@@ -145,6 +145,9 @@ define(function (require) {
   /**
    * The mouseMoved() function is called every time the mouse moves and a mouse
    * button is not pressed.
+   * Browsers may have different default
+   * behaviors attached to various mouse events. To prevent any default
+   * behavior for this event, add `return false` to the end of the method.
    *
    * @method mouseMoved
    * @example
@@ -166,12 +169,25 @@ define(function (require) {
    * }
    * </code>
    * </div>
+   * 
+   * <div class="norender">
+   * <code>
+   * function mouseMoved() {
+   *   ellipse(mouseX, mouseY, 5, 5);
+   *   // prevent default
+   *   return false;
+   * }
+   * </code>
+   * </div>
    */
 
   /**
    * The mouseDragged() function is called once every time the mouse moves and
    * a mouse button is pressed. If no mouseDragged() function is defined, the
    * touchMoved() function will be called instead if it is defined.
+   * Browsers may have different default
+   * behaviors attached to various mouse events. To prevent any default
+   * behavior for this event, add `return false` to the end of the method.
    *
    * @method mouseDragged
    * @example
@@ -190,6 +206,16 @@ define(function (require) {
    *   if (value > 255) {
    *     value = 0;
    *   }
+   * }
+   * </code>
+   * </div>
+   * 
+   * <div class="norender">
+   * <code>
+   * function mouseDragged() {
+   *   ellipse(mouseX, mouseY, 5, 5);
+   *   // prevent default
+   *   return false;
    * }
    * </code>
    * </div>
@@ -228,6 +254,9 @@ define(function (require) {
    * can be used to determine which button has been pressed. If no 
    * mousePressed() function is defined, the touchStarted() function will be
    * called instead if it is defined.
+   * Browsers may have different default
+   * behaviors attached to various mouse events. To prevent any default
+   * behavior for this event, add `return false` to the end of the method.
    *
    * @method mousePressed
    * @example
@@ -235,7 +264,6 @@ define(function (require) {
    * <code>
    * // Click within the image to change 
    * // the value of the rectangle
-   * // after the mouse has been clicked
    *       
    * var value = 0;
    * function draw() {
@@ -248,6 +276,16 @@ define(function (require) {
    *   } else {
    *     value = 0;
    *   }
+   * }
+   * </code>
+   * </div>
+   * 
+   * <div class="norender">
+   * <code>
+   * function mousePressed() {
+   *   ellipse(mouseX, mouseY, 5, 5);
+   *   // prevent default
+   *   return false;
    * }
    * </code>
    * </div>
@@ -276,6 +314,10 @@ define(function (require) {
    * The mouseReleased() function is called every time a mouse button is
    * released. If no mouseReleased() function is defined, the touchEnded()
    * function will be called instead if it is defined.
+   * Browsers may have different default
+   * behaviors attached to various mouse events. To prevent any default
+   * behavior for this event, add `return false` to the end of the method.
+   *
    *
    * @method mouseReleased
    * @example
@@ -296,6 +338,16 @@ define(function (require) {
    *   } else {
    *     value = 0;
    *   }
+   * }
+   * </code>
+   * </div>
+   * 
+   * <div class="norender">
+   * <code>
+   * function mouseReleased() {
+   *   ellipse(mouseX, mouseY, 5, 5);
+   *   // prevent default
+   *   return false;
    * }
    * </code>
    * </div>
@@ -322,6 +374,9 @@ define(function (require) {
   /**
    * The mouseClicked() function is called once after a mouse button has been
    * pressed and then released.
+   * Browsers may have different default
+   * behaviors attached to various mouse events. To prevent any default
+   * behavior for this event, add `return false` to the end of the method.
    *
    * @method mouseClicked
    * @example
@@ -345,6 +400,16 @@ define(function (require) {
    * }
    * </code>
    * </div>
+   * 
+   * <div class="norender">
+   * <code>
+   * function mouseClicked() {
+   *   ellipse(mouseX, mouseY, 5, 5);
+   *   // prevent default
+   *   return false;
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.onclick = function(e) {
     var context = this._isGlobal ? window : this;
@@ -361,6 +426,9 @@ define(function (require) {
    * the mouse wheel if rotated up or away from the user and positive in the
    * other direction. On OS X with "natural" scrolling enabled, the values are
    * opposite.
+   * Browsers may have different default
+   * behaviors attached to various mouse events. To prevent any default
+   * behavior for this event, add `return false` to the end of the method.
    * 
    * See <a href="http://www.javascriptkit.com/javatutors/onmousewheel.shtml">
    * mouse wheel event in JS</a>.

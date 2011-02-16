@@ -85,9 +85,42 @@ define(function (require) {
   /**
    * The touchStarted() function is called once after every time a touch is
    * registered. If no touchStarted() function is defined, the mousePressed()
-   * function will be called instead if it is defined.
+   * function will be called instead if it is defined. Browsers may have 
+   * different default
+   * behaviors attached to various touch events. To prevent any default
+   * behavior for this event, add `return false` to the end of the method.
    *
    * @method touchStarted
+   * @example
+   * <div>
+   * <code>
+   * // Touch within the image to change 
+   * // the value of the rectangle
+   *       
+   * var value = 0;
+   * function draw() {
+   *   fill(value);
+   *   rect(25, 25, 50, 50);
+   * }
+   * function touchStarted() {
+   *   if (value == 0) {
+   *     value = 255;
+   *   } else {
+   *     value = 0;
+   *   }
+   * }
+   * </code>
+   * </div>
+   * 
+   * <div class="norender">
+   * <code>
+   * function touchStarted() {
+   *   ellipse(touchX, touchY, 5, 5);
+   *   // prevent default
+   *   return false;
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.ontouchstart = function(e) {
     var context = this._isGlobal ? window : this;
@@ -110,9 +143,40 @@ define(function (require) {
   /**
    * The touchMoved() function is called every time a touch move is registered.
    * If no touchStarted() function is defined, the mouseDragged() function will
-   * be called instead if it is defined.
+   * be called instead if it is defined. Browsers may have different default
+   * behaviors attached to various touch events. To prevent any default
+   * behavior for this event, add `return false` to the end of the method.
    *
    * @method touchMoved
+   * @example
+   * <div>
+   * <code>
+   * // Move your finger across the page
+   * // to change its value
+   *       
+   * var value = 0;
+   * function draw() {
+   *   fill(value);
+   *   rect(25, 25, 50, 50);
+   * }
+   * function touchMoved() {
+   *   value = value + 5;
+   *   if (value > 255) {
+   *     value = 0;
+   *   }
+   * }
+   * </code>
+   * </div>
+   * 
+   * <div class="norender">
+   * <code>
+   * function touchMoved() {
+   *   ellipse(touchX, touchY, 5, 5);
+   *   // prevent default
+   *   return false;
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.ontouchmove = function(e) {
     var context = this._isGlobal ? window : this;
@@ -135,9 +199,41 @@ define(function (require) {
   /**
    * The touchEnded() function is called every time a touch ends. If no 
    * touchStarted() function is defined, the mouseReleased() function will be
-   * called instead if it is defined.
+   * called instead if it is defined. Browsers may have different default
+   * behaviors attached to various touch events. To prevent any default
+   * behavior for this event, add `return false` to the end of the method.
    *
    * @method touchEnded
+   * @example
+   * <div>
+   * <code>
+   * // Release touch within the image to 
+   * // change the value of the rectangle
+   *       
+   * var value = 0;
+   * function draw() {
+   *   fill(value);
+   *   rect(25, 25, 50, 50);
+   * }
+   * function touchEnded() {
+   *   if (value == 0) {
+   *     value = 255;
+   *   } else {
+   *     value = 0;
+   *   }
+   * }
+   * </code>
+   * </div>
+   * 
+   * <div class="norender">
+   * <code>
+   * function touchEnded() {
+   *   ellipse(touchX, touchY, 5, 5);
+   *   // prevent default
+   *   return false;
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.ontouchend = function(e) {
     var context = this._isGlobal ? window : this;
