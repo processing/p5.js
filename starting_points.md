@@ -6,10 +6,6 @@
 
 Spec out and test a JavaScript library that would enable Processing-like syntax for drawing using Canvas and WebGL. It's both about the syntax and how to code.
 
-
-
-## Philosophy
-
 Bring "Processing" ideas to JavaScript, rather than to emulate Processing/Java through JavaScript. Explore how to take positive parts of what Processing does, and see what the affordances of JS add/remove to the equation.
 
 Involves both "language design" and "ide design".
