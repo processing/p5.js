@@ -1,8 +1,6 @@
 js-processing
 =============
 
-Just some notes and thoughts to start...
-
 
 Spec out and test a JavaScript library that would enable Processing-like syntax for drawing using Canvas and WebGL. It's both about the syntax and how to code.
 
@@ -17,3 +15,7 @@ Idea of Processing syntax-wise was to take some of the nastiness out of writing 
 
 
 Current work on the Processing JS port is focused on being able to be code compatible and having things run right out of the box (which is great!), but comes at the cost of keeping some of Java's quirks, while potentially hiding the nicer parts of JS. (Strictly speaking, you can still do JS inside of that mode, but it's not necessarily the intent or the current setup.)
+
+
+See wiki for notes in progress.
+<https://github.com/lmccart/js-processing/wiki>
