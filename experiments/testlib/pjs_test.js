@@ -7,7 +7,22 @@ var c, ctx;
 
 function fill(r, g, b) {
 	ctx.fillStyle = rgbToHex(r,g,b);
-};
+}
+
+function strokeWeight(w) {
+	ctx.lineWidth = w;
+}
+
+
+
+
+function stroke(r, g, b) {
+	ctx.strokeStyle = rgbToHex(r,g,b);
+}
+
+function noStroke() {
+	ctx.strokeWeight = 0;
+}
 
 function size(w, h) {
 	width = w;
@@ -17,7 +32,6 @@ function size(w, h) {
 
 }
 
-
 function background(r, g, b) {
 	// save out the fill
 	var curFill = ctx.fillStyle;
@@ -26,7 +40,7 @@ function background(r, g, b) {
 	ctx.fillRect(0, 0, width, height);
 	// reset fill
 	ctx.fillStyle = curFill;
-};
+}
 
 
 function createCanvas() {
@@ -47,10 +61,10 @@ function createCanvas() {
 
 
 
-function rgbToHex(r,g,b) {return toHex(r)+toHex(g)+toHex(b)};
+function rgbToHex(r,g,b) {return toHex(r)+toHex(g)+toHex(b)}
 function toHex(n) {
 	n = parseInt(n,10);
 	if (isNaN(n)) return "00";
 	n = Math.max(0,Math.min(n,255));
 	return "0123456789ABCDEF".charAt((n-n%16)/16) + "0123456789ABCDEF".charAt(n%16);
-};
+}
