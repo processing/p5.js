@@ -1,12 +1,9 @@
-var c = document.createElement('canvas');
-c.setAttribute('id', 'processing');
-var ctx = c.getContext("2d");
 
 // pend temp hack
 var frameRate = 30;
 var width = 600;
 var height = 600;
-
+var ctx;
 
 function fill(r, g, b) {
 	ctx.fillStyle = rgbToHex(r,g,b);
@@ -24,13 +21,19 @@ function background(r, g, b) {
 };
 
 
+function createCanvas() {
+	console.log('create canvas');
+	var c = document.createElement('canvas');
+	c.setAttribute('id', 'processing');
+	ctx = c.getContext("2d");
+	document.body.appendChild(c);
+	
+	setup();
+	setInterval(draw, 1000/frameRate);
+}
 
 
 
-
-
-setup();
-setInterval(draw, 1000/frameRate);
 
 
 
