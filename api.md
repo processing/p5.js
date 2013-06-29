@@ -1,8 +1,8 @@
-syntax
-======
+API
+===
 
 
-##basic sketch##
+##Basic sketch##
 
 
 
@@ -29,7 +29,7 @@ var draw() = {
 
 
 
-##additional functions##
+##Additional functions##
 
 
-##no longer supported##
+##No longer supported##
