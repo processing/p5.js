@@ -1,5 +1,6 @@
 var setup = function() {
 	console.log("setup");
+	background(255, 0, 0);
 };
 
 
