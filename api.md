@@ -18,11 +18,11 @@ void draw() {
 
 
 ```javascript
-var setup() = {
+var setup = function() {
 	// setup stuff
 };
 
-var draw() = {
+var draw = function() {
 	// draw stuff
 };
 ```
