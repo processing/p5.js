@@ -6,6 +6,31 @@ var height = 100;
 var c, ctx;
 var pBackground = false;
 var pFill = false;
+var pLoop = true;
+var pDrawInterval;
+
+//// OUTPUT
+
+// Text Area
+function println(s) { console.log(s); }
+
+
+////	STRUCTURE
+function noLoop() {	
+	if (pLoop) {
+		clearInterval(pDrawInterval);
+		pLoop = false; 
+	}
+}
+
+function loop() { 
+	if (!pLoop) {
+		pDrawInterval = setInterval(pDraw, 1000/frameRate);
+		pLoop = true;
+	}
+}
+
+
 
 
 // setters
@@ -35,6 +60,7 @@ function size(w, h) {
 	height = h;
 	c.setAttribute('width', width);
 	c.setAttribute('height', height);
+	pApplyDefaults();
 }
 
 function background(r, g, b) {
@@ -56,20 +82,30 @@ function scale(x, y) { ctx.scale(x, y); }
 
 
 
-function createCanvas() {
+//// INTERNALS
+
+function pCreateCanvas() {
 	console.log('create canvas');
 	c = document.createElement('canvas');
 	c.setAttribute('id', 'processing');
 	c.setAttribute('width', width);
 	c.setAttribute('height', height);
-	ctx = c.getContext("2d");
 	document.body.appendChild(c);
+	ctx = c.getContext("2d");
+	pApplyDefaults();
 
 	setup();
-	setInterval(pDraw, 1000/frameRate);
+	pDraw();
+	if (pLoop) pDrawInterval = setInterval(pDraw, 1000/frameRate);
+}
+
+function pApplyDefaults() {
+	ctx.fillStyle = "#FFFFFF";
+	ctx.strokeStyle = "none";
 }
 
 function pDraw() {
+		console.log(ctx.fillStyle);
 	// draw bg
 	if (pBackground) {
 		// save out the fill

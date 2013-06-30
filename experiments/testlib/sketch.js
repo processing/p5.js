@@ -1,12 +1,13 @@
 var setup = function() {
-	console.log("setup");
+	println("setup");
 	size(1200, 600);
 	background(255, 200, 0);
+	noLoop();
 };
 
 
 var draw = function() {
-	console.log("d");
+	println("d");
 	noStroke();
 	rotate(0.1);
 	rect(10, 10, 500, 500);
