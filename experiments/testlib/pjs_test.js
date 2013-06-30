@@ -1,5 +1,5 @@
 
-// pend temp hack
+// pend tempz
 var frameRate = 30;
 var width = 100;
 var height = 100;
@@ -9,10 +9,6 @@ var pFill = false;
 var pLoop = true;
 var pDrawInterval;
 
-//// OUTPUT
-
-// Text Area
-function println(s) { console.log(s); }
 
 
 ////	STRUCTURE
@@ -31,30 +27,7 @@ function loop() {
 }
 
 
-
-
-// setters
-function fill(r, g, b) {
-	ctx.fillStyle = rgbToHex(r,g,b);
-}
-
-function noFill() {
-	ctx.fillStyle = "none";
-}
-
-function strokeWeight(w) {
-	ctx.lineWidth = w;
-	if (!w) noStroke();
-}
-
-function stroke(r, g, b) {
-	ctx.strokeStyle = rgbToHex(r,g,b);
-}
-
-function noStroke() {
-	ctx.strokeStyle = "none";
-}
-
+//// ENVIRONMENT
 function size(w, h) {
 	width = w;
 	height = h;
@@ -63,22 +36,55 @@ function size(w, h) {
 	pApplyDefaults();
 }
 
-function background(r, g, b) {
-	pBackground = rgbToHex(r,g,b);
-}
 
 
-// 2d primitives
+//// COLOR
+
+// Setting
+function background(r, g, b) { pBackground = rgbToHex(r,g,b); }
+function fill(r, g, b) { ctx.fillStyle = rgbToHex(r,g,b); }
+function noFill() {	ctx.fillStyle = "none"; }
+function noStroke() {	ctx.strokeStyle = "none"; }
+function stroke(r, g, b) { ctx.strokeStyle = rgbToHex(r,g,b); }
+
+
+
+//// SHAPE
+
+// 2D Primitives
 function rect(x, y, w, h) {
 	ctx.rect(x, y, w, h);
 	ctx.fill();
 	ctx.stroke();
 }
 
-// transformations
+function line(x1, y1, x2, y2) {
+	ctx.beginPath();
+	ctx.moveTo(x1, y1);
+	ctx.lineTo(x2, y2);
+	ctx.stroke();
+}
+
+// Attributes
+function strokeWeight(w) {
+	ctx.lineWidth = w;
+	if (!w) noStroke();
+}
+
+
+//// TRANSFORM
 function rotate(r) { ctx.rotate(r); }
 function translate(x, y) { ctx.translate(x, y); }
 function scale(x, y) { ctx.scale(x, y); }
+
+
+//// OUTPUT
+
+// Text Area
+function println(s) { console.log(s); }
+
+
+
 
 
 
