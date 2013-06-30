@@ -4,24 +4,30 @@ var frameRate = 30;
 var width = 100;
 var height = 100;
 var c, ctx;
+var pBackground = false;
+var pFill = false;
 
+
+// setters
 function fill(r, g, b) {
 	ctx.fillStyle = rgbToHex(r,g,b);
 }
 
-function strokeWeight(w) {
-	ctx.lineWidth = w;
+function noFill() {
+	ctx.fillStyle = "none";
 }
 
-
-
+function strokeWeight(w) {
+	ctx.lineWidth = w;
+	if (!w) noStroke();
+}
 
 function stroke(r, g, b) {
 	ctx.strokeStyle = rgbToHex(r,g,b);
 }
 
 function noStroke() {
-	ctx.strokeWeight = 0;
+	ctx.strokeStyle = "none";
 }
 
 function size(w, h) {
@@ -29,18 +35,25 @@ function size(w, h) {
 	height = h;
 	c.setAttribute('width', width);
 	c.setAttribute('height', height);
-
 }
 
 function background(r, g, b) {
-	// save out the fill
-	var curFill = ctx.fillStyle;
-	// create background rect
-	ctx.fillStyle = rgbToHex(r,g,b);
-	ctx.fillRect(0, 0, width, height);
-	// reset fill
-	ctx.fillStyle = curFill;
+	pBackground = rgbToHex(r,g,b);
 }
+
+
+// 2d primitives
+function rect(x, y, w, h) {
+	ctx.rect(x, y, w, h);
+	ctx.fill();
+	ctx.stroke();
+}
+
+// transformations
+function rotate(r) { ctx.rotate(r); }
+function translate(x, y) { ctx.translate(x, y); }
+function scale(x, y) { ctx.scale(x, y); }
+
 
 
 function createCanvas() {
@@ -53,10 +66,24 @@ function createCanvas() {
 	document.body.appendChild(c);
 
 	setup();
-	setInterval(draw, 1000/frameRate);
+	setInterval(pDraw, 1000/frameRate);
 }
 
+function pDraw() {
+	// draw bg
+	if (pBackground) {
+		// save out the fill
+		var curFill = ctx.fillStyle;
+		// create background rect
+		ctx.fillStyle = pBackground;
+		ctx.fillRect(0, 0, width, height);
+		// reset fill
+		ctx.fillStyle = curFill;
+	}
 
+	// call draw
+	draw();
+}
 
 
 
