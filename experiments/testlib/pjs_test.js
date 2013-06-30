@@ -9,6 +9,9 @@ var pFill = false;
 var pLoop = true;
 var pDrawInterval;
 
+var pMouseX = 0, pMouseY = 0, mouseX = 0, mouseY = 0;
+
+
 
 
 ////	STRUCTURE
@@ -100,6 +103,10 @@ function pCreateCanvas() {
 	ctx = c.getContext("2d");
 	pApplyDefaults();
 
+	c.onmousemove=function(e){
+    pUpdateMouseCoords(e);
+	}
+
 	setup();
 	pDraw();
 	if (pLoop) pDrawInterval = setInterval(pDraw, 1000/frameRate);
@@ -110,8 +117,15 @@ function pApplyDefaults() {
 	ctx.strokeStyle = "none";
 }
 
+function pUpdateMouseCoords(e) {
+	pMouseX = mouseX;
+	pMouseY = mouseY;
+	mouseX = e.clientX - c.offsetLeft;
+	mouseY = e.clientY - c.offsetTop;
+	//console.log('mx = '+mouseX+' my = '+mouseY);
+}
+
 function pDraw() {
-		console.log(ctx.fillStyle);
 	// draw bg
 	if (pBackground) {
 		// save out the fill
