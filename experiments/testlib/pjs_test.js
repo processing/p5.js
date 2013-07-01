@@ -5,10 +5,14 @@ var frameCount = 0;
 var width = 100;
 var height = 100;
 var c, ctx;
+
+var CORNER = 0, CORNERS = 1, RADIUS = 2, CENTER = 3;
+
 var pBackground = false;
 var pFill = false;
 var pLoop = true;
 var pDrawInterval;
+var pRectMode = CORNER;
 var setup, draw, mousePressed;
 
 var pMouseX = 0, pMouseY = 0, mouseX = 0, mouseY = 0;
@@ -48,8 +52,16 @@ function size(w, h) {
 //// SHAPE
 
 // 2D Primitives
-function rect(x, y, w, h) {
-	ctx.rect(x, y, w, h);
+function rect(a, b, c, d) {
+	if (pRectMode == CORNER) {
+		ctx.rect(a, b, c, d);
+	} else if (pRectMode == CORNERS) {
+		ctx.rect(a, b, c-a, d-b);
+	} else if (pRectMode == RADIUS) {
+		ctx.rect(a-c, b-d, 2*c, 2*d);
+	} else if (pRectMode == CENTER) {
+		ctx.rect(a-(c-a)*0.5, b-(d-b)*0.5, c, d);
+	}
 	ctx.fill();
 	ctx.stroke();
 }
@@ -62,10 +74,17 @@ function line(x1, y1, x2, y2) {
 }
 
 // Attributes
+function rectMode(m) {
+	if (typeof(m) == "number" && m >= 0 && m < 4) {
+		pRectMode = m;
+	}
+}
+
 function strokeWeight(w) {
 	ctx.lineWidth = w;
 	if (!w) noStroke();
 }
+
 
 
 //// OUTPUT

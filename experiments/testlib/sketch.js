@@ -7,6 +7,7 @@ var setup = function() {
 	background(255, 200, 0);
 	img = loadImage("http://mollysoda.biz/GIFS/femalesign.gif");
 	//noLoop();
+	rectMode(CENTER);
 };
 
 
