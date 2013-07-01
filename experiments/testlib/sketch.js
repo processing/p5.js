@@ -11,7 +11,7 @@ var setup = function() {
 
 
 var draw = function() {
-	background(255*sin(frameCount), 255*sin(3*frameCount), 255*sin(2*frameCount));
+	background(255*sin(.008*frameCount), 255*sin(.003*frameCount), 255*sin(.01*frameCount));
 	noStroke();
 	rotate(clicks/10);
 	rect(10, 10, 200, 200);
