@@ -42,15 +42,6 @@ function size(w, h) {
 
 
 
-//// COLOR
-
-// Setting
-function background(r, g, b) { pBackground = rgbToHex(r,g,b); }
-function fill(r, g, b) { ctx.fillStyle = rgbToHex(r,g,b); }
-function noFill() {	ctx.fillStyle = "none"; }
-function noStroke() {	ctx.strokeStyle = "none"; }
-function stroke(r, g, b) { ctx.strokeStyle = rgbToHex(r,g,b); }
-
 
 
 //// SHAPE
@@ -76,16 +67,45 @@ function strokeWeight(w) {
 }
 
 
+//// OUTPUT
+
+// Text Area
+function println(s) { console.log(s); }
+
+
+
 //// TRANSFORM
 function rotate(r) { ctx.rotate(r); }
 function translate(x, y) { ctx.translate(x, y); }
 function scale(x, y) { ctx.scale(x, y); }
 
 
-//// OUTPUT
+//// COLOR
 
-// Text Area
-function println(s) { console.log(s); }
+// Setting
+function background(r, g, b) { pBackground = rgbToHex(r,g,b); }
+function fill(r, g, b) { ctx.fillStyle = rgbToHex(r,g,b); }
+function noFill() {	ctx.fillStyle = "none"; }
+function noStroke() {	ctx.strokeStyle = "none"; }
+function stroke(r, g, b) { ctx.strokeStyle = rgbToHex(r,g,b); }
+
+
+//// Image
+
+// Loading & Displaying
+function image(img, x, y, w, h) { 
+	if (w && h)	ctx.drawImage(img, x, y, w, h);	
+	else ctx.drawImage(img, x, y);
+}
+
+function loadImage(path) { 
+	var imgObj = new Image();
+	imgObj.onload = function() {
+		// loaded
+	}
+	imgObj.src = path;
+	return imgObj;
+}a
 
 
 //// MATH
