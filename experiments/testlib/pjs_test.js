@@ -1,6 +1,7 @@
 
 // pend tempz
 var frameRate = 30;
+var frameCount = 0;
 var width = 100;
 var height = 100;
 var c, ctx;
@@ -177,6 +178,9 @@ function pCreateCanvas() {
 	}
 
 	if (typeof(setup) == "function") setup();
+	
+	setInterval(pUpdate, 1000/frameRate);
+
 	pDraw();
 	if (pLoop) pDrawInterval = setInterval(pDraw, 1000/frameRate);
 }
@@ -192,6 +196,10 @@ function pUpdateMouseCoords(e) {
 	mouseX = e.clientX - c.offsetLeft;
 	mouseY = e.clientY - c.offsetTop;
 	//console.log('mx = '+mouseX+' my = '+mouseY);
+}
+
+function pUpdate() {
+	frameCount++;
 }
 
 function pDraw() {

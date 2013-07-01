@@ -11,6 +11,7 @@ var setup = function() {
 
 
 var draw = function() {
+	background(255*sin(frameCount), 255*sin(3*frameCount), 255*sin(2*frameCount));
 	noStroke();
 	rotate(clicks/10);
 	rect(10, 10, 200, 200);
@@ -18,7 +19,7 @@ var draw = function() {
 	strokeWeight(10);
 	translate(clicks*5, 0);
 	line(50, 30, 400, 400);
-	image(img, 300, 40, 200, 260);
+	image(img, 300, 40, 200, 200*img.height/img.width);
 };
 
 var mousePressed = function() {
