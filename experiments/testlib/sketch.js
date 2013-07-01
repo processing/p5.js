@@ -1,3 +1,5 @@
+var clicks = 0;
+
 var setup = function() {
 	println("setup");
 	size(1200, 600);
@@ -9,7 +11,7 @@ var setup = function() {
 var draw = function() {
 	println("d");
 	noStroke();
-	rotate(mouseX/360);
+	rotate(clicks/10);
 	rect(10, 10, 200, 200);
 	stroke(255, 0, mouseY);
 	strokeWeight(10);
@@ -18,4 +20,5 @@ var draw = function() {
 
 var mousePressed = function() {
 	println("mouse pressed");
+	clicks++;
 };
