@@ -145,6 +145,7 @@ function pDraw() {
 
 	// call draw
 	draw();
+	ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
 
 

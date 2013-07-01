@@ -12,6 +12,7 @@ var draw = function() {
 	println("d");
 	noStroke();
 	rotate(clicks/10);
+	translate(clicks*5, 0);
 	rect(10, 10, 200, 200);
 	stroke(255, 0, mouseY);
 	strokeWeight(10);
