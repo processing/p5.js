@@ -76,6 +76,8 @@ function println(s) { console.log(s); }
 
 
 //// TRANSFORM
+function popMatrix() { ctx.restore(); }
+function pushMatrix() { ctx.save(); }
 function rotate(r) { ctx.rotate(r); }
 function translate(x, y) { ctx.translate(x, y); }
 function scale(x, y) { ctx.scale(x, y); }

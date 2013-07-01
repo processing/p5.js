@@ -13,9 +13,11 @@ var setup = function() {
 var draw = function() {
 	background(255*sin(.008*frameCount), 255*sin(.003*frameCount), 255*sin(.01*frameCount));
 	noStroke();
+	pushMatrix();
 	translate(200, 200);
 	rotate(clicks/10);
 	rect(0, 0, 200, 200);
+	popMatrix();
 	stroke(255, map(mouseX, 0, width, 0, 255), map(mouseY, 0, height, 0, 255));
 	strokeWeight(10);
 	translate(clicks*5, 0);
