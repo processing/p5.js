@@ -8,7 +8,7 @@ var pBackground = false;
 var pFill = false;
 var pLoop = true;
 var pDrawInterval;
-var mousePressed;
+var setup, draw, mousePressed;
 
 var pMouseX = 0, pMouseY = 0, mouseX = 0, mouseY = 0;
 
@@ -108,6 +108,30 @@ function pow(n, e) { return Math.pow(n, e); }
 function sq(n) { return n*n; }
 function sqrt(n) { return Math.sqrt(n); }
 
+// Trigonometry
+function acos(x) { return Math.acos(x); }
+function asin(x) { return Math.asin(x); }
+function atan(x) { return Math.atan(x); }
+function atan2(y, x) { return Math.atan2(y, x); }
+function cos(x) { return Math.cos(x); }
+function degrees(x) { return 360.0*x/(2*Math.PI); }
+function radians(x) { return 2*Math.PI*x/360.0; }
+function sin(x) { return Math.sin(x); }
+function tan(x) { return Math.tan(x); }
+
+// Random
+function random(x, y) { 
+	if (y) return (y-x)*Math.random()+x;
+	else if (x) return x*Math.random();
+	else return Math.random();
+}
+
+// Constants
+var HALF_PI = Math.PI*0.5;
+var PI = Math.PI;
+var QUARTER_PI = Math.PI*0.25;
+var TAU = Math.PI*2.0;
+var TWO_PI = Math.PI*2.0;
 
 
 
@@ -132,7 +156,7 @@ function pCreateCanvas() {
 	    mousePressed();
 	}
 
-	setup();
+	if (typeof(setup) == "function") setup();
 	pDraw();
 	if (pLoop) pDrawInterval = setInterval(pDraw, 1000/frameRate);
 }
@@ -163,7 +187,7 @@ function pDraw() {
 	}
 
 	// call draw
-	draw();
+	if (typeof(draw) == "function") draw();
 	ctx.setTransform(1, 0, 0, 1, 0, 0);
 }
 
