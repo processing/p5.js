@@ -28,6 +28,9 @@ var draw = function() {
 ```
 
 
+##Other changes##
+
+
 
 ##Additional functions##
 
