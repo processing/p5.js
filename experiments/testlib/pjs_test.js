@@ -93,14 +93,14 @@ function println(s) { console.log(s); }
 // Calculation
 function abs(n) { return Math.abs(n); }
 function ceil(n) { return Math.ceil(n); }
-function constrain(n, l, h) { return Math.constrain(n, l, h); }
+function constrain(n, l, h) { return max(min(n, h), l); }
 function dist(x1, y1, x2, y2) { return Math.dist(x1, y1, x2, y2); }
 function exp(n) { return Math.exp(n); }
 function floor(n) { return Math.floor(n); }
-function lerp(start, stop, amt) { return Math.lerp(start, stop, amt); }
+function lerp(start, stop, amt) { return amt*(stop-start)+start; }
 function log(n) { return Math.log(n); }
-function mag(x, y) { return Math.mag(x, y); }
-function map(n, start1, stop1, start2, stop2) { return Math.map(n, start1, stop1, start2, stop2); }
+function mag(x, y) { return Math.sqrt(x*x+y*y); }
+function map(n, start1, stop1, start2, stop2) { return ((n-start1)/(stop1-start1))*(stop2-start2)+start2; }
 function max(a, b) { return Math.max(a, b); }
 function min(a, b) { return Math.min(a, b); }
 function norm(n, start, stop) { return map(n, start, stop, 0, 1); }
