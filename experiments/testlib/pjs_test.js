@@ -8,6 +8,7 @@ var pBackground = false;
 var pFill = false;
 var pLoop = true;
 var pDrawInterval;
+var mousePressed;
 
 var pMouseX = 0, pMouseY = 0, mouseX = 0, mouseY = 0;
 
@@ -105,6 +106,11 @@ function pCreateCanvas() {
 
 	c.onmousemove=function(e){
     pUpdateMouseCoords(e);
+	}
+
+	c.onmousedown=function(e){
+		if (typeof(mousePressed) == "function")
+	    mousePressed();
 	}
 
 	setup();
