@@ -88,6 +88,25 @@ function scale(x, y) { ctx.scale(x, y); }
 function println(s) { console.log(s); }
 
 
+//// MATH
+
+// Calculation
+function abs(n) { return Math.abs(n); }
+function ceil(n) { return Math.ceil(n); }
+function constrain(n, l, h) { return Math.constrain(n, l, h); }
+function dist(x1, y1, x2, y2) { return Math.dist(x1, y1, x2, y2); }
+function exp(n) { return Math.exp(n); }
+function floor(n) { return Math.floor(n); }
+function lerp(start, stop, amt) { return Math.lerp(start, stop, amt); }
+function log(n) { return Math.log(n); }
+function mag(x, y) { return Math.mag(x, y); }
+function map(n, start1, stop1, start2, stop2) { return Math.map(n, start1, stop1, start2, stop2); }
+function max(a, b) { return Math.max(a, b); }
+function min(a, b) { return Math.min(a, b); }
+function norm(n, start, stop) { return map(n, start, stop, 0, 1); }
+function pow(n, e) { return Math.pow(n, e); }
+function sq(n) { return n*n; }
+function sqrt(n) { return Math.sqrt(n); }
 
 
 
