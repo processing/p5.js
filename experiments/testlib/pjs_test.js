@@ -105,7 +105,7 @@ function loadImage(path) {
 	}
 	imgObj.src = path;
 	return imgObj;
-}a
+}
 
 
 //// MATH
