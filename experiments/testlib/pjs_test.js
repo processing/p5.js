@@ -166,7 +166,7 @@ function scale(x, y) { ctx.scale(x, y); }
 function background(r, g, b) { pBackground = rgbToHex(r,g,b); }
 function fill(r, g, b, a) { 
 	if (a) ctx.fillStyle = "rgba("+r+","+g+","+b+","+a+")";
-	else ctx.fillStyle = "rgba("r+","+g+","+b+")";
+	else ctx.fillStyle = "rgba("+r+","+g+","+b+")";
 }
 function noFill() {	ctx.fillStyle = "none"; }
 function noStroke() {	ctx.strokeStyle = "none"; }
