@@ -1,5 +1,8 @@
 var clicks = 0, presses = 1;
-var img, img2;
+var img, img2, rad;
+var lastAdd = 0;
+var rads = 0;
+
 
 var setup = function() {
 	println("setup");
@@ -7,6 +10,7 @@ var setup = function() {
 	background(255, 200, 0);
 	img = loadImage("http://25.media.tumblr.com/ebec9ddb89465ff5b50bc35a8e8ead2c/tumblr_mlln12WAaP1r0m42ro1_500.png");
 	img2 = loadImage("http://24.media.tumblr.com/ea887aa96fdc6541c261fb1e796601eb/tumblr_mk6bew8Ola1r0m42ro4_1280.png");
+	rad = loadImage("http://24.media.tumblr.com/b63929967b4bb8fe375de87d875b6234/tumblr_ml8rao2P0G1r0m42ro1_1280.png");
 	//noLoop();
 	rectMode(CENTER);
 	//textAlign(CENTER);
@@ -17,6 +21,16 @@ var setup = function() {
 var draw = function() {
 	background(255*sin(.008*frameCount), 255*sin(.003*frameCount), 255*sin(.01*frameCount));
 	noStroke();
+
+	// rads
+	for (var i=0; i<rads; i++) {
+		imageMode(CENTER);
+		pushMatrix();
+		translate(150*i+10*sin(frameCount*0.005+10*i), height*0.5+(10+10*i)*sin(frameCount*0.005+10*i));
+		rotate(frameCount*0.001+10*i);
+		image(rad, 0, 0, 100, 100*rad.height/rad.width);
+		popMatrix();
+	}
 	
 	// rect rotate on click
 	fill(255, 255, 255);
@@ -64,11 +78,19 @@ var draw = function() {
 	popMatrix();
 
 	// text
-	fill(25, 130, 200);
-	textSize(12);
-	text("SMALL TEXT", 100, 50);
+	fill(25, 230, 200);
+	textSize(15);
+	text("SMALL TEXT", 100, 500);
 	textSize(150);
 	text("BIG TEXT", 400, 250);
+
+	// more rads
+	if (millis() - lastAdd > 300 && rads < 10) {
+		lastAdd = millis();
+		rads++;
+	}
+
+
 };
 
 var mousePressed = function(e) {
