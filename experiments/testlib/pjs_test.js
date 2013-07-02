@@ -171,8 +171,9 @@ function fill(r, g, b, a) {
 function noFill() {	ctx.fillStyle = "none"; }
 function noStroke() {	ctx.strokeStyle = "none"; }
 function stroke(r, g, b, a) { 
-	if (a) ctx.strokeStyle = "rgba("+r+","+g+","+b+","+(a/255.0)+")";
-	else ctx.strokeStyle = "rgb("+r+","+g+","+b+")";
+	//if (a) ctx.strokeStyle = "rgba("+r+","+g+","+b+","+(a/255.0)+")";
+	//else ctx.strokeStyle = rgbToHex(r,g,b); 
+	ctx.strokeStyle = rgbToHex(r,g,b); 
 }
 
 
