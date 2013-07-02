@@ -33,7 +33,7 @@ var draw = function() {
 	}
 	
 	// rect rotate on click
-	fill(255, 255, 255, 0.5);
+	fill(255, 255, 255, 100);
 	pushMatrix();
 	translate(200, 200);
 	rotate(clicks/10);
@@ -43,7 +43,6 @@ var draw = function() {
 
 
 	// auto rotate rect
-	fill(255, 255, 255);
 	pushMatrix();
 	translate(400, 400);
 	rotate(frameCount*0.1);
@@ -52,7 +51,7 @@ var draw = function() {
 
 	// line
 	pushMatrix();
-	stroke(205, map(mouseX, 0, width, 0, 255), map(mouseY, 0, height, 0, 255), 0.5);
+	stroke(205, map(mouseX, 0, width, 0, 255), map(mouseY, 0, height, 0, 255), 100);
 	strokeWeight(10);
 	translate(-clicks*5, 0);
 	for (var i=0; i<presses; i++) {
