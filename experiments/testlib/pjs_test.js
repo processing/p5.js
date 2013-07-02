@@ -6,7 +6,8 @@ var width = 100;
 var height = 100;
 var c, ctx;
 
-var CORNER = 0, CORNERS = 1, RADIUS = 2, CENTER = 3;
+var CORNER = "corner", CORNERS = "corners", RADIUS = "radius";
+var RIGHT = "right", LEFT = "left", CENTER = "center";
 
 var pBackground = false;
 var pFill = false;
@@ -76,7 +77,7 @@ function line(x1, y1, x2, y2) {
 
 // Attributes
 function rectMode(m) {
-	if (typeof(m) == "number" && m >= 0 && m < 4) {
+	if (m == CORNER || m == CORNERS || m == RADIUS || m == CENTER) {
 		pRectMode = m;
 	}
 }
@@ -140,8 +141,12 @@ function text(s, x, y) {
 }
 
 // Atributes
+function textAlign(a) {
+	if (a == LEFT || a == RIGHT || a == CENTER) ctx.textAlign = a;
+}
 function textSize(s) { pTextSize = s; }
-
+function textWidth(s) { return ctx.measureText(s).width; }
+function textHeight(s) { return ctx.measureText(s).height; }
 
 //// MATH
 
