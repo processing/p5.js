@@ -9,6 +9,7 @@ var setup = function() {
 	//noLoop();
 	rectMode(CENTER);
 	//textAlign(CENTER);
+	//imageMode(CORNERS);
 };
 
 

@@ -13,7 +13,7 @@ var pBackground = false;
 var pFill = false;
 var pLoop = true;
 var pDrawInterval;
-var pRectMode = CORNER;
+var pRectMode = CORNER, pImageMode = CORNER;
 var pTextSize = 12;
 var setup, draw, mousePressed;
 var keyCode = 0;
@@ -118,9 +118,22 @@ function stroke(r, g, b) { ctx.strokeStyle = rgbToHex(r,g,b); }
 //// Image
 
 // Loading & Displaying
-function image(img, x, y, w, h) { 
-	if (w && h)	ctx.drawImage(img, x, y, w, h);	
-	else ctx.drawImage(img, x, y);
+function image(img, a, b, c, d) { 
+	var imgW = img.width, imgH = img.height;
+
+	if (pImageMode == CORNER) {
+		if (c && d) ctx.drawImage(img, a, b, c, d);
+		else ctx.drawImage(img, a, b);
+	} else if (pImageMode == CORNERS) {
+		ctx.drawImage(img, a, b, c-a, d-b);
+	} else if (pImageMode == CENTER) {
+		ctx.drawImage(img, a-(c-a)*0.5, b-(d-b)*0.5, c, d);
+	}
+
+}
+
+function imageMode(m) {
+	if (m == CORNER || m == CORNERS || m == CENTER) pImageMode = m;
 }
 
 function loadImage(path) { 
@@ -210,11 +223,23 @@ function pCreateCanvas() {
 
 	c.onmousemove=function(e){
     pUpdateMouseCoords(e);
+    if (typeof(mouseMoved) == "function")
+    	mouseMoved(e);
 	}
 
 	c.onmousedown=function(e){
 		if (typeof(mousePressed) == "function")
-	    mousePressed();
+	    mousePressed(e);
+	}
+
+	c.onmouseup=function(e){
+		if (typeof(mouseReleased) == "function")
+			mouseReleased(e);
+	}
+
+	c.onmouseclick=function(e){
+		if (typeof(mouseClicked) == "function")
+			mouseClicked(e);
 	}
 
 	document.body.onkeydown=function(e){
