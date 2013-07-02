@@ -1,4 +1,4 @@
-var clicks = 0;
+var clicks = 0, presses = 1;
 var img, img2;
 
 var setup = function() {
@@ -23,6 +23,7 @@ var draw = function() {
 	pushMatrix();
 	translate(200, 200);
 	rotate(clicks/10);
+	scale(random(0.8, 1.0), random(0.8, 1.0));
 	rect(0, 0, 200, 200);
 	popMatrix();
 
@@ -39,8 +40,11 @@ var draw = function() {
 	pushMatrix();
 	stroke(205, map(mouseX, 0, width, 0, 255), map(mouseY, 0, height, 0, 255));
 	strokeWeight(10);
-	translate(clicks*5, 0);
-	line(50, 30, 400, 400);
+	translate(-clicks*5, 0);
+	for (var i=0; i<presses; i++) {
+		translate(30, 0);
+		line(50, 30, 400, 400);
+	}
 	popMatrix();
 
 	// img1
@@ -63,8 +67,8 @@ var draw = function() {
 	fill(25, 130, 200);
 	textSize(12);
 	text("SMALL TEXT", 100, 50);
-	textSize(50);
-	text("BIG TEXT", 200, 50);
+	textSize(150);
+	text("BIG TEXT", 400, 250);
 };
 
 var mousePressed = function(e) {
@@ -74,6 +78,8 @@ var mousePressed = function(e) {
 
 var keyPressed = function(e) {
 	println("key pressed "+keyCode);
+	//alert('key pressed '+keyCode);
+	presses++;
 };
 
 var keyReleased = function(e) {
