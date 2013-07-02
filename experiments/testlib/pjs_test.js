@@ -111,12 +111,8 @@ function strokeWeight(w) {
 //// INPUT
 
 // Files
-if (window.File && window.FileReader && window.FileList && window.Blob) {
-  //do your stuff!
-  
-} else {
-  alert('The File APIs are not fully supported by your browser.');
-}
+
+
 /*BufferedReader
 createInput()
 createReader()
@@ -225,8 +221,8 @@ function textWidth(s) { return ctx.measureText(s).width; }
 function textHeight(s) { return ctx.measureText(s).height; }
 
 //// MATH
-
-// Calculation
+/** @module Math */
+/** returns abs value */
 function abs(n) { return Math.abs(n); }
 function ceil(n) { return Math.ceil(n); }
 function constrain(n, l, h) { return max(min(n, h), l); }

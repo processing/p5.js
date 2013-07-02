@@ -2,7 +2,7 @@ var clicks = 0, presses = 1;
 var img, img2, rad;
 var lastAdd = 0;
 var rads = 0;
-
+var r;
 
 var setup = function() {
 	println("setup");
@@ -15,8 +15,30 @@ var setup = function() {
 	rectMode(CENTER);
 	//textAlign(CENTER);
 	//imageMode(CORNERS);
+
+
+	var f = "./test.txt";
+	readTextFile(f);
+
 };
 
+function readTextFile(file)
+{
+    var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", file, true);
+    rawFile.onreadystatechange = function ()
+    {
+        if(rawFile.readyState === 4)
+        {
+            if(rawFile.status === 200 || rawFile.status == 0)
+            {
+                var allText = rawFile.responseText;
+                alert(allText);
+            }
+        }
+    }
+    rawFile.send(null);
+}
 
 var draw = function() {
 	background(255*sin(.008*frameCount), 255*sin(.003*frameCount), 255*sin(.01*frameCount));
