@@ -52,7 +52,6 @@ var draw = function() {
 	// line
 	pushMatrix();
 	stroke(205, map(mouseX, 0, width, 0, 255), map(mouseY, 0, height, 0, 255));
-	console.log(map(mouseX, 0, width, 0, 255)+" "+ map(mouseY, 0, height, 0, 255));
 	strokeWeight(10);
 	translate(-clicks*5, 0);
 	for (var i=0; i<presses; i++) {
