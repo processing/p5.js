@@ -3,6 +3,7 @@ var img, img2, rad;
 var lastAdd = 0;
 var rads = 0;
 var r;
+var bg = [];
 
 var setup = function() {
 	println("setup");
@@ -24,7 +25,8 @@ var setup = function() {
 
 
 var draw = function() {
-	background(255*sin(.008*frameCount), 255*sin(.003*frameCount), 255*sin(.01*frameCount));
+	bg = [255*sin(.008*frameCount), 255*sin(.003*frameCount), 255*sin(.01*frameCount)];
+	background(bg[0], bg[1], bg[2]);
 	noStroke();
 
 	// rads
@@ -52,7 +54,7 @@ var draw = function() {
 	strokeWeight(10);
 	translate(-clicks*5, 0);
 	for (var i=0; i<presses; i++) {
-		translate(30, 0);
+		translate(40, 0);
 		line(50, 30, 400, 400);
 	}
 	popMatrix();
@@ -90,12 +92,12 @@ var draw = function() {
 
 	// bez
 	pushMatrix();
-	translate(width-200, height-200);
-	stroke(0, 0, 0);
+	translate(width-500, height-270);
+	stroke(bg[0]-35, bg[1]+35, bg[2]+20);
 	strokeWeight(3);
-	bezier(85, 20, 10, 10, 90, 190, 15, 180);
-	stroke(0, 100, 230);
-	bezier(130, 20,  180, 15,  180, 75,  130, 175);
+	for (var i=0; i<32; i++) {
+		bezier(15*i+85, 20, 15*i+10, 10, 15*i+90, 190, 15*i+15, 180);
+	}
 	popMatrix();
 
 	// more rads
