@@ -13,13 +13,13 @@ var pBackground = false;
 var pFill = false;
 var pLoop = true;
 var pDrawInterval;
+var pStartTime;
 var pRectMode = CORNER, pImageMode = CORNER;
 var pTextSize = 12;
 var setup, draw, mousePressed;
 var keyCode = 0;
 
 var pMouseX = 0, pMouseY = 0, mouseX = 0, mouseY = 0;
-
 
 
 
@@ -49,8 +49,27 @@ function size(w, h) {
 }
 
 
+//// DATA
 
-
+// String Functions
+function join(list, separator) { return list.join(separator); }
+function match(str, reg) { return str.match(reg); }
+//function matchAll(str, reg) {}
+function nf(num, digits) { 
+	var str = "";
+	for (var i=0; i<min(digits-num.toString().length, 0); i++) {
+		str += "0";
+	}
+	return str+num;
+}
+/*
+nfc()
+nfp()
+nfs()
+split()
+splitTokens()
+trim()
+*/
 
 //// SHAPE
 
@@ -87,6 +106,42 @@ function strokeWeight(w) {
 	ctx.lineWidth = w;
 	if (!w) noStroke();
 }
+
+
+//// INPUT
+
+// Files
+if (window.File && window.FileReader && window.FileList && window.Blob) {
+  //do your stuff!
+  
+} else {
+  alert('The File APIs are not fully supported by your browser.');
+}
+/*BufferedReader
+createInput()
+createReader()
+loadBytes()
+loadJSONArray()
+loadJSONObject()
+loadStrings()
+loadTable()
+loadXML()
+open()
+parseXML()
+saveTable()
+selectFolder()
+selectInput()*/
+
+
+
+// Time & Date
+function day() { return new Date().getDate(); }
+function hour() { return new Date().getHours(); }
+function millis() { return new Date().getTime() - pStartTime; }
+function month() { return new Date().getMonth(); }
+function second() { return new Date().getSeconds(); }
+function year() { return new Date().getFullYear(); }
+
 
 
 
@@ -213,6 +268,7 @@ var TWO_PI = Math.PI*2.0;
 
 function pCreateCanvas() {
 	console.log('create canvas');
+	pStartTime = new Date().getTime();
 	c = document.createElement('canvas');
 	c.setAttribute('id', 'processing');
 	c.setAttribute('width', width);
@@ -221,6 +277,17 @@ function pCreateCanvas() {
 	ctx = c.getContext("2d");
 	pApplyDefaults();
 
+	pSetupInput();
+
+	if (typeof(setup) == "function") setup();
+	
+	setInterval(pUpdate, 1000/frameRate);
+
+	pDraw();
+	if (pLoop) pDrawInterval = setInterval(pDraw, 1000/frameRate);
+}
+
+function pSetupInput() {
 	c.onmousemove=function(e){
     pUpdateMouseCoords(e);
     if (typeof(mouseMoved) == "function")
@@ -257,13 +324,6 @@ function pCreateCanvas() {
 		if (typeof(keyTyped) == "function")
 	  	keyTyped(e);
 	}
-
-	if (typeof(setup) == "function") setup();
-	
-	setInterval(pUpdate, 1000/frameRate);
-
-	pDraw();
-	if (pLoop) pDrawInterval = setInterval(pDraw, 1000/frameRate);
 }
 
 function pApplyDefaults() {
