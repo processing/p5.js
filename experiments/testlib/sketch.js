@@ -38,21 +38,12 @@ var draw = function() {
 	}
 	
 	// rect rotate on click
-	fill(255, 255, 255, 100);
+	fill(255, 255, 255, 150);
 	pushMatrix();
 	translate(200, 200);
 	rotate(clicks/10);
 	scale(random(0.8, 1.0), random(0.8, 1.0));
 	rect(0, 0, 200, 200);
-	popMatrix();
-
-
-	// auto rotate rect
-	fill(255, 0, 255, 100);
-	pushMatrix();
-	translate(400, 400);
-	rotate(frameCount*0.1);
-	rect(0, 0, 50, 50);
 	popMatrix();
 
 	// line
@@ -64,6 +55,14 @@ var draw = function() {
 		translate(30, 0);
 		line(50, 30, 400, 400);
 	}
+	popMatrix();
+
+	// auto rotate rect
+	fill(255, 0, 255, 100);
+	pushMatrix();
+	translate(400, 400);
+	rotate(frameCount*0.1);
+	rect(0, 0, 70, 70);
 	popMatrix();
 
 	// img1
@@ -90,11 +89,14 @@ var draw = function() {
 	text("BIG TEXT", 400, 250);
 
 	// bez
+	pushMatrix();
+	translate(width-200, height-200);
 	stroke(0, 0, 0);
 	strokeWeight(3);
-	bezier(85, 20, 10, 10, 90, 90, 15, 80);
+	bezier(85, 20, 10, 10, 90, 190, 15, 180);
 	stroke(0, 100, 230);
 	bezier(130, 20,  180, 15,  180, 75,  130, 175);
+	popMatrix();
 
 	// more rads
 	if (millis() - lastAdd > 3000 && rads < 10) {
