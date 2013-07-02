@@ -17,8 +17,8 @@ var setup = function() {
 	//imageMode(CORNERS);
 
 
-	var f = "test.txt";
-	loadStrings(f);
+	//loadStrings("test.txt");
+	loadJSON("test_arr.json");
 
 };
 

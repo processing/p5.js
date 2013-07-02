@@ -173,21 +173,33 @@ function strokeWeight(w) {
 //createInput()
 //createReader()
 //loadBytes()
-//loadJSONArray()
-//loadJSONObject()
-function loadStrings(file) {
-  var rawFile = new XMLHttpRequest();
-  rawFile.open("GET", "data/"+file, true);
-  rawFile.onreadystatechange = function () {
-    if(rawFile.readyState === 4) {
-      if(rawFile.status === 200 || rawFile.status == 0) {
-        return rawFile.responseText.match(/[^\r\n]+/g);
+function loadJSON(file) {
+	var req = new XMLHttpRequest();  
+	req.overrideMimeType("application/json");  
+	req.open('GET', "data/"+file);  
+  req.onreadystatechange = function () {
+    if(req.readyState === 4) {
+      if(req.status === 200 || rawFile.status == 0) {
+      	console.log(JSON.parse(req.responseText));
+        return JSON.parse(req.responseText);
       }
     }
   }
-	rawFile.send(null);
+	req.send(null);
 }
 
+function loadStrings(file) {
+  var req = new XMLHttpRequest();
+  req.open("GET", "data/"+file, true);
+  req.onreadystatechange = function () {
+    if(req.readyState === 4) {
+      if(req.status === 200 || rawFile.status == 0) {
+        return req.responseText.match(/[^\r\n]+/g);
+      }
+    }
+  }
+	req.send(null);
+}
 //loadTable()
 //loadXML()
 //open()
