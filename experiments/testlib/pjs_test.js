@@ -106,14 +106,12 @@ subset()*/
 // 2D Primitives
 //arc
 //ellipse
-
 function line(x1, y1, x2, y2) {
 	ctx.beginPath();
 	ctx.moveTo(x1, y1);
 	ctx.lineTo(x2, y2);
 	ctx.stroke();
 }
-
 // point
 function quad(x1, y1, x2, y2, x3, y3, x4, y4) {
 	ctx.beginPath();
@@ -127,6 +125,7 @@ function quad(x1, y1, x2, y2, x3, y3, x4, y4) {
 }
 
 function rect(a, b, c, d) {
+	ctx.beginPath();
 	if (pRectMode == CORNER) {
 		ctx.rect(a, b, c, d);
 	} else if (pRectMode == CORNERS) {
@@ -150,6 +149,22 @@ function triangle(x1, y1, x2, y2, x3, y3) {
 	ctx.stroke();
 }
 
+// Curves
+function bezier(x1, y1, x2, y2, x3, y3, x4, y4) {
+	ctx.beginPath();
+	ctx.moveTo(x1, y1);
+	ctx.bezierCurveTo(x2, y2, x3, y3, x4, y4);
+	ctx.stroke();
+}
+//bezierDetail()
+/*bezierPoint()
+bezierTangent()
+curve()
+curveDetail()
+curvePoint()
+curveTangent()
+curveTightness()
+*/
 
 
 // Attributes

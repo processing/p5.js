@@ -48,6 +48,7 @@ var draw = function() {
 
 
 	// auto rotate rect
+	fill(255, 0, 255, 100);
 	pushMatrix();
 	translate(400, 400);
 	rotate(frameCount*0.1);
@@ -87,6 +88,13 @@ var draw = function() {
 	text("SMALL TEXT", 100, 500);
 	textSize(150);
 	text("BIG TEXT", 400, 250);
+
+	// bez
+	stroke(0, 0, 0);
+	strokeWeight(3);
+	bezier(85, 20, 10, 10, 90, 90, 15, 80);
+	stroke(0, 100, 230);
+	bezier(130, 20,  180, 15,  180, 75,  130, 175);
 
 	// more rads
 	if (millis() - lastAdd > 3000 && rads < 10) {
