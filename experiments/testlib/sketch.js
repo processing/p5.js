@@ -85,7 +85,7 @@ var draw = function() {
 	text("BIG TEXT", 400, 250);
 
 	// more rads
-	if (millis() - lastAdd > 300 && rads < 10) {
+	if (millis() - lastAdd > 3000 && rads < 10) {
 		lastAdd = millis();
 		rads++;
 	}
