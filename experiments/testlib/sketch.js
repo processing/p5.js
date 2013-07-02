@@ -19,7 +19,7 @@ var setup = function() {
 
 
 	//loadStrings("test.txt");
-	loadJSON("test_arr.json");
+	//loadJSON("test_arr.json");
 
 };
 
