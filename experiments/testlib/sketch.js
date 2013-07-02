@@ -62,15 +62,12 @@ var mousePressed = function(e) {
 
 var keyPressed = function(e) {
 	println("key pressed "+keyCode);
-	println(e);
 };
 
 var keyReleased = function(e) {
-	println("key released");
 };
 
 var keyTyped = function(e) {
-	println("key typed");
 };
 
 
