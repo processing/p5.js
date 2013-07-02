@@ -16,6 +16,7 @@ var pDrawInterval;
 var pRectMode = CORNER;
 var pTextSize = 12;
 var setup, draw, mousePressed;
+var keyCode = 0;
 
 var pMouseX = 0, pMouseY = 0, mouseX = 0, mouseY = 0;
 
@@ -214,6 +215,22 @@ function pCreateCanvas() {
 	c.onmousedown=function(e){
 		if (typeof(mousePressed) == "function")
 	    mousePressed();
+	}
+
+	document.body.onkeydown=function(e){
+		if (typeof(keyPressed) == "function")
+	  	keyPressed(e);
+	}
+
+	document.body.onkeyup=function(e){
+		if (typeof(keyReleased) == "function")
+	  	keyReleased(e);
+	}
+
+	document.body.onkeypress=function(e){
+		keyCode = e.keyCode;
+		if (typeof(keyTyped) == "function")
+	  	keyTyped(e);
 	}
 
 	if (typeof(setup) == "function") setup();

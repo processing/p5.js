@@ -55,7 +55,24 @@ var draw = function() {
 	text("BIG TEXT", 200, 50);
 };
 
-var mousePressed = function() {
+var mousePressed = function(e) {
 	println("mouse pressed");
 	clicks++;
 };
+
+var keyPressed = function(e) {
+	println("key pressed "+keyCode);
+	println(e);
+};
+
+var keyReleased = function(e) {
+	println("key released");
+};
+
+var keyTyped = function(e) {
+	println("key typed");
+};
+
+
+
+
