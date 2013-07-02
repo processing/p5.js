@@ -13,6 +13,7 @@ var pFill = false;
 var pLoop = true;
 var pDrawInterval;
 var pRectMode = CORNER;
+var pTextSize = 12;
 var setup, draw, mousePressed;
 
 var pMouseX = 0, pMouseY = 0, mouseX = 0, mouseY = 0;
@@ -128,6 +129,18 @@ function loadImage(path) {
 	imgObj.src = path;
 	return imgObj;
 }
+
+
+//// TYPOGRAPHY
+
+// Loading & Displaying
+function text(s, x, y) {
+	ctx.font=pTextSize+"px Verdana";
+	ctx.fillText(s, x, y);
+}
+
+// Atributes
+function textSize(s) { pTextSize = s; }
 
 
 //// MATH
