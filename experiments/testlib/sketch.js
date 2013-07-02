@@ -1,11 +1,12 @@
 var clicks = 0;
-var img;
+var img, img2;
 
 var setup = function() {
 	println("setup");
 	size(1200, 600);
 	background(255, 200, 0);
-	img = loadImage("http://mollysoda.biz/GIFS/femalesign.gif");
+	img = loadImage("http://25.media.tumblr.com/ebec9ddb89465ff5b50bc35a8e8ead2c/tumblr_mlln12WAaP1r0m42ro1_500.png");
+	img2 = loadImage("http://24.media.tumblr.com/ea887aa96fdc6541c261fb1e796601eb/tumblr_mk6bew8Ola1r0m42ro4_1280.png");
 	//noLoop();
 	rectMode(CENTER);
 	//textAlign(CENTER);
@@ -42,10 +43,20 @@ var draw = function() {
 	line(50, 30, 400, 400);
 	popMatrix();
 
-	// image
+	// img1
 	pushMatrix();
 	scale(1+0.05*sin(frameCount*0.05), 1+0.05*sin(frameCount*0.05));
+	imageMode(CORNER);
 	image(img, 300, 40, 200, 200*img.height/img.width);
+	popMatrix();
+
+	// img2
+	pushMatrix();
+	imageMode(CENTER);
+	translate(600, 340);
+	rotate(frameCount*0.001);
+	scale(1+0.08*sin(frameCount*0.02), 1+0.08*sin(frameCount*0.02));
+	image(img2, 0, 0, 200, 200*img2.height/img2.width);
 	popMatrix();
 
 	// text
