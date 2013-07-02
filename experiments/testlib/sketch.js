@@ -17,28 +17,11 @@ var setup = function() {
 	//imageMode(CORNERS);
 
 
-	var f = "./test.txt";
-	readTextFile(f);
+	var f = "test.txt";
+	loadStrings(f);
 
 };
 
-function readTextFile(file)
-{
-    var rawFile = new XMLHttpRequest();
-    rawFile.open("GET", file, true);
-    rawFile.onreadystatechange = function ()
-    {
-        if(rawFile.readyState === 4)
-        {
-            if(rawFile.status === 200 || rawFile.status == 0)
-            {
-                var allText = rawFile.responseText;
-                alert(allText);
-            }
-        }
-    }
-    rawFile.send(null);
-}
 
 var draw = function() {
 	background(255*sin(.008*frameCount), 255*sin(.003*frameCount), 255*sin(.01*frameCount));

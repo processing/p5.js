@@ -1,9 +1,5 @@
 
 // pend tempz
-var frameRate = 30;
-var frameCount = 0;
-var width = 100;
-var height = 100;
 var c, ctx;
 
 var CORNER = "corner", CORNERS = "corners", RADIUS = "radius";
@@ -16,7 +12,7 @@ var pDrawInterval;
 var pStartTime;
 var pRectMode = CORNER, pImageMode = CORNER;
 var pTextSize = 12;
-var setup, draw, mousePressed;
+var mousePressed;
 var keyCode = 0;
 
 var pMouseX = 0, pMouseY = 0, mouseX = 0, mouseY = 0;
@@ -24,6 +20,7 @@ var pMouseX = 0, pMouseY = 0, mouseX = 0, mouseY = 0;
 
 
 ////	STRUCTURE
+var draw;
 function noLoop() {	
 	if (pLoop) {
 		clearInterval(pDrawInterval);
@@ -37,9 +34,19 @@ function loop() {
 		pLoop = true;
 	}
 }
+var setup;
 
 
 //// ENVIRONMENT
+//cursor()
+//displayHeight
+//displayWidth
+//focused
+var frameCount = 0;
+var frameRate = 30;
+var height = 100;
+function setFrameRate(fps) { frameRate = fps; }
+//noCursor()
 function size(w, h) {
 	width = w;
 	height = h;
@@ -47,6 +54,8 @@ function size(w, h) {
 	c.setAttribute('height', height);
 	pApplyDefaults();
 }
+var width = 100;
+
 
 
 //// DATA
@@ -63,17 +72,60 @@ function nf(num, digits) {
 	return str+num;
 }
 /*
-nfc()
-nfp()
-nfs()
-split()
-splitTokens()
-trim()
-*/
+function nfc() {}
+function nfp() {}
+function nfs()*/
+function split(str, delim) { return str.split(delim); }
+//function splitTokens(str, delim) {}
+function trim(str) {
+	if (str instanceof Array) {
+		var strps = [];
+		for (var i=0; i<str.length; i++) {
+			stps.push(str[i].trim());
+		}
+		return strps;
+	} else return str.trim();
+}
+
+// Array Functions
+/*append()
+arrayCopy()
+concat()
+expand()
+reverse()
+shorten()
+sort()
+splice()
+subset()*/
+
+
+
 
 //// SHAPE
 
 // 2D Primitives
+//arc
+//ellipse
+
+function line(x1, y1, x2, y2) {
+	ctx.beginPath();
+	ctx.moveTo(x1, y1);
+	ctx.lineTo(x2, y2);
+	ctx.stroke();
+}
+
+// point
+function quad(x1, y1, x2, y2, x3, y3, x4, y4) {
+	ctx.beginPath();
+	ctx.moveTo(x1, y1);
+	ctx.lineTo(x2, y2);
+	ctx.lineTo(x3, y3);
+	ctx.lineTo(x4, y4);
+	ctx.closePath();
+	ctx.fill();
+	ctx.stroke();
+}
+
 function rect(a, b, c, d) {
 	if (pRectMode == CORNER) {
 		ctx.rect(a, b, c, d);
@@ -88,12 +140,17 @@ function rect(a, b, c, d) {
 	ctx.stroke();
 }
 
-function line(x1, y1, x2, y2) {
+function triangle(x1, y1, x2, y2, x3, y3) {
 	ctx.beginPath();
 	ctx.moveTo(x1, y1);
 	ctx.lineTo(x2, y2);
+	ctx.lineTo(x3, y3);
+	ctx.closePath();
+	ctx.fill();
 	ctx.stroke();
 }
+
+
 
 // Attributes
 function rectMode(m) {
@@ -112,21 +169,32 @@ function strokeWeight(w) {
 
 // Files
 
+//BufferedReader
+//createInput()
+//createReader()
+//loadBytes()
+//loadJSONArray()
+//loadJSONObject()
+function loadStrings(file) {
+  var rawFile = new XMLHttpRequest();
+  rawFile.open("GET", "data/"+file, true);
+  rawFile.onreadystatechange = function () {
+    if(rawFile.readyState === 4) {
+      if(rawFile.status === 200 || rawFile.status == 0) {
+        return rawFile.responseText.match(/[^\r\n]+/g);
+      }
+    }
+  }
+	rawFile.send(null);
+}
 
-/*BufferedReader
-createInput()
-createReader()
-loadBytes()
-loadJSONArray()
-loadJSONObject()
-loadStrings()
-loadTable()
-loadXML()
-open()
-parseXML()
-saveTable()
-selectFolder()
-selectInput()*/
+//loadTable()
+//loadXML()
+//open()
+//parseXML()
+//saveTable()
+//selectFolder()
+//selectInput()*/
 
 
 
