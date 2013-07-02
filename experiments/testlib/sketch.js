@@ -93,9 +93,9 @@ var draw = function() {
 	// bez
 	pushMatrix();
 	translate(width-500, height-270);
-	stroke(bg[0]-35, bg[1]+35, bg[2]+20);
 	strokeWeight(3);
 	for (var i=0; i<32; i++) {
+	stroke(bg[0]-35, bg[1]+35, bg[2]+20-10*i);
 		bezier(15*i+85, 20, 15*i+10, 10, 15*i+90, 190, 15*i+15, 180);
 	}
 	popMatrix();
