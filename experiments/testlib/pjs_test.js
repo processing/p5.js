@@ -8,6 +8,8 @@ var POINTS = "points", LINES = "lines", TRIANGLES = "triangles", TRIANGLE_FAN = 
 TRIANGLE_STRIP = "triangles_strip", QUADS = "quads", QUAD_STRIP = "quad_strip";
 var CLOSE = "close";
 var OPEN = "open", CHORD = "chord", PIE = "pie";
+var SQUARE = "butt", ROUND = "round", PROJECT = "square"; // PEND: careful this is counterintuitive
+var BEVEL = "bevel", MITER = "miter";
 
 
 var pShapeKind = null, pShapeInited = false;;
@@ -18,6 +20,7 @@ var pDrawInterval;
 var pStartTime;
 var pRectMode = CORNER, pImageMode = CORNER;
 var pEllipseMode = CENTER;
+var pMatrices = [[1,0,0,1,0,0]];
 var pTextSize = 12;
 var mousePressed;
 var keyCode = 0;
@@ -126,10 +129,10 @@ function ellipse(a, b, c, d) {
 	var kappa = .5522848,
     ox = (vals.w / 2) * kappa, // control point offset horizontal
     oy = (vals.h / 2) * kappa, // control point offset vertical
-    xe = vals.x + vals.w,           // x-end
-    ye = vals.y + vals.h,           // y-end
-    xm = vals.x + vals.w / 2,       // x-middle
-    ym = vals.y + vals.h / 2;       // y-middle
+    xe = vals.x + vals.w,      // x-end
+    ye = vals.y + vals.h,      // y-end
+    xm = vals.x + vals.w / 2,  // x-middle
+    ym = vals.y + vals.h / 2;  // y-middle
 
   ctx.beginPath();
   ctx.moveTo(vals.x, ym);
@@ -141,7 +144,6 @@ function ellipse(a, b, c, d) {
   ctx.fill();
   ctx.stroke();
 }
-
 function line(x1, y1, x2, y2) {
 	ctx.beginPath();
 	ctx.moveTo(x1, y1);
@@ -202,12 +204,29 @@ function ellipseMode(m) {
 		pEllipseMode = m;
 	}
 }
+function noSmooth() {
+	ctx.mozImageSmoothingEnabled = false;
+	ctx.webkitImageSmoothingEnabled = false;
+}
 function rectMode(m) {
 	if (m == CORNER || m == CORNERS || m == RADIUS || m == CENTER) {
 		pRectMode = m;
 	}
 }
-
+function smooth() {
+	ctx.mozImageSmoothingEnabled = true;
+	ctx.webkitImageSmoothingEnabled = true;
+}
+function strokeCap(cap) {
+	if (cap == ROUND || cap == SQUARE || cap == PROJECT) {
+		ctx.lineCap=cap;
+	}
+}
+function strokeJoin(join) {
+	if (join == ROUND || join == BEVEL || join == MITER) {
+		ctx.lineJoin = join;
+	}
+}
 function strokeWeight(w) {
 	ctx.lineWidth = w;
 	if (!w) noStroke();
@@ -309,12 +328,64 @@ function println(s) { console.log(s); }
 
 
 //// TRANSFORM
-function popMatrix() { ctx.restore(); }
-function pushMatrix() { ctx.save(); }
-function rotate(r) { ctx.rotate(r); }
-function translate(x, y) { ctx.translate(x, y); }
-function scale(x, y) { ctx.scale(x, y); }
-
+function applyMatrix(n00, n01, n02, n10, n11, n12) {
+	ctx.transform(n00, n01, n02, n10, n11, n12);
+	var m = pMatrices[pMatrices.length-1];
+	m = pMultiplyMatrix(m, [n00, n01, n02, n10, n11, n12]);
+}
+function popMatrix() { 
+	ctx.restore(); 
+	pMatrices.pop();
+}
+function printMatrix() {
+	console.log(pMatrices[pMatrices.length-1]);
+}
+function pushMatrix() { 
+	ctx.save(); 
+	pMatrices.push([1,0,0,1,0,0]);
+}
+function resetMatrix() { 
+	ctx.setTransform();
+	pMatrices[pMatrices.length-1] = [1,0,0,1,0,0]; 
+}
+function rotate(r) { 
+	ctx.rotate(r); 
+	var m = pMatrices[pMatrices.length-1];
+	var c = Math.cos(r);
+  var s = Math.sin(r);
+  var m11 = m[0] * c + m[2] * s;
+  var m12 = m[1] * c + m[3] * s;
+  var m21 = m[0] * -s + m[2] * c;
+  var m22 = m[1] * -s + m[3] * c;
+  m[0] = m11;
+  m[1] = m12;
+  m[2] = m21;
+  m[3] = m22;
+}
+function scale(x, y) { 
+	ctx.scale(x, y); 
+	var m = pMatrices[pMatrices.length-1];
+  m[0] *= x;
+  m[1] *= x;
+  m[2] *= y;
+  m[3] *= y;
+}
+function shearX(angle) {
+	ctx.transform(1, 0, tan(angle), 1, 0, 0);
+	var m = pMatrices[pMatrices.length-1];
+	m = pMultiplyMatrix(m, [1, 0, tan(angle), 1, 0, 0]);
+}
+function shearY(angle) {
+	ctx.transform(1, tan(angle), 0, 1, 0, 0);
+	var m = pMatrices[pMatrices.length-1];
+	m = pMultiplyMatrix(m, [1, tan(angle), 0, 1, 0, 0]);
+}
+function translate(x, y) { 
+	ctx.translate(x, y); 
+	var m = pMatrices[pMatrices.length-1];
+  m[4] += m[0] * x + m[2] * y;
+  m[5] += m[1] * x + m[3] * y;
+}
 
 //// COLOR
 
@@ -487,6 +558,7 @@ function pSetupInput() {
 function pApplyDefaults() {
 	ctx.fillStyle = "#FFFFFF";
 	ctx.strokeStyle = "none";
+	ctx.lineCap=ROUND;
 }
 
 function pUpdateMouseCoords(e) {
@@ -531,6 +603,20 @@ function pModeAdjust(a, b, c, d, mode) {
 	}
 }
 
+function pMultiplyMatrix(m1, m2) {
+  var result = [];
+  for(var j = 0; j < m2.length; j++) {
+    result[j] = [];
+    for(var k = 0; k < m1[0].length; k++) {
+      var sum = 0;
+      for(var i = 0; i < m1.length; i++) {
+        sum += m1[i][k] * m2[j][i];
+      }
+      result[j].push(sum);
+    }
+  }
+  return result;
+}
 
 function rgbToHex(r,g,b) {return toHex(r)+toHex(g)+toHex(b)}
 function toHex(n) {

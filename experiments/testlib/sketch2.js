@@ -9,8 +9,7 @@ var setup = function() {
 	println("setup");
 	size(1200, 600);
 	background(255, 200, 0);
-
-
+	printMatrix();
 };
 
 
@@ -22,19 +21,9 @@ var draw = function() {
 	stroke(255, 255, 255);
 	fill(255, 0, 0);
 
-/*
-	beginShape(LINES);
-	vertex(0, 0);
-	vertex(300, 100);
-	vertex(200, 500);
-	endShape(CLOSE);
-*/
-	rectMode(CENTER);
-	fill(255, 200, 0, 100);
-	rect(600, 0, 100, 100);
-	ellipseMode(CENTER);
-	fill(0, 0, 200);
-	ellipse(600, height/2, 100, 300);
+	translate(width/4, height/4);
+	shearX(PI/4);
+	rect(0, 0, 30, 30);
 };
 
 var mousePressed = function(e) {
