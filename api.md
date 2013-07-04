@@ -26,20 +26,6 @@ var draw = function() {
 ```
 
 
-##Other changes
-+ some kind of browser compatibility check
-
-
-##Additional functions
-+ handling async, option to make it block
-
-
-##No longer supported
-+ save out files locally?
-+ function and var share name (ex: mousePressed mousePressed())
-
-
-
 ##Progress
 
 ###Structure 
