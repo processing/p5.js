@@ -15,11 +15,12 @@ var setup = function() {
 
 
 var draw = function() {
+
 	bg = [255*sin(.008*frameCount), 255*sin(.003*frameCount), 255*sin(.01*frameCount)];
 	background(bg[0], bg[1], bg[2]);
 	
 	stroke(255, 255, 255);
-	fill(255, 0, 0, 200);
+	fill(255, 0, 0);
 
 	beginShape(LINES);
 	vertex(0, 0);
@@ -27,6 +28,7 @@ var draw = function() {
 	vertex(200, 500);
 	endShape(CLOSE);
 
+	
 };
 
 var mousePressed = function(e) {

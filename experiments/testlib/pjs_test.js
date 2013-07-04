@@ -92,15 +92,20 @@ function trim(str) {
 }
 
 // Array Functions
-/*append()
-arrayCopy()
-concat()
-expand()
-reverse()
-shorten()
-sort()
-splice()
-subset()*/
+function append(array, value) { return array.push(value); }
+//arrayCopy()
+function concat(list0, list1) { return list0.concat(list1); }
+function reverse(list) { return list.reverse(); }
+function shorten(list) { 
+	list.pop();
+	return list;
+}
+//function sort(list, count) {}
+function splice(list, value, index) { return list.splice(index,0,value); }
+function subset(list, start, count) {
+	if (count) return list.slice(start, start+count);
+	else return list.slice(start, list.length-1);
+}
 
 
 
