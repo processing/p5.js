@@ -7,6 +7,8 @@ var RIGHT = "right", LEFT = "left", CENTER = "center";
 var POINTS = "points", LINES = "lines", TRIANGLES = "triangles", TRIANGLE_FAN = "triangles_fan",
 TRIANGLE_STRIP = "triangles_strip", QUADS = "quads", QUAD_STRIP = "quad_strip";
 var CLOSE = "close";
+var OPEN = "open", CHORD = "chord", PIE = "pie";
+
 
 var pShapeKind = null, pShapeInited = false;;
 var pBackground = false;
@@ -15,6 +17,7 @@ var pLoop = true;
 var pDrawInterval;
 var pStartTime;
 var pRectMode = CORNER, pImageMode = CORNER;
+var pEllipseMode = CENTER;
 var pTextSize = 12;
 var mousePressed;
 var keyCode = 0;
@@ -113,8 +116,32 @@ function subset(list, start, count) {
 //// SHAPE
 
 // 2D Primitives
-//arc
-//ellipse
+function arc(a, b, c, d, start, stop, mode) {
+
+}
+function ellipse(a, b, c, d) {
+
+	var vals = pModeAdjust(a, b, c, d, pEllipseMode);
+
+	var kappa = .5522848,
+    ox = (vals.w / 2) * kappa, // control point offset horizontal
+    oy = (vals.h / 2) * kappa, // control point offset vertical
+    xe = vals.x + vals.w,           // x-end
+    ye = vals.y + vals.h,           // y-end
+    xm = vals.x + vals.w / 2,       // x-middle
+    ym = vals.y + vals.h / 2;       // y-middle
+
+  ctx.beginPath();
+  ctx.moveTo(vals.x, ym);
+  ctx.bezierCurveTo(vals.x, ym - oy, xm - ox, vals.y, xm, vals.y);
+  ctx.bezierCurveTo(xm + ox, vals.y, xe, ym - oy, xe, ym);
+  ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+  ctx.bezierCurveTo(xm - ox, ye, vals.x, ym + oy, vals.x, ym);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+}
+
 function line(x1, y1, x2, y2) {
 	ctx.beginPath();
 	ctx.moveTo(x1, y1);
@@ -134,16 +161,9 @@ function quad(x1, y1, x2, y2, x3, y3, x4, y4) {
 }
 
 function rect(a, b, c, d) {
+	var vals = pModeAdjust(a, b, c, d, pRectMode);
 	ctx.beginPath();
-	if (pRectMode == CORNER) {
-		ctx.rect(a, b, c, d);
-	} else if (pRectMode == CORNERS) {
-		ctx.rect(a, b, c-a, d-b);
-	} else if (pRectMode == RADIUS) {
-		ctx.rect(a-c, b-d, 2*c, 2*d);
-	} else if (pRectMode == CENTER) {
-		ctx.rect(a-(c-a)*0.5, b-(d-b)*0.5, c, d);
-	}
+	ctx.rect(vals.x, vals.y, vals.w, vals.h);
 	ctx.fill();
 	ctx.stroke();
 }
@@ -177,6 +197,11 @@ curveTightness()
 
 
 // Attributes
+function ellipseMode(m) {
+	if (m == CORNER || m == CORNERS || m == RADIUS || m == CENTER) {
+		pEllipseMode = m;
+	}
+}
 function rectMode(m) {
 	if (m == CORNER || m == CORNERS || m == RADIUS || m == CENTER) {
 		pRectMode = m;
@@ -312,17 +337,12 @@ function stroke(r, g, b, a) {
 
 // Loading & Displaying
 function image(img, a, b, c, d) { 
-	var imgW = img.width, imgH = img.height;
-
-	if (pImageMode == CORNER) {
-		if (c && d) ctx.drawImage(img, a, b, c, d);
-		else ctx.drawImage(img, a, b);
-	} else if (pImageMode == CORNERS) {
-		ctx.drawImage(img, a, b, c-a, d-b);
-	} else if (pImageMode == CENTER) {
-		ctx.drawImage(img, a-(c-a)*0.5, b-(d-b)*0.5, c, d);
+	if (c && d) {
+		var vals = pModeAdjust(a, b, c, d, pImageMode);
+		ctx.drawImage(img, vals.x, vals.y, vals.w, vals.h);
+	} else {
+		ctx.drawImage(img, a, b);
 	}
-
 }
 
 function imageMode(m) {
@@ -499,6 +519,17 @@ function pDraw() {
 }
 
 
+function pModeAdjust(a, b, c, d, mode) {
+	if (mode == CORNER) {
+		return { x: a, y: b, w: c, h: d };
+	} else if (mode == CORNERS) {
+		return { x: a, y: b, w: c-a, h: d-b };
+	} else if (mode == RADIUS) {
+		return { x: a-c, y: b-d, w: 2*c, h: 2*d };
+	} else if (mode == CENTER) {
+		return { x: a-c*0.5, y: b-d*0.5, w: c, h: d };
+	}
+}
 
 
 function rgbToHex(r,g,b) {return toHex(r)+toHex(g)+toHex(b)}
