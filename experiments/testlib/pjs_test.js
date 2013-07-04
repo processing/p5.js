@@ -4,7 +4,11 @@ var c, ctx;
 
 var CORNER = "corner", CORNERS = "corners", RADIUS = "radius";
 var RIGHT = "right", LEFT = "left", CENTER = "center";
+var POINTS = "points", LINES = "lines", TRIANGLES = "triangles", TRIANGLE_FAN = "triangles_fan",
+TRIANGLE_STRIP = "triangles_strip", QUADS = "quads", QUAD_STRIP = "quad_strip";
+var CLOSE = "close";
 
+var pShapeKind = null, pShapeInited = false;;
 var pBackground = false;
 var pFill = false;
 var pLoop = true;
@@ -177,6 +181,37 @@ function rectMode(m) {
 function strokeWeight(w) {
 	ctx.lineWidth = w;
 	if (!w) noStroke();
+}
+
+
+//Vertex
+//beginContour()
+function beginShape(kind) {
+	if (kind == POINTS || kind == LINES || kind == TRIANGLES || kind == TRIANGLE_FAN 
+		|| kind == TRIANGLE_STRIP || kind == QUADS || kind == QUAD_STRIP)
+		pShapeKind = kind;
+	else pShapeKind = null; 
+	pShapeInited = true;
+	ctx.beginPath();
+}
+function bezierVertex(x1, y1, x2, y2, x3, y3) { ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3); }
+/*curveVertex()
+endContour()*/
+function endShape(mode) {
+	if (mode == CLOSE) {
+		ctx.closePath();
+	} 
+	ctx.fill();
+	ctx.stroke();
+}
+function quadraticVertex(cx, cy, x3, y3) { ctx.quadraticCurveTo(cx, cy, x3, y3); }
+function vertex(x, y) {
+	if (pShapeInited) {
+		ctx.moveTo(x, y);
+	} else {
+		ctx.lineTo(x, y); // pend this is where check for kind and do other stuff
+	}
+	pShapeInited = false;
 }
 
 
