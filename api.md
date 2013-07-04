@@ -255,12 +255,12 @@ __keyTyped()__
 + PImage
 
 ####Loading & Displaying
-+ __image()
-+ __imageMode()
-+ __loadImage()
-noTint()
-requestImage()
-tint()
++ __image()__
++ __imageMode()__
++ __loadImage()__
++ noTint()
++ requestImage()
++ tint()
 
 ####Textures
 + texture()
