@@ -44,9 +44,9 @@ var draw = function() {
 
 ###Structure
 
-- [x]() (parentheses)
-- [x], (comma)
-- [x]. (dot)
+- [ ] () (parentheses)
+- [ ] , (comma)
+- [ ] . (dot)
 + /* */ (multiline comment)
 + /** */ (doc comment)
 + // (comment)
