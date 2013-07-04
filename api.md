@@ -226,3 +226,155 @@ __keyTyped()__
 + _emissive()_
 + _shininess()_
 + _specular()_
+
+###Color
+
+####Setting
++ __background()__
++ clear()
++ colorMode()
++ __fill()__
++ __noFill()__
++ __noStroke()__
++ __stroke()__
+
+####Creating & Reading
++ alpha()
++ blue()
++ brightness()
++ color()
++ green()
++ hue()
++ lerpColor()
++ red()
++ saturation()
+
+###Image 
+
++ createImage()
++ PImage
+
+####Loading & Displaying
++ __image()
++ __imageMode()
++ __loadImage()
+noTint()
+requestImage()
+tint()
+
+####Textures
++ texture()
++ textureMode()
++ textureWrap()
+
+####Pixels
++ blend()
++ copy()
++ filter()
++ get()
++ loadPixels()
++ pixels[]
++ set()
++ updatePixels()
+
+###Rendering 
++ blendMode()
++ createGraphics()
++ PGraphics
+
+####Shaders
++ loadShader()
++ PShader
++ resetShader()
++ shader()
+
+###Typography 
+
++ PFont
+
+####Loading & Displaying
++ createFont()
++ loadFont()
++ __text()__
++ textFont()
+
+####Attributes
++ __textAlign()__
++ textLeading()
++ textMode()
++ __textSize()__
++ textWidth()
+
+####Metrics
++ textAscent()
++ textDescent()
+
+
+###Math 
+
++ PVector
+
+####Operators
++ __% (modulo)__
++ __* (multiply)__
++ __*= (multiply assign)__
++ __+ (addition)__
++ __++ (increment)__
++ __+= (add assign)__
++ __- (minus)__
++ __-- (decrement)__
++ __-= (subtract assign)__
++ __/ (divide)__
++ __/= (divide assign)__
+
+####Bitwise Operators
++ __& (bitwise AND)__
++ __<< (left shift)__
++ __>> (right shift)__
++ __| (bitwise OR)__
+
+####Calculation
++ __abs()__
++ __ceil()__
++ __constrain()__
++ __dist()__
++ __exp()__
++ __floor()__
++ __lerp()__
++ __log()__
++ __mag()__
++ __map()__
++ __max()__
++ __min()__
++ __norm()__
++ __pow()__
++ __round()__
++ __sq()__
++ __sqrt()__
+
+####Trigonometry
++ __acos()__
++ __asin()__
++ __atan()__
++ __atan2()__
++ __cos()__
++ __degrees()__
++ __radians()__
++ __sin()__
++ __tan()__
+
+####Random
++ noise()
++ noiseDetail()
++ noiseSeed()
++ __random()__
++ randomGaussian()
++ randomSeed()
+
+###Constants 
+
++ __HALF_PI__
++ __PI__
++ __QUARTER_PI__
++ __TAU__
++ __TWO_PI__
