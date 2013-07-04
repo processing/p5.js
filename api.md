@@ -42,6 +42,121 @@ var draw = function() {
 
 ##Progress
 
+###Structure 
+
+() (parentheses)
+, (comma)
+. (dot)
+/* */ (multiline comment)
+/** */ (doc comment)
+// (comment)
+; (semicolon)
+= (assign)
+[] (array access)
+{} (curly braces)
+catch
+class
+draw()
+exit()
+extends
+false
+final
+implements
+import
+loop()
+new
+noLoop()
+null
+popStyle()
+private
+public
+pushStyle()
+redraw()
+return
+setup()
+static
+super
+this
+true
+try
+void
+
+###Environment 
++ cursor()
++ displayHeight
++ displayWidth
++ focused
++ __frameCount__
++ __frameRate()__
++ frameRate
++ __height__
++ noCursor()
++ __size()__
++ __width__
+
+###Data
+
+####~~Primitive~~
+
+####~~Composite~~
+
+####Conversion
+
+
+####String Functions
++ __join()__
++ __match()__
++ matchAll()
++ __nf()__
++ nfc()
++ nfp()
++ nfs()
++ __split()__
++ splitTokens()
++ __trim()__
+
+####Array Functions
++ __append()__
++ arrayCopy()
++ __concat()__
++ __expand()__
++ __reverse()__
++ __shorten()__
++ sort()
++ __splice()__
++ __subset()__
+
+
+###Control
+
+####Relational Operators
++ __!= (inequality)__
++ __< (less than)__
++ __<= (less than or equal to)__
++ __== (equality)__
++ __> (greater than)__
++ __>= (greater than or equal to)__
+
+####Iteration
++ __for__
++ __while__
+
+####Conditionals
++ __?: (conditional)__
++ __break__
++ __case__
++ __continue__
++ __default__
++ __else__
++ __if__
++ __switch__
+
+####Logical Operators
++ __! (logical NOT)__
++ __&& (logical AND)__
++ __|| (logical OR)__
+
+
 ###Shape 
 + createShape()
 + loadShape()
