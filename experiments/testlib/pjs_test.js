@@ -200,8 +200,8 @@ endContour()*/
 function endShape(mode) {
 	if (mode == CLOSE) {
 		ctx.closePath();
+		ctx.fill();
 	} 
-	ctx.fill();
 	ctx.stroke();
 }
 function quadraticVertex(cx, cy, x3, y3) { ctx.quadraticCurveTo(cx, cy, x3, y3); }
