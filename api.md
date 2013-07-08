@@ -221,7 +221,6 @@ var draw = function() {
 __keyReleased()__
 __keyTyped()__
 
-
 ####Files
 + ~~BufferedReader~~
 + createInput()
@@ -482,8 +481,6 @@ __keyTyped()__
 
 
 
-
-
 ##Extensions
 
 ###DOM manipulation & access
@@ -503,3 +500,4 @@ __keyTyped()__
 ###HTTPrequest
 
 ###Data -- localStorage
+
