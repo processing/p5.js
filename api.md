@@ -29,8 +29,8 @@ var draw = function() {
 ##Progress
 
 ###Key
-+ to be implemented
 + __implemented__
++ to be implemented
 + ~~removed~~
 + _future version_
 
