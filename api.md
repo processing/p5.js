@@ -28,6 +28,12 @@ var draw = function() {
 
 ##Progress
 
+###Key
++ to be implemented
++ __implemented__
++ ~~removed~~
++ _future version_
+
 ###Structure 
 
 + __() (parentheses)__
