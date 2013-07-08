@@ -30,42 +30,42 @@ var draw = function() {
 
 ###Structure 
 
-() (parentheses)
-, (comma)
-. (dot)
-/* */ (multiline comment)
-/** */ (doc comment)
-// (comment)
-; (semicolon)
-= (assign)
-[] (array access)
-{} (curly braces)
-catch
-class
-draw()
-exit()
-extends
-false
-final
-implements
-import
-loop()
-new
-noLoop()
-null
-popStyle()
-private
-public
-pushStyle()
-redraw()
-return
-setup()
-static
-super
-this
-true
-try
-void
++ __() (parentheses)__
++ __, (comma)__
++ __. (dot)__
++ __/* */ (multiline comment)__
++ __/** */ (doc comment)__
++ __// (comment)__
++ __; (semicolon)__
++ __= (assign)__
++ __[] (array access)__
++ __{} (curly braces)__
++ catch
++ ~~class~~
++ __draw()
++ exit()
++ ~~extends~~
++ __false__
++ ~~final~~
++ ~~implements~~
++ ~~import~~
++ __loop()__
++ __new__
++ __noLoop()__
++ __null__
++ popStyle()
++ ~~private~~
++ ~~public~~
++ pushStyle()
++ redraw()
++ __return__
++ __setup()__
++ ~~static~~
++ ~~super~~
++ __this__
++ __true__
++ try
++ ~~void~~
 
 ###Environment 
 + cursor()
@@ -479,3 +479,27 @@ __keyTyped()__
 + __QUARTER_PI__
 + __TAU__
 + __TWO_PI__
+
+
+
+
+
+##Extensions
+
+###DOM manipulation & access
+
+###Text display
+
+###Image display <img>
+
+###Input -- forms, buttons
+
+
+##Future libs
+###Audio
+
+###Video
+
+###HTTPrequest
+
+###Data -- localStorage
