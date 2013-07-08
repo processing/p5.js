@@ -38,15 +38,16 @@ var draw = function() {
 + __// (comment)__
 + __; (semicolon)__
 + __= (assign)__
-+ __[] (array access)__
++ __"[]" (array access)__
 + __{} (curly braces)__
-+ catch
++ __catch__
 + ~~class~~
-+ __draw()
++ __draw()__
 + exit()
 + ~~extends~~
 + __false__
 + ~~final~~
++ __finally__
 + ~~implements~~
 + ~~import~~
 + __loop()__
@@ -64,7 +65,7 @@ var draw = function() {
 + ~~super~~
 + __this__
 + __true__
-+ try
++ __try__
 + ~~void~~
 
 ###Environment 
