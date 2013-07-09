@@ -446,6 +446,39 @@ function loadImage(path) {
 	return imgObj;
 }
 
+// Pixels
+//blend()
+//copy()
+//filter()
+function get(x, y, w, h) {
+	var pix = ctx.getImageData(0, 0, width, height);
+	if (w && h) {
+		var region = [];
+		for (var j=0; j<h; j++) {
+			for (var i=0; i<w; i++) {
+				region[i*w+j] = pix[(y+j)*width+(x+i)]; 
+			}
+		}
+		return region;
+	}
+	else if (x && y) {
+		if (x >= 0 && x < width && y >= 0 && y < height) {
+			return pix[y*width+x].data;
+		} else {
+			return [0, 0, 0, 255];
+		}
+	}
+	else { return pix; }
+}
+function loadPixels() { 
+	ctx.getImageData(0, 0, width, height); // pend should this be 0,0 or  c.offsetLeft,c.offsetTop?
+}
+var pixels = [];
+//set()
+function updatePixels() {
+	if (pixels)	context.putImageData(pixels, 0, 0);
+}
+
 
 //// TYPOGRAPHY
 
