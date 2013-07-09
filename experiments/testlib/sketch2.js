@@ -28,6 +28,7 @@ var draw = function() {
 
 var mousePressed = function(e) {
 	println("mouse pressed");
+	saveImage("hi");
 	clicks++;
 };
 
@@ -42,7 +43,4 @@ var keyReleased = function(e) {
 
 var keyTyped = function(e) {
 };
-
-
-
 

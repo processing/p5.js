@@ -16,7 +16,6 @@ var pShapeKind = null, pShapeInited = false;;
 var pBackground = false;
 var pFill = false;
 var pLoop = true;
-var pDrawInterval;
 var pStartTime;
 var pRectMode = CORNER, pImageMode = CORNER;
 var pEllipseMode = CENTER;
@@ -33,14 +32,12 @@ var pMouseX = 0, pMouseY = 0, mouseX = 0, mouseY = 0;
 var draw;
 function noLoop() {	
 	if (pLoop) {
-		clearInterval(pDrawInterval);
 		pLoop = false; 
 	}
 }
 
 function loop() { 
 	if (!pLoop) {
-		pDrawInterval = setInterval(pDraw, 1000/frameRate);
 		pLoop = true;
 	}
 }
@@ -342,7 +339,12 @@ function year() { return new Date().getFullYear(); }
 // Text Area
 function println(s) { console.log(s); }
 
-
+// Image
+// save()
+function saveImage(name) {
+	console.log('save');
+	c.toDataURL();
+}
 
 //// TRANSFORM
 function applyMatrix(n00, n01, n02, n10, n11, n12) {
@@ -567,7 +569,6 @@ function pCreateCanvas() {
 	setInterval(pUpdate, 1000/frameRate);
 
 	pDraw();
-	if (pLoop) pDrawInterval = setInterval(pDraw, 1000/frameRate);
 }
 
 function pSetupInput() {
@@ -628,6 +629,11 @@ function pUpdate() {
 }
 
 function pDraw() {
+  if (pLoop) {
+   	setTimeout(function() {
+        requestAnimationFrame(pDraw);
+    }, 1000 / frameRate);
+	}
 	// draw bg
 	if (pBackground) {
 		// save out the fill
@@ -679,3 +685,38 @@ function toHex(n) {
 	n = Math.max(0,Math.min(n,255));
 	return "0123456789ABCDEF".charAt((n-n%16)/16) + "0123456789ABCDEF".charAt(n%16);
 }
+
+
+
+
+// PEND: still needed?
+// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
+// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
+ 
+// requestAnimationFrame polyfill by Erik Möller
+// fixes from Paul Irish and Tino Zijdel
+ 
+(function() {
+    var lastTime = 0;
+    var vendors = ['ms', 'moz', 'webkit', 'o'];
+    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
+        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
+                                   || window[vendors[x]+'CancelRequestAnimationFrame'];
+    }
+ 
+    if (!window.requestAnimationFrame)
+        window.requestAnimationFrame = function(callback, element) {
+            var currTime = new Date().getTime();
+            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var id = window.setTimeout(function() { callback(currTime + timeToCall); },
+              timeToCall);
+            lastTime = currTime + timeToCall;
+            return id;
+        };
+ 
+    if (!window.cancelAnimationFrame)
+        window.cancelAnimationFrame = function(id) {
+            clearTimeout(id);
+        };
+}());
