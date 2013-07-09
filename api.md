@@ -379,11 +379,11 @@ __keyTyped()__
 + blend()
 + copy()
 + filter()
-+ get()
-+ loadPixels()
-+ pixels[]
++ __get()__
++ __loadPixels()__
++ __pixels[]__
 + set()
-+ updatePixels()
++ __updatePixels()__
 
 ###Rendering 
 + blendMode()
