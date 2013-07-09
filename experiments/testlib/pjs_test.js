@@ -451,7 +451,7 @@ function loadImage(path) {
 //copy()
 //filter()
 function get(x, y, w, h) {
-	var pix = ctx.getImageData(0, 0, width, height);
+	var pix = ctx.getImageData(0, 0, width, height).data.slice(0);
 	if (w && h) {
 		var region = [];
 		for (var j=0; j<h; j++) {
@@ -471,12 +471,16 @@ function get(x, y, w, h) {
 	else { return pix; }
 }
 function loadPixels() { 
-	ctx.getImageData(0, 0, width, height); // pend should this be 0,0 or  c.offsetLeft,c.offsetTop?
+	pixels = ctx.getImageData(0, 0, width, height).data.slice(0); // pend should this be 0,0 or  c.offsetLeft,c.offsetTop?
 }
 var pixels = [];
 //set()
 function updatePixels() {
-	if (pixels)	context.putImageData(pixels, 0, 0);
+	if (pixels) {
+		var imgd = ctx.getImageData(x, y, width, height);
+		imgd = pixels;
+		context.putImageData(imgd, 0, 0);
+	}
 }
 
 
