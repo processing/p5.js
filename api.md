@@ -263,8 +263,8 @@ __keyTyped()__
 + __println()__
 
 ####Image
-+ save()
-+ saveFrame()
++ __save()__
++ ~~saveFrame()~~
 
 ####Files
 + beginRaw()

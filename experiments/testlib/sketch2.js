@@ -28,7 +28,7 @@ var draw = function() {
 
 var mousePressed = function(e) {
 	println("mouse pressed");
-	saveImage("hi");
+	save("hi");
 	clicks++;
 };
 

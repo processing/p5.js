@@ -17,6 +17,7 @@ var pBackground = false;
 var pFill = false;
 var pLoop = true;
 var pStartTime;
+var pUpdateInterval;
 var pRectMode = CORNER, pImageMode = CORNER;
 var pEllipseMode = CENTER;
 var pMatrices = [[1,0,0,1,0,0]];
@@ -57,7 +58,11 @@ var frameCount = 0;
 var frameRate = 30;
 function getFrameRate() { return frameRate; }
 var height = 100;
-function setFrameRate(fps) { frameRate = fps; }
+function setFrameRate(fps) { 
+	frameRate = fps; 
+	clearInterval(pUpdateInterval);
+	pUpdateInterval = setInterval(pUpdate, 1000/frameRate);
+}
 //noCursor()
 function size(w, h) {
 	width = w;
@@ -340,10 +345,8 @@ function year() { return new Date().getFullYear(); }
 function println(s) { console.log(s); }
 
 // Image
-// save()
-function saveImage(name) {
-	console.log('save');
-	c.toDataURL();
+function save() {
+	window.open(c.toDataURL());
 }
 
 //// TRANSFORM
@@ -566,7 +569,7 @@ function pCreateCanvas() {
 
 	if (typeof(setup) == "function") setup();
 	
-	setInterval(pUpdate, 1000/frameRate);
+	pUpdateInterval = setInterval(pUpdate, 1000/frameRate);
 
 	pDraw();
 }
