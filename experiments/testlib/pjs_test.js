@@ -22,10 +22,6 @@ var pRectMode = CORNER, pImageMode = CORNER;
 var pEllipseMode = CENTER;
 var pMatrices = [[1,0,0,1,0,0]];
 var pTextSize = 12;
-var mousePressed;
-var keyCode = 0;
-
-var pMouseX = 0, pMouseY = 0, mouseX = 0, mouseY = 0;
 
 
 
@@ -326,6 +322,62 @@ function loadStrings(file) {
 //selectFolder()
 //selectInput()*/
 
+// Keyboard
+var key = "";
+var keyCode = 0; 
+var mousePressed;
+var pKeyPressed = false;
+var pMouseX = 0, pMouseY = 0, mouseX = 0, mouseY = 0;
+function isKeyPressed() { return pKeyPressed; }
+function pSetupInput() {
+	c.onmousemove=function(e){
+    pUpdateMouseCoords(e);
+    if (typeof(mouseMoved) == "function")
+    	mouseMoved(e);
+	}
+
+	c.onmousedown=function(e){
+		if (typeof(mousePressed) == "function")
+	    mousePressed(e);
+	}
+
+	c.onmouseup=function(e){
+		if (typeof(mouseReleased) == "function")
+			mouseReleased(e);
+	}
+
+	c.onmouseclick=function(e){
+		if (typeof(mouseClicked) == "function")
+			mouseClicked(e);
+	}
+
+	document.body.onkeydown=function(e){
+		pKeyPressed = true;
+		if (typeof(keyPressed) == "function")
+	  	keyPressed(e);
+	}
+
+	document.body.onkeyup=function(e){
+		pKeyPressed = false;
+		if (typeof(keyReleased) == "function")
+	  	keyReleased(e);
+	}
+
+	document.body.onkeypress=function(e){
+		keyCode = e.keyCode;
+		if (typeof(keyTyped) == "function")
+	  	keyTyped(e);
+	}
+}
+
+function pUpdateMouseCoords(e) {
+	pMouseX = mouseX;
+	pMouseY = mouseY;
+	mouseX = e.clientX - c.offsetLeft;
+	mouseY = e.clientY - c.offsetTop;
+	//console.log('mx = '+mouseX+' my = '+mouseY);
+}
+
 
 
 // Time & Date
@@ -574,57 +626,11 @@ function pCreateCanvas() {
 	pDraw();
 }
 
-function pSetupInput() {
-	c.onmousemove=function(e){
-    pUpdateMouseCoords(e);
-    if (typeof(mouseMoved) == "function")
-    	mouseMoved(e);
-	}
-
-	c.onmousedown=function(e){
-		if (typeof(mousePressed) == "function")
-	    mousePressed(e);
-	}
-
-	c.onmouseup=function(e){
-		if (typeof(mouseReleased) == "function")
-			mouseReleased(e);
-	}
-
-	c.onmouseclick=function(e){
-		if (typeof(mouseClicked) == "function")
-			mouseClicked(e);
-	}
-
-	document.body.onkeydown=function(e){
-		if (typeof(keyPressed) == "function")
-	  	keyPressed(e);
-	}
-
-	document.body.onkeyup=function(e){
-		if (typeof(keyReleased) == "function")
-	  	keyReleased(e);
-	}
-
-	document.body.onkeypress=function(e){
-		keyCode = e.keyCode;
-		if (typeof(keyTyped) == "function")
-	  	keyTyped(e);
-	}
-}
 
 function pApplyDefaults() {
 	ctx.fillStyle = "#FFFFFF";
 	ctx.strokeStyle = "none";
 	ctx.lineCap=ROUND;
-}
-
-function pUpdateMouseCoords(e) {
-	pMouseX = mouseX;
-	pMouseY = mouseY;
-	mouseX = e.clientX - c.offsetLeft;
-	mouseY = e.clientY - c.offsetTop;
-	//console.log('mx = '+mouseX+' my = '+mouseY);
 }
 
 function pUpdate() {

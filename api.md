@@ -225,9 +225,10 @@ var draw = function() {
 + key
 + __keyCode__
 + __keyPressed()__
-+ keyPressed
-__keyReleased()__
-__keyTyped()__
++ ~~keyPressed~~
++ __iskeyPressed()__
++ __keyReleased()__
++ __keyTyped()__
 
 ####Files
 + ~~BufferedReader~~

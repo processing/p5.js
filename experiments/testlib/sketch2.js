@@ -33,12 +33,16 @@ var mousePressed = function(e) {
 };
 
 var keyPressed = function(e) {
-	println("key pressed "+keyCode);
+	keyCode = e.keyCode || e.which;
+	key = String.fromCharCode(keyCode);
+	println("key pressed "+keyCode+" "+key);
 	//alert('key pressed '+keyCode);
 	presses++;
 };
 
 var keyReleased = function(e) {
+	keyCode = e.keyCode || e.which;
+	key = String.fromCharCode(keyCode);
 };
 
 var keyTyped = function(e) {
