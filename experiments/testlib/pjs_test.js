@@ -293,8 +293,7 @@ function loadJSON(file) {
 	req.open('GET', "data/"+file);  
   req.onreadystatechange = function () {
     if(req.readyState === 4) {
-      if(req.status === 200 || rawFile.status == 0) {
-      	console.log(JSON.parse(req.responseText));
+      if(req.status === 200 || req.status == 0) {
         return JSON.parse(req.responseText);
       }
     }
@@ -307,7 +306,7 @@ function loadStrings(file) {
   req.open("GET", "data/"+file, true);
   req.onreadystatechange = function () {
     if(req.readyState === 4) {
-      if(req.status === 200 || rawFile.status == 0) {
+      if(req.status === 200 || req.status == 0) {
         return req.responseText.match(/[^\r\n]+/g);
       }
     }
@@ -315,20 +314,45 @@ function loadStrings(file) {
 	req.send(null);
 }
 //loadTable()
-//loadXML()
+/*function loadXML() {
+	var req = new XMLHttpRequest();  
+	req.overrideMimeType("application/json");  
+	req.overrideMimeType('text/xml');
+	req.open('GET', "data/"+file, false);  
+  req.onreadystatechange = function () {
+    if(req.readyState === 4) {
+      if(req.status === 200 || req.status == 0) {
+      	console.log(JSON.parse(req.responseXML));
+        return JSON.parse(req.responseXML);
+      }
+    }
+  }
+	req.send(null);
+}*/
 //open()
 //parseXML()
 //saveTable()
 //selectFolder()
 //selectInput()*/
 
+// Mouse
+var mousePressed;
+var pMouseX = 0, pMouseY = 0, mouseX = 0, mouseY = 0;
+
+function pUpdateMouseCoords(e) {
+	pMouseX = mouseX;
+	pMouseY = mouseY;
+	mouseX = e.clientX - c.offsetLeft;
+	mouseY = e.clientY - c.offsetTop;
+	//console.log('mx = '+mouseX+' my = '+mouseY);
+}
+
 // Keyboard
 var key = "";
 var keyCode = 0; 
-var mousePressed;
 var pKeyPressed = false;
-var pMouseX = 0, pMouseY = 0, mouseX = 0, mouseY = 0;
 function isKeyPressed() { return pKeyPressed; }
+
 function pSetupInput() {
 	c.onmousemove=function(e){
     pUpdateMouseCoords(e);
@@ -368,14 +392,6 @@ function pSetupInput() {
 		if (typeof(keyTyped) == "function")
 	  	keyTyped(e);
 	}
-}
-
-function pUpdateMouseCoords(e) {
-	pMouseX = mouseX;
-	pMouseY = mouseY;
-	mouseX = e.clientX - c.offsetLeft;
-	mouseY = e.clientY - c.offsetTop;
-	//console.log('mx = '+mouseX+' my = '+mouseY);
 }
 
 

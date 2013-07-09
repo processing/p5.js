@@ -222,7 +222,7 @@ var draw = function() {
 + __pmouseY__
 
 ####Keyboard
-+ key
++ __key__
 + __keyCode__
 + __keyPressed()__
 + ~~keyPressed~~
@@ -487,26 +487,4 @@ var draw = function() {
 + __QUARTER_PI__
 + __TAU__
 + __TWO_PI__
-
-
-
-##Extensions
-
-###DOM manipulation & access
-
-###Text display
-
-###Image display <img>
-
-###Input -- forms, buttons
-
-
-##Future libs
-###Audio
-
-###Video
-
-###HTTPrequest
-
-###Data -- localStorage
 
