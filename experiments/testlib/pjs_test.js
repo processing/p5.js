@@ -44,7 +44,11 @@ function loop() {
 		pLoop = true;
 	}
 }
+function redraw() {
+	pDraw();
+}
 var setup;
+
 
 
 //// ENVIRONMENT
@@ -54,6 +58,7 @@ var setup;
 //focused
 var frameCount = 0;
 var frameRate = 30;
+function getFrameRate() { return frameRate; }
 var height = 100;
 function setFrameRate(fps) { frameRate = fps; }
 //noCursor()
@@ -99,7 +104,19 @@ function trim(str) {
 
 // Array Functions
 function append(array, value) { return array.push(value); }
-//arrayCopy()
+function arrayCopy(src, a, b, c, d) { //src, srcPosition, dst, dstPosition, length
+	if (d) { 
+		for (var i=a; i<min(a+d, src.length); i++) {
+			b[dstPosition+i] = src[i];
+		}
+	} 
+	else if (b) { //src, dst, length
+		a = src.slice(0, min(b, src.length)); 
+	}
+	else { //src, dst
+		a = src.slice(0);	
+	}
+}
 function concat(list0, list1) { return list0.concat(list1); }
 function reverse(list) { return list.reverse(); }
 function shorten(list) { 

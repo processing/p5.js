@@ -64,7 +64,7 @@ var draw = function() {
 + ~~private~~
 + ~~public~~
 + pushStyle()
-+ redraw()
++ __redraw()__
 + __return__
 + __setup()__
 + ~~static~~
@@ -81,7 +81,8 @@ var draw = function() {
 + focused
 + __frameCount__
 + __frameRate()__
-+ frameRate
++ ~~frameRate~~
++ __getFrameRate()__
 + __height__
 + noCursor()
 + __size()__
@@ -110,7 +111,7 @@ var draw = function() {
 
 ####Array Functions
 + __append()__
-+ arrayCopy()
++ __arrayCopy()__
 + __concat()__
 + __expand()__
 + __reverse()__
