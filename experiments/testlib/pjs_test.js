@@ -533,23 +533,45 @@ function stroke(r, g, b, a) {
 function createImage(w, h, format) { return new PImage(w, h); } //pend format?
 function PImage(w, h){
 	this = ctx.createImageData(w,h); 
-  //this.pixels = this.data;
-  this.loadPixels = function()	{ this = context.createImageData(imageData); };
-  this.updatePixels = function() {};
-  this.resize() = function() {};
+  this.pixels = [];
+  this.updatePixelArray();
+
+  this.updatePixelArray = function() {	
+	  for (var i=0; i<this.data.length; i+=4) {
+	  	this.pixels.push([this.data[i], this.data[i+1], this.data[i+2], this.data[i+3]]);
+	  }
+  }
+  this.loadPixels = function()	{ 
+  	this = context.createImageData(imageData); 
+  	this.updatePixelArray();
+  };
+  this.updatePixels = function() {
+  	for (var i=0; i<this.pixels; i+=4) {
+  		for (var j=0; j<4; j++) {
+  			this.data[4*i+j] = this.pixels[i][j];
+  		}
+  	}
+  };
+  //this.resize() = function() {};
+  this.get = function(x, y, w, h) {
+  	var wp = w ? w : 1;
+  	var hp = h ? h : 1;
+  	var vals = [];
+  	for (var j=y; j<y+hp; j++) {
+  		for (var i=x; i<x+wp; i++) {
+  			vals.push(this.pixels[j*this.width+i]);
+  		}
+  	}
+  }
+   /*set()	writes a color to any pixel or writes an image into another
+	mask()	Masks part of an image with another image as an alpha channel
+	filter()	Converts the image to grayscale or black and white
+	copy()	Copies the entire image
+	blend()	Copies a pixel or rectangle of pixels using different blending modes
+	save()	Saves the image to a TIFF, TARGA, PNG, or JPEG file*/
 }
 
-   /*Loads the pixel data for the image into its pixels[] array
-updatePixels()	Updates the image with the data in its pixels[] array
-resize()	Changes the size of an image to a new width and height
-get()	Reads the color of any pixel or grabs a rectangle of pixels
-set()	writes a color to any pixel or writes an image into another
-mask()	Masks part of an image with another image as an alpha channel
-filter()	Converts the image to grayscale or black and white
-copy()	Copies the entire image
-blend()	Copies a pixel or rectangle of pixels using different blending modes
-save()	Saves the image to a TIFF, TARGA, PNG, or JPEG file
-}*/
+ 
 
 // Loading & Displaying
 function image(img, a, b, c, d) { 

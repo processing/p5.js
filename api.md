@@ -360,8 +360,8 @@ var draw = function() {
 
 ###Image 
 
-+ createImage()
-+ PImage
++ __createImage()__
++ __PImage__ - _mostly_
 
 ####Loading & Displaying
 + __image()__
