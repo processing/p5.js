@@ -417,6 +417,40 @@ function save() {
 	window.open(c.toDataURL());
 }
 
+// Files
+var pWriters = [];
+//beginRaw()
+//beginRecord()
+//createOutput()
+function createWriter(name) {
+	if (pWriters.indexOf(name) == -1) { // check it doesn't already exist
+		pWriters['name'] = new PrintWriter(name);
+	}
+}
+/*endRaw()
+endRecord()*/
+function PrintWriter(name){
+   this.name = name;
+   this.content = "";
+   this.print = function(data) { this.content += data; };
+   this.println = function(data) { this.content += data + "\n"; };
+   this.flush = function() { this.content = ""; };
+   this.close = function() { writeFile(this.content); };
+}
+/*
+saveBytes()
+saveJSONArray()
+saveJSONObject()
+saveStream()
+*/
+function saveStrings(list) { writeFile(list.join('\n')); }
+/*saveXML()
+selectOutput()
+*/
+function writeFile(content) {
+	window.open("data:text/json;charset=utf-8," + escape(content), 'download'); 
+}
+
 //// TRANSFORM
 function applyMatrix(n00, n01, n02, n10, n11, n12) {
 	ctx.transform(n00, n01, n02, n10, n11, n12);
@@ -495,6 +529,27 @@ function stroke(r, g, b, a) {
 
 
 //// Image
+
+function createImage(w, h, format) { return new PImage(w, h); } //pend format?
+function PImage(w, h){
+	this = ctx.createImageData(w,h); 
+  //this.pixels = this.data;
+  this.loadPixels = function()	{ this = context.createImageData(imageData); };
+  this.updatePixels = function() {};
+  this.resize() = function() {};
+}
+
+   /*Loads the pixel data for the image into its pixels[] array
+updatePixels()	Updates the image with the data in its pixels[] array
+resize()	Changes the size of an image to a new width and height
+get()	Reads the color of any pixel or grabs a rectangle of pixels
+set()	writes a color to any pixel or writes an image into another
+mask()	Masks part of an image with another image as an alpha channel
+filter()	Converts the image to grayscale or black and white
+copy()	Copies the entire image
+blend()	Copies a pixel or rectangle of pixels using different blending modes
+save()	Saves the image to a TIFF, TARGA, PNG, or JPEG file
+}*/
 
 // Loading & Displaying
 function image(img, a, b, c, d) { 
@@ -714,34 +769,9 @@ function toHex(n) {
 
 
 
-// PEND: still needed?
-// http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-// http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
- 
-// requestAnimationFrame polyfill by Erik Möller
-// fixes from Paul Irish and Tino Zijdel
- 
-(function() {
-    var lastTime = 0;
-    var vendors = ['ms', 'moz', 'webkit', 'o'];
-    for(var x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame']
-                                   || window[vendors[x]+'CancelRequestAnimationFrame'];
-    }
- 
-    if (!window.requestAnimationFrame)
-        window.requestAnimationFrame = function(callback, element) {
-            var currTime = new Date().getTime();
-            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
-            var id = window.setTimeout(function() { callback(currTime + timeToCall); },
-              timeToCall);
-            lastTime = currTime + timeToCall;
-            return id;
-        };
- 
-    if (!window.cancelAnimationFrame)
-        window.cancelAnimationFrame = function(id) {
-            clearTimeout(id);
-        };
-}());
+
+
+
+
+
+

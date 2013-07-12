@@ -271,15 +271,15 @@ var draw = function() {
 + beginRaw()
 + beginRecord()
 + createOutput()
-+ createWriter()
++ __createWriter()__
 + endRaw()
 + endRecord()
-+ PrintWriter
++ __PrintWriter__
 + saveBytes()
 + saveJSONArray()
 + saveJSONObject()
 + saveStream()
-+ saveStrings()
++ __saveStrings()__
 + saveXML()
 + selectOutput()
 
