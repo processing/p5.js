@@ -10,6 +10,7 @@ var CLOSE = "close";
 var OPEN = "open", CHORD = "chord", PIE = "pie";
 var SQUARE = "butt", ROUND = "round", PROJECT = "square"; // PEND: careful this is counterintuitive
 var BEVEL = "bevel", MITER = "miter";
+var RGB = "rgb", HSB = "hsb";
 
 
 var pShapeKind = null, pShapeInited = false;;
@@ -22,7 +23,7 @@ var pRectMode = CORNER, pImageMode = CORNER;
 var pEllipseMode = CENTER;
 var pMatrices = [[1,0,0,1,0,0]];
 var pTextSize = 12;
-
+var pColorMode = RGB;
 
 
 ////	STRUCTURE
@@ -514,17 +515,71 @@ function translate(x, y) {
 //// COLOR
 
 // Setting
-function background(r, g, b) { pBackground = rgbToHex(r,g,b); }
-function fill(r, g, b, a) { 
-	if (a) ctx.fillStyle = "rgba("+r+","+g+","+b+","+(a/255.0)+")";
-	else ctx.fillStyle = "rgb("+r+","+g+","+b+")";
+function background(v1, v2, v3) { 
+	var c = [v1, v2, v3];
+	if (pColorMode == HSB) c = hsv2rgb(v1, v2, v3);
+	pBackground = rgbToHex(c[0], c[1], c[2]); 
+}
+//clear()
+function colorMode(mode) { 
+	if (mode == RGB || mode == HSB)
+		pColorMode = mode; 
+}
+function fill(v1, v2, v3, a) { 
+	var c = [v1, v2, v3];
+	if (pColorMode == HSB) c = hsv2rgb(v1, v2, v3);
+	if (a) ctx.fillStyle = "rgba("+c[0]+","+c[1]+","+c[2]+","+(a/255.0)+")";
+	else ctx.fillStyle = "rgb("+c[0]+","+c[1]+","+c[2]+")";
 }
 function noFill() {	ctx.fillStyle = "none"; }
 function noStroke() {	ctx.strokeStyle = "none"; }
-function stroke(r, g, b, a) { 
-	//if (a) ctx.strokeStyle = "rgba("+r+","+g+","+b+","+(a/255.0)+")";
-	//else ctx.strokeStyle = rgbToHex(r,g,b); 
-	ctx.strokeStyle = rgbToHex(r,g,b); 
+function stroke(v1, v2, v3, a) { 
+	var c = [v1, v2, v3];
+	if (pColorMode == HSB) c = hsv2rgb(v1, v2, v3);
+	if (a) ctx.strokeStyle = "rgba("+c[0]+","+c[1]+","+c[2]+","+(a/255.0)+")";
+	else ctx.strokeStyle = "rgb("+c[0]+","+c[1]+","+c[2]+")"; 
+}
+
+
+// Creating & Reading
+function alpha(rgb) {
+	if (rgb.length > 3) return rgb[3];
+	else return 255;
+}
+function blue(rgb) { 
+	if (rgb.length > 2) return rgb[2];
+	else return 0;
+}
+function brightness(hsv) {
+	if (rgb.length > 2) return rgb[2];
+	else return 0;
+}
+function color(gray) { return [gray, gray, gray]; }
+function color(gray, alpha) { return [gray, gray, gray, alpha]; }
+function color(v1, v2, v3) { return [v1, v2, v3]; }
+function color(v1, v2, v3, alpha) { return [v1, v2, v3, alpha]; }
+function green(rgb) { 
+	if (rgb.length > 2) return rgb[1];
+	else return 0;
+}
+function hue(hsv) { 
+	if (rgb.length > 2) return rgb[0];
+	else return 0;
+}
+function lerpColor(c1, c2, amt) {
+	var c = [];
+	for (var i=0; i<c1.length; i++) {
+		c.push(lerp(c1[i], c2[i], amt));
+	}
+	return c;
+}
+function red(rgb) { 
+	if (rgb.length > 2) return rgb[0];
+	else return 0;
+}
+function saturation(hsv) { 
+	if (rgb.length > 2) return rgb[1];
+	else return 0;
 }
 
 

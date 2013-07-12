@@ -9,7 +9,8 @@ var writer;
 var setup = function() {
 	println("setup");
 	size(1200, 600);
-	background(255, 200, 0);
+	//colorMode(HSV);
+	background(255, 200, 10);
 	printMatrix();
 	writer = new PrintWriter("name1");
 };
@@ -19,9 +20,15 @@ var draw = function() {
 
 	bg = [255*sin(.008*frameCount), 255*sin(.003*frameCount), 255*sin(.01*frameCount)];
 	background(bg[0], bg[1], bg[2]);
-	
-	stroke(255, 255, 255);
-	fill(255, 0, 0);
+
+	strokeWeight(10);
+	stroke(255, 100, 0, 100);
+	var c0 = [255, 255, 255];
+	var c1 = [0, 0, 0];
+	var c2 = lerpColor(c0, c1, 0.8);
+	fill(c2[0], c2[1], c2[2]);
+	console.log(c2);
+	//fill(20, 200, 100);
 
 	translate(width/4, height/4);
 	shearX(PI/4);
@@ -32,7 +39,7 @@ var mousePressed = function(e) {
 	println("mouse pressed");
 	//save("hi");
 	//writer.close();
-	saveStrings(['hi', 'blah']);
+	//saveStrings(['hi', 'blah']);
 	clicks++;
 };
 

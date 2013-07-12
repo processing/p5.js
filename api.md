@@ -341,22 +341,22 @@ var draw = function() {
 ####Setting
 + __background()__
 + clear()
-+ colorMode()
++ __colorMode()__ // pend test this?
 + __fill()__
 + __noFill()__
 + __noStroke()__
 + __stroke()__
 
 ####Creating & Reading
-+ alpha()
-+ blue()
-+ brightness()
-+ color()
-+ green()
-+ hue()
-+ lerpColor()
-+ red()
-+ saturation()
++ __alpha()__
++ __blue()__
++ __brightness()__
++ __color()__
++ __green()__
++ __hue()__
++ __lerpColor()__
++ __red()__
++ __saturation()__
 
 ###Image 
 
