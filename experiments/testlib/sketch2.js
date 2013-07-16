@@ -24,8 +24,8 @@ var setup = function() {
 	text0.position(canvas0.width-50, 200);
 
 	var img0 = createImage("http://media.tumblr.com/fecdc135ce5bdf0016bcd71da93d2ecb/tumblr_inline_mkr3wrfR2m1qz4rgp.png");
-	img0.size(200, 200);
-	img0.position(200, canvas0.height-150);
+	img0.size(300, 300);
+	img0.position(220, canvas0.height-200);
 
 	canvas1 = createCanvas(150, 150);
 	canvas1.position(100, canvas0.height - canvas1.height*0.25);
