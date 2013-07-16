@@ -342,9 +342,9 @@ var pMouseX = 0, pMouseY = 0, mouseX = 0, mouseY = 0;
 function pUpdateMouseCoords(e) {
 	pMouseX = mouseX;
 	pMouseY = mouseY;
-	mouseX = e.clientX - pCurCanvas.context.offsetLeft;
-	mouseY = e.clientY - pCurCanvas.offsetTop;
-	//console.log('mx = '+mouseX+' my = '+mouseY);
+	mouseX = e.clientX - parseInt(pCurCanvas.canvas.style.left, 10);
+	mouseY = e.clientY - parseInt(pCurCanvas.canvas.style.top, 10);
+	console.log('mx = '+mouseX+' my = '+mouseY);
 }
 
 // Keyboard
@@ -354,23 +354,23 @@ var pKeyPressed = false;
 function isKeyPressed() { return pKeyPressed; }
 
 function pSetupInput() {
-	pCurCanvas.onmousemove=function(e){
+	document.body.onmousemove=function(e){
     pUpdateMouseCoords(e);
     if (typeof(mouseMoved) == "function")
     	mouseMoved(e);
 	}
 
-	pCurCanvas.onmousedown=function(e){
+	document.body.onmousedown=function(e){
 		if (typeof(mousePressed) == "function")
 	    mousePressed(e);
 	}
 
-	pCurCanvas.onmouseup=function(e){
+	document.body.onmouseup=function(e){
 		if (typeof(mouseReleased) == "function")
 			mouseReleased(e);
 	}
 
-	pCurCanvas.onmouseclick=function(e){
+	document.body.onmouseclick=function(e){
 		if (typeof(mouseClicked) == "function")
 			mouseClicked(e);
 	}
@@ -762,6 +762,8 @@ var TWO_PI = Math.PI*2.0;
 
 function PCanvas(c, w, h){
 	this.canvas = c; 
+  this.canvas.style.left ='0px';
+	this.canvas.style.top = '0px';
   this.context = c.getContext('2d');
   this.width = w;
   this.height = h;
