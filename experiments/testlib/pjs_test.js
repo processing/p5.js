@@ -814,6 +814,14 @@ function createElement(html) {
 	return new PElement(c);
 }
 
+function createImage(src) {
+	var c = document.createElement('img');
+	c.setAttribute('src', src);
+	document.body.appendChild(c);
+
+	return new PElement(c);
+}
+
 function context(obj) {
 	if (obj != pCurCanvas) {
 		pCurCanvas = obj;

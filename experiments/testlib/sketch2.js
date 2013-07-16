@@ -6,22 +6,29 @@ var r;
 var bg = [];
 var writer;
 
-var canvas0, canvas1;
+var canvas0, canvas1, canvas2;
+var text0, img0;
 
 var setup = function() {
 	println("setup");
+	
 	canvas0 = createCanvas(800, 400);
-	canvas1 = createCanvas(150, 150);
-	canvas1.position(100, canvas0.height - canvas1.height*0.75);
+
 	canvas2 = createCanvas(200, 100);
 	canvas2.position(canvas0.width+10, canvas0.height+10);
 
-
-	var text0 = createElement("TESTING TESTING");
+	text0 = createElement("TESTING TESTING");
 	text0.id("test0");
 	text0.class("text");
 	text0.size(50, 200);
 	text0.position(canvas0.width-50, 200);
+
+	var img0 = createImage("http://media.tumblr.com/fecdc135ce5bdf0016bcd71da93d2ecb/tumblr_inline_mkr3wrfR2m1qz4rgp.png");
+	img0.size(200, 200);
+	img0.position(200, canvas0.height-150);
+
+	canvas1 = createCanvas(150, 150);
+	canvas1.position(100, canvas0.height - canvas1.height*0.25);
 
 	//colorMode(HSV);
 	printMatrix();
