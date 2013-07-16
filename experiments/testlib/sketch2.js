@@ -12,9 +12,9 @@ var setup = function() {
 	println("setup");
 	canvas0 = createCanvas(800, 400);
 	canvas1 = createCanvas(150, 150);
-	canvas1.setPosition(50, 30);
+	canvas1.position(50, 30);
 	canvas2 = createCanvas(200, 100);
-	canvas2.setPosition(canvas0.width+10, canvas0.height+10);
+	canvas2.position(canvas0.width+10, canvas0.height+10);
 	//colorMode(HSV);
 	printMatrix();
 	writer = new PrintWriter("name1");
@@ -23,7 +23,7 @@ var setup = function() {
 
 var draw = function() {
 
-	setCanvas(canvas0);
+	context(canvas0);
 	bg = [255*sin(.008*frameCount), 255*sin(.003*frameCount), 255*sin(.01*frameCount)];
 	fill(bg[0], bg[1], bg[2]);
 	noStroke();
@@ -39,11 +39,13 @@ var draw = function() {
 	shearX(PI/4);
 	rect(0, 0, 50, 50);
 
-	setCanvas(canvas1);
+
+	context(canvas1);
 	background(255, 200, 10);
 	ellipse(width/2, height/2, 100, 30);
 
-	setCanvas(canvas2);
+
+	context(canvas2);
 	background(0, 50, 200);
 	fill(bg[0], bg[1], bg[2]);
 	rect(10, 10, 30, 80);

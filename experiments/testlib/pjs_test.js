@@ -767,7 +767,7 @@ function PCanvas(c, w, h){
   this.context = c.getContext('2d');
   this.width = w;
   this.height = h;
-  this.setPosition = function(x, y) {
+  this.position = function(x, y) {
   	this.canvas.style.left = x+'px';
 		this.canvas.style.top = y+'px';
   }
@@ -788,12 +788,12 @@ function createCanvas(w, h) {
 	pCurCanvas =  new PCanvas(c, w, h);
 	pApplyDefaults();
 	pSetupInput();
-	setCanvas(pCurCanvas);
+	context(pCurCanvas);
 
 	return pCurCanvas;
 }
 
-function setCanvas(obj) {
+function context(obj) {
 	if (obj != pCurCanvas) {
 		pCurCanvas = obj;
 		width = obj.canvas.getAttribute('width');

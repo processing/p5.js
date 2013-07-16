@@ -6,9 +6,6 @@ Extensions
 + [HTML Filesystem tutorial](http://www.html5rocks.com/en/tutorials/file/filesystem/#toc-file-writing)
 + Allow user to save to sandboxed area in local fs? Similar to offline mail usage.
 
-###Arguments?
-+ rect({ x:10, y:20, width:50, height:40 }); vs rect(10, 20, 50, 40);
-
 
 ###DOM manipulation & access
 + var AUTO;
@@ -28,27 +25,25 @@ Extensions
 + remove
 
 // set
-+ setOrigin(id)
-+ setOrigin(obj)
-+ setCanvas(id)
-+ setCanvas(obj)
++ context(id)
++ context(obj)
 
 
 // PElement
 
-+ setId(id)
-+ setClass(class)
++ dd(id)
++ class(class)
 
-+ setSize(w, h) 
-+ setPosition(x, y)
++ size(w, h) 
++ position(x, y)
 
-+ setStyle(style)
++ style(style)
 
-+ setHTML(html)
++ html(html)
 
 
 // listeners
-+ addListener(type, function) // type -- mousePress, mouseRelease, mouseOver, mouseOut
++ listener(type, function) // type -- mousePress, mouseRelease, mouseOver, mouseOut
 
 
 
