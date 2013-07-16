@@ -1,6 +1,6 @@
 
 // pend tempz
-var c, ctx;
+var pCurCanvas;
 
 var CORNER = "corner", CORNERS = "corners", RADIUS = "radius";
 var RIGHT = "right", LEFT = "left", CENTER = "center";
@@ -13,8 +13,7 @@ var BEVEL = "bevel", MITER = "miter";
 var RGB = "rgb", HSB = "hsb";
 
 
-var pShapeKind = null, pShapeInited = false;;
-var pBackground = false;
+var pShapeKind = null, pShapeInited = false;
 var pFill = false;
 var pLoop = true;
 var pStartTime;
@@ -64,8 +63,8 @@ function setFrameRate(fps) {
 function size(w, h) {
 	width = w;
 	height = h;
-	c.setAttribute('width', width);
-	c.setAttribute('height', height);
+	pCurCanvas.setAttribute('width', width);
+	pCurCanvas.setAttribute('height', height);
 	pApplyDefaults();
 }
 var width = 100;
@@ -105,15 +104,15 @@ function trim(str) {
 function append(array, value) { return array.push(value); }
 function arrayCopy(src, a, b, c, d) { //src, srcPosition, dst, dstPosition, length
 	if (d) { 
-		for (var i=a; i<min(a+d, src.length); i++) {
+		for (var i=a; i<min(a+d, srpCurCanvas.length); i++) {
 			b[dstPosition+i] = src[i];
 		}
 	} 
 	else if (b) { //src, dst, length
-		a = src.slice(0, min(b, src.length)); 
+		a = srpCurCanvas.slice(0, min(b, srpCurCanvas.length)); 
 	}
 	else { //src, dst
-		a = src.slice(0);	
+		a = srpCurCanvas.slice(0);	
 	}
 }
 function concat(list0, list1) { return list0.concat(list1); }
@@ -150,58 +149,58 @@ function ellipse(a, b, c, d) {
     xm = vals.x + vals.w / 2,  // x-middle
     ym = vals.y + vals.h / 2;  // y-middle
 
-  ctx.beginPath();
-  ctx.moveTo(vals.x, ym);
-  ctx.bezierCurveTo(vals.x, ym - oy, xm - ox, vals.y, xm, vals.y);
-  ctx.bezierCurveTo(xm + ox, vals.y, xe, ym - oy, xe, ym);
-  ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-  ctx.bezierCurveTo(xm - ox, ye, vals.x, ym + oy, vals.x, ym);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
+  pCurCanvas.context.beginPath();
+  pCurCanvas.context.moveTo(vals.x, ym);
+  pCurCanvas.context.bezierCurveTo(vals.x, ym - oy, xm - ox, vals.y, xm, vals.y);
+  pCurCanvas.context.bezierCurveTo(xm + ox, vals.y, xe, ym - oy, xe, ym);
+  pCurCanvas.context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+  pCurCanvas.context.bezierCurveTo(xm - ox, ye, vals.x, ym + oy, vals.x, ym);
+  pCurCanvas.context.closePath();
+  pCurCanvas.context.fill();
+  pCurCanvas.context.stroke();
 }
 function line(x1, y1, x2, y2) {
-	ctx.beginPath();
-	ctx.moveTo(x1, y1);
-	ctx.lineTo(x2, y2);
-	ctx.stroke();
+	pCurCanvas.context.beginPath();
+	pCurCanvas.context.moveTo(x1, y1);
+	pCurCanvas.context.lineTo(x2, y2);
+	pCurCanvas.context.stroke();
 }
 // point
 function quad(x1, y1, x2, y2, x3, y3, x4, y4) {
-	ctx.beginPath();
-	ctx.moveTo(x1, y1);
-	ctx.lineTo(x2, y2);
-	ctx.lineTo(x3, y3);
-	ctx.lineTo(x4, y4);
-	ctx.closePath();
-	ctx.fill();
-	ctx.stroke();
+	pCurCanvas.context.beginPath();
+	pCurCanvas.context.moveTo(x1, y1);
+	pCurCanvas.context.lineTo(x2, y2);
+	pCurCanvas.context.lineTo(x3, y3);
+	pCurCanvas.context.lineTo(x4, y4);
+	pCurCanvas.context.closePath();
+	pCurCanvas.context.fill();
+	pCurCanvas.context.stroke();
 }
 
 function rect(a, b, c, d) {
 	var vals = pModeAdjust(a, b, c, d, pRectMode);
-	ctx.beginPath();
-	ctx.rect(vals.x, vals.y, vals.w, vals.h);
-	ctx.fill();
-	ctx.stroke();
+	pCurCanvas.context.beginPath();
+	pCurCanvas.context.rect(vals.x, vals.y, vals.w, vals.h);
+	pCurCanvas.context.fill();
+	pCurCanvas.context.stroke();
 }
 
 function triangle(x1, y1, x2, y2, x3, y3) {
-	ctx.beginPath();
-	ctx.moveTo(x1, y1);
-	ctx.lineTo(x2, y2);
-	ctx.lineTo(x3, y3);
-	ctx.closePath();
-	ctx.fill();
-	ctx.stroke();
+	pCurCanvas.context.beginPath();
+	pCurCanvas.context.moveTo(x1, y1);
+	pCurCanvas.context.lineTo(x2, y2);
+	pCurCanvas.context.lineTo(x3, y3);
+	pCurCanvas.context.closePath();
+	pCurCanvas.context.fill();
+	pCurCanvas.context.stroke();
 }
 
 // Curves
 function bezier(x1, y1, x2, y2, x3, y3, x4, y4) {
-	ctx.beginPath();
-	ctx.moveTo(x1, y1);
-	ctx.bezierCurveTo(x2, y2, x3, y3, x4, y4);
-	ctx.stroke();
+	pCurCanvas.context.beginPath();
+	pCurCanvas.context.moveTo(x1, y1);
+	pCurCanvas.context.bezierCurveTo(x2, y2, x3, y3, x4, y4);
+	pCurCanvas.context.stroke();
 }
 //bezierDetail()
 /*bezierPoint()
@@ -221,8 +220,8 @@ function ellipseMode(m) {
 	}
 }
 function noSmooth() {
-	ctx.mozImageSmoothingEnabled = false;
-	ctx.webkitImageSmoothingEnabled = false;
+	pCurCanvas.context.mozImageSmoothingEnabled = false;
+	pCurCanvas.context.webkitImageSmoothingEnabled = false;
 }
 function rectMode(m) {
 	if (m == CORNER || m == CORNERS || m == RADIUS || m == CENTER) {
@@ -230,21 +229,21 @@ function rectMode(m) {
 	}
 }
 function smooth() {
-	ctx.mozImageSmoothingEnabled = true;
-	ctx.webkitImageSmoothingEnabled = true;
+	pCurCanvas.context.mozImageSmoothingEnabled = true;
+	pCurCanvas.context.webkitImageSmoothingEnabled = true;
 }
 function strokeCap(cap) {
 	if (cap == ROUND || cap == SQUARE || cap == PROJECT) {
-		ctx.lineCap=cap;
+		pCurCanvas.context.lineCap=cap;
 	}
 }
 function strokeJoin(join) {
 	if (join == ROUND || join == BEVEL || join == MITER) {
-		ctx.lineJoin = join;
+		pCurCanvas.context.lineJoin = join;
 	}
 }
 function strokeWeight(w) {
-	ctx.lineWidth = w;
+	pCurCanvas.context.lineWidth = w;
 	if (!w) noStroke();
 }
 
@@ -257,24 +256,24 @@ function beginShape(kind) {
 		pShapeKind = kind;
 	else pShapeKind = null; 
 	pShapeInited = true;
-	ctx.beginPath();
+	pCurCanvas.context.beginPath();
 }
-function bezierVertex(x1, y1, x2, y2, x3, y3) { ctx.bezierCurveTo(x1, y1, x2, y2, x3, y3); }
+function bezierVertex(x1, y1, x2, y2, x3, y3) { pCurCanvas.context.bezierCurveTo(x1, y1, x2, y2, x3, y3); }
 /*curveVertex()
 endContour()*/
 function endShape(mode) {
 	if (mode == CLOSE) {
-		ctx.closePath();
-		ctx.fill();
+		pCurCanvas.context.closePath();
+		pCurCanvas.context.fill();
 	} 
-	ctx.stroke();
+	pCurCanvas.context.stroke();
 }
-function quadraticVertex(cx, cy, x3, y3) { ctx.quadraticCurveTo(cx, cy, x3, y3); }
+function quadraticVertex(cx, cy, x3, y3) { pCurCanvas.context.quadraticCurveTo(cx, cy, x3, y3); }
 function vertex(x, y) {
 	if (pShapeInited) {
-		ctx.moveTo(x, y);
+		pCurCanvas.context.moveTo(x, y);
 	} else {
-		ctx.lineTo(x, y); // pend this is where check for kind and do other stuff
+		pCurCanvas.context.lineTo(x, y); // pend this is where check for kind and do other stuff
 	}
 	pShapeInited = false;
 }
@@ -343,8 +342,8 @@ var pMouseX = 0, pMouseY = 0, mouseX = 0, mouseY = 0;
 function pUpdateMouseCoords(e) {
 	pMouseX = mouseX;
 	pMouseY = mouseY;
-	mouseX = e.clientX - c.offsetLeft;
-	mouseY = e.clientY - c.offsetTop;
+	mouseX = e.clientX - pCurCanvas.context.offsetLeft;
+	mouseY = e.clientY - pCurCanvas.offsetTop;
 	//console.log('mx = '+mouseX+' my = '+mouseY);
 }
 
@@ -355,23 +354,23 @@ var pKeyPressed = false;
 function isKeyPressed() { return pKeyPressed; }
 
 function pSetupInput() {
-	c.onmousemove=function(e){
+	pCurCanvas.onmousemove=function(e){
     pUpdateMouseCoords(e);
     if (typeof(mouseMoved) == "function")
     	mouseMoved(e);
 	}
 
-	c.onmousedown=function(e){
+	pCurCanvas.onmousedown=function(e){
 		if (typeof(mousePressed) == "function")
 	    mousePressed(e);
 	}
 
-	c.onmouseup=function(e){
+	pCurCanvas.onmouseup=function(e){
 		if (typeof(mouseReleased) == "function")
 			mouseReleased(e);
 	}
 
-	c.onmouseclick=function(e){
+	pCurCanvas.onmouseclick=function(e){
 		if (typeof(mouseClicked) == "function")
 			mouseClicked(e);
 	}
@@ -415,7 +414,7 @@ function println(s) { console.log(s); }
 
 // Image
 function save() {
-	window.open(c.toDataURL());
+	window.open(pCurCanvas.toDataURL());
 }
 
 // Files
@@ -454,27 +453,27 @@ function writeFile(content) {
 
 //// TRANSFORM
 function applyMatrix(n00, n01, n02, n10, n11, n12) {
-	ctx.transform(n00, n01, n02, n10, n11, n12);
+	pCurCanvas.context.transform(n00, n01, n02, n10, n11, n12);
 	var m = pMatrices[pMatrices.length-1];
 	m = pMultiplyMatrix(m, [n00, n01, n02, n10, n11, n12]);
 }
 function popMatrix() { 
-	ctx.restore(); 
+	pCurCanvas.context.restore(); 
 	pMatrices.pop();
 }
 function printMatrix() {
 	console.log(pMatrices[pMatrices.length-1]);
 }
 function pushMatrix() { 
-	ctx.save(); 
+	pCurCanvas.context.save(); 
 	pMatrices.push([1,0,0,1,0,0]);
 }
 function resetMatrix() { 
-	ctx.setTransform();
+	pCurCanvas.context.setTransform();
 	pMatrices[pMatrices.length-1] = [1,0,0,1,0,0]; 
 }
 function rotate(r) { 
-	ctx.rotate(r); 
+	pCurCanvas.context.rotate(r); 
 	var m = pMatrices[pMatrices.length-1];
 	var c = Math.cos(r);
   var s = Math.sin(r);
@@ -488,7 +487,7 @@ function rotate(r) {
   m[3] = m22;
 }
 function scale(x, y) { 
-	ctx.scale(x, y); 
+	pCurCanvas.context.scale(x, y); 
 	var m = pMatrices[pMatrices.length-1];
   m[0] *= x;
   m[1] *= x;
@@ -496,17 +495,17 @@ function scale(x, y) {
   m[3] *= y;
 }
 function shearX(angle) {
-	ctx.transform(1, 0, tan(angle), 1, 0, 0);
+	pCurCanvas.context.transform(1, 0, tan(angle), 1, 0, 0);
 	var m = pMatrices[pMatrices.length-1];
 	m = pMultiplyMatrix(m, [1, 0, tan(angle), 1, 0, 0]);
 }
 function shearY(angle) {
-	ctx.transform(1, tan(angle), 0, 1, 0, 0);
+	pCurCanvas.context.transform(1, tan(angle), 0, 1, 0, 0);
 	var m = pMatrices[pMatrices.length-1];
 	m = pMultiplyMatrix(m, [1, tan(angle), 0, 1, 0, 0]);
 }
 function translate(x, y) { 
-	ctx.translate(x, y); 
+	pCurCanvas.context.translate(x, y); 
 	var m = pMatrices[pMatrices.length-1];
   m[4] += m[0] * x + m[2] * y;
   m[5] += m[1] * x + m[3] * y;
@@ -518,7 +517,14 @@ function translate(x, y) {
 function background(v1, v2, v3) { 
 	var c = [v1, v2, v3];
 	if (pColorMode == HSB) c = hsv2rgb(v1, v2, v3);
-	pBackground = rgbToHex(c[0], c[1], c[2]); 
+
+	// save out the fill
+	var curFill = pCurCanvas.context.fillStyle;
+	// create background rect
+	pCurCanvas.context.fillStyle = rgbToHex(c[0], c[1], c[2]); 
+	pCurCanvas.context.fillRect(0, 0, width, height);
+	// reset fill
+	pCurCanvas.context.fillStyle = curFill;
 }
 //clear()
 function colorMode(mode) { 
@@ -526,18 +532,18 @@ function colorMode(mode) {
 		pColorMode = mode; 
 }
 function fill(v1, v2, v3, a) { 
-	var c = [v1, v2, v3];
+	var c = [parseInt(v1, 10), parseInt(v2, 10), parseInt(v3, 10)];
 	if (pColorMode == HSB) c = hsv2rgb(v1, v2, v3);
-	if (a) ctx.fillStyle = "rgba("+c[0]+","+c[1]+","+c[2]+","+(a/255.0)+")";
-	else ctx.fillStyle = "rgb("+c[0]+","+c[1]+","+c[2]+")";
+	if (a) pCurCanvas.context.fillStyle = "rgba("+c[0]+","+c[1]+","+c[2]+","+(parseInt(a, 10)/255.0)+")";
+	else pCurCanvas.context.fillStyle = "rgb("+c[0]+","+c[1]+","+c[2]+")";
 }
-function noFill() {	ctx.fillStyle = "none"; }
-function noStroke() {	ctx.strokeStyle = "none"; }
+function noFill() {	pCurCanvas.context.fillStyle = "none"; }
+function noStroke() {	pCurCanvas.context.strokeStyle = "none"; }
 function stroke(v1, v2, v3, a) { 
 	var c = [v1, v2, v3];
 	if (pColorMode == HSB) c = hsv2rgb(v1, v2, v3);
-	if (a) ctx.strokeStyle = "rgba("+c[0]+","+c[1]+","+c[2]+","+(a/255.0)+")";
-	else ctx.strokeStyle = "rgb("+c[0]+","+c[1]+","+c[2]+")"; 
+	if (a) pCurCanvas.context.strokeStyle = "rgba("+c[0]+","+c[1]+","+c[2]+","+(a/255.0)+")";
+	else pCurCanvas.context.strokeStyle = "rgb("+c[0]+","+c[1]+","+c[2]+")"; 
 }
 
 
@@ -587,7 +593,7 @@ function saturation(hsv) {
 
 function createImage(w, h, format) { return new PImage(w, h); } //pend format?
 function PImage(w, h){
-	this = ctx.createImageData(w,h); 
+	this = pCurCanvas.context.createImageData(w,h); 
   this.pixels = [];
   this.updatePixelArray();
 
@@ -632,9 +638,9 @@ function PImage(w, h){
 function image(img, a, b, c, d) { 
 	if (c && d) {
 		var vals = pModeAdjust(a, b, c, d, pImageMode);
-		ctx.drawImage(img, vals.x, vals.y, vals.w, vals.h);
+		pCurCanvas.context.drawImage(img, vals.x, vals.y, vals.w, vals.h);
 	} else {
-		ctx.drawImage(img, a, b);
+		pCurCanvas.context.drawImage(img, a, b);
 	}
 }
 
@@ -656,7 +662,7 @@ function loadImage(path) {
 //copy()
 //filter()
 function get(x, y, w, h) {
-	var pix = ctx.getImageData(0, 0, width, height).data.slice(0);
+	var pix = pCurCanvas.context.getImageData(0, 0, width, height).data.slice(0);
 	if (w && h) {
 		var region = [];
 		for (var j=0; j<h; j++) {
@@ -676,13 +682,13 @@ function get(x, y, w, h) {
 	else { return pix; }
 }
 function loadPixels() { 
-	pixels = ctx.getImageData(0, 0, width, height).data.slice(0); // pend should this be 0,0 or  c.offsetLeft,c.offsetTop?
+	pixels = pCurCanvas.context.getImageData(0, 0, width, height).data.slice(0); // pend should this be 0,0 or  pCurCanvas.offsetLeft,pCurCanvas.offsetTop?
 }
 var pixels = [];
 //set()
 function updatePixels() {
 	if (pixels) {
-		var imgd = ctx.getImageData(x, y, width, height);
+		var imgd = pCurCanvas.context.getImageData(x, y, width, height);
 		imgd = pixels;
 		context.putImageData(imgd, 0, 0);
 	}
@@ -693,17 +699,17 @@ function updatePixels() {
 
 // Loading & Displaying
 function text(s, x, y) {
-	ctx.font=pTextSize+"px Verdana";
-	ctx.fillText(s, x, y);
+	pCurCanvas.context.font=pTextSize+"px Verdana";
+	pCurCanvas.context.fillText(s, x, y);
 }
 
 // Atributes
 function textAlign(a) {
-	if (a == LEFT || a == RIGHT || a == CENTER) ctx.textAlign = a;
+	if (a == LEFT || a == RIGHT || a == CENTER) pCurCanvas.context.textAlign = a;
 }
 function textSize(s) { pTextSize = s; }
-function textWidth(s) { return ctx.measureText(s).width; }
-function textHeight(s) { return ctx.measureText(s).height; }
+function textWidth(s) { return pCurCanvas.context.measureText(s).width; }
+function textHeight(s) { return pCurCanvas.context.measureText(s).height; }
 
 //// MATH
 /** @module Math */
@@ -754,31 +760,58 @@ var TWO_PI = Math.PI*2.0;
 
 //// INTERNALS
 
-function pCreateCanvas() {
+function PCanvas(c, w, h){
+	this.canvas = c; 
+  this.context = c.getContext('2d');
+  this.width = w;
+  this.height = h;
+  this.setPosition = function(x, y) {
+  	this.canvas.style.left = x+'px';
+		this.canvas.style.top = y+'px';
+  }
+}
+
+
+function createCanvas(w, h) {
 	console.log('create canvas');
 	pStartTime = new Date().getTime();
-	c = document.createElement('canvas');
-	c.setAttribute('id', 'processing');
+	var c = document.createElement('canvas');
+	width = w;
+	height = h;
 	c.setAttribute('width', width);
 	c.setAttribute('height', height);
+	c.style.position = 'absolute';
 	document.body.appendChild(c);
-	ctx = c.getContext("2d");
-	pApplyDefaults();
 
+	pCurCanvas =  new PCanvas(c, w, h);
+	pApplyDefaults();
 	pSetupInput();
+	setCanvas(pCurCanvas);
+
+	return pCurCanvas;
+}
+
+function setCanvas(obj) {
+	if (obj != pCurCanvas) {
+		pCurCanvas = obj;
+		width = obj.canvas.getAttribute('width');
+		height = obj.canvas.getAttribute('height');
+		pCurCanvas.context.setTransform(1, 0, 0, 1, 0, 0);
+	}
+}
+
+function pCreate() {
 
 	if (typeof(setup) == "function") setup();
-	
 	pUpdateInterval = setInterval(pUpdate, 1000/frameRate);
-
 	pDraw();
 }
 
 
 function pApplyDefaults() {
-	ctx.fillStyle = "#FFFFFF";
-	ctx.strokeStyle = "none";
-	ctx.lineCap=ROUND;
+	pCurCanvas.context.fillStyle = "#FFFFFF";
+	pCurCanvas.context.strokeStyle = "none";
+	pCurCanvas.context.lineCap=ROUND;
 }
 
 function pUpdate() {
@@ -791,20 +824,10 @@ function pDraw() {
         requestAnimationFrame(pDraw);
     }, 1000 / frameRate);
 	}
-	// draw bg
-	if (pBackground) {
-		// save out the fill
-		var curFill = ctx.fillStyle;
-		// create background rect
-		ctx.fillStyle = pBackground;
-		ctx.fillRect(0, 0, width, height);
-		// reset fill
-		ctx.fillStyle = curFill;
-	}
 
 	// call draw
 	if (typeof(draw) == "function") draw();
-	ctx.setTransform(1, 0, 0, 1, 0, 0);
+	pCurCanvas.context.setTransform(1, 0, 0, 1, 0, 0);
 }
 
 
