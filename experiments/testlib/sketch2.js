@@ -12,9 +12,17 @@ var setup = function() {
 	println("setup");
 	canvas0 = createCanvas(800, 400);
 	canvas1 = createCanvas(150, 150);
-	canvas1.position(50, 30);
+	canvas1.position(100, canvas0.height - canvas1.height*0.75);
 	canvas2 = createCanvas(200, 100);
 	canvas2.position(canvas0.width+10, canvas0.height+10);
+
+
+	var text0 = createElement("TESTING TESTING");
+	text0.id("test0");
+	text0.class("text");
+	text0.size(50, 200);
+	text0.position(canvas0.width-50, 200);
+
 	//colorMode(HSV);
 	printMatrix();
 	writer = new PrintWriter("name1");
@@ -49,6 +57,7 @@ var draw = function() {
 	background(0, 50, 200);
 	fill(bg[0], bg[1], bg[2]);
 	rect(10, 10, 30, 80);
+
 };
 
 var mousePressed = function(e) {

@@ -342,8 +342,8 @@ var pMouseX = 0, pMouseY = 0, mouseX = 0, mouseY = 0;
 function pUpdateMouseCoords(e) {
 	pMouseX = mouseX;
 	pMouseY = mouseY;
-	mouseX = e.clientX - parseInt(pCurCanvas.canvas.style.left, 10);
-	mouseY = e.clientY - parseInt(pCurCanvas.canvas.style.top, 10);
+	mouseX = e.clientX - parseInt(pCurCanvas.elt.style.left, 10);
+	mouseY = e.clientY - parseInt(pCurCanvas.elt.style.top, 10);
 	console.log('mx = '+mouseX+' my = '+mouseY);
 }
 
@@ -760,32 +760,45 @@ var TWO_PI = Math.PI*2.0;
 
 //// INTERNALS
 
-function PCanvas(c, w, h){
-	this.canvas = c; 
-  this.canvas.style.left ='0px';
-	this.canvas.style.top = '0px';
-  this.context = c.getContext('2d');
-  this.width = w;
-  this.height = h;
+function PElement(elt, w, h){
+	this.elt = elt;
+	this.width = w;
+	this.height = h;
+	this.elt.style.position = 'absolute';
+	this.elt.style.left ='0px';
+	this.elt.style.top = '0px';
+	if (elt instanceof HTMLCanvasElement) {
+	  this.context = elt.getContext('2d');
+	}
   this.position = function(x, y) {
-  	this.canvas.style.left = x+'px';
-		this.canvas.style.top = y+'px';
+  	this.elt.style.left = x+'px';
+		this.elt.style.top = y+'px';
+  };
+  this.size = function(w, h) {
+  	this.width = w;
+  	this.height = h;
+  	this.elt.style.width = w;
+  	this.elt.style.height = h;
+  };
+  this.id = function(id) {
+  	this.elt.id = id;
+  };
+  this.class = function(c) {
+  	this.elt.className = c;
   }
 }
 
 
 function createCanvas(w, h) {
 	console.log('create canvas');
-	pStartTime = new Date().getTime();
 	var c = document.createElement('canvas');
 	width = w;
 	height = h;
 	c.setAttribute('width', width);
 	c.setAttribute('height', height);
-	c.style.position = 'absolute';
 	document.body.appendChild(c);
 
-	pCurCanvas =  new PCanvas(c, w, h);
+	pCurCanvas =  new PElement(c, w, h);
 	pApplyDefaults();
 	pSetupInput();
 	context(pCurCanvas);
@@ -793,17 +806,26 @@ function createCanvas(w, h) {
 	return pCurCanvas;
 }
 
+function createElement(html) {
+	var c = document.createElement('div');
+	c.innerHTML = html;
+	document.body.appendChild(c);
+
+	return new PElement(c);
+}
+
 function context(obj) {
 	if (obj != pCurCanvas) {
 		pCurCanvas = obj;
-		width = obj.canvas.getAttribute('width');
-		height = obj.canvas.getAttribute('height');
+		width = obj.elt.getAttribute('width');
+		height = obj.elt.getAttribute('height');
 		pCurCanvas.context.setTransform(1, 0, 0, 1, 0, 0);
 	}
 }
 
 function pCreate() {
 
+	pStartTime = new Date().getTime();
 	if (typeof(setup) == "function") setup();
 	pUpdateInterval = setInterval(pUpdate, 1000/frameRate);
 	pDraw();
