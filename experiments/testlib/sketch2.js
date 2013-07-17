@@ -17,7 +17,7 @@ var setup = function() {
 	canvas2 = createCanvas(200, 100);
 	canvas2.position(canvas0.width+10, canvas0.height+10);
 
-	text0 = createElement("TESTING TESTING");
+	text0 = createElement("<h1>butts</h1>");
 	text0.id("test0");
 	text0.class("text");
 	text0.size(50, 200);
