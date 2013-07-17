@@ -814,9 +814,10 @@ function createElement(html) {
 	return new PElement(c);
 }
 
-function createImage(src) {
+function createImage(src, alt) {
 	var c = document.createElement('img');
-	c.setAttribute('src', src);
+	c.src = src;
+	if (alt) c.alt = alt;
 	document.body.appendChild(c);
 
 	return new PElement(c);
