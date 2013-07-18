@@ -10,39 +10,34 @@ Extensions
 ###DOM manipulation & access
 + var AUTO;
 
-// create 
+// Create 
 + createElement(html)
 + createImage(src)
 + createCanvas(w, h)
 
-// access
-+ getElementById(id) // return obj or null
-+ getElementsByClass(class) // return arr
-+ getElementsByType(type)  // return arr
+// Access
++ get(id) // return obj or null
++ get(class) // return arr
 
-// manipulate
-+ append
-+ remove
-
-// set
+// Set context
 + context(id)
 + context(obj)
 
 
+
 // PElement
 
-+ dd(id)
++ id(id)
 + class(class)
-
 + size(w, h) 
 + position(x, y)
-
 + style(style)
-
 + html(html)
++ show()
++ hide()
 
 
-// listeners
+// Listeners
 + listener(type, function) // type -- mousePress, mouseRelease, mouseOver, mouseOut
 
 

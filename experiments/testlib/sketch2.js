@@ -29,6 +29,7 @@ var setup = function() {
 
 	canvas1 = createCanvas(150, 150);
 	canvas1.position(100, canvas0.height - canvas1.height*0.25);
+	canvas1.hide();
 
 	//colorMode(HSV);
 	printMatrix();

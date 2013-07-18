@@ -758,7 +758,9 @@ var TWO_PI = Math.PI*2.0;
 
 
 
-//// INTERNALS
+//// EXTENSIONS
+
+// PElement
 
 function PElement(elt, w, h){
 	this.elt = elt;
@@ -780,15 +782,13 @@ function PElement(elt, w, h){
   	this.elt.style.width = w;
   	this.elt.style.height = h;
   };
-  this.id = function(id) {
-  	this.elt.id = id;
-  };
-  this.class = function(c) {
-  	this.elt.className = c;
-  }
+  this.id = function(id) { this.elt.id = id; };
+  this.class = function(c) { this.elt.className = c; }
+  this.show = function() { this.elt.display = 'block'; }
+  this.hide = function() { this.elt.style.display = 'none'; }
 }
 
-
+// Create
 function createCanvas(w, h) {
 	console.log('create canvas');
 	var c = document.createElement('canvas');
@@ -823,14 +823,22 @@ function createImage(src, alt) {
 	return new PElement(c);
 }
 
-function context(obj) {
-	if (obj != pCurCanvas) {
+// Set context
+function context(e) {
+	var obj = (typeof e == 'string' || e instanceof String) ? document.getElementById(id) : e;
+	if (obj) {
 		pCurCanvas = obj;
 		width = obj.elt.getAttribute('width');
 		height = obj.elt.getAttribute('height');
 		pCurCanvas.context.setTransform(1, 0, 0, 1, 0, 0);
 	}
 }
+
+// Get
+function get(e) {
+
+}
+
 
 function pCreate() {
 
