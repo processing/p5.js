@@ -6,45 +6,39 @@ Extensions
 + [HTML Filesystem tutorial](http://www.html5rocks.com/en/tutorials/file/filesystem/#toc-file-writing)
 + Allow user to save to sandboxed area in local fs? Similar to offline mail usage.
 
-###DOM manipulation & access
-+ var AUTO = "auto"
 
-// create 
+###DOM manipulation & access
++ var AUTO;
+
+// Create 
 + createElement(html)
 + createImage(src)
 + createCanvas(w, h)
 
-// access
-+ getElementById(id) // return obj or null
-+ getElementsByClass(class) // return arr
-+ getElementsByType(type)  // return arr
+// Access
++ get(id) // return obj or null
++ get(class) // return arr
 
-// manipulate
-+ append
-+ remove
+// Set context
++ context(id)
++ context(obj)
 
-// set
-+ setOrigin(id)
-+ setOrigin(obj)
-+ setCanvas(id)
-+ setCanvas(obj)
 
 
 // PElement
 
-+ setId(id)
-+ setClass(class)
++ id(id)
++ class(class)
++ size(w, h) 
++ position(x, y)
++ style(style)
++ html(html)
++ show()
++ hide()
 
-+ setSize(w, h) 
-+ setPosition(x, y)
 
-+ setStyle(style)
-
-+ setHTML(html)
-
-
-// listeners
-+ addListener(type, function) // type -- mousePress, mouseRelease, mouseOver, mouseOut
+// Listeners
++ listener(type, function) // type -- mousePress, mouseRelease, mouseOver, mouseOut
 
 
 
