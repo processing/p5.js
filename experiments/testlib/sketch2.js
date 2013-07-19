@@ -13,23 +13,25 @@ var setup = function() {
 	println("setup");
 	
 	canvas0 = createCanvas(800, 400);
+	canvas0.mousePressed(mousePressed0);
 
-	canvas2 = createCanvas(200, 100);
-	canvas2.position(canvas0.width+10, canvas0.height+10);
+	canvas1 = createCanvas(200, 100);
+	canvas1.position(canvas0.width+10, canvas0.height+10);
 
-	text0 = createElement("<h1>butts</h1>");
+	text0 = createElement("<h1>helloworld</h1>");
 	text0.id("test0");
 	text0.class("text");
 	text0.size(50, 200);
 	text0.position(canvas0.width-50, 200);
 
-	var img0 = createImage("http://media.tumblr.com/fecdc135ce5bdf0016bcd71da93d2ecb/tumblr_inline_mkr3wrfR2m1qz4rgp.png");
+	img0 = createImage("http://media.tumblr.com/fecdc135ce5bdf0016bcd71da93d2ecb/tumblr_inline_mkr3wrfR2m1qz4rgp.png");
 	img0.size(300, 300);
 	img0.position(220, canvas0.height-200);
 
-	canvas1 = createCanvas(150, 150);
-	canvas1.position(100, canvas0.height - canvas1.height*0.25);
-	canvas1.hide();
+	canvas2 = createCanvas(150, 150);
+	canvas2.mousePressed(mousePressed2);
+	canvas2.position(100, canvas0.height - canvas1.height*0.25);
+
 
 	//colorMode(HSV);
 	printMatrix();
@@ -40,6 +42,24 @@ var setup = function() {
 var draw = function() {
 
 	context(canvas0);
+	drawCanvas0();
+
+	//context(canvas1);
+	//drawCanvas0();
+
+	context(canvas1);
+	background(0, 50, 200);
+	fill(bg[0], bg[1], bg[2]);
+	rect(10, 10, 30, 80);
+
+
+	context(canvas2);
+	background(255, 200, 10);
+	ellipse(width/2, height/2, 100, 30);
+
+};
+
+var drawCanvas0 = function() {
 	bg = [255*sin(.008*frameCount), 255*sin(.003*frameCount), 255*sin(.01*frameCount)];
 	fill(bg[0], bg[1], bg[2]);
 	noStroke();
@@ -54,25 +74,25 @@ var draw = function() {
 	translate(width/2, height/4);
 	shearX(PI/4);
 	rect(0, 0, 50, 50);
+}
 
+var mousePressed0 = function(e) {
+	// whatevs
+	println("0 pressed");
+}
 
-	context(canvas1);
-	background(255, 200, 10);
-	ellipse(width/2, height/2, 100, 30);
-
-
-	context(canvas2);
-	background(0, 50, 200);
-	fill(bg[0], bg[1], bg[2]);
-	rect(10, 10, 30, 80);
-
-};
+// these get added by createCanvas
+var mousePressed2 = function(e) {
+	// whatevs
+	println("2 pressed");
+}
 
 var mousePressed = function(e) {
 	println("mouse pressed");
 	//save("hi");
 	//writer.close();
 	//saveStrings(['hi', 'blah']);
+	console.log(e);
 	clicks++;
 };
 

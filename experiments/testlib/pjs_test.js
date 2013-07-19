@@ -344,7 +344,7 @@ function pUpdateMouseCoords(e) {
 	pMouseY = mouseY;
 	mouseX = e.clientX - parseInt(pCurCanvas.elt.style.left, 10);
 	mouseY = e.clientY - parseInt(pCurCanvas.elt.style.top, 10);
-	console.log('mx = '+mouseX+' my = '+mouseY);
+	//	console.log('mx = '+mouseX+' my = '+mouseY);
 }
 
 // Keyboard
@@ -786,6 +786,7 @@ function PElement(elt, w, h){
   this.class = function(c) { this.elt.className = c; }
   this.show = function() { this.elt.display = 'block'; }
   this.hide = function() { this.elt.style.display = 'none'; }
+  this.mousePressed = function(fxn) { this.elt.addEventListener("click", function(){fxn();}, false); }; // pend false?
 }
 
 // Create
