@@ -76,8 +76,8 @@ var draw = function() {
 
 ###Environment 
 + cursor()
-+ displayHeight
-+ displayWidth
++ __displayHeight__
++ __displayWidth__
 + focused
 + __frameCount__
 + __frameRate()__

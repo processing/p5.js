@@ -11,6 +11,7 @@ var OPEN = "open", CHORD = "chord", PIE = "pie";
 var SQUARE = "butt", ROUND = "round", PROJECT = "square"; // PEND: careful this is counterintuitive
 var BEVEL = "bevel", MITER = "miter";
 var RGB = "rgb", HSB = "hsb";
+var AUTO = "auto";
 
 
 var pShapeKind = null, pShapeInited = false;
@@ -47,8 +48,8 @@ var setup;
 
 //// ENVIRONMENT
 //cursor()
-//displayHeight
-//displayWidth
+function displayHeight() { return window.innerHeight; }
+function displayWidth() { return window.innerWidth; }
 //focused
 var frameCount = 0;
 var frameRate = 30;
@@ -336,14 +337,14 @@ function loadStrings(file) {
 //selectInput()*/
 
 // Mouse
-var mousePressed;
 var pMouseX = 0, pMouseY = 0, mouseX = 0, mouseY = 0;
 
 function pUpdateMouseCoords(e) {
 	pMouseX = mouseX;
 	pMouseY = mouseY;
-	mouseX = e.clientX - parseInt(pCurCanvas.elt.style.left, 10);
-	mouseY = e.clientY - parseInt(pCurCanvas.elt.style.top, 10);
+	mouseX = e.clientX;// - parseInt(pCurCanvas.elt.style.left, 10);
+	mouseY = e.clientY;// - parseInt(pCurCanvas.elt.style.top, 10);
+	//console.log(mouseX+" "+mouseY);
 	//	console.log('mx = '+mouseX+' my = '+mouseY);
 }
 
@@ -767,27 +768,40 @@ function PElement(elt, w, h){
 	this.width = w;
 	this.height = h;
 	this.elt.style.position = 'absolute';
-	this.elt.style.left ='0px';
-	this.elt.style.top = '0px';
+	this.x = 0;
+	this.y = 0;
+	this.elt.style.left = this.x+ 'px';
+	this.elt.style.top = this.y+ 'px';
 	if (elt instanceof HTMLCanvasElement) {
 	  this.context = elt.getContext('2d');
 	}
+	this.html = function(html) { this.elt.innerHTML = html; };
   this.position = function(x, y) {
+		this.x = x;
+		this.y = y;
   	this.elt.style.left = x+'px';
 		this.elt.style.top = y+'px';
   };
   this.size = function(w, h) {
-  	this.width = w;
-  	this.height = h;
-  	this.elt.style.width = w;
-  	this.elt.style.height = h;
+  	var aW = w, aH = h;
+  	if (aW != AUTO || aH != AUTO) {
+	  	if (aW == AUTO) aW = h * this.elt.width / this.elt.height;
+	  	else if (aH == AUTO) aH = w * this.elt.height / this.elt.width;
+	  	this.width = aW;
+	  	this.height = aH;
+	  	this.elt.width = aW;
+	  	this.elt.height = aH;
+	  }
   };
+  this.style = function(s) { this.elt.style.cssText += s; }
   this.id = function(id) { this.elt.id = id; };
   this.class = function(c) { this.elt.className = c; }
   this.show = function() { this.elt.display = 'block'; }
   this.hide = function() { this.elt.style.display = 'none'; }
-  this.mousePressed = function(fxn) { this.elt.addEventListener("click", function(){fxn();}, false); }; // pend false?
-}
+  this.mousePressed = function(fxn) { var _this = this; this.elt.addEventListener("click", function(e){fxn(e, _this);}, false); }; // pend false?
+  this.mouseOver = function(fxn) { var _this = this; this.elt.addEventListener("mouseover", function(e){fxn(e, _this);}, false); };
+  this.mouseOut = function(fxn) { var _this = this; this.elt.addEventListener("mouseout", function(e){fxn(e, _this);}, false); };
+ }
 
 // Create
 function createCanvas(w, h) {
