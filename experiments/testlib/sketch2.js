@@ -38,7 +38,7 @@ var setup = function() {
 	text0 = createElement("hello world");
 	text0.id("test0");
 	text0.class("text");
-	text0.size(500, 200);
+	text0.size(600, 200);
 	text0.position(canvas0.width-text0.width, canvas0.height*0.1);
 	text0.mouseOver(boldText);
 	text0.mouseOut(unboldText);
