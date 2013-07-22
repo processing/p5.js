@@ -540,7 +540,6 @@ function stroke(v1, v2, v3, a) {
 	else ctx.strokeStyle = "rgb("+c[0]+","+c[1]+","+c[2]+")"; 
 }
 
-
 // Creating & Reading
 function alpha(rgb) {
 	if (rgb.length > 3) return rgb[3];

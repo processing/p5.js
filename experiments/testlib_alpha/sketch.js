@@ -50,10 +50,10 @@ var draw = function() {
 
 	// line
 	pushMatrix();
-	stroke(205, map(mouseX, 0, width, 0, 255), map(mouseY, 0, height, 0, 255));
 	strokeWeight(10);
 	translate(-clicks*5, 0);
 	for (var i=0; i<presses; i++) {
+		stroke(205, 100, 100+i*10, 255-i*10);
 		translate(40, 0);
 		line(50, 30, 400, 400);
 	}
@@ -95,7 +95,8 @@ var draw = function() {
 	translate(width-500, height-270);
 	strokeWeight(3);
 	for (var i=0; i<32; i++) {
-	stroke(bg[0]-35, bg[1]+35, bg[2]+20-10*i);
+		stroke(100, 200, 8*i, (i+1)*10);
+		//console.log(bg[0]+" "+bg[1]+" "+bg[2]);
 		bezier(15*i+85, 20, 15*i+10, 10, 15*i+90, 190, 15*i+15, 180);
 	}
 	popMatrix();
