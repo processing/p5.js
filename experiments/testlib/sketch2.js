@@ -6,7 +6,7 @@ var writer;
 var canvas0, canvas1, canvas2;
 var text0;
 var burgers = [], burgerYs = [], burgerVs = [];
-var img0, imgRot = 0;
+var imgs = [], imgRot = 0;
 var flower, flowerRot = 0;
 var input;
 
@@ -22,7 +22,7 @@ var setup = function() {
 	canvas1.position(0.25*canvas0.width, displayHeight()*0.2);
 
 	// burgers
-	for (var i=0; i<1; i++) {
+	for (var i=0; i<20; i++) {
 		var b = createImage("http://24.media.tumblr.com/tumblr_mckjod8K3T1rjiujyo1_500.png");
 		b.size(100, AUTO);
 		burgerYs.push(random(-b.height, displayHeight()+b.height));
@@ -44,18 +44,23 @@ var setup = function() {
 
 
 	// images
-	flower = createImage("http://subno.net/wp-content/uploads/2013/07/pink-rose-white-backgroundrose-transparent-png-isolated-flower-roses-various-colours-for-pt3kbx0t.png");
-	flower.size(400, AUTO);
+	flower = createImage("http://25.media.tumblr.com/7f13c09f459ada46f117c3d7b9140391/tumblr_mm7j0p4RLg1spro0no1_500.gif");
+	flower.size(500, AUTO);
 	flower.position(100, canvas0.height - flower.height*0.5);
 	flower.mousePressed(flowerMove);
 
-	img0 = createImage("http://media.tumblr.com/fecdc135ce5bdf0016bcd71da93d2ecb/tumblr_inline_mkr3wrfR2m1qz4rgp.png");
-	img0.size(AUTO, 300);
-	img0.position(displayWidth()*0.5, canvas0.height-200);
-	img0.mousePressed(imgPressed);
+	for (var i=0; i<8; i++) {
+		var img = createImage("http://25.media.tumblr.com/6cde29708d8c92336066f83c7645920b/tumblr_mknxj3uAvz1s9b4wqo1_500.png");
+		img.size(AUTO, 20*i+random(130, 170));
+		img.position(flower.x+flower.width*0.75+i*displayWidth()/8, canvas0.height-img.height/2+random(-30, 30));
+		img.mousePressed(imgPressed);
+		imgs.push(img);
+	}
+
+
 
 	// canvas2
-	canvas2 = createCanvas(150, 150);
+	canvas2 = createCanvas(100, 100);
 	canvas2.mousePressed(mousePressed2);
 	canvas2.position(flower.x+flower.width/2-canvas2.width/2, flower.y+flower.height/2-canvas2.height/2);
 
@@ -78,14 +83,7 @@ var draw = function() {
 	drawCanvas1();
 
 	context(canvas2);
-	//background(255, 200, 10);
-	noStroke();
-	fill(200, 30, 0);
-	ellipse(width/2, height/2, width, height);
-	fill(200, 80, 10);
-	strokeWeight(20);
-	stroke(0, 100, 0, 50);
-	ellipse(width/2, height/2, 0.75*width, 0.75*height);
+	drawCanvas2();
 
 	// burgers
 	for (var i=0; i<burgers.length; i++) {
@@ -137,6 +135,17 @@ var drawCanvas1 = function() {
 	}
 };
 
+var drawCanvas2 = function() {
+	//background(255, 200, 10);
+	noStroke();
+	fill(200, 30, 200);
+	ellipse(width/2, height/2, width, height);
+	fill(200, 80, 10);
+	strokeWeight(30);
+	stroke(0, 100, 0, 50);
+	ellipse(width/2, height/2, 0.5*width, 0.5*height);
+};
+
 // Individual elt mouse functions, attached in setup
 var mousePressed0 = function(e) {
 	// whatevs
@@ -164,9 +173,10 @@ var unboldText = function(e) {
 	text0.style('font-weight: normal');
 };
 
-var imgPressed = function(e) {
-	imgRot += 60;
-	img0.style("-webkit-transform: rotate("+imgRot+"deg);");
+var imgPressed = function(e, obj) {
+	imgRot += random(-20, 20);
+	obj.style("-webkit-transform: rotate("+imgRot+"deg);");
+	obj.position(obj.x+random(-30, 30), obj.y+random(-30, 30));
 };
 
 var burgerHide = function(e, obj) {
@@ -175,7 +185,8 @@ var burgerHide = function(e, obj) {
 
 var flowerMove = function(e, obj) {
 	console.log(obj);
-	obj.position(obj.x+random(-100, 100), obj.y+random(-100, 100));
+	obj.size(obj.width+20, obj.height+20);
+	obj.position(obj.x-10, obj.y-10);
 }
 
 var inputKey = function(text, obj) {
