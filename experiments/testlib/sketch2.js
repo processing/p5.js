@@ -22,9 +22,9 @@ var setup = function() {
 	canvas1.position(0.25*canvas0.width, displayHeight()*0.2);
 
 	// burgers
-	for (var i=0; i<20; i++) {
+	for (var i=0; i<17; i++) {
 		var b = createImage("http://24.media.tumblr.com/tumblr_mckjod8K3T1rjiujyo1_500.png");
-		b.size(100, AUTO);
+		b.size(130, AUTO);
 		burgerYs.push(random(-b.height, displayHeight()+b.height));
 		burgerVs.push(random(1, 4));
 		b.position(random(displayWidth()-b.width), burgerYs[i]);
@@ -184,7 +184,7 @@ var burgerHide = function(e, obj) {
 }
 
 var flowerMove = function(e, obj) {
-	console.log(obj);
+	println(obj);
 	obj.size(obj.width+20, obj.height+20);
 	obj.position(obj.x-10, obj.y-10);
 }
@@ -198,7 +198,7 @@ var mousePressed = function(e) {
 	//save("hi");
 	//writer.close();
 	//saveStrings(['hi', 'blah']);
-	//console.log(e);
+	//println(e);
 	clicks++;
 };
 
