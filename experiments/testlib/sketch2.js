@@ -17,9 +17,6 @@ var setup = function() {
 	canvas0 = createCanvas(displayWidth(), 0.6*displayHeight());
 	canvas0.mousePressed(mousePressed0);
 
-	// canvas1
-	canvas1 = createCanvas(500, displayHeight()*0.8);
-	canvas1.position(0.25*canvas0.width, displayHeight()*0.2);
 
 	// burgers
 	for (var i=0; i<17; i++) {
@@ -31,6 +28,11 @@ var setup = function() {
 		b.mousePressed(burgerHide);
 		burgers.push(b);
 	}
+
+	// canvas1
+	canvas1 = createCanvas(500, displayHeight()*0.8);
+	canvas1.position(0.25*canvas0.width, displayHeight()*0.2);
+
 
 	// text
 	text0 = createElement("hello world");
@@ -65,7 +67,7 @@ var setup = function() {
 	canvas2.position(flower.x+flower.width/2-canvas2.width/2, flower.y+flower.height/2-canvas2.height/2);
 
 	// input
-	input = createElement('<input style="width:300px; font-size:24px;" id="filename" type="text" value="what is your name?" onchange="inputKey(value)">');
+	input = createElement('<input style="width:300px;font-size:24px;;font-family:menlo;" id="filename" type="text" value="what is your name?" onchange="inputKey(value)">');
 	input.position(50, 200);
 
 	//colorMode(HSV);
