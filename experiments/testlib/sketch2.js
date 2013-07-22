@@ -105,15 +105,23 @@ var drawCanvas0 = function() {
 	stroke(255, 100, 0, 100);
 	if (flashes < 5) {
 		console.log(millis()+" "+startFlash)
-		if (millis() - startFlash < flashLength*0.5) fill(255, 255, 255);
+		if (millis() - startFlash < flashLength*0.5) {
+			fill(255, 255, 255);
+			text0.style("color:rgb(0, 0, 0)");
+		}
 		else if (millis() - startFlash > flashLength) {
 			flashes++;
 			startFlash = millis();
 			fill(100, 100, 100, 100);
+			text0.style("color:rgb(255, 255, 255)");
 		}
-		else fill(100, 100, 100, 100);
+		else {
+			fill(100, 100, 100, 100);
+			text0.style("color:rgb(255, 255, 255)");
+		}
 	} else {
 		fill(100, 100, 100, 100);
+		text0.style("color:rgb(255, 255, 255)");
 	}
 
 	for (var i=-500; i<canvas0.width; i+=100) {
