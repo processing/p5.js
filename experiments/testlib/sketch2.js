@@ -3,12 +3,17 @@ var img, img2, rad;
 var bg = [];
 var writer;
 
-var canvas0, canvas1, canvas2;
+var canvas0, canvas1;
 var text0;
 var burgers = [], burgerYs = [], burgerVs = [];
 var imgs = [], imgRot = 0;
 var flower, flowerRot = 0;
 var input;
+
+var flashes = 5;
+var flashLength = 1000;
+var startFlash = 0;
+
 
 var setup = function() {
 	println("setup");
@@ -38,7 +43,7 @@ var setup = function() {
 	text0 = createElement("hello world");
 	text0.id("test0");
 	text0.class("text");
-	text0.size(600, 200);
+	text0.size(700, 200);
 	text0.position(canvas0.width-text0.width, canvas0.height*0.1);
 	text0.mouseOver(boldText);
 	text0.mouseOut(unboldText);
@@ -60,12 +65,6 @@ var setup = function() {
 	}
 
 
-
-	// canvas2
-	canvas2 = createCanvas(100, 100);
-	canvas2.mousePressed(mousePressed2);
-	canvas2.position(flower.x+flower.width/2-canvas2.width/2, flower.y+flower.height/2-canvas2.height/2);
-
 	// input
 	input = createElement('<input style="width:300px;font-size:24px;;font-family:menlo;" id="filename" type="text" value="what is your name?" onchange="inputKey(value)">');
 	input.position(50, 200);
@@ -83,9 +82,6 @@ var draw = function() {
 
 	context(canvas1);
 	drawCanvas1();
-
-	context(canvas2);
-	drawCanvas2();
 
 	// burgers
 	for (var i=0; i<burgers.length; i++) {
@@ -107,10 +103,18 @@ var drawCanvas0 = function() {
 
 	strokeWeight(15);
 	stroke(255, 100, 0, 100);
-	var c0 = [255, 255, 255];
-	var c1 = [0, 0, 0];
-	var c2 = lerpColor(c0, c1, 0.8);
-	fill(c2[0], c2[1], c2[2]);
+	if (flashes < 5) {
+		console.log(millis()+" "+startFlash)
+		if (millis() - startFlash < flashLength*0.5) fill(255, 255, 255);
+		else if (millis() - startFlash > flashLength) {
+			flashes++;
+			startFlash = millis();
+			fill(100, 100, 100, 100);
+		}
+		else fill(100, 100, 100, 100);
+	} else {
+		fill(100, 100, 100, 100);
+	}
 
 	for (var i=-500; i<canvas0.width; i+=100) {
 		for (var j=-100; j<canvas0.height; j+=100) {
@@ -135,17 +139,6 @@ var drawCanvas1 = function() {
 			rect(i, j, 30, 30);
 		}
 	}
-};
-
-var drawCanvas2 = function() {
-	//background(255, 200, 10);
-	noStroke();
-	fill(200, 30, 200);
-	ellipse(width/2, height/2, width, height);
-	fill(200, 80, 10);
-	strokeWeight(30);
-	stroke(0, 100, 0, 50);
-	ellipse(width/2, height/2, 0.5*width, 0.5*height);
 };
 
 // Individual elt mouse functions, attached in setup
@@ -193,6 +186,8 @@ var flowerMove = function(e, obj) {
 
 var inputKey = function(text, obj) {
 	text0.html("hello "+text+"!");
+	flashes = 0;
+	startFlash = millis();
 };
 
 var mousePressed = function(e) {
