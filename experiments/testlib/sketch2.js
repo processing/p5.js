@@ -1,5 +1,4 @@
 var clicks = 0, presses = 0;
-var img, img2, rad;
 var bg = [];
 var writer;
 
@@ -149,7 +148,37 @@ var drawCanvas1 = function() {
 	}
 };
 
-// Individual elt mouse functions, attached in setup
+/// Default input functions
+
+var mousePressed = function(e) {
+	println("mouse pressed");
+	//save("hi");
+	//writer.close();
+	//saveStrings(['hi', 'blah']);
+	//println(e);
+	clicks++;
+};
+
+var keyPressed = function(e) {
+	keyCode = e.keyCode || e.which;
+	key = String.fromCharCode(keyCode);
+	println("key pressed "+keyCode+" "+key);
+	writer.print(key);
+	//alert('key pressed '+keyCode);
+	presses++;
+};
+
+var keyReleased = function(e) {
+	keyCode = e.keyCode || e.which;
+	key = String.fromCharCode(keyCode);
+};
+
+var keyTyped = function(e) {
+};
+
+
+/// Individual elt mouse functions, attached in setup
+
 var mousePressed0 = function(e) {
 	// whatevs
 	println("0 pressed");
@@ -195,31 +224,5 @@ var inputKey = function(text, obj) {
 	text0.html("hello "+text+"!");
 	flashes = 0;
 	startFlash = millis();
-};
-
-var mousePressed = function(e) {
-	println("mouse pressed");
-	//save("hi");
-	//writer.close();
-	//saveStrings(['hi', 'blah']);
-	//println(e);
-	clicks++;
-};
-
-var keyPressed = function(e) {
-	keyCode = e.keyCode || e.which;
-	key = String.fromCharCode(keyCode);
-	println("key pressed "+keyCode+" "+key);
-	writer.print(key);
-	//alert('key pressed '+keyCode);
-	presses++;
-};
-
-var keyReleased = function(e) {
-	keyCode = e.keyCode || e.which;
-	key = String.fromCharCode(keyCode);
-};
-
-var keyTyped = function(e) {
 };
 

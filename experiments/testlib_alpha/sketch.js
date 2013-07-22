@@ -96,7 +96,6 @@ var draw = function() {
 	strokeWeight(3);
 	for (var i=0; i<32; i++) {
 		stroke(100, 200, 8*i, (i+1)*10);
-		//console.log(bg[0]+" "+bg[1]+" "+bg[2]);
 		bezier(15*i+85, 20, 15*i+10, 10, 15*i+90, 190, 15*i+15, 180);
 	}
 	popMatrix();
