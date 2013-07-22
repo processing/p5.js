@@ -6,7 +6,7 @@ var writer;
 var canvas0, canvas1;
 var text0;
 var burgers = [], burgerYs = [], burgerVs = [];
-var imgs = [], imgRot = 0;
+var imgs = [];
 var flower, flowerRot = 0;
 var input;
 
@@ -24,7 +24,7 @@ var setup = function() {
 
 
 	// burgers
-	for (var i=0; i<17; i++) {
+	for (var i=0; i<12; i++) {
 		var b = createImage("http://24.media.tumblr.com/tumblr_mckjod8K3T1rjiujyo1_500.png");
 		b.size(130, AUTO);
 		burgerYs.push(random(-b.height, displayHeight()+b.height));
@@ -56,11 +56,11 @@ var setup = function() {
 	flower.position(100, canvas0.height - flower.height*0.5);
 	flower.mousePressed(flowerMove);
 
-	for (var i=0; i<8; i++) {
+	for (var i=0; i<7; i++) {
 		var img = createImage("http://25.media.tumblr.com/6cde29708d8c92336066f83c7645920b/tumblr_mknxj3uAvz1s9b4wqo1_500.png");
 		img.size(AUTO, 20*i+random(130, 170));
-		img.position(flower.x+flower.width*0.75+i*displayWidth()/8, canvas0.height-img.height/2+random(-30, 30));
-		img.mousePressed(imgPressed);
+		img.position(flower.x+flower.width*0.75+i*(displayWidth()-flower.x-flower.width*0.75)/8, canvas0.height-img.height/2+random(-30, 30));
+		img.mouseOver(imgPressed);
 		imgs.push(img);
 	}
 
@@ -177,8 +177,7 @@ var unboldText = function(e) {
 };
 
 var imgPressed = function(e, obj) {
-	imgRot += random(-20, 20);
-	obj.style("-webkit-transform: rotate("+imgRot+"deg);");
+	obj.style("-webkit-transform: rotate("+random(-90,90)+"deg);");
 	obj.position(obj.x+random(-30, 30), obj.y+random(-30, 30));
 };
 
