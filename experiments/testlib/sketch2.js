@@ -16,7 +16,7 @@ var startFlash = 0;
 
 var setup = function() {
 	println("setup");
-	
+
 	// canvas0
 	canvas0 = createCanvas(displayWidth(), 0.6*displayHeight());
 	canvas0.mousePressed(mousePressed0);
