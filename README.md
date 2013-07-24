@@ -17,5 +17,4 @@ Idea of Processing syntax-wise was to take some of the nastiness out of writing 
 Current work on the Processing JS port is focused on being able to be code compatible and having things run right out of the box (which is great!), but comes at the cost of keeping some of Java's quirks, while potentially hiding the nicer parts of JS. (Strictly speaking, you can still do JS inside of that mode, but it's not necessarily the intent or the current setup.)
 
 
-####See wiki for Getting Started and Research Documentation in process.
-####<https://github.com/lmccart/js-processing/wiki>
+####See wiki for Getting Started and Research Documentation in process. <https://github.com/lmccart/js-processing/wiki>
