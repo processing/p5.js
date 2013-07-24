@@ -1,7 +1,7 @@
 Processing-JS
 =============
 
-####See wiki for Getting Started and Research Documentation in process. <https://github.com/lmccart/js-processing/wiki>
+####See wiki for [Getting Started](https://github.com/lmccart/processing-js/wiki/Getting-Started) and [Research Documentation](https://github.com/lmccart/processing-js/wiki/Research-Documentation) in progress. <https://github.com/lmccart/js-processing/wiki>
 
 ####Examples
 + [Basic drawing API example](http://htmlpreview.github.io/?https://github.com/lmccart/processing-js/blob/master/experiments/testlib_alpha/index.html)
