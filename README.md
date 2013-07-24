@@ -3,7 +3,7 @@ Processing-JS
 
 ####See wiki for [Getting Started](https://github.com/lmccart/processing-js/wiki/Getting-Started) and [Research Documentation](https://github.com/lmccart/processing-js/wiki/Research-Documentation) in progress. <https://github.com/lmccart/js-processing/wiki>
 
-####Examples
+####Demo
 + [Basic drawing API example](http://htmlpreview.github.io/?https://github.com/lmccart/processing-js/blob/master/experiments/testlib_alpha/index.html)
 + [DOM extension API example](http://htmlpreview.github.io/?https://github.com/lmccart/processing-js/blob/master/experiments/testlib/index2.html) -- refresh if images don't immediately show up for now
 
