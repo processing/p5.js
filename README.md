@@ -6,8 +6,9 @@ Note that this library is experimental and in progress.
 
 ####Demo
 + [Basic drawing API example](http://htmlpreview.github.io/?https://github.com/lmccart/processing-js/blob/master/experiments/testlib_alpha/index.html)
++ [Basic drawing code](https://github.com/lmccart/processing-js/blob/master/experiments/testlib_alpha/sketch.js)
 + [DOM extension API example](http://htmlpreview.github.io/?https://github.com/lmccart/processing-js/blob/master/experiments/testlib/index2.html) -- refresh if images don't immediately show up for now
-
++ [DOM extension code](https://github.com/lmccart/processing-js/blob/master/experiments/testlib/sketch2.js)
 
 ####Goal
 Spec out and test a JavaScript library that would enable Processing-like syntax for drawing using Canvas and WebGL. It's both about the syntax and how to code.
