@@ -2,8 +2,9 @@ Processing-JS
 =============
 
 ####[> Getting Started](https://github.com/lmccart/processing-js/wiki/Getting-Started)
-####[> Documentation](https://github.com/lmccart/processing-js/wiki/Documentation)
+####[> Reference](https://github.com/lmccart/processing-js/wiki/Reference)
 ####[> Examples](https://github.com/lmccart/processing-js/wiki/Examples)
+####[> Troubleshooting](https://github.com/lmccart/processing-js/wiki/Troubleshooting)
 ####[> Research Documentation](https://github.com/lmccart/processing-js/wiki/Research-Documentation)
 
 Note that this library is experimental and in progress.
