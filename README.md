@@ -1,7 +1,6 @@
 Processing-JS
 =============
 
-####See project page -- http://lmccart.github.io/processing-js/
 ####See wiki for [Getting Started](https://github.com/lmccart/processing-js/wiki/Getting-Started) and [Research Documentation](https://github.com/lmccart/processing-js/wiki/Research-Documentation) in progress. <https://github.com/lmccart/js-processing/wiki>
 Note that this library is experimental and in progress.
 
