@@ -1,9 +1,7 @@
 API progress
 ============
 
-
-
-##Progress
+See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for currently supported API.
 
 ###Key
 + __implemented__
