@@ -1,38 +1,7 @@
 API
 ===
 
-
-##Basic sketch
-
-```java
-void setup() {
-  // setup stuff
-}
-
-void draw() {
-	// draw stuff
-}
-```
-
-
-```javascript
-var setup = function() {
-	// setup stuff
-};
-
-var draw = function() {
-	// draw stuff
-};
-```
-
-
-##Progress
-
-###Key
-+ __implemented__
-+ to be implemented
-+ ~~removed~~
-+ _future version_
+See [API progress page](https://github.com/lmccart/processing-js/blob/master/api-progress.md) for current and future implementation plans.
 
 ###Structure 
 
