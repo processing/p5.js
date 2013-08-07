@@ -16,32 +16,22 @@ See [API progress page](https://github.com/lmccart/processing-js/blob/master/api
 + __"[]" (array access)__
 + __{} (curly braces)__
 + __catch__
-+ ~~class~~
 + __draw()__
 + exit()
-+ ~~extends~~
 + __false__
-+ ~~final~~
 + __finally__
-+ ~~implements~~
-+ ~~import~~
 + __loop()__
 + __new__
 + __noLoop()__
 + __null__
 + popStyle()
-+ ~~private~~
-+ ~~public~~
 + pushStyle()
 + __redraw()__
 + __return__
 + __setup()__
-+ ~~static~~
-+ ~~super~~
 + __this__
 + __true__
 + __try__
-+ ~~void~~
 
 ###Environment 
 + cursor()
@@ -50,20 +40,11 @@ See [API progress page](https://github.com/lmccart/processing-js/blob/master/api
 + focused
 + __frameCount__
 + __frameRate()__
-+ ~~frameRate~~
 + __getFrameRate()__
 + __height__
 + noCursor()
 + __size()__
 + __width__
-
-###Data
-
-####~~Primitive~~
-
-####~~Composite~~
-
-####Conversion
 
 
 ####String Functions
@@ -229,12 +210,10 @@ See [API progress page](https://github.com/lmccart/processing-js/blob/master/api
 ###Output
 
 ####Text Area
-+ ~~print()~~
 + __println()__
 
 ####Image
 + __save()__
-+ ~~saveFrame()~~
 
 ####Files
 + beginRaw()
@@ -267,45 +246,6 @@ See [API progress page](https://github.com/lmccart/processing-js/blob/master/api
 + __shearX()__
 + __shearY()__
 + __translate()__
-
-###_Lights, Camera_
-
-####_Lights_
-+ _ambientLight()_
-+ _directionalLight()_
-+ _lightFalloff()_
-+ _lights()_
-+ _lightSpecular()_
-+ _noLights()_
-+ _normal()_
-+ _pointLight()_
-+ _spotLight()_
-
-####_Camera_
-+ _beginCamera()_
-+ _camera()_
-+ _endCamera()_
-+ _frustum()_
-+ _ortho()_
-+ _perspective()_
-+ _printCamera()_
-+ _printProjection()_
-
-####_Coordinates_
-+ _modelX()_
-+ _modelY()_
-+ _modelZ()_
-+ _screenX()_
-+ _screenY()_
-+ _screenZ()_
-
-####_Material Properties_
-+ _ambient()_
-+ _emissive()_
-+ _shininess()_
-+ _specular()_
-
-###Color
 
 ####Setting
 + __background()__
