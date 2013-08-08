@@ -175,19 +175,15 @@ See [API progress page](https://github.com/lmccart/processing-js/blob/master/api
 + key
 + keyCode
 + keyPressed()
-+ ~~keyPressed~~
 + iskeyPressed()
 + keyReleased()
 + keyTyped()
 
 ####Files
-+ ~~BufferedReader~~
 + createInput()
 + createReader()
 + loadBytes()
 + loadJSON()
-+ ~~loadJSONArray()~~
-+ ~~loadJSONObject()~~
 + loadStrings()
 + loadTable()
 + loadXML()
