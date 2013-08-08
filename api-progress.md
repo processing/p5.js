@@ -463,3 +463,35 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + __TAU__
 + __TWO_PI__
 
+
+
+###DOM
++ __AUTO__
+
+####Create
++ __createElement(html)__
++ __createImage(src)__
++ __createCanvas(w, h)__
+
+####Access
++ get(id)
++ get(class)
+
+####Set context
++ context(id)
++ __context(obj)__
+
+####PElement
++ __id(id)__
++ __class(class)__
++ __size(w, h)__
++ __position(x, y)__
++ __style(style)__
++ __html(html)__
++ __show()__
++ __hide()__
+
+####Listeners
++ __mousePressed(function)__
++ __mouseOver(function)__
++ __mouseOut(function)__
