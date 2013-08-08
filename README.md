@@ -1,14 +1,28 @@
 Processing-JS
 =============
 
-####See wiki for Getting Started and Research Documentation in process. <https://github.com/lmccart/js-processing/wiki>
+####Note that this library is experimental and in progress!!!
 
-####Examples
+
+####[> Getting Started](https://github.com/lmccart/processing-js/wiki/Getting-Started)
+Create and run your first sketch!
+####[> Reference](https://github.com/lmccart/processing-js/wiki/Reference)
+The functionality supported by Processing-JS.
+####[> Examples](https://github.com/lmccart/processing-js/wiki/Examples)
+Short, prototypical programs exploring the basics of programming with Processing-JS.
+####[> Troubleshooting](https://github.com/lmccart/processing-js/wiki/Troubleshooting)
+Help with common problems. Coming soon.
+####[> Research Documentation](https://github.com/lmccart/processing-js/wiki/Research-Documentation)
+This project developed out of a Fellowship with the Processing Foundation exploring the future of Processing with JavaScript. Documentation of research in process and references is here.
+
+
+###Demo
 + [Basic drawing API example](http://htmlpreview.github.io/?https://github.com/lmccart/processing-js/blob/master/experiments/testlib_alpha/index.html)
++ [Basic drawing code](https://github.com/lmccart/processing-js/blob/master/experiments/testlib_alpha/sketch.js)
 + [DOM extension API example](http://htmlpreview.github.io/?https://github.com/lmccart/processing-js/blob/master/experiments/testlib/index2.html) -- refresh if images don't immediately show up for now
++ [DOM extension code](https://github.com/lmccart/processing-js/blob/master/experiments/testlib/sketch2.js)
 
-
-####Goal
+###Goal
 Spec out and test a JavaScript library that would enable Processing-like syntax for drawing using Canvas and WebGL. It's both about the syntax and how to code.
 
 

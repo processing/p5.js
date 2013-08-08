@@ -5,100 +5,100 @@ See [API progress page](https://github.com/lmccart/processing-js/blob/master/api
 
 ###Structure 
 
-+ println() (parentheses)println
-+ println, (comma)println
-+ println. (dot)println
-+ println/* */ (multiline comment)println
-+ println/** */ (doc comment)println
-+ println// (comment)println
-+ println; (semicolon)println
-+ println= (assign)println
-+ println"[]" (array access)println
-+ println{} (curly braces)println
-+ printlncatchprintln
-+ printlndraw()println
++ () (parentheses)
++ , (comma)
++ . (dot)
++ /* */ (multiline comment)
++ /** */ (doc comment)
++ // (comment)
++ ; (semicolon)
++ = (assign)
++ "[]" (array access)
++ {} (curly braces)
++ catch
++ draw()
 + exit()
-+ printlnfalseprintln
-+ printlnfinallyprintln
-+ printlnloop()println
-+ printlnnewprintln
-+ printlnnoLoop()println
-+ printlnnullprintln
++ false
++ finally
++ loop()
++ new
++ noLoop()
++ null
 + popStyle()
 + pushStyle()
-+ printlnredraw()println
-+ printlnreturnprintln
-+ printlnsetup()println
-+ printlnthisprintln
-+ printlntrueprintln
-+ printlntryprintln
++ redraw()
++ return
++ setup()
++ this
++ true
++ try
 
 ###Environment 
 + cursor()
-+ printlndisplayHeightprintln
-+ printlndisplayWidthprintln
++ displayHeight
++ displayWidth
 + focused
-+ printlnframeCountprintln
-+ printlnframeRate()println
-+ printlngetFrameRate()println
-+ printlnheightprintln
++ frameCount
++ frameRate()
++ getFrameRate()
++ height
 + noCursor()
-+ printlnsize()println
-+ printlnwidthprintln
++ size()
++ width
 
 
 ####String Functions
-+ printlnjoin()println
-+ printlnmatch()println
++ join()
++ match()
 + matchAll()
-+ printlnnf()println
++ nf()
 + nfc()
 + nfp()
 + nfs()
-+ printlnsplit()println
++ split()
 + splitTokens()
-+ printlntrim()println
++ trim()
 
 ####Array Functions
-+ printlnappend()println
-+ printlnarrayCopy()println
-+ printlnconcat()println
-+ printlnexpand()println
-+ printlnreverse()println
-+ printlnshorten()println
++ append()
++ arrayCopy()
++ concat()
++ expand()
++ reverse()
++ shorten()
 + sort()
-+ printlnsplice()println
-+ printlnsubset()println
++ splice()
++ subset()
 
 
 ###Control
 
 ####Relational Operators
-+ println!= (inequality)println
-+ println< (less than)println
-+ println<= (less than or equal to)println
-+ println== (equality)println
-+ println> (greater than)println
-+ println>= (greater than or equal to)println
++ != (inequality)
++ < (less than)
++ <= (less than or equal to)
++ == (equality)
++ > (greater than)
++ >= (greater than or equal to)
 
 ####Iteration
-+ printlnforprintln
-+ printlnwhileprintln
++ for
++ while
 
 ####Conditionals
-+ println?: (conditional)println
-+ printlnbreakprintln
-+ printlncaseprintln
-+ printlncontinueprintln
-+ printlndefaultprintln
-+ printlnelseprintln
-+ printlnifprintln
-+ printlnswitchprintln
++ ?: (conditional)
++ break
++ case
++ continue
++ default
++ else
++ if
++ switch
 
 ####Logical Operators
-+ println! (logical NOT)println
-+ println&& (logical AND)println
-+ println|| (logical OR)println
++ ! (logical NOT)
++ && (logical AND)
++ || (logical OR)
 
 
 ###Shape 
@@ -108,15 +108,15 @@ See [API progress page](https://github.com/lmccart/processing-js/blob/master/api
 
 ####2D Primitives
 + arc()
-+ printlnellipse()println
-+ printlnline()println
++ ellipse()
++ line()
 + point()
-+ printlnquad()println
-+ printlnrect()println
-+ printlntriangle()println
++ quad()
++ rect()
++ triangle()
 
 ####Curves
-+ printlnbezier()println
++ bezier()
 + bezierDetail()
 + bezierPoint()
 + bezierTangent()
@@ -132,23 +132,23 @@ See [API progress page](https://github.com/lmccart/processing-js/blob/master/api
 + _sphereDetail()_
 
 ####Attributes
-+ printlnellipseMode()println
-+ printlnnoSmooth()println
-+ printlnrectMode()println
-+ printlnsmooth()println
-+ printlnstrokeCap()println
-+ printlnstrokeJoin()println
-+ printlnstrokeWeight()println
++ ellipseMode()
++ noSmooth()
++ rectMode()
++ smooth()
++ strokeCap()
++ strokeJoin()
++ strokeWeight()
 
 ####Vertex
 + beginContour()
-+ printlnbeginShape()println
-+ printlnbezierVertex()println
++ beginShape()
++ bezierVertex()
 + curveVertex()
 + endContour()
-+ printlnendShape()println
-+ printlnquadraticVertex()println
-+ printlnvertex()println
++ endShape()
++ quadraticVertex()
++ vertex()
 
 ####Loading & Displaying
 + shape()
@@ -159,36 +159,36 @@ See [API progress page](https://github.com/lmccart/processing-js/blob/master/api
 
 ####Mouse
 + mouseButton
-+ printlnmouseClicked()println
++ mouseClicked()
 + mouseDragged()
-+ printlnmouseMoved()println
-+ printlnmousePressed()println
++ mouseMoved()
++ mousePressed()
 + mousePressed
-+ printlnmouseReleased()println
++ mouseReleased()
 + mouseWheel()
-+ printlnmouseXprintln
-+ printlnmouseYprintln
-+ printlnpmouseXprintln
-+ printlnpmouseYprintln
++ mouseX
++ mouseY
++ pmouseX
++ pmouseY
 
 ####Keyboard
-+ printlnkeyprintln
-+ printlnkeyCodeprintln
-+ printlnkeyPressed()println
++ key
++ keyCode
++ keyPressed()
 + ~~keyPressed~~
-+ printlniskeyPressed()println
-+ printlnkeyReleased()println
-+ printlnkeyTyped()println
++ iskeyPressed()
++ keyReleased()
++ keyTyped()
 
 ####Files
 + ~~BufferedReader~~
 + createInput()
 + createReader()
 + loadBytes()
-+ printlnloadJSON()println
++ loadJSON()
 + ~~loadJSONArray()~~
 + ~~loadJSONObject()~~
-+ printlnloadStrings()println
++ loadStrings()
 + loadTable()
 + loadXML()
 + open()
@@ -199,83 +199,83 @@ See [API progress page](https://github.com/lmccart/processing-js/blob/master/api
 
 
 ####Time & Date
-+ printlnday()println
-+ printlnhour()println
-+ printlnmillis()println
-+ printlnminute()println
-+ printlnmonth()println
-+ printlnsecond()println
-+ printlnyear()println
++ day()
++ hour()
++ millis()
++ minute()
++ month()
++ second()
++ year()
 
 ###Output
 
 ####Text Area
-+ printlnprintln()println
++ println()
 
 ####Image
-+ printlnsave()println
++ save()
 
 ####Files
 + beginRaw()
 + beginRecord()
 + createOutput()
-+ printlncreateWriter()println
++ createWriter()
 + endRaw()
 + endRecord()
-+ printlnPrintWriterprintln
++ PrintWriter
 + saveBytes()
 + saveJSONArray()
 + saveJSONObject()
 + saveStream()
-+ printlnsaveStrings()println
++ saveStrings()
 + saveXML()
 + selectOutput()
 
 
 ###Transform 
-+ printlnapplyMatrix()println
-+ printlnpopMatrix()println
-+ printlnprintMatrix()println
-+ printlnpushMatrix()println
-+ printlnresetMatrix()println
-+ printlnrotate()println
++ applyMatrix()
++ popMatrix()
++ printMatrix()
++ pushMatrix()
++ resetMatrix()
++ rotate()
 + _rotateX()_
 + _rotateY()_
 + _rotateZ()_
-+ printlnscale()println
-+ printlnshearX()println
-+ printlnshearY()println
-+ printlntranslate()println
++ scale()
++ shearX()
++ shearY()
++ translate()
 
 ####Setting
-+ printlnbackground()println
++ background()
 + clear()
-+ printlncolorMode()println // pend test this?
-+ printlnfill()println
-+ printlnnoFill()println
-+ printlnnoStroke()println
-+ printlnstroke()println
++ colorMode() // pend test this?
++ fill()
++ noFill()
++ noStroke()
++ stroke()
 
 ####Creating & Reading
-+ printlnalpha()println
-+ printlnblue()println
-+ printlnbrightness()println
-+ printlncolor()println
-+ printlngreen()println
-+ printlnhue()println
-+ printlnlerpColor()println
-+ printlnred()println
-+ printlnsaturation()println
++ alpha()
++ blue()
++ brightness()
++ color()
++ green()
++ hue()
++ lerpColor()
++ red()
++ saturation()
 
 ###Image 
 
-+ printlncreateImage()println
-+ printlnPImageprintln - _mostly_
++ createImage()
++ PImage - _mostly_
 
 ####Loading & Displaying
-+ printlnimage()println
-+ printlnimageMode()println
-+ printlnloadImage()println
++ image()
++ imageMode()
++ loadImage()
 + noTint()
 + requestImage()
 + tint()
@@ -289,11 +289,11 @@ See [API progress page](https://github.com/lmccart/processing-js/blob/master/api
 + blend()
 + copy()
 + filter()
-+ printlnget()println
-+ printlnloadPixels()println
-+ printlnpixels[]println
++ get()
++ loadPixels()
++ pixels[]
 + set()
-+ printlnupdatePixels()println
++ updatePixels()
 
 ###Rendering 
 + blendMode()
@@ -313,14 +313,14 @@ See [API progress page](https://github.com/lmccart/processing-js/blob/master/api
 ####Loading & Displaying
 + createFont()
 + loadFont()
-+ printlntext()println
++ text()
 + textFont()
 
 ####Attributes
-+ printlntextAlign()println
++ textAlign()
 + textLeading()
 + textMode()
-+ printlntextSize()println
++ textSize()
 + textWidth()
 
 ####Metrics
@@ -333,69 +333,69 @@ See [API progress page](https://github.com/lmccart/processing-js/blob/master/api
 + PVector
 
 ####Operators
-+ println% (modulo)println
-+ println* (multiply)println
-+ println*= (multiply assign)println
-+ println+ (addition)println
-+ println++ (increment)println
-+ println+= (add assign)println
-+ println- (minus)println
-+ println-- (decrement)println
-+ println-= (subtract assign)println
-+ println/ (divide)println
-+ println/= (divide assign)println
++ % (modulo)
++ * (multiply)
++ *= (multiply assign)
++ + (addition)
++ ++ (increment)
++ += (add assign)
++ - (minus)
++ -- (decrement)
++ -= (subtract assign)
++ / (divide)
++ /= (divide assign)
 
 ####Bitwise Operators
-+ println& (bitwise AND)println
-+ println<< (left shift)println
-+ println>> (right shift)println
-+ println| (bitwise OR)println
++ & (bitwise AND)
++ << (left shift)
++ >> (right shift)
++ | (bitwise OR)
 
 ####Calculation
-+ printlnabs()println
-+ printlnceil()println
-+ printlnconstrain()println
-+ printlndist()println
-+ printlnexp()println
-+ printlnfloor()println
-+ printlnlerp()println
-+ printlnlog()println
-+ printlnmag()println
-+ printlnmap()println
-+ printlnmax()println
-+ printlnmin()println
-+ printlnnorm()println
-+ printlnpow()println
-+ printlnround()println
-+ printlnsq()println
-+ printlnsqrt()println
++ abs()
++ ceil()
++ constrain()
++ dist()
++ exp()
++ floor()
++ lerp()
++ log()
++ mag()
++ map()
++ max()
++ min()
++ norm()
++ pow()
++ round()
++ sq()
++ sqrt()
 
 ####Trigonometry
-+ printlnacos()println
-+ printlnasin()println
-+ printlnatan()println
-+ printlnatan2()println
-+ printlncos()println
-+ printlndegrees()println
-+ printlnradians()println
-+ printlnsin()println
-+ printlntan()println
++ acos()
++ asin()
++ atan()
++ atan2()
++ cos()
++ degrees()
++ radians()
++ sin()
++ tan()
 
 ####Random
 + noise()
 + noiseDetail()
 + noiseSeed()
-+ printlnrandom()println
++ random()
 + randomGaussian()
 + randomSeed()
 
 ###Constants 
 
-+ printlnHALF_PIprintln
-+ printlnPIprintln
-+ printlnQUARTER_PIprintln
-+ printlnTAUprintln
-+ printlnTWO_PIprintln
++ HALF_PI
++ PI
++ QUARTER_PI
++ TAU
++ TWO_PI
 
 
 ###DOM
