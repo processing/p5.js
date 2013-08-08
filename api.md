@@ -397,3 +397,37 @@ See [API progress page](https://github.com/lmccart/processing-js/blob/master/api
 + __TAU__
 + __TWO_PI__
 
+
+###DOM
++ AUTO
+// Create
+
+####Create
++ createElement(html)
++ createImage(src)
++ createCanvas(w, h)
+
+
+####Access
++ get(id)
++ get(class)
+
+####Set context
++ context(id)
++ context(obj)
+
+####PElement
++ id(id)
++ class(class)
++ size(w, h)
++ position(x, y)
++ style(style)
++ html(html)
++ show()
++ hide()
+
+####Listeners
++ mousePressed(function)
++ mouseOver(function)
++ mouseOut(function)
+
