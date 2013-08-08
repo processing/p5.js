@@ -1,154 +1,104 @@
 API
 ===
 
-
-##Basic sketch
-
-```java
-void setup() {
-	// setup stuff
-}
-
-void draw() {
-	// draw stuff
-}
-```
-
-
-```javascript
-var setup = function() {
-	// setup stuff
-};
-
-var draw = function() {
-	// draw stuff
-};
-```
-
-
-##Progress
-
-###Key
-+ __implemented__
-+ to be implemented
-+ ~~removed~~
-+ _future version_
+See [API progress page](https://github.com/lmccart/processing-js/blob/master/api-progress.md) for current and future implementation plans.
 
 ###Structure 
 
-+ __() (parentheses)__
-+ __, (comma)__
-+ __. (dot)__
-+ __/* */ (multiline comment)__
-+ __/** */ (doc comment)__
-+ __// (comment)__
-+ __; (semicolon)__
-+ __= (assign)__
-+ __"[]" (array access)__
-+ __{} (curly braces)__
-+ __catch__
-+ ~~class~~
-+ __draw()__
++ println() (parentheses)println
++ println, (comma)println
++ println. (dot)println
++ println/* */ (multiline comment)println
++ println/** */ (doc comment)println
++ println// (comment)println
++ println; (semicolon)println
++ println= (assign)println
++ println"[]" (array access)println
++ println{} (curly braces)println
++ printlncatchprintln
++ printlndraw()println
 + exit()
-+ ~~extends~~
-+ __false__
-+ ~~final~~
-+ __finally__
-+ ~~implements~~
-+ ~~import~~
-+ __loop()__
-+ __new__
-+ __noLoop()__
-+ __null__
++ printlnfalseprintln
++ printlnfinallyprintln
++ printlnloop()println
++ printlnnewprintln
++ printlnnoLoop()println
++ printlnnullprintln
 + popStyle()
-+ ~~private~~
-+ ~~public~~
 + pushStyle()
-+ __redraw()__
-+ __return__
-+ __setup()__
-+ ~~static~~
-+ ~~super~~
-+ __this__
-+ __true__
-+ __try__
-+ ~~void~~
++ printlnredraw()println
++ printlnreturnprintln
++ printlnsetup()println
++ printlnthisprintln
++ printlntrueprintln
++ printlntryprintln
 
 ###Environment 
 + cursor()
-+ __displayHeight__
-+ __displayWidth__
++ printlndisplayHeightprintln
++ printlndisplayWidthprintln
 + focused
-+ __frameCount__
-+ __frameRate()__
-+ ~~frameRate~~
-+ __getFrameRate()__
-+ __height__
++ printlnframeCountprintln
++ printlnframeRate()println
++ printlngetFrameRate()println
++ printlnheightprintln
 + noCursor()
-+ __size()__
-+ __width__
-
-###Data
-
-####~~Primitive~~
-
-####~~Composite~~
-
-####Conversion
++ printlnsize()println
++ printlnwidthprintln
 
 
 ####String Functions
-+ __join()__
-+ __match()__
++ printlnjoin()println
++ printlnmatch()println
 + matchAll()
-+ __nf()__
++ printlnnf()println
 + nfc()
 + nfp()
 + nfs()
-+ __split()__
++ printlnsplit()println
 + splitTokens()
-+ __trim()__
++ printlntrim()println
 
 ####Array Functions
-+ __append()__
-+ __arrayCopy()__
-+ __concat()__
-+ __expand()__
-+ __reverse()__
-+ __shorten()__
++ printlnappend()println
++ printlnarrayCopy()println
++ printlnconcat()println
++ printlnexpand()println
++ printlnreverse()println
++ printlnshorten()println
 + sort()
-+ __splice()__
-+ __subset()__
++ printlnsplice()println
++ printlnsubset()println
 
 
 ###Control
 
 ####Relational Operators
-+ __!= (inequality)__
-+ __< (less than)__
-+ __<= (less than or equal to)__
-+ __== (equality)__
-+ __> (greater than)__
-+ __>= (greater than or equal to)__
++ println!= (inequality)println
++ println< (less than)println
++ println<= (less than or equal to)println
++ println== (equality)println
++ println> (greater than)println
++ println>= (greater than or equal to)println
 
 ####Iteration
-+ __for__
-+ __while__
++ printlnforprintln
++ printlnwhileprintln
 
 ####Conditionals
-+ __?: (conditional)__
-+ __break__
-+ __case__
-+ __continue__
-+ __default__
-+ __else__
-+ __if__
-+ __switch__
++ println?: (conditional)println
++ printlnbreakprintln
++ printlncaseprintln
++ printlncontinueprintln
++ printlndefaultprintln
++ printlnelseprintln
++ printlnifprintln
++ printlnswitchprintln
 
 ####Logical Operators
-+ __! (logical NOT)__
-+ __&& (logical AND)__
-+ __|| (logical OR)__
++ println! (logical NOT)println
++ println&& (logical AND)println
++ println|| (logical OR)println
 
 
 ###Shape 
@@ -158,15 +108,15 @@ var draw = function() {
 
 ####2D Primitives
 + arc()
-+ __ellipse()__
-+ __line()__
++ printlnellipse()println
++ printlnline()println
 + point()
-+ __quad()__
-+ __rect()__
-+ __triangle()__
++ printlnquad()println
++ printlnrect()println
++ printlntriangle()println
 
 ####Curves
-+ __bezier()__
++ printlnbezier()println
 + bezierDetail()
 + bezierPoint()
 + bezierTangent()
@@ -182,23 +132,23 @@ var draw = function() {
 + _sphereDetail()_
 
 ####Attributes
-+ __ellipseMode()__
-+ __noSmooth()__
-+ __rectMode()__
-+ __smooth()__
-+ __strokeCap()__
-+ __strokeJoin()__
-+ __strokeWeight()__
++ printlnellipseMode()println
++ printlnnoSmooth()println
++ printlnrectMode()println
++ printlnsmooth()println
++ printlnstrokeCap()println
++ printlnstrokeJoin()println
++ printlnstrokeWeight()println
 
 ####Vertex
 + beginContour()
-+ __beginShape()__
-+ __bezierVertex()__
++ printlnbeginShape()println
++ printlnbezierVertex()println
 + curveVertex()
 + endContour()
-+ __endShape()__
-+ __quadraticVertex()__
-+ __vertex()__
++ printlnendShape()println
++ printlnquadraticVertex()println
++ printlnvertex()println
 
 ####Loading & Displaying
 + shape()
@@ -209,36 +159,36 @@ var draw = function() {
 
 ####Mouse
 + mouseButton
-+ __mouseClicked()__
++ printlnmouseClicked()println
 + mouseDragged()
-+ __mouseMoved()__
-+ __mousePressed()__
++ printlnmouseMoved()println
++ printlnmousePressed()println
 + mousePressed
-+ __mouseReleased()__
++ printlnmouseReleased()println
 + mouseWheel()
-+ __mouseX__
-+ __mouseY__
-+ __pmouseX__
-+ __pmouseY__
++ printlnmouseXprintln
++ printlnmouseYprintln
++ printlnpmouseXprintln
++ printlnpmouseYprintln
 
 ####Keyboard
-+ __key__
-+ __keyCode__
-+ __keyPressed()__
++ printlnkeyprintln
++ printlnkeyCodeprintln
++ printlnkeyPressed()println
 + ~~keyPressed~~
-+ __iskeyPressed()__
-+ __keyReleased()__
-+ __keyTyped()__
++ printlniskeyPressed()println
++ printlnkeyReleased()println
++ printlnkeyTyped()println
 
 ####Files
 + ~~BufferedReader~~
 + createInput()
 + createReader()
 + loadBytes()
-+ __loadJSON()__
++ printlnloadJSON()println
 + ~~loadJSONArray()~~
 + ~~loadJSONObject()~~
-+ __loadStrings()__
++ printlnloadStrings()println
 + loadTable()
 + loadXML()
 + open()
@@ -249,124 +199,83 @@ var draw = function() {
 
 
 ####Time & Date
-+ __day()__
-+ __hour()__
-+ __millis()__
-+ __minute()__
-+ __month()__
-+ __second()__
-+ __year()__
++ printlnday()println
++ printlnhour()println
++ printlnmillis()println
++ printlnminute()println
++ printlnmonth()println
++ printlnsecond()println
++ printlnyear()println
 
 ###Output
 
 ####Text Area
-+ ~~print()~~
-+ __println()__
++ printlnprintln()println
 
 ####Image
-+ __save()__
-+ ~~saveFrame()~~
++ printlnsave()println
 
 ####Files
 + beginRaw()
 + beginRecord()
 + createOutput()
-+ __createWriter()__
++ printlncreateWriter()println
 + endRaw()
 + endRecord()
-+ __PrintWriter__
++ printlnPrintWriterprintln
 + saveBytes()
 + saveJSONArray()
 + saveJSONObject()
 + saveStream()
-+ __saveStrings()__
++ printlnsaveStrings()println
 + saveXML()
 + selectOutput()
 
 
 ###Transform 
-+ __applyMatrix()__
-+ __popMatrix()__
-+ __printMatrix()__
-+ __pushMatrix()__
-+ __resetMatrix()__
-+ __rotate()__
++ printlnapplyMatrix()println
++ printlnpopMatrix()println
++ printlnprintMatrix()println
++ printlnpushMatrix()println
++ printlnresetMatrix()println
++ printlnrotate()println
 + _rotateX()_
 + _rotateY()_
 + _rotateZ()_
-+ __scale()__
-+ __shearX()__
-+ __shearY()__
-+ __translate()__
-
-###_Lights, Camera_
-
-####_Lights_
-+ _ambientLight()_
-+ _directionalLight()_
-+ _lightFalloff()_
-+ _lights()_
-+ _lightSpecular()_
-+ _noLights()_
-+ _normal()_
-+ _pointLight()_
-+ _spotLight()_
-
-####_Camera_
-+ _beginCamera()_
-+ _camera()_
-+ _endCamera()_
-+ _frustum()_
-+ _ortho()_
-+ _perspective()_
-+ _printCamera()_
-+ _printProjection()_
-
-####_Coordinates_
-+ _modelX()_
-+ _modelY()_
-+ _modelZ()_
-+ _screenX()_
-+ _screenY()_
-+ _screenZ()_
-
-####_Material Properties_
-+ _ambient()_
-+ _emissive()_
-+ _shininess()_
-+ _specular()_
-
-###Color
++ printlnscale()println
++ printlnshearX()println
++ printlnshearY()println
++ printlntranslate()println
 
 ####Setting
-+ __background()__
++ printlnbackground()println
 + clear()
-+ __colorMode()__ // pend test this?
-+ __fill()__
-+ __noFill()__
-+ __noStroke()__
-+ __stroke()__
++ printlncolorMode()println // pend test this?
++ printlnfill()println
++ printlnnoFill()println
++ printlnnoStroke()println
++ printlnstroke()println
 
 ####Creating & Reading
-+ __alpha()__
-+ __blue()__
-+ __brightness()__
-+ __color()__
-+ __green()__
-+ __hue()__
-+ __lerpColor()__
-+ __red()__
-+ __saturation()__
++ printlnalpha()println
++ printlnblue()println
++ printlnbrightness()println
++ printlncolor()println
++ printlngreen()println
++ printlnhue()println
++ printlnlerpColor()println
++ printlnred()println
++ printlnsaturation()println
 
 ###Image 
 
-+ __createImage()__
-+ __PImage__ - _mostly_
++ printlncreateImage()println
++ printlnPImageprintln - _mostly_
 
 ####Loading & Displaying
-+ __image()__
-+ __imageMode()__
-+ __loadImage()__
++ printlnimage()println
++ printlnimageMode()println
++ printlnloadImage()println
 + noTint()
 + requestImage()
 + tint()
@@ -380,11 +289,11 @@ var draw = function() {
 + blend()
 + copy()
 + filter()
-+ __get()__
-+ __loadPixels()__
-+ __pixels[]__
++ printlnget()println
++ printlnloadPixels()println
++ printlnpixels[]println
 + set()
-+ __updatePixels()__
++ printlnupdatePixels()println
 
 ###Rendering 
 + blendMode()
@@ -404,14 +313,14 @@ var draw = function() {
 ####Loading & Displaying
 + createFont()
 + loadFont()
-+ __text()__
++ printlntext()println
 + textFont()
 
 ####Attributes
-+ __textAlign()__
++ printlntextAlign()println
 + textLeading()
 + textMode()
-+ __textSize()__
++ printlntextSize()println
 + textWidth()
 
 ####Metrics
@@ -424,67 +333,101 @@ var draw = function() {
 + PVector
 
 ####Operators
-+ __% (modulo)__
-+ __* (multiply)__
-+ __*= (multiply assign)__
-+ __+ (addition)__
-+ __++ (increment)__
-+ __+= (add assign)__
-+ __- (minus)__
-+ __-- (decrement)__
-+ __-= (subtract assign)__
-+ __/ (divide)__
-+ __/= (divide assign)__
++ println% (modulo)println
++ println* (multiply)println
++ println*= (multiply assign)println
++ println+ (addition)println
++ println++ (increment)println
++ println+= (add assign)println
++ println- (minus)println
++ println-- (decrement)println
++ println-= (subtract assign)println
++ println/ (divide)println
++ println/= (divide assign)println
 
 ####Bitwise Operators
-+ __& (bitwise AND)__
-+ __<< (left shift)__
-+ __>> (right shift)__
-+ __| (bitwise OR)__
++ println& (bitwise AND)println
++ println<< (left shift)println
++ println>> (right shift)println
++ println| (bitwise OR)println
 
 ####Calculation
-+ __abs()__
-+ __ceil()__
-+ __constrain()__
-+ __dist()__
-+ __exp()__
-+ __floor()__
-+ __lerp()__
-+ __log()__
-+ __mag()__
-+ __map()__
-+ __max()__
-+ __min()__
-+ __norm()__
-+ __pow()__
-+ __round()__
-+ __sq()__
-+ __sqrt()__
++ printlnabs()println
++ printlnceil()println
++ printlnconstrain()println
++ printlndist()println
++ printlnexp()println
++ printlnfloor()println
++ printlnlerp()println
++ printlnlog()println
++ printlnmag()println
++ printlnmap()println
++ printlnmax()println
++ printlnmin()println
++ printlnnorm()println
++ printlnpow()println
++ printlnround()println
++ printlnsq()println
++ printlnsqrt()println
 
 ####Trigonometry
-+ __acos()__
-+ __asin()__
-+ __atan()__
-+ __atan2()__
-+ __cos()__
-+ __degrees()__
-+ __radians()__
-+ __sin()__
-+ __tan()__
++ printlnacos()println
++ printlnasin()println
++ printlnatan()println
++ printlnatan2()println
++ printlncos()println
++ printlndegrees()println
++ printlnradians()println
++ printlnsin()println
++ printlntan()println
 
 ####Random
 + noise()
 + noiseDetail()
 + noiseSeed()
-+ __random()__
++ printlnrandom()println
 + randomGaussian()
 + randomSeed()
 
 ###Constants 
 
-+ __HALF_PI__
-+ __PI__
-+ __QUARTER_PI__
-+ __TAU__
-+ __TWO_PI__
++ printlnHALF_PIprintln
++ printlnPIprintln
++ printlnQUARTER_PIprintln
++ printlnTAUprintln
++ printlnTWO_PIprintln
+
+
+###DOM
++ AUTO
+// Create
+
+####Create
++ createElement(html)
++ createImage(src)
++ createCanvas(w, h)
+
+
+####Access
++ get(id)
++ get(class)
+
+####Set context
++ context(id)
++ context(obj)
+
+####PElement
++ id(id)
++ class(class)
++ size(w, h)
++ position(x, y)
++ style(style)
++ html(html)
++ show()
++ hide()
+
+####Listeners
++ mousePressed(function)
++ mouseOver(function)
++ mouseOut(function)
 
