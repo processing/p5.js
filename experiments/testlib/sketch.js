@@ -7,7 +7,7 @@ var bg = [];
 
 var setup = function() {
 	println("setup");
-	size(1200, 600);
+	createCanvas(1200, 600);
 	background(255, 200, 0);
 	img = loadImage("http://25.media.tumblr.com/ebec9ddb89465ff5b50bc35a8e8ead2c/tumblr_mlln12WAaP1r0m42ro1_500.png");
 	img2 = loadImage("http://24.media.tumblr.com/ea887aa96fdc6541c261fb1e796601eb/tumblr_mk6bew8Ola1r0m42ro4_1280.png");

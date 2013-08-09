@@ -1,6 +1,7 @@
 
-// pend tempz
-var pCurCanvas;
+//////////////////////////////////////
+//// CONSTANTS
+//////////////////////////////////////
 
 var CORNER = "corner", CORNERS = "corners", RADIUS = "radius";
 var RIGHT = "right", LEFT = "left", CENTER = "center";
@@ -14,16 +15,10 @@ var RGB = "rgb", HSB = "hsb";
 var AUTO = "auto";
 
 
-var pShapeKind = null, pShapeInited = false;
-var pFill = false;
-var pLoop = true;
-var pStartTime;
-var pUpdateInterval;
-var pRectMode = CORNER, pImageMode = CORNER;
-var pEllipseMode = CENTER;
-var pMatrices = [[1,0,0,1,0,0]];
-var pTextSize = 12;
-var pColorMode = RGB;
+
+//////////////////////////////////////
+//// CURRENT PROCESSING API
+//////////////////////////////////////
 
 
 ////	STRUCTURE
@@ -759,7 +754,10 @@ var TWO_PI = Math.PI*2.0;
 
 
 
+//////////////////////////////////////
 //// EXTENSIONS
+//////////////////////////////////////
+
 
 // PElement
 
@@ -854,6 +852,29 @@ function get(e) {
 
 }
 
+//////////////////////////////////////
+//// CORE PJS STUFF
+//////////////////////////////////////
+
+
+var pCurCanvas;
+
+var pShapeKind = null, pShapeInited = false;
+var pFill = false;
+var pLoop = true;
+var pStartTime;
+var pUpdateInterval;
+var pRectMode = CORNER, pImageMode = CORNER;
+var pEllipseMode = CENTER;
+var pMatrices = [[1,0,0,1,0,0]];
+var pTextSize = 12;
+var pColorMode = RGB;
+
+
+window.onload = function() {
+  pCreate();
+};
+
 
 function pCreate() {
 
@@ -929,9 +950,9 @@ function toHex(n) {
 
 
 
-
-
-/// HELPER FXNS
+//////////////////////////////////////
+//// HELPER FXNS
+//////////////////////////////////////
 
 function rgb2hsv (r,g,b) {
  var computedH = 0;
