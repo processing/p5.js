@@ -90,7 +90,7 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + __expand()__
 + __reverse()__
 + __shorten()__
-+ sort()
++ __sort()__
 + __splice()__
 + __subset()__
 
@@ -365,11 +365,11 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + createGraphics()
 + PGraphics
 
-####Shaders
-+ loadShader()
-+ PShader
-+ resetShader()
-+ shader()
+####_Shaders_
++ _loadShader()_
++ _PShader_
++ _resetShader()_
++ _shader()_
 
 ###Typography 
 

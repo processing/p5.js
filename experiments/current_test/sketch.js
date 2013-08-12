@@ -18,8 +18,7 @@ var setup = function() {
 	noCursor();
 	cursor(HAND);
 	println("setup");
-	console.log(splitTokens("hi hi   hi"));
-	console.log(splitTokens("hi_cat_dog", "_"));
+	console.log(sort(["ab", "d", "c"]));
 
 	// canvas0
 	canvas0 = createCanvas(displayWidth(), 0.6*displayHeight());
