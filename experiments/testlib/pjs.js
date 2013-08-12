@@ -1,6 +1,8 @@
 
 //////////////////////////////////////
+////
 //// CONSTANTS
+//// 
 //////////////////////////////////////
 
 var CORNER = "corner", CORNERS = "corners", RADIUS = "radius";
@@ -17,11 +19,15 @@ var AUTO = "auto";
 
 
 //////////////////////////////////////
+////
 //// CURRENT PROCESSING API
+////
 //////////////////////////////////////
 
 
+//////////////////////////////////////
 ////	STRUCTURE
+//////////////////////////////////////
 var draw;
 function noLoop() {	
 	if (pLoop) {
@@ -41,7 +47,10 @@ var setup;
 
 
 
-//// ENVIRONMENT
+//////////////////////////////////////
+////	ENVIRONMENT
+//////////////////////////////////////
+
 //cursor()
 function displayHeight() { return window.innerHeight; }
 function displayWidth() { return window.innerWidth; }
@@ -67,9 +76,12 @@ var width = 100;
 
 
 
-//// DATA
+//////////////////////////////////////
+////	DATA
+//////////////////////////////////////
 
-// String Functions
+
+//// STRING FUNCTIONS ////////////////
 function join(list, separator) { return list.join(separator); }
 function match(str, reg) { return str.match(reg); }
 //function matchAll(str, reg) {}
@@ -96,7 +108,7 @@ function trim(str) {
 	} else return str.trim();
 }
 
-// Array Functions
+//// ARRAY FUNCTIONS /////////////////
 function append(array, value) { return array.push(value); }
 function arrayCopy(src, a, b, c, d) { //src, srcPosition, dst, dstPosition, length
 	if (d) { 
@@ -127,9 +139,12 @@ function subset(list, start, count) {
 
 
 
-//// SHAPE
+//////////////////////////////////////
+////	SHAPE
+//////////////////////////////////////
 
-// 2D Primitives
+
+//// 2D PRIMITIVES ///////////////////
 function arc(a, b, c, d, start, stop, mode) {
 
 }
@@ -191,7 +206,8 @@ function triangle(x1, y1, x2, y2, x3, y3) {
 	pCurCanvas.context.stroke();
 }
 
-// Curves
+//// CURVES //////////////////////////
+
 function bezier(x1, y1, x2, y2, x3, y3, x4, y4) {
 	pCurCanvas.context.beginPath();
 	pCurCanvas.context.moveTo(x1, y1);
@@ -209,7 +225,8 @@ curveTightness()
 */
 
 
-// Attributes
+//// ATTRIBUTES //////////////////////
+
 function ellipseMode(m) {
 	if (m == CORNER || m == CORNERS || m == RADIUS || m == CENTER) {
 		pEllipseMode = m;
@@ -244,7 +261,8 @@ function strokeWeight(w) {
 }
 
 
-//Vertex
+//// VERTEX //////////////////////////
+
 //beginContour()
 function beginShape(kind) {
 	if (kind == POINTS || kind == LINES || kind == TRIANGLES || kind == TRIANGLE_FAN 
@@ -275,9 +293,71 @@ function vertex(x, y) {
 }
 
 
-//// INPUT
+//////////////////////////////////////
+////	INPUT
+//////////////////////////////////////
 
-// Files
+
+//// MOUSE ///////////////////////////
+var pMouseX = 0, pMouseY = 0, mouseX = 0, mouseY = 0;
+
+function pUpdateMouseCoords(e) {
+	pMouseX = mouseX;
+	pMouseY = mouseY;
+	mouseX = e.clientX;// - parseInt(pCurCanvas.elt.style.left, 10);
+	mouseY = e.clientY;// - parseInt(pCurCanvas.elt.style.top, 10);
+	//console.log(mouseX+" "+mouseY);
+	//	console.log('mx = '+mouseX+' my = '+mouseY);
+}
+
+//// KEYBOARD ////////////////////////
+var key = "";
+var keyCode = 0; 
+var pKeyPressed = false;
+function isKeyPressed() { return pKeyPressed; }
+
+function pSetupInput() {
+	document.body.onmousemove=function(e){
+    pUpdateMouseCoords(e);
+    if (typeof(mouseMoved) == "function")
+    	mouseMoved(e);
+	}
+
+	document.body.onmousedown=function(e){
+		if (typeof(mousePressed) == "function")
+	    mousePressed(e);
+	}
+
+	document.body.onmouseup=function(e){
+		if (typeof(mouseReleased) == "function")
+			mouseReleased(e);
+	}
+
+	document.body.onmouseclick=function(e){
+		if (typeof(mouseClicked) == "function")
+			mouseClicked(e);
+	}
+
+	document.body.onkeydown=function(e){
+		pKeyPressed = true;
+		if (typeof(keyPressed) == "function")
+	  	keyPressed(e);
+	}
+
+	document.body.onkeyup=function(e){
+		pKeyPressed = false;
+		if (typeof(keyReleased) == "function")
+	  	keyReleased(e);
+	}
+
+	document.body.onkeypress=function(e){
+		keyCode = e.keyCode;
+		if (typeof(keyTyped) == "function")
+	  	keyTyped(e);
+	}
+}
+
+//// FILES ///////////////////////////
 
 //BufferedReader
 //createInput()
@@ -331,68 +411,8 @@ function loadStrings(file) {
 //selectFolder()
 //selectInput()*/
 
-// Mouse
-var pMouseX = 0, pMouseY = 0, mouseX = 0, mouseY = 0;
 
-function pUpdateMouseCoords(e) {
-	pMouseX = mouseX;
-	pMouseY = mouseY;
-	mouseX = e.clientX;// - parseInt(pCurCanvas.elt.style.left, 10);
-	mouseY = e.clientY;// - parseInt(pCurCanvas.elt.style.top, 10);
-	//console.log(mouseX+" "+mouseY);
-	//	console.log('mx = '+mouseX+' my = '+mouseY);
-}
-
-// Keyboard
-var key = "";
-var keyCode = 0; 
-var pKeyPressed = false;
-function isKeyPressed() { return pKeyPressed; }
-
-function pSetupInput() {
-	document.body.onmousemove=function(e){
-    pUpdateMouseCoords(e);
-    if (typeof(mouseMoved) == "function")
-    	mouseMoved(e);
-	}
-
-	document.body.onmousedown=function(e){
-		if (typeof(mousePressed) == "function")
-	    mousePressed(e);
-	}
-
-	document.body.onmouseup=function(e){
-		if (typeof(mouseReleased) == "function")
-			mouseReleased(e);
-	}
-
-	document.body.onmouseclick=function(e){
-		if (typeof(mouseClicked) == "function")
-			mouseClicked(e);
-	}
-
-	document.body.onkeydown=function(e){
-		pKeyPressed = true;
-		if (typeof(keyPressed) == "function")
-	  	keyPressed(e);
-	}
-
-	document.body.onkeyup=function(e){
-		pKeyPressed = false;
-		if (typeof(keyReleased) == "function")
-	  	keyReleased(e);
-	}
-
-	document.body.onkeypress=function(e){
-		keyCode = e.keyCode;
-		if (typeof(keyTyped) == "function")
-	  	keyTyped(e);
-	}
-}
-
-
-
-// Time & Date
+//// TIME & DATE /////////////////////
 function day() { return new Date().getDate(); }
 function hour() { return new Date().getHours(); }
 function millis() { return new Date().getTime() - pStartTime; }
@@ -403,17 +423,21 @@ function year() { return new Date().getFullYear(); }
 
 
 
-//// OUTPUT
+//////////////////////////////////////
+////	OUTPUT
+//////////////////////////////////////
 
-// Text Area
+
+//// TEXT AREA ///////////////////////
 function println(s) { console.log(s); }
 
-// Image
+
+//// IMAGE ///////////////////////////
 function save() {
 	window.open(pCurCanvas.toDataURL());
 }
 
-// Files
+//// FILES ///////////////////////////
 var pWriters = [];
 //beginRaw()
 //beginRecord()
@@ -447,7 +471,11 @@ function writeFile(content) {
 	window.open("data:text/json;charset=utf-8," + escape(content), 'download'); 
 }
 
+
+//////////////////////////////////////
 //// TRANSFORM
+//////////////////////////////////////
+
 function applyMatrix(n00, n01, n02, n10, n11, n12) {
 	pCurCanvas.context.transform(n00, n01, n02, n10, n11, n12);
 	var m = pMatrices[pMatrices.length-1];
@@ -507,9 +535,12 @@ function translate(x, y) {
   m[5] += m[1] * x + m[3] * y;
 }
 
-//// COLOR
 
-// Setting
+//////////////////////////////////////
+////	COLOR
+//////////////////////////////////////
+
+//// SETTING /////////////////////////
 function background(v1, v2, v3) { 
 	var c = [v1, v2, v3];
 	if (pColorMode == HSB) c = hsv2rgb(v1, v2, v3);
@@ -543,7 +574,7 @@ function stroke(v1, v2, v3, a) {
 }
 
 
-// Creating & Reading
+//// CREATING & READING //////////////
 function alpha(rgb) {
 	if (rgb.length > 3) return rgb[3];
 	else return 255;
@@ -585,7 +616,12 @@ function saturation(hsv) {
 }
 
 
-//// Image
+//////////////////////////////////////
+////	IMAGE
+//////////////////////////////////////
+
+
+//// PIMAGE //////////////////////////
 
 function createImage(w, h, format) { return new PImage(w, h); } //pend format?
 function PImage(w, h){
@@ -630,7 +666,8 @@ function PImage(w, h){
 
  
 
-// Loading & Displaying
+//// LOADING & DISPLAYING //////////////////
+
 function image(img, a, b, c, d) { 
 	if (c && d) {
 		var vals = pModeAdjust(a, b, c, d, pImageMode);
@@ -653,7 +690,9 @@ function loadImage(path) {
 	return imgObj;
 }
 
-// Pixels
+
+//// PIXELS ////////////////////////////////
+
 //blend()
 //copy()
 //filter()
@@ -691,15 +730,18 @@ function updatePixels() {
 }
 
 
-//// TYPOGRAPHY
+//////////////////////////////////////
+////	TYPOGRAPHY
+//////////////////////////////////////
 
-// Loading & Displaying
+
+//// LOADING & DISPLAYING ////////////
 function text(s, x, y) {
 	pCurCanvas.context.font=pTextSize+"px Verdana";
 	pCurCanvas.context.fillText(s, x, y);
 }
 
-// Atributes
+//// ATTRIBUTES //////////////////////
 function textAlign(a) {
 	if (a == LEFT || a == RIGHT || a == CENTER) pCurCanvas.context.textAlign = a;
 }
@@ -707,9 +749,15 @@ function textSize(s) { pTextSize = s; }
 function textWidth(s) { return pCurCanvas.context.measureText(s).width; }
 function textHeight(s) { return pCurCanvas.context.measureText(s).height; }
 
-//// MATH
-/** @module Math */
-/** returns abs value */
+
+
+//////////////////////////////////////
+////	MATH
+//////////////////////////////////////
+
+
+//// CALCULATION /////////////////////
+
 function abs(n) { return Math.abs(n); }
 function ceil(n) { return Math.ceil(n); }
 function constrain(n, l, h) { return max(min(n, h), l); }
@@ -727,7 +775,9 @@ function pow(n, e) { return Math.pow(n, e); }
 function sq(n) { return n*n; }
 function sqrt(n) { return Math.sqrt(n); }
 
-// Trigonometry
+
+//// TRIGONOMETRY ////////////////////
+
 function acos(x) { return Math.acos(x); }
 function asin(x) { return Math.asin(x); }
 function atan(x) { return Math.atan(x); }
@@ -738,14 +788,20 @@ function radians(x) { return 2*Math.PI*x/360.0; }
 function sin(x) { return Math.sin(x); }
 function tan(x) { return Math.tan(x); }
 
-// Random
+//// RANDOM //////////////////////////
 function random(x, y) { 
 	if (y) return (y-x)*Math.random()+x;
 	else if (x) return x*Math.random();
 	else return Math.random();
 }
 
-// Constants
+
+//////////////////////////////////////
+////
+////	CONSTANTS
+////
+//////////////////////////////////////
+
 var HALF_PI = Math.PI*0.5;
 var PI = Math.PI;
 var QUARTER_PI = Math.PI*0.25;
@@ -755,11 +811,13 @@ var TWO_PI = Math.PI*2.0;
 
 
 //////////////////////////////////////
+////
 //// EXTENSIONS
+////
 //////////////////////////////////////
 
 
-// PElement
+//// PElement ////////////////////////
 
 function PElement(elt, w, h){
 	this.elt = elt;
@@ -801,7 +859,8 @@ function PElement(elt, w, h){
   this.mouseOut = function(fxn) { var _this = this; this.elt.addEventListener("mouseout", function(e){fxn(e, _this);}, false); };
  }
 
-// Create
+
+//// CREATE //////////////////////////
 function createCanvas(w, h) {
 	console.log('create canvas');
 	var c = document.createElement('canvas');
@@ -836,7 +895,8 @@ function createImage(src, alt) {
 	return new PElement(c);
 }
 
-// Set context
+
+//// CONTEXT /////////////////////////
 function context(e) {
 	var obj = (typeof e == 'string' || e instanceof String) ? document.getElementById(id) : e;
 	if (obj) {
@@ -847,13 +907,17 @@ function context(e) {
 	}
 }
 
-// Get
+//// ACCESS //////////////////////////
 function get(e) {
 
 }
 
+
+
 //////////////////////////////////////
+////
 //// CORE PJS STUFF
+//// 
 //////////////////////////////////////
 
 
@@ -951,7 +1015,9 @@ function toHex(n) {
 
 
 //////////////////////////////////////
-//// HELPER FXNS
+////
+//// MISC HELPER FXNS
+////
 //////////////////////////////////////
 
 function rgb2hsv (r,g,b) {
