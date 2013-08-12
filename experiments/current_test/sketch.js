@@ -21,7 +21,7 @@ var setup = function() {
 	console.log(sort(["ab", "d", "c"]));
 
 	// canvas0
-	canvas0 = createCanvas(displayWidth(), 0.6*displayHeight());
+	canvas0 = createGraphics(displayWidth(), 0.6*displayHeight());
 	canvas0.mousePressed(mousePressed0);
 
 
@@ -37,7 +37,7 @@ var setup = function() {
 	}
 
 	// canvas1
-	canvas1 = createCanvas(500, displayHeight()*0.8);
+	canvas1 = createGraphics(500, displayHeight()*0.8);
 	canvas1.position(0.25*canvas0.width, displayHeight()*0.2);
 
 
@@ -187,13 +187,13 @@ var mousePressed0 = function(e) {
 	println("0 pressed");
 };
 
-// these get added by createCanvas
+// these get added by createGraphics
 var mousePressed1 = function(e) {
 	// whatevs
 	println("1 pressed");
 };
 
-// these get added by createCanvas
+// these get added by createGraphics
 var mousePressed2 = function(e) {
 	// whatevs
 	println("2 pressed");

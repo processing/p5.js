@@ -361,9 +361,9 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + __updatePixels()__
 
 ###Rendering 
-+ blendMode()
-+ createGraphics()
-+ PGraphics
++ ~~blendMode()~~
++ __createGraphics()__
++ __PGraphics__ (is now PElement)
 
 ####_Shaders_
 + _loadShader()_
