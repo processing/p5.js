@@ -15,6 +15,8 @@ var startFlash = 0;
 
 
 var setup = function() {
+	noCursor();
+	cursor(HAND);
 	println("setup");
 
 	// canvas0

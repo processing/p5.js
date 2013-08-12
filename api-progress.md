@@ -50,7 +50,7 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + ~~void~~
 
 ###Environment 
-+ cursor()
++ __cursor()__ (no custom image src yet)
 + __displayHeight__
 + __displayWidth__
 + focused
@@ -59,7 +59,7 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + ~~frameRate~~
 + __getFrameRate()__
 + __height__
-+ noCursor()
++ __noCursor()__
 + __size()__
 + __width__
 
