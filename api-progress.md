@@ -134,7 +134,7 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + arc()
 + __ellipse()__
 + __line()__
-+ point()
++ __point()__
 + __quad()__
 + __rect()__
 + __triangle()__
