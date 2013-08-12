@@ -69,19 +69,18 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 
 ####~~Composite~~
 
-####Conversion
-
+####~~Conversion~~
 
 ####String Functions
 + __join()__
 + __match()__
 + matchAll()
 + __nf()__
-+ nfc()
-+ nfp()
-+ nfs()
++ __nfc()__ (for single number, not array)
++ __nfp()__ (for single number, not array)
++ __nfs()__
 + __split()__
-+ splitTokens()
++ __splitTokens()__
 + __trim()__
 
 ####Array Functions
