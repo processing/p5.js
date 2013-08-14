@@ -14,7 +14,7 @@ var h = 75;
 
 var setup = function() {
   createGraphics(200,200); 
-}
+};
 
 var draw = function() {
   // The button is pressed if (mouseX,mouseY) is inside the rectangle and mousePressed is true.
@@ -34,7 +34,7 @@ var draw = function() {
   
   fill(175);
   rect(x,y,w,h);
-}
+};
 
 
 

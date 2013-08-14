@@ -26,7 +26,7 @@ var setup = function() {
   zoogX = width/2;      // Zoog always starts in the middle
   zoogY = height + 100; // Zoog starts below the screen
   smooth();
-}
+};
 
 var draw = function() {
 
@@ -65,6 +65,6 @@ var draw = function() {
   // Zoog moves up
   zoogY = zoogY - 1;
 
-}
+};
 
 

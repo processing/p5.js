@@ -17,7 +17,7 @@ var c2dir = -0.1;
 
 var setup = function() {
   createGraphics(200,200);
-}
+};
 
 var draw = function() {
   noStroke();
@@ -46,7 +46,7 @@ var draw = function() {
   if (c2 < 0 || c2 > 255) {
     c2dir *= -1;
   }
-}
+};
 
 
 

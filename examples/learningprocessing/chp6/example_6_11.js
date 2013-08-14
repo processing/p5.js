@@ -13,7 +13,7 @@ var eyeSize = 16;
 var setup = function() {
   createGraphics(400,200);
   smooth();
-}
+};
 
 var draw = function() {
   background(255);
@@ -47,4 +47,4 @@ var draw = function() {
     line(x+w/12,y+h,x+w/4,y+h+10); 
   }
   
-}
+};

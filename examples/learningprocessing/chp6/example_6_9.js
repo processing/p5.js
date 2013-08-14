@@ -8,7 +8,7 @@
 
 var setup = function() {
   createGraphics(255,255);
-}
+};
 
 var draw = function() {
   background(0);
@@ -27,4 +27,4 @@ var draw = function() {
     // Increase i by 10
     i += 10;
   }
-}
+};

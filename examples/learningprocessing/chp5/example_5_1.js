@@ -13,7 +13,7 @@ var b = 0;
 
 var setup = function() {
   createGraphics(200,200);
-}
+};
 
 var draw = function() {
   // Draw stuff
@@ -37,6 +37,6 @@ var draw = function() {
   } else if (r < 0) {
     r = 0; 
   }
-}
+};
 
 

@@ -12,7 +12,7 @@
 var setup = function() {
   // Set the size of the window
   createGraphics(200,200);  
-}
+};
 
 // draw() loops continuously until you close the sketch window.
 var draw = function() {
@@ -42,4 +42,4 @@ var draw = function() {
   stroke(0);
   line(90,150,80,160);
   line(110,150,120,160);
-}
+};

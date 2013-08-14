@@ -11,7 +11,7 @@ var setup = function() {
   smooth();
   // The frame rate is set to 30 frames per second.
   setFrameRate(30);
-}
+};
 
 var draw = function() {
   // Draw a black background
@@ -42,8 +42,8 @@ var draw = function() {
   // The legs are drawn according to the mouse location and the previous mouse location.
   line(mouseX-10,mouseY+50,pmouseX-10,pmouseY+60);
   line(mouseX+10,mouseY+50,pmouseX+10,pmouseY+60);
-}
+};
 
 var mousePressed = function() {
   println("Take me to your leader!"); 
-}
+};

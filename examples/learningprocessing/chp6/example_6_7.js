@@ -22,9 +22,9 @@ var draw = function() {
     line(x,0,x,height);
     x += 5;
   }
-}
+};
 
 var mousePressed = function() {
   // x is not available! It is local to the draw( ) block of code.
   println( " The mouse was pressed! " );
-}
+};

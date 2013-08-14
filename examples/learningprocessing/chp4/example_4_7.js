@@ -19,7 +19,7 @@ var setup = function() {
   createGraphics(200,200);
   background(255);
   smooth();    
-}
+};
 
 var draw = function() {
   // Each time through draw(), new random numbers are picked for a new ellipse.
@@ -35,6 +35,6 @@ var draw = function() {
   noStroke();
   fill(r,g,b,a);
   ellipse(x,y,diam,diam);
-}
+};
 
 

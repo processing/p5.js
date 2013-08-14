@@ -8,7 +8,7 @@
 
 var setup = function() {
   createGraphics(200,200);
-}
+};
 
 var draw = function() {
   // Try moving background() to setup() and see the difference!
@@ -22,4 +22,4 @@ var draw = function() {
   // mouseX is a keyword that the sketch replaces with the horizontal position of the mouse.
   // mouseY is a keyword that the sketch replaces with the vertical position of the mouse.
   rect(mouseX,mouseY,50,50);   
-}
+};

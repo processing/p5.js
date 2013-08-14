@@ -13,7 +13,7 @@ var circleY = 100;
 var setup = function() {
   createGraphics(200,200);
   smooth();
-}
+};
 
 var draw = function() {
   background(255);
@@ -24,4 +24,4 @@ var draw = function() {
   
   // An assignment operation that increments the value of circleX by 1.
   circleX = circleX + 1;
-}
+};

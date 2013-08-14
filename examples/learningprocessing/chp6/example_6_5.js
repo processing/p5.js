@@ -14,7 +14,7 @@ var endLegs = 150; // Where should the lines stop?
 
 var setup = function() {
   createGraphics(200,200);
-}
+};
 
 var draw = function() {
   background(0);
@@ -34,4 +34,4 @@ var draw = function() {
     //  What is the range of possible values for spacing?
     x = x + spacing; 
   }
-}
+};

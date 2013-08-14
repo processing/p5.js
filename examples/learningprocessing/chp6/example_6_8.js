@@ -14,7 +14,7 @@ var setup = function() {
   background(255);
   // Slowing down the frame rate so we can easily see the effect.
   setFrameRate(5); 
-}
+};
 
 var draw = function() {
   // Draw a line
@@ -28,4 +28,4 @@ var draw = function() {
   if (y > height) {
     y = 0;
   }
-}
+};

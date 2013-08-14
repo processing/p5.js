@@ -8,7 +8,7 @@
 var setup = function() {
   createGraphics(200,200);  // Set the size of the window
   smooth();
-}
+};
 
 var draw = function() {
   background(255);  // Draw a white background 
@@ -38,4 +38,4 @@ var draw = function() {
   stroke(0);
   line(90,150,80,160);
   line(110,150,120,160);
-}
+};

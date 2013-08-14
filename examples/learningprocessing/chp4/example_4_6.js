@@ -20,12 +20,12 @@ var setup = function() {
   createGraphics(200,200);
   background(255);
   smooth();    
-}
+};
 
 var draw = function() {
   // Use those variables to draw an ellipse
   stroke(0);
   fill(r,g,b,a);  // (Remember, the fourth argument for a color is transparency.
   ellipse(x,y,diam,diam);  
-}
+};
 

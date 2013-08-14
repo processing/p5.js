@@ -7,7 +7,7 @@
 // Example 5-3: Rollovers
 var setup = function() {
   createGraphics(200,200);
-}
+};
 
 var draw = function() {
   background(255);
@@ -29,7 +29,7 @@ var draw = function() {
   } else if (mouseX > 100 && mouseY > 100) {
     rect(100,100,100,100);
   }
-}
+};
 
 
 

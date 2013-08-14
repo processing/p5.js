@@ -11,7 +11,7 @@ var speed = 1;
 var setup = function() {
   createGraphics(200,200);
   smooth();
-}
+};
 
 var draw = function() {
   background(255);
@@ -29,7 +29,7 @@ var draw = function() {
   stroke(0);
   fill(175);
   ellipse(x,100,32,32);
-}
+};
 
 
 

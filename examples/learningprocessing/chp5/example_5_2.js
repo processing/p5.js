@@ -13,7 +13,7 @@ var g = 0;
 
 var setup = function() {
   createGraphics(200,200);
-}
+};
 
 var draw = function() {
   // Color the background and draw lines to divide the window in quadrants.
@@ -49,7 +49,7 @@ var draw = function() {
   r = constrain(r,0,255);
   g = constrain(g,0,255);
   b = constrain(b,0,255);
-}
+};
 
 
 

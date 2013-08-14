@@ -14,7 +14,7 @@ var h = 75;
 
 var setup = function() {
   createGraphics(200,200); 
-}
+};
 
 var draw = function() {
   if (button) {
@@ -27,7 +27,7 @@ var draw = function() {
   
   fill(175);
   rect(x,y,w,h);
-}
+};
 
 // When the mouse is pressed, the state of the button is toggled.   
 // Try moving this code to draw() like in the rollover example.  What goes wrong?
@@ -35,7 +35,7 @@ var mousePressed = function() {
   if (mouseX > x && mouseX < x+w && mouseY > y && mouseY < y+h) {
     button = !button;
   }  
-}
+};
 
 
 

@@ -13,7 +13,7 @@ var circleY = 100;
 var setup = function() {
   createGraphics(200,200);
   smooth();
-}
+};
 
 var draw = function() {
   background(255);
@@ -21,4 +21,4 @@ var draw = function() {
   fill(175);
   // Use the variables to specify the location of an ellipse.
   ellipse(circleX,circleY,50,50);
-}
+};

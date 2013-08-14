@@ -18,7 +18,7 @@ var gravity = 0.1;
 
 var setup = function() {
   createGraphics(200,200);
-}
+};
 
 var draw = function() {
   background(255);
@@ -42,7 +42,7 @@ var draw = function() {
     // This is known as a "dampening" effect and is a more realistic simulation of the real world (without it, a ball would bounce forever).
     speed = speed * -0.95;  
   }
-}
+};
 
 
 

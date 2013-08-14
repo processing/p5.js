@@ -8,7 +8,7 @@
 var setup = function() {
   createGraphics(200,200);
   smooth();
-}
+};
 
 var draw = function() {
   background(100);
@@ -19,8 +19,8 @@ var draw = function() {
   // The rectangle will always be in the middle of the window 
   // if it is located at (width/2, height/2).
   rect(width/2,height/2,mouseX+10,mouseY+10);
-}
+};
 
 var keyPressed = function() {
   println(key);
-}
+};

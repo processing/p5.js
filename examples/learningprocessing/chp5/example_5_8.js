@@ -17,7 +17,7 @@ var state = 0;
 
 var setup = function() {
   createGraphics(200,200);
-}
+};
 
 var draw = function() {
   background(255);
@@ -55,7 +55,7 @@ var draw = function() {
       state=0;
     }
   }
-}
+};
 
 
 

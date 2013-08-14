@@ -19,7 +19,7 @@ var yspeed = 1;
 var setup = function() {
   createGraphics(200,200);  
   smooth();      
-}
+};
 
 var draw = function() {
 
@@ -60,4 +60,4 @@ var draw = function() {
   stroke(0);
   line(x-w/12,y+h,x-w/4,y+h+10);
   line(x+w/12,y+h,x+w/4,y+h+10);
-}
+};

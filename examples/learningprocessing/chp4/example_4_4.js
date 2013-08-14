@@ -20,7 +20,7 @@ var change = 0.5;
 var setup = function() {
   createGraphics(200,200);
   smooth();
-}
+};
 
 var draw = function() {
   // Draw the background and the ellipse
@@ -38,4 +38,4 @@ var draw = function() {
   circleH = circleH - change;
   circleStroke = circleStroke - change;
   circleFill = circleFill + change;
-}
+};

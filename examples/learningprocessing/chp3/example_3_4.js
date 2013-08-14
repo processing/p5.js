@@ -9,10 +9,10 @@ var setup = function() {
   createGraphics(200, 200);
   background(255);
   smooth();
-}
+};
 
 var draw = function() {
   stroke(0);
   // Draw a line from previous mouse location to current mouse location.
   line(pmouseX, pmouseY, mouseX, mouseY);
-}
+};
