@@ -163,7 +163,7 @@ See [API progress page](https://github.com/lmccart/processing-js/blob/master/api
 + mouseDragged()
 + mouseMoved()
 + mousePressed()
-+ mousePressed
++ isMousePressed()
 + mouseReleased()
 + mouseWheel()
 + mouseX
