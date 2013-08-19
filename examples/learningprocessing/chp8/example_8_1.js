@@ -12,40 +12,34 @@ var setup = function() {
   createGraphics(200,200);
   // Initialize Car object
   myCar = new Car(); // Initialize car object in setup() by calling constructor.
-}
+};
 
 var draw = function() {
   background(255);
   // Operate Car object.
   myCar.move(); // Operate the car object in draw( ) by calling object methods using the dots syntax.
   myCar.display();
+};
+
+ // Define a class below the rest of the program.
+function Car() {
+  this.c = 175;
+  this.xpos = width/2;
+  this.ypos = height/2;
+  this.xspeed = 1;
 }
 
-var Car = { // Define a class below the rest of the program.
-  var c; // Variables.
-  var xpos;
-  var ypos;
-  var xspeed;
+Car.prototype.display = function() { // Function.
+  // The car is just a square
+  rectMode(CENTER);
+  stroke(0);
+  fill(this.c);
+  rect(this.xpos,this.ypos,20,10);
+};
 
-  Car() { // A constructor.
-    c = color(175);
-    xpos = width/2;
-    ypos = height/2;
-    xspeed = 1;
+Car.prototype.move = function() { // Function.
+  this.xpos = this.xpos + this.xspeed;
+  if (this.xpos > width) {
+    this.xpos = 0;
   }
-
-  var display = function() { // Function.
-    // The car is just a square
-    rectMode(CENTER);
-    stroke(0);
-    fill(c);
-    rect(xpos,ypos,20,10);
-  }
-
-  var move = function() { // Function.
-    xpos = xpos + xspeed;
-    if (xpos > width) {
-      xpos = 0;
-    }
-  }
-}
+};
