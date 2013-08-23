@@ -5,8 +5,14 @@
 // ported by Lauren McCarthy
 
 // Example 1-1: stroke and fill
-createGraphics(200,200);
-background(255);
-stroke(0); 
-fill(150);
-rect(50,50,75,100);
+
+var setup = function() {
+	createGraphics(200,200);
+	background(255);
+};
+
+var draw = function() {
+	stroke(0); 
+	fill(150);
+	rect(50,50,75,100);
+};
