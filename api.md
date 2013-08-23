@@ -3,7 +3,7 @@ API
 
 See [API progress page](https://github.com/lmccart/processing-js/blob/master/api-progress.md) for current and future implementation plans.
 
-For now these functions link to the current [Processing.org](http://processing.org/reference) documentation, which approximately represents their use and functionality. Important differences when used in JavaScript mode are noted after the link, when necessary. Note that the examples shown on the Processing.org pages are for current Java mode and will not run in JS version without modification.
+For now these functions link to the current [Processing.org reference](http://processing.org/reference), which approximately represents their use and functionality. Important differences when used in JavaScript mode are noted after the link, when necessary. Note that the examples shown on the Processing.org pages are for current Java mode and will not run in JS version without modification.
 
 ###Structure 
 
