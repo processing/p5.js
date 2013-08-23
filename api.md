@@ -3,35 +3,32 @@ API
 
 See [API progress page](https://github.com/lmccart/processing-js/blob/master/api-progress.md) for current and future implementation plans.
 
+For now these functions link to the current [Processing.org reference](http://processing.org/reference), which approximately represents their use and functionality. Important differences when used in JavaScript mode are noted after the link, when necessary. Note that the examples shown on the Processing.org pages are for current Java mode and will not run in JS version without modification.
+
 ###Structure 
 
-+ () (parentheses)
-+ , (comma)
-+ . (dot)
-+ /* */ (multiline comment)
-+ /** */ (doc comment)
-+ // (comment)
-+ ; (semicolon)
-+ = (assign)
-+ "[]" (array access)
-+ {} (curly braces)
-+ catch
-+ draw()
-+ exit()
-+ false
-+ finally
-+ loop()
-+ new
-+ noLoop()
-+ null
-+ popStyle()
-+ pushStyle()
-+ redraw()
-+ return
-+ setup()
-+ this
-+ true
-+ try
++ [() (parentheses)](http://processing.org/reference/parentheses.html)
++ [, (comma)](http://processing.org/reference/comma.html)
++ [. (dot)](http://processing.org/reference/dot.html)
++ [/* */ (multiline comment)](http://processing.org/reference/multilinecomment.html)
++ [// (comment)](http://processing.org/reference/comment.html)
++ [; (semicolon)](http://processing.org/reference/semicolon.html)
++ [= (assign)](http://processing.org/reference/assign.html)
++ [\[\] (array access)](http://processing.org/reference/array.html) - operator is used to specify a location within an array, though array formulation shown differs for JS.
++ [{} (curly braces)](http://processing.org/reference/curlybraces.html)
++ [catch](http://processing.org/reference/catch.html)
++ [draw](http://processing.org/reference/draw_.html) - same use but different syntax, see [Getting Started](https://github.com/lmccart/processing-js/wiki/Getting-Started) tutorial for more info.
++ [false](http://processing.org/reference/false.html)
++ [loop()](http://processing.org/reference/loop.html)
++ [new](http://processing.org/reference/new.html)
++ [noLoop()](http://processing.org/reference/noLoop_.html)
++ [null](http://processing.org/reference/null.html)
++ [redraw()](http://processing.org/reference/redraw_.html)
++ [return](http://processing.org/reference/return.html)
++ [setup](http://processing.org/reference/setup_.html) - same use but different syntax, see [Getting Started](https://github.com/lmccart/processing-js/wiki/Getting-Started) tutorial for more info.
++ [this](http://processing.org/reference/this.html)
++ [true](http://processing.org/reference/true.html)
++ [try](http://processing.org/reference/try.html)
 
 ###Environment 
 + cursor()

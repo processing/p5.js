@@ -4,17 +4,21 @@
 
 // Ported by Lauren McCarthy
 
-// Example 10-8: Fancier looking raindrop
+// Example 10-1: Catcher
 
-var setup = function() {
-  background(255);
-  smooth();
+function Catcher(tempR) {
+  this.r = tempR;   // radius
+  this.x = 0; // location
+  this.y = 0;
+ }
+
+Catcher.prototype.setLocation = function(tempX, tempY) {
+  this.x = tempX;
+  this.y = tempY;
 };
 
-var draw = function() {
-  for (var i = 2; i < 8; i++ ) {
-    noStroke();
-    fill(0);
-    ellipse(width/2, height/2 + i*4, i*2, i*2);
-  }
+Catcher.prototype.display = function() {
+  stroke(0);
+  fill(175);
+  ellipse(this.x, this.y, this.r*2, this.r*2);
 };
