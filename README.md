@@ -1,7 +1,13 @@
-Processing-JS
-=============
+Processing-JS (Stable)
+======================
 
-####Note that this library is experimental and in progress!!!
+August 23, 2013:
+
+`lib/pjs.js` is currently the only stable file in the repository
+
+
+Processing-JS (Development)
+===========================
 
 
 ####[> Getting Started](https://github.com/lmccart/processing-js/wiki/Getting-Started)
