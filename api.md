@@ -13,8 +13,8 @@ For now these functions link to the current Processing.org documentation, which 
 + [/* */ (multiline comment)](http://processing.org/reference/multilinecomment.html)
 + [// (comment)](http://processing.org/reference/comment.html)
 + [; (semicolon)](http://processing.org/reference/semicolon.html)
-+ = (assign)
-+ "[]" (array access)
++ [= (assign)](http://processing.org/reference/assign.html)
++ [\[\] (array access)](http://processing.org/reference/array.html) - operator is used to specify a location within an array, though array formulation shown in example differs for JS.
 + {} (curly braces)
 + catch
 + draw()
