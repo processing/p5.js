@@ -3,17 +3,16 @@ API
 
 See [API progress page](https://github.com/lmccart/processing-js/blob/master/api-progress.md) for current and future implementation plans.
 
-For now these functions link to the current Processing.org documentation, which approximately represents their use and functionality. Important differences when used in JavaScript mode are noted after the link, when necessary.
+For now these functions link to the current Processing.org documentation, which approximately represents their use and functionality. Important differences when used in JavaScript mode are noted after the link, when necessary. Note that the examples shown on the page are for current Java mode and will not run in JS version without modification.
 
 ###Structure 
 
 + [() (parentheses)](http://processing.org/reference/parentheses.html)
-+ , (comma)
-+ . (dot)
-+ /* */ (multiline comment)
-+ /** */ (doc comment)
-+ // (comment)
-+ ; (semicolon)
++ [, (comma)](http://processing.org/reference/comma.html)
++ [. (dot)](http://processing.org/reference/dot.html)
++ [/* */ (multiline comment)](http://processing.org/reference/multilinecomment.html)
++ [// (comment)](http://processing.org/reference/comment.html)
++ [; (semicolon)](http://processing.org/reference/semicolon.html)
 + = (assign)
 + "[]" (array access)
 + {} (curly braces)
