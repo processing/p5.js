@@ -1,7 +1,9 @@
 Processing-JS (Stable)
 ======================
 
-August 23, 2013: `lib/pjs.js` is currently the only stable file in the repository
+August 23, 2013:
+
+`lib/pjs.js` is currently the only stable file in the repository
 
 
 Processing-JS (Development)
