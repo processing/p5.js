@@ -5,7 +5,7 @@
 // ported by Lauren McCarthy
 
 // Example 1-1: stroke and fill
-createCanvas(200,200);
+createGraphics(200,200);
 background(255);
 stroke(0); 
 fill(150);
