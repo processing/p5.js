@@ -18,21 +18,17 @@ For now these functions link to the current Processing.org documentation, which 
 + [{} (curly braces)](http://processing.org/reference/curlybraces.html)
 + [catch](http://processing.org/reference/catch.html)
 + [draw](http://processing.org/reference/draw_.html) - same use but different syntax, see [Getting Started](https://github.com/lmccart/processing-js/wiki/Getting-Started) tutorial for more info.
-+ exit()
-+ false
-+ finally
-+ loop()
-+ new
-+ noLoop()
-+ null
-+ popStyle()
-+ pushStyle()
-+ redraw()
-+ return
-+ setup()
-+ this
-+ true
-+ try
++ [false](http://processing.org/reference/false.html)
++ [loop()](http://processing.org/reference/loop.html)
++ [new](http://processing.org/reference/new.html)
++ [noLoop()](http://processing.org/reference/noLoop_.html)
++ [null](http://processing.org/reference/null.html)
++ [redraw()](http://processing.org/reference/redraw_.html)
++ [return](http://processing.org/reference/return.html)
++ [setup](http://processing.org/reference/setup_.html) - same use but different syntax, see [Getting Started](https://github.com/lmccart/processing-js/wiki/Getting-Started) tutorial for more info.
++ [this](http://processing.org/reference/this.html)
++ [true](http://processing.org/reference/true.html)
++ [try](http://processing.org/reference/try.html)
 
 ###Environment 
 + cursor()
