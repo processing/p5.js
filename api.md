@@ -14,10 +14,10 @@ For now these functions link to the current Processing.org documentation, which 
 + [// (comment)](http://processing.org/reference/comment.html)
 + [; (semicolon)](http://processing.org/reference/semicolon.html)
 + [= (assign)](http://processing.org/reference/assign.html)
-+ [\[\] (array access)](http://processing.org/reference/array.html) - operator is used to specify a location within an array, though array formulation shown in example differs for JS.
-+ {} (curly braces)
-+ catch
-+ draw()
++ [\[\] (array access)](http://processing.org/reference/array.html) - operator is used to specify a location within an array, though array formulation shown differs for JS.
++ [{} (curly braces)](http://processing.org/reference/curlybraces.html)
++ [catch](http://processing.org/reference/catch.html)
++ [var draw = function()](http://processing.org/reference/draw_.html) - same use but different syntax, see [Getting Started](https://github.com/lmccart/processing-js/wiki/Getting-Started) tutorial for more info.
 + exit()
 + false
 + finally
