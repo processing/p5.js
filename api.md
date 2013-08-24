@@ -54,15 +54,15 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [trim()](http://processing.org/reference/trim_.html)
 
 ####Array Functions
-+ append()
-+ arrayCopy()
-+ concat()
-+ expand()
-+ reverse()
-+ shorten()
-+ sort()
-+ splice()
-+ subset()
++ [append()](http://processing.org/reference/append_.html)
++ [arrayCopy()](http://processing.org/reference/arrayCopy_.html)
++ [concat()](http://processing.org/reference/concat_.html)
++ [expand()](http://processing.org/reference/expand_.html)
++ [reverse()](http://processing.org/reference/reverse_.html)
++ [shorten()](http://processing.org/reference/shorten_.html)
++ [sort()](http://processing.org/reference/sort_.html)
++ [splice()](http://processing.org/reference/splice_.html)
++ [subset()](http://processing.org/reference/subset_.html)
 
 
 ###Control
