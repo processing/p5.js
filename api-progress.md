@@ -60,7 +60,7 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + __getFrameRate()__
 + __height__
 + __noCursor()__
-+ __size()__
++ ~~size()~~ - replaced by createGraphics, createElement, createImage
 + __width__
 
 ###Data
