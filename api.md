@@ -45,10 +45,9 @@ For now these functions link to the current [Processing.org reference](http://pr
 ####String Functions
 + [join()](http://processing.org/reference/join_.html)
 + [match()](http://processing.org/reference/match_.html)
-+ [matchAll()](http://processing.org/reference/matchAll_.html)
 + [nf()](http://processing.org/reference/nf_.html)
-+ [nfc()](http://processing.org/reference/nfc_.html)
-+ [nfp()](http://processing.org/reference/nfp_.html)
++ [nfc()](http://processing.org/reference/nfc_.html) - for single number, not array
++ [nfp()](http://processing.org/reference/nfp_.html) - for single number, not array
 + [nfs()](http://processing.org/reference/nfs_.html)
 + [split()](http://processing.org/reference/split_.html)
 + [splitTokens()](http://processing.org/reference/splitTokens_.html)
