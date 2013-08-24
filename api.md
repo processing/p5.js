@@ -90,24 +90,18 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [switch](http://processing.org/reference/switch.html)
 
 ####Logical Operators
-+ ! (logical NOT)
-+ && (logical AND)
-+ || (logical OR)
++ [! (logical NOT)](http://processing.org/reference/logicalNOT.html)
++ [&& (logical AND)](http://processing.org/reference/logicalAND.html)
++ [|| (logical OR)](http://processing.org/reference/logicalOR.html)
 
-
-###Shape 
-+ createShape()
-+ loadShape()
-+ PShape
 
 ####2D Primitives
-+ arc()
-+ ellipse()
-+ line()
-+ point()
-+ quad()
-+ rect()
-+ triangle()
++ [ellipse()](http://processing.org/reference/ellipse_.html)
++ [line()](http://processing.org/reference/line_.html)
++ [point()](http://processing.org/reference/point_.html)
++ [quad()](http://processing.org/reference/quad_.html)
++ [rect()](http://processing.org/reference/rect_.html)
++ [triangle()](http://processing.org/reference/triangle_.html)
 
 ####Curves
 + bezier()
