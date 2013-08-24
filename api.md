@@ -80,14 +80,14 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [while](http://processing.org/reference/while.html)
 
 ####Conditionals
-+ ?: (conditional)
-+ break
-+ case
-+ continue
-+ default
-+ else
-+ if
-+ switch
++ [?: (conditional)](http://processing.org/reference/conditional.html)
++ [break](http://processing.org/reference/break.html)
++ [case](http://processing.org/reference/case.html)
++ [continue](http://processing.org/reference/continue.html)
++ [default](http://processing.org/reference/default.html)
++ [else](http://processing.org/reference/else.html)
++ [if](http://processing.org/reference/if.html)
++ [switch](http://processing.org/reference/switch.html)
 
 ####Logical Operators
 + ! (logical NOT)
