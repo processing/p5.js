@@ -117,18 +117,11 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [strokeWeight()](http://processing.org/reference/strokeWeight_.html)
 
 ####Vertex
-+ beginContour()
-+ beginShape()
-+ bezierVertex()
-+ curveVertex()
-+ endContour()
-+ endShape()
-+ quadraticVertex()
-+ vertex()
-
-####Loading & Displaying
-+ shape()
-+ shapeMode()
++ [beginShape()](http://processing.org/reference/beginShape_.html)
++ [bezierVertex()](http://processing.org/reference/bezierVertex_.html)
++ [endShape()](http://processing.org/reference/endShape_.html)
++ [quadraticVertex()](http://processing.org/reference/quadraticVertex_.html)
++ [vertex()](http://processing.org/reference/vertex_.html)
 
 
 ###Input
