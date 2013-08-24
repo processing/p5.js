@@ -31,11 +31,10 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [try](http://processing.org/reference/try.html)
 
 ###Environment 
-+ cursor()
-+ displayHeight
-+ displayWidth
-+ focused
-+ frameCount
++ [cursor()](http://processing.org/reference/cursor_.html) - cursor(img), cursor(img, x, y) not yet supported
++ [displayHeight](http://processing.org/reference/displayHeight.html)
++ [displayWidth](http://processing.org/reference/displayWidth.html)
++ [frameCoun
 + frameRate()
 + getFrameRate()
 + height
