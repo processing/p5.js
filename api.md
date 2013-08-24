@@ -34,11 +34,11 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [cursor()](http://processing.org/reference/cursor_.html) - cursor(img), cursor(img, x, y) not yet supported
 + [displayHeight](http://processing.org/reference/displayHeight.html)
 + [displayWidth](http://processing.org/reference/displayWidth.html)
-+ [frameCount]
-+ frameRate()
-+ getFrameRate()
++ [frameCount](http://processing.org/reference/frameCount.html)
++ [frameRate()](http://processing.org/reference/frameRate_.html)
++ [getFrameRate()](http://processing.org/reference/frameRate.html) = frameRate replaced with getFrameRate()
 + [height](http://processing.org/reference/height.html)
-+ noCursor()
++ [noCursor()](http://processing.org/reference/noCursor_.html)
 + [width](http://processing.org/reference/width.html)
 
 
