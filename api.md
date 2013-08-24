@@ -68,16 +68,16 @@ For now these functions link to the current [Processing.org reference](http://pr
 ###Control
 
 ####Relational Operators
-+ != (inequality)
-+ < (less than)
-+ <= (less than or equal to)
-+ == (equality)
-+ > (greater than)
-+ >= (greater than or equal to)
++ [!= (inequality)](http://processing.org/reference/inequality.html)
++ [< (less than)](http://processing.org/reference/lessthan.html)
++ [<= (less than or equal to)](http://processing.org/reference/lessthanorequalto.html)
++ [== (equality)](http://processing.org/reference/equality.html)
++ [> (greater than)](http://processing.org/reference/greaterthan.html)
++ [>= (greater than or equal to)](http://processing.org/reference/greaterthanorequalto.html)
 
 ####Iteration
-+ for
-+ while
++ [for](http://processing.org/reference/for.html)
++ [while](http://processing.org/reference/while.html)
 
 ####Conditionals
 + ?: (conditional)
