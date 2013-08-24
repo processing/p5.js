@@ -43,16 +43,16 @@ For now these functions link to the current [Processing.org reference](http://pr
 
 
 ####String Functions
-+ join()
-+ match()
-+ matchAll()
-+ nf()
-+ nfc()
-+ nfp()
-+ nfs()
-+ split()
-+ splitTokens()
-+ trim()
++ [join()](http://processing.org/reference/join_.html)
++ [match()](http://processing.org/reference/match_.html)
++ [matchAll()](http://processing.org/reference/matchAll_.html)
++ [nf()](http://processing.org/reference/nf_.html)
++ [nfc()](http://processing.org/reference/nfc_.html)
++ [nfp()](http://processing.org/reference/nfp_.html)
++ [nfs()](http://processing.org/reference/nfs_.html)
++ [split()](http://processing.org/reference/split_.html)
++ [splitTokens()](http://processing.org/reference/splitTokens_.html)
++ [trim()](http://processing.org/reference/trim_.html)
 
 ####Array Functions
 + append()
