@@ -104,29 +104,17 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [triangle()](http://processing.org/reference/triangle_.html)
 
 ####Curves
-+ bezier()
-+ bezierDetail()
-+ bezierPoint()
-+ bezierTangent()
-+ curve()
-+ curveDetail()
-+ curvePoint()
-+ curveTangent()
-+ curveTightness()
++ [bezier()](http://processing.org/reference/bezier_.html)
 
-####_3D Primitives_
-+ _box()_
-+ _sphere()_
-+ _sphereDetail()_
 
 ####Attributes
-+ ellipseMode()
-+ noSmooth()
-+ rectMode()
-+ smooth()
-+ strokeCap()
-+ strokeJoin()
-+ strokeWeight()
++ [ellipseMode()](http://processing.org/reference/ellipseMode_.html)
++ [noSmooth()](http://processing.org/reference/noSmooth_.html)
++ [rectMode()](http://processing.org/reference/rectMode_.html)
++ [smooth()](http://processing.org/reference/smooth_.html)
++ [strokeCap()](http://processing.org/reference/strokeCap_.html)
++ [strokeJoin()](http://processing.org/reference/strokeJoin_.html)
++ [strokeWeight()](http://processing.org/reference/strokeWeight_.html)
 
 ####Vertex
 + beginContour()
@@ -223,9 +211,6 @@ For now these functions link to the current [Processing.org reference](http://pr
 + pushMatrix()
 + resetMatrix()
 + rotate()
-+ _rotateX()_
-+ _rotateY()_
-+ _rotateZ()_
 + scale()
 + shearX()
 + shearY()
