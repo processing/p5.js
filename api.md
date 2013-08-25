@@ -212,28 +212,18 @@ For now these functions link to the current [Processing.org reference](http://pr
 
 ####Loading & Displaying
 + [image()](http://processing.org/reference/image_.html)
-+ [imageMode()[(http://processing.org/reference/image_.html)
-+ [loadImage()](http://processing.org/reference/image_.html) - src is a full URL to web hosted image, loadImage is currently asynchronous, can take a callback function as the last parameter to be called when image loads
-
-####Textures
-+ texture()
-+ textureMode()
-+ textureWrap()
++ [imageMode()](http://processing.org/reference/imageMode_.html)
++ [loadImage()](http://processing.org/reference/loadImage_.html) - src is a full URL to web hosted image, loadImage is currently asynchronous, can take a callback function as the last parameter to be called when image loads
 
 ####Pixels
-+ blend()
-+ copy()
-+ filter()
-+ get()
-+ loadPixels()
-+ pixels[]
-+ set()
-+ updatePixels()
++ [get()](http://processing.org/reference/get_.html)
++ [loadPixels()](http://processing.org/reference/loadPixels_.html)
++ [pixels[]](http://processing.org/reference/pixels.html)
++ [updatePixels()](http://processing.org/reference/updatePixels_.html)
 
 ###Rendering 
-+ blendMode()
-+ createGraphics()
-+ PGraphics
++ [createGraphics()](http://processing.org/reference/createGraphics_.html) - createGraphics() effectively replaces the previous size() function. It is used for onscreen drawing as well as offscreen drawing. See notes about PGraphics below.
++ [PGraphics](http://processing.org/reference/PGraphics.html) - It is used for onscreen drawing as well as offscreen drawing. Each new canvas (PGraphics) element is created using this function. Once created, you can use the dot operator to draw into that canvas as shown in the example (though beginDraw and endDraw are not required). You can also start calling drawing functions directly without using the dot operator. Use setContext() to switch between PGraphics elements if there are more than one. 
 
 ####Shaders
 + loadShader()
