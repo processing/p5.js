@@ -309,15 +309,15 @@ For now these functions link to the current [Processing.org reference](http://pr
 + sqrt()
 
 ####Trigonometry
-+ acos()
-+ asin()
-+ atan()
-+ atan2()
-+ cos()
-+ degrees()
-+ radians()
-+ sin()
-+ tan()
++ [acos()](http://processing.org/reference/acos_.html)
++ [asin()](http://processing.org/reference/asin_.html)
++ [atan()](http://processing.org/reference/atan_.html)
++ [atan2()](http://processing.org/reference/atan2_.html)
++ [cos()](http://processing.org/reference/cos_.html)
++ [degrees()](http://processing.org/reference/degrees_.html)
++ [radians()](http://processing.org/reference/radians_.html)
++ [sin()](http://processing.org/reference/sin_.html)
++ [tan()](http://processing.org/reference/tan_.html)
 
 ####Random
 + noise()
@@ -329,11 +329,11 @@ For now these functions link to the current [Processing.org reference](http://pr
 
 ###Constants 
 
-+ HALF_PI
-+ PI
-+ QUARTER_PI
-+ TAU
-+ TWO_PI
++ [HALF_PI](http://processing.org/reference/HALF_PI.html)
++ [PI](http://processing.org/reference/PI.html)
++ [QUARTER_PI](http://processing.org/reference/QUARTER_PI.html)
++ [TAU](http://processing.org/reference/TAU.html)
++ [TWO_PI](http://processing.org/reference/TWO_PI.html)
 
 
 ###DOM
