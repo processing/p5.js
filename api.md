@@ -207,16 +207,13 @@ For now these functions link to the current [Processing.org reference](http://pr
 
 ###Image 
 
-+ createImage()
-+ PImage - _mostly_
++ [createImage()](http://processing.org/reference/createImage_.html)
++ [PImage](http://processing.org/reference/PImage.html) - resize(), set(), mask(), filter(), copy(), blend(), save() not yet implemented
 
 ####Loading & Displaying
-+ image()
-+ imageMode()
-+ loadImage()
-+ noTint()
-+ requestImage()
-+ tint()
++ [image()](http://processing.org/reference/image_.html)
++ [imageMode()[(http://processing.org/reference/image_.html)
++ [loadImage()](http://processing.org/reference/image_.html) - src is a full URL to web hosted image, loadImage is currently asynchronous, can take a callback function as the last parameter to be called when image loads
 
 ####Textures
 + texture()
