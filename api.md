@@ -303,7 +303,7 @@ For now these functions link to the current [Processing.org reference](http://pr
 ###DOM
 
 There are a set of functions that have been added to create and manipulate parts of the HTML page beyond the graphics canvas. 
-Documentation for all functions below is [here](https://github.com/lmccart/processing-js/edit/master/extensions.md).
+See documentation for all functions below on the [extensions page](https://github.com/lmccart/processing-js/blob/master/extensions.md).
 
 + AUTO
 
