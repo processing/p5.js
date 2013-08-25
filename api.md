@@ -127,26 +127,23 @@ For now these functions link to the current [Processing.org reference](http://pr
 ###Input
 
 ####Mouse
-+ mouseButton
-+ mouseClicked()
-+ mouseDragged()
-+ mouseMoved()
-+ mousePressed()
-+ isMousePressed()
-+ mouseReleased()
-+ mouseWheel()
-+ mouseX
-+ mouseY
-+ pmouseX
-+ pmouseY
++ [mouseClicked()](http://processing.org/reference/mouseClicked_.html)
++ [mouseMoved()](http://processing.org/reference/mouseMoved_.html)
++ [mousePressed()](http://processing.org/reference/mousePressed_.html)
++ [isMousePressed()](http://processing.org/reference/mousePressed.html) - mousePressed is now isMousePressed()
++ [mouseReleased()](http://processing.org/reference/mouseReleased_.html)
++ [mouseX](http://processing.org/reference/mouseX.html)
++ [mouseY](http://processing.org/reference/mouseY.html)
++ [pmouseX](http://processing.org/reference/pmouseX.html)
++ [pmouseY](http://processing.org/reference/pmouseY.html)
 
 ####Keyboard
-+ key
-+ keyCode
-+ keyPressed()
-+ iskeyPressed()
-+ keyReleased()
-+ keyTyped()
++ [key](http://processing.org/reference/key.html)
++ [keyCode](http://processing.org/reference/keyCode.html)
++ [keyPressed()](http://processing.org/reference/keyPressed_.html)
++ [iskeyPressed()](http://processing.org/reference/keyPressed.html) - keyPressed now isKeyPressed()
++ [keyReleased()](http://processing.org/reference/keyReleased_.html)
++ [keyTyped()](http://processing.org/reference/keyTyped_.html)
 
 ####Files
 + createInput()
