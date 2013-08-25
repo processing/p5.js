@@ -1,25 +1,24 @@
-Extensions
+DOM Extensions
 ==========
 
 ###DOM manipulation & access
 + var AUTO;
 
-// Create 
+####Create 
 + createElement(html)
-+ createImage(src)
++ createDOMImage(src)
 + createCanvas(w, h)
 
-// Access
+####Access
 + get(id) // return obj or null
 + get(class) // return arr
 
-// Set context
+####Set context
 + context(id)
 + context(obj)
 
 
-
-// PElement
+####PElement
 
 + id(id)
 + class(class)
@@ -30,27 +29,10 @@ Extensions
 + show()
 + hide()
 
-
-// Listeners
+// Input
 + mousePressed(function)
 + mouseOver(function)
 + mouseOut(function)
 
 
-
-###Utilities / convenience functions
-+ fullScreen(value)
-+ browser support check function
-
-
-
-
-##Future libs
-###Audio
-
-###Video
-
-###HTTPrequest
-
-###Data -- localStorage
 
