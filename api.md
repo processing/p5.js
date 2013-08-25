@@ -175,36 +175,35 @@ For now these functions link to the current [Processing.org reference](http://pr
 
 
 ###Transform 
-+ applyMatrix()
-+ popMatrix()
-+ printMatrix()
-+ pushMatrix()
-+ resetMatrix()
-+ rotate()
-+ scale()
-+ shearX()
-+ shearY()
-+ translate()
++ [applyMatrix()](http://processing.org/reference/applyMatrix_.html)
++ [popMatrix()](http://processing.org/reference/popMatrix_.html)
++ [printMatrix()](http://processing.org/reference/printMatrix_.html)
++ [pushMatrix()](http://processing.org/reference/pushMatrix_.html)
++ [resetMatrix()](http://processing.org/reference/resetMatrix_.html)
++ [rotate()](http://processing.org/reference/rotate_.html)
++ [scale()](http://processing.org/reference/scale_.html)
++ [shearX()](http://processing.org/reference/shearX_.html)
++ [shearY()](http://processing.org/reference/shearY_.html)
++ [translate()](http://processing.org/reference/translate_.html)
 
 ####Setting
-+ background()
-+ clear()
-+ colorMode() // pend test this?
-+ fill()
-+ noFill()
-+ noStroke()
-+ stroke()
++ [background()](http://processing.org/reference/background_.html)
++ [colorMode()](http://processing.org/reference/colorMode_.html)
++ [fill()](http://processing.org/reference/fill_.html)
++ [noFill()](http://processing.org/reference/noFill_.html)
++ [noStroke()](http://processing.org/reference/noStroke_.html)
++ [stroke()](http://processing.org/reference/stroke_.html)
 
 ####Creating & Reading
-+ alpha()
-+ blue()
-+ brightness()
-+ color()
-+ green()
-+ hue()
-+ lerpColor()
-+ red()
-+ saturation()
++ [alpha()](http://processing.org/reference/alpha_.html)
++ [blue()](http://processing.org/reference/blue_.html)
++ [brightness()](http://processing.org/reference/brightness_.html)
++ [color()](http://processing.org/reference/color_.html)
++ [green()](http://processing.org/reference/green_.html)
++ [hue()](http://processing.org/reference/hue_.html)
++ [lerpColor()](http://processing.org/reference/lerpColor_.html)
++ [red()](http://processing.org/reference/red_.html)
++ [saturation()](http://processing.org/reference/saturation_.html)
 
 ###Image 
 
