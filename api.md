@@ -300,7 +300,7 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [TWO_PI](http://processing.org/reference/TWO_PI.html)
 
 
-###[DOM extensions page](https://github.com/lmccart/processing-js/blob/master/extensions.md)
+###[DOM extensions](https://github.com/lmccart/processing-js/blob/master/extensions.md)
 
 There are a set of functions that have been added to create and manipulate parts of the HTML page beyond the graphics canvas. 
 See documentation for all functions below on the [DOM extensions page](https://github.com/lmccart/processing-js/blob/master/extensions.md)!
