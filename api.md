@@ -223,39 +223,21 @@ For now these functions link to the current [Processing.org reference](http://pr
 
 ###Rendering 
 + [createGraphics()](http://processing.org/reference/createGraphics_.html) - createGraphics() effectively replaces the previous size() function. It is used for onscreen drawing as well as offscreen drawing. See notes about PGraphics below.
-+ [PGraphics](http://processing.org/reference/PGraphics.html) - It is used for onscreen drawing as well as offscreen drawing. Each new canvas (PGraphics) element is created using this function. Once created, you can use the dot operator to draw into that canvas as shown in the example (though beginDraw and endDraw are not required). You can also start calling drawing functions directly without using the dot operator. Use setContext() to switch between PGraphics elements if there are more than one. 
++ [PGraphics](http://processing.org/reference/PGraphics.html) - PGraphics is used for onscreen drawing as well as offscreen drawing. Each new canvas (PGraphics) element is created using this function. Once created, you can use the dot operator to draw into that canvas as shown in the example (though beginDraw and endDraw are not required). You can also start calling drawing functions directly without using the dot operator. Use setContext() to switch between PGraphics elements if there are more than one. 
 
-####Shaders
-+ loadShader()
-+ PShader
-+ resetShader()
-+ shader()
 
 ###Typography 
 
-+ PFont
-
 ####Loading & Displaying
-+ createFont()
-+ loadFont()
-+ text()
-+ textFont()
++ [text()](http://processing.org/reference/text_.html)
 
 ####Attributes
-+ textAlign()
-+ textLeading()
-+ textMode()
-+ textSize()
-+ textWidth()
++ [textAlign()](http://processing.org/reference/text_.html)
++ [textSize()](http://processing.org/reference/text_.html)
 
-####Metrics
-+ textAscent()
-+ textDescent()
 
 
 ###Math 
-
-+ PVector
 
 ####Operators
 + [% (modulo)](http://processing.org/reference/modulo.html)
@@ -307,12 +289,7 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [tan()](http://processing.org/reference/tan_.html)
 
 ####Random
-+ noise()
-+ noiseDetail()
-+ noiseSeed()
-+ random()
-+ randomGaussian()
-+ randomSeed()
++ [random()](http://processing.org/reference/random_.html)
 
 ###Constants 
 
@@ -324,14 +301,16 @@ For now these functions link to the current [Processing.org reference](http://pr
 
 
 ###DOM
+
+There are a set of functions that have been added to create and manipulate parts of the HTML page beyond the graphics canvas. 
+Documentation for all functions below is [here](https://github.com/lmccart/processing-js/edit/master/extensions.md).
+
 + AUTO
-// Create
 
 ####Create
 + createElement(html)
-+ createImage(src)
++ createDOMImage(src)
 + createCanvas(w, h)
-
 
 ####Access
 + get(id)
