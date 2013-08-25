@@ -146,52 +146,32 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [keyTyped()](http://processing.org/reference/keyTyped_.html)
 
 ####Files
-+ createInput()
-+ createReader()
-+ loadBytes()
-+ loadJSON()
-+ loadStrings()
-+ loadTable()
-+ loadXML()
-+ open()
-+ parseXML()
-+ saveTable()
-+ selectFolder()
-+ selectInput()
++ [loadJSON()](http://processing.org/reference/loadJSONObject_.html) - loadJSONObject() and loadJSONArray() now both loadJSON()
++ [loadStrings()](http://processing.org/reference/loadStrings_.html)
 
 
 ####Time & Date
-+ day()
-+ hour()
-+ millis()
-+ minute()
-+ month()
-+ second()
-+ year()
++ [day()](http://processing.org/reference/day_.html)
++ [hour()](http://processing.org/reference/hour_.html)
++ [millis()](http://processing.org/reference/millis_.html)
++ [minute()](http://processing.org/reference/minute_.html)
++ [month()](http://processing.org/reference/month_.html)
++ [second()](http://processing.org/reference/second_.html)
++ [year()](http://processing.org/reference/year_.html)
 
 ###Output
 
 ####Text Area
-+ println()
++ [print()](http://processing.org/reference/println_.html)
++ [println()](http://processing.org/reference/println_.html)
 
 ####Image
-+ save()
++ [save()](http://processing.org/reference/save_.html) - opens image in a new tab rather than saving to hard drive
 
 ####Files
-+ beginRaw()
-+ beginRecord()
-+ createOutput()
-+ createWriter()
-+ endRaw()
-+ endRecord()
-+ PrintWriter
-+ saveBytes()
-+ saveJSONArray()
-+ saveJSONObject()
-+ saveStream()
-+ saveStrings()
-+ saveXML()
-+ selectOutput()
++ [createWriter()](http://processing.org/reference/createWriter_.html)
++ [PrintWriter](http://processing.org/reference/PrintWriter.html)
++ [saveStrings()](http://processing.org/reference/saveStrings_.html)
 
 
 ###Transform 
