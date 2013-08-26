@@ -315,7 +315,7 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 
 ####Setting
 + __background()__
-+ clear()
++ __clear()__
 + __colorMode()__ // pend test this?
 + __fill()__
 + __noFill()__
