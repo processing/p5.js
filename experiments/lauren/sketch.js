@@ -5,7 +5,7 @@ var setup = function() {
 };
 
 var draw = function() {
-
+	console.log(focused);
 };
 
 var keyPressed = function() {
