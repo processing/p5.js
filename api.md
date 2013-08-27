@@ -23,6 +23,8 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [new](http://processing.org/reference/new.html)
 + [noLoop()](http://processing.org/reference/noLoop_.html)
 + [null](http://processing.org/reference/null.html)
++ [popStyle](http://processing.org/reference/popStyle_.html)
++ [pushStyle](http://processing.org/reference/pushStyle_.html)
 + [redraw()](http://processing.org/reference/redraw_.html)
 + [return](http://processing.org/reference/return.html)
 + [setup](http://processing.org/reference/setup_.html) - same use but different syntax, see [Getting Started](https://github.com/lmccart/processing-js/wiki/Getting-Started) tutorial for more info.
