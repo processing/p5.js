@@ -35,10 +35,10 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + __new__
 + __noLoop()__
 + __null__
-+ popStyle()
++ __popStyle()__
 + ~~private~~
 + ~~public~~
-+ pushStyle()
++ __pushStyle()__
 + __redraw()__
 + __return__
 + __setup()__
