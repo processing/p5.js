@@ -182,7 +182,7 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 ###Input
 
 ####Mouse
-+ mouseButton
++ __mouseButton__
 + __mouseClicked()__
 + mouseDragged()
 + __mouseMoved()__
