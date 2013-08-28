@@ -7,7 +7,7 @@ DOM Extensions
 ####Create 
 + createElement(html)
 + createDOMImage(src)
-+ createCanvas(w, h)
++ createGraphics(w, h)
 
 ####Access
 + get(id) // return obj or null
