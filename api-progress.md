@@ -74,10 +74,10 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 ####String Functions
 + __join()__
 + __match()__
-+ matchAll()
++ __matchAll()__
 + __nf()__
-+ __nfc()__ (for single number, not array)
-+ __nfp()__ (for single number, not array)
++ __nfc()__ 
++ __nfp()__ 
 + __nfs()__
 + __split()__
 + __splitTokens()__
