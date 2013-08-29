@@ -232,11 +232,15 @@ For now these functions link to the current [Processing.org reference](http://pr
 ###Typography 
 
 ####Loading & Displaying
-+ [text()](http://processing.org/reference/text_.html)
++ [text()](http://processing.org/reference/text_.html) - only text(str, x, y) and text(str, x1, y1, x2, y2) supported
 
 ####Attributes
 + [textAlign()](http://processing.org/reference/text_.html)
++ [textHeight()](http://processing.org/reference/textHeight_.html)
++ [textLeading()](http://processing.org/reference/textLeading_.html)
 + [textSize()](http://processing.org/reference/text_.html)
++ textStyle() - NORMAL, ITALIC, or BOLD
++ [textWidth()](http://processing.org/reference/textWidth_.html)
 
 
 

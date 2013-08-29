@@ -7,8 +7,15 @@ var setup = function() {
 };
 
 var draw = function() {
+
 	// console.log(focused);
-	// background(255);
+	background(255);
+	var s = "The quick brown fox jumped over the lazy dog.";
+	fill(50);
+	textLeading(30);
+	textStyle(BOLD);
+	rectMode(CORNER)
+	text(s, 10, 10, 100, 100);  // Text wraps within text box
 
 	// ellipse(0, 50, 33, 33);  // Left circle
 

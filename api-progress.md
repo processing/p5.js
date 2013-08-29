@@ -362,7 +362,7 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + __updatePixels()__
 
 ###Rendering 
-+ ~~blendMode()~~
++ blendMode()
 + __createGraphics()__
 + __PGraphics__ (is now PElement)
 
@@ -384,10 +384,12 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 
 ####Attributes
 + __textAlign()__
-+ textLeading()
-+ textMode()
++ __textHeight()__
++ __textLeading()__
++ ~~textMode()~~
 + __textSize()__
-+ textWidth()
++ __textStyle()__
++ __textWidth()__
 
 ####Metrics
 + textAscent()
