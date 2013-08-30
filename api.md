@@ -246,6 +246,18 @@ For now these functions link to the current [Processing.org reference](http://pr
 
 ###Math 
 
+####[PVector](http://processing.org/reference/PVector.html)
++ [set](http://processing.org/reference/PVector_set_.html)
++ [get](http://processing.org/reference/PVector_get_.html)
++ [add](http://processing.org/reference/PVector_add_.html)
++ [sub](http://processing.org/reference/PVector_sub_.html)
++ [mult](http://processing.org/reference/PVector_mult_.html)
++ [div](http://processing.org/reference/PVector_div_.html)
++ [mag](http://processing.org/reference/PVector_mag_.html)
++ [magSq](http://processing.org/reference/PVector_magSq_.html)
++ [dot](http://processing.org/reference/PVector_dot_.html)
++ [cross](http://processing.org/reference/PVector_cross_.html)
+
 ####Operators
 + [% (modulo)](http://processing.org/reference/modulo.html)
 + [* (multiply)](http://processing.org/reference/multiply.html)
