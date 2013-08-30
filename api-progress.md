@@ -398,7 +398,28 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 
 ###Math 
 
-+ PVector
+#### PVector
++ __set__
++ __get__
++ __add__
++ __sub__
++ __mult__
++ __div__
++ __mag__
++ __magSq__
++ __dot__
++ __cross__
++ dist
++ normalize
++ limit
++ setMag
++ heading
++ ~~rotate~~
++ rotate2D
++ lerp
++ angleBetween
++ array
+
 
 ####Operators
 + __% (modulo)__
