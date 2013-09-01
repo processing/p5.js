@@ -377,10 +377,10 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + PFont
 
 ####Loading & Displaying
-+ createFont()
-+ loadFont()
++ ~~createFont()~~
++ ~~loadFont()~~
 + __text()__
-+ textFont()
++ __textFont()__
 
 ####Attributes
 + __textAlign()__

@@ -14,6 +14,8 @@ var draw = function() {
 	fill(50);
 	textLeading(30);
 	textStyle(BOLD);
+	///textFont('sans-serif');
+	textFont('action_manregular');
 	rectMode(CORNER)
 	text(s, 10, 10, 100, 100);  // Text wraps within text box
 
