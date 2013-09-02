@@ -190,7 +190,7 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + ~~mousePressed~~
 + __isMousePressed()__
 + __mouseReleased()__
-+ mouseWheel()
++ __mouseWheel()__
 + __mouseX__
 + __mouseY__
 + __pmouseX__
