@@ -6,14 +6,14 @@ var setup = function() {
 	console.log("setup");
 
 	var cnv = createGraphics(1000, 500);
-	cnv.class("hi")
+	cnv.id("test")
 
 
 	var text = createElement("The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. v The quick brown fox jumped over the lazy dog.");
 	text.class("hi")
 	text.size(300, 200);
 
-	context(cnv)
+	context("test")
 
 	print("hi")
 	setFrameRate(1)

@@ -497,11 +497,11 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + __createCanvas(w, h)__
 
 ####Access
-+ get(id)
-+ get(class)
++ __get(id)__
++ __get(class)__
 
 ####Set context
-+ context(id)
++ __context(id)__
 + __context(obj)__
 
 ####PElement
