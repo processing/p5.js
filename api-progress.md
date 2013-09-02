@@ -377,10 +377,10 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + PFont
 
 ####Loading & Displaying
-+ createFont()
-+ loadFont()
++ ~~createFont()~~
++ ~~loadFont()~~
 + __text()__
-+ textFont()
++ __textFont()__
 
 ####Attributes
 + __textAlign()__
@@ -398,7 +398,28 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 
 ###Math 
 
-+ PVector
+#### PVector
++ __set__
++ __get__
++ __add__
++ __sub__
++ __mult__
++ __div__
++ __mag__
++ __magSq__
++ __dot__
++ __cross__
++ dist
++ normalize
++ limit
++ setMag
++ heading
++ ~~rotate~~
++ rotate2D
++ lerp
++ angleBetween
++ array
+
 
 ####Operators
 + __% (modulo)__
@@ -476,11 +497,11 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + __createCanvas(w, h)__
 
 ####Access
-+ get(id)
-+ get(class)
++ __get(id)__
++ __get(class)__
 
 ####Set context
-+ context(id)
++ __context(id)__
 + __context(obj)__
 
 ####PElement
