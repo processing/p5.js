@@ -1,15 +1,19 @@
 
+var lastMillis = 0;
+
 
 var setup = function() {
 	console.log("setup");
 
-
+	var cnv = createGraphics(1000, 500);
+	cnv.class("hi")
+	print("hi")
 };
 
 var draw = function() {
 
 	// console.log(focused);
-	background(255);
+	background(255, 0, 0);
 	var s = "The quick brown fox jumped over the lazy dog.";
 	fill(50);
 	textLeading(30);
@@ -18,6 +22,13 @@ var draw = function() {
 	textFont('action_manregular');
 	rectMode(CORNER)
 	text(s, 10, 10, 100, 100);  // Text wraps within text box
+
+
+	var c = get("hi")[0];
+	if (millis() - lastMillis > 2000) {
+		c.size(c.width-10, c.height+10);
+		lastMillis = millis();
+	}
 
 	// ellipse(0, 50, 33, 33);  // Left circle
 
