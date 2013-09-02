@@ -7,10 +7,28 @@ var setup = function() {
 
 	var cnv = createGraphics(1000, 500);
 	cnv.class("hi")
+
+
+	var text = createElement("The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. v The quick brown fox jumped over the lazy dog.");
+	text.class("hi")
+	text.size(300, 200);
+
+	context(cnv)
+
 	print("hi")
+	setFrameRate(1)
 };
 
 var draw = function() {
+
+	//var c = get("hi");
+
+	// if (millis() - lastMillis > 2000) {
+	// 	for (i=0; i<c.length; i++) {
+	// 		c[i].size(c[i].width-20, c[i].height+20);
+	// 	}
+	// 	lastMillis = millis();
+	// }
 
 	// console.log(focused);
 	background(255, 0, 0);
@@ -24,11 +42,6 @@ var draw = function() {
 	text(s, 10, 10, 100, 100);  // Text wraps within text box
 
 
-	var c = get("hi")[0];
-	if (millis() - lastMillis > 2000) {
-		c.size(c.width-10, c.height+10);
-		lastMillis = millis();
-	}
 
 	// ellipse(0, 50, 33, 33);  // Left circle
 
