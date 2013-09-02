@@ -330,7 +330,7 @@ See documentation for all functions below on the [DOM extensions page](https://g
 ####Create
 + createElement(html)
 + createDOMImage(src)
-+ createCanvas(w, h)
++ createGraphics(w, h)
 
 ####Access
 + get(id)
