@@ -409,16 +409,16 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + __magSq__
 + __dot__
 + __cross__
-+ dist
-+ normalize
-+ limit
-+ setMag
-+ heading
++ __dist__
++ __normalize__
++ __limit__
++ __setMag__
++ __heading__
 + ~~rotate~~
-+ rotate2D
-+ lerp
-+ angleBetween
-+ array
++ __rotate2D__
++ __lerp__
++ __angleBetween__
++ __array__
 
 
 ####Operators
