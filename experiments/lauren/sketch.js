@@ -5,15 +5,16 @@ var lastMillis = 0;
 var setup = function() {
 	console.log("setup");
 
-	var cnv = createGraphics(1000, 500);
-	cnv.id("test")
+	var cnv = createGraphics(100, 500);
+	cnv.class("test")
+	cnv.id("cnv")
 
 
-	var text = createElement("The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. v The quick brown fox jumped over the lazy dog.");
-	text.class("hi")
-	text.size(300, 200);
+	var text = createElement("The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. v The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. v The quick brown fox jumped over the lazy dog.");
+	text.class("test")
+	text.size(600, 200);
 
-	context("test")
+	context(cnv)
 
 	print("hi")
 	setFrameRate(1)
@@ -21,14 +22,15 @@ var setup = function() {
 
 var draw = function() {
 
-	//var c = get("hi");
+	var c = get("test");
 
-	// if (millis() - lastMillis > 2000) {
-	// 	for (i=0; i<c.length; i++) {
-	// 		c[i].size(c[i].width-20, c[i].height+20);
-	// 	}
-	// 	lastMillis = millis();
-	// }
+	if (millis() - lastMillis > 500) {
+		for (i=0; i<c.length; i++) {
+			console.log(i);
+			c[i].size(c[i].width+pow(-1,i)*20, c[i].height+pow(-1,i+1)*20);
+		}
+		lastMillis = millis();
+	}
 
 	// console.log(focused);
 	background(255, 0, 0);
