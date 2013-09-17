@@ -6,6 +6,7 @@ DOM Extensions
 
 ####Create 
 + createElement(html)
+  creates
 + createDOMImage(src)
 + createGraphics(w, h)
 
