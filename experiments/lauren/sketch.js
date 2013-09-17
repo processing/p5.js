@@ -1,51 +1,28 @@
 
 var lastMillis = 0;
+var x = 50;
 
 
 var setup = function() {
 	console.log("setup");
 
-	var cnv = createGraphics(100, 500);
-	cnv.class("test")
-	cnv.id("cnv")
-
-
-	var text = createElement("The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. v The quick brown fox jumped over the lazy dog. The quick brown fox jumped over the lazy dog. v The quick brown fox jumped over the lazy dog.");
-	text.class("test")
-	text.size(600, 200);
-
-	context(cnv)
+	createGraphics(600, 400);
 
 	print("hi")
-	setFrameRate(1)
+	setFrameRate(10)
 };
 
 var draw = function() {
+	x+= 10;
 
-	var c = get("test");
+	fill(255, 100, 0);
 
-	if (millis() - lastMillis > 500) {
-		for (i=0; i<c.length; i++) {
-			console.log(i);
-			c[i].size(c[i].width+pow(-1,i)*20, c[i].height+pow(-1,i+1)*20);
-		}
-		lastMillis = millis();
-	}
-
-	// console.log(focused);
-	background(255, 0, 0);
-	var s = "The quick brown fox jumped over the lazy dog.";
-	fill(50);
-	textLeading(30);
-	textStyle(BOLD);
-	///textFont('sans-serif');
-	textFont('action_manregular');
-	rectMode(CORNER)
-	text(s, 10, 10, 100, 100);  // Text wraps within text box
+	strokeWeight(3);
+	ellipse(x, 50, 33, 33);  // Left circle
 
 
-
-	// ellipse(0, 50, 33, 33);  // Left circle
+	strokeWeight(0);
+	ellipse(200, 50, 33, 33);  // Right circle
 
 	// pushStyle();  // Start a new style
 	// 	strokeWeight(10);
