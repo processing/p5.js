@@ -9,22 +9,21 @@
   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam suscipit turpis sed egestas sollicitudin. Praesent in nibh sed neque consequat cursus. In hac habitasse platea dictumst. Pellentesque iaculis bibendum porta. Integer vitae arcu lectus. Nunc blandit pulvinar mi, ac accumsan est consequat eu. Nam fringilla dolor vitae ante convallis, sit amet mattis diam luctus. Sed id fermentum odio. Pellentesque dictum quam ac venenatis tincidunt. Etiam at fringilla libero. Maecenas ultricies interdum nibh, sit amet feugiat urna aliquet ac. Donec quis purus feugiat, ultrices libero a, auctor urna.
   </p>
   
-  <script>
-  var canvas1;
-  var Sketch1 = function() {
-    register(this);
-  }
-  Sketch1.prototype.setup = function() {
-    canvas1 = createGraphics(200, 200);
-    canvas1.elt.style.position = 'relative';  
-  }; 
-  Sketch1.prototype.draw = function() {
-    context(canvas1);
-    background(255, 0, 0);
-    var bounds = canvas1.elt.getBoundingClientRect();
-    ellipse(mouseX - bounds.left, mouseY - bounds.top, 50, 50);
-  }; 
-  var sketch1 = new Sketch1();    
+  <script>  
+  var canvas1;  
+  var sketch1 = {  
+    setup: function() {
+      canvas1 = createGraphics(200, 200);
+      canvas1.elt.style.position = 'relative';  
+    },
+    draw: function() {
+      context(canvas1);
+      background(255, 0, 0);
+      var bounds = canvas1.elt.getBoundingClientRect();
+      ellipse(mouseX - bounds.left, mouseY - bounds.top, 50, 50);
+    }     
+  };
+  register(sketch1);
   </script>
   </div>
   

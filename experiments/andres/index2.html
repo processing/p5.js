@@ -10,21 +10,20 @@
   </p>
   
   <script>
-  var canvas1;
-  var Sketch1 = function() {
-    register(this);
-  }
-  Sketch1.prototype.setup = function() {
-    canvas1 = createGraphics(200, 200);
-    canvas1.elt.style.position = 'relative';  
-  }; 
-  Sketch1.prototype.draw = function() {
-    context(canvas1);
-    background(255, 0, 0);
-    var bounds = canvas1.elt.getBoundingClientRect();
-    ellipse(mouseX - bounds.left, mouseY - bounds.top, 50, 50);
-  }; 
-  var sketch1 = new Sketch1();    
+  var canvas1;  
+  var sketch1 = {  
+    setup: function() {
+      canvas1 = createGraphics(200, 200);
+      canvas1.elt.style.position = 'relative';  
+    },
+    draw: function() {
+      context(canvas1);
+      background(255, 0, 0);
+      var bounds = canvas1.elt.getBoundingClientRect();
+      ellipse(mouseX - bounds.left, mouseY - bounds.top, 50, 50);
+    }     
+  };
+  register(sketch1);
   </script>
   </div>
   
@@ -33,35 +32,20 @@
   Nunc mollis nec enim sit amet mattis. Cras luctus sapien feugiat purus aliquam, at venenatis arcu interdum. Cras nec mauris dapibus justo lobortis mattis sit amet nec neque. Mauris non mi non nulla ullamcorper hendrerit. Integer ultrices cursus urna, tristique imperdiet augue facilisis et. Ut eu blandit dolor. Proin tincidunt arcu vel justo auctor pulvinar. Curabitur et hendrerit urna, sed ultrices orci. Donec rutrum sem nunc, ut tincidunt metus varius a. Praesent tincidunt augue eu pretium rutrum. Sed quis magna blandit, bibendum neque non, lacinia massa. Fusce dapibus ipsum nec leo vestibulum mattis.  
   </p>  
   <script>
-  var canvas2;
-  
-  var Sketch2 = function() {
-    register(this);
-  }
-  Sketch2.prototype.setup = function() {
-    canvas2 = createGraphics(200, 200);
-    canvas2.elt.style.position = 'relative';  
-  }; 
-  Sketch2.prototype.draw = function() {
-    context(canvas2);
-    background(0, 0, 255);
-    var bounds = canvas2.elt.getBoundingClientRect();
-    ellipse(mouseX - bounds.left, mouseY - bounds.top, 50, 50);
-  }; 
-  var sketch2 = new Sketch2();   
-      
-  /*
-  var setup = function() {
-    canvas2 = createGraphics(200, 200);
-    canvas2.elt.style.position = 'relative';  
-  }
-  var draw = function() {
-    context(canvas2);
-    background(0, 0, 255);
-    var bounds = canvas2.elt.getBoundingClientRect();
-    ellipse(mouseX - bounds.left, mouseY - bounds.top, 50, 50);
-  }
-  */
+  var canvas2;  
+  var sketch2 = {  
+    setup: function() {
+      canvas2 = createGraphics(200, 200);
+      canvas2.elt.style.position = 'relative';  
+    },
+    draw: function() {
+      context(canvas2);
+      background(0, 0, 255);
+      var bounds = canvas2.elt.getBoundingClientRect();
+      ellipse(mouseX - bounds.left, mouseY - bounds.top, 50, 50);
+    }     
+  };
+  register(sketch2);      
   </script>
   </div> 
 
