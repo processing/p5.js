@@ -170,7 +170,8 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [println()](http://processing.org/reference/println_.html)
 
 ####Image
-+ [save()](http://processing.org/reference/save_.html) - opens image in a new tab rather than saving to hard drive
+<!-- + [save()](http://processing.org/reference/save_.html) - opens image in a new tab rather than saving to hard drive -->
++ save()
 
 ####Files
 + [createWriter()](http://processing.org/reference/createWriter_.html)
