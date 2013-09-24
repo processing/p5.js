@@ -170,7 +170,6 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [println()](http://processing.org/reference/println_.html)
 
 ####Image
-+ [save()](http://processing.org/reference/save_.html) - opens image in a new tab rather than saving to hard drive
 
 ####Files
 + [createWriter()](http://processing.org/reference/createWriter_.html)
@@ -237,7 +236,7 @@ For now these functions link to the current [Processing.org reference](http://pr
 
 ####Attributes
 + [textAlign()](http://processing.org/reference/text_.html)
-+ [textHeight()](http://processing.org/reference/textHeight_.html)
++ textHeight() - calculates and returns the height of any character or text string
 + [textFont()](http://processing.org/reference/textFont_.html) - takes one argument, a string specifying the name of a font
 + [textLeading()](http://processing.org/reference/textLeading_.html)
 + [textSize()](http://processing.org/reference/text_.html)

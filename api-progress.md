@@ -239,7 +239,7 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + __println()__
 
 ####Image
-+ __save()__
++ save()
 + ~~saveFrame()~~
 
 ####Files
