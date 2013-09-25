@@ -142,8 +142,8 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [pmouseY](http://processing.org/reference/pmouseY.html)
 
 ####Keyboard
-+ [key](http://processing.org/reference/key.html)
-+ [keyCode](http://processing.org/reference/keyCode.html)
++ [key](http://processing.org/reference/key.html) - always returns caps!
++ keyCode - returns integer representation of key pressed
 + [keyPressed()](http://processing.org/reference/keyPressed_.html)
 + [iskeyPressed()](http://processing.org/reference/keyPressed.html) - keyPressed now isKeyPressed()
 + [keyReleased()](http://processing.org/reference/keyReleased_.html)
