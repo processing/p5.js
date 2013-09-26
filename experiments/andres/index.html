@@ -21,9 +21,12 @@
       background(255, 0, 0);
       var bounds = canvas1.elt.getBoundingClientRect();
       ellipse(mouseX - bounds.left, mouseY - bounds.top, 50, 50);
-    }     
+    },
+    mousePressed: function() {
+      println("Pressing mouse in canvas 1");
+    } 
   };
-  register(sketch1);
+  sketch(sketch1);
   </script>
   </div>
   
@@ -42,6 +45,9 @@
     background(0, 0, 255);
     var bounds = canvas2.elt.getBoundingClientRect();
     ellipse(mouseX - bounds.left, mouseY - bounds.top, 50, 50);
+  }
+  var mousePressed = function() {
+    println("Pressing mouse in canvas 2");    
   }
   </script>
   </div> 
