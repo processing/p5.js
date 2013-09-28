@@ -2,7 +2,7 @@
 <html>
 <head></head>
 <body>
-  <script language="javascript" type="text/javascript" src="../../lib/pjs.js"></script>
+  <script language="javascript" type="text/javascript" src="../../../lib/pjs.js"></script>
 
   <div>
   <p>
@@ -24,14 +24,20 @@
       strokeWeight(2);
       stroke(255);
       fill(0);   
-      ellipse(mouseX - bounds.left, mouseY - bounds.top, 50, 50);
+      var x = mouseX - bounds.left; 
+      var y = mouseY - bounds.top;      
+      ellipse(x, y, 50, 50);
+      if (this.focused) {
+        noStroke();
+        fill(255);
+        text(key, x, y);
+      }      
     },
     mousePressed: function() {
       var bounds = this.canvas.elt.getBoundingClientRect();      
       var x = mouseX - bounds.left; 
       var y = mouseY - bounds.top;
       if (0 <= x && x <= this.canvas.width && 0 <= y && y <= this.canvas.height) {
-        println("Pressing mouse in red canvas");
         this.focused = true;
       } else {
         this.focused = false;
@@ -58,21 +64,29 @@
     setup: function() {
       this.canvas = createGraphics(200, 200);
       this.canvas.elt.style.position = 'relative';  
+      textSize(14);
     },
     draw: function() {
       context(this.canvas);
       background(0, 0, 255);
       var bounds = this.canvas.elt.getBoundingClientRect();
       strokeWeight(10);
+      stroke(0);
       fill(150); 
-      ellipse(mouseX - bounds.left, mouseY - bounds.top, 50, 50);
+      var x = mouseX - bounds.left; 
+      var y = mouseY - bounds.top;
+      ellipse(x, y, 50, 50);
+      if (this.focused) {
+        noStroke();
+        fill(0);
+        text(key, x, y);
+      }
     }, 
     mousePressed: function() {
       var bounds = this.canvas.elt.getBoundingClientRect();      
       var x = mouseX - bounds.left; 
       var y = mouseY - bounds.top; 
       if (0 <= x && x <= this.canvas.width && 0 <= y && y <= this.canvas.height) {
-        println("Pressing mouse inside blue canvas");
         this.focused = true;
       } else {
         this.focused = false;
