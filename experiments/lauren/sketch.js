@@ -13,16 +13,24 @@ var setup = function() {
 };
 
 var draw = function() {
-	x+= 10;
 
-	fill(255, 100, 0);
-
-	strokeWeight(3);
-	ellipse(x, 50, 33, 33);  // Left circle
+	background(0);
+	fill(255, 0, 100);
 
 
-	strokeWeight(0);
-	ellipse(200, 50, 33, 33);  // Right circle
+	scale(10, 2);
+	rect(0, 0, 10, 10);
+
+	// x+= 10;
+
+	// fill(255, 100, 0);
+
+	// strokeWeight(3);
+	// ellipse(x, 50, 33, 33);  // Left circle
+
+
+	// strokeWeight(0);
+	// ellipse(200, 50, 33, 33);  // Right circle
 
 	// pushStyle();  // Start a new style
 	// 	strokeWeight(10);
