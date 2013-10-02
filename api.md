@@ -232,7 +232,7 @@ For now these functions link to the current [Processing.org reference](http://pr
 ###Typography 
 
 ####Loading & Displaying
-+ [text()](http://processing.org/reference/text_.html) - only text(str, x, y) and text(str, x1, y1, x2, y2) supported
++ [text()](http://processing.org/reference/text_.html) - only text(str, x, y) and text(str, x1, y1, x2, y2) supported. Note that both fill and stroke properties are applied to text (in Java Processing, only fill is applied). This allows outlining / stroking of text, but be aware that at small scales you may not see the fill color appear if stroke is on.
 
 ####Attributes
 + [textAlign()](http://processing.org/reference/text_.html)
