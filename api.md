@@ -141,6 +141,14 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [pmouseX](http://processing.org/reference/pmouseX.html)
 + [pmouseY](http://processing.org/reference/pmouseY.html)
 
+####Touch
++ touchStarted() - called whenever a touch event starts
++ touchMoved() - called on touch move events
++ touchEnded() - called whenever a touch event ends
++ touchX - the x coordinate of a single-touch event
++ touchY - the y coordinate of a single-touch event
++ touches - an array of touch objects for multi-touch events, each item has .x and .y accessors for location
+
 ####Keyboard
 + [key](http://processing.org/reference/key.html) - always returns caps!
 + keyCode - returns integer representation of key pressed
@@ -232,7 +240,7 @@ For now these functions link to the current [Processing.org reference](http://pr
 ###Typography 
 
 ####Loading & Displaying
-+ [text()](http://processing.org/reference/text_.html) - only text(str, x, y) and text(str, x1, y1, x2, y2) supported
++ [text()](http://processing.org/reference/text_.html) - only text(str, x, y) and text(str, x1, y1, x2, y2) supported. Note that both fill and stroke properties are applied to text (in Java Processing, only fill is applied). This allows outlining / stroking of text, but be aware that at small scales you may not see the fill color appear if stroke is on.
 
 ####Attributes
 + [textAlign()](http://processing.org/reference/text_.html)
