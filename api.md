@@ -141,6 +141,14 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [pmouseX](http://processing.org/reference/pmouseX.html)
 + [pmouseY](http://processing.org/reference/pmouseY.html)
 
+####Touch
++ touchStart() - called whenever a touch event starts
++ touchMove() - called on touch move events
++ touchEnd() - called whenever a touch event ends
++ touchX - the x coordinate of a single-touch event
++ touchY - the y coordinate of a single-touch event
++ touches - an array of touch objects for multi-touch events, each item has .x and .y accessors for location
+
 ####Keyboard
 + [key](http://processing.org/reference/key.html) - always returns caps!
 + keyCode - returns integer representation of key pressed

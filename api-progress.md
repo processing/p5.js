@@ -196,6 +196,14 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + __pmouseX__
 + __pmouseY__
 
+####Touch
++ __touchStart()__
++ __touchMove()__
++ __touchEnd()__
++ __touchX__
++ __touchY__
++ __touches__
+
 ####Keyboard
 + __key__
 + __keyCode__
