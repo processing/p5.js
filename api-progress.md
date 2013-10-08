@@ -197,9 +197,9 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + __pmouseY__
 
 ####Touch
-+ __touchStart()__
-+ __touchMove()__
-+ __touchEnd()__
++ __touchStarted()__
++ __touchMoved()__
++ __touchEnded()__
 + __touchX__
 + __touchY__
 + __touches__
