@@ -141,6 +141,14 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [pmouseX](http://processing.org/reference/pmouseX.html)
 + [pmouseY](http://processing.org/reference/pmouseY.html)
 
+####Touch
++ touchStarted() - called whenever a touch event starts
++ touchMoved() - called on touch move events
++ touchEnded() - called whenever a touch event ends
++ touchX - the x coordinate of a single-touch event
++ touchY - the y coordinate of a single-touch event
++ touches - an array of touch objects for multi-touch events, each item has .x and .y accessors for location
+
 ####Keyboard
 + [key](http://processing.org/reference/key.html) - always returns caps!
 + keyCode - returns integer representation of key pressed
@@ -219,10 +227,9 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [loadImage()](http://processing.org/reference/loadImage_.html) - src is a full URL to web hosted image, loadImage is currently asynchronous, can take a callback function as the last parameter to be called when image loads
 
 ####Pixels
-+ [get()](http://processing.org/reference/get_.html)
++ [get()](http://processing.org/reference/get_.html) - only for a single pixel at x, y
 + [loadPixels()](http://processing.org/reference/loadPixels_.html)
 + [pixels[]](http://processing.org/reference/pixels.html)
-+ [updatePixels()](http://processing.org/reference/updatePixels_.html)
 
 ###Rendering 
 + [createGraphics()](http://processing.org/reference/createGraphics_.html) - createGraphics() effectively replaces the previous size() function. It is used for onscreen drawing as well as offscreen drawing. See notes about PGraphics below. See additional information on the [DOM extensions page](https://github.com/lmccart/processing-js/blob/master/extensions.md).

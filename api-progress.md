@@ -196,6 +196,14 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + __pmouseX__
 + __pmouseY__
 
+####Touch
++ __touchStarted()__
++ __touchMoved()__
++ __touchEnded()__
++ __touchX__
++ __touchY__
++ __touches__
+
 ####Keyboard
 + __key__
 + __keyCode__
@@ -355,11 +363,11 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + blend()
 + copy()
 + filter()
-+ __get()__
++ __get()__ - incomplete
 + __loadPixels()__
 + __pixels[]__
 + set()
-+ __updatePixels()__
++ updatePixels()
 
 ###Rendering 
 + blendMode()
