@@ -367,7 +367,7 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + __loadPixels()__
 + __pixels[]__
 + set()
-+ __updatePixels()__
++ updatePixels()
 
 ###Rendering 
 + blendMode()

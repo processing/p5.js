@@ -227,10 +227,10 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [loadImage()](http://processing.org/reference/loadImage_.html) - src is a full URL to web hosted image, loadImage is currently asynchronous, can take a callback function as the last parameter to be called when image loads
 
 ####Pixels
-+ [get()](http://processing.org/reference/get_.html)
++ [get()](http://processing.org/reference/get_.html) - only for a single pixel at x, y
 + [loadPixels()](http://processing.org/reference/loadPixels_.html)
 + [pixels[]](http://processing.org/reference/pixels.html)
-+ [updatePixels()](http://processing.org/reference/updatePixels_.html)
++ updatePixels()
 
 ###Rendering 
 + [createGraphics()](http://processing.org/reference/createGraphics_.html) - createGraphics() effectively replaces the previous size() function. It is used for onscreen drawing as well as offscreen drawing. See notes about PGraphics below. See additional information on the [DOM extensions page](https://github.com/lmccart/processing-js/blob/master/extensions.md).
