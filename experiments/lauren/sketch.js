@@ -1,7 +1,4 @@
-
-var lastMillis = 0;
-var x = 50;
-
+var img;
 
 var setup = function() {
 	console.log("setup");
@@ -10,16 +7,23 @@ var setup = function() {
 
 	print("hi")
 	setFrameRate(10)
+
+	img = loadImage("http://lauren-mccarthy.com/usplus/imgs/med.png");
 };
 
 var draw = function() {
 
-	background(0);
-	fill(255, 0, 100);
+	background(20, 100, 230);
+
+	//image(img, mouseX, mouseY);
 
 
-	scale(10, 2);
-	rect(0, 0, 10, 10);
+
+	// fill(255, 0, 100);
+
+
+	// scale(10, 2);
+	// rect(0, 0, 10, 10);
 
 	// x+= 10;
 
@@ -59,4 +63,5 @@ var draw = function() {
 
 var keyPressed = function() {
 	println("key: |" + key + "| (" + keyCode + ")");
+	save();
 };
