@@ -230,7 +230,6 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [get()](http://processing.org/reference/get_.html) - only for a single pixel at x, y
 + [loadPixels()](http://processing.org/reference/loadPixels_.html)
 + [pixels[]](http://processing.org/reference/pixels.html)
-+ updatePixels()
 
 ###Rendering 
 + [createGraphics()](http://processing.org/reference/createGraphics_.html) - createGraphics() effectively replaces the previous size() function. It is used for onscreen drawing as well as offscreen drawing. See notes about PGraphics below. See additional information on the [DOM extensions page](https://github.com/lmccart/processing-js/blob/master/extensions.md).

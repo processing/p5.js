@@ -363,7 +363,7 @@ See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for 
 + blend()
 + copy()
 + filter()
-+ __get()__
++ __get()__ - incomplete
 + __loadPixels()__
 + __pixels[]__
 + set()
