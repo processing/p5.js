@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+<head></head>
+<body>
+  <script language="javascript" type="text/javascript" src="../../../lib/pjs.js"></script>
+  <script> 
+  var setup = function() {
+    createGraphics(640, 360);
+    
+    //f = createFont("Georgia", 24);
+    //textFont(f);    
+    textSize(24)
+    textAlign(CENTER, CENTER);
+    noStroke();
+  }
+  var draw = function() {    
+    background(0);
+
+    // Set the left and top margin
+    var margin = 10;
+    translate(margin*4, margin*4);
+
+    var gap = 46;
+    var counter = 35;
+  
+    for (var y = 0; y < height-gap; y += gap) {
+      for (var x = 0; x < width-gap; x += gap) {
+
+        var letter = String.fromCharCode(counter);
+      
+        if (letter === 'A' || letter === 'E' || letter === 'I' || letter === 'O' || letter === 'U') {
+          fill(255, 204, 0);
+        } 
+        else {
+          fill(255);
+        }
+
+        // Draw the letter to the screen
+        text(letter, x, y);
+
+        // Increment the counter
+        counter++;
+      }
+    }
+  }
+  </script>
+</body>
+</html>
