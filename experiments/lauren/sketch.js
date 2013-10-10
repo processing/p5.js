@@ -8,14 +8,16 @@ var setup = function() {
 	print("hi")
 	setFrameRate(10)
 
-	img = loadImage("http://lauren-mccarthy.com/usplus/imgs/med.png");
+	img = loadImage("http://cdn.theatlantic.com/static/mt/assets/science/Screen%20Shot%202012-08-29%20at%201.45.48%20PM.png");
+	imageMode(CENTER);
 };
 
 var draw = function() {
 
 	background(20, 100, 230);
+	image(img, width/2, height/2, 30, 10);
 
-	//image(img, mouseX, mouseY);
+	image(img, mouseX, mouseY);
 
 
 
