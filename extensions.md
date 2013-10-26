@@ -5,7 +5,7 @@ DOM Extensions
 + var AUTO;
 
 ####Create 
-+ createElement(html)
++ createDIV(html)
   creates
 + createDOMImage(src)
 + createGraphics(w, h)
