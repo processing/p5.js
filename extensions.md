@@ -11,8 +11,8 @@ DOM Extensions
 + createGraphics(w, h)
 
 ####Access
-+ get(id) // return obj or null
-+ get(class) // return arr
++ getElement(id) // return obj or null
++ getElement(class) // return arr
 
 ####Set context
 + context(id)
