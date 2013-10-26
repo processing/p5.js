@@ -6,7 +6,6 @@ DOM Extensions
 
 ####Create 
 + createDIV(html)
-  creates
 + createDOMImage(src)
 + createGraphics(w, h)
 
