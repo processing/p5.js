@@ -6,7 +6,7 @@ DOM Extensions
 
 ####Create 
 + createHTML(html)
-+ createDOMImage(src)
++ createHTMLImage(src)
 + createGraphics(w, h)
 
 ####Access
