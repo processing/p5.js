@@ -10,7 +10,7 @@ DOM Extensions
 + createGraphics(w, h)
 
 ####Access
-+ find(id) // return obj or null
++ find(id) // return arr
 + find(class) // return arr
 
 ####Set context
