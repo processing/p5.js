@@ -1562,7 +1562,7 @@
     this.elt.className = c;
   };
   PElement.prototype.show = function() {
-    this.elt.display = 'block';
+    this.elt.style.display = 'block';
   };
   PElement.prototype.hide = function() {
     this.elt.style.display = 'none';
@@ -1609,7 +1609,7 @@
 
     return cnv;
   };
-  exports.createElement = function(html) {
+  exports.createHTML = function(html) {
     var elt = document.createElement('div');
     elt.innerHTML = html;
     document.body.appendChild(elt);
@@ -1617,13 +1617,14 @@
     context(c);
     return c;
   };
-  exports.createDOMImage = function(src, alt) {
+  exports.createHTMLImage = function(src, alt) {
     var elt = document.createElement('img');
     elt.src = src;
     if (typeof alt !== 'undefined') {
       elt.alt = alt;
     }
     document.body.appendChild(elt);
+    c =  new PElement(elt);
     context(c);
     return c;
   };
@@ -1651,7 +1652,7 @@
   };
 
   //// ACCESS //////////////////////////
-  /*exports.get = function(e) {
+  exports.find = function(e) {
     var res = document.getElementById(e);
     if (res) return [new PElement(res)];
     else {
@@ -1663,7 +1664,7 @@
       }  
     }
     return [];
-  }*/
+  }
 
   //////////////////////////////////////
   ////

@@ -5,14 +5,13 @@ DOM Extensions
 + var AUTO;
 
 ####Create 
-+ createElement(html)
-  creates
-+ createDOMImage(src)
++ createHTML(html)
++ createHTMLImage(src)
 + createGraphics(w, h)
 
 ####Access
-+ get(id) // return obj or null
-+ get(class) // return arr
++ find(id) // return arr
++ find(class) // return arr
 
 ####Set context
 + context(id)
