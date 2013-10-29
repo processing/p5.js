@@ -1,462 +1,6 @@
 (function(exports) {
-  //////////////////////////////////////
-  ////
-  //// CURRENT PROCESSING API
-  ////
-  //////////////////////////////////////
-
-  //////////////////////////////////////
-  ////  STRUCTURE
-  //////////////////////////////////////
-
-  exports.draw; // needed?
-  exports.setup; // needed?
-  exports.noLoop = function() { 
-    if (pLoop) {
-      pLoop = false; 
-    }
-  };
-  exports.loop = function() {
-    if (!pLoop) {
-      pLoop = true;
-    }
-  };
-  exports.pushStyle = function() {
-    var curS = [];
-    curS.fillStyle = pCurElement.context.fillStyle; // fill
-    curS.strokeStyle = pCurElement.context.strokeStyle; // stroke
-    curS.lineWidth = pCurElement.context.lineWidth; // strokeWeight
-    // @todo tint
-    curS.lineCap = pCurElement.context.lineCap; // strokeCap
-    curS.lineJoin = pCurElement.context.lineJoin; // strokeJoin
-    curS.pImageMode = pImageMode; // imageMode
-    curS.pRectMode = pRectMode; // rectMode
-    curS.pEllipseMode = pEllipseMode; // ellipseMode
-    // @todo shapeMode
-    curS.pColorMode = pColorMode; // colorMode
-    curS.textAlign = pCurElement.context.textAlign; // textAlign
-    curS.pTextFont = pTextFont;
-    curS.pTextLeading = pTextLeading; // textLeading
-    curS.pTextSize = pTextSize; // textSize
-    curS.pTextStyle = pTextStyle; // textStyle
-    pStyles.push(curS);
-  };
-  exports.popStyle = function() {
-    var lastS = pStyles[pStyles.length-1];
-    pCurElement.context.fillStyle = lastS.fillStyle; // fill
-    pCurElement.context.strokeStyle = lastS.strokeStyle; // stroke
-    pCurElement.context.lineWidth = lastS.lineWidth; // strokeWeight
-    // @todo tint
-    pCurElement.context.lineCap = lastS.lineCap; // strokeCap
-    pCurElement.context.lineJoin = lastS.lineJoin; // strokeJoin
-    pImageMode = lastS.pImageMode; // imageMode
-    pRectMode = lastS.pRectMode; // rectMode
-    pEllipseMode = lastS.pEllipseMode; // elllipseMode
-    // @todo shapeMode
-    pColorMode = lastS.pColorMode; // colorMode
-    pCurElement.context.textAlign = lastS.textAlign; // textAlign
-    pTextFont = lastS.pTextFont;
-    pTextLeading = lastS.pTextLeading; // textLeading
-    pTextSize = lastS.pTextSize; // textSize
-    pTextStyle = lastS.pTextStyle; // textStyle
-    pStyles.pop();
-  };
-
-  //////////////////////////////////////
-  ////  ENVIRONMENT
-  //////////////////////////////////////
-
-  exports.frameCount = 0;
-  exports.frameRate = 30;
-  exports.height = 100;
-  exports.width = 100;
-  exports.focused = true;
-
-  window.onfocus = function() {
-    exports.focused = true;
-  };
-  window.onblur = function() {
-    exports.focused = false;
-  };
-  // requestAnim shim layer by Paul Irish
-  window.requestDraw = (function(){
-    return window.requestAnimationFrame       || 
-           window.webkitRequestAnimationFrame || 
-           window.mozRequestAnimationFrame    || 
-           window.oRequestAnimationFrame      || 
-           window.msRequestAnimationFrame     || 
-           function(callback, element){
-             window.setTimeout(callback, 1000 / 60);
-           };
-  })();  
-  // exports.focused
-  exports.cursor = function(type) {
-    var cursor = 'auto';
-    if (type == CROSS || type == HAND || type == MOVE || type == TEXT || type == WAIT) {
-      cursor = type;
-    }
-    document.getElementsByTagName('body')[0].style.cursor = cursor; 
-  };
-  exports.displayHeight = screen.height;
-  exports.displayWidth = screen.width;
-  exports.getFrameRate = function() {
-    return frameRate;
-  };
-  exports.setFrameRate = function(fps) { 
-    frameRate = fps; 
-    clearInterval(pUpdateInterval);
-    pUpdateInterval = setInterval(pUpdate, 1000/frameRate);
-  };
-  exports.noCursor = function() {
-    document.getElementsByTagName('body')[0].style.cursor = 'none';
-  };
 
 
-  //////////////////////////////////////
-  ////  DATA
-  //////////////////////////////////////
-
-  //// STRING FUNCTIONS ////////////////
-
-  exports.join = function(list, separator) {
-    return list.join(separator);
-  };
-  exports.match =  function(str, reg) {
-    return str.match(reg);
-  };
-  exports.matchAll = function(str, reg) {
-    var re = new RegExp(reg, "g");
-    match = re.exec(str);
-    var matches = [];
-    while (match !== null) {
-      matches.push(match);
-      // matched text: match[0]
-      // match start: match.index
-      // capturing group n: match[n]
-      match = re.exec(str);
-    }
-    return matches;
-  };
-  exports.nf = function() { 
-    if (arguments[0] instanceof Array) {
-      var a = arguments[1];
-      var b = arguments[2];
-      return arguments[0].map(function(x) { return doNf(x, a, b);});
-    } else {
-      return doNf.apply(this, arguments);
-    }
-  };
-  function doNf() {
-    var num = arguments[0];
-    var neg = (num < 0);
-    var n = neg ? num.toString().substring(1) : num.toString();
-    var decimalInd = n.indexOf('.');
-    var intPart =  decimalInd != -1 ? n.substring(0, decimalInd) : n;
-    var decPart = decimalInd != -1 ? n.substring(decimalInd+1) : '';
-
-    var str = neg ? '-' : '';
-    if (arguments.length == 3) {
-      for (var i=0; i<arguments[1]-intPart.length; i++) { str += '0'; }
-      str += intPart;
-      str += '.';
-      str += decPart;
-      for (var j=0; j<arguments[2]-decPart.length; j++) { str += '0'; }
-      return str;
-    } else {
-      for (var k=0; k<max(arguments[1]-intPart.length, 0); k++) { str += '0'; }
-      str += n;
-      return str;
-    }
-  }
-  exports.nfc = function() {     
-    if (arguments[0] instanceof Array) {
-      var a = arguments[1];
-      return arguments[0].map(function(x) { return doNfc(x, a);});
-    } else {
-      return doNfc.apply(this, arguments);
-    }
-  };
-  function doNfc() {
-    var num = arguments[0].toString();
-    var dec = num.indexOf('.');
-    var rem = dec != -1 ? num.substring(dec) : '';
-    var n = dec != -1 ? num.substring(0, dec) : num;
-    n = n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    if (arguments.length > 1) rem = rem.substring(0, arguments[1]+1);
-    return n+rem;
-  }
-  exports.nfp = function() {
-    var nfRes = nf.apply(this, arguments);
-    if (nfRes instanceof Array) {
-      return nfRes.map(addNfp);
-    } else {
-      return addNfp(nfRes);
-    }
-  };
-  function addNfp() {   
-    return (parseFloat(arguments[0]) > 0) ? '+'+arguments[0].toString() : arguments[0].toString();
-  }
-  exports.nfs = function() {
-    var nfRes = nf.apply(this, arguments);
-    if (nfRes instanceof Array) {
-      return nfRes.map(addNfs);
-    } else {
-      return addNfs(nfRes);
-    }
-  };
-  function addNfs() {   
-    return (parseFloat(arguments[0]) > 0) ? ' '+arguments[0].toString() : arguments[0].toString();
-  }
-  exports.split = function(str, delim) {
-    return str.split(delim);
-  };
-  exports.splitTokens = function() {
-    var d = (arguments.length > 0) ? arguments[1] : /\s/g;
-    return arguments[0].split(d).filter(function(n){return n;});
-  };
-  exports.trim = function(str) {
-    if (str instanceof Array) {
-      return str.map(trim);
-    } else return str.trim();
-  };
-
-  //// ARRAY FUNCTIONS /////////////////
-
-  exports.append = function(array, value) {
-    array.push(value);
-    return array;
-  };
-  exports.arrayCopy = function(src, a, b, c, d) { //src, srcPosition, dst, dstPosition, length
-    if (typeof d !== 'undefined') { 
-      for (var i=a; i<min(a+d, srpCurElement.length); i++) {
-        b[dstPosition+i] = src[i];
-      }
-    } 
-    else if (typeof b !== 'undefined') { //src, dst, length
-      a = srpCurElement.slice(0, min(b, srpCurElement.length)); 
-    }
-    else { //src, dst
-      a = srpCurElement.slice(0);  
-    }
-  };
-  exports.concat = function(list0, list1) {
-    return list0.concat(list1);
-  };
-  exports.reverse = function(list) {
-    return list.reverse();
-  };
-  exports.shorten = function(list) { 
-    list.pop();
-    return list;
-  };
-  exports.sort = function(list, count) {
-    var arr = count ? list.slice(0, min(count, list.length)) : list;
-    var rest = count ? list.slice(min(count, list.length)) : [];
-    if (typeof arr[0] === 'string') {
-      arr = arr.sort();
-    } else {
-      arr = arr.sort(function(a,b){return a-b;});
-    }
-    return arr.concat(rest);
-  };
-  exports.splice = function(list, value, index) {
-    return list.splice(index,0,value);
-  };
-  exports.subset = function(list, start, count) {
-    if (typeof count !== 'undefined') return list.slice(start, start+count);
-    else return list.slice(start, list.length-1);
-  };
-
-  //////////////////////////////////////
-  ////  SHAPE
-  //////////////////////////////////////
-
-  //// 2D PRIMITIVES ///////////////////
-
-  exports.arc = function() {
-    // pend todo
-  };
-  exports.ellipse = function(a, b, c, d) {
-    var vals = pModeAdjust(a, b, c, d, pEllipseMode);
-    var kappa = 0.5522848,
-      ox = (vals.w / 2) * kappa, // control point offset horizontal
-      oy = (vals.h / 2) * kappa, // control point offset vertical
-      xe = vals.x + vals.w,      // x-end
-      ye = vals.y + vals.h,      // y-end
-      xm = vals.x + vals.w / 2,  // x-middle
-      ym = vals.y + vals.h / 2;  // y-middle
-    pCurElement.context.beginPath();
-    pCurElement.context.moveTo(vals.x, ym);
-    pCurElement.context.bezierCurveTo(vals.x, ym - oy, xm - ox, vals.y, xm, vals.y);
-    pCurElement.context.bezierCurveTo(xm + ox, vals.y, xe, ym - oy, xe, ym);
-    pCurElement.context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-    pCurElement.context.bezierCurveTo(xm - ox, ye, vals.x, ym + oy, vals.x, ym);
-    pCurElement.context.closePath();
-    pCurElement.context.fill();
-    pCurElement.context.stroke();
-  };
-  exports.line = function(x1, y1, x2, y2) {
-    if (pCurElement.context.strokeStyle === 'rgba(0,0,0,0)') {
-      return;
-    }
-    pCurElement.context.beginPath();
-    pCurElement.context.moveTo(x1, y1);
-    pCurElement.context.lineTo(x2, y2);
-    pCurElement.context.stroke();
-  };
-  exports.point = function(x, y) {
-    var s = pCurElement.context.strokeStyle;
-    var f = pCurElement.context.fillStyle;
-    if (s === 'rgba(0,0,0,0)') {
-      return;
-    }
-    x = Math.round(x);
-    y = Math.round(y);
-    pCurElement.context.fillStyle = s;
-    if (pCurElement.context.lineWidth > 1) {
-      pCurElement.context.beginPath();
-      pCurElement.context.arc(x, y, pCurElement.context.lineWidth / 2, 0, TWO_PI, false);
-      pCurElement.context.fill();
-    } else {
-      pCurElement.context.fillRect(x, y, 1, 1);
-    }
-    pCurElement.context.fillStyle = f;
-  };
-  exports.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
-    pCurElement.context.beginPath();
-    pCurElement.context.moveTo(x1, y1);
-    pCurElement.context.lineTo(x2, y2);
-    pCurElement.context.lineTo(x3, y3);
-    pCurElement.context.lineTo(x4, y4);
-    pCurElement.context.closePath();
-    pCurElement.context.fill();
-    pCurElement.context.stroke();
-  };
-  exports.rect = function(a, b, c, d) {
-    var vals = pModeAdjust(a, b, c, d, pRectMode);
-    pCurElement.context.beginPath();
-    pCurElement.context.rect(vals.x, vals.y, vals.w, vals.h);
-    pCurElement.context.fill();
-    pCurElement.context.stroke();
-  };
-  exports.triangle = function(x1, y1, x2, y2, x3, y3) {
-    pCurElement.context.beginPath();
-    pCurElement.context.moveTo(x1, y1);
-    pCurElement.context.lineTo(x2, y2);
-    pCurElement.context.lineTo(x3, y3);
-    pCurElement.context.closePath();
-    pCurElement.context.fill();
-    pCurElement.context.stroke();
-  };
-
-  //// CURVES //////////////////////////
-
-  exports.bezier = function(x1, y1, x2, y2, x3, y3, x4, y4) {
-    pCurElement.context.beginPath();
-    pCurElement.context.moveTo(x1, y1);
-    pCurElement.context.bezierCurveTo(x2, y2, x3, y3, x4, y4);
-    pCurElement.context.stroke();
-  };
-  exports.bezierDetail = function() {
-    // TODO
-  };
-  exports.bezierPoint = function() {
-    // TODO
-  };
-  exports.bezierTangent = function() {
-    // TODO
-  };
-  exports.curve = function() {
-    // TODO
-  };
-  exports.curveDetail = function() {
-    // TODO
-  };
-  exports.curvePoint = function() {
-    // TODO
-  };
-  exports.curveTangent = function() {
-    // TODO
-  };
-  exports.curveTightness = function() {
-    // TODO
-  };
-
-  //// ATTRIBUTES //////////////////////
-
-  exports.ellipseMode = function(m) {
-    if (m == exports.CORNER || m == exports.CORNERS || m == exports.RADIUS || m == exports.CENTER) {
-      pEllipseMode = m;
-    }
-  };
-  exports.noSmooth = function() {
-    pCurElement.context.mozImageSmoothingEnabled = false;
-    pCurElement.context.webkitImageSmoothingEnabled = false;
-  };
-  exports.rectMode = function(m) {
-    if (m == exports.CORNER || m == exports.CORNERS || m == exports.RADIUS || m == exports.CENTER) {
-      pRectMode = m;
-    }
-  };
-  exports.smooth = function() {
-    pCurElement.context.mozImageSmoothingEnabled = true;
-    pCurElement.context.webkitImageSmoothingEnabled = true;
-  };
-  exports.strokeCap = function(cap) {
-    if (cap == exports.ROUND || cap == exports.SQUARE || cap == exports.PROJECT) {
-      pCurElement.context.lineCap=cap;
-    }
-  };
-  exports.strokeJoin = function(join) {
-    if (join == exports.ROUND || join == exports.BEVEL || join == exports.MITER) {
-      pCurElement.context.lineJoin = join;
-    }
-  };
-  exports.strokeWeight = function(w) {
-    if (typeof w === 'undefined' || w === 0)
-      pCurElement.context.lineWidth = 0.0001; // hack because lineWidth 0 doesn't work
-    else pCurElement.context.lineWidth = w;
-  };
-
-  //// VERTEX //////////////////////////
-
-  exports.beginContour = function() {
-    // TODO
-  };
-  exports.beginShape = function(kind) {
-    if (kind == exports.POINTS || kind == exports.LINES || kind == exports.TRIANGLES || kind == exports.TRIANGLE_FAN || kind == exports.TRIANGLE_STRIP || kind == exports.QUADS || kind == exports.QUAD_STRIP)
-      pShapeKind = kind;
-    else pShapeKind = null; 
-    pShapeInited = true;
-    pCurElement.context.beginPath();
-  };
-  exports.bezierVertex = function(x1, y1, x2, y2, x3, y3) {
-    pCurElement.context.bezierCurveTo(x1, y1, x2, y2, x3, y3);
-  };
-  exports.curveVertex = function() {
-    // TODO
-  };
-  exports.endContour = function() {
-    // TODO
-  };
-  exports.endShape = function(mode) {
-    if (mode == exports.CLOSE) {
-      pCurElement.context.closePath();
-      pCurElement.context.fill();
-    } 
-    pCurElement.context.stroke();
-  };
-  exports.quadraticVertex = function(cx, cy, x3, y3) {
-    pCurElement.context.quadraticCurveTo(cx, cy, x3, y3);
-  };
-  exports.vertex = function(x, y) {
-    if (pShapeInited) {
-      pCurElement.context.moveTo(x, y);
-    } else {
-      pCurElement.context.lineTo(x, y); // pend this is where check for kind and do other stuff
-    }
-    pShapeInited = false;
-  };
 
   //////////////////////////////////////
   ////  INPUT
@@ -480,7 +24,7 @@
   // parts of pjs.
   Object.defineProperty(exports, "mouseX", {
     get: function() {
-      var bounds = pCurElement.elt.getBoundingClientRect();
+      var bounds = PVariables.curElement.elt.getBoundingClientRect();
       return absMouseX - bounds.left;
     },
     set: undefined
@@ -493,12 +37,12 @@
   function pUpdateMouseCoords(e) {
     pmouseX = exports.mouseX;
     pmouseY = exports.mouseY;
-    exports.mouseX = e.pageX;  // - parseInt(pCurElement.elt.style.left, 10);
-    exports.mouseY = e.pageY;  // - parseInt(pCurElement.elt.style.top, 10);
+    exports.mouseX = e.pageX;  // - parseInt(PVariables.curElement.elt.style.left, 10);
+    exports.mouseY = e.pageY;  // - parseInt(PVariables.curElement.elt.style.top, 10);
     
-    for (var n = 0; n < pSketchCanvases.length; n++) {
-      var s = pSketches[n];
-      var c = pSketchCanvases[n];
+    for (var n = 0; n < PVariables.sketchCanvases.length; n++) {
+      var s = PVariables.sketches[n];
+      var c = PVariables.sketchCanvases[n];
       var bounds = c.elt.getBoundingClientRect();
       s.pmouseX = s.mouseX;
       s.pmouseY = s.mouseY;
@@ -516,8 +60,8 @@
     } else if (e.button == 2) {
       exports.mouseButton = exports.RIGHT;
     }
-    for (var i = 0; i < pSketches.length; i++) {
-      var s = pSketches[i];
+    for (var i = 0; i < PVariables.sketches.length; i++) {
+      var s = PVariables.sketches[i];
       if (e.button == 1) {
         s.mouseButton = exports.CENTER;
       } else if (e.button == 2) {
@@ -529,15 +73,15 @@
     exports.touchX = e.changedTouches[0].pageX;
     exports.touchY = e.changedTouches[0].pageY;
     exports.touches = [];
-    for (var n = 0; n < pSketchCanvases.length; n++) {
-      pSketches[n].touches = [];
+    for (var n = 0; n < PVariables.sketchCanvases.length; n++) {
+      PVariables.sketches[n].touches = [];
     }    
     for(var i = 0; i < e.changedTouches.length; i++){
       var ct = e.changedTouches[i];
       exports.touches[i] = {x: ct.pageX, y: ct.pageY};
-      for (var m = 0; m < pSketchCanvases.length; n++) {
-        var s = pSketches[m];
-        var c = pSketchCanvases[m];
+      for (var m = 0; m < PVariables.sketchCanvases.length; n++) {
+        var s = PVariables.sketches[m];
+        var c = PVariables.sketchCanvases[m];
         var bounds = c.elt.getBoundingClientRect(); 
         s.touches[i] = {x: ct.pageX - bounds.left, y: ct.pageY - bounds.top};
       }              
@@ -560,8 +104,8 @@
         mouseMoved(e);
       if (pMousePressed && typeof mouseDragged === 'function')
         mouseDragged(e);
-      for (var i = 0; i < pSketches.length; i++) {
-        var s = pSketches[i];
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
         if (!pMousePressed && typeof s.mouseMoved === 'function')
           s.mouseMoved(e);
         if (pMousePressed && typeof s.mouseDragged === 'function')
@@ -573,8 +117,8 @@
       pSetMouseButton(e);
       if (typeof mousePressed === 'function')
         mousePressed(e);        
-      for (var i = 0; i < pSketches.length; i++) {
-        var s = pSketches[i];
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
         if (typeof s.mousePressed === 'function')
           s.mousePressed(e);
       } 
@@ -583,8 +127,8 @@
       pMousePressed = false;
       if (typeof mouseReleased === 'function')
         mouseReleased(e);
-      for (var i = 0; i < pSketches.length; i++) {
-        var s = pSketches[i];
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
         if (typeof s.mouseReleased === 'function')
           s.mouseReleased(e);
       }        
@@ -592,8 +136,8 @@
     document.body.onmouseclick = function(e) {
       if (typeof mouseClicked === 'function')
         mouseClicked(e);
-      for (var i = 0; i < pSketches.length; i++) {
-        var s = pSketches[i];
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
         if (typeof s.mouseClicked === 'function')
           s.mouseClicked(e);
       }
@@ -601,8 +145,8 @@
     document.body.onmousewheel = function(e) {
       if (typeof mouseWheel === 'function')
         mouseWheel(e);
-      for (var i = 0; i < pSketches.length; i++) {
-        var s = pSketches[i];
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
         if (typeof s.mouseWheel === 'function')
           s.mouseWheel(e);
       }     
@@ -613,8 +157,8 @@
       exports.key = String.fromCharCode(e.keyCode);
       if (typeof keyPressed === 'function')
         keyPressed(e);
-      for (var i = 0; i < pSketches.length; i++) {
-        var s = pSketches[i];
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
         if (typeof s.keyPressed === 'function')
           s.keyPressed(e);
       }
@@ -623,8 +167,8 @@
       pKeyPressed = false;
       if (typeof keyReleased === 'function')
         keyReleased(e);
-      for (var i = 0; i < pSketches.length; i++) {
-        var s = pSketches[i];
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
         if (typeof s.keyReleased === 'function')
           s.keyReleased(e);
       }  
@@ -632,8 +176,8 @@
     document.body.onkeypress = function(e) {
       if (typeof keyTyped === 'function')
         keyTyped(e);
-      for (var i = 0; i < pSketches.length; i++) {
-        var s = pSketches[i];
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
         if (typeof s.keyTyped === 'function')
           s.keyTyped(e);
       }        
@@ -643,8 +187,8 @@
       if(typeof touchStarted === 'function')
         touchStarted(e);
       var m = typeof touchMoved === 'function';         
-      for (var i = 0; i < pSketches.length; i++) {
-        var s = pSketches[i];
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
         if (typeof s.touchStarted === 'function')
           s.touchStarted(e);
         m |= typeof s.touchMoved === 'function';         
@@ -657,8 +201,8 @@
       pSetTouchPoints(e);
       if(typeof touchMoved === 'function')
         touchMoved(e);
-      for (var i = 0; i < pSketches.length; i++) {
-        var s = pSketches[i];
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
         if (typeof s.touchMoved === 'function')
           s.touchMoved(e);
       }        
@@ -667,8 +211,8 @@
       pSetTouchPoints(e);
       if(typeof touchEnded === 'function')
         touchEnded(e);
-      for (var i = 0; i < pSketches.length; i++) {
-        var s = pSketches[i];
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
         if (typeof s.touchEnded === 'function')
           s.touchEnded(e);
       }            
@@ -760,7 +304,7 @@
     return new Date().getMinutes();
   };
   exports.millis = function() {
-    return new Date().getTime() - pStartTime;
+    return new Date().getTime() - PVariables.startTime;
   };
   exports.month = function() {
     return new Date().getMonth();
@@ -783,7 +327,7 @@
   //// IMAGE ///////////////////////////
 
   exports.save = function() {
-    window.open(pCurElement.elt.toDataURL('image/png'));
+    window.open(PVariables.curElement.elt.toDataURL('image/png'));
   };
 
   //// FILES ///////////////////////////
@@ -847,28 +391,28 @@
   //////////////////////////////////////
 
   exports.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
-    pCurElement.context.transform(n00, n01, n02, n10, n11, n12);
-    var m = pMatrices[pMatrices.length-1];
+    PVariables.curElement.context.transform(n00, n01, n02, n10, n11, n12);
+    var m = PVariables.matrices[PVariables.matrices.length-1];
     m = pMultiplyMatrix(m, [n00, n01, n02, n10, n11, n12]);
   };
   exports.popMatrix = function() { 
-    pCurElement.context.restore(); 
-    pMatrices.pop();
+    PVariables.curElement.context.restore(); 
+    PVariables.matrices.pop();
   };
   exports.printMatrix = function() {
-    console.log(pMatrices[pMatrices.length-1]);
+    console.log(PVariables.matrices[PVariables.matrices.length-1]);
   };
   exports.pushMatrix = function() { 
-    pCurElement.context.save(); 
-    pMatrices.push([1,0,0,1,0,0]);
+    PVariables.curElement.context.save(); 
+    PVariables.matrices.push([1,0,0,1,0,0]);
   };
   exports.resetMatrix = function() { 
-    pCurElement.context.setTransform();
-    pMatrices[pMatrices.length-1] = [1,0,0,1,0,0]; 
+    PVariables.curElement.context.setTransform();
+    PVariables.matrices[PVariables.matrices.length-1] = [1,0,0,1,0,0]; 
   };
   exports.rotate = function(r) { 
-    pCurElement.context.rotate(r); 
-    var m = pMatrices[pMatrices.length-1];
+    PVariables.curElement.context.rotate(r); 
+    var m = PVariables.matrices[PVariables.matrices.length-1];
     var c = Math.cos(r);
     var s = Math.sin(r);
     var m11 = m[0] * c + m[2] * s;
@@ -888,26 +432,26 @@
       x = arguments[0];
       y = arguments[1];
     }
-    pCurElement.context.scale(x, y); 
-    var m = pMatrices[pMatrices.length-1];
+    PVariables.curElement.context.scale(x, y); 
+    var m = PVariables.matrices[PVariables.matrices.length-1];
     m[0] *= x;
     m[1] *= x;
     m[2] *= y;
     m[3] *= y;
   };
   exports.shearX = function(angle) {
-    pCurElement.context.transform(1, 0, tan(angle), 1, 0, 0);
-    var m = pMatrices[pMatrices.length-1];
+    PVariables.curElement.context.transform(1, 0, tan(angle), 1, 0, 0);
+    var m = PVariables.matrices[PVariables.matrices.length-1];
     m = pMultiplyMatrix(m, [1, 0, tan(angle), 1, 0, 0]);
   };
   exports.shearY = function(angle) {
-    pCurElement.context.transform(1, tan(angle), 0, 1, 0, 0);
-    var m = pMatrices[pMatrices.length-1];
+    PVariables.curElement.context.transform(1, tan(angle), 0, 1, 0, 0);
+    var m = PVariables.matrices[PVariables.matrices.length-1];
     m = pMultiplyMatrix(m, [1, tan(angle), 0, 1, 0, 0]);
   };
   exports.translate = function(x, y) { 
-    pCurElement.context.translate(x, y); 
-    var m = pMatrices[pMatrices.length-1];
+    PVariables.curElement.context.translate(x, y); 
+    var m = PVariables.matrices[PVariables.matrices.length-1];
     m[4] += m[0] * x + m[2] * y;
     m[5] += m[1] * x + m[3] * y;
   };
@@ -921,33 +465,33 @@
   exports.background = function() { 
     var c = getNormalizedColor(arguments);
     // save out the fill
-    var curFill = pCurElement.context.fillStyle;
+    var curFill = PVariables.curElement.context.fillStyle;
     // create background rect
-    pCurElement.context.fillStyle = getCSSRGBAColor(c);
-    pCurElement.context.fillRect(0, 0, width, height);
+    PVariables.curElement.context.fillStyle = getCSSRGBAColor(c);
+    PVariables.curElement.context.fillRect(0, 0, width, height);
     // reset fill
-    pCurElement.context.fillStyle = curFill;
+    PVariables.curElement.context.fillStyle = curFill;
   };
   exports.clear = function() {
-    pCurElement.context.clearRect(0, 0, width, height);
+    PVariables.curElement.context.clearRect(0, 0, width, height);
   };
   exports.colorMode = function(mode) {
     if (mode == exports.RGB || mode == exports.HSB)
-      pColorMode = mode; 
+      PVariables.colorMode = mode; 
   };
   exports.fill = function() {
     var c = getNormalizedColor(arguments);
-    pCurElement.context.fillStyle = getCSSRGBAColor(c);
+    PVariables.curElement.context.fillStyle = getCSSRGBAColor(c);
   };
   exports.noFill = function() {
-    pCurElement.context.fillStyle = 'rgba(0,0,0,0)';
+    PVariables.curElement.context.fillStyle = 'rgba(0,0,0,0)';
   };
   exports.noStroke = function() {
-    pCurElement.context.strokeStyle = 'rgba(0,0,0,0)';
+    PVariables.curElement.context.strokeStyle = 'rgba(0,0,0,0)';
   };
   exports.stroke = function() {
     var c = getNormalizedColor(arguments);
-    pCurElement.context.strokeStyle = getCSSRGBAColor(c);
+    PVariables.curElement.context.strokeStyle = getCSSRGBAColor(c);
   };
 
   //// CREATING & READING //////////////
@@ -1028,7 +572,7 @@
   function PImage(w, h) {
     this.width = w || 1;
     this.height = h || 1;
-    this.imageData = pCurElement.context.createImageData(this.width, this.height); 
+    this.imageData = PVariables.curElement.context.createImageData(this.width, this.height); 
     for (var i = 3, len = this.imageData.length; i < len; i += 4) {
       this.imageData[i] = 255;
     }
@@ -1069,11 +613,11 @@
   };
   /*PImage.prototype.mask = function(m) {
     // Masks part of an image with another image as an alpha channel
-    var op = pCurElement.context.globalCompositeOperation;
-    pCurElement.context.drawImage(m.image, 0, 0);
-    pCurElement.context.globalCompositeOperation = 'source-atop';
-    pCurElement.context.drawImage(this.image, 0, 0);
-    pCurElement.context.globalCompositeOperation = op;
+    var op = PVariables.curElement.context.globalCompositeOperation;
+    PVariables.curElement.context.drawImage(m.image, 0, 0);
+    PVariables.curElement.context.globalCompositeOperation = 'source-atop';
+    PVariables.curElement.context.drawImage(this.image, 0, 0);
+    PVariables.curElement.context.globalCompositeOperation = op;
   };*/
   PImage.prototype.filter = function() {
     // TODO
@@ -1098,16 +642,16 @@
   exports.image = function() { 
     var vals;
     if (arguments.length < 5) {
-      vals = pModeAdjust(arguments[1], arguments[2], arguments[0].width, arguments[0].height, pImageMode);
+      vals = pModeAdjust(arguments[1], arguments[2], arguments[0].width, arguments[0].height, PVariables.imageMode);
     } else {
-      vals = pModeAdjust(arguments[1], arguments[2], arguments[3], arguments[4], pImageMode);
+      vals = pModeAdjust(arguments[1], arguments[2], arguments[3], arguments[4], PVariables.imageMode);
     }
     console.log(arguments[0]);
-    pCurElement.context.drawImage(arguments[0].sourceImage, vals.x, vals.y, vals.w, vals.h);
+    PVariables.curElement.context.drawImage(arguments[0].sourceImage, vals.x, vals.y, vals.w, vals.h);
   };
 
   exports.imageMode = function(m) {
-    if (m == exports.CORNER || m == exports.CORNERS || m == exports.CENTER) pImageMode = m;
+    if (m == exports.CORNER || m == exports.CORNERS || m == exports.CENTER) PVariables.imageMode = m;
   };
 
   function getPixels(img) {
@@ -1131,7 +675,7 @@
     // TODO
   };
   exports.get = function(x, y) {
-    var pix = pCurElement.context.getImageData(0, 0, width, height).data;
+    var pix = PVariables.curElement.context.getImageData(0, 0, width, height).data;
     /*if (typeof w !== 'undefined' && typeof h !== 'undefined') {
       var region = [];
       for (var j=0; j<h; j++) {
@@ -1154,7 +698,7 @@
     }
   };
   exports.loadPixels = function() { 
-    var a = pCurElement.context.getImageData(0, 0, width, height).data;
+    var a = PVariables.curElement.context.getImageData(0, 0, width, height).data;
     pixels = [];
     for (var i=0; i < a.length; i+=4) {
       pixels.push([a[i], a[i+1], a[i+2], a[i+3]]); // each pixels entry: [r, g, b, a]
@@ -1165,7 +709,7 @@
   };
   exports.updatePixels = function() {
     /*if (typeof pixels !== 'undefined') {
-      var imgd = pCurElement.context.getImageData(x, y, width, height);
+      var imgd = PVariables.curElement.context.getImageData(x, y, width, height);
       imgd = pixels;
       context.putImageData(imgd, 0, 0);
     }*/
@@ -1181,35 +725,35 @@
     text(str, x1, y1, x2, y2)
   */
   exports.text = function() {
-    pCurElement.context.font=pTextStyle+' '+pTextSize+'px '+pTextFont;
+    PVariables.curElement.context.font=PVariables.textStyle+' '+PVariables.textSize+'px '+PVariables.textFont;
     if (arguments.length == 3) {
-      pCurElement.context.fillText(arguments[0], arguments[1], arguments[2]);
-      pCurElement.context.strokeText(arguments[0], arguments[1], arguments[2]);
+      PVariables.curElement.context.fillText(arguments[0], arguments[1], arguments[2]);
+      PVariables.curElement.context.strokeText(arguments[0], arguments[1], arguments[2]);
     } else if (arguments.length == 5) {
       var words = arguments[0].split(' ');
       var line = '';
-      var vals = pModeAdjust(arguments[1], arguments[2], arguments[3], arguments[4], pRectMode);
-      vals.y += pTextLeading;
+      var vals = pModeAdjust(arguments[1], arguments[2], arguments[3], arguments[4], PVariables.rectMode);
+      vals.y += PVariables.textLeading;
       for(var n = 0; n < words.length; n++) {
         var testLine = line + words[n] + ' ';
-        var metrics = pCurElement.context.measureText(testLine);
+        var metrics = PVariables.curElement.context.measureText(testLine);
         var testWidth = metrics.width;
         if (vals.y > vals.h) {
           break;
         }
         else if (testWidth > vals.w && n > 0) {
-          pCurElement.context.fillText(line, vals.x, vals.y);
-          pCurElement.context.strokeText(lin, vals.x, vals.y);
+          PVariables.curElement.context.fillText(line, vals.x, vals.y);
+          PVariables.curElement.context.strokeText(lin, vals.x, vals.y);
           line = words[n] + ' ';
-          vals.y += pTextLeading;
+          vals.y += PVariables.textLeading;
         }
         else {
           line = testLine;
         }
       }
       if (vals.y <= vals.h) {
-        pCurElement.context.fillText(line, vals.x, vals.y);
-        pCurElement.context.strokeText(line, vals.x, vals.y);
+        PVariables.curElement.context.fillText(line, vals.x, vals.y);
+        PVariables.curElement.context.strokeText(line, vals.x, vals.y);
       }
     }
   };
@@ -1217,27 +761,27 @@
   //// ATTRIBUTES //////////////////////
   exports.NORMAL = 'normal', exports.ITALIC = 'italic', exports.BOLD = 'bold';
   exports.textAlign = function(a) {
-    if (a == exports.LEFT || a == exports.RIGHT || a == exports.CENTER) pCurElement.context.textAlign = a;
+    if (a == exports.LEFT || a == exports.RIGHT || a == exports.CENTER) PVariables.curElement.context.textAlign = a;
   };
   exports.textFont = function(str) {
-    pTextFont = str; //pend temp?
+    PVariables.textFont = str; //pend temp?
   };
   exports.textHeight = function(s) {
-    return pCurElement.context.measureText(s).height;
+    return PVariables.curElement.context.measureText(s).height;
   };
   exports.textLeading = function(l) {
-    pTextLeading = l;
+    PVariables.textLeading = l;
   };
   exports.textSize = function(s) {
-    pTextSize = s;
+    PVariables.textSize = s;
   };
   exports.textStyle = function(s) {
     if (s == exports.NORMAL || s == exports.ITALIC || s == exports.BOLD) {
-      pTextStyle = s;
+      PVariables.textStyle = s;
     }
   };
   exports.textWidth = function(s) {
-    return pCurElement.context.measureText(s).width;
+    return PVariables.curElement.context.measureText(s).width;
   };
 
 
@@ -1546,7 +1090,7 @@
       }
       this.width = this.elt.offsetWidth;
       this.height = this.elt.offsetHeight;
-      if (pCurElement.elt == this.elt) {
+      if (PVariables.curElement.elt == this.elt) {
         width = this.elt.offsetWidth;
         height = this.elt.offsetHeight;
       }
@@ -1562,7 +1106,7 @@
     this.elt.className = c;
   };
   PElement.prototype.show = function() {
-    this.elt.display = 'block';
+    this.elt.style.display = 'block';
   };
   PElement.prototype.hide = function() {
     this.elt.style.display = 'none';
@@ -1609,7 +1153,7 @@
 
     return cnv;
   };
-  exports.createElement = function(html) {
+  exports.createHTML = function(html) {
     var elt = document.createElement('div');
     elt.innerHTML = html;
     document.body.appendChild(elt);
@@ -1617,13 +1161,14 @@
     context(c);
     return c;
   };
-  exports.createDOMImage = function(src, alt) {
+  exports.createHTMLImage = function(src, alt) {
     var elt = document.createElement('img');
     elt.src = src;
     if (typeof alt !== 'undefined') {
       elt.alt = alt;
     }
     document.body.appendChild(elt);
+    c =  new PElement(elt);
     context(c);
     return c;
   };
@@ -1638,20 +1183,20 @@
     } else obj = e;
     //console.log(obj)
     if (typeof obj !== 'undefined') {
-      pCurElement = obj;
+      PVariables.curElement = obj;
       width = obj.elt.offsetWidth;
       height = obj.elt.offsetHeight;
       //console.log(width, height)
-      if (typeof pCurElement.context !== 'undefined') pCurElement.context.setTransform(1, 0, 0, 1, 0, 0);
+      if (typeof PVariables.curElement.context !== 'undefined') PVariables.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
       
-      if (-1 < pCurSketchIndex && pSketchCanvases.length <= pCurSketchIndex) {
-        pSketchCanvases[pCurSketchIndex] = pCurElement;
+      if (-1 < PVariables.curSketchIndex && PVariables.sketchCanvases.length <= PVariables.curSketchIndex) {
+        PVariables.sketchCanvases[PVariables.curSketchIndex] = PVariables.curElement;
       }
     }
   };
 
   //// ACCESS //////////////////////////
-  /*exports.get = function(e) {
+  exports.find = function(e) {
     var res = document.getElementById(e);
     if (res) return [new PElement(res)];
     else {
@@ -1663,7 +1208,7 @@
       }  
     }
     return [];
-  }*/
+  }
 
   //////////////////////////////////////
   ////
@@ -1671,28 +1216,9 @@
   //// 
   //////////////////////////////////////
 
-  var pCurElement;
-  var pShapeKind = null, pShapeInited = false;
-  var pFill = false;
-  var pLoop = true;
-  var pStartTime;
-  var pUpdateInterval;
-  var pRectMode = exports.CORNER, pImageMode = exports.CORNER;
-  var pEllipseMode = exports.CENTER;
-  var pMatrices = [[1,0,0,1,0,0]];
-  var pTextLeading = 15;
-  var pTextFont = 'sans-serif';
-  var pTextSize = 12;
-  var pTextStyle = exports.NORMAL;
-  var pColorMode = exports.RGB;
-  var pStyles = [];
-  
-  
-  var pSketches = [];
-  var pSketchCanvases = [];
-  var pCurSketchIndex = -1;  
+
   exports.sketch = function(s) {
-    pSketches[pSketches.length] = s;
+    PVariables.sketches[PVariables.sketches.length] = s;
     s.mouseX = 0;
     s.mouseY = 0;
     s.pmouseX = 0;
@@ -1701,9 +1227,9 @@
     s.touchX = 0;
     s.touchY = 0;
     if (typeof s.setup === 'function') {
-      pCurSketchIndex = pSketches.length - 1;
+      PVariables.curSketchIndex = PVariables.sketches.length - 1;
       s.setup();
-      pCurSketchIndex = -1;
+      PVariables.curSketchIndex = -1;
     } else console.log("sketch must include a setup function");
   };
   
@@ -1712,40 +1238,40 @@
   };
   function pCreate() {
     exports.createGraphics(800, 600, true); // default canvas
-    pStartTime = new Date().getTime();
-    if (typeof setup === 'function' || pSketches.length > 0) {
+    PVariables.startTime = new Date().getTime();
+    if (typeof setup === 'function' || PVariables.sketches.length > 0) {
       if (typeof setup === 'function') setup();
     } else console.log("sketch must include a setup function");
-    pUpdateInterval = setInterval(pUpdate, 1000/frameRate);
+    PVariables.updateInterval = setInterval(pUpdate, 1000/frameRate);
     pDraw();
   }
   function pApplyDefaults() {
-    pCurElement.context.fillStyle = '#FFFFFF';
-    pCurElement.context.strokeStyle = '#000000';
-    pCurElement.context.lineCap=exports.ROUND;
+    PVariables.curElement.context.fillStyle = '#FFFFFF';
+    PVariables.curElement.context.strokeStyle = '#000000';
+    PVariables.curElement.context.lineCap=exports.ROUND;
   }
   function pUpdate() {
     frameCount++;
   }
   function pDraw() {
-    if (pLoop) {
+    if (PVariables.loop) {
       setTimeout(function() {
         requestDraw(pDraw);
       }, 1000 / frameRate);
     }
     // call draw
     if (typeof draw === 'function') draw();
-    for (var i = 0; i < pSketches.length; i++) {
-      var s = pSketches[i];
+    for (var i = 0; i < PVariables.sketches.length; i++) {
+      var s = PVariables.sketches[i];
       if (typeof s.draw === 'function') {
-        pCurSketchIndex = i;
+        PVariables.curSketchIndex = i;
         pushStyle();
         s.draw();
         popStyle();    
-        pCurSketchIndex = -1;    
+        PVariables.curSketchIndex = -1;    
       }      
     }
-    pCurElement.context.setTransform(1, 0, 0, 1, 0, 0);
+    PVariables.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
   }
   function pModeAdjust(a, b, c, d, mode) {
     if (mode == exports.CORNER) {
@@ -1809,7 +1335,7 @@
       r = g = b = _args[0];
       a = typeof _args[1] === 'number' ? _args[1] : 255;
     }
-    if (pColorMode == exports.HSB) {
+    if (PVariables.colorMode == exports.HSB) {
       rgba = hsv2rgb(r, g, b).concat(a);
     } else {
       rgba = [r, g, b, a];
