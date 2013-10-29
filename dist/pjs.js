@@ -46,6 +46,8 @@
 		mousePressed: false
 
 	};
+
+	PHelper = {};
 }(window));
 ;(function(exports) {
   exports.append = function(array, value) {
@@ -245,225 +247,6 @@
   };
 }(window));
 ;(function(exports) {
-
-
-
-  //////////////////////////////////////
-  ////  INPUT
-  //////////////////////////////////////
-
-  //// MOUSE ///////////////////////////
-  exports.mouseX = 0;
-  exports.mouseY = 0;
-  exports.pmouseX = 0;
-  exports.pmouseY = 0;
-  exports.mouseButton = 0;
-  exports.touchX = 0;
-  exports.touchY = 0;
-  /*
-  // Another possibility: mouseX, mouseY, etc. are properties with a getter
-  // that returns the relative coordinates depending on the current element.
-  // I think is overkill and might screw up things in unexpected ways in other
-  // parts of pjs.
-  Object.defineProperty(exports, "mouseX", {
-    get: function() {
-      var bounds = PVariables.curElement.elt.getBoundingClientRect();
-      return absMouseX - bounds.left;
-    },
-    set: undefined
-  });
-  */
-
-  exports.isMousePressed = function() {
-    return PVariables.mousePressed;
-  };
-  function pUpdateMouseCoords(e) {
-    pmouseX = exports.mouseX;
-    pmouseY = exports.mouseY;
-    exports.mouseX = e.pageX;  // - parseInt(PVariables.curElement.elt.style.left, 10);
-    exports.mouseY = e.pageY;  // - parseInt(PVariables.curElement.elt.style.top, 10);
-    
-    for (var n = 0; n < PVariables.sketchCanvases.length; n++) {
-      var s = PVariables.sketches[n];
-      var c = PVariables.sketchCanvases[n];
-      var bounds = c.elt.getBoundingClientRect();
-      s.pmouseX = s.mouseX;
-      s.pmouseY = s.mouseY;
-      s.mouseX = mouseX - bounds.left;
-      s.mouseY = mouseY - bounds.top;
-    }
-    
-    // console.log(mouseX+' '+mouseY);
-    // console.log('mx = '+mouseX+' my = '+mouseY);
-  }
-  function pSetMouseButton(e) {
-   exports.mouseButton = exports.LEFT;
-    if (e.button == 1) {
-      exports.mouseButton = exports.CENTER;
-    } else if (e.button == 2) {
-      exports.mouseButton = exports.RIGHT;
-    }
-    for (var i = 0; i < PVariables.sketches.length; i++) {
-      var s = PVariables.sketches[i];
-      if (e.button == 1) {
-        s.mouseButton = exports.CENTER;
-      } else if (e.button == 2) {
-        s.mouseButton = exports.RIGHT;
-      }      
-    } 
-  }
-  function pSetTouchPoints(e) {
-    exports.touchX = e.changedTouches[0].pageX;
-    exports.touchY = e.changedTouches[0].pageY;
-    exports.touches = [];
-    for (var n = 0; n < PVariables.sketchCanvases.length; n++) {
-      PVariables.sketches[n].touches = [];
-    }    
-    for(var i = 0; i < e.changedTouches.length; i++){
-      var ct = e.changedTouches[i];
-      exports.touches[i] = {x: ct.pageX, y: ct.pageY};
-      for (var m = 0; m < PVariables.sketchCanvases.length; n++) {
-        var s = PVariables.sketches[m];
-        var c = PVariables.sketchCanvases[m];
-        var bounds = c.elt.getBoundingClientRect(); 
-        s.touches[i] = {x: ct.pageX - bounds.left, y: ct.pageY - bounds.top};
-      }              
-    }
-  }
-
-  //// KEYBOARD ////////////////////////
-
-  exports.key = '';
-  exports.keyCode = 0; 
-  var pKeyPressed = false;
-
-  exports.isKeyPressed = function() {
-    return pKeyPressed;
-  };
-  function pSetupInput() {
-    document.body.onmousemove = function(e){
-      pUpdateMouseCoords(e);
-      if (!PVariables.mousePressed && typeof mouseMoved === 'function')
-        mouseMoved(e);
-      if (PVariables.mousePressed && typeof mouseDragged === 'function')
-        mouseDragged(e);
-      for (var i = 0; i < PVariables.sketches.length; i++) {
-        var s = PVariables.sketches[i];
-        if (!PVariables.mousePressed && typeof s.mouseMoved === 'function')
-          s.mouseMoved(e);
-        if (PVariables.mousePressed && typeof s.mouseDragged === 'function')
-          s.mouseDragged(e);          
-      }        
-    };
-    document.body.onmousedown = function(e) {
-      PVariables.mousePressed = true;
-      pSetMouseButton(e);
-      if (typeof mousePressed === 'function')
-        mousePressed(e);        
-      for (var i = 0; i < PVariables.sketches.length; i++) {
-        var s = PVariables.sketches[i];
-        if (typeof s.mousePressed === 'function')
-          s.mousePressed(e);
-      } 
-    };
-    document.body.onmouseup = function(e) {
-      PVariables.mousePressed = false;
-      if (typeof mouseReleased === 'function')
-        mouseReleased(e);
-      for (var i = 0; i < PVariables.sketches.length; i++) {
-        var s = PVariables.sketches[i];
-        if (typeof s.mouseReleased === 'function')
-          s.mouseReleased(e);
-      }        
-    };
-    document.body.onmouseclick = function(e) {
-      if (typeof mouseClicked === 'function')
-        mouseClicked(e);
-      for (var i = 0; i < PVariables.sketches.length; i++) {
-        var s = PVariables.sketches[i];
-        if (typeof s.mouseClicked === 'function')
-          s.mouseClicked(e);
-      }
-    };
-    document.body.onmousewheel = function(e) {
-      if (typeof mouseWheel === 'function')
-        mouseWheel(e);
-      for (var i = 0; i < PVariables.sketches.length; i++) {
-        var s = PVariables.sketches[i];
-        if (typeof s.mouseWheel === 'function')
-          s.mouseWheel(e);
-      }     
-    };
-    document.body.onkeydown = function(e) {
-      pKeyPressed = true;
-      exports.keyCode = e.keyCode;
-      exports.key = String.fromCharCode(e.keyCode);
-      if (typeof keyPressed === 'function')
-        keyPressed(e);
-      for (var i = 0; i < PVariables.sketches.length; i++) {
-        var s = PVariables.sketches[i];
-        if (typeof s.keyPressed === 'function')
-          s.keyPressed(e);
-      }
-    };
-    document.body.onkeyup = function(e) {
-      pKeyPressed = false;
-      if (typeof keyReleased === 'function')
-        keyReleased(e);
-      for (var i = 0; i < PVariables.sketches.length; i++) {
-        var s = PVariables.sketches[i];
-        if (typeof s.keyReleased === 'function')
-          s.keyReleased(e);
-      }  
-    };
-    document.body.onkeypress = function(e) {
-      if (typeof keyTyped === 'function')
-        keyTyped(e);
-      for (var i = 0; i < PVariables.sketches.length; i++) {
-        var s = PVariables.sketches[i];
-        if (typeof s.keyTyped === 'function')
-          s.keyTyped(e);
-      }        
-    };
-    document.body.ontouchstart = function(e) {
-      pSetTouchPoints(e);
-      if(typeof touchStarted === 'function')
-        touchStarted(e);
-      var m = typeof touchMoved === 'function';         
-      for (var i = 0; i < PVariables.sketches.length; i++) {
-        var s = PVariables.sketches[i];
-        if (typeof s.touchStarted === 'function')
-          s.touchStarted(e);
-        m |= typeof s.touchMoved === 'function';         
-      }        
-      if(m) {
-        e.preventDefault();
-      }
-    };
-    document.body.ontouchmove = function(e) {
-      pSetTouchPoints(e);
-      if(typeof touchMoved === 'function')
-        touchMoved(e);
-      for (var i = 0; i < PVariables.sketches.length; i++) {
-        var s = PVariables.sketches[i];
-        if (typeof s.touchMoved === 'function')
-          s.touchMoved(e);
-      }        
-    };
-    document.body.ontouchend = function(e) {
-      pSetTouchPoints(e);
-      if(typeof touchEnded === 'function')
-        touchEnded(e);
-      for (var i = 0; i < PVariables.sketches.length; i++) {
-        var s = PVariables.sketches[i];
-        if (typeof s.touchEnded === 'function')
-          s.touchEnded(e);
-      }            
-    };
-  }
-
-  //// FILES ///////////////////////////
-
   //BufferedReader
   exports.createInput = function() {
     // TODO
@@ -535,8 +318,226 @@
     // TODO
   };
 
-  //// TIME & DATE /////////////////////
+}(window));
+;(function(exports) {
+  PHelper.setupInput = function() {
+    document.body.onmousemove = function(e){
+      PHelper.updateMouseCoords(e);
+      if (!PVariables.mousePressed && typeof mouseMoved === 'function') {
+        mouseMoved(e);
+      }
+      if (PVariables.mousePressed && typeof mouseDragged === 'function') {
+        mouseDragged(e);
+      }
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
+        if (!PVariables.mousePressed && typeof s.mouseMoved === 'function') {
+          s.mouseMoved(e);
+        }
+        if (PVariables.mousePressed && typeof s.mouseDragged === 'function') {
+          s.mouseDragged(e);          
+        }
+      }        
+    };
+    document.body.onmousedown = function(e) {
+      PVariables.mousePressed = true;
+      PHelper.setMouseButton(e);
+      if (typeof mousePressed === 'function') {
+        mousePressed(e);        
+      }
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
+        if (typeof s.mousePressed === 'function') {
+          s.mousePressed(e);
+        }
+      } 
+    };
+    document.body.onmouseup = function(e) {
+      PVariables.mousePressed = false;
+      if (typeof mouseReleased === 'function') {
+        mouseReleased(e);
+      }
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
+        if (typeof s.mouseReleased === 'function') {
+          s.mouseReleased(e);
+        }
+      }        
+    };
+    document.body.onmouseclick = function(e) {
+      if (typeof mouseClicked === 'function') {
+        mouseClicked(e);
+      }
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
+        if (typeof s.mouseClicked === 'function') {
+          s.mouseClicked(e);
+        }
+      }
+    };
+    document.body.onmousewheel = function(e) {
+      if (typeof mouseWheel === 'function') {
+        mouseWheel(e);
+      }
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
+        if (typeof s.mouseWheel === 'function') {
+          s.mouseWheel(e);
+        }
+      }     
+    };
+    document.body.onkeydown = function(e) {
+      PHelper.keyPressed = true;
+      exports.keyCode = e.keyCode;
+      exports.key = String.fromCharCode(e.keyCode);
+      if (typeof keyPressed === 'function') {
+        keyPressed(e);
+      }
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
+        if (typeof s.keyPressed === 'function') {
+          s.keyPressed(e);
+        }
+      }
+    };
+    document.body.onkeyup = function(e) {
+      PHelper.keyPressed = false;
+      if (typeof keyReleased === 'function') {
+        keyReleased(e);
+      }
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
+        if (typeof s.keyReleased === 'function') {
+          s.keyReleased(e);
+        }
+      }  
+    };
+    document.body.onkeypress = function(e) {
+      if (typeof keyTyped === 'function') {
+        keyTyped(e);
+      }
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
+        if (typeof s.keyTyped === 'function') {
+          s.keyTyped(e);
+        }
+      }        
+    };
+    document.body.ontouchstart = function(e) {
+      PHelper.setTouchPoints(e);
+      if(typeof touchStarted === 'function') {
+        touchStarted(e);
+      }
+      var m = typeof touchMoved === 'function';         
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
+        if (typeof s.touchStarted === 'function') {
+          s.touchStarted(e);
+        }
+        m |= typeof s.touchMoved === 'function';         
+      }        
+      if(m) {
+        e.preventDefault();
+      }
+    };
+    document.body.ontouchmove = function(e) {
+      PHelper.setTouchPoints(e);
+      if(typeof touchMoved === 'function') {
+        touchMoved(e);
+      }
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
+        if (typeof s.touchMoved === 'function') {
+          s.touchMoved(e);
+        }
+      }        
+    };
+    document.body.ontouchend = function(e) {
+      PHelper.setTouchPoints(e);
+      if(typeof touchEnded === 'function') {
+        touchEnded(e);
+      }
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
+        if (typeof s.touchEnded === 'function') {
+          s.touchEnded(e);
+        }
+      }            
+    };
+  }
 
+}(window));;(function(exports) {
+  exports.key = '';
+  exports.keyCode = 0; 
+  PHelper.keyPressed = false;
+
+  exports.isKeyPressed = function() {
+    return pKeyPressed;
+  };
+
+}(window));
+;(function(exports) {
+  exports.mouseX = 0;
+  exports.mouseY = 0;
+  exports.pmouseX = 0;
+  exports.pmouseY = 0;
+  exports.mouseButton = 0;
+
+  /*
+  // Another possibility: mouseX, mouseY, etc. are properties with a getter
+  // that returns the relative coordinates depending on the current element.
+  // I think is overkill and might screw up things in unexpected ways in other
+  // parts of pjs.
+  Object.defineProperty(exports, "mouseX", {
+    get: function() {
+      var bounds = PVariables.curElement.elt.getBoundingClientRect();
+      return absMouseX - bounds.left;
+    },
+    set: undefined
+  });
+  */
+
+  exports.isMousePressed = function() {
+    return PVariables.mousePressed;
+  };
+  PHelper.updateMouseCoords = function(e) {
+    pmouseX = exports.mouseX;
+    pmouseY = exports.mouseY;
+    exports.mouseX = e.pageX;  // - parseInt(PVariables.curElement.elt.style.left, 10);
+    exports.mouseY = e.pageY;  // - parseInt(PVariables.curElement.elt.style.top, 10);
+    
+    for (var n = 0; n < PVariables.sketchCanvases.length; n++) {
+      var s = PVariables.sketches[n];
+      var c = PVariables.sketchCanvases[n];
+      var bounds = c.elt.getBoundingClientRect();
+      s.pmouseX = s.mouseX;
+      s.pmouseY = s.mouseY;
+      s.mouseX = mouseX - bounds.left;
+      s.mouseY = mouseY - bounds.top;
+    }
+    
+    // console.log(mouseX+' '+mouseY);
+    // console.log('mx = '+mouseX+' my = '+mouseY);
+  };
+  PHelper.setMouseButton = function(e) {
+   exports.mouseButton = exports.LEFT;
+    if (e.button == 1) {
+      exports.mouseButton = exports.CENTER;
+    } else if (e.button == 2) {
+      exports.mouseButton = exports.RIGHT;
+    }
+    for (var i = 0; i < PVariables.sketches.length; i++) {
+      var s = PVariables.sketches[i];
+      if (e.button == 1) {
+        s.mouseButton = exports.CENTER;
+      } else if (e.button == 2) {
+        s.mouseButton = exports.RIGHT;
+      }      
+    } 
+  };
+
+}(window));
+;(function(exports) {
   exports.day = function() {
     return new Date().getDate();
   };
@@ -558,6 +559,35 @@
   exports.year = function() {
     return new Date().getFullYear();
   };
+
+}(window));;(function(exports) {
+
+	exports.touchX = 0;
+	exports.touchY = 0;
+
+  PHelper.setTouchPoints = function(e) {
+    exports.touchX = e.changedTouches[0].pageX;
+    exports.touchY = e.changedTouches[0].pageY;
+    exports.touches = [];
+    for (var n = 0; n < PVariables.sketchCanvases.length; n++) {
+      PVariables.sketches[n].touches = [];
+    }    
+    for(var i = 0; i < e.changedTouches.length; i++){
+      var ct = e.changedTouches[i];
+      exports.touches[i] = {x: ct.pageX, y: ct.pageY};
+      for (var m = 0; m < PVariables.sketchCanvases.length; n++) {
+        var s = PVariables.sketches[m];
+        var c = PVariables.sketchCanvases[m];
+        var bounds = c.elt.getBoundingClientRect(); 
+        s.touches[i] = {x: ct.pageX - bounds.left, y: ct.pageY - bounds.top};
+      }              
+    }
+  };
+
+}(window));
+;(function(exports) {
+
+
 
   //////////////////////////////////////
   ////  OUTPUT
@@ -1367,7 +1397,7 @@
     var cnv =  new PElement(c);
     context(cnv);
     pApplyDefaults();
-    pSetupInput();
+    PHelper.setupInput();
 
     return cnv;
   };

@@ -25,4 +25,6 @@
 		mousePressed: false
 
 	};
+
+	PHelper = {};
 }(window));
