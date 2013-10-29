@@ -3,7 +3,7 @@
     // pend todo
   };
   exports.ellipse = function(a, b, c, d) {
-    var vals = pModeAdjust(a, b, c, d, PVariables.ellipseMode);
+    var vals = PHelper.modeAdjust(a, b, c, d, PVariables.ellipseMode);
     var kappa = 0.5522848,
       ox = (vals.w / 2) * kappa, // control point offset horizontal
       oy = (vals.h / 2) * kappa, // control point offset vertical
@@ -59,7 +59,7 @@
     PVariables.curElement.context.stroke();
   };
   exports.rect = function(a, b, c, d) {
-    var vals = pModeAdjust(a, b, c, d, PVariables.rectMode);
+    var vals = PHelper.modeAdjust(a, b, c, d, PVariables.rectMode);
     PVariables.curElement.context.beginPath();
     PVariables.curElement.context.rect(vals.x, vals.y, vals.w, vals.h);
     PVariables.curElement.context.fill();

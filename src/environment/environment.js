@@ -38,7 +38,7 @@
   exports.setFrameRate = function(fps) { 
     frameRate = fps; 
     clearInterval(PVariables.updateInterval);
-    PVariables.updateInterval = setInterval(pUpdate, 1000/frameRate);
+    PVariables.updateInterval = setInterval(PHelper.update, 1000/frameRate);
   };
   exports.noCursor = function() {
     document.getElementsByTagName('body')[0].style.cursor = 'none';
