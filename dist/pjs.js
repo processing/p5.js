@@ -1,30 +1,53 @@
 (function(exports) {
-	return PConstants = {
-	  loop: true,
-	  curElement: null,
-	  shapeKind: null,
-	  shapeInited: false,
-	  fill: false,
-	  startTime: 0,
-	  updateInterval: 0,
-	  rectMode: exports.CORNER,
-	  imageMode: exports.CORNER,
-	  ellipseMode: exports.CENTER,
-	  matrices: [[1,0,0,1,0,0]],
-	  textLeading: 15,
-	  textFont: 'sans-serif',
-	  textSize: 12,
-	  textStyle: exports.NORMAL,
-	  colorMode: exports.RGB,
-	  styles: [],
-	  
-	  sketches: [],
-	  sketchCanvases: [],
-	  curSketchIndex: -1 
+
+	exports.HALF_PI = Math.PI*0.5;
+	exports.PI = Math.PI;
+	exports.QUARTER_PI = Math.PI*0.25;
+	exports.TAU = Math.PI*2.0;
+	exports.TWO_PI = Math.PI*2.0;
+
+	exports.CORNER = 'corner', CORNERS = 'corners', exports.RADIUS = 'radius';
+	exports.RIGHT = 'right', exports.LEFT = 'left', exports.CENTER = 'center';
+	exports.POINTS = 'points', exports.LINES = 'lines', exports.TRIANGLES = 'triangles', exports.TRIANGLE_FAN = 'triangles_fan',
+	exports.TRIANGLE_STRIP = 'triangles_strip', exports.QUADS = 'quads', exports.QUAD_STRIP = 'quad_strip';
+	exports.CLOSE = 'close';
+	exports.OPEN = 'open', exports.CHORD = 'chord', exports.PIE = 'pie';
+	exports.SQUARE = 'butt', exports.ROUND = 'round', exports.PROJECT = 'square'; // PEND: careful this is counterintuitive
+	exports.BEVEL = 'bevel', exports.MITER = 'miter';
+	exports.RGB = 'rgb', exports.HSB = 'hsb';
+	exports.AUTO = 'auto';
+	exports.CROSS = 'crosshair', exports.HAND = 'pointer', exports.MOVE = 'move', exports.TEXT = 'text', exports.WAIT = 'wait';
+
+}(window));
+;(function(exports) {
+	PVariables = {
+		loop: true,
+		curElement: null,
+		shapeKind: null,
+		shapeInited: false,
+		fill: false,
+		startTime: 0,
+		updateInterval: 0,
+		rectMode: exports.CORNER,
+		imageMode: exports.CORNER,
+		ellipseMode: exports.CENTER,
+		matrices: [[1,0,0,1,0,0]],
+		textLeading: 15,
+		textFont: 'sans-serif',
+		textSize: 12,
+		textStyle: exports.NORMAL,
+		colorMode: exports.RGB,
+		styles: [],
+
+		sketches: [],
+		sketchCanvases: [],
+		curSketchIndex: -1,
+
+		mousePressed: false
 
 	};
 }(window));
-;;(function(exports) {
+;(function(exports) {
   exports.append = function(array, value) {
     array.push(value);
     return array;
@@ -214,8 +237,8 @@
   };
   exports.setFrameRate = function(fps) { 
     frameRate = fps; 
-    clearInterval(PConstants.updateInterval);
-    PConstants.updateInterval = setInterval(pUpdate, 1000/frameRate);
+    clearInterval(PVariables.updateInterval);
+    PVariables.updateInterval = setInterval(pUpdate, 1000/frameRate);
   };
   exports.noCursor = function() {
     document.getElementsByTagName('body')[0].style.cursor = 'none';
@@ -230,7 +253,6 @@
   //////////////////////////////////////
 
   //// MOUSE ///////////////////////////
-
   exports.mouseX = 0;
   exports.mouseY = 0;
   exports.pmouseX = 0;
@@ -238,8 +260,6 @@
   exports.mouseButton = 0;
   exports.touchX = 0;
   exports.touchY = 0;
-  var pMousePressed = false;
-  
   /*
   // Another possibility: mouseX, mouseY, etc. are properties with a getter
   // that returns the relative coordinates depending on the current element.
@@ -247,7 +267,7 @@
   // parts of pjs.
   Object.defineProperty(exports, "mouseX", {
     get: function() {
-      var bounds = PConstants.curElement.elt.getBoundingClientRect();
+      var bounds = PVariables.curElement.elt.getBoundingClientRect();
       return absMouseX - bounds.left;
     },
     set: undefined
@@ -255,17 +275,17 @@
   */
 
   exports.isMousePressed = function() {
-    return pMousePressed;
+    return PVariables.mousePressed;
   };
   function pUpdateMouseCoords(e) {
     pmouseX = exports.mouseX;
     pmouseY = exports.mouseY;
-    exports.mouseX = e.pageX;  // - parseInt(PConstants.curElement.elt.style.left, 10);
-    exports.mouseY = e.pageY;  // - parseInt(PConstants.curElement.elt.style.top, 10);
+    exports.mouseX = e.pageX;  // - parseInt(PVariables.curElement.elt.style.left, 10);
+    exports.mouseY = e.pageY;  // - parseInt(PVariables.curElement.elt.style.top, 10);
     
-    for (var n = 0; n < PConstants.sketchCanvases.length; n++) {
-      var s = PConstants.sketches[n];
-      var c = PConstants.sketchCanvases[n];
+    for (var n = 0; n < PVariables.sketchCanvases.length; n++) {
+      var s = PVariables.sketches[n];
+      var c = PVariables.sketchCanvases[n];
       var bounds = c.elt.getBoundingClientRect();
       s.pmouseX = s.mouseX;
       s.pmouseY = s.mouseY;
@@ -283,8 +303,8 @@
     } else if (e.button == 2) {
       exports.mouseButton = exports.RIGHT;
     }
-    for (var i = 0; i < PConstants.sketches.length; i++) {
-      var s = PConstants.sketches[i];
+    for (var i = 0; i < PVariables.sketches.length; i++) {
+      var s = PVariables.sketches[i];
       if (e.button == 1) {
         s.mouseButton = exports.CENTER;
       } else if (e.button == 2) {
@@ -296,15 +316,15 @@
     exports.touchX = e.changedTouches[0].pageX;
     exports.touchY = e.changedTouches[0].pageY;
     exports.touches = [];
-    for (var n = 0; n < PConstants.sketchCanvases.length; n++) {
-      PConstants.sketches[n].touches = [];
+    for (var n = 0; n < PVariables.sketchCanvases.length; n++) {
+      PVariables.sketches[n].touches = [];
     }    
     for(var i = 0; i < e.changedTouches.length; i++){
       var ct = e.changedTouches[i];
       exports.touches[i] = {x: ct.pageX, y: ct.pageY};
-      for (var m = 0; m < PConstants.sketchCanvases.length; n++) {
-        var s = PConstants.sketches[m];
-        var c = PConstants.sketchCanvases[m];
+      for (var m = 0; m < PVariables.sketchCanvases.length; n++) {
+        var s = PVariables.sketches[m];
+        var c = PVariables.sketchCanvases[m];
         var bounds = c.elt.getBoundingClientRect(); 
         s.touches[i] = {x: ct.pageX - bounds.left, y: ct.pageY - bounds.top};
       }              
@@ -323,35 +343,35 @@
   function pSetupInput() {
     document.body.onmousemove = function(e){
       pUpdateMouseCoords(e);
-      if (!pMousePressed && typeof mouseMoved === 'function')
+      if (!PVariables.mousePressed && typeof mouseMoved === 'function')
         mouseMoved(e);
-      if (pMousePressed && typeof mouseDragged === 'function')
+      if (PVariables.mousePressed && typeof mouseDragged === 'function')
         mouseDragged(e);
-      for (var i = 0; i < PConstants.sketches.length; i++) {
-        var s = PConstants.sketches[i];
-        if (!pMousePressed && typeof s.mouseMoved === 'function')
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
+        if (!PVariables.mousePressed && typeof s.mouseMoved === 'function')
           s.mouseMoved(e);
-        if (pMousePressed && typeof s.mouseDragged === 'function')
+        if (PVariables.mousePressed && typeof s.mouseDragged === 'function')
           s.mouseDragged(e);          
       }        
     };
     document.body.onmousedown = function(e) {
-      pMousePressed = true;
+      PVariables.mousePressed = true;
       pSetMouseButton(e);
       if (typeof mousePressed === 'function')
         mousePressed(e);        
-      for (var i = 0; i < PConstants.sketches.length; i++) {
-        var s = PConstants.sketches[i];
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
         if (typeof s.mousePressed === 'function')
           s.mousePressed(e);
       } 
     };
     document.body.onmouseup = function(e) {
-      pMousePressed = false;
+      PVariables.mousePressed = false;
       if (typeof mouseReleased === 'function')
         mouseReleased(e);
-      for (var i = 0; i < PConstants.sketches.length; i++) {
-        var s = PConstants.sketches[i];
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
         if (typeof s.mouseReleased === 'function')
           s.mouseReleased(e);
       }        
@@ -359,8 +379,8 @@
     document.body.onmouseclick = function(e) {
       if (typeof mouseClicked === 'function')
         mouseClicked(e);
-      for (var i = 0; i < PConstants.sketches.length; i++) {
-        var s = PConstants.sketches[i];
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
         if (typeof s.mouseClicked === 'function')
           s.mouseClicked(e);
       }
@@ -368,8 +388,8 @@
     document.body.onmousewheel = function(e) {
       if (typeof mouseWheel === 'function')
         mouseWheel(e);
-      for (var i = 0; i < PConstants.sketches.length; i++) {
-        var s = PConstants.sketches[i];
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
         if (typeof s.mouseWheel === 'function')
           s.mouseWheel(e);
       }     
@@ -380,8 +400,8 @@
       exports.key = String.fromCharCode(e.keyCode);
       if (typeof keyPressed === 'function')
         keyPressed(e);
-      for (var i = 0; i < PConstants.sketches.length; i++) {
-        var s = PConstants.sketches[i];
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
         if (typeof s.keyPressed === 'function')
           s.keyPressed(e);
       }
@@ -390,8 +410,8 @@
       pKeyPressed = false;
       if (typeof keyReleased === 'function')
         keyReleased(e);
-      for (var i = 0; i < PConstants.sketches.length; i++) {
-        var s = PConstants.sketches[i];
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
         if (typeof s.keyReleased === 'function')
           s.keyReleased(e);
       }  
@@ -399,8 +419,8 @@
     document.body.onkeypress = function(e) {
       if (typeof keyTyped === 'function')
         keyTyped(e);
-      for (var i = 0; i < PConstants.sketches.length; i++) {
-        var s = PConstants.sketches[i];
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
         if (typeof s.keyTyped === 'function')
           s.keyTyped(e);
       }        
@@ -410,8 +430,8 @@
       if(typeof touchStarted === 'function')
         touchStarted(e);
       var m = typeof touchMoved === 'function';         
-      for (var i = 0; i < PConstants.sketches.length; i++) {
-        var s = PConstants.sketches[i];
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
         if (typeof s.touchStarted === 'function')
           s.touchStarted(e);
         m |= typeof s.touchMoved === 'function';         
@@ -424,8 +444,8 @@
       pSetTouchPoints(e);
       if(typeof touchMoved === 'function')
         touchMoved(e);
-      for (var i = 0; i < PConstants.sketches.length; i++) {
-        var s = PConstants.sketches[i];
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
         if (typeof s.touchMoved === 'function')
           s.touchMoved(e);
       }        
@@ -434,8 +454,8 @@
       pSetTouchPoints(e);
       if(typeof touchEnded === 'function')
         touchEnded(e);
-      for (var i = 0; i < PConstants.sketches.length; i++) {
-        var s = PConstants.sketches[i];
+      for (var i = 0; i < PVariables.sketches.length; i++) {
+        var s = PVariables.sketches[i];
         if (typeof s.touchEnded === 'function')
           s.touchEnded(e);
       }            
@@ -527,7 +547,7 @@
     return new Date().getMinutes();
   };
   exports.millis = function() {
-    return new Date().getTime() - PConstants.startTime;
+    return new Date().getTime() - PVariables.startTime;
   };
   exports.month = function() {
     return new Date().getMonth();
@@ -550,7 +570,7 @@
   //// IMAGE ///////////////////////////
 
   exports.save = function() {
-    window.open(PConstants.curElement.elt.toDataURL('image/png'));
+    window.open(PVariables.curElement.elt.toDataURL('image/png'));
   };
 
   //// FILES ///////////////////////////
@@ -614,28 +634,28 @@
   //////////////////////////////////////
 
   exports.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
-    PConstants.curElement.context.transform(n00, n01, n02, n10, n11, n12);
-    var m = PConstants.matrices[PConstants.matrices.length-1];
+    PVariables.curElement.context.transform(n00, n01, n02, n10, n11, n12);
+    var m = PVariables.matrices[PVariables.matrices.length-1];
     m = pMultiplyMatrix(m, [n00, n01, n02, n10, n11, n12]);
   };
   exports.popMatrix = function() { 
-    PConstants.curElement.context.restore(); 
-    PConstants.matrices.pop();
+    PVariables.curElement.context.restore(); 
+    PVariables.matrices.pop();
   };
   exports.printMatrix = function() {
-    console.log(PConstants.matrices[PConstants.matrices.length-1]);
+    console.log(PVariables.matrices[PVariables.matrices.length-1]);
   };
   exports.pushMatrix = function() { 
-    PConstants.curElement.context.save(); 
-    PConstants.matrices.push([1,0,0,1,0,0]);
+    PVariables.curElement.context.save(); 
+    PVariables.matrices.push([1,0,0,1,0,0]);
   };
   exports.resetMatrix = function() { 
-    PConstants.curElement.context.setTransform();
-    PConstants.matrices[PConstants.matrices.length-1] = [1,0,0,1,0,0]; 
+    PVariables.curElement.context.setTransform();
+    PVariables.matrices[PVariables.matrices.length-1] = [1,0,0,1,0,0]; 
   };
   exports.rotate = function(r) { 
-    PConstants.curElement.context.rotate(r); 
-    var m = PConstants.matrices[PConstants.matrices.length-1];
+    PVariables.curElement.context.rotate(r); 
+    var m = PVariables.matrices[PVariables.matrices.length-1];
     var c = Math.cos(r);
     var s = Math.sin(r);
     var m11 = m[0] * c + m[2] * s;
@@ -655,26 +675,26 @@
       x = arguments[0];
       y = arguments[1];
     }
-    PConstants.curElement.context.scale(x, y); 
-    var m = PConstants.matrices[PConstants.matrices.length-1];
+    PVariables.curElement.context.scale(x, y); 
+    var m = PVariables.matrices[PVariables.matrices.length-1];
     m[0] *= x;
     m[1] *= x;
     m[2] *= y;
     m[3] *= y;
   };
   exports.shearX = function(angle) {
-    PConstants.curElement.context.transform(1, 0, tan(angle), 1, 0, 0);
-    var m = PConstants.matrices[PConstants.matrices.length-1];
+    PVariables.curElement.context.transform(1, 0, tan(angle), 1, 0, 0);
+    var m = PVariables.matrices[PVariables.matrices.length-1];
     m = pMultiplyMatrix(m, [1, 0, tan(angle), 1, 0, 0]);
   };
   exports.shearY = function(angle) {
-    PConstants.curElement.context.transform(1, tan(angle), 0, 1, 0, 0);
-    var m = PConstants.matrices[PConstants.matrices.length-1];
+    PVariables.curElement.context.transform(1, tan(angle), 0, 1, 0, 0);
+    var m = PVariables.matrices[PVariables.matrices.length-1];
     m = pMultiplyMatrix(m, [1, tan(angle), 0, 1, 0, 0]);
   };
   exports.translate = function(x, y) { 
-    PConstants.curElement.context.translate(x, y); 
-    var m = PConstants.matrices[PConstants.matrices.length-1];
+    PVariables.curElement.context.translate(x, y); 
+    var m = PVariables.matrices[PVariables.matrices.length-1];
     m[4] += m[0] * x + m[2] * y;
     m[5] += m[1] * x + m[3] * y;
   };
@@ -688,33 +708,33 @@
   exports.background = function() { 
     var c = getNormalizedColor(arguments);
     // save out the fill
-    var curFill = PConstants.curElement.context.fillStyle;
+    var curFill = PVariables.curElement.context.fillStyle;
     // create background rect
-    PConstants.curElement.context.fillStyle = getCSSRGBAColor(c);
-    PConstants.curElement.context.fillRect(0, 0, width, height);
+    PVariables.curElement.context.fillStyle = getCSSRGBAColor(c);
+    PVariables.curElement.context.fillRect(0, 0, width, height);
     // reset fill
-    PConstants.curElement.context.fillStyle = curFill;
+    PVariables.curElement.context.fillStyle = curFill;
   };
   exports.clear = function() {
-    PConstants.curElement.context.clearRect(0, 0, width, height);
+    PVariables.curElement.context.clearRect(0, 0, width, height);
   };
   exports.colorMode = function(mode) {
     if (mode == exports.RGB || mode == exports.HSB)
-      PConstants.colorMode = mode; 
+      PVariables.colorMode = mode; 
   };
   exports.fill = function() {
     var c = getNormalizedColor(arguments);
-    PConstants.curElement.context.fillStyle = getCSSRGBAColor(c);
+    PVariables.curElement.context.fillStyle = getCSSRGBAColor(c);
   };
   exports.noFill = function() {
-    PConstants.curElement.context.fillStyle = 'rgba(0,0,0,0)';
+    PVariables.curElement.context.fillStyle = 'rgba(0,0,0,0)';
   };
   exports.noStroke = function() {
-    PConstants.curElement.context.strokeStyle = 'rgba(0,0,0,0)';
+    PVariables.curElement.context.strokeStyle = 'rgba(0,0,0,0)';
   };
   exports.stroke = function() {
     var c = getNormalizedColor(arguments);
-    PConstants.curElement.context.strokeStyle = getCSSRGBAColor(c);
+    PVariables.curElement.context.strokeStyle = getCSSRGBAColor(c);
   };
 
   //// CREATING & READING //////////////
@@ -795,7 +815,7 @@
   function PImage(w, h) {
     this.width = w || 1;
     this.height = h || 1;
-    this.imageData = PConstants.curElement.context.createImageData(this.width, this.height); 
+    this.imageData = PVariables.curElement.context.createImageData(this.width, this.height); 
     for (var i = 3, len = this.imageData.length; i < len; i += 4) {
       this.imageData[i] = 255;
     }
@@ -836,11 +856,11 @@
   };
   /*PImage.prototype.mask = function(m) {
     // Masks part of an image with another image as an alpha channel
-    var op = PConstants.curElement.context.globalCompositeOperation;
-    PConstants.curElement.context.drawImage(m.image, 0, 0);
-    PConstants.curElement.context.globalCompositeOperation = 'source-atop';
-    PConstants.curElement.context.drawImage(this.image, 0, 0);
-    PConstants.curElement.context.globalCompositeOperation = op;
+    var op = PVariables.curElement.context.globalCompositeOperation;
+    PVariables.curElement.context.drawImage(m.image, 0, 0);
+    PVariables.curElement.context.globalCompositeOperation = 'source-atop';
+    PVariables.curElement.context.drawImage(this.image, 0, 0);
+    PVariables.curElement.context.globalCompositeOperation = op;
   };*/
   PImage.prototype.filter = function() {
     // TODO
@@ -865,16 +885,15 @@
   exports.image = function() { 
     var vals;
     if (arguments.length < 5) {
-      vals = pModeAdjust(arguments[1], arguments[2], arguments[0].width, arguments[0].height, PConstants.imageMode);
+      vals = pModeAdjust(arguments[1], arguments[2], arguments[0].width, arguments[0].height, PVariables.imageMode);
     } else {
-      vals = pModeAdjust(arguments[1], arguments[2], arguments[3], arguments[4], PConstants.imageMode);
+      vals = pModeAdjust(arguments[1], arguments[2], arguments[3], arguments[4], PVariables.imageMode);
     }
-    console.log(arguments[0]);
-    PConstants.curElement.context.drawImage(arguments[0].sourceImage, vals.x, vals.y, vals.w, vals.h);
+    PVariables.curElement.context.drawImage(arguments[0].sourceImage, vals.x, vals.y, vals.w, vals.h);
   };
 
   exports.imageMode = function(m) {
-    if (m == exports.CORNER || m == exports.CORNERS || m == exports.CENTER) PConstants.imageMode = m;
+    if (m == exports.CORNER || m == exports.CORNERS || m == exports.CENTER) PVariables.imageMode = m;
   };
 
   function getPixels(img) {
@@ -898,7 +917,7 @@
     // TODO
   };
   exports.get = function(x, y) {
-    var pix = PConstants.curElement.context.getImageData(0, 0, width, height).data;
+    var pix = PVariables.curElement.context.getImageData(0, 0, width, height).data;
     /*if (typeof w !== 'undefined' && typeof h !== 'undefined') {
       var region = [];
       for (var j=0; j<h; j++) {
@@ -921,7 +940,7 @@
     }
   };
   exports.loadPixels = function() { 
-    var a = PConstants.curElement.context.getImageData(0, 0, width, height).data;
+    var a = PVariables.curElement.context.getImageData(0, 0, width, height).data;
     pixels = [];
     for (var i=0; i < a.length; i+=4) {
       pixels.push([a[i], a[i+1], a[i+2], a[i+3]]); // each pixels entry: [r, g, b, a]
@@ -932,7 +951,7 @@
   };
   exports.updatePixels = function() {
     /*if (typeof pixels !== 'undefined') {
-      var imgd = PConstants.curElement.context.getImageData(x, y, width, height);
+      var imgd = PVariables.curElement.context.getImageData(x, y, width, height);
       imgd = pixels;
       context.putImageData(imgd, 0, 0);
     }*/
@@ -948,35 +967,35 @@
     text(str, x1, y1, x2, y2)
   */
   exports.text = function() {
-    PConstants.curElement.context.font=PConstants.textStyle+' '+PConstants.textSize+'px '+PConstants.textFont;
+    PVariables.curElement.context.font=PVariables.textStyle+' '+PVariables.textSize+'px '+PVariables.textFont;
     if (arguments.length == 3) {
-      PConstants.curElement.context.fillText(arguments[0], arguments[1], arguments[2]);
-      PConstants.curElement.context.strokeText(arguments[0], arguments[1], arguments[2]);
+      PVariables.curElement.context.fillText(arguments[0], arguments[1], arguments[2]);
+      PVariables.curElement.context.strokeText(arguments[0], arguments[1], arguments[2]);
     } else if (arguments.length == 5) {
       var words = arguments[0].split(' ');
       var line = '';
-      var vals = pModeAdjust(arguments[1], arguments[2], arguments[3], arguments[4], PConstants.rectMode);
-      vals.y += PConstants.textLeading;
+      var vals = pModeAdjust(arguments[1], arguments[2], arguments[3], arguments[4], PVariables.rectMode);
+      vals.y += PVariables.textLeading;
       for(var n = 0; n < words.length; n++) {
         var testLine = line + words[n] + ' ';
-        var metrics = PConstants.curElement.context.measureText(testLine);
+        var metrics = PVariables.curElement.context.measureText(testLine);
         var testWidth = metrics.width;
         if (vals.y > vals.h) {
           break;
         }
         else if (testWidth > vals.w && n > 0) {
-          PConstants.curElement.context.fillText(line, vals.x, vals.y);
-          PConstants.curElement.context.strokeText(lin, vals.x, vals.y);
+          PVariables.curElement.context.fillText(line, vals.x, vals.y);
+          PVariables.curElement.context.strokeText(lin, vals.x, vals.y);
           line = words[n] + ' ';
-          vals.y += PConstants.textLeading;
+          vals.y += PVariables.textLeading;
         }
         else {
           line = testLine;
         }
       }
       if (vals.y <= vals.h) {
-        PConstants.curElement.context.fillText(line, vals.x, vals.y);
-        PConstants.curElement.context.strokeText(line, vals.x, vals.y);
+        PVariables.curElement.context.fillText(line, vals.x, vals.y);
+        PVariables.curElement.context.strokeText(line, vals.x, vals.y);
       }
     }
   };
@@ -984,27 +1003,27 @@
   //// ATTRIBUTES //////////////////////
   exports.NORMAL = 'normal', exports.ITALIC = 'italic', exports.BOLD = 'bold';
   exports.textAlign = function(a) {
-    if (a == exports.LEFT || a == exports.RIGHT || a == exports.CENTER) PConstants.curElement.context.textAlign = a;
+    if (a == exports.LEFT || a == exports.RIGHT || a == exports.CENTER) PVariables.curElement.context.textAlign = a;
   };
   exports.textFont = function(str) {
-    PConstants.textFont = str; //pend temp?
+    PVariables.textFont = str; //pend temp?
   };
   exports.textHeight = function(s) {
-    return PConstants.curElement.context.measureText(s).height;
+    return PVariables.curElement.context.measureText(s).height;
   };
   exports.textLeading = function(l) {
-    PConstants.textLeading = l;
+    PVariables.textLeading = l;
   };
   exports.textSize = function(s) {
-    PConstants.textSize = s;
+    PVariables.textSize = s;
   };
   exports.textStyle = function(s) {
     if (s == exports.NORMAL || s == exports.ITALIC || s == exports.BOLD) {
-      PConstants.textStyle = s;
+      PVariables.textStyle = s;
     }
   };
   exports.textWidth = function(s) {
-    return PConstants.curElement.context.measureText(s).width;
+    return PVariables.curElement.context.measureText(s).width;
   };
 
 
@@ -1066,30 +1085,6 @@
       return Math.random();
     }
   };
-
-  //////////////////////////////////////
-  ////
-  ////  CONSTANTS
-  ////
-  //////////////////////////////////////
-
-  exports.HALF_PI = Math.PI*0.5;
-  exports.PI = Math.PI;
-  exports.QUARTER_PI = Math.PI*0.25;
-  exports.TAU = Math.PI*2.0;
-  exports.TWO_PI = Math.PI*2.0;
-
-  exports.CORNER = 'corner', CORNERS = 'corners', exports.RADIUS = 'radius';
-  exports.RIGHT = 'right', exports.LEFT = 'left', exports.CENTER = 'center';
-  exports.POINTS = 'points', exports.LINES = 'lines', exports.TRIANGLES = 'triangles', exports.TRIANGLE_FAN = 'triangles_fan',
-  exports.TRIANGLE_STRIP = 'triangles_strip', exports.QUADS = 'quads', exports.QUAD_STRIP = 'quad_strip';
-  exports.CLOSE = 'close';
-  exports.OPEN = 'open', exports.CHORD = 'chord', exports.PIE = 'pie';
-  exports.SQUARE = 'butt', exports.ROUND = 'round', exports.PROJECT = 'square'; // PEND: careful this is counterintuitive
-  exports.BEVEL = 'bevel', exports.MITER = 'miter';
-  exports.RGB = 'rgb', exports.HSB = 'hsb';
-  exports.AUTO = 'auto';
-  exports.CROSS = 'crosshair', exports.HAND = 'pointer', exports.MOVE = 'move', exports.TEXT = 'text', exports.WAIT = 'wait';
 
 
   //////////////////////////////////////
@@ -1313,7 +1308,7 @@
       }
       this.width = this.elt.offsetWidth;
       this.height = this.elt.offsetHeight;
-      if (PConstants.curElement.elt == this.elt) {
+      if (PVariables.curElement.elt == this.elt) {
         width = this.elt.offsetWidth;
         height = this.elt.offsetHeight;
       }
@@ -1406,14 +1401,14 @@
     } else obj = e;
     //console.log(obj)
     if (typeof obj !== 'undefined') {
-      PConstants.curElement = obj;
+      PVariables.curElement = obj;
       width = obj.elt.offsetWidth;
       height = obj.elt.offsetHeight;
       //console.log(width, height)
-      if (typeof PConstants.curElement.context !== 'undefined') PConstants.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
+      if (typeof PVariables.curElement.context !== 'undefined') PVariables.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
       
-      if (-1 < PConstants.curSketchIndex && PConstants.sketchCanvases.length <= PConstants.curSketchIndex) {
-        PConstants.sketchCanvases[PConstants.curSketchIndex] = PConstants.curElement;
+      if (-1 < PVariables.curSketchIndex && PVariables.sketchCanvases.length <= PVariables.curSketchIndex) {
+        PVariables.sketchCanvases[PVariables.curSketchIndex] = PVariables.curElement;
       }
     }
   };
@@ -1441,7 +1436,7 @@
 
 
   exports.sketch = function(s) {
-    PConstants.sketches[PConstants.sketches.length] = s;
+    PVariables.sketches[PVariables.sketches.length] = s;
     s.mouseX = 0;
     s.mouseY = 0;
     s.pmouseX = 0;
@@ -1450,9 +1445,9 @@
     s.touchX = 0;
     s.touchY = 0;
     if (typeof s.setup === 'function') {
-      PConstants.curSketchIndex = PConstants.sketches.length - 1;
+      PVariables.curSketchIndex = PVariables.sketches.length - 1;
       s.setup();
-      PConstants.curSketchIndex = -1;
+      PVariables.curSketchIndex = -1;
     } else console.log("sketch must include a setup function");
   };
   
@@ -1461,40 +1456,40 @@
   };
   function pCreate() {
     exports.createGraphics(800, 600, true); // default canvas
-    PConstants.startTime = new Date().getTime();
-    if (typeof setup === 'function' || PConstants.sketches.length > 0) {
+    PVariables.startTime = new Date().getTime();
+    if (typeof setup === 'function' || PVariables.sketches.length > 0) {
       if (typeof setup === 'function') setup();
     } else console.log("sketch must include a setup function");
-    PConstants.updateInterval = setInterval(pUpdate, 1000/frameRate);
+    PVariables.updateInterval = setInterval(pUpdate, 1000/frameRate);
     pDraw();
   }
   function pApplyDefaults() {
-    PConstants.curElement.context.fillStyle = '#FFFFFF';
-    PConstants.curElement.context.strokeStyle = '#000000';
-    PConstants.curElement.context.lineCap=exports.ROUND;
+    PVariables.curElement.context.fillStyle = '#FFFFFF';
+    PVariables.curElement.context.strokeStyle = '#000000';
+    PVariables.curElement.context.lineCap=exports.ROUND;
   }
   function pUpdate() {
     frameCount++;
   }
   function pDraw() {
-    if (PConstants.loop) {
+    if (PVariables.loop) {
       setTimeout(function() {
         requestDraw(pDraw);
       }, 1000 / frameRate);
     }
     // call draw
     if (typeof draw === 'function') draw();
-    for (var i = 0; i < PConstants.sketches.length; i++) {
-      var s = PConstants.sketches[i];
+    for (var i = 0; i < PVariables.sketches.length; i++) {
+      var s = PVariables.sketches[i];
       if (typeof s.draw === 'function') {
-        PConstants.curSketchIndex = i;
+        PVariables.curSketchIndex = i;
         pushStyle();
         s.draw();
         popStyle();    
-        PConstants.curSketchIndex = -1;    
+        PVariables.curSketchIndex = -1;    
       }      
     }
-    PConstants.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
+    PVariables.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
   }
   function pModeAdjust(a, b, c, d, mode) {
     if (mode == exports.CORNER) {
@@ -1558,7 +1553,7 @@
       r = g = b = _args[0];
       a = typeof _args[1] === 'number' ? _args[1] : 255;
     }
-    if (PConstants.colorMode == exports.HSB) {
+    if (PVariables.colorMode == exports.HSB) {
       rgba = hsv2rgb(r, g, b).concat(a);
     } else {
       rgba = [r, g, b, a];
@@ -1670,7 +1665,7 @@
     // pend todo
   };
   exports.ellipse = function(a, b, c, d) {
-    var vals = pModeAdjust(a, b, c, d, PConstants.ellipseMode);
+    var vals = pModeAdjust(a, b, c, d, PVariables.ellipseMode);
     var kappa = 0.5522848,
       ox = (vals.w / 2) * kappa, // control point offset horizontal
       oy = (vals.h / 2) * kappa, // control point offset vertical
@@ -1678,112 +1673,112 @@
       ye = vals.y + vals.h,      // y-end
       xm = vals.x + vals.w / 2,  // x-middle
       ym = vals.y + vals.h / 2;  // y-middle
-    PConstants.curElement.context.beginPath();
-    PConstants.curElement.context.moveTo(vals.x, ym);
-    PConstants.curElement.context.bezierCurveTo(vals.x, ym - oy, xm - ox, vals.y, xm, vals.y);
-    PConstants.curElement.context.bezierCurveTo(xm + ox, vals.y, xe, ym - oy, xe, ym);
-    PConstants.curElement.context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-    PConstants.curElement.context.bezierCurveTo(xm - ox, ye, vals.x, ym + oy, vals.x, ym);
-    PConstants.curElement.context.closePath();
-    PConstants.curElement.context.fill();
-    PConstants.curElement.context.stroke();
+    PVariables.curElement.context.beginPath();
+    PVariables.curElement.context.moveTo(vals.x, ym);
+    PVariables.curElement.context.bezierCurveTo(vals.x, ym - oy, xm - ox, vals.y, xm, vals.y);
+    PVariables.curElement.context.bezierCurveTo(xm + ox, vals.y, xe, ym - oy, xe, ym);
+    PVariables.curElement.context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+    PVariables.curElement.context.bezierCurveTo(xm - ox, ye, vals.x, ym + oy, vals.x, ym);
+    PVariables.curElement.context.closePath();
+    PVariables.curElement.context.fill();
+    PVariables.curElement.context.stroke();
   };
   exports.line = function(x1, y1, x2, y2) {
-    if (PConstants.curElement.context.strokeStyle === 'rgba(0,0,0,0)') {
+    if (PVariables.curElement.context.strokeStyle === 'rgba(0,0,0,0)') {
       return;
     }
-    PConstants.curElement.context.beginPath();
-    PConstants.curElement.context.moveTo(x1, y1);
-    PConstants.curElement.context.lineTo(x2, y2);
-    PConstants.curElement.context.stroke();
+    PVariables.curElement.context.beginPath();
+    PVariables.curElement.context.moveTo(x1, y1);
+    PVariables.curElement.context.lineTo(x2, y2);
+    PVariables.curElement.context.stroke();
   };
   exports.point = function(x, y) {
-    var s = PConstants.curElement.context.strokeStyle;
-    var f = PConstants.curElement.context.fillStyle;
+    var s = PVariables.curElement.context.strokeStyle;
+    var f = PVariables.curElement.context.fillStyle;
     if (s === 'rgba(0,0,0,0)') {
       return;
     }
     x = Math.round(x);
     y = Math.round(y);
-    PConstants.curElement.context.fillStyle = s;
-    if (PConstants.curElement.context.lineWidth > 1) {
-      PConstants.curElement.context.beginPath();
-      PConstants.curElement.context.arc(x, y, PConstants.curElement.context.lineWidth / 2, 0, TWO_PI, false);
-      PConstants.curElement.context.fill();
+    PVariables.curElement.context.fillStyle = s;
+    if (PVariables.curElement.context.lineWidth > 1) {
+      PVariables.curElement.context.beginPath();
+      PVariables.curElement.context.arc(x, y, PVariables.curElement.context.lineWidth / 2, 0, TWO_PI, false);
+      PVariables.curElement.context.fill();
     } else {
-      PConstants.curElement.context.fillRect(x, y, 1, 1);
+      PVariables.curElement.context.fillRect(x, y, 1, 1);
     }
-    PConstants.curElement.context.fillStyle = f;
+    PVariables.curElement.context.fillStyle = f;
   };
   exports.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
-    PConstants.curElement.context.beginPath();
-    PConstants.curElement.context.moveTo(x1, y1);
-    PConstants.curElement.context.lineTo(x2, y2);
-    PConstants.curElement.context.lineTo(x3, y3);
-    PConstants.curElement.context.lineTo(x4, y4);
-    PConstants.curElement.context.closePath();
-    PConstants.curElement.context.fill();
-    PConstants.curElement.context.stroke();
+    PVariables.curElement.context.beginPath();
+    PVariables.curElement.context.moveTo(x1, y1);
+    PVariables.curElement.context.lineTo(x2, y2);
+    PVariables.curElement.context.lineTo(x3, y3);
+    PVariables.curElement.context.lineTo(x4, y4);
+    PVariables.curElement.context.closePath();
+    PVariables.curElement.context.fill();
+    PVariables.curElement.context.stroke();
   };
   exports.rect = function(a, b, c, d) {
-    var vals = pModeAdjust(a, b, c, d, PConstants.rectMode);
-    PConstants.curElement.context.beginPath();
-    PConstants.curElement.context.rect(vals.x, vals.y, vals.w, vals.h);
-    PConstants.curElement.context.fill();
-    PConstants.curElement.context.stroke();
+    var vals = pModeAdjust(a, b, c, d, PVariables.rectMode);
+    PVariables.curElement.context.beginPath();
+    PVariables.curElement.context.rect(vals.x, vals.y, vals.w, vals.h);
+    PVariables.curElement.context.fill();
+    PVariables.curElement.context.stroke();
   };
   exports.triangle = function(x1, y1, x2, y2, x3, y3) {
-    PConstants.curElement.context.beginPath();
-    PConstants.curElement.context.moveTo(x1, y1);
-    PConstants.curElement.context.lineTo(x2, y2);
-    PConstants.curElement.context.lineTo(x3, y3);
-    PConstants.curElement.context.closePath();
-    PConstants.curElement.context.fill();
-    PConstants.curElement.context.stroke();
+    PVariables.curElement.context.beginPath();
+    PVariables.curElement.context.moveTo(x1, y1);
+    PVariables.curElement.context.lineTo(x2, y2);
+    PVariables.curElement.context.lineTo(x3, y3);
+    PVariables.curElement.context.closePath();
+    PVariables.curElement.context.fill();
+    PVariables.curElement.context.stroke();
   }; 
 }(window));
 ;(function(exports) {
 	exports.ellipseMode = function(m) {
     if (m == exports.CORNER || m == exports.CORNERS || m == exports.RADIUS || m == exports.CENTER) {
-      PConstants.ellipseMode = m;
+      PVariables.ellipseMode = m;
     }
   };
   exports.noSmooth = function() {
-    PConstants.curElement.context.mozImageSmoothingEnabled = false;
-    PConstants.curElement.context.webkitImageSmoothingEnabled = false;
+    PVariables.curElement.context.mozImageSmoothingEnabled = false;
+    PVariables.curElement.context.webkitImageSmoothingEnabled = false;
   };
   exports.rectMode = function(m) {
     if (m == exports.CORNER || m == exports.CORNERS || m == exports.RADIUS || m == exports.CENTER) {
-      PConstants.rectMode = m;
+      PVariables.rectMode = m;
     }
   };
   exports.smooth = function() {
-    PConstants.curElement.context.mozImageSmoothingEnabled = true;
-    PConstants.curElement.context.webkitImageSmoothingEnabled = true;
+    PVariables.curElement.context.mozImageSmoothingEnabled = true;
+    PVariables.curElement.context.webkitImageSmoothingEnabled = true;
   };
   exports.strokeCap = function(cap) {
     if (cap == exports.ROUND || cap == exports.SQUARE || cap == exports.PROJECT) {
-      PConstants.curElement.context.lineCap=cap;
+      PVariables.curElement.context.lineCap=cap;
     }
   };
   exports.strokeJoin = function(join) {
     if (join == exports.ROUND || join == exports.BEVEL || join == exports.MITER) {
-      PConstants.curElement.context.lineJoin = join;
+      PVariables.curElement.context.lineJoin = join;
     }
   };
   exports.strokeWeight = function(w) {
     if (typeof w === 'undefined' || w === 0)
-      PConstants.curElement.context.lineWidth = 0.0001; // hack because lineWidth 0 doesn't work
-    else PConstants.curElement.context.lineWidth = w;
+      PVariables.curElement.context.lineWidth = 0.0001; // hack because lineWidth 0 doesn't work
+    else PVariables.curElement.context.lineWidth = w;
   };
 
 }(window));
 ;(function(exports) {
 	exports.bezier = function(x1, y1, x2, y2, x3, y3, x4, y4) {
-    PConstants.curElement.context.beginPath();
-    PConstants.curElement.context.moveTo(x1, y1);
-    PConstants.curElement.context.bezierCurveTo(x2, y2, x3, y3, x4, y4);
-    PConstants.curElement.context.stroke();
+    PVariables.curElement.context.beginPath();
+    PVariables.curElement.context.moveTo(x1, y1);
+    PVariables.curElement.context.bezierCurveTo(x2, y2, x3, y3, x4, y4);
+    PVariables.curElement.context.stroke();
   };
   exports.bezierDetail = function() {
     // TODO
@@ -1816,13 +1811,13 @@
   };
   exports.beginShape = function(kind) {
     if (kind == exports.POINTS || kind == exports.LINES || kind == exports.TRIANGLES || kind == exports.TRIANGLE_FAN || kind == exports.TRIANGLE_STRIP || kind == exports.QUADS || kind == exports.QUAD_STRIP)
-      PConstants.shapeKind = kind;
-    else PConstants.shapeKind = null; 
-    PConstants.shapeInited = true;
-    PConstants.curElement.context.beginPath();
+      PVariables.shapeKind = kind;
+    else PVariables.shapeKind = null; 
+    PVariables.shapeInited = true;
+    PVariables.curElement.context.beginPath();
   };
   exports.bezierVertex = function(x1, y1, x2, y2, x3, y3) {
-    PConstants.curElement.context.bezierCurveTo(x1, y1, x2, y2, x3, y3);
+    PVariables.curElement.context.bezierCurveTo(x1, y1, x2, y2, x3, y3);
   };
   exports.curveVertex = function() {
     // TODO
@@ -1832,21 +1827,21 @@
   };
   exports.endShape = function(mode) {
     if (mode == exports.CLOSE) {
-      PConstants.curElement.context.closePath();
-      PConstants.curElement.context.fill();
+      PVariables.curElement.context.closePath();
+      PVariables.curElement.context.fill();
     } 
-    PConstants.curElement.context.stroke();
+    PVariables.curElement.context.stroke();
   };
   exports.quadraticVertex = function(cx, cy, x3, y3) {
-    PConstants.curElement.context.quadraticCurveTo(cx, cy, x3, y3);
+    PVariables.curElement.context.quadraticCurveTo(cx, cy, x3, y3);
   };
   exports.vertex = function(x, y) {
-    if (PConstants.shapeInited) {
-      PConstants.curElement.context.moveTo(x, y);
+    if (PVariables.shapeInited) {
+      PVariables.curElement.context.moveTo(x, y);
     } else {
-      PConstants.curElement.context.lineTo(x, y); // pend this is where check for kind and do other stuff
+      PVariables.curElement.context.lineTo(x, y); // pend this is where check for kind and do other stuff
     }
-    PConstants.shapeInited = false;
+    PVariables.shapeInited = false;
   };
 
 }(window));
@@ -1854,53 +1849,53 @@
   exports.draw; // needed?
   exports.setup; // needed?
   exports.noLoop = function() { 
-    if (PConstants.loop) {
-      PConstants.loop = false; 
+    if (PVariables.loop) {
+      PVariables.loop = false; 
     }
   };
   exports.loop = function() {
-    if (!PConstants.loop) {
-      PConstants.loop = true;
+    if (!PVariables.loop) {
+      PVariables.loop = true;
     }
   };
   exports.pushStyle = function() {
     var curS = [];
-    curS.fillStyle = PConstants.curElement.context.fillStyle; // fill
-    curS.strokeStyle = PConstants.curElement.context.strokeStyle; // stroke
-    curS.lineWidth = PConstants.curElement.context.lineWidth; // strokeWeight
+    curS.fillStyle = PVariables.curElement.context.fillStyle; // fill
+    curS.strokeStyle = PVariables.curElement.context.strokeStyle; // stroke
+    curS.lineWidth = PVariables.curElement.context.lineWidth; // strokeWeight
     // @todo tint
-    curS.lineCap = PConstants.curElement.context.lineCap; // strokeCap
-    curS.lineJoin = PConstants.curElement.context.lineJoin; // strokeJoin
-    curS.imageMode = PConstants.imageMode; // imageMode
-    curS.rectMode = PConstants.rectMode; // rectMode
-    curS.ellipseMode = PConstants.ellipseMode; // ellipseMode
+    curS.lineCap = PVariables.curElement.context.lineCap; // strokeCap
+    curS.lineJoin = PVariables.curElement.context.lineJoin; // strokeJoin
+    curS.imageMode = PVariables.imageMode; // imageMode
+    curS.rectMode = PVariables.rectMode; // rectMode
+    curS.ellipseMode = PVariables.ellipseMode; // ellipseMode
     // @todo shapeMode
-    curS.colorMode = PConstants.colorMode; // colorMode
-    curS.textAlign = PConstants.curElement.context.textAlign; // textAlign
-    curS.textFont = PConstants.textFont;
-    curS.textLeading = PConstants.textLeading; // textLeading
-    curS.textSize = PConstants.textSize; // textSize
-    curS.textStyle = PConstants.textStyle; // textStyle
-    PConstants.styles.push(curS);
+    curS.colorMode = PVariables.colorMode; // colorMode
+    curS.textAlign = PVariables.curElement.context.textAlign; // textAlign
+    curS.textFont = PVariables.textFont;
+    curS.textLeading = PVariables.textLeading; // textLeading
+    curS.textSize = PVariables.textSize; // textSize
+    curS.textStyle = PVariables.textStyle; // textStyle
+    PVariables.styles.push(curS);
   };
   exports.popStyle = function() {
-    var lastS = PConstants.styles[PConstants.styles.length-1];
-    PConstants.curElement.context.fillStyle = lastS.fillStyle; // fill
-    PConstants.curElement.context.strokeStyle = lastS.strokeStyle; // stroke
-    PConstants.curElement.context.lineWidth = lastS.lineWidth; // strokeWeight
+    var lastS = PVariables.styles[PVariables.styles.length-1];
+    PVariables.curElement.context.fillStyle = lastS.fillStyle; // fill
+    PVariables.curElement.context.strokeStyle = lastS.strokeStyle; // stroke
+    PVariables.curElement.context.lineWidth = lastS.lineWidth; // strokeWeight
     // @todo tint
-    PConstants.curElement.context.lineCap = lastS.lineCap; // strokeCap
-    PConstants.curElement.context.lineJoin = lastS.lineJoin; // strokeJoin
-    PConstants.imageMode = lastS.imageMode; // imageMode
-    PConstants.rectMode = lastS.rectMode; // rectMode
-    PConstants.ellipseMode = lastS.ellipseMode; // elllipseMode
+    PVariables.curElement.context.lineCap = lastS.lineCap; // strokeCap
+    PVariables.curElement.context.lineJoin = lastS.lineJoin; // strokeJoin
+    PVariables.imageMode = lastS.imageMode; // imageMode
+    PVariables.rectMode = lastS.rectMode; // rectMode
+    PVariables.ellipseMode = lastS.ellipseMode; // elllipseMode
     // @todo shapeMode
-    PConstants.colorMode = lastS.colorMode; // colorMode
-    PConstants.curElement.context.textAlign = lastS.textAlign; // textAlign
-    PConstants.textFont = lastS.textFont;
-    PConstants.textLeading = lastS.textLeading; // textLeading
-    PConstants.textSize = lastS.textSize; // textSize
-    PConstants.textStyle = lastS.textStyle; // textStyle
-    PConstants.styles.pop();
+    PVariables.colorMode = lastS.colorMode; // colorMode
+    PVariables.curElement.context.textAlign = lastS.textAlign; // textAlign
+    PVariables.textFont = lastS.textFont;
+    PVariables.textLeading = lastS.textLeading; // textLeading
+    PVariables.textSize = lastS.textSize; // textSize
+    PVariables.textStyle = lastS.textStyle; // textStyle
+    PVariables.styles.pop();
   };
 }(window));

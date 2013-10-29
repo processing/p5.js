@@ -7,7 +7,6 @@
   //////////////////////////////////////
 
   //// MOUSE ///////////////////////////
-
   exports.mouseX = 0;
   exports.mouseY = 0;
   exports.pmouseX = 0;
@@ -15,8 +14,6 @@
   exports.mouseButton = 0;
   exports.touchX = 0;
   exports.touchY = 0;
-  var pMousePressed = false;
-  
   /*
   // Another possibility: mouseX, mouseY, etc. are properties with a getter
   // that returns the relative coordinates depending on the current element.
@@ -32,7 +29,7 @@
   */
 
   exports.isMousePressed = function() {
-    return pMousePressed;
+    return PVariables.mousePressed;
   };
   function pUpdateMouseCoords(e) {
     pmouseX = exports.mouseX;
@@ -100,20 +97,20 @@
   function pSetupInput() {
     document.body.onmousemove = function(e){
       pUpdateMouseCoords(e);
-      if (!pMousePressed && typeof mouseMoved === 'function')
+      if (!PVariables.mousePressed && typeof mouseMoved === 'function')
         mouseMoved(e);
-      if (pMousePressed && typeof mouseDragged === 'function')
+      if (PVariables.mousePressed && typeof mouseDragged === 'function')
         mouseDragged(e);
       for (var i = 0; i < PVariables.sketches.length; i++) {
         var s = PVariables.sketches[i];
-        if (!pMousePressed && typeof s.mouseMoved === 'function')
+        if (!PVariables.mousePressed && typeof s.mouseMoved === 'function')
           s.mouseMoved(e);
-        if (pMousePressed && typeof s.mouseDragged === 'function')
+        if (PVariables.mousePressed && typeof s.mouseDragged === 'function')
           s.mouseDragged(e);          
       }        
     };
     document.body.onmousedown = function(e) {
-      pMousePressed = true;
+      PVariables.mousePressed = true;
       pSetMouseButton(e);
       if (typeof mousePressed === 'function')
         mousePressed(e);        
@@ -124,7 +121,7 @@
       } 
     };
     document.body.onmouseup = function(e) {
-      pMousePressed = false;
+      PVariables.mousePressed = false;
       if (typeof mouseReleased === 'function')
         mouseReleased(e);
       for (var i = 0; i < PVariables.sketches.length; i++) {
@@ -646,7 +643,6 @@
     } else {
       vals = pModeAdjust(arguments[1], arguments[2], arguments[3], arguments[4], PVariables.imageMode);
     }
-    console.log(arguments[0]);
     PVariables.curElement.context.drawImage(arguments[0].sourceImage, vals.x, vals.y, vals.w, vals.h);
   };
 
@@ -843,30 +839,6 @@
       return Math.random();
     }
   };
-
-  //////////////////////////////////////
-  ////
-  ////  CONSTANTS
-  ////
-  //////////////////////////////////////
-
-  exports.HALF_PI = Math.PI*0.5;
-  exports.PI = Math.PI;
-  exports.QUARTER_PI = Math.PI*0.25;
-  exports.TAU = Math.PI*2.0;
-  exports.TWO_PI = Math.PI*2.0;
-
-  exports.CORNER = 'corner', CORNERS = 'corners', exports.RADIUS = 'radius';
-  exports.RIGHT = 'right', exports.LEFT = 'left', exports.CENTER = 'center';
-  exports.POINTS = 'points', exports.LINES = 'lines', exports.TRIANGLES = 'triangles', exports.TRIANGLE_FAN = 'triangles_fan',
-  exports.TRIANGLE_STRIP = 'triangles_strip', exports.QUADS = 'quads', exports.QUAD_STRIP = 'quad_strip';
-  exports.CLOSE = 'close';
-  exports.OPEN = 'open', exports.CHORD = 'chord', exports.PIE = 'pie';
-  exports.SQUARE = 'butt', exports.ROUND = 'round', exports.PROJECT = 'square'; // PEND: careful this is counterintuitive
-  exports.BEVEL = 'bevel', exports.MITER = 'miter';
-  exports.RGB = 'rgb', exports.HSB = 'hsb';
-  exports.AUTO = 'auto';
-  exports.CROSS = 'crosshair', exports.HAND = 'pointer', exports.MOVE = 'move', exports.TEXT = 'text', exports.WAIT = 'wait';
 
 
   //////////////////////////////////////
