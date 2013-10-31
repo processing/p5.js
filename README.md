@@ -14,7 +14,7 @@ Processing-JS (Development)
 Create and run your first sketch!
 ####[> Reference](https://github.com/lmccart/processing-js/wiki/Reference)
 The functionality supported by Processing-JS.
-####[> Examples](https://github.com/lmccart/processing-js/wiki/Examples)
+####[> Tutorials](https://github.com/lmccart/processing-js/wiki/Tutorials)
 Short, prototypical programs exploring the basics of programming with Processing-JS.
 ####[> Troubleshooting](https://github.com/lmccart/processing-js/wiki/Troubleshooting)
 Help with common problems. Coming soon.
