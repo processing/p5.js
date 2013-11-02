@@ -24,6 +24,9 @@ module.exports = function(grunt) {
     qunit: {
       files: ['test/**/*.html']
     },
+    jasmine: {
+      src: ['test/**/*.js']
+    },
     jshint: {
       files: ['Gruntfile.js', 'src/**/*.js', 'test/**/*.js'],
       options: {
@@ -47,8 +50,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-jasmine');
 
   grunt.registerTask('test', ['jshint', 'qunit']);
+  grunt.registerTask('jasmine', ['jasmine']);
 
   grunt.registerTask('default', ['jshint', 'qunit', 'concat', 'uglify']);
 
