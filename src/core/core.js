@@ -41,12 +41,15 @@
     
     if (typeof preload == 'function') {
       exports.loadJSON = PHelper.preloadJSON;
+      exports.loadStrings = PHelper.preloadStrings;
       exports.loadImage = PHelper.preloadImage;
       preload();
       exports.loadJSON = PHelper.loadJSON;
+      exports.loadStrings = PHelper.loadStrings;
       exports.loadImage = PHelper.loadImage;
     } else {
       exports.loadJSON = PHelper.loadJSON;
+      exports.loadStrings = PHelper.loadStrings;
       exports.loadImage = PHelper.loadImage;
       PHelper.setup();
     }

@@ -14,31 +14,37 @@
     var self = [];
     reqwest(path, function (resp) {
       for (var k in resp) self[k] = resp[k];
-      callback(resp);
+      if (typeof callback !== 'undefined') callback(resp);
     });
     return self;
   };
- 
   PHelper.preloadJSON = function(path) {
     PVariables.preload_count++;
     return PHelper.loadJSON(path, function (resp) {
       if (--PVariables.preload_count === 0) setup();
     });
   };
- 
-  // exports.loadStrings = function(file, callback) {
-  //   var req = new XMLHttpRequest();
-  //   req.open('GET', 'data/'+file, true);
-  //   req.onreadystatechange = function () {
-  //     if(req.readyState === 4) {
-  //       if(req.status === 200 || req.status === 0) {
-  //         if (typeof callback !== 'undefined') callback();
-  //         return req.responseText.match(/[^\r\n]+/g);
-  //       }
-  //     }
-  //   };
-  //   req.send(null);
-  // };
+  PHelper.loadStrings = function(path, callback) {
+    var self = [];
+    var req = new XMLHttpRequest();
+    req.open('GET', path, true);
+    req.onreadystatechange = function () {
+      if((req.readyState === 4) && (req.status === 200 || req.status === 0)) {
+        var arr = req.responseText.match(/[^\r\n]+/g);
+        for (var k in arr) self[k] = arr[k];
+        if (typeof callback !== 'undefined') callback();
+      }
+    };
+    req.send(null);
+    return self;
+  };
+  PHelper.preloadStrings = function(path) {
+    PVariables.preload_count++;
+    return PHelper.loadStrings(path, function (resp) {
+      if (--PVariables.preload_count === 0) setup();
+    });
+  };
+
   exports.loadTable = function () {
     // TODO
   };
