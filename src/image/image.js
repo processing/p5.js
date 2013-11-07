@@ -20,7 +20,6 @@
       ctx.drawImage(pimg.sourceImage, 0, 0);
       // note: this only works with local files!
       // pimg.imageData = ctx.getImageData(0, 0, pimg.width, pimg.height); //PEND: taking it out for now to allow url loading
-
       callback();
 
     };
