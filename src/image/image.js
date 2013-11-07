@@ -3,8 +3,8 @@
   exports.createImage = function(w, h, format) {
     return new PImage(w, h);
   }; //pend format?
-  exports.loadImage = function(path, callback) { 
 
+  PHelper.loadImage = function(path, callback) {
     var pimg = new PImage();
     pimg.sourceImage = new Image();
 
@@ -19,14 +19,22 @@
       canvas.height=pimg.height;
       ctx.drawImage(pimg.sourceImage, 0, 0);
       // note: this only works with local files!
-      pimg.imageData = ctx.getImageData(0, 0, pimg.width, pimg.height);
+      // pimg.imageData = ctx.getImageData(0, 0, pimg.width, pimg.height); //PEND: taking it out for now to allow url loading
+
+      callback();
 
     };
 
     pimg.sourceImage.src = path; 
     return pimg;
   };
-
+ 
+  PHelper.preloadImage = function(path) {
+    PVariables.preload_count++;
+    return PHelper.loadImage(path, function () {
+      if (--PVariables.preload_count === 0) setup();
+    });
+  };
 
   function PImage(w, h) {
     this.width = w || 1;

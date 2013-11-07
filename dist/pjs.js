@@ -8,26 +8,47 @@
 	exports.TWO_PI = Math.PI*2.0;
 
 	// SHAPE
-	exports.CORNER = 'corner', CORNERS = 'corners', exports.RADIUS = 'radius';
-	exports.RIGHT = 'right', exports.LEFT = 'left', exports.CENTER = 'center';
-	exports.POINTS = 'points', exports.LINES = 'lines', exports.TRIANGLES = 'triangles', exports.TRIANGLE_FAN = 'triangles_fan',
-	exports.TRIANGLE_STRIP = 'triangles_strip', exports.QUADS = 'quads', exports.QUAD_STRIP = 'quad_strip';
+	exports.CORNER = 'corner'; 
+	exports.CORNERS = 'corners';
+	exports.RADIUS = 'radius';
+	exports.RIGHT = 'right';
+	exports.LEFT = 'left';
+	exports.CENTER = 'center';
+	exports.POINTS = 'points';
+	exports.LINES = 'lines';
+	exports.TRIANGLES = 'triangles';
+	exports.TRIANGLE_FAN = 'triangles_fan';
+	exports.TRIANGLE_STRIP = 'triangles_strip';
+	exports.QUADS = 'quads';
+	exports.QUAD_STRIP = 'quad_strip';
 	exports.CLOSE = 'close';
-	exports.OPEN = 'open', exports.CHORD = 'chord', exports.PIE = 'pie';
-	exports.SQUARE = 'butt', exports.ROUND = 'round', exports.PROJECT = 'square'; // PEND: careful this is counterintuitive
-	exports.BEVEL = 'bevel', exports.MITER = 'miter';
+	exports.OPEN = 'open';
+	exports.CHORD = 'chord';
+	exports.PIE = 'pie';
+	exports.PROJECT = 'square'; // PEND: careful this is counterintuitive
+	exports.SQUARE = 'butt';
+	exports.ROUND = 'round';
+	exports.BEVEL = 'bevel';
+	exports.MITER = 'miter';
 
 	// COLOR
-	exports.RGB = 'rgb', exports.HSB = 'hsb';
+	exports.RGB = 'rgb';
+	exports.HSB = 'hsb';
 
 	// DOM EXTENSION
 	exports.AUTO = 'auto';
 
 	// ENVIRONMENT
-	exports.CROSS = 'crosshair', exports.HAND = 'pointer', exports.MOVE = 'move', exports.TEXT = 'text', exports.WAIT = 'wait';
+	exports.CROSS = 'crosshair';
+	exports.HAND = 'pointer';
+	exports.MOVE = 'move';
+	exports.TEXT = 'text';
+	exports.WAIT = 'wait';
 
 	// TYPOGRAPHY
-  exports.NORMAL = 'normal', exports.ITALIC = 'italic', exports.BOLD = 'bold';
+  exports.NORMAL = 'normal';
+  exports.ITALIC = 'italic';
+  exports.BOLD = 'bold';
 
 }(window));
 ;(function(exports) {
@@ -54,45 +75,46 @@
 		sketchCanvases: [],
 		curSketchIndex: -1,
 
-		mousePressed: false
+		mousePressed: false,
+    preload_count: 0
 
 	};
 
 	PHelper = {};
 
-
-
-
-  exports.sketch = function(s) {
-    PVariables.sketches[PVariables.sketches.length] = s;
-    s.mouseX = 0;
-    s.mouseY = 0;
-    s.pmouseX = 0;
-    s.pmouseY = 0;
-    s.mouseButton = 0;
-    s.touchX = 0;
-    s.touchY = 0;
-    if (typeof s.setup === 'function') {
-      PVariables.curSketchIndex = PVariables.sketches.length - 1;
-      s.setup();
-      PVariables.curSketchIndex = -1;
-    } else console.log("sketch must include a setup function");
-  };
   
+  // THIS IS THE MAIN FUNCTION, CALLED ON PAGE LOAD
   exports.onload = function() {
     PHelper.create();
   };
 
-
   PHelper.create = function() {
     exports.createGraphics(800, 600, true); // default canvas
     PVariables.startTime = new Date().getTime();
-    if (typeof setup === 'function' || PVariables.sketches.length > 0) {
-      if (typeof setup === 'function') setup();
-    } else console.log("sketch must include a setup function");
+    
+    if (typeof preload == 'function') {
+      exports.loadJSON = PHelper.preloadJSON;
+      exports.loadImage = PHelper.preloadImage;
+      preload();
+      exports.loadJSON = PHelper.loadJSON;
+      exports.loadImage = PHelper.loadImage;
+    } else {
+      exports.loadJSON = PHelper.loadJSON;
+      exports.loadImage = PHelper.loadImage;
+      PHelper.setup();
+    }
+
     PVariables.updateInterval = setInterval(PHelper.update, 1000/frameRate);
     PHelper.draw();
   };
+
+
+  PHelper.setup = function() {
+    if (typeof setup === 'function' || PVariables.sketches.length > 0) { // pend whats happening here?
+      if (typeof setup === 'function') setup();
+    } else console.log("sketch must include a setup function");
+  };
+
   PHelper.applyDefaults = function() {
     PVariables.curElement.context.fillStyle = '#FFFFFF';
     PVariables.curElement.context.strokeStyle = '#000000';
@@ -148,6 +170,24 @@
     }
     return result;
   };
+
+
+  exports.sketch = function(s) {
+    PVariables.sketches[PVariables.sketches.length] = s;
+    s.mouseX = 0;
+    s.mouseY = 0;
+    s.pmouseX = 0;
+    s.pmouseY = 0;
+    s.mouseButton = 0;
+    s.touchX = 0;
+    s.touchY = 0;
+    if (typeof s.setup === 'function') {
+      PVariables.curSketchIndex = PVariables.sketches.length - 1;
+      s.setup();
+      PVariables.curSketchIndex = -1;
+    } else console.log("sketch must include a setup function");
+  };
+
 
 }(window));
 ;(function(exports) {
@@ -629,8 +669,8 @@
   exports.createImage = function(w, h, format) {
     return new PImage(w, h);
   }; //pend format?
-  exports.loadImage = function(path, callback) { 
 
+  PHelper.loadImage = function(path, callback) {
     var pimg = new PImage();
     pimg.sourceImage = new Image();
 
@@ -645,14 +685,22 @@
       canvas.height=pimg.height;
       ctx.drawImage(pimg.sourceImage, 0, 0);
       // note: this only works with local files!
-      pimg.imageData = ctx.getImageData(0, 0, pimg.width, pimg.height);
+      // pimg.imageData = ctx.getImageData(0, 0, pimg.width, pimg.height); //PEND: taking it out for now to allow url loading
+
+      callback();
 
     };
 
     pimg.sourceImage.src = path; 
     return pimg;
   };
-
+ 
+  PHelper.preloadImage = function(path) {
+    PVariables.preload_count++;
+    return PHelper.loadImage(path, function () {
+      if (--PVariables.preload_count === 0) setup();
+    });
+  };
 
   function PImage(w, h) {
     this.width = w || 1;
@@ -810,33 +858,36 @@
   exports.loadBytes = function() {
     // TODO
   };
-  exports.loadJSON = function(file, callback) {
-    var req = new XMLHttpRequest();  
-    req.overrideMimeType('application/json');  
-    req.open('GET', 'data/'+file);  
-    req.onreadystatechange = function () {
-      if(req.readyState === 4) {
-        if(req.status === 200 || req.status === 0) {
-          if (typeof callback !== 'undefined') callback();
-          return JSON.parse(req.responseText);
-        }
-      }
-    };
-    req.send(null);
+
+  PHelper.loadJSON = function(path, callback) {
+    var self = [];
+    reqwest(path, function (resp) {
+      for (var k in resp) self[k] = resp[k];
+      callback(resp);
+    });
+    return self;
   };
-  exports.loadStrings = function(file, callback) {
-    var req = new XMLHttpRequest();
-    req.open('GET', 'data/'+file, true);
-    req.onreadystatechange = function () {
-      if(req.readyState === 4) {
-        if(req.status === 200 || req.status === 0) {
-          if (typeof callback !== 'undefined') callback();
-          return req.responseText.match(/[^\r\n]+/g);
-        }
-      }
-    };
-    req.send(null);
+ 
+  PHelper.preloadJSON = function(path) {
+    PVariables.preload_count++;
+    return PHelper.loadJSON(path, function (resp) {
+      if (--PVariables.preload_count === 0) setup();
+    });
   };
+ 
+  // exports.loadStrings = function(file, callback) {
+  //   var req = new XMLHttpRequest();
+  //   req.open('GET', 'data/'+file, true);
+  //   req.onreadystatechange = function () {
+  //     if(req.readyState === 4) {
+  //       if(req.status === 200 || req.status === 0) {
+  //         if (typeof callback !== 'undefined') callback();
+  //         return req.responseText.match(/[^\r\n]+/g);
+  //       }
+  //     }
+  //   };
+  //   req.send(null);
+  // };
   exports.loadTable = function () {
     // TODO
   };
@@ -1138,12 +1189,6 @@
   };
 
 }(window));
-;(function(exports) {
-
-
-
-}(window));
-
 ;(function(exports) {
   exports.abs = function(n) { return Math.abs(n); };
   exports.ceil = function(n) { return Math.ceil(n); };
@@ -1624,8 +1669,6 @@
 
 }(window));
 ;(function(exports) {
-  exports.draw; // needed?
-  exports.setup; // needed?
   exports.noLoop = function() { 
     if (PVariables.loop) {
       PVariables.loop = false; 

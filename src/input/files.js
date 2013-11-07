@@ -9,33 +9,36 @@
   exports.loadBytes = function() {
     // TODO
   };
-  exports.loadJSON = function(file, callback) {
-    var req = new XMLHttpRequest();  
-    req.overrideMimeType('application/json');  
-    req.open('GET', 'data/'+file);  
-    req.onreadystatechange = function () {
-      if(req.readyState === 4) {
-        if(req.status === 200 || req.status === 0) {
-          if (typeof callback !== 'undefined') callback();
-          return JSON.parse(req.responseText);
-        }
-      }
-    };
-    req.send(null);
+
+  PHelper.loadJSON = function(path, callback) {
+    var self = [];
+    reqwest(path, function (resp) {
+      for (var k in resp) self[k] = resp[k];
+      callback(resp);
+    });
+    return self;
   };
-  exports.loadStrings = function(file, callback) {
-    var req = new XMLHttpRequest();
-    req.open('GET', 'data/'+file, true);
-    req.onreadystatechange = function () {
-      if(req.readyState === 4) {
-        if(req.status === 200 || req.status === 0) {
-          if (typeof callback !== 'undefined') callback();
-          return req.responseText.match(/[^\r\n]+/g);
-        }
-      }
-    };
-    req.send(null);
+ 
+  PHelper.preloadJSON = function(path) {
+    PVariables.preload_count++;
+    return PHelper.loadJSON(path, function (resp) {
+      if (--PVariables.preload_count === 0) setup();
+    });
   };
+ 
+  // exports.loadStrings = function(file, callback) {
+  //   var req = new XMLHttpRequest();
+  //   req.open('GET', 'data/'+file, true);
+  //   req.onreadystatechange = function () {
+  //     if(req.readyState === 4) {
+  //       if(req.status === 200 || req.status === 0) {
+  //         if (typeof callback !== 'undefined') callback();
+  //         return req.responseText.match(/[^\r\n]+/g);
+  //       }
+  //     }
+  //   };
+  //   req.send(null);
+  // };
   exports.loadTable = function () {
     // TODO
   };

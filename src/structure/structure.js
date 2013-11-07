@@ -1,6 +1,4 @@
 (function(exports) {
-  exports.draw; // needed?
-  exports.setup; // needed?
   exports.noLoop = function() { 
     if (PVariables.loop) {
       PVariables.loop = false; 

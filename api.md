@@ -159,7 +159,6 @@ For now these functions link to the current [Processing.org reference](http://pr
 
 ####Files
 + [loadJSON()](http://processing.org/reference/loadJSONObject_.html) - loadJSONObject() and loadJSONArray() now both loadJSON()
-+ [loadStrings()](http://processing.org/reference/loadStrings_.html)
 
 
 ####Time & Date
