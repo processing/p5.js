@@ -9,21 +9,23 @@
 var mySound = new buzz.sound('rhodes_loop.wav');
 var myImage;
 
-var setup = function() {
+function setup() {
   createGraphics(300, 300);
   myImage =  loadImage('red.jpg');
 };
 
-var draw = function() {
+function draw() {
   background(255, 200, 200);
   image(myImage, 20, 20, 150, 150);
 };
 
-var mousePressed = function() {
-  mySound.play(); // Start playing the sound
-  mySound.loop(); // Loop the sound once it's playing
+function mousePressed() {
+  if (mouseX > 20 && mouseX < 170 && mouseY > 20 && mouseY < 170) {
+    mySound.play(); // Start playing the sound
+    mySound.loop(); // Loop the sound once it's playing
+  }
 }
 
-var keyPressed = function() {
+function keyPressed() {
   mySound.stop(); // Stop the sound
 }

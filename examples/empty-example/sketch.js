@@ -1,10 +1,15 @@
 
-var setup = function() {
+function preload() {
+  println("preload");
+};
+
+
+function setup() {
 	println("setup");
 };
 
 
-var draw = function() {
+function draw() {
 	println("draw");
 };
 
