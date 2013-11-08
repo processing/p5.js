@@ -40,16 +40,19 @@
     PVariables.startTime = new Date().getTime();
     
     if (typeof preload == 'function') {
-      exports.loadJSON = PHelper.preloadJSON;
-      exports.loadStrings = PHelper.preloadStrings;
-      exports.loadImage = PHelper.preloadImage;
+      exports.loadJSON = function(path) { return PHelper.preloadFunc("loadJSON", path); };
+      exports.loadStrings = function(path) { return PHelper.preloadFunc("loadStrings", path); };
+      exports.loadXML = function(path) { return PHelper.preloadFunc("loadXML", path); };
+      exports.loadImage = function(path) { return PHelper.preloadFunc("loadImage", path); };
       preload();
       exports.loadJSON = PHelper.loadJSON;
       exports.loadStrings = PHelper.loadStrings;
+      exports.loadXML = PHelper.loadXML;
       exports.loadImage = PHelper.loadImage;
     } else {
       exports.loadJSON = PHelper.loadJSON;
       exports.loadStrings = PHelper.loadStrings;
+      exports.loadXML = PHelper.loadXML;
       exports.loadImage = PHelper.loadImage;
       PHelper.setup();
     }
@@ -58,6 +61,12 @@
     PHelper.draw();
   };
 
+  PHelper.preloadFunc = function(func, path) {
+    PVariables.preload_count++;
+    return PHelper[func](path, function (resp) {
+      if (--PVariables.preload_count === 0) setup();
+    });    
+  };
 
   PHelper.setup = function() {
     if (typeof setup === 'function' || PVariables.sketches.length > 0) { // pend whats happening here?

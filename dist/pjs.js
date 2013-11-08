@@ -93,16 +93,19 @@
     PVariables.startTime = new Date().getTime();
     
     if (typeof preload == 'function') {
-      exports.loadJSON = PHelper.preloadJSON;
-      exports.loadStrings = PHelper.preloadStrings;
-      exports.loadImage = PHelper.preloadImage;
+      exports.loadJSON = function(path) { return PHelper.preloadFunc("loadJSON", path); };
+      exports.loadStrings = function(path) { return PHelper.preloadFunc("loadStrings", path); };
+      exports.loadXML = function(path) { return PHelper.preloadFunc("loadXML", path); };
+      exports.loadImage = function(path) { return PHelper.preloadFunc("loadImage", path); };
       preload();
       exports.loadJSON = PHelper.loadJSON;
       exports.loadStrings = PHelper.loadStrings;
+      exports.loadXML = PHelper.loadXML;
       exports.loadImage = PHelper.loadImage;
     } else {
       exports.loadJSON = PHelper.loadJSON;
       exports.loadStrings = PHelper.loadStrings;
+      exports.loadXML = PHelper.loadXML;
       exports.loadImage = PHelper.loadImage;
       PHelper.setup();
     }
@@ -111,6 +114,12 @@
     PHelper.draw();
   };
 
+  PHelper.preloadFunc = function(func, path) {
+    PVariables.preload_count++;
+    return PHelper[func](path, function (resp) {
+      if (--PVariables.preload_count === 0) setup();
+    });    
+  };
 
   PHelper.setup = function() {
     if (typeof setup === 'function' || PVariables.sketches.length > 0) { // pend whats happening here?
@@ -869,14 +878,6 @@
     });
     return self;
   };
- 
-  PHelper.preloadJSON = function(path) {
-    PVariables.preload_count++;
-    return PHelper.loadJSON(path, function (resp) {
-      if (--PVariables.preload_count === 0) setup();
-    });
-  };
-
   PHelper.loadStrings = function(path, callback) {
     var self = [];
     var req = new XMLHttpRequest();
@@ -892,32 +893,22 @@
     return self;
   };
 
-  PHelper.preloadStrings = function(path) {
-    PVariables.preload_count++;
-    return PHelper.loadStrings(path, function (resp) {
-      console.log("pl "+path);
-      if (--PVariables.preload_count === 0) setup();
-    });
-  };
-
   exports.loadTable = function () {
     // TODO
   };
-  /*exports.loadXML = function() {
-    var req = new XMLHttpRequest();  
-    req.overrideMimeType('application/json');  
-    req.overrideMimeType('text/xml');
-    req.open('GET', 'data/'+file, false);  
-    req.onreadystatechange = function () {
-      if(req.readyState === 4) {
-        if(req.status === 200 || req.status == 0) {
-          console.log(JSON.parse(req.responseXML));
-          return JSON.parse(req.responseXML);
-        }
-      }
-    }
-    req.send(null);
-  }*/
+
+  PHelper.temp = [];
+  PHelper.loadXML = function(path, callback) {
+    var self = [];
+    reqwest(path, function (resp) {
+      console.log(resp);
+      PHelper.temp = resp;
+      self[0] = resp;
+      if (typeof callback !== 'undefined') callback(resp);
+    });
+    return self;
+  };
+
   exports.open = function() {
     // TODO
   };
