@@ -16,13 +16,13 @@ var diam = 20;
 var x = 100;
 var y = 100;
   
-var setup = function() {
+function setup()
   createGraphics(200,200);
   background(255);
   smooth();    
 };
 
-var draw = function() {
+function draw()
   // Use those variables to draw an ellipse
   stroke(0);
   fill(r,g,b,a);  // (Remember, the fourth argument for a color is transparency.

@@ -8,21 +8,21 @@
 
 var cars = []; // An array for Car objects
 
-var setup = function() {
+function setup()
   createGraphics(200,200);
   smooth();
   for (var i = 0; i < 100; i++ ) { // Initialize each Car using a for loop.
     cars[i] = new Car(i*2,0,i*2,i/20.0); 
   }
-};
+}
 
-var draw = function() {
+function draw()
   background(255);
   for (var i = 0; i < cars.length; i++ ) { // Run each Car using a for loop.
     cars[i].move();
     cars[i].display();
   }
-};
+}
 
 
 // The Car class does not change whether we are making one car, 100 cars or 1,000 cars!

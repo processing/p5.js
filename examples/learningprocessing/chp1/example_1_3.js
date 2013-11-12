@@ -5,13 +5,13 @@
 // Ported by Lauren McCarthy
 
 // Example 1-3: RGB Color
-var setup = function() {
+function setup()
 	smooth();
 	background(255);
 	noStroke();
 };
 
-var draw = function() {
+function draw()
 
 	
 	// Bright red

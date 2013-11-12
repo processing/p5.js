@@ -11,7 +11,7 @@ var timer;        // One timer object
 var drops = [];       // An array of drop objects
 var totalDrops = 0; // totalDrops
 
-var setup = function() {
+function setup()
   createGraphics(400,400);
   smooth();
   catcher = new Catcher(32); // Create the catcher with a radius of 32
@@ -19,7 +19,7 @@ var setup = function() {
   timer.start();             // Starting the timer
 };
 
-var draw = function() {
+function draw()
   background(255);
   
   // Set catcher location

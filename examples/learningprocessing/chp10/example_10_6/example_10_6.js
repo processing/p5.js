@@ -9,7 +9,7 @@
 // Variables for drop location
 var x,y; 
 
-var setup = function() {
+function setup()
   createGraphics(400,400);
   background(0);
   x = width/2;
@@ -17,7 +17,7 @@ var setup = function() {
   smooth();
 };
 
-var draw = function() {
+function draw()
   background(255);
   // Display the drop
   fill(50,100,150);

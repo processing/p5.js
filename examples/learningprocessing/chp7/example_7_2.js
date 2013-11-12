@@ -6,12 +6,12 @@
 
 // Example 7-2: Calling a function
 
-var setup = function() {
+function setup()
  createGraphics(100,100);
  smooth(); 
 };
 
-var draw = function() {
+function draw()
   background(255);
   drawBlackCircle();
 };

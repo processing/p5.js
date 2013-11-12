@@ -9,13 +9,13 @@
 var savedTime;
 var totalTime = 5000;
 
-var setup = function() {
+function setup()
   createGraphics(200,200);
   background(0);
   savedTime = millis();
 };
 
-var draw = function() {
+function draw()
   // Calculate how much time has passed
   var passedTime = millis() - savedTime;
   // Has five seconds passed?

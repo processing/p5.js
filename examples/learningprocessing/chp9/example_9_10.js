@@ -9,16 +9,16 @@
 // An array of stripes
 var stripes = [];
 
-var setup = function() {
+function setup()
   createGraphics(200,200);
   
   // Initialize all Stripe objects
   for (var i = 0; i < 10; i ++ ) {
     stripes[i] = new Stripe();
   }
-};
+}
 
-var draw = function() {
+function draw()
   
   background(100);
   // Move and display all Stripe objects

@@ -8,12 +8,12 @@
 var x = 0;
 var speed = 1;
 
-var setup = function() {
+function setup()
   createGraphics(200,200);
   smooth();
 };
 
-var draw = function() {
+function draw()
   background(255);
 
   // Add the current speed to the x location.

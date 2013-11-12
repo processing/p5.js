@@ -10,7 +10,7 @@
 var xpos = []; 
 var ypos = [];
 
-var setup = function() {
+function setup()
   createGraphics(200,200);
   
   smooth();
@@ -19,9 +19,9 @@ var setup = function() {
     xpos[i] = 0; 
     ypos[i] = 0;
   }
-};
+}
 
-var draw = function() {
+function draw()
   background(255);
   
   // Shift array values
@@ -44,4 +44,4 @@ var draw = function() {
     fill(255-i*5);
     ellipse(xpos[i],ypos[i],i,i);
   }
-};
+}

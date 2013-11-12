@@ -8,14 +8,14 @@
 
 var timer;
 
-var setup = function() {
+function setup()
   createGraphics(200,200);
   background(0);
   timer = new Timer(5000);
   timer.start();
 };
 
-var draw = function() {
+function draw()
   if (timer.isFinished()) {
     background(random(255));
     timer.start();

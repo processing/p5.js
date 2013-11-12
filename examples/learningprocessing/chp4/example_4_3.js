@@ -10,12 +10,12 @@
 var circleX = 0;
 var circleY = 100;
 
-var setup = function() {
+function setup()
   createGraphics(200,200);
   smooth();
 };
 
-var draw = function() {
+function draw()
   background(255);
   stroke(0);
   fill(175);

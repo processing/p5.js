@@ -5,11 +5,11 @@
 // Ported by Lauren McCarthy
 
 // Example 5-3: Rollovers
-var setup = function() {
+function setup()
   createGraphics(200,200);
 };
 
-var draw = function() {
+function draw()
   background(255);
   stroke(0);
   line(100,0,100,200);

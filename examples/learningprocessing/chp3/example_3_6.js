@@ -5,15 +5,15 @@
 // Ported by Lauren McCarthy
 
 // Example 3-6: Interactive Zoog?
-var setup = function() {
+function setup()
   // Set the size of the window
   createGraphics(200,200);  
   smooth();
   // The frame rate is set to 30 frames per second.
   setFrameRate(30);
-};
+}
 
-var draw = function() {
+function draw()
   // Draw a black background
   background(255);  
   
@@ -42,8 +42,8 @@ var draw = function() {
   // The legs are drawn according to the mouse location and the previous mouse location.
   line(mouseX-10,mouseY+50,pmouseX-10,pmouseY+60);
   line(mouseX+10,mouseY+50,pmouseX+10,pmouseY+60);
-};
+}
 
-var mousePressed = function() {
+function mousePressed()
   println("Take me to your leader!"); 
-};
+}

@@ -7,15 +7,15 @@
 var balls = []; 
 var gravity = 0.1;
 
-var setup = function() {
+function setup()
   createGraphics(200,200);
   smooth();
   
   // Initialize array with just one Ball object
   balls[0] = new Ball(50,0,16);
-};
+}
 
-var draw = function() {
+function draw()
   background(255);
   
   // Update and display all balls
@@ -24,9 +24,9 @@ var draw = function() {
     balls[i].move();
     balls[i].display();
   }
-};
+}
 
-var mousePressed = function() {
+function mousePressed()
   // A new ball object
   var b = new Ball(mouseX,mouseY,16); // Make a new object at the mouse location.
   console.log(b);
@@ -38,7 +38,7 @@ var mousePressed = function() {
   // You have to reassign the result of the append() function to the original array. 
   // In addition, the append() function requires that you explicitly state the type of data in the array again by putting the 
   // array data type in parentheses: (Ball[]) This is known as casting.
-};
+}
 
 
 

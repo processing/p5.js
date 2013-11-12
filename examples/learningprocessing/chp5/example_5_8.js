@@ -15,11 +15,11 @@ var speed = 5;  // speed of square
 // Depending on the value of its state, it will either move right, down, left, or up.
 var state = 0;  
 
-var setup = function() {
+function setup()
   createGraphics(200,200);
 };
 
-var draw = function() {
+function draw()
   background(255);
 
   // Display the square

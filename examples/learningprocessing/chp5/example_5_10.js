@@ -16,12 +16,12 @@ var xspeed = 3;
 var yspeed = 1;
 
 
-var setup = function() {
+function setup()
   createGraphics(200,200);  
   smooth();      
 };
 
-var draw = function() {
+function draw()
 
   // Change the location of Zoog by speed
   x = x + xspeed;

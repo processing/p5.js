@@ -6,7 +6,7 @@
 
 // Example 1-5: Zoog
 
-var setup = function() {
+function setup()
 	createGraphics(200,200);
 	background(255);
 	smooth();
@@ -14,7 +14,7 @@ var setup = function() {
 	rectMode(CENTER); 
 };
 
-var draw = function() {
+function draw()
 	// Body
 	stroke(0);
 	fill(150);

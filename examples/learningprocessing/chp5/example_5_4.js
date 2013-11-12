@@ -12,11 +12,11 @@ var y = 50;
 var w = 100;
 var h = 75;
 
-var setup = function() {
+function setup()
   createGraphics(200,200); 
 };
 
-var draw = function() {
+function draw()
   // The button is pressed if (mouseX,mouseY) is inside the rectangle and mousePressed is true.
   if (mouseX > x && mouseX < x+w && mouseY > y && mouseY < y+h && isMousePressed()) {
     button = true; 

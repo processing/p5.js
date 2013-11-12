@@ -11,11 +11,11 @@ var r = 0;
 var b = 0;
 var g = 0;
 
-var setup = function() {
+function setup()
   createGraphics(200,200);
 };
 
-var draw = function() {
+function draw()
   // Color the background and draw lines to divide the window in quadrants.
   background(r,g,b);  
   stroke(0);

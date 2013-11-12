@@ -5,12 +5,12 @@
 // Ported by Lauren McCarthy
 
 // Example 3-3: Zoog as dynamic sketch with variation
-var setup = function() {
+function setup()
   createGraphics(200,200);  // Set the size of the window
   smooth();
 };
 
-var draw = function() {
+function draw()
   background(255);  // Draw a white background 
   
   // Set ellipses and rects to CENTER mode

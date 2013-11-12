@@ -13,13 +13,13 @@ var len = 20;     // Length of each line
 var endLegs = 150;  // A variable to mark where the legs end.
 
 
-var setup = function() {
+function setup()
 	createGraphics(200,200);
 	background(255);
 	stroke(0);
 };
 
-var draw = function() {
+function draw()
 	// Draw each leg inside a while loop.
 	while (x <= endLegs) { 
 	  line (x,y,x,y + len);

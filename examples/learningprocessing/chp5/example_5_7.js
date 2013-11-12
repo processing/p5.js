@@ -15,11 +15,11 @@ var c1dir = 0.1;
 // Start by decrementing c2.
 var c2dir = -0.1; 
 
-var setup = function() {
+function setup()
   createGraphics(200,200);
 };
 
-var draw = function() {
+function draw()
   noStroke();
   
   // Draw rectangle on left

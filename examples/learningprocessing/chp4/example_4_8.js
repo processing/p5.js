@@ -18,7 +18,7 @@ var eyeR;
 var eyeG;
 var eyeB;
 
-var setup = function() {
+function setup()
   createGraphics(200,200);        // Set the size of the window
   // Feature #1.  zoogX and zoogY are initialized based on the size of the window.  
   // Note we cannot initialize these variables before the size() function is called 
@@ -28,7 +28,7 @@ var setup = function() {
   smooth();
 };
 
-var draw = function() {
+function draw()
 
   background(255);  // Draw a white background 
   

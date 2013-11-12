@@ -10,7 +10,7 @@
 var ball1;
 var ball2;
 
-var setup = function() {
+function setup()
   createGraphics(400,400);
   smooth();
   
@@ -19,7 +19,7 @@ var setup = function() {
   ball2 = new Ball(32);
 };
 
-var draw = function() {
+function draw()
   background(255);
   
   // Move and display balls

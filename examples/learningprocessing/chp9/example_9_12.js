@@ -10,21 +10,21 @@
 // is the use of an array for multiple Zoog objects.
 var zoogies = [];
 
-var setup = function() {
+function setup()
   createGraphics(400,400);
   smooth();
   for (var i = 0; i < 200; i ++ ) {
     zoogies[i] = new Zoog(random(width),random(height),30,30,8);
   }
-};
+}
 
-var draw = function() {
+function draw()
   background(255); // Draw a black background
   for (var i = 0; i < zoogies.length; i ++ ) {
     zoogies[i].display();
     zoogies[i].jiggle();
   }
-};
+}
 
 
 function Zoog(tempX, tempY, tempW, tempH, tempEyeSize) {

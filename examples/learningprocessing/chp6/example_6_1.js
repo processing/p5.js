@@ -6,12 +6,12 @@
 
 // Example 6-1: Many lines 
    
-var setup = function() {
+function setup()
 	createGraphics(200,200);  
 	background(255);  
 };
 
-var draw = function() {
+function draw()
 	// Legs  
 	stroke(0);  
 	line(50,60,50,80);  

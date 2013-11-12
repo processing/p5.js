@@ -6,11 +6,11 @@
 
 // Example 3-2: mouseX and mouseY
 
-var setup = function() {
+function setup()
   createGraphics(200,200);
 };
 
-var draw = function() {
+function draw()
   // Try moving background() to setup() and see the difference!
   background(255);
 

@@ -8,13 +8,13 @@
 
 var catcher;
 
-var setup = function() {
+function setup()
   createGraphics(400,400);
   catcher = new Catcher(32);
   smooth();
 };
 
-var draw = function() {
+function draw()
   background(255);
   catcher.setLocation(mouseX,mouseY);
   catcher.display();

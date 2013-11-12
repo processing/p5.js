@@ -16,11 +16,11 @@ var speed = 0;   // speed of square
 // Try changing this number to 2.0 and see what happens.
 var gravity = 0.1;  
 
-var setup = function() {
+function setup()
   createGraphics(200,200);
 };
 
-var draw = function() {
+function draw()
   background(255);
 
   // Display the square

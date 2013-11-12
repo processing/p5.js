@@ -9,13 +9,13 @@
 // setup() runs first one time.  
 // size() should always be first line of setup() since 
 // Processing won't be able to do anything before the window size is specified.
-var setup = function() {
+function setup()
   // Set the size of the window
   createGraphics(200,200);  
 };
 
 // draw() loops continuously until you close the sketch window.
-var draw = function() {
+function draw()
   // Draw a white background
   background(255);   
   
