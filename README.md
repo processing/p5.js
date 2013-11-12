@@ -3,7 +3,7 @@ p5.js (Stable)
 
 August 23, 2013:
 
-`dist/p5.js` is currently the only stable file in the repository
+`dist/pjs.js` is currently the only stable file in the repository
 
 
 p5.js (Development)
