@@ -6,12 +6,12 @@
 
 // Example 1-1: stroke and fill
 
-function setup()
+function setup(){
 	createGraphics(200,200);
 	background(255);
 };
 
-function draw()
+function draw(){
 	stroke(0); 
 	fill(150);
 	rect(50,50,75,100);

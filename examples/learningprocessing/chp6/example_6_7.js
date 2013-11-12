@@ -6,12 +6,12 @@
 
 // Example 6-7: Local variables
 
-function setup()
+function setup(){
   createGraphics(200,200);
   // x is not available! It is local to the draw() block of code.
 }
 
-function draw()
+function draw(){
   background(0);
   var x = 0;
   // x is available! Since it is declared within the draw() block of code, it is available here. 

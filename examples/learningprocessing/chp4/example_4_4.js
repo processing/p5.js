@@ -17,12 +17,12 @@ var backgroundColor = 255;
 var change = 0.5;
 
 // Your basic setup
-function setup()
+function setup(){
   createGraphics(200,200);
   smooth();
 };
 
-function draw()
+function draw(){
   // Draw the background and the ellipse
   // Variables are used for everything: background, stroke, fill, location, and size.
   background(backgroundColor);

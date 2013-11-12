@@ -6,11 +6,11 @@
 
 // Example 6-9: Simple while loop with interactivity
 
-function setup()
+function setup(){
   createGraphics(255,255);
 };
 
-function draw()
+function draw(){
   background(0);
 
   // Start with i as 0

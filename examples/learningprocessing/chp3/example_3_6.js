@@ -5,7 +5,7 @@
 // Ported by Lauren McCarthy
 
 // Example 3-6: Interactive Zoog?
-function setup()
+function setup(){
   // Set the size of the window
   createGraphics(200,200);  
   smooth();
@@ -13,7 +13,7 @@ function setup()
   setFrameRate(30);
 }
 
-function draw()
+function draw(){
   // Draw a black background
   background(255);  
   

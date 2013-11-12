@@ -6,12 +6,12 @@
 
 // Example 10-8: Fancier looking raindrop
 
-function setup()
+function setup(){
   background(255);
   smooth();
 };
 
-function draw()
+function draw(){
   for (var i = 2; i < 8; i++ ) {
     noStroke();
     fill(0);

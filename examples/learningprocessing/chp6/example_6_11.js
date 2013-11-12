@@ -10,12 +10,12 @@ var w = 60;
 var h = 60;
 var eyeSize = 16;
 
-function setup()
+function setup(){
   createGraphics(400,200);
   smooth();
 };
 
-function draw()
+function draw(){
   background(255);
   
   ellipseMode(CENTER);

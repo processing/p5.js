@@ -10,7 +10,7 @@
 // is the use of an array for multiple Zoog objects.
 var zoogies = [];
 
-function setup()
+function setup(){
   createGraphics(400,400);
   smooth();
   for (var i = 0; i < 200; i ++ ) {
@@ -18,7 +18,7 @@ function setup()
   }
 }
 
-function draw()
+function draw(){
   background(255); // Draw a black background
   for (var i = 0; i < zoogies.length; i ++ ) {
     zoogies[i].display();

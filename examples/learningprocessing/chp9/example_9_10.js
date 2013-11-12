@@ -9,7 +9,7 @@
 // An array of stripes
 var stripes = [];
 
-function setup()
+function setup(){
   createGraphics(200,200);
   
   // Initialize all Stripe objects
@@ -18,7 +18,7 @@ function setup()
   }
 }
 
-function draw()
+function draw(){
   
   background(100);
   // Move and display all Stripe objects

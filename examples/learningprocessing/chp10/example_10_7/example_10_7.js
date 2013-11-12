@@ -12,13 +12,13 @@ var drops = [];
  // New variable to keep track of total number of drops we want to use!
 var totalDrops = 0;
 
-function setup()
+function setup(){
   createGraphics(400,400);
   smooth();
   background(0);
 };
 
-function draw()
+function draw(){
   background(255);
 
   // Initialize one drop

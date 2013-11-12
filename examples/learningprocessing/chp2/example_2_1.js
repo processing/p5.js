@@ -6,7 +6,7 @@
 
 // Example 2-1: Zoog again
 
-function setup()
+function setup(){
 	createGraphics(200,200);  // Set the size of the window
 	background(255);  // Draw a black background 
 	smooth(); 
@@ -16,7 +16,7 @@ function setup()
 	rectMode(CENTER); 
 };
 
-function draw()
+function draw(){
 	// Draw Zoog's body
 	stroke(0);
 	fill(150);

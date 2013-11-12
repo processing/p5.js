@@ -8,13 +8,13 @@
 
 var myCar; // Declare car object as a globle variable.
 
-function setup()
+function setup(){
   createGraphics(200,200);
   // Initialize Car object
   myCar = new Car(); // Initialize car object in setup() by calling constructor.
 };
 
-function draw()
+function draw(){
   background(255);
   // Operate Car object.
   myCar.move(); // Operate the car object in draw( ) by calling object methods using the dots syntax.

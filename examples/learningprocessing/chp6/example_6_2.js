@@ -13,13 +13,13 @@ var spacing = 10; // How far apart is each line
 var len = 20;     // Length of each line
 
 
-function setup()
+function setup(){
 	createGraphics(200,200);
 	background(255);
 	stroke(0);
 };
 
-function draw()
+function draw(){
 	// Draw the first leg.
 	line(x,y,x,y + len); 
 	// Add spacing so the next leg appears 10 pixels to the right.

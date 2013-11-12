@@ -11,12 +11,12 @@ var x = 0;
 var speed = 1;
 
 // Setup does not change
-function setup()
+function setup(){
   createGraphics(200,200);
   smooth();
 };
 
-function draw()
+function draw(){
   background(255);
   move(); // Instead of writing out all the code about the ball is draw(), we simply call three functions. How do we know the names of these functions? We made them up!
   bounce();

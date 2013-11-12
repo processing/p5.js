@@ -5,12 +5,12 @@
 // Ported by Lauren McCarthy
 
 // Example 4-5: Using system variables
-function setup()
+function setup(){
   createGraphics(200,200);
   smooth();
 }
 
-function draw()
+function draw(){
   background(100);
   stroke(255);
   // frameCount is used to color a rectangle.
