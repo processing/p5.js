@@ -1,14 +1,12 @@
-p5.js (Stable)
-======================
+p5.js
+=====
 
-August 23, 2013:
 
+##p5.js library (stable)
 `dist/p5.js` is currently the only stable file in the repository
 
 
-p5.js (Development)
-===========================
-
+##Documentation
 
 ####[> Getting Started](https://github.com/lmccart/p5.js/wiki/Getting-Started)
 Create and run your first sketch!
@@ -23,21 +21,17 @@ This project developed out of a Fellowship with the Processing Foundation explor
 
 
 
-###Goal
-Spec out and test a JavaScript library that would enable Processing-like syntax for drawing using Canvas and WebGL. It's both about the syntax and how to code.
+##Overview
+
+Development of p5.js starts with the original goal of Processing, to make coding accessible for artists, designers, educators, beginners, and reinterpets this for today, for the web. The library is intended to introduce creative coding, introduce web development, and provide a tie between the two. It it important that while this is accessible for beginners, it’s not a sandbox environment and people develop real web development literacy, and the ability to extend and learn new things on their own.
+
+The web dev space is inundated with web libraries, but a lot of them are very powerful and specific, more like a swiss army knife than a platform, and often not very accessible to beginners. In contrast, p5.js aims to be accessible and broad, allowing people to get started quickly, providing scaffolding to start creating visual and interactive compositions using JavaScript immediately. It then also opens hooks to extend into areas of specific interest, interfacing with existing libraries and tools. The library is not domain specific, it’s useful for general creative coding from drawing, to working with text, images, DOM, etc. 
+
+p5.js is about bringing Processing ideas and community to the JavaScript and the web, rather than emulating Processing/Java through JavaScript. We hope to build a strong support community of users for constructive help, with a focus on teaching and learning.
+
+We have been focusing on language design, development, and documentation, but a p5.js web IDE is also in the plan.
 
 
-Bring "Processing" ideas to JavaScript, rather than to emulate Processing/Java through JavaScript. Explore how to take positive parts of what Processing does, and see what the affordances of JS add/remove to the equation.
-
-
-Involves both "language design" and "ide design".
-
-
-Idea of Processing syntax-wise was to take some of the nastiness out of writing Java code (having to define classes, threaded animation loops, etc) before you could make things show up on screen. Starting from scratch with JavaScript as the base language would ideally 1) use the nice bits of JS, and 2) hide the uglier bits.
-
-
-Current work on the Processing JS port is focused on being able to be code compatible and having things run right out of the box (which is great!), but comes at the cost of keeping some of Java's quirks, while potentially hiding the nicer parts of JS. (Strictly speaking, you can still do JS inside of that mode, but it's not necessarily the intent or the current setup.)
-
-###Development
+##Development
 See the [Development](https://github.com/lmccart/p5.js/wiki/Development) wiki page for details.
 
