@@ -10,12 +10,12 @@ var y = 80;       // Vertical location of each line
 var spacing = 10; // How far apart is each line
 var len = 20;     // Length of each line
 
-function setup()
+function setup(){
 	createGraphics(200,200);
 	background(255);
 };
 
-function draw()
+function draw(){
 	// Translation of the legs while loop to a for loop.
 	for (var x = 50; x <= 150; x += spacing) { 
 	  line(x,y,x,y + len);

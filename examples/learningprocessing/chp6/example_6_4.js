@@ -8,7 +8,7 @@
 
 var x = 0;
 
-function setup()
+function setup(){
 
 	while (x < 10) {
 	  println(x);
@@ -22,6 +22,6 @@ function setup()
 	}
 };
 
-function draw()
+function draw(){
 
 };

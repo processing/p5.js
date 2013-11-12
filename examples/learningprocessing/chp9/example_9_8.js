@@ -10,7 +10,7 @@
 var xpos = []; 
 var ypos = [];
 
-function setup()
+function setup(){
   createGraphics(200,200);
   
   smooth();
@@ -21,7 +21,7 @@ function setup()
   }
 }
 
-function draw()
+function draw(){
   background(255);
   
   // Shift array values

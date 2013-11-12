@@ -13,12 +13,12 @@ var h = 60;
 var eyeSize = 16;
 var speed = 1;
 
-function setup()
+function setup(){
   createGraphics(200,200);
   smooth();
 };
 
-function draw()
+function draw(){
   // Change the x location of Zoog by speed
   x = x + speed;
 

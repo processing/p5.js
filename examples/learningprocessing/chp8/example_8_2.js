@@ -9,13 +9,13 @@
 var myCar1;
 var myCar2; // Two objects!
 
-function setup()
+function setup(){
   createGraphics(200,200);
   myCar1 = new Car([255,0,0],0,100,2); // Parameters go inside the parentheses when the object is constructed.
   myCar2 = new Car([0,0,255],0,10,1);
 }
 
-function draw()
+function draw(){
   background(255);
   myCar1.move();
   myCar1.display();

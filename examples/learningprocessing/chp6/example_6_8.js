@@ -9,14 +9,14 @@
  // No for loop here. Instead, a global variable.
 var y = 0;
 
-function setup()
+function setup(){
   createGraphics(200,200);
   background(255);
   // Slowing down the frame rate so we can easily see the effect.
   setFrameRate(5); 
 };
 
-function draw()
+function draw(){
   // Draw a line
   stroke(0);
   // Only one line is drawn each time through draw().
