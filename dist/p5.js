@@ -872,10 +872,11 @@
 
   PHelper.loadJSON = function(path, callback) {
     var self = [];
-    reqwest(path, function (resp) {
+    var t = path.indexOf('http') == -1 ? 'json' : 'jsonp';
+    reqwest({url: path, type: t, success: function (resp) {
       for (var k in resp) self[k] = resp[k];
       if (typeof callback !== 'undefined') callback(resp);
-    });
+    }});
     return self;
   };
   PHelper.loadStrings = function(path, callback) {
