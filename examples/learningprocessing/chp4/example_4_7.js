@@ -15,13 +15,13 @@ var diam;
 var x;
 var y;
 
-function setup()
+function setup(){
   createGraphics(200,200);
   background(255);
   smooth();    
 };
 
-function draw()
+function draw(){
   // Each time through draw(), new random numbers are picked for a new ellipse.
   r = random(255);
   g = random(255);

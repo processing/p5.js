@@ -6,12 +6,12 @@
 
 // Example 1-4: Alpha Transparency
 
-function setup()
+function setup(){
 	createGraphics(200,200);
 	noStroke();
 };
 
-function draw()
+function draw(){
 
 	background(0);
 	

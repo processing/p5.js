@@ -12,12 +12,12 @@ var w = 60;
 var h = 60;
 var eyeSize = 16;
 
-function setup()
+function setup(){
   createGraphics(200,200);
   smooth();
 };
 
-function draw()
+function draw(){
   background(255); // Draw a black background
   
   // mouseX position determines speed factor for moveZoog function

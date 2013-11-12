@@ -5,12 +5,12 @@
 // Ported by Lauren McCarthy
 
 // Example 3-5: mousePressed and keyPressed
-function setup()
+function setup(){
   createGraphics(200,200);
   background(255);
 }
 
-function draw()
+function draw(){
  // Nothing happens in draw() in this example!
 }
 

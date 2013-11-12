@@ -5,7 +5,7 @@
 // Ported by Lauren McCarthy
 
 // Example 1-2: noFill
-function setup()
+function setup(){
 	createGraphics(200,200);
 	smooth();
 	background(255);
@@ -14,6 +14,6 @@ function setup()
 	stroke(0);
 };
 
-function draw()
+function draw(){
 	ellipse(60,60,100,100);
 };

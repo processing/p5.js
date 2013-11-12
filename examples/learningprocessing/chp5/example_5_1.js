@@ -11,11 +11,11 @@ var r = 150;
 var g = 0;
 var b = 0;
 
-function setup()
+function setup(){
   createGraphics(200,200);
 };
 
-function draw()
+function draw(){
   // Draw stuff
   background(r,g,b);  
   stroke(255);

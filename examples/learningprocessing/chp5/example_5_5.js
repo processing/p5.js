@@ -12,11 +12,11 @@ var y = 50;
 var w = 100;
 var h = 75;
 
-function setup()
+function setup(){
   createGraphics(200,200); 
 }
 
-function draw()
+function draw(){
   if (button) {
     background(255);
     stroke(0);

@@ -7,7 +7,7 @@
 var balls = []; 
 var gravity = 0.1;
 
-function setup()
+function setup(){
   createGraphics(200,200);
   smooth();
   
@@ -15,7 +15,7 @@ function setup()
   balls[0] = new Ball(50,0,16);
 }
 
-function draw()
+function draw(){
   background(255);
   
   // Update and display all balls

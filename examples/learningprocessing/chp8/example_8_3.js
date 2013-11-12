@@ -7,13 +7,13 @@
 // Example 8-3
 var zoog;
 
-function setup()
+function setup(){
   createGraphics(200,200);
   smooth();
   zoog = new Zoog(100,125,60,60,16);
 }
 
-function draw()
+function draw(){
   background(255);
   // mouseX position determines speed factor
   var factor = constrain(mouseX/10,0,5);

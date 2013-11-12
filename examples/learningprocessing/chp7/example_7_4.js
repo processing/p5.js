@@ -6,11 +6,11 @@
 
 // Example 7-4: Using a function that returns a value, distance
 
-function setup()
+function setup(){
   createGraphics(200,200);
 };
 
-function draw()
+function draw(){
   background(0);
   stroke(0);
   // Top left square
