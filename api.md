@@ -1,7 +1,7 @@
 API
 ===
 
-See [API progress page](https://github.com/lmccart/processing-js/blob/master/api-progress.md) for current and future implementation plans.
+See [API progress page](https://github.com/lmccart/p5.js/blob/master/api-progress.md) for current and future implementation plans.
 
 For now these functions link to the current [Processing.org reference](http://processing.org/reference), which approximately represents their use and functionality. Important differences when used in JavaScript mode are noted after the link, when necessary. Note that the examples shown on the Processing.org pages are for current Java mode and will not run in JS version without modification.
 
@@ -18,7 +18,7 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [\[\] (array access)](http://processing.org/reference/array.html) - operator is used to specify a location within an array, though array formulation shown differs for JS.
 + [{} (curly braces)](http://processing.org/reference/curlybraces.html)
 + [catch](http://processing.org/reference/catch.html)
-+ [draw](http://processing.org/reference/draw_.html) - same use but different syntax, see [Getting Started](https://github.com/lmccart/processing-js/wiki/Getting-Started) tutorial for more info.
++ [draw](http://processing.org/reference/draw_.html) - same use but different syntax, see [Getting Started](https://github.com/lmccart/p5.js/wiki/Getting-Started) tutorial for more info.
 + [false](http://processing.org/reference/false.html)
 + [loop()](http://processing.org/reference/loop.html)
 + [new](http://processing.org/reference/new.html)
@@ -28,7 +28,7 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [pushStyle](http://processing.org/reference/pushStyle_.html)
 + [redraw()](http://processing.org/reference/redraw_.html)
 + [return](http://processing.org/reference/return.html)
-+ [setup](http://processing.org/reference/setup_.html) - same use but different syntax, see [Getting Started](https://github.com/lmccart/processing-js/wiki/Getting-Started) tutorial for more info.
++ [setup](http://processing.org/reference/setup_.html) - same use but different syntax, see [Getting Started](https://github.com/lmccart/p5.js/wiki/Getting-Started) tutorial for more info.
 + [this](http://processing.org/reference/this.html)
 + [true](http://processing.org/reference/true.html)
 + [try](http://processing.org/reference/try.html)
@@ -232,8 +232,8 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [pixels[]](http://processing.org/reference/pixels.html)
 
 ###Rendering 
-+ [createGraphics()](http://processing.org/reference/createGraphics_.html) - createGraphics() effectively replaces the previous size() function. It is used for onscreen drawing as well as offscreen drawing. See notes about PGraphics below. See additional information on the [DOM extensions page](https://github.com/lmccart/processing-js/blob/master/extensions.md).
-+ [PGraphics](http://processing.org/reference/PGraphics.html) - PGraphics is used for onscreen drawing as well as offscreen drawing. Each new canvas (PGraphics) element is created using this function. Once created, you can use the dot operator to draw into that canvas as shown in the example (though beginDraw and endDraw are not required). You can also start calling drawing functions directly without using the dot operator. Use setContext() to switch between PGraphics elements if there are more than one.  See additional information on the [DOM extensions page](https://github.com/lmccart/processing-js/blob/master/extensions.md). 
++ [createGraphics()](http://processing.org/reference/createGraphics_.html) - createGraphics() effectively replaces the previous size() function. It is used for onscreen drawing as well as offscreen drawing. See notes about PGraphics below. See additional information on the [DOM extensions page](https://github.com/lmccart/p5.js/blob/master/extensions.md).
++ [PGraphics](http://processing.org/reference/PGraphics.html) - PGraphics is used for onscreen drawing as well as offscreen drawing. Each new canvas (PGraphics) element is created using this function. Once created, you can use the dot operator to draw into that canvas as shown in the example (though beginDraw and endDraw are not required). You can also start calling drawing functions directly without using the dot operator. Use setContext() to switch between PGraphics elements if there are more than one.  See additional information on the [DOM extensions page](https://github.com/lmccart/p5.js/blob/master/extensions.md). 
 
 
 ###Typography 
@@ -327,10 +327,10 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [TWO_PI](http://processing.org/reference/TWO_PI.html)
 
 
-###[DOM extensions](https://github.com/lmccart/processing-js/blob/master/extensions.md)
+###[DOM extensions](https://github.com/lmccart/p5.js/blob/master/extensions.md)
 
 There are a set of functions that have been added to create and manipulate parts of the HTML page beyond the graphics canvas. 
-See documentation for all functions below on the [DOM extensions page](https://github.com/lmccart/processing-js/blob/master/extensions.md)!
+See documentation for all functions below on the [DOM extensions page](https://github.com/lmccart/p5.js/blob/master/extensions.md)!
 
 + AUTO
 

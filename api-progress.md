@@ -1,7 +1,7 @@
 API progress
 ============
 
-See [API page](https://github.com/lmccart/processing-js/blob/master/api.md) for currently supported API.
+See [API page](https://github.com/lmccart/p5.js/blob/master/api.md) for currently supported API.
 
 ###Key
 + __implemented__
