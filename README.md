@@ -13,9 +13,9 @@ p5.js (Development)
 ####[> Getting Started](https://github.com/lmccart/p5.js/wiki/Getting-Started)
 Create and run your first sketch!
 ####[> Reference](https://github.com/lmccart/p5.js/wiki/Reference)
-The functionality supported by Processing-JS.
+The functionality supported by p5.js.
 ####[> Tutorials](https://github.com/lmccart/p5.js/wiki/Tutorials)
-Short, prototypical programs exploring the basics of programming with Processing-JS.
+Short, prototypical programs exploring the basics of programming with p5.js.
 ####[> Troubleshooting](https://github.com/lmccart/p5.js/wiki/Troubleshooting)
 Help with common problems. Coming soon.
 ####[> Research Documentation](https://github.com/lmccart/p5.js/wiki/Research-Documentation)
