@@ -109,21 +109,20 @@
       exports.loadImage = PHelper.loadImage;
       PHelper.setup();
     }
-
-    PVariables.updateInterval = setInterval(PHelper.update, 1000/frameRate);
-    PHelper.draw();
   };
 
   PHelper.preloadFunc = function(func, path) {
     PVariables.preload_count++;
     return PHelper[func](path, function (resp) {
-      if (--PVariables.preload_count === 0) setup();
+      if (--PVariables.preload_count === 0) PHelper.setup();
     });    
   };
 
   PHelper.setup = function() {
     if (typeof setup === 'function' || PVariables.sketches.length > 0) { // pend whats happening here?
-      if (typeof setup === 'function') setup();
+      if (typeof setup === 'function') setup();    
+      PVariables.updateInterval = setInterval(PHelper.update, 1000/frameRate);
+      PHelper.draw();
     } else console.log("sketch must include a setup function");
   };
 
