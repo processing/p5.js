@@ -22,7 +22,7 @@
         }
         else if (testWidth > vals.w && n > 0) {
           PVariables.curElement.context.fillText(line, vals.x, vals.y);
-          PVariables.curElement.context.strokeText(lin, vals.x, vals.y);
+          PVariables.curElement.context.strokeText(line, vals.x, vals.y);
           line = words[n] + ' ';
           vals.y += PVariables.textLeading;
         }
