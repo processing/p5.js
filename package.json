@@ -9,5 +9,11 @@
     "grunt-contrib-qunit": "~0.3.0",
     "grunt-contrib-watch": "~0.5.3",
     "grunt-contrib-concat": "~0.3.0"
-  }
+  },
+  "licenses" : [
+    {
+      "type": "GPL",
+      "url": "http://www.opensource.org/licenses/GPL-3.0"
+    }
+  ]
 }
