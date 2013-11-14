@@ -8,7 +8,7 @@
     else return 0;
   };
   exports.brightness = function(hsv) {
-    if (rgb.length > 2) return rgb[2];
+    if (hsv.length > 2) return hsv[2];
     else return 0;
   };
   exports.color = function() {
@@ -19,7 +19,7 @@
     else return 0;
   };
   exports.hue = function(hsv) { 
-    if (rgb.length > 2) return rgb[0];
+    if (hsv.length > 2) return hsv[0];
     else return 0;
   };
   exports.lerpColor = function(c1, c2, amt) {
