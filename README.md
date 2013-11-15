@@ -14,8 +14,8 @@ p5.js
 Create and run your first sketch!
 ####[> Reference](https://github.com/lmccart/p5.js/wiki/Reference)
 The functionality supported by p5.js.
-####[> Tutorials](https://github.com/lmccart/p5.js/wiki/Tutorials)
-Short, prototypical programs exploring the basics of programming with p5.js.
+####[> Learning](https://github.com/lmccart/p5.js/wiki/Learning)
+Tutorials and short, prototypical examples exploring the basics of programming with p5.js.
 ####[> Troubleshooting](https://github.com/lmccart/p5.js/wiki/Troubleshooting)
 Help with common problems. Coming soon.
 ####[> Research Documentation](https://github.com/lmccart/p5.js/wiki/Research-Documentation)
