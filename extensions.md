@@ -1,6 +1,8 @@
 DOM Extensions
 ==========
 
+See below for functions, vars, and methods for interacting with the DOM beyond drawing in the graphics canvas. Also see the [beyond the canvas](https://github.com/lmccart/p5.js/wiki/DOM-Extensions) tutorial for more details and examples.
+
 ###DOM manipulation & access
 + var AUTO // used for autoscaling either width or height of image with size() call
 
