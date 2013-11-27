@@ -8,9 +8,10 @@
     "grunt-contrib-uglify": "~0.2.2",
     "grunt-contrib-qunit": "~0.3.0",
     "grunt-contrib-watch": "~0.5.3",
-    "grunt-contrib-concat": "~0.3.0"
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-mocha": "~0.4.6"
   },
-  "licenses" : [
+  "licenses": [
     {
       "type": "GPL",
       "url": "http://www.opensource.org/licenses/GPL-3.0"
