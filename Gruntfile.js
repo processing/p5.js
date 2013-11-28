@@ -39,7 +39,18 @@ module.exports = function(grunt) {
     watch: {
       files: ['<%= jshint.files %>'],
       tasks: ['jshint', 'qunit']
+    },
+    mocha: {
+      test: {
+        //src: ['test/*.html'],
+        src: ['test/**/*.html'],
+        options: {
+          run: true,
+          log: true
+        }
+      },
     }
+
   });
 
   grunt.loadNpmTasks('grunt-contrib-uglify');

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>Example Mocha Test</title>
+</head>
+<body>
+    <!-- Required for browser reporter -->
+    <div id="mocha"></div>
+
+    <!-- mocha -->
+    <script src="js/mocha.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        // This will be overridden by mocha-helper if you run with grunt
+        mocha.setup('bdd');
+    </script>
+
+    <!-- Include your assertion lib of choice -->
+    <script src="js/chai.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript" charset="utf-8">
+        // Setup chai
+        var expect = chai.expect;
+        var assert = chai.assert;
+    </script>
+
+    <!-- Include anything you want to test -->
+    <script src="../js/wombat.js" type="text/javascript" charset="utf-8"></script>
+    <script src="../js/apple.js" type="text/javascript" charset="utf-8"></script>
+
+    <!-- Spec files -->
+    <script src="spec/wombat.js" type="text/javascript" charset="utf-8"></script>
+    <script src="spec/apple.js" type="text/javascript" charset="utf-8"></script>
+    <script src="spec/test.js" type="text/javascript" charset="utf-8"></script>
+
+    <!-- run mocha -->
+    <script type="text/javascript" charset="utf-8">
+        // If tests run in a real browser
+        // Can alternatively do a check on window.PHANTOMJS
+        if (navigator.userAgent.indexOf('PhantomJS') < 0) {
+            mocha
+                .run();
+        }
+    </script>
+</body>
+</html>

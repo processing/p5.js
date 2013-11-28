@@ -9,7 +9,9 @@
     "grunt-contrib-qunit": "~0.3.0",
     "grunt-contrib-watch": "~0.5.3",
     "grunt-contrib-concat": "~0.3.0",
-    "grunt-mocha": "~0.4.6"
+    "grunt-mocha": "~0.4.6",
+    "phantomjs": "~1.9.2-4",
+    "grunt-lib-phantomjs": "~0.4.0"
   },
   "licenses": [
     {
