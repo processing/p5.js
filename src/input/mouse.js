@@ -19,7 +19,7 @@
   });
   */
 
-  exports.isMousePressed = function() {
+  exports.isMousePressed = exports.mouseIsPressed = function() {
     return PVariables.mousePressed;
   };
   PHelper.updateMouseCoords = function(e) {

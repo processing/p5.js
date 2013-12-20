@@ -3,7 +3,7 @@
   exports.keyCode = 0; 
   PHelper.keyPressed = false;
 
-  exports.isKeyPressed = function() {
+  exports.isKeyPressed = exports.keyIsPressed = function() {
     return pKeyPressed;
   };
 

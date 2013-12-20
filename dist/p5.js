@@ -1078,7 +1078,7 @@
   exports.keyCode = 0; 
   PHelper.keyPressed = false;
 
-  exports.isKeyPressed = function() {
+  exports.isKeyPressed = exports.keyIsPressed = function() {
     return pKeyPressed;
   };
 
@@ -1104,7 +1104,7 @@
   });
   */
 
-  exports.isMousePressed = function() {
+  exports.isMousePressed = exports.mouseIsPressed = function() {
     return PVariables.mousePressed;
   };
   PHelper.updateMouseCoords = function(e) {
