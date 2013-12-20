@@ -6,6 +6,8 @@
 	exports.QUARTER_PI = Math.PI*0.25;
 	exports.TAU = Math.PI*2.0;
 	exports.TWO_PI = Math.PI*2.0;
+	exports.DEGREES = "degrees";
+	exports.RADIANS = "radians";
 
 	// SHAPE
 	exports.CORNER = 'corner'; 

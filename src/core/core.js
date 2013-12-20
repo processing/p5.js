@@ -23,7 +23,9 @@
 		curSketchIndex: -1,
 
 		mousePressed: false,
-    preload_count: 0
+    preload_count: 0,
+
+    angleMode: exports.RADIANS
 
 	};
 

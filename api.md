@@ -305,6 +305,7 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [sqrt()](http://processing.org/reference/sqrt_.html)
 
 ####Trigonometry
++ angleMode()]- can be RADIANS (default) or DEGREES
 + [acos()](http://processing.org/reference/acos_.html)
 + [asin()](http://processing.org/reference/asin_.html)
 + [atan()](http://processing.org/reference/atan_.html)

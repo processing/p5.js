@@ -20,6 +20,7 @@
     PVariables.matrices[PVariables.matrices.length-1] = [1,0,0,1,0,0]; 
   };
   exports.rotate = function(r) { 
+    r = PHelper.convertToRadians(r);
     PVariables.curElement.context.rotate(r); 
     var m = PVariables.matrices[PVariables.matrices.length-1];
     var c = Math.cos(r);

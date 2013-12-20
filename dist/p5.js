@@ -6,6 +6,8 @@
 	exports.QUARTER_PI = Math.PI*0.25;
 	exports.TAU = Math.PI*2.0;
 	exports.TWO_PI = Math.PI*2.0;
+	exports.DEGREES = "degrees";
+	exports.RADIANS = "radians";
 
 	// SHAPE
 	exports.CORNER = 'corner'; 
@@ -76,7 +78,9 @@
 		curSketchIndex: -1,
 
 		mousePressed: false,
-    preload_count: 0
+    preload_count: 0,
+
+    angleMode: exports.RADIANS
 
 	};
 
@@ -1318,11 +1322,11 @@
   };
 
   PVector.prototype.heading = function () {
-    return Math.atan2(this.y, this.x);
+    return PHelper.atan2(this.y, this.x);
   };
 
   PVector.prototype.rotate2D = function (a) {
-    var newHeading = this.heading() + a;
+    var newHeading = this.heading() + PHelper.convertToRadians(a);
     var mag = this.mag();
     this.x = Math.cos(newHeading) * mag;
     this.y = Math.sin(newHeading) * mag;
@@ -1387,8 +1391,7 @@
   };
 
   PVector.angleBetween = function (v1, v2) {
-    return Math.acos((v1.dot(v2))/(v1.mag() * v2.mag()));
-   
+    return PHelper.acos(v1.dot(v2) / (v1.mag() * v2.mag()));
   };
 
   exports.PVector = PVector;
@@ -1410,15 +1413,36 @@
 }(window));
 ;(function(exports) {
 
-  exports.acos = function(x) { return Math.acos(x); };
-  exports.asin = function(x) { return Math.asin(x); };
-  exports.atan = function(x) { return Math.atan(x); };
-  exports.atan2 = function(y, x) { return Math.atan2(y, x); };
-  exports.cos = function(x) { return Math.cos(x); };
+  exports.acos = function(x) { return compose(Math.acos, PHelper.convertToDegrees); };
+  exports.asin = function(x) { return compose(Math.asin, PHelper.convertToDegrees); };
+  exports.atan = function(x) { return compose(Math.atan, PHelper.convertToDegrees); };
+  exports.atan2 = function(y, x) { compose(Math.atan2, PHelper.convertToDegrees); };
+  exports.cos = function(x) { return compose(p.convertToRadians, Math.cos); };
   exports.degrees = function(x) { return 360.0*x/(2*Math.PI); };
   exports.radians = function(x) { return 2*Math.PI*x/360.0; };
-  exports.sin = function(x) { return Math.sin(x); };
-  exports.tan = function(x) { return Math.tan(x); };
+  exports.sin = function(x) { return compose(p.convertToRadians, Math.sin); };
+  exports.tan = function(x) { return compose(p.convertToRadians, Math.tan); };
+  exports.angleMode = function(m) { 
+    if (m == exports.RADIANS || m == exports.DEGREES) {
+      PVariables.angleMode = m;
+    }
+  };
+  PHelper.convertToDegrees = function(angle) { return PVariables.angleMode === "degrees" ? exports.degrees(angle) : angle; };
+  PHelper.convertToRadians = function(angle) { return PVariables.angleMode === "degrees" ? exports.radians(angle) : angle; };
+
+  var compose = function() {
+    var args = arguments;
+    
+    return function() {
+      var ret = arguments;
+      
+      for (var i = 0; i < args.length; i++) {
+        ret = [ args[i].apply(args[i], ret) ];
+      }
+      return ret[0];
+    };
+  };
+
 }(window));
 ;(function(exports) {
   exports.pWriters = [];
@@ -1745,6 +1769,7 @@
     PVariables.matrices[PVariables.matrices.length-1] = [1,0,0,1,0,0]; 
   };
   exports.rotate = function(r) { 
+    r = PHelper.convertToRadians(r);
     PVariables.curElement.context.rotate(r); 
     var m = PVariables.matrices[PVariables.matrices.length-1];
     var c = Math.cos(r);
