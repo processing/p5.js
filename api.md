@@ -134,7 +134,7 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [mouseClicked()](http://processing.org/reference/mouseClicked_.html)
 + [mouseMoved()](http://processing.org/reference/mouseMoved_.html)
 + [mousePressed()](http://processing.org/reference/mousePressed_.html)
-+ [isMousePressed()](http://processing.org/reference/mousePressed.html) - mousePressed is now isMousePressed()
++ [mouseIsPressed()](http://processing.org/reference/mousePressed.html) - mousePressed is now mouseIsPressed(). isMousePressed() has been deprecated.
 + [mouseReleased()](http://processing.org/reference/mouseReleased_.html)
 + [mouseX](http://processing.org/reference/mouseX.html)
 + [mouseY](http://processing.org/reference/mouseY.html)
@@ -153,7 +153,7 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [key](http://processing.org/reference/key.html) - always returns caps!
 + keyCode - returns integer representation of key pressed
 + [keyPressed()](http://processing.org/reference/keyPressed_.html)
-+ [iskeyPressed()](http://processing.org/reference/keyPressed.html) - keyPressed now isKeyPressed()
++ [keyIsPressed()](http://processing.org/reference/keyPressed.html) - keyPressed now keyIsPressed(). isKeyPressed() has been deprecated.
 + [keyReleased()](http://processing.org/reference/keyReleased_.html)
 + [keyTyped()](http://processing.org/reference/keyTyped_.html)
 
