@@ -49,6 +49,30 @@ module.exports = function(grunt) {
           log: true
         }
       },
+    },
+    requirejs: {
+      unmin: {
+        options: {
+          baseUrl: '.',
+          name: 'node_modules/almond/almond',
+          include: ['src/p5'],
+          insertRequire: ['src/p5'],
+          out: 'dist/p5.js',
+          optimize: 'none',
+          wrap: true
+        }
+      },
+      min: {
+        options: {
+          baseUrl: '.',
+          name: 'node_modules/almond/almond',
+          include: ['src/p5'],
+          insertRequire: ['src/p5'],
+          out: 'dist/p5.min.js',
+          optimize: 'uglify2',
+          wrap: true
+        }
+      }
     }
 
   });
@@ -58,6 +82,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-mocha');
   grunt.registerTask('test', ['jshint', 'qunit']);
 

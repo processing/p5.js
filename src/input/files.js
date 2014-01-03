@@ -1,69 +1,94 @@
-(function(exports) {
+define(function (require) {
+
+  'use strict';
+
+  var Processing = require('../core/core');
+  var reqwest = require('../../node_modules/reqwest/reqwest');
+
   //BufferedReader
-  exports.createInput = function() {
+  Processing.prototype.createInput = function() {
     // TODO
-  };
-  exports.createReader = function() {
-    // TODO
-  };
-  exports.loadBytes = function() {
-    // TODO
+
   };
 
-  PHelper.loadJSON = function(path, callback) {
-    var self = [];
+  Processing.prototype.createReader = function() {
+    // TODO
+
+  };
+
+  Processing.prototype.loadBytes = function() {
+    // TODO
+
+  };
+
+  Processing.prototype.loadJSON = function(path, callback) {
+    var ret = [];
     var t = path.indexOf('http') == -1 ? 'json' : 'jsonp';
     reqwest({url: path, type: t, success: function (resp) {
-      for (var k in resp) self[k] = resp[k];
+      for (var k in resp) ret[k] = resp[k];
       if (typeof callback !== 'undefined') callback(resp);
     }});
-    return self;
+    return ret;
   };
-  PHelper.loadStrings = function(path, callback) {
-    var self = [];
+
+  Processing.prototype.loadStrings = function(path, callback) {
+    var ret = [];
     var req = new XMLHttpRequest();
     req.open('GET', path, true);
     req.onreadystatechange = function () {
       if((req.readyState === 4) && (req.status === 200 || req.status === 0)) {
         var arr = req.responseText.match(/[^\r\n]+/g);
-        for (var k in arr) self[k] = arr[k];
+        for (var k in arr) ret[k] = arr[k];
         if (typeof callback !== 'undefined') callback();
       }
     };
     req.send(null);
-    return self;
+    return ret;
   };
 
-  exports.loadTable = function () {
+  Processing.prototype.loadTable = function () {
     // TODO
+
   };
 
-  PHelper.temp = [];
-  PHelper.loadXML = function(path, callback) {
-    var self = [];
+
+  Processing.prototype.loadXML = function(path, callback) {
+    this.temp = [];
+    var ret = [];
     reqwest(path, function (resp) {
       console.log(resp);
-      PHelper.temp = resp;
-      self[0] = resp;
+      this.temp = resp;
+      ret[0] = resp;
       if (typeof callback !== 'undefined') callback(resp);
     });
-    return self;
+    return ret;
   };
 
-  exports.open = function() {
+  Processing.prototype.open = function() {
     // TODO
-  };
-  exports.parseXML = function() {
-    // TODO
-  };
-  exports.saveTable = function() {
-    // TODO
-  };
-  exports.selectFolder = function() {
-    // TODO
-  };
-  exports.selectInput = function() {
-    // TODO
+
   };
 
-}(window));
+  Processing.prototype.parseXML = function() {
+    // TODO
+
+  };
+
+  Processing.prototype.saveTable = function() {
+    // TODO
+
+  };
+
+  Processing.prototype.selectFolder = function() {
+    // TODO
+
+  };
+
+  Processing.prototype.selectInput = function() {
+    // TODO
+
+  };
+
+  return Processing;
+
+});

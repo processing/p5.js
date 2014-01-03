@@ -1,5 +1,11 @@
-(function(exports) {
-  exports.print = console.log.bind(console);
-  exports.println = console.log.bind(console);
-}(window));
+define(function (require) {
 
+  'use strict';
+
+  var Processing = require('../core/core');
+
+  Processing.prototype.print = console.log.bind(console);
+  Processing.prototype.println = console.log.bind(console);
+
+  return Processing;
+});

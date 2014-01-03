@@ -1,25 +1,42 @@
-(function(exports) {
-  exports.textAlign = function(a) {
-    if (a == exports.LEFT || a == exports.RIGHT || a == exports.CENTER) PVariables.curElement.context.textAlign = a;
-  };
-  exports.textFont = function(str) {
-    PVariables.textFont = str; //pend temp?
-  };
-  exports.textHeight = function(s) {
-    return PVariables.curElement.context.measureText(s).height;
-  };
-  exports.textLeading = function(l) {
-    PVariables.textLeading = l;
-  };
-  exports.textSize = function(s) {
-    PVariables.textSize = s;
-  };
-  exports.textStyle = function(s) {
-    if (s == exports.NORMAL || s == exports.ITALIC || s == exports.BOLD) {
-      PVariables.textStyle = s;
+define(function (require) {
+
+  'use strict';
+
+  var Processing = require('../core/core');
+  var constants = require('../var/constants');
+
+  Processing.prototype.textAlign = function(a) {
+    if (a == constants.LEFT || a == constants.RIGHT || a == constants.CENTER) {
+      this.curElement.context.textAlign = a;
     }
   };
-  exports.textWidth = function(s) {
-    return PVariables.curElement.context.measureText(s).width;
+
+  Processing.prototype.textFont = function(str) {
+    this._setProperty('_textFont', str); //pend temp?
   };
-}(window));
+
+  Processing.prototype.textHeight = function(s) {
+    return this.curElement.context.measureText(s).height;
+  };
+
+  Processing.prototype.textLeading = function(l) {
+    this._setProperty('_textLeading', l);
+  };
+
+  Processing.prototype.textSize = function(s) {
+    this._setProperty('_textSize', s);
+  };
+
+  Processing.prototype.textStyle = function(s) {
+    if (s == constants.NORMAL || s == constants.ITALIC || s == constants.BOLD) {
+      this._setProperty('_textStyle', s);
+    }
+  };
+
+  Processing.prototype.textWidth = function(s) {
+    return this.curElement.context.measureText(s).width;
+  };
+
+  return Processing;
+
+});

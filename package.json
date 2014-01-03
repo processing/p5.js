@@ -1,8 +1,12 @@
 {
   "name": "p5",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lmccart/p5.js.git"
+  },
   "version": "0.1.0",
   "devDependencies": {
-    "grunt": "~0.4.1",
+    "grunt": "~0.4.2",
     "grunt-contrib-jshint": "~0.6.3",
     "grunt-contrib-nodeunit": "~0.2.0",
     "grunt-contrib-uglify": "~0.2.2",
@@ -11,12 +15,17 @@
     "grunt-contrib-concat": "~0.3.0",
     "grunt-mocha": "~0.4.6",
     "phantomjs": "~1.9.2-4",
-    "grunt-lib-phantomjs": "~0.4.0"
+    "grunt-lib-phantomjs": "~0.4.0",
+    "grunt-contrib-requirejs": "~0.4.1",
+    "almond": "~0.2.7"
   },
   "licenses": [
     {
       "type": "GPL",
       "url": "http://www.opensource.org/licenses/GPL-3.0"
     }
-  ]
+  ],
+  "dependencies": {
+    "reqwest": "~0.9.6"
+  }
 }

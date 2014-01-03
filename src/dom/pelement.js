@@ -1,6 +1,8 @@
-(function(exports) {
-  function PElement(elt) {
+define(function(require) {
+
+  function PElement(elt, pInst) {
     this.elt = elt;
+    this.pInst = pInst;
     this.width = this.elt.offsetWidth;
     this.height = this.elt.offsetHeight;
     this.elt.style.position = 'absolute';
@@ -35,7 +37,7 @@
       }
       this.width = this.elt.offsetWidth;
       this.height = this.elt.offsetHeight;
-      if (PVariables.curElement.elt == this.elt) {
+      if (this.pInst.curElement.elt == this.elt) {
         width = this.elt.offsetWidth;
         height = this.elt.offsetHeight;
       }
@@ -65,5 +67,6 @@
   PElement.prototype.mouseOut = function(fxn) {
     var _this = this; this.elt.addEventListener('mouseout', function(e){fxn(e, _this);}, false);
   };
-  exports.PElement = PElement;
-}(window));
+
+  return PElement;
+});

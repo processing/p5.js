@@ -1,11 +1,15 @@
-(function(exports) {
+define(function (require) {
 
-  exports.createImage = function(w, h, format) {
-    return new PImage(w, h);
+  'use strict';
+
+  var Processing = require('../core/core');
+
+  Processing.createImage = function(w, h, format) {
+    return new PImage(w, h, this);
   }; //pend format?
 
-  PHelper.loadImage = function(path, callback) {
-    var pimg = new PImage();
+  Processing.prototype.loadImage = function(path, callback) {
+    var pimg = new PImage(null, null, this);
     pimg.sourceImage = new Image();
 
     pimg.sourceImage.onload = function() {
@@ -24,31 +28,32 @@
 
     };
 
-    pimg.sourceImage.src = path; 
+    pimg.sourceImage.src = path;
     return pimg;
   };
- 
-  PHelper.preloadImage = function(path) {
-    PVariables.preload_count++;
-    return PHelper.loadImage(path, function () {
-      if (--PVariables.preload_count === 0) setup();
+
+  Processing.prototype.preloadImage = function(path) {
+    this.preload_count++;
+    return this.loadImage(path, function () {
+      if (--this.preload_count === 0) setup();
     });
   };
 
-  function PImage(w, h) {
+  function PImage(w, h, pInst) {
     this.width = w || 1;
     this.height = h || 1;
-    this.imageData = PVariables.curElement.context.createImageData(this.width, this.height); 
-    for (var i = 3, len = this.imageData.length; i < len; i += 4) {
-      this.imageData[i] = 255;
-    }
+    this.pInst = pInst;
     this.pixels = [];
   }
-  PImage.prototype.loadPixels = function() { 
+  PImage.prototype.loadPixels = function() {
     this.pixels = [];
+    var imageData = this.pInst.curElement.context.createImageData(this.width, this.height);
+    for (var i = 3, len = imageData.length; i < len; i += 4) {
+      imageData[i] = 255;
+    }
     var data = this.imageData.data;
-    for (var i=0; i<data.length; i+=4) {
-      this.pixels.push([data[i], data[i+1], data[i+2], data[i+3]]);
+    for (var j=0; j<data.length; j+=4) {
+      this.pixels.push([data[j], data[j+1], data[j+2], data[j+3]]);
     }
   };
   /*PImage.prototype.updatePixels = function() {
@@ -79,11 +84,11 @@
   };
   /*PImage.prototype.mask = function(m) {
     // Masks part of an image with another image as an alpha channel
-    var op = PVariables.curElement.context.globalCompositeOperation;
-    PVariables.curElement.context.drawImage(m.image, 0, 0);
-    PVariables.curElement.context.globalCompositeOperation = 'source-atop';
-    PVariables.curElement.context.drawImage(this.image, 0, 0);
-    PVariables.curElement.context.globalCompositeOperation = op;
+    var op = this.curElement.context.globalCompositeOperation;
+    this.curElement.context.drawImage(m.image, 0, 0);
+    this.curElement.context.globalCompositeOperation = 'source-atop';
+    this.curElement.context.drawImage(this.image, 0, 0);
+    this.curElement.context.globalCompositeOperation = op;
   };*/
   PImage.prototype.filter = function() {
     // TODO
@@ -101,5 +106,7 @@
     // TODO
     // Saves the image to a TIFF, TARGA, PNG, or JPEG file*/
   };
-  exports.PImage = PImage;
-}(window));
+
+  return PImage;
+
+});
