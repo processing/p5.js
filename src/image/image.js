@@ -2,7 +2,7 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('../core/core');
+  var Processing = require('core');
 
   Processing.createImage = function(w, h, format) {
     return new PImage(w, h, this);

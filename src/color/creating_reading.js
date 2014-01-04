@@ -2,7 +2,7 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('../core/core');
+  var Processing = require('core');
 
   Processing.prototype.alpha = function(rgb) {
     if (rgb.length > 3) return rgb[3];

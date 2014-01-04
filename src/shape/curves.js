@@ -2,7 +2,7 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('../core/core');
+  var Processing = require('core');
 
   Processing.prototype.bezier = function(x1, y1, x2, y2, x3, y3, x4, y4) {
     this.curElement.context.beginPath();

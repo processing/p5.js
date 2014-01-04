@@ -1,10 +1,10 @@
 define(function(require) {
 
-  var Processing = require('../core/core');
-  require('../input/mouse');
-  require('../input/touch');
+  var Processing = require('core');
+  require('input.mouse');
+  require('input.touch');
 
-  var PElement = require('./pelement');
+  var PElement = require('dom.pelement');
 
   Processing.prototype.createGraphics = function(w, h, isDefault, targetID) {
     var c = document.createElement('canvas');

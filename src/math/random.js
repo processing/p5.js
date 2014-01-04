@@ -2,7 +2,7 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('../core/core');
+  var Processing = require('core');
 
   Processing.prototype.random = function(x, y) {
     // might want to use this kind of check instead:

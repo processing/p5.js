@@ -2,8 +2,8 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('../core/core');
-  var constants = require('../var/constants');
+  var Processing = require('core');
+  var constants = require('constants');
 
   Processing.prototype.ellipseMode = function(m) {
     if (m == constants.CORNER || m == constants.CORNERS || m == constants.RADIUS || m == constants.CENTER) {

@@ -2,14 +2,14 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('../core/core');
+  var Processing = require('core');
 
   Processing.prototype.abs = Math.abs;
 
   Processing.prototype.ceil = Math.ceil;
 
   Processing.prototype.constrain = function(n, l, h) {
-    return max(min(n, h), l);
+    return this.max(this.min(n, h), l);
   };
 
   Processing.prototype.dist = function(x1, y1, x2, y2) {

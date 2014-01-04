@@ -2,7 +2,7 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('../core/core');
+  var Processing = require('core');
 
   Processing.prototype.setTouchPoints = function(e) {
     this._setProperty('touchX', e.changedTouches[0].pageX);

@@ -2,8 +2,8 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('../core/core');
-  var reqwest = require('../../node_modules/reqwest/reqwest');
+  var Processing = require('core');
+  var reqwest = require('reqwest');
 
   //BufferedReader
   Processing.prototype.createInput = function() {

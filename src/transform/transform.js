@@ -18,8 +18,8 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('../core/core');
-  var linearAlgebra = require('../var/linearalgebra');
+  var Processing = require('core');
+  var linearAlgebra = require('linearalgebra');
 
   Processing.prototype.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
     this.curElement.context.transform(n00, n01, n02, n10, n11, n12);

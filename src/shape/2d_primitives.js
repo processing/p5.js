@@ -2,8 +2,8 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('../core/core');
-  var canvas = require('../var/canvas');
+  var Processing = require('core');
+  var canvas = require('canvas');
 
 	Processing.prototype.arc = function() {
     // pend todo

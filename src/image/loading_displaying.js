@@ -2,9 +2,9 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('../core/core');
-  var canvas = require('../var/canvas');
-  var constants = require('../var/constants');
+  var Processing = require('core');
+  var canvas = require('canvas');
+  var constants = require('constants');
 
   Processing.prototype.image = function() {
     var vals;

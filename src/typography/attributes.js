@@ -2,8 +2,8 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('../core/core');
-  var constants = require('../var/constants');
+  var Processing = require('core');
+  var constants = require('constants');
 
   Processing.prototype.textAlign = function(a) {
     if (a == constants.LEFT || a == constants.RIGHT || a == constants.CENTER) {

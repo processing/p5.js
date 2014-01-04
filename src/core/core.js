@@ -2,13 +2,15 @@ define(function (require) {
 
   'use strict';
 
-  require('../var/shim');
+  require('shim');
 
   // Core needs the PVariables object
-  var constants = require('../var/constants');
+  var constants = require('constants');
 
   // Create the Processing constructor
-  var Processing = function() {
+  var Processing = function(canvs, sketchProc) {
+
+    var self = this;
 
     // Keep a reference to when this instance was created
     this.startTime = new Date().getTime();
@@ -80,7 +82,7 @@ define(function (require) {
 
     // If the user has created a global setup function,
     // assume "beginner mode" and make everything global
-    if (window.setup && typeof window.setup === 'function') {
+    if (!sketchProc) {
 
       this.isGlobal = true;
 
@@ -102,9 +104,17 @@ define(function (require) {
         }
       }
 
+    } else {
+
+      sketchProc(this);
+
     }
 
-    this._start();
+    if (document.readyState === 'complete') {
+      this._start();
+    } else {
+      window.addEventListener('load', self._start.bind(self), false);
+    }
 
   };
 

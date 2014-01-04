@@ -2,8 +2,8 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('../core/core');
-  var polarGeometry = require('../var/polargeometry');
+  var Processing = require('core');
+  var polarGeometry = require('polargeometry');
 
   function PVector(x, y, z) {
     this.x = x || 0;
