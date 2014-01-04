@@ -15,7 +15,7 @@ function draw(){
 }
 
 // Whenever a user clicks the mouse the code written inside mousePressed() is executed.
-function mousePressed()
+function mousePressed() {
   stroke(0);
   fill(175);
   rectMode(CENTER);
@@ -23,6 +23,6 @@ function mousePressed()
 }
 
 // Whenever a user presses a key the code written inside keyPressed() is executed.
-function keyPressed()
+function keyPressed() {
   background(255);
 }

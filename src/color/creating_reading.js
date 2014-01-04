@@ -20,7 +20,7 @@ define(function (require) {
   };
 
   Processing.prototype.color = function() {
-    return PHelper.getNormalizedColor(arguments);
+    return this.getNormalizedColor(arguments);
   };
 
   Processing.prototype.green = function(rgb) {

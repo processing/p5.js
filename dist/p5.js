@@ -490,7 +490,7 @@ define('src/var/constants',['require'],function(require) {
 });
 define('src/core/core',['require','../var/shim','../var/constants'],function (require) {
 
-  
+
 
   require('../var/shim');
 
@@ -745,7 +745,7 @@ define('src/core/core',['require','../var/shim','../var/constants'],function (re
 });
 define('src/color/creating_reading',['require','../core/core'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
 
@@ -765,7 +765,7 @@ define('src/color/creating_reading',['require','../core/core'],function (require
   };
 
   Processing.prototype.color = function() {
-    return PHelper.getNormalizedColor(arguments);
+    return this.getNormalizedColor(arguments);
   };
 
   Processing.prototype.green = function(rgb) {
@@ -802,7 +802,7 @@ define('src/color/creating_reading',['require','../core/core'],function (require
 
 define('src/color/setting',['require','../core/core','../var/constants'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
   var constants = require('../var/constants');
@@ -860,7 +860,7 @@ define('src/color/setting',['require','../core/core','../var/constants'],functio
   */
   Processing.prototype.getNormalizedColor = function(args) {
     var r, g, b, a, rgba;
-    var _args = typeof args[0].length === 'number' ? args[0] : args;
+    var _args = (args[0] && args[0].length) ? args[0] : args;
     if (_args.length >= 3) {
       r = _args[0];
       g = _args[1];
@@ -893,7 +893,7 @@ define('src/color/setting',['require','../core/core','../var/constants'],functio
 
 define('src/data/array_functions',['require','../core/core'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
 
@@ -954,7 +954,7 @@ define('src/data/array_functions',['require','../core/core'],function (require) 
 });
 define('src/data/string_functions',['require','../core/core'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
 
@@ -1081,7 +1081,7 @@ define('src/data/string_functions',['require','../core/core'],function (require)
 });
 define('src/input/mouse',['require','../core/core','../var/constants'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
   var constants = require('../var/constants');
@@ -1219,7 +1219,7 @@ define('src/input/mouse',['require','../core/core','../var/constants'],function 
 
 define('src/input/touch',['require','../core/core'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
 
@@ -1480,7 +1480,7 @@ define('src/dom/manipulate',['require','../core/core','../input/mouse','../input
 
 define('src/environment/environment',['require','../core/core'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
 
@@ -1515,7 +1515,7 @@ define('src/environment/environment',['require','../core/core'],function (requir
 });
 define('src/image/image',['require','../core/core'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
 
@@ -1648,7 +1648,7 @@ define('src/var/canvas',['require','./constants'],function(require) {
 });
 define('src/image/loading_displaying',['require','../core/core','../var/canvas','../var/constants'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
   var canvas = require('../var/canvas');
@@ -2345,7 +2345,7 @@ define('src/image/loading_displaying',['require','../core/core','../var/canvas',
 
 define('src/input/files',['require','../core/core','../../node_modules/reqwest/reqwest'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
   var reqwest = require('../../node_modules/reqwest/reqwest');
@@ -2440,7 +2440,7 @@ define('src/input/files',['require','../core/core','../../node_modules/reqwest/r
 
 define('src/input/keyboard',['require','../core/core'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
 
@@ -2500,7 +2500,7 @@ define('src/input/keyboard',['require','../core/core'],function (require) {
 
 define('src/input/time_date',['require','../core/core'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
 
@@ -2537,7 +2537,7 @@ define('src/input/time_date',['require','../core/core'],function (require) {
 });
 define('src/math/calculation',['require','../core/core'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
 
@@ -2608,7 +2608,7 @@ define('src/var/polargeometry',['require'],function(require) {
 });
 define('src/math/pvector',['require','../core/core','../var/polargeometry'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
   var polarGeometry = require('../var/polargeometry');
@@ -2791,7 +2791,7 @@ define('src/math/pvector',['require','../core/core','../var/polargeometry'],func
 
 define('src/math/random',['require','../core/core'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
 
@@ -2813,7 +2813,7 @@ define('src/math/random',['require','../core/core'],function (require) {
 
 define('src/math/trigonometry',['require','../core/core','../var/polargeometry'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
   var polarGeometry = require('../var/polargeometry');
@@ -2851,7 +2851,7 @@ define('src/math/trigonometry',['require','../core/core','../var/polargeometry']
 });
 define('src/output/files',['require','../core/core'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
 
@@ -2939,7 +2939,7 @@ define('src/output/files',['require','../core/core'],function (require) {
 
 define('src/output/image',['require','../core/core'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
 
@@ -2951,7 +2951,7 @@ define('src/output/image',['require','../core/core'],function (require) {
 });
 define('src/output/text_area',['require','../core/core'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
 
@@ -2962,7 +2962,7 @@ define('src/output/text_area',['require','../core/core'],function (require) {
 });
 define('src/shape/2d_primitives',['require','../core/core','../var/canvas'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
   var canvas = require('../var/canvas');
@@ -3068,7 +3068,7 @@ define('src/shape/2d_primitives',['require','../core/core','../var/canvas'],func
 
 define('src/shape/attributes',['require','../core/core','../var/constants'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
   var constants = require('../var/constants');
@@ -3133,7 +3133,7 @@ define('src/shape/attributes',['require','../core/core','../var/constants'],func
 
 define('src/shape/curves',['require','../core/core'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
 
@@ -3191,7 +3191,7 @@ define('src/shape/curves',['require','../core/core'],function (require) {
 });
 define('src/shape/vertex',['require','../core/core','../var/constants'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
   var constants = require('../var/constants');
@@ -3259,7 +3259,7 @@ define('src/shape/vertex',['require','../core/core','../var/constants'],function
 });
 define('src/structure/structure',['require','../core/core'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
 
@@ -3387,7 +3387,7 @@ define('src/var/linearalgebra',['require'],function(require) {
 
 define('src/transform/transform',['require','../core/core','../var/linearalgebra'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
   var linearAlgebra = require('../var/linearalgebra');
@@ -3511,7 +3511,7 @@ define('src/transform/transform',['require','../core/core','../var/linearalgebra
 });
 define('src/typography/attributes',['require','../core/core','../var/constants'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
   var constants = require('../var/constants');
@@ -3554,7 +3554,7 @@ define('src/typography/attributes',['require','../core/core','../var/constants']
 
 define('src/typography/loading_displaying',['require','../core/core','../var/canvas'],function (require) {
 
-  
+
 
   var Processing = require('../core/core');
   var canvas = require('../var/canvas');
@@ -3618,7 +3618,7 @@ define('src/typography/loading_displaying',['require','../core/core','../var/can
 
 define('src/p5',['require','./core/core','./color/creating_reading','./color/setting','./data/array_functions','./data/string_functions','./dom/manipulate','./dom/pelement','./environment/environment','./image/image','./image/loading_displaying','./input/files','./input/keyboard','./input/mouse','./input/time_date','./input/touch','./math/calculation','./math/pvector','./math/random','./math/trigonometry','./output/files','./output/image','./output/text_area','./shape/2d_primitives','./shape/attributes','./shape/curves','./shape/vertex','./structure/structure','./transform/transform','./typography/attributes','./typography/loading_displaying'],function (require) {
 
-  
+
 
   var Processing = require('./core/core');
   require('./color/creating_reading');

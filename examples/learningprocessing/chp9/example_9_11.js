@@ -4,20 +4,20 @@
 
 // Example 9-11: Resizing an array using append()
 
-var balls = []; 
+var balls = [];
 var gravity = 0.1;
 
 function setup(){
   createGraphics(200,200);
   smooth();
-  
+
   // Initialize array with just one Ball object
   balls[0] = new Ball(50,0,16);
 }
 
 function draw(){
   background(255);
-  
+
   // Update and display all balls
   for (var i = 0; i < balls.length; i++ ) { // Whatever the length of that array, update and display all of the objects.
     balls[i].gravity();
@@ -26,17 +26,17 @@ function draw(){
   }
 }
 
-function mousePressed()
+function mousePressed() {
   // A new ball object
   var b = new Ball(mouseX,mouseY,16); // Make a new object at the mouse location.
   console.log(b);
   console.log(balls);
   balls = append(balls,b);
 
-  // Here, the function, append() adds an element to the end of the array. 
-  // append() takes two arguments. The first is the array you want to append to, and the second is the thing you want to append. 
-  // You have to reassign the result of the append() function to the original array. 
-  // In addition, the append() function requires that you explicitly state the type of data in the array again by putting the 
+  // Here, the function, append() adds an element to the end of the array.
+  // append() takes two arguments. The first is the array you want to append to, and the second is the thing you want to append.
+  // You have to reassign the result of the append() function to the original array.
+  // In addition, the append() function requires that you explicitly state the type of data in the array again by putting the
   // array data type in parentheses: (Ball[]) This is known as casting.
 }
 
