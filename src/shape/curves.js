@@ -1,32 +1,58 @@
-(function(exports) {
-	exports.bezier = function(x1, y1, x2, y2, x3, y3, x4, y4) {
-    PVariables.curElement.context.beginPath();
-    PVariables.curElement.context.moveTo(x1, y1);
-    PVariables.curElement.context.bezierCurveTo(x2, y2, x3, y3, x4, y4);
-    PVariables.curElement.context.stroke();
+define(function (require) {
+
+  'use strict';
+
+  var Processing = require('core');
+
+  Processing.prototype.bezier = function(x1, y1, x2, y2, x3, y3, x4, y4) {
+    this.curElement.context.beginPath();
+    this.curElement.context.moveTo(x1, y1);
+    this.curElement.context.bezierCurveTo(x2, y2, x3, y3, x4, y4);
+    this.curElement.context.stroke();
+
+    return this;
   };
-  exports.bezierDetail = function() {
+
+  Processing.prototype.bezierDetail = function() {
     // TODO
+
   };
-  exports.bezierPoint = function() {
+
+  Processing.prototype.bezierPoint = function() {
     // TODO
+
   };
-  exports.bezierTangent = function() {
+
+  Processing.prototype.bezierTangent = function() {
     // TODO
+
   };
-  exports.curve = function() {
+
+  Processing.prototype.curve = function() {
     // TODO
+
   };
-  exports.curveDetail = function() {
+
+  Processing.prototype.curveDetail = function() {
     // TODO
+
   };
-  exports.curvePoint = function() {
+
+  Processing.prototype.curvePoint = function() {
     // TODO
+
   };
-  exports.curveTangent = function() {
+
+  Processing.prototype.curveTangent = function() {
     // TODO
+
   };
-  exports.curveTightness = function() {
+
+  Processing.prototype.curveTightness = function() {
     // TODO
+
   };
-}(window));
+
+  return Processing;
+
+});

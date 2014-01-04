@@ -5,11 +5,10 @@ function preload() {
 
 
 function setup() {
-	println("setup");
+        println("setup");
 };
 
 
 function draw() {
-	println("draw");
+        println("draw");
 };
-

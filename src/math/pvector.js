@@ -1,4 +1,10 @@
-(function(exports) {
+define(function (require) {
+
+  'use strict';
+
+  var Processing = require('core');
+  var polarGeometry = require('polargeometry');
+
   function PVector(x, y, z) {
     this.x = x || 0;
     this.y = y || 0;
@@ -46,7 +52,7 @@
     this.x /= n;
     this.y /= n;
     this.z /= n;
-    return this; 
+    return this;
   };
 
   PVector.prototype.mag = function () {
@@ -97,11 +103,11 @@
   };
 
   PVector.prototype.heading = function () {
-    return PHelper.atan2(this.y, this.x);
+    return Math.atan2(this.y, this.x);
   };
 
   PVector.prototype.rotate2D = function (a) {
-    var newHeading = this.heading() + PHelper.convertToRadians(a);
+    var newHeading = this.heading() + polarGeometry.convertToRadians(a);
     var mag = this.mag();
     this.x = Math.cos(newHeading) * mag;
     this.y = Math.sin(newHeading) * mag;
@@ -166,9 +172,11 @@
   };
 
   PVector.angleBetween = function (v1, v2) {
-    return PHelper.acos(v1.dot(v2) / (v1.mag() * v2.mag()));
+    return Math.acos(v1.dot(v2) / (v1.mag() * v2.mag()));
   };
 
-  exports.PVector = PVector;
+  Processing.PVector = PVector;
 
-}(window));
+  return Processing;
+
+});

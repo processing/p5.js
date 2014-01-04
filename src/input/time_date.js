@@ -1,24 +1,37 @@
-(function(exports) {
-  exports.day = function() {
+define(function (require) {
+
+  'use strict';
+
+  var Processing = require('core');
+
+  Processing.prototype.day = function() {
     return new Date().getDate();
   };
-  exports.hour = function() {
+
+  Processing.prototype.hour = function() {
     return new Date().getHours();
   };
-  exports.minute = function() {
+
+  Processing.prototype.minute = function() {
     return new Date().getMinutes();
   };
-  exports.millis = function() {
-    return new Date().getTime() - PVariables.startTime;
+
+  Processing.prototype.millis = function() {
+    return new Date().getTime() - this.startTime;
   };
-  exports.month = function() {
+
+  Processing.prototype.month = function() {
     return new Date().getMonth();
   };
-  exports.second = function() {
+
+  Processing.prototype.second = function() {
     return new Date().getSeconds();
   };
-  exports.year = function() {
+
+  Processing.prototype.year = function() {
     return new Date().getFullYear();
   };
 
-}(window));
+  return Processing;
+
+});

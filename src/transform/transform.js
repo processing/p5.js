@@ -1,28 +1,65 @@
-(function(exports) {
-  exports.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
-    PVariables.curElement.context.transform(n00, n01, n02, n10, n11, n12);
-    var m = PVariables.matrices[PVariables.matrices.length-1];
-    m = pMultiplyMatrix(m, [n00, n01, n02, n10, n11, n12]);
+/* Transform
+    applyMatrix()
+    popMatrix()
+    printMatrix()
+    pushMatrix()
+    resetMatrix()
+    rotate()
+    rotateX()
+    rotateY()
+    rotateZ()
+    scale()
+    shearX()
+    shearY()
+    translate()
+*/
+
+define(function (require) {
+
+  'use strict';
+
+  var Processing = require('core');
+  var linearAlgebra = require('linearalgebra');
+
+  Processing.prototype.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
+    this.curElement.context.transform(n00, n01, n02, n10, n11, n12);
+    var m = this.matrices[this.matrices.length-1];
+    m = linearAlgebra.pMultiplyMatrix(m, [n00, n01, n02, n10, n11, n12]);
+
+    return this;
   };
-  exports.popMatrix = function() { 
-    PVariables.curElement.context.restore(); 
-    PVariables.matrices.pop();
+
+  Processing.prototype.popMatrix = function() {
+    this.curElement.context.restore();
+    this.matrices.pop();
+
+    return this;
   };
-  exports.printMatrix = function() {
-    console.log(PVariables.matrices[PVariables.matrices.length-1]);
+
+  Processing.prototype.printMatrix = function() {
+    console.log(this.matrices[this.matrices.length-1]);
+
+    return this;
   };
-  exports.pushMatrix = function() { 
-    PVariables.curElement.context.save(); 
-    PVariables.matrices.push([1,0,0,1,0,0]);
+
+  Processing.prototype.pushMatrix = function() {
+    this.curElement.context.save();
+    this.matrices.push([1,0,0,1,0,0]);
+
+    return this;
   };
-  exports.resetMatrix = function() { 
-    PVariables.curElement.context.setTransform();
-    PVariables.matrices[PVariables.matrices.length-1] = [1,0,0,1,0,0]; 
+
+  Processing.prototype.resetMatrix = function() {
+    this.curElement.context.setTransform();
+    this.matrices[this.matrices.length-1] = [1,0,0,1,0,0];
+
+    return this;
   };
-  exports.rotate = function(r) { 
-    r = PHelper.convertToRadians(r);
-    PVariables.curElement.context.rotate(r); 
-    var m = PVariables.matrices[PVariables.matrices.length-1];
+
+  Processing.prototype.rotate = function(r) {
+    r = this.radians(r);
+    this.curElement.context.rotate(r);
+    var m = this.matrices[this.matrices.length-1];
     var c = Math.cos(r);
     var s = Math.sin(r);
     var m11 = m[0] * c + m[2] * s;
@@ -33,8 +70,29 @@
     m[1] = m12;
     m[2] = m21;
     m[3] = m22;
+
+    return this;
   };
-  exports.scale = function() {
+
+  Processing.prototype.rotateX = function() {
+
+
+    // return this;
+  };
+
+  Processing.prototype.rotateY = function() {
+
+
+    // return this;
+  };
+
+  Processing.prototype.rotateZ = function() {
+
+
+    // return this;
+  };
+
+  Processing.prototype.scale = function() {
     var x = 1.0, y = 1.0;
     if (arguments.length == 1) {
       x = y = arguments[0];
@@ -42,28 +100,41 @@
       x = arguments[0];
       y = arguments[1];
     }
-    PVariables.curElement.context.scale(x, y); 
-    var m = PVariables.matrices[PVariables.matrices.length-1];
+    this.curElement.context.scale(x, y);
+    var m = this.matrices[this.matrices.length-1];
     m[0] *= x;
     m[1] *= x;
     m[2] *= y;
     m[3] *= y;
-  };
-  exports.shearX = function(angle) {
-    PVariables.curElement.context.transform(1, 0, tan(angle), 1, 0, 0);
-    var m = PVariables.matrices[PVariables.matrices.length-1];
-    m = pMultiplyMatrix(m, [1, 0, tan(angle), 1, 0, 0]);
-  };
-  exports.shearY = function(angle) {
-    PVariables.curElement.context.transform(1, tan(angle), 0, 1, 0, 0);
-    var m = PVariables.matrices[PVariables.matrices.length-1];
-    m = pMultiplyMatrix(m, [1, tan(angle), 0, 1, 0, 0]);
-  };
-  exports.translate = function(x, y) { 
-    PVariables.curElement.context.translate(x, y); 
-    var m = PVariables.matrices[PVariables.matrices.length-1];
-    m[4] += m[0] * x + m[2] * y;
-    m[5] += m[1] * x + m[3] * y;
+
+    return this;
   };
 
-}(window));
+  Processing.prototype.shearX = function(angle) {
+    this.curElement.context.transform(1, 0, tan(angle), 1, 0, 0);
+    var m = this.matrices[this.matrices.length-1];
+    m = linearAlgebra.pMultiplyMatrix(m, [1, 0, tan(angle), 1, 0, 0]);
+
+    return this;
+  };
+
+  Processing.prototype.shearY = function(angle) {
+    this.curElement.context.transform(1, tan(angle), 0, 1, 0, 0);
+    var m = this.matrices[this.matrices.length-1];
+    m = linearAlgebra.pMultiplyMatrix(m, [1, tan(angle), 0, 1, 0, 0]);
+
+    return this;
+  };
+
+  Processing.prototype.translate = function(x, y) {
+    this.curElement.context.translate(x, y);
+    var m = this.matrices[this.matrices.length-1];
+    m[4] += m[0] * x + m[2] * y;
+    m[5] += m[1] * x + m[3] * y;
+
+    return this;
+  };
+
+  return Processing;
+
+});

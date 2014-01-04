@@ -1,152 +1,265 @@
-(function(exports) {
-	PVariables = {
-		loop: true,
-		curElement: null,
-		shapeKind: null,
-		shapeInited: false,
-		fill: false,
-		startTime: 0,
-		updateInterval: 0,
-		rectMode: exports.CORNER,
-		imageMode: exports.CORNER,
-		ellipseMode: exports.CENTER,
-		matrices: [[1,0,0,1,0,0]],
-		textLeading: 15,
-		textFont: 'sans-serif',
-		textSize: 12,
-		textStyle: exports.NORMAL,
-		colorMode: exports.RGB,
-		styles: [],
+define(function (require) {
 
-		sketches: [],
-		sketchCanvases: [],
-		curSketchIndex: -1,
+  'use strict';
 
-		mousePressed: false,
-    preload_count: 0,
+  require('shim');
 
-    angleMode: exports.RADIANS
+  // Core needs the PVariables object
+  var constants = require('constants');
 
-	};
+  // Create the Processing constructor
+  var Processing = function(canvs, sketchProc) {
 
-	PHelper = {};
+    var self = this;
 
-  
-  // THIS IS THE MAIN FUNCTION, CALLED ON PAGE LOAD
-  exports.onload = function() {
-    PHelper.create();
+    // Keep a reference to when this instance was created
+    this.startTime = new Date().getTime();
+    this.preload_count = 0;
+
+    this.isGlobal = false;
+
+    // Environment
+    this.frameCount = 0;
+    this._frameRate = 30;
+    this.focused = true;
+
+    // Shape.Vertex
+    this.shapeKind = null;
+    this.shapeInited = false;
+
+    // Input.Mouse
+    this.mouseX = 0;
+    this.mouseY = 0;
+    this.pmouseX = 0;
+    this.pmouseY = 0;
+    this.mouseButton = 0;
+
+    // Input.Keyboard
+    this.key = '';
+    this.keyCode = 0;
+    this.keyDown = false;
+
+    // Input.Touch
+    this.touchX = 0;
+    this.touchY = 0;
+
+    // Output.Files
+    this.pWriters = [];
+
+    // Text
+    this._textLeading = 15;
+    this._textFont = 'sans-serif';
+    this._textSize = 12;
+    this._textStyle = constants.NORMAL;
+
+    this.curElement = null;
+    this.matrices = [[1,0,0,1,0,0]];
+
+    this.settings = {
+
+      // Structure
+      loop: true,
+
+      fill: false,
+      startTime: 0,
+      updateInterval: 0,
+      rectMode: constants.CORNER,
+      imageMode: constants.CORNER,
+      ellipseMode: constants.CENTER,
+      colorMode: constants.RGB,
+
+      curSketchIndex: -1,
+
+      mousePressed: false,
+
+      angleMode: constants.RADIANS
+    };
+
+    this.sketches = [];
+    this.sketchCanvases = [];
+    this.styles = [];
+
+
+    // If the user has created a global setup function,
+    // assume "beginner mode" and make everything global
+    if (!sketchProc) {
+
+      this.isGlobal = true;
+
+      // Loop through methods on the prototype and attach them to the window
+      for (var method in Processing.prototype) {
+        window[method] = Processing.prototype[method].bind(this);
+      }
+
+      // Attach its properties to the window
+      for (var prop in this) {
+        if (this.hasOwnProperty(prop)) {
+          window[prop] = this[prop];
+        }
+      }
+
+      for (var constant in constants) {
+        if (constants.hasOwnProperty(constant)) {
+          window[constant] = constants[constant];
+        }
+      }
+
+    } else {
+
+      sketchProc(this);
+
+    }
+
+    if (document.readyState === 'complete') {
+      this._start();
+    } else {
+      window.addEventListener('load', self._start.bind(self), false);
+    }
+
   };
 
-  PHelper.create = function() {
-    exports.createGraphics(800, 600, true); // default canvas
-    PVariables.startTime = new Date().getTime();
-    
-    if (typeof preload == 'function') {
-      exports.loadJSON = function(path) { return PHelper.preloadFunc("loadJSON", path); };
-      exports.loadStrings = function(path) { return PHelper.preloadFunc("loadStrings", path); };
-      exports.loadXML = function(path) { return PHelper.preloadFunc("loadXML", path); };
-      exports.loadImage = function(path) { return PHelper.preloadFunc("loadImage", path); };
+  // Create is called at window.onload
+  Processing._init = function() {
+
+    // If the user has created a global setup function,
+    // assume "beginner mode" and make everything global
+    if (window.setup && typeof window.setup === 'function') {
+
+      // Create a processing instance
+      var p = new Processing();
+
+    }
+
+  };
+
+  Processing.prototype._start = function() {
+
+    // Create the default canvas
+    this.createGraphics(800, 600, true);
+
+    var preload = this.preload || window.preload;
+    var context = this.isGlobal ? window : this;
+
+    if (preload) {
+
+      context.loadJSON = function(path) { return this.preloadFunc("loadJSON", path); };
+      context.loadStrings = function(path) { return this.preloadFunc("loadStrings", path); };
+      context.loadXML = function(path) { return this.preloadFunc("loadXML", path); };
+      context.loadImage = function(path) { return this.preloadFunc("loadImage", path); };
+
       preload();
-      exports.loadJSON = PHelper.loadJSON;
-      exports.loadStrings = PHelper.loadStrings;
-      exports.loadXML = PHelper.loadXML;
-      exports.loadImage = PHelper.loadImage;
+
+      context.loadJSON = Processing.prototype.loadJSON;
+      context.loadStrings = Processing.prototype.loadStrings;
+      context.loadXML = Processing.prototype.loadXML;
+      context.loadImage = Processing.prototype.loadImage;
+
     } else {
-      exports.loadJSON = PHelper.loadJSON;
-      exports.loadStrings = PHelper.loadStrings;
-      exports.loadXML = PHelper.loadXML;
-      exports.loadImage = PHelper.loadImage;
-      PHelper.setup();
+
+      this._setup();
+
+      this._runFrames();
+
+      this._drawSketch();
+
+    }
+
+  };
+
+  Processing.prototype.preloadFunc = function(func, path) {
+
+    this._setProperty('preload_count', this.preload_count + 1);
+
+    return this[func](path, function (resp) {
+
+      this._setProperty('preload_count', this.preload_count - 1);
+
+      if (this.preload_count === 0) {
+
+        this._setup();
+
+        this._runFrames();
+
+        this._drawSketch();
+
+      }
+    });
+  };
+
+  Processing.prototype._setup = function() {
+
+    // Short-circuit on this, in case someone used the library globally earlier
+    var self = this;
+    var setup = this.setup || window.setup;
+
+    if (typeof setup === 'function') {
+
+      setup();
+
+    } else {
+
+      throw 'sketch must include a setup function';
+
     }
   };
 
-  PHelper.preloadFunc = function(func, path) {
-    PVariables.preload_count++;
-    return PHelper[func](path, function (resp) {
-      if (--PVariables.preload_count === 0) PHelper.setup();
-    });    
-  };
+  Processing.prototype._drawSketch = function () {
+    var self = this;
+    var userDraw = self.draw || window.draw;
 
-  PHelper.setup = function() {
-    if (typeof setup === 'function' || PVariables.sketches.length > 0) { // pend whats happening here?
-      if (typeof setup === 'function') setup();    
-      PVariables.updateInterval = setInterval(PHelper.update, 1000/frameRate);
-      PHelper.draw();
-    } else console.log("sketch must include a setup function");
-  };
-
-  PHelper.applyDefaults = function() {
-    PVariables.curElement.context.fillStyle = '#FFFFFF';
-    PVariables.curElement.context.strokeStyle = '#000000';
-    PVariables.curElement.context.lineCap=exports.ROUND;
-  };
-  PHelper.update = function() {
-    frameCount++;
-  };
-  PHelper.draw = function() {
-    if (PVariables.loop) {
+    if (self.settings.loop) {
       setTimeout(function() {
-        requestDraw(PHelper.draw);
-      }, 1000 / frameRate);
+        window.requestDraw(self._drawSketch.bind(self));
+      }, 1000 / self.frameRate());
     }
     // call draw
-    if (typeof draw === 'function') draw();
-    for (var i = 0; i < PVariables.sketches.length; i++) {
-      var s = PVariables.sketches[i];
+    if (typeof userDraw === 'function') {
+      userDraw();
+    }
+
+    for (var i = 0; i < self.sketches.length; i++) {
+
+      var s = self.sketches[i];
+
       if (typeof s.draw === 'function') {
-        PVariables.curSketchIndex = i;
-        pushStyle();
+        self.settings.curSketchIndex = i;
+        self.pushStyle();
         s.draw();
-        popStyle();    
-        PVariables.curSketchIndex = -1;    
-      }      
-    }
-    PVariables.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
-  };
-
-  PHelper.modeAdjust = function(a, b, c, d, mode) {
-    if (mode == exports.CORNER) {
-      return { x: a, y: b, w: c, h: d };
-    } else if (mode == exports.CORNERS) {
-      return { x: a, y: b, w: c-a, h: d-b };
-    } else if (mode == exports.RADIUS) {
-      return { x: a-c, y: b-d, w: 2*c, h: 2*d };
-    } else if (mode == exports.CENTER) {
-      return { x: a-c*0.5, y: b-d*0.5, w: c, h: d };
-    }
-  };
-
-  PHelper.multiplyMatrix = function(m1, m2) {
-    var result = [];
-    for(var j = 0; j < m2.length; j++) {
-      result[j] = [];
-      for(var k = 0; k < m1[0].length; k++) {
-        var sum = 0;
-        for(var i = 0; i < m1.length; i++) {
-          sum += m1[i][k] * m2[j][i];
-        }
-        result[j].push(sum);
+        self.popStyle();
+        self.settings.curSketchIndex = -1;
       }
     }
-    return result;
+    self.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
   };
 
+  Processing.prototype._runFrames = function() {
 
-  exports.sketch = function(s) {
-    PVariables.sketches[PVariables.sketches.length] = s;
-    s.mouseX = 0;
-    s.mouseY = 0;
-    s.pmouseX = 0;
-    s.pmouseY = 0;
-    s.mouseButton = 0;
-    s.touchX = 0;
-    s.touchY = 0;
-    if (typeof s.setup === 'function') {
-      PVariables.curSketchIndex = PVariables.sketches.length - 1;
-      s.setup();
-      PVariables.curSketchIndex = -1;
-    } else console.log("sketch must include a setup function");
+    var self = this;
+
+    if (this.updateInterval) {
+      clearInterval(this.updateInterval);
+    }
+
+    this.updateInterval = setInterval(function(){
+      self._setProperty('frameCount', self.frameCount + 1);
+    }, 1000/self.frameRate());
+
   };
 
+  Processing.prototype._applyDefaults = function() {
+    this.curElement.context.fillStyle = '#FFFFFF';
+    this.curElement.context.strokeStyle = '#000000';
+    this.curElement.context.lineCap = constants.ROUND;
+  };
 
-}(window));
+  Processing.prototype._setProperty = function(prop, value) {
+    this[prop] = value;
+
+    if (this.isGlobal) {
+      window[prop] = value;
+    }
+  };
+
+  return Processing;
+
+});

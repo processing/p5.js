@@ -1,11 +1,20 @@
-(function(exports) {
-  exports.join = function(list, separator) {
+define(function (require) {
+
+  'use strict';
+
+  var Processing = require('core');
+
+  return Processing;
+
+  Processing.prototype.join = function(list, separator) {
     return list.join(separator);
   };
-  exports.match =  function(str, reg) {
+
+  Processing.prototype.match =  function(str, reg) {
     return str.match(reg);
   };
-  exports.matchAll = function(str, reg) {
+
+  Processing.prototype.matchAll = function(str, reg) {
     var re = new RegExp(reg, "g");
     match = re.exec(str);
     var matches = [];
@@ -18,7 +27,8 @@
     }
     return matches;
   };
-  exports.nf = function() { 
+
+  Processing.prototype.nf = function() {
     if (arguments[0] instanceof Array) {
       var a = arguments[1];
       var b = arguments[2];
@@ -27,6 +37,7 @@
       return doNf.apply(this, arguments);
     }
   };
+
   function doNf() {
     var num = arguments[0];
     var neg = (num < 0);
@@ -36,6 +47,7 @@
     var decPart = decimalInd != -1 ? n.substring(decimalInd+1) : '';
 
     var str = neg ? '-' : '';
+
     if (arguments.length == 3) {
       for (var i=0; i<arguments[1]-intPart.length; i++) { str += '0'; }
       str += intPart;
@@ -49,7 +61,8 @@
       return str;
     }
   }
-  exports.nfc = function() {     
+
+  Processing.prototype.nfc = function() {
     if (arguments[0] instanceof Array) {
       var a = arguments[1];
       return arguments[0].map(function(x) { return doNfc(x, a);});
@@ -57,6 +70,7 @@
       return doNfc.apply(this, arguments);
     }
   };
+
   function doNfc() {
     var num = arguments[0].toString();
     var dec = num.indexOf('.');
@@ -66,7 +80,8 @@
     if (arguments.length > 1) rem = rem.substring(0, arguments[1]+1);
     return n+rem;
   }
-  exports.nfp = function() {
+
+  Processing.prototype.nfp = function() {
     var nfRes = nf.apply(this, arguments);
     if (nfRes instanceof Array) {
       return nfRes.map(addNfp);
@@ -74,10 +89,12 @@
       return addNfp(nfRes);
     }
   };
-  function addNfp() {   
+
+  function addNfp() {
     return (parseFloat(arguments[0]) > 0) ? '+'+arguments[0].toString() : arguments[0].toString();
   }
-  exports.nfs = function() {
+
+  Processing.prototype.nfs = function() {
     var nfRes = nf.apply(this, arguments);
     if (nfRes instanceof Array) {
       return nfRes.map(addNfs);
@@ -85,20 +102,26 @@
       return addNfs(nfRes);
     }
   };
-  function addNfs() {   
+
+  function addNfs() {
     return (parseFloat(arguments[0]) > 0) ? ' '+arguments[0].toString() : arguments[0].toString();
   }
-  exports.split = function(str, delim) {
+
+  Processing.prototype.split = function(str, delim) {
     return str.split(delim);
   };
-  exports.splitTokens = function() {
+
+  Processing.prototype.splitTokens = function() {
     var d = (arguments.length > 0) ? arguments[1] : /\s/g;
     return arguments[0].split(d).filter(function(n){return n;});
   };
-  exports.trim = function(str) {
+
+  Processing.prototype.trim = function(str) {
     if (str instanceof Array) {
       return str.map(trim);
     } else return str.trim();
   };
 
-}(window));
+  return Processing;
+
+});

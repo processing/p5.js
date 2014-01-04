@@ -1,40 +1,68 @@
-(function(exports) {
-	exports.beginContour = function() {
+define(function (require) {
+
+  'use strict';
+
+  var Processing = require('core');
+  var constants = require('constants');
+
+  Processing.prototype.beginContour = function() {
     // TODO
-  };
-  exports.beginShape = function(kind) {
-    if (kind == exports.POINTS || kind == exports.LINES || kind == exports.TRIANGLES || kind == exports.TRIANGLE_FAN || kind == exports.TRIANGLE_STRIP || kind == exports.QUADS || kind == exports.QUAD_STRIP)
-      PVariables.shapeKind = kind;
-    else PVariables.shapeKind = null; 
-    PVariables.shapeInited = true;
-    PVariables.curElement.context.beginPath();
-  };
-  exports.bezierVertex = function(x1, y1, x2, y2, x3, y3) {
-    PVariables.curElement.context.bezierCurveTo(x1, y1, x2, y2, x3, y3);
-  };
-  exports.curveVertex = function() {
-    // TODO
-  };
-  exports.endContour = function() {
-    // TODO
-  };
-  exports.endShape = function(mode) {
-    if (mode == exports.CLOSE) {
-      PVariables.curElement.context.closePath();
-      PVariables.curElement.context.fill();
-    } 
-    PVariables.curElement.context.stroke();
-  };
-  exports.quadraticVertex = function(cx, cy, x3, y3) {
-    PVariables.curElement.context.quadraticCurveTo(cx, cy, x3, y3);
-  };
-  exports.vertex = function(x, y) {
-    if (PVariables.shapeInited) {
-      PVariables.curElement.context.moveTo(x, y);
-    } else {
-      PVariables.curElement.context.lineTo(x, y); // pend this is where check for kind and do other stuff
-    }
-    PVariables.shapeInited = false;
+
   };
 
-}(window));
+  Processing.prototype.beginShape = function(kind) {
+    if (kind == constants.POINTS || kind == constants.LINES || kind == constants.TRIANGLES || kind == constants.TRIANGLE_FAN || kind == constants.TRIANGLE_STRIP || kind == constants.QUADS || kind == constants.QUAD_STRIP)
+      this.shapeKind = kind;
+    else this.shapeKind = null;
+    this.shapeInited = true;
+    this.curElement.context.beginPath();
+
+    return this;
+  };
+
+  Processing.prototype.bezierVertex = function(x1, y1, x2, y2, x3, y3) {
+    this.curElement.context.bezierCurveTo(x1, y1, x2, y2, x3, y3);
+
+    return this;
+  };
+
+  Processing.prototype.curveVertex = function() {
+    // TODO
+
+  };
+
+  Processing.prototype.endContour = function() {
+    // TODO
+
+  };
+
+  Processing.prototype.endShape = function(mode) {
+    if (mode == constants.CLOSE) {
+      this.curElement.context.closePath();
+      this.curElement.context.fill();
+    }
+    this.curElement.context.stroke();
+
+    return this;
+  };
+
+  Processing.prototype.quadraticVertex = function(cx, cy, x3, y3) {
+    this.curElement.context.quadraticCurveTo(cx, cy, x3, y3);
+
+    return this;
+  };
+
+  Processing.prototype.vertex = function(x, y) {
+    if (this.shapeInited) {
+      this.curElement.context.moveTo(x, y);
+    } else {
+      this.curElement.context.lineTo(x, y); // pend this is where check for kind and do other stuff
+    }
+    this.shapeInited = false;
+
+    return this;
+  };
+
+  return Processing;
+
+});

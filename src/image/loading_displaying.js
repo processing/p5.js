@@ -1,45 +1,60 @@
-(function(exports) {
-  exports.image = function() { 
+define(function (require) {
+
+  'use strict';
+
+  var Processing = require('core');
+  var canvas = require('canvas');
+  var constants = require('constants');
+
+  Processing.prototype.image = function() {
     var vals;
     if (arguments.length < 5) {
-      vals = PHelper.modeAdjust(arguments[1], arguments[2], arguments[0].width, arguments[0].height, PVariables.imageMode);
+      vals = canvas.modeAdjust(arguments[1], arguments[2], arguments[0].width, arguments[0].height, this.settings.imageMode);
     } else {
-      vals = PHelper.modeAdjust(arguments[1], arguments[2], arguments[3], arguments[4], PVariables.imageMode);
+      vals = canvas.modeAdjust(arguments[1], arguments[2], arguments[3], arguments[4], this.settings.imageMode);
     }
-    PVariables.curElement.context.drawImage(arguments[0].sourceImage, vals.x, vals.y, vals.w, vals.h);
+    this.curElement.context.drawImage(arguments[0].sourceImage, vals.x, vals.y, vals.w, vals.h);
   };
 
-  exports.imageMode = function(m) {
-    if (m == exports.CORNER || m == exports.CORNERS || m == exports.CENTER) PVariables.imageMode = m;
+  Processing.prototype.imageMode = function(m) {
+    if (m == constants.CORNER || m == constants.CORNERS || m == constants.CENTER) {
+      this.settings.imageMode = m;
+    }
   };
 
   function getPixels(img) {
     var c = document.createElement('canvas');
-    c.width = img.width; 
+    c.width = img.width;
     c.height = img.height;
     var ctx = c.getContext('2d');
     ctx.drawImage(img);
     return ctx.getImageData(0,0,c.width,c.height);
   }
+
   //// PIXELS ////////////////////////////////
 
-  exports.pixels = [];
-  exports.blend = function() {
+  Processing.prototype.blend = function() {
     // TODO
+
   };
-  exports.copy = function() {
+
+  Processing.prototype.copy = function() {
     // TODO
+
   };
-  exports.filter = function() {
+
+  Processing.prototype.filter = function() {
     // TODO
+
   };
-  exports.get = function(x, y) {
-    var pix = PVariables.curElement.context.getImageData(0, 0, width, height).data;
+
+  Processing.prototype.get = function(x, y) {
+    var pix = this.curElement.context.getImageData(0, 0, width, height).data;
     /*if (typeof w !== 'undefined' && typeof h !== 'undefined') {
       var region = [];
       for (var j=0; j<h; j++) {
         for (var i=0; i<w; i++) {
-          region[i*w+j] = pix[(y+j)*width+(x+i)]; 
+          region[i*w+j] = pix[(y+j)*width+(x+i)];
         }
       }
       return region;
@@ -56,22 +71,29 @@
       return [0, 0, 0, 255];
     }
   };
-  exports.loadPixels = function() { 
-    var a = PVariables.curElement.context.getImageData(0, 0, width, height).data;
-    pixels = [];
+
+  Processing.prototype.loadPixels = function() {
+    var a = this.curElement.context.getImageData(0, 0, width, height).data;
+    var pixels = [];
     for (var i=0; i < a.length; i+=4) {
       pixels.push([a[i], a[i+1], a[i+2], a[i+3]]); // each pixels entry: [r, g, b, a]
     }
+    this._setProperty('pixels', pixels);
   };
-  exports.set = function() {
+
+  Processing.prototype.set = function() {
     // TODO
+
   };
-  exports.updatePixels = function() {
-    /*if (typeof pixels !== 'undefined') {
-      var imgd = PVariables.curElement.context.getImageData(x, y, width, height);
-      imgd = pixels;
+
+  Processing.prototype.updatePixels = function() {
+    /*if (typeof this.pixels !== 'undefined') {
+      var imgd = this.curElement.context.getImageData(x, y, width, height);
+      imgd = this.pixels;
       context.putImageData(imgd, 0, 0);
     }*/
   };
 
-}(window));
+  return Processing;
+
+});

@@ -1,9 +1,9 @@
-(function(exports) {
-  exports.mouseX = 0;
-  exports.mouseY = 0;
-  exports.pmouseX = 0;
-  exports.pmouseY = 0;
-  exports.mouseButton = 0;
+define(function (require) {
+
+  'use strict';
+
+  var Processing = require('core');
+  var constants = require('constants');
 
   /*
   // Another possibility: mouseX, mouseY, etc. are properties with a getter
@@ -12,50 +12,126 @@
   // parts of pjs.
   Object.defineProperty(exports, "mouseX", {
     get: function() {
-      var bounds = PVariables.curElement.elt.getBoundingClientRect();
+      var bounds = this.curElement.elt.getBoundingClientRect();
       return absMouseX - bounds.left;
     },
     set: undefined
   });
   */
 
-  exports.isMousePressed = exports.mouseIsPressed = function() {
-    return PVariables.mousePressed;
+  Processing.prototype.isMousePressed = Processing.prototype.mouseIsPressed = function() {
+    return this.mousePressed;
   };
-  PHelper.updateMouseCoords = function(e) {
-    pmouseX = exports.mouseX;
-    pmouseY = exports.mouseY;
-    exports.mouseX = e.pageX;  // - parseInt(PVariables.curElement.elt.style.left, 10);
-    exports.mouseY = e.pageY;  // - parseInt(PVariables.curElement.elt.style.top, 10);
-    
-    for (var n = 0; n < PVariables.sketchCanvases.length; n++) {
-      var s = PVariables.sketches[n];
-      var c = PVariables.sketchCanvases[n];
+
+  Processing.prototype.updateMouseCoords = function(e) {
+    this._setProperty('pmouseX', this.mouseX);
+    this._setProperty('pmouseY', this.mouseY);
+
+    // TODO: These are based on the window, not the curElement
+    this._setProperty('mouseX', e.pageX);  // - parseInt(this.curElement.elt.style.left, 10);
+    this._setProperty('mouseY', e.pageY);  // - parseInt(this.curElement.elt.style.top, 10);
+
+
+    for (var n = 0; n < this.sketchCanvases.length; n++) {
+      var s = this.sketches[n];
+      var c = this.sketchCanvases[n];
       var bounds = c.elt.getBoundingClientRect();
       s.pmouseX = s.mouseX;
       s.pmouseY = s.mouseY;
-      s.mouseX = mouseX - bounds.left;
-      s.mouseY = mouseY - bounds.top;
+      s.mouseX = this.mouseX - bounds.left;
+      s.mouseY = this.mouseY - bounds.top;
     }
-    
+
     // console.log(mouseX+' '+mouseY);
     // console.log('mx = '+mouseX+' my = '+mouseY);
   };
-  PHelper.setMouseButton = function(e) {
-   exports.mouseButton = exports.LEFT;
+
+  Processing.prototype.setMouseButton = function(e) {
+
     if (e.button == 1) {
-      exports.mouseButton = exports.CENTER;
+      this._setProperty('mouseButton', constants.CENTER);
     } else if (e.button == 2) {
-      exports.mouseButton = exports.RIGHT;
+      this._setProperty('mouseButton', constants.RIGHT);
+    } else {
+     this._setProperty('mouseButton', constants.LEFT);
     }
-    for (var i = 0; i < PVariables.sketches.length; i++) {
-      var s = PVariables.sketches[i];
-      if (e.button == 1) {
-        s.mouseButton = exports.CENTER;
-      } else if (e.button == 2) {
-        s.mouseButton = exports.RIGHT;
-      }      
-    } 
+
+    for (var i = 0; i < this.sketches.length; i++) {
+      var s = this.sketches[i];
+      s.mouseButton = this.mouseButton;
+    }
   };
 
-}(window));
+  Processing.prototype.onmousemove = function(e){
+    this.updateMouseCoords(e);
+    if (!this.mousePressed && typeof mouseMoved === 'function') {
+      mouseMoved(e);
+    }
+    if (this.mousePressed && typeof mouseDragged === 'function') {
+      mouseDragged(e);
+    }
+    for (var i = 0; i < this.sketches.length; i++) {
+      var s = this.sketches[i];
+      if (!this.mousePressed && typeof s.mouseMoved === 'function') {
+        s.mouseMoved(e);
+      }
+      if (this.mousePressed && typeof s.mouseDragged === 'function') {
+        s.mouseDragged(e);
+      }
+    }
+  };
+
+  Processing.prototype.onmousedown = function(e) {
+    this.mousePressed = true;
+    this.setMouseButton(e);
+    if (typeof mousePressed === 'function') {
+      mousePressed(e);
+    }
+    for (var i = 0; i < this.sketches.length; i++) {
+      var s = this.sketches[i];
+      if (typeof s.mousePressed === 'function') {
+        s.mousePressed(e);
+      }
+    }
+  };
+
+  Processing.prototype.onmouseup = function(e) {
+    this.mousePressed = false;
+    if (typeof mouseReleased === 'function') {
+      mouseReleased(e);
+    }
+    for (var i = 0; i < this.sketches.length; i++) {
+      var s = this.sketches[i];
+      if (typeof s.mouseReleased === 'function') {
+        s.mouseReleased(e);
+      }
+    }
+  };
+
+  Processing.prototype.onmouseclick = function(e) {
+    if (typeof mouseClicked === 'function') {
+      mouseClicked(e);
+    }
+    for (var i = 0; i < this.sketches.length; i++) {
+      var s = this.sketches[i];
+      if (typeof s.mouseClicked === 'function') {
+        s.mouseClicked(e);
+      }
+    }
+  };
+
+  Processing.prototype.onmousewheel = function(e) {
+    if (typeof mouseWheel === 'function') {
+      mouseWheel(e);
+    }
+    for (var i = 0; i < this.sketches.length; i++) {
+      var s = this.sketches[i];
+      if (typeof s.mouseWheel === 'function') {
+        s.mouseWheel(e);
+      }
+    }
+  };
+
+  return Processing;
+
+});

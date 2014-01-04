@@ -1,52 +1,74 @@
-(function(exports) {
-  exports.noLoop = function() { 
-    if (PVariables.loop) {
-      PVariables.loop = false; 
-    }
+define(function (require) {
+
+  'use strict';
+
+  var Processing = require('core');
+
+  Processing.prototype.exit = function() {
+    throw "Not implemented";
   };
-  exports.loop = function() {
-    if (!PVariables.loop) {
-      PVariables.loop = true;
-    }
+
+  Processing.prototype.noLoop = function() {
+    this.settings.loop = false;
   };
-  exports.pushStyle = function() {
-    var curS = [];
-    curS.fillStyle = PVariables.curElement.context.fillStyle; // fill
-    curS.strokeStyle = PVariables.curElement.context.strokeStyle; // stroke
-    curS.lineWidth = PVariables.curElement.context.lineWidth; // strokeWeight
+
+  Processing.prototype.loop = function() {
+    this.settings.loop = true;
+  };
+
+  Processing.prototype.pushStyle = function() {
+
+    this.styles.push({
+      fillStyle: this.curElement.context.fillStyle, // fill
+      strokeStyle: this.curElement.context.strokeStyle, // stroke
+      lineWidth: this.curElement.context.lineWidth, // strokeWeight
+      // @todo tint
+      lineCap: this.curElement.context.lineCap, // strokeCap
+      lineJoin: this.curElement.context.lineJoin, // strokeJoin
+      imageMode: this.settings.imageMode, // imageMode
+      rectMode: this.settings.rectMode, // rectMode
+      ellipseMode: this.settings.ellipseMode, // ellipseMode
+      // @todo shapeMode
+      colorMode: this.settings.colorMode, // colorMode
+      textAlign: this.curElement.context.textAlign, // textAlign
+      textFont: this.settings.textFont,
+      textLeading: this.settings.textLeading, // textLeading
+      textSize: this.settings.textSize, // textSize
+      textStyle: this.settings.textStyle // textStyle
+    });
+  };
+
+  Processing.prototype.popStyle = function() {
+
+    var lastS = this.styles.pop();
+
+    this.curElement.context.fillStyle = lastS.fillStyle; // fill
+    this.curElement.context.strokeStyle = lastS.strokeStyle; // stroke
+    this.curElement.context.lineWidth = lastS.lineWidth; // strokeWeight
     // @todo tint
-    curS.lineCap = PVariables.curElement.context.lineCap; // strokeCap
-    curS.lineJoin = PVariables.curElement.context.lineJoin; // strokeJoin
-    curS.imageMode = PVariables.imageMode; // imageMode
-    curS.rectMode = PVariables.rectMode; // rectMode
-    curS.ellipseMode = PVariables.ellipseMode; // ellipseMode
+    this.curElement.context.lineCap = lastS.lineCap; // strokeCap
+    this.curElement.context.lineJoin = lastS.lineJoin; // strokeJoin
+    this.settings.imageMode = lastS.imageMode; // imageMode
+    this.settings.rectMode = lastS.rectMode; // rectMode
+    this.settings.ellipseMode = lastS.ellipseMode; // elllipseMode
     // @todo shapeMode
-    curS.colorMode = PVariables.colorMode; // colorMode
-    curS.textAlign = PVariables.curElement.context.textAlign; // textAlign
-    curS.textFont = PVariables.textFont;
-    curS.textLeading = PVariables.textLeading; // textLeading
-    curS.textSize = PVariables.textSize; // textSize
-    curS.textStyle = PVariables.textStyle; // textStyle
-    PVariables.styles.push(curS);
+    this.settings.colorMode = lastS.colorMode; // colorMode
+    this.curElement.context.textAlign = lastS.textAlign; // textAlign
+    this.settings.textFont = lastS.textFont;
+    this.settings.textLeading = lastS.textLeading; // textLeading
+    this.settings.textSize = lastS.textSize; // textSize
+    this.settings.textStyle = lastS.textStyle; // textStyle
+
   };
-  exports.popStyle = function() {
-    var lastS = PVariables.styles[PVariables.styles.length-1];
-    PVariables.curElement.context.fillStyle = lastS.fillStyle; // fill
-    PVariables.curElement.context.strokeStyle = lastS.strokeStyle; // stroke
-    PVariables.curElement.context.lineWidth = lastS.lineWidth; // strokeWeight
-    // @todo tint
-    PVariables.curElement.context.lineCap = lastS.lineCap; // strokeCap
-    PVariables.curElement.context.lineJoin = lastS.lineJoin; // strokeJoin
-    PVariables.imageMode = lastS.imageMode; // imageMode
-    PVariables.rectMode = lastS.rectMode; // rectMode
-    PVariables.ellipseMode = lastS.ellipseMode; // elllipseMode
-    // @todo shapeMode
-    PVariables.colorMode = lastS.colorMode; // colorMode
-    PVariables.curElement.context.textAlign = lastS.textAlign; // textAlign
-    PVariables.textFont = lastS.textFont;
-    PVariables.textLeading = lastS.textLeading; // textLeading
-    PVariables.textSize = lastS.textSize; // textSize
-    PVariables.textStyle = lastS.textStyle; // textStyle
-    PVariables.styles.pop();
+
+  Processing.prototype.redraw = function() {
+    throw "Not implemented";
   };
-}(window));
+
+  Processing.prototype.size = function() {
+    throw "Not implemented";
+  };
+
+  return Processing;
+
+});

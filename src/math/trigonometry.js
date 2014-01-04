@@ -1,33 +1,38 @@
-(function(exports) {
+define(function (require) {
 
-  exports.acos = function(x) { return compose(Math.acos, PHelper.convertToDegrees); };
-  exports.asin = function(x) { return compose(Math.asin, PHelper.convertToDegrees); };
-  exports.atan = function(x) { return compose(Math.atan, PHelper.convertToDegrees); };
-  exports.atan2 = function(y, x) { compose(Math.atan2, PHelper.convertToDegrees); };
-  exports.cos = function(x) { return compose(p.convertToRadians, Math.cos); };
-  exports.degrees = function(x) { return 360.0*x/(2*Math.PI); };
-  exports.radians = function(x) { return 2*Math.PI*x/360.0; };
-  exports.sin = function(x) { return compose(p.convertToRadians, Math.sin); };
-  exports.tan = function(x) { return compose(p.convertToRadians, Math.tan); };
-  exports.angleMode = function(m) { 
-    if (m == exports.RADIANS || m == exports.DEGREES) {
-      PVariables.angleMode = m;
-    }
-  };
-  PHelper.convertToDegrees = function(angle) { return PVariables.angleMode === "degrees" ? exports.degrees(angle) : angle; };
-  PHelper.convertToRadians = function(angle) { return PVariables.angleMode === "degrees" ? exports.radians(angle) : angle; };
+  'use strict';
 
-  var compose = function() {
-    var args = arguments;
-    
-    return function() {
-      var ret = arguments;
-      
-      for (var i = 0; i < args.length; i++) {
-        ret = [ args[i].apply(args[i], ret) ];
-      }
-      return ret[0];
-    };
+  var Processing = require('core');
+  var polarGeometry = require('polargeometry');
+
+  Processing.prototype.acos = Math.acos;
+
+  Processing.prototype.asin = Math.asin;
+
+  Processing.prototype.atan = Math.atan;
+
+  Processing.prototype.atan2 = Math.atan2;
+
+  Processing.prototype.cos = function(x) {
+    return Math.cos(this.radians(x));
   };
 
-}(window));
+  Processing.prototype.degrees = function(angle) {
+    return this.settings.angleMode === 'degrees' ? angle : polarGeometry.radiansToDegrees(angle);
+  };
+
+  Processing.prototype.radians = function(angle) {
+    return this.settings.angleMode === 'radians' ? angle : polarGeometry.degreesToRadians(angle);
+  };
+
+  Processing.prototype.sin = function(x) {
+    return Math.sin(this.radians(x));
+  };
+
+  Processing.prototype.tan = function(x) {
+    return Math.tan(this.radians(x));
+  };
+
+  return Processing;
+
+});

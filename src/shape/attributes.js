@@ -1,36 +1,64 @@
-(function(exports) {
-	exports.ellipseMode = function(m) {
-    if (m == exports.CORNER || m == exports.CORNERS || m == exports.RADIUS || m == exports.CENTER) {
-      PVariables.ellipseMode = m;
+define(function (require) {
+
+  'use strict';
+
+  var Processing = require('core');
+  var constants = require('constants');
+
+  Processing.prototype.ellipseMode = function(m) {
+    if (m == constants.CORNER || m == constants.CORNERS || m == constants.RADIUS || m == constants.CENTER) {
+      this.settings.ellipseMode = m;
     }
-  };
-  exports.noSmooth = function() {
-    PVariables.curElement.context.mozImageSmoothingEnabled = false;
-    PVariables.curElement.context.webkitImageSmoothingEnabled = false;
-  };
-  exports.rectMode = function(m) {
-    if (m == exports.CORNER || m == exports.CORNERS || m == exports.RADIUS || m == exports.CENTER) {
-      PVariables.rectMode = m;
-    }
-  };
-  exports.smooth = function() {
-    PVariables.curElement.context.mozImageSmoothingEnabled = true;
-    PVariables.curElement.context.webkitImageSmoothingEnabled = true;
-  };
-  exports.strokeCap = function(cap) {
-    if (cap == exports.ROUND || cap == exports.SQUARE || cap == exports.PROJECT) {
-      PVariables.curElement.context.lineCap=cap;
-    }
-  };
-  exports.strokeJoin = function(join) {
-    if (join == exports.ROUND || join == exports.BEVEL || join == exports.MITER) {
-      PVariables.curElement.context.lineJoin = join;
-    }
-  };
-  exports.strokeWeight = function(w) {
-    if (typeof w === 'undefined' || w === 0)
-      PVariables.curElement.context.lineWidth = 0.0001; // hack because lineWidth 0 doesn't work
-    else PVariables.curElement.context.lineWidth = w;
+
+    return this;
   };
 
-}(window));
+  Processing.prototype.noSmooth = function() {
+    this.curElement.context.mozImageSmoothingEnabled = false;
+    this.curElement.context.webkitImageSmoothingEnabled = false;
+
+    return this;
+  };
+
+  Processing.prototype.rectMode = function(m) {
+    if (m == constants.CORNER || m == constants.CORNERS || m == constants.RADIUS || m == constants.CENTER) {
+      this.settings.rectMode = m;
+    }
+
+    return this;
+  };
+
+  Processing.prototype.smooth = function() {
+    this.curElement.context.mozImageSmoothingEnabled = true;
+    this.curElement.context.webkitImageSmoothingEnabled = true;
+
+    return this;
+  };
+
+  Processing.prototype.strokeCap = function(cap) {
+    if (cap == constants.ROUND || cap == constants.SQUARE || cap == constants.PROJECT) {
+      this.curElement.context.lineCap=cap;
+    }
+
+    return this;
+  };
+
+  Processing.prototype.strokeJoin = function(join) {
+    if (join == constants.ROUND || join == constants.BEVEL || join == constants.MITER) {
+      this.curElement.context.lineJoin = join;
+    }
+
+    return this;
+  };
+
+  Processing.prototype.strokeWeight = function(w) {
+    if (typeof w === 'undefined' || w === 0)
+      this.curElement.context.lineWidth = 0.0001; // hack because lineWidth 0 doesn't work
+    else this.curElement.context.lineWidth = w;
+
+    return this;
+  };
+
+  return Processing;
+
+});

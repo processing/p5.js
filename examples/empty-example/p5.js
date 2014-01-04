@@ -11,9 +11,9 @@
 
   exports.draw; // needed?
   exports.setup; // needed?
-  exports.noLoop = function() { 
+  exports.noLoop = function() {
     if (pLoop) {
-      pLoop = false; 
+      pLoop = false;
     }
   };
   exports.loop = function() {
@@ -84,15 +84,15 @@
     if (type == CROSS || type == HAND || type == MOVE || type == TEXT || type == WAIT) {
       cursor = type;
     }
-    document.getElementsByTagName('body')[0].style.cursor = cursor; 
+    document.getElementsByTagName('body')[0].style.cursor = cursor;
   }
   exports.displayHeight = screen.height;
   exports.displayWidth = screen.width;
   exports.getFrameRate = function() {
     return frameRate;
   }
-  exports.setFrameRate = function(fps) { 
-    frameRate = fps; 
+  exports.setFrameRate = function(fps) {
+    frameRate = fps;
     clearInterval(pUpdateInterval);
     pUpdateInterval = setInterval(pUpdate, 1000/frameRate);
   }
@@ -126,7 +126,7 @@
     }
     return matches;
   }
-  exports.nf = function() { 
+  exports.nf = function() {
     if (arguments[0] instanceof Array) {
       var a = arguments[1];
       var b = arguments[2];
@@ -157,7 +157,7 @@
       return str;
     }
   }
-  exports.nfc = function() {     
+  exports.nfc = function() {
     if (arguments[0] instanceof Array) {
       var a = arguments[1];
       return arguments[0].map(function(x) { return doNfc(x, a);});
@@ -182,7 +182,7 @@
       return addNfp(nfRes);
     }
   }
-  function addNfp() {   
+  function addNfp() {
     return (parseFloat(arguments[0]) > 0) ? '+'+arguments[0].toString() : arguments[0].toString();
   }
   exports.nfs = function() {
@@ -193,7 +193,7 @@
       return addNfs(nfRes);
     }
   }
-  function addNfs() {   
+  function addNfs() {
     return (parseFloat(arguments[0]) > 0) ? ' '+arguments[0].toString() : arguments[0].toString();
   }
   exports.split = function(str, delim) {
@@ -216,16 +216,16 @@
     return array;
   }
   exports.arrayCopy = function(src, a, b, c, d) { //src, srcPosition, dst, dstPosition, length
-    if (typeof d !== 'undefined') { 
+    if (typeof d !== 'undefined') {
       for (var i=a; i<min(a+d, srpCurElement.length); i++) {
         b[dstPosition+i] = src[i];
       }
-    } 
+    }
     else if (typeof b !== 'undefined') { //src, dst, length
-      a = srpCurElement.slice(0, min(b, srpCurElement.length)); 
+      a = srpCurElement.slice(0, min(b, srpCurElement.length));
     }
     else { //src, dst
-      a = srpCurElement.slice(0);  
+      a = srpCurElement.slice(0);
     }
   }
   exports.concat = function(list0, list1) {
@@ -234,7 +234,7 @@
   exports.reverse = function(list) {
     return list.reverse();
   }
-  exports.shorten = function(list) { 
+  exports.shorten = function(list) {
     list.pop();
     return list;
   }
@@ -412,10 +412,10 @@
     // TODO
   }
   exports.beginShape = function(kind) {
-    if (kind == exports.POINTS || kind == exports.LINES || kind == exports.TRIANGLES || kind == exports.TRIANGLE_FAN 
+    if (kind == exports.POINTS || kind == exports.LINES || kind == exports.TRIANGLES || kind == exports.TRIANGLE_FAN
       || kind == exports.TRIANGLE_STRIP || kind == exports.QUADS || kind == exports.QUAD_STRIP)
       pShapeKind = kind;
-    else pShapeKind = null; 
+    else pShapeKind = null;
     pShapeInited = true;
     pCurElement.context.beginPath();
   }
@@ -432,7 +432,7 @@
     if (mode == exports.CLOSE) {
       pCurElement.context.closePath();
       pCurElement.context.fill();
-    } 
+    }
     pCurElement.context.stroke();
   }
   exports.quadraticVertex = function(cx, cy, x3, y3) {
@@ -453,8 +453,8 @@
 
   //// MOUSE ///////////////////////////
 
-  exports.mouseX = e.clientX;
-  exports.mouseY = e.clientY;
+  exports.mouseX = 0;
+  exports.mouseY = 0;
   exports.pmouseX = 0;
   exports.pmouseY = 0;
   exports.mouseButton = 0;
@@ -483,7 +483,7 @@
   //// KEYBOARD ////////////////////////
 
   exports.key = '';
-  exports.keyCode = 0; 
+  exports.keyCode = 0;
   var pKeyPressed = false;
 
   exports.isKeyPressed = function() {
@@ -547,9 +547,9 @@
     // TODO
   }
   exports.loadJSON = function(file, callback) {
-    var req = new XMLHttpRequest();  
-    req.overrideMimeType('application/json');  
-    req.open('GET', 'data/'+file);  
+    var req = new XMLHttpRequest();
+    req.overrideMimeType('application/json');
+    req.open('GET', 'data/'+file);
     req.onreadystatechange = function () {
       if(req.readyState === 4) {
         if(req.status === 200 || req.status == 0) {
@@ -577,10 +577,10 @@
     // TODO
   }
   /*exports.loadXML = function() {
-    var req = new XMLHttpRequest();  
-    req.overrideMimeType('application/json');  
+    var req = new XMLHttpRequest();
+    req.overrideMimeType('application/json');
     req.overrideMimeType('text/xml');
-    req.open('GET', 'data/'+file, false);  
+    req.open('GET', 'data/'+file, false);
     req.onreadystatechange = function () {
       if(req.readyState === 4) {
         if(req.status === 200 || req.status == 0) {
@@ -695,7 +695,7 @@
     // TODO
   }
   exports.writeFile = function(content) {
-    exports.open('data:text/json;charset=utf-8,' + escape(content), 'download'); 
+    exports.open('data:text/json;charset=utf-8,' + escape(content), 'download');
   }
 
   //////////////////////////////////////
@@ -707,23 +707,23 @@
     var m = pMatrices[pMatrices.length-1];
     m = pMultiplyMatrix(m, [n00, n01, n02, n10, n11, n12]);
   }
-  exports.popMatrix = function() { 
-    pCurElement.context.restore(); 
+  exports.popMatrix = function() {
+    pCurElement.context.restore();
     pMatrices.pop();
   }
   exports.printMatrix = function() {
     console.log(pMatrices[pMatrices.length-1]);
   }
-  exports.pushMatrix = function() { 
-    pCurElement.context.save(); 
+  exports.pushMatrix = function() {
+    pCurElement.context.save();
     pMatrices.push([1,0,0,1,0,0]);
   }
-  exports.resetMatrix = function() { 
+  exports.resetMatrix = function() {
     pCurElement.context.setTransform();
-    pMatrices[pMatrices.length-1] = [1,0,0,1,0,0]; 
+    pMatrices[pMatrices.length-1] = [1,0,0,1,0,0];
   }
-  exports.rotate = function(r) { 
-    pCurElement.context.rotate(r); 
+  exports.rotate = function(r) {
+    pCurElement.context.rotate(r);
     var m = pMatrices[pMatrices.length-1];
     var c = Math.cos(r);
     var s = Math.sin(r);
@@ -736,8 +736,8 @@
     m[2] = m21;
     m[3] = m22;
   }
-  exports.scale = function(x, y) { 
-    pCurElement.context.scale(x, y); 
+  exports.scale = function(x, y) {
+    pCurElement.context.scale(x, y);
     var m = pMatrices[pMatrices.length-1];
     m[0] *= x;
     m[1] *= x;
@@ -754,8 +754,8 @@
     var m = pMatrices[pMatrices.length-1];
     m = pMultiplyMatrix(m, [1, tan(angle), 0, 1, 0, 0]);
   }
-  exports.translate = function(x, y) { 
-    pCurElement.context.translate(x, y); 
+  exports.translate = function(x, y) {
+    pCurElement.context.translate(x, y);
     var m = pMatrices[pMatrices.length-1];
     m[4] += m[0] * x + m[2] * y;
     m[5] += m[1] * x + m[3] * y;
@@ -767,7 +767,7 @@
 
   //// SETTING /////////////////////////
 
-  exports.background = function() { 
+  exports.background = function() {
     var c = getNormalizedColor(arguments);
     // save out the fill
     var curFill = pCurElement.context.fillStyle;
@@ -782,7 +782,7 @@
   }
   exports.colorMode = function(mode) {
     if (mode == exports.RGB || mode == exports.HSB)
-      pColorMode = mode; 
+      pColorMode = mode;
   }
   exports.fill = function() {
     var c = getNormalizedColor(arguments);
@@ -805,7 +805,7 @@
     if (rgb.length > 3) return rgb[3];
     else return 255;
   }
-  exports.blue = function(rgb) { 
+  exports.blue = function(rgb) {
     if (rgb.length > 2) return rgb[2];
     else return 0;
   }
@@ -816,11 +816,11 @@
   exports.color = function() {
     return getNormalizedColor(arguments);
   }
-  exports.green = function(rgb) { 
+  exports.green = function(rgb) {
     if (rgb.length > 2) return rgb[1];
     else return 0;
   }
-  exports.hue = function(hsv) { 
+  exports.hue = function(hsv) {
     if (rgb.length > 2) return rgb[0];
     else return 0;
   }
@@ -831,11 +831,11 @@
     }
     return c;
   }
-  exports.red = function(rgb) { 
+  exports.red = function(rgb) {
     if (rgb.length > 2) return rgb[0];
     else return 0;
   }
-  exports.saturation = function(hsv) { 
+  exports.saturation = function(hsv) {
     if (hsv.length > 2) return hsv[1];
     else return 0;
   }
@@ -850,15 +850,15 @@
     return new PImage(w, h);
   } //pend format?
   function PImage(w, h) {
-    this.image = pCurElement.context.createImageData(w,h); 
+    this.image = pCurElement.context.createImageData(w,h);
     this.pixels = [];
     this.updatePixelArray();
   }
-  PImage.prototype.loadPixels = function() { 
-    this.image = context.createImageData(imageData); 
+  PImage.prototype.loadPixels = function() {
+    this.image = context.createImageData(imageData);
     this.updatePixelArray();
   };
-  PImage.prototype.updatePixelArray = function() {  
+  PImage.prototype.updatePixelArray = function() {
     for (var i=0; i<this.data.length; i+=4) {
       this.pixels.push([this.data[i], this.data[i+1], this.data[i+2], this.data[i+3]]);
     }
@@ -911,7 +911,7 @@
 
   //// LOADING & DISPLAYING //////////////////
 
-  exports.image = function(img, a, b, c, d) { 
+  exports.image = function(img, a, b, c, d) {
     if (typeof c !== 'undefined' && typeof d !== 'undefined') {
       var vals = pModeAdjust(a, b, c, d, pImageMode);
       pCurElement.context.drawImage(img, vals.x, vals.y, vals.w, vals.h);
@@ -922,7 +922,7 @@
   exports.imageMode = function(m) {
     if (m == exports.CORNER || m == exports.CORNERS || m == exports.CENTER) pImageMode = m;
   }
-  exports.loadImage = function(path, callback) { 
+  exports.loadImage = function(path, callback) {
     var imgObj = new Image();
     imgObj.onload = function() {
       if (typeof callback !== 'undefined') callback();
@@ -949,7 +949,7 @@
       var region = [];
       for (var j=0; j<h; j++) {
         for (var i=0; i<w; i++) {
-          region[i*w+j] = pix[(y+j)*width+(x+i)]; 
+          region[i*w+j] = pix[(y+j)*width+(x+i)];
         }
       }
       return region;
@@ -963,7 +963,7 @@
     }
     else { return pix; }
   }
-  exports.loadPixels = function() { 
+  exports.loadPixels = function() {
     pixels = pCurElement.context.getImageData(0, 0, width, height).data.slice(0); // pend should this be 0,0 or  pCurElement.offsetLeft,pCurElement.offsetTop?
   }
   exports.set = function() {
@@ -1093,7 +1093,7 @@
     // if (arguments.length === 0) {
     if (typeof x !== 'undefined' && typeof y !== 'undefined') {
       return (y-x)*Math.random()+x;
-    } else if (typeof x !== 'undefined') { 
+    } else if (typeof x !== 'undefined') {
       return x*Math.random();
     } else {
       return Math.random();
@@ -1182,7 +1182,7 @@
     this.x /= n;
     this.y /= n;
     this.z /= n;
-    return this; 
+    return this;
   }
 
   PVector.prototype.mag = function () {
@@ -1428,7 +1428,7 @@
         var arr = [];
         for(var i = 0, resl = res.length; i != resl; arr.push(new PElement(res[i++])));
         return arr;
-      }  
+      }
     }
     return [];
   }
@@ -1436,7 +1436,7 @@
   //////////////////////////////////////
   ////
   //// CORE PJS STUFF
-  //// 
+  ////
   //////////////////////////////////////
 
   var pCurElement;
@@ -1521,7 +1521,7 @@
   *
   * @param {'array-like' object} args An 'array-like' object that
   *                                   represents a list of arguments
-  *                                  
+  *
   * @return {Array} returns a color formatted as [r, g, b, a]
   *                 input        ==> output
   *                 g            ==> [g, g, g, 255]
@@ -1559,7 +1559,7 @@
   *                 returns a CSS rgba color string: 'rgba(r, g, b, a)'
   *
   * @param {Array} An [r, g, b [, a]] color array
-  *                                  
+  *
   * @return {String} a CSS rgba color string: 'rgba(r, g, b, a)'
   */
   function getCSSRGBAColor(arr) {
@@ -1575,9 +1575,9 @@
     var computedS = 0;
     var computedV = 0;
     //remove spaces from input RGB values, convert to int
-    var r = parseInt( (''+r).replace(/\s/g,''),10 ); 
-    var g = parseInt( (''+g).replace(/\s/g,''),10 ); 
-    var b = parseInt( (''+b).replace(/\s/g,''),10 ); 
+    var r = parseInt( (''+r).replace(/\s/g,''),10 );
+    var g = parseInt( (''+g).replace(/\s/g,''),10 );
+    var b = parseInt( (''+b).replace(/\s/g,''),10 );
     if ( r==null || g==null || b==null ||
         isNaN(r) || isNaN(g)|| isNaN(b) ) {
       alert ('Please enter numeric RGB values!');
@@ -1610,7 +1610,7 @@
     var r, g, b;
     var RGB = new Array();
     if(s==0){
-      RGB = [Math.round(v*255), Math.round(v*255), Math.round(v*255)]; 
+      RGB = [Math.round(v*255), Math.round(v*255), Math.round(v*255)];
     }else{
       // h must be < 1
       var var_h = h * 6;
@@ -1620,11 +1620,11 @@
       var var_1 = v*(1-s);
       var var_2 = v*(1-s*(var_h-var_i));
       var var_3 = v*(1-s*(1-(var_h-var_i)));
-      if(var_i==0){ 
-        var_r = v; 
-        var_g = var_3; 
+      if(var_i==0){
+        var_r = v;
+        var_g = var_3;
         var_b = var_1;
-      }else if(var_i==1){ 
+      }else if(var_i==1){
         var_r = var_2;
         var_g = v;
         var_b = var_1;
@@ -1640,14 +1640,14 @@
         var_r = var_3;
         var_g = var_1;
         var_b = v;
-      }else{ 
+      }else{
         var_r = v;
         var_g = var_1;
         var_b = var_2
       }
       RGB= [Math.round(var_r * 255), Math.round(var_g * 255), Math.round(var_b * 255)];
     }
-    return RGB;  
+    return RGB;
   };
   }(window));
 
