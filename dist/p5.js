@@ -402,7 +402,6 @@ var dataarray_functions = function (require, core) {
 var datastring_functions = function (require, core) {
         'use strict';
         var Processing = core;
-        return Processing;
         Processing.prototype.join = function (list, separator) {
             return list.join(separator);
         };
@@ -878,7 +877,7 @@ var environment = function (require, core) {
             this.curElement.style.cursor = type || 'auto';
         };
         Processing.prototype.frameRate = function (fps) {
-            if (fps == null) {
+            if (fps === null) {
                 return this._frameRate;
             } else {
                 this._setProperty('_frameRate', fps);
@@ -1222,7 +1221,7 @@ var imageloading_displaying = function (require, core, canvas, constants) {
         }
         if (o['type'] == 'jsonp')
             return handleJsonp(o, fn, err, url);
-        http = xhr(o);
+        http = o.xhr && o.xhr(o) || xhr(o);
         http.open(method, url, o['async'] === false ? false : true);
         setHeaders(http, o);
         setCredentials(http, o);

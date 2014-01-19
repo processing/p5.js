@@ -4,7 +4,7 @@ define(function (require) {
 
   var Processing = require('core');
 
-  return Processing;
+  //return Processing; //LM is this a mistake?
 
   Processing.prototype.join = function(list, separator) {
     return list.join(separator);
