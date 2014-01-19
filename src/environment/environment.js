@@ -9,7 +9,7 @@ define(function (require) {
   };
 
   Processing.prototype.frameRate = function(fps) {
-    if (fps === null) {
+    if (fps == null) {
       return this._frameRate;
     } else {
       this._setProperty('_frameRate', fps);
