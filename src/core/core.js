@@ -68,15 +68,11 @@ define(function (require) {
       ellipseMode: constants.CENTER,
       colorMode: constants.RGB,
 
-      curSketchIndex: -1,
-
       mousePressed: false,
 
       angleMode: constants.RADIANS
     };
 
-    this.sketches = [];
-    this.sketchCanvases = [];
     this.styles = [];
 
 
@@ -216,18 +212,6 @@ define(function (require) {
       userDraw();
     }
 
-    for (var i = 0; i < self.sketches.length; i++) {
-
-      var s = self.sketches[i];
-
-      if (typeof s.draw === 'function') {
-        self.settings.curSketchIndex = i;
-        self.pushStyle();
-        s.draw();
-        self.popStyle();
-        self.settings.curSketchIndex = -1;
-      }
-    }
     self.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
   };
 

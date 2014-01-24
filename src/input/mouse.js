@@ -31,17 +31,6 @@ define(function (require) {
     this._setProperty('mouseX', e.pageX);  // - parseInt(this.curElement.elt.style.left, 10);
     this._setProperty('mouseY', e.pageY);  // - parseInt(this.curElement.elt.style.top, 10);
 
-
-    for (var n = 0; n < this.sketchCanvases.length; n++) {
-      var s = this.sketches[n];
-      var c = this.sketchCanvases[n];
-      var bounds = c.elt.getBoundingClientRect();
-      s.pmouseX = s.mouseX;
-      s.pmouseY = s.mouseY;
-      s.mouseX = this.mouseX - bounds.left;
-      s.mouseY = this.mouseY - bounds.top;
-    }
-
   };
 
   Processing.prototype.setMouseButton = function(e) {
@@ -54,10 +43,6 @@ define(function (require) {
      this._setProperty('mouseButton', constants.LEFT);
     }
 
-    for (var i = 0; i < this.sketches.length; i++) {
-      var s = this.sketches[i];
-      s.mouseButton = this.mouseButton;
-    }
   };
 
   Processing.prototype.onmousemove = function(e){
@@ -68,15 +53,6 @@ define(function (require) {
     if (this.mousePressed && typeof this.mouseDragged === 'function') {
       this.mouseDragged(e);
     }
-    for (var i = 0; i < this.sketches.length; i++) {
-      var s = this.sketches[i];
-      if (!this.mousePressed && typeof s.mouseMoved === 'function') {
-        s.mouseMoved(e);
-      }
-      if (this.mousePressed && typeof s.mouseDragged === 'function') {
-        s.mouseDragged(e);
-      }
-    }
   };
 
   Processing.prototype.onmousedown = function(e) {
@@ -85,12 +61,6 @@ define(function (require) {
     if (typeof this.mousePressed === 'function') {
       this.mousePressed(e);
     }
-    for (var i = 0; i < this.sketches.length; i++) {
-      var s = this.sketches[i];
-      if (typeof s.mousePressed === 'function') {
-        s.mousePressed(e);
-      }
-    }
   };
 
   Processing.prototype.onmouseup = function(e) {
@@ -98,35 +68,17 @@ define(function (require) {
     if (typeof this.mouseReleased === 'function') {
       this.mouseReleased(e);
     }
-    for (var i = 0; i < this.sketches.length; i++) {
-      var s = this.sketches[i];
-      if (typeof s.mouseReleased === 'function') {
-        s.mouseReleased(e);
-      }
-    }
   };
 
   Processing.prototype.onmouseclick = function(e) {
     if (typeof this.mouseClicked === 'function') {
       this.mouseClicked(e);
     }
-    for (var i = 0; i < this.sketches.length; i++) {
-      var s = this.sketches[i];
-      if (typeof s.mouseClicked === 'function') {
-        s.mouseClicked(e);
-      }
-    }
   };
 
   Processing.prototype.onmousewheel = function(e) {
     if (typeof this.mouseWheel === 'function') {
       this.mouseWheel(e);
-    }
-    for (var i = 0; i < this.sketches.length; i++) {
-      var s = this.sketches[i];
-      if (typeof s.mouseWheel === 'function') {
-        s.mouseWheel(e);
-      }
     }
   };
 

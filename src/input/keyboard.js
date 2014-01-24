@@ -5,7 +5,7 @@ define(function (require) {
   var Processing = require('core');
 
   Processing.prototype.isKeyPressed = Processing.prototype.keyIsPressed = function() {
-    return this.keyPressed;
+    return this.keyDown;
   };
 
   Processing.prototype.onkeydown = function(e) {
@@ -17,12 +17,6 @@ define(function (require) {
     if (typeof keyPressed === 'function') {
       keyPressed(e);
     }
-    for (var i = 0; i < this.sketches.length; i++) {
-      var s = this.sketches[i];
-      if (typeof s.keyPressed === 'function') {
-        s.keyPressed(e);
-      }
-    }
   };
 
   Processing.prototype.onkeyup = function(e) {
@@ -32,12 +26,6 @@ define(function (require) {
     if (typeof keyReleased === 'function') {
       keyReleased(e);
     }
-    for (var i = 0; i < this.sketches.length; i++) {
-      var s = this.sketches[i];
-      if (typeof s.keyReleased === 'function') {
-        s.keyReleased(e);
-      }
-    }
   };
 
   Processing.prototype.onkeypress = function(e) {
@@ -45,12 +33,6 @@ define(function (require) {
 
     if (typeof keyTyped === 'function') {
       keyTyped(e);
-    }
-    for (var i = 0; i < this.sketches.length; i++) {
-      var s = this.sketches[i];
-      if (typeof s.keyTyped === 'function') {
-        s.keyTyped(e);
-      }
     }
   };
 

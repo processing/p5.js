@@ -113,9 +113,6 @@ define(function(require) {
         this.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
       }
 
-      if (-1 < this.curSketchIndex && this.sketchCanvases.length <= this.curSketchIndex) {
-        this.sketchCanvases[this.curSketchIndex] = this.curElement;
-      }
     }
   };
 
