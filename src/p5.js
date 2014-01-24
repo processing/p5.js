@@ -3,6 +3,8 @@ define(function (require) {
   'use strict';
 
   var Processing = require('core');
+  var PVector = require('math.pvector');
+
   require('color.creating_reading');
   require('color.setting');
   require('data.array_functions');
@@ -18,7 +20,6 @@ define(function (require) {
   require('input.time_date');
   require('input.touch');
   require('math.calculation');
-  require('math.pvector');
   require('math.random');
   require('math.trigonometry');
   require('output.files');
@@ -40,6 +41,7 @@ define(function (require) {
   }
 
   window.Processing = Processing;
+  window.PVector = PVector;
 
   return Processing;
 

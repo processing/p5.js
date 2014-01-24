@@ -2,9 +2,6 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('core');
-  var polarGeometry = require('polargeometry');
-
   function PVector(x, y, z) {
     this.x = x || 0;
     this.y = y || 0;
@@ -106,8 +103,9 @@ define(function (require) {
     return Math.atan2(this.y, this.x);
   };
 
+  // accepts angle in radians only
   PVector.prototype.rotate2D = function (a) {
-    var newHeading = this.heading() + polarGeometry.convertToRadians(a);
+    var newHeading = this.heading() + a;
     var mag = this.mag();
     this.x = Math.cos(newHeading) * mag;
     this.y = Math.sin(newHeading) * mag;
@@ -175,8 +173,6 @@ define(function (require) {
     return Math.acos(v1.dot(v2) / (v1.mag() * v2.mag()));
   };
 
-  Processing.PVector = PVector;
-
-  return Processing;
+  return PVector;
 
 });
