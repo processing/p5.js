@@ -61,11 +61,12 @@ define(function (require) {
 
 
   Processing.prototype.loadXML = function(path, callback) {
-    this.temp = [];
     var ret = [];
+    var self = this;
+    self.temp = [];
     reqwest(path, function (resp) {
-      console.log(resp);
-      this.temp = resp;
+      self.log(resp);
+      self.temp = resp;
       ret[0] = resp;
       if (typeof callback !== 'undefined') {
         callback(resp);

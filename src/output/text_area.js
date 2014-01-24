@@ -4,8 +4,10 @@ define(function (require) {
 
   var Processing = require('core');
 
-  Processing.prototype.print = console.log.bind(console);
-  Processing.prototype.println = console.log.bind(console);
+  require('log');
+
+  Processing.prototype.print = Processing.prototype.log;
+  Processing.prototype.println = Processing.prototype.log;
 
   return Processing;
 });

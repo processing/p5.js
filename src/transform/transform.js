@@ -21,6 +21,8 @@ define(function (require) {
   var Processing = require('core');
   var linearAlgebra = require('linearalgebra');
 
+  require('log');
+
   Processing.prototype.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
     this.curElement.context.transform(n00, n01, n02, n10, n11, n12);
     var m = this.matrices[this.matrices.length-1];
@@ -37,7 +39,7 @@ define(function (require) {
   };
 
   Processing.prototype.printMatrix = function() {
-    console.log(this.matrices[this.matrices.length-1]);
+    this.log(this.matrices[this.matrices.length-1]);
 
     return this;
   };

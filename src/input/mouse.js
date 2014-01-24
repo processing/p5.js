@@ -42,8 +42,6 @@ define(function (require) {
       s.mouseY = this.mouseY - bounds.top;
     }
 
-    // console.log(mouseX+' '+mouseY);
-    // console.log('mx = '+mouseX+' my = '+mouseY);
   };
 
   Processing.prototype.setMouseButton = function(e) {

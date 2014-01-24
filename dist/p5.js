@@ -1643,11 +1643,12 @@ var inputfiles = function (require, core, reqwest) {
         Processing.prototype.loadTable = function () {
         };
         Processing.prototype.loadXML = function (path, callback) {
-            this.temp = [];
             var ret = [];
+            var self = this;
+            self.temp = [];
             reqwest(path, function (resp) {
-                console.log(resp);
-                this.temp = resp;
+                self.log(resp);
+                self.temp = resp;
                 ret[0] = resp;
                 if (typeof callback !== 'undefined') {
                     callback(resp);
@@ -2017,13 +2018,23 @@ var outputimage = function (require, core) {
         };
         return Processing;
     }({}, core);
-var outputtext_area = function (require, core) {
+var log = function (require, core) {
         'use strict';
         var Processing = core;
-        Processing.prototype.print = console.log.bind(console);
-        Processing.prototype.println = console.log.bind(console);
+        Processing.prototype.log = function () {
+            if (window.console && console.log) {
+                console.log.apply(console, arguments);
+            }
+        };
         return Processing;
     }({}, core);
+var outputtext_area = function (require, core, log) {
+        'use strict';
+        var Processing = core;
+        Processing.prototype.print = Processing.prototype.log;
+        Processing.prototype.println = Processing.prototype.log;
+        return Processing;
+    }({}, core, log);
 var shape2d_primitives = function (require, core, canvas, constants) {
         'use strict';
         var Processing = core;
@@ -2304,7 +2315,7 @@ var linearalgebra = function (require) {
             }
         };
     }({});
-var transform = function (require, core, linearalgebra) {
+var transform = function (require, core, linearalgebra, log) {
         'use strict';
         var Processing = core;
         var linearAlgebra = linearalgebra;
@@ -2327,7 +2338,7 @@ var transform = function (require, core, linearalgebra) {
             return this;
         };
         Processing.prototype.printMatrix = function () {
-            console.log(this.matrices[this.matrices.length - 1]);
+            this.log(this.matrices[this.matrices.length - 1]);
             return this;
         };
         Processing.prototype.pushMatrix = function () {
@@ -2426,7 +2437,7 @@ var transform = function (require, core, linearalgebra) {
             return this;
         };
         return Processing;
-    }({}, core, linearalgebra);
+    }({}, core, linearalgebra, log);
 var typographyattributes = function (require, core, constants) {
         'use strict';
         var Processing = core;
