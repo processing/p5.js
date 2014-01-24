@@ -97,12 +97,9 @@ var core = function (require, shim, constants) {
                 imageMode: constants.CORNER,
                 ellipseMode: constants.CENTER,
                 colorMode: constants.RGB,
-                curSketchIndex: -1,
                 mousePressed: false,
                 angleMode: constants.RADIANS
             };
-            this.sketches = [];
-            this.sketchCanvases = [];
             this.styles = [];
             if (!sketchProc) {
                 this.isGlobal = true;
@@ -190,16 +187,6 @@ var core = function (require, shim, constants) {
             }
             if (typeof userDraw === 'function') {
                 userDraw();
-            }
-            for (var i = 0; i < self.sketches.length; i++) {
-                var s = self.sketches[i];
-                if (typeof s.draw === 'function') {
-                    self.settings.curSketchIndex = i;
-                    self.pushStyle();
-                    s.draw();
-                    self.popStyle();
-                    self.settings.curSketchIndex = -1;
-                }
             }
             self.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
         };
@@ -736,15 +723,6 @@ var inputmouse = function (require, core, constants) {
             this._setProperty('pmouseY', this.mouseY);
             this._setProperty('mouseX', e.pageX);
             this._setProperty('mouseY', e.pageY);
-            for (var n = 0; n < this.sketchCanvases.length; n++) {
-                var s = this.sketches[n];
-                var c = this.sketchCanvases[n];
-                var bounds = c.elt.getBoundingClientRect();
-                s.pmouseX = s.mouseX;
-                s.pmouseY = s.mouseY;
-                s.mouseX = this.mouseX - bounds.left;
-                s.mouseY = this.mouseY - bounds.top;
-            }
         };
         Processing.prototype.setMouseButton = function (e) {
             if (e.button === 1) {
@@ -753,10 +731,6 @@ var inputmouse = function (require, core, constants) {
                 this._setProperty('mouseButton', constants.RIGHT);
             } else {
                 this._setProperty('mouseButton', constants.LEFT);
-            }
-            for (var i = 0; i < this.sketches.length; i++) {
-                var s = this.sketches[i];
-                s.mouseButton = this.mouseButton;
             }
         };
         Processing.prototype.onmousemove = function (e) {
@@ -767,15 +741,6 @@ var inputmouse = function (require, core, constants) {
             if (this.mousePressed && typeof this.mouseDragged === 'function') {
                 this.mouseDragged(e);
             }
-            for (var i = 0; i < this.sketches.length; i++) {
-                var s = this.sketches[i];
-                if (!this.mousePressed && typeof s.mouseMoved === 'function') {
-                    s.mouseMoved(e);
-                }
-                if (this.mousePressed && typeof s.mouseDragged === 'function') {
-                    s.mouseDragged(e);
-                }
-            }
         };
         Processing.prototype.onmousedown = function (e) {
             this.mousePressed = true;
@@ -783,45 +748,21 @@ var inputmouse = function (require, core, constants) {
             if (typeof this.mousePressed === 'function') {
                 this.mousePressed(e);
             }
-            for (var i = 0; i < this.sketches.length; i++) {
-                var s = this.sketches[i];
-                if (typeof s.mousePressed === 'function') {
-                    s.mousePressed(e);
-                }
-            }
         };
         Processing.prototype.onmouseup = function (e) {
             this.mousePressed = false;
             if (typeof this.mouseReleased === 'function') {
                 this.mouseReleased(e);
             }
-            for (var i = 0; i < this.sketches.length; i++) {
-                var s = this.sketches[i];
-                if (typeof s.mouseReleased === 'function') {
-                    s.mouseReleased(e);
-                }
-            }
         };
         Processing.prototype.onmouseclick = function (e) {
             if (typeof this.mouseClicked === 'function') {
                 this.mouseClicked(e);
             }
-            for (var i = 0; i < this.sketches.length; i++) {
-                var s = this.sketches[i];
-                if (typeof s.mouseClicked === 'function') {
-                    s.mouseClicked(e);
-                }
-            }
         };
         Processing.prototype.onmousewheel = function (e) {
             if (typeof this.mouseWheel === 'function') {
                 this.mouseWheel(e);
-            }
-            for (var i = 0; i < this.sketches.length; i++) {
-                var s = this.sketches[i];
-                if (typeof s.mouseWheel === 'function') {
-                    s.mouseWheel(e);
-                }
             }
         };
         return Processing;
@@ -833,24 +774,12 @@ var inputtouch = function (require, core) {
             this._setProperty('touchX', e.changedTouches[0].pageX);
             this._setProperty('touchY', e.changedTouches[0].pageY);
             var touches = [];
-            for (var n = 0; n < this.sketchCanvases.length; n++) {
-                this.sketches[n].touches = [];
-            }
             for (var i = 0; i < e.changedTouches.length; i++) {
                 var ct = e.changedTouches[i];
                 touches[i] = {
                     x: ct.pageX,
                     y: ct.pageY
                 };
-                for (var m = 0; m < this.sketchCanvases.length; n++) {
-                    var s = this.sketches[m];
-                    var c = this.sketchCanvases[m];
-                    var bounds = c.elt.getBoundingClientRect();
-                    s.touches[i] = {
-                        x: ct.pageX - bounds.left,
-                        y: ct.pageY - bounds.top
-                    };
-                }
             }
             this._setProperty('touches', touches);
         };
@@ -860,13 +789,6 @@ var inputtouch = function (require, core) {
                 this.touchStarted(e);
             }
             var m = typeof touchMoved === 'function';
-            for (var i = 0; i < this.sketches.length; i++) {
-                var s = this.sketches[i];
-                if (typeof s.touchStarted === 'function') {
-                    s.touchStarted(e);
-                }
-                m |= typeof s.touchMoved === 'function';
-            }
             if (m) {
                 e.preventDefault();
             }
@@ -876,23 +798,11 @@ var inputtouch = function (require, core) {
             if (typeof this.touchMoved === 'function') {
                 this.touchMoved(e);
             }
-            for (var i = 0; i < this.sketches.length; i++) {
-                var s = this.sketches[i];
-                if (typeof s.touchMoved === 'function') {
-                    s.touchMoved(e);
-                }
-            }
         };
         Processing.prototype.ontouchend = function (e) {
             this.setTouchPoints(e);
             if (typeof this.touchEnded === 'function') {
                 this.touchEnded(e);
-            }
-            for (var i = 0; i < this.sketches.length; i++) {
-                var s = this.sketches[i];
-                if (typeof s.touchEnded === 'function') {
-                    s.touchEnded(e);
-                }
             }
         };
         return Processing;
@@ -1079,9 +989,6 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
                 this.curElement.ontouchend = this.ontouchend.bind(this);
                 if (typeof this.curElement.context !== 'undefined') {
                     this.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
-                }
-                if (-1 < this.curSketchIndex && this.sketchCanvases.length <= this.curSketchIndex) {
-                    this.sketchCanvases[this.curSketchIndex] = this.curElement;
                 }
             }
         };
@@ -1825,7 +1732,7 @@ var inputkeyboard = function (require, core) {
         'use strict';
         var Processing = core;
         Processing.prototype.isKeyPressed = Processing.prototype.keyIsPressed = function () {
-            return this.keyPressed;
+            return this.keyDown;
         };
         Processing.prototype.onkeydown = function (e) {
             var keyPressed = this.keyPressed || window.keyPressed;
@@ -1835,12 +1742,6 @@ var inputkeyboard = function (require, core) {
             if (typeof keyPressed === 'function') {
                 keyPressed(e);
             }
-            for (var i = 0; i < this.sketches.length; i++) {
-                var s = this.sketches[i];
-                if (typeof s.keyPressed === 'function') {
-                    s.keyPressed(e);
-                }
-            }
         };
         Processing.prototype.onkeyup = function (e) {
             var keyReleased = this.keyReleased || window.keyReleased;
@@ -1848,23 +1749,11 @@ var inputkeyboard = function (require, core) {
             if (typeof keyReleased === 'function') {
                 keyReleased(e);
             }
-            for (var i = 0; i < this.sketches.length; i++) {
-                var s = this.sketches[i];
-                if (typeof s.keyReleased === 'function') {
-                    s.keyReleased(e);
-                }
-            }
         };
         Processing.prototype.onkeypress = function (e) {
             var keyTyped = this.keyTyped || window.keyTyped;
             if (typeof keyTyped === 'function') {
                 keyTyped(e);
-            }
-            for (var i = 0; i < this.sketches.length; i++) {
-                var s = this.sketches[i];
-                if (typeof s.keyTyped === 'function') {
-                    s.keyTyped(e);
-                }
             }
         };
         return Processing;
