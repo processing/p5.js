@@ -9,17 +9,17 @@ define(function (require) {
     return array;
   };
 
-  Processing.prototype.arrayCopy = function(src, a, b, c, d) { //src, srcPosition, dst, dstPosition, length
-    if (typeof d !== 'undefined') {
-      for (var i=a; i<min(a+d, src.length); i++) {
-        b[dstPosition+i] = src[i];
+  Processing.prototype.arrayCopy = function(src, srcPosition, dst, dstPosition, length) { //src, srcPosition, dst, dstPosition, length
+    if (typeof length !== 'undefined') {
+      for (var i=srcPosition; i < Math.min(srcPosition + length, src.length); i++) {
+        dst[dstPosition+i] = src[i];
       }
     }
-    else if (typeof b !== 'undefined') { //src, dst, length
-      a = src.slice(0, min(b, src.length));
+    else if (typeof dst !== 'undefined') { //src, dst, length
+      srcPosition = src.slice(0, Math.min(dst, src.length));
     }
     else { //src, dst
-      a = src.slice(0);
+      srcPosition = src.slice(0);
     }
   };
 
@@ -37,8 +37,8 @@ define(function (require) {
   };
 
   Processing.prototype.sort = function(list, count) {
-    var arr = count ? list.slice(0, min(count, list.length)) : list;
-    var rest = count ? list.slice(min(count, list.length)) : [];
+    var arr = count ? list.slice(0, Math.min(count, list.length)) : list;
+    var rest = count ? list.slice(Math.min(count, list.length)) : [];
     if (typeof arr[0] === 'string') {
       arr = arr.sort();
     } else {
@@ -52,8 +52,11 @@ define(function (require) {
   };
 
   Processing.prototype.subset = function(list, start, count) {
-    if (typeof count !== 'undefined') return list.slice(start, start+count);
-    else return list.slice(start, list.length-1);
+    if (typeof count !== 'undefined') {
+      return list.slice(start, start+count);
+    } else {
+      return list.slice(start, list.length-1);
+    }
   };
 
   return Processing;

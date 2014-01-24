@@ -23,10 +23,14 @@ define(function (require) {
 
   Processing.prototype.loadJSON = function(path, callback) {
     var ret = [];
-    var t = path.indexOf('http') == -1 ? 'json' : 'jsonp';
+    var t = path.indexOf('http') === -1 ? 'json' : 'jsonp';
     reqwest({url: path, type: t, success: function (resp) {
-      for (var k in resp) ret[k] = resp[k];
-      if (typeof callback !== 'undefined') callback(resp);
+      for (var k in resp) {
+        ret[k] = resp[k];
+      }
+      if (typeof callback !== 'undefined') {
+        callback(resp);
+      }
     }});
     return ret;
   };
@@ -38,8 +42,12 @@ define(function (require) {
     req.onreadystatechange = function () {
       if((req.readyState === 4) && (req.status === 200 || req.status === 0)) {
         var arr = req.responseText.match(/[^\r\n]+/g);
-        for (var k in arr) ret[k] = arr[k];
-        if (typeof callback !== 'undefined') callback();
+        for (var k in arr) {
+          ret[k] = arr[k];
+        }
+        if (typeof callback !== 'undefined') {
+          callback();
+        }
       }
     };
     req.send(null);
@@ -59,7 +67,9 @@ define(function (require) {
       console.log(resp);
       this.temp = resp;
       ret[0] = resp;
-      if (typeof callback !== 'undefined') callback(resp);
+      if (typeof callback !== 'undefined') {
+        callback(resp);
+      }
     });
     return ret;
   };

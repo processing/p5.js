@@ -48,9 +48,9 @@ define(function (require) {
 
   Processing.prototype.setMouseButton = function(e) {
 
-    if (e.button == 1) {
+    if (e.button === 1) {
       this._setProperty('mouseButton', constants.CENTER);
-    } else if (e.button == 2) {
+    } else if (e.button === 2) {
       this._setProperty('mouseButton', constants.RIGHT);
     } else {
      this._setProperty('mouseButton', constants.LEFT);
@@ -64,11 +64,11 @@ define(function (require) {
 
   Processing.prototype.onmousemove = function(e){
     this.updateMouseCoords(e);
-    if (!this.mousePressed && typeof mouseMoved === 'function') {
-      mouseMoved(e);
+    if (!this.mousePressed && typeof this.mouseMoved === 'function') {
+      this.mouseMoved(e);
     }
-    if (this.mousePressed && typeof mouseDragged === 'function') {
-      mouseDragged(e);
+    if (this.mousePressed && typeof this.mouseDragged === 'function') {
+      this.mouseDragged(e);
     }
     for (var i = 0; i < this.sketches.length; i++) {
       var s = this.sketches[i];
@@ -84,8 +84,8 @@ define(function (require) {
   Processing.prototype.onmousedown = function(e) {
     this.mousePressed = true;
     this.setMouseButton(e);
-    if (typeof mousePressed === 'function') {
-      mousePressed(e);
+    if (typeof this.mousePressed === 'function') {
+      this.mousePressed(e);
     }
     for (var i = 0; i < this.sketches.length; i++) {
       var s = this.sketches[i];
@@ -97,8 +97,8 @@ define(function (require) {
 
   Processing.prototype.onmouseup = function(e) {
     this.mousePressed = false;
-    if (typeof mouseReleased === 'function') {
-      mouseReleased(e);
+    if (typeof this.mouseReleased === 'function') {
+      this.mouseReleased(e);
     }
     for (var i = 0; i < this.sketches.length; i++) {
       var s = this.sketches[i];
@@ -109,8 +109,8 @@ define(function (require) {
   };
 
   Processing.prototype.onmouseclick = function(e) {
-    if (typeof mouseClicked === 'function') {
-      mouseClicked(e);
+    if (typeof this.mouseClicked === 'function') {
+      this.mouseClicked(e);
     }
     for (var i = 0; i < this.sketches.length; i++) {
       var s = this.sketches[i];
@@ -121,8 +121,8 @@ define(function (require) {
   };
 
   Processing.prototype.onmousewheel = function(e) {
-    if (typeof mouseWheel === 'function') {
-      mouseWheel(e);
+    if (typeof this.mouseWheel === 'function') {
+      this.mouseWheel(e);
     }
     for (var i = 0; i < this.sketches.length; i++) {
       var s = this.sketches[i];

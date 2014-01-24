@@ -35,7 +35,7 @@ define(function (require) {
   };
 
   Processing.prototype.angleMode = function(mode) {
-    if (mode == constants.DEGREES || mode == constants.RADIANS) {
+    if (mode === constants.DEGREES || mode === constants.RADIANS) {
       this.settings.angleMode = mode;
     }
   };

@@ -19,9 +19,12 @@ define(function(require) {
         defaultCanvas.parentNode.removeChild(defaultCanvas);
       }
       if (targetID) {
-        target = document.getElementById(targetID);
-        if (target) target.appendChild(c);
-        else document.body.appendChild(c);
+        var target = document.getElementById(targetID);
+        if (target) {
+          target.appendChild(c);
+        } else {
+          document.body.appendChild(c);
+        }
       } else {
         document.body.appendChild(c);
       }
@@ -38,8 +41,8 @@ define(function(require) {
     var elt = document.createElement('div');
     elt.innerHTML = html;
     document.body.appendChild(elt);
-    c =  new PElement(elt, this);
-    context(c);
+    var c =  new PElement(elt, this);
+    this.context(c);
     return c;
   };
 
@@ -50,19 +53,23 @@ define(function(require) {
       elt.alt = alt;
     }
     document.body.appendChild(elt);
-    c =  new PElement(elt, this);
-    context(c);
+    var c =  new PElement(elt, this);
+    this.context(c);
     return c;
   };
 
   Processing.prototype.find = function(e) {
     var res = document.getElementById(e);
-    if (res) return [new PElement(res, this)];
+    if (res) {
+      return [new PElement(res, this)];
+    }
     else {
       res = document.getElementsByClassName(e);
       if (res) {
         var arr = [];
-        for(var i = 0, resl = res.length; i != resl; arr.push(new PElement(res[i++], this)));
+        for(var i = 0, resl = res.length; i !== resl; i++) {
+          arr.push(new PElement(res[i], this));
+        }
         return arr;
       }
     }
@@ -71,7 +78,7 @@ define(function(require) {
 
   Processing.prototype.context = function(e) {
     var obj;
-    if (typeof e == 'string' || e instanceof String) {
+    if (typeof e === 'string' || e instanceof String) {
       var elt = document.getElementById(e);
       obj = elt ? new PElement(elt, this) : null;
     } else {
@@ -102,7 +109,9 @@ define(function(require) {
       this.curElement.ontouchmove = this.ontouchmove.bind(this);
       this.curElement.ontouchend = this.ontouchend.bind(this);
 
-      if (typeof this.curElement.context !== 'undefined') this.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
+      if (typeof this.curElement.context !== 'undefined') {
+        this.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
+      }
 
       if (-1 < this.curSketchIndex && this.sketchCanvases.length <= this.curSketchIndex) {
         this.sketchCanvases[this.curSketchIndex] = this.curElement;

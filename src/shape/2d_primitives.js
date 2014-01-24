@@ -4,6 +4,7 @@ define(function (require) {
 
   var Processing = require('core');
   var canvas = require('canvas');
+  var constants = require('constants');
 
 	Processing.prototype.arc = function() {
     // pend todo
@@ -55,7 +56,7 @@ define(function (require) {
     this.curElement.context.fillStyle = s;
     if (this.curElement.context.lineWidth > 1) {
       this.curElement.context.beginPath();
-      this.curElement.context.arc(x, y, this.curElement.context.lineWidth / 2, 0, TWO_PI, false);
+      this.curElement.context.arc(x, y, this.curElement.context.lineWidth / 2, 0, constants.TWO_PI, false);
       this.curElement.context.fill();
     } else {
       this.curElement.context.fillRect(x, y, 1, 1);

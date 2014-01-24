@@ -16,7 +16,7 @@ define(function (require) {
 
   Processing.prototype.matchAll = function(str, reg) {
     var re = new RegExp(reg, "g");
-    match = re.exec(str);
+    var match = re.exec(str);
     var matches = [];
     while (match !== null) {
       matches.push(match);
@@ -43,12 +43,12 @@ define(function (require) {
     var neg = (num < 0);
     var n = neg ? num.toString().substring(1) : num.toString();
     var decimalInd = n.indexOf('.');
-    var intPart =  decimalInd != -1 ? n.substring(0, decimalInd) : n;
-    var decPart = decimalInd != -1 ? n.substring(decimalInd+1) : '';
+    var intPart =  decimalInd !== -1 ? n.substring(0, decimalInd) : n;
+    var decPart = decimalInd !== -1 ? n.substring(decimalInd+1) : '';
 
     var str = neg ? '-' : '';
 
-    if (arguments.length == 3) {
+    if (arguments.length === 3) {
       for (var i=0; i<arguments[1]-intPart.length; i++) { str += '0'; }
       str += intPart;
       str += '.';
@@ -56,7 +56,7 @@ define(function (require) {
       for (var j=0; j<arguments[2]-decPart.length; j++) { str += '0'; }
       return str;
     } else {
-      for (var k=0; k<max(arguments[1]-intPart.length, 0); k++) { str += '0'; }
+      for (var k=0; k < Math.max(arguments[1]-intPart.length, 0); k++) { str += '0'; }
       str += n;
       return str;
     }
@@ -74,15 +74,17 @@ define(function (require) {
   function doNfc() {
     var num = arguments[0].toString();
     var dec = num.indexOf('.');
-    var rem = dec != -1 ? num.substring(dec) : '';
-    var n = dec != -1 ? num.substring(0, dec) : num;
+    var rem = dec !== -1 ? num.substring(dec) : '';
+    var n = dec !== -1 ? num.substring(0, dec) : num;
     n = n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    if (arguments.length > 1) rem = rem.substring(0, arguments[1]+1);
+    if (arguments.length > 1) {
+      rem = rem.substring(0, arguments[1]+1);
+    }
     return n+rem;
   }
 
   Processing.prototype.nfp = function() {
-    var nfRes = nf.apply(this, arguments);
+    var nfRes = this.nf(arguments);
     if (nfRes instanceof Array) {
       return nfRes.map(addNfp);
     } else {
@@ -95,7 +97,7 @@ define(function (require) {
   }
 
   Processing.prototype.nfs = function() {
-    var nfRes = nf.apply(this, arguments);
+    var nfRes = this.nf(arguments);
     if (nfRes instanceof Array) {
       return nfRes.map(addNfs);
     } else {
@@ -118,8 +120,10 @@ define(function (require) {
 
   Processing.prototype.trim = function(str) {
     if (str instanceof Array) {
-      return str.map(trim);
-    } else return str.trim();
+      return str.map(this.trim);
+    } else {
+      return str.trim();
+    }
   };
 
   return Processing;

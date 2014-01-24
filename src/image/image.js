@@ -24,8 +24,9 @@ define(function (require) {
       ctx.drawImage(pimg.sourceImage, 0, 0);
       // note: this only works with local files!
       // pimg.imageData = ctx.getImageData(0, 0, pimg.width, pimg.height); //PEND: taking it out for now to allow url loading
-      if (typeof callback !== 'undefined') callback();
-
+      if (typeof callback !== 'undefined') {
+        callback();
+      }
     };
 
     pimg.sourceImage.src = path;
@@ -35,7 +36,9 @@ define(function (require) {
   Processing.prototype.preloadImage = function(path) {
     this.preload_count++;
     return this.loadImage(path, function () {
-      if (--this.preload_count === 0) setup();
+      if (--this.preload_count === 0) {
+        this.setup();
+      }
     });
   };
 
@@ -74,7 +77,7 @@ define(function (require) {
   };
   PImage.prototype.set = function(x, y, val) {
     var ind = y*this.width+x;
-    if (typeof val.image == 'undefined') {
+    if (typeof val.image === 'undefined') {
       if (ind < this.pixels.length) {
         this.pixels[ind] = val;
       }

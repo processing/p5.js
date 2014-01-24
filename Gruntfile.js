@@ -6,16 +6,17 @@ module.exports = function(grunt) {
       files: ['test/*.html']
     },
     jshint: {
-      files: ['Gruntfile.js', 'src/**/*.js', 'test/math/*.js'],
-      options: {
-        // options here to override JSHint defaults
-        eqnull: true,
-        globals: {
-          jQuery: true,
-          console: true,
-          module: true,
-          document: true
-        }
+      build: {
+        options: {jshintrc: '.jshintrc'},
+        src: ['Gruntfile.js']
+      },
+      source: {
+        options: {jshintrc: 'src/.jshintrc'},
+        src: ['src/**/*.js']
+      },
+      test: {
+        options: {jshintrc: 'test/.jshintrc'},
+        src: ['src/math/*.js']
       }
     },
     watch: {

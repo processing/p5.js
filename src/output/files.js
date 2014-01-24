@@ -20,8 +20,8 @@ define(function (require) {
   };
 
   Processing.prototype.createWriter  = function(name) {
-    if (this.pWriters.indexOf(name) == -1) { // check it doesn't already exist
-      this.pWriters.name = new PrintWriter(name);
+    if (this.pWriters.indexOf(name) === -1) { // check it doesn't already exist
+      this.pWriters.name = new this.PrintWriter(name);
     }
   };
 
@@ -35,13 +35,17 @@ define(function (require) {
 
   };
 
+  Processing.prototype.escape = function(content) {
+    return content;
+  };
+
   Processing.prototype.PrintWriter = function(name) {
      this.name = name;
      this.content = '';
      this.print = function(data) { this.content += data; };
      this.println = function(data) { this.content += data + '\n'; };
      this.flush = function() { this.content = ''; };
-     this.close = function() { writeFile(this.content); };
+     this.close = function() { this.writeFile(this.content); };
   };
 
   Processing.prototype.saveBytes = function() {
@@ -79,7 +83,7 @@ define(function (require) {
   };
 
   Processing.prototype.writeFile = function(content) {
-    this.open('data:text/json;charset=utf-8,' + escape(content), 'download');
+    this.open('data:text/json;charset=utf-8,' + this.escape(content), 'download');
   };
 
   return Processing;

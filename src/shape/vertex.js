@@ -11,9 +11,12 @@ define(function (require) {
   };
 
   Processing.prototype.beginShape = function(kind) {
-    if (kind == constants.POINTS || kind == constants.LINES || kind == constants.TRIANGLES || kind == constants.TRIANGLE_FAN || kind == constants.TRIANGLE_STRIP || kind == constants.QUADS || kind == constants.QUAD_STRIP)
+    if (kind === constants.POINTS || kind === constants.LINES || kind === constants.TRIANGLES || kind === constants.TRIANGLE_FAN || kind === constants.TRIANGLE_STRIP || kind === constants.QUADS || kind === constants.QUAD_STRIP) {
       this.shapeKind = kind;
-    else this.shapeKind = null;
+    } else {
+      this.shapeKind = null;
+    }
+
     this.shapeInited = true;
     this.curElement.context.beginPath();
 
@@ -37,7 +40,7 @@ define(function (require) {
   };
 
   Processing.prototype.endShape = function(mode) {
-    if (mode == constants.CLOSE) {
+    if (mode === constants.CLOSE) {
       this.curElement.context.closePath();
       this.curElement.context.fill();
     }

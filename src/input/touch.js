@@ -26,8 +26,8 @@ define(function (require) {
 
   Processing.prototype.ontouchstart = function(e) {
     this.setTouchPoints(e);
-    if(typeof touchStarted === 'function') {
-      touchStarted(e);
+    if(typeof this.touchStarted === 'function') {
+      this.touchStarted(e);
     }
     var m = typeof touchMoved === 'function';
     for (var i = 0; i < this.sketches.length; i++) {
@@ -43,8 +43,8 @@ define(function (require) {
   };
   Processing.prototype.ontouchmove = function(e) {
     this.setTouchPoints(e);
-    if(typeof touchMoved === 'function') {
-      touchMoved(e);
+    if(typeof this.touchMoved === 'function') {
+      this.touchMoved(e);
     }
     for (var i = 0; i < this.sketches.length; i++) {
       var s = this.sketches[i];
@@ -55,8 +55,8 @@ define(function (require) {
   };
   Processing.prototype.ontouchend = function(e) {
     this.setTouchPoints(e);
-    if(typeof touchEnded === 'function') {
-      touchEnded(e);
+    if(typeof this.touchEnded === 'function') {
+      this.touchEnded(e);
     }
     for (var i = 0; i < this.sketches.length; i++) {
       var s = this.sketches[i];

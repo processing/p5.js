@@ -3,7 +3,6 @@ define(function (require) {
   'use strict';
 
   var Processing = require('core');
-  var canvas = require('canvas');
 
   /*
     text(str, x, y)
@@ -13,12 +12,12 @@ define(function (require) {
 
     this.curElement.context.font=this._textStyle+' '+this._textSize+'px '+this._textFont;
 
-    if (arguments.length == 3) {
+    if (arguments.length === 3) {
 
       this.curElement.context.fillText(arguments[0], arguments[1], arguments[2]);
       this.curElement.context.strokeText(arguments[0], arguments[1], arguments[2]);
 
-    } else if (arguments.length == 5) {
+    } else if (arguments.length === 5) {
 
       var words = arguments[0].split(' ');
       var line = '';

@@ -126,7 +126,7 @@ define(function (require) {
     if (window.setup && typeof window.setup === 'function') {
 
       // Create a processing instance
-      var p = new Processing();
+      new Processing();
 
     }
 
@@ -189,7 +189,6 @@ define(function (require) {
   Processing.prototype._setup = function() {
 
     // Short-circuit on this, in case someone used the library globally earlier
-    var self = this;
     var setup = this.setup || window.setup;
 
     if (typeof setup === 'function') {

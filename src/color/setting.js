@@ -19,8 +19,9 @@ define(function (require) {
     this.curElement.context.clearRect(0, 0, this.width, this.height);
   };
   Processing.prototype.colorMode = function(mode) {
-    if (mode == constants.RGB || mode == constants.HSB)
+    if (mode === constants.RGB || mode === constants.HSB) {
       this.settings.colorMode = mode;
+    }
   };
   Processing.prototype.fill = function() {
     var c = this.getNormalizedColor(arguments);
@@ -68,13 +69,18 @@ define(function (require) {
       r = g = b = _args[0];
       a = typeof _args[1] === 'number' ? _args[1] : 255;
     }
-    if (this.settings.colorMode == constants.HSB) {
-      rgba = hsv2rgb(r, g, b).concat(a);
+    if (this.settings.colorMode === constants.HSB) {
+      rgba = this.hsv2rgb(r, g, b).concat(a);
     } else {
       rgba = [r, g, b, a];
     }
 
     return rgba;
+  };
+
+  Processing.prototype.hsv2rgb = function(h, s, b) {
+    //TODO: this doesn't do anything - write conversion
+    return [h, s, b];
   };
 
   Processing.prototype.getCSSRGBAColor = function(arr) {

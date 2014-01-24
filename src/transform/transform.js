@@ -94,7 +94,7 @@ define(function (require) {
 
   Processing.prototype.scale = function() {
     var x = 1.0, y = 1.0;
-    if (arguments.length == 1) {
+    if (arguments.length === 1) {
       x = y = arguments[0];
     } else {
       x = arguments[0];
@@ -111,17 +111,17 @@ define(function (require) {
   };
 
   Processing.prototype.shearX = function(angle) {
-    this.curElement.context.transform(1, 0, tan(angle), 1, 0, 0);
+    this.curElement.context.transform(1, 0, this.tan(angle), 1, 0, 0);
     var m = this.matrices[this.matrices.length-1];
-    m = linearAlgebra.pMultiplyMatrix(m, [1, 0, tan(angle), 1, 0, 0]);
+    m = linearAlgebra.pMultiplyMatrix(m, [1, 0, this.tan(angle), 1, 0, 0]);
 
     return this;
   };
 
   Processing.prototype.shearY = function(angle) {
-    this.curElement.context.transform(1, tan(angle), 0, 1, 0, 0);
+    this.curElement.context.transform(1, this.tan(angle), 0, 1, 0, 0);
     var m = this.matrices[this.matrices.length-1];
-    m = linearAlgebra.pMultiplyMatrix(m, [1, tan(angle), 0, 1, 0, 0]);
+    m = linearAlgebra.pMultiplyMatrix(m, [1, this.tan(angle), 0, 1, 0, 0]);
 
     return this;
   };

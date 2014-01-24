@@ -17,19 +17,19 @@ define(function (require) {
   };
 
   Processing.prototype.imageMode = function(m) {
-    if (m == constants.CORNER || m == constants.CORNERS || m == constants.CENTER) {
+    if (m === constants.CORNER || m === constants.CORNERS || m === constants.CENTER) {
       this.settings.imageMode = m;
     }
   };
 
-  function getPixels(img) {
-    var c = document.createElement('canvas');
-    c.width = img.width;
-    c.height = img.height;
-    var ctx = c.getContext('2d');
-    ctx.drawImage(img);
-    return ctx.getImageData(0,0,c.width,c.height);
-  }
+  // function getPixels(img) {
+  //   var c = document.createElement('canvas');
+  //   c.width = img.width;
+  //   c.height = img.height;
+  //   var ctx = c.getContext('2d');
+  //   ctx.drawImage(img);
+  //   return ctx.getImageData(0,0,c.width,c.height);
+  // }
 
   //// PIXELS ////////////////////////////////
 
@@ -49,6 +49,8 @@ define(function (require) {
   };
 
   Processing.prototype.get = function(x, y) {
+    var width = this.width;
+    var height = this.height;
     var pix = this.curElement.context.getImageData(0, 0, width, height).data;
     /*if (typeof w !== 'undefined' && typeof h !== 'undefined') {
       var region = [];
@@ -73,6 +75,8 @@ define(function (require) {
   };
 
   Processing.prototype.loadPixels = function() {
+    var width = this.width;
+    var height = this.height;
     var a = this.curElement.context.getImageData(0, 0, width, height).data;
     var pixels = [];
     for (var i=0; i < a.length; i+=4) {

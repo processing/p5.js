@@ -6,7 +6,7 @@ define(function (require) {
   var constants = require('constants');
 
   Processing.prototype.textAlign = function(a) {
-    if (a == constants.LEFT || a == constants.RIGHT || a == constants.CENTER) {
+    if (a === constants.LEFT || a === constants.RIGHT || a === constants.CENTER) {
       this.curElement.context.textAlign = a;
     }
   };
@@ -28,7 +28,7 @@ define(function (require) {
   };
 
   Processing.prototype.textStyle = function(s) {
-    if (s == constants.NORMAL || s == constants.ITALIC || s == constants.BOLD) {
+    if (s === constants.NORMAL || s === constants.ITALIC || s === constants.BOLD) {
       this._setProperty('_textStyle', s);
     }
   };

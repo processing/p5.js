@@ -1,5 +1,7 @@
 define(function(require) {
 
+  var constants = require('constants');
+
   function PElement(elt, pInst) {
     this.elt = elt;
     this.pInst = pInst;
@@ -24,10 +26,17 @@ define(function(require) {
     this.elt.style.top = y+'px';
   };
   PElement.prototype.size = function(w, h) {
-    var aW = w, aH = h;
-    if (aW != AUTO || aH != AUTO) {
-      if (aW == AUTO) aW = h * this.elt.width / this.elt.height;
-      else if (aH == AUTO) aH = w * this.elt.height / this.elt.width;
+    var aW = w;
+    var aH = h;
+    var AUTO = constants.AUTO;
+
+    if (aW !== AUTO || aH !== AUTO) {
+      if (aW === AUTO) {
+        aW = h * this.elt.width / this.elt.height;
+      } else if (aH === AUTO) {
+        aH = w * this.elt.height / this.elt.width;
+      }
+
       if (this.elt instanceof HTMLCanvasElement) { // set diff for cnv vs normal div
         this.elt.setAttribute('width', aW);
         this.elt.setAttribute('height', aH);
@@ -37,9 +46,9 @@ define(function(require) {
       }
       this.width = this.elt.offsetWidth;
       this.height = this.elt.offsetHeight;
-      if (this.pInst.curElement.elt == this.elt) {
-        width = this.elt.offsetWidth;
-        height = this.elt.offsetHeight;
+      if (this.pInst.curElement.elt === this.elt) {
+        this.pInst.width = this.elt.offsetWidth;
+        this.pInst.height = this.elt.offsetHeight;
       }
     }
   };

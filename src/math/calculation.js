@@ -40,7 +40,7 @@ define(function (require) {
 
   Processing.prototype.min = Math.min;
 
-  Processing.prototype.norm = function(n, start, stop) { return map(n, start, stop, 0, 1); };
+  Processing.prototype.norm = function(n, start, stop) { return this.map(n, start, stop, 0, 1); };
 
   Processing.prototype.pow = Math.pow;
 
