@@ -26,10 +26,13 @@ define(function (require) {
   Processing.prototype.updateMouseCoords = function(e) {
     this._setProperty('pmouseX', this.mouseX);
     this._setProperty('pmouseY', this.mouseY);
+    this._setProperty('mouseX', e.offsetX);
+    this._setProperty('mouseY', e.offsetY);
 
-    // TODO: These are based on the window, not the curElement
-    this._setProperty('mouseX', e.pageX);  // - parseInt(this.curElement.elt.style.left, 10);
-    this._setProperty('mouseY', e.pageY);  // - parseInt(this.curElement.elt.style.top, 10);
+    this._setProperty('pwindowMouseX', this.windowMouseX);
+    this._setProperty('pwindowMouseY', this.windowMouseY);
+    this._setProperty('windowMouseX', e.pageX);
+    this._setProperty('windowMouseY', e.pageY);
 
   };
 
