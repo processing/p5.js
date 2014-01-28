@@ -721,8 +721,12 @@ var inputmouse = function (require, core, constants) {
         Processing.prototype.updateMouseCoords = function (e) {
             this._setProperty('pmouseX', this.mouseX);
             this._setProperty('pmouseY', this.mouseY);
-            this._setProperty('mouseX', e.pageX);
-            this._setProperty('mouseY', e.pageY);
+            this._setProperty('mouseX', e.offsetX);
+            this._setProperty('mouseY', e.offsetY);
+            this._setProperty('pwindowMouseX', this.windowMouseX);
+            this._setProperty('pwindowMouseY', this.windowMouseY);
+            this._setProperty('windowMouseX', e.pageX);
+            this._setProperty('windowMouseY', e.pageY);
         };
         Processing.prototype.setMouseButton = function (e) {
             if (e.button === 1) {
@@ -976,17 +980,17 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
                 this.curElement.onblur = function () {
                     this.focused = false;
                 };
-                this.curElement.onmousemove = this.onmousemove.bind(this);
-                this.curElement.onmousedown = this.onmousedown.bind(this);
-                this.curElement.onmouseup = this.onmouseup.bind(this);
-                this.curElement.onmouseclick = this.onmouseclick.bind(this);
-                this.curElement.onmousewheel = this.onmousewheel.bind(this);
-                this.curElement.onkeydown = this.onkeydown.bind(this);
-                this.curElement.onkeyup = this.onkeyup.bind(this);
-                this.curElement.onkeypress = this.onkeypress.bind(this);
-                this.curElement.ontouchstart = this.ontouchstart.bind(this);
-                this.curElement.ontouchmove = this.ontouchmove.bind(this);
-                this.curElement.ontouchend = this.ontouchend.bind(this);
+                this.curElement.context.canvas.onmousemove = this.onmousemove.bind(this);
+                this.curElement.context.canvas.onmousedown = this.onmousedown.bind(this);
+                this.curElement.context.canvas.onmouseup = this.onmouseup.bind(this);
+                this.curElement.context.canvas.onmouseclick = this.onmouseclick.bind(this);
+                this.curElement.context.canvas.onmousewheel = this.onmousewheel.bind(this);
+                this.curElement.context.canvas.onkeydown = this.onkeydown.bind(this);
+                this.curElement.context.canvas.onkeyup = this.onkeyup.bind(this);
+                this.curElement.context.canvas.onkeypress = this.onkeypress.bind(this);
+                this.curElement.context.canvas.ontouchstart = this.ontouchstart.bind(this);
+                this.curElement.context.canvas.ontouchmove = this.ontouchmove.bind(this);
+                this.curElement.context.canvas.ontouchend = this.ontouchend.bind(this);
                 if (typeof this.curElement.context !== 'undefined') {
                     this.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
                 }
