@@ -12,7 +12,7 @@ function setup() {
 function draw() {
   context(canvas1);
   background(120, 180, 200);
-  ellipse(mouseX, mouseY, 100, 100);
+  rect(mouseX, mouseY, 100, 100);
 
   context(canvas2);
   background(50, 120, 80);
