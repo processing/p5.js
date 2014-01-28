@@ -6,16 +6,22 @@ define(function (require) {
   var constants = require('constants');
 
   /*
-  // Another possibility: mouseX, mouseY, etc. are properties with a getter
-  // that returns the relative coordinates depending on the current element.
-  // I think is overkill and might screw up things in unexpected ways in other
-  // parts of pjs.
-  Object.defineProperty(exports, "mouseX", {
+  // Trying to get mouseX to relate to the current context
+  Object.defineProperty(Processing.prototype, "mouseX", {
     get: function() {
-      var bounds = this.curElement.elt.getBoundingClientRect();
-      return absMouseX - bounds.left;
+      return this.windowMouseX - this.curElement.x;
     },
-    set: undefined
+    set: function(v) {
+      this._setProperty('mouseX', v); // broken because it calls itself?
+    }
+  });
+  Object.defineProperty(Processing.prototype, "mouseY", {
+    get: function() {
+      return this.windowMouseY - this.curElement.y;
+    },
+    set: function(v) {
+      this._setProperty('mouseY', v); // broken because it calls itself?
+    }
   });
   */
 
