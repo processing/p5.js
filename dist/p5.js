@@ -716,7 +716,7 @@ var inputmouse = function (require, core, constants) {
         var Processing = core;
         var constants = constants;
         Processing.prototype.isMousePressed = Processing.prototype.mouseIsPressed = function () {
-            return this.mousePressed;
+            return this.settings.mousePressed;
         };
         Processing.prototype.updateMouseCoords = function (e) {
             this._setProperty('pmouseX', this.mouseX);
@@ -738,35 +738,40 @@ var inputmouse = function (require, core, constants) {
             }
         };
         Processing.prototype.onmousemove = function (e) {
+            var context = this.isGlobal ? window : this;
             this.updateMouseCoords(e);
-            if (!this.mousePressed && typeof this.mouseMoved === 'function') {
-                this.mouseMoved(e);
+            if (!this.isMousePressed() && typeof context.mouseMoved === 'function') {
+                context.mouseMoved(e);
             }
-            if (this.mousePressed && typeof this.mouseDragged === 'function') {
-                this.mouseDragged(e);
+            if (this.isMousePressed() && typeof context.mouseDragged === 'function') {
+                context.mouseDragged(e);
             }
         };
         Processing.prototype.onmousedown = function (e) {
-            this.mousePressed = true;
+            var context = this.isGlobal ? window : this;
+            this.settings.mousePressed = true;
             this.setMouseButton(e);
-            if (typeof this.mousePressed === 'function') {
-                this.mousePressed(e);
+            if (typeof context.mousePressed === 'function') {
+                context.mousePressed(e);
             }
         };
         Processing.prototype.onmouseup = function (e) {
-            this.mousePressed = false;
-            if (typeof this.mouseReleased === 'function') {
-                this.mouseReleased(e);
+            var context = this.isGlobal ? window : this;
+            this.settings.mousePressed = false;
+            if (typeof context.mouseReleased === 'function') {
+                context.mouseReleased(e);
             }
         };
         Processing.prototype.onmouseclick = function (e) {
-            if (typeof this.mouseClicked === 'function') {
-                this.mouseClicked(e);
+            var context = this.isGlobal ? window : this;
+            if (typeof context.mouseClicked === 'function') {
+                context.mouseClicked(e);
             }
         };
         Processing.prototype.onmousewheel = function (e) {
-            if (typeof this.mouseWheel === 'function') {
-                this.mouseWheel(e);
+            var context = this.isGlobal ? window : this;
+            if (typeof context.mouseWheel === 'function') {
+                context.mouseWheel(e);
             }
         };
         return Processing;
@@ -980,17 +985,19 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
                 this.curElement.onblur = function () {
                     this.focused = false;
                 };
-                this.curElement.context.canvas.onmousemove = this.onmousemove.bind(this);
-                this.curElement.context.canvas.onmousedown = this.onmousedown.bind(this);
-                this.curElement.context.canvas.onmouseup = this.onmouseup.bind(this);
-                this.curElement.context.canvas.onmouseclick = this.onmouseclick.bind(this);
-                this.curElement.context.canvas.onmousewheel = this.onmousewheel.bind(this);
-                this.curElement.context.canvas.onkeydown = this.onkeydown.bind(this);
-                this.curElement.context.canvas.onkeyup = this.onkeyup.bind(this);
-                this.curElement.context.canvas.onkeypress = this.onkeypress.bind(this);
-                this.curElement.context.canvas.ontouchstart = this.ontouchstart.bind(this);
-                this.curElement.context.canvas.ontouchmove = this.ontouchmove.bind(this);
-                this.curElement.context.canvas.ontouchend = this.ontouchend.bind(this);
+                if (!this.isGlobal) {
+                    this.curElement.context.canvas.onmousemove = this.onmousemove.bind(this);
+                    this.curElement.context.canvas.onmousedown = this.onmousedown.bind(this);
+                    this.curElement.context.canvas.onmouseup = this.onmouseup.bind(this);
+                    this.curElement.context.canvas.onmouseclick = this.onmouseclick.bind(this);
+                    this.curElement.context.canvas.onmousewheel = this.onmousewheel.bind(this);
+                    this.curElement.context.canvas.onkeydown = this.onkeydown.bind(this);
+                    this.curElement.context.canvas.onkeyup = this.onkeyup.bind(this);
+                    this.curElement.context.canvas.onkeypress = this.onkeypress.bind(this);
+                    this.curElement.context.canvas.ontouchstart = this.ontouchstart.bind(this);
+                    this.curElement.context.canvas.ontouchmove = this.ontouchmove.bind(this);
+                    this.curElement.context.canvas.ontouchend = this.ontouchend.bind(this);
+                }
                 if (typeof this.curElement.context !== 'undefined') {
                     this.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
                 }

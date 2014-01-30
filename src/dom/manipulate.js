@@ -97,17 +97,21 @@ define(function(require) {
         this.focused = false;
       };
 
-      this.curElement.context.canvas.onmousemove = this.onmousemove.bind(this);
-      this.curElement.context.canvas.onmousedown = this.onmousedown.bind(this);
-      this.curElement.context.canvas.onmouseup = this.onmouseup.bind(this);
-      this.curElement.context.canvas.onmouseclick = this.onmouseclick.bind(this);
-      this.curElement.context.canvas.onmousewheel = this.onmousewheel.bind(this);
-      this.curElement.context.canvas.onkeydown = this.onkeydown.bind(this);
-      this.curElement.context.canvas.onkeyup = this.onkeyup.bind(this);
-      this.curElement.context.canvas.onkeypress = this.onkeypress.bind(this);
-      this.curElement.context.canvas.ontouchstart = this.ontouchstart.bind(this);
-      this.curElement.context.canvas.ontouchmove = this.ontouchmove.bind(this);
-      this.curElement.context.canvas.ontouchend = this.ontouchend.bind(this);
+      // TODO: This is a workaround for the global case where event handlers
+      // have been attached to the window just by declaring them
+      if (!this.isGlobal) {
+        this.curElement.context.canvas.onmousemove = this.onmousemove.bind(this);
+        this.curElement.context.canvas.onmousedown = this.onmousedown.bind(this);
+        this.curElement.context.canvas.onmouseup = this.onmouseup.bind(this);
+        this.curElement.context.canvas.onmouseclick = this.onmouseclick.bind(this);
+        this.curElement.context.canvas.onmousewheel = this.onmousewheel.bind(this);
+        this.curElement.context.canvas.onkeydown = this.onkeydown.bind(this);
+        this.curElement.context.canvas.onkeyup = this.onkeyup.bind(this);
+        this.curElement.context.canvas.onkeypress = this.onkeypress.bind(this);
+        this.curElement.context.canvas.ontouchstart = this.ontouchstart.bind(this);
+        this.curElement.context.canvas.ontouchmove = this.ontouchmove.bind(this);
+        this.curElement.context.canvas.ontouchend = this.ontouchend.bind(this);
+      }
 
       if (typeof this.curElement.context !== 'undefined') {
         this.curElement.context.setTransform(1, 0, 0, 1, 0, 0);

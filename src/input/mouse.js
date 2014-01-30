@@ -26,7 +26,7 @@ define(function (require) {
   */
 
   Processing.prototype.isMousePressed = Processing.prototype.mouseIsPressed = function() {
-    return this.mousePressed;
+    return this.settings.mousePressed;
   };
 
   Processing.prototype.updateMouseCoords = function(e) {
@@ -55,39 +55,45 @@ define(function (require) {
   };
 
   Processing.prototype.onmousemove = function(e){
+    // TODO: temporary fix to set context based on whether in global mode or not
+    var context = this.isGlobal ? window : this;
     this.updateMouseCoords(e);
-    if (!this.mousePressed && typeof this.mouseMoved === 'function') {
-      this.mouseMoved(e);
+    if (!this.isMousePressed() && typeof context.mouseMoved === 'function') {
+      context.mouseMoved(e);
     }
-    if (this.mousePressed && typeof this.mouseDragged === 'function') {
-      this.mouseDragged(e);
+    if (this.isMousePressed() && typeof context.mouseDragged === 'function') {
+      context.mouseDragged(e);
     }
   };
 
   Processing.prototype.onmousedown = function(e) {
-    this.mousePressed = true;
+    var context = this.isGlobal ? window : this;
+    this.settings.mousePressed = true;
     this.setMouseButton(e);
-    if (typeof this.mousePressed === 'function') {
-      this.mousePressed(e);
+    if (typeof context.mousePressed === 'function') {
+      context.mousePressed(e);
     }
   };
 
   Processing.prototype.onmouseup = function(e) {
-    this.mousePressed = false;
-    if (typeof this.mouseReleased === 'function') {
-      this.mouseReleased(e);
+    var context = this.isGlobal ? window : this;
+    this.settings.mousePressed = false;
+    if (typeof context.mouseReleased === 'function') {
+      context.mouseReleased(e);
     }
   };
 
   Processing.prototype.onmouseclick = function(e) {
-    if (typeof this.mouseClicked === 'function') {
-      this.mouseClicked(e);
+    var context = this.isGlobal ? window : this;
+    if (typeof context.mouseClicked === 'function') {
+      context.mouseClicked(e);
     }
   };
 
   Processing.prototype.onmousewheel = function(e) {
-    if (typeof this.mouseWheel === 'function') {
-      this.mouseWheel(e);
+    var context = this.isGlobal ? window : this;
+    if (typeof context.mouseWheel === 'function') {
+      context.mouseWheel(e);
     }
   };
 
