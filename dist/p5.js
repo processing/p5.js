@@ -1354,7 +1354,7 @@ var imageloading_displaying = function (require, core, canvas, constants) {
         }
         if (o['type'] == 'jsonp')
             return handleJsonp(o, fn, err, url);
-        http = xhr(o);
+        http = o.xhr && o.xhr(o) || xhr(o);
         http.open(method, url, o['async'] === false ? false : true);
         setHeaders(http, o);
         setCredentials(http, o);
