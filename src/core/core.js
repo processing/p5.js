@@ -138,10 +138,10 @@ define(function (require) {
 
     if (preload) {
 
-      context.loadJSON = function(path) { return this.preloadFunc("loadJSON", path); };
-      context.loadStrings = function(path) { return this.preloadFunc("loadStrings", path); };
-      context.loadXML = function(path) { return this.preloadFunc("loadXML", path); };
-      context.loadImage = function(path) { return this.preloadFunc("loadImage", path); };
+      context.loadJSON = function(path) { return this.preloadFunc('loadJSON', path); };
+      context.loadStrings = function(path) { return this.preloadFunc('loadStrings', path); };
+      context.loadXML = function(path) { return this.preloadFunc('loadXML', path); };
+      context.loadImage = function(path) { return this.preloadFunc('loadImage', path); };
 
       preload();
 

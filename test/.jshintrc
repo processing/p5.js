@@ -1,21 +1,27 @@
 {
+  "boss": true,
   "curly": true,
   "eqeqeq": true,
+  "eqnull": true,
   "immed": true,
   "latedef": "nofunc",
   "newcap": true,
   "noarg": true,
-  "sub": true,
+  "quotmark": "single",
   "undef": true,
   "unused": "vars",
-  "boss": true,
-  "eqnull": true,
+
   "browser": true,
   "globals": {
-    "define": true,
-    "describe": true,
-    "expect": true,
-    "it": true,
-    "sinon": true
+    "afterEach": false,
+    "beforeEach": false,
+    "define": false,
+    "describe": false,
+    "expect": false,
+    "it": false,
+    "sinon": false,
+    "PElement": false,
+    "Processing": false,
+    "PVector": false
   }
 }

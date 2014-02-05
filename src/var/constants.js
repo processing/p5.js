@@ -17,8 +17,8 @@ define(function(require) {
     QUARTER_PI: PI / 4,
     TAU: PI * 2,
     TWO_PI: PI * 2,
-    DEGREES: "degrees",
-    RADIANS: "radians",
+    DEGREES: 'degrees',
+    RADIANS: 'radians',
 
     // SHAPE
     CORNER: 'corner',

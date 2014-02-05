@@ -5,7 +5,7 @@ define(function (require) {
   var Processing = require('core');
 
   Processing.prototype.exit = function() {
-    throw "Not implemented";
+    throw 'Not implemented';
   };
 
   Processing.prototype.noLoop = function() {
@@ -62,11 +62,11 @@ define(function (require) {
   };
 
   Processing.prototype.redraw = function() {
-    throw "Not implemented";
+    throw 'Not implemented';
   };
 
   Processing.prototype.size = function() {
-    throw "Not implemented";
+    throw 'Not implemented';
   };
 
   return Processing;
