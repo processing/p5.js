@@ -18,7 +18,7 @@ define(function (require) {
 
       // draw to canvas to get image data
       var canvas = document.createElement('canvas');
-      var ctx=canvas.getContext("2d");
+      var ctx=canvas.getContext('2d');
       canvas.width=pimg.width;
       canvas.height=pimg.height;
       ctx.drawImage(pimg.sourceImage, 0, 0);

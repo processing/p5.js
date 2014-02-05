@@ -15,7 +15,7 @@ define(function (require) {
   };
 
   Processing.prototype.matchAll = function(str, reg) {
-    var re = new RegExp(reg, "g");
+    var re = new RegExp(reg, 'g');
     var match = re.exec(str);
     var matches = [];
     while (match !== null) {

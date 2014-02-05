@@ -1,14 +1,16 @@
 {
+  "boss": true,
   "curly": true,
   "eqeqeq": true,
+  "eqnull": true,
   "immed": true,
   "latedef": "nofunc",
   "newcap": true,
   "noarg": true,
-  "sub": true,
+  "quotmark": "single",
+  "trailing": true,
   "undef": true,
   "unused": "vars",
-  "boss": true,
-  "eqnull": true,
+
   "node": true
 }
