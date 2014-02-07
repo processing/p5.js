@@ -46,12 +46,11 @@ define(function (require) {
           ret[k] = arr[k];
         }
         if (typeof callback !== 'undefined') {
-          callback();
+          callback(ret);
         }
       }
     };
     req.send(null);
-    return ret;
   };
 
   Processing.prototype.loadTable = function () {
