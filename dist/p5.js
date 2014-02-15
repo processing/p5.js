@@ -1031,91 +1031,6 @@ var environment = function (require, core) {
         };
         return Processing;
     }({}, core);
-var image = function (require, core) {
-        'use strict';
-        var Processing = core;
-        Processing.createImage = function (w, h, format) {
-            return new PImage(w, h, this);
-        };
-        Processing.prototype.loadImage = function (path, callback) {
-            var pimg = new PImage(null, null, this);
-            pimg.sourceImage = new Image();
-            pimg.sourceImage.onload = function () {
-                pimg.width = pimg.sourceImage.width;
-                pimg.height = pimg.sourceImage.height;
-                var canvas = document.createElement('canvas');
-                var ctx = canvas.getContext('2d');
-                canvas.width = pimg.width;
-                canvas.height = pimg.height;
-                ctx.drawImage(pimg.sourceImage, 0, 0);
-                if (typeof callback !== 'undefined') {
-                    callback();
-                }
-            };
-            pimg.sourceImage.src = path;
-            return pimg;
-        };
-        Processing.prototype.preloadImage = function (path) {
-            this.preload_count++;
-            return this.loadImage(path, function () {
-                if (--this.preload_count === 0) {
-                    this.setup();
-                }
-            });
-        };
-        function PImage(w, h, pInst) {
-            this.width = w || 1;
-            this.height = h || 1;
-            this.pInst = pInst;
-            this.pixels = [];
-        }
-        PImage.prototype.loadPixels = function () {
-            this.pixels = [];
-            var imageData = this.pInst.curElement.context.createImageData(this.width, this.height);
-            for (var i = 3, len = imageData.length; i < len; i += 4) {
-                imageData[i] = 255;
-            }
-            var data = this.imageData.data;
-            for (var j = 0; j < data.length; j += 4) {
-                this.pixels.push([
-                    data[j],
-                    data[j + 1],
-                    data[j + 2],
-                    data[j + 3]
-                ]);
-            }
-        };
-        PImage.prototype.resize = function () {
-        };
-        PImage.prototype.get = function (x, y, w, h) {
-            var wp = w ? w : 1;
-            var hp = h ? h : 1;
-            var vals = [];
-            for (var j = y; j < y + hp; j++) {
-                for (var i = x; i < x + wp; i++) {
-                    vals.push(this.pixels[j * this.width + i]);
-                }
-            }
-        };
-        PImage.prototype.set = function (x, y, val) {
-            var ind = y * this.width + x;
-            if (typeof val.image === 'undefined') {
-                if (ind < this.pixels.length) {
-                    this.pixels[ind] = val;
-                }
-            } else {
-            }
-        };
-        PImage.prototype.filter = function () {
-        };
-        PImage.prototype.copy = function () {
-        };
-        PImage.prototype.blend = function () {
-        };
-        PImage.prototype.save = function () {
-        };
-        return PImage;
-    }({}, core);
 var canvas = function (require, constants) {
         var constants = constants;
         return {
@@ -1152,25 +1067,227 @@ var canvas = function (require, constants) {
             }
         };
     }({}, constants);
-var imageloading_displaying = function (require, core, canvas, constants) {
+var image = function (require, core, canvas, constants) {
         'use strict';
         var Processing = core;
         var canvas = canvas;
         var constants = constants;
-        Processing.prototype.image = function () {
-            var vals;
-            if (arguments.length < 5) {
-                vals = canvas.modeAdjust(arguments[1], arguments[2], arguments[0].width, arguments[0].height, this.settings.imageMode);
-            } else {
-                vals = canvas.modeAdjust(arguments[1], arguments[2], arguments[3], arguments[4], this.settings.imageMode);
+        Processing.prototype.createImage = function (width, height) {
+            return new PImage(width, height, this);
+        };
+        Processing.prototype.loadImage = function (path, callback) {
+            var img = new Image();
+            var pImg = new PImage(1, 1, this);
+            img.onload = function () {
+                pImg.width = pImg.canvas.width = img.width;
+                pImg.height = pImg.canvas.height = img.height;
+                pImg.canvas.getContext('2d').drawImage(img, 0, 0);
+                if (typeof callback !== 'undefined') {
+                    callback(pImg);
+                }
+            };
+            img.crossOrigin = 'Anonymous';
+            img.src = path;
+            return pImg;
+        };
+        Processing.prototype.image = function (image, x, y, width, height) {
+            if (width === undefined) {
+                width = image.width;
             }
-            this.curElement.context.drawImage(arguments[0].sourceImage, vals.x, vals.y, vals.w, vals.h);
+            if (height === undefined) {
+                height = image.height;
+            }
+            var vals = canvas.modeAdjust(x, y, width, height, this.settings.imageMode);
+            this.curElement.context.drawImage(image.canvas, vals.x, vals.y, vals.w, vals.h);
         };
         Processing.prototype.imageMode = function (m) {
             if (m === constants.CORNER || m === constants.CORNERS || m === constants.CENTER) {
                 this.settings.imageMode = m;
             }
         };
+        function PImage(width, height, pInst) {
+            this.width = width;
+            this.height = height;
+            this.pInst = pInst;
+            this.canvas = document.createElement('canvas');
+            this.canvas.width = this.width;
+            this.canvas.height = this.height;
+            this.pixels = [];
+        }
+        PImage.prototype.loadPixels = function () {
+            var x = 0;
+            var y = 0;
+            var w = this.width;
+            var h = this.height;
+            var imageData = this.canvas.getContext('2d').getImageData(x, y, w, h);
+            var data = imageData.data;
+            var pixels = [];
+            for (var i = 0; i < data.length; i += 4) {
+                pixels.push([
+                    data[i],
+                    data[i + 1],
+                    data[i + 2],
+                    data[i + 3]
+                ]);
+            }
+            this.pixels = pixels;
+        };
+        PImage.prototype.updatePixels = function (x, y, w, h) {
+            if (x === undefined && y === undefined && w === undefined && h === undefined) {
+                x = 0;
+                y = 0;
+                w = this.width;
+                h = this.height;
+            }
+            var imageData = this.canvas.getContext('2d').getImageData(x, y, w, h);
+            var data = imageData.data;
+            for (var i = 0; i < this.pixels.length; i += 1) {
+                var j = i * 4;
+                data[j] = this.pixels[i][0];
+                data[j + 1] = this.pixels[i][1];
+                data[j + 2] = this.pixels[i][2];
+                data[j + 3] = this.pixels[i][3];
+            }
+            this.canvas.getContext('2d').putImageData(imageData, x, y, 0, 0, w, h);
+        };
+        PImage.prototype.get = function (x, y, w, h) {
+            if (x === undefined && y === undefined && w === undefined && h === undefined) {
+                x = 0;
+                y = 0;
+                w = this.width;
+                h = this.height;
+            } else if (w === undefined && h === undefined) {
+                w = 1;
+                h = 1;
+            }
+            if (x > this.width || y > this.height) {
+                return undefined;
+            }
+            var imageData = this.canvas.getContext('2d').getImageData(x, y, w, h);
+            var data = imageData.data;
+            if (w === 1 && h === 1) {
+                var pixels = [];
+                for (var i = 0; i < data.length; i += 4) {
+                    pixels.push(data[i], data[i + 1], data[i + 2], data[i + 3]);
+                }
+                return pixels;
+            } else {
+                w = Math.min(w, this.width);
+                h = Math.min(h, this.height);
+                var region = new PImage(w, h, this.pInst);
+                region.canvas.getContext('2d').putImageData(imageData, 0, 0, 0, 0, w, h);
+                return region;
+            }
+        };
+        PImage.prototype.set = function (x, y, imgOrCol) {
+            var idx = y * this.width + x;
+            if (imgOrCol instanceof Array) {
+                if (idx < this.pixels.length) {
+                    this.pixels[idx] = imgOrCol;
+                    this.updatePixels();
+                }
+            } else {
+                this.canvas.getContext('2d').drawImage(imgOrCol.canvas, 0, 0);
+                this.loadPixels();
+            }
+        };
+        PImage.prototype.resize = function (width, height) {
+            var tempCanvas = document.createElement('canvas');
+            tempCanvas.width = width;
+            tempCanvas.height = height;
+            tempCanvas.getContext('2d').drawImage(this.canvas, 0, 0, this.canvas.width, this.canvas.height, 0, 0, tempCanvas.width, tempCanvas.width);
+            this.canvas.width = this.width = width;
+            this.canvas.height = this.height = height;
+            this.canvas.getContext('2d').drawImage(tempCanvas, 0, 0, width, height, 0, 0, width, height);
+            if (this.pixels.length > 0) {
+                this.loadPixels();
+            }
+        };
+        PImage.prototype.copy = function () {
+            var srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
+            if (arguments.length === 9) {
+                srcImage = arguments[0];
+                sx = arguments[1];
+                sy = arguments[2];
+                sw = arguments[3];
+                sh = arguments[4];
+                dx = arguments[5];
+                dy = arguments[6];
+                dw = arguments[7];
+                dh = arguments[8];
+            } else if (arguments.length === 8) {
+                sx = arguments[0];
+                sy = arguments[1];
+                sw = arguments[2];
+                sh = arguments[3];
+                dx = arguments[4];
+                dy = arguments[5];
+                dw = arguments[6];
+                dh = arguments[7];
+                srcImage = this;
+            } else {
+                throw new Error('Signature not supported');
+            }
+            this.canvas.getContext('2d').drawImage(srcImage.canvas, sx, sy, sw, sh, dx, dy, dw, dh);
+        };
+        PImage.prototype.mask = function (pImage) {
+            if (pImage === undefined) {
+                pImage = this;
+            }
+            var currBlend = this.canvas.getContext('2d').globalCompositeOperation;
+            var copyArgs = [
+                    pImage,
+                    0,
+                    0,
+                    pImage.width,
+                    pImage.height,
+                    0,
+                    0,
+                    this.width,
+                    this.height
+                ];
+            this.canvas.getContext('2d').globalCompositeOperation = 'destination-out';
+            this.copy.apply(this, copyArgs);
+            this.canvas.getContext('2d').globalCompositeOperation = currBlend;
+        };
+        PImage.prototype.filter = function (operation, value) {
+        };
+        PImage.prototype.blend = function () {
+            var currBlend = this.canvas.getContext('2d').globalCompositeOperation;
+            var blendMode = arguments[arguments.length - 1];
+            var copyArgs = Array.prototype.slice.call(arguments, 0, arguments.length - 1);
+            this.canvas.getContext('2d').globalCompositeOperation = blendMode;
+            this.copy.apply(this, copyArgs);
+            this.canvas.getContext('2d').globalCompositeOperation = currBlend;
+        };
+        PImage.prototype.save = function (extension) {
+            var mimeType;
+            switch (extension.toLowerCase()) {
+            case 'png':
+                mimeType = 'image/png';
+                break;
+            case 'jpeg':
+                mimeType = 'image/jpeg';
+                break;
+            case 'jpg':
+                mimeType = 'image/jpeg';
+                break;
+            default:
+                mimeType = 'image/png';
+                break;
+            }
+            if (mimeType !== undefined) {
+                var downloadMime = 'image/octet-stream';
+                var imageData = this.canvas.toDataURL(mimeType);
+                imageData = imageData.replace(mimeType, downloadMime);
+                window.location.href = imageData;
+            }
+        };
+        return PImage;
+    }({}, core, canvas, constants);
+var imageloading_displaying = function (require, core) {
+        'use strict';
+        var Processing = core;
         Processing.prototype.blend = function () {
         };
         Processing.prototype.copy = function () {
@@ -1228,7 +1345,7 @@ var imageloading_displaying = function (require, core, canvas, constants) {
         Processing.prototype.updatePixels = function () {
         };
         return Processing;
-    }({}, core, canvas, constants);
+    }({}, core);
 !function (name, context, definition) {
     if (typeof module != 'undefined' && module.exports)
         module.exports = definition();
