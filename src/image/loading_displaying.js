@@ -6,21 +6,7 @@ define(function (require) {
   var canvas = require('canvas');
   var constants = require('constants');
 
-  Processing.prototype.image = function() {
-    var vals;
-    if (arguments.length < 5) {
-      vals = canvas.modeAdjust(arguments[1], arguments[2], arguments[0].width, arguments[0].height, this.settings.imageMode);
-    } else {
-      vals = canvas.modeAdjust(arguments[1], arguments[2], arguments[3], arguments[4], this.settings.imageMode);
-    }
-    this.curElement.context.drawImage(arguments[0].sourceImage, vals.x, vals.y, vals.w, vals.h);
-  };
-
-  Processing.prototype.imageMode = function(m) {
-    if (m === constants.CORNER || m === constants.CORNERS || m === constants.CENTER) {
-      this.settings.imageMode = m;
-    }
-  };
+  
 
   // function getPixels(img) {
   //   var c = document.createElement('canvas');
