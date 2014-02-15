@@ -3,9 +3,6 @@ define(function (require) {
   'use strict';
 
   var Processing = require('core');
-  var canvas = require('canvas');
-  var constants = require('constants');
-
   
 
   // function getPixels(img) {

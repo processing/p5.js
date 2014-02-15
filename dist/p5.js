@@ -1285,11 +1285,9 @@ var image = function (require, core, canvas, constants) {
         };
         return PImage;
     }({}, core, canvas, constants);
-var imageloading_displaying = function (require, core, canvas, constants) {
+var imageloading_displaying = function (require, core) {
         'use strict';
         var Processing = core;
-        var canvas = canvas;
-        var constants = constants;
         Processing.prototype.blend = function () {
         };
         Processing.prototype.copy = function () {
@@ -1347,7 +1345,7 @@ var imageloading_displaying = function (require, core, canvas, constants) {
         Processing.prototype.updatePixels = function () {
         };
         return Processing;
-    }({}, core, canvas, constants);
+    }({}, core);
 !function (name, context, definition) {
     if (typeof module != 'undefined' && module.exports)
         module.exports = definition();

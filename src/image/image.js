@@ -47,7 +47,7 @@ define(function (require) {
       pImg.height = pImg.canvas.height = img.height;
 
       // Draw the image into the backing canvas of the pImage
-      pImg.canvas.getContext("2d").drawImage(img, 0, 0);
+      pImg.canvas.getContext('2d').drawImage(img, 0, 0);
 
       if (typeof callback !== 'undefined') {
         callback(pImg);
@@ -57,7 +57,7 @@ define(function (require) {
     //set crossOrigin in case image is served which CORS headers
     //this will let us draw to canvas without tainting it.
     //see https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
-    img.crossOrigin = "Anonymous";
+    img.crossOrigin = 'Anonymous';
 
     //start loading the image
     img.src = path;
@@ -258,7 +258,7 @@ define(function (require) {
         this.updatePixels();
       }
     } else {
-      this.canvas.getContext("2d").drawImage(imgOrCol.canvas, 0, 0);
+      this.canvas.getContext('2d').drawImage(imgOrCol.canvas, 0, 0);
       this.loadPixels();
     }
   };
@@ -284,7 +284,7 @@ define(function (require) {
     var tempCanvas = document.createElement('canvas');
     tempCanvas.width = width;
     tempCanvas.height = height;
-    tempCanvas.getContext("2d").drawImage(this.canvas,
+    tempCanvas.getContext('2d').drawImage(this.canvas,
       0, 0, this.canvas.width, this.canvas.height,
       0, 0, tempCanvas.width, tempCanvas.width
     );
@@ -296,7 +296,7 @@ define(function (require) {
 
     //Copy the image back
 
-    this.canvas.getContext("2d").drawImage(tempCanvas,
+    this.canvas.getContext('2d').drawImage(tempCanvas,
       0, 0, width, height,
       0, 0, width, height
     );
@@ -347,10 +347,10 @@ define(function (require) {
 
       srcImage = this;
     } else {
-      throw new Error("Signature not supported");
+      throw new Error('Signature not supported');
     }
 
-    this.canvas.getContext("2d").drawImage(srcImage.canvas,
+    this.canvas.getContext('2d').drawImage(srcImage.canvas,
       sx, sy, sw, sh, dx, dy, dw, dh
     );
   };
@@ -380,7 +380,7 @@ define(function (require) {
 
     var copyArgs = [pImage, 0, 0, pImage.width, pImage.height, 0, 0, this.width, this.height];
 
-    this.canvas.getContext('2d').globalCompositeOperation = "destination-out";
+    this.canvas.getContext('2d').globalCompositeOperation = 'destination-out';
     this.copy.apply(this, copyArgs);
     this.canvas.getContext('2d').globalCompositeOperation = currBlend;   
   };
@@ -435,28 +435,28 @@ define(function (require) {
    * 
    */
   PImage.prototype.save = function(extension) {
-    // var components = name.split(".");
+    // var components = name.split('.');
     // var extension = components[components.length - 1];
     var mimeType;
     
     // http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support
     switch(extension.toLowerCase()){
-      case "png":
-        mimeType = "image/png";
+      case 'png':
+        mimeType = 'image/png';
         break;
-      case "jpeg":
-        mimeType = "image/jpeg";
+      case 'jpeg':
+        mimeType = 'image/jpeg';
         break;
-      case "jpg":
-        mimeType = "image/jpeg";
+      case 'jpg':
+        mimeType = 'image/jpeg';
         break;      
       default:
-        mimeType = "image/png";
+        mimeType = 'image/png';
         break;
     }
 
     if(mimeType !== undefined){
-      var downloadMime = "image/octet-stream";
+      var downloadMime = 'image/octet-stream';
       var imageData = this.canvas.toDataURL(mimeType);
       imageData = imageData.replace(mimeType, downloadMime);
       
