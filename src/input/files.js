@@ -29,10 +29,9 @@ define(function (require) {
         ret[k] = resp[k];
       }
       if (typeof callback !== 'undefined') {
-        callback(resp);
+        callback(ret);
       }
     }});
-    return ret;
   };
 
   Processing.prototype.loadStrings = function(path, callback) {
@@ -68,10 +67,9 @@ define(function (require) {
       self.temp = resp;
       ret[0] = resp;
       if (typeof callback !== 'undefined') {
-        callback(resp);
+        callback(ret);
       }
     });
-    return ret;
   };
 
   Processing.prototype.open = function() {

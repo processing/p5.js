@@ -136,16 +136,16 @@ var core = function (require, shim, constants) {
             var context = this.isGlobal ? window : this;
             if (preload) {
                 context.loadJSON = function (path) {
-                    return this.preloadFunc('loadJSON', path);
+                    return context.preloadFunc('loadJSON', path);
                 };
                 context.loadStrings = function (path) {
-                    return this.preloadFunc('loadStrings', path);
+                    return context.preloadFunc('loadStrings', path);
                 };
                 context.loadXML = function (path) {
-                    return this.preloadFunc('loadXML', path);
+                    return context.preloadFunc('loadXML', path);
                 };
                 context.loadImage = function (path) {
-                    return this.preloadFunc('loadImage', path);
+                    return context.preloadFunc('loadImage', path);
                 };
                 preload();
                 context.loadJSON = Processing.prototype.loadJSON;
@@ -1687,11 +1687,10 @@ var inputfiles = function (require, core, reqwest) {
                         ret[k] = resp[k];
                     }
                     if (typeof callback !== 'undefined') {
-                        callback(resp);
+                        callback(ret);
                     }
                 }
             });
-            return ret;
         };
         Processing.prototype.loadStrings = function (path, callback) {
             var ret = [];
@@ -1704,12 +1703,11 @@ var inputfiles = function (require, core, reqwest) {
                         ret[k] = arr[k];
                     }
                     if (typeof callback !== 'undefined') {
-                        callback();
+                        callback(ret);
                     }
                 }
             };
             req.send(null);
-            return ret;
         };
         Processing.prototype.loadTable = function () {
         };
@@ -1722,10 +1720,9 @@ var inputfiles = function (require, core, reqwest) {
                 self.temp = resp;
                 ret[0] = resp;
                 if (typeof callback !== 'undefined') {
-                    callback(resp);
+                    callback(ret);
                 }
             });
-            return ret;
         };
         Processing.prototype.open = function () {
         };
