@@ -136,16 +136,16 @@ var core = function (require, shim, constants) {
             var context = this.isGlobal ? window : this;
             if (preload) {
                 context.loadJSON = function (path) {
-                    return context.preloadFunc('loadJSON', path);
+                    return this.preloadFunc('loadJSON', path);
                 };
                 context.loadStrings = function (path) {
-                    return context.preloadFunc('loadStrings', path);
+                    return this.preloadFunc('loadStrings', path);
                 };
                 context.loadXML = function (path) {
-                    return context.preloadFunc('loadXML', path);
+                    return this.preloadFunc('loadXML', path);
                 };
                 context.loadImage = function (path) {
-                    return context.preloadFunc('loadImage', path);
+                    return this.preloadFunc('loadImage', path);
                 };
                 preload();
                 context.loadJSON = Processing.prototype.loadJSON;
