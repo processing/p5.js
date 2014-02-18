@@ -231,8 +231,9 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [loadPixels()](http://processing.org/reference/loadPixels_.html)
 + [pixels[]](http://processing.org/reference/pixels.html)
 
-###Rendering 
-+ [createGraphics()](http://processing.org/reference/createGraphics_.html) - createGraphics() effectively replaces the previous size() function. It is used for onscreen drawing as well as offscreen drawing. See notes about PGraphics below. See additional information on the [DOM extensions page](https://github.com/lmccart/p5.js/blob/master/extensions.md).
+###Rendering
++ createCanvas() - effectively replaces the previous [size()](http://processing.org/reference/size_.html) function. It creates a `<canvas>` element to be the main drawing surface of the sketch.
++ [createGraphics()](http://processing.org/reference/createGraphics_.html) - Used for onscreen drawing as well as offscreen drawing. See notes about PGraphics below. See additional information on the [DOM extensions page](https://github.com/lmccart/p5.js/blob/master/extensions.md).
 + [PGraphics](http://processing.org/reference/PGraphics.html) - PGraphics is used for onscreen drawing as well as offscreen drawing. Each new canvas (PGraphics) element is created using this function. Once created, you can use the dot operator to draw into that canvas as shown in the example (though beginDraw and endDraw are not required). You can also start calling drawing functions directly without using the dot operator. Use setContext() to switch between PGraphics elements if there are more than one.  See additional information on the [DOM extensions page](https://github.com/lmccart/p5.js/blob/master/extensions.md). 
 
 
