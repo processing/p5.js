@@ -16,18 +16,18 @@ function setup() {
 function draw() {
   background(250, 250, 50);
 
-	strokeWeight(10);
+  strokeWeight(10);
 
-	// line(100, 100, 100, 300);
-	// line(120, 100, 120, 300);
-	// line(140, 100, 140, 300);
-	// line(160, 100, 160, 300);
+  // line(100, 100, 100, 300);
+  // line(120, 100, 120, 300);
+  // line(140, 100, 140, 300);
+  // line(160, 100, 160, 300);
 
-	for (var i=0; i<4; i++) {
-		line(100 + 20*i, 100, 100 + 20*i, 300);
-	}
+  for (var i=0; i<4; i++) {
+    line(100 + 20*i, 100, 100 + 20*i, 300);
+  }
 
-	// Try changing 4 to other numbers... 8, 12, 100?!
-	// Try changing 4 to a variable like width.
-	// Try changing the line to an ellipse.
+  // Try changing 4 to other numbers... 8, 12, 100?!
+  // Try changing 4 to a variable like width.
+  // Try changing the line to an ellipse.
 };
