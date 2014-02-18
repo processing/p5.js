@@ -12,7 +12,7 @@ function setup() {
 
 function draw() {
   // First image as background
- 	image(img1, 0, 0, width, height);
+  image(img1, 0, 0, width, height);
 
   // Second image following mouse
   image(img2, mouseX, mouseY);   // transparent .pngs work, too

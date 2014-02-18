@@ -22,7 +22,6 @@ function draw() {
   //var mx = constrain(mouseX, 0, width);
 
   // draw black line
-	stroke(0);  
+  stroke(0);  
   line(0, 0, mx, mouseY); 
 }
-

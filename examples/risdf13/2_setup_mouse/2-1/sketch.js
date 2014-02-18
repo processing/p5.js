@@ -10,7 +10,6 @@ function setup() {
   fill(x, 100, 100);
 };
 
-
 function draw() {
   background(0, 100, 150);
   ellipse(x, y, diameter, diameter);

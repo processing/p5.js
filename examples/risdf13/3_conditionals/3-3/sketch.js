@@ -7,9 +7,9 @@ function setup() {
 };
 
 function draw() {
-	background(204);
+  background(204);
 
- 	if ((mouseX >= 100) && (mouseX <= 300) && (mouseY >= 200) && (mouseY <= 400)) {
-   	rect(100, 200, 200, 200);
-	}
+  if ((mouseX >= 100) && (mouseX <= 300) && (mouseY >= 200) && (mouseY <= 400)) {
+    rect(100, 200, 200, 200);
+  }
 };

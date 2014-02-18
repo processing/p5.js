@@ -8,7 +8,7 @@ function setup() {
 };
 
 function draw() {
-	background(0);
+  background(0);
   textSize(45);
   textFont('Clicker Script'); // name of Google Font
   text("DIFFICULT TO READ", 70, 200);

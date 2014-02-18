@@ -10,9 +10,9 @@ function setup() {
 };
 
 function draw() {
-	background(255);
+  background(255);
 
-	// Add the current speed to the x location
+  // Add the current speed to the x location
   diameter = maxDiameter * sin(frameCount);
 
   // Slow down the bouncing

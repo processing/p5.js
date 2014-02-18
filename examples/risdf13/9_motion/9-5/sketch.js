@@ -1,4 +1,4 @@
-// tweening
+// Tweening
 
 var startX = 0;    // Initial x-coordinate
 var stopX = 300;    // Final x-coordinate
@@ -16,16 +16,16 @@ function setup() {
 };
 
 function draw() {
-	background(100, 0, 255);
+  background(100, 0, 255);
 
-	// Determine the current location
-	x = (stopX - startX) * pct + startX;
-	y = (stopY - startY) * pct + startY;
+  // Determine the current location
+  x = (stopX - startX) * pct + startX;
+  y = (stopY - startY) * pct + startY;
 
-	// Increment pct by one step if not at 1.0 yet
-	if (pct < 1.0) {
-		pct += step;
-	}
+  // Increment pct by one step if not at 1.0 yet
+  if (pct < 1.0) {
+    pct += step;
+  }
 
   // Display circle at position
   ellipse(x, y, 50, 50);

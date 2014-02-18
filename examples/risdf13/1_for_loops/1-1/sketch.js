@@ -1,4 +1,3 @@
-
 // A for loop has 3 parts. 
 // The init part declares a new value to be used just within the loop, and assigns it a value. i is used a lot, but it can be anything. 
 // The test part evaluates the value of the variable. As long as the value is true, the statements inside the brackets are evaluated. 
@@ -7,7 +6,6 @@
 // for (init; test; update) {
 //  statements
 // }
-
 
 function setup() {
   createCanvas(600, 400);

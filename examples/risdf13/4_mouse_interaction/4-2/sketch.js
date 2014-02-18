@@ -4,14 +4,13 @@
 var gray = 0;
 
 function setup() {
-	createCanvas(600, 400);
+  createCanvas(600, 400);
 };
 
 function draw() {
-	background(gray);
+  background(gray);
 };
 
 function mousePressed() {
-	gray += 20;
+  gray += 20;
 };
-

@@ -7,9 +7,9 @@ function setup() {
 };
 
 function draw() {
-	background(204);
+  background(204);
 
-	if ((mouseX < 300) || (mouseY < 300)) { // either or
-		ellipse(300,300,50,50);
-	}
+  if ((mouseX < 300) || (mouseY < 300)) { // either or
+    ellipse(300,300,50,50);
+  }
 };

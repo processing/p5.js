@@ -9,9 +9,9 @@ function setup() {
 };
 
 function draw() {
-	background(200, 0, 80);
+  background(200, 0, 80);
 
-	// Add the current speed to the x location
+  // Add the current speed to the x location
   x = x + velocity;
 
   // Remember, || means "or."

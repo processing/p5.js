@@ -11,11 +11,11 @@ function setup() {
 };
 
 function draw() {
-	background(250, 200, 200);
+  background(250, 200, 200);
   // For a fading image, try:
   //background(250, 200, 200, 20);
 
   // Draw the image with the image() command
   // Takes three arguments: the image variable, x position, y position
- 	image(img, mouseX, mouseY);
+  image(img, mouseX, mouseY);
 };

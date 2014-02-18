@@ -7,13 +7,13 @@ function setup() {
 };
 
 function draw() {
-	background(204);
+  background(204);
 
-	if (isMousePressed() == true) {
-		fill(255); // White
-	} else {
-		fill(0); // Black
-	}
+  if (isMousePressed() == true) {
+    fill(255); // White
+  } else {
+    fill(0); // Black
+  }
 
-	rect(150, 150, 300, 300);
+  rect(150, 150, 300, 300);
 };
