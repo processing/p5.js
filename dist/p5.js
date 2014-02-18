@@ -1011,6 +1011,8 @@ var environment = function (require, core) {
         Processing.prototype.cursor = function (type) {
             this.curElement.style.cursor = type || 'auto';
         };
+        Processing.prototype.displayHeight = screen.height;
+        Processing.prototype.displayWidth = screen.width;
         Processing.prototype.frameRate = function (fps) {
             if (fps == null) {
                 return this._frameRate;
