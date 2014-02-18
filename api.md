@@ -20,7 +20,7 @@ For now these functions link to the current [Processing.org reference](http://pr
 + [catch](http://processing.org/reference/catch.html)
 + [draw](http://processing.org/reference/draw_.html) - same use but different syntax, see [Getting Started](https://github.com/lmccart/p5.js/wiki/Getting-Started) tutorial for more info.
 + [false](http://processing.org/reference/false.html)
-+ [loop()](http://processing.org/reference/loop.html)
++ [loop()](http://processing.org/reference/loop_.html)
 + [new](http://processing.org/reference/new.html)
 + [noLoop()](http://processing.org/reference/noLoop_.html)
 + [null](http://processing.org/reference/null.html)
