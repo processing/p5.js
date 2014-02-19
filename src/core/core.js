@@ -22,6 +22,8 @@ define(function (require) {
     this.frameCount = 0;
     this._frameRate = 30;
     this.focused = true;
+    this.displayWidth = screen.width;
+    this.displayHeight = screen.height;
 
     // Shape.Vertex
     this.shapeKind = null;

@@ -62,6 +62,8 @@ var core = function (require, shim, constants) {
             this.frameCount = 0;
             this._frameRate = 30;
             this.focused = true;
+            this.displayWidth = screen.width;
+            this.displayHeight = screen.height;
             this.shapeKind = null;
             this.shapeInited = false;
             this.mouseX = 0;
@@ -1011,8 +1013,6 @@ var environment = function (require, core) {
         Processing.prototype.cursor = function (type) {
             this.curElement.style.cursor = type || 'auto';
         };
-        Processing.prototype.displayHeight = screen.height;
-        Processing.prototype.displayWidth = screen.width;
         Processing.prototype.frameRate = function (fps) {
             if (fps == null) {
                 return this._frameRate;
