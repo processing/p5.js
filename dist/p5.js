@@ -1092,6 +1092,15 @@ var image = function (require, core, canvas, constants) {
             img.src = path;
             return pImg;
         };
+        Processing.prototype.preloadImage = function (path) {
+            console.log(this);
+            this.preload_count++;
+            return this.loadImage(path, function () {
+                if (--this.preload_count === 0) {
+                    this.setup();
+                }
+            });
+        };
         Processing.prototype.image = function (image, x, y, width, height) {
             if (width === undefined) {
                 width = image.width;
