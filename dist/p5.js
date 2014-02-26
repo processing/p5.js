@@ -524,12 +524,10 @@ var colorsetting = function (require, core, constants) {
                     a
                 ];
             }
-            console.log(rgba);
             return rgba;
         };
         Processing.prototype.hsv2rgb = function (h, s, v) {
             var r, g, b, i, f, p, q, t;
-            console.log('HSV Values', h, s, v);
             s /= 100;
             v /= 100;
             h /= 60;
@@ -570,9 +568,10 @@ var colorsetting = function (require, core, constants) {
                 b = q;
                 break;
             }
-            console.log('RGB Values', Math.round(r * 255), Math.round(g * 255), Math.round(b * 255));
             return [
-                Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)
+                Math.round(r * 255),
+                Math.round(g * 255),
+                Math.round(b * 255)
             ];
         };
         Processing.prototype.getCSSRGBAColor = function (arr) {
