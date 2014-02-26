@@ -1,5 +1,4 @@
-(function () {
-var shim = function (require) {
+(function () {var shim = function (require) {
         window.requestDraw = function () {
             return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
                 window.setTimeout(callback, 1000 / 60);
@@ -525,13 +524,55 @@ var colorsetting = function (require, core, constants) {
                     a
                 ];
             }
+            console.log(rgba);
             return rgba;
         };
-        Processing.prototype.hsv2rgb = function (h, s, b) {
+        Processing.prototype.hsv2rgb = function (h, s, v) {
+            var r, g, b, i, f, p, q, t;
+            console.log('HSV Values', h, s, v);
+            s /= 100;
+            v /= 100;
+            h /= 60;
+            i = Math.floor(h);
+            f = h - i;
+            p = v * (1 - s);
+            q = v * (1 - s * f);
+            t = v * (1 - s * (1 - f));
+            switch (i) {
+            case 0:
+                r = v;
+                g = t;
+                b = p;
+                break;
+            case 1:
+                r = q;
+                g = v;
+                b = p;
+                break;
+            case 2:
+                r = p;
+                g = v;
+                b = t;
+                break;
+            case 3:
+                r = p;
+                g = q;
+                b = v;
+                break;
+            case 4:
+                r = t;
+                g = p;
+                b = v;
+                break;
+            default:
+                r = v;
+                g = p;
+                b = q;
+                break;
+            }
+            console.log('RGB Values', Math.round(r * 255), Math.round(g * 255), Math.round(b * 255));
             return [
-                h,
-                s,
-                b
+                Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)
             ];
         };
         Processing.prototype.getCSSRGBAColor = function (arr) {
@@ -2530,4 +2571,5 @@ var src_p5 = function (require, core, mathpvector, colorcreating_reading, colors
         window.Processing = Processing;
         window.PVector = PVector;
         return Processing;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
+    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);
+}());
