@@ -386,6 +386,13 @@ define(function (require) {
     this.canvas.getContext('2d').globalCompositeOperation = currBlend;   
   };
 
+  /**
+   * Applies an image filter to a PImage
+   * 
+   * @param  {String} operation one of threshold, gray, invert, posterize and opaque
+   *                            see Filters.js for docs on each available filter
+   * @param  {Number|undefined} value
+   */
   PImage.prototype.filter = function(operation, value) {
     Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
   };
