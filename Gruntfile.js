@@ -82,7 +82,8 @@ module.exports = function(grunt) {
             'linearalgebra': 'src/var/linearalgebra',
             'polargeometry': 'src/var/polargeometry',
             'shim': 'src/var/shim',
-            'reqwest': 'node_modules/reqwest/reqwest'
+            'reqwest': 'node_modules/reqwest/reqwest',
+            'filters': 'src/image/filters'
           },
           useStrict: true,
           wrap: true

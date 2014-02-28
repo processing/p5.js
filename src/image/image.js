@@ -10,6 +10,7 @@ define(function (require) {
   var Processing = require('core');
   var canvas = require('canvas');
   var constants = require('constants');
+  var Filters = require('filters');
 
   /*
    * Global/P5 methods
@@ -386,7 +387,7 @@ define(function (require) {
   };
 
   PImage.prototype.filter = function(operation, value) {
-    // TODO
+    Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
   };
 
   /**
