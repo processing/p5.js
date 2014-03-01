@@ -60,7 +60,9 @@ var core = function (require, shim, constants) {
             this.preload_count = 0;
             this.isGlobal = false;
             this.frameCount = 0;
-            this._frameRate = 30;
+            this._frameRate = 0;
+            this._lastFrameTime = 0;
+            this._targetFrameRate = 30;
             this.focused = true;
             this.displayWidth = screen.width;
             this.displayHeight = screen.height;
@@ -181,16 +183,24 @@ var core = function (require, shim, constants) {
         };
         Processing.prototype._drawSketch = function () {
             var self = this;
+
+            var now = new Date().getTime();
+            self._frameRate = 1000.0/(now - self._lastFrameTime);
+            self._lastFrameTime = now;
+
             var userDraw = self.draw || window.draw;
+
             if (self.settings.loop) {
                 setTimeout(function () {
                     window.requestDraw(self._drawSketch.bind(self));
-                }, 1000 / self.frameRate());
+                }, 1000 / self._targetFrameRate);
             }
             if (typeof userDraw === 'function') {
                 userDraw();
             }
             self.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
+
+
         };
         Processing.prototype._runFrames = function () {
             var self = this;
@@ -199,7 +209,7 @@ var core = function (require, shim, constants) {
             }
             this.updateInterval = setInterval(function () {
                 self._setProperty('frameCount', self.frameCount + 1);
-            }, 1000 / self.frameRate());
+            }, 1000 / self._targetFrameRate);
         };
         Processing.prototype._applyDefaults = function () {
             this.curElement.context.fillStyle = '#FFFFFF';
@@ -1014,15 +1024,16 @@ var environment = function (require, core) {
             this.curElement.style.cursor = type || 'auto';
         };
         Processing.prototype.frameRate = function (fps) {
-            if (fps == null) {
+            if (typeof fps == 'undefined') {
                 return this._frameRate;
             } else {
-                this._setProperty('_frameRate', fps);
+                this._setProperty('_targetFrameRate', fps);
                 this._runFrames();
                 return this;
             }
         };
         Processing.prototype.getFrameRate = function () {
+            console.log('hi')
             return this.frameRate();
         };
         Processing.prototype.setFrameRate = function (fps) {
