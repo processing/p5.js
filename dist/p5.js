@@ -183,24 +183,19 @@ var core = function (require, shim, constants) {
         };
         Processing.prototype._drawSketch = function () {
             var self = this;
-
             var now = new Date().getTime();
-            self._frameRate = 1000.0/(now - self._lastFrameTime);
+            self._frameRate = 1000 / (now - self._lastFrameTime);
             self._lastFrameTime = now;
-
             var userDraw = self.draw || window.draw;
-
             if (self.settings.loop) {
                 setTimeout(function () {
                     window.requestDraw(self._drawSketch.bind(self));
-                }, 1000 / self._targetFrameRate);
+                }, 1000 / self.frameRate());
             }
             if (typeof userDraw === 'function') {
                 userDraw();
             }
             self.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
-
-
         };
         Processing.prototype._runFrames = function () {
             var self = this;
@@ -209,7 +204,7 @@ var core = function (require, shim, constants) {
             }
             this.updateInterval = setInterval(function () {
                 self._setProperty('frameCount', self.frameCount + 1);
-            }, 1000 / self._targetFrameRate);
+            }, 1000 / self.frameRate());
         };
         Processing.prototype._applyDefaults = function () {
             this.curElement.context.fillStyle = '#FFFFFF';
@@ -1024,7 +1019,7 @@ var environment = function (require, core) {
             this.curElement.style.cursor = type || 'auto';
         };
         Processing.prototype.frameRate = function (fps) {
-            if (typeof fps == 'undefined') {
+            if (typeof fps === 'undefined') {
                 return this._frameRate;
             } else {
                 this._setProperty('_targetFrameRate', fps);
@@ -1033,7 +1028,6 @@ var environment = function (require, core) {
             }
         };
         Processing.prototype.getFrameRate = function () {
-            console.log('hi')
             return this.frameRate();
         };
         Processing.prototype.setFrameRate = function (fps) {
@@ -1080,11 +1074,107 @@ var canvas = function (require, constants) {
             }
         };
     }({}, constants);
-var image = function (require, core, canvas, constants) {
+var filters = function (require) {
+        'use strict';
+        var Filters = {};
+        Filters._toPixels = function (canvas) {
+            if (canvas instanceof ImageData) {
+                return canvas.data;
+            } else {
+                return canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
+            }
+        };
+        Filters._toImageData = function (canvas) {
+            if (canvas instanceof ImageData) {
+                return canvas;
+            } else {
+                return canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+            }
+        };
+        Filters._createImageData = function (width, height) {
+            Filters._tmpCanvas = document.createElement('canvas');
+            Filters._tmpCtx = Filters._tmpCanvas.getContext('2d');
+            return this._tmpCtx.createImageData(width, height);
+        };
+        Filters.apply = function (canvas, func, filterParam) {
+            var ctx = canvas.getContext('2d');
+            var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            var newImageData = func(imageData, filterParam);
+            if (newImageData instanceof ImageData) {
+                ctx.putImageData(newImageData, 0, 0, 0, 0, canvas.width, canvas.height);
+            } else {
+                ctx.putImageData(imageData, 0, 0, 0, 0, canvas.width, canvas.height);
+            }
+        };
+        Filters.threshold = function (canvas, level) {
+            var pixels = Filters._toPixels(canvas);
+            if (level === undefined) {
+                level = 0.5;
+            }
+            var thresh = Math.floor(level * 255);
+            for (var i = 0; i < pixels.length; i += 4) {
+                var r = pixels[i];
+                var g = pixels[i + 1];
+                var b = pixels[i + 2];
+                var grey = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                var val;
+                if (grey >= thresh) {
+                    val = 255;
+                } else {
+                    val = 0;
+                }
+                pixels[i] = pixels[i + 1] = pixels[i + 2] = val;
+            }
+        };
+        Filters.gray = function (canvas) {
+            var pixels = Filters._toPixels(canvas);
+            for (var i = 0; i < pixels.length; i += 4) {
+                var r = pixels[i];
+                var g = pixels[i + 1];
+                var b = pixels[i + 2];
+                var gray = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+                pixels[i] = pixels[i + 1] = pixels[i + 2] = gray;
+            }
+        };
+        Filters.opaque = function (canvas) {
+            var pixels = Filters._toPixels(canvas);
+            for (var i = 0; i < pixels.length; i += 4) {
+                pixels[i + 3] = 255;
+            }
+            return pixels;
+        };
+        Filters.invert = function (canvas) {
+            var pixels = Filters._toPixels(canvas);
+            for (var i = 0; i < pixels.length; i += 4) {
+                pixels[i] = 255 - pixels[i];
+                pixels[i + 1] = 255 - pixels[i + 1];
+                pixels[i + 2] = 255 - pixels[i + 2];
+            }
+        };
+        Filters.posterize = function (canvas, level) {
+            var pixels = Filters._toPixels(canvas);
+            if (level < 2 || level > 255) {
+                throw new Error('Level must be greater than 2 and less than 255 for posterize');
+            }
+            var levels1 = level - 1;
+            for (var i = 0; i < pixels.length; i++) {
+                var rlevel = pixels[i] >> 16 & 255;
+                var glevel = pixels[i] >> 8 & 255;
+                var blevel = pixels[i] & 255;
+                rlevel = (rlevel * level >> 8) * 255 / levels1;
+                glevel = (glevel * level >> 8) * 255 / levels1;
+                blevel = (blevel * level >> 8) * 255 / levels1;
+                pixels[i] = 4278190080 & pixels[i] | rlevel << 16 | glevel << 8 | blevel;
+            }
+        };
+        return Filters;
+    }({});
+var image = function (require, core, canvas, constants, filters) {
         'use strict';
         var Processing = core;
         var canvas = canvas;
         var constants = constants;
+        var Filters = filters;
         Processing.prototype.createImage = function (width, height) {
             return new PImage(width, height, this);
         };
@@ -1102,15 +1192,6 @@ var image = function (require, core, canvas, constants) {
             img.crossOrigin = 'Anonymous';
             img.src = path;
             return pImg;
-        };
-        Processing.prototype.preloadImage = function (path) {
-            console.log(this);
-            this.preload_count++;
-            return this.loadImage(path, function () {
-                if (--this.preload_count === 0) {
-                    this.setup();
-                }
-            });
         };
         Processing.prototype.image = function (image, x, y, width, height) {
             if (width === undefined) {
@@ -1273,6 +1354,7 @@ var image = function (require, core, canvas, constants) {
             this.canvas.getContext('2d').globalCompositeOperation = currBlend;
         };
         PImage.prototype.filter = function (operation, value) {
+            Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
         };
         PImage.prototype.blend = function () {
             var currBlend = this.canvas.getContext('2d').globalCompositeOperation;
@@ -1306,7 +1388,7 @@ var image = function (require, core, canvas, constants) {
             }
         };
         return PImage;
-    }({}, core, canvas, constants);
+    }({}, core, canvas, constants, filters);
 var imageloading_displaying = function (require, core) {
         'use strict';
         var Processing = core;
