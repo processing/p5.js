@@ -20,7 +20,9 @@ define(function (require) {
 
     // Environment
     this.frameCount = 0;
-    this._frameRate = 30;
+    this._frameRate = 0;
+    this._lastFrameTime = 0;
+    this._targetFrameRate = 60;
     this.focused = true;
     this.displayWidth = screen.width;
     this.displayHeight = screen.height;
@@ -202,12 +204,17 @@ define(function (require) {
 
   Processing.prototype._drawSketch = function () {
     var self = this;
+
+    var now = new Date().getTime();
+    self._frameRate = 1000.0/(now - self._lastFrameTime);
+    self._lastFrameTime = now;
+
     var userDraw = self.draw || window.draw;
 
     if (self.settings.loop) {
       setTimeout(function() {
         window.requestDraw(self._drawSketch.bind(self));
-      }, 1000 / self.frameRate());
+      }, 1000 / self._targetFrameRate);
     }
     // call draw
     if (typeof userDraw === 'function') {
@@ -227,7 +234,7 @@ define(function (require) {
 
     this.updateInterval = setInterval(function(){
       self._setProperty('frameCount', self.frameCount + 1);
-    }, 1000/self.frameRate());
+    }, 1000/self._targetFrameRate);
 
   };
 

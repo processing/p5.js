@@ -62,7 +62,7 @@ var core = function (require, shim, constants) {
             this.frameCount = 0;
             this._frameRate = 0;
             this._lastFrameTime = 0;
-            this._targetFrameRate = 30;
+            this._targetFrameRate = 60;
             this.focused = true;
             this.displayWidth = screen.width;
             this.displayHeight = screen.height;
@@ -190,7 +190,7 @@ var core = function (require, shim, constants) {
             if (self.settings.loop) {
                 setTimeout(function () {
                     window.requestDraw(self._drawSketch.bind(self));
-                }, 1000 / self.frameRate());
+                }, 1000 / self._targetFrameRate);
             }
             if (typeof userDraw === 'function') {
                 userDraw();
@@ -204,7 +204,7 @@ var core = function (require, shim, constants) {
             }
             this.updateInterval = setInterval(function () {
                 self._setProperty('frameCount', self.frameCount + 1);
-            }, 1000 / self.frameRate());
+            }, 1000 / self._targetFrameRate);
         };
         Processing.prototype._applyDefaults = function () {
             this.curElement.context.fillStyle = '#FFFFFF';
