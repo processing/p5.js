@@ -132,60 +132,47 @@ define(function (require) {
 
   };
 
-  Processing.prototype._start = function() {
-
-    // Create the default canvas
-    this.createGraphics(800, 600, true);
-
-    var preload = this.preload || window.preload;
-    var context = this.isGlobal ? window : this;
-
-    if (preload) {
-
-      context.loadJSON = function(path) { return this.preloadFunc('loadJSON', path); };
-      context.loadStrings = function(path) { return this.preloadFunc('loadStrings', path); };
-      context.loadXML = function(path) { return this.preloadFunc('loadXML', path); };
-      context.loadImage = function(path) { return this.preloadFunc('loadImage', path); };
-
-      preload();
-
-      context.loadJSON = Processing.prototype.loadJSON;
-      context.loadStrings = Processing.prototype.loadStrings;
-      context.loadXML = Processing.prototype.loadXML;
-      context.loadImage = Processing.prototype.loadImage;
-
-    } else {
-
-      this._setup();
-
-      this._runFrames();
-
-      this._drawSketch();
-
-    }
-
-  };
-
-  Processing.prototype.preloadFunc = function(func, path) {
-
-    this._setProperty('preload_count', this.preload_count + 1);
-
-    return this[func](path, function (resp) {
-
-      this._setProperty('preload_count', this.preload_count - 1);
-
-      if (this.preload_count === 0) {
-
-        this._setup();
-
-        this._runFrames();
-
-        this._drawSketch();
-
+  Processing.prototype._start = function () {
+      this.createGraphics(800, 600, true);
+      var preload = this.preload || window.preload;
+      var context = this.isGlobal ? window : this;
+      if (preload) {
+          context.loadJSON = function (path) {
+              return context.preloadFunc('loadJSON', path);
+          };
+          context.loadStrings = function (path) {
+              return context.preloadFunc('loadStrings', path);
+          };
+          context.loadXML = function (path) {
+              return context.preloadFunc('loadXML', path);
+          };
+          context.loadImage = function (path) {
+              return context.preloadFunc('loadImage', path);
+          };
+          preload();
+          context.loadJSON = Processing.prototype.loadJSON;
+          context.loadStrings = Processing.prototype.loadStrings;
+          context.loadXML = Processing.prototype.loadXML;
+          context.loadImage = Processing.prototype.loadImage;
+      } else {
+          this._setup();
+          this._runFrames();
+          this._drawSketch();
       }
-    });
   };
-
+  Processing.prototype.preloadFunc = function (func, path) {
+      this._setProperty('preload_count', this.preload_count + 1);
+      var context = this.isGlobal ? window : this;
+      return this[func](path, function (resp) {
+          context._setProperty('preload_count', context.preload_count - 1);
+          if (context.preload_count === 0) {
+              context._setup();
+              context._runFrames();
+              context._drawSketch();
+          }
+      });
+  };
+  
   Processing.prototype._setup = function() {
 
     // Short-circuit on this, in case someone used the library globally earlier

@@ -140,16 +140,16 @@ var core = function (require, shim, constants) {
             var context = this.isGlobal ? window : this;
             if (preload) {
                 context.loadJSON = function (path) {
-                    return this.preloadFunc('loadJSON', path);
+                    return context.preloadFunc('loadJSON', path);
                 };
                 context.loadStrings = function (path) {
-                    return this.preloadFunc('loadStrings', path);
+                    return context.preloadFunc('loadStrings', path);
                 };
                 context.loadXML = function (path) {
-                    return this.preloadFunc('loadXML', path);
+                    return context.preloadFunc('loadXML', path);
                 };
                 context.loadImage = function (path) {
-                    return this.preloadFunc('loadImage', path);
+                    return context.preloadFunc('loadImage', path);
                 };
                 preload();
                 context.loadJSON = Processing.prototype.loadJSON;
@@ -164,12 +164,13 @@ var core = function (require, shim, constants) {
         };
         Processing.prototype.preloadFunc = function (func, path) {
             this._setProperty('preload_count', this.preload_count + 1);
+            var context = this.isGlobal ? window : this;
             return this[func](path, function (resp) {
-                this._setProperty('preload_count', this.preload_count - 1);
-                if (this.preload_count === 0) {
-                    this._setup();
-                    this._runFrames();
-                    this._drawSketch();
+                context._setProperty('preload_count', context.preload_count - 1);
+                if (context.preload_count === 0) {
+                    context._setup();
+                    context._runFrames();
+                    context._drawSketch();
                 }
             });
         };
