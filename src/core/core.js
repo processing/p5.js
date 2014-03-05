@@ -20,7 +20,9 @@ define(function (require) {
 
     // Environment
     this.frameCount = 0;
-    this._frameRate = 30;
+    this._frameRate = 0;
+    this._lastFrameTime = 0;
+    this._targetFrameRate = 60;
     this.focused = true;
     this.displayWidth = screen.width;
     this.displayHeight = screen.height;
@@ -130,60 +132,47 @@ define(function (require) {
 
   };
 
-  Processing.prototype._start = function() {
-
-    // Create the default canvas
-    this.createGraphics(800, 600, true);
-
-    var preload = this.preload || window.preload;
-    var context = this.isGlobal ? window : this;
-
-    if (preload) {
-
-      context.loadJSON = function(path) { return this.preloadFunc('loadJSON', path); };
-      context.loadStrings = function(path) { return this.preloadFunc('loadStrings', path); };
-      context.loadXML = function(path) { return this.preloadFunc('loadXML', path); };
-      context.loadImage = function(path) { return this.preloadFunc('loadImage', path); };
-
-      preload();
-
-      context.loadJSON = Processing.prototype.loadJSON;
-      context.loadStrings = Processing.prototype.loadStrings;
-      context.loadXML = Processing.prototype.loadXML;
-      context.loadImage = Processing.prototype.loadImage;
-
-    } else {
-
-      this._setup();
-
-      this._runFrames();
-
-      this._drawSketch();
-
-    }
-
-  };
-
-  Processing.prototype.preloadFunc = function(func, path) {
-
-    this._setProperty('preload_count', this.preload_count + 1);
-
-    return this[func](path, function (resp) {
-
-      this._setProperty('preload_count', this.preload_count - 1);
-
-      if (this.preload_count === 0) {
-
-        this._setup();
-
-        this._runFrames();
-
-        this._drawSketch();
-
+  Processing.prototype._start = function () {
+      this.createGraphics(800, 600, true);
+      var preload = this.preload || window.preload;
+      var context = this.isGlobal ? window : this;
+      if (preload) {
+          context.loadJSON = function (path) {
+              return context.preloadFunc('loadJSON', path);
+          };
+          context.loadStrings = function (path) {
+              return context.preloadFunc('loadStrings', path);
+          };
+          context.loadXML = function (path) {
+              return context.preloadFunc('loadXML', path);
+          };
+          context.loadImage = function (path) {
+              return context.preloadFunc('loadImage', path);
+          };
+          preload();
+          context.loadJSON = Processing.prototype.loadJSON;
+          context.loadStrings = Processing.prototype.loadStrings;
+          context.loadXML = Processing.prototype.loadXML;
+          context.loadImage = Processing.prototype.loadImage;
+      } else {
+          this._setup();
+          this._runFrames();
+          this._drawSketch();
       }
-    });
   };
-
+  Processing.prototype.preloadFunc = function (func, path) {
+      this._setProperty('preload_count', this.preload_count + 1);
+      var context = this.isGlobal ? window : this;
+      return this[func](path, function (resp) {
+          context._setProperty('preload_count', context.preload_count - 1);
+          if (context.preload_count === 0) {
+              context._setup();
+              context._runFrames();
+              context._drawSketch();
+          }
+      });
+  };
+  
   Processing.prototype._setup = function() {
 
     // Short-circuit on this, in case someone used the library globally earlier
@@ -202,12 +191,17 @@ define(function (require) {
 
   Processing.prototype._drawSketch = function () {
     var self = this;
+
+    var now = new Date().getTime();
+    self._frameRate = 1000.0/(now - self._lastFrameTime);
+    self._lastFrameTime = now;
+
     var userDraw = self.draw || window.draw;
 
     if (self.settings.loop) {
       setTimeout(function() {
         window.requestDraw(self._drawSketch.bind(self));
-      }, 1000 / self.frameRate());
+      }, 1000 / self._targetFrameRate);
     }
     // call draw
     if (typeof userDraw === 'function') {
@@ -227,7 +221,7 @@ define(function (require) {
 
     this.updateInterval = setInterval(function(){
       self._setProperty('frameCount', self.frameCount + 1);
-    }, 1000/self.frameRate());
+    }, 1000/self._targetFrameRate);
 
   };
 
