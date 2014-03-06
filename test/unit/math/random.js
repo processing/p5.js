@@ -38,10 +38,6 @@ suite('Random', function() {
 
   });
 
-  suite('noise()', function() {
-
-  });
-
 });
 
 
