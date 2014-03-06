@@ -4,6 +4,18 @@ define(function (require) {
 
   var Processing = require('core');
 
+  /**
+   * Return a random number.
+   *
+   * Takes either 0, 1 or 2 arguments.
+   * If no argument is given, returns a random number between 0 and 1.
+   * If one argument is given, returns a random number between 0 and the number.
+   * If two arguments are given, returns a random number between them, inclusive.
+   *
+   * @param  {x}      min
+   * @param  {y}      max
+   * @return {Number}
+   */
   Processing.prototype.random = function(x, y) {
     // might want to use this kind of check instead:
     // if (arguments.length === 0) {
