@@ -128,13 +128,40 @@ define(function (require) {
 
 
   // Static Methods
+  
 
-  PVector.random2D = function () {
-    //TODO:
+  /**
+   * Make a new 2D unit vector from an angle
+   
+   * @param {number} The desired angle.
+   * @return {PVector} The new PVector object.
+   */
+  PVector.fromAngle = function(angle) {
+     return new PVector(Math.cos(angle),Math.sin(angle),0);
   };
 
+  /**
+   * Make a new 2D unit vector from a random angle
+   *
+   * @return {PVector} The new PVector object.
+   */  
+   PVector.random2D = function () {
+    // This should include an option to use p5.js seeded random number
+    return this.fromAngle(Math.random(Math.PI*2));
+  };
+
+  /**
+   * Make a new random 3D unit vector.
+   *
+   * @return {PVector} The new PVector object.
+   */  
   PVector.random3D = function () {
-    //TODO:
+      // This should include an option to use p5.js seeded random number
+      var angle = Math.random()*Math.PI*2;
+      var vz = Math.random()*2-1;
+      var vx = Math.sqrt(1-vz*vz)*Math.cos(angle);
+      var vy = Math.sqrt(1-vz*vz)*Math.sin(angle);
+      return new PVector(vx, vy, vz);
   };
 
   PVector.add = function (v1, v2) {
