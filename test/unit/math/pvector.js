@@ -684,6 +684,36 @@ describe('PVector', function() {
     });
   });
 
+
+  describe('PVector.fromAngle(angle)', function() {
+    var res,angle;
+    beforeEach(function() {
+      angle = Math.PI/2;
+      res = PVector.fromAngle(angle);
+    });
+    it('should be a PVector with values (0,1)', function() {
+      expect(res.x).to.be.closeTo(0,0.01);
+      expect(res.y).to.be.closeTo(1,0.01);
+    });
+  });
+  describe('PVector.random2D()', function() {
+    var res;
+    beforeEach(function() {
+      res = PVector.random2D();
+    });
+    it('should be a unit PVector', function() {
+      expect(res.mag()).to.be.closeTo(1,0.01);
+    });
+  });  
+  describe('PVector.random3D()', function() {
+    var res;
+    beforeEach(function() {
+      res = PVector.random3D();
+    });
+    it('should be a unit PVector', function() {
+      expect(res.mag()).to.be.closeTo(1,0.01);
+    });
+  });  
   describe('PVector.angleBetween(v1, v2)', function() {
     var res, v1, v2;
     beforeEach(function() {
