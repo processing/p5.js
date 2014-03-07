@@ -3,7 +3,7 @@ var image2;
 
 function setup() {
   frameRate(1);
-  createGraphics(600, 600);
+  createGraphics(800, 600);
   background(200);
 
   //Load an image and then clone it and 
@@ -12,7 +12,6 @@ function setup() {
     var clone;
     //Original
     image(img, 10, 10, 100, 100);
-
 
     clone = img.get();
     clone.filter("threshold", 0.5);
@@ -29,6 +28,14 @@ function setup() {
     clone = img.get();
     clone.filter("posterize", 4);
     image(clone, 450, 10, 100, 100);
+
+      clone = img.get();
+      clone.filter("dilate");
+      image(clone, 560, 10, 100, 100);
+
+    clone = img.get();
+    clone.filter("erode");
+    image(clone, 670, 10, 100, 100);
 
   });
 
