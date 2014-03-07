@@ -1,64 +1,44 @@
-describe('Random', function() {
-  beforeEach(function() {
-    this.sut = null;
+suite('Random', function() {
+
+  var random = Processing.prototype.random;
+  var result;
+
+  suite('random()', function() {
+
+    setup(function() {
+      result = random();
+    });
+
+    test('should return a number', function() {
+      assert.typeOf(result, 'number');
+    });
+
   });
 
-  afterEach(function() {
-    delete this.sut;
+  suite('random(5)', function() {
+
+    setup(function() {
+      result = random(5);
+    });
+
+    test('should return a number 0 <= n < 5', function() {
+      assert.isTrue(result >= 0);
+      assert.isTrue(result < 5);
+    });
+
   });
 
-  describe('random()', function() {
-    beforeEach(function() {
-      this.sut = Processing.prototype.random();
+  suite('random(1, 10)', function() {
+
+    setup(function() {
+      result = random(1, 10);
     });
 
-    it('should return a number', function() {
-       expect(typeof(this.sut) ===  'number').to.eql(true);
-    });
-  });
-
-  describe('random(10)', function() {
-    beforeEach(function() {
-      this.sut = Processing.prototype.random(10);
+    test('should return a number 1 <= n < 10', function() {
+      assert.isTrue(result >= 1);
+      assert.isTrue(result < 10);
     });
 
-    it('should return a number < 10', function() {
-       expect(this.sut).to.be.below(10);
-    });
-
-    it('should return a number >= 0', function() {
-       expect(this.sut).to.be.at.least(0);
-    });
-  });
-
-  describe('random(1, 10)', function() {
-    beforeEach(function() {
-      this.sut = Processing.prototype.random(1, 10);
-    });
-
-    it('should return a number < 10', function() {
-       expect(this.sut).to.be.below(10);
-    });
-
-    it('should return a number >= 1', function() {
-       expect(this.sut).to.be.at.least(1);
-    });
-  });
-
-  describe('noise()', function() {
-    // beforeEach(function() {
-    //   this.sut = Processing.prototype.random(1, 10);
-    // });
-
-    // it('should return a number < 10', function() {
-    //    expect(this.sut).to.be.below(10);
-    // });
-
-    // it('should return a number >= 1', function() {
-    //    expect(this.sut).to.be.at.least(1);
-    // });
   });
 
 });
-
-

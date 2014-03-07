@@ -339,9 +339,18 @@ var mathpvector = function (require) {
                 this.z || 0
             ];
         };
+        PVector.fromAngle = function (angle) {
+            return new PVector(Math.cos(angle), Math.sin(angle), 0);
+        };
         PVector.random2D = function () {
+            return this.fromAngle(Math.random(Math.PI * 2));
         };
         PVector.random3D = function () {
+            var angle = Math.random() * Math.PI * 2;
+            var vz = Math.random() * 2 - 1;
+            var vx = Math.sqrt(1 - vz * vz) * Math.cos(angle);
+            var vy = Math.sqrt(1 - vz * vz) * Math.sin(angle);
+            return new PVector(vx, vy, vz);
         };
         PVector.add = function (v1, v2) {
             return v1.get().add(v2);
@@ -532,52 +541,11 @@ var colorsetting = function (require, core, constants) {
             }
             return rgba;
         };
-        Processing.prototype.hsv2rgb = function (h, s, v) {
-            var r, g, b, i, f, p, q, t;
-            s /= 100;
-            v /= 100;
-            h /= 60;
-            i = Math.floor(h);
-            f = h - i;
-            p = v * (1 - s);
-            q = v * (1 - s * f);
-            t = v * (1 - s * (1 - f));
-            switch (i) {
-            case 0:
-                r = v;
-                g = t;
-                b = p;
-                break;
-            case 1:
-                r = q;
-                g = v;
-                b = p;
-                break;
-            case 2:
-                r = p;
-                g = v;
-                b = t;
-                break;
-            case 3:
-                r = p;
-                g = q;
-                b = v;
-                break;
-            case 4:
-                r = t;
-                g = p;
-                b = v;
-                break;
-            default:
-                r = v;
-                g = p;
-                b = q;
-                break;
-            }
+        Processing.prototype.hsv2rgb = function (h, s, b) {
             return [
-                Math.round(r * 255),
-                Math.round(g * 255),
-                Math.round(b * 255)
+                h,
+                s,
+                b
             ];
         };
         Processing.prototype.getCSSRGBAColor = function (arr) {

@@ -13,6 +13,10 @@
 
   "browser": true,
   "globals": {
+    "assert": false,
+    "suite": false,
+    "setup": false,
+    "test": false,
     "afterEach": false,
     "beforeEach": false,
     "define": false,
