@@ -1,7 +1,8 @@
 suite('Core', function(){
 
-  setup(function(){
-    // ...
+  suite('Processing.prototype', function() {
+
+
   });
 
 });
