@@ -1,10 +1,8 @@
 suite('Calculation', function() {
 
   suite('Processing.prototype.abs', function() {
-
     var abs = Processing.prototype.abs;
     var result;
-
     suite('abs()', function() {
       test('should be a function', function() {
         assert.ok(abs);
@@ -20,7 +18,6 @@ suite('Calculation', function() {
         assert.notEqual(result, -1);
       })
     });
-
   });
 
 });
