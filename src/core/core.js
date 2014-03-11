@@ -8,7 +8,7 @@ define(function (require) {
   var constants = require('constants');
 
   // Create the Processing constructor
-  var Processing = function(canvs, sketchProc) {
+  var Processing = function(node, sketch) {
 
     var self = this;
 
@@ -82,7 +82,7 @@ define(function (require) {
 
     // If the user has created a global setup function,
     // assume "beginner mode" and make everything global
-    if (!sketchProc) {
+    if (!sketch) {
 
       this.isGlobal = true;
 
@@ -106,7 +106,7 @@ define(function (require) {
 
     } else {
 
-      sketchProc(this);
+      sketch(this);
 
     }
 
