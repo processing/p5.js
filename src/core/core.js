@@ -60,10 +60,8 @@ define(function (require) {
     this.matrices = [[1,0,0,1,0,0]];
 
     this.settings = {
-
       // Structure
       loop: true,
-
       fill: false,
       startTime: 0,
       updateInterval: 0,
@@ -71,43 +69,33 @@ define(function (require) {
       imageMode: constants.CORNER,
       ellipseMode: constants.CENTER,
       colorMode: constants.RGB,
-
       mousePressed: false,
-
       angleMode: constants.RADIANS
     };
 
     this.styles = [];
 
-
     // If the user has created a global setup function,
     // assume "beginner mode" and make everything global
     if (!sketch) {
-
       this.isGlobal = true;
-
       // Loop through methods on the prototype and attach them to the window
       for (var method in Processing.prototype) {
         window[method] = Processing.prototype[method].bind(this);
       }
-
       // Attach its properties to the window
       for (var prop in this) {
         if (this.hasOwnProperty(prop)) {
           window[prop] = this[prop];
         }
       }
-
       for (var constant in constants) {
         if (constants.hasOwnProperty(constant)) {
           window[constant] = constants[constant];
         }
       }
-
     } else {
-
       sketch(this);
-
     }
 
     if (document.readyState === 'complete') {
@@ -120,72 +108,63 @@ define(function (require) {
 
   // Create is called at window.onload
   Processing._init = function() {
-
     // If the user has created a global setup function,
     // assume "beginner mode" and make everything global
     if (window.setup && typeof window.setup === 'function') {
-
       // Create a processing instance
       new Processing();
-
     }
-
   };
 
   Processing.prototype._start = function () {
-      this.createGraphics(800, 600, true);
-      var preload = this.preload || window.preload;
-      var context = this.isGlobal ? window : this;
-      if (preload) {
-          context.loadJSON = function (path) {
-              return context.preloadFunc('loadJSON', path);
-          };
-          context.loadStrings = function (path) {
-              return context.preloadFunc('loadStrings', path);
-          };
-          context.loadXML = function (path) {
-              return context.preloadFunc('loadXML', path);
-          };
-          context.loadImage = function (path) {
-              return context.preloadFunc('loadImage', path);
-          };
-          preload();
-          context.loadJSON = Processing.prototype.loadJSON;
-          context.loadStrings = Processing.prototype.loadStrings;
-          context.loadXML = Processing.prototype.loadXML;
-          context.loadImage = Processing.prototype.loadImage;
-      } else {
-          this._setup();
-          this._runFrames();
-          this._drawSketch();
-      }
+    this.createGraphics(800, 600, true);
+    var preload = this.preload || window.preload;
+    var context = this.isGlobal ? window : this;
+    if (preload) {
+      context.loadJSON = function (path) {
+        return context.preloadFunc('loadJSON', path);
+      };
+      context.loadStrings = function (path) {
+        return context.preloadFunc('loadStrings', path);
+      };
+      context.loadXML = function (path) {
+        return context.preloadFunc('loadXML', path);
+      };
+      context.loadImage = function (path) {
+        return context.preloadFunc('loadImage', path);
+      };
+      preload();
+      context.loadJSON = Processing.prototype.loadJSON;
+      context.loadStrings = Processing.prototype.loadStrings;
+      context.loadXML = Processing.prototype.loadXML;
+      context.loadImage = Processing.prototype.loadImage;
+    } else {
+      this._setup();
+      this._runFrames();
+      this._drawSketch();
+    }
   };
+
   Processing.prototype.preloadFunc = function (func, path) {
-      this._setProperty('preload_count', this.preload_count + 1);
-      var context = this.isGlobal ? window : this;
-      return this[func](path, function (resp) {
-          context._setProperty('preload_count', context.preload_count - 1);
-          if (context.preload_count === 0) {
-              context._setup();
-              context._runFrames();
-              context._drawSketch();
-          }
-      });
+    this._setProperty('preload_count', this.preload_count + 1);
+    var context = this.isGlobal ? window : this;
+    return this[func](path, function (resp) {
+      context._setProperty('preload_count', context.preload_count - 1);
+      if (context.preload_count === 0) {
+        context._setup();
+        context._runFrames();
+        context._drawSketch();
+      }
+    });
   };
   
   Processing.prototype._setup = function() {
-
     // Short-circuit on this, in case someone used the library globally earlier
     var setup = this.setup || window.setup;
-
     if (typeof setup === 'function') {
-
       setup();
-
     } else {
-
       throw 'sketch must include a setup function';
-
     }
   };
 
@@ -212,17 +191,13 @@ define(function (require) {
   };
 
   Processing.prototype._runFrames = function() {
-
     var self = this;
-
     if (this.updateInterval) {
       clearInterval(this.updateInterval);
     }
-
     this.updateInterval = setInterval(function(){
       self._setProperty('frameCount', self.frameCount + 1);
     }, 1000/self._targetFrameRate);
-
   };
 
   Processing.prototype._applyDefaults = function() {
@@ -233,7 +208,6 @@ define(function (require) {
 
   Processing.prototype._setProperty = function(prop, value) {
     this[prop] = value;
-
     if (this.isGlobal) {
       window[prop] = value;
     }
