@@ -53,7 +53,7 @@ var constants = function (require) {
 var core = function (require, shim, constants) {
         'use strict';
         var constants = constants;
-        var Processing = function (canvs, sketchProc) {
+        var Processing = function (node, sketch) {
             var self = this;
             this.startTime = new Date().getTime();
             this.preload_count = 0;
@@ -104,7 +104,7 @@ var core = function (require, shim, constants) {
                 angleMode: constants.RADIANS
             };
             this.styles = [];
-            if (!sketchProc) {
+            if (!sketch) {
                 this.isGlobal = true;
                 for (var method in Processing.prototype) {
                     window[method] = Processing.prototype[method].bind(this);
@@ -120,7 +120,7 @@ var core = function (require, shim, constants) {
                     }
                 }
             } else {
-                sketchProc(this);
+                sketch(this);
             }
             if (document.readyState === 'complete') {
                 this._start();
