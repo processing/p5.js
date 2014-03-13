@@ -110,11 +110,17 @@ define(function (require) {
 
     var n1,n2,n3;
 
+    // Is this right do just have this here?
+    var noise_fsc = function(i) {
+      // using cosine lookup table
+      return 0.5*(1.0-cosLUT[Math.floor(i*perlin_PI)%SINCOS_LENGTH]);
+    };
+
     for (var o=0; o<perlin_octaves; o++) {
       var of=xi+(yi<<PERLIN_YWRAPB)+(zi<<PERLIN_ZWRAPB);
 
-      rxf=this.noise_fsc(xf);
-      ryf=this.noise_fsc(yf);
+      rxf= noise_fsc(xf);
+      ryf= noise_fsc(yf);
 
       n1  = perlin[of&PERLIN_SIZE];
       n1 += rxf*(perlin[(of+1)&PERLIN_SIZE]-n1);
@@ -129,7 +135,7 @@ define(function (require) {
       n3 += rxf*(perlin[(of+PERLIN_YWRAP+1)&PERLIN_SIZE]-n3);
       n2 += ryf*(n3-n2);
 
-      n1 += this.noise_fsc(zf)*(n2-n1);
+      n1 += noise_fsc(zf)*(n2-n1);
 
       r += n1*ampl;
       ampl *= perlin_amp_falloff;
@@ -144,13 +150,7 @@ define(function (require) {
     return r;
   };
 
-  // [toxi 031112]
-  // now adjusts to the size of the cosLUT used via
-  // the new variables, defined above
-  Processing.prototype.noise_fsc = function(i) {
-    // using bagel's cosine table instead
-    return 0.5*(1.0-cosLUT[Math.floor(i*perlin_PI)%SINCOS_LENGTH]);
-  };
+
 
   // [toxi 040903]
   // make perlin noise quality user controlled to allow
