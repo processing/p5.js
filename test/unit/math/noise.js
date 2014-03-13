@@ -3,6 +3,8 @@ suite('Noise', function() {
   // This could use some better  testing!
   // Just checking that we get an actual number now
   // 1D noise only
+  // ALso need test for noiseSeed and noiseDetail
+  
   suite('Processing.prototype.noise', function() {
     var noise = Processing.prototype.noise;
 

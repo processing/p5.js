@@ -174,15 +174,8 @@ define(function (require) {
    * />By changing these parameters, the signal created by the <b>noise()</b>
    * function can be adapted to fit very specific needs and characteristics.
    *
-   * @param lod number of octaves to be used by the noise
-   * @param falloff falloff factor for each octave
-   */
-  Processing.prototype.noiseDetail = function(lod) {
-    if (lod>0) { perlin_octaves=lod; }
-  };
-
-  /**
-   * @param falloff falloff factor for each octave
+   * @param {lod} number of octaves to be used by the noise
+   * @param {falloff} falloff factor for each octave
    */
   Processing.prototype.noiseDetail = function(lod, falloff) {
     if (lod>0)     { perlin_octaves=lod; }
@@ -191,6 +184,7 @@ define(function (require) {
 
   /**
    *
+   * NOT IMPLEMENTED YET!
    * Sets the seed value for <b>noise()</b>. By default, <b>noise()</b>
    * produces different results each time the program is run. Set the
    * <b>value</b> parameter to a constant to return the same pseudo-random
