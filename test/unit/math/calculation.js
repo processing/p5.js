@@ -1,7 +1,7 @@
 suite('Calculation', function() {
 
-  suite('Processing.prototype.abs', function() {
-    var abs = Processing.prototype.abs;
+  suite('p5.prototype.abs', function() {
+    var abs = p5.prototype.abs;
     var result;
     suite('abs()', function() {
       test('should be a function', function() {

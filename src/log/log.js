@@ -6,14 +6,14 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('core');
+  var p5 = require('core');
 
-  Processing.prototype.log = function() {
+  p5.prototype.log = function() {
     if (window.console && console.log) {
       console.log.apply(console, arguments);
     }
   };
 
-  return Processing;
+  return p5;
 
 });

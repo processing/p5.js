@@ -2,10 +2,10 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('core');
+  var p5 = require('core');
   var constants = require('constants');
 
-  Processing.prototype.background = function() {
+  p5.prototype.background = function() {
     var c = this.getNormalizedColor(arguments);
     // save out the fill
     var curFill = this.curElement.context.fillStyle;
@@ -15,25 +15,25 @@ define(function (require) {
     // reset fill
     this.curElement.context.fillStyle = curFill;
   };
-  Processing.prototype.clear = function() {
+  p5.prototype.clear = function() {
     this.curElement.context.clearRect(0, 0, this.width, this.height);
   };
-  Processing.prototype.colorMode = function(mode) {
+  p5.prototype.colorMode = function(mode) {
     if (mode === constants.RGB || mode === constants.HSB) {
       this.settings.colorMode = mode;
     }
   };
-  Processing.prototype.fill = function() {
+  p5.prototype.fill = function() {
     var c = this.getNormalizedColor(arguments);
     this.curElement.context.fillStyle = this.getCSSRGBAColor(c);
   };
-  Processing.prototype.noFill = function() {
+  p5.prototype.noFill = function() {
     this.curElement.context.fillStyle = 'rgba(0,0,0,0)';
   };
-  Processing.prototype.noStroke = function() {
+  p5.prototype.noStroke = function() {
     this.curElement.context.strokeStyle = 'rgba(0,0,0,0)';
   };
-  Processing.prototype.stroke = function() {
+  p5.prototype.stroke = function() {
     var c = this.getNormalizedColor(arguments);
     this.curElement.context.strokeStyle = this.getCSSRGBAColor(c);
   };
@@ -57,7 +57,7 @@ define(function (require) {
   *                 [r, g, b]    ==> [r, g, b, 255]
   *                 [r, g, b, a] ==> [r, g, b, a]
   */
-  Processing.prototype.getNormalizedColor = function(args) {
+  p5.prototype.getNormalizedColor = function(args) {
     var r, g, b, a, rgba;
     var _args = typeof args[0].length === 'number' ? args[0] : args;
     if (_args.length >= 3) {
@@ -78,12 +78,12 @@ define(function (require) {
     return rgba;
   };
 
-  Processing.prototype.hsv2rgb = function(h, s, b) {
+  p5.prototype.hsv2rgb = function(h, s, b) {
     //TODO: this doesn't do anything - write conversion
     return [h, s, b];
   };
 
-  Processing.prototype.getCSSRGBAColor = function(arr) {
+  p5.prototype.getCSSRGBAColor = function(arr) {
     var a = arr.map(function(val) {
       return Math.floor(val);
     });
@@ -91,6 +91,6 @@ define(function (require) {
     return 'rgba('+a[0]+','+a[1]+','+a[2]+','+ alpha +')';
   };
 
-  return Processing;
+  return p5;
 
 });

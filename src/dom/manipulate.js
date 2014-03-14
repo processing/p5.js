@@ -1,12 +1,12 @@
 define(function(require) {
 
-  var Processing = require('core');
+  var p5 = require('core');
   require('input.mouse');
   require('input.touch');
 
   var PElement = require('dom.pelement');
 
-  Processing.prototype.createGraphics = function(w, h, isDefault, targetID) {
+  p5.prototype.createGraphics = function(w, h, isDefault, targetID) {
     var c = document.createElement('canvas');
     c.setAttribute('width', w);
     c.setAttribute('height', h);
@@ -37,7 +37,7 @@ define(function(require) {
     return cnv;
   };
 
-  Processing.prototype.createHTML = function(html) {
+  p5.prototype.createHTML = function(html) {
     var elt = document.createElement('div');
     elt.innerHTML = html;
     document.body.appendChild(elt);
@@ -46,7 +46,7 @@ define(function(require) {
     return c;
   };
 
-  Processing.prototype.createHTMLImage = function(src, alt) {
+  p5.prototype.createHTMLImage = function(src, alt) {
     var elt = document.createElement('img');
     elt.src = src;
     if (typeof alt !== 'undefined') {
@@ -58,7 +58,7 @@ define(function(require) {
     return c;
   };
 
-  Processing.prototype.find = function(e) {
+  p5.prototype.find = function(e) {
     var res = document.getElementById(e);
     if (res) {
       return [new PElement(res, this)];
@@ -76,7 +76,7 @@ define(function(require) {
     return [];
   };
 
-  Processing.prototype.context = function(e) {
+  p5.prototype.context = function(e) {
     var obj;
     if (typeof e === 'string' || e instanceof String) {
       var elt = document.getElementById(e);
@@ -120,6 +120,6 @@ define(function(require) {
     }
   };
 
-  return Processing;
+  return p5;
 
 });

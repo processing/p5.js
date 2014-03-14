@@ -6,7 +6,7 @@
   "eqnull": true,
   "immed": true,
   "latedef": "nofunc",
-  "newcap": true,
+  "newcap": false,
   "noarg": true,
   "quotmark": "single",
   "undef": true,

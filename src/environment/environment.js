@@ -2,13 +2,13 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('core');
+  var p5 = require('core');
 
-  Processing.prototype.cursor = function(type) {
+  p5.prototype.cursor = function(type) {
     this.curElement.style.cursor = type || 'auto';
   };
 
-  Processing.prototype.frameRate = function(fps) {
+  p5.prototype.frameRate = function(fps) {
     if (typeof fps === 'undefined') {
         return this._frameRate;
     } else {
@@ -18,18 +18,18 @@ define(function (require) {
     }
   };
 
-  Processing.prototype.getFrameRate = function() {
+  p5.prototype.getFrameRate = function() {
     return this.frameRate();
   };
 
-  Processing.prototype.setFrameRate = function(fps) {
+  p5.prototype.setFrameRate = function(fps) {
     return this.frameRate(fps);
   };
 
-  Processing.prototype.noCursor = function() {
+  p5.prototype.noCursor = function() {
     this.curElement.style.cursor = 'none';
   };
 
-  return Processing;
+  return p5;
 
 });

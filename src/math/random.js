@@ -2,7 +2,7 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('core');
+  var p5 = require('core');
 
   /**
    * Return a random number.
@@ -16,7 +16,7 @@ define(function (require) {
    * @param  {y}      max
    * @return {Number}
    */
-  Processing.prototype.random = function(x, y) {
+  p5.prototype.random = function(x, y) {
     // might want to use this kind of check instead:
     // if (arguments.length === 0) {
     if (typeof x !== 'undefined' && typeof y !== 'undefined') {
@@ -28,6 +28,6 @@ define(function (require) {
     }
   };
 
-  return Processing;
+  return p5;
 
 });

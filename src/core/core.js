@@ -7,8 +7,8 @@ define(function (require) {
   // Core needs the PVariables object
   var constants = require('constants');
 
-  // Create the Processing constructor
-  var Processing = function(node, sketch) {
+  // Create the p5 constructor
+  var p5 = function(node, sketch) {
 
     var self = this;
 
@@ -80,8 +80,8 @@ define(function (require) {
     if (!sketch) {
       this.isGlobal = true;
       // Loop through methods on the prototype and attach them to the window
-      for (var method in Processing.prototype) {
-        window[method] = Processing.prototype[method].bind(this);
+      for (var method in p5.prototype) {
+        window[method] = p5.prototype[method].bind(this);
       }
       // Attach its properties to the window
       for (var prop in this) {
@@ -107,16 +107,16 @@ define(function (require) {
   };
 
   // Create is called at window.onload
-  Processing._init = function() {
+  p5._init = function() {
     // If the user has created a global setup function,
     // assume "beginner mode" and make everything global
     if (window.setup && typeof window.setup === 'function') {
       // Create a processing instance
-      new Processing();
+      new p5();
     }
   };
 
-  Processing.prototype._start = function () {
+  p5.prototype._start = function () {
     this.createGraphics(800, 600, true);
     var preload = this.preload || window.preload;
     var context = this.isGlobal ? window : this;
@@ -134,10 +134,10 @@ define(function (require) {
         return context.preloadFunc('loadImage', path);
       };
       preload();
-      context.loadJSON = Processing.prototype.loadJSON;
-      context.loadStrings = Processing.prototype.loadStrings;
-      context.loadXML = Processing.prototype.loadXML;
-      context.loadImage = Processing.prototype.loadImage;
+      context.loadJSON = p5.prototype.loadJSON;
+      context.loadStrings = p5.prototype.loadStrings;
+      context.loadXML = p5.prototype.loadXML;
+      context.loadImage = p5.prototype.loadImage;
     } else {
       this._setup();
       this._runFrames();
@@ -145,7 +145,7 @@ define(function (require) {
     }
   };
 
-  Processing.prototype.preloadFunc = function (func, path) {
+  p5.prototype.preloadFunc = function (func, path) {
     this._setProperty('preload_count', this.preload_count + 1);
     var context = this.isGlobal ? window : this;
     return this[func](path, function (resp) {
@@ -158,7 +158,7 @@ define(function (require) {
     });
   };
   
-  Processing.prototype._setup = function() {
+  p5.prototype._setup = function() {
     // Short-circuit on this, in case someone used the library globally earlier
     var setup = this.setup || window.setup;
     if (typeof setup === 'function') {
@@ -168,7 +168,7 @@ define(function (require) {
     }
   };
 
-  Processing.prototype._drawSketch = function () {
+  p5.prototype._drawSketch = function () {
     var self = this;
 
     var now = new Date().getTime();
@@ -190,7 +190,7 @@ define(function (require) {
     self.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
   };
 
-  Processing.prototype._runFrames = function() {
+  p5.prototype._runFrames = function() {
     var self = this;
     if (this.updateInterval) {
       clearInterval(this.updateInterval);
@@ -200,19 +200,19 @@ define(function (require) {
     }, 1000/self._targetFrameRate);
   };
 
-  Processing.prototype._applyDefaults = function() {
+  p5.prototype._applyDefaults = function() {
     this.curElement.context.fillStyle = '#FFFFFF';
     this.curElement.context.strokeStyle = '#000000';
     this.curElement.context.lineCap = constants.ROUND;
   };
 
-  Processing.prototype._setProperty = function(prop, value) {
+  p5.prototype._setProperty = function(prop, value) {
     this[prop] = value;
     if (this.isGlobal) {
       window[prop] = value;
     }
   };
 
-  return Processing;
+  return p5;
 
 });

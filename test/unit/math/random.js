@@ -1,7 +1,7 @@
 suite('Random', function() {
 
-  suite('Processing.prototype.random', function() {
-    var random = Processing.prototype.random;
+  suite('p5.prototype.random', function() {
+    var random = p5.prototype.random;
     var result;
     suite('random()', function() {
       setup(function() {

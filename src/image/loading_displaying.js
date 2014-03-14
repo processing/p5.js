@@ -2,7 +2,7 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('core');
+  var p5 = require('core');
   
 
   // function getPixels(img) {
@@ -16,22 +16,22 @@ define(function (require) {
 
   //// PIXELS ////////////////////////////////
 
-  Processing.prototype.blend = function() {
+  p5.prototype.blend = function() {
     // TODO
 
   };
 
-  Processing.prototype.copy = function() {
+  p5.prototype.copy = function() {
     // TODO
 
   };
 
-  Processing.prototype.filter = function() {
+  p5.prototype.filter = function() {
     // TODO
 
   };
 
-  Processing.prototype.get = function(x, y) {
+  p5.prototype.get = function(x, y) {
     var width = this.width;
     var height = this.height;
     var pix = this.curElement.context.getImageData(0, 0, width, height).data;
@@ -57,7 +57,7 @@ define(function (require) {
     }
   };
 
-  Processing.prototype.loadPixels = function() {
+  p5.prototype.loadPixels = function() {
     var width = this.width;
     var height = this.height;
     var a = this.curElement.context.getImageData(0, 0, width, height).data;
@@ -68,12 +68,12 @@ define(function (require) {
     this._setProperty('pixels', pixels);
   };
 
-  Processing.prototype.set = function() {
+  p5.prototype.set = function() {
     // TODO
 
   };
 
-  Processing.prototype.updatePixels = function() {
+  p5.prototype.updatePixels = function() {
     /*if (typeof this.pixels !== 'undefined') {
       var imgd = this.curElement.context.getImageData(x, y, width, height);
       imgd = this.pixels;
@@ -81,6 +81,6 @@ define(function (require) {
     }*/
   };
 
-  return Processing;
+  return p5;
 
 });

@@ -2,12 +2,12 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('core');
+  var p5 = require('core');
   var constants = require('constants');
 
   /*
   // Trying to get mouseX to relate to the current context
-  Object.defineProperty(Processing.prototype, "mouseX", {
+  Object.defineProperty(p5.prototype, "mouseX", {
     get: function() {
       return this.windowMouseX - this.curElement.x;
     },
@@ -15,7 +15,7 @@ define(function (require) {
       this._setProperty('mouseX', v); // broken because it calls itself?
     }
   });
-  Object.defineProperty(Processing.prototype, "mouseY", {
+  Object.defineProperty(p5.prototype, "mouseY", {
     get: function() {
       return this.windowMouseY - this.curElement.y;
     },
@@ -25,11 +25,11 @@ define(function (require) {
   });
   */
 
-  Processing.prototype.isMousePressed = Processing.prototype.mouseIsPressed = function() {
+  p5.prototype.isMousePressed = p5.prototype.mouseIsPressed = function() {
     return this.settings.mousePressed;
   };
 
-  Processing.prototype.updateMouseCoords = function(e) {
+  p5.prototype.updateMouseCoords = function(e) {
     this._setProperty('pmouseX', this.mouseX);
     this._setProperty('pmouseY', this.mouseY);
     this._setProperty('mouseX', e.offsetX);
@@ -42,7 +42,7 @@ define(function (require) {
 
   };
 
-  Processing.prototype.setMouseButton = function(e) {
+  p5.prototype.setMouseButton = function(e) {
 
     if (e.button === 1) {
       this._setProperty('mouseButton', constants.CENTER);
@@ -54,7 +54,7 @@ define(function (require) {
 
   };
 
-  Processing.prototype.onmousemove = function(e){
+  p5.prototype.onmousemove = function(e){
     // TODO: temporary fix to set context based on whether in global mode or not
     var context = this.isGlobal ? window : this;
     this.updateMouseCoords(e);
@@ -66,7 +66,7 @@ define(function (require) {
     }
   };
 
-  Processing.prototype.onmousedown = function(e) {
+  p5.prototype.onmousedown = function(e) {
     var context = this.isGlobal ? window : this;
     this.settings.mousePressed = true;
     this.setMouseButton(e);
@@ -75,7 +75,7 @@ define(function (require) {
     }
   };
 
-  Processing.prototype.onmouseup = function(e) {
+  p5.prototype.onmouseup = function(e) {
     var context = this.isGlobal ? window : this;
     this.settings.mousePressed = false;
     if (typeof context.mouseReleased === 'function') {
@@ -83,20 +83,20 @@ define(function (require) {
     }
   };
 
-  Processing.prototype.onmouseclick = function(e) {
+  p5.prototype.onmouseclick = function(e) {
     var context = this.isGlobal ? window : this;
     if (typeof context.mouseClicked === 'function') {
       context.mouseClicked(e);
     }
   };
 
-  Processing.prototype.onmousewheel = function(e) {
+  p5.prototype.onmousewheel = function(e) {
     var context = this.isGlobal ? window : this;
     if (typeof context.mouseWheel === 'function') {
       context.mouseWheel(e);
     }
   };
 
-  return Processing;
+  return p5;
 
 });

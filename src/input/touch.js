@@ -2,9 +2,9 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('core');
+  var p5 = require('core');
 
-  Processing.prototype.setTouchPoints = function(e) {
+  p5.prototype.setTouchPoints = function(e) {
     this._setProperty('touchX', e.changedTouches[0].pageX);
     this._setProperty('touchY', e.changedTouches[0].pageY);
     var touches = [];
@@ -15,7 +15,7 @@ define(function (require) {
     this._setProperty('touches', touches);
   };
 
-  Processing.prototype.ontouchstart = function(e) {
+  p5.prototype.ontouchstart = function(e) {
     this.setTouchPoints(e);
     if(typeof this.touchStarted === 'function') {
       this.touchStarted(e);
@@ -25,19 +25,19 @@ define(function (require) {
       e.preventDefault();
     }
   };
-  Processing.prototype.ontouchmove = function(e) {
+  p5.prototype.ontouchmove = function(e) {
     this.setTouchPoints(e);
     if(typeof this.touchMoved === 'function') {
       this.touchMoved(e);
     }
   };
-  Processing.prototype.ontouchend = function(e) {
+  p5.prototype.ontouchend = function(e) {
     this.setTouchPoints(e);
     if(typeof this.touchEnded === 'function') {
       this.touchEnded(e);
     }
   };
 
-  return Processing;
+  return p5;
 
 });
