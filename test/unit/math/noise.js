@@ -5,8 +5,8 @@ suite('Noise', function() {
   // 1D noise only
   // ALso need test for noiseSeed and noiseDetail
   
-  suite('Processing.prototype.noise', function() {
-    var noise = Processing.prototype.noise;
+  suite('p5.prototype.noise', function() {
+    var noise = p5.prototype.noise;
 
     var result;
     suite('noise()', function() {
