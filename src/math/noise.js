@@ -15,7 +15,7 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('core');
+  var p5 = require('core');
 
   var PERLIN_YWRAPB = 4;
   var PERLIN_YWRAP = 1<<PERLIN_YWRAPB;
@@ -78,7 +78,7 @@ define(function (require) {
    * @param  {z}      z-coordinate in noise space
    * @return {Number} between 0 and 1
    */
-  Processing.prototype.noise = function(x,y,z) {
+  p5.prototype.noise = function(x,y,z) {
     // is this legit?
     y = y || 0;
     z = z || 0;
@@ -177,7 +177,7 @@ define(function (require) {
    * @param {lod} number of octaves to be used by the noise
    * @param {falloff} falloff factor for each octave
    */
-  Processing.prototype.noiseDetail = function(lod, falloff) {
+  p5.prototype.noiseDetail = function(lod, falloff) {
     if (lod>0)     { perlin_octaves=lod; }
     if (falloff>0) { perlin_amp_falloff=falloff; }
   };
@@ -191,7 +191,7 @@ define(function (require) {
    * numbers each time the software is run.
    *
    */
-  Processing.prototype.noiseSeed = function(seed) {
+  p5.prototype.noiseSeed = function(seed) {
     // Need to implement seeding
     // if (perlinRandom == null) perlinRandom = new Random();
     // perlinRandom.setSeed(seed);
