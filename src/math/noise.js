@@ -199,7 +199,7 @@ define(function (require) {
     // perlin = null;
   };
 
-  return Processing;
+  return p5;
 });
 
 
