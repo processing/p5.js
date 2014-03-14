@@ -6,9 +6,26 @@ define(function (require) {
   var canvas = require('canvas');
   var constants = require('constants');
 
-	Processing.prototype.arc = function() {
-    // pend todo
+	Processing.prototype.arc = function(x, y, w, h, start, stop, mode) {
+    var radius = (h>w) ? h/2 : w/2,
+      xScale = (h>w) ? w/h : 1,
+      yScale = (h>w) ? 1 : h/w;
 
+    this.curElement.context.scale(xScale,yScale);
+    this.curElement.context.beginPath();
+    this.curElement.context.arc(x,y,radius,start,stop);
+
+    //TODO: use a this.settings?
+    if (mode === 'chord') {
+      this.curElement.context.closePath();
+    } else if (mode === 'pie') {
+      this.curElement.context.lineTo(x,y);
+      this.curElement.context.closePath();
+    }
+    if(this.settings.fill) {
+      this.curElement.context.fill();
+    }
+    this.curElement.context.stroke();
   };
 
   Processing.prototype.ellipse = function(a, b, c, d) {
