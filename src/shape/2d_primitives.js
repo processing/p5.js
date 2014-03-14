@@ -6,26 +6,27 @@ define(function (require) {
   var canvas = require('canvas');
   var constants = require('constants');
 
-	Processing.prototype.arc = function(x, y, w, h, start, stop, mode) {
-    var radius = (h>w) ? h/2 : w/2,
-      xScale = (h>w) ? w/h : 1,
-      yScale = (h>w) ? 1 : h/w;
-
-    this.curElement.context.scale(xScale,yScale);
+	Processing.prototype.arc = function(a, b, c, d, start, stop, mode) {
+    var vals = canvas.modeAdjust(a, b, c, d, this.settings.ellipseMode);
+    var radius = (vals.h > vals.w) ? vals.h / 2 : vals.w / 2,
+      xScale = (vals.h > vals.w) ? vals.w / vals.h : 1, //scale the arc if it is oblong
+      yScale = (vals.h > vals.w) ? 1 : vals.h / vals.w;
+    this.curElement.context.scale(xScale, yScale);
     this.curElement.context.beginPath();
-    this.curElement.context.arc(x,y,radius,start,stop);
-
-    //TODO: use a this.settings?
-    if (mode === 'chord') {
-      this.curElement.context.closePath();
-    } else if (mode === 'pie') {
-      this.curElement.context.lineTo(x,y);
-      this.curElement.context.closePath();
-    }
-    if(this.settings.fill) {
-      this.curElement.context.fill();
-    }
+    this.curElement.context.arc(vals.x, vals.y, radius, start, stop);
     this.curElement.context.stroke();
+    if (mode === constants.CHORD || mode === constants.OPEN) {
+      this.curElement.context.closePath();
+    } else if (mode === constants.PIE || mode === undefined) {
+      this.curElement.context.lineTo(x, y);
+      this.curElement.context.closePath();
+    }
+    this.curElement.context.fill();
+    if(mode != constants.OPEN && mode != undefined) { // final stroke must be after fill so the fill does not cover part of the line
+      this.curElement.context.stroke();
+    }
+
+    return this;
   };
 
   Processing.prototype.ellipse = function(a, b, c, d) {
