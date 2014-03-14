@@ -6,6 +6,25 @@ define(function (require) {
   var canvas = require('canvas');
   var constants = require('constants');
 
+  /**
+   * Draw an arc
+   *
+   * If a,b,c,d,start and stop are the only params provided, draws an
+   * open pie.
+   * If mode is provided draws the arc either open, chord or pie, dependant
+   * on the variable provided
+   *
+   * Returns void
+   *
+   * @param  {Float} a x-coordinate of the arc's ellipse
+   * @param  {Float} b y-coordinate of the arc's ellipse
+   * @param  {Float} c width of the arc's ellipse by default
+   * @param  {Float} d height of the arc's ellipse by default
+   * @param  {Float} start angle to start the arc, specified in radians
+   * @param  {Float} stop angle to stop the arc, specified in radians
+   * @param  {Mode} optional parameter to determine the way of drawing the arc
+   * @return {Void}
+   */
 	Processing.prototype.arc = function(a, b, c, d, start, stop, mode) {
     var vals = canvas.modeAdjust(a, b, c, d, this.settings.ellipseMode);
     var radius = (vals.h > vals.w) ? vals.h / 2 : vals.w / 2,
