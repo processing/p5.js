@@ -2,54 +2,54 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('core');
+  var p5 = require('core');
 
-  Processing.prototype.abs = Math.abs;
+  p5.prototype.abs = Math.abs;
 
-  Processing.prototype.ceil = Math.ceil;
+  p5.prototype.ceil = Math.ceil;
 
-  Processing.prototype.constrain = function(n, l, h) {
+  p5.prototype.constrain = function(n, l, h) {
     return this.max(this.min(n, h), l);
   };
 
-  Processing.prototype.dist = function(x1, y1, x2, y2) {
+  p5.prototype.dist = function(x1, y1, x2, y2) {
     var xs = x2-x1;
     var ys = y2-y1;
     return Math.sqrt( xs*xs + ys*ys );
   };
 
-  Processing.prototype.exp = Math.exp;
+  p5.prototype.exp = Math.exp;
 
-  Processing.prototype.floor = Math.floor;
+  p5.prototype.floor = Math.floor;
 
-  Processing.prototype.lerp = function(start, stop, amt) {
+  p5.prototype.lerp = function(start, stop, amt) {
     return amt*(stop-start)+start;
   };
 
-  Processing.prototype.log = Math.log;
+  p5.prototype.log = Math.log;
 
-  Processing.prototype.mag = function(x, y) {
+  p5.prototype.mag = function(x, y) {
     return Math.sqrt(x*x+y*y);
   };
 
-  Processing.prototype.map = function(n, start1, stop1, start2, stop2) {
+  p5.prototype.map = function(n, start1, stop1, start2, stop2) {
     return ((n-start1)/(stop1-start1))*(stop2-start2)+start2;
   };
 
-  Processing.prototype.max = Math.max;
+  p5.prototype.max = Math.max;
 
-  Processing.prototype.min = Math.min;
+  p5.prototype.min = Math.min;
 
-  Processing.prototype.norm = function(n, start, stop) { return this.map(n, start, stop, 0, 1); };
+  p5.prototype.norm = function(n, start, stop) { return this.map(n, start, stop, 0, 1); };
 
-  Processing.prototype.pow = Math.pow;
+  p5.prototype.pow = Math.pow;
 
-  Processing.prototype.round = Math.round;
+  p5.prototype.round = Math.round;
 
-  Processing.prototype.sq = function(n) { return n*n; };
+  p5.prototype.sq = function(n) { return n*n; };
 
-  Processing.prototype.sqrt = Math.sqrt;
+  p5.prototype.sqrt = Math.sqrt;
 
-  return Processing;
+  return p5;
 
 });

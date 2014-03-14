@@ -2,13 +2,13 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('core');
+  var p5 = require('core');
 
   /*
     text(str, x, y)
     text(str, x1, y1, x2, y2)
   */
-  Processing.prototype.text = function() {
+  p5.prototype.text = function() {
 
     this.curElement.context.font=this._textStyle+' '+this._textSize+'px '+this._textFont;
 
@@ -57,6 +57,6 @@ define(function (require) {
     }
   };
 
-  return Processing;
+  return p5;
 
 });

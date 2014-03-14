@@ -1,6 +1,6 @@
 suite('Core', function(){
 
-  suite('Processing.prototype', function() {
+  suite('p5.prototype', function() {
 
 
   });

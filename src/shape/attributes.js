@@ -2,10 +2,10 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('core');
+  var p5 = require('core');
   var constants = require('constants');
 
-  Processing.prototype.ellipseMode = function(m) {
+  p5.prototype.ellipseMode = function(m) {
     if (m === constants.CORNER || m === constants.CORNERS || m === constants.RADIUS || m === constants.CENTER) {
       this.settings.ellipseMode = m;
     }
@@ -13,14 +13,14 @@ define(function (require) {
     return this;
   };
 
-  Processing.prototype.noSmooth = function() {
+  p5.prototype.noSmooth = function() {
     this.curElement.context.mozImageSmoothingEnabled = false;
     this.curElement.context.webkitImageSmoothingEnabled = false;
 
     return this;
   };
 
-  Processing.prototype.rectMode = function(m) {
+  p5.prototype.rectMode = function(m) {
     if (m === constants.CORNER || m === constants.CORNERS || m === constants.RADIUS || m === constants.CENTER) {
       this.settings.rectMode = m;
     }
@@ -28,14 +28,14 @@ define(function (require) {
     return this;
   };
 
-  Processing.prototype.smooth = function() {
+  p5.prototype.smooth = function() {
     this.curElement.context.mozImageSmoothingEnabled = true;
     this.curElement.context.webkitImageSmoothingEnabled = true;
 
     return this;
   };
 
-  Processing.prototype.strokeCap = function(cap) {
+  p5.prototype.strokeCap = function(cap) {
     if (cap === constants.ROUND || cap === constants.SQUARE || cap === constants.PROJECT) {
       this.curElement.context.lineCap=cap;
     }
@@ -43,7 +43,7 @@ define(function (require) {
     return this;
   };
 
-  Processing.prototype.strokeJoin = function(join) {
+  p5.prototype.strokeJoin = function(join) {
     if (join === constants.ROUND || join === constants.BEVEL || join === constants.MITER) {
       this.curElement.context.lineJoin = join;
     }
@@ -51,7 +51,7 @@ define(function (require) {
     return this;
   };
 
-  Processing.prototype.strokeWeight = function(w) {
+  p5.prototype.strokeWeight = function(w) {
     if (typeof w === 'undefined' || w === 0) {
       this.curElement.context.lineWidth = 0.0001; // hack because lineWidth 0 doesn't work
     } else {
@@ -61,6 +61,6 @@ define(function (require) {
     return this;
   };
 
-  return Processing;
+  return p5;
 
 });

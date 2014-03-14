@@ -25,7 +25,7 @@
     "it": false,
     "sinon": false,
     "PElement": false,
-    "Processing": false,
+    "p5": false,
     "PVector": false
   }
 }

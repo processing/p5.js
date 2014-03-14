@@ -2,16 +2,16 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('core');
+  var p5 = require('core');
   var canvas = require('canvas');
   var constants = require('constants');
 
-	Processing.prototype.arc = function() {
+	p5.prototype.arc = function() {
     // pend todo
 
   };
 
-  Processing.prototype.ellipse = function(a, b, c, d) {
+  p5.prototype.ellipse = function(a, b, c, d) {
     var vals = canvas.modeAdjust(a, b, c, d, this.settings.ellipseMode);
     var kappa = 0.5522848,
       ox = (vals.w / 2) * kappa, // control point offset horizontal
@@ -33,7 +33,7 @@ define(function (require) {
     return this;
   };
 
-  Processing.prototype.line = function(x1, y1, x2, y2) {
+  p5.prototype.line = function(x1, y1, x2, y2) {
     if (this.curElement.context.strokeStyle === 'rgba(0,0,0,0)') {
       return;
     }
@@ -45,7 +45,7 @@ define(function (require) {
     return this;
   };
 
-  Processing.prototype.point = function(x, y) {
+  p5.prototype.point = function(x, y) {
     var s = this.curElement.context.strokeStyle;
     var f = this.curElement.context.fillStyle;
     if (s === 'rgba(0,0,0,0)') {
@@ -66,7 +66,7 @@ define(function (require) {
     return this;
   };
 
-  Processing.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
+  p5.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
     this.curElement.context.beginPath();
     this.curElement.context.moveTo(x1, y1);
     this.curElement.context.lineTo(x2, y2);
@@ -79,7 +79,7 @@ define(function (require) {
     return this;
   };
 
-  Processing.prototype.rect = function(a, b, c, d) {
+  p5.prototype.rect = function(a, b, c, d) {
     var vals = canvas.modeAdjust(a, b, c, d, this.settings.rectMode);
     this.curElement.context.beginPath();
     this.curElement.context.rect(vals.x, vals.y, vals.w, vals.h);
@@ -89,7 +89,7 @@ define(function (require) {
     return this;
   };
 
-  Processing.prototype.triangle = function(x1, y1, x2, y2, x3, y3) {
+  p5.prototype.triangle = function(x1, y1, x2, y2, x3, y3) {
     this.curElement.context.beginPath();
     this.curElement.context.moveTo(x1, y1);
     this.curElement.context.lineTo(x2, y2);
@@ -101,6 +101,6 @@ define(function (require) {
     return this;
   };
 
-  return Processing;
+  return p5;
 
 });

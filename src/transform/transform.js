@@ -18,12 +18,12 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('core');
+  var p5 = require('core');
   var linearAlgebra = require('linearalgebra');
 
   require('log');
 
-  Processing.prototype.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
+  p5.prototype.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
     this.curElement.context.transform(n00, n01, n02, n10, n11, n12);
     var m = this.matrices[this.matrices.length-1];
     m = linearAlgebra.pMultiplyMatrix(m, [n00, n01, n02, n10, n11, n12]);
@@ -31,34 +31,34 @@ define(function (require) {
     return this;
   };
 
-  Processing.prototype.popMatrix = function() {
+  p5.prototype.popMatrix = function() {
     this.curElement.context.restore();
     this.matrices.pop();
 
     return this;
   };
 
-  Processing.prototype.printMatrix = function() {
+  p5.prototype.printMatrix = function() {
     this.log(this.matrices[this.matrices.length-1]);
 
     return this;
   };
 
-  Processing.prototype.pushMatrix = function() {
+  p5.prototype.pushMatrix = function() {
     this.curElement.context.save();
     this.matrices.push([1,0,0,1,0,0]);
 
     return this;
   };
 
-  Processing.prototype.resetMatrix = function() {
+  p5.prototype.resetMatrix = function() {
     this.curElement.context.setTransform();
     this.matrices[this.matrices.length-1] = [1,0,0,1,0,0];
 
     return this;
   };
 
-  Processing.prototype.rotate = function(r) {
+  p5.prototype.rotate = function(r) {
     r = this.radians(r);
     this.curElement.context.rotate(r);
     var m = this.matrices[this.matrices.length-1];
@@ -76,25 +76,25 @@ define(function (require) {
     return this;
   };
 
-  Processing.prototype.rotateX = function() {
+  p5.prototype.rotateX = function() {
 
 
     // return this;
   };
 
-  Processing.prototype.rotateY = function() {
+  p5.prototype.rotateY = function() {
 
 
     // return this;
   };
 
-  Processing.prototype.rotateZ = function() {
+  p5.prototype.rotateZ = function() {
 
 
     // return this;
   };
 
-  Processing.prototype.scale = function() {
+  p5.prototype.scale = function() {
     var x = 1.0, y = 1.0;
     if (arguments.length === 1) {
       x = y = arguments[0];
@@ -112,7 +112,7 @@ define(function (require) {
     return this;
   };
 
-  Processing.prototype.shearX = function(angle) {
+  p5.prototype.shearX = function(angle) {
     this.curElement.context.transform(1, 0, this.tan(angle), 1, 0, 0);
     var m = this.matrices[this.matrices.length-1];
     m = linearAlgebra.pMultiplyMatrix(m, [1, 0, this.tan(angle), 1, 0, 0]);
@@ -120,7 +120,7 @@ define(function (require) {
     return this;
   };
 
-  Processing.prototype.shearY = function(angle) {
+  p5.prototype.shearY = function(angle) {
     this.curElement.context.transform(1, this.tan(angle), 0, 1, 0, 0);
     var m = this.matrices[this.matrices.length-1];
     m = linearAlgebra.pMultiplyMatrix(m, [1, this.tan(angle), 0, 1, 0, 0]);
@@ -128,7 +128,7 @@ define(function (require) {
     return this;
   };
 
-  Processing.prototype.translate = function(x, y) {
+  p5.prototype.translate = function(x, y) {
     this.curElement.context.translate(x, y);
     var m = this.matrices[this.matrices.length-1];
     m[4] += m[0] * x + m[2] * y;
@@ -137,6 +137,6 @@ define(function (require) {
     return this;
   };
 
-  return Processing;
+  return p5;
 
 });

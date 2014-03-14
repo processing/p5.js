@@ -2,26 +2,26 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('core');
+  var p5 = require('core');
   var reqwest = require('reqwest');
 
   //BufferedReader
-  Processing.prototype.createInput = function() {
+  p5.prototype.createInput = function() {
     // TODO
 
   };
 
-  Processing.prototype.createReader = function() {
+  p5.prototype.createReader = function() {
     // TODO
 
   };
 
-  Processing.prototype.loadBytes = function() {
+  p5.prototype.loadBytes = function() {
     // TODO
 
   };
 
-  Processing.prototype.loadJSON = function(path, callback) {
+  p5.prototype.loadJSON = function(path, callback) {
     var ret = [];
     var t = path.indexOf('http') === -1 ? 'json' : 'jsonp';
     reqwest({url: path, type: t, success: function (resp) {
@@ -34,7 +34,7 @@ define(function (require) {
     }});
   };
 
-  Processing.prototype.loadStrings = function(path, callback) {
+  p5.prototype.loadStrings = function(path, callback) {
     var ret = [];
     var req = new XMLHttpRequest();
     req.open('GET', path, true);
@@ -52,13 +52,13 @@ define(function (require) {
     req.send(null);
   };
 
-  Processing.prototype.loadTable = function () {
+  p5.prototype.loadTable = function () {
     // TODO
 
   };
 
 
-  Processing.prototype.loadXML = function(path, callback) {
+  p5.prototype.loadXML = function(path, callback) {
     var ret = [];
     var self = this;
     self.temp = [];
@@ -72,31 +72,31 @@ define(function (require) {
     });
   };
 
-  Processing.prototype.open = function() {
+  p5.prototype.open = function() {
     // TODO
 
   };
 
-  Processing.prototype.parseXML = function() {
+  p5.prototype.parseXML = function() {
     // TODO
 
   };
 
-  Processing.prototype.saveTable = function() {
+  p5.prototype.saveTable = function() {
     // TODO
 
   };
 
-  Processing.prototype.selectFolder = function() {
+  p5.prototype.selectFolder = function() {
     // TODO
 
   };
 
-  Processing.prototype.selectInput = function() {
+  p5.prototype.selectInput = function() {
     // TODO
 
   };
 
-  return Processing;
+  return p5;
 
 });

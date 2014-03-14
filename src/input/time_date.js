@@ -2,36 +2,36 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('core');
+  var p5 = require('core');
 
-  Processing.prototype.day = function() {
+  p5.prototype.day = function() {
     return new Date().getDate();
   };
 
-  Processing.prototype.hour = function() {
+  p5.prototype.hour = function() {
     return new Date().getHours();
   };
 
-  Processing.prototype.minute = function() {
+  p5.prototype.minute = function() {
     return new Date().getMinutes();
   };
 
-  Processing.prototype.millis = function() {
+  p5.prototype.millis = function() {
     return new Date().getTime() - this.startTime;
   };
 
-  Processing.prototype.month = function() {
+  p5.prototype.month = function() {
     return new Date().getMonth();
   };
 
-  Processing.prototype.second = function() {
+  p5.prototype.second = function() {
     return new Date().getSeconds();
   };
 
-  Processing.prototype.year = function() {
+  p5.prototype.year = function() {
     return new Date().getFullYear();
   };
 
-  return Processing;
+  return p5;
 
 });

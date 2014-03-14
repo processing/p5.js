@@ -2,19 +2,19 @@ define(function (require) {
 
   'use strict';
 
-  var Processing = require('core');
+  var p5 = require('core');
 
-  //return Processing; //LM is this a mistake?
+  //return p5; //LM is this a mistake?
 
-  Processing.prototype.join = function(list, separator) {
+  p5.prototype.join = function(list, separator) {
     return list.join(separator);
   };
 
-  Processing.prototype.match =  function(str, reg) {
+  p5.prototype.match =  function(str, reg) {
     return str.match(reg);
   };
 
-  Processing.prototype.matchAll = function(str, reg) {
+  p5.prototype.matchAll = function(str, reg) {
     var re = new RegExp(reg, 'g');
     var match = re.exec(str);
     var matches = [];
@@ -28,7 +28,7 @@ define(function (require) {
     return matches;
   };
 
-  Processing.prototype.nf = function() {
+  p5.prototype.nf = function() {
     if (arguments[0] instanceof Array) {
       var a = arguments[1];
       var b = arguments[2];
@@ -62,7 +62,7 @@ define(function (require) {
     }
   }
 
-  Processing.prototype.nfc = function() {
+  p5.prototype.nfc = function() {
     if (arguments[0] instanceof Array) {
       var a = arguments[1];
       return arguments[0].map(function(x) { return doNfc(x, a);});
@@ -83,7 +83,7 @@ define(function (require) {
     return n+rem;
   }
 
-  Processing.prototype.nfp = function() {
+  p5.prototype.nfp = function() {
     var nfRes = this.nf(arguments);
     if (nfRes instanceof Array) {
       return nfRes.map(addNfp);
@@ -96,7 +96,7 @@ define(function (require) {
     return (parseFloat(arguments[0]) > 0) ? '+'+arguments[0].toString() : arguments[0].toString();
   }
 
-  Processing.prototype.nfs = function() {
+  p5.prototype.nfs = function() {
     var nfRes = this.nf(arguments);
     if (nfRes instanceof Array) {
       return nfRes.map(addNfs);
@@ -109,16 +109,16 @@ define(function (require) {
     return (parseFloat(arguments[0]) > 0) ? ' '+arguments[0].toString() : arguments[0].toString();
   }
 
-  Processing.prototype.split = function(str, delim) {
+  p5.prototype.split = function(str, delim) {
     return str.split(delim);
   };
 
-  Processing.prototype.splitTokens = function() {
+  p5.prototype.splitTokens = function() {
     var d = (arguments.length > 0) ? arguments[1] : /\s/g;
     return arguments[0].split(d).filter(function(n){return n;});
   };
 
-  Processing.prototype.trim = function(str) {
+  p5.prototype.trim = function(str) {
     if (str instanceof Array) {
       return str.map(this.trim);
     } else {
@@ -126,6 +126,6 @@ define(function (require) {
     }
   };
 
-  return Processing;
+  return p5;
 
 });
