@@ -2025,13 +2025,26 @@ var inputtime_date = function (require, core) {
 var mathrandom = function (require, core) {
         'use strict';
         var p5 = core;
-        p5.prototype.random = function (x, y) {
-            if (typeof x !== 'undefined' && typeof y !== 'undefined') {
-                return (y - x) * Math.random() + x;
-            } else if (typeof x !== 'undefined') {
-                return x * Math.random();
+        var randConst = 100000;
+        var seed = Math.ceil(Math.random() * randConst);
+        p5.prototype.randomSeed = function (nseed) {
+            seed = Math.ceil(Math.abs(nseed));
+        };
+        p5.prototype.random = function (min, max) {
+            var tmp;
+            var rand = Math.sin(seed++) * randConst;
+            rand -= Math.floor(rand);
+            if (arguments.length === 0) {
+                return rand;
+            } else if (arguments.length === 1) {
+                return rand * min;
             } else {
-                return Math.random();
+                if (min > max) {
+                    tmp = min;
+                    min = max;
+                    max = tmp;
+                }
+                return rand * (max - min) + min;
             }
         };
         return p5;
