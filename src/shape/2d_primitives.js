@@ -37,11 +37,11 @@ define(function (require) {
     if (mode === constants.CHORD || mode === constants.OPEN) {
       this.curElement.context.closePath();
     } else if (mode === constants.PIE || mode === undefined) {
-      this.curElement.context.lineTo(x, y);
+      this.curElement.context.lineTo(vals.x, vals.y);
       this.curElement.context.closePath();
     }
     this.curElement.context.fill();
-    if(mode != constants.OPEN && mode != undefined) { // final stroke must be after fill so the fill does not cover part of the line
+    if(mode !== constants.OPEN && mode !== undefined) { // final stroke must be after fill so the fill does not cover part of the line
       this.curElement.context.stroke();
     }
 
