@@ -737,8 +737,8 @@ var inputmouse = function (require, core, constants) {
         p5.prototype.updateMouseCoords = function (e) {
             this._setProperty('pmouseX', this.mouseX);
             this._setProperty('pmouseY', this.mouseY);
-            this._setProperty('mouseX', e.offsetX);
-            this._setProperty('mouseY', e.offsetY);
+            this._setProperty('mouseX', e.offsetX || e.layerX);
+            this._setProperty('mouseY', e.offsetY || e.layerY);
             this._setProperty('pwindowMouseX', this.windowMouseX);
             this._setProperty('pwindowMouseY', this.windowMouseY);
             this._setProperty('windowMouseX', e.pageX);
@@ -2025,13 +2025,26 @@ var inputtime_date = function (require, core) {
 var mathrandom = function (require, core) {
         'use strict';
         var p5 = core;
-        p5.prototype.random = function (x, y) {
-            if (typeof x !== 'undefined' && typeof y !== 'undefined') {
-                return (y - x) * Math.random() + x;
-            } else if (typeof x !== 'undefined') {
-                return x * Math.random();
+        var randConst = 100000;
+        var seed = Math.ceil(Math.random() * randConst);
+        p5.prototype.randomSeed = function (nseed) {
+            seed = Math.ceil(Math.abs(nseed));
+        };
+        p5.prototype.random = function (min, max) {
+            var tmp;
+            var rand = Math.sin(seed++) * randConst;
+            rand -= Math.floor(rand);
+            if (arguments.length === 0) {
+                return rand;
+            } else if (arguments.length === 1) {
+                return rand * min;
             } else {
-                return Math.random();
+                if (min > max) {
+                    tmp = min;
+                    min = max;
+                    max = tmp;
+                }
+                return rand * (max - min) + min;
             }
         };
         return p5;

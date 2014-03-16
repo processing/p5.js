@@ -19,22 +19,22 @@ define(function (require) {
   p5.prototype.pushStyle = function() {
 
     this.styles.push({
-      fillStyle: this.curElement.context.fillStyle, // fill
+      fillStyle:   this.curElement.context.fillStyle, // fill
       strokeStyle: this.curElement.context.strokeStyle, // stroke
-      lineWidth: this.curElement.context.lineWidth, // strokeWeight
+      lineWidth:   this.curElement.context.lineWidth, // strokeWeight
       // @todo tint
-      lineCap: this.curElement.context.lineCap, // strokeCap
-      lineJoin: this.curElement.context.lineJoin, // strokeJoin
-      imageMode: this.settings.imageMode, // imageMode
-      rectMode: this.settings.rectMode, // rectMode
+      lineCap:     this.curElement.context.lineCap, // strokeCap
+      lineJoin:    this.curElement.context.lineJoin, // strokeJoin
+      imageMode:   this.settings.imageMode, // imageMode
+      rectMode:    this.settings.rectMode, // rectMode
       ellipseMode: this.settings.ellipseMode, // ellipseMode
       // @todo shapeMode
-      colorMode: this.settings.colorMode, // colorMode
-      textAlign: this.curElement.context.textAlign, // textAlign
-      textFont: this.settings.textFont,
+      colorMode:   this.settings.colorMode, // colorMode
+      textAlign:   this.curElement.context.textAlign, // textAlign
+      textFont:    this.settings.textFont,
       textLeading: this.settings.textLeading, // textLeading
-      textSize: this.settings.textSize, // textSize
-      textStyle: this.settings.textStyle // textStyle
+      textSize:    this.settings.textSize, // textSize
+      textStyle:   this.settings.textStyle // textStyle
     });
   };
 

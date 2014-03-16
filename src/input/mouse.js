@@ -32,8 +32,8 @@ define(function (require) {
   p5.prototype.updateMouseCoords = function(e) {
     this._setProperty('pmouseX', this.mouseX);
     this._setProperty('pmouseY', this.mouseY);
-    this._setProperty('mouseX', e.offsetX);
-    this._setProperty('mouseY', e.offsetY);
+    this._setProperty('mouseX', e.offsetX || e.layerX);
+    this._setProperty('mouseY', e.offsetY || e.layerY);
 
     this._setProperty('pwindowMouseX', this.windowMouseX);
     this._setProperty('pwindowMouseY', this.windowMouseY);
