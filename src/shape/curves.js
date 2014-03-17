@@ -58,9 +58,26 @@ define(function (require) {
     return Math.pow(adjustedT,3)*a + 3*(Math.pow(adjustedT,2))*t*b + 3*adjustedT*Math.pow(t,2)*c + Math.pow(t,3)*d;
   };
 
-  Processing.prototype.bezierTangent = function() {
-    // TODO
+  /**
+   * Calculates the tangent of a point on a Bezier curve
+   *
+   * Evaluates the tangent at point t for points a, b, c, d.
+   * The parameter t varies between 0 and 1, a and d are points
+   * on the curve, and b and c are the control points
+   *
+   * Returns float
+   *
+   * @param  {Float} a coordinate of first point on the curve
+   * @param  {Float} b coordinate of first control point
+   * @param  {Float} c coordinate of second control point
+   * @param  {Float} d coordinate of second point on the curve
+   * @param  {Float} t value between 0 and 1
+   */
 
+  Processing.prototype.bezierTangent = function(a, b, c, d, t) {
+    var adjustedT = 1-t;
+
+    return 3*d*Math.pow(t,2) - 3*c*Math.pow(t,2) + 6*c*adjustedT*t - 6*b*adjustedT*t + 3*b*Math.pow(adjustedT,2) - 3*a*Math.pow(adjustedT,2);
   };
 
   Processing.prototype.curve = function() {

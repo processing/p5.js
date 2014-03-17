@@ -2312,7 +2312,9 @@ var shapecurves = function (require, core) {
             var adjustedT = 1 - t;
             return Math.pow(adjustedT, 3) * a + 3 * Math.pow(adjustedT, 2) * t * b + 3 * adjustedT * Math.pow(t, 2) * c + Math.pow(t, 3) * d;
         };
-        Processing.prototype.bezierTangent = function () {
+        Processing.prototype.bezierTangent = function (a, b, c, d, t) {
+            var adjustedT = 1 - t;
+            return 3 * d * Math.pow(t, 2) - 3 * c * Math.pow(t, 2) + 6 * c * adjustedT * t - 6 * b * adjustedT * t + 3 * b * Math.pow(adjustedT, 2) - 3 * a * Math.pow(adjustedT, 2);
         };
         Processing.prototype.curve = function () {
         };
