@@ -82,6 +82,7 @@ var core = function (require, shim, constants) {
             this._textFont = 'sans-serif';
             this._textSize = 12;
             this._textStyle = constants.NORMAL;
+            this._bezierDetail = 20;
             this.curElement = null;
             this.matrices = [[
                     1,
@@ -2294,11 +2295,18 @@ var shapecurves = function (require, core) {
         Processing.prototype.bezier = function (x1, y1, x2, y2, x3, y3, x4, y4) {
             this.curElement.context.beginPath();
             this.curElement.context.moveTo(x1, y1);
-            this.curElement.context.bezierCurveTo(x2, y2, x3, y3, x4, y4);
+            for (var i = 0; i <= this._bezierDetail; i++) {
+                var t = i / parseFloat(this._bezierDetail);
+                var x = Processing.prototype.bezierPoint(x1, x2, x3, x4, t);
+                var y = Processing.prototype.bezierPoint(y1, y2, y3, y4, t);
+                this.curElement.context.lineTo(x, y);
+            }
             this.curElement.context.stroke();
             return this;
         };
-        Processing.prototype.bezierDetail = function () {
+        Processing.prototype.bezierDetail = function (d) {
+            this._setProperty('_bezierDetail', d);
+            return this;
         };
         Processing.prototype.bezierPoint = function (a, b, c, d, t) {
             var adjustedT = 1 - t;

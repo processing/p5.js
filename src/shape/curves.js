@@ -7,15 +7,31 @@ define(function (require) {
   Processing.prototype.bezier = function(x1, y1, x2, y2, x3, y3, x4, y4) {
     this.curElement.context.beginPath();
     this.curElement.context.moveTo(x1, y1);
-    this.curElement.context.bezierCurveTo(x2, y2, x3, y3, x4, y4);
+    for (var i = 0; i <= this._bezierDetail; i++) { //for each point as considered by detail, iterate
+      var t = i / parseFloat(this._bezierDetail);
+      var x = Processing.prototype.bezierPoint(x1, x2, x3, x4, t);
+      var y = Processing.prototype.bezierPoint(y1, y2, y3, y4, t);
+      this.curElement.context.lineTo(x, y);
+    }
     this.curElement.context.stroke();
+
 
     return this;
   };
 
-  Processing.prototype.bezierDetail = function() {
-    // TODO
+  /**
+   * Sets the resolution at which Beziers display.
+   *
+   * The default value is 20.
+   *
+   * Returns void
+   *
+   * @param  {Int} resolution of the curves
+   */
+  Processing.prototype.bezierDetail = function(d) {
+    this._setProperty('_bezierDetail', d);
 
+    return this;
   };
 
   /**

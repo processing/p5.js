@@ -56,6 +56,9 @@ define(function (require) {
     this._textSize = 12;
     this._textStyle = constants.NORMAL;
 
+    //Curves
+    this._bezierDetail = 20;
+
     this.curElement = null;
     this.matrices = [[1,0,0,1,0,0]];
 
