@@ -15,6 +15,7 @@ define(function (require) {
     }
     this.curElement.context.stroke();
 
+
     return this;
   };
 
