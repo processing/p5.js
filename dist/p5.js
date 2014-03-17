@@ -1,5 +1,4 @@
-(function () {
-var shim = function (require) {
+(function () {var shim = function (require) {
         window.requestDraw = function () {
             return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
                 window.setTimeout(callback, 1000 / 60);
@@ -84,6 +83,7 @@ var core = function (require, shim, constants) {
             this._textFont = 'sans-serif';
             this._textSize = 12;
             this._textStyle = constants.NORMAL;
+            this._bezierDetail = 20;
             this._curveDetail = 20;
             this.curElement = null;
             this.matrices = [[
@@ -2616,15 +2616,26 @@ var shapecurves = function (require, core) {
         p5.prototype.bezier = function (x1, y1, x2, y2, x3, y3, x4, y4) {
             this.curElement.context.beginPath();
             this.curElement.context.moveTo(x1, y1);
-            this.curElement.context.bezierCurveTo(x2, y2, x3, y3, x4, y4);
+            for (var i = 0; i <= this._bezierDetail; i++) {
+                var t = i / parseFloat(this._bezierDetail);
+                var x = p5.prototype.bezierPoint(x1, x2, x3, x4, t);
+                var y = p5.prototype.bezierPoint(y1, y2, y3, y4, t);
+                this.curElement.context.lineTo(x, y);
+            }
             this.curElement.context.stroke();
             return this;
         };
-        p5.prototype.bezierDetail = function () {
+        p5.prototype.bezierDetail = function (d) {
+            this._setProperty('_bezierDetail', d);
+            return this;
         };
-        p5.prototype.bezierPoint = function () {
+        p5.prototype.bezierPoint = function (a, b, c, d, t) {
+            var adjustedT = 1 - t;
+            return Math.pow(adjustedT, 3) * a + 3 * Math.pow(adjustedT, 2) * t * b + 3 * adjustedT * Math.pow(t, 2) * c + Math.pow(t, 3) * d;
         };
-        p5.prototype.bezierTangent = function () {
+        p5.prototype.bezierTangent = function (a, b, c, d, t) {
+            var adjustedT = 1 - t;
+            return 3 * d * Math.pow(t, 2) - 3 * c * Math.pow(t, 2) + 6 * c * adjustedT * t - 6 * b * adjustedT * t + 3 * b * Math.pow(adjustedT, 2) - 3 * a * Math.pow(adjustedT, 2);
         };
         p5.prototype.curve = function (x1, y1, x2, y2, x3, y3, x4, y4) {
             this.curElement.context.moveTo(x1, y1);
@@ -2980,4 +2991,5 @@ var src_p5 = function (require, core, mathpvector, colorcreating_reading, colors
         window.p5 = p5;
         window.PVector = PVector;
         return p5;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
+    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);
+}());
