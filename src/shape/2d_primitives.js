@@ -6,9 +6,26 @@ define(function (require) {
   var canvas = require('canvas');
   var constants = require('constants');
 
-	Processing.prototype.arc = function() {
-    // pend todo
 
+	Processing.prototype.arc = function (a, b, c, d, start, stop, mode) {
+      var vals = canvas.modeAdjust(a, b, c, d, this.settings.ellipseMode);
+      var radius = vals.h > vals.w ? vals.h / 2 : vals.w / 2, xScale = vals.h > vals.w ? vals.w / vals.h : 1, yScale = vals.h > vals.w ? 1 : vals.h / vals.w;
+      this.curElement.context.scale(xScale, yScale);
+      this.curElement.context.beginPath();
+      this.curElement.context.arc(vals.x, vals.y, radius, start, stop);
+      this.curElement.context.stroke();
+      if (mode === constants.CHORD || mode === constants.OPEN) {
+        this.curElement.context.closePath();
+      } else if (mode === constants.PIE || mode === undefined) {
+        this.curElement.context.lineTo(vals.x, vals.y);
+        this.curElement.context.closePath();
+      }
+      this.curElement.context.fill();
+      if (mode !== constants.OPEN && mode !== undefined) {
+        this.curElement.context.stroke();
+      }
+
+      return this;
   };
 
   Processing.prototype.ellipse = function(a, b, c, d) {
