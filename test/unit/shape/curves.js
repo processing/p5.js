@@ -51,7 +51,7 @@ suite('Curves', function() {
         result = curvePoint(5, 5, 73, 73, 0.5);
         assert.typeOf(result, 'number');
       });
-      test('should return the correct point on a Bezier Curve', function() {
+      test('should return the correct point on a Catmull-Rom Curve', function() {
         result = curvePoint(5, 5, 73, 73, 0.5);
         assert.equal(result, 39);
         assert.notEqual(result, -1);
@@ -71,7 +71,7 @@ suite('Curves', function() {
         result = curveTangent(95, 73, 73, 15, 0.5);
         assert.typeOf(result, 'number');
       });
-      test('should return the correct point on a Bezier Curve', function() {
+      test('should return the correct point on a Catmull-Rom Curve', function() {
         result = curveTangent(95, 73, 73, 15, 0.5);
         assert.equal(result, 10);
       });
