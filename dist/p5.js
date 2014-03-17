@@ -2300,7 +2300,9 @@ var shapecurves = function (require, core) {
         };
         Processing.prototype.bezierDetail = function () {
         };
-        Processing.prototype.bezierPoint = function () {
+        Processing.prototype.bezierPoint = function (a, b, c, d, t) {
+            var adjustedT = 1 - t;
+            return Math.pow(adjustedT, 3) * a + 3 * Math.pow(adjustedT, 2) * t * b + 3 * adjustedT * Math.pow(t, 2) * c + Math.pow(t, 3) * d;
         };
         Processing.prototype.bezierTangent = function () {
         };
