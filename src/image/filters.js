@@ -50,8 +50,8 @@ define(function (require) {
      *
      * @private
      *
-     * @param  {Uint8ClampedArray} array returned by _toPixels()
-     * @param  {Integer} index of a 1D Image Array
+     * @param  {Uint8ClampedArray} data [array returned by _toPixels()]
+     * @param  {Integer} i [index of a 1D Image Array]
      * @return {Integer} 32 bit integer value representing ARGB value.
      */
     Filters._getARGB = function (data, i) {
@@ -63,17 +63,16 @@ define(function (require) {
     };
 
     /**
-     * Returns a 32 bit number containing ARGB data at ith pixel in the
-     * 1D array containing pixels data.
+     * Modifies pixels RGBA values to values contained in the data object.
      *
      * @private
      *
-     * @param {Uint8ClampedArray} array returned by _toPixels()
-     * @param {Int32Array} source 1D array where each value represents ARGB values
+     * @param {Uint8ClampedArray} array [returned by _toPixels()]
+     * @param {Int32Array} source 1D [array where each value represents ARGB values]
      */
-    Filters._setPixels = function (pixels, data){
+    Filters._setPixels = function (pixels, data) {
         var offset = 0;
-        for( var i = 0, al = pixels.length; i < al; i++){
+        for( var i = 0, al = pixels.length; i < al; i++) {
             offset = i*4;
             pixels[offset + 0] = (data[i] & 0x00ff0000)>>>16;
             pixels[offset + 1] = (data[i] & 0x0000ff00)>>>8;
@@ -278,11 +277,11 @@ define(function (require) {
     };
 
     /**
-     * ERODE - reduces the bright areas in an image
+     * reduces the bright areas in an image
      * @param  {Canvas} canvas
      *
      */
-    Filters.erode = function(canvas){
+    Filters.dilate = function (canvas) {
         var pixels = Filters._toPixels(canvas);
         var currIdx = 0;
         var maxIdx = pixels.length ? pixels.length/4 : 0;
@@ -292,8 +291,7 @@ define(function (require) {
             colRight, colLeft, colUp, colDown,
             lumRight, lumLeft, lumUp, lumDown;
 
-        while(currIdx < maxIdx)
-        {
+        while(currIdx < maxIdx){
             currRowIdx = currIdx;
             maxRowIdx = currIdx + canvas.width;
             while (currIdx < maxRowIdx)
@@ -351,14 +349,13 @@ define(function (require) {
         }
         Filters._setPixels(pixels, out);
     };
+
     /**
-     * DILATE - increases the bright areas in an image
+     * increases the bright areas in an image
      * @param  {Canvas} canvas
      *
      */
-
-    Filters.dilate = function(canvas)
-    {
+    Filters.erode = function(canvas) {
         var pixels = Filters._toPixels(canvas);
         var currIdx = 0;
         var maxIdx = pixels.length ? pixels.length/4 : 0;
@@ -368,8 +365,7 @@ define(function (require) {
             colRight, colLeft, colUp, colDown,
             lumRight, lumLeft, lumUp, lumDown;
 
-        while(currIdx < maxIdx)
-        {
+        while(currIdx < maxIdx){
             currRowIdx = currIdx;
             maxRowIdx = currIdx + canvas.width;
             while (currIdx < maxRowIdx)
