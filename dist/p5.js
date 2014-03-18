@@ -1918,7 +1918,7 @@ var inputfiles = function (require, core, reqwest) {
                 callback(resp);
             });
             return self;
-        }        
+        };
 
         p5.prototype.loadStrings = function (path, callback) {
             var ret = [];
