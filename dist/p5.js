@@ -82,6 +82,7 @@ var core = function (require, shim, constants) {
             this._textFont = 'sans-serif';
             this._textSize = 12;
             this._textStyle = constants.NORMAL;
+            this._curveDetail = 20;
             this.curElement = null;
             this.matrices = [[
                     1,
@@ -2304,11 +2305,26 @@ var shapecurves = function (require, core) {
         };
         Processing.prototype.bezierTangent = function () {
         };
-        Processing.prototype.curve = function () {
+        Processing.prototype.curve = function (x1, y1, x2, y2, x3, y3, x4, y4) {
+            this.curElement.context.moveTo(x1, y1);
+            this.curElement.context.beginPath();
+            for (var i = 0; i <= this._curveDetail; i++) {
+                var t = parseFloat(i / this._curveDetail);
+                var x = Processing.prototype.curvePoint(x1, x2, x3, x4, t);
+                var y = Processing.prototype.curvePoint(y1, y2, y3, y4, t);
+                this.curElement.context.lineTo(x, y);
+            }
+            this.curElement.context.stroke();
+            this.curElement.context.closePath();
+            return this;
         };
-        Processing.prototype.curveDetail = function () {
+        Processing.prototype.curveDetail = function (d) {
+            this._setProperty('_curveDetail', d);
+            return this;
         };
-        Processing.prototype.curvePoint = function () {
+        Processing.prototype.curvePoint = function (a, b, c, d, t) {
+            var t3 = t * t * t, t2 = t * t, f1 = -0.5 * t3 + t2 - 0.5 * t, f2 = 1.5 * t3 - 2.5 * t2 + 1, f3 = -1.5 * t3 + 2 * t2 + 0.5 * t, f4 = 0.5 * t3 - 0.5 * t2;
+            return a * f1 + b * f2 + c * f3 + d * f4;
         };
         Processing.prototype.curveTangent = function () {
         };
