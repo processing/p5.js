@@ -151,7 +151,6 @@ var core = function (require, shim, constants) {
                     return context.preloadFunc('loadImage', path);
                 };
                 preload();
-
                 context.loadJSON = p5.prototype.loadJSON;
                 context.loadStrings = p5.prototype.loadStrings;
                 context.loadXML = p5.prototype.loadXML;
@@ -165,10 +164,8 @@ var core = function (require, shim, constants) {
         p5.prototype.preloadFunc = function (func, path) {
             var context = this.isGlobal ? window : this;
             context._setProperty('preload_count', context.preload_count + 1);
-            console.log('preeeeload count: ' + context.preload_count);
             return this[func](path, function (resp) {
                 context._setProperty('preload_count', context.preload_count - 1);
-                console.log(func + ' postload count: ' + context.preload_count);
                 if (context.preload_count === 0) {
                     context._setup();
                     context._runFrames();
