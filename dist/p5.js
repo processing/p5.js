@@ -151,6 +151,7 @@ var core = function (require, shim, constants) {
                     return context.preloadFunc('loadImage', path);
                 };
                 preload();
+
                 context.loadJSON = p5.prototype.loadJSON;
                 context.loadStrings = p5.prototype.loadStrings;
                 context.loadXML = p5.prototype.loadXML;
@@ -162,10 +163,12 @@ var core = function (require, shim, constants) {
             }
         };
         p5.prototype.preloadFunc = function (func, path) {
-            this._setProperty('preload_count', this.preload_count + 1);
             var context = this.isGlobal ? window : this;
+            context._setProperty('preload_count', context.preload_count + 1);
+            console.log('preeeeload count: ' + context.preload_count);
             return this[func](path, function (resp) {
                 context._setProperty('preload_count', context.preload_count - 1);
+                console.log(func + ' postload count: ' + context.preload_count);
                 if (context.preload_count === 0) {
                     context._setup();
                     context._runFrames();
@@ -1906,22 +1909,17 @@ var inputfiles = function (require, core, reqwest) {
         };
         p5.prototype.loadBytes = function () {
         };
-        p5.prototype.loadJSON = function (path, callback) {
-            var ret = [];
-            var t = path.indexOf('http') === -1 ? 'json' : 'jsonp';
-            reqwest({
-                url: path,
-                type: t,
-                success: function (resp) {
-                    for (var k in resp) {
-                        ret[k] = resp[k];
-                    }
-                    if (typeof callback !== 'undefined') {
-                        callback(ret);
-                    }
-                }
+
+        // via https://gist.github.com/brysonian/7298465
+        p5.prototype.loadJSON = function(url, callback) {
+            var self = [];
+            reqwest(url, function (resp) {
+                for (var k in resp) self[k] = resp[k];
+                callback(resp);
             });
-        };
+            return self;
+        }        
+
         p5.prototype.loadStrings = function (path, callback) {
             var ret = [];
             var req = new XMLHttpRequest();
@@ -1938,7 +1936,9 @@ var inputfiles = function (require, core, reqwest) {
                 }
             };
             req.send(null);
+            return ret;
         };
+
         p5.prototype.loadTable = function () {
         };
         p5.prototype.loadXML = function (path, callback) {
