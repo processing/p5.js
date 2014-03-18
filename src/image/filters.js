@@ -291,27 +291,26 @@ define(function (require) {
             colRight, colLeft, colUp, colDown,
             lumRight, lumLeft, lumUp, lumDown;
 
-        while(currIdx < maxIdx){
+        while(currIdx < maxIdx) {
             currRowIdx = currIdx;
             maxRowIdx = currIdx + canvas.width;
-            while (currIdx < maxRowIdx)
-            {
+            while (currIdx < maxRowIdx) {
                 colOrig = colOut = Filters._getARGB(pixels, currIdx);
                 idxLeft = currIdx - 1;
                 idxRight = currIdx + 1;
                 idxUp = currIdx - canvas.width;
                 idxDown = currIdx + canvas.width;
 
-                if (idxLeft < currRowIdx){
+                if (idxLeft < currRowIdx) {
                     idxLeft = currIdx;
                 }
-                if (idxRight >= maxRowIdx){
+                if (idxRight >= maxRowIdx) {
                     idxRight = currIdx;
                 }
                 if (idxUp < 0){
                     idxUp = 0;
                 }
-                if (idxDown >= maxIdx){
+                if (idxDown >= maxIdx) {
                     idxDown = currIdx;
                 }
                 colUp = Filters._getARGB(pixels, idxUp);
@@ -365,27 +364,26 @@ define(function (require) {
             colRight, colLeft, colUp, colDown,
             lumRight, lumLeft, lumUp, lumDown;
 
-        while(currIdx < maxIdx){
+        while(currIdx < maxIdx) {
             currRowIdx = currIdx;
             maxRowIdx = currIdx + canvas.width;
-            while (currIdx < maxRowIdx)
-            {
+            while (currIdx < maxRowIdx) {
                 colOrig = colOut = Filters._getARGB(pixels, currIdx);
                 idxLeft = currIdx - 1;
                 idxRight = currIdx + 1;
                 idxUp = currIdx - canvas.width;
                 idxDown = currIdx + canvas.width;
 
-                if (idxLeft < currRowIdx){
+                if (idxLeft < currRowIdx) {
                     idxLeft = currIdx;
                 }
-                if (idxRight >= maxRowIdx){
+                if (idxRight >= maxRowIdx) {
                     idxRight = currIdx;
                 }
-                if (idxUp < 0){
+                if (idxUp < 0) {
                     idxUp = 0;
                 }
-                if (idxDown >= maxIdx){
+                if (idxDown >= maxIdx) {
                     idxDown = currIdx;
                 }
                 colUp = Filters._getARGB(pixels, idxUp);
