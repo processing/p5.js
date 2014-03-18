@@ -21,6 +21,7 @@ define(function (require) {
   require('input.touch');
   require('math.calculation');
   require('math.random');
+  require('math.noise');
   require('math.trigonometry');
   require('output.files');
   require('output.image');

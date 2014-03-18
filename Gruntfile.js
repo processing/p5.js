@@ -65,6 +65,7 @@ module.exports = function(grunt) {
             'math.calculation': 'src/math/calculation',
             'math.pvector': 'src/math/pvector',
             'math.random': 'src/math/random',
+            'math.noise': 'src/math/noise',
             'math.trigonometry': 'src/math/trigonometry',
             'output.files': 'src/output/files',
             'output.image': 'src/output/image',
