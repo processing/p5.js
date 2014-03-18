@@ -32,9 +32,9 @@ define(function (require) {
      *
      * @private
      *
-     * @param  {Canvas|ImageData} Canvas
+     * @param  {Canvas|ImageData} canvas
      * @return {Uint8ClampedArray} a one-dimensional array containing the data
-     *                             in the RGBA order, with integer values between 0 and 255
+     *                             in thc RGBA order, with integer values between 0 and 255
      */
     Filters._toPixels = function (canvas) {
         if (canvas instanceof ImageData) {
@@ -67,8 +67,8 @@ define(function (require) {
      *
      * @private
      *
-     * @param {Uint8ClampedArray} array [returned by _toPixels()]
-     * @param {Int32Array} source 1D [array where each value represents ARGB values]
+     * @param {Uint8ClampedArray} pixels [array returned by _toPixels()]
+     * @param {Int32Array} data [source 1D array where each value represents ARGB values]
      */
     Filters._setPixels = function (pixels, data) {
         var offset = 0;
