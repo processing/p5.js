@@ -87,8 +87,30 @@ define(function (require) {
     return a*f1 + b*f2 + c*f3 + d*f4;
   };
 
-  Processing.prototype.curveTangent = function() {
-    // TODO
+  /**
+   * Calculates the tangent of a point on a curve
+   *
+   * Evaluates the tangent at point t for points a, b, c, d.
+   * The parameter t varies between 0 and 1, a and d are points
+   * on the curve, and b and c are the control points
+   *
+   * Returns float
+   *
+   * @param  {Float} a coordinate of first point on the curve
+   * @param  {Float} b coordinate of first control point
+   * @param  {Float} c coordinate of second control point
+   * @param  {Float} d coordinate of second point on the curve
+   * @param  {Float} t value between 0 and 1
+   */
+
+  Processing.prototype.curveTangent = function(a, b,c, d, t) {
+    var t2 = t*t,
+      f1 = (-3*t2)/2 + 2*t - 0.5,
+      f2 = (9*t2)/2 - 5*t,
+      f3 = (-9*t2)/2 + 4*t + 0.5,
+      f4 = (3*t2)/2 - t;
+
+    return a*f1 + b*f2 + c*f3 + d*f4;
 
   };
 

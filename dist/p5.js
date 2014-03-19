@@ -2326,7 +2326,9 @@ var shapecurves = function (require, core) {
             var t3 = t * t * t, t2 = t * t, f1 = -0.5 * t3 + t2 - 0.5 * t, f2 = 1.5 * t3 - 2.5 * t2 + 1, f3 = -1.5 * t3 + 2 * t2 + 0.5 * t, f4 = 0.5 * t3 - 0.5 * t2;
             return a * f1 + b * f2 + c * f3 + d * f4;
         };
-        Processing.prototype.curveTangent = function () {
+        Processing.prototype.curveTangent = function (a, b, c, d, t) {
+            var t2 = t * t, f1 = -3 * t2 / 2 + 2 * t - 0.5, f2 = 9 * t2 / 2 - 5 * t, f3 = -9 * t2 / 2 + 4 * t + 0.5, f4 = 3 * t2 / 2 - t;
+            return a * f1 + b * f2 + c * f3 + d * f4;
         };
         Processing.prototype.curveTightness = function () {
         };
