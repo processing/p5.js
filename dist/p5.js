@@ -1,4 +1,5 @@
-(function () {var shim = function (require) {
+(function () {
+var shim = function (require) {
         window.requestDraw = function () {
             return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
                 window.setTimeout(callback, 1000 / 60);
@@ -162,8 +163,8 @@ var core = function (require, shim, constants) {
             }
         };
         p5.prototype.preloadFunc = function (func, path) {
+            this._setProperty('preload_count', this.preload_count + 1);
             var context = this.isGlobal ? window : this;
-            context._setProperty('preload_count', context.preload_count + 1);
             return this[func](path, function (resp) {
                 context._setProperty('preload_count', context.preload_count - 1);
                 if (context.preload_count === 0) {
@@ -1906,17 +1907,22 @@ var inputfiles = function (require, core, reqwest) {
         };
         p5.prototype.loadBytes = function () {
         };
-
-        // via https://gist.github.com/brysonian/7298465
-        p5.prototype.loadJSON = function(url, callback) {
-            var self = [];
-            reqwest(url, function (resp) {
-                for (var k in resp) self[k] = resp[k];
-                callback(resp);
+        p5.prototype.loadJSON = function (path, callback) {
+            var ret = [];
+            var t = path.indexOf('http') === -1 ? 'json' : 'jsonp';
+            reqwest({
+                url: path,
+                type: t,
+                success: function (resp) {
+                    for (var k in resp) {
+                        ret[k] = resp[k];
+                    }
+                    if (typeof callback !== 'undefined') {
+                        callback(ret);
+                    }
+                }
             });
-            return self;
         };
-
         p5.prototype.loadStrings = function (path, callback) {
             var ret = [];
             var req = new XMLHttpRequest();
@@ -1933,9 +1939,7 @@ var inputfiles = function (require, core, reqwest) {
                 }
             };
             req.send(null);
-            return ret;
         };
-
         p5.prototype.loadTable = function () {
         };
         p5.prototype.loadXML = function (path, callback) {
@@ -2263,7 +2267,24 @@ var shape2d_primitives = function (require, core, canvas, constants) {
         var p5 = core;
         var canvas = canvas;
         var constants = constants;
-        p5.prototype.arc = function () {
+        p5.prototype.arc = function (a, b, c, d, start, stop, mode) {
+            var vals = canvas.modeAdjust(a, b, c, d, this.settings.ellipseMode);
+            var radius = vals.h > vals.w ? vals.h / 2 : vals.w / 2, xScale = vals.h > vals.w ? vals.w / vals.h : 1, yScale = vals.h > vals.w ? 1 : vals.h / vals.w;
+            this.curElement.context.scale(xScale, yScale);
+            this.curElement.context.beginPath();
+            this.curElement.context.arc(vals.x, vals.y, radius, start, stop);
+            this.curElement.context.stroke();
+            if (mode === constants.CHORD || mode === constants.OPEN) {
+                this.curElement.context.closePath();
+            } else if (mode === constants.PIE || mode === undefined) {
+                this.curElement.context.lineTo(vals.x, vals.y);
+                this.curElement.context.closePath();
+            }
+            this.curElement.context.fill();
+            if (mode !== constants.OPEN && mode !== undefined) {
+                this.curElement.context.stroke();
+            }
+            return this;
         };
         p5.prototype.ellipse = function (a, b, c, d) {
             var vals = canvas.modeAdjust(a, b, c, d, this.settings.ellipseMode);
@@ -2740,5 +2761,4 @@ var src_p5 = function (require, core, mathpvector, colorcreating_reading, colors
         window.p5 = p5;
         window.PVector = PVector;
         return p5;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);
-}());
+    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
