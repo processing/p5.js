@@ -1906,17 +1906,16 @@ var inputfiles = function (require, core, reqwest) {
         };
         p5.prototype.loadBytes = function () {
         };
-
-        // via https://gist.github.com/brysonian/7298465
-        p5.prototype.loadJSON = function(url, callback) {
+        p5.prototype.loadJSON = function (url, callback) {
             var self = [];
             reqwest(url, function (resp) {
-                for (var k in resp) self[k] = resp[k];
+                for (var k in resp) {
+                    self[k] = resp[k];
+                }
                 callback(resp);
             });
             return self;
         };
-
         p5.prototype.loadStrings = function (path, callback) {
             var ret = [];
             var req = new XMLHttpRequest();
@@ -1935,7 +1934,6 @@ var inputfiles = function (require, core, reqwest) {
             req.send(null);
             return ret;
         };
-
         p5.prototype.loadTable = function () {
         };
         p5.prototype.loadXML = function (path, callback) {

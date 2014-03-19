@@ -21,35 +21,34 @@ define(function (require) {
 
   };
 
-  p5.prototype.loadJSON = function(path, callback) {
-    var ret = [];
-    var t = path.indexOf('http') === -1 ? 'json' : 'jsonp';
-    reqwest({url: path, type: t, success: function (resp) {
-      for (var k in resp) {
-        ret[k] = resp[k];
-      }
-      if (typeof callback !== 'undefined') {
-        callback(ret);
-      }
-    }});
+  p5.prototype.loadJSON = function(url, callback) {
+    var self = [];
+    reqwest(url, function (resp) {
+        for (var k in resp) {
+          self[k] = resp[k];
+        }
+        callback(resp);
+    });
+    return self;
   };
 
-  p5.prototype.loadStrings = function(path, callback) {
+  p5.prototype.loadStrings = function (path, callback) {
     var ret = [];
     var req = new XMLHttpRequest();
     req.open('GET', path, true);
     req.onreadystatechange = function () {
-      if((req.readyState === 4) && (req.status === 200 || req.status === 0)) {
-        var arr = req.responseText.match(/[^\r\n]+/g);
-        for (var k in arr) {
-          ret[k] = arr[k];
+        if (req.readyState === 4 && (req.status === 200 || req.status === 0)) {
+            var arr = req.responseText.match(/[^\r\n]+/g);
+            for (var k in arr) {
+                ret[k] = arr[k];
+            }
+            if (typeof callback !== 'undefined') {
+                callback(ret);
+            }
         }
-        if (typeof callback !== 'undefined') {
-          callback(ret);
-        }
-      }
     };
     req.send(null);
+    return ret;
   };
 
   p5.prototype.loadTable = function () {
