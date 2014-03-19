@@ -25,8 +25,9 @@ define(function (require) {
    * @param  {Mode} optional parameter to determine the way of drawing the arc
    * @return {Void}
    */
+
 	p5.prototype.arc = function(a, b, c, d, start, stop, mode) {
-    var vals = canvas.modeAdjust(a, b, c, d, this.settings.ellipseMode);
+    var vals = canvas.arcModeAdjust(a, b, c, d, this.settings.ellipseMode);
     var radius = (vals.h > vals.w) ? vals.h / 2 : vals.w / 2,
       xScale = (vals.h > vals.w) ? vals.w / vals.h : 1, //scale the arc if it is oblong
       yScale = (vals.h > vals.w) ? 1 : vals.h / vals.w;

@@ -1,5 +1,4 @@
-(function () {
-var shim = function (require) {
+(function () {var shim = function (require) {
         window.requestDraw = function () {
             return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
                 window.setTimeout(callback, 1000 / 60);
@@ -1077,6 +1076,37 @@ var canvas = function (require, constants) {
                     return {
                         x: a - c * 0.5,
                         y: b - d * 0.5,
+                        w: c,
+                        h: d
+                    };
+                }
+            },
+            arcModeAdjust: function (a, b, c, d, mode) {
+                if (mode === constants.CORNER) {
+                    return {
+                        x: a + c * 0.5,
+                        y: b + d * 0.5,
+                        w: c,
+                        h: d
+                    };
+                } else if (mode === constants.CORNERS) {
+                    return {
+                        x: a,
+                        y: b,
+                        w: c + a,
+                        h: d + b
+                    };
+                } else if (mode === constants.RADIUS) {
+                    return {
+                        x: a,
+                        y: b,
+                        w: 2 * c,
+                        h: 2 * d
+                    };
+                } else if (mode === constants.CENTER) {
+                    return {
+                        x: a,
+                        y: b,
                         w: c,
                         h: d
                     };
@@ -2268,7 +2298,7 @@ var shape2d_primitives = function (require, core, canvas, constants) {
         var canvas = canvas;
         var constants = constants;
         p5.prototype.arc = function (a, b, c, d, start, stop, mode) {
-            var vals = canvas.modeAdjust(a, b, c, d, this.settings.ellipseMode);
+            var vals = canvas.arcModeAdjust(a, b, c, d, this.settings.ellipseMode);
             var radius = vals.h > vals.w ? vals.h / 2 : vals.w / 2, xScale = vals.h > vals.w ? vals.w / vals.h : 1, yScale = vals.h > vals.w ? 1 : vals.h / vals.w;
             this.curElement.context.scale(xScale, yScale);
             this.curElement.context.beginPath();
@@ -2761,4 +2791,5 @@ var src_p5 = function (require, core, mathpvector, colorcreating_reading, colors
         window.p5 = p5;
         window.PVector = PVector;
         return p5;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
+    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);
+}());
