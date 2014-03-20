@@ -1094,6 +1094,20 @@ var filters = function (require) {
                 return canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
             }
         };
+        Filters._getARGB = function (data, i) {
+            var offset = i * 4;
+            return data[offset + 3] << 24 & 4278190080 | data[offset] << 16 & 16711680 | data[offset + 1] << 8 & 65280 | data[offset + 2] & 255;
+        };
+        Filters._setPixels = function (pixels, data) {
+            var offset = 0;
+            for (var i = 0, al = pixels.length; i < al; i++) {
+                offset = i * 4;
+                pixels[offset + 0] = (data[i] & 16711680) >>> 16;
+                pixels[offset + 1] = (data[i] & 65280) >>> 8;
+                pixels[offset + 2] = data[i] & 255;
+                pixels[offset + 3] = (data[i] & 4278190080) >>> 24;
+            }
+        };
         Filters._toImageData = function (canvas) {
             if (canvas instanceof ImageData) {
                 return canvas;
@@ -1176,6 +1190,122 @@ var filters = function (require) {
                 blevel = (blevel * level >> 8) * 255 / levels1;
                 pixels[i] = 4278190080 & pixels[i] | rlevel << 16 | glevel << 8 | blevel;
             }
+        };
+        Filters.dilate = function (canvas) {
+            var pixels = Filters._toPixels(canvas);
+            var currIdx = 0;
+            var maxIdx = pixels.length ? pixels.length / 4 : 0;
+            var out = new Int32Array(maxIdx);
+            var currRowIdx, maxRowIdx, colOrig, colOut, currLum;
+            var idxRight, idxLeft, idxUp, idxDown, colRight, colLeft, colUp, colDown, lumRight, lumLeft, lumUp, lumDown;
+            while (currIdx < maxIdx) {
+                currRowIdx = currIdx;
+                maxRowIdx = currIdx + canvas.width;
+                while (currIdx < maxRowIdx) {
+                    colOrig = colOut = Filters._getARGB(pixels, currIdx);
+                    idxLeft = currIdx - 1;
+                    idxRight = currIdx + 1;
+                    idxUp = currIdx - canvas.width;
+                    idxDown = currIdx + canvas.width;
+                    if (idxLeft < currRowIdx) {
+                        idxLeft = currIdx;
+                    }
+                    if (idxRight >= maxRowIdx) {
+                        idxRight = currIdx;
+                    }
+                    if (idxUp < 0) {
+                        idxUp = 0;
+                    }
+                    if (idxDown >= maxIdx) {
+                        idxDown = currIdx;
+                    }
+                    colUp = Filters._getARGB(pixels, idxUp);
+                    colLeft = Filters._getARGB(pixels, idxLeft);
+                    colDown = Filters._getARGB(pixels, idxDown);
+                    colRight = Filters._getARGB(pixels, idxRight);
+                    currLum = 77 * (colOrig >> 16 & 255) + 151 * (colOrig >> 8 & 255) + 28 * (colOrig & 255);
+                    lumLeft = 77 * (colLeft >> 16 & 255) + 151 * (colLeft >> 8 & 255) + 28 * (colLeft & 255);
+                    lumRight = 77 * (colRight >> 16 & 255) + 151 * (colRight >> 8 & 255) + 28 * (colRight & 255);
+                    lumUp = 77 * (colUp >> 16 & 255) + 151 * (colUp >> 8 & 255) + 28 * (colUp & 255);
+                    lumDown = 77 * (colDown >> 16 & 255) + 151 * (colDown >> 8 & 255) + 28 * (colDown & 255);
+                    if (lumLeft > currLum) {
+                        colOut = colLeft;
+                        currLum = lumLeft;
+                    }
+                    if (lumRight > currLum) {
+                        colOut = colRight;
+                        currLum = lumRight;
+                    }
+                    if (lumUp > currLum) {
+                        colOut = colUp;
+                        currLum = lumUp;
+                    }
+                    if (lumDown > currLum) {
+                        colOut = colDown;
+                        currLum = lumDown;
+                    }
+                    out[currIdx++] = colOut;
+                }
+            }
+            Filters._setPixels(pixels, out);
+        };
+        Filters.erode = function (canvas) {
+            var pixels = Filters._toPixels(canvas);
+            var currIdx = 0;
+            var maxIdx = pixels.length ? pixels.length / 4 : 0;
+            var out = new Int32Array(maxIdx);
+            var currRowIdx, maxRowIdx, colOrig, colOut, currLum;
+            var idxRight, idxLeft, idxUp, idxDown, colRight, colLeft, colUp, colDown, lumRight, lumLeft, lumUp, lumDown;
+            while (currIdx < maxIdx) {
+                currRowIdx = currIdx;
+                maxRowIdx = currIdx + canvas.width;
+                while (currIdx < maxRowIdx) {
+                    colOrig = colOut = Filters._getARGB(pixels, currIdx);
+                    idxLeft = currIdx - 1;
+                    idxRight = currIdx + 1;
+                    idxUp = currIdx - canvas.width;
+                    idxDown = currIdx + canvas.width;
+                    if (idxLeft < currRowIdx) {
+                        idxLeft = currIdx;
+                    }
+                    if (idxRight >= maxRowIdx) {
+                        idxRight = currIdx;
+                    }
+                    if (idxUp < 0) {
+                        idxUp = 0;
+                    }
+                    if (idxDown >= maxIdx) {
+                        idxDown = currIdx;
+                    }
+                    colUp = Filters._getARGB(pixels, idxUp);
+                    colLeft = Filters._getARGB(pixels, idxLeft);
+                    colDown = Filters._getARGB(pixels, idxDown);
+                    colRight = Filters._getARGB(pixels, idxRight);
+                    currLum = 77 * (colOrig >> 16 & 255) + 151 * (colOrig >> 8 & 255) + 28 * (colOrig & 255);
+                    lumLeft = 77 * (colLeft >> 16 & 255) + 151 * (colLeft >> 8 & 255) + 28 * (colLeft & 255);
+                    lumRight = 77 * (colRight >> 16 & 255) + 151 * (colRight >> 8 & 255) + 28 * (colRight & 255);
+                    lumUp = 77 * (colUp >> 16 & 255) + 151 * (colUp >> 8 & 255) + 28 * (colUp & 255);
+                    lumDown = 77 * (colDown >> 16 & 255) + 151 * (colDown >> 8 & 255) + 28 * (colDown & 255);
+                    if (lumLeft < currLum) {
+                        colOut = colLeft;
+                        currLum = lumLeft;
+                    }
+                    if (lumRight < currLum) {
+                        colOut = colRight;
+                        currLum = lumRight;
+                    }
+                    if (lumUp < currLum) {
+                        colOut = colUp;
+                        currLum = lumUp;
+                    }
+                    if (lumDown < currLum) {
+                        colOut = colDown;
+                        currLum = lumDown;
+                    }
+                    out[currIdx++] = colOut;
+                }
+            }
+            Filters._setPixels(pixels, out);
         };
         return Filters;
     }({});
