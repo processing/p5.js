@@ -130,12 +130,10 @@ var core = function (require, shim, constants) {
             }
         };
         p5._init = function () {
-            if (window.setup && typeof window.setup === 'function') {
-                new p5();
-            }
+            new p5();
         };
         p5.prototype._start = function () {
-            this.createGraphics(800, 600, true);
+            this.createCanvas(800, 600, true);
             var preload = this.preload || window.preload;
             var context = this.isGlobal ? window : this;
             if (preload) {
@@ -176,10 +174,12 @@ var core = function (require, shim, constants) {
         };
         p5.prototype._setup = function () {
             var setup = this.setup || window.setup;
+            console.log(setup);
             if (typeof setup === 'function') {
                 setup();
             } else {
-                throw 'sketch must include a setup function';
+                var context = this.isGlobal ? window : this;
+                context.createCanvas(600, 400, true);
             }
         };
         p5.prototype._drawSketch = function () {
@@ -921,7 +921,7 @@ var dompelement = function (require, constants) {
 var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement) {
         var p5 = core;
         var PElement = dompelement;
-        p5.prototype.createGraphics = function (w, h, isDefault, targetID) {
+        p5.prototype.createCanvas = function (w, h, isDefault, targetID) {
             var c = document.createElement('canvas');
             c.setAttribute('width', w);
             c.setAttribute('height', h);

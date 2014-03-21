@@ -110,14 +110,12 @@ define(function (require) {
   p5._init = function() {
     // If the user has created a global setup function,
     // assume "beginner mode" and make everything global
-    if (window.setup && typeof window.setup === 'function') {
-      // Create a processing instance
-      new p5();
-    }
+    // Create a processing instance
+    new p5();
   };
 
   p5.prototype._start = function () {
-    this.createGraphics(800, 600, true);
+    this.createCanvas(800, 600, true);
     var preload = this.preload || window.preload;
     var context = this.isGlobal ? window : this;
     if (preload) {
@@ -161,10 +159,12 @@ define(function (require) {
   p5.prototype._setup = function() {
     // Short-circuit on this, in case someone used the library globally earlier
     var setup = this.setup || window.setup;
+      console.log(setup);
     if (typeof setup === 'function') {
       setup();
     } else {
-      throw 'sketch must include a setup function';
+      var context = this.isGlobal ? window : this;
+      context.createCanvas(600, 400, true);
     }
   };
 

@@ -6,7 +6,7 @@ define(function(require) {
 
   var PElement = require('dom.pelement');
 
-  p5.prototype.createGraphics = function(w, h, isDefault, targetID) {
+  p5.prototype.createCanvas = function(w, h, isDefault, targetID) {
     var c = document.createElement('canvas');
     c.setAttribute('width', w);
     c.setAttribute('height', h);

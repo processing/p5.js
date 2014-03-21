@@ -8,4 +8,5 @@ function setup() {
 }
 function draw() {
   ellipse(random(0, 400), random(0, 400), 50, 50);
+  console.log(mouseX);
 }
