@@ -738,12 +738,12 @@ var inputmouse = function (require, core, constants) {
         p5.prototype.updateMouseCoords = function (e) {
             this._setProperty('pmouseX', this.mouseX);
             this._setProperty('pmouseY', this.mouseY);
-            this._setProperty('mouseX', e.offsetX);
-            this._setProperty('mouseY', e.offsetY);
-            this._setProperty('pwindowMouseX', this.windowMouseX);
-            this._setProperty('pwindowMouseY', this.windowMouseY);
-            this._setProperty('windowMouseX', e.pageX);
-            this._setProperty('windowMouseY', e.pageY);
+            this._setProperty('mouseX', Math.max(e.pageX - this.curElement.x, 0));
+            this._setProperty('mouseY', Math.max(e.pageY - this.curElement.y, 0));
+            this._setProperty('pwinMouseX', this.winMouseX);
+            this._setProperty('pwinMouseY', this.winMouseY);
+            this._setProperty('winMouseX', e.pageX);
+            this._setProperty('winMouseY', e.pageY);
         };
         p5.prototype.setMouseButton = function (e) {
             if (e.button === 1) {

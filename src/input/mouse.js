@@ -5,26 +5,6 @@ define(function (require) {
   var p5 = require('core');
   var constants = require('constants');
 
-  /*
-  // Trying to get mouseX to relate to the current context
-  Object.defineProperty(p5.prototype, "mouseX", {
-    get: function() {
-      return this.windowMouseX - this.curElement.x;
-    },
-    set: function(v) {
-      this._setProperty('mouseX', v); // broken because it calls itself?
-    }
-  });
-  Object.defineProperty(p5.prototype, "mouseY", {
-    get: function() {
-      return this.windowMouseY - this.curElement.y;
-    },
-    set: function(v) {
-      this._setProperty('mouseY', v); // broken because it calls itself?
-    }
-  });
-  */
-
   p5.prototype.isMousePressed = p5.prototype.mouseIsPressed = function() {
     return this.settings.mousePressed;
   };
@@ -32,14 +12,13 @@ define(function (require) {
   p5.prototype.updateMouseCoords = function(e) {
     this._setProperty('pmouseX', this.mouseX);
     this._setProperty('pmouseY', this.mouseY);
-    this._setProperty('mouseX', e.offsetX);
-    this._setProperty('mouseY', e.offsetY);
+    this._setProperty('mouseX', Math.max(e.pageX - this.curElement.x, 0));
+    this._setProperty('mouseY', Math.max(e.pageY - this.curElement.y, 0));
 
-    this._setProperty('pwindowMouseX', this.windowMouseX);
-    this._setProperty('pwindowMouseY', this.windowMouseY);
-    this._setProperty('windowMouseX', e.pageX);
-    this._setProperty('windowMouseY', e.pageY);
-
+    this._setProperty('pwinMouseX', this.winMouseX);
+    this._setProperty('pwinMouseY', this.winMouseY);
+    this._setProperty('winMouseX', e.pageX);
+    this._setProperty('winMouseY', e.pageY);
   };
 
   p5.prototype.setMouseButton = function(e) {
