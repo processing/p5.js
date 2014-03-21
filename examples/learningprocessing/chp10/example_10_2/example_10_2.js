@@ -11,7 +11,7 @@ var ball1;
 var ball2;
 
 function setup(){
-  createGraphics(400,400);
+  createCanvas(400,400);
   smooth();
   
   // Initialize balls

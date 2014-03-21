@@ -11,7 +11,7 @@ var spacing = 10; // How far apart is each line
 var len = 20;     // Length of each line
 
 function setup(){
-	createGraphics(200,200);
+	createCanvas(200,200);
 	background(255);
 };
 

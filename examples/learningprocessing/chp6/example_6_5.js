@@ -13,7 +13,7 @@ var len = 20;      // Length of each line
 var endLegs = 150; // Where should the lines stop?
 
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
 };
 
 function draw(){

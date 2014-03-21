@@ -3,7 +3,7 @@ var image2;
 
 function setup() {
   frameRate(1);
-  createGraphics(600, 600);
+  createCanvas(600, 600);
   background(200);
   
   //Copy image 1 into image 2

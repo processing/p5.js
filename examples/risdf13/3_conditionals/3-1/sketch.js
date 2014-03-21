@@ -1,7 +1,7 @@
 // Check location with 3 areas
 
 function setup() {
-  createGraphics(600, 600);
+  createCanvas(600, 600);
   noStroke();
   fill(0);
 };

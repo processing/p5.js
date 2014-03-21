@@ -6,7 +6,7 @@
 
 // Example 3-4: Drawing a continuous line
 function setup(){
-  createGraphics(200, 200);
+  createCanvas(200, 200);
   background(255);
   smooth();
 };

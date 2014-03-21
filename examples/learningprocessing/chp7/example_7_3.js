@@ -12,7 +12,7 @@ var speed = 1;
 
 // Setup does not change
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
   smooth();
 };
 

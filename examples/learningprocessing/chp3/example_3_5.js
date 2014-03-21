@@ -6,7 +6,7 @@
 
 // Example 3-5: mousePressed and keyPressed
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
   background(255);
 }
 

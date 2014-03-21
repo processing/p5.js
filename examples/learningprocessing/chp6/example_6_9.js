@@ -7,7 +7,7 @@
 // Example 6-9: Simple while loop with interactivity
 
 function setup(){
-  createGraphics(255,255);
+  createCanvas(255,255);
 };
 
 function draw(){

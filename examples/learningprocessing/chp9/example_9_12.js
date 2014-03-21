@@ -11,7 +11,7 @@
 var zoogies = [];
 
 function setup(){
-  createGraphics(400,400);
+  createCanvas(400,400);
   smooth();
   for (var i = 0; i < 200; i ++ ) {
     zoogies[i] = new Zoog(random(width),random(height),30,30,8);

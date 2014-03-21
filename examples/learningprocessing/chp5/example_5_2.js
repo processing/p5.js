@@ -12,7 +12,7 @@ var b = 0;
 var g = 0;
 
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
 };
 
 function draw(){

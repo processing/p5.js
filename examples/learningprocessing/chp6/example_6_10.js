@@ -14,7 +14,7 @@ var eyeSize = 16;
 var speed = 1;
 
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
   smooth();
 };
 

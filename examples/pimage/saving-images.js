@@ -1,6 +1,6 @@
 function setup() {
   // frameRate(1);
-  createGraphics(600, 600);
+  createCanvas(600, 600);
   background(200);
 
   var i = loadImage("unicorn.jpg", function(img){

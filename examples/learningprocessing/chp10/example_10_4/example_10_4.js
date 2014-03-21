@@ -10,7 +10,7 @@ var savedTime;
 var totalTime = 5000;
 
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
   background(0);
   savedTime = millis();
 };

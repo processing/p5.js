@@ -3,7 +3,7 @@ var image5;
 
 function setup() {
   frameRate(1);
-  createGraphics(600, 600);
+  createCanvas(600, 600);
   background(200);
 
   //

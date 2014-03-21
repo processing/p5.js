@@ -18,7 +18,7 @@ var change = 0.5;
 
 // Your basic setup
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
   smooth();
 };
 

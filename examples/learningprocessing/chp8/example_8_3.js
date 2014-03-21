@@ -8,7 +8,7 @@
 var zoog;
 
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
   smooth();
   zoog = new Zoog(100,125,60,60,16);
 }

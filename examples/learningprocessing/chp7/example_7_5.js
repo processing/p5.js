@@ -13,7 +13,7 @@ var h = 60;
 var eyeSize = 16;
 
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
   smooth();
 };
 

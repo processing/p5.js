@@ -11,7 +11,7 @@ var xpos = [];
 var ypos = [];
 
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
   
   smooth();
   // Initialize all elements of each array to zero.

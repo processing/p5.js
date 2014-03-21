@@ -2,15 +2,15 @@
 // Keyboard input
 // Draw a rectangle when any key is pressed
 
-var setup = function() {
+function setup() {
 
-  createGraphics(600, 600);
+  createCanvas(600, 600);
   smooth();
   strokeWeight(8);
 
 }
 
-var draw = function() {
+function draw() {
 
   background(204);
 
@@ -19,4 +19,4 @@ var draw = function() {
   } else { // Otherwise,
     rect(240, 240, 120, 120); // draw a rectangle
   }
-};
+}

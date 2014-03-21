@@ -7,7 +7,7 @@
 // Example 3-6: Interactive Zoog?
 function setup(){
   // Set the size of the window
-  createGraphics(200,200);
+  createCanvas(200,200);
   smooth();
   // The frame rate is set to 30 frames per second.
   setFrameRate(30);

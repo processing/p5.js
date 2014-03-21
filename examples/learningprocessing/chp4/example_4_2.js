@@ -11,7 +11,7 @@ var circleX = 100;
 var circleY = 100;
 
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
   smooth();
 };
 

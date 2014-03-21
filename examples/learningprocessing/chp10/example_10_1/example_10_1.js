@@ -9,7 +9,7 @@
 var catcher;
 
 function setup(){
-  createGraphics(400,400);
+  createCanvas(400,400);
   catcher = new Catcher(32);
   smooth();
 };

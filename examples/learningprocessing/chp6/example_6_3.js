@@ -14,7 +14,7 @@ var endLegs = 150;  // A variable to mark where the legs end.
 
 
 function setup(){
-	createGraphics(200,200);
+	createCanvas(200,200);
 	background(255);
 	stroke(0);
 };

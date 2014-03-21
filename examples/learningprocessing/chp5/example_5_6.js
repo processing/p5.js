@@ -9,7 +9,7 @@ var x = 0;
 var speed = 1;
 
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
   smooth();
 };
 

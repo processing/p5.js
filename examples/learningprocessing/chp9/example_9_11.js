@@ -8,7 +8,7 @@ var balls = [];
 var gravity = 0.1;
 
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
   smooth();
 
   // Initialize array with just one Ball object

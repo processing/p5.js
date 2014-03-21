@@ -10,7 +10,7 @@ var mySound = new buzz.sound('rhodes_loop.wav');
 var myImage;
 
 function setup() {
-  createGraphics(300, 300);
+  createCanvas(300, 300);
   myImage =  loadImage('red.jpg');
 };
 

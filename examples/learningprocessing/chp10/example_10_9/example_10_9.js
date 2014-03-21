@@ -12,7 +12,7 @@ var drops = [];       // An array of drop objects
 var totalDrops = 0; // totalDrops
 
 function setup(){
-  createGraphics(400,400);
+  createCanvas(400,400);
   smooth();
   catcher = new Catcher(32); // Create the catcher with a radius of 32
   timer = new Timer(2000);   // Create a timer that goes off every 2 seconds

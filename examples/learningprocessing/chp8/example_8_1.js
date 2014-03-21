@@ -9,7 +9,7 @@
 var myCar; // Declare car object as a globle variable.
 
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
   // Initialize Car object
   myCar = new Car(); // Initialize car object in setup() by calling constructor.
 };

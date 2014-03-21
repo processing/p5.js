@@ -4,7 +4,7 @@
 function setup() {
 
 
-  // We are still calling createGraphics like in the past, but now we are storing the result as a variable.
+  // We are still calling createCanvas like in the past, but now we are storing the result as a variable.
   // This way we can call methods of the element, to set the position for instance.
 
   // Try switching the order of these two lines. You notice that it breaks when you put them the other way.
@@ -14,7 +14,7 @@ function setup() {
 
   // Now let's try putting some more HTML in.
   var text = createHTML("Here is some text and <a href='http://i.imgur.com/WXaUlrK.gif'>this is an HTML link</a>!");
-  var canvas = createGraphics(600, 400);
+  var canvas = createCanvas(600, 400);
 
   // Here we call methods of each element to set the position and id, try changing these values.
   // Use the inspector to look at the HTML generated from this code when you load the sketch in your browser.

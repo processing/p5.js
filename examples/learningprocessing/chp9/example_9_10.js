@@ -10,7 +10,7 @@
 var stripes = [];
 
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
   
   // Initialize all Stripe objects
   for (var i = 0; i < 10; i ++ ) {

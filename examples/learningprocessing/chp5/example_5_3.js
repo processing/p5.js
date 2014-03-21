@@ -6,7 +6,7 @@
 
 // Example 5-3: Rollovers
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
 };
 
 function draw(){

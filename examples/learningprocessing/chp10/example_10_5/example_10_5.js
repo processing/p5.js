@@ -9,7 +9,7 @@
 var timer;
 
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
   background(0);
   timer = new Timer(5000);
   timer.start();

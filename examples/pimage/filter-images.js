@@ -3,7 +3,7 @@ var image2;
 
 function setup() {
   frameRate(1);
-  createGraphics(800, 600);
+  createCanvas(800, 600);
   background(200);
 
   //Load an image and then clone it and 

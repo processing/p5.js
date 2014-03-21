@@ -13,7 +13,7 @@ var w = 100;
 var h = 75;
 
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
 }
 
 function draw(){

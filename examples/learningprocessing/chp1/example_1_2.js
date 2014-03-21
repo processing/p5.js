@@ -6,7 +6,7 @@
 
 // Example 1-2: noFill
 function setup(){
-	createGraphics(200,200);
+	createCanvas(200,200);
 	smooth();
 	background(255);
 	// noFill() leaves the shape with only an outline.

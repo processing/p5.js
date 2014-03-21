@@ -48,7 +48,7 @@ function draw() {
 // var bug;  // Declare object
 
 // var setup = function() {
-//   createGraphics(600, 400);
+//   createCanvas(600, 400);
 //   background(50, 89, 100);
 
 //   // Create object and pass in parameters

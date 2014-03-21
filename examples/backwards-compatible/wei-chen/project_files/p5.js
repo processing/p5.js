@@ -89,7 +89,7 @@
   };
 
   PHelper.create = function() {
-    exports.createGraphics(800, 600, true); // default canvas
+    exports.createCanvas(800, 600, true); // default canvas
     PVariables.startTime = new Date().getTime();
     
     if (typeof preload == 'function') {
@@ -476,7 +476,7 @@
 
 }(window));
 ;(function(exports) {
-  exports.createGraphics = function(w, h, isDefault, targetID) {
+  exports.createCanvas = function(w, h, isDefault, targetID) {
     //console.log('create canvas');
     var c = document.createElement('canvas');
     c.setAttribute('width', w);

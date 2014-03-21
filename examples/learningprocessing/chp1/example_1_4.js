@@ -7,7 +7,7 @@
 // Example 1-4: Alpha Transparency
 
 function setup(){
-	createGraphics(200,200);
+	createCanvas(200,200);
 	noStroke();
 };
 

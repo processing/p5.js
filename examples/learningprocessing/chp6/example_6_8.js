@@ -10,7 +10,7 @@
 var y = 0;
 
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
   background(255);
   // Slowing down the frame rate so we can easily see the effect.
   setFrameRate(5); 

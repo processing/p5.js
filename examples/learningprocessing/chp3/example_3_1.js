@@ -11,7 +11,7 @@
 // Processing won't be able to do anything before the window size is specified.
 function setup(){
   // Set the size of the window
-  createGraphics(200,200);  
+  createCanvas(200,200);  
 };
 
 // draw() loops continuously until you close the sketch window.

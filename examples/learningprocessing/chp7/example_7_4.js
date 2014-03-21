@@ -7,7 +7,7 @@
 // Example 7-4: Using a function that returns a value, distance
 
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
 };
 
 function draw(){

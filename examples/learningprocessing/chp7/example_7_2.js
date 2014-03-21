@@ -7,7 +7,7 @@
 // Example 7-2: Calling a function
 
 function setup(){
- createGraphics(100,100);
+ createCanvas(100,100);
  smooth(); 
 };
 

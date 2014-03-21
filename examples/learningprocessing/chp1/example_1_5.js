@@ -7,7 +7,7 @@
 // Example 1-5: Zoog
 
 function setup(){
-	createGraphics(200,200);
+	createCanvas(200,200);
 	background(255);
 	smooth();
 	ellipseMode(CENTER);

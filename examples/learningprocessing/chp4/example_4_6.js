@@ -17,7 +17,7 @@ var x = 100;
 var y = 100;
   
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
   background(255);
   smooth();    
 };

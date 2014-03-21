@@ -17,7 +17,7 @@ var speed = 0;   // speed of square
 var gravity = 0.1;  
 
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
 };
 
 function draw(){

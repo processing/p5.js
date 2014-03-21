@@ -10,7 +10,7 @@
 var x,y; 
 
 function setup(){
-  createGraphics(400,400);
+  createCanvas(400,400);
   background(0);
   x = width/2;
   y = 0;

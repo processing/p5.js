@@ -116,7 +116,7 @@ var rotateSpeed=0,rotateDirection=0,rotateProcess=Math.PI;
 
     var setup = function(){
       smooth();
-      canvas1 = createGraphics(720, 720);
+      canvas1 = createCanvas(720, 720);
       canvas1.position(0, 0);
       img1 = loadImage("Outline_1.png");
       img2 = loadImage("Outline_2.png");

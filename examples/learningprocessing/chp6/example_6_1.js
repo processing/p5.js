@@ -7,7 +7,7 @@
 // Example 6-1: Many lines 
    
 function setup(){
-	createGraphics(200,200);  
+	createCanvas(200,200);  
 	background(255);  
 };
 

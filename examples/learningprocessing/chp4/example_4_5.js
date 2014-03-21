@@ -6,7 +6,7 @@
 
 // Example 4-5: Using system variables
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
   smooth();
 }
 

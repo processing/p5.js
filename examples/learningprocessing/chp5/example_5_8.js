@@ -16,7 +16,7 @@ var speed = 5;  // speed of square
 var state = 0;  
 
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
 };
 
 function draw(){

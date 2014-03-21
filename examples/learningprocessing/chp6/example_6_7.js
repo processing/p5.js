@@ -7,7 +7,7 @@
 // Example 6-7: Local variables
 
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
   // x is not available! It is local to the draw() block of code.
 }
 

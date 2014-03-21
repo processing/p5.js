@@ -7,7 +7,7 @@
 // Example 3-2: mouseX and mouseY
 
 function setup(){
-  createGraphics(200,200);
+  createCanvas(200,200);
 };
 
 function draw(){
