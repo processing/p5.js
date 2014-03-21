@@ -146,8 +146,8 @@ define(function (require) {
   };
 
   p5.prototype.preloadFunc = function (func, path) {
-    this._setProperty('preload_count', this.preload_count + 1);
     var context = this.isGlobal ? window : this;
+    context._setProperty('preload_count', context.preload_count + 1);
     return this[func](path, function (resp) {
       context._setProperty('preload_count', context.preload_count - 1);
       if (context.preload_count === 0) {
