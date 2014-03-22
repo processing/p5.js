@@ -5,6 +5,7 @@ define(function(require) {
   return {
 
     // ENVIRONMENT
+    ARROW: 'default',
     CROSS: 'crosshair',
     HAND: 'pointer',
     MOVE: 'move',
