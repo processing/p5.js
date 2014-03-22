@@ -16,6 +16,8 @@ define(function(require) {
     } else if (typeof type === 'string') {
       var coords = '';
       if (x && y && (typeof x === 'number' && typeof y === 'number')) {
+        // Note that x and y values must be unit-less positive integers < 32
+        // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
         coords = x + ' ' + y;
       }
       if (type.substring(0, 6) !== 'http://') {
