@@ -20,7 +20,7 @@ function setup(){
 function draw() {
   if (mouseX < 200 && mouseY < 200) {
     //cursor("http://www.mariowiki.com/images/8/87/SMK_Banana.png");
-    cursor("banana.png");
+    cursor("banana.png", 20, 5);
   } else if (mouseX > 200 && mouseY < 200) {
     cursor(CROSS);
   } else if (mouseX > 200 && mouseY > 200) {
