@@ -20,4 +20,4 @@ var s = function( sketch ) {
   return sketch;
 };
 
-P5(s);
+var sketch = new p5(s);

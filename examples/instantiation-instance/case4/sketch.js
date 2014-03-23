@@ -22,4 +22,4 @@ var s = function( sketch ) {
 };
 
 var containerNode = document.getElementById( 'p5-container' );
-P5(s, containerNode);
+var sketch = new p5(s, containerNode);

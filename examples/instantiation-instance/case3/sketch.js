@@ -21,4 +21,4 @@ var s = function( sketch ) {
   return sketch;
 };
 
-P5(s, 'p5-container');
+var sketch = new p5(s, 'p5-container');
