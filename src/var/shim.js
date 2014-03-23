@@ -7,9 +7,6 @@ define(function(require) {
            window.mozRequestAnimationFrame    ||
            window.oRequestAnimationFrame      ||
            window.msRequestAnimationFrame     ||
-           function(callback, element){
-             window.setTimeout(callback, 1000 / 60);
-           };
+           function(callback, element){ window.setTimeout(callback, 1000 / 60); };
   })();
-
 });

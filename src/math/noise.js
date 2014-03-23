@@ -84,15 +84,15 @@ define(function (require) {
     z = z || 0;
 
     if (perlin == null) {
-        // need to deal with seeding?
-        //if (perlinRandom == null) {
-          //perlinRandom = new Random();
-        //}
+      // need to deal with seeding?
+      //if (perlinRandom == null) {
+        //perlinRandom = new Random();
+      //}
 
-        perlin = new Array(PERLIN_SIZE + 1);
-        for (var i = 0; i < PERLIN_SIZE + 1; i++) {
-          perlin[i] = Math.random();
-        }
+      perlin = new Array(PERLIN_SIZE + 1);
+      for (var i = 0; i < PERLIN_SIZE + 1; i++) {
+        perlin[i] = Math.random();
+      }
     }
 
     if (x<0) { x=-x; }
@@ -139,9 +139,12 @@ define(function (require) {
 
       r += n1*ampl;
       ampl *= perlin_amp_falloff;
-      xi<<=1; xf*=2;
-      yi<<=1; yf*=2;
-      zi<<=1; zf*=2;
+      xi<<=1;
+      xf*=2;
+      yi<<=1;
+      yf*=2;
+      zi<<=1;
+      zf*=2;
 
       if (xf>=1.0) { xi++; xf--; }
       if (yf>=1.0) { yi++; yf--; }

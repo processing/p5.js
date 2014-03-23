@@ -305,7 +305,7 @@ define(function (require) {
     if(this.pixels.length > 0){
       this.loadPixels();
     }
-  };  
+  };
 
   /**
    * Copies a region of pixels from one image to another. If no
@@ -373,7 +373,7 @@ define(function (require) {
    * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
    * 
    */
-  PImage.prototype.mask = function(pImage) {    
+  PImage.prototype.mask = function(pImage) {
     if(pImage === undefined){
       pImage = this;
     }
@@ -383,7 +383,7 @@ define(function (require) {
 
     this.canvas.getContext('2d').globalCompositeOperation = 'destination-out';
     this.copy.apply(this, copyArgs);
-    this.canvas.getContext('2d').globalCompositeOperation = currBlend;   
+    this.canvas.getContext('2d').globalCompositeOperation = currBlend;
   };
 
   /**
@@ -423,12 +423,12 @@ define(function (require) {
    */
   PImage.prototype.blend = function() {
     var currBlend = this.canvas.getContext('2d').globalCompositeOperation;
-    var blendMode = arguments[arguments.length - 1];     
+    var blendMode = arguments[arguments.length - 1];
     var copyArgs = Array.prototype.slice.call(arguments, 0, arguments.length - 1);
 
     this.canvas.getContext('2d').globalCompositeOperation = blendMode;
     this.copy.apply(this, copyArgs);
-    this.canvas.getContext('2d').globalCompositeOperation = currBlend;    
+    this.canvas.getContext('2d').globalCompositeOperation = currBlend;
   };
 
   /**
@@ -449,18 +449,18 @@ define(function (require) {
     
     // http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support
     switch(extension.toLowerCase()){
-      case 'png':
-        mimeType = 'image/png';
-        break;
-      case 'jpeg':
-        mimeType = 'image/jpeg';
-        break;
-      case 'jpg':
-        mimeType = 'image/jpeg';
-        break;      
-      default:
-        mimeType = 'image/png';
-        break;
+    case 'png':
+      mimeType = 'image/png';
+      break;
+    case 'jpeg':
+      mimeType = 'image/jpeg';
+      break;
+    case 'jpg':
+      mimeType = 'image/jpeg';
+      break;
+    default:
+      mimeType = 'image/png';
+      break;
     }
 
     if(mimeType !== undefined){
@@ -470,10 +470,7 @@ define(function (require) {
       
       //Make the browser download the file
       window.location.href = imageData;
-    }    
+    }
   };
-
-
   return PImage;
-
 });

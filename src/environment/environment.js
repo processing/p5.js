@@ -10,7 +10,7 @@ define(function (require) {
 
   p5.prototype.frameRate = function(fps) {
     if (typeof fps === 'undefined') {
-        return this._frameRate;
+      return this._frameRate;
     } else {
       this._setProperty('_targetFrameRate', fps);
       this._runFrames();

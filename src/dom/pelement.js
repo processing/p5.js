@@ -68,13 +68,16 @@ define(function(require) {
     this.elt.style.display = 'none';
   };
   PElement.prototype.mousePressed = function(fxn) {
-    var _this = this; this.elt.addEventListener('click', function(e){fxn(e, _this);}, false);
+    var _this = this;
+    this.elt.addEventListener('click', function(e){fxn(e, _this);}, false);
   }; // pend false?
   PElement.prototype.mouseOver = function(fxn) {
-    var _this = this; this.elt.addEventListener('mouseover', function(e){fxn(e, _this);}, false);
+    var _this = this;
+    this.elt.addEventListener('mouseover', function(e){fxn(e, _this);}, false);
   };
   PElement.prototype.mouseOut = function(fxn) {
-    var _this = this; this.elt.addEventListener('mouseout', function(e){fxn(e, _this);}, false);
+    var _this = this;
+    this.elt.addEventListener('mouseout', function(e){fxn(e, _this);}, false);
   };
 
   return PElement;

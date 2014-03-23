@@ -1,6 +1,8 @@
 {
   "boss": true,
   "curly": true,
+  "trailing": true,
+  "indent": 2,
   "devel": true,
   "eqeqeq": true,
   "eqnull": true,
