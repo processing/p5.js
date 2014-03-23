@@ -83,6 +83,7 @@ var core = function (require, shim, constants) {
             this._textFont = 'sans-serif';
             this._textSize = 12;
             this._textStyle = constants.NORMAL;
+            this._curveDetail = 20;
             this.curElement = null;
             this.matrices = [[
                     1,
@@ -2579,13 +2580,30 @@ var shapecurves = function (require, core) {
         };
         p5.prototype.bezierTangent = function () {
         };
-        p5.prototype.curve = function () {
+        p5.prototype.curve = function (x1, y1, x2, y2, x3, y3, x4, y4) {
+            this.curElement.context.moveTo(x1, y1);
+            this.curElement.context.beginPath();
+            for (var i = 0; i <= this._curveDetail; i++) {
+                var t = parseFloat(i / this._curveDetail);
+                var x = p5.prototype.curvePoint(x1, x2, x3, x4, t);
+                var y = p5.prototype.curvePoint(y1, y2, y3, y4, t);
+                this.curElement.context.lineTo(x, y);
+            }
+            this.curElement.context.stroke();
+            this.curElement.context.closePath();
+            return this;
         };
-        p5.prototype.curveDetail = function () {
+        p5.prototype.curveDetail = function (d) {
+            this._setProperty('_curveDetail', d);
+            return this;
         };
-        p5.prototype.curvePoint = function () {
+        p5.prototype.curvePoint = function (a, b, c, d, t) {
+            var t3 = t * t * t, t2 = t * t, f1 = -0.5 * t3 + t2 - 0.5 * t, f2 = 1.5 * t3 - 2.5 * t2 + 1, f3 = -1.5 * t3 + 2 * t2 + 0.5 * t, f4 = 0.5 * t3 - 0.5 * t2;
+            return a * f1 + b * f2 + c * f3 + d * f4;
         };
-        p5.prototype.curveTangent = function () {
+        p5.prototype.curveTangent = function (a, b, c, d, t) {
+            var t2 = t * t, f1 = -3 * t2 / 2 + 2 * t - 0.5, f2 = 9 * t2 / 2 - 5 * t, f3 = -9 * t2 / 2 + 4 * t + 0.5, f4 = 3 * t2 / 2 - t;
+            return a * f1 + b * f2 + c * f3 + d * f4;
         };
         p5.prototype.curveTightness = function () {
         };
