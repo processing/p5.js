@@ -8,17 +8,14 @@ define(function (require) {
   //BufferedReader
   p5.prototype.createInput = function() {
     // TODO
-
   };
 
   p5.prototype.createReader = function() {
     // TODO
-
   };
 
   p5.prototype.loadBytes = function() {
     // TODO
-
   };
 
   p5.prototype.loadJSON = function(url, callback) {
@@ -53,7 +50,6 @@ define(function (require) {
 
   p5.prototype.loadTable = function () {
     // TODO
-
   };
 
 

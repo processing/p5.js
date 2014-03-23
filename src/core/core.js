@@ -159,7 +159,6 @@ define(function (require) {
   p5.prototype._setup = function() {
     // Short-circuit on this, in case someone used the library globally earlier
     var setup = this.setup || window.setup;
-      console.log(setup);
     if (typeof setup === 'function') {
       setup();
     } else {

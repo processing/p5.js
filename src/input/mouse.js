@@ -28,9 +28,8 @@ define(function (require) {
     } else if (e.button === 2) {
       this._setProperty('mouseButton', constants.RIGHT);
     } else {
-     this._setProperty('mouseButton', constants.LEFT);
+      this._setProperty('mouseButton', constants.LEFT);
     }
-
   };
 
   p5.prototype.onmousemove = function(e){

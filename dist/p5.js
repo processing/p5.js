@@ -174,7 +174,6 @@ var core = function (require, shim, constants) {
         };
         p5.prototype._setup = function () {
             var setup = this.setup || window.setup;
-            console.log(setup);
             if (typeof setup === 'function') {
                 setup();
             } else {

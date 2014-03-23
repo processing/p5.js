@@ -12,5 +12,9 @@
   "undef": true,
   "unused": "vars",
 
-  "node": true
+  "node": true,
+
+  "trailing": true,
+  "curly": true,
+  "indent": 2
 }

@@ -40,12 +40,12 @@ define(function (require) {
   };
 
   p5.prototype.PrintWriter = function(name) {
-     this.name = name;
-     this.content = '';
-     this.print = function(data) { this.content += data; };
-     this.println = function(data) { this.content += data + '\n'; };
-     this.flush = function() { this.content = ''; };
-     this.close = function() { this.writeFile(this.content); };
+    this.name = name;
+    this.content = '';
+    this.print = function(data) { this.content += data; };
+    this.println = function(data) { this.content += data + '\n'; };
+    this.flush = function() { this.content = ''; };
+    this.close = function() { this.writeFile(this.content); };
   };
 
   p5.prototype.saveBytes = function() {
