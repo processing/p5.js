@@ -20,8 +20,10 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      files: ['<%= jshint.files %>'],
-      tasks: ['jshint', 'qunit']
+//      files: ['<%= jshint.files %>'],
+//      tasks: ['jshint', 'qunit'],
+        files: ['src/**/*.js'],
+        tasks: ['jshint', 'requirejs']
     },
     mocha: {
       test: {
