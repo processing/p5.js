@@ -16,17 +16,18 @@ define(function (require) {
    *
    * Returns void
    *
-   * @param  {Float} a x-coordinate of the arc's ellipse
-   * @param  {Float} b y-coordinate of the arc's ellipse
-   * @param  {Float} c width of the arc's ellipse by default
-   * @param  {Float} d height of the arc's ellipse by default
-   * @param  {Float} start angle to start the arc, specified in radians
-   * @param  {Float} stop angle to stop the arc, specified in radians
+   * @param  {Number} a x-coordinate of the arc's ellipse
+   * @param  {Number} b y-coordinate of the arc's ellipse
+   * @param  {Number} c width of the arc's ellipse by default
+   * @param  {Number} d height of the arc's ellipse by default
+   * @param  {Number} start angle to start the arc, specified in radians
+   * @param  {Number} stop angle to stop the arc, specified in radians
    * @param  {Mode} optional parameter to determine the way of drawing the arc
    * @return {Void}
    */
+
 	p5.prototype.arc = function(a, b, c, d, start, stop, mode) {
-    var vals = canvas.modeAdjust(a, b, c, d, this.settings.ellipseMode);
+    var vals = canvas.arcModeAdjust(a, b, c, d, this.settings.ellipseMode);
     var radius = (vals.h > vals.w) ? vals.h / 2 : vals.w / 2,
       xScale = (vals.h > vals.w) ? vals.w / vals.h : 1, //scale the arc if it is oblong
       yScale = (vals.h > vals.w) ? 1 : vals.h / vals.w;
