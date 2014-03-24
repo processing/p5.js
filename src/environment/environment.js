@@ -23,7 +23,7 @@ define(function(require) {
       if (type.substring(0, 6) !== 'http://') {
         // Image (absolute url)
         cursor = 'url(' + type + ') ' + coords + ', auto';
-      } else if (/\.(cur|jpg|jpeg|gif|png|CUR|JPG|JPEG|GIF|PNG)$/.test(type)) {      
+      } else if (/\.(cur|jpg|jpeg|gif|png|CUR|JPG|JPEG|GIF|PNG)$/.test(type)) {
         // Image file (relative path) - Separated for performance reasons
         cursor = 'url(' + type + ') ' + coords + ', auto';
       } else {

@@ -9,6 +9,7 @@ var shim = function (require) {
 var constants = function (require) {
         var PI = Math.PI;
         return {
+            ARROW: 'default',
             CROSS: 'crosshair',
             HAND: 'pointer',
             MOVE: 'move',
@@ -1022,11 +1023,37 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
         };
         return p5;
     }({}, core, inputmouse, inputtouch, dompelement);
-var environment = function (require, core) {
+var environment = function (require, core, constants) {
         'use strict';
         var p5 = core;
-        p5.prototype.cursor = function (type) {
-            this.curElement.style.cursor = type || 'auto';
+        var C = constants;
+        var standardCursors = [
+                C.ARROW,
+                C.CROSS,
+                C.HAND,
+                C.MOVE,
+                C.TEXT,
+                C.WAIT
+            ];
+        p5.prototype.cursor = function (type, x, y) {
+            var cursor = 'auto';
+            var canvas = this.curElement.elt;
+            if (standardCursors.indexOf(type) > -1) {
+                cursor = type;
+            } else if (typeof type === 'string') {
+                var coords = '';
+                if (x && y && (typeof x === 'number' && typeof y === 'number')) {
+                    coords = x + ' ' + y;
+                }
+                if (type.substring(0, 6) !== 'http://') {
+                    cursor = 'url(' + type + ') ' + coords + ', auto';
+                } else if (/\.(cur|jpg|jpeg|gif|png|CUR|JPG|JPEG|GIF|PNG)$/.test(type)) {
+                    cursor = 'url(' + type + ') ' + coords + ', auto';
+                } else {
+                    cursor = type;
+                }
+            }
+            canvas.style.cursor = cursor;
         };
         p5.prototype.frameRate = function (fps) {
             if (typeof fps === 'undefined') {
@@ -1044,10 +1071,10 @@ var environment = function (require, core) {
             return this.frameRate(fps);
         };
         p5.prototype.noCursor = function () {
-            this.curElement.style.cursor = 'none';
+            this.curElement.elt.style.cursor = 'none';
         };
         return p5;
-    }({}, core);
+    }({}, core, constants);
 var canvas = function (require, constants) {
         var constants = constants;
         return {
