@@ -135,26 +135,22 @@ var core = function (require, shim, constants) {
                 window.addEventListener('load', this._start.bind(this), false);
             }
         };
-        p5._init = function () {
-            console.log('_init');
-            new p5();
-        };
         p5.prototype._start = function () {
             this.createCanvas(800, 600, true);
             var preload = this.preload || window.preload;
             var context = this._isGlobal ? window : this;
             if (preload) {
                 context.loadJSON = function (path) {
-                    return context.preloadFunc('loadJSON', path);
+                    return context._preload('loadJSON', path);
                 };
                 context.loadStrings = function (path) {
-                    return context.preloadFunc('loadStrings', path);
+                    return context._preload('loadStrings', path);
                 };
                 context.loadXML = function (path) {
-                    return context.preloadFunc('loadXML', path);
+                    return context._preload('loadXML', path);
                 };
                 context.loadImage = function (path) {
-                    return context.preloadFunc('loadImage', path);
+                    return context._preload('loadImage', path);
                 };
                 preload();
                 context.loadJSON = p5.prototype.loadJSON;
@@ -167,12 +163,12 @@ var core = function (require, shim, constants) {
                 this._drawSketch();
             }
         };
-        p5.prototype.preloadFunc = function (func, path) {
+        p5.prototype._preload = function (func, path) {
             var context = this._isGlobal ? window : this;
-            context._setProperty('preload-count', context.preloadCount + 1);
+            context._setProperty('preload-count', context._preloadCount + 1);
             return this[func](path, function (resp) {
-                context._setProperty('preload-count', context.preloadCount - 1);
-                if (context.preloadCount === 0) {
+                context._setProperty('preload-count', context._preloadCount - 1);
+                if (context._preloadCount === 0) {
                     context._setup();
                     context._runFrames();
                     context._drawSketch();

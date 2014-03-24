@@ -13,7 +13,9 @@ define(function (require) {
    *
    * A p5 instance....
    *
-   * Can run in "global" or "instance" mode.
+   * Can run in "global" or "instance" mode:
+   *   "global" - 
+   *   "instance" - 
    *
    * Public fields on a p5 instance:
    * 
@@ -25,7 +27,7 @@ define(function (require) {
   var p5 = function(node, sketch) {
 
     // ******************************************
-    // PUBLIC PROPERTIES
+    // PUBLIC p5 PROTOTYPE PROPERTIES
     //   
 
     // Environment
@@ -83,7 +85,7 @@ define(function (require) {
     };
 
     // ******************************************
-    // PRIVATE PROPERTIES
+    // PRIVATE p5 PROTOTYPE PROPERTIES
     //
 
     // Keep a reference to when this instance was created
@@ -113,7 +115,7 @@ define(function (require) {
     this.styles = [];
 
     // If the user has created a global setup function,
-    // assume "global mode" and make everything global
+    // assume "global" mode and make everything global
     if (!sketch) {
       this._isGlobal = true;
       // Loop through methods on the prototype and attach them to the window
@@ -144,25 +146,8 @@ define(function (require) {
   };
 
   // ******************************************
-  // PRIVATE METHODS
+  // PRIVATE p5 PROTOTYPE METHODS
   //
-
-  /**
-   * _init
-   *
-   * Called at window.onload in p5.js
-   * TODO: explain how instantiation works
-   * 
-   * @return {Undefined}
-   */
-  p5._init = function() {
-    // If the user has created a global setup function,
-    // assume "global" mode and make everything global.
-    //
-    // Create a processing instance automatically.
-    console.log('_init');
-    new p5();
-  };
 
   /**
    * _start
@@ -172,21 +157,21 @@ define(function (require) {
    * @return {Undefined}
    */
   p5.prototype._start = function () {
-    this.createCanvas(800, 600, true);
+    this.createCanvas(800, 600, true); // should move this size to defaults somewhere
     var preload = this.preload || window.preload;
     var context = this._isGlobal ? window : this;
     if (preload) {
       context.loadJSON = function (path) {
-        return context.preloadFunc('loadJSON', path);
+        return context._preload('loadJSON', path);
       };
       context.loadStrings = function (path) {
-        return context.preloadFunc('loadStrings', path);
+        return context._preload('loadStrings', path);
       };
       context.loadXML = function (path) {
-        return context.preloadFunc('loadXML', path);
+        return context._preload('loadXML', path);
       };
       context.loadImage = function (path) {
-        return context.preloadFunc('loadImage', path);
+        return context._preload('loadImage', path);
       };
       preload();
       context.loadJSON = p5.prototype.loadJSON;
@@ -201,25 +186,25 @@ define(function (require) {
   };
 
   /**
-   * _preloadFunc
+   * _preload
    *
    * TODO: ???
    * 
    * @return {Undefined}
    */
-  p5.prototype.preloadFunc = function (func, path) {
+  p5.prototype._preload = function (func, path) {
     var context = this._isGlobal ? window : this;
-    context._setProperty('preload-count', context.preloadCount + 1);
+    context._setProperty('preload-count', context._preloadCount + 1);
     return this[func](path, function (resp) {
-      context._setProperty('preload-count', context.preloadCount - 1);
-      if (context.preloadCount === 0) {
+      context._setProperty('preload-count', context._preloadCount - 1);
+      if (context._preloadCount === 0) {
         context._setup();
         context._runFrames();
         context._drawSketch();
       }
     });
   };
-  
+
   /**
    * _setup
    *
@@ -257,7 +242,7 @@ define(function (require) {
         window.requestDraw(this._drawSketch.bind(this));
       }, 1000 / this._targetFrameRate);
     }
-    // call draw
+    // call user's draw
     if (typeof userDraw === 'function') {
       userDraw();
     }
