@@ -7,7 +7,15 @@ define(function (require) {
   // Core needs the PVariables object
   var constants = require('constants');
 
-  // Create the p5 constructor
+  /**
+   * p5 instance constructor
+   *
+   * A p5 instance....
+   *
+   * @param  {HTMLElement}  node
+   * @param  {Function}     sketch
+   * @return {p5}
+   */
   var p5 = function(node, sketch) {
 
     var self = this;
