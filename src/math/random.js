@@ -7,9 +7,12 @@ define(function (require) {
   var randConst = 100000;
   var seed = Math.ceil(Math.random() * randConst);
 
+  var seeded = false;
+
   p5.prototype.randomSeed = function(nseed) {
     //the seed will be a positive (non-zero) number
     seed = Math.ceil(Math.abs(nseed));
+    seeded = true;
   };
 
   /**
@@ -25,9 +28,15 @@ define(function (require) {
    * @return {Number}
    */
   p5.prototype.random = function (min, max) {
-    var tmp;
-    var rand  = Math.sin(seed++) * randConst;
-    rand -= Math.floor(rand);
+
+    var rand;
+
+    if (seeded) {
+      rand  = Math.sin(seed++) * randConst;
+      rand -= Math.floor(rand);
+    } else {
+      rand = Math.random();
+    }
 
     if (arguments.length === 0) {
       return rand;
@@ -36,7 +45,7 @@ define(function (require) {
       return rand * min;
     } else {
       if (min > max) {
-        tmp = min;
+        var tmp = min;
         min = max;
         max = tmp;
       }

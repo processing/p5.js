@@ -1,5 +1,4 @@
-(function () {
-var shim = function (require) {
+(function () {var shim = function (require) {
         window.requestDraw = function () {
             return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
                 window.setTimeout(callback, 1000 / 60);
@@ -2184,20 +2183,26 @@ var mathrandom = function (require, core) {
         var p5 = core;
         var randConst = 100000;
         var seed = Math.ceil(Math.random() * randConst);
+        var seeded = false;
         p5.prototype.randomSeed = function (nseed) {
             seed = Math.ceil(Math.abs(nseed));
+            seeded = true;
         };
         p5.prototype.random = function (min, max) {
-            var tmp;
-            var rand = Math.sin(seed++) * randConst;
-            rand -= Math.floor(rand);
+            var rand;
+            if (seeded) {
+                rand = Math.sin(seed++) * randConst;
+                rand -= Math.floor(rand);
+            } else {
+                rand = Math.random();
+            }
             if (arguments.length === 0) {
                 return rand;
             } else if (arguments.length === 1) {
                 return rand * min;
             } else {
                 if (min > max) {
-                    tmp = min;
+                    var tmp = min;
                     min = max;
                     max = tmp;
                 }
@@ -2947,4 +2952,5 @@ var src_p5 = function (require, core, mathpvector, colorcreating_reading, colors
         window.p5 = p5;
         window.PVector = PVector;
         return p5;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
+    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);
+}());
