@@ -94,7 +94,7 @@ define(function (require) {
     // TODO: ???
     this._preloadCount = 0; // private?
 
-    // Tracks whether p5 is running in 'global' or 'instance' mode
+    // Tracks whether p5 is running in "global" or "instance" mode
     this._isGlobal = false; // private?
 
     // Environment

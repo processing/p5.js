@@ -2991,16 +2991,16 @@ var src_p5 = function (require, core, mathpvector, colorcreating_reading, colors
         'use strict';
         var p5 = core;
         var PVector = mathpvector;
-        var _init = function () {
+        var _globalInit = function () {
             console.log('init');
             new p5();
         };
         if (document.readyState === 'complete') {
             console.log('document.readyState == complete');
-            _init();
+            _globalInit();
         } else {
             console.log('window.addEventListener for load');
-            window.addEventListener('load', _init, false);
+            window.addEventListener('load', _globalInit, false);
         }
         window.p5 = p5;
         window.PVector = PVector;

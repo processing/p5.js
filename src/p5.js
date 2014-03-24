@@ -36,26 +36,30 @@ define(function (require) {
   require('typography.loading_displaying');
 
   /**
-   * _init
+   * _globalInit
    *
    * TODO: ???
-   * looks for "preload" on sketch or on window
+   * if sketch is on window
+   * assume "global" mode
+   * and instantiate p5 automatically
+   * otherwise do nothing
    * 
    * @return {Undefined}
    */
-  var _init = function() {
+  var _globalInit = function() {
     console.log('init');
+    // if skech on window
     new p5();
   };
 
   if (document.readyState === 'complete') {
     // TODO: ???
     console.log('document.readyState == complete');
-    _init();
+    _globalInit();
   } else {
     // TODO: ???
     console.log('window.addEventListener for load');
-    window.addEventListener('load', _init , false);
+    window.addEventListener('load', _globalInit , false);
   }
 
   window.p5 = p5;
