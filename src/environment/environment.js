@@ -1,11 +1,37 @@
-define(function (require) {
+define(function(require) {
 
   'use strict';
 
   var p5 = require('core');
+  var C = require('constants');
 
-  p5.prototype.cursor = function(type) {
-    this.curElement.style.cursor = type || 'auto';
+  var standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
+
+  p5.prototype.cursor = function(type, x, y) {
+    var cursor = 'auto';
+    var canvas = this.curElement.elt;
+    if (standardCursors.indexOf(type) > -1) {
+      // Standard css cursor
+      cursor = type;
+    } else if (typeof type === 'string') {
+      var coords = '';
+      if (x && y && (typeof x === 'number' && typeof y === 'number')) {
+        // Note that x and y values must be unit-less positive integers < 32
+        // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
+        coords = x + ' ' + y;
+      }
+      if (type.substring(0, 6) !== 'http://') {
+        // Image (absolute url)
+        cursor = 'url(' + type + ') ' + coords + ', auto';
+      } else if (/\.(cur|jpg|jpeg|gif|png|CUR|JPG|JPEG|GIF|PNG)$/.test(type)) {      
+        // Image file (relative path) - Separated for performance reasons
+        cursor = 'url(' + type + ') ' + coords + ', auto';
+      } else {
+        // Any valid string for the css cursor property
+        cursor = type;
+      }
+    }
+    canvas.style.cursor = cursor;
   };
 
   p5.prototype.frameRate = function(fps) {
@@ -27,7 +53,7 @@ define(function (require) {
   };
 
   p5.prototype.noCursor = function() {
-    this.curElement.style.cursor = 'none';
+    this.curElement.elt.style.cursor = 'none';
   };
 
   return p5;
