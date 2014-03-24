@@ -109,6 +109,7 @@ var core = function (require, shim, constants) {
             this._textFont = 'sans-serif';
             this._textSize = 12;
             this._textStyle = constants.NORMAL;
+            this._curveDetail = 20;
             this.styles = [];
             if (!sketch) {
                 this._isGlobal = true;

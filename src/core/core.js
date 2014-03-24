@@ -13,19 +13,19 @@ define(function (require) {
    *
    * A p5 instance....
    *
-   * Can run in 'global' or 'instance' mode.
+   * Can run in "global" or "instance" mode.
    *
    * Public fields on a p5 instance:
    * 
    *
-   * @param  {HTMLElement}  node
-   * @param  {Function}     sketch
+   * @param  {HTMLElement}  node - to attach the instance to
+   * @param  {Function}     sketch - with a setup() and draw() properties
    * @return {p5}
    */
   var p5 = function(node, sketch) {
 
     // ******************************************
-    // PUBLIC FIELDS
+    // PUBLIC PROPERTIES
     //   
 
     // Environment
@@ -63,9 +63,11 @@ define(function (require) {
     this._bezierDetail = 20;
     this._curveDetail = 20;
 
+    // TODO: ???
     this.curElement = null;
     this.matrices = [[1,0,0,1,0,0]];
 
+    // TODO: ???
     this.settings = {
       // Structure
       loop: true,
@@ -81,7 +83,7 @@ define(function (require) {
     };
 
     // ******************************************
-    // PRIVATE FIELDS
+    // PRIVATE PROPERTIES
     //
 
     // Keep a reference to when this instance was created
@@ -104,10 +106,14 @@ define(function (require) {
     this._textSize = 12;
     this._textStyle = constants.NORMAL;
 
+    // Curves
+    this._curveDetail = 20;
+
+    // TODO: ???
     this.styles = [];
 
     // If the user has created a global setup function,
-    // assume "beginner mode" and make everything global
+    // assume "global mode" and make everything global
     if (!sketch) {
       this._isGlobal = true;
       // Loop through methods on the prototype and attach them to the window
@@ -137,15 +143,34 @@ define(function (require) {
 
   };
 
-  // Create is called at window.onload
+  // ******************************************
+  // PRIVATE METHODS
+  //
+
+  /**
+   * _init
+   *
+   * Called at window.onload in p5.js
+   * TODO: explain how instantiation works
+   * 
+   * @return {Undefined}
+   */
   p5._init = function() {
     // If the user has created a global setup function,
-    // assume "beginner mode" and make everything global
-    // Create a processing instance
+    // assume "global" mode and make everything global.
+    //
+    // Create a processing instance automatically.
     console.log('_init');
     new p5();
   };
 
+  /**
+   * _start
+   *
+   * TODO: ???
+   * 
+   * @return {Undefined}
+   */
   p5.prototype._start = function () {
     this.createCanvas(800, 600, true);
     var preload = this.preload || window.preload;
@@ -175,6 +200,13 @@ define(function (require) {
     }
   };
 
+  /**
+   * _preloadFunc
+   *
+   * TODO: ???
+   * 
+   * @return {Undefined}
+   */
   p5.prototype.preloadFunc = function (func, path) {
     var context = this._isGlobal ? window : this;
     context._setProperty('preload-count', context.preloadCount + 1);
@@ -188,8 +220,15 @@ define(function (require) {
     });
   };
   
+  /**
+   * _setup
+   *
+   * TODO: ???
+   * 
+   * @return {Undefined}
+   */
   p5.prototype._setup = function() {
-    // Short-circuit on this, in case someone used the library globally earlier
+    // Short-circuit on this, in case someone used the library in "global" mode earlier
     var setup = this.setup || window.setup;
     if (typeof setup === 'function') {
       setup();
@@ -199,8 +238,14 @@ define(function (require) {
     }
   };
 
+  /**
+   * _drawSketch
+   * 
+   * TODO: ???
+   * 
+   * @return {Undefined}
+   */
   p5.prototype._drawSketch = function () {
-
     var now = new Date().getTime();
     this._frameRate = 1000.0/(now - this._lastFrameTime);
     this._lastFrameTime = now;
@@ -220,6 +265,13 @@ define(function (require) {
     this.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
   };
 
+  /**
+   * _runFrames
+   *
+   * TODO: ???
+   * 
+   * @return {Undefined}
+   */
   p5.prototype._runFrames = function() {
     if (this.updateInterval) {
       clearInterval(this.updateInterval);
@@ -229,12 +281,26 @@ define(function (require) {
     }, 1000/this._targetFrameRate);
   };
 
+  /**
+   * _applyDefaults
+   *
+   * TODO: ???
+   * 
+   * @return {Undefined}
+   */
   p5.prototype._applyDefaults = function() {
     this.curElement.context.fillStyle = '#FFFFFF';
     this.curElement.context.strokeStyle = '#000000';
     this.curElement.context.lineCap = constants.ROUND;
   };
 
+  /**
+   * _setProperty
+   *
+   * TODO: ???
+   * 
+   * @return {Undefined}
+   */
   p5.prototype._setProperty = function(prop, value) {
     this[prop] = value;
     if (this._isGlobal) {
