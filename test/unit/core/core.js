@@ -1,8 +1,8 @@
 suite('Core', function(){
 
   suite('p5.prototype', function() {
-    var prototype = p5;
-    var result;
+    //var prototype = p5;
+    //var result;
     /*suite('abs()', function() {
       test('should be a function', function() {
         assert.ok(abs);

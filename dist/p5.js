@@ -1,5 +1,4 @@
-(function () {
-var shim = function (require) {
+(function () {var shim = function (require) {
         window.requestDraw = function () {
             return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
                 window.setTimeout(callback, 1000 / 60);
@@ -56,14 +55,7 @@ var core = function (require, shim, constants) {
         'use strict';
         var constants = constants;
         var p5 = function (node, sketch) {
-            var self = this;
-            this.startTime = new Date().getTime();
-            this.preload_count = 0;
-            this.isGlobal = false;
             this.frameCount = 0;
-            this._frameRate = 0;
-            this._lastFrameTime = 0;
-            this._targetFrameRate = 60;
             this.focused = true;
             this.displayWidth = screen.width;
             this.displayHeight = screen.height;
@@ -107,9 +99,19 @@ var core = function (require, shim, constants) {
                 mousePressed: false,
                 angleMode: constants.RADIANS
             };
+            this.startTime = new Date().getTime();
+            this._preloadCount = 0;
+            this._isGlobal = false;
+            this._frameRate = 0;
+            this._lastFrameTime = 0;
+            this._targetFrameRate = 60;
+            this._textLeading = 15;
+            this._textFont = 'sans-serif';
+            this._textSize = 12;
+            this._textStyle = constants.NORMAL;
             this.styles = [];
             if (!sketch) {
-                this.isGlobal = true;
+                this._isGlobal = true;
                 for (var method in p5.prototype) {
                     window[method] = p5.prototype[method].bind(this);
                 }
@@ -129,16 +131,17 @@ var core = function (require, shim, constants) {
             if (document.readyState === 'complete') {
                 this._start();
             } else {
-                window.addEventListener('load', self._start.bind(self), false);
+                window.addEventListener('load', this._start.bind(this), false);
             }
         };
         p5._init = function () {
+            console.log('_init');
             new p5();
         };
         p5.prototype._start = function () {
             this.createCanvas(800, 600, true);
             var preload = this.preload || window.preload;
-            var context = this.isGlobal ? window : this;
+            var context = this._isGlobal ? window : this;
             if (preload) {
                 context.loadJSON = function (path) {
                     return context.preloadFunc('loadJSON', path);
@@ -164,11 +167,11 @@ var core = function (require, shim, constants) {
             }
         };
         p5.prototype.preloadFunc = function (func, path) {
-            var context = this.isGlobal ? window : this;
-            context._setProperty('preload_count', context.preload_count + 1);
+            var context = this._isGlobal ? window : this;
+            context._setProperty('preload-count', context.preloadCount + 1);
             return this[func](path, function (resp) {
-                context._setProperty('preload_count', context.preload_count - 1);
-                if (context.preload_count === 0) {
+                context._setProperty('preload-count', context.preloadCount - 1);
+                if (context.preloadCount === 0) {
                     context._setup();
                     context._runFrames();
                     context._drawSketch();
@@ -180,34 +183,32 @@ var core = function (require, shim, constants) {
             if (typeof setup === 'function') {
                 setup();
             } else {
-                var context = this.isGlobal ? window : this;
+                var context = this._isGlobal ? window : this;
                 context.createCanvas(600, 400, true);
             }
         };
         p5.prototype._drawSketch = function () {
-            var self = this;
             var now = new Date().getTime();
-            self._frameRate = 1000 / (now - self._lastFrameTime);
-            self._lastFrameTime = now;
-            var userDraw = self.draw || window.draw;
-            if (self.settings.loop) {
+            this._frameRate = 1000 / (now - this._lastFrameTime);
+            this._lastFrameTime = now;
+            var userDraw = this.draw || window.draw;
+            if (this.settings.loop) {
                 setTimeout(function () {
-                    window.requestDraw(self._drawSketch.bind(self));
-                }, 1000 / self._targetFrameRate);
+                    window.requestDraw(this._drawSketch.bind(this));
+                }, 1000 / this._targetFrameRate);
             }
             if (typeof userDraw === 'function') {
                 userDraw();
             }
-            self.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
+            this.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
         };
         p5.prototype._runFrames = function () {
-            var self = this;
             if (this.updateInterval) {
                 clearInterval(this.updateInterval);
             }
             this.updateInterval = setInterval(function () {
-                self._setProperty('frameCount', self.frameCount + 1);
-            }, 1000 / self._targetFrameRate);
+                this._setProperty('frameCount', this.frameCount + 1);
+            }, 1000 / this._targetFrameRate);
         };
         p5.prototype._applyDefaults = function () {
             this.curElement.context.fillStyle = '#FFFFFF';
@@ -216,7 +217,7 @@ var core = function (require, shim, constants) {
         };
         p5.prototype._setProperty = function (prop, value) {
             this[prop] = value;
-            if (this.isGlobal) {
+            if (this._isGlobal) {
                 window[prop] = value;
             }
         };
@@ -3001,4 +3002,5 @@ var src_p5 = function (require, core, mathpvector, colorcreating_reading, colors
         window.p5 = p5;
         window.PVector = PVector;
         return p5;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
+    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);
+}());
