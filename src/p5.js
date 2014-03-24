@@ -35,10 +35,27 @@ define(function (require) {
   require('typography.attributes');
   require('typography.loading_displaying');
 
+  /**
+   * _init
+   *
+   * TODO: ???
+   * looks for "preload" on sketch or on window
+   * 
+   * @return {Undefined}
+   */
+  var _init = function() {
+    console.log('init');
+    new p5();
+  };
+
   if (document.readyState === 'complete') {
-    p5._init();
+    // TODO: ???
+    console.log('document.readyState == complete');
+    _init();
   } else {
-    window.addEventListener('load', p5._init , false);
+    // TODO: ???
+    console.log('window.addEventListener for load');
+    window.addEventListener('load', _init , false);
   }
 
   window.p5 = p5;

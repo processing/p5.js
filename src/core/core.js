@@ -153,27 +153,28 @@ define(function (require) {
    * _start
    *
    * TODO: ???
+   * looks for "preload" on sketch or on window
    * 
    * @return {Undefined}
    */
   p5.prototype._start = function () {
     this.createCanvas(800, 600, true); // should move this size to defaults somewhere
-    var preload = this.preload || window.preload;
+    var preload = this.preload || window.preload; // look for "preload"
     var context = this._isGlobal ? window : this;
     if (preload) {
       context.loadJSON = function (path) {
-        return context._preload('loadJSON', path);
+        return context._preload('loadJSON', path); // _preload?
       };
       context.loadStrings = function (path) {
-        return context._preload('loadStrings', path);
+        return context._preload('loadStrings', path); // _preload?
       };
       context.loadXML = function (path) {
-        return context._preload('loadXML', path);
+        return context._preload('loadXML', path); // _preload?
       };
       context.loadImage = function (path) {
-        return context._preload('loadImage', path);
+        return context._preload('loadImage', path); // _preload?
       };
-      preload();
+      preload(); // _preload?
       context.loadJSON = p5.prototype.loadJSON;
       context.loadStrings = p5.prototype.loadStrings;
       context.loadXML = p5.prototype.loadXML;
