@@ -3,6 +3,7 @@ define(function(require) {
   var constants = require('./constants');
 
   return {
+
     modeAdjust: function(a, b, c, d, mode) {
       if (mode === constants.CORNER) {
         return { x: a, y: b, w: c, h: d };
@@ -26,7 +27,7 @@ define(function(require) {
         return { x: a, y: b, w: c, h: d };
       }
     }
-
+    
   };
 
 });
