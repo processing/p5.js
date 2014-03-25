@@ -2452,7 +2452,7 @@ var log = function (require, core) {
         var p5 = core;
         p5.prototype.log = function () {
             if (window.console && console.log) {
-                console.log.apply(console, arguments);
+                console.log.bind(console);
             }
         };
         return p5;
