@@ -74,6 +74,7 @@ suite('Curves', function() {
       test('should return the correct point on a Catmull-Rom Curve', function() {
         result = curveTangent(95, 73, 73, 15, 0.5);
         assert.equal(result, 10);
+        assert.notEqual(result, -1);
       });
     });
   });
