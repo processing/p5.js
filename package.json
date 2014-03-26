@@ -26,5 +26,10 @@
   ],
   "dependencies": {
     "reqwest": "~0.9.6"
-  }
+  },
+  "files": [
+    "license.txt",
+    "dist/p5.min.js",
+    "dist/p5.js"
+  ]
 }
