@@ -10,17 +10,38 @@ define(function (require) {
   };
 
   p5.prototype.arrayCopy = function(src, srcPosition, dst, dstPosition, length) { //src, srcPosition, dst, dstPosition, length
+
+    // the index to begin splicing from dst array
+    var start,
+        end;
+
     if (typeof length !== 'undefined') {
-      for (var i=srcPosition; i < Math.min(srcPosition + length, src.length); i++) {
-        dst[dstPosition+i] = src[i];
+
+      end = Math.min(length, src.length);
+      start = dstPosition;
+      src = src.slice(srcPosition, end + srcPosition);
+
+    } else {
+
+      if (typeof dst !== 'undefined') { // src, dst, length
+        // rename  so we don't get confused
+        end = dst;
+        end = Math.min(end, src.length);
+      } else { // src, dst
+        end = src.length;
       }
+
+      start = 0;
+      // rename  so we don't get confused
+      dst = srcPosition;
+      src = src.slice(0, end);
     }
-    else if (typeof dst !== 'undefined') { //src, dst, length
-      srcPosition = src.slice(0, Math.min(dst, src.length));
-    }
-    else { //src, dst
-      srcPosition = src.slice(0);
-    }
+
+    // Since we are not returning the array and JavaScript is pass by reference
+    // we must modify the actual values of the array
+    // instead of reassigning arrays
+    Array.prototype.splice.apply(dst, [start, end].concat(src));
+
   };
 
   p5.prototype.concat = function(list0, list1) {
@@ -48,14 +69,18 @@ define(function (require) {
   };
 
   p5.prototype.splice = function(list, value, index) {
-    return list.splice(index,0,value);
+
+    // note that splice returns spliced elements and not an array
+    Array.prototype.splice.apply(list, [index, 0].concat(value));
+
+    return list;
   };
 
   p5.prototype.subset = function(list, start, count) {
     if (typeof count !== 'undefined') {
-      return list.slice(start, start+count);
+      return list.slice(start, start + count);
     } else {
-      return list.slice(start, list.length-1);
+      return list.slice(start, list.length);
     }
   };
 
