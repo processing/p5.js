@@ -1,5 +1,4 @@
-(function () {
-var shim = function (require) {
+(function () {var shim = function (require) {
         window.requestDraw = function () {
             return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
                 window.setTimeout(callback, 1000 / 60);
@@ -567,15 +566,26 @@ var dataarray_functions = function (require, core) {
             return array;
         };
         p5.prototype.arrayCopy = function (src, srcPosition, dst, dstPosition, length) {
+            var start, end;
             if (typeof length !== 'undefined') {
-                for (var i = srcPosition; i < Math.min(srcPosition + length, src.length); i++) {
-                    dst[dstPosition + i] = src[i];
-                }
-            } else if (typeof dst !== 'undefined') {
-                srcPosition = src.slice(0, Math.min(dst, src.length));
+                end = Math.min(length, src.length);
+                start = dstPosition;
+                src = src.slice(srcPosition, end + srcPosition);
             } else {
-                srcPosition = src.slice(0);
+                if (typeof dst !== 'undefined') {
+                    end = dst;
+                    end = Math.min(end, src.length);
+                } else {
+                    end = src.length;
+                }
+                start = 0;
+                dst = srcPosition;
+                src = src.slice(0, end);
             }
+            Array.prototype.splice.apply(dst, [
+                start,
+                end
+            ].concat(src));
         };
         p5.prototype.concat = function (list0, list1) {
             return list0.concat(list1);
@@ -600,13 +610,17 @@ var dataarray_functions = function (require, core) {
             return arr.concat(rest);
         };
         p5.prototype.splice = function (list, value, index) {
-            return list.splice(index, 0, value);
+            Array.prototype.splice.apply(list, [
+                index,
+                0
+            ].concat(value));
+            return list;
         };
         p5.prototype.subset = function (list, start, count) {
             if (typeof count !== 'undefined') {
                 return list.slice(start, start + count);
             } else {
-                return list.slice(start, list.length - 1);
+                return list.slice(start, list.length);
             }
         };
         return p5;
@@ -2980,4 +2994,5 @@ var src_p5 = function (require, core, mathpvector, colorcreating_reading, colors
         window.p5 = p5;
         window.PVector = PVector;
         return p5;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
+    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);
+}());
