@@ -57,6 +57,7 @@ define(function (require) {
     this._textStyle = constants.NORMAL;
 
     // Curves
+    this._bezierDetail = 20;
     this._curveDetail = 20;
 
     this.curElement = null;

@@ -7,25 +7,77 @@ define(function (require) {
   p5.prototype.bezier = function(x1, y1, x2, y2, x3, y3, x4, y4) {
     this.curElement.context.beginPath();
     this.curElement.context.moveTo(x1, y1);
-    this.curElement.context.bezierCurveTo(x2, y2, x3, y3, x4, y4);
+    for (var i = 0; i <= this._bezierDetail; i++) { //for each point as considered by detail, iterate
+      var t = i / parseFloat(this._bezierDetail);
+      var x = p5.prototype.bezierPoint(x1, x2, x3, x4, t);
+      var y = p5.prototype.bezierPoint(y1, y2, y3, y4, t);
+      this.curElement.context.lineTo(x, y);
+    }
     this.curElement.context.stroke();
+
 
     return this;
   };
 
-  p5.prototype.bezierDetail = function() {
-    // TODO
+  /**
+   * Sets the resolution at which Beziers display.
+   *
+   * The default value is 20.
+   *
+   * Returns void
+   *
+   * @param  {Number} resolution of the curves
+   */
+  p5.prototype.bezierDetail = function(d) {
+    this._setProperty('_bezierDetail', d);
 
+    return this;
   };
 
-  p5.prototype.bezierPoint = function() {
-    // TODO
+  /**
+   * Calculate a point on the Bezier Curve
+   *
+   * Evaluates the Bezier at point t for points a, b, c, d.
+   * The parameter t varies between 0 and 1, a and d are points
+   * on the curve, and b and c are the control points.
+   * This can be done once with the x coordinates and a second time
+   * with the y coordinates to get the location of a bezier curve at t.
+   *
+   * Returns Number
+   *
+   * @param  {Number} a coordinate of first point on the curve
+   * @param  {Number} b coordinate of first control point
+   * @param  {Number} c coordinate of second control point
+   * @param  {Number} d coordinate of second point on the curve
+   * @param  {Number} t value between 0 and 1
+   */
 
+  p5.prototype.bezierPoint = function(a, b, c, d, t) {
+    var adjustedT = 1-t;
+
+    return Math.pow(adjustedT,3)*a + 3*(Math.pow(adjustedT,2))*t*b + 3*adjustedT*Math.pow(t,2)*c + Math.pow(t,3)*d;
   };
 
-  p5.prototype.bezierTangent = function() {
-    // TODO
+  /**
+   * Calculates the tangent of a point on a Bezier curve
+   *
+   * Evaluates the tangent at point t for points a, b, c, d.
+   * The parameter t varies between 0 and 1, a and d are points
+   * on the curve, and b and c are the control points
+   *
+   * Returns Number
+   *
+   * @param  {Number} a coordinate of first point on the curve
+   * @param  {Number} b coordinate of first control point
+   * @param  {Number} c coordinate of second control point
+   * @param  {Number} d coordinate of second point on the curve
+   * @param  {Number} t value between 0 and 1
+   */
 
+  p5.prototype.bezierTangent = function(a, b, c, d, t) {
+    var adjustedT = 1-t;
+
+    return 3*d*Math.pow(t,2) - 3*c*Math.pow(t,2) + 6*c*adjustedT*t - 6*b*adjustedT*t + 3*b*Math.pow(adjustedT,2) - 3*a*Math.pow(adjustedT,2);
   };
 
   p5.prototype.curve = function(x1, y1, x2, y2, x3, y3, x4, y4) {
@@ -39,6 +91,7 @@ define(function (require) {
     }
     this.curElement.context.stroke();
     this.curElement.context.closePath();
+
     return this;
   };
 
@@ -53,6 +106,7 @@ define(function (require) {
    */
   p5.prototype.curveDetail = function(d) {
     this._setProperty('_curveDetail', d);
+
     return this;
   };
 
@@ -66,7 +120,7 @@ define(function (require) {
    * This can be done once with the x coordinates and a second time
    * with the y coordinates to get the location of a curve at t.
    *
-   * Returns float
+   * Returns Number
    *
    * @param  {Number} a coordinate of first point on the curve
    * @param  {Number} b coordinate of first control point
@@ -92,7 +146,7 @@ define(function (require) {
    * The parameter t varies between 0 and 1, a and d are points
    * on the curve, and b and c are the control points
    *
-   * Returns float
+   * Returns Number
    *
    * @param  {Number} a coordinate of first point on the curve
    * @param  {Number} b coordinate of first control point
