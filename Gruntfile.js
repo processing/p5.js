@@ -28,6 +28,8 @@ module.exports = function(grunt) {
         //src: ['test/*.html'],
         src: ['test/**/*.html'],
         options: {
+          // reporter: 'test/reporter/simple.js',
+          reporter: 'Nyan',
           run: true,
           log: true
         }
