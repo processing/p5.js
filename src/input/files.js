@@ -58,7 +58,7 @@ define(function (require) {
     var self = this;
     self.temp = [];
     reqwest(path, function (resp) {
-      self.log(resp);
+      self.print(resp);
       self.temp = resp;
       ret[0] = resp;
       if (typeof callback !== 'undefined') {

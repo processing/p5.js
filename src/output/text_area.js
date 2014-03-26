@@ -4,10 +4,13 @@ define(function (require) {
 
   var p5 = require('core');
 
-  require('log');
+  p5.prototype.print = function() {
+    if (window.console && console.log) {
+      console.log.apply(console, arguments);
+    }
+  };
 
-  p5.prototype.print = p5.prototype.log;
-  p5.prototype.println = p5.prototype.log;
+  p5.prototype.println = p5.prototype.print;
 
   return p5;
 });

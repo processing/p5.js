@@ -135,8 +135,6 @@ suite('Calculation', function() {
     });
   });
 
-  /*
-  TODO: fix namespace collision with console log
   suite('p5.prototype.log', function() {
     var log = p5.prototype.log;
     var result;
@@ -146,21 +144,20 @@ suite('Calculation', function() {
         assert.typeOf(log, 'function');
       });
       test('should return log value given negative value', function() {
-        result = log(Math.log(Math.exp(-1)));
+        result = log(Math.exp(-1));
         assert.equal(result, -1);
       });
       test('should return log value given positive value', function() {
         result = log(Math.exp(1));
         assert.equal(result, 1);
       });
-      test('should return 1', function() {
+      test('should return 0', function() {
         result = log(Math.exp(0));
-        assert.equal(result, 1);
+        assert.equal(result, 0);
       });
     });
   });
-  */
-
+  
   suite('p5.prototype.mag', function() {
     var mag = p5.prototype.mag;
     var result;

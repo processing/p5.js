@@ -2130,7 +2130,7 @@ var inputfiles = function (require, core, reqwest) {
             var self = this;
             self.temp = [];
             reqwest(path, function (resp) {
-                self.log(resp);
+                self.print(resp);
                 self.temp = resp;
                 ret[0] = resp;
                 if (typeof callback !== 'undefined') {
@@ -2447,23 +2447,17 @@ var outputimage = function (require, core) {
         };
         return p5;
     }({}, core);
-var log = function (require, core) {
+var outputtext_area = function (require, core) {
         'use strict';
         var p5 = core;
-        p5.prototype.log = function () {
+        p5.prototype.print = function () {
             if (window.console && console.log) {
-                console.log.bind(console);
+                console.log.apply(console, arguments);
             }
         };
+        p5.prototype.println = p5.prototype.print;
         return p5;
     }({}, core);
-var outputtext_area = function (require, core, log) {
-        'use strict';
-        var p5 = core;
-        p5.prototype.print = p5.prototype.log;
-        p5.prototype.println = p5.prototype.log;
-        return p5;
-    }({}, core, log);
 var shape2d_primitives = function (require, core, canvas, constants) {
         'use strict';
         var p5 = core;
@@ -2778,7 +2772,7 @@ var linearalgebra = function (require) {
             }
         };
     }({});
-var transform = function (require, core, linearalgebra, log) {
+var transform = function (require, core, linearalgebra, outputtext_area) {
         'use strict';
         var p5 = core;
         var linearAlgebra = linearalgebra;
@@ -2801,7 +2795,7 @@ var transform = function (require, core, linearalgebra, log) {
             return this;
         };
         p5.prototype.printMatrix = function () {
-            this.log(this.matrices[this.matrices.length - 1]);
+            this.print(this.matrices[this.matrices.length - 1]);
             return this;
         };
         p5.prototype.pushMatrix = function () {
@@ -2900,7 +2894,7 @@ var transform = function (require, core, linearalgebra, log) {
             return this;
         };
         return p5;
-    }({}, core, linearalgebra, log);
+    }({}, core, linearalgebra, outputtext_area);
 var typographyattributes = function (require, core, constants) {
         'use strict';
         var p5 = core;

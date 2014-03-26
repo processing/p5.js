@@ -21,7 +21,7 @@ define(function (require) {
   var p5 = require('core');
   var linearAlgebra = require('linearalgebra');
 
-  require('log');
+  require('output.text_area');
 
   p5.prototype.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
     this.curElement.context.transform(n00, n01, n02, n10, n11, n12);
@@ -39,7 +39,7 @@ define(function (require) {
   };
 
   p5.prototype.printMatrix = function() {
-    this.log(this.matrices[this.matrices.length-1]);
+    this.print(this.matrices[this.matrices.length-1]);
 
     return this;
   };
