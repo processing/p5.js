@@ -47,7 +47,6 @@ define(function (require) {
    * @return {Undefined}
    */
   var _globalInit = function() {
-    console.log('_globalInit');
     // if there is a setup or draw function on the window
     // then instantiate p5 in "global" mode
     if((window.setup && typeof window.setup === 'function') ||

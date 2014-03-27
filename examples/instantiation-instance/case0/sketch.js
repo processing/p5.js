@@ -19,4 +19,4 @@ var s = function( sketch ) {
 
 };
 
-var sketch = new p5(s);
+var myp5 = new p5(s);

@@ -20,4 +20,4 @@ var s = function( sketch ) {
 
 };
 
-var sketch = new p5(s, 'p5-canvas');
+var myp5 = new p5(s, 'p5-canvas');

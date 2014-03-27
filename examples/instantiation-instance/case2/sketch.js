@@ -17,9 +17,7 @@ var s = function( sketch ) {
   sketch.mousePressed = function() {
     gray += 10;
   }
-
-  return sketch;
 };
 
 var canvasNode = document.getElementById( 'p5-canvas' );
-var sketch = new p5(s, canvasNode);
+var myp5 = new p5(s, canvasNode);

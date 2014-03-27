@@ -1,7 +1,7 @@
 // CASE 3: alternate syntax
 // Canvas is auto-generated and appended to body.
 
-var sketch = new p5(function( sketch ) {
+var myp5 = new p5(function( sketch ) {
 
   var gray = 0; 
 

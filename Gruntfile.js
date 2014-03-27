@@ -40,14 +40,14 @@ module.exports = function(grunt) {
         options: {
           baseUrl: '.',
           findNestedDependencies: true,
-          include: ['src/p5'],
+          include: ['src/app'],
           onBuildWrite: function( name, path, contents ) {
             return require('amdclean').clean(contents);
           },
           optimize: 'none',
           out: 'dist/p5.js',
           paths: {
-            'p5': 'src/p5',
+            'app': 'src/app',
             'color.creating_reading': 'src/color/creating_reading',
             'color.setting': 'src/color/setting',
             'core': 'src/core/core',
@@ -95,7 +95,7 @@ module.exports = function(grunt) {
         options: {
           baseUrl: '.',
           findNestedDependencies: true,
-          include: ['src/p5'],
+          include: ['src/app'],
           onBuildWrite: function( name, path, contents ) {
             return require('amdclean').clean(contents);
           },
