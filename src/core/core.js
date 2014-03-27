@@ -24,7 +24,7 @@ define(function (require) {
    * @param  {Function}     sketch - with a setup() and draw() properties
    * @return {p5}
    */
-  var p5 = function(node, sketch) {
+  var p5 = function(sketch, node) {
 
     // ******************************************
     // PUBLIC p5 PROTOTYPE PROPERTIES
@@ -134,7 +134,9 @@ define(function (require) {
         }
       }
     } else {
+      console.log('extending sketch with setup/draw');
       sketch(this);
+      console.log(this);
     }
 
     if (document.readyState === 'complete') {
@@ -182,7 +184,7 @@ define(function (require) {
     } else {
       this._setup();
       this._runFrames();
-      this._drawSketch();
+      this._draw();
     }
   };
 
@@ -201,7 +203,7 @@ define(function (require) {
       if (context._preloadCount === 0) {
         context._setup();
         context._runFrames();
-        context._drawSketch();
+        context._draw();
       }
     });
   };
@@ -220,18 +222,18 @@ define(function (require) {
       setup();
     } else {
       var context = this._isGlobal ? window : this;
-      context.createCanvas(600, 400, true);
+      context.createCanvas(600, 400, true); // should move this size to defaults somewhere
     }
   };
 
   /**
-   * _drawSketch
+   * _draw
    * 
    * TODO: ???
    * 
    * @return {Undefined}
    */
-  p5.prototype._drawSketch = function () {
+  p5.prototype._draw = function () {
     var now = new Date().getTime();
     this._frameRate = 1000.0/(now - this._lastFrameTime);
     this._lastFrameTime = now;
@@ -240,8 +242,8 @@ define(function (require) {
 
     if (this.settings.loop) {
       setTimeout(function() {
-        window.requestDraw(this._drawSketch.bind(this));
-      }, 1000 / this._targetFrameRate);
+        window.requestDraw(this._draw.bind(this));
+      }.bind(this), 1000 / this._targetFrameRate);
     }
     // call user's draw
     if (typeof userDraw === 'function') {
@@ -264,7 +266,7 @@ define(function (require) {
     }
     this.updateInterval = setInterval(function(){
       this._setProperty('frameCount', this.frameCount + 1);
-    }, 1000/this._targetFrameRate);
+    }.bind(this), 1000/this._targetFrameRate);
   };
 
   /**

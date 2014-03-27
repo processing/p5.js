@@ -47,10 +47,11 @@ define(function (require) {
    * @return {Undefined}
    */
   var _globalInit = function() {
-    console.log('init');
-    // if there is a skech on the window
+    console.log('_globalInit');
+    // if there is a sketch setup or draw on the window
     // then instantiate p5 in "global" mode
-    if(window.sketch) {
+    if(window.setup || window.draw) {
+      console.log('instantiating global');
       new p5();
     }
   };

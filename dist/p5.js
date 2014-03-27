@@ -54,7 +54,7 @@ var constants = function (require) {
 var core = function (require, shim, constants) {
         'use strict';
         var constants = constants;
-        var p5 = function (node, sketch) {
+        var p5 = function (sketch, node) {
             this.frameCount = 0;
             this.focused = true;
             this.displayWidth = screen.width;
@@ -123,7 +123,9 @@ var core = function (require, shim, constants) {
                     }
                 }
             } else {
+                console.log('extending sketch with setup/draw');
                 sketch(this);
+                console.log(this);
             }
             if (document.readyState === 'complete') {
                 this._start();
@@ -156,7 +158,7 @@ var core = function (require, shim, constants) {
             } else {
                 this._setup();
                 this._runFrames();
-                this._drawSketch();
+                this._draw();
             }
         };
         p5.prototype._preload = function (func, path) {
@@ -167,7 +169,7 @@ var core = function (require, shim, constants) {
                 if (context._preloadCount === 0) {
                     context._setup();
                     context._runFrames();
-                    context._drawSketch();
+                    context._draw();
                 }
             });
         };
@@ -180,15 +182,15 @@ var core = function (require, shim, constants) {
                 context.createCanvas(600, 400, true);
             }
         };
-        p5.prototype._drawSketch = function () {
+        p5.prototype._draw = function () {
             var now = new Date().getTime();
             this._frameRate = 1000 / (now - this._lastFrameTime);
             this._lastFrameTime = now;
             var userDraw = this.draw || window.draw;
             if (this.settings.loop) {
                 setTimeout(function () {
-                    window.requestDraw(this._drawSketch.bind(this));
-                }, 1000 / this._targetFrameRate);
+                    window.requestDraw(this._draw.bind(this));
+                }.bind(this), 1000 / this._targetFrameRate);
             }
             if (typeof userDraw === 'function') {
                 userDraw();
@@ -201,7 +203,7 @@ var core = function (require, shim, constants) {
             }
             this.updateInterval = setInterval(function () {
                 this._setProperty('frameCount', this.frameCount + 1);
-            }, 1000 / this._targetFrameRate);
+            }.bind(this), 1000 / this._targetFrameRate);
         };
         p5.prototype._applyDefaults = function () {
             this.curElement.context.fillStyle = '#FFFFFF';
@@ -2988,8 +2990,9 @@ var src_p5 = function (require, core, mathpvector, colorcreating_reading, colors
         var p5 = core;
         var PVector = mathpvector;
         var _globalInit = function () {
-            console.log('init');
-            if (window.sketch) {
+            console.log('_globalInit');
+            if (window.setup || window.draw) {
+                console.log('instantiating global');
                 new p5();
             }
         };

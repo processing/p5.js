@@ -6,10 +6,10 @@ var s = function( sketch ) {
 
   sketch.setup = function() {
     sketch.createCanvas(600, 400);
-    sketch.background(gray);
   };
 
   sketch.draw = function() {
+    sketch.background(gray);
     sketch.rect(sketch.width/2, sketch.height/2, 200, 200);
   }
 
@@ -17,7 +17,6 @@ var s = function( sketch ) {
     gray += 10;
   }
 
-  return sketch;
 };
 
-var sketch = new p5(s);
+var myp5 = new p5(s);
