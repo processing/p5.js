@@ -72,10 +72,6 @@ var core = function (require, shim, constants) {
             this.touchX = 0;
             this.touchY = 0;
             this.pWriters = [];
-            this._textLeading = 15;
-            this._textFont = 'sans-serif';
-            this._textSize = 12;
-            this._textStyle = constants.NORMAL;
             this._bezierDetail = 20;
             this._curveDetail = 20;
             this.curElement = null;
@@ -2993,7 +2989,9 @@ var src_p5 = function (require, core, mathpvector, colorcreating_reading, colors
         var PVector = mathpvector;
         var _globalInit = function () {
             console.log('init');
-            new p5();
+            if (window.sketch) {
+                new p5();
+            }
         };
         if (document.readyState === 'complete') {
             console.log('document.readyState == complete');

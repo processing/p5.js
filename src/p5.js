@@ -48,8 +48,11 @@ define(function (require) {
    */
   var _globalInit = function() {
     console.log('init');
-    // if skech on window
-    new p5();
+    // if there is a skech on the window
+    // then instantiate p5 in "global" mode
+    if(window.sketch) {
+      new p5();
+    }
   };
 
   if (document.readyState === 'complete') {
