@@ -59,8 +59,6 @@ define(function (require) {
     // Output.Files
     this.pWriters = [];
 
-    // Text
-
     // Curves
     this._bezierDetail = 20;
     this._curveDetail = 20;
@@ -134,9 +132,7 @@ define(function (require) {
         }
       }
     } else {
-      console.log('extending sketch with setup/draw');
       sketch(this);
-      console.log(this);
     }
 
     if (document.readyState === 'complete') {

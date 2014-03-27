@@ -2991,7 +2991,7 @@ var src_p5 = function (require, core, mathpvector, colorcreating_reading, colors
         var PVector = mathpvector;
         var _globalInit = function () {
             console.log('_globalInit');
-            if (window.setup || window.draw) {
+            if (window.setup && typeof window.setup === 'function' || window.draw && typeof window.draw === 'function') {
                 console.log('instantiating global');
                 new p5();
             }

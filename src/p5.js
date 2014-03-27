@@ -48,21 +48,19 @@ define(function (require) {
    */
   var _globalInit = function() {
     console.log('_globalInit');
-    // if there is a sketch setup or draw on the window
+    // if there is a setup or draw function on the window
     // then instantiate p5 in "global" mode
-    if(window.setup || window.draw) {
-      console.log('instantiating global');
+    if((window.setup && typeof window.setup === 'function') ||
+      (window.draw && typeof window.draw === 'function')) {
       new p5();
     }
   };
 
   if (document.readyState === 'complete') {
     // TODO: ???
-    console.log('document.readyState == complete');
     _globalInit();
   } else {
     // TODO: ???
-    console.log('window.addEventListener for load');
     window.addEventListener('load', _globalInit , false);
   }
 
