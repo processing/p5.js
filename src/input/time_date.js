@@ -17,7 +17,7 @@ define(function (require) {
   };
 
   p5.prototype.millis = function() {
-    return new Date().getTime() - this.startTime;
+    return new Date().getTime() - this._startTime;
   };
 
   p5.prototype.month = function() {
