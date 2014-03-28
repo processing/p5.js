@@ -19,5 +19,7 @@ var s = function( sketch ) {
   
 };
 
-var canvasNode = document.getElementById( 'p5-canvas' );
-var myp5 = new p5(s, canvasNode);
+window.onload = function() {
+  var canvasNode = document.getElementById( 'p5-canvas' );
+  var myp5 = new p5(s, canvasNode);
+};

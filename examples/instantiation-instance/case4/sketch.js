@@ -19,5 +19,7 @@ var s = function( sketch ) {
   
 };
 
-var containerNode = document.getElementById( 'p5-container' );
-var myp5 = new p5(s, containerNode);
+window.onload = function() {
+  var containerNode = document.getElementById( 'p5-container' );
+  var myp5 = new p5(s, containerNode);
+};
