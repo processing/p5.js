@@ -95,6 +95,7 @@ var core = function (require, shim, constants) {
                 angleMode: constants.RADIANS
             };
             this._startTime = new Date().getTime();
+            this._userNode = node;
             this._preloadCount = 0;
             this._isGlobal = false;
             this._frameRate = 0;
@@ -132,9 +133,15 @@ var core = function (require, shim, constants) {
         };
         p5.prototype._start = function () {
             this.createCanvas(800, 600, true);
-            var preload = this.preload || window.preload;
+            if (this._userNode) {
+                console.log('this._userNode: ' + this._userNode);
+                if (typeof this._userNode === 'string') {
+                    this._userNode = document.getElementById(this._userNode);
+                }
+            }
+            var userPreload = this.preload || window.preload;
             var context = this._isGlobal ? window : this;
-            if (preload) {
+            if (userPreload) {
                 context.loadJSON = function (path) {
                     return context._preload('loadJSON', path);
                 };
@@ -147,7 +154,7 @@ var core = function (require, shim, constants) {
                 context.loadImage = function (path) {
                     return context._preload('loadImage', path);
                 };
-                preload();
+                userPreload();
                 context.loadJSON = p5.prototype.loadJSON;
                 context.loadStrings = p5.prototype.loadStrings;
                 context.loadXML = p5.prototype.loadXML;
@@ -171,12 +178,10 @@ var core = function (require, shim, constants) {
             });
         };
         p5.prototype._setup = function () {
-            var setup = this.setup || window.setup;
-            if (typeof setup === 'function') {
-                setup();
-            } else {
-                var context = this._isGlobal ? window : this;
-                context.createCanvas(600, 400, true);
+            var userSetup = this.setup || window.setup;
+            if (typeof userSetup === 'function') {
+                console.log('userSetup should run');
+                userSetup();
             }
         };
         p5.prototype._draw = function () {
@@ -931,7 +936,7 @@ var dompelement = function (require, constants) {
 var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement) {
         var p5 = core;
         var PElement = dompelement;
-        p5.prototype.createCanvas = function (w, h, isDefault, targetID) {
+        p5.prototype.createCanvas = function (w, h, isDefault) {
             var c = document.createElement('canvas');
             c.setAttribute('width', w);
             c.setAttribute('height', h);
@@ -943,12 +948,14 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
                 if (defaultCanvas) {
                     defaultCanvas.parentNode.removeChild(defaultCanvas);
                 }
-                if (targetID) {
-                    var target = document.getElementById(targetID);
-                    if (target) {
-                        target.appendChild(c);
+                if (this._userNode) {
+                    console.log('this._userNode.tagName: ' + this._userNode.tagName);
+                    if (this._userNode.tagName === 'CANVAS') {
+                        c = this._userNode;
+                        c.setAttribute('width', w);
+                        c.setAttribute('height', h);
                     } else {
-                        document.body.appendChild(c);
+                        this._userNode.appendChild(c);
                     }
                 } else {
                     document.body.appendChild(c);

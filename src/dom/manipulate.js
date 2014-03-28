@@ -6,7 +6,7 @@ define(function(require) {
 
   var PElement = require('dom.pelement');
 
-  p5.prototype.createCanvas = function(w, h, isDefault, targetID) {
+  p5.prototype.createCanvas = function(w, h, isDefault) {
     var c = document.createElement('canvas');
     c.setAttribute('width', w);
     c.setAttribute('height', h);
@@ -18,12 +18,16 @@ define(function(require) {
       if (defaultCanvas) {
         defaultCanvas.parentNode.removeChild(defaultCanvas);
       }
-      if (targetID) {
-        var target = document.getElementById(targetID);
-        if (target) {
-          target.appendChild(c);
+      if (this._userNode) { // user input node case
+        console.log('this._userNode.tagName: ' + this._userNode.tagName);
+        if(this._userNode.tagName === 'CANVAS') {
+          // if user input node exists and it's a canvas, use that
+          c = this._userNode;
+          c.setAttribute('width', w);
+          c.setAttribute('height', h);
         } else {
-          document.body.appendChild(c);
+          // if user input node exists and it's not a canvas, append one
+          this._userNode.appendChild(c);
         }
       } else {
         document.body.appendChild(c);

@@ -88,6 +88,8 @@ define(function (require) {
     // Keep a reference to when this instance was created
     this._startTime = new Date().getTime(); // private?
 
+    this._userNode = node;
+
     // TODO: ???
     this._preloadCount = 0; // private?
 
@@ -111,7 +113,7 @@ define(function (require) {
     // TODO: ???
     this.styles = [];
 
-    // If the user has created a global setup function,
+    // If the user has created a global setup or draw function,
     // assume "global" mode and make everything global
     if (!sketch) {
       this._isGlobal = true;
@@ -155,10 +157,22 @@ define(function (require) {
    * @return {Undefined}
    */
   p5.prototype._start = function () {
-    this.createCanvas(800, 600, true); // should move this size to defaults somewhere
-    var preload = this.preload || window.preload; // look for "preload"
+    // Always create a default canvas.
+    // Later on if the user calls createCanvas, this default one
+    // will be replaced
+    this.createCanvas(800, 600, true);
+
+    // Set input node if there was one
+    if (this._userNode) {
+      console.log('this._userNode: ' + this._userNode);
+      if (typeof this._userNode === 'string') {
+        this._userNode = document.getElementById(this._userNode);
+      }
+    }
+
+    var userPreload = this.preload || window.preload; // look for "preload"
     var context = this._isGlobal ? window : this;
-    if (preload) {
+    if (userPreload) {
       context.loadJSON = function (path) {
         return context._preload('loadJSON', path); // _preload?
       };
@@ -171,7 +185,7 @@ define(function (require) {
       context.loadImage = function (path) {
         return context._preload('loadImage', path); // _preload?
       };
-      preload(); // _preload?
+      userPreload();
       context.loadJSON = p5.prototype.loadJSON;
       context.loadStrings = p5.prototype.loadStrings;
       context.loadXML = p5.prototype.loadXML;
@@ -212,12 +226,10 @@ define(function (require) {
    */
   p5.prototype._setup = function() {
     // Short-circuit on this, in case someone used the library in "global" mode earlier
-    var setup = this.setup || window.setup;
-    if (typeof setup === 'function') {
-      setup();
-    } else {
-      var context = this._isGlobal ? window : this;
-      context.createCanvas(600, 400, true); // should move this size to defaults somewhere
+    var userSetup = this.setup || window.setup;
+    if (typeof userSetup === 'function') {
+      console.log('userSetup should run');
+      userSetup();
     }
   };
 
