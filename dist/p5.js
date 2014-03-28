@@ -134,7 +134,6 @@ var core = function (require, shim, constants) {
         p5.prototype._start = function () {
             this.createCanvas(800, 600, true);
             if (this._userNode) {
-                console.log('this._userNode: ' + this._userNode);
                 if (typeof this._userNode === 'string') {
                     this._userNode = document.getElementById(this._userNode);
                 }
@@ -180,7 +179,6 @@ var core = function (require, shim, constants) {
         p5.prototype._setup = function () {
             var userSetup = this.setup || window.setup;
             if (typeof userSetup === 'function') {
-                console.log('userSetup should run');
                 userSetup();
             }
         };
@@ -949,7 +947,6 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
                     defaultCanvas.parentNode.removeChild(defaultCanvas);
                 }
                 if (this._userNode) {
-                    console.log('this._userNode.tagName: ' + this._userNode.tagName);
                     if (this._userNode.tagName === 'CANVAS') {
                         c = this._userNode;
                         c.setAttribute('width', w);

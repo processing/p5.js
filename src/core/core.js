@@ -164,7 +164,6 @@ define(function (require) {
 
     // Set input node if there was one
     if (this._userNode) {
-      console.log('this._userNode: ' + this._userNode);
       if (typeof this._userNode === 'string') {
         this._userNode = document.getElementById(this._userNode);
       }
@@ -228,7 +227,6 @@ define(function (require) {
     // Short-circuit on this, in case someone used the library in "global" mode earlier
     var userSetup = this.setup || window.setup;
     if (typeof userSetup === 'function') {
-      console.log('userSetup should run');
       userSetup();
     }
   };

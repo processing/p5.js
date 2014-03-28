@@ -19,7 +19,6 @@ define(function(require) {
         defaultCanvas.parentNode.removeChild(defaultCanvas);
       }
       if (this._userNode) { // user input node case
-        console.log('this._userNode.tagName: ' + this._userNode.tagName);
         if(this._userNode.tagName === 'CANVAS') {
           // if user input node exists and it's a canvas, use that
           c = this._userNode;
