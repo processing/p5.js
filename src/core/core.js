@@ -72,7 +72,6 @@ define(function (require) {
       // Structure
       loop: true,
       fill: false,
-      startTime: 0,
       updateInterval: 0,
       rectMode: constants.CORNER,
       imageMode: constants.CORNER,
@@ -87,7 +86,7 @@ define(function (require) {
     //
 
     // Keep a reference to when this instance was created
-    this.startTime = new Date().getTime(); // private?
+    this._startTime = new Date().getTime(); // private?
 
     // TODO: ???
     this._preloadCount = 0; // private?

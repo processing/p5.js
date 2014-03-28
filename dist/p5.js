@@ -86,7 +86,6 @@ var core = function (require, shim, constants) {
             this.settings = {
                 loop: true,
                 fill: false,
-                startTime: 0,
                 updateInterval: 0,
                 rectMode: constants.CORNER,
                 imageMode: constants.CORNER,
@@ -95,7 +94,7 @@ var core = function (require, shim, constants) {
                 mousePressed: false,
                 angleMode: constants.RADIANS
             };
-            this.startTime = new Date().getTime();
+            this._startTime = new Date().getTime();
             this._preloadCount = 0;
             this._isGlobal = false;
             this._frameRate = 0;
