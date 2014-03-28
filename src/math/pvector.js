@@ -103,7 +103,7 @@ define(function (require) {
    *
    * @return {PVector} A reference to the PVector object (allow chaining)
    */
-    PVector.prototype.div = function (n) {
+  PVector.prototype.div = function (n) {
     this.x /= n;
     this.y /= n;
     this.z /= n;
@@ -232,7 +232,7 @@ define(function (require) {
    *
    * @param {number} the angle of rotation
    */
-   PVector.prototype.rotate2D = function (a) {
+  PVector.prototype.rotate2D = function (a) {
     var newHeading = this.heading() + a;
     var mag = this.mag();
     this.x = Math.cos(newHeading) * mag;
