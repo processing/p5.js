@@ -7,7 +7,7 @@ suite('Trigonometry', function() {
   var p5mock = { settings:{} };
   p5mock.radians = p5.prototype.radians;
 
-  var shouldHandleAngleMode = function(func) {
+  var handleDegreesAndRadians = function(func) {
 
     test('should handle degrees', function() {
       p5mock.settings.angleMode = DEGREES;
@@ -66,27 +66,27 @@ suite('Trigonometry', function() {
   });
 
   suite('p5.prototype.asin', function() {
-    shouldHandleAngleMode('asin');
+    handleDegreesAndRadians('asin');
   });
 
   suite('p5.prototype.atan', function() {
-    shouldHandleAngleMode('atan');
+    handleDegreesAndRadians('atan');
   });
 
   suite('p5.prototype.acos', function() {
-    shouldHandleAngleMode('acos');
+    handleDegreesAndRadians('acos');
   });
 
   suite('p5.prototype.sin', function() {
-    shouldHandleAngleMode('sin');
+    handleDegreesAndRadians('sin');
   });
 
   suite('p5.prototype.cos', function() {
-    shouldHandleAngleMode('cos');
+    handleDegreesAndRadians('cos');
   });
 
   suite('p5.prototype.tan', function() {
-    shouldHandleAngleMode('tan');
+    handleDegreesAndRadians('tan');
   });
 
 
