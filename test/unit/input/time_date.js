@@ -1,8 +1,6 @@
 suite('time and date', function() {
 
     var result;
-    var startTime = new Date().getTime();
-
 
     suite('p5.prototype.year', function() {
       var year = p5.prototype.year;
