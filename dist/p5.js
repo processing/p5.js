@@ -930,7 +930,6 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
             elt.innerHTML = html;
             document.body.appendChild(elt);
             var c = new PElement(elt, this);
-            this.context(c);
             return c;
         };
         p5.prototype.createHTMLImage = function (src, alt) {
@@ -941,7 +940,6 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
             }
             document.body.appendChild(elt);
             var c = new PElement(elt, this);
-            this.context(c);
             return c;
         };
         p5.prototype.find = function (e) {

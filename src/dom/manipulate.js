@@ -45,7 +45,7 @@ define(function(require) {
     elt.innerHTML = html;
     document.body.appendChild(elt);
     var c =  new PElement(elt, this);
-    this.context(c);
+    //this.context(c);
     return c;
   };
 
@@ -57,7 +57,7 @@ define(function(require) {
     }
     document.body.appendChild(elt);
     var c =  new PElement(elt, this);
-    this.context(c);
+    //this.context(c);
     return c;
   };
 
