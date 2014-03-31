@@ -3,7 +3,6 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
-  var calculation = require('math.calculation');
 
   p5.prototype.alpha = function(rgb) {
     if (rgb.length > 3) {
@@ -52,7 +51,7 @@ define(function (require) {
   p5.prototype.lerpColor = function(c1, c2, amt) {
     var c = [];
     for (var i=0; i<c1.length; i++) {
-      c.push(calculation.lerp(c1[i], c2[i], amt));
+      c.push(p5.prototype.lerp(c1[i], c2[i], amt));
     }
     return c;
   };

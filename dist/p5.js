@@ -1,4 +1,5 @@
-(function () {var shim = function (require) {
+(function () {
+var shim = function (require) {
         window.requestDraw = function () {
             return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
                 window.setTimeout(callback, 1000 / 60);
@@ -380,48 +381,9 @@ var mathpvector = function (require) {
         };
         return PVector;
     }({});
-var mathcalculation = function (require, core) {
+var colorcreating_reading = function (require, core) {
         'use strict';
         var p5 = core;
-        p5.prototype.abs = Math.abs;
-        p5.prototype.ceil = Math.ceil;
-        p5.prototype.constrain = function (n, l, h) {
-            return this.max(this.min(n, h), l);
-        };
-        p5.prototype.dist = function (x1, y1, x2, y2) {
-            var xs = x2 - x1;
-            var ys = y2 - y1;
-            return Math.sqrt(xs * xs + ys * ys);
-        };
-        p5.prototype.exp = Math.exp;
-        p5.prototype.floor = Math.floor;
-        p5.prototype.lerp = function (start, stop, amt) {
-            return amt * (stop - start) + start;
-        };
-        p5.prototype.log = Math.log;
-        p5.prototype.mag = function (x, y) {
-            return Math.sqrt(x * x + y * y);
-        };
-        p5.prototype.map = function (n, start1, stop1, start2, stop2) {
-            return (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
-        };
-        p5.prototype.max = Math.max;
-        p5.prototype.min = Math.min;
-        p5.prototype.norm = function (n, start, stop) {
-            return this.map(n, start, stop, 0, 1);
-        };
-        p5.prototype.pow = Math.pow;
-        p5.prototype.round = Math.round;
-        p5.prototype.sq = function (n) {
-            return n * n;
-        };
-        p5.prototype.sqrt = Math.sqrt;
-        return p5;
-    }({}, core);
-var colorcreating_reading = function (require, core, mathcalculation) {
-        'use strict';
-        var p5 = core;
-        var calculation = mathcalculation;
         p5.prototype.alpha = function (rgb) {
             if (rgb.length > 3) {
                 return rgb[3];
@@ -463,7 +425,7 @@ var colorcreating_reading = function (require, core, mathcalculation) {
         p5.prototype.lerpColor = function (c1, c2, amt) {
             var c = [];
             for (var i = 0; i < c1.length; i++) {
-                c.push(calculation.lerp(c1[i], c2[i], amt));
+                c.push(p5.prototype.lerp(c1[i], c2[i], amt));
             }
             return c;
         };
@@ -482,7 +444,7 @@ var colorcreating_reading = function (require, core, mathcalculation) {
             }
         };
         return p5;
-    }({}, core, mathcalculation);
+    }({}, core);
 var colorsetting = function (require, core, constants) {
         'use strict';
         var p5 = core;
@@ -2219,6 +2181,44 @@ var inputtime_date = function (require, core) {
         };
         return p5;
     }({}, core);
+var mathcalculation = function (require, core) {
+        'use strict';
+        var p5 = core;
+        p5.prototype.abs = Math.abs;
+        p5.prototype.ceil = Math.ceil;
+        p5.prototype.constrain = function (n, l, h) {
+            return this.max(this.min(n, h), l);
+        };
+        p5.prototype.dist = function (x1, y1, x2, y2) {
+            var xs = x2 - x1;
+            var ys = y2 - y1;
+            return Math.sqrt(xs * xs + ys * ys);
+        };
+        p5.prototype.exp = Math.exp;
+        p5.prototype.floor = Math.floor;
+        p5.prototype.lerp = function (start, stop, amt) {
+            return amt * (stop - start) + start;
+        };
+        p5.prototype.log = Math.log;
+        p5.prototype.mag = function (x, y) {
+            return Math.sqrt(x * x + y * y);
+        };
+        p5.prototype.map = function (n, start1, stop1, start2, stop2) {
+            return (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
+        };
+        p5.prototype.max = Math.max;
+        p5.prototype.min = Math.min;
+        p5.prototype.norm = function (n, start, stop) {
+            return this.map(n, start, stop, 0, 1);
+        };
+        p5.prototype.pow = Math.pow;
+        p5.prototype.round = Math.round;
+        p5.prototype.sq = function (n) {
+            return n * n;
+        };
+        p5.prototype.sqrt = Math.sqrt;
+        return p5;
+    }({}, core);
 var mathrandom = function (require, core) {
         'use strict';
         var p5 = core;
@@ -2369,24 +2369,32 @@ var mathtrigonometry = function (require, core, polargeometry, constants) {
         var p5 = core;
         var polarGeometry = polargeometry;
         var constants = constants;
-        p5.prototype.acos = Math.acos;
-        p5.prototype.asin = Math.asin;
-        p5.prototype.atan = Math.atan;
-        p5.prototype.atan2 = Math.atan2;
+        p5.prototype.acos = function (x) {
+            return Math.acos(this.radians(x));
+        };
+        p5.prototype.asin = function (x) {
+            return Math.asin(this.radians(x));
+        };
+        p5.prototype.atan = function (x) {
+            return Math.atan(this.radians(x));
+        };
+        p5.prototype.atan2 = function (x, y) {
+            return Math.atan2(this.radians(x), this.radians(y));
+        };
         p5.prototype.cos = function (x) {
             return Math.cos(this.radians(x));
-        };
-        p5.prototype.degrees = function (angle) {
-            return this.settings.angleMode === constants.DEGREES ? angle : polarGeometry.radiansToDegrees(angle);
-        };
-        p5.prototype.radians = function (angle) {
-            return this.settings.angleMode === constants.RADIANS ? angle : polarGeometry.degreesToRadians(angle);
         };
         p5.prototype.sin = function (x) {
             return Math.sin(this.radians(x));
         };
         p5.prototype.tan = function (x) {
             return Math.tan(this.radians(x));
+        };
+        p5.prototype.degrees = function (angle) {
+            return this.settings.angleMode === constants.DEGREES ? angle : polarGeometry.radiansToDegrees(angle);
+        };
+        p5.prototype.radians = function (angle) {
+            return this.settings.angleMode === constants.RADIANS ? angle : polarGeometry.degreesToRadians(angle);
         };
         p5.prototype.angleMode = function (mode) {
             if (mode === constants.DEGREES || mode === constants.RADIANS) {
@@ -3003,5 +3011,4 @@ var src_app = function (require, core, mathpvector, colorcreating_reading, color
         window.p5 = p5;
         window.PVector = PVector;
         return p5;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);
-}());
+    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
