@@ -730,7 +730,7 @@ var inputmouse = function (require, core, constants) {
             }
         };
         p5.prototype.onmousemove = function (e) {
-            var context = this.isGlobal ? window : this;
+            var context = this._isGlobal ? window : this;
             this.updateMouseCoords(e);
             if (!this.isMousePressed() && typeof context.mouseMoved === 'function') {
                 context.mouseMoved(e);
@@ -740,7 +740,7 @@ var inputmouse = function (require, core, constants) {
             }
         };
         p5.prototype.onmousedown = function (e) {
-            var context = this.isGlobal ? window : this;
+            var context = this._isGlobal ? window : this;
             this.settings.mousePressed = true;
             this.setMouseButton(e);
             if (typeof context.mousePressed === 'function') {
@@ -748,20 +748,20 @@ var inputmouse = function (require, core, constants) {
             }
         };
         p5.prototype.onmouseup = function (e) {
-            var context = this.isGlobal ? window : this;
+            var context = this._isGlobal ? window : this;
             this.settings.mousePressed = false;
             if (typeof context.mouseReleased === 'function') {
                 context.mouseReleased(e);
             }
         };
         p5.prototype.onmouseclick = function (e) {
-            var context = this.isGlobal ? window : this;
+            var context = this._isGlobal ? window : this;
             if (typeof context.mouseClicked === 'function') {
                 context.mouseClicked(e);
             }
         };
         p5.prototype.onmousewheel = function (e) {
-            var context = this.isGlobal ? window : this;
+            var context = this._isGlobal ? window : this;
             if (typeof context.mouseWheel === 'function') {
                 context.mouseWheel(e);
             }
@@ -976,7 +976,7 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
                 this.curElement.onblur = function () {
                     this.focused = false;
                 };
-                if (!this.isGlobal) {
+                if (!this._isGlobal) {
                     this.curElement.context.canvas.onmousemove = this.onmousemove.bind(this);
                     this.curElement.context.canvas.onmousedown = this.onmousedown.bind(this);
                     this.curElement.context.canvas.onmouseup = this.onmouseup.bind(this);
