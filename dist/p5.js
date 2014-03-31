@@ -1,5 +1,4 @@
-(function () {
-var shim = function (require) {
+(function () {var shim = function (require) {
         window.requestDraw = function () {
             return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
                 window.setTimeout(callback, 1000 / 60);
@@ -730,7 +729,7 @@ var inputmouse = function (require, core, constants) {
             }
         };
         p5.prototype.onmousemove = function (e) {
-            var context = this.isGlobal ? window : this;
+            var context = this._isGlobal ? window : this;
             this.updateMouseCoords(e);
             if (!this.isMousePressed() && typeof context.mouseMoved === 'function') {
                 context.mouseMoved(e);
@@ -740,7 +739,7 @@ var inputmouse = function (require, core, constants) {
             }
         };
         p5.prototype.onmousedown = function (e) {
-            var context = this.isGlobal ? window : this;
+            var context = this._isGlobal ? window : this;
             this.settings.mousePressed = true;
             this.setMouseButton(e);
             if (typeof context.mousePressed === 'function') {
@@ -748,20 +747,20 @@ var inputmouse = function (require, core, constants) {
             }
         };
         p5.prototype.onmouseup = function (e) {
-            var context = this.isGlobal ? window : this;
+            var context = this._isGlobal ? window : this;
             this.settings.mousePressed = false;
             if (typeof context.mouseReleased === 'function') {
                 context.mouseReleased(e);
             }
         };
         p5.prototype.onmouseclick = function (e) {
-            var context = this.isGlobal ? window : this;
+            var context = this._isGlobal ? window : this;
             if (typeof context.mouseClicked === 'function') {
                 context.mouseClicked(e);
             }
         };
         p5.prototype.onmousewheel = function (e) {
-            var context = this.isGlobal ? window : this;
+            var context = this._isGlobal ? window : this;
             if (typeof context.mouseWheel === 'function') {
                 context.mouseWheel(e);
             }
@@ -978,7 +977,7 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
                 this.curElement.onblur = function () {
                     this.focused = false;
                 };
-                if (!this.isGlobal) {
+                if (!this._isGlobal) {
                     this.curElement.context.canvas.onmousemove = this.onmousemove.bind(this);
                     this.curElement.context.canvas.onmousedown = this.onmousedown.bind(this);
                     this.curElement.context.canvas.onmouseup = this.onmouseup.bind(this);
@@ -3011,4 +3010,5 @@ var src_app = function (require, core, mathpvector, colorcreating_reading, color
         window.p5 = p5;
         window.PVector = PVector;
         return p5;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
+    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);
+}());
