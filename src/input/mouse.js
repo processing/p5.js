@@ -34,7 +34,7 @@ define(function (require) {
 
   p5.prototype.onmousemove = function(e){
     // TODO: temporary fix to set context based on whether in global mode or not
-    var context = this.isGlobal ? window : this;
+    var context = this._isGlobal ? window : this;
     this.updateMouseCoords(e);
     if (!this.isMousePressed() && typeof context.mouseMoved === 'function') {
       context.mouseMoved(e);
@@ -45,7 +45,7 @@ define(function (require) {
   };
 
   p5.prototype.onmousedown = function(e) {
-    var context = this.isGlobal ? window : this;
+    var context = this._isGlobal ? window : this;
     this.settings.mousePressed = true;
     this.setMouseButton(e);
     if (typeof context.mousePressed === 'function') {
@@ -54,7 +54,7 @@ define(function (require) {
   };
 
   p5.prototype.onmouseup = function(e) {
-    var context = this.isGlobal ? window : this;
+    var context = this._isGlobal ? window : this;
     this.settings.mousePressed = false;
     if (typeof context.mouseReleased === 'function') {
       context.mouseReleased(e);
@@ -62,14 +62,14 @@ define(function (require) {
   };
 
   p5.prototype.onmouseclick = function(e) {
-    var context = this.isGlobal ? window : this;
+    var context = this._isGlobal ? window : this;
     if (typeof context.mouseClicked === 'function') {
       context.mouseClicked(e);
     }
   };
 
   p5.prototype.onmousewheel = function(e) {
-    var context = this.isGlobal ? window : this;
+    var context = this._isGlobal ? window : this;
     if (typeof context.mouseWheel === 'function') {
       context.mouseWheel(e);
     }

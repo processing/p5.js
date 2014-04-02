@@ -45,7 +45,7 @@ define(function(require) {
     elt.innerHTML = html;
     document.body.appendChild(elt);
     var c =  new PElement(elt, this);
-    this.context(c);
+    //this.context(c);
     return c;
   };
 
@@ -57,7 +57,7 @@ define(function(require) {
     }
     document.body.appendChild(elt);
     var c =  new PElement(elt, this);
-    this.context(c);
+    //this.context(c);
     return c;
   };
 
@@ -102,7 +102,7 @@ define(function(require) {
 
       // TODO: This is a workaround for the global case where event handlers
       // have been attached to the window just by declaring them
-      if (!this.isGlobal) {
+      if (!this._isGlobal) {
         this.curElement.context.canvas.onmousemove = this.onmousemove.bind(this);
         this.curElement.context.canvas.onmousedown = this.onmousedown.bind(this);
         this.curElement.context.canvas.onmouseup = this.onmouseup.bind(this);
