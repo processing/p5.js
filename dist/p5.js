@@ -1,5 +1,4 @@
-(function () {
-var shim = function (require) {
+(function () {var shim = function (require) {
         window.requestDraw = function () {
             return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
                 window.setTimeout(callback, 1000 / 60);
@@ -2367,32 +2366,60 @@ var mathtrigonometry = function (require, core, polargeometry, constants) {
         var p5 = core;
         var polarGeometry = polargeometry;
         var constants = constants;
-        p5.prototype.acos = function (x) {
-            return Math.acos(this.radians(x));
+        p5.prototype.acos = function (ratio) {
+            if (this.settings.angleMode === constants.RADIANS) {
+                return Math.acos(ratio);
+            } else {
+                return polarGeometry.radiansToDegrees(Math.acos(ratio));
+            }
         };
-        p5.prototype.asin = function (x) {
-            return Math.asin(this.radians(x));
+        p5.prototype.asin = function (ratio) {
+            if (this.settings.angleMode === constants.RADIANS) {
+                return Math.asin(ratio);
+            } else {
+                return polarGeometry.radiansToDegrees(Math.asin(ratio));
+            }
         };
-        p5.prototype.atan = function (x) {
-            return Math.atan(this.radians(x));
+        p5.prototype.atan = function (ratio) {
+            if (this.settings.angleMode === constants.RADIANS) {
+                return Math.atan(ratio);
+            } else {
+                return polarGeometry.radiansToDegrees(Math.atan(ratio));
+            }
         };
-        p5.prototype.atan2 = function (x, y) {
-            return Math.atan2(this.radians(x), this.radians(y));
+        p5.prototype.atan2 = function (y, x) {
+            if (this.settings.angleMode === constants.RADIANS) {
+                return Math.atan2(y, x);
+            } else {
+                return polarGeometry.radiansToDegrees(Math.atan2(y, x));
+            }
         };
-        p5.prototype.cos = function (x) {
-            return Math.cos(this.radians(x));
+        p5.prototype.cos = function (angle) {
+            if (this.settings.angleMode === constants.RADIANS) {
+                return Math.cos(angle);
+            } else {
+                return Math.cos(this.radians(angle));
+            }
         };
-        p5.prototype.sin = function (x) {
-            return Math.sin(this.radians(x));
+        p5.prototype.sin = function (angle) {
+            if (this.settings.angleMode === constants.RADIANS) {
+                return Math.sin(angle);
+            } else {
+                return Math.sin(this.radians(angle));
+            }
         };
-        p5.prototype.tan = function (x) {
-            return Math.tan(this.radians(x));
+        p5.prototype.tan = function (angle) {
+            if (this.settings.angleMode === constants.RADIANS) {
+                return Math.tan(angle);
+            } else {
+                return Math.tan(this.radians(angle));
+            }
         };
         p5.prototype.degrees = function (angle) {
-            return this.settings.angleMode === constants.DEGREES ? angle : polarGeometry.radiansToDegrees(angle);
+            return polarGeometry.radiansToDegrees(angle);
         };
         p5.prototype.radians = function (angle) {
-            return this.settings.angleMode === constants.RADIANS ? angle : polarGeometry.degreesToRadians(angle);
+            return polarGeometry.degreesToRadians(angle);
         };
         p5.prototype.angleMode = function (mode) {
             if (mode === constants.DEGREES || mode === constants.RADIANS) {
@@ -3009,4 +3036,5 @@ var src_app = function (require, core, mathpvector, colorcreating_reading, color
         window.p5 = p5;
         window.PVector = PVector;
         return p5;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
+    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);
+}());
