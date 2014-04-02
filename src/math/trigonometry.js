@@ -35,11 +35,11 @@ define(function (require) {
   };
 
   p5.prototype.degrees = function(angle) {
-    return this.settings.angleMode === constants.DEGREES ? angle : polarGeometry.radiansToDegrees(angle);
+    return polarGeometry.radiansToDegrees(angle);
   };
 
   p5.prototype.radians = function(angle) {
-    return this.settings.angleMode === constants.RADIANS ? angle : polarGeometry.degreesToRadians(angle);
+    return polarGeometry.degreesToRadians(angle);
   };
 
   p5.prototype.angleMode = function(mode) {
