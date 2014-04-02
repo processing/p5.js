@@ -18,8 +18,12 @@ define(function (require) {
     return Math.atan(this.radians(x));
   };
 
-  p5.prototype.atan2 = function (x, y) {
-    return Math.atan2(this.radians(x), this.radians(y));
+  p5.prototype.atan2 = function (y, x) {
+    if (this.settings.angleMode === constants.RADIANS) {
+      return Math.atan2(y, x);
+    } else {
+      return polarGeometry.radiansToDegrees(Math.atan2(y, x));
+    }
   };
 
   p5.prototype.cos = function(x) {
