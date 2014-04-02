@@ -1,9 +1,10 @@
 
 suite('Trigonometry', function() {
 
-  var theta =  0.5;
+  var theta =  90;
   var x = 0;
   var y = 1;
+  var ratio = 0.5;
   var RADIANS = 'radians';
   var DEGREES = 'degrees';
   var p5mock = { settings:{} };
@@ -22,6 +23,20 @@ suite('Trigonometry', function() {
       assert.equal(Math[func](theta), p5.prototype[func].call(p5mock, theta));
     });
   };
+
+ var ahandleDegreesAndRadians = function(func) {
+    test('should handle degrees', function() {
+      p5mock.settings.angleMode = DEGREES;
+      assert.equal(p5.prototype.degrees(Math[func](ratio)), p5.prototype[func].call(p5mock, ratio));
+    });
+
+    test('should handle radians', function() {
+      p5mock.settings.angleMode = RADIANS;
+      assert.equal(Math[func](ratio), p5.prototype[func].call(p5mock, ratio));
+    });
+  };
+
+
 
   suite('p5.prototype.angleMode', function() {
     test('should set constant to DEGREES', function() {
@@ -70,15 +85,15 @@ suite('Trigonometry', function() {
   });
 
   suite('p5.prototype.asin', function() {
-    handleDegreesAndRadians('asin');
+    ahandleDegreesAndRadians('asin');
   });
 
   suite('p5.prototype.atan', function() {
-    handleDegreesAndRadians('atan');
+    ahandleDegreesAndRadians('atan');
   });
 
   suite('p5.prototype.acos', function() {
-    handleDegreesAndRadians('acos');
+    ahandleDegreesAndRadians('acos');
   });
 
   suite('p5.prototype.sin', function() {
@@ -102,7 +117,7 @@ suite('Trigonometry', function() {
 
     test('should handle radians', function() {
       p5mock.settings.angleMode = RADIANS;
-      assert.equal(Math.atan2(theta, theta), p5.prototype.atan2.apply(p5mock, [theta, theta]));
+      assert.equal(Math.atan2(y, x), p5.prototype.atan2.apply(p5mock, [y, x]));
     });
   });
 
