@@ -103,7 +103,9 @@ module.exports = function(grunt) {
           out: 'dist/p5.min.js',
           paths: '<%= requirejs.unmin.options.paths %>',
           useStrict: true,
-          wrap: true
+          wrap: true,
+          preserveLicenseComments: false,
+          generateSourceMaps: true
         }
       }
     }

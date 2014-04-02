@@ -9,7 +9,7 @@ define(function (require) {
   var constants = require('constants');
 
   /**
-   * p5 instance constructor
+   * p5 instance
    *
    * A p5 instance....
    *
@@ -24,7 +24,23 @@ define(function (require) {
    * @param  {Function}     sketch - with a setup() and draw() properties
    * @return {p5}
    */
-  var p5 = function(sketch, node) {
+  var p5 = function( sketch, node ) {
+    // p5 simply returns an instance of an internal constructor
+    // representing the p5 sketch (ie: the user application)
+    return new p5.prototype.init( sketch, node );
+  };
+  
+  p5.prototype = {
+    constructor: p5
+  };
+  
+  /**
+   * p5 constructor.
+   * @param {type} sketch
+   * @param {type} node
+   * @returns {undefined}
+   */
+  p5.prototype.init = function( sketch, node ) {
 
     // ******************************************
     // PUBLIC p5 PROTOTYPE PROPERTIES
@@ -143,6 +159,29 @@ define(function (require) {
     }
 
   };
+  
+  
+  // Set the constructor prototype to the instance prototype
+  p5.prototype.init.prototype = p5.prototype;
+  
+  
+  /**
+   * p5 extend() method.
+   * Extends the prototype of p5 by adding objects containing functions.
+   * Every function added will be inherited by all p5 instances.
+   * 
+   * @method
+   * @param {Object} obj Any object containing methods.
+   * @returns {undefined}
+   */
+  p5.extend = p5.prototype.extend = function(obj) {
+    for (var prop in obj) {
+      if (obj.hasOwnProperty(prop) && obj[prop] && obj[prop] instanceof Function) {
+        p5.prototype[prop] = obj[prop];
+      }
+    }
+  };
+  
 
   // ******************************************
   // PRIVATE p5 PROTOTYPE METHODS
