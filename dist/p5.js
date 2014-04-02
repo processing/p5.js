@@ -1,5 +1,4 @@
-(function () {
-var shim = function (require) {
+(function () {var shim = function (require) {
         window.requestDraw = function () {
             return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
                 window.setTimeout(callback, 1000 / 60);
@@ -56,6 +55,10 @@ var core = function (require, shim, constants) {
         'use strict';
         var constants = constants;
         var p5 = function (sketch, node) {
+            return new p5.prototype.init(sketch, node);
+        };
+        p5.prototype = { constructor: p5 };
+        p5.prototype.init = function (sketch, node) {
             this.frameCount = 0;
             this.focused = true;
             this.displayWidth = screen.width;
@@ -130,6 +133,14 @@ var core = function (require, shim, constants) {
                 this._start();
             } else {
                 window.addEventListener('load', this._start.bind(this), false);
+            }
+        };
+        p5.prototype.init.prototype = p5.prototype;
+        p5.extend = p5.prototype.extend = function (obj) {
+            for (var prop in obj) {
+                if (obj.hasOwnProperty(prop) && obj[prop] && obj[prop] instanceof Function) {
+                    p5.prototype[prop] = obj[prop];
+                }
             }
         };
         p5.prototype._start = function () {
@@ -219,15 +230,23 @@ var core = function (require, shim, constants) {
         };
         return p5;
     }({}, shim, constants);
-var mathpvector = function (require) {
+var mathpvector = function (require, core) {
         'use strict';
+        var p5 = core;
         function PVector(x, y, z) {
+            var sketch = this;
+            return new Vector(x, y, z, sketch);
+        }
+        p5.extend({ 'PVector': PVector });
+        function Vector(x, y, z, sketch) {
+            this.sketch = sketch;
+            console.log('current angle mode is ' + this.sketch.settings.angleMode);
             this.x = x || 0;
             this.y = y || 0;
             this.z = z || 0;
         }
-        PVector.prototype.set = function (x, y, z) {
-            if (x instanceof PVector) {
+        Vector.prototype.set = function (x, y, z) {
+            if (x instanceof Vector) {
                 return this.set(x.x, x.y, x.z);
             }
             if (x instanceof Array) {
@@ -237,11 +256,11 @@ var mathpvector = function (require) {
             this.y = y || 0;
             this.z = z || 0;
         };
-        PVector.prototype.get = function () {
-            return new PVector(this.x, this.y, this.z);
+        Vector.prototype.get = function () {
+            return new Vector(this.x, this.y, this.z);
         };
-        PVector.prototype.add = function (x, y, z) {
-            if (x instanceof PVector) {
+        Vector.prototype.add = function (x, y, z) {
+            if (x instanceof Vector) {
                 return this.add(x.x, x.y, x.z);
             }
             if (x instanceof Array) {
@@ -252,8 +271,8 @@ var mathpvector = function (require) {
             this.z += z || 0;
             return this;
         };
-        PVector.prototype.sub = function (x, y, z) {
-            if (x instanceof PVector) {
+        Vector.prototype.sub = function (x, y, z) {
+            if (x instanceof Vector) {
                 return this.sub(x.x, x.y, x.z);
             }
             if (x instanceof Array) {
@@ -264,45 +283,45 @@ var mathpvector = function (require) {
             this.z -= z || 0;
             return this;
         };
-        PVector.prototype.mult = function (n) {
+        Vector.prototype.mult = function (n) {
             this.x *= n || 0;
             this.y *= n || 0;
             this.z *= n || 0;
             return this;
         };
-        PVector.prototype.div = function (n) {
+        Vector.prototype.div = function (n) {
             this.x /= n;
             this.y /= n;
             this.z /= n;
             return this;
         };
-        PVector.prototype.mag = function () {
+        Vector.prototype.mag = function () {
             return Math.sqrt(this.magSq());
         };
-        PVector.prototype.magSq = function () {
+        Vector.prototype.magSq = function () {
             var x = this.x, y = this.y, z = this.z;
             return x * x + y * y + z * z;
         };
-        PVector.prototype.dot = function (x, y, z) {
-            if (x instanceof PVector) {
+        Vector.prototype.dot = function (x, y, z) {
+            if (x instanceof Vector) {
                 return this.dot(x.x, x.y, x.z);
             }
             return this.x * (x || 0) + this.y * (y || 0) + this.z * (z || 0);
         };
-        PVector.prototype.cross = function (v) {
+        Vector.prototype.cross = function (v) {
             var x = this.y * v.z - this.z * v.y;
             var y = this.z * v.x - this.x * v.z;
             var z = this.x * v.y - this.y * v.x;
-            return new PVector(x, y, z);
+            return new Vector(x, y, z);
         };
-        PVector.prototype.dist = function (v) {
+        Vector.prototype.dist = function (v) {
             var d = v.get().sub(this);
             return d.mag();
         };
-        PVector.prototype.normalize = function () {
+        Vector.prototype.normalize = function () {
             return this.div(this.mag());
         };
-        PVector.prototype.limit = function (l) {
+        Vector.prototype.limit = function (l) {
             var mSq = this.magSq();
             if (mSq > l * l) {
                 this.div(Math.sqrt(mSq));
@@ -310,21 +329,21 @@ var mathpvector = function (require) {
             }
             return this;
         };
-        PVector.prototype.setMag = function (n) {
+        Vector.prototype.setMag = function (n) {
             return this.normalize().mult(n);
         };
-        PVector.prototype.heading = function () {
+        Vector.prototype.heading = function () {
             return Math.atan2(this.y, this.x);
         };
-        PVector.prototype.rotate2D = function (a) {
+        Vector.prototype.rotate2D = function (a) {
             var newHeading = this.heading() + a;
             var mag = this.mag();
             this.x = Math.cos(newHeading) * mag;
             this.y = Math.sin(newHeading) * mag;
             return this;
         };
-        PVector.prototype.lerp = function (x, y, z, amt) {
-            if (x instanceof PVector) {
+        Vector.prototype.lerp = function (x, y, z, amt) {
+            if (x instanceof Vector) {
                 return this.lerp(x.x, x.y, x.z, y);
             }
             this.x += (x - this.x) * amt || 0;
@@ -332,55 +351,55 @@ var mathpvector = function (require) {
             this.z += (z - this.z) * amt || 0;
             return this;
         };
-        PVector.prototype.array = function () {
+        Vector.prototype.array = function () {
             return [
                 this.x || 0,
                 this.y || 0,
                 this.z || 0
             ];
         };
-        PVector.fromAngle = function (angle) {
-            return new PVector(Math.cos(angle), Math.sin(angle), 0);
+        Vector.fromAngle = function (angle) {
+            return new Vector(Math.cos(angle), Math.sin(angle), 0);
         };
-        PVector.random2D = function () {
+        Vector.random2D = function () {
             return this.fromAngle(Math.random(Math.PI * 2));
         };
-        PVector.random3D = function () {
+        Vector.random3D = function () {
             var angle = Math.random() * Math.PI * 2;
             var vz = Math.random() * 2 - 1;
             var vx = Math.sqrt(1 - vz * vz) * Math.cos(angle);
             var vy = Math.sqrt(1 - vz * vz) * Math.sin(angle);
-            return new PVector(vx, vy, vz);
+            return new Vector(vx, vy, vz);
         };
-        PVector.add = function (v1, v2) {
+        Vector.add = function (v1, v2) {
             return v1.get().add(v2);
         };
-        PVector.sub = function (v1, v2) {
+        Vector.sub = function (v1, v2) {
             return v1.get().sub(v2);
         };
-        PVector.mult = function (v, n) {
+        Vector.mult = function (v, n) {
             return v.get().mult(n);
         };
-        PVector.div = function (v, n) {
+        Vector.div = function (v, n) {
             return v.get().div(n);
         };
-        PVector.dot = function (v1, v2) {
+        Vector.dot = function (v1, v2) {
             return v1.dot(v2);
         };
-        PVector.cross = function (v1, v2) {
+        Vector.cross = function (v1, v2) {
             return v1.cross(v2);
         };
-        PVector.dist = function (v1, v2) {
+        Vector.dist = function (v1, v2) {
             return v1.dist(v2);
         };
-        PVector.lerp = function (v1, v2, amt) {
+        Vector.lerp = function (v1, v2, amt) {
             return v1.get().lerp(v2, amt);
         };
-        PVector.angleBetween = function (v1, v2) {
+        Vector.angleBetween = function (v1, v2) {
             return Math.acos(v1.dot(v2) / (v1.mag() * v2.mag()));
         };
         return PVector;
-    }({});
+    }({}, core);
 var colorcreating_reading = function (require, core) {
         'use strict';
         var p5 = core;
@@ -3009,4 +3028,5 @@ var src_app = function (require, core, mathpvector, colorcreating_reading, color
         window.p5 = p5;
         window.PVector = PVector;
         return p5;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
+    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);
+}());
