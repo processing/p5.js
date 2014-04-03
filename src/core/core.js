@@ -27,7 +27,7 @@ define(function (require) {
   var p5 = function( sketch, node ) {
     // p5 simply returns an instance of an internal constructor
     // representing the p5 sketch (ie: the user application)
-    return new p5.prototype.init( sketch, node );
+    return new Sketch( sketch, node );
   };
   
   p5.prototype = {
@@ -40,7 +40,7 @@ define(function (require) {
    * @param {type} node
    * @returns {undefined}
    */
-  p5.prototype.init = function( sketch, node ) {
+  var Sketch = function( sketch, node ) {
 
     // ******************************************
     // PUBLIC p5 PROTOTYPE PROPERTIES
@@ -162,7 +162,7 @@ define(function (require) {
   
   
   // Set the constructor prototype to the instance prototype
-  p5.prototype.init.prototype = p5.prototype;
+  Sketch.prototype = p5.prototype;
   
   
   /**

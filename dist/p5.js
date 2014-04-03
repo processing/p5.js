@@ -55,10 +55,10 @@ var core = function (require, shim, constants) {
         'use strict';
         var constants = constants;
         var p5 = function (sketch, node) {
-            return new p5.prototype.init(sketch, node);
+            return new Sketch(sketch, node);
         };
         p5.prototype = { constructor: p5 };
-        p5.prototype.init = function (sketch, node) {
+        var Sketch = function (sketch, node) {
             this.frameCount = 0;
             this.focused = true;
             this.displayWidth = screen.width;
@@ -135,7 +135,7 @@ var core = function (require, shim, constants) {
                 window.addEventListener('load', this._start.bind(this), false);
             }
         };
-        p5.prototype.init.prototype = p5.prototype;
+        Sketch.prototype = p5.prototype;
         p5.extend = p5.prototype.extend = function (obj) {
             for (var prop in obj) {
                 if (obj.hasOwnProperty(prop) && obj[prop] && obj[prop] instanceof Function) {
@@ -234,13 +234,19 @@ var mathpvector = function (require, core) {
         'use strict';
         var p5 = core;
         function PVector(x, y, z) {
-            var sketch = this;
+            var sketch;
+            if (Object.getOwnPropertyNames(this).length > 0) {
+                sketch = this;
+            }
             return new Vector(x, y, z, sketch);
         }
         p5.extend({ 'PVector': PVector });
         function Vector(x, y, z, sketch) {
-            this.sketch = sketch;
-            console.log('current angle mode is ' + this.sketch.settings.angleMode);
+            if (sketch) {
+                this.sketch = sketch;
+                console.log(this.sketch);
+                console.log('current angle mode is ' + this.sketch.settings.angleMode);
+            }
             this.x = x || 0;
             this.y = y || 0;
             this.z = z || 0;

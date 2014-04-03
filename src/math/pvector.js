@@ -5,7 +5,12 @@ define(function(require) {
   var p5 = require('core');
 
   function PVector(x, y, z) {
-    var sketch = this;
+    // Check if PVector is called from a Sketch
+    var sketch;
+    if (Object.getOwnPropertyNames(this).length > 0) {
+      sketch = this;
+    }
+    
     return new Vector(x, y, z, sketch);
   }
   
@@ -22,8 +27,11 @@ define(function(require) {
    * @returns {_L1.Vector}
    */
   function Vector(x, y, z, sketch) {
-    this.sketch = sketch;
-    console.log('current angle mode is ' + this.sketch.settings.angleMode);
+    if (sketch) {
+      this.sketch = sketch;
+      console.log(this.sketch);
+      console.log('current angle mode is ' + this.sketch.settings.angleMode);
+    }
     this.x = x || 0;
     this.y = y || 0;
     this.z = z || 0;
