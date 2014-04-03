@@ -16,9 +16,9 @@ define(function (require) {
    *
    * Takes either 1, 2 or 3 arguments.
    *
-   * @param {x} x component (or PVector or array of 3 numbers)
-   * @param {y} y component 
-   * @param {z} z component 
+   * @param {number} x component (or PVector or array of 3 numbers)
+   * @param {number} y component 
+   * @param {number} z component 
    */
   PVector.prototype.set = function (x, y, z) {
     if (x instanceof PVector) { return this.set(x.x, x.y, x.z); }
@@ -44,9 +44,9 @@ define(function (require) {
    * add two independent vectors together see the static add method
    * which returns a new PVector.
    *
-   * @param {x} x component (or PVector or array of 3 numbers)
-   * @param {y} y component 
-   * @param {z} z component 
+   * @param {number} x component (or PVector or array of 3 numbers)
+   * @param {number} y component 
+   * @param {number} z component 
 
    * @return {PVector} A reference to the PVector object (allow chaining)
    */
@@ -65,9 +65,9 @@ define(function (require) {
    * subtract two independent vectors together see the static subtract method
    * which returns a new PVector.   
    *
-   * @param {x} x component (or PVector or array of 3 numbers)
-   * @param {y} y component 
-   * @param {z} z component 
+   * @param {number} x component (or PVector or array of 3 numbers)
+   * @param {number} y component 
+   * @param {number} z component 
 
    * @return {PVector} A reference to the PVector object (allow chaining)
    */
@@ -138,6 +138,8 @@ define(function (require) {
   /**
    *
    * Calculates the dot product of two vectors.
+   *
+   * @param {PVector}
    *
    * @return {number} the dot product
    */
@@ -222,8 +224,6 @@ define(function (require) {
     return Math.atan2(this.y, this.x);
   };
 
-
-
   /**
    *
    * Rotate the vector by an angle (only 2D vectors), magnitude remains the same
@@ -307,34 +307,111 @@ define(function (require) {
     return new PVector(vx, vy, vz);
   };
 
+
+  /**
+   *
+   * Adds two vectors together and returns a new one.
+   *
+   * @param {PVector} a PVector to add
+   * @param {PVector} a PVector to add
+
+   * @return {PVector} The resulting new PVector.
+   */
+
   PVector.add = function (v1, v2) {
     return v1.get().add(v2);
   };
+
+  /**
+   *
+   * Subtracts one PVector from another and returns a new one.  The second vector (v2) is subtracted from the first (v1), resulting in v1-v2.
+   *
+   * @param {PVector} 
+   * @param {PVector} 
+
+   * @return {PVector} The resulting new PVector.
+   */
 
   PVector.sub = function (v1, v2) {
     return v1.get().sub(v2);
   };
 
+
+  /**
+   *
+   * Multiplies a vector by a scalar and returns a new vector.
+   *
+   * @param {PVector} the vector to multiply
+   * @param {number} the scalar
+
+   * @return {PVector} The resulting new PVector.
+   */
   PVector.mult = function (v, n) {
     return v.get().mult(n);
   };
 
+  /**
+   *
+   * Divides a vector by a scalar and returns a new vector.
+   *
+   * @param {PVector} the vector to divide
+   * @param {number} the scalar
+
+   * @return {PVector} The resulting new PVector.
+   */
   PVector.div = function (v, n) {
     return v.get().div(n);
   };
 
+
+  /**
+   *
+   * Calculates the dot product of two vectors.
+   *
+   * @param {PVector}
+   * @param {PVector}
+   *
+   * @return {number} the dot product
+   */
   PVector.dot = function (v1, v2) {
     return v1.dot(v2);
   };
 
+  /**
+   *
+   * Calculates the cross product of two vectors.
+   *
+   * @param {PVector}
+   * @param {PVector}
+   *
+   * @return {number} the cross product
+   */
   PVector.cross = function (v1, v2) {
     return v1.cross(v2);
   };
 
+  /**
+   *
+   * Calculates the Euclidean distance between two points (considering a
+   * point as a vector object).
+   *
+   * @param {PVector} 
+   * @param {PVector} 
+   *
+   * @return {number} the distance
+   */
   PVector.dist = function (v1,v2) {
     return v1.dist(v2);
   };
 
+  /**
+   *
+   * Linear interpolate a vector to another vector and return the result as a new vector.
+   *
+   * @param {PVector} a starting vector
+   * @param {PVector} the vector to lerp to
+   * @param {number} The amount of interpolation; some value between 0.0 (old vector) and 1.0 (new vector). 0.1 is very near the new vector. 0.5 is halfway in between.
+   */
   PVector.lerp = function (v1, v2, amt) {
     return v1.get().lerp(v2, amt);
   };
