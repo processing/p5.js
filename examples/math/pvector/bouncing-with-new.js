@@ -7,8 +7,8 @@ var sketch = function(s) {
 
   s.setup = function() {
     s.createCanvas(400, 400);
-    location = s.PVector(100, 100);
-    velocity = s.PVector(2.5, 5);
+    location = new PVector(100, 100);
+    velocity = new PVector(2.5, 5);
     s.fill(255,0,255);
     s.noStroke();
     s.strokeWeight = 10;
