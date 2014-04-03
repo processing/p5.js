@@ -21,7 +21,7 @@ define(function (require) {
   };
 
   p5.prototype.month = function() {
-    return new Date().getMonth();
+    return new Date().getMonth() + 1; //January is 0!
   };
 
   p5.prototype.second = function() {

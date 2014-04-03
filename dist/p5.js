@@ -2168,7 +2168,7 @@ var inputtime_date = function (require, core) {
             return new Date().getTime() - this._startTime;
         };
         p5.prototype.month = function () {
-            return new Date().getMonth();
+            return new Date().getMonth() + 1;
         };
         p5.prototype.second = function () {
             return new Date().getSeconds();
