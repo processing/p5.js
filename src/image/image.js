@@ -23,7 +23,7 @@ define(function (require) {
    * @return {PImage}
    */
   p5.prototype.createImage = function(width, height) {
-    return new PImage(width, height, this);
+    return new PImage(width, height);
   };
 
   /**
@@ -109,13 +109,11 @@ define(function (require) {
    * of an image.
    *
    * @param {Integer} width
-   * @param {Integer} height
-   * @param {Object} pInst an instance of a p5js sketch
+   * @param {Integer} height   
    */
-  function PImage(width, height, pInst){
+  function PImage(width, height){
     this.width = width;
     this.height = height;
-    this.pInst = pInst;
     this.canvas = document.createElement('canvas');
     this.canvas.width = this.width;
     this.canvas.height = this.height;
@@ -229,7 +227,7 @@ define(function (require) {
       w = Math.min(w, this.width);
       h = Math.min(h, this.height);
 
-      var region = new PImage(w, h, this.pInst);
+      var region = new PImage(w, h);
       region.canvas.getContext('2d').putImageData(imageData, 0, 0, 0, 0, w, h);
 
       return region;

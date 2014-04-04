@@ -1,4 +1,5 @@
-(function () {var shim = function (require) {
+(function () {
+var shim = function (require) {
         window.requestDraw = function () {
             return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
                 window.setTimeout(callback, 1000 / 60);
@@ -1346,7 +1347,7 @@ var image = function (require, core, canvas, constants, filters) {
         var constants = constants;
         var Filters = filters;
         p5.prototype.createImage = function (width, height) {
-            return new PImage(width, height, this);
+            return new PImage(width, height);
         };
         p5.prototype.loadImage = function (path, callback) {
             var img = new Image();
@@ -1378,10 +1379,9 @@ var image = function (require, core, canvas, constants, filters) {
                 this.settings.imageMode = m;
             }
         };
-        function PImage(width, height, pInst) {
+        function PImage(width, height) {
             this.width = width;
             this.height = height;
-            this.pInst = pInst;
             this.canvas = document.createElement('canvas');
             this.canvas.width = this.width;
             this.canvas.height = this.height;
@@ -1447,7 +1447,7 @@ var image = function (require, core, canvas, constants, filters) {
             } else {
                 w = Math.min(w, this.width);
                 h = Math.min(h, this.height);
-                var region = new PImage(w, h, this.pInst);
+                var region = new PImage(w, h);
                 region.canvas.getContext('2d').putImageData(imageData, 0, 0, 0, 0, w, h);
                 return region;
             }
@@ -3036,5 +3036,4 @@ var src_app = function (require, core, mathpvector, colorcreating_reading, color
         window.p5 = p5;
         window.PVector = PVector;
         return p5;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);
-}());
+    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
