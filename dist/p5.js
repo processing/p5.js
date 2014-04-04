@@ -127,7 +127,7 @@ var core = function (require, shim, constants) {
                     }
                 }
             } else {
-                sketch(this);
+                sketch.call(this, this);
             }
             if (document.readyState === 'complete') {
                 this._start();
@@ -182,9 +182,9 @@ var core = function (require, shim, constants) {
             return this[func](path, function (resp) {
                 context._setProperty('preload-count', context._preloadCount - 1);
                 if (context._preloadCount === 0) {
-                    context._setup();
-                    context._runFrames();
-                    context._draw();
+                    this._setup();
+                    this._runFrames();
+                    this._draw();
                 }
             });
         };
@@ -235,7 +235,7 @@ var mathpvector = function (require, core) {
         var p5 = core;
         function PVector(x, y, z) {
             var sketch;
-            if (Object.getOwnPropertyNames(this).length > 0) {
+            if (this instanceof p5) {
                 sketch = this;
             }
             return new Vector(x, y, z, sketch);
@@ -3025,7 +3025,8 @@ var src_app = function (require, core, mathpvector, colorcreating_reading, color
         var PVector = mathpvector;
         var _globalInit = function () {
             if (window.setup && typeof window.setup === 'function' || window.draw && typeof window.draw === 'function') {
-                new p5();
+                window.globalP5 = p5();
+                console.log(window.globalP5);
             }
         };
         if (document.readyState === 'complete') {

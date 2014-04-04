@@ -51,7 +51,9 @@ define(function (require) {
     // then instantiate p5 in "global" mode
     if((window.setup && typeof window.setup === 'function') ||
       (window.draw && typeof window.draw === 'function')) {
-      new p5();
+      //new p5();
+      window.globalP5 = p5();
+      console.log(window.globalP5);
     }
   };
 

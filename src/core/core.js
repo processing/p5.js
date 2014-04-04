@@ -1,4 +1,4 @@
-define(function (require) {
+define(function(require) {
 
   'use strict';
 
@@ -24,23 +24,23 @@ define(function (require) {
    * @param  {Function}     sketch - with a setup() and draw() properties
    * @return {p5}
    */
-  var p5 = function( sketch, node ) {
+  var p5 = function(sketch, node) {
     // p5 simply returns an instance of an internal constructor
     // representing the p5 sketch (ie: the user application)
-    return new Sketch( sketch, node );
+    return new Sketch(sketch, node);
   };
-  
+
   p5.prototype = {
     constructor: p5
   };
-  
+
   /**
    * p5 constructor.
    * @param {type} sketch
    * @param {type} node
    * @returns {undefined}
    */
-  var Sketch = function( sketch, node ) {
+  var Sketch = function(sketch, node) {
 
     // ******************************************
     // PUBLIC p5 PROTOTYPE PROPERTIES
@@ -81,7 +81,7 @@ define(function (require) {
 
     // TODO: ???
     this.curElement = null;
-    this.matrices = [[1,0,0,1,0,0]];
+    this.matrices = [[1, 0, 0, 1, 0, 0]];
 
     // TODO: ???
     this.settings = {
@@ -149,7 +149,8 @@ define(function (require) {
         }
       }
     } else {
-      sketch(this);
+      sketch.call(this, this);
+//      sketch(this);
     }
 
     if (document.readyState === 'complete') {
@@ -159,12 +160,12 @@ define(function (require) {
     }
 
   };
-  
-  
+
+
   // Set the constructor prototype to the instance prototype
   Sketch.prototype = p5.prototype;
-  
-  
+
+
   /**
    * p5 extend() method.
    * Extends the prototype of p5 by adding objects containing functions.
@@ -181,7 +182,7 @@ define(function (require) {
       }
     }
   };
-  
+
 
   // ******************************************
   // PRIVATE p5 PROTOTYPE METHODS
@@ -195,12 +196,11 @@ define(function (require) {
    * 
    * @return {Undefined}
    */
-  p5.prototype._start = function () {
+  p5.prototype._start = function() {
     // Always create a default canvas.
     // Later on if the user calls createCanvas, this default one
     // will be replaced
     this.createCanvas(800, 600, true);
-
     // Set input node if there was one
     if (this._userNode) {
       if (typeof this._userNode === 'string') {
@@ -211,16 +211,16 @@ define(function (require) {
     var userPreload = this.preload || window.preload; // look for "preload"
     var context = this._isGlobal ? window : this;
     if (userPreload) {
-      context.loadJSON = function (path) {
+      context.loadJSON = function(path) {
         return context._preload('loadJSON', path); // _preload?
       };
-      context.loadStrings = function (path) {
+      context.loadStrings = function(path) {
         return context._preload('loadStrings', path); // _preload?
       };
-      context.loadXML = function (path) {
+      context.loadXML = function(path) {
         return context._preload('loadXML', path); // _preload?
       };
-      context.loadImage = function (path) {
+      context.loadImage = function(path) {
         return context._preload('loadImage', path); // _preload?
       };
       userPreload();
@@ -242,15 +242,15 @@ define(function (require) {
    * 
    * @return {Undefined}
    */
-  p5.prototype._preload = function (func, path) {
+  p5.prototype._preload = function(func, path) {
     var context = this._isGlobal ? window : this;
     context._setProperty('preload-count', context._preloadCount + 1);
-    return this[func](path, function (resp) {
+    return this[func](path, function(resp) {
       context._setProperty('preload-count', context._preloadCount - 1);
       if (context._preloadCount === 0) {
-        context._setup();
-        context._runFrames();
-        context._draw();
+        this._setup();
+        this._runFrames();
+        this._draw();
       }
     });
   };
@@ -264,8 +264,10 @@ define(function (require) {
    */
   p5.prototype._setup = function() {
     // Short-circuit on this, in case someone used the library in "global" mode earlier
+    //var context = this._isGlobal ? window : this;
     var userSetup = this.setup || window.setup;
     if (typeof userSetup === 'function') {
+      //userSetup.call(context);
       userSetup();
     }
   };
@@ -277,11 +279,12 @@ define(function (require) {
    * 
    * @return {Undefined}
    */
-  p5.prototype._draw = function () {
+  p5.prototype._draw = function() {
     var now = new Date().getTime();
-    this._frameRate = 1000.0/(now - this._lastFrameTime);
+    this._frameRate = 1000.0 / (now - this._lastFrameTime);
     this._lastFrameTime = now;
 
+    //var context = this._isGlobal ? window : this;
     var userDraw = this.draw || window.draw;
 
     if (this.settings.loop) {
@@ -291,6 +294,7 @@ define(function (require) {
     }
     // call user's draw
     if (typeof userDraw === 'function') {
+      //userDraw.call(context);
       userDraw();
     }
 
@@ -308,9 +312,9 @@ define(function (require) {
     if (this.updateInterval) {
       clearInterval(this.updateInterval);
     }
-    this.updateInterval = setInterval(function(){
+    this.updateInterval = setInterval(function() {
       this._setProperty('frameCount', this.frameCount + 1);
-    }.bind(this), 1000/this._targetFrameRate);
+    }.bind(this), 1000 / this._targetFrameRate);
   };
 
   /**

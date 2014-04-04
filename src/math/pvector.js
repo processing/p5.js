@@ -7,7 +7,7 @@ define(function(require) {
   function PVector(x, y, z) {
     // Check if PVector is called from a Sketch
     var sketch;
-    if (Object.getOwnPropertyNames(this).length > 0) {
+    if (this instanceof p5) {
       sketch = this;
     }
     
@@ -16,7 +16,7 @@ define(function(require) {
   
   // Extends p5 with the Vector plugin
   p5.extend({'PVector': PVector});
-
+  
   /**
    * Vector constructor.
    * 
