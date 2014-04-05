@@ -1,5 +1,6 @@
 /**
- * Super-ultra-simple live editor.
+ * Super-ultra-simple live editor for p5.
+ * v 0.0.1a
  * 
  * Note: this is totally unsafe: never use this for production.
  */
