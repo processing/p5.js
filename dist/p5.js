@@ -1,5 +1,4 @@
-(function () {
-var shim = function (require) {
+(function () {var shim = function (require) {
         window.requestDraw = function () {
             return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
                 window.setTimeout(callback, 1000 / 60);
@@ -2203,8 +2202,20 @@ var mathcalculation = function (require, core) {
         p5.prototype.map = function (n, start1, stop1, start2, stop2) {
             return (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
         };
-        p5.prototype.max = Math.max;
-        p5.prototype.min = Math.min;
+        p5.prototype.max = function () {
+            if (arguments[0] instanceof Array) {
+                return Math.max.apply(null, arguments[0]);
+            } else {
+                return Math.max.apply(null, arguments);
+            }
+        };
+        p5.prototype.min = function () {
+            if (arguments[0] instanceof Array) {
+                return Math.min.apply(null, arguments[0]);
+            } else {
+                return Math.min.apply(null, arguments);
+            }
+        };
         p5.prototype.norm = function (n, start, stop) {
             return this.map(n, start, stop, 0, 1);
         };
@@ -3036,4 +3047,5 @@ var src_app = function (require, core, mathpvector, colorcreating_reading, color
         window.p5 = p5;
         window.PVector = PVector;
         return p5;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
+    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);
+}());
