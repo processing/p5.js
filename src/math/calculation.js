@@ -36,9 +36,21 @@ define(function (require) {
     return ((n-start1)/(stop1-start1))*(stop2-start2)+start2;
   };
 
-  p5.prototype.max = Math.max;
+  p5.prototype.max = function() {
+    if (arguments[0] instanceof Array) {
+      return Math.max.apply(null,arguments[0]);
+    } else {
+      return Math.max.apply(null,arguments);
+    }
+  };
 
-  p5.prototype.min = Math.min;
+  p5.prototype.min = function() {
+    if (arguments[0] instanceof Array) {
+      return Math.min.apply(null,arguments[0]);
+    } else {
+      return Math.min.apply(null,arguments);
+    }
+  };
 
   p5.prototype.norm = function(n, start, stop) { return this.map(n, start, stop, 0, 1); };
 
