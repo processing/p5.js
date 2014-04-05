@@ -45,6 +45,10 @@ define(function (require) {
     this.mouseY = 0;
     this.pmouseX = 0;
     this.pmouseY = 0;
+    this.winMouseX = 0;
+    this.winMouseY = 0;
+    this.pwinMouseX = 0;
+    this.pwinMouseY = 0;
     this.mouseButton = 0;
 
     // Input.Keyboard

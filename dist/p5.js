@@ -1,4 +1,5 @@
-(function () {var shim = function (require) {
+(function () {
+var shim = function (require) {
         window.requestDraw = function () {
             return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
                 window.setTimeout(callback, 1000 / 60);
@@ -65,6 +66,10 @@ var core = function (require, shim, constants) {
             this.mouseY = 0;
             this.pmouseX = 0;
             this.pmouseY = 0;
+            this.winMouseX = 0;
+            this.winMouseY = 0;
+            this.pwinMouseX = 0;
+            this.pwinMouseY = 0;
             this.mouseButton = 0;
             this.key = '';
             this.keyCode = 0;
@@ -712,8 +717,8 @@ var inputmouse = function (require, core, constants) {
         p5.prototype.updateMouseCoords = function (e) {
             this._setProperty('pmouseX', this.mouseX);
             this._setProperty('pmouseY', this.mouseY);
-            this._setProperty('mouseX', Math.max(e.pageX - this.curElement.x, 0));
-            this._setProperty('mouseY', Math.max(e.pageY - this.curElement.y, 0));
+            this._setProperty('mouseX', e.pageX - this.curElement.x);
+            this._setProperty('mouseY', e.pageY - this.curElement.y);
             this._setProperty('pwinMouseX', this.winMouseX);
             this._setProperty('pwinMouseY', this.winMouseY);
             this._setProperty('winMouseX', e.pageX);
@@ -3036,5 +3041,4 @@ var src_app = function (require, core, mathpvector, colorcreating_reading, color
         window.p5 = p5;
         window.PVector = PVector;
         return p5;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);
-}());
+    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
