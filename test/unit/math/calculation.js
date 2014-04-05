@@ -220,6 +220,18 @@ suite('Calculation', function() {
         result = max(10, 10);
         assert.equal(result, 10);
       });
+      test('should return larger value from array', function() {
+        result = max([10,-1]);
+        assert.equal(result, 10);
+      });
+      test('should return larger value from array', function() {
+        result = max(-1, 10);
+        assert.equal(result, 10);
+      });
+      test('should return single value from array', function() {
+        result = max([10,10]);
+        assert.equal(result, 10);
+      });      
     });
   });
 
@@ -241,6 +253,18 @@ suite('Calculation', function() {
       });
       test('should return single value', function() {
         result = min(10, 10);
+        assert.equal(result, 10);
+      });
+      test('should return smaller value from array', function() {
+        result = min([10,-1]);
+        assert.equal(result, -1);
+      });
+      test('should return smaller value from array', function() {
+        result = min([-1,10]);
+        assert.equal(result, -1);
+      });
+      test('should return single value from array', function() {
+        result = min([10,10]);
         assert.equal(result, 10);
       });
     });
