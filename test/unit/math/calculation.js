@@ -256,7 +256,7 @@ suite('Calculation', function() {
         assert.equal(result, 10);
       });
       test('should return smaller value from array', function() {
-        result = min([10-1]);
+        result = min([10,-1]);
         assert.equal(result, -1);
       });
       test('should return smaller value from array', function() {
