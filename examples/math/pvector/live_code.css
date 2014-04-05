@@ -1,0 +1,25 @@
+html,
+body {
+  height: 100%;
+  width: 100%;
+  position: relative;
+  font-size: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.col {
+  display: inline-block;
+  vertical-align: top;
+  width: 50%;
+  height: 100%;
+  position: relative;
+}
+
+#sketch {
+  
+}
+
+#editor {
+  
+}

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>P5.js - Enhanced instance - Instance mode</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="live_code.css" rel="stylesheet" type="text/css">
+  </head>
+  <body>
+    
+    <div id="sketch" class="col"></div>
+
+    <div id="editor" class="col">
+
+// 'this' is the current sketch
+
+var s = this;
+var loc; // ATTENTION: 'location' is a property of the window obj
+var velocity;
+var w = 200;
+var h = 200;
+var esize = 20;
+
+s.setup = function() {
+  s.createCanvas(w, h);
+  loc = PVector(100, 100);
+  velocity = s.PVector(2.5, 5);
+  s.fill(190,20,50);
+  s.noStroke();
+};
+
+s.draw = function() {
+  s.background(200);
+  loc.add(velocity);
+  if ((loc.x >= w - esize/2) || (loc.x <= esize/2)) {
+    velocity.x = velocity.x * -1;
+  }
+  if ((loc.y >= h - esize/2) || (loc.y <= esize/2)) {
+    velocity.y = velocity.y * -1;
+  }
+  s.ellipse(loc.x, loc.y, esize, esize);
+};</div>
+
+    
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script language="javascript" type="text/javascript" src="../../../dist/p5.min.js"></script>
+    <script language="javascript" type="text/javascript" src="live_code.js"></script>
+  </body>
+</html>

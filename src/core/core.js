@@ -200,7 +200,10 @@ define(function(require) {
     // Always create a default canvas.
     // Later on if the user calls createCanvas, this default one
     // will be replaced
-    this.createCanvas(800, 600, true);
+    
+    // @TODO: correct the default canvas creation
+    //this.createCanvas(800, 600, true);
+    
     // Set input node if there was one
     if (this._userNode) {
       if (typeof this._userNode === 'string') {
@@ -298,7 +301,7 @@ define(function(require) {
       userDraw();
     }
 
-    this.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
+    //this.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
   };
 
   /**

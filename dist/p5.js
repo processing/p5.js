@@ -144,7 +144,6 @@ var core = function (require, shim, constants) {
             }
         };
         p5.prototype._start = function () {
-            this.createCanvas(800, 600, true);
             if (this._userNode) {
                 if (typeof this._userNode === 'string') {
                     this._userNode = document.getElementById(this._userNode);
@@ -207,7 +206,6 @@ var core = function (require, shim, constants) {
             if (typeof userDraw === 'function') {
                 userDraw();
             }
-            this.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
         };
         p5.prototype._runFrames = function () {
             if (this.updateInterval) {
@@ -244,10 +242,6 @@ var mathpvector = function (require, core) {
         function Vector(x, y, z, sketch) {
             if (sketch) {
                 this.sketch = sketch;
-                console.log('PVector was called from a sketch');
-                console.log('current angle mode is ' + this.sketch.settings.angleMode);
-            } else {
-                console.log('PVector was called alone');
             }
             this.x = x || 0;
             this.y = y || 0;

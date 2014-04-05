@@ -29,10 +29,6 @@ define(function(require) {
   function Vector(x, y, z, sketch) {
     if (sketch) {
       this.sketch = sketch;
-      console.log('PVector was called from a sketch');
-      console.log('current angle mode is ' + this.sketch.settings.angleMode);
-    } else {
-      console.log('PVector was called alone');
     }
     this.x = x || 0;
     this.y = y || 0;
