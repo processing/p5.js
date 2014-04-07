@@ -148,7 +148,43 @@ define(function (require) {
       }.bind(this);
 
       window.onmousedown = function(e) {
-        this.onmousemove(e);
+        this.onmousedown(e);
+      }.bind(this);
+
+      window.onmouseup = function(e) {
+        this.onmouseup(e);
+      }.bind(this);
+
+      window.onmouseclick = function(e) {
+        this.onmouseclick(e);
+      }.bind(this);
+
+      window.onmousewheel = function(e) {
+        this.onmousewheel(e);
+      }.bind(this);
+
+      window.onkeydown = function(e) {
+        this.onkeydown(e);
+      }.bind(this);
+
+      window.onkeyup = function(e) {
+        this.onkeyup(e);
+      }.bind(this);
+
+      window.onkeypress = function(e) {
+        this.onkeypress(e);
+      }.bind(this);
+
+      window.ontouchstart = function(e) {
+        this.ontouchstart(e);
+      }.bind(this);
+
+      window.ontouchmove = function(e) {
+        this.ontouchmove(e);
+      }.bind(this);
+
+      window.ontouchend = function(e) {
+        this.ontouchend(e);
       }.bind(this);
     }
 
