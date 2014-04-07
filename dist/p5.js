@@ -946,21 +946,23 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
             var c = new PElement(elt, this);
             return c;
         };
-        p5.prototype.find = function (e) {
+        p5.prototype.getID = function (e) {
             var res = document.getElementById(e);
             if (res) {
                 return [new PElement(res, this)];
             } else {
-                res = document.getElementsByClassName(e);
-                if (res) {
-                    var arr = [];
-                    for (var i = 0, resl = res.length; i !== resl; i++) {
-                        arr.push(new PElement(res[i], this));
-                    }
-                    return arr;
+                return null;
+            }
+        };
+        p5.prototype.getClass = function (e) {
+            var arr = [];
+            var res = document.getElementsByClassName(e);
+            if (res) {
+                for (var i = 0, resl = res.length; i !== resl; i++) {
+                    arr.push(new PElement(res[i], this));
                 }
             }
-            return [];
+            return arr;
         };
         p5.prototype.context = function (e) {
             var obj;
