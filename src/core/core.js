@@ -118,7 +118,7 @@ define(function (require) {
     this.styles = [];
 
     // If the user has created a global setup or draw function,
-    // assume "global" mode and make everything global
+    // assume "global" mode and make everything global (i.e. on the window)
     if (!sketch) {
       this._isGlobal = true;
       // Loop through methods on the prototype and attach them to the window
@@ -137,7 +137,19 @@ define(function (require) {
         }
       }
     } else {
+      // Else, the user has passed in a sketch function closure
+      // So create attach the user given 'setup', 'draw', etc on this
+      // instance of p5
       sketch(this);
+
+      // Pass all window mouse events to the p5 instance
+      window.onmousemove = function(e) {
+        this.onmousemove(e);
+      }.bind(this);
+
+      window.onmousedown = function(e) {
+        this.onmousemove(e);
+      }.bind(this);
     }
 
     if (document.readyState === 'complete') {

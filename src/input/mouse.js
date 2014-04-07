@@ -22,7 +22,6 @@ define(function (require) {
   };
 
   p5.prototype.setMouseButton = function(e) {
-
     if (e.button === 1) {
       this._setProperty('mouseButton', constants.CENTER);
     } else if (e.button === 2) {
@@ -33,7 +32,6 @@ define(function (require) {
   };
 
   p5.prototype.onmousemove = function(e){
-    // TODO: temporary fix to set context based on whether in global mode or not
     var context = this._isGlobal ? window : this;
     this.updateMouseCoords(e);
     if (!this.isMousePressed() && typeof context.mouseMoved === 'function') {
