@@ -129,6 +129,39 @@ var core = function (require, shim, constants) {
                 }
             } else {
                 sketch(this);
+                window.onmousemove = function (e) {
+                    this.onmousemove(e);
+                }.bind(this);
+                window.onmousedown = function (e) {
+                    this.onmousedown(e);
+                }.bind(this);
+                window.onmouseup = function (e) {
+                    this.onmouseup(e);
+                }.bind(this);
+                window.onmouseclick = function (e) {
+                    this.onmouseclick(e);
+                }.bind(this);
+                window.onmousewheel = function (e) {
+                    this.onmousewheel(e);
+                }.bind(this);
+                window.onkeydown = function (e) {
+                    this.onkeydown(e);
+                }.bind(this);
+                window.onkeyup = function (e) {
+                    this.onkeyup(e);
+                }.bind(this);
+                window.onkeypress = function (e) {
+                    this.onkeypress(e);
+                }.bind(this);
+                window.ontouchstart = function (e) {
+                    this.ontouchstart(e);
+                }.bind(this);
+                window.ontouchmove = function (e) {
+                    this.ontouchmove(e);
+                }.bind(this);
+                window.ontouchend = function (e) {
+                    this.ontouchend(e);
+                }.bind(this);
             }
             if (document.readyState === 'complete') {
                 this._start();
@@ -982,19 +1015,6 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
                 this.curElement.onblur = function () {
                     this.focused = false;
                 };
-                if (!this._isGlobal) {
-                    this.curElement.context.canvas.onmousemove = this.onmousemove.bind(this);
-                    this.curElement.context.canvas.onmousedown = this.onmousedown.bind(this);
-                    this.curElement.context.canvas.onmouseup = this.onmouseup.bind(this);
-                    this.curElement.context.canvas.onmouseclick = this.onmouseclick.bind(this);
-                    this.curElement.context.canvas.onmousewheel = this.onmousewheel.bind(this);
-                    this.curElement.context.canvas.onkeydown = this.onkeydown.bind(this);
-                    this.curElement.context.canvas.onkeyup = this.onkeyup.bind(this);
-                    this.curElement.context.canvas.onkeypress = this.onkeypress.bind(this);
-                    this.curElement.context.canvas.ontouchstart = this.ontouchstart.bind(this);
-                    this.curElement.context.canvas.ontouchmove = this.ontouchmove.bind(this);
-                    this.curElement.context.canvas.ontouchend = this.ontouchend.bind(this);
-                }
                 if (typeof this.curElement.context !== 'undefined') {
                     this.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
                 }
