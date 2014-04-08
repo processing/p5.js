@@ -61,10 +61,10 @@ define(function(require) {
     return c;
   };
 
-  p5.prototype.getID = function(e) {
+  p5.prototype.getId = function(e) {
     var res = document.getElementById(e);
     if (res) {
-      return [new PElement(res, this)];
+      return new PElement(res, this);
     }
     else {
       return null;

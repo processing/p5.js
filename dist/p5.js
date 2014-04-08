@@ -979,10 +979,10 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
             var c = new PElement(elt, this);
             return c;
         };
-        p5.prototype.getID = function (e) {
+        p5.prototype.getId = function (e) {
             var res = document.getElementById(e);
             if (res) {
-                return [new PElement(res, this)];
+                return new PElement(res, this);
             } else {
                 return null;
             }
