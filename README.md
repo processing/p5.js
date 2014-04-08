@@ -38,7 +38,4 @@ We have been focusing on language design, development, and documentation, but a 
 See the [Development](https://github.com/lmccart/p5.js/wiki/Development) wiki page for details.
 
 
-##Questions
-
-###How is p5.js different than processing.js?
 
