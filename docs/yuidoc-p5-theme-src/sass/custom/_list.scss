@@ -1,0 +1,123 @@
+#list {
+
+  text-align: left;
+
+  ul,
+  li {
+    list-style: none;
+    padding: 0;
+  }
+
+  ul {
+    margin: 0;
+    font-size: 0;
+  }
+
+  li {
+    font-size: $font-size-base; // bootstrap var
+    display: block;
+    &.group {
+      display: inline-block;
+      width: 20%;
+      vertical-align: top;
+    }
+    a {
+      margin-right: 20px;
+      margin-bottom: 20px;
+    }
+    h4 {
+      margin: 20px 0;
+      display: block;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+  }
+
+
+  /* -- API list -------------------------------------------------------------- */
+  #api-list {
+    margin-top: 1.5em;
+    *zoom: 1;
+  }
+
+  .apis {
+    font-size: 12px;
+    line-height: 1.4;
+    list-style: none;
+    margin: 0;
+    padding: 0.5em 0 0.5em 0.4em;
+  }
+
+  .apis a {
+    border: 1px solid transparent;
+    display: block;
+    margin: 0 0 0 -4px;
+    padding: 1px 4px 0;
+    text-decoration: none;
+    _border: none;
+    _display: inline;
+  }
+
+  .apis a:hover,
+    .apis a:focus {
+    background: #E8EDFC;
+    background: -moz-linear-gradient(top, #e8edfc 0%, #becef7 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#E8EDFC), color-stop(100%,#BECEF7));
+    border-color: #AAC0FA;
+    border-radius: 3px;
+    color: #333;
+    outline: none;
+  }
+
+  .api-list-item a:hover,
+    .api-list-item a:focus {
+    font-weight: bold;
+    text-shadow: 1px 1px 1px #fff;
+  }
+
+  .apis .message { color: #888; }
+  .apis .result a { padding: 3px 5px 2px; }
+
+  .apis .result .type {
+    right: 4px;
+    top: 7px;
+  }
+
+  .api-list-item .yui3-highlight {
+    font-weight: bold;
+  }
+
+
+
+
+  @media only screen and (max-width : 480px) {
+    /* Smartphone view: 1 tile */
+    li.group {
+      display: block;
+      width: auto;
+      a {
+        margin-right: 0;
+      }
+    }
+  }
+  @media only screen and (max-width : 650px) and (min-width : 481px) {
+    /* Tablet view: 2 tiles */
+    li.group {
+      width: 50%;
+    }
+  }
+  @media only screen and (max-width : 1050px) and (min-width : 651px) {
+    /* Small desktop / ipad view: 3 tiles */
+    li.group {
+      width: 33%;
+    }
+  }
+  @media only screen and (max-width : 1290px) and (min-width : 1051px) {
+    /* Medium desktop: 4 tiles */
+    li.group {
+      width: 25%;
+    }
+  }
+
+
+}

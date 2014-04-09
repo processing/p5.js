@@ -1,0 +1,24 @@
+<div class="page-header">
+  <h1>
+    <%=title%>
+  </h1>
+</div>
+
+<ul id="collection-list" class="<%=listCollection%>-collection">
+
+  <% _.each(groups, function(group){ %>
+  <li class="group">
+    <h4><%=group.name%></h4>
+
+    <ul class="<%=group.name%>-group">
+      <% _.each(group.items, function(item) { %>
+      <li>
+        <a href="<%=item.hash%>"><%=item.name%></a>
+      </li>
+      <% }); %>
+    </ul>
+
+  </li>
+  <% }); %>
+
+</ul>

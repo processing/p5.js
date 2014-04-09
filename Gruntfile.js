@@ -106,6 +106,20 @@ module.exports = function(grunt) {
           wrap: true
         }
       }
+    },
+    yuidoc: {
+      compile: {
+        name: '<%= pkg.name %>',
+        description: '<%= pkg.description %>',
+        version: '<%= pkg.version %>',
+        url: '<%= pkg.homepage %>',
+        options: {
+          paths: 'src/',
+          //helpers: [],
+          themedir: 'docs/yuidoc-p5-theme/',
+          outdir: 'docs/reference/'
+        }
+      }
     }
 
   });
@@ -115,7 +129,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-mocha');
+  grunt.loadNpmTasks('grunt-contrib-yuidoc');
   grunt.registerTask('test', ['jshint', 'qunit']);
+  grunt.registerTask('yui', ['yuidoc']);
 
   //grunt.registerTask('default', ['jshint', 'qunit', 'concat', 'uglify']);
   grunt.registerTask('default', ['jshint', 'requirejs', 'mocha']);

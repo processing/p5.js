@@ -1,0 +1,413 @@
+#item {
+
+  .events,
+  .method {
+    .signature {
+      padding-top: 20px;
+      padding-bottom: 20px;
+      .name {
+        font-size: 15px;
+        code {
+          .word-new {
+            .kwd {
+              color: #0096FF;
+            }
+          }
+          .word-name {
+            .typ,
+            .pln {
+              color: #0096FF;
+            }
+          }
+        }
+      } 
+    }
+
+    .args {
+      display: inline;
+      .paren {
+        margin: 0 6px;
+        font-size: 18px;
+      }
+    }
+
+    ul.params-list,
+    ul.args-list {
+      li.param,
+      li.arg {
+        code {
+          font-size: 15px;
+        }
+        .param-type,
+        .param-name,
+        .flag {
+          display: inline-block;
+          margin-right: 20px;
+        }
+        .param-name {
+          min-width: 100px;
+          font-weight: bold;
+        }
+        .param-type {
+          text-align: center;
+        }
+        .flag {
+          min-width: 60px;
+          text-align: center;
+        }
+        .param-description {
+          display: block;
+          margin: 10px 0;
+        }
+        .optional {
+          .pln {
+            color: $codeEasyColor; // green
+          }
+        }
+        .pln {
+          font-weight: bold;
+          color: $codeAttentionColor; // orange
+        }
+      }
+    }
+  }
+
+  .example-content {
+    font-size: 0;
+    pre,
+    code,
+    img {
+      display: inline-block;
+      vertical-align: top;
+    }
+    img {
+      margin-right: 30px;
+      margin-bottom: 30px;
+    }
+    span,
+    p,
+    pre,
+    code {
+      font-size: $font-size-base;
+      white-space:pre;
+      margin: 0;
+      margin-bottom: 20px;
+      border: none;
+      background: none;
+      padding: 0;
+    }
+  }
+
+
+  .meta {
+    font-size: $font-size-small;
+    color: #666;
+    margin: 20px 0;
+  }
+
+  .description,
+  .meta,
+  .params,
+  .returns,
+  .example {
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+
+
+
+  /* -- Generic Content Styles ------------------------------------------------ */
+
+  /* Headings */
+  h2, h3, h4, h5, h6 {
+    border: none;
+    /*color: #30418C;*/
+    color: #0096ff;
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .link-docs {
+    float: right;
+    font-size: 15px;
+    margin: 4px 4px 6px;
+    padding: 6px 30px 5px;
+  }
+
+  /* Generic box styles. */
+  .box {
+    border: 1px solid;
+    border-radius: 3px;
+    margin: 13px 0;
+    padding: 0 13px;
+  }
+
+  /* A flag is a compact, capsule-like indicator of some kind. It's used to
+     indicate private and protected items, item return types, etc. in an
+     attractive and unobtrusive way. */
+  .flag {
+    background: #bababa;
+    border-radius: 3px;
+    color: #fff;
+    font-size: 11px;
+    margin: 0 6px;
+    padding: 2px 4px 1px;
+    font-weight: normal;
+    min-width: 60px;
+    text-align: center;
+  }
+
+  /* Class/module metadata such as "Uses", "Extends", "Defined in", etc. */
+  .meta {
+    background: #f9f9f9;
+    border-color: #efefef;
+    color: #555;
+    font-size: 11px;
+    padding: 3px 6px;
+  }
+
+  .meta p { margin: 0; }
+
+  /* Deprecation warning. */
+  .box.deprecated,
+  .flag.deprecated {
+    background: #fdac9f;
+    border: 1px solid #fd7775;
+  }
+
+  .box.deprecated p { margin: 6px 0; }
+  .flag.deprecated { color: #333; }
+
+  /* Module/Class intro description. */
+  .intro {
+    background: #f0f1f8;
+    border-color: #d4d8eb;
+  }
+
+  /* Loading spinners. */
+  #bd.loading ,
+  #api-list.loading .yui3-tabview-panel {
+    background: #fff url(../img/spinner.gif) no-repeat center 70px;
+    min-height: 150px;
+  }
+
+  #bd.loading  .content,
+  #api-list.loading .yui3-tabview-panel .apis {
+    display: none;
+  }
+
+  .no-visible-items { color: #666; }
+
+  /* Generic inline list. */
+  ul.inline {
+    display: inline;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  ul.inline li { display: inline; }
+
+  /* Comma-separated list. */
+  ul.commas li:after { content: ','; }
+  ul.commas li:last-child:after { content: ''; }
+
+  /* Keyboard shortcuts. */
+  kbd .cmd { font-family: Monaco, Helvetica; }
+
+  /* -- Generic Item Index styles --------------------------------------------- */
+  .index { margin: 19px 0 39px; }
+
+  .index h3 {
+    border-bottom: 1px solid #efefef;
+    color: #333;
+    font-size: 13px;
+    margin: 26px 0 8px;
+    padding-bottom: 2px;
+  }
+
+  .index .no-visible-items { margin-top: 26px; }
+
+  .index-list {
+    border-color: #efefef;
+    font-size: 12px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    -moz-column-count: 4;
+    -moz-column-gap: 10px;
+    -moz-column-width: 170px;
+    -ms-column-count: 4;
+    -ms-column-gap: 10px;
+    -ms-column-width: 170px;
+    -o-column-count: 4;
+    -o-column-gap: 10px;
+    -o-column-width: 170px;
+    -webkit-column-count: 4;
+    -webkit-column-gap: 10px;
+    -webkit-column-width: 170px;
+    column-count: 4;
+    column-gap: 10px;
+    column-width: 170px;
+  }
+
+  .no-columns .index-list {
+    -moz-column-count: 1;
+    -ms-column-count: 1;
+    -o-column-count: 1;
+    -webkit-column-count: 1;
+    column-count: 1;
+  }
+
+  .index-item { white-space: nowrap; }
+
+  .index-item .flag {
+    background: none;
+    border: none;
+    color: #afafaf;
+    display: inline;
+    margin: 0 0 0 4px;
+    padding: 0;
+  }
+
+  /* -- Generic API item styles ----------------------------------------------- */
+
+
+  .flag.chainable { background: #46ca3b; }
+  .flag.protected { background: #9b86fc; }
+  .flag.private { background: #fd6b1b; }
+  .flag.async { background: #356de4; }
+  .flag.required { background: #e60923; }
+
+  /*  .item {
+      border-bottom: 1px solid #efefef;
+      margin: 20px 0 30px;
+      padding-bottom: 30px;
+    }*/
+
+  .item h4,
+  .item h5,
+  .item h6 {
+    color: #333;
+  }
+
+  .item .meta {
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .item .name {
+    display: inline;
+    font-size: 14px;
+  }
+
+  .item .type,
+  .item .type a,
+  .returns-inline {
+    color: #555;
+  }
+
+  .item .type,
+  .returns-inline {
+    font-size: 11px;
+    margin: 0 0 0 0;
+  }
+
+  .item .type a { border-bottom: 1px dotted #afafaf; }
+  .item .type a:hover { border: none; }
+
+  /* -- Item Parameter List --------------------------------------------------- */
+  .params-list {
+    list-style: none;
+    margin: 10px 0 0 0;
+    padding: 0;
+  }
+
+  .param { margin-bottom: 20px; }
+
+  .param .type,
+  .param .type a {
+    color: #666;
+  }
+
+  .param .type {
+    margin: 0 0 0 6px;
+    *margin-left: 6px;
+  }
+
+
+  /* -- Item "Emits" block ---------------------------------------------------- */
+  .item .emits {
+    background: #f9f9f9;
+    border-color: #eaeaea;
+  }
+
+  /* -- Item "Returns" block -------------------------------------------------- */
+  .item .returns .type,
+  .item .returns .type a {
+    font-size: 100%;
+    margin: 0;
+  }
+
+  /* -- Class Constructor block ----------------------------------------------- */
+  .constructor .item {
+    border: none;
+    padding-bottom: 0;
+  }
+
+  /* -- File Source View ------------------------------------------------------ */
+  .file pre.code,
+  #doc  .file pre.prettyprint {
+    background: inherit;
+    border: none;
+    overflow: visible;
+    padding: 0;
+  }
+
+  .L0,
+  .L1,
+  .L2,
+  .L3,
+  .L4,
+  .L5,
+  .L6,
+  .L7,
+  .L8,
+  .L9 {
+    background: inherit;
+  }
+
+  /* -- Submodule List -------------------------------------------------------- */
+  .module-submodule-description {
+    font-size: 12px;
+    margin: 4px 0 13px;
+  }
+
+  .module-submodule-description p:first-child { margin-top: 0; }
+
+
+  /* -- Source File Contents -------------------------------------------------- */
+  .prettyprint li.L0,
+  .prettyprint li.L1,
+  .prettyprint li.L2,
+  .prettyprint li.L3,
+  .prettyprint li.L5,
+  .prettyprint li.L6,
+  .prettyprint li.L7,
+  .prettyprint li.L8 {
+    list-style: decimal;
+  }
+
+  /* -- API options ----------------------------------------------------------- */
+  #api-options {
+    font-size: 11px;
+    margin-top: 2.2em;
+    position: absolute;
+    right: 1.5em;
+  }
+
+
+
+}

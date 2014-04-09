@@ -15,6 +15,7 @@
     "phantomjs": "~1.9.2-4",
     "grunt-lib-phantomjs": "~0.4.0",
     "grunt-contrib-requirejs": "~0.4.1",
+    "grunt-contrib-yuidoc": "0.5.2",
     "almond": "~0.2.7",
     "amdclean": "~0.3.3"
   },

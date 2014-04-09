@@ -2547,8 +2547,8 @@ var shape2d_primitives = function (require, core, canvas, constants) {
         var p5 = core;
         var canvas = canvas;
         var constants = constants;
-        p5.prototype.arc = function (a, b, c, d, start, stop, mode) {
-            var vals = canvas.arcModeAdjust(a, b, c, d, this.settings.ellipseMode);
+        p5.prototype.arc = function (x, y, width, height, start, stop, mode) {
+            var vals = canvas.arcModeAdjust(x, y, width, height, this.settings.ellipseMode);
             var radius = vals.h > vals.w ? vals.h / 2 : vals.w / 2, xScale = vals.h > vals.w ? vals.w / vals.h : 1, yScale = vals.h > vals.w ? 1 : vals.h / vals.w;
             this.curElement.context.scale(xScale, yScale);
             this.curElement.context.beginPath();
@@ -2566,8 +2566,8 @@ var shape2d_primitives = function (require, core, canvas, constants) {
             }
             return this;
         };
-        p5.prototype.ellipse = function (a, b, c, d) {
-            var vals = canvas.modeAdjust(a, b, c, d, this.settings.ellipseMode);
+        p5.prototype.ellipse = function (x, y, width, height) {
+            var vals = canvas.modeAdjust(x, y, width, height, this.settings.ellipseMode);
             var kappa = 0.5522848, ox = vals.w / 2 * kappa, oy = vals.h / 2 * kappa, xe = vals.x + vals.w, ye = vals.y + vals.h, xm = vals.x + vals.w / 2, ym = vals.y + vals.h / 2;
             this.curElement.context.beginPath();
             this.curElement.context.moveTo(vals.x, ym);

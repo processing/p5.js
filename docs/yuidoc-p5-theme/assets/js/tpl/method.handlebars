@@ -1,0 +1,229 @@
+
+<div id="method_{{name}}" class="method item{{#if access}} {{access}}{{/if}}{{#if deprecated}} deprecated{{/if}}{{#if extended_from}} inherited{{/if}}">
+
+  <div class="description">
+    <!--<h4>Description:</h4>-->
+    <p>{{{description}}}</p>
+  </div>
+
+  <div class="signature">
+
+    <h3 class="name">
+      <code>
+        {{#if isConstructor}}<span class="word-new">new</span>{{/if}}
+        <span class="word-name">{{name}}</span>
+      </code>
+    </h3>
+    <div class="args">
+      {{#if params}}
+      <span class="paren">(</span><ul class="args-list inline commas">
+        {{#params}}
+        <li class="arg">
+          {{#if optional}}
+          <code class="optional">[{{name}}{{#if optdefault}}={{optdefault}}{{/if}}]</code> 
+          {{else}}
+          <code>{{name}}</code>
+          {{/if}}
+        </li>
+        {{/params}}
+      </ul><span class="paren">)</span>
+
+      {{else}}
+      <span class="paren">(</span>
+      <span class="paren">)</span>
+      {{/if}}
+    </div>
+
+  </div>
+
+  {{#if return}}
+  <span class="returns-inline">
+    <span class="type"></span>
+  </span>
+  {{/if}}
+
+  {{#if deprecated}}
+  <span class="flag deprecated"{{#if deprecationMessage}} title="{{deprecationMessage}}"{{/if}}>deprecated</span>
+  {{/if}}
+
+  {{#if access}}
+  <span class="flag {{access}}">{{access}}</span>
+  {{/if}}
+
+  {{#if final}}
+  <span class="flag final">final</span>
+  {{/if}}
+
+  {{#if static}}
+  <span class="flag static">static</span>
+  {{/if}}
+
+  {{#if chainable}}
+  <span class="label label-success chainable">chainable</span>
+  {{/if}}
+
+  {{#if async}}
+  <span class="flag async">async</span>
+  {{/if}}
+
+  <!--  <div class="meta">
+      {{#if overwritten_from}}
+      <p>Inherited from
+        <a href="#">
+          {{overwritten_from/class}}
+        </a>
+        {{#if foundAt}}
+        but overwritten in
+        {{/if}}
+        {{else}}
+        {{#if extended_from}}
+      <p>Inherited from
+        <a href="#">{{extended_from}}</a>:
+        {{else}}
+        {{#providedBy}}
+      <p>Provided by the <a href="../modules/{{.}}.html">{{.}}</a> module.</p>
+      {{/providedBy}}
+      <p>
+        {{#if foundAt}}
+        Defined in
+        {{/if}}
+        {{/if}}
+        {{/if}}
+        {{#if foundAt}}
+        <a href="{{foundAt}}">`{{{file}}}:{{{line}}}`</a>
+        {{/if}}
+      </p>
+  
+      {{#if deprecationMessage}}
+      <p>Deprecated: {{deprecationMessage}}</p>
+      {{/if}}
+  
+      {{#if since}}
+      <p>Available since {{since}}</p>
+      {{/if}}
+    </div>-->
+
+
+  {{#if params}}
+  <div class="params">
+    <h4>Parameters:</h4>
+
+    <ul class="params-list">
+      {{#params}}
+      <li class="param">
+
+        {{#if optional}}
+        <code class="param-name optional">[{{name}}{{#if optdefault}}={{optdefault}}{{/if}}]</code>
+
+        <span class="label label-default optional" title="This parameter is optional.">optional</span>
+        {{else}}
+        <code class="param-name">{{name}}</code>
+
+        {{/if}}
+
+        {{#if type}}
+          <span class="param-type label label-info">{{type}}</span> 
+        {{/if}}
+
+        {{#if multiple}}
+        <span class="flag multiple" title="This argument may occur one or more times.">multiple</span>
+        {{/if}}
+
+        <div class="param-description">
+          {{{description}}}
+        </div>
+
+        {{#if props}}
+        <ul class="params-list">
+          {{#props}}
+          <li class="param">
+            {{#if optional}}
+            <code class="param-name optional">[{{name}}{{#if optdefault}}={{optdefault}}{{/if}}]</code>
+
+            <span class="flag optional" title="This parameter is optional.">optional</span>
+            {{else}}
+            <code class="param-name">{{name}}</code>
+
+            {{/if}}
+
+            <div class="param-description">
+              {{{description}}}
+            </div>
+
+            {{#if props}}
+            <ul class="params-list">
+              {{#props}}
+              <li class="param">
+                {{#if optional}}
+                <code class="param-name optional">[{{name}}{{#if optdefault}}={{optdefault}}{{/if}}]</code>
+
+                <span class="flag optional" title="This parameter is optional.">optional</span>
+                {{else}}
+                <code class="param-name">{{name}}</code>
+
+                {{/if}}
+
+                <div class="param-description">
+                  {{{description}}}
+                </div>
+              </li>
+              {{/props}}
+            </ul>
+            {{/if}}
+          </li>
+          {{/props}}
+        </ul>
+        {{/if}}
+      </li>
+      {{/params}}
+    </ul>
+  </div>
+  {{/if}}
+
+  {{#return}}
+  <div class="returns">
+    <h4>Returns:</h4> 
+
+    <div class="returns-description">
+      {{#if description}}
+      {{#if type}}
+      [ <strong>{{{type}}}</strong> ]
+
+      {{/if}}
+      {{{description}}}
+      {{else}}
+      {{#if type}}
+      :
+      {{/if}}
+      {{/if}}
+    </div>
+  </div>
+  {{/return}}
+
+  {{#example}}
+  <div class="example">
+    <h4>Example:</h4>
+
+    <div class="example-content">
+      {{{.}}}
+    </div>
+  </div>
+  {{/example}}
+
+
+
+
+
+  <div class="meta">
+    {{#if class}}
+    Class: 
+    <strong><a href='#get/{{class}}'>{{class}}</a></strong>
+    |
+    {{/if}}
+    File: 
+    <strong><a href='#file/{{urlencodedfile}}/{{line}}'>{{file}}:{{line}}</a></strong> 
+  </div>
+
+
+
+</div>

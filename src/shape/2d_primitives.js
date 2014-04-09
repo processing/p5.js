@@ -9,25 +9,22 @@ define(function (require) {
   /**
    * Draw an arc
    *
-   * If a,b,c,d,start and stop are the only params provided, draws an
+   * If x, y, width, height, start and stop are the only params provided, draws an
    * open pie.
    * If mode is provided draws the arc either open, chord or pie, dependant
    * on the variable provided
    *
-   * Returns void
-   *
-   * @param  {Number} a x-coordinate of the arc's ellipse
-   * @param  {Number} b y-coordinate of the arc's ellipse
-   * @param  {Number} c width of the arc's ellipse by default
-   * @param  {Number} d height of the arc's ellipse by default
+   * @param  {Number} x x-coordinate of the arc's ellipse
+   * @param  {Number} y y-coordinate of the arc's ellipse
+   * @param  {Number} width width of the arc's ellipse by default
+   * @param  {Number} height height of the arc's ellipse by default
    * @param  {Number} start angle to start the arc, specified in radians
    * @param  {Number} stop angle to stop the arc, specified in radians
-   * @param  {Mode} optional parameter to determine the way of drawing the arc
-   * @return {Void}
+   * @param  {String} [mode] optional parameter to determine the way of drawing the arc
    */
 
-	p5.prototype.arc = function(a, b, c, d, start, stop, mode) {
-    var vals = canvas.arcModeAdjust(a, b, c, d, this.settings.ellipseMode);
+	p5.prototype.arc = function(x, y, width, height, start, stop, mode) {
+    var vals = canvas.arcModeAdjust(x, y, width, height, this.settings.ellipseMode);
     var radius = (vals.h > vals.w) ? vals.h / 2 : vals.w / 2,
       xScale = (vals.h > vals.w) ? vals.w / vals.h : 1, //scale the arc if it is oblong
       yScale = (vals.h > vals.w) ? 1 : vals.h / vals.w;
@@ -49,8 +46,17 @@ define(function (require) {
     return this;
   };
 
-  p5.prototype.ellipse = function(a, b, c, d) {
-    var vals = canvas.modeAdjust(a, b, c, d, this.settings.ellipseMode);
+  /**
+   * Draws an ellipse (oval) to the screen. An ellipse with equal width and height is a circle. The origin may be changed with the ellipseMode() function.
+   *
+   * @param  {Number} x x-coordinate of the ellipse
+   * @param  {Number} y y-coordinate of the ellipse
+   * @param  {Number} width width of the ellipse
+   * @param  {Number} height height of the ellipse
+   */
+
+  p5.prototype.ellipse = function(x, y, width, height) {
+    var vals = canvas.modeAdjust(x, y, width, height, this.settings.ellipseMode);
     var kappa = 0.5522848,
       ox = (vals.w / 2) * kappa, // control point offset horizontal
       oy = (vals.h / 2) * kappa, // control point offset vertical

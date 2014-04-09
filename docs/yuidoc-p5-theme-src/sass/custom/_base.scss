@@ -1,0 +1,44 @@
+/*
+ * Base structure
+ */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: $backgroundColor;
+  color: $mainTextColor;
+  position: relative;
+}
+
+/* Links */
+a,
+a:focus,
+a:hover,
+a:visited {
+  color: $mainTextColor;
+}
+
+/*Remove outlines*/
+a,
+a:focus,
+object, 
+embed {
+   outline: 0;
+   border: 0; 
+}
+
+button::-moz-focus-inner,
+input::-moz-focus-inner { 
+  border: 0; 
+}
+
+
+/*Helpers*/
+.float-right {
+  float: right;
+}
+.float-left {
+  float: left;
+}

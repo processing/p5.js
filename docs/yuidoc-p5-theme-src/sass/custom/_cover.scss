@@ -1,0 +1,159 @@
+/* Extra markup and styles for table-esque vertical and horizontal centering */
+.site-wrapper {
+  /*display: table;*/
+  /*height: 100%;  For at least Firefox */
+  min-height: 100%;
+  margin: 0 auto;
+  width: 62.5%;
+  position: relative;
+}
+/* Handle the widths */
+.masthead,
+.mastfoot,
+.cover-container {
+  /*text-align: center;*/
+  display:block;
+  width: 100%;  
+  /*Must be percentage or pixels for horizontal alignment*/ 
+}
+
+/*.site-wrapper-inner {
+  display: table-cell;
+  vertical-align: top;
+}*/
+.cover-container {
+  margin-right: auto;
+  margin-left: auto;
+  padding-bottom: 80px;
+  /*margin-bottom: 100px;*/
+}
+
+/* Padding for spacing */
+.inner {
+  padding: 30px;
+}
+
+
+/*
+ * Header
+ */
+
+.header {
+  text-align: center;
+}
+.masthead-brand,
+.masthead-nav {
+  display: block;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.masthead-brand {
+  img {
+    margin-right: 10px;
+  }
+  span {
+    vertical-align: middle;
+  }
+}
+
+.masthead-nav > li {
+  display: inline-block;
+}
+.masthead-nav > li + li {
+  margin-left: 20px;
+}
+.masthead-nav > li > a {
+  padding-right: 0;
+  padding-left: 0;
+  font-size: 13px;
+  font-weight: bold;
+  border-bottom: 2px solid transparent;
+}
+.masthead-nav > li > a:hover,
+.masthead-nav > li > a:focus {
+  background-color: transparent;
+  border-bottom-color: rgba(0,0,0,.25);
+}
+.masthead-nav > .active > a,
+.masthead-nav > .active > a:hover,
+.masthead-nav > .active > a:focus {
+  color: $mainTextColor;
+  border-bottom-color: $mainTextColor;
+}
+
+/*
+ * Cover
+ */
+
+.cover {
+  padding: 0 20px;
+}
+.cover .btn-lg {
+  padding: 10px 20px;
+  font-weight: bold;
+}
+
+/*
+ * Footer
+ */
+
+.mastfoot {
+  border-top: 1px solid #eeeeee;
+  color: $footerTextColor;
+  background-color: $backgroundColor;
+  position: absolute;
+  bottom: 0;
+  text-align: center;
+  margin: 0 30px;
+  .inner {
+    padding: 15px 30px 30px 30px;
+    p {
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+}
+
+
+
+@media only screen and (max-width : 480px) {
+  /* Smartphone view: 1 tile */
+  .site-wrapper {
+    width: 100%;
+  }
+  .inner {
+    padding: 20px;
+  }
+}
+@media only screen and (max-width : 650px) and (min-width : 481px) {
+  /* Tablet view: 2 tiles */
+  .site-wrapper {
+    width: 90%;
+  }
+}
+@media only screen and (max-width : 1050px) and (min-width : 651px) {
+  /* Small desktop / ipad view: 3 tiles */
+  .site-wrapper {
+    width: 80%;
+  }
+}
+@media only screen and (max-width : 1290px) and (min-width : 1051px) {
+  /* Medium desktop: 4 tiles */
+  .site-wrapper {
+    width: 70%;
+  }
+}
+
+
+
+/*@media only screen and (max-height : 768px) {
+   Small devices-monitors: check height
+  .site-wrapper {
+    height: auto;
+  }
+  .cover-container {
+    margin-bottom: 30px;
+  }
+}*/

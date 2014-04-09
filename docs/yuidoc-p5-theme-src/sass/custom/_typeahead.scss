@@ -1,0 +1,125 @@
+#search {
+  .twitter-typeahead {
+
+    width: 700px;
+
+    .tt-dropdown-menu,
+    .gist {
+      text-align: left;
+    }
+
+    /*    .table-of-contents li {
+          display: inline-block;
+          *display: inline;
+          zoom: 1;
+        }
+    
+        .table-of-contents li a {
+          font-size: 16px;
+          color: #999;
+        }*/
+
+    /*    p + p {
+          margin: 30px 0 0 0;
+        }*/
+
+    .tt-hint {
+      color: #999
+    }
+
+    .tt-dropdown-menu {
+      max-height: 200px;
+      overflow-y: auto;
+      width: 100%;
+      margin-top: 8px;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+    }
+
+    .tt-suggestion {
+      padding: 3px 20px;
+      font-size: 18px;
+      line-height: 24px;
+      cursor: pointer;
+    }
+
+    .empty-message {
+      padding: 8px 20px 1px 20px;
+      font-size: 14px;
+      line-height: 24px;
+    }
+
+    .tt-suggestion.tt-cursor {
+      color: #333;
+      background-color: #eee;
+    }
+
+    .tt-suggestion p {
+      margin: 0;
+      .small {
+        font-size: 12px;
+        color: #666;
+      }
+    }
+
+    .gist {
+      font-size: 14px;
+    }
+
+    /* example specific styles */
+    /* ----------------------- */
+
+    #custom-templates .empty-message {
+      padding: 5px 10px;
+      text-align: center;
+    }
+
+    #multiple-datasets .league-name {
+      margin: 0 20px 5px 20px;
+      padding: 3px 0;
+      border-bottom: 1px solid #ccc;
+    }
+
+    #scrollable-dropdown-menu .tt-dropdown-menu {
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    #rtl-support .tt-dropdown-menu {
+      text-align: right;
+    }
+  }
+
+
+
+  @media only screen and (max-width : 480px) {
+    /* Smartphone view: 1 tile */
+    .twitter-typeahead {
+      width: 100%;
+    }
+  }
+  @media only screen and (max-width : 650px) and (min-width : 481px) {
+    /* Tablet view: 2 tiles */
+    .twitter-typeahead {
+      width: 100%;
+    }
+  }
+  @media only screen and (max-width : 1050px) and (min-width : 651px) {
+    /* Small desktop / ipad view: 3 tiles */
+    .twitter-typeahead {
+      width: 500px;
+    }
+  }
+  @media only screen and (max-width : 1290px) and (min-width : 1051px) {
+    /* Medium desktop: 4 tiles */
+    .twitter-typeahead {
+      width: 600px;
+    }
+  }
+
+
+}
+
+
+
