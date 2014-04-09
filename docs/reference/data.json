@@ -33,6 +33,17 @@
             "fors": {},
             "namespaces": {}
         },
+        "src/environment/environment.js": {
+            "name": "src/environment/environment.js",
+            "modules": {
+                "Environment": 1
+            },
+            "classes": {},
+            "fors": {
+                "Environment": 1
+            },
+            "namespaces": {}
+        },
         "src/image/filters.js": {
             "name": "src/image/filters.js",
             "modules": {},
@@ -181,6 +192,24 @@
                 "core"
             ]
         },
+        "Environment": {
+            "name": "Environment",
+            "submodules": {},
+            "classes": {
+                "Environment": 1
+            },
+            "fors": {
+                "Environment": 1
+            },
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/environment/environment.js",
+            "line": 1,
+            "requires": [
+                "core",
+                "constants"
+            ]
+        },
         "Image": {
             "name": "Image",
             "submodules": {},
@@ -294,6 +323,17 @@
             "plugin_for": [],
             "extension_for": [],
             "module": "Color",
+            "namespace": ""
+        },
+        "Environment": {
+            "name": "Environment",
+            "shortname": "Environment",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "Environment",
             "namespace": ""
         },
         "Image": {
@@ -706,7 +746,7 @@
                 "description": "",
                 "type": "P5"
             },
-            "class": "Image",
+            "class": "Environment",
             "module": "Color"
         },
         {
@@ -717,7 +757,7 @@
                 "description": "",
                 "type": "Undefined"
             },
-            "class": "Image",
+            "class": "Environment",
             "module": "Color"
         },
         {
@@ -728,7 +768,7 @@
                 "description": "",
                 "type": "Undefined"
             },
-            "class": "Image",
+            "class": "Environment",
             "module": "Color"
         },
         {
@@ -739,7 +779,7 @@
                 "description": "",
                 "type": "Undefined"
             },
-            "class": "Image",
+            "class": "Environment",
             "module": "Color"
         },
         {
@@ -750,7 +790,7 @@
                 "description": "",
                 "type": "Undefined"
             },
-            "class": "Image",
+            "class": "Environment",
             "module": "Color"
         },
         {
@@ -761,7 +801,7 @@
                 "description": "",
                 "type": "Undefined"
             },
-            "class": "Image",
+            "class": "Environment",
             "module": "Color"
         },
         {
@@ -772,7 +812,7 @@
                 "description": "",
                 "type": "Undefined"
             },
-            "class": "Image",
+            "class": "Environment",
             "module": "Color"
         },
         {
@@ -783,15 +823,103 @@
                 "description": "",
                 "type": "Undefined"
             },
-            "class": "Image",
+            "class": "Environment",
             "module": "Color"
+        },
+        {
+            "file": "src/environment/environment.js",
+            "line": 16,
+            "description": "Sets the cursor to a predefined symbol or an image, or makes it visible if already hidden. If you are trying to set an image as the cursor, the recommended size is 16x16 or 32x32 pixels. It is not possible to load an image as the cursor if you are exporting your program for the Web, and not all MODES work with all browsers. The values for parameters x and y must be less than the dimensions of the image.",
+            "itemtype": "method",
+            "name": "cursor",
+            "params": [
+                {
+                    "name": "kind",
+                    "description": "either ARROW, CROSS, HAND, MOVE, TEXT, or WAIT, or path for image",
+                    "type": "Number/Constant"
+                },
+                {
+                    "name": "x",
+                    "description": "the horizontal active spot of the cursor",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "y",
+                    "description": "the vertical active spot of the cursor",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "class": "Environment",
+            "module": "Environment"
+        },
+        {
+            "file": "src/environment/environment.js",
+            "line": 51,
+            "description": "Specifies the number of frames to be displayed every second. For example, the function call frameRate(30) will attempt to refresh 30 times a second. If the processor is not fast enough to maintain the specified rate, the frame rate will not be achieved. Setting the frame rate within setup() is recommended. The default rate is 60 frames per second.\nCalling frameRate() with no arguments returns the current framerate.",
+            "itemtype": "method",
+            "name": "frameRate",
+            "params": [
+                {
+                    "name": "fps",
+                    "description": "number of frames to be displayed every second",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "return": {
+                "description": "[frameRate] current frameRate",
+                "type": "Number"
+            },
+            "class": "Environment",
+            "module": "Environment"
+        },
+        {
+            "file": "src/environment/environment.js",
+            "line": 68,
+            "description": "Returns the current framerate.",
+            "itemtype": "method",
+            "name": "getFrameRate",
+            "return": {
+                "description": "[frameRate] current frameRate",
+                "type": "Number"
+            },
+            "class": "Environment",
+            "module": "Environment"
+        },
+        {
+            "file": "src/environment/environment.js",
+            "line": 78,
+            "description": "Specifies the number of frames to be displayed every second. For example, the function call frameRate(30) will attempt to refresh 30 times a second. If the processor is not fast enough to maintain the specified rate, the frame rate will not be achieved. Setting the frame rate within setup() is recommended. The default rate is 60 frames per second.\nCalling frameRate() with no arguments returns the current framerate.",
+            "itemtype": "method",
+            "name": "setFrameRate",
+            "params": [
+                {
+                    "name": "fps",
+                    "description": "number of frames to be displayed every second",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "class": "Environment",
+            "module": "Environment"
+        },
+        {
+            "file": "src/environment/environment.js",
+            "line": 89,
+            "description": "Hides the cursor from view.",
+            "itemtype": "method",
+            "name": "noCursor",
+            "class": "Environment",
+            "module": "Environment"
         },
         {
             "file": "src/image/filters.js",
             "line": 5,
             "description": "This module defines the filters for use with image buffers.\n\nThis module is basically a collection of functions stored in an object\nas opposed to modules. The functions are destructive, modifying\nthe passed in canvas rather than creating a copy.\n\nGenerally speaking users of this module will use the Filters.apply method\non a canvas to create an effect.\n\nA number of functions are borrowed/adapted from http://www.html5rocks.com/en/tutorials/canvas/imagefilters/\nor the java processing implmentation.",
             "class": "Image",
-            "module": "Color"
+            "module": "Environment"
         },
         {
             "file": "src/image/filters.js",
@@ -811,7 +939,7 @@
                 "type": "Uint8ClampedArray"
             },
             "class": "Image",
-            "module": "Color"
+            "module": "Environment"
         },
         {
             "file": "src/image/filters.js",
@@ -836,7 +964,7 @@
                 "type": "Integer"
             },
             "class": "Image",
-            "module": "Color"
+            "module": "Environment"
         },
         {
             "file": "src/image/filters.js",
@@ -857,7 +985,7 @@
                 }
             ],
             "class": "Image",
-            "module": "Color"
+            "module": "Environment"
         },
         {
             "file": "src/image/filters.js",
@@ -877,7 +1005,7 @@
                 "type": "ImageData"
             },
             "class": "Image",
-            "module": "Color"
+            "module": "Environment"
         },
         {
             "file": "src/image/filters.js",
@@ -902,7 +1030,7 @@
                 "type": "ImageData"
             },
             "class": "Image",
-            "module": "Color"
+            "module": "Environment"
         },
         {
             "file": "src/image/filters.js",
@@ -930,7 +1058,7 @@
                 "type": "[type]"
             },
             "class": "Image",
-            "module": "Color"
+            "module": "Environment"
         },
         {
             "file": "src/image/filters.js",
@@ -949,7 +1077,7 @@
                 }
             ],
             "class": "Image",
-            "module": "Color"
+            "module": "Environment"
         },
         {
             "file": "src/image/filters.js",
@@ -963,7 +1091,7 @@
                 }
             ],
             "class": "Image",
-            "module": "Color"
+            "module": "Environment"
         },
         {
             "file": "src/image/filters.js",
@@ -977,7 +1105,7 @@
                 }
             ],
             "class": "Image",
-            "module": "Color"
+            "module": "Environment"
         },
         {
             "file": "src/image/filters.js",
@@ -991,7 +1119,7 @@
                 }
             ],
             "class": "Image",
-            "module": "Color"
+            "module": "Environment"
         },
         {
             "file": "src/image/filters.js",
@@ -1010,7 +1138,7 @@
                 }
             ],
             "class": "Image",
-            "module": "Color"
+            "module": "Environment"
         },
         {
             "file": "src/image/filters.js",
@@ -1024,7 +1152,7 @@
                 }
             ],
             "class": "Image",
-            "module": "Color"
+            "module": "Environment"
         },
         {
             "file": "src/image/filters.js",
@@ -1038,7 +1166,7 @@
                 }
             ],
             "class": "Image",
-            "module": "Color"
+            "module": "Environment"
         },
         {
             "file": "src/image/image.js",

@@ -6,6 +6,7 @@ YUI.add("yuidoc-meta", function(Y) {
         "Calculation",
         "Creating & Reading",
         "Curves",
+        "Environment",
         "Image",
         "Loading & Displaying",
         "Noise",
@@ -19,6 +20,7 @@ YUI.add("yuidoc-meta", function(Y) {
     ],
     "modules": [
         "Color",
+        "Environment",
         "Image",
         "Math",
         "Shape",
@@ -28,6 +30,10 @@ YUI.add("yuidoc-meta", function(Y) {
         {
             "displayName": "Color",
             "name": "Color"
+        },
+        {
+            "displayName": "Environment",
+            "name": "Environment"
         },
         {
             "displayName": "Image",
