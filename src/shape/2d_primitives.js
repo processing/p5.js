@@ -1,6 +1,6 @@
 /**
- * @module shape
- * @for 2d primitives
+ * @module Shape
+ * @for 2D Primitives
  * @requires core
  * @requires canvas
  * @requires constants

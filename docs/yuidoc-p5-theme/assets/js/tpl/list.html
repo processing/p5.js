@@ -8,13 +8,22 @@
 
   <% _.each(groups, function(group){ %>
   <li class="group">
-    <h4><%=group.name%></h4>
+    <h3 class="group-name"><%=group.name%></h3>
 
     <ul class="<%=group.name%>-group">
-      <% _.each(group.items, function(item) { %>
-      <li>
-        <a href="<%=item.hash%>"><%=item.name%></a>
-      </li>
+      <% _.each(group.subgroups, function(subgroup) { %>
+        <li>
+          <% if (subgroup.name !== group.name) { %>
+            <h3 class="subgroup-name"><%=subgroup.name%></h3>
+          <% } %>
+          <ul>
+            <% _.each(subgroup.items, function(item) { %>
+              <li>
+                <a href="<%=item.hash%>"><%=item.name%></a>
+              </li>
+            <% }); %>
+          </ul>
+        </li>
       <% }); %>
     </ul>
 

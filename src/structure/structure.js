@@ -1,3 +1,8 @@
+/**
+ * @module Structure
+ * @for Structure
+ * @requires core
+ */
 define(function (require) {
 
   'use strict';
@@ -7,15 +12,35 @@ define(function (require) {
   p5.prototype.exit = function() {
     throw 'Not implemented';
   };
-
+  /**
+   * Stops Processing from continuously executing the code within draw(). If loop() is called, the code in draw() begins to run continuously again. If using noLoop() in setup(), it should be the last line inside the block.
+   * 
+   * When noLoop() is used, it's not possible to manipulate or access the screen inside event handling functions such as mousePressed() or keyPressed(). Instead, use those functions to call redraw() or loop(), which will run draw(), which can update the screen properly. This means that when noLoop() has been called, no drawing can happen, and functions like saveFrame() or loadPixels() may not be used.
+   * 
+   * Note that if the sketch is resized, redraw() will be called to update the sketch, even after noLoop() has been specified. Otherwise, the sketch would enter an odd state until loop() was called.
+   *
+   * @method noLoop
+   */
   p5.prototype.noLoop = function() {
     this.settings.loop = false;
   };
 
+  /**
+   * By default, Processing loops through draw() continuously, executing the code within it. However, the draw() loop may be stopped by calling noLoop(). In that case, the draw() loop can be resumed with loop().
+   * 
+   * @method loop
+   */
   p5.prototype.loop = function() {
     this.settings.loop = true;
   };
 
+  /**
+   * The pushStyle() function saves the current style settings and popStyle() restores the prior settings. Note that these functions are always used together. They allow you to change the style settings and later return to what you had. When a new style is started with pushStyle(), it builds on the current style information. The pushStyle() and popStyle() functions can be embedded to provide more control. (See the second example above for a demonstration.)
+   *
+   * The style information controlled by the following functions are included in the style: fill(), stroke(), tint(), strokeWeight(), strokeCap(), strokeJoin(), imageMode(), rectMode(), ellipseMode(), shapeMode(), colorMode(), textAlign(), textFont(), textMode(), textSize(), textLeading(), emissive(), specular(), shininess(), ambient()
+   *
+   * @method pushStyle
+   */
   p5.prototype.pushStyle = function() {
 
     this.styles.push({
@@ -38,6 +63,11 @@ define(function (require) {
     });
   };
 
+  /**
+   * The pushStyle() function saves the current style settings and popStyle() restores the prior settings; these functions are always used together. They allow you to change the style settings and later return to what you had. When a new style is started with pushStyle(), it builds on the current style information. The pushStyle() and popStyle() functions can be embedded to provide more control (see the second example above for a demonstration.)
+   * 
+   * @method popStyle
+   */
   p5.prototype.popStyle = function() {
 
     var lastS = this.styles.pop();
@@ -58,7 +88,6 @@ define(function (require) {
     this.settings.textLeading = lastS.textLeading; // textLeading
     this.settings.textSize = lastS.textSize; // textSize
     this.settings.textStyle = lastS.textStyle; // textStyle
-
   };
 
   p5.prototype.redraw = function() {

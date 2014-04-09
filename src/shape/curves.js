@@ -1,6 +1,6 @@
 /**
- * @module shape
- * @for curves
+ * @module Shape
+ * @for Curves
  * @requires core
  */
 define(function (require) {
@@ -149,11 +149,11 @@ define(function (require) {
    * with the y coordinates to get the location of a curve at t.
    *
    * @method curvePoint
-   * @param  {Number} a coordinate of first point on the curve
-   * @param  {Number} b coordinate of first control point
-   * @param  {Number} c coordinate of second control point
-   * @param  {Number} d coordinate of second point on the curve
-   * @param  {Number} t value between 0 and 1
+   * @param {Number} a coordinate of first point on the curve
+   * @param {Number} b coordinate of first control point
+   * @param {Number} c coordinate of second control point
+   * @param {Number} d coordinate of second point on the curve
+   * @param {Number} t value between 0 and 1
    * @return {Number} value Bezier value at point t
    */
 
@@ -175,11 +175,11 @@ define(function (require) {
    * on the curve, and b and c are the control points
    *
    * @method curveTangent
-   * @param  {Number} a coordinate of first point on the curve
-   * @param  {Number} b coordinate of first control point
-   * @param  {Number} c coordinate of second control point
-   * @param  {Number} d coordinate of second point on the curve
-   * @param  {Number} t value between 0 and 1
+   * @param {Number} a coordinate of first point on the curve
+   * @param {Number} b coordinate of first control point
+   * @param {Number} c coordinate of second control point
+   * @param {Number} d coordinate of second point on the curve
+   * @param {Number} t value between 0 and 1
    * @return {Number} value the tangent at point t
    */
   p5.prototype.curveTangent = function(a, b,c, d, t) {

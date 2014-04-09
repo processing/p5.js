@@ -1,6 +1,6 @@
 /**
- * @module shape
- * @for attributes
+ * @module Shape
+ * @for Attributes
  * @requires core
  * @requires constants
  */
@@ -26,7 +26,7 @@ define(function (require) {
    * The parameter must be written in ALL CAPS because Processing is a case-sensitive language.
    *
    * @method ellipseMode
-   * @param {Number/Variable} mode either CENTER, RADIUS, CORNER, or CORNERS
+   * @param {Number/Constant} mode either CENTER, RADIUS, CORNER, or CORNERS
    * @return {p5} the p5 object
    */
   p5.prototype.ellipseMode = function(m) {
@@ -64,7 +64,7 @@ define(function (require) {
    * The parameter must be written in ALL CAPS because Processing is a case-sensitive language.
    * 
    * @method rectMode
-   * @param {Number/Variable} mode either CORNER, CORNERS, CENTER, or RADIUS
+   * @param {Number/Constant} mode either CORNER, CORNERS, CENTER, or RADIUS
    * @return {p5} the p5 object
    */
   p5.prototype.rectMode = function(m) {
@@ -92,7 +92,7 @@ define(function (require) {
    * Sets the style for rendering line endings. These ends are either squared, extended, or rounded, each of which specified with the corresponding parameters: SQUARE, PROJECT, and ROUND. The default cap is ROUND.
    * 
    * @method strokeCap
-   * @param {Number/Variable} cap either SQUARE, PROJECT, or ROUND
+   * @param {Number/Constant} cap either SQUARE, PROJECT, or ROUND
    * @return {p5} the p5 object
    */
   p5.prototype.strokeCap = function(cap) {
@@ -107,7 +107,7 @@ define(function (require) {
    * Sets the style of the joints which connect line segments. These joints are either mitered, beveled, or rounded and specified with the corresponding parameters MITER, BEVEL, and ROUND. The default joint is MITER.
    *
    * @method strokeJoin
-   * @param {Number/Variable} join either MITER, BEVEL, ROUND
+   * @param {Number/Constant} join either MITER, BEVEL, ROUND
    * @return {p5} the p5 object
    */
   p5.prototype.strokeJoin = function(join) {

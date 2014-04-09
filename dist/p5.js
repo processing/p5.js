@@ -460,11 +460,15 @@ var colorcreating_reading = function (require, core) {
             }
         };
         p5.prototype.lerpColor = function (c1, c2, amt) {
-            var c = [];
-            for (var i = 0; i < c1.length; i++) {
-                c.push(p5.prototype.lerp(c1[i], c2[i], amt));
+            if (typeof c1 === 'Array') {
+                var c = [];
+                for (var i = 0; i < c1.length; i++) {
+                    c.push(p5.prototype.lerp(c1[i], c2[i], amt));
+                }
+                return c;
+            } else {
+                return p5.prototype.lerp(c1, c2, amt);
             }
-            return c;
         };
         p5.prototype.red = function (rgb) {
             if (rgb.length > 2) {
@@ -2209,8 +2213,8 @@ var mathcalculation = function (require, core) {
         var p5 = core;
         p5.prototype.abs = Math.abs;
         p5.prototype.ceil = Math.ceil;
-        p5.prototype.constrain = function (n, l, h) {
-            return this.max(this.min(n, h), l);
+        p5.prototype.constrain = function (amt, low, high) {
+            return this.max(this.min(amt, high), low);
         };
         p5.prototype.dist = function (x1, y1, x2, y2) {
             var xs = x2 - x1;
@@ -2760,8 +2764,8 @@ var shapevertex = function (require, core, constants) {
             this.curElement.context.beginPath();
             return this;
         };
-        p5.prototype.bezierVertex = function (x1, y1, x2, y2, x3, y3) {
-            this.curElement.context.bezierCurveTo(x1, y1, x2, y2, x3, y3);
+        p5.prototype.bezierVertex = function (x2, y2, x3, y3, x4, y4) {
+            this.curElement.context.bezierCurveTo(x2, y2, x3, y3, x4, y4);
             return this;
         };
         p5.prototype.curveVertex = function () {

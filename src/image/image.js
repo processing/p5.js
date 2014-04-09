@@ -1,5 +1,5 @@
 /**
- * @module image
+ * @module Image
  * @requires core
  * @requires canvas
  * @requires constants
@@ -29,7 +29,7 @@ define(function (require) {
    * @param  {Integer} width
    * @param  {Integer} height
    * @return {PImage} the PImage object
-   * @for image
+   * @for Image
    */
   p5.prototype.createImage = function(width, height) {
     return new PImage(width, height);
@@ -47,7 +47,7 @@ define(function (require) {
    * @param  {String}   path
    * @param  {Function} callback Function to be called once the image is loaded. Will be passed the PImage.
    * @return {PImage} the PImage object
-   * @for loading & displaying
+   * @for Loading & Displaying
    */
   p5.prototype.loadImage = function(path, callback) {
     var img = new Image();
@@ -85,7 +85,7 @@ define(function (require) {
    * @param  {[type]} y
    * @param  {[type]} width
    * @param  {[type]} height   
-   * @for loading & displaying
+   * @for Loading & Displaying
    */
   p5.prototype.image = function(image, x, y, width, height) {
     if (width === undefined){
@@ -110,7 +110,7 @@ imageMode(CENTER) interprets the second and third parameters of image() as the i
 The parameter must be written in ALL CAPS because Processing is a case-sensitive language. 
    * @method imageMode
    * @param {String} m The mode: either CORNER, CORNERS, or CENTER.
-   * @for loading & displaying
+   * @for Loading & Displaying
    */
   p5.prototype.imageMode = function(m) {
     if (m === constants.CORNER || m === constants.CORNERS || m === constants.CENTER) {

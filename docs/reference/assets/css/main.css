@@ -4607,3 +4607,16 @@ ol.linenums li {
   .page-header .right-header {
     display: inline-block;
     width: 25%; }
+
+
+/* LM ADDING */
+.group-name {
+  color: #FF47A3;
+}
+.subgroup-name {
+  color: #FF47A3;
+  font-size: 100%;
+  font-weight: bold;
+}
+
+

@@ -10,7 +10,11 @@
 // http://mrl.nyu.edu/~perlin/paper445.pdf
 // See: https://github.com/shiffman/The-Nature-of-Code-Examples-p5.js/blob/master/introduction/Noise1D/noise.js
 
-
+/**
+ * @module Math
+ * @for Noise
+ * @requires core
+ */
 define(function (require) {
 
   'use strict';
@@ -55,7 +59,7 @@ define(function (require) {
    * <b>random()</b> function is that Perlin noise is defined in an infinite
    * n-dimensional space where each pair of coordinates corresponds to a
    * fixed semi-random value (fixed only for the lifespan of the program).
-   * The resulting value will always be between 0.0 and 1.0. Processing can
+   * The resulting value will always be between 0.0 and 1.0. p5.js can
    * compute 1D, 2D and 3D noise, depending on the number of coordinates
    * given. The noise value can be animated by moving through the noise space
    * as demonstrated in the example above. The 2nd and 3rd dimension can also
@@ -73,10 +77,11 @@ define(function (require) {
    * applications, but this will differ depending on use.
    *
    *
-   * @param  {x}      x-coordinate in noise space
-   * @param  {y}      y-coordinate in noise space
-   * @param  {z}      z-coordinate in noise space
-   * @return {Number} between 0 and 1
+   * @method noise
+   * @param {Number} x x-coordinate in noise space
+   * @param {Number} [y] y-coordinate in noise space
+   * @param {Number} [z] z-coordinate in noise space
+   * @return {Number} Perlin noise value (between 0 and 1) at specified coordinates
    */
   p5.prototype.noise = function(x,y,z) {
     // is this legit?
@@ -177,8 +182,9 @@ define(function (require) {
    * />By changing these parameters, the signal created by the <b>noise()</b>
    * function can be adapted to fit very specific needs and characteristics.
    *
-   * @param {lod} number of octaves to be used by the noise
-   * @param {falloff} falloff factor for each octave
+   * @method noiseDetail
+   * @param {Number} lod number of octaves to be used by the noise
+   * @param {Number} falloff falloff factor for each octave
    */
   p5.prototype.noiseDetail = function(lod, falloff) {
     if (lod>0)     { perlin_octaves=lod; }

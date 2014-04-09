@@ -1,3 +1,8 @@
+/**
+ * @module Math
+ * @for Random
+ * @requires core
+ */
 define(function (require) {
 
   'use strict';

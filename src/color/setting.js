@@ -1,3 +1,9 @@
+/**
+ * @module Color
+ * @for Setting
+ * @requires core
+ * @requires constants
+ */
 define(function (require) {
 
   'use strict';
