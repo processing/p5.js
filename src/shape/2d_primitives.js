@@ -1,5 +1,6 @@
 /**
- * @module p5
+ * @module 2d primitives
+ * @for 2d primitives
  * @requires core
  * @requires canvas
  * @requires constants

@@ -1,5 +1,6 @@
 /**
- * @module p5
+ * @module attributes
+ * @for attributes
  * @requires core
  * @requires constants
  */
