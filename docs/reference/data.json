@@ -68,6 +68,15 @@
         },
         "src/shape/2d_primitives.js": {
             "name": "src/shape/2d_primitives.js",
+            "modules": {
+                "p5": 1
+            },
+            "classes": {},
+            "fors": {},
+            "namespaces": {}
+        },
+        "src/shape/attributes.js": {
+            "name": "src/shape/attributes.js",
             "modules": {},
             "classes": {},
             "fors": {},
@@ -122,6 +131,21 @@
             "tag": "module",
             "file": "src/math/pvector.js",
             "line": 8
+        },
+        "p5": {
+            "name": "p5",
+            "submodules": {},
+            "classes": {},
+            "fors": {},
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/shape/2d_primitives.js",
+            "line": 1,
+            "requires": [
+                "core",
+                "canvas",
+                "constants"
+            ]
         }
     },
     "classes": {
@@ -582,7 +606,7 @@
                 }
             ],
             "return": {
-                "description": "",
+                "description": "the PImage object",
                 "type": "PImage"
             },
             "class": "p5",
@@ -607,7 +631,7 @@
                 }
             ],
             "return": {
-                "description": "The PImage object.",
+                "description": "the PImage object",
                 "type": "PImage"
             },
             "class": "p5",
@@ -1188,7 +1212,7 @@
                 }
             ],
             "return": {
-                "description": "A reference to the PVector object (allow chaining)",
+                "description": "reference to the PVector object (allow chaining)",
                 "type": "PVector"
             },
             "class": "PVector",
@@ -1218,7 +1242,7 @@
                 }
             ],
             "return": {
-                "description": "",
+                "description": "magnitude of the dot product",
                 "type": "Number/mag"
             },
             "class": "PVector",
@@ -1641,96 +1665,96 @@
         },
         {
             "file": "src/shape/2d_primitives.js",
-            "line": 10,
+            "line": 16,
             "description": "Draw an arc.\n\nIf a,b,c,d,start and stop are the only params provided, draws an\nopen pie.\nIf mode is provided draws the arc either open, chord or pie, dependant on the variable provided.",
             "itemtype": "method",
             "name": "arc",
             "params": [
                 {
                     "name": "a",
-                    "description": "X-coordinate of the arc's ellipse",
+                    "description": "x-coordinate of the arc's ellipse",
                     "type": "Number"
                 },
                 {
                     "name": "b",
-                    "description": "Y-coordinate of the arc's ellipse",
+                    "description": "y-coordinate of the arc's ellipse",
                     "type": "Number"
                 },
                 {
                     "name": "c",
-                    "description": "Width of the arc's ellipse by default",
+                    "description": "width of the arc's ellipse by default",
                     "type": "Number"
                 },
                 {
                     "name": "d",
-                    "description": "Height of the arc's ellipse by default",
+                    "description": "height of the arc's ellipse by default",
                     "type": "Number"
                 },
                 {
                     "name": "start",
-                    "description": "Angle to start the arc, specified in radians",
+                    "description": "angle to start the arc, specified in radians",
                     "type": "Number"
                 },
                 {
                     "name": "stop",
-                    "description": "Angle to stop the arc, specified in radians",
+                    "description": "angle to stop the arc, specified in radians",
                     "type": "Number"
                 },
                 {
                     "name": "mode",
-                    "description": "Optional parameter to determine the way of drawing the arc",
+                    "description": "optional parameter to determine the way of drawing the arc",
                     "type": "String",
                     "optional": true
                 }
             ],
             "return": {
-                "description": "Returns the p5 object.",
+                "description": "the p5 object",
                 "type": "Object"
             },
             "example": [
                 " <div><img src=\"http://processing.org/reference/images/arc_.png\">\n<code>arc(50, 55, 50, 50, 0, HALF_PI);\nnoFill();\narc(50, 55, 60, 60, HALF_PI, PI);\narc(50, 55, 70, 70, PI, PI+QUARTER_PI);\narc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);\n</code></div>\n\n<div><img src=\"http://processing.org/reference/images/arc_2.png\">\n<code>arc(50, 50, 80, 80, 0, PI+QUARTER_PI, OPEN);\n</code></div>\n\n<div><img src=\"http://processing.org/reference/images/arc_3.png\">\n<code>arc(50, 50, 80, 80, 0, PI+QUARTER_PI, CHORD);\n</code></div>\n\n<div><img src=\"http://processing.org/reference/images/arc_4.png\">\n<code>arc(50, 50, 80, 80, 0, PI+QUARTER_PI, PIE);\n</code></div>"
             ],
             "class": "",
-            "module": "PVector"
+            "module": "p5"
         },
         {
             "file": "src/shape/2d_primitives.js",
-            "line": 70,
+            "line": 76,
             "description": "Draws an ellipse (oval) to the screen. An ellipse with equal width and height is a circle. By default, the first two parameters set the location, and the third and fourth parameters set the shape's width and height. The origin may be changed with the ellipseMode() function.",
             "itemtype": "method",
             "name": "ellipse",
             "params": [
                 {
                     "name": "a",
-                    "description": "X-coordinate of the ellipse.",
+                    "description": "x-coordinate of the ellipse.",
                     "type": "Number"
                 },
                 {
                     "name": "b",
-                    "description": "Y-coordinate of the ellipse.",
+                    "description": "y-coordinate of the ellipse.",
                     "type": "Number"
                 },
                 {
                     "name": "c",
-                    "description": "Width of the ellipse.",
+                    "description": "width of the ellipse.",
                     "type": "Number"
                 },
                 {
                     "name": "d",
-                    "description": "Height of the ellipse.",
+                    "description": "height of the ellipse.",
                     "type": "Number"
                 }
             ],
             "return": {
-                "description": "Returns the p5 object.",
+                "description": "the p5 object",
                 "type": "P5"
             },
             "class": "",
-            "module": "PVector"
+            "module": "p5"
         },
         {
             "file": "src/shape/2d_primitives.js",
-            "line": 102,
+            "line": 107,
             "description": "Draws a line (a direct path between two points) to the screen. The version of line() with four parameters draws the line in 2D. To color a line, use the stroke() function. A line cannot be filled, therefore the fill() function will not affect the color of a line. 2D lines are drawn with a width of one pixel by default, but this can be changed with the strokeWeight() function. The version with six parameters allows the line to be placed anywhere within XYZ space. Drawing this shape in 3D with the z parameter requires the P3D parameter in combination with size() as shown in the above example.",
             "itemtype": "method",
             "name": "line",
@@ -1757,15 +1781,15 @@
                 }
             ],
             "return": {
-                "description": "Returns the p5 object.",
+                "description": "the p5 object",
                 "type": "P5"
             },
             "class": "",
-            "module": "PVector"
+            "module": "p5"
         },
         {
             "file": "src/shape/2d_primitives.js",
-            "line": 124,
+            "line": 129,
             "description": "Draws a point, a coordinate in space at the dimension of one pixel. The first parameter is the horizontal value for the point, the second value is the vertical value for the point, and the optional third value is the depth value. Drawing this shape in 3D with the z parameter requires the P3D parameter in combination with size() as shown in the above example.",
             "itemtype": "method",
             "name": "point",
@@ -1782,15 +1806,15 @@
                 }
             ],
             "return": {
-                "description": "Returns the p5 object.",
+                "description": "the p5 object",
                 "type": "P5"
             },
             "class": "",
-            "module": "PVector"
+            "module": "p5"
         },
         {
             "file": "src/shape/2d_primitives.js",
-            "line": 154,
+            "line": 159,
             "description": "Draw a quad. A quad is a quadrilateral, a four sided polygon. It is similar to a rectangle, but the angles between its edges are not constrained to ninety degrees. The first pair of parameters (x1,y1) sets the first vertex and the subsequent pairs should proceed clockwise or counter-clockwise around the defined shape.",
             "itemtype": "method",
             "name": "quad",
@@ -1837,16 +1861,432 @@
                 }
             ],
             "return": {
-                "description": "Returns the p5 object.",
+                "description": "the p5 object",
                 "type": "P5"
             },
             "class": "",
-            "module": "PVector"
+            "module": "p5"
+        },
+        {
+            "file": "src/shape/2d_primitives.js",
+            "line": 186,
+            "description": "Draws a rectangle to the screen. A rectangle is a four-sided shape with every angle at ninety degrees. By default, the first two parameters set the location of the upper-left corner, the third sets the width, and the fourth sets the height. The way these parameters are interpreted, however, may be changed with the rectMode() function.",
+            "itemtype": "method",
+            "name": "rect",
+            "params": [
+                {
+                    "name": "a",
+                    "description": "x-coordinate of the rectangle",
+                    "type": "Number"
+                },
+                {
+                    "name": "b",
+                    "description": "y-coordinate of the rectangle",
+                    "type": "Number"
+                },
+                {
+                    "name": "c",
+                    "description": "width of the rectangle",
+                    "type": "Number"
+                },
+                {
+                    "name": "d",
+                    "description": "height of the rectangle",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "the p5 object",
+                "type": "P5"
+            },
+            "class": "",
+            "module": "p5"
+        },
+        {
+            "file": "src/shape/2d_primitives.js",
+            "line": 207,
+            "description": "A triangle is a plane created by connecting three points. The first two arguments specify the first point, the middle two arguments specify the second point, and the last two arguments specify the third point.",
+            "itemtype": "method",
+            "name": "triangle",
+            "params": [
+                {
+                    "name": "x1",
+                    "description": "x-coordinate of the first point",
+                    "type": "Number"
+                },
+                {
+                    "name": "y1",
+                    "description": "y-coordinate of the first point",
+                    "type": "Number"
+                },
+                {
+                    "name": "x2",
+                    "description": "x-coordinate of the second point",
+                    "type": "Number"
+                },
+                {
+                    "name": "y2",
+                    "description": "y-coordinate of the second point",
+                    "type": "Number"
+                },
+                {
+                    "name": "x3",
+                    "description": "x-coordinate of the third point",
+                    "type": "Number"
+                },
+                {
+                    "name": "y3",
+                    "description": "y-coordinate of the third point",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "the p5 object",
+                "type": "P5"
+            },
+            "class": "",
+            "module": "p5"
+        },
+        {
+            "file": "src/shape/attributes.js",
+            "line": 14,
+            "description": "Modifies the location from which ellipses are drawn by changing the way in which parameters given to ellipse() are intepreted.\n\nThe default mode is ellipseMode(CENTER), which interprets the first two parameters of ellipse() as the shape's center point, while the third and fourth parameters are its width and height.\n\nellipseMode(RADIUS) also uses the first two parameters of ellipse() as the shape's center point, but uses the third and fourth parameters to specify half of the shapes's width and height.\n\nellipseMode(CORNER) interprets the first two parameters of ellipse() as the upper-left corner of the shape, while the third and fourth parameters are its width and height.\n\nellipseMode(CORNERS) interprets the first two parameters of ellipse() as the location of one corner of the ellipse's bounding box, and the third and fourth parameters as the location of the opposite corner.\n\nThe parameter must be written in ALL CAPS because Processing is a case-sensitive language.",
+            "itemtype": "method",
+            "name": "ellipseMode",
+            "params": [
+                {
+                    "name": "mode",
+                    "description": "either CENTER, RADIUS, CORNER, or CORNERS",
+                    "type": "Number/Variable"
+                }
+            ],
+            "return": {
+                "description": "the p5 object",
+                "type": "P5"
+            },
+            "class": "",
+            "module": "p5"
+        },
+        {
+            "file": "src/shape/attributes.js",
+            "line": 39,
+            "description": "Draws all geometry with jagged (aliased) edges. Note that smooth() is active by default, so it is necessary to call noSmooth() to disable smoothing of geometry, images, and fonts.",
+            "itemtype": "method",
+            "name": "noSmooth",
+            "return": {
+                "description": "the p5 object",
+                "type": "P5"
+            },
+            "class": "",
+            "module": "p5"
+        },
+        {
+            "file": "src/shape/attributes.js",
+            "line": 52,
+            "description": "Modifies the location from which rectangles are drawn by changing the way in which parameters given to rect() are intepreted.\n\nThe default mode is rectMode(CORNER), which interprets the first two parameters of rect() as the upper-left corner of the shape, while the third and fourth parameters are its width and height.\n\nrectMode(CORNERS) interprets the first two parameters of rect() as the location of one corner, and the third and fourth parameters as the location of the opposite corner.\n\nrectMode(CENTER) interprets the first two parameters of rect() as the shape's center point, while the third and fourth parameters are its width and height.\n\nrectMode(RADIUS) also uses the first two parameters of rect() as the shape's center point, but uses the third and fourth parameters to specify half of the shapes's width and height.\n\nThe parameter must be written in ALL CAPS because Processing is a case-sensitive language.",
+            "itemtype": "method",
+            "name": "rectMode",
+            "params": [
+                {
+                    "name": "mode",
+                    "description": "either CORNER, CORNERS, CENTER, or RADIUS",
+                    "type": "Number/Variable"
+                }
+            ],
+            "return": {
+                "description": "the p5 object",
+                "type": "P5"
+            },
+            "class": "",
+            "module": "p5"
+        },
+        {
+            "file": "src/shape/attributes.js",
+            "line": 77,
+            "description": "Draws all geometry with smooth (anti-aliased) edges. smooth() will also improve image quality of resized images. Note that smooth() is active by default; noSmooth() can be used to disable smoothing of geometry, images, and fonts.",
+            "itemtype": "method",
+            "name": "smooth",
+            "return": {
+                "description": "the p5 object",
+                "type": "P5"
+            },
+            "class": "",
+            "module": "p5"
+        },
+        {
+            "file": "src/shape/attributes.js",
+            "line": 90,
+            "description": "Sets the style for rendering line endings. These ends are either squared, extended, or rounded, each of which specified with the corresponding parameters: SQUARE, PROJECT, and ROUND. The default cap is ROUND.",
+            "itemtype": "method",
+            "name": "strokeCap",
+            "params": [
+                {
+                    "name": "cap",
+                    "description": "either SQUARE, PROJECT, or ROUND",
+                    "type": "Number/Variable"
+                }
+            ],
+            "return": {
+                "description": "the p5 object",
+                "type": "P5"
+            },
+            "class": "",
+            "module": "p5"
+        },
+        {
+            "file": "src/shape/attributes.js",
+            "line": 105,
+            "description": "Sets the style of the joints which connect line segments. These joints are either mitered, beveled, or rounded and specified with the corresponding parameters MITER, BEVEL, and ROUND. The default joint is MITER.",
+            "itemtype": "method",
+            "name": "strokeJoin",
+            "params": [
+                {
+                    "name": "join",
+                    "description": "either MITER, BEVEL, ROUND",
+                    "type": "Number/Variable"
+                }
+            ],
+            "return": {
+                "description": "the p5 object",
+                "type": "P5"
+            },
+            "class": "",
+            "module": "p5"
+        },
+        {
+            "file": "src/shape/attributes.js",
+            "line": 120,
+            "description": "Sets the width of the stroke used for lines, points, and the border around shapes. All widths are set in units of pixels.",
+            "itemtype": "method",
+            "name": "strokeWeight",
+            "params": [
+                {
+                    "name": "weight",
+                    "description": "the weight (in pixels) of the stroke",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "the p5 object",
+                "type": "P5"
+            },
+            "class": "",
+            "module": "p5"
         },
         {
             "file": "src/shape/curves.js",
-            "line": 22,
-            "description": "Sets the resolution at which Beziers display.\n\nThe default value is 20.\n\nReturns void",
+            "line": 12,
+            "description": "Draws a Bezier curve on the screen. These curves are defined by a series of anchor and control points. The first two parameters specify the first anchor point and the last two parameters specify the other anchor point. The middle parameters specify the control points which define the shape of the curve. Bezier curves were developed by French engineer Pierre Bezier. Using the 3D version requires rendering with P3D (see the Environment reference for more information).",
+            "itemtype": "method",
+            "name": "bezier",
+            "params": [
+                {
+                    "name": "x1",
+                    "description": "x-coordinate for the first anchor point",
+                    "type": "Number"
+                },
+                {
+                    "name": "y1",
+                    "description": "y-coordinate for the first anchor point",
+                    "type": "Number"
+                },
+                {
+                    "name": "x2",
+                    "description": "x-coordinate for the first control point",
+                    "type": "Number"
+                },
+                {
+                    "name": "y2",
+                    "description": "y-coordinate for the first control point",
+                    "type": "Number"
+                },
+                {
+                    "name": "x3",
+                    "description": "x-coordinate for the second control point",
+                    "type": "Number"
+                },
+                {
+                    "name": "y3",
+                    "description": "y-coordinate for the second control point",
+                    "type": "Number"
+                },
+                {
+                    "name": "x4",
+                    "description": "x-coordinate for the second anchor point",
+                    "type": "Number"
+                },
+                {
+                    "name": "y4",
+                    "description": "y-coordinate for the second anchor point",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "the p5 object",
+                "type": "Object"
+            },
+            "class": "",
+            "module": "p5"
+        },
+        {
+            "file": "src/shape/curves.js",
+            "line": 39,
+            "description": "Sets the resolution at which Beziers display.\n\nThe default value is 20.",
+            "itemtype": "method",
+            "name": "bezierDetail",
+            "params": [
+                {
+                    "name": "detail",
+                    "description": "resolution of the curves",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "the p5 object",
+                "type": "Object"
+            },
+            "class": "",
+            "module": "p5"
+        },
+        {
+            "file": "src/shape/curves.js",
+            "line": 53,
+            "description": "Calculate a point on the Bezier Curve\n\nEvaluates the Bezier at point t for points a, b, c, d.\nThe parameter t varies between 0 and 1, a and d are points\non the curve, and b and c are the control points.\nThis can be done once with the x coordinates and a second time\nwith the y coordinates to get the location of a bezier curve at t.",
+            "itemtype": "method",
+            "name": "bezierPoint",
+            "params": [
+                {
+                    "name": "a",
+                    "description": "coordinate of first point on the curve",
+                    "type": "Number"
+                },
+                {
+                    "name": "b",
+                    "description": "coordinate of first control point",
+                    "type": "Number"
+                },
+                {
+                    "name": "c",
+                    "description": "coordinate of second control point",
+                    "type": "Number"
+                },
+                {
+                    "name": "d",
+                    "description": "coordinate of second point on the curve",
+                    "type": "Number"
+                },
+                {
+                    "name": "t",
+                    "description": "value between 0 and 1",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "value the value of the Bezier at point t",
+                "type": "Number"
+            },
+            "class": "",
+            "module": "p5"
+        },
+        {
+            "file": "src/shape/curves.js",
+            "line": 77,
+            "description": "Calculates the tangent of a point on a Bezier curve\n\nEvaluates the tangent at point t for points a, b, c, d.\nThe parameter t varies between 0 and 1, a and d are points\non the curve, and b and c are the control points",
+            "params": [
+                {
+                    "name": "a",
+                    "description": "coordinate of first point on the curve",
+                    "type": "Number"
+                },
+                {
+                    "name": "b",
+                    "description": "coordinate of first control point",
+                    "type": "Number"
+                },
+                {
+                    "name": "c",
+                    "description": "coordinate of second control point",
+                    "type": "Number"
+                },
+                {
+                    "name": "d",
+                    "description": "coordinate of second point on the curve",
+                    "type": "Number"
+                },
+                {
+                    "name": "t",
+                    "description": "value between 0 and 1",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "value the tangent at point t",
+                "type": "Number"
+            },
+            "class": "",
+            "module": "p5"
+        },
+        {
+            "file": "src/shape/curves.js",
+            "line": 96,
+            "description": "Draws a curved line on the screen. The first and second parameters specify the beginning control point and the last two parameters specify the ending control point. The middle parameters specify the start and stop of the curve. Longer curves can be created by putting a series of curve() functions together or using curveVertex(). An additional function called curveTightness() provides control for the visual quality of the curve. The curve() function is an implementation of Catmull-Rom splines. Using the 3D version requires rendering with P3D (see the Environment reference for more information).",
+            "itemtype": "method",
+            "name": "curve",
+            "params": [
+                {
+                    "name": "x1",
+                    "description": "x-coordinate for the beginning control point",
+                    "type": "Number"
+                },
+                {
+                    "name": "y1",
+                    "description": "y-coordinate for the beginning control point",
+                    "type": "Number"
+                },
+                {
+                    "name": "x2",
+                    "description": "x-coordinate for the first point",
+                    "type": "Number"
+                },
+                {
+                    "name": "y2",
+                    "description": "y-coordinate for the first point",
+                    "type": "Number"
+                },
+                {
+                    "name": "x3",
+                    "description": "x-coordinate for the second point",
+                    "type": "Number"
+                },
+                {
+                    "name": "y3",
+                    "description": "y-coordinate for the second point",
+                    "type": "Number"
+                },
+                {
+                    "name": "x4",
+                    "description": "x-coordinate for the ending control point",
+                    "type": "Number"
+                },
+                {
+                    "name": "y4",
+                    "description": "y-coordinate for the ending control point",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "the p5 object",
+                "type": "Object"
+            },
+            "class": "",
+            "module": "p5"
+        },
+        {
+            "file": "src/shape/curves.js",
+            "line": 125,
+            "description": "Sets the resolution at which curves display.\n\nThe default value is 20.",
+            "itemtype": "method",
+            "name": "curveDetail",
             "params": [
                 {
                     "name": "resolution",
@@ -1854,13 +2294,19 @@
                     "type": "Number"
                 }
             ],
+            "return": {
+                "description": "the p5 object",
+                "type": "Object"
+            },
             "class": "",
-            "module": "PVector"
+            "module": "p5"
         },
         {
             "file": "src/shape/curves.js",
-            "line": 37,
-            "description": "Calculate a point on the Bezier Curve\n\nEvaluates the Bezier at point t for points a, b, c, d.\nThe parameter t varies between 0 and 1, a and d are points\non the curve, and b and c are the control points.\nThis can be done once with the x coordinates and a second time\nwith the y coordinates to get the location of a bezier curve at t.\n\nReturns Number",
+            "line": 141,
+            "description": "Calculate a point on the Curve\n\nEvaluates the Bezier at point t for points a, b, c, d.\nThe parameter t varies between 0 and 1, a and d are points\non the curve, and b and c are the control points.\nThis can be done once with the x coordinates and a second time\nwith the y coordinates to get the location of a curve at t.",
+            "itemtype": "method",
+            "name": "curvePoint",
             "params": [
                 {
                     "name": "a",
@@ -1888,13 +2334,19 @@
                     "type": "Number"
                 }
             ],
+            "return": {
+                "description": "value Bezier value at point t",
+                "type": "Number"
+            },
             "class": "",
-            "module": "PVector"
+            "module": "p5"
         },
         {
             "file": "src/shape/curves.js",
-            "line": 61,
-            "description": "Calculates the tangent of a point on a Bezier curve\n\nEvaluates the tangent at point t for points a, b, c, d.\nThe parameter t varies between 0 and 1, a and d are points\non the curve, and b and c are the control points\n\nReturns Number",
+            "line": 169,
+            "description": "Calculates the tangent of a point on a curve\n\nEvaluates the tangent at point t for points a, b, c, d.\nThe parameter t varies between 0 and 1, a and d are points\non the curve, and b and c are the control points",
+            "itemtype": "method",
+            "name": "curveTangent",
             "params": [
                 {
                     "name": "a",
@@ -1922,90 +2374,12 @@
                     "type": "Number"
                 }
             ],
+            "return": {
+                "description": "value the tangent at point t",
+                "type": "Number"
+            },
             "class": "",
-            "module": "PVector"
-        },
-        {
-            "file": "src/shape/curves.js",
-            "line": 98,
-            "description": "Sets the resolution at which curves display.\n\nThe default value is 20.\n\nReturns void",
-            "params": [
-                {
-                    "name": "resolution",
-                    "description": "of the curves",
-                    "type": "Number"
-                }
-            ],
-            "class": "",
-            "module": "PVector"
-        },
-        {
-            "file": "src/shape/curves.js",
-            "line": 114,
-            "description": "Calculate a point on the Curve\n\nEvaluates the Bezier at point t for points a, b, c, d.\nThe parameter t varies between 0 and 1, a and d are points\non the curve, and b and c are the control points.\nThis can be done once with the x coordinates and a second time\nwith the y coordinates to get the location of a curve at t.\n\nReturns Number",
-            "params": [
-                {
-                    "name": "a",
-                    "description": "coordinate of first point on the curve",
-                    "type": "Number"
-                },
-                {
-                    "name": "b",
-                    "description": "coordinate of first control point",
-                    "type": "Number"
-                },
-                {
-                    "name": "c",
-                    "description": "coordinate of second control point",
-                    "type": "Number"
-                },
-                {
-                    "name": "d",
-                    "description": "coordinate of second point on the curve",
-                    "type": "Number"
-                },
-                {
-                    "name": "t",
-                    "description": "value between 0 and 1",
-                    "type": "Number"
-                }
-            ],
-            "class": "",
-            "module": "PVector"
-        },
-        {
-            "file": "src/shape/curves.js",
-            "line": 142,
-            "description": "Calculates the tangent of a point on a curve\n\nEvaluates the tangent at point t for points a, b, c, d.\nThe parameter t varies between 0 and 1, a and d are points\non the curve, and b and c are the control points\n\nReturns Number",
-            "params": [
-                {
-                    "name": "a",
-                    "description": "coordinate of first point on the curve",
-                    "type": "Number"
-                },
-                {
-                    "name": "b",
-                    "description": "coordinate of first control point",
-                    "type": "Number"
-                },
-                {
-                    "name": "c",
-                    "description": "coordinate of second control point",
-                    "type": "Number"
-                },
-                {
-                    "name": "d",
-                    "description": "coordinate of second point on the curve",
-                    "type": "Number"
-                },
-                {
-                    "name": "t",
-                    "description": "value between 0 and 1",
-                    "type": "Number"
-                }
-            ],
-            "class": "",
-            "module": "PVector"
+            "module": "p5"
         },
         {
             "file": "src/app.js",
@@ -2016,7 +2390,7 @@
                 "type": "Undefined"
             },
             "class": "",
-            "module": "PVector"
+            "module": "p5"
         }
     ],
     "warnings": [
@@ -2253,28 +2627,8 @@
             "line": " src/math/random.js:18"
         },
         {
-            "message": "Missing item type\nSets the resolution at which Beziers display.\n\nThe default value is 20.\n\nReturns void",
-            "line": " src/shape/curves.js:22"
-        },
-        {
-            "message": "Missing item type\nCalculate a point on the Bezier Curve\n\nEvaluates the Bezier at point t for points a, b, c, d.\nThe parameter t varies between 0 and 1, a and d are points\non the curve, and b and c are the control points.\nThis can be done once with the x coordinates and a second time\nwith the y coordinates to get the location of a bezier curve at t.\n\nReturns Number",
-            "line": " src/shape/curves.js:37"
-        },
-        {
-            "message": "Missing item type\nCalculates the tangent of a point on a Bezier curve\n\nEvaluates the tangent at point t for points a, b, c, d.\nThe parameter t varies between 0 and 1, a and d are points\non the curve, and b and c are the control points\n\nReturns Number",
-            "line": " src/shape/curves.js:61"
-        },
-        {
-            "message": "Missing item type\nSets the resolution at which curves display.\n\nThe default value is 20.\n\nReturns void",
-            "line": " src/shape/curves.js:98"
-        },
-        {
-            "message": "Missing item type\nCalculate a point on the Curve\n\nEvaluates the Bezier at point t for points a, b, c, d.\nThe parameter t varies between 0 and 1, a and d are points\non the curve, and b and c are the control points.\nThis can be done once with the x coordinates and a second time\nwith the y coordinates to get the location of a curve at t.\n\nReturns Number",
-            "line": " src/shape/curves.js:114"
-        },
-        {
-            "message": "Missing item type\nCalculates the tangent of a point on a curve\n\nEvaluates the tangent at point t for points a, b, c, d.\nThe parameter t varies between 0 and 1, a and d are points\non the curve, and b and c are the control points\n\nReturns Number",
-            "line": " src/shape/curves.js:142"
+            "message": "Missing item type\nCalculates the tangent of a point on a Bezier curve\n\nEvaluates the tangent at point t for points a, b, c, d.\nThe parameter t varies between 0 and 1, a and d are points\non the curve, and b and c are the control points",
+            "line": " src/shape/curves.js:77"
         },
         {
             "message": "Missing item type\n_globalInit\n\nTODO: ???\nif sketch is on window\nassume \"global\" mode\nand instantiate p5 automatically\notherwise do nothing",

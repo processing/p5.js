@@ -28,7 +28,7 @@ define(function (require) {
    * @method createImage
    * @param  {Integer} width
    * @param  {Integer} height
-   * @return {PImage}
+   * @return {PImage} the PImage object
    * @for p5
    */
   p5.prototype.createImage = function(width, height) {
@@ -46,7 +46,7 @@ define(function (require) {
    * @method loadImage
    * @param  {String}   path
    * @param  {Function} callback Function to be called once the image is loaded. Will be passed the PImage.
-   * @return {PImage} The PImage object.
+   * @return {PImage} the PImage object
    * @for p5
    */
   p5.prototype.loadImage = function(path, callback) {

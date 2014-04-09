@@ -128,7 +128,7 @@ define(function (require) {
    * @method div
    * @chainable
    * @param {number} n the number to divide the vector by
-   * @return {PVector} A reference to the PVector object (allow chaining)
+   * @return {PVector} reference to the PVector object (allow chaining)
    */
   PVector.prototype.div = function (n) {
     this.x /= n;
@@ -144,7 +144,7 @@ define(function (require) {
    * @param {Number} x
    * @param {Number} y
    * @param {Number} z
-   * @return {Number/mag}
+   * @return {Number/mag} magnitude of the dot product
    */
   PVector.prototype.mag = function () {
     return Math.sqrt(this.magSq());

@@ -1,3 +1,9 @@
+/**
+ * @module p5
+ * @requires core
+ * @requires canvas
+ * @requires constants
+ */
 define(function (require) {
 
   'use strict';
@@ -15,14 +21,14 @@ define(function (require) {
    * If mode is provided draws the arc either open, chord or pie, dependant on the variable provided.
    * 
    * @method arc
-   * @param  {Number} a X-coordinate of the arc's ellipse
-   * @param  {Number} b Y-coordinate of the arc's ellipse
-   * @param  {Number} c Width of the arc's ellipse by default
-   * @param  {Number} d Height of the arc's ellipse by default
-   * @param  {Number} start Angle to start the arc, specified in radians
-   * @param  {Number} stop Angle to stop the arc, specified in radians
-   * @param  {String} [mode] Optional parameter to determine the way of drawing the arc
-   * @return {Object} Returns the p5 object.
+   * @param  {Number} a x-coordinate of the arc's ellipse
+   * @param  {Number} b y-coordinate of the arc's ellipse
+   * @param  {Number} c width of the arc's ellipse by default
+   * @param  {Number} d height of the arc's ellipse by default
+   * @param  {Number} start angle to start the arc, specified in radians
+   * @param  {Number} stop angle to stop the arc, specified in radians
+   * @param  {String} [mode] optional parameter to determine the way of drawing the arc
+   * @return {Object} the p5 object
    * 
    * @example <div><img src="http://processing.org/reference/images/arc_.png">
 <code>arc(50, 55, 50, 50, 0, HALF_PI);
@@ -71,13 +77,12 @@ arc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);
    * Draws an ellipse (oval) to the screen. An ellipse with equal width and height is a circle. By default, the first two parameters set the location, and the third and fourth parameters set the shape's width and height. The origin may be changed with the ellipseMode() function. 
    * 
    * @method ellipse
-   * @param {Number} a X-coordinate of the ellipse.
-   * @param {Number} b Y-coordinate of the ellipse.
-   * @param {Number} c Width of the ellipse.
-   * @param {Number} d Height of the ellipse.
-   * @return {p5} Returns the p5 object.
+   * @param {Number} a x-coordinate of the ellipse.
+   * @param {Number} b y-coordinate of the ellipse.
+   * @param {Number} c width of the ellipse.
+   * @param {Number} d height of the ellipse.
+   * @return {p5} the p5 object
    */
-
   p5.prototype.ellipse = function(x, y, width, height) {
     var vals = canvas.modeAdjust(x, y, width, height, this.settings.ellipseMode);
     var kappa = 0.5522848,
@@ -107,7 +112,7 @@ arc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);
    * @param {Number} y1 
    * @param {Number} x2 
    * @param {Number} y2 
-   * @return {p5} Returns the p5 object.
+   * @return {p5} the p5 object
    */
   p5.prototype.line = function(x1, y1, x2, y2) {
     if (this.curElement.context.strokeStyle === 'rgba(0,0,0,0)') {
@@ -127,7 +132,7 @@ arc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);
    * @method point
    * @param {Number} x
    * @param {Number} y
-   * @return {p5} Returns the p5 object.
+   * @return {p5} the p5 object
    */
   p5.prototype.point = function(x, y) {
     var s = this.curElement.context.strokeStyle;
@@ -163,7 +168,7 @@ arc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);
    * @param {type} y3
    * @param {type} x4
    * @param {type} y4
-   * @return {p5} Returns the p5 object.
+   * @return {p5} the p5 object
    */
   p5.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
     this.curElement.context.beginPath();
@@ -178,6 +183,17 @@ arc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);
     return this;
   };
 
+  /**
+  * Draws a rectangle to the screen. A rectangle is a four-sided shape with every angle at ninety degrees. By default, the first two parameters set the location of the upper-left corner, the third sets the width, and the fourth sets the height. The way these parameters are interpreted, however, may be changed with the rectMode() function.
+  *
+  * @method rect
+  * @param {Number} a x-coordinate of the rectangle
+  * @param {Number} b y-coordinate of the rectangle
+  * @param {Number} c width of the rectangle
+  * @param {Number} d height of the rectangle
+  * @return {p5} the p5 object
+  * 
+  */
   p5.prototype.rect = function(a, b, c, d) {
     var vals = canvas.modeAdjust(a, b, c, d, this.settings.rectMode);
     this.curElement.context.beginPath();
@@ -188,6 +204,19 @@ arc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);
     return this;
   };
 
+  /**
+  * A triangle is a plane created by connecting three points. The first two arguments specify the first point, the middle two arguments specify the second point, and the last two arguments specify the third point.
+  * 
+  * @method triangle
+  * 
+  * @param {Number} x1 x-coordinate of the first point
+  * @param {Number} y1 y-coordinate of the first point
+  * @param {Number} x2 x-coordinate of the second point
+  * @param {Number} y2 y-coordinate of the second point
+  * @param {Number} x3 x-coordinate of the third point
+  * @param {Number} y3 y-coordinate of the third point
+  * @return {p5} the p5 object
+  */
   p5.prototype.triangle = function(x1, y1, x2, y2, x3, y3) {
     this.curElement.context.beginPath();
     this.curElement.context.moveTo(x1, y1);

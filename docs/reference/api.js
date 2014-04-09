@@ -7,12 +7,17 @@ YUI.add("yuidoc-meta", function(Y) {
     ],
     "modules": [
         "PVector",
-        "image"
+        "image",
+        "p5"
     ],
     "allModules": [
         {
             "displayName": "image",
             "name": "image"
+        },
+        {
+            "displayName": "p5",
+            "name": "p5"
         },
         {
             "displayName": "PVector",
