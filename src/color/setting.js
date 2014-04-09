@@ -40,23 +40,21 @@ define(function (require) {
 
 
   /**
-  * getNormalizedColor For a number of different inputs,
-  *                    returns a color formatted as [r, g, b, a]
-  *
-  * @param {'array-like' object} args An 'array-like' object that
-  *                                   represents a list of arguments
-  *
-  * @return {Array} returns a color formatted as [r, g, b, a]
-  *                 input        ==> output
-  *                 g            ==> [g, g, g, 255]
-  *                 g,a          ==> [g, g, g, a]
-  *                 r, g, b      ==> [r, g, b, 255]
-  *                 r, g, b, a   ==> [r, g, b, a]
-  *                 [g]          ==> [g, g, g, 255]
-  *                 [g, a]       ==> [g, g, g, a]
-  *                 [r, g, b]    ==> [r, g, b, 255]
-  *                 [r, g, b, a] ==> [r, g, b, a]
-  */
+   * For a number of different inputs, returns a color formatted as [r, g, b, a].
+   * 
+   * @method getNormalizedColor 
+   * @param {Array-like} args An 'array-like' object that represents a list of arguments
+   * @return {Array} Returns a color formatted as [r, g, b, a]
+   *                 input        ==> output
+   *                 g            ==> [g, g, g, 255]
+   *                 g,a          ==> [g, g, g, a]
+   *                 r, g, b      ==> [r, g, b, 255]
+   *                 r, g, b, a   ==> [r, g, b, a]
+   *                 [g]          ==> [g, g, g, 255]
+   *                 [g, a]       ==> [g, g, g, a]
+   *                 [r, g, b]    ==> [r, g, b, 255]
+   *                 [r, g, b, a] ==> [r, g, b, a]
+   */
   p5.prototype.getNormalizedColor = function(args) {
     var r, g, b, a, rgba;
     var _args = typeof args[0].length === 'number' ? args[0] : args;

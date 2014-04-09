@@ -1,3 +1,10 @@
+/**
+ * @module image
+ * @requires core
+ * @requires canvas
+ * @requires constants
+ * @requires filters
+ */
 define(function (require) {
 
   /**
@@ -18,9 +25,11 @@ define(function (require) {
 
   /**
    * Create a new empty PImage object.
+   * @method createImage
    * @param  {Integer} width
    * @param  {Integer} height
    * @return {PImage}
+   * @for p5
    */
   p5.prototype.createImage = function(width, height) {
     return new PImage(width, height);
@@ -33,11 +42,12 @@ define(function (require) {
    * If you want to ensure that the image is ready before doing
    * anything with it you can do perform those operations in the
    * callback.
-   *
+   * 
+   * @method loadImage
    * @param  {String}   path
-   * @param  {Function} callback function to be called once the image is loaded. Will
-   *                             be passed the PImage
-   * @return {PImage}
+   * @param  {Function} callback Function to be called once the image is loaded. Will be passed the PImage.
+   * @return {PImage} The PImage object.
+   * @for p5
    */
   p5.prototype.loadImage = function(path, callback) {
     var img = new Image();
@@ -69,11 +79,13 @@ define(function (require) {
   /**
    * Draw an image to the main canvas of the p5js sketch
    *
+   * @method image
    * @param  {PImage} image
    * @param  {[type]} x
    * @param  {[type]} y
    * @param  {[type]} width
    * @param  {[type]} height   
+   * @for p5
    */
   p5.prototype.image = function(image, x, y, width, height) {
     if (width === undefined){
@@ -87,8 +99,18 @@ define(function (require) {
   };
 
   /**
-   * Set image mode
-   * @param {String} m the mode
+   * Set image mode. Modifies the location from which images are drawn by changing the way in which parameters given to image() are intepreted.
+
+The default mode is imageMode(CORNER), which interprets the second and third parameters of image() as the upper-left corner of the image. If two additional parameters are specified, they are used to set the image's width and height.
+
+imageMode(CORNERS) interprets the second and third parameters of image() as the location of one corner, and the fourth and fifth parameters as the opposite corner.
+
+imageMode(CENTER) interprets the second and third parameters of image() as the image's center point. If two additional parameters are specified, they are used to set the image's width and height.
+
+The parameter must be written in ALL CAPS because Processing is a case-sensitive language. 
+   * @method imageMode
+   * @param {String} m The mode: either CORNER, CORNERS, or CENTER.
+   * @for p5
    */
   p5.prototype.imageMode = function(m) {
     if (m === constants.CORNER || m === constants.CORNERS || m === constants.CENTER) {
@@ -103,13 +125,16 @@ define(function (require) {
 
 
   /**
+   * Creates a new PImage. A PImage is a canvas backed representation of an image.
+   * p5 can display .gif, .jpg and .png images. Images may be displayed in 2D and 3D space. Before an image is used, it must be loaded with the loadImage() function. The PImage class contains fields for the width and height of the image, as well as an array called pixels[] that contains the values for every pixel in the image. The methods described below allow easy access to the image's pixels and alpha channel and simplify the process of compositing.
+
+Before using the pixels[] array, be sure to use the loadPixels() method on the image to make sure that the pixel data is properly loaded.
+   * 
    * @constructor
-   *
-   * Creates a new PImage. A PImage is a canvas backed representation   *
-   * of an image.
-   *
-   * @param {Integer} width
-   * @param {Integer} height   
+   * @class PImage
+   * @param {Number} width 
+   * @param {Number} height 
+   * @param {Object} pInst An instance of a p5 sketch.
    */
   function PImage(width, height){
     this.width = width;
@@ -121,7 +146,10 @@ define(function (require) {
   }
 
   /**
-   * Loads the pixels data for this image into the [pixels] attribute
+   * Loads the pixels data for this image into the [pixels] attribute.
+   * 
+   * @method loadPixels
+   * @for PImage
    */
   PImage.prototype.loadPixels = function(){
     var x = 0;
@@ -145,6 +173,7 @@ define(function (require) {
    * the [pixels] array.
    *
    *
+   * @method updatePixels
    * @param  {Integer|undefined} x x offset of the target update area for the
    *                               underlying canvas
    * @param  {Integer|undefined} y y offset of the target update area for the
@@ -153,6 +182,7 @@ define(function (require) {
    *                               underlying canvas
    * @param  {Integer|undefined} h height of the target update area for the
    *                               underlying canvas
+   * @for PImage
    */
   PImage.prototype.updatePixels = function(x, y, w, h){
     if (x === undefined && y === undefined &&
@@ -178,6 +208,8 @@ define(function (require) {
   };
 
 
+
+
   /**
    * Get a region of pixels from an image.
    *
@@ -188,6 +220,8 @@ define(function (require) {
    *
    * Returns undefined if the region is outside the bounds of the image
    *
+   * @method get
+   * @for PImage
    * @param  {Integer} x
    * @param  {Integer} y
    * @param  {Integer} w width
@@ -244,6 +278,8 @@ define(function (require) {
    *
    * TODO: Should me make the update operation toggleable?
    *
+   * @method set
+   * @for PImage
    * @param {Integer} x
    * @param {Integer} y
    * @param {PImage|[Integer]}  imageData a pImage or an array representing a color.
@@ -265,6 +301,8 @@ define(function (require) {
 
   /**
    * Resize this PImage.
+   * @method resize
+   * @for PImage
    * @param  {[type]} width  [description]
    * @param  {[type]} height [description]
    * @return {[type]}        [description]
@@ -312,6 +350,8 @@ define(function (require) {
    * automatically resize source pixels to fit the specified
    * target region.
    *
+   * @method copy
+   * @for PImage
    * @param  {PImage|undefined} srcImage source image
    * @param  {Integer} sx X coordinate of the source's upper left corner
    * @param  {Integer} sy Y coordinate of the source's upper left corner
@@ -355,11 +395,15 @@ define(function (require) {
   };
 
 
+
+
   /**
    * Masks part of an image from displaying by loading another
    * image and using it's alpha channel as an alpha channel for
    * this image.
    * 
+   * @method mask
+   * @for PImage
    * @param  {PImage|undefined} srcImage source image
    *
    * TODO: - Accept an array of alpha values.
@@ -387,6 +431,8 @@ define(function (require) {
   /**
    * Applies an image filter to a PImage
    * 
+   * @method filter
+   * @for PImage
    * @param  {String} operation one of threshold, gray, invert, posterize and opaque
    *                            see Filters.js for docs on each available filter
    * @param  {Number|undefined} value
@@ -399,6 +445,8 @@ define(function (require) {
    * Copies a region of pixels from one image to another, using a specified
    * blend mode to do the operation.
    * 
+   * @method blend
+   * @for PImage
    * @param  {PImage|undefined} srcImage source image
    * @param  {Integer} sx X coordinate of the source's upper left corner
    * @param  {Integer} sy Y coordinate of the source's upper left corner
@@ -433,6 +481,8 @@ define(function (require) {
    * Saves the image to a file and forces the browser to download it.
    * Supports png and jpg.
    * 
+   * @method save
+   * @for PImage
    * @param  {[type]} extension
    *
    * TODO: There doesn't seem to be a way to give the force the

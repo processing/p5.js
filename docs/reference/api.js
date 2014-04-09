@@ -1,12 +1,19 @@
 YUI.add("yuidoc-meta", function(Y) {
    Y.YUIDoc = { meta: {
     "classes": [
-        "PVector"
+        "PImage",
+        "PVector",
+        "p5"
     ],
     "modules": [
-        "PVector"
+        "PVector",
+        "image"
     ],
     "allModules": [
+        {
+            "displayName": "image",
+            "name": "image"
+        },
         {
             "displayName": "PVector",
             "name": "PVector"

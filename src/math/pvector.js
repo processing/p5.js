@@ -137,7 +137,6 @@ define(function (require) {
     return this;
   };
 
-
   /**
    * Calculates the dot product of two vectors. 
    * 

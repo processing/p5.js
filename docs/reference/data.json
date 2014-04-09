@@ -29,9 +29,16 @@
         },
         "src/image/image.js": {
             "name": "src/image/image.js",
-            "modules": {},
-            "classes": {},
-            "fors": {},
+            "modules": {
+                "image": 1
+            },
+            "classes": {
+                "PImage": 1
+            },
+            "fors": {
+                "p5": 1,
+                "PImage": 1
+            },
             "namespaces": {}
         },
         "src/math/noise.js": {
@@ -82,6 +89,28 @@
         }
     },
     "modules": {
+        "image": {
+            "name": "image",
+            "submodules": {},
+            "classes": {
+                "p5": 1,
+                "PImage": 1
+            },
+            "fors": {
+                "p5": 1,
+                "PImage": 1
+            },
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/image/image.js",
+            "line": 127,
+            "requires": [
+                "core",
+                "canvas",
+                "constants",
+                "filters"
+            ]
+        },
         "PVector": {
             "name": "PVector",
             "submodules": {},
@@ -96,6 +125,49 @@
         }
     },
     "classes": {
+        "p5": {
+            "name": "p5",
+            "shortname": "p5",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "image",
+            "namespace": ""
+        },
+        "PImage": {
+            "name": "PImage",
+            "shortname": "PImage",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "image",
+            "namespace": "",
+            "file": "src/image/image.js",
+            "line": 127,
+            "description": "Creates a new PImage. A PImage is a canvas backed representation of an image.\np5 can display .gif, .jpg and .png images. Images may be displayed in 2D and 3D space. Before an image is used, it must be loaded with the loadImage() function. The PImage class contains fields for the width and height of the image, as well as an array called pixels[] that contains the values for every pixel in the image. The methods described below allow easy access to the image's pixels and alpha channel and simplify the process of compositing.\n\nBefore using the pixels[] array, be sure to use the loadPixels() method on the image to make sure that the pixel data is properly loaded.",
+            "is_constructor": 1,
+            "params": [
+                {
+                    "name": "width",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "height",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "pInst",
+                    "description": "An instance of a p5 sketch.",
+                    "type": "Object"
+                }
+            ]
+        },
         "PVector": {
             "name": "PVector",
             "shortname": "PVector",
@@ -136,19 +208,21 @@
         {
             "file": "src/color/setting.js",
             "line": 42,
-            "description": "getNormalizedColor For a number of different inputs,\n                   returns a color formatted as [r, g, b, a]",
+            "description": "For a number of different inputs, returns a color formatted as [r, g, b, a].",
+            "itemtype": "method",
+            "name": "getNormalizedColor",
             "params": [
                 {
                     "name": "args",
-                    "description": "An 'array-like' object that\n                                  represents a list of arguments",
-                    "type": "'array-like' object"
+                    "description": "An 'array-like' object that represents a list of arguments",
+                    "type": "Array-like"
                 }
             ],
             "return": {
-                "description": "returns a color formatted as [r, g, b, a]\n                input        ==> output\n                g            ==> [g, g, g, 255]\n                g,a          ==> [g, g, g, a]\n                r, g, b      ==> [r, g, b, 255]\n                r, g, b, a   ==> [r, g, b, a]\n                [g]          ==> [g, g, g, 255]\n                [g, a]       ==> [g, g, g, a]\n                [r, g, b]    ==> [r, g, b, 255]\n                [r, g, b, a] ==> [r, g, b, a]",
+                "description": "Returns a color formatted as [r, g, b, a]\n                input        ==> output\n                g            ==> [g, g, g, 255]\n                g,a          ==> [g, g, g, a]\n                r, g, b      ==> [r, g, b, 255]\n                r, g, b, a   ==> [r, g, b, a]\n                [g]          ==> [g, g, g, 255]\n                [g, a]       ==> [g, g, g, a]\n                [r, g, b]    ==> [r, g, b, 255]\n                [r, g, b, a] ==> [r, g, b, a]",
                 "type": "Array"
             },
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/core/core.js",
@@ -170,7 +244,7 @@
                 "description": "",
                 "type": "P5"
             },
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/core/core.js",
@@ -180,7 +254,7 @@
                 "description": "",
                 "type": "Undefined"
             },
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/core/core.js",
@@ -190,7 +264,7 @@
                 "description": "",
                 "type": "Undefined"
             },
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/core/core.js",
@@ -200,7 +274,7 @@
                 "description": "",
                 "type": "Undefined"
             },
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/core/core.js",
@@ -210,7 +284,7 @@
                 "description": "",
                 "type": "Undefined"
             },
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/core/core.js",
@@ -220,7 +294,7 @@
                 "description": "",
                 "type": "Undefined"
             },
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/core/core.js",
@@ -230,7 +304,7 @@
                 "description": "",
                 "type": "Undefined"
             },
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/core/core.js",
@@ -240,13 +314,13 @@
                 "description": "",
                 "type": "Undefined"
             },
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/image/filters.js",
             "line": 5,
             "description": "This module defines the filters for use with image buffers.\n\nThis module is basically a collection of functions stored in an object\nas opposed to modules. The functions are destructive, modifying\nthe passed in canvas rather than creating a copy.\n\nGenerally speaking users of this module will use the Filters.apply method\non a canvas to create an effect.\n\nA number of functions are borrowed/adapted from http://www.html5rocks.com/en/tutorials/canvas/imagefilters/\nor the java processing implmentation.",
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/image/filters.js",
@@ -265,7 +339,7 @@
                 "description": "a one-dimensional array containing the data\n                            in thc RGBA order, with integer values between 0 and 255",
                 "type": "Uint8ClampedArray"
             },
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/image/filters.js",
@@ -289,7 +363,7 @@
                 "description": "32 bit integer value representing ARGB value.",
                 "type": "Integer"
             },
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/image/filters.js",
@@ -309,7 +383,7 @@
                     "type": "Int32Array"
                 }
             ],
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/image/filters.js",
@@ -328,7 +402,7 @@
                 "description": "Holder of pixel data (and width and height)\n                    for a canvas",
                 "type": "ImageData"
             },
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/image/filters.js",
@@ -352,7 +426,7 @@
                 "description": "",
                 "type": "ImageData"
             },
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/image/filters.js",
@@ -379,7 +453,7 @@
                 "description": "[description]",
                 "type": "[type]"
             },
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/image/filters.js",
@@ -397,7 +471,7 @@
                     "type": "Float"
                 }
             ],
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/image/filters.js",
@@ -410,7 +484,7 @@
                     "type": "Canvas"
                 }
             ],
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/image/filters.js",
@@ -423,7 +497,7 @@
                     "type": "Canvas"
                 }
             ],
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/image/filters.js",
@@ -436,7 +510,7 @@
                     "type": "Invert"
                 }
             ],
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/image/filters.js",
@@ -454,7 +528,7 @@
                     "type": "Integer"
                 }
             ],
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/image/filters.js",
@@ -467,7 +541,7 @@
                     "type": "Canvas"
                 }
             ],
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/image/filters.js",
@@ -480,18 +554,21 @@
                     "type": "Canvas"
                 }
             ],
-            "class": "PVector"
+            "class": "p5"
         },
         {
             "file": "src/image/image.js",
-            "line": 3,
+            "line": 10,
             "description": "This module defines the PImage class and P5 methods for\ndrawing images to the main display canvas.",
-            "class": "PVector"
+            "class": "p5",
+            "module": "image"
         },
         {
             "file": "src/image/image.js",
-            "line": 19,
+            "line": 26,
             "description": "Create a new empty PImage object.",
+            "itemtype": "method",
+            "name": "createImage",
             "params": [
                 {
                     "name": "width",
@@ -508,12 +585,15 @@
                 "description": "",
                 "type": "PImage"
             },
-            "class": "PVector"
+            "class": "p5",
+            "module": "image"
         },
         {
             "file": "src/image/image.js",
-            "line": 29,
+            "line": 38,
             "description": "Loads an image from a path and creates a PImage from it.\n\nThe image may not be immediately available for rendering\nIf you want to ensure that the image is ready before doing\nanything with it you can do perform those operations in the\ncallback.",
+            "itemtype": "method",
+            "name": "loadImage",
             "params": [
                 {
                     "name": "path",
@@ -522,20 +602,23 @@
                 },
                 {
                     "name": "callback",
-                    "description": "function to be called once the image is loaded. Will\n                            be passed the PImage",
+                    "description": "Function to be called once the image is loaded. Will be passed the PImage.",
                     "type": "Function"
                 }
             ],
             "return": {
-                "description": "",
+                "description": "The PImage object.",
                 "type": "PImage"
             },
-            "class": "PVector"
+            "class": "p5",
+            "module": "image"
         },
         {
             "file": "src/image/image.js",
-            "line": 69,
+            "line": 79,
             "description": "Draw an image to the main canvas of the p5js sketch",
+            "itemtype": "method",
+            "name": "image",
             "params": [
                 {
                     "name": "image",
@@ -563,49 +646,40 @@
                     "type": "[type]"
                 }
             ],
-            "class": "PVector"
+            "class": "p5",
+            "module": "image"
         },
         {
             "file": "src/image/image.js",
-            "line": 89,
-            "description": "Set image mode",
+            "line": 101,
+            "description": "Set image mode. Modifies the location from which images are drawn by changing the way in which parameters given to image() are intepreted.\n\nThe default mode is imageMode(CORNER), which interprets the second and third parameters of image() as the upper-left corner of the image. If two additional parameters are specified, they are used to set the image's width and height.\n\nimageMode(CORNERS) interprets the second and third parameters of image() as the location of one corner, and the fourth and fifth parameters as the opposite corner.\n\nimageMode(CENTER) interprets the second and third parameters of image() as the image's center point. If two additional parameters are specified, they are used to set the image's width and height.\n\nThe parameter must be written in ALL CAPS because Processing is a case-sensitive language.",
+            "itemtype": "method",
+            "name": "imageMode",
             "params": [
                 {
                     "name": "m",
-                    "description": "the mode",
+                    "description": "The mode: either CORNER, CORNERS, or CENTER.",
                     "type": "String"
                 }
             ],
-            "class": "PVector"
+            "class": "p5",
+            "module": "image"
         },
         {
             "file": "src/image/image.js",
-            "line": 105,
-            "is_constructor": 1,
-            "params": [
-                {
-                    "name": "width",
-                    "description": "",
-                    "type": "Integer"
-                },
-                {
-                    "name": "height",
-                    "description": "",
-                    "type": "Integer"
-                }
-            ],
-            "class": "PVector"
+            "line": 148,
+            "description": "Loads the pixels data for this image into the [pixels] attribute.",
+            "itemtype": "method",
+            "name": "loadPixels",
+            "class": "PImage",
+            "module": "image"
         },
         {
             "file": "src/image/image.js",
-            "line": 123,
-            "description": "Loads the pixels data for this image into the [pixels] attribute",
-            "class": "PVector"
-        },
-        {
-            "file": "src/image/image.js",
-            "line": 143,
+            "line": 171,
             "description": "Updates the backing canvas for this image with the contents of\nthe [pixels] array.",
+            "itemtype": "method",
+            "name": "updatePixels",
             "params": [
                 {
                     "name": "x",
@@ -628,12 +702,15 @@
                     "type": "Integer|undefined"
                 }
             ],
-            "class": "PVector"
+            "class": "PImage",
+            "module": "image"
         },
         {
             "file": "src/image/image.js",
-            "line": 181,
+            "line": 213,
             "description": "Get a region of pixels from an image.\n\nIf no params are passed, those whole image is returned,\nif x and y are the only params passed a single pixel is extracted\nif all params are passed a rectangle region is extracted and a Pimage is\nreturned.\n\nReturns undefined if the region is outside the bounds of the image",
+            "itemtype": "method",
+            "name": "get",
             "params": [
                 {
                     "name": "x",
@@ -660,12 +737,15 @@
                 "description": "pixel [4 element integer] array or a PImage",
                 "type": "[Integer] | PImage | undefined"
             },
-            "class": "PVector"
+            "class": "PImage",
+            "module": "image"
         },
         {
             "file": "src/image/image.js",
-            "line": 237,
+            "line": 271,
             "description": "Set the color of a single pixel or write an image into\nthis PImage.\n\nNote that for a large number of pixels this will\nbe slower than directly manipulating the pixels array\nand then calling updatePixels()\n\nTODO: Should me make the update operation toggleable?",
+            "itemtype": "method",
+            "name": "set",
             "params": [
                 {
                     "name": "x",
@@ -683,12 +763,15 @@
                     "type": "PImage|[Integer]"
                 }
             ],
-            "class": "PVector"
+            "class": "PImage",
+            "module": "image"
         },
         {
             "file": "src/image/image.js",
-            "line": 266,
+            "line": 302,
             "description": "Resize this PImage.",
+            "itemtype": "method",
+            "name": "resize",
             "params": [
                 {
                     "name": "width",
@@ -705,12 +788,15 @@
                 "description": "[description]",
                 "type": "[type]"
             },
-            "class": "PVector"
+            "class": "PImage",
+            "module": "image"
         },
         {
             "file": "src/image/image.js",
-            "line": 308,
+            "line": 346,
             "description": "Copies a region of pixels from one image to another. If no\nsrcImage is specified this is used as the source. If the source\nand destination regions aren't the same size, it will\nautomatically resize source pixels to fit the specified\ntarget region.",
+            "itemtype": "method",
+            "name": "copy",
             "params": [
                 {
                     "name": "srcImage",
@@ -758,12 +844,15 @@
                     "type": "Integer"
                 }
             ],
-            "class": "PVector"
+            "class": "PImage",
+            "module": "image"
         },
         {
             "file": "src/image/image.js",
-            "line": 358,
+            "line": 400,
             "description": "Masks part of an image from displaying by loading another\nimage and using it's alpha channel as an alpha channel for\nthis image.",
+            "itemtype": "method",
+            "name": "mask",
             "params": [
                 {
                     "name": "srcImage",
@@ -771,12 +860,15 @@
                     "type": "PImage|undefined"
                 }
             ],
-            "class": "PVector"
+            "class": "PImage",
+            "module": "image"
         },
         {
             "file": "src/image/image.js",
-            "line": 387,
+            "line": 431,
             "description": "Applies an image filter to a PImage",
+            "itemtype": "method",
+            "name": "filter",
             "params": [
                 {
                     "name": "operation",
@@ -789,12 +881,15 @@
                     "type": "Number|undefined"
                 }
             ],
-            "class": "PVector"
+            "class": "PImage",
+            "module": "image"
         },
         {
             "file": "src/image/image.js",
-            "line": 398,
+            "line": 444,
             "description": "Copies a region of pixels from one image to another, using a specified\nblend mode to do the operation.",
+            "itemtype": "method",
+            "name": "blend",
             "params": [
                 {
                     "name": "srcImage",
@@ -847,12 +942,15 @@
                     "type": "Integer"
                 }
             ],
-            "class": "PVector"
+            "class": "PImage",
+            "module": "image"
         },
         {
             "file": "src/image/image.js",
-            "line": 432,
+            "line": 480,
             "description": "Saves the image to a file and forces the browser to download it.\nSupports png and jpg.",
+            "itemtype": "method",
+            "name": "save",
             "params": [
                 {
                     "name": "extension!~YUIDOC_LINE~!!~YUIDOC_LINE~!TODO:",
@@ -860,7 +958,8 @@
                     "type": "[type]"
                 }
             ],
-            "class": "PVector"
+            "class": "PImage",
+            "module": "image"
         },
         {
             "file": "src/math/noise.js",
@@ -887,7 +986,8 @@
                 "description": "between 0 and 1",
                 "type": "Number"
             },
-            "class": "PVector"
+            "class": "PVector",
+            "module": "image"
         },
         {
             "file": "src/math/noise.js",
@@ -905,13 +1005,15 @@
                     "type": "Falloff"
                 }
             ],
-            "class": "PVector"
+            "class": "PVector",
+            "module": "image"
         },
         {
             "file": "src/math/noise.js",
             "line": 188,
             "description": "NOT IMPLEMENTED YET!\n Sets the seed value for <b>noise()</b>. By default, <b>noise()</b>\n produces different results each time the program is run. Set the\n <b>value</b> parameter to a constant to return the same pseudo-random\n numbers each time the software is run.",
-            "class": "PVector"
+            "class": "PVector",
+            "module": "image"
         },
         {
             "file": "src/math/pvector.js",
@@ -1094,7 +1196,7 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 141,
+            "line": 140,
             "description": "Calculates the dot product of two vectors.",
             "itemtype": "method",
             "name": "dot",
@@ -1124,7 +1226,7 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 154,
+            "line": 153,
             "description": "Calculates the squared magnitude of the vector and returns the result\n as a float (this is simply the equation <em>(x*x + y*y + z*z)</em>.)\n Faster if the real length is not required in the\n case of comparing vectors, etc.",
             "return": {
                 "description": "squared magnitude of the vector",
@@ -1135,7 +1237,7 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 168,
+            "line": 167,
             "description": "Calculates the dot product of two vectors.",
             "params": [
                 {
@@ -1153,7 +1255,7 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 185,
+            "line": 184,
             "description": "Calculates the cross product of two vectors.",
             "return": {
                 "description": "the cross product",
@@ -1164,7 +1266,7 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 198,
+            "line": 197,
             "description": "Calculates the Euclidean distance between two points (considering a\n point as a vector object).",
             "params": [
                 {
@@ -1182,14 +1284,14 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 212,
+            "line": 211,
             "description": "Normalize the vector to length 1 (make it a unit vector).",
             "class": "PVector",
             "module": "PVector"
         },
         {
             "file": "src/math/pvector.js",
-            "line": 221,
+            "line": 220,
             "description": "Limit the magnitude of this vector to the value used for the <b>max</b> parameter.",
             "params": [
                 {
@@ -1203,7 +1305,7 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 236,
+            "line": 235,
             "description": "Set the magnitude of this vector to the value used for the <b>len</b> parameter.",
             "params": [
                 {
@@ -1217,7 +1319,7 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 246,
+            "line": 245,
             "description": "Calculate the angle of rotation for this vector (only 2D vectors)\n TODO: deal with AngleMode",
             "return": {
                 "description": "the angle of rotation",
@@ -1228,7 +1330,7 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 257,
+            "line": 256,
             "description": "Rotate the vector by an angle (only 2D vectors), magnitude remains the same\n TODO: Change to rotate()\n TODO: Deal with angleMode",
             "params": [
                 {
@@ -1242,7 +1344,7 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 273,
+            "line": 272,
             "description": "Linear interpolate the vector to another vector",
             "params": [
                 {
@@ -1261,14 +1363,14 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 290,
+            "line": 289,
             "description": "Return a representation of this vector as a float array. This is only\n for temporary use. If used in any other fashion, the contents should be\n copied by using the <b>PVector.get()</b> method to copy into your own array.\nreturn {Array} an array with the 3 values",
             "class": "PVector",
             "module": "PVector"
         },
         {
             "file": "src/math/pvector.js",
-            "line": 306,
+            "line": 305,
             "description": "Make a new 2D unit vector from an angle",
             "params": [
                 {
@@ -1286,7 +1388,7 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 316,
+            "line": 315,
             "description": "Make a new 2D unit vector from a random angle",
             "return": {
                 "description": "The new PVector object.",
@@ -1297,7 +1399,7 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 326,
+            "line": 325,
             "description": "Make a new random 3D unit vector.",
             "return": {
                 "description": "The new PVector object.",
@@ -1308,7 +1410,7 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 341,
+            "line": 340,
             "description": "Adds two vectors together and returns a new one.",
             "params": [
                 {
@@ -1331,7 +1433,7 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 355,
+            "line": 354,
             "description": "Subtracts one PVector from another and returns a new one.  The second vector (v2) is subtracted from the first (v1), resulting in v1-v2.",
             "params": [
                 {
@@ -1354,7 +1456,7 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 370,
+            "line": 369,
             "description": "Multiplies a vector by a scalar and returns a new vector.",
             "params": [
                 {
@@ -1377,7 +1479,7 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 383,
+            "line": 382,
             "description": "Divides a vector by a scalar and returns a new vector.",
             "params": [
                 {
@@ -1400,7 +1502,7 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 397,
+            "line": 396,
             "description": "Calculates the dot product of two vectors.",
             "params": [
                 {
@@ -1423,7 +1525,7 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 410,
+            "line": 409,
             "description": "Calculates the cross product of two vectors.",
             "params": [
                 {
@@ -1446,7 +1548,7 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 423,
+            "line": 422,
             "description": "Calculates the Euclidean distance between two points (considering a\n point as a vector object).",
             "params": [
                 {
@@ -1469,7 +1571,7 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 437,
+            "line": 436,
             "description": "Linear interpolate a vector to another vector and return the result as a new vector.",
             "params": [
                 {
@@ -1493,7 +1595,7 @@
         },
         {
             "file": "src/math/pvector.js",
-            "line": 449,
+            "line": 448,
             "description": "Calculates and returns the angle (in radians) between two vectors.",
             "params": [
                 {
@@ -1539,75 +1641,205 @@
         },
         {
             "file": "src/shape/2d_primitives.js",
-            "line": 9,
-            "description": "Draw an arc\n\nIf x, y, width, height, start and stop are the only params provided, draws an\nopen pie.\nIf mode is provided draws the arc either open, chord or pie, dependant\non the variable provided",
+            "line": 10,
+            "description": "Draw an arc.\n\nIf a,b,c,d,start and stop are the only params provided, draws an\nopen pie.\nIf mode is provided draws the arc either open, chord or pie, dependant on the variable provided.",
+            "itemtype": "method",
+            "name": "arc",
             "params": [
                 {
-                    "name": "x",
-                    "description": "x-coordinate of the arc's ellipse",
+                    "name": "a",
+                    "description": "X-coordinate of the arc's ellipse",
                     "type": "Number"
                 },
                 {
-                    "name": "y",
-                    "description": "y-coordinate of the arc's ellipse",
+                    "name": "b",
+                    "description": "Y-coordinate of the arc's ellipse",
                     "type": "Number"
                 },
                 {
-                    "name": "width",
-                    "description": "width of the arc's ellipse by default",
+                    "name": "c",
+                    "description": "Width of the arc's ellipse by default",
                     "type": "Number"
                 },
                 {
-                    "name": "height",
-                    "description": "height of the arc's ellipse by default",
+                    "name": "d",
+                    "description": "Height of the arc's ellipse by default",
                     "type": "Number"
                 },
                 {
                     "name": "start",
-                    "description": "angle to start the arc, specified in radians",
+                    "description": "Angle to start the arc, specified in radians",
                     "type": "Number"
                 },
                 {
                     "name": "stop",
-                    "description": "angle to stop the arc, specified in radians",
+                    "description": "Angle to stop the arc, specified in radians",
                     "type": "Number"
                 },
                 {
                     "name": "mode",
-                    "description": "optional parameter to determine the way of drawing the arc",
+                    "description": "Optional parameter to determine the way of drawing the arc",
                     "type": "String",
                     "optional": true
                 }
+            ],
+            "return": {
+                "description": "Returns the p5 object.",
+                "type": "Object"
+            },
+            "example": [
+                " <div><img src=\"http://processing.org/reference/images/arc_.png\">\n<code>arc(50, 55, 50, 50, 0, HALF_PI);\nnoFill();\narc(50, 55, 60, 60, HALF_PI, PI);\narc(50, 55, 70, 70, PI, PI+QUARTER_PI);\narc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);\n</code></div>\n\n<div><img src=\"http://processing.org/reference/images/arc_2.png\">\n<code>arc(50, 50, 80, 80, 0, PI+QUARTER_PI, OPEN);\n</code></div>\n\n<div><img src=\"http://processing.org/reference/images/arc_3.png\">\n<code>arc(50, 50, 80, 80, 0, PI+QUARTER_PI, CHORD);\n</code></div>\n\n<div><img src=\"http://processing.org/reference/images/arc_4.png\">\n<code>arc(50, 50, 80, 80, 0, PI+QUARTER_PI, PIE);\n</code></div>"
             ],
             "class": "",
             "module": "PVector"
         },
         {
             "file": "src/shape/2d_primitives.js",
-            "line": 49,
-            "description": "Draws an ellipse (oval) to the screen. An ellipse with equal width and height is a circle. The origin may be changed with the ellipseMode() function.",
+            "line": 70,
+            "description": "Draws an ellipse (oval) to the screen. An ellipse with equal width and height is a circle. By default, the first two parameters set the location, and the third and fourth parameters set the shape's width and height. The origin may be changed with the ellipseMode() function.",
+            "itemtype": "method",
+            "name": "ellipse",
+            "params": [
+                {
+                    "name": "a",
+                    "description": "X-coordinate of the ellipse.",
+                    "type": "Number"
+                },
+                {
+                    "name": "b",
+                    "description": "Y-coordinate of the ellipse.",
+                    "type": "Number"
+                },
+                {
+                    "name": "c",
+                    "description": "Width of the ellipse.",
+                    "type": "Number"
+                },
+                {
+                    "name": "d",
+                    "description": "Height of the ellipse.",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "Returns the p5 object.",
+                "type": "P5"
+            },
+            "class": "",
+            "module": "PVector"
+        },
+        {
+            "file": "src/shape/2d_primitives.js",
+            "line": 102,
+            "description": "Draws a line (a direct path between two points) to the screen. The version of line() with four parameters draws the line in 2D. To color a line, use the stroke() function. A line cannot be filled, therefore the fill() function will not affect the color of a line. 2D lines are drawn with a width of one pixel by default, but this can be changed with the strokeWeight() function. The version with six parameters allows the line to be placed anywhere within XYZ space. Drawing this shape in 3D with the z parameter requires the P3D parameter in combination with size() as shown in the above example.",
+            "itemtype": "method",
+            "name": "line",
+            "params": [
+                {
+                    "name": "x1",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "y1",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "x2",
+                    "description": "",
+                    "type": "Number"
+                },
+                {
+                    "name": "y2",
+                    "description": "",
+                    "type": "Number"
+                }
+            ],
+            "return": {
+                "description": "Returns the p5 object.",
+                "type": "P5"
+            },
+            "class": "",
+            "module": "PVector"
+        },
+        {
+            "file": "src/shape/2d_primitives.js",
+            "line": 124,
+            "description": "Draws a point, a coordinate in space at the dimension of one pixel. The first parameter is the horizontal value for the point, the second value is the vertical value for the point, and the optional third value is the depth value. Drawing this shape in 3D with the z parameter requires the P3D parameter in combination with size() as shown in the above example.",
+            "itemtype": "method",
+            "name": "point",
             "params": [
                 {
                     "name": "x",
-                    "description": "x-coordinate of the ellipse",
+                    "description": "",
                     "type": "Number"
                 },
                 {
                     "name": "y",
-                    "description": "y-coordinate of the ellipse",
-                    "type": "Number"
-                },
-                {
-                    "name": "width",
-                    "description": "width of the ellipse",
-                    "type": "Number"
-                },
-                {
-                    "name": "height",
-                    "description": "height of the ellipse",
+                    "description": "",
                     "type": "Number"
                 }
             ],
+            "return": {
+                "description": "Returns the p5 object.",
+                "type": "P5"
+            },
+            "class": "",
+            "module": "PVector"
+        },
+        {
+            "file": "src/shape/2d_primitives.js",
+            "line": 154,
+            "description": "Draw a quad. A quad is a quadrilateral, a four sided polygon. It is similar to a rectangle, but the angles between its edges are not constrained to ninety degrees. The first pair of parameters (x1,y1) sets the first vertex and the subsequent pairs should proceed clockwise or counter-clockwise around the defined shape.",
+            "itemtype": "method",
+            "name": "quad",
+            "params": [
+                {
+                    "name": "x1",
+                    "description": "",
+                    "type": "Type"
+                },
+                {
+                    "name": "y1",
+                    "description": "",
+                    "type": "Type"
+                },
+                {
+                    "name": "x2",
+                    "description": "",
+                    "type": "Type"
+                },
+                {
+                    "name": "y2",
+                    "description": "",
+                    "type": "Type"
+                },
+                {
+                    "name": "x3",
+                    "description": "",
+                    "type": "Type"
+                },
+                {
+                    "name": "y3",
+                    "description": "",
+                    "type": "Type"
+                },
+                {
+                    "name": "x4",
+                    "description": "",
+                    "type": "Type"
+                },
+                {
+                    "name": "y4",
+                    "description": "",
+                    "type": "Type"
+                }
+            ],
+            "return": {
+                "description": "Returns the p5 object.",
+                "type": "P5"
+            },
             "class": "",
             "module": "PVector"
         },
@@ -1794,35 +2026,31 @@
         },
         {
             "message": "param name missing: {PVector}",
-            "line": " src/math/pvector.js:168"
+            "line": " src/math/pvector.js:167"
         },
         {
             "message": "param name missing: {PVector}",
-            "line": " src/math/pvector.js:397"
+            "line": " src/math/pvector.js:396"
         },
         {
             "message": "param name missing: {PVector}",
-            "line": " src/math/pvector.js:397"
+            "line": " src/math/pvector.js:396"
         },
         {
             "message": "param name missing: {PVector}",
-            "line": " src/math/pvector.js:410"
+            "line": " src/math/pvector.js:409"
         },
         {
             "message": "param name missing: {PVector}",
-            "line": " src/math/pvector.js:410"
+            "line": " src/math/pvector.js:409"
         },
         {
             "message": "param name missing: {PVector}",
-            "line": " src/math/pvector.js:423"
+            "line": " src/math/pvector.js:422"
         },
         {
             "message": "param name missing: {PVector}",
-            "line": " src/math/pvector.js:423"
-        },
-        {
-            "message": "Missing item type\ngetNormalizedColor For a number of different inputs,\n                   returns a color formatted as [r, g, b, a]",
-            "line": " src/color/setting.js:42"
+            "line": " src/math/pvector.js:422"
         },
         {
             "message": "Missing item type\np5 instance constructor\n\nA p5 instance....\n\nCan run in \"global\" or \"instance\" mode:\n  \"global\" - \n  \"instance\" - \n\nPublic fields on a p5 instance:",
@@ -1914,67 +2142,7 @@
         },
         {
             "message": "Missing item type\nThis module defines the PImage class and P5 methods for\ndrawing images to the main display canvas.",
-            "line": " src/image/image.js:3"
-        },
-        {
-            "message": "Missing item type\nCreate a new empty PImage object.",
-            "line": " src/image/image.js:19"
-        },
-        {
-            "message": "Missing item type\nLoads an image from a path and creates a PImage from it.\n\nThe image may not be immediately available for rendering\nIf you want to ensure that the image is ready before doing\nanything with it you can do perform those operations in the\ncallback.",
-            "line": " src/image/image.js:29"
-        },
-        {
-            "message": "Missing item type\nDraw an image to the main canvas of the p5js sketch",
-            "line": " src/image/image.js:69"
-        },
-        {
-            "message": "Missing item type\nSet image mode",
-            "line": " src/image/image.js:89"
-        },
-        {
-            "message": "Missing item type",
-            "line": " src/image/image.js:105"
-        },
-        {
-            "message": "Missing item type\nLoads the pixels data for this image into the [pixels] attribute",
-            "line": " src/image/image.js:123"
-        },
-        {
-            "message": "Missing item type\nUpdates the backing canvas for this image with the contents of\nthe [pixels] array.",
-            "line": " src/image/image.js:143"
-        },
-        {
-            "message": "Missing item type\nGet a region of pixels from an image.\n\nIf no params are passed, those whole image is returned,\nif x and y are the only params passed a single pixel is extracted\nif all params are passed a rectangle region is extracted and a Pimage is\nreturned.\n\nReturns undefined if the region is outside the bounds of the image",
-            "line": " src/image/image.js:181"
-        },
-        {
-            "message": "Missing item type\nSet the color of a single pixel or write an image into\nthis PImage.\n\nNote that for a large number of pixels this will\nbe slower than directly manipulating the pixels array\nand then calling updatePixels()\n\nTODO: Should me make the update operation toggleable?",
-            "line": " src/image/image.js:237"
-        },
-        {
-            "message": "Missing item type\nResize this PImage.",
-            "line": " src/image/image.js:266"
-        },
-        {
-            "message": "Missing item type\nCopies a region of pixels from one image to another. If no\nsrcImage is specified this is used as the source. If the source\nand destination regions aren't the same size, it will\nautomatically resize source pixels to fit the specified\ntarget region.",
-            "line": " src/image/image.js:308"
-        },
-        {
-            "message": "Missing item type\nMasks part of an image from displaying by loading another\nimage and using it's alpha channel as an alpha channel for\nthis image.",
-            "line": " src/image/image.js:358"
-        },
-        {
-            "message": "Missing item type\nApplies an image filter to a PImage",
-            "line": " src/image/image.js:387"
-        },
-        {
-            "message": "Missing item type\nCopies a region of pixels from one image to another, using a specified\nblend mode to do the operation.",
-            "line": " src/image/image.js:398"
-        },
-        {
-            "message": "Missing item type\nSaves the image to a file and forces the browser to download it.\nSupports png and jpg.",
-            "line": " src/image/image.js:432"
+            "line": " src/image/image.js:10"
         },
         {
             "message": "Missing item type\nReturns the Perlin noise value at specified coordinates. Perlin noise is\na random sequence generator producing a more natural ordered, harmonic\nsuccession of numbers compared to the standard <b>random()</b> function.\nIt was invented by Ken Perlin in the 1980s and been used since in\ngraphical applications to produce procedural textures, natural motion,\nshapes, terrains etc.<br /><br /> The main difference to the\n<b>random()</b> function is that Perlin noise is defined in an infinite\nn-dimensional space where each pair of coordinates corresponds to a\nfixed semi-random value (fixed only for the lifespan of the program).\nThe resulting value will always be between 0.0 and 1.0. Processing can\ncompute 1D, 2D and 3D noise, depending on the number of coordinates\ngiven. The noise value can be animated by moving through the noise space\nas demonstrated in the example above. The 2nd and 3rd dimension can also\nbe interpreted as time.<br /><br />The actual noise is structured\nsimilar to an audio signal, in respect to the function's use of\nfrequencies. Similar to the concept of harmonics in physics, perlin\nnoise is computed over several octaves which are added together for the\nfinal result. <br /><br />Another way to adjust the character of the\nresulting sequence is the scale of the input coordinates. As the\nfunction works within an infinite space the value of the coordinates\ndoesn't matter as such, only the distance between successive coordinates\ndoes (eg. when using <b>noise()</b> within a loop). As a general rule\nthe smaller the difference between coordinates, the smoother the\nresulting noise sequence will be. Steps of 0.005-0.03 work best for most\napplications, but this will differ depending on use.",
@@ -1990,107 +2158,99 @@
         },
         {
             "message": "Missing item type\nCalculates the squared magnitude of the vector and returns the result\n as a float (this is simply the equation <em>(x*x + y*y + z*z)</em>.)\n Faster if the real length is not required in the\n case of comparing vectors, etc.",
-            "line": " src/math/pvector.js:154"
+            "line": " src/math/pvector.js:153"
         },
         {
             "message": "Missing item type\nCalculates the dot product of two vectors.",
-            "line": " src/math/pvector.js:168"
+            "line": " src/math/pvector.js:167"
         },
         {
             "message": "Missing item type\nCalculates the cross product of two vectors.",
-            "line": " src/math/pvector.js:185"
+            "line": " src/math/pvector.js:184"
         },
         {
             "message": "Missing item type\nCalculates the Euclidean distance between two points (considering a\n point as a vector object).",
-            "line": " src/math/pvector.js:198"
+            "line": " src/math/pvector.js:197"
         },
         {
             "message": "Missing item type\nNormalize the vector to length 1 (make it a unit vector).",
-            "line": " src/math/pvector.js:212"
+            "line": " src/math/pvector.js:211"
         },
         {
             "message": "Missing item type\nLimit the magnitude of this vector to the value used for the <b>max</b> parameter.",
-            "line": " src/math/pvector.js:221"
+            "line": " src/math/pvector.js:220"
         },
         {
             "message": "Missing item type\nSet the magnitude of this vector to the value used for the <b>len</b> parameter.",
-            "line": " src/math/pvector.js:236"
+            "line": " src/math/pvector.js:235"
         },
         {
             "message": "Missing item type\nCalculate the angle of rotation for this vector (only 2D vectors)\n TODO: deal with AngleMode",
-            "line": " src/math/pvector.js:246"
+            "line": " src/math/pvector.js:245"
         },
         {
             "message": "Missing item type\nRotate the vector by an angle (only 2D vectors), magnitude remains the same\n TODO: Change to rotate()\n TODO: Deal with angleMode",
-            "line": " src/math/pvector.js:257"
+            "line": " src/math/pvector.js:256"
         },
         {
             "message": "Missing item type\nLinear interpolate the vector to another vector",
-            "line": " src/math/pvector.js:273"
+            "line": " src/math/pvector.js:272"
         },
         {
             "message": "Missing item type\nReturn a representation of this vector as a float array. This is only\n for temporary use. If used in any other fashion, the contents should be\n copied by using the <b>PVector.get()</b> method to copy into your own array.\nreturn {Array} an array with the 3 values",
-            "line": " src/math/pvector.js:290"
+            "line": " src/math/pvector.js:289"
         },
         {
             "message": "Missing item type\nMake a new 2D unit vector from an angle",
-            "line": " src/math/pvector.js:306"
+            "line": " src/math/pvector.js:305"
         },
         {
             "message": "Missing item type\nMake a new 2D unit vector from a random angle",
-            "line": " src/math/pvector.js:316"
+            "line": " src/math/pvector.js:315"
         },
         {
             "message": "Missing item type\nMake a new random 3D unit vector.",
-            "line": " src/math/pvector.js:326"
+            "line": " src/math/pvector.js:325"
         },
         {
             "message": "Missing item type\nAdds two vectors together and returns a new one.",
-            "line": " src/math/pvector.js:341"
+            "line": " src/math/pvector.js:340"
         },
         {
             "message": "Missing item type\nSubtracts one PVector from another and returns a new one.  The second vector (v2) is subtracted from the first (v1), resulting in v1-v2.",
-            "line": " src/math/pvector.js:355"
+            "line": " src/math/pvector.js:354"
         },
         {
             "message": "Missing item type\nMultiplies a vector by a scalar and returns a new vector.",
-            "line": " src/math/pvector.js:370"
+            "line": " src/math/pvector.js:369"
         },
         {
             "message": "Missing item type\nDivides a vector by a scalar and returns a new vector.",
-            "line": " src/math/pvector.js:383"
+            "line": " src/math/pvector.js:382"
         },
         {
             "message": "Missing item type\nCalculates the dot product of two vectors.",
-            "line": " src/math/pvector.js:397"
+            "line": " src/math/pvector.js:396"
         },
         {
             "message": "Missing item type\nCalculates the cross product of two vectors.",
-            "line": " src/math/pvector.js:410"
+            "line": " src/math/pvector.js:409"
         },
         {
             "message": "Missing item type\nCalculates the Euclidean distance between two points (considering a\n point as a vector object).",
-            "line": " src/math/pvector.js:423"
+            "line": " src/math/pvector.js:422"
         },
         {
             "message": "Missing item type\nLinear interpolate a vector to another vector and return the result as a new vector.",
-            "line": " src/math/pvector.js:437"
+            "line": " src/math/pvector.js:436"
         },
         {
             "message": "Missing item type\nCalculates and returns the angle (in radians) between two vectors.",
-            "line": " src/math/pvector.js:449"
+            "line": " src/math/pvector.js:448"
         },
         {
             "message": "Missing item type\nReturn a random number.\n\nTakes either 0, 1 or 2 arguments.\nIf no argument is given, returns a random number between 0 and 1.\nIf one argument is given, returns a random number between 0 and the number.\nIf two arguments are given, returns a random number between them, inclusive.",
             "line": " src/math/random.js:18"
-        },
-        {
-            "message": "Missing item type\nDraw an arc\n\nIf x, y, width, height, start and stop are the only params provided, draws an\nopen pie.\nIf mode is provided draws the arc either open, chord or pie, dependant\non the variable provided",
-            "line": " src/shape/2d_primitives.js:9"
-        },
-        {
-            "message": "Missing item type\nDraws an ellipse (oval) to the screen. An ellipse with equal width and height is a circle. The origin may be changed with the ellipseMode() function.",
-            "line": " src/shape/2d_primitives.js:49"
         },
         {
             "message": "Missing item type\nSets the resolution at which Beziers display.\n\nThe default value is 20.\n\nReturns void",
