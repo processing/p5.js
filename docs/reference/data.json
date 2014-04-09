@@ -36,7 +36,8 @@
                 "PImage": 1
             },
             "fors": {
-                "p5": 1,
+                "image": 1,
+                "loading & displaying": 1,
                 "PImage": 1
             },
             "namespaces": {}
@@ -69,7 +70,7 @@
         "src/shape/2d_primitives.js": {
             "name": "src/shape/2d_primitives.js",
             "modules": {
-                "2d primitives": 1
+                "shape": 1
             },
             "classes": {},
             "fors": {
@@ -79,9 +80,7 @@
         },
         "src/shape/attributes.js": {
             "name": "src/shape/attributes.js",
-            "modules": {
-                "attributes": 1
-            },
+            "modules": {},
             "classes": {},
             "fors": {
                 "attributes": 1
@@ -90,9 +89,7 @@
         },
         "src/shape/curves.js": {
             "name": "src/shape/curves.js",
-            "modules": {
-                "curves": 1
-            },
+            "modules": {},
             "classes": {},
             "fors": {
                 "curves": 1
@@ -112,11 +109,13 @@
             "name": "image",
             "submodules": {},
             "classes": {
-                "p5": 1,
+                "image": 1,
+                "loading & displaying": 1,
                 "PImage": 1
             },
             "fors": {
-                "p5": 1,
+                "image": 1,
+                "loading & displaying": 1,
                 "PImage": 1
             },
             "namespaces": {},
@@ -142,14 +141,18 @@
             "file": "src/math/pvector.js",
             "line": 8
         },
-        "2d primitives": {
-            "name": "2d primitives",
+        "shape": {
+            "name": "shape",
             "submodules": {},
             "classes": {
-                "2d primitives": 1
+                "2d primitives": 1,
+                "attributes": 1,
+                "curves": 1
             },
             "fors": {
-                "2d primitives": 1
+                "2d primitives": 1,
+                "attributes": 1,
+                "curves": 1
             },
             "namespaces": {},
             "tag": "module",
@@ -160,47 +163,23 @@
                 "canvas",
                 "constants"
             ]
-        },
-        "attributes": {
-            "name": "attributes",
-            "submodules": {},
-            "classes": {
-                "attributes": 1
-            },
-            "fors": {
-                "attributes": 1
-            },
-            "namespaces": {},
-            "tag": "module",
-            "file": "src/shape/attributes.js",
-            "line": 1,
-            "requires": [
-                "core",
-                "constants"
-            ]
-        },
-        "curves": {
-            "name": "curves",
-            "submodules": {},
-            "classes": {
-                "curves": 1
-            },
-            "fors": {
-                "curves": 1
-            },
-            "namespaces": {},
-            "tag": "module",
-            "file": "src/shape/curves.js",
-            "line": 1,
-            "requires": [
-                "core"
-            ]
         }
     },
     "classes": {
-        "p5": {
-            "name": "p5",
-            "shortname": "p5",
+        "image": {
+            "name": "image",
+            "shortname": "image",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "module": "image",
+            "namespace": ""
+        },
+        "loading & displaying": {
+            "name": "loading & displaying",
+            "shortname": "loading & displaying",
             "classitems": [],
             "plugins": [],
             "extensions": [],
@@ -284,7 +263,7 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "module": "2d primitives",
+            "module": "shape",
             "namespace": ""
         },
         "attributes": {
@@ -295,7 +274,7 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "module": "attributes",
+            "module": "shape",
             "namespace": ""
         },
         "curves": {
@@ -306,7 +285,7 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "module": "curves",
+            "module": "shape",
             "namespace": ""
         }
     },
@@ -328,7 +307,7 @@
                 "description": "Returns a color formatted as [r, g, b, a]\n                input        ==> output\n                g            ==> [g, g, g, 255]\n                g,a          ==> [g, g, g, a]\n                r, g, b      ==> [r, g, b, 255]\n                r, g, b, a   ==> [r, g, b, a]\n                [g]          ==> [g, g, g, 255]\n                [g, a]       ==> [g, g, g, a]\n                [r, g, b]    ==> [r, g, b, 255]\n                [r, g, b, a] ==> [r, g, b, a]",
                 "type": "Array"
             },
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/core/core.js",
@@ -350,7 +329,7 @@
                 "description": "",
                 "type": "P5"
             },
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/core/core.js",
@@ -360,7 +339,7 @@
                 "description": "",
                 "type": "Undefined"
             },
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/core/core.js",
@@ -370,7 +349,7 @@
                 "description": "",
                 "type": "Undefined"
             },
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/core/core.js",
@@ -380,7 +359,7 @@
                 "description": "",
                 "type": "Undefined"
             },
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/core/core.js",
@@ -390,7 +369,7 @@
                 "description": "",
                 "type": "Undefined"
             },
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/core/core.js",
@@ -400,7 +379,7 @@
                 "description": "",
                 "type": "Undefined"
             },
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/core/core.js",
@@ -410,7 +389,7 @@
                 "description": "",
                 "type": "Undefined"
             },
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/core/core.js",
@@ -420,13 +399,13 @@
                 "description": "",
                 "type": "Undefined"
             },
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/image/filters.js",
             "line": 5,
             "description": "This module defines the filters for use with image buffers.\n\nThis module is basically a collection of functions stored in an object\nas opposed to modules. The functions are destructive, modifying\nthe passed in canvas rather than creating a copy.\n\nGenerally speaking users of this module will use the Filters.apply method\non a canvas to create an effect.\n\nA number of functions are borrowed/adapted from http://www.html5rocks.com/en/tutorials/canvas/imagefilters/\nor the java processing implmentation.",
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/image/filters.js",
@@ -445,7 +424,7 @@
                 "description": "a one-dimensional array containing the data\n                            in thc RGBA order, with integer values between 0 and 255",
                 "type": "Uint8ClampedArray"
             },
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/image/filters.js",
@@ -469,7 +448,7 @@
                 "description": "32 bit integer value representing ARGB value.",
                 "type": "Integer"
             },
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/image/filters.js",
@@ -489,7 +468,7 @@
                     "type": "Int32Array"
                 }
             ],
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/image/filters.js",
@@ -508,7 +487,7 @@
                 "description": "Holder of pixel data (and width and height)\n                    for a canvas",
                 "type": "ImageData"
             },
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/image/filters.js",
@@ -532,7 +511,7 @@
                 "description": "",
                 "type": "ImageData"
             },
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/image/filters.js",
@@ -559,7 +538,7 @@
                 "description": "[description]",
                 "type": "[type]"
             },
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/image/filters.js",
@@ -577,7 +556,7 @@
                     "type": "Float"
                 }
             ],
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/image/filters.js",
@@ -590,7 +569,7 @@
                     "type": "Canvas"
                 }
             ],
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/image/filters.js",
@@ -603,7 +582,7 @@
                     "type": "Canvas"
                 }
             ],
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/image/filters.js",
@@ -616,7 +595,7 @@
                     "type": "Invert"
                 }
             ],
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/image/filters.js",
@@ -634,7 +613,7 @@
                     "type": "Integer"
                 }
             ],
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/image/filters.js",
@@ -647,7 +626,7 @@
                     "type": "Canvas"
                 }
             ],
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/image/filters.js",
@@ -660,13 +639,13 @@
                     "type": "Canvas"
                 }
             ],
-            "class": "p5"
+            "class": "image"
         },
         {
             "file": "src/image/image.js",
             "line": 10,
             "description": "This module defines the PImage class and P5 methods for\ndrawing images to the main display canvas.",
-            "class": "p5",
+            "class": "image",
             "module": "image"
         },
         {
@@ -691,7 +670,7 @@
                 "description": "the PImage object",
                 "type": "PImage"
             },
-            "class": "p5",
+            "class": "image",
             "module": "image"
         },
         {
@@ -716,7 +695,7 @@
                 "description": "the PImage object",
                 "type": "PImage"
             },
-            "class": "p5",
+            "class": "loading & displaying",
             "module": "image"
         },
         {
@@ -752,7 +731,7 @@
                     "type": "[type]"
                 }
             ],
-            "class": "p5",
+            "class": "loading & displaying",
             "module": "image"
         },
         {
@@ -768,7 +747,7 @@
                     "type": "String"
                 }
             ],
-            "class": "p5",
+            "class": "loading & displaying",
             "module": "image"
         },
         {
@@ -1797,7 +1776,7 @@
                 " <div><img src=\"http://processing.org/reference/images/arc_.png\">\n<code>arc(50, 55, 50, 50, 0, HALF_PI);\nnoFill();\narc(50, 55, 60, 60, HALF_PI, PI);\narc(50, 55, 70, 70, PI, PI+QUARTER_PI);\narc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);\n</code></div>\n\n<div><img src=\"http://processing.org/reference/images/arc_2.png\">\n<code>arc(50, 50, 80, 80, 0, PI+QUARTER_PI, OPEN);\n</code></div>\n\n<div><img src=\"http://processing.org/reference/images/arc_3.png\">\n<code>arc(50, 50, 80, 80, 0, PI+QUARTER_PI, CHORD);\n</code></div>\n\n<div><img src=\"http://processing.org/reference/images/arc_4.png\">\n<code>arc(50, 50, 80, 80, 0, PI+QUARTER_PI, PIE);\n</code></div>"
             ],
             "class": "2d primitives",
-            "module": "2d primitives"
+            "module": "shape"
         },
         {
             "file": "src/shape/2d_primitives.js",
@@ -1832,7 +1811,7 @@
                 "type": "P5"
             },
             "class": "2d primitives",
-            "module": "2d primitives"
+            "module": "shape"
         },
         {
             "file": "src/shape/2d_primitives.js",
@@ -1867,7 +1846,7 @@
                 "type": "P5"
             },
             "class": "2d primitives",
-            "module": "2d primitives"
+            "module": "shape"
         },
         {
             "file": "src/shape/2d_primitives.js",
@@ -1892,7 +1871,7 @@
                 "type": "P5"
             },
             "class": "2d primitives",
-            "module": "2d primitives"
+            "module": "shape"
         },
         {
             "file": "src/shape/2d_primitives.js",
@@ -1947,7 +1926,7 @@
                 "type": "P5"
             },
             "class": "2d primitives",
-            "module": "2d primitives"
+            "module": "shape"
         },
         {
             "file": "src/shape/2d_primitives.js",
@@ -1982,7 +1961,7 @@
                 "type": "P5"
             },
             "class": "2d primitives",
-            "module": "2d primitives"
+            "module": "shape"
         },
         {
             "file": "src/shape/2d_primitives.js",
@@ -2027,7 +2006,7 @@
                 "type": "P5"
             },
             "class": "2d primitives",
-            "module": "2d primitives"
+            "module": "shape"
         },
         {
             "file": "src/shape/attributes.js",
@@ -2047,7 +2026,7 @@
                 "type": "P5"
             },
             "class": "attributes",
-            "module": "attributes"
+            "module": "shape"
         },
         {
             "file": "src/shape/attributes.js",
@@ -2060,7 +2039,7 @@
                 "type": "P5"
             },
             "class": "attributes",
-            "module": "attributes"
+            "module": "shape"
         },
         {
             "file": "src/shape/attributes.js",
@@ -2080,7 +2059,7 @@
                 "type": "P5"
             },
             "class": "attributes",
-            "module": "attributes"
+            "module": "shape"
         },
         {
             "file": "src/shape/attributes.js",
@@ -2093,7 +2072,7 @@
                 "type": "P5"
             },
             "class": "attributes",
-            "module": "attributes"
+            "module": "shape"
         },
         {
             "file": "src/shape/attributes.js",
@@ -2113,7 +2092,7 @@
                 "type": "P5"
             },
             "class": "attributes",
-            "module": "attributes"
+            "module": "shape"
         },
         {
             "file": "src/shape/attributes.js",
@@ -2133,7 +2112,7 @@
                 "type": "P5"
             },
             "class": "attributes",
-            "module": "attributes"
+            "module": "shape"
         },
         {
             "file": "src/shape/attributes.js",
@@ -2153,7 +2132,7 @@
                 "type": "P5"
             },
             "class": "attributes",
-            "module": "attributes"
+            "module": "shape"
         },
         {
             "file": "src/shape/curves.js",
@@ -2208,7 +2187,7 @@
                 "type": "Object"
             },
             "class": "curves",
-            "module": "curves"
+            "module": "shape"
         },
         {
             "file": "src/shape/curves.js",
@@ -2228,7 +2207,7 @@
                 "type": "Object"
             },
             "class": "curves",
-            "module": "curves"
+            "module": "shape"
         },
         {
             "file": "src/shape/curves.js",
@@ -2268,7 +2247,7 @@
                 "type": "Number"
             },
             "class": "curves",
-            "module": "curves"
+            "module": "shape"
         },
         {
             "file": "src/shape/curves.js",
@@ -2306,7 +2285,7 @@
                 "type": "Number"
             },
             "class": "curves",
-            "module": "curves"
+            "module": "shape"
         },
         {
             "file": "src/shape/curves.js",
@@ -2361,7 +2340,7 @@
                 "type": "Object"
             },
             "class": "curves",
-            "module": "curves"
+            "module": "shape"
         },
         {
             "file": "src/shape/curves.js",
@@ -2381,7 +2360,7 @@
                 "type": "Object"
             },
             "class": "curves",
-            "module": "curves"
+            "module": "shape"
         },
         {
             "file": "src/shape/curves.js",
@@ -2421,7 +2400,7 @@
                 "type": "Number"
             },
             "class": "curves",
-            "module": "curves"
+            "module": "shape"
         },
         {
             "file": "src/shape/curves.js",
@@ -2461,7 +2440,7 @@
                 "type": "Number"
             },
             "class": "curves",
-            "module": "curves"
+            "module": "shape"
         },
         {
             "file": "src/app.js",
@@ -2472,7 +2451,7 @@
                 "type": "Undefined"
             },
             "class": "",
-            "module": "curves"
+            "module": "shape"
         }
     ],
     "warnings": [

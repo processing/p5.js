@@ -1,5 +1,5 @@
 /**
- * @module attributes
+ * @module shape
  * @for attributes
  * @requires core
  * @requires constants

@@ -1,5 +1,5 @@
 /**
- * @module 2d primitives
+ * @module shape
  * @for 2d primitives
  * @requires core
  * @requires canvas

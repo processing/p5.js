@@ -6,28 +6,15 @@ YUI.add("yuidoc-meta", function(Y) {
         "PVector",
         "attributes",
         "curves",
-        "p5"
+        "image",
+        "loading & displaying"
     ],
     "modules": [
-        "2d primitives",
         "PVector",
-        "attributes",
-        "curves",
-        "image"
+        "image",
+        "shape"
     ],
     "allModules": [
-        {
-            "displayName": "2d primitives",
-            "name": "2d primitives"
-        },
-        {
-            "displayName": "attributes",
-            "name": "attributes"
-        },
-        {
-            "displayName": "curves",
-            "name": "curves"
-        },
         {
             "displayName": "image",
             "name": "image"
@@ -35,6 +22,10 @@ YUI.add("yuidoc-meta", function(Y) {
         {
             "displayName": "PVector",
             "name": "PVector"
+        },
+        {
+            "displayName": "shape",
+            "name": "shape"
         }
     ]
 } };

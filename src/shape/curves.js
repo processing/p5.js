@@ -1,5 +1,5 @@
 /**
- * @module curves
+ * @module shape
  * @for curves
  * @requires core
  */
