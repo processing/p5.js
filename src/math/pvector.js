@@ -127,7 +127,7 @@ define(function (require) {
    *
    * @method div
    * @chainable
-   * @param {number} the number to divide the vector by
+   * @param {number} n the number to divide the vector by
    * @return {PVector} A reference to the PVector object (allow chaining)
    */
   PVector.prototype.div = function (n) {

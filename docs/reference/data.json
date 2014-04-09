@@ -1080,8 +1080,8 @@
             "chainable": 1,
             "params": [
                 {
-                    "name": "the",
-                    "description": "number to divide the vector by",
+                    "name": "n",
+                    "description": "the number to divide the vector by",
                     "type": "Number"
                 }
             ],
