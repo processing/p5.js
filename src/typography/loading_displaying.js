@@ -3,6 +3,7 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
+  var canvas = require('canvas');
 
   /*
     text(str, x, y)
@@ -21,9 +22,9 @@ define(function (require) {
 
       var words = arguments[0].split(' ');
       var line = '';
-      var vals = this.modeAdjust(arguments[1], arguments[2], arguments[3], arguments[4], this.rectMode);
+      var vals = canvas.modeAdjust(arguments[1], arguments[2], arguments[3], arguments[4], this.settings.rectMode);
 
-      vals.y += this.textLeading;
+      vals.y += this._textLeading;
 
       for(var n = 0; n < words.length; n++) {
 
@@ -40,7 +41,7 @@ define(function (require) {
           this.curElement.context.fillText(line, vals.x, vals.y);
           this.curElement.context.strokeText(line, vals.x, vals.y);
           line = words[n] + ' ';
-          vals.y += this.textLeading;
+          vals.y += this._textLeading;
 
         } else {
 

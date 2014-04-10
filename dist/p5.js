@@ -3025,9 +3025,10 @@ var typographyattributes = function (require, core, constants) {
         };
         return p5;
     }({}, core, constants);
-var typographyloading_displaying = function (require, core) {
+var typographyloading_displaying = function (require, core, canvas) {
         'use strict';
         var p5 = core;
+        var canvas = canvas;
         p5.prototype.text = function () {
             this.curElement.context.font = this._textStyle + ' ' + this._textSize + 'px ' + this._textFont;
             if (arguments.length === 3) {
@@ -3036,8 +3037,8 @@ var typographyloading_displaying = function (require, core) {
             } else if (arguments.length === 5) {
                 var words = arguments[0].split(' ');
                 var line = '';
-                var vals = this.modeAdjust(arguments[1], arguments[2], arguments[3], arguments[4], this.rectMode);
-                vals.y += this.textLeading;
+                var vals = canvas.modeAdjust(arguments[1], arguments[2], arguments[3], arguments[4], this.settings.rectMode);
+                vals.y += this._textLeading;
                 for (var n = 0; n < words.length; n++) {
                     var testLine = line + words[n] + ' ';
                     var metrics = this.curElement.context.measureText(testLine);
@@ -3048,7 +3049,7 @@ var typographyloading_displaying = function (require, core) {
                         this.curElement.context.fillText(line, vals.x, vals.y);
                         this.curElement.context.strokeText(line, vals.x, vals.y);
                         line = words[n] + ' ';
-                        vals.y += this.textLeading;
+                        vals.y += this._textLeading;
                     } else {
                         line = testLine;
                     }
@@ -3060,7 +3061,7 @@ var typographyloading_displaying = function (require, core) {
             }
         };
         return p5;
-    }({}, core);
+    }({}, core, canvas);
 var src_app = function (require, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying) {
         'use strict';
         var p5 = core;
