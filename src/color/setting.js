@@ -74,7 +74,7 @@ define(function (require) {
       a = typeof _args[1] === 'number' ? _args[1] : 255;
     }
     if (this.settings.colorMode === constants.HSB) {
-      rgba = this.hsv2rgb(r, g, b).concat(a);
+      rgba = hsv2rgb(r, g, b).concat(a);
     } else {
       rgba = [r, g, b, a];
     }
@@ -82,10 +82,55 @@ define(function (require) {
     return rgba;
   };
 
-  p5.prototype.hsv2rgb = function(h, s, b) {
-    //TODO: this doesn't do anything - write conversion
-    return [h, s, b];
-  };
+  function hsv2rgb(h,s,v) {
+    // Adapted from http://www.easyrgb.com/math.html
+    // hsv values = 0 - 1, rgb values = 0 - 255
+    var RGB = [];
+    if(s===0){
+      RGB = [Math.round(v*255), Math.round(v*255), Math.round(v*255)];
+    }else{
+      // h must be < 1
+      var var_h = h * 6;
+      if (var_h===6) {
+        var_h = 0;
+      }
+      //Or ... var_i = floor( var_h )
+      var var_i = Math.floor( var_h );
+      var var_1 = v*(1-s);
+      var var_2 = v*(1-s*(var_h-var_i));
+      var var_3 = v*(1-s*(1-(var_h-var_i)));
+      var var_r;
+      var var_g;
+      var var_b;
+      if(var_i===0){
+        var_r = v;
+        var_g = var_3;
+        var_b = var_1;
+      }else if(var_i===1){
+        var_r = var_2;
+        var_g = v;
+        var_b = var_1;
+      }else if(var_i===2){
+        var_r = var_1;
+        var_g = v;
+        var_b = var_3;
+      }else if(var_i===3){
+        var_r = var_1;
+        var_g = var_2;
+        var_b = v;
+      }else if (var_i===4){
+        var_r = var_3;
+        var_g = var_1;
+        var_b = v;
+      }else{
+        var_r = v;
+        var_g = var_1;
+        var_b = var_2;
+      }
+      RGB= [Math.round(var_r * 255), Math.round(var_g * 255), Math.round(var_b * 255)];
+    }
+    return RGB;
+  }
 
   p5.prototype.getCSSRGBAColor = function(arr) {
     var a = arr.map(function(val) {

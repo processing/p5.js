@@ -24,6 +24,7 @@
     "expect": false,
     "it": false,
     "sinon": false,
+    "console": false,
     "PElement": false,
     "p5": false,
     "PVector": false
