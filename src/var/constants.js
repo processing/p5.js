@@ -55,7 +55,13 @@ define(function(require) {
     // TYPOGRAPHY
     NORMAL: 'normal',
     ITALIC: 'italic',
-    BOLD: 'bold'
+    BOLD: 'bold',
+
+    // VERTICES
+    LINEAR: 'linear',
+    QUADRATIC: 'quadratic',
+    BEZIER: 'bezier',
+    CURVE: 'curve'
 
   };
 
