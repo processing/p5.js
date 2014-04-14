@@ -18,15 +18,19 @@ define(function (require) {
     // TODO
   };
 
-  p5.prototype.loadJSON = function(url, callback) {
-    var self = [];
-    reqwest(url, function (resp) {
+
+  p5.prototype.loadJSON = function(path, callback) {
+    var ret = [];
+    var t = path.indexOf('http') === -1 ? 'json' : 'jsonp';
+    reqwest({url: path, type: t, success: function (resp) {
       for (var k in resp) {
-        self[k] = resp[k];
+        ret[k] = resp[k];
       }
-      callback(resp);
-    });
-    return self;
+      if (typeof callback !== 'undefined') {
+        callback(ret);
+      }
+    }});
+    return ret;
   };
 
   p5.prototype.loadStrings = function (path, callback) {
@@ -55,16 +59,17 @@ define(function (require) {
 
   p5.prototype.loadXML = function(path, callback) {
     var ret = [];
-    var self = this;
-    self.temp = [];
-    reqwest(path, function (resp) {
-      self.print(resp);
-      self.temp = resp;
-      ret[0] = resp;
-      if (typeof callback !== 'undefined') {
-        callback(ret);
+    reqwest({
+      url: path,
+      type: 'xml',
+      success: function (resp) {
+        ret[0] = resp;
+        if (typeof callback !== 'undefined') {
+          callback(ret);
+        }
       }
     });
+    return ret;
   };
 
   p5.prototype.open = function() {
