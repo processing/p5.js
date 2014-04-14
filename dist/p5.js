@@ -49,7 +49,11 @@ var constants = function (require) {
             AUTO: 'auto',
             NORMAL: 'normal',
             ITALIC: 'italic',
-            BOLD: 'bold'
+            BOLD: 'bold',
+            LINEAR: 'linear',
+            QUADRATIC: 'quadratic',
+            BEZIER: 'bezier',
+            CURVE: 'curve'
         };
     }({});
 var core = function (require, shim, constants) {
@@ -77,8 +81,6 @@ var core = function (require, shim, constants) {
             this.touchX = 0;
             this.touchY = 0;
             this.pWriters = [];
-            this._bezierDetail = 20;
-            this._curveDetail = 20;
             this.curElement = null;
             this.matrices = [[
                     1,
@@ -110,8 +112,11 @@ var core = function (require, shim, constants) {
             this._textFont = 'sans-serif';
             this._textSize = 12;
             this._textStyle = constants.NORMAL;
-            this._curveDetail = 20;
             this.styles = [];
+            this._bezierDetail = 20;
+            this._curveDetail = 20;
+            this._contourInited = false;
+            this._contourVertices = [];
             if (!sketch) {
                 this._isGlobal = true;
                 for (var method in p5.prototype) {
@@ -2799,6 +2804,9 @@ var shapevertex = function (require, core, constants) {
         var p5 = core;
         var constants = constants;
         p5.prototype.beginContour = function () {
+            this._contourVertices = [];
+            this._contourInited = true;
+            return this;
         };
         p5.prototype.beginShape = function (kind) {
             if (kind === constants.POINTS || kind === constants.LINES || kind === constants.TRIANGLES || kind === constants.TRIANGLE_FAN || kind === constants.TRIANGLE_STRIP || kind === constants.QUADS || kind === constants.QUAD_STRIP) {
@@ -2817,6 +2825,26 @@ var shapevertex = function (require, core, constants) {
         p5.prototype.curveVertex = function () {
         };
         p5.prototype.endContour = function () {
+            this._contourVertices.reverse();
+            this.curElement.context.moveTo(this._contourVertices[0].x, this._contourVertices[0].y);
+            var ctx = this.curElement.context;
+            this._contourVertices.slice(1).forEach(function (pt, i) {
+                switch (pt.type) {
+                case constants.LINEAR:
+                    ctx.lineTo(pt.x, pt.y);
+                    break;
+                case constants.QUADRATIC:
+                    ctx.quadraticCurveTo(pt.x, pt.y, pt.x3, pt.y3);
+                    break;
+                case constants.BEZIER:
+                    break;
+                case constants.CURVE:
+                    break;
+                }
+            });
+            this.curElement.context.closePath();
+            this._contourInited = false;
+            return this;
         };
         p5.prototype.endShape = function (mode) {
             if (mode === constants.CLOSE) {
@@ -2827,10 +2855,28 @@ var shapevertex = function (require, core, constants) {
             return this;
         };
         p5.prototype.quadraticVertex = function (cx, cy, x3, y3) {
+            if (this._contourInited) {
+                var pt = {};
+                pt.x = cx;
+                pt.y = cy;
+                pt.x3 = x3;
+                pt.y3 = y3;
+                pt.type = constants.QUADRATIC;
+                this._contourVertices.push(pt);
+                return this;
+            }
             this.curElement.context.quadraticCurveTo(cx, cy, x3, y3);
             return this;
         };
         p5.prototype.vertex = function (x, y) {
+            if (this._contourInited) {
+                var pt = {};
+                pt.x = x;
+                pt.y = y;
+                pt.type = constants.LINEAR;
+                this._contourVertices.push(pt);
+                return this;
+            }
             if (this.shapeInited) {
                 this.curElement.context.moveTo(x, y);
             } else {
@@ -3125,4 +3171,5 @@ var src_app = function (require, core, mathpvector, colorcreating_reading, color
         window.p5 = p5;
         window.PVector = PVector;
         return p5;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
+    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);
+}());
