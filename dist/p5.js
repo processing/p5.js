@@ -1,4 +1,5 @@
-(function () {var shim = function (require) {
+(function () {
+var shim = function (require) {
         window.requestDraw = function () {
             return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
                 window.setTimeout(callback, 1000 / 60);
@@ -1692,6 +1693,16 @@ var imageloading_displaying = function (require, core) {
         p5.prototype.set = function () {
         };
         p5.prototype.updatePixels = function () {
+            var imageData = this.curElement.context.getImageData(0, 0, this.width, this.height);
+            var data = imageData.data;
+            for (var i = 0; i < this.pixels.length; i += 1) {
+                var j = i * 4;
+                data[j] = this.pixels[i][0];
+                data[j + 1] = this.pixels[i][1];
+                data[j + 2] = this.pixels[i][2];
+                data[j + 3] = this.pixels[i][3];
+            }
+            this.curElement.context.putImageData(imageData, 0, 0, 0, 0, this.width, this.height);
         };
         return p5;
     }({}, core);
@@ -3142,5 +3153,4 @@ var src_app = function (require, core, mathpvector, colorcreating_reading, color
         window.p5 = p5;
         window.PVector = PVector;
         return p5;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);
-}());
+    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imageloading_displaying, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
