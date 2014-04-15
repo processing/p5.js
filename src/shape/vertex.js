@@ -61,7 +61,22 @@ define(function (require) {
    * @return {Object} the p5 object
    */
   p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
+    if(this._contourInited) {
+      var pt = {};
+      pt.x = x2;
+      pt.y = y2;
+      pt.x3 = x3;
+      pt.y3 = y3;
+      pt.x4 = x4;
+      pt.y4 = y4;
+      pt.type = constants.BEZIER;
+      this._contourVertices.push(pt);
+
+      return this;
+    }
+
     this.curElement.context.bezierCurveTo(x2, y2, x3, y3, x4, y4);
+
     return this;
   };
 
@@ -90,7 +105,7 @@ define(function (require) {
         ctx.quadraticCurveTo(pt.x, pt.y, pt.x3, pt.y3);
         break;
       case constants.BEZIER:
-        //TODO: Bezier curve
+        ctx.bezierCurveTo(pt.x, pt.y, pt.x3, pt.y3, pt.x4, pt.y4);
         break;
       case constants.CURVE:
         //TODO: Curve... curve
