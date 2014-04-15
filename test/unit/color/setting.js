@@ -1,14 +1,16 @@
-suite('Calculation', function() {
+suite('Color', function() {
+
+  // p5 instance
+  var myp5 = new p5(function( sketch ) {
+    sketch.setup = function() {};
+    sketch.draw = function() {};
+  });
 
   suite('p5.prototype.colorMode', function() {
-    var colorMode = p5.prototype.colorMode;
-    var p = {}; // new p5();
-    console.log('hi');
-    console.log(p);
+    var colorMode = myp5.colorMode;
     suite('colorMode(RGB)', function() {
       test('should be a function', function() {
         assert.ok(colorMode);
-        assert.typeOf(colorMode, 'function');
       });
       // test('should be a function', function() {
       //   assert.ok(p);

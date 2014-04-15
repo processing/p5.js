@@ -35,6 +35,16 @@ define(function (require) {
   require('typography.attributes');
   require('typography.loading_displaying');
 
+  // PhantomJS does not implement Function.prototype.bind
+  if(window.PHANTOMJS) {
+    Function.prototype.bind = Function.prototype.bind || function (thisp) {
+      var fn = this;
+      return function () {
+        return fn.apply(thisp, arguments);
+      };
+    };
+  }
+
   /**
    * _globalInit
    *
@@ -47,19 +57,20 @@ define(function (require) {
    * @return {Undefined}
    */
   var _globalInit = function() {
-    // if there is a setup or draw function on the window
-    // then instantiate p5 in "global" mode
-    if((window.setup && typeof window.setup === 'function') ||
-      (window.draw && typeof window.draw === 'function')) {
-      new p5();
+    if(!window.PHANTOMJS) {
+      // If there is a setup or draw function on the window
+      // then instantiate p5 in "global" mode
+      if((window.setup && typeof window.setup === 'function') ||
+        (window.draw && typeof window.draw === 'function')) {
+        new p5();
+      }
     }
   };
 
+  // TODO: ???
   if (document.readyState === 'complete') {
-    // TODO: ???
     _globalInit();
   } else {
-    // TODO: ???
     window.addEventListener('load', _globalInit , false);
   }
 

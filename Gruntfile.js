@@ -31,7 +31,8 @@ module.exports = function(grunt) {
           // reporter: 'test/reporter/simple.js',
           reporter: 'Nyan',
           run: true,
-          log: true
+          log: true,
+          logErrors: true
         }
       },
     },
