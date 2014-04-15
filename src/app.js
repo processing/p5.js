@@ -35,16 +35,6 @@ define(function (require) {
   require('typography.attributes');
   require('typography.loading_displaying');
 
-  // PhantomJS does not implement Function.prototype.bind
-  if(window.PHANTOMJS) {
-    Function.prototype.bind = Function.prototype.bind || function (thisp) {
-      var fn = this;
-      return function () {
-        return fn.apply(thisp, arguments);
-      };
-    };
-  }
-
   /**
    * _globalInit
    *
