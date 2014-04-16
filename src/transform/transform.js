@@ -19,6 +19,7 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
+  var constants = require('constants');
   var linearAlgebra = require('linearalgebra');
 
   require('output.text_area');
@@ -59,7 +60,9 @@ define(function (require) {
   };
 
   p5.prototype.rotate = function(r) {
-    r = this.radians(r);
+    if (this.settings.angleMode === constants.DEGREES) {
+      r = this.radians(r);
+    }
     this.curElement.context.rotate(r);
     var m = this.matrices[this.matrices.length-1];
     var c = Math.cos(r);
