@@ -1690,7 +1690,36 @@ var imageloading_displaying = function (require, core) {
             }
             this._setProperty('pixels', pixels);
         };
-        p5.prototype.set = function () {
+        p5.prototype.set = function (x, y, imgOrCol) {
+            var idx = y * this.width + x;
+            if (typeof imgOrCol === 'number') {
+                if (!this.pixels) {
+                    this.loadPixels();
+                }
+                if (idx < this.pixels.length) {
+                    this.pixels[idx] = [
+                        imgOrCol,
+                        imgOrCol,
+                        imgOrCol,
+                        255
+                    ];
+                    this.updatePixels();
+                }
+            } else if (imgOrCol instanceof Array) {
+                if (imgOrCol.length < 4) {
+                    imgOrCol[3] = 255;
+                }
+                if (!this.pixels) {
+                    this.loadPixels();
+                }
+                if (idx < this.pixels.length) {
+                    this.pixels[idx] = imgOrCol;
+                    this.updatePixels();
+                }
+            } else {
+                this.curElement.context.drawImage(imgOrCol.canvas, x, y);
+                this.loadPixels();
+            }
         };
         p5.prototype.updatePixels = function () {
             var imageData = this.curElement.context.getImageData(0, 0, this.width, this.height);

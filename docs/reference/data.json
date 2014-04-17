@@ -1656,7 +1656,33 @@
         },
         {
             "file": "src/image/loading_displaying.js",
-            "line": 86,
+            "line": 81,
+            "description": "Changes the color of any pixel, or writes an image directly to the display window.\n\nThe x and y parameters specify the pixel to change and the c parameter specifies the color value. The c parameter is interpreted according to the current color mode. (The default color mode is RGB values from 0 to 255.) When setting an image, the x and y parameters define the coordinates for the upper-left corner of the image, regardless of the current imageMode(). \n\nSetting the color of a single pixel with set(x, y) is easy, but not as fast as putting the data directly into pixels[]. The equivalent statement to set(x, y, #000000) using pixels[] is pixels[y*width+x] = #000000. See the reference for pixels[] for more information.",
+            "itemtype": "method",
+            "name": "set",
+            "params": [
+                {
+                    "name": "x",
+                    "description": "x-coordinate of the pixel",
+                    "type": "Number"
+                },
+                {
+                    "name": "y",
+                    "description": "y-coordinate of the pixel",
+                    "type": "Number"
+                },
+                {
+                    "name": "insert",
+                    "description": "a grayscale value | a color array | image to copy",
+                    "type": "Number|Array|Object"
+                }
+            ],
+            "class": "Loading & Displaying",
+            "module": "Image"
+        },
+        {
+            "file": "src/image/loading_displaying.js",
+            "line": 120,
             "description": "Updates the display window with the data in the pixels[] array. Use in conjunction with loadPixels(). If you're only reading pixels from the array, there's no need to call updatePixels() — updating is only necessary to apply changes.",
             "itemtype": "method",
             "name": "updatePixels",

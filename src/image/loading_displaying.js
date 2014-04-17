@@ -78,10 +78,44 @@ define(function (require) {
     }
     this._setProperty('pixels', pixels);
   };
-
-  p5.prototype.set = function() {
-    // TODO
-
+  /**
+   * Changes the color of any pixel, or writes an image directly to the display window.
+   *
+   * The x and y parameters specify the pixel to change and the c parameter specifies the color value. The c parameter is interpreted according to the current color mode. (The default color mode is RGB values from 0 to 255.) When setting an image, the x and y parameters define the coordinates for the upper-left corner of the image, regardless of the current imageMode(). 
+   * 
+   * Setting the color of a single pixel with set(x, y) is easy, but not as fast as putting the data directly into pixels[]. The equivalent statement to set(x, y, #000000) using pixels[] is pixels[y*width+x] = #000000. See the reference for pixels[] for more information.
+   *
+   * @method set
+   * @param {Number} x x-coordinate of the pixel
+   * @param {Number} y y-coordinate of the pixel
+   * @param {Number|Array|Object} insert a grayscale value | a color array | image to copy
+   */
+  p5.prototype.set = function (x, y, imgOrCol) {
+    var idx = y * this.width + x;
+    if (typeof imgOrCol === 'number') {
+      if (!this.pixels) {
+        this.loadPixels();
+      }
+      if (idx < this.pixels.length) {
+        this.pixels[idx] = [imgOrCol, imgOrCol, imgOrCol, 255];
+        this.updatePixels();
+      }
+    }
+    else if (imgOrCol instanceof Array) {
+      if (imgOrCol.length < 4) {
+        imgOrCol[3] = 255;
+      }
+      if (!this.pixels) {
+        this.loadPixels();
+      }
+      if (idx < this.pixels.length) {
+        this.pixels[idx] = imgOrCol;
+        this.updatePixels();
+      }
+    } else {
+      this.curElement.context.drawImage(imgOrCol.canvas, x, y);
+      this.loadPixels();
+    }
   };
   /**
    * Updates the display window with the data in the pixels[] array. Use in conjunction with loadPixels(). If you're only reading pixels from the array, there's no need to call updatePixels() — updating is only necessary to apply changes. 
