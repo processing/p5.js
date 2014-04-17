@@ -8,7 +8,7 @@ define([
 
   var Router = Backbone.Router.extend({
     routes: {
-      '': 'start',
+      '': 'list',
       'classes': 'list',
       'methods': 'list',
       'properties': 'list',
@@ -117,8 +117,9 @@ define([
      */
     list: function(collection) {
       // Get collection from the hash if not provided
-      if (!collection)
-        var collection = location.hash.replace('#', '');
+      // if (!collection)
+      //   var collection = location.hash.replace('#', '');
+      collection = 'methods'; //temp
 
       // Make sure collection is valid
       if (App.collections.indexOf(collection) < 0)

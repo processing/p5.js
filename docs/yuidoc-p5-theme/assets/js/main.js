@@ -59,6 +59,5 @@ require([
     });
     
     require(['router']);
-
   });
 });
