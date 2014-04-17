@@ -2935,9 +2935,10 @@ var linearalgebra = function (require) {
             }
         };
     }({});
-var transform = function (require, core, linearalgebra, outputtext_area) {
+var transform = function (require, core, constants, linearalgebra, outputtext_area) {
         'use strict';
         var p5 = core;
+        var constants = constants;
         var linearAlgebra = linearalgebra;
         p5.prototype.applyMatrix = function (n00, n01, n02, n10, n11, n12) {
             this.curElement.context.transform(n00, n01, n02, n10, n11, n12);
@@ -2986,7 +2987,9 @@ var transform = function (require, core, linearalgebra, outputtext_area) {
             return this;
         };
         p5.prototype.rotate = function (r) {
-            r = this.radians(r);
+            if (this.settings.angleMode === constants.DEGREES) {
+                r = this.radians(r);
+            }
             this.curElement.context.rotate(r);
             var m = this.matrices[this.matrices.length - 1];
             var c = Math.cos(r);
@@ -3057,7 +3060,7 @@ var transform = function (require, core, linearalgebra, outputtext_area) {
             return this;
         };
         return p5;
-    }({}, core, linearalgebra, outputtext_area);
+    }({}, core, constants, linearalgebra, outputtext_area);
 var typographyattributes = function (require, core, constants) {
         'use strict';
         var p5 = core;

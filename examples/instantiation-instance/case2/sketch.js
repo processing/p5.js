@@ -6,6 +6,7 @@ var s = function( sketch ) {
 
   sketch.setup = function() {
     sketch.createCanvas(400, 400);
+    console.log(sketch.DEGREES);
   };
 
   sketch.draw = function() {
