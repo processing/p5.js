@@ -1,5 +1,5 @@
 suite('Color', function() {
-
+  
   // p5 instance
   var myp5 = new p5(function( sketch ) {
     sketch.setup = function() {};
@@ -12,14 +12,10 @@ suite('Color', function() {
       test('should be a function', function() {
         assert.ok(colorMode);
       });
-      // test('should be a function', function() {
-      //   assert.ok(p);
-      //   assert.typeOf(p, 'Object');
-      // });
-      // test('should set mode to RGB', function() {
-      //   p.colorMode(p5.prototype.RGB);
-      //   assert.equal(p.settings.colorMode, p5.prototype.RGB);
-      // });
+      test('should set mode to HSB', function() {
+        myp5.colorMode('hsb'); //myp5.colorMode(myp5.RGB);
+        assert.equal(myp5.settings.colorMode, 'hsb');
+      });
     });
   });
 

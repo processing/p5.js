@@ -2,7 +2,7 @@
     "project": {
         "name": "p5",
         "description": "",
-        "version": "0.2.5",
+        "version": "0.2.7",
         "url": ""
     },
     "files": {
@@ -63,6 +63,15 @@
                 "Image": 1,
                 "Loading & Displaying": 1,
                 "PImage": 1
+            },
+            "namespaces": {}
+        },
+        "src/image/loading_displaying.js": {
+            "name": "src/image/loading_displaying.js",
+            "modules": {},
+            "classes": {},
+            "fors": {
+                "Loading & Displaying": 1
             },
             "namespaces": {}
         },
@@ -1571,6 +1580,51 @@
                 }
             ],
             "class": "PImage",
+            "module": "Image"
+        },
+        {
+            "file": "src/image/loading_displaying.js",
+            "line": 38,
+            "description": "Reads the color of any pixel or grabs a section of an image. If no parameters are specified, the entire image is returned. Use the x and y parameters to get the value of one pixel. Get a section of the display window by specifying additional w and h parameters. When getting an image, the x and y parameters define the coordinates for the upper-left corner of the image, regardless of the current imageMode().\n\nIf the pixel requested is outside of the image window, black is returned. The numbers returned are scaled according to the current color ranges, but only RGB values are returned by this function. For example, even though you may have drawn a shape with colorMode(HSB), the numbers returned will be in RGB format. \n\nGetting the color of a single pixel with get(x, y) is easy, but not as fast as grabbing the data directly from pixels[]. The equivalent statement to get(x, y) using pixels[] is pixels[y*width+x]. See the reference for pixels[] for more information.",
+            "itemtype": "method",
+            "name": "get",
+            "params": [
+                {
+                    "name": "x",
+                    "description": "x-coordinate of the pixel",
+                    "type": "Number",
+                    "optional": true
+                },
+                {
+                    "name": "y",
+                    "description": "y-coordinate of the pixel",
+                    "type": "Number",
+                    "optional": true
+                }
+            ],
+            "return": {
+                "description": "color of pixel at x,y in array format [R, G, B, A]",
+                "type": "Array/Color"
+            },
+            "class": "Loading & Displaying",
+            "module": "Image"
+        },
+        {
+            "file": "src/image/loading_displaying.js",
+            "line": 66,
+            "description": "Loads the pixel data for the display window into the pixels[] array. This function must always be called before reading from or writing to pixels[].",
+            "itemtype": "method",
+            "name": "loadPixels",
+            "class": "Loading & Displaying",
+            "module": "Image"
+        },
+        {
+            "file": "src/image/loading_displaying.js",
+            "line": 86,
+            "description": "Updates the display window with the data in the pixels[] array. Use in conjunction with loadPixels(). If you're only reading pixels from the array, there's no need to call updatePixels() — updating is only necessary to apply changes.",
+            "itemtype": "method",
+            "name": "updatePixels",
+            "class": "Loading & Displaying",
             "module": "Image"
         },
         {

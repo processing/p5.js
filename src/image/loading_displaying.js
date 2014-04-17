@@ -1,5 +1,5 @@
 /**
- * @module Environment
+ * @module Image
  * @for Loading & Displaying
  * @requires core
  */
