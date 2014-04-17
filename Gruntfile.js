@@ -58,7 +58,7 @@ module.exports = function(grunt) {
             'dom.pelement': 'src/dom/pelement',
             'environment': 'src/environment/environment',
             'image': 'src/image/image',
-            'image.loading_displaying': 'src/image/loading_displaying',
+            'image.pixels': 'src/image/pixels',
             'input.files': 'src/input/files',
             'input.keyboard': 'src/input/keyboard',
             'input.mouse': 'src/input/mouse',

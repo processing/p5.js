@@ -1,6 +1,6 @@
 /**
  * @module Image
- * @for Loading & Displaying
+ * @for Pixels
  * @requires core
  */
 define(function (require) {

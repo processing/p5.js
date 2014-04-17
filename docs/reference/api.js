@@ -12,6 +12,7 @@ YUI.add("yuidoc-meta", function(Y) {
         "Noise",
         "PImage",
         "PVector",
+        "Pixels",
         "Random",
         "Setting",
         "Structure",

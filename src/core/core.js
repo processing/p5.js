@@ -64,10 +64,6 @@ define(function (require) {
     // Output.Files
     this.pWriters = [];
 
-    // Curves
-    this._bezierDetail = 20;
-    this._curveDetail = 20;
-
     // TODO: ???
     this.curElement = null;
     this.matrices = [[1,0,0,1,0,0]];
@@ -112,11 +108,16 @@ define(function (require) {
     this._textSize = 12;
     this._textStyle = constants.NORMAL;
 
-    // Curves
-    this._curveDetail = 20;
-
     // TODO: ???
     this.styles = [];
+
+    // Curves
+    this._bezierDetail = 20;
+    this._curveDetail = 20;
+
+    //Vertices
+    this._contourInited = false;
+    this._contourVertices = [];
 
     // If the user has created a global setup or draw function,
     // assume "global" mode and make everything global (i.e. on the window)

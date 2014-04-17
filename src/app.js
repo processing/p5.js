@@ -13,7 +13,7 @@ define(function (require) {
   require('dom.pelement');
   require('environment');
   require('image');
-  require('image.loading_displaying');
+  require('image.pixels');
   require('input.files');
   require('input.keyboard');
   require('input.mouse');
