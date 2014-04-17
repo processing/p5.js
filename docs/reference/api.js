@@ -24,7 +24,8 @@ YUI.add("yuidoc-meta", function(Y) {
         "Image",
         "Math",
         "Shape",
-        "Structure"
+        "Structure",
+        "Typography"
     ],
     "allModules": [
         {
@@ -50,6 +51,10 @@ YUI.add("yuidoc-meta", function(Y) {
         {
             "displayName": "Structure",
             "name": "Structure"
+        },
+        {
+            "displayName": "Typography",
+            "name": "Typography"
         }
     ]
 } };

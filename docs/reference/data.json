@@ -173,6 +173,26 @@
             },
             "namespaces": {}
         },
+        "src/typography/attributes.js": {
+            "name": "src/typography/attributes.js",
+            "modules": {
+                "Typography": 1
+            },
+            "classes": {},
+            "fors": {
+                "Attributes": 1
+            },
+            "namespaces": {}
+        },
+        "src/typography/loading_displaying.js": {
+            "name": "src/typography/loading_displaying.js",
+            "modules": {},
+            "classes": {},
+            "fors": {
+                "Loading & Displaying": 1
+            },
+            "namespaces": {}
+        },
         "src/app.js": {
             "name": "src/app.js",
             "modules": {},
@@ -305,6 +325,22 @@
             "namespaces": {},
             "tag": "module",
             "file": "src/structure/structure.js",
+            "line": 1,
+            "requires": [
+                "core"
+            ]
+        },
+        "Typography": {
+            "name": "Typography",
+            "submodules": {},
+            "classes": {},
+            "fors": {
+                "Attributes": 1,
+                "Loading & Displaying": 1
+            },
+            "namespaces": {},
+            "tag": "module",
+            "file": "src/typography/attributes.js",
             "line": 1,
             "requires": [
                 "core"
@@ -3482,6 +3518,154 @@
             "module": "Structure"
         },
         {
+            "file": "src/typography/attributes.js",
+            "line": 13,
+            "description": "Sets the current alignment for drawing text. The parameters LEFT, CENTER, and RIGHT set the display characteristics of the letters in relation to the values for the x and y parameters of the text() function.",
+            "itemtype": "method",
+            "name": "textAlign",
+            "params": [
+                {
+                    "name": "alignX",
+                    "description": "horizontal alignment, either LEFT, CENTER, or RIGHT",
+                    "type": "Number/Constant"
+                }
+            ],
+            "class": "Attributes",
+            "module": "Typography"
+        },
+        {
+            "file": "src/typography/attributes.js",
+            "line": 25,
+            "description": "Calculates and returns the height of any character or text string.",
+            "itemtype": "method",
+            "name": "textHeight",
+            "params": [
+                {
+                    "name": "str",
+                    "description": "the String of characters to measure",
+                    "type": "String"
+                }
+            ],
+            "class": "Attributes",
+            "module": "Typography"
+        },
+        {
+            "file": "src/typography/attributes.js",
+            "line": 35,
+            "description": "Sets the spacing between lines of text in units of pixels. This setting will be used in all subsequent calls to the text() function.",
+            "itemtype": "method",
+            "name": "textLeading",
+            "params": [
+                {
+                    "name": "leading",
+                    "description": "the size in pixels for spacing between lines",
+                    "type": "Number"
+                }
+            ],
+            "class": "Attributes",
+            "module": "Typography"
+        },
+        {
+            "file": "src/typography/attributes.js",
+            "line": 45,
+            "description": "Sets the current font size. This size will be used in all subsequent calls to the text() function. Font size is measured in units of pixels.",
+            "itemtype": "method",
+            "name": "textSize",
+            "params": [
+                {
+                    "name": "size",
+                    "description": "the size of the letters in units of pixels",
+                    "type": "Number"
+                }
+            ],
+            "class": "Attributes",
+            "module": "Typography"
+        },
+        {
+            "file": "src/typography/attributes.js",
+            "line": 55,
+            "description": "Sets the style of the text to NORMAL, ITALIC, or BOLD. Note this is overriden by CSS styling.",
+            "itemtype": "method",
+            "name": "textStyle",
+            "params": [
+                {
+                    "name": "style",
+                    "description": "styling for text, either NORMAL, ITALIC, or BOLD",
+                    "type": "Number/Constant"
+                }
+            ],
+            "class": "Attributes",
+            "module": "Typography"
+        },
+        {
+            "file": "src/typography/attributes.js",
+            "line": 67,
+            "description": "Calculates and returns the width of any character or text string.",
+            "itemtype": "method",
+            "name": "textWidth",
+            "params": [
+                {
+                    "name": "str",
+                    "description": "the String of characters to measure",
+                    "type": "String"
+                }
+            ],
+            "class": "Attributes",
+            "module": "Typography"
+        },
+        {
+            "file": "src/typography/loading_displaying.js",
+            "line": 13,
+            "description": "Draws text to the screen. Displays the information specified in the first parameter on the screen in the position specified by the additional parameters. A default font will be used unless a font is set with the textFont() function and a default size will be used unless a font is set with textSize(). Change the color of the text with the fill() function. The text displays in relation to the textAlign() function, which gives the option to draw to the left, right, and center of the coordinates.\n\nThe x2 and y2 parameters define a rectangular area to display within and may only be used with string data. When these parameters are specified, they are interpreted based on the current rectMode() setting. Text that does not fit completely within the rectangle specified will not be drawn to the screen.",
+            "itemtype": "method",
+            "name": "text",
+            "params": [
+                {
+                    "name": "str",
+                    "description": "the alphanumberic symbols to be displayed",
+                    "type": "String"
+                },
+                {
+                    "name": "x",
+                    "description": "x-coordinate of text",
+                    "type": "Number"
+                },
+                {
+                    "name": "y",
+                    "description": "y-coordinate of text",
+                    "type": "Number"
+                },
+                {
+                    "name": "x2",
+                    "description": "by default, the width of the text box, see rectMode() for more info",
+                    "type": "Number"
+                },
+                {
+                    "name": "y2",
+                    "description": "by default, the height of the text box, see rectMode() for more info",
+                    "type": "Number"
+                }
+            ],
+            "class": "Loading & Displaying",
+            "module": "Typography"
+        },
+        {
+            "file": "src/typography/loading_displaying.js",
+            "line": 74,
+            "description": "Sets the current font that will be drawn with the text() function.",
+            "itemtype": "method",
+            "name": "textFont",
+            "params": [
+                {
+                    "name": "font",
+                    "description": "name of font",
+                    "type": "String"
+                }
+            ],
+            "class": "Loading & Displaying",
+            "module": "Typography"
+        },
+        {
             "file": "src/app.js",
             "line": 38,
             "description": "_globalInit\n\nTODO: ???\nif sketch is on window\nassume \"global\" mode\nand instantiate p5 automatically\notherwise do nothing",
@@ -3490,7 +3674,7 @@
                 "type": "Undefined"
             },
             "class": "",
-            "module": "Structure"
+            "module": "Typography"
         }
     ],
     "warnings": [

@@ -3070,9 +3070,6 @@ var typographyattributes = function (require, core, constants) {
                 this.curElement.context.textAlign = a;
             }
         };
-        p5.prototype.textFont = function (str) {
-            this._setProperty('_textFont', str);
-        };
         p5.prototype.textHeight = function (s) {
             return this.curElement.context.measureText(s).height;
         };
@@ -3126,6 +3123,9 @@ var typographyloading_displaying = function (require, core, canvas) {
                     this.curElement.context.strokeText(line, vals.x, vals.y);
                 }
             }
+        };
+        p5.prototype.textFont = function (str) {
+            this._setProperty('_textFont', str);
         };
         return p5;
     }({}, core, canvas);

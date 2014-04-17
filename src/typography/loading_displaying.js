@@ -1,3 +1,8 @@
+/**
+ * @module Typography
+ * @for Loading & Displaying
+ * @requires core
+ */
 define(function (require) {
 
   'use strict';
@@ -5,10 +10,18 @@ define(function (require) {
   var p5 = require('core');
   var canvas = require('canvas');
 
-  /*
-    text(str, x, y)
-    text(str, x1, y1, x2, y2)
-  */
+  /**
+   * Draws text to the screen. Displays the information specified in the first parameter on the screen in the position specified by the additional parameters. A default font will be used unless a font is set with the textFont() function and a default size will be used unless a font is set with textSize(). Change the color of the text with the fill() function. The text displays in relation to the textAlign() function, which gives the option to draw to the left, right, and center of the coordinates.
+   *
+   * The x2 and y2 parameters define a rectangular area to display within and may only be used with string data. When these parameters are specified, they are interpreted based on the current rectMode() setting. Text that does not fit completely within the rectangle specified will not be drawn to the screen.
+   *
+   * @method text
+   * @param {String} str the alphanumberic symbols to be displayed
+   * @param {Number} x x-coordinate of text
+   * @param {Number} y y-coordinate of text
+   * @param {Number} x2 by default, the width of the text box, see rectMode() for more info
+   * @param {Number} y2 by default, the height of the text box, see rectMode() for more info
+   */
   p5.prototype.text = function() {
 
     this.curElement.context.font=this._textStyle+' '+this._textSize+'px '+this._textFont;
@@ -56,6 +69,16 @@ define(function (require) {
         this.curElement.context.strokeText(line, vals.x, vals.y);
       }
     }
+  };
+
+  /**
+   * Sets the current font that will be drawn with the text() function. 
+   *
+   * @method textFont
+   * @param {String} font name of font
+   */
+  p5.prototype.textFont = function(str) {
+    this._setProperty('_textFont', str); //pend temp?
   };
 
   return p5;
