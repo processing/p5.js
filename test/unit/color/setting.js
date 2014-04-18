@@ -13,8 +13,8 @@ suite('Color', function() {
         assert.ok(colorMode);
       });
       test('should set mode to HSB', function() {
-        myp5.colorMode('hsb'); //myp5.colorMode(myp5.RGB);
-        assert.equal(myp5.settings.colorMode, 'hsb');
+        myp5.colorMode(myp5.HSB); 
+        assert.equal(myp5.settings.colorMode, myp5.HSB);
       });
     });
   });

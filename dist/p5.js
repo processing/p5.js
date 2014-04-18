@@ -134,6 +134,11 @@ var core = function (require, shim, constants) {
                 }
             } else {
                 sketch(this);
+                for (var c in constants) {
+                    if (constants.hasOwnProperty(c)) {
+                        p5.prototype[c] = constants[c];
+                    }
+                }
                 window.onmousemove = function (e) {
                     this.onmousemove(e);
                 }.bind(this);

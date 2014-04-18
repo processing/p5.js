@@ -144,6 +144,13 @@ define(function (require) {
       // instance of p5
       sketch(this);
 
+      // attach constants to p5 instance
+      for (var c in constants) {
+        if (constants.hasOwnProperty(c)) {
+          p5.prototype[c] = constants[c];
+        }
+      }
+
       // Pass all window mouse events to the p5 instance
       window.onmousemove = function(e) {
         this.onmousemove(e);
