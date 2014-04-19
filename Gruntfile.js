@@ -135,16 +135,15 @@ module.exports = function(grunt) {
       },
       yuidoc_theme: {
         options: {
-          baseUrl: "./docs/yuidoc-p5-theme-src/scripts/",
-          mainConfigFile: "./docs/yuidoc-p5-theme-src/scripts/config.js",
+          baseUrl: './docs/yuidoc-p5-theme-src/scripts/',
+          mainConfigFile: './docs/yuidoc-p5-theme-src/scripts/config.js',
           name: 'main',
-          out: "./docs/yuidoc-p5-theme/assets/js/reference.js",
-          optimize: "none",
-          //optimize: "uglify2",
+          out: './docs/yuidoc-p5-theme/assets/js/reference.js',
+          optimize: 'none',
           generateSourceMaps: true,
           findNestedDependencies: true,
           wrap: true,
-          paths: { "jquery": "empty:" }
+          paths: { 'jquery': 'empty:' }
         }
       }
     },
