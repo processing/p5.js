@@ -4086,6 +4086,8 @@ input::-moz-focus-inner {
 #list {
   text-align: left;
   /* -- API list -------------------------------------------------------------- */ }
+  #list.list-wrapper {
+    margin-top: 50px; }
   #list ul,
   #list li {
     list-style: none;
@@ -4099,7 +4101,14 @@ input::-moz-focus-inner {
     #list li.group {
       display: inline-block;
       width: 20%;
-      vertical-align: top; }
+      vertical-align: top;
+      /* LM ADDING */ }
+      #list li.group .group-name {
+        color: #FF47A3; }
+      #list li.group .subgroup-name {
+        color: #FF47A3;
+        font-size: 100%;
+        font-weight: bold; }
     #list li a {
       margin-right: 20px;
       margin-bottom: 20px; }
@@ -4607,19 +4616,3 @@ ol.linenums li {
   .page-header .right-header {
     display: inline-block;
     width: 25%; }
-
-
-/* LM ADDING */
-.group-name {
-  color: #FF47A3;
-}
-.subgroup-name {
-  color: #FF47A3;
-  font-size: 100%;
-  font-weight: bold;
-}
-
-.list-wrapper {
-  margin-top: 50px;
-}
-

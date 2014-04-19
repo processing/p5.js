@@ -20,8 +20,34 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      files: ['src/**/*.js'],
-      tasks: ['jshint', 'requirejs']
+      // p5 dist
+      main: {
+        files: ['src/**/*.js'],
+        tasks: ['jshint', 'requirejs'],
+      },
+      // reference
+      reference_build: {
+        files: ['docs/yuidoc-p5-theme/**/*'],
+        tasks: ['yuidoc'],
+        options: { livereload: true, interrupt: true }
+      },
+      // scripts for yuidoc/reference theme
+      yuidoc_theme_build: {
+        files: ['docs/yuidoc-p5-theme-src/scripts/**/*'],
+        tasks: ['requirejs:yuidoc_theme']
+      },
+      // css for yuidoc/reference theme (see 'sass' task)
+      yuidoc_theme_sass: {
+        files: ['docs/yuidoc-p5-theme-src/sass/**/*.scss'],
+        tasks: ['sass']
+      },
+    },
+    sass: {
+      yuidoc_theme: {
+        files: {
+          'docs/yuidoc-p5-theme/assets/css/main.css': 'docs/yuidoc-p5-theme-src/sass/main.scss'
+        }
+      }
     },
     mocha: {
       test: {
@@ -106,6 +132,20 @@ module.exports = function(grunt) {
           useStrict: true,
           wrap: true
         }
+      },
+      yuidoc_theme: {
+        options: {
+          baseUrl: "./docs/yuidoc-p5-theme-src/scripts/",
+          mainConfigFile: "./docs/yuidoc-p5-theme-src/scripts/config.js",
+          name: 'main',
+          out: "./docs/yuidoc-p5-theme/assets/js/reference.js",
+          optimize: "none",
+          //optimize: "uglify2",
+          generateSourceMaps: true,
+          findNestedDependencies: true,
+          wrap: true,
+          paths: { "jquery": "empty:" }
+        }
       }
     },
     yuidoc: {
@@ -131,7 +171,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
+  grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.registerTask('test', ['jshint', 'qunit']);
+  
   grunt.registerTask('yui', ['yuidoc']);
 
   //grunt.registerTask('default', ['jshint', 'qunit', 'concat', 'uglify']);

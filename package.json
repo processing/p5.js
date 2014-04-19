@@ -17,7 +17,8 @@
     "grunt-contrib-requirejs": "~0.4.1",
     "grunt-contrib-yuidoc": "0.5.2",
     "almond": "~0.2.7",
-    "amdclean": "~0.3.3"
+    "amdclean": "~0.3.3",
+    "grunt-contrib-sass": "~0.7.2"
   },
   "licenses": [
     {

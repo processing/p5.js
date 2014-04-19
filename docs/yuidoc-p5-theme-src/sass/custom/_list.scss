@@ -1,7 +1,11 @@
 #list {
 
   text-align: left;
-
+  
+  &.list-wrapper {
+    margin-top: 50px;
+  }
+  
   ul,
   li {
     list-style: none;
@@ -16,11 +20,24 @@
   li {
     font-size: $font-size-base; // bootstrap var
     display: block;
+
     &.group {
       display: inline-block;
       width: 20%;
       vertical-align: top;
+
+      /* LM ADDING */
+      .group-name {
+        color: #FF47A3;
+      }
+
+      .subgroup-name {
+        color: #FF47A3;
+        font-size: 100%;
+        font-weight: bold;
+      }
     }
+
     a {
       margin-right: 20px;
       margin-bottom: 20px;
@@ -31,6 +48,7 @@
       text-transform: uppercase;
       font-size: 12px;
     }
+
   }
 
 
