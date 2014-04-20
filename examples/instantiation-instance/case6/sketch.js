@@ -45,7 +45,6 @@ var s1 = function( sketch ) {
   sketch.draw = function() {
     sketch.background(255, 0, 100);
     sketch.fill(gray);
-    sketch.noStroke();
     sketch.rect(sketch.width/2, sketch.height/2, 50, 50);
   };
 
