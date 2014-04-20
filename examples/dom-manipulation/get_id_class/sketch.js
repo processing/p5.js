@@ -5,7 +5,7 @@ function setup() {
 
   var html = createHTML("Some text:");
   html.id("test");
-  html.class("testC hihi");
+  html.class("testC");
   html.position(100,50);
 
 }

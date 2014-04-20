@@ -1047,7 +1047,7 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
         };
         p5.prototype.getId = function (e) {
             for (var i = 0; i < this._elements.length; i++) {
-                if (this._elements[i].id === e) {
+                if (this._elements[i].elt.id === e) {
                     return this._elements[i];
                 }
             }
@@ -1061,11 +1061,21 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
             }
         };
         p5.prototype.getClass = function (e) {
+            console.log(this._elements);
             var arr = [];
-            var res = document.getElementsByClassName(e);
-            if (res) {
-                for (var i = 0, resl = res.length; i !== resl; i++) {
-                    arr.push(new PElement(res[i], this));
+            for (var i = 0; i < this._elements.length; i++) {
+                if (this._elements[i].elt.className.split(' ').indexOf(e) !== -1) {
+                    arr.push(this._elements[i]);
+                }
+            }
+            if (arr.length === 0) {
+                var res = document.getElementsByClassName(e);
+                if (res) {
+                    for (var j = 0; j < res.length; j++) {
+                        var obj = new PElement(res[j], this);
+                        this._elements.push(obj);
+                        arr.push(obj);
+                    }
                 }
             }
             return arr;
