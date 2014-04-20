@@ -140,39 +140,39 @@ var core = function (require, shim, constants) {
                         p5.prototype[c] = constants[c];
                     }
                 }
-                window.onmousemove = function (e) {
+                window.addEventListener('mousemove', function (e) {
                     this.onmousemove(e);
-                }.bind(this);
-                window.onmousedown = function (e) {
+                }.bind(this));
+                window.addEventListener('mousedown', function (e) {
                     this.onmousedown(e);
-                }.bind(this);
-                window.onmouseup = function (e) {
+                }.bind(this));
+                window.addEventListener('mouseup', function (e) {
                     this.onmouseup(e);
-                }.bind(this);
-                window.onmouseclick = function (e) {
+                }.bind(this));
+                window.addEventListener('mouseclick', function (e) {
                     this.onmouseclick(e);
-                }.bind(this);
-                window.onmousewheel = function (e) {
+                }.bind(this));
+                window.addEventListener('mousewheel', function (e) {
                     this.onmousewheel(e);
-                }.bind(this);
-                window.onkeydown = function (e) {
+                }.bind(this));
+                window.addEventListener('keydown', function (e) {
                     this.onkeydown(e);
-                }.bind(this);
-                window.onkeyup = function (e) {
+                }.bind(this));
+                window.addEventListener('keyup', function (e) {
                     this.onkeyup(e);
-                }.bind(this);
-                window.onkeypress = function (e) {
+                }.bind(this));
+                window.addEventListener('keypress', function (e) {
                     this.onkeypress(e);
-                }.bind(this);
-                window.ontouchstart = function (e) {
+                }.bind(this));
+                window.addEventListener('touchstart', function (e) {
                     this.ontouchstart(e);
-                }.bind(this);
-                window.ontouchmove = function (e) {
+                }.bind(this));
+                window.addEventListener('touchmove', function (e) {
                     this.ontouchmove(e);
-                }.bind(this);
-                window.ontouchend = function (e) {
+                }.bind(this));
+                window.addEventListener('touchend', function (e) {
                     this.ontouchend(e);
-                }.bind(this);
+                }.bind(this));
             }
             if (document.readyState === 'complete') {
                 this._start();
