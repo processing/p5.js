@@ -34,6 +34,7 @@ define(function(require) {
     }
 
     var cnv =  new PElement(c, this);
+    this._elements.push(cnv);
     this.context(cnv);
     this._applyDefaults();
 
@@ -45,6 +46,7 @@ define(function(require) {
     elt.innerHTML = html;
     document.body.appendChild(elt);
     var c =  new PElement(elt, this);
+    this._elements.push(c);
     //this.context(c);
     return c;
   };
@@ -57,14 +59,25 @@ define(function(require) {
     }
     document.body.appendChild(elt);
     var c =  new PElement(elt, this);
+    this._elements.push(c);
     //this.context(c);
     return c;
   };
 
   p5.prototype.getId = function(e) {
+
+    for (var i=0; i<this._elements.length; i++) {
+      if (this._elements[i].id === e) {
+        return this._elements[i];
+      }
+    }
+
+    // if not found, default to getElementById
     var res = document.getElementById(e);
     if (res) {
-      return new PElement(res, this);
+      var obj = new PElement(res, this);
+      this._elements.push(obj);
+      return obj;
     }
     else {
       return null;
@@ -73,10 +86,19 @@ define(function(require) {
 
   p5.prototype.getClass = function(e) {
     var arr = [];
+
+    for (var i=0; i<this._elements.length; i++) {
+      if (Array.contains(this._elements[i].elt.className, e)) {
+        arr.push(this.elements[i]);
+      }
+    }
+
     var res = document.getElementsByClassName(e);
     if (res) {
-      for(var i = 0, resl = res.length; i !== resl; i++) {
-        arr.push(new PElement(res[i], this));
+      for(var j = 0; j < res.length; j++) {
+        var obj = new PElement(res[j], this);
+        this._elements.push(obj);
+        arr.push(obj);
       }
     }
     return arr;
@@ -86,7 +108,13 @@ define(function(require) {
     var obj;
     if (typeof e === 'string' || e instanceof String) {
       var elt = document.getElementById(e);
-      obj = elt ? new PElement(elt, this) : null;
+      if (elt) {
+        var pe = new PElement(elt, this);
+        this._elements.push(pe);
+        obj = pe;
+      } else {
+        obj = null;
+      }
     } else {
       obj = e;
     }

@@ -66,6 +66,7 @@ define(function (require) {
 
     // TODO: ???
     this.curElement = null;
+    this._elements = [];
     this.matrices = [[1,0,0,1,0,0]];
 
     // TODO: ???

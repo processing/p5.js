@@ -82,6 +82,7 @@ var core = function (require, shim, constants) {
             this.touchY = 0;
             this.pWriters = [];
             this.curElement = null;
+            this._elements = [];
             this.matrices = [[
                     1,
                     0,
@@ -1020,6 +1021,7 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
                 }
             }
             var cnv = new PElement(c, this);
+            this._elements.push(cnv);
             this.context(cnv);
             this._applyDefaults();
             return cnv;
@@ -1029,6 +1031,7 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
             elt.innerHTML = html;
             document.body.appendChild(elt);
             var c = new PElement(elt, this);
+            this._elements.push(c);
             return c;
         };
         p5.prototype.createHTMLImage = function (src, alt) {
@@ -1039,12 +1042,20 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
             }
             document.body.appendChild(elt);
             var c = new PElement(elt, this);
+            this._elements.push(c);
             return c;
         };
         p5.prototype.getId = function (e) {
+            for (var i = 0; i < this._elements.length; i++) {
+                if (this._elements[i].id === e) {
+                    return this._elements[i];
+                }
+            }
             var res = document.getElementById(e);
             if (res) {
-                return new PElement(res, this);
+                var obj = new PElement(res, this);
+                this._elements.push(obj);
+                return obj;
             } else {
                 return null;
             }
@@ -1063,7 +1074,13 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
             var obj;
             if (typeof e === 'string' || e instanceof String) {
                 var elt = document.getElementById(e);
-                obj = elt ? new PElement(elt, this) : null;
+                if (elt) {
+                    var pe = new PElement(elt, this);
+                    this._elements.push(pe);
+                    obj = pe;
+                } else {
+                    obj = null;
+                }
             } else {
                 obj = e;
             }
