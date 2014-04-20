@@ -10,16 +10,25 @@ define(function (require) {
   };
 
   p5.prototype.updateMouseCoords = function(e) {
+    var mousePos = getMousePos(this.curElement.elt, e);
     this._setProperty('pmouseX', this.mouseX);
     this._setProperty('pmouseY', this.mouseY);
-    this._setProperty('mouseX', e.pageX - this.curElement.x);
-    this._setProperty('mouseY', e.pageY - this.curElement.y);
+    this._setProperty('mouseX', mousePos.x);
+    this._setProperty('mouseY', mousePos.y);
 
     this._setProperty('pwinMouseX', this.winMouseX);
     this._setProperty('pwinMouseY', this.winMouseY);
     this._setProperty('winMouseX', e.pageX);
     this._setProperty('winMouseY', e.pageY);
   };
+
+  function getMousePos(canvas, evt) {
+    var rect = canvas.getBoundingClientRect();
+    return {
+      x: evt.clientX - rect.left,
+      y: evt.clientY - rect.top
+    };
+  }
 
   p5.prototype.setMouseButton = function(e) {
     if (e.button === 1) {

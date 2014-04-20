@@ -808,15 +808,23 @@ var inputmouse = function (require, core, constants) {
             return this.settings.mousePressed;
         };
         p5.prototype.updateMouseCoords = function (e) {
+            var mousePos = getMousePos(this.curElement.elt, e);
             this._setProperty('pmouseX', this.mouseX);
             this._setProperty('pmouseY', this.mouseY);
-            this._setProperty('mouseX', e.pageX - this.curElement.x);
-            this._setProperty('mouseY', e.pageY - this.curElement.y);
+            this._setProperty('mouseX', mousePos.x);
+            this._setProperty('mouseY', mousePos.y);
             this._setProperty('pwinMouseX', this.winMouseX);
             this._setProperty('pwinMouseY', this.winMouseY);
             this._setProperty('winMouseX', e.pageX);
             this._setProperty('winMouseY', e.pageY);
         };
+        function getMousePos(canvas, evt) {
+            var rect = canvas.getBoundingClientRect();
+            return {
+                x: evt.clientX - rect.left,
+                y: evt.clientY - rect.top
+            };
+        }
         p5.prototype.setMouseButton = function (e) {
             if (e.button === 1) {
                 this._setProperty('mouseButton', constants.CENTER);
@@ -912,11 +920,6 @@ var dompelement = function (require, constants) {
             this.pInst = pInst;
             this.width = this.elt.offsetWidth;
             this.height = this.elt.offsetHeight;
-            this.elt.style.position = 'absolute';
-            this.x = 0;
-            this.y = 0;
-            this.elt.style.left = this.x + 'px';
-            this.elt.style.top = this.y + 'px';
             if (elt instanceof HTMLCanvasElement) {
                 this.context = elt.getContext('2d');
             }
@@ -925,8 +928,7 @@ var dompelement = function (require, constants) {
             this.elt.innerHTML = html;
         };
         PElement.prototype.position = function (x, y) {
-            this.x = x;
-            this.y = y;
+            this.elt.style.position = 'absolute';
             this.elt.style.left = x + 'px';
             this.elt.style.top = y + 'px';
         };

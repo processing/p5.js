@@ -7,11 +7,6 @@ define(function(require) {
     this.pInst = pInst;
     this.width = this.elt.offsetWidth;
     this.height = this.elt.offsetHeight;
-    this.elt.style.position = 'absolute';
-    this.x = 0;
-    this.y = 0;
-    this.elt.style.left = this.x+ 'px';
-    this.elt.style.top = this.y+ 'px';
     if (elt instanceof HTMLCanvasElement) {
       this.context = elt.getContext('2d');
     }
@@ -20,8 +15,7 @@ define(function(require) {
     this.elt.innerHTML = html;
   };
   PElement.prototype.position = function(x, y) {
-    this.x = x;
-    this.y = y;
+    this.elt.style.position = 'absolute';
     this.elt.style.left = x+'px';
     this.elt.style.top = y+'px';
   };
