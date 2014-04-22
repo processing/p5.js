@@ -93,10 +93,10 @@ define(function (require) {
     this._userNode = node;
 
     // TODO: ???
-    this._preloadCount = 0; // private?
+    this._preloadCount = 0;
 
     // Tracks whether p5 is running in "global" or "instance" mode
-    this._isGlobal = false; // private?
+    this._isGlobal = false;
 
     // Environment
     this._frameRate = 0;
@@ -269,12 +269,12 @@ define(function (require) {
   /**
    * _setup
    *
-   * TODO: ???
+   * Looks for a function named 'setup' defined on this
+   * or on the window.  If one is found, call it.
    * 
    * @return {Undefined}
    */
   p5.prototype._setup = function() {
-    // Short-circuit on this, in case someone used the library in "global" mode earlier
     var userSetup = this.setup || window.setup;
     if (typeof userSetup === 'function') {
       userSetup();
