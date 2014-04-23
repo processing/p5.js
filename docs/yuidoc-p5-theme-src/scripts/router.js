@@ -70,10 +70,11 @@ define([
       this.init(function() {
         var item = self.getItem(searchClass, searchItem);
 
-        if (item)
+        if (item) {
           App.itemView.show(item);
-        else
+        } else {
           App.itemView.nothingFound();
+        }
 
       });
     },
@@ -114,7 +115,7 @@ define([
     },
     /**
      * List items.
-     * @param {string} collection THe name of the collection to list.
+     * @param {string} collection The name of the collection to list.
      */
     list: function(collection) {
       // Get collection from the hash if not provided
@@ -123,8 +124,9 @@ define([
       collection = 'methods'; //temp
 
       // Make sure collection is valid
-      if (App.collections.indexOf(collection) < 0)
+      if (App.collections.indexOf(collection) < 0) {
         return;
+      }
 
       this.init(function() {
         App.menuView.update(collection);
