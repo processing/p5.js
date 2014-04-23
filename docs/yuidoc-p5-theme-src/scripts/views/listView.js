@@ -4,17 +4,15 @@ define([
   'App',
   // Templates
   'text!tpl/list.html'
-], function(_, Backbone, App, listTpl) {
+], function (_, Backbone, App, listTpl) {
 
   var listView = Backbone.View.extend({
     el: '#list',
-    events: {
-      //'click #sort-az': 'sortAZ'
-    },
+    events: {},
     /**
      * Init.
      */
-    init: function() {
+    init: function () {
       this.listTpl = _.template(listTpl);
 
       return this;
@@ -22,19 +20,19 @@ define([
     /**
      * Render the list.
      */
-    render: function(items, listCollection) {
+    render: function (items, listCollection) {
       if (items && listCollection) {
         var self = this;
 
         // Render items and group them by module
         // module === group
         this.groups = {};
-        _.each(items, function(item, i) {
+        _.each(items, function (item, i) {
           var item = items[i];
           var group = item.module || '_';
           var subgroup = item.class || '_';
           var hash = App.router.getHash(item);
-          
+
           // Create a group list
           if (!self.groups[group]) {
             self.groups[group] = {
@@ -58,9 +56,9 @@ define([
         _.sortBy(self.groups, this.sortByName);
 
         // Sort items by name A-Z
-        _.each(self.groups, function(group) {
+        _.each(self.groups, function (group) {
           _.sortBy(group.subgroups, this.sortByName);
-          _.each(group.subgroups, function(subgroup) {
+          _.each(group.subgroups, function (subgroup) {
             _.sortBy(subgroup.items, this.sortByName);
           });
         });
@@ -83,10 +81,10 @@ define([
      * @param {array} items Array of item objects.
      * @returns {object} This view.
      */
-    show: function(listGroup) {
-      if (App[listGroup])
+    show: function (listGroup) {
+      if (App[listGroup]) {
         this.render(App[listGroup], listGroup);
-
+      }
       App.pageView.hideContentViews();
 
       this.$el.show();
@@ -95,10 +93,10 @@ define([
     },
     /**
      * Helper method to capitalize the first letter of a string
-     * @param {string} str 
+     * @param {string} str
      * @returns {string} Returns the string.
      */
-    capitalizeFirst: function(str) {
+    capitalizeFirst: function (str) {
       return str.substr(0, 1).toUpperCase() + str.substr(1);
     },
     /**
@@ -107,11 +105,11 @@ define([
      * @param {string} b
      * @returns {Array} Returns an array with elements sorted from A to Z.
      */
-    sortAZ: function(a, b) {
+    sortAZ: function (a, b) {
       return a.innerHTML.toLowerCase() > b.innerHTML.toLowerCase() ? 1 : -1;
     },
-    
-    sortByName: function(a,b) {
+
+    sortByName: function (a, b) {
       return a.name > b.name ? 1 : -1;
     }
 

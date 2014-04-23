@@ -14,14 +14,17 @@ define([
   //'text!tpl/class.handlebars',
   // Tools
   'prettify'
-], function(_, Backbone, App, Handlebars, itemTpl, classTpl, methodTpl, eventTpl, propertyTpl) {
+], function (_, Backbone, App, Handlebars, itemTpl, classTpl, methodTpl, eventTpl, propertyTpl) {
+
+  'use strict';
 
   var itemView = Backbone.View.extend({
     el: '#item',
-    init: function() {
+    init: function () {
+      this.$body = $('body,html');
       this.tpl = _.template(itemTpl);
       this.classTpl = _.template(classTpl);
-     
+
       this.methodTpl = Handlebars.compile(methodTpl);
       this.eventTpl = Handlebars.compile(eventTpl);
       this.propertyTpl = Handlebars.compile(propertyTpl);
@@ -29,14 +32,14 @@ define([
 
       return this;
     },
-    render: function(item) {
+    render: function (item) {
       if (item) {
         var itemHtml = '',
-                cleanItem = this.clean(item),
-                isClass = item.hasOwnProperty('itemtype') ? 0 : 1,
-                collectionName = isClass ? 'Constructor' : this.capitalizeFirst(cleanItem.itemtype),
-                isConstant = !isClass ? cleanItem.final : 0,
-                isConstructor = cleanItem.is_constructor;
+          cleanItem = this.clean(item),
+          isClass = item.hasOwnProperty('itemtype') ? 0 : 1,
+          collectionName = isClass ? 'Constructor' : this.capitalizeFirst(cleanItem.itemtype),
+          isConstant = !isClass ? cleanItem.final : 0,
+          isConstructor = cleanItem.is_constructor;
 
         // Set the item header (title)
         itemHtml = this.tpl({
@@ -65,7 +68,7 @@ define([
 
         // Insert the view in the dom
         this.$el.html(itemHtml);
-        
+
         // Prettify code (syntax highlighter)
         this.$el.find('code').addClass('prettyprint');
         prettyPrint();
@@ -78,9 +81,9 @@ define([
      * @param {object} item The item object.
      * @returns {object} Returns the same item object with urlencoded paths.
      */
-    clean: function(item) {
+    clean: function (item) {
       var cleanItem = item;
-      
+
       if (cleanItem.hasOwnProperty('file')) {
         cleanItem.urlencodedfile = encodeURIComponent(item.file);
       }
@@ -91,13 +94,16 @@ define([
      * @param {object} item Item object.
      * @returns {object} This view.
      */
-    show: function(item) {
-      if (item)
+    show: function (item) {
+      if (item) {
         this.render(item);
+      }
 
       App.pageView.hideContentViews();
 
       this.$el.show();
+
+      this.scrollTop();
 
       return this;
     },
@@ -105,7 +111,7 @@ define([
      * Show a message if no item is found.
      * @returns {object} This view.
      */
-    nothingFound: function() {
+    nothingFound: function () {
       this.$el.html("<p><br><br>Ouch. I am unable to find any item that match the current query.</p>");
       App.pageView.hideContentViews();
       this.$el.show();
@@ -113,11 +119,19 @@ define([
       return this;
     },
     /**
+     * Scroll to the top of the window with an animation.
+     */
+    scrollTop: function() {
+      if (this.$body.scrollTop() > 0) {
+        this.$body.animate({'scrollTop': 0}, 600);
+      }
+    },
+    /**
      * Helper method to capitalize the first letter of a string
-     * @param {string} str 
+     * @param {string} str
      * @returns {string} Returns the string.
      */
-    capitalizeFirst: function(str) {
+    capitalizeFirst: function (str) {
       return str.substr(0, 1).toUpperCase() + str.substr(1);
     }
   });
