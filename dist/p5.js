@@ -959,8 +959,8 @@ var dompelement = function (require, constants) {
                 this.width = this.elt.offsetWidth;
                 this.height = this.elt.offsetHeight;
                 if (this.pInst.curElement.elt === this.elt) {
-                    this.pInst.width = this.elt.offsetWidth;
-                    this.pInst.height = this.elt.offsetHeight;
+                    this.pInst._setProperty('width', this.elt.offsetWidth);
+                    this.pInst._setProperty('height', this.elt.offsetHeight);
                 }
             }
         };
