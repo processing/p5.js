@@ -320,7 +320,7 @@ define(function (require) {
    */
   PVector.random2D = function () {
     // TODO: This should include an option to use p5.js seeded random number
-    return this.fromAngle(Math.random(Math.PI*2));
+    return this.fromAngle(Math.random()*Math.PI*2);
   };
 
   /**
