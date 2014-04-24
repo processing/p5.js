@@ -38,6 +38,11 @@ define(function (require) {
     this.displayHeight = screen.height;
     this.windowWidth = window.innerWidth;
     this.windowHeight = window.innerHeight;
+  
+    window.addEventListener('resize', function (e) {
+      this.windowWidth = window.innerWidth;
+      this.windowHeight = window.innerHeight;
+    });
 
     // Shape.Vertex
     this.shapeKind = null;

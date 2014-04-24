@@ -66,6 +66,10 @@ var core = function (require, shim, constants) {
             this.displayHeight = screen.height;
             this.windowWidth = window.innerWidth;
             this.windowHeight = window.innerHeight;
+            window.addEventListener('resize', function (e) {
+                this.windowWidth = window.innerWidth;
+                this.windowHeight = window.innerHeight;
+            });
             this.shapeKind = null;
             this.shapeInited = false;
             this.mouseX = 0;
