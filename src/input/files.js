@@ -94,7 +94,6 @@ define(function (require) {
 
   p5.prototype.selectInput = function() {
     // TODO
-
   };
 
   return p5;
