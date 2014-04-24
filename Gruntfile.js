@@ -24,6 +24,7 @@ module.exports = function(grunt) {
       main: {
         files: ['src/**/*.js'],
         tasks: ['jshint', 'requirejs'],
+        options: { livereload: true }
       },
       // reference
       reference_build: {
