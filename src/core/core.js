@@ -36,6 +36,8 @@ define(function (require) {
     this.focused = true;
     this.displayWidth = screen.width;
     this.displayHeight = screen.height;
+    this.windowWidth = window.innerWidth;
+    this.windowHeight = window.innerHeight;
 
     // Shape.Vertex
     this.shapeKind = null;

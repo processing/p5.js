@@ -64,6 +64,8 @@ var core = function (require, shim, constants) {
             this.focused = true;
             this.displayWidth = screen.width;
             this.displayHeight = screen.height;
+            this.windowWidth = window.innerWidth;
+            this.windowHeight = window.innerHeight;
             this.shapeKind = null;
             this.shapeInited = false;
             this.mouseX = 0;
@@ -391,7 +393,7 @@ var mathpvector = function (require) {
             return new PVector(Math.cos(angle), Math.sin(angle), 0);
         };
         PVector.random2D = function () {
-            return this.fromAngle(Math.random(Math.PI * 2));
+            return this.fromAngle(Math.random() * Math.PI * 2);
         };
         PVector.random3D = function () {
             var angle = Math.random() * Math.PI * 2;
