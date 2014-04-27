@@ -146,26 +146,21 @@ Before using the pixels[] array, be sure to use the loadPixels() method on the i
   }
 
   /**
+   * Helper fxn for sharing pixel methods
+   *
+   */
+  PImage.prototype._setProperty = function (prop, value) {
+    this[prop] = value;
+  };
+
+  /**
    * Loads the pixels data for this image into the [pixels] attribute.
    * 
    * @method loadPixels
    * @for PImage
    */
   PImage.prototype.loadPixels = function(){
-    var x = 0;
-    var y = 0;
-    var w = this.width;
-    var h = this.height;
-
-    var imageData = this.canvas.getContext('2d').getImageData(x, y, w, h);
-    var data = imageData.data;
-
-    var pixels = [];
-    for (var i = 0; i < data.length; i += 4) {
-      pixels.push([data[i], data[i+1], data[i+2], data[i+3]]);
-    }
-
-    this.pixels = pixels;
+    p5.prototype.loadPixels(this);
   };
 
   /**
@@ -185,30 +180,8 @@ Before using the pixels[] array, be sure to use the loadPixels() method on the i
    * @for PImage
    */
   PImage.prototype.updatePixels = function(x, y, w, h){
-    if (x === undefined && y === undefined &&
-        w === undefined && h === undefined){
-      x = 0;
-      y = 0;
-      w = this.width;
-      h = this.height;
-    }
-
-    //unpack pixels[] to the canvas imageData format
-    var imageData = this.canvas.getContext('2d').getImageData(x, y, w, h);
-    var data = imageData.data;
-    for (var i = 0; i < this.pixels.length; i += 1) {
-      var j = i * 4;
-      data[j] = this.pixels[i][0];
-      data[j+1] = this.pixels[i][1];
-      data[j+2] = this.pixels[i][2];
-      data[j+3] = this.pixels[i][3];
-    }
-
-    this.canvas.getContext('2d').putImageData(imageData, x, y, 0, 0, w, h);
+    p5.prototype.updatePixels(this, x, y, w, h);
   };
-
-
-
 
   /**
    * Get a region of pixels from an image.

@@ -1508,41 +1508,14 @@ var image = function (require, core, canvas, constants, filters) {
             this.canvas.height = this.height;
             this.pixels = [];
         }
+        PImage.prototype._setProperty = function (prop, value) {
+            this[prop] = value;
+        };
         PImage.prototype.loadPixels = function () {
-            var x = 0;
-            var y = 0;
-            var w = this.width;
-            var h = this.height;
-            var imageData = this.canvas.getContext('2d').getImageData(x, y, w, h);
-            var data = imageData.data;
-            var pixels = [];
-            for (var i = 0; i < data.length; i += 4) {
-                pixels.push([
-                    data[i],
-                    data[i + 1],
-                    data[i + 2],
-                    data[i + 3]
-                ]);
-            }
-            this.pixels = pixels;
+            p5.prototype.loadPixels(this);
         };
         PImage.prototype.updatePixels = function (x, y, w, h) {
-            if (x === undefined && y === undefined && w === undefined && h === undefined) {
-                x = 0;
-                y = 0;
-                w = this.width;
-                h = this.height;
-            }
-            var imageData = this.canvas.getContext('2d').getImageData(x, y, w, h);
-            var data = imageData.data;
-            for (var i = 0; i < this.pixels.length; i += 1) {
-                var j = i * 4;
-                data[j] = this.pixels[i][0];
-                data[j + 1] = this.pixels[i][1];
-                data[j + 2] = this.pixels[i][2];
-                data[j + 3] = this.pixels[i][3];
-            }
-            this.canvas.getContext('2d').putImageData(imageData, x, y, 0, 0, w, h);
+            p5.prototype.updatePixels(this, x, y, w, h);
         };
         PImage.prototype.get = function (x, y, w, h) {
             if (x === undefined && y === undefined && w === undefined && h === undefined) {
@@ -1720,20 +1693,27 @@ var imagepixels = function (require, core) {
                 ];
             }
         };
-        p5.prototype.loadPixels = function () {
-            var width = this.width;
-            var height = this.height;
-            var a = this.curElement.context.getImageData(0, 0, width, height).data;
+        p5.prototype.loadPixels = function (self) {
+            var ctx;
+            if (typeof self === 'undefined') {
+                self = this;
+                ctx = self.curElement.context;
+            } else {
+                ctx = self.canvas.getContext('2d');
+            }
+            var width = self.width;
+            var height = self.height;
+            var data = ctx.getImageData(0, 0, width, height).data;
             var pixels = [];
-            for (var i = 0; i < a.length; i += 4) {
+            for (var i = 0; i < data.length; i += 4) {
                 pixels.push([
-                    a[i],
-                    a[i + 1],
-                    a[i + 2],
-                    a[i + 3]
+                    data[i],
+                    data[i + 1],
+                    data[i + 2],
+                    data[i + 3]
                 ]);
             }
-            this._setProperty('pixels', pixels);
+            self._setProperty('pixels', pixels);
         };
         p5.prototype.set = function (x, y, imgOrCol) {
             var idx = y * this.width + x;
@@ -1766,17 +1746,30 @@ var imagepixels = function (require, core) {
                 this.loadPixels();
             }
         };
-        p5.prototype.updatePixels = function () {
-            var imageData = this.curElement.context.getImageData(0, 0, this.width, this.height);
-            var data = imageData.data;
-            for (var i = 0; i < this.pixels.length; i += 1) {
-                var j = i * 4;
-                data[j] = this.pixels[i][0];
-                data[j + 1] = this.pixels[i][1];
-                data[j + 2] = this.pixels[i][2];
-                data[j + 3] = this.pixels[i][3];
+        p5.prototype.updatePixels = function (self, x, y, w, h) {
+            var ctx;
+            if (typeof self === 'undefined') {
+                self = this;
+                ctx = self.curElement.context;
+            } else {
+                ctx = self.canvas.getContext('2d');
             }
-            this.curElement.context.putImageData(imageData, 0, 0, 0, 0, this.width, this.height);
+            if (x === undefined && y === undefined && w === undefined && h === undefined) {
+                x = 0;
+                y = 0;
+                w = self.width;
+                h = self.height;
+            }
+            var imageData = ctx.getImageData(x, y, w, h);
+            var data = imageData.data;
+            for (var i = 0; i < self.pixels.length; i += 1) {
+                var j = i * 4;
+                data[j] = self.pixels[i][0];
+                data[j + 1] = self.pixels[i][1];
+                data[j + 2] = self.pixels[i][2];
+                data[j + 3] = self.pixels[i][3];
+            }
+            ctx.putImageData(imageData, x, y, 0, 0, w, h);
         };
         return p5;
     }({}, core);

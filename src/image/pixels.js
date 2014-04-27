@@ -68,16 +68,24 @@ define(function (require) {
    *
    * @method loadPixels
    */
-  p5.prototype.loadPixels = function() {
-    var width = this.width;
-    var height = this.height;
-    var a = this.curElement.context.getImageData(0, 0, width, height).data;
-    var pixels = [];
-    for (var i=0; i < a.length; i+=4) {
-      pixels.push([a[i], a[i+1], a[i+2], a[i+3]]); // each pixels entry: [r, g, b, a]
+  p5.prototype.loadPixels = function(self) {
+    var ctx;
+    if (typeof self === 'undefined') { // p5 
+      self = this;
+      ctx = self.curElement.context;
+    } else { // pimage
+      ctx = self.canvas.getContext('2d');
     }
-    this._setProperty('pixels', pixels);
+    var width = self.width;
+    var height = self.height;
+    var data = ctx.getImageData(0, 0, width, height).data;
+    var pixels = [];
+    for (var i=0; i < data.length; i+=4) {
+      pixels.push([data[i], data[i+1], data[i+2], data[i+3]]); // each pixels entry: [r, g, b, a]
+    }
+    self._setProperty('pixels', pixels);
   };
+
   /**
    * Changes the color of any pixel, or writes an image directly to the display window.
    *
@@ -122,18 +130,35 @@ define(function (require) {
    *
    * @method updatePixels
    */
-  p5.prototype.updatePixels = function() {
-    var imageData = this.curElement.context.getImageData(0, 0, this.width, this.height);
-    var data = imageData.data;
-    for (var i = 0; i < this.pixels.length; i += 1) {
-      var j = i * 4;
-      data[j] = this.pixels[i][0];
-      data[j + 1] = this.pixels[i][1];
-      data[j + 2] = this.pixels[i][2];
-      data[j + 3] = this.pixels[i][3];
+  p5.prototype.updatePixels = function(self, x, y, w, h) {
+    var ctx;
+    if (typeof self === 'undefined') { // p5
+      self = this;
+      ctx = self.curElement.context;
+    } else { // PImage
+      ctx = self.canvas.getContext('2d');
     }
-    this.curElement.context.putImageData(imageData, 0, 0, 0, 0, this.width, this.height);
+
+    if (x === undefined && y === undefined &&
+        w === undefined && h === undefined){
+      x = 0;
+      y = 0;
+      w = self.width;
+      h = self.height;
+    }
+
+    var imageData = ctx.getImageData(x, y, w, h);
+    var data = imageData.data;
+    for (var i = 0; i < self.pixels.length; i += 1) {
+      var j = i * 4;
+      data[j] = self.pixels[i][0];
+      data[j + 1] = self.pixels[i][1];
+      data[j + 2] = self.pixels[i][2];
+      data[j + 3] = self.pixels[i][3];
+    }
+    ctx.putImageData(imageData,x, y, 0, 0, w, h);
   };
+
 
   return p5;
 
