@@ -221,9 +221,9 @@ var core = function (require, shim, constants) {
         };
         p5.prototype._preload = function (func, path) {
             var context = this._isGlobal ? window : this;
-            context._setProperty('preload-count', context._preloadCount + 1);
+            context._setProperty('_preloadCount', context._preloadCount + 1);
             return p5.prototype[func].call(context, path, function (resp) {
-                context._setProperty('preload-count', context._preloadCount - 1);
+                context._setProperty('_preloadCount', context._preloadCount - 1);
                 if (context._preloadCount === 0) {
                     context._setup();
                     context._runFrames();
