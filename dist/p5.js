@@ -213,6 +213,11 @@ var core = function (require, shim, constants) {
                 context.loadStrings = p5.prototype.loadStrings;
                 context.loadXML = p5.prototype.loadXML;
                 context.loadImage = p5.prototype.loadImage;
+                if (this._preloadCount === 0) {
+                    this._setup();
+                    this._runFrames();
+                    this._draw();
+                }
             } else {
                 this._setup();
                 this._runFrames();
