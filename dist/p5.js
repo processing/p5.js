@@ -884,8 +884,9 @@ var inputtouch = function (require, core) {
         'use strict';
         var p5 = core;
         p5.prototype.setTouchPoints = function (e) {
-            this._setProperty('touchX', e.changedTouches[0].pageX);
-            this._setProperty('touchY', e.changedTouches[0].pageY);
+            var context = this._isGlobal ? window : this;
+            context._setProperty('touchX', e.changedTouches[0].pageX);
+            context._setProperty('touchY', e.changedTouches[0].pageY);
             var touches = [];
             for (var i = 0; i < e.changedTouches.length; i++) {
                 var ct = e.changedTouches[i];
@@ -894,28 +895,30 @@ var inputtouch = function (require, core) {
                     y: ct.pageY
                 };
             }
-            this._setProperty('touches', touches);
+            context._setProperty('touches', touches);
         };
         p5.prototype.ontouchstart = function (e) {
-            this.setTouchPoints(e);
-            if (typeof this.touchStarted === 'function') {
-                this.touchStarted(e);
-            }
-            var m = typeof touchMoved === 'function';
-            if (m) {
+            var context = this._isGlobal ? window : this;
+            context.setTouchPoints(e);
+            if (typeof context.touchStarted === 'function') {
                 e.preventDefault();
+                context.touchStarted(e);
             }
         };
         p5.prototype.ontouchmove = function (e) {
-            this.setTouchPoints(e);
-            if (typeof this.touchMoved === 'function') {
-                this.touchMoved(e);
+            var context = this._isGlobal ? window : this;
+            context.setTouchPoints(e);
+            if (typeof context.touchMoved === 'function') {
+                e.preventDefault();
+                context.touchMoved(e);
             }
         };
         p5.prototype.ontouchend = function (e) {
-            this.setTouchPoints(e);
-            if (typeof this.touchEnded === 'function') {
-                this.touchEnded(e);
+            var context = this._isGlobal ? window : this;
+            context.setTouchPoints(e);
+            if (typeof context.touchEnded === 'function') {
+                e.preventDefault();
+                context.touchEnded(e);
             }
         };
         return p5;
