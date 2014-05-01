@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/lmccart/p5.js.git"
   },
-  "version": "0.2.10",
+  "version": "0.2.11",
   "devDependencies": {
     "grunt": "~0.4.2",
     "grunt-contrib-jshint": "~0.6.3",
