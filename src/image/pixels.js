@@ -8,7 +8,6 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
-  
 
   // function getPixels(img) {
   //   var c = document.createElement('canvas');
@@ -21,9 +20,21 @@ define(function (require) {
 
   //// PIXELS ////////////////////////////////
 
-  p5.prototype.blend = function() {
-    // TODO
+  p5.prototype.blend = function(self) {
+    var ctx;
+    if (typeof self === 'undefined') { // p5 
+      self = this;
+      ctx = self.curElement.context;
+    } else { // pimage
+      ctx = self.canvas.getContext('2d');
+    }
+    var currBlend = this.canvas.getContext('2d').globalCompositeOperation;
+    var blendMode = arguments[arguments.length - 1];
+    var copyArgs = Array.prototype.slice.call(arguments, 0, arguments.length - 1);
 
+    ctx.globalCompositeOperation = blendMode;
+    self.copy.apply(self, copyArgs);
+    ctx.globalCompositeOperation = currBlend;
   };
 
   p5.prototype.copy = function() {
@@ -45,45 +56,65 @@ define(function (require) {
    * @method get
    * @param {Number} [x] x-coordinate of the pixel
    * @param {Number} [y] y-coordinate of the pixel
-   * @return {Array/Color} color of pixel at x,y in array format [R, G, B, A]
+   * @param {Number} w width
+   * @param {Number} h height
+   * @return {Array/Color} color of pixel at x,y in array format [R, G, B, A] or PImage
    */
-  p5.prototype.get = function(x, y) {
-    var width = this.width;
-    var height = this.height;
-    var pix = this.curElement.context.getImageData(0, 0, width, height).data;
-    if (typeof x !== 'undefined' && typeof y !== 'undefined') {
-      if (x >= 0 && x < width && y >= 0 && y < height) {
-        var offset = 4*y*width+4*x;
-        var c = [pix[offset], pix[offset+1], pix[offset+2], pix[offset+3]];
-        return c;
-      } else {
-        return [0, 0, 0, 255];
-      }
-    } else {
+  p5.prototype.get = function(x, y, w, h){
+    if (x === undefined && y === undefined &&
+        w === undefined && h === undefined){
+      x = 0;
+      y = 0;
+      w = this.width;
+      h = this.height;
+    } else if (w === undefined && h === undefined) {
+      w = 1;
+      h = 1;
+    }
+
+    if(x > this.width || y > this.height || x < 0 || y < 0){
       return [0, 0, 0, 255];
     }
+
+    var imageData = this.canvas.getContext('2d').getImageData(x, y, w, h);
+    var data = imageData.data;
+
+    if (w === 1 && h === 1){
+      var pixels = [];
+      
+      for (var i = 0; i < data.length; i += 4) {
+        pixels.push(data[i], data[i+1], data[i+2], data[i+3]);
+      }
+      
+      return pixels;
+    } else {
+      //auto constrain the width and height to
+      //dimensions of the source image
+      w = Math.min(w, this.width);
+      h = Math.min(h, this.height);
+
+      var region = new p5.prototype.PImage(w, h);
+      region.canvas.getContext('2d').putImageData(imageData, 0, 0, 0, 0, w, h);
+
+      return region;
+    }
   };
+
   /**
    * Loads the pixel data for the display window into the pixels[] array. This function must always be called before reading from or writing to pixels[].
    *
    * @method loadPixels
    */
-  p5.prototype.loadPixels = function(self) {
-    var ctx;
-    if (typeof self === 'undefined') { // p5 
-      self = this;
-      ctx = self.curElement.context;
-    } else { // pimage
-      ctx = self.canvas.getContext('2d');
-    }
-    var width = self.width;
-    var height = self.height;
-    var data = ctx.getImageData(0, 0, width, height).data;
+  p5.prototype.loadPixels = function() {
+    var canvas = this.canvas || this.curElement.canvas;
+    var width = this.width;
+    var height = this.height;
+    var data = canvas.getContext('2d').getImageData(0, 0, width, height).data;
     var pixels = [];
     for (var i=0; i < data.length; i+=4) {
       pixels.push([data[i], data[i+1], data[i+2], data[i+3]]); // each pixels entry: [r, g, b, a]
     }
-    self._setProperty('pixels', pixels);
+    this._setProperty('pixels', pixels);
   };
 
   /**
@@ -102,11 +133,11 @@ define(function (require) {
     var idx = y * this.width + x;
     if (typeof imgOrCol === 'number') {
       if (!this.pixels) {
-        this.loadPixels();
+        this.loadPixels.call(this);
       }
       if (idx < this.pixels.length) {
         this.pixels[idx] = [imgOrCol, imgOrCol, imgOrCol, 255];
-        this.updatePixels();
+        this.updatePixels.call(this);
       }
     }
     else if (imgOrCol instanceof Array) {
@@ -114,15 +145,15 @@ define(function (require) {
         imgOrCol[3] = 255;
       }
       if (!this.pixels) {
-        this.loadPixels();
+        this.loadPixels.call(this);
       }
       if (idx < this.pixels.length) {
         this.pixels[idx] = imgOrCol;
-        this.updatePixels();
+        this.updatePixels.call(this);
       }
     } else {
-      this.curElement.context.drawImage(imgOrCol.canvas, x, y);
-      this.loadPixels();
+      this.canvas.getContext('2d').drawImage(imgOrCol.canvas, x, y);
+      this.loadPixels.call(this);
     }
   };
   /**
@@ -130,35 +161,24 @@ define(function (require) {
    *
    * @method updatePixels
    */
-  p5.prototype.updatePixels = function(self, x, y, w, h) {
-    var ctx;
-    if (typeof self === 'undefined') { // p5
-      self = this;
-      ctx = self.curElement.context;
-    } else { // PImage
-      ctx = self.canvas.getContext('2d');
-    }
-
-    if (x === undefined && y === undefined &&
-        w === undefined && h === undefined){
+  p5.prototype.updatePixels = function (x, y, w, h) {
+    if (x === undefined && y === undefined && w === undefined && h === undefined) {
       x = 0;
       y = 0;
-      w = self.width;
-      h = self.height;
+      w = this.width;
+      h = this.height;
     }
-
-    var imageData = ctx.getImageData(x, y, w, h);
+    var imageData = this.canvas.getContext('2d').getImageData(x, y, w, h);
     var data = imageData.data;
-    for (var i = 0; i < self.pixels.length; i += 1) {
+    for (var i = 0; i < this.pixels.length; i += 1) {
       var j = i * 4;
-      data[j] = self.pixels[i][0];
-      data[j + 1] = self.pixels[i][1];
-      data[j + 2] = self.pixels[i][2];
-      data[j + 3] = self.pixels[i][3];
+      data[j] = this.pixels[i][0];
+      data[j + 1] = this.pixels[i][1];
+      data[j + 2] = this.pixels[i][2];
+      data[j + 3] = this.pixels[i][3];
     }
-    ctx.putImageData(imageData,x, y, 0, 0, w, h);
+    this.canvas.getContext('2d').putImageData(imageData, x, y, 0, 0, w, h);
   };
-
 
   return p5;
 

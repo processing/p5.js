@@ -144,6 +144,7 @@ Before using the pixels[] array, be sure to use the loadPixels() method on the i
     this.canvas.height = this.height;
     this.pixels = [];
   }
+  p5.prototype.PImage = PImage; // hack to access PImage outside module??
 
   /**
    * Helper fxn for sharing pixel methods
@@ -160,7 +161,7 @@ Before using the pixels[] array, be sure to use the loadPixels() method on the i
    * @for PImage
    */
   PImage.prototype.loadPixels = function(){
-    p5.prototype.loadPixels(this);
+    p5.prototype.loadPixels.call(this);
   };
 
   /**
@@ -180,7 +181,7 @@ Before using the pixels[] array, be sure to use the loadPixels() method on the i
    * @for PImage
    */
   PImage.prototype.updatePixels = function(x, y, w, h){
-    p5.prototype.updatePixels(this, x, y, w, h);
+    p5.prototype.updatePixels.call(this, x, y, w, h);
   };
 
   /**
@@ -195,50 +196,14 @@ Before using the pixels[] array, be sure to use the loadPixels() method on the i
    *
    * @method get
    * @for PImage
-   * @param  {Integer} x
-   * @param  {Integer} y
-   * @param  {Integer} w width
-   * @param  {Integer} h height
-   * @return {[Integer] | PImage | undefined} pixel [4 element integer] array or a PImage
+   * @param {Number} [x] x-coordinate of the pixel
+   * @param {Number} [y] y-coordinate of the pixel
+   * @param  {Number} w width
+   * @param  {Number} h height
+   * @return {Array/Color | PImage} color of pixel at x,y in array format [R, G, B, A] or PImage
    */
   PImage.prototype.get = function(x, y, w, h){
-    if (x === undefined && y === undefined &&
-        w === undefined && h === undefined){
-      x = 0;
-      y = 0;
-      w = this.width;
-      h = this.height;
-    } else if (w === undefined && h === undefined){
-      w = 1;
-      h = 1;
-    }
-
-    if(x > this.width || y > this.height){
-      return undefined;
-    }
-
-    var imageData = this.canvas.getContext('2d').getImageData(x, y, w, h);
-    var data = imageData.data;
-
-    if (w === 1 && h === 1){
-      var pixels = [];
-      
-      for (var i = 0; i < data.length; i += 4) {
-        pixels.push(data[i], data[i+1], data[i+2], data[i+3]);
-      }
-      
-      return pixels;
-    } else {
-      //auto constrain the width and height to
-      //dimensions of the source image
-      w = Math.min(w, this.width);
-      h = Math.min(h, this.height);
-
-      var region = new PImage(w, h);
-      region.canvas.getContext('2d').putImageData(imageData, 0, 0, 0, 0, w, h);
-
-      return region;
-    }
+    return p5.prototype.get.call(this, x, y, w, h);
   };
 
   /**
@@ -253,22 +218,12 @@ Before using the pixels[] array, be sure to use the loadPixels() method on the i
    *
    * @method set
    * @for PImage
-   * @param {Integer} x
-   * @param {Integer} y
-   * @param {PImage|[Integer]}  imageData a pImage or an array representing a color.
+   * @param {Number} x x-coordinate of the pixel
+   * @param {Number} y y-coordinate of the pixel
+   * @param {Number|Array|Object} insert a grayscale value | a color array | image to copy
    */
   PImage.prototype.set = function(x, y, imgOrCol){
-    var idx = (y * this.width) + x;
-
-    if (imgOrCol instanceof Array) {
-      if (idx < this.pixels.length){
-        this.pixels[idx] = imgOrCol;
-        this.updatePixels();
-      }
-    } else {
-      this.canvas.getContext('2d').drawImage(imgOrCol.canvas, 0, 0);
-      this.loadPixels();
-    }
+    p5.prototype.set.call(this, x, y, imgOrCol);
   };
 
 

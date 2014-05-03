@@ -9,6 +9,7 @@ define(function(require) {
     this.height = this.elt.offsetHeight;
     if (elt instanceof HTMLCanvasElement) {
       this.context = elt.getContext('2d');
+      this.canvas = elt; // for pixel method sharing with pimage
     }
   }
   PElement.prototype.html = function(html) {

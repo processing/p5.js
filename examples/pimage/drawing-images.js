@@ -58,10 +58,11 @@ function setup() {
     img2.loadPixels();
 
     var col = img2.get(0,0);
+    console.log(img2.get(0,0));
     console.log("I got a color: ", col);
 
     var col2 = img2.get(490,999);
-    console.log("I got a non existent color: ", col2);
+    console.log("I got a non existent color (black): ", col2);
 
     var reg = img2.get(100, 80, 65, 35);
     console.log("I got a region: ", reg);
