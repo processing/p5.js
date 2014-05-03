@@ -937,7 +937,7 @@ var dompelement = function (require, constants) {
             this.height = this.elt.offsetHeight;
             if (elt instanceof HTMLCanvasElement) {
                 this.context = elt.getContext('2d');
-                this.canvas = elt;
+                this.pInst._setProperty('canvas', elt);
             }
         }
         PElement.prototype.html = function (html) {
@@ -1647,6 +1647,31 @@ var imagepixels = function (require, core) {
             ctx.globalCompositeOperation = currBlend;
         };
         p5.prototype.copy = function () {
+            var srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
+            if (arguments.length === 9) {
+                srcImage = arguments[0];
+                sx = arguments[1];
+                sy = arguments[2];
+                sw = arguments[3];
+                sh = arguments[4];
+                dx = arguments[5];
+                dy = arguments[6];
+                dw = arguments[7];
+                dh = arguments[8];
+            } else if (arguments.length === 8) {
+                sx = arguments[0];
+                sy = arguments[1];
+                sw = arguments[2];
+                sh = arguments[3];
+                dx = arguments[4];
+                dy = arguments[5];
+                dw = arguments[6];
+                dh = arguments[7];
+                srcImage = this;
+            } else {
+                throw new Error('Signature not supported');
+            }
+            this.canvas.getContext('2d').drawImage(srcImage.canvas, sx, sy, sw, sh, dx, dy, dw, dh);
         };
         p5.prototype.filter = function () {
         };
@@ -1685,10 +1710,9 @@ var imagepixels = function (require, core) {
             }
         };
         p5.prototype.loadPixels = function () {
-            var canvas = this.canvas || this.curElement.canvas;
             var width = this.width;
             var height = this.height;
-            var data = canvas.getContext('2d').getImageData(0, 0, width, height).data;
+            var data = this.canvas.getContext('2d').getImageData(0, 0, width, height).data;
             var pixels = [];
             for (var i = 0; i < data.length; i += 4) {
                 pixels.push([
