@@ -291,39 +291,8 @@ Before using the pixels[] array, be sure to use the loadPixels() method on the i
    * @param  {Integer} dh destination image height
    */
   PImage.prototype.copy = function() {
-    var srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
-    if(arguments.length === 9){
-      srcImage = arguments[0];
-      sx = arguments[1];
-      sy = arguments[2];
-      sw = arguments[3];
-      sh = arguments[4];
-      dx = arguments[5];
-      dy = arguments[6];
-      dw = arguments[7];
-      dh = arguments[8];
-    } else if(arguments.length === 8){
-      sx = arguments[0];
-      sy = arguments[1];
-      sw = arguments[2];
-      sh = arguments[3];
-      dx = arguments[4];
-      dy = arguments[5];
-      dw = arguments[6];
-      dh = arguments[7];
-
-      srcImage = this;
-    } else {
-      throw new Error('Signature not supported');
-    }
-
-    this.canvas.getContext('2d').drawImage(srcImage.canvas,
-      sx, sy, sw, sh, dx, dy, dw, dh
-    );
+    p5.prototype.copy.apply(this, arguments);
   };
-
-
-
 
   /**
    * Masks part of an image from displaying by loading another

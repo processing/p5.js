@@ -37,6 +37,26 @@ define(function (require) {
     ctx.globalCompositeOperation = currBlend;
   };
 
+  /**
+   * Copies a region of the canvas to another region of the canvas  
+   * and copies a region of pixels from an image used as the srcImg parameter into the canvas
+   * srcImage is specified this is used as the source. If the source
+   * and destination regions aren't the same size, it will
+   * automatically resize source pixels to fit the specified
+   * target region.
+   *
+   * @method copy
+   * @for PImage
+   * @param  {PImage|undefined} srcImage source image
+   * @param  {Integer} sx X coordinate of the source's upper left corner
+   * @param  {Integer} sy Y coordinate of the source's upper left corner
+   * @param  {Integer} sw source image width
+   * @param  {Integer} sh source image height
+   * @param  {Integer} dx X coordinate of the destination's upper left corner
+   * @param  {Integer} dy Y coordinate of the destination's upper left corner
+   * @param  {Integer} dw destination image width
+   * @param  {Integer} dh destination image height
+   */
   p5.prototype.copy = function() {
     var srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
     if(arguments.length === 9){
