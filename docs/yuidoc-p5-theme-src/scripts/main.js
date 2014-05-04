@@ -19,7 +19,7 @@ require([
   'App'], function(_, Backbone, App) {
   
   // Set collections
-  App.collections = ['classes', 'events', 'methods', 'properties'];
+  App.collections = ['allItems', 'classes', 'events', 'methods', 'properties'];
 
   // Get json API data
   $.getJSON("data.json", function(data) {
@@ -55,7 +55,7 @@ require([
     // Get classes
     _.each(classes, function(el, idx, array) {
       App.classes.push(el);
-      App.allItems.push(el);
+      // App.allItems.push(el);
     });
     
     require(['router']);

@@ -1,4 +1,7 @@
-
+/**
+ * @module Core
+ * @for Core
+ */
 define(function (require) {
 
   'use strict';
@@ -31,12 +34,81 @@ define(function (require) {
     // PUBLIC p5 PROTOTYPE PROPERTIES
     //   
 
-    // Environment
+  /**
+   *
+   * The system variable frameCount contains the number of frames that have been displayed since the program started. Inside setup() the value is 0, after the first iteration of draw it is 1, etc.
+   *
+   * @property frameCount
+   * @for Environment
+   * @example
+<div><code>
+function setup() {
+  frameRate(30);
+}
+
+function draw() {
+  line(0, 0, width, height);
+  print(frameCount);
+}
+</code></div>
+   */
     this.frameCount = 0;
+  /**
+   *
+   * Confirms if a p5.js program is "focused," meaning that it is active and will accept mouse or keyboard input. This variable is "true" if it is focused and "false" if not.
+   *
+   * @property focused
+   * @for Environment
+   * @example
+<div><code>
+if (focused) {  // or "if (focused === true)"
+  ellipse(25, 25, 50, 50);
+} else {
+  line(0, 0, 100, 100);
+  line(100, 0, 0, 100);
+}
+</code></div>
+   */
     this.focused = true;
+  /**
+   *
+   * System variable that stores the width of the entire screen display. This is used to run a full-screen program on any display size.
+   *
+   * @example
+<div><code>size(displayWidth, displayHeight);</code></div>
+   * @property displayWidth
+   * @for Environment
+   */
     this.displayWidth = screen.width;
+  /**
+   *
+   * System variable that stores the height of the entire screen display. This is used to run a full-screen program on any display size.
+   *
+   * @example
+<div><code>size(displayWidth, displayHeight);</code></div>
+   * @property displayHeight
+   * @for Environment
+   */
     this.displayHeight = screen.height;
+  /**
+   *
+   * System variable that stores the width of the inner window, it maps to window.innerWidth
+   *
+   * @example
+<div><code>size(windowWidth, windowHeight);</code></div>
+   * @property windowWidth
+   * @for Environment
+   */
     this.windowWidth = window.innerWidth;
+  /**
+   *
+   * System variable that stores the height of the inner window, it maps to window.innerHeight
+   *
+   * @example
+<div><code>size(windowWidth, windowHeight);</code></div>
+   * @property windowHeight
+   * @for Environment
+   */
     this.windowHeight = window.innerHeight;
   
     window.addEventListener('resize', function (e) {
@@ -279,11 +351,23 @@ define(function (require) {
   };
 
   /**
-   * _setup
+   * The setup() function is called once when the program starts. It's used to define initial enviroment properties such as screen size and background color and to load media such as images and fonts as the program starts. There can only be one setup() function for each program and it shouldn't be called again after its initial execution. Note: Variables declared within setup() are not accessible within other functions, including draw().
+   * @example <div>
+<code>function setup() {
+  createCanvas(200, 200);
+  background(0);
+  noStroke();
+  fill(102);
+}
+
+var a = 0;
+
+function draw() {
+  rect(a++%width, 10, 2, 80); 
+}</code></div>
    *
-   * TODO: ???
-   * 
-   * @return {Undefined}
+   * @method setup
+   * @for Structure
    */
   p5.prototype._setup = function() {
     // Short-circuit on this, in case someone used the library in "global" mode earlier
@@ -294,11 +378,15 @@ define(function (require) {
   };
 
   /**
-   * _draw
+   * Called directly after setup(), the draw() function continuously executes the lines of code contained inside its block until the program is stopped or noLoop() is called. draw() is called automatically and should never be called explicitly.
+   * It should always be controlled with noLoop(), redraw() and loop(). After noLoop() stops the code in draw() from executing, redraw() causes the code inside draw() to execute once, and loop() will cause the code inside draw() to resume executing continuously.
    * 
-   * TODO: ???
+   * The number of times draw() executes in each second may be controlled with the frameRate() function.
    * 
-   * @return {Undefined}
+   * There can only be one draw() function for each sketch, and draw() must exist if you want the code to run continuously, or to process events such as mousePressed(). Sometimes, you might have an empty call to draw() in your program, as shown in the above example.
+   *
+   * @method draw
+   * @for Structure
    */
   p5.prototype._draw = function () {
     var now = new Date().getTime();

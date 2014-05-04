@@ -90,8 +90,40 @@ define(function (require) {
     this.settings.textStyle = lastS.textStyle; // textStyle
   };
 
+  /**
+   *
+   * Executes the code within draw() one time. This functions allows the program to update the display window only when necessary, for example when an event registered by mousePressed() or keyPressed() occurs. 
+   *
+   * In structuring a program, it only makes sense to call redraw() within events such as mousePressed(). This is because redraw() does not run draw() immediately (it only sets a flag that indicates an update is needed). 
+   * 
+   * The redraw() function does not work properly when called inside draw(). To enable/disable animations, use loop() and noLoop().
+   *
+   * @method redraw
+   * @example
+<div><code>
+var x = 0;
+
+function setup() {
+  createCanvas(200, 200);
+  noLoop();
+}
+
+function draw() {
+  background(204);
+  line(x, 0, x, height); 
+}
+
+function mousePressed() {
+  x += 1;
+  redraw();
+}
+</code></div>
+   */
   p5.prototype.redraw = function() {
-    throw 'Not implemented';
+    var context = this._isGlobal ? window : this;
+    if (context.draw) {
+      context.draw();
+    }
   };
 
   p5.prototype.size = function() {

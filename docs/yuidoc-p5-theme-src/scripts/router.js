@@ -121,7 +121,7 @@ define([
       // Get collection from the hash if not provided
       // if (!collection)
       //   var collection = location.hash.replace('#', '');
-      collection = 'methods'; //temp
+      collection = 'allItems'; //temp
 
       // Make sure collection is valid
       if (App.collections.indexOf(collection) < 0) {

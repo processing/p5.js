@@ -120,12 +120,12 @@ define(function(require) {
       this._setProperty('width', obj.elt.offsetWidth);
       this._setProperty('height', obj.elt.offsetHeight);
 
-      this.curElement.onfocus = function() {
-        this.focused = true;
+      window.onfocus = function() {
+        this._setProperty('focused', true);
       };
 
-      this.curElement.onblur = function() {
-        this.focused = false;
+      window.onblur = function() {
+        this._setProperty('focused', false);
       };
 
       if (typeof this.curElement.context !== 'undefined') {

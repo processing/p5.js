@@ -1113,11 +1113,11 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
                 this.curElement = obj;
                 this._setProperty('width', obj.elt.offsetWidth);
                 this._setProperty('height', obj.elt.offsetHeight);
-                this.curElement.onfocus = function () {
-                    this.focused = true;
+                window.onfocus = function () {
+                    this._setProperty('focused', true);
                 };
-                this.curElement.onblur = function () {
-                    this.focused = false;
+                window.onblur = function () {
+                    this._setProperty('focused', false);
                 };
                 if (typeof this.curElement.context !== 'undefined') {
                     this.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
@@ -2997,7 +2997,10 @@ var structure = function (require, core) {
             this.settings.textStyle = lastS.textStyle;
         };
         p5.prototype.redraw = function () {
-            throw 'Not implemented';
+            var context = this._isGlobal ? window : this;
+            if (context.draw) {
+                context.draw();
+            }
         };
         p5.prototype.size = function () {
             throw 'Not implemented';
