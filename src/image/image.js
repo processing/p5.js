@@ -365,13 +365,7 @@ Before using the pixels[] array, be sure to use the loadPixels() method on the i
    * 
    */
   PImage.prototype.blend = function() {
-    var currBlend = this.canvas.getContext('2d').globalCompositeOperation;
-    var blendMode = arguments[arguments.length - 1];
-    var copyArgs = Array.prototype.slice.call(arguments, 0, arguments.length - 1);
-
-    this.canvas.getContext('2d').globalCompositeOperation = blendMode;
-    this.copy.apply(this, copyArgs);
-    this.canvas.getContext('2d').globalCompositeOperation = currBlend;
+    p5.prototype.blend.apply(this, arguments);
   };
 
   /**

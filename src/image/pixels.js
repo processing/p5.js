@@ -8,6 +8,7 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
+  var Filters = require('filters');
 
   // function getPixels(img) {
   //   var c = document.createElement('canvas');
@@ -20,21 +21,39 @@ define(function (require) {
 
   //// PIXELS ////////////////////////////////
 
-  p5.prototype.blend = function(self) {
-    var ctx;
-    if (typeof self === 'undefined') { // p5 
-      self = this;
-      ctx = self.curElement.context;
-    } else { // pimage
-      ctx = self.canvas.getContext('2d');
-    }
+  /**
+   * Copies a region of pixels from one image to another, using a specified
+   * blend mode to do the operation.
+   * 
+   * @method blend
+   * @param  {PImage|undefined} srcImage source image
+   * @param  {Integer} sx X coordinate of the source's upper left corner
+   * @param  {Integer} sy Y coordinate of the source's upper left corner
+   * @param  {Integer} sw source image width
+   * @param  {Integer} sh source image height
+   * @param  {Integer} dx X coordinate of the destination's upper left corner
+   * @param  {Integer} dy Y coordinate of the destination's upper left corner
+   * @param  {Integer} dw destination image width
+   * @param  {Integer} dh destination image height
+   * @param  {Integer} blendMode the blend mode
+   *
+   * Available blend modes are: normal | multiply | screen | overlay | 
+   *            darken | lighten | color-dodge | color-burn | hard-light | 
+   *            soft-light | difference | exclusion | hue | saturation | 
+   *            color | luminosity
+
+   * 
+   * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
+   * 
+   */
+  p5.prototype.blend = function() {
     var currBlend = this.canvas.getContext('2d').globalCompositeOperation;
     var blendMode = arguments[arguments.length - 1];
     var copyArgs = Array.prototype.slice.call(arguments, 0, arguments.length - 1);
 
-    ctx.globalCompositeOperation = blendMode;
-    self.copy.apply(self, copyArgs);
-    ctx.globalCompositeOperation = currBlend;
+    this.canvas.getContext('2d').globalCompositeOperation = blendMode;
+    this.copy.apply(this, copyArgs);
+    this.canvas.getContext('2d').globalCompositeOperation = currBlend;
   };
 
   /**
@@ -46,7 +65,6 @@ define(function (require) {
    * target region.
    *
    * @method copy
-   * @for PImage
    * @param  {PImage|undefined} srcImage source image
    * @param  {Integer} sx X coordinate of the source's upper left corner
    * @param  {Integer} sy Y coordinate of the source's upper left corner
@@ -89,10 +107,18 @@ define(function (require) {
     );
   };
 
-  p5.prototype.filter = function() {
-    // TODO
-
+  /**
+   * Applies a filter to the canvas
+   * 
+   * @method filter
+   * @param  {String} operation one of threshold, gray, invert, posterize and opaque
+   *                            see Filters.js for docs on each available filter
+   * @param  {Number|undefined} value
+   */
+  p5.prototype.filter = function(operation, value) {
+    Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
   };
+
   /**
    * Reads the color of any pixel or grabs a section of an image. If no parameters are specified, the entire image is returned. Use the x and y parameters to get the value of one pixel. Get a section of the display window by specifying additional w and h parameters. When getting an image, the x and y parameters define the coordinates for the upper-left corner of the image, regardless of the current imageMode().
    *

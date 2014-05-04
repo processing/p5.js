@@ -1572,12 +1572,7 @@ var image = function (require, core, canvas, constants, filters) {
             Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
         };
         PImage.prototype.blend = function () {
-            var currBlend = this.canvas.getContext('2d').globalCompositeOperation;
-            var blendMode = arguments[arguments.length - 1];
-            var copyArgs = Array.prototype.slice.call(arguments, 0, arguments.length - 1);
-            this.canvas.getContext('2d').globalCompositeOperation = blendMode;
-            this.copy.apply(this, copyArgs);
-            this.canvas.getContext('2d').globalCompositeOperation = currBlend;
+            p5.prototype.blend.apply(this, arguments);
         };
         PImage.prototype.save = function (extension) {
             var mimeType;
@@ -1604,23 +1599,17 @@ var image = function (require, core, canvas, constants, filters) {
         };
         return PImage;
     }({}, core, canvas, constants, filters);
-var imagepixels = function (require, core) {
+var imagepixels = function (require, core, filters) {
         'use strict';
         var p5 = core;
-        p5.prototype.blend = function (self) {
-            var ctx;
-            if (typeof self === 'undefined') {
-                self = this;
-                ctx = self.curElement.context;
-            } else {
-                ctx = self.canvas.getContext('2d');
-            }
+        var Filters = filters;
+        p5.prototype.blend = function () {
             var currBlend = this.canvas.getContext('2d').globalCompositeOperation;
             var blendMode = arguments[arguments.length - 1];
             var copyArgs = Array.prototype.slice.call(arguments, 0, arguments.length - 1);
-            ctx.globalCompositeOperation = blendMode;
-            self.copy.apply(self, copyArgs);
-            ctx.globalCompositeOperation = currBlend;
+            this.canvas.getContext('2d').globalCompositeOperation = blendMode;
+            this.copy.apply(this, copyArgs);
+            this.canvas.getContext('2d').globalCompositeOperation = currBlend;
         };
         p5.prototype.copy = function () {
             var srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
@@ -1649,7 +1638,8 @@ var imagepixels = function (require, core) {
             }
             this.canvas.getContext('2d').drawImage(srcImage.canvas, sx, sy, sw, sh, dx, dy, dw, dh);
         };
-        p5.prototype.filter = function () {
+        p5.prototype.filter = function (operation, value) {
+            Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
         };
         p5.prototype.get = function (x, y, w, h) {
             if (x === undefined && y === undefined && w === undefined && h === undefined) {
@@ -1750,7 +1740,7 @@ var imagepixels = function (require, core) {
             this.canvas.getContext('2d').putImageData(imageData, x, y, 0, 0, w, h);
         };
         return p5;
-    }({}, core);
+    }({}, core, filters);
 !function (name, context, definition) {
     if (typeof module != 'undefined' && module.exports)
         module.exports = definition();
