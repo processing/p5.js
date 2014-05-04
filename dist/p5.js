@@ -66,6 +66,8 @@ var core = function (require, shim, constants) {
             this.displayHeight = screen.height;
             this.windowWidth = window.innerWidth;
             this.windowHeight = window.innerHeight;
+            this.width = 0;
+            this.height = 0;
             window.addEventListener('resize', function (e) {
                 this.windowWidth = window.innerWidth;
                 this.windowHeight = window.innerHeight;
@@ -187,7 +189,7 @@ var core = function (require, shim, constants) {
             }
         };
         p5.prototype._start = function () {
-            this.createCanvas(800, 600, true);
+            this.createCanvas(100, 100, true);
             if (this._userNode) {
                 if (typeof this._userNode === 'string') {
                     this._userNode = document.getElementById(this._userNode);

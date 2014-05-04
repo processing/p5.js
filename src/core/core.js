@@ -110,6 +110,24 @@ if (focused) {  // or "if (focused === true)"
    * @for Environment
    */
     this.windowHeight = window.innerHeight;
+
+  /**
+   *
+   * System variable that stores the width of the drawing canvas. This value is set by the first parameter of the createCanvas() function. For example, the function call createCanvas(320, 240) sets the width variable to the value 320. The value of width defaults to 100 if createCanvas() is not used in a program.
+   *
+   * @property width
+   * @for Environment
+   */
+    this.width = 0;
+  /**
+   *
+   * System variable that stores the height of the drawing canvas. This value is set by the second parameter of the createCanvas() function. For example, the function call createCanvas(320, 240) sets the height variable to the value 240. The value of height defaults to 100 if createCanvas() is not used in a program.
+   *
+   * @property height
+   * @for Environment
+   */
+    this.height = 0;
+
   
     window.addEventListener('resize', function (e) {
       this.windowWidth = window.innerWidth;
@@ -289,7 +307,7 @@ if (focused) {  // or "if (focused === true)"
     // Always create a default canvas.
     // Later on if the user calls createCanvas, this default one
     // will be replaced
-    this.createCanvas(800, 600, true);
+    this.createCanvas(100, 100, true);
 
     // Set input node if there was one
     if (this._userNode) {
