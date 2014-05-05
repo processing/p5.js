@@ -19,7 +19,7 @@ define(function (require) {
    * 
    * Note that if the sketch is resized, redraw() will be called to update the sketch, even after noLoop() has been specified. Otherwise, the sketch would enter an odd state until loop() was called.
    *
-   * @method noLoop
+   * @method noLoop()
    */
   p5.prototype.noLoop = function() {
     this.settings.loop = false;
@@ -28,7 +28,7 @@ define(function (require) {
   /**
    * By default, Processing loops through draw() continuously, executing the code within it. However, the draw() loop may be stopped by calling noLoop(). In that case, the draw() loop can be resumed with loop().
    * 
-   * @method loop
+   * @method loop()
    */
   p5.prototype.loop = function() {
     this.settings.loop = true;
@@ -39,7 +39,7 @@ define(function (require) {
    *
    * The style information controlled by the following functions are included in the style: fill(), stroke(), tint(), strokeWeight(), strokeCap(), strokeJoin(), imageMode(), rectMode(), ellipseMode(), shapeMode(), colorMode(), textAlign(), textFont(), textMode(), textSize(), textLeading(), emissive(), specular(), shininess(), ambient()
    *
-   * @method pushStyle
+   * @method pushStyle()
    */
   p5.prototype.pushStyle = function() {
 
@@ -66,7 +66,7 @@ define(function (require) {
   /**
    * The pushStyle() function saves the current style settings and popStyle() restores the prior settings; these functions are always used together. They allow you to change the style settings and later return to what you had. When a new style is started with pushStyle(), it builds on the current style information. The pushStyle() and popStyle() functions can be embedded to provide more control (see the second example above for a demonstration.)
    * 
-   * @method popStyle
+   * @method popStyle()
    */
   p5.prototype.popStyle = function() {
 
@@ -98,7 +98,7 @@ define(function (require) {
    * 
    * The redraw() function does not work properly when called inside draw(). To enable/disable animations, use loop() and noLoop().
    *
-   * @method redraw
+   * @method redraw()
    * @example
 <div><code>
 var x = 0;

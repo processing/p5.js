@@ -384,7 +384,7 @@ function draw() {
   rect(a++%width, 10, 2, 80); 
 }</code></div>
    *
-   * @method setup
+   * @method setup()
    * @for Structure
    */
   p5.prototype._setup = function() {
@@ -403,7 +403,7 @@ function draw() {
    * 
    * There can only be one draw() function for each sketch, and draw() must exist if you want the code to run continuously, or to process events such as mousePressed(). Sometimes, you might have an empty call to draw() in your program, as shown in the above example.
    *
-   * @method draw
+   * @method draw()
    * @for Structure
    */
   p5.prototype._draw = function () {
