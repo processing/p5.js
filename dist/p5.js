@@ -89,6 +89,7 @@ var core = function (require, shim, constants) {
             this.touchX = 0;
             this.touchY = 0;
             this.pWriters = [];
+            this.pixels = [];
             this.curElement = null;
             this._elements = [];
             this.matrices = [[

@@ -25,7 +25,7 @@ define(function (require) {
    * Copies a region of pixels from one image to another, using a specified
    * blend mode to do the operation.
    * 
-   * @method blend
+   * @method blend()
    * @param  {PImage|undefined} srcImage source image
    * @param  {Integer} sx X coordinate of the source's upper left corner
    * @param  {Integer} sy Y coordinate of the source's upper left corner
@@ -64,7 +64,7 @@ define(function (require) {
    * automatically resize source pixels to fit the specified
    * target region.
    *
-   * @method copy
+   * @method copy()
    * @param  {PImage|undefined} srcImage source image
    * @param  {Integer} sx X coordinate of the source's upper left corner
    * @param  {Integer} sy Y coordinate of the source's upper left corner
@@ -110,7 +110,7 @@ define(function (require) {
   /**
    * Applies a filter to the canvas
    * 
-   * @method filter
+   * @method filter()
    * @param  {String} operation one of threshold, gray, invert, posterize and opaque
    *                            see Filters.js for docs on each available filter
    * @param  {Number|undefined} value
@@ -126,7 +126,7 @@ define(function (require) {
    *
    * Getting the color of a single pixel with get(x, y) is easy, but not as fast as grabbing the data directly from pixels[]. The equivalent statement to get(x, y) using pixels[] is pixels[y*width+x]. See the reference for pixels[] for more information.
    *
-   * @method get
+   * @method get()
    * @param {Number} [x] x-coordinate of the pixel
    * @param {Number} [y] y-coordinate of the pixel
    * @param {Number} w width
@@ -176,7 +176,7 @@ define(function (require) {
   /**
    * Loads the pixel data for the display window into the pixels[] array. This function must always be called before reading from or writing to pixels[].
    *
-   * @method loadPixels
+   * @method loadPixels()
    */
   p5.prototype.loadPixels = function() {
     var width = this.width;
@@ -196,7 +196,7 @@ define(function (require) {
    * 
    * Setting the color of a single pixel with set(x, y) is easy, but not as fast as putting the data directly into pixels[]. The equivalent statement to set(x, y, #000000) using pixels[] is pixels[y*width+x] = #000000. See the reference for pixels[] for more information.
    *
-   * @method set
+   * @method set()
    * @param {Number} x x-coordinate of the pixel
    * @param {Number} y y-coordinate of the pixel
    * @param {Number|Array|Object} insert a grayscale value | a color array | image to copy
@@ -231,7 +231,7 @@ define(function (require) {
   /**
    * Updates the display window with the data in the pixels[] array. Use in conjunction with loadPixels(). If you're only reading pixels from the array, there's no need to call updatePixels() — updating is only necessary to apply changes. 
    *
-   * @method updatePixels
+   * @method updatePixels()
    */
   p5.prototype.updatePixels = function (x, y, w, h) {
     if (x === undefined && y === undefined && w === undefined && h === undefined) {

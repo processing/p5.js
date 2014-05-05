@@ -15,7 +15,7 @@ define(function (require) {
    *
    * The x2 and y2 parameters define a rectangular area to display within and may only be used with string data. When these parameters are specified, they are interpreted based on the current rectMode() setting. Text that does not fit completely within the rectangle specified will not be drawn to the screen.
    *
-   * @method text
+   * @method text()
    * @param {String} str the alphanumberic symbols to be displayed
    * @param {Number} x x-coordinate of text
    * @param {Number} y y-coordinate of text
@@ -74,7 +74,7 @@ define(function (require) {
   /**
    * Sets the current font that will be drawn with the text() function. 
    *
-   * @method textFont
+   * @method textFont()
    * @param {String} font name of font
    */
   p5.prototype.textFont = function(str) {
