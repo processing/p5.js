@@ -68,7 +68,6 @@ define(function(require) {
   /**
    * Returns the current framerate.
    *
-   * @method getFrameRate
    * @return {Number} [frameRate] current frameRate
    */
   p5.prototype.getFrameRate = function() {
@@ -79,7 +78,6 @@ define(function(require) {
    * Specifies the number of frames to be displayed every second. For example, the function call frameRate(30) will attempt to refresh 30 times a second. If the processor is not fast enough to maintain the specified rate, the frame rate will not be achieved. Setting the frame rate within setup() is recommended. The default rate is 60 frames per second.
    * Calling frameRate() with no arguments returns the current framerate.
    *
-   * @method setFrameRate
    * @param {Number} [fps] number of frames to be displayed every second
    */
   p5.prototype.setFrameRate = function(fps) {
