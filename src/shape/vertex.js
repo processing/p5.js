@@ -16,7 +16,7 @@ define(function (require) {
    *
    * Transformations such as translate(), rotate(), and scale() do not work within a beginContour()/endContour() pair. It is also not possible to use other shapes, such as ellipse() or rect() within.
    *
-   * @method beginContour
+   * @method beginContour()
    * @return {Object} the p5 object
    */
   p5.prototype.beginContour = function() {
@@ -31,7 +31,7 @@ define(function (require) {
    *
    * Transformations such as translate(), rotate(), and scale() do not work within beginShape(). It is also not possible to use other shapes, such as ellipse() or rect() within beginShape().
    *
-   * @method beginShape
+   * @method beginShape()
    * @param {Number/Constant} kind either POINTS, LINES, TRIANGLES, TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, or QUAD_STRIP
    * @return {Object} the p5 object
    */
@@ -51,7 +51,7 @@ define(function (require) {
   /**
    * Specifies vertex coordinates for Bezier curves. Each call to bezierVertex() defines the position of two control points and one anchor point of a Bezier curve, adding a new segment to a line or shape. The first time bezierVertex() is used within a beginShape() call, it must be prefaced with a call to vertex() to set the first anchor point. This function must be used between beginShape() and endShape() and only when there is no MODE parameter specified to beginShape().
    *
-   * @method bezierVertex
+   * @method bezierVertex()
    * @param {Number} x2 x-coordinate for the first control point
    * @param {Number} y2 y-coordinate for the first control point
    * @param {Number} x3 x-coordinate for the second control point
@@ -82,13 +82,13 @@ define(function (require) {
 
   p5.prototype.curveVertex = function() {
     // TODO
-
+    throw 'not yet implemented';
   };
 
   /**
    * Use the beginContour() and endContour() function to create negative shapes within shapes. For instance, the center of the letter 'O'. beginContour() begins recording vertices for the shape and endContour() stops recording. These functions can only be within a beginShape()/endShape() pair and they only work with the P2D and P3D renderers.
    *
-   * @method endContour
+   * @method endContour()
    * @return {Object} the p5 object
    */
   p5.prototype.endContour = function() {
@@ -122,7 +122,7 @@ define(function (require) {
   /**
    * The endShape() function is the companion to beginShape() and may only be called after beginShape(). When endshape() is called, all of image data defined since the previous call to beginShape() is written into the image buffer. The constant CLOSE as the value for the MODE parameter to close the shape (to connect the beginning and the end).
    *
-   * @method endShape
+   * @method endShape()
    * @param {Number/Constant} mode use CLOSE to close the shape
    * @return {Object} the p5 object
    */
@@ -139,7 +139,7 @@ define(function (require) {
   /**
    * Specifies vertex coordinates for quadratic Bezier curves. Each call to quadraticVertex() defines the position of one control points and one anchor point of a Bezier curve, adding a new segment to a line or shape. The first time quadraticVertex() is used within a beginShape() call, it must be prefaced with a call to vertex() to set the first anchor point. This function must be used between beginShape() and endShape() and only when there is no MODE parameter specified to beginShape().
    * 
-   * @method quadraticVertex
+   * @method quadraticVertex()
    * @param {Number} cx x-coordinate for the control point
    * @param {Number} cy y-coordinate for the control point
    * @param {Number} x3 x-coordinate for the anchor point
@@ -168,7 +168,7 @@ define(function (require) {
   /**
    * All shapes are constructed by connecting a series of vertices. vertex() is used to specify the vertex coordinates for points, lines, triangles, quads, and polygons. It is used exclusively within the beginShape() and endShape() functions.
    *
-   * @method vertex
+   * @method vertex()
    * @param {Number} x x-coordinate of the vertex
    * @param {Number} y y-coordinate of the vertex
    * @return {Object} the p5 object

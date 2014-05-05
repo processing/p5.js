@@ -25,7 +25,7 @@ define(function (require) {
    *
    * The parameter must be written in ALL CAPS because Processing is a case-sensitive language.
    *
-   * @method ellipseMode
+   * @method ellipseMode()
    * @param {Number/Constant} mode either CENTER, RADIUS, CORNER, or CORNERS
    * @return {p5} the p5 object
    */
@@ -40,7 +40,7 @@ define(function (require) {
   /**
    * Draws all geometry with jagged (aliased) edges. Note that smooth() is active by default, so it is necessary to call noSmooth() to disable smoothing of geometry, images, and fonts.
    *
-   * @method noSmooth
+   * @method noSmooth()
    * @return {p5} the p5 object
    */
   p5.prototype.noSmooth = function() {
@@ -63,7 +63,7 @@ define(function (require) {
    *
    * The parameter must be written in ALL CAPS because Processing is a case-sensitive language.
    * 
-   * @method rectMode
+   * @method rectMode()
    * @param {Number/Constant} mode either CORNER, CORNERS, CENTER, or RADIUS
    * @return {p5} the p5 object
    */
@@ -78,7 +78,7 @@ define(function (require) {
   /**
    * Draws all geometry with smooth (anti-aliased) edges. smooth() will also improve image quality of resized images. Note that smooth() is active by default; noSmooth() can be used to disable smoothing of geometry, images, and fonts.
    * 
-   * @method smooth
+   * @method smooth()
    * @return {p5} the p5 object
    */
   p5.prototype.smooth = function() {
@@ -91,7 +91,7 @@ define(function (require) {
   /**
    * Sets the style for rendering line endings. These ends are either squared, extended, or rounded, each of which specified with the corresponding parameters: SQUARE, PROJECT, and ROUND. The default cap is ROUND.
    * 
-   * @method strokeCap
+   * @method strokeCap()
    * @param {Number/Constant} cap either SQUARE, PROJECT, or ROUND
    * @return {p5} the p5 object
    */
@@ -106,7 +106,7 @@ define(function (require) {
   /**
    * Sets the style of the joints which connect line segments. These joints are either mitered, beveled, or rounded and specified with the corresponding parameters MITER, BEVEL, and ROUND. The default joint is MITER.
    *
-   * @method strokeJoin
+   * @method strokeJoin()
    * @param {Number/Constant} join either MITER, BEVEL, ROUND
    * @return {p5} the p5 object
    */
@@ -121,7 +121,7 @@ define(function (require) {
   /**
    * Sets the width of the stroke used for lines, points, and the border around shapes. All widths are set in units of pixels.
    *
-   * @method strokeWeight
+   * @method strokeWeight()
    * @param {Number} weight the weight (in pixels) of the stroke
    * @return {p5} the p5 object
    */

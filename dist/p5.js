@@ -2847,6 +2847,7 @@ var shapecurves = function (require, core) {
             return a * f1 + b * f2 + c * f3 + d * f4;
         };
         p5.prototype.curveTightness = function () {
+            throw 'not yet implemented';
         };
         return p5;
     }({}, core);
@@ -2886,6 +2887,7 @@ var shapevertex = function (require, core, constants) {
             return this;
         };
         p5.prototype.curveVertex = function () {
+            throw 'not yet implemented';
         };
         p5.prototype.endContour = function () {
             this._contourVertices.reverse();
