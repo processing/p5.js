@@ -21,7 +21,9 @@ define([
   var itemView = Backbone.View.extend({
     el: '#item',
     init: function () {
-      this.$body = $('body,html');
+      this.$html = $('html');
+      this.$body = $('body');
+      this.$scrollBody = $('html, body'); // hack for Chrome/Firefox scroll
       this.tpl = _.template(itemTpl);
       this.classTpl = _.template(classTpl);
 
@@ -47,7 +49,7 @@ define([
           name: cleanItem.name,
           collectionName: collectionName,
           isClass: isClass,
-          isConstant: isConstant,
+          isConstant: isConstant
         });
 
         // Set item contents
@@ -104,7 +106,7 @@ define([
       this.$el.show();
 
       this.scrollTop();
-      window.scrollTo(0, 0); // LM
+      //window.scrollTo(0, 0); // LM
 
       return this;
     },
@@ -123,8 +125,11 @@ define([
      * Scroll to the top of the window with an animation.
      */
     scrollTop: function() {
-      if (this.$body.scrollTop() > 0) {
-        this.$body.animate({'scrollTop': 0}, 600);
+      // Hack for Chrome/Firefox scroll animation
+      // Chrome scrolls 'body', Firefox scrolls 'html'
+      var scroll = this.$body.scrollTop() > 0 || this.$html.scrollTop() > 0;
+      if (scroll) {
+        this.$scrollBody.animate({'scrollTop': 0}, 600);
       }
     },
     /**
