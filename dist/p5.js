@@ -298,6 +298,7 @@ var mathpvector = function (require) {
             this.x = x || 0;
             this.y = y || 0;
             this.z = z || 0;
+            return this;
         };
         PVector.prototype.get = function () {
             return new PVector(this.x, this.y, this.z);
