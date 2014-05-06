@@ -14,7 +14,7 @@ define(function (require) {
   /**
    * Combines an array of Strings into one String, each separated by the character(s) used for the separator parameter. To join arrays of ints or floats, it's necessary to first convert them to Strings using nf() or nfs().
    *
-   * @method join()
+   * @method join
    * @param {Array} list array of Strings to be joined
    * @param {String} separator String to be placed between each item
    * @return {String} joined String
@@ -30,10 +30,10 @@ define(function (require) {
    *
    * If there are groups (specified by sets of parentheses) in the regular expression, then the contents of each will be returned in the array. Element [0] of a regular expression match returns the entire matching string, and the match groups start at element [1] (the first group is [1], the second [2], and so on).
    *
-   * @method match()
+   * @method match
    * @param {String} str the String to be searched
    * @param {String} regexp the regexp to be used for matching
-   * @return {Array} strings Array of Strings found
+   * @return {Array} Array of Strings found
    */
   p5.prototype.match =  function(str, reg) {
     return str.match(reg);
@@ -46,8 +46,8 @@ define(function (require) {
    *
    * If there are groups (specified by sets of parentheses) in the regular expression, then the contents of each will be returned in the array. Assuming a loop with counter variable i, element [i][0] of a regular expression match returns the entire matching string, and the match groups start at element [i][1] (the first group is [i][1], the second [i][2], and so on).
    *
-   * @method matchAll()
-   * @param {String} str the String to be searched
+   * @method matchAll
+   * @param {String} the String to be searched
    * @param {String} regexp the regexp to be used for matching
    * @return {Array} strings 2d Array of Strings found
    */
@@ -68,12 +68,12 @@ define(function (require) {
   /**
    * Utility function for formatting numbers into strings. There are two versions: one for formatting floats, and one for formatting ints. The values for the digits, left, and right parameters should always be positive integers.
    *
-   * @method nf()
+   * @method nf
    * @param {Number|Array} num the Number to format
    * @param {Number} [digits] number of digits to pad with zero
    * @param {Number} [left] number of digits to the left of the decimal point
    * @param {Number} [right] number of digits to the right of the decimal point
-   * @return {String|Array} string formatted String 
+   * @return {String|Array} formatted String 
    */
   p5.prototype.nf = function() {
     if (arguments[0] instanceof Array) {
@@ -112,10 +112,10 @@ define(function (require) {
   /**
    * Utility function for formatting numbers into strings and placing appropriate commas to mark units of 1000. There are two versions: one for formatting ints, and one for formatting an array of ints. The value for the right parameter should always be a positive integer. 
    *
-   * @method nfc()
+   * @method nfc
    * @param {Number|Array} num the Number to format
    * @param {Number} [right] number of digits to the right of the decimal point
-   * @return {String|Array} string formatted String 
+   * @return {String|Array} formatted String 
    */
   p5.prototype.nfc = function() {
     if (arguments[0] instanceof Array) {
@@ -141,12 +141,12 @@ define(function (require) {
   /**
    * Utility function for formatting numbers into strings. Similar to nf() but puts a "+" in front of positive numbers and a "-" in front of negative numbers. There are two versions: one for formatting floats, and one for formatting ints. The values for the digits, left, and right parameters should always be positive integers.
    *
-   * @method nfp()
+   * @method nfp
    * @param {Number|Array} num the Number to format
    * @param {Number} [digits] number of digits to pad with zero
    * @param {Number} [left] number of digits to the left of the decimal point
    * @param {Number} [right] number of digits to the right of the decimal point
-   * @return {String|Array} string formatted String 
+   * @return {String|Array} formatted String 
    */
   p5.prototype.nfp = function() {
     var nfRes = this.nf(arguments);
@@ -164,12 +164,12 @@ define(function (require) {
   /**
    * Utility function for formatting numbers into strings. Similar to nf() but puts a "+" in front of positive numbers and a "-" in front of negative numbers. There are two versions: one for formatting floats, and one for formatting ints. The values for the digits, left, and right parameters should always be positive integers.
    *
-   * @method nfs()
+   * @method nfs
    * @param {Number|Array} num the Number to format
    * @param {Number} [digits] number of digits to pad with zero
    * @param {Number} [left] number of digits to the left of the decimal point
    * @param {Number} [right] number of digits to the right of the decimal point
-   * @return {String|Array} string formatted String 
+   * @return {String|Array} formatted String 
    */
   p5.prototype.nfs = function() {
     var nfRes = this.nf(arguments);
@@ -189,10 +189,10 @@ define(function (require) {
    * 
    * The splitTokens() function works in a similar fashion, except that it splits using a range of characters instead of a specific character or sequence.
    *
-   * @method split()
+   * @method split
    * @param {String} value the String to be split
    * @param {String} delim the String used to separate the data
-   * @return {Array} strings Array of Strings 
+   * @return {Array} Array of Strings 
    */
   p5.prototype.split = function(str, delim) {
     return str.split(delim);
@@ -203,10 +203,10 @@ define(function (require) {
    *
    * If no delim characters are specified, any whitespace character is used to split. Whitespace characters include tab (\t), line feed (\n), carriage return (\r), form feed (\f), and space.
    *
-   * @method split()
+   * @method split
    * @param {String} value the String to be split
    * @param {String} [delim] list of individual Strings that will be used as separators
-   * @return {Array} strings Array of Strings 
+   * @return {Array} Array of Strings 
    */
   p5.prototype.splitTokens = function() {
     var d = (arguments.length > 0) ? arguments[1] : /\s/g;
@@ -216,9 +216,9 @@ define(function (require) {
   /**
    * Removes whitespace characters from the beginning and end of a String. In addition to standard whitespace characters such as space, carriage return, and tab, this function also removes the Unicode "nbsp" character.
    *
-   * @method trim()
+   * @method trim
    * @param {String|Array} [str] a String or Array of Strings to be trimmed
-   * @return {String|Array} result a trimmed String or Array of Strings 
+   * @return {String|Array} a trimmed String or Array of Strings 
    */
   p5.prototype.trim = function(str) {
     if (str instanceof Array) {

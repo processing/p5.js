@@ -185,17 +185,15 @@
     <h4>Returns:</h4> 
 
     <div class="returns-description">
-      {{#if description}}
-      {{#if type}}
-      [ <strong>{{{type}}}</strong> ]
 
-      {{/if}}
-      {{{description}}}
-      {{else}}
       {{#if type}}
-      :
+        <span class="param-type label label-info">{{type}}</span> 
       {{/if}}
-      {{/if}}
+
+      <div class="param-description">
+        {{{description}}}
+      </div>
+
     </div>
   </div>
   {{/return}}

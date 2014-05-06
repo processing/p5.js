@@ -16,9 +16,9 @@ define(function (require) {
   /**
    * The inverse of cos(), returns the arc cosine of a value. This function expects the values in the range of -1 to 1 and values are returned in the range 0 to PI (3.1415927).
    * 
-   * @method acos()
+   * @method acos
    * @param {Number} value the value whose arc cosine is to be returned
-   * @return {Number} angle the arc cosine of the given value
+   * @return {Number} the arc cosine of the given value
    */
   p5.prototype.acos = function(ratio) {
     if (this.settings.angleMode === constants.RADIANS) {
@@ -31,9 +31,9 @@ define(function (require) {
   /**
    * The inverse of sin(), returns the arc sine of a value. This function expects the values in the range of -1 to 1 and values are returned in the range -PI/2 to PI/2.
    *
-   * @method asin()
+   * @method asin
    * @param {Number} value the value whose arc sine is to be returned
-   * @return {Number} angle the arc sine of the given value
+   * @return {Number} the arc sine of the given value
    */
   p5.prototype.asin = function(ratio) {
     if (this.settings.angleMode === constants.RADIANS) {
@@ -46,9 +46,9 @@ define(function (require) {
   /**
    * The inverse of tan(), returns the arc tangent of a value. This function expects the values in the range of -Infinity to Infinity (exclusive) and values are returned in the range -PI/2 to PI/2.
    * 
-   * @method atan()
+   * @method atan
    * @param {Number} value the value whose arc tangent is to be returned
-   * @return {Number} angle the arc tangent of the given value
+   * @return {Number} the arc tangent of the given value
    */
   p5.prototype.atan = function(ratio) {
     if (this.settings.angleMode === constants.RADIANS) {
@@ -61,10 +61,10 @@ define(function (require) {
   /**
    * Calculates the angle (in radians) from a specified point to the coordinate origin as measured from the positive x-axis. Values are returned as a float in the range from PI to -PI. The atan2() function is most often used for orienting geometry to the position of the cursor. Note: The y-coordinate of the point is the first parameter, and the x-coordinate is the second parameter, due the the structure of calculating the tangent.
    *
-   * @method atan2()
+   * @method atan2
    * @param {Number} y y-coordinate of the point
    * @param {Number} x x-coordinate of the point
-   * @return {Number} angle the arc tangent of the given point
+   * @return {Number} the arc tangent of the given point
    */
   p5.prototype.atan2 = function (y, x) {
     if (this.settings.angleMode === constants.RADIANS) {
@@ -77,9 +77,9 @@ define(function (require) {
   /**
    * Calculates the cosine of an angle. This function takes into account the current angleMode. Values are returned in the range -1 to 1.
    * 
-   * @method cos()
+   * @method cos
    * @param {Number} angle 
-   * @return {Number} value the cosine of the angle
+   * @return {Number} the cosine of the angle
    */
   p5.prototype.cos = function(angle) {
     if (this.settings.angleMode === constants.RADIANS) {
@@ -92,9 +92,9 @@ define(function (require) {
   /**
    * Calculates the sine of an angle. This function takes into account the current angleMode. Values are returned in the range -1 to 1.
    * 
-   * @method sin()
+   * @method sin
    * @param {Number} angle 
-   * @return {Number} value the sine of the angle
+   * @return {Number} the sine of the angle
    */
   p5.prototype.sin = function(angle) {
     if (this.settings.angleMode === constants.RADIANS) {
@@ -107,9 +107,9 @@ define(function (require) {
   /**
    * Calculates the tangent of an angle. This function takes into account the current angleMode. Values are returned in the range -1 to 1.
    * 
-   * @method tan()
+   * @method tan
    * @param {Number} angle 
-   * @return {Number} value the tangent of the angle
+   * @return {Number} the tangent of the angle
    */
   p5.prototype.tan = function(angle) {
     if (this.settings.angleMode === constants.RADIANS) {
@@ -122,9 +122,9 @@ define(function (require) {
   /**
    * Converts a radian measurement to its corresponding value in degrees. Radians and degrees are two ways of measuring the same thing. There are 360 degrees in a circle and 2*PI radians in a circle. For example, 90° = PI/2 = 1.5707964.
    *
-   * @method degrees()
+   * @method degrees
    * @param {Number} radians the radians value to convert to degrees 
-   * @return {Number} value the converted angle
+   * @return {Number} the converted angle
    */
   p5.prototype.degrees = function(angle) {
     return polarGeometry.radiansToDegrees(angle);
@@ -133,9 +133,9 @@ define(function (require) {
   /**
    * Converts a degree measurement to its corresponding value in radians. Radians and degrees are two ways of measuring the same thing. There are 360 degrees in a circle and 2*PI radians in a circle. For example, 90° = PI/2 = 1.5707964. 
    *
-   * @method radians()
+   * @method radians
    * @param {Number} degrees the degree value to convert to radians 
-   * @return {Number} value the converted angle
+   * @return {Number} the converted angle
    */
   p5.prototype.radians = function(angle) {
     return polarGeometry.degreesToRadians(angle);
@@ -144,7 +144,7 @@ define(function (require) {
   /**
    * Sets the current mode of p5 to given mode.
    * 
-   * @method angleMode()
+   * @method angleMode
    * @param {Number/Constant} mode either RADIANS or DEGREES 
    */
   p5.prototype.angleMode = function(mode) {

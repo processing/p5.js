@@ -50,7 +50,7 @@ define(function (require) {
    * 
    * @method getNormalizedColor 
    * @param {Array-like} args An 'array-like' object that represents a list of arguments
-   * @return {Array} Returns a color formatted as [r, g, b, a]
+   * @return {Array} a color formatted as [r, g, b, a]
    *                 input        ==> output
    *                 g            ==> [g, g, g, 255]
    *                 g,a          ==> [g, g, g, a]

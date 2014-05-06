@@ -12,8 +12,8 @@ define(function (require) {
   /**
    * Extracts the alpha value from a color.
    * 
-   * @method alpha()
-   * @param {Array} rgb an array representing a color
+   * @method alpha
+   * @param {Array} an array representing a color
    */
   p5.prototype.alpha = function(rgb) {
     if (rgb.length > 3) {
@@ -26,8 +26,8 @@ define(function (require) {
   /**
    * Extracts the blue value from a color, scaled to match current colorMode(). 
    * 
-   * @method blue()
-   * @param {Array} rgb an array representing a color
+   * @method blue
+   * @param {Array} an array representing a color
    */
   p5.prototype.blue = function(rgb) {
     if (rgb.length > 2) {
@@ -40,8 +40,8 @@ define(function (require) {
   /**
    * Extracts the brightness value from a color. 
    * 
-   * @method brightness()
-   * @param {Array} hsv an array representing a color
+   * @method brightness
+   * @param {Array} an array representing a color
    */
   p5.prototype.brightness = function(hsv) {
     if (hsv.length > 2) {
@@ -58,7 +58,7 @@ define(function (require) {
    * 
    * Colors are stored as Numbers or Arrays.
    * 
-   * @method color()
+   * @method color
    * @param {Number} v1 gray value or red or hue value relative to the current color range
    * @param {Number} [v2] gray value or green or saturation value relative to the current color range (or alpha value if first param is gray value)
    * @param {Number} [v3] gray value or blue or brightness value relative to the current color range
@@ -72,8 +72,8 @@ define(function (require) {
   /**
    * Extracts the green value from a color, scaled to match current colorMode(). 
    * 
-   * @method green()
-   * @param {Array} rgb an array representing a color
+   * @method green
+   * @param {Array} an array representing a color
    */
   p5.prototype.green = function(rgb) {
     if (rgb.length > 2) {
@@ -86,8 +86,8 @@ define(function (require) {
   /**
    * Extracts the hue value from a color. 
    * 
-   * @method hue()
-   * @param {Array} hsv an array representing a color
+   * @method hue
+   * @param {Array} an array representing a color
    */
   p5.prototype.hue = function(hsv) {
     if (hsv.length > 2) {
@@ -100,7 +100,7 @@ define(function (require) {
   /**
    * Calculates a color or colors between two color at a specific increment. The amt parameter is the amount to interpolate between the two values where 0.0 equal to the first point, 0.1 is very near the first point, 0.5 is halfway in between, etc. An amount below 0 will be treated as 0. Likewise, amounts above 1 will be capped at 1. This is different from the behavior of lerp(), but necessary because otherwise numbers outside the range will produce strange and unexpected colors.
    * 
-   * @method lerpColor()
+   * @method lerpColor
    * @param {Array/Number} c1 interpolate from this color
    * @param {Array/Number} c2 interpolate to this color
    * @param {Number} amt number between 0 and 1
@@ -121,8 +121,8 @@ define(function (require) {
   /**
    * Extracts the red value from a color, scaled to match current colorMode(). 
    * 
-   * @method red()
-   * @param {Array} rgb an array representing a color
+   * @method red
+   * @param {Array} an array representing a color
    */
   p5.prototype.red = function(rgb) {
     if (rgb.length > 2) {
@@ -135,8 +135,8 @@ define(function (require) {
   /**
    * Extracts the saturation value from a color. 
    * 
-   * @method saturation()
-   * @param {Array} hsv an array representing a color
+   * @method saturation
+   * @param {Array} an array representing a color
    */
   p5.prototype.saturation = function(hsv) {
     if (hsv.length > 2) {

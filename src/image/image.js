@@ -24,10 +24,10 @@ define(function (require) {
    */
 
   /**
-   * Create a new empty PImage object.
+   * Creates a new PImage (the datatype for storing images). This provides a fresh buffer of pixels to play with. Set the size of the buffer with the width and height parameters.
    * @method createImage
-   * @param  {Integer} width
-   * @param  {Integer} height
+   * @param  {Integer} width width in pixels
+   * @param  {Integer} height height in pixels
    * @return {PImage} the PImage object
    * @for Image
    */
@@ -44,7 +44,7 @@ define(function (require) {
    * callback.
    * 
    * @method loadImage
-   * @param  {String}   path
+   * @param  {String} path
    * @param  {Function} callback Function to be called once the image is loaded. Will be passed the PImage.
    * @return {PImage} the PImage object
    * @for Loading & Displaying

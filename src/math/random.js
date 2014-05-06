@@ -28,9 +28,9 @@ define(function (require) {
    * If one argument is given, returns a random number between 0 and the number.
    * If two arguments are given, returns a random number between them, inclusive.
    *
-   * @param  {x}      min
-   * @param  {y}      max
-   * @return {Number}
+   * @param  {x} min
+   * @param  {y} max
+   * @return {Number} the random number
    */
   p5.prototype.random = function (min, max) {
 
