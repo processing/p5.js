@@ -19,7 +19,7 @@
           <ul>
             <% _.each(subgroup.items, function(item) { %>
               <li>
-                <a href="<%=item.hash%>"><%=item.name%></a>
+                <a href="<%=item.hash%>"><%=item.name%><% if (item.itemtype === 'method') { %>()<% } %></a>
               </li>
             <% }); %>
           </ul>
