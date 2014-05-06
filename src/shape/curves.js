@@ -13,7 +13,7 @@ define(function (require) {
   /**
    * Draws a Bezier curve on the screen. These curves are defined by a series of anchor and control points. The first two parameters specify the first anchor point and the last two parameters specify the other anchor point. The middle parameters specify the control points which define the shape of the curve. Bezier curves were developed by French engineer Pierre Bezier. Using the 3D version requires rendering with P3D (see the Environment reference for more information).
    *
-   * @method bezier()
+   * @method bezier
    * @param {Number} x1 x-coordinate for the first anchor point
    * @param {Number} y1 y-coordinate for the first anchor point
    * @param {Number} x2 x-coordinate for the first control point
@@ -42,7 +42,7 @@ define(function (require) {
    *
    * The default value is 20.
    *
-   * @method bezierDetail()
+   * @method bezierDetail
    * @param {Number} detail resolution of the curves
    * @return {Object} the p5 object
    */
@@ -60,13 +60,13 @@ define(function (require) {
    * This can be done once with the x coordinates and a second time
    * with the y coordinates to get the location of a bezier curve at t.
    *
-   * @method bezierPoint()
+   * @method bezierPoint
    * @param {Number} a coordinate of first point on the curve
    * @param {Number} b coordinate of first control point
    * @param {Number} c coordinate of second control point
    * @param {Number} d coordinate of second point on the curve
    * @param {Number} t value between 0 and 1
-   * @return {Number} value the value of the Bezier at point t
+   * @return {Number} the value of the Bezier at point t
    */
 
   p5.prototype.bezierPoint = function(a, b, c, d, t) {
@@ -82,13 +82,13 @@ define(function (require) {
    * The parameter t varies between 0 and 1, a and d are points
    * on the curve, and b and c are the control points
    *
-   * @method bezierTangent()
+   * @method bezierTangent
    * @param {Number} a coordinate of first point on the curve
    * @param {Number} b coordinate of first control point
    * @param {Number} c coordinate of second control point
    * @param {Number} d coordinate of second point on the curve
    * @param {Number} t value between 0 and 1
-   * @return {Number} value the tangent at point t
+   * @return {Number} the tangent at point t
    */
   p5.prototype.bezierTangent = function(a, b, c, d, t) {
     var adjustedT = 1-t;
@@ -98,7 +98,7 @@ define(function (require) {
   /**
    * Draws a curved line on the screen. The first and second parameters specify the beginning control point and the last two parameters specify the ending control point. The middle parameters specify the start and stop of the curve. Longer curves can be created by putting a series of curve() functions together or using curveVertex(). An additional function called curveTightness() provides control for the visual quality of the curve. The curve() function is an implementation of Catmull-Rom splines. Using the 3D version requires rendering with P3D (see the Environment reference for more information).
    * 
-   * @method curve()
+   * @method curve
    * @param {Number} x1 x-coordinate for the beginning control point
    * @param {Number} y1 y-coordinate for the beginning control point
    * @param {Number} x2 x-coordinate for the first point
@@ -129,7 +129,7 @@ define(function (require) {
    *
    * The default value is 20.
    *
-   * @method curveDetail()
+   * @method curveDetail
    * @param {Number} resolution of the curves
    * @return {Object} the p5 object
    */
@@ -149,13 +149,13 @@ define(function (require) {
    * This can be done once with the x coordinates and a second time
    * with the y coordinates to get the location of a curve at t.
    *
-   * @method curvePoint()
+   * @method curvePoint
    * @param {Number} a coordinate of first point on the curve
    * @param {Number} b coordinate of first control point
    * @param {Number} c coordinate of second control point
    * @param {Number} d coordinate of second point on the curve
    * @param {Number} t value between 0 and 1
-   * @return {Number} value Bezier value at point t
+   * @return {Number} bezier value at point t
    */
 
   p5.prototype.curvePoint = function(a, b,c, d, t) {
@@ -175,13 +175,13 @@ define(function (require) {
    * The parameter t varies between 0 and 1, a and d are points
    * on the curve, and b and c are the control points
    *
-   * @method curveTangent()
+   * @method curveTangent
    * @param {Number} a coordinate of first point on the curve
    * @param {Number} b coordinate of first control point
    * @param {Number} c coordinate of second control point
    * @param {Number} d coordinate of second point on the curve
    * @param {Number} t value between 0 and 1
-   * @return {Number} value the tangent at point t
+   * @return {Number} the tangent at point t
    */
   p5.prototype.curveTangent = function(a, b,c, d, t) {
     var t2 = t*t,

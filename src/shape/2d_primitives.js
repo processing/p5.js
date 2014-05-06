@@ -21,7 +21,7 @@ define(function (require) {
    * open pie.
    * If mode is provided draws the arc either open, chord or pie, dependant on the variable provided.
    * 
-   * @method arc()
+   * @method arc
    * @param  {Number} a x-coordinate of the arc's ellipse
    * @param  {Number} b y-coordinate of the arc's ellipse
    * @param  {Number} c width of the arc's ellipse by default
@@ -77,7 +77,7 @@ arc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);
   /**
    * Draws an ellipse (oval) to the screen. An ellipse with equal width and height is a circle. By default, the first two parameters set the location, and the third and fourth parameters set the shape's width and height. The origin may be changed with the ellipseMode() function. 
    * 
-   * @method ellipse()
+   * @method ellipse
    * @param {Number} a x-coordinate of the ellipse.
    * @param {Number} b y-coordinate of the ellipse.
    * @param {Number} c width of the ellipse.
@@ -108,7 +108,7 @@ arc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);
   /**
    * Draws a line (a direct path between two points) to the screen. The version of line() with four parameters draws the line in 2D. To color a line, use the stroke() function. A line cannot be filled, therefore the fill() function will not affect the color of a line. 2D lines are drawn with a width of one pixel by default, but this can be changed with the strokeWeight() function. The version with six parameters allows the line to be placed anywhere within XYZ space. Drawing this shape in 3D with the z parameter requires the P3D parameter in combination with size() as shown in the above example. 
    * 
-   * @method line()
+   * @method line
    * @param {Number} x1 
    * @param {Number} y1 
    * @param {Number} x2 
@@ -130,7 +130,7 @@ arc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);
   /**
    * Draws a point, a coordinate in space at the dimension of one pixel. The first parameter is the horizontal value for the point, the second value is the vertical value for the point, and the optional third value is the depth value. Drawing this shape in 3D with the z parameter requires the P3D parameter in combination with size() as shown in the above example. 
    * 
-   * @method point()
+   * @method point
    * @param {Number} x
    * @param {Number} y
    * @return {p5} the p5 object
@@ -160,7 +160,7 @@ arc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);
   /**
    * Draw a quad. A quad is a quadrilateral, a four sided polygon. It is similar to a rectangle, but the angles between its edges are not constrained to ninety degrees. The first pair of parameters (x1,y1) sets the first vertex and the subsequent pairs should proceed clockwise or counter-clockwise around the defined shape.
    * 
-   * @method quad()
+   * @method quad
    * @param {type} x1
    * @param {type} y1
    * @param {type} x2
@@ -187,7 +187,7 @@ arc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);
   /**
   * Draws a rectangle to the screen. A rectangle is a four-sided shape with every angle at ninety degrees. By default, the first two parameters set the location of the upper-left corner, the third sets the width, and the fourth sets the height. The way these parameters are interpreted, however, may be changed with the rectMode() function.
   *
-  * @method rect()
+  * @method rect
   * @param {Number} a x-coordinate of the rectangle
   * @param {Number} b y-coordinate of the rectangle
   * @param {Number} c width of the rectangle
@@ -208,7 +208,7 @@ arc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);
   /**
   * A triangle is a plane created by connecting three points. The first two arguments specify the first point, the middle two arguments specify the second point, and the last two arguments specify the third point.
   * 
-  * @method triangle()
+  * @method triangle
   * @param {Number} x1 x-coordinate of the first point
   * @param {Number} y1 y-coordinate of the first point
   * @param {Number} x2 x-coordinate of the second point
