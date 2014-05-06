@@ -1,6 +1,5 @@
 /**
- * @module Core
- * @for Core
+ * @module *
  */
 define(function (require) {
 
@@ -39,7 +38,7 @@ define(function (require) {
    * The system variable frameCount contains the number of frames that have been displayed since the program started. Inside setup() the value is 0, after the first iteration of draw it is 1, etc.
    *
    * @property frameCount
-   * @for Environment
+   * @for Environment:Environment
    * @example
 <div><code>
 function setup() {
@@ -58,7 +57,7 @@ function draw() {
    * Confirms if a p5.js program is "focused," meaning that it is active and will accept mouse or keyboard input. This variable is "true" if it is focused and "false" if not.
    *
    * @property focused
-   * @for Environment
+   * @for Environment:Environment
    * @example
 <div><code>
 if (focused) {  // or "if (focused === true)"
@@ -77,7 +76,7 @@ if (focused) {  // or "if (focused === true)"
    * @example
 <div><code>size(displayWidth, displayHeight);</code></div>
    * @property displayWidth
-   * @for Environment
+   * @for Environment:Environment
    */
     this.displayWidth = screen.width;
   /**
@@ -87,7 +86,7 @@ if (focused) {  // or "if (focused === true)"
    * @example
 <div><code>size(displayWidth, displayHeight);</code></div>
    * @property displayHeight
-   * @for Environment
+   * @for Environment:Environment
    */
     this.displayHeight = screen.height;
   /**
@@ -97,7 +96,7 @@ if (focused) {  // or "if (focused === true)"
    * @example
 <div><code>size(windowWidth, windowHeight);</code></div>
    * @property windowWidth
-   * @for Environment
+   * @for Environment:Environment
    */
     this.windowWidth = window.innerWidth;
   /**
@@ -107,7 +106,7 @@ if (focused) {  // or "if (focused === true)"
    * @example
 <div><code>size(windowWidth, windowHeight);</code></div>
    * @property windowHeight
-   * @for Environment
+   * @for Environment:Environment
    */
     this.windowHeight = window.innerHeight;
 
@@ -116,7 +115,7 @@ if (focused) {  // or "if (focused === true)"
    * System variable that stores the width of the drawing canvas. This value is set by the first parameter of the createCanvas() function. For example, the function call createCanvas(320, 240) sets the width variable to the value 320. The value of width defaults to 100 if createCanvas() is not used in a program.
    *
    * @property width
-   * @for Environment
+   * @for Environment:Environment
    */
     this.width = 0;
   /**
@@ -124,7 +123,7 @@ if (focused) {  // or "if (focused === true)"
    * System variable that stores the height of the drawing canvas. This value is set by the second parameter of the createCanvas() function. For example, the function call createCanvas(320, 240) sets the height variable to the value 240. The value of height defaults to 100 if createCanvas() is not used in a program.
    *
    * @property height
-   * @for Environment
+   * @for Environment:Environment
    */
     this.height = 0;
 
@@ -168,7 +167,7 @@ if (focused) {  // or "if (focused === true)"
    * Before accessing this array, the data must loaded with the loadPixels() function. After the array data has been modified, the updatePixels() function must be run to update the changes.
    *
    * @property pixels[]
-   * @for Pixels
+   * @for Image:Pixels
    */
     this.pixels = [];
 
@@ -396,7 +395,7 @@ function draw() {
 }</code></div>
    *
    * @method setup()
-   * @for Structure
+   * @for Structure:Structure
    */
   p5.prototype._setup = function() {
     // Short-circuit on this, in case someone used the library in "global" mode earlier
@@ -415,7 +414,7 @@ function draw() {
    * There can only be one draw() function for each sketch, and draw() must exist if you want the code to run continuously, or to process events such as mousePressed(). Sometimes, you might have an empty call to draw() in your program, as shown in the above example.
    *
    * @method draw()
-   * @for Structure
+   * @for Structure:Structure
    */
   p5.prototype._draw = function () {
     var now = new Date().getTime();

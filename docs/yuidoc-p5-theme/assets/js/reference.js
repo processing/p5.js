@@ -10217,6 +10217,12 @@ require([
 
     // Get class items (methods, properties, events)
     _.each(items, function(el, idx, array) {
+
+      var pieces = el.class.split(':');
+      if (pieces.length > 1) {
+        el.module = pieces[0];
+        el.class = pieces[1];
+      }
       if (el.itemtype) {
         if (el.itemtype === "method") {
           App.methods.push(el);
