@@ -39,7 +39,6 @@ define(function (require) {
 
 
   /**
-   *
    * Sets the x, y, and z component of the vector using two or three separate
    * variables, the data from a PVector, or the values from a float array.
    * @method set
@@ -58,7 +57,6 @@ define(function (require) {
   };
 
   /**
-   *
    * Gets a copy of the vector, returns a PVector object.
    *
    * @method get
@@ -108,7 +106,6 @@ define(function (require) {
   };
 
   /**
-   *
    * Multiply the vector by a scalar.   
    *
    * @method mult
@@ -123,8 +120,7 @@ define(function (require) {
     return this;
   };
 
-   /**
-   *
+  /**
    * Divide the vector by a scalar.   
    *
    * @method div
@@ -150,7 +146,6 @@ define(function (require) {
   };
 
   /**
-   *
    * Calculates the squared magnitude of the vector and returns the result
    * as a float (this is simply the equation <em>(x*x + y*y + z*z)</em>.)
    * Faster if the real length is not required in the
@@ -165,7 +160,6 @@ define(function (require) {
   };
 
   /**
-   *
    * Calculates the dot product of two vectors.
    *
    * @method dot
@@ -184,7 +178,6 @@ define(function (require) {
   };
 
   /**
-   *
    * Calculates and returns a vector composed of the cross product between two vectors.
    *
    * @method cross
@@ -199,7 +192,6 @@ define(function (require) {
   };
 
   /**
-   *
    * Calculates the Euclidean distance between two points (considering a
    * point as a vector object).
    *
@@ -213,7 +205,6 @@ define(function (require) {
   };
 
   /**
-   *
    * Normalize the vector to length 1 (make it a unit vector).
    *
    * @method normalize
@@ -224,7 +215,6 @@ define(function (require) {
   };
 
   /**
-   *
    * Limit the magnitude of this vector to the value used for the <b>max</b> parameter.
    *
    * @method limit
@@ -241,7 +231,6 @@ define(function (require) {
   };
 
   /**
-   *
    * Set the magnitude of this vector to the value used for the <b>len</b> parameter.
    *
    * @mtehod setMag
@@ -253,7 +242,6 @@ define(function (require) {
   };
 
   /**
-   *
    * Calculate the angle of rotation for this vector (only 2D vectors)
    * TODO: deal with AngleMode
    *
@@ -265,7 +253,6 @@ define(function (require) {
   };
 
   /**
-   *
    * Rotate the vector by an angle (only 2D vectors), magnitude remains the same
    * TODO: Change to rotate()
    * TODO: Deal with angleMode
@@ -283,7 +270,6 @@ define(function (require) {
   };
 
   /**
-   *
    * Linear interpolate the vector to another vector
    *
    * @method lerp
@@ -304,7 +290,6 @@ define(function (require) {
   };
 
   /**
-   *
    * Return a representation of this vector as a float array. This is only
    * for temporary use. If used in any other fashion, the contents should be
    * copied by using the <b>PVector.get()</b> method to copy into your own array.
@@ -362,7 +347,6 @@ define(function (require) {
 
 
   /**
-   *
    * Adds two vectors together and returns a new one.
    *
    * @static
@@ -376,7 +360,6 @@ define(function (require) {
   };
 
   /**
-   *
    * Subtracts one PVector from another and returns a new one.  The second vector (v2) is subtracted from the first (v1), resulting in v1-v2.
    *
    * @static
@@ -391,7 +374,6 @@ define(function (require) {
 
 
   /**
-   *
    * Multiplies a vector by a scalar and returns a new vector.
    *
    * @static
@@ -404,7 +386,6 @@ define(function (require) {
   };
 
   /**
-   *
    * Divides a vector by a scalar and returns a new vector.
    *
    * @static
@@ -418,7 +399,6 @@ define(function (require) {
 
 
   /**
-   *
    * Calculates the dot product of two vectors.
    *
    * @static
@@ -431,7 +411,6 @@ define(function (require) {
   };
 
   /**
-   *
    * Calculates the cross product of two vectors.
    *
    * @static
@@ -444,7 +423,6 @@ define(function (require) {
   };
 
   /**
-   *
    * Calculates the Euclidean distance between two points (considering a
    * point as a vector object).
    *
@@ -458,7 +436,6 @@ define(function (require) {
   };
 
   /**
-   *
    * Linear interpolate a vector to another vector and return the result as a new vector.
    *
    * @static
@@ -471,7 +448,6 @@ define(function (require) {
   };
 
   /**
-   *
    * Calculates and returns the angle (in radians) between two vectors.
    *
    * @static

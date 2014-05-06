@@ -120,26 +120,27 @@ define(function (require) {
    * @param {Number} stop upper bound of the value's target range
    * @return {Number} remapped number
    * @example
-<div><code>
-createCanvas(200, 200);
-var value = 25;
-var m = map(value, 0, 100, 0, width);
-ellipse(m, 200, 10, 10);
-</code></div>
-
-<div><code>
-function setup() {
-  createCanvs(200, 200);
-  noStroke();
-}
-function draw() {
-  background(204);
-  var x1 = map(mouseX, 0, width, 50, 150);
-  ellipse(x1, 75, 50, 50);  
-  var x2 = map(mouseX, 0, width, 0, 200);
-  ellipse(x2, 125, 50, 50);  
-}
-</code></div>
+   *   <div><code>
+   *     createCanvas(200, 200);
+   *     var value = 25;
+   *     var m = map(value, 0, 100, 0, width);
+   *     ellipse(m, 200, 10, 10);
+   *   </code></div>
+   *
+   *   <div><code>
+   *     function setup() {
+   *       createCanvs(200, 200);
+   *       noStroke();
+   *     }
+   *
+   *     function draw() {
+   *       background(204);
+   *       var x1 = map(mouseX, 0, width, 50, 150);
+   *       ellipse(x1, 75, 50, 50);  
+   *       var x2 = map(mouseX, 0, width, 0, 200);
+   *       ellipse(x2, 125, 50, 50);  
+   *     }
+   *   </code></div>
    */
   p5.prototype.map = function(n, start1, stop1, start2, stop2) {
     return ((n-start1)/(stop1-start1))*(stop2-start2)+start2;

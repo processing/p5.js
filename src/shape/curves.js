@@ -68,7 +68,6 @@ define(function (require) {
    * @param {Number} t value between 0 and 1
    * @return {Number} the value of the Bezier at point t
    */
-
   p5.prototype.bezierPoint = function(a, b, c, d, t) {
     var adjustedT = 1-t;
 
@@ -139,7 +138,6 @@ define(function (require) {
     return this;
   };
 
-
   /**
    * Calculate a point on the Curve
    *
@@ -157,7 +155,6 @@ define(function (require) {
    * @param {Number} t value between 0 and 1
    * @return {Number} bezier value at point t
    */
-
   p5.prototype.curvePoint = function(a, b,c, d, t) {
     var t3 = t*t*t,
       t2 = t*t,
