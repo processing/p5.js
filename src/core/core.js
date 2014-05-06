@@ -33,101 +33,108 @@ define(function (require) {
     // PUBLIC p5 PROTOTYPE PROPERTIES
     //   
 
-  /**
-   *
-   * The system variable frameCount contains the number of frames that have been displayed since the program started. Inside setup() the value is 0, after the first iteration of draw it is 1, etc.
-   *
-   * @property frameCount
-   * @for Environment:Environment
-   * @example
-<div><code>
-function setup() {
-  frameRate(30);
-}
-
-function draw() {
-  line(0, 0, width, height);
-  print(frameCount);
-}
-</code></div>
-   */
+    /**
+     * The system variable frameCount contains the number of frames that have been displayed since the program started. Inside setup() the value is 0, after the first iteration of draw it is 1, etc.
+     *
+     * @property frameCount
+     * @for Environment:Environment
+     * @example
+     *   <div><code>
+     *     function setup() {
+     *       frameRate(30);
+     *     }
+     *
+     *     function draw() {
+     *       line(0, 0, width, height);
+     *       print(frameCount);
+     *     }
+     *   </code></div>
+     */
     this.frameCount = 0;
-  /**
-   *
-   * Confirms if a p5.js program is "focused," meaning that it is active and will accept mouse or keyboard input. This variable is "true" if it is focused and "false" if not.
-   *
-   * @property focused
-   * @for Environment:Environment
-   * @example
-<div><code>
-if (focused) {  // or "if (focused === true)"
-  ellipse(25, 25, 50, 50);
-} else {
-  line(0, 0, 100, 100);
-  line(100, 0, 0, 100);
-}
-</code></div>
-   */
+
+    /**
+     * Confirms if a p5.js program is "focused," meaning that it is active and will accept mouse or keyboard input. This variable is "true" if it is focused and "false" if not.
+     *
+     * @property focused
+     * @for Environment:Environment
+     * @example
+     *   <div><code>
+     *     if (focused) {  // or "if (focused === true)"
+     *       ellipse(25, 25, 50, 50);
+     *     } else {
+     *       line(0, 0, 100, 100);
+     *       line(100, 0, 0, 100);
+     *     }
+     *   </code></div>
+     */
     this.focused = true;
-  /**
-   *
-   * System variable that stores the width of the entire screen display. This is used to run a full-screen program on any display size.
-   *
-   * @example
-<div><code>size(displayWidth, displayHeight);</code></div>
-   * @property displayWidth
-   * @for Environment:Environment
-   */
+  
+    /**
+     * System variable that stores the width of the entire screen display. This is used to run a full-screen program on any display size.
+     *
+     * @property displayWidth
+     * @for Environment:Environment
+     * @example
+     *   <div><code>
+     *     size(displayWidth, displayHeight);
+     *   </code></div>
+     */
     this.displayWidth = screen.width;
-  /**
-   *
-   * System variable that stores the height of the entire screen display. This is used to run a full-screen program on any display size.
-   *
-   * @example
-<div><code>size(displayWidth, displayHeight);</code></div>
-   * @property displayHeight
-   * @for Environment:Environment
-   */
+  
+    /**
+     * System variable that stores the height of the entire screen display. This is used to run a full-screen program on any display size.
+     *
+     * @property displayHeight
+     * @for Environment:Environment
+     * @example
+     *   <div><code>
+     *     size(displayWidth, displayHeight);
+     *   </code></div>
+     */
     this.displayHeight = screen.height;
-  /**
-   *
-   * System variable that stores the width of the inner window, it maps to window.innerWidth
-   *
-   * @example
-<div><code>size(windowWidth, windowHeight);</code></div>
-   * @property windowWidth
-   * @for Environment:Environment
-   */
+  
+    /**
+     * System variable that stores the width of the inner window, it maps to window.innerWidth
+     *
+     * @property windowWidth
+     * @for Environment:Environment
+     * @example
+     *   <div><code>
+     *     size(windowWidth, windowHeight);
+     *   </code></div>
+     */
     this.windowWidth = window.innerWidth;
-  /**
-   *
-   * System variable that stores the height of the inner window, it maps to window.innerHeight
-   *
-   * @example
-<div><code>size(windowWidth, windowHeight);</code></div>
-   * @property windowHeight
-   * @for Environment:Environment
-   */
+  
+    /**
+     *
+     * System variable that stores the height of the inner window, it maps to window.innerHeight
+     *
+     * @property windowHeight
+     * @for Environment:Environment
+     * @example
+     *   <div><code>
+     *     size(windowWidth, windowHeight);
+     *   </code></div>
+     */
     this.windowHeight = window.innerHeight;
 
-  /**
-   *
-   * System variable that stores the width of the drawing canvas. This value is set by the first parameter of the createCanvas() function. For example, the function call createCanvas(320, 240) sets the width variable to the value 320. The value of width defaults to 100 if createCanvas() is not used in a program.
-   *
-   * @property width
-   * @for Environment:Environment
-   */
+    /**
+     * System variable that stores the width of the drawing canvas. This value is set by the first parameter of the createCanvas() function. For example, the function call createCanvas(320, 240) sets the width variable to the value 320. The value of width defaults to 100 if createCanvas() is not used in a program.
+     *
+     * @property width
+     * @for Environment:Environment
+     */
     this.width = 0;
-  /**
-   *
-   * System variable that stores the height of the drawing canvas. This value is set by the second parameter of the createCanvas() function. For example, the function call createCanvas(320, 240) sets the height variable to the value 240. The value of height defaults to 100 if createCanvas() is not used in a program.
-   *
-   * @property height
-   * @for Environment:Environment
-   */
-    this.height = 0;
-
   
+    /**
+     * System variable that stores the height of the drawing canvas. This value is set by the second parameter of the createCanvas() function. For example, the function call createCanvas(320, 240) sets the height variable to the value 240. The value of height defaults to 100 if createCanvas() is not used in a program.
+     *
+     * @property height
+     * @for Environment:Environment
+     */
+    this.height = 0;
+  
+    // TODO: ???
     window.addEventListener('resize', function (e) {
       this.windowWidth = window.innerWidth;
       this.windowHeight = window.innerHeight;
@@ -161,14 +168,13 @@ if (focused) {  // or "if (focused === true)"
     this.pWriters = [];
 
     // Image.Pixels
-  /**
-   *
-   * Array containing the values for all the pixels in the display window. These values are of the color datatype. This array is the size of the display window. For example, if the image is 100x100 pixels, there will be 10000 values and if the window is 200x300 pixels, there will be 60000 values. The index value defines the position of a value within the array. 
-   * Before accessing this array, the data must loaded with the loadPixels() function. After the array data has been modified, the updatePixels() function must be run to update the changes.
-   *
-   * @property pixels[]
-   * @for Image:Pixels
-   */
+    /**
+     * Array containing the values for all the pixels in the display window. These values are of the color datatype. This array is the size of the display window. For example, if the image is 100x100 pixels, there will be 10000 values and if the window is 200x300 pixels, there will be 60000 values. The index value defines the position of a value within the array. 
+     * Before accessing this array, the data must loaded with the loadPixels() function. After the array data has been modified, the updatePixels() function must be run to update the changes.
+     *
+     * @property pixels[]
+     * @for Image:Pixels
+     */
     this.pixels = [];
 
     // TODO: ???
@@ -380,22 +386,24 @@ if (focused) {  // or "if (focused === true)"
 
   /**
    * The setup() function is called once when the program starts. It's used to define initial enviroment properties such as screen size and background color and to load media such as images and fonts as the program starts. There can only be one setup() function for each program and it shouldn't be called again after its initial execution. Note: Variables declared within setup() are not accessible within other functions, including draw().
-   * @example <div>
-<code>function setup() {
-  createCanvas(200, 200);
-  background(0);
-  noStroke();
-  fill(102);
-}
-
-var a = 0;
-
-function draw() {
-  rect(a++%width, 10, 2, 80); 
-}</code></div>
    *
    * @method setup
    * @for Structure:Structure
+   * @example
+   *   <div><code>
+   *     var a = 0;
+   *
+   *     function setup() {
+   *       createCanvas(200, 200);
+   *       background(0);
+   *       noStroke();
+   *       fill(102);
+   *     }
+   *
+   *     function draw() {
+   *       rect(a++%width, 10, 2, 80); 
+   *     }
+   *   </code></div>
    */
   p5.prototype._setup = function() {
     // Short-circuit on this, in case someone used the library in "global" mode earlier
