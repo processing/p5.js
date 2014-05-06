@@ -41,7 +41,7 @@ define(function (require) {
    * The image may not be immediately available for rendering
    * If you want to ensure that the image is ready before doing
    * anything with it you can do perform those operations in the
-   * callback.
+   * callback, or place the loadImage() call in preload().
    * 
    * @method loadImage
    * @param  {String} path
@@ -79,12 +79,12 @@ define(function (require) {
   /**
    * Draw an image to the main canvas of the p5js sketch
    *
-   * @method image
-   * @param  {PImage} image
-   * @param  {[type]} x
-   * @param  {[type]} y
-   * @param  {[type]} width
-   * @param  {[type]} height   
+   * @method image 
+   * @param  {PImage} image the image to display
+   * @param  {[type]} x x-coordinate of the image
+   * @param  {[type]} y y-coordinate of the image
+   * @param  {[type]} width width to display the image
+   * @param  {[type]} height height to display the image
    * @for Loading & Displaying
    */
   p5.prototype.image = function(image, x, y, width, height) {
@@ -100,14 +100,9 @@ define(function (require) {
 
   /**
    * Set image mode. Modifies the location from which images are drawn by changing the way in which parameters given to image() are intepreted.
-
-The default mode is imageMode(CORNER), which interprets the second and third parameters of image() as the upper-left corner of the image. If two additional parameters are specified, they are used to set the image's width and height.
-
-imageMode(CORNERS) interprets the second and third parameters of image() as the location of one corner, and the fourth and fifth parameters as the opposite corner.
-
-imageMode(CENTER) interprets the second and third parameters of image() as the image's center point. If two additional parameters are specified, they are used to set the image's width and height.
-
-The parameter must be written in ALL CAPS because Processing is a case-sensitive language. 
+   * The default mode is imageMode(CORNER), which interprets the second and third parameters of image() as the upper-left corner of the image. If two additional parameters are specified, they are used to set the image's width and height.
+   * imageMode(CORNERS) interprets the second and third parameters of image() as the location of one corner, and the fourth and fifth parameters as the opposite corner.
+   * imageMode(CENTER) interprets the second and third parameters of image() as the image's center point. If two additional parameters are specified, they are used to set the image's width and height.
    * @method imageMode
    * @param {String} m The mode: either CORNER, CORNERS, or CENTER.
    * @for Loading & Displaying
@@ -118,7 +113,6 @@ The parameter must be written in ALL CAPS because Processing is a case-sensitive
     }
   };
 
-
   /*
    * Class methods
    */
@@ -127,8 +121,7 @@ The parameter must be written in ALL CAPS because Processing is a case-sensitive
   /**
    * Creates a new PImage. A PImage is a canvas backed representation of an image.
    * p5 can display .gif, .jpg and .png images. Images may be displayed in 2D and 3D space. Before an image is used, it must be loaded with the loadImage() function. The PImage class contains fields for the width and height of the image, as well as an array called pixels[] that contains the values for every pixel in the image. The methods described below allow easy access to the image's pixels and alpha channel and simplify the process of compositing.
-
-Before using the pixels[] array, be sure to use the loadPixels() method on the image to make sure that the pixel data is properly loaded.
+   * Before using the pixels[] array, be sure to use the loadPixels() method on the image to make sure that the pixel data is properly loaded.
    * 
    * @constructor
    * @class PImage
@@ -137,11 +130,26 @@ Before using the pixels[] array, be sure to use the loadPixels() method on the i
    * @param {Object} pInst An instance of a p5 sketch.
    */
   function PImage(width, height){
+    /**
+     * Image width.
+     * @property width
+     * @for PImage
+     */
     this.width = width;
+    /**
+     * Image height.
+     * @property height
+     * @for PImage
+     */
     this.height = height;
     this.canvas = document.createElement('canvas');
     this.canvas.width = this.width;
     this.canvas.height = this.height;
+    /**
+     * Array containing the color of every pixel in the image.
+     * @property pixels[]
+     * @for PImage
+     */
     this.pixels = [];
   }
   p5.prototype.PImage = PImage; // hack to access PImage outside module??
@@ -170,9 +178,9 @@ Before using the pixels[] array, be sure to use the loadPixels() method on the i
    *
    *
    * @method updatePixels
-   * @param  {Integer|undefined} x x offset of the target update area for the
+   * @param  {Integer|undefined} x x-offset of the target update area for the
    *                               underlying canvas
-   * @param  {Integer|undefined} y y offset of the target update area for the
+   * @param  {Integer|undefined} y y-offset of the target update area for the
    *                               underlying canvas
    * @param  {Integer|undefined} w height of the target update area for the
    *                               underlying canvas
@@ -198,8 +206,8 @@ Before using the pixels[] array, be sure to use the loadPixels() method on the i
    * @for PImage
    * @param {Number} [x] x-coordinate of the pixel
    * @param {Number} [y] y-coordinate of the pixel
-   * @param  {Number} w width
-   * @param  {Number} h height
+   * @param {Number} [w] width
+   * @param {Number} [h] height
    * @return {Array/Color | PImage} color of pixel at x,y in array format [R, G, B, A] or PImage
    */
   PImage.prototype.get = function(x, y, w, h){
@@ -228,12 +236,11 @@ Before using the pixels[] array, be sure to use the loadPixels() method on the i
 
 
   /**
-   * Resize this PImage.
+   * Resize the image to a new width and height. To make the image scale proportionally, use 0 as the value for the wide or high parameter. For instance, to make the width of an image 150 pixels, and change the height using the same proportion, use resize(150, 0).
    * @method resize
    * @for PImage
-   * @param  {[type]} width  [description]
-   * @param  {[type]} height [description]
-   * @return {[type]}        [description]
+   * @param  {Number} width the resized image width
+   * @param  {Number} height the resized image height
    */
   PImage.prototype.resize = function(width, height){
 
@@ -301,7 +308,7 @@ Before using the pixels[] array, be sure to use the loadPixels() method on the i
    * 
    * @method mask
    * @for PImage
-   * @param  {PImage|undefined} srcImage source image
+   * @param {PImage|undefined} srcImage source image
    *
    * TODO: - Accept an array of alpha values.
    *       - Use other channels of an image. p5 uses the
