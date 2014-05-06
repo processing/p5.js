@@ -104,6 +104,7 @@ define([
       this.$el.show();
 
       this.scrollTop();
+      window.scrollTo(0, 0); // LM
 
       return this;
     },

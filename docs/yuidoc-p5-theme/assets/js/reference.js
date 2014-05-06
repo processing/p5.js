@@ -5088,7 +5088,7 @@ define('searchView',[
 
 });
 
-define('text!tpl/list.html',[],function () { return '<!-- <div class="page-header">\n  <h1>\n    <%=title%>\n  </h1>\n</div> -->\n\n<ul id="collection-list" class="<%=listCollection%>-collection">\n\n  <% _.each(groups, function(group){ %>\n  <li class="group">\n    <h3 class="group-name"><%=group.name%></h3>\n\n    <ul class="<%=group.name%>-group">\n      <% _.each(group.subgroups, function(subgroup) { %>\n        <li>\n          <% if (subgroup.name !== group.name) { %>\n            <h3 class="subgroup-name"><%=subgroup.name%></h3>\n          <% } %>\n          <ul>\n            <% _.each(subgroup.items, function(item) { %>\n              <li>\n                <a href="<%=item.hash%>"><%=item.name%><% if (item.itemtype === \'method\') { %>()<% } %></a>\n              </li>\n            <% }); %>\n          </ul>\n        </li>\n      <% }); %>\n    </ul>\n\n  </li>\n  <% }); %>\n\n</ul>';});
+define('text!tpl/list.html',[],function () { return '<!-- <div class="page-header">\n  <h1>\n    <%=title%>\n  </h1>\n</div> -->\n\n<ul id="collection-list" class="<%=listCollection%>-collection">\n\n  <% _.each(groups, function(group){ %>\n  <li class="group">\n    <h3 class="group-name"><%=group.name%></h3>\n\n    <ul class="<%=group.name%>-group">\n      <% _.each(group.subgroups, function(subgroup) { %>\n        <li>\n          <% if (subgroup.name !== group.name) { %>\n            <h3 class="subgroup-name"><%=subgroup.name%></h3>\n          <% } %>\n          <ul>\n            <% _.each(subgroup.items, function(item) { %>\n              <li>\n                <a href="<%=item.hash%>"><%=item.name%><% if (item.itemtype === \'method\') { %>()<%}%></a>\n              </li>\n            <% }); %>\n          </ul>\n        </li>\n      <% }); %>\n    </ul>\n\n  </li>\n  <% }); %>\n\n</ul>';});
 
 define('listView',[
   'underscore',
@@ -9738,6 +9738,7 @@ define('itemView',[
       this.$el.show();
 
       this.scrollTop();
+      window.scrollTo(0, 0); // LM
 
       return this;
     },
