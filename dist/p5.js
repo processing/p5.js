@@ -972,9 +972,9 @@ var dompelement = function (require, constants) {
                 this.width = this.elt.offsetWidth;
                 this.height = this.elt.offsetHeight;
                 if (this.pInst.curElement.elt === this.elt) {
-                    this.pInst._setProperty('width', this.elt.offsetWidth);
-                    this.pInst._setProperty('height', this.elt.offsetHeight);
-                }
+                    this.pInst._setProperty('width', this.width);
+                    this.pInst._setProperty('height', this.height);
+                } else console.log(this.pInst.curElement.elt, this.elt);
             }
         };
         PElement.prototype.style = function (s) {

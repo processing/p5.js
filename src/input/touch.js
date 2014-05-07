@@ -1,3 +1,8 @@
+/**
+ * @module Input
+ * @for Touch
+ * @requires core
+ */
 define(function (require) {
 
   'use strict';
@@ -16,6 +21,10 @@ define(function (require) {
     context._setProperty('touches', touches);
   };
 
+  /**
+   * 
+   * @method touchStarted
+   */
   p5.prototype.ontouchstart = function(e) {
     var context = this._isGlobal ? window : this;
     context.setTouchPoints(e);
@@ -24,6 +33,11 @@ define(function (require) {
       context.touchStarted(e);
     }
   };
+
+  /**
+   * 
+   * @method touchMoved
+   */
   p5.prototype.ontouchmove = function(e) {
     var context = this._isGlobal ? window : this;
     context.setTouchPoints(e);
@@ -32,6 +46,11 @@ define(function (require) {
       context.touchMoved(e);
     }
   };
+
+  /**
+   * 
+   * @method touchEnded
+   */
   p5.prototype.ontouchend = function(e) {
     var context = this._isGlobal ? window : this;
     context.setTouchPoints(e);
