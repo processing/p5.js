@@ -114,6 +114,10 @@ var core = function (require, shim, constants) {
             this._userNode = node;
             this._preloadCount = 0;
             this._isGlobal = false;
+            this._defaultCanvasSize = {
+                width: 100,
+                height: 100
+            };
             this._frameRate = 0;
             this._lastFrameTime = 0;
             this._targetFrameRate = 60;
@@ -189,7 +193,7 @@ var core = function (require, shim, constants) {
             }
         };
         p5.prototype._start = function () {
-            this.createCanvas(100, 100, true);
+            this.createCanvas(this._defaultCanvasSize.width, this._defaultCanvasSize.height, true);
             if (this._userNode) {
                 if (typeof this._userNode === 'string') {
                     this._userNode = document.getElementById(this._userNode);
