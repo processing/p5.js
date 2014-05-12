@@ -10,7 +10,18 @@ define(function (require) {
 
   var p5 = require('core');
   var constants = require('constants');
-
+  /**
+   * The background() function sets the color used for the background of the p5.js canvas. 
+   * The default background is light gray. This function is typically used within draw() to clear 
+   * the display window at the beginning of each frame, but it can be used inside setup() to set 
+   * the background on the first frame of animation or if the backgound need only be set once. 
+   *
+   * @method background
+   * @param {Number|Array} v1 gray value, red or hue value (depending on the current color mode), or color Array
+   * @param {Number|Array} [v2] green or saturation value (depending on the current color mode)
+   * @param {Number|Array} [v3] blue or brightness value (depending on the current color mode)
+   * @param {Number|Array} [a] opacity of the background
+   */
   p5.prototype.background = function() {
     var c = this.getNormalizedColor(arguments);
     // save out the fill
@@ -21,24 +32,72 @@ define(function (require) {
     // reset fill
     this.curElement.context.fillStyle = curFill;
   };
+  /**
+   * Clears the pixels within a buffer. This function only works on PGraphics objects created with the 
+   * createCanvas() function; it won't work with the main display window. Unlike the main graphics context, 
+   * pixels in additional graphics areas created with createGraphics() can be entirely or partially 
+   * transparent. This function clears everything to make all of the pixels 100% transparent.
+   *
+   * @method clear
+   */
   p5.prototype.clear = function() {
     this.curElement.context.clearRect(0, 0, this.width, this.height);
   };
+  /**
+   * Changes the way p5.js interprets color data. By default, the parameters for fill(), stroke(), 
+   * background(), and color() are defined by values between 0 and 255 using the RGB color model. 
+   * The colorMode() function is used to switch color systems. 
+   * 
+   * @method colorMode
+   * @param {Number|Constant} mode either RGB or HSB, corresponding to Red/Green/Blue and Hue/Saturation/Brightness
+   */
   p5.prototype.colorMode = function(mode) {
     if (mode === constants.RGB || mode === constants.HSB) {
       this.settings.colorMode = mode;
     }
   };
+  /**
+   * Sets the color used to fill shapes. For example, if you run fill(204, 102, 0), all subsequent shapes will be 
+   * filled with orange. This color is either specified in terms of the RGB or HSB color depending on the current 
+   * colorMode(). (The default color space is RGB, with each value in the range from 0 to 255.) 
+   * 
+   * @method fill
+   * @param {Number|Array} v1 gray value, red or hue value (depending on the current color mode), or color Array
+   * @param {Number|Array} [v2] green or saturation value (depending on the current color mode)
+   * @param {Number|Array} [v3] blue or brightness value (depending on the current color mode)
+   * @param {Number|Array} [a] opacity of the background
+   */
   p5.prototype.fill = function() {
     var c = this.getNormalizedColor(arguments);
     this.curElement.context.fillStyle = this.getCSSRGBAColor(c);
   };
+  /**
+   * Disables filling geometry. If both noStroke() and noFill() are called, nothing will be drawn to the screen.
+   *
+   * @method noFill
+   */
   p5.prototype.noFill = function() {
     this.curElement.context.fillStyle = 'rgba(0,0,0,0)';
   };
+  /**
+   * Disables drawing the stroke (outline). If both noStroke() and noFill() are called, nothing will be drawn to the screen.
+   *
+   * @method noStroke
+   */
   p5.prototype.noStroke = function() {
     this.curElement.context.strokeStyle = 'rgba(0,0,0,0)';
   };
+  /**
+   * Sets the color used to draw lines and borders around shapes. This color is either specified in terms of the 
+   * RGB or HSB color depending on the current colorMode() (the default color space is RGB, with each value in 
+   * the range from 0 to 255). 
+   *
+   * @method stroke
+   * @param {Number|Array} v1 gray value, red or hue value (depending on the current color mode), or color Array
+   * @param {Number|Array} [v2] green or saturation value (depending on the current color mode)
+   * @param {Number|Array} [v3] blue or brightness value (depending on the current color mode)
+   * @param {Number|Array} [a] opacity of the background
+   */
   p5.prototype.stroke = function() {
     var c = this.getNormalizedColor(arguments);
     this.curElement.context.strokeStyle = this.getCSSRGBAColor(c);
