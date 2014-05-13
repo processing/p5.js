@@ -1,4 +1,5 @@
-(function () {var shim = function (require) {
+(function () {
+var shim = function (require) {
         window.requestDraw = function () {
             return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
                 window.setTimeout(callback, 1000 / 60);
@@ -3061,7 +3062,7 @@ var transform = function (require, core, constants, linearalgebra, outputtext_ar
             return this;
         };
         p5.prototype.printMatrix = function () {
-            this.print(this.matrices[this.matrices.length - 1]);
+            console.log(this.matrices[this.matrices.length - 1]);
             return this;
         };
         p5.prototype.pushMatrix = function () {
@@ -3107,10 +3108,10 @@ var transform = function (require, core, constants, linearalgebra, outputtext_ar
             return this;
         };
         p5.prototype.rotateX = function () {
+            throw 'not yet implemented';
         };
         p5.prototype.rotateY = function () {
-        };
-        p5.prototype.rotateZ = function () {
+            throw 'not yet implemented';
         };
         p5.prototype.scale = function () {
             var x = 1, y = 1;
@@ -3129,6 +3130,9 @@ var transform = function (require, core, constants, linearalgebra, outputtext_ar
             return this;
         };
         p5.prototype.shearX = function (angle) {
+            if (this.settings.angleMode === constants.DEGREES) {
+                angle = this.radians(angle);
+            }
             this.curElement.context.transform(1, 0, this.tan(angle), 1, 0, 0);
             var m = this.matrices[this.matrices.length - 1];
             m = linearAlgebra.pMultiplyMatrix(m, [
@@ -3142,6 +3146,9 @@ var transform = function (require, core, constants, linearalgebra, outputtext_ar
             return this;
         };
         p5.prototype.shearY = function (angle) {
+            if (this.settings.angleMode === constants.DEGREES) {
+                angle = this.radians(angle);
+            }
             this.curElement.context.transform(1, this.tan(angle), 0, 1, 0, 0);
             var m = this.matrices[this.matrices.length - 1];
             m = linearAlgebra.pMultiplyMatrix(m, [
@@ -3250,5 +3257,4 @@ var src_app = function (require, core, mathpvector, colorcreating_reading, color
         window.p5 = p5;
         window.PVector = PVector;
         return p5;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imagepixels, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);
-}());
+    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imagepixels, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
