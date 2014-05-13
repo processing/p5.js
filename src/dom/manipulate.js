@@ -6,6 +6,15 @@ define(function(require) {
 
   var PElement = require('dom.pelement');
 
+  /**
+   * Creates a canvas element in the document.
+   *
+   * @method createCanvas
+   * @param  {Number} w width of the canvas
+   * @param  {Number} h height of the canvas
+   * @param  {Boolean} isDefault whether the canvas is a default one
+   * @return {undefined}
+   */
   p5.prototype.createCanvas = function(w, h, isDefault) {
     var c = document.createElement('canvas');
     c.setAttribute('width', w);

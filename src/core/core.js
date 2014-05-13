@@ -201,15 +201,21 @@ define(function (require) {
     //
 
     // Keep a reference to when this instance was created
-    this._startTime = new Date().getTime(); // private?
+    this._startTime = new Date().getTime();
 
     this._userNode = node;
 
     // TODO: ???
-    this._preloadCount = 0; // private?
+    this._preloadCount = 0;
 
     // Tracks whether p5 is running in "global" or "instance" mode
-    this._isGlobal = false; // private?
+    this._isGlobal = false;
+
+    // Default canvas size
+    this._defaultCanvasSize = {
+      width: 100,
+      height: 100
+    };
 
     // Environment
     this._frameRate = 0;
@@ -323,7 +329,11 @@ define(function (require) {
     // Always create a default canvas.
     // Later on if the user calls createCanvas, this default one
     // will be replaced
-    this.createCanvas(100, 100, true);
+    this.createCanvas(
+      this._defaultCanvasSize.width,
+      this._defaultCanvasSize.height,
+      true
+    );
 
     // Set input node if there was one
     if (this._userNode) {

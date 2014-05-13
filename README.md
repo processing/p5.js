@@ -1,7 +1,7 @@
 p5.js
 =====
 
-####We have begun work on a new JS client-side library for creating graphic and interactive experiences, based on the core principles of [Processing](http://processing.org). It is currently in development and a beta release will be ready for use and contributions this spring. You can follow along with the progress here until then.
+####We have begun work on a new JS client-side library for creating graphic and interactive experiences, based on the core principles of [Processing](http://processing.org). IT IS CURRENTLY IN DEVELOPMENT and a more stable release will be ready for use and contributions this summer. You can follow along with the progress here until then.
 
 
 ##p5.js library (stable)

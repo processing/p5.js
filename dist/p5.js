@@ -1,5 +1,4 @@
-(function () {
-var shim = function (require) {
+(function () {var shim = function (require) {
         window.requestDraw = function () {
             return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
                 window.setTimeout(callback, 1000 / 60);
@@ -115,6 +114,10 @@ var core = function (require, shim, constants) {
             this._userNode = node;
             this._preloadCount = 0;
             this._isGlobal = false;
+            this._defaultCanvasSize = {
+                width: 100,
+                height: 100
+            };
             this._frameRate = 0;
             this._lastFrameTime = 0;
             this._targetFrameRate = 60;
@@ -190,7 +193,7 @@ var core = function (require, shim, constants) {
             }
         };
         p5.prototype._start = function () {
-            this.createCanvas(100, 100, true);
+            this.createCanvas(this._defaultCanvasSize.width, this._defaultCanvasSize.height, true);
             if (this._userNode) {
                 if (typeof this._userNode === 'string') {
                     this._userNode = document.getElementById(this._userNode);
@@ -972,9 +975,9 @@ var dompelement = function (require, constants) {
                 this.width = this.elt.offsetWidth;
                 this.height = this.elt.offsetHeight;
                 if (this.pInst.curElement.elt === this.elt) {
-                    this.pInst._setProperty('width', this.width);
-                    this.pInst._setProperty('height', this.height);
-                } else console.log(this.pInst.curElement.elt, this.elt);
+                    this.pInst._setProperty('width', this.elt.offsetWidth);
+                    this.pInst._setProperty('height', this.elt.offsetHeight);
+                }
             }
         };
         PElement.prototype.style = function (s) {
@@ -3247,4 +3250,5 @@ var src_app = function (require, core, mathpvector, colorcreating_reading, color
         window.p5 = p5;
         window.PVector = PVector;
         return p5;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imagepixels, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
+    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imagepixels, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);
+}());

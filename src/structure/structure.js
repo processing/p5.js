@@ -100,24 +100,24 @@ define(function (require) {
    *
    * @method redraw
    * @example
-<div><code>
-var x = 0;
-
-function setup() {
-  createCanvas(200, 200);
-  noLoop();
-}
-
-function draw() {
-  background(204);
-  line(x, 0, x, height); 
-}
-
-function mousePressed() {
-  x += 1;
-  redraw();
-}
-</code></div>
+   *   <div><code>
+   *     var x = 0;
+   *
+   *     function setup() {
+   *       createCanvas(200, 200);
+   *       noLoop();
+   *     }
+   *
+   *     function draw() {
+   *       background(204);
+   *       line(x, 0, x, height); 
+   *     }
+   *
+   *     function mousePressed() {
+   *       x += 1;
+   *       redraw();
+   *     }
+   *   </code></div>
    */
   p5.prototype.redraw = function() {
     var context = this._isGlobal ? window : this;
