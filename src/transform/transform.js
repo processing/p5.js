@@ -1,18 +1,10 @@
-/* Transform
-    applyMatrix()
-    popMatrix()
-    printMatrix()
-    pushMatrix()
-    resetMatrix()
-    rotate()
-    rotateX()
-    rotateY()
-    rotateZ()
-    scale()
-    shearX()
-    shearY()
-    translate()
-*/
+/**
+ * @module Transform
+ * @for Transform
+ * @requires core
+ * @requires constants
+ * @requires linearalgebra
+ */
 
 define(function (require) {
 
