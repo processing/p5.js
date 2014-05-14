@@ -2191,10 +2191,13 @@ var inputfiles = function (require, core, reqwest) {
         var p5 = core;
         var reqwest = reqwest;
         p5.prototype.createInput = function () {
+            throw 'not yet implemented';
         };
         p5.prototype.createReader = function () {
+            throw 'not yet implemented';
         };
         p5.prototype.loadBytes = function () {
+            throw 'not yet implemented';
         };
         p5.prototype.loadJSON = function (path, callback) {
             var ret = [];
@@ -2232,6 +2235,7 @@ var inputfiles = function (require, core, reqwest) {
             return ret;
         };
         p5.prototype.loadTable = function () {
+            throw 'not yet implemented';
         };
         p5.prototype.loadXML = function (path, callback) {
             var ret = [];
@@ -2247,15 +2251,17 @@ var inputfiles = function (require, core, reqwest) {
             });
             return ret;
         };
-        p5.prototype.open = function () {
-        };
         p5.prototype.parseXML = function () {
+            throw 'not yet implemented';
         };
         p5.prototype.saveTable = function () {
+            throw 'not yet implemented';
         };
         p5.prototype.selectFolder = function () {
+            throw 'not yet implemented';
         };
         p5.prototype.selectInput = function () {
+            throw 'not yet implemented';
         };
         return p5;
     }({}, core, reqwest);
@@ -2581,10 +2587,13 @@ var outputfiles = function (require, core) {
         'use strict';
         var p5 = core;
         p5.prototype.beginRaw = function () {
+            throw 'not yet implemented';
         };
         p5.prototype.beginRecord = function () {
+            throw 'not yet implemented';
         };
         p5.prototype.createOutput = function () {
+            throw 'not yet implemented';
         };
         p5.prototype.createWriter = function (name) {
             if (this.pWriters.indexOf(name) === -1) {
@@ -2592,8 +2601,10 @@ var outputfiles = function (require, core) {
             }
         };
         p5.prototype.endRaw = function () {
+            throw 'not yet implemented';
         };
         p5.prototype.endRecord = function () {
+            throw 'not yet implemented';
         };
         p5.prototype.escape = function (content) {
             return content;
@@ -2615,19 +2626,25 @@ var outputfiles = function (require, core) {
             };
         };
         p5.prototype.saveBytes = function () {
+            throw 'not yet implemented';
         };
         p5.prototype.saveJSONArray = function () {
+            throw 'not yet implemented';
         };
         p5.prototype.saveJSONObject = function () {
+            throw 'not yet implemented';
         };
         p5.prototype.saveStream = function () {
+            throw 'not yet implemented';
         };
         p5.prototype.saveStrings = function (list) {
             this.writeFile(list.join('\n'));
         };
         p5.prototype.saveXML = function () {
+            throw 'not yet implemented';
         };
         p5.prototype.selectOutput = function () {
+            throw 'not yet implemented';
         };
         p5.prototype.writeFile = function (content) {
             this.open('data:text/json;charset=utf-8,' + this.escape(content), 'download');

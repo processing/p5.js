@@ -8,14 +8,17 @@ define(function (require) {
   //BufferedReader
   p5.prototype.createInput = function() {
     // TODO
+    throw 'not yet implemented';
   };
 
   p5.prototype.createReader = function() {
     // TODO
+    throw 'not yet implemented';
   };
 
   p5.prototype.loadBytes = function() {
     // TODO
+    throw 'not yet implemented';
   };
 
 
@@ -54,6 +57,7 @@ define(function (require) {
 
   p5.prototype.loadTable = function () {
     // TODO
+    throw 'not yet implemented';
   };
 
 
@@ -72,28 +76,33 @@ define(function (require) {
     return ret;
   };
 
-  p5.prototype.open = function() {
-    // TODO
+  // name clash with window.open
+  // p5.prototype.open = function() {
+  //   // TODO
 
-  };
+  // };
 
   p5.prototype.parseXML = function() {
     // TODO
+    throw 'not yet implemented';
 
   };
 
   p5.prototype.saveTable = function() {
     // TODO
+    throw 'not yet implemented';
 
   };
 
   p5.prototype.selectFolder = function() {
     // TODO
+    throw 'not yet implemented';
 
   };
 
   p5.prototype.selectInput = function() {
     // TODO
+    throw 'not yet implemented';
 
   };
 
