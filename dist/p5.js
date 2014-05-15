@@ -2655,7 +2655,7 @@ var outputimage = function (require, core) {
         'use strict';
         var p5 = core;
         p5.prototype.save = function () {
-            this.open(this.curElement.elt.toDataURL('image/png'));
+            window.open(this.curElement.elt.toDataURL('image/png'));
         };
         return p5;
     }({}, core);
