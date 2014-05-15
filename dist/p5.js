@@ -2272,11 +2272,10 @@ var inputkeyboard = function (require, core) {
             return this.keyDown;
         };
         p5.prototype.onkeydown = function (e) {
-            var keyPressed = this.keyPressed || window.keyPressed;
             this._setProperty('keyDown', true);
             this._setProperty('keyCode', e.keyCode);
-            this._setProperty('key', String.fromCharCode(e.keyCode));
-            if (typeof keyPressed === 'function') {
+            var keyPressed = this.keyPressed || window.keyPressed;
+            if (typeof keyPressed === 'function' && !e.charCode) {
                 keyPressed(e);
             }
         };
@@ -2288,6 +2287,8 @@ var inputkeyboard = function (require, core) {
             }
         };
         p5.prototype.onkeypress = function (e) {
+            var code = e.charCode || e.keyCode;
+            this._setProperty('key', String.fromCharCode(code));
             var keyTyped = this.keyTyped || window.keyTyped;
             if (typeof keyTyped === 'function') {
                 keyTyped(e);

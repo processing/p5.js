@@ -1,36 +1,120 @@
+/**
+ * @module Input
+ * @for Keyboard
+ * @requires core
+ */
 define(function (require) {
 
   'use strict';
 
   var p5 = require('core');
 
+   /**
+   * The isKeyPressed() function returns a boolean value whether a key is pressed, or not. It is the same as keyIsPressed().
+   * @method isKeyPressed
+   * @example
+   *   <div>
+   *     <code>
+   *       // Click within the image to change 
+   *       // the value of the rectangle
+   *       
+   *       var value = 0;
+   *       function draw() {
+   *         if (isKeyPressed()) {
+   *           fill(value);
+   *           rect(25, 25, 50, 50);
+   *         }
+   *       }
+   *     </code>
+   *   </div>
+   * 
+   */
   p5.prototype.isKeyPressed = p5.prototype.keyIsPressed = function() {
     return this.keyDown;
   };
 
-  p5.prototype.onkeydown = function(e) {
-    var keyPressed = this.keyPressed || window.keyPressed;
-
+   /**
+   * The keyPressed() function is called once every time a key is pressed. 
+   * @method keyPressed
+   * @example
+   *   <div>
+   *     <code>
+   *       // Click within the image to change 
+   *       // the value of the rectangle
+   *       
+   *       var value = 0;
+   *       function draw() {
+   *         fill(value);
+   *         rect(25, 25, 50, 50);
+   *       }
+   *       function keyPressed() {
+   *         if (value == 0) {
+   *           value = 255;
+   *         } else {
+   *           value = 0;
+   *         }
+   *       }
+   *     </code>
+   *   </div>
+   * 
+   */
+  p5.prototype.onkeydown = function (e) {
     this._setProperty('keyDown', true);
+    /**
+     * The variable keyCode is used to detect special keys such as the UP, DOWN, LEFT, RIGHT arrow keys and ALT, CONTROL, SHIFT. 
+     * @property keyCode
+     */
     this._setProperty('keyCode', e.keyCode);
-    this._setProperty('key', String.fromCharCode(e.keyCode));
-    if (typeof keyPressed === 'function') {
+    var keyPressed = this.keyPressed || window.keyPressed;
+    if (typeof keyPressed === 'function' && !e.charCode) {
       keyPressed(e);
     }
   };
-
-  p5.prototype.onkeyup = function(e) {
+   /**
+   * The keyReleased() function is called once every time a key is released. See key and keyReleased for more information. For non-ASCII keys, use the keyCode variable.
+   * @method keyReleased
+   * @example
+   *   <div>
+   *     <code>
+   *       // Click within the image to change 
+   *       // the value of the rectangle
+   *       
+   *       var value = 0;
+   *       function draw() {
+   *         fill(value);
+   *         rect(25, 25, 50, 50);
+   *       }
+   *       function keyReleased() {
+   *         if (value == 0) {
+   *           value = 255;
+   *         } else {
+   *           value = 0;
+   *         }
+   *       }
+   *     </code>
+   *   </div>
+   * 
+   */
+  p5.prototype.onkeyup = function (e) {
     var keyReleased = this.keyReleased || window.keyReleased;
-
     this._setProperty('keyDown', false);
     if (typeof keyReleased === 'function') {
       keyReleased(e);
     }
   };
 
-  p5.prototype.onkeypress = function(e) {
+  /**
+   * The keyTyped() function is called once every time a key is pressed, but action keys such as Ctrl, Shift, and Alt are ignored. The most recent key pressed will be stored in the key variable.
+   * @method keyTyped
+   */
+  p5.prototype.onkeypress = function (e) {
+    var code = e.charCode || e.keyCode; // for IE, Opera
+    /**
+     * The system variable key always contains the value of the most recent key on the keyboard that was typed. For non-ASCII keys, use the keyCode variable.
+     * @property key
+     */
+    this._setProperty('key', String.fromCharCode(code));
     var keyTyped = this.keyTyped || window.keyTyped;
-
     if (typeof keyTyped === 'function') {
       keyTyped(e);
     }
