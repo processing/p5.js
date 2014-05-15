@@ -20,7 +20,7 @@ define(function (require) {
 
     /**
      * The system variable touchY always contains the horizontal position of one finger, relative to (0, 0) of the canvas. This is best used for single touch interactions. For multi-touch interactions, use the touches[] array.
-     * @property touchX
+     * @property touchY
      */
     context._setProperty('touchY', e.changedTouches[0].pageY);
 
