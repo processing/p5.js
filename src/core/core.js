@@ -154,11 +154,14 @@ define(function (require) {
     this.pwinMouseX = 0;
     this.pwinMouseY = 0;
     this.mouseButton = 0;
+    this.isMousePressed = false;
+    this.mouseIsPressed = false; // khan
 
     // Input.Keyboard
     this.key = '';
     this.keyCode = 0;
-    this.keyDown = false;
+    this.isKeyPressed = false;
+    this.keyIsPressed = false; // khan
 
     // Input.Touch
     this.touchX = 0;
@@ -192,7 +195,6 @@ define(function (require) {
       imageMode: constants.CORNER,
       ellipseMode: constants.CENTER,
       colorMode: constants.RGB,
-      mousePressed: false,
       angleMode: constants.RADIANS
     };
 

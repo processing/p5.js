@@ -83,9 +83,12 @@ var core = function (require, shim, constants) {
             this.pwinMouseX = 0;
             this.pwinMouseY = 0;
             this.mouseButton = 0;
+            this.isMousePressed = false;
+            this.mouseIsPressed = false;
             this.key = '';
             this.keyCode = 0;
-            this.keyDown = false;
+            this.isKeyPressed = false;
+            this.keyIsPressed = false;
             this.touchX = 0;
             this.touchY = 0;
             this.pWriters = [];
@@ -108,7 +111,6 @@ var core = function (require, shim, constants) {
                 imageMode: constants.CORNER,
                 ellipseMode: constants.CENTER,
                 colorMode: constants.RGB,
-                mousePressed: false,
                 angleMode: constants.RADIANS
             };
             this._startTime = new Date().getTime();
@@ -824,9 +826,6 @@ var inputmouse = function (require, core, constants) {
         'use strict';
         var p5 = core;
         var constants = constants;
-        p5.prototype.isMousePressed = p5.prototype.mouseIsPressed = function () {
-            return this.settings.mousePressed;
-        };
         p5.prototype.updateMouseCoords = function (e) {
             var mousePos = getMousePos(this.curElement.elt, e);
             this._setProperty('pmouseX', this.mouseX);
@@ -857,16 +856,17 @@ var inputmouse = function (require, core, constants) {
         p5.prototype.onmousemove = function (e) {
             var context = this._isGlobal ? window : this;
             this.updateMouseCoords(e);
-            if (!this.isMousePressed() && typeof context.mouseMoved === 'function') {
+            if (!this.isMousePressed && typeof context.mouseMoved === 'function') {
                 context.mouseMoved(e);
             }
-            if (this.isMousePressed() && typeof context.mouseDragged === 'function') {
+            if (this.isMousePressed && typeof context.mouseDragged === 'function') {
                 context.mouseDragged(e);
             }
         };
         p5.prototype.onmousedown = function (e) {
             var context = this._isGlobal ? window : this;
-            this.settings.mousePressed = true;
+            this._setProperty('isMousePressed', true);
+            this._setProperty('mouseIsPressed', true);
             this.setMouseButton(e);
             if (typeof context.mousePressed === 'function') {
                 context.mousePressed(e);
@@ -874,7 +874,8 @@ var inputmouse = function (require, core, constants) {
         };
         p5.prototype.onmouseup = function (e) {
             var context = this._isGlobal ? window : this;
-            this.settings.mousePressed = false;
+            this._setProperty('isMousePressed', false);
+            this._setProperty('mouseIsPressed', false);
             if (typeof context.mouseReleased === 'function') {
                 context.mouseReleased(e);
             }
@@ -2268,11 +2269,9 @@ var inputfiles = function (require, core, reqwest) {
 var inputkeyboard = function (require, core) {
         'use strict';
         var p5 = core;
-        p5.prototype.isKeyPressed = p5.prototype.keyIsPressed = function () {
-            return this.keyDown;
-        };
         p5.prototype.onkeydown = function (e) {
-            this._setProperty('keyDown', true);
+            this._setProperty('isKeyPressed', true);
+            this._setProperty('keyIsPressed', true);
             this._setProperty('keyCode', e.keyCode);
             var keyPressed = this.keyPressed || window.keyPressed;
             if (typeof keyPressed === 'function' && !e.charCode) {
@@ -2281,7 +2280,8 @@ var inputkeyboard = function (require, core) {
         };
         p5.prototype.onkeyup = function (e) {
             var keyReleased = this.keyReleased || window.keyReleased;
-            this._setProperty('keyDown', false);
+            this._setProperty('isKeyPressed', false);
+            this._setProperty('keyIsPressed', false);
             if (typeof keyReleased === 'function') {
                 keyReleased(e);
             }

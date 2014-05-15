@@ -12,9 +12,10 @@ define(function (require) {
   var p5 = require('core');
   var constants = require('constants');
 
-  p5.prototype.isMousePressed = p5.prototype.mouseIsPressed = function() {
-    return this.settings.mousePressed;
-  };
+  /**
+   * The boolean system variable isMousePressed is true if the mouse is pressed and false if not.
+   * @property isMousePressed
+   */
 
   p5.prototype.updateMouseCoords = function(e) {
     var mousePos = getMousePos(this.curElement.elt, e);
@@ -138,10 +139,10 @@ define(function (require) {
   p5.prototype.onmousemove = function(e){
     var context = this._isGlobal ? window : this;
     this.updateMouseCoords(e);
-    if (!this.isMousePressed() && typeof context.mouseMoved === 'function') {
+    if (!this.isMousePressed && typeof context.mouseMoved === 'function') {
       context.mouseMoved(e);
     }
-    if (this.isMousePressed() && typeof context.mouseDragged === 'function') {
+    if (this.isMousePressed && typeof context.mouseDragged === 'function') {
       context.mouseDragged(e);
     }
   };
@@ -173,7 +174,8 @@ define(function (require) {
    */
   p5.prototype.onmousedown = function(e) {
     var context = this._isGlobal ? window : this;
-    this.settings.mousePressed = true;
+    this._setProperty('isMousePressed', true);
+    this._setProperty('mouseIsPressed', true);
     this.setMouseButton(e);
     if (typeof context.mousePressed === 'function') {
       context.mousePressed(e);
@@ -207,7 +209,8 @@ define(function (require) {
    */
   p5.prototype.onmouseup = function(e) {
     var context = this._isGlobal ? window : this;
-    this.settings.mousePressed = false;
+    this._setProperty('isMousePressed', false);
+    this._setProperty('mouseIsPressed', false);
     if (typeof context.mouseReleased === 'function') {
       context.mouseReleased(e);
     }
