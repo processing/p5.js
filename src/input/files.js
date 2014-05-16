@@ -1,3 +1,9 @@
+/**
+ * @module Input
+ * @for Files
+ * @requires core
+ * @requires reqwest
+ */
 define(function (require) {
 
   'use strict';
@@ -21,7 +27,15 @@ define(function (require) {
     throw 'not yet implemented';
   };
 
-
+  /**
+   * Loads a JSON file from a file or a URL, and returns an Object or Array.
+   * This method is asynchronous, meaning it may not finish before the next line in your sketch is executed, either use preload() to guarantee the file loads before setup() and draw() are called, or supply a callback function that is executed when loadStrings() completes.
+   * 
+   * @method loadJSON
+   * @param {String} filename name of the file or url to load
+   * @param {Function} [callback] function to be executed after loadJSON() completes, Array is passed in as first argument
+   * @return {Object|Array} JSON data
+   */
   p5.prototype.loadJSON = function(path, callback) {
     var ret = [];
     var t = path.indexOf('http') === -1 ? 'json' : 'jsonp';
@@ -36,6 +50,16 @@ define(function (require) {
     return ret;
   };
 
+  /**
+   * Reads the contents of a file and creates a String array of its individual lines. If the name of the file is used as the parameter, as in the above example, the file must be located in the sketch directory/folder. 
+   * Alternatively, the file maybe be loaded from anywhere on the local computer using an absolute path (something that starts with / on Unix and Linux, or a drive letter on Windows), or the filename parameter can be a URL for a file found on a network.
+   * This method is asynchronous, meaning it may not finish before the next line in your sketch is executed, either use preload() to guarantee the file loads before setup() and draw() are called, or supply a callback function that is executed when loadStrings() completes.
+   * 
+   * @method loadStrings
+   * @param {String} filename name of the file or url to load
+   * @param {Function} [callback] function to be executed after loadStrings() completes, Array is passed in as first argument
+   * @return {Array} Array of Strings
+   */
   p5.prototype.loadStrings = function (path, callback) {
     var ret = [];
     var req = new XMLHttpRequest();
@@ -61,6 +85,17 @@ define(function (require) {
   };
 
 
+
+  /**
+   * Reads the contents of a file and creates an XML object with its values. If the name of the file is used as the parameter, as in the above example, the file must be located in the sketch directory/folder. 
+   * Alternatively, the file maybe be loaded from anywhere on the local computer using an absolute path (something that starts with / on Unix and Linux, or a drive letter on Windows), or the filename parameter can be a URL for a file found on a network.
+   * This method is asynchronous, meaning it may not finish before the next line in your sketch is executed, either use preload() to guarantee the file loads before setup() and draw() are called, or supply a callback function that is executed when loadXML() completes.
+   * 
+   * @method loadXML
+   * @param {String} filename name of the file or URL to load
+   * @param {Function} [callback] function to be executed after loadXML() completes, XML object is passed in as first argument
+   * @return {Object} XML object containing data
+   */
   p5.prototype.loadXML = function(path, callback) {
     var ret = [];
     reqwest({
