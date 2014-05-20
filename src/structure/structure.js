@@ -47,9 +47,9 @@ define(function (require) {
       fillStyle:   this.curElement.context.fillStyle, // fill
       strokeStyle: this.curElement.context.strokeStyle, // stroke
       lineWidth:   this.curElement.context.lineWidth, // strokeWeight
-      // @todo tint
       lineCap:     this.curElement.context.lineCap, // strokeCap
       lineJoin:    this.curElement.context.lineJoin, // strokeJoin
+      tint:        this.settings.tint, // tint
       imageMode:   this.settings.imageMode, // imageMode
       rectMode:    this.settings.rectMode, // rectMode
       ellipseMode: this.settings.ellipseMode, // ellipseMode
@@ -75,9 +75,9 @@ define(function (require) {
     this.curElement.context.fillStyle = lastS.fillStyle; // fill
     this.curElement.context.strokeStyle = lastS.strokeStyle; // stroke
     this.curElement.context.lineWidth = lastS.lineWidth; // strokeWeight
-    // @todo tint
     this.curElement.context.lineCap = lastS.lineCap; // strokeCap
     this.curElement.context.lineJoin = lastS.lineJoin; // strokeJoin
+    this.settings.tint = lastS.tint; // tint
     this.settings.imageMode = lastS.imageMode; // imageMode
     this.settings.rectMode = lastS.rectMode; // rectMode
     this.settings.ellipseMode = lastS.ellipseMode; // elllipseMode

@@ -95,7 +95,56 @@ define(function (require) {
       height = image.height;
     }
     var vals = canvas.modeAdjust(x, y, width, height, this.settings.imageMode);
-    this.curElement.context.drawImage(image.canvas, vals.x, vals.y, vals.w, vals.h);
+    // tint the image if there is a tint
+    if (this.settings.tint[0] !== 255 ||
+        this.settings.tint[1] !== 255 ||
+        this.settings.tint[2] !== 255) {
+      console.log('get tinted image canvas');
+      this.curElement.context.drawImage(this._getTintedImageCanvas(image), vals.x, vals.y, vals.w, vals.h);
+    } else {
+      this.curElement.context.drawImage(image.canvas, vals.x, vals.y, vals.w, vals.h);
+    }
+  };
+
+  /**
+   * Set the current tint color.
+   *
+   *
+   */
+  p5.prototype.tint = function(rgb) {
+    this.settings.tint = rgb;
+  };
+
+  /**
+   * Apply the current tint color to the input image, return the resulting canvas.
+   *
+   *
+   */
+  p5.prototype._getTintedImageCanvas = function(image) {
+    var pixels = Filters._toPixels(image.canvas);
+    var tmpCanvas = document.createElement('canvas');
+    tmpCanvas.width = image.canvas.width;
+    tmpCanvas.height = image.canvas.height;
+    var tmpCtx = tmpCanvas.getContext('2d');
+    var id = tmpCtx.createImageData(image.canvas.width, image.canvas.height);
+    var newPixels = id.data;
+
+    for(var i = 0; i < pixels.length; i += 4) {
+      var r = pixels[i];
+      var g = pixels[i+1];
+      var b = pixels[i+2];
+      var a = pixels[i+3];
+
+      var avg = (r + g + b) / 255;
+
+      newPixels[i] = this.settings.tint[0]*avg;
+      newPixels[i+1] = this.settings.tint[1]*avg;
+      newPixels[i+2] = this.settings.tint[2]*avg;
+      newPixels[i+3] = a;
+    }
+
+    tmpCtx.putImageData(id, 0, 0);
+    return tmpCanvas;
   };
 
   /**

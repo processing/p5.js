@@ -1,5 +1,4 @@
-(function () {
-var shim = function (require) {
+(function () {var shim = function (require) {
         window.requestDraw = function () {
             return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
                 window.setTimeout(callback, 1000 / 60);
@@ -111,7 +110,12 @@ var core = function (require, shim, constants) {
                 imageMode: constants.CORNER,
                 ellipseMode: constants.CENTER,
                 colorMode: constants.RGB,
-                angleMode: constants.RADIANS
+                angleMode: constants.RADIANS,
+                tint: [
+                    255,
+                    255,
+                    255
+                ]
             };
             this._startTime = new Date().getTime();
             this._userNode = node;
@@ -1511,7 +1515,37 @@ var image = function (require, core, canvas, constants, filters) {
                 height = image.height;
             }
             var vals = canvas.modeAdjust(x, y, width, height, this.settings.imageMode);
-            this.curElement.context.drawImage(image.canvas, vals.x, vals.y, vals.w, vals.h);
+            if (this.settings.tint[0] !== 255 || this.settings.tint[1] !== 255 || this.settings.tint[2] !== 255) {
+                console.log('get tinted image canvas');
+                this.curElement.context.drawImage(this._getTintedImageCanvas(image), vals.x, vals.y, vals.w, vals.h);
+            } else {
+                this.curElement.context.drawImage(image.canvas, vals.x, vals.y, vals.w, vals.h);
+            }
+        };
+        p5.prototype.tint = function (rgb) {
+            this.settings.tint = rgb;
+        };
+        p5.prototype._getTintedImageCanvas = function (image) {
+            var pixels = Filters._toPixels(image.canvas);
+            var tmpCanvas = document.createElement('canvas');
+            tmpCanvas.width = image.canvas.width;
+            tmpCanvas.height = image.canvas.height;
+            var tmpCtx = tmpCanvas.getContext('2d');
+            var id = tmpCtx.createImageData(image.canvas.width, image.canvas.height);
+            var newPixels = id.data;
+            for (var i = 0; i < pixels.length; i += 4) {
+                var r = pixels[i];
+                var g = pixels[i + 1];
+                var b = pixels[i + 2];
+                var a = pixels[i + 3];
+                var avg = (r + g + b) / 255;
+                newPixels[i] = this.settings.tint[0] * avg;
+                newPixels[i + 1] = this.settings.tint[1] * avg;
+                newPixels[i + 2] = this.settings.tint[2] * avg;
+                newPixels[i + 3] = a;
+            }
+            tmpCtx.putImageData(id, 0, 0);
+            return tmpCanvas;
         };
         p5.prototype.imageMode = function (m) {
             if (m === constants.CORNER || m === constants.CORNERS || m === constants.CENTER) {
@@ -2996,6 +3030,7 @@ var structure = function (require, core) {
                 lineWidth: this.curElement.context.lineWidth,
                 lineCap: this.curElement.context.lineCap,
                 lineJoin: this.curElement.context.lineJoin,
+                tint: this.settings.tint,
                 imageMode: this.settings.imageMode,
                 rectMode: this.settings.rectMode,
                 ellipseMode: this.settings.ellipseMode,
@@ -3014,6 +3049,7 @@ var structure = function (require, core) {
             this.curElement.context.lineWidth = lastS.lineWidth;
             this.curElement.context.lineCap = lastS.lineCap;
             this.curElement.context.lineJoin = lastS.lineJoin;
+            this.settings.tint = lastS.tint;
             this.settings.imageMode = lastS.imageMode;
             this.settings.rectMode = lastS.rectMode;
             this.settings.ellipseMode = lastS.ellipseMode;
@@ -3275,4 +3311,5 @@ var src_app = function (require, core, mathpvector, colorcreating_reading, color
         window.p5 = p5;
         window.PVector = PVector;
         return p5;
-    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imagepixels, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);}());
+    }({}, core, mathpvector, colorcreating_reading, colorsetting, dataarray_functions, datastring_functions, dommanipulate, dompelement, environment, image, imagepixels, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);
+}());

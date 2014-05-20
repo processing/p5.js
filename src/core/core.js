@@ -195,7 +195,8 @@ define(function (require) {
       imageMode: constants.CORNER,
       ellipseMode: constants.CENTER,
       colorMode: constants.RGB,
-      angleMode: constants.RADIANS
+      angleMode: constants.RADIANS,
+      tint: [255, 255, 255]
     };
 
     // ******************************************
@@ -240,6 +241,8 @@ define(function (require) {
     //Vertices
     this._contourInited = false;
     this._contourVertices = [];
+
+    //Tint
 
     // If the user has created a global setup or draw function,
     // assume "global" mode and make everything global (i.e. on the window)

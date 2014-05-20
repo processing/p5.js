@@ -1,6 +1,6 @@
 {
   "version": 3,
-  "file": "/Users/Shared/htdocs/p5/master/p5.js/docs/yuidoc-p5-theme/assets/js/reference.js",
+  "file": "/Users/evhan55/GitHub/p5.js/docs/yuidoc-p5-theme/assets/js/reference.js",
   "sources": [
     "vendor/underscore-amd/underscore.js",
     "vendor/backbone-amd/backbone.js",
