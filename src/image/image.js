@@ -109,6 +109,8 @@ define(function (require) {
   /**
    * Set the current tint color.
    *
+   * TODO:
+   * - implement other signatures
    *
    */
   p5.prototype.tint = function(rgb) {
@@ -118,6 +120,9 @@ define(function (require) {
   /**
    * Apply the current tint color to the input image, return the resulting canvas.
    *
+   * TODO:
+   * - fix tinting
+   * - take alpha into account
    *
    */
   p5.prototype._getTintedImageCanvas = function(image) {
