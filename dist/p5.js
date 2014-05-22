@@ -1517,14 +1517,9 @@ var image = function (require, core, canvas, constants, filters) {
                 this.curElement.context.drawImage(image.canvas, vals.x, vals.y, vals.w, vals.h);
             }
         };
-        p5.prototype.tint = function (a1, a2, a3, a4) {
-            a4 = a4 ? a4 : 255;
-            this.settings.tint = [
-                a1,
-                a2,
-                a3,
-                a4
-            ];
+        p5.prototype.tint = function () {
+            var c = this.getNormalizedColor(arguments);
+            this.settings.tint = c;
         };
         p5.prototype.noTint = function () {
             this.settings.tint = null;

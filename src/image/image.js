@@ -104,23 +104,35 @@ define(function (require) {
   };
 
   /**
-   * Set the current tint color.
+   * Sets the fill value for displaying images. Images can be tinted to
+   * specified colors or made transparent by including an alpha value.
    *
-   * TODO:
-   * - implement other signatures
-   * - add docs
+   * To apply transparency to an image without affecting its color, use 
+   * white as the tint color and specify an alpha value. For instance, 
+   * tint(255, 128) will make an image 50% transparent (assuming the default
+   * alpha range of 0-255, which can be changed with colorMode()). 
    *
+   * The value for the gray parameter must be less than or equal to the current
+   * maximum value as specified by colorMode(). The default maximum value is
+   * 255.
+   *
+   * @method tint
+   * @for Loading & Displaying
+   * @param {Number|Array} v1 gray value, red or hue value (depending on the current color mode), or color Array
+   * @param {Number|Array} [v2] green or saturation value (depending on the current color mode)
+   * @param {Number|Array} [v3] blue or brightness value (depending on the current color mode)
+   * @param {Number|Array} [a] opacity of the background
    */
-  p5.prototype.tint = function(a1, a2, a3, a4) {
-    a4 = a4 ? a4 : 255;
-    this.settings.tint = [a1, a2, a3, a4];
+  p5.prototype.tint = function() {
+    var c = this.getNormalizedColor(arguments);
+    this.settings.tint = c;
   };
 
   /**
    * Removes the current fill value for displaying images and reverts to
    * displaying images with their original hues.
    *
-   * @method image
+   * @method noTint
    * @for Loading & Displaying
    */
   p5.prototype.noTint = function() {
@@ -130,9 +142,8 @@ define(function (require) {
   /**
    * Apply the current tint color to the input image, return the resulting canvas.
    *
-   * TODO:
-   * - add docs
-   *
+   * @param {PImage} The image to be tinted
+   * @return {canvas} The resulting tinted canvas
    */
   p5.prototype._getTintedImageCanvas = function(image) {
     var pixels = Filters._toPixels(image.canvas);
