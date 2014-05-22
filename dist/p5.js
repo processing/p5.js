@@ -1522,8 +1522,13 @@ var image = function (require, core, canvas, constants, filters) {
                 this.curElement.context.drawImage(image.canvas, vals.x, vals.y, vals.w, vals.h);
             }
         };
-        p5.prototype.tint = function (rgb) {
-            this.settings.tint = rgb;
+        p5.prototype.tint = function (a1, a2, a3, a4) {
+            this.settings.tint = [
+                a1,
+                a2,
+                a3,
+                a4
+            ];
         };
         p5.prototype._getTintedImageCanvas = function (image) {
             var pixels = Filters._toPixels(image.canvas);
@@ -1541,7 +1546,7 @@ var image = function (require, core, canvas, constants, filters) {
                 newPixels[i] = r * this.settings.tint[0] / 255;
                 newPixels[i + 1] = g * this.settings.tint[1] / 255;
                 newPixels[i + 2] = b * this.settings.tint[2] / 255;
-                newPixels[i + 3] = a;
+                newPixels[i + 3] = a * this.settings.tint[3] / 255;
             }
             tmpCtx.putImageData(id, 0, 0);
             return tmpCanvas;
