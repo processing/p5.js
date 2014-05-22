@@ -140,11 +140,11 @@ define(function (require) {
       var b = pixels[i+2];
       var a = pixels[i+3];
 
-      var avg = (r + g + b) / 255;
+      //var avg = (r + g + b) / 255;
 
-      newPixels[i] = this.settings.tint[0]*avg;
-      newPixels[i+1] = this.settings.tint[1]*avg;
-      newPixels[i+2] = this.settings.tint[2]*avg;
+      newPixels[i] = r*this.settings.tint[0]/255;
+      newPixels[i+1] = g*this.settings.tint[1]/255;
+      newPixels[i+2] = b*this.settings.tint[2]/255;
       newPixels[i+3] = a;
     }
 
