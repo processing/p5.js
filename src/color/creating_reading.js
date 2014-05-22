@@ -52,25 +52,38 @@ define(function (require) {
   };
 
   /**
-   * Creates colors for storing in variables of the color datatype. The parameters are interpreted as RGB or HSB values depending on the current colorMode(). The default mode is RGB values from 0 to 255 and, therefore, the function call color(255, 204, 0) will return a bright yellow color.
+   * Creates colors for storing in variables of the color datatype. The
+   * parameters are interpreted as RGB or HSB values depending on the
+   * current colorMode(). The default mode is RGB values from 0 to 255
+   * and, therefore, the function call color(255, 204, 0) will return a
+   * bright yellow color.
    * 
-   * Note that if only one value is provided to color(), it will be interpreted as a grayscale value. Add a second value, and it will be used for alpha transparency. When three values are specified, they are interpreted as either RGB or HSB values. Adding a fourth value applies alpha transparency.
+   * Note that if only one value is provided to color(), it will be interpreted
+   * as a grayscale value. Add a second value, and it will be used for alpha
+   * transparency. When three values are specified, they are interpreted as
+   * either RGB or HSB values. Adding a fourth value applies alpha
+   * transparency.
    * 
    * Colors are stored as Numbers or Arrays.
    * 
    * @method color
-   * @param {Number} v1 gray value or red or hue value relative to the current color range
-   * @param {Number} [v2] gray value or green or saturation value relative to the current color range (or alpha value if first param is gray value)
-   * @param {Number} [v3] gray value or blue or brightness value relative to the current color range
-   * @param {Number} [alpha] alpha value relative to current color range
-   * @return {Array} color
+   * @param  {Number} v1      gray value or red or hue value relative to the 
+   *                          current color range
+   * @param  {Number} [v2]    gray value or green or saturation value relative
+   *                          to the current color range (or alpha value if
+   *                          first param is gray value)
+   * @param  {Number} [v3]    gray value or blue or brightness value relative
+   *                          to the current color range
+   * @param  {Number} [alpha] alpha value relative to current color range
+   * @return {Array}          resulting color
    */
   p5.prototype.color = function() {
     return this.getNormalizedColor(arguments);
   };
 
   /**
-   * Extracts the green value from a color, scaled to match current colorMode(). 
+   * Extracts the green value from a color, scaled to match current
+   * colorMode(). 
    * 
    * @method green
    * @param {Array} an array representing a color
@@ -98,13 +111,19 @@ define(function (require) {
   };
 
   /**
-   * Calculates a color or colors between two color at a specific increment. The amt parameter is the amount to interpolate between the two values where 0.0 equal to the first point, 0.1 is very near the first point, 0.5 is halfway in between, etc. An amount below 0 will be treated as 0. Likewise, amounts above 1 will be capped at 1. This is different from the behavior of lerp(), but necessary because otherwise numbers outside the range will produce strange and unexpected colors.
+   * Calculates a color or colors between two color at a specific increment.
+   * The amt parameter is the amount to interpolate between the two values
+   * where 0.0 equal to the first point, 0.1 is very near the first point,
+   * 0.5 is halfway in between, etc. An amount below 0 will be treated as 0.
+   * Likewise, amounts above 1 will be capped at 1. This is different from
+   * the behavior of lerp(), but necessary because otherwise numbers outside
+   * the range will produce strange and unexpected colors.
    * 
    * @method lerpColor
-   * @param {Array/Number} c1 interpolate from this color
-   * @param {Array/Number} c2 interpolate to this color
-   * @param {Number} amt number between 0 and 1
-   * @return {Array/Number} interpolated color
+   * @param  {Array/Number} c1  interpolate from this color
+   * @param  {Array/Number} c2  interpolate to this color
+   * @param  {Number}       amt number between 0 and 1
+   * @return {Array/Number}     interpolated color
    */
   p5.prototype.lerpColor = function(c1, c2, amt) {
     if (typeof c1 === 'Array') {
@@ -122,7 +141,7 @@ define(function (require) {
    * Extracts the red value from a color, scaled to match current colorMode(). 
    * 
    * @method red
-   * @param {Array} an array representing a color
+   * @param {Array} rgb an array representing a color
    */
   p5.prototype.red = function(rgb) {
     if (rgb.length > 2) {

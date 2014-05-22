@@ -9,7 +9,8 @@ define(function(require) {
     this.height = this.elt.offsetHeight;
     if (elt instanceof HTMLCanvasElement) {
       this.context = elt.getContext('2d');
-      this.pInst._setProperty('canvas', elt); // for pixel method sharing with pimage
+      // for pixel method sharing with pimage
+      this.pInst._setProperty('canvas', elt);
     }
   }
   PElement.prototype.html = function(html) {
@@ -31,8 +32,8 @@ define(function(require) {
       } else if (aH === AUTO) {
         aH = w * this.elt.height / this.elt.width;
       }
-
-      if (this.elt instanceof HTMLCanvasElement) { // set diff for cnv vs normal div
+      // set diff for cnv vs normal div
+      if (this.elt instanceof HTMLCanvasElement) {
         this.elt.setAttribute('width', aW);
         this.elt.setAttribute('height', aH);
       } else {

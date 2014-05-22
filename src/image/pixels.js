@@ -49,7 +49,11 @@ define(function (require) {
   p5.prototype.blend = function() {
     var currBlend = this.canvas.getContext('2d').globalCompositeOperation;
     var blendMode = arguments[arguments.length - 1];
-    var copyArgs = Array.prototype.slice.call(arguments, 0, arguments.length - 1);
+    var copyArgs = Array.prototype.slice.call(
+      arguments,
+      0,
+      arguments.length - 1
+    );
 
     this.canvas.getContext('2d').globalCompositeOperation = blendMode;
     this.copy.apply(this, copyArgs);
@@ -58,9 +62,9 @@ define(function (require) {
 
   /**
    * Copies a region of the canvas to another region of the canvas  
-   * and copies a region of pixels from an image used as the srcImg parameter into the canvas
-   * srcImage is specified this is used as the source. If the source
-   * and destination regions aren't the same size, it will
+   * and copies a region of pixels from an image used as the srcImg parameter
+   * into the canvas srcImage is specified this is used as the source. If
+   * the source and destination regions aren't the same size, it will
    * automatically resize source pixels to fit the specified
    * target region.
    *
@@ -111,8 +115,9 @@ define(function (require) {
    * Applies a filter to the canvas
    * 
    * @method filter
-   * @param  {String} operation one of threshold, gray, invert, posterize and opaque
-   *                            see Filters.js for docs on each available filter
+   * @param  {String}           operation one of threshold, gray, invert,
+   *                                      posterize and opaque. see filters.js
+   *                                      for docs on each available filter
    * @param  {Number|undefined} value
    */
   p5.prototype.filter = function(operation, value) {
@@ -120,18 +125,31 @@ define(function (require) {
   };
 
   /**
-   * Reads the color of any pixel or grabs a section of an image. If no parameters are specified, the entire image is returned. Use the x and y parameters to get the value of one pixel. Get a section of the display window by specifying additional w and h parameters. When getting an image, the x and y parameters define the coordinates for the upper-left corner of the image, regardless of the current imageMode().
+   * Reads the color of any pixel or grabs a section of an image. If no
+   * parameters are specified, the entire image is returned. Use the x and y
+   * parameters to get the value of one pixel. Get a section of the display
+   * window by specifying additional w and h parameters. When getting an image,
+   * the x and y parameters define the coordinates for the upper-left corner of
+   * the image, regardless of the current imageMode().
    *
-   * If the pixel requested is outside of the image window, black is returned. The numbers returned are scaled according to the current color ranges, but only RGB values are returned by this function. For example, even though you may have drawn a shape with colorMode(HSB), the numbers returned will be in RGB format. 
+   * If the pixel requested is outside of the image window, black is returned.
+   * The numbers returned are scaled according to the current color ranges, but
+   * only RGB values are returned by this function. For example, even though
+   * you may have drawn a shape with colorMode(HSB), the numbers returned will
+   * be in RGB format. 
    *
-   * Getting the color of a single pixel with get(x, y) is easy, but not as fast as grabbing the data directly from pixels[]. The equivalent statement to get(x, y) using pixels[] is pixels[y*width+x]. See the reference for pixels[] for more information.
+   * Getting the color of a single pixel with get(x, y) is easy, but not as fast
+   * as grabbing the data directly from pixels[]. The equivalent statement to
+   * get(x, y) using pixels[] is pixels[y*width+x]. See the reference for
+   * pixels[] for more information.
    *
    * @method get
-   * @param {Number} [x] x-coordinate of the pixel
-   * @param {Number} [y] y-coordinate of the pixel
-   * @param {Number} w width
-   * @param {Number} h height
-   * @return {Array/Color} color of pixel at x,y in array format [R, G, B, A] or PImage
+   * @param  {Number}      [x] x-coordinate of the pixel
+   * @param  {Number}      [y] y-coordinate of the pixel
+   * @param  {Number}      w   width
+   * @param  {Number}      h   height
+   * @return {Array/Color}     color of pixel at x,y in array format
+   *                           [R, G, B, A] or PImage
    */
   p5.prototype.get = function(x, y, w, h){
     if (x === undefined && y === undefined &&
@@ -174,32 +192,47 @@ define(function (require) {
   };
 
   /**
-   * Loads the pixel data for the display window into the pixels[] array. This function must always be called before reading from or writing to pixels[].
+   * Loads the pixel data for the display window into the pixels[] array. This
+   * function must always be called before reading from or writing to pixels[].
    *
    * @method loadPixels
    */
   p5.prototype.loadPixels = function() {
     var width = this.width;
     var height = this.height;
-    var data = this.canvas.getContext('2d').getImageData(0, 0, width, height).data;
+    var data = this.canvas.getContext('2d').getImageData(
+      0,
+      0,
+      width,
+      height).data;
     var pixels = [];
     for (var i=0; i < data.length; i+=4) {
-      pixels.push([data[i], data[i+1], data[i+2], data[i+3]]); // each pixels entry: [r, g, b, a]
+      // each pixels entry: [r, g, b, a]
+      pixels.push([data[i], data[i+1], data[i+2], data[i+3]]);
     }
     this._setProperty('pixels', pixels);
   };
 
   /**
-   * Changes the color of any pixel, or writes an image directly to the display window.
+   * Changes the color of any pixel, or writes an image directly to the display
+   * window.
    *
-   * The x and y parameters specify the pixel to change and the c parameter specifies the color value. The c parameter is interpreted according to the current color mode. (The default color mode is RGB values from 0 to 255.) When setting an image, the x and y parameters define the coordinates for the upper-left corner of the image, regardless of the current imageMode(). 
+   * The x and y parameters specify the pixel to change and the c parameter
+   * specifies the color value. The c parameter is interpreted according to the
+   * current color mode. (The default color mode is RGB values from 0 to 255.)
+   * When setting an image, the x and y parameters define the coordinates for
+   * the upper-left corner of the image, regardless of the current imageMode(). 
    * 
-   * Setting the color of a single pixel with set(x, y) is easy, but not as fast as putting the data directly into pixels[]. The equivalent statement to set(x, y, #000000) using pixels[] is pixels[y*width+x] = #000000. See the reference for pixels[] for more information.
+   * Setting the color of a single pixel with set(x, y) is easy, but not as
+   * fast as putting the data directly into pixels[]. The equivalent statement
+   * to set(x, y, #000000) using pixels[] is pixels[y*width+x] = #000000.
+   * See the reference for pixels[] for more information.
    *
    * @method set
-   * @param {Number} x x-coordinate of the pixel
-   * @param {Number} y y-coordinate of the pixel
-   * @param {Number|Array|Object} insert a grayscale value | a color array | image to copy
+   * @param {Number}              x x-coordinate of the pixel
+   * @param {Number}              y y-coordinate of the pixel
+   * @param {Number|Array|Object}   insert a grayscale value | a color array |
+   *                                image to copy
    */
   p5.prototype.set = function (x, y, imgOrCol) {
     var idx = y * this.width + x;
@@ -229,12 +262,18 @@ define(function (require) {
     }
   };
   /**
-   * Updates the display window with the data in the pixels[] array. Use in conjunction with loadPixels(). If you're only reading pixels from the array, there's no need to call updatePixels() — updating is only necessary to apply changes. 
+   * Updates the display window with the data in the pixels[] array.
+   * Use in conjunction with loadPixels(). If you're only reading pixels from
+   * the array, there's no need to call updatePixels() — updating is only
+   * necessary to apply changes. 
    *
    * @method updatePixels
    */
   p5.prototype.updatePixels = function (x, y, w, h) {
-    if (x === undefined && y === undefined && w === undefined && h === undefined) {
+    if (x === undefined &&
+      y === undefined &&
+      w === undefined &&
+      h === undefined) {
       x = 0;
       y = 0;
       w = this.width;

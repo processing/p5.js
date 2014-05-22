@@ -12,7 +12,8 @@ define(function (require) {
    * Generally speaking users of this module will use the Filters.apply method
    * on a canvas to create an effect.
    *
-   * A number of functions are borrowed/adapted from http://www.html5rocks.com/en/tutorials/canvas/imagefilters/
+   * A number of functions are borrowed/adapted from
+   * http://www.html5rocks.com/en/tutorials/canvas/imagefilters/
    * or the java processing implmentation.
    */
 
@@ -32,15 +33,21 @@ define(function (require) {
    *
    * @private
    *
-   * @param  {Canvas|ImageData} canvas
-   * @return {Uint8ClampedArray} a one-dimensional array containing the data
-   *                             in thc RGBA order, with integer values between 0 and 255
+   * @param  {Canvas|ImageData} canvas the canvas to get pixels from
+   * @return {Uint8ClampedArray}       a one-dimensional array containing
+   *                                   the data in thc RGBA order, with integer
+   *                                   values between 0 and 255
    */
   Filters._toPixels = function (canvas) {
     if (canvas instanceof ImageData) {
       return canvas.data;
     } else {
-      return canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
+      return canvas.getContext('2d').getImageData(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      ).data;
     }
   };
 
@@ -50,9 +57,10 @@ define(function (require) {
    *
    * @private
    *
-   * @param  {Uint8ClampedArray} data [array returned by _toPixels()]
-   * @param  {Integer} i [index of a 1D Image Array]
-   * @return {Integer} 32 bit integer value representing ARGB value.
+   * @param  {Uint8ClampedArray} data array returned by _toPixels()
+   * @param  {Integer}           i    index of a 1D Image Array
+   * @return {Integer}                32 bit integer value representing
+   *                                  ARGB value.
    */
   Filters._getARGB = function (data, i) {
     var offset = i * 4;
@@ -67,8 +75,9 @@ define(function (require) {
    *
    * @private
    *
-   * @param {Uint8ClampedArray} pixels [array returned by _toPixels()]
-   * @param {Int32Array} data [source 1D array where each value represents ARGB values]
+   * @param {Uint8ClampedArray} pixels array returned by _toPixels()
+   * @param {Int32Array}        data   source 1D array where each value
+   *                                   represents ARGB values
    */
   Filters._setPixels = function (pixels, data) {
     var offset = 0;
@@ -87,15 +96,20 @@ define(function (require) {
    *
    * @private
    *
-   * @param  {Canvas|ImageData} canvas
-   * @return {ImageData} Holder of pixel data (and width and height)
-   *                     for a canvas
+   * @param  {Canvas|ImageData} canvas canvas to get image data from
+   * @return {ImageData}               Holder of pixel data (and width and
+   *                                   height) for a canvas
    */
   Filters._toImageData = function (canvas) {
     if (canvas instanceof ImageData) {
       return canvas;
     } else {
-      return canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+      return canvas.getContext('2d').getImageData(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
     }
   };
 
@@ -121,13 +135,13 @@ define(function (require) {
    * The difference between this and the actual filter functions defined below
    * is that the filter functions generally modify the pixel buffer but do
    * not actually put that data back to the canvas (where it would actually
-   * update what is visible). By contrast this method does make the changes actually
-   * visible in the canvas.
+   * update what is visible). By contrast this method does make the changes
+   * actually visible in the canvas.
    *
-   * The apply method is the method that callers of this module would generally use.
-   * It has been separated from the actual filters to support an advanced use case
-   * of creating a filter chain that executes without actually updating the canvas
-   * in between everystep.
+   * The apply method is the method that callers of this module would generally
+   * use. It has been separated from the actual filters to support an advanced
+   * use case of creating a filter chain that executes without actually updating
+   * the canvas in between everystep.
    *
    * @param  {[type]} func   [description]
    * @param  {[type]} canvas [description]
@@ -190,11 +204,12 @@ define(function (require) {
 
 
   /**
-   * Converts any colors in the image to grayscale equivalents. No parameter is used.
+   * Converts any colors in the image to grayscale equivalents.
+   * No parameter is used.
    *
    * Borrowed from http://www.html5rocks.com/en/tutorials/canvas/imagefilters/
    *
-   * @param  {Canvas} canvas
+   * @param {Canvas} canvas
    */
   Filters.gray = function (canvas) {
     var pixels = Filters._toPixels(canvas);
@@ -213,7 +228,7 @@ define(function (require) {
   /**
    * Sets the alpha channel to entirely opaque. No parameter is used.
    *
-   * @param  {Canvas} canvas
+   * @param {Canvas} canvas
    */
   Filters.opaque = function (canvas) {
     var pixels = Filters._toPixels(canvas);
@@ -227,7 +242,7 @@ define(function (require) {
 
   /**
    * Sets each pixel to its inverse value. No parameter is used.
-   * @param  {Invert}
+   * @param {Invert}
    */
   Filters.invert = function (canvas) {
     var pixels = Filters._toPixels(canvas);
@@ -255,7 +270,9 @@ define(function (require) {
     var pixels = Filters._toPixels(canvas);
 
     if ((level < 2) || (level > 255)) {
-      throw new Error('Level must be greater than 2 and less than 255 for posterize');
+      throw new Error(
+        'Level must be greater than 2 and less than 255 for posterize'
+      );
     }
 
     var levels1 = level - 1;
@@ -316,11 +333,21 @@ define(function (require) {
         colRight = Filters._getARGB(pixels, idxRight);
 
         //compute luminance
-        currLum = 77*(colOrig>>16&0xff) + 151*(colOrig>>8&0xff) + 28*(colOrig&0xff);
-        lumLeft = 77*(colLeft>>16&0xff) + 151*(colLeft>>8&0xff) + 28*(colLeft&0xff);
-        lumRight = 77*(colRight>>16&0xff) + 151*(colRight>>8&0xff) + 28*(colRight&0xff);
-        lumUp = 77*(colUp>>16&0xff) + 151*(colUp>>8&0xff) + 28*(colUp&0xff);
-        lumDown = 77*(colDown>>16&0xff) + 151*(colDown>>8&0xff) + 28*(colDown&0xff);
+        currLum = 77*(colOrig>>16&0xff) +
+          151*(colOrig>>8&0xff) +
+          28*(colOrig&0xff);
+        lumLeft = 77*(colLeft>>16&0xff) +
+          151*(colLeft>>8&0xff) +
+          28*(colLeft&0xff);
+        lumRight = 77*(colRight>>16&0xff) +
+          151*(colRight>>8&0xff) +
+          28*(colRight&0xff);
+        lumUp = 77*(colUp>>16&0xff) +
+          151*(colUp>>8&0xff) +
+          28*(colUp&0xff);
+        lumDown = 77*(colDown>>16&0xff) +
+          151*(colDown>>8&0xff) +
+          28*(colDown&0xff);
 
         if (lumLeft > currLum) {
           colOut = colLeft;
@@ -387,11 +414,21 @@ define(function (require) {
         colRight = Filters._getARGB(pixels, idxRight);
 
         //compute luminance
-        currLum = 77*(colOrig>>16&0xff) + 151*(colOrig>>8&0xff) + 28*(colOrig&0xff);
-        lumLeft = 77*(colLeft>>16&0xff) + 151*(colLeft>>8&0xff) + 28*(colLeft&0xff);
-        lumRight = 77*(colRight>>16&0xff) + 151*(colRight>>8&0xff) + 28*(colRight&0xff);
-        lumUp = 77*(colUp>>16&0xff) + 151*(colUp>>8&0xff) + 28*(colUp&0xff);
-        lumDown = 77*(colDown>>16&0xff) + 151*(colDown>>8&0xff) + 28*(colDown&0xff);
+        currLum = 77*(colOrig>>16&0xff) +
+          151*(colOrig>>8&0xff) +
+          28*(colOrig&0xff);
+        lumLeft = 77*(colLeft>>16&0xff) +
+          151*(colLeft>>8&0xff) +
+          28*(colLeft&0xff);
+        lumRight = 77*(colRight>>16&0xff) +
+          151*(colRight>>8&0xff) +
+          28*(colRight&0xff);
+        lumUp = 77*(colUp>>16&0xff) +
+          151*(colUp>>8&0xff) +
+          28*(colUp&0xff);
+        lumDown = 77*(colDown>>16&0xff) +
+          151*(colDown>>8&0xff) +
+          28*(colDown&0xff);
 
         if (lumLeft < currLum) {
           colOut = colLeft;

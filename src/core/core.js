@@ -34,7 +34,9 @@ define(function (require) {
     //   
 
     /**
-     * The system variable frameCount contains the number of frames that have been displayed since the program started. Inside setup() the value is 0, after the first iteration of draw it is 1, etc.
+     * The system variable frameCount contains the number of frames that have
+     * been displayed since the program started. Inside setup() the value is 0,
+     * after the first iteration of draw it is 1, etc.
      *
      * @property frameCount
      * @for Environment:Environment
@@ -53,7 +55,9 @@ define(function (require) {
     this.frameCount = 0;
 
     /**
-     * Confirms if a p5.js program is "focused," meaning that it is active and will accept mouse or keyboard input. This variable is "true" if it is focused and "false" if not.
+     * Confirms if a p5.js program is "focused," meaning that it is active and
+     * will accept mouse or keyboard input. This variable is "true" if it is
+     * focused and "false" if not.
      *
      * @property focused
      * @for Environment:Environment
@@ -70,7 +74,8 @@ define(function (require) {
     this.focused = true;
   
     /**
-     * System variable that stores the width of the entire screen display. This is used to run a full-screen program on any display size.
+     * System variable that stores the width of the entire screen display. This
+     * is used to run a full-screen program on any display size.
      *
      * @property displayWidth
      * @for Environment:Environment
@@ -82,7 +87,8 @@ define(function (require) {
     this.displayWidth = screen.width;
   
     /**
-     * System variable that stores the height of the entire screen display. This is used to run a full-screen program on any display size.
+     * System variable that stores the height of the entire screen display. This
+     * is used to run a full-screen program on any display size.
      *
      * @property displayHeight
      * @for Environment:Environment
@@ -94,7 +100,8 @@ define(function (require) {
     this.displayHeight = screen.height;
   
     /**
-     * System variable that stores the width of the inner window, it maps to window.innerWidth
+     * System variable that stores the width of the inner window, it maps to
+     * window.innerWidth
      *
      * @property windowWidth
      * @for Environment:Environment
@@ -106,8 +113,8 @@ define(function (require) {
     this.windowWidth = window.innerWidth;
   
     /**
-     *
-     * System variable that stores the height of the inner window, it maps to window.innerHeight
+     * System variable that stores the height of the inner window, it maps to
+     * window.innerHeight
      *
      * @property windowHeight
      * @for Environment:Environment
@@ -119,7 +126,11 @@ define(function (require) {
     this.windowHeight = window.innerHeight;
 
     /**
-     * System variable that stores the width of the drawing canvas. This value is set by the first parameter of the createCanvas() function. For example, the function call createCanvas(320, 240) sets the width variable to the value 320. The value of width defaults to 100 if createCanvas() is not used in a program.
+     * System variable that stores the width of the drawing canvas. This value
+     * is set by the first parameter of the createCanvas() function.
+     * For example, the function call createCanvas(320, 240) sets the width
+     * variable to the value 320. The value of width defaults to 100 if
+     * createCanvas() is not used in a program.
      *
      * @property width
      * @for Environment:Environment
@@ -127,7 +138,11 @@ define(function (require) {
     this.width = 0;
   
     /**
-     * System variable that stores the height of the drawing canvas. This value is set by the second parameter of the createCanvas() function. For example, the function call createCanvas(320, 240) sets the height variable to the value 240. The value of height defaults to 100 if createCanvas() is not used in a program.
+     * System variable that stores the height of the drawing canvas. This value
+     * is set by the second parameter of the createCanvas() function. For
+     * example, the function call createCanvas(320, 240) sets the height
+     * variable to the value 240. The value of height defaults to 100 if
+     * createCanvas() is not used in a program.
      *
      * @property height
      * @for Environment:Environment
@@ -172,8 +187,16 @@ define(function (require) {
 
     // Image.Pixels
     /**
-     * Array containing the values for all the pixels in the display window. These values are of the color datatype. This array is the size of the display window. For example, if the image is 100x100 pixels, there will be 10000 values and if the window is 200x300 pixels, there will be 60000 values. The index value defines the position of a value within the array. 
-     * Before accessing this array, the data must loaded with the loadPixels() function. After the array data has been modified, the updatePixels() function must be run to update the changes.
+     * Array containing the values for all the pixels in the display window.
+     * These values are of the color datatype. This array is the size of the
+     * display window. For example, if the image is 100x100 pixels, there will
+     * be 10000 values and if the window is 200x300 pixels, there will be 60000
+     * values. The index value defines the position of a value within the
+     * array.
+     *
+     * Before accessing this array, the data must loaded with the loadPixels()
+     * function. After the array data has been modified, the updatePixels()
+     * function must be run to update the changes.
      *
      * @property pixels[]
      * @for Image:Pixels
@@ -400,7 +423,13 @@ define(function (require) {
   };
 
   /**
-   * The setup() function is called once when the program starts. It's used to define initial enviroment properties such as screen size and background color and to load media such as images and fonts as the program starts. There can only be one setup() function for each program and it shouldn't be called again after its initial execution. Note: Variables declared within setup() are not accessible within other functions, including draw().
+   * The setup() function is called once when the program starts. It's used to
+   * define initial enviroment properties such as screen size and background
+   * color and to load media such as images and fonts as the program starts.
+   * There can only be one setup() function for each program and it shouldn't
+   * be called again after its initial execution. Note: Variables declared
+   * within setup() are not accessible within other functions, including
+   * draw().
    *
    * @method setup
    * @for Structure:Structure
@@ -421,7 +450,8 @@ define(function (require) {
    *   </code></div>
    */
   p5.prototype._setup = function() {
-    // Short-circuit on this, in case someone used the library in "global" mode earlier
+    // Short-circuit on this, in case someone used the library in "global"
+    // mode earlier
     var userSetup = this.setup || window.setup;
     if (typeof userSetup === 'function') {
       userSetup();
@@ -429,12 +459,23 @@ define(function (require) {
   };
 
   /**
-   * Called directly after setup(), the draw() function continuously executes the lines of code contained inside its block until the program is stopped or noLoop() is called. draw() is called automatically and should never be called explicitly.
-   * It should always be controlled with noLoop(), redraw() and loop(). After noLoop() stops the code in draw() from executing, redraw() causes the code inside draw() to execute once, and loop() will cause the code inside draw() to resume executing continuously.
+   * Called directly after setup(), the draw() function continuously executes
+   * the lines of code contained inside its block until the program is stopped
+   * or noLoop() is called. draw() is called automatically and should never be
+   * called explicitly.
+   *
+   * It should always be controlled with noLoop(), redraw() and loop(). After
+   * noLoop() stops the code in draw() from executing, redraw() causes the code
+   * inside draw() to execute once, and loop() will cause the code inside draw()
+   * to resume executing continuously.
    * 
-   * The number of times draw() executes in each second may be controlled with the frameRate() function.
+   * The number of times draw() executes in each second may be controlled with
+   * the frameRate() function.
    * 
-   * There can only be one draw() function for each sketch, and draw() must exist if you want the code to run continuously, or to process events such as mousePressed(). Sometimes, you might have an empty call to draw() in your program, as shown in the above example.
+   * There can only be one draw() function for each sketch, and draw() must
+   * exist if you want the code to run continuously, or to process events such
+   * as mousePressed(). Sometimes, you might have an empty call to draw() in
+   * your program, as shown in the above example.
    *
    * @method draw
    * @for Structure:Structure

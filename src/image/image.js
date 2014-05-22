@@ -24,11 +24,14 @@ define(function (require) {
    */
 
   /**
-   * Creates a new PImage (the datatype for storing images). This provides a fresh buffer of pixels to play with. Set the size of the buffer with the width and height parameters.
+   * Creates a new PImage (the datatype for storing images). This provides a
+   * fresh buffer of pixels to play with. Set the size of the buffer with the
+   * width and height parameters.
+   *
    * @method createImage
-   * @param  {Integer} width width in pixels
+   * @param  {Integer} width  width in pixels
    * @param  {Integer} height height in pixels
-   * @return {PImage} the PImage object
+   * @return {PImage}         the PImage object
    * @for Image
    */
   p5.prototype.createImage = function(width, height) {
@@ -44,9 +47,10 @@ define(function (require) {
    * callback, or place the loadImage() call in preload().
    * 
    * @method loadImage
-   * @param  {String} path
-   * @param  {Function} callback Function to be called once the image is loaded. Will be passed the PImage.
-   * @return {PImage} the PImage object
+   * @param  {String}   path
+   * @param  {Function} callback Function to be called once the image is
+   *                             loaded. Will be passed the PImage.
+   * @return {PImage}            the PImage object
    * @for Loading & Displaying
    */
   p5.prototype.loadImage = function(path, callback) {
@@ -97,9 +101,19 @@ define(function (require) {
     var vals = canvas.modeAdjust(x, y, width, height, this.settings.imageMode);
     // tint the image if there is a tint
     if (this.settings.tint) {
-      this.curElement.context.drawImage(this._getTintedImageCanvas(image), vals.x, vals.y, vals.w, vals.h);
+      this.curElement.context.drawImage(
+        this._getTintedImageCanvas(image),
+        vals.x,
+        vals.y,
+        vals.w,
+        vals.h);
     } else {
-      this.curElement.context.drawImage(image.canvas, vals.x, vals.y, vals.w, vals.h);
+      this.curElement.context.drawImage(
+        image.canvas,
+        vals.x,
+        vals.y,
+        vals.w,
+        vals.h);
     }
   };
 
@@ -118,10 +132,13 @@ define(function (require) {
    *
    * @method tint
    * @for Loading & Displaying
-   * @param {Number|Array} v1 gray value, red or hue value (depending on the current color mode), or color Array
-   * @param {Number|Array} [v2] green or saturation value (depending on the current color mode)
-   * @param {Number|Array} [v3] blue or brightness value (depending on the current color mode)
-   * @param {Number|Array} [a] opacity of the background
+   * @param {Number|Array} v1   gray value, red or hue value (depending on the
+   *                            current color mode), or color Array
+   * @param {Number|Array} [v2] green or saturation value (depending on the
+   *                            current color mode)
+   * @param {Number|Array} [v3] blue or brightness value (depending on the
+   *                            current color mode)
+   * @param {Number|Array} [a]  opacity of the background
    */
   p5.prototype.tint = function() {
     var c = this.getNormalizedColor(arguments);
@@ -140,7 +157,8 @@ define(function (require) {
   };
 
   /**
-   * Apply the current tint color to the input image, return the resulting canvas.
+   * Apply the current tint color to the input image, return the resulting
+   * canvas.
    *
    * @param {PImage} The image to be tinted
    * @return {canvas} The resulting tinted canvas
@@ -171,16 +189,28 @@ define(function (require) {
   };
 
   /**
-   * Set image mode. Modifies the location from which images are drawn by changing the way in which parameters given to image() are intepreted.
-   * The default mode is imageMode(CORNER), which interprets the second and third parameters of image() as the upper-left corner of the image. If two additional parameters are specified, they are used to set the image's width and height.
-   * imageMode(CORNERS) interprets the second and third parameters of image() as the location of one corner, and the fourth and fifth parameters as the opposite corner.
-   * imageMode(CENTER) interprets the second and third parameters of image() as the image's center point. If two additional parameters are specified, they are used to set the image's width and height.
+   * Set image mode. Modifies the location from which images are drawn by
+   * changing the way in which parameters given to image() are intepreted.
+   * The default mode is imageMode(CORNER), which interprets the second and
+   * third parameters of image() as the upper-left corner of the image. If
+   * two additional parameters are specified, they are used to set the image's
+   * width and height.
+   *
+   * imageMode(CORNERS) interprets the second and third parameters of image()
+   * as the location of one corner, and the fourth and fifth parameters as the
+   * opposite corner.
+   * imageMode(CENTER) interprets the second and third parameters of image()
+   * as the image's center point. If two additional parameters are specified,
+   * they are used to set the image's width and height.
+   *
    * @method imageMode
    * @param {String} m The mode: either CORNER, CORNERS, or CENTER.
    * @for Loading & Displaying
    */
   p5.prototype.imageMode = function(m) {
-    if (m === constants.CORNER || m === constants.CORNERS || m === constants.CENTER) {
+    if (m === constants.CORNER ||
+      m === constants.CORNERS ||
+      m === constants.CENTER) {
       this.settings.imageMode = m;
     }
   };
@@ -189,11 +219,18 @@ define(function (require) {
    * Class methods
    */
 
-
   /**
-   * Creates a new PImage. A PImage is a canvas backed representation of an image.
-   * p5 can display .gif, .jpg and .png images. Images may be displayed in 2D and 3D space. Before an image is used, it must be loaded with the loadImage() function. The PImage class contains fields for the width and height of the image, as well as an array called pixels[] that contains the values for every pixel in the image. The methods described below allow easy access to the image's pixels and alpha channel and simplify the process of compositing.
-   * Before using the pixels[] array, be sure to use the loadPixels() method on the image to make sure that the pixel data is properly loaded.
+   * Creates a new PImage. A PImage is a canvas backed representation of an
+   * image. p5 can display .gif, .jpg and .png images. Images may be displayed
+   * in 2D and 3D space. Before an image is used, it must be loaded with the
+   * loadImage() function. The PImage class contains fields for the width and
+   * height of the image, as well as an array called pixels[] that contains the
+   * values for every pixel in the image. The methods described below allow
+   * easy access to the image's pixels and alpha channel and simplify the
+   * process of compositing.
+   *
+   * Before using the pixels[] array, be sure to use the loadPixels() method on
+   * the image to make sure that the pixel data is properly loaded.
    * 
    * @constructor
    * @class PImage
@@ -248,16 +285,15 @@ define(function (require) {
    * Updates the backing canvas for this image with the contents of
    * the [pixels] array.
    *
-   *
    * @method updatePixels
-   * @param  {Integer|undefined} x x-offset of the target update area for the
-   *                               underlying canvas
-   * @param  {Integer|undefined} y y-offset of the target update area for the
-   *                               underlying canvas
-   * @param  {Integer|undefined} w height of the target update area for the
-   *                               underlying canvas
-   * @param  {Integer|undefined} h height of the target update area for the
-   *                               underlying canvas
+   * @param {Integer|undefined} x x-offset of the target update area for the
+   *                              underlying canvas
+   * @param {Integer|undefined} y y-offset of the target update area for the
+   *                              underlying canvas
+   * @param {Integer|undefined} w height of the target update area for the
+   *                              underlying canvas
+   * @param {Integer|undefined} h height of the target update area for the
+   *                              underlying canvas
    * @for PImage
    */
   PImage.prototype.updatePixels = function(x, y, w, h){
@@ -276,11 +312,12 @@ define(function (require) {
    *
    * @method get
    * @for PImage
-   * @param {Number} [x] x-coordinate of the pixel
-   * @param {Number} [y] y-coordinate of the pixel
-   * @param {Number} [w] width
-   * @param {Number} [h] height
-   * @return {Array/Color | PImage} color of pixel at x,y in array format [R, G, B, A] or PImage
+   * @param  {Number}               [x] x-coordinate of the pixel
+   * @param  {Number}               [y] y-coordinate of the pixel
+   * @param  {Number}               [w] width
+   * @param  {Number}               [h] height
+   * @return {Array/Color | PImage}     color of pixel at x,y in array format
+   *                                    [R, G, B, A] or PImage
    */
   PImage.prototype.get = function(x, y, w, h){
     return p5.prototype.get.call(this, x, y, w, h);
@@ -298,9 +335,10 @@ define(function (require) {
    *
    * @method set
    * @for PImage
-   * @param {Number} x x-coordinate of the pixel
-   * @param {Number} y y-coordinate of the pixel
-   * @param {Number|Array|Object} insert a grayscale value | a color array | image to copy
+   * @param {Number}              x x-coordinate of the pixel
+   * @param {Number}              y y-coordinate of the pixel
+   * @param {Number|Array|Object}   insert a grayscale value |
+   *                                a color array | image to copy
    */
   PImage.prototype.set = function(x, y, imgOrCol){
     p5.prototype.set.call(this, x, y, imgOrCol);
@@ -308,11 +346,15 @@ define(function (require) {
 
 
   /**
-   * Resize the image to a new width and height. To make the image scale proportionally, use 0 as the value for the wide or high parameter. For instance, to make the width of an image 150 pixels, and change the height using the same proportion, use resize(150, 0).
+   * Resize the image to a new width and height. To make the image scale
+   * proportionally, use 0 as the value for the wide or high parameter.
+   * For instance, to make the width of an image 150 pixels, and change
+   * the height using the same proportion, use resize(150, 0).
+   *
    * @method resize
    * @for PImage
-   * @param  {Number} width the resized image width
-   * @param  {Number} height the resized image height
+   * @param {Number} width the resized image width
+   * @param {Number} height the resized image height
    */
   PImage.prototype.resize = function(width, height){
 
@@ -320,10 +362,11 @@ define(function (require) {
     // and then copy back.
     //
     // There is a faster approach that involves just one copy and swapping the
-    // this.canvas reference. We could switch to that approach if (as i think is
-    // the case) there an expectation that the user would not hold a reference to
-    // the backing canvas of a pImage. But since we do not enforece that at the
-    // moment, I am leaving in the slower, but safer implementation.
+    // this.canvas reference. We could switch to that approach if (as i think
+    // is the case) there an expectation that the user would not hold a 
+    // reference to the backing canvas of a pImage. But since we do not
+    // enforece that at the moment, I am leaving in the slower, but safer
+    // implementation.
 
     var tempCanvas = document.createElement('canvas');
     tempCanvas.width = width;
@@ -397,7 +440,17 @@ define(function (require) {
     }
     var currBlend = this.canvas.getContext('2d').globalCompositeOperation;
 
-    var copyArgs = [pImage, 0, 0, pImage.width, pImage.height, 0, 0, this.width, this.height];
+    var copyArgs = [
+      pImage,
+      0,
+      0,
+      pImage.width,
+      pImage.height,
+      0,
+      0,
+      this.width,
+      this.height
+    ];
 
     this.canvas.getContext('2d').globalCompositeOperation = 'destination-out';
     this.copy.apply(this, copyArgs);
@@ -409,9 +462,10 @@ define(function (require) {
    * 
    * @method filter
    * @for PImage
-   * @param  {String} operation one of threshold, gray, invert, posterize and opaque
-   *                            see Filters.js for docs on each available filter
-   * @param  {Number|undefined} value
+   * @param {String} operation one of threshold, gray, invert, posterize and 
+   *                           opaque see Filters.js for docs on each available
+   *                           filter
+   * @param {Number|undefined} value
    */
   PImage.prototype.filter = function(operation, value) {
     Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
@@ -438,7 +492,7 @@ define(function (require) {
    *            darken | lighten | color-dodge | color-burn | hard-light | 
    *            soft-light | difference | exclusion | hue | saturation | 
    *            color | luminosity
-
+   *
    * 
    * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
    * 
@@ -465,7 +519,7 @@ define(function (require) {
     // var extension = components[components.length - 1];
     var mimeType;
     
-    // http://en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support
+    // en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support
     switch(extension.toLowerCase()){
     case 'png':
       mimeType = 'image/png';

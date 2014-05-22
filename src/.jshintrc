@@ -13,6 +13,7 @@
   "quotmark": "single",
   "undef": true,
   "unused": "vars",
+  "maxlen": 80,
 
   "browser": true,
   "globals": {
