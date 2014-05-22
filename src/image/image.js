@@ -117,11 +117,11 @@ define(function (require) {
   };
 
   /**
-   * Removes the current tint color.
+   * Removes the current fill value for displaying images and reverts to
+   * displaying images with their original hues.
    *
-   * TODO:
-   * - add docs
-   *
+   * @method image
+   * @for Loading & Displaying
    */
   p5.prototype.noTint = function() {
     this.settings.tint = null;
