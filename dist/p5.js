@@ -111,11 +111,7 @@ var core = function (require, shim, constants) {
                 ellipseMode: constants.CENTER,
                 colorMode: constants.RGB,
                 angleMode: constants.RADIANS,
-                tint: [
-                    255,
-                    255,
-                    255
-                ]
+                tint: null
             };
             this._startTime = new Date().getTime();
             this._userNode = node;
@@ -1515,20 +1511,23 @@ var image = function (require, core, canvas, constants, filters) {
                 height = image.height;
             }
             var vals = canvas.modeAdjust(x, y, width, height, this.settings.imageMode);
-            if (this.settings.tint[0] !== 255 || this.settings.tint[1] !== 255 || this.settings.tint[2] !== 255) {
-                console.log('get tinted image canvas');
+            if (this.settings.tint) {
                 this.curElement.context.drawImage(this._getTintedImageCanvas(image), vals.x, vals.y, vals.w, vals.h);
             } else {
                 this.curElement.context.drawImage(image.canvas, vals.x, vals.y, vals.w, vals.h);
             }
         };
         p5.prototype.tint = function (a1, a2, a3, a4) {
+            a4 = a4 ? a4 : 255;
             this.settings.tint = [
                 a1,
                 a2,
                 a3,
                 a4
             ];
+        };
+        p5.prototype.noTint = function () {
+            this.settings.tint = null;
         };
         p5.prototype._getTintedImageCanvas = function (image) {
             var pixels = Filters._toPixels(image.canvas);

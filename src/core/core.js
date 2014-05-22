@@ -196,7 +196,7 @@ define(function (require) {
       ellipseMode: constants.CENTER,
       colorMode: constants.RGB,
       angleMode: constants.RADIANS,
-      tint: [255, 255, 255]
+      tint: null
     };
 
     // ******************************************

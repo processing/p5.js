@@ -96,10 +96,7 @@ define(function (require) {
     }
     var vals = canvas.modeAdjust(x, y, width, height, this.settings.imageMode);
     // tint the image if there is a tint
-    if (this.settings.tint[0] !== 255 ||
-        this.settings.tint[1] !== 255 ||
-        this.settings.tint[2] !== 255) {
-      console.log('get tinted image canvas');
+    if (this.settings.tint) {
       this.curElement.context.drawImage(this._getTintedImageCanvas(image), vals.x, vals.y, vals.w, vals.h);
     } else {
       this.curElement.context.drawImage(image.canvas, vals.x, vals.y, vals.w, vals.h);
@@ -115,7 +112,19 @@ define(function (require) {
    *
    */
   p5.prototype.tint = function(a1, a2, a3, a4) {
+    a4 = a4 ? a4 : 255;
     this.settings.tint = [a1, a2, a3, a4];
+  };
+
+  /**
+   * Removes the current tint color.
+   *
+   * TODO:
+   * - add docs
+   *
+   */
+  p5.prototype.noTint = function() {
+    this.settings.tint = null;
   };
 
   /**
