@@ -26,11 +26,12 @@ define(function (require) {
    * Takes either 0, 1 or 2 arguments.
    * If no argument is given, returns a random number between 0 and 1.
    * If one argument is given, returns a random number between 0 and the number.
-   * If two arguments are given, returns a random number between them, inclusive.
+   * If two arguments are given, returns a random number between them,
+   * inclusive.
    *
-   * @param  {x} min
-   * @param  {y} max
-   * @return {Number} the random number
+   * @param  {x}      min the lower bound
+   * @param  {y}      max the upper bound
+   * @return {Number}     the random number
    */
   p5.prototype.random = function (min, max) {
 

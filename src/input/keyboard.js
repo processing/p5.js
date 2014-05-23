@@ -10,17 +10,24 @@ define(function (require) {
   var p5 = require('core');
 
   /**
-   * The boolean system variable isKeyPressed is true if any key is pressed and false if no keys are pressed.
+   * The boolean system variable isKeyPressed is true if any key is pressed
+   * and false if no keys are pressed.
+   *
    * @property isKeyPressed
    */
    
   /**
-   * The system variable key always contains the value of the most recent key on the keyboard that was typed. For non-ASCII keys, use the keyCode variable.
+   * The system variable key always contains the value of the most recent
+   * key on the keyboard that was typed. For non-ASCII keys, use the keyCode
+   * variable.
+   *
    * @property key
    */
 
   /**
-   * The variable keyCode is used to detect special keys such as the UP, DOWN, LEFT, RIGHT arrow keys and ALT, CONTROL, SHIFT. 
+   * The variable keyCode is used to detect special keys such as the UP,
+   * DOWN, LEFT, RIGHT arrow keys and ALT, CONTROL, SHIFT.
+   *
    * @property keyCode
    */
 
@@ -47,7 +54,6 @@ define(function (require) {
    *       }
    *     </code>
    *   </div>
-   * 
    */
   p5.prototype.onkeydown = function (e) {
     this._setProperty('isKeyPressed', true);
@@ -59,7 +65,10 @@ define(function (require) {
     }
   };
    /**
-   * The keyReleased() function is called once every time a key is released. See key and keyReleased for more information. For non-ASCII keys, use the keyCode variable.
+   * The keyReleased() function is called once every time a key is released.
+   * See key and keyReleased for more information. For non-ASCII keys, use
+   * the keyCode variable.
+   *
    * @method keyReleased
    * @example
    *   <div>
@@ -81,7 +90,6 @@ define(function (require) {
    *       }
    *     </code>
    *   </div>
-   * 
    */
   p5.prototype.onkeyup = function (e) {
     var keyReleased = this.keyReleased || window.keyReleased;
@@ -93,7 +101,10 @@ define(function (require) {
   };
 
   /**
-   * The keyTyped() function is called once every time a key is pressed, but action keys such as Ctrl, Shift, and Alt are ignored. The most recent key pressed will be stored in the key variable.
+   * The keyTyped() function is called once every time a key is pressed, but
+   * action keys such as Ctrl, Shift, and Alt are ignored. The most recent
+   * key pressed will be stored in the key variable.
+   *
    * @method keyTyped
    */
   p5.prototype.onkeypress = function (e) {

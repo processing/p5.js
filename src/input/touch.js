@@ -13,19 +13,30 @@ define(function (require) {
     var context = this._isGlobal ? window : this;
 
     /**
-     * The system variable touchX always contains the horizontal position of one finger, relative to (0, 0) of the canvas. This is best used for single touch interactions. For multi-touch interactions, use the touches[] array.
+     * The system variable touchX always contains the horizontal position of
+     * one finger, relative to (0, 0) of the canvas. This is best used for
+     * single touch interactions. For multi-touch interactions, use the
+     * touches[] array.
+     *
      * @property touchX
      */
     context._setProperty('touchX', e.changedTouches[0].pageX);
 
     /**
-     * The system variable touchY always contains the horizontal position of one finger, relative to (0, 0) of the canvas. This is best used for single touch interactions. For multi-touch interactions, use the touches[] array.
+     * The system variable touchY always contains the horizontal position of
+     * one finger, relative to (0, 0) of the canvas. This is best used for
+     * single touch interactions. For multi-touch interactions, use the
+     * touches[] array.
+     *
      * @property touchY
      */
     context._setProperty('touchY', e.changedTouches[0].pageY);
 
     /**
-     * The system variable touches[] contains an array of the positions of all current touch points, relative to (0, 0) of the canvas. Each element in the array is an object with x and y properties.
+     * The system variable touches[] contains an array of the positions of all
+     * current touch points, relative to (0, 0) of the canvas. Each element in
+     * the array is an object with x and y properties.
+     *
      * @property touches[]
      */
     var touches = [];
@@ -37,7 +48,9 @@ define(function (require) {
   };
 
   /**
-   * The touchStarted() function is called once after every time a touch is registered.  
+   * The touchStarted() function is called once after every time a touch is
+   * registered.
+   *
    * @method touchStarted
    */
   p5.prototype.ontouchstart = function(e) {
@@ -51,6 +64,7 @@ define(function (require) {
 
   /**
    * The touchMoved() function is called every time a touch move is registered.
+   *
    * @method touchMoved
    */
   p5.prototype.ontouchmove = function(e) {
@@ -63,7 +77,8 @@ define(function (require) {
   };
 
   /**
-   * The touchEnded() function is called every time a touch ends. 
+   * The touchEnded() function is called every time a touch ends.
+   *
    * @method touchEnded
    */
   p5.prototype.ontouchend = function(e) {

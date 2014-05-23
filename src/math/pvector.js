@@ -9,7 +9,22 @@ define(function (require) {
   /**
    * The PVector constructor function.
    *
-   * A class to describe a two or three dimensional vector, specifically a Euclidean (also known as geometric) vector. A vector is an entity that has both magnitude and direction. The datatype, however, stores the components of the vector (x,y for 2D, and x,y,z for 3D). The magnitude and direction can be accessed via the methods mag() and heading(). In many of the p5.js examples, you will see PVector used to describe a position, velocity, or acceleration. For example, if you consider a rectangle moving across the screen, at any given instant it has a position (a vector that points from the origin to its location), a velocity (the rate at which the object's position changes per time unit, expressed as a vector), and acceleration (the rate at which the object's velocity changes per time unit, expressed as a vector). Since vectors represent groupings of values, we cannot simply use traditional addition/multiplication/etc. Instead, we'll need to do some "vector" math, which is made easy by the methods inside the PVector class.
+   * A class to describe a two or three dimensional vector, specifically
+   * a Euclidean (also known as geometric) vector. A vector is an entity
+   * that has both magnitude and direction. The datatype, however, stores
+   * the components of the vector (x,y for 2D, and x,y,z for 3D). The magnitude
+   * and direction can be accessed via the methods mag() and heading(). In many
+   * of the p5.js examples, you will see PVector used to describe a position,
+   * velocity, or acceleration. For example, if you consider a rectangle moving
+   * across the screen, at any given instant it has a position (a vector that
+   * points from the origin to its location), a velocity (the rate at which the
+   * object's position changes per time unit, expressed as a vector), and
+   * acceleration (the rate at which the object's velocity changes per time
+   * unit, expressed as a vector). Since vectors represent groupings of values,
+   * we cannot simply use traditional addition/multiplication/etc. Instead,
+   * we'll need to do some "vector" math, which is made easy by the methods
+   * inside the PVector class.
+   *
    * @class PVector
    * @constructor
    * @param {Number} [x] x component of the vector
@@ -43,9 +58,10 @@ define(function (require) {
    * variables, the data from a PVector, or the values from a float array.
    * @method set
    * 
-   * @param {Number|PVector|Array} [x] the x component of the vector or a PVector or an Array
-   * @param {Number} [y] the y component of the vector 
-   * @param {Number} [z] the z component of the vector 
+   * @param {Number|PVector|Array} [x] the x component of the vector or a
+   *                                   PVector or an Array
+   * @param {Number}               [y] the y component of the vector 
+   * @param {Number}               [z] the z component of the vector 
    */
   PVector.prototype.set = function (x, y, z) {
     if (x instanceof PVector) { return this.set(x.x, x.y, x.z); }
@@ -68,14 +84,21 @@ define(function (require) {
 
 
   /**
-   * Adds x, y, and z components to a vector, adds one vector to another, or adds two independent vectors together. The version of the method that adds two vectors together is a static method and returns a PVector, the others have no return value -- they act directly on the vector. See the examples for more context. 
+   * Adds x, y, and z components to a vector, adds one vector to another, or
+   * adds two independent vectors together. The version of the method that adds
+   * two vectors together is a static method and returns a PVector, the others
+   * have no return value -- they act directly on the vector. See the examples
+   * for more context. 
    * 
    * @method add
    * @chainable
-   * @param {Number|PVector|Array} x the x component of the vector to be added or a PVector or an Array
-   * @param {Number} [y] the y component of the vector to be added
-   * @param {Number} [z] the z component of the vector to be added
-   * @return {PVector} the PVector object.
+   * @param  {Number|PVector|Array} x   the x component of the vector to be
+   *                                    added or a PVector or an Array
+   * @param  {Number}               [y] the y component of the vector to be
+   *                                    added
+   * @param  {Number}               [z] the z component of the vector to be
+   *                                    added
+   * @return {PVector}                  the PVector object.
    */
   PVector.prototype.add = function (x, y, z) {
     if (x instanceof PVector) { return this.add(x.x, x.y, x.z); }
@@ -87,14 +110,19 @@ define(function (require) {
   };
 
   /**
-   * Subtracts x, y, and z components from a vector, subtracts one vector from another, or subtracts two independent vectors. The version of the method that substracts two vectors is a static method and returns a PVector, the others have no return value -- they act directly on the vector. See the examples for more context. 
+   * Subtracts x, y, and z components from a vector, subtracts one vector from
+   * another, or subtracts two independent vectors. The version of the method
+   * that substracts two vectors is a static method and returns a PVector, the
+   * others have no return value -- they act directly on the vector. See the
+   * examples for more context. 
    * 
    * @method sub
    * @chainable
-   * @param {Number|PVector|Array} x the x component of the vector or a PVector or an Array
-   * @param {Number} [y] the y component of the vector
-   * @param {Number} [z] the z component of the vector
-   * @return {PVector} PVector object.
+   * @param  {Number|PVector|Array} x   the x component of the vector or a
+   *                                    PVector or an Array
+   * @param  {Number}               [y] the y component of the vector
+   * @param  {Number}               [z] the z component of the vector
+   * @return {PVector}                  PVector object.
    */
   PVector.prototype.sub = function (x, y, z) {
     if (x instanceof PVector) { return this.sub(x.x, x.y, x.z); }
@@ -110,7 +138,7 @@ define(function (require) {
    *
    * @method mult
    * @chainable
-   * @param {Number} n the number to multiply with the vector
+   * @param  {Number}  n the number to multiply with the vector
    * @return {PVector} a reference to the PVector object (allow chaining)
    */
   PVector.prototype.mult = function (n) {
@@ -125,7 +153,7 @@ define(function (require) {
    *
    * @method div
    * @chainable
-   * @param {number} n the number to divide the vector by
+   * @param  {number}  n the number to divide the vector by
    * @return {PVector} a reference to the PVector object (allow chaining)
    */
   PVector.prototype.div = function (n) {
@@ -136,7 +164,8 @@ define(function (require) {
   };
 
   /**
-   * Calculates the magnitude (length) of the vector and returns the result as a float (this is simply the equation sqrt(x*x + y*y + z*z).)
+   * Calculates the magnitude (length) of the vector and returns the result as
+   * a float (this is simply the equation sqrt(x*x + y*y + z*z).)
    * 
    * @method mag
    * @return {Number} magnitude of the vector
@@ -163,10 +192,10 @@ define(function (require) {
    * Calculates the dot product of two vectors.
    *
    * @method dot
-   * @param {Number|PVector} x x component of the vector or a PVector
-   * @param {Number} [y] y component of the vector
-   * @param {Number} [z] z component of the vector
-   * @return {Number} the dot product
+   * @param  {Number|PVector} x   x component of the vector or a PVector
+   * @param  {Number}         [y] y component of the vector
+   * @param  {Number}         [z] z component of the vector
+   * @return {Number}             the dot product
    */
   PVector.prototype.dot = function (x, y, z) {
     if (x instanceof PVector) {
@@ -178,11 +207,12 @@ define(function (require) {
   };
 
   /**
-   * Calculates and returns a vector composed of the cross product between two vectors.
+   * Calculates and returns a vector composed of the cross product between
+   * two vectors.
    *
    * @method cross
-   * @param {PVector} v PVector to be crossed
-   * @return {PVector} PVector composed of cross product
+   * @param  {PVector} v PVector to be crossed
+   * @return {PVector}   PVector composed of cross product
    */
   PVector.prototype.cross = function (v) {
     var x = this.y * v.z - this.z * v.y;
@@ -196,8 +226,8 @@ define(function (require) {
    * point as a vector object).
    *
    * @method dist
-   * @param {PVector} v the x, y, and z coordinates of a PVector
-   * @return {Number} the distance
+   * @param  {PVector} v the x, y, and z coordinates of a PVector
+   * @return {Number}    the distance
    */
   PVector.prototype.dist = function (v) {
     var d = v.get().sub(this);
@@ -215,11 +245,12 @@ define(function (require) {
   };
 
   /**
-   * Limit the magnitude of this vector to the value used for the <b>max</b> parameter.
+   * Limit the magnitude of this vector to the value used for the <b>max</b>
+   * parameter.
    *
    * @method limit
-   * @param {Number} max the maximum magnitude for the vector
-   * @return {PVector} the modified PVector
+   * @param  {Number}  max the maximum magnitude for the vector
+   * @return {PVector}     the modified PVector
    */
   PVector.prototype.limit = function (l) {
     var mSq = this.magSq();
@@ -231,11 +262,12 @@ define(function (require) {
   };
 
   /**
-   * Set the magnitude of this vector to the value used for the <b>len</b> parameter.
+   * Set the magnitude of this vector to the value used for the <b>len</b>
+   * parameter.
    *
    * @mtehod setMag
-   * @param {number} len the new length for this vector
-   * @return {PVector} the modified PVector
+   * @param  {number}  len the new length for this vector
+   * @return {PVector}     the modified PVector
    */
   PVector.prototype.setMag = function (n) {
     return this.normalize().mult(n);
@@ -253,12 +285,13 @@ define(function (require) {
   };
 
   /**
-   * Rotate the vector by an angle (only 2D vectors), magnitude remains the same
+   * Rotate the vector by an angle (only 2D vectors), magnitude remains the
+   * same
    * TODO: Change to rotate()
    * TODO: Deal with angleMode
    *
    * @method rotate2D
-   * @param {number} angle the angle of rotation
+   * @param  {number}  angle the angle of rotation
    * @return {PVector} the modified PVector
    */
   PVector.prototype.rotate2D = function (a) {
@@ -273,11 +306,13 @@ define(function (require) {
    * Linear interpolate the vector to another vector
    *
    * @method lerp
-   * @param {PVector} x the x component or the PVector to lerp to
-   * @param {PVector} [y] y the y component 
-   * @param {PVector} [z] z the z component
-   * @param {Number} amt the amount of interpolation; some value between 0.0 (old vector) and 1.0 (new vector). 0.1 is very near the new vector. 0.5 is halfway in between.
-   * @return {PVector} the modified PVector
+   * @param  {PVector} x   the x component or the PVector to lerp to
+   * @param  {PVector} [y] y the y component 
+   * @param  {PVector} [z] z the z component
+   * @param  {Number}  amt the amount of interpolation; some value between 0.0
+   *                       (old vector) and 1.0 (new vector). 0.1 is very near
+   *                       the new vector. 0.5 is halfway in between.
+   * @return {PVector}     the modified PVector
    */
   PVector.prototype.lerp = function (x, y, z, amt) {
     if (x instanceof PVector) {
@@ -292,7 +327,8 @@ define(function (require) {
   /**
    * Return a representation of this vector as a float array. This is only
    * for temporary use. If used in any other fashion, the contents should be
-   * copied by using the <b>PVector.get()</b> method to copy into your own array.
+   * copied by using the <b>PVector.get()</b> method to copy into your own
+   * array.
    *
    * @method array
    * @return {Array} an Array with the 3 values 
@@ -350,9 +386,9 @@ define(function (require) {
    * Adds two vectors together and returns a new one.
    *
    * @static
-   * @param {PVector} v1 a PVector to add
-   * @param {PVector} v2 a PVector to add
-   * @return {PVector} the resulting new PVector
+   * @param  {PVector} v1 a PVector to add
+   * @param  {PVector} v2 a PVector to add
+   * @return {PVector}    the resulting new PVector
    */
 
   PVector.add = function (v1, v2) {
@@ -360,12 +396,13 @@ define(function (require) {
   };
 
   /**
-   * Subtracts one PVector from another and returns a new one.  The second vector (v2) is subtracted from the first (v1), resulting in v1-v2.
+   * Subtracts one PVector from another and returns a new one.  The second
+   * vector (v2) is subtracted from the first (v1), resulting in v1-v2.
    *
    * @static
-   * @param {PVector} v1 a PVector to subtract from
-   * @param {PVector} v2 a PVector to subtract
-   * @return {PVector} the resulting new PVector
+   * @param  {PVector} v1 a PVector to subtract from
+   * @param  {PVector} v2 a PVector to subtract
+   * @return {PVector}    the resulting new PVector
    */
 
   PVector.sub = function (v1, v2) {
@@ -377,9 +414,9 @@ define(function (require) {
    * Multiplies a vector by a scalar and returns a new vector.
    *
    * @static
-   * @param {PVector} v the PVector to multiply
-   * @param {Number} n the scalar
-   * @return {PVector} the resulting new PVector
+   * @param  {PVector} v the PVector to multiply
+   * @param  {Number}  n the scalar
+   * @return {PVector}   the resulting new PVector
    */
   PVector.mult = function (v, n) {
     return v.get().mult(n);
@@ -389,9 +426,9 @@ define(function (require) {
    * Divides a vector by a scalar and returns a new vector.
    *
    * @static
-   * @param {PVector} v the PVector to divide
-   * @param {Number} n the scalar
-   * @return {PVector} the resulting new PVector
+   * @param  {PVector} v the PVector to divide
+   * @param  {Number}  n the scalar
+   * @return {PVector}   the resulting new PVector
    */
   PVector.div = function (v, n) {
     return v.get().div(n);
@@ -402,9 +439,9 @@ define(function (require) {
    * Calculates the dot product of two vectors.
    *
    * @static
-   * @param {PVector} v1 the first PVector
-   * @param {PVector} v2 the second PVector
-   * @return {Number} the dot product
+   * @param  {PVector} v1 the first PVector
+   * @param  {PVector} v2 the second PVector
+   * @return {Number}     the dot product
    */
   PVector.dot = function (v1, v2) {
     return v1.dot(v2);
@@ -414,9 +451,9 @@ define(function (require) {
    * Calculates the cross product of two vectors.
    *
    * @static
-   * @param {PVector} v1 the first PVector
-   * @param {PVector} v2 the second PVector
-   * @return {Number} the cross product
+   * @param  {PVector} v1 the first PVector
+   * @param  {PVector} v2 the second PVector
+   * @return {Number}     the cross product
    */
   PVector.cross = function (v1, v2) {
     return v1.cross(v2);
@@ -427,21 +464,24 @@ define(function (require) {
    * point as a vector object).
    *
    * @static
-   * @param {PVector} v1 the first PVector
-   * @param {PVector} v2 the second PVector
-   * @return {Number} the distance
+   * @param  {PVector} v1 the first PVector
+   * @param  {PVector} v2 the second PVector
+   * @return {Number}     the distance
    */
   PVector.dist = function (v1,v2) {
     return v1.dist(v2);
   };
 
   /**
-   * Linear interpolate a vector to another vector and return the result as a new vector.
+   * Linear interpolate a vector to another vector and return the result as a
+   * new vector.
    *
    * @static
    * @param {PVector} v1 a starting PVector
    * @param {PVector} v2 the PVector to lerp to
-   * @param {number} the amount of interpolation; some value between 0.0 (old vector) and 1.0 (new vector). 0.1 is very near the new vector. 0.5 is halfway in between.
+   * @param {Number}     the amount of interpolation; some value between 0.0
+   *                     (old vector) and 1.0 (new vector). 0.1 is very near
+   *                     the new vector. 0.5 is halfway in between.
    */
   PVector.lerp = function (v1, v2, amt) {
     return v1.get().lerp(v2, amt);
@@ -451,9 +491,9 @@ define(function (require) {
    * Calculates and returns the angle (in radians) between two vectors.
    *
    * @static
-   * @param {PVector} v1 the x, y, and z components of a PVector
-   * @param {PVector} v2 the x, y, and z components of a PVector
-   * @return {Number} the angle between
+   * @param  {PVector} v1 the x, y, and z components of a PVector
+   * @param  {PVector} v2 the x, y, and z components of a PVector
+   * @return {Number}     the angle between
    * 
    * TODO: Needs to account for angleMode
    */

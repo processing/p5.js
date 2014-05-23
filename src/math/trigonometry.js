@@ -14,11 +14,13 @@ define(function (require) {
   var constants = require('constants');
 
   /**
-   * The inverse of cos(), returns the arc cosine of a value. This function expects the values in the range of -1 to 1 and values are returned in the range 0 to PI (3.1415927).
+   * The inverse of cos(), returns the arc cosine of a value. This function
+   * expects the values in the range of -1 to 1 and values are returned in
+   * the range 0 to PI (3.1415927).
    * 
    * @method acos
-   * @param {Number} value the value whose arc cosine is to be returned
-   * @return {Number} the arc cosine of the given value
+   * @param  {Number} value the value whose arc cosine is to be returned
+   * @return {Number}       the arc cosine of the given value
    */
   p5.prototype.acos = function(ratio) {
     if (this.settings.angleMode === constants.RADIANS) {

@@ -10,7 +10,8 @@ define(function (require) {
   var p5 = require('core');
 
   /**
-   * p5.js communicates with the clock on your computer. The day() function returns the current day as a value from 1 - 31.
+   * p5.js communicates with the clock on your computer. The day() function
+   * returns the current day as a value from 1 - 31.
    *
    * @method day
    * @return {Number} the current day
@@ -20,7 +21,8 @@ define(function (require) {
   };
 
   /**
-   * p5.js communicates with the clock on your computer. The hour() function returns the current hour as a value from 0 - 23.
+   * p5.js communicates with the clock on your computer. The hour() function
+   * returns the current hour as a value from 0 - 23.
    *
    * @method hour
    * @return {Number} the current hour
@@ -30,7 +32,8 @@ define(function (require) {
   };
 
   /**
-   * p5.js communicates with the clock on your computer. The minute() function returns the current minute as a value from 0 - 59.
+   * p5.js communicates with the clock on your computer. The minute() function
+   * returns the current minute as a value from 0 - 59.
    *
    * @method minute
    * @return {Number} the current minute
@@ -40,7 +43,9 @@ define(function (require) {
   };
 
   /**
-   * Returns the number of milliseconds (thousandths of a second) since starting the program. This information is often used for timing events and animation sequences.
+   * Returns the number of milliseconds (thousandths of a second) since
+   * starting the program. This information is often used for timing events and
+   * animation sequences.
    *
    * @method millis
    * @return {Number} the number of milliseconds since starting the program
@@ -50,7 +55,8 @@ define(function (require) {
   };
 
   /**
-   * p5.js communicates with the clock on your computer. The month() function returns the current month as a value from 1 - 12.
+   * p5.js communicates with the clock on your computer. The month() function
+   * returns the current month as a value from 1 - 12.
    *
    * @method month
    * @return {Number} the current month
@@ -60,7 +66,8 @@ define(function (require) {
   };
 
   /**
-   * p5.js communicates with the clock on your computer. The second() function returns the current second as a value from 0 - 59.
+   * p5.js communicates with the clock on your computer. The second() function
+   * returns the current second as a value from 0 - 59.
    *
    * @method second
    * @return {Number} the current second
@@ -70,7 +77,8 @@ define(function (require) {
   };
 
   /**
-   * p5.js communicates with the clock on your computer. The year() function returns the current year as an integer (2014, 2015, 2016, etc).
+   * p5.js communicates with the clock on your computer. The year() function
+   * returns the current year as an integer (2014, 2015, 2016, etc).
    *
    * @method year
    * @return {Number} the current year

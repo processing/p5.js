@@ -8,7 +8,8 @@
 
 // someday we might consider using "improved noise"
 // http://mrl.nyu.edu/~perlin/paper445.pdf
-// See: https://github.com/shiffman/The-Nature-of-Code-Examples-p5.js/blob/master/introduction/Noise1D/noise.js
+// See: https://github.com/shiffman/The-Nature-of-Code-Examples-p5.js/
+//      blob/master/introduction/Noise1D/noise.js
 
 /**
  * @module Math
@@ -78,10 +79,11 @@ define(function (require) {
    *
    *
    * @method noise
-   * @param {Number} x x-coordinate in noise space
-   * @param {Number} [y] y-coordinate in noise space
-   * @param {Number} [z] z-coordinate in noise space
-   * @return {Number} Perlin noise value (between 0 and 1) at specified coordinates
+   * @param  {Number} x   x-coordinate in noise space
+   * @param  {Number} [y] y-coordinate in noise space
+   * @param  {Number} [z] z-coordinate in noise space
+   * @return {Number}     Perlin noise value (between 0 and 1) at specified
+   *                      coordinates
    */
   p5.prototype.noise = function(x,y,z) {
     // is this legit?
