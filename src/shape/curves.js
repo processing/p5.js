@@ -9,25 +9,31 @@ define(function (require) {
 
   var p5 = require('core');
 
-
   /**
-   * Draws a Bezier curve on the screen. These curves are defined by a series of anchor and control points. The first two parameters specify the first anchor point and the last two parameters specify the other anchor point. The middle parameters specify the control points which define the shape of the curve. Bezier curves were developed by French engineer Pierre Bezier. Using the 3D version requires rendering with P3D (see the Environment reference for more information).
+   * Draws a Bezier curve on the screen. These curves are defined by a series
+   * of anchor and control points. The first two parameters specify the first
+   * anchor point and the last two parameters specify the other anchor point.
+   * The middle parameters specify the control points which define the shape
+   * of the curve. Bezier curves were developed by French engineer Pierre
+   * Bezier. Using the 3D version requires rendering with P3D (see the
+   * Environment reference for more information).
    *
    * @method bezier
-   * @param {Number} x1 x-coordinate for the first anchor point
-   * @param {Number} y1 y-coordinate for the first anchor point
-   * @param {Number} x2 x-coordinate for the first control point
-   * @param {Number} y2 y-coordinate for the first control point
-   * @param {Number} x3 x-coordinate for the second control point
-   * @param {Number} y3 y-coordinate for the second control point
-   * @param {Number} x4 x-coordinate for the second anchor point
-   * @param {Number} y4 y-coordinate for the second anchor point
-   * @return {Object} the p5 object
+   * @param  {Number} x1 x-coordinate for the first anchor point
+   * @param  {Number} y1 y-coordinate for the first anchor point
+   * @param  {Number} x2 x-coordinate for the first control point
+   * @param  {Number} y2 y-coordinate for the first control point
+   * @param  {Number} x3 x-coordinate for the second control point
+   * @param  {Number} y3 y-coordinate for the second control point
+   * @param  {Number} x4 x-coordinate for the second anchor point
+   * @param  {Number} y4 y-coordinate for the second anchor point
+   * @return {Object}    the p5 object
    */
   p5.prototype.bezier = function(x1, y1, x2, y2, x3, y3, x4, y4) {
     this.curElement.context.beginPath();
     this.curElement.context.moveTo(x1, y1);
-    for (var i = 0; i <= this._bezierDetail; i++) { //for each point as considered by detail, iterate
+    //for each point as considered by detail, iterate
+    for (var i = 0; i <= this._bezierDetail; i++) {
       var t = i / parseFloat(this._bezierDetail);
       var x = p5.prototype.bezierPoint(x1, x2, x3, x4, t);
       var y = p5.prototype.bezierPoint(y1, y2, y3, y4, t);
@@ -71,7 +77,10 @@ define(function (require) {
   p5.prototype.bezierPoint = function(a, b, c, d, t) {
     var adjustedT = 1-t;
 
-    return Math.pow(adjustedT,3)*a + 3*(Math.pow(adjustedT,2))*t*b + 3*adjustedT*Math.pow(t,2)*c + Math.pow(t,3)*d;
+    return Math.pow(adjustedT,3)*a +
+     3*(Math.pow(adjustedT,2))*t*b +
+     3*adjustedT*Math.pow(t,2)*c +
+     Math.pow(t,3)*d;
   };
 
   /**
@@ -91,22 +100,35 @@ define(function (require) {
    */
   p5.prototype.bezierTangent = function(a, b, c, d, t) {
     var adjustedT = 1-t;
-    return 3*d*Math.pow(t,2) - 3*c*Math.pow(t,2) + 6*c*adjustedT*t - 6*b*adjustedT*t + 3*b*Math.pow(adjustedT,2) - 3*a*Math.pow(adjustedT,2);
+    return 3*d*Math.pow(t,2) -
+     3*c*Math.pow(t,2) +
+     6*c*adjustedT*t -
+     6*b*adjustedT*t +
+     3*b*Math.pow(adjustedT,2) -
+     3*a*Math.pow(adjustedT,2);
   };
 
   /**
-   * Draws a curved line on the screen. The first and second parameters specify the beginning control point and the last two parameters specify the ending control point. The middle parameters specify the start and stop of the curve. Longer curves can be created by putting a series of curve() functions together or using curveVertex(). An additional function called curveTightness() provides control for the visual quality of the curve. The curve() function is an implementation of Catmull-Rom splines. Using the 3D version requires rendering with P3D (see the Environment reference for more information).
+   * Draws a curved line on the screen. The first and second parameters specify
+   * the beginning control point and the last two parameters specify the ending
+   * control point. The middle parameters specify the start and stop of the
+   * curve. Longer curves can be created by putting a series of curve() 
+   * functions together or using curveVertex(). An additional function called
+   * curveTightness() provides control for the visual quality of the curve.
+   * The curve() function is an implementation of Catmull-Rom splines. Using
+   * the 3D version requires rendering with P3D (see the Environment reference
+   * for more information).
    * 
    * @method curve
-   * @param {Number} x1 x-coordinate for the beginning control point
-   * @param {Number} y1 y-coordinate for the beginning control point
-   * @param {Number} x2 x-coordinate for the first point
-   * @param {Number} y2 y-coordinate for the first point
-   * @param {Number} x3 x-coordinate for the second point
-   * @param {Number} y3 y-coordinate for the second point
-   * @param {Number} x4 x-coordinate for the ending control point
-   * @param {Number} y4 y-coordinate for the ending control point
-   * @return {Object} the p5 object
+   * @param  {Number} x1 x-coordinate for the beginning control point
+   * @param  {Number} y1 y-coordinate for the beginning control point
+   * @param  {Number} x2 x-coordinate for the first point
+   * @param  {Number} y2 y-coordinate for the first point
+   * @param  {Number} x3 x-coordinate for the second point
+   * @param  {Number} y3 y-coordinate for the second point
+   * @param  {Number} x4 x-coordinate for the ending control point
+   * @param  {Number} y4 y-coordinate for the ending control point
+   * @return {Object}    the p5 object
    */
   p5.prototype.curve = function(x1, y1, x2, y2, x3, y3, x4, y4) {
     this.curElement.context.moveTo(x1,y1);

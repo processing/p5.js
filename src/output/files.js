@@ -94,7 +94,10 @@ define(function (require) {
   };
 
   p5.prototype.writeFile = function(content) {
-    this.open('data:text/json;charset=utf-8,' + this.escape(content), 'download');
+    this.open(
+      'data:text/json;charset=utf-8,' + this.escape(content),
+      'download'
+    );
   };
 
   return p5;
