@@ -50,65 +50,7 @@ define(function(require) {
     return cnv;
   };
 
-  p5.prototype.createHTML = function(html) {
-    var elt = document.createElement('div');
-    elt.innerHTML = html;
-    document.body.appendChild(elt);
-    var c =  new PElement(elt, this);
-    this._elements.push(c);
-    //this.context(c);
-    return c;
-  };
 
-  p5.prototype.createHTMLImage = function(src, alt) {
-    var elt = document.createElement('img');
-    elt.src = src;
-    if (typeof alt !== 'undefined') {
-      elt.alt = alt;
-    }
-    document.body.appendChild(elt);
-    var c =  new PElement(elt, this);
-    this._elements.push(c);
-    //this.context(c);
-    return c;
-  };
-
-  p5.prototype.getId = function (e) {
-    for (var i = 0; i < this._elements.length; i++) {
-      if (this._elements[i].elt.id === e) {
-        return this._elements[i];
-      }
-    }
-    var res = document.getElementById(e);
-    if (res) {
-      var obj = new PElement(res, this);
-      this._elements.push(obj);
-      return obj;
-    } else {
-      return null;
-    }
-  };
-  p5.prototype.getClass = function (e) {
-    console.log(this._elements);
-    var arr = [];
-    for (var i = 0; i < this._elements.length; i++) {
-      if (this._elements[i].elt.className.split(' ').indexOf(e) !== -1) {
-        arr.push(this._elements[i]);
-      }
-    }
-
-    if (arr.length === 0) {
-      var res = document.getElementsByClassName(e);
-      if (res) {
-        for (var j = 0; j < res.length; j++) {
-          var obj = new PElement(res[j], this);
-          this._elements.push(obj);
-          arr.push(obj);
-        }
-      }
-    }
-    return arr;
-  };
 
   p5.prototype.context = function(e) {
     var obj;

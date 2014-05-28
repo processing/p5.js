@@ -1,5 +1,6 @@
 define(function(require) {
 
+  var p5 = require('core');
   var constants = require('constants');
 
   function PElement(elt, pInst) {
@@ -76,5 +77,7 @@ define(function(require) {
     this.elt.addEventListener('mouseout', function(e){fxn(e, _this);}, false);
   };
 
+  p5.prototype.PElement = PElement;
+  
   return PElement;
 });
