@@ -13,6 +13,11 @@ define(function(require) {
       this.pInst._setProperty('canvas', elt);
     }
   }
+
+  PElement.prototype.parent = function(id) {
+    document.getElementById(id).appendChild(this.elt);
+  };
+
   PElement.prototype.html = function(html) {
     this.elt.innerHTML = html;
   };
