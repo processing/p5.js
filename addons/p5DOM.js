@@ -6,7 +6,7 @@ p5DOM.prototype.createDiv = function(text) {
   var elt = document.createElement('div');
   elt.innerHTML = text;
   document.body.appendChild(elt);
-  var c =  new this.p5.PElement(elt, this);
+  var c = new this.p5.PElement(elt, this);
   this.p5._elements.push(c);
   return c;
 };
@@ -15,7 +15,7 @@ p5DOM.prototype.createP = function(text) {
   var elt = document.createElement('p');
   elt.innerHTML = text;
   document.body.appendChild(elt);
-  var c =  new this.p5.PElement(elt, this);
+  var c = new this.p5.PElement(elt, this);
   this.p5._elements.push(c);
   return c;
 };
@@ -24,7 +24,7 @@ p5DOM.prototype.createSpan = function(text) {
   var elt = document.createElement('span');
   elt.innerHTML = text;
   document.body.appendChild(elt);
-  var c =  new this.p5.PElement(elt, this);
+  var c = new this.p5.PElement(elt, this);
   this.p5._elements.push(c);
   return c;
 };
@@ -33,7 +33,7 @@ p5DOM.prototype.createH1 = function(text) {
   var elt = document.createElement('h1');
   elt.innerHTML = text;
   document.body.appendChild(elt);
-  var c =  new this.p5.PElement(elt, this);
+  var c = new this.p5.PElement(elt, this);
   this.p5._elements.push(c);
   return c;
 };
@@ -42,7 +42,7 @@ p5DOM.prototype.createH2 = function(text) {
   var elt = document.createElement('h2');
   elt.innerHTML = text;
   document.body.appendChild(elt);
-  var c =  new this.p5.PElement(elt, this);
+  var c = new this.p5.PElement(elt, this);
   this.p5._elements.push(c);
   return c;
 };
@@ -51,7 +51,7 @@ p5DOM.prototype.createH3 = function(text) {
   var elt = document.createElement('h3');
   elt.innerHTML = text;
   document.body.appendChild(elt);
-  var c =  new this.p5.PElement(elt, this);
+  var c = new this.p5.PElement(elt, this);
   this.p5._elements.push(c);
   return c;
 };
@@ -60,7 +60,7 @@ p5DOM.prototype.createH4 = function(text) {
   var elt = document.createElement('h4');
   elt.innerHTML = text;
   document.body.appendChild(elt);
-  var c =  new this.p5.PElement(elt, this);
+  var c = new this.p5.PElement(elt, this);
   this.p5._elements.push(c);
   return c;
 };
@@ -69,7 +69,7 @@ p5DOM.prototype.createH5 = function(text) {
   var elt = document.createElement('h5');
   elt.innerHTML = text;
   document.body.appendChild(elt);
-  var c =  new this.p5.PElement(elt, this);
+  var c = new this.p5.PElement(elt, this);
   this.p5._elements.push(c);
   return c;
 };
@@ -78,7 +78,7 @@ p5DOM.prototype.createH6 = function(text) {
   var elt = document.createElement('h6');
   elt.innerHTML = text;
   document.body.appendChild(elt);
-  var c =  new this.p5.PElement(elt, this);
+  var c = new this.p5.PElement(elt, this);
   this.p5._elements.push(c);
   return c;
 };
@@ -90,7 +90,7 @@ p5DOM.prototype.createImg = function(src, alt) {
     elt.alt = alt;
   }
   document.body.appendChild(elt);
-  var c =  new this.p5.PElement(elt, this);
+  var c = new this.p5.PElement(elt, this);
   this.p5._elements.push(c);
   return c;  
 };
@@ -101,7 +101,7 @@ p5DOM.prototype.createA = function(href, html, target) {
   elt.innerHTML = html;
   if (target) elt.target = target;
   document.body.appendChild(elt);
-  var c =  new this.p5.PElement(elt, this);
+  var c = new this.p5.PElement(elt, this);
   this.p5._elements.push(c);
   return c;  
 };
