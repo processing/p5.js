@@ -94,7 +94,6 @@ var core = function (require, shim, constants) {
             this.pWriters = [];
             this.pixels = [];
             this.curElement = null;
-            this._elements = [];
             this.matrices = [[
                     1,
                     0,
@@ -951,6 +950,9 @@ var dompelement = function (require, core, constants) {
                 this.pInst._setProperty('canvas', elt);
             }
         }
+        PElement.prototype.parent = function (id) {
+            document.getElementById(id).appendChild(this.elt);
+        };
         PElement.prototype.html = function (html) {
             this.elt.innerHTML = html;
         };
@@ -978,9 +980,11 @@ var dompelement = function (require, core, constants) {
                 }
                 this.width = this.elt.offsetWidth;
                 this.height = this.elt.offsetHeight;
-                if (this.pInst.curElement.elt === this.elt) {
-                    this.pInst._setProperty('width', this.elt.offsetWidth);
-                    this.pInst._setProperty('height', this.elt.offsetHeight);
+                if (this.pInst) {
+                    if (this.pInst.curElement.elt === this.elt) {
+                        this.pInst._setProperty('width', this.elt.offsetWidth);
+                        this.pInst._setProperty('height', this.elt.offsetHeight);
+                    }
                 }
             }
         };
@@ -1017,7 +1021,7 @@ var dompelement = function (require, core, constants) {
                 fxn(e, _this);
             }, false);
         };
-        p5.prototype.PElement = PElement;
+        p5.PElement = PElement;
         return PElement;
     }({}, core, constants);
 var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement) {
@@ -1048,7 +1052,6 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
                 }
             }
             var cnv = new PElement(c, this);
-            this._elements.push(cnv);
             this.context(cnv);
             this._applyDefaults();
             return cnv;
@@ -1059,7 +1062,6 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
                 var elt = document.getElementById(e);
                 if (elt) {
                     var pe = new PElement(elt, this);
-                    this._elements.push(pe);
                     obj = pe;
                 } else {
                     obj = null;
@@ -1081,6 +1083,25 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
                     this.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
                 }
             }
+        };
+        p5.prototype.getId = function (e) {
+            var res = document.getElementById(e);
+            if (res) {
+                return new PElement(res, this);
+            } else {
+                return null;
+            }
+        };
+        p5.prototype.getClass = function (e) {
+            var arr = [];
+            var res = document.getElementsByClassName(e);
+            if (res) {
+                for (var j = 0; j < res.length; j++) {
+                    var obj = new PElement(res[j], this);
+                    arr.push(obj);
+                }
+            }
+            return arr;
         };
         return p5;
     }({}, core, inputmouse, inputtouch, dompelement);

@@ -43,7 +43,6 @@ define(function(require) {
     }
 
     var cnv =  new PElement(c, this);
-    this._elements.push(cnv);
     this.context(cnv);
     this._applyDefaults();
 
@@ -58,7 +57,6 @@ define(function(require) {
       var elt = document.getElementById(e);
       if (elt) {
         var pe = new PElement(elt, this);
-        this._elements.push(pe);
         obj = pe;
       } else {
         obj = null;
@@ -85,6 +83,28 @@ define(function(require) {
 
     }
   };
+
+  p5.prototype.getId = function (e) {
+    var res = document.getElementById(e);
+    if (res) {
+      return new PElement(res, this);
+    } else {
+      return null;
+    }
+  };
+
+  p5.prototype.getClass = function (e) {
+    var arr = [];
+    var res = document.getElementsByClassName(e);
+    if (res) {
+      for (var j = 0; j < res.length; j++) {
+        var obj = new PElement(res[j], this);
+        arr.push(obj);
+      }
+    }
+    return arr;
+  };
+
 
   return p5;
 

@@ -14,6 +14,11 @@ define(function(require) {
       this.pInst._setProperty('canvas', elt);
     }
   }
+
+  PElement.prototype.parent = function(id) {
+    document.getElementById(id).appendChild(this.elt);
+  };
+
   PElement.prototype.html = function(html) {
     this.elt.innerHTML = html;
   };
@@ -43,9 +48,11 @@ define(function(require) {
       }
       this.width = this.elt.offsetWidth;
       this.height = this.elt.offsetHeight;
-      if (this.pInst.curElement.elt === this.elt) {
-        this.pInst._setProperty('width', this.elt.offsetWidth);
-        this.pInst._setProperty('height', this.elt.offsetHeight);
+      if (this.pInst) { // main canvas associated with p5 instance
+        if (this.pInst.curElement.elt === this.elt) {
+          this.pInst._setProperty('width', this.elt.offsetWidth);
+          this.pInst._setProperty('height', this.elt.offsetHeight);
+        }
       }
     }
   };
@@ -77,7 +84,7 @@ define(function(require) {
     this.elt.addEventListener('mouseout', function(e){fxn(e, _this);}, false);
   };
 
-  p5.prototype.PElement = PElement;
+  p5.PElement = PElement;
   
   return PElement;
 });
