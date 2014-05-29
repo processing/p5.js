@@ -14,8 +14,11 @@ define(function(require) {
     }
   }
 
-  PElement.prototype.parent = function(id) {
-    document.getElementById(id).appendChild(this.elt);
+  PElement.prototype.parent = function(parent) {
+    if (typeof parent === 'string') {
+      parent = document.getElementById(parent);
+    }
+    parent.appendChild(this.elt);
   };
 
   PElement.prototype.html = function(html) {
