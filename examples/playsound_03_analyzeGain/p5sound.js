@@ -48,15 +48,18 @@ var P5sound = function() {
   this.input = audiocontext.createGain();
   this.output = audiocontext.createGain();
   this.audiocontext = audiocontext;
+
+  // connect output to master
+  this.output.connect(this.audiocontext.destination);
 }
 
 
 P5sound.prototype.connect = function(unit){
-  this.output.connect();
+  this.output.connect(unit);
 }
 
 P5sound.prototype.disconnect = function(unit){
-  this.output.disconnect();
+  this.output.disconnect(unit);
 }
 
 // set gain ("amplitude")
@@ -136,6 +139,56 @@ isFileSupported = function(extension) {
 }
 
 
+
+// Another way to Loop (for callbacks)
+var loop_now = function(sfile) {
+  console.log('ready to loop!');
+  if (sfile.buffer) {
+    sfile.source = sfile.p5s.audiocontext.createBufferSource();
+    sfile.source.buffer = sfile.buffer;
+    sfile.source.loop = true;
+
+    // set variables like playback rate, gain and panning
+    sfile.source.playbackRate.value = sfile.playbackRate;
+    sfile.source.gain.value = sfile.gain;
+    // connect to panner, which is already connected to the destination.
+    sfile.source.connect(sfile.panner); 
+
+    // play the sound
+    sfile.source.start(0);
+  }
+  // If it hasn't loaded the buffer yet, load it then loop it in the callback
+  else {
+    console.log('not loaded yet');
+//    sfile.load(loop);
+  }
+}
+
+// Another way to Play (for callbacks)
+var play_now = function(sfile) {
+  console.log('ready to play!');
+  if (sfile.buffer) {
+    sfile.source = sfile.p5s.audiocontext.createBufferSource();
+    sfile.source.buffer = sfile.buffer;
+    sfile.source.loop = false;
+
+    // set variables like playback rate, gain and panning
+    sfile.source.playbackRate.value = sfile.playbackRate;
+    sfile.source.gain.value = sfile.gain;
+    // connect to panner, which is already connected to the destination.
+    sfile.source.connect(sfile.panner); 
+
+    // play the sound
+    sfile.source.start(0);
+  }
+  // If it hasn't loaded the buffer yet, load it then loop it in the callback
+  else {
+    console.log('not loaded yet');
+//    sfile.load(loop);
+  }
+}
+
+
 // ====================================
 // SoundFile Object
 // ====================================
@@ -146,7 +199,7 @@ Because sound file formats such as mp3, ogg, wav and m4a/aac are not compatible 
 you have the option to include multiple paths to multiple file formats (i.e. sound.wav, sound.mp3, sound.ogg)
 
 */
-var SoundFile = function(path1, path2, path3) {
+var SoundFile = function(p5sound, path1, path2, path3) {
 
   var path = path1;
 
@@ -189,6 +242,9 @@ var SoundFile = function(path1, path2, path3) {
       }
   }
 
+  // store a local reference to the p5sound context
+  this.p5s = p5sound;
+
   // player variables
   this.url = path;
   this.source = null;
@@ -203,15 +259,12 @@ var SoundFile = function(path1, path2, path3) {
   this.panner.distanceModel = 'linear';
   this.panner.setPosition(0,0,0);
 
-  //probably not the best way to do this.
-  //should extend the P5 class instead.
-  this.audiocontext = audiocontext;
 
   // the panner is always connected to the destination
-  this.panner.connect(this.audiocontext.destination);
+  this.panner.connect(p5sound.output);
 
   // calls load to load the AudioBuffer asyncronously
-  this.load(print);
+  this.load();
 }
 
 // load the sound file (this happens automatically when the soundfile is instantiated)
@@ -243,7 +296,7 @@ SoundFile.prototype.load = function(callback){
 SoundFile.prototype.play = function(rate, amp) {
   if (this.buffer) {
     // make the source
-    this.source = this.audiocontext.createBufferSource();
+    this.source = this.p5s.audiocontext.createBufferSource();
     this.source.buffer = this.buffer;
     this.source.loop = false;
 
@@ -257,6 +310,11 @@ SoundFile.prototype.play = function(rate, amp) {
     // play the sound
     this.source.start(0);
   }
+  // If soundFile hasn't loaded the buffer yet, load it then play it in the callback
+  else {
+    console.log('not ready to play');
+    this.load(play_now);
+  }
 }
 
 // variables (TK)
@@ -267,7 +325,7 @@ SoundFile.prototype.play = function(rate, amp) {
 // rate, pos, amp, add, cue
 SoundFile.prototype.loop = function() {
   if (this.buffer) {
-    this.source = this.audiocontext.createBufferSource();
+    this.source = this.p5s.audiocontext.createBufferSource();
     this.source.buffer = this.buffer;
     this.source.loop = true;
 
@@ -280,7 +338,13 @@ SoundFile.prototype.loop = function() {
     // play the sound
     this.source.start(0);
   }
+  // If soundFile hasn't loaded the buffer yet, load it then loop it in the callback
+  else {
+    console.log('not ready to loop');
+    this.load(loop_now);
+  }
 }
+
 
 
 // Loop a sound, or stop looping a sound
@@ -374,14 +438,19 @@ SoundFile.prototype.duration = function() {
 // The MIT License (MIT) Copyright (c) 2014 Chris Wilson
 // ================
 
-var Amplitude = function() {
+var Amplitude = function(p5s) {
+
+  // store a reference to the p5sound instance
+  this.p5s = p5s;
+
+  // set audio context
+  this.audiocontext = this.p5s.audiocontext;
+  this.processor = this.audiocontext.createScriptProcessor(this.bufferSize);
+
 
   // Set to 512 for now. In future iterations, this should be inherited
   this.bufferSize = 512;
 
-  // probably not the best way to do this. Should extend the P5Sound class instead.
-  this.audiocontext = audiocontext;
-  this.processor = this.audiocontext.createScriptProcessor(this.bufferSize);
 
   // this may only be necessary because of a Chrome bug
   this.processor.connect(this.audiocontext.destination);
@@ -394,10 +463,20 @@ var Amplitude = function() {
 }
 
 
-// note that the buffer must already exist (i.e. be playing) before connecting.
+// Connects to the p5sound instance (master output) by default.
+// Optionally, you can pass in a specific source (i.e. a soundfile).
+// If you give it a source, the source's buffer must already exist (i.e. be playing) before connecting.
 Amplitude.prototype.input = function(source) {
-  source.connect(this.processor);
-
+  if (source == null) {
+    this.p5s.output.connect(this.processor);
+  }
+  else if (typeof(source.connect)) {
+    source.connect(this.processor);
+  }
+  // connect to the master out of p5s instance by default
+  else {
+    this.p5s.output.connect(this.processor);
+  }
 }
 
 Amplitude.prototype.volumeAudioProcess = function(event) {
