@@ -229,6 +229,12 @@ define(function (require) {
     this._startTime = new Date().getTime();
 
     this._userNode = node;
+    // find node if id given
+    if (this._userNode) {
+      if (typeof this._userNode === 'string') {
+        this._userNode = document.getElementById(this._userNode);
+      }
+    }
 
     // TODO: ???
     this._preloadCount = 0;
@@ -297,37 +303,40 @@ define(function (require) {
           p5.prototype[c] = constants[c];
         }
       }
-      window.addEventListener('mousemove', function (e) {
+
+      // bind events to window or to container div (instance mode)
+      var ctx = this._userNode ? this._userNode : window;
+      ctx.addEventListener('mousemove', function (e) {
         this.onmousemove(e);
       }.bind(this));
-      window.addEventListener('mousedown', function (e) {
+      ctx.addEventListener('mousedown', function (e) {
         this.onmousedown(e);
       }.bind(this));
-      window.addEventListener('mouseup', function (e) {
+      ctx.addEventListener('mouseup', function (e) {
         this.onmouseup(e);
       }.bind(this));
-      window.addEventListener('mouseclick', function (e) {
+      ctx.addEventListener('mouseclick', function (e) {
         this.onmouseclick(e);
       }.bind(this));
-      window.addEventListener('mousewheel', function (e) {
+      ctx.addEventListener('mousewheel', function (e) {
         this.onmousewheel(e);
       }.bind(this));
-      window.addEventListener('keydown', function (e) {
+      ctx.addEventListener('keydown', function (e) {
         this.onkeydown(e);
       }.bind(this));
-      window.addEventListener('keyup', function (e) {
+      ctx.addEventListener('keyup', function (e) {
         this.onkeyup(e);
       }.bind(this));
-      window.addEventListener('keypress', function (e) {
+      ctx.addEventListener('keypress', function (e) {
         this.onkeypress(e);
       }.bind(this));
-      window.addEventListener('touchstart', function (e) {
+      ctx.addEventListener('touchstart', function (e) {
         this.ontouchstart(e);
       }.bind(this));
-      window.addEventListener('touchmove', function (e) {
+      ctx.addEventListener('touchmove', function (e) {
         this.ontouchmove(e);
       }.bind(this));
-      window.addEventListener('touchend', function (e) {
+      ctx.addEventListener('touchend', function (e) {
         this.ontouchend(e);
       }.bind(this));
     }
@@ -354,13 +363,6 @@ define(function (require) {
    */
   p5.prototype._start = function () {
 
-    // Set input node if there was one
-    if (this._userNode) {
-      if (typeof this._userNode === 'string') {
-        this._userNode = document.getElementById(this._userNode);
-      }
-    }
-    
     // Always create a default canvas.
     // Later on if the user calls createCanvas, this default one
     // will be replaced
