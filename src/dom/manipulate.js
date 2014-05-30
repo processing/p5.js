@@ -19,27 +19,20 @@ define(function(require) {
     var c = document.createElement('canvas');
     c.setAttribute('width', w);
     c.setAttribute('height', h);
+    
     if (isDefault) {
       c.id = 'defaultCanvas';
-      document.body.appendChild(c);
     } else { // remove the default canvas if new one is created
       var defaultCanvas = document.getElementById('defaultCanvas');
       if (defaultCanvas) {
         defaultCanvas.parentNode.removeChild(defaultCanvas);
       }
-      if (this._userNode) { // user input node case
-        if(this._userNode.tagName === 'CANVAS') {
-          // if user input node exists and it's a canvas, use that
-          c = this._userNode;
-          c.setAttribute('width', w);
-          c.setAttribute('height', h);
-        } else {
-          // if user input node exists and it's not a canvas, append one
-          this._userNode.appendChild(c);
-        }
-      } else {
-        document.body.appendChild(c);
-      }
+    }
+
+    if (this._userNode) { // user input node case
+      this._userNode.appendChild(c);
+    } else {
+      document.body.appendChild(c);
     }
 
     var cnv =  new PElement(c, this);

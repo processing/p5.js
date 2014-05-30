@@ -353,6 +353,14 @@ define(function (require) {
    * @return {Undefined}
    */
   p5.prototype._start = function () {
+
+    // Set input node if there was one
+    if (this._userNode) {
+      if (typeof this._userNode === 'string') {
+        this._userNode = document.getElementById(this._userNode);
+      }
+    }
+    
     // Always create a default canvas.
     // Later on if the user calls createCanvas, this default one
     // will be replaced
@@ -361,13 +369,6 @@ define(function (require) {
       this._defaultCanvasSize.height,
       true
     );
-
-    // Set input node if there was one
-    if (this._userNode) {
-      if (typeof this._userNode === 'string') {
-        this._userNode = document.getElementById(this._userNode);
-      }
-    }
 
     var userPreload = this.preload || window.preload; // look for "preload"
     var context = this._isGlobal ? window : this;

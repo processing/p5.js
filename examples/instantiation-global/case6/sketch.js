@@ -1,9 +1,11 @@
 // CASE 6
 // setup() and draw() with createCanvas(), holding pointer
+// parent call moves canvas to div with given id
 var canvas;
 function setup() {
   canvas = createCanvas(400, 400);
   canvas.position(100, 50); // allows you to set position, id, etc
+  canvas.parent('test');
   background(255, 255, 0);
 }
 function draw() {
