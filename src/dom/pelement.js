@@ -8,15 +8,18 @@ define(function(require) {
     this.pInst = pInst;
     this.width = this.elt.offsetWidth;
     this.height = this.elt.offsetHeight;
-    if (elt instanceof HTMLCanvasElement) {
+    if (elt instanceof HTMLCanvasElement && this.pInst) {
       this.context = elt.getContext('2d');
       // for pixel method sharing with pimage
       this.pInst._setProperty('canvas', elt);
     }
   }
 
-  PElement.prototype.parent = function(id) {
-    document.getElementById(id).appendChild(this.elt);
+  PElement.prototype.parent = function(parent) {
+    if (typeof parent === 'string') {
+      parent = document.getElementById(parent);
+    }
+    parent.appendChild(this.elt);
   };
 
   PElement.prototype.html = function(html) {

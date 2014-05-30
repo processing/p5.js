@@ -945,13 +945,16 @@ var dompelement = function (require, core, constants) {
             this.pInst = pInst;
             this.width = this.elt.offsetWidth;
             this.height = this.elt.offsetHeight;
-            if (elt instanceof HTMLCanvasElement) {
+            if (elt instanceof HTMLCanvasElement && this.pInst) {
                 this.context = elt.getContext('2d');
                 this.pInst._setProperty('canvas', elt);
             }
         }
-        PElement.prototype.parent = function (id) {
-            document.getElementById(id).appendChild(this.elt);
+        PElement.prototype.parent = function (parent) {
+            if (typeof parent === 'string') {
+                parent = document.getElementById(parent);
+            }
+            parent.appendChild(this.elt);
         };
         PElement.prototype.html = function (html) {
             this.elt.innerHTML = html;
@@ -1083,25 +1086,6 @@ var dommanipulate = function (require, core, inputmouse, inputtouch, dompelement
                     this.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
                 }
             }
-        };
-        p5.prototype.getId = function (e) {
-            var res = document.getElementById(e);
-            if (res) {
-                return new PElement(res, this);
-            } else {
-                return null;
-            }
-        };
-        p5.prototype.getClass = function (e) {
-            var arr = [];
-            var res = document.getElementsByClassName(e);
-            if (res) {
-                for (var j = 0; j < res.length; j++) {
-                    var obj = new PElement(res[j], this);
-                    arr.push(obj);
-                }
-            }
-            return arr;
         };
         return p5;
     }({}, core, inputmouse, inputtouch, dompelement);
