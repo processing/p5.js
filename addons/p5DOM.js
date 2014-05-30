@@ -1,5 +1,26 @@
 var p5DOM = (function(){
   return {
+    getElement: function (e) {
+      var res = document.getElementById(e);
+      if (res) {
+        return new p5.PElement(res);
+      } else {
+        return null;
+      }
+    },
+
+    getElements: function (e) {
+      var arr = [];
+      var res = document.getElementsByClassName(e);
+      if (res) {
+        for (var j = 0; j < res.length; j++) {
+          var obj = new p5.PElement(res[j]);
+          arr.push(obj);
+        }
+      }
+      return arr;
+    },
+
     createDiv: function(text) {
       var elt = document.createElement('div');
       elt.innerHTML = text;
