@@ -62,12 +62,13 @@ define(function(require) {
       this._setProperty('width', obj.elt.offsetWidth);
       this._setProperty('height', obj.elt.offsetHeight);
 
+      var p = this;
       window.onfocus = function() {
-        this._setProperty('focused', true);
+        p._setProperty('focused', true);
       };
 
       window.onblur = function() {
-        this._setProperty('focused', false);
+        p._setProperty('focused', false);
       };
 
       if (typeof this.curElement.context !== 'undefined') {
