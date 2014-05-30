@@ -4,18 +4,19 @@
 // ====================
 
 var ball;
-
 var soundFile;
+var p5s;
 
 function setup() {
   createCanvas(400, 400); 
   background(0, 0, 0);
 
   // create a p5sound context
-  p5s = new P5sound();
+  p5s = new P5sound(this);
 
   // create a SoundFile
-  soundFile = new SoundFile('drum.ogg', 'drum.wav', 'drum.mp3');
+  soundFile = new SoundFile(this, 'drum.ogg', 'drum.wav', 'drum.mp3');
+  soundFile.setGain(.6);
 
   // create the ball
   ball = ellipse()
@@ -30,17 +31,18 @@ function draw() {
 
   ball.x += ball.speed;
 
-  // map the ball's x location to a panning degree (float between -1.0 and 1.0)
-  var panning = map(ball.x, 0., width,-1.0, 1.0);
-  soundFile.pan(panning);
 
   // when the ball hits the wall...
   if (ball.x > width) {
 
-    var newSpeed = Math.random();
-    ball.speed = -(ball.speed);
+    // map the ball's x location to a panning degree (float between -1.0 and 1.0)
+    var panning = map(ball.x, 0., width,-1.0, 1.0);
+    soundFile.pan(panning);
+
 
     // set a random playback speed for the sound
+    var newSpeed = Math.random();
+    ball.speed = -(ball.speed);
     soundFile.rate(newSpeed);
 
     // play the sound
@@ -49,11 +51,13 @@ function draw() {
 
   if (ball.x < 0) {
 
-    var newSpeed = Math.random();
-    ball.speed = -(ball.speed);
-
+    // map the ball's x location to a panning degree (float between -1.0 and 1.0)
+    var panning = map(ball.x, 0., width,-1.0, 1.0);
+    soundFile.pan(panning);
 
     // set a random playback speed for the sound
+    var newSpeed = Math.random();
+    ball.speed = -(ball.speed);
     soundFile.rate(newSpeed);
 
     // play the sound

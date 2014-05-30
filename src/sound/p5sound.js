@@ -1,25 +1,26 @@
-/*
+/**
+ *  This library defines the P5sound class and webaudio wrappers for p5.
+ *
  *  Version .0001
  *  Experimenting with Web Audio wrapper for p5.js
  *  Incorporates elements from:
- *  --> TONE.js (c) Yotam Mann, 2014. Licensed under The MIT License (MIT). https://github.com/TONEnoTONE/Tone.js
- *  --> buzz.js (c) Jay Salvat, 2013. Licensed under The MIT License (MIT). http://buzz.jaysalvat.com/
+ *   - TONE.js (c) Yotam Mann, 2014. Licensed under The MIT License (MIT). https://github.com/TONEnoTONE/Tone.js
+ *   - buzz.js (c) Jay Salvat, 2013. Licensed under The MIT License (MIT). http://buzz.jaysalvat.com/
  */
 
 
-// =====================================
-// The p5sound object contains audio context, master gain
-// =====================================
-
+/**
+ * Web Audio SHIMS and helper functions to ensure compatability across browsers
+ */
 
 // If window.AudioContext is unimplemented, it will alias to window.webkitAudioContext.
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
-// Create the Audio Context.
+// Create the Audio Context
 var audiocontext;
 audiocontext = new AudioContext();
 
-// SHIMS (inspired by tone.js and AudioContext MonkeyPacth) ////////////////////////////////////////////////////////////////////
+// SHIMS (inspired by tone.js and the AudioContext MonkeyPatch https://github.com/cwilso/AudioContext-MonkeyPatch/ (c) 2013 Chris Wilson, Licensed under the Apache License) //
 
 if (typeof audiocontext.createGain !== "function"){
   audioContext.createGain = audioContext.createGainNode;
@@ -44,77 +45,30 @@ if (!AudioContext.prototype.hasOwnProperty('createScriptProcessor')){
 }
 
 
-var P5sound = function() {
-  this.input = audiocontext.createGain();
-  this.output = audiocontext.createGain();
-  this.audiocontext = audiocontext;
-
-  // connect output to master
-  this.output.connect(this.audiocontext.destination);
-}
-
-
-P5sound.prototype.connect = function(unit){
-  this.output.connect(unit);
-}
-
-P5sound.prototype.disconnect = function(unit){
-  this.output.disconnect(unit);
-}
-
-// set gain ("amplitude")
-P5sound.prototype.setAmp = function(vol){
-  this.output.gain.value = vol;
-}
-
-// get gain ("amplitude")
-P5sound.prototype.getAmp = function(){
-  return this.output.gain.value;
-}
-
-// ================
-// HELPER FUNCTIONS
-// ================
-
-// If the given argument is undefined, go with the default
-  //@param {*} given
-  //@param {*} fallback
-  //@returns {*}
-  P5sound.prototype.defaultArg = function(given, fallback){
-    return isUndef(given) ? fallback : given;
-  }
-
-// ======================================
-// Determine which filetypes are supported (inspired by buzz.js)
-// ======================================
-
-// Create an audio element
+/**
+ * Determine which filetypes are supported (inspired by buzz.js)
+ * The audio element (el) will only be used to test browser support for various audio formats
+ */
 el = document.createElement('audio');
 
 isSupported = function() {
   return !!el.canPlayType;
 }
-
 isOGGSupported = function() {
   return !!el.canPlayType && el.canPlayType('audio/ogg; codecs="vorbis"');
 }
-
 isMP3Supported = function() {
   return !!el.canPlayType && el.canPlayType('audio/mpeg;');
 }
-
 isWAVSupported = function() {
   return !!el.canPlayType && el.canPlayType('audio/wav; codecs="1"');
 }
-
 isAACSupported = function() {
   return !!el.canPlayType && (el.canPlayType('audio/x-m4a;') || el.canPlayType('audio/aac;'));
 }
-
 isAIFSupported = function() {
   return !!el.canPlayType && el.canPlayType('audio/x-aiff;');
 }
-
 isFileSupported = function(extension) {
   switch(extension.toLowerCase())
   {
@@ -139,10 +93,13 @@ isFileSupported = function(extension) {
 }
 
 
+/**
+ * Callbacks to be used for soundfile playback & loading
+ */
 
-// Another way to Loop (for callbacks)
+// If a SoundFile is looped before the buffer.source has loaded, it will load the file and pass this function as the callback.
 var loop_now = function(sfile) {
-  console.log('ready to loop!');
+  console.log('looping ' + sfile.url);
   if (sfile.buffer) {
     sfile.source = sfile.p5s.audiocontext.createBufferSource();
     sfile.source.buffer = sfile.buffer;
@@ -151,22 +108,22 @@ var loop_now = function(sfile) {
     // set variables like playback rate, gain and panning
     sfile.source.playbackRate.value = sfile.playbackRate;
     sfile.source.gain.value = sfile.gain;
+
     // connect to panner, which is already connected to the destination.
     sfile.source.connect(sfile.panner); 
 
     // play the sound
     sfile.source.start(0);
   }
-  // If it hasn't loaded the buffer yet, load it then loop it in the callback
+
   else {
-    console.log('not loaded yet');
-//    sfile.load(loop);
+    console.log(sfile.url + ' not loaded yet');
   }
 }
 
-// Another way to Play (for callbacks)
+// If a SoundFile is looped before the buffer.source has loaded, it will load the file and pass this function as the callback.
 var play_now = function(sfile) {
-  console.log('ready to play!');
+  console.log('playing ' + sfile.url);
   if (sfile.buffer) {
     sfile.source = sfile.p5s.audiocontext.createBufferSource();
     sfile.source.buffer = sfile.buffer;
@@ -175,31 +132,75 @@ var play_now = function(sfile) {
     // set variables like playback rate, gain and panning
     sfile.source.playbackRate.value = sfile.playbackRate;
     sfile.source.gain.value = sfile.gain;
+
     // connect to panner, which is already connected to the destination.
     sfile.source.connect(sfile.panner); 
 
     // play the sound
     sfile.source.start(0);
   }
-  // If it hasn't loaded the buffer yet, load it then loop it in the callback
+
   else {
-    console.log('not loaded yet');
-//    sfile.load(loop);
+    console.log(sfile.url + ' not loaded yet');
   }
 }
 
 
-// ====================================
-// SoundFile Object
-// ====================================
-/*
-The SoundFile takes a path to a sound file. 
 
-Because sound file formats such as mp3, ogg, wav and m4a/aac are not compatible across all web browsers, 
-you have the option to include multiple paths to multiple file formats (i.e. sound.wav, sound.mp3, sound.ogg)
+/**
+ * The P5sound object contains audio context, master gain
+ * @constructor
+ * @class P5sound
+ * @param {window} a reference to the document window ("this")
+ */
+var P5sound = function(w) {
+  this.input = audiocontext.createGain();
+  this.output = audiocontext.createGain();
+  this.audiocontext = audiocontext;
 
-*/
-var SoundFile = function(p5sound, path1, path2, path3) {
+  // tell the window about the p5 object so that we can reference it in the future
+  w.p5sound = this;
+
+
+  // connect output to master
+  this.output.connect(this.audiocontext.destination);
+}
+
+
+P5sound.prototype.connect = function(unit){
+  this.output.connect(unit);
+}
+
+P5sound.prototype.disconnect = function(unit){
+  this.output.disconnect(unit);
+}
+
+// set gain ("amplitude?")
+P5sound.prototype.setGain = function(vol){
+  this.output.gain.value = vol;
+}
+
+// get gain ("amplitude?")
+P5sound.prototype.getGain = function(){
+  return this.output.gain.value;
+}
+
+
+
+/**
+ * The SoundFile object.
+ * 
+ * Because sound file formats such as mp3, ogg, wav and m4a/aac are not compatible across all web browsers, 
+ * you have the option to include multiple paths to multiple file formats (i.e. sound.wav, sound.mp3, sound.ogg)
+ *
+ * @constructor
+ * @class SoundFile
+ * @param {Object} [w]      a reference to the document.window (usually 'this', i.e. new Amplitude(this); ) 
+ * @param {path1} [path1]   path to a sound file 
+ * @param {path2} [path2]   (optional) path to additional format of the sound file to ensure compatability across browsers
+ * @param {path3} [path3]   (optional) path to additional format of the sound file to ensure compatability across browsers
+ */
+var SoundFile = function(w, path1, path2, path3) {
 
   var path = path1;
 
@@ -216,7 +217,6 @@ var SoundFile = function(p5sound, path1, path2, path3) {
       path1 = false;
       }
   }
-
   if (path1 == false && path2) {
     var extension = path2.split(".").pop();
     var supported = isFileSupported(extension);
@@ -229,7 +229,6 @@ var SoundFile = function(p5sound, path1, path2, path3) {
       path2 = false;
       }
   }
-
   if (path2 == false && path3) {
     var extension = path3.split(".").pop();
     var supported = isFileSupported(extension);
@@ -242,15 +241,15 @@ var SoundFile = function(p5sound, path1, path2, path3) {
       }
   }
 
-  // store a local reference to the p5sound context
-  this.p5s = p5sound;
+  // store a local reference to the window's p5sound context
+  this.p5s = w.p5sound;
 
   // player variables
   this.url = path;
   this.source = null;
   this.buffer = null;
   this.playbackRate = 1;
-  this.gain = 1;
+  this.gain = .8;
 
   // sterep panning
   this.panPosition = 0.0;
@@ -261,13 +260,13 @@ var SoundFile = function(p5sound, path1, path2, path3) {
 
 
   // the panner is always connected to the destination
-  this.panner.connect(p5sound.output);
+  this.panner.connect(this.p5s.output);
 
   // calls load to load the AudioBuffer asyncronously
   this.load();
 }
 
-// load the sound file (this happens automatically when the soundfile is instantiated)
+// Load the sound file (this happens automatically when the soundfile is instantiated)
 SoundFile.prototype.load = function(callback){
   if (!this.buffer) {
     var request = new XMLHttpRequest();
@@ -292,13 +291,28 @@ SoundFile.prototype.load = function(callback){
   }
 }
 
-
+/**
+ * Play the SoundFile
+ *
+ * @method play
+ * @param {Number} [rate]             (optional) playback rate. 1.0 is normal, .5 plays the sound at half speed, 2.0 is twice as fast.
+ * @param {Number} [amp]              (optional) amplitude (volume) of playback
+ * @for SoundFile
+ */
 SoundFile.prototype.play = function(rate, amp) {
   if (this.buffer) {
     // make the source
     this.source = this.p5s.audiocontext.createBufferSource();
     this.source.buffer = this.buffer;
     this.source.loop = false;
+
+    // set rate and amp if provided
+    if (rate) {
+      this.playbackRate = rate;
+    }
+    if (amp) {
+      this.gain = amp;
+    }
 
     // set variables like playback rate, gain and panning
     this.source.playbackRate.value = this.playbackRate;
@@ -317,12 +331,19 @@ SoundFile.prototype.play = function(rate, amp) {
   }
 }
 
-// variables (TK)
-// rate
-// rate, amp
-// rate, pos, amp
-// rate, pos, amp, add
-// rate, pos, amp, add, cue
+/**
+ * Loop the SoundFile. 
+ *
+ * Will be able to accept the following parameters (not yet implemented):
+ * rate
+ * rate, amp
+ * rate, pos, amp
+ * rate, pos, amp, add
+ * rate, pos, amp, add, cue
+ *
+ * @method loop
+ * @for SoundFile
+ */
 SoundFile.prototype.loop = function() {
   if (this.buffer) {
     this.source = this.p5s.audiocontext.createBufferSource();
@@ -346,8 +367,12 @@ SoundFile.prototype.loop = function() {
 }
 
 
-
-// Loop a sound, or stop looping a sound
+/**
+ * Toggle whether a soundfile is looping or not. Either loop the sound, or stop looping (and playing) the sound.
+ *
+ * @method toggleLoop
+ * @for SoundFile
+ */
 SoundFile.prototype.toggleLoop = function() {
   if (this.buffer && this.source) {
     this.source.loop = !this.source.loop;
@@ -363,12 +388,36 @@ SoundFile.prototype.toggleLoop = function() {
   }
 }
 
+/**
+ * Returns 'true' if a SoundFile is looping, 'false' if not.
+ *
+ * @method toggleLoop
+ * @return {Boolean}
+ * @for SoundFile
+ */
+SoundFile.prototype.isLooping = function() {
+  return this.source.loop;
+}
+
+/**
+ * Stop soundfile playback.
+ *
+ * @method stop
+ * @for SoundFile
+ */
 SoundFile.prototype.stop = function() {
   if (this.buffer && this.source) {
     this.source.stop();
   }
 }
 
+/**
+ * Set the playback rate of a sound file. Will change the speed and the pitch.
+ *
+ * @method rate
+ * @param {Number} [playbackRate]     Set the playback rate. 1.0 is normal, .5 is half-speed, 2.0 is twice as fast. Must be greater than zero.
+ * @for SoundFile
+ */
 SoundFile.prototype.rate = function(playbackRate) {
   this.playbackRate = playbackRate;
 }
@@ -383,18 +432,36 @@ SoundFile.prototype.frames = function() {
   // Return Samples
 }
 
-// set gain ("amplitude")
+/**
+ * Set the output gain of a sound file.
+ *
+ * @method setGain
+ * @param {Number} [vol]     Set the gain. 1.0 is normal. 0.0 is silence.
+ * @for SoundFile
+ */
 SoundFile.prototype.setGain = function(vol){
   this.gain = vol;
 }
 
-// get gain ("amplitude")
+/**
+ * Returns the output gain of a sound file.
+ *
+ * @method getGain
+ * @returns {Number}        1.0 is normal. 0.0 is silence.
+ * @for SoundFile
+ */
 SoundFile.prototype.getGain = function(){
   return this.gain;
 }
 
 
-// stereo panner anywhere between -1.0 (left) and 1.0 (right)
+/**
+ * Set the stereo panning of a sound file.
+ *
+ * @method pan
+ * @param {Number} [pval]     Set the stereo panner to a floating point number between -1.0 (left) and 1.0 (right). 0.0 is center and default.
+ * @for SoundFile
+ */
 SoundFile.prototype.pan = function(pval) {
   this.panPosition = pval;
   pval = pval * 90.0;
@@ -408,8 +475,14 @@ SoundFile.prototype.pan = function(pval) {
   this.panner.setPosition(x, 0, z);
 }
 
+/**
+ * Returns the current stereo panning value of a sound file.
+ *
+ * @method getPan
+ * @return {Number}     Returns the stereo pan setting of the soundFile as a number between -1.0 (left) and 1.0 (right). 0.0 is center and default.
+ * @for SoundFile
+ */
 SoundFile.prototype.getPan = function() {
-  // TO DO
   return this.panPosition;
 }
 
@@ -420,6 +493,14 @@ SoundFile.prototype.connect = function(to) {
   }
 }
 
+
+/**
+ * Returns the duration of a sound file.
+ *
+ * @method duration
+ * @return {Number}     The duration of the soundFile in seconds.
+ * @for SoundFile
+ */
 SoundFile.prototype.duration = function() {
   // Return Duration
   if (this.buffer) {
@@ -429,29 +510,35 @@ SoundFile.prototype.duration = function() {
   }
 }
 
-// ================
-// AMPLITUDE OBJECT
-// Inspired by tone.js https://github.com/TONEnoTONE/Tone.js/blob/master/Tone/component/Meter.js
-// The MIT License (MIT) Copyright (c) Yotam Mann 2014
-//
-// Also inspired by https://github.com/cwilso/volume-meter/blob/master/volume-meter.js
-// The MIT License (MIT) Copyright (c) 2014 Chris Wilson
-// ================
+  /**
+  * Amplitude
+  * 
+  * Inspired by tone.js https://github.com/TONEnoTONE/Tone.js/blob/master/Tone/component/Meter.js
+  * The MIT License (MIT) Copyright (c) Yotam Mann 2014
+  * Also inspired by https://github.com/cwilso/volume-meter/blob/master/volume-meter.js
+  * The MIT License (MIT) Copyright (c) 2014 Chris Wilson
+  * 
+  * @constructor
+  * @class Amplitude
+  * @param {Object} [w]          a reference to the document.window (usually 'this', i.e. new Amplitude(this); ) 
+  */
+var Amplitude = function(w) {
 
-var Amplitude = function(p5s) {
-
-  // store a reference to the p5sound instance
-  this.p5s = p5s;
+  // store a reference to the window's p5sound instance
+  this.p5s = w.p5sound;
 
   // set audio context
   this.audiocontext = this.p5s.audiocontext;
   this.processor = this.audiocontext.createScriptProcessor(this.bufferSize);
 
 
-  // Set to 512 for now. In future iterations, this should be inherited
+  // Set to 512 for now. In future iterations, this should be inherited or parsed from p5sound's default
   this.bufferSize = 512;
 
+  //smoothing (defaults to .8)
+  this.smoothing = .8;
 
+  console.log('smoothing: ' + this.smoothing);
   // this may only be necessary because of a Chrome bug
   this.processor.connect(this.audiocontext.destination);
 
@@ -463,22 +550,55 @@ var Amplitude = function(p5s) {
 }
 
 
-// Connects to the p5sound instance (master output) by default.
-// Optionally, you can pass in a specific source (i.e. a soundfile).
-// If you give it a source, the source's buffer must already exist (i.e. be playing) before connecting.
-Amplitude.prototype.input = function(source) {
-  if (source == null) {
+
+/**
+ * Connects to the p5sound instance (master output) by default.
+ * Optionally, you can pass in a specific source (i.e. a soundfile).
+ * If you give it a source, the source's buffer must already exist (i.e. be playing) before connecting.
+ *
+ * @method input
+ * @param {soundObject|undefined} [snd]       set the sound source (optional, defaults to master output). If it is a soundFile, the buffer must have finished loading.
+ * @param {Number|undefined} [smoothing]      a range between 0.0 and .999 to smooth amplitude readings. This is optional, defaults to .8)
+ * @for Amplitude
+ */
+
+ // TO DO figure out how to connect to a buffer before it is loaded
+Amplitude.prototype.input = function(snd, smoothing) {
+  var thisAmp = this;
+
+  // set smoothing if smoothing is provided
+  if (smoothing) {
+    this.smoothing = smoothing;
+  }
+
+  // connect to the master out of p5s instance if no snd is provided
+  if (snd == null) {
+    console.log('no s!');
     this.p5s.output.connect(this.processor);
   }
-  else if (typeof(source.connect)) {
-    source.connect(this.processor);
+
+  // If buffer.source hassn't finished loading, ideally, input should wait for the buffer to load and then connect.
+  // But for now, it just connects to master.
+  else if (snd.source == null) {
+    console.log('source is not ready to connect. Connecting to master output instead');
+    // Not working: snd.load(thisAmp.input); // TO DO: figure out how to make it work!
+    this.p5s.output.connect(this.processor);
   }
-  // connect to the master out of p5s instance by default
+
+  // connect to the sound if it is available
+  else if (typeof(snd.connect)) {
+    snd.connect(this.processor);
+    console.log('connecting Amplitude to ' + snd.url);
+  }
+
+  // otherwise, connect to the master out of p5s instance (default)
   else {
     this.p5s.output.connect(this.processor);
   }
 }
 
+
+// TO DO make this stereo / dependent on # of audio channels
 Amplitude.prototype.volumeAudioProcess = function(event) {
   // return result
   var inputBuffer = event.inputBuffer.getChannelData(0);
@@ -486,7 +606,7 @@ Amplitude.prototype.volumeAudioProcess = function(event) {
   var total = 0;
   var sum = 0;
   var x;
-//  console.log('audio event! ' + input);
+
   for (var i = 0; i < bufLength; i++) {
     x = inputBuffer[i];
     total += x;
@@ -498,13 +618,16 @@ Amplitude.prototype.volumeAudioProcess = function(event) {
   // ... then take the square root of the sum.
   var rms = Math.sqrt(sum / bufLength);
 
-  this.volume = Math.max(rms, this.volume*.95);
-
-  if (average > 0.001) {
-//    console.log('volume: ' + this.volume);
-  }
+  this.volume = Math.max(rms, this.volume*this.smoothing);
 }
 
+/**
+ * Returns the volume read by an Amplitude reader.
+ *
+ * @method process
+ * @return {Number}       Amplitude as a number between 0.0 and 1.0
+ * @for Amplitude
+ */
 Amplitude.prototype.process = function() {
   return this.volume;
 }

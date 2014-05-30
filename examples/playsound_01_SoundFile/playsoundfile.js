@@ -2,43 +2,31 @@
 // DEMO: play a sound at a random speed/pitch when the ball hits the edge
 // ====================
 
-var ball;
+// create the p5 sound context
+var p5s = new P5sound(this);
 
+// create a variable for the sound file
 var soundFile;
 
 function setup() {
-  createCanvas(400, 400); 
-  background(0, 0, 0);
-
-  // create a SoundFile
-  soundFile = new SoundFile('drum.wav');
-
-  // create the ball
-  ball = ellipse()
-  ball.x = width/2;
-  ball.y = height/2;
-  ball.speed = 2;
-  ellipse(ball.x, ball.y, 100, 100);
+  createCanvas(400, 400);
+  background(0);
+  // create a SoundFile with a reference to this and a path to a sound file
+  soundFile = new SoundFile(this, 'beatbox.wav');
+  createHTML('<h1> Press any key to play the sound</h1>');
 }
 
-function draw() {
-  background(0, 0, 0);
+// when a key is pressed...
+function keyPressed() {
 
-  ball.x += ball.speed;
+  // play the sound file
+  soundFile.play();
 
-  // when the ball hits the wall...
-  if (ball.x > width || ball.x < 0) {
-    var newSpeed = Math.random();
-    ball.speed = -(ball.speed);
-
-    // set a random playback speed for the sound
-    soundFile.rate(newSpeed);
-
-    // play the sound
-    soundFile.play();
-  }
-
-  ellipse(ball.x, ball.y, 100, 100)
-
+  // also make the background yellow
+  background(255, 255, 0);
 }
 
+function keyReleased() {
+  // make the background black again when the key is released
+  background(0);
+}
