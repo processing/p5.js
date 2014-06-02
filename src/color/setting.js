@@ -61,10 +61,30 @@ define(function (require) {
    * @method colorMode
    * @param {Number|Constant} mode either RGB or HSB, corresponding to
    *                               Red/Green/Blue and Hue/Saturation/Brightness
+   * @param {Number|Constant} max1 range for the red or hue depending on the 
+   *                               current color mode, or range for all values
+   * @param {Number|Constant} max2 range for the green or saturation depending 
+   *                               on the current color mode
+   * @param {Number|Constant} max3 range for the blue or brightness depending
+   *                               on the current color mode
+   * @param {Number|Constant} maxA range for the alpha
    */
-  p5.prototype.colorMode = function(mode) {
-    if (mode === constants.RGB || mode === constants.HSB) {
-      this.settings.colorMode = mode;
+  p5.prototype.colorMode = function() {
+    if (arguments[0] === constants.RGB || arguments[0] === constants.HSB) {
+      this.settings.colorMode = arguments[0];
+    }
+    if (arguments.length === 2) {
+      this.settings.maxC0 = arguments[1];
+      this.settings.maxC1 = arguments[1];
+      this.settings.maxC2 = arguments[1];
+    }
+    else if (arguments.length > 2) {
+      this.settings.maxC0 = arguments[1];
+      this.settings.maxC1 = arguments[2];
+      this.settings.maxC2 = arguments[3];
+    }
+    if (arguments.length === 5) {
+      this.settings.maxA = arguments[4];
     }
   };
 
@@ -155,11 +175,17 @@ define(function (require) {
       r = _args[0];
       g = _args[1];
       b = _args[2];
-      a = typeof _args[3] === 'number' ? _args[3] : 255;
+      a = typeof _args[3] === 'number' ? _args[3] : this.settings.maxA;
     } else {
       r = g = b = _args[0];
-      a = typeof _args[1] === 'number' ? _args[1] : 255;
+      a = typeof _args[1] === 'number' ? _args[1] : this.settings.maxA;
     }
+
+    r *= 255/this.settings.maxC0;
+    g *= 255/this.settings.maxC1;
+    b *= 255/this.settings.maxC2;
+    a *= 255/this.settings.maxA;
+
     if (this.settings.colorMode === constants.HSB) {
       rgba = hsv2rgb(r, g, b).concat(a);
     } else {
@@ -170,6 +196,9 @@ define(function (require) {
   };
 
   function hsv2rgb(h,s,v) {
+    h /= 255;
+    s /= 255;
+    v /= 255;
     // Adapted from http://www.easyrgb.com/math.html
     // hsv values = 0 - 1, rgb values = 0 - 255
     var RGB = [];

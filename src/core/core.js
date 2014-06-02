@@ -217,6 +217,10 @@ define(function (require) {
       imageMode: constants.CORNER,
       ellipseMode: constants.CENTER,
       colorMode: constants.RGB,
+      maxC0: 255, // these correspond to max vals for RGB or HSB
+      maxC1: 255,
+      maxC2: 255,
+      maxA: 255,
       angleMode: constants.RADIANS,
       tint: null
     };
