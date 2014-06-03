@@ -74,18 +74,23 @@ define(function(require) {
   PElement.prototype.hide = function() {
     this.elt.style.display = 'none';
   };
-  PElement.prototype.mousePressed = function(fxn) {
-    var _this = this;
-    this.elt.addEventListener('click', function(e){fxn(e, _this);}, false);
-  }; // pend false?
-  PElement.prototype.mouseOver = function(fxn) {
-    var _this = this;
-    this.elt.addEventListener('mouseover', function(e){fxn(e, _this);}, false);
+  PElement.prototype.mousePressed = function (fxn) {
+    attachListener('click', fxn, this);
   };
-  PElement.prototype.mouseOut = function(fxn) {
-    var _this = this;
-    this.elt.addEventListener('mouseout', function(e){fxn(e, _this);}, false);
+  PElement.prototype.mouseOver = function (fxn) {
+    attachListener('mouseover', fxn, this);
   };
+  PElement.prototype.mouseOut = function (fxn) {
+    attachListener('mouseout', fxn, this);
+  };
+  function attachListener(ev, fxn, ctx) {
+    var _this = ctx;
+    var f = function (e) { fxn(e, _this); };
+    ctx.elt.addEventListener(ev, f, false);
+    if (ctx.pInst) {
+      ctx.pInst._events[ev].push([ctx.elt, f]);
+    }
+  }
 
   p5.PElement = PElement;
   

@@ -275,6 +275,21 @@ define(function (require) {
     this._contourVertices = [];
 
     //Tint
+    this._events = {
+      'mousemove':[],
+      'mousedown':[],
+      'mouseup':[],
+      'click':[],
+      'mousewheel':[],
+      'mouseover':[],
+      'mouseout': [],
+      'keydown':[],
+      'keyup':[],
+      'keypress':[],
+      'touchstart':[],
+      'touchmove':[],
+      'touchend':[]
+    };
 
     // If the user has created a global setup or draw function,
     // assume "global" mode and make everything global (i.e. on the window)
@@ -282,7 +297,14 @@ define(function (require) {
       this._isGlobal = true;
       // Loop through methods on the prototype and attach them to the window
       for (var method in p5.prototype) {
-        window[method] = p5.prototype[method].bind(this);
+        var ev = method.substring(2);
+        if (this._events.hasOwnProperty(ev)) {
+          var meth = p5.prototype[method].bind(this);
+          window.addEventListener(ev, meth);
+          this._events[ev].push([window, meth]);
+        } else {
+          window[method] = p5.prototype[method].bind(this);
+        }
       }
       // Attach its properties to the window
       for (var prop in this) {
@@ -310,39 +332,14 @@ define(function (require) {
 
       // bind events to window or to container div (instance mode)
       var ctx = this._userNode ? this._userNode : window;
-      ctx.addEventListener('mousemove', function (e) {
-        this.onmousemove(e);
-      }.bind(this));
-      ctx.addEventListener('mousedown', function (e) {
-        this.onmousedown(e);
-      }.bind(this));
-      ctx.addEventListener('mouseup', function (e) {
-        this.onmouseup(e);
-      }.bind(this));
-      ctx.addEventListener('mouseclick', function (e) {
-        this.onmouseclick(e);
-      }.bind(this));
-      ctx.addEventListener('mousewheel', function (e) {
-        this.onmousewheel(e);
-      }.bind(this));
-      ctx.addEventListener('keydown', function (e) {
-        this.onkeydown(e);
-      }.bind(this));
-      ctx.addEventListener('keyup', function (e) {
-        this.onkeyup(e);
-      }.bind(this));
-      ctx.addEventListener('keypress', function (e) {
-        this.onkeypress(e);
-      }.bind(this));
-      ctx.addEventListener('touchstart', function (e) {
-        this.ontouchstart(e);
-      }.bind(this));
-      ctx.addEventListener('touchmove', function (e) {
-        this.ontouchmove(e);
-      }.bind(this));
-      ctx.addEventListener('touchend', function (e) {
-        this.ontouchend(e);
-      }.bind(this));
+      for (var e in this._events) {
+        var f = this['on'+e];
+        if (f) {
+          var m = f.bind(this);
+          ctx.addEventListener(e, m);
+          this._events[e].push([ctx, m]);
+        }
+      }
     }
 
     if (document.readyState === 'complete') {
@@ -494,7 +491,7 @@ define(function (require) {
     var userDraw = this.draw || window.draw;
 
     if (this.settings.loop) {
-      setTimeout(function() {
+      this._timeout = setTimeout(function() {
         window.requestDraw(this._draw.bind(this));
       }.bind(this), 1000 / this._targetFrameRate);
     }
@@ -546,6 +543,52 @@ define(function (require) {
     this[prop] = value;
     if (this._isGlobal) {
       window[prop] = value;
+    }
+  };
+
+  /**
+   * @method remove
+   */
+  p5.prototype.remove = function() {
+    if (this.curElement) {
+
+      // stop draw
+      if (this._timeout) {
+        clearTimeout(this._timeout);
+        this.settings.loop = false;
+      }
+
+      // @TODO unregister events
+      for (var ev in this._events) {
+        var pairs = this._events[ev];
+        for (var i=0; i<pairs.length; i++) {
+          pairs[i][0].removeEventListener(ev, pairs[i][1]);
+        }
+      }
+
+      // remove window bound properties and methods
+      if (this._isGlobal) {
+        for (var method in p5.prototype) {
+          delete(window[method]);
+        }
+        // Attach its properties to the window
+        for (var prop in this) {
+          if (this.hasOwnProperty(prop)) {
+            delete(window[prop]);
+          }
+        }
+        for (var constant in constants) {
+          delete(window[constant]);
+        }
+      }
+
+      // remove canvas from DOM
+      var elt = this.curElement.elt;
+      elt.parentNode.removeChild(elt);
+
+      // cleanup p5
+      window.p5 = null;
+
     }
   };
 
