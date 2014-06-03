@@ -586,9 +586,6 @@ define(function (require) {
       var elt = this.curElement.elt;
       elt.parentNode.removeChild(elt);
 
-      // cleanup p5
-      window.p5 = null;
-
     }
   };
 
