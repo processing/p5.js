@@ -561,6 +561,7 @@ var Amplitude = function(smoothing) {
   this.volume = 0;
   this.average = 0;
   this.volMax = .001;
+  this.normalize = true;
 
   this.processor.onaudioprocess = this.volumeAudioProcess.bind(this);
 }
@@ -624,8 +625,14 @@ Amplitude.prototype.volumeAudioProcess = function(event) {
 
   for (var i = 0; i < bufLength; i++) {
     x = inputBuffer[i];
-    total += x;
-    sum += x * x;
+    if (this.normalize){
+      total += constrain(x/this.volMax, -1, 1);
+      sum += constrain(x/this.volMax, -1, 1) * constrain(x/this.volMax, -1, 1);
+    }
+    else {
+      total += x;
+      sum += x * x;
+    }
   }
 
   var average = total/ bufLength;
@@ -634,6 +641,10 @@ Amplitude.prototype.volumeAudioProcess = function(event) {
   var rms = Math.sqrt(sum / bufLength);
 
   this.volume = Math.max(rms, this.volume*this.smoothing);
+  this.volMax=max(this.volume, this.volMax);
+
+  // normalized values
+  this.volNorm = constrain(this.volume/this.volMax, 0, 1);
 }
 
 /**
@@ -644,8 +655,22 @@ Amplitude.prototype.volumeAudioProcess = function(event) {
  * @for Amplitude
  */
 Amplitude.prototype.process = function() {
-  // TO DO --> add more to volume
-  return this.volume;
+  if (this.normalize) {
+    return this.volNorm;
+  }
+  else {
+    return this.volume;
+  }
+}
+
+/**
+ * Turns normalize on/off.
+ *
+ * @method toggleNormalize
+ * @for Amplitude
+ */
+Amplitude.prototype.toggleNormalize = function() {
+  this.normalize = !this.normalize;
 }
 
 
@@ -667,9 +692,10 @@ var FFT = function(smoothing, fft_size, minDecibels, maxDecibels) {
   this.analyser.minDecibels = minDecibels || -140;
   this.analyser.maxDecibels = maxDecibels || 0;
 
-  this.freqDomain = new Uint8Array(analyser.frequencyBinCount);
-  this.timeDomain = new Uint8Array(analyser.frequencyBinCount);
+  this.freqDomain = new Uint8Array(this.analyser.frequencyBinCount);
+  this.timeDomain = new Uint8Array(this.analyser.frequencyBinCount);
 
+  console.log(SMOOTHING);
   this.analyser.smoothingTimeConstant = SMOOTHING;
   this.analyser.fftSize = FFT_SIZE;
 }

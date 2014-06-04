@@ -10,7 +10,8 @@ var amplitude;
 function setup() {
   createCanvas(400, 400); 
   background(0, 0, 0);
-
+  noStroke();
+  
   // instantiate the p5sound context. Pass in a reference to this.
   p5s = new p5Sound(this);
 
@@ -24,7 +25,7 @@ function setup() {
   amplitude = new Amplitude();
 
   // tell the amplitude to listen to the soundFile.
-  amplitude.input(soundFile, .99);
+  amplitude.input(soundFile, .97);
 
   // create the ball
   ball = ellipse();
@@ -32,7 +33,7 @@ function setup() {
   soundFile.rate(1);
   ellipse(width/2, height/2, ball.size, ball.size);
 
-  createHTML('<h1>Press any key to start / stop the loop</h1>');
+  createHTML('<h1>Press any key to pause the loop</h1>');
 }
 
 function draw() {
@@ -42,13 +43,13 @@ function draw() {
   var volume = amplitude.process();
 
   //change ball size based on the volume, which is a float between 0 and 1.0 but typically lower. Map it to values that will look nice.
-  ball.size = map(volume, 0, .5, 25, 300);
-
+  ball.size = map(volume, 0, 1.0, 25, 400);
+  text(volume, 20, 20);
   ellipse(width/2, height/2, ball.size, ball.size);
 }
 
 function keyPressed() {
   soundFile.pause();
   // give soundFile as input to Amplitude
-  amplitude.input(soundFile);
+  amplitude.input(soundFile, .97);
 }
