@@ -42,7 +42,7 @@ function draw() {
   var volume = amplitude.process();
 
   //change ball size based on the volume, which is a float between 0 and 1.0 but typically lower. Map it to values that will look nice.
-  ball.size = map(volume, 0, .5, 25, 2500); //10 + (volume * 3000);
+  ball.size = map(volume, 0, .5, 25, 300);
 
   ellipse(width/2, height/2, ball.size, ball.size);
 }

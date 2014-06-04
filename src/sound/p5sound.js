@@ -544,23 +544,23 @@ var Amplitude = function(smoothing) {
   this.processor = this.audiocontext.createScriptProcessor(this.bufferSize);
 
 
-  // Set to 512 for now. In future iterations, this should be inherited or parsed from p5sound's default
+  // Set to 2048 for now. In future iterations, this should be inherited or parsed from p5sound's default
   this.bufferSize = 2048;
 
-  //smoothing (defaults to .8)
-  this.smoothing = .99;
+  //smoothing (defaults to .95)
+  this.smoothing = .95;
 
   if (smoothing) {
     this.smoothing = smoothing;
   }
 
-  console.log('smoothing: ' + this.smoothing);
   // this may only be necessary because of a Chrome bug
   this.processor.connect(this.audiocontext.destination);
 
   // the variables to return
   this.volume = 0;
   this.average = 0;
+  this.volMax = .001;
 
   this.processor.onaudioprocess = this.volumeAudioProcess.bind(this);
 }
@@ -580,7 +580,6 @@ var Amplitude = function(smoothing) {
 
  // TO DO figure out how to connect to a buffer before it is loaded
 Amplitude.prototype.input = function(snd, smoothing) {
-  var thisAmp = this;
 
   // set smoothing if smoothing is provided
   if (smoothing) {
@@ -589,7 +588,7 @@ Amplitude.prototype.input = function(snd, smoothing) {
 
   // connect to the master out of p5s instance if no snd is provided
   if (snd == null) {
-    console.log('no s!');
+    console.log('Amplitude input source is not ready! Connecting to master output instead');
     this.p5s.output.connect(this.processor);
   }
 
@@ -597,7 +596,7 @@ Amplitude.prototype.input = function(snd, smoothing) {
   // But for now, it just connects to master.
   else if (snd.source == null) {
     console.log('source is not ready to connect. Connecting to master output instead');
-    // Not working: snd.load(thisAmp.input); // TO DO: figure out how to make it work!
+    // Not working: snd.load(this.input); // TO DO: figure out how to make it work!
     this.p5s.output.connect(this.processor);
   }
 
@@ -626,8 +625,8 @@ Amplitude.prototype.volumeAudioProcess = function(event) {
   for (var i = 0; i < bufLength; i++) {
     x = inputBuffer[i];
     total += x;
+    sum += x * x;
   }
-  sum += x * x;
 
   var average = total/ bufLength;
 
