@@ -692,12 +692,12 @@ var FFT = function(smoothing, fft_size, minDecibels, maxDecibels) {
   this.analyser.minDecibels = minDecibels || -140;
   this.analyser.maxDecibels = maxDecibels || 0;
 
+  this.analyser.smoothingTimeConstant = SMOOTHING;
+  this.analyser.fftSize = FFT_SIZE;
+
   this.freqDomain = new Uint8Array(this.analyser.frequencyBinCount);
   this.timeDomain = new Uint8Array(this.analyser.frequencyBinCount);
 
-  console.log(SMOOTHING);
-  this.analyser.smoothingTimeConstant = SMOOTHING;
-  this.analyser.fftSize = FFT_SIZE;
 }
 
 // create analyser node with optional variables for smoothing, fft size, min/max decibels

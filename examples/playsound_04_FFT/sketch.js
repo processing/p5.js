@@ -6,12 +6,13 @@ var soundFile;
 var p5s;
 
 var fft;
-var fftBands = 512;
+var fftBands = 1024;
 var spec;
 
 function setup() {
   createCanvas(fftBands, 400); 
-  background(0, 0, 0);
+  background(20, 20, 0);
+  fill(255,255,0);
 
   // instantiate the p5sound context. Pass in a reference to this.
   p5s = new p5Sound(this);
@@ -22,16 +23,16 @@ function setup() {
   // loop the sound file
   soundFile.loop();
 
-  fft = new FFT();
+  fft = new FFT(.95,fftBands, -100, 0);
 }
 
 function draw() {
-  background(0, 0, 0);
+  background(20, 200, 0);
 
   spec = fft.processFrequency();
-  for (var i = 0; i< fftBands; i++){
+  for (var i = 0; i< spec.length; i++){
     noStroke();
-    rect(i, fftBands/width, 5, height-spec[i]);
+    rect(map(i, 0, spec.length, 0, width), fftBands/width, 5, height-spec[i]);
   }
 }
 
