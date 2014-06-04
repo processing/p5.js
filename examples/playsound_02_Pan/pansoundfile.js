@@ -12,10 +12,10 @@ function setup() {
   background(0, 0, 0);
 
   // create a p5sound context
-  p5s = new P5sound(this);
+  p5s = new p5Sound(this);
 
   // create a SoundFile
-  soundFile = new SoundFile(this, 'drum.ogg', 'drum.wav', 'drum.mp3');
+  soundFile = new SoundFile('drum.ogg', 'drum.wav', 'drum.mp3');
   soundFile.setGain(.6);
 
   // create the ball

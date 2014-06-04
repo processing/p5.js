@@ -97,37 +97,12 @@ isFileSupported = function(extension) {
  * Callbacks to be used for soundfile playback & loading
  */
 
-// If a SoundFile is looped before the buffer.source has loaded, it will load the file and pass this function as the callback.
-var loop_now = function(sfile) {
-  console.log('looping ' + sfile.url);
-  if (sfile.buffer) {
-    sfile.source = sfile.p5s.audiocontext.createBufferSource();
-    sfile.source.buffer = sfile.buffer;
-    sfile.source.loop = true;
-
-    // set variables like playback rate, gain and panning
-    sfile.source.playbackRate.value = sfile.playbackRate;
-    sfile.source.gain.value = sfile.gain;
-
-    // connect to panner, which is already connected to the destination.
-    sfile.source.connect(sfile.panner); 
-
-    // play the sound
-    sfile.source.start(0);
-  }
-
-  else {
-    console.log(sfile.url + ' not loaded yet');
-  }
-}
-
-// If a SoundFile is looped before the buffer.source has loaded, it will load the file and pass this function as the callback.
+// If a SoundFile is played before the buffer.source has loaded, it will load the file and pass this function as the callback.
 var play_now = function(sfile) {
-  console.log('playing ' + sfile.url);
   if (sfile.buffer) {
     sfile.source = sfile.p5s.audiocontext.createBufferSource();
     sfile.source.buffer = sfile.buffer;
-    sfile.source.loop = false;
+    sfile.source.loop = sfile.looping;
 
     // set variables like playback rate, gain and panning
     sfile.source.playbackRate.value = sfile.playbackRate;
@@ -137,7 +112,9 @@ var play_now = function(sfile) {
     sfile.source.connect(sfile.panner); 
 
     // play the sound
-    sfile.source.start(0);
+    sfile.source.start(0, this.startTime);
+    sfile.startSeconds = sfile.p5s.audiocontext.currentTime;
+    sfile.playing = true;
   }
 
   else {
@@ -153,7 +130,7 @@ var play_now = function(sfile) {
  * @class P5sound
  * @param {window} a reference to the document window ("this")
  */
-var P5sound = function(w) {
+var p5Sound = function(w) {
   this.input = audiocontext.createGain();
   this.output = audiocontext.createGain();
   this.audiocontext = audiocontext;
@@ -167,21 +144,21 @@ var P5sound = function(w) {
 }
 
 
-P5sound.prototype.connect = function(unit){
+p5Sound.prototype.connect = function(unit){
   this.output.connect(unit);
 }
 
-P5sound.prototype.disconnect = function(unit){
+p5Sound.prototype.disconnect = function(unit){
   this.output.disconnect(unit);
 }
 
 // set gain ("amplitude?")
-P5sound.prototype.setGain = function(vol){
+p5Sound.prototype.setGain = function(vol){
   this.output.gain.value = vol;
 }
 
 // get gain ("amplitude?")
-P5sound.prototype.getGain = function(){
+p5Sound.prototype.getGain = function(){
   return this.output.gain.value;
 }
 
@@ -195,12 +172,11 @@ P5sound.prototype.getGain = function(){
  *
  * @constructor
  * @class SoundFile
- * @param {Object} [w]      a reference to the document.window (usually 'this', i.e. new Amplitude(this); ) 
  * @param {path1} [path1]   path to a sound file 
  * @param {path2} [path2]   (optional) path to additional format of the sound file to ensure compatability across browsers
  * @param {path3} [path3]   (optional) path to additional format of the sound file to ensure compatability across browsers
  */
-var SoundFile = function(w, path1, path2, path3) {
+var SoundFile = function(path1, path2, path3) {
 
   var path = path1;
 
@@ -242,14 +218,28 @@ var SoundFile = function(w, path1, path2, path3) {
   }
 
   // store a local reference to the window's p5sound context
-  this.p5s = w.p5sound;
+  this.p5s = window.p5sound;
+
 
   // player variables
   this.url = path;
   this.source = null;
   this.buffer = null;
   this.playbackRate = 1;
-  this.gain = .8;
+  this.gain = 1;
+
+  // start and end of playback / loop
+  this.startTime = 0;
+  this.endTime = null;
+
+  // loop on/off - defaults to false
+  this.looping = false;
+
+  // playing - defaults to false
+  this.playing = false;
+
+  // time that playback was started, in millis
+  this.startMillis = null;
 
   // sterep panning
   this.panPosition = 0.0;
@@ -257,6 +247,7 @@ var SoundFile = function(w, path1, path2, path3) {
   this.panner.panningModel = 'equalpower';
   this.panner.distanceModel = 'linear';
   this.panner.setPosition(0,0,0);
+
 
 
   // the panner is always connected to the destination
@@ -300,11 +291,12 @@ SoundFile.prototype.load = function(callback){
  * @for SoundFile
  */
 SoundFile.prototype.play = function(rate, amp) {
+  // this.looping = false;
   if (this.buffer) {
     // make the source
     this.source = this.p5s.audiocontext.createBufferSource();
     this.source.buffer = this.buffer;
-    this.source.loop = false;
+    this.source.loop = this.looping;
 
     // set rate and amp if provided
     if (rate) {
@@ -322,7 +314,9 @@ SoundFile.prototype.play = function(rate, amp) {
     this.source.connect(this.panner); 
 
     // play the sound
-    this.source.start(0);
+    this.source.start(0, this.startTime);
+    this.startSeconds = this.p5s.audiocontext.currentTime;
+    this.playing = true;
   }
   // If soundFile hasn't loaded the buffer yet, load it then play it in the callback
   else {
@@ -344,28 +338,10 @@ SoundFile.prototype.play = function(rate, amp) {
  * @method loop
  * @for SoundFile
  */
-SoundFile.prototype.loop = function() {
-  if (this.buffer) {
-    this.source = this.p5s.audiocontext.createBufferSource();
-    this.source.buffer = this.buffer;
-    this.source.loop = true;
-
-    // set variables like playback rate, gain and panning
-    this.source.playbackRate.value = this.playbackRate;
-    this.source.gain.value = this.gain;
-    // connect to panner, which is already connected to the destination.
-    this.source.connect(this.panner); 
-
-    // play the sound
-    this.source.start(0);
-  }
-  // If soundFile hasn't loaded the buffer yet, load it then loop it in the callback
-  else {
-    console.log('not ready to loop');
-    this.load(loop_now);
-  }
+SoundFile.prototype.loop = function(rate, amp) {
+  this.play(rate, amp);
+  this.looping = true;
 }
-
 
 /**
  * Toggle whether a soundfile is looping or not. Either loop the sound, or stop looping (and playing) the sound.
@@ -374,29 +350,44 @@ SoundFile.prototype.loop = function() {
  * @for SoundFile
  */
 SoundFile.prototype.toggleLoop = function() {
-  if (this.buffer && this.source) {
-    this.source.loop = !this.source.loop;
-    console.log(this.url + ' looping = ' + this.source.loop);
-    if (this.source.loop == true) {
-      this.loop();
-    } else {
-      this.stop();
-    }
-  } else {
-    this.loop();
-    console.log(this.url + ' looping!');
+  this.looping = !this.looping;
+  if (this.source) {
+    this.source.loop = this.looping;
+  }
+}
+
+/**
+ * Pause a file that is currently playing.
+ * Save the start time & loop status (true/false) so that we can continue playback from the same spot
+ */
+SoundFile.prototype.pause = function() {
+  var keepLoop = this.looping;
+  if (this.isPlaying() && this.buffer && this.source) {
+    this.startTime = this.currentTime();
+    this.stop();
+  }
+  else {
+      this.play();
+      this.looping = keepLoop;
   }
 }
 
 /**
  * Returns 'true' if a SoundFile is looping, 'false' if not.
  *
- * @method toggleLoop
+ * @method isLooping
  * @return {Boolean}
  * @for SoundFile
  */
 SoundFile.prototype.isLooping = function() {
-  return this.source.loop;
+  if (!this.source) {
+    return false;
+  }
+  return this.looping;
+}
+
+SoundFile.prototype.isPlaying = function() {
+  return this.playing;
 }
 
 /**
@@ -408,8 +399,10 @@ SoundFile.prototype.isLooping = function() {
 SoundFile.prototype.stop = function() {
   if (this.buffer && this.source) {
     this.source.stop();
+    this.playing = false;
   }
 }
+
 
 /**
  * Set the playback rate of a sound file. Will change the speed and the pitch.
@@ -510,6 +503,25 @@ SoundFile.prototype.duration = function() {
   }
 }
 
+SoundFile.prototype.fade = function() {
+  // TO DO
+}
+
+/**
+ * Return the current moment in the song, in seconds
+ */
+SoundFile.prototype.currentTime = function() {
+  // TO DO --> make this work with paused audio
+  if (this.isPlaying()) {
+    var howLong = ( (this.p5s.audiocontext.currentTime - this.startSeconds + this.startTime) * this.playbackRate ) % this.duration();
+    return howLong;
+  }
+  else {
+    return this.startTime;
+  }
+
+}
+
   /**
   * Amplitude
   * 
@@ -522,10 +534,10 @@ SoundFile.prototype.duration = function() {
   * @class Amplitude
   * @param {Object} [w]          a reference to the document.window (usually 'this', i.e. new Amplitude(this); ) 
   */
-var Amplitude = function(w) {
+var Amplitude = function(smoothing) {
 
-  // store a reference to the window's p5sound instance
-  this.p5s = w.p5sound;
+  // store a local reference to the window's p5sound context
+  this.p5s = window.p5sound;
 
   // set audio context
   this.audiocontext = this.p5s.audiocontext;
@@ -533,10 +545,14 @@ var Amplitude = function(w) {
 
 
   // Set to 512 for now. In future iterations, this should be inherited or parsed from p5sound's default
-  this.bufferSize = 512;
+  this.bufferSize = 2048;
 
   //smoothing (defaults to .8)
-  this.smoothing = .8;
+  this.smoothing = .99;
+
+  if (smoothing) {
+    this.smoothing = smoothing;
+  }
 
   console.log('smoothing: ' + this.smoothing);
   // this may only be necessary because of a Chrome bug
@@ -629,5 +645,57 @@ Amplitude.prototype.volumeAudioProcess = function(event) {
  * @for Amplitude
  */
 Amplitude.prototype.process = function() {
+  // TO DO --> add more to volume
   return this.volume;
+}
+
+
+/**
+ *  FFT Object
+ */
+
+// create analyser node with optional variables for smoothing, fft size, min/max decibels
+var FFT = function(smoothing, fft_size, minDecibels, maxDecibels) {
+  var SMOOTHING = smoothing || .7;
+  var FFT_SIZE = fft_size || 2048;
+  this.p5s = window.p5sound;
+  this.analyser = this.p5s.audiocontext.createAnalyser();
+
+  // default connections to p5sound master
+  this.p5s.output.connect(this.analyser);
+  this.analyser.connect(this.p5s.audiocontext.destination);
+
+  this.analyser.minDecibels = minDecibels || -140;
+  this.analyser.maxDecibels = maxDecibels || 0;
+
+  this.freqDomain = new Uint8Array(analyser.frequencyBinCount);
+  this.timeDomain = new Uint8Array(analyser.frequencyBinCount);
+
+  this.analyser.smoothingTimeConstant = SMOOTHING;
+  this.analyser.fftSize = FFT_SIZE;
+}
+
+// create analyser node with optional variables for smoothing, fft size, min/max decibels
+FFT.prototype.input = function(source) {
+  source.connect(this.analyser);
+}
+
+// returns an array of frequencies
+FFT.prototype.processFrequency = function() {
+  this.analyser.getByteFrequencyData(this.freqDomain);
+  return this.freqDomain;
+}
+
+FFT.prototype.processWaveform = function() {
+  this.analyser.getByteTimeDomainData(this.timeDomain);
+  return this.timeDomain;
+}
+
+// change smoothing
+FFT.prototype.setSmoothing = function(s) {
+  this.analyser.smoothingTimeConstant = s;
+}
+
+FFT.prototype.getSmoothing = function() {
+  return this.analyser.smoothingTimeConstant;
 }

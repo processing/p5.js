@@ -5,26 +5,26 @@
 var ball;
 var soundFile;
 var p5s;
-
+var amplitude;
 
 function setup() {
   createCanvas(400, 400); 
   background(0, 0, 0);
 
   // instantiate the p5sound context. Pass in a reference to this.
-  p5s = new P5sound(this);
+  p5s = new p5Sound(this);
 
   // instantiate the SoundFile. Pass in a reference to this, followed by path to file. Include multiple file types to ensure compatability across browsers (for example, .aiff is only supported by Safari).
-  soundFile = new SoundFile(this, 'beat.aiff', 'beat.wav', 'beat.mp3');
+  soundFile = new SoundFile('beat.aiff', 'beat.wav', 'beat.mp3');
 
   // loop the sound file
   soundFile.loop();
 
   // create a new Amplitude, give it a reference to this.
-  amplitude = new Amplitude(this);
+  amplitude = new Amplitude();
 
   // tell the amplitude to listen to the soundFile.
-  amplitude.input(soundFile);
+  amplitude.input(soundFile, .99);
 
   // create the ball
   ball = ellipse();
@@ -48,7 +48,7 @@ function draw() {
 }
 
 function keyPressed() {
-  soundFile.toggleLoop();
+  soundFile.pause();
   // give soundFile as input to Amplitude
   amplitude.input(soundFile);
 }
