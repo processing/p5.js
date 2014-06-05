@@ -233,12 +233,6 @@ define(function (require) {
     this._startTime = new Date().getTime();
 
     this._userNode = node;
-    // find node if id given
-    if (this._userNode) {
-      if (typeof this._userNode === 'string') {
-        this._userNode = document.getElementById(this._userNode);
-      }
-    }
 
     // TODO: ???
     this._preloadCount = 0;
@@ -298,11 +292,7 @@ define(function (require) {
       // Loop through methods on the prototype and attach them to the window
       for (var method in p5.prototype) {
         var ev = method.substring(2);
-        if (this._events.hasOwnProperty(ev)) {
-          var meth = p5.prototype[method].bind(this);
-          window.addEventListener(ev, meth);
-          this._events[ev].push([window, meth]);
-        } else {
+        if (!this._events.hasOwnProperty(ev)) {
           window[method] = p5.prototype[method].bind(this);
         }
       }
@@ -330,15 +320,15 @@ define(function (require) {
         }
       }
 
-      // bind events to window or to container div (instance mode)
-      var ctx = this._userNode ? this._userNode : window;
-      for (var e in this._events) {
-        var f = this['on'+e];
-        if (f) {
-          var m = f.bind(this);
-          ctx.addEventListener(e, m);
-          this._events[e].push([ctx, m]);
-        }
+    }
+
+    // bind events to window (not using container div bc key events don't work)
+    for (var e in this._events) {
+      var f = this['on'+e];
+      if (f) {
+        var m = f.bind(this);
+        window.addEventListener(e, m);
+        this._events[e].push([window, m]);
       }
     }
 
@@ -363,6 +353,13 @@ define(function (require) {
    * @return {Undefined}
    */
   p5.prototype._start = function () {
+
+    // find node if id given
+    if (this._userNode) {
+      if (typeof this._userNode === 'string') {
+        this._userNode = document.getElementById(this._userNode);
+      }
+    }
 
     // Always create a default canvas.
     // Later on if the user calls createCanvas, this default one

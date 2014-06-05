@@ -1,14 +1,16 @@
 var s0 = function( sketch ) {
 
   var v;
+  var h1;
 
   sketch.setup = function() {
     sketch.createCanvas(400, 400);
 
-    var h1 = sketch.createH1('pause');
-    h1.position(250, 50);
+    h1 = sketch.createH1('press a key');
+    h1.position(40, 250);
     h1.mousePressed(function() {
       v.pause();
+      h1.html('press a key');
     });
 
     v = sketch.createVideo('fingers.mov');
@@ -23,6 +25,7 @@ var s0 = function( sketch ) {
 
   sketch.keyPressed = function() {
     v.play();
+    h1.html('click to pause');
   };
 
 
