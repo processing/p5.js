@@ -680,7 +680,7 @@ Amplitude.prototype.toggleNormalize = function() {
 
 // create analyser node with optional variables for smoothing, fft size, min/max decibels
 var FFT = function(smoothing, fft_size, minDecibels, maxDecibels) {
-  var SMOOTHING = smoothing || .7;
+  var SMOOTHING = smoothing || .6;
   var FFT_SIZE = fft_size || 2048;
   this.p5s = window.p5sound;
   this.analyser = this.p5s.audiocontext.createAnalyser();
@@ -723,4 +723,29 @@ FFT.prototype.setSmoothing = function(s) {
 
 FFT.prototype.getSmoothing = function() {
   return this.analyser.smoothingTimeConstant;
+}
+
+// get value of a specific frequency
+FFT.prototype.getFreqValue = function(frequency) {
+  var nyquist = this.p5s.audiocontext.sampleRate/2;
+  var index = Math.round(frequency/nyquist * this.freqDomain.length);
+  return this.freqDomain[index];
+}
+
+// get value of a range of frequencies
+FFT.prototype.getFreqRange = function(lowFreq, highFreq) {
+  var nyquist = this.p5s.audiocontext.sampleRate/2;
+  var lowIndex = Math.round(lowFreq/nyquist * this.freqDomain.length);
+  var highIndex = Math.round(highFreq/nyquist * this.freqDomain.length);
+
+  var total = 0;
+  var numFrequencies = 0;
+  // add up all of the values for the frequencies
+  for (var i = lowIndex; i<=highIndex; i++) {
+    total += this.freqDomain[i];
+    numFrequencies += 1;
+  }
+  // divide by total number of frequencies
+  var toReturn = total/numFrequencies;
+  return toReturn;
 }
