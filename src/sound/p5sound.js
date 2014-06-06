@@ -689,8 +689,8 @@ var FFT = function(smoothing, fft_size, minDecibels, maxDecibels) {
   this.p5s.output.connect(this.analyser);
   this.analyser.connect(this.p5s.audiocontext.destination);
 
-  this.analyser.minDecibels = minDecibels || -140;
   this.analyser.maxDecibels = maxDecibels || 0;
+  this.analyser.minDecibels = minDecibels || -140;
 
   this.analyser.smoothingTimeConstant = SMOOTHING;
   this.analyser.fftSize = FFT_SIZE;
@@ -705,12 +705,32 @@ FFT.prototype.input = function(source) {
   source.connect(this.analyser);
 }
 
-// returns an array of frequencies
+/**
+ * Returns an array of amplitude values (between -140-0 by default) 
+ * from the lowest to highest frequencies in the spectrum.
+ * Length will be equal to FFT size (default is 2048).
+ *
+ * @method processFrequency
+ * @return {Array}       Array of amplitude values for the frequency spectrum
+ * @for FFT
+ *
+ */
 FFT.prototype.processFrequency = function() {
   this.analyser.getByteFrequencyData(this.freqDomain);
   return this.freqDomain;
 }
 
+
+/**
+ * Returns an array of amplitude values (between 0-255) that can be used to 
+ * draw or represent the waveform of a sound. Length will be
+ * 1/2 size of FFT (default is 2048 / 1024).
+ *
+ * @method processWaveform
+ * @return {Array}       Array of amplitude values (0-255) over time. Length will be 1/2 fftBands.
+ * @for FFT
+ *
+ */
 FFT.prototype.processWaveform = function() {
   this.analyser.getByteTimeDomainData(this.timeDomain);
   return this.timeDomain;
