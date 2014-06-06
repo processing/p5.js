@@ -1,35 +1,39 @@
 /**
- * DEMO: loop a sound and analyze gain to change the size of a visual
+ *
  */
 
 var soundFile;
-var p5s;
-
 var fft;
-var fftBands = 1024;
+var fftSize = 1024;
+
+
+var description = 'loading';
+var h1;
+
 
 function setup() {
-  createCanvas(fftBands, 400); 
+  createCanvas(fftSize, 400); 
   fill(255, 40, 255);
   noStroke();
   textAlign(CENTER);
 
-  // instantiate the p5sound context. Pass in a reference to this.
-  p5s = new p5Sound(this);
-
-  // instantiate the SoundFile. Pass in a path to the file.
-  soundFile = new SoundFile('Karl_Blau_-_02_-_Crucial_Contact.mp3');
+  // Create SoundFile. Multiple filetypes for cross-browser compatability.
+  soundFile = new SoundFile('beat.mp3', 'beat.wav');
 
   // loop the sound file
   soundFile.loop();
 
-  // instantiate the FFT object which will analyze the frequency spectrum of sound
-  fft = new FFT(.4,fftBands, -140, 0);
+  // instantiate the FFT object. Give it smoothing and fftSize
+  fft = new FFT(.25,fftSize);
+
+  // update description text
+  h1 = createH1(description);
 }
 
 function draw() {
   background(30,20,30);
-
+  updateDescription();
+  
   // tell the FFT object to process the frequency spectrum as the sound plays
   fft.processFrequency();
 
@@ -58,3 +62,28 @@ function draw() {
 function keyPressed() {
   soundFile.pause();
 }
+
+// Change description text if the song is loading, playing or paused
+function updateDescription() {
+  if (soundFile.isPaused()) {
+    description = 'Paused...';
+    h1.html(description);
+  }
+  else if (soundFile.isPlaying()){
+    description = 'Playing!';
+    h1.html(description);
+  }
+  else {
+    for (var i = 0; i < frameCount%3; i++ ) {
+      // add periods to loading to create a fun loading bar effect
+      if (frameCount%4 == 0){
+        description += '.';
+      }
+      if (frameCount%25 == 0) {
+        description = 'loading';
+      }
+    }
+    h1.html(description);
+  }
+}
+

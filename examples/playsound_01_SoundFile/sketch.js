@@ -2,18 +2,18 @@
 // DEMO: play a sound at a random speed/pitch when the ball hits the edge
 // ====================
 
-// create the p5 sound context
-var p5s = new p5Sound(this);
-
 // create a variable for the sound file
 var soundFile;
 
 function setup() {
   createCanvas(400, 400);
   background(0);
+
   // create a SoundFile with a reference to this and a path to a sound file
   soundFile = new SoundFile('beatbox.wav');
-  createHTML('<h1> Press any key to play the sound</h1>');
+
+
+  createH1('Press any key to play the sound');
 }
 
 // when a key is pressed...

@@ -1,20 +1,16 @@
 // ====================
-// DEMO: play a sound at a random speed/pitch when the ball hits the edge
-// Stereo panning for the ball
+// DEMO: play a sound at a random speed/pitch when the ball hits the edge.
+// Set the sound file's to pan left when ball hits left edge and vice versa.
 // ====================
 
 var ball;
 var soundFile;
-var p5s;
 
 function setup() {
   createCanvas(400, 400); 
   background(0, 0, 0);
 
-  // create a p5sound context
-  p5s = new p5Sound(this);
-
-  // create a SoundFile
+  // Create SoundFile. Multiple filetypes for cross-browser compatability.
   soundFile = new SoundFile('drum.ogg', 'drum.wav', 'drum.mp3');
   soundFile.setGain(.6);
 

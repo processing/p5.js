@@ -1,58 +1,89 @@
 /**
- * DEMO: loop a sound and analyze gain to change the size of a visual
+ * Draw frequency spectrum of a sound as it plays using FFT.processFrequency()
  */
 
 var soundFile;
-var p5s;
 var fft;
-var fftBands = 1024;
+var fftSize = 1024;
 
-// spec is an array of values that represent the frequency spectrum from low to high
+var description = 'loading';
+var h1;
+
+// This will be an array of amplitude from lowest to highest frequencies
 var frequencySpectrum = [];
 
 function setup() {
-  createCanvas(fftBands, 256); 
+  createCanvas(fftSize/2, 256);
   fill(255, 40, 255);
 
-  // instantiate the p5sound context. Pass in a reference to this.
-  p5s = new p5Sound(this);
-
-  // instantiate the SoundFile. Pass in a reference to this, followed by path to file. Include multiple file types to ensure compatability across browsers (for example, .aiff is only supported by Safari).
-  soundFile = new SoundFile('Karl_Blau_-_02_-_Crucial_Contact.mp3', 'beat.wav', 'beat.aiff');
+  // Create SoundFile. Multiple filetypes for cross-browser compatability.
+  soundFile = new SoundFile('Karl_Blau_-_02_-_Crucial_Contact.mp3', 'beat.wav');
 
   // loop the sound file
   soundFile.loop();
 
-  // Instantiate the FFT which we will use to analyze the frequencies in our soundFile as it plays.
-  fft = new FFT();
-
   /**
+   * Instantiate the FFT which will analyze frequencies of sound as it plays.
    * Optional parameters are:
    * - Smoothing (between 0.01 and .99)
-   * - fftBands (must be a power of two between 32 and 2048)
+   * - fftSize (must be a power of two between 32 and 2048)
    * - minimum value of each band in decibels
-   * - maximum value of each band in decibles
+   * - maximum value of each band in decibels
    */
-  // fft = new FFT(.8,fftBands, -100, 0);
+  fft = new FFT(.8, fftSize, -140, 0);
+
+  // update description text
+  h1 = createH1(description);
 }
 
 function draw() {
   background(30);
 
+  // update the description if the sound is playing
+  updateDescription();
+
   /** 
    * Analyze the sound.
-   * Return array of frequency volumes, from lowest to highest frequencies
+   * Return array of frequency volumes, from lowest to highest frequencies.
+   * The length of the frequencySpectrum will be 1/2 the fftSize.
    */
   frequencySpectrum = fft.processFrequency();
 
-  // Draw every value in the frequencySpectrum array. 
+  // Draw every value in the frequencySpectrum array as a rectangle
   for (var i = 0; i< frequencySpectrum.length; i++){
     noStroke();
-    rect(map(i, 0, frequencySpectrum.length, 0, width), height, fftBands/width, -frequencySpectrum[i]);
+    rect(map(i, 0, frequencySpectrum.length, 0, width), height, fftSize/width, -frequencySpectrum[i] ) ;
   }
 }
 
+
+
+// Change description text if the song is loading, playing or paused
+function updateDescription() {
+  if (soundFile.isPaused()) {
+    description = 'Paused...';
+    h1.html(description);
+  }
+  else if (soundFile.isPlaying()){
+    description = 'Playing!';
+    h1.html(description);
+  }
+  else {
+    for (var i = 0; i < frameCount%3; i++ ) {
+      // add periods to loading to create a fun loading bar effect
+      if (frameCount%4 == 0){
+        description += '.';
+      }
+      if (frameCount%25 == 0) {
+        description = 'loading';
+      }
+    }
+    h1.html(description);
+  }
+}
+
+
+// pause the song if a key is pressed
 function keyPressed() {
   soundFile.pause();
-  // fft.input(soundFile);
 }
