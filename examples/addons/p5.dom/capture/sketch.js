@@ -1,7 +1,4 @@
-var playing = false;
 var capture;
-
-
 
 function setup() {
   createCanvas(340, 260);
