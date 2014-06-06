@@ -4,6 +4,8 @@ define(function (require) {
 
   var p5 = require('core');
 
+  p5.prototype.pWriters = [];
+
   p5.prototype.beginRaw = function() {
     // TODO
     throw 'not yet implemented';

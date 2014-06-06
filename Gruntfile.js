@@ -73,7 +73,7 @@ module.exports = function(grunt) {
             return require('amdclean').clean(contents);
           },
           optimize: 'none',
-          out: 'dist/p5.js',
+          out: 'lib/p5.js',
           paths: {
             'app': 'src/app',
             'color.creating_reading': 'src/color/creating_reading',
@@ -128,7 +128,7 @@ module.exports = function(grunt) {
             return require('amdclean').clean(contents);
           },
           optimize: 'uglify2',
-          out: 'dist/p5.min.js',
+          out: 'lib/p5.min.js',
           paths: '<%= requirejs.unmin.options.paths %>',
           useStrict: true,
           wrap: true

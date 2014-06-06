@@ -10,6 +10,23 @@ define(function (require) {
   var p5 = require('core');
   var Filters = require('filters');
 
+  /**
+   * Array containing the values for all the pixels in the display window.
+   * These values are of the color datatype. This array is the size of the
+   * display window. For example, if the image is 100x100 pixels, there will
+   * be 10000 values and if the window is 200x300 pixels, there will be 60000
+   * values. The index value defines the position of a value within the
+   * array.
+   *
+   * Before accessing this array, the data must loaded with the loadPixels()
+   * function. After the array data has been modified, the updatePixels()
+   * function must be run to update the changes.
+   *
+   * @property pixels[]
+   * @for Image:Pixels
+   */
+  p5.prototype.pixels = [];
+
   // function getPixels(img) {
   //   var c = document.createElement('canvas');
   //   c.width = img.width;

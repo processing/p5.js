@@ -31,7 +31,7 @@ define(function (require) {
    * @method noLoop
    */
   p5.prototype.noLoop = function() {
-    this.settings.loop = false;
+    this._loop = false;
   };
 
   /**
@@ -42,7 +42,7 @@ define(function (require) {
    * @method loop
    */
   p5.prototype.loop = function() {
-    this.settings.loop = true;
+    this._loop = true;
   };
 
   /**
@@ -65,22 +65,22 @@ define(function (require) {
   p5.prototype.pushStyle = function() {
 
     this.styles.push({
-      fillStyle:   this.curElement.context.fillStyle, // fill
-      strokeStyle: this.curElement.context.strokeStyle, // stroke
-      lineWidth:   this.curElement.context.lineWidth, // strokeWeight
-      lineCap:     this.curElement.context.lineCap, // strokeCap
-      lineJoin:    this.curElement.context.lineJoin, // strokeJoin
-      tint:        this.settings.tint, // tint
-      imageMode:   this.settings.imageMode, // imageMode
-      rectMode:    this.settings.rectMode, // rectMode
-      ellipseMode: this.settings.ellipseMode, // ellipseMode
+      fillStyle:   this._curElement.context.fillStyle, // fill
+      strokeStyle: this._curElement.context.strokeStyle, // stroke
+      lineWidth:   this._curElement.context.lineWidth, // strokeWeight
+      lineCap:     this._curElement.context.lineCap, // strokeCap
+      lineJoin:    this._curElement.context.lineJoin, // strokeJoin
+      tint:        this._tint, // tint
+      imageMode:   this._imageMode, // imageMode
+      rectMode:    this._rectMode, // rectMode
+      ellipseMode: this._ellipseMode, // ellipseMode
       // @todo shapeMode
-      colorMode:   this.settings.colorMode, // colorMode
-      textAlign:   this.curElement.context.textAlign, // textAlign
-      textFont:    this.settings.textFont,
-      textLeading: this.settings.textLeading, // textLeading
-      textSize:    this.settings.textSize, // textSize
-      textStyle:   this.settings.textStyle // textStyle
+      colorMode:   this._colorMode, // colorMode
+      textAlign:   this._curElement.context.textAlign, // textAlign
+      textFont:    this.textFont,
+      textLeading: this.textLeading, // textLeading
+      textSize:    this.textSize, // textSize
+      textStyle:   this.textStyle // textStyle
     });
   };
 
@@ -99,22 +99,22 @@ define(function (require) {
 
     var lastS = this.styles.pop();
 
-    this.curElement.context.fillStyle = lastS.fillStyle; // fill
-    this.curElement.context.strokeStyle = lastS.strokeStyle; // stroke
-    this.curElement.context.lineWidth = lastS.lineWidth; // strokeWeight
-    this.curElement.context.lineCap = lastS.lineCap; // strokeCap
-    this.curElement.context.lineJoin = lastS.lineJoin; // strokeJoin
-    this.settings.tint = lastS.tint; // tint
-    this.settings.imageMode = lastS.imageMode; // imageMode
-    this.settings.rectMode = lastS.rectMode; // rectMode
-    this.settings.ellipseMode = lastS.ellipseMode; // elllipseMode
+    this._curElement.context.fillStyle = lastS.fillStyle; // fill
+    this._curElement.context.strokeStyle = lastS.strokeStyle; // stroke
+    this._curElement.context.lineWidth = lastS.lineWidth; // strokeWeight
+    this._curElement.context.lineCap = lastS.lineCap; // strokeCap
+    this._curElement.context.lineJoin = lastS.lineJoin; // strokeJoin
+    this._tint = lastS.tint; // tint
+    this._imageMode = lastS.imageMode; // imageMode
+    this._rectMode = lastS._rectMode; // rectMode
+    this._ellipseMode = lastS.ellipseMode; // elllipseMode
     // @todo shapeMode
-    this.settings.colorMode = lastS.colorMode; // colorMode
-    this.curElement.context.textAlign = lastS.textAlign; // textAlign
-    this.settings.textFont = lastS.textFont;
-    this.settings.textLeading = lastS.textLeading; // textLeading
-    this.settings.textSize = lastS.textSize; // textSize
-    this.settings.textStyle = lastS.textStyle; // textStyle
+    this._colorMode = lastS._colorMode; // colorMode
+    this._curElement.context.textAlign = lastS.textAlign; // textAlign
+    this.textFont = lastS.textFont;
+    this.textLeading = lastS.textLeading; // textLeading
+    this.textSize = lastS.textSize; // textSize
+    this.textStyle = lastS.textStyle; // textStyle
   };
 
   /**

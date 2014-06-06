@@ -11,6 +11,11 @@ define(function (require) {
   var p5 = require('core');
   var constants = require('constants');
 
+  p5.prototype._shapeKind = null;
+  p5.prototype._shapeInited = false;
+  p5.prototype._contourInited = false;
+  p5.prototype._contourVertices = [];
+
   /**
    * Use the beginContour() and endContour() function to create negative shapes
    * within shapes. For instance, the center of the letter 'O'. beginContour()
@@ -64,13 +69,13 @@ define(function (require) {
       kind === constants.TRIANGLE_STRIP ||
       kind === constants.QUADS ||
       kind === constants.QUAD_STRIP) {
-      this.shapeKind = kind;
+      this._shapeKind = kind;
     } else {
-      this.shapeKind = null;
+      this._shapeKind = null;
     }
 
-    this.shapeInited = true;
-    this.curElement.context.beginPath();
+    this._shapeInited = true;
+    this._curElement.context.beginPath();
 
     return this;
   };
@@ -109,7 +114,7 @@ define(function (require) {
       return this;
     }
 
-    this.curElement.context.bezierCurveTo(x2, y2, x3, y3, x4, y4);
+    this._curElement.context.bezierCurveTo(x2, y2, x3, y3, x4, y4);
 
     return this;
   };
@@ -134,11 +139,11 @@ define(function (require) {
     //In order for the contour fill to work correctly, the inside points must
     // be drawn in the reverse order of the parents
     this._contourVertices.reverse();
-    this.curElement.context.moveTo(
+    this._curElement.context.moveTo(
       this._contourVertices[0].x,
       this._contourVertices[0].y
     );
-    var ctx = this.curElement.context;
+    var ctx = this._curElement.context;
     this._contourVertices.slice(1).forEach(function(pt, i) {
       switch(pt.type) {
       case constants.LINEAR:
@@ -155,7 +160,7 @@ define(function (require) {
         break;
       }
     });
-    this.curElement.context.closePath();
+    this._curElement.context.closePath();
 
     this._contourInited = false;
 
@@ -175,10 +180,10 @@ define(function (require) {
    */
   p5.prototype.endShape = function(mode) {
     if (mode === constants.CLOSE) {
-      this.curElement.context.closePath();
-      this.curElement.context.fill();
+      this._curElement.context.closePath();
+      this._curElement.context.fill();
     }
-    this.curElement.context.stroke();
+    this._curElement.context.stroke();
 
     return this;
   };
@@ -214,7 +219,7 @@ define(function (require) {
       return this;
     }
 
-    this.curElement.context.quadraticCurveTo(cx, cy, x3, y3);
+    this._curElement.context.quadraticCurveTo(cx, cy, x3, y3);
 
     return this;
   };
@@ -243,13 +248,13 @@ define(function (require) {
       return this;
     }
 
-    if (this.shapeInited) {
-      this.curElement.context.moveTo(x, y);
+    if (this._shapeInited) {
+      this._curElement.context.moveTo(x, y);
     } else {
       // pend this is where check for kind and do other stuff
-      this.curElement.context.lineTo(x, y);
+      this._curElement.context.lineTo(x, y);
     }
-    this.shapeInited = false;
+    this._shapeInited = false;
 
     return this;
   };

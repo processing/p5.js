@@ -11,6 +11,12 @@ define(function (require) {
   var p5 = require('core');
   var constants = require('constants');
 
+  p5.prototype._colorMode = constants.RGB;
+  p5.prototype._maxC0 = 255; // these correspond to max vals for RGB or HSB
+  p5.prototype._maxC1 = 255;
+  p5.prototype._maxC2 = 255;
+  p5.prototype._maxA = 255;
+
   /**
    * The background() function sets the color used for the background of the
    * p5.js canvas. The default background is light gray. This function is
@@ -30,12 +36,12 @@ define(function (require) {
   p5.prototype.background = function() {
     var c = this.getNormalizedColor(arguments);
     // save out the fill
-    var curFill = this.curElement.context.fillStyle;
+    var curFill = this._curElement.context.fillStyle;
     // create background rect
-    this.curElement.context.fillStyle = this.getCSSRGBAColor(c);
-    this.curElement.context.fillRect(0, 0, this.width, this.height);
+    this._curElement.context.fillStyle = this.getCSSRGBAColor(c);
+    this._curElement.context.fillRect(0, 0, this.width, this.height);
     // reset fill
-    this.curElement.context.fillStyle = curFill;
+    this._curElement.context.fillStyle = curFill;
   };
 
   /**
@@ -49,7 +55,7 @@ define(function (require) {
    * @method clear
    */
   p5.prototype.clear = function() {
-    this.curElement.context.clearRect(0, 0, this.width, this.height);
+    this._curElement.context.clearRect(0, 0, this.width, this.height);
   };
 
   /**
@@ -61,10 +67,30 @@ define(function (require) {
    * @method colorMode
    * @param {Number|Constant} mode either RGB or HSB, corresponding to
    *                               Red/Green/Blue and Hue/Saturation/Brightness
+   * @param {Number|Constant} max1 range for the red or hue depending on the 
+   *                               current color mode, or range for all values
+   * @param {Number|Constant} max2 range for the green or saturation depending 
+   *                               on the current color mode
+   * @param {Number|Constant} max3 range for the blue or brightness depending
+   *                               on the current color mode
+   * @param {Number|Constant} maxA range for the alpha
    */
-  p5.prototype.colorMode = function(mode) {
-    if (mode === constants.RGB || mode === constants.HSB) {
-      this.settings.colorMode = mode;
+  p5.prototype.colorMode = function() {
+    if (arguments[0] === constants.RGB || arguments[0] === constants.HSB) {
+      this._colorMode = arguments[0];
+    }
+    if (arguments.length === 2) {
+      this._maxC0 = arguments[1];
+      this._maxC1 = arguments[1];
+      this._maxC2 = arguments[1];
+    }
+    else if (arguments.length > 2) {
+      this._maxC0 = arguments[1];
+      this._maxC1 = arguments[2];
+      this._maxC2 = arguments[3];
+    }
+    if (arguments.length === 5) {
+      this._maxA = arguments[4];
     }
   };
 
@@ -86,7 +112,7 @@ define(function (require) {
    */
   p5.prototype.fill = function() {
     var c = this.getNormalizedColor(arguments);
-    this.curElement.context.fillStyle = this.getCSSRGBAColor(c);
+    this._curElement.context.fillStyle = this.getCSSRGBAColor(c);
   };
 
   /**
@@ -96,7 +122,7 @@ define(function (require) {
    * @method noFill
    */
   p5.prototype.noFill = function() {
-    this.curElement.context.fillStyle = 'rgba(0,0,0,0)';
+    this._curElement.context.fillStyle = 'rgba(0,0,0,0)';
   };
 
   /**
@@ -106,7 +132,7 @@ define(function (require) {
    * @method noStroke
    */
   p5.prototype.noStroke = function() {
-    this.curElement.context.strokeStyle = 'rgba(0,0,0,0)';
+    this._curElement.context.strokeStyle = 'rgba(0,0,0,0)';
   };
 
   /**
@@ -126,7 +152,7 @@ define(function (require) {
    */
   p5.prototype.stroke = function() {
     var c = this.getNormalizedColor(arguments);
-    this.curElement.context.strokeStyle = this.getCSSRGBAColor(c);
+    this._curElement.context.strokeStyle = this.getCSSRGBAColor(c);
   };
 
   /**
@@ -155,12 +181,18 @@ define(function (require) {
       r = _args[0];
       g = _args[1];
       b = _args[2];
-      a = typeof _args[3] === 'number' ? _args[3] : 255;
+      a = typeof _args[3] === 'number' ? _args[3] : this._maxA;
     } else {
       r = g = b = _args[0];
-      a = typeof _args[1] === 'number' ? _args[1] : 255;
+      a = typeof _args[1] === 'number' ? _args[1] : this._maxA;
     }
-    if (this.settings.colorMode === constants.HSB) {
+
+    r *= 255/this._maxC0;
+    g *= 255/this._maxC1;
+    b *= 255/this._maxC2;
+    a *= 255/this._maxA;
+
+    if (this._colorMode === constants.HSB) {
       rgba = hsv2rgb(r, g, b).concat(a);
     } else {
       rgba = [r, g, b, a];
@@ -170,6 +202,9 @@ define(function (require) {
   };
 
   function hsv2rgb(h,s,v) {
+    h /= 255;
+    s /= 255;
+    v /= 255;
     // Adapted from http://www.easyrgb.com/math.html
     // hsv values = 0 - 1, rgb values = 0 - 255
     var RGB = [];

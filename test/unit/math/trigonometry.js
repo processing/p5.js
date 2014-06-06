@@ -44,17 +44,17 @@ suite('Trigonometry', function() {
   suite('p5.prototype.angleMode', function() {
     test('should set constant to DEGREES', function() {
       myp5.angleMode(DEGREES);
-      assert.equal(myp5.settings.angleMode, 'degrees');
+      assert.equal(myp5._angleMode, 'degrees');
     });
 
     test('should set constant to RADIANS', function() {
       myp5.angleMode(RADIANS);
-      assert.equal(myp5.settings.angleMode, 'radians');
+      assert.equal(myp5._angleMode, 'radians');
     });
 
     test('should always be RADIANS or DEGREES', function() {
       myp5.angleMode('wtflolzkk');
-      assert.equal(myp5.settings.angleMode, 'radians');
+      assert.equal(myp5._angleMode, 'radians');
     });
   });
 

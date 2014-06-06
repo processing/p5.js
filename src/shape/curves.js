@@ -9,6 +9,9 @@ define(function (require) {
 
   var p5 = require('core');
 
+  p5.prototype._bezierDetail = 20;
+  p5.prototype._curveDetail = 20;
+
   /**
    * Draws a Bezier curve on the screen. These curves are defined by a series
    * of anchor and control points. The first two parameters specify the first
@@ -30,16 +33,16 @@ define(function (require) {
    * @return {Object}    the p5 object
    */
   p5.prototype.bezier = function(x1, y1, x2, y2, x3, y3, x4, y4) {
-    this.curElement.context.beginPath();
-    this.curElement.context.moveTo(x1, y1);
+    this._curElement.context.beginPath();
+    this._curElement.context.moveTo(x1, y1);
     //for each point as considered by detail, iterate
     for (var i = 0; i <= this._bezierDetail; i++) {
       var t = i / parseFloat(this._bezierDetail);
       var x = p5.prototype.bezierPoint(x1, x2, x3, x4, t);
       var y = p5.prototype.bezierPoint(y1, y2, y3, y4, t);
-      this.curElement.context.lineTo(x, y);
+      this._curElement.context.lineTo(x, y);
     }
-    this.curElement.context.stroke();
+    this._curElement.context.stroke();
     return this;
   };
 
@@ -131,16 +134,16 @@ define(function (require) {
    * @return {Object}    the p5 object
    */
   p5.prototype.curve = function(x1, y1, x2, y2, x3, y3, x4, y4) {
-    this.curElement.context.moveTo(x1,y1);
-    this.curElement.context.beginPath();
+    this._curElement.context.moveTo(x1,y1);
+    this._curElement.context.beginPath();
     for (var i = 0; i <= this._curveDetail; i++) {
       var t = parseFloat(i/this._curveDetail);
       var x = p5.prototype.curvePoint(x1,x2,x3,x4,t);
       var y = p5.prototype.curvePoint(y1,y2,y3,y4,t);
-      this.curElement.context.lineTo(x,y);
+      this._curElement.context.lineTo(x,y);
     }
-    this.curElement.context.stroke();
-    this.curElement.context.closePath();
+    this._curElement.context.stroke();
+    this._curElement.context.closePath();
 
     return this;
   };

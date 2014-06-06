@@ -15,6 +15,8 @@ define(function (require) {
    *
    * @property isKeyPressed
    */
+  p5.prototype.isKeyPressed = false;
+  p5.prototype.keyIsPressed = false; // khan
    
   /**
    * The system variable key always contains the value of the most recent
@@ -23,6 +25,7 @@ define(function (require) {
    *
    * @property key
    */
+  p5.prototype.key = '';
 
   /**
    * The variable keyCode is used to detect special keys such as the UP,
@@ -30,6 +33,7 @@ define(function (require) {
    *
    * @property keyCode
    */
+  p5.prototype.keyCode = 0;
 
    /**
    * The keyPressed() function is called once every time a key is pressed. 

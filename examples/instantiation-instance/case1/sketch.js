@@ -1,5 +1,5 @@
-// CASE 1: node specified, node is a CANVAS ELEMENT ID
-// p5 will attach to canvas node specified.
+// CASE 1: no node specified, createCanvas called
+// Canvas is generated and appended to body.
 var s = function( sketch ) {
 
   var gray = 0; 
@@ -19,4 +19,4 @@ var s = function( sketch ) {
 
 };
 
-var myp5 = new p5(s, 'p5-canvas');
+var myp5 = new p5(s);

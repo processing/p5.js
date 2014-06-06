@@ -5,7 +5,29 @@
 define(function (require) {
 
   'use strict';
-  
+
+  var p5 = require('core');
+  var polarGeometry = require('polargeometry');
+  var constants = require('constants');
+
+
+  /**
+   * Creates a new PVector (the datatype for storing vectors). This provides a
+   * two or three dimensional vector, specifically a Euclidean (also known as 
+   * geometric) vector. A vector is an entity that has both magnitude and 
+   * direction. 
+   *
+   * @method createVector
+   * @param {Number} [x] x component of the vector
+   * @param {Number} [y] y component of the vector
+   * @param {Number} [z] z component of the vector
+   * @for Math
+   */
+  p5.prototype.createVector = function() {
+    return new PVector(this, arguments);
+  };
+
+
   /**
    * The PVector constructor function.
    *
@@ -31,25 +53,31 @@ define(function (require) {
    * @param {Number} [y] y component of the vector
    * @param {Number} [z] z component of the vector
    */
-  function PVector(x, y, z) {
+  function PVector() {
+    var nums = arguments;
+    // save reference to p5 if passed in
+    if(arguments[0] instanceof p5) {
+      this.p5 = arguments[0];
+      nums = arguments[1];
+    }
     /**
      * The x component of the vector
      * @property x
      * @type {Number}
      */
-    this.x = x || 0;
+    this.x = nums[0] || 0;
     /**
      * The y component of the vector
      * @property y
      * @type {Number}
      */
-    this.y = y || 0;
+    this.y = nums[1] || 0;
     /**
      * The z component of the vector
      * @property z
      * @type {Number}
      */
-    this.z = z || 0;
+    this.z = nums[2] || 0;
   }
 
 
@@ -275,13 +303,22 @@ define(function (require) {
 
   /**
    * Calculate the angle of rotation for this vector (only 2D vectors)
-   * TODO: deal with AngleMode
+   * TODO: deal with AngleMode // LM gave this a shot, is it right?
    *
    * @method heading
    * @return {Number} the angle of rotation
    */
   PVector.prototype.heading = function () {
-    return Math.atan2(this.y, this.x);
+    var h = Math.atan2(this.y, this.x);
+    if (this.p5) {
+      if (this.p5._angleMode === constants.RADIANS) {
+        return h;
+      } else {
+        return polarGeometry.radiansToDegrees(h);
+      }
+    } else {
+      return h;
+    }
   };
 
   /**

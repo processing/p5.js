@@ -16,6 +16,8 @@ define(function (require) {
 
   require('output.text_area');
 
+  p5.prototype._matrices = [[1,0,0,1,0,0]];
+
   /**
    * Multiplies the current matrix by the one specified through the parameters.
    * This is very slow because it will try to calculate the inverse of the
@@ -31,8 +33,8 @@ define(function (require) {
    * @return {p5}         the p5 object
    */
   p5.prototype.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
-    this.curElement.context.transform(n00, n01, n02, n10, n11, n12);
-    var m = this.matrices[this.matrices.length-1];
+    this._curElement.context.transform(n00, n01, n02, n10, n11, n12);
+    var m = this._matrices[this._matrices.length-1];
     m = linearAlgebra.pMultiplyMatrix(m, [n00, n01, n02, n10, n11, n12]);
 
     return this;
@@ -50,8 +52,8 @@ define(function (require) {
    * @return {p5} the p5 object
    */
   p5.prototype.popMatrix = function() {
-    this.curElement.context.restore();
-    this.matrices.pop();
+    this._curElement.context.restore();
+    this._matrices.pop();
 
     return this;
   };
@@ -63,7 +65,7 @@ define(function (require) {
    * @return {p5} the p5 object
    */
   p5.prototype.printMatrix = function() {
-    console.log(this.matrices[this.matrices.length-1]);
+    //console.log(this._matrices[this._matrices.length-1]);
     return this;
   };
 
@@ -80,8 +82,8 @@ define(function (require) {
    * @return {p5} the p5 object
    */
   p5.prototype.pushMatrix = function() {
-    this.curElement.context.save();
-    this.matrices.push([1,0,0,1,0,0]);
+    this._curElement.context.save();
+    this._matrices.push([1,0,0,1,0,0]);
 
     return this;
   };
@@ -93,8 +95,8 @@ define(function (require) {
    * @return {p5} the p5 object
    */
   p5.prototype.resetMatrix = function() {
-    this.curElement.context.setTransform();
-    this.matrices[this.matrices.length-1] = [1,0,0,1,0,0];
+    this._curElement.context.setTransform();
+    this._matrices[this._matrices.length-1] = [1,0,0,1,0,0];
 
     return this;
   };
@@ -121,11 +123,11 @@ define(function (require) {
    * @return {p5}           the p5 object
    */
   p5.prototype.rotate = function(r) {
-    if (this.settings.angleMode === constants.DEGREES) {
+    if (this._angleMode === constants.DEGREES) {
       r = this.radians(r);
     }
-    this.curElement.context.rotate(r);
-    var m = this.matrices[this.matrices.length-1];
+    this._curElement.context.rotate(r);
+    var m = this._matrices[this._matrices.length-1];
     var c = Math.cos(r);
     var s = Math.sin(r);
     var m11 = m[0] * c + m[2] * s;
@@ -181,8 +183,8 @@ define(function (require) {
       x = arguments[0];
       y = arguments[1];
     }
-    this.curElement.context.scale(x, y);
-    var m = this.matrices[this.matrices.length-1];
+    this._curElement.context.scale(x, y);
+    var m = this._matrices[this._matrices.length-1];
     m[0] *= x;
     m[1] *= x;
     m[2] *= y;
@@ -213,11 +215,11 @@ define(function (require) {
    * @return {p5}           the p5 object
    */
   p5.prototype.shearX = function(angle) {
-    if (this.settings.angleMode === constants.DEGREES) {
+    if (this._angleMode === constants.DEGREES) {
       angle = this.radians(angle);
     }
-    this.curElement.context.transform(1, 0, this.tan(angle), 1, 0, 0);
-    var m = this.matrices[this.matrices.length-1];
+    this._curElement.context.transform(1, 0, this.tan(angle), 1, 0, 0);
+    var m = this._matrices[this._matrices.length-1];
     m = linearAlgebra.pMultiplyMatrix(m, [1, 0, this.tan(angle), 1, 0, 0]);
 
     return this;
@@ -245,11 +247,11 @@ define(function (require) {
    * @return {p5}           the p5 object
    */
   p5.prototype.shearY = function(angle) {
-    if (this.settings.angleMode === constants.DEGREES) {
+    if (this._angleMode === constants.DEGREES) {
       angle = this.radians(angle);
     }
-    this.curElement.context.transform(1, this.tan(angle), 0, 1, 0, 0);
-    var m = this.matrices[this.matrices.length-1];
+    this._curElement.context.transform(1, this.tan(angle), 0, 1, 0, 0);
+    var m = this._matrices[this._matrices.length-1];
     m = linearAlgebra.pMultiplyMatrix(m, [1, this.tan(angle), 0, 1, 0, 0]);
 
     return this;
@@ -273,8 +275,8 @@ define(function (require) {
    * @return {p5}       the p5 object
    */
   p5.prototype.translate = function(x, y) {
-    this.curElement.context.translate(x, y);
-    var m = this.matrices[this.matrices.length-1];
+    this._curElement.context.translate(x, y);
+    var m = this._matrices[this._matrices.length-1];
     m[4] += m[0] * x + m[2] * y;
     m[5] += m[1] * x + m[3] * y;
 

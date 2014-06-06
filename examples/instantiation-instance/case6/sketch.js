@@ -28,7 +28,7 @@ var s0 = function( sketch ) {
   }
 };
 
-var myp5_0 = new p5(s0, 'canvas0');
+var myp5_0 = new p5(s0, 'div0');
 
 
 
@@ -70,5 +70,5 @@ var s1 = function( sketch ) {
 };
 
 
-var myp5_1 = new p5(s1, 'canvas1');
+var myp5_1 = new p5(s1, 'div1');
 

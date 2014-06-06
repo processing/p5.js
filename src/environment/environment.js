@@ -13,6 +13,10 @@ define(function(require) {
 
   var standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
 
+  p5.prototype._frameRate = 0;
+  p5.prototype._lastFrameTime = 0;
+  p5.prototype._targetFrameRate = 60;
+
   /**
    * Sets the cursor to a predefined symbol or an image, or makes it visible
    * if already hidden. If you are trying to set an image as the cursor, the
@@ -29,7 +33,7 @@ define(function(require) {
    */
   p5.prototype.cursor = function(type, x, y) {
     var cursor = 'auto';
-    var canvas = this.curElement.elt;
+    var canvas = this._curElement.elt;
     if (standardCursors.indexOf(type) > -1) {
       // Standard css cursor
       cursor = type;
@@ -108,7 +112,7 @@ define(function(require) {
    * @method noCursor
    */
   p5.prototype.noCursor = function() {
-    this.curElement.elt.style.cursor = 'none';
+    this._curElement.elt.style.cursor = 'none';
   };
 
   return p5;

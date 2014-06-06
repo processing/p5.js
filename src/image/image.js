@@ -19,6 +19,9 @@ define(function (require) {
   var constants = require('constants');
   var Filters = require('filters');
 
+  p5.prototype._imageMode = constants.CORNER;
+  p5.prototype._tint = null;
+
   /*
    * Global/P5 methods
    */
@@ -98,17 +101,17 @@ define(function (require) {
     if (height === undefined){
       height = image.height;
     }
-    var vals = canvas.modeAdjust(x, y, width, height, this.settings.imageMode);
+    var vals = canvas.modeAdjust(x, y, width, height, this._imageMode);
     // tint the image if there is a tint
-    if (this.settings.tint) {
-      this.curElement.context.drawImage(
+    if (this._tint) {
+      this._curElement.context.drawImage(
         this._getTintedImageCanvas(image),
         vals.x,
         vals.y,
         vals.w,
         vals.h);
     } else {
-      this.curElement.context.drawImage(
+      this._curElement.context.drawImage(
         image.canvas,
         vals.x,
         vals.y,
@@ -142,7 +145,7 @@ define(function (require) {
    */
   p5.prototype.tint = function() {
     var c = this.getNormalizedColor(arguments);
-    this.settings.tint = c;
+    this._tint = c;
   };
 
   /**
@@ -153,7 +156,7 @@ define(function (require) {
    * @for Loading & Displaying
    */
   p5.prototype.noTint = function() {
-    this.settings.tint = null;
+    this._tint = null;
   };
 
   /**
@@ -178,10 +181,10 @@ define(function (require) {
       var b = pixels[i+2];
       var a = pixels[i+3];
 
-      newPixels[i] = r*this.settings.tint[0]/255;
-      newPixels[i+1] = g*this.settings.tint[1]/255;
-      newPixels[i+2] = b*this.settings.tint[2]/255;
-      newPixels[i+3] = a*this.settings.tint[3]/255;
+      newPixels[i] = r*this._tint[0]/255;
+      newPixels[i+1] = g*this._tint[1]/255;
+      newPixels[i+2] = b*this._tint[2]/255;
+      newPixels[i+3] = a*this._tint[3]/255;
     }
 
     tmpCtx.putImageData(id, 0, 0);
@@ -211,7 +214,7 @@ define(function (require) {
     if (m === constants.CORNER ||
       m === constants.CORNERS ||
       m === constants.CENTER) {
-      this.settings.imageMode = m;
+      this._imageMode = m;
     }
   };
 

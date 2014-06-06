@@ -1,5 +1,6 @@
 define(function(require) {
 
+  var p5 = require('core');
   var constants = require('constants');
 
   function PElement(elt, pInst) {
@@ -7,12 +8,20 @@ define(function(require) {
     this.pInst = pInst;
     this.width = this.elt.offsetWidth;
     this.height = this.elt.offsetHeight;
-    if (elt instanceof HTMLCanvasElement) {
+    if (elt instanceof HTMLCanvasElement && this.pInst) {
       this.context = elt.getContext('2d');
       // for pixel method sharing with pimage
       this.pInst._setProperty('canvas', elt);
     }
   }
+
+  PElement.prototype.parent = function(parent) {
+    if (typeof parent === 'string') {
+      parent = document.getElementById(parent);
+    }
+    parent.appendChild(this.elt);
+  };
+
   PElement.prototype.html = function(html) {
     this.elt.innerHTML = html;
   };
@@ -42,9 +51,11 @@ define(function(require) {
       }
       this.width = this.elt.offsetWidth;
       this.height = this.elt.offsetHeight;
-      if (this.pInst.curElement.elt === this.elt) {
-        this.pInst._setProperty('width', this.elt.offsetWidth);
-        this.pInst._setProperty('height', this.elt.offsetHeight);
+      if (this.pInst) { // main canvas associated with p5 instance
+        if (this.pInst.curElement.elt === this.elt) {
+          this.pInst._setProperty('width', this.elt.offsetWidth);
+          this.pInst._setProperty('height', this.elt.offsetHeight);
+        }
       }
     }
   };
@@ -63,18 +74,25 @@ define(function(require) {
   PElement.prototype.hide = function() {
     this.elt.style.display = 'none';
   };
-  PElement.prototype.mousePressed = function(fxn) {
-    var _this = this;
-    this.elt.addEventListener('click', function(e){fxn(e, _this);}, false);
-  }; // pend false?
-  PElement.prototype.mouseOver = function(fxn) {
-    var _this = this;
-    this.elt.addEventListener('mouseover', function(e){fxn(e, _this);}, false);
+  PElement.prototype.mousePressed = function (fxn) {
+    attachListener('click', fxn, this);
   };
-  PElement.prototype.mouseOut = function(fxn) {
-    var _this = this;
-    this.elt.addEventListener('mouseout', function(e){fxn(e, _this);}, false);
+  PElement.prototype.mouseOver = function (fxn) {
+    attachListener('mouseover', fxn, this);
   };
+  PElement.prototype.mouseOut = function (fxn) {
+    attachListener('mouseout', fxn, this);
+  };
+  function attachListener(ev, fxn, ctx) {
+    var _this = ctx;
+    var f = function (e) { fxn(e, _this); };
+    ctx.elt.addEventListener(ev, f, false);
+    if (ctx.pInst) {
+      ctx.pInst._events[ev].push([ctx.elt, f]);
+    }
+  }
 
+  p5.PElement = PElement;
+  
   return PElement;
 });

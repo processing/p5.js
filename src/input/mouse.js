@@ -13,77 +13,102 @@ define(function (require) {
   var constants = require('constants');
 
   /**
+   * The system variable mouseX always contains the current horizontal
+   * position of the mouse, relative to (0, 0) of the canvas.
+   *
+   * @property mouseX
+   */
+  p5.prototype.mouseX = 0;
+
+  /**
+   * The system variable mouseY always contains the current vertical position
+   * of the mouse, relative to (0, 0) of the canvas.
+   *
+   * @property mouseY
+   */
+  p5.prototype.mouseY = 0;
+
+  /**
+   * The system variable pmouseX always contains the horizontal position of
+   * the mouse in the frame previous to the current frame, relative to (0, 0)
+   * of the canvas.
+   *
+   * @property pmouseX
+   */
+  p5.prototype.pmouseX = 0;
+
+  /**
+   * The system variable pmouseY always contains the vertical position of the
+   * mouse in the frame previous to the current frame, relative to (0, 0) of
+   * the canvas.
+   *
+   * @property pmouseY
+   */
+  p5.prototype.pmouseY = 0;
+
+  /**
+   * The system variable pwinMouseY always contains the current horizontal
+   * position of the mouse, relative to (0, 0) of the window.
+   *
+   * @property winMouseX
+   */
+  p5.prototype.winMouseX = 0;
+
+  /**
+   * The system variable winMouseY always contains the current vertical
+   * position of the mouse, relative to (0, 0) of the window.
+   *
+   * @property winMouseY
+   */
+  p5.prototype.winMouseY = 0;
+
+  /**
+   * The system variable pwinMouseX always contains the horizontal position
+   * of the mouse in the frame previous to the current frame, relative to
+   * (0, 0) of the window.
+   *
+   * @property pwinMouseX
+   */
+  p5.prototype.pwinMouseX = 0;
+
+  /**
+   * The system variable pwinMouseY always contains the vertical position of
+   * the mouse in the frame previous to the current frame, relative to (0, 0)
+   * of the window.
+   *
+   * @property pwinMouseY
+   */
+  p5.prototype.pwinMouseY = 0;
+
+  /**
+   * Processing automatically tracks if the mouse button is pressed and which
+   * button is pressed. The value of the system variable mouseButton is either
+   * LEFT, RIGHT, or CENTER depending on which button is pressed. Browsers are
+   * weird, USE AT YOUR OWN RISK FOR NOW!
+   *
+   * @property mouseButton
+   */
+  p5.prototype.mouseButton = 0;
+
+  /**
    * The boolean system variable isMousePressed is true if the mouse is pressed
    * and false if not.
    *
    * @property isMousePressed
    */
+  p5.prototype.isMousePressed = false;
+  p5.prototype.mouseIsPressed = false; // khan
 
   p5.prototype.updateMouseCoords = function(e) {
-    var mousePos = getMousePos(this.curElement.elt, e);
-    /**
-     * The system variable pmouseX always contains the horizontal position of
-     * the mouse in the frame previous to the current frame, relative to (0, 0)
-     * of the canvas.
-     *
-     * @property pmouseX
-     */
+    var mousePos = getMousePos(this._curElement.elt, e);
+
     this._setProperty('pmouseX', this.mouseX);
-    /**
-     * The system variable pmouseY always contains the vertical position of the
-     * mouse in the frame previous to the current frame, relative to (0, 0) of
-     * the canvas.
-     *
-     * @property pmouseY
-     */
     this._setProperty('pmouseY', this.mouseY);
-    /**
-     * The system variable mouseX always contains the current horizontal
-     * position of the mouse, relative to (0, 0) of the canvas.
-     *
-     * @property mouseX
-     */
     this._setProperty('mouseX', mousePos.x);
-    /**
-     * The system variable mouseY always contains the current vertical position
-     * of the mouse, relative to (0, 0) of the canvas.
-     *
-     * @property mouseY
-     */
     this._setProperty('mouseY', mousePos.y);
-
-    /**
-     * The system variable pwinMouseX always contains the horizontal position
-     * of the mouse in the frame previous to the current frame, relative to
-     * (0, 0) of the window.
-     *
-     * @property pwinMouseX
-     */
     this._setProperty('pwinMouseX', this.winMouseX);
-
-    /**
-     * The system variable pwinMouseY always contains the vertical position of
-     * the mouse in the frame previous to the current frame, relative to (0, 0)
-     * of the window.
-     *
-     * @property pwinMouseY
-     */
     this._setProperty('pwinMouseY', this.winMouseY);
-
-    /**
-     * The system variable pwinMouseY always contains the current horizontal
-     * position of the mouse, relative to (0, 0) of the window.
-     *
-     * @property winMouseX
-     */
     this._setProperty('winMouseX', e.pageX);
-
-    /**
-     * The system variable winMouseY always contains the current vertical
-     * position of the mouse, relative to (0, 0) of the window.
-     *
-     * @property winMouseY
-     */
     this._setProperty('winMouseY', e.pageY);
   };
 
@@ -95,14 +120,6 @@ define(function (require) {
     };
   }
 
-  /**
-   * Processing automatically tracks if the mouse button is pressed and which
-   * button is pressed. The value of the system variable mouseButton is either
-   * LEFT, RIGHT, or CENTER depending on which button is pressed. Browsers are
-   * weird, USE AT YOUR OWN RISK FOR NOW!
-   *
-   * @property mouseButton
-   */
   p5.prototype.setMouseButton = function(e) {
     if (e.button === 1) {
       this._setProperty('mouseButton', constants.CENTER);
