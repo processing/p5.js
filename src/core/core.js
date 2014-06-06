@@ -420,7 +420,6 @@ define(function (require) {
       for (var p in p5.prototype) {
         if (p5.prototype.hasOwnProperty(p) &&
           typeof p5.prototype[p] !== 'function') {
-          console.log(typeof p);
           window[p] = this[p];
         }
       }
