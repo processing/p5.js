@@ -98,9 +98,9 @@ define(function (require) {
     if (height === undefined){
       height = image.height;
     }
-    var vals = canvas.modeAdjust(x, y, width, height, this.settings.imageMode);
+    var vals = canvas.modeAdjust(x, y, width, height, this.imageMode);
     // tint the image if there is a tint
-    if (this.settings.tint) {
+    if (this.tint) {
       this.curElement.context.drawImage(
         this._getTintedImageCanvas(image),
         vals.x,
@@ -142,7 +142,7 @@ define(function (require) {
    */
   p5.prototype.tint = function() {
     var c = this.getNormalizedColor(arguments);
-    this.settings.tint = c;
+    this.tint = c;
   };
 
   /**
@@ -153,7 +153,7 @@ define(function (require) {
    * @for Loading & Displaying
    */
   p5.prototype.noTint = function() {
-    this.settings.tint = null;
+    this.tint = null;
   };
 
   /**
@@ -178,10 +178,10 @@ define(function (require) {
       var b = pixels[i+2];
       var a = pixels[i+3];
 
-      newPixels[i] = r*this.settings.tint[0]/255;
-      newPixels[i+1] = g*this.settings.tint[1]/255;
-      newPixels[i+2] = b*this.settings.tint[2]/255;
-      newPixels[i+3] = a*this.settings.tint[3]/255;
+      newPixels[i] = r*this.tint[0]/255;
+      newPixels[i+1] = g*this.tint[1]/255;
+      newPixels[i+2] = b*this.tint[2]/255;
+      newPixels[i+3] = a*this.tint[3]/255;
     }
 
     tmpCtx.putImageData(id, 0, 0);
@@ -211,7 +211,7 @@ define(function (require) {
     if (m === constants.CORNER ||
       m === constants.CORNERS ||
       m === constants.CENTER) {
-      this.settings.imageMode = m;
+      this.imageMode = m;
     }
   };
 

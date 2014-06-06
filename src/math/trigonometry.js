@@ -23,7 +23,7 @@ define(function (require) {
    * @return {Number}       the arc cosine of the given value
    */
   p5.prototype.acos = function(ratio) {
-    if (this.settings.angleMode === constants.RADIANS) {
+    if (this._angleMode === constants.RADIANS) {
       return Math.acos(ratio);
     } else {
       return polarGeometry.radiansToDegrees(Math.acos(ratio));
@@ -40,7 +40,7 @@ define(function (require) {
    * @return {Number}       the arc sine of the given value
    */
   p5.prototype.asin = function(ratio) {
-    if (this.settings.angleMode === constants.RADIANS) {
+    if (this._angleMode === constants.RADIANS) {
       return Math.asin(ratio);
     } else {
       return polarGeometry.radiansToDegrees(Math.asin(ratio));
@@ -57,7 +57,7 @@ define(function (require) {
    * @return {Number}       the arc tangent of the given value
    */
   p5.prototype.atan = function(ratio) {
-    if (this.settings.angleMode === constants.RADIANS) {
+    if (this._angleMode === constants.RADIANS) {
       return Math.atan(ratio);
     } else {
       return polarGeometry.radiansToDegrees(Math.atan(ratio));
@@ -78,7 +78,7 @@ define(function (require) {
    * @return {Number}   the arc tangent of the given point
    */
   p5.prototype.atan2 = function (y, x) {
-    if (this.settings.angleMode === constants.RADIANS) {
+    if (this._angleMode === constants.RADIANS) {
       return Math.atan2(y, x);
     } else {
       return polarGeometry.radiansToDegrees(Math.atan2(y, x));
@@ -94,7 +94,7 @@ define(function (require) {
    * @return {Number}       the cosine of the angle
    */
   p5.prototype.cos = function(angle) {
-    if (this.settings.angleMode === constants.RADIANS) {
+    if (this._angleMode === constants.RADIANS) {
       return Math.cos(angle);
     } else {
       return Math.cos(this.radians(angle));
@@ -110,7 +110,7 @@ define(function (require) {
    * @return {Number}       the sine of the angle
    */
   p5.prototype.sin = function(angle) {
-    if (this.settings.angleMode === constants.RADIANS) {
+    if (this._angleMode === constants.RADIANS) {
       return Math.sin(angle);
     } else {
       return Math.sin(this.radians(angle));
@@ -126,7 +126,7 @@ define(function (require) {
    * @return {Number}       the tangent of the angle
    */
   p5.prototype.tan = function(angle) {
-    if (this.settings.angleMode === constants.RADIANS) {
+    if (this._angleMode === constants.RADIANS) {
       return Math.tan(angle);
     } else {
       return Math.tan(this.radians(angle));
@@ -169,7 +169,7 @@ define(function (require) {
    */
   p5.prototype.angleMode = function(mode) {
     if (mode === constants.DEGREES || mode === constants.RADIANS) {
-      this.settings.angleMode = mode;
+      this._angleMode = mode;
     }
   };
 

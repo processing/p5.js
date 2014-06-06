@@ -31,7 +31,7 @@ define(function (require) {
    * @method noLoop
    */
   p5.prototype.noLoop = function() {
-    this.settings.loop = false;
+    this.loop = false;
   };
 
   /**
@@ -42,7 +42,7 @@ define(function (require) {
    * @method loop
    */
   p5.prototype.loop = function() {
-    this.settings.loop = true;
+    this.loop = true;
   };
 
   /**
@@ -70,17 +70,17 @@ define(function (require) {
       lineWidth:   this.curElement.context.lineWidth, // strokeWeight
       lineCap:     this.curElement.context.lineCap, // strokeCap
       lineJoin:    this.curElement.context.lineJoin, // strokeJoin
-      tint:        this.settings.tint, // tint
-      imageMode:   this.settings.imageMode, // imageMode
-      rectMode:    this.settings.rectMode, // rectMode
-      ellipseMode: this.settings.ellipseMode, // ellipseMode
+      tint:        this.tint, // tint
+      imageMode:   this.imageMode, // imageMode
+      rectMode:    this.rectMode, // rectMode
+      ellipseMode: this.ellipseMode, // ellipseMode
       // @todo shapeMode
-      colorMode:   this.settings.colorMode, // colorMode
+      colorMode:   this._colorMode, // colorMode
       textAlign:   this.curElement.context.textAlign, // textAlign
-      textFont:    this.settings.textFont,
-      textLeading: this.settings.textLeading, // textLeading
-      textSize:    this.settings.textSize, // textSize
-      textStyle:   this.settings.textStyle // textStyle
+      textFont:    this.textFont,
+      textLeading: this.textLeading, // textLeading
+      textSize:    this.textSize, // textSize
+      textStyle:   this.textStyle // textStyle
     });
   };
 
@@ -104,17 +104,17 @@ define(function (require) {
     this.curElement.context.lineWidth = lastS.lineWidth; // strokeWeight
     this.curElement.context.lineCap = lastS.lineCap; // strokeCap
     this.curElement.context.lineJoin = lastS.lineJoin; // strokeJoin
-    this.settings.tint = lastS.tint; // tint
-    this.settings.imageMode = lastS.imageMode; // imageMode
-    this.settings.rectMode = lastS.rectMode; // rectMode
-    this.settings.ellipseMode = lastS.ellipseMode; // elllipseMode
+    this.tint = lastS.tint; // tint
+    this.imageMode = lastS.imageMode; // imageMode
+    this.rectMode = lastS.rectMode; // rectMode
+    this.ellipseMode = lastS.ellipseMode; // elllipseMode
     // @todo shapeMode
-    this.settings.colorMode = lastS.colorMode; // colorMode
+    this._colorMode = lastS._colorMode; // colorMode
     this.curElement.context.textAlign = lastS.textAlign; // textAlign
-    this.settings.textFont = lastS.textFont;
-    this.settings.textLeading = lastS.textLeading; // textLeading
-    this.settings.textSize = lastS.textSize; // textSize
-    this.settings.textStyle = lastS.textStyle; // textStyle
+    this.textFont = lastS.textFont;
+    this.textLeading = lastS.textLeading; // textLeading
+    this.textSize = lastS.textSize; // textSize
+    this.textStyle = lastS.textStyle; // textStyle
   };
 
   /**

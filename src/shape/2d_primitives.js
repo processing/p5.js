@@ -72,7 +72,7 @@ define(function (require) {
       y,
       width,
       height,
-      this.settings.ellipseMode
+      this.ellipseMode
     );
     var radius = (vals.h > vals.w) ? vals.h / 2 : vals.w / 2,
       //scale the arc if it is oblong
@@ -117,7 +117,7 @@ define(function (require) {
       y,
       width,
       height,
-      this.settings.ellipseMode
+      this.ellipseMode
     );
     var kappa = 0.5522848,
       ox = (vals.w / 2) * kappa, // control point offset horizontal
@@ -278,7 +278,7 @@ define(function (require) {
   * 
   */
   p5.prototype.rect = function(a, b, c, d) {
-    var vals = canvas.modeAdjust(a, b, c, d, this.settings.rectMode);
+    var vals = canvas.modeAdjust(a, b, c, d, this.rectMode);
     this.curElement.context.beginPath();
     this.curElement.context.rect(vals.x, vals.y, vals.w, vals.h);
     this.curElement.context.fill();

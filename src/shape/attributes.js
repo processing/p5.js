@@ -43,7 +43,7 @@ define(function (require) {
       m === constants.CORNERS ||
       m === constants.RADIUS ||
       m === constants.CENTER) {
-      this.settings.ellipseMode = m;
+      this.ellipseMode = m;
     }
 
     return this;
@@ -96,7 +96,7 @@ define(function (require) {
       m === constants.CORNERS ||
       m === constants.RADIUS ||
       m === constants.CENTER) {
-      this.settings.rectMode = m;
+      this.rectMode = m;
     }
 
     return this;

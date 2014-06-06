@@ -311,7 +311,7 @@ define(function (require) {
   PVector.prototype.heading = function () {
     var h = Math.atan2(this.y, this.x);
     if (this.p5) {
-      if (this.p5.settings.angleMode === constants.RADIANS) {
+      if (this.p5._angleMode === constants.RADIANS) {
         return h;
       } else {
         return polarGeometry.radiansToDegrees(h);

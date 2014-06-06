@@ -64,7 +64,7 @@ define(function (require) {
         arguments[2],
         arguments[3],
         arguments[4],
-        this.settings.rectMode
+        this.rectMode
       );
 
       vals.y += this._textLeading;

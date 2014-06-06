@@ -71,20 +71,20 @@ define(function (require) {
    */
   p5.prototype.colorMode = function() {
     if (arguments[0] === constants.RGB || arguments[0] === constants.HSB) {
-      this.settings.colorMode = arguments[0];
+      this._colorMode = arguments[0];
     }
     if (arguments.length === 2) {
-      this.settings.maxC0 = arguments[1];
-      this.settings.maxC1 = arguments[1];
-      this.settings.maxC2 = arguments[1];
+      this.maxC0 = arguments[1];
+      this.maxC1 = arguments[1];
+      this.maxC2 = arguments[1];
     }
     else if (arguments.length > 2) {
-      this.settings.maxC0 = arguments[1];
-      this.settings.maxC1 = arguments[2];
-      this.settings.maxC2 = arguments[3];
+      this.maxC0 = arguments[1];
+      this.maxC1 = arguments[2];
+      this.maxC2 = arguments[3];
     }
     if (arguments.length === 5) {
-      this.settings.maxA = arguments[4];
+      this.maxA = arguments[4];
     }
   };
 
@@ -175,18 +175,18 @@ define(function (require) {
       r = _args[0];
       g = _args[1];
       b = _args[2];
-      a = typeof _args[3] === 'number' ? _args[3] : this.settings.maxA;
+      a = typeof _args[3] === 'number' ? _args[3] : this.maxA;
     } else {
       r = g = b = _args[0];
-      a = typeof _args[1] === 'number' ? _args[1] : this.settings.maxA;
+      a = typeof _args[1] === 'number' ? _args[1] : this.maxA;
     }
 
-    r *= 255/this.settings.maxC0;
-    g *= 255/this.settings.maxC1;
-    b *= 255/this.settings.maxC2;
-    a *= 255/this.settings.maxA;
+    r *= 255/this.maxC0;
+    g *= 255/this.maxC1;
+    b *= 255/this.maxC2;
+    a *= 255/this.maxA;
 
-    if (this.settings.colorMode === constants.HSB) {
+    if (this._colorMode === constants.HSB) {
       rgba = hsv2rgb(r, g, b).concat(a);
     } else {
       rgba = [r, g, b, a];

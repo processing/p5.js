@@ -121,7 +121,7 @@ define(function (require) {
    * @return {p5}           the p5 object
    */
   p5.prototype.rotate = function(r) {
-    if (this.settings.angleMode === constants.DEGREES) {
+    if (this._angleMode === constants.DEGREES) {
       r = this.radians(r);
     }
     this.curElement.context.rotate(r);
@@ -213,7 +213,7 @@ define(function (require) {
    * @return {p5}           the p5 object
    */
   p5.prototype.shearX = function(angle) {
-    if (this.settings.angleMode === constants.DEGREES) {
+    if (this._angleMode === constants.DEGREES) {
       angle = this.radians(angle);
     }
     this.curElement.context.transform(1, 0, this.tan(angle), 1, 0, 0);
@@ -245,7 +245,7 @@ define(function (require) {
    * @return {p5}           the p5 object
    */
   p5.prototype.shearY = function(angle) {
-    if (this.settings.angleMode === constants.DEGREES) {
+    if (this._angleMode === constants.DEGREES) {
       angle = this.radians(angle);
     }
     this.curElement.context.transform(1, this.tan(angle), 0, 1, 0, 0);

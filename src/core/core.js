@@ -30,7 +30,7 @@ define(function (require) {
   var p5 = function(sketch, node) {
 
     // ******************************************
-    // PUBLIC p5 PROTOTYPE PROPERTIES
+    // PUBLIC p5 PROPERTIES
     //   
 
     /**
@@ -203,30 +203,28 @@ define(function (require) {
      */
     this.pixels = [];
 
-    // TODO: ???
+    // TODO:
+    // - add in documentation for these
+    // - make private ones private
+    // - figure out how they relate to structure.js
     this.curElement = null;
     this.matrices = [[1,0,0,1,0,0]];
-
-    // TODO: ???
-    this.settings = {
-      // Structure
-      loop: true,
-      fill: false,
-      updateInterval: 0,
-      rectMode: constants.CORNER,
-      imageMode: constants.CORNER,
-      ellipseMode: constants.CENTER,
-      colorMode: constants.RGB,
-      maxC0: 255, // these correspond to max vals for RGB or HSB
-      maxC1: 255,
-      maxC2: 255,
-      maxA: 255,
-      angleMode: constants.RADIANS,
-      tint: null
-    };
+    this.loop = true;
+    this.fill = false;
+    this.updateInterval = 0;
+    this.rectMode = constants.CORNER;
+    this.imageMode = constants.CORNER;
+    this.ellipseMode = constants.CENTER;
+    this._colorMode = constants.RGB;
+    this._angleMode = constants.RADIANS;
+    this.maxC0 = 255; // these correspond to max vals for RGB or HSB
+    this.maxC1 = 255;
+    this.maxC2 = 255;
+    this.maxA = 255;
+    this.tint = null;
 
     // ******************************************
-    // PRIVATE p5 PROTOTYPE PROPERTIES
+    // PRIVATE p5 PROPERTIES
     //
 
     // Keep a reference to when this instance was created
@@ -341,7 +339,7 @@ define(function (require) {
   };
 
   // ******************************************
-  // PRIVATE p5 PROTOTYPE METHODS
+  // PRIVATE p5 METHODS
   //
 
   /**
@@ -487,7 +485,7 @@ define(function (require) {
 
     var userDraw = this.draw || window.draw;
 
-    if (this.settings.loop) {
+    if (this.loop) {
       this._timeout = setTimeout(function() {
         window.requestDraw(this._draw.bind(this));
       }.bind(this), 1000 / this._targetFrameRate);
@@ -552,7 +550,7 @@ define(function (require) {
       // stop draw
       if (this._timeout) {
         clearTimeout(this._timeout);
-        this.settings.loop = false;
+        this.loop = false;
       }
 
       // @TODO unregister events
