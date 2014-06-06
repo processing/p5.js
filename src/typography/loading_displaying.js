@@ -36,7 +36,7 @@ define(function (require) {
    */
   p5.prototype.text = function() {
 
-    this.curElement.context.font=this._textStyle+
+    this._curElement.context.font=this._textStyle+
       ' '+
       this._textSize+
       'px '+
@@ -44,12 +44,12 @@ define(function (require) {
 
     if (arguments.length === 3) {
 
-      this.curElement.context.fillText(
+      this._curElement.context.fillText(
         arguments[0],
         arguments[1],
         arguments[2]
       );
-      this.curElement.context.strokeText(
+      this._curElement.context.strokeText(
         arguments[0],
         arguments[1],
         arguments[2]
@@ -64,7 +64,7 @@ define(function (require) {
         arguments[2],
         arguments[3],
         arguments[4],
-        this.rectMode
+        this._rectMode
       );
 
       vals.y += this._textLeading;
@@ -72,7 +72,7 @@ define(function (require) {
       for(var n = 0; n < words.length; n++) {
 
         var testLine = line + words[n] + ' ';
-        var metrics = this.curElement.context.measureText(testLine);
+        var metrics = this._curElement.context.measureText(testLine);
         var testWidth = metrics.width;
 
         if (vals.y > vals.h) {
@@ -81,8 +81,8 @@ define(function (require) {
 
         } else if (testWidth > vals.w && n > 0) {
 
-          this.curElement.context.fillText(line, vals.x, vals.y);
-          this.curElement.context.strokeText(line, vals.x, vals.y);
+          this._curElement.context.fillText(line, vals.x, vals.y);
+          this._curElement.context.strokeText(line, vals.x, vals.y);
           line = words[n] + ' ';
           vals.y += this._textLeading;
 
@@ -95,8 +95,8 @@ define(function (require) {
 
       if (vals.y <= vals.h) {
 
-        this.curElement.context.fillText(line, vals.x, vals.y);
-        this.curElement.context.strokeText(line, vals.x, vals.y);
+        this._curElement.context.fillText(line, vals.x, vals.y);
+        this._curElement.context.strokeText(line, vals.x, vals.y);
       }
     }
   };

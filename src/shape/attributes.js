@@ -11,6 +11,9 @@ define(function (require) {
   var p5 = require('core');
   var constants = require('constants');
 
+  p5.prototype._rectMode = constants.CORNER;
+  p5.prototype._ellipseMode = constants.CENTER;
+
   /**
    * Modifies the location from which ellipses are drawn by changing the way
    * in which parameters given to ellipse() are intepreted.
@@ -43,7 +46,7 @@ define(function (require) {
       m === constants.CORNERS ||
       m === constants.RADIUS ||
       m === constants.CENTER) {
-      this.ellipseMode = m;
+      this._ellipseMode = m;
     }
 
     return this;
@@ -58,8 +61,8 @@ define(function (require) {
    * @return {p5} the p5 object
    */
   p5.prototype.noSmooth = function() {
-    this.curElement.context.mozImageSmoothingEnabled = false;
-    this.curElement.context.webkitImageSmoothingEnabled = false;
+    this._curElement.context.mozImageSmoothingEnabled = false;
+    this._curElement.context.webkitImageSmoothingEnabled = false;
 
     return this;
   };
@@ -96,7 +99,7 @@ define(function (require) {
       m === constants.CORNERS ||
       m === constants.RADIUS ||
       m === constants.CENTER) {
-      this.rectMode = m;
+      this._rectMode = m;
     }
 
     return this;
@@ -112,8 +115,8 @@ define(function (require) {
    * @return {p5} the p5 object
    */
   p5.prototype.smooth = function() {
-    this.curElement.context.mozImageSmoothingEnabled = true;
-    this.curElement.context.webkitImageSmoothingEnabled = true;
+    this._curElement.context.mozImageSmoothingEnabled = true;
+    this._curElement.context.webkitImageSmoothingEnabled = true;
 
     return this;
   };
@@ -131,7 +134,7 @@ define(function (require) {
     if (cap === constants.ROUND ||
       cap === constants.SQUARE ||
       cap === constants.PROJECT) {
-      this.curElement.context.lineCap=cap;
+      this._curElement.context.lineCap=cap;
     }
 
     return this;
@@ -151,7 +154,7 @@ define(function (require) {
     if (join === constants.ROUND ||
       join === constants.BEVEL ||
       join === constants.MITER) {
-      this.curElement.context.lineJoin = join;
+      this._curElement.context.lineJoin = join;
     }
 
     return this;
@@ -168,9 +171,9 @@ define(function (require) {
   p5.prototype.strokeWeight = function(w) {
     if (typeof w === 'undefined' || w === 0) {
       // hack because lineWidth 0 doesn't work
-      this.curElement.context.lineWidth = 0.0001;
+      this._curElement.context.lineWidth = 0.0001;
     } else {
-      this.curElement.context.lineWidth = w;
+      this._curElement.context.lineWidth = w;
     }
 
     return this;

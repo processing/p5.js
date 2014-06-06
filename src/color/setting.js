@@ -11,6 +11,12 @@ define(function (require) {
   var p5 = require('core');
   var constants = require('constants');
 
+  p5.prototype._colorMode = constants.RGB;
+  p5.prototype._maxC0 = 255; // these correspond to max vals for RGB or HSB
+  p5.prototype._maxC1 = 255;
+  p5.prototype._maxC2 = 255;
+  p5.prototype._maxA = 255;
+
   /**
    * The background() function sets the color used for the background of the
    * p5.js canvas. The default background is light gray. This function is
@@ -30,12 +36,12 @@ define(function (require) {
   p5.prototype.background = function() {
     var c = this.getNormalizedColor(arguments);
     // save out the fill
-    var curFill = this.curElement.context.fillStyle;
+    var curFill = this._curElement.context.fillStyle;
     // create background rect
-    this.curElement.context.fillStyle = this.getCSSRGBAColor(c);
-    this.curElement.context.fillRect(0, 0, this.width, this.height);
+    this._curElement.context.fillStyle = this.getCSSRGBAColor(c);
+    this._curElement.context.fillRect(0, 0, this.width, this.height);
     // reset fill
-    this.curElement.context.fillStyle = curFill;
+    this._curElement.context.fillStyle = curFill;
   };
 
   /**
@@ -49,7 +55,7 @@ define(function (require) {
    * @method clear
    */
   p5.prototype.clear = function() {
-    this.curElement.context.clearRect(0, 0, this.width, this.height);
+    this._curElement.context.clearRect(0, 0, this.width, this.height);
   };
 
   /**
@@ -74,17 +80,17 @@ define(function (require) {
       this._colorMode = arguments[0];
     }
     if (arguments.length === 2) {
-      this.maxC0 = arguments[1];
-      this.maxC1 = arguments[1];
-      this.maxC2 = arguments[1];
+      this._maxC0 = arguments[1];
+      this._maxC1 = arguments[1];
+      this._maxC2 = arguments[1];
     }
     else if (arguments.length > 2) {
-      this.maxC0 = arguments[1];
-      this.maxC1 = arguments[2];
-      this.maxC2 = arguments[3];
+      this._maxC0 = arguments[1];
+      this._maxC1 = arguments[2];
+      this._maxC2 = arguments[3];
     }
     if (arguments.length === 5) {
-      this.maxA = arguments[4];
+      this._maxA = arguments[4];
     }
   };
 
@@ -106,7 +112,7 @@ define(function (require) {
    */
   p5.prototype.fill = function() {
     var c = this.getNormalizedColor(arguments);
-    this.curElement.context.fillStyle = this.getCSSRGBAColor(c);
+    this._curElement.context.fillStyle = this.getCSSRGBAColor(c);
   };
 
   /**
@@ -116,7 +122,7 @@ define(function (require) {
    * @method noFill
    */
   p5.prototype.noFill = function() {
-    this.curElement.context.fillStyle = 'rgba(0,0,0,0)';
+    this._curElement.context.fillStyle = 'rgba(0,0,0,0)';
   };
 
   /**
@@ -126,7 +132,7 @@ define(function (require) {
    * @method noStroke
    */
   p5.prototype.noStroke = function() {
-    this.curElement.context.strokeStyle = 'rgba(0,0,0,0)';
+    this._curElement.context.strokeStyle = 'rgba(0,0,0,0)';
   };
 
   /**
@@ -146,7 +152,7 @@ define(function (require) {
    */
   p5.prototype.stroke = function() {
     var c = this.getNormalizedColor(arguments);
-    this.curElement.context.strokeStyle = this.getCSSRGBAColor(c);
+    this._curElement.context.strokeStyle = this.getCSSRGBAColor(c);
   };
 
   /**
@@ -175,16 +181,16 @@ define(function (require) {
       r = _args[0];
       g = _args[1];
       b = _args[2];
-      a = typeof _args[3] === 'number' ? _args[3] : this.maxA;
+      a = typeof _args[3] === 'number' ? _args[3] : this._maxA;
     } else {
       r = g = b = _args[0];
-      a = typeof _args[1] === 'number' ? _args[1] : this.maxA;
+      a = typeof _args[1] === 'number' ? _args[1] : this._maxA;
     }
 
-    r *= 255/this.maxC0;
-    g *= 255/this.maxC1;
-    b *= 255/this.maxC2;
-    a *= 255/this.maxA;
+    r *= 255/this._maxC0;
+    g *= 255/this._maxC1;
+    b *= 255/this._maxC2;
+    a *= 255/this._maxA;
 
     if (this._colorMode === constants.HSB) {
       rgba = hsv2rgb(r, g, b).concat(a);

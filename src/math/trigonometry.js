@@ -13,6 +13,8 @@ define(function (require) {
   var polarGeometry = require('polargeometry');
   var constants = require('constants');
 
+  p5.prototype._angleMode = constants.RADIANS;
+
   /**
    * The inverse of cos(), returns the arc cosine of a value. This function
    * expects the values in the range of -1 to 1 and values are returned in

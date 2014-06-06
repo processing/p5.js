@@ -58,7 +58,7 @@ define(function(require) {
       obj = e;
     }
     if (typeof obj !== 'undefined') {
-      this.curElement = obj;
+      this._curElement = obj;
       this._setProperty('width', obj.elt.offsetWidth);
       this._setProperty('height', obj.elt.offsetHeight);
 
@@ -71,8 +71,8 @@ define(function(require) {
         p._setProperty('focused', false);
       };
 
-      if (typeof this.curElement.context !== 'undefined') {
-        this.curElement.context.setTransform(1, 0, 0, 1, 0, 0);
+      if (typeof this._curElement.context !== 'undefined') {
+        this._curElement.context.setTransform(1, 0, 0, 1, 0, 0);
       }
 
     }

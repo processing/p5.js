@@ -10,6 +10,11 @@ define(function (require) {
   var p5 = require('core');
   var constants = require('constants');
 
+  p5.prototype._textLeading = 15;
+  p5.prototype._textFont = 'sans-serif';
+  p5.prototype._textSize = 12;
+  p5.prototype._textStyle = constants.NORMAL;
+
   /**
    * Sets the current alignment for drawing text. The parameters LEFT, CENTER,
    * and RIGHT set the display characteristics of the letters in relation to
@@ -23,7 +28,7 @@ define(function (require) {
     if (a === constants.LEFT ||
       a === constants.RIGHT ||
       a === constants.CENTER) {
-      this.curElement.context.textAlign = a;
+      this._curElement.context.textAlign = a;
     }
   };
 
@@ -34,7 +39,7 @@ define(function (require) {
    * @param {String} s the String of characters to measure
    */
   p5.prototype.textHeight = function(s) {
-    return this.curElement.context.measureText(s).height;
+    return this._curElement.context.measureText(s).height;
   };
 
   /**
@@ -82,7 +87,7 @@ define(function (require) {
    * @param {String} s the String of characters to measure
    */
   p5.prototype.textWidth = function(s) {
-    return this.curElement.context.measureText(s).width;
+    return this._curElement.context.measureText(s).width;
   };
 
   return p5;

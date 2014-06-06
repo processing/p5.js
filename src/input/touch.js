@@ -9,27 +9,30 @@ define(function (require) {
 
   var p5 = require('core');
 
+  /**
+   * The system variable touchX always contains the horizontal position of
+   * one finger, relative to (0, 0) of the canvas. This is best used for
+   * single touch interactions. For multi-touch interactions, use the
+   * touches[] array.
+   *
+   * @property touchX
+   */
+  p5.prototype.touchX = 0;
+
+  /**
+   * The system variable touchY always contains the horizontal position of
+   * one finger, relative to (0, 0) of the canvas. This is best used for
+   * single touch interactions. For multi-touch interactions, use the
+   * touches[] array.
+   *
+   * @property touchY
+   */
+  p5.prototype.touchY = 0;
+
   p5.prototype.setTouchPoints = function(e) {
     var context = this._isGlobal ? window : this;
 
-    /**
-     * The system variable touchX always contains the horizontal position of
-     * one finger, relative to (0, 0) of the canvas. This is best used for
-     * single touch interactions. For multi-touch interactions, use the
-     * touches[] array.
-     *
-     * @property touchX
-     */
     context._setProperty('touchX', e.changedTouches[0].pageX);
-
-    /**
-     * The system variable touchY always contains the horizontal position of
-     * one finger, relative to (0, 0) of the canvas. This is best used for
-     * single touch interactions. For multi-touch interactions, use the
-     * touches[] array.
-     *
-     * @property touchY
-     */
     context._setProperty('touchY', e.changedTouches[0].pageY);
 
     /**
