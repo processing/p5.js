@@ -29,6 +29,7 @@ define(function (require) {
    * If two arguments are given, returns a random number between them,
    * inclusive.
    *
+   * @method random
    * @param  {x}      min the lower bound
    * @param  {y}      max the upper bound
    * @return {Number}     the random number
