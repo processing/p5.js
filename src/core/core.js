@@ -300,16 +300,16 @@ define(function (require) {
       var context = this._isGlobal ? window : this;
       if (userPreload) {
         context.loadJSON = function (path) {
-          return context._preload('loadJSON', path); // _preload?
+          return context._preload('loadJSON', path);
         };
         context.loadStrings = function (path) {
-          return context._preload('loadStrings', path); // _preload?
+          return context._preload('loadStrings', path);
         };
         context.loadXML = function (path) {
-          return context._preload('loadXML', path); // _preload?
+          return context._preload('loadXML', path);
         };
         context.loadImage = function (path) {
-          return context._preload('loadImage', path); // _preload?
+          return context._preload('loadImage', path);
         };
         userPreload();
         context.loadJSON = p5.prototype.loadJSON;
