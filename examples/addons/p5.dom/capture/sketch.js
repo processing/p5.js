@@ -4,7 +4,6 @@ function setup() {
   createCanvas(340, 260);
   capture = createCapture();
   //capture.hide();
-  rectMode(CENTER);
 }
 
 function draw() {
