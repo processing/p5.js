@@ -2,7 +2,7 @@ var capture;
 
 function setup() {
   createCanvas(340, 260);
-  capture = createCapture();
+  capture = createCapture(VIDEO);
   //capture.hide();
 }
 

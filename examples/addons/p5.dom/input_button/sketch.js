@@ -15,7 +15,7 @@ function setup() {
 
   greeting = createH1('');
   greeting.position(10, 15);
-  greeting.size(380, AUTO);
+  greeting.size(380, 300);
   noStroke();
 
 }
