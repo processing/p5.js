@@ -39,8 +39,18 @@ function draw() {
     noStroke();
     ellipse( (i*2 + xOffset)%width, waveform[i], 2, 2);
   }
+  for (var i = 0; i< waveform.length; i++){
+    noStroke();
+    ellipse( (i*2 + xOffset)%width, waveform[i], 2, 2);
+  }
 
   xOffset++;
+
+  if (soundFile.isPlaying() && (frameCount%100 == 0)){
+    soundFile.pause();
+    console.log('bang');
+  }
+
 }
 
 function keyPressed() {
