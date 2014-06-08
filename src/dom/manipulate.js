@@ -1,3 +1,7 @@
+/**
+ * @module DOM
+ * @for Manipulate
+ */
 define(function(require) {
 
   var p5 = require('core');

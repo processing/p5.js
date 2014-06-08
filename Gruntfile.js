@@ -155,7 +155,7 @@ module.exports = function(grunt) {
         version: '<%= pkg.version %>',
         url: '<%= pkg.homepage %>',
         options: {
-          paths: 'src/',
+          paths: ['src/', 'lib/addons/'],
           //helpers: [],
           themedir: 'docs/yuidoc-p5-theme/',
           outdir: 'docs/reference/'

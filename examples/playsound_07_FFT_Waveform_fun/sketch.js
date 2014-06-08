@@ -12,47 +12,54 @@ var xOffset = 0;
 var waveform = [];
 
 function setup() {
-  createCanvas(fftSize, 256);
-  fill(255, 40, 255);
-
+  createCanvas(fftSize, 400);
+  fill(60, 60, 180);
+  background(0);
 
   // instantiate using a .wav, with .mp3 fallback if .wav isn't supported
-  soundFile = new SoundFile('beat.wav', 'beat.mp3');
+  soundFile = new SoundFile('Chris_Zabriskie_-_06_-_Divider.mp3', 'beat.mp3');
 
   // loop the sound file
   soundFile.loop();
 
   // Create an FFT object. Give it smoothing and fftSize
   fft = new FFT(.99, fftSize);
+  createP('Press spacebar to pause');
 }
 
 function draw() {
-  background(30, 30, 30, 3);
+  background(30, 30, 30, frameCount%40 + 4);
 
   /** 
    * Analyze the sound as a waveform (amplitude over time)
    */
-  waveform = fft.processWaveform();
-
-  // Draw snapshot of the waveform
-  for (var i = 0; i< waveform.length; i++){
-    noStroke();
-    ellipse( (i*2 + xOffset)%width, waveform[i], 2, 2);
+  if (frameCount%2 == 0 ){
+    waveform = fft.processWaveform();
   }
+  // Draw two mirrored snapshots of the waveform
   for (var i = 0; i< waveform.length; i++){
     noStroke();
-    ellipse( (i*2 + xOffset)%width, waveform[i], 2, 2);
+    fill(60, 60, 180, waveform[i] % 100);
+    ellipse( -(i*2)%width/2 + width/2 + 1, height-( map(Math.log(waveform[i]),0,10,0,height) + log(i/2)*waveform[i]  )/4, waveform[i]/100, waveform[i]*2);
+    ellipse( (i*2)%width/2 + width/2, height-( map(Math.log(waveform[i]),0,10,0,-height) + log(i/2)*waveform[i]  )/4, waveform[i]/100, waveform[i]*2);
   }
 
   xOffset++;
 
-  if (soundFile.isPlaying() && (frameCount%100 == 0)){
-    soundFile.pause();
-    console.log('bang');
-  }
+  // if (soundFile.isPlaying() && (frameCount%60 == 0)){
+  //   soundFile.pause();
+  //   console.log('pause');
+  // }
+  // else if (soundFile.isPaused() && (frameCount%121 == 0)) {
+  //   soundFile.pause();
+  //   console.log('play');
+  // }
 
 }
 
-function keyPressed() {
-  soundFile.pause();
+function keyPressed(e) {
+  console.log(e);
+  if (e.keyCode == 32) {
+    soundFile.pause();
+  }
 }
