@@ -587,16 +587,16 @@ describe('PVector', function() {
     });
   });
 
-  describe('rotate2D', function() {
+  describe('rotate', function() {
     it('should return the same object', function() {
-      expect(this.sut.rotate2D()).to.eql(this.sut);
+      expect(this.sut.rotate()).to.eql(this.sut);
     });
 
     it('should rotate the vector', function() {
       this.sut.x = 1;
       this.sut.y = 0;
       this.sut.z = 0;
-      this.sut.rotate2D(Math.PI);
+      this.sut.rotate(Math.PI);
       expect(this.sut.x).to.be.closeTo(-1, 0.01);
       expect(this.sut.y).to.be.closeTo(0, 0.01);
     });
@@ -605,7 +605,7 @@ describe('PVector', function() {
       this.sut.x = 1;
       this.sut.y = 0;
       this.sut.z = 0;
-      this.sut.rotate2D(Math.PI/2);
+      this.sut.rotate(Math.PI/2);
       expect(this.sut.x).to.be.closeTo(0, 0.01);
       expect(this.sut.y).to.be.closeTo(1, 0.01);
     });
