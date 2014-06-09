@@ -27,11 +27,11 @@ function draw() {
 
 function toggleAudio() {
   if (playing) {
-    beat.stop();
+    beat.pause();
     button.html('play');
   } else {
     beat.play();
-    button.html('stop');
+    button.html('pause');
   }
   playing = !playing;
 }

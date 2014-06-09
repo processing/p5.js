@@ -17,7 +17,7 @@ function setup() {
   background(0);
 
   // instantiate using a .wav, with .mp3 fallback if .wav isn't supported
-  soundFile = new SoundFile('lucky_dragons_-_power_melody.mp3','lucky_dragons_-_power_melody.wav.wav');
+  soundFile = new SoundFile('lucky_dragons_-_power_melody.mp3','lucky_dragons_-_power_melody.wav');
 
   // loop the sound file
   soundFile.loop();
