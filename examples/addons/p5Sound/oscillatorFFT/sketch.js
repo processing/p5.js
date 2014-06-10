@@ -4,7 +4,7 @@
 var freqSlider, freqLabel, button;
 
 var osc;
-var startFreq = 220;
+var freq = 220; // current frequency (updated by slider)
 var fft;
 
 var oscOn = false;
@@ -16,11 +16,11 @@ function setup() {
   strokeWeight(10);
 
   freqLabel = createP('Frequency: ');
-  freqSlider = createSlider(1, 700, startFreq);
+  freqSlider = createSlider(1, 700, freq);
   button = createButton('start');
   button.mousePressed(toggleOsc);
 
-  osc = new Oscillator(startFreq, 'sawtooth');
+  osc = new SinOsc(freq);
 
   p = createP('Current Waveform: ' + osc.getType());
   // these buttons will change the osc's waveform
@@ -39,7 +39,7 @@ function setup() {
 
 function draw() {
   background(0);
-  var freq = freqSlider.value();
+  freq = freqSlider.value();
   osc.setFrequency(freq);
 
   freqLabel.html('Frequency: ' + freq + ' Hz');
@@ -56,6 +56,7 @@ function draw() {
     vertex(x, y + height/2);
   }
   endShape();
+  console.log(frameRate());
 }
 
 function toggleOsc() {
@@ -70,17 +71,33 @@ function toggleOsc() {
 }
 
 function setSine() {
-  osc.setType('sine');
+  osc.stop();
+  osc = new SinOsc(freq);
+  if (oscOn) {
+    osc.start();
+  }
 }
 
 function setTriangle() {
-  osc.setType('triangle');
+  osc.stop();
+  osc = new TriOsc(freq);;
+  if (oscOn) {
+    osc.start();
+  }
 }
 
 function setSawtooth() {
-  osc.setType('sawtooth');
+  osc.stop();
+  osc = new SawOsc(freq);
+  if (oscOn) {
+    osc.start();
+  }
 }
 
 function setSquare() {
-  osc.setType('square');
+  osc.stop();
+  osc = new SqrOsc(freq);
+  if (oscOn) {
+    osc.start();
+  }
 }
