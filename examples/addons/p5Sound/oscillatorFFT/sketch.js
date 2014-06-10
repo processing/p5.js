@@ -42,7 +42,7 @@ function draw() {
   var freq = freqSlider.value();
   osc.setFrequency(freq);
 
-  freqLabel.html('Frequency: ' + freq);
+  freqLabel.html('Frequency: ' + freq + ' Hz');
   p.html('Current Waveform: ' + osc.getType());
 
   // process the waveform
