@@ -25,9 +25,9 @@ define(function (require) {
    * the first frame of animation or if the backgound need only be set once.
    *
    * @method background
-   * @param {Number|Array|String} v1   gray value, red or hue value (depending
-   *                                   on the current color mode), or color
-   *                                   Array, or a hex RGB color value String
+   * @param {Number|Array|String} v1 gray value, red or hue value (depending on
+   *                                 the current color mode), or color Array,
+   *                                 or a CSS color String
    * @param {Number|Array} [v2] green or saturation value (depending on the
    *                            current color mode)
    * @param {Number|Array} [v3] blue or brightness value (depending on the
@@ -103,9 +103,9 @@ define(function (require) {
    * in the range from 0 to 255.)
    *
    * @method fill
-   * @param {Number|Array|String} v1   gray value, red or hue value (depending
-   *                                   on the current color mode), or color
-   *                                   Array, or a hex RGB color value String
+   * @param {Number|Array|String} v1 gray value, red or hue value (depending on
+   *                                 the current color mode), or color Array,
+   *                                 or a CSS color String
    * @param {Number|Array} [v2] green or saturation value (depending on the
    *                            current color mode)
    * @param {Number|Array} [v3] blue or brightness value (depending on the
@@ -144,9 +144,9 @@ define(function (require) {
    * the range from 0 to 255).
    *
    * @method stroke
-   * @param {Number|Array|String} v1   gray value, red or hue value (depending
-   *                                   on the current color mode), or color
-   *                                   Array, or a hex RGB color value String
+   * @param {Number|Array|String} v1 gray value, red or hue value (depending on
+   *                                 the current color mode), or color Array,
+   *                                 or a CSS color String
    * @param {Number|Array} [v2] green or saturation value (depending on the
    *                            current color mode)
    * @param {Number|Array} [v3] blue or brightness value (depending on the
@@ -163,10 +163,11 @@ define(function (require) {
    * [r, g, b, a].
    *
    * @method getNormalizedColor
-   * @param {String|Array-like} args An 'array-like' object that represents a
-   *                                 list of arguments, or a hex color String
-   * @return {Array}          a color formatted as [r, g, b, a]
-   *                          Example:
+   * @param {Array-like} args An 'array-like' object that represents a
+   *                          list of arguments
+   * @return {Array}          an RGBA color formatted as [r, g, b, a], or a
+   *                          CSS color String passed through from args
+   *                          Examples:
    *                          input        ==> output
    *                          g            ==> [g, g, g, 255]
    *                          g,a          ==> [g, g, g, a]
@@ -176,18 +177,14 @@ define(function (require) {
    *                          [g, a]       ==> [g, g, g, a]
    *                          [r, g, b]    ==> [r, g, b, 255]
    *                          [r, g, b, a] ==> [r, g, b, a]
-   *                          #rrggbb      ==> [r, g, b, 255]
+   *                          '#rrggbb'    ==> '#rrggbb'
+   *                          'blue'       ==> 'blue'
    */
   p5.prototype.getNormalizedColor = function(args) {
     var r, g, b, a, rgba;
     var _args = typeof args[0].length === 'number' ? args[0] : args;
-    if (typeof _args === 'string') {
-      _args = _args[0] === '#' ? _args.replace(/^#/, '') : _args;
-      r = parseInt(_args.substr(0, 2), 16);
-      g = parseInt(_args.substr(2, 2), 16);
-      b = parseInt(_args.substr(4, 2), 16);
-      a = this._maxA;
-      return [r, g, b, a];
+    if ( typeof _args === 'string' ) {
+      return _args;
     }
     if (_args.length >= 3) {
       r = _args[0];
@@ -271,6 +268,9 @@ define(function (require) {
   }
 
   p5.prototype.getCSSRGBAColor = function(arr) {
+    if ( typeof arr === 'string' ) {
+      return arr;
+    }
     var a = arr.map(function(val) {
       return Math.floor(val);
     });
