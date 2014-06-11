@@ -5,7 +5,6 @@
 define(function(require) {
 
   var p5 = require('core');
-  var constants = require('constants');
 
   function PElement(elt, pInst) {
     this.elt = elt;
@@ -20,11 +19,11 @@ define(function(require) {
   }
 
   /**
-   * 
+   *
    * Attaches the element to the parent specified. A way of setting
    * the container for the element. Accepts either a string ID or
    * DOM node.
-   * 
+   *
    * @for    DOM:PElement
    * @method parent
    * @param  {String|Object} parent the ID or node of the parent elt
@@ -37,9 +36,9 @@ define(function(require) {
   };
 
   /**
-   * 
+   *
    * Sets the inner HTML of the element. Replaces any existing html.
-   * 
+   *
    * @for    DOM:PElement
    * @method html
    * @param  {String} html the HTML to be placed inside the element
@@ -49,11 +48,11 @@ define(function(require) {
   };
 
   /**
-   * 
+   *
    * Sets the position of the element relative to (0, 0) of the
    * window. Essentially, sets position:absolute and left and top
    * properties of style.
-   * 
+   *
    * @for    DOM:PElement
    * @method position
    * @param  {Number} x x-position relative to upper left of window
@@ -71,9 +70,9 @@ define(function(require) {
   };
 
   /**
-   * 
+   *
    * Sets the ID of the element
-   * 
+   *
    * @for    DOM:PElement
    * @method id
    * @param  {String} id ID of the element
@@ -83,9 +82,9 @@ define(function(require) {
   };
 
   /**
-   * 
+   *
    * Adds given class to the element
-   * 
+   *
    * @for    DOM:PElement
    * @method class
    * @param  {String} class class to add
@@ -93,9 +92,9 @@ define(function(require) {
   PElement.prototype.class = function(c) {
     this.elt.className += ' '+c;
   };
-  
+
   /**
-   * The .mousePressed() function is called once after every time a 
+   * The .mousePressed() function is called once after every time a
    * mouse button is pressed over the element. This can be used to
    * attach an element specific event listeners.
    *
@@ -107,10 +106,10 @@ define(function(require) {
   PElement.prototype.mousePressed = function (fxn) {
     attachListener('click', fxn, this);
   };
-  
+
   /**
-   * The .mouseOver() function is called once after every time a 
-   * mouse moves onto the element. This can be used to attach an 
+   * The .mouseOver() function is called once after every time a
+   * mouse moves onto the element. This can be used to attach an
    * element specific event listener.
    *
    * @for    DOM:PElement
@@ -123,8 +122,8 @@ define(function(require) {
   };
 
   /**
-   * The .mouseOut() function is called once after every time a 
-   * mouse moves off the element. This can be used to attach an 
+   * The .mouseOut() function is called once after every time a
+   * mouse moves off the element. This can be used to attach an
    * element specific event listener.
    *
    * @for    DOM:PElement
@@ -147,6 +146,6 @@ define(function(require) {
   }
 
   p5.PElement = PElement;
-  
+
   return PElement;
 });
