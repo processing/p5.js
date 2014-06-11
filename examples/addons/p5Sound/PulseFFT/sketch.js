@@ -1,11 +1,12 @@
 /**
- * Example: change the frequency of an oscillator and visualize the frequency spectrum
+ * PWM
  */
-var freqSlider, freqLabel, ampLabel, ampSlider, button;
+var freqSlider, freqLabel, ampLabel, ampSlider, widthLabel, widthSlider, button;
 
-var osc;
+var pulse;
 var freq = 220; // current frequency (updated by slider)
 var amp = .5;
+var w = 0;
 var fft;
 
 
@@ -23,22 +24,14 @@ function setup() {
   ampLabel = createP('Amplitude: ' + amp);
   ampSlider = createSlider(0.0, 100.0, amp*100);
 
+  widthLabel = createP('Width: ' + w);
+  widthSlider = createSlider(0.0, 100.0, w*100);
+
   button = createButton('start');
   button.mousePressed(toggleOsc);
 
-  osc = new SinOsc(freq);
-  osc.setAmp(amp);
-
-  p = createP('Current Waveform: ' + osc.getType());
-  // these buttons will change the osc's waveform
-  sine = createButton('sine');
-  sine.mousePressed(setSine);
-  saw = createButton('sawtooth');
-  saw.mousePressed(setSawtooth);
-  tri = createButton('triangle');
-  tri.mousePressed(setTriangle);
-  sq = createButton('square');
-  sq.mousePressed(setSquare);
+  pulse = new Pulse(freq);
+  pulse.setAmp(amp);
 
   // create an fft to analyze the audio
   fft = new FFT();
@@ -48,14 +41,17 @@ function draw() {
   background(0);
 
   amp = ampSlider.value()/100;
-  osc.setAmp(amp);
+  pulse.setAmp(amp);
   ampLabel.html('Amplitude: ' + amp + '/ 1.0');
 
   freq = freqSlider.value();
-  osc.setFreq(freq);
+  pulse.setFreq(freq);
   freqLabel.html('Frequency: ' + freq + ' Hz');
 
-  p.html('Current Waveform: ' + osc.getType());
+
+  w = widthSlider.value()/100;
+  pulse.setWidth(w);
+  widthLabel.html('Width: ' + w + '/ 1.0');
 
   // process the waveform
   waveform = fft.processWaveform();
@@ -72,43 +68,11 @@ function draw() {
 
 function toggleOsc() {
   if (oscOn) {
-    osc.stop();
+    pulse.stop();
     button.html('start');
   } else {
-    osc.start();
+    pulse.start();
     button.html('stop');
   }
   oscOn = !oscOn;
-}
-
-function setSine() {
-  osc.stop();
-  osc = new SinOsc(freq);
-  if (oscOn) {
-    osc.start();
-  }
-}
-
-function setTriangle() {
-  osc.stop();
-  osc = new TriOsc(freq);;
-  if (oscOn) {
-    osc.start();
-  }
-}
-
-function setSawtooth() {
-  osc.stop();
-  osc = new SawOsc(freq);
-  if (oscOn) {
-    osc.start();
-  }
-}
-
-function setSquare() {
-  osc.stop();
-  osc = new SqrOsc(freq);
-  if (oscOn) {
-    osc.start();
-  }
 }
