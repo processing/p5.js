@@ -303,7 +303,6 @@ define(function (require) {
 
   /**
    * Calculate the angle of rotation for this vector (only 2D vectors)
-   * TODO: deal with AngleMode // LM gave this a shot, is it right?
    *
    * @method heading
    * @return {Number} the angle of rotation
@@ -324,14 +323,17 @@ define(function (require) {
   /**
    * Rotate the vector by an angle (only 2D vectors), magnitude remains the
    * same
-   * TODO: Change to rotate()
-   * TODO: Deal with angleMode
    *
-   * @method rotate2D
+   * @method rotate
    * @param  {number}  angle the angle of rotation
    * @return {PVector} the modified PVector
    */
-  PVector.prototype.rotate2D = function (a) {
+  PVector.prototype.rotate = function (a) {
+    if (this.p5) {
+      if (this.p5._angleMode === constants.DEGREES) {
+        a = polarGeometry.degreesToRadians(a);
+      }
+    }
     var newHeading = this.heading() + a;
     var mag = this.mag();
     this.x = Math.cos(newHeading) * mag;
@@ -387,6 +389,11 @@ define(function (require) {
    * @return {PVector} the new PVector object
    */
   PVector.fromAngle = function(angle) {
+    if (this.p5) {
+      if (this.p5._angleMode === constants.DEGREES) {
+        angle = polarGeometry.degreesToRadians(angle);
+      }
+    }
     return new PVector(Math.cos(angle),Math.sin(angle),0);
   };
 
@@ -398,8 +405,19 @@ define(function (require) {
    * @return {PVector} the new PVector object
    */
   PVector.random2D = function () {
-    // TODO: This should include an option to use p5.js seeded random number
-    return this.fromAngle(Math.random()*Math.PI*2);
+    var angle;
+    // A lot of nonsense to determine if we know about a 
+    // p5 sketch and whether we should make a random angle in degrees or radians
+    if (this.p5) {
+      if (this.p5._angleMode === constants.DEGREES) {
+        angle = this.p5.random(360);
+      } else {
+        angle = this.p5.random(constants.TWO_PI);
+      }
+    } else {
+      angle = Math.random()*Math.PI*2;
+    }
+    return this.fromAngle(angle);
   };
 
   /**
@@ -410,9 +428,15 @@ define(function (require) {
    * @return {PVector} the new PVector object
    */
   PVector.random3D = function () {
-    // TODO: This should include an option to use p5.js seeded random number
-    var angle = Math.random()*Math.PI*2;
-    var vz = Math.random()*2-1;
+    var angle,vz;
+    // If we know about p5
+    if (this.p5) {
+      angle = this.p5.random(0,constants.TWO_PI);
+      vz = this.p5.random(-1,1);
+    } else {
+      angle = Math.random()*Math.PI*2;
+      vz = Math.random()*2-1;
+    }
     var vx = Math.sqrt(1-vz*vz)*Math.cos(angle);
     var vy = Math.sqrt(1-vz*vz)*Math.sin(angle);
     return new PVector(vx, vy, vz);
@@ -532,10 +556,15 @@ define(function (require) {
    * @param  {PVector} v2 the x, y, and z components of a PVector
    * @return {Number}     the angle between
    * 
-   * TODO: Needs to account for angleMode
    */
   PVector.angleBetween = function (v1, v2) {
-    return Math.acos(v1.dot(v2) / (v1.mag() * v2.mag()));
+    var angle = Math.acos(v1.dot(v2) / (v1.mag() * v2.mag()));
+    if (this.p5) {
+      if (this.p5._angleMode === constants.DEGREES) {
+        angle = polarGeometry.radiansToDegrees(angle);
+      }
+    }
+    return angle;
   };
 
   return PVector;
