@@ -194,8 +194,7 @@ define(function (require) {
   };
 
   /**
-   *
-   * NOT IMPLEMENTED YET!
+   * TODO: NOT IMPLEMENTED YET!
    * Sets the seed value for <b>noise()</b>. By default, <b>noise()</b>
    * produces different results each time the program is run. Set the
    * <b>value</b> parameter to a constant to return the same pseudo-random
@@ -203,7 +202,7 @@ define(function (require) {
    *
    */
   p5.prototype.noiseSeed = function(seed) {
-    // Need to implement seeding
+    // TODO: Need to implement seeding
     // if (perlinRandom == null) perlinRandom = new Random();
     // perlinRandom.setSeed(seed);
     // force table reset after changing the random number seed [0122]
