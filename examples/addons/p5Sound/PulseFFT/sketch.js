@@ -4,9 +4,9 @@
 var freqSlider, freqLabel, ampLabel, ampSlider, widthLabel, widthSlider, button;
 
 var pulse;
-var freq = 220; // current frequency (updated by slider)
-var amp = .5;
-var w = 0;
+var freq = 1; // current frequency (updated by slider)
+var amp = 1.0;
+var w = .25;
 var fft;
 
 
@@ -18,27 +18,31 @@ function setup() {
   stroke(255);
   strokeWeight(10);
 
-  freqLabel = createP('Frequency: ');
-  freqSlider = createSlider(1, 700, freq);
-
-  ampLabel = createP('Amplitude: ' + amp);
-  ampSlider = createSlider(0.0, 100.0, amp*100);
-
   widthLabel = createP('Width: ' + w);
   widthSlider = createSlider(0.0, 100.0, w*100);
 
   button = createButton('start');
   button.mousePressed(toggleOsc);
 
+  freqLabel = createP('Frequency: ');
+  freqSlider = createSlider(1, 700, freq);
+
+  ampLabel = createP('Amplitude: ' + amp);
+  ampSlider = createSlider(0.0, 100.0, amp*100);
+
+
   pulse = new Pulse(freq);
   pulse.setAmp(amp);
 
   // create an fft to analyze the audio
   fft = new FFT();
+
+  // begin sound
+  toggleOsc();
 }
 
 function draw() {
-  background(0);
+  background(0, 0, 0, 100);
 
   amp = ampSlider.value()/100;
   pulse.setAmp(amp);

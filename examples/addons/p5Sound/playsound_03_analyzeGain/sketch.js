@@ -12,6 +12,9 @@ var description;
 var h1;
 var h2;
 
+var smoothing = .01;
+var smoothSlider, smoothLabel;
+
 function setup() {
   createCanvas(400, 400); 
   background(0, 0, 0);
@@ -24,12 +27,14 @@ function setup() {
   soundFile.loop();
 
   // create a new Amplitude. Optionally, give it a 'smoothing' value betw 0.0 and .999
-  amplitude = new Amplitude();
+  amplitude = new Amplitude(smoothing);
 
   // instruction text
   description = 'Spacebar: pause/unpause the loop. <br>Press "N" to toggle Normalize';
   h1 = createH1(description);
 
+  smoothSlider = createSlider(0.0, 99.9, smoothing*100);
+  smoothLabel = createP('Smoothing: ' + smoothing);
 }
 
 function draw() {
@@ -49,6 +54,10 @@ function draw() {
   description = 'Spacebar: pause/unpause the loop. <br>Press "N" to toggle Normalize. Normalized is '+amplitude.normalize;
   h1.html(description);
 
+  // change smoothing
+  smoothing = smoothSlider.value()/100;
+  smoothLabel.html('Smoothing: ' + smoothing);
+  amplitude.smooth(smoothing);
 }
 
 // on key pressed...
