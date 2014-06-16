@@ -120,6 +120,23 @@ define(function (require) {
     return this;
   };
 
+  /**
+   * Specifies vertex coordinates for curves. This function may only
+   * be used between beginShape() and endShape() and only when there
+   * is no MODE parameter specified to beginShape(). The first and
+   * last points in a series of curveVertex() lines will be used to
+   * guide the beginning and end of a the curve. A minimum of four
+   * points is required to draw a tiny curve between the second and
+   * third points. Adding a fifth point with curveVertex() will draw
+   * the curve between the second, third, and fourth points. The
+   * curveVertex() function is an implementation of Catmull-Rom
+   * splines.
+   *
+   * @method curveVertex
+   * @param {Number} x x-coordinate of the vertex
+   * @param {Number} y y-coordinate of the vertex
+   * @return {Object} the p5 object
+   */
   p5.prototype.curveVertex = function(x,y) {
     var pt = {};
     pt.x = x;
