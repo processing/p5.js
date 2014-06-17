@@ -56,29 +56,33 @@ define(function (require) {
    */
   function PVector() {
     var nums = arguments;
+
+    // Where do we start pulling the x,y,z values
+    var index = 0;
     // save reference to p5 if passed in
     if(arguments[0] instanceof p5) {
       this.p5 = arguments[0];
-      nums = arguments[1];
+      index = 1;
+      // nums = arguments[1]; // this was causing terrible performance issues
     }
     /**
      * The x component of the vector
      * @property x
      * @type {Number}
      */
-    this.x = nums[0] || 0;
+    this.x = nums[index+0] || 0;
     /**
      * The y component of the vector
      * @property y
      * @type {Number}
      */
-    this.y = nums[1] || 0;
+    this.y = nums[index+1] || 0;
     /**
      * The z component of the vector
      * @property z
      * @type {Number}
      */
-    this.z = nums[2] || 0;
+    this.z = nums[index+2] || 0;
   }
 
 
