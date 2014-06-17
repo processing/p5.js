@@ -1,6 +1,7 @@
 /**
  * @module Math
  * @for PVector
+ * @requires constants
  */
 define(function (require) {
 

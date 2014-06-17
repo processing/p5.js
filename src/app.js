@@ -7,6 +7,7 @@ define(function (require) {
 
   require('color.creating_reading');
   require('color.setting');
+  require('constants');
   require('data.array_functions');
   require('data.string_functions');
   require('dom.manipulate');
