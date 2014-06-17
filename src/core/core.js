@@ -465,6 +465,12 @@ define(function (require) {
 
   };
 
+  // attach constants to p5 instance
+  for (var c in constants) {
+    if (constants.hasOwnProperty(c)) {
+      p5.prototype[c] = constants[c];
+    }
+  }
   return p5;
 
 });

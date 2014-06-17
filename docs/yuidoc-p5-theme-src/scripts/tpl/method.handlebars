@@ -222,6 +222,47 @@
     <strong><a href='#file/{{urlencodedfile}}/{{line}}'>{{file}}:{{line}}</a></strong> 
   </div>
 
+  <script>
+  var examples = document.getElementsByClassName('example');
+  if (examples.length > 0) {
+    var sketches = examples[0].getElementsByTagName('code');
+    for (var i=0; i<sketches.length; i++) {
 
+      var c = sketches[i];
+      var cnv = document.createElement('div');
+      cnv.id = i+'_cnv';
+      c.parentNode.insertBefore(cnv, c);
+
+      var runnable = c.innerText;
+
+      var keys = Object.getOwnPropertyNames(p5.prototype);
+      keys.sort(function(a, b){
+        return b.length - a.length;
+      });
+
+      var reg = '(';
+      for (var k=0; k<keys.length; k++) {
+        reg += keys[k];
+        if (k !== keys.length - 1) {
+          reg += '|';
+        }
+      }
+      reg += ')';
+
+      runnable = runnable.replace(new RegExp(reg, 'g'), 'p.$1');
+
+      var s = function( p ) {
+
+        p.setup = function() {
+          p.createCanvas(100, 100);
+          p.background(200);
+          eval(runnable);
+        }
+      };
+
+      var myp5 = new p5(s, cnv.id);
+    }
+  }
+  </script>
 
 </div>
