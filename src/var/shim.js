@@ -8,7 +8,8 @@ define(function(require) {
           window.oRequestAnimationFrame      ||
           window.msRequestAnimationFrame     ||
           function(callback, element){
-            window.setTimeout(callback, 1000 / 60); // should '60' here be framerate?
+            // should '60' here be framerate?
+            window.setTimeout(callback, 1000 / 60);
           };
   })();
 });
