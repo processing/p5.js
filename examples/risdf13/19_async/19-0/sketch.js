@@ -1,4 +1,4 @@
-// In this example, we want to load a *very large* (123MegaPixels)
+// In this example, we want to load an
 // image and display it in setup().
 //
 // Since setup() happens quickly at the beginning, the image doesn't
@@ -9,16 +9,16 @@
 // This is called asynchronous loading, because it happens whenever
 // the computer is done and ready, not necessarily when you call it.
 
-var largeImage;
+var i;
 
 function preload() {
-  //largeImage = loadImage('ripple.jpg'); // preloading the image guarantees it will be ready by setup()
+  //i = loadImage('sun.jpg'); // preloading the image guarantees it will be ready by setup()
 };
 
 function setup() {
   createCanvas(1300, 600);
-  largeImage = loadImage('ripple.jpg');   // loading the image here is too slow
-  image(largeImage, 0, 0);
+  i = loadImage('sun.jpg');   // loading the image here is too slow
+  image(i, 0, 0);
 };
 
 function draw() {
