@@ -55,30 +55,38 @@ define(function (require) {
    * @param {Number} [z] z component of the vector
    */
   function PVector() {
-    var nums = arguments;
-    // save reference to p5 if passed in
+    var x,y,z;
+    // This is how it comes in with createVector()
     if(arguments[0] instanceof p5) {
+      // save reference to p5 if passed in
       this.p5 = arguments[0];
-      nums = arguments[1];
+      x  = arguments[1][0] || 0;
+      y  = arguments[1][1] || 0;
+      z  = arguments[1][2] || 0;
+    // This is what we'll get with new PVector()
+    } else {
+      x = arguments[0] || 0;
+      y = arguments[1] || 0;
+      z = arguments[2] || 0;
     }
     /**
      * The x component of the vector
      * @property x
      * @type {Number}
      */
-    this.x = nums[0] || 0;
+    this.x = x;
     /**
      * The y component of the vector
      * @property y
      * @type {Number}
      */
-    this.y = nums[1] || 0;
+    this.y = y;
     /**
      * The z component of the vector
      * @property z
      * @type {Number}
      */
-    this.z = nums[2] || 0;
+    this.z = z;
   }
 
 
