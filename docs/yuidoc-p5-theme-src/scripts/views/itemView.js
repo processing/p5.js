@@ -74,6 +74,8 @@ define([
         // Prettify code (syntax highlighter)
         this.$el.find('code').addClass('prettyprint');
         prettyPrint();
+
+        renderCode();
       }
 
       return this;
