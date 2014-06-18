@@ -8,7 +8,7 @@ define(function(require) {
   require('input.mouse');
   require('input.touch');
 
-  var PElement = require('dom.pelement');
+  //var p5.Element = require('p5.Element');
 
   /**
    * Creates a canvas element in the document.
@@ -39,7 +39,7 @@ define(function(require) {
       document.body.appendChild(c);
     }
 
-    var cnv =  new PElement(c, this);
+    var cnv =  new p5.Element(c, this);
     this.context(cnv);
     this._applyDefaults();
 
@@ -53,7 +53,7 @@ define(function(require) {
     if (typeof e === 'string' || e instanceof String) {
       var elt = document.getElementById(e);
       if (elt) {
-        var pe = new PElement(elt, this);
+        var pe = new p5.Element(elt, this);
         obj = pe;
       } else {
         obj = null;

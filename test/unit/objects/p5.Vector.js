@@ -1,14 +1,14 @@
-describe('PVector', function() {
+describe('p5.Vector', function() {
   beforeEach(function() {
-    this.sut = new PVector();
+    this.sut = new p5.Vector();
   });
 
   afterEach(function() {
     delete this.sut;
   });
 
-  it('should return a PVector instance', function() {
-    expect(this.sut).to.be.an.instanceof(PVector);
+  it('should return a p5.Vector instance', function() {
+    expect(this.sut).to.be.an.instanceof(p5.Vector);
   });
 
   it('should have x, y, z be initialized to 0', function() {
@@ -17,9 +17,9 @@ describe('PVector', function() {
     expect(this.sut.z).to.eql(0);
   });
 
-  describe('new PVector(1,2,3)', function() {
+  describe('new p5.Vector(1,2,3)', function() {
     beforeEach(function() {
-      this.sut = new PVector(1,2,3);
+      this.sut = new p5.Vector(1,2,3);
     });
 
     it('should have x, y, z be initialized to 1,2,3', function() {
@@ -29,9 +29,9 @@ describe('PVector', function() {
     });
   });
 
-  describe('new PVector(1,2,undefined)', function() {
+  describe('new p5.Vector(1,2,undefined)', function() {
     beforeEach(function() {
-      this.sut = new PVector(1,2,undefined);
+      this.sut = new p5.Vector(1,2,undefined);
     });
 
     it('should have x, y, z be initialized to 1,2,0', function() {
@@ -41,9 +41,9 @@ describe('PVector', function() {
     });
   });
  describe('set()', function() {
-    describe('with PVector', function() {
+    describe('with p5.Vector', function() {
       it('should have x, y, z be initialized to the vector\'s x, y, z', function() {
-        this.sut.set(new PVector(2,5,6));
+        this.sut.set(new p5.Vector(2,5,6));
         expect(this.sut.x).to.eql(2);
         expect(this.sut.y).to.eql(5);
         expect(this.sut.z).to.eql(6);
@@ -99,9 +99,9 @@ describe('PVector', function() {
       this.sut.y = 0;
       this.sut.z = 0;
     });
-    describe('with PVector', function() {
+    describe('with p5.Vector', function() {
       it('should add x, y, z  from the vector argument', function() {
-        this.sut.add(new PVector(2,5,6));
+        this.sut.add(new p5.Vector(2,5,6));
         expect(this.sut.x).to.eql(2);
         expect(this.sut.y).to.eql(5);
         expect(this.sut.z).to.eql(6);
@@ -144,12 +144,12 @@ describe('PVector', function() {
       });
     });
 
-    describe('PVector.add(v1, v2)', function() {
+    describe('p5.Vector.add(v1, v2)', function() {
       var v1, v2, res;
       beforeEach(function() {
-        v1 = new PVector(2,0,3);
-        v2 = new PVector(0,1,3);
-        res = PVector.add(v1, v2);
+        v1 = new p5.Vector(2,0,3);
+        v2 = new p5.Vector(0,1,3);
+        res = p5.Vector.add(v1, v2);
       });
 
       it('should return neither v1 nor v2', function() {
@@ -157,7 +157,7 @@ describe('PVector', function() {
         expect(res).to.not.eql(v2);
       });
 
-      it('should be sum of the two PVectors', function() {
+      it('should be sum of the two p5.Vectors', function() {
         expect(res.x).to.eql(v1.x + v2.x);
         expect(res.y).to.eql(v1.y + v2.y);
         expect(res.z).to.eql(v1.z + v2.z);
@@ -173,9 +173,9 @@ describe('PVector', function() {
       this.sut.y = 0;
       this.sut.z = 0;
     });
-    describe('with PVector', function() {
+    describe('with p5.Vector', function() {
       it('should sub x, y, z  from the vector argument', function() {
-        this.sut.sub(new PVector(2,5,6));
+        this.sut.sub(new p5.Vector(2,5,6));
         expect(this.sut.x).to.eql(-2);
         expect(this.sut.y).to.eql(-5);
         expect(this.sut.z).to.eql(-6);
@@ -218,12 +218,12 @@ describe('PVector', function() {
       });
     });
 
-    describe('PVector.sub(v1, v2)', function() {
+    describe('p5.Vector.sub(v1, v2)', function() {
       var v1, v2, res;
       beforeEach(function() {
-        v1 = new PVector(2,0,3);
-        v2 = new PVector(0,1,3);
-        res = PVector.sub(v1, v2);
+        v1 = new p5.Vector(2,0,3);
+        v2 = new p5.Vector(0,1,3);
+        res = p5.Vector.sub(v1, v2);
       });
 
       it('should return neither v1 nor v2', function() {
@@ -241,7 +241,7 @@ describe('PVector', function() {
 
   describe('mult()', function() {
     beforeEach(function() {
-      this.sut = new PVector();
+      this.sut = new p5.Vector();
       this.sut.x = 1;
       this.sut.y = 1;
       this.sut.z = 1;
@@ -260,14 +260,14 @@ describe('PVector', function() {
       });
     });
 
-    describe('PVector.mult(v, n)', function() {
+    describe('p5.Vector.mult(v, n)', function() {
       var v, res;
       beforeEach(function() {
-        v = new PVector(1,2,3);
-        res = PVector.mult(v, 4);
+        v = new p5.Vector(1,2,3);
+        res = p5.Vector.mult(v, 4);
       });
 
-      it('should return a new PVector', function() {
+      it('should return a new p5.Vector', function() {
         expect(res).to.not.eql(v);
       });
 
@@ -301,18 +301,18 @@ describe('PVector', function() {
       });
     });
 
-    describe('PVector.div(v, n)', function() {
+    describe('p5.Vector.div(v, n)', function() {
       var v, res;
       beforeEach(function() {
-        v = new PVector(1,1,1);
-        res = PVector.div(v, 4);
+        v = new p5.Vector(1,1,1);
+        res = p5.Vector.div(v, 4);
       });
 
       it('should not be undefined', function() {
         expect(res).to.not.eql(undefined);
       });
 
-      it('should return a new PVector', function() {
+      it('should return a new p5.Vector', function() {
         expect(res).to.not.eql(v);
       });
 
@@ -333,13 +333,13 @@ describe('PVector', function() {
     });
  
     it('should return a number', function() {
-       expect(typeof(this.sut.dot(new PVector())) ===  'number').to.eql(true);
+       expect(typeof(this.sut.dot(new p5.Vector())) ===  'number').to.eql(true);
     });
 
 
-    describe('with PVector', function() {
+    describe('with p5.Vector', function() {
       it('should be the dot product of the vector', function() {
-        expect(this.sut.dot(new PVector(2,2))).to.eql(4);
+        expect(this.sut.dot(new p5.Vector(2,2))).to.eql(4);
       });
     });
 
@@ -353,12 +353,12 @@ describe('PVector', function() {
       });
     });
 
-    describe('PVector.dot(v, n)', function() {
+    describe('p5.Vector.dot(v, n)', function() {
       var v1, v2, res;
       beforeEach(function() {
-        v1 = new PVector(1,1,1);
-        v2 = new PVector(2,3,4);
-        res = PVector.dot(v1, v2);
+        v1 = new p5.Vector(1,1,1);
+        v2 = new p5.Vector(2,3,4);
+        res = p5.Vector.dot(v1, v2);
       });
 
       it('should return a number', function() {
@@ -379,24 +379,24 @@ describe('PVector', function() {
       this.sut.z = 1;
     });
       it('should return a new product', function() {
-        expect(this.sut.cross(new PVector())).to.not.eql(this.sut);
+        expect(this.sut.cross(new p5.Vector())).to.not.eql(this.sut);
       });
 
-    describe('with PVector', function() {
+    describe('with p5.Vector', function() {
       it('should cross x, y, z  from the vector argument', function() {
-        res = this.sut.cross(new PVector(2,5,6));
+        res = this.sut.cross(new p5.Vector(2,5,6));
         expect(res.x).to.eql(1);   //this.y * v.z - this.z * v.y
         expect(res.y).to.eql(-4);  //this.z * v.x - this.x * v.z
         expect(res.z).to.eql(3);   //this.x * v.y - this.y * v.x
       });
     });
 
-    describe('PVector.cross(v1, v2)', function() {
+    describe('p5.Vector.cross(v1, v2)', function() {
       var v1, v2, res;
       beforeEach(function() {
-        v1 = new PVector(3,6,9);
-        v2 = new PVector(1,1,1);
-        res = PVector.cross(v1, v2);
+        v1 = new p5.Vector(3,6,9);
+        v2 = new p5.Vector(1,1,1);
+        res = p5.Vector.cross(v1, v2);
       });
 
       it('should not be undefined', function() {
@@ -423,8 +423,8 @@ describe('PVector', function() {
       this.sut.x = 0;
       this.sut.y = 0;
       this.sut.z = 1;
-      b = new PVector(0,0,5);
-      c = new PVector(3,4,1);
+      b = new p5.Vector(0,0,5);
+      c = new p5.Vector(3,4,1);
     });
 
     it('should return a number', function() {
@@ -445,19 +445,19 @@ describe('PVector', function() {
 
   });
 
-  describe('PVector.dist(v1, v2)', function() {
+  describe('p5.Vector.dist(v1, v2)', function() {
     var v1, v2;
     beforeEach(function() {
-      v1 = new PVector(0,0,0);
-      v2 = new PVector(0,3,4);
+      v1 = new p5.Vector(0,0,0);
+      v2 = new p5.Vector(0,3,4);
     });
 
     it('should return a number', function() {
-      expect(typeof(PVector.dist(v1, v2)) ===  'number').to.eql(true);
+      expect(typeof(p5.Vector.dist(v1, v2)) ===  'number').to.eql(true);
     });
 
     it('should be commutative', function() {
-      expect(PVector.dist(v1, v2)).to.eql(PVector.dist(v2, v1));
+      expect(p5.Vector.dist(v1, v2)).to.eql(p5.Vector.dist(v2, v1));
     });
   });
 
@@ -617,10 +617,10 @@ describe('PVector', function() {
     // });
 
     // PEND: ADD BACK IN
-    // describe('with PVector', function() {
+    // describe('with p5.Vector', function() {
     //   it('should call lerp with 4 arguments', function() {
     //     spyOn(this.sut, 'lerp').andCallThrough();
-    //     this.sut.lerp(new PVector(1,2,3), 1);
+    //     this.sut.lerp(new p5.Vector(1,2,3), 1);
     //     expect(this.sut.lerp).toHaveBeenCalledWith(1, 2, 3, 1);
     //   });
     // });
@@ -657,19 +657,19 @@ describe('PVector', function() {
       });
     });
   });
-  describe('PVector.lerp(v1, v2, amt)', function() {
+  describe('p5.Vector.lerp(v1, v2, amt)', function() {
     var res, v1, v2;
     beforeEach(function() {
-      v1 = new PVector(0, 0, 0);
-      v2 = new PVector(2, 2, 2);
-      res = PVector.lerp(v1, v2, 0.5);
+      v1 = new p5.Vector(0, 0, 0);
+      v2 = new p5.Vector(2, 2, 2);
+      res = p5.Vector.lerp(v1, v2, 0.5);
     });
     it('should not be undefined', function() {
       expect(res).to.not.eql(undefined);
     });
 
-    it('should be a PVector', function() {
-      expect(res).to.be.an.instanceof(PVector);
+    it('should be a p5.Vector', function() {
+      expect(res).to.be.an.instanceof(p5.Vector);
     });
 
     it('should return neither v1 nor v2', function() {
@@ -685,41 +685,41 @@ describe('PVector', function() {
   });
 
 
-  describe('PVector.fromAngle(angle)', function() {
+  describe('p5.Vector.fromAngle(angle)', function() {
     var res,angle;
     beforeEach(function() {
       angle = Math.PI/2;
-      res = PVector.fromAngle(angle);
+      res = p5.Vector.fromAngle(angle);
     });
-    it('should be a PVector with values (0,1)', function() {
+    it('should be a p5.Vector with values (0,1)', function() {
       expect(res.x).to.be.closeTo(0,0.01);
       expect(res.y).to.be.closeTo(1,0.01);
     });
   });
-  describe('PVector.random2D()', function() {
+  describe('p5.Vector.random2D()', function() {
     var res;
     beforeEach(function() {
-      res = PVector.random2D();
+      res = p5.Vector.random2D();
     });
-    it('should be a unit PVector', function() {
+    it('should be a unit p5.Vector', function() {
       expect(res.mag()).to.be.closeTo(1,0.01);
     });
   });  
-  describe('PVector.random3D()', function() {
+  describe('p5.Vector.random3D()', function() {
     var res;
     beforeEach(function() {
-      res = PVector.random3D();
+      res = p5.Vector.random3D();
     });
-    it('should be a unit PVector', function() {
+    it('should be a unit p5.Vector', function() {
       expect(res.mag()).to.be.closeTo(1,0.01);
     });
   });  
-  describe('PVector.angleBetween(v1, v2)', function() {
+  describe('p5.Vector.angleBetween(v1, v2)', function() {
     var res, v1, v2;
     beforeEach(function() {
-      v1 = new PVector(1, 0, 0);
-      v2 = new PVector(2, 2, 0);
-      res = PVector.angleBetween(v1, v2);
+      v1 = new p5.Vector(1, 0, 0);
+      v2 = new p5.Vector(2, 2, 0);
+      res = p5.Vector.angleBetween(v1, v2);
 
     });
     it('should be a Number', function() {
@@ -727,35 +727,35 @@ describe('PVector', function() {
     });
     describe('with [1,0,0] and [2,2,0]', function() {
       it('should be 45 deg differnce', function() {
-        v1 = new PVector(1, 0, 0);
-        v2 = new PVector(2, 2, 0);
-        res = PVector.angleBetween(v1, v2);
+        v1 = new p5.Vector(1, 0, 0);
+        v2 = new p5.Vector(2, 2, 0);
+        res = p5.Vector.angleBetween(v1, v2);
         expect(res).to.be.closeTo(Math.PI/4, 0.01);
       });
     });
 
     describe('with [2,0,0] and [-2,0,0]', function() {
       it('should be 180 deg differnce', function() {
-        v1 = new PVector(2, 0, 0);
-        v2 = new PVector(-2, 0, 0);
-        res = PVector.angleBetween(v1, v2);
+        v1 = new p5.Vector(2, 0, 0);
+        v2 = new p5.Vector(-2, 0, 0);
+        res = p5.Vector.angleBetween(v1, v2);
         expect(res).to.be.closeTo(Math.PI, 0.01);
       });
     });
 
     describe('with [2,0,0] and [-2,-2,0]', function() {
       it('should be 135 deg differnce', function() {
-        v1 = new PVector(2, 0, 0);
-        v2 = new PVector(-2, -2, 0);
-        res = PVector.angleBetween(v1, v2);
+        v1 = new p5.Vector(2, 0, 0);
+        v2 = new p5.Vector(-2, -2, 0);
+        res = p5.Vector.angleBetween(v1, v2);
         expect(res).to.be.closeTo(Math.PI/2 + Math.PI/4, 0.01);
       });
 
       it('should be commutative', function() {
-        v1 = new PVector(2, 0, 0);
-        v2 = new PVector(-2, -2, 0);
-        res = PVector.angleBetween(v1, v2);
-        expect(PVector.angleBetween(v1,v2)).to.be.closeTo(PVector.angleBetween(v2,v1), 0.01);
+        v1 = new p5.Vector(2, 0, 0);
+        v2 = new p5.Vector(-2, -2, 0);
+        res = p5.Vector.angleBetween(v1, v2);
+        expect(p5.Vector.angleBetween(v1,v2)).to.be.closeTo(p5.Vector.angleBetween(v2,v1), 0.01);
       });
     });
   });

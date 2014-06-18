@@ -8,7 +8,7 @@
 define(function (require) {
 
   /**
-   * This module defines the PImage class and P5 methods for
+   * This module defines the p5.Image class and P5 methods for
    * drawing images to the main display canvas.
    */
 
@@ -27,22 +27,22 @@ define(function (require) {
    */
 
   /**
-   * Creates a new PImage (the datatype for storing images). This provides a
+   * Creates a new p5.Image (the datatype for storing images). This provides a
    * fresh buffer of pixels to play with. Set the size of the buffer with the
    * width and height parameters.
    *
    * @method createImage
    * @param  {Integer} width  width in pixels
    * @param  {Integer} height height in pixels
-   * @return {PImage}         the PImage object
+   * @return {p5.Image}         the p5.Image object
    * @for Image
    */
   p5.prototype.createImage = function(width, height) {
-    return new PImage(width, height);
+    return new p5.Image(width, height);
   };
 
   /**
-   * Loads an image from a path and creates a PImage from it.
+   * Loads an image from a path and creates a p5.Image from it.
    *
    * The image may not be immediately available for rendering
    * If you want to ensure that the image is ready before doing
@@ -52,19 +52,19 @@ define(function (require) {
    * @method loadImage
    * @param  {String}   path
    * @param  {Function} callback Function to be called once the image is
-   *                             loaded. Will be passed the PImage.
-   * @return {PImage}            the PImage object
+   *                             loaded. Will be passed the p5.Image.
+   * @return {p5.Image}            the p5.Image object
    * @for Loading & Displaying
    */
   p5.prototype.loadImage = function(path, callback) {
     var img = new Image();
-    var pImg = new PImage(1, 1, this);
+    var pImg = new p5.Image(1, 1, this);
 
     img.onload = function() {
       pImg.width = pImg.canvas.width = img.width;
       pImg.height = pImg.canvas.height = img.height;
 
-      // Draw the image into the backing canvas of the pImage
+      // Draw the image into the backing canvas of the p5.Image
       pImg.canvas.getContext('2d').drawImage(img, 0, 0);
 
       if (typeof callback !== 'undefined') {
@@ -87,7 +87,7 @@ define(function (require) {
    * Draw an image to the main canvas of the p5js sketch
    *
    * @method image 
-   * @param  {PImage} image the image to display
+   * @param  {p5.Image} image the image to display
    * @param  {[type]} x x-coordinate of the image
    * @param  {[type]} y y-coordinate of the image
    * @param  {[type]} width width to display the image
@@ -163,7 +163,7 @@ define(function (require) {
    * Apply the current tint color to the input image, return the resulting
    * canvas.
    *
-   * @param {PImage} The image to be tinted
+   * @param {p5.Image} The image to be tinted
    * @return {canvas} The resulting tinted canvas
    */
   p5.prototype._getTintedImageCanvas = function(image) {
@@ -223,10 +223,10 @@ define(function (require) {
    */
 
   /**
-   * Creates a new PImage. A PImage is a canvas backed representation of an
+   * Creates a new p5.Image. A p5.Image is a canvas backed representation of an
    * image. p5 can display .gif, .jpg and .png images. Images may be displayed
    * in 2D and 3D space. Before an image is used, it must be loaded with the
-   * loadImage() function. The PImage class contains fields for the width and
+   * loadImage() function. The p5.Image class contains fields for the width and
    * height of the image, as well as an array called pixels[] that contains the
    * values for every pixel in the image. The methods described below allow
    * easy access to the image's pixels and alpha channel and simplify the
@@ -236,22 +236,22 @@ define(function (require) {
    * the image to make sure that the pixel data is properly loaded.
    * 
    * @constructor
-   * @class PImage
+   * @class p5.Image
    * @param {Number} width 
    * @param {Number} height 
    * @param {Object} pInst An instance of a p5 sketch.
    */
-  function PImage(width, height){
+  p5.Image = function(width, height){
     /**
      * Image width.
      * @property width
-     * @for PImage
+     * @for p5.Image
      */
     this.width = width;
     /**
      * Image height.
      * @property height
-     * @for PImage
+     * @for p5.Image
      */
     this.height = height;
     this.canvas = document.createElement('canvas');
@@ -260,17 +260,16 @@ define(function (require) {
     /**
      * Array containing the color of every pixel in the image.
      * @property pixels[]
-     * @for PImage
+     * @for p5.Image
      */
     this.pixels = [];
-  }
-  p5.prototype.PImage = PImage; // hack to access PImage outside module??
+  };
 
   /**
    * Helper fxn for sharing pixel methods
    *
    */
-  PImage.prototype._setProperty = function (prop, value) {
+  p5.Image.prototype._setProperty = function (prop, value) {
     this[prop] = value;
   };
 
@@ -278,9 +277,9 @@ define(function (require) {
    * Loads the pixels data for this image into the [pixels] attribute.
    * 
    * @method loadPixels
-   * @for PImage
+   * @for p5.Image
    */
-  PImage.prototype.loadPixels = function(){
+  p5.Image.prototype.loadPixels = function(){
     p5.prototype.loadPixels.call(this);
   };
 
@@ -297,9 +296,9 @@ define(function (require) {
    *                              underlying canvas
    * @param {Integer|undefined} h height of the target update area for the
    *                              underlying canvas
-   * @for PImage
+   * @for p5.Image
    */
-  PImage.prototype.updatePixels = function(x, y, w, h){
+  p5.Image.prototype.updatePixels = function(x, y, w, h){
     p5.prototype.updatePixels.call(this, x, y, w, h);
   };
 
@@ -308,27 +307,27 @@ define(function (require) {
    *
    * If no params are passed, those whole image is returned,
    * if x and y are the only params passed a single pixel is extracted
-   * if all params are passed a rectangle region is extracted and a Pimage is
-   * returned.
+   * if all params are passed a rectangle region is extracted and a p5.Image
+   * is returned.
    *
    * Returns undefined if the region is outside the bounds of the image
    *
    * @method get
-   * @for PImage
+   * @for p5.Image
    * @param  {Number}               [x] x-coordinate of the pixel
    * @param  {Number}               [y] y-coordinate of the pixel
    * @param  {Number}               [w] width
    * @param  {Number}               [h] height
-   * @return {Array/Color | PImage}     color of pixel at x,y in array format
-   *                                    [R, G, B, A] or PImage
+   * @return {Array/Color | p5.Image}     color of pixel at x,y in array format
+   *                                    [R, G, B, A] or p5.Image
    */
-  PImage.prototype.get = function(x, y, w, h){
+  p5.Image.prototype.get = function(x, y, w, h){
     return p5.prototype.get.call(this, x, y, w, h);
   };
 
   /**
    * Set the color of a single pixel or write an image into
-   * this PImage.
+   * this p5.Image.
    *
    * Note that for a large number of pixels this will
    * be slower than directly manipulating the pixels array
@@ -337,13 +336,13 @@ define(function (require) {
    * TODO: Should me make the update operation toggleable?
    *
    * @method set
-   * @for PImage
+   * @for p5.Image
    * @param {Number}              x x-coordinate of the pixel
    * @param {Number}              y y-coordinate of the pixel
    * @param {Number|Array|Object}   insert a grayscale value |
    *                                a color array | image to copy
    */
-  PImage.prototype.set = function(x, y, imgOrCol){
+  p5.Image.prototype.set = function(x, y, imgOrCol){
     p5.prototype.set.call(this, x, y, imgOrCol);
   };
 
@@ -355,11 +354,11 @@ define(function (require) {
    * the height using the same proportion, use resize(150, 0).
    *
    * @method resize
-   * @for PImage
+   * @for p5.Image
    * @param {Number} width the resized image width
    * @param {Number} height the resized image height
    */
-  PImage.prototype.resize = function(width, height){
+  p5.Image.prototype.resize = function(width, height){
 
     // Copy contents to a temporary canvas, resize the original
     // and then copy back.
@@ -367,7 +366,7 @@ define(function (require) {
     // There is a faster approach that involves just one copy and swapping the
     // this.canvas reference. We could switch to that approach if (as i think
     // is the case) there an expectation that the user would not hold a 
-    // reference to the backing canvas of a pImage. But since we do not
+    // reference to the backing canvas of a p5.Image. But since we do not
     // enforece that at the moment, I am leaving in the slower, but safer
     // implementation.
 
@@ -404,8 +403,8 @@ define(function (require) {
    * target region.
    *
    * @method copy
-   * @for PImage
-   * @param  {PImage|undefined} srcImage source image
+   * @for p5.Image
+   * @param  {p5.Image|undefined} srcImage source image
    * @param  {Integer} sx X coordinate of the source's upper left corner
    * @param  {Integer} sy Y coordinate of the source's upper left corner
    * @param  {Integer} sw source image width
@@ -415,7 +414,7 @@ define(function (require) {
    * @param  {Integer} dw destination image width
    * @param  {Integer} dh destination image height
    */
-  PImage.prototype.copy = function() {
+  p5.Image.prototype.copy = function() {
     p5.prototype.copy.apply(this, arguments);
   };
 
@@ -425,8 +424,8 @@ define(function (require) {
    * this image.
    * 
    * @method mask
-   * @for PImage
-   * @param {PImage|undefined} srcImage source image
+   * @for p5.Image
+   * @param {p5.Image|undefined} srcImage source image
    *
    * TODO: - Accept an array of alpha values.
    *       - Use other channels of an image. p5 uses the
@@ -437,18 +436,18 @@ define(function (require) {
    * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
    * 
    */
-  PImage.prototype.mask = function(pImage) {
-    if(pImage === undefined){
-      pImage = this;
+  p5.Image.prototype.mask = function(p5Image) {
+    if(p5Image === undefined){
+      p5Image = this;
     }
     var currBlend = this.canvas.getContext('2d').globalCompositeOperation;
 
     var copyArgs = [
-      pImage,
+      p5Image,
       0,
       0,
-      pImage.width,
-      pImage.height,
+      p5Image.width,
+      p5Image.height,
       0,
       0,
       this.width,
@@ -461,16 +460,16 @@ define(function (require) {
   };
 
   /**
-   * Applies an image filter to a PImage
+   * Applies an image filter to a p5.Image
    * 
    * @method filter
-   * @for PImage
+   * @for p5.Image
    * @param {String} operation one of threshold, gray, invert, posterize and 
    *                           opaque see Filters.js for docs on each available
    *                           filter
    * @param {Number|undefined} value
    */
-  PImage.prototype.filter = function(operation, value) {
+  p5.Image.prototype.filter = function(operation, value) {
     Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
   };
 
@@ -479,8 +478,8 @@ define(function (require) {
    * blend mode to do the operation.
    * 
    * @method blend
-   * @for PImage
-   * @param  {PImage|undefined} srcImage source image
+   * @for p5.Image
+   * @param  {p5.Image|undefined} srcImage source image
    * @param  {Integer} sx X coordinate of the source's upper left corner
    * @param  {Integer} sy Y coordinate of the source's upper left corner
    * @param  {Integer} sw source image width
@@ -500,7 +499,7 @@ define(function (require) {
    * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
    * 
    */
-  PImage.prototype.blend = function() {
+  p5.Image.prototype.blend = function() {
     p5.prototype.blend.apply(this, arguments);
   };
 
@@ -509,7 +508,7 @@ define(function (require) {
    * Supports png and jpg.
    * 
    * @method save
-   * @for PImage
+   * @for p5.Image
    * @param  {[type]} extension
    *
    * TODO: There doesn't seem to be a way to give the force the
@@ -517,7 +516,7 @@ define(function (require) {
    * this function currently only take an extension parameter.
    * 
    */
-  PImage.prototype.save = function(extension) {
+  p5.Image.prototype.save = function(extension) {
     // var components = name.split('.');
     // var extension = components[components.length - 1];
     var mimeType;
@@ -547,5 +546,5 @@ define(function (require) {
       window.location.href = imageData;
     }
   };
-  return PImage;
+  return p5.Image;
 });
