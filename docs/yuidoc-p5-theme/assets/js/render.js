@@ -12,6 +12,8 @@ function renderCode() {
 
   function setupCode(sketch) {
 
+    // remove start and end lines
+    sketch.innerText = sketch.innerText.replace(/^\s+|\s+$/g, '');
     var runnable = sketch.innerText;
     var rows = sketch.innerText.split('\n').length;
 
@@ -37,7 +39,7 @@ function renderCode() {
     // create edit space
     var edit_space = document.createElement('div');
     edit_space.style.position = 'absolute';
-    edit_space.style.top = 0;
+    edit_space.style.top = '-20px';
     edit_space.style.left = '150px';
     sketch.parentNode.appendChild(edit_space);
 
@@ -48,13 +50,9 @@ function renderCode() {
     edit_space.appendChild(edit_button);
     edit_button.onclick = function(e) {
       if (edit_button.innerHTML === 'edit') { // edit
-        edit_button.innerHTML = 'run';
-        edit_area.style.display = 'block';
+        setMode(sketch, 'edit');
       } else { // run
-        edit_button.innerHTML = 'edit';
-        edit_area.style.display = 'none';
-        sketch.innerHTML = edit_area.value;
-        runCode(sketch);
+        setMode(sketch, 'run');
       }
     }
 
@@ -64,9 +62,8 @@ function renderCode() {
     reset_button.innerHTML = 'reset';
     edit_space.appendChild(reset_button);
     reset_button.onclick = function() {
-      sketch.innerText = orig_sketch.innerText;
       edit_area.value = orig_sketch.innerText;
-      runCode(sketch);
+      setMode(sketch, 'run');
     };
 
     var edit_area = document.createElement('textarea');
@@ -76,6 +73,20 @@ function renderCode() {
     edit_area.position = 'absolute'
     edit_space.appendChild(edit_area);
     edit_area.style.display = 'none';
+
+
+    function setMode(sketch, m) {
+      if (m === 'edit') {
+        edit_button.innerHTML = 'run';
+        edit_area.style.display = 'block';
+      } else {
+        edit_button.innerHTML = 'edit';
+        edit_area.style.display = 'none';
+        sketch.innerHTML = edit_area.value;
+        runCode(sketch);
+      }
+    }
+
 
   }
 
