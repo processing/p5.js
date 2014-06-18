@@ -4323,8 +4323,11 @@ input::-moz-focus-inner {
   #item .method ul.args-list li.arg .pln {
     font-weight: bold;
     color: #ff6600; }
-  #item .example-content {
-    font-size: 0; }
+  #item .example-content button {
+    font-size: 10px; }
+  #item .example-content textarea {
+    font-size: inherit !important;
+    font-family: monospace !important; }
     #item .example-content pre,
     #item .example-content code,
     #item .example-content img {
