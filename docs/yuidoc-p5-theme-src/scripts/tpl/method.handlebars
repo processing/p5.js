@@ -226,14 +226,15 @@
   var examples = document.getElementsByClassName('example');
   if (examples.length > 0) {
     var sketches = examples[0].getElementsByTagName('code');
-    for (var i=0; i<sketches.length; i++) {
-
-      var c = sketches[i];
+    var sketches_array = Array.prototype.slice.call(sketches);
+    var i = 0;
+    sketches_array.forEach(function(sketch) {
+    
       var cnv = document.createElement('div');
       cnv.id = i+'_cnv';
-      c.parentNode.insertBefore(cnv, c);
+      sketch.parentNode.insertBefore(cnv, sketch);
 
-      var runnable = c.innerText;
+      var runnable = sketch.innerText;
 
       var keys = Object.getOwnPropertyNames(p5.prototype);
       keys.sort(function(a, b){
@@ -253,15 +254,35 @@
 
       var s = function( p ) {
 
-        p.setup = function() {
-          p.createCanvas(100, 100);
-          p.background(200);
+        if (runnable.indexOf('setup()') === -1 && runnable.indexOf('draw()') === -1){
+          p.setup = function() {
+            p.createCanvas(100, 100);
+            p.background(200);
+            eval(runnable);
+          }
+        }
+        else {
+
+          p.setup = function() {
+            p.createCanvas(100, 100);
+            p.background(200);
+          }
+          
           eval(runnable);
+
+          var fxns = ['setup', 'draw', 'preload', 'mousePressed', 'mouseReleased', 'mouseMoved', 'mouseDragged', 'mouseClicked', 'mouseWheel', 'touchStarted', 'touchMoved', 'touchEnded'];
+          fxns.forEach(function(f) { 
+            if (runnable.indexOf(f) !== -1) {
+              p[f] = eval(f);
+            }
+          });
+
         }
       };
 
-      var myp5 = new p5(s, cnv.id);
-    }
+      setTimeout(function(){ var myp5 = new p5(s, cnv.id); }, 100);
+      i++;
+    });
   }
   </script>
 

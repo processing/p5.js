@@ -4354,7 +4354,7 @@ input::-moz-focus-inner {
   #item .params,
   #item .returns,
   #item .example-content div {
-    display: inline !important;
+    /*display: inline !important;*/
   }
   #item .example {
     padding-top: 10px;
