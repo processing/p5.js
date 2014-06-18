@@ -3,6 +3,8 @@ var amplitude, micLevel, masterLevel, levelLabel;
 
 var soundToggle;
 var soundOn = false;
+var micOn = true;
+var micToggle;
 
 function setup() {
   createCanvas(400,400);
@@ -13,14 +15,19 @@ function setup() {
   // don't send to master output
   mic.disconnect();
 
-  // only send to the Amplitude reader
+  // only send to the Amplitude reader, so we can see it but not hear it.
   amplitude.setInput(mic);
 
+  // create controls
   levelLabel = createP('Master Volume: ');
   masterLevel = createSlider(0,100,50);
 
   soundToggle = createButton('Sound ON');
   soundToggle.mousePressed(toggleSound);
+
+  micToggle = createButton('Mic OFF');
+  micToggle.mousePressed(toggleMic);
+
 
   createP('NOTE: Turning sound on may cause a <a href="https://en.wikipedia.org/wiki/Audio_feedback" target="_blank">feedback loop</a> between the mic and speakers. Try headphones.');
 }
@@ -39,9 +46,10 @@ function draw() {
 }
 
 
+// Toggle whether mic is connected to p5Sound (output) or only to Amplitude
 function toggleSound() {
   if (soundOn == false) {
-    mic.connect(p5sound);
+    mic.connect();
     soundOn = true;
     soundToggle.html('Sound OFF');
   } else {
@@ -49,5 +57,18 @@ function toggleSound() {
     amplitude.setInput(mic);
     soundOn = false;
     soundToggle.html('Sound ON');
+  }
+}
+
+// Toggle whether the mic is on or off
+function toggleMic() {
+  if (micOn == true) {
+    mic.off();
+    micOn = false;
+    micToggle.html('Mic ON');
+  } else {
+    mic.on();
+    micOn = true;
+    micToggle.html('Mic OFF');
   }
 }
