@@ -34,33 +34,33 @@ define(function (require) {
    *                         the arc
    * @return {Object}        the p5 object
    * @example
-   *   <div>
-   *     <code>
-   *       arc(50, 55, 50, 50, 0, HALF_PI);
-   *       noFill();
-   *       arc(50, 55, 60, 60, HALF_PI, PI);
-   *       arc(50, 55, 70, 70, PI, PI+QUARTER_PI);
-   *       arc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);
-   *     </code>
-   *   </div>
+   * <div>
+   * <code>
+   * arc(50, 55, 50, 50, 0, HALF_PI);
+   * noFill();
+   * arc(50, 55, 60, 60, HALF_PI, PI);
+   * arc(50, 55, 70, 70, PI, PI+QUARTER_PI);
+   * arc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);
+   * </code>
+   * </div>
    *
-   *   <div>
-   *     <code>
-   *       arc(50, 50, 80, 80, 0, PI+QUARTER_PI, OPEN);
-   *     </code>
-   *   </div>
+   * <div>
+   * <code>
+   * arc(50, 50, 80, 80, 0, PI+QUARTER_PI, OPEN);
+   * </code>
+   * </div>
    *
-   *   <div>
-   *     <code>
-   *       arc(50, 50, 80, 80, 0, PI+QUARTER_PI, CHORD);
-   *     </code>
-   *   </div>
+   * <div>
+   * <code>
+   * arc(50, 50, 80, 80, 0, PI+QUARTER_PI, CHORD);
+   * </code>
+   * </div>
    *
-   *   <div>
-   *     <code>
-   *       arc(50, 50, 80, 80, 0, PI+QUARTER_PI, PIE);
-   *     </code>
-   *   </div>
+   * <div>
+   * <code>
+   * arc(50, 50, 80, 80, 0, PI+QUARTER_PI, PIE);
+   * </code>
+   * </div>
    */
 	p5.prototype.arc = function(x, y, width, height, start, stop, mode) {
     var vals = canvas.arcModeAdjust(
@@ -107,9 +107,11 @@ define(function (require) {
    * @param  {Number} d height of the ellipse.
    * @return {p5}       the p5 object
    * @example
-   *     <code>
-   *       ellipse(56, 46, 55, 55);
-   *     </code>
+   * <div>
+   * <code>
+   * ellipse(56, 46, 55, 55);
+   * </code>
+   * </div>
    */
   p5.prototype.ellipse = function(x, y, width, height) {
     var vals = canvas.modeAdjust(
@@ -177,21 +179,21 @@ define(function (require) {
    * @param  {Number} y2 the y-coordinate of the second point
    * @return {p5}        the p5 object
    * @example
-   *   <div>
-   *     <code>
-   *       line(30, 20, 85, 75);
-   *     </code>
-   *   </div>
+   * <div>
+   * <code>
+   * line(30, 20, 85, 75);
+   * </code>
+   * </div>
    *
-   *   <div>
-   *     <code>
-   *       line(30, 20, 85, 20);
-   *       stroke(126);
-   *       line(85, 20, 85, 75);
-   *       stroke(255);
-   *       line(85, 75, 30, 75);
-   *     </code>
-   *   </div>
+   * <div>
+   * <code>
+   * line(30, 20, 85, 20);
+   * stroke(126);
+   * line(85, 20, 85, 75);
+   * stroke(255);
+   * line(85, 75, 30, 75);
+   * </code>
+   * </div>
    */
   p5.prototype.line = function(x1, y1, x2, y2) {
     if (this._curElement.context.strokeStyle === 'rgba(0,0,0,0)') {
@@ -218,12 +220,14 @@ define(function (require) {
    * @param  {Number} y the y-coordinate
    * @return {p5}       the p5 object
    * @example
-   *   <code>
-   *     point(30, 20);
-   *     point(85, 20);
-   *     point(85, 75);
-   *     point(30, 75);
-   *   </code>
+   * <div>
+   * <code>
+   * point(30, 20);
+   * point(85, 20);
+   * point(85, 75);
+   * point(30, 75);
+   * </code>
+   * </div>
    */
   p5.prototype.point = function(x, y) {
     var s = this._curElement.context.strokeStyle;
@@ -272,9 +276,11 @@ define(function (require) {
    * @param {type} y4 the y-coordinate of the fourth point
    * @return {p5}     the p5 object
    * @example
-   *   <code>   
-   *     quad(38, 31, 86, 20, 69, 63, 30, 76);
-   *   </code>
+   * <div>
+   * <code>   
+   * quad(38, 31, 86, 20, 69, 63, 30, 76);
+   * </code>
+   * </div>
    */
   p5.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
     this._curElement.context.beginPath();
@@ -303,9 +309,11 @@ define(function (require) {
   * @param  {Number} d height of the rectangle
   * @return {p5}       the p5 object
   * @example
-  *    <code>
-  *      rect(30, 20, 55, 55);
-  *    </code>
+  * <div>
+  * <code>
+  * rect(30, 20, 55, 55);
+  * </code>
+  * </div>
   */
   p5.prototype.rect = function(a, b, c, d) {
     var vals = canvas.modeAdjust(a, b, c, d, this._rectMode);
@@ -331,9 +339,11 @@ define(function (require) {
   * @param  {Number} y3 y-coordinate of the third point
   * @return {p5}        the p5 object
   * @example
-  *     <code>
-  *       triangle(30, 75, 58, 20, 86, 75);
-  *     </code>
+  * <div>
+  * <code>
+  * triangle(30, 75, 58, 20, 86, 75);
+  * </code>
+  * </div>
   */
   p5.prototype.triangle = function(x1, y1, x2, y2, x3, y3) {
     this._curElement.context.beginPath();
