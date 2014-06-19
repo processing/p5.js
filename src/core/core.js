@@ -1,5 +1,6 @@
 /**
  * @module *
+ * @requires constants
  */
 define(function (require) {
 
@@ -105,7 +106,7 @@ define(function (require) {
   
     /**
      * System variable that stores the width of the inner window, it maps to
-     * window.innerWidth
+     * window.innerWidth.
      *
      * @property windowWidth
      * @for Environment:Environment
@@ -115,10 +116,14 @@ define(function (require) {
      *   </code></div>
      */
     this.windowWidth = window.innerWidth;
+    window.addEventListener('resize', function (e) {
+      // remap the window width on window resize
+      this.windowWidth = window.innerWidth;
+    });
   
     /**
      * System variable that stores the height of the inner window, it maps to
-     * window.innerHeight
+     * window.innerHeight.
      *
      * @property windowHeight
      * @for Environment:Environment
@@ -128,6 +133,10 @@ define(function (require) {
      *   </code></div>
      */
     this.windowHeight = window.innerHeight;
+    window.addEventListener('resize', function (e) {
+      // remap the window height on resize
+      this.windowHeight = window.windowHeight;
+    });
 
     /**
      * System variable that stores the width of the drawing canvas. This value
@@ -392,12 +401,6 @@ define(function (require) {
       }
     }.bind(this);
 
-    // TODO: ???
-    window.addEventListener('resize', function (e) {
-      this.windowWidth = window.innerWidth;
-      this.windowHeight = window.innerHeight;
-    });
-
     // If the user has created a global setup or draw function,
     // assume "global" mode and make everything global (i.e. on the window)
     if (!sketch) {
@@ -462,6 +465,12 @@ define(function (require) {
 
   };
 
+  // attach constants to p5 instance
+  for (var c in constants) {
+    if (constants.hasOwnProperty(c)) {
+      p5.prototype[c] = constants[c];
+    }
+  }
   return p5;
 
 });

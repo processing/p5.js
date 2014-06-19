@@ -3,7 +3,6 @@
  * @for Transform
  * @requires core
  * @requires constants
- * @requires linearalgebra
  */
 
 define(function (require) {
@@ -12,7 +11,6 @@ define(function (require) {
 
   var p5 = require('core');
   var constants = require('constants');
-  var linearAlgebra = require('linearalgebra');
 
   require('output.text_area');
 
@@ -35,7 +33,7 @@ define(function (require) {
   p5.prototype.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
     this._curElement.context.transform(n00, n01, n02, n10, n11, n12);
     var m = this._matrices[this._matrices.length-1];
-    m = linearAlgebra.pMultiplyMatrix(m, [n00, n01, n02, n10, n11, n12]);
+    m = multiplyMatrix(m, [n00, n01, n02, n10, n11, n12]);
 
     return this;
   };
@@ -220,7 +218,7 @@ define(function (require) {
     }
     this._curElement.context.transform(1, 0, this.tan(angle), 1, 0, 0);
     var m = this._matrices[this._matrices.length-1];
-    m = linearAlgebra.pMultiplyMatrix(m, [1, 0, this.tan(angle), 1, 0, 0]);
+    m = multiplyMatrix(m, [1, 0, this.tan(angle), 1, 0, 0]);
 
     return this;
   };
@@ -252,7 +250,7 @@ define(function (require) {
     }
     this._curElement.context.transform(1, this.tan(angle), 0, 1, 0, 0);
     var m = this._matrices[this._matrices.length-1];
-    m = linearAlgebra.pMultiplyMatrix(m, [1, this.tan(angle), 0, 1, 0, 0]);
+    m = multiplyMatrix(m, [1, this.tan(angle), 0, 1, 0, 0]);
 
     return this;
   };
@@ -282,6 +280,26 @@ define(function (require) {
 
     return this;
   };
+
+  // TODO: Replace with an optimized matrix-multiplication algorithm
+  function multiplyMatrix(m1, m2) {
+    var result = [];
+    var m1Length = m1.length;
+    var m2Length = m2.length;
+    var m10Length = m1[0].length;
+
+    for(var j = 0; j < m2Length; j++) {
+      result[j] = [];
+      for(var k = 0; k < m10Length; k++) {
+        var sum = 0;
+        for(var i = 0; i < m1Length; i++) {
+          sum += m1[i][k] * m2[j][i];
+        }
+        result[j].push(sum);
+      }
+    }
+    return result;
+  }
 
   return p5;
 

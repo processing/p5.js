@@ -2,6 +2,7 @@
  * @module Typography
  * @for Attributes
  * @requires core
+ * @requires constants
  */
 define(function (require) {
 

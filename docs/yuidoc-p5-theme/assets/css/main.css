@@ -106,7 +106,7 @@ optgroup,
 select,
 textarea {
   color: inherit;
-  font: inherit;
+/*  font: inherit;*/
   margin: 0; }
 
 button {
@@ -273,7 +273,6 @@ button,
 select,
 textarea {
   font-family: inherit;
-  font-size: inherit;
   line-height: inherit; }
 
 a {
@@ -4324,8 +4323,11 @@ input::-moz-focus-inner {
   #item .method ul.args-list li.arg .pln {
     font-weight: bold;
     color: #ff6600; }
-  #item .example-content {
-    font-size: 0; }
+  #item .example-content button {
+    font-size: 10px; }
+  #item .example-content textarea {
+    font-size: inherit !important;
+    font-family: monospace !important; }
     #item .example-content pre,
     #item .example-content code,
     #item .example-content img {
@@ -4353,6 +4355,9 @@ input::-moz-focus-inner {
   #item .meta,
   #item .params,
   #item .returns,
+  #item .example-content div {
+    /*display: inline !important;*/
+  }
   #item .example {
     padding-top: 10px;
     padding-bottom: 10px; }

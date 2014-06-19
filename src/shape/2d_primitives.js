@@ -34,37 +34,33 @@ define(function (require) {
    *                         the arc
    * @return {Object}        the p5 object
    * @example
-   *   <div>
-   *     <img src="http://processing.org/reference/images/arc_.png">
-   *     <code>
-   *       arc(50, 55, 50, 50, 0, HALF_PI);
-   *       noFill();
-   *       arc(50, 55, 60, 60, HALF_PI, PI);
-   *       arc(50, 55, 70, 70, PI, PI+QUARTER_PI);
-   *       arc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);
-   *     </code>
-   *   </div>
+   * <div>
+   * <code>
+   * arc(50, 55, 50, 50, 0, HALF_PI);
+   * noFill();
+   * arc(50, 55, 60, 60, HALF_PI, PI);
+   * arc(50, 55, 70, 70, PI, PI+QUARTER_PI);
+   * arc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);
+   * </code>
+   * </div>
    *
-   *   <div>
-   *     <img src="http://processing.org/reference/images/arc_2.png">
-   *     <code>
-   *       arc(50, 50, 80, 80, 0, PI+QUARTER_PI, OPEN);
-   *     </code>
-   *   </div>
+   * <div>
+   * <code>
+   * arc(50, 50, 80, 80, 0, PI+QUARTER_PI, OPEN);
+   * </code>
+   * </div>
    *
-   *   <div>
-   *     <img src="http://processing.org/reference/images/arc_3.png">
-   *     <code>
-   *       arc(50, 50, 80, 80, 0, PI+QUARTER_PI, CHORD);
-   *     </code>
-   *   </div>
+   * <div>
+   * <code>
+   * arc(50, 50, 80, 80, 0, PI+QUARTER_PI, CHORD);
+   * </code>
+   * </div>
    *
-   *   <div>
-   *     <img src="http://processing.org/reference/images/arc_4.png">
-   *     <code>
-   *       arc(50, 50, 80, 80, 0, PI+QUARTER_PI, PIE);
-   *     </code>
-   *   </div>
+   * <div>
+   * <code>
+   * arc(50, 50, 80, 80, 0, PI+QUARTER_PI, PIE);
+   * </code>
+   * </div>
    */
 	p5.prototype.arc = function(x, y, width, height, start, stop, mode) {
     var vals = canvas.arcModeAdjust(
@@ -110,6 +106,12 @@ define(function (require) {
    * @param  {Number} c width of the ellipse.
    * @param  {Number} d height of the ellipse.
    * @return {p5}       the p5 object
+   * @example
+   * <div>
+   * <code>
+   * ellipse(56, 46, 55, 55);
+   * </code>
+   * </div>
    */
   p5.prototype.ellipse = function(x, y, width, height) {
     var vals = canvas.modeAdjust(

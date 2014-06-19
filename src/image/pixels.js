@@ -43,7 +43,7 @@ define(function (require) {
    * blend mode to do the operation.
    * 
    * @method blend
-   * @param  {PImage|undefined} srcImage source image
+   * @param  {p5.Image|undefined} srcImage source image
    * @param  {Integer} sx X coordinate of the source's upper left corner
    * @param  {Integer} sy Y coordinate of the source's upper left corner
    * @param  {Integer} sw source image width
@@ -86,7 +86,7 @@ define(function (require) {
    * target region.
    *
    * @method copy
-   * @param  {PImage|undefined} srcImage source image
+   * @param  {p5.Image|undefined} srcImage source image
    * @param  {Integer} sx X coordinate of the source's upper left corner
    * @param  {Integer} sy Y coordinate of the source's upper left corner
    * @param  {Integer} sw source image width
@@ -166,7 +166,7 @@ define(function (require) {
    * @param  {Number}      w   width
    * @param  {Number}      h   height
    * @return {Array/Color}     color of pixel at x,y in array format
-   *                           [R, G, B, A] or PImage
+   *                           [R, G, B, A] or p5.Image
    */
   p5.prototype.get = function(x, y, w, h){
     if (x === undefined && y === undefined &&
@@ -201,7 +201,7 @@ define(function (require) {
       w = Math.min(w, this.width);
       h = Math.min(h, this.height);
 
-      var region = new p5.prototype.PImage(w, h);
+      var region = new p5.Image(w, h);
       region.canvas.getContext('2d').putImageData(imageData, 0, 0, 0, 0, w, h);
 
       return region;

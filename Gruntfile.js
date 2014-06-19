@@ -2,9 +2,6 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    qunit: {
-      files: ['test/*.html']
-    },
     jshint: {
       build: {
         options: {jshintrc: '.jshintrc'},
@@ -76,15 +73,17 @@ module.exports = function(grunt) {
           out: 'lib/p5.js',
           paths: {
             'app': 'src/app',
+            'p5.Element': 'src/objects/p5.Element',
+            'p5.Image': 'src/objects/p5.Image',
+            'p5.Vector': 'src/objects/p5.Vector',
             'color.creating_reading': 'src/color/creating_reading',
             'color.setting': 'src/color/setting',
             'core': 'src/core/core',
+            'constants': 'src/core/constants',
             'data.array_functions': 'src/data/array_functions',
             'data.string_functions': 'src/data/string_functions',
             'dom.manipulate': 'src/dom/manipulate',
-            'dom.pelement': 'src/dom/pelement',
             'environment': 'src/environment/environment',
-            'image': 'src/image/image',
             'image.pixels': 'src/image/pixels',
             'input.files': 'src/input/files',
             'input.keyboard': 'src/input/keyboard',
@@ -92,7 +91,6 @@ module.exports = function(grunt) {
             'input.time_date': 'src/input/time_date',
             'input.touch': 'src/input/touch',
             'math.calculation': 'src/math/calculation',
-            'math.pvector': 'src/math/pvector',
             'math.random': 'src/math/random',
             'math.noise': 'src/math/noise',
             'math.trigonometry': 'src/math/trigonometry',
@@ -108,7 +106,6 @@ module.exports = function(grunt) {
             'typography.attributes': 'src/typography/attributes',
             'typography.loading_displaying': 'src/typography/loading_displaying',
             'canvas': 'src/var/canvas',
-            'constants': 'src/var/constants',
             'linearalgebra': 'src/var/linearalgebra',
             'polargeometry': 'src/var/polargeometry',
             'shim': 'src/var/shim',
@@ -166,17 +163,15 @@ module.exports = function(grunt) {
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
   grunt.loadNpmTasks('grunt-contrib-sass');
-  grunt.registerTask('test', ['jshint', 'qunit']);
-  
+  grunt.registerTask('test', ['jshint', 'mocha']);
+
   grunt.registerTask('yui', ['yuidoc']);
 
-  //grunt.registerTask('default', ['jshint', 'qunit', 'concat', 'uglify']);
   grunt.registerTask('default', ['jshint', 'requirejs', 'mocha']);
 
 };

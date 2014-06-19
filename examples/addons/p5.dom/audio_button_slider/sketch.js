@@ -35,5 +35,3 @@ function toggleAudio() {
   }
   playing = !playing;
 }
-
-

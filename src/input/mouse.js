@@ -136,24 +136,24 @@ define(function (require) {
    *
    * @method mouseMoved
    * @example
-   *   <div>
-   *     <code>
-   *       // Move the mouse across the image
-   *       // to change its value
+   * <div>
+   * <code>
+   * // Move the mouse across the page
+   * // to change its value
    *       
-   *       var value = 0;
-   *       function draw() {
-   *         fill(value);
-   *         rect(25, 25, 50, 50);
-   *       }
-   *       function mouseMoved() {
-   *         value = value + 5;
-   *         if (value > 255) {
-   *           value = 0;
-   *         }
-   *       }
-   *     </code>
-   *   </div>
+   * var value = 0;
+   * function draw() {
+   *   fill(value);
+   *   rect(25, 25, 50, 50);
+   * }
+   * function mouseMoved() {
+   *   value = value + 5;
+   *   if (value > 255) {
+   *     value = 0;
+   *   }
+   * }
+   * </code>
+   * </div>
    */
 
   /**
@@ -162,24 +162,24 @@ define(function (require) {
    *
    * @method mouseDragged
    * @example
-   *   <div>
-   *     <code>
-   *       // Move the mouse across the image
-   *       // to change its value
+   * <div>
+   * <code>
+   * // Drag the mouse across the page
+   * // to change its value
    *       
-   *       var value = 0;
-   *       function draw() {
-   *         fill(value);
-   *         rect(25, 25, 50, 50);
-   *       }
-   *       function mouseDragged() {
-   *         value = value + 5;
-   *         if (value > 255) {
-   *           value = 0;
-   *         }
-   *       }
-   *     </code>
-   *   </div>
+   * var value = 0;
+   * function draw() {
+   *   fill(value);
+   *   rect(25, 25, 50, 50);
+   * }
+   * function mouseDragged() {
+   *   value = value + 5;
+   *   if (value > 255) {
+   *     value = 0;
+   *   }
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.onmousemove = function(e){
     var context = this._isGlobal ? window : this;
@@ -199,25 +199,26 @@ define(function (require) {
    *
    * @method mousePressed
    * @example
-   *   <div>
-   *     <code>
-   *       // Click within the image to change 
-   *       // the value of the rectangle
+   * <div>
+   * <code>
+   * // Click within the image to change 
+   * // the value of the rectangle
+   * // after the mouse has been clicked
    *       
-   *       var value = 0;
-   *       function draw() {
-   *         fill(value);
-   *         rect(25, 25, 50, 50);
-   *       }
-   *       function mouseClicked() {
-   *         if (value == 0) {
-   *           value = 255;
-   *         } else {
-   *           value = 0;
-   *         }
-   *       }
-   *     </code>
-   *   </div>
+   * var value = 0;
+   * function draw() {
+   *   fill(value);
+   *   rect(25, 25, 50, 50);
+   * }
+   * function mousePressed() {
+   *   if (value == 0) {
+   *     value = 255;
+   *   } else {
+   *     value = 0;
+   *   }
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.onmousedown = function(e) {
     var context = this._isGlobal ? window : this;
@@ -235,25 +236,26 @@ define(function (require) {
    *
    * @method mouseReleased
    * @example
-   *   <div>
-   *     <code>
-   *       // Click within the image to change 
-   *       // the value of the rectangle
+   * <div>
+   * <code>
+   * // Click within the image to change 
+   * // the value of the rectangle
+   * // after the mouse has been clicked
    *       
-   *       var value = 0;
-   *       function draw() {
-   *         fill(value);
-   *         rect(25, 25, 50, 50);
-   *       }
-   *       function mouseReleased() {
-   *         if (value == 0) {
-   *           value = 255;
-   *         } else {
-   *           value = 0;
-   *         }
-   *       }
-   *     </code>
-   *   </div>
+   * var value = 0;
+   * function draw() {
+   *   fill(value);
+   *   rect(25, 25, 50, 50);
+   * }
+   * function mouseReleased() {
+   *   if (value == 0) {
+   *     value = 255;
+   *   } else {
+   *     value = 0;
+   *   }
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.onmouseup = function(e) {
     var context = this._isGlobal ? window : this;
@@ -270,26 +272,26 @@ define(function (require) {
    *
    * @method mouseClicked
    * @example
-   *   <div>
-   *     <code>
-   *       // Click within the image to change 
-   *       // the value of the rectangle
-   *       // after the mouse has been clicked
+   * <div>
+   * <code>
+   * // Click within the image to change 
+   * // the value of the rectangle
+   * // after the mouse has been clicked
    *       
-   *       var value = 0;
-   *       function draw() {
-   *         fill(value);
-   *         rect(25, 25, 50, 50);
-   *       }
-   *       function mouseClicked() {
-   *         if (value == 0) {
-   *           value = 255;
-   *         } else {
-   *           value = 0;
-   *         }
-   *       }
-   *     </code>
-   *   </div>
+   * var value = 0;
+   * function draw() {
+   *   fill(value);
+   *   rect(25, 25, 50, 50);
+   * }
+   * function mouseClicked() {
+   *   if (value == 0) {
+   *     value = 255;
+   *   } else {
+   *     value = 0;
+   *   }
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.onmouseclick = function(e) {
     var context = this._isGlobal ? window : this;

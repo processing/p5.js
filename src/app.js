@@ -3,16 +3,18 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
-  var PVector = require('math.pvector');
+  
+  require('p5.Element');
+  require('p5.Image');
+  require('p5.Vector');
 
   require('color.creating_reading');
   require('color.setting');
+  require('constants');
   require('data.array_functions');
   require('data.string_functions');
   require('dom.manipulate');
-  require('dom.pelement');
   require('environment');
-  require('image');
   require('image.pixels');
   require('input.files');
   require('input.keyboard');
@@ -65,7 +67,6 @@ define(function (require) {
   }
 
   window.p5 = p5;
-  window.PVector = PVector;
 
   return p5;
 

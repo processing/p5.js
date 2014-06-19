@@ -60,7 +60,6 @@ define([
           }
         });
       }
-
       return this;
     },
     /**
@@ -74,6 +73,7 @@ define([
 
       App.pageView.hideContentViews();
       this.$el.show();
+
 
       return this;
     },
