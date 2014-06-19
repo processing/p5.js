@@ -116,7 +116,11 @@ define(function (require) {
    * @return {p5.Vector} the copy of the p5.Vector object
    */
   p5.Vector.prototype.get = function () {
-    return new p5.Vector(this.x, this.y, this.z);
+    if (this.p5) {
+      return new p5.Vector(this.p5,[this.x, this.y, this.z]);
+    } else {
+      return new p5.Vector(this.x,this.y,this.z);
+    }
   };
 
 
@@ -255,7 +259,11 @@ define(function (require) {
     var x = this.y * v.z - this.z * v.y;
     var y = this.z * v.x - this.x * v.z;
     var z = this.x * v.y - this.y * v.x;
-    return new p5.Vector(x, y, z);
+    if (this.p5) {
+      return new p5.Vector(this.p5,[x,y,z]);
+    } else {
+      return new p5.Vector(x,y,z);
+    }
   };
 
   /**
@@ -403,7 +411,11 @@ define(function (require) {
         angle = polarGeometry.degreesToRadians(angle);
       }
     }
-    return new p5.Vector(Math.cos(angle),Math.sin(angle),0);
+    if (this.p5) {
+      return new p5.Vector(this.p5,[Math.cos(angle),Math.sin(angle),0]);
+    } else {
+      return new p5.Vector(Math.cos(angle),Math.sin(angle),0);
+    }
   };
 
   /**
@@ -448,7 +460,11 @@ define(function (require) {
     }
     var vx = Math.sqrt(1-vz*vz)*Math.cos(angle);
     var vy = Math.sqrt(1-vz*vz)*Math.sin(angle);
-    return new p5.Vector(vx, vy, vz);
+    if (this.p5) {
+      return new p5.Vector(this.p5,[vx,vy,vz]);
+    } else {
+      return new p5.Vector(vx,vy,vz);
+    }
   };
 
 
