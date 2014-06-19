@@ -12,7 +12,7 @@ function setup() {
   amplitude = new Amplitude();
   mic.on();
 
-  // don't send to master output
+  // don't send mic to master output
   mic.disconnect();
 
   // only send to the Amplitude reader, so we can see it but not hear it.
