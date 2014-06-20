@@ -452,8 +452,172 @@ define(function (require) {
     }
     Filters._setPixels(pixels, out);
   };
-  //TODO
+
   // BLUR
+
+  // internal kernel stuff for the gaussian blur filter
+  var blurRadius;
+  var blurKernelSize;
+  var blurKernel;
+  var blurMult;
+
+  /*
+   * Port of https://github.com/processing/processing/blob/
+   * master/core/src/processing/core/PImage.java#L1250
+   *
+   * Optimized code for building the blur kernel.
+   * further optimized blur code (approx. 15% for radius=20)
+   * bigger speed gains for larger radii (~30%)
+   * added support for various image types (ALPHA, RGB, ARGB)
+   * [toxi 050728]
+   */
+  function buildBlurKernel(r) {
+    var radius = (r * 3.5)|0;
+    radius = (radius < 1) ? 1 : ((radius < 248) ? radius : 248);
+
+    if (blurRadius !== radius) {
+      blurRadius = radius;
+      blurKernelSize = 1 + blurRadius<<1;
+      blurKernel = new Int32Array(blurKernelSize);
+      blurMult = new Array(blurKernelSize);
+      for(var l = 0; l < blurKernelSize; l++){
+        blurMult[l] = new Int32Array(256);
+      }
+
+      var bk,bki;
+      var bm,bmi;
+
+      for (var i = 1, radiusi = radius - 1; i < radius; i++) {
+        blurKernel[radius+i] = blurKernel[radiusi] = bki = radiusi * radiusi;
+        bm = blurMult[radius+i];
+        bmi = blurMult[radiusi--];
+        for (var j = 0; j < 256; j++){
+          bm[j] = bmi[j] = bki * j;
+        }
+      }
+      bk = blurKernel[radius] = radius * radius;
+      bm = blurMult[radius];
+
+      for (var k = 0; k < 256; k++){
+        bm[k] = bk * k;
+      }
+    }
+
+  }
+
+  // Port of https://github.com/processing/processing/blob/
+  // master/core/src/processing/core/PImage.java#L1349
+  function blurRGB(canvas, radius) {
+    var pixels = Filters._toPixels(canvas);
+    var width = canvas.width;
+    var height = canvas.height;
+    var numPackedPixels = width * height;
+
+    //Pack the color data for each pixel into one int
+    var argb = new Int32Array(numPackedPixels);
+    for(var j = 0; j < numPackedPixels; j++){
+      argb[j] = Filters._getARGB(pixels, j);
+    }
+
+    var sum, cr, cg, cb;
+    var read, ri, ym, ymi, bk0;
+
+    var r2 = new Int32Array(numPackedPixels);
+    var g2 = new Int32Array(numPackedPixels);
+    var b2 = new Int32Array(numPackedPixels);
+
+    var yi = 0;
+
+    buildBlurKernel(radius);
+
+    var x, y, i;
+    var bm;
+
+    for(y = 0; y < height; y++) {
+      for(x = 0; x < width; x++) {
+        cb = cg = cr = sum = 0;
+        read = x - blurRadius;
+
+        if(read < 0) {
+          bk0 = -read;
+          read = 0;
+        } else {
+          if (read >= width){
+            break;
+          }
+          bk0 = 0;
+        }
+
+        for (i = bk0; i < blurKernelSize; i++) {
+          if (read >= width){
+            break;
+          }
+
+          var c = argb[read + yi];
+          bm = blurMult[i];
+          cr += bm[(c & 0x00ff0000) >> 16];
+          cg += bm[(c & 0x0000ff00) >> 8];
+          cb += bm[c & 0x000000ff];
+          sum += blurKernel[i];
+          read++;
+        }
+        ri = yi + x;
+        r2[ri] = (cr / sum);
+        g2[ri] = (cg / sum);
+        b2[ri] = (cb / sum);
+      }
+      yi += width;
+    }
+
+    yi = 0;
+    ym = -blurRadius;
+    ymi= ym * width;
+
+    for(y = 0; y < height; y++) {
+      for(x = 0; x < width; x++) {
+        cb = cg = cr = sum = 0;
+        if(ym < 0) {
+          bk0 = ri = -ym;
+          read = x;
+        } else {
+          if (ym >= height){
+            break;
+          }
+          bk0 = 0;
+          ri = ym;
+          read = x + ymi;
+        }
+        for (i = bk0; i < blurKernelSize; i++) {
+          if (ri >= height){
+            break;
+          }
+
+          bm = blurMult[i];
+          cr += bm[r2[read]];
+          cg += bm[g2[read]];
+          cb += bm[b2[read]];
+          sum += blurKernel[i];
+          ri++;
+          read += width;
+        }
+
+        argb[x+yi] = 0xff000000 |
+          ((cr/sum))<<16 |
+          ((cg/sum))<<8 |
+          ((cb/sum));
+      }
+      yi += width;
+      ymi += width;
+      ym++;
+    }
+
+    Filters._setPixels(pixels, argb);
+  }
+
+  Filters.blur = function(canvas, radius){
+    blurRGB(canvas, radius);
+  };
+
 
   return Filters;
 
