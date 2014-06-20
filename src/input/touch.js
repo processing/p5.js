@@ -52,7 +52,8 @@ define(function (require) {
 
   /**
    * The touchStarted() function is called once after every time a touch is
-   * registered.
+   * registered. If no touchStarted() function is defined, the mousePressed()
+   * function will be called instead if it is defined.
    *
    * @method touchStarted
    */
@@ -62,34 +63,44 @@ define(function (require) {
     if(typeof context.touchStarted === 'function') {
       e.preventDefault();
       context.touchStarted(e);
+    } else if (typeof context.mousePressed === 'function') {
+      context.mousePressed(e);
     }
   };
 
   /**
    * The touchMoved() function is called every time a touch move is registered.
+   * If no touchStarted() function is defined, the mouseDragged() function will
+   * be called instead if it is defined.
    *
    * @method touchMoved
    */
   p5.prototype.ontouchmove = function(e) {
     var context = this._isGlobal ? window : this;
     context.setTouchPoints(e);
-    if(typeof context.touchMoved === 'function') {
+    if (typeof context.touchMoved === 'function') {
       e.preventDefault();
       context.touchMoved(e);
+    } else if (typeof context.mouseDragged === 'function') {
+      context.mouseDragged(e);
     }
   };
 
   /**
-   * The touchEnded() function is called every time a touch ends.
+   * The touchEnded() function is called every time a touch ends. If no 
+   * touchStarted() function is defined, the mouseReleased() function will be
+   * called instead if it is defined.
    *
    * @method touchEnded
    */
   p5.prototype.ontouchend = function(e) {
     var context = this._isGlobal ? window : this;
     context.setTouchPoints(e);
-    if(typeof context.touchEnded === 'function') {
+    if (typeof context.touchEnded === 'function') {
       e.preventDefault();
       context.touchEnded(e);
+    } else if (typeof context.mouseReleased === 'function') {
+      context.mouseReleased(e);
     }
   };
 

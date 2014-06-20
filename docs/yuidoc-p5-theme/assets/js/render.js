@@ -117,7 +117,6 @@ function renderCode() {
         'keyPressed', 'keyReleased', 'keyTyped'];
         fxns.forEach(function(f) { 
           if (runnable.indexOf(f) !== -1) {
-            console.log(f);
             with (p) {
               p[f] = eval(f);
             }
