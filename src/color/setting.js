@@ -22,11 +22,12 @@ define(function (require) {
    * p5.js canvas. The default background is light gray. This function is
    * typically used within draw() to clear the display window at the beginning
    * of each frame, but it can be used inside setup() to set the background on
-   * the first frame of animation or if the backgound need only be set once. 
+   * the first frame of animation or if the backgound need only be set once.
    *
    * @method background
-   * @param {Number|Array} v1   gray value, red or hue value (depending on the
-   *                            current color mode), or color Array
+   * @param {Number|Array|String} v1 gray value, red or hue value (depending on
+   *                                 the current color mode), or color Array,
+   *                                 or a CSS color String
    * @param {Number|Array} [v2] green or saturation value (depending on the
    *                            current color mode)
    * @param {Number|Array} [v3] blue or brightness value (depending on the
@@ -62,14 +63,14 @@ define(function (require) {
    * Changes the way p5.js interprets color data. By default, the parameters
    * for fill(), stroke(), background(), and color() are defined by values
    * between 0 and 255 using the RGB color model. The colorMode() function is
-   * used to switch color systems. 
-   * 
+   * used to switch color systems.
+   *
    * @method colorMode
    * @param {Number|Constant} mode either RGB or HSB, corresponding to
    *                               Red/Green/Blue and Hue/Saturation/Brightness
-   * @param {Number|Constant} max1 range for the red or hue depending on the 
+   * @param {Number|Constant} max1 range for the red or hue depending on the
    *                               current color mode, or range for all values
-   * @param {Number|Constant} max2 range for the green or saturation depending 
+   * @param {Number|Constant} max2 range for the green or saturation depending
    *                               on the current color mode
    * @param {Number|Constant} max3 range for the blue or brightness depending
    *                               on the current color mode
@@ -99,11 +100,12 @@ define(function (require) {
    * fill(204, 102, 0), all subsequent shapes will be filled with orange. This
    * color is either specified in terms of the RGB or HSB color depending on
    * the current colorMode(). (The default color space is RGB, with each value
-   * in the range from 0 to 255.) 
-   * 
+   * in the range from 0 to 255.)
+   *
    * @method fill
-   * @param {Number|Array} v1   gray value, red or hue value (depending on the
-   *                            current color mode), or color Array
+   * @param {Number|Array|String} v1 gray value, red or hue value (depending on
+   *                                 the current color mode), or color Array,
+   *                                 or a CSS color String
    * @param {Number|Array} [v2] green or saturation value (depending on the
    *                            current color mode)
    * @param {Number|Array} [v3] blue or brightness value (depending on the
@@ -139,11 +141,12 @@ define(function (require) {
    * Sets the color used to draw lines and borders around shapes. This color
    * is either specified in terms of the RGB or HSB color depending on the
    * current colorMode() (the default color space is RGB, with each value in
-   * the range from 0 to 255). 
+   * the range from 0 to 255).
    *
    * @method stroke
-   * @param {Number|Array} v1   gray value, red or hue value (depending on the
-   *                            current color mode), or color Array
+   * @param {Number|Array|String} v1 gray value, red or hue value (depending on
+   *                                 the current color mode), or color Array,
+   *                                 or a CSS color String
    * @param {Number|Array} [v2] green or saturation value (depending on the
    *                            current color mode)
    * @param {Number|Array} [v3] blue or brightness value (depending on the
@@ -158,12 +161,13 @@ define(function (require) {
   /**
    * For a number of different inputs, returns a color formatted as
    * [r, g, b, a].
-   * 
-   * @method getNormalizedColor 
-   * @param {Array-like} args An 'array-like' object that represents a list of
-   *                          arguments
-   * @return {Array}          a color formatted as [r, g, b, a]
-   *                          Example:
+   *
+   * @method getNormalizedColor
+   * @param {Array-like} args An 'array-like' object that represents a
+   *                          list of arguments
+   * @return {Array}          an RGBA color formatted as [r, g, b, a], or a
+   *                          CSS color String passed through from args
+   *                          Examples:
    *                          input        ==> output
    *                          g            ==> [g, g, g, 255]
    *                          g,a          ==> [g, g, g, a]
@@ -173,10 +177,15 @@ define(function (require) {
    *                          [g, a]       ==> [g, g, g, a]
    *                          [r, g, b]    ==> [r, g, b, 255]
    *                          [r, g, b, a] ==> [r, g, b, a]
+   *                          '#rrggbb'    ==> '#rrggbb'
+   *                          'blue'       ==> 'blue'
    */
   p5.prototype.getNormalizedColor = function(args) {
     var r, g, b, a, rgba;
     var _args = typeof args[0].length === 'number' ? args[0] : args;
+    if ( typeof _args === 'string' ) {
+      return _args;
+    }
     if (_args.length >= 3) {
       r = _args[0];
       g = _args[1];
@@ -259,6 +268,9 @@ define(function (require) {
   }
 
   p5.prototype.getCSSRGBAColor = function(arr) {
+    if ( typeof arr === 'string' ) {
+      return arr;
+    }
     var a = arr.map(function(val) {
       return Math.floor(val);
     });
