@@ -12,18 +12,15 @@ function renderCode() {
 
   function setupCode(sketch) {
 
+    var sketchNode = (sketch.parentNode.tagName === 'PRE') ? sketch.parentNode : sketch;
+    var parent = sketchNode.parentNode;
+
     // remove start and end lines
     sketch.innerText = sketch.innerText.replace(/^\s+|\s+$/g, '');
     var runnable = sketch.innerText;
     var rows = sketch.innerText.split('\n').length;
 
-    // sketch
-    sketch.style.position = 'absolute';
-    sketch.style.top = 0;
-    sketch.style.left = '150px';
-    sketch.parentNode.style.position = 'relative';
-    var h = Math.max(sketch.offsetHeight, 100) + 25;
-    sketch.parentNode.style.height = h+'px';
+    // var h = Math.max(sketch.offsetHeight, 100) + 25;
 
     // store original sketch
     var orig_sketch = document.createElement('div');
@@ -32,16 +29,13 @@ function renderCode() {
     // create canvas
     var cnv = document.createElement('div');
     cnv.className = 'cnv_div';
-    cnv.style.position = 'absolute';
-    sketch.parentNode.insertBefore(cnv, sketch);
+    parent.insertBefore(cnv, sketchNode);
 
 
     // create edit space
     var edit_space = document.createElement('div');
-    edit_space.style.position = 'absolute';
-    edit_space.style.top = '-20px';
-    edit_space.style.left = '150px';
-    sketch.parentNode.appendChild(edit_space);
+    edit_space.className = 'edit_space';
+    parent.appendChild(edit_space);
 
     //add buttons
     var edit_button = document.createElement('button');
@@ -70,7 +64,7 @@ function renderCode() {
     edit_area.value = runnable;
     edit_area.rows = rows;
     edit_area.cols = 80;
-    edit_area.position = 'absolute'
+    // edit_area.position = 'absolute'
     edit_space.appendChild(edit_area);
     edit_area.style.display = 'none';
 
@@ -90,8 +84,11 @@ function renderCode() {
 
   function runCode(sketch) {
 
+    var parent = (sketch.parentNode.tagName === 'PRE') ? sketch.parentNode.parentNode : sketch.parentNode;
+  
+
     var runnable = sketch.innerText;
-    var cnv = sketch.parentNode.getElementsByClassName('cnv_div')[0];
+    var cnv = parent.getElementsByClassName('cnv_div')[0];
     cnv.innerHTML = '';
 
     var s = function( p ) {
@@ -132,7 +129,7 @@ function renderCode() {
       }
     };
 
-    prettyPrint();
+    if (typeof prettyPrint !== 'undefined') prettyPrint();
 
     setTimeout(function() { var myp5 = new p5(s, cnv); }, 100);
   }
