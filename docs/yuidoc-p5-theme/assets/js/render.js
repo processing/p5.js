@@ -86,8 +86,6 @@ function renderCode() {
         runCode(sketch);
       }
     }
-
-
   }
 
   function runCode(sketch) {
@@ -108,14 +106,15 @@ function renderCode() {
         }
       }
       else {
-
-
-        
+ 
         with (p) {
           eval(runnable);
         }
 
-        var fxns = ['setup', 'draw', 'preload', 'mousePressed', 'mouseReleased', 'mouseMoved', 'mouseDragged', 'mouseClicked', 'mouseWheel', 'touchStarted', 'touchMoved', 'touchEnded'];
+        var fxns = ['setup', 'draw', 'preload', 'mousePressed', 'mouseReleased', 
+        'mouseMoved', 'mouseDragged', 'mouseClicked', 'mouseWheel', 
+        'touchStarted', 'touchMoved', 'touchEnded', 
+        'keyPressed', 'keyReleased', 'keyTyped'];
         fxns.forEach(function(f) { 
           if (runnable.indexOf(f) !== -1) {
             console.log(f);
