@@ -276,17 +276,14 @@ define(function (require) {
     }
 
     var levels1 = level - 1;
-    for (var i = 0; i < pixels.length; i++) {
-      var rlevel = (pixels[i] >> 16) & 0xff;
-      var glevel = (pixels[i] >> 8) & 0xff;
-      var blevel = pixels[i] & 0xff;
-      rlevel = (((rlevel * level) >> 8) * 255) / levels1;
-      glevel = (((glevel * level) >> 8) * 255) / levels1;
-      blevel = (((blevel * level) >> 8) * 255) / levels1;
-      pixels[i] = ((0xff000000 & pixels[i]) |
-        (rlevel << 16) |
-        (glevel << 8) |
-        blevel);
+    for (var i = 0; i < pixels.length; i+=4) {
+      var rlevel = pixels[i];
+      var glevel = pixels[i + 1];
+      var blevel = pixels[i + 2];
+
+      pixels[i] = (((rlevel * level) >> 8) * 255) / levels1;
+      pixels[i + 1] = (((glevel * level) >> 8) * 255) / levels1;
+      pixels[i + 2] = (((blevel * level) >> 8) * 255) / levels1;
     }
   };
 

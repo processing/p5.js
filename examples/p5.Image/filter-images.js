@@ -29,9 +29,9 @@ function setup() {
     clone.filter("posterize", 4);
     image(clone, 450, 10, 100, 100);
 
-      clone = img.get();
-      clone.filter("dilate");
-      image(clone, 560, 10, 100, 100);
+    clone = img.get();
+    clone.filter("dilate");
+    image(clone, 560, 10, 100, 100);
 
     clone = img.get();
     clone.filter("erode");
