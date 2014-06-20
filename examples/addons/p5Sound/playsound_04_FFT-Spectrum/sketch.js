@@ -12,6 +12,8 @@ var h1;
 // This will be an array of amplitude from lowest to highest frequencies
 var frequencySpectrum = [];
 
+
+
 function setup() {
   createCanvas(fftSize/2, 256);
   fill(255, 40, 255);
@@ -34,6 +36,9 @@ function setup() {
 
   // update description text
   h1 = createH1(description);
+
+  // set the master volume;
+  p5sound.amp(.5);
 }
 
 function draw() {
@@ -65,7 +70,7 @@ function updateDescription() {
     h1.html(description);
   }
   else if (soundFile.isPlaying()){
-    description = 'Playing!';
+    description = 'Playing! Press any key to pause';
     h1.html(description);
   }
   else {

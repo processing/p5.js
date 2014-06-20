@@ -9,6 +9,9 @@ function setup() {
    amplitude = new Amplitude(.9);
    amplitude.setInput(mic);
    amplitude.toggleNormalize();
+
+   // turn down the output of p5sound so we don't get feedback
+   p5sound.amp(.1);
 }
 
 function draw() {

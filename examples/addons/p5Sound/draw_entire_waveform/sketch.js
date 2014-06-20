@@ -1,5 +1,10 @@
-// ====================
-// DEMO: find the peaks in an audio file to draw the entire waveform
+/**
+ *  EXAMPLE
+ *  - find the peaks in an audio file to draw the entire waveform with SoundFile.getPeaks();
+ *  - draw cursor on a timeline with SoundFile.currentTime() and SoundFile.duration();
+ *  - 
+ */
+
 // ====================
 
 var soundFile;
@@ -15,12 +20,12 @@ function setup() {
   createCanvas(800, 400);
   background(0);
   p = createP('peaks to draw: ' + peakCount);
-  createP('Press Spacebar to play<br>Up/Down to change playback rate<br>R to reverse the buffer<br> S to stop all audio<br>P to pause')
+  createP('Press Spacebar to play<br>P to pause<br> S to stop all audio<br>R to reverse the buffer (or move mouseX to get a negative value for playbackRate)')
 }
 
 
 function draw() {
-  background(0);
+  background(255);
 
   peakCount = map(this.mouseY, height, 0, 5, 2000); //peakCountSlider.value();
   if (peakCount < 8) {
@@ -31,19 +36,22 @@ function draw() {
   // only draw the waveform if the soundfile has loaded, otherwise it will throw an error
   if (soundFile.isLoaded()) {
     var waveform = soundFile.getPeaks(peakCount);
-    fill(255);
-    stroke(255);
+    fill(0);
+    stroke(0);
     strokeWeight(2);
     beginShape();
     for (var i = 0; i< waveform.length; i++){
-      vertex(map(i, 0, waveform.length, 0, width), map(waveform[i], -1, 1, height, 0));// 1, -waveform[i]*height);
+      vertex(map(i, 0, waveform.length, 0, width), map(waveform[i], -1, 1, height, 0));
     }
     endShape();
   }
 
   drawCursor();
-  var newRate = Math.round(map(mouseX,0,800,-10,10))/10;
+
+  // map playback rate of a sound file to mouseX position
+  var newRate = (map(mouseX,0,800,-7,10))/10;
   soundFile.rate(newRate);
+  
   p.html('MouseY = Visible Amplitude Peaks: ' + peakCount+'<br>MouseX = Playback Rate: '+newRate);
 }
 
@@ -55,22 +63,27 @@ function drawCursor() {
 }
 
 // Keyboard Controls
-function keyPressed(k) {
-  console.log(k.keyCode);
+function keyPressed() {
+  var key = keyCode;
+  // console.log(key);
   // "S" stops all sound sources
-  if (k.keyCode == 83) {
+  if (key == 83) {
     soundFile.stopAll();
   }
   // "P" pauses current source
-  if (k.keyCode == 80) {
+  if (key == 80) {
     soundFile.pause();
   }
   // "R" reverses sound file
-  if (k.keyCode == 82) {
+  if (key == 82) {
     soundFile.reverse();
   }
   // Spacebar: play (creates a new sound source from the same buffer, does not stop playback)
-  if (k.keyCode == 32) {
+  if (key == 32) {
+    soundFile.loop();
+  }
+  // L: noLoop
+  if (key == 76) {
     soundFile.loop();
   }
 

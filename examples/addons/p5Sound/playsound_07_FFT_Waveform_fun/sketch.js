@@ -19,6 +19,9 @@ function setup() {
   // instantiate using a .wav, with .mp3 fallback if .wav isn't supported
   soundFile = new SoundFile('lucky_dragons_-_power_melody.mp3','lucky_dragons_-_power_melody.wav');
 
+  // a slower playback rate also lowers the pitch, and with lower frequencies the waveforms are longer
+  soundFile.rate(.2);
+
   // loop the sound file
   soundFile.loop();
 
@@ -45,15 +48,6 @@ function draw() {
   }
 
   xOffset++;
-
-  // if (soundFile.isPlaying() && (frameCount%60 == 0)){
-  //   soundFile.pause();
-  //   console.log('pause');
-  // }
-  // else if (soundFile.isPaused() && (frameCount%121 == 0)) {
-  //   soundFile.pause();
-  //   console.log('play');
-  // }
 
 }
 

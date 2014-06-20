@@ -22,10 +22,12 @@ function setup() {
 
   // Create an FFT object. Give it smoothing and fftSize
   fft = new FFT(.99, fftSize);
+
+  h1 = createH1('press any key to pause');
 }
 
 function draw() {
-  background(30);
+  background(250);
 
   /** 
    * Analyze the sound as a waveform (amplitude over time)
@@ -33,10 +35,13 @@ function draw() {
   waveform = fft.processWaveform();
 
   // Draw snapshot of the waveform
+  beginShape();
   for (var i = 0; i< waveform.length; i++){
-    noStroke();
-    ellipse(i*2, waveform[i], 2, 2);
+    stroke(5);
+    strokeWeight(5);
+    vertex(i*2, waveform[i]);
   }
+  endShape();
 }
 
 function keyPressed() {

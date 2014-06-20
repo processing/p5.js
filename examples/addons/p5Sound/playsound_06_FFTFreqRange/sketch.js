@@ -55,7 +55,7 @@ function draw() {
     rect((i+1)*width/8 - width/8, height, width/8, -freqValue);
 
     // label the frequency range
-    text( firstFreq.toFixed(0) +' - ' + centerFreq.toFixed(0) + ' - ' + secondFreq.toFixed(0), (i+1)*width/8 - width/8/2, 30);
+    text( firstFreq.toFixed(0) +' Hz - ' + secondFreq.toFixed(0)+' Hz', (i+1)*width/8 - width/8/2, 30);
   }
 }
 

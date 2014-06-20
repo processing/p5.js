@@ -6,6 +6,8 @@ var soundOn = false;
 var micOn = true;
 var micToggle;
 
+var h;
+
 function setup() {
   createCanvas(400,400);
   mic = new AudioIn();
@@ -28,7 +30,7 @@ function setup() {
   micToggle = createButton('Mic OFF');
   micToggle.mousePressed(toggleMic);
 
-
+  h = createH1('enable the mic...');
   createP('NOTE: Turning sound on may cause a <a href="https://en.wikipedia.org/wiki/Audio_feedback" target="_blank">feedback loop</a> between the mic and speakers. Try headphones.');
 }
 
@@ -38,6 +40,12 @@ function draw() {
   text('input volume: ' + amplitude.process(), 5, 10);
 
   micLevel = amplitude.process();
+
+  // if the mic picks up a level greater than zero, that means it's enabled.
+  if (micLevel > 0) {
+    h.html('Make some noise!');
+  }
+
   ellipse(width/2,height/2, 400*micLevel + 10, 400*micLevel + 10);
 
   // set master output
