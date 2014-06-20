@@ -96,47 +96,41 @@ function renderCode() {
     var cnv = sketch.parentNode.getElementsByClassName('cnv_div')[0];
     cnv.innerHTML = '';
 
-    var keys = Object.getOwnPropertyNames(p5.prototype);
-    keys.sort(function(a, b){
-      return b.length - a.length;
-    });
-
-    var reg = '(';
-    for (var k=0; k<keys.length; k++) {
-      reg += keys[k];
-      if (k !== keys.length - 1) {
-        reg += '|';
-      }
-    }
-    reg += ')';
-
-    runnable = runnable.replace(new RegExp(reg, 'g'), 'p.$1');
-
     var s = function( p ) {
 
       if (runnable.indexOf('setup()') === -1 && runnable.indexOf('draw()') === -1){
         p.setup = function() {
           p.createCanvas(100, 100);
           p.background(200);
-          eval(runnable);
+          with (p) {
+            eval(runnable);
+          }
         }
       }
       else {
 
-        p.setup = function() {
-          p.createCanvas(100, 100);
-          p.background(200);
-        }
+
         
-        eval(runnable);
+        with (p) {
+          eval(runnable);
+        }
 
         var fxns = ['setup', 'draw', 'preload', 'mousePressed', 'mouseReleased', 'mouseMoved', 'mouseDragged', 'mouseClicked', 'mouseWheel', 'touchStarted', 'touchMoved', 'touchEnded'];
         fxns.forEach(function(f) { 
           if (runnable.indexOf(f) !== -1) {
-            p[f] = eval(f);
+            console.log(f);
+            with (p) {
+              p[f] = eval(f);
+            }
           }
         });
 
+        if (typeof p.setup === 'undefined') {
+          p.setup = function() {
+            p.createCanvas(100, 100);
+            p.background(200);
+          }
+        }
       }
     };
 

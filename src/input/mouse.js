@@ -293,7 +293,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.onmouseclick = function(e) {
+  p5.prototype.onclick = function(e) {
     var context = this._isGlobal ? window : this;
     if (typeof context.mouseClicked === 'function') {
       context.mouseClicked(e);
