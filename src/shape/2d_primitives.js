@@ -167,10 +167,7 @@ define(function (require) {
    * the stroke() function. A line cannot be filled, therefore the fill()
    * function will not affect the color of a line. 2D lines are drawn with a
    * width of one pixel by default, but this can be changed with the
-   * strokeWeight() function. The version with six parameters allows the line
-   * to be placed anywhere within XYZ space. Drawing this shape in 3D with the
-   * z parameter requires the P3D parameter in combination with size() as shown
-   * in the above example. 
+   * strokeWeight() function.
    * 
    * @method line
    * @param  {Number} x1 the x-coordinate of the first point
@@ -210,10 +207,7 @@ define(function (require) {
   /**
    * Draws a point, a coordinate in space at the dimension of one pixel.
    * The first parameter is the horizontal value for the point, the second
-   * value is the vertical value for the point, and the optional third value is
-   * the depth value. Drawing this shape in 3D with the z parameter requires
-   * the P3D parameter in combination with size() as shown in the above
-   * example.
+   * value is the vertical value for the point.
    * 
    * @method point
    * @param  {Number} x the x-coordinate
