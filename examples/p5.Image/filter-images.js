@@ -37,6 +37,10 @@ function setup() {
     clone.filter("erode");
     image(clone, 670, 10, 100, 100);
 
+    clone = img.get();
+    clone.filter("blur", 10);
+    image(clone, 10, 130, 100, 100);
+
   });
 
   //Load an image with an alpha channel that
@@ -54,5 +58,3 @@ function setup() {
 
 
 }
-
-
