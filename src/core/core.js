@@ -260,6 +260,7 @@ define(function (require) {
     // PRIVATE p5 PROPERTIES AND METHODS
     //////////////////////////////////////////////
 
+    this._pixelDensity = window.devicePixelRatio; // for handling hidpi
     this._startTime = new Date().getTime();
     this._userNode = node;
     this._curElement = null;
@@ -355,6 +356,7 @@ define(function (require) {
       // mode earlier
       var userSetup = this.setup || window.setup;
       if (typeof userSetup === 'function') {
+        this.scale(this._pixelDensity, this._pixelDensity);
         userSetup();
       }
     }.bind(this);
@@ -373,6 +375,7 @@ define(function (require) {
       }
       // call user's draw
       if (typeof userDraw === 'function') {
+        this.scale(this._pixelDensity, this._pixelDensity);
         userDraw();
       }
 

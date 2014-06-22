@@ -144,6 +144,15 @@ define(function(require) {
       ctx.pInst._events[ev].push([ctx.elt, f]);
     }
   }
+
+  /**
+   * Helper fxn for sharing pixel methods
+   *
+   */
+  p5.Element.prototype._setProperty = function (prop, value) {
+    this[prop] = value;
+  };
+
   
   return p5.Element;
 });

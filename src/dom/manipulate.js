@@ -21,8 +21,11 @@ define(function(require) {
    */
   p5.prototype.createCanvas = function(w, h, isDefault) {
     var c = document.createElement('canvas');
-    c.setAttribute('width', w);
-    c.setAttribute('height', h);
+    c.setAttribute('width', w*this._pixelDensity);
+    c.setAttribute('height', h*this._pixelDensity);
+
+    c.style.width = w;
+    c.style.height = h;
     
     if (isDefault) {
       c.id = 'defaultCanvas';
