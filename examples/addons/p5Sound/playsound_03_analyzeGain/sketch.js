@@ -41,7 +41,7 @@ function draw() {
   background(0, 0, 0);
 
   // get volume from the amplitude process
-  var volume = amplitude.process();
+  var volume = amplitude.analyze();
 
   // print the volume to the canvas. It is a float between 0 and 1.0.
   text('volume: ' + volume, 20, 20);

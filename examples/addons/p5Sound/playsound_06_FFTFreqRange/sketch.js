@@ -35,7 +35,7 @@ function draw() {
   updateDescription();
   
   // tell the FFT object to process the frequency spectrum as the sound plays
-  fft.processFrequency();
+  fft.processFreq();
 
 
   // Use FFT.getFreqRange() to get 8 ranges of frequency values, and then draw them as rectangles on the canvas

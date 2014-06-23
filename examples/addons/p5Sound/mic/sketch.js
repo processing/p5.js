@@ -37,9 +37,9 @@ function setup() {
 function draw() {
   stroke(255);
   background(0);
-  text('input volume: ' + amplitude.process(), 5, 10);
+  text('input volume: ' + amplitude.analyze(), 5, 10);
 
-  micLevel = amplitude.process();
+  micLevel = amplitude.analyze();
 
   // if the mic picks up a level greater than zero, that means it's enabled.
   if (micLevel > 0) {

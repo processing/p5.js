@@ -57,8 +57,8 @@ function draw() {
 
   p.html('Current Waveform: ' + osc.getType());
 
-  // process the waveform
-  waveform = fft.processWaveform();
+  // analyze the waveform
+  waveform = fft.waveform();
 
   // draw the shape of the waveform
   beginShape();

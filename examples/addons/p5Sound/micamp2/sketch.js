@@ -16,6 +16,6 @@ function setup() {
 
 function draw() {
    background(0);
-   micLevel = amplitude.process();
+   micLevel = amplitude.analyze();
    ellipse(width/2, height - micLevel*height, 100, 100);
 }

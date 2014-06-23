@@ -58,7 +58,7 @@ function draw() {
   widthLabel.html('Width: ' + w + '/ 1.0');
 
   // process the waveform
-  waveform = fft.processWaveform();
+  waveform = fft.waveform();
 
   // draw the shape of the waveform
   beginShape();

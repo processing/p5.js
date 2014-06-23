@@ -52,7 +52,7 @@ function draw() {
    * Return array of frequency volumes, from lowest to highest frequencies.
    * The length of the frequencySpectrum will be 1/2 the fftSize.
    */
-  frequencySpectrum = fft.processFrequency();
+  frequencySpectrum = fft.processFreq();
 
   // Draw every value in the frequencySpectrum array as a rectangle
   for (var i = 0; i< frequencySpectrum.length; i++){
