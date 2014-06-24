@@ -1,4 +1,5 @@
 function renderCode() {
+  console.log('render')
   var examples = document.getElementsByClassName('example');
   if (examples.length > 0) {
 

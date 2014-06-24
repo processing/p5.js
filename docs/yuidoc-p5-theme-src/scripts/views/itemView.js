@@ -18,6 +18,18 @@ define([
 
   'use strict';
 
+  Handlebars.registerHelper("foreach",function(arr,options) {
+      if(options.inverse && !arr.length)
+          return options.inverse(this);
+
+      return arr.map(function(item,index) {
+          item.$index = index;
+          item.$first = index === 0;
+          item.$last  = index === arr.length-1;
+          return options.fn(item);
+      }).join('');
+  });
+
   var itemView = Backbone.View.extend({
     el: '#item',
     init: function () {
@@ -42,6 +54,7 @@ define([
           collectionName = isClass ? 'Constructor' : this.capitalizeFirst(cleanItem.itemtype),
           isConstant = !isClass ? cleanItem.final : 0,
           isConstructor = cleanItem.is_constructor;
+          isMethod = collectionName === 'Method';
 
         // Set the item header (title)
         itemHtml = this.tpl({
@@ -49,7 +62,8 @@ define([
           name: cleanItem.name,
           collectionName: collectionName,
           isClass: isClass,
-          isConstant: isConstant
+          isConstant: isConstant,
+          isMethod: isMethod
         });
 
         // Set item contents
@@ -76,6 +90,7 @@ define([
         // prettyPrint();
 
         renderCode();
+        Prism.highlightAll();
       }
 
       return this;

@@ -1,15 +1,13 @@
-<div class="page-header">
-  <h1><%=name%> <small><%=collectionName%></small>
+<p>
+	<strong>Name</strong><br>
+	<%=name%><% if (isMethod) { %>()<% } %>
+  
 
-    
-    <div class="right-header">
-    <% if (isConstant) { %>
-    <small>
-      <span class="label label-warning final">Constant</span>
-    </small>
-    <% } %>
-    </div>
-  </h1>
-</div>
+  <div>
+  <% if (isConstant) { %>
+    <span class="label label-warning final">Constant</span>
+  <% } %>
+  </div>
+</p>
 
 

@@ -1,0 +1,213 @@
+/* http://prismjs.com/download.html?themes=prism-coy&languages=markup+css+css-extras+clike+javascript+java&plugins=line-numbers */
+
+/*
+
+  * p5.js highlighting based on the prism.js Coy theme for JavaScript, CoffeeScript, CSS and HTML
+  * Based on https://github.com/tshedor/workshop-wp-theme (Example: http://workshop.kansan.com/category/sessions/basics or http://workshop.timshedor.com/category/sessions/basics);
+  * @author Tim  Shedor
+
+*/
+
+code[class*="language-"],
+pre[class*="language-"],
+textarea {
+  color: #222;
+  font-family: 
+      inconsolatamedium, 
+      Consolas, 
+      Monaco, 
+      'Andale Mono', 
+      monospace;
+  direction: ltr;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+  font-size: 1em !important;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+  position:relative;
+  padding: 0.5em 1em;
+  margin: 0.5em 0 0 -0.5em;
+  border-left: 0.5em solid #AFAFAF; /* coy og blue 10px solid  358ccb  */
+  background-color: #fff; /* coy og white #fdfdfd  */
+  /* lines */
+  background-image: -webkit-linear-gradient(transparent 50%, rgba(69, 142, 209, 0.04) 50%);
+  background-image: -moz-linear-gradient(transparent 50%, rgba(69, 142, 209, 0.04) 50%);
+  background-image: -ms-linear-gradient(transparent 50%, rgba(69, 142, 209, 0.04) 50%);
+  background-image: -o-linear-gradient(transparent 50%, rgba(69, 142, 209, 0.04) 50%);
+  background-image: linear-gradient(transparent 50%, rgba(69, 142, 209, 0.04) 50%);
+  background-size: 2.9em 2.9em; /* adjusts height of alternating lines */
+  background-origin:content-box;
+  /* set overflow to just let the code roll  */
+  overflow:auto;
+  /* or uncomment this to let an inner vertical scroll be triggered, 
+    but be generous as to when  
+  max-height:36em; */
+}
+
+code[class*="language"] {
+
+}
+
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+  margin-bottom: 1em;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+  position:relative;
+  padding: .2em;
+  -webkit-border-radius: 0.3em;
+  -moz-border-radius: 0.3em;
+  -ms-border-radius: 0.3em;
+  -o-border-radius: 0.3em;
+  border-radius: 0.3em;
+  color: #333;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+
+:not(pre) > code[class*="language-"]:after,
+pre[class*="language-"]:after {
+  right: 0.75em;
+  left: auto;
+}
+
+/*  code colors */
+.token.comment,
+.token.block-comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #A0A0A0; /* light gray */ /* 727272 898189 919191 A0A0A0 AFAFAF BEBEBE coy og: #7D8B99; */
+}
+
+.token.punctuation {
+  color: #666; /* darker gray */ /* og coy 5F6364 */
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.function-name,
+.token.constant,
+.token.symbol {
+  color: #DC3787; /* not p5 pink, but related */ /* og coy c92c2c a reddish color */
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.function,
+.token.builtin {
+  color: #00A1D3; /* blue */ /* 877923  */  /* og coy 2f9c0a - green */
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.token.variable {
+  color: #a67f59; /* og coy a67f59 a light brown */
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword,
+.token.class-name {
+  color: #704F21; /* 9F944F brown */ /* og coy #1990b8 blue */
+}
+
+.token.regex,
+.token.important {
+  color: #e90; /* og coy e90 orange */
+}
+.language-css .token.string,
+.style .token.string {
+  color: #a67f59; /* og coy a67f59 a light brown */
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.token.important {
+  font-weight: normal;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+.namespace {
+  opacity: .7;
+}
+
+@media screen and (max-width:767px){
+  pre[class*="language-"]:before,
+  pre[class*="language-"]:after {
+    bottom:14px;
+    -webkit-box-shadow:none;
+    -moz-box-shadow:none;
+    box-shadow:none;
+  }
+
+}
+
+/* Plugin styles */
+.token.tab:not(:empty):before,
+.token.cr:before,
+.token.lf:before {
+  color: #e0d7d1; /* og coy very light brown  */
+}
+
+pre.line-numbers {
+	position: relative;
+	padding-left: 3.8em;
+	counter-reset: linenumber;
+}
+
+pre.line-numbers > code {
+	position: relative;
+}
+
+.line-numbers .line-numbers-rows {
+	position: absolute;
+	pointer-events: none;
+	top: 0;
+  font-size: 100%;
+	left: -3.8em;
+	width: 3em; /* works for line-numbers below 1000 lines */
+	letter-spacing: -1px;
+	border-right: 1px solid #999;
+
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+}
+
+.line-numbers-rows > span {
+	pointer-events: none;
+	display: block;
+	counter-increment: linenumber;
+}
+
+.line-numbers-rows > span:before {
+	content: counter(linenumber);
+	color: #999;
+	display: block;
+	padding-right: 0.8em;
+	text-align: right;
+}
