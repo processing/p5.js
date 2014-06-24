@@ -11,14 +11,7 @@ var h;
 function setup() {
   createCanvas(400,400);
   mic = new AudioIn();
-  amplitude = new Amplitude();
   mic.on();
-
-  // don't send mic to master output
-  mic.disconnect();
-
-  // only send to the Amplitude reader, so we can see it but not hear it.
-  amplitude.setInput(mic);
 
   // create controls
   levelLabel = createP('Master Volume: ');
@@ -31,15 +24,16 @@ function setup() {
   micToggle.mousePressed(toggleMic);
 
   h = createH1('enable the mic...');
-  createP('NOTE: Turning sound on may cause a <a href="https://en.wikipedia.org/wiki/Audio_feedback" target="_blank">feedback loop</a> between the mic and speakers. Try headphones.');
+  createP('NOTE: Mic Sound is off by default. Turning sound on with mic.connect( ) may cause a <a href="https://en.wikipedia.org/wiki/Audio_feedback" target="_blank">feedback loop</a> between the mic and speakers. Try headphones.');
 }
 
 function draw() {
   stroke(255);
   background(0);
-  text('input volume: ' + amplitude.analyze(), 5, 10);
+  text('input volume: ' + mic.getLevel(), 5, 10);
 
-  micLevel = amplitude.analyze();
+  // get the volume level, accepts an optional smoothing value that defaults to 0.
+  micLevel = mic.getLevel();
 
   // if the mic picks up a level greater than zero, that means it's enabled.
   if (micLevel > 0) {
@@ -54,7 +48,7 @@ function draw() {
 }
 
 
-// Toggle whether mic is connected to p5Sound (output) or only to Amplitude
+// Toggle whether mic is connected to p5Sound output
 function toggleSound() {
   if (soundOn == false) {
     mic.connect();
@@ -62,7 +56,6 @@ function toggleSound() {
     soundToggle.html('Sound OFF');
   } else {
     mic.disconnect();
-    amplitude.setInput(mic);
     soundOn = false;
     soundToggle.html('Sound ON');
   }

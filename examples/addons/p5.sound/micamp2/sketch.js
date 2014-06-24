@@ -6,16 +6,14 @@ function setup() {
    createCanvas(400,400);
    mic = new AudioIn();
    mic.on();
-   amplitude = new Amplitude(.9);
-   amplitude.setInput(mic);
-   amplitude.toggleNormalize();
 
-   // turn down the output of p5sound so we don't get feedback
-   volume(.1);
+   // the Mic reads level using p5.sound's Amplitude object.
+   // We can call methods on this Amplitude, just like any other.
+   mic.amplitude.toggleNormalize();
 }
 
 function draw() {
    background(0);
-   micLevel = amplitude.analyze();
+   micLevel = mic.getLevel(.9);
    ellipse(width/2, height - micLevel*height, 100, 100);
 }
