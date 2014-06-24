@@ -13,18 +13,20 @@ function renderCode() {
 
   function setupCode(sketch) {
 
-    var sketchNode = (sketch.parentNode.tagName === 'PRE') ? sketch.parentNode : sketch;
+    var isRef = sketch.parentNode.tagName !== 'PRE';
+
+    var sketchNode =  isRef ? sketch : sketch.parentNode;
     var sketchContainer = sketchNode.parentNode;
 
-    if (sketch.parentNode.tagName !== 'PRE') {
+    if (isRef) {
       var pre = document.createElement('pre');
+      pre.className = 'ref';
       pre.appendChild(sketchNode);
       sketchContainer.appendChild(pre);
       sketch.className = 'language-javascript';
     }
 
     sketchContainer.style.height = sketchNode.offsetHeight;
-    var parent = sketchContainer.parentNode;
 
     // remove start and end lines
     sketch.innerText = sketch.innerText.replace(/^\s+|\s+$/g, '');
@@ -40,7 +42,11 @@ function renderCode() {
     // create canvas
     var cnv = document.createElement('div');
     cnv.className = 'cnv_div';
-    parent.insertBefore(cnv, sketchContainer);
+    if (isRef) {
+      sketchContainer.appendChild(cnv);
+    } else {
+      sketchContainer.parentNode.insertBefore(cnv, sketchContainer);
+    }
 
 
     // create edit space
@@ -95,13 +101,23 @@ function renderCode() {
   }
 
   function runCode(sketch) {
+      console.log("run")
+      console.log(sketch.parentNode);
 
-    var sketchNode = (sketch.parentNode.tagName === 'PRE') ? sketch.parentNode : sketch;
+    var sketchNode = sketch.parentNode;
+    var isRef = sketchNode.className.indexOf('ref') !== -1;
     var sketchContainer = sketchNode.parentNode;
     var parent = sketchContainer.parentNode;
 
     var runnable = sketch.innerText;
-    var cnv = parent.parentNode.getElementsByClassName('cnv_div')[0];
+    var cnv;
+    if (isRef) {
+      console.log("ref")
+      cnv = sketchContainer.getElementsByClassName('cnv_div')[0];
+    } else {
+      console.log(sketchNode.className);
+      cnv = parent.parentNode.getElementsByClassName('cnv_div')[0];
+    }
     cnv.innerHTML = '';
 
     var s = function( p ) {
