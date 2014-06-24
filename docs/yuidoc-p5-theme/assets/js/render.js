@@ -9,21 +9,21 @@ function renderCode() {
       runCode(s);
     });
   }
+  var edit_area;
 
   function setupCode(sketch) {
+
+    var sketchNode = (sketch.parentNode.tagName === 'PRE') ? sketch.parentNode : sketch;
+    var sketchContainer = sketchNode.parentNode;
+    sketchContainer.style.height = sketchNode.offsetHeight;
+    var parent = sketchContainer.parentNode;
 
     // remove start and end lines
     sketch.innerText = sketch.innerText.replace(/^\s+|\s+$/g, '');
     var runnable = sketch.innerText;
     var rows = sketch.innerText.split('\n').length;
 
-    // sketch
-    sketch.style.position = 'absolute';
-    sketch.style.top = 0;
-    sketch.style.left = '150px';
-    sketch.parentNode.style.position = 'relative';
-    var h = Math.max(sketch.offsetHeight, 100) + 25;
-    sketch.parentNode.style.height = h+'px';
+    // var h = Math.max(sketch.offsetHeight, 100) + 25;
 
     // store original sketch
     var orig_sketch = document.createElement('div');
@@ -32,16 +32,13 @@ function renderCode() {
     // create canvas
     var cnv = document.createElement('div');
     cnv.className = 'cnv_div';
-    cnv.style.position = 'absolute';
-    sketch.parentNode.insertBefore(cnv, sketch);
+    parent.insertBefore(cnv, sketchContainer);
 
 
     // create edit space
     var edit_space = document.createElement('div');
-    edit_space.style.position = 'absolute';
-    edit_space.style.top = '-20px';
-    edit_space.style.left = '150px';
-    sketch.parentNode.appendChild(edit_space);
+    edit_space.className = 'edit_space';
+    sketchContainer.appendChild(edit_space);
 
     //add buttons
     var edit_button = document.createElement('button');
@@ -60,6 +57,7 @@ function renderCode() {
     var reset_button = document.createElement('button');
     reset_button.value = 'reset';
     reset_button.innerHTML = 'reset';
+    reset_button.id = 'right_button';
     edit_space.appendChild(reset_button);
     reset_button.onclick = function() {
       edit_area.value = orig_sketch.innerText;
@@ -69,8 +67,8 @@ function renderCode() {
     var edit_area = document.createElement('textarea');
     edit_area.value = runnable;
     edit_area.rows = rows;
-    edit_area.cols = 80;
-    edit_area.position = 'absolute'
+    edit_area.cols = 65;
+    // edit_area.position = 'absolute'
     edit_space.appendChild(edit_area);
     edit_area.style.display = 'none';
 
@@ -90,8 +88,12 @@ function renderCode() {
 
   function runCode(sketch) {
 
+    var sketchNode = (sketch.parentNode.tagName === 'PRE') ? sketch.parentNode : sketch;
+    var sketchContainer = sketchNode.parentNode;
+    var parent = sketchContainer.parentNode;
+
     var runnable = sketch.innerText;
-    var cnv = sketch.parentNode.getElementsByClassName('cnv_div')[0];
+    var cnv = parent.parentNode.getElementsByClassName('cnv_div')[0];
     cnv.innerHTML = '';
 
     var s = function( p ) {
@@ -117,7 +119,6 @@ function renderCode() {
         'keyPressed', 'keyReleased', 'keyTyped'];
         fxns.forEach(function(f) { 
           if (runnable.indexOf(f) !== -1) {
-            console.log(f);
             with (p) {
               p[f] = eval(f);
             }
@@ -133,9 +134,12 @@ function renderCode() {
       }
     };
 
-    prettyPrint();
+    if (typeof prettyPrint !== 'undefined') prettyPrint();
+    if (Prism) Prism.highlightAll();
 
-    setTimeout(function() { var myp5 = new p5(s, cnv); }, 100);
+    setTimeout(function() { 
+      var myp5 = new p5(s, cnv); 
+    }, 100);
   }
 
 }
