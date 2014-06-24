@@ -9,12 +9,19 @@ function renderCode() {
       runCode(s);
     });
   }
-  var edit_area;
 
   function setupCode(sketch) {
 
     var sketchNode = (sketch.parentNode.tagName === 'PRE') ? sketch.parentNode : sketch;
     var sketchContainer = sketchNode.parentNode;
+
+    if (sketch.parentNode.tagName !== 'PRE') {
+      var pre = document.createElement('pre');
+      pre.appendChild(sketchNode);
+      sketchContainer.appendChild(pre);
+      sketch.className = 'language-javascript';
+    }
+
     sketchContainer.style.height = sketchNode.offsetHeight;
     var parent = sketchContainer.parentNode;
 
@@ -134,12 +141,10 @@ function renderCode() {
       }
     };
 
-    if (typeof prettyPrint !== 'undefined') prettyPrint();
-    if (Prism) Prism.highlightAll();
+    //if (typeof prettyPrint !== 'undefined') prettyPrint();
+    if (typeof Prism !== 'undefined') Prism.highlightAll();
 
-    setTimeout(function() { 
-      var myp5 = new p5(s, cnv); 
-    }, 100);
+    var myp5 = new p5(s, cnv); 
   }
 
 }

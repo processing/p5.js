@@ -62,7 +62,6 @@ define([
         App.searchView = new searchView();
         App.searchView.init().render();
       }
-      
       return this;
     },
     /**
