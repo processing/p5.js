@@ -2,7 +2,7 @@ var fingers;
 
 function setup() {
   createCanvas(320, 240);
-  fingers = createVideo("fingers.mov");
+  fingers = createVideo("fingers.mov", "fingers.webm");
   fingers.play();
   fingers.loop();
   fingers.hide();
