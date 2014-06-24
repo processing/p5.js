@@ -54,7 +54,7 @@ function draw() {
   ampLabel.html('Amplitude: ' + amp + '/ 1.0');
 
   freq = freqSlider.value();
-  osc.setFreq(freq);
+  osc.freq(freq);
   freqLabel.html('Frequency: ' + freq + ' Hz');
 
   p.html('Current Waveform: ' + osc.getType());

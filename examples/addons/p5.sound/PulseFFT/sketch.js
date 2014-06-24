@@ -49,12 +49,12 @@ function draw() {
   ampLabel.html('Amplitude: ' + amp + '/ 1.0');
 
   freq = freqSlider.value();
-  pulse.setFreq(freq);
+  pulse.freq(freq);
   freqLabel.html('Frequency: ' + freq + ' Hz');
 
 
   w = widthSlider.value()/100;
-  pulse.setWidth(w);
+  pulse.width(w);
   widthLabel.html('Width: ' + w + '/ 1.0');
 
   // process the waveform
