@@ -158,7 +158,8 @@ define(function (require) {
 
   /**
    * The mouseDragged() function is called once every time the mouse moves and
-   * a mouse button is pressed.
+   * a mouse button is pressed. If no mouseDragged() function is defined, the
+   * touchMoved() function will be called instead if it is defined.
    *
    * @method mouseDragged
    * @example
@@ -187,15 +188,21 @@ define(function (require) {
     if (!this.isMousePressed && typeof context.mouseMoved === 'function') {
       context.mouseMoved(e);
     }
-    if (this.isMousePressed && typeof context.mouseDragged === 'function') {
-      context.mouseDragged(e);
+    if (this.isMousePressed) {
+      if (typeof context.mouseDragged === 'function') {
+        context.mouseDragged(e);
+      } else if (typeof context.touchMoved === 'function') {
+        context.touchMoved(e);
+      }
     }
   };
 
   /**
    * The mousePressed() function is called once after every time a mouse button
    * is pressed. The mouseButton variable (see the related reference entry)
-   * can be used to determine which button has been pressed.
+   * can be used to determine which button has been pressed. If no 
+   * mousePressed() function is defined, the touchStarted() function will be
+   * called instead if it is defined.
    *
    * @method mousePressed
    * @example
@@ -227,12 +234,15 @@ define(function (require) {
     this.setMouseButton(e);
     if (typeof context.mousePressed === 'function') {
       context.mousePressed(e);
+    } else if (typeof context.touchStarted === 'function') {
+      context.touchStarted(e);
     }
   };
 
   /**
    * The mouseReleased() function is called every time a mouse button is
-   * released.
+   * released. If no mouseReleased() function is defined, the touchEnded()
+   * function will be called instead if it is defined.
    *
    * @method mouseReleased
    * @example
@@ -263,6 +273,8 @@ define(function (require) {
     this._setProperty('mouseIsPressed', false);
     if (typeof context.mouseReleased === 'function') {
       context.mouseReleased(e);
+    } else if (typeof context.touchEnded === 'function') {
+      context.touchEnded(e);
     }
   };
 
@@ -293,7 +305,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.onmouseclick = function(e) {
+  p5.prototype.onclick = function(e) {
     var context = this._isGlobal ? window : this;
     if (typeof context.mouseClicked === 'function') {
       context.mouseClicked(e);

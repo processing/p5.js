@@ -1,3 +1,29 @@
+
+.example-content div {
+  position: relative;
+  height: 200px;
+}
+
+.example-content canvas {
+  position: absolute !important;
+  top: 0;
+  left: 0;
+}
+
+
+.example-content .edit_space {
+  position: absolute !important;
+  top: -20px;
+  left: 150px;
+}
+
+.example-content code {
+  position: absolute !important;
+  top: 0;
+  left: 150px;
+}
+
+
 /*! normalize.css v3.0.0 | MIT License | git.io/normalize */
 html {
   font-family: sans-serif;
