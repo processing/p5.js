@@ -42,12 +42,40 @@
 .example button {
     position: absolute;
     top: 0;
-    left: 300px;
+    left: 400px;
 }
 
 .example #right_button {
-    left: 350px;
+    left: 450px;
 }
+
+
+.example-content .cnv_div {
+    position: absolute !important;
+    top: 0px;
+    left: 0px;
+}
+
+.example-content .edit_space, 
+.example-content pre {
+    position: absolute !important;
+    width: 100%;
+    top: 0 !important;
+    left: 120px !important;
+    padding-top: 0 !important;
+    border: none !important;
+}
+
+.example-content pre {
+
+    margin-top: 0 !important;
+}
+
+.example-content .edit_space {
+
+    margin: -0.5em 0 0 -0.5em !important;
+}
+
 
 html,
 button,

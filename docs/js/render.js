@@ -101,8 +101,6 @@ function renderCode() {
   }
 
   function runCode(sketch) {
-      console.log("run")
-      console.log(sketch.parentNode);
 
     var sketchNode = sketch.parentNode;
     var isRef = sketchNode.className.indexOf('ref') !== -1;
@@ -112,7 +110,6 @@ function renderCode() {
     var runnable = sketch.innerText;
     var cnv;
     if (isRef) {
-      console.log("ref")
       cnv = sketchContainer.getElementsByClassName('cnv_div')[0];
     } else {
       console.log(sketchNode.className);
@@ -160,6 +157,18 @@ function renderCode() {
 
     //if (typeof prettyPrint !== 'undefined') prettyPrint();
     if (typeof Prism !== 'undefined') Prism.highlightAll();
+
+    $( document ).ready(function() {
+      console.log('hi')
+      $( ".example-content" ).find('div').each(function() {
+          $this = $( this );
+          var pre = $this.find('pre')[0];
+          if (pre) {
+            console.log($(pre).height())
+            $this.height( Math.max($(pre).height()*1.1, 100) + 20 );
+          }
+      });
+    });
 
     var myp5 = new p5(s, cnv); 
   }
