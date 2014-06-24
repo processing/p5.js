@@ -23,19 +23,21 @@ function setup() {
   micToggle = createButton('Mic OFF');
   micToggle.mousePressed(toggleMic);
 
-  h = createH1('enable the mic...');
+  h = createP('enable the mic...');
   createP('NOTE: Mic Sound is off by default. Turning sound on with mic.connect( ) may cause a <a href="https://en.wikipedia.org/wiki/Audio_feedback" target="_blank">feedback loop</a> between the mic and speakers. Try headphones.');
 }
 
 function draw() {
   stroke(255);
   background(0);
-  text('input volume: ' + mic.getLevel(), 5, 10);
 
-  // get the volume level, accepts an optional smoothing value that defaults to 0.
+  // get the volume level, accepts an optional smoothing value or defaults to 0.
   micLevel = mic.getLevel();
 
-  // if the mic picks up a level greater than zero, that means it's enabled.
+  text('input volume: ' + micLevel, 5, 10);
+
+  // if the mic picks up a level greater than zero, we can assume
+  // that the user has allowed their browser to access the microphone.
   if (micLevel > 0) {
     h.html('Make some noise!');
   }
@@ -44,11 +46,11 @@ function draw() {
 
   // set master output
   levelLabel.html('Master Volume: ' + masterLevel.value()/100);
-  volume(masterLevel.value()/100);
+  masterVolume(masterLevel.value()/100);
 }
 
 
-// Toggle whether mic is connected to p5Sound output
+// Toggle whether mic is connected to master output
 function toggleSound() {
   if (soundOn == false) {
     mic.connect();
@@ -61,7 +63,7 @@ function toggleSound() {
   }
 }
 
-// Toggle whether the mic is on or off
+// Toggle whether the mic is on (getting input) or off
 function toggleMic() {
   if (micOn == true) {
     mic.off();

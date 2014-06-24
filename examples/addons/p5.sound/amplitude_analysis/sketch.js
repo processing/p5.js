@@ -9,8 +9,7 @@ var amplitude;
 
 // description text
 var description;
-var h1;
-var h2;
+var p1;
 
 var smoothing = .01;
 var smoothSlider, smoothLabel;
@@ -31,7 +30,7 @@ function setup() {
 
   // instruction text
   description = 'Spacebar: pause/unpause the loop. <br>Press "N" to toggle Normalize';
-  h1 = createH1(description);
+  p1 = createP(description);
 
   smoothSlider = createSlider(0.0, 99.9, smoothing*100);
   smoothLabel = createP('Smoothing: ' + smoothing);
@@ -41,7 +40,7 @@ function draw() {
   background(0, 0, 0);
 
   // get volume from the amplitude process
-  var volume = amplitude.analyze();
+  var volume = amplitude.getLevel();
 
   // print the volume to the canvas. It is a float between 0 and 1.0.
   text('volume: ' + volume, 20, 20);
@@ -52,7 +51,7 @@ function draw() {
 
   // instruction text
   description = 'Spacebar: pause/unpause the loop. <br>Press "N" to toggle Normalize. Normalized is '+amplitude.normalize;
-  h1.html(description);
+  p1.html(description);
 
   // change smoothing
   smoothing = smoothSlider.value()/100;

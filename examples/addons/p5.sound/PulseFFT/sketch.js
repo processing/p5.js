@@ -32,7 +32,7 @@ function setup() {
 
 
   pulse = new Pulse(freq);
-  pulse.setAmp(amp);
+  pulse.amp(amp);
 
   // create an fft to analyze the audio
   fft = new FFT();
@@ -45,7 +45,7 @@ function draw() {
   background(0, 0, 0, 100);
 
   amp = ampSlider.value()/100;
-  pulse.setAmp(amp);
+  pulse.amp(amp);
   ampLabel.html('Amplitude: ' + amp + '/ 1.0');
 
   freq = freqSlider.value();

@@ -1,8 +1,8 @@
 /**
- *  EXAMPLE
+ *  DEMO
  *  - find the peaks in an audio file to draw the entire waveform with SoundFile.getPeaks();
  *  - draw cursor on a timeline with SoundFile.currentTime() and SoundFile.duration();
- *  - 
+ *  - change playbackRate based on mouse position
  */
 
 // ====================
@@ -14,13 +14,16 @@ var p, peakCount;
 function preload() {
   // create a SoundFile with a reference to this and a path to a sound file
   soundFile = new SoundFile('lucky_dragons_-_power_melody.wav','lucky_dragons_-_power_melody.mp3');
+
+  // load the file with turnitup (a function defined below) as the callback
+  soundFile.load(turnItUp);
 }
 
 function setup() {
   createCanvas(800, 400);
   background(0);
   p = createP('peaks to draw: ' + peakCount);
-  createP('Press Spacebar to play<br>P to pause<br> S to stop all audio<br>R to reverse the buffer (or move mouseX to get a negative value for playbackRate)')
+  createP('Press Spacebar to play/pause.');
 }
 
 
@@ -31,7 +34,6 @@ function draw() {
   if (peakCount < 8) {
     peakCount = 8;
   }
-
 
   // only draw the waveform if the soundfile has loaded, otherwise it will throw an error
   if (soundFile.isLoaded()) {
@@ -52,7 +54,8 @@ function draw() {
   var newRate = (map(mouseX,0,800,-7,10))/10;
   soundFile.rate(newRate);
   
-  p.html('MouseY = Visible Amplitude Peaks: ' + peakCount+'<br>MouseX = Playback Rate: '+newRate);
+  // update display text:
+  p.html('MouseY = Visible Amplitude Peaks: ' + peakCount.toFixed(3)+'<br>MouseX = Playback Rate: '+newRate.toFixed(3));
 }
 
 
@@ -65,26 +68,13 @@ function drawCursor() {
 // Keyboard Controls
 function keyPressed() {
   var key = keyCode;
-  // console.log(key);
-  // "S" stops all sound sources
-  if (key == 83) {
-    soundFile.stopAll();
-  }
-  // "P" pauses current source
-  if (key == 80) {
+  // Spacebar: pause
+  if (key == 32) {
     soundFile.pause();
   }
-  // "R" reverses sound file
-  if (key == 82) {
-    soundFile.reverse();
-  }
-  // Spacebar: play (creates a new sound source from the same buffer, does not stop playback)
-  if (key == 32) {
-    soundFile.loop();
-  }
-  // L: noLoop
-  if (key == 76) {
-    soundFile.loop();
-  }
+}
 
+// callback
+function turnItUp(sf) {
+  sf.loop();
 }

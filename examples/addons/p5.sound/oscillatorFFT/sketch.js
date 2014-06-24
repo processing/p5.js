@@ -26,10 +26,12 @@ function setup() {
   button = createButton('start');
   button.mousePressed(toggleOsc);
 
+  // Other types of oscillators include TriOsc, SawOsc, SqrOsc, and generic Oscillator.
   osc = new SinOsc(freq);
-  osc.setAmp(amp);
+  osc.amp(amp);
 
   p = createP('Current Waveform: ' + osc.getType());
+
   // these buttons will change the osc's waveform
   sine = createButton('sine');
   sine.mousePressed(setSine);
@@ -48,7 +50,7 @@ function draw() {
   background(0);
 
   amp = ampSlider.value()/100;
-  osc.setAmp(amp);
+  osc.amp(amp);
   ampLabel.html('Amplitude: ' + amp + '/ 1.0');
 
   freq = freqSlider.value();
@@ -70,6 +72,7 @@ function draw() {
   endShape();
 }
 
+// Turn the oscillator on / off
 function toggleOsc() {
   if (oscOn) {
     osc.stop();
@@ -81,34 +84,20 @@ function toggleOsc() {
   oscOn = !oscOn;
 }
 
+// Methods to change the oscillator type.
+// You can change the type by using osc.setType('sine').
 function setSine() {
-  osc.stop();
-  osc = new SinOsc(freq);
-  if (oscOn) {
-    osc.start();
-  }
+  osc.setType('sine');
 }
 
 function setTriangle() {
-  osc.stop();
-  osc = new TriOsc(freq);;
-  if (oscOn) {
-    osc.start();
-  }
+  osc.setType('triangle');
 }
 
 function setSawtooth() {
-  osc.stop();
-  osc = new SawOsc(freq);
-  if (oscOn) {
-    osc.start();
-  }
+  osc.setType('sawtooth');
 }
 
 function setSquare() {
-  osc.stop();
-  osc = new SqrOsc(freq);
-  if (oscOn) {
-    osc.start();
-  }
+  osc.setType('square');
 }

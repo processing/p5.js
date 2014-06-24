@@ -8,7 +8,7 @@ var fftSize = 1024;
 
 
 var description = 'loading';
-var h1;
+var p;
 
 
 function setup() {
@@ -27,7 +27,8 @@ function setup() {
   fft = new FFT(.25,fftSize);
 
   // update description text
-  h1 = createH1(description);
+  p = createP(description);
+  var p2 = createP('Description: Using getFreq(low, high) to measure amplitude within a range of frequencies.');
 }
 
 function draw() {
@@ -49,7 +50,7 @@ function draw() {
     var secondFreq = (centerFreq + centerFreq/2);
 
     // get the average value for each given frequency range. 
-    var freqValue = fft.getFreqRange(firstFreq,secondFreq-1);
+    var freqValue = fft.getFreq(firstFreq,secondFreq-1);
 
     // draw a rectangle whose height represents the average value of this frequency range
     rect((i+1)*width/8 - width/8, height, width/8, -freqValue);
@@ -67,11 +68,11 @@ function keyPressed() {
 function updateDescription() {
   if (soundFile.isPaused()) {
     description = 'Paused...';
-    h1.html(description);
+    p.html(description);
   }
   else if (soundFile.isPlaying()){
     description = 'Playing!';
-    h1.html(description);
+    p.html(description);
   }
   else {
     for (var i = 0; i < frameCount%3; i++ ) {
@@ -83,7 +84,7 @@ function updateDescription() {
         description = 'loading';
       }
     }
-    h1.html(description);
+    p.html(description);
   }
 }
 

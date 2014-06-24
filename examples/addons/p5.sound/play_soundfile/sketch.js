@@ -13,7 +13,7 @@ function setup() {
   soundFile = new SoundFile('beatbox.wav');
 
 
-  createH1('Press any key to play the sound');
+  createP('Press any key to play the sound');
 }
 
 // when a key is pressed...

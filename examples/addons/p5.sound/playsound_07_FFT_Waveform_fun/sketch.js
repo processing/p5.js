@@ -1,5 +1,5 @@
 /**
- * DEMO: Draw the waveform of a sound as it plays using FFT.processWaveform()
+ * DEMO: Draw the waveform of a sound as it plays using FFT.waveform()
  */
 
 var soundFile;

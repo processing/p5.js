@@ -1,5 +1,5 @@
 /**
- * Draw frequency spectrum of a sound as it plays using FFT.processFrequency()
+ * Draw frequency spectrum of a sound as it plays using FFT.processFreq()
  */
 
 var soundFile;
@@ -7,7 +7,7 @@ var fft;
 var fftSize = 1024;
 
 var description = 'loading';
-var h1;
+var p;
 
 // This will be an array of amplitude from lowest to highest frequencies
 var frequencySpectrum = [];
@@ -35,10 +35,11 @@ function setup() {
   fft = new FFT(.8, fftSize, -140, 0);
 
   // update description text
-  h1 = createH1(description);
+  p = createP(description);
+  var p2 = createP('Draw the array returned by FFT.processFreq( ). This represents the frequency spectrum, from lowest to highest frequencies.');
 
   // set the master volume;
-  volume(.5);
+  masterVolume(.5);
 }
 
 function draw() {
@@ -67,11 +68,11 @@ function draw() {
 function updateDescription() {
   if (soundFile.isPaused()) {
     description = 'Paused...';
-    h1.html(description);
+    p.html(description);
   }
   else if (soundFile.isPlaying()){
     description = 'Playing! Press any key to pause';
-    h1.html(description);
+    p.html(description);
   }
   else {
     for (var i = 0; i < frameCount%3; i++ ) {
@@ -83,7 +84,7 @@ function updateDescription() {
         description = 'loading';
       }
     }
-    h1.html(description);
+    p.html(description);
   }
 }
 
