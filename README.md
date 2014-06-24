@@ -5,7 +5,7 @@ p5.js
 
 
 ##p5.js library (stable)
-`dist/p5.js` is currently the only stable file in the repository
+`lib/p5.js` is currently the only stable file in the repository
 
 
 ##Documentation
