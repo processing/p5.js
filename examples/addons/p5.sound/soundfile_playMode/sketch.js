@@ -1,6 +1,7 @@
 /**
  * Toggle play mode between 'mono' and 'poly'.
  * SoundFiles are polyphonic by default.
+ * Music from Damscray, "Dancing Tiger", Creative Commons BY-NC-SA
  */
 
 var playMode = 'poly';
@@ -36,6 +37,7 @@ function togglePlayMode(){
 function keyPressed(k) {
   if (k.keyCode == 65) {
     sample1.play(.6);
+
     // Get even more monophonic by only letting one sample play at a time
     if ( playMode =='mono' && sample2.isPlaying() ){
       sample2.stopAll();
