@@ -20,7 +20,8 @@ var testRender = function(file, sketch, callback) {
         n += diff;
       }
     }
-    var same = (n/(256*4*p.length)) < 0.015;
+    var same = (n/(256*4*p.length)) < 0.005;
+    same = same && (ctx.pixels.length === p.length);
     callback(same);
   });
 }
