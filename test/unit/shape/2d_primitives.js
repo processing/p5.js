@@ -5,10 +5,13 @@ suite('2D Primitives', function() {
     sketch.draw = function() {};
   });
 
+  teardown(function(){
+    myp5.clear();
+  });
+
   suite('p5.prototype.ellipse', function() {
     var ellipse = p5.prototype.ellipse;
     suite('ellipse()', function() {
-
       test('should be a function', function() {
         assert.ok(ellipse);
         assert.typeOf(ellipse, 'function');
@@ -26,6 +29,24 @@ suite('2D Primitives', function() {
     });
   });
 
+  suite('p5.prototype.line', function() {
+    var line = p5.prototype.line;
+    suite('line()', function() {
+      test('should be a function', function() {
+        assert.ok(line);
+        assert.typeOf(line, 'function');
+      });
+      test('should draw', function(done) {
+        myp5.background(155);
+        myp5.fill(0);
+        myp5.line(0, 0, 100, 100);
 
+        testRender('unit/shape/renders/line.png', myp5, function(res) {
+          assert.isTrue(res);
+          done();
+        });
+      });
+    });
+  });
 
 });
