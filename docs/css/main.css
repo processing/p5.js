@@ -49,7 +49,7 @@
     left: 450px;
 }
 
-
+/* EXAMPLES IN REF */
 .example-content .cnv_div {
     position: absolute !important;
     top: 0px;
@@ -76,6 +76,10 @@
     margin: -0.5em 0 0 -0.5em !important;
 }
 
+.column_0, .column_1, .column_2 {
+    float: left;
+    width: 12em;
+}
 
 html,
 button,

@@ -159,18 +159,18 @@ function renderCode() {
     if (typeof Prism !== 'undefined') Prism.highlightAll();
 
     $( document ).ready(function() {
-      console.log('hi')
       $( ".example-content" ).find('div').each(function() {
           $this = $( this );
           var pre = $this.find('pre')[0];
           if (pre) {
-            console.log($(pre).height())
             $this.height( Math.max($(pre).height()*1.1, 100) + 20 );
           }
       });
     });
 
-    var myp5 = new p5(s, cnv); 
+    setTimeout(function() {
+      var myp5 = new p5(s, cnv);
+    }); 
   }
 
 }
