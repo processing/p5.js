@@ -18,8 +18,8 @@ suite('2D Primitives', function() {
         myp5.fill(0);
         myp5.ellipse(0, 0, 100, 100);
 
-        myp5.testRender('unit/shape/renders/ellipse.png', function(v) {
-          assert.equal(v, true);
+        testRender('unit/shape/renders/ellipse.png', myp5, function(res) {
+          assert.isTrue(res);
           done();
         });
       });

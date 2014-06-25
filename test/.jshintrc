@@ -27,6 +27,7 @@
     "console": false,
     "PElement": false,
     "p5": false,
-    "PVector": false
+    "PVector": false,
+    "testRender": false
   }
 }
