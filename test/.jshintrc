@@ -16,6 +16,7 @@
     "assert": false,
     "suite": false,
     "setup": false,
+    "teardown": false,
     "test": false,
     "afterEach": false,
     "beforeEach": false,
