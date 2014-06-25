@@ -12,7 +12,7 @@ function setup() {
 
   // Create SoundFile. Multiple filetypes for cross-browser compatability.
   soundFile = new SoundFile('drum.ogg', 'drum.wav', 'drum.mp3');
-  soundFile.amp(.6);
+  soundFile.volume = .6;
 
   // create the ball
   ball = ellipse()
