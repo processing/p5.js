@@ -356,12 +356,12 @@ define(function (require) {
       // mode earlier
       var userSetup = this.setup || window.setup;
       if (typeof userSetup === 'function') {
-        this.scale(this._pixelDensity, this._pixelDensity);
         userSetup();
       }
     }.bind(this);
 
     this._draw = function () {
+      var userSetup = this.setup || window.setup;
       var now = new Date().getTime();
       this._frameRate = 1000.0/(now - this._lastFrameTime);
       this._lastFrameTime = now;
@@ -375,11 +375,13 @@ define(function (require) {
       }
       // call user's draw
       if (typeof userDraw === 'function') {
-        this.scale(this._pixelDensity, this._pixelDensity);
+        this.pushMatrix();
+        if (typeof userSetup === 'undefined') {
+          this.scale(this._pixelDensity, this._pixelDensity);
+        }
         userDraw();
+        this.popMatrix();
       }
-
-      this._curElement.context.setTransform(1, 0, 0, 1, 0, 0);
     }.bind(this);
 
     this._runFrames = function() {

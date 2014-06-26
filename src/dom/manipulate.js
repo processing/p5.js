@@ -23,9 +23,8 @@ define(function(require) {
     var c = document.createElement('canvas');
     c.setAttribute('width', w*this._pixelDensity);
     c.setAttribute('height', h*this._pixelDensity);
-
-    c.style.width = w;
-    c.style.height = h;
+    c.setAttribute('style',
+      'width:'+w+'px !important; height:'+h+'px !important;');
     
     if (isDefault) {
       c.id = 'defaultCanvas';
@@ -45,7 +44,7 @@ define(function(require) {
     var cnv =  new p5.Element(c, this);
     this.context(cnv);
     this._applyDefaults();
-
+    this.scale(this._pixelDensity, this._pixelDensity);
     return cnv;
   };
 
