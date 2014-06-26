@@ -83,7 +83,7 @@ suite('p5.Vector', function() {
       assert.equal(v.y, 2);
       assert.equal(v.z, 0);
     });
-  });  
+  });
 });
 
 
