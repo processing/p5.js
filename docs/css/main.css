@@ -22,6 +22,16 @@
   left: 150px;
 }
 */
+#bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -10;
+}
+#bg .edit_area, #bg button,
+#home .edit_area, #home button {
+    display: none;
+}
 
 .example .edit_space {
     position: absolute !important;
@@ -521,16 +531,20 @@ p+img {
     margin:4.25em 1.25em 1.25em 1.25em;
 }
 
-#lockup object, .logo {
+#lockup object {
     margin:0;
     padding:0; 
-    height:4.5em;
-    width:9.75em; 
     border: none;
 }
 
+
 .logo {
+    margin:0;
+    padding:0; 
+    border: none;
     margin-bottom: 0.4em;
+    height:4.5em;
+    width:9.75em; 
 }
 
 #lockup p {
@@ -700,10 +714,6 @@ footer {
 
     }
 
-    #reference-page section {
-        /*background-color: rgba(252,252,252,.05);*/
-    }
-
     small, .small, footer, #family {
     font-size: 0.75em;
     }
@@ -751,7 +761,7 @@ footer {
 /* constants for the asterisk */
     #asterisk-design-element {
         position:fixed;
-        z-index: -100;
+        z-index: -1 !important;
         opacity: 0.6;
     }
 
@@ -765,7 +775,8 @@ footer {
         opacity: 1;
     }
 
-    #about-page #asterisk-design-element {
+    #about-page #asterisk-design-element,
+    #development-page #asterisk-design-element {
         bottom:-14%;
         left:-20%;
         height:25em;
@@ -790,7 +801,7 @@ footer {
         transform: rotate(2deg);
     }
 
-    #tutorials-page #asterisk-design-element {
+    #learning-page #asterisk-design-element {
 
         top:-30%;
         right:-40%;
@@ -804,7 +815,8 @@ footer {
 
     }
 
-    #reference-page #asterisk-design-element, 
+    #reference-page #asterisk-design-element,
+    #download-page #asterisk-design-element, 
     #other-content-types-page #asterisk-design-element
     {
         top:7%;
