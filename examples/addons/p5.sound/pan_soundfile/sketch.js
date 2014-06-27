@@ -6,12 +6,15 @@
 var ball;
 var soundFile;
 
+function preload() {
+  // Create SoundFile. Multiple filetypes for cross-browser compatability.
+  soundFile = loadSound( ['drum.ogg', 'drum.wav'] );
+}
+
 function setup() {
   createCanvas(400, 400); 
   background(0, 0, 0);
 
-  // Create SoundFile. Multiple filetypes for cross-browser compatability.
-  soundFile = new SoundFile('drum.ogg', 'drum.wav', 'drum.mp3');
   soundFile.volume = .6;
 
   // create the ball

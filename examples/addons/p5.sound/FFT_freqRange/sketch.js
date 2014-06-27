@@ -1,5 +1,7 @@
 /**
- *
+ * Display the average amount of energy (amplitude) across 
+ * a range of frequencies using getFreqRange(). This example
+ * divides the frequency spectrum into eight bands.
  */
 
 var soundFile;
@@ -10,18 +12,18 @@ var fftSize = 1024;
 var description = 'loading';
 var p;
 
+function preload() {
+  soundFile = loadSound( ['beat.mp3', 'beat.ogg'] );
+}
+
 
 function setup() {
+  soundFile.loop();
+
   createCanvas(fftSize, 400); 
   fill(255, 40, 255);
   noStroke();
   textAlign(CENTER);
-
-  // Create SoundFile. Multiple filetypes for cross-browser compatability.
-  soundFile = new SoundFile('beat.mp3', 'beat.wav');
-
-  // loop the sound file
-  soundFile.loop();
 
   // instantiate the FFT object. Give it smoothing and fftSize
   fft = new FFT(.25,fftSize);

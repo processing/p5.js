@@ -11,13 +11,14 @@ var xOffset = 0;
 // Array of amplitude values (0-255) over time. Length will be 1/2 fftSize.
 var waveform = [];
 
+function preload() {
+  soundFile = loadSound( ['lucky_dragons_-_power_melody.mp3','lucky_dragons_-_power_melody.ogg'] );
+}
+
 function setup() {
   createCanvas(fftSize, 400);
   fill(60, 60, 180);
   background(0);
-
-  // instantiate using a .wav, with .mp3 fallback if .wav isn't supported
-  soundFile = new SoundFile('lucky_dragons_-_power_melody.mp3','lucky_dragons_-_power_melody.wav');
 
   // a slower playback rate also lowers the pitch, and with lower frequencies the waveforms are longer
   soundFile.rate(.2);

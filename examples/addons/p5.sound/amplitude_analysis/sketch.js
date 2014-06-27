@@ -14,15 +14,15 @@ var p1;
 var smoothing = .01;
 var smoothSlider, smoothLabel;
 
+function preload() {
+  soundFile = loadSound(['beat.mp3', 'beat.ogg']);
+}
+
 function setup() {
   createCanvas(400, 400); 
   background(0, 0, 0);
   noStroke();
   
-  // Create SoundFile. Multiple filetypes for cross-browser compatability.
-  soundFile = new SoundFile('beat.aiff', 'beat.wav', 'beat.mp3');
-
-  // loop the sound file
   soundFile.loop();
 
   // create a new Amplitude. Optionally, give it a 'smoothing' value betw 0.0 and .999

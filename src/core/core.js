@@ -321,11 +321,15 @@ define(function (require) {
         context.loadImage = function (path) {
           return context._preload('loadImage', path);
         };
+        context.loadSound = function (path) {
+          return context._preload('loadSound', path);
+        };
         userPreload();
         context.loadJSON = p5.prototype.loadJSON;
         context.loadStrings = p5.prototype.loadStrings;
         context.loadXML = p5.prototype.loadXML;
         context.loadImage = p5.prototype.loadImage;
+        context.loadSound = p5.prototype.loadSound;
         if (this._preloadCount === 0) {
           this._setup();
           this._runFrames();
