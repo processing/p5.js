@@ -20,7 +20,7 @@ function setup() {
   noStroke();
   
   // Create SoundFile. Multiple filetypes for cross-browser compatability.
-  soundFile = new SoundFile('beat.aiff', 'beat.wav', 'beat.mp3');
+  soundFile = new SoundFile(['beat.mp3', 'beat.ogg']);
 
   // loop the sound file
   soundFile.loop();

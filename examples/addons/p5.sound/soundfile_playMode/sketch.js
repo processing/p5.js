@@ -9,8 +9,8 @@ var sample1, sample2, button;
 
 function setup() {
   createCanvas(0,0);
-  sample1 = new SoundFile('Damscray_-_Dancing_Tiger_01.wav');
-  sample2 = new SoundFile('Damscray_-_Dancing_Tiger_02.wav');
+  sample1 = new SoundFile( ['Damscray_-_Dancing_Tiger_01.ogg', 'Damscray_-_Dancing_Tiger_01.mp3'] );
+  sample2 = new SoundFile( ['Damscray_-_Dancing_Tiger_02.ogg', 'Damscray_-_Dancing_Tiger_02.mp3'] );
 
   createP('Press "a" and "s" on your keyboard to play two different samples.<br> Trigger lots of sounds at once! Change mode to hear the difference');
 

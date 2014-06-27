@@ -13,13 +13,13 @@ var p;
 var frequencySpectrum = [];
 
 
+function preload() {
+  soundFile = new SoundFile( ['lucky_dragons_-_power_melody.mp3','lucky_dragons_-_power_melody.ogg'] );
+}
 
 function setup() {
   createCanvas(fftSize/2, 256);
   fill(255, 40, 255);
-
-  // Create SoundFile. Multiple filetypes for cross-browser compatability.
-  soundFile = new SoundFile('lucky_dragons_-_power_melody.mp3', 'lucky_dragons_-_power_melody.wav');
 
   // loop the sound file
   soundFile.loop();
@@ -29,10 +29,8 @@ function setup() {
    * Optional parameters are:
    * - Smoothing (between 0.01 and .99)
    * - fftSize (must be a power of two between 32 and 2048)
-   * - minimum value of each band in decibels
-   * - maximum value of each band in decibels
    */
-  fft = new FFT(.8, fftSize, -140, 0);
+  fft = new FFT(.8, fftSize);
 
   // update description text
   p = createP(description);

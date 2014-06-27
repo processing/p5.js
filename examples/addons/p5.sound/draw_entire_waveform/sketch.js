@@ -12,11 +12,13 @@ var soundFile;
 var p, peakCount;
 
 function preload() {
-  // create a SoundFile with a reference to this and a path to a sound file
-  soundFile = new SoundFile('lucky_dragons_-_power_melody.wav','lucky_dragons_-_power_melody.mp3');
+  // create a SoundFile with turnItUp as the callback
+  soundFile = new SoundFile( ['lucky_dragons_-_power_melody.mp3','lucky_dragons_-_power_melody.ogg'], turnItUp );
+}
 
-  // load the file with turnitup (a function defined below) as the callback
-  soundFile.load(turnItUp);
+// callback
+function turnItUp(sf) {
+  sf.loop();
 }
 
 function setup() {
@@ -72,9 +74,4 @@ function keyPressed() {
   if (key == 32) {
     soundFile.pause();
   }
-}
-
-// callback
-function turnItUp(sf) {
-  sf.loop();
 }
