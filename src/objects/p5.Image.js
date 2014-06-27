@@ -94,25 +94,25 @@ define(function (require) {
    * @param  {[type]} height height to display the image
    * @for Loading & Displaying
    */
-  p5.prototype.image = function(image, x, y, width, height) {
+  p5.prototype.image = function(img, x, y, width, height) {
     if (width === undefined){
-      width = image.width;
+      width = img.width;
     }
     if (height === undefined){
-      height = image.height;
+      height = img.height;
     }
     var vals = canvas.modeAdjust(x, y, width, height, this._imageMode);
     // tint the image if there is a tint
     if (this._tint) {
       this._curElement.context.drawImage(
-        this._getTintedImageCanvas(image),
+        this._getTintedImageCanvas(img),
         vals.x,
         vals.y,
         vals.w,
         vals.h);
     } else {
       this._curElement.context.drawImage(
-        image.canvas,
+        img.canvas,
         vals.x,
         vals.y,
         vals.w,

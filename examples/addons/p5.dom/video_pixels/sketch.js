@@ -10,10 +10,10 @@ function setup() {
 
 function draw() {
   background(150);
-  video(fingers,10,10, 200, 200);
-  loadPixels();
-  for (var i=0; i<pixels.length; i++) {
-    pixels[i][3] = random(255);
+  fingers.loadPixels();
+  for (var i=0; i<fingers.pixels.length/2; i++) {
+    fingers.pixels[i][3] = random(255);
   }
-  updatePixels();
+  fingers.updatePixels();
+  video(fingers,10,10, 200, 200);
 }
