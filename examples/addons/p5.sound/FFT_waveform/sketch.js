@@ -9,21 +9,20 @@ var fftSize = 1024;
 // Array of amplitude values (0-255) over time. Length will be 1/2 fftSize.
 var waveform = [];
 
+function preload() {
+  soundFile = loadSound( ['beat.ogg', 'beat.mp3'] );
+}
+
 function setup() {
   createCanvas(fftSize, 256);
   fill(255, 40, 255);
 
-
-  // instantiate using a .wav, with .mp3 fallback if .wav isn't supported
-  soundFile = new SoundFile('beat.wav', 'beat.mp3');
-
-  // loop the sound file
   soundFile.loop();
 
   // Create an FFT object. Give it smoothing and fftSize
   fft = new FFT(.99, fftSize);
 
-  h1 = createH1('press any key to pause');
+  p = createP('press any key to pause');
 }
 
 function draw() {

@@ -9,9 +9,8 @@ function setup() {
   createCanvas(400, 400);
   background(0);
 
-  // create a SoundFile with a reference to this and a path to a sound file
-  soundFile = new SoundFile('beatbox.wav');
-
+  // create a SoundFile
+  soundFile = loadSound( ['beatbox.ogg', 'beatbox.mp3'] );
 
   createP('Press any key to play the sound');
 }

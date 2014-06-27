@@ -309,23 +309,12 @@ define(function (require) {
       var userPreload = this.preload || window.preload; // look for "preload"
       var context = this._isGlobal ? window : this;
       if (userPreload) {
-        context.loadJSON = function (path) {
-          return context._preload('loadJSON', path);
-        };
-        context.loadStrings = function (path) {
-          return context._preload('loadStrings', path);
-        };
-        context.loadXML = function (path) {
-          return context._preload('loadXML', path);
-        };
-        context.loadImage = function (path) {
-          return context._preload('loadImage', path);
-        };
+        this._preloadFuncs.forEach(function(f) {
+          context[f] = function(path) {
+            return context._preload(f, path);
+          };
+        });
         userPreload();
-        context.loadJSON = p5.prototype.loadJSON;
-        context.loadStrings = p5.prototype.loadStrings;
-        context.loadXML = p5.prototype.loadXML;
-        context.loadImage = p5.prototype.loadImage;
         if (this._preloadCount === 0) {
           this._setup();
           this._runFrames();
@@ -406,6 +395,10 @@ define(function (require) {
       }
     }.bind(this);
 
+    this._registerPreloadFunc = function(func) {
+      this._preloadFuncs.push(func);
+    }.bind(this);
+
     // If the user has created a global setup or draw function,
     // assume "global" mode and make everything global (i.e. on the window)
     if (!sketch) {
@@ -476,6 +469,17 @@ define(function (require) {
       p5.prototype[c] = constants[c];
     }
   }
+
+  p5.prototype._preloadFuncs = [
+    'loadJSON',
+    'loadImage',
+    'loadStrings',
+    'loadXML'
+  ];
+  p5.prototype._registerPreloadFunc = function (func) {
+    p5.prototype._preloadFuncs.push(func);
+  }.bind(this);
+
   return p5;
 
 });
