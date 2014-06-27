@@ -10,18 +10,8 @@
    Base styles: opinionated defaults
    ========================================================================== */
 
-/*.example div {
-  position: relative !important;
-}
+/* HOMEPAGE */
 
-*/
-
-/*.example .cnv_div {
-  position: absolute !important;
-  top: 0px;
-  left: 150px;
-}
-*/
 #bg {
     position: absolute;
     top: 0;
@@ -33,6 +23,7 @@
     display: none;
 }
 
+/* EXAMPLES */
 .example .edit_space {
     position: absolute !important;
     top: 0;
@@ -57,6 +48,18 @@
 
 .example #right_button {
     left: 450px;
+}
+
+
+
+/* 
+  //////////////////////////////////////////////////
+    REFERENCE 
+  //////////////////////////////////////////////////
+*/
+
+section#reference h2 {
+    float:left;
 }
 
 /* EXAMPLES IN REF */
@@ -92,87 +95,86 @@
 }
 
 
-#search .twitter-typeahead {
-  width: 700px;
-  /*    .table-of-contents li {
-        display: inline-block;
-        *display: inline;
-        zoom: 1;
-      }
-  
-      .table-of-contents li a {
-        font-size: 16px;
-        color: #999;
-      }*/
-  /*    p + p {
-        margin: 30px 0 0 0;
-      }*/
-  /* example specific styles */
-  /* ----------------------- */ }
-  #search .twitter-typeahead .tt-dropdown-menu,
-  #search .twitter-typeahead .gist {
-    text-align: left; }
-  #search .twitter-typeahead .tt-hint {
-    color: #222; }
-  #search .twitter-typeahead .tt-dropdown-menu {
-    max-height: 200px;
-    overflow-y: auto;
-    width: 100%;
-    margin-top: 8px;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border: 1px solid rgba(0, 0, 0, 0.2); }
-  #search .twitter-typeahead .tt-suggestion {
-    padding: 3px 20px;
-    font-size: 18px;
-    line-height: 24px;
-    cursor: pointer; }
-  #search .twitter-typeahead .empty-message {
-    padding: 8px 20px 1px 20px;
-    font-size: 14px;
-    line-height: 24px; }
-  #search .twitter-typeahead .tt-suggestion.tt-cursor {
-    color: #333;
-    background-color: #eee; }
-  #search .twitter-typeahead .tt-suggestion p {
-    margin: 0; }
-    #search .twitter-typeahead .tt-suggestion p .small {
-      font-size: 12px;
-      color: #666; }
-  #search .twitter-typeahead .gist {
-    font-size: 14px; }
-  #search .twitter-typeahead #custom-templates .empty-message {
-    padding: 5px 10px;
-    text-align: center; }
-  #search .twitter-typeahead #multiple-datasets .league-name {
-    margin: 0 20px 5px 20px;
-    padding: 3px 0;
-    border-bottom: 1px solid #ccc; }
-  #search .twitter-typeahead #scrollable-dropdown-menu .tt-dropdown-menu {
-    max-height: 150px;
-    overflow-y: auto; }
-  #search .twitter-typeahead #rtl-support .tt-dropdown-menu {
-    text-align: right; }
-@media only screen and (max-width: 480px) {
-  #search {
-    /* Smartphone view: 1 tile */ }
-    #search .twitter-typeahead {
-      width: 100%; } }
-@media only screen and (max-width: 650px) and (min-width: 481px) {
-  #search {
-    /* Tablet view: 2 tiles */ }
-    #search .twitter-typeahead {
-      width: 100%; } }
-@media only screen and (max-width: 1050px) and (min-width: 651px) {
-  #search {
-    /* Small desktop / ipad view: 3 tiles */ }
-    #search .twitter-typeahead {
-      width: 500px; } }
-@media only screen and (max-width: 1290px) and (min-width: 1051px) {
-  #search {
-    /* Medium desktop: 4 tiles */ }
-    #search .twitter-typeahead {
-      width: 600px; } }
+#search {
+    float:right;
+    margin: 0.5em 0 0 0;
+}
+#search input, #search input[type="password"], #search input[type="search"]
+ {
+    border: 1px solid rgba(200, 200, 200, .15);
+    font-size: 2.25em;
+    font-family: "AvenirNextLTW01-Medium";
+    width:7.70em;
+}
+
+#search ::-webkit-input-placeholder,
+#search .twitter-typeahead .tt-hint {
+   color: #ccc;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   color: #ccc;  
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   color: #ccc;  
+}
+
+:-ms-input-placeholder {  
+   color: #ccc;  
+}
+
+#search input:focus {
+    transition: width 0.65s ease;
+    width:9.75em;
+    color:#ED225D; 
+    outline-color:#3796D1;
+    outline-width: 1px;
+    outline-style: solid;
+}
+
+#search .twitter-typeahead .tt-dropdown-menu {
+background-color: #fff;
+border: 1px solid rgba(0, 0, 0, 0.2);
+padding: 0.5em;
+max-height: 200px;
+overflow-y: auto; 
+
+font-size: 1em;
+line-height: 1.4em;
+}
+
+#search .twitter-typeahead .tt-suggestion {
+padding: 3px 20px;
+line-height: 24px;
+cursor: pointer; }
+
+#search .twitter-typeahead .empty-message {
+padding: 8px 20px 1px 20px;
+font-size: 14px;
+line-height: 24px; }
+
+#search .twitter-typeahead .tt-suggestion.tt-cursor {
+color: #333;
+background-color: #eee; }
+
+#search .twitter-typeahead .tt-suggestion p {
+margin: 0; }
+#search .twitter-typeahead .tt-suggestion p .small {
+font-size: 12px;
+color: #666;  }
+
+
+
+#collection-list-nav {
+    width:100%;
+    list-style-type: none;
+    clear:both;
+    margin:0 0 0.5em 0;
+    padding:0;
+    border-bottom: 1px dashed rgba(0,0,0,.2)
+}
+
 
 
 html,
@@ -752,7 +754,7 @@ footer {
         /*content:" Â»";*/
         }
 
-    #menu li:nth-child(7) {
+    #menu li:nth-child(8) {
         margin-top:3em;
         padding-top: 0.5em;
         /*border-top: 0.06em solid rgba(51,51,51,0.25);*/
@@ -788,7 +790,8 @@ footer {
         transform: rotate(-1deg);
     }
 
-    #getting-started-page #asterisk-design-element {
+    #getting-started-page #asterisk-design-element,
+    #libraries-page #asterisk-design-element {
     
         bottom:-19%;
         right:-16%;

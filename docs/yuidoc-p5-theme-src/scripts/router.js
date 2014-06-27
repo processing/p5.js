@@ -17,7 +17,8 @@ define([
       'list:group': 'list',
       'search': 'search',
       'file/:filepath/:line': 'file',
-      'get/:searchClass(/:searchItem)': 'get'
+      'get/:searchClass(/:searchItem)': 'get',
+      'libraries/:lib': 'library'
     },
     /**
      * Whether the json API data was loaded.
@@ -131,6 +132,18 @@ define([
       this.init(function() {
         App.menuView.update(collection);
         App.listView.show(collection);
+      });
+    },
+    /**
+     * List items in a library.
+     * @param {string} collection The name of the collection to list.
+     */
+    library: function(collection) {
+
+
+      this.init(function() {
+        App.menuView.update(collection);
+        App.libraryView.show(collection);
       });
     },
     /**

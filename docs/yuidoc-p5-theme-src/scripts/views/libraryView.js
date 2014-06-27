@@ -3,78 +3,59 @@ define([
   'backbone',
   'App',
   // Templates
-  'text!tpl/list.html'
-], function (_, Backbone, App, listTpl) {
+  'text!tpl/library.html'
+], function (_, Backbone, App, libraryTpl) {
 
-  var listView = Backbone.View.extend({
+  var libraryView = Backbone.View.extend({
     el: '#list',
     events: {},
     /**
      * Init.
      */
     init: function () {
-      this.listTpl = _.template(listTpl);
+      this.libraryTpl = _.template(libraryTpl);
 
       return this;
     },
     /**
      * Render the list.
      */
-    render: function (items, listCollection) {
-      if (items && listCollection) {
+    render: function (m, listCollection) {
+      if (m && listCollection) {
         var self = this;
 
         // Render items and group them by module
         // module === group
         this.groups = {};
-        _.each(items, function (item, i) {
-          if (item.file.indexOf('addons') === -1) { //addons don't get displayed on main page
+        _.each(m.items, function (item, i) {
+          var module = item.module || '_';
+          var group = item.class || '_';
+          var hash = App.router.getHash(item);
 
-            var item = items[i];
-            var group = item.module || '_';
-            var subgroup = item.class || '_';
-            var hash = App.router.getHash(item);
-
-            // Create a group list
-            if (!self.groups[group]) {
-              self.groups[group] = {
-                name: group.replace('_', '&nbsp;'),
-                subgroups: {}
-              };
-            }
-
-            // Create a subgroup list
-            if (!self.groups[group].subgroups[subgroup]) {
-              self.groups[group].subgroups[subgroup] = {
-                name: subgroup.replace('_', '&nbsp;'),
-                items: []
-              };
-            }
-
-            self.groups[group].subgroups[subgroup].items.push(item);
+          // Create a group list
+          if (!self.groups[group]) {
+            self.groups[group] = {
+              name: group.replace('_', '&nbsp;'),
+              items: []
+            };
           }
+
+
+          self.groups[group].items.push(item);
         });
 
         // Sort groups by name A-Z
         _.sortBy(self.groups, this.sortByName);
 
-        // Sort items by name A-Z
-        _.each(self.groups, function (group) {
-          _.sortBy(group.subgroups, this.sortByName);
-          _.each(group.subgroups, function (subgroup) {
-            _.sortBy(subgroup.items, this.sortByName);
-          });
-        });
-
         // Put the <li> items html into the list <ul>
-        var listHtml = self.listTpl({
+        var libraryHtml = self.libraryTpl({
           'title': self.capitalizeFirst(listCollection),
-          'groups': self.groups,
-          'listCollection': listCollection
+          'module': m.module,
+          'groups': self.groups
         });
 
         // Render the view
-        this.$el.html(listHtml);
+        this.$el.html(libraryHtml);
       }
 
       return this;
@@ -118,6 +99,6 @@ define([
 
   });
 
-  return listView;
+  return libraryView;
 
 });

@@ -19,7 +19,7 @@ require([
   'App'], function(_, Backbone, App) {
   
   // Set collections
-  App.collections = ['allItems', 'classes', 'events', 'methods', 'properties'];
+  App.collections = ['allItems', 'classes', 'events', 'methods', 'properties', 'sound'];
 
   // Get json API data
   $.getJSON("data.json", function(data) {
@@ -29,7 +29,19 @@ require([
     App.properties = [];
     App.events = [];
     App.allItems = [];
+    App.sound = { items: [] };
     App.project = data.project;
+
+
+    var modules = data.modules;
+
+    // Get class items (methods, properties, events)
+    _.each(modules, function(m, idx, array) {
+      if (m.name == "p5.sound") {
+        App.sound.module = m;
+      }
+    });
+
 
     var items = data.classitems;
     var classes = data.classes;
@@ -52,6 +64,11 @@ require([
         } else if (el.itemtype === "event") {
           App.events.push(el);
           App.allItems.push(el);
+        } 
+
+        // libraries
+        if (el.module === "p5.sound") {
+          App.sound.items.push(el);
         }
       }
     });

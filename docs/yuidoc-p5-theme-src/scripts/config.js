@@ -28,6 +28,7 @@ var require = {
     'searchView': 'views/searchView',
     'pageView': 'views/pageView',
     'fileView': 'views/fileView',
-    'menuView': 'views/menuView'
+    'menuView': 'views/menuView',
+    'libraryView': 'views/libraryView'
   }
 };

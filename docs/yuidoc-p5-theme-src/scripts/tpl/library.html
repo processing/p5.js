@@ -1,0 +1,24 @@
+<!-- <div class="page-header">
+  <h1>
+    <%=title%>
+  </h1>
+</div> -->
+
+<h3><%= module.name %></h3>
+
+
+<p><%= module.description %></p>
+
+
+<% _.each(groups, function(group){ %>
+  <div>
+  <% if (group.name !== module.name) { %>
+    <strong><%=group.name%></strong> 
+  <% } %>
+  <% _.each(group.items, function(item) { %>
+    <br>
+    <a href="<%=item.hash%>"><%=item.name%><% if (item.itemtype === 'method') { %>()<%}%></a>
+  <% }); %>
+  <br><br>
+  </div>
+<% }); %>
