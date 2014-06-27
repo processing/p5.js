@@ -10,14 +10,13 @@ var fftSize = 1024;
 var waveform = [];
 
 function preload() {
-  soundFile = new SoundFile( ['beat.ogg', 'beat.mp3'] );
+  soundFile = loadSound( ['beat.ogg', 'beat.mp3'] );
 }
 
 function setup() {
   createCanvas(fftSize, 256);
   fill(255, 40, 255);
 
-  // loop the sound file
   soundFile.loop();
 
   // Create an FFT object. Give it smoothing and fftSize

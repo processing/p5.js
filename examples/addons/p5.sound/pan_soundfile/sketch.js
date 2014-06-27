@@ -8,7 +8,7 @@ var soundFile;
 
 function preload() {
   // Create SoundFile. Multiple filetypes for cross-browser compatability.
-  soundFile = new SoundFile( ['drum.ogg', 'drum.wav'] );
+  soundFile = loadSound( ['drum.ogg', 'drum.wav'] );
 }
 
 function setup() {

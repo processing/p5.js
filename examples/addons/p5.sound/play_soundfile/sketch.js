@@ -10,7 +10,7 @@ function setup() {
   background(0);
 
   // create a SoundFile
-  soundFile = new SoundFile( ['beatbox.ogg', 'beatbox.mp3'] );
+  soundFile = loadSound( ['beatbox.ogg', 'beatbox.mp3'] );
 
   createP('Press any key to play the sound');
 }
