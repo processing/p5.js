@@ -8,13 +8,14 @@ define(function(require) {
 
   p5.Element = function(elt, pInst) {
     this.elt = elt;
-    this.pInst = pInst;
+    this._pInst = pInst;
+    this._events = {};
     this.width = this.elt.offsetWidth;
     this.height = this.elt.offsetHeight;
-    if (elt instanceof HTMLCanvasElement && this.pInst) {
+    if (elt instanceof HTMLCanvasElement && this._pInst) {
       this.context = elt.getContext('2d');
       // for pixel method sharing with pimage
-      this.pInst._setProperty('canvas', elt);
+      this._pInst._setProperty('canvas', elt);
     }
   };
 
@@ -140,9 +141,7 @@ define(function(require) {
     var _this = ctx;
     var f = function (e) { fxn(e, _this); };
     ctx.elt.addEventListener(ev, f, false);
-    if (ctx.pInst) {
-      ctx.pInst._events[ev].push([ctx.elt, f]);
-    }
+    ctx._events[ev] = f;
   }
 
   /**

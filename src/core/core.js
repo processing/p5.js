@@ -225,12 +225,15 @@ define(function (require) {
           this._loop = false;
         }
 
-        // @TODO unregister events
+        // unregister events sketch-wide
         for (var ev in this._events) {
-          var pairs = this._events[ev];
-          for (var i=0; i<pairs.length; i++) {
-            pairs[i][0].removeEventListener(ev, pairs[i][1]);
-          }
+          window.removeEventListener(ev, this._events[ev]);
+        }
+
+        // unregister events canvas-specific
+        for (var cev in this._curElement._events) {
+          var f = this._curElement._events[cev];
+          this._curElement.elt.removeEventListener(cev, f);
         }
 
         // remove window bound properties and methods
@@ -254,7 +257,7 @@ define(function (require) {
         elt.parentNode.removeChild(elt);
 
       }
-    };
+    }.bind(this);
     
     //////////////////////////////////////////////
     // PRIVATE p5 PROPERTIES AND METHODS
@@ -274,19 +277,19 @@ define(function (require) {
       height: 100
     };
     this._events = { // keep track of user-events for unregistering later
-      'mousemove':[],
-      'mousedown':[],
-      'mouseup':[],
-      'click':[],
-      'mousewheel':[],
-      'mouseover':[],
-      'mouseout': [],
-      'keydown':[],
-      'keyup':[],
-      'keypress':[],
-      'touchstart':[],
-      'touchmove':[],
-      'touchend':[]
+      'mousemove': null,
+      'mousedown': null,
+      'mouseup': null,
+      'click': null,
+      'mousewheel': null,
+      'mouseover': null,
+      'mouseout': null,
+      'keydown': null,
+      'keyup': null,
+      'keypress': null,
+      'touchstart': null,
+      'touchmove': null,
+      'touchend': null
     };
 
     this._start = function () {
@@ -450,7 +453,7 @@ define(function (require) {
       if (f) {
         var m = f.bind(this);
         window.addEventListener(e, m);
-        this._events[e].push([window, m]);
+        this._events[e] = m;
       }
     }
 
