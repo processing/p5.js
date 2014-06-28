@@ -19,7 +19,7 @@ require([
   'App'], function(_, Backbone, App) {
   
   // Set collections
-  App.collections = ['allItems', 'classes', 'events', 'methods', 'properties'];
+  App.collections = ['allItems', 'classes', 'events', 'methods', 'properties', 'sound'];
 
   // Get json API data
   $.getJSON("data.json", function(data) {
@@ -29,10 +29,29 @@ require([
     App.properties = [];
     App.events = [];
     App.allItems = [];
+    App.sound = { items: [] };
+    App.modules = [];
     App.project = data.project;
+
+
+    var modules = data.modules;
+
+    // Get class items (methods, properties, events)
+    _.each(modules, function(m, idx, array) {
+      App.modules.push(m);
+      if (m.name == "p5.sound") {
+        App.sound.module = m;
+      }
+    });
+
 
     var items = data.classitems;
     var classes = data.classes;
+
+    // Get classes
+    _.each(classes, function(el, idx, array) {
+      App.classes.push(el);
+    });
 
     // Get class items (methods, properties, events)
     _.each(items, function(el, idx, array) {
@@ -52,18 +71,19 @@ require([
         } else if (el.itemtype === "event") {
           App.events.push(el);
           App.allItems.push(el);
+        } 
+
+        // libraries
+        if (el.module === "p5.sound") {
+          App.sound.items.push(el);
         }
       }
     });
 
-    //console.log(App.data);
-
-    // Get classes
-    _.each(classes, function(el, idx, array) {
-      App.classes.push(el);
-      // App.allItems.push(el);
+    _.each(App.classes, function(c, idx) {
+      c.items = _.filter(App.allItems, function(it){ return it.class === c.name; });
     });
-    
+
     require(['router']);
   });
 });

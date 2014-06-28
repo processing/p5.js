@@ -1,12 +1,26 @@
-<!--  <div class="description"> 
-    <%=description%>
-  </div>
-  
-<div class="meta">File: <strong><a href='#file/<%=urlencodedfile%>/<%=line%>'><%=file%>:<%=line%></a></strong></div>-->
 
-  <% if (isConstructor) { %>
-  <div class="constructor">
-    <!--<h2>Constructor</h2>--> 
-    <%=constructor%>
-  </div>
-  <% } %>
+<% if (isConstructor) { %>
+<div class="constructor">
+  <!--<h2>Constructor</h2>--> 
+  <%=constructor%>
+</div>
+<% } %>
+
+
+<p>
+  <strong>Fields</strong><br>
+  <% var fields = _.filter(things, function(item) { return item.itemtype === 'property' }); %>
+  <% _.each(fields, function(item) { %>
+    <a href="<%=item.hash%>"><%=item.name%></a>: <%= item.description %>
+    <br>
+  <% }); %>
+</p>
+
+<p>
+  <strong>Methods</strong><br>
+  <% var methods = _.filter(things, function(item) { return item.itemtype === 'method' }); %>
+  <% _.each(methods, function(item) { %>
+    <a href="<%=item.hash%>"><%=item.name%><% if (item.itemtype === 'method') { %>()<%}%></a>: <%= item.description %>
+    <br>
+  <% }); %>
+</p>

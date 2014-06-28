@@ -15,6 +15,8 @@ define(function (require) {
   require('data.string_functions');
   require('dom.manipulate');
   require('environment');
+  require('image.image');
+  require('image.loading_displaying');
   require('image.pixels');
   require('input.files');
   require('input.keyboard');

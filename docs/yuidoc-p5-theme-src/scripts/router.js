@@ -11,13 +11,10 @@ define([
     routes: {
       '': 'list',
       'classes': 'list',
-      'methods': 'list',
-      'properties': 'list',
-      'events': 'list',
-      'list:group': 'list',
       'search': 'search',
       'file/:filepath/:line': 'file',
-      'get/:searchClass(/:searchItem)': 'get'
+      'get/:searchClass(/:searchItem)': 'get',
+      'libraries/:lib': 'library'
     },
     /**
      * Whether the json API data was loaded.
@@ -69,6 +66,8 @@ define([
       var self = this;
       this.init(function() {
         var item = self.getItem(searchClass, searchItem);
+
+        App.menuView.hide();
 
         if (item) {
           App.itemView.show(item);
@@ -129,8 +128,19 @@ define([
       }
 
       this.init(function() {
+        App.menuView.show(collection);
         App.menuView.update(collection);
         App.listView.show(collection);
+      });
+    },
+    /**
+     * Display information for a library.
+     * @param {string} collection The name of the collection to list.
+     */
+    library: function(collection) {
+      this.init(function() {
+        App.menuView.hide();
+        App.libraryView.show(collection);
       });
     },
     /**
@@ -138,6 +148,7 @@ define([
      */
     search: function() {
       this.init(function() {
+        App.menuView.hide();
         App.pageView.hideContentViews();
       });
     },
@@ -148,6 +159,7 @@ define([
      */
     file: function(filepath, line) {
       this.init(function() {
+        App.menuView.hide();
         App.fileView.show(filepath, line);
       });
     },

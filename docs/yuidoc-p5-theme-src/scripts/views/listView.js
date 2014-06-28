@@ -28,28 +28,37 @@ define([
         // module === group
         this.groups = {};
         _.each(items, function (item, i) {
-          var item = items[i];
-          var group = item.module || '_';
-          var subgroup = item.class || '_';
-          var hash = App.router.getHash(item);
+          if (item.file.indexOf('addons') === -1) { //addons don't get displayed on main page
 
-          // Create a group list
-          if (!self.groups[group]) {
-            self.groups[group] = {
-              name: group.replace('_', '&nbsp;'),
-              subgroups: {}
-            };
+            var group = item.module || '_';
+            var subgroup = item.class || '_';
+            var hash = App.router.getHash(item);
+
+            // Create a group list
+            if (!self.groups[group]) {
+              self.groups[group] = {
+                name: group.replace('_', '&nbsp;'),
+                subgroups: {}
+              };
+            }
+
+            // Create a subgroup list
+            if (!self.groups[group].subgroups[subgroup]) {
+              self.groups[group].subgroups[subgroup] = {
+                name: subgroup.replace('_', '&nbsp;'),
+                items: []
+              };
+            }
+
+            if (item.file.indexOf('objects') === -1) {
+              self.groups[group].subgroups[subgroup].items.push(item);
+            } else {
+              var hash = item.hash;
+              var ind = hash.lastIndexOf('/');
+              hash = hash.substring(0, ind);
+              self.groups[group].subgroups[subgroup].hash = hash;
+            }
           }
-
-          // Create a subgroup list
-          if (!self.groups[group].subgroups[subgroup]) {
-            self.groups[group].subgroups[subgroup] = {
-              name: subgroup.replace('_', '&nbsp;'),
-              items: []
-            };
-          }
-
-          self.groups[group].subgroups[subgroup].items.push(item);
         });
 
         // Sort groups by name A-Z

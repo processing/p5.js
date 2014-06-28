@@ -1,0 +1,14 @@
+
+<% var i=0; %>
+<% var max=Math.ceil(groups.length/4); %>
+
+<% _.each(groups, function(group){ %>
+  <% if (i%max === 0) { %>
+    <dl>
+  <% } %>
+  <dd><a href="#group-<%=group%>"><%=group%></a></dd>
+  <% if (i%max === 3) { %>
+    </dl>
+  <% } %>
+  <% i++ %>
+<% }); %>
