@@ -11,10 +11,11 @@ define([
   'text!tpl/method.handlebars',
   'text!tpl/event.handlebars',
   'text!tpl/property.handlebars',
+  'text!tpl/itemEnd.handlebars',
   //'text!tpl/class.handlebars',
   // Tools
   'prettify'
-], function (_, Backbone, App, Handlebars, itemTpl, classTpl, methodTpl, eventTpl, propertyTpl) {
+], function (_, Backbone, App, Handlebars, itemTpl, classTpl, methodTpl, eventTpl, propertyTpl, endTpl) {
 
   'use strict';
 
@@ -42,7 +43,7 @@ define([
       this.methodTpl = Handlebars.compile(methodTpl);
       this.eventTpl = Handlebars.compile(eventTpl);
       this.propertyTpl = Handlebars.compile(propertyTpl);
-      //this.classTpl = Handlebars.compile(classTpl);
+      this.endTpl = Handlebars.compile(endTpl);
 
       return this;
     },
@@ -73,6 +74,10 @@ define([
             var constructor = this.methodTpl(cleanItem);
             cleanItem.constructor = constructor;
           }
+
+          var contents = _.find(App.classes, function(c){ return c.name === cleanItem.name; });
+          cleanItem.things = contents.items;
+
           itemHtml += this.classTpl(cleanItem);
         } else if (item.itemtype === 'method') {
           itemHtml += this.methodTpl(cleanItem);
@@ -81,6 +86,8 @@ define([
         } else if (item.itemtype === 'property') {
           itemHtml += this.propertyTpl(cleanItem);
         }
+
+        itemHtml += this.endTpl(cleanItem);
 
         // Insert the view in the dom
         this.$el.html(itemHtml);

@@ -11,10 +11,6 @@ define([
     routes: {
       '': 'list',
       'classes': 'list',
-      'methods': 'list',
-      'properties': 'list',
-      'events': 'list',
-      'list:group': 'list',
       'search': 'search',
       'file/:filepath/:line': 'file',
       'get/:searchClass(/:searchItem)': 'get',
@@ -135,12 +131,10 @@ define([
       });
     },
     /**
-     * List items in a library.
+     * Display information for a library.
      * @param {string} collection The name of the collection to list.
      */
     library: function(collection) {
-
-
       this.init(function() {
         App.menuView.update(collection);
         App.libraryView.show(collection);

@@ -11,7 +11,11 @@
   <h3 class="group-name"><%=group.name%></h3>
   <% _.each(group.subgroups, function(subgroup, ind) { %>
     <% if (subgroup.name !== group.name) { %>
-      <strong><%=subgroup.name%></strong>
+      <% if (subgroup.hash) { %>
+        <a href="<%=subgroup.hash%>"><strong><%=subgroup.name%></strong></a>
+      <% } else { %>
+        <strong><%=subgroup.name%></strong>
+      <% } %>
     <% } %>
     <% _.each(subgroup.items, function(item) { %>
       <br>

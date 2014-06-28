@@ -46,6 +46,11 @@ require([
     var items = data.classitems;
     var classes = data.classes;
 
+    // Get classes
+    _.each(classes, function(el, idx, array) {
+      App.classes.push(el);
+    });
+
     // Get class items (methods, properties, events)
     _.each(items, function(el, idx, array) {
 
@@ -73,14 +78,10 @@ require([
       }
     });
 
-    //console.log(App.data);
-
-    // Get classes
-    _.each(classes, function(el, idx, array) {
-      App.classes.push(el);
-      // App.allItems.push(el);
+    _.each(App.classes, function(c, idx) {
+      c.items = _.filter(App.allItems, function(it){ return it.class === c.name; });
     });
-    
+
     require(['router']);
   });
 });

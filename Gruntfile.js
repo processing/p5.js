@@ -84,6 +84,8 @@ module.exports = function(grunt) {
             'data.string_functions': 'src/data/string_functions',
             'dom.manipulate': 'src/dom/manipulate',
             'environment': 'src/environment/environment',
+            'image.image': 'src/image/image',
+            'image.loading_displaying': 'src/image/loading_displaying',
             'image.pixels': 'src/image/pixels',
             'input.files': 'src/input/files',
             'input.keyboard': 'src/input/keyboard',

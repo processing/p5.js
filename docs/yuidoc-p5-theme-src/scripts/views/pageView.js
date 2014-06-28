@@ -41,7 +41,7 @@ define([
         // Add the item view to the views array
         App.contentViews.push(App.itemView);
       }
-      
+
       // File view
       if (!App.fileView) {
         App.fileView = new fileView();
@@ -58,7 +58,7 @@ define([
         App.contentViews.push(App.listView);
       }
       
-      // List view
+      // Libary view
       if (!App.libraryView) {
         App.libraryView = new libraryView();
         App.libraryView.init().render();

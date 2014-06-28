@@ -51,7 +51,14 @@ define([
               };
             }
 
-            self.groups[group].subgroups[subgroup].items.push(item);
+            if (item.file.indexOf('objects') === -1) {
+              self.groups[group].subgroups[subgroup].items.push(item);
+            } else {
+              var hash = item.hash;
+              var ind = hash.lastIndexOf('/');
+              hash = hash.substring(0, ind);
+              self.groups[group].subgroups[subgroup].hash = hash;
+            }
           }
         });
 
