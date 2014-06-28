@@ -30,6 +30,7 @@ require([
     App.events = [];
     App.allItems = [];
     App.sound = { items: [] };
+    App.modules = [];
     App.project = data.project;
 
 
@@ -37,6 +38,7 @@ require([
 
     // Get class items (methods, properties, events)
     _.each(modules, function(m, idx, array) {
+      App.modules.push(m);
       if (m.name == "p5.sound") {
         App.sound.module = m;
       }

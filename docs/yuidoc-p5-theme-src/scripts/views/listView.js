@@ -30,7 +30,6 @@ define([
         _.each(items, function (item, i) {
           if (item.file.indexOf('addons') === -1) { //addons don't get displayed on main page
 
-            var item = items[i];
             var group = item.module || '_';
             var subgroup = item.class || '_';
             var hash = App.router.getHash(item);

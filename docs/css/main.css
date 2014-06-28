@@ -168,13 +168,76 @@ color: #666;  }
 
 #collection-list-nav {
     width:100%;
+    height:8.25em;
     list-style-type: none;
+    font-family: "AvenirNextLTW01-Medium";
     clear:both;
     margin:0 0 0.5em 0;
     padding:0;
     border-bottom: 1px dashed rgba(0,0,0,.2)
 }
 
+#collection-list {
+    margin: 0;
+}
+
+#collection-list-nav dl, 
+    .reference-group dl {
+    float: left;
+    width:7.68em;
+    margin:0 1.75em 0 0;
+}
+
+#collection-list-nav dl:nth-child(4), 
+    .reference-group dl:nth-child(4) {
+    margin-right:0;
+}
+
+.reference-group dl:nth-child(n+5) {
+ margin-bottom:1em;
+}
+
+#collection-list-nav dd, 
+    .reference-group dd {
+    margin:0;
+}
+
+.group-name {
+    font-size: 1em;
+}
+
+div.reference-group {
+    margin: 1em 0;
+    padding: 0 0 0.5em 0;
+}
+
+div.reference-group:nth-child(1) {
+    margin: 0 0 1em 0;
+}
+
+div.reference-group:nth-child(1) h4 {
+    margin-top: 0.5em;
+}
+
+div.reference-group:nth-child(even) {
+    background-color: rgba(69, 142, 209, 0.02);
+}
+
+div.reference-group:nth-child(even) h4 {
+    margin-top: 0.25em;
+}
+
+.item {
+    display:block; 
+    width:100%; 
+}
+
+.description {
+    clear:both;
+    display:block; 
+    width:100%; 
+
+}
 
 
 html,

@@ -67,6 +67,8 @@ define([
       this.init(function() {
         var item = self.getItem(searchClass, searchItem);
 
+        App.menuView.hide();
+
         if (item) {
           App.itemView.show(item);
         } else {
@@ -126,6 +128,7 @@ define([
       }
 
       this.init(function() {
+        App.menuView.show(collection);
         App.menuView.update(collection);
         App.listView.show(collection);
       });
@@ -136,7 +139,7 @@ define([
      */
     library: function(collection) {
       this.init(function() {
-        App.menuView.update(collection);
+        App.menuView.hide();
         App.libraryView.show(collection);
       });
     },
@@ -145,6 +148,7 @@ define([
      */
     search: function() {
       this.init(function() {
+        App.menuView.hide();
         App.pageView.hideContentViews();
       });
     },
@@ -155,6 +159,7 @@ define([
      */
     file: function(filepath, line) {
       this.init(function() {
+        App.menuView.hide();
         App.fileView.show(filepath, line);
       });
     },
