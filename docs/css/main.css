@@ -239,7 +239,7 @@ div.reference-group:nth-child(even) h4 {
 
 }
 
-.item-wrapper {
+.item-wrapper, .list-wrapper {
     float: left;
 }
 
