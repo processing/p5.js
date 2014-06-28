@@ -13,7 +13,7 @@
 <% _.each(groups, function(group){ %>
   <div>
   <% if (group.name !== module.name) { %>
-    <strong><%=group.name%></strong> 
+    <a href="<%=group.hash%>"><strong><%=group.name%>()</strong></a>
   <% } %>
   <% _.each(group.items, function(item) { %>
     <br>

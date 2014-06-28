@@ -32,10 +32,14 @@ define([
           var group = item.class || '_';
           var hash = App.router.getHash(item);
 
+          var ind = hash.lastIndexOf('/');
+          hash = hash.substring(0, ind);
+
           // Create a group list
           if (!self.groups[group]) {
             self.groups[group] = {
               name: group.replace('_', '&nbsp;'),
+              hash: hash,
               items: []
             };
           }
