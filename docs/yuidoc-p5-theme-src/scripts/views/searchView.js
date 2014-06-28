@@ -49,7 +49,7 @@ define([
         'displayKey': 'name',
         'minLength': 2,
         //'highlight': true,
-        'source': self.substringMatcher(App.allItems),
+        'source': self.substringMatcher(App.classesAndItems),
         'templates': {
           'empty': '<p class="empty-message">Unable to find any item that match the current query</p>',
           'suggestion': _.template(suggestionTpl)

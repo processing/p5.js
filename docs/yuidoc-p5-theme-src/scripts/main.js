@@ -32,6 +32,7 @@ require([
     App.sound = { items: [] };
     App.modules = [];
     App.project = data.project;
+    App.classesAndItems = [];
 
 
     var modules = data.modules;
@@ -77,12 +78,21 @@ require([
         if (el.module === "p5.sound") {
           App.sound.items.push(el);
         }
+        App.classesAndItems.push(el);
       }
     });
 
     _.each(App.classes, function(c, idx) {
       c.items = _.filter(App.allItems, function(it){ return it.class === c.name; });
     });
+
+    _.each(App.classes, function(c, idx) {
+      if (c.module == 'p5.sound' || c.name.indexOf('p5') !== -1) {
+        App.classesAndItems.push(c);
+      }
+    });
+
+
 
     require(['router']);
   });
