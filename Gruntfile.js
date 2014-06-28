@@ -92,6 +92,7 @@ module.exports = function(grunt) {
             'input.mouse': 'src/input/mouse',
             'input.time_date': 'src/input/time_date',
             'input.touch': 'src/input/touch',
+            'math.math': 'src/math/math',
             'math.calculation': 'src/math/calculation',
             'math.random': 'src/math/random',
             'math.noise': 'src/math/noise',

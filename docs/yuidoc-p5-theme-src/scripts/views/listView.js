@@ -32,6 +32,10 @@ define([
 
             var group = item.module || '_';
             var subgroup = item.class || '_';
+            if (item.file.indexOf('objects') !== -1 ||
+              group === subgroup) {
+              subgroup = '0';
+            }
             var hash = App.router.getHash(item);
 
             // Create a group list
@@ -53,10 +57,18 @@ define([
             if (item.file.indexOf('objects') === -1) {
               self.groups[group].subgroups[subgroup].items.push(item);
             } else {
-              var hash = item.hash;
-              var ind = hash.lastIndexOf('/');
-              hash = hash.substring(0, ind);
-              self.groups[group].subgroups[subgroup].hash = hash;
+              var found = _.find(self.groups[group].subgroups[subgroup].items, 
+                function(i){ return i.name == item.class; });
+
+              if (!found) {
+                var hash = item.hash;
+                var ind = hash.lastIndexOf('/');
+                hash = hash.substring(0, ind);
+                self.groups[group].subgroups[subgroup].items.push({
+                  name: item.class,
+                  hash: hash
+                });
+              }
             }
           }
         });
@@ -67,9 +79,6 @@ define([
         // Sort items by name A-Z
         _.each(self.groups, function (group) {
           _.sortBy(group.subgroups, this.sortByName);
-          _.each(group.subgroups, function (subgroup) {
-            _.sortBy(subgroup.items, this.sortByName);
-          });
         });
 
         // Put the <li> items html into the list <ul>

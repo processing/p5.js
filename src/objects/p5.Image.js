@@ -33,8 +33,8 @@ define(function (require) {
    * Before using the pixels[] array, be sure to use the loadPixels() method on
    * the image to make sure that the pixel data is properly loaded.
    * 
-   * @constructor
    * @class p5.Image
+   * @constructor
    * @param {Number} width 
    * @param {Number} height 
    * @param {Object} pInst An instance of a p5 sketch.

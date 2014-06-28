@@ -23,6 +23,7 @@ define(function (require) {
   require('input.mouse');
   require('input.time_date');
   require('input.touch');
+  require('math.math');
   require('math.calculation');
   require('math.random');
   require('math.noise');
