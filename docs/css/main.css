@@ -239,6 +239,10 @@ div.reference-group:nth-child(even) h4 {
 
 }
 
+.item-wrapper {
+    float: left;
+}
+
 
 html,
 button,
