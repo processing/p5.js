@@ -1,6 +1,7 @@
 /**
  * @module Color
- * @for Creating & Reading
+ * @submodule Creating & Reading
+ * @for p5
  * @requires core
  */
 define(function (require) {

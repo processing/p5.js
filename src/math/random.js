@@ -1,6 +1,7 @@
 /**
  * @module Math
- * @for Random
+ * @submodule Random
+ * @for p5
  * @requires core
  */
 define(function (require) {

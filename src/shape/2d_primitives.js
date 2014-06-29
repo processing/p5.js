@@ -1,6 +1,7 @@
 /**
  * @module Shape
- * @for 2D Primitives
+ * @submodule 2D Primitives
+ * @for p5
  * @requires core
  * @requires canvas
  * @requires constants

@@ -54,19 +54,14 @@ require([
 
     // Get classes
     _.each(classes, function(c, idx, array) {
-      if (c.module === 'p5.sound' || c.module === 'p5.dom' || c.name.indexOf('p5') !== -1) {
+      //if (c.module === 'p5.sound' || c.module === 'p5.dom' || c.name.indexOf('p5') !== -1) {
         App.classes.push(c);
-      }
+      //}
     });
 
     // Get class items (methods, properties, events)
     _.each(items, function(el, idx, array) {
 
-      var pieces = el.class.split(':');
-      if (pieces.length > 1) {
-        el.module = pieces[0];
-        el.class = pieces[1];
-      }
       if (el.itemtype) {
         if (el.itemtype === "method") {
           App.methods.push(el);

@@ -1,6 +1,7 @@
 /**
  * @module Environment
- * @for Environment
+ * @submodule Environment
+ * @for p5
  * @requires core
  * @requires constants
  */
@@ -43,7 +44,6 @@ define(function(require) {
    * focused and "false" if not.
    *
    * @property focused
-   * @for Environment:Environment
    * @example
    *   <div><code>
    *     if (focused) {  // or "if (focused === true)"

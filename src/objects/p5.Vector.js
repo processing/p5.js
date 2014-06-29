@@ -1,6 +1,6 @@
 /**
  * @module Math
- * @for p5.Vector
+ * @submodule Math
  * @requires constants
  */
 define(function (require) {

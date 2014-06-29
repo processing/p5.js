@@ -1,6 +1,7 @@
 /**
  * @module Color
- * @for Setting
+ * @submodule Setting
+ * @for p5
  * @requires core
  * @requires constants
  */

@@ -1,6 +1,7 @@
 /**
  * @module Output
- * @for Text Area
+ * @submodule Text Area
+ * @for p5
  * @requires core
  */
 define(function (require) {

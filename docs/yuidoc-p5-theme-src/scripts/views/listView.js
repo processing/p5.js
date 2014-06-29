@@ -31,9 +31,8 @@ define([
           if (item.file.indexOf('addons') === -1) { //addons don't get displayed on main page
 
             var group = item.module || '_';
-            var subgroup = item.class || '_';
-            if (item.file.indexOf('objects') !== -1 ||
-              group === subgroup) {
+            var subgroup = item.submodule || '_';
+            if (group === subgroup) {
               subgroup = '0';
             }
             var hash = App.router.getHash(item);

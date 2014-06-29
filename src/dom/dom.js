@@ -1,6 +1,7 @@
 /**
  * @module DOM
- * @for DOM
+ * @submodule DOM
+ * @for p5
  */
 define(function(require) {
 

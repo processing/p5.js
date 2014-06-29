@@ -1,6 +1,7 @@
 /**
  * @module Input
- * @for Mouse
+ * @submodule Mouse
+ * @for p5
  * @requires core
  * @requires constants
  */

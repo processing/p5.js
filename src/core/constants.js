@@ -1,6 +1,7 @@
 /**
  * @module Constants
- * @for Constants
+ * @submodule Constants
+ * @for p5
  */
 define(function(require) {
 

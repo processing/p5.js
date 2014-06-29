@@ -1,6 +1,7 @@
 /**
  * @module Shape
- * @for Vertex
+ * @submodule Vertex
+ * @for p5
  * @requires core
  * @requires constants
  */

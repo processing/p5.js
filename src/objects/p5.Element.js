@@ -1,6 +1,6 @@
 /**
  * @module DOM
- * @for DOM
+ * @submodule DOM
  */
 define(function(require) {
 
@@ -33,7 +33,6 @@ define(function(require) {
    * the container for the element. Accepts either a string ID or
    * DOM node.
    *
-   * @for    DOM:p5.Element
    * @method parent
    * @param  {String|Object} parent the ID or node of the parent elt
    */
@@ -48,7 +47,6 @@ define(function(require) {
    *
    * Sets the inner HTML of the element. Replaces any existing html.
    *
-   * @for    DOM:p5.Element
    * @method html
    * @param  {String} html the HTML to be placed inside the element
    */
@@ -62,7 +60,6 @@ define(function(require) {
    * window. Essentially, sets position:absolute and left and top
    * properties of style.
    *
-   * @for    DOM:p5.Element
    * @method position
    * @param  {Number} x x-position relative to upper left of window
    * @param  {Number} y y-position relative to upper left of window
@@ -77,7 +74,6 @@ define(function(require) {
    *
    * Sets the given style (css) property of the element with the given value.
    *
-   * @for    DOM:p5.Element
    * @method style
    * @param  {String} property property to be set
    * @param  {String} value value to assign to property
@@ -90,7 +86,6 @@ define(function(require) {
    *
    * Sets the ID of the element
    *
-   * @for    DOM:p5.Element
    * @method id
    * @param  {String} id ID of the element
    */
@@ -102,7 +97,6 @@ define(function(require) {
    *
    * Adds given class to the element
    *
-   * @for    DOM:p5.Element
    * @method class
    * @param  {String} class class to add
    */
@@ -115,7 +109,6 @@ define(function(require) {
    * mouse button is pressed over the element. This can be used to
    * attach an element specific event listeners.
    *
-   * @for    DOM:p5.Element
    * @method mousePressed
    * @param  {Function} fxn function to be fired when mouse is
    *                    pressed over the element.
@@ -129,7 +122,6 @@ define(function(require) {
    * mouse moves onto the element. This can be used to attach an
    * element specific event listener.
    *
-   * @for    DOM:p5.Element
    * @method mouseOver
    * @param  {Function} fxn function to be fired when mouse is
    *                    moved over the element.
@@ -143,7 +135,6 @@ define(function(require) {
    * mouse moves off the element. This can be used to attach an
    * element specific event listener.
    *
-   * @for    DOM:p5.Element
    * @method mouseOut
    * @param  {Function} fxn function to be fired when mouse is
    *                    moved off the element.

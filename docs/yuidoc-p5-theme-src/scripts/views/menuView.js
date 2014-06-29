@@ -23,9 +23,12 @@ define([
     
       var groups = [];
       _.each(App.modules, function (item, i) {
-        if (item.file.indexOf('addons') === -1) { //addons don't get displayed on main page
-          groups.push(item.name);
+        if (!item.is_submodule) {
+          if (!item.file || item.file.indexOf('addons') === -1) { //addons don't get displayed on main page
+            groups.push(item.name);
+          }
         }
+        //}
       });
 
       // Sort groups by name A-Z

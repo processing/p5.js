@@ -1,6 +1,7 @@
 /**
  * @module Image
- * @for Loading & Displaying
+ * @submodule Loading & Displaying
+ * @for p5
  * @requires core
  */
 define(function (require) {

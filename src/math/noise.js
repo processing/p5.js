@@ -13,7 +13,8 @@
 
 /**
  * @module Math
- * @for Noise
+ * @submodule Noise
+ * @for p5
  * @requires core
  */
 define(function (require) {

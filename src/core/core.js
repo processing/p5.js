@@ -1,6 +1,7 @@
 /**
  * @module Structure
- * @for Structure
+ * @submodule Structure
+ * @for p5
  * @requires constants
  */
 define(function (require) {

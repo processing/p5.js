@@ -1,6 +1,7 @@
 /**
  * @module Math
- * @for Math
+ * @submodule Math
+ * @for p5
  * @requires core
  */
 define(function (require) {
@@ -20,7 +21,6 @@ define(function (require) {
    * @param {Number} [x] x component of the vector
    * @param {Number} [y] y component of the vector
    * @param {Number} [z] z component of the vector
-   * @for Math
    */
   p5.prototype.createVector = function() {
     return new p5.Vector(this, arguments);
