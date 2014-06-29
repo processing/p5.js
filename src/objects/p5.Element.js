@@ -16,6 +16,11 @@ define(function(require) {
    * @param {Object} [pInst] pointer to p5 instance
    */
   p5.Element = function(elt, pInst) {
+    /**
+     * Underlying HTML element. All normal HTML methods can be called on this.
+     *
+     * @property elt
+     */
     this.elt = elt;
     this._pInst = pInst;
     this._events = {};
