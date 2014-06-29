@@ -11,7 +11,7 @@
   <strong>Fields</strong><br>
   <% var fields = _.filter(things, function(item) { return item.itemtype === 'property' }); %>
   <% _.each(fields, function(item) { %>
-    <a href="<%=item.hash%>"><%=item.name%></a>: <%= item.description %>
+    <a href="<%=item.hash%>" <% if (item.module !== module) { %>class="addon"<% } %> ><%=item.name%></a>: <%= item.description %>
     <br>
   <% }); %>
 </p>
@@ -20,7 +20,7 @@
   <strong>Methods</strong><br>
   <% var methods = _.filter(things, function(item) { return item.itemtype === 'method' }); %>
   <% _.each(methods, function(item) { %>
-    <a href="<%=item.hash%>"><%=item.name%><% if (item.itemtype === 'method') { %>()<%}%></a>: <%= item.description %>
+    <a href="<%=item.hash%>" <% if (item.module !== module) { %>class="addon"<% } %>><%=item.name%><% if (item.itemtype === 'method') { %>()<%}%></a>: <%= item.description %>
     <br>
   <% }); %>
 </p>

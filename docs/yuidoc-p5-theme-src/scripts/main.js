@@ -79,6 +79,9 @@ require([
           App.sound.items.push(el);
         }
         else if (el.module === "p5.dom" || el.module === 'DOM') {
+          if (el.class === 'p5') {
+            el.class = 'p5.dom';
+          }
           App.dom.items.push(el);
         }
       }

@@ -12,11 +12,11 @@
 <% _.each(groups, function(group){ %>
   <div>
   <% if (group.name !== module.name) { %>
-    <a href="<%=group.hash%>"><strong><%=group.name%>()</strong></a>
+    <a href="<%=group.hash%>" <% if (group.module !== module.name) { %>class="core"<% } %>><strong><%=group.name%>()</strong></a>
   <% } %>
   <% _.each(group.items, function(item) { %>
     <br>
-    <a href="<%=item.hash%>"><%=item.name%><% if (item.itemtype === 'method') { %>()<%}%></a>
+    <a href="<%=item.hash%>" <% if (item.module !== module.name) { %>class="core"<% } %>><%=item.name%><% if (item.itemtype === 'method') { %>()<%}%></a>
   <% }); %>
   <br><br>
   </div>

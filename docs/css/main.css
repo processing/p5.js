@@ -243,6 +243,9 @@ div.reference-group:nth-child(even) h4 {
     float: left;
 }
 
+#reference .core, #reference .addon {
+    color: #222;
+}
 
 html,
 button,
@@ -408,7 +411,7 @@ a:link, a:visited {
     text-decoration: none; 
 }
 
-a:active, a:hover { 
+a:active, a:hover, #reference a:hover { 
     color:#ED225D; 
     text-decoration: none;
     padding-bottom: 0.1em; 

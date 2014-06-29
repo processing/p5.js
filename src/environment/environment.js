@@ -36,7 +36,7 @@ define(function(require) {
    *     }
    *   </code></div>
    */
-  this.frameCount = 0;
+  p5.prototype.frameCount = 0;
 
   /**
    * Confirms if a p5.js program is "focused," meaning that it is active and
@@ -54,7 +54,7 @@ define(function(require) {
    *     }
    *   </code></div>
    */
-  this.focused = true;
+  p5.prototype.focused = true;
   
   /**
    * Sets the cursor to a predefined symbol or an image, or makes it visible
@@ -165,7 +165,7 @@ define(function(require) {
    *     size(displayWidth, displayHeight);
    *   </code></div>
    */
-  this.displayWidth = screen.width;
+  p5.prototype.displayWidth = screen.width;
 
   /**
    * System variable that stores the height of the entire screen display. This
@@ -177,7 +177,7 @@ define(function(require) {
    *     size(displayWidth, displayHeight);
    *   </code></div>
    */
-  this.displayHeight = screen.height;
+  p5.prototype.displayHeight = screen.height;
 
   /**
    * System variable that stores the width of the inner window, it maps to
@@ -189,7 +189,7 @@ define(function(require) {
    *     size(windowWidth, windowHeight);
    *   </code></div>
    */
-  this.windowWidth = window.innerWidth;
+  p5.prototype.windowWidth = window.innerWidth;
   window.addEventListener('resize', function (e) {
     // remap the window width on window resize
     this.windowWidth = window.innerWidth;
@@ -205,7 +205,7 @@ define(function(require) {
    *     size(windowWidth, windowHeight);
    *   </code></div>
    */
-  this.windowHeight = window.innerHeight;
+  p5.prototype.windowHeight = window.innerHeight;
   window.addEventListener('resize', function (e) {
     // remap the window height on resize
     this.windowHeight = window.windowHeight;
@@ -220,7 +220,7 @@ define(function(require) {
    *
    * @property width
    */
-  this.width = 0;
+  p5.prototype.width = 0;
 
   /**
    * System variable that stores the height of the drawing canvas. This value
@@ -231,7 +231,7 @@ define(function(require) {
    *
    * @property height
    */
-  this.height = 0;
+  p5.prototype.height = 0;
   return p5;
 
 });

@@ -1,6 +1,7 @@
 /**
  * @module DOM
  * @submodule DOM
+ * @for p5.Element
  */
 define(function(require) {
 
@@ -41,45 +42,6 @@ define(function(require) {
       parent = document.getElementById(parent);
     }
     parent.appendChild(this.elt);
-  };
-
-  /**
-   *
-   * Sets the inner HTML of the element. Replaces any existing html.
-   *
-   * @method html
-   * @param  {String} html the HTML to be placed inside the element
-   */
-  p5.Element.prototype.html = function(html) {
-    this.elt.innerHTML = html;
-  };
-
-  /**
-   *
-   * Sets the position of the element relative to (0, 0) of the
-   * window. Essentially, sets position:absolute and left and top
-   * properties of style.
-   *
-   * @method position
-   * @param  {Number} x x-position relative to upper left of window
-   * @param  {Number} y y-position relative to upper left of window
-   */
-  p5.Element.prototype.position = function(x, y) {
-    this.elt.style.position = 'absolute';
-    this.elt.style.left = x+'px';
-    this.elt.style.top = y+'px';
-  };
-
-  /**
-   *
-   * Sets the given style (css) property of the element with the given value.
-   *
-   * @method style
-   * @param  {String} property property to be set
-   * @param  {String} value value to assign to property
-   */
-  p5.Element.prototype.style = function(prop, val) {
-    this.elt.style[prop] = val;
   };
 
   /**
