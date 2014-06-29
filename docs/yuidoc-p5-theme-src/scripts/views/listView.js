@@ -73,14 +73,6 @@ define([
           }
         });
 
-        // Sort groups by name A-Z
-        _.sortBy(self.groups, this.sortByName);
-
-        // Sort items by name A-Z
-        _.each(self.groups, function (group) {
-          _.sortBy(group.subgroups, this.sortByName);
-        });
-
         // Put the <li> items html into the list <ul>
         var listHtml = self.listTpl({
           'title': self.capitalizeFirst(listCollection),
@@ -116,20 +108,9 @@ define([
      */
     capitalizeFirst: function (str) {
       return str.substr(0, 1).toUpperCase() + str.substr(1);
-    },
-    /**
-     * Sort function (for the Array.prototype.sort() native method): from A to Z.
-     * @param {string} a
-     * @param {string} b
-     * @returns {Array} Returns an array with elements sorted from A to Z.
-     */
-    sortAZ: function (a, b) {
-      return a.innerHTML.toLowerCase() > b.innerHTML.toLowerCase() ? 1 : -1;
-    },
-
-    sortByName: function (a, b) {
-      return a.name > b.name ? 1 : -1;
     }
+
+
 
   });
 

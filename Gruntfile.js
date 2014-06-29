@@ -82,7 +82,7 @@ module.exports = function(grunt) {
             'constants': 'src/core/constants',
             'data.array_functions': 'src/data/array_functions',
             'data.string_functions': 'src/data/string_functions',
-            'dom.manipulate': 'src/dom/manipulate',
+            'dom.dom': 'src/dom/dom',
             'environment': 'src/environment/environment',
             'image.image': 'src/image/image',
             'image.loading_displaying': 'src/image/loading_displaying',

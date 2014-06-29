@@ -22,6 +22,7 @@ define([
         'placeholder': placeholder,
         'className': className
       });
+      this.items = App.classes.concat(App.allItems);
 
       return this;
     },
@@ -49,7 +50,7 @@ define([
         'displayKey': 'name',
         'minLength': 2,
         //'highlight': true,
-        'source': self.substringMatcher(App.classesAndItems),
+        'source': self.substringMatcher(this.items),
         'templates': {
           'empty': '<p class="empty-message">Unable to find any item that match the current query</p>',
           'suggestion': _.template(suggestionTpl)
@@ -61,7 +62,7 @@ define([
      */
     typeaheadEvents: function($input) {
       $input.on('typeahead:selected', function(e, item, datasetName) {
-        var selectedItem = App.allItems[item.idx];
+        var selectedItem = this.items[item.idx];
         var hash = App.router.getHash(selectedItem).replace('#', '');
         App.router.navigate(hash, {'trigger': true});
       });

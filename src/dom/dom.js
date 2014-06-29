@@ -1,14 +1,12 @@
 /**
  * @module DOM
- * @for Manipulate
+ * @for DOM
  */
 define(function(require) {
 
   var p5 = require('core');
   require('input.mouse');
   require('input.touch');
-
-  //var p5.Element = require('p5.Element');
 
   /**
    * Creates a canvas element in the document.

@@ -9,9 +9,10 @@
 
 <p><%= module.description %></p>
 
-
 <% _.each(groups, function(group){ %>
   <div>
+<p>const:<%= group.is_constructor %></p>
+
   <% if (group.name !== module.name) { %>
     <a href="<%=group.hash%>"><strong><%=group.name%>()</strong></a>
   <% } %>

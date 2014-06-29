@@ -19,7 +19,7 @@ require([
   'App'], function(_, Backbone, App) {
   
   // Set collections
-  App.collections = ['allItems', 'classes', 'events', 'methods', 'properties', 'sound'];
+  App.collections = ['allItems', 'classes', 'events', 'methods', 'properties', 'sound', 'dom'];
 
   // Get json API data
   $.getJSON("data.json", function(data) {
@@ -30,9 +30,9 @@ require([
     App.events = [];
     App.allItems = [];
     App.sound = { items: [] };
+    App.dom = { items: [] };
     App.modules = [];
     App.project = data.project;
-    App.classesAndItems = [];
 
 
     var modules = data.modules;
@@ -43,6 +43,9 @@ require([
       if (m.name == "p5.sound") {
         App.sound.module = m;
       }
+      else if (m.name == "p5.dom") {
+        App.dom.module = m;
+      }
     });
 
 
@@ -50,8 +53,10 @@ require([
     var classes = data.classes;
 
     // Get classes
-    _.each(classes, function(el, idx, array) {
-      App.classes.push(el);
+    _.each(classes, function(c, idx, array) {
+      if (c.module === 'p5.sound' || c.module === 'p5.dom' || c.name.indexOf('p5') !== -1) {
+        App.classes.push(c);
+      }
     });
 
     // Get class items (methods, properties, events)
@@ -78,18 +83,14 @@ require([
         if (el.module === "p5.sound") {
           App.sound.items.push(el);
         }
-        App.classesAndItems.push(el);
+        else if (el.module === "p5.dom" || el.module === 'DOM') {
+          App.dom.items.push(el);
+        }
       }
     });
 
     _.each(App.classes, function(c, idx) {
       c.items = _.filter(App.allItems, function(it){ return it.class === c.name; });
-    });
-
-    _.each(App.classes, function(c, idx) {
-      if (c.module == 'p5.sound' || c.name.indexOf('p5') !== -1) {
-        App.classesAndItems.push(c);
-      }
     });
 
 

@@ -12,8 +12,6 @@ define(function (require) {
   var constants = require('constants');
 
   /**
-   * The p5.Vector constructor function.
-   *
    * A class to describe a two or three dimensional vector, specifically
    * a Euclidean (also known as geometric) vector. A vector is an entity
    * that has both magnitude and direction. The datatype, however, stores

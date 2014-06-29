@@ -1,11 +1,19 @@
 /**
  * @module DOM
- * @for p5.Element
+ * @for DOM
  */
 define(function(require) {
 
   var p5 = require('core');
 
+  /**
+   * A class to describe...
+   *
+   * @class p5.Element
+   * @constructor
+   * @param {String} elt DOM node that is wrapped
+   * @param {Object} [pInst] pointer to p5 instance
+   */
   p5.Element = function(elt, pInst) {
     this.elt = elt;
     this._pInst = pInst;
@@ -65,9 +73,17 @@ define(function(require) {
     this.elt.style.top = y+'px';
   };
 
-
-  p5.Element.prototype.style = function(s) {
-    this.elt.style.cssText += s;
+  /**
+   *
+   * Sets the given style (css) property of the element with the given value.
+   *
+   * @for    DOM:p5.Element
+   * @method style
+   * @param  {String} property property to be set
+   * @param  {String} value value to assign to property
+   */
+  p5.Element.prototype.style = function(prop, val) {
+    this.elt.style[prop] = val;
   };
 
   /**

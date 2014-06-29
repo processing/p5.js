@@ -18,6 +18,45 @@ define(function(require) {
   p5.prototype._targetFrameRate = 60;
 
   /**
+   * The system variable frameCount contains the number of frames that have
+   * been displayed since the program started. Inside setup() the value is 0,
+   * after the first iteration of draw it is 1, etc.
+   *
+   * @property frameCount
+   * @example
+   *   <div><code>
+   *     function setup() {
+   *       frameRate(30);
+   *     }
+   *
+   *     function draw() {
+   *       line(0, 0, width, height);
+   *       print(frameCount);
+   *     }
+   *   </code></div>
+   */
+  this.frameCount = 0;
+
+  /**
+   * Confirms if a p5.js program is "focused," meaning that it is active and
+   * will accept mouse or keyboard input. This variable is "true" if it is
+   * focused and "false" if not.
+   *
+   * @property focused
+   * @for Environment:Environment
+   * @example
+   *   <div><code>
+   *     if (focused) {  // or "if (focused === true)"
+   *       ellipse(25, 25, 50, 50);
+   *     } else {
+   *       line(0, 0, 100, 100);
+   *       line(100, 0, 0, 100);
+   *     }
+   *   </code></div>
+   */
+  this.focused = true;
+  
+  /**
    * Sets the cursor to a predefined symbol or an image, or makes it visible
    * if already hidden. If you are trying to set an image as the cursor, the
    * recommended size is 16x16 or 32x32 pixels. It is not possible to load an
@@ -115,6 +154,84 @@ define(function(require) {
     this._curElement.elt.style.cursor = 'none';
   };
 
+
+  /**
+   * System variable that stores the width of the entire screen display. This
+   * is used to run a full-screen program on any display size.
+   *
+   * @property displayWidth
+   * @example
+   *   <div><code>
+   *     size(displayWidth, displayHeight);
+   *   </code></div>
+   */
+  this.displayWidth = screen.width;
+
+  /**
+   * System variable that stores the height of the entire screen display. This
+   * is used to run a full-screen program on any display size.
+   *
+   * @property displayHeight
+   * @example
+   *   <div><code>
+   *     size(displayWidth, displayHeight);
+   *   </code></div>
+   */
+  this.displayHeight = screen.height;
+
+  /**
+   * System variable that stores the width of the inner window, it maps to
+   * window.innerWidth.
+   *
+   * @property windowWidth
+   * @example
+   *   <div><code>
+   *     size(windowWidth, windowHeight);
+   *   </code></div>
+   */
+  this.windowWidth = window.innerWidth;
+  window.addEventListener('resize', function (e) {
+    // remap the window width on window resize
+    this.windowWidth = window.innerWidth;
+  });
+
+  /**
+   * System variable that stores the height of the inner window, it maps to
+   * window.innerHeight.
+   *
+   * @property windowHeight
+   * @example
+   *   <div><code>
+   *     size(windowWidth, windowHeight);
+   *   </code></div>
+   */
+  this.windowHeight = window.innerHeight;
+  window.addEventListener('resize', function (e) {
+    // remap the window height on resize
+    this.windowHeight = window.windowHeight;
+  });
+
+  /**
+   * System variable that stores the width of the drawing canvas. This value
+   * is set by the first parameter of the createCanvas() function.
+   * For example, the function call createCanvas(320, 240) sets the width
+   * variable to the value 320. The value of width defaults to 100 if
+   * createCanvas() is not used in a program.
+   *
+   * @property width
+   */
+  this.width = 0;
+
+  /**
+   * System variable that stores the height of the drawing canvas. This value
+   * is set by the second parameter of the createCanvas() function. For
+   * example, the function call createCanvas(320, 240) sets the height
+   * variable to the value 240. The value of height defaults to 100 if
+   * createCanvas() is not used in a program.
+   *
+   * @property height
+   */
+  this.height = 0;
   return p5;
 
 });
