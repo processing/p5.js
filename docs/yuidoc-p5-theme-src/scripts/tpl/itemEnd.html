@@ -1,10 +1,10 @@
 <p>
 
   <div class="meta">
-    {{#if class}}
+    <% if (item.class) { %>
     Class: 
-    <strong><a href='#/{{class}}'>{{class}}</a></strong>
-    {{/if}}
+    <strong><a href='#/<%=item.class%>'><%=item.class%></a></strong>
+    <% } %>
 
   </div>
 

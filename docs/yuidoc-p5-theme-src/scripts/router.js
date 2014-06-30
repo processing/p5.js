@@ -14,7 +14,6 @@ define([
       'p5/': 'list',
       'classes': 'list',
       'search': 'search',
-      'file/:filepath/:line': 'file',
       'libraries/:lib': 'library',
       ':searchClass(/:searchItem)': 'get'
     },
@@ -155,17 +154,6 @@ define([
       this.init(function() {
         App.menuView.hide();
         App.pageView.hideContentViews();
-      });
-    },
-    /**
-     * Open the file view.
-     * @param {string} filepath
-     * @param {string} line
-     */
-    file: function(filepath, line) {
-      this.init(function() {
-        App.menuView.hide();
-        App.fileView.show(filepath, line);
       });
     },
     /**
