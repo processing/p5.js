@@ -38,7 +38,7 @@ define([
         // create syntax string
         var syntax = '';
         if (isConstructor) syntax += 'new ';
-        syntax += cleanItem.name;
+        syntax += cleanItem.name+'()';
 
         if (cleanItem.isMethod) {
           syntax += '(';

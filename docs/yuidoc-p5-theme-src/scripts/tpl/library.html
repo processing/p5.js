@@ -1,23 +1,15 @@
-<!-- <div class="page-header">
-  <h1>
-    <%=title%>
-  </h1>
-</div> -->
-
-<h2><%= module.name %></h2>
-
+<h3><%= module.name %></h3>
 
 <p><%= module.description %></p>
 
 <% _.each(groups, function(group){ %>
-  <div>
   <% if (group.name !== module.name) { %>
-    <a href="<%=group.hash%>" <% if (group.module !== module.name) { %>class="core"<% } %>><strong><%=group.name%>()</strong></a>
+    <a href="<%=group.hash%>" <% if (group.module !== module.name) { %>class="core"<% } %>><h4><%=group.name%>()</h4></a>
   <% } %>
+  <p>
   <% _.each(group.items, function(item) { %>
     <br>
     <a href="<%=item.hash%>" <% if (item.module !== module.name) { %>class="core"<% } %>><%=item.name%><% if (item.itemtype === 'method') { %>()<%}%></a>
   <% }); %>
-  <br><br>
-  </div>
+  </p>
 <% }); %>

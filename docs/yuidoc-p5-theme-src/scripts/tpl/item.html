@@ -11,16 +11,16 @@
 <% } %>
 
 
-<p class="description">
+<div class="description">
   <h4>Description</h4>
-  <%= item.description %>
-</p>
+  <p><%= item.description %></p>
+</div>
 
 
-<p>
+<div>
   <h4>Syntax</h4>
-<pre><code class="language-javascript"><%= syntax %></code></pre>
-</p>
+<p><pre><code class="language-javascript"><%= syntax %></code></pre></p>
+</div>
 
 
 <% if (item.return) { %>
@@ -30,11 +30,11 @@
 <% } %>
 
 <% if (item.deprecated) { %>
-<span class="flag deprecated"<% if (item.deprecationMessage) { %> title="{{deprecationMessage}}"<% } %>>deprecated</span>
+<span class="flag deprecated"<% if (item.deprecationMessage) { %> title="<%=item.deprecationMessage%>"<% } %>>deprecated</span>
 <% } %>
 
 <% if (item.access) { %>
-<span class="flag {{access}}"><%= item.access %></span>
+<span class="flag <%=item.access%>"><%= item.access %></span>
 <% } %>
 
 <% if (item.final) { %>
@@ -90,57 +90,38 @@
     {{/if}}
   </div>-->
 
-
-<!-- {{#if params}}
-<p class="params">
+<% if (item.params) { %>
+<div class="params">
   <h4>Parameters</h4>
-
-    {{#params}}
-
-      {{#if optional}}
-      <code  class="language-javascript">[{{name}}{{#if optdefault}}={{optdefault}}{{/if}}]</code>
-      {{else}}
-      <code  class="language-javascript">{{name}}</code>
-
-      {{/if}}
-
-      {{#if type}}
-        <span class="param-type label label-info">{{type}}</span>: {{{description}}}</span> 
-      {{/if}}
-
-      {{#if multiple}}
+  <ul>
+  <% for (var i=0; i<item.params.length; i++) { %>
+    <li>
+    <% var p = item.params[i] %>
+    <% if (p.optional) { %>
+      <code class="language-javascript">[<%=p.name%>]</code>
+    <% } else { %>
+      <code class="language-javascript"><%=p.name%></code>
+    <% } %> 
+    <%if (p.optdefault) { %>=<%=p.optdefault%><% } %>
+    <% if (p.type) { %>
+      <span class="param-type label label-info"><%=p.type%></span>: <%=p.description%></span> 
+    <% } %>
+    <% if (p.multiple) {%>
       <span class="flag multiple" title="This argument may occur one or more times.">multiple</span>
-      {{/if}}
-
-
-      {{#if props}}
-        {{#props}}
-          {{#if optional}}
-          <code class="param-name optional">[{{name}}{{#if optdefault}}={{optdefault}}{{/if}}]</code>
-
-          <span class="flag optional" title="This parameter is optional.">optional</span>
-          {{else}}
-          <code class="param-name">{{name}}</code>
-
-          {{/if}}
-
-          {{{description}}}
-          
-        {{/props}}
-      {{/if}}
-      <br>
-    {{/params}}
-</p>
-{{/if}}
- -->
+    <% } %>
+    </li>
+  <% } %>
+  </ul>
+</div>
+<% } %>
 
 <% if (item.return) { %>
-<p>
+<div>
   <h4>Returns</h4>
 
     <% if (item.return.type) { %>
-      <span class="param-type label label-info"><%=item.return.type%></span>: <%= item.return.description %>
+      <p><span class="param-type label label-info"><%=item.return.type%></span>: <%= item.return.description %></p>
     <% } %>
-</p>
+</div>
 <% } %>
 
