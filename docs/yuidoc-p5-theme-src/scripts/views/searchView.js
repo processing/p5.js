@@ -66,13 +66,15 @@ define([
         var selectedItem = self.items[item.idx];
         select(selectedItem);
       });
-      $input.on('keypress', function(e) {
-        if (e.which == 13) { // enter
+      $input.on('keydown', function(e) {
+        if (e.which === 13) { // enter
           var txt = $input.val();
           var f = _.find(self.items, function(it) { return it.name == txt; });
           if (f) {
             select(f); 
           }
+        } else if (e.which === 27) {
+          $input.blur();
         }
       });
 
