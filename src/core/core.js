@@ -140,6 +140,7 @@ define(function (require) {
     // PRIVATE p5 PROPERTIES AND METHODS
     //////////////////////////////////////////////
 
+    this._setupDone = false;
     this._pixelDensity = window.devicePixelRatio || 1; // for handling hidpi
     this._startTime = new Date().getTime();
     this._userNode = node;
@@ -227,6 +228,16 @@ define(function (require) {
       if (typeof userSetup === 'function') {
         userSetup();
       }
+
+      // unhide any hidden canvases that were created
+      var reg = new RegExp(/(^|\s)p5_hidden(?!\S)/g);
+      var canvases = document.getElementsByClassName('p5_hidden');
+      for (var i = 0; i < canvases.length; i++) {
+        var k = canvases[i];
+        k.style.visibility = '';
+        k.className = k.className.replace(reg, '');
+      }
+      this._setupDone = true;
     }.bind(this);
 
     this._draw = function () {

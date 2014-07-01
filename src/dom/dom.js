@@ -19,19 +19,30 @@ define(function(require) {
    * @return {undefined}
    */
   p5.prototype.createCanvas = function(w, h, isDefault) {
-    var c = document.createElement('canvas');
+    var c;
+    if (isDefault) {
+      c = document.createElement('canvas');
+      c.id = 'defaultCanvas';
+    } else { // resize the default canvas if new one is created
+      c = document.getElementById('defaultCanvas');
+      c.id = ''; // remove default id
+      if (!c) { // probably user calling createCanvas more than once... uhoh
+        c = document.createElement('canvas');
+        var warn = 'Warning: createCanvas more than once not recommended.';
+        warn += 'Unpredictable behavior may result.';
+        console.log(warn);
+      }
+    }
+
     c.setAttribute('width', w*this._pixelDensity);
     c.setAttribute('height', h*this._pixelDensity);
     c.setAttribute('style',
       'width:'+w+'px !important; height:'+h+'px !important;');
-    
-    if (isDefault) {
-      c.id = 'defaultCanvas';
-    } else { // remove the default canvas if new one is created
-      var defaultCanvas = document.getElementById('defaultCanvas');
-      if (defaultCanvas) {
-        defaultCanvas.parentNode.removeChild(defaultCanvas);
-      }
+
+    // set to invisible if still in setup (to prevent flashing with manipulate)
+    if (!this._setupDone) {
+      c.className += ' p5_hidden'; // tag to show later
+      c.style.visibility='hidden';
     }
 
     if (this._userNode) { // user input node case
@@ -40,11 +51,11 @@ define(function(require) {
       document.body.appendChild(c);
     }
 
-    var cnv =  new p5.Element(c, this);
-    this.context(cnv);
+    var elt =  new p5.Element(c, this);
+    this.context(elt);
     this._applyDefaults();
     this.scale(this._pixelDensity, this._pixelDensity);
-    return cnv;
+    return elt;
   };
 
 

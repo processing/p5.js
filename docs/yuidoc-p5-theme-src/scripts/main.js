@@ -54,9 +54,9 @@ require([
 
     // Get classes
     _.each(classes, function(c, idx, array) {
-      //if (c.module === 'p5.sound' || c.module === 'p5.dom' || c.name.indexOf('p5') !== -1) {
+      if (c.is_constructor) {
         App.classes.push(c);
-      //}
+      }
     });
 
     // Get class items (methods, properties, events)

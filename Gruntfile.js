@@ -33,18 +33,6 @@ module.exports = function(grunt) {
       yuidoc_theme_build: {
         files: ['docs/yuidoc-p5-theme-src/scripts/**/*'],
         tasks: ['requirejs:yuidoc_theme']
-      },
-      // css for yuidoc/reference theme (see 'sass' task)
-      yuidoc_theme_sass: {
-        files: ['docs/yuidoc-p5-theme-src/sass/**/*.scss'],
-        tasks: ['sass']
-      },
-    },
-    sass: {
-      yuidoc_theme: {
-        files: {
-          'docs/yuidoc-p5-theme/assets/css/main.css': 'docs/yuidoc-p5-theme-src/sass/main.scss'
-        }
       }
     },
     mocha: {

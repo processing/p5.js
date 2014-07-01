@@ -188,14 +188,18 @@ color: #666;  }
     margin:0 1.75em 0 0;
 }
 
+
 #collection-list-nav dl:nth-child(4), 
-    .reference-group dl:nth-child(4) {
+    .reference-group dl:nth-child(4),
+    .reference-group.main-ref-page dl:nth-child(5) {
     margin-right:0;
 }
 
+
 .reference-group dl:nth-child(n+5) {
- margin-bottom:1em;
+ margin-top:1em;
 }
+
 
 #collection-list-nav dd, 
     .reference-group dd {
