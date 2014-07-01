@@ -38,9 +38,9 @@ define([
         // create syntax string
         var syntax = '';
         if (isConstructor) syntax += 'new ';
-        syntax += cleanItem.name+'()';
+        syntax += cleanItem.name;
 
-        if (cleanItem.isMethod) {
+        if (cleanItem.isMethod || isConstructor) {
           syntax += '(';
           if (cleanItem.params) {
             for (var i=0; i<cleanItem.params.length; i++) { 
