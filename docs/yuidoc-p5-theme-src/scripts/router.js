@@ -10,11 +10,12 @@ define([
     
     routes: {
       '': 'list',
+      'p5': 'list',
+      'p5/': 'list',
       'classes': 'list',
       'search': 'search',
-      'file/:filepath/:line': 'file',
-      'get/:searchClass(/:searchItem)': 'get',
-      'libraries/:lib': 'library'
+      'libraries/:lib': 'library',
+      ':searchClass(/:searchItem)': 'get'
     },
     /**
      * Whether the json API data was loaded.
@@ -72,7 +73,9 @@ define([
         if (item) {
           App.itemView.show(item);
         } else {
-          App.itemView.nothingFound();
+          //App.itemView.nothingFound();
+
+          self.list();
         }
 
       });
@@ -103,7 +106,8 @@ define([
         // Search for a class item
       } else if (className && itemName) {
         for (var i = 0; i < itemsCount; i++) {
-          if (items[i].class.toLowerCase() === className && items[i].name.toLowerCase() === itemName) {
+          if ((className == 'p5' || items[i].class.toLowerCase() === className) && 
+            items[i].name.toLowerCase() === itemName) {
             found = items[i];
             break;
           }
@@ -153,30 +157,20 @@ define([
       });
     },
     /**
-     * Open the file view.
-     * @param {string} filepath
-     * @param {string} line
-     */
-    file: function(filepath, line) {
-      this.init(function() {
-        App.menuView.hide();
-        App.fileView.show(filepath, line);
-      });
-    },
-    /**
      * Create an hash/url for the item.
      * @param {Object} item A class, method, property or event object.
      * @returns {String} The hash string, including the '#'.
      */
     getHash: function(item) {
       if (!item.hash) {
-        var hash = '#get/';
+        var hash = '#/';
         var isClass = item.hasOwnProperty('classitems');
+        var c = (item.file.indexOf('objects') === -1 && item.file.indexOf('addons') === -1 ) ? 'p5' : item.class;
         // Create hash for links
         if (isClass) {
           hash += item.name;
         } else {
-          hash += item.class + '/' + item.name;
+          hash += c + '/' + item.name;
         }
         item.hash = hash;
       }

@@ -1,13 +1,11 @@
 <p>
 
   <div class="meta">
-    {{#if class}}
-    Class: 
-    <strong><a href='#get/{{class}}'>{{class}}</a></strong>
-    |
-    {{/if}}
-    File: 
-    <strong><a href='#file/{{urlencodedfile}}/{{line}}'>{{file}}:{{line}}</a></strong> 
+    <% if (item.class) { %>
+    <p>Class: 
+    <strong><a href='#/<%=item.class%>'><%=item.class%></a></strong></p>
+    <% } %>
+
   </div>
 
 

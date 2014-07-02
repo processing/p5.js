@@ -1,5 +1,4 @@
 function renderCode() {
-  console.log('render')
   var examples = document.getElementsByClassName('example');
   if (examples.length > 0) {
 
@@ -29,8 +28,7 @@ function renderCode() {
     sketchContainer.style.height = sketchNode.offsetHeight;
 
     // remove start and end lines
-    sketch.innerText = sketch.innerText.replace(/^\s+|\s+$/g, '');
-    var runnable = sketch.innerText;
+    var runnable = sketch.innerText.replace(/^\s+|\s+$/g, '');
     var rows = sketch.innerText.split('\n').length;
 
     // var h = Math.max(sketch.offsetHeight, 100) + 25;
@@ -86,6 +84,7 @@ function renderCode() {
     edit_space.appendChild(edit_area);
     edit_area.style.display = 'none';
 
+    enableTab(edit_area);
 
     function setMode(sketch, m) {
       if (m === 'edit') {
@@ -98,6 +97,25 @@ function renderCode() {
         runCode(sketch);
       }
     }
+
+    function enableTab(el) {
+      el.onkeydown = function(e) {
+        if (e.keyCode === 9) { // tab was pressed
+          // get caret position/selection
+          var val = this.value,
+              start = this.selectionStart,
+              end = this.selectionEnd;
+          // set textarea value to: text before caret + tab + text after caret
+          this.value = val.substring(0, start) + '  ' + val.substring(end);
+          // put caret at right position again
+          this.selectionStart = this.selectionEnd = start + 2;
+          // prevent the focus lose
+          return false;
+
+        }
+      };
+    }
+
   }
 
   function runCode(sketch) {
@@ -159,18 +177,19 @@ function renderCode() {
     if (typeof Prism !== 'undefined') Prism.highlightAll();
 
     $( document ).ready(function() {
-      $( ".example-content" ).find('div').each(function() {
+      setTimeout(function() {
+        var myp5 = new p5(s, cnv);      
+        $( ".example-content" ).find('div').each(function() {
           $this = $( this );
           var pre = $this.find('pre')[0];
           if (pre) {
             $this.height( Math.max($(pre).height()*1.1, 100) + 20 );
           }
-      });
+        });
+      }, 100); 
+
     });
 
-    setTimeout(function() {
-      var myp5 = new p5(s, cnv);
-    }); 
   }
 
 }

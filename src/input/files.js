@@ -1,6 +1,7 @@
 /**
  * @module Input
- * @for Files
+ * @submodule Files
+ * @for p5
  * @requires core
  * @requires reqwest
  */

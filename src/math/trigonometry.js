@@ -1,6 +1,7 @@
 /**
  * @module Math
- * @for Trigonometry
+ * @submodule Trigonometry
+ * @for p5
  * @requires core
  * @requires polargeometry
  * @requires constants

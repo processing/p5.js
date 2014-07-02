@@ -1,6 +1,7 @@
 /**
  * @module Typography
- * @for Attributes
+ * @submodule Attributes
+ * @for p5
  * @requires core
  * @requires constants
  */

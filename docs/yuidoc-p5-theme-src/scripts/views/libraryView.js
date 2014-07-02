@@ -39,6 +39,7 @@ define([
           if (!self.groups[group]) {
             self.groups[group] = {
               name: group.replace('_', '&nbsp;'),
+              module: module,
               hash: hash,
               items: []
             };

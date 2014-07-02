@@ -1,6 +1,7 @@
 /**
  * @module Input
- * @for Touch
+ * @submodule Touch
+ * @for p5
  * @requires core
  */
 define(function (require) {

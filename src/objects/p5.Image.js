@@ -1,5 +1,6 @@
 /**
  * @module Image
+ * @submodule Image
  * @requires core
  * @requires constants
  * @requires filters
@@ -33,8 +34,8 @@ define(function (require) {
    * Before using the pixels[] array, be sure to use the loadPixels() method on
    * the image to make sure that the pixel data is properly loaded.
    * 
-   * @constructor
    * @class p5.Image
+   * @constructor
    * @param {Number} width 
    * @param {Number} height 
    * @param {Object} pInst An instance of a p5 sketch.
@@ -43,13 +44,11 @@ define(function (require) {
     /**
      * Image width.
      * @property width
-     * @for p5.Image
      */
     this.width = width;
     /**
      * Image height.
      * @property height
-     * @for p5.Image
      */
     this.height = height;
     this.canvas = document.createElement('canvas');
@@ -58,7 +57,6 @@ define(function (require) {
     /**
      * Array containing the color of every pixel in the image.
      * @property pixels[]
-     * @for p5.Image
      */
     this.pixels = [];
   };
@@ -75,7 +73,6 @@ define(function (require) {
    * Loads the pixels data for this image into the [pixels] attribute.
    * 
    * @method loadPixels
-   * @for p5.Image
    */
   p5.Image.prototype.loadPixels = function(){
     p5.prototype.loadPixels.call(this);
@@ -94,7 +91,6 @@ define(function (require) {
    *                              underlying canvas
    * @param {Integer|undefined} h height of the target update area for the
    *                              underlying canvas
-   * @for p5.Image
    */
   p5.Image.prototype.updatePixels = function(x, y, w, h){
     p5.prototype.updatePixels.call(this, x, y, w, h);
@@ -111,7 +107,6 @@ define(function (require) {
    * Returns undefined if the region is outside the bounds of the image
    *
    * @method get
-   * @for p5.Image
    * @param  {Number}               [x] x-coordinate of the pixel
    * @param  {Number}               [y] y-coordinate of the pixel
    * @param  {Number}               [w] width
@@ -134,7 +129,6 @@ define(function (require) {
    * TODO: Should me make the update operation toggleable?
    *
    * @method set
-   * @for p5.Image
    * @param {Number}              x x-coordinate of the pixel
    * @param {Number}              y y-coordinate of the pixel
    * @param {Number|Array|Object}   insert a grayscale value |
@@ -152,7 +146,6 @@ define(function (require) {
    * the height using the same proportion, use resize(150, 0).
    *
    * @method resize
-   * @for p5.Image
    * @param {Number} width the resized image width
    * @param {Number} height the resized image height
    */
@@ -201,7 +194,6 @@ define(function (require) {
    * target region.
    *
    * @method copy
-   * @for p5.Image
    * @param  {p5.Image|undefined} srcImage source image
    * @param  {Integer} sx X coordinate of the source's upper left corner
    * @param  {Integer} sy Y coordinate of the source's upper left corner
@@ -222,7 +214,6 @@ define(function (require) {
    * this image.
    * 
    * @method mask
-   * @for p5.Image
    * @param {p5.Image|undefined} srcImage source image
    *
    * TODO: - Accept an array of alpha values.
@@ -261,7 +252,6 @@ define(function (require) {
    * Applies an image filter to a p5.Image
    * 
    * @method filter
-   * @for p5.Image
    * @param {String} operation one of threshold, gray, invert, posterize and 
    *                           opaque see Filters.js for docs on each available
    *                           filter
@@ -276,7 +266,6 @@ define(function (require) {
    * blend mode to do the operation.
    * 
    * @method blend
-   * @for p5.Image
    * @param  {p5.Image|undefined} srcImage source image
    * @param  {Integer} sx X coordinate of the source's upper left corner
    * @param  {Integer} sy Y coordinate of the source's upper left corner
@@ -306,7 +295,6 @@ define(function (require) {
    * Supports png and jpg.
    * 
    * @method save
-   * @for p5.Image
    * @param  {[type]} extension
    *
    * TODO: There doesn't seem to be a way to give the force the

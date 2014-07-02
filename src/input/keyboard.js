@@ -1,6 +1,7 @@
 /**
  * @module Input
- * @for Keyboard
+ * @submodule Keyboard
+ * @for p5
  * @requires core
  */
 define(function (require) {
