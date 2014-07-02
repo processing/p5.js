@@ -19,7 +19,7 @@ function setup() {
 function keyPressed() {
 
   // play the sound file
-  soundFile.play();
+  soundFile.play(1,1);
 
   // also make the background yellow
   background(255, 255, 0);
