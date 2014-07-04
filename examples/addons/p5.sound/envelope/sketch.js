@@ -18,14 +18,15 @@ var triOsc;
 var env;
 
 // Times and levels for the ASR envelope
-var attackTime = 0.001;
-var attackLevel = .8;
-var sustainTime = 0.004;
-var sustainLevel = 0.4;
-var releaseTime = 0.4;
+var attackTime = 0.1;
+var attackLevel = .7;
+var decayTime = .3;
+var sustainTime = 0.1;
+var sustainLevel = 0.2;
+var releaseTime = .5;
 
 var midiSequence = [ 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72 ]; 
-var duration = 200;
+var duration = 1000;
 // Set the note trigger
 var trigger;
 
@@ -33,7 +34,7 @@ var trigger;
 var note = 0
 
 function setup(){
-  createCanvas(200, 200);
+  createCanvas(600, 600);
   background(255);
 
   trigger = millis();
@@ -42,29 +43,33 @@ function setup(){
   triOsc.amp(0);
   triOsc.start();
 
-  env = new Env();
+  env = new Env(attackTime, attackLevel, decayTime, sustainLevel, sustainTime, releaseTime);
+  fill(0);
 }
 
 function draw(){
+  var size = 10;
+  background(255, 255,255,20);
+  ellipse(map ( (trigger - millis()) % duration, 1000, 0, 0, width), map ( triOsc.getAmp(), 0, 1, height-size, 0), size, size);
+
   // If the determined trigger moment in time matches up with the computer clock and we if the 
   // sequence of notes hasn't been finished yet the next note gets played.
-
-  if ((millis() > trigger) && (note<midiSequence.length)){
+  if ((millis() > trigger)){
     // midiToFreq transforms the MIDI value into a frequency in Hz which we use to control the triangle oscillator
     triOsc.start(midiToFreq(midiSequence[note]));
 
     // The envelope gets triggered with the oscillator as input and the times and levels we defined earlier
-    env.play(triOsc, attackTime, attackLevel, sustainTime, sustainLevel, releaseTime);
+    env.play(triOsc);
 
     // Create the new trigger according to predefined durations and speed it up by deviding by 1.5
     trigger = millis() + duration;
     
     // Advance by one note in the midiSequence;
     note++; 
-    
+
     // Loop the sequence, notice the jitter
     if(note == 12) {
-      note = 13;
+      note = 0;
     }
   }
 }
