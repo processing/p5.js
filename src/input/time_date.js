@@ -1,6 +1,7 @@
 /**
  * @module Input
- * @for Time & Date
+ * @submodule Time & Date
+ * @for p5
  * @requires core
  */
 define(function (require) {

@@ -1,0 +1,19 @@
+
+<% var i=0; %>
+<% var max=Math.floor(groups.length/4); %>
+<% var rem=groups.length%max; %>
+
+<% _.each(groups, function(group){ %>
+  <% var m = rem > 0 ? 1 : 0 %>
+  <% if (i === 0) { %>
+    <dl>
+  <% } %>
+  <dd><a href="#group-<%=group%>"><%=group%></a></dd>
+  <% if (i === (max+m-1)) { %>
+    </dl>
+  	<% rem-- %>
+  	<% i=0 %>
+  <% } else { %>
+  	<% i++ %>
+  <% } %>
+<% }); %>

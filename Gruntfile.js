@@ -33,18 +33,6 @@ module.exports = function(grunt) {
       yuidoc_theme_build: {
         files: ['docs/yuidoc-p5-theme-src/scripts/**/*'],
         tasks: ['requirejs:yuidoc_theme']
-      },
-      // css for yuidoc/reference theme (see 'sass' task)
-      yuidoc_theme_sass: {
-        files: ['docs/yuidoc-p5-theme-src/sass/**/*.scss'],
-        tasks: ['sass']
-      },
-    },
-    sass: {
-      yuidoc_theme: {
-        files: {
-          'docs/yuidoc-p5-theme/assets/css/main.css': 'docs/yuidoc-p5-theme-src/sass/main.scss'
-        }
       }
     },
     mocha: {
@@ -73,24 +61,27 @@ module.exports = function(grunt) {
           out: 'lib/p5.js',
           paths: {
             'app': 'src/app',
+            'p5.Element': 'src/objects/p5.Element',
+            'p5.Image': 'src/objects/p5.Image',
+            'p5.Vector': 'src/objects/p5.Vector',
             'color.creating_reading': 'src/color/creating_reading',
             'color.setting': 'src/color/setting',
             'core': 'src/core/core',
             'constants': 'src/core/constants',
             'data.array_functions': 'src/data/array_functions',
             'data.string_functions': 'src/data/string_functions',
-            'dom.manipulate': 'src/dom/manipulate',
-            'dom.pelement': 'src/dom/pelement',
+            'dom.dom': 'src/dom/dom',
             'environment': 'src/environment/environment',
-            'image': 'src/image/image',
+            'image.image': 'src/image/image',
+            'image.loading_displaying': 'src/image/loading_displaying',
             'image.pixels': 'src/image/pixels',
             'input.files': 'src/input/files',
             'input.keyboard': 'src/input/keyboard',
             'input.mouse': 'src/input/mouse',
             'input.time_date': 'src/input/time_date',
             'input.touch': 'src/input/touch',
+            'math.math': 'src/math/math',
             'math.calculation': 'src/math/calculation',
-            'math.pvector': 'src/math/pvector',
             'math.random': 'src/math/random',
             'math.noise': 'src/math/noise',
             'math.trigonometry': 'src/math/trigonometry',

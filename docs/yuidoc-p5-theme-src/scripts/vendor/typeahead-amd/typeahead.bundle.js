@@ -1467,6 +1467,7 @@ define([], function() {
                 this.isActivated = false;
                 this.dropdown.empty();
                 this.dropdown.close();
+                this.setVal("", true); //LM
             },
             _onEnterKeyed: function onEnterKeyed(type, $e) {
                 var cursorDatum, topSuggestionDatum;

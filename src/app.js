@@ -3,23 +3,27 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
-  var PVector = require('math.pvector');
+  
+  require('p5.Element');
+  require('p5.Image');
+  require('p5.Vector');
 
   require('color.creating_reading');
   require('color.setting');
   require('constants');
   require('data.array_functions');
   require('data.string_functions');
-  require('dom.manipulate');
-  require('dom.pelement');
+  require('dom.dom');
   require('environment');
-  require('image');
+  require('image.image');
+  require('image.loading_displaying');
   require('image.pixels');
   require('input.files');
   require('input.keyboard');
   require('input.mouse');
   require('input.time_date');
   require('input.touch');
+  require('math.math');
   require('math.calculation');
   require('math.random');
   require('math.noise');
@@ -66,7 +70,6 @@ define(function (require) {
   }
 
   window.p5 = p5;
-  window.PVector = PVector;
 
   return p5;
 

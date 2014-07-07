@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/lmccart/p5.js.git"
   },
-  "version": "0.2.15",
+  "version": "0.2.20",
   "devDependencies": {
     "grunt": "~0.4.2",
     "grunt-contrib-jshint": "~0.6.3",
@@ -30,7 +30,7 @@
   },
   "files": [
     "license.txt",
-    "dist/p5.min.js",
-    "dist/p5.js"
+    "lib/p5.min.js",
+    "lib/p5.js"
   ]
 }

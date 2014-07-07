@@ -1,6 +1,7 @@
 /**
  * @module Input
- * @for Mouse
+ * @submodule Mouse
+ * @for p5
  * @requires core
  * @requires constants
  */
@@ -136,88 +137,104 @@ define(function (require) {
    *
    * @method mouseMoved
    * @example
-   *   <div>
-   *     <code>
-   *       // Move the mouse across the image
-   *       // to change its value
+   * <div>
+   * <code>
+   * // Move the mouse across the page
+   * // to change its value
    *       
-   *       var value = 0;
-   *       function draw() {
-   *         fill(value);
-   *         rect(25, 25, 50, 50);
-   *       }
-   *       function mouseMoved() {
-   *         value = value + 5;
-   *         if (value > 255) {
-   *           value = 0;
-   *         }
-   *       }
-   *     </code>
-   *   </div>
+   * var value = 0;
+   * function draw() {
+   *   fill(value);
+   *   rect(25, 25, 50, 50);
+   * }
+   * function mouseMoved() {
+   *   value = value + 5;
+   *   if (value > 255) {
+   *     value = 0;
+   *   }
+   * }
+   * </code>
+   * </div>
    */
 
   /**
    * The mouseDragged() function is called once every time the mouse moves and
-   * a mouse button is pressed.
+   * a mouse button is pressed. If no mouseDragged() function is defined, the
+   * touchMoved() function will be called instead if it is defined.
    *
    * @method mouseDragged
    * @example
-   *   <div>
-   *     <code>
-   *       // Move the mouse across the image
-   *       // to change its value
+   * <div>
+   * <code>
+   * // Drag the mouse across the page
+   * // to change its value
    *       
-   *       var value = 0;
-   *       function draw() {
-   *         fill(value);
-   *         rect(25, 25, 50, 50);
-   *       }
-   *       function mouseDragged() {
-   *         value = value + 5;
-   *         if (value > 255) {
-   *           value = 0;
-   *         }
-   *       }
-   *     </code>
-   *   </div>
+   * var value = 0;
+   * function draw() {
+   *   fill(value);
+   *   rect(25, 25, 50, 50);
+   * }
+   * function mouseDragged() {
+   *   value = value + 5;
+   *   if (value > 255) {
+   *     value = 0;
+   *   }
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.onmousemove = function(e){
     var context = this._isGlobal ? window : this;
     this.updateMouseCoords(e);
-    if (!this.isMousePressed && typeof context.mouseMoved === 'function') {
-      context.mouseMoved(e);
+    if (!this.isMousePressed) {
+      if (typeof context.mouseMoved === 'function') {
+        e.preventDefault();
+        context.mouseMoved(e);
+      } else if (typeof context.touchMoved === 'function') {
+        e.preventDefault();
+        context.touchMoved(e);
+      }
     }
-    if (this.isMousePressed && typeof context.mouseDragged === 'function') {
-      context.mouseDragged(e);
+    else {
+      if (typeof context.mouseDragged === 'function') {
+        e.preventDefault();
+        context.mouseDragged(e);
+      } else if (typeof context.touchMoved === 'function') {
+        e.preventDefault();
+        context.touchMoved(e);
+      }
     }
   };
 
   /**
    * The mousePressed() function is called once after every time a mouse button
    * is pressed. The mouseButton variable (see the related reference entry)
-   * can be used to determine which button has been pressed.
+   * can be used to determine which button has been pressed. If no 
+   * mousePressed() function is defined, the touchStarted() function will be
+   * called instead if it is defined.
    *
    * @method mousePressed
    * @example
-   *   <div>
-   *     <code>
-   *       // Click within the image to change 
-   *       // the value of the rectangle
+   * <div>
+   * <code>
+   * // Click within the image to change 
+   * // the value of the rectangle
+   * // after the mouse has been clicked
    *       
-   *       var value = 0;
-   *       function draw() {
-   *         fill(value);
-   *         rect(25, 25, 50, 50);
-   *       }
-   *       function mousePressed() {
-   *         if (value == 0) {
-   *           value = 255;
-   *         } else {
-   *           value = 0;
-   *         }
-   *       }
-   *     </code>
-   *   </div>
+   * var value = 0;
+   * function draw() {
+   *   fill(value);
+   *   rect(25, 25, 50, 50);
+   * }
+   * function mousePressed() {
+   *   if (value == 0) {
+   *     value = 255;
+   *   } else {
+   *     value = 0;
+   *   }
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.onmousedown = function(e) {
     var context = this._isGlobal ? window : this;
@@ -225,42 +242,52 @@ define(function (require) {
     this._setProperty('mouseIsPressed', true);
     this.setMouseButton(e);
     if (typeof context.mousePressed === 'function') {
+      e.preventDefault();
       context.mousePressed(e);
+    } else if (typeof context.touchStarted === 'function') {
+      e.preventDefault();
+      context.touchStarted(e);
     }
   };
 
   /**
    * The mouseReleased() function is called every time a mouse button is
-   * released.
+   * released. If no mouseReleased() function is defined, the touchEnded()
+   * function will be called instead if it is defined.
    *
    * @method mouseReleased
    * @example
-   *   <div>
-   *     <code>
-   *       // Click within the image to change 
-   *       // the value of the rectangle
+   * <div>
+   * <code>
+   * // Click within the image to change 
+   * // the value of the rectangle
+   * // after the mouse has been clicked
    *       
-   *       var value = 0;
-   *       function draw() {
-   *         fill(value);
-   *         rect(25, 25, 50, 50);
-   *       }
-   *       function mouseReleased() {
-   *         if (value == 0) {
-   *           value = 255;
-   *         } else {
-   *           value = 0;
-   *         }
-   *       }
-   *     </code>
-   *   </div>
+   * var value = 0;
+   * function draw() {
+   *   fill(value);
+   *   rect(25, 25, 50, 50);
+   * }
+   * function mouseReleased() {
+   *   if (value == 0) {
+   *     value = 255;
+   *   } else {
+   *     value = 0;
+   *   }
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.onmouseup = function(e) {
     var context = this._isGlobal ? window : this;
     this._setProperty('isMousePressed', false);
     this._setProperty('mouseIsPressed', false);
     if (typeof context.mouseReleased === 'function') {
+      e.preventDefault();
       context.mouseReleased(e);
+    } else if (typeof context.touchEnded === 'function') {
+      e.preventDefault();
+      context.touchEnded(e);
     }
   };
 
@@ -270,30 +297,31 @@ define(function (require) {
    *
    * @method mouseClicked
    * @example
-   *   <div>
-   *     <code>
-   *       // Click within the image to change 
-   *       // the value of the rectangle
-   *       // after the mouse has been clicked
+   * <div>
+   * <code>
+   * // Click within the image to change 
+   * // the value of the rectangle
+   * // after the mouse has been clicked
    *       
-   *       var value = 0;
-   *       function draw() {
-   *         fill(value);
-   *         rect(25, 25, 50, 50);
-   *       }
-   *       function mouseClicked() {
-   *         if (value == 0) {
-   *           value = 255;
-   *         } else {
-   *           value = 0;
-   *         }
-   *       }
-   *     </code>
-   *   </div>
+   * var value = 0;
+   * function draw() {
+   *   fill(value);
+   *   rect(25, 25, 50, 50);
+   * }
+   * function mouseClicked() {
+   *   if (value == 0) {
+   *     value = 255;
+   *   } else {
+   *     value = 0;
+   *   }
+   * }
+   * </code>
+   * </div>
    */
-  p5.prototype.onmouseclick = function(e) {
+  p5.prototype.onclick = function(e) {
     var context = this._isGlobal ? window : this;
     if (typeof context.mouseClicked === 'function') {
+      e.preventDefault();
       context.mouseClicked(e);
     }
   };
@@ -312,6 +340,7 @@ define(function (require) {
   p5.prototype.onmousewheel = function(e) {
     var context = this._isGlobal ? window : this;
     if (typeof context.mouseWheel === 'function') {
+      e.preventDefault();
       context.mouseWheel(e);
     }
   };

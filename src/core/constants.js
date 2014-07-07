@@ -1,6 +1,7 @@
 /**
  * @module Constants
- * @for Constants
+ * @submodule Constants
+ * @for p5
  */
 define(function(require) {
 
@@ -96,6 +97,22 @@ define(function(require) {
 
     // DOM EXTENSION
     AUTO: 'auto',
+
+    // INPUT
+    ALT: 18,
+    BACKSPACE: 8,
+    CONTROL: 17,
+    DELETE: 46,
+    DOWN_ARROW: 40,
+    ENTER: 13,
+    ESCAPE: 27,
+    LEFT_ARROW: 37,
+    OPTION: 18,
+    RETURN: 13,
+    RIGHT_ARROW: 39,
+    SHIFT: 16,
+    TAB: 9,
+    UP_ARROW: 38,
 
     // TYPOGRAPHY
     NORMAL: 'normal',

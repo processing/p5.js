@@ -1,6 +1,7 @@
 /**
  * @module Shape
- * @for Curves
+ * @submodule Curves
+ * @for p5
  * @requires core
  */
 define(function (require) {

@@ -1,6 +1,7 @@
 /**
  * @module Math
- * @for Calculation
+ * @submodule Calculation
+ * @for p5
  * @requires core
  */
 define(function (require) {

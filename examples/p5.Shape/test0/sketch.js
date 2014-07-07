@@ -1,0 +1,7 @@
+function setup() {
+
+}
+
+function draw() {
+	
+}
