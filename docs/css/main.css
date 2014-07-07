@@ -1,0 +1,992 @@
+/*
+ * HTML5 Boilerplate
+ *
+ * What follows is the result of much research on cross-browser styling.
+ * Credit left inline and big thanks to Nicolas Gallagher, Jonathan Neal,
+ * Kroc Camen, and the H5BP dev community and team.
+ */
+
+/* ==========================================================================
+   Base styles: opinionated defaults
+   ========================================================================== */
+
+/* HOMEPAGE */
+
+#bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -10;
+}
+#bg .edit_area, #bg button,
+#home .edit_area, #home button {
+    display: none;
+}
+
+/* EXAMPLES */
+.example .edit_space {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+.example pre {
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+.example div {
+    position: relative;
+}
+
+.example button {
+    position: absolute;
+    top: 0;
+    left: 400px;
+}
+
+.example #right_button {
+    left: 450px;
+}
+
+
+
+/* 
+  //////////////////////////////////////////////////
+    REFERENCE 
+  //////////////////////////////////////////////////
+*/
+
+section#reference h2 {
+    float:left;
+}
+
+/* EXAMPLES IN REF */
+.example-content .cnv_div {
+    position: absolute !important;
+    top: 0px;
+    left: 0px;
+}
+
+.example-content .edit_space, 
+.example-content pre {
+    position: absolute !important;
+    width: 100%;
+    top: 0 !important;
+    left: 120px !important;
+    padding-top: 0 !important;
+    border: none !important;
+}
+
+.example-content pre {
+
+    margin-top: 0 !important;
+}
+
+.example-content .edit_space {
+
+    margin: -0.5em 0 0 -0.5em !important;
+}
+
+.column_0, .column_1, .column_2 {
+    float: left;
+    width: 12em;
+}
+
+
+#search {
+    float:right;
+    margin: 0.5em 0 0 0;
+}
+#search input, #search input[type="password"], #search input[type="search"]
+ {
+    border: 1px solid rgba(200, 200, 200, .15);
+    font-size: 2.25em;
+    font-family: "AvenirNextLTW01-Medium";
+    width:7.70em;
+}
+
+#search ::-webkit-input-placeholder,
+#search .twitter-typeahead .tt-hint {
+   color: #ccc;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   color: #ccc;  
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   color: #ccc;  
+}
+
+:-ms-input-placeholder {  
+   color: #ccc;  
+}
+
+#search input:focus {
+    transition: width 0.65s ease;
+    width:9.75em;
+    color:#ED225D; 
+    outline-color:#3796D1;
+    outline-width: 1px;
+    outline-style: solid;
+}
+
+#search .twitter-typeahead .tt-dropdown-menu {
+background-color: #fff;
+border: 1px solid rgba(0, 0, 0, 0.2);
+padding: 0.5em;
+max-height: 200px;
+overflow-y: auto; 
+
+font-size: 1em;
+line-height: 1.4em;
+}
+
+#search .twitter-typeahead .tt-suggestion {
+padding: 3px 20px;
+line-height: 24px;
+cursor: pointer; }
+
+#search .twitter-typeahead .empty-message {
+padding: 8px 20px 1px 20px;
+font-size: 14px;
+line-height: 24px; }
+
+#search .twitter-typeahead .tt-suggestion.tt-cursor {
+color: #333;
+background-color: #eee; }
+
+#search .twitter-typeahead .tt-suggestion p {
+margin: 0; }
+#search .twitter-typeahead .tt-suggestion p .small {
+font-size: 12px;
+color: #666;  }
+
+
+
+#collection-list-nav {
+    width:100%;
+    height:8.25em;
+    list-style-type: none;
+    font-family: "AvenirNextLTW01-Medium";
+    clear:both;
+    margin:0 0 0.5em 0;
+    padding:0;
+    border-bottom: 1px dashed rgba(0,0,0,.2)
+}
+
+#collection-list {
+    margin: 0;
+}
+
+#collection-list-nav dl, 
+    .reference-group dl {
+    float: left;
+    width:7.68em;
+    margin:0 1.75em 0 0;
+}
+
+
+#collection-list-nav dl:nth-child(4), 
+    .reference-group dl:nth-child(4),
+    .reference-group.main-ref-page dl:nth-child(5) {
+    margin-right:0;
+}
+
+
+.reference-group dl:nth-child(n+5) {
+ margin-top:1em;
+}
+
+
+#collection-list-nav dd, 
+    .reference-group dd {
+    margin:0;
+}
+
+.group-name {
+    font-size: 1em;
+}
+
+div.reference-group {
+    margin: 1em 0;
+    padding: 0 0 0.5em 0;
+}
+
+div.reference-group:nth-child(1) {
+    margin: 0 0 1em 0;
+}
+
+div.reference-group:nth-child(1) h4 {
+    margin-top: 0.5em;
+}
+
+div.reference-group:nth-child(even) {
+    background-color: rgba(69, 142, 209, 0.02);
+}
+
+div.reference-group:nth-child(even) h4 {
+    margin-top: 0.25em;
+}
+
+.item {
+    display:block; 
+    width:100%; 
+}
+
+.description {
+    clear:both;
+    display:block; 
+    width:100%; 
+
+}
+
+.item-wrapper, .list-wrapper {
+    float: left;
+}
+
+#reference .core, #reference .addon {
+    color: #222;
+}
+
+html,
+button,
+input,
+select {
+    color: #222;
+}
+
+textarea {
+    line-height: 1.45em;
+    margin: -0.1em 0 0 -0.1em;
+    padding: 0.5em 1em 0.5em 1em;
+    border:0.1em solid;
+    border-color:rgba(51,51,51,.5);
+}
+
+body {
+    font-size: 1em;
+    line-height: 1.4;
+}
+
+/*
+ * Remove text-shadow in selection highlight: h5bp.com/i
+ * These selection rule sets have to be separate.
+ * Customize the background color to match your design.
+ */
+
+::-moz-selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+::selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+/*
+ * A better looking default horizontal rule
+ */
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}
+
+/*
+ * Remove the gap between images and the bottom of their containers: h5bp.com/i/440
+ */
+
+img {
+    vertical-align: middle;
+}
+
+/*
+ * Remove default fieldset styles.
+ */
+
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+/*
+ * Allow only vertical resizing of textareas.
+ */
+
+textarea {
+    resize: vertical;
+}
+
+/* ==========================================================================
+   Chrome Frame prompt
+   ========================================================================== */
+
+.chromeframe {
+    margin: 0.2em 0;
+    background: #ccc;
+    color: #000;
+    padding: 0.2em 0;
+}
+
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+/*
+        font-family:'AvenirNextLTW01-Medium';
+*/
+    /* while local dev */
+    @font-face{
+    font-family:"AvenirNextLTW01-Medium";
+    src:url("f/AvenirNextLTW01-Medium.eot?#iefix");
+    src:url("f/AvenirNextLTW01-Medium.eot?#iefix") format("eot"),
+    url("f/AvenirNextLTW01-Medium.woff") format("woff"),
+    url("f/AvenirNextLTW01-Medium.ttf") format("truetype"),
+    url("f/AvenirNextLTW01-Medium.svg#a89d6ad1-a04f-4a8f-b140-e55478dbea80") format("svg");
+    font-weight: normal;
+    font-style: normal;
+    }
+
+    /* always */
+    @font-face {
+    font-family: 'inconsolatamedium';
+    src: url('f/inconsolata.eot');
+    src: url('f/inconsolata.eot?#iefix') format('embedded-opentype'),
+         url('f/inconsolata.woff') format('woff'),
+         url('f/inconsolata.ttf') format('truetype'),
+         url('f/inconsolata.svg#inconsolatamedium') format('svg');
+    font-weight: normal;
+    font-style: normal;
+    }
+
+/* apply a natural box layout model to all elements */
+*, *:before, *:after {
+  -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+
+html {
+    font-size: 1.25em; 
+    /* 1.25em ~ 20px if times, 1.0em if body text is avenir  */
+}     
+
+body {
+    margin:0 0.5em; /* this goes away when screens are greater than 600px */
+    background-color: #fff;
+    font-family: times;
+    font-weight: 400;
+    line-height: 1.45;
+    color: #333;
+}
+
+#container {
+    z-index: 1;
+    background-color: rgba(255,255,255,1);
+}
+
+
+/* menu links  */
+
+#menu li a:link, #menu li a:visited  {
+    color: #ED225D; 
+    /* gray #333; 
+    og p5 pink #ED225D; 
+    blue #2D7BB6 (a lighter Processing blue â€” it's our take on it) */
+}
+
+#menu li a:active, #menu li a:hover {
+    color:#FF276F; /* FF276F */
+    padding-bottom: 0.11em; 
+    border-bottom: 0.11em dashed; 
+    border-bottom-color: #FF276F;
+    transition: border-bottom 30ms linear; 
+}
+
+/* body links  */
+a:link, a:visited { 
+    color: #2D7BB6;
+    text-decoration: none; 
+}
+
+a:active, a:hover, #reference a:hover { 
+    color:#ED225D; 
+    text-decoration: none;
+    padding-bottom: 0.1em; 
+    border-bottom: 0.1em dashed; 
+    border-bottom-color: #ED225D;
+    transition: border-bottom 30ms linear; 
+}
+
+.anchor {
+    color: #222 !important;
+}
+
+.here {
+    color:#ED225D !important; 
+    text-decoration: none;
+    padding-bottom: 0.1em; 
+    border-bottom: transparent; 
+    border-bottom-color: #ED225D;
+}
+
+p { 
+    margin-top:0.5em;
+    margin-bottom: 1.3em;
+}
+
+.highlight {background-color: rgba(237,34,93,0.15);}
+
+h1, h2, h3, h4 {
+  margin: 1.414em 0 0.5em 0;
+  font-weight: inherit;
+  line-height: 1.2;
+  font-family: "AvenirNextLTW01-Medium";
+}
+
+h1 {
+  font-size: 3.157em;
+}
+
+h2 {
+    font-size: 2.25em; /* 2.369em  */
+    margin: 0.25em 0 0 0;
+}
+
+h3 {
+    font-size: 1.777em;
+}
+
+h4 {
+    font-size: 1.333em;
+}
+
+small, .small, footer, #family {
+    font-size: 0.9em;
+}
+
+
+#family a:link, #family a:visited {
+    margin: 0.5em;
+}
+
+#family a:hover, #family a:active {
+    margin: 0.5em;
+    border:none;
+}
+
+#family {
+    position:absolute;
+    z-index: 9999;
+    top:0;
+    left:0;
+    /*padding: 0.5em 2em;*/
+    width:100%; /* 96, 100% if fixed*/
+    border-bottom: 1px solid;
+    overflow:none;
+    margin:0;
+    border-bottom-color: rgba(51,51,51,0.5);
+    -webkit-box-shadow: 0px 0px 10px #333;
+    -moz-box-shadow: 0px 0px 10px #333;
+    box-shadow: 0px 0px 10px #333; 
+    background-color: rgba(255,255,255,0.85);  /* */
+} 
+
+#family span {
+    margin: 0.5em;
+    color:#333 !important;
+} 
+
+#family p {
+    margin:0.375em 0 0.375em 2em;
+}
+
+.code-snippet {
+    margin:0 0 0 1em;
+    width: 90%;
+    clear:both;
+}
+
+.column-span {
+    margin:0 0 0 1em;
+    padding:0;
+    float:left;
+}
+
+
+section {
+    padding:0;
+    /*  
+    margin:0 auto;
+    clear:both; 
+    */
+}
+
+section p, section li {
+    font-size: 1.20em;
+}
+
+.spacer {
+    clear: both;
+}
+
+.left-column  {
+    width:48%;
+    float: left;
+}
+
+.right-column {  
+    width:48%;
+    float:right;
+    margin-right: 0;
+    margin-bottom: 0.25em;  
+}
+
+ul {
+    margin:0;
+    padding: 0;
+    list-style: disc;
+    list-style-position: outside;
+}
+
+li {
+    margin: 0 0 1em 0;
+}
+
+.image-row img {
+    width:48%;
+}
+
+.image-row img+img {
+    float:right;
+    margin-right: 0;
+    margin-bottom: 0.25em;    
+}
+
+img, section div img {
+    margin: 0.5em 0.5em 0 0;
+    width:100%;
+    border:0.1em solid;
+    border-color:rgba(51,51,51,.5);
+}
+
+p+img {
+    margin-top: 0;
+}
+
+.video {
+    width:100%;
+    border-color:rgba(51,51,51,.5);
+}
+
+#menu {
+    list-style: none;
+    font-family: "AvenirNextLTW01-Medium";
+    height: 100%;
+    padding:1em 0; 
+    z-index: -2;
+}
+
+#menu li { 
+    float:left;
+    margin-right: 1em;
+}
+
+#menu li:last-child { 
+
+}
+
+
+#lockup {
+    margin:4.25em 1.25em 1.25em 1.25em;
+}
+
+#lockup object {
+    margin:0;
+    padding:0; 
+    border: none;
+}
+
+
+.logo {
+    margin:0;
+    padding:0; 
+    border: none;
+    margin-bottom: 0.4em;
+    height:4.5em;
+    width:9.75em; 
+}
+
+#lockup p {
+    color: #ED225D;
+    font: 0.75em "AvenirNextLTW01-Medium";
+}
+
+#lockup a:link {
+    border: transparent;
+    height:4.5em;
+    width:9.75em; 
+}
+
+.caption {
+    margin-bottom: 2.5em;
+
+}
+
+.caption span, .caption p  {
+    text-align:right;
+    font: 0.75em "AvenirNextLTW01-Medium";
+    padding-top: 0.25em;
+}
+
+footer {
+    clear:both;
+    border-top: 0.1em dashed; 
+    border-top-color: #ED225D; 
+}
+
+/* ==========================================================================
+   Helper classes
+   ========================================================================== */
+
+/*
+ * Image replacement
+ */
+
+.ir {
+    background-color: transparent;
+    border: 0;
+    overflow: hidden;
+    /* IE 6/7 fallback */
+    *text-indent: -9999px;
+}
+
+.ir:before {
+    content: "";
+    display: block;
+    width: 0;
+    height: 150%;
+}
+
+/*
+ * Hide from both screenreaders and browsers: h5bp.com/u
+ */
+
+.hidden {
+    display: none !important;
+    visibility: hidden;
+}
+
+/*
+ * Hide only visually, but have it available for screenreaders: h5bp.com/v
+ */
+
+.visuallyhidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+/*
+ * Extends the .visuallyhidden class to allow the element to be focusable
+ * when navigated to via the keyboard: h5bp.com/p
+ */
+
+.visuallyhidden.focusable:active,
+.visuallyhidden.focusable:focus {
+    clip: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    position: static;
+    width: auto;
+}
+
+/*
+ * Hide visually and from screenreaders, but maintain layout
+ */
+
+.invisible {
+    visibility: hidden;
+}
+
+/*
+ * Clearfix: contain floats
+ *
+ * For modern browsers
+ * 1. The space content is one way to avoid an Opera bug when the
+ *    `contenteditable` attribute is included anywhere else in the document.
+ *    Otherwise it causes space to appear at the top and bottom of elements
+ *    that receive the `clearfix` class.
+ * 2. The use of `table` rather than `block` is only necessary if using
+ *    `:before` to contain the top-margins of child elements.
+ */
+
+.clearfix:before,
+.clearfix:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+/*
+ * For IE 6/7 only
+ * Include this rule to trigger hasLayout and contain floats.
+ */
+
+.clearfix {
+    *zoom: 1;
+}
+
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   Theses examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+/*  
+    initial responsive, 
+    if window is over 720 px in width 
+    put these rules into play 
+*/
+
+@media (min-width: 720px) {
+    body {
+        margin:0;
+    }
+
+    #container {
+        margin:2em auto;
+        width:52em;
+        height: auto;
+        min-height: 100%;
+        background-color: rgba(51,51,51,0.0);
+        
+    }
+    #lockup p {
+        padding:0;
+        margin:0 0 0 8.5em; /* the 7.5em  */
+    }
+    section {
+        width:36em; /* 36-38 em for about 10-14 words at this size  */
+
+    }
+
+    small, .small, footer, #family {
+    font-size: 0.75em;
+    }
+
+    footer {
+        clear:both;
+        /*margin: 4em 0 2em -.75em;*/
+        width:52em;
+    }
+
+    #menu {
+    margin:4.25em 0.75em 0 -1.85em; /* margin-right: 0.75em;  */
+    width:7.3em;
+    height:4.5em;
+    float:left;
+    border-top: transparent;
+    border-bottom: transparent;
+    height: 14.25em;
+    padding:1em 0; 
+    font-size: 0.92em;
+    }
+
+    #menu li {
+        float:none;
+        margin: 0 0 1em 0;
+        text-align: right;
+    }
+
+    #menu li:last-child {
+    /*    margin: 0;*/
+    }
+
+    #menu .other-link::after {
+        /* content:"\2192"; 
+        margin-right: -0.98em; */
+        /*content:" Â»";*/
+        }
+
+    #menu li:nth-child(8) {
+        margin-top:3em;
+        padding-top: 0.5em;
+        /*border-top: 0.06em solid rgba(51,51,51,0.25);*/
+    }
+
+/* constants for the asterisk */
+    #asterisk-design-element {
+        position:fixed;
+        z-index: -1 !important;
+        opacity: 0.6;
+    }
+
+/*  variations for asterisks on pages */
+
+    #home-page #asterisk-design-element {
+        bottom:-8%;
+        right:20%;
+        height:12em;
+        width:12em;
+        opacity: 1;
+    }
+
+    #about-page #asterisk-design-element,
+    #development-page #asterisk-design-element {
+        bottom:-14%;
+        left:-20%;
+        height:25em;
+        width:25em;
+        -webkit-transform:rotate(-1deg);
+        -moz-transform:rotate(-1deg);
+        -ms-transform:rotate(-1deg);
+        -o-transform:rotate(-1deg);
+        transform: rotate(-1deg);
+    }
+
+    #getting-started-page #asterisk-design-element,
+    #libraries-page #asterisk-design-element {
+    
+        bottom:-19%;
+        right:-16%;
+        height:28em;
+        width:28em;         
+        -webkit-transform:rotate(2deg);
+        -moz-transform:rotate(2deg);
+        -ms-transform:rotate(2deg);
+        -o-transform:rotate(2deg);
+        transform: rotate(2deg);
+    }
+
+    #learning-page #asterisk-design-element {
+
+        top:-30%;
+        right:-40%;
+        height:44em;
+        width:44em;
+        -webkit-transform:rotate(9deg);
+        -moz-transform:rotate(9deg);
+        -ms-transform:rotate(9deg);
+        -o-transform:rotate(9deg);
+        transform: rotate(9deg);         
+
+    }
+
+    #reference-page #asterisk-design-element,
+    #download-page #asterisk-design-element, 
+    #other-content-types-page #asterisk-design-element
+    {
+        top:7%;
+        left:1%;
+        height:10em;
+        width:10em; 
+        -webkit-transform:rotate(-21deg);
+        -moz-transform:rotate(-21deg);
+        -ms-transform:rotate(-21deg);
+        -o-transform:rotate(-21deg);
+        transform: rotate(-21deg); 
+    }
+
+}
+
+/* Style adjustments for high resolution devices (commented out as dpi unit throws unwanted error in inspector)
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+     
+} */
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}
+

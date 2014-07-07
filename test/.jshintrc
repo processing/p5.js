@@ -16,6 +16,7 @@
     "assert": false,
     "suite": false,
     "setup": false,
+    "teardown": false,
     "test": false,
     "afterEach": false,
     "beforeEach": false,
@@ -27,6 +28,7 @@
     "console": false,
     "PElement": false,
     "p5": false,
-    "PVector": false
+    "PVector": false,
+    "testRender": false
   }
 }

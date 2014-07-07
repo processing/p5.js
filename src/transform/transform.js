@@ -1,6 +1,7 @@
 /**
  * @module Transform
- * @for Transform
+ * @submodule Transform
+ * @for p5
  * @requires core
  * @requires constants
  */

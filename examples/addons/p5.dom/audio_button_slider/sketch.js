@@ -3,7 +3,7 @@ var beat, pVol, pTime, button, volumeSlider;
 
 function setup() {
   createCanvas(0,0);
-  beat = createAudio('lucky_dragons_-_power_melody.mp3');
+  beat = createAudio('lucky_dragons_-_power_melody.wav', 'lucky_dragons_-_power_melody.mp3');
   beat.loop();
 
   button = createButton('play');

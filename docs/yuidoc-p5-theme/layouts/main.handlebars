@@ -1,73 +1,126 @@
 <!DOCTYPE html>
+
 <!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
 <!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
 <!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>{{htmlTitle}}</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{projectAssets}}/css/main.css">
-    <link rel="shortcut icon" type="image/png" href="{{projectAssets}}/img/favicon.png">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>p5.js | reference</title>
+    <meta name="description" content="p5.js a JS client-side library for creating graphic and interactive experiences, based on the core principles of Processing.">
+    <meta name="viewport" content="width=device-width">
+
+    <!-- when hosted
+    <script type="text/javascript" src="http://fast.fonts.net/jsapi/173b6bc2-616e-4a13-8c9a-6fcf9ae1c69a.js"></script>
+    -->
+
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+    <!-- CSS (order matters): normalize across browsers -->
+    <link rel="stylesheet" href="../css/normalize.css">
+
+    <!-- CSS (order matters): Site styles -->
+    <link rel="stylesheet" href="../css/main.css">
+
+    <!-- CSS (order matters): code highlighting -->
+    <link rel="stylesheet" href="../css/prism.css">
+
+    <!-- modernizer (not leveraged, yet) 
+    <script src="../js/vendor/modernizr-2.6.2.min.js"></script>-->
   </head>
-  <body>
 
-    <div class="site-wrapper">
-      <div class="cover-container">
-        <div class="masthead clearfix">
-          <div class="inner">
+  <body id="reference-page">
 
-            <div id="header" class="header">
-              <div class="masthead-brand">
-                {{#if projectLogo}}
-                <img alt="{{projectName}}" src="{{projectLogo}}" title="{{projectName}}">
-                {{else}}<!-- 
-                <img alt="{{projectName}}" src="{{projectAssets}}/css/logo.png" title="{{projectName}}"> -->
-                {{/if}}
 
-                <!--{{projectName}}-->
+    <div id="family">
+      <p><a href="http://processing.org">Processing</a> <a class="here" href="../">p5.js</a></p> 
+    </div>    
 
-                <a href="{{projectRoot}}"><span class="lead">p5.js reference</span></a>
-              </div>
-              
-              <div id="search" class="search-wrapper"></div>
-
-              <!--
-              <ul id="menu" class="nav masthead-nav">
-                <li><a href="#classes">Classes</a></li>
-                <li><a href="#methods">Methods</a></li>
-                <li><a href="#properties">Properties</a></li>
-                <li><a href="#events">Events</a></li>
-              </ul>-->
-            </div>
-
-            <div id="container" > 
-              <!--class="container-fluid"-->
-              <div id="list" class="list-wrapper"></div>
-              <div id="item" class="item-wrapper apidocs"></div>
-              <div id="file" class="file-wrapper"></div>
-            </div>
-
-          </div>
-        </div>
-
-      </div>
-
-      <div class="mastfoot">
-        <div class="inner">
-          <p>p5 API documentation | <a href="http://p5js.org/">Get p5</a> | <a href="https://github.com/lmccart/p5.js/issues">Issues?</a> | <a href="https://github.com/lmccart/p5.js">Contribute</a></p>
-        </div>
-      </div>
-
+    <div id="container">
+    <!-- identity -->
+    <div id="lockup">
+      <a href="../">
+        <img type="image/svg+xml" src="../img/p5js.svg" class="logo" />
+      </a>
+      <p>the intuition of Processing times the extensibility of JavaScript</p>
     </div>
 
-    <script src="{{projectAssets}}/js/p5.js"></script>
+    <!-- site navigation -->
+    <div class="column-span">
+    <ul id="menu">
+      <li><a href="../">Home</a></li>
+      <li><a href="../about/">About</a></li>
+      <li><a href="../download/">Download</a></li> 
+      <li><a href="../getting-started/">Getting&nbsp;Started</a></li>
+      <li><a href="./">Reference</a></li>
+      <li><a href="../libraries/">Libraries</a></li>
+      <li><a href="../learning/">Learning</a></li>
+      <li><a href="../development/">Development</a></li>
+      <li><a href="http://github.com/lmccart/p5.js" target=_blank class="other-link">Github</a></li>
+    </ul>
+    <br />
+    </div>
+
+    <div class="column-span">
+      <section id="reference">
+
+        <a href="./" class="anchor"><h2>Reference</h2></a>
+
+        <div id="search" class="search-wrapper"></div>
+        <div id="collection-list-nav">
+
+        </div>
+
+        <!--class="container-fluid"-->
+        <div id="list" class="list-wrapper allItems-collection"></div>
+        <div id="item" class="item-wrapper apidocs"></div>
+        <div id="file" class="file-wrapper"></div>
+
+      </section>
+
+
+      <footer>
+        <p>p5.js is developed by <a href="http://lauren-mccarthy.com" target="_blank">Lauren McCarthy</a> and other <a href="../development/#contributors" target="_blank">contributors</a>, with the support of the <a href="http://processing.org/foundation/" target="_blank">Processing Foundation</a> and <a href="http://itp.nyu.edu/itp/" target="_blank">NYU ITP</a>.</p>
+      </footer>
+    </div><!-- end column-span -->
+
+    <!-- outside of column for footer to go across both -->
+
+    <p class="clearfix"> &nbsp; </p>
+
+    <object type="image/svg+xml" data="../img/thick-asterisk-alone.svg" id="asterisk-design-element">
+         *<!-- to do: add fallback image in CSS -->
+    </object>
+
+
+
+    <!-- jquery-->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>-->
+    <script>window.jQuery || document.write('../js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+
+
+    <script src="../js/p5.js"></script>
+    <script src="../js/render.js"></script>
+    <!-- prism for code highlighting -->
+    <script src="../js/vendor/prism.js"></script>
+
+    <script src="../js/main.js"></script>
+
     <script src="{{projectAssets}}/js/require.min.js"></script>
     <script src="{{projectAssets}}/js/reference.js"></script>
-    <script src="{{projectAssets}}/js/render.js"></script>
-  
+
+
+    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. 
+    <script>
+    /*    
+      var _gaq=[['_setAccount','UA-XXXXX-X'],['_trackPageview']];
+      (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+      g.src=('https:'==location.protocol?'//ssl':'//www')+'.google-analytics.com/ga.js';
+      s.parentNode.insertBefore(g,s)}(document,'script'));
+    */
+    </script>
+    -->
   </body>
 </html>

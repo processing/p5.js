@@ -1,6 +1,7 @@
 /**
  * @module Input
- * @for Touch
+ * @submodule Touch
+ * @for p5
  * @requires core
  */
 define(function (require) {
@@ -64,6 +65,7 @@ define(function (require) {
       e.preventDefault();
       context.touchStarted(e);
     } else if (typeof context.mousePressed === 'function') {
+      e.preventDefault();
       context.mousePressed(e);
     }
   };
@@ -82,6 +84,7 @@ define(function (require) {
       e.preventDefault();
       context.touchMoved(e);
     } else if (typeof context.mouseDragged === 'function') {
+      e.preventDefault();
       context.mouseDragged(e);
     }
   };
@@ -100,6 +103,7 @@ define(function (require) {
       e.preventDefault();
       context.touchEnded(e);
     } else if (typeof context.mouseReleased === 'function') {
+      e.preventDefault();
       context.mouseReleased(e);
     }
   };

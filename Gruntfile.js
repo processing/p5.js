@@ -33,18 +33,6 @@ module.exports = function(grunt) {
       yuidoc_theme_build: {
         files: ['docs/yuidoc-p5-theme-src/scripts/**/*'],
         tasks: ['requirejs:yuidoc_theme']
-      },
-      // css for yuidoc/reference theme (see 'sass' task)
-      yuidoc_theme_sass: {
-        files: ['docs/yuidoc-p5-theme-src/sass/**/*.scss'],
-        tasks: ['sass']
-      },
-    },
-    sass: {
-      yuidoc_theme: {
-        files: {
-          'docs/yuidoc-p5-theme/assets/css/main.css': 'docs/yuidoc-p5-theme-src/sass/main.scss'
-        }
       }
     },
     mocha: {
@@ -82,14 +70,17 @@ module.exports = function(grunt) {
             'constants': 'src/core/constants',
             'data.array_functions': 'src/data/array_functions',
             'data.string_functions': 'src/data/string_functions',
-            'dom.manipulate': 'src/dom/manipulate',
+            'dom.dom': 'src/dom/dom',
             'environment': 'src/environment/environment',
+            'image.image': 'src/image/image',
+            'image.loading_displaying': 'src/image/loading_displaying',
             'image.pixels': 'src/image/pixels',
             'input.files': 'src/input/files',
             'input.keyboard': 'src/input/keyboard',
             'input.mouse': 'src/input/mouse',
             'input.time_date': 'src/input/time_date',
             'input.touch': 'src/input/touch',
+            'math.math': 'src/math/math',
             'math.calculation': 'src/math/calculation',
             'math.random': 'src/math/random',
             'math.noise': 'src/math/noise',

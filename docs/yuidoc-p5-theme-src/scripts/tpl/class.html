@@ -1,12 +1,29 @@
-<!--  <div class="description"> 
-    <%=description%>
-  </div>
-  
-<div class="meta">File: <strong><a href='#file/<%=urlencodedfile%>/<%=line%>'><%=file%>:<%=line%></a></strong></div>-->
 
-  <% if (isConstructor) { %>
-  <div class="constructor">
-    <!--<h2>Constructor</h2>--> 
-    <%=constructor%>
-  </div>
-  <% } %>
+<% if (is_constructor) { %>
+<div class="constructor">
+  <!--<h2>Constructor</h2>--> 
+  <%=constructor%>
+</div>
+<% } %>
+
+<% var fields = _.filter(things, function(item) { return item.itemtype === 'property' }); %>
+<% if (fields.length > 0) { %>
+  <h4>Fields</h4>
+  <p>
+    <% _.each(fields, function(item) { %>
+      <a href="<%=item.hash%>" <% if (item.module !== module) { %>class="addon"<% } %> ><%=item.name%></a>: <%= item.description %>
+      <br>
+    <% }); %>
+  </p>
+<% } %>
+
+<% var methods = _.filter(things, function(item) { return item.itemtype === 'method' }); %>
+<% if (methods.length > 0) { %>
+  <h4>Methods</h4>
+  <p>
+    <% _.each(methods, function(item) { %>
+      <a href="<%=item.hash%>" <% if (item.module !== module) { %>class="addon"<% } %>><%=item.name%><% if (item.itemtype === 'method') { %>()<%}%></a>: <%= item.description %>
+      <br>
+    <% }); %>
+  </p>
+<% } %>

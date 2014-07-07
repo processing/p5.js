@@ -4,30 +4,23 @@
   </h1>
 </div> -->
 
-<ul id="collection-list" class="<%=listCollection%>-collection">
-
-  <% _.each(groups, function(group){ %>
-  <li class="group">
-    <h3 class="group-name"><%=group.name%></h3>
-
-    <ul class="<%=group.name%>-group">
-      <% _.each(group.subgroups, function(subgroup) { %>
-        <li>
-          <% if (subgroup.name !== group.name) { %>
-            <h3 class="subgroup-name"><%=subgroup.name%></h3>
-          <% } %>
-          <ul>
-            <% _.each(subgroup.items, function(item) { %>
-              <li>
-                <a href="<%=item.hash%>"><%=item.name%><% if (item.itemtype === 'method') { %>()<%}%></a>
-              </li>
-            <% }); %>
-          </ul>
-        </li>
-      <% }); %>
-    </ul>
-
-  </li>
+<% _.each(groups, function(group){ %>
+  <h4 class="group-name" id="group-<%=group.name%>"><%=group.name%></h4>
+  <div class="reference-group clearfix main-ref-page">  
+  <% _.each(group.subgroups, function(subgroup, ind) { %>
+    <dl>
+    <% if (subgroup.name !== '0') { %>
+        <dt class="subgroup-<%=subgroup.name%>"><%=subgroup.name%></dt>
+    <% } %>
+    <% _.each(subgroup.items, function(item) { %>
+      <dd><a href="<%=item.hash%>"><%=item.name%><% if (item.itemtype === 'method') { %>()<%}%></a></dd>
+    <% }); %>
+    </dl>
   <% }); %>
+  </div>
+<% }); %>
 
-</ul>
+
+
+                
+                  

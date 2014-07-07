@@ -13,14 +13,17 @@ define(function (require) {
   require('constants');
   require('data.array_functions');
   require('data.string_functions');
-  require('dom.manipulate');
+  require('dom.dom');
   require('environment');
+  require('image.image');
+  require('image.loading_displaying');
   require('image.pixels');
   require('input.files');
   require('input.keyboard');
   require('input.mouse');
   require('input.time_date');
   require('input.touch');
+  require('math.math');
   require('math.calculation');
   require('math.random');
   require('math.noise');

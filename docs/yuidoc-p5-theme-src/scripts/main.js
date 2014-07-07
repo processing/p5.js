@@ -19,7 +19,7 @@ require([
   'App'], function(_, Backbone, App) {
   
   // Set collections
-  App.collections = ['allItems', 'classes', 'events', 'methods', 'properties'];
+  App.collections = ['allItems', 'classes', 'events', 'methods', 'properties', 'sound', 'dom'];
 
   // Get json API data
   $.getJSON("data.json", function(data) {
@@ -29,19 +29,39 @@ require([
     App.properties = [];
     App.events = [];
     App.allItems = [];
+    App.sound = { items: [] };
+    App.dom = { items: [] };
+    App.modules = [];
     App.project = data.project;
+
+
+    var modules = data.modules;
+
+    // Get class items (methods, properties, events)
+    _.each(modules, function(m, idx, array) {
+      App.modules.push(m);
+      if (m.name == "p5.sound") {
+        App.sound.module = m;
+      }
+      else if (m.name == "p5.dom") {
+        App.dom.module = m;
+      }
+    });
+
 
     var items = data.classitems;
     var classes = data.classes;
 
+    // Get classes
+    _.each(classes, function(c, idx, array) {
+      if (c.is_constructor) {
+        App.classes.push(c);
+      }
+    });
+
     // Get class items (methods, properties, events)
     _.each(items, function(el, idx, array) {
 
-      var pieces = el.class.split(':');
-      if (pieces.length > 1) {
-        el.module = pieces[0];
-        el.class = pieces[1];
-      }
       if (el.itemtype) {
         if (el.itemtype === "method") {
           App.methods.push(el);
@@ -52,18 +72,27 @@ require([
         } else if (el.itemtype === "event") {
           App.events.push(el);
           App.allItems.push(el);
+        } 
+
+        // libraries
+        if (el.module === "p5.sound") {
+          App.sound.items.push(el);
+        }
+        else if (el.module === "p5.dom" || el.module === 'DOM') {
+          if (el.class === 'p5') {
+            el.class = 'p5.dom';
+          }
+          App.dom.items.push(el);
         }
       }
     });
 
-    //console.log(App.data);
-
-    // Get classes
-    _.each(classes, function(el, idx, array) {
-      App.classes.push(el);
-      // App.allItems.push(el);
+    _.each(App.classes, function(c, idx) {
+      c.items = _.filter(App.allItems, function(it){ return it.class === c.name; });
     });
-    
+
+
+
     require(['router']);
   });
 });

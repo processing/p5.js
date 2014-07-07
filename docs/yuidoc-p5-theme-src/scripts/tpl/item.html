@@ -1,15 +1,127 @@
-<div class="page-header">
-  <h1><%=name%> <small><%=collectionName%></small>
+<h3><%=item.name%><% if (item.isMethod) { %>()<% } %></h3>
 
-    
-    <div class="right-header">
-    <% if (isConstant) { %>
-    <small>
-      <span class="label label-warning final">Constant</span>
-    </small>
-    <% } %>
-    </div>
-  </h1>
+<% if (item.example) { %>
+<div class="example">
+  <h4>Example</h4>
+
+	<div class="example-content">
+    <%= item.example %>
+  </div>
+</div> 
+<% } %>
+
+
+<div class="description">
+  <h4>Description</h4>
+  <p><%= item.description %></p>
 </div>
 
+
+<div>
+  <h4>Syntax</h4>
+<p><pre><code class="language-javascript"><%= syntax %></code></pre></p>
+</div>
+
+
+<% if (item.return) { %>
+<span class="returns-inline">
+  <span class="type"></span>
+</span>
+<% } %>
+
+<% if (item.deprecated) { %>
+<span class="flag deprecated"<% if (item.deprecationMessage) { %> title="<%=item.deprecationMessage%>"<% } %>>deprecated</span>
+<% } %>
+
+<% if (item.access) { %>
+<span class="flag <%=item.access%>"><%= item.access %></span>
+<% } %>
+
+<% if (item.final) { %>
+<span class="flag final">final</span>
+<% } %>
+
+<% if (item.static) { %>
+<span class="flag static">static</span>
+<% } %>
+
+<% if (item.chainable) { %>
+<span class="label label-success chainable">chainable</span>
+<% } %>
+
+<% if (item.async) { %>
+<span class="flag async">async</span>
+<% } %>
+
+<!--  <div class="meta">
+    {{#if overwritten_from}}
+    <p>Inherited from
+      <a href="#">
+        {{overwritten_from/class}}
+      </a>
+      {{#if foundAt}}
+      but overwritten in
+      {{/if}}
+      {{else}}
+      {{#if extended_from}}
+    <p>Inherited from
+      <a href="#">{{extended_from}}</a>:
+      {{else}}
+      {{#providedBy}}
+    <p>Provided by the <a href="../modules/{{.}}.html">{{.}}</a> module.</p>
+    {{/providedBy}}
+    <p>
+      {{#if foundAt}}
+      Defined in
+      {{/if}}
+      {{/if}}
+      {{/if}}
+      {{#if foundAt}}
+      <a href="{{foundAt}}">`{{{file}}}:{{{line}}}`</a>
+      {{/if}}
+    </p>
+
+    {{#if deprecationMessage}}
+    <p>Deprecated: {{deprecationMessage}}</p>
+    {{/if}}
+
+    {{#if since}}
+    <p>Available since {{since}}</p>
+    {{/if}}
+  </div>-->
+
+<% if (item.params) { %>
+<div class="params">
+  <h4>Parameters</h4>
+  <ul>
+  <% for (var i=0; i<item.params.length; i++) { %>
+    <li>
+    <% var p = item.params[i] %>
+    <% if (p.optional) { %>
+      <code class="language-javascript">[<%=p.name%>]</code>
+    <% } else { %>
+      <code class="language-javascript"><%=p.name%></code>
+    <% } %> 
+    <%if (p.optdefault) { %>=<%=p.optdefault%><% } %>
+    <% if (p.type) { %>
+      <span class="param-type label label-info"><%=p.type%></span>: <%=p.description%></span> 
+    <% } %>
+    <% if (p.multiple) {%>
+      <span class="flag multiple" title="This argument may occur one or more times.">multiple</span>
+    <% } %>
+    </li>
+  <% } %>
+  </ul>
+</div>
+<% } %>
+
+<% if (item.return) { %>
+<div>
+  <h4>Returns</h4>
+
+    <% if (item.return.type) { %>
+      <p><span class="param-type label label-info"><%=item.return.type%></span>: <%= item.return.description %></p>
+    <% } %>
+</div>
+<% } %>
 

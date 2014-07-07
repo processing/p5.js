@@ -1,6 +1,7 @@
 /**
  * @module Color
- * @for Setting
+ * @submodule Setting
+ * @for p5
  * @requires core
  * @requires constants
  */
@@ -175,16 +176,18 @@ define(function (require) {
    *                          [r, g, b, a] ==> [r, g, b, a]
    */
   p5.prototype.getNormalizedColor = function(args) {
+    if (args[0] instanceof Array) { // already color object
+      return args[0];
+    }
     var r, g, b, a, rgba;
-    var _args = typeof args[0].length === 'number' ? args[0] : args;
-    if (_args.length >= 3) {
-      r = _args[0];
-      g = _args[1];
-      b = _args[2];
-      a = typeof _args[3] === 'number' ? _args[3] : this._maxA;
+    if (args.length >= 3) {
+      r = args[0];
+      g = args[1];
+      b = args[2];
+      a = typeof args[3] === 'number' ? args[3] : this._maxA;
     } else {
-      r = g = b = _args[0];
-      a = typeof _args[1] === 'number' ? _args[1] : this._maxA;
+      r = g = b = args[0];
+      a = typeof args[1] === 'number' ? args[1] : this._maxA;
     }
 
     r *= 255/this._maxC0;
