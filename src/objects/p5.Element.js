@@ -110,6 +110,19 @@ define(function(require) {
     attachListener('mouseout', fxn, this);
   };
 
+  /**
+   * The .mouseMoved() function is called once every time a
+   * mouse moves over the element. This can be used to attach an
+   * element specific event listener.
+   *
+   * @method mouseMoved
+   * @param  {Function} fxn function to be fired when mouse is
+   *                    moved over the element.
+   */
+  p5.Element.prototype.mouseMoved = function (fxn) {
+    attachListener('mousemove', fxn, this);
+  };
+
 
   function attachListener(ev, fxn, ctx) {
     var _this = ctx;
