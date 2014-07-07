@@ -27,7 +27,6 @@ define(function(require) {
     this.width = this.elt.offsetWidth;
     this.height = this.elt.offsetHeight;
     if (elt instanceof HTMLCanvasElement && this._pInst) {
-      this.context = elt.getContext('2d');
       // for pixel method sharing with pimage
       this._pInst._setProperty('canvas', elt);
     }

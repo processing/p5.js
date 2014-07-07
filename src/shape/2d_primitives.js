@@ -64,6 +64,7 @@ define(function (require) {
    * </div>
    */
 	p5.prototype.arc = function(x, y, width, height, start, stop, mode) {
+    var ctx = this.canvas.getContext('2d');
     var vals = canvas.arcModeAdjust(
       x,
       y,
@@ -75,21 +76,21 @@ define(function (require) {
       //scale the arc if it is oblong
       xScale = (vals.h > vals.w) ? vals.w / vals.h : 1,
       yScale = (vals.h > vals.w) ? 1 : vals.h / vals.w;
-    this._curElement.context.scale(xScale, yScale);
-    this._curElement.context.beginPath();
-    this._curElement.context.arc(vals.x, vals.y, radius, start, stop);
-    this._curElement.context.stroke();
+    ctx.scale(xScale, yScale);
+    ctx.beginPath();
+    ctx.arc(vals.x, vals.y, radius, start, stop);
+    ctx.stroke();
     if (mode === constants.CHORD || mode === constants.OPEN) {
-      this._curElement.context.closePath();
+      ctx.closePath();
     } else if (mode === constants.PIE || mode === undefined) {
-      this._curElement.context.lineTo(vals.x, vals.y);
-      this._curElement.context.closePath();
+      ctx.lineTo(vals.x, vals.y);
+      ctx.closePath();
     }
-    this._curElement.context.fill();
+    ctx.fill();
     if(mode !== constants.OPEN && mode !== undefined) {
       // final stroke must be after fill so the fill does not
       // cover part of the line
-      this._curElement.context.stroke();
+      ctx.stroke();
     }
 
     return this;
@@ -115,6 +116,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.ellipse = function(x, y, width, height) {
+    var ctx = this.canvas.getContext('2d');
     var vals = canvas.modeAdjust(
       x,
       y,
@@ -129,9 +131,9 @@ define(function (require) {
       ye = vals.y + vals.h,      // y-end
       xm = vals.x + vals.w / 2,  // x-middle
       ym = vals.y + vals.h / 2;  // y-middle
-    this._curElement.context.beginPath();
-    this._curElement.context.moveTo(vals.x, ym);
-    this._curElement.context.bezierCurveTo(
+    ctx.beginPath();
+    ctx.moveTo(vals.x, ym);
+    ctx.bezierCurveTo(
       vals.x,
       ym - oy,
       xm - ox,
@@ -139,7 +141,7 @@ define(function (require) {
       xm,
       vals.y
     );
-    this._curElement.context.bezierCurveTo(
+    ctx.bezierCurveTo(
       xm + ox,
       vals.y,
       xe,
@@ -147,8 +149,8 @@ define(function (require) {
       xe,
       ym
     );
-    this._curElement.context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-    this._curElement.context.bezierCurveTo(
+    ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+    ctx.bezierCurveTo(
       xm - ox,
       ye,
       vals.x,
@@ -156,9 +158,9 @@ define(function (require) {
       vals.x,
       ym
     );
-    this._curElement.context.closePath();
-    this._curElement.context.fill();
-    this._curElement.context.stroke();
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
 
     return this;
   };
@@ -181,13 +183,14 @@ define(function (require) {
    * @return {p5}        the p5 object
    */
   p5.prototype.line = function(x1, y1, x2, y2) {
-    if (this._curElement.context.strokeStyle === 'rgba(0,0,0,0)') {
+    var ctx = this.canvas.getContext('2d');
+    if (ctx.strokeStyle === 'rgba(0,0,0,0)') {
       return;
     }
-    this._curElement.context.beginPath();
-    this._curElement.context.moveTo(x1, y1);
-    this._curElement.context.lineTo(x2, y2);
-    this._curElement.context.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
 
     return this;
   };
@@ -206,29 +209,30 @@ define(function (require) {
    * @return {p5}       the p5 object
    */
   p5.prototype.point = function(x, y) {
-    var s = this._curElement.context.strokeStyle;
-    var f = this._curElement.context.fillStyle;
+    var ctx = this.canvas.getContext('2d');
+    var s = ctx.strokeStyle;
+    var f = ctx.fillStyle;
     if (s === 'rgba(0,0,0,0)') {
       return;
     }
     x = Math.round(x);
     y = Math.round(y);
-    this._curElement.context.fillStyle = s;
-    if (this._curElement.context.lineWidth > 1) {
-      this._curElement.context.beginPath();
-      this._curElement.context.arc(
+    ctx.fillStyle = s;
+    if (ctx.lineWidth > 1) {
+      ctx.beginPath();
+      ctx.arc(
         x,
         y,
-        this._curElement.context.lineWidth / 2,
+        ctx.lineWidth / 2,
         0,
         constants.TWO_PI,
         false
       );
-      this._curElement.context.fill();
+      ctx.fill();
     } else {
-      this._curElement.context.fillRect(x, y, 1, 1);
+      ctx.fillRect(x, y, 1, 1);
     }
-    this._curElement.context.fillStyle = f;
+    ctx.fillStyle = f;
 
     return this;
   };
@@ -253,14 +257,15 @@ define(function (require) {
    * @return {p5}     the p5 object
    */
   p5.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
-    this._curElement.context.beginPath();
-    this._curElement.context.moveTo(x1, y1);
-    this._curElement.context.lineTo(x2, y2);
-    this._curElement.context.lineTo(x3, y3);
-    this._curElement.context.lineTo(x4, y4);
-    this._curElement.context.closePath();
-    this._curElement.context.fill();
-    this._curElement.context.stroke();
+    var ctx = this.canvas.getContext('2d');
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.lineTo(x3, y3);
+    ctx.lineTo(x4, y4);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
 
     return this;
   };
@@ -282,10 +287,11 @@ define(function (require) {
   */
   p5.prototype.rect = function(a, b, c, d) {
     var vals = canvas.modeAdjust(a, b, c, d, this._rectMode);
-    this._curElement.context.beginPath();
-    this._curElement.context.rect(vals.x, vals.y, vals.w, vals.h);
-    this._curElement.context.fill();
-    this._curElement.context.stroke();
+    var ctx = this.canvas.getContext('2d');
+    ctx.beginPath();
+    ctx.rect(vals.x, vals.y, vals.w, vals.h);
+    ctx.fill();
+    ctx.stroke();
 
     return this;
   };
@@ -305,13 +311,14 @@ define(function (require) {
   * @return {p5}        the p5 object
   */
   p5.prototype.triangle = function(x1, y1, x2, y2, x3, y3) {
-    this._curElement.context.beginPath();
-    this._curElement.context.moveTo(x1, y1);
-    this._curElement.context.lineTo(x2, y2);
-    this._curElement.context.lineTo(x3, y3);
-    this._curElement.context.closePath();
-    this._curElement.context.fill();
-    this._curElement.context.stroke();
+    var ctx = this.canvas.getContext('2d');
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.lineTo(x3, y3);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
 
     return this;
   };

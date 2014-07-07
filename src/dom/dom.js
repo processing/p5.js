@@ -87,8 +87,8 @@ define(function(require) {
         p._setProperty('focused', false);
       };
 
-      if (typeof this._curElement.context !== 'undefined') {
-        this._curElement.context.setTransform(1, 0, 0, 1, 0, 0);
+      if (typeof this.canvas.getContext('2d') !== 'undefined') {
+        this.canvas.getContext('2d').setTransform(1, 0, 0, 1, 0, 0);
       }
 
     }

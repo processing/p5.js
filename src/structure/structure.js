@@ -66,18 +66,18 @@ define(function (require) {
   p5.prototype.pushStyle = function() {
 
     this.styles.push({
-      fillStyle:   this._curElement.context.fillStyle, // fill
-      strokeStyle: this._curElement.context.strokeStyle, // stroke
-      lineWidth:   this._curElement.context.lineWidth, // strokeWeight
-      lineCap:     this._curElement.context.lineCap, // strokeCap
-      lineJoin:    this._curElement.context.lineJoin, // strokeJoin
+      fillStyle:   this.canvas.getContext('2d').fillStyle, // fill
+      strokeStyle: this.canvas.getContext('2d').strokeStyle, // stroke
+      lineWidth:   this.canvas.getContext('2d').lineWidth, // strokeWeight
+      lineCap:     this.canvas.getContext('2d').lineCap, // strokeCap
+      lineJoin:    this.canvas.getContext('2d').lineJoin, // strokeJoin
       tint:        this._tint, // tint
       imageMode:   this._imageMode, // imageMode
       rectMode:    this._rectMode, // rectMode
       ellipseMode: this._ellipseMode, // ellipseMode
       // @todo shapeMode
       colorMode:   this._colorMode, // colorMode
-      textAlign:   this._curElement.context.textAlign, // textAlign
+      textAlign:   this.canvas.getContext('2d').textAlign, // textAlign
       textFont:    this.textFont,
       textLeading: this.textLeading, // textLeading
       textSize:    this.textSize, // textSize
@@ -100,18 +100,18 @@ define(function (require) {
 
     var lastS = this.styles.pop();
 
-    this._curElement.context.fillStyle = lastS.fillStyle; // fill
-    this._curElement.context.strokeStyle = lastS.strokeStyle; // stroke
-    this._curElement.context.lineWidth = lastS.lineWidth; // strokeWeight
-    this._curElement.context.lineCap = lastS.lineCap; // strokeCap
-    this._curElement.context.lineJoin = lastS.lineJoin; // strokeJoin
+    this.canvas.getContext('2d').fillStyle = lastS.fillStyle; // fill
+    this.canvas.getContext('2d').strokeStyle = lastS.strokeStyle; // stroke
+    this.canvas.getContext('2d').lineWidth = lastS.lineWidth; // strokeWeight
+    this.canvas.getContext('2d').lineCap = lastS.lineCap; // strokeCap
+    this.canvas.getContext('2d').lineJoin = lastS.lineJoin; // strokeJoin
     this._tint = lastS.tint; // tint
     this._imageMode = lastS.imageMode; // imageMode
     this._rectMode = lastS._rectMode; // rectMode
     this._ellipseMode = lastS.ellipseMode; // elllipseMode
     // @todo shapeMode
     this._colorMode = lastS._colorMode; // colorMode
-    this._curElement.context.textAlign = lastS.textAlign; // textAlign
+    this.canvas.getContext('2d').textAlign = lastS.textAlign; // textAlign
     this.textFont = lastS.textFont;
     this.textLeading = lastS.textLeading; // textLeading
     this.textSize = lastS.textSize; // textSize

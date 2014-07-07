@@ -274,9 +274,9 @@ define(function (require) {
     }.bind(this);
 
     this._applyDefaults = function() {
-      this._curElement.context.fillStyle = '#FFFFFF';
-      this._curElement.context.strokeStyle = '#000000';
-      this._curElement.context.lineCap = constants.ROUND;
+      this.canvas.getContext('2d').fillStyle = '#FFFFFF';
+      this.canvas.getContext('2d').strokeStyle = '#000000';
+      this.canvas.getContext('2d').lineCap = constants.ROUND;
     }.bind(this);
 
     this._setProperty = function(prop, value) {
