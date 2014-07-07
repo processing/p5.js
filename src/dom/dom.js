@@ -51,7 +51,7 @@ define(function(require) {
       document.body.appendChild(c);
     }
 
-    var elt =  new p5.Element(c, this);
+    var elt = new p5.Graphics(c, this);
     this.context(elt);
     this._applyDefaults();
     this.scale(this._pixelDensity, this._pixelDensity);
@@ -61,22 +61,10 @@ define(function(require) {
 
 
   p5.prototype.context = function(e) {
-    var obj;
-    if (typeof e === 'string' || e instanceof String) {
-      var elt = document.getElementById(e);
-      if (elt) {
-        var pe = new p5.Element(elt, this);
-        obj = pe;
-      } else {
-        obj = null;
-      }
-    } else {
-      obj = e;
-    }
-    if (typeof obj !== 'undefined') {
-      this._curElement = obj;
-      this._setProperty('width', obj.elt.offsetWidth);
-      this._setProperty('height', obj.elt.offsetHeight);
+    if (typeof e !== 'undefined') {
+      this._curElement = e;
+      this._setProperty('width', e.elt.offsetWidth);
+      this._setProperty('height', e.elt.offsetHeight);
 
       var p = this;
       window.onfocus = function() {
@@ -86,11 +74,6 @@ define(function(require) {
       window.onblur = function() {
         p._setProperty('focused', false);
       };
-
-      if (typeof this.canvas.getContext('2d') !== 'undefined') {
-        this.canvas.getContext('2d').setTransform(1, 0, 0, 1, 0, 0);
-      }
-
     }
   };
 

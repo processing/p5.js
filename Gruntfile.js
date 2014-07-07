@@ -62,6 +62,7 @@ module.exports = function(grunt) {
           paths: {
             'app': 'src/app',
             'p5.Element': 'src/objects/p5.Element',
+            'p5.Graphics': 'src/objects/p5.Graphics',
             'p5.Image': 'src/objects/p5.Image',
             'p5.Vector': 'src/objects/p5.Vector',
             'color.creating_reading': 'src/color/creating_reading',
