@@ -22,13 +22,20 @@ define(function(require) {
     if (isDefault) {
       c = document.createElement('canvas');
       c.id = 'defaultCanvas';
+      // store in elements array
+      this._elements.push(c);
+
     } else { // resize the default canvas if new one is created
       c = document.getElementById('defaultCanvas');
       c.id = ''; // remove default id
       if (!c) { // probably user calling createCanvas more than once... uhoh
         c = document.createElement('canvas');
-        var warn = 'Warning: createCanvas more than once not recommended.';
-        warn += 'Unpredictable behavior may result.';
+
+        // store in elements array
+        this._elements.push(c);
+
+        var warn = 'Warning: createCanvas more than once NOT recommended.';
+        warn += ' Very unpredictable behavior may result.';
         console.log(warn);
       }
     }
@@ -78,8 +85,8 @@ define(function(require) {
    * function draw() {
    *   background(200);
    *   pg.background(100);
-   *   pg.stroke(255);
-   *   pg.line(50, 50, mouseX, mouseY);
+   *   pg.noStroke();
+   *   pg.ellipse(pg.width/2, pg.height/2, 50, 50);
    *   image(pg, 50, 50); 
    *   image(pg, 0, 0, 50, 50);
    * }
@@ -93,6 +100,9 @@ define(function(require) {
     //c.style.visibility='hidden';
     document.body.appendChild(c);
     
+    // store in elements array
+    this._elements.push(c);
+
     var elt = new p5.Graphics(c);
 
     for (var p in p5.prototype) {
@@ -104,7 +114,6 @@ define(function(require) {
         }
       }
     }
-
     this._applyDefaults.call(elt);
     return elt;
   };

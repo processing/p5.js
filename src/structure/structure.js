@@ -190,6 +190,12 @@ define(function (require) {
         this._curElement.elt.removeEventListener(cev, f);
       }
 
+      // remove DOM elements created by p5
+      for (var i=0; i<this._elements.length; i++) {
+        var e = this._elements[i];
+        e.parentNode.removeChild(e);
+      }
+
       // remove window bound properties and methods
       if (this._isGlobal) {
         for (var method in p5.prototype) {
@@ -202,10 +208,6 @@ define(function (require) {
           }
         }
       }
-
-      // remove canvas from DOM
-      var elt = this._curElement.elt;
-      elt.parentNode.removeChild(elt);
     }
   };
 

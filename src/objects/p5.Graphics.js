@@ -30,8 +30,8 @@ define(function(require) {
    * function draw() {
    *   background(200);
    *   pg.background(100);
-   *   pg.stroke(255);
-   *   pg.line(20, 20, mouseX, mouseY);
+   *   pg.noStroke();
+   *   pg.ellipse(pg.width/2, pg.height/2, 50, 50);
    *   image(pg, 9, 30); 
    *   image(pg, 51, 30);
    * }

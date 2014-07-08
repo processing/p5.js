@@ -98,6 +98,7 @@ define(function (require) {
     this._startTime = new Date().getTime();
     this._userNode = node;
     this._curElement = null;
+    this._elements = [];
     this._preloadCount = 0;
     this._updateInterval = 0;
     this._isGlobal = false;
