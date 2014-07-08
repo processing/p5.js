@@ -12,11 +12,15 @@ define(function(require) {
     this.canvas = elt;
     if (this._pInst) {
       // for pixel method sharing with pimage
+      this._pInst._setProperty('_curElement', this);
       this._pInst._setProperty('canvas', elt);
+      this._pInst._setProperty('width', this.width);
+      this._pInst._setProperty('height', this.height);
     }
   };
 
   p5.Graphics.prototype = Object.create(p5.Element.prototype);
+
 
   return p5.Graphics;
 });

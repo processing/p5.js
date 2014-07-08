@@ -348,6 +348,14 @@ define(function (require) {
       }
     }
 
+    window.addEventListener('focus', function() {
+      this._setProperty('focused', true);
+    });
+
+    window.addEventListener('blur', function() {
+      this._setProperty('focused', false);
+    });
+
     // TODO: ???
     if (document.readyState === 'complete') {
       this._start();

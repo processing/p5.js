@@ -11,7 +11,7 @@ define(function (require) {
   var p5 = require('core');
 
   p5.prototype.exit = function() {
-    throw 'Not implemented';
+    throw 'exit() not implemented, see remove()';
   };
   /**
    * Stops p5.js from continuously executing the code within draw(). If loop()
@@ -161,7 +161,7 @@ define(function (require) {
   };
 
   p5.prototype.size = function() {
-    throw 'Not implemented';
+    throw 'size() not implemented, see createCanvas()';
   };
 
   return p5;

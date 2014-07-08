@@ -26,13 +26,6 @@ define(function(require) {
     this._events = {};
     this.width = this.elt.offsetWidth;
     this.height = this.elt.offsetHeight;
-    if (elt instanceof HTMLCanvasElement) {
-      this.canvas = elt;
-      if (this._pInst) {
-        // for pixel method sharing with pimage
-        this._pInst._setProperty('canvas', elt);
-      }
-    }
   };
 
   /**

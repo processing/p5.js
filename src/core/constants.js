@@ -114,6 +114,23 @@ define(function(require) {
     TAB: 9,
     UP_ARROW: 38,
 
+    // RENDERING
+    BLEND: 'normal',
+    //ADD: 'add', //
+    //SUBTRACT: 'subtract', //
+    DARKEST: 'darken',
+    LIGHTEST: 'lighten',
+    DIFFERENCE: 'difference',
+    EXCLUSION: 'exclusion',
+    MULTIPLY: 'multiply',
+    SCREEN: 'screen',
+    REPLACE: 'source-over',
+    OVERLAY: 'overlay',
+    HARD_LIGHT: 'hard-light',
+    SOFT_LIGHT: 'soft-light',
+    DODGE: 'color-dodge',
+    BURN: 'color-burn',
+
     // TYPOGRAPHY
     NORMAL: 'normal',
     ITALIC: 'italic',
