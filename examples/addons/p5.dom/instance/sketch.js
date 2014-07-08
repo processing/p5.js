@@ -13,7 +13,7 @@ var s0 = function( sketch ) {
       h1.html('press a key');
     });
 
-    v = sketch.createVideo('fingers.mov');
+    v = sketch.createVideo('../fingers.mov');
     v.hide();
     v.loop();
   };

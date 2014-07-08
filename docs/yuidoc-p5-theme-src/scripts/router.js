@@ -64,6 +64,14 @@ define([
      * @param {string} searchItem The class item name: can be a method, property or event name.
      */
     get: function(searchClass, searchItem) {
+
+      // if looking for a library page, redirect
+      if ((searchClass === 'p5.dom' || searchClass === 'p5.sound')
+          && !searchItem) {
+        window.location.hash = '/libraries/'+searchClass;
+        return;
+      } 
+
       var self = this;
       this.init(function() {
         var item = self.getItem(searchClass, searchItem);
@@ -121,10 +129,8 @@ define([
      * @param {string} collection The name of the collection to list.
      */
     list: function(collection) {
-      // Get collection from the hash if not provided
-      // if (!collection)
-      //   var collection = location.hash.replace('#', '');
-      collection = 'allItems'; //temp
+
+      collection = 'allItems';
 
       // Make sure collection is valid
       if (App.collections.indexOf(collection) < 0) {
@@ -144,7 +150,7 @@ define([
     library: function(collection) {
       this.init(function() {
         App.menuView.hide();
-        App.libraryView.show(collection);
+        App.libraryView.show(collection.substring(3)); //remove p5.
       });
     },
     /**

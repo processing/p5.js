@@ -77,7 +77,7 @@ define(function (require) {
     }
 
     this._shapeInited = true;
-    this._curElement.context.beginPath();
+    this.canvas.getContext('2d').beginPath();
 
     return this;
   };
@@ -116,7 +116,7 @@ define(function (require) {
       return this;
     }
 
-    this._curElement.context.bezierCurveTo(x2, y2, x3, y3, x4, y4);
+    this.canvas.getContext('2d').bezierCurveTo(x2, y2, x3, y3, x4, y4);
 
     return this;
   };
@@ -174,11 +174,11 @@ define(function (require) {
     //In order for the contour fill to work correctly, the inside points must
     // be drawn in the reverse order of the parents
     this._contourVertices.reverse();
-    this._curElement.context.moveTo(
+    this.canvas.getContext('2d').moveTo(
       this._contourVertices[0].x,
       this._contourVertices[0].y
     );
-    var ctx = this._curElement.context;
+    var ctx = this.canvas.getContext('2d');
     this._contourVertices.slice(1).forEach(function(pt, i) {
       switch(pt.type) {
       case constants.LINEAR:
@@ -195,7 +195,7 @@ define(function (require) {
         break;
       }
     });
-    this._curElement.context.closePath();
+    this.canvas.getContext('2d').closePath();
 
     this._contourInited = false;
 
@@ -215,11 +215,11 @@ define(function (require) {
    */
   p5.prototype.endShape = function(mode) {
     if (mode === constants.CLOSE) {
-      this._curElement.context.closePath();
-      this._curElement.context.fill();
+      this.canvas.getContext('2d').closePath();
+      this.canvas.getContext('2d').fill();
     }
     if (this._curveVertices.length <= 0) {
-      this._curElement.context.stroke();
+      this.canvas.getContext('2d').stroke();
     } else {
       this._curveVertices = [];
     }
@@ -258,7 +258,7 @@ define(function (require) {
       return this;
     }
 
-    this._curElement.context.quadraticCurveTo(cx, cy, x3, y3);
+    this.canvas.getContext('2d').quadraticCurveTo(cx, cy, x3, y3);
 
     return this;
   };
@@ -288,10 +288,10 @@ define(function (require) {
     }
 
     if (this._shapeInited) {
-      this._curElement.context.moveTo(x, y);
+      this.canvas.getContext('2d').moveTo(x, y);
     } else {
       // pend this is where check for kind and do other stuff
-      this._curElement.context.lineTo(x, y);
+      this.canvas.getContext('2d').lineTo(x, y);
     }
     this._shapeInited = false;
 

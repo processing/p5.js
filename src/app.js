@@ -5,6 +5,7 @@ define(function (require) {
   var p5 = require('core');
   
   require('p5.Element');
+  require('p5.Graphics');
   require('p5.Image');
   require('p5.Vector');
 
@@ -13,7 +14,6 @@ define(function (require) {
   require('constants');
   require('data.array_functions');
   require('data.string_functions');
-  require('dom.dom');
   require('environment');
   require('image.image');
   require('image.loading_displaying');
@@ -31,6 +31,7 @@ define(function (require) {
   require('output.files');
   require('output.image');
   require('output.text_area');
+  require('rendering.rendering');
   require('shape.2d_primitives');
   require('shape.attributes');
   require('shape.curves');

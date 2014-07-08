@@ -13,7 +13,7 @@ function setup() {
   button.position(140, 10);
   button.mousePressed(greet);
 
-  greeting = createH1('');
+  greeting = createElement('h1');
   greeting.position(10, 15);
   greeting.size(380, 300);
   noStroke();

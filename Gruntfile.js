@@ -62,6 +62,7 @@ module.exports = function(grunt) {
           paths: {
             'app': 'src/app',
             'p5.Element': 'src/objects/p5.Element',
+            'p5.Graphics': 'src/objects/p5.Graphics',
             'p5.Image': 'src/objects/p5.Image',
             'p5.Vector': 'src/objects/p5.Vector',
             'color.creating_reading': 'src/color/creating_reading',
@@ -70,7 +71,6 @@ module.exports = function(grunt) {
             'constants': 'src/core/constants',
             'data.array_functions': 'src/data/array_functions',
             'data.string_functions': 'src/data/string_functions',
-            'dom.dom': 'src/dom/dom',
             'environment': 'src/environment/environment',
             'image.image': 'src/image/image',
             'image.loading_displaying': 'src/image/loading_displaying',
@@ -88,6 +88,7 @@ module.exports = function(grunt) {
             'output.files': 'src/output/files',
             'output.image': 'src/output/image',
             'output.text_area': 'src/output/text_area',
+            'rendering.rendering': 'src/rendering/rendering',
             'shape.2d_primitives': 'src/shape/2d_primitives',
             'shape.attributes': 'src/shape/attributes',
             'shape.curves': 'src/shape/curves',

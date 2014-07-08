@@ -22,7 +22,7 @@ function setup() {
     result.html('input is: '+input.value());
   });
 
-  result = createH1("this is h1");
+  result = createElement("H1", "this is h1");
 
   vid = createVideo('fingers.mov');
   vid.loop(true);

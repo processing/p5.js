@@ -97,9 +97,12 @@ define(function (require) {
       if (this._curElement) {
 
         // stop draw
-        if (this._timeout) {
-          clearTimeout(this._timeout);
-          this._loop = false;
+        this._loop = false;
+        if (this._drawInterval) {
+          clearTimeout(this._drawInterval);
+        }
+        if (this._updateInterval) {
+          clearTimeout(this._updateInterval);
         }
 
         // unregister events sketch-wide
@@ -118,14 +121,11 @@ define(function (require) {
           for (var method in p5.prototype) {
             delete(window[method]);
           }
-          // Attach its properties to the window
+          // Remove its properties to the window
           for (var prop in this) {
             if (this.hasOwnProperty(prop)) {
               delete(window[prop]);
             }
-          }
-          for (var constant in constants) {
-            delete(window[constant]);
           }
         }
 
@@ -249,7 +249,10 @@ define(function (require) {
       var userDraw = this.draw || window.draw;
 
       if (this._loop) {
-        this._timeout = setTimeout(function() {
+        if (this._drawInterval) {
+          clearInterval(this._drawInterval);
+        }
+        this._drawInterval = setTimeout(function() {
           window.requestDraw(this._draw.bind(this));
         }.bind(this), 1000 / this._targetFrameRate);
       }
@@ -274,9 +277,9 @@ define(function (require) {
     }.bind(this);
 
     this._applyDefaults = function() {
-      this._curElement.context.fillStyle = '#FFFFFF';
-      this._curElement.context.strokeStyle = '#000000';
-      this._curElement.context.lineCap = constants.ROUND;
+      this.canvas.getContext('2d').fillStyle = '#FFFFFF';
+      this.canvas.getContext('2d').strokeStyle = '#000000';
+      this.canvas.getContext('2d').lineCap = constants.ROUND;
     }.bind(this);
 
     this._setProperty = function(prop, value) {
@@ -344,6 +347,14 @@ define(function (require) {
         this._events[e] = m;
       }
     }
+
+    window.addEventListener('focus', function() {
+      this._setProperty('focused', true);
+    });
+
+    window.addEventListener('blur', function() {
+      this._setProperty('focused', false);
+    });
 
     // TODO: ???
     if (document.readyState === 'complete') {
