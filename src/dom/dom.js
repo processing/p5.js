@@ -6,8 +6,6 @@
 define(function(require) {
 
   var p5 = require('core');
-  require('input.mouse');
-  require('input.touch');
 
   /**
    * Creates a canvas element in the document.

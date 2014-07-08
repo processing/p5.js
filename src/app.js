@@ -32,6 +32,7 @@ define(function (require) {
   require('output.files');
   require('output.image');
   require('output.text_area');
+  require('rendering.rendering');
   require('shape.2d_primitives');
   require('shape.attributes');
   require('shape.curves');
