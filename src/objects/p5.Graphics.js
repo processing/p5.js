@@ -6,6 +6,7 @@
 define(function(require) {
 
   var p5 = require('core');
+  var constants = require('constants');
 
   /**
    * Main graphics and rendering context, as well as the base API 
@@ -50,6 +51,10 @@ define(function(require) {
     } else { // hide if offscreen buffer
       this.canvas.style.display = 'none';
     }
+    
+    this.canvas.getContext('2d').fillStyle = '#FFFFFF';
+    this.canvas.getContext('2d').strokeStyle = '#000000';
+    this.canvas.getContext('2d').lineCap = constants.ROUND;
   };
 
   p5.Graphics.prototype = Object.create(p5.Element.prototype);

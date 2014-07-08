@@ -239,12 +239,6 @@ define(function (require) {
       }.bind(this), 1000/this._targetFrameRate);
     }.bind(this);
 
-    this._applyDefaults = function() {
-      this.canvas.getContext('2d').fillStyle = '#FFFFFF';
-      this.canvas.getContext('2d').strokeStyle = '#000000';
-      this.canvas.getContext('2d').lineCap = constants.ROUND;
-    }.bind(this);
-
     this._setProperty = function(prop, value) {
       this[prop] = value;
       if (this._isGlobal) {

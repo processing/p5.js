@@ -58,7 +58,6 @@ define(function(require) {
     }
 
     var elt = new p5.Graphics(c, this);
-    this._applyDefaults();
     this.scale(this._pixelDensity, this._pixelDensity);
     return elt;
   };
@@ -114,7 +113,6 @@ define(function(require) {
         }
       }
     }
-    this._applyDefaults.call(elt);
     return elt;
   };
 
