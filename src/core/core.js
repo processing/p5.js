@@ -124,16 +124,6 @@ define(function (require) {
       'touchend': null
     };
 
-    // functions that cause preload to wait
-    // more can be added by using _registerPreloadFunc(func)
-    this._preloadFuncs = [
-      'loadJSON',
-      'loadImage',
-      'loadStrings',
-      'loadXML',
-      'loadShape'
-    ];
-
     this._start = function () {
       // Find node if id given
       if (this._userNode) {
@@ -255,12 +245,6 @@ define(function (require) {
       }
     }.bind(this);
 
-    this._registerPreloadFunc = function(func) {
-      this._preloadFuncs.push(func);
-    }.bind(this);
-
-
-
     // attach constants to p5 instance
     for (var k in constants) {
       p5.prototype[k] = constants[k];
@@ -324,8 +308,25 @@ define(function (require) {
 
   };
 
+
+  // functions that cause preload to wait
+  // more can be added by using _registerPreloadFunc(func)
+  p5.prototype._preloadFuncs = [
+    'loadJSON',
+    'loadImage',
+    'loadStrings',
+    'loadXML',
+    'loadShape'
+  ];
+
+  p5.prototype._removeFuncs = [];
+
   p5.prototype._registerPreloadFunc = function (func) {
-    this._preloadFuncs.push(func);
+    p5.prototype._preloadFuncs.push(func);
+  }.bind(this);
+
+  p5.prototype._registerRemoveFunc = function(func) {
+    p5.prototype._removeFuncs.push(func);
   }.bind(this);
 
   return p5;

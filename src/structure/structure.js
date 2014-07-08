@@ -196,15 +196,20 @@ define(function (require) {
         e.parentNode.removeChild(e);
       }
 
+      // call any registered remove functions
+      var self = this;
+      this._removeFuncs.forEach(function(f) {
+        self[f]();
+      });
+
       // remove window bound properties and methods
       if (this._isGlobal) {
-        for (var method in p5.prototype) {
-          delete(window[method]);
+        for (var p in p5.prototype) {
+          delete(window[p]);
         }
-        // Remove its properties to the window
-        for (var prop in this) {
-          if (this.hasOwnProperty(prop)) {
-            delete(window[prop]);
+        for (var p2 in this) {
+          if (this.hasOwnProperty(p2)) {
+            delete(window[p2]);
           }
         }
       }
