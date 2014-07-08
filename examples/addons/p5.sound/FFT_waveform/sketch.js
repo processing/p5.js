@@ -10,7 +10,7 @@ var fftSize = 1024;
 var waveform = [];
 
 function preload() {
-  soundFile = loadSound( ['beat.ogg', 'beat.mp3'] );
+  soundFile = loadSound( ['../_files/beat.ogg', '../_files/beat.mp3'] );
 }
 
 function setup() {

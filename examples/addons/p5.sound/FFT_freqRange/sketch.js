@@ -13,7 +13,7 @@ var description = 'loading';
 var p;
 
 function preload() {
-  soundFile = loadSound( ['beat.mp3', 'beat.ogg'] );
+  soundFile = loadSound( ['../_files/beat.mp3', '../_files/beat.ogg'] );
 }
 
 

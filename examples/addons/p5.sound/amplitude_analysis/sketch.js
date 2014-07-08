@@ -15,7 +15,7 @@ var smoothing = .01;
 var smoothSlider, smoothLabel;
 
 function preload() {
-  soundFile = loadSound(['beat.mp3', 'beat.ogg']);
+  soundFile = loadSound(['../_files/beat.mp3', '../_files/beat.ogg']);
 }
 
 function setup() {
