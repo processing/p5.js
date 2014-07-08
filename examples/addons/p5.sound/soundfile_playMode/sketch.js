@@ -1,10 +1,10 @@
 /**
- * Toggle play mode between 'mono' and 'poly'.
- * SoundFiles are polyphonic by default.
+ * Toggle play mode between 'restart' and 'sustain'.
+ * Sustain is the default playmode for SoundFiles
  * Music from Damscray, "Dancing Tiger", Creative Commons BY-NC-SA
  */
 
-var playMode = 'poly';
+var playMode = 'sustain';
 var sample1, sample2, button;
 
 function setup() {
@@ -22,13 +22,13 @@ function draw() {
   button.html('Current Play Mode: ' + playMode);
 }
 
-// alternate between 'poly' and 'mono', and set playMode of both samples
+// alternate between 'sustain' and 'restart', and set playMode of both samples
 function togglePlayMode(){
-  if (playMode == 'poly'){
-    playMode = 'mono';
+  if (playMode == 'sustain'){
+    playMode = 'restart';
   }
   else {
-    playMode = 'poly';
+    playMode = 'sustain';
   }
   sample1.playMode(playMode);
   sample2.playMode(playMode);
@@ -39,12 +39,12 @@ function keyPressed(k) {
     sample1.play(.6);
 
     // Get even more monophonic by only letting one sample play at a time
-    if ( playMode =='mono' && sample2.isPlaying() ){
+    if ( playMode =='restart' && sample2.isPlaying() ){
       sample2.stopAll();
     }
   }
   if (k.keyCode == 83) {
-    if ( playMode =='mono' && sample1.isPlaying() ){
+    if ( playMode =='restart' && sample1.isPlaying() ){
       sample1.stopAll();
     }
     sample2.play(.6);
