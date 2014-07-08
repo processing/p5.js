@@ -7,6 +7,7 @@ define(function (require) {
   require('p5.Element');
   require('p5.Graphics');
   require('p5.Image');
+  //require('p5.Shape');
   require('p5.Vector');
 
   require('color.creating_reading');
@@ -35,6 +36,7 @@ define(function (require) {
   require('shape.2d_primitives');
   require('shape.attributes');
   require('shape.curves');
+  //require('shape.shape');
   require('shape.vertex');
   require('structure');
   require('transform');

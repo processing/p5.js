@@ -27,12 +27,13 @@ define(function(require) {
 
     } else { // resize the default canvas if new one is created
       c = document.getElementById('defaultCanvas');
-      c.id = ''; // remove default id
-      if (!c) { // probably user calling createCanvas more than once... uhoh
-        c = document.createElement('canvas');
+      if (c) {
+        c.id = ''; // remove default id
+      } else { // probably user calling createCanvas more than once... uhoh
+        // c = document.createElement('canvas');
 
-        // store in elements array
-        this._elements.push(c);
+        // // store in elements array
+        // this._elements.push(c);
 
         var warn = 'Warning: createCanvas more than once NOT recommended.';
         warn += ' Very unpredictable behavior may result.';

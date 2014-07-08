@@ -130,7 +130,8 @@ define(function (require) {
       'loadJSON',
       'loadImage',
       'loadStrings',
-      'loadXML'
+      'loadXML',
+      'loadShape'
     ];
 
     this._start = function () {
@@ -185,11 +186,19 @@ define(function (require) {
     }.bind(this);
 
     this._setup = function() {
+
+      // return preload functions to their normal vals if switched by preload
+      var context = this._isGlobal ? window : this;
+      if (typeof context.preload === 'function') {
+        this._preloadFuncs.forEach(function (f) {
+          context[f] = p5.prototype[f];
+        });
+      }
+
       // Short-circuit on this, in case someone used the library in "global"
       // mode earlier
-      var userSetup = this.setup || window.setup;
-      if (typeof userSetup === 'function') {
-        userSetup();
+      if (typeof context.setup === 'function') {
+        context.setup();
       }
 
       // unhide any hidden canvases that were created
