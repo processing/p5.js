@@ -164,6 +164,51 @@ define(function (require) {
     throw 'size() not implemented, see createCanvas()';
   };
 
+  /**
+   * @method remove
+   */
+  p5.prototype.remove = function() {
+    if (this._curElement) {
+
+      // stop draw
+      this._loop = false;
+      if (this._drawInterval) {
+        clearTimeout(this._drawInterval);
+      }
+      if (this._updateInterval) {
+        clearTimeout(this._updateInterval);
+      }
+
+      // unregister events sketch-wide
+      for (var ev in this._events) {
+        window.removeEventListener(ev, this._events[ev]);
+      }
+
+      // unregister events canvas-specific
+      for (var cev in this._curElement._events) {
+        var f = this._curElement._events[cev];
+        this._curElement.elt.removeEventListener(cev, f);
+      }
+
+      // remove window bound properties and methods
+      if (this._isGlobal) {
+        for (var method in p5.prototype) {
+          delete(window[method]);
+        }
+        // Remove its properties to the window
+        for (var prop in this) {
+          if (this.hasOwnProperty(prop)) {
+            delete(window[prop]);
+          }
+        }
+      }
+
+      // remove canvas from DOM
+      var elt = this._curElement.elt;
+      elt.parentNode.removeChild(elt);
+    }
+  };
+
   return p5;
 
 });

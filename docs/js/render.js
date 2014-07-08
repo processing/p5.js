@@ -95,7 +95,7 @@ function renderCode(sel) {
           edit_button.innerHTML = 'edit';
           edit_area.style.display = 'none';
           sketch.innerHTML = edit_area.value;
-          runCode(sketch);
+          runCode(sketch, true);
         }
       }
 
@@ -128,7 +128,6 @@ function renderCode(sel) {
 
     var runnable = sketch.innerText.replace(/^\s+|\s+$/g, '');
     var cnv;
-    
 
     if (rc) {
       if (isRef) {

@@ -7,6 +7,37 @@ define(function(require) {
 
   var p5 = require('core');
 
+  /**
+   * Main graphics and rendering context, as well as the base API 
+   * implementation for p5.js "core". Use this class if you need to draw into 
+   * an off-screen graphics buffer. A p5.Graphics object can be constructed 
+   * with the <code>createGraphics()</code> function. The fields and methods 
+   * for this class are extensive, but mirror the normal drawing API for p5.
+   * 
+   * @class p5.Graphics
+   * @constructor
+   * @extends p5.Element
+   * @param {String} elt DOM node that is wrapped
+   * @param {Object} [pInst] pointer to p5 instance
+   * @example
+   * <div>
+   * <code>
+   * var pg;
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   pg = createGraphics(40, 40);
+   * }
+   * function draw() {
+   *   background(200);
+   *   pg.background(100);
+   *   pg.stroke(255);
+   *   pg.line(20, 20, mouseX, mouseY);
+   *   image(pg, 9, 30); 
+   *   image(pg, 51, 30);
+   * }
+   * </code>
+   * </div>
+   */
   p5.Graphics = function(elt, pInst) {
     p5.Element.call(this, elt, pInst);
     this.canvas = elt;
@@ -16,6 +47,8 @@ define(function(require) {
       this._pInst._setProperty('canvas', elt);
       this._pInst._setProperty('width', this.width);
       this._pInst._setProperty('height', this.height);
+    } else { // hide if offscreen buffer
+      this.canvas.style.display = 'none';
     }
   };
 

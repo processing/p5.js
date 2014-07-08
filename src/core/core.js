@@ -15,8 +15,6 @@ define(function (require) {
   var constants = require('constants');
 
   /**
-   * p5
-   * 
    * This is the p5 instance constructor.
    *
    * A p5 instance holds all the properties and methods related to
@@ -90,51 +88,6 @@ define(function (require) {
      * @method draw
      */
 
-    /**
-     * @method remove
-     */
-    this.remove = function() {
-      if (this._curElement) {
-
-        // stop draw
-        this._loop = false;
-        if (this._drawInterval) {
-          clearTimeout(this._drawInterval);
-        }
-        if (this._updateInterval) {
-          clearTimeout(this._updateInterval);
-        }
-
-        // unregister events sketch-wide
-        for (var ev in this._events) {
-          window.removeEventListener(ev, this._events[ev]);
-        }
-
-        // unregister events canvas-specific
-        for (var cev in this._curElement._events) {
-          var f = this._curElement._events[cev];
-          this._curElement.elt.removeEventListener(cev, f);
-        }
-
-        // remove window bound properties and methods
-        if (this._isGlobal) {
-          for (var method in p5.prototype) {
-            delete(window[method]);
-          }
-          // Remove its properties to the window
-          for (var prop in this) {
-            if (this.hasOwnProperty(prop)) {
-              delete(window[prop]);
-            }
-          }
-        }
-
-        // remove canvas from DOM
-        var elt = this._curElement.elt;
-        elt.parentNode.removeChild(elt);
-
-      }
-    }.bind(this);
     
     //////////////////////////////////////////////
     // PRIVATE p5 PROPERTIES AND METHODS
@@ -169,6 +122,15 @@ define(function (require) {
       'touchmove': null,
       'touchend': null
     };
+
+    // functions that cause preload to wait
+    // more can be added by using _registerPreloadFunc(func)
+    this._preloadFuncs = [
+      'loadJSON',
+      'loadImage',
+      'loadStrings',
+      'loadXML'
+    ];
 
     this._start = function () {
       // Find node if id given
@@ -293,49 +255,41 @@ define(function (require) {
       this._preloadFuncs.push(func);
     }.bind(this);
 
+
+
+    // attach constants to p5 instance
+    for (var k in constants) {
+      p5.prototype[k] = constants[k];
+    }
+
+
     // If the user has created a global setup or draw function,
     // assume "global" mode and make everything global (i.e. on the window)
     if (!sketch) {
       this._isGlobal = true;
       // Loop through methods on the prototype and attach them to the window
-      for (var method in p5.prototype) {
-        var ev = method.substring(2);
-        if (!this._events.hasOwnProperty(ev)) {
-          if(typeof p5.prototype[method] === 'function') {
-            window[method] = p5.prototype[method].bind(this);
+      for (var p in p5.prototype) {
+        if(typeof p5.prototype[p] === 'function') {
+          var ev = p.substring(2);
+          if (!this._events.hasOwnProperty(ev)) {
+            window[p] = p5.prototype[p].bind(this);
           }
+        } else {
+          window[p] = p5.prototype[p];
         }
       }
       // Attach its properties to the window
-      for (var prop in this) {
-        if (this.hasOwnProperty(prop)) {
-          window[prop] = this[prop];
+      for (var p2 in this) {
+        if (this.hasOwnProperty(p2)) {
+          window[p2] = this[p2];
         }
       }
-      for (var p in p5.prototype) {
-        if (p5.prototype.hasOwnProperty(p) &&
-          typeof p5.prototype[p] !== 'function') {
-          window[p] = this[p];
-        }
-      }
-      for (var constant in constants) {
-        if (constants.hasOwnProperty(constant)) {
-          window[constant] = constants[constant];
-        }
-      }
+      
     } else {
       // Else, the user has passed in a sketch function closure
-      // So create attach the user given 'setup', 'draw', etc on this
+      // So attach the user given 'setup', 'draw', etc on this
       // instance of p5
       sketch(this);
-
-      // attach constants to p5 instance
-      for (var c in constants) {
-        if (constants.hasOwnProperty(c)) {
-          p5.prototype[c] = constants[c];
-        }
-      }
-
     }
 
     // Bind events to window (not using container div bc key events don't work)
@@ -348,12 +302,13 @@ define(function (require) {
       }
     }
 
+    var self = this;
     window.addEventListener('focus', function() {
-      this._setProperty('focused', true);
+      self._setProperty('focused', true);
     });
 
     window.addEventListener('blur', function() {
-      this._setProperty('focused', false);
+      self._setProperty('focused', false);
     });
 
     // TODO: ???
@@ -365,21 +320,8 @@ define(function (require) {
 
   };
 
-  // attach constants to p5 instance
-  for (var c in constants) {
-    if (constants.hasOwnProperty(c)) {
-      p5.prototype[c] = constants[c];
-    }
-  }
-
-  p5.prototype._preloadFuncs = [
-    'loadJSON',
-    'loadImage',
-    'loadStrings',
-    'loadXML'
-  ];
   p5.prototype._registerPreloadFunc = function (func) {
-    p5.prototype._preloadFuncs.push(func);
+    this._preloadFuncs.push(func);
   }.bind(this);
 
   return p5;

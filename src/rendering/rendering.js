@@ -15,8 +15,7 @@ define(function(require) {
    * @method createCanvas
    * @param  {Number} w width of the canvas
    * @param  {Number} h height of the canvas
-   * @param  {Boolean} isDefault whether the canvas is a default one
-   * @return {undefined}
+   * @return {Object} canvas generated
    */
   p5.prototype.createCanvas = function(w, h, isDefault) {
     var c;
@@ -58,8 +57,34 @@ define(function(require) {
   };
 
 
+
   /**
-   * Creates a p5.Graphics object.
+   * Creates and returns a new p5.Graphics object. Use this class if you need 
+   * to draw into an off-screen graphics buffer. The two parameters define the
+   * width and height in pixels.
+   * 
+   * @method createGraphics
+   * @param  {Number} w width of the offscreen graphics buffer
+   * @param  {Number} h height of the offscreen graphics buffer
+   * @return {Object} offscreen graphics buffer
+   * @example
+   * <div>
+   * <code>
+   * var pg;
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   pg = createGraphics(100, 100);
+   * }
+   * function draw() {
+   *   background(200);
+   *   pg.background(100);
+   *   pg.stroke(255);
+   *   pg.line(50, 50, mouseX, mouseY);
+   *   image(pg, 50, 50); 
+   *   image(pg, 0, 0, 50, 50);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.createGraphics = function(w, h) {
     var c = document.createElement('canvas');
