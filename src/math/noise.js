@@ -215,6 +215,34 @@ define(function (require) {
    * @method noiseDetail
    * @param {Number} lod number of octaves to be used by the noise
    * @param {Number} falloff falloff factor for each octave
+   * @example
+   * <div>
+   * <code>
+   * var noiseVal;
+   * var noiseScale=0.02;
+   * 
+   * function setup() {
+   *   createCanvas(100,100);
+   * }
+   * 
+   * function draw() {
+   *   background(0);
+   *   for (var y = 0; y < height; y++) {
+   *     for (var x = 0; x < width/2; x++) {
+   *       noiseDetail(2,0.2);
+   *       noiseVal = noise((mouseX+x) * noiseScale, (mouseY+y) * noiseScale);
+   *       stroke(noiseVal*255);
+   *       point(x,y);
+   *       noiseDetail(8,0.65);
+   *       noiseVal = noise((mouseX + x + width/2) * noiseScale, 
+   *                        (mouseY + y) * noiseScale);
+   *      stroke(noiseVal*255);
+   *       point(x + width/2, y);
+   *     }
+   *   }
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.noiseDetail = function(lod, falloff) {
     if (lod>0)     { perlin_octaves=lod; }
