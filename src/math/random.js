@@ -151,6 +151,39 @@ define(function (require) {
    * @param  {mean}       mean
    * @param  {sd}         standard deviation
    * @return {Number}     the random number
+   * @example
+   * <div>
+   * <code>for (var y = 0; y < 100; y++) {
+   *  var x = randomGaussian(50,15);
+   *  line(50, y, x, y);
+   *}
+   * </code>
+   * </div>
+   * <div>
+   * <code> 
+   *var distribution = new Array(360);
+   * 
+   *function setup() {
+   *  createCanvas(100, 100);
+   *  for (var i = 0; i < distribution.length; i++) {
+   *    distribution[i] = floor(randomGaussian(0,15));
+   *  }
+   *}
+   * 
+   *function draw() {
+   *  background(204);
+   *   
+   *  translate(width/2, width/2);
+   * 
+   *  for (var i = 0; i < distribution.length; i++) {
+   *    rotate(TWO_PI/distribution.length);
+   *    stroke(0);
+   *    var dist = abs(distribution[i]);
+   *    line(0, 0, dist, 0);
+   *  }
+   *}
+   * </code>
+   * </div>
    */
   var y2;
   var previous = false;
