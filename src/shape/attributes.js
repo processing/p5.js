@@ -97,8 +97,8 @@ define(function (require) {
    * </div>
    */
   p5.prototype.noSmooth = function() {
-    this._curElement.context.mozImageSmoothingEnabled = false;
-    this._curElement.context.webkitImageSmoothingEnabled = false;
+    this.canvas.getContext('2d').mozImageSmoothingEnabled = false;
+    this.canvas.getContext('2d').webkitImageSmoothingEnabled = false;
 
     return this;
   };
@@ -186,8 +186,8 @@ define(function (require) {
    * </div>
    */
   p5.prototype.smooth = function() {
-    this._curElement.context.mozImageSmoothingEnabled = true;
-    this._curElement.context.webkitImageSmoothingEnabled = true;
+    this.canvas.getContext('2d').mozImageSmoothingEnabled = true;
+    this.canvas.getContext('2d').webkitImageSmoothingEnabled = true;
 
     return this;
   };
@@ -217,7 +217,7 @@ define(function (require) {
     if (cap === constants.ROUND ||
       cap === constants.SQUARE ||
       cap === constants.PROJECT) {
-      this._curElement.context.lineCap=cap;
+      this.canvas.getContext('2d').lineCap=cap;
     }
 
     return this;
@@ -276,7 +276,7 @@ define(function (require) {
     if (join === constants.ROUND ||
       join === constants.BEVEL ||
       join === constants.MITER) {
-      this._curElement.context.lineJoin = join;
+      this.canvas.getContext('2d').lineJoin = join;
     }
 
     return this;
@@ -304,9 +304,9 @@ define(function (require) {
   p5.prototype.strokeWeight = function(w) {
     if (typeof w === 'undefined' || w === 0) {
       // hack because lineWidth 0 doesn't work
-      this._curElement.context.lineWidth = 0.0001;
+      this.canvas.getContext('2d').lineWidth = 0.0001;
     } else {
-      this._curElement.context.lineWidth = w;
+      this.canvas.getContext('2d').lineWidth = w;
     }
 
     return this;

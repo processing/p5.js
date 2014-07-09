@@ -232,6 +232,76 @@ define(function(require) {
    * @property height
    */
   p5.prototype.height = 0;
+
+  /**
+   * If argument is given, sets the sketch to fullscreen or not based on the
+   * value of the argument. If no argument is given, returns the current 
+   * fullscreen state.
+   *
+   * @method fullscreen
+   * @param  {Boolean} [val] whether the sketch should be fullscreened or not
+   * @return {Boolean} current fullscreen state
+   * @example
+   * <div>
+   * <code>
+   * // Clicking in the box toggles fullscreen on and off.
+   * function setup() {
+   *   background(200);
+   * }
+   * function mousePressed() {
+   *   if (mouseX > 0 && mouseX < 100 && mouseY > 0 && mouseY < 100) {
+   *     var fs = fullscreen();
+   *     fullscreen(!fs);
+   *   }
+   * }
+   * </code>
+   * </div>
+   */
+  p5.prototype.fullscreen = function(val) {
+    // no arguments, return fullscreen or not
+    if (typeof val === 'undefined') {
+      return document.fullscreenElement ||
+             document.webkitFullscreenElement ||
+             document.mozFullScreenElement ||
+             document.msFullscreenElement;
+    } else { // otherwise set to fullscreen or not
+      if (val) {
+        launchFullscreen(document.documentElement);
+      } else {
+        exitFullscreen();
+      }
+    }
+  };
+
+  function launchFullscreen(element) {
+    var enabled = document.fullscreenEnabled ||
+                  document.webkitFullscreenEnabled ||
+                  document.mozFullScreenEnabled ||
+                  document.msFullscreenEnabled;
+    if (!enabled) {
+      throw new Error('Fullscreen not enabled in this browser.');
+    }
+    if(element.requestFullscreen) {
+      element.requestFullscreen();
+    } else if(element.mozRequestFullScreen) {
+      element.mozRequestFullScreen();
+    } else if(element.webkitRequestFullscreen) {
+      element.webkitRequestFullscreen();
+    } else if(element.msRequestFullscreen) {
+      element.msRequestFullscreen();
+    }
+  }
+
+  function exitFullscreen() {
+    if(document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if(document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if(document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+  }
+
   return p5;
 
 });

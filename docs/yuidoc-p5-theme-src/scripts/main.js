@@ -19,7 +19,7 @@ require([
   'App'], function(_, Backbone, App) {
   
   // Set collections
-  App.collections = ['allItems', 'classes', 'events', 'methods', 'properties', 'sound', 'dom'];
+  App.collections = ['allItems', 'classes', 'events', 'methods', 'properties', 'p5.sound', 'p5.dom'];
 
   // Get json API data
   $.getJSON("data.json", function(data) {
