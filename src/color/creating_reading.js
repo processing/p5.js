@@ -71,7 +71,6 @@ define(function (require) {
    * @example
    * <div>
    * <code>
-   * // colorMode(HSB) not working as expected
    * noStroke();
    * colorMode(HSB, 255);
    * c = color(0, 126, 255);
@@ -198,7 +197,6 @@ define(function (require) {
    * @example
    * <div>
    * <code>
-   * // HSB not working correctly
    * noStroke();
    * colorMode(HSB, 255);
    * c = color(0, 126, 255);
@@ -235,7 +233,6 @@ define(function (require) {
    * @example
    * <div>
    * <code>
-   * // lerpColor not behaving as expected
    * stroke(255);
    * background(51);
    * from = color(204, 102, 0);
@@ -300,7 +297,6 @@ define(function (require) {
    * @example
    * <div>
    * <code>
-   * // HSB not behaving as expected
    * noStroke();
    * colorMode(HSB, 255);
    * c = color(0, 126, 255);
