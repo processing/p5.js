@@ -41,6 +41,27 @@ define(function (require) {
     };
   }());
 
+  /**
+   * Sets the seed value for random(). 
+   * 
+   * By default, random() produces different results each time the program 
+   * is run. Set the seed parameter to a constant to return the same 
+   * pseudo-random numbers each time the software is run.
+   *
+   * @method randomSeed
+   * @param {Number} seed value
+   * @example
+   * <div>
+   * <code>
+   * randomSeed(99);
+   * for (var i=0; i < 100; i++) {
+   *   var r = random(0, 255);
+   *   stroke(r);
+   *   line(i, 0, i, 100);
+   * }
+   * </code>
+   * </div>
+   */
   p5.prototype.randomSeed = function(seed) {
     lcg.setSeed(seed);
     seeded = true;
