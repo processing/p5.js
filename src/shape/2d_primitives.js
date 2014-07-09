@@ -170,10 +170,7 @@ define(function (require) {
    * the stroke() function. A line cannot be filled, therefore the fill()
    * function will not affect the color of a line. 2D lines are drawn with a
    * width of one pixel by default, but this can be changed with the
-   * strokeWeight() function. The version with six parameters allows the line
-   * to be placed anywhere within XYZ space. Drawing this shape in 3D with the
-   * z parameter requires the P3D parameter in combination with size() as shown
-   * in the above example. 
+   * strokeWeight() function.
    * 
    * @method line
    * @param  {Number} x1 the x-coordinate of the first point
@@ -181,6 +178,22 @@ define(function (require) {
    * @param  {Number} x2 the x-coordinate of the second point
    * @param  {Number} y2 the y-coordinate of the second point
    * @return {p5}        the p5 object
+   * @example
+   * <div>
+   * <code>
+   * line(30, 20, 85, 75);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * line(30, 20, 85, 20);
+   * stroke(126);
+   * line(85, 20, 85, 75);
+   * stroke(255);
+   * line(85, 75, 30, 75);
+   * </code>
+   * </div>
    */
   p5.prototype.line = function(x1, y1, x2, y2) {
     var ctx = this.canvas.getContext('2d');
@@ -198,15 +211,21 @@ define(function (require) {
   /**
    * Draws a point, a coordinate in space at the dimension of one pixel.
    * The first parameter is the horizontal value for the point, the second
-   * value is the vertical value for the point, and the optional third value is
-   * the depth value. Drawing this shape in 3D with the z parameter requires
-   * the P3D parameter in combination with size() as shown in the above
-   * example.
+   * value is the vertical value for the point.
    * 
    * @method point
    * @param  {Number} x the x-coordinate
    * @param  {Number} y the y-coordinate
    * @return {p5}       the p5 object
+   * @example
+   * <div>
+   * <code>
+   * point(30, 20);
+   * point(85, 20);
+   * point(85, 75);
+   * point(30, 75);
+   * </code>
+   * </div>
    */
   p5.prototype.point = function(x, y) {
     var ctx = this.canvas.getContext('2d');
@@ -255,6 +274,12 @@ define(function (require) {
    * @param {type} x4 the x-coordinate of the fourth point
    * @param {type} y4 the y-coordinate of the fourth point
    * @return {p5}     the p5 object
+   * @example
+   * <div>
+   * <code>   
+   * quad(38, 31, 86, 20, 69, 63, 30, 76);
+   * </code>
+   * </div>
    */
   p5.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
     var ctx = this.canvas.getContext('2d');
@@ -283,7 +308,12 @@ define(function (require) {
   * @param  {Number} c width of the rectangle
   * @param  {Number} d height of the rectangle
   * @return {p5}       the p5 object
-  * 
+  * @example
+  * <div>
+  * <code>
+  * rect(30, 20, 55, 55);
+  * </code>
+  * </div>
   */
   p5.prototype.rect = function(a, b, c, d) {
     var vals = canvas.modeAdjust(a, b, c, d, this._rectMode);
@@ -309,6 +339,12 @@ define(function (require) {
   * @param  {Number} x3 x-coordinate of the third point
   * @param  {Number} y3 y-coordinate of the third point
   * @return {p5}        the p5 object
+  * @example
+  * <div>
+  * <code>
+  * triangle(30, 75, 58, 20, 86, 75);
+  * </code>
+  * </div>
   */
   p5.prototype.triangle = function(x1, y1, x2, y2, x3, y3) {
     var ctx = this.canvas.getContext('2d');
