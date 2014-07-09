@@ -15,6 +15,18 @@ define(function (require) {
    * 
    * @method alpha
    * @param {Array} an array representing a color
+   * @example
+   * <div>
+   * <code>
+   * noStroke();
+   * c = color(0, 126, 255, 102);
+   * fill(c);
+   * rect(15, 15, 35, 70);
+   * value = alpha(c);  // Sets 'value' to 102
+   * fill(value);
+   * rect(50, 15, 35, 70);
+   * </code>
+   * </div>
    */
   p5.prototype.alpha = function(rgb) {
     if (rgb.length > 3) {
@@ -29,6 +41,19 @@ define(function (require) {
    * 
    * @method blue
    * @param {Array} an array representing a color
+   * @example
+   * <div>
+   * <code>
+   * c = color(175, 100, 220);  // Define color 'c'
+   * fill(c);  // Use color variable 'c' as fill color
+   * rect(15, 20, 35, 60);  // Draw left rectangle
+   * 
+   * blueValue = blue(c);  // Get blue in 'c'
+   * println(blueValue);  // Prints "220.0"
+   * fill(0, 0, blueValue);  // Use 'blueValue' in new fill
+   * rect(50, 20, 35, 60);  // Draw right rectangle   
+   * </code>
+   * </div>
    */
   p5.prototype.blue = function(rgb) {
     if (rgb.length > 2) {
@@ -43,6 +68,20 @@ define(function (require) {
    * 
    * @method brightness
    * @param {Array} an array representing a color
+   * @example
+   * <div>
+   * <code>
+   * // colorMode(HSB) not working as expected
+   * noStroke();
+   * colorMode(HSB, 255);
+   * c = color(0, 126, 255);
+   * fill(c);
+   * rect(15, 20, 35, 60);
+   * value = brightness(c);  // Sets 'value' to 255
+   * fill(value);
+   * rect(50, 20, 35, 60);
+   * </code>
+   * </div>
    */
   p5.prototype.brightness = function(hsv) {
     if (hsv.length > 2) {
@@ -77,6 +116,47 @@ define(function (require) {
    *                          to the current color range
    * @param  {Number} [alpha] alpha value relative to current color range
    * @return {Array}          resulting color
+   * @example
+   * <div>
+   * <code>
+   * c = color(255, 204, 0);  // Define color 'c'
+   * fill(c);  // Use color variable 'c' as fill color
+   * noStroke();  // Don't draw a stroke around shapes
+   * rect(30, 20, 55, 55);  // Draw rectangle
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * c = color(255, 204, 0);  // Define color 'c'
+   * fill(c);  // Use color variable 'c' as fill color
+   * noStroke();  // Don't draw a stroke around shapes
+   * ellipse(25, 25, 80, 80);  // Draw left circle
+   * 
+   * // Using only one value with color()
+   * // generates a grayscale value.
+   * c = color(65);  // Update 'c' with grayscale value
+   * fill(c);  // Use updated 'c' as fill color
+   * ellipse(75, 75, 80, 80);  // Draw right circle
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * noStroke();  // Don't draw a stroke around shapes
+   * 
+   * // if switching from RGB to HSB both modes must be declared
+   * colorMode(RGB, 255);  // Use RGB with scale of 0-255
+   * c = color(50, 55, 100);  // Create a color for 'c'
+   * fill(c);  // Use color variable 'c' as fill color
+   * rect(0, 10, 45, 80);  // Draw left rect
+   * 
+   * colorMode(HSB, 100);  // Use HSB with scale of 0-100
+   * c = color(50, 55, 100);  // Update 'c' with new color
+   * fill(c);  // Use updated 'c' as fill color
+   * rect(55, 10, 45, 80);  // Draw right rect
+   * </code>
+   * </div>
    */
   p5.prototype.color = function() {
     return this.getNormalizedColor(arguments);
@@ -88,6 +168,19 @@ define(function (require) {
    * 
    * @method green
    * @param {Array} an array representing a color
+   * @example
+   * <div>
+   * <code>
+   * c = color(20, 75, 200);  // Define color 'c'
+   * fill(c);  // Use color variable 'c' as fill color
+   * rect(15, 20, 35, 60);  // Draw left rectangle
+   * 
+   * greenValue = green(c);  // Get green in 'c'
+   * println(greenValue);  // Print "75.0"
+   * fill(0, greenValue, 0);  // Use 'greenValue' in new fill
+   * rect(50, 20, 35, 60);  // Draw right rectangle
+   * </code>
+   * </div>
    */
   p5.prototype.green = function(rgb) {
     if (rgb.length > 2) {
@@ -102,6 +195,20 @@ define(function (require) {
    * 
    * @method hue
    * @param {Array} an array representing a color
+   * @example
+   * <div>
+   * <code>
+   * // HSB not working correctly
+   * noStroke();
+   * colorMode(HSB, 255);
+   * c = color(0, 126, 255);
+   * fill(c);
+   * rect(15, 20, 35, 60);
+   * value = hue(c);  // Sets 'value' to "0"
+   * fill(value);
+   * rect(50, 20, 35, 60);
+   * </code>
+   * </div>
    */
   p5.prototype.hue = function(hsv) {
     if (hsv.length > 2) {
@@ -125,6 +232,26 @@ define(function (require) {
    * @param  {Array/Number} c2  interpolate to this color
    * @param  {Number}       amt number between 0 and 1
    * @return {Array/Number}     interpolated color
+   * @example
+   * <div>
+   * <code>
+   * // lerpColor not behaving as expected
+   * stroke(255);
+   * background(51);
+   * from = color(204, 102, 0);
+   * to = color(0, 102, 153);
+   * interA = lerpColor(from, to, .33);
+   * interB = lerpColor(from, to, .66);
+   * fill(from);
+   * rect(10, 20, 20, 60);
+   * fill(interA);
+   * rect(30, 20, 20, 60);
+   * fill(interB);
+   * rect(50, 20, 20, 60);
+   * fill(to);
+   * rect(70, 20, 20, 60);
+   * </code>
+   * </div>
    */
   p5.prototype.lerpColor = function(c1, c2, amt) {
     if (typeof c1 === 'Array') {
@@ -143,6 +270,19 @@ define(function (require) {
    * 
    * @method red
    * @param {Array} rgb an array representing a color
+   * @example
+   * <div>
+   * <code>
+   * c = color(255, 204, 0);  // Define color 'c'
+   * fill(c);  // Use color variable 'c' as fill color
+   * rect(15, 20, 35, 60);  // Draw left rectangle
+   *
+   * redValue = red(c);  // Get red in 'c'
+   * println(redValue);  // Print "255.0"
+   * fill(redValue, 0, 0);  // Use 'redValue' in new fill
+   * rect(50, 20, 35, 60);  // Draw right rectangle
+   * </code>
+   * </div>
    */
   p5.prototype.red = function(rgb) {
     if (rgb.length > 2) {
@@ -157,6 +297,20 @@ define(function (require) {
    * 
    * @method saturation
    * @param {Array} an array representing a color
+   * @example
+   * <div>
+   * <code>
+   * // HSB not behaving as expected
+   * noStroke();
+   * colorMode(HSB, 255);
+   * c = color(0, 126, 255);
+   * fill(c);
+   * rect(15, 20, 35, 60);
+   * value = saturation(c);  // Sets 'value' to 126
+   * fill(value);
+   * rect(50, 20, 35, 60);
+   * </code>
+   * </div>
    */
   p5.prototype.saturation = function(hsv) {
     if (hsv.length > 2) {

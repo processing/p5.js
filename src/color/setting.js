@@ -33,6 +33,18 @@ define(function (require) {
    * @param {Number|Array} [v3] blue or brightness value (depending on the
    *                            current color mode)
    * @param {Number|Array} [a]  opacity of the background
+   * @example
+   * <div>
+   * <code>
+   * background(51);   
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * background(255, 204, 0);
+   * </code>
+   * </div>
    */
   p5.prototype.background = function() {
     var c = this.getNormalizedColor(arguments);
@@ -54,6 +66,11 @@ define(function (require) {
    * the pixels 100% transparent.
    *
    * @method clear
+   * @example
+   * <div>
+   * <code>
+   * </code>
+   * </div>
    */
   p5.prototype.clear = function() {
     this.canvas.getContext('2d').clearRect(0, 0, this.width, this.height);
@@ -75,6 +92,33 @@ define(function (require) {
    * @param {Number|Constant} max3 range for the blue or brightness depending
    *                               on the current color mode
    * @param {Number|Constant} maxA range for the alpha
+   * @example
+   * <div>
+   * <code>
+   * noStroke();
+   * colorMode(RGB, 100);
+   * for (i = 0; i < 100; i++) {
+   *   for (j = 0; j < 100; j++) {
+   *     stroke(i, j, 0);
+   *     point(i, j);
+   *   }
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // Doesn't work as expected
+   * noStroke();
+   * colorMode(HSB, 100);
+   * for (i = 0; i < 100; i++) {
+   *   for (j = 0; j < 100; j++) {
+   *     stroke(i, j, 100);
+   *     point(i, j);
+   *   }
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.colorMode = function() {
     if (arguments[0] === constants.RGB || arguments[0] === constants.HSB) {
@@ -110,6 +154,20 @@ define(function (require) {
    * @param {Number|Array} [v3] blue or brightness value (depending on the
    *                            current color mode)
    * @param {Number|Array} [a]  opacity of the background
+   * @example
+   * <div>
+   * <code>
+   * fill(153);
+   * rect(30, 20, 55, 55);   
+   * </code>
+   * </div>
+   * 
+   * <div>
+   * <code>
+   * fill(204, 102, 0);
+   * rect(30, 20, 55, 55);
+   * </code>
+   * </div>
    */
   p5.prototype.fill = function() {
     var c = this.getNormalizedColor(arguments);
@@ -121,6 +179,14 @@ define(function (require) {
    * nothing will be drawn to the screen.
    *
    * @method noFill
+   * @example
+   * <div>
+   * <code>
+   * rect(15, 10, 55, 55);
+   * noFill();
+   * rect(30, 20, 55, 55);
+   * </code>
+   * </div>
    */
   p5.prototype.noFill = function() {
     this.canvas.getContext('2d').fillStyle = 'rgba(0,0,0,0)';
@@ -131,6 +197,13 @@ define(function (require) {
    * are called, nothing will be drawn to the screen.
    *
    * @method noStroke
+   * @example
+   * <div>
+   * <code>
+   * noStroke();
+   * rect(30, 20, 55, 55);
+   * </code>
+   * </div>
    */
   p5.prototype.noStroke = function() {
     this.canvas.getContext('2d').strokeStyle = 'rgba(0,0,0,0)';
@@ -150,6 +223,20 @@ define(function (require) {
    * @param {Number|Array} [v3] blue or brightness value (depending on the
    *                            current color mode)
    * @param {Number|Array} [a]  opacity of the background
+   * @example
+   * <div>
+   * <code>
+   * stroke(153);
+   * rect(30, 20, 55, 55);   
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * stroke(204, 102, 0);
+   * rect(30, 20, 55, 55);
+   * </code>
+   * </div>
    */
   p5.prototype.stroke = function() {
     var c = this.getNormalizedColor(arguments);
@@ -174,6 +261,12 @@ define(function (require) {
    *                          [g, a]       ==> [g, g, g, a]
    *                          [r, g, b]    ==> [r, g, b, 255]
    *                          [r, g, b, a] ==> [r, g, b, a]
+   * @example
+   * <div>
+   * <code>
+   * // todo
+   * </code>
+   * </div>
    */
   p5.prototype.getNormalizedColor = function(args) {
     if (args[0] instanceof Array) { // already color object
