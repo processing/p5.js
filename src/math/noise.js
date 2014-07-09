@@ -250,12 +250,29 @@ define(function (require) {
   };
 
   /**
-   * TODO: NOT IMPLEMENTED YET!
    * Sets the seed value for <b>noise()</b>. By default, <b>noise()</b>
    * produces different results each time the program is run. Set the
    * <b>value</b> parameter to a constant to return the same pseudo-random
    * numbers each time the software is run.
    *
+   * @method noiseSeed
+   * @param {Number} seed value
+   * @example
+   * <div>
+   * <code>
+   * var xoff = 0.0;
+   * function setup() {
+   *   noiseSeed(99);
+   *   stroke(0, 10);
+   * }
+   * 
+   * function draw() {
+   *   xoff = xoff + .01;
+   *   var n = noise(xoff) * width;
+   *   line(n, 0, n, height);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.noiseSeed = function(seed) {
     // Linear Congruential Generator
