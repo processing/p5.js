@@ -85,6 +85,33 @@ define(function (require) {
    * @param  {Number} [z] z-coordinate in noise space
    * @return {Number}     Perlin noise value (between 0 and 1) at specified
    *                      coordinates
+   * @example
+   * <div>
+   * <code>
+   * var xoff = 0.0;
+   * 
+   * function draw() {
+   *   background(204);
+   *   xoff = xoff + .01;
+   *   var n = noise(xoff) * width;
+   *   line(n, 0, n, height);
+   * }
+   * </code>
+   * </div>
+   * <div>
+   * <code>
+   * var noiseScale=0.02;
+   * 
+   * function draw() {
+   *   background(0);
+   *   for (var x=0; x < width; x++) {
+   *     var noiseVal = noise((mouseX+x)*noiseScale, mouseY*noiseScale);
+   *     stroke(noiseVal*255);
+   *     line(x, mouseY+noiseVal*80, x, height);
+   *   }
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.noise = function(x,y,z) {
     // is this legit?
