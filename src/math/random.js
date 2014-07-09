@@ -41,6 +41,27 @@ define(function (require) {
     };
   }());
 
+  /**
+   * Sets the seed value for random(). 
+   * 
+   * By default, random() produces different results each time the program 
+   * is run. Set the seed parameter to a constant to return the same 
+   * pseudo-random numbers each time the software is run.
+   *
+   * @method randomSeed
+   * @param {Number} seed   the seed value
+   * @example
+   * <div>
+   * <code>
+   * randomSeed(99);
+   * for (var i=0; i < 100; i++) {
+   *   var r = random(0, 255);
+   *   stroke(r);
+   *   line(i, 0, i, 100);
+   * }
+   * </code>
+   * </div>
+   */
   p5.prototype.randomSeed = function(seed) {
     lcg.setSeed(seed);
     seeded = true;
@@ -56,9 +77,35 @@ define(function (require) {
    * inclusive.
    *
    * @method random
-   * @param  {x}      min the lower bound
-   * @param  {y}      max the upper bound
-   * @return {Number}     the random number
+   * @param  {Number} min   the lower bound
+   * @param  {Number} max   the upper bound
+   * @return {Number} the random number
+   * @example
+   * <div>
+   * <code>
+   * for (var i = 0; i < 100; i++) {
+   *   var r = random(50);
+   *   stroke(r*5);
+   *   line(50, i, 50+r, i);
+   * }
+   * </code>
+   * </div>
+   * <div>
+   * <code>
+   * for (var i = 0; i < 100; i++) {
+   *   var r = random(-50, 50);
+   *   line(50,i,50+r,i);
+   * }
+   * </code>
+   * </div>
+   * <div>
+   * <code>
+   * // Get a random element from an array
+   * var words = [ "apple", "bear", "cat", "dog" ];
+   * var index = floor(random(words.length));  // Convert to integer
+   * text(words[index],10,50);  // Displays one of the four words
+   * </code>
+   * </div>
    */
   p5.prototype.random = function (min, max) {
 
@@ -101,10 +148,43 @@ define(function (require) {
    * If two args, first is mean, second is standard deviation
    *
    * @method randomGaussian
-   * @param  {mean}       mean
-   * @param  {sd}         standard deviation
-   * @return {Number}     the random number
-   */
+   * @param  {Number} mean  the mean
+   * @param  {Number} sd    the standard deviation
+   * @return {Number} the random number
+   * @example
+   * <div>
+   * <code>for (var y = 0; y < 100; y++) {
+   *  var x = randomGaussian(50,15);
+   *  line(50, y, x, y);
+   *}
+   * </code>
+   * </div>
+   * <div>
+   * <code> 
+   *var distribution = new Array(360);
+   * 
+   *function setup() {
+   *  createCanvas(100, 100);
+   *  for (var i = 0; i < distribution.length; i++) {
+   *    distribution[i] = floor(randomGaussian(0,15));
+   *  }
+   *}
+   * 
+   *function draw() {
+   *  background(204);
+   *   
+   *  translate(width/2, width/2);
+   * 
+   *  for (var i = 0; i < distribution.length; i++) {
+   *    rotate(TWO_PI/distribution.length);
+   *    stroke(0);
+   *    var dist = abs(distribution[i]);
+   *    line(0, 0, dist, 0);
+   *  }
+   *}
+   * </code>
+   * </div>
+   */ 
   var y2;
   var previous = false;
   p5.prototype.randomGaussian = function(mean, sd)  {
