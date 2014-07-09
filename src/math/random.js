@@ -49,7 +49,7 @@ define(function (require) {
    * pseudo-random numbers each time the software is run.
    *
    * @method randomSeed
-   * @param {Number} seed value
+   * @param {Number} seed   the seed value
    * @example
    * <div>
    * <code>

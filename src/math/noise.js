@@ -81,8 +81,8 @@ define(function (require) {
    *
    * @method noise
    * @param  {Number} x   x-coordinate in noise space
-   * @param  {Number} [y] y-coordinate in noise space
-   * @param  {Number} [z] z-coordinate in noise space
+   * @param  {Number} y   y-coordinate in noise space
+   * @param  {Number} z   z-coordinate in noise space
    * @return {Number}     Perlin noise value (between 0 and 1) at specified
    *                      coordinates
    * @example
@@ -256,7 +256,7 @@ define(function (require) {
    * numbers each time the software is run.
    *
    * @method noiseSeed
-   * @param {Number} seed value
+   * @param {Number} seed   the seed value
    * @example
    * <div>
    * <code>var xoff = 0.0;
