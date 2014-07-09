@@ -77,9 +77,9 @@ define(function (require) {
    * inclusive.
    *
    * @method random
-   * @param  {x}      min the lower bound
-   * @param  {y}      max the upper bound
-   * @return {Number}     the random number
+   * @param  {Number} min   the lower bound
+   * @param  {Number} max   the upper bound
+   * @return {Number} the random number
    * @example
    * <div>
    * <code>
@@ -148,9 +148,9 @@ define(function (require) {
    * If two args, first is mean, second is standard deviation
    *
    * @method randomGaussian
-   * @param  {mean}       mean
-   * @param  {sd}         standard deviation
-   * @return {Number}     the random number
+   * @param  {Number} mean  the mean
+   * @param  {Number} sd    the standard deviation
+   * @return {Number} the random number
    * @example
    * <div>
    * <code>for (var y = 0; y < 100; y++) {
@@ -184,7 +184,7 @@ define(function (require) {
    *}
    * </code>
    * </div>
-   */
+   */ 
   var y2;
   var previous = false;
   p5.prototype.randomGaussian = function(mean, sd)  {
