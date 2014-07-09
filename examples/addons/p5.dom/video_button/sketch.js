@@ -3,8 +3,7 @@ var fingers, button;
 
 
 function setup() {
-  fingers = createVideo('fingers.mov');
-  fingers.loop();
+  fingers = createVideo('../fingers.mov');
 
   button = createButton('play');
   button.mousePressed(toggleVid);
@@ -15,7 +14,7 @@ function toggleVid() {
     fingers.pause();
     button.html('play');
   } else {
-    fingers.play();
+    fingers.loop();
     button.html('pause');
   }
   playing = !playing;

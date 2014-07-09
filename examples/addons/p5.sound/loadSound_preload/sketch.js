@@ -3,7 +3,7 @@
 
 
 function preload(){
-  sample1 = loadSound(['sound.ogg', 'sound.mp3']);
+  sample1 = loadSound(['../_files/Damscray_-_Dancing_Tiger_01.mp3', '../_files/Damscray_-_Dancing_Tiger_01.ogg']);
 }
 
 function setup() {

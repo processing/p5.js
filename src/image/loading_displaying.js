@@ -58,11 +58,11 @@ define(function (require) {
    * Draw an image to the main canvas of the p5js sketch
    *
    * @method image 
-   * @param  {p5.Image} image the image to display
-   * @param  {[type]} x x-coordinate of the image
-   * @param  {[type]} y y-coordinate of the image
-   * @param  {[type]} width width to display the image
-   * @param  {[type]} height height to display the image
+   * @param  {p5.Image} image    the image to display
+   * @param  {Number}   x        x-coordinate of the image
+   * @param  {Number}   y        y-coordinate of the image
+   * @param  {Number}   [width]  width to display the image
+   * @param  {Number}   [height] height to display the image
    */
   p5.prototype.image = function(img, x, y, width, height) {
     if (width === undefined){
@@ -74,14 +74,14 @@ define(function (require) {
     var vals = canvas.modeAdjust(x, y, width, height, this._imageMode);
     // tint the image if there is a tint
     if (this._tint) {
-      this._curElement.context.drawImage(
+      this.canvas.getContext('2d').drawImage(
         this._getTintedImageCanvas(img),
         vals.x,
         vals.y,
         vals.w,
         vals.h);
     } else {
-      this._curElement.context.drawImage(
+      this.canvas.getContext('2d').drawImage(
         img.canvas,
         vals.x,
         vals.y,

@@ -26,11 +26,6 @@ define(function(require) {
     this._events = {};
     this.width = this.elt.offsetWidth;
     this.height = this.elt.offsetHeight;
-    if (elt instanceof HTMLCanvasElement && this._pInst) {
-      this.context = elt.getContext('2d');
-      // for pixel method sharing with pimage
-      this._pInst._setProperty('canvas', elt);
-    }
   };
 
   /**
@@ -108,6 +103,19 @@ define(function(require) {
    */
   p5.Element.prototype.mouseOut = function (fxn) {
     attachListener('mouseout', fxn, this);
+  };
+
+  /**
+   * The .mouseMoved() function is called once every time a
+   * mouse moves over the element. This can be used to attach an
+   * element specific event listener.
+   *
+   * @method mouseMoved
+   * @param  {Function} fxn function to be fired when mouse is
+   *                    moved over the element.
+   */
+  p5.Element.prototype.mouseMoved = function (fxn) {
+    attachListener('mousemove', fxn, this);
   };
 
 

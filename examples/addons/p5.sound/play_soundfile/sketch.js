@@ -10,7 +10,7 @@ function setup() {
   background(0);
 
   // create a SoundFile
-  soundFile = loadSound( ['beatbox.ogg', 'beatbox.mp3'] );
+  soundFile = loadSound( ['../_files/beatbox.ogg', '../_files/beatbox.mp3'] );
 
   createP('Press any key to play the sound');
 }
@@ -19,7 +19,7 @@ function setup() {
 function keyPressed() {
 
   // play the sound file
-  soundFile.play();
+  soundFile.play(1,1);
 
   // also make the background yellow
   background(255, 255, 0);

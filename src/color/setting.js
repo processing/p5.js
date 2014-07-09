@@ -37,12 +37,12 @@ define(function (require) {
   p5.prototype.background = function() {
     var c = this.getNormalizedColor(arguments);
     // save out the fill
-    var curFill = this._curElement.context.fillStyle;
+    var curFill = this.canvas.getContext('2d').fillStyle;
     // create background rect
-    this._curElement.context.fillStyle = this.getCSSRGBAColor(c);
-    this._curElement.context.fillRect(0, 0, this.width, this.height);
+    this.canvas.getContext('2d').fillStyle = this.getCSSRGBAColor(c);
+    this.canvas.getContext('2d').fillRect(0, 0, this.width, this.height);
     // reset fill
-    this._curElement.context.fillStyle = curFill;
+    this.canvas.getContext('2d').fillStyle = curFill;
   };
 
   /**
@@ -56,7 +56,7 @@ define(function (require) {
    * @method clear
    */
   p5.prototype.clear = function() {
-    this._curElement.context.clearRect(0, 0, this.width, this.height);
+    this.canvas.getContext('2d').clearRect(0, 0, this.width, this.height);
   };
 
   /**
@@ -113,7 +113,7 @@ define(function (require) {
    */
   p5.prototype.fill = function() {
     var c = this.getNormalizedColor(arguments);
-    this._curElement.context.fillStyle = this.getCSSRGBAColor(c);
+    this.canvas.getContext('2d').fillStyle = this.getCSSRGBAColor(c);
   };
 
   /**
@@ -123,7 +123,7 @@ define(function (require) {
    * @method noFill
    */
   p5.prototype.noFill = function() {
-    this._curElement.context.fillStyle = 'rgba(0,0,0,0)';
+    this.canvas.getContext('2d').fillStyle = 'rgba(0,0,0,0)';
   };
 
   /**
@@ -133,7 +133,7 @@ define(function (require) {
    * @method noStroke
    */
   p5.prototype.noStroke = function() {
-    this._curElement.context.strokeStyle = 'rgba(0,0,0,0)';
+    this.canvas.getContext('2d').strokeStyle = 'rgba(0,0,0,0)';
   };
 
   /**
@@ -153,7 +153,7 @@ define(function (require) {
    */
   p5.prototype.stroke = function() {
     var c = this.getNormalizedColor(arguments);
-    this._curElement.context.strokeStyle = this.getCSSRGBAColor(c);
+    this.canvas.getContext('2d').strokeStyle = this.getCSSRGBAColor(c);
   };
 
   /**

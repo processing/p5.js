@@ -30,7 +30,7 @@ define(function (require) {
     if (a === constants.LEFT ||
       a === constants.RIGHT ||
       a === constants.CENTER) {
-      this._curElement.context.textAlign = a;
+      this.canvas.getContext('2d').textAlign = a;
     }
   };
 
@@ -41,7 +41,7 @@ define(function (require) {
    * @param {String} s the String of characters to measure
    */
   p5.prototype.textHeight = function(s) {
-    return this._curElement.context.measureText(s).height;
+    return this.canvas.getContext('2d').measureText(s).height;
   };
 
   /**
@@ -89,7 +89,7 @@ define(function (require) {
    * @param {String} s the String of characters to measure
    */
   p5.prototype.textWidth = function(s) {
-    return this._curElement.context.measureText(s).width;
+    return this.canvas.getContext('2d').measureText(s).width;
   };
 
   return p5;

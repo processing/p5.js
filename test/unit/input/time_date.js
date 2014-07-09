@@ -110,7 +110,7 @@ suite('time and date', function() {
             assert.isNumber(result);
         });
         test('result should be ' + runningTime, function() {
-            assert.operator(result, '==', runningTime, 'everything is ok');
+            assert.closeTo(result, runningTime, 1, 'everything is ok');
         });
          test('result should be > newResult', function() {
             var newResult = millis.call(p5mock);
