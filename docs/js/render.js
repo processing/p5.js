@@ -1,18 +1,24 @@
 function renderCode(sel) {
+
+   // $( document ).ready(function() {
+
+  var p5Instances = [];
   var selector = sel || 'example'
   var examples = document.getElementsByClassName(selector);
   if (examples.length > 0) {
 
     var sketches = examples[0].getElementsByTagName('code');
     var sketches_array = Array.prototype.slice.call(sketches);
+    var i = 0;
     sketches_array.forEach(function(s) {
       var rc = (s.parentNode.className.indexOf('norender') === -1);
-      setupCode(s, rc);
-      runCode(s, rc);
+      setupCode(s, rc, i);
+      p5Instances.push(runCode(s, rc, i));
+      i++;
     });
   }
 
-  function setupCode(sketch, rc) {
+  function setupCode(sketch, rc, i) {
 
     var isRef = sketch.parentNode.tagName !== 'PRE';
 
@@ -95,7 +101,7 @@ function renderCode(sel) {
           edit_button.innerHTML = 'edit';
           edit_area.style.display = 'none';
           sketch.innerHTML = edit_area.value;
-          runCode(sketch, true);
+          runCode(sketch, true, i);
         }
       }
 
@@ -119,7 +125,11 @@ function renderCode(sel) {
     }
   }
 
-  function runCode(sketch, rc) {
+  function runCode(sketch, rc, i) {
+
+    if (p5Instances[i]) {
+      p5Instances[i].remove();
+    }
 
     var sketchNode = sketch.parentNode;
     var isRef = sketchNode.className.indexOf('ref') !== -1;
@@ -137,7 +147,7 @@ function renderCode(sel) {
       }
       cnv.innerHTML = '';
 
-      var s = function( p ) {
+      s = function(p) {
 
         if (runnable.indexOf('setup()') === -1 && runnable.indexOf('draw()') === -1){
           p.setup = function() {
@@ -179,18 +189,17 @@ function renderCode(sel) {
     //if (typeof prettyPrint !== 'undefined') prettyPrint();
     if (typeof Prism !== 'undefined') Prism.highlightAll();
 
-    $( document ).ready(function() {
-      setTimeout(function() {
-        var myp5 = new p5(s, cnv);      
-        $( ".example-content" ).find('div').each(function() {
-          $this = $( this );
-          var pre = $this.find('pre')[0];
-          if (pre) {
-            $this.height( Math.max($(pre).height()*1.1, 100) + 20 );
-          }
-        });
-      }, 100); 
-    });
+    setTimeout(function() {
+      var p5Inst = new p5(s, cnv);      
+      $( ".example-content" ).find('div').each(function() {
+        $this = $( this );
+        var pre = $this.find('pre')[0];
+        if (pre) {
+          $this.height( Math.max($(pre).height()*1.1, 100) + 20 );
+        }
+      });
+      p5Instances[i] = p5Inst;
+    }, 100); 
 
   }
 

@@ -164,57 +164,6 @@ define(function (require) {
     throw 'size() not implemented, see createCanvas()';
   };
 
-  /**
-   * @method remove
-   */
-  p5.prototype.remove = function() {
-    if (this._curElement) {
-
-      // stop draw
-      this._loop = false;
-      if (this._drawInterval) {
-        clearTimeout(this._drawInterval);
-      }
-      if (this._updateInterval) {
-        clearTimeout(this._updateInterval);
-      }
-
-      // unregister events sketch-wide
-      for (var ev in this._events) {
-        window.removeEventListener(ev, this._events[ev]);
-      }
-
-      // unregister events canvas-specific
-      for (var cev in this._curElement._events) {
-        var f = this._curElement._events[cev];
-        this._curElement.elt.removeEventListener(cev, f);
-      }
-
-      // remove DOM elements created by p5
-      for (var i=0; i<this._elements.length; i++) {
-        var e = this._elements[i];
-        e.parentNode.removeChild(e);
-      }
-
-      // call any registered remove functions
-      var self = this;
-      this._removeFuncs.forEach(function(f) {
-        self[f]();
-      });
-
-      // remove window bound properties and methods
-      if (this._isGlobal) {
-        for (var p in p5.prototype) {
-          delete(window[p]);
-        }
-        for (var p2 in this) {
-          if (this.hasOwnProperty(p2)) {
-            delete(window[p2]);
-          }
-        }
-      }
-    }
-  };
 
   return p5;
 
