@@ -81,20 +81,24 @@ define(function (require) {
    */
   p5.prototype.color = function() {
     var args = arguments;
+    
+    var isRGB = this._colorMode === constants.RGB;
+    var maxArr = isRGB ? this._maxRGB : this._maxHSB;
+
     var r, g, b, a;
     if (args.length >= 3) {
       r = args[0];
       g = args[1];
       b = args[2];
-      a = typeof args[3] === 'number' ? args[3] : this._maxA;
+      a = typeof args[3] === 'number' ? args[3] : maxArr[3];
     } else {
-      if (this._colorMode === constants.RGB) {
+      if (isRGB) {
         r = g = b = args[0];
       } else {
         r = b = args[0];
         g = 0;
       }
-      a = typeof args[1] === 'number' ? args[1] : this._maxA;
+      a = typeof args[1] === 'number' ? args[1] : maxArr[3];
     }
     return [r, g, b, a];
   };

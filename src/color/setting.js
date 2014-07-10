@@ -13,10 +13,8 @@ define(function (require) {
   var constants = require('constants');
 
   p5.prototype._colorMode = constants.RGB;
-  p5.prototype._maxC0 = 255; // these correspond to max vals for RGB or HSB
-  p5.prototype._maxC1 = 255;
-  p5.prototype._maxC2 = 255;
-  p5.prototype._maxA = 255;
+  p5.prototype._maxRGB = [255, 255, 255, 255];
+  p5.prototype._maxHSB = [255, 255, 255, 255];
 
   /**
    * The background() function sets the color used for the background of the
@@ -79,19 +77,23 @@ define(function (require) {
   p5.prototype.colorMode = function() {
     if (arguments[0] === constants.RGB || arguments[0] === constants.HSB) {
       this._colorMode = arguments[0];
-    }
-    if (arguments.length === 2) {
-      this._maxC0 = arguments[1];
-      this._maxC1 = arguments[1];
-      this._maxC2 = arguments[1];
-    }
-    else if (arguments.length > 2) {
-      this._maxC0 = arguments[1];
-      this._maxC1 = arguments[2];
-      this._maxC2 = arguments[3];
-    }
-    if (arguments.length === 5) {
-      this._maxA = arguments[4];
+    
+      var isRGB = this._colorMode === constants.RGB;
+      var maxArr = isRGB ? this._maxRGB : this._maxHSB;
+
+      if (arguments.length === 2) {
+        maxArr[0] = arguments[1];
+        maxArr[1] = arguments[1];
+        maxArr[2] = arguments[1];
+      }
+      else if (arguments.length > 2) {
+        maxArr[0] = arguments[1];
+        maxArr[1] = arguments[2];
+        maxArr[2] = arguments[3];
+      }
+      if (arguments.length === 5) {
+        maxArr[3] = arguments[4];
+      }
     }
   };
 
@@ -176,6 +178,8 @@ define(function (require) {
    *                          [r, g, b, a] ==> [r, g, b, a]
    */
   p5.prototype.getNormalizedColor = function(args) {
+    var isRGB = this._colorMode === constants.RGB;
+
     if (args[0] instanceof Array) { // already color object
       args = args[0];
     }
@@ -186,7 +190,7 @@ define(function (require) {
       b = args[2];
       a = typeof args[3] === 'number' ? args[3] : this._maxA;
     } else {
-      if (this._colorMode === constants.RGB) {
+      if (isRGB) {
         r = g = b = args[0];
       } else {
         r = b = args[0];
@@ -195,10 +199,12 @@ define(function (require) {
       a = typeof args[1] === 'number' ? args[1] : this._maxA;
     }
 
-    r *= 255/this._maxC0;
-    g *= 255/this._maxC1;
-    b *= 255/this._maxC2;
-    a *= 255/this._maxA;
+    var maxArr = isRGB ? this._maxRGB : this._maxHSB;
+
+    r *= 255/maxArr[0];
+    g *= 255/maxArr[1];
+    b *= 255/maxArr[2];
+    a *= 255/maxArr[3];
 
     if (this._colorMode === constants.HSB) {
       rgba = hsv2rgb(r, g, b).concat(a);
