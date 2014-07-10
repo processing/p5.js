@@ -31,7 +31,7 @@ var duration = 1000;
 var trigger;
 
 // An index to count up the notes
-var note = 0
+var note = 0;
 
 function setup(){
   createCanvas(600, 600);
