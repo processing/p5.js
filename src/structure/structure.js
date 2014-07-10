@@ -185,10 +185,10 @@ define(function (require) {
     ctx.lineJoin = lastS.lineJoin; // strokeJoin
     this._tint = lastS.tint; // tint
     this._imageMode = lastS.imageMode; // imageMode
-    this._rectMode = lastS._rectMode; // rectMode
+    this._rectMode = lastS.rectMode; // rectMode
     this._ellipseMode = lastS.ellipseMode; // elllipseMode
     // @todo shapeMode
-    this._colorMode = lastS._colorMode; // colorMode
+    this._colorMode = lastS.colorMode; // colorMode
     ctx.textAlign = lastS.textAlign; // textAlign
     this.textFont = lastS.textFont;
     this.textLeading = lastS.textLeading; // textLeading
