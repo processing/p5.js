@@ -188,7 +188,6 @@ color: #666;  }
     margin:0 1.75em 0 0;
 }
 
-
 #collection-list-nav dl:nth-child(4), 
     .reference-group dl:nth-child(4),
     .reference-group.main-ref-page dl:nth-child(5) {
@@ -585,23 +584,6 @@ p+img {
     border-color:rgba(51,51,51,.5);
 }
 
-#menu {
-    list-style: none;
-    font-family: "AvenirNextLTW01-Medium";
-    height: 100%;
-    padding:1em 0; 
-    z-index: -2;
-}
-
-#menu li { 
-    float:left;
-    margin-right: 1em;
-}
-
-#menu li:last-child { 
-
-}
-
 
 #lockup {
     margin:4.25em 1.25em 1.25em 1.25em;
@@ -801,15 +783,18 @@ footer {
     }
 
     #menu {
-    margin:4.25em 0.75em 0 -1.85em; /* margin-right: 0.75em;  */
+    list-style: none;
+    font-family: "AvenirNextLTW01-Medium";
+    margin:0 0.75em 0 -1.85em; /* margin-right: 0.75em;  */
     width:7.3em;
-    height:4.5em;
+    height:100%;
     float:left;
     border-top: transparent;
     border-bottom: transparent;
     height: 14.25em;
-    padding:1em 0; 
+    padding:5.25em 0; 
     font-size: 0.92em;
+    z-index: 100;
     }
 
     #menu li {
@@ -821,6 +806,7 @@ footer {
     #menu li:last-child {
     /*    margin: 0;*/
     }
+
 
     #menu .other-link::after {
         /* content:"\2192"; 
