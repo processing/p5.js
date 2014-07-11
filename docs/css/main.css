@@ -168,7 +168,7 @@ color: #666;  }
 
 #collection-list-nav {
     width:100%;
-    height:8.25em;
+    height:6.75em;
     list-style-type: none;
     font-family: "AvenirNextLTW01-Medium";
     clear:both;
@@ -425,6 +425,10 @@ a:active, a:hover, #reference a:hover {
 
 .anchor {
     color: #222 !important;
+}
+
+a.nounderline:hover {
+    border: none;
 }
 
 .here {
