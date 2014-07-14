@@ -65,6 +65,7 @@ define(function (require) {
    * @param  {Number}   [height] height to display the image
    */
   p5.prototype.image = function(img, x, y, width, height) {
+    var frame = img.canvas ? img.canvas : img.elt; // may use vid src
     if (width === undefined){
       width = img.width;
     }
@@ -75,14 +76,14 @@ define(function (require) {
     // tint the image if there is a tint
     if (this._tint) {
       this.canvas.getContext('2d').drawImage(
-        this._getTintedImageCanvas(img),
+        this._getTintedImageCanvas(frame),
         vals.x,
         vals.y,
         vals.w,
         vals.h);
     } else {
       this.canvas.getContext('2d').drawImage(
-        img.canvas,
+        frame,
         vals.x,
         vals.y,
         vals.w,
@@ -134,13 +135,16 @@ define(function (require) {
    * @param {p5.Image} The image to be tinted
    * @return {canvas} The resulting tinted canvas
    */
-  p5.prototype._getTintedImageCanvas = function(image) {
-    var pixels = Filters._toPixels(image.canvas);
+  p5.prototype._getTintedImageCanvas = function(img) {
+    if (!img.canvas) {
+      return img;
+    }
+    var pixels = Filters._toPixels(img.canvas);
     var tmpCanvas = document.createElement('canvas');
-    tmpCanvas.width = image.canvas.width;
-    tmpCanvas.height = image.canvas.height;
+    tmpCanvas.width = img.canvas.width;
+    tmpCanvas.height = img.canvas.height;
     var tmpCtx = tmpCanvas.getContext('2d');
-    var id = tmpCtx.createImageData(image.canvas.width, image.canvas.height);
+    var id = tmpCtx.createImageData(img.canvas.width, img.canvas.height);
     var newPixels = id.data;
 
     for(var i = 0; i < pixels.length; i += 4) {

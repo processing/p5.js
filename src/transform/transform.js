@@ -39,22 +39,8 @@ define(function (require) {
     return this;
   };
 
-  /**
-   * Pops the current transformation matrix off the matrix stack. Understanding
-   * pushing and popping requires understanding the concept of a matrix stack.
-   * The pushMatrix() function saves the current coordinate system to the stack
-   * and popMatrix() restores the prior coordinate system. pushMatrix() and
-   * popMatrix() are used in conjuction with the other transformation functions
-   * and may be embedded to control the scope of the transformations.
-   *
-   * @method popMatrix
-   * @return {p5} the p5 object
-   */
   p5.prototype.popMatrix = function() {
-    this.canvas.getContext('2d').restore();
-    this._matrices.pop();
-
-    return this;
+    throw new Error('popMatrix() not used, see pop()');
   };
 
   /**
@@ -64,27 +50,11 @@ define(function (require) {
    * @return {p5} the p5 object
    */
   p5.prototype.printMatrix = function() {
-    //console.log(this._matrices[this._matrices.length-1]);
-    return this;
+    throw new Error('printMatrix() not implemented');
   };
 
-  /**
-   * Pushes the current transformation matrix onto the matrix stack.
-   * Understanding pushMatrix() and popMatrix() requires understanding the
-   * concept of a matrix stack. The pushMatrix() function saves the current
-   * coordinate system to the stack and popMatrix() restores the prior
-   * coordinate system. pushMatrix() and popMatrix() are used in conjuction
-   * with the other transformation functions and may be embedded to control
-   * the scope of the transformations.
-   *
-   * @method pushMatrix
-   * @return {p5} the p5 object
-   */
   p5.prototype.pushMatrix = function() {
-    this.canvas.getContext('2d').save();
-    this._matrices.push([1,0,0,1,0,0]);
-
-    return this;
+    throw new Error('pushMatrix() not used, see push()');
   };
 
   /**
@@ -114,7 +84,7 @@ define(function (require) {
    *
    * Technically, rotate() multiplies the current transformation matrix
    * by a rotation matrix. This function can be further controlled by
-   * the pushMatrix() and popMatrix().
+   * the push() and pop().
    *
    * @method rotate
    * @param  {Number} angle the angle of rotation, specified in radians
@@ -165,7 +135,7 @@ define(function (require) {
    *
    * Using this fuction with the z parameter requires using P3D as a
    * parameter for size(), as shown in the third example above. This function
-   * can be further controlled with pushMatrix() and popMatrix().
+   * can be further controlled with push() and pop().
    *
    * @method scale
    * @param  {Number} s   percentage to scale the object, or percentage to
@@ -206,7 +176,7 @@ define(function (require) {
    *
    * Technically, shearX() multiplies the current transformation matrix by a
    * rotation matrix. This function can be further controlled by the
-   * pushMatrix() and popMatrix() functions.
+   * push() and pop() functions.
    *
    * @method shearX
    * @param  {Number} angle angle of shear specified in radians or degrees,
@@ -238,7 +208,7 @@ define(function (require) {
    *
    * Technically, shearY() multiplies the current transformation matrix by a
    * rotation matrix. This function can be further controlled by the
-   * pushMatrix() and popMatrix() functions.
+   * push() and pop() functions.
    *
    * @method shearY
    * @param  {Number} angle angle of shear specified in radians or degrees,
@@ -266,7 +236,7 @@ define(function (require) {
    * calling translate(50, 0) and then translate(20, 0) is the same as
    * translate(70, 0). If translate() is called within draw(), the
    * transformation is reset when the loop begins again. This function can be
-   * further controlled by using pushMatrix() and popMatrix().
+   * further controlled by using push() and pop().
    *
    * @method translate
    * @param  {Number} x left/right translation

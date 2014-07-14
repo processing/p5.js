@@ -10,7 +10,7 @@ function setup() {
 }
 
 function draw() {
-  video(fingers, 0, 0, 320, 240);
+  image(fingers, 0, 0);
   loadPixels();
   background(255);
   var stepSize = round(constrain(mouseX / 8, 6, 32));

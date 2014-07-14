@@ -184,7 +184,7 @@ define(function (require) {
    *}
    * </code>
    * </div>
-   */ 
+   */
   var y2;
   var previous = false;
   p5.prototype.randomGaussian = function(mean, sd)  {

@@ -9,6 +9,7 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
+  var constants = require('constants');
 
   /**
    * Extracts the alpha value from a color.
@@ -158,7 +159,27 @@ define(function (require) {
    * </div>
    */
   p5.prototype.color = function() {
-    return this.getNormalizedColor(arguments);
+    var args = arguments;
+    
+    var isRGB = this._colorMode === constants.RGB;
+    var maxArr = isRGB ? this._maxRGB : this._maxHSB;
+
+    var r, g, b, a;
+    if (args.length >= 3) {
+      r = args[0];
+      g = args[1];
+      b = args[2];
+      a = typeof args[3] === 'number' ? args[3] : maxArr[3];
+    } else {
+      if (isRGB) {
+        r = g = b = args[0];
+      } else {
+        r = b = args[0];
+        g = 0;
+      }
+      a = typeof args[1] === 'number' ? args[1] : maxArr[3];
+    }
+    return [r, g, b, a];
   };
 
   /**
@@ -251,7 +272,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.lerpColor = function(c1, c2, amt) {
-    if (typeof c1 === 'Array') {
+    if (typeof c1 === 'object') {
       var c = [];
       for (var i=0; i<c1.length; i++) {
         c.push(p5.prototype.lerp(c1[i], c2[i], amt));

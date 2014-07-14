@@ -220,12 +220,12 @@ define(function (require) {
       }
       // call user's draw
       if (typeof userDraw === 'function') {
-        this.pushMatrix();
+        this.push();
         if (typeof userSetup === 'undefined') {
           this.scale(this._pixelDensity, this._pixelDensity);
         }
         userDraw();
-        this.popMatrix();
+        this.pop();
       }
     }.bind(this);
 
