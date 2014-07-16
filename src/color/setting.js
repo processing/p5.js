@@ -106,7 +106,6 @@ define(function (require) {
    *
    * <div>
    * <code>
-   * // Doesn't work as expected
    * noStroke();
    * colorMode(HSB, 100);
    * for (i = 0; i < 100; i++) {
