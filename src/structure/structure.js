@@ -33,8 +33,10 @@ define(function (require) {
    */
   p5.prototype.noLoop = function() {
     this._loop = false;
+    if (this._drawInterval) {
+      clearInterval(this._drawInterval);
+    }
   };
-
   /**
    * By default, p5.js loops through draw() continuously, executing the code
    * within it. However, the draw() loop may be stopped by calling noLoop().
@@ -44,6 +46,7 @@ define(function (require) {
    */
   p5.prototype.loop = function() {
     this._loop = true;
+    this._draw();
   };
 
   /**
