@@ -106,7 +106,6 @@ define(function (require) {
    *
    * <div>
    * <code>
-   * // currently not working
    * beginShape(LINES);
    * vertex(30, 20);
    * vertex(85, 20);
@@ -142,7 +141,6 @@ define(function (require) {
    *
    * <div>
    * <code>
-   * // currently not working
    * beginShape(TRIANGLES);
    * vertex(30, 75);
    * vertex(40, 20);
@@ -156,7 +154,6 @@ define(function (require) {
    *
    * <div>
    * <code>
-   * // currently not working
    * beginShape(TRIANGLE_STRIP);
    * vertex(30, 75);
    * vertex(40, 20);
@@ -171,7 +168,6 @@ define(function (require) {
    *
    * <div>
    * <code>
-   * // currently not working
    * beginShape(TRIANGLE_FAN);
    * vertex(57.5, 50);
    * vertex(57.5, 15); 
@@ -185,7 +181,6 @@ define(function (require) {
    *
    * <div>
    * <code>
-   * // currently not working
    * beginShape(QUADS);
    * vertex(30, 20);
    * vertex(30, 75);
@@ -200,8 +195,7 @@ define(function (require) {
    * </div>
    *
    * <div>
-   * <code>
-   * // currently not working   
+   * <code>  
    * beginShape(QUAD_STRIP); 
    * vertex(30, 20); 
    * vertex(30, 75); 
@@ -325,7 +319,6 @@ define(function (require) {
    * @example
    * <div>
    * <code>
-   * // Uncaught not yet implemented
    * noFill();
    * beginShape();
    * curveVertex(84,  91);
@@ -540,7 +533,6 @@ define(function (require) {
    * @example
    * <div>
    * <code>
-   * // currently not working
    * beginShape(POINTS);
    * vertex(30, 20);
    * vertex(85, 20);
