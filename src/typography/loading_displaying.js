@@ -34,6 +34,24 @@ define(function (require) {
    *                     see rectMode() for more info
    * @param {Number} y2  by default, the height of the text box,
    *                     see rectMode() for more info
+   * @example
+   * <div>
+   * <code>
+   * textSize(32);
+   * text("word", 10, 30); 
+   * fill(0, 102, 153);
+   * text("word", 10, 60);
+   * fill(0, 102, 153, 51);
+   * text("word", 10, 90); 
+   * </code>
+   * </div>
+   * <div>
+   * <code>
+   * s = "The quick brown fox jumped over the lazy dog.";
+   * fill(50);
+   * text(s, 10, 10, 70, 80); // Text wraps within text box
+   * </code>
+   * </div>
    */
   p5.prototype.text = function() {
 
@@ -107,6 +125,17 @@ define(function (require) {
    *
    * @method textFont
    * @param {String} str name of font
+   * @example
+   * <div>
+   * <code>
+   * fill(0);
+   * textSize(36);
+   * textFont("Georgia");
+   * text("Georgia", 12, 40);
+   * textFont("Helvetica");
+   * text("Helvetica", 12, 90);
+   * </code>
+   * </div>
    */
   p5.prototype.textFont = function(str) {
     this._setProperty('_textFont', str); //pend temp?
