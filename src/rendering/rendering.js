@@ -124,6 +124,7 @@ define(function(require) {
    * <ul>
    * <li><code>BLEND</code> - linear interpolation of colours: C = 
    * A*factor + B. This is the default blending mode.</li>
+   * <li><code>ADD</code> - sum of A and B</li>
    * <li><code>DARKEST</code> - only the darkest colour succeeds: C = 
    * min(A*factor, B).</li>
    * <li><code>LIGHTEST</code> - only the lightest colour succeeds: C = 

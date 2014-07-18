@@ -41,6 +41,30 @@ define(function (require) {
    * @method ellipseMode
    * @param  {Number/Constant} mode either CENTER, RADIUS, CORNER, or CORNERS
    * @return {p5}                   the p5 object
+   * @example
+   * <div>
+   * <code>
+   * ellipseMode(RADIUS);  // Set ellipseMode to RADIUS
+   * fill(255);  // Set fill to white
+   * ellipse(50, 50, 30, 30);  // Draw white ellipse using RADIUS mode
+   *
+   * ellipseMode(CENTER);  // Set ellipseMode to CENTER
+   * fill(100);  // Set fill to gray
+   * ellipse(50, 50, 30, 30);  // Draw gray ellipse using CENTER mode
+   * </code>
+   * </div>
+   * 
+   * <div>
+   * <code>
+   * ellipseMode(CORNER);  // Set ellipseMode is CORNER
+   * fill(255);  // Set fill to white
+   * ellipse(25, 25, 50, 50);  // Draw white ellipse using CORNER mode
+   *
+   * ellipseMode(CORNERS);  // Set ellipseMode to CORNERS
+   * fill(100);  // Set fill to gray
+   * ellipse(25, 25, 50, 50);  // Draw gray ellipse using CORNERS mode
+   * </code>
+   * </div>
    */
   p5.prototype.ellipseMode = function(m) {
     if (m === constants.CORNER ||
@@ -60,6 +84,17 @@ define(function (require) {
    *
    * @method noSmooth
    * @return {p5} the p5 object
+   * @example
+   * <div>
+   * <code>
+   * background(0);
+   * noStroke();
+   * smooth();
+   * ellipse(30, 48, 36, 36);
+   * noSmooth();
+   * ellipse(70, 48, 36, 36);
+   * </code>
+   * </div>
    */
   p5.prototype.noSmooth = function() {
     this.canvas.getContext('2d').mozImageSmoothingEnabled = false;
@@ -94,6 +129,30 @@ define(function (require) {
    * @method rectMode
    * @param  {Number/Constant} mode either CORNER, CORNERS, CENTER, or RADIUS
    * @return {p5}                   the p5 object
+   * @example
+   * <div>
+   * <code>
+   * rectMode(CORNER);  // Default rectMode is CORNER
+   * fill(255);  // Set fill to white
+   * rect(25, 25, 50, 50);  // Draw white rect using CORNER mode
+   * 
+   * rectMode(CORNERS);  // Set rectMode to CORNERS
+   * fill(100);  // Set fill to gray
+   * rect(25, 25, 50, 50);  // Draw gray rect using CORNERS mode
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * rectMode(RADIUS);  // Set rectMode to RADIUS
+   * fill(255);  // Set fill to white
+   * rect(50, 50, 30, 30);  // Draw white rect using RADIUS mode
+   * 
+   * rectMode(CENTER);  // Set rectMode to CENTER
+   * fill(100);  // Set fill to gray
+   * rect(50, 50, 30, 30);  // Draw gray rect using CENTER mode
+   * </code>
+   * </div>
    */
   p5.prototype.rectMode = function(m) {
     if (m === constants.CORNER ||
@@ -114,6 +173,17 @@ define(function (require) {
    * 
    * @method smooth
    * @return {p5} the p5 object
+   * @example
+   * <div>
+   * <code>
+   * background(0);
+   * noStroke();
+   * smooth();
+   * ellipse(30, 48, 36, 36);
+   * noSmooth();
+   * ellipse(70, 48, 36, 36);
+   * </code>
+   * </div>
    */
   p5.prototype.smooth = function() {
     this.canvas.getContext('2d').mozImageSmoothingEnabled = true;
@@ -130,6 +200,18 @@ define(function (require) {
    * @method strokeCap
    * @param  {Number/Constant} cap either SQUARE, PROJECT, or ROUND
    * @return {p5}                  the p5 object
+   * @example
+   * <div>
+   * <code>
+   * strokeWeight(12.0);
+   * strokeCap(ROUND);
+   * line(20, 30, 80, 30);
+   * strokeCap(SQUARE);
+   * line(20, 50, 80, 50);
+   * strokeCap(PROJECT);
+   * line(20, 70, 80, 70);
+   * </code>
+   * </div>
    */
   p5.prototype.strokeCap = function(cap) {
     if (cap === constants.ROUND ||
@@ -150,6 +232,45 @@ define(function (require) {
    * @method strokeJoin
    * @param  {Number/Constant} join either MITER, BEVEL, ROUND
    * @return {p5}                   the p5 object
+   * @example
+   * <div>
+   * <code>
+   * noFill();
+   * strokeWeight(10.0);
+   * strokeJoin(MITER);
+   * beginShape();
+   * vertex(35, 20);
+   * vertex(65, 50);
+   * vertex(35, 80);
+   * endShape();
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * noFill();
+   * strokeWeight(10.0);
+   * strokeJoin(BEVEL);
+   * beginShape();
+   * vertex(35, 20);
+   * vertex(65, 50);
+   * vertex(35, 80);
+   * endShape();
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * noFill();
+   * strokeWeight(10.0);
+   * strokeJoin(ROUND);
+   * beginShape();
+   * vertex(35, 20);
+   * vertex(65, 50);
+   * vertex(35, 80);
+   * endShape();
+   * </code>
+   * </div>
    */
   p5.prototype.strokeJoin = function(join) {
     if (join === constants.ROUND ||
@@ -168,6 +289,17 @@ define(function (require) {
    * @method strokeWeight
    * @param  {Number} weight the weight (in pixels) of the stroke
    * @return {p5}            the p5 object
+   * @example
+   * <div>
+   * <code>
+   * strokeWeight(1);  // Default
+   * line(20, 20, 80, 20);
+   * strokeWeight(4);  // Thicker
+   * line(20, 40, 80, 40);
+   * strokeWeight(10);  // Beastly
+   * line(20, 70, 80, 70);
+   * </code>
+   * </div>
    */
   p5.prototype.strokeWeight = function(w) {
     if (typeof w === 'undefined' || w === 0) {

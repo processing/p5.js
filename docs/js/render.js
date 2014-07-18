@@ -33,8 +33,8 @@ function renderCode(sel) {
     sketchContainer.style.height = sketchNode.offsetHeight;
 
     // remove start and end lines
-    var runnable = sketch.innerText.replace(/^\s+|\s+$/g, '');
-    var rows = sketch.innerText.split('\n').length;
+    var runnable = sketch.textContent.replace(/^\s+|\s+$/g, '');
+    var rows = sketch.textContent.split('\n').length;
 
     // var h = Math.max(sketch.offsetHeight, 100) + 25;
 
@@ -76,7 +76,7 @@ function renderCode(sel) {
       reset_button.id = 'right_button';
       edit_space.appendChild(reset_button);
       reset_button.onclick = function() {
-        edit_area.value = orig_sketch.innerText;
+        edit_area.value = orig_sketch.textContent;
         setMode(sketch, 'run');
       };
 
@@ -101,24 +101,6 @@ function renderCode(sel) {
           runCode(sketch, true, i);
         }
       }
-
-      function enableTab(el) {
-        el.onkeydown = function(e) {
-          if (e.keyCode === 9) { // tab was pressed
-            // get caret position/selection
-            var val = this.value,
-                start = this.selectionStart,
-                end = this.selectionEnd;
-            // set textarea value to: text before caret + tab + text after caret
-            this.value = val.substring(0, start) + '  ' + val.substring(end);
-            // put caret at right position again
-            this.selectionStart = this.selectionEnd = start + 2;
-            // prevent the focus lose
-            return false;
-
-          }
-        };
-      }
     }
   }
 
@@ -133,7 +115,7 @@ function renderCode(sel) {
     var sketchContainer = sketchNode.parentNode;
     var parent = sketchContainer.parentNode;
 
-    var runnable = sketch.innerText.replace(/^\s+|\s+$/g, '');
+    var runnable = sketch.textContent.replace(/^\s+|\s+$/g, '');
     var cnv;
 
     if (rc) {
@@ -202,4 +184,22 @@ function renderCode(sel) {
 
   }
 
+}
+
+function enableTab(el) {
+  el.onkeydown = function(e) {
+    if (e.keyCode === 9) { // tab was pressed
+      // get caret position/selection
+      var val = this.value,
+          start = this.selectionStart,
+          end = this.selectionEnd;
+      // set textarea value to: text before caret + tab + text after caret
+      this.value = val.substring(0, start) + '  ' + val.substring(end);
+      // put caret at right position again
+      this.selectionStart = this.selectionEnd = start + 2;
+      // prevent the focus lose
+      return false;
+
+    }
+  };
 }

@@ -19,8 +19,7 @@ define(function (require) {
    * anchor point and the last two parameters specify the other anchor point.
    * The middle parameters specify the control points which define the shape
    * of the curve. Bezier curves were developed by French engineer Pierre
-   * Bezier. Using the 3D version requires rendering with P3D (see the
-   * Environment reference for more information).
+   * Bezier.
    *
    * @method bezier
    * @param  {Number} x1 x-coordinate for the first anchor point
@@ -32,6 +31,17 @@ define(function (require) {
    * @param  {Number} x4 x-coordinate for the second anchor point
    * @param  {Number} y4 y-coordinate for the second anchor point
    * @return {Object}    the p5 object
+   * @example
+   * <div>
+   * <code>
+   * noFill();
+   * stroke(255, 102, 0);
+   * line(85, 20, 10, 10);
+   * line(90, 90, 15, 80);
+   * stroke(0, 0, 0);
+   * bezier(85, 20, 10, 10, 90, 90, 15, 80);
+   * </code>
+   * </div>
    */
   p5.prototype.bezier = function(x1, y1, x2, y2, x3, y3, x4, y4) {
     var ctx = this.canvas.getContext('2d');
@@ -56,6 +66,14 @@ define(function (require) {
    * @method bezierDetail
    * @param {Number} detail resolution of the curves
    * @return {Object} the p5 object
+   * @example
+   * <div>
+   * <code>
+   * background(204);
+   * bezierDetail(50);
+   * bezier(85, 20, 10, 10, 90, 90, 15, 80);
+   * </code>
+   * </div>
    */
   p5.prototype.bezierDetail = function(d) {
     this._setProperty('_bezierDetail', d);
@@ -78,6 +96,21 @@ define(function (require) {
    * @param {Number} d coordinate of second point on the curve
    * @param {Number} t value between 0 and 1
    * @return {Number} the value of the Bezier at point t
+   * @example
+   * <div>
+   * <code>
+   * noFill();
+   * bezier(85, 20, 10, 10, 90, 90, 15, 80);
+   * fill(255);
+   * steps = 10;
+   * for (i = 0; i <= steps; i++) {
+   *   t = i / steps;
+   *   x = bezierPoint(85, 10, 90, 15, t);
+   *   y = bezierPoint(20, 10, 90, 80, t);
+   *   ellipse(x, y, 5, 5);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.bezierPoint = function(a, b, c, d, t) {
     var adjustedT = 1-t;
@@ -102,6 +135,53 @@ define(function (require) {
    * @param {Number} d coordinate of second point on the curve
    * @param {Number} t value between 0 and 1
    * @return {Number} the tangent at point t
+   * @example
+   * <div>
+   * <code>
+   * noFill();
+   * bezier(85, 20, 10, 10, 90, 90, 15, 80);
+   * steps = 6;
+   * fill(255);
+   * for (i = 0; i <= steps; i++) {
+   *   t = i / steps;
+   *   // Get the location of the point
+   *   x = bezierPoint(85, 10, 90, 15, t);
+   *   y = bezierPoint(20, 10, 90, 80, t);
+   *   // Get the tangent points
+   *   tx = bezierTangent(85, 10, 90, 15, t);
+   *   ty = bezierTangent(20, 10, 90, 80, t);
+   *   // Calculate an angle from the tangent points
+   *   a = atan2(ty, tx);
+   *   a += PI;
+   *   stroke(255, 102, 0);
+   *   line(x, y, cos(a)*30 + x, sin(a)*30 + y);
+   *   // The following line of code makes a line 
+   *   // inverse of the above line
+   *   //line(x, y, cos(a)*-30 + x, sin(a)*-30 + y);
+   *   stroke(0);
+   *   ellipse(x, y, 5, 5);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * noFill();
+   * bezier(85, 20, 10, 10, 90, 90, 15, 80);
+   * stroke(255, 102, 0);
+   * steps = 16;
+   * for (i = 0; i <= steps; i++) {
+   *   t = i / steps;
+   *   x = bezierPoint(85, 10, 90, 15, t);
+   *   y = bezierPoint(20, 10, 90, 80, t);
+   *   tx = bezierTangent(85, 10, 90, 15, t);
+   *   ty = bezierTangent(20, 10, 90, 80, t);
+   *   a = atan2(ty, tx);
+   *   a -= HALF_PI;
+   *   line(x, y, cos(a)*8 + x, sin(a)*8 + y);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.bezierTangent = function(a, b, c, d, t) {
     var adjustedT = 1-t;
@@ -120,9 +200,7 @@ define(function (require) {
    * curve. Longer curves can be created by putting a series of curve() 
    * functions together or using curveVertex(). An additional function called
    * curveTightness() provides control for the visual quality of the curve.
-   * The curve() function is an implementation of Catmull-Rom splines. Using
-   * the 3D version requires rendering with P3D (see the Environment reference
-   * for more information).
+   * The curve() function is an implementation of Catmull-Rom splines. 
    * 
    * @method curve
    * @param  {Number} x1 x-coordinate for the beginning control point
@@ -134,6 +212,18 @@ define(function (require) {
    * @param  {Number} x4 x-coordinate for the ending control point
    * @param  {Number} y4 y-coordinate for the ending control point
    * @return {Object}    the p5 object
+   * @example
+   * <div>
+   * <code>
+   * noFill();
+   * stroke(255, 102, 0);
+   * curve(5, 26, 5, 26, 73, 24, 73, 61);
+   * stroke(0); 
+   * curve(5, 26, 73, 24, 73, 61, 15, 65); 
+   * stroke(255, 102, 0);
+   * curve(73, 24, 73, 61, 15, 65, 15, 65);
+   * </code>
+   * </div>
    */
   p5.prototype.curve = function(x1, y1, x2, y2, x3, y3, x4, y4) {
     var ctx = this.canvas.getContext('2d');
@@ -159,6 +249,14 @@ define(function (require) {
    * @method curveDetail
    * @param {Number} resolution of the curves
    * @return {Object} the p5 object
+   * @example
+   * <div>
+   * <code>
+   * background(204);
+   * curveDetail(20);
+   * curve(5, 26, 5, 26, 73, 24, 73, 61);
+   * </code>
+   * </div>
    */
   p5.prototype.curveDetail = function(d) {
     this._setProperty('_curveDetail', d);
@@ -182,6 +280,26 @@ define(function (require) {
    * @param {Number} d coordinate of second point on the curve
    * @param {Number} t value between 0 and 1
    * @return {Number} bezier value at point t
+   * @example
+   * <div>
+   * <code>
+   * noFill();
+   * curve(5, 26, 5, 26, 73, 24, 73, 61);
+   * curve(5, 26, 73, 24, 73, 61, 15, 65);
+   * fill(255);
+   * ellipseMode(CENTER);
+   * steps = 6;
+   * for (i = 0; i <= steps; i++) {
+   *   t = i / steps;
+   *   x = curvePoint(5, 5, 73, 73, t);
+   *   y = curvePoint(26, 26, 24, 61, t);
+   *   ellipse(x, y, 5, 5);
+   *   x = curvePoint(5, 73, 73, 15, t);
+   *   y = curvePoint(26, 24, 61, 65, t);
+   *   ellipse(x, y, 5, 5);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.curvePoint = function(a, b,c, d, t) {
     var t3 = t*t*t,
@@ -207,6 +325,25 @@ define(function (require) {
    * @param {Number} d coordinate of second point on the curve
    * @param {Number} t value between 0 and 1
    * @return {Number} the tangent at point t
+   * @example
+   * <div>
+   * <code>
+   * noFill();
+   * curve(5, 26, 73, 24, 73, 61, 15, 65); 
+   * steps = 6;
+   * for (i = 0; i <= steps; i++) {
+   *   t = i / steps;
+   *   x = curvePoint(5, 73, 73, 15, t);
+   *   y = curvePoint(26, 24, 61, 65, t);
+   *   //ellipse(x, y, 5, 5);
+   *   tx = curveTangent(5, 73, 73, 15, t);
+   *   ty = curveTangent(26, 24, 61, 65, t);
+   *   a = atan2(ty, tx);
+   *   a -= PI/2.0;
+   *   line(x, y, cos(a)*8 + x, sin(a)*8 + y);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.curveTangent = function(a, b,c, d, t) {
     var t2 = t*t,
@@ -217,6 +354,8 @@ define(function (require) {
     return a*f1 + b*f2 + c*f3 + d*f4;
   };
 
+  /**
+   */
   p5.prototype.curveTightness = function() {
     throw 'not yet implemented';
   };

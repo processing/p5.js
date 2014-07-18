@@ -9,5 +9,5 @@ function setup() {
 
 function draw() {
   background(150);
-  video(fingers,10,10);
+  image(fingers,10,10);
 }

@@ -13,10 +13,8 @@ define(function (require) {
   var constants = require('constants');
 
   p5.prototype._colorMode = constants.RGB;
-  p5.prototype._maxC0 = 255; // these correspond to max vals for RGB or HSB
-  p5.prototype._maxC1 = 255;
-  p5.prototype._maxC2 = 255;
-  p5.prototype._maxA = 255;
+  p5.prototype._maxRGB = [255, 255, 255, 255];
+  p5.prototype._maxHSB = [255, 255, 255, 255];
 
   /**
    * The background() function sets the color used for the background of the
@@ -33,6 +31,18 @@ define(function (require) {
    * @param {Number|Array} [v3] blue or brightness value (depending on the
    *                            current color mode)
    * @param {Number|Array} [a]  opacity of the background
+   * @example
+   * <div>
+   * <code>
+   * background(51);   
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * background(255, 204, 0);
+   * </code>
+   * </div>
    */
   p5.prototype.background = function() {
     var c = this.getNormalizedColor(arguments);
@@ -54,6 +64,11 @@ define(function (require) {
    * the pixels 100% transparent.
    *
    * @method clear
+   * @example
+   * <div>
+   * <code>
+   * </code>
+   * </div>
    */
   p5.prototype.clear = function() {
     this.canvas.getContext('2d').clearRect(0, 0, this.width, this.height);
@@ -75,23 +90,53 @@ define(function (require) {
    * @param {Number|Constant} max3 range for the blue or brightness depending
    *                               on the current color mode
    * @param {Number|Constant} maxA range for the alpha
+   * @example
+   * <div>
+   * <code>
+   * noStroke();
+   * colorMode(RGB, 100);
+   * for (i = 0; i < 100; i++) {
+   *   for (j = 0; j < 100; j++) {
+   *     stroke(i, j, 0);
+   *     point(i, j);
+   *   }
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * noStroke();
+   * colorMode(HSB, 100);
+   * for (i = 0; i < 100; i++) {
+   *   for (j = 0; j < 100; j++) {
+   *     stroke(i, j, 100);
+   *     point(i, j);
+   *   }
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.colorMode = function() {
     if (arguments[0] === constants.RGB || arguments[0] === constants.HSB) {
       this._colorMode = arguments[0];
-    }
-    if (arguments.length === 2) {
-      this._maxC0 = arguments[1];
-      this._maxC1 = arguments[1];
-      this._maxC2 = arguments[1];
-    }
-    else if (arguments.length > 2) {
-      this._maxC0 = arguments[1];
-      this._maxC1 = arguments[2];
-      this._maxC2 = arguments[3];
-    }
-    if (arguments.length === 5) {
-      this._maxA = arguments[4];
+    
+      var isRGB = this._colorMode === constants.RGB;
+      var maxArr = isRGB ? this._maxRGB : this._maxHSB;
+
+      if (arguments.length === 2) {
+        maxArr[0] = arguments[1];
+        maxArr[1] = arguments[1];
+        maxArr[2] = arguments[1];
+      }
+      else if (arguments.length > 2) {
+        maxArr[0] = arguments[1];
+        maxArr[1] = arguments[2];
+        maxArr[2] = arguments[3];
+      }
+      if (arguments.length === 5) {
+        maxArr[3] = arguments[4];
+      }
     }
   };
 
@@ -110,6 +155,20 @@ define(function (require) {
    * @param {Number|Array} [v3] blue or brightness value (depending on the
    *                            current color mode)
    * @param {Number|Array} [a]  opacity of the background
+   * @example
+   * <div>
+   * <code>
+   * fill(153);
+   * rect(30, 20, 55, 55);   
+   * </code>
+   * </div>
+   * 
+   * <div>
+   * <code>
+   * fill(204, 102, 0);
+   * rect(30, 20, 55, 55);
+   * </code>
+   * </div>
    */
   p5.prototype.fill = function() {
     var c = this.getNormalizedColor(arguments);
@@ -121,6 +180,14 @@ define(function (require) {
    * nothing will be drawn to the screen.
    *
    * @method noFill
+   * @example
+   * <div>
+   * <code>
+   * rect(15, 10, 55, 55);
+   * noFill();
+   * rect(30, 20, 55, 55);
+   * </code>
+   * </div>
    */
   p5.prototype.noFill = function() {
     this.canvas.getContext('2d').fillStyle = 'rgba(0,0,0,0)';
@@ -131,6 +198,13 @@ define(function (require) {
    * are called, nothing will be drawn to the screen.
    *
    * @method noStroke
+   * @example
+   * <div>
+   * <code>
+   * noStroke();
+   * rect(30, 20, 55, 55);
+   * </code>
+   * </div>
    */
   p5.prototype.noStroke = function() {
     this.canvas.getContext('2d').strokeStyle = 'rgba(0,0,0,0)';
@@ -150,6 +224,20 @@ define(function (require) {
    * @param {Number|Array} [v3] blue or brightness value (depending on the
    *                            current color mode)
    * @param {Number|Array} [a]  opacity of the background
+   * @example
+   * <div>
+   * <code>
+   * stroke(153);
+   * rect(30, 20, 55, 55);   
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * stroke(204, 102, 0);
+   * rect(30, 20, 55, 55);
+   * </code>
+   * </div>
    */
   p5.prototype.stroke = function() {
     var c = this.getNormalizedColor(arguments);
@@ -174,10 +262,18 @@ define(function (require) {
    *                          [g, a]       ==> [g, g, g, a]
    *                          [r, g, b]    ==> [r, g, b, 255]
    *                          [r, g, b, a] ==> [r, g, b, a]
+   * @example
+   * <div>
+   * <code>
+   * // todo
+   * </code>
+   * </div>
    */
   p5.prototype.getNormalizedColor = function(args) {
+    var isRGB = this._colorMode === constants.RGB;
+
     if (args[0] instanceof Array) { // already color object
-      return args[0];
+      args = args[0];
     }
     var r, g, b, a, rgba;
     if (args.length >= 3) {
@@ -186,14 +282,21 @@ define(function (require) {
       b = args[2];
       a = typeof args[3] === 'number' ? args[3] : this._maxA;
     } else {
-      r = g = b = args[0];
+      if (isRGB) {
+        r = g = b = args[0];
+      } else {
+        r = b = args[0];
+        g = 0;
+      }
       a = typeof args[1] === 'number' ? args[1] : this._maxA;
     }
 
-    r *= 255/this._maxC0;
-    g *= 255/this._maxC1;
-    b *= 255/this._maxC2;
-    a *= 255/this._maxA;
+    var maxArr = isRGB ? this._maxRGB : this._maxHSB;
+
+    r *= 255/maxArr[0];
+    g *= 255/maxArr[1];
+    b *= 255/maxArr[2];
+    a *= 255/maxArr[3];
 
     if (this._colorMode === constants.HSB) {
       rgba = hsv2rgb(r, g, b).concat(a);

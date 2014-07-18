@@ -81,14 +81,13 @@ define(function (require) {
    *
    * @method noise
    * @param  {Number} x   x-coordinate in noise space
-   * @param  {Number} [y] y-coordinate in noise space
-   * @param  {Number} [z] z-coordinate in noise space
+   * @param  {Number} y   y-coordinate in noise space
+   * @param  {Number} z   z-coordinate in noise space
    * @return {Number}     Perlin noise value (between 0 and 1) at specified
    *                      coordinates
    * @example
    * <div>
-   * <code>
-   * var xoff = 0.0;
+   * <code>var xoff = 0.0;
    * 
    * function draw() {
    *   background(204);
@@ -99,8 +98,7 @@ define(function (require) {
    * </code>
    * </div>
    * <div>
-   * <code>
-   * var noiseScale=0.02;
+   * <code>var noiseScale=0.02;
    * 
    * function draw() {
    *   background(0);
@@ -215,6 +213,36 @@ define(function (require) {
    * @method noiseDetail
    * @param {Number} lod number of octaves to be used by the noise
    * @param {Number} falloff falloff factor for each octave
+   * @example
+   * <div>
+   * <code>
+   * 
+   * var noiseVal;
+   * var noiseScale=0.02;
+   * 
+   * function setup() {
+   *   createCanvas(100,100);
+   * }
+   * 
+   * function draw() {
+   *   background(0);
+   *   for (var y = 0; y < height; y++) {
+   *     for (var x = 0; x < width/2; x++) {
+   *       noiseDetail(2,0.2);
+   *       noiseVal = noise((mouseX+x) * noiseScale, 
+   *                        (mouseY+y) * noiseScale);
+   *       stroke(noiseVal*255);
+   *       point(x,y);
+   *       noiseDetail(8,0.65);
+   *       noiseVal = noise((mouseX + x + width/2) * noiseScale, 
+   *                        (mouseY + y) * noiseScale);
+   *       stroke(noiseVal*255);
+   *       point(x + width/2, y);
+   *     }
+   *   }
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.noiseDetail = function(lod, falloff) {
     if (lod>0)     { perlin_octaves=lod; }
@@ -222,12 +250,29 @@ define(function (require) {
   };
 
   /**
-   * TODO: NOT IMPLEMENTED YET!
    * Sets the seed value for <b>noise()</b>. By default, <b>noise()</b>
    * produces different results each time the program is run. Set the
    * <b>value</b> parameter to a constant to return the same pseudo-random
    * numbers each time the software is run.
    *
+   * @method noiseSeed
+   * @param {Number} seed   the seed value
+   * @example
+   * <div>
+   * <code>var xoff = 0.0;
+   * 
+   * function setup() {
+   *   noiseSeed(99);
+   *   stroke(0, 10);
+   * }
+   * 
+   * function draw() {
+   *   xoff = xoff + .01;
+   *   var n = noise(xoff) * width;
+   *   line(n, 0, n, height);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.noiseSeed = function(seed) {
     // Linear Congruential Generator

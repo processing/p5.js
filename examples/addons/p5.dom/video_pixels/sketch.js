@@ -16,5 +16,5 @@ function draw() {
   }
   fingers.updatePixels();
 
-  video(fingers,10,10);
+  image(fingers,10,10);
 }
