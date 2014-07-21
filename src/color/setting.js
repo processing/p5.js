@@ -12,6 +12,8 @@ define(function (require) {
   var p5 = require('core');
   var constants = require('constants');
 
+  p5.prototype._doStroke = true;
+  p5.prototype._doFill = false;
   p5.prototype._colorMode = constants.RGB;
   p5.prototype._maxRGB = [255, 255, 255, 255];
   p5.prototype._maxHSB = [255, 255, 255, 255];
@@ -171,6 +173,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.fill = function() {
+    this._setProperty('_doFill', true);
     var c = this.getNormalizedColor(arguments);
     this.canvas.getContext('2d').fillStyle = this.getCSSRGBAColor(c);
   };
@@ -190,7 +193,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.noFill = function() {
-    this.canvas.getContext('2d').fillStyle = 'rgba(0,0,0,0)';
+    this._setProperty('_doFill', false);
   };
 
   /**
@@ -207,7 +210,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.noStroke = function() {
-    this.canvas.getContext('2d').strokeStyle = 'rgba(0,0,0,0)';
+    this._setProperty('_doStroke', false);
   };
 
   /**
@@ -240,6 +243,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.stroke = function() {
+    this._setProperty('_doStroke', true);
     var c = this.getNormalizedColor(arguments);
     this.canvas.getContext('2d').strokeStyle = this.getCSSRGBAColor(c);
   };
