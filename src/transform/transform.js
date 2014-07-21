@@ -49,18 +49,6 @@ define(function (require) {
     throw new Error('popMatrix() not used, see pop()');
   };
 
-  /**
-   * Prints the current matrix to the Console.
-   * 
-   * @method printMatrix
-   * @return {p5} the p5 object
-   * @example
-   * <div>
-   * <code>
-   * // Example in the works.
-   * </code>
-   * </div>
-   */
   p5.prototype.printMatrix = function() {
     throw new Error('printMatrix() not implemented');
   };
