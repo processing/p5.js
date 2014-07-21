@@ -119,7 +119,7 @@ module.exports = function(grunt) {
           },
           useStrict: true,
           wrap: {
-            start: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
+            start: '/*! p5.min.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */\n',
             end: ''
           }
         }
@@ -137,7 +137,7 @@ module.exports = function(grunt) {
           paths: '<%= requirejs.unmin.options.paths %>',
           useStrict: true,
           wrap: {
-            start: '/*! p5.min.js v<%= pkg.version %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
+            start: '/*! p5.min.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */\n',
             end: ''
           }
         }
