@@ -55,7 +55,18 @@ module.exports = function(grunt) {
           findNestedDependencies: true,
           include: ['src/app'],
           onBuildWrite: function( name, path, contents ) {
-            return require('amdclean').clean(contents);
+            return require('amdclean').clean({
+              code: contents,
+              escodegen: {
+                'comment': true,
+                'format': {
+                  'indent': {
+                    'style': '  ',
+                    'adjustMultilineComment': true
+                  }
+                }
+              }
+            });
           },
           optimize: 'none',
           out: 'lib/p5.js',
@@ -107,7 +118,10 @@ module.exports = function(grunt) {
             'filters': 'src/image/filters'
           },
           useStrict: true,
-          wrap: true
+          wrap: {
+            start: '/*! p5.min.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */\n',
+            end: ''
+          }
         }
       },
       min: {
@@ -122,7 +136,10 @@ module.exports = function(grunt) {
           out: 'lib/p5.min.js',
           paths: '<%= requirejs.unmin.options.paths %>',
           useStrict: true,
-          wrap: true
+          wrap: {
+            start: '/*! p5.min.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */\n',
+            end: ''
+          }
         }
       },
       yuidoc_theme: {
