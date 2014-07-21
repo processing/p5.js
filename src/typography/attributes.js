@@ -25,6 +25,18 @@ define(function (require) {
    * @method textAlign
    * @param {Number/Constant} a horizontal alignment, either LEFT,
    *                            CENTER, or RIGHT
+   * @example
+   * <div>
+   * <code>
+   * textSize(16);
+   * textAlign(RIGHT);
+   * text("ABCD", 50, 30);
+   * textAlign(CENTER);
+   * text("EFGH", 50, 50);
+   * textAlign(LEFT);
+   * text("IJKL", 50, 70);
+   * </code>
+   * </div>
    */
   p5.prototype.textAlign = function(a) {
     if (a === constants.LEFT ||
@@ -39,6 +51,17 @@ define(function (require) {
    *
    * @method textHeight
    * @param {String} s the String of characters to measure
+   * @example
+   * <div>
+   * <code>
+   * background(0);
+   * fill(255);
+   * textSize(14);
+   * s = "String.";
+   * text(s, 10, 23);
+   * console.log(textHeight(s));
+   * </code>
+   * </div>
    */
   p5.prototype.textHeight = function(s) {
     return this.canvas.getContext('2d').measureText(s).height;
@@ -50,6 +73,24 @@ define(function (require) {
    *
    * @method textLeading
    * @param {Number} l the size in pixels for spacing between lines
+   * @example
+   * <div>
+   * <code>
+   * // Text to display. The "\n" is a "new line" character
+   * lines = "L1\nL2\nL3";
+   * textSize(12);
+   * fill(0);  // Set fill to black
+   * 
+   * textLeading(10);  // Set leading to 10
+   * text(lines, 10, 25);
+   * 
+   * textLeading(20);  // Set leading to 20
+   * text(lines, 40, 25);
+   * 
+   * textLeading(30);  // Set leading to 30
+   * text(lines, 70, 25);
+   * </code>
+   * </div>
    */
   p5.prototype.textLeading = function(l) {
     this._setProperty('_textLeading', l);
@@ -61,6 +102,17 @@ define(function (require) {
    *
    * @method textSize
    * @param {Number} s the size of the letters in units of pixels
+   * @example
+   * <div>
+   * <code>
+   * background(0);
+   * fill(255);
+   * textSize(26); 
+   * text("WORD", 10, 50); 
+   * textSize(14);
+   * text("WORD", 10, 70);
+   * </code>
+   * </div>
    */
   p5.prototype.textSize = function(s) {
     this._setProperty('_textSize', s);
@@ -73,6 +125,22 @@ define(function (require) {
    * @method textStyle
    * @param {Number/Constant} s styling for text, either NORMAL,
    *                            ITALIC, or BOLD
+   * @example
+   * <div>
+   * <code>
+   * background(0);
+   * fill(255);
+   * textStyle(NORMAL);
+   * textSize(14);
+   * text("WORD", 10, 23);
+   * textStyle(ITALIC);
+   * textSize(14);
+   * text("WORD", 10, 45);
+   * textStyle(BOLD);
+   * textSize(14);
+   * text("WORD", 10, 67);
+   * </code>
+   * </div>
    */
   p5.prototype.textStyle = function(s) {
     if (s === constants.NORMAL ||
@@ -87,6 +155,17 @@ define(function (require) {
    *
    * @method textWidth
    * @param {String} s the String of characters to measure
+   * @example
+   * <div>
+   * <code>
+   * background(0);
+   * fill(255);
+   * textSize(14);
+   * s = "String.";
+   * text(s, 10, 23);
+   * console.log(textWidth(s));
+   * </code>
+   * </div>
    */
   p5.prototype.textWidth = function(s) {
     return this.canvas.getContext('2d').measureText(s).width;
