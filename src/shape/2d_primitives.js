@@ -348,6 +348,10 @@ define(function (require) {
     }
     var vals = canvas.modeAdjust(a, b, c, d, this._rectMode);
     var ctx = this.canvas.getContext('2d');
+    // Translate the line by (0.5, 0.5) to draw a crisp rectangle border
+    if (this._doStroke && ctx.lineWidth % 2 === 1) {
+      ctx.translate(0.5, 0.5);
+    }
     ctx.beginPath();
     ctx.rect(vals.x, vals.y, vals.w, vals.h);
     if (this._doFill) {
@@ -356,7 +360,9 @@ define(function (require) {
     if (this._doStroke) {
       ctx.stroke();
     }
-
+    if (this._doStroke && ctx.lineWidth % 2 === 1) {
+      ctx.translate(-0.5, -0.5);
+    }
     return this;
   };
 

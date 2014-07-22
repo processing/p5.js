@@ -13,7 +13,7 @@ define(function (require) {
   var constants = require('constants');
 
   p5.prototype._doStroke = true;
-  p5.prototype._doFill = false;
+  p5.prototype._doFill = true;
   p5.prototype._colorMode = constants.RGB;
   p5.prototype._maxRGB = [255, 255, 255, 255];
   p5.prototype._maxHSB = [255, 255, 255, 255];

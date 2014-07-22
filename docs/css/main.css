@@ -507,8 +507,33 @@ small, .small, footer, #family {
 } 
 
 #family p {
+    float: left;
     margin:0.375em 0 0.375em 2em;
 }
+
+#family form {
+    float: right;
+    padding:0.375em 0.75em 0.375em 0.75em;
+    margin-right: 0.25em;
+}
+
+#family form input[type="text"] {
+    visibility: hidden;
+    width: 0;
+    margin: 0;
+    color:#333; 
+    border: 1px solid #3796D1;
+    font-family: times !important;
+    font-weight: 400;
+    font-size: 1em;
+}
+
+#family form input[type="submit"] {
+    background: url('../img/search.png') center center no-repeat;
+    border: none;
+    outline: none;
+}
+
 
 .code-snippet {
     margin:0 0 0 1em;
