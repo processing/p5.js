@@ -44,6 +44,9 @@ define(function (require) {
    * </div>
    */
   p5.prototype.bezier = function(x1, y1, x2, y2, x3, y3, x4, y4) {
+    if (!this._doStroke) {
+      return;
+    }
     var ctx = this.canvas.getContext('2d');
     ctx.beginPath();
     ctx.moveTo(x1, y1);
@@ -226,6 +229,9 @@ define(function (require) {
    * </div>
    */
   p5.prototype.curve = function(x1, y1, x2, y2, x3, y3, x4, y4) {
+    if (!this._doStroke) {
+      return;
+    }
     var ctx = this.canvas.getContext('2d');
     ctx.moveTo(x1,y1);
     ctx.beginPath();

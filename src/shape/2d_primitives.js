@@ -64,6 +64,9 @@ define(function (require) {
    * </div>
    */
 	p5.prototype.arc = function(x, y, width, height, start, stop, mode) {
+    if (!this._doStroke && !this._doFill) {
+      return;
+    }
     var ctx = this.canvas.getContext('2d');
     var vals = canvas.arcModeAdjust(
       x,
@@ -79,15 +82,19 @@ define(function (require) {
     ctx.scale(xScale, yScale);
     ctx.beginPath();
     ctx.arc(vals.x, vals.y, radius, start, stop);
-    ctx.stroke();
+    if (this._doStroke) {
+      ctx.stroke();
+    }
     if (mode === constants.CHORD || mode === constants.OPEN) {
       ctx.closePath();
     } else if (mode === constants.PIE || mode === undefined) {
       ctx.lineTo(vals.x, vals.y);
       ctx.closePath();
     }
-    ctx.fill();
-    if(mode !== constants.OPEN && mode !== undefined) {
+    if (this._doFill) {
+      ctx.fill();
+    }
+    if(this._doStroke && mode !== constants.OPEN && mode !== undefined) {
       // final stroke must be after fill so the fill does not
       // cover part of the line
       ctx.stroke();
@@ -116,6 +123,9 @@ define(function (require) {
    * </div>
    */
   p5.prototype.ellipse = function(x, y, width, height) {
+    if (!this._doStroke && !this._doFill) {
+      return;
+    }
     var ctx = this.canvas.getContext('2d');
     var vals = canvas.modeAdjust(
       x,
@@ -159,8 +169,12 @@ define(function (require) {
       ym
     );
     ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
+    if (this._doFill) {
+      ctx.fill();
+    }
+    if (this._doStroke) {
+      ctx.stroke();
+    }
 
     return this;
   };
@@ -196,6 +210,9 @@ define(function (require) {
    * </div>
    */
   p5.prototype.line = function(x1, y1, x2, y2) {
+    if (!this._doStroke) {
+      return;
+    }
     var ctx = this.canvas.getContext('2d');
     if (ctx.strokeStyle === 'rgba(0,0,0,0)') {
       return;
@@ -228,6 +245,9 @@ define(function (require) {
    * </div>
    */
   p5.prototype.point = function(x, y) {
+    if (!this._doStroke) {
+      return;
+    }
     var ctx = this.canvas.getContext('2d');
     var s = ctx.strokeStyle;
     var f = ctx.fillStyle;
@@ -282,6 +302,9 @@ define(function (require) {
    * </div>
    */
   p5.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
+    if (!this._doStroke && !this._doFill) {
+      return;
+    }
     var ctx = this.canvas.getContext('2d');
     ctx.beginPath();
     ctx.moveTo(x1, y1);
@@ -289,8 +312,12 @@ define(function (require) {
     ctx.lineTo(x3, y3);
     ctx.lineTo(x4, y4);
     ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
+    if (this._doFill) {
+      ctx.fill();
+    }
+    if (this._doStroke) {
+      ctx.stroke();
+    }
 
     return this;
   };
@@ -316,13 +343,26 @@ define(function (require) {
   * </div>
   */
   p5.prototype.rect = function(a, b, c, d) {
+    if (!this._doStroke && !this._doFill) {
+      return;
+    }
     var vals = canvas.modeAdjust(a, b, c, d, this._rectMode);
     var ctx = this.canvas.getContext('2d');
+    // Translate the line by (0.5, 0.5) to draw a crisp rectangle border
+    if (this._doStroke && ctx.lineWidth % 2 === 1) {
+      ctx.translate(0.5, 0.5);
+    }
     ctx.beginPath();
     ctx.rect(vals.x, vals.y, vals.w, vals.h);
-    ctx.fill();
-    ctx.stroke();
-
+    if (this._doFill) {
+      ctx.fill();
+    }
+    if (this._doStroke) {
+      ctx.stroke();
+    }
+    if (this._doStroke && ctx.lineWidth % 2 === 1) {
+      ctx.translate(-0.5, -0.5);
+    }
     return this;
   };
 
@@ -347,14 +387,21 @@ define(function (require) {
   * </div>
   */
   p5.prototype.triangle = function(x1, y1, x2, y2, x3, y3) {
+    if (!this._doStroke && !this._doFill) {
+      return;
+    }
     var ctx = this.canvas.getContext('2d');
     ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
     ctx.lineTo(x3, y3);
     ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
+    if (this._doFill) {
+      ctx.fill();
+    }
+    if (this._doStroke) {
+      ctx.stroke();
+    }
 
     return this;
   };
