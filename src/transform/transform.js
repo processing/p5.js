@@ -54,12 +54,6 @@ define(function (require) {
    * 
    * @method printMatrix
    * @return {p5} the p5 object
-   * @example
-   * <div>
-   * <code>
-   * // Example in the works.
-   * </code>
-   * </div>
    */
   p5.prototype.printMatrix = function() {
     throw new Error('printMatrix() not implemented');
@@ -74,12 +68,6 @@ define(function (require) {
    *
    * @method resetMatrix
    * @return {p5} the p5 object
-   * @example
-   * <div>
-   * <code>
-   * // Example in the works.
-   * </code>
-   * </div>
    */
   p5.prototype.resetMatrix = function() {
     this.canvas.getContext('2d').setTransform();
