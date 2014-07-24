@@ -76,7 +76,7 @@ define(function (require) {
     // tint the image if there is a tint
     if (this._tint) {
       this.canvas.getContext('2d').drawImage(
-        this._getTintedImageCanvas(frame),
+        this._getTintedImageCanvas(img),
         vals.x,
         vals.y,
         vals.w,
@@ -111,7 +111,21 @@ define(function (require) {
    *                            current color mode)
    * @param {Number|Array} [v3] blue or brightness value (depending on the
    *                            current color mode)
-   * @param {Number|Array} [a]  opacity of the background
+   * @param {Number|Array} [a]  opacity of the background   
+   * @example
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/laDefense.jpg");
+   * }
+   * function setup() {
+   *   image(img, 0, 0);
+   *   tint(0, 153, 204);  // Tint blue
+   *   image(img, 50, 0);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.tint = function() {
     var c = this.getNormalizedColor(arguments);

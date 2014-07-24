@@ -275,6 +275,7 @@ define(function (require) {
    */
   p5.prototype.getNormalizedColor = function(args) {
     var isRGB = this._colorMode === constants.RGB;
+    var maxArr = isRGB ? this._maxRGB : this._maxHSB;
 
     if (args[0] instanceof Array) { // already color object
       args = args[0];
@@ -284,7 +285,7 @@ define(function (require) {
       r = args[0];
       g = args[1];
       b = args[2];
-      a = typeof args[3] === 'number' ? args[3] : this._maxA;
+      a = typeof args[3] === 'number' ? args[3] : maxArr[3];
     } else {
       if (isRGB) {
         r = g = b = args[0];
@@ -292,10 +293,8 @@ define(function (require) {
         r = b = args[0];
         g = 0;
       }
-      a = typeof args[1] === 'number' ? args[1] : this._maxA;
+      a = typeof args[1] === 'number' ? args[1] : maxArr[3];
     }
-
-    var maxArr = isRGB ? this._maxRGB : this._maxHSB;
 
     r *= 255/maxArr[0];
     g *= 255/maxArr[1];
