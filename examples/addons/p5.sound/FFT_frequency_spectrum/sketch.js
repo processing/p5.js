@@ -14,7 +14,8 @@ var frequencySpectrum = [];
 
 
 function preload() {
-  soundFile = loadSound( ['../_files/lucky_dragons_-_power_melody.mp3','../_files/lucky_dragons_-_power_melody.ogg'] );
+  soundFormats('mp3', 'ogg');
+  soundFile = loadSound('../_files/lucky_dragons_-_power_melody');
 }
 
 function setup() {
@@ -56,7 +57,7 @@ function draw() {
   // Draw every value in the frequencySpectrum array as a rectangle
   for (var i = 0; i< frequencySpectrum.length; i++){
     noStroke();
-    rect(map(i, 0, frequencySpectrum.length, 0, width), height, fftSize/width, -frequencySpectrum[i] ) ;
+    rect(map(i, 0, frequencySpectrum.length, 0, width), height, fftSize/width, -height -frequencySpectrum[i] ) ;
   }
 }
 
