@@ -126,6 +126,32 @@ define(function (require) {
    * }
    * </code>
    * </div>
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/laDefense.jpg");
+   * }
+   * function setup() {
+   *   image(img, 0, 0);
+   *   tint(0, 153, 204, 126);  // Tint blue and set transparency
+   *   image(img, 50, 0);
+   * }
+   * </code>
+   * </div>
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/laDefense.jpg");
+   * }
+   * function setup() {
+   *   image(img, 0, 0);
+   *   tint(255, 126);  // Apply transparency without changing color
+   *   image(img, 50, 0);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.tint = function() {
     var c = this.getNormalizedColor(arguments);
