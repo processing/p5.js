@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 /*! p5.min.js v0.2.22 July 27, 2014 */
+=======
+/*! p5.min.js v0.2.22 July 26, 2014 */
+>>>>>>> cb7ee2c08db18ef8503424210da477d687133802
 var shim = function (require) {
     window.requestDraw = function () {
       return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
@@ -230,10 +234,15 @@ var core = function (require, shim, constants) {
             this._curElement.elt.removeEventListener(cev, f);
           }
           for (var i = 0; i < this._elements.length; i++) {
+<<<<<<< HEAD
             var e = this._elements[i].elt;
             if (e.parentNode) {
               e.parentNode.removeChild(e);
             }
+=======
+            var e = this._elements[i];
+            e.parentNode.removeChild(e);
+>>>>>>> cb7ee2c08db18ef8503424210da477d687133802
           }
           var self = this;
           this._removeFuncs.forEach(function (f) {
@@ -333,6 +342,7 @@ var p5Element = function (require, core) {
       this.elt.className += ' ' + c;
     };
     p5.Element.prototype.mousePressed = function (fxn) {
+<<<<<<< HEAD
       attachListener('mousedown', fxn, this);
     };
     p5.Element.prototype.mouseReleased = function (fxn) {
@@ -344,12 +354,22 @@ var p5Element = function (require, core) {
     p5.Element.prototype.mouseMoved = function (fxn) {
       attachListener('mousemove', fxn, this);
     };
+=======
+      attachListener('click', fxn, this);
+    };
+>>>>>>> cb7ee2c08db18ef8503424210da477d687133802
     p5.Element.prototype.mouseOver = function (fxn) {
       attachListener('mouseover', fxn, this);
     };
     p5.Element.prototype.mouseOut = function (fxn) {
       attachListener('mouseout', fxn, this);
     };
+<<<<<<< HEAD
+=======
+    p5.Element.prototype.mouseMoved = function (fxn) {
+      attachListener('mousemove', fxn, this);
+    };
+>>>>>>> cb7ee2c08db18ef8503424210da477d687133802
     function attachListener(ev, fxn, ctx) {
       var _this = ctx;
       var f = function (e) {
@@ -1087,6 +1107,7 @@ var colorcreating_reading = function (require, core, constants) {
     'use strict';
     var p5 = core;
     var constants = constants;
+<<<<<<< HEAD
     p5.prototype.alpha = function (rgb) {
       if (rgb.length > 3) {
         return rgb[3];
@@ -1109,6 +1130,32 @@ var colorcreating_reading = function (require, core, constants) {
       }
     };
     p5.prototype.color = function () {
+=======
+    p5.prototype.alpha = function (c) {
+      if (!c.isColor) {
+        c = this.color(c);
+      }
+      return c.rgba[3];
+    };
+    p5.prototype.blue = function (c) {
+      if (!c.isColor) {
+        c = this.color(c);
+      }
+      return c.rgba[2];
+    };
+    p5.prototype.brightness = function (c) {
+      if (!c.isColor) {
+        c = this.color(c);
+      }
+      if (!c.hsba) {
+        c.hsba = rgb2hsv(c.rgba[0], c.rgba[1], c.rgba[2]).concat(c.rgba[3]);
+      }
+      return c.hsba[2];
+    };
+    p5.prototype.color = function () {
+      var c = {};
+      c.isColor = true;
+>>>>>>> cb7ee2c08db18ef8503424210da477d687133802
       var args = arguments;
       var isRGB = this._colorMode === constants.RGB;
       var maxArr = isRGB ? this._maxRGB : this._maxHSB;
@@ -1127,11 +1174,24 @@ var colorcreating_reading = function (require, core, constants) {
         }
         a = typeof args[1] === 'number' ? args[1] : maxArr[3];
       }
+<<<<<<< HEAD
       return [
+=======
+      if (!isRGB) {
+        c.hsba = [
+          r,
+          g,
+          b,
+          a
+        ];
+      }
+      c.rgba = this.getNormalizedColor([
+>>>>>>> cb7ee2c08db18ef8503424210da477d687133802
         r,
         g,
         b,
         a
+<<<<<<< HEAD
       ];
     };
     p5.prototype.green = function (rgb) {
@@ -1147,6 +1207,26 @@ var colorcreating_reading = function (require, core, constants) {
       } else {
         return 0;
       }
+=======
+      ]);
+      c.colorString = this.getColorString(c.rgba);
+      return c;
+    };
+    p5.prototype.green = function (c) {
+      if (!c.isColor) {
+        c = this.color(c);
+      }
+      return c.rgba[1];
+    };
+    p5.prototype.hue = function (c) {
+      if (!c.isColor) {
+        c = this.color(c);
+      }
+      if (!c.hsba) {
+        c.hsba = rgb2hsv(c.rgba[0], c.rgba[1], c.rgba[2]).concat(c.rgba[3]);
+      }
+      return c.hsba[0];
+>>>>>>> cb7ee2c08db18ef8503424210da477d687133802
     };
     p5.prototype.lerpColor = function (c1, c2, amt) {
       if (typeof c1 === 'object') {
@@ -1159,6 +1239,7 @@ var colorcreating_reading = function (require, core, constants) {
         return p5.prototype.lerp(c1, c2, amt);
       }
     };
+<<<<<<< HEAD
     p5.prototype.red = function (rgb) {
       if (rgb.length > 2) {
         return rgb[0];
@@ -1173,6 +1254,61 @@ var colorcreating_reading = function (require, core, constants) {
         return 0;
       }
     };
+=======
+    p5.prototype.red = function (c) {
+      if (!c.isColor) {
+        c = this.color(c);
+      }
+      return c.rgba[0];
+    };
+    p5.prototype.saturation = function (c) {
+      if (!c.isColor) {
+        c = this.color(c);
+      }
+      if (!c.hsba) {
+        c.hsba = rgb2hsv(c.rgba[0], c.rgba[1], c.rgba[2]).concat(c.rgba[3]);
+      }
+      return c.hsba[1];
+    };
+    function rgb2hsv(r, g, b) {
+      var var_R = r / 255;
+      var var_G = g / 255;
+      var var_B = b / 255;
+      var var_Min = Math.min(var_R, var_G, var_B);
+      var var_Max = Math.max(var_R, var_G, var_B);
+      var del_Max = var_Max - var_Min;
+      var H;
+      var S;
+      var V = var_Max;
+      if (del_Max === 0) {
+        H = 0;
+        S = 0;
+      } else {
+        S = del_Max / var_Max;
+        var del_R = ((var_Max - var_R) / 6 + del_Max / 2) / del_Max;
+        var del_G = ((var_Max - var_G) / 6 + del_Max / 2) / del_Max;
+        var del_B = ((var_Max - var_B) / 6 + del_Max / 2) / del_Max;
+        if (var_R === var_Max) {
+          H = del_B - del_G;
+        } else if (var_G === var_Max) {
+          H = 1 / 3 + del_R - del_B;
+        } else if (var_B === var_Max) {
+          H = 2 / 3 + del_G - del_R;
+        }
+        if (H < 0) {
+          H += 1;
+        }
+        if (H > 1) {
+          H -= 1;
+        }
+      }
+      return [
+        Math.round(H * 255),
+        Math.round(S * 255),
+        Math.round(V * 255)
+      ];
+    }
+>>>>>>> cb7ee2c08db18ef8503424210da477d687133802
     return p5;
   }({}, core, constants);
 var colorsetting = function (require, core, constants) {
@@ -1195,14 +1331,23 @@ var colorsetting = function (require, core, constants) {
       255
     ];
     p5.prototype.background = function () {
+<<<<<<< HEAD
       var c = this.getNormalizedColor(arguments);
       var curFill = this.canvas.getContext('2d').fillStyle;
       this.canvas.getContext('2d').fillStyle = this.getCSSRGBAColor(c);
+=======
+      var curFill = this.canvas.getContext('2d').fillStyle;
+      this.canvas.getContext('2d').fillStyle = this.getColor(arguments);
+>>>>>>> cb7ee2c08db18ef8503424210da477d687133802
       this.canvas.getContext('2d').fillRect(0, 0, this.width, this.height);
       this.canvas.getContext('2d').fillStyle = curFill;
     };
     p5.prototype.clear = function () {
+<<<<<<< HEAD
       this.canvas.width = this.canvas.width;
+=======
+      this.canvas.getContext('2d').clearRect(0, 0, this.width, this.height);
+>>>>>>> cb7ee2c08db18ef8503424210da477d687133802
     };
     p5.prototype.colorMode = function () {
       if (arguments[0] === constants.RGB || arguments[0] === constants.HSB) {
@@ -1225,8 +1370,12 @@ var colorsetting = function (require, core, constants) {
     };
     p5.prototype.fill = function () {
       this._setProperty('_doFill', true);
+<<<<<<< HEAD
       var c = this.getNormalizedColor(arguments);
       this.canvas.getContext('2d').fillStyle = this.getCSSRGBAColor(c);
+=======
+      this.canvas.getContext('2d').fillStyle = this.getColor(arguments);
+>>>>>>> cb7ee2c08db18ef8503424210da477d687133802
     };
     p5.prototype.noFill = function () {
       this._setProperty('_doFill', false);
@@ -1236,8 +1385,12 @@ var colorsetting = function (require, core, constants) {
     };
     p5.prototype.stroke = function () {
       this._setProperty('_doStroke', true);
+<<<<<<< HEAD
       var c = this.getNormalizedColor(arguments);
       this.canvas.getContext('2d').strokeStyle = this.getCSSRGBAColor(c);
+=======
+      this.canvas.getContext('2d').strokeStyle = this.getColor(arguments);
+>>>>>>> cb7ee2c08db18ef8503424210da477d687133802
     };
     p5.prototype.getNormalizedColor = function (args) {
       var isRGB = this._colorMode === constants.RGB;
@@ -1332,13 +1485,28 @@ var colorsetting = function (require, core, constants) {
       }
       return RGB;
     }
+<<<<<<< HEAD
     p5.prototype.getCSSRGBAColor = function (arr) {
+=======
+    p5.prototype.getColorString = function (arr) {
+>>>>>>> cb7ee2c08db18ef8503424210da477d687133802
       var a = arr.map(function (val) {
           return Math.floor(val);
         });
       var alpha = a[3] ? a[3] / 255 : 1;
       return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + alpha + ')';
     };
+<<<<<<< HEAD
+=======
+    p5.prototype.getColor = function (args) {
+      if (args[0].isColor) {
+        return args[0].colorString;
+      } else {
+        var c = this.getNormalizedColor(args);
+        return this.getColorString(c);
+      }
+    };
+>>>>>>> cb7ee2c08db18ef8503424210da477d687133802
     return p5;
   }({}, core, constants);
 var dataarray_functions = function (require, core) {
@@ -3076,6 +3244,10 @@ var renderingrendering = function (require, core, constants) {
       if (isDefault) {
         c = document.createElement('canvas');
         c.id = 'defaultCanvas';
+<<<<<<< HEAD
+=======
+        this._elements.push(c);
+>>>>>>> cb7ee2c08db18ef8503424210da477d687133802
       } else {
         c = document.getElementById('defaultCanvas');
         if (c) {
@@ -3098,18 +3270,25 @@ var renderingrendering = function (require, core, constants) {
       } else {
         document.body.appendChild(c);
       }
+<<<<<<< HEAD
       var pg = new p5.Graphics(c, this);
       if (isDefault) {
         this._elements.push(pg);
       }
       this.scale(this._pixelDensity, this._pixelDensity);
       return pg;
+=======
+      var elt = new p5.Graphics(c, this);
+      this.scale(this._pixelDensity, this._pixelDensity);
+      return elt;
+>>>>>>> cb7ee2c08db18ef8503424210da477d687133802
     };
     p5.prototype.createGraphics = function (w, h) {
       var c = document.createElement('canvas');
       c.setAttribute('width', w);
       c.setAttribute('height', h);
       document.body.appendChild(c);
+<<<<<<< HEAD
       var pg = new p5.Graphics(c);
       this._elements.push(pg);
       for (var p in p5.prototype) {
@@ -3122,6 +3301,20 @@ var renderingrendering = function (require, core, constants) {
         }
       }
       return pg;
+=======
+      this._elements.push(c);
+      var elt = new p5.Graphics(c);
+      for (var p in p5.prototype) {
+        if (!elt.hasOwnProperty(p)) {
+          if (typeof p5.prototype[p] === 'function') {
+            elt[p] = p5.prototype[p].bind(elt);
+          } else {
+            elt[p] = p5.prototype[p];
+          }
+        }
+      }
+      return elt;
+>>>>>>> cb7ee2c08db18ef8503424210da477d687133802
     };
     p5.prototype.blendMode = function (mode) {
       if (mode === constants.BLEND || mode === constants.DARKEST || mode === constants.LIGHTEST || mode === constants.DIFFERENCE || mode === constants.MULTIPLY || mode === constants.EXCLUSION || mode === constants.SCREEN || mode === constants.REPLACE || mode === constants.OVERLAY || mode === constants.HARD_LIGHT || mode === constants.SOFT_LIGHT || mode === constants.DODGE || mode === constants.BURN) {

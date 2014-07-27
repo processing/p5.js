@@ -51,11 +51,9 @@ define(function (require) {
     if (arguments[0] instanceof p5.Image) {
       this.image(arguments[0], 0, 0, this.width, this.height);
     } else {
-      var c = this.getNormalizedColor(arguments);
-      // save out the fill
       var curFill = this.canvas.getContext('2d').fillStyle;
       // create background rect
-      this.canvas.getContext('2d').fillStyle = this.getCSSRGBAColor(c);
+      this.canvas.getContext('2d').fillStyle = this.getColor(arguments);
       this.canvas.getContext('2d').fillRect(0, 0, this.width, this.height);
       // reset fill
       this.canvas.getContext('2d').fillStyle = curFill;
@@ -179,8 +177,7 @@ define(function (require) {
    */
   p5.prototype.fill = function() {
     this._setProperty('_doFill', true);
-    var c = this.getNormalizedColor(arguments);
-    this.canvas.getContext('2d').fillStyle = this.getCSSRGBAColor(c);
+    this.canvas.getContext('2d').fillStyle = this.getColor(arguments);
   };
 
   /**
@@ -249,8 +246,7 @@ define(function (require) {
    */
   p5.prototype.stroke = function() {
     this._setProperty('_doStroke', true);
-    var c = this.getNormalizedColor(arguments);
-    this.canvas.getContext('2d').strokeStyle = this.getCSSRGBAColor(c);
+    this.canvas.getContext('2d').strokeStyle = this.getColor(arguments);
   };
 
   /**
@@ -372,12 +368,21 @@ define(function (require) {
     return RGB;
   }
 
-  p5.prototype.getCSSRGBAColor = function(arr) {
-    var a = arr.map(function(val) {
-      return Math.floor(val);
-    });
-    var alpha = a[3] ? (a[3]/255.0) : 1;
+  p5.prototype.getColorString = function(a) {
+    for (var i=0; i<a.length; i++) {
+      a[i] = Math.floor(a[i]);
+    }
+    var alpha = a[3] ? Math.floor(a[3]/255.0) : 1;
     return 'rgba('+a[0]+','+a[1]+','+a[2]+','+ alpha +')';
+  };
+
+  p5.prototype.getColor = function(args) {
+    if (args[0] instanceof p5.Color) {
+      return args[0].colorString;
+    } else {
+      var c = this.getNormalizedColor(args);
+      return this.getColorString(c);
+    }
   };
 
   return p5;
