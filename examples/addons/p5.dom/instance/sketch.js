@@ -31,6 +31,10 @@ var s0 = function( sketch ) {
     console.log('press')
   }
 
+  sketch.mouseReleased = function() {
+    console.log('released')
+  }
+
 };
 
 var myp5_0 = new p5(s0, 'div0');
