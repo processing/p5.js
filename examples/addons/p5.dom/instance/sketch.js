@@ -24,9 +24,16 @@ var s0 = function( sketch ) {
 
   sketch.keyPressed = function() {
     v.loop();
-    h1.html('click to pause');
+    h1.html('click here to pause');
   };
 
+  sketch.mousePressed = function() {
+    console.log('press')
+  }
+
+  sketch.mouseReleased = function() {
+    console.log('released')
+  }
 
 };
 
