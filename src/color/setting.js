@@ -364,11 +364,11 @@ define(function (require) {
     return RGB;
   }
 
-  p5.prototype.getColorString = function(arr) {
-    var a = arr.map(function(val) {
-      return Math.floor(val);
-    });
-    var alpha = a[3] ? (a[3]/255.0) : 1;
+  p5.prototype.getColorString = function(a) {
+    for (var i=0; i<a.length; i++) {
+      a[i] = Math.floor(a[i]);
+    }
+    var alpha = a[3] ? Math.floor(a[3]/255.0) : 1;
     return 'rgba('+a[0]+','+a[1]+','+a[2]+','+ alpha +')';
   };
 
