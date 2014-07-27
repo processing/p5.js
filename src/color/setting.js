@@ -58,7 +58,7 @@ define(function (require) {
   };
 
   /**
-   * Clears the pixels within a buffer. This function only works on PGraphics
+   * Clears the pixels within a buffer. This function only works on p5.Canvas
    * objects created with the createCanvas() function; it won't work with the
    * main display window. Unlike the main graphics context, pixels in
    * additional graphics areas created with createGraphics() can be entirely
@@ -73,7 +73,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.clear = function() {
-    this.canvas.getContext('2d').clearRect(0, 0, this.width, this.height);
+    this.canvas.width = this.canvas.width;
   };
 
   /**
