@@ -26,13 +26,14 @@ define(function (require) {
    * the first frame of animation or if the backgound need only be set once. 
    *
    * @method background
-   * @param {Number|Array} v1   gray value, red or hue value (depending on the
-   *                            current color mode), or color Array
-   * @param {Number|Array} [v2] green or saturation value (depending on the
-   *                            current color mode)
-   * @param {Number|Array} [v3] blue or brightness value (depending on the
-   *                            current color mode)
-   * @param {Number|Array} [a]  opacity of the background
+   * @param {Number|Color|p5.Image} v1   gray value, red or hue value 
+   *                                     (depending on the current color mode),
+   *                                     or color or p5.Image
+   * @param {Number|Array}          [v2] green or saturation value (depending on
+   *                                     the current color mode)
+   * @param {Number|Array}          [v3] blue or brightness value (depending on 
+   *                                     the current color mode)
+   * @param {Number|Array}          [a]  opacity of the background
    * @example
    * <div>
    * <code>
@@ -47,14 +48,18 @@ define(function (require) {
    * </div>
    */
   p5.prototype.background = function() {
-    var c = this.getNormalizedColor(arguments);
-    // save out the fill
-    var curFill = this.canvas.getContext('2d').fillStyle;
-    // create background rect
-    this.canvas.getContext('2d').fillStyle = this.getCSSRGBAColor(c);
-    this.canvas.getContext('2d').fillRect(0, 0, this.width, this.height);
-    // reset fill
-    this.canvas.getContext('2d').fillStyle = curFill;
+    if (arguments[0] instanceof p5.Image) {
+      this.image(arguments[0], 0, 0, this.width, this.height);
+    } else {
+      var c = this.getNormalizedColor(arguments);
+      // save out the fill
+      var curFill = this.canvas.getContext('2d').fillStyle;
+      // create background rect
+      this.canvas.getContext('2d').fillStyle = this.getCSSRGBAColor(c);
+      this.canvas.getContext('2d').fillRect(0, 0, this.width, this.height);
+      // reset fill
+      this.canvas.getContext('2d').fillStyle = curFill;
+    }
   };
 
   /**
