@@ -10,7 +10,6 @@ define(function (require) {
 
   var p5 = require('core');
   var Filters = require('filters');
-  var constants = require('constants');
   require('p5.Color');
 
   /**
@@ -21,29 +20,34 @@ define(function (require) {
    * if the image is 100x100 pixels, there will be 40000. The first four values
    * (indices 0-3) in the array will be the R, G, B, A values of the pixel at 
    * (0, 0). The second four values (indices 4-7) will contain the R, G, B, A
-   * values of the pixel at (1, 0). More generally, to values for a pixel at 
-   * (x, y) are: <code>pixels[y*width+x]</code>, 
-   * <code>pixels[y*width+x+1]</code>, <code>pixels[y*width+x+2]</code>,
-   * <code>pixels[y*width+x+3]</code>.<br><br>
-   *
+   * values of the pixel at (1, 0). More generally, to set values for a pixel
+   * at (x, y): 
+   * <code>pixels[y*width+x] = r; 
+   * pixels[y*width+x+1] = g;
+   * pixels[y*width+x+2] = b;
+   * pixels[y*width+x+3] = a;</code>
+   * <br><br>
    * Before accessing this array, the data must loaded with the loadPixels()
    * function. After the array data has been modified, the updatePixels()
    * function must be run to update the changes.
    *
-   * @property pixels[]
+   * @property pixels[]   
+   * @example
+   * <div>
+   * <code>
+   * var pink = color(255, 102, 204);
+   * loadPixels();
+   * for (var i = 0; i < 4*(width*height/2); i+=4) {
+   *   pixels[i] = red(pink);
+   *   pixels[i+1] = green(pink);
+   *   pixels[i+2] = blue(pink);
+   *   pixels[i+3] = alpha(pink);
+   * }
+   * updatePixels();
+   * </code>
+   * </div>
    */
   p5.prototype.pixels = [];
-
-  // function getPixels(img) {
-  //   var c = document.createElement('canvas');
-  //   c.width = img.width;
-  //   c.height = img.height;
-  //   var ctx = c.getContext('2d');
-  //   ctx.drawImage(img);
-  //   return ctx.getImageData(0,0,c.width,c.height);
-  // }
-
-  //// PIXELS ////////////////////////////////
 
   /**
    * Copies a region of pixels from one image to another, using a specified
@@ -173,6 +177,36 @@ define(function (require) {
    * @param  {Number}         [h] height
    * @return {Array|p5.Image}     values of pixel at x,y in array format
    *                              [R, G, B, A] or p5.Image
+   * @example
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/rockies.jpg");
+   * }
+   * function setup() {
+   *   image(img, 0, 0);
+   *   var c = get();
+   *   image(c, width/2, 0);
+   * }
+   * </code>
+   * </div>
+   * 
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/rockies.jpg");
+   * }
+   * function setup() {
+   *   image(img, 0, 0);
+   *   var c = get(50, 90);
+   *   fill(c);
+   *   noStroke();
+   *   rect(25, 25, 50, 50);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.get = function(x, y, w, h){
     if (x === undefined && y === undefined &&
@@ -215,40 +249,29 @@ define(function (require) {
   };
 
   /**
-   * Reads an array of [R,G,B,A] values for any pixel or grabs a section of an 
-   * image. If no parameters are specified, the entire image is returned. Use 
-   * the x and y parameters to get the value of one pixel. Get a section of 
-   * the display window by specifying additional w and h parameters. When 
-   * getting an image, the x and y parameters define the coordinates for the 
-   * upper-left corner of the image, regardless of the current imageMode().
-   *
-   * If the pixel requested is outside of the image window, [0,0,0,255] is 
-   * returned. To get the numbers scaled according to the current color ranges
-   * and taking into account colorMode, use getColor instead of get.
-   *
-   * Getting the color of a single pixel with get(x, y) is easy, but not as fast
-   * as grabbing the data directly from pixels[]. The equivalent statement to
-   * get(x, y) using pixels[] is [ pixels[y*width+x], pixels[y*width+x+1], 
-   * pixels[y*width+x+2], pixels[y*width+3] ]. See the reference for
-   * pixels[] for more information.
-   *
-   * @method getColor
-   * @param  {Number}         [x] x-coordinate of the pixel
-   * @param  {Number}         [y] y-coordinate of the pixel
-   * @param  {Number}         [w] width
-   * @param  {Number}         [h] height
-   * @return {Array|p5.Image}     values of pixel at x,y in array format
-   *                              [R, G, B, A] or p5.Image
-   */
-  p5.prototype.getColor = function(x, y){
-    var arr = this.get(x, y);
-    return new p5.Color(this, arr, constants.RGB);
-  };
-  /**
    * Loads the pixel data for the display window into the pixels[] array. This
    * function must always be called before reading from or writing to pixels[].
    *
-   * @method loadPixels
+   * @method loadPixels   
+   * @example
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/rockies.jpg");
+   * }
+   * 
+   * function setup() {
+   *   image(img, 0, 0);
+   *   var halfImage = 4 * img.width * img.height/2;
+   *   loadPixels();
+   *   for (var i = 0; i < halfImage; i++) {
+   *     pixels[i+halfImage] = pixels[i];
+   *   }
+   *   updatePixels();
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.loadPixels = function() {
     var width = this.width;
@@ -263,25 +286,67 @@ define(function (require) {
   };
 
   /**
-   * Changes the color of any pixel, or writes an image directly to the display
-   * window.
-   *
-   * The x and y parameters specify the pixel to change and the c parameter
-   * specifies the color value. The c parameter is interpreted according to the
-   * current color mode. (The default color mode is RGB values from 0 to 255.)
+   * <p>Changes the color of any pixel, or writes an image directly to the 
+   * display window.</p>
+   * <p>The x and y parameters specify the pixel to change and the c parameter
+   * specifies the color value. This can be a p5.COlor object, or [R, G, B, A]
+   * pixel array. It can also be a single grayscale value.
    * When setting an image, the x and y parameters define the coordinates for
-   * the upper-left corner of the image, regardless of the current imageMode(). 
-   * 
-   * Setting the color of a single pixel with set(x, y) is easy, but not as
+   * the upper-left corner of the image, regardless of the current imageMode().
+   * </p>
+   * <p>Setting the color of a single pixel with set(x, y) is easy, but not as
    * fast as putting the data directly into pixels[]. The equivalent statement
-   * to set(x, y, #000000) using pixels[] is pixels[y*width+x] = #000000.
-   * See the reference for pixels[] for more information.
+   * to set(x, y, [100, 50, 10, 255]) using pixels[] is:</p>
+   * <pre><code class="language-markup">pixels[4*(y*width+x)] = 100;
+   * pixels[4*(y*width+x)+1] = 50;
+   * pixels[4*(y*width+x)+2] = 10;
+   * pixels[4*(y*width+x)+3] = 255;</code></pre>
+   * <p>See the reference for pixels[] for more information.</p>
    *
    * @method set
    * @param {Number}              x x-coordinate of the pixel
    * @param {Number}              y y-coordinate of the pixel
-   * @param {Number|Array|Object}   insert a grayscale value | a color array |
-   *                                image to copy
+   * @param {Number|Array|Object} c insert a grayscale value | a pixel array |
+   *                                a p5.Color object | a p5.Image to copy   
+   * @example
+   * <div>
+   * <code>
+   * var black = color(0);
+   * set(30, 20, black);
+   * set(85, 20, black);
+   * set(85, 75, black);
+   * set(30, 75, black);
+   * updatePixels();
+   * </code>
+   * </div> 
+   *
+   * <div>
+   * <code>
+   * for (var i = 30; i < width-15; i++) {
+   *   for (var j = 20; j < height-25; j++) {
+   *     var c = color(204-j, 153-i, 0);
+   *     set(i, j, c);
+   *   }
+   * }
+   * updatePixels();
+   * </code>
+   * </div> 
+   *
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/rockies.jpg");
+   * }
+   *
+   * function setup() {
+   *   set(0, 0, img);
+   *   updatePixels();
+   *   line(0, 0, width, height);
+   *   line(0, height, width, 0);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.set = function (x, y, imgOrCol) {
     if (imgOrCol instanceof p5.Image) {
@@ -289,7 +354,7 @@ define(function (require) {
       this.loadPixels.call(this);
     } else {
       var idx = 4*(y * this.width + x);
-      if (!this.pixels) {
+      if (!this.imageData) {
         this.loadPixels.call(this);
       }
       if (typeof imgOrCol === 'number') {
@@ -327,9 +392,35 @@ define(function (require) {
    * Updates the display window with the data in the pixels[] array.
    * Use in conjunction with loadPixels(). If you're only reading pixels from
    * the array, there's no need to call updatePixels() — updating is only
-   * necessary to apply changes. 
+   * necessary to apply changes. updatePixels() should be called anytime the 
+   * pixels array is manipulated or set() is called.
    *
-   * @method updatePixels
+   * @method updatePixels  
+   * @param  {Number} [x]    x-coordinate of the upper-left corner of region 
+   *                         to update
+   * @param  {Number} [y]    y-coordinate of the upper-left corner of region 
+   *                         to update
+   * @param  {Number} [w]    width of region to update
+   * @param  {Number} [w]    height of region to update
+   * @example
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/rockies.jpg");
+   * }
+   * 
+   * function setup() {
+   *   image(img, 0, 0);
+   *   var halfImage = 4 * img.width * img.height/2;
+   *   loadPixels();
+   *   for (var i = 0; i < halfImage; i++) {
+   *     pixels[i+halfImage] = pixels[i];
+   *   }
+   *   updatePixels();
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.updatePixels = function (x, y, w, h) {
     if (x === undefined &&

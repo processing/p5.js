@@ -118,22 +118,6 @@ define(function (require) {
     return p5.prototype.get.call(this, x, y, w, h);
   };
 
-
-  /**
-   * Get a p5.Color object representing a single pixel in an image.
-   *
-   * @method getColor
-   * @param  {Number}               [x] x-coordinate of the pixel
-   * @param  {Number}               [y] y-coordinate of the pixel
-   * @param  {Number}               [w] width
-   * @param  {Number}               [h] height
-   * @return {Array/Color | p5.Image}     color of pixel at x,y in array format
-   *                                    [R, G, B, A] or p5.Image
-   */
-  p5.Image.prototype.getColor = function(x, y){
-    return p5.prototype.getColor.call(this, x, y);
-  };
-
   /**
    * Set the color of a single pixel or write an image into
    * this p5.Image.

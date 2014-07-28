@@ -92,7 +92,7 @@ define(function (require) {
       throw new Error('Needs p5.Color as argument.');
     }
     if (!c.hsba) {
-      c.hsba = p5.Color.rgb2hsv(c.rgba[0], c.rgba[1], c.rgba[2]);
+      c.hsba = p5.Color.getRGB(c.rgba);
       c.hsba = c.hsba.concat(c.rgba[3]);
     }
     return c.hsba[2];
@@ -165,10 +165,13 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.color = function() {
-    return new p5.Color(this, arguments);
+  p5.prototype.color = function () {
+    if (arguments[0] instanceof Array) {
+      return new p5.Color(this, arguments[0], true);
+    } else {
+      return new p5.Color(this, arguments);
+    }
   };
-
   /**
    * Extracts the green value from a color or pixel array.
    * 
@@ -222,8 +225,7 @@ define(function (require) {
       throw new Error('Needs p5.Color as argument.');
     }
     if (!c.hsba) {
-      c.hsba = p5.Color.rgb2hsv(c.rgba[0], c.rgba[1], c.rgba[2]);
-      c.hsba = c.hsba.concat(c.rgba[3]);
+      c.hsba = p5.Color.getRGB(c.rgba);
     }
     return c.hsba[0];
   };
@@ -327,7 +329,7 @@ define(function (require) {
       throw new Error('Needs p5.Color as argument.');
     }
     if (!c.hsba) {
-      c.hsba = p5.Color.rgb2hsv(c.rgba[0], c.rgba[1], c.rgba[2]);
+      c.hsba = p5.Color.getRGB(c.rgba);
       c.hsba = c.hsba.concat(c.rgba[3]);
     }
     return c.hsba[1];

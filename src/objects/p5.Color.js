@@ -13,34 +13,21 @@ define(function(require) {
    * @class p5.Color
    * @constructor
    */
-  p5.Color = function(pInst, vals, mode) {
-    
-    var isRGB = mode === constants.RGB || pInst._colorMode === constants.RGB;
-    var maxArr = isRGB ? pInst._maxRGB : pInst._maxHSB;
-
-    var r, g, b, a;
-    if (vals.length >= 3) {
-      r = vals[0];
-      g = vals[1];
-      b = vals[2];
-      a = typeof vals[3] === 'number' ? vals[3] : maxArr[3];
+  p5.Color = function(pInst, vals) {
+    if (vals instanceof Array) {
+      this.rgba = vals;
     } else {
-      if (isRGB) {
-        r = g = b = vals[0];
+      var norm = p5.Color.getNormalizedColor.apply(pInst, vals);
+      if (pInst._colorMode === constants.HSB) {
+        this.hsba = norm;
+        this.rgba = p5.Color.getRGB(this.hsba);
       } else {
-        r = b = vals[0];
-        g = 0;
+        this.rgba = norm;
       }
-      a = typeof vals[1] === 'number' ? vals[1] : maxArr[3];
     }
-    // we will need all these later, store them instead of recalc
-    if (!isRGB) {
-      this.hsba = [r, g, b, a];
-    }
-    this.rgba = p5.Color.getNormalizedColor.apply(pInst, [r, g, b, a]);
     this.colorString = p5.Color.getColorString(this.rgba);
   };
-    /**
+  /**
    * For a number of different inputs, returns a color formatted as
    * [r, g, b, a].
    * 
@@ -68,11 +55,10 @@ define(function(require) {
   p5.Color.getNormalizedColor = function() {
     var isRGB = this._colorMode === constants.RGB;
     var maxArr = isRGB ? this._maxRGB : this._maxHSB;
-
-    if (arguments[0] instanceof Array) { // already color object
-      return p5.Color.getNormalizeColor.apply(this, arguments[0]);
+    if (arguments[0] instanceof Array) {
+      return p5.Color.getNormalizedColor.apply(this, arguments[0]);
     }
-    var r, g, b, a, rgba;
+    var r, g, b, a;
     if (arguments.length >= 3) {
       r = arguments[0];
       g = arguments[1];
@@ -93,24 +79,21 @@ define(function(require) {
     b *= 255/maxArr[2];
     a *= 255/maxArr[3];
 
-    if (this._colorMode === constants.HSB) {
-      rgba = p5.Color.hsv2rgb(r, g, b).concat(a);
-    } else {
-      rgba = [r, g, b, a];
-    }
-
-    return rgba;
+    return [r, g, b, a];
   };
 
-  p5.Color.hsv2rgb = function(h,s,v) {
+  p5.Color.getRGB = function(hsba) {
+    var h = hsba[0];
+    var s = hsba[1];
+    var v = hsba[2];
     h /= 255;
     s /= 255;
     v /= 255;
     // Adapted from http://www.easyrgb.com/math.html
     // hsv values = 0 - 1, rgb values = 0 - 255
-    var RGB = [];
+    var RGBA = [];
     if(s===0){
-      RGB = [Math.round(v*255), Math.round(v*255), Math.round(v*255)];
+      RGBA = [Math.round(v*255), Math.round(v*255), Math.round(v*255), hsba[3]];
     }else{
       // h must be < 1
       var var_h = h * 6;
@@ -150,19 +133,20 @@ define(function(require) {
         var_g = var_1;
         var_b = var_2;
       }
-      RGB= [
+      RGBA= [
         Math.round(var_r * 255),
         Math.round(var_g * 255),
-        Math.round(var_b * 255)
+        Math.round(var_b * 255),
+        hsba[3]
       ];
     }
-    return RGB;
+    return RGBA;
   };
 
-  p5.Color.rgb2hsv = function(r,g,b) {
-    var var_R = r/255;                           //RGB from 0 to 255
-    var var_G = g/255;
-    var var_B = b/255;
+  p5.Color.getHSB = function(rgba) {
+    var var_R = rgba[0]/255;
+    var var_G = rgba[1]/255;
+    var var_B = rgba[2]/255;
 
     var var_Min = Math.min(var_R, var_G, var_B); //Min. value of RGB
     var var_Max = Math.max(var_R, var_G, var_B); //Max. value of RGB
@@ -201,7 +185,8 @@ define(function(require) {
     return [
         Math.round(H * 255),
         Math.round(S * 255),
-        Math.round(V * 255)
+        Math.round(V * 255),
+        rgba[3]
       ];
   };
 
@@ -216,8 +201,13 @@ define(function(require) {
   p5.Color.getColor = function() {
     if (arguments[0] instanceof p5.Color) {
       return arguments[0].colorString;
+    } else if (arguments[0] instanceof Array) { // [R,G,B,A] pixel array
+      return p5.Color.getColorString(arguments[0]);
     } else {
       var c = p5.Color.getNormalizedColor.apply(this, arguments);
+      if (this._colorMode === constants.HSB) {
+        c = p5.Color.getRGB(c);
+      }
       return p5.Color.getColorString(c);
     }
   };
