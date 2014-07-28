@@ -7,7 +7,7 @@
 var result;
 
 function preload() {
-  result = loadStrings('tenderbuttons.txt');
+  result = loadStrings('tenderbuttons_excerpt.txt');
 }
 
 function setup(){

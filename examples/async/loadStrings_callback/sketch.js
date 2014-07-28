@@ -13,7 +13,7 @@ function setup(){
   noStroke();
 
   // pickLine is a function called by loadStrings when it's loaded.
-  result = loadStrings('tenderbuttons.txt', pickLine);
+  result = loadStrings('tenderbuttons_excerpt.txt', pickLine);
 
   print('In setup(), there are ' + result.length + ' lines in the result');
 }
