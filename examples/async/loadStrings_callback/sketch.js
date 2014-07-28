@@ -1,7 +1,9 @@
 /**
  *  Load strings of text into an array of lines.
- *  Display a random line.
+ *
+ *  Display a random line every time the mouse is clicked.
  */
+
 var result;
 
 function setup(){
@@ -10,20 +12,23 @@ function setup(){
   fill(0);
   noStroke();
 
-  // showText is a function called by loadStrings when it's loaded.
-  result = loadStrings('tenderbuttons.txt', showText);
+  // pickLine is a function called by loadStrings when it's loaded.
+  result = loadStrings('tenderbuttons.txt', pickLine);
 
   print('In setup(), there are ' + result.length + ' lines in the result');
 }
 
-
-function showText(){
+function pickLine(){
+  background(255);
   var randomLineNumber = floor(random(0, result.length-1));
   var randomLine = result[randomLineNumber];
   text(randomLine, width/2, height/2);
 
-  print('In the callback function, there are ' + result.length + ' lines in the result');
-  print('Displaying random line number ' + randomLineNumber);
-  print('Reload the page for a different random line!');
+  print('Displaying random line number ' + randomLineNumber + ' of ' + result.length);
+  print('Click the mouse to display a different random line!');
+}
 
+// refresh text every time the mouse is clicked
+function mouseClicked(){
+  pickLine();
 }
