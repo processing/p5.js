@@ -13,11 +13,9 @@ define(function(require) {
    * @class p5.Color
    * @constructor
    */
-  p5.Color = function() {
-    var pInst = arguments[0];
-    var vals = arguments[1];
+  p5.Color = function(pInst, vals, mode) {
     
-    var isRGB = pInst._colorMode === constants.RGB;
+    var isRGB = mode === constants.RGB || pInst._colorMode === constants.RGB;
     var maxArr = isRGB ? pInst._maxRGB : pInst._maxHSB;
 
     var r, g, b, a;

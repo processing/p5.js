@@ -10,6 +10,7 @@ define(function (require) {
 
   var p5 = require('core');
   var Filters = require('filters');
+  var constants = require('constants');
   require('p5.Color');
 
   /**
@@ -148,9 +149,9 @@ define(function (require) {
   };
 
   /**
-   * Reads an array of [R,G,B,A] values for any pixel or grabs a section of an 
-   * image. If no parameters are specified, the entire image is returned. Use 
-   * the x and y parameters to get the value of one pixel. Get a section of 
+   * Returns an array of [R,G,B,A] values for any pixel or grabs a section of
+   * an image. If no parameters are specified, the entire image is returned. 
+   * Use the x and y parameters to get the value of one pixel. Get a section of
    * the display window by specifying additional w and h parameters. When 
    * getting an image, the x and y parameters define the coordinates for the 
    * upper-left corner of the image, regardless of the current imageMode().
@@ -241,7 +242,7 @@ define(function (require) {
    */
   p5.prototype.getColor = function(x, y){
     var arr = this.get(x, y);
-    return new p5.Color(this, arr);
+    return new p5.Color(this, arr, constants.RGB);
   };
   /**
    * Loads the pixel data for the display window into the pixels[] array. This
