@@ -13,19 +13,21 @@ function setup() {
 
   //First fill it with black pixels and draw that to screen
   image1.loadPixels();
-  for(var i = 0; i < image1.pixels.length; i += 1) {
-    image1.pixels[i] = [0,0, 0, 255];
+  for(var i = 0; i < image1.pixels.length; i += 4) {
+    image1.pixels[i] = 0;
+    image1.pixels[i+1] = 0;
+    image1.pixels[i+2] = 0;
+    image1.pixels[i+3] = 255;
   }
   image1.updatePixels();
   image(image1, 50, 50);
 
   image1.loadPixels();
-  for(var i = 0; i < image1.pixels.length; i += 1) {
-    image1.pixels[i] = [
-      Math.random() * 255,
-      Math.random() * 255,
-      Math.random() * 255,
-      255];
+  for(var i = 0; i < image1.pixels.length; i += 4) {
+    image1.pixels[i] = Math.random()*255;
+    image1.pixels[i+1] = Math.random()*255;
+    image1.pixels[i+2] = Math.random()*255;
+    image1.pixels[i+3] = 255;
   }
 
   image1.updatePixels(25, 10, 10, 20);
@@ -97,12 +99,11 @@ function draw(){
   loadPixels(); 
   for(var i = width/2; i < width; i+=30) { // every 20 pixels across
     for(var j = height/2; j < height; j+=30) { // every 20 pixels down
-      var c = pixels[j*width + i]; // calculate where in the pixel array to be, get the value there
-      fill(c);
+      var ind = 4*(j*width+i);
+      fill(pixels[ind], pixels[ind+1], pixels[ind+2], pixels[ind+3]);
       ellipse(i, j, 30, 30); // the location to draw the circle
     }
   }
-
   
   image(image2, 50, 100);
   image(image3, 50, 400, 75, 57);
