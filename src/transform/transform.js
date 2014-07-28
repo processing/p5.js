@@ -35,7 +35,7 @@ define(function(require) {
      * @example
      * <div>
      * <code>
-     * // Example in the works.
+     * // Example in the works. 
      * </code>
      * </div>
      */
