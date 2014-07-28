@@ -26,13 +26,14 @@ define(function (require) {
    * the first frame of animation or if the backgound need only be set once. 
    *
    * @method background
-   * @param {Number|Array} v1   gray value, red or hue value (depending on the
-   *                            current color mode), or color Array
-   * @param {Number|Array} [v2] green or saturation value (depending on the
-   *                            current color mode)
-   * @param {Number|Array} [v3] blue or brightness value (depending on the
-   *                            current color mode)
-   * @param {Number|Array} [a]  opacity of the background
+   * @param {Number|Color|p5.Image} v1   gray value, red or hue value 
+   *                                     (depending on the current color mode),
+   *                                     or color or p5.Image
+   * @param {Number|Array}          [v2] green or saturation value (depending on
+   *                                     the current color mode)
+   * @param {Number|Array}          [v3] blue or brightness value (depending on 
+   *                                     the current color mode)
+   * @param {Number|Array}          [a]  opacity of the background
    * @example
    * <div>
    * <code>
@@ -47,18 +48,20 @@ define(function (require) {
    * </div>
    */
   p5.prototype.background = function() {
-    var c = this.getNormalizedColor(arguments);
-    // save out the fill
-    var curFill = this.canvas.getContext('2d').fillStyle;
-    // create background rect
-    this.canvas.getContext('2d').fillStyle = this.getCSSRGBAColor(c);
-    this.canvas.getContext('2d').fillRect(0, 0, this.width, this.height);
-    // reset fill
-    this.canvas.getContext('2d').fillStyle = curFill;
+    if (arguments[0] instanceof p5.Image) {
+      this.image(arguments[0], 0, 0, this.width, this.height);
+    } else {
+      var curFill = this.canvas.getContext('2d').fillStyle;
+      // create background rect
+      this.canvas.getContext('2d').fillStyle = this.getColor(arguments);
+      this.canvas.getContext('2d').fillRect(0, 0, this.width, this.height);
+      // reset fill
+      this.canvas.getContext('2d').fillStyle = curFill;
+    }
   };
 
   /**
-   * Clears the pixels within a buffer. This function only works on PGraphics
+   * Clears the pixels within a buffer. This function only works on p5.Canvas
    * objects created with the createCanvas() function; it won't work with the
    * main display window. Unlike the main graphics context, pixels in
    * additional graphics areas created with createGraphics() can be entirely
@@ -73,7 +76,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.clear = function() {
-    this.canvas.getContext('2d').clearRect(0, 0, this.width, this.height);
+    this.canvas.width = this.canvas.width;
   };
 
   /**
@@ -174,8 +177,7 @@ define(function (require) {
    */
   p5.prototype.fill = function() {
     this._setProperty('_doFill', true);
-    var c = this.getNormalizedColor(arguments);
-    this.canvas.getContext('2d').fillStyle = this.getCSSRGBAColor(c);
+    this.canvas.getContext('2d').fillStyle = this.getColor(arguments);
   };
 
   /**
@@ -244,8 +246,7 @@ define(function (require) {
    */
   p5.prototype.stroke = function() {
     this._setProperty('_doStroke', true);
-    var c = this.getNormalizedColor(arguments);
-    this.canvas.getContext('2d').strokeStyle = this.getCSSRGBAColor(c);
+    this.canvas.getContext('2d').strokeStyle = this.getColor(arguments);
   };
 
   /**
@@ -275,6 +276,7 @@ define(function (require) {
    */
   p5.prototype.getNormalizedColor = function(args) {
     var isRGB = this._colorMode === constants.RGB;
+    var maxArr = isRGB ? this._maxRGB : this._maxHSB;
 
     if (args[0] instanceof Array) { // already color object
       args = args[0];
@@ -284,7 +286,7 @@ define(function (require) {
       r = args[0];
       g = args[1];
       b = args[2];
-      a = typeof args[3] === 'number' ? args[3] : this._maxA;
+      a = typeof args[3] === 'number' ? args[3] : maxArr[3];
     } else {
       if (isRGB) {
         r = g = b = args[0];
@@ -292,10 +294,8 @@ define(function (require) {
         r = b = args[0];
         g = 0;
       }
-      a = typeof args[1] === 'number' ? args[1] : this._maxA;
+      a = typeof args[1] === 'number' ? args[1] : maxArr[3];
     }
-
-    var maxArr = isRGB ? this._maxRGB : this._maxHSB;
 
     r *= 255/maxArr[0];
     g *= 255/maxArr[1];
@@ -368,12 +368,21 @@ define(function (require) {
     return RGB;
   }
 
-  p5.prototype.getCSSRGBAColor = function(arr) {
-    var a = arr.map(function(val) {
-      return Math.floor(val);
-    });
-    var alpha = a[3] ? (a[3]/255.0) : 1;
+  p5.prototype.getColorString = function(a) {
+    for (var i=0; i<a.length; i++) {
+      a[i] = Math.floor(a[i]);
+    }
+    var alpha = a[3] ? Math.floor(a[3]/255.0) : 1;
     return 'rgba('+a[0]+','+a[1]+','+a[2]+','+ alpha +')';
+  };
+
+  p5.prototype.getColor = function(args) {
+    if (args[0] instanceof p5.Color) {
+      return args[0].colorString;
+    } else {
+      var c = this.getNormalizedColor(args);
+      return this.getColorString(c);
+    }
   };
 
   return p5;

@@ -9,13 +9,13 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
-  var constants = require('constants');
+  //var constants = require('constants');
 
   /**
    * Extracts the alpha value from a color.
    * 
    * @method alpha
-   * @param {Array} an array representing a color
+   * @param {Object} color p5.Color object
    * @example
    * <div>
    * <code>
@@ -29,19 +29,18 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.alpha = function(rgb) {
-    if (rgb.length > 3) {
-      return rgb[3];
-    } else {
-      return 255;
+  p5.prototype.alpha = function(c) {
+    if (!c instanceof p5.Color) {
+      throw new Error('Needs p5.Color as argument.');
     }
+    return c.rgba[3];
   };
 
   /**
    * Extracts the blue value from a color, scaled to match current colorMode(). 
    * 
    * @method blue
-   * @param {Array} an array representing a color
+   * @param {Object} color p5.Color object
    * @example
    * <div>
    * <code>
@@ -56,19 +55,18 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.blue = function(rgb) {
-    if (rgb.length > 2) {
-      return rgb[2];
-    } else {
-      return 0;
+  p5.prototype.blue = function(c) {
+    if (!c instanceof p5.Color) {
+      throw new Error('Needs p5.Color as argument.');
     }
+    return c.rgba[2];
   };
 
   /**
    * Extracts the brightness value from a color. 
    * 
    * @method brightness
-   * @param {Array} an array representing a color
+   * @param {Object} color p5.Color object
    * @example
    * <div>
    * <code>
@@ -83,12 +81,14 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.brightness = function(hsv) {
-    if (hsv.length > 2) {
-      return hsv[2];
-    } else {
-      return 0;
+  p5.prototype.brightness = function(c) {
+    if (!c instanceof p5.Color) {
+      throw new Error('Needs p5.Color as argument.');
     }
+    if (!c.hsba) {
+      c.hsba = rgb2hsv(c.rgba[0], c.rgba[1], c.rgba[2]).concat(c.rgba[3]);
+    }
+    return c.hsba[2];
   };
 
   /**
@@ -159,27 +159,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.color = function() {
-    var args = arguments;
-    
-    var isRGB = this._colorMode === constants.RGB;
-    var maxArr = isRGB ? this._maxRGB : this._maxHSB;
-
-    var r, g, b, a;
-    if (args.length >= 3) {
-      r = args[0];
-      g = args[1];
-      b = args[2];
-      a = typeof args[3] === 'number' ? args[3] : maxArr[3];
-    } else {
-      if (isRGB) {
-        r = g = b = args[0];
-      } else {
-        r = b = args[0];
-        g = 0;
-      }
-      a = typeof args[1] === 'number' ? args[1] : maxArr[3];
-    }
-    return [r, g, b, a];
+    return new p5.Color(this, arguments);
   };
 
   /**
@@ -187,7 +167,7 @@ define(function (require) {
    * colorMode(). 
    * 
    * @method green
-   * @param {Array} an array representing a color
+   * @param {Object} color p5.Color object
    * @example
    * <div>
    * <code>
@@ -202,19 +182,18 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.green = function(rgb) {
-    if (rgb.length > 2) {
-      return rgb[1];
-    } else {
-      return 0;
+  p5.prototype.green = function(c) {
+    if (!c instanceof p5.Color) {
+      throw new Error('Needs p5.Color as argument.');
     }
+    return c.rgba[1];
   };
 
   /**
    * Extracts the hue value from a color. 
    * 
    * @method hue
-   * @param {Array} an array representing a color
+   * @param {Object} color p5.Color object
    * @example
    * <div>
    * <code>
@@ -229,12 +208,14 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.hue = function(hsv) {
-    if (hsv.length > 2) {
-      return hsv[0];
-    } else {
-      return 0;
+  p5.prototype.hue = function(c) {
+    if (!c instanceof p5.Color) {
+      throw new Error('Needs p5.Color as argument.');
     }
+    if (!c.hsba) {
+      c.hsba = rgb2hsv(c.rgba[0], c.rgba[1], c.rgba[2]).concat(c.rgba[3]);
+    }
+    return c.hsba[0];
   };
 
   /**
@@ -287,7 +268,7 @@ define(function (require) {
    * Extracts the red value from a color, scaled to match current colorMode(). 
    * 
    * @method red
-   * @param {Array} rgb an array representing a color
+   * @param {Object} color p5.Color object
    * @example
    * <div>
    * <code>
@@ -302,19 +283,18 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.red = function(rgb) {
-    if (rgb.length > 2) {
-      return rgb[0];
-    } else {
-      return 0;
+  p5.prototype.red = function(c) {
+    if (!c instanceof p5.Color) {
+      throw new Error('Needs p5.Color as argument.');
     }
+    return c.rgba[0];
   };
 
   /**
    * Extracts the saturation value from a color. 
    * 
    * @method saturation
-   * @param {Array} an array representing a color
+   * @param {Object} color p5.Color object
    * @example
    * <div>
    * <code>
@@ -329,13 +309,62 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.saturation = function(hsv) {
-    if (hsv.length > 2) {
-      return hsv[1];
-    } else {
-      return 0;
+  p5.prototype.saturation = function(c) {
+    if (!c instanceof p5.Color) {
+      throw new Error('Needs p5.Color as argument.');
     }
+    if (!c.hsba) {
+      c.hsba = rgb2hsv(c.rgba[0], c.rgba[1], c.rgba[2]).concat(c.rgba[3]);
+    }
+    return c.hsba[1];
   };
+
+
+  function rgb2hsv(r,g,b) {
+    var var_R = r/255;                           //RGB from 0 to 255
+    var var_G = g/255;
+    var var_B = b/255;
+
+    var var_Min = Math.min(var_R, var_G, var_B); //Min. value of RGB
+    var var_Max = Math.max(var_R, var_G, var_B); //Max. value of RGB
+    var del_Max = var_Max - var_Min;             //Delta RGB value 
+
+    var H;
+    var S;
+    var V = var_Max;
+
+    if (del_Max === 0) { //This is a gray, no chroma...
+      H = 0; //HSV results from 0 to 1
+      S = 0;
+    }
+    else { //Chromatic data...
+      S = del_Max/var_Max;
+
+      var del_R = ( ( ( var_Max - var_R ) / 6 ) + ( del_Max / 2 ) ) / del_Max;
+      var del_G = ( ( ( var_Max - var_G ) / 6 ) + ( del_Max / 2 ) ) / del_Max;
+      var del_B = ( ( ( var_Max - var_B ) / 6 ) + ( del_Max / 2 ) ) / del_Max;
+
+      if (var_R === var_Max) {
+        H = del_B - del_G;
+      } else if (var_G === var_Max) {
+        H = 1/3 + del_R - del_B;
+      } else if (var_B === var_Max) {
+        H = 2/3 + del_G - del_R;
+      }
+
+      if (H<0) {
+        H += 1;
+      }
+      if (H>1) {
+        H -= 1;
+      }
+    }
+    return [
+        Math.round(H * 255),
+        Math.round(S * 255),
+        Math.round(V * 255)
+      ];
+  }
 
   return p5;
 

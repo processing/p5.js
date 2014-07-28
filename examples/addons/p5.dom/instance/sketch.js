@@ -6,7 +6,7 @@ var s0 = function( sketch ) {
   sketch.setup = function() {
     sketch.createCanvas(400, 400);
 
-    h1 = sketch.createH1('press a key');
+    h1 = sketch.createElement('h1', 'press a key');
     h1.position(40, 250);
     h1.mousePressed(function() {
       v.pause();
@@ -15,19 +15,25 @@ var s0 = function( sketch ) {
 
     v = sketch.createVideo('../fingers.mov');
     v.hide();
-    v.loop();
   };
 
   sketch.draw = function() {
     sketch.background(30, 100, 200);
-    sketch.video(v, 30, 30, 200, 200);
+    sketch.image(v, 30, 30, 200, 200);
   };
 
   sketch.keyPressed = function() {
-    v.play();
-    h1.html('click to pause');
+    v.loop();
+    h1.html('click here to pause');
   };
 
+  sketch.mousePressed = function() {
+    console.log('press')
+  }
+
+  sketch.mouseReleased = function() {
+    console.log('released')
+  }
 
 };
 
