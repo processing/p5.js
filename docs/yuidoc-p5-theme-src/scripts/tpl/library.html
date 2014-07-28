@@ -1,0 +1,19 @@
+<h3><%= module.name %></h3>
+
+<p><%= module.description %></p>
+
+<div class="reference-group clearfix">  
+
+<% _.each(groups, function(group){ %>
+  <dl>
+  <% if (group.name !== module.name) { %>
+    <dt><a href="<%=group.hash%>" <% if (group.module !== module.name) { %>class="core"<% } %>><h4><%=group.name%>()</h4></a></dt>
+  <% } %>
+  <p>
+  <% _.each(group.items, function(item) { %>
+    <dd><a href="<%=item.hash%>" <% if (item.module !== module.name) { %>class="core"<% } %>><%=item.name%><% if (item.itemtype === 'method') { %>()<%}%></a></dd>
+  <% }); %>
+  </p>
+  </dl>
+<% }); %>
+</div>

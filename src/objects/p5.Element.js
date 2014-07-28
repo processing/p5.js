@@ -1,21 +1,31 @@
 /**
  * @module DOM
+ * @submodule DOM
  * @for p5.Element
  */
 define(function(require) {
 
   var p5 = require('core');
 
+  /**
+   * A class to describe...
+   *
+   * @class p5.Element
+   * @constructor
+   * @param {String} elt DOM node that is wrapped
+   * @param {Object} [pInst] pointer to p5 instance
+   */
   p5.Element = function(elt, pInst) {
+    /**
+     * Underlying HTML element. All normal HTML methods can be called on this.
+     *
+     * @property elt
+     */
     this.elt = elt;
-    this.pInst = pInst;
+    this._pInst = pInst;
+    this._events = {};
     this.width = this.elt.offsetWidth;
     this.height = this.elt.offsetHeight;
-    if (elt instanceof HTMLCanvasElement && this.pInst) {
-      this.context = elt.getContext('2d');
-      // for pixel method sharing with pimage
-      this.pInst._setProperty('canvas', elt);
-    }
   };
 
   /**
@@ -24,7 +34,6 @@ define(function(require) {
    * the container for the element. Accepts either a string ID or
    * DOM node.
    *
-   * @for    DOM:p5.Element
    * @method parent
    * @param  {String|Object} parent the ID or node of the parent elt
    */
@@ -37,43 +46,8 @@ define(function(require) {
 
   /**
    *
-   * Sets the inner HTML of the element. Replaces any existing html.
-   *
-   * @for    DOM:p5.Element
-   * @method html
-   * @param  {String} html the HTML to be placed inside the element
-   */
-  p5.Element.prototype.html = function(html) {
-    this.elt.innerHTML = html;
-  };
-
-  /**
-   *
-   * Sets the position of the element relative to (0, 0) of the
-   * window. Essentially, sets position:absolute and left and top
-   * properties of style.
-   *
-   * @for    DOM:p5.Element
-   * @method position
-   * @param  {Number} x x-position relative to upper left of window
-   * @param  {Number} y y-position relative to upper left of window
-   */
-  p5.Element.prototype.position = function(x, y) {
-    this.elt.style.position = 'absolute';
-    this.elt.style.left = x+'px';
-    this.elt.style.top = y+'px';
-  };
-
-
-  p5.Element.prototype.style = function(s) {
-    this.elt.style.cssText += s;
-  };
-
-  /**
-   *
    * Sets the ID of the element
    *
-   * @for    DOM:p5.Element
    * @method id
    * @param  {String} id ID of the element
    */
@@ -85,7 +59,6 @@ define(function(require) {
    *
    * Adds given class to the element
    *
-   * @for    DOM:p5.Element
    * @method class
    * @param  {String} class class to add
    */
@@ -96,15 +69,54 @@ define(function(require) {
   /**
    * The .mousePressed() function is called once after every time a
    * mouse button is pressed over the element. This can be used to
-   * attach an element specific event listeners.
+   * attach element specific event listeners.
    *
-   * @for    DOM:p5.Element
    * @method mousePressed
    * @param  {Function} fxn function to be fired when mouse is
    *                    pressed over the element.
    */
   p5.Element.prototype.mousePressed = function (fxn) {
+    attachListener('mousedown', fxn, this);
+  };
+
+  /**
+   * The .mouseReleased() function is called once after every time a
+   * mouse button is released over the element. This can be used to
+   * attach element specific event listeners.
+   *
+   * @method mouseReleased
+   * @param  {Function} fxn function to be fired when mouse is
+   *                    released over the element.
+   */
+  p5.Element.prototype.mouseReleased = function (fxn) {
+    attachListener('mouseup', fxn, this);
+  };
+
+
+  /**
+   * The .mouseClicked() function is called once after a mouse button is 
+   * pressed and released over the element. This can be used to
+   * attach element specific event listeners.
+   *
+   * @method mouseClicked
+   * @param  {Function} fxn function to be fired when mouse is
+   *                    clicked over the element.
+   */
+  p5.Element.prototype.mouseClicked = function (fxn) {
     attachListener('click', fxn, this);
+  };
+
+  /**
+   * The .mouseMoved() function is called once every time a
+   * mouse moves over the element. This can be used to attach an
+   * element specific event listener.
+   *
+   * @method mouseMoved
+   * @param  {Function} fxn function to be fired when mouse is
+   *                    moved over the element.
+   */
+  p5.Element.prototype.mouseMoved = function (fxn) {
+    attachListener('mousemove', fxn, this);
   };
 
   /**
@@ -112,7 +124,6 @@ define(function(require) {
    * mouse moves onto the element. This can be used to attach an
    * element specific event listener.
    *
-   * @for    DOM:p5.Element
    * @method mouseOver
    * @param  {Function} fxn function to be fired when mouse is
    *                    moved over the element.
@@ -126,7 +137,6 @@ define(function(require) {
    * mouse moves off the element. This can be used to attach an
    * element specific event listener.
    *
-   * @for    DOM:p5.Element
    * @method mouseOut
    * @param  {Function} fxn function to be fired when mouse is
    *                    moved off the element.
@@ -135,14 +145,11 @@ define(function(require) {
     attachListener('mouseout', fxn, this);
   };
 
-
   function attachListener(ev, fxn, ctx) {
     var _this = ctx;
     var f = function (e) { fxn(e, _this); };
     ctx.elt.addEventListener(ev, f, false);
-    if (ctx.pInst) {
-      ctx.pInst._events[ev].push([ctx.elt, f]);
-    }
+    ctx._events[ev] = f;
   }
 
   /**

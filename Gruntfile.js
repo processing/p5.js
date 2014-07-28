@@ -33,18 +33,6 @@ module.exports = function(grunt) {
       yuidoc_theme_build: {
         files: ['docs/yuidoc-p5-theme-src/scripts/**/*'],
         tasks: ['requirejs:yuidoc_theme']
-      },
-      // css for yuidoc/reference theme (see 'sass' task)
-      yuidoc_theme_sass: {
-        files: ['docs/yuidoc-p5-theme-src/sass/**/*.scss'],
-        tasks: ['sass']
-      },
-    },
-    sass: {
-      yuidoc_theme: {
-        files: {
-          'docs/yuidoc-p5-theme/assets/css/main.css': 'docs/yuidoc-p5-theme-src/sass/main.scss'
-        }
       }
     },
     mocha: {
@@ -67,14 +55,28 @@ module.exports = function(grunt) {
           findNestedDependencies: true,
           include: ['src/app'],
           onBuildWrite: function( name, path, contents ) {
-            return require('amdclean').clean(contents);
+            return require('amdclean').clean({
+              code: contents,
+              escodegen: {
+                'comment': true,
+                'format': {
+                  'indent': {
+                    'style': '  ',
+                    'adjustMultilineComment': true
+                  }
+                }
+              }
+            });
           },
           optimize: 'none',
           out: 'lib/p5.js',
           paths: {
             'app': 'src/app',
+            'p5.Color': 'src/objects/p5.Color',
             'p5.Element': 'src/objects/p5.Element',
+            'p5.Graphics': 'src/objects/p5.Graphics',
             'p5.Image': 'src/objects/p5.Image',
+            //'p5.Shape': 'src/objects/p5.Shape',
             'p5.Vector': 'src/objects/p5.Vector',
             'color.creating_reading': 'src/color/creating_reading',
             'color.setting': 'src/color/setting',
@@ -82,14 +84,16 @@ module.exports = function(grunt) {
             'constants': 'src/core/constants',
             'data.array_functions': 'src/data/array_functions',
             'data.string_functions': 'src/data/string_functions',
-            'dom.manipulate': 'src/dom/manipulate',
             'environment': 'src/environment/environment',
+            'image.image': 'src/image/image',
+            'image.loading_displaying': 'src/image/loading_displaying',
             'image.pixels': 'src/image/pixels',
             'input.files': 'src/input/files',
             'input.keyboard': 'src/input/keyboard',
             'input.mouse': 'src/input/mouse',
             'input.time_date': 'src/input/time_date',
             'input.touch': 'src/input/touch',
+            'math.math': 'src/math/math',
             'math.calculation': 'src/math/calculation',
             'math.random': 'src/math/random',
             'math.noise': 'src/math/noise',
@@ -97,9 +101,11 @@ module.exports = function(grunt) {
             'output.files': 'src/output/files',
             'output.image': 'src/output/image',
             'output.text_area': 'src/output/text_area',
+            'rendering.rendering': 'src/rendering/rendering',
             'shape.2d_primitives': 'src/shape/2d_primitives',
             'shape.attributes': 'src/shape/attributes',
             'shape.curves': 'src/shape/curves',
+            //'shape.shape': 'src/shape/shape',
             'shape.vertex': 'src/shape/vertex',
             'structure': 'src/structure/structure',
             'transform': 'src/transform/transform',
@@ -113,7 +119,10 @@ module.exports = function(grunt) {
             'filters': 'src/image/filters'
           },
           useStrict: true,
-          wrap: true
+          wrap: {
+            start: '/*! p5.min.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */\n',
+            end: ''
+          }
         }
       },
       min: {
@@ -128,7 +137,10 @@ module.exports = function(grunt) {
           out: 'lib/p5.min.js',
           paths: '<%= requirejs.unmin.options.paths %>',
           useStrict: true,
-          wrap: true
+          wrap: {
+            start: '/*! p5.min.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */\n',
+            end: ''
+          }
         }
       },
       yuidoc_theme: {

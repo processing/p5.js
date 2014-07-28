@@ -13,7 +13,8 @@
 
 /**
  * @module Math
- * @for Noise
+ * @submodule Noise
+ * @for p5
  * @requires core
  */
 define(function (require) {
@@ -80,10 +81,35 @@ define(function (require) {
    *
    * @method noise
    * @param  {Number} x   x-coordinate in noise space
-   * @param  {Number} [y] y-coordinate in noise space
-   * @param  {Number} [z] z-coordinate in noise space
+   * @param  {Number} y   y-coordinate in noise space
+   * @param  {Number} z   z-coordinate in noise space
    * @return {Number}     Perlin noise value (between 0 and 1) at specified
    *                      coordinates
+   * @example
+   * <div>
+   * <code>var xoff = 0.0;
+   * 
+   * function draw() {
+   *   background(204);
+   *   xoff = xoff + .01;
+   *   var n = noise(xoff) * width;
+   *   line(n, 0, n, height);
+   * }
+   * </code>
+   * </div>
+   * <div>
+   * <code>var noiseScale=0.02;
+   * 
+   * function draw() {
+   *   background(0);
+   *   for (var x=0; x < width; x++) {
+   *     var noiseVal = noise((mouseX+x)*noiseScale, mouseY*noiseScale);
+   *     stroke(noiseVal*255);
+   *     line(x, mouseY+noiseVal*80, x, height);
+   *   }
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.noise = function(x,y,z) {
     // is this legit?
@@ -187,6 +213,36 @@ define(function (require) {
    * @method noiseDetail
    * @param {Number} lod number of octaves to be used by the noise
    * @param {Number} falloff falloff factor for each octave
+   * @example
+   * <div>
+   * <code>
+   * 
+   * var noiseVal;
+   * var noiseScale=0.02;
+   * 
+   * function setup() {
+   *   createCanvas(100,100);
+   * }
+   * 
+   * function draw() {
+   *   background(0);
+   *   for (var y = 0; y < height; y++) {
+   *     for (var x = 0; x < width/2; x++) {
+   *       noiseDetail(2,0.2);
+   *       noiseVal = noise((mouseX+x) * noiseScale, 
+   *                        (mouseY+y) * noiseScale);
+   *       stroke(noiseVal*255);
+   *       point(x,y);
+   *       noiseDetail(8,0.65);
+   *       noiseVal = noise((mouseX + x + width/2) * noiseScale, 
+   *                        (mouseY + y) * noiseScale);
+   *       stroke(noiseVal*255);
+   *       point(x + width/2, y);
+   *     }
+   *   }
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.noiseDetail = function(lod, falloff) {
     if (lod>0)     { perlin_octaves=lod; }
@@ -194,19 +250,65 @@ define(function (require) {
   };
 
   /**
-   * TODO: NOT IMPLEMENTED YET!
    * Sets the seed value for <b>noise()</b>. By default, <b>noise()</b>
    * produces different results each time the program is run. Set the
    * <b>value</b> parameter to a constant to return the same pseudo-random
    * numbers each time the software is run.
    *
+   * @method noiseSeed
+   * @param {Number} seed   the seed value
+   * @example
+   * <div>
+   * <code>var xoff = 0.0;
+   * 
+   * function setup() {
+   *   noiseSeed(99);
+   *   stroke(0, 10);
+   * }
+   * 
+   * function draw() {
+   *   xoff = xoff + .01;
+   *   var n = noise(xoff) * width;
+   *   line(n, 0, n, height);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.noiseSeed = function(seed) {
-    // TODO: Need to implement seeding
-    // if (perlinRandom == null) perlinRandom = new Random();
-    // perlinRandom.setSeed(seed);
-    // force table reset after changing the random number seed [0122]
-    // perlin = null;
+    // Linear Congruential Generator
+    // Variant of a Lehman Generator 
+    var lcg = (function() {
+      // Set to values from http://en.wikipedia.org/wiki/Numerical_Recipes
+      // m is basically chosen to be large (as it is the max period)
+      // and for its relationships to a and c
+      var m = 4294967296,
+      // a - 1 should be divisible by m's prime factors
+      a = 1664525,
+       // c and m should be co-prime
+      c = 1013904223,
+      seed, z;
+      return {
+        setSeed : function(val) {
+          z = seed = val || Math.round(Math.random() * m);
+        },
+        getSeed : function() {
+          return seed;
+        },
+        rand : function() {
+          // define the recurrence relationship
+          z = (a * z + c) % m;
+          // return a float in [0, 1) 
+          // if z = m then z / m = 0 therefore (z % m) / m < 1 always
+          return z / m;
+        }
+      };
+    }());
+    
+    lcg.setSeed(seed);
+    perlin = new Array(PERLIN_SIZE + 1);
+    for (var i = 0; i < PERLIN_SIZE + 1; i++) {
+      perlin[i] = lcg.rand();
+    }
   };
 
   return p5;

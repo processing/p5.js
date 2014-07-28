@@ -1,6 +1,7 @@
 /**
  * @module Typography
- * @for Loading & Displaying
+ * @submodule Loading & Displaying
+ * @for p5
  * @requires core
  */
 define(function (require) {
@@ -33,10 +34,28 @@ define(function (require) {
    *                     see rectMode() for more info
    * @param {Number} y2  by default, the height of the text box,
    *                     see rectMode() for more info
+   * @example
+   * <div>
+   * <code>
+   * textSize(32);
+   * text("word", 10, 30); 
+   * fill(0, 102, 153);
+   * text("word", 10, 60);
+   * fill(0, 102, 153, 51);
+   * text("word", 10, 90); 
+   * </code>
+   * </div>
+   * <div>
+   * <code>
+   * s = "The quick brown fox jumped over the lazy dog.";
+   * fill(50);
+   * text(s, 10, 10, 70, 80); // Text wraps within text box
+   * </code>
+   * </div>
    */
   p5.prototype.text = function() {
 
-    this._curElement.context.font=this._textStyle+
+    this.canvas.getContext('2d').font=this._textStyle+
       ' '+
       this._textSize+
       'px '+
@@ -44,12 +63,12 @@ define(function (require) {
 
     if (arguments.length === 3) {
 
-      this._curElement.context.fillText(
+      this.canvas.getContext('2d').fillText(
         arguments[0],
         arguments[1],
         arguments[2]
       );
-      this._curElement.context.strokeText(
+      this.canvas.getContext('2d').strokeText(
         arguments[0],
         arguments[1],
         arguments[2]
@@ -72,7 +91,7 @@ define(function (require) {
       for(var n = 0; n < words.length; n++) {
 
         var testLine = line + words[n] + ' ';
-        var metrics = this._curElement.context.measureText(testLine);
+        var metrics = this.canvas.getContext('2d').measureText(testLine);
         var testWidth = metrics.width;
 
         if (vals.y > vals.h) {
@@ -81,8 +100,8 @@ define(function (require) {
 
         } else if (testWidth > vals.w && n > 0) {
 
-          this._curElement.context.fillText(line, vals.x, vals.y);
-          this._curElement.context.strokeText(line, vals.x, vals.y);
+          this.canvas.getContext('2d').fillText(line, vals.x, vals.y);
+          this.canvas.getContext('2d').strokeText(line, vals.x, vals.y);
           line = words[n] + ' ';
           vals.y += this._textLeading;
 
@@ -95,8 +114,8 @@ define(function (require) {
 
       if (vals.y <= vals.h) {
 
-        this._curElement.context.fillText(line, vals.x, vals.y);
-        this._curElement.context.strokeText(line, vals.x, vals.y);
+        this.canvas.getContext('2d').fillText(line, vals.x, vals.y);
+        this.canvas.getContext('2d').strokeText(line, vals.x, vals.y);
       }
     }
   };
@@ -106,6 +125,17 @@ define(function (require) {
    *
    * @method textFont
    * @param {String} str name of font
+   * @example
+   * <div>
+   * <code>
+   * fill(0);
+   * textSize(36);
+   * textFont("Georgia");
+   * text("Georgia", 12, 40);
+   * textFont("Helvetica");
+   * text("Helvetica", 12, 90);
+   * </code>
+   * </div>
    */
   p5.prototype.textFont = function(str) {
     this._setProperty('_textFont', str); //pend temp?

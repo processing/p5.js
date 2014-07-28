@@ -22,6 +22,7 @@ define([
         'placeholder': placeholder,
         'className': className
       });
+      this.items = App.classes.concat(App.allItems);
 
       return this;
     },
@@ -49,7 +50,7 @@ define([
         'displayKey': 'name',
         'minLength': 2,
         //'highlight': true,
-        'source': self.substringMatcher(App.allItems),
+        'source': self.substringMatcher(this.items),
         'templates': {
           'empty': '<p class="empty-message">Unable to find any item that match the current query</p>',
           'suggestion': _.template(suggestionTpl)
@@ -60,11 +61,28 @@ define([
      * Setup typeahead custom events (item selected).
      */
     typeaheadEvents: function($input) {
+      var self = this;
       $input.on('typeahead:selected', function(e, item, datasetName) {
-        var selectedItem = App.allItems[item.idx];
+        var selectedItem = self.items[item.idx];
+        select(selectedItem);
+      });
+      $input.on('keydown', function(e) {
+        if (e.which === 13) { // enter
+          var txt = $input.val();
+          var f = _.find(self.items, function(it) { return it.name == txt; });
+          if (f) {
+            select(f); 
+          }
+        } else if (e.which === 27) {
+          $input.blur();
+        }
+      });
+
+      function select(selectedItem) {
         var hash = App.router.getHash(selectedItem).replace('#', '');
         App.router.navigate(hash, {'trigger': true});
-      });
+        $input.blur();
+      }
     },
     /**
      * substringMatcher function for Typehead (search for strings in an array).

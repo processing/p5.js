@@ -1,6 +1,7 @@
 /**
  * @module Math
- * @for Calculation
+ * @submodule Calculation
+ * @for p5
  * @requires core
  */
 define(function (require) {
@@ -34,13 +35,13 @@ define(function (require) {
    * Constrains a value to not exceed a maximum and minimum value.
    *
    * @method constrain
-   * @param  {Number} amt  number to constrain
+   * @param  {Number} n    number to constrain
    * @param  {Number} low  minimum limit
    * @param  {Number} high maximum limit
    * @return {Number}      constrained number
    */
-  p5.prototype.constrain = function(amt, low, high) {
-    return this.max(this.min(amt, high), low);
+  p5.prototype.constrain = function(n, low, high) {
+    return n > high ? high : n < low ? low : n;
   };
 
   /**

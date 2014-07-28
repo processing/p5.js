@@ -10,14 +10,12 @@ define([
     
     routes: {
       '': 'list',
+      'p5': 'list',
+      'p5/': 'list',
       'classes': 'list',
-      'methods': 'list',
-      'properties': 'list',
-      'events': 'list',
-      'list:group': 'list',
       'search': 'search',
-      'file/:filepath/:line': 'file',
-      'get/:searchClass(/:searchItem)': 'get'
+      'libraries/:lib': 'library',
+      ':searchClass(/:searchItem)': 'get'
     },
     /**
      * Whether the json API data was loaded.
@@ -66,14 +64,26 @@ define([
      * @param {string} searchItem The class item name: can be a method, property or event name.
      */
     get: function(searchClass, searchItem) {
+
+      // if looking for a library page, redirect
+      if ((searchClass === 'p5.dom' || searchClass === 'p5.sound')
+          && !searchItem) {
+        window.location.hash = '/libraries/'+searchClass;
+        return;
+      } 
+
       var self = this;
       this.init(function() {
         var item = self.getItem(searchClass, searchItem);
 
+        App.menuView.hide();
+
         if (item) {
           App.itemView.show(item);
         } else {
-          App.itemView.nothingFound();
+          //App.itemView.nothingFound();
+
+          self.list();
         }
 
       });
@@ -104,7 +114,8 @@ define([
         // Search for a class item
       } else if (className && itemName) {
         for (var i = 0; i < itemsCount; i++) {
-          if (items[i].class.toLowerCase() === className && items[i].name.toLowerCase() === itemName) {
+          if ((className == 'p5' || items[i].class.toLowerCase() === className) && 
+            items[i].name.toLowerCase() === itemName) {
             found = items[i];
             break;
           }
@@ -118,10 +129,8 @@ define([
      * @param {string} collection The name of the collection to list.
      */
     list: function(collection) {
-      // Get collection from the hash if not provided
-      // if (!collection)
-      //   var collection = location.hash.replace('#', '');
-      collection = 'allItems'; //temp
+
+      collection = 'allItems';
 
       // Make sure collection is valid
       if (App.collections.indexOf(collection) < 0) {
@@ -129,8 +138,19 @@ define([
       }
 
       this.init(function() {
+        App.menuView.show(collection);
         App.menuView.update(collection);
         App.listView.show(collection);
+      });
+    },
+    /**
+     * Display information for a library.
+     * @param {string} collection The name of the collection to list.
+     */
+    library: function(collection) {
+      this.init(function() {
+        App.menuView.hide();
+        App.libraryView.show(collection.substring(3)); //remove p5.
       });
     },
     /**
@@ -138,17 +158,8 @@ define([
      */
     search: function() {
       this.init(function() {
+        App.menuView.hide();
         App.pageView.hideContentViews();
-      });
-    },
-    /**
-     * Open the file view.
-     * @param {string} filepath
-     * @param {string} line
-     */
-    file: function(filepath, line) {
-      this.init(function() {
-        App.fileView.show(filepath, line);
       });
     },
     /**
@@ -158,13 +169,14 @@ define([
      */
     getHash: function(item) {
       if (!item.hash) {
-        var hash = '#get/';
+        var hash = '#/';
         var isClass = item.hasOwnProperty('classitems');
+        var c = (item.file.indexOf('objects') === -1 && item.file.indexOf('addons') === -1 ) ? 'p5' : item.class;
         // Create hash for links
         if (isClass) {
           hash += item.name;
         } else {
-          hash += item.class + '/' + item.name;
+          hash += c + '/' + item.name;
         }
         item.hash = hash;
       }

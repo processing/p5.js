@@ -1,6 +1,7 @@
 /**
  * @module Structure
- * @for Structure
+ * @submodule Structure
+ * @for p5
  * @requires core
  */
 define(function (require) {
@@ -10,7 +11,7 @@ define(function (require) {
   var p5 = require('core');
 
   p5.prototype.exit = function() {
-    throw 'Not implemented';
+    throw 'exit() not implemented, see remove()';
   };
   /**
    * Stops p5.js from continuously executing the code within draw(). If loop()
@@ -32,8 +33,10 @@ define(function (require) {
    */
   p5.prototype.noLoop = function() {
     this._loop = false;
+    if (this._drawInterval) {
+      clearInterval(this._drawInterval);
+    }
   };
-
   /**
    * By default, p5.js loops through draw() continuously, executing the code
    * within it. However, the draw() loop may be stopped by calling noLoop().
@@ -43,40 +46,77 @@ define(function (require) {
    */
   p5.prototype.loop = function() {
     this._loop = true;
+    this._draw();
   };
 
   /**
-   * The pushStyle() function saves the current style settings and popStyle()
-   * restores the prior settings. Note that these functions are always used
-   * together. They allow you to change the style settings and later return to
-   * what you had. When a new style is started with pushStyle(), it builds on
-   * the current style information. The pushStyle() and popStyle() functions
-   * can be embedded to provide more control. (See the second example above
-   * for a demonstration.)
+   * The push() function saves the current drawing style settings and 
+   * transformations, while pop() restores these settings. Note that these 
+   * functions are always used together. They allow you to change the style 
+   * and transformation settings and later return to what you had. When a new 
+   * state is started with push(), it builds on the current style and transform
+   * information. The push() and pop() functions can be embedded to provide 
+   * more control. (See the second example for a demonstration.)
+   * <br><br>
+   * push() stores information related to the current transformation state
+   * and style settings controlled by the following functions: fill(), 
+   * stroke(), tint(), strokeWeight(), strokeCap(), strokeJoin(), 
+   * imageMode(), rectMode(), ellipseMode(), colorMode(), textAlign(), 
+   * textFont(), textMode(), textSize(), textLeading().
    *
-   * The style information controlled by the following functions are included
-   * in the style: fill(), stroke(), tint(), strokeWeight(), strokeCap(),
-   * strokeJoin(), imageMode(), rectMode(), ellipseMode(), shapeMode(),
-   * colorMode(), textAlign(), textFont(), textMode(), textSize(),
-   * textLeading(), emissive(), specular(), shininess(), ambient()
+   * @method push
+   * @example
+   * <div>
+   * <code>
+   * ellipse(0, 50, 33, 33);  // Left circle
    *
-   * @method pushStyle
+   * push();  // Start a new drawing state
+   * strokeWeight(10);
+   * fill(204, 153, 0);
+   * translate(50, 0);
+   * ellipse(0, 50, 33, 33);  // Middle circle
+   * pop();  // Restore original state
+   *
+   * ellipse(100, 50, 33, 33);  // Right circle
+   * </code>
+   * </div>
+   * <div>
+   * <code>
+   * ellipse(0, 50, 33, 33);  // Left circle
+   *
+   * push();  // Start a new drawing state
+   * strokeWeight(10);
+   * fill(204, 153, 0);
+   * ellipse(33, 50, 33, 33);  // Left-middle circle
+   *
+   * push();  // Start another new drawing state
+   * stroke(0, 102, 153);
+   * ellipse(66, 50, 33, 33);  // Right-middle circle
+   * pop();  // Restore previous state
+   *
+   * pop();  // Restore original state
+   *
+   * ellipse(100, 50, 33, 33);  // Right circle
+   * </code>
+   * </div>
    */
-  p5.prototype.pushStyle = function() {
+  p5.prototype.push = function() {
+    var ctx = this.canvas.getContext('2d');
+    ctx.save();
 
     this.styles.push({
-      fillStyle:   this._curElement.context.fillStyle, // fill
-      strokeStyle: this._curElement.context.strokeStyle, // stroke
-      lineWidth:   this._curElement.context.lineWidth, // strokeWeight
-      lineCap:     this._curElement.context.lineCap, // strokeCap
-      lineJoin:    this._curElement.context.lineJoin, // strokeJoin
+      fillStyle:   ctx.fillStyle, // fill
+      strokeStyle: ctx.strokeStyle, // stroke
+      lineWidth:   ctx.lineWidth, // strokeWeight
+      lineCap:     ctx.lineCap, // strokeCap
+      lineJoin:    ctx.lineJoin, // strokeJoin
       tint:        this._tint, // tint
       imageMode:   this._imageMode, // imageMode
       rectMode:    this._rectMode, // rectMode
       ellipseMode: this._ellipseMode, // ellipseMode
       // @todo shapeMode
       colorMode:   this._colorMode, // colorMode
-      textAlign:   this._curElement.context.textAlign, // textAlign
+      textAlign:   ctx.textAlign, // textAlign
       textFont:    this.textFont,
       textLeading: this.textLeading, // textLeading
       textSize:    this.textSize, // textSize
@@ -85,36 +125,86 @@ define(function (require) {
   };
 
   /**
-   * The pushStyle() function saves the current style settings and popStyle()
-   * restores the prior settings; these functions are always used together.
-   * They allow you to change the style settings and later return to what you
-   * had. When a new style is started with pushStyle(), it builds on the
-   * current style information. The pushStyle() and popStyle() functions can
-   * be embedded to provide more control (see the second example above for
-   * a demonstration.)
+   * The push() function saves the current drawing style settings and 
+   * transformations, while pop() restores these settings. Note that these 
+   * functions are always used together. They allow you to change the style 
+   * and transformation settings and later return to what you had. When a new 
+   * state is started with push(), it builds on the current style and transform
+   * information. The push() and pop() functions can be embedded to provide 
+   * more control. (See the second example for a demonstration.)
+   * <br><br>
+   * push() stores information related to the current transformation state
+   * and style settings controlled by the following functions: fill(), 
+   * stroke(), tint(), strokeWeight(), strokeCap(), strokeJoin(), 
+   * imageMode(), rectMode(), ellipseMode(), colorMode(), textAlign(), 
+   * textFont(), textMode(), textSize(), textLeading().
    * 
-   * @method popStyle
+   * @method pop   
+   * @example
+   * <div>
+   * <code>
+   * ellipse(0, 50, 33, 33);  // Left circle
+   *
+   * push();  // Start a new drawing state
+   * translate(50, 0);
+   * strokeWeight(10);
+   * fill(204, 153, 0);
+   * ellipse(0, 50, 33, 33);  // Middle circle
+   * pop();  // Restore original state
+   *
+   * ellipse(100, 50, 33, 33);  // Right circle
+   * </code>
+   * </div>
+   * <div>
+   * <code>
+   * ellipse(0, 50, 33, 33);  // Left circle
+   *
+   * push();  // Start a new drawing state
+   * strokeWeight(10);
+   * fill(204, 153, 0);
+   * ellipse(33, 50, 33, 33);  // Left-middle circle
+   *
+   * push();  // Start another new drawing state
+   * stroke(0, 102, 153);
+   * ellipse(66, 50, 33, 33);  // Right-middle circle
+   * pop();  // Restore previous state
+   *
+   * pop();  // Restore original state
+   *
+   * ellipse(100, 50, 33, 33);  // Right circle
+   * </code>
+   * </div>
    */
-  p5.prototype.popStyle = function() {
+  p5.prototype.pop = function() {
+    var ctx = this.canvas.getContext('2d');
+    ctx.restore();
 
     var lastS = this.styles.pop();
 
-    this._curElement.context.fillStyle = lastS.fillStyle; // fill
-    this._curElement.context.strokeStyle = lastS.strokeStyle; // stroke
-    this._curElement.context.lineWidth = lastS.lineWidth; // strokeWeight
-    this._curElement.context.lineCap = lastS.lineCap; // strokeCap
-    this._curElement.context.lineJoin = lastS.lineJoin; // strokeJoin
+    ctx.fillStyle = lastS.fillStyle; // fill
+    ctx.strokeStyle = lastS.strokeStyle; // stroke
+    ctx.lineWidth = lastS.lineWidth; // strokeWeight
+    ctx.lineCap = lastS.lineCap; // strokeCap
+    ctx.lineJoin = lastS.lineJoin; // strokeJoin
     this._tint = lastS.tint; // tint
     this._imageMode = lastS.imageMode; // imageMode
-    this._rectMode = lastS._rectMode; // rectMode
+    this._rectMode = lastS.rectMode; // rectMode
     this._ellipseMode = lastS.ellipseMode; // elllipseMode
     // @todo shapeMode
-    this._colorMode = lastS._colorMode; // colorMode
-    this._curElement.context.textAlign = lastS.textAlign; // textAlign
+    this._colorMode = lastS.colorMode; // colorMode
+    ctx.textAlign = lastS.textAlign; // textAlign
     this.textFont = lastS.textFont;
     this.textLeading = lastS.textLeading; // textLeading
     this.textSize = lastS.textSize; // textSize
     this.textStyle = lastS.textStyle; // textStyle
+  };
+
+  p5.prototype.pushStyle = function() {
+    throw new Error('pushStyle() not used, see push()');
+  };
+
+  p5.prototype.popStyle = function() {
+    throw new Error('popStyle() not used, see pop()');
   };
 
   /**
@@ -160,8 +250,9 @@ define(function (require) {
   };
 
   p5.prototype.size = function() {
-    throw 'Not implemented';
+    throw 'size() not implemented, see createCanvas()';
   };
+
 
   return p5;
 

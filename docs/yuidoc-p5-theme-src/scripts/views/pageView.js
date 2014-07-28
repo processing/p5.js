@@ -7,9 +7,9 @@ define([
   'searchView',
   'listView',
   'itemView',
-  'fileView',
-  'menuView'
-], function(_, Backbone, App, searchView, listView, itemView, fileView, menuView) {
+  'menuView',
+  'libraryView'
+], function(_, Backbone, App, searchView, listView, itemView, menuView, libraryView) {
 
   var pageView = Backbone.View.extend({
     el: 'body',
@@ -41,20 +41,20 @@ define([
         App.contentViews.push(App.itemView);
       }
       
-      // File view
-      if (!App.fileView) {
-        App.fileView = new fileView();
-        App.fileView.init().render();
-        // Add the item view to the views array
-        App.contentViews.push(App.fileView);
-      }
-      
       // List view
       if (!App.listView) {
         App.listView = new listView();
         App.listView.init().render();
         // Add the list view to the views array
         App.contentViews.push(App.listView);
+      }
+      
+      // Libary view
+      if (!App.libraryView) {
+        App.libraryView = new libraryView();
+        App.libraryView.init().render();
+        // Add the list view to the views array
+        App.contentViews.push(App.libraryView);
       }
       
       // Search

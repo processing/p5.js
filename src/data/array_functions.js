@@ -1,6 +1,7 @@
 /**
  * @module Data
- * @for Array Functions
+ * @submodule Array Functions
+ * @for p5
  * @requires core
  */
 define(function (require) {

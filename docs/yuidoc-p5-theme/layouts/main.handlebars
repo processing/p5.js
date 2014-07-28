@@ -7,7 +7,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>p5.js</title>
+    <title>p5.js | reference</title>
     <meta name="description" content="p5.js a JS client-side library for creating graphic and interactive experiences, based on the core principles of Processing.">
     <meta name="viewport" content="width=device-width">
 
@@ -34,8 +34,14 @@
 
 
     <div id="family">
-      <p><a href="http://processing.org">Processing</a> <a class="here" href="../">p5.js</a></p> 
+      <p><a href="http://processing.org">Processing</a> <a class="here" href="<?php echo getRoot(); ?>">p5.js</a></p> 
+      <form name="search" method="get" action="http://www.google.com/search">
+        <input type="hidden" name="as_sitesearch" value="p5js.org" />
+        <input id="search_field" type="text" name="as_q" value="" size="20" class="text" />
+        <input id="search_button" type="submit" value=" " />
+      </form>
     </div>    
+  
 
     <div id="container">
     <!-- identity -->
@@ -54,6 +60,7 @@
       <li><a href="../download/">Download</a></li> 
       <li><a href="../getting-started/">Getting&nbsp;Started</a></li>
       <li><a href="./">Reference</a></li>
+      <li><a href="../libraries/">Libraries</a></li>
       <li><a href="../learning/">Learning</a></li>
       <li><a href="../development/">Development</a></li>
       <li><a href="http://github.com/lmccart/p5.js" target=_blank class="other-link">Github</a></li>
@@ -67,19 +74,20 @@
         <a href="./" class="anchor"><h2>Reference</h2></a>
 
         <div id="search" class="search-wrapper"></div>
-      
         <div id="collection-list-nav">
-          <!--class="container-fluid"-->
-          <div id="list" class="list-wrapper"></div>
-          <div id="item" class="item-wrapper apidocs"></div>
-          <div id="file" class="file-wrapper"></div>
+
         </div>
+
+        <!--class="container-fluid"-->
+        <div id="list" class="list-wrapper allItems-collection"></div>
+        <div id="item" class="item-wrapper apidocs"></div>
+        <div id="file" class="file-wrapper"></div>
 
       </section>
 
 
       <footer>
-        <p>p5.js is developed by <a href="http://lauren-mccarthy.com" target="_blank">Lauren McCarthy</a> and other <a href="https://github.com/lmccart/p5.js/graphs/contributors" target="_blank">contributors</a>, with the support of the <a href="http://processing.org/foundation/" target="_blank">Processing Foundation</a> and <a href="http://itp.nyu.edu/itp/" target="_blank">NYU ITP</a>.</p>
+        <p>p5.js is developed by <a href="http://lauren-mccarthy.com" target="_blank">Lauren McCarthy</a> and other <a href="../development/#contributors" target="_blank">contributors</a>, with the support of the <a href="http://processing.org/foundation/" target="_blank">Processing Foundation</a> and <a href="http://itp.nyu.edu/itp/" target="_blank">NYU ITP</a>.</p>
       </footer>
     </div><!-- end column-span -->
 
@@ -108,6 +116,7 @@
 
     <script src="{{projectAssets}}/js/require.min.js"></script>
     <script src="{{projectAssets}}/js/reference.js"></script>
+
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. 
     <script>

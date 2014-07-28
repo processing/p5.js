@@ -2,8 +2,7 @@ var fingers;
 
 function setup() {
   createCanvas(320, 240);
-  fingers = createVideo("fingers.mov", "fingers.webm");
-  fingers.play();
+  fingers = createVideo(["../fingers.mov", "../fingers.webm"]);
   fingers.loop();
   fingers.hide();
   noStroke();
@@ -11,7 +10,7 @@ function setup() {
 }
 
 function draw() {
-  video(fingers, 0, 0, 320, 240);
+  image(fingers, 0, 0);
   loadPixels();
   background(255);
   var stepSize = round(constrain(mouseX / 8, 6, 32));

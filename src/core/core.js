@@ -1,5 +1,7 @@
 /**
- * @module *
+ * @module Structure
+ * @submodule Structure
+ * @for p5
  * @requires constants
  */
 define(function (require) {
@@ -13,8 +15,6 @@ define(function (require) {
   var constants = require('constants');
 
   /**
-   * p5
-   * 
    * This is the p5 instance constructor.
    *
    * A p5 instance holds all the properties and methods related to
@@ -38,129 +38,6 @@ define(function (require) {
     // PUBLIC p5 PROPERTIES AND METHODS
     //////////////////////////////////////////////
 
-    /**
-     * The system variable frameCount contains the number of frames that have
-     * been displayed since the program started. Inside setup() the value is 0,
-     * after the first iteration of draw it is 1, etc.
-     *
-     * @property frameCount
-     * @for Environment:Environment
-     * @example
-     *   <div><code>
-     *     function setup() {
-     *       frameRate(30);
-     *     }
-     *
-     *     function draw() {
-     *       line(0, 0, width, height);
-     *       print(frameCount);
-     *     }
-     *   </code></div>
-     */
-    this.frameCount = 0;
-
-    /**
-     * Confirms if a p5.js program is "focused," meaning that it is active and
-     * will accept mouse or keyboard input. This variable is "true" if it is
-     * focused and "false" if not.
-     *
-     * @property focused
-     * @for Environment:Environment
-     * @example
-     *   <div><code>
-     *     if (focused) {  // or "if (focused === true)"
-     *       ellipse(25, 25, 50, 50);
-     *     } else {
-     *       line(0, 0, 100, 100);
-     *       line(100, 0, 0, 100);
-     *     }
-     *   </code></div>
-     */
-    this.focused = true;
-  
-    /**
-     * System variable that stores the width of the entire screen display. This
-     * is used to run a full-screen program on any display size.
-     *
-     * @property displayWidth
-     * @for Environment:Environment
-     * @example
-     *   <div><code>
-     *     size(displayWidth, displayHeight);
-     *   </code></div>
-     */
-    this.displayWidth = screen.width;
-  
-    /**
-     * System variable that stores the height of the entire screen display. This
-     * is used to run a full-screen program on any display size.
-     *
-     * @property displayHeight
-     * @for Environment:Environment
-     * @example
-     *   <div><code>
-     *     size(displayWidth, displayHeight);
-     *   </code></div>
-     */
-    this.displayHeight = screen.height;
-  
-    /**
-     * System variable that stores the width of the inner window, it maps to
-     * window.innerWidth.
-     *
-     * @property windowWidth
-     * @for Environment:Environment
-     * @example
-     *   <div><code>
-     *     size(windowWidth, windowHeight);
-     *   </code></div>
-     */
-    this.windowWidth = window.innerWidth;
-    window.addEventListener('resize', function (e) {
-      // remap the window width on window resize
-      this.windowWidth = window.innerWidth;
-    });
-  
-    /**
-     * System variable that stores the height of the inner window, it maps to
-     * window.innerHeight.
-     *
-     * @property windowHeight
-     * @for Environment:Environment
-     * @example
-     *   <div><code>
-     *     size(windowWidth, windowHeight);
-     *   </code></div>
-     */
-    this.windowHeight = window.innerHeight;
-    window.addEventListener('resize', function (e) {
-      // remap the window height on resize
-      this.windowHeight = window.windowHeight;
-    });
-
-    /**
-     * System variable that stores the width of the drawing canvas. This value
-     * is set by the first parameter of the createCanvas() function.
-     * For example, the function call createCanvas(320, 240) sets the width
-     * variable to the value 320. The value of width defaults to 100 if
-     * createCanvas() is not used in a program.
-     *
-     * @property width
-     * @for Environment:Environment
-     */
-    this.width = 0;
-  
-    /**
-     * System variable that stores the height of the drawing canvas. This value
-     * is set by the second parameter of the createCanvas() function. For
-     * example, the function call createCanvas(320, 240) sets the height
-     * variable to the value 240. The value of height defaults to 100 if
-     * createCanvas() is not used in a program.
-     *
-     * @property height
-     * @for Environment:Environment
-     */
-    this.height = 0;
 
     /**
      * The setup() function is called once when the program starts. It's used to
@@ -172,7 +49,6 @@ define(function (require) {
      * draw().
      *
      * @method setup
-     * @for Structure:Structure
      * @example
      *   <div><code>
      *     var a = 0;
@@ -210,60 +86,19 @@ define(function (require) {
      * your program, as shown in the above example.
      *
      * @method draw
-     * @for Structure:Structure
      */
 
-    /**
-     * @method remove
-     */
-    this.remove = function() {
-      if (this._curElement) {
-
-        // stop draw
-        if (this._timeout) {
-          clearTimeout(this._timeout);
-          this._loop = false;
-        }
-
-        // @TODO unregister events
-        for (var ev in this._events) {
-          var pairs = this._events[ev];
-          for (var i=0; i<pairs.length; i++) {
-            pairs[i][0].removeEventListener(ev, pairs[i][1]);
-          }
-        }
-
-        // remove window bound properties and methods
-        if (this._isGlobal) {
-          for (var method in p5.prototype) {
-            delete(window[method]);
-          }
-          // Attach its properties to the window
-          for (var prop in this) {
-            if (this.hasOwnProperty(prop)) {
-              delete(window[prop]);
-            }
-          }
-          for (var constant in constants) {
-            delete(window[constant]);
-          }
-        }
-
-        // remove canvas from DOM
-        var elt = this._curElement.elt;
-        elt.parentNode.removeChild(elt);
-
-      }
-    };
     
     //////////////////////////////////////////////
     // PRIVATE p5 PROPERTIES AND METHODS
     //////////////////////////////////////////////
 
+    this._setupDone = false;
     this._pixelDensity = window.devicePixelRatio || 1; // for handling hidpi
     this._startTime = new Date().getTime();
     this._userNode = node;
     this._curElement = null;
+    this._elements = [];
     this._preloadCount = 0;
     this._updateInterval = 0;
     this._isGlobal = false;
@@ -274,19 +109,19 @@ define(function (require) {
       height: 100
     };
     this._events = { // keep track of user-events for unregistering later
-      'mousemove':[],
-      'mousedown':[],
-      'mouseup':[],
-      'click':[],
-      'mousewheel':[],
-      'mouseover':[],
-      'mouseout': [],
-      'keydown':[],
-      'keyup':[],
-      'keypress':[],
-      'touchstart':[],
-      'touchmove':[],
-      'touchend':[]
+      'mousemove': null,
+      'mousedown': null,
+      'mouseup': null,
+      'click': null,
+      'mousewheel': null,
+      'mouseover': null,
+      'mouseout': null,
+      'keydown': null,
+      'keyup': null,
+      'keypress': null,
+      'touchstart': null,
+      'touchmove': null,
+      'touchend': null
     };
 
     this._start = function () {
@@ -341,12 +176,30 @@ define(function (require) {
     }.bind(this);
 
     this._setup = function() {
+
+      // return preload functions to their normal vals if switched by preload
+      var context = this._isGlobal ? window : this;
+      if (typeof context.preload === 'function') {
+        this._preloadFuncs.forEach(function (f) {
+          context[f] = p5.prototype[f];
+        });
+      }
+
       // Short-circuit on this, in case someone used the library in "global"
       // mode earlier
-      var userSetup = this.setup || window.setup;
-      if (typeof userSetup === 'function') {
-        userSetup();
+      if (typeof context.setup === 'function') {
+        context.setup();
       }
+
+      // unhide any hidden canvases that were created
+      var reg = new RegExp(/(^|\s)p5_hidden(?!\S)/g);
+      var canvases = document.getElementsByClassName('p5_hidden');
+      for (var i = 0; i < canvases.length; i++) {
+        var k = canvases[i];
+        k.style.visibility = '';
+        k.className = k.className.replace(reg, '');
+      }
+      this._setupDone = true;
     }.bind(this);
 
     this._draw = function () {
@@ -358,18 +211,21 @@ define(function (require) {
       var userDraw = this.draw || window.draw;
 
       if (this._loop) {
-        this._timeout = setTimeout(function() {
+        if (this._drawInterval) {
+          clearInterval(this._drawInterval);
+        }
+        this._drawInterval = setTimeout(function() {
           window.requestDraw(this._draw.bind(this));
         }.bind(this), 1000 / this._targetFrameRate);
       }
       // call user's draw
       if (typeof userDraw === 'function') {
-        this.pushMatrix();
+        this.push();
         if (typeof userSetup === 'undefined') {
           this.scale(this._pixelDensity, this._pixelDensity);
         }
         userDraw();
-        this.popMatrix();
+        this.pop();
       }
     }.bind(this);
 
@@ -382,12 +238,6 @@ define(function (require) {
       }.bind(this), 1000/this._targetFrameRate);
     }.bind(this);
 
-    this._applyDefaults = function() {
-      this._curElement.context.fillStyle = '#FFFFFF';
-      this._curElement.context.strokeStyle = '#000000';
-      this._curElement.context.lineCap = constants.ROUND;
-    }.bind(this);
-
     this._setProperty = function(prop, value) {
       this[prop] = value;
       if (this._isGlobal) {
@@ -395,53 +245,90 @@ define(function (require) {
       }
     }.bind(this);
 
-    this._registerPreloadFunc = function(func) {
-      this._preloadFuncs.push(func);
-    }.bind(this);
+    /**
+     * @method remove
+     */
+    this.remove = function() {
+      if (this._curElement) {
+
+        // stop draw
+        this._loop = false;
+        if (this._drawInterval) {
+          clearTimeout(this._drawInterval);
+        }
+        if (this._updateInterval) {
+          clearTimeout(this._updateInterval);
+        }
+
+        // unregister events sketch-wide
+        for (var ev in this._events) {
+          window.removeEventListener(ev, this._events[ev]);
+        }
+
+        // remove DOM elements created by p5, and listeners
+        for (var i=0; i<this._elements.length; i++) {
+          var e = this._elements[i];
+          if (e.elt.parentNode) {
+            e.elt.parentNode.removeChild(e.elt);
+          }
+          for (var elt_ev in e._events) {
+            e.elt.removeEventListener(elt_ev, e._events[elt_ev]);
+          }
+        }
+
+        // call any registered remove functions
+        var self = this;
+        this._removeFuncs.forEach(function(f) {
+          self[f]();
+        });
+
+        // remove window bound properties and methods
+        if (this._isGlobal) {
+          for (var p in p5.prototype) {
+            delete(window[p]);
+          }
+          for (var p2 in this) {
+            if (this.hasOwnProperty(p2)) {
+              delete(window[p2]);
+            }
+          }
+        }
+      }
+    };
+
+
+    // attach constants to p5 instance
+    for (var k in constants) {
+      p5.prototype[k] = constants[k];
+    }
 
     // If the user has created a global setup or draw function,
     // assume "global" mode and make everything global (i.e. on the window)
     if (!sketch) {
       this._isGlobal = true;
       // Loop through methods on the prototype and attach them to the window
-      for (var method in p5.prototype) {
-        var ev = method.substring(2);
-        if (!this._events.hasOwnProperty(ev)) {
-          if(typeof p5.prototype[method] === 'function') {
-            window[method] = p5.prototype[method].bind(this);
+      for (var p in p5.prototype) {
+        if(typeof p5.prototype[p] === 'function') {
+          var ev = p.substring(2);
+          if (!this._events.hasOwnProperty(ev)) {
+            window[p] = p5.prototype[p].bind(this);
           }
+        } else {
+          window[p] = p5.prototype[p];
         }
       }
       // Attach its properties to the window
-      for (var prop in this) {
-        if (this.hasOwnProperty(prop)) {
-          window[prop] = this[prop];
+      for (var p2 in this) {
+        if (this.hasOwnProperty(p2)) {
+          window[p2] = this[p2];
         }
       }
-      for (var p in p5.prototype) {
-        if (p5.prototype.hasOwnProperty(p) &&
-          typeof p5.prototype[p] !== 'function') {
-          window[p] = this[p];
-        }
-      }
-      for (var constant in constants) {
-        if (constants.hasOwnProperty(constant)) {
-          window[constant] = constants[constant];
-        }
-      }
+      
     } else {
       // Else, the user has passed in a sketch function closure
-      // So create attach the user given 'setup', 'draw', etc on this
+      // So attach the user given 'setup', 'draw', etc on this
       // instance of p5
       sketch(this);
-
-      // attach constants to p5 instance
-      for (var c in constants) {
-        if (constants.hasOwnProperty(c)) {
-          p5.prototype[c] = constants[c];
-        }
-      }
-
     }
 
     // Bind events to window (not using container div bc key events don't work)
@@ -450,9 +337,18 @@ define(function (require) {
       if (f) {
         var m = f.bind(this);
         window.addEventListener(e, m);
-        this._events[e].push([window, m]);
+        this._events[e] = m;
       }
     }
+
+    var self = this;
+    window.addEventListener('focus', function() {
+      self._setProperty('focused', true);
+    });
+
+    window.addEventListener('blur', function() {
+      self._setProperty('focused', false);
+    });
 
     // TODO: ???
     if (document.readyState === 'complete') {
@@ -463,21 +359,25 @@ define(function (require) {
 
   };
 
-  // attach constants to p5 instance
-  for (var c in constants) {
-    if (constants.hasOwnProperty(c)) {
-      p5.prototype[c] = constants[c];
-    }
-  }
 
+  // functions that cause preload to wait
+  // more can be added by using _registerPreloadFunc(func)
   p5.prototype._preloadFuncs = [
     'loadJSON',
     'loadImage',
     'loadStrings',
-    'loadXML'
+    'loadXML',
+    'loadShape'
   ];
+
+  p5.prototype._removeFuncs = [];
+
   p5.prototype._registerPreloadFunc = function (func) {
     p5.prototype._preloadFuncs.push(func);
+  }.bind(this);
+
+  p5.prototype._registerRemoveFunc = function(func) {
+    p5.prototype._removeFuncs.push(func);
   }.bind(this);
 
   return p5;

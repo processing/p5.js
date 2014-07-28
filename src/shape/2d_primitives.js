@@ -1,6 +1,7 @@
 /**
  * @module Shape
- * @for 2D Primitives
+ * @submodule 2D Primitives
+ * @for p5
  * @requires core
  * @requires canvas
  * @requires constants
@@ -63,6 +64,10 @@ define(function (require) {
    * </div>
    */
 	p5.prototype.arc = function(x, y, width, height, start, stop, mode) {
+    if (!this._doStroke && !this._doFill) {
+      return;
+    }
+    var ctx = this.canvas.getContext('2d');
     var vals = canvas.arcModeAdjust(
       x,
       y,
@@ -74,21 +79,25 @@ define(function (require) {
       //scale the arc if it is oblong
       xScale = (vals.h > vals.w) ? vals.w / vals.h : 1,
       yScale = (vals.h > vals.w) ? 1 : vals.h / vals.w;
-    this._curElement.context.scale(xScale, yScale);
-    this._curElement.context.beginPath();
-    this._curElement.context.arc(vals.x, vals.y, radius, start, stop);
-    this._curElement.context.stroke();
-    if (mode === constants.CHORD || mode === constants.OPEN) {
-      this._curElement.context.closePath();
-    } else if (mode === constants.PIE || mode === undefined) {
-      this._curElement.context.lineTo(vals.x, vals.y);
-      this._curElement.context.closePath();
+    ctx.scale(xScale, yScale);
+    ctx.beginPath();
+    ctx.arc(vals.x, vals.y, radius, start, stop);
+    if (this._doStroke) {
+      ctx.stroke();
     }
-    this._curElement.context.fill();
-    if(mode !== constants.OPEN && mode !== undefined) {
+    if (mode === constants.CHORD || mode === constants.OPEN) {
+      ctx.closePath();
+    } else if (mode === constants.PIE || mode === undefined) {
+      ctx.lineTo(vals.x, vals.y);
+      ctx.closePath();
+    }
+    if (this._doFill) {
+      ctx.fill();
+    }
+    if(this._doStroke && mode !== constants.OPEN && mode !== undefined) {
       // final stroke must be after fill so the fill does not
       // cover part of the line
-      this._curElement.context.stroke();
+      ctx.stroke();
     }
 
     return this;
@@ -114,6 +123,10 @@ define(function (require) {
    * </div>
    */
   p5.prototype.ellipse = function(x, y, width, height) {
+    if (!this._doStroke && !this._doFill) {
+      return;
+    }
+    var ctx = this.canvas.getContext('2d');
     var vals = canvas.modeAdjust(
       x,
       y,
@@ -128,9 +141,9 @@ define(function (require) {
       ye = vals.y + vals.h,      // y-end
       xm = vals.x + vals.w / 2,  // x-middle
       ym = vals.y + vals.h / 2;  // y-middle
-    this._curElement.context.beginPath();
-    this._curElement.context.moveTo(vals.x, ym);
-    this._curElement.context.bezierCurveTo(
+    ctx.beginPath();
+    ctx.moveTo(vals.x, ym);
+    ctx.bezierCurveTo(
       vals.x,
       ym - oy,
       xm - ox,
@@ -138,7 +151,7 @@ define(function (require) {
       xm,
       vals.y
     );
-    this._curElement.context.bezierCurveTo(
+    ctx.bezierCurveTo(
       xm + ox,
       vals.y,
       xe,
@@ -146,8 +159,8 @@ define(function (require) {
       xe,
       ym
     );
-    this._curElement.context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-    this._curElement.context.bezierCurveTo(
+    ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+    ctx.bezierCurveTo(
       xm - ox,
       ye,
       vals.x,
@@ -155,9 +168,13 @@ define(function (require) {
       vals.x,
       ym
     );
-    this._curElement.context.closePath();
-    this._curElement.context.fill();
-    this._curElement.context.stroke();
+    ctx.closePath();
+    if (this._doFill) {
+      ctx.fill();
+    }
+    if (this._doStroke) {
+      ctx.stroke();
+    }
 
     return this;
   };
@@ -167,10 +184,7 @@ define(function (require) {
    * the stroke() function. A line cannot be filled, therefore the fill()
    * function will not affect the color of a line. 2D lines are drawn with a
    * width of one pixel by default, but this can be changed with the
-   * strokeWeight() function. The version with six parameters allows the line
-   * to be placed anywhere within XYZ space. Drawing this shape in 3D with the
-   * z parameter requires the P3D parameter in combination with size() as shown
-   * in the above example. 
+   * strokeWeight() function.
    * 
    * @method line
    * @param  {Number} x1 the x-coordinate of the first point
@@ -178,15 +192,35 @@ define(function (require) {
    * @param  {Number} x2 the x-coordinate of the second point
    * @param  {Number} y2 the y-coordinate of the second point
    * @return {p5}        the p5 object
+   * @example
+   * <div>
+   * <code>
+   * line(30, 20, 85, 75);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * line(30, 20, 85, 20);
+   * stroke(126);
+   * line(85, 20, 85, 75);
+   * stroke(255);
+   * line(85, 75, 30, 75);
+   * </code>
+   * </div>
    */
   p5.prototype.line = function(x1, y1, x2, y2) {
-    if (this._curElement.context.strokeStyle === 'rgba(0,0,0,0)') {
+    if (!this._doStroke) {
       return;
     }
-    this._curElement.context.beginPath();
-    this._curElement.context.moveTo(x1, y1);
-    this._curElement.context.lineTo(x2, y2);
-    this._curElement.context.stroke();
+    var ctx = this.canvas.getContext('2d');
+    if (ctx.strokeStyle === 'rgba(0,0,0,0)') {
+      return;
+    }
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
 
     return this;
   };
@@ -194,40 +228,50 @@ define(function (require) {
   /**
    * Draws a point, a coordinate in space at the dimension of one pixel.
    * The first parameter is the horizontal value for the point, the second
-   * value is the vertical value for the point, and the optional third value is
-   * the depth value. Drawing this shape in 3D with the z parameter requires
-   * the P3D parameter in combination with size() as shown in the above
-   * example.
+   * value is the vertical value for the point.
    * 
    * @method point
    * @param  {Number} x the x-coordinate
    * @param  {Number} y the y-coordinate
    * @return {p5}       the p5 object
+   * @example
+   * <div>
+   * <code>
+   * point(30, 20);
+   * point(85, 20);
+   * point(85, 75);
+   * point(30, 75);
+   * </code>
+   * </div>
    */
   p5.prototype.point = function(x, y) {
-    var s = this._curElement.context.strokeStyle;
-    var f = this._curElement.context.fillStyle;
+    if (!this._doStroke) {
+      return;
+    }
+    var ctx = this.canvas.getContext('2d');
+    var s = ctx.strokeStyle;
+    var f = ctx.fillStyle;
     if (s === 'rgba(0,0,0,0)') {
       return;
     }
     x = Math.round(x);
     y = Math.round(y);
-    this._curElement.context.fillStyle = s;
-    if (this._curElement.context.lineWidth > 1) {
-      this._curElement.context.beginPath();
-      this._curElement.context.arc(
+    ctx.fillStyle = s;
+    if (ctx.lineWidth > 1) {
+      ctx.beginPath();
+      ctx.arc(
         x,
         y,
-        this._curElement.context.lineWidth / 2,
+        ctx.lineWidth / 2,
         0,
         constants.TWO_PI,
         false
       );
-      this._curElement.context.fill();
+      ctx.fill();
     } else {
-      this._curElement.context.fillRect(x, y, 1, 1);
+      ctx.fillRect(x, y, 1, 1);
     }
-    this._curElement.context.fillStyle = f;
+    ctx.fillStyle = f;
 
     return this;
   };
@@ -250,16 +294,30 @@ define(function (require) {
    * @param {type} x4 the x-coordinate of the fourth point
    * @param {type} y4 the y-coordinate of the fourth point
    * @return {p5}     the p5 object
+   * @example
+   * <div>
+   * <code>   
+   * quad(38, 31, 86, 20, 69, 63, 30, 76);
+   * </code>
+   * </div>
    */
   p5.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
-    this._curElement.context.beginPath();
-    this._curElement.context.moveTo(x1, y1);
-    this._curElement.context.lineTo(x2, y2);
-    this._curElement.context.lineTo(x3, y3);
-    this._curElement.context.lineTo(x4, y4);
-    this._curElement.context.closePath();
-    this._curElement.context.fill();
-    this._curElement.context.stroke();
+    if (!this._doStroke && !this._doFill) {
+      return;
+    }
+    var ctx = this.canvas.getContext('2d');
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.lineTo(x3, y3);
+    ctx.lineTo(x4, y4);
+    ctx.closePath();
+    if (this._doFill) {
+      ctx.fill();
+    }
+    if (this._doStroke) {
+      ctx.stroke();
+    }
 
     return this;
   };
@@ -277,15 +335,34 @@ define(function (require) {
   * @param  {Number} c width of the rectangle
   * @param  {Number} d height of the rectangle
   * @return {p5}       the p5 object
-  * 
+  * @example
+  * <div>
+  * <code>
+  * rect(30, 20, 55, 55);
+  * </code>
+  * </div>
   */
   p5.prototype.rect = function(a, b, c, d) {
+    if (!this._doStroke && !this._doFill) {
+      return;
+    }
     var vals = canvas.modeAdjust(a, b, c, d, this._rectMode);
-    this._curElement.context.beginPath();
-    this._curElement.context.rect(vals.x, vals.y, vals.w, vals.h);
-    this._curElement.context.fill();
-    this._curElement.context.stroke();
-
+    var ctx = this.canvas.getContext('2d');
+    // Translate the line by (0.5, 0.5) to draw a crisp rectangle border
+    if (this._doStroke && ctx.lineWidth % 2 === 1) {
+      ctx.translate(0.5, 0.5);
+    }
+    ctx.beginPath();
+    ctx.rect(vals.x, vals.y, vals.w, vals.h);
+    if (this._doFill) {
+      ctx.fill();
+    }
+    if (this._doStroke) {
+      ctx.stroke();
+    }
+    if (this._doStroke && ctx.lineWidth % 2 === 1) {
+      ctx.translate(-0.5, -0.5);
+    }
     return this;
   };
 
@@ -302,15 +379,29 @@ define(function (require) {
   * @param  {Number} x3 x-coordinate of the third point
   * @param  {Number} y3 y-coordinate of the third point
   * @return {p5}        the p5 object
+  * @example
+  * <div>
+  * <code>
+  * triangle(30, 75, 58, 20, 86, 75);
+  * </code>
+  * </div>
   */
   p5.prototype.triangle = function(x1, y1, x2, y2, x3, y3) {
-    this._curElement.context.beginPath();
-    this._curElement.context.moveTo(x1, y1);
-    this._curElement.context.lineTo(x2, y2);
-    this._curElement.context.lineTo(x3, y3);
-    this._curElement.context.closePath();
-    this._curElement.context.fill();
-    this._curElement.context.stroke();
+    if (!this._doStroke && !this._doFill) {
+      return;
+    }
+    var ctx = this.canvas.getContext('2d');
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.lineTo(x3, y3);
+    ctx.closePath();
+    if (this._doFill) {
+      ctx.fill();
+    }
+    if (this._doStroke) {
+      ctx.stroke();
+    }
 
     return this;
   };

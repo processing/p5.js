@@ -4,21 +4,23 @@
   </h1>
 </div> -->
 
-<% var i=0; %>
-
 <% _.each(groups, function(group){ %>
-  <div class="column_<%= i%3 %>">
-  <h3 class="group-name"><%=group.name%></h3>
+  <h4 class="group-name" id="group-<%=group.name%>"><%=group.name%></h4>
+  <div class="reference-group clearfix main-ref-page">  
   <% _.each(group.subgroups, function(subgroup, ind) { %>
-    <% if (subgroup.name !== group.name) { %>
-      <strong><%=subgroup.name%></strong>
+    <dl>
+    <% if (subgroup.name !== '0') { %>
+        <dt class="subgroup-<%=subgroup.name%>"><%=subgroup.name%></dt>
     <% } %>
     <% _.each(subgroup.items, function(item) { %>
-      <br>
-      <a href="<%=item.hash%>"><%=item.name%><% if (item.itemtype === 'method') { %>()<%}%></a>
+      <dd><a href="<%=item.hash%>"><%=item.name%><% if (item.itemtype === 'method') { %>()<%}%></a></dd>
     <% }); %>
-    <br><br>
+    </dl>
   <% }); %>
   </div>
-  <% i++; %>
 <% }); %>
+
+
+
+                
+                  

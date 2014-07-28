@@ -1,6 +1,7 @@
 /**
  * @module Image
- * @for Pixels
+ * @submodule Pixels
+ * @for p5
  * @requires core
  */
 define(function (require) {
@@ -23,7 +24,6 @@ define(function (require) {
    * function must be run to update the changes.
    *
    * @property pixels[]
-   * @for Image:Pixels
    */
   p5.prototype.pixels = [];
 

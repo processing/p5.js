@@ -1,6 +1,7 @@
 /**
  * @module Data
- * @for String Functions
+ * @submodule String Functions
+ * @for p5
  * @requires core
  */
 define(function (require) {

@@ -13,8 +13,6 @@ var require = {
     // Twitter typeahead + bloodhound
     'typeahead': 'vendor/typeahead-amd/typeahead.bundle',
     //'bloodhound': 'vendor/typeahead-amd/',
-    
-    'handlebars': 'vendor/handlebars/handlebars-v1.3.0',
     'prettify': 'vendor/prettify/prettify',
 //    'prism': 'vendor/prism/prism',
 
@@ -27,7 +25,7 @@ var require = {
     'itemView': 'views/itemView',
     'searchView': 'views/searchView',
     'pageView': 'views/pageView',
-    'fileView': 'views/fileView',
-    'menuView': 'views/menuView'
+    'menuView': 'views/menuView',
+    'libraryView': 'views/libraryView'
   }
 };

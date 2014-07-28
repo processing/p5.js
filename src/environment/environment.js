@@ -1,6 +1,7 @@
 /**
  * @module Environment
- * @for Environment
+ * @submodule Environment
+ * @for p5
  * @requires core
  * @requires constants
  */
@@ -17,6 +18,44 @@ define(function(require) {
   p5.prototype._lastFrameTime = 0;
   p5.prototype._targetFrameRate = 60;
 
+  /**
+   * The system variable frameCount contains the number of frames that have
+   * been displayed since the program started. Inside setup() the value is 0,
+   * after the first iteration of draw it is 1, etc.
+   *
+   * @property frameCount
+   * @example
+   *   <div><code>
+   *     function setup() {
+   *       frameRate(30);
+   *     }
+   *
+   *     function draw() {
+   *       line(0, 0, width, height);
+   *       print(frameCount);
+   *     }
+   *   </code></div>
+   */
+  p5.prototype.frameCount = 0;
+
+  /**
+   * Confirms if a p5.js program is "focused," meaning that it is active and
+   * will accept mouse or keyboard input. This variable is "true" if it is
+   * focused and "false" if not.
+   *
+   * @property focused
+   * @example
+   *   <div><code>
+   *     if (focused) {  // or "if (focused === true)"
+   *       ellipse(25, 25, 50, 50);
+   *     } else {
+   *       line(0, 0, 100, 100);
+   *       line(100, 0, 0, 100);
+   *     }
+   *   </code></div>
+   */
+  p5.prototype.focused = true;
+  
   /**
    * Sets the cursor to a predefined symbol or an image, or makes it visible
    * if already hidden. If you are trying to set an image as the cursor, the
@@ -114,6 +153,154 @@ define(function(require) {
   p5.prototype.noCursor = function() {
     this._curElement.elt.style.cursor = 'none';
   };
+
+
+  /**
+   * System variable that stores the width of the entire screen display. This
+   * is used to run a full-screen program on any display size.
+   *
+   * @property displayWidth
+   * @example
+   *   <div><code>
+   *     size(displayWidth, displayHeight);
+   *   </code></div>
+   */
+  p5.prototype.displayWidth = screen.width;
+
+  /**
+   * System variable that stores the height of the entire screen display. This
+   * is used to run a full-screen program on any display size.
+   *
+   * @property displayHeight
+   * @example
+   *   <div><code>
+   *     size(displayWidth, displayHeight);
+   *   </code></div>
+   */
+  p5.prototype.displayHeight = screen.height;
+
+  /**
+   * System variable that stores the width of the inner window, it maps to
+   * window.innerWidth.
+   *
+   * @property windowWidth
+   * @example
+   *   <div><code>
+   *     size(windowWidth, windowHeight);
+   *   </code></div>
+   */
+  p5.prototype.windowWidth = window.innerWidth;
+  window.addEventListener('resize', function (e) {
+    // remap the window width on window resize
+    this.windowWidth = window.innerWidth;
+  });
+
+  /**
+   * System variable that stores the height of the inner window, it maps to
+   * window.innerHeight.
+   *
+   * @property windowHeight
+   * @example
+   *   <div><code>
+   *     size(windowWidth, windowHeight);
+   *   </code></div>
+   */
+  p5.prototype.windowHeight = window.innerHeight;
+  window.addEventListener('resize', function (e) {
+    // remap the window height on resize
+    this.windowHeight = window.windowHeight;
+  });
+
+  /**
+   * System variable that stores the width of the drawing canvas. This value
+   * is set by the first parameter of the createCanvas() function.
+   * For example, the function call createCanvas(320, 240) sets the width
+   * variable to the value 320. The value of width defaults to 100 if
+   * createCanvas() is not used in a program.
+   *
+   * @property width
+   */
+  p5.prototype.width = 0;
+
+  /**
+   * System variable that stores the height of the drawing canvas. This value
+   * is set by the second parameter of the createCanvas() function. For
+   * example, the function call createCanvas(320, 240) sets the height
+   * variable to the value 240. The value of height defaults to 100 if
+   * createCanvas() is not used in a program.
+   *
+   * @property height
+   */
+  p5.prototype.height = 0;
+
+  /**
+   * If argument is given, sets the sketch to fullscreen or not based on the
+   * value of the argument. If no argument is given, returns the current 
+   * fullscreen state.
+   *
+   * @method fullscreen
+   * @param  {Boolean} [val] whether the sketch should be fullscreened or not
+   * @return {Boolean} current fullscreen state
+   * @example
+   * <div>
+   * <code>
+   * // Clicking in the box toggles fullscreen on and off.
+   * function setup() {
+   *   background(200);
+   * }
+   * function mousePressed() {
+   *   if (mouseX > 0 && mouseX < 100 && mouseY > 0 && mouseY < 100) {
+   *     var fs = fullscreen();
+   *     fullscreen(!fs);
+   *   }
+   * }
+   * </code>
+   * </div>
+   */
+  p5.prototype.fullscreen = function(val) {
+    // no arguments, return fullscreen or not
+    if (typeof val === 'undefined') {
+      return document.fullscreenElement ||
+             document.webkitFullscreenElement ||
+             document.mozFullScreenElement ||
+             document.msFullscreenElement;
+    } else { // otherwise set to fullscreen or not
+      if (val) {
+        launchFullscreen(document.documentElement);
+      } else {
+        exitFullscreen();
+      }
+    }
+  };
+
+  function launchFullscreen(element) {
+    var enabled = document.fullscreenEnabled ||
+                  document.webkitFullscreenEnabled ||
+                  document.mozFullScreenEnabled ||
+                  document.msFullscreenEnabled;
+    if (!enabled) {
+      throw new Error('Fullscreen not enabled in this browser.');
+    }
+    if(element.requestFullscreen) {
+      element.requestFullscreen();
+    } else if(element.mozRequestFullScreen) {
+      element.mozRequestFullScreen();
+    } else if(element.webkitRequestFullscreen) {
+      element.webkitRequestFullscreen();
+    } else if(element.msRequestFullscreen) {
+      element.msRequestFullscreen();
+    }
+  }
+
+  function exitFullscreen() {
+    if(document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if(document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if(document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+  }
 
   return p5;
 
