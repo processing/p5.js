@@ -9,13 +9,13 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
-  //var constants = require('constants');
+  require('p5.Color');
 
   /**
-   * Extracts the alpha value from a color.
+   * Extracts the alpha value from a color or pixel array.
    * 
    * @method alpha
-   * @param {Object} color p5.Color object
+   * @param {Object} obj p5.Color object or pixel array
    * @example
    * <div>
    * <code>
@@ -30,17 +30,20 @@ define(function (require) {
    * </div>
    */
   p5.prototype.alpha = function(c) {
-    if (!c instanceof p5.Color) {
-      throw new Error('Needs p5.Color as argument.');
+    if (c instanceof p5.Color) {
+      return c.rgba[3];
+    } else if (c instanceof Array) {
+      return c[3];
+    } else {
+      throw new Error('Needs p5.Color or pixel array as argument.');
     }
-    return c.rgba[3];
   };
 
   /**
-   * Extracts the blue value from a color, scaled to match current colorMode(). 
+   * Extracts the blue value from a color or a pixel array.
    * 
    * @method blue
-   * @param {Object} color p5.Color object
+   * @param {Object} obj p5.Color object or pixel array
    * @example
    * <div>
    * <code>
@@ -56,10 +59,13 @@ define(function (require) {
    * </div>
    */
   p5.prototype.blue = function(c) {
-    if (!c instanceof p5.Color) {
-      throw new Error('Needs p5.Color as argument.');
+    if (c instanceof Array) {
+      return c[2];
+    } else if (c instanceof p5.Color) {
+      return c.rgba[2];
+    } else {
+      throw new Error('Needs p5.Color or pixel array as argument.');
     }
-    return c.rgba[2];
   };
 
   /**
@@ -86,7 +92,8 @@ define(function (require) {
       throw new Error('Needs p5.Color as argument.');
     }
     if (!c.hsba) {
-      c.hsba = rgb2hsv(c.rgba[0], c.rgba[1], c.rgba[2]).concat(c.rgba[3]);
+      c.hsba = p5.Color.rgb2hsv(c.rgba[0], c.rgba[1], c.rgba[2]);
+      c.hsba = c.hsba.concat(c.rgba[3]);
     }
     return c.hsba[2];
   };
@@ -163,8 +170,7 @@ define(function (require) {
   };
 
   /**
-   * Extracts the green value from a color, scaled to match current
-   * colorMode(). 
+   * Extracts the green value from a color or pixel array.
    * 
    * @method green
    * @param {Object} color p5.Color object
@@ -183,10 +189,13 @@ define(function (require) {
    * </div>
    */
   p5.prototype.green = function(c) {
-    if (!c instanceof p5.Color) {
-      throw new Error('Needs p5.Color as argument.');
+    if (c instanceof Array) {
+      return c[1];
+    } else if (c instanceof p5.Color) {
+      return c.rgba[1];
+    } else {
+      throw new Error('Needs p5.Color or pixel array as argument.');
     }
-    return c.rgba[1];
   };
 
   /**
@@ -213,7 +222,8 @@ define(function (require) {
       throw new Error('Needs p5.Color as argument.');
     }
     if (!c.hsba) {
-      c.hsba = rgb2hsv(c.rgba[0], c.rgba[1], c.rgba[2]).concat(c.rgba[3]);
+      c.hsba = p5.Color.rgb2hsv(c.rgba[0], c.rgba[1], c.rgba[2]);
+      c.hsba = c.hsba.concat(c.rgba[3]);
     }
     return c.hsba[0];
   };
@@ -253,7 +263,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.lerpColor = function(c1, c2, amt) {
-    if (typeof c1 === 'object') {
+    if (c1 instanceof Array) {
       var c = [];
       for (var i=0; i<c1.length; i++) {
         c.push(p5.prototype.lerp(c1[i], c2[i], amt));
@@ -265,10 +275,10 @@ define(function (require) {
   };
 
   /**
-   * Extracts the red value from a color, scaled to match current colorMode(). 
+   * Extracts the red value from a color or pixel array.
    * 
    * @method red
-   * @param {Object} color p5.Color object
+   * @param {Object} obj p5.Color object or pixel array
    * @example
    * <div>
    * <code>
@@ -284,10 +294,13 @@ define(function (require) {
    * </div>
    */
   p5.prototype.red = function(c) {
-    if (!c instanceof p5.Color) {
-      throw new Error('Needs p5.Color as argument.');
+    if (c instanceof Array) {
+      return c[0];
+    } else if (c instanceof p5.Color) {
+      return c.rgba[0];
+    } else {
+      throw new Error('Needs p5.Color or pixel array as argument.');
     }
-    return c.rgba[0];
   };
 
   /**
@@ -314,57 +327,13 @@ define(function (require) {
       throw new Error('Needs p5.Color as argument.');
     }
     if (!c.hsba) {
-      c.hsba = rgb2hsv(c.rgba[0], c.rgba[1], c.rgba[2]).concat(c.rgba[3]);
+      c.hsba = p5.Color.rgb2hsv(c.rgba[0], c.rgba[1], c.rgba[2]);
+      c.hsba = c.hsba.concat(c.rgba[3]);
     }
     return c.hsba[1];
   };
 
 
-  function rgb2hsv(r,g,b) {
-    var var_R = r/255;                           //RGB from 0 to 255
-    var var_G = g/255;
-    var var_B = b/255;
-
-    var var_Min = Math.min(var_R, var_G, var_B); //Min. value of RGB
-    var var_Max = Math.max(var_R, var_G, var_B); //Max. value of RGB
-    var del_Max = var_Max - var_Min;             //Delta RGB value 
-
-    var H;
-    var S;
-    var V = var_Max;
-
-    if (del_Max === 0) { //This is a gray, no chroma...
-      H = 0; //HSV results from 0 to 1
-      S = 0;
-    }
-    else { //Chromatic data...
-      S = del_Max/var_Max;
-
-      var del_R = ( ( ( var_Max - var_R ) / 6 ) + ( del_Max / 2 ) ) / del_Max;
-      var del_G = ( ( ( var_Max - var_G ) / 6 ) + ( del_Max / 2 ) ) / del_Max;
-      var del_B = ( ( ( var_Max - var_B ) / 6 ) + ( del_Max / 2 ) ) / del_Max;
-
-      if (var_R === var_Max) {
-        H = del_B - del_G;
-      } else if (var_G === var_Max) {
-        H = 1/3 + del_R - del_B;
-      } else if (var_B === var_Max) {
-        H = 2/3 + del_G - del_R;
-      }
-
-      if (H<0) {
-        H += 1;
-      }
-      if (H>1) {
-        H -= 1;
-      }
-    }
-    return [
-        Math.round(H * 255),
-        Math.round(S * 255),
-        Math.round(V * 255)
-      ];
-  }
 
   return p5;
 
