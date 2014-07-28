@@ -10,14 +10,20 @@ define(function (require) {
 
   var p5 = require('core');
   var Filters = require('filters');
+  require('p5.Color');
 
   /**
    * Array containing the values for all the pixels in the display window.
-   * These values are of the color datatype. This array is the size of the
-   * display window. For example, if the image is 100x100 pixels, there will
-   * be 10000 values and if the window is 200x300 pixels, there will be 60000
-   * values. The index value defines the position of a value within the
-   * array.
+   * These values are numbers. This array is the size of the display window x4,
+   * representing the R, G, B, A values in order for each pixel, moving from 
+   * left to right across each row, then down each column. For example, 
+   * if the image is 100x100 pixels, there will be 40000. The first four values
+   * (indices 0-3) in the array will be the R, G, B, A values of the pixel at 
+   * (0, 0). The second four values (indices 4-7) will contain the R, G, B, A
+   * values of the pixel at (1, 0). More generally, to values for a pixel at 
+   * (x, y) are: <code>pixels[y*width+x]</code>, 
+   * <code>pixels[y*width+x+1]</code>, <code>pixels[y*width+x+2]</code>,
+   * <code>pixels[y*width+x+3]</code>.<br><br>
    *
    * Before accessing this array, the data must loaded with the loadPixels()
    * function. After the array data has been modified, the updatePixels()
@@ -142,31 +148,30 @@ define(function (require) {
   };
 
   /**
-   * Reads the color of any pixel or grabs a section of an image. If no
-   * parameters are specified, the entire image is returned. Use the x and y
-   * parameters to get the value of one pixel. Get a section of the display
-   * window by specifying additional w and h parameters. When getting an image,
-   * the x and y parameters define the coordinates for the upper-left corner of
-   * the image, regardless of the current imageMode().
+   * Reads an array of [R,G,B,A] values for any pixel or grabs a section of an 
+   * image. If no parameters are specified, the entire image is returned. Use 
+   * the x and y parameters to get the value of one pixel. Get a section of 
+   * the display window by specifying additional w and h parameters. When 
+   * getting an image, the x and y parameters define the coordinates for the 
+   * upper-left corner of the image, regardless of the current imageMode().
    *
-   * If the pixel requested is outside of the image window, black is returned.
-   * The numbers returned are scaled according to the current color ranges, but
-   * only RGB values are returned by this function. For example, even though
-   * you may have drawn a shape with colorMode(HSB), the numbers returned will
-   * be in RGB format. 
+   * If the pixel requested is outside of the image window, [0,0,0,255] is 
+   * returned. To get the numbers scaled according to the current color ranges
+   * and taking into account colorMode, use getColor instead of get.
    *
    * Getting the color of a single pixel with get(x, y) is easy, but not as fast
    * as grabbing the data directly from pixels[]. The equivalent statement to
-   * get(x, y) using pixels[] is pixels[y*width+x]. See the reference for
+   * get(x, y) using pixels[] is [ pixels[y*width+x], pixels[y*width+x+1], 
+   * pixels[y*width+x+2], pixels[y*width+3] ]. See the reference for
    * pixels[] for more information.
    *
    * @method get
-   * @param  {Number}      [x] x-coordinate of the pixel
-   * @param  {Number}      [y] y-coordinate of the pixel
-   * @param  {Number}      w   width
-   * @param  {Number}      h   height
-   * @return {Array/Color}     color of pixel at x,y in array format
-   *                           [R, G, B, A] or p5.Image
+   * @param  {Number}         [x] x-coordinate of the pixel
+   * @param  {Number}         [y] y-coordinate of the pixel
+   * @param  {Number}         [w] width
+   * @param  {Number}         [h] height
+   * @return {Array|p5.Image}     values of pixel at x,y in array format
+   *                              [R, G, B, A] or p5.Image
    */
   p5.prototype.get = function(x, y, w, h){
     if (x === undefined && y === undefined &&
@@ -209,6 +214,36 @@ define(function (require) {
   };
 
   /**
+   * Reads an array of [R,G,B,A] values for any pixel or grabs a section of an 
+   * image. If no parameters are specified, the entire image is returned. Use 
+   * the x and y parameters to get the value of one pixel. Get a section of 
+   * the display window by specifying additional w and h parameters. When 
+   * getting an image, the x and y parameters define the coordinates for the 
+   * upper-left corner of the image, regardless of the current imageMode().
+   *
+   * If the pixel requested is outside of the image window, [0,0,0,255] is 
+   * returned. To get the numbers scaled according to the current color ranges
+   * and taking into account colorMode, use getColor instead of get.
+   *
+   * Getting the color of a single pixel with get(x, y) is easy, but not as fast
+   * as grabbing the data directly from pixels[]. The equivalent statement to
+   * get(x, y) using pixels[] is [ pixels[y*width+x], pixels[y*width+x+1], 
+   * pixels[y*width+x+2], pixels[y*width+3] ]. See the reference for
+   * pixels[] for more information.
+   *
+   * @method getColor
+   * @param  {Number}         [x] x-coordinate of the pixel
+   * @param  {Number}         [y] y-coordinate of the pixel
+   * @param  {Number}         [w] width
+   * @param  {Number}         [h] height
+   * @return {Array|p5.Image}     values of pixel at x,y in array format
+   *                              [R, G, B, A] or p5.Image
+   */
+  p5.prototype.getColor = function(x, y){
+    var arr = this.get(x, y);
+    return new p5.Color(this, arr);
+  };
+  /**
    * Loads the pixel data for the display window into the pixels[] array. This
    * function must always be called before reading from or writing to pixels[].
    *
@@ -217,17 +252,13 @@ define(function (require) {
   p5.prototype.loadPixels = function() {
     var width = this.width;
     var height = this.height;
-    var data = this.canvas.getContext('2d').getImageData(
+    var imageData = this.canvas.getContext('2d').getImageData(
       0,
       0,
       width,
-      height).data;
-    var pixels = [];
-    for (var i=0; i < data.length; i+=4) {
-      // each pixels entry: [r, g, b, a]
-      pixels.push([data[i], data[i+1], data[i+2], data[i+3]]);
-    }
-    this._setProperty('pixels', pixels);
+      height);
+    this._setProperty('imageData', imageData);
+    this._setProperty('pixels', imageData.data);
   };
 
   /**
@@ -252,30 +283,43 @@ define(function (require) {
    *                                image to copy
    */
   p5.prototype.set = function (x, y, imgOrCol) {
-    var idx = y * this.width + x;
-    if (typeof imgOrCol === 'number') {
-      if (!this.pixels) {
-        this.loadPixels.call(this);
-      }
-      if (idx < this.pixels.length) {
-        this.pixels[idx] = [imgOrCol, imgOrCol, imgOrCol, 255];
-        this.updatePixels.call(this);
-      }
-    }
-    else if (imgOrCol instanceof Array) {
-      if (imgOrCol.length < 4) {
-        imgOrCol[3] = 255;
-      }
-      if (!this.pixels) {
-        this.loadPixels.call(this);
-      }
-      if (idx < this.pixels.length) {
-        this.pixels[idx] = imgOrCol;
-        this.updatePixels.call(this);
-      }
-    } else {
+    if (imgOrCol instanceof p5.Image) {
       this.canvas.getContext('2d').drawImage(imgOrCol.canvas, x, y);
       this.loadPixels.call(this);
+    } else {
+      var idx = 4*(y * this.width + x);
+      if (!this.pixels) {
+        this.loadPixels.call(this);
+      }
+      if (typeof imgOrCol === 'number') {
+        if (idx < this.pixels.length) {
+          this.pixels[idx] = imgOrCol;
+          this.pixels[idx+1] = imgOrCol;
+          this.pixels[idx+2] = imgOrCol;
+          this.pixels[idx+3] = 255;
+          //this.updatePixels.call(this);
+        }
+      }
+      else if (imgOrCol instanceof Array) {
+        if (imgOrCol.length < 4) {
+          throw new Error('pixel array must be of the form [R, G, B, A]');
+        }
+        if (idx < this.pixels.length) {
+          this.pixels[idx] = imgOrCol[0];
+          this.pixels[idx+1] = imgOrCol[1];
+          this.pixels[idx+2] = imgOrCol[2];
+          this.pixels[idx+3] = imgOrCol[3];
+          //this.updatePixels.call(this);
+        }
+      } else if (imgOrCol instanceof p5.Color) {
+        if (idx < this.pixels.length) {
+          this.pixels[idx] = imgOrCol.rgba[0];
+          this.pixels[idx+1] = imgOrCol.rgba[1];
+          this.pixels[idx+2] = imgOrCol.rgba[2];
+          this.pixels[idx+3] = imgOrCol.rgba[3];
+          //this.updatePixels.call(this);
+        }
+      }
     }
   };
   /**
@@ -296,16 +340,7 @@ define(function (require) {
       w = this.width;
       h = this.height;
     }
-    var imageData = this.canvas.getContext('2d').getImageData(x, y, w, h);
-    var data = imageData.data;
-    for (var i = 0; i < this.pixels.length; i += 1) {
-      var j = i * 4;
-      data[j] = this.pixels[i][0];
-      data[j + 1] = this.pixels[i][1];
-      data[j + 2] = this.pixels[i][2];
-      data[j + 3] = this.pixels[i][3];
-    }
-    this.canvas.getContext('2d').putImageData(imageData, x, y, 0, 0, w, h);
+    this.canvas.getContext('2d').putImageData(this.imageData, x, y, 0, 0, w, h);
   };
 
   return p5;
