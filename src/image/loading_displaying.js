@@ -154,7 +154,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.tint = function() {
-    var c = this.getNormalizedColor.call(this, arguments);
+    var c = p5.Color.getNormalizedColor.apply(this, arguments);
     this._tint = c;
   };
 

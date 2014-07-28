@@ -1833,7 +1833,7 @@ var imageloading_displaying = function (require, core, filters, canvas, constant
       }
     };
     p5.prototype.tint = function () {
-      var c = this.getNormalizedColor.call(this, arguments);
+      var c = p5.Color.getNormalizedColor.apply(this, arguments);
       this._tint = c;
     };
     p5.prototype.noTint = function () {
