@@ -98,12 +98,149 @@ define(function (require) {
     return ret;
   };
 
-  p5.prototype.loadTable = function () {
-    // TODO
-    throw 'not yet implemented';
+
+
+  /**
+   *  <p>Generic class for handling tabular data, typically from a
+   *  CSV, TSV, or other sort of spreadsheet file.</p>
+   *  <p>CSV files are
+   *  <a href="http://en.wikipedia.org/wiki/Comma-separated_values">
+   *  comma separated values</a>, often with the data in quotes. TSV
+   *  files use tabs as separators, and usually don't bother with the
+   *  quotes.</p>
+   *  <p>File names should end with .csv if they're comma separated.</p>
+   *  <p>A rough "spec" for CSV can be found
+   *  <a href="http://tools.ietf.org/html/rfc4180">here</a>.</p>
+   *
+   *  Possible options include:
+   *  <ul>
+   *  <li>csv - parse the table as comma-separated values
+   *  <li>tsv - parse the table as tab-separated values
+   *  <li>newlines - this CSV file contains newlines inside individual cells
+   *  <li>header - this table has a header (title) row
+   *  </ul>
+   *
+   *  @param {[Object]} input
+   *  @param {[String]} options
+   */
+  p5.prototype.Table = function (path, options) {
+    this._rowCount = null;
+    this.columnTitles = null; // array of column titles
+    this.columnCategories = null; // not sure if this is necessary
+    this.columnIndices = null; // {string: number}
+    this._columns = null; // {}
+    this.rows = [];
+  };
+
+  p5.prototype.Table.prototype.addRow = function(row) {
+    if (row) {
+      console.log('row!');
+    }
+    var r = row || [];
+    this.rows.push(r);
+  };
+
+  p5.prototype.Table.prototype.removeRow = function(id) {
+    var chunk = this.rows.splice(id+1, this.rows.length);
+    this.rows.pop();
+    this.rows = this.rows.concat(chunk);
+  };
+
+  /**
+   *  Use addColumn() to add a new column to a Table object.
+   *  Typically, you will want to specify a title, so the column
+   *  may be easily referenced later by name. (If no title is
+   *  specified, the new column's title will be null.)
+   */
+  p5.prototype.Table.prototype.addColumn = function(title){
+    var t = title || null;
+    this.columnTitles.push(t);
+  };
+
+  /**
+   *  Use removeColumn() to remove an existing column from a Table
+   *  object. The column to be removed may be identified by either
+   *  its title (a String) or its index value (an int).
+   *  removeColumn(0) would remove the first column, removeColumn(1)
+   *  would remove the second column, and so on.
+   *  
+   *  @param  {[String or Number]} c columnName (string) or ID (number)
+   *  @return {[type]}   [description]
+   */
+  p5.prototype.Table.prototype.removeColumn = function(c){
+    if (typeof(c) === 'string') {
+      // find the position of c in the columnTitles
+      c = this.columnTitles.indexOf(c);
+    }
+    var chunk = this.columnTitles.splice(c+1, this.columnTitles.length);
+    this.columnTitles.pop();
+    this.columnTitles = this.columnTitles.concat(chunk);
+
+    for (var i = 0; i < this.rows.length; i++){
+      var r = this.rows[i];
+      var chip = r.splice(c+1, r.length);
+      r.pop();
+      this.rows[i] = r.concat(chip);
+    }
+
   };
 
 
+  p5.prototype.TableRow = function (stuff, separator) {
+    separator = separator || ',';
+    this.row = stuff.split(separator);
+    return this.row;
+  };
+
+  /**
+   *  <p>Reads the contents of a file or URL and creates an Table object
+   *  with its values. If a file is specified, it must be located in
+   *  the sketch's "data" folder. The filename parameter can also be
+   *  a URL to a file found online. By default, the file is assumed
+   *  to be comma-separated (in CSV format). To use tab-separated
+   *  data, include "tsv" in the options parameter.</p>
+   *  
+   *  <p>If the file contains a header row, include "header" in the
+   *  options parameter. If the file does not have a header row, then
+   *  simply omit the "header" option.</p>
+   *  
+   *  <p>When specifying both a header and the file type, separate
+   *  the options with commas, as in:
+   *  loadTable("data.csv", "header, tsv")</p>
+   *
+   *  <p> All files loaded and saved use UTF-8 encoding.</p>
+   *  
+   *  @param  {String}   filename   name of the file or URL to load
+   *  @param  {Function} [callback] function to be executed after loadXML()
+   *                               completes, XML object is passed in as
+   *                               first argument
+   *  @return {Object}              XML object containing data
+   */
+  p5.prototype.loadTable = function (path, callback) {
+    var ret = [];
+    var req = new XMLHttpRequest();
+    req.open('GET', path, true);
+    req.onreadystatechange = function () {
+      if (req.readyState === 4 && (req.status === 200 || req.status === 0)) {
+        var arr = req.responseText.match(/[^\r\n]+/g);
+        for (var k in arr) {
+          ret[k] = arr[k];
+        }
+        if (typeof callback !== 'undefined') {
+          var t = new p5.prototype.Table();
+          t.columnTitles = new p5.prototype.TableRow(ret[0]);
+          for (var i = 1; i<ret.length; i++) {
+            var x = new p5.prototype.TableRow(ret[i]);
+            t.addRow(x);
+          }
+          callback(t);
+        }
+      }
+    };
+    req.send(null);
+    return ret;
+    // throw 'not yet implemented';
+  };
 
   /**
    * Reads the contents of a file and creates an XML object with its values.
