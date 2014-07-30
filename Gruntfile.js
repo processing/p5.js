@@ -120,7 +120,7 @@ module.exports = function(grunt) {
           },
           useStrict: true,
           wrap: {
-            start: '/*! p5.min.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */\n',
+            start: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */\n',
             end: ''
           }
         }

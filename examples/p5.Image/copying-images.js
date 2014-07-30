@@ -11,7 +11,6 @@ function setup() {
   image2 = loadImage("unicorn.jpg", function(img){    
     image1.copy(img, 0, 0, 36, 36, 0, 0, 40, 40);
 
-    
     image(image1, 10, 10);
     image(img, 10, 75);
   });

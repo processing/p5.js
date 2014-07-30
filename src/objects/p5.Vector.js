@@ -81,8 +81,18 @@ define(function (require) {
    * @param {Number}                 [z] the z component of the vector 
    */
   p5.Vector.prototype.set = function (x, y, z) {
-    if (x instanceof p5.Vector) { return this.set(x.x, x.y, x.z); }
-    if (x instanceof Array) { return this.set(x[0], x[1], x[2]); }
+    if (x instanceof p5.Vector) {
+      this.x = x.x || 0;
+      this.y = x.y || 0;
+      this.z = x.z || 0;
+      return this;
+    }
+    if (x instanceof Array) {
+      this.x = x[0] || 0;
+      this.y = x[1] || 0;
+      this.z = x[2] || 0;
+      return this;
+    }
     this.x = x || 0;
     this.y = y || 0;
     this.z = z || 0;
@@ -122,8 +132,18 @@ define(function (require) {
    * @return {p5.Vector}                  the p5.Vector object.
    */
   p5.Vector.prototype.add = function (x, y, z) {
-    if (x instanceof p5.Vector) { return this.add(x.x, x.y, x.z); }
-    if (x instanceof Array) { return this.add(x[0], x[1], x[2]); }
+    if (x instanceof p5.Vector) {
+      this.x += x.x || 0;
+      this.y += x.y || 0;
+      this.z += x.z || 0;
+      return this;
+    }
+    if (x instanceof Array) {
+      this.x += x[0] || 0;
+      this.y += x[1] || 0;
+      this.z += x[2] || 0;
+      return this;
+    }
     this.x += x || 0;
     this.y += y || 0;
     this.z += z || 0;
@@ -146,8 +166,18 @@ define(function (require) {
    * @return {p5.Vector}                  p5.Vector object.
    */
   p5.Vector.prototype.sub = function (x, y, z) {
-    if (x instanceof p5.Vector) { return this.sub(x.x, x.y, x.z); }
-    if (x instanceof Array) { return this.sub(x[0], x[1], x[2]); }
+    if (x instanceof p5.Vector) {
+      this.x -= x.x || 0;
+      this.y -= x.y || 0;
+      this.z -= x.z || 0;
+      return this;
+    }
+    if (x instanceof Array) {
+      this.x -= x[0] || 0;
+      this.y -= x[1] || 0;
+      this.z -= x[2] || 0;
+      return this;
+    }
     this.x -= x || 0;
     this.y -= y || 0;
     this.z -= z || 0;
