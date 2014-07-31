@@ -125,26 +125,112 @@ define(function (require) {
    */
   p5.prototype.Table = function (path, options) {
     this._rowCount = null;
-    this.columnTitles = null; // array of column titles
-    this.columnCategories = null; // not sure if this is necessary
+    this.columnTitles = []; // array of column titles
+    // this.columnCategories = []; // not sure if this is necessary
     this.columnIndices = null; // {string: number}
-    this._columns = null; // {}
+    // this._columns = null; // {}
     this.rows = [];
   };
 
+  /**
+   *  Use addRow() to add a new row of data to a Table object. By default,
+   *  an empty row is created. Typically, you would store a reference to
+   *  the new row in a TableRow object (see newRow in the example above),
+   *  and then set individual values using set().
+   *
+   *  If a TableRow object is included as a parameter, then that row is
+   *  duplicated and added to the table.
+   *  
+   *  @param {[TableRow]} row [description]
+   */
   p5.prototype.Table.prototype.addRow = function(row) {
-    if (row) {
-      console.log('row!');
+    // make sure it is a valid TableRow
+    var r = row || new p5.prototype.TableRow();
+
+    if (typeof(r.arr) === 'undefined' || typeof(r.obj) === 'undefined') {
+      //r = new p5.prototype.TableRow(r);
+      throw 'invalid TableRow: ' + r;
     }
-    var r = row || [];
+    r.table = this;
     this.rows.push(r);
+    return r;
   };
 
   p5.prototype.Table.prototype.removeRow = function(id) {
+    this.rows[id].table = null; // remove reference to table
     var chunk = this.rows.splice(id+1, this.rows.length);
     this.rows.pop();
     this.rows = this.rows.concat(chunk);
   };
+
+
+  p5.prototype.Table.prototype.findRow = function(value, column) {
+    // try the Object
+    if (typeof(column) === 'string') {
+      for (var i = 0; i < this.rows.length; i++){
+        if (this.rows[i].obj[column] === value) {
+          return this.rows[i];
+        }
+      }
+    }
+    // try the Array
+    for (var j = 0; j < this.rows.length; j++){
+      if (this.rows[j].arr[column] === value) {
+        return this.rows[j];
+      }
+    }
+    // otherwise...
+    return null;
+  };
+
+  p5.prototype.Table.prototype.findRows = function(value, column) {
+    var ret = [];
+    if (typeof(column) === 'string') {
+      for (var i = 0; i < this.rows.length; i++){
+        if (this.rows[i].obj[column] === value) {
+          ret.push( this.rows[i] );
+        }
+      }
+    }
+    // try the Array
+    else {
+      for (var j = 0; j < this.rows.length; j++){
+        if (this.rows[j].arr[column] === value) {
+          ret.push( this.rows[j] );
+        }
+      }
+    }
+    // otherwise...
+    return ret;
+
+  };
+
+  // helper function to turn a row into a JSON object
+  function makeObject(row, headers){
+    var ret = {};
+    headers = headers || [];
+    if (typeof(headers) === 'undefined'){
+      for (var j = 0; j < row.length; j++ ){
+        headers[j] = j;
+      }
+    }
+    for (var i = 0; i < headers.length; i++){
+      var key = headers[i];
+      var val = row[i];
+      ret[key] = val;
+    }
+    return ret;
+  }
+
+  function makeArray(obj){
+    var arr = [];
+    for (var key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        arr.push(obj[key]);
+      }
+    }
+    return arr;
+  }
 
   /**
    *  Use addColumn() to add a new column to a Table object.
@@ -186,10 +272,73 @@ define(function (require) {
   };
 
 
+  /**
+   *  A TableRow object represents a single row of data values,
+   *  stored in columns, from a table.
+   *  
+   *  Under the hood, a Table Row contains both an ordered array
+   *  and an unordered JSON object.
+   *
+   *  @param {[type]} stuff     [description]
+   *  @param {[type]} separator [description]
+   */
   p5.prototype.TableRow = function (stuff, separator) {
-    separator = separator || ',';
-    this.row = stuff.split(separator);
-    return this.row;
+    var arr = [];
+    var obj = {};
+    if (stuff){
+      separator = separator || ',';
+      arr = stuff.split(separator);
+    }
+    for (var i = 0; i < arr.length; i++){
+      var key = i;
+      var val = arr[i];
+      obj[key] = val;
+    }
+    this.arr = arr;
+    this.obj = obj;
+    this.table = null;
+  };
+
+  /**
+   *  [set description]
+   *  @param {[type]} column [description]
+   *  @param {[type]} value  [description]
+   */
+  p5.prototype.TableRow.prototype.set = function(column, value) {
+    // if typeof column is string, use .obj
+    if (typeof(column) === 'string'){
+      var addedArr = false;
+      if (typeof(this.obj.column) !== 'undefined'){
+        this.arr.push(value);
+        addedArr = true;
+      }
+      this.obj[column] = value;
+      if (addedArr === false){
+        this.arr = makeArray(this.obj); // this might be out of order!
+      }
+    }
+
+    // if typeof column is number, use .arr
+    else {
+      var prevVal = this.arr[column];
+      this.arr[column] = value;
+      // iterate thru all the object's values and replace it
+      for (var key in this.obj) {
+        if (this.obj.hasOwnProperty(key)) {
+          if (this.obj[key] === prevVal){
+            this.obj[key] = value;
+          }
+        }
+      }
+    }
+  };
+
+  p5.prototype.TableRow.prototype.get = function(column, value) {
+    if (typeof(column) === 'string'){
+      return this.obj[column];
+    } else {
+      return this.arr[column];
+    }
   };
 
   /**
@@ -228,10 +377,11 @@ define(function (require) {
         }
         if (typeof callback !== 'undefined') {
           var t = new p5.prototype.Table();
-          t.columnTitles = new p5.prototype.TableRow(ret[0]);
+          t.columnTitles = new p5.prototype.TableRow(ret[0]).arr;
           for (var i = 1; i<ret.length; i++) {
-            var x = new p5.prototype.TableRow(ret[i]);
-            t.addRow(x);
+            var row = new p5.prototype.TableRow(ret[i]);
+            row.obj = makeObject(row.arr, t.columnTitles); // if Headers
+            t.addRow(row);
           }
           callback(t);
         }
