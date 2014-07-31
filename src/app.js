@@ -10,6 +10,8 @@ define(function (require) {
   require('p5.Image');
   //require('p5.Shape');
   require('p5.Vector');
+  require('p5.TableRow');
+  require('p5.Table');
 
   require('color.creating_reading');
   require('color.setting');

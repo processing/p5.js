@@ -1,10 +1,16 @@
 var table;
 
 function setup() {
-  loadTable("table.csv", helloWorld);
-  // println(table.getRowCount() + " total rows in table");
+  loadTable("table.csv", logResults);
 }
 
-function helloWorld(stuff) {
-  table = stuff;
+function logResults(results) {
+  table = results;
+  console.log(table);
+  for (var i = 0; i < table.rows.length; i++) {
+    for (var j = 0; j < table.columns.length; j++ ) {
+      console.log(table.columns[j] +': '+ table.rows[i].get(j) );
+    }
+    console.log('---');
+  }
 }

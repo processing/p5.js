@@ -2,7 +2,7 @@ var table;
 
 function setup() {
 
-  table = new Table();
+  table = new p5.Table();
 
   table.addColumn('name');
   table.addColumn('type');
