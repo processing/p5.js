@@ -1,6 +1,6 @@
 /**
- * @module Input
- * @submodule TableRow
+ * @module Data
+ * @submodule Table
  * @requires core
  */
 define(function (require) {

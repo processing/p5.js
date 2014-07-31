@@ -116,6 +116,7 @@ define(function (require) {
    *
    *  <p> All files loaded and saved use UTF-8 encoding.</p>
    *  
+   *  @method  loadTable
    *  @param  {String}   filename   name of the file or URL to load
    *  @param  {Function} [callback] function to be executed after loadXML()
    *                               completes, XML object is passed in as
@@ -124,6 +125,7 @@ define(function (require) {
    */
   p5.prototype.loadTable = function (path, callback) {
     var ret = [];
+    var t = new p5.Table();
     var req = new XMLHttpRequest();
     req.open('GET', path, true);
     req.onreadystatechange = function () {
@@ -133,7 +135,6 @@ define(function (require) {
           ret[k] = arr[k];
         }
         if (typeof callback !== 'undefined') {
-          var t = new p5.Table();
           t.columns = new p5.TableRow(ret[0]).arr;
           for (var i = 1; i<ret.length; i++) {
             var row = new p5.TableRow(ret[i]);
@@ -145,7 +146,7 @@ define(function (require) {
       }
     };
     req.send(null);
-    return ret;
+    return t;
     // throw 'not yet implemented';
   };
 
