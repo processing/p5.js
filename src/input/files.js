@@ -99,21 +99,13 @@ define(function (require) {
   };
 
   /**
-   *  <p>Reads the contents of a file or URL and creates an Table object
-   *  with its values. If a file is specified, it must be located in
-   *  the sketch's "data" folder. The filename parameter can also be
-   *  a URL to a file found online. By default, the file is assumed
-   *  to be comma-separated (in CSV format). To use tab-separated
-   *  data, include "tsv" in the options parameter.</p>
+   *  <p>Reads the contents of a file or URL and creates an Table
+   *  object with its values. If a file is specified, it must be
+   *  located in the sketch's "data" folder. The filename parameter
+   *  can also be a URL to a file found online. By default, the file
+   *  is assumed to be comma-separated (in CSV format), and to
+   *  include a header row.</p>
    *  
-   *  <p>If the file contains a header row, include "header" in the
-   *  options parameter. If the file does not have a header row, then
-   *  simply omit the "header" option.</p>
-   *  
-   *  <p>When specifying both a header and the file type, separate
-   *  the options with commas, as in:
-   *  loadTable("data.csv", "header, tsv")</p>
-   *
    *  <p> All files loaded and saved use UTF-8 encoding.</p>
    *  
    *  @method  loadTable

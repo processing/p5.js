@@ -10,32 +10,16 @@ define(function (require) {
   var p5 = require('core');
 
   /**
-   *  <p>Generic class for handling tabular data, typically from a
-   *  CSV, TSV, or other sort of spreadsheet file.</p>
-   *  <p>CSV files are
-   *  <a href="http://en.wikipedia.org/wiki/Comma-separated_values">
-   *  comma separated values</a>, often with the data in quotes. TSV
-   *  files use tabs as separators, and usually don't bother with the
-   *  quotes.</p>
-   *  <p>File names should end with .csv if they're comma separated.</p>
-   *  <p>A rough "spec" for CSV can be found
-   *  <a href="http://tools.ietf.org/html/rfc4180">here</a>.</p>
-   *  <p>To load files, use the loadTable method.</p>
-   *
-   *  Possible options include:
-   *  <ul>
-   *  <li>csv - parse the table as comma-separated values
-   *  <li>tsv - parse the table as tab-separated values
-   *  <li>newlines - this CSV file contains newlines inside individual cells
-   *  <li>header - this table has a header (title) row
-   *  </ul>
+   *  Table objects store data with multiple rows and columns, much
+   *  like in a traditional spreadsheet. Tables can be generated from
+   *  scratch, dynamically, or using data from an existing file.
    *
    *  @class p5.Table
    *  @constructor
-   *  @param {[Object]} input
-   *  @param {[String]} options
+   *  @param {[Array]} rows An array of p5.TableRow objects (optional)
+   *  @returns {p5.Table} [description]
    */
-  p5.Table = function (path, options) {
+  p5.Table = function (rows) {
     /**
      *  @property columns
      *  @type {Array}

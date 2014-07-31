@@ -188,7 +188,7 @@ define(function (require) {
     this.updateMouseCoords(e);
     if (!this.isMousePressed) {
       if (typeof context.mouseMoved === 'function') {
-        e.preventDefault();
+        //e.preventDefault();
         context.mouseMoved(e);
       } else if (typeof context.touchMoved === 'function') {
         e.preventDefault();
@@ -197,7 +197,7 @@ define(function (require) {
     }
     else {
       if (typeof context.mouseDragged === 'function') {
-        e.preventDefault();
+        //e.preventDefault();
         context.mouseDragged(e);
       } else if (typeof context.touchMoved === 'function') {
         e.preventDefault();
@@ -242,7 +242,7 @@ define(function (require) {
     this._setProperty('mouseIsPressed', true);
     this.setMouseButton(e);
     if (typeof context.mousePressed === 'function') {
-      e.preventDefault();
+      //e.preventDefault();
       context.mousePressed(e);
     } else if (typeof context.touchStarted === 'function') {
       e.preventDefault();
@@ -283,7 +283,7 @@ define(function (require) {
     this._setProperty('isMousePressed', false);
     this._setProperty('mouseIsPressed', false);
     if (typeof context.mouseReleased === 'function') {
-      e.preventDefault();
+      //e.preventDefault();
       context.mouseReleased(e);
     } else if (typeof context.touchEnded === 'function') {
       e.preventDefault();
@@ -321,7 +321,7 @@ define(function (require) {
   p5.prototype.onclick = function(e) {
     var context = this._isGlobal ? window : this;
     if (typeof context.mouseClicked === 'function') {
-      e.preventDefault();
+      //e.preventDefault();
       context.mouseClicked(e);
     }
   };
