@@ -114,7 +114,7 @@ define([
         // Search for a class item
       } else if (className && itemName) {
         for (var i = 0; i < itemsCount; i++) {
-          if ((className == 'p5' || items[i].class.toLowerCase() === className) && 
+          if (items[i].class.toLowerCase() === className && 
             items[i].name.toLowerCase() === itemName) {
             found = items[i];
             break;

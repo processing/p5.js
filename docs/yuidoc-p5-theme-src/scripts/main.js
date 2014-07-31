@@ -79,14 +79,14 @@ require([
           App.sound.items.push(el);
         }
         else if (el.module === "p5.dom" || el.module === 'DOM') {
-          if (el.class === 'p5') {
-            el.class = 'p5.dom';
+          if (el.class === 'p5.dom') {
+            el.class = 'p5';
           }
           App.dom.items.push(el);
         }
       }
     });
-
+    
     _.each(App.classes, function(c, idx) {
       c.items = _.filter(App.allItems, function(it){ return it.class === c.name; });
     });
