@@ -394,7 +394,47 @@ define(function (require) {
         }
       }
     }
+    else if (typeof(column) === 'string'){
+      for (var j = 0; j < this.rows.length; j++) {
+        var val = this.rows[j].obj[column];
+        val = val.replace(regex, '');
+        this.rows[j].obj[column] = val;
+        var pos = this.columnTitles.indexOf(column);
+        this.rows[j].arr[pos] = val;
+      }
+    }
+    else {
+      for (var k = 0; k < this.rows.length; k++) {
+        var str = this.rows[k].arr[column];
+        str = str.replace(regex, '');
+        this.rows[k].arr[column] = str;
+        this.rows[k].obj[this.columnTitles[column]] = str;
+      }
+    }
+  };
 
+  /**
+   *  Trims leading and trailing whitespace, such as spaces and tabs,
+   *  from String table values. If no column is specified, then the
+   *  values in all columns and rows are trimmed. A specific column
+   *  may be referenced by either its ID or title.
+   *  
+   *  @param  {[String|Number]} column Column ID (number)
+   *                                   or name (string)
+   */
+  p5.prototype.Table.prototype.trim = function(column) {
+    var regex = new RegExp( (' '), 'g');
+
+    if (typeof(column) === 'undefined'){
+      for (var c = 0; c < this.columnTitles.length; c++) {
+        for (var d = 0; d < this.rows.length; d++) {
+          var s = this.rows[d].arr[c];
+          s = s.replace(regex, '');
+          this.rows[d].arr[c] = s;
+          this.rows[d].obj[this.columnTitles[c]] = s;
+        }
+      }
+    }
     else if (typeof(column) === 'string'){
       for (var j = 0; j < this.rows.length; j++) {
         var val = this.rows[j].obj[column];
