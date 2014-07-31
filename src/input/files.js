@@ -166,6 +166,26 @@ define(function (require) {
   };
 
 
+  /**
+   *  Returns a reference to the specified TableRow. The reference
+   *  can then be used to get and set values of the selected row.
+   *  
+   *  @param  {Number} rowID ID number of the row to get
+   *  @return {TableRow}     [description]
+   */
+  p5.prototype.Table.prototype.getRow = function(r) {
+    return this.rows[r];
+  };
+
+  /**
+   *  Gets all rows from the table. Returns an array of TableRows.
+   *  
+   *  @return {Array}   Array of TableRows
+   */
+  p5.prototype.Table.prototype.rows = function() {
+    return this.rows;
+  };
+
   p5.prototype.Table.prototype.findRow = function(value, column) {
     // try the Object
     if (typeof(column) === 'string') {
@@ -280,8 +300,13 @@ define(function (require) {
     return ret;
   };
 
+  p5.prototype.Table.prototype.clearRows = function() {
+    delete this.rows;
+    this.rows = [];
+  };
+
   // helper function to turn a row into a JSON object
-  function makeObject(row, headers){
+  function makeObject(row, headers) {
     var ret = {};
     headers = headers || [];
     if (typeof(headers) === 'undefined'){
@@ -315,9 +340,78 @@ define(function (require) {
    *
    *  @param {[String]} title Title of the given column
    */
-  p5.prototype.Table.prototype.addColumn = function(title){
+  p5.prototype.Table.prototype.addColumn = function(title) {
     var t = title || null;
     this.columnTitles.push(t);
+  };
+
+  /**
+   *  Returns the total number of columns in a Table.
+   *  
+   *  @return {Number} Number of columns in this table
+   */
+  p5.prototype.Table.prototype.getColumnCount = function() {
+    return this.columnTitles.length;
+  };
+
+  /**
+   *  Returns the total number of rows in a Table.
+   *  
+   *  @return {Number} Number of rows in this table
+   */
+  p5.prototype.Table.prototype.getRowCount = function() {
+    return this.rows.length;
+  };
+
+  /**
+   *  <p>Removes any of the specified characters (or "tokens").</p>
+   *  
+   *  <p>If no column is specified, then the values in all columns and
+   *  rows are processed. A specific column may be referenced by
+   *  either its ID or title.</p>
+   *  
+   *  @param  {String} chars  String listing characters to be removed
+   *  @param  {[String|Number]} column Column ID (number)
+   *                                   or name (string)
+   */
+  p5.prototype.Table.prototype.removeTokens = function(chars, column) {
+    var escape= function(s) {
+      return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+    };
+    var charArray = [];
+    for (var i = 0; i < chars.length; i++) {
+      charArray.push( escape( chars.charAt(i) ) );
+    }
+    var regex = new RegExp(charArray.join('|'), 'g');
+
+    if (typeof(column) === 'undefined'){
+      for (var c = 0; c < this.columnTitles.length; c++) {
+        for (var d = 0; d < this.rows.length; d++) {
+          var s = this.rows[d].arr[c];
+          s = s.replace(regex, '');
+          this.rows[d].arr[c] = s;
+          this.rows[d].obj[this.columnTitles[c]] = s;
+        }
+      }
+    }
+
+    else if (typeof(column) === 'string'){
+      for (var j = 0; j < this.rows.length; j++) {
+        var val = this.rows[j].obj[column];
+        val = val.replace(regex, '');
+        this.rows[j].obj[column] = val;
+        var pos = this.columnTitles.indexOf(column);
+        this.rows[j].arr[pos] = val;
+      }
+    }
+    else {
+      for (var k = 0; k < this.rows.length; k++) {
+        var str = this.rows[k].arr[column];
+        str = str.replace(regex, '');
+        this.rows[k].arr[column] = str;
+        this.rows[k].obj[this.columnTitles[column]] = str;
+      }
+    }
   };
 
   /**
@@ -329,7 +423,7 @@ define(function (require) {
    *  
    *  @param  {(String|Number)} column columnName (string) or ID (number)
    */
-  p5.prototype.Table.prototype.removeColumn = function(c){
+  p5.prototype.Table.prototype.removeColumn = function(c) {
     var cString;
     var cNumber;
     if (typeof(c) === 'string') {
