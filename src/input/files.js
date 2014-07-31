@@ -124,10 +124,10 @@ define(function (require) {
    *  @param {[String]} options
    */
   p5.prototype.Table = function (path, options) {
-    this._rowCount = null;
+    // this._rowCount = null;
     this.columnTitles = []; // array of column titles
     // this.columnCategories = []; // not sure if this is necessary
-    this.columnIndices = null; // {string: number}
+    // this.columnIndices = null; // {string: number}
     // this._columns = null; // {}
     this.rows = [];
   };
@@ -254,19 +254,29 @@ define(function (require) {
    *  @return {[type]}   [description]
    */
   p5.prototype.Table.prototype.removeColumn = function(c){
+    var cString;
+    var cNumber;
     if (typeof(c) === 'string') {
       // find the position of c in the columnTitles
-      c = this.columnTitles.indexOf(c);
+      cString = c;
+      cNumber = this.columnTitles.indexOf(c);
+      console.log('string');
     }
-    var chunk = this.columnTitles.splice(c+1, this.columnTitles.length);
+    else{
+      cNumber = c;
+      cString = this.columnTitles[c];
+    }
+
+    var chunk = this.columnTitles.splice(cNumber+1, this.columnTitles.length);
     this.columnTitles.pop();
     this.columnTitles = this.columnTitles.concat(chunk);
 
     for (var i = 0; i < this.rows.length; i++){
-      var r = this.rows[i];
-      var chip = r.splice(c+1, r.length);
-      r.pop();
-      this.rows[i] = r.concat(chip);
+      var tempR = this.rows[i].arr;
+      var chip = tempR.splice(cNumber+1, tempR.length);
+      tempR.pop();
+      this.rows[i].arr = tempR.concat(chip);
+      delete this.rows[i].obj[cString];
     }
 
   };
