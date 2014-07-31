@@ -129,6 +129,8 @@ define(function (require) {
     // this.columnCategories = []; // not sure if this is necessary
     // this.columnIndices = null; // {string: number}
     // this._columns = null; // {}
+
+    // make this public
     this.rows = [];
   };
 
@@ -174,9 +176,11 @@ define(function (require) {
       }
     }
     // try the Array
-    for (var j = 0; j < this.rows.length; j++){
-      if (this.rows[j].arr[column] === value) {
-        return this.rows[j];
+    else {
+      for (var j = 0; j < this.rows.length; j++){
+        if (this.rows[j].arr[column] === value) {
+          return this.rows[j];
+        }
       }
     }
     // otherwise...
@@ -200,9 +204,80 @@ define(function (require) {
         }
       }
     }
-    // otherwise...
     return ret;
+  };
 
+  /**
+   *  Finds the first row in the Table that matches the regular
+   *  expression provided, and returns a reference to that row.
+   *  Even if multiple rows are possible matches, only the first
+   *  matching row is returned. The column to search may be
+   *  specified by either its ID or title.
+   *  
+   *  @param  {String} regexp The regular expression to match
+   *  @param  {(String|Number)} column The column ID (number) or 
+   *                                   title (string)
+   *  @return {TableRow}        TableRow object
+   */
+  p5.prototype.Table.prototype.matchRow = function(regexp, column) {
+    if (typeof(column) === 'number') {
+      for (var j = 0; j < this.rows.length; j++) {
+        if ( this.rows[j].arr[column].match(regexp) ) {
+          return this.rows[j];
+        }
+      }
+    }
+
+    else {
+      for (var i = 0; i < this.rows.length; i++) {
+        if ( this.rows[i].obj[column].match(regexp) ) {
+          return this.rows[i];
+        }
+      }
+    }
+    return null;
+  };
+
+  p5.prototype.Table.prototype.matchRows = function(regexp, column) {
+    var ret = [];
+    if (typeof(column) === 'number') {
+      for (var j = 0; j < this.rows.length; j++) {
+        if ( this.rows[j].arr[column].match(regexp) ) {
+          ret.push( this.rows[j] );
+        }
+      }
+    }
+
+    else {
+      for (var i = 0; i < this.rows.length; i++) {
+        if ( this.rows[i].obj[column].match(regexp) ) {
+          ret.push( this.rows[i] );
+        }
+      }
+    }
+    return ret;
+  };
+
+
+  /**
+   *  Retrieves all values in the specified column, and returns them
+   *  as an array. The column may be specified by either its ID or title.
+   *  
+   *  @param  {(String|Number)} column String or Number of the column to return
+   *  @return {Array}       Array of column values
+   */
+  p5.prototype.Table.prototype.getColumn = function(value) {
+    var ret = [];
+    if (typeof(value) === 'string'){
+      for (var i = 0; i < this.rows.length; i++){
+        ret.push (this.rows[i].obj[value]);
+      }
+    } else {
+      for (var j = 0; j < this.rows.length; j++){
+        ret.push (this.rows[j].arr[value]);
+      }
+    }
+    return ret;
   };
 
   // helper function to turn a row into a JSON object
@@ -237,6 +312,8 @@ define(function (require) {
    *  Typically, you will want to specify a title, so the column
    *  may be easily referenced later by name. (If no title is
    *  specified, the new column's title will be null.)
+   *
+   *  @param {[String]} title Title of the given column
    */
   p5.prototype.Table.prototype.addColumn = function(title){
     var t = title || null;
@@ -250,8 +327,7 @@ define(function (require) {
    *  removeColumn(0) would remove the first column, removeColumn(1)
    *  would remove the second column, and so on.
    *  
-   *  @param  {[String or Number]} c columnName (string) or ID (number)
-   *  @return {[type]}   [description]
+   *  @param  {(String|Number)} column columnName (string) or ID (number)
    */
   p5.prototype.Table.prototype.removeColumn = function(c){
     var cString;
@@ -343,7 +419,14 @@ define(function (require) {
     }
   };
 
-  p5.prototype.TableRow.prototype.get = function(column, value) {
+  /**
+   *  Get a value from a row.
+   *  
+   *  @param  {(String|Number)} column columnName (string) or
+   *                                   ID (number)
+   *  @return {[type]}        [description]
+   */
+  p5.prototype.TableRow.prototype.get = function(column) {
     if (typeof(column) === 'string'){
       return this.obj[column];
     } else {
