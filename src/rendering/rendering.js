@@ -99,7 +99,8 @@ define(function(require) {
     c.setAttribute('width', w);
     c.setAttribute('height', h);
     //c.style.visibility='hidden';
-    document.body.appendChild(c);
+    var node = this._userNode || document.body;
+    node.appendChild(c);
     
     var pg = new p5.Graphics(c);
     // store in elements array
