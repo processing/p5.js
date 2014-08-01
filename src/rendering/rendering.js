@@ -96,8 +96,8 @@ define(function(require) {
    */
   p5.prototype.createGraphics = function(w, h) {
     var c = document.createElement('canvas');
-    c.setAttribute('width', w);
-    c.setAttribute('height', h);
+    c.setAttribute('width', w*this._pixelDensity);
+    c.setAttribute('height', h*this._pixelDensity);
     //c.style.visibility='hidden';
     var node = this._userNode || document.body;
     node.appendChild(c);
@@ -115,6 +115,7 @@ define(function(require) {
         }
       }
     }
+    pg.scale(this._pixelDensity, this._pixelDensity);
     return pg;
   };
 
