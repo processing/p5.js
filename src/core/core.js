@@ -367,7 +367,8 @@ define(function (require) {
     'loadImage',
     'loadStrings',
     'loadXML',
-    'loadShape'
+    'loadShape',
+    'loadTable'
   ];
 
   p5.prototype._removeFuncs = [];
