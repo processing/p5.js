@@ -6,7 +6,7 @@
  * @requires constants
  */
 
-define(function (require) {
+define(function(require) {
 
   'use strict';
 
@@ -15,7 +15,9 @@ define(function (require) {
 
   require('output.text_area');
 
-  p5.prototype._matrices = [[1,0,0,1,0,0]];
+  p5.prototype._matrices = [
+    [1, 0, 0, 1, 0, 0]
+  ];
 
   /**
    * Multiplies the current matrix by the one specified through the parameters.
@@ -30,10 +32,16 @@ define(function (require) {
    * @param  {Number} n11 numbers which define the 3x2 matrix to be multiplied
    * @param  {Number} n12 numbers which define the 3x2 matrix to be multiplied
    * @return {p5}         the p5 object
+   * @example
+   * <div>
+   * <code>
+   * // Example in the works. 
+   * </code>
+   * </div>
    */
   p5.prototype.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
     this.canvas.getContext('2d').transform(n00, n01, n02, n10, n11, n12);
-    var m = this._matrices[this._matrices.length-1];
+    var m = this._matrices[this._matrices.length - 1];
     m = multiplyMatrix(m, [n00, n01, n02, n10, n11, n12]);
 
     return this;
@@ -43,12 +51,6 @@ define(function (require) {
     throw new Error('popMatrix() not used, see pop()');
   };
 
-  /**
-   * Prints the current matrix to the Console.
-   * 
-   * @method printMatrix
-   * @return {p5} the p5 object
-   */
   p5.prototype.printMatrix = function() {
     throw new Error('printMatrix() not implemented');
   };
@@ -62,10 +64,16 @@ define(function (require) {
    *
    * @method resetMatrix
    * @return {p5} the p5 object
+   * @example
+   * <div>
+   * <code>
+   * // Example in the works.
+   * </code>
+   * </div>
    */
   p5.prototype.resetMatrix = function() {
     this.canvas.getContext('2d').setTransform();
-    this._matrices[this._matrices.length-1] = [1,0,0,1,0,0];
+    this._matrices[this._matrices.length - 1] = [1, 0, 0, 1, 0, 0];
 
     return this;
   };
@@ -90,13 +98,21 @@ define(function (require) {
    * @param  {Number} angle the angle of rotation, specified in radians
    *                        or degrees, depending on current angleMode
    * @return {p5}           the p5 object
+   * @example
+   * <div>
+   * <code>
+   * translate(width/2, height/2);
+   * rotate(PI/3.0);
+   * rect(-26, -26, 52, 52);
+   * </code>
+   * </div>
    */
   p5.prototype.rotate = function(r) {
     if (this._angleMode === constants.DEGREES) {
       r = this.radians(r);
     }
     this.canvas.getContext('2d').rotate(r);
-    var m = this._matrices[this._matrices.length-1];
+    var m = this._matrices[this._matrices.length - 1];
     var c = Math.cos(r);
     var s = Math.sin(r);
     var m11 = m[0] * c + m[2] * s;
@@ -143,9 +159,26 @@ define(function (require) {
    *                      are given
    * @param  {Number} [y] percentage to scale the object in the y-axis
    * @return {p5}         the p5 object
+   * @example
+   * <div>
+   * <code>
+   * translate(width/2, height/2);
+   * rotate(PI/3.0);
+   * rect(-26, -26, 52, 52);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * rect(30, 20, 50, 50);
+   * scale(0.5, 1.3);
+   * rect(30, 20, 50, 50);
+   * </code>
+   * </div>
    */
   p5.prototype.scale = function() {
-    var x = 1.0, y = 1.0;
+    var x = 1.0,
+      y = 1.0;
     if (arguments.length === 1) {
       x = y = arguments[0];
     } else {
@@ -153,7 +186,7 @@ define(function (require) {
       y = arguments[1];
     }
     this.canvas.getContext('2d').scale(x, y);
-    var m = this._matrices[this._matrices.length-1];
+    var m = this._matrices[this._matrices.length - 1];
     m[0] *= x;
     m[1] *= x;
     m[2] *= y;
@@ -172,7 +205,7 @@ define(function (require) {
    * calls to the function accumulates the effect. For example, calling
    * shearX(PI/2) and then shearX(PI/2) is the same as shearX(PI).
    * If shearX() is called within the draw(), the transformation is reset when
-   * the loop begins again. 
+   * the loop begins again.
    *
    * Technically, shearX() multiplies the current transformation matrix by a
    * rotation matrix. This function can be further controlled by the
@@ -182,13 +215,21 @@ define(function (require) {
    * @param  {Number} angle angle of shear specified in radians or degrees,
    *                        depending on current angleMode
    * @return {p5}           the p5 object
+   * @example
+   * <div>
+   * <code>
+   * translate(width/4, height/4);
+   * shearX(PI/4.0);
+   * rect(0, 0, 30, 30);
+   * </code>
+   * </div>
    */
   p5.prototype.shearX = function(angle) {
     if (this._angleMode === constants.DEGREES) {
       angle = this.radians(angle);
     }
     this.canvas.getContext('2d').transform(1, 0, this.tan(angle), 1, 0, 0);
-    var m = this._matrices[this._matrices.length-1];
+    var m = this._matrices[this._matrices.length - 1];
     m = multiplyMatrix(m, [1, 0, this.tan(angle), 1, 0, 0]);
 
     return this;
@@ -204,7 +245,7 @@ define(function (require) {
    * calls to the function accumulates the effect. For example, calling
    * shearY(PI/2) and then shearY(PI/2) is the same as shearY(PI). If
    * shearY() is called within the draw(), the transformation is reset when
-   * the loop begins again.  
+   * the loop begins again.
    *
    * Technically, shearY() multiplies the current transformation matrix by a
    * rotation matrix. This function can be further controlled by the
@@ -214,13 +255,21 @@ define(function (require) {
    * @param  {Number} angle angle of shear specified in radians or degrees,
    *                        depending on current angleMode
    * @return {p5}           the p5 object
+   * @example
+   * <div>
+   * <code>
+   * translate(width/4, height/4);
+   * shearY(PI/4.0);
+   * rect(0, 0, 30, 30);
+   * </code>
+   * </div>
    */
   p5.prototype.shearY = function(angle) {
     if (this._angleMode === constants.DEGREES) {
       angle = this.radians(angle);
     }
     this.canvas.getContext('2d').transform(1, this.tan(angle), 0, 1, 0, 0);
-    var m = this._matrices[this._matrices.length-1];
+    var m = this._matrices[this._matrices.length - 1];
     m = multiplyMatrix(m, [1, this.tan(angle), 0, 1, 0, 0]);
 
     return this;
@@ -242,10 +291,27 @@ define(function (require) {
    * @param  {Number} x left/right translation
    * @param  {Number} y up/down translation
    * @return {p5}       the p5 object
+   * @example
+   * <div>
+   * <code>
+   * translate(30, 20);
+   * rect(0, 0, 55, 55);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * rect(0, 0, 55, 55);  // Draw rect at original 0,0
+   * translate(30, 20);
+   * rect(0, 0, 55, 55);  // Draw rect at new 0,0
+   * translate(14, 14);
+   * rect(0, 0, 55, 55);  // Draw rect at new 0,0
+   * </code>
+   * </div>
    */
   p5.prototype.translate = function(x, y) {
     this.canvas.getContext('2d').translate(x, y);
-    var m = this._matrices[this._matrices.length-1];
+    var m = this._matrices[this._matrices.length - 1];
     m[4] += m[0] * x + m[2] * y;
     m[5] += m[1] * x + m[3] * y;
 
@@ -253,17 +319,18 @@ define(function (require) {
   };
 
   // TODO: Replace with an optimized matrix-multiplication algorithm
+
   function multiplyMatrix(m1, m2) {
     var result = [];
     var m1Length = m1.length;
     var m2Length = m2.length;
     var m10Length = m1[0].length;
 
-    for(var j = 0; j < m2Length; j++) {
+    for (var j = 0; j < m2Length; j++) {
       result[j] = [];
-      for(var k = 0; k < m10Length; k++) {
+      for (var k = 0; k < m10Length; k++) {
         var sum = 0;
-        for(var i = 0; i < m1Length; i++) {
+        for (var i = 0; i < m1Length; i++) {
           sum += m1[i][k] * m2[j][i];
         }
         result[j].push(sum);

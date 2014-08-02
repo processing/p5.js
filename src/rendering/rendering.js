@@ -22,9 +22,6 @@ define(function(require) {
     if (isDefault) {
       c = document.createElement('canvas');
       c.id = 'defaultCanvas';
-      // store in elements array
-      this._elements.push(c);
-
     } else { // resize the default canvas if new one is created
       c = document.getElementById('defaultCanvas');
       if (c) {
@@ -58,9 +55,13 @@ define(function(require) {
       document.body.appendChild(c);
     }
 
-    var elt = new p5.Graphics(c, this);
+    var pg = new p5.Graphics(c, this);
+    if (isDefault) {
+      // store in elements array
+      this._elements.push(pg);
+    }
     this.scale(this._pixelDensity, this._pixelDensity);
-    return elt;
+    return pg;
   };
 
 
@@ -95,26 +96,27 @@ define(function(require) {
    */
   p5.prototype.createGraphics = function(w, h) {
     var c = document.createElement('canvas');
-    c.setAttribute('width', w);
-    c.setAttribute('height', h);
+    c.setAttribute('width', w*this._pixelDensity);
+    c.setAttribute('height', h*this._pixelDensity);
     //c.style.visibility='hidden';
-    document.body.appendChild(c);
+    var node = this._userNode || document.body;
+    node.appendChild(c);
     
+    var pg = new p5.Graphics(c);
     // store in elements array
-    this._elements.push(c);
-
-    var elt = new p5.Graphics(c);
+    this._elements.push(pg);
 
     for (var p in p5.prototype) {
-      if (!elt.hasOwnProperty(p)) {
+      if (!pg.hasOwnProperty(p)) {
         if (typeof p5.prototype[p] === 'function') {
-          elt[p] = p5.prototype[p].bind(elt);
+          pg[p] = p5.prototype[p].bind(pg);
         } else {
-          elt[p] = p5.prototype[p];
+          pg[p] = p5.prototype[p];
         }
       }
     }
-    return elt;
+    pg.scale(this._pixelDensity, this._pixelDensity);
+    return pg;
   };
 
   /**

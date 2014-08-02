@@ -265,16 +265,15 @@ define(function (require) {
           window.removeEventListener(ev, this._events[ev]);
         }
 
-        // unregister events canvas-specific
-        for (var cev in this._curElement._events) {
-          var f = this._curElement._events[cev];
-          this._curElement.elt.removeEventListener(cev, f);
-        }
-
-        // remove DOM elements created by p5
+        // remove DOM elements created by p5, and listeners
         for (var i=0; i<this._elements.length; i++) {
           var e = this._elements[i];
-          e.parentNode.removeChild(e);
+          if (e.elt.parentNode) {
+            e.elt.parentNode.removeChild(e.elt);
+          }
+          for (var elt_ev in e._events) {
+            e.elt.removeEventListener(elt_ev, e._events[elt_ev]);
+          }
         }
 
         // call any registered remove functions

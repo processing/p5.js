@@ -4,6 +4,7 @@ define(function (require) {
 
   var p5 = require('core');
   
+  require('p5.Color');
   require('p5.Element');
   require('p5.Graphics');
   require('p5.Image');

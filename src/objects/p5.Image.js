@@ -126,18 +126,15 @@ define(function (require) {
    * be slower than directly manipulating the pixels array
    * and then calling updatePixels()
    *
-   * TODO: Should me make the update operation toggleable?
-   *
    * @method set
    * @param {Number}              x x-coordinate of the pixel
    * @param {Number}              y y-coordinate of the pixel
-   * @param {Number|Array|Object}   insert a grayscale value |
-   *                                a color array | image to copy
+   * @param {Number|Array|Object}   a grayscale value | pixel array |
+   *                                a p5.Color | image to copy
    */
   p5.Image.prototype.set = function(x, y, imgOrCol){
     p5.prototype.set.call(this, x, y, imgOrCol);
   };
-
 
   /**
    * Resize the image to a new width and height. To make the image scale

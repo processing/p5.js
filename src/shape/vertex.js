@@ -449,9 +449,11 @@ define(function (require) {
   p5.prototype.endShape = function(mode) {
     if (mode === constants.CLOSE) {
       this.canvas.getContext('2d').closePath();
-      this.canvas.getContext('2d').fill();
+      if (this._doFill) {
+        this.canvas.getContext('2d').fill();
+      }
     }
-    if (this._curveVertices.length <= 0) {
+    if (this._doStroke && this._curveVertices.length <= 0) {
       this.canvas.getContext('2d').stroke();
     } else {
       this._curveVertices = [];

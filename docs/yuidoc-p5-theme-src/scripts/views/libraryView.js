@@ -50,12 +50,13 @@ define([
         });
 
         // Sort groups by name A-Z
-        _.sortBy(self.groups, this.sortByName);
+        self.groups = _.sortBy(self.groups, this.sortByName);
 
         // Put the <li> items html into the list <ul>
         var libraryHtml = self.libraryTpl({
           'title': self.capitalizeFirst(listCollection),
           'module': m.module,
+          'totalItems': m.items.length,
           'groups': self.groups
         });
 
@@ -99,7 +100,8 @@ define([
     },
 
     sortByName: function (a, b) {
-      return a.name > b.name ? 1 : -1;
+      if (a.name === 'p5') return -1;
+      else return 0;
     }
 
   });

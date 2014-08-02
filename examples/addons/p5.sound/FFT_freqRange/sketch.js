@@ -55,7 +55,7 @@ function draw() {
     var freqValue = fft.getFreq(firstFreq,secondFreq-1);
 
     // draw a rectangle whose height represents the average value of this frequency range
-    rect((i+1)*width/8 - width/8, height, width/8, -freqValue);
+    rect((i+1)*width/8 - width/8, height, width/8, -height - freqValue);
 
     // label the frequency range
     text( firstFreq.toFixed(0) +' Hz - ' + secondFreq.toFixed(0)+' Hz', (i+1)*width/8 - width/8/2, 30);

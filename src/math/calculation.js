@@ -35,13 +35,13 @@ define(function (require) {
    * Constrains a value to not exceed a maximum and minimum value.
    *
    * @method constrain
-   * @param  {Number} amt  number to constrain
+   * @param  {Number} n    number to constrain
    * @param  {Number} low  minimum limit
    * @param  {Number} high maximum limit
    * @return {Number}      constrained number
    */
-  p5.prototype.constrain = function(amt, low, high) {
-    return this.max(this.min(amt, high), low);
+  p5.prototype.constrain = function(n, low, high) {
+    return Math.max(Math.min(n, high), low);
   };
 
   /**
@@ -55,9 +55,7 @@ define(function (require) {
    * @return {Number}    distance between the two points
    */
   p5.prototype.dist = function(x1, y1, x2, y2) {
-    var xs = x2-x1;
-    var ys = y2-y1;
-    return Math.sqrt( xs*xs + ys*ys );
+    return Math.sqrt( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) );
   };
   
   /**

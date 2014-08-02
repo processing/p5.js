@@ -9,13 +9,13 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
-  var constants = require('constants');
+  require('p5.Color');
 
   /**
-   * Extracts the alpha value from a color.
+   * Extracts the alpha value from a color or pixel array.
    * 
    * @method alpha
-   * @param {Array} an array representing a color
+   * @param {Object} obj p5.Color object or pixel array
    * @example
    * <div>
    * <code>
@@ -29,19 +29,21 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.alpha = function(rgb) {
-    if (rgb.length > 3) {
-      return rgb[3];
+  p5.prototype.alpha = function(c) {
+    if (c instanceof p5.Color) {
+      return c.rgba[3];
+    } else if (c instanceof Array) {
+      return c[3];
     } else {
-      return 255;
+      throw new Error('Needs p5.Color or pixel array as argument.');
     }
   };
 
   /**
-   * Extracts the blue value from a color, scaled to match current colorMode(). 
+   * Extracts the blue value from a color or a pixel array.
    * 
    * @method blue
-   * @param {Array} an array representing a color
+   * @param {Object} obj p5.Color object or pixel array
    * @example
    * <div>
    * <code>
@@ -56,11 +58,13 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.blue = function(rgb) {
-    if (rgb.length > 2) {
-      return rgb[2];
+  p5.prototype.blue = function(c) {
+    if (c instanceof Array) {
+      return c[2];
+    } else if (c instanceof p5.Color) {
+      return c.rgba[2];
     } else {
-      return 0;
+      throw new Error('Needs p5.Color or pixel array as argument.');
     }
   };
 
@@ -68,7 +72,7 @@ define(function (require) {
    * Extracts the brightness value from a color. 
    * 
    * @method brightness
-   * @param {Array} an array representing a color
+   * @param {Object} color p5.Color object
    * @example
    * <div>
    * <code>
@@ -83,12 +87,15 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.brightness = function(hsv) {
-    if (hsv.length > 2) {
-      return hsv[2];
-    } else {
-      return 0;
+  p5.prototype.brightness = function(c) {
+    if (!c instanceof p5.Color) {
+      throw new Error('Needs p5.Color as argument.');
     }
+    if (!c.hsba) {
+      c.hsba = p5.Color.getRGB(c.rgba);
+      c.hsba = c.hsba.concat(c.rgba[3]);
+    }
+    return c.hsba[2];
   };
 
   /**
@@ -158,36 +165,18 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.color = function() {
-    var args = arguments;
-    
-    var isRGB = this._colorMode === constants.RGB;
-    var maxArr = isRGB ? this._maxRGB : this._maxHSB;
-
-    var r, g, b, a;
-    if (args.length >= 3) {
-      r = args[0];
-      g = args[1];
-      b = args[2];
-      a = typeof args[3] === 'number' ? args[3] : maxArr[3];
+  p5.prototype.color = function () {
+    if (arguments[0] instanceof Array) {
+      return new p5.Color(this, arguments[0], true);
     } else {
-      if (isRGB) {
-        r = g = b = args[0];
-      } else {
-        r = b = args[0];
-        g = 0;
-      }
-      a = typeof args[1] === 'number' ? args[1] : maxArr[3];
+      return new p5.Color(this, arguments);
     }
-    return [r, g, b, a];
   };
-
   /**
-   * Extracts the green value from a color, scaled to match current
-   * colorMode(). 
+   * Extracts the green value from a color or pixel array.
    * 
    * @method green
-   * @param {Array} an array representing a color
+   * @param {Object} color p5.Color object
    * @example
    * <div>
    * <code>
@@ -202,11 +191,13 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.green = function(rgb) {
-    if (rgb.length > 2) {
-      return rgb[1];
+  p5.prototype.green = function(c) {
+    if (c instanceof Array) {
+      return c[1];
+    } else if (c instanceof p5.Color) {
+      return c.rgba[1];
     } else {
-      return 0;
+      throw new Error('Needs p5.Color or pixel array as argument.');
     }
   };
 
@@ -214,7 +205,7 @@ define(function (require) {
    * Extracts the hue value from a color. 
    * 
    * @method hue
-   * @param {Array} an array representing a color
+   * @param {Object} color p5.Color object
    * @example
    * <div>
    * <code>
@@ -229,12 +220,14 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.hue = function(hsv) {
-    if (hsv.length > 2) {
-      return hsv[0];
-    } else {
-      return 0;
+  p5.prototype.hue = function(c) {
+    if (!c instanceof p5.Color) {
+      throw new Error('Needs p5.Color as argument.');
     }
+    if (!c.hsba) {
+      c.hsba = p5.Color.getRGB(c.rgba);
+    }
+    return c.hsba[0];
   };
 
   /**
@@ -272,7 +265,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.lerpColor = function(c1, c2, amt) {
-    if (typeof c1 === 'object') {
+    if (c1 instanceof Array) {
       var c = [];
       for (var i=0; i<c1.length; i++) {
         c.push(p5.prototype.lerp(c1[i], c2[i], amt));
@@ -284,10 +277,10 @@ define(function (require) {
   };
 
   /**
-   * Extracts the red value from a color, scaled to match current colorMode(). 
+   * Extracts the red value from a color or pixel array.
    * 
    * @method red
-   * @param {Array} rgb an array representing a color
+   * @param {Object} obj p5.Color object or pixel array
    * @example
    * <div>
    * <code>
@@ -302,11 +295,13 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.red = function(rgb) {
-    if (rgb.length > 2) {
-      return rgb[0];
+  p5.prototype.red = function(c) {
+    if (c instanceof Array) {
+      return c[0];
+    } else if (c instanceof p5.Color) {
+      return c.rgba[0];
     } else {
-      return 0;
+      throw new Error('Needs p5.Color or pixel array as argument.');
     }
   };
 
@@ -314,7 +309,7 @@ define(function (require) {
    * Extracts the saturation value from a color. 
    * 
    * @method saturation
-   * @param {Array} an array representing a color
+   * @param {Object} color p5.Color object
    * @example
    * <div>
    * <code>
@@ -329,13 +324,18 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.saturation = function(hsv) {
-    if (hsv.length > 2) {
-      return hsv[1];
-    } else {
-      return 0;
+  p5.prototype.saturation = function(c) {
+    if (!c instanceof p5.Color) {
+      throw new Error('Needs p5.Color as argument.');
     }
+    if (!c.hsba) {
+      c.hsba = p5.Color.getRGB(c.rgba);
+      c.hsba = c.hsba.concat(c.rgba[3]);
+    }
+    return c.hsba[1];
   };
+
+
 
   return p5;
 

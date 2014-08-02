@@ -28,7 +28,32 @@ define(function (require) {
    * @method createImage
    * @param  {Integer} width  width in pixels
    * @param  {Integer} height height in pixels
-   * @return {p5.Image}         the p5.Image object
+   * @return {p5.Image}       the p5.Image object
+   * @example
+   * <div>
+   * <code>
+   * img = createImage(66, 66);
+   * img.loadPixels();
+   * for (i = 0; i < img.pixels.length; i++) {
+   *   img.pixels[i] = color(0, 90, 102); 
+   * }
+   * img.updatePixels();
+   * image(img, 17, 17);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * img = createImage(66, 66);
+   * img.loadPixels();
+   * for (i = 0; i < img.pixels.length; i++) {
+   *   img.pixels[i] = color(0, 90, 102, i % img.width * 2); 
+   * }
+   * img.updatePixels();
+   * image(img, 17, 17);
+   * image(img, 34, 34);
+   * </code>
+   * </div>
    */
   p5.prototype.createImage = function(width, height) {
     return new p5.Image(width, height);

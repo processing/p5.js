@@ -11,7 +11,10 @@ define(function (require) {
 
   var p5 = require('core');
   var constants = require('constants');
+  require('p5.Color');
 
+  p5.prototype._doStroke = true;
+  p5.prototype._doFill = true;
   p5.prototype._colorMode = constants.RGB;
   p5.prototype._maxRGB = [255, 255, 255, 255];
   p5.prototype._maxHSB = [255, 255, 255, 255];
@@ -24,13 +27,14 @@ define(function (require) {
    * the first frame of animation or if the backgound need only be set once. 
    *
    * @method background
-   * @param {Number|Array} v1   gray value, red or hue value (depending on the
-   *                            current color mode), or color Array
-   * @param {Number|Array} [v2] green or saturation value (depending on the
-   *                            current color mode)
-   * @param {Number|Array} [v3] blue or brightness value (depending on the
-   *                            current color mode)
-   * @param {Number|Array} [a]  opacity of the background
+   * @param {Number|Color|p5.Image} v1   gray value, red or hue value 
+   *                                     (depending on the current color mode),
+   *                                     or color or p5.Image
+   * @param {Number|Array}          [v2] green or saturation value (depending on
+   *                                     the current color mode)
+   * @param {Number|Array}          [v3] blue or brightness value (depending on 
+   *                                     the current color mode)
+   * @param {Number|Array}          [a]  opacity of the background
    * @example
    * <div>
    * <code>
@@ -45,18 +49,21 @@ define(function (require) {
    * </div>
    */
   p5.prototype.background = function() {
-    var c = this.getNormalizedColor(arguments);
-    // save out the fill
-    var curFill = this.canvas.getContext('2d').fillStyle;
-    // create background rect
-    this.canvas.getContext('2d').fillStyle = this.getCSSRGBAColor(c);
-    this.canvas.getContext('2d').fillRect(0, 0, this.width, this.height);
-    // reset fill
-    this.canvas.getContext('2d').fillStyle = curFill;
+    if (arguments[0] instanceof p5.Image) {
+      this.image(arguments[0], 0, 0, this.width, this.height);
+    } else {
+      var curFill = this.canvas.getContext('2d').fillStyle;
+      // create background rect
+      var ctx = this.canvas.getContext('2d');
+      ctx.fillStyle = p5.Color.getColor.apply(this, arguments);
+      ctx.fillRect(0, 0, this.width, this.height);
+      // reset fill
+      ctx.fillStyle = curFill;
+    }
   };
 
   /**
-   * Clears the pixels within a buffer. This function only works on PGraphics
+   * Clears the pixels within a buffer. This function only works on p5.Canvas
    * objects created with the createCanvas() function; it won't work with the
    * main display window. Unlike the main graphics context, pixels in
    * additional graphics areas created with createGraphics() can be entirely
@@ -71,7 +78,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.clear = function() {
-    this.canvas.getContext('2d').clearRect(0, 0, this.width, this.height);
+    this.canvas.width = this.canvas.width;
   };
 
   /**
@@ -171,8 +178,9 @@ define(function (require) {
    * </div>
    */
   p5.prototype.fill = function() {
-    var c = this.getNormalizedColor(arguments);
-    this.canvas.getContext('2d').fillStyle = this.getCSSRGBAColor(c);
+    this._setProperty('_doFill', true);
+    var ctx = this.canvas.getContext('2d');
+    ctx.fillStyle = p5.Color.getColor.apply(this, arguments);
   };
 
   /**
@@ -190,7 +198,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.noFill = function() {
-    this.canvas.getContext('2d').fillStyle = 'rgba(0,0,0,0)';
+    this._setProperty('_doFill', false);
   };
 
   /**
@@ -207,7 +215,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.noStroke = function() {
-    this.canvas.getContext('2d').strokeStyle = 'rgba(0,0,0,0)';
+    this._setProperty('_doStroke', false);
   };
 
   /**
@@ -240,137 +248,12 @@ define(function (require) {
    * </div>
    */
   p5.prototype.stroke = function() {
-    var c = this.getNormalizedColor(arguments);
-    this.canvas.getContext('2d').strokeStyle = this.getCSSRGBAColor(c);
+    this._setProperty('_doStroke', true);
+    var ctx = this.canvas.getContext('2d');
+    ctx.strokeStyle = p5.Color.getColor.apply(this, arguments);
   };
 
-  /**
-   * For a number of different inputs, returns a color formatted as
-   * [r, g, b, a].
-   * 
-   * @method getNormalizedColor 
-   * @param {Array-like} args An 'array-like' object that represents a list of
-   *                          arguments
-   * @return {Array}          a color formatted as [r, g, b, a]
-   *                          Example:
-   *                          input        ==> output
-   *                          g            ==> [g, g, g, 255]
-   *                          g,a          ==> [g, g, g, a]
-   *                          r, g, b      ==> [r, g, b, 255]
-   *                          r, g, b, a   ==> [r, g, b, a]
-   *                          [g]          ==> [g, g, g, 255]
-   *                          [g, a]       ==> [g, g, g, a]
-   *                          [r, g, b]    ==> [r, g, b, 255]
-   *                          [r, g, b, a] ==> [r, g, b, a]
-   * @example
-   * <div>
-   * <code>
-   * // todo
-   * </code>
-   * </div>
-   */
-  p5.prototype.getNormalizedColor = function(args) {
-    var isRGB = this._colorMode === constants.RGB;
 
-    if (args[0] instanceof Array) { // already color object
-      args = args[0];
-    }
-    var r, g, b, a, rgba;
-    if (args.length >= 3) {
-      r = args[0];
-      g = args[1];
-      b = args[2];
-      a = typeof args[3] === 'number' ? args[3] : this._maxA;
-    } else {
-      if (isRGB) {
-        r = g = b = args[0];
-      } else {
-        r = b = args[0];
-        g = 0;
-      }
-      a = typeof args[1] === 'number' ? args[1] : this._maxA;
-    }
-
-    var maxArr = isRGB ? this._maxRGB : this._maxHSB;
-
-    r *= 255/maxArr[0];
-    g *= 255/maxArr[1];
-    b *= 255/maxArr[2];
-    a *= 255/maxArr[3];
-
-    if (this._colorMode === constants.HSB) {
-      rgba = hsv2rgb(r, g, b).concat(a);
-    } else {
-      rgba = [r, g, b, a];
-    }
-
-    return rgba;
-  };
-
-  function hsv2rgb(h,s,v) {
-    h /= 255;
-    s /= 255;
-    v /= 255;
-    // Adapted from http://www.easyrgb.com/math.html
-    // hsv values = 0 - 1, rgb values = 0 - 255
-    var RGB = [];
-    if(s===0){
-      RGB = [Math.round(v*255), Math.round(v*255), Math.round(v*255)];
-    }else{
-      // h must be < 1
-      var var_h = h * 6;
-      if (var_h===6) {
-        var_h = 0;
-      }
-      //Or ... var_i = floor( var_h )
-      var var_i = Math.floor( var_h );
-      var var_1 = v*(1-s);
-      var var_2 = v*(1-s*(var_h-var_i));
-      var var_3 = v*(1-s*(1-(var_h-var_i)));
-      var var_r;
-      var var_g;
-      var var_b;
-      if(var_i===0){
-        var_r = v;
-        var_g = var_3;
-        var_b = var_1;
-      }else if(var_i===1){
-        var_r = var_2;
-        var_g = v;
-        var_b = var_1;
-      }else if(var_i===2){
-        var_r = var_1;
-        var_g = v;
-        var_b = var_3;
-      }else if(var_i===3){
-        var_r = var_1;
-        var_g = var_2;
-        var_b = v;
-      }else if (var_i===4){
-        var_r = var_3;
-        var_g = var_1;
-        var_b = v;
-      }else{
-        var_r = v;
-        var_g = var_1;
-        var_b = var_2;
-      }
-      RGB= [
-        Math.round(var_r * 255),
-        Math.round(var_g * 255),
-        Math.round(var_b * 255)
-      ];
-    }
-    return RGB;
-  }
-
-  p5.prototype.getCSSRGBAColor = function(arr) {
-    var a = arr.map(function(val) {
-      return Math.floor(val);
-    });
-    var alpha = a[3] ? (a[3]/255.0) : 1;
-    return 'rgba('+a[0]+','+a[1]+','+a[2]+','+ alpha +')';
-  };
 
   return p5;
 

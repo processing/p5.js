@@ -10,7 +10,12 @@
    Base styles: opinionated defaults
    ========================================================================== */
 
-/* HOMEPAGE */
+
+/* 
+  //////////////////////////////////////////////////
+    HOMEPAGE 
+  //////////////////////////////////////////////////
+*/
 
 #bg {
     position: absolute;
@@ -23,34 +28,99 @@
     display: none;
 }
 
-/* EXAMPLES */
-.example .edit_space {
-    position: absolute !important;
-    top: 0;
-    left: 0;
-    width: 100%;
+#home-page .column-span {
+        /*margin:0 0.75em 0 -1.85em; /* margin-right: 0.75em;  */
+    margin-left:7.7em;
 }
 
-.example pre {
-    top: 0;
-    left: 0;
-    width: 100%;
+#menu.top_menu {
+    list-style: none;
+    font-family: "AvenirNextLTW01-Medium";
+    width:100%;
+    margin: 0 0 1em 0;
+    padding: 0;
+    height: 100%;
+    font-size: 1.1em;
 }
-.example div {
+
+#menu.top_menu li {
+    display: inline;
+}
+
+#separator-design-element {
+    width: 0.35em;
+    margin: 0 0.09em 0.25em 0.09em;
+}
+
+
+
+/* 
+  //////////////////////////////////////////////////
+    DOWNLOAD PAGE 
+  //////////////////////////////////////////////////
+*/
+.download_box {
+    border: 1px solid #ED225D;
+    padding: 0.4em;
+    margin: 1em 1.75em 0 0;
+    width: 18.65em;
+    color: #333 !important;
+    height:7.45em;
     position: relative;
 }
 
-.example button {
+.download_box:hover {
+    border: 1px solid #ED225D;
+    background: #ED225D;
+    color: #FFF !important;
+}
+
+.download_box.half_box {
+    width:8.45em;
+    float: left;
+}
+
+.download_box h4 {
+    font-size: 1em;
+    margin: 0;
+    padding-bottom: 0.3em;
+    border-bottom: 0.09em dashed; 
+    border-bottom-color: #ED225D;
+}
+
+.download_box:hover h4 {
+    -webkit-text-stroke-width: 0;
+    border-bottom-color: #FFF;
+}
+
+.download_box p {
+    font-size: 0.65em;
+    margin: 0;
+    position:absolute; 
+    bottom:1em;
+}
+
+.download_box svg {
+    height:0.65em;
+    width:0.65em;
     position: absolute;
-    top: 0;
-    left: 400px;
+    bottom: 3.5em;
 }
 
-.example #right_button {
-    left: 450px;
+.download_box:hover svg {
+    fill: white;
 }
 
+.download_box h4 + p {display: block;}
 
+#download-page .link_group {
+    width: 100%;
+    margin-bottom: 3em;
+}
+
+#download-page p {
+    margin-bottom: 0;
+}
 
 /* 
   //////////////////////////////////////////////////
@@ -63,17 +133,11 @@ section#reference h2 {
 }
 
 /* EXAMPLES IN REF */
-.example-content .cnv_div {
-    position: absolute !important;
-    top: 0px;
-    left: 0px;
-}
 
 .example-content .edit_space, 
 .example-content pre {
     position: absolute !important;
-    width: 100%;
-    top: 0 !important;
+    top: 0.5em !important;
     left: 120px !important;
     padding-top: 0 !important;
     border: none !important;
@@ -82,16 +146,71 @@ section#reference h2 {
 .example-content pre {
 
     margin-top: 0 !important;
+    width: 33.5em !important;
 }
 
 .example-content .edit_space {
-
     margin: -0.5em 0 0 -0.5em !important;
 }
 
+.example_container .edit_space {
+    position: absolute !important;
+    top: 0;
+    left: 0;
+}
+
+.example_container pre {
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+.example div {
+    position: relative;
+}
+
+.example_container button {
+    position: absolute;
+    top: 0.25em;
+}
+
+.edit_space button {
+    font-family: "AvenirNextLTW01-Medium";
+    font-size: 1em;
+    color: #ccc;
+    border: 1px solid rgba(200, 200, 200, .15);
+    background: transparent;
+    outline: none;
+}
+
+.example_container button:hover, .example_container.editing button {
+    color: #2D7BB6;
+    border-color: rgba(45,123,182, .25);
+}
+
+.edit_button {
+    left: 24.5em;
+}
+
+.reset_button {
+    left: 27.5em;
+}
+
+.example_container {
+    width: 36em;
+    border-top: 0.09em dashed; 
+    border-top-color: #333;
+    padding-top: 0.5em;
+    margin-top: 1em;
+}
+
+
 .column_0, .column_1, .column_2 {
     float: left;
-    width: 12em;
+    width: 11.333em;
+}
+
+.column_0, .column_1 {
+    margin-right: 1.0em;
 }
 
 
@@ -182,15 +301,18 @@ color: #666;  }
 }
 
 #collection-list-nav dl, 
-    .reference-group dl {
+    .reference-group dl,
+    #list .column {
     float: left;
     width:7.68em;
     margin:0 1.75em 0 0;
+    font-size: 1em;
 }
 
 #collection-list-nav dl:nth-child(4), 
     .reference-group dl:nth-child(4),
-    .reference-group.main-ref-page dl:nth-child(5) {
+    .reference-group.main-ref-page dl:nth-child(5),
+    #list .column.col_3 {
     margin-right:0;
 }
 
@@ -207,6 +329,22 @@ color: #666;  }
 
 .group-name {
     font-size: 1em;
+}
+
+.group-name.first {
+    margin-top: 0;
+}
+
+.column.group-name {
+    margin-bottom: 1em;
+}
+
+#library-page .group-name:hover {
+    color: #ED225D;
+}
+
+#library-page .group-name {
+    margin-bottom: 1em;
 }
 
 div.reference-group {
@@ -259,10 +397,12 @@ select {
 
 textarea {
     line-height: 1.45em;
-    margin: -0.1em 0 0 -0.1em;
     padding: 0.5em 1em 0.5em 1em;
-    border:0.1em solid;
-    border-color:rgba(51,51,51,.5);
+    border:none;
+}
+
+textarea:focus {
+    outline: none;
 }
 
 body {
@@ -325,6 +465,154 @@ textarea {
     resize: vertical;
 }
 
+/* 
+  //////////////////////////////////////////////////
+    LIBRARIES / LEARN 
+  //////////////////////////////////////////////////
+*/
+.label {
+    position: relative;
+}
+.label h4 {
+    color: white;
+    position: absolute;
+    top: 0;
+    margin: 1em;
+}
+
+.label:hover h4 {
+    color:#ED225D;
+}
+
+#exampleDisplay, #exampleFrame, #exampleEditor {
+    width: 36em;
+    border: none;
+}
+
+#exampleDisplay button {
+    color: #2D7BB6;
+    border-color: rgba(45,123,182, .25);
+    float: right;
+    margin: 0.5em 0 0 0.5em;
+    background: rgba(255, 255, 255, 0.5);
+    position: absolute;
+    left: 0;
+    z-index: 2;
+}
+
+#exampleDisplay .edit_button {
+    left: 29.55em;
+}
+
+#exampleDisplay .reset_button {
+    left: 32.55em;
+}
+
+#exampleDisplay .edit_space {
+    position: relative;
+}
+
+#exampleFrame {
+    height: 22em;
+}
+
+#exampleEditor {
+    height: 500em;
+    width: 720px;
+    overflow: hidden;
+    margin-top: 0.5em;
+    color: #222;
+    font-family: 
+      inconsolatamedium, 
+      Consolas, 
+      Monaco, 
+      'Andale Mono', 
+      monospace;
+    font-size: 1em !important;
+    background-color: #FFF;
+    line-height: 1em;
+}
+
+.ace_numeric {
+    color: #DC3787 !important;
+}
+
+.ace_type {
+    color: #704F21 !important;
+}
+
+.ace_function, .ace_keyword {
+    color: #00A1D3 !important;
+}
+
+.ace_support {
+    color: #71A845 !important;
+}
+
+.ace_operator {
+    color: #666 !important;
+}
+
+.ace_comment {
+    color: #A0A0A0 !important;
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+  position:relative;
+  padding: 0.5em 1em;
+  margin: 0.5em 0 0 -0.5em;
+  border-left: 0.5em solid #AFAFAF; /* coy og blue 10px solid  358ccb  */
+  background-color: #fff; /* coy og white #fdfdfd  */
+  /* lines */
+  background-image: -webkit-linear-gradient(transparent 50%, rgba(69, 142, 209, 0.06) 50%);
+  background-image: -moz-linear-gradient(transparent 50%, rgba(69, 142, 209, 0.06) 50%);
+  background-image: -ms-linear-gradient(transparent 50%, rgba(69, 142, 209, 0.06) 50%);
+  background-image: -o-linear-gradient(transparent 50%, rgba(69, 142, 209, 0.06) 50%);
+  background-image: linear-gradient(transparent 50%, rgba(69, 142, 209, 0.06) 50%);
+  background-size: 2.9em 2.9em; /* adjusts height of alternating lines */
+  background-origin:content-box;
+  /* set overflow to just let the code roll  */
+  overflow:auto;
+  /* or uncomment this to let an inner vertical scroll be triggered, 
+    but be generous as to when  
+  max-height:36em; */
+}
+
+
+.ace-gutter {
+    color: #333 !important;
+}
+
+.ace-gutter-layer {
+    color: #333 !important;
+}
+
+.ace_folding-enabled {
+    width: 10px !important;
+    color: #333 !important;
+
+}
+.ace_gutter-cell {
+  background-image: none !important;
+  padding-left: 10px !important;
+  overflow: hidden !important;
+  background-color: #AFAFAF !important;
+}
+
+.ace_info {
+  background-color: #D7E5F5 !important;
+}
+
+.ace_warning {
+  background-color: #FFD700 !important;
+  color: #ffffff !important;
+}
+
+.ace_error {
+  background-color: #FF6347 !important;
+  color: #ffffff !important;
+}
 /* ==========================================================================
    Chrome Frame prompt
    ========================================================================== */
@@ -400,14 +688,6 @@ body {
     blue #2D7BB6 (a lighter Processing blue â€” it's our take on it) */
 }
 
-#menu li a:active, #menu li a:hover {
-    color:#FF276F; /* FF276F */
-    padding-bottom: 0.11em; 
-    border-bottom: 0.11em dashed; 
-    border-bottom-color: #FF276F;
-    transition: border-bottom 30ms linear; 
-}
-
 /* body links  */
 a:link, a:visited { 
     color: #2D7BB6;
@@ -417,8 +697,8 @@ a:link, a:visited {
 a:active, a:hover, #reference a:hover { 
     color:#ED225D; 
     text-decoration: none;
-    padding-bottom: 0.1em; 
-    border-bottom: 0.1em dashed; 
+    padding-bottom: 0.11em; 
+    border-bottom: 0.11em dashed; 
     border-bottom-color: #ED225D;
     transition: border-bottom 30ms linear; 
 }
@@ -463,12 +743,47 @@ h2 {
 }
 
 h3 {
-    font-size: 1.777em;
+    font-size: 1.5em; /* 1.777em */
+    margin: 1em 0 0 0;
 }
 
-h4 {
-    font-size: 1.333em;
+#item h3 {
+    margin: 0.777em 0 0 0;
+    font-size: 1.444em;
+    font-weight: inherit;
+    /*line-height: 1.2;*/
+    font-family: inconsolatamedium, consolas, monospace;
+    color: #00A1D3 !important; /* 2D7BB6, 4A90E2 */
 }
+
+/* probably needs to be more specific, like with a class selector, in case there are other links inside #item that are not code (or those exceptions could just be handled with a class of .notcode */
+#item a {
+    font-family: inconsolatamedium, consolas, monospace;
+}
+
+#backlink {
+    margin: 1.2em 0.444em 0 0;
+    font: 1em AvenirNextLTW01-Medium;
+    float:right;
+}
+
+#backlink a {
+    color:#AFAFAF;
+}
+
+#backlink a:hover {
+    color:#ED225D;
+    border-bottom:none;
+}
+
+
+h4 {
+    font-size: 1.33em;
+    margin: 1em 0 0 0;
+}
+
+h4 + p {display: inline;}
+
 
 small, .small, footer, #family {
     font-size: 0.9em;
@@ -507,8 +822,33 @@ small, .small, footer, #family {
 } 
 
 #family p {
+    float: left;
     margin:0.375em 0 0.375em 2em;
 }
+
+#family form {
+    float: right;
+    padding:0.375em 0.75em 0.375em 0.75em;
+    margin-right: 0.25em;
+}
+
+#family form input[type="text"] {
+    visibility: hidden;
+    width: 0;
+    margin: 0;
+    color:#333; 
+    border: 1px solid #3796D1;
+    font-family: times !important;
+    font-weight: 400;
+    font-size: 1em;
+}
+
+#family form input[type="submit"] {
+    background: url('../img/search.png') center center no-repeat;
+    border: none;
+    outline: none;
+}
+
 
 .code-snippet {
     margin:0 0 0 1em;
@@ -562,8 +902,31 @@ li {
     margin: 0 0 1em 0;
 }
 
+section li {
+    margin: 0 0 1em 0.04em;
+}
+
+ul.nobullet, div.params ul {
+    margin:0;
+    padding: 0;
+    list-style: none;
+    list-style-position: outside;
+}
+
+div.params ul li {
+    margin-left: -0.23em;
+}
+
+ul.inside {
+    margin:0 0 0 2em;
+    padding: 0;
+    list-style: disc;
+    list-style-position: inside;
+}
+
 .image-row img {
     width:48%;
+    height:14.3%;
 }
 
 .image-row img+img {
@@ -575,8 +938,6 @@ li {
 img, section div img {
     margin: 0.5em 0.5em 0 0;
     width:100%;
-    border:0.1em solid;
-    border-color:rgba(51,51,51,.5);
 }
 
 p+img {
@@ -585,7 +946,6 @@ p+img {
 
 .video {
     width:100%;
-    border-color:rgba(51,51,51,.5);
 }
 
 
@@ -761,7 +1121,8 @@ footer {
 
     #container {
         margin:2em auto;
-        width:52em;
+        width:49em;
+        padding:0;
         height: auto;
         min-height: 100%;
         background-color: rgba(51,51,51,0.0);
@@ -772,8 +1133,7 @@ footer {
         margin:0 0 0 8.5em; /* the 7.5em  */
     }
     section {
-        width:36em; /* 36-38 em for about 10-14 words at this size  */
-
+        width:36em; /* 36-38 em for about 10-14 words at this size   */
     }
 
     small, .small, footer, #family {
@@ -783,22 +1143,22 @@ footer {
     footer {
         clear:both;
         /*margin: 4em 0 2em -.75em;*/
-        width:52em;
+        width:48em;
     }
 
     #menu {
-    list-style: none;
-    font-family: "AvenirNextLTW01-Medium";
-    margin:0 0.75em 0 -1.85em; /* margin-right: 0.75em;  */
-    width:7.3em;
-    height:100%;
-    float:left;
-    border-top: transparent;
-    border-bottom: transparent;
-    height: 14.25em;
-    padding:5.25em 0; 
-    font-size: 0.92em;
-    z-index: 100;
+        list-style: none;
+        font-family: "AvenirNextLTW01-Medium";
+        margin:0 0.75em 0 -1.85em; /* margin-right: 0.75em;  */
+        width:7.3em;
+        height:100%;
+        float:left;
+        border-top: transparent;
+        border-bottom: transparent;
+        height: 14.25em;
+        padding:5.25em 0; 
+        font-size: 0.92em;
+        z-index: 100;
     }
 
     #menu li {
@@ -818,13 +1178,14 @@ footer {
         /*content:" Â»";*/
         }
 
-    #menu li:nth-child(8) {
+    #menu li:nth-child(7) {
         margin-top:3em;
         padding-top: 0.5em;
         /*border-top: 0.06em solid rgba(51,51,51,0.25);*/
     }
 
 /* constants for the asterisk */
+
     #asterisk-design-element {
         position:fixed;
         z-index: -1 !important;
@@ -841,8 +1202,8 @@ footer {
         opacity: 1;
     }
 
-    #about-page #asterisk-design-element,
-    #development-page #asterisk-design-element {
+    #learn-page #asterisk-design-element, 
+    #other-content-types-page #asterisk-design-element {
         bottom:-14%;
         left:-20%;
         height:25em;
@@ -854,7 +1215,6 @@ footer {
         transform: rotate(-1deg);
     }
 
-    #getting-started-page #asterisk-design-element,
     #libraries-page #asterisk-design-element {
     
         bottom:-19%;
@@ -868,7 +1228,8 @@ footer {
         transform: rotate(2deg);
     }
 
-    #learning-page #asterisk-design-element {
+    #get-started-page #asterisk-design-element,
+    #contribute-page #asterisk-design-element {
 
         top:-30%;
         right:-40%;
@@ -883,8 +1244,7 @@ footer {
     }
 
     #reference-page #asterisk-design-element,
-    #download-page #asterisk-design-element, 
-    #other-content-types-page #asterisk-design-element
+    #download-page #asterisk-design-element
     {
         top:7%;
         left:1%;
