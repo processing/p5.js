@@ -18,11 +18,10 @@ define(function (require) {
    *
    *  @class p5.TableRow
    *  @constructor
-   *  @param {[String]} str     optional: populate the row with a
-   *                            string of values, separated by the
-   *                            separator
-   *  @param {[String]} separator  Comma separated values (csv)
-   *                               by default
+   *  @param {String} [str]       optional: populate the row with a
+   *                              string of values, separated by the
+   *                              separator
+   *  @param {String} [separator] comma separated values (csv) by default
    */
   p5.TableRow = function (str, separator) {
     var arr = [];
@@ -94,7 +93,7 @@ define(function (require) {
    *  The column may be specified by either its ID or title.
    *
    *  @method  get
-   *  @param  {(String|Number)} column columnName (string) or
+   *  @param  {String|Number} column columnName (string) or
    *                                   ID (number)
    *  @return {[type]}        [description]
    */

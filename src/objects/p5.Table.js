@@ -16,8 +16,8 @@ define(function (require) {
    *
    *  @class p5.Table
    *  @constructor
-   *  @param {[Array]} rows An array of p5.TableRow objects (optional)
-   *  @returns {p5.Table} [description]
+   *  @param  {Array}     [rows] An array of p5.TableRow objects
+   *  @return {p5.Table}         p5.Table generated
    */
   p5.Table = function (rows) {
     /**
@@ -43,7 +43,7 @@ define(function (require) {
    *  duplicated and added to the table.
    *  
    *  @method  addRow
-   *  @param {[TableRow]} row [description]
+   *  @param   {p5.TableRow} [row] row to be added to the table
    */
   p5.Table.prototype.addRow = function(row) {
     // make sure it is a valid TableRow
