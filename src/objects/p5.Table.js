@@ -40,8 +40,8 @@ define(function (require) {
    *
    *  @class p5.Table
    *  @constructor
-   *  @param {[Array]} rows An array of p5.TableRow objects (optional)
-   *  @returns {p5.Table} [description]
+   *  @param  {Array}     [rows] An array of p5.TableRow objects
+   *  @return {p5.Table}         p5.Table generated
    */
   p5.Table = function (rows) {
     /**
@@ -58,16 +58,16 @@ define(function (require) {
   };
 
   /**
-   *  Use addRow() to add a new row of data to a Table object. By default,
+   *  Use addRow() to add a new row of data to a p5.Table object. By default,
    *  an empty row is created. Typically, you would store a reference to
    *  the new row in a TableRow object (see newRow in the example above),
    *  and then set individual values using set().
    *
-   *  If a TableRow object is included as a parameter, then that row is
+   *  If a p5.TableRow object is included as a parameter, then that row is
    *  duplicated and added to the table.
    *  
    *  @method  addRow
-   *  @param {[TableRow]} row [description]
+   *  @param   {p5.TableRow} [row] row to be added to the table
    */
   p5.Table.prototype.addRow = function(row) {
     // make sure it is a valid TableRow
@@ -83,11 +83,10 @@ define(function (require) {
   };
 
   /**
-   *  [removeRow description]
+   * Removes a row from the table object.
    *
-   *  @method  removeRow
-   *  @param  {[type]} id [description]
-   *  @return {[type]}    [description]
+   * @method  removeRow
+   * @param   {Number} id ID number of the row to remove
    */
   p5.Table.prototype.removeRow = function(id) {
     this.rows[id].table = null; // remove reference to table
@@ -98,22 +97,22 @@ define(function (require) {
 
 
   /**
-   *  Returns a reference to the specified TableRow. The reference
-   *  can then be used to get and set values of the selected row.
+   * Returns a reference to the specified p5.TableRow. The reference
+   * can then be used to get and set values of the selected row.
    *  
-   *  @method  getRow
-   *  @param  {Number} rowID ID number of the row to get
-   *  @return {TableRow}     [description]
+   * @method  getRow
+   * @param  {Number}   rowID ID number of the row to get
+   * @return {TableRow} p5.TableRow object
    */
   p5.Table.prototype.getRow = function(r) {
     return this.rows[r];
   };
 
   /**
-   *  Gets all rows from the table. Returns an array of TableRows.
+   *  Gets all rows from the table. Returns an array of p5.TableRows.
    *  
    *  @method  getRows
-   *  @return {Array}   Array of TableRows
+   *  @return {Array}   Array of p5.TableRows
    */
   p5.Table.prototype.getRows = function() {
     return this.rows;

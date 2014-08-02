@@ -78,7 +78,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.clear = function() {
-    this.canvas.width = this.canvas.width;
+    this.canvas.getContext('2d').clearRect(0, 0, this.width, this.height);
   };
 
   /**

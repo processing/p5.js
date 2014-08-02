@@ -1,14 +1,4 @@
 /*! p5.sound.js v0.009 2014-07-24 */
-
-/**
- * This is the p5.sound library. Description goes here.
- *
- * @module p5.sound
- * @submodule p5.sound
- * @for p5.sound
- * @main
- */
-
 var sndcore;
 sndcore = function () {
   'use strict';

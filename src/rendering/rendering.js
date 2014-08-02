@@ -96,10 +96,13 @@ define(function(require) {
    */
   p5.prototype.createGraphics = function(w, h) {
     var c = document.createElement('canvas');
-    c.setAttribute('width', w);
-    c.setAttribute('height', h);
+    c.setAttribute('width', w*this._pixelDensity);
+    c.setAttribute('height', h*this._pixelDensity);
+    c.setAttribute('style',
+      'width:'+w+'px !important; height:'+h+'px !important;');
     //c.style.visibility='hidden';
-    document.body.appendChild(c);
+    var node = this._userNode || document.body;
+    node.appendChild(c);
     
     var pg = new p5.Graphics(c);
     // store in elements array
@@ -114,6 +117,7 @@ define(function(require) {
         }
       }
     }
+    pg.scale(this._pixelDensity, this._pixelDensity);
     return pg;
   };
 

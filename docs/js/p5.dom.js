@@ -1,24 +1,4 @@
 /*! p5.dom.js v0.0.1 July 31, 2014 */
-/**
- * <p>The web is much more than just canvas and p5.dom makes it easy to interact 
- * with other HTML5 objects, including text, hyperlink, image, input, video, 
- * audio, and webcam.</p>
- * <p>There are a set of creation methods, and some other stuff... @TODO.</p>
- *
- * <p>Methods and properties shown in black are part of the p5.js core, items in
- * blue are part of the p5.dom library. See the
- * <a href="http://p5js.org/libraries/#using-a-library">using a library</a>
- * section for information on how to include this library. p5.dom comes with
- * <a href="http://p5js.org/download">p5 complete</a> or you can download the single file
- * <a href="https://raw.githubusercontent.com/lmccart/p5.js/master/lib/addons/p5.dom.js">
- * here</a>.</p>
- * 
- *
- * @module p5.dom
- * @submodule p5.dom
- * @for p5.dom
- * @main
- */
 
 var p5DOM = (function(){
 
@@ -384,7 +364,6 @@ var p5DOM = (function(){
    *
    * Adds specified class to the element.
    *
-   * @for p5.Element
    * @method addClass
    * @param  {String} class name of class to add
    */

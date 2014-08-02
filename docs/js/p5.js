@@ -1,4 +1,4 @@
-/*! p5.min.js v0.2.22 July 28, 2014 */
+/*! p5.js v0.2.23 July 31, 2014 */
 var shim = function (require) {
     window.requestDraw = function () {
       return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
@@ -2603,7 +2603,6 @@ var inputmouse = function (require, core, constants) {
       this.updateMouseCoords(e);
       if (!this.isMousePressed) {
         if (typeof context.mouseMoved === 'function') {
-          e.preventDefault();
           context.mouseMoved(e);
         } else if (typeof context.touchMoved === 'function') {
           e.preventDefault();
@@ -2611,7 +2610,6 @@ var inputmouse = function (require, core, constants) {
         }
       } else {
         if (typeof context.mouseDragged === 'function') {
-          e.preventDefault();
           context.mouseDragged(e);
         } else if (typeof context.touchMoved === 'function') {
           e.preventDefault();
@@ -2625,7 +2623,6 @@ var inputmouse = function (require, core, constants) {
       this._setProperty('mouseIsPressed', true);
       this.setMouseButton(e);
       if (typeof context.mousePressed === 'function') {
-        e.preventDefault();
         context.mousePressed(e);
       } else if (typeof context.touchStarted === 'function') {
         e.preventDefault();
@@ -2637,7 +2634,6 @@ var inputmouse = function (require, core, constants) {
       this._setProperty('isMousePressed', false);
       this._setProperty('mouseIsPressed', false);
       if (typeof context.mouseReleased === 'function') {
-        e.preventDefault();
         context.mouseReleased(e);
       } else if (typeof context.touchEnded === 'function') {
         e.preventDefault();
@@ -2647,7 +2643,6 @@ var inputmouse = function (require, core, constants) {
     p5.prototype.onclick = function (e) {
       var context = this._isGlobal ? window : this;
       if (typeof context.mouseClicked === 'function') {
-        e.preventDefault();
         context.mouseClicked(e);
       }
     };
