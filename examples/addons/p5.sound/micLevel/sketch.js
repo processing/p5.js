@@ -5,7 +5,7 @@
 function setup() {
    createCanvas(400,400);
    mic = new AudioIn();
-   mic.on();
+   mic.start();
 }
 
 function draw() {

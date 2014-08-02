@@ -2,7 +2,6 @@
  *  DEMO
  *  - find the peaks in an audio file to draw the entire waveform with SoundFile.getPeaks();
  *  - draw cursor on a timeline with SoundFile.currentTime() and SoundFile.duration();
- *  - change playbackRate based on mouse position
  */
 
 // ====================
@@ -12,7 +11,8 @@ var soundFile;
 var p, peakCount;
 
 function preload() {
-  soundFile = loadSound(['../_files/lucky_dragons_-_power_melody.mp3','../_files/lucky_dragons_-_power_melody.ogg']);
+  soundFormats('ogg', 'mp3');
+  soundFile = loadSound('../_files/lucky_dragons_-_power_melody');
 }
 
 function setup() {
@@ -42,12 +42,8 @@ function draw() {
   }
   endShape();
 
-  // map playback rate of a sound file to mouseX position
-  var newRate = (map(mouseX,0,800,-7,10))/10;
-  soundFile.rate(newRate);
-
   // update display text:
-  p.html('MouseY = Visible Amplitude Peaks: ' + peakCount.toFixed(3)+'<br>MouseX = Playback Rate: '+newRate.toFixed(3));
+  p.html('MouseY = Visible Amplitude Peaks: ' + peakCount.toFixed(3) );
 
   drawCursor();
 }

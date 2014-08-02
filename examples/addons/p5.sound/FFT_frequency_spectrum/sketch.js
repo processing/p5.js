@@ -1,15 +1,28 @@
 /**
- * Draw frequency spectrum of a sound as it plays using FFT.processFreq()
+ * This example draws the frequency spectrum of a sound by using
+ * the FFT object's analyze() method.
+ * 
+ * FFT is a Fast Fourier Transform function that calculates
+ * amplitude across the frequency spectrum. The analyze() method returns
+ * an array of values. These values represent how much volume exists in a
+ * sound at various frequencies (or pitches). The beginning of the
+ * array represents the lowest frequencies (bass), and the end of the
+ * array represents the highest frequencies (treble).
+ * 
+ * By default, the array length is 1024. We can determine the size of the array by including
+ * an optional parameter, but the number must be a power of 2 between
+ * 16 and 1024.
  */
+
 
 var soundFile;
 var fft;
-var fftSize = 1024;
+var fftBands = 512;
 
 var description = 'loading';
 var p;
 
-// This will be an array of amplitude from lowest to highest frequencies
+// This will be an array of amplitude values from lowest to highest frequencies
 var frequencySpectrum = [];
 
 
@@ -19,23 +32,17 @@ function preload() {
 }
 
 function setup() {
-  createCanvas(fftSize/2, 256);
+  createCanvas(fftBands, 256);
   fill(255, 40, 255);
 
   // loop the sound file
   soundFile.loop();
 
-  /**
-   * Instantiate the FFT which will analyze frequencies of sound as it plays.
-   * Optional parameters are:
-   * - Smoothing (between 0.01 and .99)
-   * - fftSize (must be a power of two between 32 and 2048)
-   */
-  fft = new FFT(.8, fftSize);
+  fft = new FFT();
 
   // update description text
   p = createP(description);
-  var p2 = createP('Draw the array returned by FFT.processFreq( ). This represents the frequency spectrum, from lowest to highest frequencies.');
+  var p2 = createP('Draw the array returned by FFT.analyze( ). This represents the frequency spectrum, from lowest to highest frequencies.');
 
   // set the master volume;
   masterVolume(.5);
@@ -50,17 +57,15 @@ function draw() {
   /** 
    * Analyze the sound.
    * Return array of frequency volumes, from lowest to highest frequencies.
-   * The length of the frequencySpectrum will be 1/2 the fftSize.
    */
-  frequencySpectrum = fft.processFreq();
+  frequencySpectrum = fft.analyze();
 
   // Draw every value in the frequencySpectrum array as a rectangle
-  for (var i = 0; i< frequencySpectrum.length; i++){
+  for (var i = 0; i< fftBands; i++){
     noStroke();
-    rect(map(i, 0, frequencySpectrum.length, 0, width), height, fftSize/width, -height -frequencySpectrum[i] ) ;
+    rect(map(i, 0, fftBands, 0, width), height, fftBands/width, -height -frequencySpectrum[i] ) ;
   }
 }
-
 
 
 // Change description text if the song is loading, playing or paused
@@ -86,7 +91,6 @@ function updateDescription() {
     p.html(description);
   }
 }
-
 
 // pause the song if a key is pressed
 function keyPressed() {

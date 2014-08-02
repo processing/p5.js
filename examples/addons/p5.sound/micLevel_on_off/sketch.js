@@ -11,7 +11,7 @@ var h;
 function setup() {
   createCanvas(400,400);
   mic = new AudioIn();
-  mic.on();
+  mic.start();
 
   // create controls
   levelLabel = createP('Master Volume: ');
@@ -20,11 +20,11 @@ function setup() {
   soundToggle = createButton('Sound ON');
   soundToggle.mousePressed(toggleSound);
 
-  micToggle = createButton('Mic OFF');
+  micToggle = createButton('Stop Mic');
   micToggle.mousePressed(toggleMic);
 
   h = createP('enable the mic...');
-  createP('NOTE: Mic Sound is off by default. Turning sound on with mic.connect( ) may cause a <a href="https://en.wikipedia.org/wiki/Audio_feedback" target="_blank">feedback loop</a> between the mic and speakers. Try headphones.');
+  createP('NOTE: Mic is disconnected from master output (speakers) by default. Turning sound on with mic.connect( ) may cause a <a href="https://en.wikipedia.org/wiki/Audio_feedback" target="_blank">feedback loop</a> between the mic and speakers. Try headphones.');
 }
 
 function draw() {
@@ -66,12 +66,12 @@ function toggleSound() {
 // Toggle whether the mic is on (getting input) or off
 function toggleMic() {
   if (micOn == true) {
-    mic.off();
+    mic.stop();
     micOn = false;
-    micToggle.html('Mic ON');
+    micToggle.html('Start Mic');
   } else {
-    mic.on();
+    mic.start();
     micOn = true;
-    micToggle.html('Mic OFF');
+    micToggle.html('Stop mic');
   }
 }

@@ -20,9 +20,9 @@ function preload() {
 
 function setup() {
   createCanvas(400, 400); 
-  background(0, 0, 0);
-  noStroke();
-  
+  background(0);
+  stroke(255);
+
   soundFile.loop();
 
   // create a new Amplitude. Optionally, give it a 'smoothing' value betw 0.0 and .999
@@ -37,7 +37,7 @@ function setup() {
 }
 
 function draw() {
-  background(0, 0, 0);
+  background(0);
 
   // get volume from the amplitude process
   var volume = amplitude.getLevel();
