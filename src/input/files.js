@@ -98,12 +98,66 @@ define(function (require) {
     return ret;
   };
 
-  p5.prototype.loadTable = function () {
-    // TODO
-    throw 'not yet implemented';
+  /**
+   *  <p>Reads the contents of a file or URL and creates an Table
+   *  object with its values. If a file is specified, it must be
+   *  located in the sketch's "data" folder. The filename parameter
+   *  can also be a URL to a file found online. By default, the file
+   *  is assumed to be comma-separated (in CSV format), and to
+   *  include a header row.</p>
+   *  
+   *  <p> All files loaded and saved use UTF-8 encoding.</p>
+   *  
+   *  @method  loadTable
+   *  @param  {String}   filename   name of the file or URL to load
+   *  @param  {Function} [callback] function to be executed after loadXML()
+   *                               completes, XML object is passed in as
+   *                               first argument
+   *  @return {Object}              XML object containing data
+   */
+  p5.prototype.loadTable = function (path, callback) {
+    var ret = [];
+    var t = new p5.Table();
+    var req = new XMLHttpRequest();
+    req.open('GET', path, true);
+    req.onreadystatechange = function () {
+      if (req.readyState === 4 && (req.status === 200 || req.status === 0)) {
+        var arr = req.responseText.match(/[^\r\n]+/g);
+        for (var k in arr) {
+          ret[k] = arr[k];
+        }
+        if (typeof callback !== 'undefined') {
+          t.columns = new p5.TableRow(ret[0]).arr;
+          for (var i = 1; i<ret.length; i++) {
+            var row = new p5.TableRow(ret[i]);
+            row.obj = makeObject(row.arr, t.columns); // if Headers
+            t.addRow(row);
+          }
+          callback(t);
+        }
+      }
+    };
+    req.send(null);
+    return t;
+    // throw 'not yet implemented';
   };
 
-
+  // helper function to turn a row into a JSON object
+  function makeObject(row, headers) {
+    var ret = {};
+    headers = headers || [];
+    if (typeof(headers) === 'undefined'){
+      for (var j = 0; j < row.length; j++ ){
+        headers[j] = j;
+      }
+    }
+    for (var i = 0; i < headers.length; i++){
+      var key = headers[i];
+      var val = row[i];
+      ret[key] = val;
+    }
+    return ret;
+  }
 
   /**
    * Reads the contents of a file and creates an XML object with its values.

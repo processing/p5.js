@@ -78,6 +78,8 @@ module.exports = function(grunt) {
             'p5.Image': 'src/objects/p5.Image',
             //'p5.Shape': 'src/objects/p5.Shape',
             'p5.Vector': 'src/objects/p5.Vector',
+            'p5.TableRow': 'src/objects/p5.TableRow',
+            'p5.Table': 'src/objects/p5.Table',
             'color.creating_reading': 'src/color/creating_reading',
             'color.setting': 'src/color/setting',
             'core': 'src/core/core',
