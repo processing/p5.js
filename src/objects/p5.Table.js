@@ -194,7 +194,7 @@ define(function (require) {
    *  
    *  @method  matchRow
    *  @param  {String} regexp The regular expression to match
-   *  @param  {(String|Number)} column The column ID (number) or 
+   *  @param  {String|Number} column The column ID (number) or 
    *                                   title (string)
    *  @return {TableRow}        TableRow object
    */
@@ -226,7 +226,7 @@ define(function (require) {
    *
    *  @method  matchRows
    *  @param  {String} regexp The regular expression to match
-   *  @param  {[(String|Number)]} column The column ID (number) or 
+   *  @param  {String|Number} [column] The column ID (number) or 
    *                                   title (string)
    *  @return {Array}        An Array of TableRow objects
    */
@@ -256,7 +256,7 @@ define(function (require) {
    *  as an array. The column may be specified by either its ID or title.
    *
    *  @method  getColumn
-   *  @param  {(String|Number)} column String or Number of the column to return
+   *  @param  {String|Number} column String or Number of the column to return
    *  @return {Array}       Array of column values
    */
   p5.Table.prototype.getColumn = function(value) {
@@ -291,7 +291,7 @@ define(function (require) {
    *  specified, the new column's title will be null.)
    *
    *  @method  addColumn
-   *  @param {[String]} title Title of the given column
+   *  @param {String} [title] Title of the given column
    */
   p5.Table.prototype.addColumn = function(title) {
     var t = title || null;
@@ -326,7 +326,7 @@ define(function (require) {
    *
    *  @method  removeTokens
    *  @param  {String} chars  String listing characters to be removed
-   *  @param  {[String|Number]} column Column ID (number)
+   *  @param  {String|Number} [column] Column ID (number)
    *                                   or name (string)
    */
   p5.Table.prototype.removeTokens = function(chars, column) {
@@ -375,7 +375,7 @@ define(function (require) {
    *  may be referenced by either its ID or title.
    *
    *  @method  trim
-   *  @param  {[String|Number]} column Column ID (number)
+   *  @param  {String|Number} column Column ID (number)
    *                                   or name (string)
    */
   p5.Table.prototype.trim = function(column) {
@@ -418,7 +418,7 @@ define(function (require) {
    *  would remove the second column, and so on.
    *
    *  @method  removeColumn
-   *  @param  {(String|Number)} column columnName (string) or ID (number)
+   *  @param  {String|Number} column columnName (string) or ID (number)
    */
   p5.Table.prototype.removeColumn = function(c) {
     var cString;
