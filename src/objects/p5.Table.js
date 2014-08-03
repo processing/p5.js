@@ -9,6 +9,30 @@ define(function (require) {
 
   var p5 = require('core');
 
+
+  /**
+   *  Table Options
+   *  <p>Generic class for handling tabular data, typically from a
+   *  CSV, TSV, or other sort of spreadsheet file.</p>
+   *  <p>CSV files are
+   *  <a href="http://en.wikipedia.org/wiki/Comma-separated_values">
+   *  comma separated values</a>, often with the data in quotes. TSV
+   *  files use tabs as separators, and usually don't bother with the
+   *  quotes.</p>
+   *  <p>File names should end with .csv if they're comma separated.</p>
+   *  <p>A rough "spec" for CSV can be found
+   *  <a href="http://tools.ietf.org/html/rfc4180">here</a>.</p>
+   *  <p>To load files, use the loadTable method.</p>
+   *
+   *  Possible options include:
+   *  <ul>
+   *  <li>csv - parse the table as comma-separated values
+   *  <li>tsv - parse the table as tab-separated values
+   *  <li>newlines - this CSV file contains newlines inside individual cells
+   *  <li>header - this table has a header (title) row
+   *  </ul>
+   */
+
   /**
    *  Table objects store data with multiple rows and columns, much
    *  like in a traditional spreadsheet. Tables can be generated from
@@ -170,7 +194,7 @@ define(function (require) {
    *  
    *  @method  matchRow
    *  @param  {String} regexp The regular expression to match
-   *  @param  {(String|Number)} column The column ID (number) or 
+   *  @param  {String|Number} column The column ID (number) or 
    *                                   title (string)
    *  @return {TableRow}        TableRow object
    */
@@ -202,7 +226,7 @@ define(function (require) {
    *
    *  @method  matchRows
    *  @param  {String} regexp The regular expression to match
-   *  @param  {[(String|Number)]} column The column ID (number) or 
+   *  @param  {String|Number} [column] The column ID (number) or 
    *                                   title (string)
    *  @return {Array}        An Array of TableRow objects
    */
@@ -232,7 +256,7 @@ define(function (require) {
    *  as an array. The column may be specified by either its ID or title.
    *
    *  @method  getColumn
-   *  @param  {(String|Number)} column String or Number of the column to return
+   *  @param  {String|Number} column String or Number of the column to return
    *  @return {Array}       Array of column values
    */
   p5.Table.prototype.getColumn = function(value) {
@@ -267,7 +291,7 @@ define(function (require) {
    *  specified, the new column's title will be null.)
    *
    *  @method  addColumn
-   *  @param {[String]} title Title of the given column
+   *  @param {String} [title] Title of the given column
    */
   p5.Table.prototype.addColumn = function(title) {
     var t = title || null;
@@ -302,7 +326,7 @@ define(function (require) {
    *
    *  @method  removeTokens
    *  @param  {String} chars  String listing characters to be removed
-   *  @param  {[String|Number]} column Column ID (number)
+   *  @param  {String|Number} [column] Column ID (number)
    *                                   or name (string)
    */
   p5.Table.prototype.removeTokens = function(chars, column) {
@@ -351,7 +375,7 @@ define(function (require) {
    *  may be referenced by either its ID or title.
    *
    *  @method  trim
-   *  @param  {[String|Number]} column Column ID (number)
+   *  @param  {String|Number} column Column ID (number)
    *                                   or name (string)
    */
   p5.Table.prototype.trim = function(column) {
@@ -394,7 +418,7 @@ define(function (require) {
    *  would remove the second column, and so on.
    *
    *  @method  removeColumn
-   *  @param  {(String|Number)} column columnName (string) or ID (number)
+   *  @param  {String|Number} column columnName (string) or ID (number)
    */
   p5.Table.prototype.removeColumn = function(c) {
     var cString;

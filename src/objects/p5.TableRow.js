@@ -56,8 +56,9 @@ define(function (require) {
    *  The column may be specified by either its ID or title.
    *
    *  @method  set
-   *  @param {[type]} column [description]
-   *  @param {[type]} value  [description]
+   *  @param {String|Number} column Column ID (Number)
+   *                                or Title (String)
+   *  @param {String|Number} value  The value to be stored
    */
   p5.TableRow.prototype.set = function(column, value) {
     // if typeof column is string, use .obj
@@ -95,7 +96,7 @@ define(function (require) {
    *  @method  get
    *  @param  {String|Number} column columnName (string) or
    *                                   ID (number)
-   *  @return {[type]}        [description]
+   *  @return {Object|p5.TableRow}
    */
   p5.TableRow.prototype.get = function(column) {
     if (typeof(column) === 'string'){
