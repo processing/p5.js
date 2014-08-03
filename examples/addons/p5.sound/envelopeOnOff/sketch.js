@@ -9,11 +9,11 @@ var env;
 
 // Times and levels for the ADSR envelope
 var attackTime = 0.1;
-var attackLevel = .7;
-var decayTime = .3;
+var attackLevel = 0.7;
+var decayTime = 0.3;
 var sustainTime = 0.1;
 var sustainLevel = 0.2;
-var releaseTime = .5;
+var releaseTime = 0.5;
 var duration = 1000;
 // Set the note trigger
 var trigger;
