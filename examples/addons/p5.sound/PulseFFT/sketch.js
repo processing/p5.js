@@ -14,9 +14,6 @@ var oscOn = false;
 
 function setup() {
   createCanvas(800,400);
-  background(30);
-  stroke(255);
-  strokeWeight(10);
 
   widthLabel = createP('Width: ' + w);
   widthSlider = createSlider(0.0, 100.0, w*100);
@@ -42,7 +39,7 @@ function setup() {
 }
 
 function draw() {
-  background(0, 0, 0, 100);
+  background(30);
 
   amp = ampSlider.value()/100;
   pulse.amp(amp);
@@ -61,6 +58,8 @@ function draw() {
   waveform = fft.waveform();
 
   // draw the shape of the waveform
+  stroke(255);
+  strokeWeight(10);
   beginShape();
   for (var i = 0; i<waveform.length; i++){
     var x = map(i, 0, waveform.length, 0, width);

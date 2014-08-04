@@ -1,14 +1,14 @@
 // ====================
 // DEMO: play a sound at a random speed/pitch when the ball hits the edge.
-// Set the sound file's to pan left when ball hits left edge and vice versa.
+// Pan the sound file left when ball hits left edge and vice versa.
 // ====================
 
 var ball;
 var soundFile;
 
 function preload() {
-  // Create SoundFile. Multiple filetypes for cross-browser compatability.
-  soundFile = loadSound( ['../_files/drum.ogg', '../_files/drum.wav'] );
+  soundFormats('mp3', 'ogg');
+  soundFile = loadSound( '../_files/drum');
 }
 
 function setup() {
@@ -47,4 +47,3 @@ function draw() {
   }
   ellipse(ball.x, ball.y, 100, 100);
 }
-

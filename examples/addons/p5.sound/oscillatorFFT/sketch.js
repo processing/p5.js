@@ -1,5 +1,5 @@
 /**
- * Example: change the frequency of an oscillator and visualize the frequency spectrum
+ * Example: change the frequency of an oscillator and visualize the waveform
  */
 var freqSlider, freqLabel, ampLabel, ampSlider, button;
 

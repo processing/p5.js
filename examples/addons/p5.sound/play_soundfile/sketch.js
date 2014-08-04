@@ -1,5 +1,5 @@
 // ====================
-// DEMO: play a sound at a random speed/pitch when the ball hits the edge
+// DEMO: play a sound when the user presses a key
 // ====================
 
 // create a variable for the sound file

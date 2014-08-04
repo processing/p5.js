@@ -1,26 +1,32 @@
 /**
- * DEMO: Draw the waveform of a sound as it plays using FFT.processWaveform()
+ * DEMO: Draw the waveform of a sound as it plays using FFT.waveform()
  */
 
 var soundFile;
 var fft;
-var fftSize = 1024;
+var fftBands = 1024;
 
-// Array of amplitude values (0-255) over time. Length will be 1/2 fftSize.
+// Array of amplitude values (0-255) over time.
 var waveform = [];
 
 function preload() {
-  soundFile = loadSound( ['../_files/beat.ogg', '../_files/beat.mp3'] );
+  soundFormats('mp3', 'ogg');
+  soundFile = loadSound('../_files/beat');
 }
 
 function setup() {
-  createCanvas(fftSize, 256);
+  createCanvas(fftBands, 256);
   fill(255, 40, 255);
 
   soundFile.loop();
 
-  // Create an FFT object. Give it smoothing and fftSize
-  fft = new FFT(.99, fftSize);
+  /**
+   *  Create an FFT object.
+   *  Accepts optional parameters for
+   *    - Smoothing 
+   *    - Length of the FFT's analyze/waveform array. Must be a power of two between 16 and 1024 (default).
+   */
+  fft = new FFT(.99, fftBands);
 
   p = createP('press any key to pause');
 }

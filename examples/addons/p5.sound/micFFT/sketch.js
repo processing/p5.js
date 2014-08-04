@@ -7,19 +7,19 @@ var mic, fft;
 function setup() {
    createCanvas(512,400);
    mic = new AudioIn();
-   mic.on();
-   fft = new FFT(.6, 1024);
+   mic.start();
+   fft = new FFT();
    fft.setInput(mic);
 }
 
 function draw() {
    background(200);
 
-   var spectrum = fft.processFreq(.01, 1024);
+   var spectrum = fft.analyze();
 
    beginShape();
    for (i = 0; i<spectrum.length; i++) {
-    vertex(i, map(spectrum[i], -140, 0, height, 0) );
+    vertex(i, map(spectrum[i], 0, 255, height, 0) );
    }
    endShape();
 
