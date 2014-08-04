@@ -19,7 +19,7 @@ function draw() {
 
    beginShape();
    for (i = 0; i<spectrum.length; i++) {
-    vertex(i, map(spectrum[i], -140, 0, height, 0) );
+    vertex(i, map(spectrum[i], 0, 255, height, 0) );
    }
    endShape();
 

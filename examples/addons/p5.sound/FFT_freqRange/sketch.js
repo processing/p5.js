@@ -49,7 +49,8 @@ function draw() {
     var freqValue = fft.getFreq(loFreq, hiFreq - 1); 
 
     // Rectangle height represents the average value of this frequency range
-    rect((i+1)*width/8 - width/8, height, width/8, -height - freqValue);
+    var h = -height + map(freqValue, 0, 255, height, 0);
+    rect((i+1)*width/8 - width/8, height, width/8, h);
 
     text( loFreq.toFixed(0) +' Hz - ' + hiFreq.toFixed(0)+' Hz', (i+1)*width/8 - width/8/2, 30);
   }

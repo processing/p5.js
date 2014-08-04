@@ -61,9 +61,11 @@ function draw() {
   frequencySpectrum = fft.analyze();
 
   // Draw every value in the frequencySpectrum array as a rectangle
+  noStroke();
   for (var i = 0; i< fftBands; i++){
-    noStroke();
-    rect(map(i, 0, fftBands, 0, width), height, fftBands/width, -height -frequencySpectrum[i] ) ;
+    var x = map(i, 0, fftBands, 0, width);
+    var h = -height + map(frequencySpectrum[i], 0, 255, height, 0);
+    rect(x, height, width/fftBands, h) ;
   }
 }
 
