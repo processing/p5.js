@@ -110,12 +110,24 @@ define(function (require) {
    *  
    *  @method  loadTable
    *  @param  {String}   filename   name of the file or URL to load
+   *  @param  {String|Strings}   [options]   
    *  @param  {Function} [callback] function to be executed after loadXML()
    *                               completes, XML object is passed in as
    *                               first argument
    *  @return {Object}              XML object containing data
    */
-  p5.prototype.loadTable = function (path, callback) {
+  p5.prototype.loadTable = function (path) {
+    var callback = null;
+    var options = [];
+    console.log('arguments lenght: ' + arguments.length);
+    for (var i = 1; i < arguments.length; i++) {
+      if (typeof(arguments[i]) === 'function' ){
+        callback = arguments[i];
+      }
+      else if (typeof(arguments[i]) === 'string') {
+        options.push(arguments[i]);
+      }
+    }
     var ret = [];
     var t = new p5.Table();
     var req = new XMLHttpRequest();
