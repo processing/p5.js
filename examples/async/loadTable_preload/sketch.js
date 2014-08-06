@@ -1,7 +1,7 @@
 var table;
 
 function preload() {
-  table = loadTable("table.csv");
+  table = loadTable('table.csv', 'header');
 }
 
 function setup() {

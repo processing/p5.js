@@ -99,18 +99,27 @@ define(function (require) {
   };
 
   /**
-   *  <p>Reads the contents of a file or URL and creates an Table
+   *  <p>Reads the contents of a file or URL and creates a p5.Table
    *  object with its values. If a file is specified, it must be
    *  located in the sketch's "data" folder. The filename parameter
    *  can also be a URL to a file found online. By default, the file
-   *  is assumed to be comma-separated (in CSV format), and to
-   *  include a header row.</p>
+   *  is assumed to be comma-separated (in CSV format). Table only
+   *  looks for a header row if the 'header' option is included.</p>
+   *
+   *  <p>Possible options include:
+   *  <ul>
+   *  <li>csv - parse the table as comma-separated values
+   *  <li>tsv - parse the table as tab-separated values
+   *  <li>newlines - this CSV file contains newlines inside individual cells
+   *  <li>header - this table has a header (title) row
+   *  </ul>
+   *  </p>
    *  
    *  <p> All files loaded and saved use UTF-8 encoding.</p>
    *  
    *  @method  loadTable
    *  @param  {String}   filename   name of the file or URL to load
-   *  @param  {String|Strings}   [options]   
+   *  @param  {String|Strings}   [options]  "header" "csv" "tsv"
    *  @param  {Function} [callback] function to be executed after loadXML()
    *                               completes, XML object is passed in as
    *                               first argument
@@ -119,13 +128,25 @@ define(function (require) {
   p5.prototype.loadTable = function (path) {
     var callback = null;
     var options = [];
-    console.log('arguments lenght: ' + arguments.length);
+    var header = false;
+    var sep = ',';
+
+    console.log('arguments length: ' + arguments.length);
     for (var i = 1; i < arguments.length; i++) {
       if (typeof(arguments[i]) === 'function' ){
         callback = arguments[i];
       }
       else if (typeof(arguments[i]) === 'string') {
         options.push(arguments[i]);
+        if (arguments[i] === 'header') {
+          header = true;
+        }
+        if (arguments[i] === 'csv') {
+          sep = ',';
+        }
+        else if (arguments[i] === 'tsv') {
+          sep = '\t';
+        }
       }
     }
     var ret = [];
@@ -139,19 +160,31 @@ define(function (require) {
           ret[k] = arr[k];
         }
         if (typeof callback !== 'undefined') {
-          t.columns = new p5.TableRow(ret[0]).arr;
-          for (var i = 1; i<ret.length; i++) {
-            var row = new p5.TableRow(ret[i]);
-            row.obj = makeObject(row.arr, t.columns); // if Headers
-            t.addRow(row);
+          var i, row;
+          if (header) {
+            t.columns = new p5.TableRow(ret[0]).arr;
+            for (i = 1; i<ret.length; i++) {
+              row = new p5.TableRow(ret[i], sep);
+              row.obj = makeObject(row.arr, t.columns);
+              t.addRow(row);
+            }
+          } else {
+            // no header: column titles will be numbers
+            for (i = 0; i < ret.length; i++){
+              t.columns[i] = i.toString();
+            }
+            for (i = 0; i<ret.length; i++) {
+              row = new p5.TableRow(ret[i], sep);
+              t.addRow(row);
+            }
           }
+
           callback(t);
         }
       }
     };
     req.send(null);
     return t;
-    // throw 'not yet implemented';
   };
 
   // helper function to turn a row into a JSON object
@@ -160,7 +193,7 @@ define(function (require) {
     headers = headers || [];
     if (typeof(headers) === 'undefined'){
       for (var j = 0; j < row.length; j++ ){
-        headers[j] = j;
+        headers[j.toString()] = j;
       }
     }
     for (var i = 0; i < headers.length; i++){
