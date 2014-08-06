@@ -14,7 +14,7 @@ define(function (require) {
    *
    * A number of functions are borrowed/adapted from
    * http://www.html5rocks.com/en/tutorials/canvas/imagefilters/
-   * or the java processing implmentation.
+   * or the java processing implementation.
    */
 
   'use strict';

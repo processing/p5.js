@@ -24,7 +24,7 @@ define(function (require) {
    * p5.js canvas. The default background is light gray. This function is
    * typically used within draw() to clear the display window at the beginning
    * of each frame, but it can be used inside setup() to set the background on
-   * the first frame of animation or if the backgound need only be set once. 
+   * the first frame of animation or if the background need only be set once.
    *
    * @method background
    * @param {Number|Color|p5.Image} v1   gray value, red or hue value 

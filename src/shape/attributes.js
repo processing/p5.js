@@ -17,7 +17,7 @@ define(function (require) {
 
   /**
    * Modifies the location from which ellipses are drawn by changing the way
-   * in which parameters given to ellipse() are intepreted.
+   * in which parameters given to ellipse() are interpreted.
    *
    * The default mode is ellipseMode(CENTER), which interprets the first two
    * parameters of ellipse() as the shape's center point, while the third and
