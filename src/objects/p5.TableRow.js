@@ -91,20 +91,22 @@ define(function (require) {
     this.set(column, intVal);
   };
 
+  p5.TableRow.prototype.setFloat = function(column, value){
+    var floatVal = parseFloat(value, 10);
+    this.set(column, floatVal);
+  };
+
   /**
    *  Stores a Float value in the TableRow's specified column.
    *  The column may be specified by either its ID or title.
    *
-   *  @method  setFloat
+   *  @method  setNum
    *  @param {String|Number} column Column ID (Number)
    *                                or Title (String)
    *  @param {Number} value  The value to be stored
    *                                as a Float
    */
-  p5.TableRow.prototype.setFloat = function(column, value){
-    var floatVal = parseFloat(value, 10);
-    this.set(column, floatVal);
-  };
+  p5.TableRow.prototype.setNum = p5.TableRow.prototype.setFloat;
 
   /**
    *  Stores a String value in the TableRow's specified column.
@@ -143,7 +145,6 @@ define(function (require) {
    *  column. The column may be specified by either its ID or
    *  title.
    *
-   *  @method  getInt
    *  @param  {String|Number} column columnName (string) or
    *                                   ID (number)
    *  @return {Number}  Integer The number will be rounded
@@ -162,23 +163,31 @@ define(function (require) {
     }
   };
 
+  p5.TableRow.prototype.getFloat = function(column) {
+    var ret;
+    if (typeof(column) === 'string'){
+      ret = parseFloat(this.obj[column], 10);
+    } else {
+      ret = parseFloat(this.arr[column], 10);
+    }
+
+    if (ret.toString() === 'NaN') {
+      throw 'Error: ' + this.obj[column]+ ' is NaN (Not a Number)';
+    }
+    return ret;
+  };
+
   /**
    *  Retrieves a Float value from the TableRow's specified
    *  column. The column may be specified by either its ID or
    *  title.
    *
-   *  @method  getFloat
+   *  @method  getNum
    *  @param  {String|Number} column columnName (string) or
    *                                   ID (number)
    *  @return {Number}  Float Floating point number
    */
-  p5.TableRow.prototype.getFloat = function(column) {
-    if (typeof(column) === 'string'){
-      return parseFloat(this.obj[column], 10);
-    } else {
-      return parseFloat(this.arr[column], 10);
-    }
-  };
+  p5.TableRow.prototype.getNum = p5.TableRow.prototype.getFloat;
 
   /**
    *  Retrieves an String value from the TableRow's specified
