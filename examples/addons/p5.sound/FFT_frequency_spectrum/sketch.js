@@ -1,6 +1,6 @@
 /**
  * This example draws the frequency spectrum of a sound by using
- * the FFT object's analyze() method.
+ * the p5.FFT object's analyze() method.
  * 
  * FFT is a Fast Fourier Transform function that calculates
  * amplitude across the frequency spectrum. The analyze() method returns
@@ -38,7 +38,7 @@ function setup() {
   // loop the sound file
   soundFile.loop();
 
-  fft = new FFT();
+  fft = new p5.FFT();
 
   // update description text
   p = createP(description);
@@ -96,5 +96,9 @@ function updateDescription() {
 
 // pause the song if a key is pressed
 function keyPressed() {
-  soundFile.pause();
+  if (soundFile.isPlaying()){
+    soundFile.pause();
+  } else {
+    soundFile.play();
+  }
 }

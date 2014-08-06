@@ -1,14 +1,14 @@
 /**
- * Make some noise to float the ellipse
+ *  Visualize the frequency spectrum of live audio input
  */
 
 var mic, fft;
 
 function setup() {
    createCanvas(512,400);
-   mic = new AudioIn();
+   mic = new p5.AudioIn();
    mic.start();
-   fft = new FFT();
+   fft = new p5.FFT();
    fft.setInput(mic);
 }
 

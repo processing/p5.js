@@ -1,5 +1,5 @@
 /**
- *  Example: Create an Envelope to control oscillator amplitude.
+ *  Example: Create an Envelope (p5.Env) to control oscillator amplitude.
  *  Trigger the Attack portion of the envelope when the mouse is clicked.
  *  Trigger the Release when the mouse is released.
  */
@@ -11,8 +11,9 @@ var env;
 var attackTime = 0.1;
 var attackLevel = 0.7;
 var decayTime = 0.3;
+var decayLevel = 0.2;
 var sustainTime = 0.1;
-var sustainLevel = 0.2;
+var sustainLevel = decayLevel;
 var releaseTime = 0.5;
 var duration = 1000;
 // Set the note trigger
@@ -28,12 +29,13 @@ function setup(){
 
   trigger = millis();
 
-  triOsc = new TriOsc();
+  triOsc = new p5.TriOsc();
   triOsc.amp(0);
   triOsc.start();
 
-  env = new Env(attackTime, attackLevel, decayTime, sustainLevel, sustainTime, releaseTime);
+  env = new p5.Env(attackTime, attackLevel, decayTime, decayLevel, sustainTime, sustainLevel, releaseTime);
   fill(0);
+  createP('click mouse to triggerAttack, release mouse to triggerRelease')
 }
 
 function draw(){

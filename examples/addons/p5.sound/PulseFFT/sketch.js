@@ -28,11 +28,11 @@ function setup() {
   ampSlider = createSlider(0.0, 100.0, amp*100);
 
 
-  pulse = new Pulse(freq);
+  pulse = new p5.Pulse(freq);
   pulse.amp(amp);
 
   // create an fft to analyze the audio
-  fft = new FFT();
+  fft = new p5.FFT();
 
   // begin sound
   toggleOsc();

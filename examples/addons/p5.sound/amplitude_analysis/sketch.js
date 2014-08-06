@@ -1,5 +1,5 @@
 /**
- * DEMO:  Use Amplitude (volume) to change the size of an ellipse
+ * DEMO:  Use p5.Amplitude (volume) to change the size of an ellipse
  */
 
 var size;
@@ -25,8 +25,8 @@ function setup() {
 
   soundFile.loop();
 
-  // create a new Amplitude. Optionally, give it a 'smoothing' value betw 0.0 and .999
-  amplitude = new Amplitude(smoothing);
+  // create a new p5.Amplitude. Optionally, give it a 'smoothing' value betw 0.0 and .999
+  amplitude = new p5.Amplitude(smoothing);
 
   // instruction text
   description = 'Spacebar: pause/unpause the loop. <br>Press "N" to toggle Normalize';
@@ -64,7 +64,11 @@ function keyPressed(e) {
 
   // spacebar pauses
   if (e.keyCode == 32) {
-    soundFile.pause();
+    if (soundFile.isPlaying()) {
+      soundFile.pause();
+    } else {
+      soundFile.play();
+    }
   }
 
   // 'n' keypress toggles normalize on/off

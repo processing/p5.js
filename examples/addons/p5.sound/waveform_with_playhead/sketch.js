@@ -20,7 +20,7 @@ function setup() {
   soundFile.loop();
   background(0);
   p = createP('peaks to draw: ' + peakCount);
-  createP('Press Spacebar to play/pause.');
+  createP('Press any key to play/pause.');
 }
 
 
@@ -56,10 +56,10 @@ function drawCursor() {
 }
 
 // Keyboard Controls
-function keyPressed() {
-  var key = keyCode;
-  // Spacebar: pause
-  if (key == 32) {
+function keyTyped() {
+  if (soundFile.isPlaying()) { 
     soundFile.pause();
+  } else {
+    soundFile.play();
   }
 }
