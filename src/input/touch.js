@@ -30,19 +30,21 @@ define(function (require) {
    */
   p5.prototype.touchY = 0;
 
+  /**
+   * The system variable touches[] contains an array of the positions of all
+   * current touch points, relative to (0, 0) of the canvas. Each element in
+   * the array is an object with x and y properties.
+   *
+   * @property touches[]
+   */
+  p5.prototype.touches = [];
+
   p5.prototype.setTouchPoints = function(e) {
     var context = this._isGlobal ? window : this;
 
     context._setProperty('touchX', e.changedTouches[0].pageX);
     context._setProperty('touchY', e.changedTouches[0].pageY);
 
-    /**
-     * The system variable touches[] contains an array of the positions of all
-     * current touch points, relative to (0, 0) of the canvas. Each element in
-     * the array is an object with x and y properties.
-     *
-     * @property touches[]
-     */
     var touches = [];
     for(var i = 0; i < e.changedTouches.length; i++){
       var ct = e.changedTouches[i];
