@@ -1,8 +1,11 @@
 p5.js
 =====
 
-####We have begun work on a new JS client-side library for creating graphic and interactive experiences, based on the core principles of [Processing](http://processing.org). IT IS CURRENTLY IN DEVELOPMENT and a more stable release will be ready for use and contributions this summer. You can follow along with the progress here until then.
+[Hello!](http://hello.p5js.org/) p5.js is a JavaScript library that starts with the original goal of Processing, to make coding accessible for artists, designers, educators, and beginners, and reinterpets this for today's web.
 
+Using the original metaphor of a software sketchbook, p5.js has a full set of drawing functionality. However, you're not limited to your drawing canvas, you can think of your whole browser page as your sketch! For this, p5.js has addon libraries that make it easy to interact with other HTML5 objects, including text, input, video, webcam, and sound.
+
+p5.js is a new interpretation, not an emulation or port, and it is in active development. An official editing environment is coming soon, as well as many more features!
 
 ##p5.js library (stable)
 `lib/p5.js` is currently the only stable file in the repository
