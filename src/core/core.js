@@ -40,6 +40,34 @@ define(function (require) {
 
 
     /**
+     * Called directly before setup(), the preload() function is used to handle
+     * asynchronous loading of external files. If a preload function is
+     * defined, setup() will wait until any load calls within have finished.
+     * Nothing besides load calls should be inside preload (loadImage,
+     * loadJSON, loadStrings, etc).
+     *
+     * @method preload
+     * @example
+     * <div><code>
+     * var img;
+     * var c;
+     * function preload() {  // preload() runs once
+     *   img = loadImage('assets/laDefense.jpg');
+     *   noLoop();
+     * }
+     * function setup() {  // setup() waits until preload() is done
+     *   img.loadPixels();
+     *   // get color of middle pixel
+     *   c = img.get(img.width/2, img.height/2);
+     * }
+     * function draw() {
+     *   background(c);
+     *   image(img, 25, 25, 50, 50);
+     * }
+     * </code></div>
+     */
+
+    /**
      * The setup() function is called once when the program starts. It's used to
      * define initial enviroment properties such as screen size and background
      * color and to load media such as images and fonts as the program starts.
@@ -50,20 +78,19 @@ define(function (require) {
      *
      * @method setup
      * @example
-     *   <div><code>
-     *     var a = 0;
+     * <div><code>
+     * var a = 0;
      *
-     *     function setup() {
-     *       createCanvas(200, 200);
-     *       background(0);
-     *       noStroke();
-     *       fill(102);
-     *     }
+     * function setup() {
+     *   background(0);
+     *   noStroke();
+     *   fill(102);
+     * }
      *
-     *     function draw() {
-     *       rect(a++%width, 10, 2, 80); 
-     *     }
-     *   </code></div>
+     * function draw() {
+     *   rect(a++%width, 10, 2, 80); 
+     * }
+     * </code></div>
      */
 
     /**
@@ -86,6 +113,21 @@ define(function (require) {
      * your program, as shown in the above example.
      *
      * @method draw
+     * @example
+     * <div><code>
+     * var yPos = 0;
+     * function setup() {  // setup() runs once
+     *   frameRate(30);
+     * }
+     * function draw() {  // draw() loops forever, until stopped
+     *   background(204);
+     *   yPos = yPos - 1;
+     *   if (yPos < 0) {
+     *     yPos = height;
+     *   }
+     *   line(0, yPos, width, yPos);
+     * }
+     * </code></div>
      */
 
     

@@ -69,18 +69,9 @@ selectOutput()
 
 
 
-// Image 
-// Loading & Displaying
-
-noTint()
-tint()
-
-
 
 // Rendering 
 
-blendMode()
-createGraphics()
 PGraphics
 
 
@@ -103,13 +94,3 @@ textDescent()
 
 
 
-
-// Math 
-
-// Random
-noise()
-noiseDetail()
-noiseSeed()
-random()
-randomGaussian()
-randomSeed()

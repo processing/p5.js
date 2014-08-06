@@ -194,7 +194,7 @@ define(function(require) {
     for (var i=0; i<3; i++) {
       a[i] = Math.floor(a[i]);
     }
-    var alpha = a[3] ? a[3]/255.0 : 1;
+    var alpha = typeof a[3] !== 'undefined' ? a[3] / 255 : 1;
     return 'rgba('+a[0]+','+a[1]+','+a[2]+','+ alpha +')';
   };
 

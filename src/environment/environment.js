@@ -236,7 +236,9 @@ define(function(require) {
   /**
    * If argument is given, sets the sketch to fullscreen or not based on the
    * value of the argument. If no argument is given, returns the current 
-   * fullscreen state.
+   * fullscreen state. Note that due to browser restrictiions this can only 
+   * be called on user input, for example, on mouse press like the example
+   * below.
    *
    * @method fullscreen
    * @param  {Boolean} [val] whether the sketch should be fullscreened or not
