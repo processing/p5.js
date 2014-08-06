@@ -1,4 +1,4 @@
-/*! p5.js v0.2.23 July 31, 2014 */
+/*! p5.js v0.2.23 August 05, 2014 */
 var shim = function (require) {
     window.requestDraw = function () {
       return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback, element) {
@@ -299,7 +299,8 @@ var core = function (require, shim, constants) {
       'loadImage',
       'loadStrings',
       'loadXML',
-      'loadShape'
+      'loadShape',
+      'loadTable'
     ];
     p5.prototype._removeFuncs = [];
     p5.prototype._registerPreloadFunc = function (func) {
@@ -463,7 +464,7 @@ var p5Color = function (require, core, constants) {
       for (var i = 0; i < 3; i++) {
         a[i] = Math.floor(a[i]);
       }
-      var alpha = a[3] ? a[3] / 255 : 1;
+      var alpha = typeof a[3] !== 'undefined' ? a[3] / 255 : 1;
       return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + alpha + ')';
     };
     p5.Color.getColor = function () {
@@ -1271,6 +1272,274 @@ var p5Vector = function (require, core, polargeometry, constants) {
     };
     return p5.Vector;
   }({}, core, polargeometry, constants);
+var p5TableRow = function (require, core) {
+    'use strict';
+    var p5 = core;
+    p5.TableRow = function (str, separator) {
+      var arr = [];
+      var obj = {};
+      if (str) {
+        separator = separator || ',';
+        arr = str.split(separator);
+      }
+      for (var i = 0; i < arr.length; i++) {
+        var key = i;
+        var val = arr[i];
+        obj[key] = val;
+      }
+      this.arr = arr;
+      this.obj = obj;
+      this.table = null;
+    };
+    function makeArray(obj) {
+      var arr = [];
+      for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          arr.push(obj[key]);
+        }
+      }
+      return arr;
+    }
+    p5.TableRow.prototype.set = function (column, value) {
+      if (typeof column === 'string') {
+        var addedArr = false;
+        if (typeof this.obj.column !== 'undefined') {
+          this.arr.push(value);
+          addedArr = true;
+        }
+        this.obj[column] = value;
+        if (addedArr === false) {
+          this.arr = makeArray(this.obj);
+        }
+      } else {
+        var prevVal = this.arr[column];
+        this.arr[column] = value;
+        for (var key in this.obj) {
+          if (this.obj.hasOwnProperty(key)) {
+            if (this.obj[key] === prevVal) {
+              this.obj[key] = value;
+            }
+          }
+        }
+      }
+    };
+    p5.TableRow.prototype.get = function (column) {
+      if (typeof column === 'string') {
+        return this.obj[column];
+      } else {
+        return this.arr[column];
+      }
+    };
+    return p5.TableRow;
+  }({}, core);
+var p5Table = function (require, core) {
+    'use strict';
+    var p5 = core;
+    p5.Table = function (rows) {
+      this.columns = [];
+      this.rows = [];
+    };
+    p5.Table.prototype.addRow = function (row) {
+      var r = row || new p5.TableRow();
+      if (typeof r.arr === 'undefined' || typeof r.obj === 'undefined') {
+        throw 'invalid TableRow: ' + r;
+      }
+      r.table = this;
+      this.rows.push(r);
+      return r;
+    };
+    p5.Table.prototype.removeRow = function (id) {
+      this.rows[id].table = null;
+      var chunk = this.rows.splice(id + 1, this.rows.length);
+      this.rows.pop();
+      this.rows = this.rows.concat(chunk);
+    };
+    p5.Table.prototype.getRow = function (r) {
+      return this.rows[r];
+    };
+    p5.Table.prototype.getRows = function () {
+      return this.rows;
+    };
+    p5.Table.prototype.findRow = function (value, column) {
+      if (typeof column === 'string') {
+        for (var i = 0; i < this.rows.length; i++) {
+          if (this.rows[i].obj[column] === value) {
+            return this.rows[i];
+          }
+        }
+      } else {
+        for (var j = 0; j < this.rows.length; j++) {
+          if (this.rows[j].arr[column] === value) {
+            return this.rows[j];
+          }
+        }
+      }
+      return null;
+    };
+    p5.Table.prototype.findRows = function (value, column) {
+      var ret = [];
+      if (typeof column === 'string') {
+        for (var i = 0; i < this.rows.length; i++) {
+          if (this.rows[i].obj[column] === value) {
+            ret.push(this.rows[i]);
+          }
+        }
+      } else {
+        for (var j = 0; j < this.rows.length; j++) {
+          if (this.rows[j].arr[column] === value) {
+            ret.push(this.rows[j]);
+          }
+        }
+      }
+      return ret;
+    };
+    p5.Table.prototype.matchRow = function (regexp, column) {
+      if (typeof column === 'number') {
+        for (var j = 0; j < this.rows.length; j++) {
+          if (this.rows[j].arr[column].match(regexp)) {
+            return this.rows[j];
+          }
+        }
+      } else {
+        for (var i = 0; i < this.rows.length; i++) {
+          if (this.rows[i].obj[column].match(regexp)) {
+            return this.rows[i];
+          }
+        }
+      }
+      return null;
+    };
+    p5.Table.prototype.matchRows = function (regexp, column) {
+      var ret = [];
+      if (typeof column === 'number') {
+        for (var j = 0; j < this.rows.length; j++) {
+          if (this.rows[j].arr[column].match(regexp)) {
+            ret.push(this.rows[j]);
+          }
+        }
+      } else {
+        for (var i = 0; i < this.rows.length; i++) {
+          if (this.rows[i].obj[column].match(regexp)) {
+            ret.push(this.rows[i]);
+          }
+        }
+      }
+      return ret;
+    };
+    p5.Table.prototype.getColumn = function (value) {
+      var ret = [];
+      if (typeof value === 'string') {
+        for (var i = 0; i < this.rows.length; i++) {
+          ret.push(this.rows[i].obj[value]);
+        }
+      } else {
+        for (var j = 0; j < this.rows.length; j++) {
+          ret.push(this.rows[j].arr[value]);
+        }
+      }
+      return ret;
+    };
+    p5.Table.prototype.clearRows = function () {
+      delete this.rows;
+      this.rows = [];
+    };
+    p5.Table.prototype.addColumn = function (title) {
+      var t = title || null;
+      this.columns.push(t);
+    };
+    p5.Table.prototype.getColumnCount = function () {
+      return this.columns.length;
+    };
+    p5.Table.prototype.getRowCount = function () {
+      return this.rows.length;
+    };
+    p5.Table.prototype.removeTokens = function (chars, column) {
+      var escape = function (s) {
+        return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      };
+      var charArray = [];
+      for (var i = 0; i < chars.length; i++) {
+        charArray.push(escape(chars.charAt(i)));
+      }
+      var regex = new RegExp(charArray.join('|'), 'g');
+      if (typeof column === 'undefined') {
+        for (var c = 0; c < this.columns.length; c++) {
+          for (var d = 0; d < this.rows.length; d++) {
+            var s = this.rows[d].arr[c];
+            s = s.replace(regex, '');
+            this.rows[d].arr[c] = s;
+            this.rows[d].obj[this.columns[c]] = s;
+          }
+        }
+      } else if (typeof column === 'string') {
+        for (var j = 0; j < this.rows.length; j++) {
+          var val = this.rows[j].obj[column];
+          val = val.replace(regex, '');
+          this.rows[j].obj[column] = val;
+          var pos = this.columns.indexOf(column);
+          this.rows[j].arr[pos] = val;
+        }
+      } else {
+        for (var k = 0; k < this.rows.length; k++) {
+          var str = this.rows[k].arr[column];
+          str = str.replace(regex, '');
+          this.rows[k].arr[column] = str;
+          this.rows[k].obj[this.columns[column]] = str;
+        }
+      }
+    };
+    p5.Table.prototype.trim = function (column) {
+      var regex = new RegExp(' ', 'g');
+      if (typeof column === 'undefined') {
+        for (var c = 0; c < this.columns.length; c++) {
+          for (var d = 0; d < this.rows.length; d++) {
+            var s = this.rows[d].arr[c];
+            s = s.replace(regex, '');
+            this.rows[d].arr[c] = s;
+            this.rows[d].obj[this.columns[c]] = s;
+          }
+        }
+      } else if (typeof column === 'string') {
+        for (var j = 0; j < this.rows.length; j++) {
+          var val = this.rows[j].obj[column];
+          val = val.replace(regex, '');
+          this.rows[j].obj[column] = val;
+          var pos = this.columns.indexOf(column);
+          this.rows[j].arr[pos] = val;
+        }
+      } else {
+        for (var k = 0; k < this.rows.length; k++) {
+          var str = this.rows[k].arr[column];
+          str = str.replace(regex, '');
+          this.rows[k].arr[column] = str;
+          this.rows[k].obj[this.columns[column]] = str;
+        }
+      }
+    };
+    p5.Table.prototype.removeColumn = function (c) {
+      var cString;
+      var cNumber;
+      if (typeof c === 'string') {
+        cString = c;
+        cNumber = this.columns.indexOf(c);
+        console.log('string');
+      } else {
+        cNumber = c;
+        cString = this.columns[c];
+      }
+      var chunk = this.columns.splice(cNumber + 1, this.columns.length);
+      this.columns.pop();
+      this.columns = this.columns.concat(chunk);
+      for (var i = 0; i < this.rows.length; i++) {
+        var tempR = this.rows[i].arr;
+        var chip = tempR.splice(cNumber + 1, tempR.length);
+        tempR.pop();
+        this.rows[i].arr = tempR.concat(chip);
+        delete this.rows[i].obj[cString];
+      }
+    };
+    return p5.Table;
+  }({}, core);
 var colorcreating_reading = function (require, core, p5Color) {
     'use strict';
     var p5 = core;
@@ -1334,6 +1603,12 @@ var colorcreating_reading = function (require, core, p5Color) {
           c.push(p5.prototype.lerp(c1[i], c2[i], amt));
         }
         return c;
+      } else if (c1 instanceof p5.Color) {
+        var pc = [];
+        for (var j = 0; j < 4; j++) {
+          pc.push(p5.prototype.lerp(c1.rgba[j], c2.rgba[j], amt));
+        }
+        return new p5.Color(this, pc);
       } else {
         return p5.prototype.lerp(c1, c2, amt);
       }
@@ -1390,7 +1665,7 @@ var colorsetting = function (require, core, constants, p5Color) {
       }
     };
     p5.prototype.clear = function () {
-      this.canvas.width = this.canvas.width;
+      this.canvas.getContext('2d').clearRect(0, 0, this.width, this.height);
     };
     p5.prototype.colorMode = function () {
       if (arguments[0] === constants.RGB || arguments[0] === constants.HSB) {
@@ -2486,9 +2761,46 @@ var inputfiles = function (require, core, reqwest) {
       req.send(null);
       return ret;
     };
-    p5.prototype.loadTable = function () {
-      throw 'not yet implemented';
+    p5.prototype.loadTable = function (path, callback) {
+      var ret = [];
+      var t = new p5.Table();
+      var req = new XMLHttpRequest();
+      req.open('GET', path, true);
+      req.onreadystatechange = function () {
+        if (req.readyState === 4 && (req.status === 200 || req.status === 0)) {
+          var arr = req.responseText.match(/[^\r\n]+/g);
+          for (var k in arr) {
+            ret[k] = arr[k];
+          }
+          if (typeof callback !== 'undefined') {
+            t.columns = new p5.TableRow(ret[0]).arr;
+            for (var i = 1; i < ret.length; i++) {
+              var row = new p5.TableRow(ret[i]);
+              row.obj = makeObject(row.arr, t.columns);
+              t.addRow(row);
+            }
+            callback(t);
+          }
+        }
+      };
+      req.send(null);
+      return t;
     };
+    function makeObject(row, headers) {
+      var ret = {};
+      headers = headers || [];
+      if (typeof headers === 'undefined') {
+        for (var j = 0; j < row.length; j++) {
+          headers[j] = j;
+        }
+      }
+      for (var i = 0; i < headers.length; i++) {
+        var key = headers[i];
+        var val = row[i];
+        ret[key] = val;
+      }
+      return ret;
+    }
     p5.prototype.loadXML = function (path, callback) {
       var ret = [];
       reqwest({
@@ -3176,9 +3488,11 @@ var renderingrendering = function (require, core, constants) {
     };
     p5.prototype.createGraphics = function (w, h) {
       var c = document.createElement('canvas');
-      c.setAttribute('width', w);
-      c.setAttribute('height', h);
-      document.body.appendChild(c);
+      c.setAttribute('width', w * this._pixelDensity);
+      c.setAttribute('height', h * this._pixelDensity);
+      c.setAttribute('style', 'width:' + w + 'px !important; height:' + h + 'px !important;');
+      var node = this._userNode || document.body;
+      node.appendChild(c);
       var pg = new p5.Graphics(c);
       this._elements.push(pg);
       for (var p in p5.prototype) {
@@ -3190,6 +3504,7 @@ var renderingrendering = function (require, core, constants) {
           }
         }
       }
+      pg.scale(this._pixelDensity, this._pixelDensity);
       return pg;
     };
     p5.prototype.blendMode = function (mode) {
@@ -3881,7 +4196,7 @@ var typographyloading_displaying = function (require, core, canvas) {
     };
     return p5;
   }({}, core, canvas);
-var src_app = function (require, core, p5Color, p5Element, p5Graphics, p5Image, p5Vector, colorcreating_reading, colorsetting, constants, dataarray_functions, datastring_functions, environment, imageimage, imageloading_displaying, imagepixels, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathmath, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, renderingrendering, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying) {
+var src_app = function (require, core, p5Color, p5Element, p5Graphics, p5Image, p5Vector, p5TableRow, p5Table, colorcreating_reading, colorsetting, constants, dataarray_functions, datastring_functions, environment, imageimage, imageloading_displaying, imagepixels, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathmath, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, renderingrendering, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying) {
     'use strict';
     var p5 = core;
     var _globalInit = function () {
@@ -3898,4 +4213,4 @@ var src_app = function (require, core, p5Color, p5Element, p5Graphics, p5Image, 
     }
     window.p5 = p5;
     return p5;
-  }({}, core, p5Color, p5Element, p5Graphics, p5Image, p5Vector, colorcreating_reading, colorsetting, constants, dataarray_functions, datastring_functions, environment, imageimage, imageloading_displaying, imagepixels, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathmath, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, renderingrendering, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);
+  }({}, core, p5Color, p5Element, p5Graphics, p5Image, p5Vector, p5TableRow, p5Table, colorcreating_reading, colorsetting, constants, dataarray_functions, datastring_functions, environment, imageimage, imageloading_displaying, imagepixels, inputfiles, inputkeyboard, inputmouse, inputtime_date, inputtouch, mathmath, mathcalculation, mathrandom, mathnoise, mathtrigonometry, outputfiles, outputimage, outputtext_area, renderingrendering, shape2d_primitives, shapeattributes, shapecurves, shapevertex, structure, transform, typographyattributes, typographyloading_displaying);

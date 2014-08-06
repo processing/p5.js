@@ -264,13 +264,19 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.lerpColor = function(c1, c2, amt) {
+  p5.prototype.lerpColor = function (c1, c2, amt) {
     if (c1 instanceof Array) {
       var c = [];
-      for (var i=0; i<c1.length; i++) {
+      for (var i = 0; i < c1.length; i++) {
         c.push(p5.prototype.lerp(c1[i], c2[i], amt));
       }
       return c;
+    } else if (c1 instanceof p5.Color) {
+      var pc = [];
+      for (var j = 0; j < 4; j++) {
+        pc.push(p5.prototype.lerp(c1.rgba[j], c2.rgba[j], amt));
+      }
+      return new p5.Color(this, pc);
     } else {
       return p5.prototype.lerp(c1, c2, amt);
     }
