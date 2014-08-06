@@ -21,6 +21,8 @@ The functionality supported by p5.js.
 Tutorials and short, prototypical examples exploring the basics of programming with p5.js.
 ####[> Libraries](http://p5js.org/libraries)
 Extend p5 functionality to interact with other HTML elements, manipulate sound, and more!
+####[> Contribute](http://p5js.org/contribute)
+Get involved in the p5.js project.
 ####[> Research Documentation](https://github.com/lmccart/p5.js/wiki/Research-Documentation)
 This project developed out of a Fellowship with the Processing Foundation exploring the future of Processing with JavaScript. Documentation of research in process and references is here.
 
