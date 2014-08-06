@@ -8,16 +8,16 @@ function setup() {
   table.addColumn("type");
 
   var newRow = table.addRow();
-  newRow.set("name", "   Lion");
-  newRow.set("type", "  Mammal    ");
+  newRow.setString("name", "   Lion");
+  newRow.setString("type", "  Mammal    ");
 
   newRow = table.addRow();
-  newRow.set("name", "Snake  ");
-  newRow.set("type", "Reptile      ");
+  newRow.setString("name", "Snake  ");
+  newRow.setString("type", "Reptile      ");
 
   newRow = table.addRow();
-  newRow.set("name", "  Mosquito  ");
-  newRow.set("type", "Insect    ");
+  newRow.setString("name", "  Mosquito  ");
+  newRow.setString("type", "Insect    ");
   
   println(table.getColumn("name"));
   println(table.getColumn("type"));

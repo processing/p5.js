@@ -75,26 +75,6 @@ define(function (require) {
     }
   };
 
-  /**
-   *  Stores an Integer value in the TableRow's specified column.
-   *  The column may be specified by either its ID or title.
-   *
-   *  @method  setInt
-   *  @param {String|Number} column Column ID (Number)
-   *                                or Title (String)
-   *  @param {Number} value  The value to be stored
-   *                                as an Integer
-   */
-  p5.TableRow.prototype.setInt = function(column, value){
-    var floatVal = parseFloat(value, 10);
-    var intVal = Math.round(floatVal);
-    this.set(column, intVal);
-  };
-
-  p5.TableRow.prototype.setFloat = function(column, value){
-    var floatVal = parseFloat(value, 10);
-    this.set(column, floatVal);
-  };
 
   /**
    *  Stores a Float value in the TableRow's specified column.
@@ -106,7 +86,11 @@ define(function (require) {
    *  @param {Number} value  The value to be stored
    *                                as a Float
    */
-  p5.TableRow.prototype.setNum = p5.TableRow.prototype.setFloat;
+  p5.TableRow.prototype.setNum = function(column, value){
+    var floatVal = parseFloat(value, 10);
+    this.set(column, floatVal);
+  };
+
 
   /**
    *  Stores a String value in the TableRow's specified column.
@@ -141,29 +125,16 @@ define(function (require) {
   };
 
   /**
-   *  Retrieves an Integer value from the TableRow's specified
+   *  Retrieves a Float value from the TableRow's specified
    *  column. The column may be specified by either its ID or
    *  title.
    *
+   *  @method  getNum
    *  @param  {String|Number} column columnName (string) or
    *                                   ID (number)
-   *  @return {Number}  Integer The number will be rounded
-   *                            to the nearest integer
+   *  @return {Number}  Float Floating point number
    */
-  p5.TableRow.prototype.getInt = function(column) {
-    var floatVal, intVal;
-    if (typeof(column) === 'string'){
-      floatVal = parseFloat(this.obj[column], 10);
-      intVal = Math.round(floatVal);
-      return intVal;
-    } else {
-      floatVal = parseFloat(this.arr[column], 10);
-      intVal = Math.round(floatVal);
-      return intVal;
-    }
-  };
-
-  p5.TableRow.prototype.getFloat = function(column) {
+  p5.TableRow.prototype.getNum = function(column) {
     var ret;
     if (typeof(column) === 'string'){
       ret = parseFloat(this.obj[column], 10);
@@ -176,18 +147,6 @@ define(function (require) {
     }
     return ret;
   };
-
-  /**
-   *  Retrieves a Float value from the TableRow's specified
-   *  column. The column may be specified by either its ID or
-   *  title.
-   *
-   *  @method  getNum
-   *  @param  {String|Number} column columnName (string) or
-   *                                   ID (number)
-   *  @return {Number}  Float Floating point number
-   */
-  p5.TableRow.prototype.getNum = p5.TableRow.prototype.getFloat;
 
   /**
    *  Retrieves an String value from the TableRow's specified

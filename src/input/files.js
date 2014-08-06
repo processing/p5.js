@@ -130,8 +130,6 @@ define(function (require) {
     var options = [];
     var header = false;
     var sep = ',';
-
-    console.log('arguments length: ' + arguments.length);
     for (var i = 1; i < arguments.length; i++) {
       if (typeof(arguments[i]) === 'function' ){
         callback = arguments[i];
@@ -170,7 +168,7 @@ define(function (require) {
             }
           } else {
             // no header: column titles will be numbers
-            for (i = 0; i < ret.length; i++){
+            for (i = 0; i < ret[0].split(sep).length; i++){
               t.columns[i] = i.toString();
             }
             for (i = 0; i<ret.length; i++) {

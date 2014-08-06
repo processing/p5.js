@@ -4,17 +4,18 @@
 
 function setup() {
   createCanvas(400,200);
-  sample1 = loadSound(['../_files/Damscray_-_Dancing_Tiger_01.mp3', '../_files/Damscray_-_Dancing_Tiger_01.ogg'], soundReady);
+  soundFormats('ogg', 'mp3');
+  soundFile = loadSound('../_files/Damscray_-_Dancing_Tiger_01', soundReady);
 }
 
 function soundReady(){
-  sample1.rate(1.75);
-  sample1.loop();
+  soundFile.rate(1.75);
+  soundFile.loop();
 
-  text('File is ready!  Click to pause.', 50, 10);
+  text('File is ready!  Click to pause / unpause', 50, 10);
 
   // draw the waveform
-  peaks = sample1.getPeaks();
+  peaks = soundFile.getPeaks();
   beginShape();
   for (i = 0; i< peaks.length; i++){
     vertex(map(i, 0, peaks.length, 0, width), map(peaks[i], -1, 1, height, 0) );
@@ -23,5 +24,9 @@ function soundReady(){
 }
 
 function mousePressed(){
-  sample1.pause();
+  if (soundFile.isPlaying()){
+    soundFile.pause();
+  } else {
+    soundFile.play();
+  }
 }

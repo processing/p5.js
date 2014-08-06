@@ -1,5 +1,5 @@
 /**
- * DEMO: Draw the waveform of a sound as it plays using FFT.waveform()
+ * DEMO: Draw the waveform of a sound as it plays using p5.FFT.waveform()
  */
 
 var soundFile;
@@ -26,9 +26,9 @@ function setup() {
    *    - Smoothing 
    *    - Length of the FFT's analyze/waveform array. Must be a power of two between 16 and 1024 (default).
    */
-  fft = new FFT(.99, fftBands);
+  fft = new p5.FFT(.99, fftBands);
 
-  p = createP('press any key to pause');
+  p = createP('press any key to pause / play');
 }
 
 function draw() {
@@ -50,5 +50,9 @@ function draw() {
 }
 
 function keyPressed() {
-  soundFile.pause();
+  if (soundFile.isPlaying() ) {
+    soundFile.pause();
+  } else {
+    soundFile.play();
+  }
 }

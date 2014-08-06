@@ -1,4 +1,4 @@
-// Attempting to convert Wilm's Envelope example from the Processing Handbook ex2
+// Adapting Wilm Thoben's Envelope example from the Processing Handbook ex2
 
 /*
 This sketch shows how to use envelopes and oscillators. Envelopes are pre-defined amplitude 
@@ -21,8 +21,9 @@ var env;
 var attackTime = 0.1;
 var attackLevel = 0.7;
 var decayTime = 0.3;
+var decayLevel = 0.2;
 var sustainTime = 0.1;
-var sustainLevel = 0.2;
+var sustainLevel = decayLevel;
 var releaseTime = 0.5;
 
 var midiSequence = [ 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72 ]; 
@@ -39,11 +40,11 @@ function setup(){
 
   trigger = millis();
 
-  triOsc = new TriOsc();
+  triOsc = new p5.TriOsc();
   triOsc.amp(0);
   triOsc.start();
 
-  env = new Env(attackTime, attackLevel, decayTime, sustainLevel, sustainTime, releaseTime);
+  env = new p5.Env(attackTime, attackLevel, decayTime, decayLevel, sustainTime, sustainLevel, releaseTime);
   fill(0);
 }
 

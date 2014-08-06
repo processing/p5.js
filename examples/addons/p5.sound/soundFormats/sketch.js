@@ -23,7 +23,7 @@ function setup() {
 }
 
 function keyPressed() {
-  soundFile.play(1,1);
+  soundFile.play();
   background(255, 255, 0);
 }
 
