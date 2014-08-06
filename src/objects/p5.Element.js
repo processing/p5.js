@@ -10,8 +10,9 @@ define(function(require) {
   /**
    * Base class for all elements added to a sketch, including canvas,
    * graphics buffers, and other HTML elements. Methods in blue are
-   * included in the core functionality, methods in black are added
-   * with the p5.dom library. It is not called directly, but p5.Element
+   * included in the core functionality, methods in brown are added
+   * with the <a href="http://p5js.org/libraries/">p5.dom library</a>. 
+   * It is not called directly, but p5.Element
    * objects are created by calling createCanvas, createGraphics,
    * or in the p5.dom library, createDiv, createImg, createInput, etc.
    *
