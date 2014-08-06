@@ -6,18 +6,19 @@
   },
   "version": "0.2.23",
   "devDependencies": {
+    "almond": "~0.2.7",
+    "amdclean": "~0.3.3",
     "grunt": "~0.4.2",
     "grunt-contrib-jshint": "~0.6.3",
     "grunt-contrib-nodeunit": "~0.2.0",
-    "grunt-contrib-watch": "~0.5.3",
-    "grunt-mocha": "~0.4.6",
-    "phantomjs": "~1.9.2-4",
-    "grunt-lib-phantomjs": "~0.4.0",
     "grunt-contrib-requirejs": "~0.4.1",
+    "grunt-contrib-sass": "~0.7.2",
+    "grunt-contrib-watch": "~0.5.3",
     "grunt-contrib-yuidoc": "0.5.2",
-    "almond": "~0.2.7",
-    "amdclean": "~0.3.3",
-    "grunt-contrib-sass": "~0.7.2"
+    "grunt-lib-phantomjs": "~0.4.0",
+    "grunt-mocha": "~0.4.6",
+    "grunt-release": "^0.7.0",
+    "phantomjs": "~1.9.2-4"
   },
   "licenses": [
     {

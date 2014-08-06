@@ -10,12 +10,27 @@ define(function(require) {
 
 
   /**
-   * Creates a canvas element in the document.
+   * Creates a canvas element in the document, and sets the dimensions of it
+   * in pixels. This method should be called only once at the start of setup.
+   * <br>
+   * The system variables width and height are set by the parameters passed 
+   * to this function. If size() is not used, the window will be given a 
+   * default size of 100x100 pixels. 
    *
    * @method createCanvas
    * @param  {Number} w width of the canvas
    * @param  {Number} h height of the canvas
    * @return {Object} canvas generated
+   * @example 
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 50);
+   *   background(153);
+   *   line(0, 0, width, height);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.createCanvas = function(w, h, isDefault) {
     var c;

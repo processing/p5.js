@@ -172,6 +172,15 @@ module.exports = function(grunt) {
           outdir: 'docs/reference/'
         }
       }
+    },
+    release: {
+      options: {
+        github: { 
+          repo: 'lmccart/p5.js', //put your user/repo here
+          usernameVar: process.env.GITHUB_USERNAME, //ENVIRONMENT VARIABLE that contains Github username 
+          passwordVar: process.env.GITHUB_PASSWORD //ENVIRONMENT VARIABLE that contains Github password
+        }
+      }
     }
 
   });
@@ -182,10 +191,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
   grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-release');
+
   grunt.registerTask('test', ['jshint', 'mocha']);
-
   grunt.registerTask('yui', ['yuidoc']);
-
   grunt.registerTask('default', ['jshint', 'requirejs', 'mocha']);
 
 };
