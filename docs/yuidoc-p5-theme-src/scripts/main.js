@@ -17,9 +17,6 @@ require([
   'underscore',
   'backbone',
   'App'], function(_, Backbone, App) {
-
-    
-require(['router']);
   
   // Set collections
   App.collections = ['allItems', 'classes', 'events', 'methods', 'properties', 'p5.sound', 'p5.dom'];
@@ -62,10 +59,10 @@ require(['router']);
       }
     });
 
+
     // Get class items (methods, properties, events)
     _.each(items, function(el, idx, array) {
 
-      el.hash = App.router.getHash(el);
       if (el.itemtype) {
         if (el.itemtype === "method") {
           App.methods.push(el);
@@ -95,7 +92,6 @@ require(['router']);
       c.items = _.filter(App.allItems, function(it){ return it.class === c.name; });
     });
 
-
-
+    require(['router']);
   });
 });

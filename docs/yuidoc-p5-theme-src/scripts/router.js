@@ -108,6 +108,9 @@ define([
         for (var i = 0; i < classesCount; i++) {
           if (classes[i].name.toLowerCase() === className) {
             found = classes[i];
+            _.each(found.items, function(i, idx) {
+              i.hash = App.router.getHash(i);
+            });
             break;
           }
         }
