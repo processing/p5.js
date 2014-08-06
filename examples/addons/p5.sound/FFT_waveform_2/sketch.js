@@ -1,5 +1,5 @@
 /**
- * DEMO: Draw the waveform of a sound as it plays using FFT.waveform()
+ * DEMO: Draw the waveform of a sound as it plays using p5.FFT.waveform()
  */
 
 var soundFile;
@@ -12,7 +12,8 @@ var xOffset = 0;
 var waveform = [];
 
 function preload() {
-  soundFile = loadSound( ['../_files/lucky_dragons_-_power_melody.mp3','../_files/lucky_dragons_-_power_melody.ogg'] );
+  soundFormats('ogg', 'mp3');
+  soundFile = loadSound('../_files/lucky_dragons_-_power_melody');
 }
 
 function setup() {
@@ -27,7 +28,7 @@ function setup() {
   soundFile.loop();
 
   // Create an FFT object. Give it smoothing and fftSize
-  fft = new FFT(.99, fftSize);
+  fft = new p5.FFT(.99, fftSize);
   createP('Press spacebar to pause');
 }
 

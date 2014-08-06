@@ -1,6 +1,7 @@
 /**
  * Example: change the frequency of an oscillator and visualize the waveform
  */
+
 var freqSlider, freqLabel, ampLabel, ampSlider, button;
 
 var osc;
@@ -24,7 +25,7 @@ function setup() {
   button.mousePressed(toggleOsc);
 
   // Other types of oscillators include TriOsc, SawOsc, SqrOsc, and generic Oscillator.
-  osc = new SinOsc(freq);
+  osc = new p5.SinOsc(freq);
   osc.amp(amp);
 
   p = createP('Current Waveform: ' + osc.getType());
@@ -40,7 +41,7 @@ function setup() {
   sq.mousePressed(setSquare);
 
   // create an fft to analyze the audio
-  fft = new FFT();
+  fft = new p5.FFT();
 }
 
 function draw() {

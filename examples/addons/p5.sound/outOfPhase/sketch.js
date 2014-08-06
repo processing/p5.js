@@ -11,9 +11,9 @@ var phaseSlider;
 function setup() {
   createCanvas(800,400);
 
-  osc1 = new Oscillator('sine');
-  osc2 = new Oscillator('sine');
-  fft = new FFT();
+  osc1 = new p5.SinOsc();
+  osc2 = new p5.SinOsc();
+  fft = new p5.FFT();
   osc1.phase(.5);
   osc2.phase(0);
   osc1.start(); osc2.start();
