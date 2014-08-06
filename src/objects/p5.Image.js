@@ -155,7 +155,7 @@ define(function (require) {
     // this.canvas reference. We could switch to that approach if (as i think
     // is the case) there an expectation that the user would not hold a 
     // reference to the backing canvas of a p5.Image. But since we do not
-    // enforece that at the moment, I am leaving in the slower, but safer
+    // enforce that at the moment, I am leaving in the slower, but safer
     // implementation.
 
     var tempCanvas = document.createElement('canvas');

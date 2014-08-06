@@ -320,7 +320,7 @@ define(function (require) {
    * Set the magnitude of this vector to the value used for the <b>len</b>
    * parameter.
    *
-   * @mtehod setMag
+   * @method setMag
    * @param  {number}    len the new length for this vector
    * @return {p5.Vector}     the modified p5.Vector
    */

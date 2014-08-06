@@ -189,7 +189,7 @@ define(function (require) {
     this._tint = lastS.tint; // tint
     this._imageMode = lastS.imageMode; // imageMode
     this._rectMode = lastS.rectMode; // rectMode
-    this._ellipseMode = lastS.ellipseMode; // elllipseMode
+    this._ellipseMode = lastS.ellipseMode; // ellipseMode
     // @todo shapeMode
     this._colorMode = lastS.colorMode; // colorMode
     ctx.textAlign = lastS.textAlign; // textAlign

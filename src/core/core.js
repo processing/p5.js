@@ -69,7 +69,7 @@ define(function (require) {
 
     /**
      * The setup() function is called once when the program starts. It's used to
-     * define initial enviroment properties such as screen size and background
+     * define initial environment properties such as screen size and background
      * color and to load media such as images and fonts as the program starts.
      * There can only be one setup() function for each program and it shouldn't
      * be called again after its initial execution. Note: Variables declared

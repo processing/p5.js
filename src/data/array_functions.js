@@ -144,7 +144,7 @@ define(function (require) {
 
   /**
    * Inserts a value or an array of values into an existing array. The first
-   * parameter specifies the intial array to be modified, and the second
+   * parameter specifies the initial array to be modified, and the second
    * parameter defines the data to be inserted. The third parameter is an index
    * value which specifies the array position from which to insert data.
    * (Remember that array index numbering starts at zero, so the first position

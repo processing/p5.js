@@ -120,7 +120,7 @@ define(function (require) {
 
   /**
    * Sets the style of the text to NORMAL, ITALIC, or BOLD. Note this is
-   * overriden by CSS styling.
+   * overridden by CSS styling.
    *
    * @method textStyle
    * @param {Number/Constant} s styling for text, either NORMAL,

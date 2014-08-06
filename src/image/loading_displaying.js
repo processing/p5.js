@@ -205,7 +205,7 @@ define(function (require) {
 
   /**
    * Set image mode. Modifies the location from which images are drawn by
-   * changing the way in which parameters given to image() are intepreted.
+   * changing the way in which parameters given to image() are interpreted.
    * The default mode is imageMode(CORNER), which interprets the second and
    * third parameters of image() as the upper-left corner of the image. If
    * two additional parameters are specified, they are used to set the image's

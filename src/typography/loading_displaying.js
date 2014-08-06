@@ -27,7 +27,7 @@ define(function (require) {
    * to the screen.
    *
    * @method text
-   * @param {String} str the alphanumberic symbols to be displayed
+   * @param {String} str the alphanumeric symbols to be displayed
    * @param {Number} x   x-coordinate of text
    * @param {Number} y   y-coordinate of text
    * @param {Number} x2  by default, the width of the text box,
