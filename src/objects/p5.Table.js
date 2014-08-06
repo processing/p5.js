@@ -28,7 +28,6 @@ define(function (require) {
    *  <ul>
    *  <li>csv - parse the table as comma-separated values
    *  <li>tsv - parse the table as tab-separated values
-   *  <li>newlines - this CSV file contains newlines inside individual cells
    *  <li>header - this table has a header (title) row
    *  </ul>
    */

@@ -1,7 +1,7 @@
 var table;
 
 function setup() {
-  loadTable("table.csv", "header", "csv", logResults);
+  loadTable('table.csv', 'tsv', logResults);
 }
 
 function logResults(results) {

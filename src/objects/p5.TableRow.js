@@ -40,17 +40,6 @@ define(function (require) {
     this.table = null;
   };
 
-  // helper function used by set()
-  function makeArray(obj){
-    var arr = [];
-    for (var key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        arr.push(obj[key]);
-      }
-    }
-    return arr;
-  }
-
   /**
    *  Stores a value in the TableRow's specified column.
    *  The column may be specified by either its ID or title.
@@ -63,46 +52,117 @@ define(function (require) {
   p5.TableRow.prototype.set = function(column, value) {
     // if typeof column is string, use .obj
     if (typeof(column) === 'string'){
-      var addedArr = false;
-      if (typeof(this.obj.column) !== 'undefined'){
-        this.arr.push(value);
-        addedArr = true;
+      var cPos = this.table.columns.indexOf(column); // index of columnID
+      if (cPos >= 0) {
+        this.obj[column] = value;
+        this.arr[cPos] = value;
       }
-      this.obj[column] = value;
-      if (addedArr === false){
-        this.arr = makeArray(this.obj); // this might be out of order!
+      else {
+        throw 'This table has no column named "' + column +'"';
       }
     }
 
     // if typeof column is number, use .arr
     else {
-      var prevVal = this.arr[column];
-      this.arr[column] = value;
-      // iterate thru all the object's values and replace it
-      for (var key in this.obj) {
-        if (this.obj.hasOwnProperty(key)) {
-          if (this.obj[key] === prevVal){
-            this.obj[key] = value;
-          }
-        }
+      if (column < this.table.columns.length) {
+        this.arr[column] = value;
+        var cTitle = this.table.columns[column];
+        this.obj[cTitle] = value;
+      }
+      else {
+        throw 'Column #' + column + ' is out of the range of this table';
       }
     }
   };
 
+
   /**
-   *  Retrieves a float value from the TableRow's specified column.
+   *  Stores a Float value in the TableRow's specified column.
+   *  The column may be specified by either its ID or title.
+   *
+   *  @method  setNum
+   *  @param {String|Number} column Column ID (Number)
+   *                                or Title (String)
+   *  @param {Number} value  The value to be stored
+   *                                as a Float
+   */
+  p5.TableRow.prototype.setNum = function(column, value){
+    var floatVal = parseFloat(value, 10);
+    this.set(column, floatVal);
+  };
+
+
+  /**
+   *  Stores a String value in the TableRow's specified column.
+   *  The column may be specified by either its ID or title.
+   *
+   *  @method  setString
+   *  @param {String|Number} column Column ID (Number)
+   *                                or Title (String)
+   *  @param {String} value  The value to be stored
+   *                                as a String
+   */
+  p5.TableRow.prototype.setString = function(column, value){
+    var stringVal = value.toString();
+    this.set(column, stringVal);
+  };
+
+  /**
+   *  Retrieves a value from the TableRow's specified column.
    *  The column may be specified by either its ID or title.
    *
    *  @method  get
    *  @param  {String|Number} column columnName (string) or
    *                                   ID (number)
-   *  @return {Object|p5.TableRow}
+   *  @return {String|Number}
    */
   p5.TableRow.prototype.get = function(column) {
     if (typeof(column) === 'string'){
       return this.obj[column];
     } else {
       return this.arr[column];
+    }
+  };
+
+  /**
+   *  Retrieves a Float value from the TableRow's specified
+   *  column. The column may be specified by either its ID or
+   *  title.
+   *
+   *  @method  getNum
+   *  @param  {String|Number} column columnName (string) or
+   *                                   ID (number)
+   *  @return {Number}  Float Floating point number
+   */
+  p5.TableRow.prototype.getNum = function(column) {
+    var ret;
+    if (typeof(column) === 'string'){
+      ret = parseFloat(this.obj[column], 10);
+    } else {
+      ret = parseFloat(this.arr[column], 10);
+    }
+
+    if (ret.toString() === 'NaN') {
+      throw 'Error: ' + this.obj[column]+ ' is NaN (Not a Number)';
+    }
+    return ret;
+  };
+
+  /**
+   *  Retrieves an String value from the TableRow's specified
+   *  column. The column may be specified by either its ID or
+   *  title.
+   *
+   *  @method  getString
+   *  @param  {String|Number} column columnName (string) or
+   *                                   ID (number)
+   *  @return {String}  String
+   */
+  p5.TableRow.prototype.getString = function(column) {
+    if (typeof(column) === 'string'){
+      return this.obj[column].toString();
+    } else {
+      return this.arr[column].toString();
     }
   };
 

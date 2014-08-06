@@ -8,24 +8,24 @@ function setup() {
   table.addColumn('type');
 
   var newRow = table.addRow();
-  newRow.set('name', 'Lion');
-  newRow.set('type', 'Mammal');
+  newRow.setString('name', 'Lion');
+  newRow.setString('type', 'Mammal');
 
   newRow = table.addRow();
-  newRow.set('name', 'Snake');
-  newRow.set('type', 'Reptile');
+  newRow.setString('name', 'Snake');
+  newRow.setString('type', 'Reptile');
 
   newRow = table.addRow();
-  newRow.set('name', 'Mosquito');
-  newRow.set('type', 'Insect');
+  newRow.setString('name', 'Mosquito');
+  newRow.setString('type', 'Insect');
 
   newRow = table.addRow();
-  newRow.set('name', 'Lizard');
-  newRow.set('type', 'Reptile');
+  newRow.setString('name', 'Lizard');
+  newRow.setString('type', 'Reptile');
 
   var rows = table.findRows('Reptile', 'type');
   for (var i = 0; i < rows.length; i++){
-    println(rows[i].get('name') + ': ' + rows[i].get('type'));
+    println(rows[i].getString('name') + ': ' + rows[i].getString('type'));
   }
 }
 
