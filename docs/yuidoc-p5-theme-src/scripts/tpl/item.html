@@ -93,9 +93,10 @@
 <% if (item.params) { %>
 <div class="params">
   <h4>Parameters</h4>
-  <ul>
+  <table>
   <% for (var i=0; i<item.params.length; i++) { %>
-    <li>
+    <tr>
+    <td>
     <% var p = item.params[i] %>
     <% if (p.optional) { %>
       <code class="language-javascript">[<%=p.name%>]</code>
@@ -103,22 +104,24 @@
       <code class="language-javascript"><%=p.name%></code>
     <% } %> 
     <%if (p.optdefault) { %>=<%=p.optdefault%><% } %>
+    </td>
+    <td>
     <% if (p.type) { %>
       <span class="param-type label label-info"><%=p.type%></span>: <%=p.description%></span> 
     <% } %>
     <% if (p.multiple) {%>
       <span class="flag multiple" title="This argument may occur one or more times.">multiple</span>
     <% } %>
-    </li>
+    </td>
+    </tr>
   <% } %>
-  </ul>
+  </table>
 </div>
 <% } %>
 
 <% if (item.return) { %>
 <div>
   <h4>Returns</h4>
-
     <% if (item.return.type) { %>
       <p><span class="param-type label label-info"><%=item.return.type%></span>: <%= item.return.description %></p>
     <% } %>

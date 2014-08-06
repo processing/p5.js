@@ -8,7 +8,12 @@ define(function(require) {
   var p5 = require('core');
 
   /**
-   * A class to describe...
+   * Base class for all elements added to a sketch, including canvas,
+   * graphics buffers, and other HTML elements. Methods in blue are
+   * included in the core functionality, methods in black are added
+   * with the p5.dom library. It is not called directly, but p5.Element
+   * objects are created by calling createCanvas, createGraphics,
+   * or in the p5.dom library, createDiv, createImg, createInput, etc.
    *
    * @class p5.Element
    * @constructor

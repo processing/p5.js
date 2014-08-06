@@ -21,9 +21,12 @@
 <% if (methods.length > 0) { %>
   <h4>Methods</h4>
   <p>
+    <table>
     <% _.each(methods, function(item) { %>
-      <a href="<%=item.hash%>" <% if (item.module !== module) { %>class="addon"<% } %>><%=item.name%><% if (item.itemtype === 'method') { %>()<%}%></a>: <%= item.description %>
-      <br>
+      <tr>
+      <td><a href="<%=item.hash%>" <% if (item.module !== module) { %>class="addon"<% } %>><%=item.name%><% if (item.itemtype === 'method') { %>()<%}%></a></td><td><%= item.description %></td>
+      </tr>
     <% }); %>
+    </table>
   </p>
 <% } %>

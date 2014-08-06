@@ -10,6 +10,15 @@
    Base styles: opinionated defaults
    ========================================================================== */
 
+td {
+    vertical-align: top;
+    font-size: 1.2em;
+    padding-bottom: 0.75em;
+}
+
+td:first-child {
+    padding-right: 0.5em;
+}
 
 /* 
   //////////////////////////////////////////////////
@@ -257,7 +266,7 @@ section#reference h2 {
 }
 
 #reference .core, #reference .addon {
-    color: #222;
+    color: #704F21;
 }
 
 html,

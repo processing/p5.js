@@ -1,7 +1,7 @@
 /**
  * @module Rendering
  * @submodule Rendering
- * @for p5.Graphics
+ * @for p5
  */
 define(function(require) {
 
