@@ -75,7 +75,7 @@ define(function (require) {
    * 
    */
   p5.prototype.blend = function() {
-    var currBlend = this.canvas.getContext('2d').globalCompositeOperation;
+    var currBlend = this.drawingContext.globalCompositeOperation;
     var blendMode = arguments[arguments.length - 1];
     var copyArgs = Array.prototype.slice.call(
       arguments,
@@ -83,9 +83,9 @@ define(function (require) {
       arguments.length - 1
     );
 
-    this.canvas.getContext('2d').globalCompositeOperation = blendMode;
+    this.drawingContext.globalCompositeOperation = blendMode;
     this.copy.apply(this, copyArgs);
-    this.canvas.getContext('2d').globalCompositeOperation = currBlend;
+    this.drawingContext.globalCompositeOperation = currBlend;
   };
 
   /**
@@ -134,7 +134,7 @@ define(function (require) {
       throw new Error('Signature not supported');
     }
 
-    this.canvas.getContext('2d').drawImage(srcImage.canvas,
+    this.drawingContext.drawImage(srcImage.canvas,
       sx, sy, sw, sh, dx, dy, dw, dh
     );
   };
@@ -224,7 +224,7 @@ define(function (require) {
       return [0, 0, 0, 255];
     }
 
-    var imageData = this.canvas.getContext('2d').getImageData(x, y, w, h);
+    var imageData = this.drawingContext.getImageData(x, y, w, h);
     var data = imageData.data;
 
     if (w === 1 && h === 1){
@@ -276,7 +276,7 @@ define(function (require) {
   p5.prototype.loadPixels = function() {
     var width = this.width;
     var height = this.height;
-    var imageData = this.canvas.getContext('2d').getImageData(
+    var imageData = this.drawingContext.getImageData(
       0,
       0,
       width,
@@ -350,7 +350,7 @@ define(function (require) {
    */
   p5.prototype.set = function (x, y, imgOrCol) {
     if (imgOrCol instanceof p5.Image) {
-      this.canvas.getContext('2d').drawImage(imgOrCol.canvas, x, y);
+      this.drawingContext.drawImage(imgOrCol.canvas, x, y);
       this.loadPixels.call(this);
     } else {
       var idx = 4*(y * this.width + x);
@@ -432,7 +432,7 @@ define(function (require) {
       w = this.width;
       h = this.height;
     }
-    this.canvas.getContext('2d').putImageData(this.imageData, x, y, 0, 0, w, h);
+    this.drawingContext.putImageData(this.imageData, x, y, 0, 0, w, h);
   };
 
   return p5;

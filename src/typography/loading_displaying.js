@@ -55,7 +55,7 @@ define(function (require) {
    */
   p5.prototype.text = function() {
 
-    this.canvas.getContext('2d').font=this._textStyle+
+    this.drawingContext.font=this._textStyle+
       ' '+
       this._textSize+
       'px '+
@@ -64,14 +64,14 @@ define(function (require) {
     if (arguments.length === 3) {
 
       if (this._doFill) {
-        this.canvas.getContext('2d').fillText(
+        this.drawingContext.fillText(
           arguments[0],
           arguments[1],
           arguments[2]
         );
       }
       if (this._doStroke) {
-        this.canvas.getContext('2d').strokeText(
+        this.drawingContext.strokeText(
           arguments[0],
           arguments[1],
           arguments[2]
@@ -95,7 +95,7 @@ define(function (require) {
       for(var n = 0; n < words.length; n++) {
 
         var testLine = line + words[n] + ' ';
-        var metrics = this.canvas.getContext('2d').measureText(testLine);
+        var metrics = this.drawingContext.measureText(testLine);
         var testWidth = metrics.width;
 
         if (vals.y > vals.h) {
@@ -105,10 +105,10 @@ define(function (require) {
         } else if (testWidth > vals.w && n > 0) {
 
           if (this._doFill) {
-            this.canvas.getContext('2d').fillText(line, vals.x, vals.y);
+            this.drawingContext.fillText(line, vals.x, vals.y);
           }
           if (this._doStroke) {
-            this.canvas.getContext('2d').strokeText(line, vals.x, vals.y);
+            this.drawingContext.strokeText(line, vals.x, vals.y);
           }
           line = words[n] + ' ';
           vals.y += this._textLeading;
@@ -122,10 +122,10 @@ define(function (require) {
 
       if (vals.y <= vals.h) {
         if (this._doFill) {
-          this.canvas.getContext('2d').fillText(line, vals.x, vals.y);
+          this.drawingContext.fillText(line, vals.x, vals.y);
         }
         if (this._doStroke) {
-          this.canvas.getContext('2d').strokeText(line, vals.x, vals.y);
+          this.drawingContext.strokeText(line, vals.x, vals.y);
         }
       }
     }

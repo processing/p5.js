@@ -54,6 +54,7 @@ define(function (require) {
     this.canvas = document.createElement('canvas');
     this.canvas.width = this.width;
     this.canvas.height = this.height;
+    this.drawingContext = this.canvas.getContext('2d');
     /**
      * Array containing the color of every pixel in the image.
      * @property pixels[]
@@ -173,7 +174,7 @@ define(function (require) {
 
     //Copy the image back
 
-    this.canvas.getContext('2d').drawImage(tempCanvas,
+    this.drawingContext.drawImage(tempCanvas,
       0, 0, width, height,
       0, 0, width, height
     );
@@ -226,7 +227,7 @@ define(function (require) {
     if(p5Image === undefined){
       p5Image = this;
     }
-    var currBlend = this.canvas.getContext('2d').globalCompositeOperation;
+    var currBlend = this.drawingContext.globalCompositeOperation;
 
     var copyArgs = [
       p5Image,
@@ -240,9 +241,9 @@ define(function (require) {
       this.height
     ];
 
-    this.canvas.getContext('2d').globalCompositeOperation = 'destination-out';
+    this.drawingContext.globalCompositeOperation = 'destination-out';
     this.copy.apply(this, copyArgs);
-    this.canvas.getContext('2d').globalCompositeOperation = currBlend;
+    this.drawingContext.globalCompositeOperation = currBlend;
   };
 
   /**

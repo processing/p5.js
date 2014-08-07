@@ -202,7 +202,7 @@ define(function(require) {
       mode === constants.OVERLAY || mode === constants.HARD_LIGHT ||
       mode === constants.SOFT_LIGHT || mode === constants.DODGE ||
       mode === constants.BURN) {
-      this.canvas.getContext('2d').globalCompositeOperation = mode;
+      this.drawingContext.globalCompositeOperation = mode;
     } else {
       throw new Error('Mode '+mode+' not recognized.');
     }

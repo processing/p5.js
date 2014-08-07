@@ -42,19 +42,21 @@ define(function(require) {
   p5.Graphics = function(elt, pInst) {
     p5.Element.call(this, elt, pInst);
     this.canvas = elt;
+    this.drawingContext = this.canvas.getContext('2d');
     if (this._pInst) {
       // for pixel method sharing with pimage
       this._pInst._setProperty('_curElement', this);
-      this._pInst._setProperty('canvas', elt);
+      this._pInst._setProperty('canvas', this.canvas);
+      this._pInst._setProperty('drawingContext', this.drawingContext);
       this._pInst._setProperty('width', this.width);
       this._pInst._setProperty('height', this.height);
     } else { // hide if offscreen buffer
       this.canvas.style.display = 'none';
     }
     
-    this.canvas.getContext('2d').fillStyle = '#FFFFFF';
-    this.canvas.getContext('2d').strokeStyle = '#000000';
-    this.canvas.getContext('2d').lineCap = constants.ROUND;
+    this.drawingContext.fillStyle = '#FFFFFF';
+    this.drawingContext.strokeStyle = '#000000';
+    this.drawingContext.lineCap = constants.ROUND;
   };
 
   p5.Graphics.prototype = Object.create(p5.Element.prototype);
