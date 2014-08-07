@@ -12,7 +12,7 @@ function draw() {
   
   fingers.loadPixels();
   for (var i=0; i<fingers.pixels.length/2; i++) {
-    fingers.pixels[i][3] = random(255);
+    fingers.pixels[i] = random(255);
   }
   fingers.updatePixels();
 
