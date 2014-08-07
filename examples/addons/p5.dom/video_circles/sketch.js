@@ -10,14 +10,13 @@ function setup() {
 }
 
 function draw() {
-  image(fingers, 0, 0);
-  loadPixels();
   background(255);
+  fingers.loadPixels();
   var stepSize = round(constrain(mouseX / 8, 6, 32));
   for (var y=0; y<height; y+=stepSize) {
     for (var x=0; x<width; x+=stepSize) {
       var i = y * width + x;
-      var darkness = (255 - pixels[i][0]) / 255;
+      var darkness = (255 - fingers.pixels[i*4]) / 255;
       var radius = stepSize * darkness;
       ellipse(x, y, radius, radius);
     }

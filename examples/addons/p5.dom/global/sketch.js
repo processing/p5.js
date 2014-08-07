@@ -24,7 +24,7 @@ function setup() {
 
   result = createElement("H1", "this is h1");
 
-  vid = createVideo('fingers.mov');
+  vid = createVideo('../fingers.mov');
   vid.loop(true);
   vid.hide();
 
@@ -32,7 +32,7 @@ function setup() {
  
 function draw() {
   background(95, 165, 26);
-  video(vid, 10, 10, 80, 180);
+  image(vid, 10, 10, 80, 180);
 };
  
  
