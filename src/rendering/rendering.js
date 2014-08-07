@@ -14,7 +14,7 @@ define(function(require) {
    * in pixels. This method should be called only once at the start of setup.
    * <br>
    * The system variables width and height are set by the parameters passed 
-   * to this function. If size() is not used, the window will be given a 
+   * to this function. If createCanvas() is not used, the window will be given a 
    * default size of 100x100 pixels. 
    *
    * @method createCanvas
