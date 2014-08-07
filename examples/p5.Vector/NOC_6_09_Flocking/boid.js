@@ -70,7 +70,7 @@ Boid.prototype.render = function() {
   var theta = this.velocity.heading() + radians(90);
   fill(127);
   stroke(200);
-  pushMatrix();
+  push();
   translate(this.position.x,this.position.y);
   rotate(theta);
   beginShape();
@@ -78,7 +78,7 @@ Boid.prototype.render = function() {
   vertex(-this.r, this.r*2);
   vertex(this.r, this.r*2);
   endShape(CLOSE);
-  popMatrix();
+  pop();
 }
 
 // Wraparound
