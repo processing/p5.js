@@ -100,27 +100,20 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.push = function() {
-    var ctx = this.canvas.getContext('2d');
-    ctx.save();
-
+  p5.prototype.push = function () {
+    this.canvas.getContext('2d').save();
     this.styles.push({
-      fillStyle:   ctx.fillStyle, // fill
-      strokeStyle: ctx.strokeStyle, // stroke
-      lineWidth:   ctx.lineWidth, // strokeWeight
-      lineCap:     ctx.lineCap, // strokeCap
-      lineJoin:    ctx.lineJoin, // strokeJoin
-      tint:        this._tint, // tint
-      imageMode:   this._imageMode, // imageMode
-      rectMode:    this._rectMode, // rectMode
-      ellipseMode: this._ellipseMode, // ellipseMode
-      // @todo shapeMode
-      colorMode:   this._colorMode, // colorMode
-      textAlign:   ctx.textAlign, // textAlign
-      textFont:    this.textFont,
-      textLeading: this.textLeading, // textLeading
-      textSize:    this.textSize, // textSize
-      textStyle:   this.textStyle // textStyle
+      doStroke: this._doStroke,
+      doFill: this._doFill,
+      tint: this._tint,
+      imageMode: this._imageMode,
+      rectMode: this._rectMode,
+      ellipseMode: this._ellipseMode,
+      colorMode: this._colorMode,
+      textFont: this.textFont,
+      textLeading: this.textLeading,
+      textSize: this.textSize,
+      textStyle: this.textStyle
     });
   };
 
@@ -175,28 +168,20 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.pop = function() {
-    var ctx = this.canvas.getContext('2d');
-    ctx.restore();
-
+  p5.prototype.pop = function () {
+    this.canvas.getContext('2d').restore();
     var lastS = this.styles.pop();
-
-    ctx.fillStyle = lastS.fillStyle; // fill
-    ctx.strokeStyle = lastS.strokeStyle; // stroke
-    ctx.lineWidth = lastS.lineWidth; // strokeWeight
-    ctx.lineCap = lastS.lineCap; // strokeCap
-    ctx.lineJoin = lastS.lineJoin; // strokeJoin
-    this._tint = lastS.tint; // tint
-    this._imageMode = lastS.imageMode; // imageMode
-    this._rectMode = lastS.rectMode; // rectMode
-    this._ellipseMode = lastS.ellipseMode; // ellipseMode
-    // @todo shapeMode
-    this._colorMode = lastS.colorMode; // colorMode
-    ctx.textAlign = lastS.textAlign; // textAlign
+    this._doStroke = lastS.doStroke;
+    this._doFill = lastS.doFill;
+    this._tint = lastS.tint;
+    this._imageMode = lastS.imageMode;
+    this._rectMode = lastS.rectMode;
+    this._ellipseMode = lastS.ellipseMode;
+    this._colorMode = lastS.colorMode;
     this.textFont = lastS.textFont;
-    this.textLeading = lastS.textLeading; // textLeading
-    this.textSize = lastS.textSize; // textSize
-    this.textStyle = lastS.textStyle; // textStyle
+    this.textLeading = lastS.textLeading;
+    this.textSize = lastS.textSize;
+    this.textStyle = lastS.textStyle;
   };
 
   p5.prototype.pushStyle = function() {
