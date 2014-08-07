@@ -63,16 +63,20 @@ define(function (require) {
 
     if (arguments.length === 3) {
 
-      this.canvas.getContext('2d').fillText(
-        arguments[0],
-        arguments[1],
-        arguments[2]
-      );
-      this.canvas.getContext('2d').strokeText(
-        arguments[0],
-        arguments[1],
-        arguments[2]
-      );
+      if (this._doFill) {
+        this.canvas.getContext('2d').fillText(
+          arguments[0],
+          arguments[1],
+          arguments[2]
+        );
+      }
+      if (this._doStroke) {
+        this.canvas.getContext('2d').strokeText(
+          arguments[0],
+          arguments[1],
+          arguments[2]
+        );
+      }
 
     } else if (arguments.length === 5) {
 
@@ -100,8 +104,12 @@ define(function (require) {
 
         } else if (testWidth > vals.w && n > 0) {
 
-          this.canvas.getContext('2d').fillText(line, vals.x, vals.y);
-          this.canvas.getContext('2d').strokeText(line, vals.x, vals.y);
+          if (this._doFill) {
+            this.canvas.getContext('2d').fillText(line, vals.x, vals.y);
+          }
+          if (this._doStroke) {
+            this.canvas.getContext('2d').strokeText(line, vals.x, vals.y);
+          }
           line = words[n] + ' ';
           vals.y += this._textLeading;
 
@@ -113,9 +121,12 @@ define(function (require) {
       }
 
       if (vals.y <= vals.h) {
-
-        this.canvas.getContext('2d').fillText(line, vals.x, vals.y);
-        this.canvas.getContext('2d').strokeText(line, vals.x, vals.y);
+        if (this._doFill) {
+          this.canvas.getContext('2d').fillText(line, vals.x, vals.y);
+        }
+        if (this._doStroke) {
+          this.canvas.getContext('2d').strokeText(line, vals.x, vals.y);
+        }
       }
     }
   };

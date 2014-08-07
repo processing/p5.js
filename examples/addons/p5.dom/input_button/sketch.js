@@ -1,31 +1,35 @@
-var canvas, input, button, greeting;
+var input, button, greeting;
 
 function setup() {
 
   // create canvas
-  canvas = createCanvas(400, 150);
-  canvas.position(0, 0);
+  createCanvas(710, 400);
 
-  input = createInput('enter your name');
-  input.position(10, 10);
+  input = createInput();
+  input.position(20, 65);
 
   button = createButton('submit');
-  button.position(140, 10);
+  button.position(150, 65);
   button.mousePressed(greet);
 
-  greeting = createElement('h1');
-  greeting.position(10, 15);
-  greeting.size(380, 300);
-  noStroke();
+  greeting = createElement('h2', 'what is your name?');
+  greeting.position(20, 5);
 
+  textAlign(CENTER)
+  textSize(50);
 }
 
 function greet() {
   var name = input.value();
   greeting.html('hello '+name+'!');
+  input.value('');
 
-  background(random(255), random(255), random(255));
-  for (var i=0; i<name.length; i++) {
-    ellipse(random(width), random(height), 20, 20);
+  for (var i=0; i<200; i++) {
+    push();
+    fill(random(255), 255, 255);
+    translate(random(width), random(height));
+    rotate(random(2*PI));
+    text(name, 0, 0);
+    pop();
   }
 }
