@@ -40,7 +40,7 @@ define(function(require) {
    * </div>
    */
   p5.prototype.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
-    this.canvas.getContext('2d').transform(n00, n01, n02, n10, n11, n12);
+    this.drawingContext.transform(n00, n01, n02, n10, n11, n12);
     var m = this._matrices[this._matrices.length - 1];
     m = multiplyMatrix(m, [n00, n01, n02, n10, n11, n12]);
 
@@ -72,7 +72,7 @@ define(function(require) {
    * </div>
    */
   p5.prototype.resetMatrix = function() {
-    this.canvas.getContext('2d').setTransform();
+    this.drawingContext.setTransform();
     this._matrices[this._matrices.length - 1] = [1, 0, 0, 1, 0, 0];
 
     return this;
@@ -111,7 +111,7 @@ define(function(require) {
     if (this._angleMode === constants.DEGREES) {
       r = this.radians(r);
     }
-    this.canvas.getContext('2d').rotate(r);
+    this.drawingContext.rotate(r);
     var m = this._matrices[this._matrices.length - 1];
     var c = Math.cos(r);
     var s = Math.sin(r);
@@ -185,7 +185,7 @@ define(function(require) {
       x = arguments[0];
       y = arguments[1];
     }
-    this.canvas.getContext('2d').scale(x, y);
+    this.drawingContext.scale(x, y);
     var m = this._matrices[this._matrices.length - 1];
     m[0] *= x;
     m[1] *= x;
@@ -228,7 +228,7 @@ define(function(require) {
     if (this._angleMode === constants.DEGREES) {
       angle = this.radians(angle);
     }
-    this.canvas.getContext('2d').transform(1, 0, this.tan(angle), 1, 0, 0);
+    this.drawingContext.transform(1, 0, this.tan(angle), 1, 0, 0);
     var m = this._matrices[this._matrices.length - 1];
     m = multiplyMatrix(m, [1, 0, this.tan(angle), 1, 0, 0]);
 
@@ -268,7 +268,7 @@ define(function(require) {
     if (this._angleMode === constants.DEGREES) {
       angle = this.radians(angle);
     }
-    this.canvas.getContext('2d').transform(1, this.tan(angle), 0, 1, 0, 0);
+    this.drawingContext.transform(1, this.tan(angle), 0, 1, 0, 0);
     var m = this._matrices[this._matrices.length - 1];
     m = multiplyMatrix(m, [1, this.tan(angle), 0, 1, 0, 0]);
 
@@ -310,7 +310,7 @@ define(function(require) {
    * </div>
    */
   p5.prototype.translate = function(x, y) {
-    this.canvas.getContext('2d').translate(x, y);
+    this.drawingContext.translate(x, y);
     var m = this._matrices[this._matrices.length - 1];
     m[4] += m[0] * x + m[2] * y;
     m[5] += m[1] * x + m[3] * y;

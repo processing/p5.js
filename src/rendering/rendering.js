@@ -14,8 +14,8 @@ define(function(require) {
    * in pixels. This method should be called only once at the start of setup.
    * <br>
    * The system variables width and height are set by the parameters passed 
-   * to this function. If createCanvas() is not used, the window will be given a 
-   * default size of 100x100 pixels. 
+   * to this function. If createCanvas() is not used, the window will be 
+   * given a default size of 100x100 pixels. 
    *
    * @method createCanvas
    * @param  {Number} w width of the canvas
@@ -202,7 +202,7 @@ define(function(require) {
       mode === constants.OVERLAY || mode === constants.HARD_LIGHT ||
       mode === constants.SOFT_LIGHT || mode === constants.DODGE ||
       mode === constants.BURN) {
-      this.canvas.getContext('2d').globalCompositeOperation = mode;
+      this.drawingContext.globalCompositeOperation = mode;
     } else {
       throw new Error('Mode '+mode+' not recognized.');
     }

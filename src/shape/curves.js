@@ -47,7 +47,7 @@ define(function (require) {
     if (!this._doStroke) {
       return;
     }
-    var ctx = this.canvas.getContext('2d');
+    var ctx = this.drawingContext;
     ctx.beginPath();
     ctx.moveTo(x1, y1);
     //for each point as considered by detail, iterate
@@ -232,7 +232,7 @@ define(function (require) {
     if (!this._doStroke) {
       return;
     }
-    var ctx = this.canvas.getContext('2d');
+    var ctx = this.drawingContext;
     ctx.moveTo(x1,y1);
     ctx.beginPath();
     for (var i = 0; i <= this._curveDetail; i++) {

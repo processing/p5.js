@@ -42,6 +42,15 @@ define(function(require) {
    *
    * @method parent
    * @param  {String|Object} parent the ID or node of the parent elt
+   * @example
+   * <div class="norender"><code>
+   * // in the html file:
+   * &lt;div id="myContainer">&lt;/div>
+   * 
+   * // in the js file:
+   * var cnv = createCanvas(100, 100);
+   * cnv.parent("myContainer");
+   * </code></div>
    */
   p5.Element.prototype.parent = function(parent) {
     if (typeof parent === 'string') {

@@ -161,9 +161,9 @@ define(function(require) {
    *
    * @property displayWidth
    * @example
-   *   <div><code>
-   *     size(displayWidth, displayHeight);
-   *   </code></div>
+   * <div class="norender"><code>
+   * createCanvas(displayWidth, displayHeight);
+   * </code></div>
    */
   p5.prototype.displayWidth = screen.width;
 
@@ -173,9 +173,9 @@ define(function(require) {
    *
    * @property displayHeight
    * @example
-   *   <div><code>
-   *     size(displayWidth, displayHeight);
-   *   </code></div>
+   * <div class="norender"><code>
+   * createCanvas(displayWidth, displayHeight);
+   * </code></div>
    */
   p5.prototype.displayHeight = screen.height;
 
@@ -185,9 +185,9 @@ define(function(require) {
    *
    * @property windowWidth
    * @example
-   *   <div><code>
-   *     size(windowWidth, windowHeight);
-   *   </code></div>
+   * <div class="norender"><code>
+   * createCanvas(windowWidth, windowHeight);
+   * </code></div>
    */
   p5.prototype.windowWidth = window.innerWidth;
   window.addEventListener('resize', function (e) {
@@ -201,9 +201,9 @@ define(function(require) {
    *
    * @property windowHeight
    * @example
-   *   <div><code>
-   *     size(windowWidth, windowHeight);
-   *   </code></div>
+   * <div class="norender"><code>
+   * createCanvas(windowWidth, windowHeight);
+   * </code></div>
    */
   p5.prototype.windowHeight = window.innerHeight;
   window.addEventListener('resize', function (e) {

@@ -67,7 +67,7 @@ define(function (require) {
     if (!this._doStroke && !this._doFill) {
       return;
     }
-    var ctx = this.canvas.getContext('2d');
+    var ctx = this.drawingContext;
     var vals = canvas.arcModeAdjust(
       x,
       y,
@@ -126,7 +126,7 @@ define(function (require) {
     if (!this._doStroke && !this._doFill) {
       return;
     }
-    var ctx = this.canvas.getContext('2d');
+    var ctx = this.drawingContext;
     var vals = canvas.modeAdjust(
       x,
       y,
@@ -213,7 +213,7 @@ define(function (require) {
     if (!this._doStroke) {
       return;
     }
-    var ctx = this.canvas.getContext('2d');
+    var ctx = this.drawingContext;
     if (ctx.strokeStyle === 'rgba(0,0,0,0)') {
       return;
     }
@@ -248,7 +248,7 @@ define(function (require) {
     if (!this._doStroke) {
       return;
     }
-    var ctx = this.canvas.getContext('2d');
+    var ctx = this.drawingContext;
     var s = ctx.strokeStyle;
     var f = ctx.fillStyle;
     if (s === 'rgba(0,0,0,0)') {
@@ -305,7 +305,7 @@ define(function (require) {
     if (!this._doStroke && !this._doFill) {
       return;
     }
-    var ctx = this.canvas.getContext('2d');
+    var ctx = this.drawingContext;
     ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
@@ -347,7 +347,7 @@ define(function (require) {
       return;
     }
     var vals = canvas.modeAdjust(a, b, c, d, this._rectMode);
-    var ctx = this.canvas.getContext('2d');
+    var ctx = this.drawingContext;
     // Translate the line by (0.5, 0.5) to draw a crisp rectangle border
     if (this._doStroke && ctx.lineWidth % 2 === 1) {
       ctx.translate(0.5, 0.5);
@@ -390,7 +390,7 @@ define(function (require) {
     if (!this._doStroke && !this._doFill) {
       return;
     }
-    var ctx = this.canvas.getContext('2d');
+    var ctx = this.drawingContext;
     ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);

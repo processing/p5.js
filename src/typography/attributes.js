@@ -42,7 +42,7 @@ define(function (require) {
     if (a === constants.LEFT ||
       a === constants.RIGHT ||
       a === constants.CENTER) {
-      this.canvas.getContext('2d').textAlign = a;
+      this.drawingContext.textAlign = a;
     }
   };
 
@@ -64,7 +64,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.textHeight = function(s) {
-    return this.canvas.getContext('2d').measureText(s).height;
+    return this.drawingContext.measureText(s).height;
   };
 
   /**
@@ -168,7 +168,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.textWidth = function(s) {
-    return this.canvas.getContext('2d').measureText(s).width;
+    return this.drawingContext.measureText(s).width;
   };
 
   return p5;

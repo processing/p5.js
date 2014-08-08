@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/lmccart/p5.js.git"
   },
-  "version": "0.3.0",
+  "version": "0.3.2",
   "devDependencies": {
     "almond": "~0.2.7",
     "amdclean": "~0.3.3",
@@ -22,8 +22,8 @@
   },
   "licenses": [
     {
-      "type": "GPL",
-      "url": "http://www.opensource.org/licenses/GPL-3.0"
+      "type": "LGPL",
+      "url": "https://www.gnu.org/licenses/lgpl-2.1.html"
     }
   ],
   "dependencies": {
