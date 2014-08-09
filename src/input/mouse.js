@@ -92,13 +92,13 @@ define(function (require) {
   p5.prototype.mouseButton = 0;
 
   /**
-   * The boolean system variable isMousePressed is true if the mouse is pressed
+   * The boolean system variable mouseIsPressed is true if the mouse is pressed
    * and false if not.
    *
-   * @property isMousePressed
+   * @property mouseIsPressed
    */
-  p5.prototype.isMousePressed = false;
-  p5.prototype.mouseIsPressed = false; // khan
+  p5.prototype.mouseIsPressed = false; 
+  p5.prototype.isMousePressed = false; // both are supported
 
   p5.prototype.updateMouseCoords = function(e) {
     var mousePos = getMousePos(this._curElement.elt, e);
