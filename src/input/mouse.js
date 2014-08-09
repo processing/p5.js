@@ -97,7 +97,7 @@ define(function (require) {
    *
    * @property mouseIsPressed
    */
-  p5.prototype.mouseIsPressed = false; 
+  p5.prototype.mouseIsPressed = false;
   p5.prototype.isMousePressed = false; // both are supported
 
   p5.prototype.updateMouseCoords = function(e) {
