@@ -40,9 +40,6 @@ function draw() {
   // set filter parameters
   filter.set(filterFreq, filterWidth);
 
-  // update the description if the sound is playing
-  updateDescription();
-
   // Draw every value in the FFT spectrum analysis where
   // x = lowest (10Hz) to highest (22050Hz) frequencies,
   // h = energy / amplitude at that frequency
@@ -53,6 +50,8 @@ function draw() {
     var h = -height + map(spectrum[i], 0, 255, height, 0);
     rect(x, height, width/spectrum.length, h) ;
   }
+
+  updateDescription();
 }
 
 // display current Filter params
