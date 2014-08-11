@@ -19,7 +19,7 @@ function setup() {
   newRow.setString('name', 'Mosquito');
   newRow.setString('type', 'Insect');
 
-  saveTable(table, 'animals.csv', 'csv');
+  saveTable(table, 'animals.bin', 'bin');
 }
 
 // Sketch saves the following to a file called 'animals.csv':

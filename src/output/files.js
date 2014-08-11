@@ -12,7 +12,8 @@ define(function (require) {
 
   window.URL = window.URL || window.webkitURL;
 
-  p5.prototype.pWriters = [];
+  // private array of p5.PrintWriter objects
+  p5.prototype._pWriters = [];
 
   p5.prototype.beginRaw = function() {
     // TODO
@@ -33,10 +34,16 @@ define(function (require) {
   };
 
   p5.prototype.createWriter  = function(name, extension) {
-    if (this.pWriters.indexOf(name) === -1) { // check it doesn't already exist
-      this.pWriters.name = new this.PrintWriter(name, extension);
-      return this.pWriters.name;
+    // check it doesn't already exist
+    for (var i in p5.prototype._pWriters) {
+      if (p5.prototype._pWriters[i].name.indexOf(name) > -1) {
+        // if a p5.PrintWriter w/ this name already exists, return it...
+        return p5.prototype._pWriters[i];
+      }
     }
+    var newPW = new p5.PrintWriter(name, extension);
+    p5.prototype._pWriters.push( newPW );
+    return newPW;
   };
 
   p5.prototype.endRaw = function() {
@@ -61,7 +68,8 @@ define(function (require) {
       .replace(/'/g, '&#039;');
   };
 
-  p5.prototype.PrintWriter = function(filename, extension) {
+  p5.PrintWriter = function(filename, extension) {
+    var self = this;
     this.name = filename;
     this.content = '';
     this.print = function(data) { this.content += data; };
@@ -72,6 +80,15 @@ define(function (require) {
       var arr = [];
       arr.push(this.content);
       p5.prototype.writeFile(arr, filename, extension);
+      // remove from _pWriters array and delete self
+      for (var i in p5.prototype._pWriters) {
+        if (p5.prototype._pWriters[i].name.indexOf(this.name) > -1) {
+          // remove from _pWriters array
+          p5.prototype._pWriters.splice(i, 1);
+        }
+      }
+      self.flush();
+      self = {};
     };
   };
 
@@ -342,11 +359,10 @@ define(function (require) {
     }
 
     var blob = new Blob(dataToDownload, {'type': type});
-
     a.href = window.URL.createObjectURL(blob);
     a.download = filename;
 
-    // Firefox requires the link to be added to the DOM before it can be clicked
+    // Firefox requires the link to be added to the DOM before click()
     a.onclick = destroyClickedElement;
     a.style.display = 'none';
     document.body.appendChild(a);
