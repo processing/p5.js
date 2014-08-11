@@ -57,7 +57,7 @@ function draw(){
   // sequence of notes hasn't been finished yet the next note gets played.
   if ((millis() > trigger)){
     // midiToFreq transforms the MIDI value into a frequency in Hz which we use to control the triangle oscillator
-    triOsc.start(midiToFreq(midiSequence[note]));
+    triOsc.freq(midiToFreq(midiSequence[note]));
 
     // The envelope gets triggered with the oscillator as input and the times and levels we defined earlier
     env.play(triOsc);

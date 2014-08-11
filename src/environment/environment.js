@@ -190,11 +190,6 @@ define(function(require) {
    * </code></div>
    */
   p5.prototype.windowWidth = window.innerWidth;
-  window.addEventListener('resize', function (e) {
-    // remap the window width on window resize
-    this.windowWidth = window.innerWidth;
-  });
-
   /**
    * System variable that stores the height of the inner window, it maps to
    * window.innerHeight.
@@ -207,8 +202,9 @@ define(function(require) {
    */
   p5.prototype.windowHeight = window.innerHeight;
   window.addEventListener('resize', function (e) {
-    // remap the window height on resize
-    this.windowHeight = window.windowHeight;
+    // remap the window width and height on resize
+    this.windowWidth = window.innerWidth;
+    this.windowHeight = window.innerHeight;
   });
 
   /**
