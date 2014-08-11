@@ -8,6 +8,7 @@
 var soundFile, analyzer, delay;
 
 function preload() {
+  soundFormats('ogg', 'mp3');
   soundFile = loadSound('../_files/beatbox.mp3');
 }
 
