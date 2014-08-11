@@ -36,7 +36,7 @@ define(function (require) {
   p5.prototype.createWriter  = function(name, extension) {
     // check it doesn't already exist
     for (var i in p5.prototype._pWriters) {
-      if (p5.prototype._pWriters[i].name.indexOf(name) > -1) {
+      if (p5.prototype._pWriters[i].name === name) {
         // if a p5.PrintWriter w/ this name already exists, return it...
         return p5.prototype._pWriters[i];
       }
