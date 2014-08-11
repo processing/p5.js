@@ -251,12 +251,6 @@ define(function (require) {
 
   };
 
-  p5.prototype.saveTable = function() {
-    // TODO
-    throw 'not yet implemented';
-
-  };
-
   p5.prototype.selectFolder = function() {
     // TODO
     throw 'not yet implemented';
