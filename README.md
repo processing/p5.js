@@ -1,3 +1,5 @@
+![](http://p5js.org/img/p5js-beta.svg)
+
 p5.js
 =====
 
