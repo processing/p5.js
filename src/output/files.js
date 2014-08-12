@@ -34,14 +34,19 @@ define(function (require) {
   };
 
   p5.prototype.createWriter  = function(name, extension) {
-    // check it doesn't already exist
+    var newPW;
+    // check that it doesn't already exist
     for (var i in p5.prototype._pWriters) {
       if (p5.prototype._pWriters[i].name === name) {
-        // if a p5.PrintWriter w/ this name already exists, return it...
-        return p5.prototype._pWriters[i];
+        // if a p5.PrintWriter w/ this name already exists...
+        // return p5.prototype._pWriters[i]; // return it w/ contents intact.
+        // or, could return a new, empty one with a unique name:
+        newPW = new p5.PrintWriter(name + window.millis(), extension);
+        p5.prototype._pWriters.push( newPW );
+        return newPW;
       }
     }
-    var newPW = new p5.PrintWriter(name, extension);
+    newPW = new p5.PrintWriter(name, extension);
     p5.prototype._pWriters.push( newPW );
     return newPW;
   };
