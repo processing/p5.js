@@ -87,7 +87,7 @@ define(function (require) {
       p5.prototype.writeFile(arr, filename, extension);
       // remove from _pWriters array and delete self
       for (var i in p5.prototype._pWriters) {
-        if (p5.prototype._pWriters[i].name.indexOf(this.name) > -1) {
+        if (p5.prototype._pWriters[i].name === this.name) {
           // remove from _pWriters array
           p5.prototype._pWriters.splice(i, 1);
         }
