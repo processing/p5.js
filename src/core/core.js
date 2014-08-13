@@ -266,7 +266,15 @@ define(function (require) {
         if (typeof userSetup === 'undefined') {
           this.scale(this._pixelDensity, this._pixelDensity);
         }
+        // call any registered pre functions
+        this._registeredMethods.pre.forEach(function(f) {
+          f.call(this);
+        });
         userDraw();
+        // call any registered post functions
+        this._registeredMethods.post.forEach(function(f) {
+          f.call(this);
+        });
         this.pop();
       }
     }.bind(this);
@@ -421,7 +429,7 @@ define(function (require) {
     'loadTable'
   ];
 
-  p5.prototype._registeredMethods = { remove: [] };
+  p5.prototype._registeredMethods = { pre: [], post: [], remove: [] };
 
   p5.prototype.registerPreloadMethod = function(m) {
     p5.prototype._preloadMethods.push(m);
