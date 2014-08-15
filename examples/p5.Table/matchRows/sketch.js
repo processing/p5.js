@@ -20,7 +20,7 @@ function setup() {
   newRow.setString("type", "Insect");
 
   newRow = table.addRow();
-  newRow.ssetStringet("name", "Lizard");
+  newRow.setString("name", "Lizard");
   newRow.setString("type", "Reptile");
   
   var rows = table.matchRows("R.*", "type");
