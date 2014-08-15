@@ -95,6 +95,19 @@ define(function(require) {
   };
 
   /**
+   * The .mouseScrolled() function is called once after every time a
+   * mouse wheel is scrolled over the element. This can be used to
+   * attach element specific event listeners.
+   *
+   * @method mouseScrolled
+   * @param  {Function} fxn function to be fired when mouse wheel is
+   *                    scrolled over the element.
+   */
+  p5.Element.prototype.mouseScrolled = function (fxn) {
+    attachListener('mousewheel', fxn, this);
+  };
+
+  /**
    * The .mouseReleased() function is called once after every time a
    * mouse button is released over the element. This can be used to
    * attach element specific event listeners.
