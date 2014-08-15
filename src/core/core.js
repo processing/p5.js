@@ -186,7 +186,7 @@ define(function (require) {
       var userPreload = this.preload || window.preload; // look for "preload"
       var context = this._isGlobal ? window : this;
       if (userPreload) {
-        this._preloadFuncs.forEach(function(f) {
+        this._preloadMethods.forEach(function(f) {
           context[f] = function(path) {
             return context._preload(f, path);
           };
@@ -222,7 +222,7 @@ define(function (require) {
       // return preload functions to their normal vals if switched by preload
       var context = this._isGlobal ? window : this;
       if (typeof context.preload === 'function') {
-        this._preloadFuncs.forEach(function (f) {
+        this._preloadMethods.forEach(function (f) {
           context[f] = p5.prototype[f];
         });
       }
@@ -266,7 +266,15 @@ define(function (require) {
         if (typeof userSetup === 'undefined') {
           this.scale(this._pixelDensity, this._pixelDensity);
         }
+        // call any registered pre functions
+        this._registeredMethods.pre.forEach(function(f) {
+          f.call(this);
+        });
         userDraw();
+        // call any registered post functions
+        this._registeredMethods.post.forEach(function(f) {
+          f.call(this);
+        });
         this.pop();
       }
     }.bind(this);
@@ -319,24 +327,32 @@ define(function (require) {
         }
 
         // call any registered remove functions
-        var self = this;
-        this._removeFuncs.forEach(function(f) {
-          self[f]();
+        this._registeredMethods.remove.forEach(function(f) {
+          f.call(this);
         });
 
         // remove window bound properties and methods
         if (this._isGlobal) {
           for (var p in p5.prototype) {
-            delete(window[p]);
+            try {
+              delete window[p];
+            } catch (x) {
+              window[p] = undefined;
+            }
           }
           for (var p2 in this) {
             if (this.hasOwnProperty(p2)) {
-              delete(window[p2]);
+              try {
+                delete window[p2];
+              } catch (x) {
+                window[p2] = undefined;
+              }
             }
           }
         }
       }
-    };
+      window.p5 = undefined;
+    }.bind(this);
 
 
     // attach constants to p5 instance
@@ -403,8 +419,8 @@ define(function (require) {
 
 
   // functions that cause preload to wait
-  // more can be added by using _registerPreloadFunc(func)
-  p5.prototype._preloadFuncs = [
+  // more can be added by using registerPreloadMethod(func)
+  p5.prototype._preloadMethods = [
     'loadJSON',
     'loadImage',
     'loadStrings',
@@ -413,14 +429,17 @@ define(function (require) {
     'loadTable'
   ];
 
-  p5.prototype._removeFuncs = [];
+  p5.prototype._registeredMethods = { pre: [], post: [], remove: [] };
 
-  p5.prototype._registerPreloadFunc = function (func) {
-    p5.prototype._preloadFuncs.push(func);
+  p5.prototype.registerPreloadMethod = function(m) {
+    p5.prototype._preloadMethods.push(m);
   }.bind(this);
 
-  p5.prototype._registerRemoveFunc = function(func) {
-    p5.prototype._removeFuncs.push(func);
+  p5.prototype.registerMethod = function(name, m) {
+    if (!p5.prototype._registeredMethods.hasOwnProperty(name)) {
+      p5.prototype._registeredMethods[name] = [];
+    }
+    p5.prototype._registeredMethods[name].push(m);
   }.bind(this);
 
   return p5;
