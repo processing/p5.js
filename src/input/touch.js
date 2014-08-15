@@ -62,7 +62,7 @@ define(function (require) {
    */
   p5.prototype.ontouchstart = function(e) {
     var context = this._isGlobal ? window : this;
-    context.setTouchPoints(e);
+    this.setTouchPoints(e);
     if(typeof context.touchStarted === 'function') {
       e.preventDefault();
       context.touchStarted(e);
