@@ -190,9 +190,6 @@ define(function (require) {
       if (typeof context.mouseMoved === 'function') {
         //e.preventDefault();
         context.mouseMoved(e);
-      } else if (typeof context.touchMoved === 'function') {
-        e.preventDefault();
-        context.touchMoved(e);
       }
     }
     else {
