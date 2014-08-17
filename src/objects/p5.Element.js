@@ -95,15 +95,19 @@ define(function(require) {
   };
 
   /**
-   * The .mouseScrolled() function is called once after every time a
+   * The .mouseWheel() function is called once after every time a
    * mouse wheel is scrolled over the element. This can be used to
-   * attach element specific event listeners.
+   * attach element specific event listeners.<br><br>
+   * The event.wheelDelta or event.detail property returns negative values if
+   * the mouse wheel if rotated up or away from the user and positive in the
+   * other direction. On OS X with "natural" scrolling enabled, the values are
+   * opposite.
    *
-   * @method mouseScrolled
+   * @method mouseWheel
    * @param  {Function} fxn function to be fired when mouse wheel is
    *                    scrolled over the element.
    */
-  p5.Element.prototype.mouseScrolled = function (fxn) {
+  p5.Element.prototype.mouseWheel = function (fxn) {
     attachListener('mousewheel', fxn, this);
   };
 
