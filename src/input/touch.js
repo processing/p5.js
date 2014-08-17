@@ -107,7 +107,6 @@ define(function (require) {
    */
   p5.prototype.ontouchend = function(e) {
     var context = this._isGlobal ? window : this;
-    this.setTouchPoints(e);
     if (typeof context.touchEnded === 'function') {
       e.preventDefault();
       context.touchEnded(e);
