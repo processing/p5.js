@@ -199,10 +199,13 @@ define(function (require) {
       if (typeof context.mouseMoved === 'function') {
         //e.preventDefault();
         context.mouseMoved(e);
+<<<<<<< HEAD
       } else if (typeof context.touchMoved === 'function') {
         e.preventDefault();
         this.setTouchPoints(e);
         context.touchMoved(e);
+=======
+>>>>>>> e2e3627b5b11113d6d7425704b4c4d54fa4c9f76
       }
     }
     else {
