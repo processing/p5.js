@@ -101,7 +101,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.push = function () {
-    this.drawingContext.save();
+    this._graphics.push();
     this.styles.push({
       doStroke: this._doStroke,
       doFill: this._doFill,
@@ -169,7 +169,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.pop = function () {
-    this.drawingContext.restore();
+    this._graphics.pop();
     var lastS = this.styles.pop();
     this._doStroke = lastS.doStroke;
     this._doFill = lastS.doFill;

@@ -32,7 +32,7 @@ define(function(require) {
    * </code>
    * </div>
    */
-  p5.prototype.createCanvas = function(w, h, isDefault) {
+  p5.prototype.createCanvas = function(w, h, renderer, isDefault) {
     var c;
     if (isDefault) {
       c = document.createElement('canvas');
@@ -70,7 +70,13 @@ define(function(require) {
       document.body.appendChild(c);
     }
 
-    var pg = new p5.Graphics(c, this);
+    var pg;
+    if (renderer === constants.P2D || typeof renderer === 'undefined') {
+      pg = new p5.Graphics2D(c, this);
+    } else if (renderer === constants.WEBGL) {
+      pg = new p5.Graphics3D(c, this);
+    }
+
     if (isDefault) {
       // store in elements array
       this._elements.push(pg);

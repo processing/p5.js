@@ -180,6 +180,7 @@ define(function (require) {
       this.createCanvas(
         this._defaultCanvasSize.width,
         this._defaultCanvasSize.height,
+        constants.P2D,
         true
       );
 

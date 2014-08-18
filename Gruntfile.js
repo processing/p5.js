@@ -75,6 +75,8 @@ module.exports = function(grunt) {
             'p5.Color': 'src/objects/p5.Color',
             'p5.Element': 'src/objects/p5.Element',
             'p5.Graphics': 'src/objects/p5.Graphics',
+            'p5.Graphics2D': 'src/objects/p5.Graphics2D',
+            'p5.Graphics3D': 'src/objects/p5.Graphics3D',
             'p5.Image': 'src/objects/p5.Image',
             //'p5.Shape': 'src/objects/p5.Shape',
             'p5.Vector': 'src/objects/p5.Vector',
@@ -195,6 +197,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('test', ['jshint', 'mocha']);
   grunt.registerTask('yui', ['yuidoc']);
+  grunt.registerTask('notest', ['jshint', 'requirejs']);
   grunt.registerTask('default', ['jshint', 'requirejs', 'mocha']);
 
 };

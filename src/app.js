@@ -7,6 +7,8 @@ define(function (require) {
   require('p5.Color');
   require('p5.Element');
   require('p5.Graphics');
+  require('p5.Graphics2D');
+  require('p5.Graphics3D');
   require('p5.Image');
   //require('p5.Shape');
   require('p5.Vector');

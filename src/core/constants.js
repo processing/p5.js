@@ -9,6 +9,10 @@ define(function(require) {
 
   return {
 
+    // RENDERER
+    P2D: 'p2d',
+    WEBGL: 'webgl',
+
     // ENVIRONMENT
     ARROW: 'default',
     CROSS: 'crosshair',
