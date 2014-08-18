@@ -105,8 +105,13 @@ define(function (require) {
 
     this._setProperty('pmouseX', this.mouseX);
     this._setProperty('pmouseY', this.mouseY);
-    this._setProperty('mouseX', mousePos.x);
-    this._setProperty('mouseY', mousePos.y);
+    if(e.type === 'touchstart' || e.type === 'touchmove') {
+      this._setProperty('mouseX', this.touchX);
+      this._setProperty('mouseY', this.touchY);
+    } else {
+      this._setProperty('mouseX', mousePos.x);
+      this._setProperty('mouseY', mousePos.y);
+    }
     this._setProperty('pwinMouseX', this.winMouseX);
     this._setProperty('pwinMouseY', this.winMouseY);
     this._setProperty('winMouseX', e.pageX);
@@ -128,6 +133,10 @@ define(function (require) {
       this._setProperty('mouseButton', constants.RIGHT);
     } else {
       this._setProperty('mouseButton', constants.LEFT);
+      if(e.type === 'touchstart' || e.type === 'touchmove') {
+        this._setProperty('mouseX', this.touchX);
+        this._setProperty('mouseY', this.touchY);
+      }
     }
   };
 
@@ -190,9 +199,6 @@ define(function (require) {
       if (typeof context.mouseMoved === 'function') {
         //e.preventDefault();
         context.mouseMoved(e);
-      } else if (typeof context.touchMoved === 'function') {
-        e.preventDefault();
-        context.touchMoved(e);
       }
     }
     else {
@@ -201,6 +207,7 @@ define(function (require) {
         context.mouseDragged(e);
       } else if (typeof context.touchMoved === 'function') {
         e.preventDefault();
+        this.setTouchPoints(e);
         context.touchMoved(e);
       }
     }
@@ -246,6 +253,7 @@ define(function (require) {
       context.mousePressed(e);
     } else if (typeof context.touchStarted === 'function') {
       e.preventDefault();
+      this.setTouchPoints(e);
       context.touchStarted(e);
     }
   };
@@ -287,6 +295,7 @@ define(function (require) {
       context.mouseReleased(e);
     } else if (typeof context.touchEnded === 'function') {
       e.preventDefault();
+      this.setTouchPoints(e);
       context.touchEnded(e);
     }
   };

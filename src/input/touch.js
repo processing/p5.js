@@ -42,15 +42,20 @@ define(function (require) {
   p5.prototype.setTouchPoints = function(e) {
     var context = this._isGlobal ? window : this;
 
-    context._setProperty('touchX', e.changedTouches[0].pageX);
-    context._setProperty('touchY', e.changedTouches[0].pageY);
+    if(e.type === 'mousedown' || e.type === 'mousemove'){
+      context._setProperty('touchX', context.mouseX);
+      context._setProperty('touchY', context.mouseY);
+    } else {
+      context._setProperty('touchX', e.changedTouches[0].pageX);
+      context._setProperty('touchY', e.changedTouches[0].pageY);
 
-    var touches = [];
-    for(var i = 0; i < e.changedTouches.length; i++){
-      var ct = e.changedTouches[i];
-      touches[i] = {x: ct.pageX, y: ct.pageY};
+      var touches = [];
+      for(var i = 0; i < e.changedTouches.length; i++){
+        var ct = e.changedTouches[i];
+        touches[i] = {x: ct.pageX, y: ct.pageY};
+      }
+      context._setProperty('touches', touches);
     }
-    context._setProperty('touches', touches);
   };
 
   /**
@@ -62,12 +67,13 @@ define(function (require) {
    */
   p5.prototype.ontouchstart = function(e) {
     var context = this._isGlobal ? window : this;
-    context.setTouchPoints(e);
+    this.setTouchPoints(e);
     if(typeof context.touchStarted === 'function') {
       e.preventDefault();
       context.touchStarted(e);
     } else if (typeof context.mousePressed === 'function') {
       e.preventDefault();
+      this.setMouseButton(e);
       context.mousePressed(e);
     }
   };
@@ -81,12 +87,13 @@ define(function (require) {
    */
   p5.prototype.ontouchmove = function(e) {
     var context = this._isGlobal ? window : this;
-    context.setTouchPoints(e);
+    this.setTouchPoints(e);
     if (typeof context.touchMoved === 'function') {
       e.preventDefault();
       context.touchMoved(e);
     } else if (typeof context.mouseDragged === 'function') {
       e.preventDefault();
+      this.updateMouseCoords(e);
       context.mouseDragged(e);
     }
   };
@@ -100,12 +107,12 @@ define(function (require) {
    */
   p5.prototype.ontouchend = function(e) {
     var context = this._isGlobal ? window : this;
-    context.setTouchPoints(e);
     if (typeof context.touchEnded === 'function') {
       e.preventDefault();
       context.touchEnded(e);
     } else if (typeof context.mouseReleased === 'function') {
       e.preventDefault();
+      this.updateMouseCoords(e);
       context.mouseReleased(e);
     }
   };
