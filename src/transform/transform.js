@@ -36,7 +36,7 @@ define(function(require) {
    * </div>
    */
   p5.prototype.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
-    this.drawingContext.transform(n00, n01, n02, n10, n11, n12);
+    this._graphics.applyMatrix(n00, n01, n02, n10, n11, n12);
     return this;
   };
 
@@ -65,7 +65,7 @@ define(function(require) {
    * </div>
    */
   p5.prototype.resetMatrix = function() {
-    this.drawingContext.setTransform();
+    this._graphics.resetMatrix();
     return this;
   };
 
@@ -102,7 +102,7 @@ define(function(require) {
     if (this._angleMode === constants.DEGREES) {
       r = this.radians(r);
     }
-    this.drawingContext.rotate(r);
+    this._graphics.rotate(r);
     return this;
   };
 
@@ -192,8 +192,7 @@ define(function(require) {
     if (this._angleMode === constants.DEGREES) {
       angle = this.radians(angle);
     }
-    this.drawingContext.transform(1, 0, this.tan(angle), 1, 0, 0);
-
+    this._graphics.shearX(angle);
     return this;
   };
 
@@ -230,8 +229,7 @@ define(function(require) {
     if (this._angleMode === constants.DEGREES) {
       angle = this.radians(angle);
     }
-    this.drawingContext.transform(1, this.tan(angle), 0, 1, 0, 0);
-
+    this._graphics.shearY(angle);
     return this;
   };
 
@@ -270,8 +268,7 @@ define(function(require) {
    * </div>
    */
   p5.prototype.translate = function(x, y) {
-    this.drawingContext.translate(x, y);
-
+    this._graphics.translate(x, y);
     return this;
   };
   

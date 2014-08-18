@@ -52,13 +52,7 @@ define(function (require) {
     if (arguments[0] instanceof p5.Image) {
       this.image(arguments[0], 0, 0, this.width, this.height);
     } else {
-      var curFill = this.drawingContext.fillStyle;
-      // create background rect
-      var ctx = this.drawingContext;
-      ctx.fillStyle = p5.Color.getColor.apply(this, arguments);
-      ctx.fillRect(0, 0, this.width, this.height);
-      // reset fill
-      ctx.fillStyle = curFill;
+      this._graphics.background(arguments);
     }
   };
 
@@ -78,7 +72,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.clear = function() {
-    this.drawingContext.clearRect(0, 0, this.width, this.height);
+    this._graphics.clear();
   };
 
   /**
@@ -179,8 +173,7 @@ define(function (require) {
    */
   p5.prototype.fill = function() {
     this._setProperty('_doFill', true);
-    var ctx = this.drawingContext;
-    ctx.fillStyle = p5.Color.getColor.apply(this, arguments);
+    this._graphics.fill(arguments);
   };
 
   /**
@@ -249,8 +242,7 @@ define(function (require) {
    */
   p5.prototype.stroke = function() {
     this._setProperty('_doStroke', true);
-    var ctx = this.drawingContext;
-    ctx.strokeStyle = p5.Color.getColor.apply(this, arguments);
+    this._graphics.stroke(arguments);
   };
 
 

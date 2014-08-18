@@ -55,7 +55,6 @@ define(function (require) {
   p5.prototype.beginContour = function() {
     this._contourVertices = [];
     this._contourInited = true;
-
     return this;
   };
 
