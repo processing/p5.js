@@ -54,9 +54,9 @@ define(function(require) {
   // IMAGE | Loading & Displaying
   //////////////////////////////////////////////
 
-  p5.prototype.image = function(img, x, y, w, h) {
+  p5.Graphics2D.prototype.image = function(img, x, y, w, h) {
     // tint the image if there is a tint
-    if (this._tint) {
+    if (this._pInst._tint) {
       this.drawingContext.drawImage(getTintedImageCanvas(img), x, y, w, h);
     } else {
       var frame = img.canvas ? img.canvas : img.elt; // may use vid src
@@ -98,6 +98,141 @@ define(function(require) {
     tmpCtx.putImageData(id, 0, 0);
     return tmpCanvas;
   }
+
+
+  //////////////////////////////////////////////
+  // IMAGE | Pixels
+  //////////////////////////////////////////////
+
+  p5.Graphics2D.prototype.blend = function() {
+    var currBlend = this.drawingContext.globalCompositeOperation;
+    var blendMode = arguments[arguments.length - 1];
+    var copyArgs = Array.prototype.slice.call(
+      arguments,
+      0,
+      arguments.length - 1
+    );
+
+    this.drawingContext.globalCompositeOperation = blendMode;
+    this._pInst.copy.apply(this._pInst, copyArgs);
+    this.drawingContext.globalCompositeOperation = currBlend;
+  };
+
+  p5.Graphics2D.prototype.copy = function() {
+
+    var srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
+    if(arguments.length === 9){
+      srcImage = arguments[0];
+      sx = arguments[1];
+      sy = arguments[2];
+      sw = arguments[3];
+      sh = arguments[4];
+      dx = arguments[5];
+      dy = arguments[6];
+      dw = arguments[7];
+      dh = arguments[8];
+    } else if(arguments.length === 8){
+      sx = arguments[0];
+      sy = arguments[1];
+      sw = arguments[2];
+      sh = arguments[3];
+      dx = arguments[4];
+      dy = arguments[5];
+      dw = arguments[6];
+      dh = arguments[7];
+      srcImage = this._pInst;
+    } else {
+      throw new Error('Signature not supported');
+    }
+
+    this.drawingContext.drawImage(srcImage.canvas,
+      sx, sy, sw, sh, dx, dy, dw, dh
+    );
+  };
+
+  p5.Graphics2D.prototype.get = function(x, y, w, h) {
+    if(x > this.width || y > this.height || x < 0 || y < 0){
+      return [0, 0, 0, 255];
+    }
+
+    var imageData = this.drawingContext.getImageData(x, y, w, h);
+    var data = imageData.data;
+
+    if (w === 1 && h === 1){
+      var pixels = [];
+      
+      for (var i = 0; i < data.length; i += 4) {
+        pixels.push(data[i], data[i+1], data[i+2], data[i+3]);
+      }
+      
+      return pixels;
+    } else {
+      //auto constrain the width and height to
+      //dimensions of the source image
+      w = Math.min(w, this.width);
+      h = Math.min(h, this.height);
+
+      var region = new p5.Image(w, h);
+      region.drawingContext.putImageData(imageData, 0, 0, 0, 0, w, h);
+
+      return region;
+    }
+  };
+
+  p5.Graphics2D.prototype.loadPixels = function() {
+    var imageData = this.drawingContext.getImageData(
+      0,
+      0,
+      this._pInst.width,
+      this._pInst.height);
+    this._setProperty('imageData', imageData);
+    this._pInst._setProperty('pixels', imageData.data);
+  };
+
+  p5.Graphics2D.prototype.set = function (x, y, imgOrCol) {
+    if (imgOrCol instanceof p5.Image) {
+      this.drawingContext.drawImage(imgOrCol.canvas, x, y);
+      this._pInst.loadPixels.call(this._pInst);
+    } else {
+      var idx = 4*(y * this.width + x);
+      if (!this.imageData) {
+        this._pInst.loadPixels.call(this._pInst);
+      }
+      if (typeof imgOrCol === 'number') {
+        if (idx < this.pixels.length) {
+          this._pInst.pixels[idx] = imgOrCol;
+          this._pInst.pixels[idx+1] = imgOrCol;
+          this._pInst.pixels[idx+2] = imgOrCol;
+          this._pInst.pixels[idx+3] = 255;
+          //this.updatePixels.call(this);
+        }
+      }
+      else if (imgOrCol instanceof Array) {
+        if (imgOrCol.length < 4) {
+          throw new Error('pixel array must be of the form [R, G, B, A]');
+        }
+        if (idx < this.pixels.length) {
+          this._pInst.pixels[idx] = imgOrCol[0];
+          this._pInst.pixels[idx+1] = imgOrCol[1];
+          this._pInst.pixels[idx+2] = imgOrCol[2];
+          this._pInst.pixels[idx+3] = imgOrCol[3];
+          //this.updatePixels.call(this);
+        }
+      } else if (imgOrCol instanceof p5.Color) {
+        if (idx < this.pixels.length) {
+          this._pInst.pixels[idx] = imgOrCol.rgba[0];
+          this._pInst.pixels[idx+1] = imgOrCol.rgba[1];
+          this._pInst.pixels[idx+2] = imgOrCol.rgba[2];
+          this._pInst.pixels[idx+3] = imgOrCol.rgba[3];
+          //this.updatePixels.call(this);
+        }
+      }
+    }
+  };
+
+  p5.Graphics2D.prototype.updatePixels = function (x, y, w, h) {
+    this.drawingContext.putImageData(this.imageData, x, y, 0, 0, w, h);
+  };
 
   //////////////////////////////////////////////
   // SHAPE | 2D Primitives
