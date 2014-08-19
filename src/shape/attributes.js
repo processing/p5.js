@@ -73,7 +73,6 @@ define(function (require) {
       m === constants.CENTER) {
       this._ellipseMode = m;
     }
-
     return this;
   };
 
@@ -97,9 +96,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.noSmooth = function() {
-    this.drawingContext.mozImageSmoothingEnabled = false;
-    this.drawingContext.webkitImageSmoothingEnabled = false;
-
+    this._graphics.noSmooth();
     return this;
   };
 
@@ -161,7 +158,6 @@ define(function (require) {
       m === constants.CENTER) {
       this._rectMode = m;
     }
-
     return this;
   };
 
@@ -186,9 +182,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.smooth = function() {
-    this.drawingContext.mozImageSmoothingEnabled = true;
-    this.drawingContext.webkitImageSmoothingEnabled = true;
-
+    this._graphics.smooth();
     return this;
   };
 
@@ -217,9 +211,8 @@ define(function (require) {
     if (cap === constants.ROUND ||
       cap === constants.SQUARE ||
       cap === constants.PROJECT) {
-      this.drawingContext.lineCap=cap;
+      this._graphics.strokeCap(cap);
     }
-
     return this;
   };
 
@@ -276,9 +269,8 @@ define(function (require) {
     if (join === constants.ROUND ||
       join === constants.BEVEL ||
       join === constants.MITER) {
-      this.drawingContext.lineJoin = join;
+      this._graphics.strokeJoin(join);
     }
-
     return this;
   };
 
@@ -302,13 +294,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.strokeWeight = function(w) {
-    if (typeof w === 'undefined' || w === 0) {
-      // hack because lineWidth 0 doesn't work
-      this.drawingContext.lineWidth = 0.0001;
-    } else {
-      this.drawingContext.lineWidth = w;
-    }
-
+    this._graphics.strokeWeight(w);
     return this;
   };
 

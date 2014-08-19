@@ -10,7 +10,6 @@ define(function (require) {
   require('p5.Graphics2D');
   require('p5.Graphics3D');
   require('p5.Image');
-  //require('p5.Shape');
   require('p5.Vector');
   require('p5.TableRow');
   require('p5.Table');

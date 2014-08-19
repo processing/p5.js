@@ -45,19 +45,9 @@ define(function (require) {
    */
   p5.prototype.bezier = function(x1, y1, x2, y2, x3, y3, x4, y4) {
     if (!this._doStroke) {
-      return;
+      return this;
     }
-    var ctx = this.drawingContext;
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    //for each point as considered by detail, iterate
-    for (var i = 0; i <= this._bezierDetail; i++) {
-      var t = i / parseFloat(this._bezierDetail);
-      var x = p5.prototype.bezierPoint(x1, x2, x3, x4, t);
-      var y = p5.prototype.bezierPoint(y1, y2, y3, y4, t);
-      ctx.lineTo(x, y);
-    }
-    ctx.stroke();
+    this._graphics(x1, y1, x2, y2, x3, y3, x4, y4);
     return this;
   };
 
@@ -117,7 +107,6 @@ define(function (require) {
    */
   p5.prototype.bezierPoint = function(a, b, c, d, t) {
     var adjustedT = 1-t;
-
     return Math.pow(adjustedT,3)*a +
      3*(Math.pow(adjustedT,2))*t*b +
      3*adjustedT*Math.pow(t,2)*c +
@@ -232,18 +221,7 @@ define(function (require) {
     if (!this._doStroke) {
       return;
     }
-    var ctx = this.drawingContext;
-    ctx.moveTo(x1,y1);
-    ctx.beginPath();
-    for (var i = 0; i <= this._curveDetail; i++) {
-      var t = parseFloat(i/this._curveDetail);
-      var x = p5.prototype.curvePoint(x1,x2,x3,x4,t);
-      var y = p5.prototype.curvePoint(y1,y2,y3,y4,t);
-      ctx.lineTo(x,y);
-    }
-    ctx.stroke();
-    ctx.closePath();
-
+    this._graphics.curve();
     return this;
   };
 
@@ -266,7 +244,6 @@ define(function (require) {
    */
   p5.prototype.curveDetail = function(d) {
     this._setProperty('_curveDetail', d);
-
     return this;
   };
 
