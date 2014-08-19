@@ -52,7 +52,7 @@ define(function (require) {
     if (arguments[0] instanceof p5.Image) {
       this.image(arguments[0], 0, 0, this.width, this.height);
     } else {
-      this._graphics.background(arguments);
+      this._graphics.background.apply(this._graphics, arguments);
     }
   };
 
@@ -173,7 +173,7 @@ define(function (require) {
    */
   p5.prototype.fill = function() {
     this._setProperty('_doFill', true);
-    this._graphics.fill(arguments);
+    this._graphics.fill.apply(this._graphics, arguments);
   };
 
   /**
@@ -242,7 +242,7 @@ define(function (require) {
    */
   p5.prototype.stroke = function() {
     this._setProperty('_doStroke', true);
-    this._graphics.stroke(arguments);
+    this._graphics.stroke.apply(this._graphics, arguments);
   };
 
 

@@ -156,7 +156,7 @@ define(function(require) {
    * </div>
    */
   p5.prototype.scale = function() {
-    this._graphics.scale(arguments);
+    this._graphics.scale.apply(this._graphics, arguments);
   };
 
   /**

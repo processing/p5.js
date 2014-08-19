@@ -63,7 +63,7 @@ define(function (require) {
     if (!this._doStroke && !this._doFill) {
       return this;
     }
-    this._graphics(x, y, width, height, start, stop, mode);
+    this._graphics.arc(x, y, width, height, start, stop, mode);
     return this;
   };
 
@@ -90,7 +90,7 @@ define(function (require) {
     if (!this._doStroke && !this._doFill) {
       return this;
     }
-    this._graphics(x, y, width, height);
+    this._graphics.ellipse(x, y, width, height);
     return this;
   };
   /**

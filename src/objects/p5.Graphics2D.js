@@ -6,6 +6,10 @@ define(function(require) {
   var constants = require('constants');
   var filters = require('filters');
 
+  var styleEmpty = 'rgba(0,0,0,0)';
+  // var alphaThreshold = 0.00125; // minimum visible
+  
+
   p5.Graphics2D = function(elt, pInst) {
     p5.Graphics.call(this, constants.P2D, elt, pInst);
     // apply some defaults
@@ -101,8 +105,18 @@ define(function(require) {
 
   p5.Graphics2D.prototype.arc = function(x, y, w, h, start, stop, mode) {
     var ctx = this.drawingContext;
+    var doFill = this._pInst._doFill, doStroke = this._pInst._doStroke;
+    if (doFill && !doStroke) {
+      if(ctx.fillStyle === styleEmpty) {
+        return this;
+      }
+    } else if (!doFill && doStroke) {
+      if(ctx.strokeStyle === styleEmpty) {
+        return this;
+      }
+    }
     var vals = canvas.arcModeAdjust(x, y, w, h, this._pInst._ellipseMode);
-    var radius = (vals.h > vals.w) ? vals.h / 2 : vals.w / 2,
+    var radius = (vals.h > vals.w) ? vals.h * 0.5 : vals.w * 0.5,
       //scale the arc if it is oblong
       xScale = (vals.h > vals.w) ? vals.w / vals.h : 1,
       yScale = (vals.h > vals.w) ? 1 : vals.h / vals.w;
@@ -118,10 +132,10 @@ define(function(require) {
       ctx.lineTo(vals.x, vals.y);
       ctx.closePath();
     }
-    if (this._pInst._doFill) {
+    if (doFill) {
       ctx.fill();
     }
-    if(this._pInst._doStroke && mode !== constants.OPEN && mode !== undefined) {
+    if(doStroke && mode !== constants.OPEN && mode !== undefined) {
       // final stroke must be after fill so the fill does not
       // cover part of the line
       ctx.stroke();
@@ -130,6 +144,16 @@ define(function(require) {
 
   p5.Graphics2D.prototype.ellipse = function(x, y, w, h) {
     var ctx = this.drawingContext;
+    var doFill = this._pInst._doFill, doStroke = this._pInst._doStroke;
+    if (doFill && !doStroke) {
+      if(ctx.fillStyle === styleEmpty) {
+        return this;
+      }
+    } else if (!doFill && doStroke) {
+      if(ctx.strokeStyle === styleEmpty) {
+        return this;
+      }
+    }
     var vals = canvas.modeAdjust(x, y, w, h, this._pInst._ellipseMode);
     var kappa = 0.5522848,
       ox = (vals.w / 2) * kappa, // control point offset horizontal
@@ -145,18 +169,20 @@ define(function(require) {
     ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
     ctx.bezierCurveTo(xm - ox, ye, vals.x, ym + oy, vals.x, ym);
     ctx.closePath();
-    if (this._pInst._doFill) {
+    if (doFill) {
       ctx.fill();
     }
-    if (this._pInst._doStroke) {
+    if (doStroke) {
       ctx.stroke();
     }
   };
 
   p5.Graphics2D.prototype.line = function(x1, y1, x2, y2) {
     var ctx = this.drawingContext;
-    if (ctx.strokeStyle === 'rgba(0,0,0,0)') {
-      return;
+    if (!this._pInst._doStroke) {
+      return this;
+    } else if(ctx.strokeStyle === styleEmpty){
+      return this;
     }
     ctx.beginPath();
     ctx.moveTo(x1, y1);
@@ -169,8 +195,10 @@ define(function(require) {
     var ctx = this.drawingContext;
     var s = ctx.strokeStyle;
     var f = ctx.fillStyle;
-    if (s === 'rgba(0,0,0,0)') {
-      return;
+    if (!this._pInst._doStroke) {
+      return this;
+    } else if(ctx.strokeStyle === styleEmpty){
+      return this;
     }
     x = Math.round(x);
     y = Math.round(y);
@@ -195,51 +223,76 @@ define(function(require) {
   p5.Graphics2D.prototype.quad =
     function(x1, y1, x2, y2, x3, y3, x4, y4) {
     var ctx = this.drawingContext;
+    var doFill = this._pInst._doFill, doStroke = this._pInst._doStroke;
+    if (doFill && !doStroke) {
+      if(ctx.fillStyle === styleEmpty) {
+        return this;
+      }
+    } else if (!doFill && doStroke) {
+      if(ctx.strokeStyle === styleEmpty) {
+        return this;
+      }
+    }
     ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
     ctx.lineTo(x3, y3);
     ctx.lineTo(x4, y4);
     ctx.closePath();
-    if (this._pInst._doFill) {
+    if (doFill) {
       ctx.fill();
     }
-    if (this._doStroke) {
+    if (doStroke) {
       ctx.stroke();
     }
+    return this;
   };
 
   p5.Graphics2D.prototype.rect = function(a, b, c, d) {
-    var vals = canvas.modeAdjust(a, b, c, d, this._pInst._rectMode);
     var ctx = this.drawingContext;
-    // Translate the line by (0.5, 0.5) to draw a crisp rectangle border
-    if (this._pInst._doStroke && ctx.lineWidth % 2 === 1) {
-      ctx.translate(0.5, 0.5);
+    var doFill = this._pInst._doFill, doStroke = this._pInst._doStroke;
+    if (doFill && !doStroke) {
+      if(ctx.fillStyle === styleEmpty) {
+        return this;
+      }
+    } else if (!doFill && doStroke) {
+      if(ctx.strokeStyle === styleEmpty) {
+        return this;
+      }
     }
+    var vals = canvas.modeAdjust(a, b, c, d, this._pInst._rectMode);
     ctx.beginPath();
     ctx.rect(vals.x, vals.y, vals.w, vals.h);
-    if (this._pInst._doFill) {
+    if (doFill) {
       ctx.fill();
     }
-    if (this._pInst._doStroke) {
+    if (doStroke) {
       ctx.stroke();
     }
-    if (this._pInst._doStroke && ctx.lineWidth % 2 === 1) {
-      ctx.translate(-0.5, -0.5);
-    }
+    return this;
   };
 
   p5.Graphics2D.prototype.triangle = function(x1, y1, x2, y2, x3, y3) {
     var ctx = this.drawingContext;
+    var doFill = this._pInst._doFill, doStroke = this._pInst._doStroke;
+    if (doFill && !doStroke) {
+      if(ctx.fillStyle === styleEmpty) {
+        return this;
+      }
+    } else if (!doFill && doStroke) {
+      if(ctx.strokeStyle === styleEmpty) {
+        return this;
+      }
+    }
     ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
     ctx.lineTo(x3, y3);
     ctx.closePath();
-    if (this._pInst._doFill) {
+    if (doFill) {
       ctx.fill();
     }
-    if (this._pInst._doStroke) {
+    if (doStroke) {
       ctx.stroke();
     }
   };
