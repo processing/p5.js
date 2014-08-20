@@ -1,7 +1,7 @@
 /**
  * Display the average amount of energy (amplitude) across a range
  * of frequencies using the p5.FFT class and its methods analyze()
- * and getFreq().
+ * and getEnergy().
  * 
  * This example divides the frequency spectrum into eight bands.
  */
@@ -28,14 +28,14 @@ function setup() {
   fft = new p5.FFT();
 
   p = createP(description);
-  var p2 = createP('Description: Using getFreq(low, high) to measure amplitude within a range of frequencies.');
+  var p2 = createP('Description: Using getEnergy(low, high) to measure amplitude within a range of frequencies.');
 }
 
 function draw() {
   background(30,20,30);
   updateDescription();
 
-  fft.analyze(); // analyze before calling fft.getFreq()
+  fft.analyze(); // analyze before calling fft.getEnergy()
 
   // Generate 8 bars to represent 8 different frequency ranges
   for (var i = 0; i < 8; i++){
@@ -48,7 +48,7 @@ function draw() {
     var hiFreq = (centerFreq + centerFreq/2);
 
     // get the average value in a frequency range
-    var freqValue = fft.getFreq(loFreq, hiFreq - 1); 
+    var freqValue = fft.getEnergy(loFreq, hiFreq - 1); 
 
     // Rectangle height represents the average value of this frequency range
     var h = -height + map(freqValue, 0, 255, height, 0);

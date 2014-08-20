@@ -47,5 +47,5 @@ function draw() {
 }
 
 function mousePressed() {
-  soundFile.play(noise);
+  soundFile.play();
 }
