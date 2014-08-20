@@ -11,16 +11,16 @@ define(function (require) {
   var p5 = require('core');
   
   /**
-   * The boolean system variable isKeyPressed is true if any key is pressed
+   * The boolean system variable keyIsPressed is true if any key is pressed
    * and false if no keys are pressed.
    *
-   * @property isKeyPressed   
+   * @property keyIsPressed   
    * @example
    * <div>
    * <code>
    * var value = 0;
    * function draw() {
-   *   if (isKeyPressed === true) {
+   *   if (keyIsPressed === true) {
    *     fill(0);
    *   } else {
    *     fill(255);
