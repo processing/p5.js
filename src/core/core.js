@@ -329,8 +329,11 @@ define(function (require) {
         }
 
         // call any registered remove functions
-        this._registeredMethods.remove.forEach(function(f) {
-          f.call(this);
+        var self = this;
+        this._registeredMethods.remove.forEach(function (f) {
+          if (typeof(f) !== 'undefined') {
+            f.call(self);
+          }
         });
 
         // remove window bound properties and methods
@@ -353,7 +356,7 @@ define(function (require) {
           }
         }
       }
-      window.p5 = undefined;
+      // window.p5 = undefined;
     }.bind(this);
 
 
