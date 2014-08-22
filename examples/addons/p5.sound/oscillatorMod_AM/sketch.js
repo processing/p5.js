@@ -45,7 +45,7 @@ function setup() {
 
   // Modulate the carrier's amplitude with the modulator
   // Optionally, we can scale the signal.
-  carrier.amp(modulator.scale(-1,1,1,-1));
+  carrier.amp(modulator.scale(-1,1,0,1));
 
   // create an fft to analyze the audio
   fft = new p5.FFT();
@@ -56,6 +56,7 @@ function draw() {
 
   // map mouseY to moodulator freq between 0 and 20hz
   var modFreq = map(mouseY, 0, height, 4, 0);
+  //modFreq = 1.;
   modulator.freq(modFreq);
 
   var modAmp = map(mouseX, 0, width, 0, 1);
