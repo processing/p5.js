@@ -10,8 +10,7 @@ define(function (require) {
    *  image in the window and the user must provide their own
    *  filename on save-as. Other browsers will either save the
    *  file immediately, or prompt the user with a dialogue window.
-   *   
-   *  @method saveCanvas
+   *
    *  @param  {[String]} filename
    *  @param  {[String]} extension 'jpg' or 'png'
    *  @param  {[Canvas]} canvas a variable representing a

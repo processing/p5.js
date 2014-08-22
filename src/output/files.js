@@ -107,34 +107,40 @@ define(function (require) {
   // filename, [extension] [canvas] --> saveImage
 
   /**
-   *  Save an image, text, json, csv, wav, or html. Prompts download to
-   *  the client's computer.<br/>
-   *  <br/>
-   *  The default behavior is to save an image from the canvas. For example:
-   *  <br/><br/>
-   *  <code>save()</code><br/>
-   *  <code>save('myFile.jpg')</code><br/><br/>
+   *  <p>Save an image, text, json, csv, wav, or html. Prompts download to
+   *  the client's computer. <b>Note that it is not recommended to call save() 
+   *  within draw if it's looping, as the save() function will open a new save 
+   *  dialog every frame.</b></p>
+   *  <p>The default behavior is to save the canvas as an image. 
+   *  For example:</p>
+   *  <pre class='language-javascript'><code>
+   *  save();
+   *  save('myFile.jpg');
+   *  </code></pre>
    *
-   *  Alternately, the first parameter can be an Array of Strings,
+   *  <p>Alternately, the first parameter can be an Array of Strings,
    *  an Array of JSON, a JSON object, a p5.Table, a p5.Image, or a
    *  p5.SoundFile (requires p5.sound). The second parameter is a filename
    *  (including extension). The third parameter is for options specific
    *  to this type of object. This method will save a file that fits the
-   *  given paramaters. For example: <br/><br/>
-   *  <code>save(myTable, 'myTable.html')</code> Saves table as html file<br/>
-   *  <code>save(myTable, 'myTable.csv',)</code> Comma Separated Values<br/>
-   *  <code>save(myTable, 'myTable.tsv')</code> Tab Separated Values<br/>
-   *  <br/>
-   *  <code>save(myJSON, 'my.json')</code> Saves pretty JSON<br/>
-   *  <code>save(myJSON, 'my.json', true)</code> Optimizes JSON filesize<br/>
-   *  <br/>
-   *  <code>save(img, 'my.png')</code> Saves pImage as a png image<br/>
-   *  <br/>
-   *  <code>save(arrayOfStrings, 'my.txt')</code> Saves strings to a
-   *  text file with line breaks after each item in the array<br/>
+   *  given paramaters. For example:</p>
+   * 
+   *  <pre class='language-javascript'><code>
+   *  save(myTable, 'myTable.html');  // Saves table as html file
+   *  save(myTable, 'myTable.csv',);  // Comma Separated Values
+   *  save(myTable, 'myTable.tsv');   // Tab Separated Values
+   * 
+   *  save(myJSON, 'my.json');        // Saves pretty JSON
+   *  save(myJSON, 'my.json', true);  // Optimizes JSON filesize
+   * 
+   *  save(img, 'my.png');            // Saves pImage as a png image
    *
-   *  @method  save
-   *  @param  {[Object/String]} object/filename  If filename is provided, will
+   *  save(arrayOfStrings, 'my.txt'); // Saves strings to a text file with line
+   *                                  // breaks after each item in the array
+   *  </code></pre> 
+   *
+   *  @method save
+   *  @param  {[Object|String]} objectOrFilename  If filename is provided, will
    *                                             save canvas as an image with
    *                                             either png or jpg extension
    *                                             depending on the filename.
@@ -223,7 +229,6 @@ define(function (require) {
    *  The file saving process and location of the saved file will
    *  vary between web browsers.
    *
-   *  @method  saveJSON  
    *  @param  {Array|Object} json
    *  @param  {String} filename
    *  @param  {Boolean} [optimize]   If true, removes line breaks
@@ -278,7 +283,6 @@ define(function (require) {
    *  The file saving process and location of the saved file will
    *  vary between web browsers.
    *
-   *  @method  saveStrings
    *  @param  {Array} list      string array to be written
    *  @param  {String} filename filename for output
    *  @example
@@ -332,7 +336,6 @@ define(function (require) {
    *  The file saving process and location of the saved file will
    *  vary between web browsers.
    *  
-   *  @method saveTable
    *  @param  {p5.Table} Table  the Table object to save to a file
    *  @param  {String} filename the filename to which the Table should be saved
    *  @param  {[String]} options  can be one of "tsv", "csv", or "html"
