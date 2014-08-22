@@ -3,54 +3,80 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
-
   var frames = [];
 
   /**
-   *  Save the current canvas as an image.
-   *  
-   *  @param  {[type]} filename  [description]
-   *  @param  {[type]} extension [description]
-   *  @return {[type]}           [description]
+   *  Save the current canvas as an image. Accepts parameters for filename,
+   *  extension. In Safari, will open the image in the window and the
+   *  user must provide their own filename on save-as. Other browsers
+   *  will either save the file immediately, or prompt the user with
+   *  a dialogue window.
+   *   
+   *  @method saveCanvas
+   *  @param  {[String]} filename
+   *  @param  {[String]} extension 'jpg' or 'png'
+   *  @param  {[Canvas]} canvas a variable representing a
+   *                             specific html5 canvas (optional).
    */
-  p5.prototype.save = function(filename, extension, _cnv) {
+  p5.prototype.saveCanvas = function(filename, extension, _cnv) {
     var cnv;
-    if (this) {
+    if (this._curElement && this._curElement.elt) {
       cnv = this._curElement.elt;
     } else {
       cnv = _cnv;
     }
-    var mimeType;
-    if (!extension) {
-      extension = 'png';
-      mimeType = 'image/png';
-    }
-    else {
-      switch(extension.toLowerCase()){
-      case 'png':
+    if ( p5.prototype._isSafari() ) {
+      var aText = 'Hello, Safari user!\n';
+      aText += 'Now capturing a screenshot...\n';
+      aText += 'To save this image,\n';
+      aText += 'go to File --> Save As.\n';
+      alert(aText);
+      window.location.href = cnv.toDataURL();
+    } else {
+      var mimeType;
+      if (!extension) {
+        extension = 'png';
         mimeType = 'image/png';
-        break;
-      case 'jpeg':
-        mimeType = 'image/jpeg';
-        break;
-      case 'jpg':
-        mimeType = 'image/jpeg';
-        break;
-      default:
-        mimeType = 'image/png';
-        break;
       }
+      else {
+        switch(extension.toLowerCase()){
+        case 'png':
+          mimeType = 'image/png';
+          break;
+        case 'jpeg':
+          mimeType = 'image/jpeg';
+          break;
+        case 'jpg':
+          mimeType = 'image/jpeg';
+          break;
+        default:
+          mimeType = 'image/png';
+          break;
+        }
+      }
+      var downloadMime = 'image/octet-stream';
+      var imageData = cnv.toDataURL(mimeType);
+      imageData = imageData.replace(mimeType, downloadMime);
+
+      p5.prototype.downloadFile(imageData, filename, extension);
     }
-
-    var downloadMime = 'image/octet-stream';
-    var imageData = cnv.toDataURL(mimeType);
-    imageData = imageData.replace(mimeType, downloadMime);
-
-    p5.prototype.downloadFile(imageData, filename, extension);
   };
 
-  // duration (in seconds), maximum 15
-  p5.prototype.saveFrames = function(filename, extension, _duration, _fps) {
+  /**
+   *  Capture a sequence of frames that can be used to create a movie.
+   *  Accepts a callback. For example, you may wish to send the frames
+   *  to a server where they can be stored or converted into a movie.
+   *  If no callback is provided, the browser will attempt to download
+   *  all of the images that have just been created.
+   *  
+   *  @param  {[type]}   filename  [description]
+   *  @param  {[type]}   extension [description]
+   *  @param  {[type]}   _duration [description]
+   *  @param  {[type]}   _fps      [description]
+   *  @param  {[Function]} callback  [description]
+   *  @return {[type]}             [description]
+   */
+  p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
     var duration = _duration || 3;
     duration = p5.prototype.constrain(duration, 0, 15);
     duration = duration * 1000;
@@ -61,15 +87,20 @@ define(function (require) {
     var makeFrame = p5.prototype._makeFrame;
     var cnv = this._curElement.elt;
     var frameFactory = setInterval(function(){
-      makeFrame(filename + count, extension, cnv);
+      makeFrame(fName + count, ext, cnv);
       count++;
     },1000/fps);
 
     setTimeout(function(){
       clearInterval(frameFactory);
-      for (var i = 0; i < frames.length; i++) {
-        var f = frames[i];
-        p5.prototype.downloadFile(f.imageData, f.filename, f.ext);
+      if (callback) {
+        callback(frames);
+      }
+      else {
+        for (var i = 0; i < frames.length; i++) {
+          var f = frames[i];
+          p5.prototype.downloadFile(f.imageData, f.filename, f.ext);
+        }
       }
       frames = []; // clear frames
     }, duration + 0.01);

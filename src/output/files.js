@@ -103,6 +103,82 @@ define(function (require) {
 
   };
 
+  // object, filename, options --> saveJSON, saveStrings, saveTable
+  // filename, [extension] [canvas] --> saveImage
+  p5.prototype.save = function(object, _filename, _options) {
+    // parse the arguments and figure out which things we are saving
+    var args = arguments;
+    // =================================================
+    // OPTION 1: saveCanvas...
+
+    // if no arguments are provided, save canvas
+    var cnv = this._curElement.elt;
+    if (args.length === 0) {
+      p5.prototype.saveCanvas(null, null, cnv);
+      return;
+    }
+    // otherwise, parse the arguments
+
+    // if first param is a string, then it is a filename for saveCanvas
+    if (typeof(args[0]) === 'string') {
+      // if a canvas is provided:
+      if (typeof(args[2]) === 'object') {
+        p5.prototype.saveCanvas(args);
+      }
+      // if image extension is provided:
+      else if (typeof(args[1]) === 'string') {
+        p5.prototype.saveCanvas(args[0], args[1], cnv);
+      }
+      // if only filename is provided:
+      else {
+        p5.prototype.saveCanvas(args[0], null, cnv);
+      }
+      return;
+    }
+
+    // =================================================
+    // OPTION 2: extension is clear...
+
+    else {
+      // get extension
+      var x = _checkFileExtension(args[1], args[2]);
+      var extension = x[1];
+      // case of extensions:
+      switch(extension){
+      case 'json':
+        p5.prototype.saveJSON(args[0], args[1], args[2]);
+        break;
+      case 'csv':
+        p5.prototype.saveTable(args[0], args[1], args[2], args[3]);
+        break;
+      case 'tsv':
+        p5.prototype.saveTable(args[0], args[1], args[2], args[3]);
+        break;
+      case 'html':
+        p5.prototype.saveTable(args[0], args[1], args[2], args[3]);
+        break;
+      case 'txt':
+        p5.prototype.saveStrings(args[0], args[1], args[2]);
+        break;
+        // =================================================
+        // OPTION 3: No extension, decide based on object...
+      default:
+        if (args[0] instanceof Array) {
+          console.log('arr');
+          p5.prototype.saveStrings(args[0], args[1], args[2]);
+        }
+        else if (args[0] instanceof p5.Table) {
+          console.log('Table');
+          p5.prototype.saveTable(args[0], args[1], args[2], args[3]);
+        }
+        else if (args[0] instanceof Object) {
+          console.log('obj');
+          p5.prototype.saveJSON(args[0], args[1], args[2]);
+        }
+      }
+    }
+  };
+
   /**
    *  Writes the contents of an Array or a JSON object to a .json file.
    *  The file saving process and location of the saved file will
@@ -331,7 +407,7 @@ define(function (require) {
   // ================
 
   /**
-   *  Generate a blob of file data, and a url to prepare for download.
+   *  Generate a blob of file data as a url to prepare for download.
    *  Accepts an array of data, a filename, and an extension (optional).
    *  This is a private function because it does not do any formatting,
    *  but it is used by saveStrings, saveJSON, saveTable etc.
@@ -343,12 +419,12 @@ define(function (require) {
    */
   p5.prototype.writeFile = function(dataToDownload, filename, extension) {
     var type = 'application\/octet-stream';
-    if ( _isSafari() ) {
+    if (p5.prototype._isSafari() ) {
       type = 'text\/plain';
     }
     var blob = new Blob(dataToDownload, {'type': type});
     var href = window.URL.createObjectURL(blob);
-    p5.prototype.downloadBlob(href, filename, extension);
+    p5.prototype.downloadFile(href, filename, extension);
   };
 
   /**
@@ -376,7 +452,7 @@ define(function (require) {
     document.body.appendChild(a);
 
     // Safari will open this file in the same page as a confusing Blob.
-    if ( _isSafari() ) {
+    if (p5.prototype._isSafari() ) {
       var aText = 'Hello, Safari user! To download this file...\n';
       aText += '1. Go to File --> Save As.\n';
       aText += '2. Choose "Page Source" as the Format.\n';
@@ -423,10 +499,10 @@ define(function (require) {
    *  @return  {Boolean} [description]
    *  @private
    */
-  function _isSafari() {
+  p5.prototype._isSafari = function() {
     var x = Object.prototype.toString.call(window.HTMLElement);
     return x.indexOf('Constructor') > 0;
-  }
+  };
 
   /**
    *  Helper function, a callback for download that deletes
