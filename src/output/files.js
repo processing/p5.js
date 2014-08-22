@@ -111,10 +111,9 @@ define(function (require) {
    *  the client's computer.<br/>
    *  <br/>
    *  The default behavior is to save an image from the canvas. For example:
-   *  <br/>
+   *  <br/><br/>
    *  <code>save()</code><br/>
-   *  <code>save('myFile.jpg')</code><br/>
-   *  <code>save('myFile', 'jpeg')</code><br/><br/>
+   *  <code>save('myFile.jpg')</code><br/><br/>
    *
    *  Alternately, the first parameter can be an Array of Strings,
    *  an Array of JSON, a JSON object, a p5.Table, a p5.Image, or a
@@ -122,23 +121,36 @@ define(function (require) {
    *  (including extension). The third parameter is for options specific
    *  to this type of object. This method will save a file that fits the
    *  given paramaters. For example: <br/><br/>
-   *  <code>save(myTable, 'myTable.html')</code> saves table as html file<br/>
-   *  <code>save(myTable, 'myTable.csv',)</code> comma separated values<br/> 
-   *  <code>save(myTable, 'myTable.tsv')</code> tab separated values<br/>
+   *  <code>save(myTable, 'myTable.html')</code> Saves table as html file<br/>
+   *  <code>save(myTable, 'myTable.csv',)</code> Comma Separated Values<br/>
+   *  <code>save(myTable, 'myTable.tsv')</code> Tab Separated Values<br/>
    *  <br/>
-   *  <code>save(myJSON, 'my.json')</code>saves pretty JSON<br/>
-   *  <code>save(myJSON, 'my.json', true)</code>optimizes JSON filesize<br/>
+   *  <code>save(myJSON, 'my.json')</code> Saves pretty JSON<br/>
+   *  <code>save(myJSON, 'my.json', true)</code> Optimizes JSON filesize<br/>
    *  <br/>
-   *  <code>save(img, 'my.png')</code> saves pImage as a png image<br/>
+   *  <code>save(img, 'my.png')</code> Saves pImage as a png image<br/>
    *  <br/>
-   *  <code>save(arrayOfStrings, 'my.txt')</code>saves strings to a
+   *  <code>save(arrayOfStrings, 'my.txt')</code> Saves strings to a
    *  text file with line breaks after each item in the array<br/>
    *
    *  @method  save
-   *  @param  {[type]} object    [description]
-   *  @param  {[type]} _filename [description]
-   *  @param  {[type]} _options  [description]
-   *  @return {[type]}           [description]
+   *  @param  {[Object/String]} object/filename  If filename is provided, will
+   *                                             save canvas as an image with
+   *                                             either png or jpg extension
+   *                                             depending on the filename.
+   *                                             If object is provided, will
+   *                                             save depending on the object
+   *                                             and filename (see examples
+   *                                             above).
+   *  @param  {[String]} filename If an object is provided as the first
+   *                               parameter, then the second parameter
+   *                               indicates the filename,
+   *                               and should include an appropriate
+   *                               file extension (see examples above).
+   *  @param  {[Boolean]} options  Additional options depend on filetype. For
+   *                            example, when saving JSON, true indicates that
+   *                            the output will be optimized for filesize,
+   *                            rather than readability.
    */
   p5.prototype.save = function(object, _filename, _options) {
     // parse the arguments and figure out which things we are saving
