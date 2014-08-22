@@ -123,7 +123,7 @@ define(function (require) {
     if (typeof(args[0]) === 'string') {
       // if a canvas is provided:
       if (typeof(args[2]) === 'object') {
-        p5.prototype.saveCanvas(args);
+        p5.prototype.saveCanvas(args[0], args[1], args[2]);
       }
       // if image extension is provided:
       else if (typeof(args[1]) === 'string') {
@@ -137,31 +137,19 @@ define(function (require) {
     }
 
     // =================================================
-    // OPTION 2: extension is clear...
+    // OPTION 2: extension clarifies saveStrings vs. saveJSON
 
     else {
-      // get extension
-      var x = _checkFileExtension(args[1], args[2]);
-      var extension = x[1];
-      // case of extensions:
+      var extension = _checkFileExtension(args[1], args[2])[1];
       switch(extension){
       case 'json':
         p5.prototype.saveJSON(args[0], args[1], args[2]);
         break;
-      case 'csv':
-        p5.prototype.saveTable(args[0], args[1], args[2], args[3]);
-        break;
-      case 'tsv':
-        p5.prototype.saveTable(args[0], args[1], args[2], args[3]);
-        break;
-      case 'html':
-        p5.prototype.saveTable(args[0], args[1], args[2], args[3]);
-        break;
       case 'txt':
         p5.prototype.saveStrings(args[0], args[1], args[2]);
         break;
-        // =================================================
-        // OPTION 3: No extension, decide based on object...
+      // =================================================
+      // OPTION 3: decide based on object...
       default:
         if (args[0] instanceof Array) {
           console.log('arr');
@@ -170,6 +158,9 @@ define(function (require) {
         else if (args[0] instanceof p5.Table) {
           console.log('Table');
           p5.prototype.saveTable(args[0], args[1], args[2], args[3]);
+        }
+        else if (args[0] instanceof p5.SoundFile) {
+          p5.prototype.saveSound(args[0], args[1], args[2], args[3]);
         }
         else if (args[0] instanceof Object) {
           console.log('obj');

@@ -6,11 +6,10 @@ define(function (require) {
   var frames = [];
 
   /**
-   *  Save the current canvas as an image. Accepts parameters for filename,
-   *  extension. In Safari, will open the image in the window and the
-   *  user must provide their own filename on save-as. Other browsers
-   *  will either save the file immediately, or prompt the user with
-   *  a dialogue window.
+   *  Save the current canvas as an image. In Safari, will open the
+   *  image in the window and the user must provide their own
+   *  filename on save-as. Other browsers will either save the
+   *  file immediately, or prompt the user with a dialogue window.
    *   
    *  @method saveCanvas
    *  @param  {[String]} filename
