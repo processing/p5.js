@@ -147,9 +147,10 @@ define(function (require) {
    *                               indicates the filename,
    *                               and should include an appropriate
    *                               file extension (see examples above).
-   *  @param  {[Boolean]} options  Additional options depend on filetype. For
-   *                            example, when saving JSON, true indicates that
-   *                            the output will be optimized for filesize,
+   *  @param  {[Boolean/String]} options  Additional options depend on
+   *                            filetype. For example, when saving JSON,
+   *                            <code>true</code> indicates that the
+   *                            output will be optimized for filesize,
    *                            rather than readability.
    */
   p5.prototype.save = function(object, _filename, _options) {
