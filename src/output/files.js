@@ -105,6 +105,41 @@ define(function (require) {
 
   // object, filename, options --> saveJSON, saveStrings, saveTable
   // filename, [extension] [canvas] --> saveImage
+
+  /**
+   *  Save an image, text, json, csv, wav, or html. Prompts download to
+   *  the client's computer.<br/>
+   *  <br/>
+   *  The default behavior is to save an image from the canvas. For example:
+   *  <br/>
+   *  <code>save()</code><br/>
+   *  <code>save('myFile.jpg')</code><br/>
+   *  <code>save('myFile', 'jpeg')</code><br/><br/>
+   *
+   *  Alternately, the first parameter can be an Array of Strings,
+   *  an Array of JSON, a JSON object, a p5.Table, a p5.Image, or a
+   *  p5.SoundFile (requires p5.sound). The second parameter is a filename
+   *  (including extension). The third parameter is for options specific
+   *  to this type of object. This method will save a file that fits the
+   *  given paramaters. For example: <br/><br/>
+   *  <code>save(myTable, 'myTable.html')</code> saves table as html file<br/>
+   *  <code>save(myTable, 'myTable.csv',)</code> comma separated values<br/> 
+   *  <code>save(myTable, 'myTable.tsv')</code> tab separated values<br/>
+   *  <br/>
+   *  <code>save(myJSON, 'my.json')</code>saves pretty JSON<br/>
+   *  <code>save(myJSON, 'my.json', true)</code>optimizes JSON filesize<br/>
+   *  <br/>
+   *  <code>save(img, 'my.png')</code> saves pImage as a png image<br/>
+   *  <br/>
+   *  <code>save(arrayOfStrings, 'my.txt')</code>saves strings to a
+   *  text file with line breaks after each item in the array<br/>
+   *
+   *  @method  save
+   *  @param  {[type]} object    [description]
+   *  @param  {[type]} _filename [description]
+   *  @param  {[type]} _options  [description]
+   *  @return {[type]}           [description]
+   */
   p5.prototype.save = function(object, _filename, _options) {
     // parse the arguments and figure out which things we are saving
     var args = arguments;
@@ -152,18 +187,18 @@ define(function (require) {
       // OPTION 3: decide based on object...
       default:
         if (args[0] instanceof Array) {
-          console.log('arr');
           p5.prototype.saveStrings(args[0], args[1], args[2]);
         }
         else if (args[0] instanceof p5.Table) {
-          console.log('Table');
           p5.prototype.saveTable(args[0], args[1], args[2], args[3]);
+        }
+        else if (args[0] instanceof p5.Image) {
+          p5.prototype.saveCanvas(args[1], args[2], args[0].canvas);
         }
         else if (args[0] instanceof p5.SoundFile) {
           p5.prototype.saveSound(args[0], args[1], args[2], args[3]);
         }
         else if (args[0] instanceof Object) {
-          console.log('obj');
           p5.prototype.saveJSON(args[0], args[1], args[2]);
         }
       }

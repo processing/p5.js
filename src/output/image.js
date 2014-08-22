@@ -19,11 +19,12 @@ define(function (require) {
    */
   p5.prototype.saveCanvas = function(filename, extension, _cnv) {
     var cnv;
-    if (this._curElement && this._curElement.elt) {
-      cnv = this._curElement.elt;
-    } else {
+    if (_cnv) {
       cnv = _cnv;
+    } else if (this._curElement && this._curElement.elt) {
+      cnv = this._curElement.elt;
     }
+
     if ( p5.prototype._isSafari() ) {
       var aText = 'Hello, Safari user!\n';
       aText += 'Now capturing a screenshot...\n';
