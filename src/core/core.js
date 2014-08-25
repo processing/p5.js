@@ -338,11 +338,18 @@ define(function (require) {
 
         // remove window bound properties and methods
         if (this._isGlobal) {
-          for (var p in p5.prototype) {
+          for (var p0 in p5.prototype) {
             try {
-              delete window[p];
+              delete window[p0];
             } catch (x) {
-              window[p] = undefined;
+              window[p0] = undefined;
+            }
+          }
+          for (var p1 in p5) {
+            try {
+              delete window[p1];
+            } catch (x) {
+              window[p1] = undefined;
             }
           }
           for (var p2 in this) {
@@ -370,15 +377,18 @@ define(function (require) {
     if (!sketch) {
       this._isGlobal = true;
       // Loop through methods on the prototype and attach them to the window
-      for (var p in p5.prototype) {
-        if(typeof p5.prototype[p] === 'function') {
-          var ev = p.substring(2);
+      for (var p0 in p5.prototype) {
+        if(typeof p5.prototype[p0] === 'function') {
+          var ev = p0.substring(2);
           if (!this._events.hasOwnProperty(ev)) {
-            window[p] = p5.prototype[p].bind(this);
+            window[p0] = p5.prototype[p0].bind(this);
           }
         } else {
-          window[p] = p5.prototype[p];
+          window[p0] = p5.prototype[p0];
         }
+      }
+      for (var p1 in p5) {
+        window[p1] = p5[p1];
       }
       // Attach its properties to the window
       for (var p2 in this) {
