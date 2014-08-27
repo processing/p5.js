@@ -136,7 +136,7 @@ define(function (require) {
     );
     ctx.beginPath();
     if (w === h) {
-      ctx.arc(vals.x, vals.y, vals.w/2, 0, 2 * Math.PI, false);
+      ctx.arc(vals.x+vals.w/2, vals.y+vals.w/2, vals.w/2, 0, 2*Math.PI, false);
     } else {
       var kappa = 0.5522848,
         ox = (vals.w / 2) * kappa, // control point offset horizontal
