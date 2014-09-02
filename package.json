@@ -32,6 +32,8 @@
   "files": [
     "license.txt",
     "lib/p5.min.js",
-    "lib/p5.js"
+    "lib/p5.js",
+    "lib/p5.sound.js",
+    "lib/p5.dom.js"
   ]
 }
