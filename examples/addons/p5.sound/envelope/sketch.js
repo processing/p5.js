@@ -16,6 +16,7 @@ depending on pre defined time segments.
 
 var triOsc;
 var env;
+var a;
 
 // Times and levels for the ASR envelope
 var attackTime = 0.1;
@@ -46,12 +47,14 @@ function setup(){
 
   env = new p5.Env(attackTime, attackLevel, decayTime, decayLevel, sustainTime, sustainLevel, releaseTime);
   fill(0);
+
+  a = new p5.Amplitude();
 }
 
 function draw(){
   var size = 10;
   background(255, 255,255,20);
-  ellipse(map ( (trigger - millis()) % duration, 1000, 0, 0, width), map ( triOsc.getAmp(), 0, 1, height-size, 0), size, size);
+  ellipse(map ( (trigger - millis()) % duration, 1000, 0, 0, width), map ( a.getLevel(), 0, .5, height-size, 0), size, size);
 
   // If the determined trigger moment in time matches up with the computer clock and we if the 
   // sequence of notes hasn't been finished yet the next note gets played.

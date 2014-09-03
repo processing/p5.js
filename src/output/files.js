@@ -103,12 +103,132 @@ define(function (require) {
 
   };
 
+  // object, filename, options --> saveJSON, saveStrings, saveTable
+  // filename, [extension] [canvas] --> saveImage
+
+  /**
+   *  <p>Save an image, text, json, csv, wav, or html. Prompts download to
+   *  the client's computer. <b>Note that it is not recommended to call save() 
+   *  within draw if it's looping, as the save() function will open a new save 
+   *  dialog every frame.</b></p>
+   *  <p>The default behavior is to save the canvas as an image. 
+   *  For example:</p>
+   *  <pre class='language-javascript'><code>
+   *  save();
+   *  save('myFile.jpg');
+   *  </code></pre>
+   *
+   *  <p>Alternately, the first parameter can be an Array of Strings,
+   *  an Array of JSON, a JSON object, a p5.Table, a p5.Image, or a
+   *  p5.SoundFile (requires p5.sound). The second parameter is a filename
+   *  (including extension). The third parameter is for options specific
+   *  to this type of object. This method will save a file that fits the
+   *  given paramaters. For example:</p>
+   * 
+   *  <pre class='language-javascript'><code>
+   *  save(myTable, 'myTable.html');  // Saves table as html file
+   *  save(myTable, 'myTable.csv',);  // Comma Separated Values
+   *  save(myTable, 'myTable.tsv');   // Tab Separated Values
+   * 
+   *  save(myJSON, 'my.json');        // Saves pretty JSON
+   *  save(myJSON, 'my.json', true);  // Optimizes JSON filesize
+   * 
+   *  save(img, 'my.png');            // Saves pImage as a png image
+   *
+   *  save(arrayOfStrings, 'my.txt'); // Saves strings to a text file with line
+   *                                  // breaks after each item in the array
+   *  </code></pre> 
+   *
+   *  @method save
+   *  @param  {[Object|String]} objectOrFilename  If filename is provided, will
+   *                                             save canvas as an image with
+   *                                             either png or jpg extension
+   *                                             depending on the filename.
+   *                                             If object is provided, will
+   *                                             save depending on the object
+   *                                             and filename (see examples
+   *                                             above).
+   *  @param  {[String]} filename If an object is provided as the first
+   *                               parameter, then the second parameter
+   *                               indicates the filename,
+   *                               and should include an appropriate
+   *                               file extension (see examples above).
+   *  @param  {[Boolean/String]} options  Additional options depend on
+   *                            filetype. For example, when saving JSON,
+   *                            <code>true</code> indicates that the
+   *                            output will be optimized for filesize,
+   *                            rather than readability.
+   */
+  p5.prototype.save = function(object, _filename, _options) {
+    // parse the arguments and figure out which things we are saving
+    var args = arguments;
+    // =================================================
+    // OPTION 1: saveCanvas...
+
+    // if no arguments are provided, save canvas
+    var cnv = this._curElement.elt;
+    if (args.length === 0) {
+      p5.prototype.saveCanvas(null, null, cnv);
+      return;
+    }
+    // otherwise, parse the arguments
+
+    // if first param is a string, then it is a filename for saveCanvas
+    if (typeof(args[0]) === 'string') {
+      // if a canvas is provided:
+      if (typeof(args[2]) === 'object') {
+        p5.prototype.saveCanvas(args[0], args[1], args[2]);
+      }
+      // if image extension is provided:
+      else if (typeof(args[1]) === 'string') {
+        p5.prototype.saveCanvas(args[0], args[1], cnv);
+      }
+      // if only filename is provided:
+      else {
+        p5.prototype.saveCanvas(args[0], null, cnv);
+      }
+      return;
+    }
+
+    // =================================================
+    // OPTION 2: extension clarifies saveStrings vs. saveJSON
+
+    else {
+      var extension = _checkFileExtension(args[1], args[2])[1];
+      switch(extension){
+      case 'json':
+        p5.prototype.saveJSON(args[0], args[1], args[2]);
+        break;
+      case 'txt':
+        p5.prototype.saveStrings(args[0], args[1], args[2]);
+        break;
+      // =================================================
+      // OPTION 3: decide based on object...
+      default:
+        if (args[0] instanceof Array) {
+          p5.prototype.saveStrings(args[0], args[1], args[2]);
+        }
+        else if (args[0] instanceof p5.Table) {
+          p5.prototype.saveTable(args[0], args[1], args[2], args[3]);
+        }
+        else if (args[0] instanceof p5.Image) {
+          p5.prototype.saveCanvas(args[1], args[2], args[0].canvas);
+        }
+        else if (args[0] instanceof p5.SoundFile) {
+          p5.prototype.saveSound(args[0], args[1], args[2], args[3]);
+        }
+        else if (args[0] instanceof Object) {
+          p5.prototype.saveJSON(args[0], args[1], args[2]);
+        }
+      }
+    }
+  };
+
   /**
    *  Writes the contents of an Array or a JSON object to a .json file.
    *  The file saving process and location of the saved file will
    *  vary between web browsers.
    *
-   *  @method  saveJSON  
    *  @param  {Array|Object} json
    *  @param  {String} filename
    *  @param  {Boolean} [optimize]   If true, removes line breaks
@@ -163,7 +283,6 @@ define(function (require) {
    *  The file saving process and location of the saved file will
    *  vary between web browsers.
    *
-   *  @method  saveStrings
    *  @param  {Array} list      string array to be written
    *  @param  {String} filename filename for output
    *  @example
@@ -217,7 +336,6 @@ define(function (require) {
    *  The file saving process and location of the saved file will
    *  vary between web browsers.
    *  
-   *  @method saveTable
    *  @param  {p5.Table} Table  the Table object to save to a file
    *  @param  {String} filename the filename to which the Table should be saved
    *  @param  {[String]} options  can be one of "tsv", "csv", or "html"
@@ -331,7 +449,7 @@ define(function (require) {
   // ================
 
   /**
-   *  Generate a file and force download.
+   *  Generate a blob of file data as a url to prepare for download.
    *  Accepts an array of data, a filename, and an extension (optional).
    *  This is a private function because it does not do any formatting,
    *  but it is used by saveStrings, saveJSON, saveTable etc.
@@ -342,29 +460,32 @@ define(function (require) {
    *  @private
    */
   p5.prototype.writeFile = function(dataToDownload, filename, extension) {
-    var ext = '';
-    var a = document.createElement('a');
     var type = 'application\/octet-stream';
-    if ( _isSafari() ) {
+    if (p5.prototype._isSafari() ) {
       type = 'text\/plain';
     }
-
-    // make sure the file will have a name, see if filename needs extension
-    if (filename) {
-      ext = _checkFileExtension(filename);
-    } else {
-      filename = 'untitled';
-    }
-    // append extension if it doesn't exist
-    if (extension) {
-      if (ext !== extension) {
-        ext = extension;
-        filename = filename + '.' + ext;
-      }
-    }
-
     var blob = new Blob(dataToDownload, {'type': type});
-    a.href = window.URL.createObjectURL(blob);
+    var href = window.URL.createObjectURL(blob);
+    p5.prototype.downloadFile(href, filename, extension);
+  };
+
+  /**
+   *  Forces download. Accepts a url to filedata/blob, a filename,
+   *  and an extension (optional).
+   *  This is a private function because it does not do any formatting,
+   *  but it is used by saveStrings, saveJSON, saveTable etc.
+   *  
+   *  @param  {String} href      i.e. an href generated by createObjectURL
+   *  @param  {[String]} filename
+   *  @param  {[String]} extension
+   */
+  p5.prototype.downloadFile = function(href, fName, extension) {
+    var fx = _checkFileExtension(fName, extension);
+    var filename = fx[0];
+    var ext = fx[1];
+
+    var a = document.createElement('a');
+    a.href = href;
     a.download = filename;
 
     // Firefox requires the link to be added to the DOM before click()
@@ -373,7 +494,7 @@ define(function (require) {
     document.body.appendChild(a);
 
     // Safari will open this file in the same page as a confusing Blob.
-    if ( _isSafari() ) {
+    if (p5.prototype._isSafari() ) {
       var aText = 'Hello, Safari user! To download this file...\n';
       aText += '1. Go to File --> Save As.\n';
       aText += '2. Choose "Page Source" as the Format.\n';
@@ -381,7 +502,7 @@ define(function (require) {
       alert(aText);
     }
     a.click();
-    blob = null;
+    href = null;
   };
 
   /**
@@ -392,8 +513,25 @@ define(function (require) {
    *  @return  {String}          File Extension
    *  @private
    */
-  function _checkFileExtension(filename) {
-    return filename.split('.').pop();
+  function _checkFileExtension(filename, extension) {
+    if (!extension) {
+      extension = '';
+    }
+    var ext = '';
+    // make sure the file will have a name, see if filename needs extension
+    if (filename) {
+      ext = filename.split('.').pop();
+    } else {
+      filename = 'untitled';
+    }
+    // append extension if it doesn't exist
+    if (extension) {
+      if (ext !== extension) {
+        ext = extension;
+        filename = filename + '.' + ext;
+      }
+    }
+    return [filename, ext];
   }
 
   /**
@@ -403,10 +541,10 @@ define(function (require) {
    *  @return  {Boolean} [description]
    *  @private
    */
-  function _isSafari() {
+  p5.prototype._isSafari = function() {
     var x = Object.prototype.toString.call(window.HTMLElement);
     return x.indexOf('Constructor') > 0;
-  }
+  };
 
   /**
    *  Helper function, a callback for download that deletes

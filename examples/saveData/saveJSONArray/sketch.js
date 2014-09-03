@@ -19,7 +19,7 @@ function setup() {
     values.push(animal); // add an animal object to the array
   }
 
-  saveJSONArray(values, 'animals.json');
+  save(values, 'animals.json');
 }
 
 // Sketch saves the following to a file called "animals.json":

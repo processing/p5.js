@@ -16,6 +16,8 @@ function setup() {
   fft = new p5.FFT();
   osc1.phase(.5);
   osc2.phase(0);
+  osc1.amp(1);
+  osc2.amp(1);
   osc1.start(); osc2.start();
 
   phaseSlider = createSlider(0, 100, 50);

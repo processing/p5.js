@@ -6,6 +6,7 @@
 
 var triOsc;
 var env;
+var a;
 
 // Times and levels for the ADSR envelope
 var attackTime = 0.1;
@@ -14,7 +15,7 @@ var decayTime = 0.3;
 var decayLevel = 0.2;
 var sustainTime = 0.1;
 var sustainLevel = decayLevel;
-var releaseTime = 0.5;
+var releaseTime = .8;
 var duration = 1000;
 // Set the note trigger
 var trigger;
@@ -35,13 +36,15 @@ function setup(){
 
   env = new p5.Env(attackTime, attackLevel, decayTime, decayLevel, sustainTime, sustainLevel, releaseTime);
   fill(0);
-  createP('click mouse to triggerAttack, release mouse to triggerRelease')
+  createP('click mouse to triggerAttack, release mouse to triggerRelease');
+
+  a = new p5.Amplitude();
 }
 
 function draw(){
   var size = 10;
   background(255, 255,255,20);
-  ellipse( map ( (trigger - millis()) % duration, 1000, 0, 0, width) % width, map ( triOsc.getAmp(), 0, 1, height-size, 0), size, size);
+  ellipse( map ( (trigger - millis()) % duration, 1000, 0, 0, width) % width, map ( a.getLevel(), 0, .5, height-size, 0), size, size);
 }
 
 function mousePressed(){

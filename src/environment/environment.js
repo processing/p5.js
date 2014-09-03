@@ -69,6 +69,19 @@ define(function(require) {
    *                               WAIT, or path for image
    * @param {Number}          [x]  the horizontal active spot of the cursor
    * @param {Number}          [y]  the vertical active spot of the cursor
+   * @example
+   * <div><code>
+   * // Move the mouse left and right across the image
+   * // to see the cursor change from a cross to a hand
+   * function draw() {
+   *   line(width/2, 0, width/2, height); 
+   *   if (mouseX < 50) {
+   *     cursor(CROSS);
+   *   } else {
+   *     cursor(HAND);
+   *   }
+   * }
+   * </code></div>
    */
   p5.prototype.cursor = function(type, x, y) {
     var cursor = 'auto';
@@ -149,6 +162,17 @@ define(function(require) {
    * Hides the cursor from view. 
    * 
    * @method noCursor
+   * @example
+   * <div><code>
+   * function setup() {
+   *   noCursor();
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *   ellipse(mouseX, mouseY, 10, 10); 
+   * }
+   * </code></div>
    */
   p5.prototype.noCursor = function() {
     this._curElement.elt.style.cursor = 'none';

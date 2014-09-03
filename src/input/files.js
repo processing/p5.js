@@ -78,6 +78,31 @@ define(function (require) {
    *                               completes, Array is passed in as first
    *                               argument
    * @return {Array}               Array of Strings
+   * @example
+   * <div><code>
+   * var result;
+   * function preload() {
+   *   result = loadStrings('assets/test.txt');
+   * }
+
+   * function setup() {
+   *   background(200);
+   *   var ind = floor(random(result.length));
+   *   text(result[ind], 10, 10, 80, 80);
+   * }
+   * </code></div>
+   *
+   * <div><code>
+   * function setup() {
+   *   loadStrings('assets/test.txt', pickString);
+   * }
+   *
+   * function pickString(result) {
+   *   background(200);
+   *   var ind = floor(random(result.length));
+   *   text(result[ind], 10, 10, 80, 80);
+   * }
+   * </code></div>
    */
   p5.prototype.loadStrings = function (path, callback) {
     var ret = [];

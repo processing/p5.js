@@ -1,7 +1,5 @@
 ![](http://p5js.org/img/p5js-beta.svg)
 
-p5.js
-=====
 
 [Hello!](http://hello.p5js.org/) p5.js is a JavaScript library that starts with the original goal of Processing, to make coding accessible for artists, designers, educators, and beginners, and reinterprets this for today's web.
 

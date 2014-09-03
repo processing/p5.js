@@ -53,79 +53,48 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.text = function() {
-
-    this.drawingContext.font=this._textStyle+
-      ' '+
-      this._textSize+
-      'px '+
-      this._textFont;
-
+  p5.prototype.text = function () {
+    var str = this._textStyle + ' ' + this._textSize + 'px ' + this._textFont;
+    this.drawingContext.font = str;
     if (arguments.length === 3) {
-
       if (this._doFill) {
-        this.drawingContext.fillText(
-          arguments[0],
-          arguments[1],
-          arguments[2]
-        );
+        this.drawingContext.fillText(arguments[0], arguments[1], arguments[2]);
       }
       if (this._doStroke) {
-        this.drawingContext.strokeText(
-          arguments[0],
-          arguments[1],
-          arguments[2]
-        );
+        this.drawingContext.strokeText(arguments[0],
+          arguments[1], arguments[2]);
       }
-
     } else if (arguments.length === 5) {
-
       var words = arguments[0].split(' ');
       var line = '';
-      var vals = canvas.modeAdjust(
-        arguments[1],
-        arguments[2],
-        arguments[3],
-        arguments[4],
-        this._rectMode
-      );
-
-      vals.y += this._textLeading;
-
-      for(var n = 0; n < words.length; n++) {
-
+      var vals = canvas.modeAdjust(arguments[1], arguments[2],
+        arguments[3], arguments[4], this._rectMode);
+      var y = vals.y + this._textLeading;
+      for (var n = 0; n < words.length; n++) {
         var testLine = line + words[n] + ' ';
         var metrics = this.drawingContext.measureText(testLine);
         var testWidth = metrics.width;
-
-        if (vals.y > vals.h) {
-
+        if (y > vals.y + vals.h) {
           break;
-
         } else if (testWidth > vals.w && n > 0) {
-
           if (this._doFill) {
-            this.drawingContext.fillText(line, vals.x, vals.y);
+            this.drawingContext.fillText(line, vals.x, y);
           }
           if (this._doStroke) {
-            this.drawingContext.strokeText(line, vals.x, vals.y);
+            this.drawingContext.strokeText(line, vals.x, y);
           }
           line = words[n] + ' ';
-          vals.y += this._textLeading;
-
+          y += this._textLeading;
         } else {
-
           line = testLine;
-
         }
       }
-
-      if (vals.y <= vals.h) {
+      if (y <= vals.y + vals.h) {
         if (this._doFill) {
-          this.drawingContext.fillText(line, vals.x, vals.y);
+          this.drawingContext.fillText(line, vals.x, y);
         }
         if (this._doStroke) {
-          this.drawingContext.strokeText(line, vals.x, vals.y);
+          this.drawingContext.strokeText(line, vals.x, y);
         }
       }
     }

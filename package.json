@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/lmccart/p5.js.git"
   },
-  "version": "0.3.2",
+  "version": "0.3.5",
   "devDependencies": {
     "almond": "~0.2.7",
     "amdclean": "~0.3.3",
@@ -32,6 +32,8 @@
   "files": [
     "license.txt",
     "lib/p5.min.js",
-    "lib/p5.js"
+    "lib/p5.js",
+    "lib/p5.sound.js",
+    "lib/p5.dom.js"
   ]
 }

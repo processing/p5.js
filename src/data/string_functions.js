@@ -268,7 +268,7 @@ define(function (require) {
    * split. Whitespace characters include tab (\t), line feed (\n), carriage
    * return (\r), form feed (\f), and space.
    *
-   * @method split
+   * @method splitTokens
    * @param  {String} value   the String to be split
    * @param  {String} [delim] list of individual Strings that will be used as
    *                          separators
