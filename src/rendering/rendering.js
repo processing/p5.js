@@ -80,6 +80,25 @@ define(function(require) {
   };
 
 
+  /**
+   * Removes the default canvas for a p5 sketch that doesn't 
+   * require a canvas
+   * @method noCanvas
+   * @example 
+   * <div>
+   * <code>
+   * function setup() {
+   *   noCanvas();
+   * }
+   * </code>
+   * </div>
+   */
+  p5.prototype.noCanvas = function() {
+    c = document.getElementById('defaultCanvas');
+    if (c) {
+      c.parentNode.removeChild(c);
+    }
+  };
 
   /**
    * Creates and returns a new p5.Graphics object. Use this class if you need 
