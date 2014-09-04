@@ -194,21 +194,28 @@ define(function (require) {
    */
   p5.prototype.onmousemove = function(e){
     var context = this._isGlobal ? window : this;
+    var executeDefault;
     this.updateMouseCoords(e);
     if (!this.isMousePressed) {
       if (typeof context.mouseMoved === 'function') {
-        //e.preventDefault();
-        context.mouseMoved(e);
+        executeDefault = context.mouseMoved(e);
+        if(executeDefault !== undefined && !executeDefault) {
+          e.preventDefault();
+        }
       }
     }
     else {
       if (typeof context.mouseDragged === 'function') {
-        //e.preventDefault();
-        context.mouseDragged(e);
+        executeDefault = context.mouseDragged(e);
+        if(executeDefault !== undefined && !executeDefault) {
+          e.preventDefault();
+        }
       } else if (typeof context.touchMoved === 'function') {
-        e.preventDefault();
+        executeDefault = context.touchMoved(e);
+        if(!executeDefault) {
+          e.preventDefault();
+        }
         this.setTouchPoints(e);
-        context.touchMoved(e);
       }
     }
   };
@@ -245,16 +252,21 @@ define(function (require) {
    */
   p5.prototype.onmousedown = function(e) {
     var context = this._isGlobal ? window : this;
+    var executeDefault;
     this._setProperty('isMousePressed', true);
     this._setProperty('mouseIsPressed', true);
     this.setMouseButton(e);
     if (typeof context.mousePressed === 'function') {
-      //e.preventDefault();
-      context.mousePressed(e);
+      executeDefault = context.mousePressed(e);
+      if(executeDefault !== undefined && !executeDefault) {
+        e.preventDefault();
+      }
     } else if (typeof context.touchStarted === 'function') {
-      e.preventDefault();
+      executeDefault = context.touchStarted(e);
+      if(!executeDefault) {
+        e.preventDefault();
+      }
       this.setTouchPoints(e);
-      context.touchStarted(e);
     }
   };
 
@@ -288,15 +300,20 @@ define(function (require) {
    */
   p5.prototype.onmouseup = function(e) {
     var context = this._isGlobal ? window : this;
+    var executeDefault;
     this._setProperty('isMousePressed', false);
     this._setProperty('mouseIsPressed', false);
     if (typeof context.mouseReleased === 'function') {
-      //e.preventDefault();
-      context.mouseReleased(e);
+      executeDefault = context.mouseReleased(e);
+      if(executeDefault !== undefined && !executeDefault) {
+        e.preventDefault();
+      }
     } else if (typeof context.touchEnded === 'function') {
-      e.preventDefault();
+      executeDefault = context.touchEnded(e);
+      if(!executeDefault) {
+        e.preventDefault();
+      }
       this.setTouchPoints(e);
-      context.touchEnded(e);
     }
   };
 
@@ -330,8 +347,10 @@ define(function (require) {
   p5.prototype.onclick = function(e) {
     var context = this._isGlobal ? window : this;
     if (typeof context.mouseClicked === 'function') {
-      //e.preventDefault();
-      context.mouseClicked(e);
+      var executeDefault = context.mouseClicked(e);
+      if(executeDefault !== undefined && !executeDefault) {
+        e.preventDefault();
+      }
     }
   };
 
@@ -349,8 +368,10 @@ define(function (require) {
   p5.prototype.onmousewheel = function(e) {
     var context = this._isGlobal ? window : this;
     if (typeof context.mouseWheel === 'function') {
-      e.preventDefault();
-      context.mouseWheel(e);
+      var executeDefault = context.mouseWheel(e);
+      if(!executeDefault) {
+        e.preventDefault();
+      }
     }
   };
 
