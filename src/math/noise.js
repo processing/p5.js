@@ -163,14 +163,14 @@ define(function (require) {
   // [toxi 040903]
   // make perlin noise quality user controlled to allow
   // for different levels of detail. lower values will produce
-  // smoother results as higher octaves are surpressed
+  // smoother results as higher octaves are suppressed
 
   /**
    *
    * Adjusts the character and level of detail produced by the Perlin noise
    * function. Similar to harmonics in physics, noise is computed over
    * several octaves. Lower octaves contribute more to the output signal and
-   * as such define the overal intensity of the noise, whereas higher octaves
+   * as such define the overall intensity of the noise, whereas higher octaves
    * create finer grained details in the noise sequence. By default, noise is
    * computed over 4 octaves with each octave contributing exactly half than
    * its predecessor, starting at 50% strength for the 1st octave. This
