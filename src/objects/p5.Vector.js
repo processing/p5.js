@@ -33,18 +33,6 @@ define(function (require) {
    * @param {Number} [x] x component of the vector
    * @param {Number} [y] y component of the vector
    * @param {Number} [z] z component of the vector
-   * @example
-   * <div>
-   * <code> 
-   * var vector = createVector(40, 50);
-   * var vector2 = createVector(40, 50);
-   * 
-   * ellipse(vector.x, vector.y, 50, 50);
-   * ellipse(vector2.x, vector2.y, 50, 50);
-   * vector.add(vector2);
-   * ellipse(vector.x, vector.y, 50, 50);
-   *</div>
-   *</code>
    */
   p5.Vector = function() {
     var x,y,z;

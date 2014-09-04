@@ -8,7 +8,7 @@ function setup() {
 
     setTimeout(function(){
       console.log("Save image")
-      save(img, "unicorn.png");
+      img.save("png");
     }, 1000);
     
   });

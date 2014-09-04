@@ -15,6 +15,10 @@ define(function(require) {
 
   require('output.text_area');
 
+  p5.prototype._matrices = [
+    [1, 0, 0, 1, 0, 0]
+  ];
+
   /**
    * Multiplies the current matrix by the one specified through the parameters.
    * This is very slow because it will try to calculate the inverse of the
@@ -37,6 +41,9 @@ define(function(require) {
    */
   p5.prototype.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
     this.drawingContext.transform(n00, n01, n02, n10, n11, n12);
+    var m = this._matrices[this._matrices.length - 1];
+    m = multiplyMatrix(m, [n00, n01, n02, n10, n11, n12]);
+
     return this;
   };
 
@@ -66,6 +73,8 @@ define(function(require) {
    */
   p5.prototype.resetMatrix = function() {
     this.drawingContext.setTransform();
+    this._matrices[this._matrices.length - 1] = [1, 0, 0, 1, 0, 0];
+
     return this;
   };
 
@@ -103,6 +112,18 @@ define(function(require) {
       r = this.radians(r);
     }
     this.drawingContext.rotate(r);
+    var m = this._matrices[this._matrices.length - 1];
+    var c = Math.cos(r);
+    var s = Math.sin(r);
+    var m11 = m[0] * c + m[2] * s;
+    var m12 = m[1] * c + m[3] * s;
+    var m21 = m[0] * -s + m[2] * c;
+    var m22 = m[1] * -s + m[3] * c;
+    m[0] = m11;
+    m[1] = m12;
+    m[2] = m21;
+    m[3] = m22;
+
     return this;
   };
 
@@ -165,6 +186,12 @@ define(function(require) {
       y = arguments[1];
     }
     this.drawingContext.scale(x, y);
+    var m = this._matrices[this._matrices.length - 1];
+    m[0] *= x;
+    m[1] *= x;
+    m[2] *= y;
+    m[3] *= y;
+
     return this;
   };
 
@@ -202,6 +229,9 @@ define(function(require) {
       angle = this.radians(angle);
     }
     this.drawingContext.transform(1, 0, this.tan(angle), 1, 0, 0);
+    var m = this._matrices[this._matrices.length - 1];
+    m = multiplyMatrix(m, [1, 0, this.tan(angle), 1, 0, 0]);
+
     return this;
   };
 
@@ -239,6 +269,9 @@ define(function(require) {
       angle = this.radians(angle);
     }
     this.drawingContext.transform(1, this.tan(angle), 0, 1, 0, 0);
+    var m = this._matrices[this._matrices.length - 1];
+    m = multiplyMatrix(m, [1, this.tan(angle), 0, 1, 0, 0]);
+
     return this;
   };
 
@@ -278,8 +311,33 @@ define(function(require) {
    */
   p5.prototype.translate = function(x, y) {
     this.drawingContext.translate(x, y);
+    var m = this._matrices[this._matrices.length - 1];
+    m[4] += m[0] * x + m[2] * y;
+    m[5] += m[1] * x + m[3] * y;
+
     return this;
   };
+
+  // TODO: Replace with an optimized matrix-multiplication algorithm
+
+  function multiplyMatrix(m1, m2) {
+    var result = [];
+    var m1Length = m1.length;
+    var m2Length = m2.length;
+    var m10Length = m1[0].length;
+
+    for (var j = 0; j < m2Length; j++) {
+      result[j] = [];
+      for (var k = 0; k < m10Length; k++) {
+        var sum = 0;
+        for (var i = 0; i < m1Length; i++) {
+          sum += m1[i][k] * m2[j][i];
+        }
+        result[j].push(sum);
+      }
+    }
+    return result;
+  }
 
   return p5;
 

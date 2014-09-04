@@ -8,7 +8,7 @@ function setup() {
   json.species = 'Panthera leo';
   json.name = 'Lion';
 
-  save(json, 'lion.json');
+  saveJSONObject(json, 'lion.json');
 }
 
 // Sketch saves the following to a file called "lion.json":

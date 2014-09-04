@@ -18,19 +18,17 @@ define(function (require) {
    * This is the p5 instance constructor.
    *
    * A p5 instance holds all the properties and methods related to
-   * a p5 sketch.  It expects an incoming sketch closure and it can also
-   * take an optional node parameter for attaching the generated p5 canvas
-   * to a node.  The sketch closure takes the newly created p5 instance as
-   * its sole argument and may optionally set preload(), setup(), and/or
-   * draw() properties on it for running a sketch.
+   * a p5 sketch.  It expects an incoming sketch closure with optional
+   * preload(), setup() and draw() properties to attach to this p5
+   * instance for running a sketch.  It can also take an optional node
+   * parameter for attaching the generated p5 canvas to a node.
    *
    * A p5 sketch can run in "global" or "instance" mode:
    * "global"   - all properties and methods are attached to the window
    * "instance" - all properties and methods are bound to this p5 object
    *
-   * @param  {Function}    sketch a closure that can set optional preload(),
-   *                              setup(), and/or draw() properties on the
-   *                              given p5 instance
+   * @param  {Function}    sketch a closure with optional preload(), setup()
+  *                               and draw() properties
    * @param  {HTMLElement} node   an element to attach the generated canvas to
    * @return {p5}                 a p5 instance
    */
@@ -329,11 +327,8 @@ define(function (require) {
         }
 
         // call any registered remove functions
-        var self = this;
-        this._registeredMethods.remove.forEach(function (f) {
-          if (typeof(f) !== 'undefined') {
-            f.call(self);
-          }
+        this._registeredMethods.remove.forEach(function(f) {
+          f.call(this);
         });
 
         // remove window bound properties and methods
@@ -356,7 +351,7 @@ define(function (require) {
           }
         }
       }
-      // window.p5 = undefined;
+      window.p5 = undefined;
     }.bind(this);
 
 
@@ -388,8 +383,9 @@ define(function (require) {
       }
       
     } else {
-      // Else, the user has passed in a sketch closure that may set
-      // user-provided 'setup', 'draw', etc. properties on this instance of p5
+      // Else, the user has passed in a sketch function closure
+      // So attach the user given 'setup', 'draw', etc on this
+      // instance of p5
       sketch(this);
     }
 

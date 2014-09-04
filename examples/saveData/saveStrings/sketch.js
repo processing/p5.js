@@ -6,5 +6,5 @@ function setup() {
   var list = split(words, ' ');
 
   // Writes the strings to a file, each on a separate line
-  save(list, 'nouns.txt');
+  saveStrings(list, 'nouns.txt');
 }

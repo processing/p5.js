@@ -122,7 +122,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.ellipse = function(x, y, w, h) {
+  p5.prototype.ellipse = function(x, y, width, height) {
     if (!this._doStroke && !this._doFill) {
       return;
     }
@@ -130,55 +130,52 @@ define(function (require) {
     var vals = canvas.modeAdjust(
       x,
       y,
-      w,
-      h,
+      width,
+      height,
       this._ellipseMode
     );
+    var kappa = 0.5522848,
+      ox = (vals.w / 2) * kappa, // control point offset horizontal
+      oy = (vals.h / 2) * kappa, // control point offset vertical
+      xe = vals.x + vals.w,      // x-end
+      ye = vals.y + vals.h,      // y-end
+      xm = vals.x + vals.w / 2,  // x-middle
+      ym = vals.y + vals.h / 2;  // y-middle
     ctx.beginPath();
-    if (w === h) {
-      ctx.arc(vals.x+vals.w/2, vals.y+vals.w/2, vals.w/2, 0, 2*Math.PI, false);
-    } else {
-      var kappa = 0.5522848,
-        ox = (vals.w / 2) * kappa, // control point offset horizontal
-        oy = (vals.h / 2) * kappa, // control point offset vertical
-        xe = vals.x + vals.w,      // x-end
-        ye = vals.y + vals.h,      // y-end
-        xm = vals.x + vals.w / 2,  // x-middle
-        ym = vals.y + vals.h / 2;  // y-middle
-      ctx.moveTo(vals.x, ym);
-      ctx.bezierCurveTo(
-        vals.x,
-        ym - oy,
-        xm - ox,
-        vals.y,
-        xm,
-        vals.y
-      );
-      ctx.bezierCurveTo(
-        xm + ox,
-        vals.y,
-        xe,
-        ym - oy,
-        xe,
-        ym
-      );
-      ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-      ctx.bezierCurveTo(
-        xm - ox,
-        ye,
-        vals.x,
-        ym + oy,
-        vals.x,
-        ym
-      );
-      ctx.closePath();
-    }
+    ctx.moveTo(vals.x, ym);
+    ctx.bezierCurveTo(
+      vals.x,
+      ym - oy,
+      xm - ox,
+      vals.y,
+      xm,
+      vals.y
+    );
+    ctx.bezierCurveTo(
+      xm + ox,
+      vals.y,
+      xe,
+      ym - oy,
+      xe,
+      ym
+    );
+    ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
+    ctx.bezierCurveTo(
+      xm - ox,
+      ye,
+      vals.x,
+      ym + oy,
+      vals.x,
+      ym
+    );
+    ctx.closePath();
     if (this._doFill) {
       ctx.fill();
     }
     if (this._doStroke) {
       ctx.stroke();
     }
+
     return this;
   };
   /**

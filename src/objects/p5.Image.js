@@ -289,43 +289,46 @@ define(function (require) {
   };
 
   /**
-   * Saves the image to a file and force the browser to download it.
-   * Accepts two strings for filename and file extension
-   * Supports png (default) and jpg.
+   * Saves the image to a file and forces the browser to download it.
+   * Supports png and jpg.
    * 
    * @method save
-   * @param {String} filename give your file a name
-   * @param  {String} extension 'png' or 'jpg'
+   * @param  {[type]} extension
+   *
+   * TODO: There doesn't seem to be a way to give the force the
+   * browser to download a file *and* give it a name. Which is why 
+   * this function currently only take an extension parameter.
+   * 
    */
-  p5.Image.prototype.save = function(filename, extension) {
+  p5.Image.prototype.save = function(extension) {
+    // var components = name.split('.');
+    // var extension = components[components.length - 1];
     var mimeType;
-    if (!extension) {
-      extension = 'png';
+    
+    // en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support
+    switch(extension.toLowerCase()){
+    case 'png':
       mimeType = 'image/png';
+      break;
+    case 'jpeg':
+      mimeType = 'image/jpeg';
+      break;
+    case 'jpg':
+      mimeType = 'image/jpeg';
+      break;
+    default:
+      mimeType = 'image/png';
+      break;
     }
-    else {
-      // en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support
-      switch(extension.toLowerCase()){
-      case 'png':
-        mimeType = 'image/png';
-        break;
-      case 'jpeg':
-        mimeType = 'image/jpeg';
-        break;
-      case 'jpg':
-        mimeType = 'image/jpeg';
-        break;
-      default:
-        mimeType = 'image/png';
-        break;
-      }
-    }
-    var downloadMime = 'image/octet-stream';
-    var imageData = this.canvas.toDataURL(mimeType);
-    imageData = imageData.replace(mimeType, downloadMime);
 
-    //Make the browser download the file
-    p5.prototype.downloadFile(imageData, filename, extension);
+    if(mimeType !== undefined){
+      var downloadMime = 'image/octet-stream';
+      var imageData = this.canvas.toDataURL(mimeType);
+      imageData = imageData.replace(mimeType, downloadMime);
+      
+      //Make the browser download the file
+      window.location.href = imageData;
+    }
   };
   return p5.Image;
 });

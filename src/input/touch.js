@@ -67,14 +67,19 @@ define(function (require) {
    */
   p5.prototype.ontouchstart = function(e) {
     var context = this._isGlobal ? window : this;
+    var executeDefault;
     this.setTouchPoints(e);
     if(typeof context.touchStarted === 'function') {
-      e.preventDefault();
-      context.touchStarted(e);
+      executeDefault = context.touchStarted(e);
+      if(!executeDefault) {
+        e.preventDefault();
+      }
     } else if (typeof context.mousePressed === 'function') {
-      e.preventDefault();
+      executeDefault = context.mousePressed(e);
+      if(!executeDefault) {
+        e.preventDefault();
+      }
       this.setMouseButton(e);
-      context.mousePressed(e);
     }
   };
 
@@ -87,14 +92,19 @@ define(function (require) {
    */
   p5.prototype.ontouchmove = function(e) {
     var context = this._isGlobal ? window : this;
+    var executeDefault;
     this.setTouchPoints(e);
     if (typeof context.touchMoved === 'function') {
-      e.preventDefault();
-      context.touchMoved(e);
+      executeDefault = context.touchMoved(e);
+      if(!executeDefault) {
+        e.preventDefault();
+      }
     } else if (typeof context.mouseDragged === 'function') {
-      e.preventDefault();
+      executeDefault = context.mouseDragged(e);
+      if(!executeDefault) {
+        e.preventDefault();
+      }
       this.updateMouseCoords(e);
-      context.mouseDragged(e);
     }
   };
 
@@ -107,13 +117,18 @@ define(function (require) {
    */
   p5.prototype.ontouchend = function(e) {
     var context = this._isGlobal ? window : this;
+    var executeDefault;
     if (typeof context.touchEnded === 'function') {
-      e.preventDefault();
-      context.touchEnded(e);
+      executeDefault = context.touchEnded(e);
+      if(!executeDefault) {
+        e.preventDefault();
+      }
     } else if (typeof context.mouseReleased === 'function') {
-      e.preventDefault();
+      executeDefault = context.mouseReleased(e);
+      if(!executeDefault) {
+        e.preventDefault();
+      }
       this.updateMouseCoords(e);
-      context.mouseReleased(e);
     }
   };
 
