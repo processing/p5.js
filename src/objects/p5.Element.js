@@ -37,26 +37,45 @@ define(function(require) {
   /**
    *
    * Attaches the element to the parent specified. A way of setting
-   * the container for the element. Accepts either a string ID or
-   * DOM node.
+   * the container for the element. Accepts either a string ID, DOM
+   * node, or p5.Element.
    *
    * @method parent
-   * @param  {String|Object} parent the ID or node of the parent elt
+   * @param  {String|Object} parent the ID, DOM node, or p5.Element
+   *                         of desired parent element
    * @example
    * <div class="norender"><code>
    * // in the html file:
    * &lt;div id="myContainer">&lt;/div>
-   * 
    * // in the js file:
    * var cnv = createCanvas(100, 100);
    * cnv.parent("myContainer");
    * </code></div>
+   * @example
+   * <div class='norender'><code>
+   * var div0 = createDiv('this is the parent');
+   * var div1 = createDiv('this is the child');
+   * div1.parent(div0); // use p5.Element
+   * </code></div>
+   * <div class='norender'><code>
+   * var div0 = createDiv('this is the parent');
+   * div0.id('apples');
+   * var div1 = createDiv('this is the child');
+   * div1.parent('apples'); // use id
+   * </code></div>
+   * <div class='norender'><code>
+   * var elt = document.getElementById('myParentDiv');
+   * var div1 = createDiv('this is the child');
+   * div1.parent(elt); // use element from page
+   * </code></div>
    */
-  p5.Element.prototype.parent = function(parent) {
-    if (typeof parent === 'string') {
-      parent = document.getElementById(parent);
+  p5.Element.prototype.parent = function(p) {
+    if (typeof p === 'string') {
+      p = document.getElementById(p);
+    } else if (p instanceof p5.Element) {
+      p = p.elt;
     }
-    parent.appendChild(this.elt);
+    p.appendChild(this.elt);
   };
 
   /**
