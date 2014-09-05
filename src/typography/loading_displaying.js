@@ -54,8 +54,6 @@ define(function (require) {
    * </div>
    */
   p5.prototype.text = function () {
-    var str = this._textStyle + ' ' + this._textSize + 'px ' + this._textFont;
-    this.drawingContext.font = str;
     if (arguments.length === 3) {
       if (this._doFill) {
         this.drawingContext.fillText(arguments[0], arguments[1], arguments[2]);
@@ -119,6 +117,7 @@ define(function (require) {
    */
   p5.prototype.textFont = function(str) {
     this._setProperty('_textFont', str); //pend temp?
+    this._applyTextProperties();
   };
 
   return p5;
