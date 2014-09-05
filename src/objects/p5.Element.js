@@ -51,7 +51,6 @@ define(function(require) {
    * var cnv = createCanvas(100, 100);
    * cnv.parent("myContainer");
    * </code></div>
-   * @example
    * <div class='norender'><code>
    * var div0 = createDiv('this is the parent');
    * var div1 = createDiv('this is the child');

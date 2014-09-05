@@ -67,6 +67,10 @@ define(function (require) {
     if (!this._doStroke && !this._doFill) {
       return;
     }
+    if (this._angleMode === constants.DEGREES) {
+      start = this.radians(start);
+      stop = this.radians(stop);
+    }
     var ctx = this.drawingContext;
     var vals = canvas.arcModeAdjust(
       x,
