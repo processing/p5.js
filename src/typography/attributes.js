@@ -116,6 +116,7 @@ define(function (require) {
    */
   p5.prototype.textSize = function(s) {
     this._setProperty('_textSize', s);
+    this._applyTextProperties();
   };
 
   /**
@@ -147,6 +148,7 @@ define(function (require) {
       s === constants.ITALIC ||
       s === constants.BOLD) {
       this._setProperty('_textStyle', s);
+      this._applyTextProperties();
     }
   };
 
@@ -169,6 +171,15 @@ define(function (require) {
    */
   p5.prototype.textWidth = function(s) {
     return this.drawingContext.measureText(s).width;
+  };
+
+  /**
+   * Helper fxn to apply text properties. 
+   *
+   */
+  p5.prototype._applyTextProperties = function () {
+    var str = this._textStyle + ' ' + this._textSize + 'px ' + this._textFont;
+    this.drawingContext.font = str;
   };
 
   return p5;
