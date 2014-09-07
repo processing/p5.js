@@ -298,7 +298,26 @@ define(function (require) {
     }.bind(this);
 
     /**
+     * Removes the entire p5 sketch. This will remove the canvas and any 
+     * elements created by p5.js. It will also stop the draw loop and unbind 
+     * any properties or methods from the window global scope. It will
+     * leave a variable p5 in case you wanted to create a new p5 sketch. 
+     * If you like, you can set p5 = null to erase it.
      * @method remove
+     * @example
+     * <div class='norender'><code>
+     * function setup() {
+     *   createCanvas(200, 200);
+     * }
+     * 
+     * function draw() {
+     *   ellipse(width/2, height/2, 0, 0);
+     * }
+     * 
+     * function mousePressed() {
+     *   remove(); // remove whole sketch on mouse press
+     * }
+     * </code></div>
      */
     this.remove = function() {
       if (this._curElement) {
