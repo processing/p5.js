@@ -55,14 +55,14 @@ define(function(require) {
    *   </code></div>
    */
   p5.prototype.focused = true;
-  
+
   /**
    * Sets the cursor to a predefined symbol or an image, or makes it visible
    * if already hidden. If you are trying to set an image as the cursor, the
    * recommended size is 16x16 or 32x32 pixels. It is not possible to load an
    * image as the cursor if you are exporting your program for the Web, and not
    * all MODES work with all browsers. The values for parameters x and y must
-   * be less than the dimensions of the image. 
+   * be less than the dimensions of the image.
    *
    * @method cursor
    * @param {Number/Constant} type either ARROW, CROSS, HAND, MOVE, TEXT, or
@@ -74,7 +74,7 @@ define(function(require) {
    * // Move the mouse left and right across the image
    * // to see the cursor change from a cross to a hand
    * function draw() {
-   *   line(width/2, 0, width/2, height); 
+   *   line(width/2, 0, width/2, height);
    *   if (mouseX < 50) {
    *     cursor(CROSS);
    *   } else {
@@ -159,8 +159,8 @@ define(function(require) {
   };
 
   /**
-   * Hides the cursor from view. 
-   * 
+   * Hides the cursor from view.
+   *
    * @method noCursor
    * @example
    * <div><code>
@@ -170,7 +170,7 @@ define(function(require) {
    *
    * function draw() {
    *   background(200);
-   *   ellipse(mouseX, mouseY, 10, 10); 
+   *   ellipse(mouseX, mouseY, 10, 10);
    * }
    * </code></div>
    */
@@ -229,6 +229,16 @@ define(function(require) {
     // remap the window width and height on resize
     this.windowWidth = window.innerWidth;
     this.windowHeight = window.innerHeight;
+
+    var context = this._isGlobal ? window : this;
+    var executeDefault;
+    if (typeof context.windowResized === 'function') {
+      executeDefault = context.windowResized(e);
+      if(executeDefault !== undefined && !executeDefault) {
+        e.preventDefault();
+      }
+    }
+
   });
 
   /**
@@ -255,7 +265,7 @@ define(function(require) {
 
   /**
    * If argument is given, sets the sketch to fullscreen or not based on the
-   * value of the argument. If no argument is given, returns the current 
+   * value of the argument. If no argument is given, returns the current
    * fullscreen state. Note that due to browser restrictions this can only
    * be called on user input, for example, on mouse press like the example
    * below.
