@@ -176,6 +176,13 @@ define(function (require) {
         }
       }
 
+      // PEND
+      // // Setup loading screen
+      // this._loadingScreen = document.createElement('loadingDiv');
+      // this._loadingScreen.innerHTML = 'loading...';
+      // var node = this._userNode || document.body;
+      // node.appendChild(this._loadingScreen);
+
       // Always create a default canvas.
       // Later on if the user calls createCanvas, this default one
       // will be replaced
@@ -244,6 +251,7 @@ define(function (require) {
         k.className = k.className.replace(reg, '');
       }
       this._setupDone = true;
+      // this._loadingScreen.parentNode.removeChild(this._loadingScreen);//PEND
     }.bind(this);
 
     this._draw = function () {
