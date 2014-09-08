@@ -11,7 +11,6 @@ define(function (require) {
   require('shim');
 
   // Core needs the PVariables object
-  // TODO: ???
   var constants = require('constants');
 
   /**
