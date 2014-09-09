@@ -37,14 +37,10 @@ function getWeather(){
   var cityName = userInput.value();
   var URL = 'http://api.openweathermap.org/data/2.5/weather?q='+cityName+'&units=metric';
   result = loadJSON(URL, displayWeather); // displayWeather is the callback
-
-  print('At the moment the mouse is clicked, the JSON object is empty: ');
-  print(result); // result is not ready
 }
 
 // Callback: loadJSON calls this function when finished loading.
 function displayWeather(){
-  print('In the callback function, the JSON object is ready: ')
   print(result); // result is ready!
 
   var location = result.name;

@@ -16,7 +16,7 @@ define(function (require) {
    *  @param  {[Canvas]} canvas a variable representing a
    *                             specific html5 canvas (optional).
    */
-  p5.prototype.saveCanvas = function(filename, extension, _cnv) {
+  p5.prototype.saveCanvas = function(_cnv, filename, extension) {
     var cnv;
     if (_cnv) {
       cnv = _cnv;
@@ -38,7 +38,7 @@ define(function (require) {
         mimeType = 'image/png';
       }
       else {
-        switch(extension.toLowerCase()){
+        switch(extension){
         case 'png':
           mimeType = 'image/png';
           break;
