@@ -111,15 +111,16 @@ define(function (require) {
    *  the client's computer. <b>Note that it is not recommended to call save() 
    *  within draw if it's looping, as the save() function will open a new save 
    *  dialog every frame.</b></p>
-   *  <p>The default behavior is to save the canvas as an image. 
+   *  <p>The default behavior is to save the canvas as an image. You can
+   *  optionally specify a filename. 
    *  For example:</p>
    *  <pre class='language-javascript'><code>
    *  save();
-   *  var cnv = createCanvas(100, 100);
-   *  save(cnv, 'myCanvas.jpg'); // save a specific canvas with a filename
+   *  save('myCanvas.jpg'); // save a specific canvas with a filename
    *  </code></pre>
    *
-   *  <p>Alternately, the first parameter can be an Array of Strings,
+   *  <p>Alternately, the first parameter can be a pointer to a canvas
+   *  p5.Element, an Array of Strings,
    *  an Array of JSON, a JSON object, a p5.Table, a p5.Image, or a
    *  p5.SoundFile (requires p5.sound). The second parameter is a filename
    *  (including extension). The third parameter is for options specific
@@ -127,6 +128,13 @@ define(function (require) {
    *  given paramaters. For example:</p>
    * 
    *  <pre class='language-javascript'><code>
+   *  
+   *  var cnv = createCanvas(100, 100);
+   *  save(cnv, 'myCanvas.jpg');      // Saves canvas as an image
+   *
+   *  var gb = createGraphics(100, 100);
+   *  save(gb, 'myGraphics.jpg');      // Saves p5.Graphics object as an image
+   * 
    *  save(myTable, 'myTable.html');  // Saves table as html file
    *  save(myTable, 'myTable.csv',);  // Comma Separated Values
    *  save(myTable, 'myTable.tsv');   // Tab Separated Values
@@ -176,14 +184,14 @@ define(function (require) {
 
     // if first param is a p5Graphics, then saveCanvas
     else if (args[0] instanceof p5.Graphics) {
-      p5.prototype.saveCanvas(args[0], args[1], args[2]);
+      p5.prototype.saveCanvas(args[0].elt, args[1], args[2]);
       return;
     }
 
     // // if first param is a String, assume it is a filename for canvas
-    // else if (typeof(args[0]) === 'string') {
-    //   p5.prototype.saveCanvas(cnv, args[0]);
-    // }
+    else if (typeof(args[0]) === 'string') {
+      p5.prototype.saveCanvas(cnv, args[0]);
+    }
 
     // =================================================
     // OPTION 2: extension clarifies saveStrings vs. saveJSON
