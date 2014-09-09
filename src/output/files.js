@@ -207,7 +207,7 @@ define(function (require) {
           p5.prototype.saveTable(args[0], args[1], args[2], args[3]);
         }
         else if (args[0] instanceof p5.Image) {
-          p5.prototype.saveCanvas(args[1], args[2], args[0].canvas);
+          p5.prototype.saveCanvas(args[0].canvas, args[1], args[2]);
         }
         else if (args[0] instanceof p5.SoundFile) {
           p5.prototype.saveSound(args[0], args[1], args[2], args[3]);

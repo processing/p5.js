@@ -38,7 +38,7 @@ define(function (require) {
         mimeType = 'image/png';
       }
       else {
-        switch(extension.toLowerCase()){
+        switch(extension){
         case 'png':
           mimeType = 'image/png';
           break;
