@@ -115,7 +115,8 @@ define(function (require) {
    *  For example:</p>
    *  <pre class='language-javascript'><code>
    *  save();
-   *  save('myFile.jpg');
+   *  var cnv = createCanvas(100, 100);
+   *  save(cnv, 'myCanvas.jpg'); // save a specific canvas with a filename
    *  </code></pre>
    *
    *  <p>Alternately, the first parameter can be an Array of Strings,
@@ -168,27 +169,21 @@ define(function (require) {
     // if no arguments are provided, save canvas
     var cnv = this._curElement.elt;
     if (args.length === 0) {
-      p5.prototype.saveCanvas(null, null, cnv);
+      p5.prototype.saveCanvas(cnv);
       return;
     }
     // otherwise, parse the arguments
 
-    // if first param is a string, then it is a filename for saveCanvas
-    if (typeof(args[0]) === 'string') {
-      // if a canvas is provided:
-      if (typeof(args[2]) === 'object') {
-        p5.prototype.saveCanvas(args[0], args[1], args[2]);
-      }
-      // if image extension is provided:
-      else if (typeof(args[1]) === 'string') {
-        p5.prototype.saveCanvas(args[0], args[1], cnv);
-      }
-      // if only filename is provided:
-      else {
-        p5.prototype.saveCanvas(args[0], null, cnv);
-      }
+    // if first param is a p5Graphics, then saveCanvas
+    else if (args[0] instanceof p5.Graphics) {
+      p5.prototype.saveCanvas(args[0], args[1], args[2]);
       return;
     }
+
+    // // if first param is a String, assume it is a filename for canvas
+    // else if (typeof(args[0]) === 'string') {
+    //   p5.prototype.saveCanvas(cnv, args[0]);
+    // }
 
     // =================================================
     // OPTION 2: extension clarifies saveStrings vs. saveJSON

@@ -255,13 +255,10 @@ define(function (require) {
       url: path,
       type: 'xml',
       crossOrigin: true,
-      success: function (resp) {
-        ret[0] = resp;
-        if (typeof callback !== 'undefined') {
-          callback(ret);
-        }
-      }
-    });
+    })
+      .then(function(resp){
+        callback(resp);
+      });
     return ret;
   };
 
