@@ -46,14 +46,15 @@ define(function (require) {
   p5.prototype.loadJSON = function(path, callback) {
     var ret = [];
     var t = path.indexOf('http') === -1 ? 'json' : 'jsonp';
-    reqwest({url: path, type: t, success: function (resp) {
-      for (var k in resp) {
-        ret[k] = resp[k];
-      }
-      if (typeof callback !== 'undefined') {
-        callback(ret);
-      }
-    }});
+    reqwest({url: path, type: t, crossOrigin: true})
+      .then(function(resp) {
+        for (var k in resp) {
+          ret[k] = resp[k];
+        }
+        if (typeof callback !== 'undefined') {
+          callback(ret);
+        }
+      });
     return ret;
   };
 
