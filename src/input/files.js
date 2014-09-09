@@ -145,10 +145,10 @@ define(function (require) {
    *  @method  loadTable
    *  @param  {String}   filename   name of the file or URL to load
    *  @param  {String|Strings}   [options]  "header" "csv" "tsv"
-   *  @param  {Function} [callback] function to be executed after loadXML()
-   *                               completes, XML object is passed in as
+   *  @param  {Function} [callback] function to be executed after loadTable()
+   *                               completes, Table object is passed in as
    *                               first argument
-   *  @return {Object}              XML object containing data
+   *  @return {Object}              Table object containing data
    */
   p5.prototype.loadTable = function (path) {
     var callback = null;
@@ -254,6 +254,7 @@ define(function (require) {
     reqwest({
       url: path,
       type: 'xml',
+      crossOrigin: true,
       success: function (resp) {
         ret[0] = resp;
         if (typeof callback !== 'undefined') {
