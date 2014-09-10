@@ -17,6 +17,12 @@ define(function (require) {
    *                             specific html5 canvas (optional).
    */
   p5.prototype.saveCanvas = function(_cnv, filename, extension) {
+    if (!extension) {
+      extension = p5.prototype._checkFileExtension(filename, extension)[1];
+      if (extension === '') {
+        extension = 'png';
+      }
+    }
     var cnv;
     if (_cnv) {
       cnv = _cnv;
@@ -33,7 +39,7 @@ define(function (require) {
       window.location.href = cnv.toDataURL();
     } else {
       var mimeType;
-      if (!extension) {
+      if (typeof(extension) === 'undefined') {
         extension = 'png';
         mimeType = 'image/png';
       }
