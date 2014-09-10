@@ -215,7 +215,7 @@ define(function (require) {
           p5.prototype.saveTable(args[0], args[1], args[2], args[3]);
         }
         else if (args[0] instanceof p5.Image) {
-          p5.prototype.saveCanvas(args[0].canvas, args[1], args[2]);
+          p5.prototype.saveCanvas(args[0].canvas, args[1]);
         }
         else if (args[0] instanceof p5.SoundFile) {
           p5.prototype.saveSound(args[0], args[1], args[2], args[3]);
@@ -520,12 +520,13 @@ define(function (require) {
     if (!extension) {
       extension = '';
     }
+    if (!filename) {
+      filename = 'untitled';
+    }
     var ext = '';
     // make sure the file will have a name, see if filename needs extension
-    if (filename) {
+    if (filename && filename.indexOf('.') > -1) {
       ext = filename.split('.').pop();
-    } else {
-      filename = 'untitled';
     }
     // append extension if it doesn't exist
     if (extension) {
@@ -536,6 +537,7 @@ define(function (require) {
     }
     return [filename, ext];
   }
+  p5.prototype._checkFileExtension = _checkFileExtension;
 
   /**
    *  Returns true if the browser is Safari, false if not.
