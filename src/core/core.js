@@ -281,14 +281,14 @@ define(function (require) {
           f.call(this);
         });
         userDraw();
-        this._updatePMouseCoords();
-        this._updatePTouchCoords();
         // call any registered post functions
         this._registeredMethods.post.forEach(function(f) {
           f.call(this);
         });
         this.pop();
       }
+      this._updatePMouseCoords();
+      this._updatePTouchCoords();
     }.bind(this);
 
     this._runFrames = function() {
