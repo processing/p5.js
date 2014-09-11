@@ -101,6 +101,7 @@ define(function (require) {
   p5.prototype.isMousePressed = false; // both are supported
 
   p5.prototype._updateMouseCoords = function(e) {
+    this._updatePMouseCoords();
     if(e.type === 'touchstart' || e.type === 'touchmove') {
       this._setProperty('mouseX', this.touchX);
       this._setProperty('mouseY', this.touchY);
