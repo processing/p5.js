@@ -100,22 +100,24 @@ define(function (require) {
   p5.prototype.mouseIsPressed = false;
   p5.prototype.isMousePressed = false; // both are supported
 
-  p5.prototype.updateMouseCoords = function(e) {
-    var mousePos = getMousePos(this._curElement.elt, e);
-
-    this._setProperty('pmouseX', this.mouseX);
-    this._setProperty('pmouseY', this.mouseY);
+  p5.prototype._updateMouseCoords = function(e) {
     if(e.type === 'touchstart' || e.type === 'touchmove') {
       this._setProperty('mouseX', this.touchX);
       this._setProperty('mouseY', this.touchY);
     } else {
+      var mousePos = getMousePos(this._curElement.elt, e);
       this._setProperty('mouseX', mousePos.x);
       this._setProperty('mouseY', mousePos.y);
     }
-    this._setProperty('pwinMouseX', this.winMouseX);
-    this._setProperty('pwinMouseY', this.winMouseY);
     this._setProperty('winMouseX', e.pageX);
     this._setProperty('winMouseY', e.pageY);
+  };
+
+  p5.prototype._updatePMouseCoords = function(e) {
+    this._setProperty('pmouseX', this.mouseX);
+    this._setProperty('pmouseY', this.mouseY);
+    this._setProperty('pwinMouseX', this.winMouseX);
+    this._setProperty('pwinMouseY', this.winMouseY);
   };
 
   function getMousePos(canvas, evt) {
@@ -126,7 +128,7 @@ define(function (require) {
     };
   }
 
-  p5.prototype.setMouseButton = function(e) {
+  p5.prototype._setMouseButton = function(e) {
     if (e.button === 1) {
       this._setProperty('mouseButton', constants.CENTER);
     } else if (e.button === 2) {
@@ -195,7 +197,7 @@ define(function (require) {
   p5.prototype.onmousemove = function(e){
     var context = this._isGlobal ? window : this;
     var executeDefault;
-    this.updateMouseCoords(e);
+    this._updateMouseCoords(e);
     if (!this.isMousePressed) {
       if (typeof context.mouseMoved === 'function') {
         executeDefault = context.mouseMoved(e);
@@ -215,7 +217,7 @@ define(function (require) {
         if(!executeDefault) {
           e.preventDefault();
         }
-        this.setTouchPoints(e);
+        this._updateTouchCoords(e);
       }
     }
   };
@@ -255,7 +257,7 @@ define(function (require) {
     var executeDefault;
     this._setProperty('isMousePressed', true);
     this._setProperty('mouseIsPressed', true);
-    this.setMouseButton(e);
+    this._setMouseButton(e);
     if (typeof context.mousePressed === 'function') {
       executeDefault = context.mousePressed(e);
       if(executeDefault !== undefined && !executeDefault) {
@@ -266,7 +268,7 @@ define(function (require) {
       if(!executeDefault) {
         e.preventDefault();
       }
-      this.setTouchPoints(e);
+      this._updateTouchCoords(e);
     }
   };
 
@@ -313,7 +315,7 @@ define(function (require) {
       if(!executeDefault) {
         e.preventDefault();
       }
-      this.setTouchPoints(e);
+      this._updateTouchCoords(e);
     }
   };
 

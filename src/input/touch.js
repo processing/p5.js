@@ -22,13 +22,34 @@ define(function (require) {
 
   /**
    * The system variable touchY always contains the horizontal position of
-   * one finger, relative to (0, 0) of the canvas. This is best used for
+   * one finger, relative to (0, 0) of the canvas in the frame previous to the
+   * current frame. This is best used for
    * single touch interactions. For multi-touch interactions, use the
    * touches[] array.
    *
    * @property touchY
    */
   p5.prototype.touchY = 0;
+
+  /**
+   * The system variable touchY always contains the horizontal position of
+   * one finger, relative to (0, 0) of the canvas in the frame previous to the
+   * current frame. This is best used for
+   * single touch interactions. For multi-touch interactions, use the
+   * touches[] array.
+   *
+   * @property ptouchX
+   */
+  p5.prototype.ptouchX = 0;
+
+  /**
+   * The system variable pmouseY always contains the vertical position of the
+   * mouse in the frame previous to the current frame, relative to (0, 0) of
+   * the canvas.
+   *
+   * @property ptouchY
+   */
+  p5.prototype.ptouchY = 0;
 
   /**
    * The system variable touches[] contains an array of the positions of all
@@ -39,23 +60,26 @@ define(function (require) {
    */
   p5.prototype.touches = [];
 
-  p5.prototype.setTouchPoints = function(e) {
-    var context = this._isGlobal ? window : this;
-
+  p5.prototype._updateTouchCoords = function(e) {
     if(e.type === 'mousedown' || e.type === 'mousemove'){
-      context._setProperty('touchX', context.mouseX);
-      context._setProperty('touchY', context.mouseY);
+      this._setProperty('touchX', this.mouseX);
+      this._setProperty('touchY', this.mouseY);
     } else {
-      context._setProperty('touchX', e.changedTouches[0].pageX);
-      context._setProperty('touchY', e.changedTouches[0].pageY);
+      this._setProperty('touchX', e.changedTouches[0].pageX);
+      this._setProperty('touchY', e.changedTouches[0].pageY);
 
       var touches = [];
       for(var i = 0; i < e.changedTouches.length; i++){
         var ct = e.changedTouches[i];
         touches[i] = {x: ct.pageX, y: ct.pageY};
       }
-      context._setProperty('touches', touches);
+      this._setProperty('touches', touches);
     }
+  };
+
+  p5.prototype._updatePTouchCoords = function() {
+    this._setProperty('ptouchX', this.touchX);
+    this._setProperty('ptouchY', this.touchY);
   };
 
   /**
@@ -68,7 +92,7 @@ define(function (require) {
   p5.prototype.ontouchstart = function(e) {
     var context = this._isGlobal ? window : this;
     var executeDefault;
-    this.setTouchPoints(e);
+    this._updateTouchCoords(e);
     if(typeof context.touchStarted === 'function') {
       executeDefault = context.touchStarted(e);
       if(!executeDefault) {
@@ -79,7 +103,7 @@ define(function (require) {
       if(!executeDefault) {
         e.preventDefault();
       }
-      this.setMouseButton(e);
+      //this._setMouseButton(e);
     }
   };
 
@@ -93,7 +117,7 @@ define(function (require) {
   p5.prototype.ontouchmove = function(e) {
     var context = this._isGlobal ? window : this;
     var executeDefault;
-    this.setTouchPoints(e);
+    this._updateTouchCoords(e);
     if (typeof context.touchMoved === 'function') {
       executeDefault = context.touchMoved(e);
       if(!executeDefault) {
@@ -104,7 +128,7 @@ define(function (require) {
       if(!executeDefault) {
         e.preventDefault();
       }
-      this.updateMouseCoords(e);
+      this._updateMouseCoords(e);
     }
   };
 
@@ -128,7 +152,7 @@ define(function (require) {
       if(!executeDefault) {
         e.preventDefault();
       }
-      this.updateMouseCoords(e);
+      this._updateMouseCoords(e);
     }
   };
 
