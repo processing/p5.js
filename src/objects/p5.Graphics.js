@@ -9,12 +9,12 @@ define(function(require) {
   var constants = require('constants');
 
   /**
-   * Main graphics and rendering context, as well as the base API 
-   * implementation for p5.js "core". Use this class if you need to draw into 
-   * an off-screen graphics buffer. A p5.Graphics object can be constructed 
-   * with the <code>createGraphics()</code> function. The fields and methods 
+   * Main graphics and rendering context, as well as the base API
+   * implementation for p5.js "core". Use this class if you need to draw into
+   * an off-screen graphics buffer. A p5.Graphics object can be constructed
+   * with the <code>createGraphics()</code> function. The fields and methods
    * for this class are extensive, but mirror the normal drawing API for p5.
-   * 
+   *
    * @class p5.Graphics
    * @constructor
    * @extends p5.Element
@@ -33,7 +33,7 @@ define(function(require) {
    *   pg.background(100);
    *   pg.noStroke();
    *   pg.ellipse(pg.width/2, pg.height/2, 50, 50);
-   *   image(pg, 9, 30); 
+   *   image(pg, 9, 30);
    *   image(pg, 51, 30);
    * }
    * </code>
@@ -53,7 +53,7 @@ define(function(require) {
     } else { // hide if offscreen buffer
       this.canvas.style.display = 'none';
     }
-    
+
     this.drawingContext.fillStyle = '#FFFFFF';
     this.drawingContext.strokeStyle = '#000000';
     this.drawingContext.lineCap = constants.ROUND;
@@ -61,6 +61,14 @@ define(function(require) {
 
   p5.Graphics.prototype = Object.create(p5.Element.prototype);
 
+  p5.Graphics.prototype.resize = function(w, h) {
+    this.width = w;
+    this.height = h;
+    if (this._pInst) {
+      this._pInst._setProperty('width', this.width);
+      this._pInst._setProperty('height', this.height);
+    }
+  };
 
   return p5.Graphics;
 });

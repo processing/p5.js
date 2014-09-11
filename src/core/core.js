@@ -164,7 +164,8 @@ define(function (require) {
       'keypress': null,
       'touchstart': null,
       'touchmove': null,
-      'touchend': null
+      'touchend': null,
+      'resize': null
     };
 
     this._start = function () {
