@@ -47,27 +47,6 @@ define(function (require) {
   };
 
   /**
-   * Calculates and returns the height of any character or text string.
-   *
-   * @method textHeight
-   * @param {String} s the String of characters to measure
-   * @example
-   * <div>
-   * <code>
-   * background(0);
-   * fill(255);
-   * textSize(14);
-   * s = "String.";
-   * text(s, 10, 23);
-   * console.log(textHeight(s));
-   * </code>
-   * </div>
-   */
-  p5.prototype.textHeight = function(s) {
-    return this.drawingContext.measureText(s).height;
-  };
-
-  /**
    * Sets the spacing between lines of text in units of pixels. This
    * setting will be used in all subsequent calls to the text() function.
    *
