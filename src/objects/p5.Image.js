@@ -64,16 +64,45 @@ define(function (require) {
      * (indices 0-3) in the array will be the R, G, B, A values of the pixel at 
      * (0, 0). The second four values (indices 4-7) will contain the R, G, B, A
      * values of the pixel at (1, 0). More generally, to set values for a pixel
-     * at (x, y): 
-     * <code>pixels[y*width+x] = r; 
-     * pixels[y*width+x+1] = g;
-     * pixels[y*width+x+2] = b;
+     * at (x, y):<br>
+     * <code>pixels[y*width+x] = r; <br>
+     * pixels[y*width+x+1] = g;<br>
+     * pixels[y*width+x+2] = b;<br>
      * pixels[y*width+x+3] = a;</code>
      * <br><br>
      * Before accessing this array, the data must loaded with the loadPixels()
      * function. After the array data has been modified, the updatePixels()
      * function must be run to update the changes.
      * @property pixels[]
+     * @example
+     * <div>
+     * <code>
+     * img = createImage(66, 66);
+     * img.loadPixels();
+     * for (i = 0; i < img.width; i++) {
+     *   for (j = 0; j < img.height; j++) {
+     *     img.set(i, j, color(0, 90, 102)); 
+     *   }
+     * }
+     * img.updatePixels();
+     * image(img, 17, 17);
+     * </code>
+     * </div>
+     * <div>
+     * <code>
+     * var pink = color(255, 102, 204);
+     * img = createImage(66, 66);
+     * img.loadPixels();
+     * for (var i = 0; i < 4*(width*height/2); i+=4) {
+     *   img.pixels[i] = red(pink);
+     *   img.pixels[i+1] = green(pink);
+     *   img.pixels[i+2] = blue(pink);
+     *   img.pixels[i+3] = alpha(pink);
+     * }
+     * img.updatePixels();
+     * image(img, 17, 17);
+     * </code>
+     * </div>
      */
     this.pixels = [];
   };
@@ -141,13 +170,28 @@ define(function (require) {
    *
    * Note that for a large number of pixels this will
    * be slower than directly manipulating the pixels array
-   * and then calling updatePixels()
+   * and then calling updatePixels().
    *
    * @method set
    * @param {Number}              x x-coordinate of the pixel
    * @param {Number}              y y-coordinate of the pixel
    * @param {Number|Array|Object}   a grayscale value | pixel array |
    *                                a p5.Color | image to copy
+   * @example
+   * <div>
+   * <code>
+   * img = createImage(66, 66);
+   * img.loadPixels();
+   * for (i = 0; i < img.width; i++) {
+   *   for (j = 0; j < img.height; j++) {
+   *     img.set(i, j, color(0, 90, 102, i % img.width * 2)); 
+   *   }
+   * }
+   * img.updatePixels();
+   * image(img, 17, 17);
+   * image(img, 34, 34);
+   * </code>
+   * </div>
    */
   p5.Image.prototype.set = function(x, y, imgOrCol){
     p5.prototype.set.call(this, x, y, imgOrCol);
