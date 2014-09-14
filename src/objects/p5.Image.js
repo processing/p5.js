@@ -57,14 +57,14 @@ define(function (require) {
     this.drawingContext = this.canvas.getContext('2d');
     /**
      * Array containing the color of every pixel in the image.
-     * These values are numbers. This array is the size of the display window x4,
-     * representing the R, G, B, A values in order for each pixel, moving from 
-     * left to right across each row, then down each column. For example, 
-     * if the image is 100x100 pixels, there will be 40000. The first four values
-     * (indices 0-3) in the array will be the R, G, B, A values of the pixel at 
-     * (0, 0). The second four values (indices 4-7) will contain the R, G, B, A
-     * values of the pixel at (1, 0). More generally, to set values for a pixel
-     * at (x, y):<br>
+     * These values are numbers. This array is the size of the display window
+     * x 4, representing the R, G, B, A values in order for each pixel, moving 
+     * from left to right across each row, then down each column. For example, 
+     * if the image is 100x100 pixels, there will be 40000. The first four
+     * values (indices 0-3) in the array will be the R, G, B, A values of the
+     * pixel at  (0, 0). The second four values (indices 4-7) will contain the
+     * R, G, B, A values of the pixel at (1, 0). More generally, to set values
+     * for a pixel at (x, y):<br>
      * <code>pixels[y*width+x] = r; <br>
      * pixels[y*width+x+1] = g;<br>
      * pixels[y*width+x+2] = b;<br>
