@@ -6,7 +6,7 @@
     "Lauren lmccart McCarthy"
   ],
   "description": "A JS client-side library for creating graphic and interactive experiences, based on the core principles of Processing.",
-  "main": "p5.min.js",
+  "main": "lib/p5.min.js",
   "keywords": [
     "javascript",
     "p5",
