@@ -1,12 +1,12 @@
 {
   "name": "p5.js",
   "version": "0.3.6",
+  "main": "lib/p5.min.js",
   "homepage": "http://p5js.org/",
   "authors": [
     "Lauren lmccart McCarthy"
   ],
   "description": "A JS client-side library for creating graphic and interactive experiences, based on the core principles of Processing.",
-  "main": "lib/p5.min.js",
   "keywords": [
     "javascript",
     "p5",
