@@ -48,6 +48,20 @@ module.exports = function(grunt) {
         }
       },
     },
+     update_json: {
+        // set some task-level options
+        options: {
+          src: 'package.json',
+          indent: '\t'
+        },
+        // update bower.json with data from package.json
+        bower: {
+          src: 'package.json',    // where to read from
+          dest: 'bower.json',     // where to write to
+          // the fields to update, as a String Grouping
+          fields: 'name version description repository'
+        },
+      },
     requirejs: {
       unmin: {
         options: {
@@ -177,7 +191,7 @@ module.exports = function(grunt) {
       options: {
         github: {
           repo: 'lmccart/p5.js', //put your user/repo here
-          usernameVar: process.env.GITHUB_USERNAME, //ENVIRONMENT VARIABLE that contains Github username 
+          usernameVar: process.env.GITHUB_USERNAME, //ENVIRONMENT VARIABLE that contains Github username
           passwordVar: process.env.GITHUB_PASSWORD //ENVIRONMENT VARIABLE that contains Github password
         }
       }
@@ -192,7 +206,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-release');
-
+  grunt.loadNpmTasks('grunt-update-json');
   grunt.registerTask('test', ['jshint', 'mocha']);
   grunt.registerTask('yui', ['yuidoc']);
   grunt.registerTask('default', ['jshint', 'requirejs', 'mocha']);
