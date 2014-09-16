@@ -106,7 +106,36 @@ define(function(require) {
    *
    * @method mousePressed
    * @param  {Function} fxn function to be fired when mouse is
-   *                    pressed over the element.
+   *                    pressed over the element.   
+   * @example
+   * <div class='norender'><code>
+   * var cnv;
+   * var d;
+   * var g;
+   * function setup() {
+   *   cnv = createCanvas(100, 100);
+   *   cnv.mousePressed(changeGray); // attach listener for
+   *                                 // canvas click only
+   *   d = 10;
+   *   g = 100;
+   * }
+   *
+   * function draw() {
+   *   background(g);
+   *   ellipse(width/2, height/2, d, d);
+   * }
+   *
+   * // this function fires with any click anywhere
+   * function mousePressed() {
+   *   d = d + 10;
+   * }
+   * 
+   * // this function fires only when cnv is clicked
+   * function changeGray() {
+   *   g = random(0, 255);
+   * }
+   * </code></div>
+   *
    */
   p5.Element.prototype.mousePressed = function (fxn) {
     attachListener('mousedown', fxn, this);
