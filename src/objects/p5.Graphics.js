@@ -57,6 +57,7 @@ define(function(require) {
     this.drawingContext.fillStyle = '#FFFFFF';
     this.drawingContext.strokeStyle = '#000000';
     this.drawingContext.lineCap = constants.ROUND;
+    this.drawingContext.font = 'normal 12px sans-serif';
   };
 
   p5.Graphics.prototype = Object.create(p5.Element.prototype);
