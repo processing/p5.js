@@ -257,7 +257,8 @@ define(function(require) {
       mode === constants.SCREEN || mode === constants.REPLACE ||
       mode === constants.OVERLAY || mode === constants.HARD_LIGHT ||
       mode === constants.SOFT_LIGHT || mode === constants.DODGE ||
-      mode === constants.BURN) {
+      mode === constants.BURN || mode === constants.ADDITIVE ||
+      mode === constants.NORMAL) {
       this.drawingContext.globalCompositeOperation = mode;
     } else {
       throw new Error('Mode '+mode+' not recognized.');
