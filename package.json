@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/lmccart/p5.js.git"
   },
-  "version": "0.3.6",
+  "version": "0.3.7",
   "devDependencies": {
     "almond": "~0.2.7",
     "amdclean": "~0.3.3",
@@ -18,6 +18,7 @@
     "grunt-lib-phantomjs": "~0.4.0",
     "grunt-mocha": "~0.4.6",
     "grunt-release": "^0.7.0",
+    "grunt-update-json": "^0.1.3",
     "phantomjs": "~1.9.2-4"
   },
   "licenses": [
