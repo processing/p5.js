@@ -55,7 +55,7 @@ define(function (require) {
       var curFill = this.drawingContext.fillStyle;
       // create background rect
       var ctx = this.drawingContext;
-      ctx.fillStyle = p5.Color.getColor.apply(this, arguments);
+      ctx.fillStyle = p5.Color._getCanvasColor.apply(this, arguments);
       ctx.fillRect(0, 0, this.width, this.height);
       // reset fill
       ctx.fillStyle = curFill;
@@ -180,7 +180,7 @@ define(function (require) {
   p5.prototype.fill = function() {
     this._setProperty('_doFill', true);
     var ctx = this.drawingContext;
-    ctx.fillStyle = p5.Color.getColor.apply(this, arguments);
+    ctx.fillStyle = p5.Color._getCanvasColor.apply(this, arguments);
   };
 
   /**
@@ -250,7 +250,7 @@ define(function (require) {
   p5.prototype.stroke = function() {
     this._setProperty('_doStroke', true);
     var ctx = this.drawingContext;
-    ctx.strokeStyle = p5.Color.getColor.apply(this, arguments);
+    ctx.strokeStyle = p5.Color._getCanvasColor.apply(this, arguments);
   };
 
 
