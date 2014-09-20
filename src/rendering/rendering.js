@@ -71,7 +71,7 @@ define(function(require) {
 
     var pg = this._defaultGraphics;
     if (!pg) {
-      pg = new p5.Graphics(c, this);
+      pg = new p5.Graphics(c, this._pixelDensity, this);
       this._elements.push(pg);
       this._defaultGraphics = pg;
     }
@@ -175,7 +175,7 @@ define(function(require) {
     var node = this._userNode || document.body;
     node.appendChild(c);
 
-    var pg = new p5.Graphics(c);
+    var pg = new p5.Graphics(c, this._pixelDensity);
     // store in elements array
     this._elements.push(pg);
 

@@ -39,10 +39,11 @@ define(function(require) {
    * </code>
    * </div>
    */
-  p5.Graphics = function(elt, pInst) {
+  p5.Graphics = function(elt, pixelDensity, pInst) {
     p5.Element.call(this, elt, pInst);
     this.canvas = elt;
     this.drawingContext = this.canvas.getContext('2d');
+    this._pixelDensity = pixelDensity;
     if (this._pInst) {
       // for pixel method sharing with pimage
       this._pInst._setProperty('_curElement', this);
