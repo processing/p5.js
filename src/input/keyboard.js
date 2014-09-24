@@ -9,12 +9,12 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
-  
+
   /**
    * The boolean system variable keyIsPressed is true if any key is pressed
    * and false if no keys are pressed.
    *
-   * @property keyIsPressed   
+   * @property keyIsPressed
    * @example
    * <div>
    * <code>
@@ -32,7 +32,7 @@ define(function (require) {
    */
   p5.prototype.isKeyPressed = false;
   p5.prototype.keyIsPressed = false; // khan
-   
+
   /**
    * The system variable key always contains the value of the most recent
    * key on the keyboard that was typed. To get the proper capitalization, it
@@ -54,10 +54,10 @@ define(function (require) {
 
    /**
    * The keyPressed() function is called once every time a key is pressed. The
-   * keyCode for the key that was pressed is stored in the keyCode variable. 
+   * keyCode for the key that was pressed is stored in the keyCode variable.
    * <br><br>
    * For non-ASCII keys, use the keyCode variable. You can check if the keyCode
-   * equals BACKSPACE, DELETE, ENTER, RETURN, TAB, ESCAPE, SHIFT, CONTROL, 
+   * equals BACKSPACE, DELETE, ENTER, RETURN, TAB, ESCAPE, SHIFT, CONTROL,
    * OPTION, ALT, UP_ARROW, DOWN_ARROW, LEFT_ARROW, RIGHT_ARROW.
    * <br><br>
    * For ASCII keys that was pressed is stored in the key variable. However, it
@@ -65,10 +65,10 @@ define(function (require) {
    * is recommended to use keyTyped() to read the key variable, in which the
    * case of the variable will be distinguished.
    * <br><br>
-   * Because of how operating systems handle key repeats, holding down a key 
-   * may cause multiple calls to keyTyped() (and keyReleased() as well). The 
-   * rate of repeat is set by the operating system and how each computer is 
-   * configured. 
+   * Because of how operating systems handle key repeats, holding down a key
+   * may cause multiple calls to keyTyped() (and keyReleased() as well). The
+   * rate of repeat is set by the operating system and how each computer is
+   * configured.
    *
    * @method keyPressed
    * @example
@@ -146,6 +146,12 @@ define(function (require) {
     var keyReleased = this.keyReleased || window.keyReleased;
     this._setProperty('isKeyPressed', false);
     this._setProperty('keyIsPressed', false);
+    var key = String.fromCharCode(e.which);
+    if (!key) {
+      key = e.which;
+    }
+    this._setProperty('key', key);
+    this._setProperty('keyCode', e.which);
     if (typeof keyReleased === 'function') {
       keyReleased(e);
     }
@@ -156,10 +162,10 @@ define(function (require) {
    * action keys such as Ctrl, Shift, and Alt are ignored. The most recent
    * key pressed will be stored in the key variable.
    * <br><br>
-   * Because of how operating systems handle key repeats, holding down a key 
-   * will cause multiple calls to keyTyped(), the rate is set by the operating 
-   * system and how each computer is configured. 
-   * 
+   * Because of how operating systems handle key repeats, holding down a key
+   * will cause multiple calls to keyTyped(), the rate is set by the operating
+   * system and how each computer is configured.
+   *
    * @method keyTyped
    * @example
    * <div>
