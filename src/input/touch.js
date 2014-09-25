@@ -95,12 +95,12 @@ define(function (require) {
     this._updateTouchCoords(e);
     if(typeof context.touchStarted === 'function') {
       executeDefault = context.touchStarted(e);
-      if(!executeDefault) {
+      if(executeDefault === false) {
         e.preventDefault();
       }
     } else if (typeof context.mousePressed === 'function') {
       executeDefault = context.mousePressed(e);
-      if(!executeDefault) {
+      if(executeDefault === false) {
         e.preventDefault();
       }
       //this._setMouseButton(e);
@@ -120,12 +120,12 @@ define(function (require) {
     this._updateTouchCoords(e);
     if (typeof context.touchMoved === 'function') {
       executeDefault = context.touchMoved(e);
-      if(!executeDefault) {
+      if(executeDefault === false) {
         e.preventDefault();
       }
     } else if (typeof context.mouseDragged === 'function') {
       executeDefault = context.mouseDragged(e);
-      if(!executeDefault) {
+      if(executeDefault === false) {
         e.preventDefault();
       }
       this._updateMouseCoords(e);
@@ -144,12 +144,12 @@ define(function (require) {
     var executeDefault;
     if (typeof context.touchEnded === 'function') {
       executeDefault = context.touchEnded(e);
-      if(!executeDefault) {
+      if(executeDefault === false) {
         e.preventDefault();
       }
     } else if (typeof context.mouseReleased === 'function') {
       executeDefault = context.mouseReleased(e);
-      if(!executeDefault) {
+      if(executeDefault === false) {
         e.preventDefault();
       }
       this._updateMouseCoords(e);

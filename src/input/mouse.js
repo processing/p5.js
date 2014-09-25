@@ -201,7 +201,7 @@ define(function (require) {
     if (!this.isMousePressed) {
       if (typeof context.mouseMoved === 'function') {
         executeDefault = context.mouseMoved(e);
-        if(executeDefault !== undefined && !executeDefault) {
+        if(executeDefault === false) {
           e.preventDefault();
         }
       }
@@ -209,12 +209,12 @@ define(function (require) {
     else {
       if (typeof context.mouseDragged === 'function') {
         executeDefault = context.mouseDragged(e);
-        if(executeDefault !== undefined && !executeDefault) {
+        if(executeDefault === false) {
           e.preventDefault();
         }
       } else if (typeof context.touchMoved === 'function') {
         executeDefault = context.touchMoved(e);
-        if(!executeDefault) {
+        if(executeDefault === false) {
           e.preventDefault();
         }
         this._updateTouchCoords(e);
@@ -260,12 +260,12 @@ define(function (require) {
     this._setMouseButton(e);
     if (typeof context.mousePressed === 'function') {
       executeDefault = context.mousePressed(e);
-      if(executeDefault !== undefined && !executeDefault) {
+      if(executeDefault === false) {
         e.preventDefault();
       }
     } else if (typeof context.touchStarted === 'function') {
       executeDefault = context.touchStarted(e);
-      if(!executeDefault) {
+      if(executeDefault === false) {
         e.preventDefault();
       }
       this._updateTouchCoords(e);
@@ -307,12 +307,12 @@ define(function (require) {
     this._setProperty('mouseIsPressed', false);
     if (typeof context.mouseReleased === 'function') {
       executeDefault = context.mouseReleased(e);
-      if(executeDefault !== undefined && !executeDefault) {
+      if(executeDefault === false) {
         e.preventDefault();
       }
     } else if (typeof context.touchEnded === 'function') {
       executeDefault = context.touchEnded(e);
-      if(!executeDefault) {
+      if(executeDefault === false) {
         e.preventDefault();
       }
       this._updateTouchCoords(e);
@@ -350,7 +350,7 @@ define(function (require) {
     var context = this._isGlobal ? window : this;
     if (typeof context.mouseClicked === 'function') {
       var executeDefault = context.mouseClicked(e);
-      if(executeDefault !== undefined && !executeDefault) {
+      if(executeDefault === false) {
         e.preventDefault();
       }
     }
@@ -371,7 +371,7 @@ define(function (require) {
     var context = this._isGlobal ? window : this;
     if (typeof context.mouseWheel === 'function') {
       var executeDefault = context.mouseWheel(e);
-      if(!executeDefault) {
+      if(executeDefault === false) {
         e.preventDefault();
       }
     }
