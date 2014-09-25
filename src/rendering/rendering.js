@@ -38,25 +38,9 @@ define(function(require) {
       c = document.createElement('canvas');
       c.id = 'defaultCanvas';
     } else { // resize the default canvas if new one is created
-      c = document.getElementById('defaultCanvas');
-      if (c) {
-        c.id = ''; // remove default id
-      } else { // probably user calling createCanvas more than once... uhoh
-        // c = document.createElement('canvas');
-
-        // // store in elements array
-        // this._elements.push(c);
-
-        var warn = 'Warning: createCanvas more than once NOT recommended.';
-        warn += ' Very unpredictable behavior may result.';
-        console.log(warn);
-      }
+      c = this.canvas;
     }
 
-    c.setAttribute('width', w*this._pixelDensity);
-    c.setAttribute('height', h*this._pixelDensity);
-    c.setAttribute('style',
-      'width:'+w+'px !important; height:'+h+'px !important;');
     // set to invisible if still in setup (to prevent flashing with manipulate)
     if (!this._setupDone) {
       c.className += ' p5_hidden'; // tag to show later
@@ -69,19 +53,14 @@ define(function(require) {
       document.body.appendChild(c);
     }
 
-    var pg = this._defaultGraphics;
-    if (!pg) {
-      pg = new p5.Graphics(c, this._pixelDensity, this);
-      this._elements.push(pg);
-      this._defaultGraphics = pg;
+    if (!this._defaultGraphics) {
+      this._defaultGraphics = new p5.Graphics(c, this, true);
+      this._elements.push(this._defaultGraphics);
     }
-    else {
-      pg.resize(w, h);
-      pg._applyDefaults();
-    }
-
-    this.scale(this._pixelDensity, this._pixelDensity);
-    return pg;
+    
+    this._defaultGraphics.resize(w, h);
+    this._defaultGraphics._applyDefaults();
+    return this._defaultGraphics;
   };
   /*
    * Resizes the canvas to given width and height. Note that the
@@ -106,14 +85,9 @@ define(function(require) {
    * </code></div>
    */
   p5.prototype.resizeCanvas = function (w, h) {
-    var pg = this._defaultGraphics;
-    if (pg) {
-      pg.resize(w * this._pixelDensity, h * this._pixelDensity);
-      pg.elt.setAttribute('width', w * this._pixelDensity);
-      pg.elt.setAttribute('height', h * this._pixelDensity);
-      pg.elt.setAttribute('style',
-        'width:'+w+'px !important; height:'+h+'px !important;');
-      this.scale(this._pixelDensity, this._pixelDensity);
+    if (this._defaultGraphics) {
+      this._defaultGraphics.resize(w, h);
+      this._defaultGraphics._applyDefaults();
     }
   };
 
@@ -176,7 +150,7 @@ define(function(require) {
     var node = this._userNode || document.body;
     node.appendChild(c);
 
-    var pg = new p5.Graphics(c, this._pixelDensity);
+    var pg = new p5.Graphics(c, this, false);
     // store in elements array
     this._elements.push(pg);
 
@@ -190,6 +164,7 @@ define(function(require) {
       }
     }
     pg.scale(this._pixelDensity, this._pixelDensity);
+    pg._applyDefaults();
     return pg;
   };
 

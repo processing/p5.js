@@ -291,7 +291,7 @@ define(function (require) {
 
     var scaleFactor = 1;
     if (p5Image instanceof p5.Graphics) {
-      scaleFactor = p5Image._pixelDensity;
+      scaleFactor = p5Image._pInst._pixelDensity;
     }
     
     var copyArgs = [

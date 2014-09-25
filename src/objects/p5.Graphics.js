@@ -39,22 +39,22 @@ define(function(require) {
    * </code>
    * </div>
    */
-  p5.Graphics = function(elt, pixelDensity, pInst) {
+  p5.Graphics = function(elt, pInst, isMainCanvas) {
     p5.Element.call(this, elt, pInst);
     this.canvas = elt;
     this.drawingContext = this.canvas.getContext('2d');
-    this._pixelDensity = pixelDensity;
-    if (this._pInst) {
+    this._pInst = pInst;
+    if (isMainCanvas) {
+      this._isMainCanvas = true;
       // for pixel method sharing with pimage
       this._pInst._setProperty('_curElement', this);
       this._pInst._setProperty('canvas', this.canvas);
       this._pInst._setProperty('drawingContext', this.drawingContext);
       this._pInst._setProperty('width', this.width);
       this._pInst._setProperty('height', this.height);
-    } else { // hide if offscreen buffer
+    } else { // hide if offscreen buffer by default
       this.canvas.style.display = 'none';
     }
-    this._applyDefaults();
   };
 
   p5.Graphics.prototype = Object.create(p5.Element.prototype);
@@ -69,9 +69,14 @@ define(function(require) {
   p5.Graphics.prototype.resize = function(w, h) {
     this.width = w;
     this.height = h;
-    if (this._pInst) {
+    this.elt.setAttribute('width', w * this._pInst._pixelDensity);
+    this.elt.setAttribute('height', h * this._pInst._pixelDensity);
+    this.elt.setAttribute('style',
+      'width:'+w+'px !important; height:'+h+'px !important;');
+    if (this._isMainCanvas) {
       this._pInst._setProperty('width', this.width);
       this._pInst._setProperty('height', this.height);
+      this._pInst.scale(this._pInst._pixelDensity, this._pInst._pixelDensity);
     }
   };
 

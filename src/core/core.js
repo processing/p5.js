@@ -242,14 +242,9 @@ define(function (require) {
         context.setup();
       }
 
-      // unhide any hidden canvases that were created
-      var reg = new RegExp(/(^|\s)p5_hidden(?!\S)/g);
-      var canvases = document.getElementsByClassName('p5_hidden');
-      for (var i = 0; i < canvases.length; i++) {
-        var k = canvases[i];
-        k.style.visibility = '';
-        k.className = k.className.replace(reg, '');
-      }
+      // unhide hidden canvas that was created
+      this.canvas.style.visibility = '';
+      this.canvas.className = this.canvas.className.replace('p5_hidden', '');
       this._setupDone = true;
       // this._loadingScreen.parentNode.removeChild(this._loadingScreen);//PEND
     }.bind(this);
