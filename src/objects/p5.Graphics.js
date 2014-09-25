@@ -54,14 +54,17 @@ define(function(require) {
     } else { // hide if offscreen buffer
       this.canvas.style.display = 'none';
     }
+    this._applyDefaults();
+  };
 
+  p5.Graphics.prototype = Object.create(p5.Element.prototype);
+
+  p5.Graphics.prototype._applyDefaults = function() {
     this.drawingContext.fillStyle = '#FFFFFF';
     this.drawingContext.strokeStyle = '#000000';
     this.drawingContext.lineCap = constants.ROUND;
     this.drawingContext.font = 'normal 12px sans-serif';
   };
-
-  p5.Graphics.prototype = Object.create(p5.Element.prototype);
 
   p5.Graphics.prototype.resize = function(w, h) {
     this.width = w;

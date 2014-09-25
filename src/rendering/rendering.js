@@ -76,7 +76,8 @@ define(function(require) {
       this._defaultGraphics = pg;
     }
     else {
-      pg.resize(w*this._pixelDensity, h*this._pixelDensity);
+      pg.resize(w, h);
+      pg._applyDefaults();
     }
 
     this.scale(this._pixelDensity, this._pixelDensity);
