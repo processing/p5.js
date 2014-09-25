@@ -1,4 +1,5 @@
 function renderCode(sel) {
+  var _p5 = p5;
   var instances = [];
   var selector = sel || 'example';
   var examples = document.getElementsByClassName(selector);
@@ -27,10 +28,10 @@ function renderCode(sel) {
       pre.className = 'ref';
       pre.appendChild(sketchNode);
       sketchContainer.appendChild(pre);
+      sketchContainer.className = 'example_container'
       sketch.className = 'language-javascript';
     }
 
-    sketchContainer.style.height = sketchNode.offsetHeight;
 
     // remove start and end lines
     var runnable = sketch.textContent.replace(/^\s+|\s+$/g, '');
@@ -61,6 +62,7 @@ function renderCode(sel) {
       var edit_button = document.createElement('button');
       edit_button.value = 'edit';
       edit_button.innerHTML = 'edit';
+      edit_button.className = 'edit_button';
       edit_space.appendChild(edit_button);
       edit_button.onclick = function(e) {
         if (edit_button.innerHTML === 'edit') { // edit
@@ -73,7 +75,7 @@ function renderCode(sel) {
       var reset_button = document.createElement('button');
       reset_button.value = 'reset';
       reset_button.innerHTML = 'reset';
-      reset_button.id = 'right_button';
+      reset_button.className = 'reset_button';
       edit_space.appendChild(reset_button);
       reset_button.onclick = function() {
         edit_area.value = orig_sketch.textContent;
@@ -83,7 +85,7 @@ function renderCode(sel) {
       var edit_area = document.createElement('textarea');
       edit_area.value = runnable;
       edit_area.rows = rows;
-      edit_area.cols = 65;
+      edit_area.cols = 62;
       // edit_area.position = 'absolute'
       edit_space.appendChild(edit_area);
       edit_area.style.display = 'none';
@@ -92,9 +94,21 @@ function renderCode(sel) {
 
       function setMode(sketch, m) {
         if (m === 'edit') {
+          $('.example_container').each(function(ind, con) {
+            if (ind !== i) {
+              $(con).css('opacity', 0.25);
+            } else {
+              $(con).addClass('editing');
+            }
+          });
           edit_button.innerHTML = 'run';
           edit_area.style.display = 'block';
+          edit_area.focus();
         } else {
+          $('.example_container').each(function(ind, con) {
+            $(con).css('opacity', 1.0);
+            $(con).removeClass('editing');
+          });
           edit_button.innerHTML = 'edit';
           edit_area.style.display = 'none';
           sketch.innerHTML = edit_area.value;
@@ -170,7 +184,7 @@ function renderCode(sel) {
 
     $( document ).ready(function() {
       setTimeout(function() {
-        var myp5 = new p5(s, cnv);      
+        var myp5 = new _p5(s, cnv);      
         $( ".example-content" ).find('div').each(function() {
           $this = $( this );
           var pre = $this.find('pre')[0];

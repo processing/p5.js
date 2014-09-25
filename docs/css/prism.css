@@ -36,16 +36,16 @@ textarea {
 /* Code blocks */
 pre[class*="language-"] {
   position:relative;
-  padding: 0.5em 1em;
+  padding: 0.5em 1.0em;
   margin: 0.5em 0 0 -0.5em;
   border-left: 0.5em solid #AFAFAF; /* coy og blue 10px solid  358ccb  */
   background-color: #fff; /* coy og white #fdfdfd  */
   /* lines */
-  background-image: -webkit-linear-gradient(transparent 50%, rgba(69, 142, 209, 0.04) 50%);
-  background-image: -moz-linear-gradient(transparent 50%, rgba(69, 142, 209, 0.04) 50%);
-  background-image: -ms-linear-gradient(transparent 50%, rgba(69, 142, 209, 0.04) 50%);
-  background-image: -o-linear-gradient(transparent 50%, rgba(69, 142, 209, 0.04) 50%);
-  background-image: linear-gradient(transparent 50%, rgba(69, 142, 209, 0.04) 50%);
+  background-image: -webkit-linear-gradient(transparent 50%, rgba(69, 142, 209, 0.06) 50%);
+  background-image: -moz-linear-gradient(transparent 50%, rgba(69, 142, 209, 0.06) 50%);
+  background-image: -ms-linear-gradient(transparent 50%, rgba(69, 142, 209, 0.06) 50%);
+  background-image: -o-linear-gradient(transparent 50%, rgba(69, 142, 209, 0.06) 50%);
+  background-image: linear-gradient(transparent 50%, rgba(69, 142, 209, 0.06) 50%);
   background-size: 2.9em 2.9em; /* adjusts height of alternating lines */
   background-origin:content-box;
   /* set overflow to just let the code roll  */
@@ -56,7 +56,6 @@ pre[class*="language-"] {
 }
 
 code[class*="language"] {
-
 }
 
 
@@ -172,42 +171,44 @@ pre[class*="language-"]:after {
 }
 
 pre.line-numbers {
-	position: relative;
-	padding-left: 3.8em;
-	counter-reset: linenumber;
+  position: relative;
+  padding-left: 3.8em;
+  counter-reset: linenumber;
 }
 
 pre.line-numbers > code {
-	position: relative;
+  position: relative;
 }
 
 .line-numbers .line-numbers-rows {
-	position: absolute;
-	pointer-events: none;
-	top: 0;
+  position: absolute;
+  pointer-events: none;
+  top: 0;
   font-size: 100%;
-	left: -3.8em;
-	width: 3em; /* works for line-numbers below 1000 lines */
-	letter-spacing: -1px;
-	border-right: 1px solid #999;
+  left: -3.8em;
+  width: 3em; /* works for line-numbers below 1000 lines */
+  letter-spacing: -1px;
+  border-right: 1px solid #999;
 
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 
 }
 
 .line-numbers-rows > span {
-	pointer-events: none;
-	display: block;
-	counter-increment: linenumber;
+  pointer-events: none;
+  display: block;
+  counter-increment: linenumber;
 }
 
 .line-numbers-rows > span:before {
-	content: counter(linenumber);
-	color: #999;
-	display: block;
-	padding-right: 0.8em;
-	text-align: right;
+  content: counter(linenumber);
+  color: #999;
+  display: block;
+  padding-right: 0.8em;
+  text-align: right;
 }
+
+
