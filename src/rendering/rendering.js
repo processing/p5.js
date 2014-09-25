@@ -12,7 +12,9 @@ define(function(require) {
   /**
    * Creates a canvas element in the document, and sets the dimensions of it
    * in pixels. This method should be called only once at the start of setup.
-   * <br>
+   * Calling createCanvas more than once in a sketch will result in very
+   * unpredicable behavior. If you want more more than one drawing canvas
+   * you could use createGraphics (hidden by default but it can be shown).<br>
    * The system variables width and height are set by the parameters passed
    * to this function. If createCanvas() is not used, the window will be
    * given a default size of 100x100 pixels.
