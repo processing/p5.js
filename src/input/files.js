@@ -31,7 +31,7 @@ define(function (require) {
   /**
    * Loads a JSON file from a file or a URL, and returns an Object or Array.
    * This method is asynchronous, meaning it may not finish before the next
-   * line in your sketch is executed, either use preload() to guarantee the
+   * line in your sketch is executed. Either use preload() to guarantee the
    * file loads before setup() and draw() are called, or supply a callback
    * function that is executed when loadStrings() completes.
    * 
@@ -46,14 +46,15 @@ define(function (require) {
   p5.prototype.loadJSON = function(path, callback) {
     var ret = [];
     var t = path.indexOf('http') === -1 ? 'json' : 'jsonp';
-    reqwest({url: path, type: t, success: function (resp) {
-      for (var k in resp) {
-        ret[k] = resp[k];
-      }
-      if (typeof callback !== 'undefined') {
-        callback(ret);
-      }
-    }});
+    reqwest({url: path, type: t, crossOrigin: true})
+      .then(function(resp) {
+        for (var k in resp) {
+          ret[k] = resp[k];
+        }
+        if (typeof callback !== 'undefined') {
+          callback(ret);
+        }
+      });
     return ret;
   };
 
@@ -68,7 +69,7 @@ define(function (require) {
    * URL for a file found on a network.
    *
    * This method is asynchronous, meaning it may not finish before the next
-   * line in your sketch is executed, either use preload() to guarantee the
+   * line in your sketch is executed. Either use preload() to guarantee the
    * file loads before setup() and draw() are called, or supply a callback
    * function that is executed when loadStrings() completes.
    * 
@@ -142,13 +143,18 @@ define(function (require) {
    *  
    *  <p> All files loaded and saved use UTF-8 encoding.</p>
    *  
+   *  <p>This method is asynchronous, meaning it may not finish before the next
+   *  line in your sketch is executed. Either use preload() to guarantee the
+   *  file loads before setup() and draw() are called, or supply a callback
+   *  function that is executed when loadTable() completes.</p>
+   * 
    *  @method  loadTable
    *  @param  {String}   filename   name of the file or URL to load
    *  @param  {String|Strings}   [options]  "header" "csv" "tsv"
-   *  @param  {Function} [callback] function to be executed after loadXML()
-   *                               completes, XML object is passed in as
+   *  @param  {Function} [callback] function to be executed after loadTable()
+   *                               completes, Table object is passed in as
    *                               first argument
-   *  @return {Object}              XML object containing data
+   *  @return {Object}              Table object containing data
    */
   p5.prototype.loadTable = function (path) {
     var callback = null;
@@ -238,7 +244,7 @@ define(function (require) {
    * URL for a file found on a network.
    * 
    * This method is asynchronous, meaning it may not finish before the next
-   * line in your sketch is executed, either use preload() to guarantee the
+   * line in your sketch is executed. Either use preload() to guarantee the
    * file loads before setup() and draw() are called, or supply a callback
    * function that is executed when loadXML() completes.
    * 
@@ -254,13 +260,11 @@ define(function (require) {
     reqwest({
       url: path,
       type: 'xml',
-      success: function (resp) {
-        ret[0] = resp;
-        if (typeof callback !== 'undefined') {
-          callback(ret);
-        }
-      }
-    });
+      crossOrigin: true,
+    })
+      .then(function(resp){
+        callback(resp);
+      });
     return ret;
   };
 
