@@ -137,7 +137,7 @@ define(function (require) {
     //////////////////////////////////////////////
 
     this._setupDone = false;
-    this._pixel = window.devicePixelRatio || 1; // for handling hidpi
+    this._pixelDensity = window.devicePixelRatio || 1; // for handling hidpi
     this._startTime = new Date().getTime();
     this._userNode = node;
     this._curElement = null;
