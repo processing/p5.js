@@ -31,18 +31,35 @@ define(function (require) {
   };
 
   /**
-   * 
-   * @param {String}  str float string to parse
-   * @return {Number}     floating point representation of string
+   * Converts a boolean, string, or float to its integer representation.
+   * When an array of values is passed in, then an int array of the same length 
+   * is returned.
+   *
+   * @method int
+   * @param {String|Boolean|Number|Array} n value to parse
+   * @return {Number}                     integer representation of value
    * @example
-   * <div><code>
-   * var str = '20';
-   * var diameter = float(str);
-   * ellipse(width/2, height/2, diameter, diameter);
+   * <div class='norender'><code>
+   * print(int("10")); // 10
+   * print(int(10.31)); // 10
+   * print(int(-10)); // -10
+   * print(int(true)); // 1
+   * print(int(false)); // 0
+   * print(int([false, true, "10.3", 9.8])); // [0, 1, 10, 9]
    * </code></div>
    */
-  // p5.prototype.int = function(str) {
-  // };
+  p5.prototype.int = function(n, radix) {
+    if (typeof n === 'string') {
+      radix = radix | 10;
+      return parseInt(n, radix);
+    } else if (typeof n === 'number') {
+      return Math.floor(n);
+    } else if (typeof n === 'boolean') {
+      return n ? 1 : 0;
+    } else if (n instanceof Array) {
+      return n.map(p5.prototype.int);
+    }
+  };
 
 
   return p5;
