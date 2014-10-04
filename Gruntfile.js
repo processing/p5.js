@@ -98,6 +98,7 @@ module.exports = function(grunt) {
             'color.setting': 'src/color/setting',
             'core': 'src/core/core',
             'constants': 'src/core/constants',
+            'data.conversion': 'src/data/conversion',
             'data.array_functions': 'src/data/array_functions',
             'data.string_functions': 'src/data/string_functions',
             'environment': 'src/environment/environment',

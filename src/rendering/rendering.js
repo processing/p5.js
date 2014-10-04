@@ -144,10 +144,6 @@ define(function(require) {
    */
   p5.prototype.createGraphics = function(w, h) {
     var c = document.createElement('canvas');
-    c.setAttribute('width', w*this._pixelDensity);
-    c.setAttribute('height', h*this._pixelDensity);
-    c.setAttribute('style',
-      'width:'+w+'px !important; height:'+h+'px !important;');
     //c.style.visibility='hidden';
     var node = this._userNode || document.body;
     node.appendChild(c);
@@ -165,7 +161,7 @@ define(function(require) {
         }
       }
     }
-    pg.scale(this._pixelDensity, this._pixelDensity);
+    pg.resize(w, h);
     pg._applyDefaults();
     return pg;
   };
