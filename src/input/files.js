@@ -31,7 +31,7 @@ define(function (require) {
   /**
    * Loads a JSON file from a file or a URL, and returns an Object or Array.
    * This method is asynchronous, meaning it may not finish before the next
-   * line in your sketch is executed, either use preload() to guarantee the
+   * line in your sketch is executed. Either use preload() to guarantee the
    * file loads before setup() and draw() are called, or supply a callback
    * function that is executed when loadStrings() completes.
    * 
@@ -69,7 +69,7 @@ define(function (require) {
    * URL for a file found on a network.
    *
    * This method is asynchronous, meaning it may not finish before the next
-   * line in your sketch is executed, either use preload() to guarantee the
+   * line in your sketch is executed. Either use preload() to guarantee the
    * file loads before setup() and draw() are called, or supply a callback
    * function that is executed when loadStrings() completes.
    * 
@@ -143,6 +143,11 @@ define(function (require) {
    *  
    *  <p> All files loaded and saved use UTF-8 encoding.</p>
    *  
+   *  <p>This method is asynchronous, meaning it may not finish before the next
+   *  line in your sketch is executed. Either use preload() to guarantee the
+   *  file loads before setup() and draw() are called, or supply a callback
+   *  function that is executed when loadTable() completes.</p>
+   * 
    *  @method  loadTable
    *  @param  {String}   filename   name of the file or URL to load
    *  @param  {String|Strings}   [options]  "header" "csv" "tsv"
@@ -239,7 +244,7 @@ define(function (require) {
    * URL for a file found on a network.
    * 
    * This method is asynchronous, meaning it may not finish before the next
-   * line in your sketch is executed, either use preload() to guarantee the
+   * line in your sketch is executed. Either use preload() to guarantee the
    * file loads before setup() and draw() are called, or supply a callback
    * function that is executed when loadXML() completes.
    * 
