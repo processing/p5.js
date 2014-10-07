@@ -53,7 +53,7 @@ define(function (require) {
       radix = radix | 10;
       return parseInt(n, radix);
     } else if (typeof n === 'number') {
-      return Math.floor(n);
+      return n | 0;
     } else if (typeof n === 'boolean') {
       return n ? 1 : 0;
     } else if (n instanceof Array) {

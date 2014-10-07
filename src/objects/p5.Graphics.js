@@ -54,6 +54,7 @@ define(function(require) {
       this._pInst._setProperty('height', this.height);
     } else { // hide if offscreen buffer by default
       this.canvas.style.display = 'none';
+      this._styles = []; // non-main elt styles stored in p5.Graphics
     }
   };
 

@@ -146,7 +146,7 @@ define(function (require) {
     this._updateInterval = 0;
     this._isGlobal = false;
     this._loop = true;
-    this.styles = [];
+    this._styles = [];
     this._defaultCanvasSize = {
       width: 100,
       height: 100

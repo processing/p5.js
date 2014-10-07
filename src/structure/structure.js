@@ -102,7 +102,7 @@ define(function (require) {
    */
   p5.prototype.push = function () {
     this.drawingContext.save();
-    this.styles.push({
+    this._styles.push({
       doStroke: this._doStroke,
       doFill: this._doFill,
       tint: this._tint,
@@ -170,7 +170,7 @@ define(function (require) {
    */
   p5.prototype.pop = function () {
     this.drawingContext.restore();
-    var lastS = this.styles.pop();
+    var lastS = this._styles.pop();
     this._doStroke = lastS.doStroke;
     this._doFill = lastS.doFill;
     this._tint = lastS.tint;
