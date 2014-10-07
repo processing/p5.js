@@ -90,6 +90,7 @@ define(function(require) {
     if (this._defaultGraphics) {
       this._defaultGraphics.resize(w, h);
       this._defaultGraphics._applyDefaults();
+      this.redraw();
     }
   };
 
