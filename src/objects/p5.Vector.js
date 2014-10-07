@@ -767,7 +767,16 @@ define(function (require) {
    * @param  {p5.Vector} v1 the x, y, and z components of a p5.Vector
    * @param  {p5.Vector} v2 the x, y, and z components of a p5.Vector
    * @return {Number}       the angle between
-   * 
+   * @example 
+   * <div class="norender">
+   * <code>
+   * var v = createVector(1,0,0);
+   * var v1 = createVector(0,1,0);
+   *
+   * var angle = p5.Vector.angleBetween(v,v1);
+   * //angle == (PI / 2)
+   * </code>
+   * </div>
    */
   p5.Vector.angleBetween = function (v1, v2) {
     var angle = Math.acos(v1.dot(v2) / (v1.mag() * v2.mag()));
