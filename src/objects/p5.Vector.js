@@ -92,8 +92,8 @@ define(function (require) {
    * @param {Number}                 [y] the y component of the vector 
    * @param {Number}                 [z] the z component of the vector 
    * @example
-   * <code>
    * <div class="norender">
+   * <code>
    * function setup() {
    *    var v = createVector(1,2,3);
    *    v.set(4,5,6); //Sets vector to [4,5,6]
@@ -102,8 +102,8 @@ define(function (require) {
    *    var arr = [1,2,3]
    *    v1.set(arr); //Sets vector to [1,2,3]
    * }
-   * </div>
    * </code>
+   * </div>
    */
   p5.Vector.prototype.set = function (x, y, z) {
     if (x instanceof p5.Vector) {
@@ -278,6 +278,21 @@ define(function (require) {
    * @chainable
    * @param  {number}    n the number to divide the vector by
    * @return {p5.Vector} a reference to the p5.Vector object (allow chaining)
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = createVector(6,4,2);
+   * v.div(2); //v's compnents are set to [3,2,1]
+   * </code>
+   * </div>
+   * <div class="norender">
+   * <code>
+   * //Static method
+   * var v  = createVector(6,4,2);
+   *
+   * var v1 = p5.Vector.div(v, 2); //v1 has compnents [3,2,1]
+   * </code>
+   * </div>
    */
   p5.Vector.prototype.div = function (n) {
     this.x /= n;
@@ -319,6 +334,24 @@ define(function (require) {
    * @param  {Number}           [y] y component of the vector
    * @param  {Number}           [z] z component of the vector
    * @return {Number}                 the dot product
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = createVector(1,2,3);
+   * var v1 = createVector(2,3,4);
+   *
+   * v.dot(v1); //Returns 20
+   * </code>
+   * </div>
+   * <div class="norender">
+   * <code>
+   * //Static method
+   * var v = createVector(1,2,3);
+   * var v1 = createVector(3,2,1);
+   *
+   * var dotProduct = p5.Vector.dot(v,v1); //dotProduct == 10
+   * </code>
+   * </div>
    */
   p5.Vector.prototype.dot = function (x, y, z) {
     if (x instanceof p5.Vector) {
@@ -336,6 +369,24 @@ define(function (require) {
    * @method cross
    * @param  {p5.Vector} v p5.Vector to be crossed
    * @return {p5.Vector}   p5.Vector composed of cross product
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = createVector(1,2,3);
+   * var v1 = createVector(1,2,3);
+   *
+   * v.cross(v1); //v's components are [0,0,0]
+   * </code>
+   * </div>
+   * <div class="norender">
+   * <code>
+   * //Static method
+   * var v = createVector(1,0,0);
+   * var v1 = createVector(0,1,0);
+   *
+   * var crossProduct = p5.Vector.cross(v,v1); //crossProduct has components [0,0,1]
+   * </code>
+   * </div>
    */
   p5.Vector.prototype.cross = function (v) {
     var x = this.y * v.z - this.z * v.y;
@@ -355,6 +406,24 @@ define(function (require) {
    * @method dist
    * @param  {p5.Vector} v the x, y, and z coordinates of a p5.Vector
    * @return {Number}      the distance
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = createVector(1,0,0);
+   * var v1 = createVector(0,1,0);
+   *
+   * var distance = v.dist(v1); //distance == 1.4142...
+   * </code>
+   * </div>
+   * <div class="norender">
+   * <code>
+   * //Static method
+   * var v = createVector(1,0,0);
+   * var v1 = createVector(0,1,0);
+   *
+   * var distance = p5.Vector.dist(v,v1); //distance == 1.4142...
+   * </code>
+   * </div>
    */
   p5.Vector.prototype.dist = function (v) {
     var d = v.get().sub(this);
@@ -451,6 +520,23 @@ define(function (require) {
    *                         (old vector) and 1.0 (new vector). 0.1 is very near
    *                         the new vector. 0.5 is halfway in between.
    * @return {p5.Vector}     the modified p5.Vector
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = createVector(1,1,0);
+   *
+   * v.lerp(3,3,0,0.5); //v now has components [2,2,0]
+   * </code>
+   * </div>
+   * <div class="norender">
+   * <code>
+   * var v = createVector(0,0,0);
+   * var v1 = createVector(100,100,0);
+   * 
+   * var v2 = p5.Vector.lerp(v,v1,0.5);
+   * //v2 has components [50,50,0]
+   * </code>
+   * </div>
    */
   p5.Vector.prototype.lerp = function (x, y, z, amt) {
     if (x instanceof p5.Vector) {
@@ -486,6 +572,13 @@ define(function (require) {
    * @static
    * @param {Number}     angle the desired angle
    * @return {p5.Vector}       the new p5.Vector object
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = p5.Vector.fromAngle(PI / 2);
+   * //v has components [0,1,0]
+   * </code>
+   * </div>
    */
   p5.Vector.fromAngle = function(angle) {
     if (this.p5) {
@@ -506,6 +599,12 @@ define(function (require) {
    * @method random2D
    * @static
    * @return {p5.Vector} the new p5.Vector object
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = p5.Vector.random2D();
+   * </code>
+   * </div>
    */
   p5.Vector.random2D = function () {
     var angle;
@@ -529,6 +628,12 @@ define(function (require) {
    * @method random3D
    * @static
    * @return {p5.Vector} the new p5.Vector object
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = p5.Vector.random3D();
+   * </code>
+   * </div>
    */
   p5.Vector.random3D = function () {
     var angle,vz;
@@ -657,7 +762,7 @@ define(function (require) {
 
   /**
    * Calculates and returns the angle (in radians) between two vectors.
-   *
+   * @method angleBetween
    * @static
    * @param  {p5.Vector} v1 the x, y, and z components of a p5.Vector
    * @param  {p5.Vector} v2 the x, y, and z components of a p5.Vector
