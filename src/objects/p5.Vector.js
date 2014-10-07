@@ -43,8 +43,8 @@ define(function (require) {
    * ellipse(vector2.x, vector2.y, 50, 50);
    * vector.add(vector2);
    * ellipse(vector.x, vector.y, 50, 50);
-   *</div>
-   *</code>
+   * </code>
+   * </div>
    */
   p5.Vector = function() {
     var x,y,z;
@@ -91,6 +91,19 @@ define(function (require) {
    *                                     p5.Vector or an Array
    * @param {Number}                 [y] the y component of the vector 
    * @param {Number}                 [z] the z component of the vector 
+   * @example
+   * <code>
+   * <div class="norender">
+   * function setup() {
+   *    var v = createVector(1,2,3);
+   *    v.set(4,5,6); //Sets vector to [4,5,6]
+   *
+   *    var v1 = createVector(0,0,0);
+   *    var arr = [1,2,3]
+   *    v1.set(arr); //Sets vector to [1,2,3]
+   * }
+   * </div>
+   * </code>
    */
   p5.Vector.prototype.set = function (x, y, z) {
     if (x instanceof p5.Vector) {
@@ -142,6 +155,22 @@ define(function (require) {
    * @param  {Number}                 [z] the z component of the vector to be
    *                                      added
    * @return {p5.Vector}                  the p5.Vector object.
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = createVector(1,2,3);
+   * v.add(4,5,6); //v's compnents are set to [5,7,9]
+   * </code>
+   * </div>
+   * <div class="norender">
+   * <code>
+   * //Static method
+   * var v = createVector(1,2,3);
+   * var v1 = createVector(2,3,4);
+   *
+   * var v2 = p5.Vector.add(v, v1); //v2 has compnents [3,5,7]
+   * </code>
+   * </div>
    */
   p5.Vector.prototype.add = function (x, y, z) {
     if (x instanceof p5.Vector) {
@@ -176,6 +205,22 @@ define(function (require) {
    * @param  {Number}                 [y] the y component of the vector
    * @param  {Number}                 [z] the z component of the vector
    * @return {p5.Vector}                  p5.Vector object.
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = createVector(4,5,6);
+   * v.sub(1,1,1); //v's compnents are set to [3,4,5]
+   * </code>
+   * </div>
+   * <div class="norender">
+   * <code>
+   * //Static method
+   * var v  = createVector(2,3,4);
+   * var v1 = createVector(1,2,3);
+   *
+   * var v2 = p5.Vector.sub(v, v1); //v2 has compnents [1,1,1]
+   * </code>
+   * </div>
    */
   p5.Vector.prototype.sub = function (x, y, z) {
     if (x instanceof p5.Vector) {
@@ -203,6 +248,21 @@ define(function (require) {
    * @chainable
    * @param  {Number}    n the number to multiply with the vector
    * @return {p5.Vector} a reference to the p5.Vector object (allow chaining)
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = createVector(1,2,3);
+   * v.mult(2); //v's compnents are set to [2,4,6]
+   * </code>
+   * </div>
+   * <div class="norender">
+   * <code>
+   * //Static method
+   * var v  = createVector(1,2,3);
+   *
+   * var v1 = p5.Vector.mult(v, 2); //v1 has compnents [2,4,6]
+   * </code>
+   * </div>
    */
   p5.Vector.prototype.mult = function (n) {
     this.x *= n || 0;
