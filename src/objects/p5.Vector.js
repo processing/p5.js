@@ -143,8 +143,7 @@ define(function (require) {
    * Adds x, y, and z components to a vector, adds one vector to another, or
    * adds two independent vectors together. The version of the method that adds
    * two vectors together is a static method and returns a p5.Vector, the others
-   * have no return value -- they act directly on the vector. See the examples
-   * for more context.
+   * acts directly on the vector. See the examples for more context.
    *
    * @method add
    * @chainable
@@ -194,9 +193,8 @@ define(function (require) {
   /**
    * Subtracts x, y, and z components from a vector, subtracts one vector from
    * another, or subtracts two independent vectors. The version of the method
-   * that substracts two vectors is a static method and returns a p5.Vector, the
-   * others have no return value -- they act directly on the vector. See the
-   * examples for more context.
+   * that subtracts two vectors is a static method and returns a p5.Vector, the
+   * other acts directly on the vector. See the examples for more context.
    *
    * @method sub
    * @chainable
@@ -242,7 +240,8 @@ define(function (require) {
   };
 
   /**
-   * Multiply the vector by a scalar.
+   * Multiply the vector by a scalar. The static version of this method creates a new p5.Vector
+   * while the non static version acts on the vector directly. See the examples for more context.
    *
    * @method mult
    * @chainable
@@ -272,7 +271,8 @@ define(function (require) {
   };
 
   /**
-   * Divide the vector by a scalar.
+   * Divide the vector by a scalar. The static version of this method creates a new p5.Vector
+   * while the non static version acts on the vector directly. See the examples for more context.
    *
    * @method div
    * @chainable
@@ -367,7 +367,7 @@ define(function (require) {
 
   /**
    * Calculates and returns a vector composed of the cross product between
-   * two vectors. The version of the method that computes the cross product of two independent vectors is a static method.
+   * two vectors. Both the static and non static methods return a new p5.Vector.
    * See the examples for more context.
    *
    * @method cross
