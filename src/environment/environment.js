@@ -324,6 +324,30 @@ define(function(require) {
     }
   };
 
+  /*
+   * 
+   *
+   * devicePixelScaling
+   * @param  {Boolean} val whether the sketch should be scaled or not
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   * }
+   * function mousePressed() {
+   * }
+   * </code>
+   * </div>
+   */
+  // p5.prototype.devicePixelScaling = function(val) {
+  //   if (val) {
+  //     this._pixelDensity = window.devicePixelRatio || 1;
+  //   } else {
+  //     this._pixelDensity = 1;
+  //   }
+  //   this.resizeCanvas(this.width, this.height);
+  // }
+
   function launchFullscreen(element) {
     var enabled = document.fullscreenEnabled ||
                   document.webkitFullscreenEnabled ||
