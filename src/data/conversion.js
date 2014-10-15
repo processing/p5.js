@@ -50,7 +50,7 @@ define(function (require) {
    */
   p5.prototype.int = function(n, radix) {
     if (typeof n === 'string') {
-      radix = radix | 10;
+      radix = radix || 10;
       return parseInt(n, radix);
     } else if (typeof n === 'number') {
       return n | 0;
