@@ -77,8 +77,9 @@ define(function(require) {
     if (this._isMainCanvas) {
       this._pInst._setProperty('width', this.width);
       this._pInst._setProperty('height', this.height);
-      this._pInst.scale(this._pInst._pixelDensity, this._pInst._pixelDensity);
     }
+    this.drawingContext.scale(this._pInst._pixelDensity,
+                              this._pInst._pixelDensity);
   };
 
   return p5.Graphics;
