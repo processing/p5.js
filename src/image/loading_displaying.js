@@ -74,7 +74,7 @@ define(function (require) {
     }
     var vals = canvas.modeAdjust(x, y, width, height, this._imageMode);
     // tint the image if there is a tint
-    if (this._tint) {
+    if (this._tint && img.canvas) {
       this.drawingContext.drawImage(
         this._getTintedImageCanvas(img),
         vals.x,
