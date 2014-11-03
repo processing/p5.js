@@ -101,7 +101,9 @@ define(function (require) {
   p5.prototype.isMousePressed = false; // both are supported
 
   p5.prototype._updateMouseCoords = function(e) {
-    if(e.type === 'touchstart' || e.type === 'touchmove') {
+    if(e.type === 'touchstart' ||
+       e.type === 'touchmove' ||
+       e.type === 'touchend') {
       this._setProperty('mouseX', this.touchX);
       this._setProperty('mouseY', this.touchY);
     } else {
@@ -296,6 +298,7 @@ define(function (require) {
     this._setProperty('isMousePressed', true);
     this._setProperty('mouseIsPressed', true);
     this._setMouseButton(e);
+    this._updateMouseCoords(e);
     if (typeof context.mousePressed === 'function') {
       executeDefault = context.mousePressed(e);
       if(executeDefault === false) {
