@@ -11,6 +11,13 @@ define(function (require) {
   var p5 = require('core');
 
   /**
+   * Holds the key codes of the currently pressed keys.
+   * @property _downKeys
+   * @private
+   */
+  p5.prototype._downKeys=[];
+
+  /**
    * The boolean system variable keyIsPressed is true if any key is pressed
    * and false if no keys are pressed.
    *
@@ -113,6 +120,9 @@ define(function (require) {
     this._setProperty('isKeyPressed', true);
     this._setProperty('keyIsPressed', true);
     this._setProperty('keyCode', e.which);
+    if (this._downKeys.indexOf(e.which)<0) {
+      this._downKeys.push(e.which);
+    }
     var key = String.fromCharCode(e.which);
     if (!key) {
       key = e.which;
@@ -157,6 +167,9 @@ define(function (require) {
     var keyReleased = this.keyReleased || window.keyReleased;
     this._setProperty('isKeyPressed', false);
     this._setProperty('keyIsPressed', false);
+    if (this._downKeys.indexOf(e.which)>=0) {
+      this._downKeys.splice(this._downKeys.indexOf(e.which),1);
+    }
     var key = String.fromCharCode(e.which);
     if (!key) {
       key = e.which;
@@ -213,6 +226,48 @@ define(function (require) {
         e.preventDefault();
       }
     }
+  };
+
+  /**
+   * The keyIsDown function checkes if the key is currently down, i.e. pressed.
+   * It can be used if you have an object that moves, and you want several keys
+   * to be able to affect its behaivour simoultaneously, such as moving a
+   * sprite diagonally.
+   *
+   * @method keyIsDown
+   * @param {Number}          [code] The key to check for.
+   * @example
+   * <div>
+   * <code>
+   * var x = 100;
+   * var y = 100;
+   *
+   * function setup() {
+   *   createCanvas(512, 512);
+   * }
+   *
+   * function draw() {
+   *   if (keyIsDown(LEFT_ARROW))
+   *     x-=5;
+   *
+   *   if (keyIsDown(RIGHT_ARROW))
+   *     x+=5;
+   *
+   *   if (keyIsDown(UP_ARROW))
+   *     y-=5;
+   *
+   *   if (keyIsDown(DOWN_ARROW))
+   *     y+=5;
+   *
+   *   clear();
+   *   fill(255, 0, 0);
+   *   ellipse(x, y, 50, 50);
+   * }
+   * <code>
+   * </div>
+   */
+  p5.prototype.keyIsDown = function(code) {
+    return this._downKeys.indexOf(code)>=0;
   };
 
   return p5;
