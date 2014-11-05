@@ -1,4 +1,4 @@
-/**
+  /**
  * @module Structure
  * @submodule Structure
  * @for p5
@@ -89,7 +89,7 @@ define(function (require) {
      * }
      *
      * function draw() {
-     *   rect(a++%width, 10, 2, 80); 
+     *   rect(a++%width, 10, 2, 80);
      * }
      * </code></div>
      */
@@ -104,10 +104,10 @@ define(function (require) {
      * noLoop() stops the code in draw() from executing, redraw() causes the
      * code inside draw() to execute once, and loop() will cause the code
      * inside draw() to resume executing continuously.
-     * 
+     *
      * The number of times draw() executes in each second may be controlled with
      * the frameRate() function.
-     * 
+     *
      * There can only be one draw() function for each sketch, and draw() must
      * exist if you want the code to run continuously, or to process events such
      * as mousePressed(). Sometimes, you might have an empty call to draw() in
@@ -131,7 +131,7 @@ define(function (require) {
      * </code></div>
      */
 
-    
+
     //////////////////////////////////////////////
     // PRIVATE p5 PROPERTIES AND METHODS
     //////////////////////////////////////////////
@@ -167,6 +167,7 @@ define(function (require) {
       'touchend': null,
       'resize': null
     };
+    this.loadingScreenId = 'p5_loading';
 
     this._start = function () {
       // Find node if id given
@@ -176,12 +177,17 @@ define(function (require) {
         }
       }
 
-      // PEND
-      // // Setup loading screen
-      // this._loadingScreen = document.createElement('loadingDiv');
-      // this._loadingScreen.innerHTML = 'loading...';
-      // var node = this._userNode || document.body;
-      // node.appendChild(this._loadingScreen);
+      // Setup loading screen
+      // Set loading scfeen into dom if not present
+      // Otherwise displays and removes user provided loading screen
+      if(!document.getElementById(this.loadingScreenId)){
+        this._loadingScreen = document.createElement('loadingDiv');
+        this._loadingScreen.innerHTML = 'loading...';
+        var node = this._userNode || document.body;
+        node.appendChild(this._loadingScreen);
+      } else {
+        this._loadingScreen = document.getElementById(this.loadingScreenId);
+      }
 
       // Always create a default canvas.
       // Later on if the user calls createCanvas, this default one
@@ -246,7 +252,10 @@ define(function (require) {
       this.canvas.style.visibility = '';
       this.canvas.className = this.canvas.className.replace('p5_hidden', '');
       this._setupDone = true;
-      // this._loadingScreen.parentNode.removeChild(this._loadingScreen);//PEND
+
+      // Removes the loading screen if it's in the DOM
+      this._loadingScreen.parentNode.removeChild(this._loadingScreen);
+
     }.bind(this);
 
     this._draw = function () {
@@ -303,10 +312,10 @@ define(function (require) {
     }.bind(this);
 
     /**
-     * Removes the entire p5 sketch. This will remove the canvas and any 
-     * elements created by p5.js. It will also stop the draw loop and unbind 
+     * Removes the entire p5 sketch. This will remove the canvas and any
+     * elements created by p5.js. It will also stop the draw loop and unbind
      * any properties or methods from the window global scope. It will
-     * leave a variable p5 in case you wanted to create a new p5 sketch. 
+     * leave a variable p5 in case you wanted to create a new p5 sketch.
      * If you like, you can set p5 = null to erase it.
      * @method remove
      * @example
@@ -314,11 +323,11 @@ define(function (require) {
      * function setup() {
      *   createCanvas(200, 200);
      * }
-     * 
+     *
      * function draw() {
      *   ellipse(width/2, height/2, 0, 0);
      * }
-     * 
+     *
      * function mousePressed() {
      *   remove(); // remove whole sketch on mouse press
      * }
@@ -410,7 +419,7 @@ define(function (require) {
           window[p2] = this[p2];
         }
       }
-      
+
     } else {
       // Else, the user has passed in a sketch closure that may set
       // user-provided 'setup', 'draw', etc. properties on this instance of p5
