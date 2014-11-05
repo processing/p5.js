@@ -61,7 +61,9 @@ define(function (require) {
   p5.prototype.touches = [];
 
   p5.prototype._updateTouchCoords = function(e) {
-    if(e.type === 'mousedown' || e.type === 'mousemove'){
+    if(e.type === 'mousedown' ||
+       e.type === 'mousemove' ||
+       e.type === 'mouseup'){
       this._setProperty('touchX', this.mouseX);
       this._setProperty('touchY', this.mouseY);
     } else {
@@ -236,6 +238,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.ontouchend = function(e) {
+    this._updateTouchCoords(e);
     var context = this._isGlobal ? window : this;
     var executeDefault;
     if (typeof context.touchEnded === 'function') {

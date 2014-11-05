@@ -68,7 +68,10 @@ define(function (require) {
    * Because of how operating systems handle key repeats, holding down a key
    * may cause multiple calls to keyTyped() (and keyReleased() as well). The
    * rate of repeat is set by the operating system and how each computer is
-   * configured.
+   * configured.<br><br>
+   * Browsers may have different default
+   * behaviors attached to various key events. To prevent any default
+   * behavior for this event, add "return false" to the end of the method.
    *
    * @method keyPressed
    * @example
@@ -101,6 +104,7 @@ define(function (require) {
    *   } else if (keyCode === RIGHT_ARROW) {
    *     value = 0;
    *   }
+   *   return false; // prevent any default behavior
    * }
    * </code>
    * </div>
@@ -116,12 +120,18 @@ define(function (require) {
     this._setProperty('key', key);
     var keyPressed = this.keyPressed || window.keyPressed;
     if (typeof keyPressed === 'function' && !e.charCode) {
-      keyPressed(e);
+      var executeDefault = keyPressed(e);
+      if(executeDefault === false) {
+        e.preventDefault();
+      }
     }
   };
    /**
    * The keyReleased() function is called once every time a key is released.
-   * See key and keyCode for more information.
+   * See key and keyCode for more information.<br><br>
+   * Browsers may have different default
+   * behaviors attached to various key events. To prevent any default
+   * behavior for this event, add "return false" to the end of the method.
    *
    * @method keyReleased
    * @example
@@ -138,6 +148,7 @@ define(function (require) {
    *   } else {
    *     value = 0;
    *   }
+   *   return false; // prevent any default behavior
    * }
    * </code>
    * </div>
@@ -153,7 +164,10 @@ define(function (require) {
     this._setProperty('key', key);
     this._setProperty('keyCode', e.which);
     if (typeof keyReleased === 'function') {
-      keyReleased(e);
+      var executeDefault = keyReleased(e);
+      if(executeDefault === false) {
+        e.preventDefault();
+      }
     }
   };
 
@@ -164,7 +178,10 @@ define(function (require) {
    * <br><br>
    * Because of how operating systems handle key repeats, holding down a key
    * will cause multiple calls to keyTyped(), the rate is set by the operating
-   * system and how each computer is configured.
+   * system and how each computer is configured.<br><br>
+   * Browsers may have different default
+   * behaviors attached to various key events. To prevent any default
+   * behavior for this event, add "return false" to the end of the method.
    *
    * @method keyTyped
    * @example
@@ -181,6 +198,7 @@ define(function (require) {
    *   } else if (key === 'b') {
    *     value = 0;
    *   }
+   *   return false; // prevent any default behavior
    * }
    * </code>
    * </div>
@@ -190,7 +208,10 @@ define(function (require) {
     this._setProperty('key', String.fromCharCode(e.which));
     var keyTyped = this.keyTyped || window.keyTyped;
     if (typeof keyTyped === 'function') {
-      keyTyped(e);
+      var executeDefault = keyTyped(e);
+      if(executeDefault === false) {
+        e.preventDefault();
+      }
     }
   };
 

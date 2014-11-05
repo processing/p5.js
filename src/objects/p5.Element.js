@@ -43,6 +43,7 @@ define(function(require) {
    * @method parent
    * @param  {String|Object} parent the ID, DOM node, or p5.Element
    *                         of desired parent element
+   * @return {p5.Element}
    * @example
    * <div class="norender"><code>
    * // in the html file:
@@ -75,6 +76,7 @@ define(function(require) {
       p = p.elt;
     }
     p.appendChild(this.elt);
+    return this;
   };
 
   /**
@@ -83,9 +85,11 @@ define(function(require) {
    *
    * @method id
    * @param  {String} id ID of the element
+   * @return {p5.Element}
    */
   p5.Element.prototype.id = function(id) {
     this.elt.id = id;
+    return this;
   };
 
   /**
@@ -94,9 +98,11 @@ define(function(require) {
    *
    * @method class
    * @param  {String} class class to add
+   * @return {p5.Element}
    */
   p5.Element.prototype.class = function(c) {
     this.elt.className += ' '+c;
+    return this;
   };
 
   /**
@@ -106,7 +112,8 @@ define(function(require) {
    *
    * @method mousePressed
    * @param  {Function} fxn function to be fired when mouse is
-   *                    pressed over the element.   
+   *                    pressed over the element. 
+   * @return {p5.Element}  
    * @example
    * <div class='norender'><code>
    * var cnv;
@@ -139,6 +146,7 @@ define(function(require) {
    */
   p5.Element.prototype.mousePressed = function (fxn) {
     attachListener('mousedown', fxn, this);
+    return this;
   };
 
   /**
@@ -153,9 +161,11 @@ define(function(require) {
    * @method mouseWheel
    * @param  {Function} fxn function to be fired when mouse wheel is
    *                    scrolled over the element.
+   * @return {p5.Element}
    */
   p5.Element.prototype.mouseWheel = function (fxn) {
     attachListener('mousewheel', fxn, this);
+    return this;
   };
 
   /**
@@ -166,9 +176,11 @@ define(function(require) {
    * @method mouseReleased
    * @param  {Function} fxn function to be fired when mouse is
    *                    released over the element.
+   * @return {p5.Element}
    */
   p5.Element.prototype.mouseReleased = function (fxn) {
     attachListener('mouseup', fxn, this);
+    return this;
   };
 
 
@@ -180,9 +192,11 @@ define(function(require) {
    * @method mouseClicked
    * @param  {Function} fxn function to be fired when mouse is
    *                    clicked over the element.
+   * @return {p5.Element}
    */
   p5.Element.prototype.mouseClicked = function (fxn) {
     attachListener('click', fxn, this);
+    return this;
   };
 
   /**
@@ -193,9 +207,11 @@ define(function(require) {
    * @method mouseMoved
    * @param  {Function} fxn function to be fired when mouse is
    *                    moved over the element.
+   * @return {p5.Element}
    */
   p5.Element.prototype.mouseMoved = function (fxn) {
     attachListener('mousemove', fxn, this);
+    return this;
   };
 
   /**
@@ -206,9 +222,11 @@ define(function(require) {
    * @method mouseOver
    * @param  {Function} fxn function to be fired when mouse is
    *                    moved over the element.
+   * @return {p5.Element}
    */
   p5.Element.prototype.mouseOver = function (fxn) {
     attachListener('mouseover', fxn, this);
+    return this;
   };
 
   /**
@@ -219,9 +237,11 @@ define(function(require) {
    * @method mouseOut
    * @param  {Function} fxn function to be fired when mouse is
    *                    moved off the element.
+   * @return {p5.Element}
    */
   p5.Element.prototype.mouseOut = function (fxn) {
     attachListener('mouseout', fxn, this);
+    return this;
   };
 
   function attachListener(ev, fxn, ctx) {

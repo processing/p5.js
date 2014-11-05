@@ -101,7 +101,9 @@ define(function (require) {
   p5.prototype.isMousePressed = false; // both are supported
 
   p5.prototype._updateMouseCoords = function(e) {
-    if(e.type === 'touchstart' || e.type === 'touchmove') {
+    if(e.type === 'touchstart' ||
+       e.type === 'touchmove' ||
+       e.type === 'touchend') {
       this._setProperty('mouseX', this.touchX);
       this._setProperty('mouseY', this.touchY);
     } else {
@@ -144,7 +146,7 @@ define(function (require) {
 
   /**
    * The mouseMoved() function is called every time the mouse moves and a mouse
-   * button is not pressed.
+   * button is not pressed.<br><br>
    * Browsers may have different default
    * behaviors attached to various mouse events. To prevent any default
    * behavior for this event, add `return false` to the end of the method.
@@ -184,7 +186,7 @@ define(function (require) {
   /**
    * The mouseDragged() function is called once every time the mouse moves and
    * a mouse button is pressed. If no mouseDragged() function is defined, the
-   * touchMoved() function will be called instead if it is defined.
+   * touchMoved() function will be called instead if it is defined.<br><br>
    * Browsers may have different default
    * behaviors attached to various mouse events. To prevent any default
    * behavior for this event, add `return false` to the end of the method.
@@ -253,7 +255,7 @@ define(function (require) {
    * is pressed. The mouseButton variable (see the related reference entry)
    * can be used to determine which button has been pressed. If no 
    * mousePressed() function is defined, the touchStarted() function will be
-   * called instead if it is defined.
+   * called instead if it is defined.<br><br>
    * Browsers may have different default
    * behaviors attached to various mouse events. To prevent any default
    * behavior for this event, add `return false` to the end of the method.
@@ -296,6 +298,7 @@ define(function (require) {
     this._setProperty('isMousePressed', true);
     this._setProperty('mouseIsPressed', true);
     this._setMouseButton(e);
+    this._updateMouseCoords(e);
     if (typeof context.mousePressed === 'function') {
       executeDefault = context.mousePressed(e);
       if(executeDefault === false) {
@@ -313,7 +316,7 @@ define(function (require) {
   /**
    * The mouseReleased() function is called every time a mouse button is
    * released. If no mouseReleased() function is defined, the touchEnded()
-   * function will be called instead if it is defined.
+   * function will be called instead if it is defined.<br><br>
    * Browsers may have different default
    * behaviors attached to various mouse events. To prevent any default
    * behavior for this event, add `return false` to the end of the method.
@@ -373,7 +376,7 @@ define(function (require) {
 
   /**
    * The mouseClicked() function is called once after a mouse button has been
-   * pressed and then released.
+   * pressed and then released.<br><br>
    * Browsers may have different default
    * behaviors attached to various mouse events. To prevent any default
    * behavior for this event, add `return false` to the end of the method.
@@ -425,7 +428,7 @@ define(function (require) {
    * The event.wheelDelta or event.detail property returns negative values if
    * the mouse wheel if rotated up or away from the user and positive in the
    * other direction. On OS X with "natural" scrolling enabled, the values are
-   * opposite.
+   * opposite.<br><br>
    * Browsers may have different default
    * behaviors attached to various mouse events. To prevent any default
    * behavior for this event, add `return false` to the end of the method.

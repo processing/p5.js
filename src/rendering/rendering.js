@@ -109,9 +109,8 @@ define(function(require) {
    * </div>
    */
   p5.prototype.noCanvas = function() {
-    var c = document.getElementById('defaultCanvas');
-    if (c) {
-      c.parentNode.removeChild(c);
+    if (this.canvas) {
+      this.canvas.parentNode.removeChild(this.canvas);
     }
   };
 
