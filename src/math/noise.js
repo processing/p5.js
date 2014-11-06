@@ -88,7 +88,7 @@ define(function (require) {
    * @example
    * <div>
    * <code>var xoff = 0.0;
-   * 
+   *
    * function draw() {
    *   background(204);
    *   xoff = xoff + .01;
@@ -99,7 +99,7 @@ define(function (require) {
    * </div>
    * <div>
    * <code>var noiseScale=0.02;
-   * 
+   *
    * function draw() {
    *   background(0);
    *   for (var x=0; x < width; x++) {
@@ -191,7 +191,7 @@ define(function (require) {
   // [toxi 040903]
   // make perlin noise quality user controlled to allow
   // for different levels of detail. lower values will produce
-  // smoother results as higher octaves are surpressed
+  // smoother results as higher octaves are suppressed
 
   /**
    *
@@ -216,25 +216,25 @@ define(function (require) {
    * @example
    * <div>
    * <code>
-   * 
+   *
    * var noiseVal;
    * var noiseScale=0.02;
-   * 
+   *
    * function setup() {
    *   createCanvas(100,100);
    * }
-   * 
+   *
    * function draw() {
    *   background(0);
    *   for (var y = 0; y < height; y++) {
    *     for (var x = 0; x < width/2; x++) {
    *       noiseDetail(2,0.2);
-   *       noiseVal = noise((mouseX+x) * noiseScale, 
+   *       noiseVal = noise((mouseX+x) * noiseScale,
    *                        (mouseY+y) * noiseScale);
    *       stroke(noiseVal*255);
    *       point(x,y);
    *       noiseDetail(8,0.65);
-   *       noiseVal = noise((mouseX + x + width/2) * noiseScale, 
+   *       noiseVal = noise((mouseX + x + width/2) * noiseScale,
    *                        (mouseY + y) * noiseScale);
    *       stroke(noiseVal*255);
    *       point(x + width/2, y);
@@ -260,12 +260,12 @@ define(function (require) {
    * @example
    * <div>
    * <code>var xoff = 0.0;
-   * 
+   *
    * function setup() {
    *   noiseSeed(99);
    *   stroke(0, 10);
    * }
-   * 
+   *
    * function draw() {
    *   xoff = xoff + .01;
    *   var n = noise(xoff) * width;
@@ -276,7 +276,7 @@ define(function (require) {
    */
   p5.prototype.noiseSeed = function(seed) {
     // Linear Congruential Generator
-    // Variant of a Lehman Generator 
+    // Variant of a Lehman Generator
     var lcg = (function() {
       // Set to values from http://en.wikipedia.org/wiki/Numerical_Recipes
       // m is basically chosen to be large (as it is the max period)
@@ -297,13 +297,13 @@ define(function (require) {
         rand : function() {
           // define the recurrence relationship
           z = (a * z + c) % m;
-          // return a float in [0, 1) 
+          // return a float in [0, 1)
           // if z = m then z / m = 0 therefore (z % m) / m < 1 always
           return z / m;
         }
       };
     }());
-    
+
     lcg.setSeed(seed);
     perlin = new Array(PERLIN_SIZE + 1);
     for (var i = 0; i < PERLIN_SIZE + 1; i++) {
