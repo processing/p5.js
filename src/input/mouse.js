@@ -107,9 +107,11 @@ define(function (require) {
       this._setProperty('mouseX', this.touchX);
       this._setProperty('mouseY', this.touchY);
     } else {
-      var mousePos = getMousePos(this._curElement.elt, e);
-      this._setProperty('mouseX', mousePos.x);
-      this._setProperty('mouseY', mousePos.y);
+      if(this._curElement !== null) {
+        var mousePos = getMousePos(this._curElement.elt, e);
+        this._setProperty('mouseX', mousePos.x);
+        this._setProperty('mouseY', mousePos.y);
+      }
     }
     this._setProperty('winMouseX', e.pageX);
     this._setProperty('winMouseY', e.pageY);
