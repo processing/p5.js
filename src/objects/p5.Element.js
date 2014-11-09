@@ -100,7 +100,7 @@ define(function(require) {
    * @param  {String} class class to add
    * @return {p5.Element}
    */
-  p5.Element.prototype.class = function(c) {
+  p5.Element.prototype.addClass = function(c) {
     this.elt.className += ' '+c;
     return this;
   };
