@@ -168,7 +168,7 @@ define(function (require) {
       'touchend': null,
       'resize': null
     };
-    this.loadingScreenId = 'p5_loading';
+    this._loadingScreenId = 'p5_loading';
 
     this._start = function () {
       // Find node if id given
@@ -181,14 +181,13 @@ define(function (require) {
       // Setup loading screen
       // Set loading scfeen into dom if not present
       // Otherwise displays and removes user provided loading screen
-      if(!document.getElementById(this.loadingScreenId)){
+      this._loadingScreen = document.getElementById(this._loadingScreenId);
+      if(!this._loadingScreen){
         this._loadingScreen = document.createElement('loadingDiv');
         this._loadingScreen.innerHTML = 'loading...';
         this._loadingScreen.style.position = 'absolute';
         var node = this._userNode || document.body;
         node.appendChild(this._loadingScreen);
-      } else {
-        this._loadingScreen = document.getElementById(this.loadingScreenId);
       }
 
       // Always create a default canvas.
