@@ -184,6 +184,7 @@ define(function (require) {
       if(!document.getElementById(this.loadingScreenId)){
         this._loadingScreen = document.createElement('loadingDiv');
         this._loadingScreen.innerHTML = 'loading...';
+        this._loadingScreen.style.position = 'absolute';
         var node = this._userNode || document.body;
         node.appendChild(this._loadingScreen);
       } else {
