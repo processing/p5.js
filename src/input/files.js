@@ -28,32 +28,6 @@ define(function (require) {
     throw 'not yet implemented';
   };
 
-
-  /**
-   * Loads a JSON file from a file or a URL, and returns an Object or Array.
-   * This method is asynchronous, meaning it may not finish before the next
-   * line in your sketch is executed. Either use preload() to guarantee the
-   * file loads before setup() and draw() are called, or supply a callback
-   * function that is executed when loadStrings() completes.
-   * 
-   * @method loadJSON
-   * @param  {String}        path       name of the file or url to load
-   * @param  {Function}      [callback] function to be executed after
-   *                                    loadJSON()
-   *                                    completes, Array is passed in as first
-   *                                    argument
-   * @return {Object|Array}             JSON data
-   */
-  p5.prototype.httpGet = function(url, data, callback) {
-    reqwest({url: path, data:data crossOrigin: true})
-      .then(function(resp) {
-        if (typeof callback !== 'undefined') {
-          callback(resp);
-        }
-      });
-    return this;
-  };
-
   /**
    * Loads a JSON file from a file or a URL, and returns an Object or Array.
    * This method is asynchronous, meaning it may not finish before the next
