@@ -12,7 +12,7 @@ define(function (require) {
   var Filters = require('filters');
   var canvas = require('canvas');
   var constants = require('constants');
-  
+
   /**
    * Loads an image from a path and creates a p5.Image from it.
    *
@@ -20,7 +20,7 @@ define(function (require) {
    * If you want to ensure that the image is ready before doing
    * anything with it you can do perform those operations in the
    * callback, or place the loadImage() call in preload().
-   * 
+   *
    * @method loadImage
    * @param  {String}   path
    * @param  {Function} callback Function to be called once the image is
@@ -46,7 +46,12 @@ define(function (require) {
     //set crossOrigin in case image is served which CORS headers
     //this will let us draw to canvas without tainting it.
     //see https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
-    img.crossOrigin = 'Anonymous';
+    // Due to crossOrigin issues and permissions on iOS devices we sniff
+    // to check if the the user is using one of these devices and if they are
+    // don't apply the origin
+    if (!/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      img.crossOrigin = 'Anonymous';
+    }
 
     //start loading the image
     img.src = path;
@@ -57,7 +62,7 @@ define(function (require) {
   /**
    * Draw an image to the main canvas of the p5js sketch
    *
-   * @method image 
+   * @method image
    * @param  {p5.Image} image    the image to display
    * @param  {Number}   x        x-coordinate of the image
    * @param  {Number}   y        y-coordinate of the image
@@ -95,10 +100,10 @@ define(function (require) {
    * Sets the fill value for displaying images. Images can be tinted to
    * specified colors or made transparent by including an alpha value.
    *
-   * To apply transparency to an image without affecting its color, use 
-   * white as the tint color and specify an alpha value. For instance, 
+   * To apply transparency to an image without affecting its color, use
+   * white as the tint color and specify an alpha value. For instance,
    * tint(255, 128) will make an image 50% transparent (assuming the default
-   * alpha range of 0-255, which can be changed with colorMode()). 
+   * alpha range of 0-255, which can be changed with colorMode()).
    *
    * The value for the gray parameter must be less than or equal to the current
    * maximum value as specified by colorMode(). The default maximum value is
@@ -111,7 +116,7 @@ define(function (require) {
    *                            current color mode)
    * @param {Number|Array} [v3] blue or brightness value (depending on the
    *                            current color mode)
-   * @param {Number|Array} [a]  opacity of the background   
+   * @param {Number|Array} [a]  opacity of the background
    * @example
    * <div>
    * <code>
