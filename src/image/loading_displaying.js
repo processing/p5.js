@@ -46,10 +46,9 @@ define(function (require) {
     //set crossOrigin in case image is served which CORS headers
     //this will let us draw to canvas without tainting it.
     //see https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
-    // Due to crossOrigin issues and permissions on iOS devices we sniff
-    // to check if the the user is using one of these devices and if they are
-    // don't apply the origin
-    if (!/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+    // When using data-uris the file will be loaded locally
+    // so we don't need to worry about crossOrgin with base64 file types
+    if(path.indexOf('data:image/') !== 0) {
       img.crossOrigin = 'Anonymous';
     }
 
