@@ -130,6 +130,11 @@ define(function (require) {
     if (!this._doStroke && !this._doFill) {
       return;
     }
+
+    // processing supports negative width and heights for ellipses
+    w = Math.abs(w);
+    h = Math.abs(h);
+
     var ctx = this.drawingContext;
     var vals = canvas.modeAdjust(
       x,
