@@ -14,11 +14,3 @@ function logResults(results) {
     console.log('---');
   }
 }
-
-
-
-r = random(5); // 4.3
-r = int(r);
-
-
-r = int(random(5));
