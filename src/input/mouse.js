@@ -48,7 +48,7 @@ define(function (require) {
   p5.prototype.pmouseY = 0;
 
   /**
-   * The system variable pwinMouseY always contains the current horizontal
+   * The system variable winMouseX always contains the current horizontal
    * position of the mouse, relative to (0, 0) of the window.
    *
    * @property winMouseX
