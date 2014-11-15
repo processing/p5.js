@@ -231,7 +231,7 @@ define(function (require) {
    * Calculates the integer closest to the n parameter. For example,
    * round(133.8) returns the value 134. Maps to Math.round().
    *
-   * @method constrain
+   * @method round
    * @param  {Number} n number to round
    * @return {Number}   rounded number
    */
