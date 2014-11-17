@@ -240,8 +240,9 @@ define(function (require) {
   };
 
   /**
-   * Multiply the vector by a scalar. The static version of this method creates a new p5.Vector
-   * while the non static version acts on the vector directly. See the examples for more context.
+   * Multiply the vector by a scalar. The static version of this method 
+   * creates a new p5.Vector while the non static version acts on the vector
+   * directly. See the examples for more context.
    *
    * @method mult
    * @chainable
@@ -271,8 +272,9 @@ define(function (require) {
   };
 
   /**
-   * Divide the vector by a scalar. The static version of this method creates a new p5.Vector
-   * while the non static version acts on the vector directly. See the examples for more context.
+   * Divide the vector by a scalar. The static version of this method creates a
+   * new p5.Vector while the non static version acts on the vector directly. 
+   * See the examples for more context.
    *
    * @method div
    * @chainable
@@ -328,8 +330,8 @@ define(function (require) {
 
   /**
    * Calculates the dot product of two vectors. The version of the method
-   * that computes the dot product of two independent vectors is a static method.
-   * See the examples for more context.
+   * that computes the dot product of two independent vectors is a static
+   * method. See the examples for more context.
    *
    *
    * @method dot
@@ -388,7 +390,8 @@ define(function (require) {
    * var v = createVector(1,0,0);
    * var v1 = createVector(0,1,0);
    *
-   * var crossProduct = p5.Vector.cross(v,v1); //crossProduct has components [0,0,1]
+   * // crossProduct has components [0,0,1]
+   * var crossProduct = p5.Vector.cross(v,v1); 
    * </code>
    * </div>
    */
