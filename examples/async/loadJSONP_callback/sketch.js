@@ -1,4 +1,5 @@
-// This example gets weather for any city based on user input.
+// This example gets weather for any city based on user input,
+// using padded JSON (JSONP).
 // 
 // We'll use loadJSON() to get weather data from the API at
 // openweather.org.
@@ -8,11 +9,11 @@
 // at the moment loadJSON is called, our 'result' will be empty.
 // 
 // A callback is the name of a function that handles our data
-// when it is ready. 
+// when it is ready.
 // 
-// We'll add a callback as the 2nd parameter to loadJSON, like this:
+// For JSONP, we add a callback parameter to the loadJSON path:
 // 
-// loadJSON(url, callback)
+// loadJSON('http://api.com/data?q=myQuery&callback=myCallbackFunction')
 
 var result;
 var userInput;
@@ -29,14 +30,20 @@ function setup(){
   button = createButton('submit');
 
   button.mousePressed(getWeather); //getWeather() is the callback.
+
+  loadJSON('http://api.openweathermap.org/data/2.5/station?id=5091', logResults);
 }
 
 function getWeather(){
   background(255);
 
   var cityName = userInput.value();
-  var path = 'http://api.openweathermap.org/data/2.5/weather?q='+cityName+'&units=metric';
+  var path = 'http://api.openweathermap.org/data/2.5/weather?q='+cityName+'&units=metric&callback=displayWeather'
   loadJSON(path, displayWeather); // displayWeather is the callback
+}
+
+function logResults(stuff) {
+  console.log(stuff.station);
 }
 
 // Callback: loadJSON calls this function when finished loading.
