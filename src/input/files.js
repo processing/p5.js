@@ -45,17 +45,13 @@ define(function (require) {
    */
   p5.prototype.loadJSON = function(path, callback) {
     var ret = [];
-    var t = 'json';
+    var t = path.indexOf('http') === -1 ? 'json' : 'jsonp';
     var callbackString = '';
 
     // is it jsonp?
-    if ( (path.indexOf('jsonp') > -1 ) || (path.indexOf('callback') > -1) ) {
-      t = 'jsonp';
-      // if there is a callback in the path but no argument
-      if (typeof(callback) === 'undefined') {
-        callbackString = path.slice( [path.indexOf('callback') + 9] );
-        callback = window[callbackString];
-      }
+    if ( (t === 'jsonp') && (typeof(callback) === 'undefined') ) {
+      callbackString = path.slice( [path.indexOf('callback') + 9] );
+      callback = window[callbackString];
     }
 
     reqwest({
