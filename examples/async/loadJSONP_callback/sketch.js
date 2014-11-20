@@ -30,6 +30,8 @@ function setup(){
   button = createButton('submit');
 
   button.mousePressed(getWeather); //getWeather() is the callback.
+
+  loadJSON('http://api.openweathermap.org/data/2.5/station?id=5091', logResults);
 }
 
 function getWeather(){
@@ -41,8 +43,7 @@ function getWeather(){
 }
 
 function logResults(stuff) {
-  console.log('got the stuff!!!');
-  console.log(stuff);
+  console.log(stuff.station);
 }
 
 // Callback: loadJSON calls this function when finished loading.
