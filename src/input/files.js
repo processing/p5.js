@@ -48,7 +48,7 @@ define(function (require) {
     var t = path.indexOf('http') === -1 ? 'json' : 'jsonp';
     var callbackString = '';
 
-    // is it jsonp?
+    // parse callback from url if callback is not defined as separate argument
     if ( (t === 'jsonp') && (typeof(callback) === 'undefined') ) {
       callbackString = path.slice( [path.indexOf('callback') + 9] );
       callback = window[callbackString];
