@@ -79,6 +79,16 @@ define(function (require) {
    * }
    * </code>
    * </div>
+   * <div>
+   * <code>
+   * function setup() {
+   *   // here we use a callback to display the image after loading
+   *   loadImage("assets/laDefense.jpg", function(img) {
+   *     image(img, 0, 0);
+   *   });
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.image = function(img, x, y, width, height) {
     var frame = img.canvas ? img.canvas : img.elt; // may use vid src
