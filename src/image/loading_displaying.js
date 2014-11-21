@@ -69,19 +69,11 @@ define(function (require) {
    * @param  {Number}   [height] height to display the image
    */
   p5.prototype.image = function(img, x, y, width, height) {
-    var frame = img.canvas ? img.canvas : img.elt; // may use vid src
-    if (x === undefined){
-      x = 0;
-    }
-    if (y === undefined){
-      y = 0;
-    }
-    if (width === undefined){
-      width = img.width;
-    }
-    if (height === undefined){
-      height = img.height;
-    }
+    var frame = img.canvas || img.elt; // may use vid src
+    // set defaults
+    x = x || 0, y = y || 0;
+    width = width || img.width, height = height || img.height;
+
     var vals = canvas.modeAdjust(x, y, width, height, this._imageMode);
     // tint the image if there is a tint
     if (this._tint && img.canvas) {
