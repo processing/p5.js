@@ -63,13 +63,19 @@ define(function (require) {
    *
    * @method image
    * @param  {p5.Image} image    the image to display
-   * @param  {Number}   x        x-coordinate of the image
-   * @param  {Number}   y        y-coordinate of the image
+   * @param  {Number}   [x=0]    x-coordinate of the image
+   * @param  {Number}   [y=0]    y-coordinate of the image
    * @param  {Number}   [width]  width to display the image
    * @param  {Number}   [height] height to display the image
    */
   p5.prototype.image = function(img, x, y, width, height) {
     var frame = img.canvas ? img.canvas : img.elt; // may use vid src
+    if (x === undefined){
+      x = 0;
+    }
+    if (y === undefined){
+      y = 0;
+    }
     if (width === undefined){
       width = img.width;
     }
