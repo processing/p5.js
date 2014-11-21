@@ -69,6 +69,35 @@ define(function (require) {
    * @param  {Number}   y        y-coordinate of the image
    * @param  {Number}   [width]  width to display the image
    * @param  {Number}   [height] height to display the image
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   image("assets/laDefense.jpg", 0, 0);
+   * }
+   * </code>
+   * </div>
+   * <div>
+   * <code>
+   * function setup() {
+   *   loadImage("assets/laDefense.jpg",function(img){
+   *     image(img, 0, 0);
+   *   });
+   * }
+   * </code>
+   * </div>
+   * <div>
+   * <code>
+   * // this is the most flexible method
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/laDefense.jpg");
+   * }
+   * function setup() {
+   *   image(img, 0, 0);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.image = function(img, x, y, width, height) {
     // if img is a string, we load it first
