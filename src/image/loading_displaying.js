@@ -22,10 +22,10 @@ define(function (require) {
    * callback, or place the loadImage() call in preload().
    *
    * @method loadImage
-   * @param  {String}   path
-   * @param  {Function} callback Function to be called once the image is
-   *                             loaded. Will be passed the p5.Image.
-   * @return {p5.Image}            the p5.Image object
+   * @param  {String} path Path of the image to be loaded
+   * @param  {Function(p5.Image)} [callback]   Function to be called once the image is
+   *                                 loaded. Will be passed the p5.Image.
+   * @return {p5.Image}              the p5.Image object
    */
   p5.prototype.loadImage = function(path, callback) {
     var img = new Image();
