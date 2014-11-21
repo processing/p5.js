@@ -62,36 +62,51 @@ define(function (require) {
    * Draw an image to the main canvas of the p5js sketch
    *
    * @method image
-   * @param  {p5.Image} image    the image to display
+   * @param  {String|p5.Image} path|image
+   *             path to image, or the p5.Image to display
+   *
    * @param  {Number}   x        x-coordinate of the image
    * @param  {Number}   y        y-coordinate of the image
    * @param  {Number}   [width]  width to display the image
    * @param  {Number}   [height] height to display the image
    */
   p5.prototype.image = function(img, x, y, width, height) {
-    var frame = img.canvas ? img.canvas : img.elt; // may use vid src
-    if (width === undefined){
-      width = img.width;
-    }
-    if (height === undefined){
-      height = img.height;
-    }
-    var vals = canvas.modeAdjust(x, y, width, height, this._imageMode);
-    // tint the image if there is a tint
-    if (this._tint && img.canvas) {
-      this.drawingContext.drawImage(
-        this._getTintedImageCanvas(img),
-        vals.x,
-        vals.y,
-        vals.w,
-        vals.h);
+    // if img is a string, we load it first
+    var _this = this;
+    if (typeof img === 'string'){
+      _this.loadImage(img, function(_img){
+        _image(_img, x, y, width, height);
+      });
     } else {
-      this.drawingContext.drawImage(
-        frame,
-        vals.x,
-        vals.y,
-        vals.w,
-        vals.h);
+      _image(img, x, y, width, height);
+    }
+
+    function _image(img, x, y, width, height){
+      var frame = img.canvas ? img.canvas : img.elt; // may use vid src
+
+      if (width === undefined){
+        width = img.width;
+      }
+      if (height === undefined){
+        height = img.height;
+      }
+      var vals = canvas.modeAdjust(x, y, width, height, _this._imageMode);
+      // tint the image if there is a tint
+      if (_this._tint && img.canvas) {
+        _this.drawingContext.drawImage(
+          _this._getTintedImageCanvas(img),
+          vals.x,
+          vals.y,
+          vals.w,
+          vals.h);
+      } else {
+        _this.drawingContext.drawImage(
+          frame,
+          vals.x,
+          vals.y,
+          vals.w,
+          vals.h);
+      }
     }
   };
 
