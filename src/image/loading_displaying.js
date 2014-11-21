@@ -71,8 +71,10 @@ define(function (require) {
   p5.prototype.image = function(img, x, y, width, height) {
     var frame = img.canvas || img.elt; // may use vid src
     // set defaults
-    x = x || 0, y = y || 0;
-    width = width || img.width, height = height || img.height;
+    x = x || 0;
+    y = y || 0;
+    width = width || img.width;
+    height = height || img.height;
 
     var vals = canvas.modeAdjust(x, y, width, height, this._imageMode);
     // tint the image if there is a tint
