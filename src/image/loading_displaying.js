@@ -26,7 +26,29 @@ define(function (require) {
    * @param  {Function(p5.Image)} [callback]   Function to be called once the 
    *                                 image is loaded. Will be passed the 
                                      p5.Image.
-   * @return {p5.Image}              the p5.Image object
+   * @return {p5.Image}              the p5.Image object   
+   * @example
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/laDefense.jpg");
+   * }
+   * function setup() {
+   *   image(img, 0, 0);
+   * }
+   * </code>
+   * </div>
+   * <div>
+   * <code>
+   * function setup() {
+   *   // here we use a callback to display the image after loading
+   *   loadImage("assets/laDefense.jpg", function(img) {
+   *     image(img, 0, 0);
+   *   });
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.loadImage = function(path, callback) {
     var img = new Image();
