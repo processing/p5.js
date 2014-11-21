@@ -67,6 +67,18 @@ define(function (require) {
    * @param  {Number}   y        y-coordinate of the image
    * @param  {Number}   [width]  width to display the image
    * @param  {Number}   [height] height to display the image
+   * @example
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/laDefense.jpg");
+   * }
+   * function setup() {
+   *   image(img, 0, 0);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.image = function(img, x, y, width, height) {
     var frame = img.canvas ? img.canvas : img.elt; // may use vid src
