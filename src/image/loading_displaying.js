@@ -23,8 +23,9 @@ define(function (require) {
    *
    * @method loadImage
    * @param  {String} path Path of the image to be loaded
-   * @param  {Function(p5.Image)} [callback]   Function to be called once the image is
-   *                                 loaded. Will be passed the p5.Image.
+   * @param  {Function(p5.Image)} [callback]   Function to be called once the 
+   *                                 image is loaded. Will be passed the 
+                                     p5.Image.
    * @return {p5.Image}              the p5.Image object
    */
   p5.prototype.loadImage = function(path, callback) {
