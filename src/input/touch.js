@@ -67,13 +67,14 @@ define(function (require) {
       this._setProperty('touchX', this.mouseX);
       this._setProperty('touchY', this.mouseY);
     } else {
-      this._setProperty('touchX', e.changedTouches[0].pageX);
-      this._setProperty('touchY', e.changedTouches[0].pageY);
+      var touchPos = getTouchPos(this._curElement.elt, e, 0);
+      this._setProperty('touchX', touchPos.x);
+      this._setProperty('touchY', touchPos.y);
 
       var touches = [];
       for(var i = 0; i < e.changedTouches.length; i++){
-        var ct = e.changedTouches[i];
-        touches[i] = {x: ct.pageX, y: ct.pageY};
+        var pos = getTouchPos(this._curElement.elt, e, i);
+        touches[i] = {x: pos.x, y: pos.y};
       }
       this._setProperty('touches', touches);
     }
@@ -83,6 +84,15 @@ define(function (require) {
     this._setProperty('ptouchX', this.touchX);
     this._setProperty('ptouchY', this.touchY);
   };
+
+  function getTouchPos(canvas, e, i) {
+    i = i || 0;
+    var rect = canvas.getBoundingClientRect();
+    return {
+      x: e.changedTouches[i].pageX - rect.left,
+      y: e.changedTouches[i].pageY - rect.top
+    };
+  }
 
   /**
    * The touchStarted() function is called once after every time a touch is
