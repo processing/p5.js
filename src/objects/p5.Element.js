@@ -248,8 +248,9 @@ define(function(require) {
     // LM removing, not sure why we had this?
     // var _this = ctx;
     // var f = function (e) { fxn(e, _this); };
-    ctx.elt.addEventListener(ev, fxn, false);
-    ctx._events[ev] = fxn;
+    var f = fxn.bind(ctx);
+    ctx.elt.addEventListener(ev, f, false);
+    ctx._events[ev] = f;
   }
 
   /**
