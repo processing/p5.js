@@ -41,18 +41,28 @@ define(function (require) {
    *                                    loadJSON()
    *                                    completes, Array is passed in as first
    *                                    argument
+   * @param  {String}       [datatype]  "json" or "jsonp"
    * @return {Object|Array}             JSON data
    */
   p5.prototype.loadJSON = function(path, callback) {
-    var ret = [];
+    var ret = []; // array needed for preload
+    // assume jsonp for URLs
     var t = path.indexOf('http') === -1 ? 'json' : 'jsonp';
+
+    // check for explicit data type argument
+    if (typeof arguments[2] === 'string'){
+      if (arguments[2] === 'jsonp' || arguments[2] === 'json') {
+        t = arguments[2];
+      }
+    }
+
     reqwest({url: path, type: t, crossOrigin: true})
       .then(function(resp) {
         for (var k in resp) {
           ret[k] = resp[k];
         }
         if (typeof callback !== 'undefined') {
-          callback(ret);
+          callback(resp);
         }
       });
     return ret;

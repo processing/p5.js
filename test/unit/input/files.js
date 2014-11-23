@@ -54,4 +54,23 @@ suite('Files', function() {
   //tests while preload is false with callbacks
   preload = false;
 
+  suite('p5.prototype.loadJSON', function(){
+    test('should be a function', function(){
+      assert.ok(loadJSON);
+      assert.typeOf(loadJSON, 'function');
+    });
+    test('should allow json to override jsonp in 3rd param',
+      function(done){
+        var url = 'https://maps.googleapis.com/maps/api/geocode/json?address=Atlanta';
+        var datatype = 'json';
+        var myCallback = function(resp){
+          assert.ok(resp);
+          //assert.typeOf(resp,'Object');
+          done();
+        };
+        result = loadJSON(url,myCallback,datatype);
+    });
+
+  });
+
 });
