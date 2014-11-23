@@ -45,7 +45,7 @@ define(function (require) {
    * @return {Object|Array}             JSON data
    */
   p5.prototype.loadJSON = function(path, callback) {
-    var ret = [];
+    var ret = []; // array needed for preload
     // assume jsonp for URLs
     var t = path.indexOf('http') === -1 ? 'json' : 'jsonp';
 
@@ -62,7 +62,7 @@ define(function (require) {
           ret[k] = resp[k];
         }
         if (typeof callback !== 'undefined') {
-          callback(ret);
+          callback(resp);
         }
       });
     return ret;
