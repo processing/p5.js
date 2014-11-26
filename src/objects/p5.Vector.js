@@ -35,16 +35,16 @@ define(function (require) {
    * @param {Number} [z] z component of the vector
    * @example
    * <div>
-   * <code> 
+   * <code>
    * var vector = createVector(40, 50);
    * var vector2 = createVector(40, 50);
-   * 
+   *
    * ellipse(vector.x, vector.y, 50, 50);
    * ellipse(vector2.x, vector2.y, 50, 50);
    * vector.add(vector2);
    * ellipse(vector.x, vector.y, 50, 50);
-   *</div>
-   *</code>
+   * </code>
+   * </div>
    */
   p5.Vector = function() {
     var x,y,z;
@@ -86,11 +86,24 @@ define(function (require) {
    * Sets the x, y, and z component of the vector using two or three separate
    * variables, the data from a p5.Vector, or the values from a float array.
    * @method set
-   * 
+   *
    * @param {Number|p5.Vector|Array} [x] the x component of the vector or a
    *                                     p5.Vector or an Array
-   * @param {Number}                 [y] the y component of the vector 
-   * @param {Number}                 [z] the z component of the vector 
+   * @param {Number}                 [y] the y component of the vector
+   * @param {Number}                 [z] the z component of the vector
+   * @example
+   * <div class="norender">
+   * <code>
+   * function setup() {
+   *    var v = createVector(1,2,3);
+   *    v.set(4,5,6); //Sets vector to [4,5,6]
+   *
+   *    var v1 = createVector(0,0,0);
+   *    var arr = [1,2,3]
+   *    v1.set(arr); //Sets vector to [1,2,3]
+   * }
+   * </code>
+   * </div>
    */
   p5.Vector.prototype.set = function (x, y, z) {
     if (x instanceof p5.Vector) {
@@ -130,9 +143,8 @@ define(function (require) {
    * Adds x, y, and z components to a vector, adds one vector to another, or
    * adds two independent vectors together. The version of the method that adds
    * two vectors together is a static method and returns a p5.Vector, the others
-   * have no return value -- they act directly on the vector. See the examples
-   * for more context. 
-   * 
+   * acts directly on the vector. See the examples for more context.
+   *
    * @method add
    * @chainable
    * @param  {Number|p5.Vector|Array} x   the x component of the vector to be
@@ -142,6 +154,22 @@ define(function (require) {
    * @param  {Number}                 [z] the z component of the vector to be
    *                                      added
    * @return {p5.Vector}                  the p5.Vector object.
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = createVector(1,2,3);
+   * v.add(4,5,6); //v's compnents are set to [5,7,9]
+   * </code>
+   * </div>
+   * <div class="norender">
+   * <code>
+   * //Static method
+   * var v = createVector(1,2,3);
+   * var v1 = createVector(2,3,4);
+   *
+   * var v2 = p5.Vector.add(v, v1); //v2 has compnents [3,5,7]
+   * </code>
+   * </div>
    */
   p5.Vector.prototype.add = function (x, y, z) {
     if (x instanceof p5.Vector) {
@@ -165,10 +193,9 @@ define(function (require) {
   /**
    * Subtracts x, y, and z components from a vector, subtracts one vector from
    * another, or subtracts two independent vectors. The version of the method
-   * that substracts two vectors is a static method and returns a p5.Vector, the
-   * others have no return value -- they act directly on the vector. See the
-   * examples for more context. 
-   * 
+   * that subtracts two vectors is a static method and returns a p5.Vector, the
+   * other acts directly on the vector. See the examples for more context.
+   *
    * @method sub
    * @chainable
    * @param  {Number|p5.Vector|Array} x   the x component of the vector or a
@@ -176,6 +203,22 @@ define(function (require) {
    * @param  {Number}                 [y] the y component of the vector
    * @param  {Number}                 [z] the z component of the vector
    * @return {p5.Vector}                  p5.Vector object.
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = createVector(4,5,6);
+   * v.sub(1,1,1); //v's compnents are set to [3,4,5]
+   * </code>
+   * </div>
+   * <div class="norender">
+   * <code>
+   * //Static method
+   * var v  = createVector(2,3,4);
+   * var v1 = createVector(1,2,3);
+   *
+   * var v2 = p5.Vector.sub(v, v1); //v2 has compnents [1,1,1]
+   * </code>
+   * </div>
    */
   p5.Vector.prototype.sub = function (x, y, z) {
     if (x instanceof p5.Vector) {
@@ -197,12 +240,29 @@ define(function (require) {
   };
 
   /**
-   * Multiply the vector by a scalar.   
+   * Multiply the vector by a scalar. The static version of this method 
+   * creates a new p5.Vector while the non static version acts on the vector
+   * directly. See the examples for more context.
    *
    * @method mult
    * @chainable
    * @param  {Number}    n the number to multiply with the vector
    * @return {p5.Vector} a reference to the p5.Vector object (allow chaining)
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = createVector(1,2,3);
+   * v.mult(2); //v's compnents are set to [2,4,6]
+   * </code>
+   * </div>
+   * <div class="norender">
+   * <code>
+   * //Static method
+   * var v  = createVector(1,2,3);
+   *
+   * var v1 = p5.Vector.mult(v, 2); //v1 has compnents [2,4,6]
+   * </code>
+   * </div>
    */
   p5.Vector.prototype.mult = function (n) {
     this.x *= n || 0;
@@ -212,12 +272,29 @@ define(function (require) {
   };
 
   /**
-   * Divide the vector by a scalar.   
+   * Divide the vector by a scalar. The static version of this method creates a
+   * new p5.Vector while the non static version acts on the vector directly. 
+   * See the examples for more context.
    *
    * @method div
    * @chainable
    * @param  {number}    n the number to divide the vector by
    * @return {p5.Vector} a reference to the p5.Vector object (allow chaining)
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = createVector(6,4,2);
+   * v.div(2); //v's compnents are set to [3,2,1]
+   * </code>
+   * </div>
+   * <div class="norender">
+   * <code>
+   * //Static method
+   * var v  = createVector(6,4,2);
+   *
+   * var v1 = p5.Vector.div(v, 2); //v1 has compnents [3,2,1]
+   * </code>
+   * </div>
    */
   p5.Vector.prototype.div = function (n) {
     this.x /= n;
@@ -229,7 +306,7 @@ define(function (require) {
   /**
    * Calculates the magnitude (length) of the vector and returns the result as
    * a float (this is simply the equation sqrt(x*x + y*y + z*z).)
-   * 
+   *
    * @method mag
    * @return {Number} magnitude of the vector
    */
@@ -252,13 +329,34 @@ define(function (require) {
   };
 
   /**
-   * Calculates the dot product of two vectors.
+   * Calculates the dot product of two vectors. The version of the method
+   * that computes the dot product of two independent vectors is a static
+   * method. See the examples for more context.
+   *
    *
    * @method dot
    * @param  {Number|p5.Vector} x   x component of the vector or a p5.Vector
    * @param  {Number}           [y] y component of the vector
    * @param  {Number}           [z] z component of the vector
    * @return {Number}                 the dot product
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = createVector(1,2,3);
+   * var v1 = createVector(2,3,4);
+   *
+   * v.dot(v1); //Returns 20
+   * </code>
+   * </div>
+   * <div class="norender">
+   * <code>
+   * //Static method
+   * var v = createVector(1,2,3);
+   * var v1 = createVector(3,2,1);
+   *
+   * var dotProduct = p5.Vector.dot(v,v1); //dotProduct == 10
+   * </code>
+   * </div>
    */
   p5.Vector.prototype.dot = function (x, y, z) {
     if (x instanceof p5.Vector) {
@@ -271,11 +369,31 @@ define(function (require) {
 
   /**
    * Calculates and returns a vector composed of the cross product between
-   * two vectors.
+   * two vectors. Both the static and non static methods return a new p5.Vector.
+   * See the examples for more context.
    *
    * @method cross
    * @param  {p5.Vector} v p5.Vector to be crossed
    * @return {p5.Vector}   p5.Vector composed of cross product
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = createVector(1,2,3);
+   * var v1 = createVector(1,2,3);
+   *
+   * v.cross(v1); //v's components are [0,0,0]
+   * </code>
+   * </div>
+   * <div class="norender">
+   * <code>
+   * //Static method
+   * var v = createVector(1,0,0);
+   * var v1 = createVector(0,1,0);
+   *
+   * // crossProduct has components [0,0,1]
+   * var crossProduct = p5.Vector.cross(v,v1); 
+   * </code>
+   * </div>
    */
   p5.Vector.prototype.cross = function (v) {
     var x = this.y * v.z - this.z * v.y;
@@ -295,6 +413,24 @@ define(function (require) {
    * @method dist
    * @param  {p5.Vector} v the x, y, and z coordinates of a p5.Vector
    * @return {Number}      the distance
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = createVector(1,0,0);
+   * var v1 = createVector(0,1,0);
+   *
+   * var distance = v.dist(v1); //distance == 1.4142...
+   * </code>
+   * </div>
+   * <div class="norender">
+   * <code>
+   * //Static method
+   * var v = createVector(1,0,0);
+   * var v1 = createVector(0,1,0);
+   *
+   * var distance = p5.Vector.dist(v,v1); //distance == 1.4142...
+   * </code>
+   * </div>
    */
   p5.Vector.prototype.dist = function (v) {
     var d = v.get().sub(this);
@@ -385,12 +521,29 @@ define(function (require) {
    *
    * @method lerp
    * @param  {p5.Vector} x   the x component or the p5.Vector to lerp to
-   * @param  {p5.Vector} [y] y the y component 
+   * @param  {p5.Vector} [y] y the y component
    * @param  {p5.Vector} [z] z the z component
    * @param  {Number}    amt the amount of interpolation; some value between 0.0
    *                         (old vector) and 1.0 (new vector). 0.1 is very near
    *                         the new vector. 0.5 is halfway in between.
    * @return {p5.Vector}     the modified p5.Vector
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = createVector(1,1,0);
+   *
+   * v.lerp(3,3,0,0.5); //v now has components [2,2,0]
+   * </code>
+   * </div>
+   * <div class="norender">
+   * <code>
+   * var v = createVector(0,0,0);
+   * var v1 = createVector(100,100,0);
+   *
+   * var v2 = p5.Vector.lerp(v,v1,0.5);
+   * //v2 has components [50,50,0]
+   * </code>
+   * </div>
    */
   p5.Vector.prototype.lerp = function (x, y, z, amt) {
     if (x instanceof p5.Vector) {
@@ -409,7 +562,7 @@ define(function (require) {
    * array.
    *
    * @method array
-   * @return {Array} an Array with the 3 values 
+   * @return {Array} an Array with the 3 values
    */
   p5.Vector.prototype.array = function () {
     return [this.x || 0, this.y || 0, this.z || 0];
@@ -417,15 +570,22 @@ define(function (require) {
 
 
   // Static Methods
-  
+
 
   /**
    * Make a new 2D unit vector from an angle
-   * 
+   *
    * @method fromAngle
    * @static
    * @param {Number}     angle the desired angle
    * @return {p5.Vector}       the new p5.Vector object
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = p5.Vector.fromAngle(PI / 2);
+   * //v has components [0,1,0]
+   * </code>
+   * </div>
    */
   p5.Vector.fromAngle = function(angle) {
     if (this.p5) {
@@ -446,10 +606,16 @@ define(function (require) {
    * @method random2D
    * @static
    * @return {p5.Vector} the new p5.Vector object
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = p5.Vector.random2D();
+   * </code>
+   * </div>
    */
   p5.Vector.random2D = function () {
     var angle;
-    // A lot of nonsense to determine if we know about a 
+    // A lot of nonsense to determine if we know about a
     // p5 sketch and whether we should make a random angle in degrees or radians
     if (this.p5) {
       if (this.p5._angleMode === constants.DEGREES) {
@@ -469,6 +635,12 @@ define(function (require) {
    * @method random3D
    * @static
    * @return {p5.Vector} the new p5.Vector object
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = p5.Vector.random3D();
+   * </code>
+   * </div>
    */
   p5.Vector.random3D = function () {
     var angle,vz;
@@ -597,12 +769,21 @@ define(function (require) {
 
   /**
    * Calculates and returns the angle (in radians) between two vectors.
-   *
+   * @method angleBetween
    * @static
    * @param  {p5.Vector} v1 the x, y, and z components of a p5.Vector
    * @param  {p5.Vector} v2 the x, y, and z components of a p5.Vector
-   * @return {Number}       the angle between
-   * 
+   * @return {Number}       the angle between (in radians)
+   * @example
+   * <div class="norender">
+   * <code>
+   * var v = createVector(1,0,0);
+   * var v1 = createVector(0,1,0);
+   *
+   * var angle = p5.Vector.angleBetween(v,v1);
+   * //angle == (PI / 2)
+   * </code>
+   * </div>
    */
   p5.Vector.angleBetween = function (v1, v2) {
     var angle = Math.acos(v1.dot(v2) / (v1.mag() * v2.mag()));

@@ -12,7 +12,7 @@ define(function (require) {
   var Filters = require('filters');
   var canvas = require('canvas');
   var constants = require('constants');
-  
+
   /**
    * Loads an image from a path and creates a p5.Image from it.
    *
@@ -20,12 +20,35 @@ define(function (require) {
    * If you want to ensure that the image is ready before doing
    * anything with it you can do perform those operations in the
    * callback, or place the loadImage() call in preload().
-   * 
+   *
    * @method loadImage
-   * @param  {String}   path
-   * @param  {Function} callback Function to be called once the image is
-   *                             loaded. Will be passed the p5.Image.
-   * @return {p5.Image}            the p5.Image object
+   * @param  {String} path Path of the image to be loaded
+   * @param  {Function(p5.Image)} [callback]   Function to be called once the 
+   *                                 image is loaded. Will be passed the 
+                                     p5.Image.
+   * @return {p5.Image}              the p5.Image object   
+   * @example
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/laDefense.jpg");
+   * }
+   * function setup() {
+   *   image(img, 0, 0);
+   * }
+   * </code>
+   * </div>
+   * <div>
+   * <code>
+   * function setup() {
+   *   // here we use a callback to display the image after loading
+   *   loadImage("assets/laDefense.jpg", function(img) {
+   *     image(img, 0, 0);
+   *   });
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.loadImage = function(path, callback) {
     var img = new Image();
@@ -46,7 +69,11 @@ define(function (require) {
     //set crossOrigin in case image is served which CORS headers
     //this will let us draw to canvas without tainting it.
     //see https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
-    img.crossOrigin = 'Anonymous';
+    // When using data-uris the file will be loaded locally
+    // so we don't need to worry about crossOrigin with base64 file types
+    if(path.indexOf('data:image/') !== 0) {
+      img.crossOrigin = 'Anonymous';
+    }
 
     //start loading the image
     img.src = path;
@@ -57,21 +84,43 @@ define(function (require) {
   /**
    * Draw an image to the main canvas of the p5js sketch
    *
-   * @method image 
+   * @method image
    * @param  {p5.Image} image    the image to display
-   * @param  {Number}   x        x-coordinate of the image
-   * @param  {Number}   y        y-coordinate of the image
+   * @param  {Number}   [x=0]    x-coordinate of the image
+   * @param  {Number}   [y=0]    y-coordinate of the image
    * @param  {Number}   [width]  width to display the image
    * @param  {Number}   [height] height to display the image
+   * @example
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/laDefense.jpg");
+   * }
+   * function setup() {
+   *   image(img, 0, 0);
+   * }
+   * </code>
+   * </div>
+   * <div>
+   * <code>
+   * function setup() {
+   *   // here we use a callback to display the image after loading
+   *   loadImage("assets/laDefense.jpg", function(img) {
+   *     image(img, 0, 0);
+   *   });
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.image = function(img, x, y, width, height) {
-    var frame = img.canvas ? img.canvas : img.elt; // may use vid src
-    if (width === undefined){
-      width = img.width;
-    }
-    if (height === undefined){
-      height = img.height;
-    }
+    var frame = img.canvas || img.elt; // may use vid src
+    // set defaults
+    x = x || 0;
+    y = y || 0;
+    width = width || img.width;
+    height = height || img.height;
+
     var vals = canvas.modeAdjust(x, y, width, height, this._imageMode);
     // tint the image if there is a tint
     if (this._tint && img.canvas) {
@@ -95,10 +144,10 @@ define(function (require) {
    * Sets the fill value for displaying images. Images can be tinted to
    * specified colors or made transparent by including an alpha value.
    *
-   * To apply transparency to an image without affecting its color, use 
-   * white as the tint color and specify an alpha value. For instance, 
+   * To apply transparency to an image without affecting its color, use
+   * white as the tint color and specify an alpha value. For instance,
    * tint(255, 128) will make an image 50% transparent (assuming the default
-   * alpha range of 0-255, which can be changed with colorMode()). 
+   * alpha range of 0-255, which can be changed with colorMode()).
    *
    * The value for the gray parameter must be less than or equal to the current
    * maximum value as specified by colorMode(). The default maximum value is
@@ -111,7 +160,7 @@ define(function (require) {
    *                            current color mode)
    * @param {Number|Array} [v3] blue or brightness value (depending on the
    *                            current color mode)
-   * @param {Number|Array} [a]  opacity of the background   
+   * @param {Number|Array} [a]  opacity of the background
    * @example
    * <div>
    * <code>

@@ -218,6 +218,8 @@ define(function (require) {
     // reference to the backing canvas of a p5.Image. But since we do not
     // enforce that at the moment, I am leaving in the slower, but safer
     // implementation.
+    width = width || this.canvas.width;
+    height = width || this.canvas.height;
 
     var tempCanvas = document.createElement('canvas');
     tempCanvas.width = width;

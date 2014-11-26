@@ -64,13 +64,13 @@ define(function(require) {
     this._defaultGraphics._applyDefaults();
     return this._defaultGraphics;
   };
-  /*
+
+  /**
    * Resizes the canvas to given width and height. Note that the
    * canvas will be cleared so anything drawn previously in setup
    * or draw will disappear on resize. Setup will not be called
    * again.
-   *
-   * @property resizeCanvas
+   * @method resizeCanvas
    * @example
    * <div class="norender"><code>
    * function setup() {
