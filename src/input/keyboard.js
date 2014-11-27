@@ -11,7 +11,7 @@ define(function (require) {
   var p5 = require('core');
 
   /**
-   * Holds the key codes of the currently pressed keys.
+   * Holds the key codes of currently pressed keys.
    * @property _downKeys
    * @private
    */
@@ -229,9 +229,9 @@ define(function (require) {
   };
 
   /**
-   * The keyIsDown function checkes if the key is currently down, i.e. pressed.
+   * The keyIsDown function checks if the key is currently down, i.e. pressed.
    * It can be used if you have an object that moves, and you want several keys
-   * to be able to affect its behaivour simoultaneously, such as moving a
+   * to be able to affect its behaviour simultaneously, such as moving a
    * sprite diagonally.
    *
    * @method keyIsDown
