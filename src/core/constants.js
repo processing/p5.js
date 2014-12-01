@@ -116,7 +116,7 @@ define(function(require) {
 
     // RENDERING
     BLEND: 'normal',
-    ADDITIVE: 'lighter',
+    ADD: 'lighter',
     //ADD: 'add', //
     //SUBTRACT: 'subtract', //
     DARKEST: 'darken',
