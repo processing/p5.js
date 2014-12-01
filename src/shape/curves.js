@@ -60,7 +60,6 @@ define(function (require) {
    *
    * The default value is 20.
    *
-   * @method bezierDetail
    * @param {Number} detail resolution of the curves
    * @return {Object} the p5 object
    * @example
@@ -241,7 +240,6 @@ define(function (require) {
    *
    * The default value is 20.
    *
-   * @method curveDetail
    * @param {Number} resolution of the curves
    * @return {Object} the p5 object
    * @example

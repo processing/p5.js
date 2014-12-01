@@ -12,10 +12,10 @@ define(function (require) {
   var p5 = require('core');
   var constants = require('constants');
   var shapeKind = null;
-  var curveVertices = [];
   var vertices = [];
   var isBezier = false;
   var isCurve = false;
+  var isQuadratic = false;
   var contourInited = false;
 
   /* 
@@ -246,7 +246,6 @@ define(function (require) {
     } else {
       shapeKind = null;
     }
-    curveVertices = [];
     vertices = [];
     return this;
   };
@@ -492,8 +491,23 @@ define(function (require) {
         }
       }
       this._doFillStrokeClose();
+    } else if (isQuadratic &&
+      (shapeKind === constants.POLYGON || shapeKind === null)) {
+      this.drawingContext.beginPath();
+      for (i = 0; i < numVerts; i++) {
+        if (vertices[i].isVert) {
+          if (vertices[i].moveTo) {
+            this.drawingContext.moveTo([0], vertices[i][1]);
+          } else {
+            this.drawingContext.lineTo(vertices[i][0], vertices[i][1]);
+          }
+        } else {
+          this.drawingContext.quadraticCurveTo(vertices[i][0],
+            vertices[i][1], vertices[i][2], vertices[i][3]);
+        }
+      }
+      this._doFillStrokeClose();
     }
-
     // render the vertices provided
     else {
       if (shapeKind === constants.POINTS) {
@@ -651,7 +665,7 @@ define(function (require) {
     // Reset some settings
     isCurve = false;
     isBezier = false;
-    curveVertices = [];
+    isQuadratic = false;
 
     // If the shape is closed, the first element was added as last element.
     // We must remove it again to prevent the list of vertices from growing
@@ -716,9 +730,17 @@ define(function (require) {
 
       return this;
     }
-
-    this.drawingContext.quadraticCurveTo(cx, cy, x3, y3);
-
+    if (vertices.length > 0) {
+      isQuadratic = true;
+      var vert = [];
+      for (var i = 0; i < arguments.length; i++) {
+        vert[i] = arguments[i];
+      }
+      vert.isVert = false;
+      vertices.push(vert);
+    } else {
+      throw 'vertex() must be used once before calling quadraticVertex()';
+    }
     return this;
   };
 
