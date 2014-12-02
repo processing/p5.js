@@ -13,10 +13,11 @@ define(function (require) {
   var constants = require('constants');
   var shapeKind = null;
   var vertices = [];
+  var contourVertices = [];
   var isBezier = false;
   var isCurve = false;
   var isQuadratic = false;
-  var contourInited = false;
+  var isContour = false;
 
   /* 
    * Helper method
@@ -66,8 +67,8 @@ define(function (require) {
    * </div>
    */
   p5.prototype.beginContour = function() {
-    vertices = [];
-    contourInited = true;
+    contourVertices = [];
+    isContour = true;
     return this;
   };
 
@@ -247,6 +248,7 @@ define(function (require) {
       shapeKind = null;
     }
     vertices = [];
+    contourVertices = [];
     return this;
   };
 
@@ -299,7 +301,11 @@ define(function (require) {
         vert[i] = arguments[i];
       }
       vert.isVert = false;
-      vertices.push(vert);
+      if (isContour) {
+        contourVertices.push(vert);
+      } else {
+        vertices.push(vert);
+      }
     }
     return this;
   };
@@ -375,29 +381,17 @@ define(function (require) {
    * </div>
    */
   p5.prototype.endContour = function() {
-    // vertices.reverse();
-    // this.drawingContext.moveTo(vertices[0][0], vertices[0][1]);
-    // var ctx = this.drawingContext;
-    // vertices.slice(1).forEach(function (pt, i) {
-    //   switch (pt.type) {
-    //   case constants.LINEAR:
-    //     this.drawingContext.lineTo(pt.x, pt.y);
-    //     break;
-    //   case constants.QUADRATIC:
-    //     this.drawingContext.quadraticCurveTo(pt.x, pt.y, pt.x3, pt.y3);
-    //     break;
-    //   case constants.BEZIER:
-    //     this.drawingContext.bezierCurveTo(pt.x, pt.y, pt.x3, 
-    //     pt.y3, pt.x4, pt.y4);
-    //     break;
-    //   case constants.CURVE:
-    //     break;
-    //   }
-    // });
-    // this.drawingContext.closePath();
-    // contourInited = false;
-    // return this;
-    throw 'Not yet implemented';
+    var vert = contourVertices[0].slice(); // copy all data
+    vert.isVert = contourVertices[0].isVert;
+    vert.moveTo = false;
+    contourVertices.push(vert);
+
+    vertices.push(vertices[0]);
+    for (var i = 0; i < contourVertices.length; i++) {
+      vertices.push(contourVertices[i]);
+    }
+    isContour = false;
+    return this;
   };
 
   /**
@@ -666,6 +660,7 @@ define(function (require) {
     isCurve = false;
     isBezier = false;
     isQuadratic = false;
+    isContour = false;
 
     // If the shape is closed, the first element was added as last element.
     // We must remove it again to prevent the list of vertices from growing
@@ -737,7 +732,11 @@ define(function (require) {
         vert[i] = arguments[i];
       }
       vert.isVert = false;
-      vertices.push(vert);
+      if (isContour) {
+        contourVertices.push(vert);
+      } else {
+        vertices.push(vert);
+      }
     } else {
       throw 'vertex() must be used once before calling quadraticVertex()';
     }
@@ -782,7 +781,14 @@ define(function (require) {
     if (moveTo) {
       vert.moveTo = moveTo;
     }
-    vertices.push(vert);
+    if (isContour) {
+      if (contourVertices.length === 0) {
+        vert.moveTo = true;
+      }
+      contourVertices.push(vert);
+    } else {
+      vertices.push(vert);
+    }
     return this;
   };
 
