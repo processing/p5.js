@@ -15,7 +15,9 @@ define(function (require) {
    * @property _downKeys
    * @private
    */
-  p5.prototype._downKeys=[];
+  //p5.prototype._downKeys = [];
+  p5.prototype._downKeys = {};
+  //p5.prototype._downKeys = new Set();
 
   /**
    * The boolean system variable keyIsPressed is true if any key is pressed
@@ -120,9 +122,16 @@ define(function (require) {
     this._setProperty('isKeyPressed', true);
     this._setProperty('keyIsPressed', true);
     this._setProperty('keyCode', e.which);
-    if (this._downKeys.indexOf(e.which)<0) {
-      this._downKeys.push(e.which);
-    }
+
+    /* Array add */
+    //~this._downKeys.indexOf(e.which) || this._downKeys.push(e.which);
+
+    /* Object add */
+    this._downKeys[e.which] = true;
+
+    /* Set add */
+    //this._downKeys.add(e.which);
+
     var key = String.fromCharCode(e.which);
     if (!key) {
       key = e.which;
@@ -167,9 +176,18 @@ define(function (require) {
     var keyReleased = this.keyReleased || window.keyReleased;
     this._setProperty('isKeyPressed', false);
     this._setProperty('keyIsPressed', false);
-    if (this._downKeys.indexOf(e.which)>=0) {
-      this._downKeys.splice(this._downKeys.indexOf(e.which),1);
-    }
+
+    /* Array remove */
+    //const idx = this._downKeys.indexOf(e.which);
+    //~idx && this._downKeys.splice(idx, 1);
+
+    /* Object remove */
+    //delete this._downKeys[e.which];
+    this._downKeys[e.which] = false;
+
+    /* Set remove */
+    //this._downKeys.delete(e.which);
+
     var key = String.fromCharCode(e.which);
     if (!key) {
       key = e.which;
@@ -267,7 +285,14 @@ define(function (require) {
    * </div>
    */
   p5.prototype.keyIsDown = function(code) {
-    return this._downKeys.indexOf(code)>=0;
+    /* Array check */
+    //return this._downKeys.indexOf(code) != -1;
+
+    /* Object check */
+    return this._downKeys[code];
+
+    /* Set check */
+    //return this._downKeys.has(code);
   };
 
   return p5;
