@@ -33,12 +33,16 @@ define(function (require) {
   };
 
   /**
-   * Use the beginContour() and endContour() function to create negative shapes
-   * within shapes. For instance, the center of the letter 'O'. beginContour()
+   * Use the beginContour() and endContour() functions to create negative
+   * shapes within shapes such as the center of the letter 'O'. beginContour()
    * begins recording vertices for the shape and endContour() stops recording.
-   * These functions can only be within a beginShape()/endShape() pair.
-   *
-   * Transformations such as translate(), rotate(), and scale() do not work
+   * The vertices that define a negative shape must "wind" in the opposite 
+   * direction from the exterior shape. First draw vertices for the exterior
+   * clockwise order, then for internal shapes, draw vertices 
+   * shape in counter-clockwise.
+   * <br><br>
+   * These functions can only be used within a beginShape()/endShape() pair and
+   * transformations such as translate(), rotate(), and scale() do not work 
    * within a beginContour()/endContour() pair. It is also not possible to use
    * other shapes, such as ellipse() or rect() within.
    *
@@ -50,17 +54,17 @@ define(function (require) {
    * translate(50, 50);
    * stroke(255, 0, 0);
    * beginShape();
-   * // Exterior part of shape
+   * // Exterior part of shape, clockwise winding
    * vertex(-40, -40);
    * vertex(40, -40);
    * vertex(40, 40);
    * vertex(-40, 40);
-   * // Interior part of shape
+   * // Interior part of shape, counter-clockwise winding
    * beginContour();
    * vertex(-20, -20);
-   * vertex(20, -20);
-   * vertex(20, 20);
    * vertex(-20, 20);
+   * vertex(20, 20);
+   * vertex(20, -20);
    * endContour();
    * endShape(CLOSE);
    * </code>
@@ -348,34 +352,39 @@ define(function (require) {
   };
 
   /**
-   * Use the beginContour() and endContour() function to create negative
-   * shapes within shapes. For instance, the center of the letter 'O'.
-   * beginContour() begins recording vertices for the shape and endContour()
-   * stops recording. These functions can only be within a
-   * beginShape()/endShape() pair.
+   * Use the beginContour() and endContour() functions to create negative
+   * shapes within shapes such as the center of the letter 'O'. beginContour()
+   * begins recording vertices for the shape and endContour() stops recording.
+   * The vertices that define a negative shape must "wind" in the opposite 
+   * direction from the exterior shape. First draw vertices for the exterior
+   * clockwise order, then for internal shapes, draw vertices 
+   * shape in counter-clockwise.
+   * <br><br>
+   * These functions can only be used within a beginShape()/endShape() pair and
+   * transformations such as translate(), rotate(), and scale() do not work 
+   * within a beginContour()/endContour() pair. It is also not possible to use
+   * other shapes, such as ellipse() or rect() within.
    *
    * @method endContour
    * @return {Object} the p5 object
    * @example
    * <div>
    * <code>
-   * // drawing the outer border must happen last,
-   * // otherwise it gets drawn under the interior shape
    * translate(50, 50);
    * stroke(255, 0, 0);
    * beginShape();
-   * // Interior part of shape
-   * beginContour();
-   * vertex(-20, -20);
-   * vertex(20, -20);
-   * vertex(20, 20);
-   * vertex(-20, 20);
-   * endContour();
-   * // Exterior part of shape
+   * // Exterior part of shape, clockwise winding
    * vertex(-40, -40);
    * vertex(40, -40);
    * vertex(40, 40);
    * vertex(-40, 40);
+   * // Interior part of shape, counter-clockwise winding
+   * beginContour();
+   * vertex(-20, -20);
+   * vertex(-20, 20);
+   * vertex(20, 20);
+   * vertex(20, -20);
+   * endContour();
    * endShape(CLOSE);
    * </code>
    * </div>
@@ -390,7 +399,6 @@ define(function (require) {
     for (var i = 0; i < contourVertices.length; i++) {
       vertices.push(contourVertices[i]);
     }
-    isContour = false;
     return this;
   };
 
@@ -431,7 +439,7 @@ define(function (require) {
     var v;
 
     // if the shape is closed, the first element is also the last element
-    if (closeShape) {
+    if (closeShape && !isContour) {
       vertices.push(vertices[0]);
     }
 
