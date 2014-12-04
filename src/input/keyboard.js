@@ -15,7 +15,7 @@ define(function (require) {
    * @property _downKeys
    * @private
    */
-  p5.prototype._downKeys=[];
+  p5.prototype._downKeys = {};
 
   /**
    * The boolean system variable keyIsPressed is true if any key is pressed
@@ -120,9 +120,7 @@ define(function (require) {
     this._setProperty('isKeyPressed', true);
     this._setProperty('keyIsPressed', true);
     this._setProperty('keyCode', e.which);
-    if (this._downKeys.indexOf(e.which)<0) {
-      this._downKeys.push(e.which);
-    }
+    this._downKeys[e.which] = true;
     var key = String.fromCharCode(e.which);
     if (!key) {
       key = e.which;
@@ -167,9 +165,8 @@ define(function (require) {
     var keyReleased = this.keyReleased || window.keyReleased;
     this._setProperty('isKeyPressed', false);
     this._setProperty('keyIsPressed', false);
-    if (this._downKeys.indexOf(e.which)>=0) {
-      this._downKeys.splice(this._downKeys.indexOf(e.which),1);
-    }
+    this._downKeys[e.which] = false;
+    //delete this._downKeys[e.which];
     var key = String.fromCharCode(e.which);
     if (!key) {
       key = e.which;
@@ -267,7 +264,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.keyIsDown = function(code) {
-    return this._downKeys.indexOf(code)>=0;
+    return this._downKeys[code];
   };
 
   return p5;
