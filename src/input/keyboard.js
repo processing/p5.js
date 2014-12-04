@@ -12,7 +12,6 @@ define(function (require) {
 
   /**
    * Holds the key codes of currently pressed keys.
-   * @property _downKeys
    * @private
    */
   var downKeys = {};
