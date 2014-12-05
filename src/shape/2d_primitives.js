@@ -83,6 +83,7 @@ define(function (require) {
       //scale the arc if it is oblong
       xScale = (vals.h > vals.w) ? vals.w / vals.h : 1,
       yScale = (vals.h > vals.w) ? 1 : vals.h / vals.w;
+    ctx.save();
     ctx.scale(xScale, yScale);
     ctx.beginPath();
     ctx.arc(vals.x, vals.y, radius, start, stop);
@@ -103,6 +104,7 @@ define(function (require) {
       // cover part of the line
       ctx.stroke();
     }
+    ctx.restore();
 
     return this;
   };

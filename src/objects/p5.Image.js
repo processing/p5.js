@@ -219,7 +219,7 @@ define(function (require) {
    * }
    * 
    * function mousePressed() {
-   *   img.resize(100, 200);
+   *   img.resize(50, 100);
    * }
    * </code></div>
    */
