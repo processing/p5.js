@@ -206,6 +206,22 @@ define(function (require) {
    * @method resize
    * @param {Number} width the resized image width
    * @param {Number} height the resized image height
+   * @example
+   * <div><code>
+   * var img;
+   * 
+   * function setup() {
+   *   img = loadImage("assets/rockies.jpg");
+   * }
+
+   * function draw() {
+   *   image(img, 0, 0);
+   * }
+   * 
+   * function mousePressed() {
+   *   img.resize(100, 200);
+   * }
+   * </code></div>
    */
   p5.Image.prototype.resize = function(width, height){
 
