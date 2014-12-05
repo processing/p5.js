@@ -302,5 +302,29 @@ define(function (require) {
 
   };
 
+  /**
+   * 
+   * @method httpGet
+   * @param  {String}        path       name of the file or url to load
+   * @param  {Function}      [callback] function to be executed after
+   *                                    loadJSON()
+   *                                    completes, Array is passed in as first
+   *                                    argument
+   * @param  {String}       [datatype]  "json" or "jsonp"
+   * @return {Object|Array}             JSON data
+   */
+  p5.prototype.httpGet = function(path, data, callback) {
+    reqwest({
+      url: path,
+      method: 'get',
+      data: data,
+      success: function (resp) {
+        if (typeof callback !== 'undefined') {
+          callback(resp);
+        }
+      }
+    });
+  };
+
   return p5;
 });
