@@ -313,18 +313,41 @@ define(function (require) {
    *                                    as first argument
    */
   p5.prototype.httpGet = function () {
-    var path = arguments[0];
+    httpDo('get', arguments);
+  };
+
+
+  /**
+   * 
+   * @method httpPost
+   * @param  {String}        path       name of the file or url to load
+   * @param  {Object}        [data]     param data passed sent with request
+   * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
+   * @param  {Function}      [callback] function to be executed after
+   *                                    httpGet() completes, data is passed in
+   *                                    as first argument
+   */
+  p5.prototype.httpPost = function () {
+    httpDo('post', arguments);
+  };
+
+  /**
+   * Helper method for httpGet and httpPost
+   */
+  function httpDo(method, args) {
+    
+    var path = args[0];
     var data = {};
     var type = '';
     var callback;
 
-    for (var i=1; i<arguments.length; i++) {
-      if (typeof arguments[i] === 'string') {
-        type = arguments[i];
-      } else if (typeof arguments[i] === 'object') {
-        data = arguments[i];
-      } else if (typeof arguments[i] === 'function') {
-        callback = arguments[i];
+    for (var i=1; i<args.length; i++) {
+      if (typeof args[i] === 'string') {
+        type = args[i];
+      } else if (typeof args[i] === 'object') {
+        data = args[i];
+      } else if (typeof args[i] === 'function') {
+        callback = args[i];
       }
     }
 
@@ -341,7 +364,7 @@ define(function (require) {
 
     reqwest({
       url: path,
-      method: 'get',
+      method: method,
       data: data,
       type: type,
       crossOrigin: true,
@@ -351,7 +374,7 @@ define(function (require) {
         }
       }
     });
-  };
+  }
 
   return p5;
 });
