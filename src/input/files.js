@@ -306,18 +306,45 @@ define(function (require) {
    * 
    * @method httpGet
    * @param  {String}        path       name of the file or url to load
+   * @param  {Object}        [data]     param data passed sent with request
+   * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
    * @param  {Function}      [callback] function to be executed after
-   *                                    loadJSON()
-   *                                    completes, Array is passed in as first
-   *                                    argument
-   * @param  {String}       [datatype]  "json" or "jsonp"
-   * @return {Object|Array}             JSON data
+   *                                    httpGet() completes, data is passed in
+   *                                    as first argument
    */
-  p5.prototype.httpGet = function(path, data, callback) {
+  p5.prototype.httpGet = function () {
+    var path = arguments[0];
+    var data = {};
+    var type = '';
+    var callback;
+
+    for (var i=1; i<arguments.length; i++) {
+      if (typeof arguments[i] === 'string') {
+        type = arguments[i];
+      } else if (typeof arguments[i] === 'object') {
+        data = arguments[i];
+      } else if (typeof arguments[i] === 'function') {
+        callback = arguments[i];
+      }
+    }
+
+    // do some sort of smart type checking
+    if (type === '') {
+      if (path.indexOf('.json') !== -1) {
+        type = 'json';
+      } else if (path.indexOf('.xml') !== -1) {
+        type = 'xml';
+      } else {
+        type = 'text';
+      }
+    }
+
     reqwest({
       url: path,
       method: 'get',
       data: data,
+      type: type,
+      crossOrigin: true,
       success: function (resp) {
         if (typeof callback !== 'undefined') {
           callback(resp);
