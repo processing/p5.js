@@ -219,7 +219,7 @@ define(function (require) {
     // enforce that at the moment, I am leaving in the slower, but safer
     // implementation.
     width = width || this.canvas.width;
-    height = width || this.canvas.height;
+    height = height || this.canvas.height;
 
     var tempCanvas = document.createElement('canvas');
     tempCanvas.width = width;
