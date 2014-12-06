@@ -328,7 +328,7 @@ define(function(require) {
    * Disables scaling for retina display. By default, the pixels
    * are scaled for the display.
    *
-   * @devicePixelScaling
+   * @method devicePixelScaling
    * @param  {Boolean} val whether the sketch should be scaled or not
    * @example
    * <div>
