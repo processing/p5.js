@@ -134,8 +134,10 @@ define(function (require) {
       throw new Error('Signature not supported');
     }
 
+    /// use s scale factor to deal with pixel density
+    var s = srcImage.canvas.width / srcImage.width;
     this.drawingContext.drawImage(srcImage.canvas,
-      sx, sy, sw, sh, dx, dy, dw, dh
+      s*sx, s*sy, s*sw, s*sh, dx, dy, dw, dh
     );
   };
 
