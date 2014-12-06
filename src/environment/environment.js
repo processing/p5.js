@@ -324,12 +324,14 @@ define(function(require) {
     }
   };
 
-  /*
-   * Disables scaling for retina display. By default, the pixels
-   * are scaled for the display.
+  /**
+   * If argument is given, sets the sketch to fullscreen or not based on the
+   * value of the argument. If no argument is given, returns the current
+   * fullscreen state. Note that due to browser restrictions this can only
+   * be called on user input, for example, on mouse press like the example
+   * below.
    *
    * @method devicePixelScaling
-   * @param  {Boolean} val whether the sketch should be scaled or not
    * @example
    * <div>
    * <code>
