@@ -325,16 +325,23 @@ define(function(require) {
   };
 
   /*
-   * 
+   * Disables scaling for retina display. By default, the pixels
+   * are scaled for the display.
    *
-   * devicePixelScaling
+   * @devicePixelScaling
    * @param  {Boolean} val whether the sketch should be scaled or not
    * @example
    * <div>
    * <code>
    * function setup() {
+   *   createCanvas(100, 100);
+   * }
+   * 
+   * function draw() {
+   *   ellipse(width/2, height/2, 50, 50);
    * }
    * function mousePressed() {
+   *   devicePixelScaling(false);
    * }
    * </code>
    * </div>
