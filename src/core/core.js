@@ -166,7 +166,8 @@ define(function (require) {
       'touchstart': null,
       'touchmove': null,
       'touchend': null,
-      'resize': null
+      'resize': null,
+      'devicemotion': null
     };
     this._loadingScreenId = 'p5_loading';
 

@@ -133,6 +133,34 @@ define(function (require) {
       }
     }
   };
+
+  p5.prototype.accelerationX = 0;
+  p5.prototype.accelerationY = 0;
+  p5.prototype.accelerationZ = 0;
+
+  p5.prototype.ondevicemotion = function (e) {
+    this._setProperty('accelerationX', e.accelerationIncludingGravity.x);
+    this._setProperty('accelerationY', e.accelerationIncludingGravity.y);
+    this._setProperty('accelerationZ', e.accelerationIncludingGravity.z);
+    
+    var onTurn = this.onTurn || window.onTurn;
+    if (typeof keyPressed === 'function') {
+      var executeDefault  = onTurn(e);
+      if(executeDefault === false) {
+        e.preventDefault();
+      }
+    }
+    /*
+    var onTurn = this.onTurn || window.onTurn;
+    if(typeof keyPressed === 'function'){
+       var executeDefault = onTurn(e);
+    }*/
+  };
+
+
+
+
+
    /**
    * The keyReleased() function is called once every time a key is released.
    * See key and keyCode for more information.<br><br>
