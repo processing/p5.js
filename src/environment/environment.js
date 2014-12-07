@@ -324,29 +324,38 @@ define(function(require) {
     }
   };
 
-  /*
-   * 
+  /**
+   * If argument is given, sets the sketch to fullscreen or not based on the
+   * value of the argument. If no argument is given, returns the current
+   * fullscreen state. Note that due to browser restrictions this can only
+   * be called on user input, for example, on mouse press like the example
+   * below.
    *
-   * devicePixelScaling
-   * @param  {Boolean} val whether the sketch should be scaled or not
+   * @method devicePixelScaling
    * @example
    * <div>
    * <code>
    * function setup() {
+   *   createCanvas(100, 100);
+   * }
+   * 
+   * function draw() {
+   *   ellipse(width/2, height/2, 50, 50);
    * }
    * function mousePressed() {
+   *   devicePixelScaling(false);
    * }
    * </code>
    * </div>
    */
-  // p5.prototype.devicePixelScaling = function(val) {
-  //   if (val) {
-  //     this._pixelDensity = window.devicePixelRatio || 1;
-  //   } else {
-  //     this._pixelDensity = 1;
-  //   }
-  //   this.resizeCanvas(this.width, this.height);
-  // }
+  p5.prototype.devicePixelScaling = function(val) {
+    if (val) {
+      this._pixelDensity = window.devicePixelRatio || 1;
+    } else {
+      this._pixelDensity = 1;
+    }
+    this.resizeCanvas(this.width, this.height);
+  };
 
   function launchFullscreen(element) {
     var enabled = document.fullscreenEnabled ||
