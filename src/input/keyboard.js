@@ -223,6 +223,15 @@ define(function (require) {
       }
     }
   };
+  /**
+   * The onblur function is called when the user is no longer focused
+   * on the p5 element. Because the keyup events will no fire if the user is
+   * not focused on the element we must assume all keys currently down have 
+   * been released.
+   */
+  p5.prototype.onblur = function (e) {
+    downKeys =[];
+  };
 
   /**
    * The keyIsDown function checks if the key is currently down, i.e. pressed.
