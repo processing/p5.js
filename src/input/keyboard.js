@@ -230,7 +230,7 @@ define(function (require) {
    * been released.
    */
   p5.prototype.onblur = function (e) {
-    downKeys ={};
+    downKeys = {};
   };
 
   /**
