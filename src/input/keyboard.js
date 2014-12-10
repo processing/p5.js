@@ -55,6 +55,23 @@ define(function (require) {
    * DOWN_ARROW, LEFT_ARROW, RIGHT_ARROW.
    *
    * @property keyCode
+   * @example
+   * <div><code>
+   * var fillVal = 126;
+   * function draw() {
+   *   fill(fillVal);
+   *   rect(25, 25, 50, 50);
+   * }
+   * 
+   * function keyPressed() {
+   *   if (keyCode == UP_ARROW) {
+   *     fillVal = 255;
+   *   } else if (keyCode == DOWN_ARROW) {
+   *     fillVal = 0;
+   *   } 
+   *   return false; // prevent default
+   * }
+   * </code></div>
    */
   p5.prototype.keyCode = 0;
 
