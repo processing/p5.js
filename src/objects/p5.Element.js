@@ -146,6 +146,7 @@ define(function(require) {
    */
   p5.Element.prototype.mousePressed = function (fxn) {
     attachListener('mousedown', fxn, this);
+    attachListener('touchstart', fxn, this);
     return this;
   };
 
@@ -180,6 +181,7 @@ define(function(require) {
    */
   p5.Element.prototype.mouseReleased = function (fxn) {
     attachListener('mouseup', fxn, this);
+    attachListener('touchend', fxn, this);
     return this;
   };
 
@@ -211,6 +213,7 @@ define(function(require) {
    */
   p5.Element.prototype.mouseMoved = function (fxn) {
     attachListener('mousemove', fxn, this);
+    attachListener('touchmove', fxn, this);
     return this;
   };
 
@@ -243,6 +246,131 @@ define(function(require) {
     attachListener('mouseout', fxn, this);
     return this;
   };
+
+  /**
+   * The .touchStarted() function is called once after every time a touch is
+   * registered. This can be used to attach element specific event listeners.
+   *
+   * @method touchStarted
+   * @param  {Function} fxn function to be fired when touch is
+   *                    started over the element. 
+   * @return {p5.Element}  
+   * @example
+   * <div class='norender'><code>
+   * var cnv;
+   * var d;
+   * var g;
+   * function setup() {
+   *   cnv = createCanvas(100, 100);
+   *   cnv.touchStarted(changeGray); // attach listener for
+   *                                 // canvas click only
+   *   d = 10;
+   *   g = 100;
+   * }
+   *
+   * function draw() {
+   *   background(g);
+   *   ellipse(width/2, height/2, d, d);
+   * }
+   *
+   * // this function fires with any touch anywhere
+   * function touchStarted() {
+   *   d = d + 10;
+   * }
+   * 
+   * // this function fires only when cnv is clicked
+   * function changeGray() {
+   *   g = random(0, 255);
+   * }
+   * </code></div>
+   *
+   */
+  p5.Element.prototype.touchStarted = function (fxn) {
+    attachListener('touchstart', fxn, this);
+    attachListener('mousedown', fxn, this);
+    return this;
+  };
+
+  /**
+   * The .touchMoved() function is called once after every time a touch move is
+   * registered. This can be used to attach element specific event listeners.
+   *
+   * @method touchMoved
+   * @param  {Function} fxn function to be fired when touch is moved
+   *                    over the element. 
+   * @return {p5.Element}  
+   * @example
+   * <div class='norender'><code>
+   * var cnv;
+   * var g;
+   * function setup() {
+   *   cnv = createCanvas(100, 100);
+   *   cnv.touchMoved(changeGray); // attach listener for
+   *                               // canvas click only
+   *   g = 100;
+   * }
+   *
+   * function draw() {
+   *   background(g);
+   * }
+   *
+   * // this function fires only when cnv is clicked
+   * function changeGray() {
+   *   g = random(0, 255);
+   * }
+   * </code></div>
+   *
+   */
+  p5.Element.prototype.touchMoved = function (fxn) {
+    attachListener('touchmove', fxn, this);
+    attachListener('mousemove', fxn, this);
+    return this;
+  };
+
+  /**
+   * The .touchEnded() function is called once after every time a touch is
+   * registered. This can be used to attach element specific event listeners.
+   *
+   * @method touchEnded
+   * @param  {Function} fxn function to be fired when touch is
+   *                    ended over the element. 
+   * @return {p5.Element}  
+   * @example
+   * <div class='norender'><code>
+   * var cnv;
+   * var d;
+   * var g;
+   * function setup() {
+   *   cnv = createCanvas(100, 100);
+   *   cnv.touchEnded(changeGray);   // attach listener for
+   *                                 // canvas click only
+   *   d = 10;
+   *   g = 100;
+   * }
+   *
+   * function draw() {
+   *   background(g);
+   *   ellipse(width/2, height/2, d, d);
+   * }
+   *
+   * // this function fires with any touch anywhere
+   * function touchEnded() {
+   *   d = d + 10;
+   * }
+   * 
+   * // this function fires only when cnv is clicked
+   * function changeGray() {
+   *   g = random(0, 255);
+   * }
+   * </code></div>
+   *
+   */
+  p5.Element.prototype.touchEnded = function (fxn) {
+    attachListener('touchend', fxn, this);
+    attachListener('mouseup', fxn, this);
+    return this;
+  };
+
 
   function attachListener(ev, fxn, ctx) {
     // LM removing, not sure why we had this?

@@ -325,25 +325,18 @@ define(function(require) {
   };
 
   /**
-   * If argument is given, sets the sketch to fullscreen or not based on the
-   * value of the argument. If no argument is given, returns the current
-   * fullscreen state. Note that due to browser restrictions this can only
-   * be called on user input, for example, on mouse press like the example
-   * below.
+   * Toggles pixel scaling for high pixel density displays. By default
+   * pixel scaling is on, call devicePixelScaling(false) to turn it off.
    *
    * @method devicePixelScaling
    * @example
    * <div>
    * <code>
    * function setup() {
-   *   createCanvas(100, 100);
-   * }
-   * 
-   * function draw() {
-   *   ellipse(width/2, height/2, 50, 50);
-   * }
-   * function mousePressed() {
    *   devicePixelScaling(false);
+   *   createCanvas(100, 100);
+   *   background(200);
+   *   ellipse(width/2, height/2, 50, 50);
    * }
    * </code>
    * </div>
