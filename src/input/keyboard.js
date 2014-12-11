@@ -254,13 +254,15 @@ define(function (require) {
    * The keyIsDown function checks if the key is currently down, i.e. pressed.
    * It can be used if you have an object that moves, and you want several keys
    * to be able to affect its behaviour simultaneously, such as moving a
-   * sprite diagonally.
+   * sprite diagonally. You can put in any number representing the keyCode of
+   * the key, or use any of the variable keyCode names listed
+   * <a href="http://localhost:8000/docs/reference/#p5/keyCode">here</a>.
    *
    * @method keyIsDown
-   * @param {Number}          [code] The key to check for.
+   * @param {Number}          code The key to check for.
+   * @return {Boolean}        whether key is down or not
    * @example
-   * <div>
-   * <code>
+   * <div><code>
    * var x = 100;
    * var y = 100;
    *
@@ -285,8 +287,7 @@ define(function (require) {
    *   fill(255, 0, 0);
    *   ellipse(x, y, 50, 50);
    * }
-   * <code>
-   * </div>
+   * </code></div>
    */
   p5.prototype.keyIsDown = function(code) {
     return downKeys[code];
