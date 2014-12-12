@@ -293,6 +293,7 @@ define(function (require) {
         });
         this.pop();
       }
+      this._updatePAccelerations();
       this._updatePMouseCoords();
       this._updatePTouchCoords();
     }.bind(this);
