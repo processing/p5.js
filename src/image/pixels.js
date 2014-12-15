@@ -75,8 +75,8 @@ define(function (require) {
    * var img1;
    *
    * function preload() {
-   *   img0 = loadImage("rockies.jpg");
-   *   img1 = loadImage("bricks_third.jpg");
+   *   img0 = loadImage("assets/rockies.jpg");
+   *   img1 = loadImage("assets/bricks_third.jpg");
    * }
    * 
    * function setup() {
@@ -90,8 +90,8 @@ define(function (require) {
    * var img1;
    *
    * function preload() {
-   *   img0 = loadImage("rockies.jpg");
-   *   img1 = loadImage("bricks_third.jpg");
+   *   img0 = loadImage("assets/rockies.jpg");
+   *   img1 = loadImage("assets/bricks_third.jpg");
    * }
    * 
    * function setup() {
@@ -105,8 +105,8 @@ define(function (require) {
    * var img1;
    *
    * function preload() {
-   *   img0 = loadImage("rockies.jpg");
-   *   img1 = loadImage("bricks_third.jpg");
+   *   img0 = loadImage("assets/rockies.jpg");
+   *   img1 = loadImage("assets/bricks_third.jpg");
    * }
    * 
    * function setup() {
