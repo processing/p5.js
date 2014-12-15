@@ -313,7 +313,9 @@ define(function (require) {
    *                                    as first argument
    */
   p5.prototype.httpGet = function () {
-    httpDo('get', arguments);
+    var args = Array.prototype.slice.call(arguments);
+    args.push('GET');
+    p5.prototype.httpDo.apply(this, args);
   };
 
 
@@ -328,34 +330,48 @@ define(function (require) {
    *                                    as first argument
    */
   p5.prototype.httpPost = function () {
-    httpDo('post', arguments);
+    var args = Array.prototype.slice.call(arguments);
+    args.push('POST');
+    p5.prototype.httpDo.apply(this, args);
   };
 
   /**
-   * Helper method for httpGet and httpPost
+   * 
+   * @method httpDo
+   * @param  {String}        path       name of the file or url to load
+   * @param  {Object}        [data]     param data passed sent with request
+   * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
+   * @param  {Function}      [callback] function to be executed after
+   *                                    httpGet() completes, data is passed in
+   *                                    as first argument
    */
-  function httpDo(method, args) {
-    
-    var path = args[0];
+  p5.prototype.httpDo = function() {
+    var method = 'GET';
+    var path = arguments[0];
     var data = {};
     var type = '';
     var callback;
 
-    for (var i=1; i<args.length; i++) {
-      if (typeof args[i] === 'string') {
-        type = args[i];
-      } else if (typeof args[i] === 'object') {
-        data = args[i];
-      } else if (typeof args[i] === 'function') {
-        callback = args[i];
+    for (var i=1; i<arguments.length; i++) {
+      var a = arguments[i];
+      if (typeof a === 'string') {
+        if (a === 'GET' || a === 'POST' || a === 'PUT') {
+          method = a;
+        } else {
+          type = a;
+        }
+      } else if (typeof a === 'object') {
+        data = a;
+      } else if (typeof a === 'function') {
+        callback = a;
       }
     }
 
     // do some sort of smart type checking
     if (type === '') {
-      if (path.indexOf('.json') !== -1) {
+      if (path.indexOf('json') !== -1) {
         type = 'json';
-      } else if (path.indexOf('.xml') !== -1) {
+      } else if (path.indexOf('xml') !== -1) {
         type = 'xml';
       } else {
         type = 'text';
@@ -370,11 +386,15 @@ define(function (require) {
       crossOrigin: true,
       success: function (resp) {
         if (typeof callback !== 'undefined') {
-          callback(resp);
+          if (type === 'text') {
+            callback(resp.response);
+          } else {
+            callback(resp);
+          }
         }
       }
     });
-  }
+  };
 
   return p5;
 });
