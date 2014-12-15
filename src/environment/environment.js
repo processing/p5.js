@@ -412,20 +412,18 @@ define(function(require) {
    * @method getURLPath
    * @return {Array} path components
    * @example
-   * <div>
-   * <code>
+   * <div class='norender'><code>
    * function setup() {
    *   createCanvas(100, 100);
    *   fill(0);
    *   noStroke();  
    *   var urlPath = getURLPath();  
    *   background(200);
-   *   for (var i=0; i<urlPath.length; i++) {
+   *   for (var i=0; i&lt;urlPath.length; i++) {
    *     text(urlPath[i], 10, i*20+20);
    *   }
-   * }    
-   * </code>
-   * </div>
+   * }
+   * </code></div>
    */
   p5.prototype.getURLPath = function() {
     return location.pathname.split('/').filter(function(v){return v!=='';});
@@ -435,10 +433,9 @@ define(function(require) {
    * @method getURLParams
    * @return {Object} URL params
    * @example
-   * <div>
+   * <div class='norender'>
    * <code>
-   * // Try adding "?year=2014&month=December&day=15" to
-   * // the end of the URL in the address bar.
+   * // Example: http://p5js.org?year=2014&month=May&day=15
    * 
    * function setup() {
    *   createCanvas(100, 100);
