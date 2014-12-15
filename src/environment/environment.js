@@ -414,11 +414,7 @@ define(function(require) {
    * @example
    * <div class='norender'><code>
    * function setup() {
-   *   createCanvas(100, 100);
-   *   fill(0);
-   *   noStroke();  
-   *   var urlPath = getURLPath();  
-   *   background(200);
+   *   var urlPath = getURLPath();
    *   for (var i=0; i&lt;urlPath.length; i++) {
    *     text(urlPath[i], 10, i*20+20);
    *   }
@@ -438,11 +434,7 @@ define(function(require) {
    * // Example: http://p5js.org?year=2014&month=May&day=15
    * 
    * function setup() {
-   *   createCanvas(100, 100);
-   *   fill(0);
-   *   noStroke();
    *   var params = getURLParams();  
-   *   background(200);
    *   text(params.day, 10, 20);
    *   text(params.month, 10, 40);
    *   text(params.year, 10, 60);  
