@@ -52,6 +52,9 @@ define(function (require) {
    * </div>
    */
   p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
+    if (typeof str !== 'string') {
+      return;
+    }
     if (typeof maxWidth !== 'undefined') {
       y += this._textLeading;
       maxHeight += y;

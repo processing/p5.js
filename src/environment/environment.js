@@ -379,6 +379,93 @@ define(function(require) {
     }
   }
 
+
+  /**
+   * Gets the current URL.
+   * @method getURL
+   * @return {String} url
+   * @example
+   * <div>
+   * <code>
+   * var url;
+   * var x = 100;    
+   * 
+   * function setup() {
+   *   fill(0);
+   *   noStroke();
+   *   url = getURL();    
+   * }    
+   * 
+   * function draw() {
+   *   background(200);
+   *   text(url, x, height/2);
+   *   x--;
+   * }
+   * </code>
+   * </div>
+   */
+  p5.prototype.getURL = function() {
+    return location.href;
+  };
+  /**
+   * Gets the current URL path as an array.
+   * @method getURLPath
+   * @return {Array} path components
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   fill(0);
+   *   noStroke();  
+   *   var urlPath = getURLPath();  
+   *   background(200);
+   *   for (var i=0; i<urlPath.length; i++) {
+   *     text(urlPath[i], 10, i*20+20);
+   *   }
+   * }    
+   * </code>
+   * </div>
+   */
+  p5.prototype.getURLPath = function() {
+    return location.pathname.split('/').filter(function(v){return v!=='';});
+  };
+  /**
+   * Gets the current URL params as an Object.
+   * @method getURLParams
+   * @return {Object} URL params
+   * @example
+   * <div>
+   * <code>
+   * // Try adding "?year=2014&month=December&day=15" to
+   * // the end of the URL in the address bar.
+   * 
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   fill(0);
+   *   noStroke();
+   *   var params = getURLParams();  
+   *   background(200);
+   *   text(params.day, 10, 20);
+   *   text(params.month, 10, 40);
+   *   text(params.year, 10, 60);  
+   * }    
+   * </code>
+   * </div>
+   */
+  p5.prototype.getURLParams = function() {
+    var re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
+    var m;
+    var v={};
+    while ((m = re.exec(location.search)) != null) {
+      if (m.index === re.lastIndex) {
+        re.lastIndex++;
+      }
+      v[m[1]]=m[2];
+    }
+    return v;
+  };
+
   return p5;
 
 });
