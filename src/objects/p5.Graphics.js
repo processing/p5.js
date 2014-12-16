@@ -20,6 +20,7 @@ define(function(require) {
    * @extends p5.Element
    * @param {String} elt DOM node that is wrapped
    * @param {Object} [pInst] pointer to p5 instance
+   * @param Optional:{Object} attrs webgl initialization attributes 
    * @example
    * <div>
    * <code>
@@ -39,14 +40,23 @@ define(function(require) {
    * </code>
    * </div>
    */
-  p5.Graphics = function(renderer, elt, pInst) {
+  p5.Graphics = function(renderer, elt, pInst, attrs) {
     p5.Element.call(this, elt, pInst);
     this.canvas = elt;
     if (renderer === constants.P2D) {
       this.drawingContext = this.canvas.getContext('2d');
     } else if (renderer === constants.WEBGL) {
-      this.drawingContext = this.canvas.getContext('webgl') ||
-        this.canvas.getContext('experimental-webgl');
+      try {
+        this.drawingContext = this.canvas.getContext('webgl', attrs) ||
+          this.canvas.getContext('experimental-webgl', attrs);
+        if (this.drawingContext === null) {
+          throw 'Error creating webgl context';
+        } else {
+          console.log('p5.Graphics3d: enabled webgl context');
+        }
+      } catch (er){
+          console.error(er);
+        }
     }
     if (this._pInst) {
       // for pixel method sharing with pimage

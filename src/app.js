@@ -46,7 +46,7 @@ define(function (require) {
   require('transform');
   require('typography.attributes');
   require('typography.loading_displaying');
-
+  require('shaders');
   /**
    * _globalInit
    *

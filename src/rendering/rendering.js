@@ -20,6 +20,7 @@ define(function(require) {
    * @method createCanvas
    * @param  {Number} w width of the canvas
    * @param  {Number} h height of the canvas
+   * @param  optional:{String} renderer 'p2d' | 'webgl'
    * @return {Object} canvas generated
    * @example 
    * <div>
@@ -33,24 +34,15 @@ define(function(require) {
    * </div>
    */
   p5.prototype.createCanvas = function(w, h, renderer, isDefault) {
-    var c;
-    if (isDefault) {
+    var c = document.getElementById('defaultCanvas');
+    if(c){ //if defaultCanvas already exists
+      c.parentNode.removeChild(c); //replace the existing defaultCanvas
       c = document.createElement('canvas');
       c.id = 'defaultCanvas';
-    } else { // resize the default canvas if new one is created
-      c = document.getElementById('defaultCanvas');
-      if (c) {
-        c.id = ''; // remove default id
-      } else { // probably user calling createCanvas more than once... uhoh
-        // c = document.createElement('canvas');
-
-        // // store in elements array
-        // this._elements.push(c);
-
-        var warn = 'Warning: createCanvas more than once NOT recommended.';
-        warn += ' Very unpredictable behavior may result.';
-        console.log(warn);
-      }
+    }
+    else {
+      c = document.createElement('canvas');
+      c.id = 'defaultCanvas';
     }
 
     c.setAttribute('width', w*this._pixelDensity);

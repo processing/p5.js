@@ -124,11 +124,35 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.line = function(x1, y1, x2, y2) {
+  
+  ////commented out original
+  // p5.prototype.line = function(x1, y1, x2, y2) {
+  //   if (!this._doStroke) {
+  //     return this;
+  //   }
+  //   if(this._graphics.isP3D){
+  //   } else {
+  //     this._graphics.line(x1, y1, x2, y2);      
+  //   }
+  // };
+  p5.prototype.line = function() {
     if (!this._doStroke) {
       return this;
     }
-    this._graphics.line(x1, y1, x2, y2);
+    //check whether we should draw a 3d line or 2d
+    if(this._graphics.isP3D){
+      this._graphics.line(arguments[0],
+        arguments[1],
+        arguments[2],
+        arguments[3],
+        arguments[4],
+        arguments[5]);
+    } else {
+      this._graphics.line(arguments[0],
+        arguments[1],
+        arguments[2],
+        arguments[3]);
+    }
   };
 
   /**
