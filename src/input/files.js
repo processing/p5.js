@@ -303,6 +303,8 @@ define(function (require) {
   };
 
   /**
+   * Method for executing an HTTP GET request. If data type is not specified,
+   * p5 will try to guess based on the URL, defaulting to text.
    * 
    * @method httpGet
    * @param  {String}        path       name of the file or url to load
@@ -320,6 +322,8 @@ define(function (require) {
 
 
   /**
+   * Method for executing an HTTP POST request. If data type is not specified,
+   * p5 will try to guess based on the URL, defaulting to text.
    * 
    * @method httpPost
    * @param  {String}        path       name of the file or url to load
@@ -336,6 +340,8 @@ define(function (require) {
   };
 
   /**
+   * Method for executing an HTTP request. If data type is not specified,
+   * p5 will try to guess based on the URL, defaulting to text.
    * 
    * @method httpDo
    * @param  {String}        path       name of the file or url to load
