@@ -472,6 +472,9 @@ define(function (require) {
           this.drawingContext.bezierCurveTo(b[1][0], b[1][1],
             b[2][0], b[2][1], b[3][0], b[3][1]);
         }
+        if (closeShape) {
+          this.drawingContext.lineTo(vertices[i+1][0], vertices[i+1][1]);
+        }
         this._doFillStrokeClose();
       }
     }
