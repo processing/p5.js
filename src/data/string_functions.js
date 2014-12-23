@@ -170,6 +170,9 @@ define(function (require) {
     var rem = dec !== -1 ? num.substring(dec) : '';
     var n = dec !== -1 ? num.substring(0, dec) : num;
     n = n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    if (arguments[1] === 0) {
+      rem = '';
+    }
     if (arguments.length > 1) {
       rem = rem.substring(0, arguments[1]+1);
     }
