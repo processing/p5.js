@@ -16,6 +16,8 @@ define(function (require) {
   p5.prototype._textFont = 'sans-serif';
   p5.prototype._textSize = 12;
   p5.prototype._textStyle = constants.NORMAL;
+  p5.prototype._textAscent = null;
+  p5.prototype._textDescent = null;
 
   /**
    * Sets the current alignment for drawing text. The parameters LEFT, CENTER,
@@ -44,27 +46,6 @@ define(function (require) {
       a === constants.CENTER) {
       this.drawingContext.textAlign = a;
     }
-  };
-
-  /**
-   * Calculates and returns the height of any character or text string.
-   *
-   * @method textHeight
-   * @param {String} s the String of characters to measure
-   * @example
-   * <div>
-   * <code>
-   * background(0);
-   * fill(255);
-   * textSize(14);
-   * s = "String.";
-   * text(s, 10, 23);
-   * console.log(textHeight(s));
-   * </code>
-   * </div>
-   */
-  p5.prototype.textHeight = function(s) {
-    return this.drawingContext.measureText(s).height;
   };
 
   /**
@@ -116,6 +97,7 @@ define(function (require) {
    */
   p5.prototype.textSize = function(s) {
     this._setProperty('_textSize', s);
+    this._applyTextProperties();
   };
 
   /**
@@ -147,6 +129,7 @@ define(function (require) {
       s === constants.ITALIC ||
       s === constants.BOLD) {
       this._setProperty('_textStyle', s);
+      this._applyTextProperties();
     }
   };
 
@@ -169,6 +152,126 @@ define(function (require) {
    */
   p5.prototype.textWidth = function(s) {
     return this.drawingContext.measureText(s).width;
+  };
+
+  /**
+   * Returns ascent of the current font at its current size.
+   * @example
+   * <div>
+   * <code>
+   * var base = height * 0.75;
+   * var scalar = 0.8; // Different for each font
+   * 
+   * textSize(32);  // Set initial text size
+   * var a = textAscent() * scalar;  // Calc ascent
+   * line(0, base-a, width, base-a);
+   * text("dp", 0, base);  // Draw text on baseline
+   * 
+   * textSize(64);  // Increase text size
+   * a = textAscent() * scalar;  // Recalc ascent
+   * line(40, base-a, width, base-a);
+   * text("dp", 40, base);  // Draw text on baseline
+   * </code>
+   * </div>
+   */
+  p5.prototype.textAscent = function() {
+    if (this._textAscent == null) { this._updateTextMetrics(); }
+    return this._textAscent;
+  };
+
+  /**
+   * Returns descent of the current font at its current size.
+   * @example
+   * <div>
+   * <code>
+   * var base = height * 0.75;
+   * var scalar = 0.8; // Different for each font
+   * 
+   * textSize(32);  // Set initial text size
+   * var a = textDescent() * scalar;  // Calc ascent
+   * line(0, base+a, width, base+a);
+   * text("dp", 0, base);  // Draw text on baseline
+   * 
+   * textSize(64);  // Increase text size
+   * a = textDescent() * scalar;  // Recalc ascent
+   * line(40, base+a, width, base+a);
+   * text("dp", 40, base);  // Draw text on baseline
+   * </code>
+   * </div> 
+   */
+  p5.prototype.textDescent = function() {
+    if (this._textDescent == null) { this._updateTextMetrics(); }
+    return this._textDescent;
+  };
+
+  /**
+   * Helper fxn to apply text properties. 
+   */
+  p5.prototype._applyTextProperties = function () {
+    this._setProperty('_textAscent', null);
+    this._setProperty('_textDescent', null);
+
+    var str = this._textStyle + ' ' + this._textSize + 'px ' + this._textFont;
+    this.drawingContext.font = str;
+  };
+
+  /**
+   * Helper fxn to measure ascent and descent. 
+   * Adapted from http://stackoverflow.com/a/25355178
+   */
+  p5.prototype._updateTextMetrics = function () {
+
+    var text = document.createElement('span');
+    text.style.fontFamily = this._textFont;
+    text.style.fontSize = this._textSize + 'px';
+    text.innerHTML = 'ABCjgq|';
+
+    var block = document.createElement('div');
+    block.style.display = 'inline-block';
+    block.style.width = '1px';
+    block.style.height = '0px';
+
+    var container = document.createElement('div');
+    container.appendChild(text);
+    container.appendChild(block);
+
+    container.style.height = '0px';
+    container.style.overflow = 'hidden';
+    document.body.appendChild(container);
+
+    block.style.verticalAlign = 'baseline';
+    var blockOffset = this._calculateOffset(block);
+    var textOffset = this._calculateOffset(text);
+    var ascent = blockOffset[1] - textOffset[1];
+
+    block.style.verticalAlign = 'bottom';
+    blockOffset = this._calculateOffset(block);
+    textOffset = this._calculateOffset(text);
+    var height = blockOffset[1] - textOffset[1];
+    var descent = height - ascent;
+
+    document.body.removeChild(container);
+
+    this._setProperty('_textAscent', ascent);
+    this._setProperty('_textDescent', descent);
+  };
+
+  /**
+   * Helper fxn to measure ascent and descent. 
+   * Adapted from http://stackoverflow.com/a/25355178
+   */
+  p5.prototype._calculateOffset = function (object) {
+    var currentLeft = 0, currentTop = 0;
+    if( object.offsetParent ) {
+      do {
+        currentLeft += object.offsetLeft;
+        currentTop += object.offsetTop;
+      } while( object = object.offsetParent );
+    } else {
+      currentLeft += object.offsetLeft;
+      currentTop += object.offsetTop;
+    }
+    return [currentLeft,currentTop];
   };
 
   return p5;

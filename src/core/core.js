@@ -1,4 +1,4 @@
-/**
+  /**
  * @module Structure
  * @submodule Structure
  * @for p5
@@ -11,24 +11,25 @@ define(function (require) {
   require('shim');
 
   // Core needs the PVariables object
-  // TODO: ???
   var constants = require('constants');
 
   /**
    * This is the p5 instance constructor.
    *
    * A p5 instance holds all the properties and methods related to
-   * a p5 sketch.  It expects an incoming sketch closure with optional
-   * preload(), setup() and draw() properties to attach to this p5
-   * instance for running a sketch.  It can also take an optional node
-   * parameter for attaching the generated p5 canvas to a node.
+   * a p5 sketch.  It expects an incoming sketch closure and it can also
+   * take an optional node parameter for attaching the generated p5 canvas
+   * to a node.  The sketch closure takes the newly created p5 instance as
+   * its sole argument and may optionally set preload(), setup(), and/or
+   * draw() properties on it for running a sketch.
    *
    * A p5 sketch can run in "global" or "instance" mode:
    * "global"   - all properties and methods are attached to the window
    * "instance" - all properties and methods are bound to this p5 object
    *
-   * @param  {Function}    sketch a closure with optional preload(), setup()
-  *                               and draw() properties
+   * @param  {Function}    sketch a closure that can set optional preload(),
+   *                              setup(), and/or draw() properties on the
+   *                              given p5 instance
    * @param  {HTMLElement} node   an element to attach the generated canvas to
    * @return {p5}                 a p5 instance
    */
@@ -53,13 +54,14 @@ define(function (require) {
      * var c;
      * function preload() {  // preload() runs once
      *   img = loadImage('assets/laDefense.jpg');
-     *   noLoop();
      * }
+     * 
      * function setup() {  // setup() waits until preload() is done
      *   img.loadPixels();
      *   // get color of middle pixel
      *   c = img.get(img.width/2, img.height/2);
      * }
+     * 
      * function draw() {
      *   background(c);
      *   image(img, 25, 25, 50, 50);
@@ -88,7 +90,7 @@ define(function (require) {
      * }
      *
      * function draw() {
-     *   rect(a++%width, 10, 2, 80); 
+     *   rect(a++%width, 10, 2, 80);
      * }
      * </code></div>
      */
@@ -103,10 +105,10 @@ define(function (require) {
      * noLoop() stops the code in draw() from executing, redraw() causes the
      * code inside draw() to execute once, and loop() will cause the code
      * inside draw() to resume executing continuously.
-     * 
+     *
      * The number of times draw() executes in each second may be controlled with
      * the frameRate() function.
-     * 
+     *
      * There can only be one draw() function for each sketch, and draw() must
      * exist if you want the code to run continuously, or to process events such
      * as mousePressed(). Sometimes, you might have an empty call to draw() in
@@ -130,7 +132,7 @@ define(function (require) {
      * </code></div>
      */
 
-    
+
     //////////////////////////////////////////////
     // PRIVATE p5 PROPERTIES AND METHODS
     //////////////////////////////////////////////
@@ -145,7 +147,7 @@ define(function (require) {
     this._updateInterval = 0;
     this._isGlobal = false;
     this._loop = true;
-    this.styles = [];
+    this._styles = [];
     this._defaultCanvasSize = {
       width: 100,
       height: 100
@@ -163,8 +165,11 @@ define(function (require) {
       'keypress': null,
       'touchstart': null,
       'touchmove': null,
-      'touchend': null
+      'touchend': null,
+      'resize': null,
+      'blur': null
     };
+    this._loadingScreenId = 'p5_loading';
 
     this._start = function () {
       // Find node if id given
@@ -172,6 +177,18 @@ define(function (require) {
         if (typeof this._userNode === 'string') {
           this._userNode = document.getElementById(this._userNode);
         }
+      }
+
+      // Setup loading screen
+      // Set loading scfeen into dom if not present
+      // Otherwise displays and removes user provided loading screen
+      this._loadingScreen = document.getElementById(this._loadingScreenId);
+      if(!this._loadingScreen){
+        this._loadingScreen = document.createElement('loadingDiv');
+        this._loadingScreen.innerHTML = 'loading...';
+        this._loadingScreen.style.position = 'absolute';
+        var node = this._userNode || document.body;
+        node.appendChild(this._loadingScreen);
       }
 
       // Always create a default canvas.
@@ -234,15 +251,14 @@ define(function (require) {
         context.setup();
       }
 
-      // unhide any hidden canvases that were created
-      var reg = new RegExp(/(^|\s)p5_hidden(?!\S)/g);
-      var canvases = document.getElementsByClassName('p5_hidden');
-      for (var i = 0; i < canvases.length; i++) {
-        var k = canvases[i];
-        k.style.visibility = '';
-        k.className = k.className.replace(reg, '');
-      }
+      // unhide hidden canvas that was created
+      this.canvas.style.visibility = '';
+      this.canvas.className = this.canvas.className.replace('p5_hidden', '');
       this._setupDone = true;
+
+      // Removes the loading screen if it's in the DOM
+      this._loadingScreen.parentNode.removeChild(this._loadingScreen);
+
     }.bind(this);
 
     this._draw = function () {
@@ -278,6 +294,8 @@ define(function (require) {
         });
         this.pop();
       }
+      this._updatePMouseCoords();
+      this._updatePTouchCoords();
     }.bind(this);
 
     this._runFrames = function() {
@@ -297,7 +315,26 @@ define(function (require) {
     }.bind(this);
 
     /**
+     * Removes the entire p5 sketch. This will remove the canvas and any
+     * elements created by p5.js. It will also stop the draw loop and unbind
+     * any properties or methods from the window global scope. It will
+     * leave a variable p5 in case you wanted to create a new p5 sketch.
+     * If you like, you can set p5 = null to erase it.
      * @method remove
+     * @example
+     * <div class='norender'><code>
+     * function setup() {
+     *   createCanvas(200, 200);
+     * }
+     *
+     * function draw() {
+     *   ellipse(width/2, height/2, 0, 0);
+     * }
+     *
+     * function mousePressed() {
+     *   remove(); // remove whole sketch on mouse press
+     * }
+     * </code></div>
      */
     this.remove = function() {
       if (this._curElement) {
@@ -328,8 +365,11 @@ define(function (require) {
         }
 
         // call any registered remove functions
-        this._registeredMethods.remove.forEach(function(f) {
-          f.call(this);
+        var self = this;
+        this._registeredMethods.remove.forEach(function (f) {
+          if (typeof(f) !== 'undefined') {
+            f.call(self);
+          }
         });
 
         // remove window bound properties and methods
@@ -352,7 +392,7 @@ define(function (require) {
           }
         }
       }
-      window.p5 = undefined;
+      // window.p5 = undefined;
     }.bind(this);
 
 
@@ -382,11 +422,10 @@ define(function (require) {
           window[p2] = this[p2];
         }
       }
-      
+
     } else {
-      // Else, the user has passed in a sketch function closure
-      // So attach the user given 'setup', 'draw', etc on this
-      // instance of p5
+      // Else, the user has passed in a sketch closure that may set
+      // user-provided 'setup', 'draw', etc. properties on this instance of p5
       sketch(this);
     }
 

@@ -31,7 +31,7 @@ define(function (require) {
   /**
    * Loads a JSON file from a file or a URL, and returns an Object or Array.
    * This method is asynchronous, meaning it may not finish before the next
-   * line in your sketch is executed, either use preload() to guarantee the
+   * line in your sketch is executed. Either use preload() to guarantee the
    * file loads before setup() and draw() are called, or supply a callback
    * function that is executed when loadStrings() completes.
    * 
@@ -41,19 +41,30 @@ define(function (require) {
    *                                    loadJSON()
    *                                    completes, Array is passed in as first
    *                                    argument
+   * @param  {String}       [datatype]  "json" or "jsonp"
    * @return {Object|Array}             JSON data
    */
   p5.prototype.loadJSON = function(path, callback) {
-    var ret = [];
+    var ret = []; // array needed for preload
+    // assume jsonp for URLs
     var t = path.indexOf('http') === -1 ? 'json' : 'jsonp';
-    reqwest({url: path, type: t, success: function (resp) {
-      for (var k in resp) {
-        ret[k] = resp[k];
+
+    // check for explicit data type argument
+    if (typeof arguments[2] === 'string'){
+      if (arguments[2] === 'jsonp' || arguments[2] === 'json') {
+        t = arguments[2];
       }
-      if (typeof callback !== 'undefined') {
-        callback(ret);
-      }
-    }});
+    }
+
+    reqwest({url: path, type: t, crossOrigin: true})
+      .then(function(resp) {
+        for (var k in resp) {
+          ret[k] = resp[k];
+        }
+        if (typeof callback !== 'undefined') {
+          callback(resp);
+        }
+      });
     return ret;
   };
 
@@ -68,7 +79,7 @@ define(function (require) {
    * URL for a file found on a network.
    *
    * This method is asynchronous, meaning it may not finish before the next
-   * line in your sketch is executed, either use preload() to guarantee the
+   * line in your sketch is executed. Either use preload() to guarantee the
    * file loads before setup() and draw() are called, or supply a callback
    * function that is executed when loadStrings() completes.
    * 
@@ -78,6 +89,31 @@ define(function (require) {
    *                               completes, Array is passed in as first
    *                               argument
    * @return {Array}               Array of Strings
+   * @example
+   * <div><code>
+   * var result;
+   * function preload() {
+   *   result = loadStrings('assets/test.txt');
+   * }
+
+   * function setup() {
+   *   background(200);
+   *   var ind = floor(random(result.length));
+   *   text(result[ind], 10, 10, 80, 80);
+   * }
+   * </code></div>
+   *
+   * <div><code>
+   * function setup() {
+   *   loadStrings('assets/test.txt', pickString);
+   * }
+   *
+   * function pickString(result) {
+   *   background(200);
+   *   var ind = floor(random(result.length));
+   *   text(result[ind], 10, 10, 80, 80);
+   * }
+   * </code></div>
    */
   p5.prototype.loadStrings = function (path, callback) {
     var ret = [];
@@ -117,13 +153,18 @@ define(function (require) {
    *  
    *  <p> All files loaded and saved use UTF-8 encoding.</p>
    *  
+   *  <p>This method is asynchronous, meaning it may not finish before the next
+   *  line in your sketch is executed. Either use preload() to guarantee the
+   *  file loads before setup() and draw() are called, or supply a callback
+   *  function that is executed when loadTable() completes.</p>
+   * 
    *  @method  loadTable
    *  @param  {String}   filename   name of the file or URL to load
    *  @param  {String|Strings}   [options]  "header" "csv" "tsv"
-   *  @param  {Function} [callback] function to be executed after loadXML()
-   *                               completes, XML object is passed in as
+   *  @param  {Function} [callback] function to be executed after loadTable()
+   *                               completes, Table object is passed in as
    *                               first argument
-   *  @return {Object}              XML object containing data
+   *  @return {Object}              Table object containing data
    */
   p5.prototype.loadTable = function (path) {
     var callback = null;
@@ -213,7 +254,7 @@ define(function (require) {
    * URL for a file found on a network.
    * 
    * This method is asynchronous, meaning it may not finish before the next
-   * line in your sketch is executed, either use preload() to guarantee the
+   * line in your sketch is executed. Either use preload() to guarantee the
    * file loads before setup() and draw() are called, or supply a callback
    * function that is executed when loadXML() completes.
    * 
@@ -229,13 +270,11 @@ define(function (require) {
     reqwest({
       url: path,
       type: 'xml',
-      success: function (resp) {
-        ret[0] = resp;
-        if (typeof callback !== 'undefined') {
-          callback(ret);
-        }
-      }
-    });
+      crossOrigin: true,
+    })
+      .then(function(resp){
+        callback(resp);
+      });
     return ret;
   };
 
@@ -261,6 +300,106 @@ define(function (require) {
     // TODO
     throw 'not yet implemented';
 
+  };
+
+  /**
+   * Method for executing an HTTP GET request. If data type is not specified,
+   * p5 will try to guess based on the URL, defaulting to text.
+   * 
+   * @method httpGet
+   * @param  {String}        path       name of the file or url to load
+   * @param  {Object}        [data]     param data passed sent with request
+   * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
+   * @param  {Function}      [callback] function to be executed after
+   *                                    httpGet() completes, data is passed in
+   *                                    as first argument
+   */
+  p5.prototype.httpGet = function () {
+    var args = Array.prototype.slice.call(arguments);
+    args.push('GET');
+    p5.prototype.httpDo.apply(this, args);
+  };
+
+
+  /**
+   * Method for executing an HTTP POST request. If data type is not specified,
+   * p5 will try to guess based on the URL, defaulting to text.
+   * 
+   * @method httpPost
+   * @param  {String}        path       name of the file or url to load
+   * @param  {Object}        [data]     param data passed sent with request
+   * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
+   * @param  {Function}      [callback] function to be executed after
+   *                                    httpGet() completes, data is passed in
+   *                                    as first argument
+   */
+  p5.prototype.httpPost = function () {
+    var args = Array.prototype.slice.call(arguments);
+    args.push('POST');
+    p5.prototype.httpDo.apply(this, args);
+  };
+
+  /**
+   * Method for executing an HTTP request. If data type is not specified,
+   * p5 will try to guess based on the URL, defaulting to text.
+   * 
+   * @method httpDo
+   * @param  {String}        path       name of the file or url to load
+   * @param  {Object}        [data]     param data passed sent with request
+   * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
+   * @param  {Function}      [callback] function to be executed after
+   *                                    httpGet() completes, data is passed in
+   *                                    as first argument
+   */
+  p5.prototype.httpDo = function() {
+    var method = 'GET';
+    var path = arguments[0];
+    var data = {};
+    var type = '';
+    var callback;
+
+    for (var i=1; i<arguments.length; i++) {
+      var a = arguments[i];
+      if (typeof a === 'string') {
+        if (a === 'GET' || a === 'POST' || a === 'PUT') {
+          method = a;
+        } else {
+          type = a;
+        }
+      } else if (typeof a === 'object') {
+        data = a;
+      } else if (typeof a === 'function') {
+        callback = a;
+      }
+    }
+
+    // do some sort of smart type checking
+    if (type === '') {
+      if (path.indexOf('json') !== -1) {
+        type = 'json';
+      } else if (path.indexOf('xml') !== -1) {
+        type = 'xml';
+      } else {
+        type = 'text';
+      }
+    }
+
+    reqwest({
+      url: path,
+      method: method,
+      data: data,
+      type: type,
+      crossOrigin: true,
+      success: function (resp) {
+        if (typeof callback !== 'undefined') {
+          if (type === 'text') {
+            callback(resp.response);
+          } else {
+            callback(resp);
+          }
+        }
+      }
+    });
   };
 
   return p5;

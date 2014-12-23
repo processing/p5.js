@@ -26,7 +26,7 @@ define(function (require) {
    * ellipseMode(RADIUS) also uses the first two parameters of ellipse() as
    * the shape's center point, but uses the third and fourth parameters to
    * specify half of the shapes's width and height.
-   * 
+   *
    * ellipseMode(CORNER) interprets the first two parameters of ellipse() as
    * the upper-left corner of the shape, while the third and fourth parameters
    * are its width and height.
@@ -53,7 +53,7 @@ define(function (require) {
    * ellipse(50, 50, 30, 30);  // Draw gray ellipse using CENTER mode
    * </code>
    * </div>
-   * 
+   *
    * <div>
    * <code>
    * ellipseMode(CORNER);  // Set ellipseMode is CORNER
@@ -102,8 +102,8 @@ define(function (require) {
 
   /**
    * Modifies the location from which rectangles are drawn by changing the way
-   * in which parameters given to rect() are intepreted.
-   * 
+   * in which parameters given to rect() are interpreted.
+   *
    * The default mode is rectMode(CORNER), which interprets the first two
    * parameters of rect() as the upper-left corner of the shape, while the
    * third and fourth parameters are its width and height.
@@ -122,7 +122,7 @@ define(function (require) {
    *
    * The parameter must be written in ALL CAPS because Processing is a
    * case-sensitive language.
-   * 
+   *
    * @method rectMode
    * @param  {Number/Constant} mode either CORNER, CORNERS, CENTER, or RADIUS
    * @return {p5}                   the p5 object
@@ -132,7 +132,7 @@ define(function (require) {
    * rectMode(CORNER);  // Default rectMode is CORNER
    * fill(255);  // Set fill to white
    * rect(25, 25, 50, 50);  // Draw white rect using CORNER mode
-   * 
+   *
    * rectMode(CORNERS);  // Set rectMode to CORNERS
    * fill(100);  // Set fill to gray
    * rect(25, 25, 50, 50);  // Draw gray rect using CORNERS mode
@@ -144,7 +144,7 @@ define(function (require) {
    * rectMode(RADIUS);  // Set rectMode to RADIUS
    * fill(255);  // Set fill to white
    * rect(50, 50, 30, 30);  // Draw white rect using RADIUS mode
-   * 
+   *
    * rectMode(CENTER);  // Set rectMode to CENTER
    * fill(100);  // Set fill to gray
    * rect(50, 50, 30, 30);  // Draw gray rect using CENTER mode
@@ -166,7 +166,7 @@ define(function (require) {
    * improve image quality of resized images. Note that smooth() is active by
    * default; noSmooth() can be used to disable smoothing of geometry,
    * images, and fonts.
-   * 
+   *
    * @method smooth
    * @return {p5} the p5 object
    * @example
@@ -190,7 +190,7 @@ define(function (require) {
    * Sets the style for rendering line endings. These ends are either squared,
    * extended, or rounded, each of which specified with the corresponding
    * parameters: SQUARE, PROJECT, and ROUND. The default cap is ROUND.
-   * 
+   *
    * @method strokeCap
    * @param  {Number/Constant} cap either SQUARE, PROJECT, or ROUND
    * @return {p5}                  the p5 object

@@ -9,8 +9,6 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
-  var canvas = require('canvas');
-
   /**
    * Draws text to the screen. Displays the information specified in the first
    * parameter on the screen in the position specified by the additional
@@ -53,81 +51,52 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.text = function() {
+  p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
+    if (typeof str !== 'string') {
+      return;
+    }
+    if (typeof maxWidth !== 'undefined') {
+      y += this._textLeading;
+      maxHeight += y;
+    }
+    str = str.replace(/(\t)/g, '  ');
+    var cars = str.split('\n');
 
-    this.drawingContext.font=this._textStyle+
-      ' '+
-      this._textSize+
-      'px '+
-      this._textFont;
+    for (var ii = 0; ii < cars.length; ii++) {
 
-    if (arguments.length === 3) {
+      var line = '';
+      var words = cars[ii].split(' ');
+
+      for (var n = 0; n < words.length; n++) {
+        if (y + this._textLeading <= maxHeight ||
+          typeof maxHeight === 'undefined') {
+          var testLine = line + words[n] + ' ';
+          var metrics = this.drawingContext.measureText(testLine);
+          var testWidth = metrics.width;
+
+          if ( typeof maxWidth !== 'undefined' && testWidth > maxWidth) {
+            if (this._doFill) {
+              this.drawingContext.fillText(line, x, y);
+            }
+            if (this._doStroke) {
+              this.drawingContext.strokeText(line, x, y);
+            }
+            line = words[n] + ' ';
+            y += this._textLeading;
+          }
+          else {
+            line = testLine;
+          }
+        }
+      }
 
       if (this._doFill) {
-        this.drawingContext.fillText(
-          arguments[0],
-          arguments[1],
-          arguments[2]
-        );
+        this.drawingContext.fillText(line, x, y);
       }
       if (this._doStroke) {
-        this.drawingContext.strokeText(
-          arguments[0],
-          arguments[1],
-          arguments[2]
-        );
+        this.drawingContext.strokeText(line, x, y);
       }
-
-    } else if (arguments.length === 5) {
-
-      var words = arguments[0].split(' ');
-      var line = '';
-      var vals = canvas.modeAdjust(
-        arguments[1],
-        arguments[2],
-        arguments[3],
-        arguments[4],
-        this._rectMode
-      );
-
-      vals.y += this._textLeading;
-
-      for(var n = 0; n < words.length; n++) {
-
-        var testLine = line + words[n] + ' ';
-        var metrics = this.drawingContext.measureText(testLine);
-        var testWidth = metrics.width;
-
-        if (vals.y > vals.h) {
-
-          break;
-
-        } else if (testWidth > vals.w && n > 0) {
-
-          if (this._doFill) {
-            this.drawingContext.fillText(line, vals.x, vals.y);
-          }
-          if (this._doStroke) {
-            this.drawingContext.strokeText(line, vals.x, vals.y);
-          }
-          line = words[n] + ' ';
-          vals.y += this._textLeading;
-
-        } else {
-
-          line = testLine;
-
-        }
-      }
-
-      if (vals.y <= vals.h) {
-        if (this._doFill) {
-          this.drawingContext.fillText(line, vals.x, vals.y);
-        }
-        if (this._doStroke) {
-          this.drawingContext.strokeText(line, vals.x, vals.y);
-        }
-      }
+      y += this._textLeading;
     }
   };
 
@@ -150,6 +119,7 @@ define(function (require) {
    */
   p5.prototype.textFont = function(str) {
     this._setProperty('_textFont', str); //pend temp?
+    this._applyTextProperties();
   };
 
   return p5;

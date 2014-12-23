@@ -57,7 +57,52 @@ define(function (require) {
     this.drawingContext = this.canvas.getContext('2d');
     /**
      * Array containing the color of every pixel in the image.
+     * These values are numbers. This array is the size of the display window
+     * x 4, representing the R, G, B, A values in order for each pixel, moving 
+     * from left to right across each row, then down each column. For example, 
+     * if the image is 100x100 pixels, there will be 40000. The first four
+     * values (indices 0-3) in the array will be the R, G, B, A values of the
+     * pixel at  (0, 0). The second four values (indices 4-7) will contain the
+     * R, G, B, A values of the pixel at (1, 0). More generally, to set values
+     * for a pixel at (x, y):<br>
+     * <code>pixels[y*width+x] = r; <br>
+     * pixels[y*width+x+1] = g;<br>
+     * pixels[y*width+x+2] = b;<br>
+     * pixels[y*width+x+3] = a;</code>
+     * <br><br>
+     * Before accessing this array, the data must loaded with the loadPixels()
+     * function. After the array data has been modified, the updatePixels()
+     * function must be run to update the changes.
      * @property pixels[]
+     * @example
+     * <div>
+     * <code>
+     * img = createImage(66, 66);
+     * img.loadPixels();
+     * for (i = 0; i < img.width; i++) {
+     *   for (j = 0; j < img.height; j++) {
+     *     img.set(i, j, color(0, 90, 102)); 
+     *   }
+     * }
+     * img.updatePixels();
+     * image(img, 17, 17);
+     * </code>
+     * </div>
+     * <div>
+     * <code>
+     * var pink = color(255, 102, 204);
+     * img = createImage(66, 66);
+     * img.loadPixels();
+     * for (var i = 0; i < 4*(width*height/2); i+=4) {
+     *   img.pixels[i] = red(pink);
+     *   img.pixels[i+1] = green(pink);
+     *   img.pixels[i+2] = blue(pink);
+     *   img.pixels[i+3] = alpha(pink);
+     * }
+     * img.updatePixels();
+     * image(img, 17, 17);
+     * </code>
+     * </div>
      */
     this.pixels = [];
   };
@@ -125,13 +170,28 @@ define(function (require) {
    *
    * Note that for a large number of pixels this will
    * be slower than directly manipulating the pixels array
-   * and then calling updatePixels()
+   * and then calling updatePixels().
    *
    * @method set
    * @param {Number}              x x-coordinate of the pixel
    * @param {Number}              y y-coordinate of the pixel
    * @param {Number|Array|Object}   a grayscale value | pixel array |
    *                                a p5.Color | image to copy
+   * @example
+   * <div>
+   * <code>
+   * img = createImage(66, 66);
+   * img.loadPixels();
+   * for (i = 0; i < img.width; i++) {
+   *   for (j = 0; j < img.height; j++) {
+   *     img.set(i, j, color(0, 90, 102, i % img.width * 2)); 
+   *   }
+   * }
+   * img.updatePixels();
+   * image(img, 17, 17);
+   * image(img, 34, 34);
+   * </code>
+   * </div>
    */
   p5.Image.prototype.set = function(x, y, imgOrCol){
     p5.prototype.set.call(this, x, y, imgOrCol);
@@ -146,6 +206,22 @@ define(function (require) {
    * @method resize
    * @param {Number} width the resized image width
    * @param {Number} height the resized image height
+   * @example
+   * <div><code>
+   * var img;
+   * 
+   * function setup() {
+   *   img = loadImage("assets/rockies.jpg");
+   * }
+
+   * function draw() {
+   *   image(img, 0, 0);
+   * }
+   * 
+   * function mousePressed() {
+   *   img.resize(50, 100);
+   * }
+   * </code></div>
    */
   p5.Image.prototype.resize = function(width, height){
 
@@ -158,13 +234,15 @@ define(function (require) {
     // reference to the backing canvas of a p5.Image. But since we do not
     // enforce that at the moment, I am leaving in the slower, but safer
     // implementation.
+    width = width || this.canvas.width;
+    height = height || this.canvas.height;
 
     var tempCanvas = document.createElement('canvas');
     tempCanvas.width = width;
     tempCanvas.height = height;
     tempCanvas.getContext('2d').drawImage(this.canvas,
       0, 0, this.canvas.width, this.canvas.height,
-      0, 0, tempCanvas.width, tempCanvas.width
+      0, 0, tempCanvas.width, tempCanvas.height
     );
 
 
@@ -229,12 +307,17 @@ define(function (require) {
     }
     var currBlend = this.drawingContext.globalCompositeOperation;
 
+    var scaleFactor = 1;
+    if (p5Image instanceof p5.Graphics) {
+      scaleFactor = p5Image._pInst._pixelDensity;
+    }
+    
     var copyArgs = [
       p5Image,
       0,
       0,
-      p5Image.width,
-      p5Image.height,
+      scaleFactor*p5Image.width,
+      scaleFactor*p5Image.height,
       0,
       0,
       this.width,
@@ -289,46 +372,43 @@ define(function (require) {
   };
 
   /**
-   * Saves the image to a file and forces the browser to download it.
-   * Supports png and jpg.
+   * Saves the image to a file and force the browser to download it.
+   * Accepts two strings for filename and file extension
+   * Supports png (default) and jpg.
    * 
    * @method save
-   * @param  {[type]} extension
-   *
-   * TODO: There doesn't seem to be a way to give the force the
-   * browser to download a file *and* give it a name. Which is why 
-   * this function currently only take an extension parameter.
-   * 
+   * @param {String} filename give your file a name
+   * @param  {String} extension 'png' or 'jpg'
    */
-  p5.Image.prototype.save = function(extension) {
-    // var components = name.split('.');
-    // var extension = components[components.length - 1];
+  p5.Image.prototype.save = function(filename, extension) {
     var mimeType;
-    
-    // en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support
-    switch(extension.toLowerCase()){
-    case 'png':
+    if (!extension) {
+      extension = 'png';
       mimeType = 'image/png';
-      break;
-    case 'jpeg':
-      mimeType = 'image/jpeg';
-      break;
-    case 'jpg':
-      mimeType = 'image/jpeg';
-      break;
-    default:
-      mimeType = 'image/png';
-      break;
     }
+    else {
+      // en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support
+      switch(extension.toLowerCase()){
+      case 'png':
+        mimeType = 'image/png';
+        break;
+      case 'jpeg':
+        mimeType = 'image/jpeg';
+        break;
+      case 'jpg':
+        mimeType = 'image/jpeg';
+        break;
+      default:
+        mimeType = 'image/png';
+        break;
+      }
+    }
+    var downloadMime = 'image/octet-stream';
+    var imageData = this.canvas.toDataURL(mimeType);
+    imageData = imageData.replace(mimeType, downloadMime);
 
-    if(mimeType !== undefined){
-      var downloadMime = 'image/octet-stream';
-      var imageData = this.canvas.toDataURL(mimeType);
-      imageData = imageData.replace(mimeType, downloadMime);
-      
-      //Make the browser download the file
-      window.location.href = imageData;
-    }
+    //Make the browser download the file
+    p5.prototype.downloadFile(imageData, filename, extension);
   };
   return p5.Image;
 });

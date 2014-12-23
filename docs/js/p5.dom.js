@@ -1,4 +1,25 @@
-/*! p5.dom.js v0.0.1 July 31, 2014 */
+/*! p5.dom.js v0.1.3 September 2, 2014 */
+/**
+ * <p>The web is much more than just canvas and p5.dom makes it easy to interact 
+ * with other HTML5 objects, including text, hyperlink, image, input, video, 
+ * audio, and webcam.</p>
+ * <p>There are a set of creation methods, and some other stuff... @TODO.</p>
+ *
+ * <p>Methods and properties shown in black are part of the p5.js core, items in
+ * blue are part of the p5.dom library. See the
+ * <a href="http://p5js.org/libraries/#using-a-library">using a library</a>
+ * section for information on how to include this library. p5.dom comes with
+ * <a href="http://p5js.org/download">p5 complete</a> or you can download the single file
+ * <a href="https://raw.githubusercontent.com/lmccart/p5.js/master/lib/addons/p5.dom.js">
+ * here</a>.</p>
+ * <p>See <a href="https://github.com/lmccart/p5.js/wiki/Beyond-the-canvas">tutorial: beyond the canvas]</a>
+ * for more info on how to use this libary.</a>
+ *
+ * @module p5.dom
+ * @submodule p5.dom
+ * @for p5.dom
+ * @main
+ */
 
 var p5DOM = (function(){
 
@@ -364,8 +385,10 @@ var p5DOM = (function(){
    *
    * Adds specified class to the element.
    *
+   * @for p5.Element
    * @method addClass
    * @param  {String} class name of class to add
+   * @return {p5.Element}
    */
   p5.Element.prototype.addClass = function(c) {
     if (this.elt.className) {
@@ -377,6 +400,7 @@ var p5DOM = (function(){
     } else {
       this.elt.className = c;
     }
+    return this;
   }
 
   /**
@@ -385,11 +409,13 @@ var p5DOM = (function(){
    *
    * @method removeClass
    * @param  {String} class name of class to remove
+   * @return {p5.Element}
    */
   p5.Element.prototype.removeClass = function(c) {
     var regex = new RegExp('(?:^|\\s)'+c+'(?!\\S)');
     this.elt.className = this.elt.className.replace(regex, '');
     this.elt.className = this.elt.className.replace(/^\s+|\s+$/g, ""); //prettify (optional)
+    return this;
   }
 
   /**
@@ -400,25 +426,35 @@ var p5DOM = (function(){
    *
    * @method child
    * @param  {String|Object} child the ID or node to add to the current element
+   * @return {p5.Element}
    */ 
   p5.Element.prototype.child = function(c) {
     if (typeof c === 'string') {
       c = document.getElementById(c);
     }
     this.elt.appendChild(c);
+    return this;
   };
 
 
   /**
    *
-   * Sets the inner HTML of the element. Replaces any existing html.
+   * If an argument is given, sets the inner HTML of the element, 
+   * replacing any existing html. If no arguments are given, returns
+   * the inner HTML of the element.
    *
    * @for p5.Element
    * @method html
-   * @param  {String} html the HTML to be placed inside the element
+   * @param  {String} [html] the HTML to be placed inside the element
+   * @return {p5.Element|String}
    */
   p5.Element.prototype.html = function(html) {
-    this.elt.innerHTML = html;
+    if (typeof html !== 'undefined') {
+      this.elt.innerHTML = html;
+      return this;
+    } else {
+      return this.elt.innerHTML;
+    }
   };
 
   /**
@@ -430,11 +466,13 @@ var p5DOM = (function(){
    * @method position
    * @param  {Number} x x-position relative to upper left of window
    * @param  {Number} y y-position relative to upper left of window
+   * @return {p5.Element}
    */
   p5.Element.prototype.position = function(x, y) {
     this.elt.style.position = 'absolute';
     this.elt.style.left = x+'px';
     this.elt.style.top = y+'px';
+    return this;
   };
 
   /**
@@ -444,16 +482,31 @@ var p5DOM = (function(){
    * or undefined if the property is not.
    *
    * @method style
-   * @param  {String} property property to be set
-   * @param  {String} value    value to assign to property
-   * @return {String} value of property, if no value is specified
+   * @param  {String} property   property to be set
+   * @param  {String} [value]    value to assign to property
+   * @return {String|p5.Element} value of property, if no value is specified
+   *                             or p5.Element
+   * @example
+   * <div><code class="norender">
+   * var myDiv = createDiv("I like pandas.");
+   * myDiv.style("color", "#ff0000");
+   * myDiv.style("font-size", "18px");
+   * </code></div>
    */
   p5.Element.prototype.style = function(prop, val) {
     if (typeof val === 'undefined') {
-      return this.elt.style[prop];
+      var attrs = prop.split(';');
+      for (var i=0; i<attrs.length; i++) {
+        var parts = attrs[i].split(':');
+        if (parts[0] && parts[1]) {
+          this.elt.style[parts[0].trim()] = parts[1].trim();
+        }
+      }
+      console.log(this.elt.style)
     } else {
       this.elt.style[prop] = val;
     }
+    return this;
   };
 
 
@@ -464,15 +517,22 @@ var p5DOM = (function(){
    * value of the given attribute, or null if attribute is not set.
    *
    * @method attribute
-   * @param  {String} attr  attribute to set
-   * @param  {String} [value] value to assign to attribute
-   * @return {String} value of attribute, if no value is specified
+   * @param  {String} attr       attribute to set
+   * @param  {String} [value]    value to assign to attribute
+   * @return {String|p5.Element} value of attribute, if no value is 
+   *                             specified or p5.Element
+   * @example
+   * <div class="norender"><code>
+   * var myDiv = createDiv("I like pandas.");
+   *myDiv.attribute("align", "center");
+   * </code></div>
    */
   p5.Element.prototype.attribute = function(attr, value) {
     if (typeof value === 'undefined') {
       return this.elt.getAttribute(attr);
     } else {
       this.elt.setAttribute(attr, value);
+      return this;
     }
   };
 
@@ -482,12 +542,14 @@ var p5DOM = (function(){
    * given, or sets the value of the element.
    * 
    * @method value
-   * @param  {String|Number} [value]
-   * @return {String|Number}
+   * @param  {String|Number}     [value]
+   * @return {String|p5.Element} value of element, if no value is 
+   *                             specified or p5.Element
    */
   p5.Element.prototype.value = function() {
     if (arguments.length > 0) {
       this.elt.value = arguments[0];
+      return this;
     } else {
       if (this.elt.type === 'range') {
         return parseFloat(this.elt.value);
@@ -501,18 +563,22 @@ var p5DOM = (function(){
    * Shows the current element. Essentially, setting display:block for the style.
    * 
    * @method show
+   * @return {p5.Element}
    */
   p5.Element.prototype.show = function() {
     this.elt.style.display = 'block';
+    return this;
   };
 
   /**
    * Hides the current element. Essentially, setting display:none for the style.
    * 
    * @method hide
+   * @return {p5.Element}
    */
   p5.Element.prototype.hide = function() {
     this.elt.style.display = 'none';
+    return this;
   };
 
   /**
@@ -523,6 +589,7 @@ var p5DOM = (function(){
    * @method size
    * @param  {Number} w width of the element
    * @param  {Number} h height of the element
+   * @return {p5.Element}
    */
   p5.Element.prototype.size = function(w, h) {
     var aW = w;
@@ -537,12 +604,21 @@ var p5DOM = (function(){
       }
       // set diff for cnv vs normal div
       if (this.elt instanceof HTMLCanvasElement) {
+        var j = {};
+        var k  = this.elt.getContext('2d');        
+        for (var prop in k) {
+          j[prop] = k[prop];
+        }
         this.elt.setAttribute('width', aW * this._pInst._pixelDensity);
         this.elt.setAttribute('height', aH * this._pInst._pixelDensity);
         this.elt.setAttribute('style', 'width:' + aW + 'px !important; height:' + aH + 'px !important;');
+        this._pInst.scale(this._pInst._pixelDensity, this._pInst._pixelDensity);
+        for (var prop in j) {
+          this.elt.getContext('2d')[prop] = j[prop];
+        }
       } else {
-        this.elt.style.width = aW;
-        this.elt.style.height = aH;
+        this.elt.style.width = aW+'px';
+        this.elt.style.height = aH+'px';
       }
       this.width = this.elt.offsetWidth;
       this.height = this.elt.offsetHeight;
@@ -553,6 +629,7 @@ var p5DOM = (function(){
         }
       }
     }
+    return this;
   };
 
   /**
@@ -579,7 +656,10 @@ var p5DOM = (function(){
 
 
   /**
-   * A class to describe...
+   * Extends p5.Element to handle audio and video. In addition to the methods
+   * of p5.Element, it also contains methods for controlling media. It is not
+   * called directly, but p5.MediaElements are created by calling createVideo,
+   * createAudio, and createCapture.
    *
    * @class p5.MediaElement
    * @constructor
@@ -598,50 +678,60 @@ var p5DOM = (function(){
    * Play an HTML5 media element.
    * 
    * @method play
+   * @return {p5.Element}
    */
   p5.MediaElement.prototype.play = function() {
     if (this.elt.currentTime === this.elt.duration) {
       this.elt.currentTime = 0;
     }
     this.elt.play();
+    return this;
   };  
 
   /**
    * Stops an HTML5 media element (sets current time to zero).
    * 
    * @method stop
+   * @return {p5.Element}
    */
   p5.MediaElement.prototype.stop = function() {
     this.elt.pause();
     this.elt.currentTime = 0;
+    return this;
   };  
 
   /**
    * Pauses an HTML5 media element.
    * 
    * @method pause
+   * @return {p5.Element}
    */
   p5.MediaElement.prototype.pause = function() {
     this.elt.pause();
+    return this;
   };  
 
   /**
    * Set 'loop' to true for an HTML5 media element, and starts playing.
    * 
    * @method loop
+   * @return {p5.Element}
    */
   p5.MediaElement.prototype.loop = function() {
     this.elt.setAttribute('loop', true);
     this.play();
+    return this;
   };
   /**
    * Set 'loop' to false for an HTML5 media element. Element will stop
    * when it reaches the end.
    * 
    * @method noLoop
+   * @return {p5.Element}
    */
   p5.MediaElement.prototype.noLoop = function() {
     this.elt.setAttribute('loop', false);
+    return this;
   };
 
 
@@ -650,17 +740,19 @@ var p5DOM = (function(){
    * 
    * @method autoplay
    * @param {Boolean} autoplay whether the element should autoplay
+   * @return {p5.Element}
    */
   p5.MediaElement.prototype.autoplay = function(val) {
     this.elt.setAttribute('autoplay', val);
+    return this;
   };
 
   /**
    * Sets volume for this HTML5 media element. If no argument is given,
-   * returns the current volume;
+   * returns the current volume.
    * 
-   * @param {Number} [val] volume between 0.0 and 1.0
-   * @return {Number} current volume
+   * @param {Number}            [val] volume between 0.0 and 1.0
+   * @return {Number|p5.MediaElement} current volume or p5.MediaElement
    * @method volume
    */
   p5.MediaElement.prototype.volume = function(val) {
@@ -677,7 +769,8 @@ var p5DOM = (function(){
    * 
    * @method time
    * @param {Number} [time] time to jump to (in seconds)
-   * @return {Number} current time (in seconds)
+   * @return {Number|p5.MediaElement} current time (in seconds)
+   *                                  or p5.MediaElement
    */
   p5.MediaElement.prototype.time = function(val) {
     if (typeof val === 'undefined') {
@@ -696,10 +789,6 @@ var p5DOM = (function(){
   p5.MediaElement.prototype.duration = function() {
     return this.elt.duration;
   };
-  p5.MediaElement.prototype.stop = function() {
-    this.elt.pause();
-    this.elt.currentTime = 0;
-  };
   p5.MediaElement.prototype.pixels = [];
   p5.MediaElement.prototype.loadPixels = function() {
     if (this.loadedmetadata) { // wait for metadata for w/h
@@ -707,18 +796,18 @@ var p5DOM = (function(){
         this.canvas = document.createElement('canvas');
         this.canvas.width = this.width;
         this.canvas.height = this.height;
-        this.canvas.getContext('2d').drawImage(this.elt, 0, 0);
-        p5.prototype.loadPixels.call(this);
-      } else {
-        this.canvas.getContext('2d').drawImage(this.elt, 0, 0);
-        p5.prototype.loadPixels.call(this);
+        this.drawingContext = this.canvas.getContext('2d');
       }
+      this.drawingContext.drawImage(this.elt, 0, 0);
+      p5.prototype.loadPixels.call(this);
     }
+    return this;
   }
   p5.MediaElement.prototype.updatePixels =  function(x, y, w, h){
     if (this.loadedmetadata) { // wait for metadata
       p5.prototype.updatePixels.call(this, x, y, w, h);
     }
+    return this;
   }
   p5.MediaElement.prototype.get = function(x, y, w, h){
     if (this.loadedmetadata) { // wait for metadata

@@ -9,9 +9,9 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
-
-  p5.prototype._bezierDetail = 20;
-  p5.prototype._curveDetail = 20;
+  var bezierDetail = 20;
+  var curveDetail = 20;
+  p5.prototype._curveTightness = 0;
 
   /**
    * Draws a Bezier curve on the screen. These curves are defined by a series
@@ -47,7 +47,7 @@ define(function (require) {
     if (!this._doStroke) {
       return this;
     }
-    this._graphics(x1, y1, x2, y2, x3, y3, x4, y4);
+    this._graphics.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
     return this;
   };
 
@@ -56,7 +56,6 @@ define(function (require) {
    *
    * The default value is 20.
    *
-   * @method bezierDetail
    * @param {Number} detail resolution of the curves
    * @return {Object} the p5 object
    * @example
@@ -69,7 +68,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.bezierDetail = function(d) {
-    this._setProperty('_bezierDetail', d);
+    bezierDetail = d;
     return this;
   };
 
@@ -221,7 +220,7 @@ define(function (require) {
     if (!this._doStroke) {
       return;
     }
-    this._graphics.curve();
+    this._graphics.curve(x1, y1, x2, y2, x3, y3, x4, y4);
     return this;
   };
 
@@ -230,7 +229,6 @@ define(function (require) {
    *
    * The default value is 20.
    *
-   * @method curveDetail
    * @param {Number} resolution of the curves
    * @return {Object} the p5 object
    * @example
@@ -243,8 +241,50 @@ define(function (require) {
    * </div>
    */
   p5.prototype.curveDetail = function(d) {
-    this._setProperty('_curveDetail', d);
+    curveDetail = d;
     return this;
+  };
+
+  /**
+   * Modifies the quality of forms created with curve() and curveVertex().
+   * The parameter tightness determines how the curve fits to the vertex 
+   * points. The value 0.0 is the default value for tightness (this value
+   * defines the curves to be Catmull-Rom splines) and the value 1.0 connects
+   * all the points with straight lines. Values within the range -5.0 and 5.0
+   * will deform the curves but will leave them recognizable and as values 
+   * increase in magnitude, they will continue to deform.
+   *
+   * @method curveTightness
+   * @param {Number} amount of deformation from the original vertices
+   * @return {Object} the p5 object
+   * @example
+   * <div>
+   * <code>
+   * // Move the mouse left and right to see the curve change
+   * 
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   noFill();
+   * }
+   * 
+   * function draw() {
+   *   background(204);
+   *   var t = map(mouseX, 0, width, -5, 5);
+   *   curveTightness(t);
+   *   beginShape();
+   *   curveVertex(10, 26);
+   *   curveVertex(10, 26);
+   *   curveVertex(83, 24);
+   *   curveVertex(83, 61);
+   *   curveVertex(25, 65); 
+   *   curveVertex(25, 65);
+   *   endShape();
+   * }
+   * </code>
+   * </div>
+   */
+  p5.prototype.curveTightness = function (t) {
+    this._setProperty('_curveTightness', t);
   };
 
   /**

@@ -11,6 +11,7 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
+  var constants = require('constants');
   /**
    * Draw an arc.
    *
@@ -63,6 +64,10 @@ define(function (require) {
     if (!this._doStroke && !this._doFill) {
       return this;
     }
+    if (this._angleMode === constants.DEGREES) {
+      start = this.radians(start);
+      stop = this.radians(stop);
+    }
     this._graphics.arc(x, y, width, height, start, stop, mode);
     return this;
   };
@@ -86,11 +91,14 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.ellipse = function(x, y, width, height) {
+  p5.prototype.ellipse = function(x, y, w, h) {
     if (!this._doStroke && !this._doFill) {
       return this;
     }
-    this._graphics.ellipse(x, y, width, height);
+    // p5 supports negative width and heights for ellipses
+    w = Math.abs(w);
+    h = Math.abs(h);
+    this._graphics.ellipse(x, y, w, h);
     return this;
   };
   /**

@@ -48,7 +48,7 @@ define(function (require) {
   p5.prototype.pmouseY = 0;
 
   /**
-   * The system variable pwinMouseY always contains the current horizontal
+   * The system variable winMouseX always contains the current horizontal
    * position of the mouse, relative to (0, 0) of the window.
    *
    * @property winMouseX
@@ -100,22 +100,28 @@ define(function (require) {
   p5.prototype.mouseIsPressed = false;
   p5.prototype.isMousePressed = false; // both are supported
 
-  p5.prototype.updateMouseCoords = function(e) {
-    var mousePos = getMousePos(this._curElement.elt, e);
-
-    this._setProperty('pmouseX', this.mouseX);
-    this._setProperty('pmouseY', this.mouseY);
-    if(e.type === 'touchstart' || e.type === 'touchmove') {
+  p5.prototype._updateMouseCoords = function(e) {
+    if(e.type === 'touchstart' ||
+       e.type === 'touchmove' ||
+       e.type === 'touchend') {
       this._setProperty('mouseX', this.touchX);
       this._setProperty('mouseY', this.touchY);
     } else {
-      this._setProperty('mouseX', mousePos.x);
-      this._setProperty('mouseY', mousePos.y);
+      if(this._curElement !== null) {
+        var mousePos = getMousePos(this._curElement.elt, e);
+        this._setProperty('mouseX', mousePos.x);
+        this._setProperty('mouseY', mousePos.y);
+      }
     }
-    this._setProperty('pwinMouseX', this.winMouseX);
-    this._setProperty('pwinMouseY', this.winMouseY);
     this._setProperty('winMouseX', e.pageX);
     this._setProperty('winMouseY', e.pageY);
+  };
+
+  p5.prototype._updatePMouseCoords = function(e) {
+    this._setProperty('pmouseX', this.mouseX);
+    this._setProperty('pmouseY', this.mouseY);
+    this._setProperty('pwinMouseX', this.winMouseX);
+    this._setProperty('pwinMouseY', this.winMouseY);
   };
 
   function getMousePos(canvas, evt) {
@@ -126,7 +132,7 @@ define(function (require) {
     };
   }
 
-  p5.prototype.setMouseButton = function(e) {
+  p5.prototype._setMouseButton = function(e) {
     if (e.button === 1) {
       this._setProperty('mouseButton', constants.CENTER);
     } else if (e.button === 2) {
@@ -142,7 +148,10 @@ define(function (require) {
 
   /**
    * The mouseMoved() function is called every time the mouse moves and a mouse
-   * button is not pressed.
+   * button is not pressed.<br><br>
+   * Browsers may have different default
+   * behaviors attached to various mouse events. To prevent any default
+   * behavior for this event, add `return false` to the end of the method.
    *
    * @method mouseMoved
    * @example
@@ -164,12 +173,25 @@ define(function (require) {
    * }
    * </code>
    * </div>
+   * 
+   * <div class="norender">
+   * <code>
+   * function mouseMoved() {
+   *   ellipse(mouseX, mouseY, 5, 5);
+   *   // prevent default
+   *   return false;
+   * }
+   * </code>
+   * </div>
    */
 
   /**
    * The mouseDragged() function is called once every time the mouse moves and
    * a mouse button is pressed. If no mouseDragged() function is defined, the
-   * touchMoved() function will be called instead if it is defined.
+   * touchMoved() function will be called instead if it is defined.<br><br>
+   * Browsers may have different default
+   * behaviors attached to various mouse events. To prevent any default
+   * behavior for this event, add `return false` to the end of the method.
    *
    * @method mouseDragged
    * @example
@@ -191,24 +213,41 @@ define(function (require) {
    * }
    * </code>
    * </div>
+   * 
+   * <div class="norender">
+   * <code>
+   * function mouseDragged() {
+   *   ellipse(mouseX, mouseY, 5, 5);
+   *   // prevent default
+   *   return false;
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.onmousemove = function(e){
     var context = this._isGlobal ? window : this;
-    this.updateMouseCoords(e);
+    var executeDefault;
+    this._updateMouseCoords(e);
     if (!this.isMousePressed) {
       if (typeof context.mouseMoved === 'function') {
-        //e.preventDefault();
-        context.mouseMoved(e);
+        executeDefault = context.mouseMoved(e);
+        if(executeDefault === false) {
+          e.preventDefault();
+        }
       }
     }
     else {
       if (typeof context.mouseDragged === 'function') {
-        //e.preventDefault();
-        context.mouseDragged(e);
+        executeDefault = context.mouseDragged(e);
+        if(executeDefault === false) {
+          e.preventDefault();
+        }
       } else if (typeof context.touchMoved === 'function') {
-        e.preventDefault();
-        this.setTouchPoints(e);
-        context.touchMoved(e);
+        executeDefault = context.touchMoved(e);
+        if(executeDefault === false) {
+          e.preventDefault();
+        }
+        this._updateTouchCoords(e);
       }
     }
   };
@@ -218,7 +257,10 @@ define(function (require) {
    * is pressed. The mouseButton variable (see the related reference entry)
    * can be used to determine which button has been pressed. If no 
    * mousePressed() function is defined, the touchStarted() function will be
-   * called instead if it is defined.
+   * called instead if it is defined.<br><br>
+   * Browsers may have different default
+   * behaviors attached to various mouse events. To prevent any default
+   * behavior for this event, add `return false` to the end of the method.
    *
    * @method mousePressed
    * @example
@@ -226,7 +268,6 @@ define(function (require) {
    * <code>
    * // Click within the image to change 
    * // the value of the rectangle
-   * // after the mouse has been clicked
    *       
    * var value = 0;
    * function draw() {
@@ -242,26 +283,46 @@ define(function (require) {
    * }
    * </code>
    * </div>
+   * 
+   * <div class="norender">
+   * <code>
+   * function mousePressed() {
+   *   ellipse(mouseX, mouseY, 5, 5);
+   *   // prevent default
+   *   return false;
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.onmousedown = function(e) {
     var context = this._isGlobal ? window : this;
+    var executeDefault;
     this._setProperty('isMousePressed', true);
     this._setProperty('mouseIsPressed', true);
-    this.setMouseButton(e);
+    this._setMouseButton(e);
+    this._updateMouseCoords(e);
     if (typeof context.mousePressed === 'function') {
-      //e.preventDefault();
-      context.mousePressed(e);
+      executeDefault = context.mousePressed(e);
+      if(executeDefault === false) {
+        e.preventDefault();
+      }
     } else if (typeof context.touchStarted === 'function') {
-      e.preventDefault();
-      this.setTouchPoints(e);
-      context.touchStarted(e);
+      executeDefault = context.touchStarted(e);
+      if(executeDefault === false) {
+        e.preventDefault();
+      }
+      this._updateTouchCoords(e);
     }
   };
 
   /**
    * The mouseReleased() function is called every time a mouse button is
    * released. If no mouseReleased() function is defined, the touchEnded()
-   * function will be called instead if it is defined.
+   * function will be called instead if it is defined.<br><br>
+   * Browsers may have different default
+   * behaviors attached to various mouse events. To prevent any default
+   * behavior for this event, add `return false` to the end of the method.
+   *
    *
    * @method mouseReleased
    * @example
@@ -285,24 +346,42 @@ define(function (require) {
    * }
    * </code>
    * </div>
+   * 
+   * <div class="norender">
+   * <code>
+   * function mouseReleased() {
+   *   ellipse(mouseX, mouseY, 5, 5);
+   *   // prevent default
+   *   return false;
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.onmouseup = function(e) {
     var context = this._isGlobal ? window : this;
+    var executeDefault;
     this._setProperty('isMousePressed', false);
     this._setProperty('mouseIsPressed', false);
     if (typeof context.mouseReleased === 'function') {
-      //e.preventDefault();
-      context.mouseReleased(e);
+      executeDefault = context.mouseReleased(e);
+      if(executeDefault === false) {
+        e.preventDefault();
+      }
     } else if (typeof context.touchEnded === 'function') {
-      e.preventDefault();
-      this.setTouchPoints(e);
-      context.touchEnded(e);
+      executeDefault = context.touchEnded(e);
+      if(executeDefault === false) {
+        e.preventDefault();
+      }
+      this._updateTouchCoords(e);
     }
   };
 
   /**
    * The mouseClicked() function is called once after a mouse button has been
-   * pressed and then released.
+   * pressed and then released.<br><br>
+   * Browsers may have different default
+   * behaviors attached to various mouse events. To prevent any default
+   * behavior for this event, add `return false` to the end of the method.
    *
    * @method mouseClicked
    * @example
@@ -326,12 +405,24 @@ define(function (require) {
    * }
    * </code>
    * </div>
+   * 
+   * <div class="norender">
+   * <code>
+   * function mouseClicked() {
+   *   ellipse(mouseX, mouseY, 5, 5);
+   *   // prevent default
+   *   return false;
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.onclick = function(e) {
     var context = this._isGlobal ? window : this;
     if (typeof context.mouseClicked === 'function') {
-      //e.preventDefault();
-      context.mouseClicked(e);
+      var executeDefault = context.mouseClicked(e);
+      if(executeDefault === false) {
+        e.preventDefault();
+      }
     }
   };
 
@@ -339,7 +430,10 @@ define(function (require) {
    * The event.wheelDelta or event.detail property returns negative values if
    * the mouse wheel if rotated up or away from the user and positive in the
    * other direction. On OS X with "natural" scrolling enabled, the values are
-   * opposite.
+   * opposite.<br><br>
+   * Browsers may have different default
+   * behaviors attached to various mouse events. To prevent any default
+   * behavior for this event, add `return false` to the end of the method.
    * 
    * See <a href="http://www.javascriptkit.com/javatutors/onmousewheel.shtml">
    * mouse wheel event in JS</a>.
@@ -349,8 +443,10 @@ define(function (require) {
   p5.prototype.onmousewheel = function(e) {
     var context = this._isGlobal ? window : this;
     if (typeof context.mouseWheel === 'function') {
-      e.preventDefault();
-      context.mouseWheel(e);
+      var executeDefault = context.mouseWheel(e);
+      if(executeDefault === false) {
+        e.preventDefault();
+      }
     }
   };
 

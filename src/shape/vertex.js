@@ -11,20 +11,38 @@ define(function (require) {
 
   var p5 = require('core');
   var constants = require('constants');
+  var shapeKind = null;
+  var vertices = [];
+  var contourVertices = [];
+  var isBezier = false;
+  var isCurve = false;
+  var isQuadratic = false;
+  var isContour = false;
 
-  p5.prototype._shapeKind = null;
-  p5.prototype._shapeInited = false;
-  p5.prototype._contourInited = false;
-  p5.prototype._contourVertices = [];
-  p5.prototype._curveVertices = [];
+  /* 
+   * Helper method
+   */
+  p5.prototype._doFillStrokeClose = function() {
+    if (this._doFill) {
+      this.drawingContext.fill();
+    }
+    if (this._doStroke) {
+      this.drawingContext.stroke();
+    }
+    this.drawingContext.closePath();
+  };
 
   /**
-   * Use the beginContour() and endContour() function to create negative shapes
-   * within shapes. For instance, the center of the letter 'O'. beginContour()
+   * Use the beginContour() and endContour() functions to create negative
+   * shapes within shapes such as the center of the letter 'O'. beginContour()
    * begins recording vertices for the shape and endContour() stops recording.
-   * These functions can only be within a beginShape()/endShape() pair.
-   *
-   * Transformations such as translate(), rotate(), and scale() do not work
+   * The vertices that define a negative shape must "wind" in the opposite 
+   * direction from the exterior shape. First draw vertices for the exterior
+   * clockwise order, then for internal shapes, draw vertices 
+   * shape in counter-clockwise.
+   * <br><br>
+   * These functions can only be used within a beginShape()/endShape() pair and
+   * transformations such as translate(), rotate(), and scale() do not work 
    * within a beginContour()/endContour() pair. It is also not possible to use
    * other shapes, such as ellipse() or rect() within.
    *
@@ -36,25 +54,25 @@ define(function (require) {
    * translate(50, 50);
    * stroke(255, 0, 0);
    * beginShape();
-   * // Exterior part of shape
+   * // Exterior part of shape, clockwise winding
    * vertex(-40, -40);
    * vertex(40, -40);
    * vertex(40, 40);
    * vertex(-40, 40);
-   * // Interior part of shape
+   * // Interior part of shape, counter-clockwise winding
    * beginContour();
    * vertex(-20, -20);
-   * vertex(20, -20);
-   * vertex(20, 20);
    * vertex(-20, 20);
+   * vertex(20, 20);
+   * vertex(20, -20);
    * endContour();
    * endShape(CLOSE);
    * </code>
    * </div>
    */
   p5.prototype.beginContour = function() {
-    this._contourVertices = [];
-    this._contourInited = true;
+    contourVertices = [];
+    isContour = true;
     return this;
   };
 
@@ -229,14 +247,12 @@ define(function (require) {
       kind === constants.TRIANGLE_STRIP ||
       kind === constants.QUADS ||
       kind === constants.QUAD_STRIP) {
-      this._shapeKind = kind;
+      shapeKind = kind;
     } else {
-      this._shapeKind = null;
+      shapeKind = null;
     }
-
-    this._shapeInited = true;
-    this.drawingContext.beginPath();
-
+    vertices = [];
+    contourVertices = [];
     return this;
   };
 
@@ -280,22 +296,21 @@ define(function (require) {
    * </div>
    */
   p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
-    if(this._contourInited) {
-      var pt = {};
-      pt.x = x2;
-      pt.y = y2;
-      pt.x3 = x3;
-      pt.y3 = y3;
-      pt.x4 = x4;
-      pt.y4 = y4;
-      pt.type = constants.BEZIER;
-      this._contourVertices.push(pt);
-
-      return this;
+    if (vertices.length === 0) {
+      throw 'vertex() must be used once before calling bezierVertex()';
+    } else {
+      isBezier = true;
+      var vert = [];
+      for (var i = 0; i < arguments.length; i++) {
+        vert[i] = arguments[i];
+      }
+      vert.isVert = false;
+      if (isContour) {
+        contourVertices.push(vert);
+      } else {
+        vertices.push(vert);
+      }
     }
-
-    this.drawingContext.bezierCurveTo(x2, y2, x3, y3, x4, y4);
-
     return this;
   };
 
@@ -331,88 +346,59 @@ define(function (require) {
    * </div>
    */
   p5.prototype.curveVertex = function(x,y) {
-    var pt = {};
-    pt.x = x;
-    pt.y = y;
-    this._curveVertices.push(pt);
-
-    if(this._curveVertices.length >= 4) {
-      this.curve(this._curveVertices[0].x,
-                 this._curveVertices[0].y,
-                 this._curveVertices[1].x,
-                 this._curveVertices[1].y,
-                 this._curveVertices[2].x,
-                 this._curveVertices[2].y,
-                 this._curveVertices[3].x,
-                 this._curveVertices[3].y);
-      this._curveVertices.shift();
-    }
-
+    isCurve = true;
+    this.vertex(x, y);
     return this;
   };
 
   /**
-   * Use the beginContour() and endContour() function to create negative
-   * shapes within shapes. For instance, the center of the letter 'O'.
-   * beginContour() begins recording vertices for the shape and endContour()
-   * stops recording. These functions can only be within a
-   * beginShape()/endShape() pair.
+   * Use the beginContour() and endContour() functions to create negative
+   * shapes within shapes such as the center of the letter 'O'. beginContour()
+   * begins recording vertices for the shape and endContour() stops recording.
+   * The vertices that define a negative shape must "wind" in the opposite 
+   * direction from the exterior shape. First draw vertices for the exterior
+   * clockwise order, then for internal shapes, draw vertices 
+   * shape in counter-clockwise.
+   * <br><br>
+   * These functions can only be used within a beginShape()/endShape() pair and
+   * transformations such as translate(), rotate(), and scale() do not work 
+   * within a beginContour()/endContour() pair. It is also not possible to use
+   * other shapes, such as ellipse() or rect() within.
    *
    * @method endContour
    * @return {Object} the p5 object
    * @example
    * <div>
    * <code>
-   * // drawing the outer border must happen last,
-   * // otherwise it gets drawn under the interior shape
    * translate(50, 50);
    * stroke(255, 0, 0);
    * beginShape();
-   * // Interior part of shape
-   * beginContour();
-   * vertex(-20, -20);
-   * vertex(20, -20);
-   * vertex(20, 20);
-   * vertex(-20, 20);
-   * endContour();
-   * // Exterior part of shape
+   * // Exterior part of shape, clockwise winding
    * vertex(-40, -40);
    * vertex(40, -40);
    * vertex(40, 40);
    * vertex(-40, 40);
+   * // Interior part of shape, counter-clockwise winding
+   * beginContour();
+   * vertex(-20, -20);
+   * vertex(-20, 20);
+   * vertex(20, 20);
+   * vertex(20, -20);
+   * endContour();
    * endShape(CLOSE);
    * </code>
    * </div>
    */
   p5.prototype.endContour = function() {
-    //In order for the contour fill to work correctly, the inside points must
-    // be drawn in the reverse order of the parents
-    this._contourVertices.reverse();
-    this.drawingContext.moveTo(
-      this._contourVertices[0].x,
-      this._contourVertices[0].y
-    );
-    var ctx = this.drawingContext;
-    this._contourVertices.slice(1).forEach(function(pt, i) {
-      switch(pt.type) {
-      case constants.LINEAR:
-        ctx.lineTo(pt.x,pt.y);
-        break;
-      case constants.QUADRATIC:
-        ctx.quadraticCurveTo(pt.x, pt.y, pt.x3, pt.y3);
-        break;
-      case constants.BEZIER:
-        ctx.bezierCurveTo(pt.x, pt.y, pt.x3, pt.y3, pt.x4, pt.y4);
-        break;
-      case constants.CURVE:
-        //TODO: Curve... curve
-        break;
-      }
-    });
-    this.drawingContext.closePath();
+    var vert = contourVertices[0].slice(); // copy all data
+    vert.isVert = contourVertices[0].isVert;
+    vert.moveTo = false;
+    contourVertices.push(vert);
 
-    this._contourInited = false;
-
+    vertices.push(vertices[0]);
+    for (var i = 0; i < contourVertices.length; i++) {
+      vertices.push(contourVertices[i]);
+    }
     return this;
   };
 
@@ -446,18 +432,253 @@ define(function (require) {
    * </div>
    */
   p5.prototype.endShape = function(mode) {
-    if (mode === constants.CLOSE) {
-      this.drawingContext.closePath();
-      if (this._doFill) {
-        this.drawingContext.fill();
-      }
-    }
-    if (this._doStroke && this._curveVertices.length <= 0) {
-      this.drawingContext.stroke();
-    } else {
-      this._curveVertices = [];
+    if (vertices.length === 0) { return this; }
+    if (!this._doStroke && !this._doFill) { return this; }
+
+    var closeShape = mode === constants.CLOSE;
+    var v;
+
+    // if the shape is closed, the first element is also the last element
+    if (closeShape && !isContour) {
+      vertices.push(vertices[0]);
     }
 
+    var i, j;
+    var numVerts = vertices.length;
+
+    // curveVertex
+    if ( isCurve && (shapeKind === constants.POLYGON || shapeKind === null) ) {
+      if (numVerts > 3) {
+        var b = [],
+            s = 1 - this._curveTightness;
+        this.drawingContext.beginPath();
+        this.drawingContext.moveTo(vertices[1][0], vertices[1][1]);
+          /*
+          * Matrix to convert from Catmull-Rom to cubic Bezier
+          * where t = curTightness
+          * |0         1          0         0       |
+          * |(t-1)/6   1          (1-t)/6   0       |
+          * |0         (1-t)/6    1         (t-1)/6 |
+          * |0         0          0         0       |
+          */
+        for (i = 1; (i+2) < numVerts; i++) {
+          v = vertices[i];
+          b[0] = [v[0], v[1]];
+          b[1] = [v[0] + (s * vertices[i+1][0] - s * vertices[i-1][0]) / 6,
+                 v[1] + (s * vertices[i+1][1] - s * vertices[i-1][1]) / 6];
+          b[2] = [vertices[i+1][0] + (s*vertices[i][0] - s*vertices[i+2][0])/6,
+                 vertices[i+1][1] + (s*vertices[i][1] - s*vertices[i+2][1])/6];
+          b[3] = [vertices[i+1][0], vertices[i+1][1]];
+          this.drawingContext.bezierCurveTo(b[1][0], b[1][1],
+            b[2][0], b[2][1], b[3][0], b[3][1]);
+        }
+        if (closeShape) {
+          this.drawingContext.lineTo(vertices[i+1][0], vertices[i+1][1]);
+        }
+        this._doFillStrokeClose();
+      }
+    }
+
+    // bezierVertex
+    else if (isBezier &&
+      (shapeKind === constants.POLYGON || shapeKind === null) ) {
+      this.drawingContext.beginPath();
+      for (i = 0; i < numVerts; i++) {
+        if (vertices[i].isVert) { //if it is a vertex move to the position
+          if (vertices[i].moveTo) {
+            this.drawingContext.moveTo(vertices[i][0], vertices[i][1]);
+          } else {
+            this.drawingContext.lineTo(vertices[i][0], vertices[i][1]);
+          }
+        } else { //otherwise continue drawing bezier
+          this.drawingContext.bezierCurveTo(vertices[i][0], vertices[i][1],
+            vertices[i][2], vertices[i][3], vertices[i][4], vertices[i][5]);
+        }
+      }
+      this._doFillStrokeClose();
+    } else if (isQuadratic &&
+      (shapeKind === constants.POLYGON || shapeKind === null)) {
+      this.drawingContext.beginPath();
+      for (i = 0; i < numVerts; i++) {
+        if (vertices[i].isVert) {
+          if (vertices[i].moveTo) {
+            this.drawingContext.moveTo([0], vertices[i][1]);
+          } else {
+            this.drawingContext.lineTo(vertices[i][0], vertices[i][1]);
+          }
+        } else {
+          this.drawingContext.quadraticCurveTo(vertices[i][0],
+            vertices[i][1], vertices[i][2], vertices[i][3]);
+        }
+      }
+      this._doFillStrokeClose();
+    }
+    // render the vertices provided
+    else {
+      if (shapeKind === constants.POINTS) {
+        for (i = 0; i < numVerts; i++) {
+          v = vertices[i];
+          if (this._doStroke) {
+            this.stroke(v[6]);
+          }
+          this.point(v[0], v[1]);
+        }
+      } else if (shapeKind === constants.LINES) {
+        for (i = 0; (i + 1) < numVerts; i+=2) {
+          v = vertices[i];
+          if (this._doStroke) {
+            this.stroke(vertices[i+1][6]);
+          }
+          this.line(v[0], v[1], vertices[i+1][0], vertices[i+1][1]);
+        }
+      } else if (shapeKind === constants.TRIANGLES) {
+        for (i = 0; (i + 2) < numVerts; i+=3) {
+          v = vertices[i];
+          this.drawingContext.beginPath();
+          this.drawingContext.moveTo(v[0], v[1]);
+          this.drawingContext.lineTo(vertices[i+1][0], vertices[i+1][1]);
+          this.drawingContext.lineTo(vertices[i+2][0], vertices[i+2][1]);
+          this.drawingContext.lineTo(v[0], v[1]);
+
+          if (this._doFill) {
+            this.fill(vertices[i+2][5]);
+            this.drawingContext.fill();
+          }
+          if (this._doStroke) {
+            this.stroke(vertices[i+2][6]);
+            this.drawingContext.stroke();
+          }
+
+          this.drawingContext.closePath();
+        }
+      } else if (shapeKind === constants.TRIANGLE_STRIP) {
+        for (i = 0; (i+1) < numVerts; i++) {
+          v = vertices[i];
+          this.drawingContext.beginPath();
+          this.drawingContext.moveTo(vertices[i+1][0], vertices[i+1][1]);
+          this.drawingContext.lineTo(v[0], v[1]);
+
+          if (this._doStroke) {
+            this.stroke(vertices[i+1][6]);
+          }
+          if (this._doFill) {
+            this.fill(vertices[i+1][5]);
+          }
+
+          if (i + 2 < numVerts) {
+            this.drawingContext.lineTo(vertices[i+2][0], vertices[i+2][1]);
+            if (this._doStroke) {
+              this.stroke(vertices[i+2][6]);
+            }
+            if (this._doFill) {
+              this.fill(vertices[i+2][5]);
+            }
+          }
+          this._doFillStrokeClose();
+        }
+      } else if (shapeKind === constants.TRIANGLE_FAN) {
+        if (numVerts > 2) {
+          this.drawingContext.beginPath();
+          this.drawingContext.moveTo(vertices[0][0], vertices[0][1]);
+          this.drawingContext.lineTo(vertices[1][0], vertices[1][1]);
+          this.drawingContext.lineTo(vertices[2][0], vertices[2][1]);
+
+          if (this._doFill) {
+            this.fill(vertices[2][5]);
+          }
+          if (this._doStroke) {
+            this.stroke(vertices[2][6]);
+          }
+          this._doFillStrokeClose();
+
+          for (i = 3; i < numVerts; i++) {
+            v = vertices[i];
+            this.drawingContext.beginPath();
+            this.drawingContext.moveTo(vertices[0][0], vertices[0][1]);
+            this.drawingContext.lineTo(vertices[i-1][0], vertices[i-1][1]);
+            this.drawingContext.lineTo(v[0], v[1]);
+
+            if (this._doFill) {
+              this.fill(v[5]);
+            }
+            if (this._doStroke) {
+              this.stroke(v[6]);
+            }
+            this._doFillStrokeClose();
+          }
+        }
+      } else if (shapeKind === constants.QUADS) {
+        for (i = 0; (i + 3) < numVerts; i+=4) {
+          v = vertices[i];
+          this.drawingContext.beginPath();
+          this.drawingContext.moveTo(v[0], v[1]);
+          for (j = 1; j < 4; j++) {
+            this.drawingContext.lineTo(vertices[i+j][0], vertices[i+j][1]);
+          }
+          this.drawingContext.lineTo(v[0], v[1]);
+
+          if (this._doFill) {
+            this.fill(vertices[i+3][5]);
+          }
+          if (this._doStroke) {
+            this.stroke(vertices[i+3][6]);
+          }
+
+          this._doFillStrokeClose();
+        }
+      } else if (shapeKind === constants.QUAD_STRIP) {
+        if (numVerts > 3) {
+          for (i = 0; (i+1) < numVerts; i+=2) {
+            v = vertices[i];
+            this.drawingContext.beginPath();
+            if (i+3 < numVerts) {
+              this.drawingContext.moveTo(vertices[i+2][0], vertices[i+2][1]);
+              this.drawingContext.lineTo(v[0], v[1]);
+              this.drawingContext.lineTo(vertices[i+1][0], vertices[i+1][1]);
+              this.drawingContext.lineTo(vertices[i+3][0], vertices[i+3][1]);
+
+              if (this._doFill) {
+                this.fill(vertices[i+3][5]);
+              }
+              if (this._doStroke) {
+                this.stroke(vertices[i+3][6]);
+              }
+            } else {
+              this.drawingContext.moveTo(v[0], v[1]);
+              this.drawingContext.lineTo(vertices[i+1][0], vertices[i+1][1]);
+            }
+            this._doFillStrokeClose();
+          }
+        }
+      } else {
+        this.drawingContext.beginPath();
+        this.drawingContext.moveTo(vertices[0][0], vertices[0][1]);
+        for (i = 1; i < numVerts; i++) {
+          v = vertices[i];
+          if (v.isVert) { //if it is a vertex move to the position
+            if (v.moveTo) {
+              this.drawingContext.moveTo(v[0], v[1]);
+            } else {
+              this.drawingContext.lineTo(v[0], v[1]);
+            }
+          }
+        }
+        this._doFillStrokeClose();
+      }
+    }
+
+    // Reset some settings
+    isCurve = false;
+    isBezier = false;
+    isQuadratic = false;
+    isContour = false;
+
+    // If the shape is closed, the first element was added as last element.
+    // We must remove it again to prevent the list of vertices from growing
+    // over successive calls to endShape(CLOSE)
+    if (closeShape) {
+      vertices.pop();
+    }
     return this;
   };
 
@@ -515,9 +736,21 @@ define(function (require) {
 
       return this;
     }
-
-    this.drawingContext.quadraticCurveTo(cx, cy, x3, y3);
-
+    if (vertices.length > 0) {
+      isQuadratic = true;
+      var vert = [];
+      for (var i = 0; i < arguments.length; i++) {
+        vert[i] = arguments[i];
+      }
+      vert.isVert = false;
+      if (isContour) {
+        contourVertices.push(vert);
+      } else {
+        vertices.push(vert);
+      }
+    } else {
+      throw 'vertex() must be used once before calling quadraticVertex()';
+    }
     return this;
   };
 
@@ -543,27 +776,30 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.vertex = function(x, y) {
-    //if we're drawing a contour, put the points into an array for inside
-    // drawing
-    if(this._contourInited) {
-      var pt = {};
-      pt.x = x;
-      pt.y = y;
-      pt.type = constants.LINEAR;
-      this._contourVertices.push(pt);
+  p5.prototype.vertex = function(x, y, moveTo) {
+    var vert = [];
+    vert.isVert = true;
+    vert[0] = x;
+    vert[1] = y;
+    vert[2] = 0;
+    vert[3] = 0;
+    vert[4] = 0;
 
-      return this;
+    // fill and stroke color
+    vert[5] = this.drawingContext.fillStyle;
+    vert[6] = this.drawingContext.strokeStyle;
+
+    if (moveTo) {
+      vert.moveTo = moveTo;
     }
-
-    if (this._shapeInited) {
-      this.drawingContext.moveTo(x, y);
+    if (isContour) {
+      if (contourVertices.length === 0) {
+        vert.moveTo = true;
+      }
+      contourVertices.push(vert);
     } else {
-      // pend this is where check for kind and do other stuff
-      this.drawingContext.lineTo(x, y);
+      vertices.push(vert);
     }
-    this._shapeInited = false;
-
     return this;
   };
 

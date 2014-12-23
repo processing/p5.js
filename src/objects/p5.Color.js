@@ -13,25 +13,38 @@ define(function(require) {
    * @class p5.Color
    * @constructor
    */
-  p5.Color = function(pInst, vals) {
+  p5.Color = function (pInst, vals) {
     if (vals instanceof Array) {
       this.rgba = vals;
     } else {
-      var norm = p5.Color.getNormalizedColor.apply(pInst, vals);
+      var formatted = p5.Color._getFormattedColor.apply(pInst, vals);
       if (pInst._colorMode === constants.HSB) {
-        this.hsba = norm;
-        this.rgba = p5.Color.getRGB(this.hsba);
+        this.hsba = formatted;
+        this.rgba = p5.Color._getRGB(formatted);
       } else {
-        this.rgba = norm;
+        this.rgba = formatted;
       }
     }
-    this.colorString = p5.Color.getColorString(this.rgba);
+    var c = p5.Color._normalizeColorArray.call(pInst, this.rgba);
+    this.colorString = p5.Color._getColorString(c);
+    return this;
   };
+
+  // p5.Color.prototype.r = function(val) {
+  //   if (typeof val === 'undefined') {
+  //     p = document.getElementById(p);
+  //   } else if (p instanceof p5.Element) {
+  //     p = p.elt;
+  //   }
+  //   p.appendChild(this.elt);
+  // };
+
+
+
   /**
    * For a number of different inputs, returns a color formatted as
    * [r, g, b, a].
    * 
-   * @method getNormalizedColor 
    * @param {Array-like} args An 'array-like' object that represents a list of
    *                          arguments
    * @return {Array}          a color formatted as [r, g, b, a]
@@ -52,9 +65,7 @@ define(function(require) {
    * </code>
    * </div>
    */
-  p5.Color.getNormalizedColor = function() {
-    var isRGB = this._colorMode === constants.RGB;
-    var maxArr = isRGB ? this._maxRGB : this._maxHSB;
+  p5.Color._getFormattedColor = function () {
     if (arguments[0] instanceof Array) {
       return p5.Color.getNormalizedColor.apply(this, arguments[0]);
     }
@@ -63,26 +74,39 @@ define(function(require) {
       r = arguments[0];
       g = arguments[1];
       b = arguments[2];
-      a = typeof arguments[3] === 'number' ? arguments[3] : maxArr[3];
+      a = typeof arguments[3] === 'number' ? arguments[3] : 255;
     } else {
-      if (isRGB) {
+      if (this._colorMode === constants.RGB) {
         r = g = b = arguments[0];
       } else {
         r = b = arguments[0];
         g = 0;
       }
-      a = typeof arguments[1] === 'number' ? arguments[1] : maxArr[3];
+      a = typeof arguments[1] === 'number' ? arguments[1] : 255;
     }
-
-    r *= 255/maxArr[0];
-    g *= 255/maxArr[1];
-    b *= 255/maxArr[2];
-    a *= 255/maxArr[3];
-
-    return [r, g, b, a];
+    return [
+      r,
+      g,
+      b,
+      a
+    ];
+  };
+  /**
+   * Normalizes an array based on max vals.
+   * @param {Array} array A four value array rgba or hsba array.
+   * @return {Array}
+   */
+  p5.Color._normalizeColorArray = function (arr) {
+    var isRGB = this._colorMode === constants.RGB;
+    var maxArr = isRGB ? this._maxRGB : this._maxHSB;
+    arr[0] *= 255 / maxArr[0];
+    arr[1] *= 255 / maxArr[1];
+    arr[2] *= 255 / maxArr[2];
+    arr[3] *= 255 / maxArr[3];
+    return arr;
   };
 
-  p5.Color.getRGB = function(hsba) {
+  p5.Color._getRGB = function(hsba) {
     var h = hsba[0];
     var s = hsba[1];
     var v = hsba[2];
@@ -143,7 +167,7 @@ define(function(require) {
     return RGBA;
   };
 
-  p5.Color.getHSB = function(rgba) {
+  p5.Color._getHSB = function(rgba) {
     var var_R = rgba[0]/255;
     var var_G = rgba[1]/255;
     var var_B = rgba[2]/255;
@@ -190,7 +214,7 @@ define(function(require) {
       ];
   };
 
-  p5.Color.getColorString = function(a) {
+  p5.Color._getColorString = function(a) {
     for (var i=0; i<3; i++) {
       a[i] = Math.floor(a[i]);
     }
@@ -198,17 +222,32 @@ define(function(require) {
     return 'rgba('+a[0]+','+a[1]+','+a[2]+','+ alpha +')';
   };
 
-  p5.Color.getColor = function() {
+  p5.Color._getCanvasColor = function () {
     if (arguments[0] instanceof p5.Color) {
-      return arguments[0].colorString;
-    } else if (arguments[0] instanceof Array) { // [R,G,B,A] pixel array
-      return p5.Color.getColorString(arguments[0]);
-    } else {
-      var c = p5.Color.getNormalizedColor.apply(this, arguments);
-      if (this._colorMode === constants.HSB) {
-        c = p5.Color.getRGB(c);
+      if (arguments.length === 1) {
+        return arguments[0].colorString;
+      } else {
+        var c = arguments[0].rgba;
+        c[3] = arguments[1];
+        c = p5.Color._normalizeColorArray.call(this, c);
+        return p5.Color._getColorString(c);
       }
-      return p5.Color.getColorString(c);
+    } else if (arguments[0] instanceof Array) {
+      if (arguments.length === 1) {
+        return p5.Color._getColorString(arguments[0]);
+      } else {
+        var isRGB = this._colorMode === constants.RGB;
+        var maxA = isRGB ? this._maxRGB[3] : this._maxHSB[3];
+        arguments[0][3] = 255 * arguments[1] / maxA;
+        return p5.Color._getColorString(arguments[0]);
+      }
+    } else {
+      var e = p5.Color._getFormattedColor.apply(this, arguments);
+      e = p5.Color._normalizeColorArray.call(this, e);
+      if (this._colorMode === constants.HSB) {
+        e = p5.Color._getRGB(e);
+      }
+      return p5.Color._getColorString(e);
     }
   };
 

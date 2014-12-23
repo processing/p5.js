@@ -51,7 +51,11 @@ define(function (require) {
 
   /**
    * Copies a region of pixels from one image to another, using a specified
-   * blend mode to do the operation.
+   * blend mode to do the operation.<br><br>
+   * Available blend modes are: BLEND | DARKEST | LIGHTEST | DIFFERENCE | 
+   * MULTIPLY| EXCLUSION | SCREEN | REPLACE | OVERLAY | HARD_LIGHT | 
+   * SOFT_LIGHT | DODGE | BURN | ADD | NORMAL
+   *
    * 
    * @method blend
    * @param  {p5.Image|undefined} srcImage source image
@@ -65,14 +69,52 @@ define(function (require) {
    * @param  {Integer} dh destination image height
    * @param  {Integer} blendMode the blend mode
    *
-   * Available blend modes are: normal | multiply | screen | overlay | 
-   *            darken | lighten | color-dodge | color-burn | hard-light | 
-   *            soft-light | difference | exclusion | hue | saturation | 
-   *            color | luminosity
-
+   * @example
+   * <div><code>
+   * var img0;
+   * var img1;
+   *
+   * function preload() {
+   *   img0 = loadImage("assets/rockies.jpg");
+   *   img1 = loadImage("assets/bricks_third.jpg");
+   * }
    * 
-   * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
+   * function setup() {
+   *   background(img0);
+   *   image(img1, 0, 0);
+   *   blend(img1, 0, 0, 33, 100, 67, 0, 33, 100, LIGHTEST);
+   * }
+   * </code></div>
+   * <div><code>
+   * var img0;
+   * var img1;
+   *
+   * function preload() {
+   *   img0 = loadImage("assets/rockies.jpg");
+   *   img1 = loadImage("assets/bricks_third.jpg");
+   * }
    * 
+   * function setup() {
+   *   background(img0);
+   *   image(img1, 0, 0);
+   *   blend(img1, 0, 0, 33, 100, 67, 0, 33, 100, DARKEST);
+   * }
+   * </code></div>
+   * <div><code>
+   * var img0;
+   * var img1;
+   *
+   * function preload() {
+   *   img0 = loadImage("assets/rockies.jpg");
+   *   img1 = loadImage("assets/bricks_third.jpg");
+   * }
+   * 
+   * function setup() {
+   *   background(img0);
+   *   image(img1, 0, 0);
+   *   blend(img1, 0, 0, 33, 100, 67, 0, 33, 100, ADD);
+   * }
+   * </code></div>
    */
   p5.prototype.blend = function() {
     this._graphics.blend.apply(this._graphics, arguments);

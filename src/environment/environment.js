@@ -15,7 +15,7 @@ define(function(require) {
   var standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
 
   p5.prototype._frameRate = 0;
-  p5.prototype._lastFrameTime = 0;
+  p5.prototype._lastFrameTime = new Date().getTime();
   p5.prototype._targetFrameRate = 60;
 
   /**
@@ -55,20 +55,33 @@ define(function(require) {
    *   </code></div>
    */
   p5.prototype.focused = true;
-  
+
   /**
    * Sets the cursor to a predefined symbol or an image, or makes it visible
    * if already hidden. If you are trying to set an image as the cursor, the
    * recommended size is 16x16 or 32x32 pixels. It is not possible to load an
    * image as the cursor if you are exporting your program for the Web, and not
    * all MODES work with all browsers. The values for parameters x and y must
-   * be less than the dimensions of the image. 
+   * be less than the dimensions of the image.
    *
    * @method cursor
    * @param {Number/Constant} type either ARROW, CROSS, HAND, MOVE, TEXT, or
    *                               WAIT, or path for image
    * @param {Number}          [x]  the horizontal active spot of the cursor
    * @param {Number}          [y]  the vertical active spot of the cursor
+   * @example
+   * <div><code>
+   * // Move the mouse left and right across the image
+   * // to see the cursor change from a cross to a hand
+   * function draw() {
+   *   line(width/2, 0, width/2, height);
+   *   if (mouseX < 50) {
+   *     cursor(CROSS);
+   *   } else {
+   *     cursor(HAND);
+   *   }
+   * }
+   * </code></div>
    */
   p5.prototype.cursor = function(type, x, y) {
     var cursor = 'auto';
@@ -146,9 +159,20 @@ define(function(require) {
   };
 
   /**
-   * Hides the cursor from view. 
-   * 
+   * Hides the cursor from view.
+   *
    * @method noCursor
+   * @example
+   * <div><code>
+   * function setup() {
+   *   noCursor();
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *   ellipse(mouseX, mouseY, 10, 10);
+   * }
+   * </code></div>
    */
   p5.prototype.noCursor = function() {
     this._curElement.elt.style.cursor = 'none';
@@ -201,11 +225,40 @@ define(function(require) {
    * </code></div>
    */
   p5.prototype.windowHeight = window.innerHeight;
-  window.addEventListener('resize', function (e) {
-    // remap the window width and height on resize
-    this.windowWidth = window.innerWidth;
-    this.windowHeight = window.innerHeight;
-  });
+
+  /**
+   * The windowResized() function is called once every time the browser window
+   * is resized. This is a good place to resize the canvas or do any other 
+   * adjustements to accomodate the new window size.
+   *
+   * @property windowResized
+   * @example
+   * <div class="norender"><code>
+   * function setup() {
+   *   createCanvas(windowWidth, windowHeight);
+   * }
+   *
+   * function draw() {
+   *  background(0, 100, 200);
+   * }
+   *
+   * function windowResized() {
+   *   resizeCanvas(windowWidth, windowHeight);
+   * }
+   * </code></div>
+   */
+  p5.prototype.onresize = function(e){
+    this._setProperty('windowWidth', window.innerWidth);
+    this._setProperty('windowHeight', window.innerHeight);
+    var context = this._isGlobal ? window : this;
+    var executeDefault;
+    if (typeof context.windowResized === 'function') {
+      executeDefault = context.windowResized(e);
+      if (executeDefault !== undefined && !executeDefault) {
+        e.preventDefault();
+      }
+    }
+  };
 
   /**
    * System variable that stores the width of the drawing canvas. This value
@@ -231,7 +284,7 @@ define(function(require) {
 
   /**
    * If argument is given, sets the sketch to fullscreen or not based on the
-   * value of the argument. If no argument is given, returns the current 
+   * value of the argument. If no argument is given, returns the current
    * fullscreen state. Note that due to browser restrictions this can only
    * be called on user input, for example, on mouse press like the example
    * below.
@@ -271,6 +324,32 @@ define(function(require) {
     }
   };
 
+  /**
+   * Toggles pixel scaling for high pixel density displays. By default
+   * pixel scaling is on, call devicePixelScaling(false) to turn it off.
+   *
+   * @method devicePixelScaling
+   * @example
+   * <div>
+   * <code>
+   * function setup() {
+   *   devicePixelScaling(false);
+   *   createCanvas(100, 100);
+   *   background(200);
+   *   ellipse(width/2, height/2, 50, 50);
+   * }
+   * </code>
+   * </div>
+   */
+  p5.prototype.devicePixelScaling = function(val) {
+    if (val) {
+      this._pixelDensity = window.devicePixelRatio || 1;
+    } else {
+      this._pixelDensity = 1;
+    }
+    this.resizeCanvas(this.width, this.height);
+  };
+
   function launchFullscreen(element) {
     var enabled = document.fullscreenEnabled ||
                   document.webkitFullscreenEnabled ||
@@ -299,6 +378,82 @@ define(function(require) {
       document.webkitExitFullscreen();
     }
   }
+
+
+  /**
+   * Gets the current URL.
+   * @method getURL
+   * @return {String} url
+   * @example
+   * <div>
+   * <code>
+   * var url;
+   * var x = 100;    
+   * 
+   * function setup() {
+   *   fill(0);
+   *   noStroke();
+   *   url = getURL();    
+   * }    
+   * 
+   * function draw() {
+   *   background(200);
+   *   text(url, x, height/2);
+   *   x--;
+   * }
+   * </code>
+   * </div>
+   */
+  p5.prototype.getURL = function() {
+    return location.href;
+  };
+  /**
+   * Gets the current URL path as an array.
+   * @method getURLPath
+   * @return {Array} path components
+   * @example
+   * <div class='norender'><code>
+   * function setup() {
+   *   var urlPath = getURLPath();
+   *   for (var i=0; i&lt;urlPath.length; i++) {
+   *     text(urlPath[i], 10, i*20+20);
+   *   }
+   * }
+   * </code></div>
+   */
+  p5.prototype.getURLPath = function() {
+    return location.pathname.split('/').filter(function(v){return v!=='';});
+  };
+  /**
+   * Gets the current URL params as an Object.
+   * @method getURLParams
+   * @return {Object} URL params
+   * @example
+   * <div class='norender'>
+   * <code>
+   * // Example: http://p5js.org?year=2014&month=May&day=15
+   * 
+   * function setup() {
+   *   var params = getURLParams();  
+   *   text(params.day, 10, 20);
+   *   text(params.month, 10, 40);
+   *   text(params.year, 10, 60);  
+   * }    
+   * </code>
+   * </div>
+   */
+  p5.prototype.getURLParams = function() {
+    var re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
+    var m;
+    var v={};
+    while ((m = re.exec(location.search)) != null) {
+      if (m.index === re.lastIndex) {
+        re.lastIndex++;
+      }
+      v[m[1]]=m[2];
+    }
+    return v;
+  };
 
   return p5;
 

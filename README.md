@@ -1,7 +1,5 @@
 ![](http://p5js.org/img/p5js-beta.svg)
 
-p5.js
-=====
 
 [Hello!](http://hello.p5js.org/) p5.js is a JavaScript library that starts with the original goal of Processing, to make coding accessible for artists, designers, educators, and beginners, and reinterprets this for today's web.
 
@@ -11,7 +9,7 @@ p5.js is a new interpretation, not an emulation or port, and it is in active dev
 
 ##p5.js library
 
-You can [download here](http://p5js.org/get-started) or use `lib/p5.js` for the less stable, newest version.
+You can [download here](http://p5js.org/download) or use `lib/p5.js` for the less stable, newest version.
 
 ##Documentation
 
@@ -33,6 +31,7 @@ This project developed out of a Fellowship with the Processing Foundation explor
 
 
 ##Development
+
 See the [contribute section](http://p5js.org/contribute) to get started and check out the [development](https://github.com/lmccart/p5.js/wiki/Development) wiki page for details.
 
 

@@ -19,8 +19,9 @@ define(function(require) {
 		preserveDrawingBuffer: false
 	};
 
-	p5.Graphics3D = function(elt, pInst) {
-		p5.Graphics.call(this, constants.WEBGL, elt, pInst, attributes);
+	p5.Graphics3D = function(elt, pInst, isMainCanvas) {
+		p5.Graphics.call(this, constants.WEBGL, elt, pInst,
+			attributes, isMainCanvas);
 		this._pInst._setProperty('_graphics', this);
 		this.isP3D = true; //lets us know we're in 3d mode
 		gl = this.drawingContext;

@@ -10,15 +10,6 @@
    Base styles: opinionated defaults
    ========================================================================== */
 
-td {
-    vertical-align: top;
-    font-size: 1.2em;
-    padding-bottom: 0.75em;
-}
-
-td:first-child {
-    padding-right: 0.5em;
-}
 
 /* 
   //////////////////////////////////////////////////
@@ -132,10 +123,14 @@ section#reference h2 {
     border: none !important;
 }
 
+.norender pre {
+    left: 0px !important;
+}
+
 .example-content pre {
 
     margin-top: 0 !important;
-    width: 33.5em !important;
+    width: 30.5em !important;
 }
 
 .example-content .edit_space {
@@ -291,6 +286,16 @@ body {
     line-height: 1.4;
 }
 
+td {
+    vertical-align: top;
+    font-size: 1.2em;
+    padding-bottom: 0.75em;
+}
+
+td:first-child {
+    padding-right: 0.5em;
+}
+
 /*
  * Remove text-shadow in selection highlight: h5bp.com/i
  * These selection rule sets have to be separate.
@@ -382,11 +387,11 @@ textarea {
 }
 
 #exampleDisplay .edit_button {
-    left: 29.55em;
+    left: 29em;
 }
 
 #exampleDisplay .reset_button {
-    left: 32.55em;
+    left: 32em;
 }
 
 #exampleDisplay .edit_space {
@@ -399,7 +404,7 @@ textarea {
 
 #exampleEditor {
     height: 500em;
-    width: 720px;
+    width: 710px;
     overflow: hidden;
     margin-top: 0.5em;
     color: #222;

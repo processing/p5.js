@@ -157,6 +157,7 @@ define(function(require) {
    */
   p5.prototype.scale = function() {
     this._graphics.scale.apply(this._graphics, arguments);
+    return this;
   };
 
   /**
