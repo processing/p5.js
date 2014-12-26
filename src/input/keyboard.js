@@ -55,6 +55,23 @@ define(function (require) {
    * DOWN_ARROW, LEFT_ARROW, RIGHT_ARROW.
    *
    * @property keyCode
+   * @example
+   * <div><code>
+   * var fillVal = 126;
+   * function draw() {
+   *   fill(fillVal);
+   *   rect(25, 25, 50, 50);
+   * }
+   * 
+   * function keyPressed() {
+   *   if (keyCode == UP_ARROW) {
+   *     fillVal = 255;
+   *   } else if (keyCode == DOWN_ARROW) {
+   *     fillVal = 0;
+   *   } 
+   *   return false; // prevent default
+   * }
+   * </code></div>
    */
   p5.prototype.keyCode = 0;
 
@@ -133,48 +150,6 @@ define(function (require) {
       }
     }
   };
-
-  p5.prototype.accelerationX = 0;
-  p5.prototype.accelerationY = 0;
-  p5.prototype.accelerationZ = 0;
-  
-  p5.prototype.pAccelerationX = 0;
-  p5.prototype.pAccelerationY = 0;
-  p5.prototype.pAccelerationZ = 0;
-
-  var move_threshold = 0.5;
-
-  p5.prototype.setMoveThreshold = function(val){
-    if(typeof val === 'number'){
-      move_threshold = val;
-    }
-  };
-
-  p5.prototype._updatePAccelerations = function(){
-    this._setProperty('pAccelerationX', this.accelerationX);
-    this._setProperty('pAccelerationY', this.accelerationY);
-    this._setProperty('pAccelerationZ', this.accelerationZ);
-  };
-
-  p5.prototype.ondevicemotion = function (e) {
-    this._setProperty('accelerationX', e.accelerationIncludingGravity.x);
-    this._setProperty('accelerationY', e.accelerationIncludingGravity.y);
-    this._setProperty('accelerationZ', e.accelerationIncludingGravity.z);
-    
-    var onDeviceMove = this.onDeviceMove || window.onDeviceMove;
-    if (typeof onDeviceMove === 'function') {
-      if(Math.abs(this.accelerationX - this.pAccelerationX) > move_threshold ||
-         Math.abs(this.accelerationY - this.pAccelerationY) > move_threshold ||
-         Math.abs(this.accelerationZ - this.pAccelerationZ) > move_threshold ){
-        onDeviceMove();
-      }
-    }
-  };
-
-
-
-
-
    /**
    * The keyReleased() function is called once every time a key is released.
    * See key and keyCode for more information.<br><br>
@@ -265,18 +240,29 @@ define(function (require) {
       }
     }
   };
+  /**
+   * The onblur function is called when the user is no longer focused
+   * on the p5 element. Because the keyup events will no fire if the user is
+   * not focused on the element we must assume all keys currently down have 
+   * been released.
+   */
+  p5.prototype.onblur = function (e) {
+    downKeys = {};
+  };
 
   /**
    * The keyIsDown function checks if the key is currently down, i.e. pressed.
    * It can be used if you have an object that moves, and you want several keys
    * to be able to affect its behaviour simultaneously, such as moving a
-   * sprite diagonally.
+   * sprite diagonally. You can put in any number representing the keyCode of
+   * the key, or use any of the variable keyCode names listed
+   * <a href="http://localhost:8000/docs/reference/#p5/keyCode">here</a>.
    *
    * @method keyIsDown
-   * @param {Number}          [code] The key to check for.
+   * @param {Number}          code The key to check for.
+   * @return {Boolean}        whether key is down or not
    * @example
-   * <div>
-   * <code>
+   * <div><code>
    * var x = 100;
    * var y = 100;
    *
@@ -301,8 +287,7 @@ define(function (require) {
    *   fill(255, 0, 0);
    *   ellipse(x, y, 50, 50);
    * }
-   * <code>
-   * </div>
+   * </code></div>
    */
   p5.prototype.keyIsDown = function(code) {
     return downKeys[code];

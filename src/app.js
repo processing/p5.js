@@ -25,6 +25,7 @@ define(function (require) {
   require('image.pixels');
   require('input.files');
   require('input.keyboard');
+  require('input.acceleration'); //john
   require('input.mouse');
   require('input.time_date');
   require('input.touch');
