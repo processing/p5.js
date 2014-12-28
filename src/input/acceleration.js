@@ -15,6 +15,12 @@ define(function (require){
   p5.prototype.pAccelerationY = 0;
   p5.prototype.pAccelerationZ = 0;
 
+  p5.prototype._updatePAccelerations = function(){
+    this._setProperty('pAccelerationX', this.accelerationX);
+    this._setProperty('pAccelerationY', this.accelerationY);
+    this._setProperty('pAccelerationZ', this.accelerationZ);
+  };
+
   var move_threshold = 0.5;
 
   p5.prototype.setMoveThreshold = function(val){
@@ -23,11 +29,8 @@ define(function (require){
     }
   };
 
-  p5.prototype._updatePAccelerations = function(){
-    this._setProperty('pAccelerationX', this.accelerationX);
-    this._setProperty('pAccelerationY', this.accelerationY);
-    this._setProperty('pAccelerationZ', this.accelerationZ);
-  };
+  var old_max_axis = '';
+  var new_max_axis = '';
 
   p5.prototype.ondevicemotion = function (e) {
     this._setProperty('accelerationX', e.accelerationIncludingGravity.x);
@@ -41,6 +44,30 @@ define(function (require){
           Math.abs(this.accelerationZ - this.pAccelerationZ) > move_threshold ){
         onDeviceMove();
       }
+    }
+
+    var onDeviceTurn = this.onDeviceTurn || window.onDeviceTurn;
+    if (typeof onDeviceTurn === 'function') {
+      //set current_max_axis
+      var max_val = 0;
+      if(Math.abs(this.accelerationX) > max_val){
+        max_val = this.accelerationX;
+        new_max_axis = 'x';
+      }
+      if(Math.abs(this.accelerationY) > max_val){
+        max_val = this.accelerationY;
+        new_max_axis = 'y';
+      }
+      if(Math.abs(this.accelerationZ) > max_val){
+        new_max_axis = 'z'; //max_val is now irrelevant
+      }
+      
+      //call the actual method
+      if(old_max_axis !== '' && old_max_axis !== new_max_axis){
+        onDeviceTurn(new_max_axis);
+      }
+
+      old_max_axis = new_max_axis;
     }
   };
 
