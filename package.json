@@ -31,6 +31,7 @@
     "grunt-update-json": "^0.2.1",
     "reqwest": "~0.9.6"
   },
+  "main": "./lib/p5.js",
   "files": [
     "license.txt",
     "lib/p5.min.js",
