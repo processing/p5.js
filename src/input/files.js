@@ -43,6 +43,43 @@ define(function (require) {
    *                                    argument
    * @param  {String}       [datatype]  "json" or "jsonp"
    * @return {Object|Array}             JSON data
+   * @example
+   * <div><code>
+   * function setup() {
+   *   noLoop();
+   *   loadJSON('http://api.openweathermap.org/data/2.5/weather?q=NewYork,USA', drawWeather);
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   * }
+   *
+   * function drawWeather(weather) {
+   *   // get the humidity value out of the loaded JSON
+   *   var humidity = weather.main.humidity;
+   *   fill(0, humidity); // use the humidity value to set the alpha
+   *   ellipse(width/2, height/2, 50, 50);
+   * }
+   * </code></div>
+   *
+   * <div><code>
+   * var weather;
+   * function preload() {
+   *   weather = loadJSON('http://api.openweathermap.org/data/2.5/weather?q=London,UK');
+   * }
+   *
+   * function setup() {
+   *   noLoop();
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *   // get the humidity value out of the loaded JSON
+   *   var humidity = weather.main.humidity;
+   *   fill(0, humidity); // use the humidity value to set the alpha
+   *   ellipse(width/2, height/2, 50, 50);
+   * }
+   * </code></div>
    */
   p5.prototype.loadJSON = function() {
     var path = arguments[0];
