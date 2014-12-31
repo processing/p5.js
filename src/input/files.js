@@ -44,15 +44,15 @@ define(function (require) {
    * @param  {String}       [datatype]  "json" or "jsonp"
    * @return {Object|Array}             JSON data
    */
-  p5.prototype.loadJSON = function(path, callback) {
+  p5.prototype.loadJSON = function(path, callback, type) {
     var ret = []; // array needed for preload
     // assume jsonp for URLs
     var t = path.indexOf('http') === -1 ? 'json' : 'jsonp';
 
     // check for explicit data type argument
-    if (typeof arguments[2] === 'string'){
-      if (arguments[2] === 'jsonp' || arguments[2] === 'json') {
-        t = arguments[2];
+    if (typeof type === 'string'){
+      if (type === 'jsonp' || type === 'json') {
+        t = type;
       }
     }
 
