@@ -289,7 +289,7 @@ define(function (require) {
       seed, z;
       return {
         setSeed : function(val) {
-          z = seed = val || Math.round(Math.random() * m);
+          z = seed = Math.floor((val === undefined) ? Math.random() * m : val);
         },
         getSeed : function() {
           return seed;
