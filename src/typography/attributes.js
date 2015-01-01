@@ -25,8 +25,10 @@ define(function (require) {
    * the values for the x and y parameters of the text() function. 
    * 
    * @method textAlign
-   * @param {Number/Constant} a horizontal alignment, either LEFT,
+   * @param {Number/Constant} h horizontal alignment, either LEFT,
    *                            CENTER, or RIGHT
+   * @param {Number/Constant} v vertical alignment, either TOP,
+   *                            BOTTOM, CENTER, or BASELINE
    * @example
    * <div>
    * <code>
@@ -40,11 +42,17 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.textAlign = function(a) {
-    if (a === constants.LEFT ||
-      a === constants.RIGHT ||
-      a === constants.CENTER) {
-      this.drawingContext.textAlign = a;
+  p5.prototype.textAlign = function(h, v) {
+    if (h === constants.LEFT ||
+      h === constants.RIGHT ||
+      h === constants.CENTER) {
+      this.drawingContext.textAlign = h;
+    }
+    if (v === constants.TOP ||
+      v === constants.BOTTOM ||
+      v === constants.CENTER ||
+      v === constants.BASELINE) {
+      this.drawingContext.textBaseline = v;
     }
   };
 

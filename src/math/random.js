@@ -26,7 +26,7 @@ define(function (require) {
         seed, z;
     return {
       setSeed : function(val) {
-        z = seed = val || Math.round(Math.random() * m);
+        z = seed = (val == null) ? (Math.random() * m | 0) : (val | 0);
       },
       getSeed : function() {
         return seed;
