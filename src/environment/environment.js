@@ -349,7 +349,7 @@ define(function(require) {
     } else {
       this._pixelDensity = 1;
     }
-    this.resizeCanvas(this.width, this.height);
+    this.resizeCanvas(this.width, this.height, true);
   };
 
   function launchFullscreen(element) {

@@ -47,7 +47,8 @@ define(function (require) {
    * <div><code>
    * function setup() {
    *   noLoop();
-   *   loadJSON('http://api.openweathermap.org/data/2.5/weather?q=NewYork,USA', drawWeather);
+   *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=NewYork,USA';
+   *   loadJSON(url, drawWeather);
    * }
    *
    * function draw() {
@@ -65,7 +66,8 @@ define(function (require) {
    * <div><code>
    * var weather;
    * function preload() {
-   *   weather = loadJSON('http://api.openweathermap.org/data/2.5/weather?q=London,UK');
+   *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=London,UK';
+   *   weather = loadJSON(url);
    * }
    *
    * function setup() {
