@@ -7,6 +7,8 @@ Using the original metaphor of a software sketchbook, p5.js has a full set of dr
 
 p5.js is a new interpretation, not an emulation or port, and it is in active development. An official editing environment is coming soon, as well as many more features!
 
+**If you already know the basics of JS or Processing, the [p5.js overview](https://github.com/lmccart/p5.js/wiki/p5.js-overview) wiki page is a good place to start. Otherwise, see below for more learning links.**
+
 ##p5.js library
 
 You can [download here](http://p5js.org/download) or use `lib/p5.js` for the less stable, newest version.
