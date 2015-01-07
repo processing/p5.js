@@ -327,6 +327,8 @@ define(function(require) {
   /**
    * Toggles pixel scaling for high pixel density displays. By default
    * pixel scaling is on, call devicePixelScaling(false) to turn it off.
+   * This devicePixelScaling() function must be the first line of code
+   * inside setup().
    *
    * @method devicePixelScaling
    * @example
