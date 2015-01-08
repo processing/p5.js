@@ -3,7 +3,7 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
-  
+
   require('p5.Color');
   require('p5.Element');
   require('p5.Graphics');
@@ -55,7 +55,7 @@ define(function (require) {
    * assume "global" mode
    * and instantiate p5 automatically
    * otherwise do nothing
-   * 
+   *
    * @return {Undefined}
    */
   var _globalInit = function() {
@@ -75,8 +75,6 @@ define(function (require) {
   } else {
     window.addEventListener('load', _globalInit , false);
   }
-
-  window.p5 = p5;
 
   return p5;
 
