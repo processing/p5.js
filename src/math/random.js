@@ -26,7 +26,9 @@ define(function (require) {
         seed, z;
     return {
       setSeed : function(val) {
-        z = seed = val || Math.round(Math.random() * m);
+        // pick a random seed if val is undefined or null
+        // the >>> 0 casts the seed to an unsigned 32-bit integer
+        z = seed = (val == null ? Math.random() * m : val) >>> 0;
       },
       getSeed : function() {
         return seed;
