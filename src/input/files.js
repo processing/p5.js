@@ -386,6 +386,8 @@ define(function (require) {
    * 
    * @method httpDo
    * @param  {String}        path       name of the file or url to load
+   * @param  {String}        [method]   either "GET", "POST", or "PUT", 
+   *                                    defaults to "GET"
    * @param  {Object}        [data]     param data passed sent with request
    * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
    * @param  {Function}      [callback] function to be executed after
