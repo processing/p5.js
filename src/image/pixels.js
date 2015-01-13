@@ -213,16 +213,6 @@ define(function (require) {
    * </div>
    */
   p5.prototype.get = function(x, y, w, h){
-    if (x === undefined && y === undefined &&
-        w === undefined && h === undefined){
-      x = 0;
-      y = 0;
-      w = this.width;
-      h = this.height;
-    } else if (w === undefined && h === undefined) {
-      w = 1;
-      h = 1;
-    }
     return this._graphics.get(x, y, w, h);
   };
 
@@ -356,15 +346,6 @@ define(function (require) {
    * </div>
    */
   p5.prototype.updatePixels = function (x, y, w, h) {
-    if (x === undefined &&
-      y === undefined &&
-      w === undefined &&
-      h === undefined) {
-      x = 0;
-      y = 0;
-      w = this.width;
-      h = this.height;
-    }
     this._graphics.updatePixels(x, y, w, h);
   };
 

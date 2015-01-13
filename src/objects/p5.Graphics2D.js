@@ -114,7 +114,11 @@ define(function(require) {
     );
 
     this.drawingContext.globalCompositeOperation = blendMode;
-    this._pInst.copy.apply(this._pInst, copyArgs);
+    if (this._pInst) {
+      this._pInst.copy.apply(this._pInst, copyArgs);
+    } else {
+      this.copy.apply(this, copyArgs);
+    }
     this.drawingContext.globalCompositeOperation = currBlend;
   };
 
@@ -155,6 +159,15 @@ define(function(require) {
   p5.Graphics2D.prototype.get = function(x, y, w, h) {
     if(x > this.width || y > this.height || x < 0 || y < 0){
       return [0, 0, 0, 255];
+    } else if (x === undefined && y === undefined &&
+      w === undefined && h === undefined){
+      x = 0;
+      y = 0;
+      w = this.width;
+      h = this.height;
+    } else if (w === undefined && h === undefined) {
+      w = 1;
+      h = 1;
     }
 
     var imageData = this.drawingContext.getImageData(x, y, w, h);
@@ -185,27 +198,40 @@ define(function(require) {
     var imageData = this.drawingContext.getImageData(
       0,
       0,
-      this._pInst.width,
-      this._pInst.height);
+      this.width,
+      this.height);
     this._setProperty('imageData', imageData);
-    this._pInst._setProperty('pixels', imageData.data);
+    if (this._pInst) {
+      this._pInst._setProperty('pixels', imageData.data);
+    } else {
+      this._setProperty('pixels', imageData.data);
+    }
   };
 
   p5.Graphics2D.prototype.set = function (x, y, imgOrCol) {
+    var pix = this._pInst ? this._pInst.pixels : this.pixels;
     if (imgOrCol instanceof p5.Image) {
       this.drawingContext.drawImage(imgOrCol.canvas, x, y);
-      this._pInst.loadPixels.call(this._pInst);
+      if (this._pInst) {
+        this._pInst.loadPixels.call(this._pInst);
+      } else {
+        this.loadPixels.call(this);
+      }
     } else {
       var idx = 4*(y * this.width + x);
       if (!this.imageData) {
-        this._pInst.loadPixels.call(this._pInst);
+        if (this._pInst) {
+          this._pInst.loadPixels.call(this._pInst);
+        } else {
+          this.loadPixels.call(this);
+        }
       }
       if (typeof imgOrCol === 'number') {
-        if (idx < this.pixels.length) {
-          this._pInst.pixels[idx] = imgOrCol;
-          this._pInst.pixels[idx+1] = imgOrCol;
-          this._pInst.pixels[idx+2] = imgOrCol;
-          this._pInst.pixels[idx+3] = 255;
+        if (idx < pix.length) {
+          pix[idx] = imgOrCol;
+          pix[idx+1] = imgOrCol;
+          pix[idx+2] = imgOrCol;
+          pix[idx+3] = 255;
           //this.updatePixels.call(this);
         }
       }
@@ -213,19 +239,19 @@ define(function(require) {
         if (imgOrCol.length < 4) {
           throw new Error('pixel array must be of the form [R, G, B, A]');
         }
-        if (idx < this.pixels.length) {
-          this._pInst.pixels[idx] = imgOrCol[0];
-          this._pInst.pixels[idx+1] = imgOrCol[1];
-          this._pInst.pixels[idx+2] = imgOrCol[2];
-          this._pInst.pixels[idx+3] = imgOrCol[3];
+        if (idx < pix.length) {
+          pix[idx] = imgOrCol[0];
+          pix[idx+1] = imgOrCol[1];
+          pix[idx+2] = imgOrCol[2];
+          pix[idx+3] = imgOrCol[3];
           //this.updatePixels.call(this);
         }
       } else if (imgOrCol instanceof p5.Color) {
-        if (idx < this.pixels.length) {
-          this._pInst.pixels[idx] = imgOrCol.rgba[0];
-          this._pInst.pixels[idx+1] = imgOrCol.rgba[1];
-          this._pInst.pixels[idx+2] = imgOrCol.rgba[2];
-          this._pInst.pixels[idx+3] = imgOrCol.rgba[3];
+        if (idx < pix.length) {
+          pix[idx] = imgOrCol.rgba[0];
+          pix[idx+1] = imgOrCol.rgba[1];
+          pix[idx+2] = imgOrCol.rgba[2];
+          pix[idx+3] = imgOrCol.rgba[3];
           //this.updatePixels.call(this);
         }
       }
@@ -233,6 +259,15 @@ define(function(require) {
   };
 
   p5.Graphics2D.prototype.updatePixels = function (x, y, w, h) {
+    if (x === undefined &&
+      y === undefined &&
+      w === undefined &&
+      h === undefined) {
+      x = 0;
+      y = 0;
+      w = this.width;
+      h = this.height;
+    }
     this.drawingContext.putImageData(this.imageData, x, y, 0, 0, w, h);
   };
 
