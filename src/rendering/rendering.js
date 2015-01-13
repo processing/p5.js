@@ -148,13 +148,17 @@ define(function(require) {
    * </code>
    * </div>
    */
-  p5.prototype.createGraphics = function(w, h) {
+  p5.prototype.createGraphics = function(w, h, renderer) {
     var c = document.createElement('canvas');
     //c.style.visibility='hidden';
     var node = this._userNode || document.body;
     node.appendChild(c);
-
-    var pg = new p5.Graphics(c, this, false);
+    var pg;
+    if (renderer === constants.P2D || typeof renderer === 'undefined') {
+      pg = new p5.Graphics2D(c, this, false);
+    } else if (renderer === constants.WEBGL) {
+      pg = new p5.Graphics3D(c, this, false);
+    }
     // store in elements array
     this._elements.push(pg);
 

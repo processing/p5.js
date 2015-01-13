@@ -249,7 +249,7 @@ define(function (require) {
    *     var x = 0;
    *
    *     function setup() {
-   *       createCanvas(200, 200);
+   *       createCanvas(100, 100);
    *       noLoop();
    *     }
    *

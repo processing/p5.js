@@ -52,52 +52,10 @@ define(function (require) {
    * </div>
    */
   p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
-    if (typeof str !== 'string') {
-      return;
+    if (!this._doFill && !this._doStroke) {
+      return this;
     }
-    if (typeof maxWidth !== 'undefined') {
-      y += this._textLeading;
-      maxHeight += y;
-    }
-    str = str.replace(/(\t)/g, '  ');
-    var cars = str.split('\n');
-
-    for (var ii = 0; ii < cars.length; ii++) {
-
-      var line = '';
-      var words = cars[ii].split(' ');
-
-      for (var n = 0; n < words.length; n++) {
-        if (y + this._textLeading <= maxHeight ||
-          typeof maxHeight === 'undefined') {
-          var testLine = line + words[n] + ' ';
-          var metrics = this.drawingContext.measureText(testLine);
-          var testWidth = metrics.width;
-
-          if ( typeof maxWidth !== 'undefined' && testWidth > maxWidth) {
-            if (this._doFill) {
-              this.drawingContext.fillText(line, x, y);
-            }
-            if (this._doStroke) {
-              this.drawingContext.strokeText(line, x, y);
-            }
-            line = words[n] + ' ';
-            y += this._textLeading;
-          }
-          else {
-            line = testLine;
-          }
-        }
-      }
-
-      if (this._doFill) {
-        this.drawingContext.fillText(line, x, y);
-      }
-      if (this._doStroke) {
-        this.drawingContext.strokeText(line, x, y);
-      }
-      y += this._textLeading;
-    }
+    this._graphics.text.apply(this._graphics, arguments);
   };
 
   /**

@@ -57,7 +57,8 @@ define(function(require) {
   p5.Graphics2D.prototype.image = function(img, x, y, w, h) {
     // tint the image if there is a tint
     if (this._pInst._tint) {
-      this.drawingContext.drawImage(getTintedImageCanvas(img), x, y, w, h);
+      this.drawingContext.drawImage(getTintedImageCanvas(this._pInst._tint,
+        img), x, y, w, h);
     } else {
       var frame = img.canvas || img.elt; // may use vid src
       this.drawingContext.drawImage(frame, x, y, w, h);
@@ -71,7 +72,7 @@ define(function(require) {
    * @param {p5.Image} The image to be tinted
    * @return {canvas} The resulting tinted canvas
    */
-  function getTintedImageCanvas(img) {
+  function getTintedImageCanvas(tint, img) {
     if (!img.canvas) {
       return img;
     }
@@ -89,10 +90,10 @@ define(function(require) {
       var b = pixels[i+2];
       var a = pixels[i+3];
 
-      newPixels[i] = r*this._tint[0]/255;
-      newPixels[i+1] = g*this._tint[1]/255;
-      newPixels[i+2] = b*this._tint[2]/255;
-      newPixels[i+3] = a*this._tint[3]/255;
+      newPixels[i] = r*tint[0]/255;
+      newPixels[i+1] = g*tint[1]/255;
+      newPixels[i+2] = b*tint[2]/255;
+      newPixels[i+3] = a*tint[3]/255;
     }
 
     tmpCtx.putImageData(id, 0, 0);
@@ -837,6 +838,74 @@ define(function(require) {
   p5.Graphics2D.prototype.pop = function() {
     this.drawingContext.restore();
   };
+
+
+  //////////////////////////////////////////////
+  // TYPOGRAPHY
+  //////////////////////////////////////////////
+
+
+  p5.Graphics2D.prototype.textAlign = function(a) {
+    this.drawingContext.textAlign = a;
+  };
+
+  p5.Graphics2D.prototype.textWidth = function(s) {
+    return this.drawingContext.measureText(s).width;
+  };
+
+  p5.Graphics2D.prototype._applyTextProperties = function () {
+    var str = this._pInst._textStyle + ' ' +
+      this._pInst._textSize + 'px ' + this._pInst._textFont;
+    this.drawingContext.font = str;
+  };
+
+  p5.Graphics2D.prototype.text = function(str, x, y, maxWidth, maxHeight) {
+    if (typeof maxWidth !== 'undefined') {
+      y += this._pInst._textLeading;
+      maxHeight += y;
+    }
+    str = str.toString();
+    str = str.replace(/(\t)/g, '  ');
+    var cars = str.split('\n');
+
+    for (var ii = 0; ii < cars.length; ii++) {
+
+      var line = '';
+      var words = cars[ii].split(' ');
+
+      for (var n = 0; n < words.length; n++) {
+        if (y + this._pInst._textLeading <= maxHeight ||
+          typeof maxHeight === 'undefined') {
+          var testLine = line + words[n] + ' ';
+          var metrics = this.drawingContext.measureText(testLine);
+          var testWidth = metrics.width;
+
+          if ( typeof maxWidth !== 'undefined' && testWidth > maxWidth) {
+            if (this._pInst._doFill) {
+              this.drawingContext.fillText(line, x, y);
+            }
+            if (this._pInst._doStroke) {
+              this.drawingContext.strokeText(line, x, y);
+            }
+            line = words[n] + ' ';
+            y += this._pInst._textLeading;
+          }
+          else {
+            line = testLine;
+          }
+        }
+      }
+
+      if (this._pInst._doFill) {
+        this.drawingContext.fillText(line, x, y);
+      }
+      if (this._pInst._doStroke) {
+        this.drawingContext.strokeText(line, x, y);
+      }
+      y += this._pInst._textLeading;
+    }
+  };
+
   
   return p5.Graphics2D;
 });

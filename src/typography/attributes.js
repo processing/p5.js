@@ -44,7 +44,7 @@ define(function (require) {
     if (a === constants.LEFT ||
       a === constants.RIGHT ||
       a === constants.CENTER) {
-      this.drawingContext.textAlign = a;
+      this._graphics.textAlign(a);
     }
   };
 
@@ -151,7 +151,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.textWidth = function(s) {
-    return this.drawingContext.measureText(s).width;
+    return this._graphics.textWidth();
   };
 
   /**
@@ -210,9 +210,7 @@ define(function (require) {
   p5.prototype._applyTextProperties = function () {
     this._setProperty('_textAscent', null);
     this._setProperty('_textDescent', null);
-
-    var str = this._textStyle + ' ' + this._textSize + 'px ' + this._textFont;
-    this.drawingContext.font = str;
+    this._graphics._applyTextProperties();
   };
 
   /**
