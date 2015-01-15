@@ -261,13 +261,9 @@ define(function (require) {
     }.bind(this);
 
     this._draw = function () {
-      var userSetup = this.setup || window.setup;
       var now = new Date().getTime();
       this._frameRate = 1000.0/(now - this._lastFrameTime);
       this._lastFrameTime = now;
-
-      var userDraw = this.draw || window.draw;
-
       if (this._loop) {
         if (this._drawInterval) {
           clearInterval(this._drawInterval);
@@ -277,22 +273,7 @@ define(function (require) {
         }.bind(this), 1000 / this._targetFrameRate);
       }
       // call user's draw
-      if (typeof userDraw === 'function') {
-        this.push();
-        if (typeof userSetup === 'undefined') {
-          this.scale(this._pixelDensity, this._pixelDensity);
-        }
-        // call any registered pre functions
-        this._registeredMethods.pre.forEach(function(f) {
-          f.call(this);
-        });
-        userDraw();
-        // call any registered post functions
-        this._registeredMethods.post.forEach(function(f) {
-          f.call(this);
-        });
-        this.pop();
-      }
+      this.redraw();
       this._updatePMouseCoords();
       this._updatePTouchCoords();
     }.bind(this);
