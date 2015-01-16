@@ -49,17 +49,20 @@ define(function (require) {
    * </div>
    */
   p5.prototype.background = function() {
+    this.drawingContext.save();
+    this.drawingContext.resetTransform();
     if (arguments[0] instanceof p5.Image) {
       this.image(arguments[0], 0, 0, this.width, this.height);
     } else {
       var curFill = this.drawingContext.fillStyle;
       // create background rect
-      var ctx = this.drawingContext;
-      ctx.fillStyle = p5.Color._getCanvasColor.apply(this, arguments);
-      ctx.fillRect(0, 0, this.width, this.height);
+      var newFill = p5.Color._getCanvasColor.apply(this, arguments);
+      this.drawingContext.fillStyle = newFill;
+      this.drawingContext.fillRect(0, 0, this.width, this.height);
       // reset fill
-      ctx.fillStyle = curFill;
+      this.drawingContext.fillStyle = curFill;
     }
+    this.drawingContext.restore();
   };
 
   /**
