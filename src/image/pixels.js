@@ -394,8 +394,12 @@ define(function (require) {
    */
   p5.prototype.set = function (x, y, imgOrCol) {
     if (imgOrCol instanceof p5.Image) {
+      this.drawingContext.save();
+      this.drawingContext.resetTransform();
+      this.drawingContext.scale(this._pixelDensity, this._pixelDensity);
       this.drawingContext.drawImage(imgOrCol.canvas, x, y);
       this.loadPixels.call(this);
+      this.drawingContext.restore();
     } else {
       var idx = 4*(y * this.width + x);
       if (!this.imageData) {
