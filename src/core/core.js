@@ -31,9 +31,10 @@ define(function (require) {
    *                              setup(), and/or draw() properties on the
    *                              given p5 instance
    * @param  {HTMLElement} node   an element to attach the generated canvas to
+   * @param  {boolean}     sync   start synchronously
    * @return {p5}                 a p5 instance
    */
-  var p5 = function(sketch, node) {
+  var p5 = function(sketch, node, sync) {
 
     //////////////////////////////////////////////
     // PUBLIC p5 PROPERTIES AND METHODS
@@ -429,12 +430,15 @@ define(function (require) {
     });
 
     // TODO: ???
-    if (document.readyState === 'complete') {
+    if (sync) {
       this._start();
     } else {
-      window.addEventListener('load', this._start.bind(this), false);
+      if (document.readyState === 'complete') {
+        this._start();
+      } else {
+        window.addEventListener('load', this._start.bind(this), false);
+      }
     }
-
   };
 
 
