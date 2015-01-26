@@ -1,5 +1,5 @@
 suite('Core', function(){
-  var myp5, node;
+  var node;
   
   setup(function () {
     node = document.createElement('div');
@@ -11,29 +11,67 @@ suite('Core', function(){
   });
 
   suite('new p5(sketch, null, true)', function () {
-    myp5 = new p5(function(sketch) { }, null, true);
-    myp5.background(128); // sync call
-    
-    test('should call methods synchronously after instantiation without throwing an exception', function () {
-      assert.ok(true);
+
+    // The reason why these tests run inside the suite() { ... } block is
+    // because they test code that checks document.readyState.  If we waited
+    // to run the test in test() { ... } the page would already be loaded and
+    // readyState would be "completed".  By doing the tests things this way
+    // readyState is "loading" and we can verify that the code is doing the
+    // right thing during page load.
+
+    var myp5 = new p5(function(sketch) { }, null, true);
+    var isDrawingContextDefined = myp5.drawingContext !== undefined;
+
+    test('should define drawContext synchronously', function () {
+      assert.ok(isDrawingContextDefined);
+    });
+  });
+
+  suite('new p5(sketch, null, false)', function () {
+    var myp5 = new p5(function(sketch) { }, null, false);
+    var isDrawingContextDefined = myp5.drawingContext !== undefined;
+
+    test('should define drawContext asynchronously', function () {
+      assert.equal(isDrawingContextDefined, false);
+      assert.isDefined(myp5.drawingContext);
     });
   });
 
   suite('new p5(sketch, node, true)', function () {
-    myp5 = new p5(function(sketch) { }, node, true);
-    myp5.background(128); // sync call
+    var myp5 = new p5(function(sketch) { }, node, true);
+    var isDrawingContextDefined = myp5.drawingContext !== undefined;
 
-    test('should call methods synchronously after instantiation without throwing an exception', function () {
-      assert.ok(true);
+    test('should define drawContext synchronously', function () {
+      assert.ok(isDrawingContextDefined);
+    });
+  });
+
+  suite('new p5(sketch, node)', function () {
+    var myp5 = new p5(function(sketch) { }, node);
+    var isDrawingContextDefined = myp5.drawingContext !== undefined;
+
+    test('should define drawContext asynchronously', function () {
+      assert.equal(isDrawingContextDefined, false);
+      assert.isDefined(myp5.drawingContext);
     });
   });
 
   suite('new p5(sketch, true)', function () {
-    myp5 = new p5(function(sketch) { }, true);
-    myp5.background(128); // sync call
+    var myp5 = new p5(function(sketch) { }, true);
+    var isDrawingContextDefined = myp5.drawingContext !== undefined;
 
-    test('should call methods synchronously after instantiation without throwing an exception', function () {
-      assert.ok(true);
+    test('should define drawContext synchronously', function () {
+      assert.ok(isDrawingContextDefined);
+    });
+  });
+
+  suite('new p5(sketch)', function () {
+    var myp5 = new p5(function(sketch) { });
+    var isDrawingContextDefined = myp5.drawingContext !== undefined;
+
+    test('should define drawContext asynchronously', function () {
+      assert.equal(isDrawingContextDefined, false);
+      assert.isDefined(myp5.drawingContext);
     });
   });
 
