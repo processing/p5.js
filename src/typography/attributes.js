@@ -105,6 +105,7 @@ define(function (require) {
    */
   p5.prototype.textSize = function(s) {
     this._setProperty('_textSize', s);
+    this._setProperty('_textLeading', s*1.25);
     this._applyTextProperties();
   };
 
