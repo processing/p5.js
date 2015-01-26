@@ -23,10 +23,12 @@ define(function (require) {
    *
    * @method loadImage
    * @param  {String} path Path of the image to be loaded
-   * @param  {Function(p5.Image)} [callback]   Function to be called once the 
-   *                                 image is loaded. Will be passed the 
-                                     p5.Image.
-   * @return {p5.Image}              the p5.Image object   
+   * @param  {Function(p5.Image)} [successCallback] Function to be called once 
+   *                                the image is loaded. Will be passed the 
+   *                                p5.Image.
+   * @param  {Function(Event)}    [failureCallback] called with event error if 
+   *                                the image fails to load.
+   * @return {p5.Image}             the p5.Image object   
    * @example
    * <div>
    * <code>
@@ -50,7 +52,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.loadImage = function(path, callback) {
+  p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     var img = new Image();
     var pImg = new p5.Image(1, 1, this);
 
@@ -61,8 +63,14 @@ define(function (require) {
       // Draw the image into the backing canvas of the p5.Image
       pImg.canvas.getContext('2d').drawImage(img, 0, 0);
 
-      if (typeof callback !== 'undefined') {
-        callback(pImg);
+      if (typeof successCallback === 'function') {
+        successCallback(pImg);
+      }
+    };
+    
+    img.onerror = function(e) {
+      if (typeof failureCallback === 'function') {
+        failureCallback(e);
       }
     };
 

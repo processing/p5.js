@@ -50,7 +50,7 @@ define(function (require) {
    */
   p5.prototype.background = function() {
     this.drawingContext.save();
-    this.drawingContext.resetTransform();
+    this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
     this.drawingContext.scale(this._pixelDensity, this._pixelDensity);
     if (arguments[0] instanceof p5.Image) {
       this.image(arguments[0], 0, 0, this.width, this.height);
