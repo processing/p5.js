@@ -65,7 +65,7 @@ define(function(require) {
    * </div>
    */
   p5.prototype.resetMatrix = function() {
-    this.drawingContext.setTransform();
+    this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
     return this;
   };
 

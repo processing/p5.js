@@ -30,10 +30,17 @@ define(function (require) {
    * @param  {Function}    sketch a closure that can set optional preload(),
    *                              setup(), and/or draw() properties on the
    *                              given p5 instance
-   * @param  {HTMLElement} node   an element to attach the generated canvas to
+   * @param  {HTMLElement|boolean} node element to attach canvas to, if a 
+   *                                    boolean is passed in use it as sync
+   * @param  {boolean}     [sync] start synchronously (optional)
    * @return {p5}                 a p5 instance
    */
-  var p5 = function(sketch, node) {
+  var p5 = function(sketch, node, sync) {
+
+    if (arguments.length === 2 && typeof node === 'boolean') {
+      sync = node;
+      node = undefined;
+    }
 
     //////////////////////////////////////////////
     // PUBLIC p5 PROPERTIES AND METHODS
@@ -429,12 +436,16 @@ define(function (require) {
     });
 
     // TODO: ???
-    if (document.readyState === 'complete') {
+    
+    if (sync) {
       this._start();
     } else {
-      window.addEventListener('load', this._start.bind(this), false);
+      if (document.readyState === 'complete') {
+        this._start();
+      } else {
+        window.addEventListener('load', this._start.bind(this), false);
+      }
     }
-
   };
 
 
