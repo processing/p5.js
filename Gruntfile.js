@@ -1,5 +1,10 @@
 module.exports = function(grunt) {
 
+  var reporter = 'Nyan';
+  if (grunt.option('ci')) {
+    reporter = 'Dot';
+  }
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     jshint: {
@@ -40,8 +45,7 @@ module.exports = function(grunt) {
         //src: ['test/*.html'],
         src: ['test/**/*.html'],
         options: {
-          // reporter: 'test/reporter/simple.js',
-          reporter: 'Nyan',
+          reporter: reporter,
           run: true,
           log: true,
           logErrors: true
