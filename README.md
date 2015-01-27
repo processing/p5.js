@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/lmccart/p5.js.svg?branch=master)](https://travis-ci.org/lmccart/p5.js)
 ![](http://p5js.org/img/p5js-beta.svg)
 
 
