@@ -60,6 +60,14 @@ define(function (require) {
    */
   p5.prototype.touches = [];
 
+  /**
+   * The boolean system variable touchIsDown is true if the screen is
+   * touched and false if not.
+   *
+   * @property touchIsDown
+   */
+  p5.prototype.touchIsDown = false;
+
   p5.prototype._updateTouchCoords = function(e) {
     if(e.type === 'mousedown' ||
        e.type === 'mousemove' ||
@@ -138,6 +146,7 @@ define(function (require) {
     var context = this._isGlobal ? window : this;
     var executeDefault;
     this._updateTouchCoords(e);
+    this._setProperty('touchIsDown', true);
     if(typeof context.touchStarted === 'function') {
       executeDefault = context.touchStarted(e);
       if(executeDefault === false) {
@@ -249,6 +258,7 @@ define(function (require) {
    */
   p5.prototype.ontouchend = function(e) {
     this._updateTouchCoords(e);
+    this._setProperty('touchIsDown', false);
     var context = this._isGlobal ? window : this;
     var executeDefault;
     if (typeof context.touchEnded === 'function') {
