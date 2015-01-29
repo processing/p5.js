@@ -256,7 +256,7 @@ define(function (require) {
    * to be able to affect its behaviour simultaneously, such as moving a
    * sprite diagonally. You can put in any number representing the keyCode of
    * the key, or use any of the variable keyCode names listed
-   * <a href="http://localhost:8000/docs/reference/#p5/keyCode">here</a>.
+   * <a href="http://p5js.org/reference/#p5/keyCode">here</a>.
    *
    * @method keyIsDown
    * @param {Number}          code The key to check for.
