@@ -8,18 +8,15 @@ var fileSelect;
 
 function setup() {
   noCanvas();
-  fileSelect = createFileInput(false, gotFiles);
+  fileSelect = createFileInput(gotFile,'multiple');
 }
 
-function gotFiles(files) {
-  for (var i = 0; i < files.length; i++) {
-    var f = files[i];
-    var file = createDiv(f.name + ' ' + f.type + ' ' + f.size + ' bytes');
-    if (f.isImage()) {
-      var img = createImg(f.data);
-      img.class('thumb');
-    } else if (f.isText()) {
-      createDiv(f.data);
-    }
+function gotFile(file) {
+  var fileDiv = createDiv(file.name + ' ' + file.type + ' ' + file.subtype + ' ' + file.size + ' bytes');
+  if (file.type === 'image') {
+    var img = createImg(file.data);
+    img.class('thumb');
+  } else if (file.type === 'text') {
+    createDiv(file.data);
   }
 }
