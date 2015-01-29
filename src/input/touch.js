@@ -258,7 +258,9 @@ define(function (require) {
    */
   p5.prototype.ontouchend = function(e) {
     this._updateTouchCoords(e);
-    this._setProperty('touchIsDown', false);
+    if (this.touches.length === 0) {
+      this._setProperty('touchIsDown', false);
+    }
     var context = this._isGlobal ? window : this;
     var executeDefault;
     if (typeof context.touchEnded === 'function') {
