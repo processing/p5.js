@@ -139,18 +139,6 @@ define(function (require) {
   };
 
   /**
-   * Gets a copy of the vector, returns a p5.Vector object.
-   *
-   * @deprecated!
-   * @method get
-   * @return {p5.Vector} the copy of the p5.Vector object
-   */
-  p5.Vector.prototype.get = function () {
-    return this.copy();
-  };
-
-
-  /**
    * Adds x, y, and z components to a vector, adds one vector to another, or
    * adds two independent vectors together. The version of the method that adds
    * two vectors together is a static method and returns a p5.Vector, the others
