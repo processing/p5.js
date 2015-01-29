@@ -130,12 +130,23 @@ define(function (require) {
    * @method get
    * @return {p5.Vector} the copy of the p5.Vector object
    */
-  p5.Vector.prototype.get = function () {
+  p5.Vector.prototype.copy = function () {
     if (this.p5) {
       return new p5.Vector(this.p5,[this.x, this.y, this.z]);
     } else {
       return new p5.Vector(this.x,this.y,this.z);
     }
+  };
+
+  /**
+   * Gets a copy of the vector, returns a p5.Vector object.
+   *
+   * @deprecated!
+   * @method get
+   * @return {p5.Vector} the copy of the p5.Vector object
+   */
+  p5.Vector.prototype.get = function () {
+    return this.copy();
   };
 
 
