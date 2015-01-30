@@ -130,14 +130,13 @@ define(function (require) {
    * @method get
    * @return {p5.Vector} the copy of the p5.Vector object
    */
-  p5.Vector.prototype.get = function () {
+  p5.Vector.prototype.copy = function () {
     if (this.p5) {
       return new p5.Vector(this.p5,[this.x, this.y, this.z]);
     } else {
       return new p5.Vector(this.x,this.y,this.z);
     }
   };
-
 
   /**
    * Adds x, y, and z components to a vector, adds one vector to another, or
@@ -666,11 +665,18 @@ define(function (require) {
    * @static
    * @param  {p5.Vector} v1 a p5.Vector to add
    * @param  {p5.Vector} v2 a p5.Vector to add
-   * @return {p5.Vector}    the resulting new p5.Vector
+   * @param  {p5.Vector} target if undefined a new vector will be created
+   * @return {p5.Vector} the resulting p5.Vector
    */
 
-  p5.Vector.add = function (v1, v2) {
-    return v1.get().add(v2);
+  p5.Vector.add = function (v1, v2, target) {
+    if (!target) {
+      target = v1.get();
+    } else {
+      target.set(v1);
+    }
+    target.add(v2);
+    return target;
   };
 
   /**
@@ -680,11 +686,18 @@ define(function (require) {
    * @static
    * @param  {p5.Vector} v1 a p5.Vector to subtract from
    * @param  {p5.Vector} v2 a p5.Vector to subtract
-   * @return {p5.Vector}    the resulting new p5.Vector
+   * @param  {p5.Vector} target if undefined a new vector will be created
+   * @return {p5.Vector} the resulting p5.Vector
    */
 
-  p5.Vector.sub = function (v1, v2) {
-    return v1.get().sub(v2);
+  p5.Vector.sub = function (v1, v2, target) {
+    if (!target) {
+      target = v1.get();
+    } else {
+      target.set(v1);
+    }
+    target.sub(v2);
+    return target;
   };
 
 
@@ -694,10 +707,17 @@ define(function (require) {
    * @static
    * @param  {p5.Vector} v the p5.Vector to multiply
    * @param  {Number}  n the scalar
-   * @return {p5.Vector}   the resulting new p5.Vector
+   * @param  {p5.Vector} target if undefined a new vector will be created
+   * @return {p5.Vector}  the resulting new p5.Vector
    */
-  p5.Vector.mult = function (v, n) {
-    return v.get().mult(n);
+  p5.Vector.mult = function (v, n, target) {
+    if (!target) {
+      target = v.get();
+    } else {
+      target.set(v);
+    }
+    target.mult(n);
+    return target;
   };
 
   /**
@@ -706,10 +726,17 @@ define(function (require) {
    * @static
    * @param  {p5.Vector} v the p5.Vector to divide
    * @param  {Number}  n the scalar
-   * @return {p5.Vector}   the resulting new p5.Vector
+   * @param  {p5.Vector} target if undefined a new vector will be created
+   * @return {p5.Vector} the resulting new p5.Vector
    */
-  p5.Vector.div = function (v, n) {
-    return v.get().div(n);
+  p5.Vector.div = function (v, n, target) {
+    if (!target) {
+      target = v.get();
+    } else {
+      target.set(v);
+    }
+    target.div(n);
+    return target;
   };
 
 
@@ -761,8 +788,14 @@ define(function (require) {
    *                       (old vector) and 1.0 (new vector). 0.1 is very near
    *                       the new vector. 0.5 is halfway in between.
    */
-  p5.Vector.lerp = function (v1, v2, amt) {
-    return v1.get().lerp(v2, amt);
+  p5.Vector.lerp = function (v1, v2, amt, target) {
+    if (!target) {
+      target = v1.get();
+    } else {
+      target.set(v1);
+    }
+    target.lerp(v2, amt);
+    return target;
   };
 
   /**

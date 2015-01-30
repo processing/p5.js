@@ -6,6 +6,7 @@ function setup() {
   createCanvas(710, 400);
 
   input = createInput();
+
   input.position(20, 65);
 
   button = createButton('submit');
