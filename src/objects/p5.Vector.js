@@ -430,7 +430,7 @@ define(function (require) {
    * </div>
    */
   p5.Vector.prototype.dist = function (v) {
-    var d = v.get().sub(this);
+    var d = v.copy().sub(this);
     return d.mag();
   };
 
@@ -555,7 +555,7 @@ define(function (require) {
   /**
    * Return a representation of this vector as a float array. This is only
    * for temporary use. If used in any other fashion, the contents should be
-   * copied by using the <b>p5.Vector.get()</b> method to copy into your own
+   * copied by using the <b>p5.Vector.copy()</b> method to copy into your own
    * array.
    *
    * @method array
@@ -671,7 +671,7 @@ define(function (require) {
 
   p5.Vector.add = function (v1, v2, target) {
     if (!target) {
-      target = v1.get();
+      target = v1.copy();
     } else {
       target.set(v1);
     }
@@ -692,7 +692,7 @@ define(function (require) {
 
   p5.Vector.sub = function (v1, v2, target) {
     if (!target) {
-      target = v1.get();
+      target = v1.copy();
     } else {
       target.set(v1);
     }
@@ -712,7 +712,7 @@ define(function (require) {
    */
   p5.Vector.mult = function (v, n, target) {
     if (!target) {
-      target = v.get();
+      target = v.copy();
     } else {
       target.set(v);
     }
@@ -731,7 +731,7 @@ define(function (require) {
    */
   p5.Vector.div = function (v, n, target) {
     if (!target) {
-      target = v.get();
+      target = v.copy();
     } else {
       target.set(v);
     }
@@ -790,7 +790,7 @@ define(function (require) {
    */
   p5.Vector.lerp = function (v1, v2, amt, target) {
     if (!target) {
-      target = v1.get();
+      target = v1.copy();
     } else {
       target.set(v1);
     }
