@@ -3,6 +3,10 @@
  * @submodule Data
  * @for p5.File
  */
+
+// This is very bare at the moment and is a quick implemenation
+// for file input in p5.dom.
+
 define(function(require) {
 
   var p5 = require('core');
@@ -25,9 +29,10 @@ define(function(require) {
     this.file = file;
 
     this._pInst = pInst;
+
+    // Splitting out the file type into two components
+    // This makes determining if image or text etc simpler
     var typeList = file.type.split('/');
-
-
     this.type = typeList[0];
     this.subtype = typeList[1];
     this.name = file.name;
