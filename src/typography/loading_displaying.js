@@ -54,6 +54,9 @@ define(function (require) {
    * </div>
    */
   p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
+    if (typeof str === 'number') {
+      str = str.toString();
+    }
     if (typeof str !== 'string') {
       return;
     }
