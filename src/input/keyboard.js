@@ -55,6 +55,23 @@ define(function (require) {
    * DOWN_ARROW, LEFT_ARROW, RIGHT_ARROW.
    *
    * @property keyCode
+   * @example
+   * <div><code>
+   * var fillVal = 126;
+   * function draw() {
+   *   fill(fillVal);
+   *   rect(25, 25, 50, 50);
+   * }
+   * 
+   * function keyPressed() {
+   *   if (keyCode == UP_ARROW) {
+   *     fillVal = 255;
+   *   } else if (keyCode == DOWN_ARROW) {
+   *     fillVal = 0;
+   *   } 
+   *   return false; // prevent default
+   * }
+   * </code></div>
    */
   p5.prototype.keyCode = 0;
 
@@ -223,18 +240,29 @@ define(function (require) {
       }
     }
   };
+  /**
+   * The onblur function is called when the user is no longer focused
+   * on the p5 element. Because the keyup events will no fire if the user is
+   * not focused on the element we must assume all keys currently down have 
+   * been released.
+   */
+  p5.prototype.onblur = function (e) {
+    downKeys = {};
+  };
 
   /**
    * The keyIsDown function checks if the key is currently down, i.e. pressed.
    * It can be used if you have an object that moves, and you want several keys
    * to be able to affect its behaviour simultaneously, such as moving a
-   * sprite diagonally.
+   * sprite diagonally. You can put in any number representing the keyCode of
+   * the key, or use any of the variable keyCode names listed
+   * <a href="http://p5js.org/reference/#p5/keyCode">here</a>.
    *
    * @method keyIsDown
-   * @param {Number}          [code] The key to check for.
+   * @param {Number}          code The key to check for.
+   * @return {Boolean}        whether key is down or not
    * @example
-   * <div>
-   * <code>
+   * <div><code>
    * var x = 100;
    * var y = 100;
    *
@@ -259,8 +287,7 @@ define(function (require) {
    *   fill(255, 0, 0);
    *   ellipse(x, y, 50, 50);
    * }
-   * <code>
-   * </div>
+   * </code></div>
    */
   p5.prototype.keyIsDown = function(code) {
     return downKeys[code];

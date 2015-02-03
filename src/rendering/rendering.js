@@ -86,11 +86,13 @@ define(function(require) {
    * }
    * </code></div>
    */
-  p5.prototype.resizeCanvas = function (w, h) {
+  p5.prototype.resizeCanvas = function (w, h, noRedraw) {
     if (this._defaultGraphics) {
       this._defaultGraphics.resize(w, h);
       this._defaultGraphics._applyDefaults();
-      this.redraw();
+      if (!noRedraw) {
+        this.redraw();
+      }
     }
   };
 

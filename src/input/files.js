@@ -43,8 +43,49 @@ define(function (require) {
    *                                    argument
    * @param  {String}       [datatype]  "json" or "jsonp"
    * @return {Object|Array}             JSON data
+   * @example
+   * <div><code>
+   * function setup() {
+   *   noLoop();
+   *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=NewYork,USA';
+   *   loadJSON(url, drawWeather);
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   * }
+   *
+   * function drawWeather(weather) {
+   *   // get the humidity value out of the loaded JSON
+   *   var humidity = weather.main.humidity;
+   *   fill(0, humidity); // use the humidity value to set the alpha
+   *   ellipse(width/2, height/2, 50, 50);
+   * }
+   * </code></div>
+   *
+   * <div><code>
+   * var weather;
+   * function preload() {
+   *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=London,UK';
+   *   weather = loadJSON(url);
+   * }
+   *
+   * function setup() {
+   *   noLoop();
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *   // get the humidity value out of the loaded JSON
+   *   var humidity = weather.main.humidity;
+   *   fill(0, humidity); // use the humidity value to set the alpha
+   *   ellipse(width/2, height/2, 50, 50);
+   * }
+   * </code></div>
    */
-  p5.prototype.loadJSON = function(path, callback) {
+  p5.prototype.loadJSON = function() {
+    var path = arguments[0];
+    var callback = arguments[1];
     var ret = []; // array needed for preload
     // assume jsonp for URLs
     var t = path.indexOf('http') === -1 ? 'json' : 'jsonp';
@@ -303,6 +344,8 @@ define(function (require) {
   };
 
   /**
+   * Method for executing an HTTP GET request. If data type is not specified,
+   * p5 will try to guess based on the URL, defaulting to text.
    * 
    * @method httpGet
    * @param  {String}        path       name of the file or url to load
@@ -313,11 +356,15 @@ define(function (require) {
    *                                    as first argument
    */
   p5.prototype.httpGet = function () {
-    httpDo('get', arguments);
+    var args = Array.prototype.slice.call(arguments);
+    args.push('GET');
+    p5.prototype.httpDo.apply(this, args);
   };
 
 
   /**
+   * Method for executing an HTTP POST request. If data type is not specified,
+   * p5 will try to guess based on the URL, defaulting to text.
    * 
    * @method httpPost
    * @param  {String}        path       name of the file or url to load
@@ -328,34 +375,52 @@ define(function (require) {
    *                                    as first argument
    */
   p5.prototype.httpPost = function () {
-    httpDo('post', arguments);
+    var args = Array.prototype.slice.call(arguments);
+    args.push('POST');
+    p5.prototype.httpDo.apply(this, args);
   };
 
   /**
-   * Helper method for httpGet and httpPost
+   * Method for executing an HTTP request. If data type is not specified,
+   * p5 will try to guess based on the URL, defaulting to text.
+   * 
+   * @method httpDo
+   * @param  {String}        path       name of the file or url to load
+   * @param  {String}        [method]   either "GET", "POST", or "PUT", 
+   *                                    defaults to "GET"
+   * @param  {Object}        [data]     param data passed sent with request
+   * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
+   * @param  {Function}      [callback] function to be executed after
+   *                                    httpGet() completes, data is passed in
+   *                                    as first argument
    */
-  function httpDo(method, args) {
-    
-    var path = args[0];
+  p5.prototype.httpDo = function() {
+    var method = 'GET';
+    var path = arguments[0];
     var data = {};
     var type = '';
     var callback;
 
-    for (var i=1; i<args.length; i++) {
-      if (typeof args[i] === 'string') {
-        type = args[i];
-      } else if (typeof args[i] === 'object') {
-        data = args[i];
-      } else if (typeof args[i] === 'function') {
-        callback = args[i];
+    for (var i=1; i<arguments.length; i++) {
+      var a = arguments[i];
+      if (typeof a === 'string') {
+        if (a === 'GET' || a === 'POST' || a === 'PUT') {
+          method = a;
+        } else {
+          type = a;
+        }
+      } else if (typeof a === 'object') {
+        data = a;
+      } else if (typeof a === 'function') {
+        callback = a;
       }
     }
 
     // do some sort of smart type checking
     if (type === '') {
-      if (path.indexOf('.json') !== -1) {
+      if (path.indexOf('json') !== -1) {
         type = 'json';
-      } else if (path.indexOf('.xml') !== -1) {
+      } else if (path.indexOf('xml') !== -1) {
         type = 'xml';
       } else {
         type = 'text';
@@ -370,11 +435,15 @@ define(function (require) {
       crossOrigin: true,
       success: function (resp) {
         if (typeof callback !== 'undefined') {
-          callback(resp);
+          if (type === 'text') {
+            callback(resp.response);
+          } else {
+            callback(resp);
+          }
         }
       }
     });
-  }
+  };
 
   return p5;
 });

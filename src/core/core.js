@@ -30,10 +30,17 @@ define(function (require) {
    * @param  {Function}    sketch a closure that can set optional preload(),
    *                              setup(), and/or draw() properties on the
    *                              given p5 instance
-   * @param  {HTMLElement} node   an element to attach the generated canvas to
+   * @param  {HTMLElement|boolean} node element to attach canvas to, if a 
+   *                                    boolean is passed in use it as sync
+   * @param  {boolean}     [sync] start synchronously (optional)
    * @return {p5}                 a p5 instance
    */
-  var p5 = function(sketch, node) {
+  var p5 = function(sketch, node, sync) {
+
+    if (arguments.length === 2 && typeof node === 'boolean') {
+      sync = node;
+      node = undefined;
+    }
 
     //////////////////////////////////////////////
     // PUBLIC p5 PROPERTIES AND METHODS
@@ -166,7 +173,8 @@ define(function (require) {
       'touchstart': null,
       'touchmove': null,
       'touchend': null,
-      'resize': null
+      'resize': null,
+      'blur': null
     };
     this._loadingScreenId = 'p5_loading';
 
@@ -260,13 +268,9 @@ define(function (require) {
     }.bind(this);
 
     this._draw = function () {
-      var userSetup = this.setup || window.setup;
       var now = new Date().getTime();
       this._frameRate = 1000.0/(now - this._lastFrameTime);
       this._lastFrameTime = now;
-
-      var userDraw = this.draw || window.draw;
-
       if (this._loop) {
         if (this._drawInterval) {
           clearInterval(this._drawInterval);
@@ -276,22 +280,7 @@ define(function (require) {
         }.bind(this), 1000 / this._targetFrameRate);
       }
       // call user's draw
-      if (typeof userDraw === 'function') {
-        this.push();
-        if (typeof userSetup === 'undefined') {
-          this.scale(this._pixelDensity, this._pixelDensity);
-        }
-        // call any registered pre functions
-        this._registeredMethods.pre.forEach(function(f) {
-          f.call(this);
-        });
-        userDraw();
-        // call any registered post functions
-        this._registeredMethods.post.forEach(function(f) {
-          f.call(this);
-        });
-        this.pop();
-      }
+      this.redraw();
       this._updatePMouseCoords();
       this._updatePTouchCoords();
     }.bind(this);
@@ -447,12 +436,16 @@ define(function (require) {
     });
 
     // TODO: ???
-    if (document.readyState === 'complete') {
+    
+    if (sync) {
       this._start();
     } else {
-      window.addEventListener('load', this._start.bind(this), false);
+      if (document.readyState === 'complete') {
+        this._start();
+      } else {
+        window.addEventListener('load', this._start.bind(this), false);
+      }
     }
-
   };
 
 

@@ -22,8 +22,12 @@ define(function (require) {
    * @param {Number} [y] y component of the vector
    * @param {Number} [z] z component of the vector
    */
-  p5.prototype.createVector = function() {
-    return new p5.Vector(this, arguments);
+  p5.prototype.createVector = function (x, y, z) {
+    if (this instanceof p5) {
+      return new p5.Vector(this, arguments);
+    } else {
+      return new p5.Vector(x, y, z);
+    }
   };
 
   return p5;

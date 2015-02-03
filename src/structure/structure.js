@@ -264,13 +264,25 @@ define(function (require) {
    *     }
    *   </code></div>
    */
-  p5.prototype.redraw = function() {
-    var context = this._isGlobal ? window : this;
-    if (context.draw) {
-      context.draw();
+  p5.prototype.redraw = function () {
+    var userSetup = this.setup || window.setup;
+    var userDraw = this.draw || window.draw;
+    if (typeof userDraw === 'function') {
+      this.push();
+      if (typeof userSetup === 'undefined') {
+        this.scale(this._pixelDensity, this._pixelDensity);
+      }
+      this._registeredMethods.pre.forEach(function (f) {
+        f.call(this);
+      });
+      userDraw();
+      this._registeredMethods.post.forEach(function (f) {
+        f.call(this);
+      });
+      this.pop();
     }
   };
-
+  
   p5.prototype.size = function() {
     throw 'size() not implemented, see createCanvas()';
   };

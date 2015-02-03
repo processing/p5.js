@@ -63,16 +63,6 @@ define(function (require) {
 
   };
 
-  p5.prototype.escape = function(content) {
-    return content
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      // .replace(/\//g), '&apos;')
-      .replace(/'/g, '&#039;');
-  };
-
   p5.PrintWriter = function(filename, extension) {
     var self = this;
     this.name = filename;
@@ -420,7 +410,7 @@ define(function (require) {
       if (header[0] !== '0') {
         pWriter.println('    <tr>');
         for (var k = 0; k < header.length; k++ ) {
-          var e = p5.prototype.escape(header[k]);
+          var e = escapeHelper(header[k]);
           pWriter.println('      <td>' +e);
           pWriter.println('      </td>');
         }
@@ -432,7 +422,7 @@ define(function (require) {
         pWriter.println('    <tr>');
         for (var col = 0; col < table.columns.length; col++) {
           var entry = table.rows[row].getString(col);
-          var htmlEntry = p5.prototype.escape(entry);
+          var htmlEntry = escapeHelper(entry);
           pWriter.println('      <td>' +htmlEntry);
           pWriter.println('      </td>');
         }
@@ -447,9 +437,18 @@ define(function (require) {
     pWriter.flush();
   }; // end saveTable()
 
-  // ================
-  // DOWNLOAD HELPERS
-  // ================
+  // =======
+  // HELPERS
+  // =======
+
+  var escapeHelper = function(content) {
+    return content
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  };
 
   /**
    *  Generate a blob of file data as a url to prepare for download.

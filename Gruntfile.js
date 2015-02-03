@@ -1,5 +1,10 @@
 module.exports = function(grunt) {
 
+  var reporter = 'Nyan';
+  if (grunt.option('ci')) {
+    reporter = 'Dot';
+  }
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     jshint: {
@@ -40,8 +45,7 @@ module.exports = function(grunt) {
         //src: ['test/*.html'],
         src: ['test/**/*.html'],
         options: {
-          // reporter: 'test/reporter/simple.js',
-          reporter: 'Nyan',
+          reporter: reporter,
           run: true,
           log: true,
           logErrors: true
@@ -69,8 +73,12 @@ module.exports = function(grunt) {
           findNestedDependencies: true,
           include: ['src/app'],
           onBuildWrite: function( name, path, contents ) {
+            if (name === 'reqwest') {
+              contents = contents.replace('}(\'reqwest\', this, function () {', '}(\'reqwest\', amdclean, function () {');
+            }
             return require('amdclean').clean({
               code: contents,
+              'globalObject': true,
               escodegen: {
                 'comment': true,
                 'format': {
@@ -138,26 +146,17 @@ module.exports = function(grunt) {
           },
           useStrict: true,
           wrap: {
-            start: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */\n',
-            end: ''
-          }
-        }
-      },
-      min: {
-        options: {
-          baseUrl: '.',
-          findNestedDependencies: true,
-          include: ['src/app'],
-          onBuildWrite: function( name, path, contents ) {
-            return require('amdclean').clean(contents);
-          },
-          optimize: 'uglify2',
-          out: 'lib/p5.min.js',
-          paths: '<%= requirejs.unmin.options.paths %>',
-          useStrict: true,
-          wrap: {
-            start: '/*! p5.min.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */\n',
-            end: ''
+            start:
+              ['/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */',
+              '(function (root, factory) {',
+              '  if (typeof define === \'function\' && define.amd)',
+              '    define(\'p5\', [], function () { return (root.returnExportsGlobal = factory());});',
+              '  else if (typeof exports === \'object\')',
+              '    module.exports = factory();',
+              '  else',
+              '    root[\'p5\'] = factory();',
+              '}(this, function () {\n'].join('\n'),
+            end: 'return amdclean[\'src_app\'];\n}));'
           }
         }
       },
@@ -173,6 +172,15 @@ module.exports = function(grunt) {
           wrap: true,
           paths: { 'jquery': 'empty:' }
         }
+      }
+    },
+    uglify: {
+      options: {
+        banner: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */'
+      },
+      build: {
+        src: '<%= requirejs.unmin.options.out %>',
+        dest: 'lib/p5.min.js'
       }
     },
     yuidoc: {
@@ -209,8 +217,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-release');
   grunt.loadNpmTasks('grunt-update-json');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.registerTask('test', ['jshint', 'mocha']);
   grunt.registerTask('yui', ['yuidoc']);
-  grunt.registerTask('default', ['jshint', 'requirejs', 'mocha']);
+  grunt.registerTask('default', ['jshint', 'requirejs', 'mocha', 'uglify']);
 
 };

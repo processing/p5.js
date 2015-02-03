@@ -325,25 +325,20 @@ define(function(require) {
   };
 
   /**
-   * If argument is given, sets the sketch to fullscreen or not based on the
-   * value of the argument. If no argument is given, returns the current
-   * fullscreen state. Note that due to browser restrictions this can only
-   * be called on user input, for example, on mouse press like the example
-   * below.
+   * Toggles pixel scaling for high pixel density displays. By default
+   * pixel scaling is on, call devicePixelScaling(false) to turn it off.
+   * This devicePixelScaling() function must be the first line of code
+   * inside setup().
    *
    * @method devicePixelScaling
    * @example
    * <div>
    * <code>
    * function setup() {
-   *   createCanvas(100, 100);
-   * }
-   * 
-   * function draw() {
-   *   ellipse(width/2, height/2, 50, 50);
-   * }
-   * function mousePressed() {
    *   devicePixelScaling(false);
+   *   createCanvas(100, 100);
+   *   background(200);
+   *   ellipse(width/2, height/2, 50, 50);
    * }
    * </code>
    * </div>
@@ -354,7 +349,7 @@ define(function(require) {
     } else {
       this._pixelDensity = 1;
     }
-    this.resizeCanvas(this.width, this.height);
+    this.resizeCanvas(this.width, this.height, true);
   };
 
   function launchFullscreen(element) {
@@ -385,6 +380,82 @@ define(function(require) {
       document.webkitExitFullscreen();
     }
   }
+
+
+  /**
+   * Gets the current URL.
+   * @method getURL
+   * @return {String} url
+   * @example
+   * <div>
+   * <code>
+   * var url;
+   * var x = 100;    
+   * 
+   * function setup() {
+   *   fill(0);
+   *   noStroke();
+   *   url = getURL();    
+   * }    
+   * 
+   * function draw() {
+   *   background(200);
+   *   text(url, x, height/2);
+   *   x--;
+   * }
+   * </code>
+   * </div>
+   */
+  p5.prototype.getURL = function() {
+    return location.href;
+  };
+  /**
+   * Gets the current URL path as an array.
+   * @method getURLPath
+   * @return {Array} path components
+   * @example
+   * <div class='norender'><code>
+   * function setup() {
+   *   var urlPath = getURLPath();
+   *   for (var i=0; i&lt;urlPath.length; i++) {
+   *     text(urlPath[i], 10, i*20+20);
+   *   }
+   * }
+   * </code></div>
+   */
+  p5.prototype.getURLPath = function() {
+    return location.pathname.split('/').filter(function(v){return v!=='';});
+  };
+  /**
+   * Gets the current URL params as an Object.
+   * @method getURLParams
+   * @return {Object} URL params
+   * @example
+   * <div class='norender'>
+   * <code>
+   * // Example: http://p5js.org?year=2014&month=May&day=15
+   * 
+   * function setup() {
+   *   var params = getURLParams();  
+   *   text(params.day, 10, 20);
+   *   text(params.month, 10, 40);
+   *   text(params.year, 10, 60);  
+   * }    
+   * </code>
+   * </div>
+   */
+  p5.prototype.getURLParams = function() {
+    var re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
+    var m;
+    var v={};
+    while ((m = re.exec(location.search)) != null) {
+      if (m.index === re.lastIndex) {
+        re.lastIndex++;
+      }
+      v[m[1]]=m[2];
+    }
+    return v;
+  };
 
   return p5;
 
