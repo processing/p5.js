@@ -8,7 +8,7 @@ var fileSelect;
 
 function setup() {
   noCanvas();
-  fileSelect = createFileInput(gotFile,'multiple');
+  fileSelect = createFileInput(gotFile, 'multiple');
 }
 
 function gotFile(file) {
