@@ -1,10 +1,5 @@
 // based on http://www.html5rocks.com/en/tutorials/file/dndfiles/
 
-// When we get text we'll just make a paragraph element with the text
-function process(text) {
-  createP(text);
-}
-
 function setup() {
 
   noCanvas();
