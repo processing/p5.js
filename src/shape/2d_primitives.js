@@ -184,7 +184,7 @@ define(function (require) {
     });
 
     if (this._doFill) {
-      if (mode === constants.PIE || mode === undefined || mode === null) {
+      if (mode === constants.PIE || mode == null) {
         ctx.lineTo(vals.x, vals.y);
       }
       ctx.closePath();
@@ -198,7 +198,7 @@ define(function (require) {
     }
 
     if (this._doStroke) {
-      if (mode === constants.OPEN || mode === undefined || mode === null) {
+      if (mode === constants.OPEN || mode == null) {
         ctx.beginPath();
         curves.forEach(function (curve, index) {
           if (index === 0) {
