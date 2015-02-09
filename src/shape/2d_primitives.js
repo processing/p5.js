@@ -30,14 +30,7 @@ define(function (require) {
    *  control points.
    */
   function createArc(radius, startAngle, endAngle) {
-    // normalize startAngle, endAngle to [-2PI, 2PI]
-
     var twoPI = Math.PI * 2;
-    startAngle = startAngle % twoPI;
-    endAngle = endAngle % twoPI;
-
-    // Compute the sequence of arc curves, up to PI/2 at a time. Total arc angle
-    // is less than 2PI.
 
     var curves = [];
     var piOverTwo = Math.PI / 2.0;
@@ -170,16 +163,18 @@ define(function (require) {
     );
 
     var curves = createArc(1.0, start, stop);
+    var rx = vals.w / 2;
+    var ry = vals.h / 2;
 
     ctx.beginPath();
     curves.forEach(function (curve, index) {
       if (index === 0) {
-        ctx.moveTo(vals.x + curve.x1 * vals.w, vals.y + curve.y1 * vals.h);
+        ctx.moveTo(vals.x + curve.x1 * rx, vals.y + curve.y1 * ry);
       }
       ctx.bezierCurveTo(
-        vals.x + curve.x2 * vals.w, vals.y + curve.y2 * vals.h,
-        vals.x + curve.x3 * vals.w, vals.y + curve.y3 * vals.h,
-        vals.x + curve.x4 * vals.w, vals.y + curve.y4 * vals.h
+        vals.x + curve.x2 * rx, vals.y + curve.y2 * ry,
+        vals.x + curve.x3 * rx, vals.y + curve.y3 * ry,
+        vals.x + curve.x4 * rx, vals.y + curve.y4 * ry
       );
     });
 
@@ -202,12 +197,12 @@ define(function (require) {
         ctx.beginPath();
         curves.forEach(function (curve, index) {
           if (index === 0) {
-            ctx.moveTo(vals.x + curve.x1 * vals.w, vals.y + curve.y1 * vals.h);
+            ctx.moveTo(vals.x + curve.x1 * rx, vals.y + curve.y1 * ry);
           }
           ctx.bezierCurveTo(
-            vals.x + curve.x2 * vals.w, vals.y + curve.y2 * vals.h,
-            vals.x + curve.x3 * vals.w, vals.y + curve.y3 * vals.h,
-            vals.x + curve.x4 * vals.w, vals.y + curve.y4 * vals.h
+            vals.x + curve.x2 * rx, vals.y + curve.y2 * ry,
+            vals.x + curve.x3 * rx, vals.y + curve.y3 * ry,
+            vals.x + curve.x4 * rx, vals.y + curve.y4 * ry
           );
         });
         ctx.stroke();
