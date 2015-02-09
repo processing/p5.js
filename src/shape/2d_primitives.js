@@ -30,14 +30,7 @@ define(function (require) {
    *  control points.
    */
   function createArc(radius, startAngle, endAngle) {
-    // normalize startAngle, endAngle to [-2PI, 2PI]
-
     var twoPI = Math.PI * 2;
-    startAngle = startAngle % twoPI;
-    endAngle = endAngle % twoPI;
-
-    // Compute the sequence of arc curves, up to PI/2 at a time. Total arc angle
-    // is less than 2PI.
 
     var curves = [];
     var piOverTwo = Math.PI / 2.0;
