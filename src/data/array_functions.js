@@ -134,9 +134,9 @@ define(function (require) {
   p5.prototype.shuffle = function(arr, bool) {
     arr = bool || ArrayBuffer.isView(arr)? arr : arr.slice();
 
-    for (var rnd, tmp, idx = arr.length; idx > 1;
+    for (var rnd, tmp, idx = arr.length; idx > 1;)
       rnd = Math.random()*idx | 0,
-      tmp = arr[--idx], arr[idx] = arr[rnd], arr[rnd] = tmp);
+      tmp = arr[--idx], arr[idx] = arr[rnd], arr[rnd] = tmp;
 
     return arr;
   };
