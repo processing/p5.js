@@ -121,6 +121,27 @@ define(function (require) {
   };
 
   /**
+   * Randomizes the order of the elements of an array.
+   * Implements Fisher-Yates Shuffle Algorithm
+   * http://Bost.Ocks.org/mike/shuffle/
+   * http://en.Wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
+   *
+   * @method shuffle
+   * @param  {Array}   array  Array to shuffle
+   * @param  {Boolean} [bool] modify passed array
+   * @return {Array}   shuffled Array
+   */
+  p5.prototype.shuffle = function(arr, bool) {
+    arr = bool || ArrayBuffer.isView(arr)? arr : arr.slice();
+
+    for (var rnd, tmp, idx = arr.length; idx > 1;
+      rnd = Math.random()*idx | 0,
+      tmp = arr[--idx], arr[idx] = arr[rnd], arr[rnd] = tmp);
+
+    return arr;
+  };
+
+  /**
    * Sorts an array of numbers from smallest to largest, or puts an array of
    * words in alphabetical order. The original array is not modified; a
    * re-ordered array is returned. The count parameter states the number of
