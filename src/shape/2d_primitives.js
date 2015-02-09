@@ -14,6 +14,95 @@ define(function (require) {
   var canvas = require('canvas');
   var constants = require('constants');
 
+  // source: https://sites.google.com/site/hansmuller/flex-blog/CircularArc.mxml
+  // blog post: http://hansmuller-flex.blogspot.ca/
+  //            2011/04/approximating-circular-arc-with-cubic.html
+
+  var EPSILON = 0.00001;  // Roughly 1/1000th of a degree, see below
+
+  /**
+   *  Return a array of objects that represent bezier curves which approximate 
+   *  the circular arc centered at the origin, from startAngle to endAngle 
+   *  (radians) with the specified radius.
+   *
+   *  Each bezier curve is an object with four points, where x1,y1 and
+   *  x4,y4 are the arc's end points and x2,y2 and x3,y3 are the cubic bezier's
+   *  control points.
+   */
+  function createArc(radius, startAngle, endAngle) {
+    // normalize startAngle, endAngle to [-2PI, 2PI]
+
+    var twoPI = Math.PI * 2;
+    startAngle = startAngle % twoPI;
+    endAngle = endAngle % twoPI;
+
+    // Compute the sequence of arc curves, up to PI/2 at a time. Total arc angle
+    // is less than 2PI.
+
+    var curves = [];
+    var piOverTwo = Math.PI / 2.0;
+    var sgn = (startAngle < endAngle) ? 1 : -1;
+
+    var a1 = startAngle;
+    var totalAngle = Math.min(twoPI, Math.abs(endAngle - startAngle));
+    for (; totalAngle > EPSILON; ) {
+      var a2 = a1 + sgn * Math.min(totalAngle, piOverTwo);
+      curves.push(createSmallArc(radius, a1, a2));
+      totalAngle -= Math.abs(a2 - a1);
+      a1 = a2;
+    }
+
+    return curves;
+  }
+
+  /**
+   *  Cubic bezier approximation of a circular arc centered at the origin,
+   *  from (radians) a1 to a2, where a2-a1 < pi/2.  The arc's radius is r.
+   *
+   *  Returns an object with four points, where x1,y1 and x4,y4 are the arc's 
+   *  end points and x2,y2 and x3,y3 are the cubic bezier's control points.
+   *
+   *  This algorithm is based on the approach described in:
+   *  A. Riškus, "Approximation of a Cubic Bezier Curve by Circular Arcs and 
+   *  Vice Versa," Information Technology and Control, 35(4), 2006 pp. 371-378.
+   */
+  function createSmallArc(r, a1, a2) {
+    // Compute all four points for an arc that subtends the same total angle
+    // but is centered on the X-axis
+
+    var a = (a2 - a1) / 2.0; // 
+
+    var x4 = r * Math.cos(a);
+    var y4 = r * Math.sin(a);
+    var x1 = x4;
+    var y1 = -y4;
+
+    var k = 0.5522847498;
+    var f = k * Math.tan(a);
+
+    var x2 = x1 + f * y4;
+    var y2 = y1 + f * x4;
+    var x3 = x2;
+    var y3 = -y2;
+
+    // Find the arc points actual locations by computing x1,y1 and x4,y4 
+    // and rotating the control points by a + a1
+
+    var ar = a + a1;
+    var cos_ar = Math.cos(ar);
+    var sin_ar = Math.sin(ar);
+
+    return {
+      x1: r * Math.cos(a1),
+      y1: r * Math.sin(a1),
+      x2: x2 * cos_ar - y2 * sin_ar,
+      y2: x2 * sin_ar + y2 * cos_ar,
+      x3: x3 * cos_ar - y3 * sin_ar,
+      y3: x3 * sin_ar + y3 * cos_ar,
+      x4: r * Math.cos(a2),
+      y4: r * Math.sin(a2)
+    };
+  }
 
   /**
    * Draw an arc.
@@ -79,32 +168,51 @@ define(function (require) {
       height,
       this._ellipseMode
     );
-    var radius = (vals.h > vals.w) ? vals.h / 2 : vals.w / 2,
-      //scale the arc if it is oblong
-      xScale = (vals.h > vals.w) ? vals.w / vals.h : 1,
-      yScale = (vals.h > vals.w) ? 1 : vals.h / vals.w;
-    ctx.save();
-    ctx.scale(xScale, yScale);
+
+    var curves = createArc(1.0, start, stop);
+
     ctx.beginPath();
-    ctx.arc(vals.x, vals.y, radius, start, stop);
-    if (this._doStroke) {
-      ctx.stroke();
-    }
-    if (mode === constants.CHORD || mode === constants.OPEN) {
-      ctx.closePath();
-    } else if (mode === constants.PIE || mode === undefined) {
-      ctx.lineTo(vals.x, vals.y);
-      ctx.closePath();
-    }
+    curves.forEach(function (curve, index) {
+      if (index === 0) {
+        ctx.moveTo(vals.x + curve.x1 * vals.w, vals.y + curve.y1 * vals.h);
+      }
+      ctx.bezierCurveTo(
+        vals.x + curve.x2 * vals.w, vals.y + curve.y2 * vals.h,
+        vals.x + curve.x3 * vals.w, vals.y + curve.y3 * vals.h,
+        vals.x + curve.x4 * vals.w, vals.y + curve.y4 * vals.h
+      );
+    });
+
     if (this._doFill) {
+      if (mode === constants.PIE || mode == null) {
+        ctx.lineTo(vals.x, vals.y);
+      }
+      ctx.closePath();
       ctx.fill();
+      if (this._doStroke) {
+        if (mode === constants.CHORD || mode === constants.PIE) {
+          ctx.stroke();
+          return this;
+        }
+      }
     }
-    if(this._doStroke && mode !== constants.OPEN && mode !== undefined) {
-      // final stroke must be after fill so the fill does not
-      // cover part of the line
-      ctx.stroke();
+
+    if (this._doStroke) {
+      if (mode === constants.OPEN || mode == null) {
+        ctx.beginPath();
+        curves.forEach(function (curve, index) {
+          if (index === 0) {
+            ctx.moveTo(vals.x + curve.x1 * vals.w, vals.y + curve.y1 * vals.h);
+          }
+          ctx.bezierCurveTo(
+            vals.x + curve.x2 * vals.w, vals.y + curve.y2 * vals.h,
+            vals.x + curve.x3 * vals.w, vals.y + curve.y3 * vals.h,
+            vals.x + curve.x4 * vals.w, vals.y + curve.y4 * vals.h
+          );
+        });
+        ctx.stroke();
+      }
     }
-    ctx.restore();
 
     return this;
   };
