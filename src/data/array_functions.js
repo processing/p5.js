@@ -135,8 +135,7 @@ define(function (require) {
     arr = bool || ArrayBuffer.isView(arr)? arr : arr.slice();
 
     for (var rnd, tmp, idx = arr.length; idx > 1;)
-      rnd = Math.random()*idx | 0,
-      tmp = arr[--idx], arr[idx] = arr[rnd], arr[rnd] = tmp;
+      rnd = Math.random()*idx | 0, tmp = arr[--idx], arr[idx] = arr[rnd], arr[rnd] = tmp;
 
     return arr;
   };
