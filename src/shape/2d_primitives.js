@@ -164,8 +164,8 @@ define(function (require) {
     var vals = canvas.arcModeAdjust(
       x,
       y,
-      width,
-      height,
+      width/2,
+      height/2,
       this._ellipseMode
     );
 
