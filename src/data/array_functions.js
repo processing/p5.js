@@ -16,23 +16,6 @@ define(function (require) {
    * @method append
    * @param {Array} array Array to append
    * @param {any} value to be added to the Array
-   * @example
-   * <div><code>
-   * function setup() {
-   *   const regularArr = ['ABC', 'def', createVector(), TAU, Math.E];
-   *   println(regularArr);
-   *   shuffle(regularArr, true); // Forced modifications to passed array!
-   *   println(regularArr), println('');
-   *
-   *   const clonedArr = shuffle(regularArr); // By default returns a shuffled cloned array!
-   *   println(regularArr), println(clonedArr), println('');
-   *
-   *   const typedArr = new Uint8ClampedArray([10, 20, 30, 40, 50]);
-   *   println(typedArr);
-   *   shuffle(typedArr); // TypedArrays are never cloned! Modifications in situ always!
-   *   println(typedArr), println('');
-   * }
-   * </code></div>
    */
   p5.prototype.append = function(array, value) {
     array.push(value);
@@ -147,6 +130,23 @@ define(function (require) {
    * @param  {Array}   array  Array to shuffle
    * @param  {Boolean} [bool] modify passed array
    * @return {Array}   shuffled Array
+   * @example
+   * <div><code>
+   * function setup() {
+   *   const regularArr = ['ABC', 'def', createVector(), TAU, Math.E];
+   *   println(regularArr);
+   *   shuffle(regularArr, true); // Forced modifications to passed array!
+   *   println(regularArr), println('');
+   *
+   *   const clonedArr = shuffle(regularArr); // By default returns a shuffled cloned array!
+   *   println(regularArr), println(clonedArr), println('');
+   *
+   *   const typedArr = new Uint8ClampedArray([10, 20, 30, 40, 50]);
+   *   println(typedArr);
+   *   shuffle(typedArr); // TypedArrays are never cloned! Modifications in situ always!
+   *   println(typedArr), println('');
+   * }
+   * </code></div>
    */
   p5.prototype.shuffle = function(arr, bool) {
     arr = bool || ArrayBuffer.isView(arr)? arr : arr.slice();
