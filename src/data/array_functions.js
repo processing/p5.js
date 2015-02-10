@@ -138,12 +138,13 @@ define(function (require) {
    *   shuffle(regularArr, true); // Forced modifications to passed array!
    *   println(regularArr), println('');
    *
-   *   const clonedArr = shuffle(regularArr); // By default returns a shuffled cloned array!
+   *   // By default shuffle() returns a shuffled cloned array:
+   *   const clonedArr = shuffle(regularArr);
    *   println(regularArr), println(clonedArr), println('');
    *
    *   const typedArr = new Uint8ClampedArray([10, 20, 30, 40, 50]);
    *   println(typedArr);
-   *   shuffle(typedArr); // TypedArrays are never cloned! Modifications in situ always!
+   *   shuffle(typedArr); // TypedArrays are never cloned!
    *   println(typedArr), println('');
    * }
    * </code></div>
