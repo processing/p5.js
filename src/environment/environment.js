@@ -397,11 +397,12 @@ define(function(require) {
    * <div><code>
    * function setup() {
    *   noLoop(), smooth();
-   *   background(0350), fill(0, 0x80, 0), noStroke();
-   *   textAlign(CENTER, CENTER), textSize(20);
+   *   noStroke(), fill(0, 0x80, 0);
+   *   textSize(20), textAlign(CENTER, CENTER);
    * }
    *
    * function draw() {
+   *   background(0350);
    *   text("Click me!", width>>1, height>>1);
    * }
    * 
