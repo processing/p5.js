@@ -405,27 +405,17 @@ define(function(require) {
 
   /**
    * The .drop() function is called for each file dropped on the element.
-   * It requires a callback that is passed a p5.File object
+   * It requires a callback that is passed a p5.File object.  You can 
+   * optionally pass two callbacks, the first one (required) is triggered 
+   * for each file dropped when the file is loaded.  The second (optional)
+   * is triggered just once when a file (or files) are dropped.
    *
    * @method drop
+   * @param  {Function} callback triggered when files are dropped.
    * @param  {Function} callback to receive loaded file.
    * @return {p5.Element}
    */
-  p5.Element.prototype.drop = function (fxn, callback) {
-
-    // If you want to be able to drop you've got to turn off
-    // a lot of default behavior
-    attachListener('dragover',function(evt) {
-      evt.stopPropagation();
-      evt.preventDefault();
-    },this);
-
-    // If this is a drag area we need to turn off the default behavior
-    attachListener('dragleave',function(evt) {
-      evt.stopPropagation();
-      evt.preventDefault();
-    },this);
-
+  p5.Element.prototype.drop = function (callback, fxn) {
     // Make a file loader callback and trigger user's callback
     function makeLoader(theFile) {
       // Making a p5.File object
@@ -436,39 +426,55 @@ define(function(require) {
       };
     }
 
-    // If just one argument it's the callback for the files
-    if (arguments.length < 2) {
-      callback = fxn;
-    // If two we have a separate callback for the drop moment
-    } else {
-      attachListener('drop', fxn, this);
-    }
-    
-    // Deal with the files
-    attachListener('drop', function(evt) {
+    // Is the file stuff supported?
+    if (window.File && window.FileReader && window.FileList && window.Blob) {
 
-      evt.stopPropagation();
-      evt.preventDefault();
-      
-      // A FileList
-      var files = evt.dataTransfer.files;
-      
-      // Load each one and trigger the callback
-      for (var i = 0; i < files.length; i++) {
-        var f = files[i];
-        var reader = new FileReader();
-        reader.onload = makeLoader(f);
+      // If you want to be able to drop you've got to turn off
+      // a lot of default behavior
+      attachListener('dragover',function(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+      },this);
 
-        
-        // Text of data?
-        // This should likely be improved
-        if (f.type === 'text') {
-          reader.readAsText(f);
-        } else {
-          reader.readAsDataURL(f);
-        }
+      // If this is a drag area we need to turn off the default behavior
+      attachListener('dragleave',function(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+      },this);
+
+      // If just one argument it's the callback for the files
+      if (arguments.length > 1) {
+        attachListener('drop', fxn, this);
       }
-    }, this);
+      
+      // Deal with the files
+      attachListener('drop', function(evt) {
+
+        evt.stopPropagation();
+        evt.preventDefault();
+        
+        // A FileList
+        var files = evt.dataTransfer.files;
+        
+        // Load each one and trigger the callback
+        for (var i = 0; i < files.length; i++) {
+          var f = files[i];
+          var reader = new FileReader();
+          reader.onload = makeLoader(f);
+
+          
+          // Text of data?
+          // This should likely be improved
+          if (f.type === 'text') {
+            reader.readAsText(f);
+          } else {
+            reader.readAsDataURL(f);
+          }
+        }
+      }, this);
+    } else {
+      console.log('The File APIs are not fully supported in this browser.');
+    }
 
     return this;
   };
