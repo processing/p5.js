@@ -405,9 +405,13 @@ define(function(require) {
 
   /**
    * The .drop() function is called for each file dropped on the element.
-   * It requires a callback that is passed a p5.File object
+   * It requires a callback that is passed a p5.File object.  You can optionally 
+   * pass two callbacks, the first one (optional) is always triggered just once when a file
+   * (or files) are dropped.  The second callback (required) is triggered
+   * for each file dropped when the file is loaded.
    *
    * @method drop
+   * @param  {Function} callback triggered when files are dropped.
    * @param  {Function} callback to receive loaded file.
    * @return {p5.Element}
    */
