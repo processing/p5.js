@@ -416,63 +416,68 @@ define(function(require) {
    * @return {p5.Element}
    */
   p5.Element.prototype.drop = function (fxn, callback) {
+    // Is the file stuff supported?
+    if (window.File && window.FileReader && window.FileList && window.Blob) {
 
-    // If you want to be able to drop you've got to turn off
-    // a lot of default behavior
-    attachListener('dragover',function(evt) {
-      evt.stopPropagation();
-      evt.preventDefault();
-    },this);
+      // If you want to be able to drop you've got to turn off
+      // a lot of default behavior
+      attachListener('dragover',function(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+      },this);
 
-    // If this is a drag area we need to turn off the default behavior
-    attachListener('dragleave',function(evt) {
-      evt.stopPropagation();
-      evt.preventDefault();
-    },this);
+      // If this is a drag area we need to turn off the default behavior
+      attachListener('dragleave',function(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+      },this);
 
-    // Make a file loader callback and trigger user's callback
-    function makeLoader(theFile) {
-      // Making a p5.File object
-      var p5file = new p5.File(theFile);
-      return function(e) {
-        p5file.data = e.target.result;
-        callback(p5file);
-      };
-    }
-
-    // If just one argument it's the callback for the files
-    if (arguments.length < 2) {
-      callback = fxn;
-    // If two we have a separate callback for the drop moment
-    } else {
-      attachListener('drop', fxn, this);
-    }
-    
-    // Deal with the files
-    attachListener('drop', function(evt) {
-
-      evt.stopPropagation();
-      evt.preventDefault();
-      
-      // A FileList
-      var files = evt.dataTransfer.files;
-      
-      // Load each one and trigger the callback
-      for (var i = 0; i < files.length; i++) {
-        var f = files[i];
-        var reader = new FileReader();
-        reader.onload = makeLoader(f);
-
-        
-        // Text of data?
-        // This should likely be improved
-        if (f.type === 'text') {
-          reader.readAsText(f);
-        } else {
-          reader.readAsDataURL(f);
-        }
+      // Make a file loader callback and trigger user's callback
+      function makeLoader(theFile) {
+        // Making a p5.File object
+        var p5file = new p5.File(theFile);
+        return function(e) {
+          p5file.data = e.target.result;
+          callback(p5file);
+        };
       }
-    }, this);
+
+      // If just one argument it's the callback for the files
+      if (arguments.length < 2) {
+        callback = fxn;
+      // If two we have a separate callback for the drop moment
+      } else {
+        attachListener('drop', fxn, this);
+      }
+      
+      // Deal with the files
+      attachListener('drop', function(evt) {
+
+        evt.stopPropagation();
+        evt.preventDefault();
+        
+        // A FileList
+        var files = evt.dataTransfer.files;
+        
+        // Load each one and trigger the callback
+        for (var i = 0; i < files.length; i++) {
+          var f = files[i];
+          var reader = new FileReader();
+          reader.onload = makeLoader(f);
+
+          
+          // Text of data?
+          // This should likely be improved
+          if (f.type === 'text') {
+            reader.readAsText(f);
+          } else {
+            reader.readAsDataURL(f);
+          }
+        }
+      }, this);
+    } else {
+      console.log('The File APIs are not fully supported in this browser.');
+    }
 
     return this;
   };
