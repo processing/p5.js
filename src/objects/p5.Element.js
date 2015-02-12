@@ -405,17 +405,27 @@ define(function(require) {
 
   /**
    * The .drop() function is called for each file dropped on the element.
-   * It requires a callback that is passed a p5.File object.  You can optionally 
-   * pass two callbacks, the first one (optional) is always triggered just once when a file
-   * (or files) are dropped.  The second callback (required) is triggered
-   * for each file dropped when the file is loaded.
+   * It requires a callback that is passed a p5.File object.  You can 
+   * optionally pass two callbacks, the first one (required) is triggered 
+   * for each file dropped when the file is loaded.  The second (optional)
+   * is triggered just once when a file (or files) are dropped.
    *
    * @method drop
    * @param  {Function} callback triggered when files are dropped.
    * @param  {Function} callback to receive loaded file.
    * @return {p5.Element}
    */
-  p5.Element.prototype.drop = function (fxn, callback) {
+  p5.Element.prototype.drop = function (callback, fxn) {
+    // Make a file loader callback and trigger user's callback
+    function makeLoader(theFile) {
+      // Making a p5.File object
+      var p5file = new p5.File(theFile);
+      return function(e) {
+        p5file.data = e.target.result;
+        callback(p5file);
+      };
+    }
+
     // Is the file stuff supported?
     if (window.File && window.FileReader && window.FileList && window.Blob) {
 
@@ -432,21 +442,8 @@ define(function(require) {
         evt.preventDefault();
       },this);
 
-      // Make a file loader callback and trigger user's callback
-      function makeLoader(theFile) {
-        // Making a p5.File object
-        var p5file = new p5.File(theFile);
-        return function(e) {
-          p5file.data = e.target.result;
-          callback(p5file);
-        };
-      }
-
       // If just one argument it's the callback for the files
-      if (arguments.length < 2) {
-        callback = fxn;
-      // If two we have a separate callback for the drop moment
-      } else {
+      if (arguments.length > 1) {
         attachListener('drop', fxn, this);
       }
       
