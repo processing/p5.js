@@ -274,6 +274,7 @@ define(function (require) {
       var now = new Date().getTime();
       this._frameRate = 1000.0/(now - this._lastFrameTime);
       this._lastFrameTime = now;
+      this._setProperty('frameCount', this.frameCount + 1);
       if (this._loop) {
         if (this._drawInterval) {
           clearInterval(this._drawInterval);
@@ -292,9 +293,6 @@ define(function (require) {
       if (this._updateInterval) {
         clearInterval(this._updateInterval);
       }
-      this._updateInterval = setInterval(function(){
-        this._setProperty('frameCount', this.frameCount + 1);
-      }.bind(this), 1000/this._targetFrameRate);
     }.bind(this);
 
     this._setProperty = function(prop, value) {
