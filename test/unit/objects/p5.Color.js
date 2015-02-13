@@ -39,8 +39,7 @@ suite('p5.Color', function() {
     });
   });
 
-  // TODO: should this usage be supported?
-  suite.skip('p5.prototype.color([])', function() {
+  suite('p5.prototype.color([])', function() {
     setup(function() {
       c = myp5.color([10, 20, 30]);
     });
