@@ -31,9 +31,9 @@ define(function (require) {
    */
   p5.prototype.alpha = function(c) {
     if (c instanceof p5.Color) {
-      return c.rgba[3];
+      return c.getAlpha();
     } else if (c instanceof Array) {
-      return c[3];
+      return this.color(c).getAlpha();
     } else {
       throw new Error('Needs p5.Color or pixel array as argument.');
     }
@@ -59,10 +59,10 @@ define(function (require) {
    * </div>
    */
   p5.prototype.blue = function(c) {
-    if (c instanceof Array) {
-      return c[2];
-    } else if (c instanceof p5.Color) {
-      return c.rgba[2];
+    if (c instanceof p5.Color) {
+      return c.getBlue();
+    } else if (c instanceof Array) {
+      return this.color(c).getBlue();
     } else {
       throw new Error('Needs p5.Color or pixel array as argument.');
     }
@@ -91,11 +91,7 @@ define(function (require) {
     if (!c instanceof p5.Color) {
       throw new Error('Needs p5.Color as argument.');
     }
-    if (!c.hsba) {
-      c.hsba = p5.Color.getRGB(c.rgba);
-      c.hsba = c.hsba.concat(c.rgba[3]);
-    }
-    return c.hsba[2];
+    return c.getBrightness();
   };
 
   /**
@@ -166,10 +162,11 @@ define(function (require) {
    * </div>
    */
   p5.prototype.color = function () {
-    if (arguments[0] instanceof Array) {
-      return new p5.Color(this, arguments[0], true);
+    if (arguments[0] instanceof p5.Color) {
+      return arguments[0];
     } else {
-      return new p5.Color(this, arguments);
+      var args = Array.prototype.slice.call(arguments);
+      return new p5.Color(this, args);
     }
   };
   /**
@@ -192,10 +189,10 @@ define(function (require) {
    * </div>
    */
   p5.prototype.green = function(c) {
-    if (c instanceof Array) {
-      return c[1];
-    } else if (c instanceof p5.Color) {
-      return c.rgba[1];
+    if (c instanceof p5.Color) {
+      return c.getGreen();
+    } else if (c instanceof Array) {
+      return this.color(c).getGreen();
     } else {
       throw new Error('Needs p5.Color or pixel array as argument.');
     }
@@ -224,10 +221,7 @@ define(function (require) {
     if (!c instanceof p5.Color) {
       throw new Error('Needs p5.Color as argument.');
     }
-    if (!c.hsba) {
-      c.hsba = p5.Color.getRGB(c.rgba);
-    }
-    return c.hsba[0];
+    return c.getHue();
   };
 
   /**
@@ -302,10 +296,10 @@ define(function (require) {
    * </div>
    */
   p5.prototype.red = function(c) {
-    if (c instanceof Array) {
-      return c[0];
-    } else if (c instanceof p5.Color) {
-      return c.rgba[0];
+    if (c instanceof p5.Color) {
+      return c.getRed();
+    } else if (c instanceof Array) {
+      return this.color(c).getRed();
     } else {
       throw new Error('Needs p5.Color or pixel array as argument.');
     }
@@ -334,11 +328,7 @@ define(function (require) {
     if (!c instanceof p5.Color) {
       throw new Error('Needs p5.Color as argument.');
     }
-    if (!c.hsba) {
-      c.hsba = p5.Color.getRGB(c.rgba);
-      c.hsba = c.hsba.concat(c.rgba[3]);
-    }
-    return c.hsba[1];
+    return c.getSaturation();
   };
 
 
