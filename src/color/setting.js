@@ -140,6 +140,7 @@ define(function (require) {
         maxArr[0] = arguments[1];
         maxArr[1] = arguments[1];
         maxArr[2] = arguments[1];
+        maxArr[3] = arguments[1];
       }
       else if (arguments.length > 2) {
         maxArr[0] = arguments[1];
