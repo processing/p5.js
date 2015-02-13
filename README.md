@@ -18,8 +18,7 @@ You can [download the p5.js library here](http://p5js.org/download) or use `lib/
 
 ##Learning
 
-####[> Get Started](http://p5js.org/get-started)
-Create and run your first sketch!
+* [Get Started](http://p5js.org/get-started) — Create and run your first sketch!
 ####[> p5.js overview](https://github.com/lmccart/p5.js/wiki/p5.js-overview)
 An overview of the main features and functionality of p5.js.
 ####[> Reference](http://p5js.org/reference)
