@@ -1,43 +1,43 @@
-var s0 = function( sketch ) {
+var sketch0 = function( p ) {
 
   var v;
   var h1;
 
-  sketch.setup = function() {
-    sketch.createCanvas(400, 400);
+  p.setup = function() {
+    p.createCanvas(400, 400);
 
-    h1 = sketch.createElement('h1', 'press a key');
+    h1 = p.createElement('h1', 'press a key');
     h1.position(40, 250);
     h1.mousePressed(function() {
       v.pause();
       h1.html('press a key');
     });
 
-    v = sketch.createVideo('../fingers.mov');
+    v = p.createVideo('../fingers.mov');
     v.hide();
   };
 
-  sketch.draw = function() {
-    sketch.background(30, 100, 200);
-    sketch.image(v, 30, 30, 200, 200);
+  p.draw = function() {
+    p.background(30, 100, 200);
+    p.image(v, 30, 30, 200, 200);
   };
 
-  sketch.keyPressed = function() {
+  p.keyPressed = function() {
     v.loop();
     h1.html('click here to pause');
   };
 
-  sketch.mousePressed = function() {
+  p.mousePressed = function() {
     console.log('press')
   }
 
-  sketch.mouseReleased = function() {
+  p.mouseReleased = function() {
     console.log('released')
   }
 
 };
 
-var myp5_0 = new p5(s0, 'div0');
+var myp5_0 = new p5(sketch0, 'div0');
 
 
 

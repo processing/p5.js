@@ -1,18 +1,18 @@
-var s = function(sketch) {
+var sketch = function(p) {
 
   var c;
 
-  sketch.setup = function() {
+  p.setup = function() {
 
-    c = sketch.createCanvas(200, 200);
+    c = p.createCanvas(200, 200);
     c.position(100, 100);
   };
 
-  sketch.draw = function() {
-    sketch.background(125);
-    sketch.ellipse(sketch.mouseX, sketch.mouseY, 20, 20);
-    console.log('mx:'+sketch.mouseX+' my:'+sketch.mouseY+' wmx:'+sketch.winMouseX+' wmy:'+sketch.winMouseY);
+  p.draw = function() {
+    p.background(125);
+    p.ellipse(p.mouseX, p.mouseY, 20, 20);
+    console.log('mx:'+p.mouseX+' my:'+p.mouseY+' wmx:'+p.winMouseX+' wmy:'+p.winMouseY);
   };
 };
  
-var myp5 = new p5(s);
+var myp5 = new p5(sketch);
