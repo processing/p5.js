@@ -30,9 +30,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.alpha = function(c) {
-    if (c instanceof p5.Color) {
-      return c.getAlpha();
-    } else if (c instanceof Array) {
+    if (c instanceof p5.Color || c instanceof Array) {
       return this.color(c).getAlpha();
     } else {
       throw new Error('Needs p5.Color or pixel array as argument.');
@@ -59,9 +57,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.blue = function(c) {
-    if (c instanceof p5.Color) {
-      return c.getBlue();
-    } else if (c instanceof Array) {
+    if (c instanceof p5.Color || c instanceof Array) {
       return this.color(c).getBlue();
     } else {
       throw new Error('Needs p5.Color or pixel array as argument.');
@@ -164,6 +160,8 @@ define(function (require) {
   p5.prototype.color = function () {
     if (arguments[0] instanceof p5.Color) {
       return arguments[0];
+    } else if (arguments[0] instanceof Array) {
+      return new p5.Color(this, arguments[0]);
     } else {
       var args = Array.prototype.slice.call(arguments);
       return new p5.Color(this, args);
@@ -189,9 +187,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.green = function(c) {
-    if (c instanceof p5.Color) {
-      return c.getGreen();
-    } else if (c instanceof Array) {
+    if (c instanceof p5.Color || c instanceof Array) {
       return this.color(c).getGreen();
     } else {
       throw new Error('Needs p5.Color or pixel array as argument.');
@@ -296,9 +292,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.red = function(c) {
-    if (c instanceof p5.Color) {
-      return c.getRed();
-    } else if (c instanceof Array) {
+    if (c instanceof p5.Color || c instanceof Array) {
       return this.color(c).getRed();
     } else {
       throw new Error('Needs p5.Color or pixel array as argument.');

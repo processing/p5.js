@@ -142,7 +142,8 @@ module.exports = function(grunt) {
             'polargeometry': 'src/var/polargeometry',
             'shim': 'src/var/shim',
             'reqwest': 'node_modules/reqwest/reqwest',
-            'filters': 'src/image/filters'
+            'filters': 'src/image/filters',
+            'utils.color_utils': 'src/utils/color_utils'
           },
           useStrict: true,
           wrap: {
