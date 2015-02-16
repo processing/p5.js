@@ -88,7 +88,7 @@ define(function (require) {
     var callback = arguments[1];
     var ret = []; // array needed for preload
     // assume jsonp for URLs
-    var t = path.indexOf('http') === -1 ? 'json' : 'jsonp';
+    var t = 'json'; //= path.indexOf('http') === -1 ? 'json' : 'jsonp';
 
     // check for explicit data type argument
     if (typeof arguments[2] === 'string'){
