@@ -9,21 +9,21 @@
 // This is called asynchronous loading, because it happens whenever
 // the computer is done and ready, not necessarily when you call it.
 
-var s = function(sketch) {
+var sketch = function(p) {
   var largeImage;
 
-  sketch.preload = function() {
-    largeImage = sketch.loadImage('test.gif'); // preloading the image guarantees it will be ready by setup()
+  p.preload = function() {
+    largeImage = p.loadImage('test.gif'); // preloading the image guarantees it will be ready by setup()
   };
 
-  sketch.setup = function() {
-    sketch.createCanvas(1300, 600);
-    sketch.image(largeImage, 0, 0);
+  p.setup = function() {
+    p.createCanvas(1300, 600);
+    p.image(largeImage, 0, 0);
   };
 
-  sketch.draw = function() {
+  p.draw = function() {
   	// do nothing
   };
 }
 
-var myp5 = new p5(s);
+var myp5 = new p5(sketch);

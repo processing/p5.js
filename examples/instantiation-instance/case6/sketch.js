@@ -1,26 +1,26 @@
-var s0 = function( sketch ) {
+var sketch0 = function( p ) {
 
   var gray = 0;
   var h = 10; 
 
-  sketch.setup = function() {
-    var cnv = sketch.createCanvas(400, 400);
+  p.setup = function() {
+    var cnv = p.createCanvas(400, 400);
     cnv.mousePressed(increaseH);
-    sketch.rectMode(sketch.CENTER);
-    sketch.print("both gray values should change, rect in sketch0 should change only when clicking on canvas0");
+    p.rectMode(p.CENTER);
+    p.print("both gray values should change, rect in sketch0 should change only when clicking on canvas0");
   };
 
-  sketch.draw = function() {
-    sketch.background(gray);
-    sketch.rect(sketch.width/2, sketch.height/2, h, h);
+  p.draw = function() {
+    p.background(gray);
+    p.rect(p.width/2, p.height/2, h, h);
   };
 
-  sketch.mousePressed = function() {
+  p.mousePressed = function() {
     gray += 10;
   };
 
-  sketch.mouseMoved = function() {
-    sketch.print("sketch0 x:"+sketch.mouseX+" y:"+sketch.mouseY);
+  p.mouseMoved = function() {
+    p.print("sketch0 x:"+p.mouseX+" y:"+p.mouseY);
   };
 
   function increaseH() {
@@ -28,47 +28,47 @@ var s0 = function( sketch ) {
   }
 };
 
-var myp5_0 = new p5(s0, 'div0');
+var myp5_0 = new p5(sketch0, 'div0');
 
 
 
 
 
-var s1 = function( sketch ) {
+var sketch1 = function( p ) {
 
   var gray = 0; 
 
-  sketch.setup = function() {
-    sketch.createCanvas(400, 400);
+  p.setup = function() {
+    p.createCanvas(400, 400);
   };
 
-  sketch.draw = function() {
-    sketch.background(255, 0, 100);
-    sketch.fill(gray);
-    sketch.rect(sketch.width/2, sketch.height/2, 50, 50);
+  p.draw = function() {
+    p.background(255, 0, 100);
+    p.fill(gray);
+    p.rect(p.width/2, p.height/2, 50, 50);
   };
 
-  sketch.mousePressed = function() {
+  p.mousePressed = function() {
     gray += 10;
   };
 
-  sketch.mouseMoved = function() {
-    console.log("sketch1 x:"+sketch.mouseX+" y:"+sketch.mouseY);
+  p.mouseMoved = function() {
+    console.log("sketch1 x:"+p.mouseX+" y:"+p.mouseY);
   };
 
-  sketch.mouseReleased = function() {
+  p.mouseReleased = function() {
     console.log("mouseReleased");
   };
 
-  sketch.keyPressed = function() {
+  p.keyPressed = function() {
     console.log("keyPressed");
   };
 
-  sketch.mouseDragged = function() {
+  p.mouseDragged = function() {
     console.log("mouseDragged");
   };
 };
 
 
-var myp5_1 = new p5(s1, 'div1');
+var myp5_1 = new p5(sketch1, 'div1');
 

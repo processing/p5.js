@@ -1,18 +1,19 @@
 // CASE 0: no node specified
 // Canvas is auto-generated and appended to body.
-var s = function( sketch ) {
+
+var sketch = function( p ) {
 
   var gray = 0; 
 
-  sketch.draw = function() {
-    sketch.background(gray);
-    sketch.rect(sketch.width/2, sketch.height/2, 50, 50);
+  p.draw = function() {
+    p.background(gray);
+    p.rect(p.width/2, p.height/2, 50, 50);
   }
 
-  sketch.mousePressed = function() {
+  p.mousePressed = function() {
     gray += 10;
   }
 
 };
 
-var myp5 = new p5(s);
+var myp5 = new p5(sketch);
