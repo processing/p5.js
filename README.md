@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/processing/p5.js.svg?branch=master)](https://travis-ci.org/processing/p5.js)
 
-#p5.js
+#[p5.js](http://p5js.org)
 
 [Hello!](http://hello.p5js.org/) p5.js is a JavaScript library that starts with the original goal of Processing, to make coding accessible for artists, designers, educators, and beginners, and reinterprets this for today's web.
 
