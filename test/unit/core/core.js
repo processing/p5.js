@@ -19,7 +19,7 @@ suite('Core', function(){
     // readyState is "loading" and we can verify that the code is doing the
     // right thing during page load.
 
-    var myp5 = new p5(function(sketch) { }, null, true);
+    var myp5 = new p5(function() { }, null, true);
     var isDrawingContextDefined = myp5.drawingContext !== undefined;
 
     test('should define drawContext synchronously', function () {
@@ -28,7 +28,7 @@ suite('Core', function(){
   });
 
   suite('new p5(sketch, null, false)', function () {
-    var myp5 = new p5(function(sketch) { }, null, false);
+    var myp5 = new p5(function() { }, null, false);
     var isDrawingContextDefined = myp5.drawingContext !== undefined;
 
     test('should define drawContext asynchronously', function () {
@@ -38,7 +38,7 @@ suite('Core', function(){
   });
 
   suite('new p5(sketch, node, true)', function () {
-    var myp5 = new p5(function(sketch) { }, node, true);
+    var myp5 = new p5(function() { }, node, true);
     var isDrawingContextDefined = myp5.drawingContext !== undefined;
 
     test('should define drawContext synchronously', function () {
@@ -47,7 +47,7 @@ suite('Core', function(){
   });
 
   suite('new p5(sketch, node)', function () {
-    var myp5 = new p5(function(sketch) { }, node);
+    var myp5 = new p5(function() { }, node);
     var isDrawingContextDefined = myp5.drawingContext !== undefined;
 
     test('should define drawContext asynchronously', function () {
@@ -57,7 +57,7 @@ suite('Core', function(){
   });
 
   suite('new p5(sketch, true)', function () {
-    var myp5 = new p5(function(sketch) { }, true);
+    var myp5 = new p5(function() { }, true);
     var isDrawingContextDefined = myp5.drawingContext !== undefined;
 
     test('should define drawContext synchronously', function () {
@@ -66,7 +66,7 @@ suite('Core', function(){
   });
 
   suite('new p5(sketch)', function () {
-    var myp5 = new p5(function(sketch) { });
+    var myp5 = new p5(function() { });
     var isDrawingContextDefined = myp5.drawingContext !== undefined;
 
     test('should define drawContext asynchronously', function () {

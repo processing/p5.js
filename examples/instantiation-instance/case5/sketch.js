@@ -1,19 +1,20 @@
 // CASE 3: alternate syntax
 // Canvas is auto-generated and appended to body.
-var myp5 = new p5(function( sketch ) {
+
+var myp5 = new p5(function( p ) {
 
   var gray = 0; 
 
-  sketch.setup = function() {
-    sketch.createCanvas(400, 400);
+  p.setup = function() {
+    p.createCanvas(400, 400);
   };
 
-  sketch.draw = function() {
-    sketch.background(gray);
-    sketch.rect(sketch.width/2, sketch.height/2, 50, 50);
+  p.draw = function() {
+    p.background(gray);
+    p.rect(p.width/2, p.height/2, 50, 50);
   }
 
-  sketch.mousePressed = function() {
+  p.mousePressed = function() {
     gray += 10;
   }
 
