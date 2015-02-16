@@ -12,7 +12,7 @@
  * <a href="http://p5js.org/download">p5 complete</a> or you can download the single file
  * <a href="https://raw.githubusercontent.com/lmccart/p5.js/master/lib/addons/p5.dom.js">
  * here</a>.</p>
- * <p>See <a href="https://github.com/lmccart/p5.js/wiki/Beyond-the-canvas">tutorial: beyond the canvas]</a>
+ * <p>See <a href="https://github.com/processing/p5.js/wiki/Beyond-the-canvas">tutorial: beyond the canvas]</a>
  * for more info on how to use this libary.</a>
  *
  * @module p5.dom
