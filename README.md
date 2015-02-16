@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/lmccart/p5.js.svg?branch=master)](https://travis-ci.org/lmccart/p5.js)
+[![Build Status](https://travis-ci.org/processing/p5.js.svg?branch=master)](https://travis-ci.org/processing/p5.js)
 
 #p5.js
 
