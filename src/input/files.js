@@ -187,7 +187,6 @@ define(function (require) {
    *  <ul>
    *  <li>csv - parse the table as comma-separated values
    *  <li>tsv - parse the table as tab-separated values
-   *  <li>newlines - this CSV file contains newlines inside individual cells
    *  <li>header - this table has a header (title) row
    *  </ul>
    *  </p>
@@ -212,6 +211,7 @@ define(function (require) {
     var options = [];
     var header = false;
     var sep = ',';
+    var separatorSet = false;
     for (var i = 1; i < arguments.length; i++) {
       if (typeof(arguments[i]) === 'function' ){
         callback = arguments[i];
@@ -222,48 +222,162 @@ define(function (require) {
           header = true;
         }
         if (arguments[i] === 'csv') {
-          sep = ',';
+          if (separatorSet) {
+            throw new Error('Cannot set multiple separator types.');
+          }
+          else {
+            sep = ',';
+            separatorSet = true;
+          }
         }
         else if (arguments[i] === 'tsv') {
-          sep = '\t';
+          if (separatorSet) {
+            throw new Error('Cannot set multiple separator types.');
+          }
+          else {
+            sep = '\t';
+            separatorSet = true;
+          }
         }
       }
     }
-    var ret = [];
+
     var t = new p5.Table();
-    var req = new XMLHttpRequest();
-    req.open('GET', path, true);
-    req.onreadystatechange = function () {
-      if (req.readyState === 4 && (req.status === 200 || req.status === 0)) {
-        var arr = req.responseText.match(/[^\r\n]+/g);
-        for (var k in arr) {
-          ret[k] = arr[k];
-        }
-        if (typeof callback !== 'undefined') {
-          var i, row;
-          if (header) {
-            t.columns = new p5.TableRow(ret[0]).arr;
-            for (i = 1; i<ret.length; i++) {
-              row = new p5.TableRow(ret[i], sep);
-              row.obj = makeObject(row.arr, t.columns);
-              t.addRow(row);
+    reqwest({url: path, crossOrigin: true})
+      .then(function(resp) {
+
+        var state = {};
+
+        // define constants
+        var PRE_TOKEN = 0,
+            MID_TOKEN = 1,
+            POST_TOKEN = 2,
+            POST_RECORD = 4;
+
+        var QUOTE = '\"',
+               CR = '\r',
+               LF = '\n';
+
+        var records = [];
+        var offset = 0;
+        var currentRecord = null;
+        var currentChar;
+
+        var recordBegin = function () {
+          state.escaped = false;
+          currentRecord = [];
+          tokenBegin();
+        };
+
+        var recordEnd = function () {
+          state.currentState = POST_RECORD;
+          records.push(currentRecord);
+          currentRecord = null;
+        };
+
+        var tokenBegin = function() {
+          state.currentState = PRE_TOKEN;
+          state.token = '';
+        };
+
+        var tokenEnd = function() {
+          currentRecord.push(state.token);
+          tokenBegin();
+        };
+
+        while(true) {
+          currentChar = resp[offset++];
+          
+          // EOF
+          if(currentChar == null) {
+            if (state.escaped) {
+              throw new Error('Unclosed quote in file.');
             }
-          } else {
-            // no header: column titles will be numbers
-            for (i = 0; i < ret[0].split(sep).length; i++){
-              t.columns[i] = i.toString();
-            }
-            for (i = 0; i<ret.length; i++) {
-              row = new p5.TableRow(ret[i], sep);
-              t.addRow(row);
+            if (currentRecord){
+              tokenEnd();
+              recordEnd();
+              break;
             }
           }
+          if(currentRecord === null) {
+            recordBegin();
+          }
 
+          // Handle opening quote
+          if (state.currentState === PRE_TOKEN) {
+            if (currentChar === QUOTE) {
+              state.escaped = true;
+              state.currentState = MID_TOKEN;
+              continue;
+            }
+            state.currentState = MID_TOKEN;
+          }
+
+          // mid-token and escaped, look for sequences and end quote
+          if (state.currentState === MID_TOKEN && state.escaped) {
+            if (currentChar === QUOTE) {
+              if (resp[offset] === QUOTE) {
+                state.token += QUOTE;
+                offset++;
+              }
+              else {
+                state.escaped = false;
+                state.currentState = POST_TOKEN;
+              }
+            }
+            else {
+              state.token += currentChar;
+            }
+            continue;
+          }
+
+
+          // fall-through: mid-token or post-token, not escaped
+          if (currentChar === CR ) {
+            if( resp[offset] === LF  ) {
+              offset++;
+            }
+            tokenEnd();
+            recordEnd();
+          }
+          else if (currentChar === LF) {
+            tokenEnd();
+            recordEnd();
+          }
+          else if (currentChar === sep) {
+            tokenEnd();
+          }
+          else if( state.currentState === MID_TOKEN ){
+            state.token += currentChar;
+          }
+        }
+
+        // set up column names
+        if (header) {
+          t.columns = records.shift();
+        }
+        else {
+          for (i = 0; i < records.length; i++){
+            t.columns[i] = i.toString();
+          }
+        }
+        var row;
+        for (i =0; i<records.length; i++) {
+          row = new p5.TableRow();
+          row.arr = records[i];
+          row.obj = makeObject(records[i], t.columns);
+          t.addRow(row);
+        }
+        if (callback !== null) {
           callback(t);
         }
-      }
-    };
-    req.send(null);
+      })
+      .fail(function(err,msg){
+        if (typeof callback !== 'undefined') {
+          callback(false);
+        }
+      });
+
     return t;
   };
 
