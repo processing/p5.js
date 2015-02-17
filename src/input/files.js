@@ -185,12 +185,16 @@ define(function (require) {
    *
    *  <p>Possible options include:
    *  <ul>
-   *  <li>csv - parse the table as comma-separated values
-   *  <li>tsv - parse the table as tab-separated values
-   *  <li>newlines - this CSV file contains newlines inside individual cells
-   *  <li>header - this table has a header (title) row
+   *  <li>csv - parse the table as comma-separated values</li>
+   *  <li>tsv - parse the table as tab-separated values</li>
+   *  <li><s>newlines - this CSV file contains newlines
+   *  inside individual cells.</s></li>
+   *  <li>header - this table has a header (title) row</li>
    *  </ul>
    *  </p>
+   *  
+   *  <p> Multiple options may be included.  When including multiple
+   *  options, pass each one as a separate parameter.</p>
    *  
    *  <p> All files loaded and saved use UTF-8 encoding.</p>
    *  
