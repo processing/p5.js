@@ -239,6 +239,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.registerTask('test', ['connect', 'jshint', 'mocha']);
   grunt.registerTask('yui', ['yuidoc']);
-  grunt.registerTask('default', ['jshint', 'requirejs', 'mocha', 'uglify']);
+  grunt.registerTask('default', ['connect', 'jshint', 'requirejs', 'mocha', 'uglify']);
 
 };
