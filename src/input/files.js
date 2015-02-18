@@ -185,12 +185,15 @@ define(function (require) {
    *
    *  <p>Possible options include:
    *  <ul>
-   *  <li>csv - parse the table as comma-separated values
-   *  <li>tsv - parse the table as tab-separated values
-   *  <li>header - this table has a header (title) row
+   *  <li>csv - parse the table as comma-separated values</li>
+   *  <li>tsv - parse the table as tab-separated values</li>
+   *  <li>header - this table has a header (title) row</li>
    *  </ul>
    *  </p>
    *  
+   *  <p>When passing in multiple options, pass them in as separate parameters,
+   *  seperated by commas.</p>
+   *
    *  <p> All files loaded and saved use UTF-8 encoding.</p>
    *  
    *  <p>This method is asynchronous, meaning it may not finish before the next
@@ -243,8 +246,9 @@ define(function (require) {
     }
 
     var t = new p5.Table();
-    reqwest({url: path, crossOrigin: true})
+    reqwest({url: path, crossOrigin: true, type: 'csv'})
       .then(function(resp) {
+        resp = resp.responseText;
 
         var state = {};
 
@@ -287,7 +291,7 @@ define(function (require) {
 
         while(true) {
           currentChar = resp[offset++];
-          
+
           // EOF
           if(currentChar == null) {
             if (state.escaped) {
