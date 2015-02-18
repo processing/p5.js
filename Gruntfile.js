@@ -4,7 +4,7 @@ module.exports = function(grunt) {
   var keepalive = false;
   if (grunt.option('keepalive')) {
     keepalive = true;
-  }  
+  }
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
