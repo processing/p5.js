@@ -77,7 +77,7 @@ suite('Files', function() {
 
 
   suite('p5.prototype.loadTable',function(){
-    var url = 'https://github-raw-cors-proxy.herokuapp.com/workergnome/p5.js/csv_tests/test/unit/input/csv.csv';
+    var url = 'http://localhost:9001/unit/input/csv.csv';
     
     test('should be a function', function(){
       assert.isFunction(loadTable);
