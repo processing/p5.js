@@ -1,9 +1,10 @@
 module.exports = function(grunt) {
 
-  var reporter = 'Nyan';
-  if (grunt.option('ci')) {
-    reporter = 'Dot';
-  }
+  var reporter = 'Dot';
+  var keepalive = false;
+  if (grunt.option('keepalive')) {
+    keepalive = true;
+  }  
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -64,7 +65,7 @@ module.exports = function(grunt) {
         dest: 'bower.json',     // where to write to
         // the fields to update, as a String Grouping
         fields: 'name version description repository'
-      },
+      }
     },
     requirejs: {
       unmin: {
@@ -206,8 +207,24 @@ module.exports = function(grunt) {
           passwordVar: process.env.GITHUB_PASSWORD //ENVIRONMENT VARIABLE that contains Github password
         }
       }
+    },
+    connect: {
+      server: {
+        options: {
+          base: './test',
+          port: 9001,
+          keepalive: keepalive,
+          middleware: function(connect, options, middlewares) {
+            middlewares.unshift(function (req, res, next) {
+              res.setHeader('Access-Control-Allow-Origin', '*');
+              res.setHeader('Access-Control-Allow-Methods', '*');
+              return next();
+            });
+            return middlewares;
+          }
+        }
+      }
     }
-
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -219,7 +236,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-release');
   grunt.loadNpmTasks('grunt-update-json');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.registerTask('test', ['jshint', 'mocha']);
+  grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.registerTask('test', ['connect', 'jshint', 'mocha']);
   grunt.registerTask('yui', ['yuidoc']);
   grunt.registerTask('default', ['jshint', 'requirejs', 'mocha', 'uglify']);
 

@@ -77,7 +77,7 @@ suite('Files', function() {
 
 
   suite('p5.prototype.loadTable',function(){
-    var url = 'http://p5js.org/p5-tests/csv.csv';
+    var url = 'http://localhost:9001/unit/input/csv.csv';
     
     test('should be a function', function(){
       assert.isFunction(loadTable);
