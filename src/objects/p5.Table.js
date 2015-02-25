@@ -447,6 +447,97 @@ define(function (require) {
 
   };
 
+
+  /**
+   * Stores a value in the Table's specified row and column.
+   * The row is specified by its ID, while the column may be specified 
+   * by either its ID or title.
+   *
+   * @method  set
+   * @param {String|Number} column column ID (Number)
+   *                               or Title (String)
+   * @param {String|Number} value  value to assign
+   */
+  p5.Table.prototype.set = function(row, column, value) {
+    this.rows[row].set(column, value);
+  };
+
+  /**
+   * Stores a Float value in the Table's specified row and column.
+   * The row is specified by its ID, while the column may be specified 
+   * by either its ID or title.
+   *
+   * @method setNum
+   * @param {Number} row row ID
+   * @param {String|Number} column column ID (Number)
+   *                               or title (String)
+   * @param {Number} value  value to assign
+   */
+  p5.Table.prototype.setNum = function(row, column, value){
+    this.rows[row].set(column, value);
+  };
+
+
+  /**
+   * Stores a String value in the Table's specified row and column.
+   * The row is specified by its ID, while the column may be specified 
+   * by either its ID or title.
+   *
+   * @method  setString
+   * @param {Number} row row ID
+   * @param {String|Number} column column ID (Number)
+   *                               or Title (String)
+   * @param {String} value  value to assign
+   */
+  p5.Table.prototype.setString = function(row, column, value){
+    this.rows[row].set(column, value);
+  };
+
+  /**
+   * Retrieves a value from the Table's specified row and column.
+   * The row is specified by its ID, while the column may be specified by 
+   * either its ID or title.
+   *
+   * @method  get
+   * @param {Number} row row ID (Number)
+   * @param  {String|Number} column columnName (string) or
+   *                                   ID (number)
+   * @return {String|Number}
+   */
+  p5.Table.prototype.get = function(row, column) {
+    return this.rows[row].get(column);
+  };
+
+  /**
+   * Retrieves a Float value from the Table's specified row and column.
+   * The row is specified by its ID, while the column may be specified by 
+   * either its ID or title.
+   *
+   * @method  getNum
+   * @param {Number} row row ID (Number)
+   * @param  {String|Number} column columnName (string) or
+   *                                   ID (number)
+   * @return {Number}
+   */
+  p5.Table.prototype.getNum = function(row, column) {
+    return this.rows[row].getNum(column);
+  };
+
+  /**
+   * Retrieves a String value from the Table's specified row and column.
+   * The row is specified by its ID, while the column may be specified by 
+   * either its ID or title.
+   *
+   * @method  getString
+   * @param {Number} row row ID (Number)
+   * @param  {String|Number} column columnName (string) or
+   *                                   ID (number)
+   * @return {String}
+   */
+  p5.Table.prototype.getString = function(row, column) {
+    return this.rows[row].getString(column);
+  };
+
   return p5.Table;
 
 });
