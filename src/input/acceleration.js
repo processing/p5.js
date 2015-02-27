@@ -1,6 +1,3 @@
-
-//my shitty acceleration stuff
-
 define(function (require){
 
   'use strict';
@@ -8,7 +5,6 @@ define(function (require){
   var p5 = require('core');
   
   p5.prototype.deviceOrientation = undefined;
-  //not sure what a good default would be
 
   p5.prototype.accelerationX = 0;
   p5.prototype.accelerationY = 0;
@@ -49,8 +45,7 @@ define(function (require){
       this._setProperty('deviceOrientation', 'portrait');
     }
     else if (window.orientation === undefined){
-      //in case the device doesn't support this function
-      //I don't know if this is a good idea
+      //In case the device doesn't support this function
       this._setProperty('deviceOrientation', 'undefined');
     }
 
@@ -79,7 +74,6 @@ define(function (require){
         new_max_axis = 'z'; //max_val is now irrelevant
       }
       
-      //call the actual method
       if(old_max_axis !== '' && old_max_axis !== new_max_axis){
         onDeviceTurn(new_max_axis);
       }
