@@ -178,8 +178,8 @@ define(function (require) {
       return;
     }
 
-    // // if first param is a String, assume it is a filename for canvas
-    else if (typeof(args[0]) === 'string') {
+    // if first param is a String and there is only one argument, assume it is a filename for canvas
+    else if (args.length === 1 && typeof(args[0]) === 'string') {
       p5.prototype.saveCanvas(cnv, args[0]);
     }
 
