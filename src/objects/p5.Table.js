@@ -290,7 +290,7 @@ define(function (require) {
    *  specified, the new column's title will be null.)
    *
    *  @method  addColumn
-   *  @param {String} [title] Title of the given column
+   *  @param {String} [title] title of the given column
    */
   p5.Table.prototype.addColumn = function(title) {
     var t = title || null;
@@ -455,7 +455,7 @@ define(function (require) {
    *
    * @method  set
    * @param {String|Number} column column ID (Number)
-   *                               or Title (String)
+   *                               or title (String)
    * @param {String|Number} value  value to assign
    */
   p5.Table.prototype.set = function(row, column, value) {
@@ -486,7 +486,7 @@ define(function (require) {
    * @method  setString
    * @param {Number} row row ID
    * @param {String|Number} column column ID (Number)
-   *                               or Title (String)
+   *                               or title (String)
    * @param {String} value  value to assign
    */
   p5.Table.prototype.setString = function(row, column, value){
@@ -499,7 +499,7 @@ define(function (require) {
    * either its ID or title.
    *
    * @method  get
-   * @param {Number} row row ID (Number)
+   * @param {Number} row row ID
    * @param  {String|Number} column columnName (string) or
    *                                   ID (number)
    * @return {String|Number}
@@ -514,7 +514,7 @@ define(function (require) {
    * either its ID or title.
    *
    * @method  getNum
-   * @param {Number} row row ID (Number)
+   * @param {Number} row row ID
    * @param  {String|Number} column columnName (string) or
    *                                   ID (number)
    * @return {Number}
@@ -529,7 +529,7 @@ define(function (require) {
    * either its ID or title.
    *
    * @method  getString
-   * @param {Number} row row ID (Number)
+   * @param {Number} row row ID
    * @param  {String|Number} column columnName (string) or
    *                                   ID (number)
    * @return {String}
