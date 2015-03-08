@@ -118,6 +118,8 @@ define(function (require) {
    *  given paramaters. For example:</p>
    * 
    *  <pre class='language-javascript'><code>
+   *
+   *  save('myCanvas.jpg');           // Saves canvas as an image
    *  
    *  var cnv = createCanvas(100, 100);
    *  save(cnv, 'myCanvas.jpg');      // Saves canvas as an image
@@ -178,8 +180,8 @@ define(function (require) {
       return;
     }
 
-    // // if first param is a String, assume it is a filename for canvas
-    else if (typeof(args[0]) === 'string') {
+    // if 1st param is String and only one arg, assume it is canvas filename
+    else if (args.length === 1 && typeof(args[0]) === 'string') {
       p5.prototype.saveCanvas(cnv, args[0]);
     }
 
@@ -191,10 +193,10 @@ define(function (require) {
       switch(extension){
       case 'json':
         p5.prototype.saveJSON(args[0], args[1], args[2]);
-        break;
+        return;
       case 'txt':
         p5.prototype.saveStrings(args[0], args[1], args[2]);
-        break;
+        return;
       // =================================================
       // OPTION 3: decide based on object...
       default:
@@ -209,9 +211,6 @@ define(function (require) {
         }
         else if (args[0] instanceof p5.SoundFile) {
           p5.prototype.saveSound(args[0], args[1], args[2], args[3]);
-        }
-        else if (args[0] instanceof Object) {
-          p5.prototype.saveJSON(args[0], args[1], args[2]);
         }
       }
     }
@@ -259,6 +258,7 @@ define(function (require) {
     } else {
       stringify = JSON.stringify( json, undefined, 2);
     }
+    console.log(stringify);
     this.saveStrings(stringify.split('\n'), filename, 'json');
   };
 
@@ -512,11 +512,12 @@ define(function (require) {
    *  if the provided parameter has no extension.
    *  
    *  @param   {String} filename
-   *  @return  {String}          File Extension
+   *  @return  {Array} [fileName, fileExtension]
+   *                               
    *  @private
    */
   function _checkFileExtension(filename, extension) {
-    if (!extension) {
+    if (!extension || extension === true || extension === 'true') {
       extension = '';
     }
     if (!filename) {
