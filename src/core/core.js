@@ -174,7 +174,8 @@ define(function (require) {
       'touchmove': null,
       'touchend': null,
       'resize': null,
-      'blur': null
+      'blur': null,
+      'devicemotion': null
     };
     this._loadingScreenId = 'p5_loading';
 
@@ -285,6 +286,7 @@ define(function (require) {
       }
       // call user's draw
       this.redraw();
+      this._updatePAccelerations();
       this._updatePMouseCoords();
       this._updatePTouchCoords();
     }.bind(this);

@@ -117,6 +117,7 @@ module.exports = function(grunt) {
             'image.pixels': 'src/image/pixels',
             'input.files': 'src/input/files',
             'input.keyboard': 'src/input/keyboard',
+            'input.acceleration': 'src/input/acceleration',
             'input.mouse': 'src/input/mouse',
             'input.time_date': 'src/input/time_date',
             'input.touch': 'src/input/touch',
