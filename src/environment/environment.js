@@ -381,6 +381,44 @@ define(function(require) {
     }
   }
 
+  /**
+   * Links to a webpage either in the same window or in a new window.
+   * The complete URL needs to be specified.
+   * Optional windowFeatures is 1 String w/o whitespaces & separated by commas.
+   * http://developer.mozilla.org/en-US/docs/Web/API/Window.open
+   * http://developer.mozilla.org/en-US/docs/Web/API/Window.location
+   *
+   * @method link
+   * @param  {String} full URL to be loaded either current or another Window
+   * @param  {String} [targetWindowName] which Window to load the URL
+   * @param  {String} [windowFeatures] modify passed array
+   * @return {Object} For 1 argument, returns Location object, otherwise Window
+   * @example
+   * <div><code>
+   * function setup() {
+   *   noLoop(), smooth();
+   *   noStroke(), fill(0, 0x80, 0);
+   *   textSize(20), textAlign(CENTER, CENTER);
+   * }
+   *
+   * function draw() {
+   *   background(0350);
+   *   text("Click me!", width>>1, height>>1);
+   * }
+   * 
+   * function keyPressed() {
+   *   link("http://p5js.org");
+   * }
+   *
+   * function mousePressed() {
+   *   link("http://p5js.org", "_blank", // always open in a new Window
+   *   "menubar=no,location,resizable,scrollbars=no,status=no");
+   * }
+   * </code></div>
+   */
+  p5.prototype.link = function(url, win, options) {
+    return win && window.open(url, win, options) || (window.location = url);
+  };
 
   /**
    * Gets the current URL.
