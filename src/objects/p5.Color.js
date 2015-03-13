@@ -98,7 +98,7 @@ define(function(require) {
    * @property _patterns
    * @type {Object}
    */
-  p5.Color._patterns = {
+  var colorPatterns = {
     /**
      * Regular expression for matching colors in format #XXX,
      * e.g. #416
@@ -187,6 +187,9 @@ define(function(require) {
     ].join(WHITESPACE.source), 'i')
   };
 
+  // Assign colorPatterns to p5.Color for testing
+  p5.Color._patterns = colorPatterns;
+
   /**
    * For a number of different inputs, returns a color formatted as
    * [r, g, b, a].
@@ -212,12 +215,59 @@ define(function(require) {
    * </div>
    */
   p5.Color._getFormattedColor = function () {
-    var r, g, b, a;
+    var r, g, b, a, str, vals;
     if (arguments.length >= 3) {
       r = arguments[0];
       g = arguments[1];
       b = arguments[2];
       a = typeof arguments[3] === 'number' ? arguments[3] : 255;
+    } else if (typeof arguments[0] === 'string') {
+      str = arguments[0].trim().toLowerCase();
+
+      // Work through available string patterns to determine how to proceed
+      if (colorPatterns.HEX3.test(str)) {
+        vals = colorPatterns.HEX3.exec(str).slice(1).map(function(color) {
+          // Expand #RGB to #RRGGBB
+          return parseInt(color + color, 16);
+        });
+      } else if (colorPatterns.HEX6.test(str)) {
+        vals = colorPatterns.HEX6.exec(str).slice(1).map(function(color) {
+          return parseInt(color, 16);
+        });
+      } else if (colorPatterns.RGB.test(str)) {
+        vals = colorPatterns.RGB.exec(str).slice(1).map(function(color) {
+          return parseInt(color, 10);
+        });
+      } else if (colorPatterns.RGB_PERCENT.test(str)) {
+        vals = colorPatterns.RGB_PERCENT.exec(str).slice(1)
+          .map(function(color) {
+            return parseInt(parseFloat(color) / 100 * 255, 10);
+          });
+      } else if (colorPatterns.RGBA.test(str)) {
+        vals = colorPatterns.RGBA.exec(str).slice(1)
+          .map(function(color, idx) {
+            if (idx === 3) {
+              // Alpha value is a decimal: multiply by 255
+              return parseInt(parseFloat(color) * 255, 10);
+            }
+            return parseInt(color, 10);
+          });
+      } else if (colorPatterns.RGBA_PERCENT.test(str)) {
+        vals = colorPatterns.RGBA_PERCENT.exec(str).slice(1)
+          .map(function(color, idx) {
+            if (idx === 3) {
+              // Alpha value is a decimal: multiply by 255
+              return parseInt(parseFloat(color) * 255, 10);
+            }
+            return parseInt(parseFloat(color) / 100 * 255, 10);
+          });
+      } else {
+        // Input did not match any CSS Color pattern: Default to white
+        vals = [255];
+      }
+
+      // Re-run _getFormattedColor with the values parsed out of the string
+      return p5.Color._getFormattedColor.apply(this, vals);
     } else {
       if (this._colorMode === constants.RGB) {
         r = g = b = arguments[0];

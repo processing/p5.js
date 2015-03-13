@@ -39,6 +39,210 @@ suite('p5.Color', function() {
     });
   });
 
+  suite('p5.prototype.color("#rgb")', function() {
+    setup(function() {
+      c = myp5.color('#859');
+    });
+    test('should create instance of p5.Color', function() {
+      assert.instanceOf(c, p5.Color);
+    });
+
+    test('should correctly set RGBA property', function() {
+      assert.deepEqual(c.rgba, [136, 85, 153, 255]);
+    });
+
+    test('should correctly set HSBA property', function() {
+      assert.deepEqual(c.hsba, [202, 113, 153, 255] );
+    });
+
+    test('should correctly set RGBA values', function() {
+      assert.equal(c.getRed(), 136);
+      assert.equal(c.getGreen(), 85);
+      assert.equal(c.getBlue(), 153);
+      assert.equal(c.getAlpha(), 255);
+    });
+
+    test('should correctly set HSB values', function() {
+      assert.equal(c.getHue(), 202);
+      assert.equal(c.getSaturation(), 113);
+      assert.equal(c.getBrightness(), 153);
+    });
+
+    test('should correctly render color string', function() {
+      assert.equal(c.toString(), 'rgba(136,85,153,1)');
+    });
+  });
+
+  suite('p5.prototype.color("#rrggbb")', function() {
+    setup(function() {
+      c = myp5.color('#0A508C');
+    });
+    test('should create instance of p5.Color', function() {
+      assert.instanceOf(c, p5.Color);
+    });
+
+    test('should correctly set RGBA property', function() {
+      assert.deepEqual(c.rgba, [10, 80, 140, 255]);
+    });
+
+    test('should correctly set HSBA property', function() {
+      assert.deepEqual(c.hsba, [147, 237, 140, 255] );
+    });
+
+    test('should correctly set RGBA values', function() {
+      assert.equal(c.getRed(), 10);
+      assert.equal(c.getGreen(), 80);
+      assert.equal(c.getBlue(), 140);
+      assert.equal(c.getAlpha(), 255);
+    });
+
+    test('should correctly set HSB values', function() {
+      assert.equal(c.getHue(), 147);
+      assert.equal(c.getSaturation(), 237);
+      assert.equal(c.getBrightness(), 140);
+    });
+
+    test('should correctly render color string', function() {
+      assert.equal(c.toString(), 'rgba(10,80,140,1)');
+    });
+  });
+
+  suite('p5.prototype.color("rgb(r,g,b)")', function() {
+    setup(function() {
+      c = myp5.color('rgb(10,80,140)');
+    });
+    test('should create instance of p5.Color', function() {
+      assert.instanceOf(c, p5.Color);
+    });
+
+    test('should correctly set RGBA property', function() {
+      assert.deepEqual(c.rgba, [10, 80, 140, 255]);
+    });
+
+    test('should correctly set HSBA property', function() {
+      assert.deepEqual(c.hsba, [147, 237, 140, 255] );
+    });
+
+    test('should correctly set RGBA values', function() {
+      assert.equal(c.getRed(), 10);
+      assert.equal(c.getGreen(), 80);
+      assert.equal(c.getBlue(), 140);
+      assert.equal(c.getAlpha(), 255);
+    });
+
+    test('should correctly set HSB values', function() {
+      assert.equal(c.getHue(), 147);
+      assert.equal(c.getSaturation(), 237);
+      assert.equal(c.getBrightness(), 140);
+    });
+
+    test('should correctly render color string', function() {
+      assert.equal(c.toString(), 'rgba(10,80,140,1)');
+    });
+  });
+
+  suite('p5.prototype.color("rgb(r%,g%,b%)")', function() {
+    setup(function() {
+      c = myp5.color('rgb(4%,31.5%,55%)');
+    });
+    test('should create instance of p5.Color', function() {
+      assert.instanceOf(c, p5.Color);
+    });
+
+    test('should correctly set RGBA property', function() {
+      assert.deepEqual(c.rgba, [10, 80, 140, 255]);
+    });
+
+    test('should correctly set HSBA property', function() {
+      assert.deepEqual(c.hsba, [147, 237, 140, 255] );
+    });
+
+    test('should correctly set RGBA values', function() {
+      assert.equal(c.getRed(), 10);
+      assert.equal(c.getGreen(), 80);
+      assert.equal(c.getBlue(), 140);
+      assert.equal(c.getAlpha(), 255);
+    });
+
+    test('should correctly set HSB values', function() {
+      assert.equal(c.getHue(), 147);
+      assert.equal(c.getSaturation(), 237);
+      assert.equal(c.getBrightness(), 140);
+    });
+
+    test('should correctly render color string', function() {
+      assert.equal(c.toString(), 'rgba(10,80,140,1)');
+    });
+  });
+
+  suite('p5.prototype.color("rgba(r,g,b,a)")', function() {
+    setup(function() {
+      c = myp5.color('rgba(10,80,140,0.8)');
+    });
+    test('should create instance of p5.Color', function() {
+      assert.instanceOf(c, p5.Color);
+    });
+
+    test('should correctly set RGBA property', function() {
+      assert.deepEqual(c.rgba, [10, 80, 140, 204]);
+    });
+
+    test('should correctly set HSBA property', function() {
+      assert.deepEqual(c.hsba, [147, 237, 140, 204] );
+    });
+
+    test('should correctly set RGBA values', function() {
+      assert.equal(c.getRed(), 10);
+      assert.equal(c.getGreen(), 80);
+      assert.equal(c.getBlue(), 140);
+      assert.equal(c.getAlpha(), 204);
+    });
+
+    test('should correctly set HSB values', function() {
+      assert.equal(c.getHue(), 147);
+      assert.equal(c.getSaturation(), 237);
+      assert.equal(c.getBrightness(), 140);
+    });
+
+    test('should correctly render color string', function() {
+      assert.equal(c.toString(), 'rgba(10,80,140,0.8)');
+    });
+  });
+
+  suite('p5.prototype.color("rgba(r%,g%,b%,a)")', function() {
+    setup(function() {
+      c = myp5.color('rgba(4%,31.5%,55%,0.6)');
+    });
+    test('should create instance of p5.Color', function() {
+      assert.instanceOf(c, p5.Color);
+    });
+
+    test('should correctly set RGBA property', function() {
+      assert.deepEqual(c.rgba, [10, 80, 140, 153]);
+    });
+
+    test('should correctly set HSBA property', function() {
+      assert.deepEqual(c.hsba, [147, 237, 140, 153] );
+    });
+
+    test('should correctly set RGBA values', function() {
+      assert.equal(c.getRed(), 10);
+      assert.equal(c.getGreen(), 80);
+      assert.equal(c.getBlue(), 140);
+      assert.equal(c.getAlpha(), 153);
+    });
+
+    test('should correctly set HSB values', function() {
+      assert.equal(c.getHue(), 147);
+      assert.equal(c.getSaturation(), 237);
+      assert.equal(c.getBrightness(), 140);
+    });
+
+    test('should correctly render color string', function() {
+      assert.equal(c.toString(), 'rgba(10,80,140,0.6)');
+    });
+  });
+
   suite('p5.prototype.color(r,g,b,a)', function() {
     setup(function() {
       c = myp5.color(10, 20, 30, 51);
@@ -148,7 +352,7 @@ suite('p5.Color', function() {
       });
 
       test('should parse out the component values', function() {
-        var values = '#f0a'.match(HEX3);
+        var values = HEX3.exec('#f0a');
         assert.equal(values.join('|'), '#f0a|f|0|a');
       });
 
@@ -176,7 +380,7 @@ suite('p5.Color', function() {
       });
 
       test('should parse out the component values', function() {
-        var values = '#a3a1b9'.match(HEX6);
+        var values = HEX6.exec('#a3a1b9');
         assert.equal(values.join('|'), '#a3a1b9|a3|a1|b9');
       });
 
@@ -218,7 +422,7 @@ suite('p5.Color', function() {
       });
 
       test('should parse out the component values', function() {
-        var values = 'rgb(139, 0, 138)'.match(RGB);
+        var values = RGB.exec('rgb(139, 0, 138)');
         assert.equal(values.join('|'), 'rgb(139, 0, 138)|139|0|138');
       });
 
@@ -262,7 +466,7 @@ suite('p5.Color', function() {
       });
 
       test('should parse out the component values', function() {
-        var values = 'rgb(0%, 54%, 55%)'.match(RGB_PERCENT);
+        var values = RGB_PERCENT.exec('rgb(0%, 54%, 55%)');
         assert.equal(values.join('|'), 'rgb(0%, 54%, 55%)|0|54|55');
       });
 
@@ -307,7 +511,7 @@ suite('p5.Color', function() {
       });
 
       test('should parse out the component values', function() {
-        var values = 'rgba(139, 0, 138, 0.5)'.match(RGBA);
+        var values = RGBA.exec('rgba(139, 0, 138, 0.5)');
         assert.equal(values.join('|'), 'rgba(139, 0, 138, 0.5)|139|0|138|0.5');
       });
 
@@ -351,7 +555,7 @@ suite('p5.Color', function() {
       });
 
       test('should parse out the component values', function() {
-        var values = 'rgba(0%, 54%, 55%, 0.5)'.match(RGBA_PERCENT);
+        var values = RGBA_PERCENT.exec('rgba(0%, 54%, 55%, 0.5)');
         assert.equal(values.join('|'), 'rgba(0%, 54%, 55%, 0.5)|0|54|55|0.5');
       });
 
