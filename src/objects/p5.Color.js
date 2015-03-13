@@ -10,7 +10,7 @@ define(function(require) {
   var constants = require('constants');
 
   /**
-   * 
+   *
    * @class p5.Color
    * @constructor
    */
@@ -77,9 +77,104 @@ define(function(require) {
   };
 
   /**
+   * Regular Expressions for use identifying color pattern strings
+   *
+   * @property _patterns
+   * @type {Object}
+   */
+  p5.Color._patterns = {
+    /**
+     * Regular expression for matching colors in format #XXX,
+     * e.g. #416
+     * @property _patterns.HEX3
+     * @type {RegExp}
+     */
+    HEX3: /^#[\da-f]{3}$/i,
+    /**
+     * Regular expression for matching colors in format #XXXXXX,
+     * e.g. #b4d455
+     * @property _patterns.HEX6
+     * @type {RegExp}
+     */
+    HEX6: /^#[\da-f]{6}$/i,
+    /**
+     * Regular expression for matching colors in format rgb(R, G, B),
+     * e.g. rgb(255, 0, 128)
+     *
+     * @property _patterns.RGB
+     * @type {RegExp}
+     */
+    RGB: new RegExp([
+      // Defining RegExp this way makes it more obvious where whitespace
+      // (`\s*`) is permitted between tokens
+      '^rgb\\(',
+      '([\\d.]+)',
+      ',',
+      '([\\d.]+)',
+      ',',
+      '([\\d.]+)',
+      '\\)$'
+    ].join('\\s*'), 'i'),
+    /**
+     * Regular expression for matching colors in format rgb(R%, G%, B%),
+     * e.g. rgb(100%, 0%, 28%)
+     *
+     * @property _patterns.RGB_PERCENT
+     * @type {RegExp}
+     */
+    RGB_PERCENT: new RegExp([
+      // Defining RegExp this way makes it more obvious where whitespace
+      // (`\s*`) is permitted between tokens
+      '^rgb\\(',
+      '([\\d.]+)%',
+      ',',
+      '([\\d.]+)%',
+      ',',
+      '([\\d.]+)%',
+      '\\)$'
+    ].join('\\s*'), 'i'),
+    /**
+     * Regular expression for matching colors in format rgb(R, G, B, A),
+     * e.g. rgb(255, 0, 128, 0.25)
+     *
+     * @property _patterns.RGBA
+     * @type {RegExp}
+     */
+    RGBA: new RegExp([
+      '^rgba\\(',
+      '([\\d.]+)',
+      ',',
+      '([\\d.]+)',
+      ',',
+      '([\\d.]+)',
+      ',',
+      '([\\d.]+)',
+      '\\)$'
+    ].join('\\s*'), 'i'),
+    /**
+     * Regular expression for matching colors in format rgb(R%, G%, B%, A),
+     * e.g. rgb(100%, 0%, 28%. 0.5)
+     *
+     * @property _patterns.RGBA_PERCENT
+     * @type {RegExp}
+     */
+    RGBA_PERCENT: new RegExp([
+      '^rgba\\(',
+      '([\\d.]+)%',
+      ',',
+      '([\\d.]+)%',
+      ',',
+      '([\\d.]+)%',
+      ',',
+      '([\\d.]+)',
+      '\\)$'
+    ].join('\\s*'), 'i')
+  };
+
+  /**
    * For a number of different inputs, returns a color formatted as
    * [r, g, b, a].
-   * 
+   *
    * @param {Array-like} args An 'array-like' object that represents a list of
    *                          arguments
    * @return {Array}          a color formatted as [r, g, b, a]
