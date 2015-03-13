@@ -243,6 +243,40 @@ suite('p5.Color', function() {
     });
   });
 
+  suite('p5.prototype.color("papayawhip")', function() {
+    setup(function() {
+      c = myp5.color('papayawhip');
+    });
+    test('should create instance of p5.Color', function() {
+      assert.instanceOf(c, p5.Color);
+    });
+
+    test('should correctly set RGBA property', function() {
+      assert.deepEqual(c.rgba, [255, 239, 213, 255]);
+    });
+
+    test('should correctly set HSBA property', function() {
+      assert.deepEqual(c.hsba, [26, 42, 255, 255] );
+    });
+
+    test('should correctly set RGBA values', function() {
+      assert.equal(c.getRed(), 255);
+      assert.equal(c.getGreen(), 239);
+      assert.equal(c.getBlue(), 213);
+      assert.equal(c.getAlpha(), 255);
+    });
+
+    test('should correctly set HSB values', function() {
+      assert.equal(c.getHue(), 26);
+      assert.equal(c.getSaturation(), 42);
+      assert.equal(c.getBrightness(), 255);
+    });
+
+    test('should correctly render color string', function() {
+      assert.equal(c.toString(), 'rgba(255,239,213,1)');
+    });
+  });
+
   suite('p5.prototype.color(r,g,b,a)', function() {
     setup(function() {
       c = myp5.color(10, 20, 30, 51);
