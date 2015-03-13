@@ -147,7 +147,12 @@ suite('p5.Color', function() {
         assert.isTrue(HEX3.test('#f0e'), 'works for another alphanumeric value');
       });
 
-      test('should not match other color code formats', function() {
+      test('should parse out the component values', function() {
+        var values = '#f0a'.match(HEX3);
+        assert.equal(values.join('|'), '#f0a|f|0|a');
+      });
+
+      test('should not match invalid formats or other strings', function() {
         assert.isFalse(HEX3.test('#cat'), 'does not match invalid hex');
         assert.isFalse(HEX3.test('#000000'), 'does not match hex-6');
         assert.isFalse(HEX3.test('rgb(0,0,0)'), 'does not match rgb()');
@@ -170,7 +175,12 @@ suite('p5.Color', function() {
         assert.isTrue(HEX6.test('#14ffa8'), 'works for another alphanumeric value');
       });
 
-      test('should not match other color code formats', function() {
+      test('should parse out the component values', function() {
+        var values = '#a3a1b9'.match(HEX6);
+        assert.equal(values.join('|'), '#a3a1b9|a3|a1|b9');
+      });
+
+      test('should not match invalid formats or other strings', function() {
         assert.isFalse(HEX6.test('#zzztop'), 'does not match invalid hex');
         assert.isFalse(HEX6.test('#000'), 'does not match hex-3');
         assert.isFalse(HEX6.test('rgb(0,0,0)'), 'does not match rgb()');
@@ -212,16 +222,13 @@ suite('p5.Color', function() {
         assert.equal(values.join('|'), 'rgb(139, 0, 138)|139|0|138');
       });
 
-      test('should not match invalid color code formats', function() {
-        assert.isFalse(RGB.test('skip a beat'), 'does not match non-color strings');
-        assert.isFalse(RGB.test('rgba(,0,0)'), 'does not match missing values');
-        assert.isFalse(RGB.test('rgba(0 0 100)'), 'does not match missing commas');
-      });
-
-      test('should not match other color code formats', function() {
+      test('should not match invalid formats or other strings', function() {
         assert.isFalse(RGB.test('#000000'), 'does not match hex-6');
         assert.isFalse(RGB.test('rgba(0, 0, 0, 1)'), 'does not match rgba()');
         assert.isFalse(RGB.test('orange'), 'does not match keywords');
+        assert.isFalse(RGB.test('skip a beat'), 'does not match non-color strings');
+        assert.isFalse(RGB.test('rgba(,0,0)'), 'does not match missing values');
+        assert.isFalse(RGB.test('rgba(0 0 100)'), 'does not match missing commas');
       });
 
     });
@@ -259,17 +266,14 @@ suite('p5.Color', function() {
         assert.equal(values.join('|'), 'rgb(0%, 54%, 55%)|0|54|55');
       });
 
-      test('should not match invalid color code formats', function() {
+      test('should not match invalid formats or other strings', function() {
+        assert.isFalse(RGB_PERCENT.test('#000000'), 'does not match hex-6');
+        assert.isFalse(RGB_PERCENT.test('rgba(0, 0, 0, 1)'), 'does not match rgba()');
+        assert.isFalse(RGB_PERCENT.test('orange'), 'does not match keyword');
+        assert.isFalse(RGB_PERCENT.test('rgb(A%,B%,C%)'), 'does not match non-numeric percents');
         assert.isFalse(RGB_PERCENT.test('skip a beat'), 'does not match non-color strings');
         assert.isFalse(RGB_PERCENT.test('rgb(,0%,0%)'), 'does not match missing values');
         assert.isFalse(RGB_PERCENT.test('rgb(0% 0% 100%)'), 'does not match missing commas');
-      });
-
-      test('should not match other color code formats', function() {
-        assert.isFalse(RGB_PERCENT.test('#000000'), 'does not match hex-6');
-        assert.isFalse(RGB_PERCENT.test('rgb(A%,B%,C%)'), 'does not match non-numeric percents');
-        assert.isFalse(RGB_PERCENT.test('rgba(0, 0, 0, 1)'), 'does not match rgba()');
-        assert.isFalse(RGB_PERCENT.test('orange'), 'does not match keyword');
       });
 
     });
@@ -307,16 +311,13 @@ suite('p5.Color', function() {
         assert.equal(values.join('|'), 'rgba(139, 0, 138, 0.5)|139|0|138|0.5');
       });
 
-      test('should not match invalid color code formats', function() {
-        assert.isFalse(RGBA.test('skip a beat'), 'does not match non-color strings');
-        assert.isFalse(RGBA.test('rgba(,0,0,1)'), 'does not match missing values');
-        assert.isFalse(RGBA.test('rgba(0 0 100 1)'), 'does not match missing commas');
-      });
-
-      test('should not match other color code formats', function() {
+      test('should not match invalid formats or other strings', function() {
         assert.isFalse(RGBA.test('#000000'), 'does not match hex-6');
         assert.isFalse(RGBA.test('rgb(0, 0, 0)'), 'does not match rgb()');
         assert.isFalse(RGBA.test('orange'), 'does not match keywords');
+        assert.isFalse(RGBA.test('skip a beat'), 'does not match non-color strings');
+        assert.isFalse(RGBA.test('rgba(,0,0,1)'), 'does not match missing values');
+        assert.isFalse(RGBA.test('rgba(0 0 100 1)'), 'does not match missing commas');
       });
 
     });
@@ -342,12 +343,6 @@ suite('p5.Color', function() {
         assert.isTrue(RGBA_PERCENT.test('rgba(0%,87%, 10% , 0.3)'));
       });
 
-      test('should not match invalid color code formats', function() {
-        assert.isFalse(RGBA_PERCENT.test('skip a beat'), 'does not match non-color strings');
-        assert.isFalse(RGBA_PERCENT.test('rgba(,0%,0%,1)'), 'does not match missing values');
-        assert.isFalse(RGBA_PERCENT.test('rgba(0% 0% 100%, 1)'), 'does not match missing commas');
-      });
-
       test('should match decimal R, G or B values', function() {
         assert.isTrue(RGBA_PERCENT.test('rgba(90.5%, 40%, 3%, 0.45)'), 'decimal R value');
         assert.isTrue(RGBA_PERCENT.test('rgba(90%, 40.00009%, 3%, 0.45)'), 'decimal G value');
@@ -360,11 +355,14 @@ suite('p5.Color', function() {
         assert.equal(values.join('|'), 'rgba(0%, 54%, 55%, 0.5)|0|54|55|0.5');
       });
 
-      test('should not match other color code formats', function() {
+      test('should not match invalid formats or other strings', function() {
         assert.isFalse(RGBA_PERCENT.test('#000000'), 'does not match hex-6');
-        assert.isFalse(RGBA_PERCENT.test('rgba(A%,B%,C%,1)'), 'does not match non-numeric percents');
         assert.isFalse(RGBA_PERCENT.test('rgb(0, 0, 0)'), 'does not match rgb()');
         assert.isFalse(RGBA_PERCENT.test('orange'), 'does not match keywords');
+        assert.isFalse(RGBA_PERCENT.test('rgba(A%,B%,C%,1)'), 'does not match non-numeric percents');
+        assert.isFalse(RGBA_PERCENT.test('skip a beat'), 'does not match non-color strings');
+        assert.isFalse(RGBA_PERCENT.test('rgba(,0%,0%,1)'), 'does not match missing values');
+        assert.isFalse(RGBA_PERCENT.test('rgba(0% 0% 100%, 1)'), 'does not match missing commas');
       });
 
     });

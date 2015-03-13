@@ -85,10 +85,12 @@ define(function(require) {
   var WHITESPACE = /\s*/;
   // Match whole-number values, e.g `255` or `79`
   var INTEGER = /(\d{1,3})/;
-  // Match decimal values, e.g `129.6` or `79`
-  var PERCENT = /(\d+(?:\.\d+)?)%/;
-  // Match decimal values, making the leading number optional
-  var DECIMAL = /(\d?(?:\.\d+)?)/;
+  // Match decimal values, e.g `129.6`, `79`, or `.9`
+  // Note: R, G or B values of `.9` are not parsed by IE: however, they are
+  // supported here to provide more consistent color string parsing
+  var DECIMAL = /((?:\d+(?:\.\d+)?)|(?:\.\d+))/;
+  // Match decimal values followed by a percent sign
+  var PERCENT = new RegExp(DECIMAL.source + '%');
 
   /**
    * Regular Expressions for use identifying color pattern strings
