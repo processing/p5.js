@@ -77,6 +77,20 @@ define(function(require) {
   };
 
   /**
+   * These Regular Expressions are used to build up the patterns for matching
+   * viable CSS color strings: fragmenting the regexes in this way increases
+   * the legibility and comprehensibility of the code
+   */
+  // Match any number of whitespace characters (including no whitespace)
+  var WHITESPACE = /\s*/;
+  // Match whole-number values, e.g `255` or `79`
+  var INTEGER = /(\d{1,3})/;
+  // Match decimal values, e.g `129.6` or `79`
+  var PERCENT = /(\d+(?:\.\d+)?)%/;
+  // Match decimal values, making the leading number optional
+  var DECIMAL = /(\d?(?:\.\d+)?)/;
+
+  /**
    * Regular Expressions for use identifying color pattern strings
    *
    * @property _patterns
@@ -89,14 +103,14 @@ define(function(require) {
      * @property _patterns.HEX3
      * @type {RegExp}
      */
-    HEX3: /^#[\da-f]{3}$/i,
+    HEX3: /^#([a-f0-9])([a-f0-9])([a-f0-9])$/i,
     /**
      * Regular expression for matching colors in format #XXXXXX,
      * e.g. #b4d455
      * @property _patterns.HEX6
      * @type {RegExp}
      */
-    HEX6: /^#[\da-f]{6}$/i,
+    HEX6: /^#([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})$/i,
     /**
      * Regular expression for matching colors in format rgb(R, G, B),
      * e.g. rgb(255, 0, 128)
@@ -108,16 +122,16 @@ define(function(require) {
       // Defining RegExp this way makes it more obvious where whitespace
       // (`\s*`) is permitted between tokens
       '^rgb\\(',
-      '([\\d.]+)',
+      INTEGER.source,
       ',',
-      '([\\d.]+)',
+      INTEGER.source,
       ',',
-      '([\\d.]+)',
+      INTEGER.source,
       '\\)$'
-    ].join('\\s*'), 'i'),
+    ].join(WHITESPACE.source), 'i'),
     /**
      * Regular expression for matching colors in format rgb(R%, G%, B%),
-     * e.g. rgb(100%, 0%, 28%)
+     * e.g. rgb(100%, 0%, 28.9%)
      *
      * @property _patterns.RGB_PERCENT
      * @type {RegExp}
@@ -126,13 +140,13 @@ define(function(require) {
       // Defining RegExp this way makes it more obvious where whitespace
       // (`\s*`) is permitted between tokens
       '^rgb\\(',
-      '([\\d.]+)%',
+      PERCENT.source,
       ',',
-      '([\\d.]+)%',
+      PERCENT.source,
       ',',
-      '([\\d.]+)%',
+      PERCENT.source,
       '\\)$'
-    ].join('\\s*'), 'i'),
+    ].join(WHITESPACE.source), 'i'),
     /**
      * Regular expression for matching colors in format rgb(R, G, B, A),
      * e.g. rgb(255, 0, 128, 0.25)
@@ -142,33 +156,33 @@ define(function(require) {
      */
     RGBA: new RegExp([
       '^rgba\\(',
-      '([\\d.]+)',
+      INTEGER.source,
       ',',
-      '([\\d.]+)',
+      INTEGER.source,
       ',',
-      '([\\d.]+)',
+      INTEGER.source,
       ',',
-      '([\\d.]+)',
+      DECIMAL.source,
       '\\)$'
-    ].join('\\s*'), 'i'),
+    ].join(WHITESPACE.source), 'i'),
     /**
      * Regular expression for matching colors in format rgb(R%, G%, B%, A),
-     * e.g. rgb(100%, 0%, 28%. 0.5)
+     * e.g. rgb(100%, 0%, 28.9%. 0.5)
      *
      * @property _patterns.RGBA_PERCENT
      * @type {RegExp}
      */
     RGBA_PERCENT: new RegExp([
       '^rgba\\(',
-      '([\\d.]+)%',
+      PERCENT.source,
       ',',
-      '([\\d.]+)%',
+      PERCENT.source,
       ',',
-      '([\\d.]+)%',
+      PERCENT.source,
       ',',
-      '([\\d.]+)',
+      DECIMAL.source,
       '\\)$'
-    ].join('\\s*'), 'i')
+    ].join(WHITESPACE.source), 'i')
   };
 
   /**

@@ -186,7 +186,7 @@ suite('p5.Color', function() {
         RGB = p5.Color._patterns.RGB;
       });
 
-      test('should match Hex color codes of format rgb(R,G,B)', function() {
+      test('should match color strings of format rgb(R,G,B)', function() {
         // Exhaustive testing of spacing variations within RGB format is
         // prohibitive: spot check a set of representative values
         assert.isTrue(RGB.test('rgb(255,255,255)'));
@@ -200,13 +200,22 @@ suite('p5.Color', function() {
         assert.isTrue(RGB.test('rgb(0,255, 10 )'));
       });
 
-      test('should match decimal R, G or B values', function() {
-        assert.isTrue(RGB.test('rgb(100.5, 40.00009, 3.14159265)'));
+      test('should not match decimal R, G or B values', function() {
+        assert.isFalse(RGB.test('rgb(100.5, 40, 3)'), 'decimal R value');
+        assert.isFalse(RGB.test('rgb(100, 40.00009, 3)'), 'decimal G value');
+        assert.isFalse(RGB.test('rgb(100, 40, 3.14159265)'), 'decimal B value');
+        assert.isFalse(RGB.test('rgb(.9, 40, 3, 1.0)'), 'decimal without leading 0');
       });
 
       test('should parse out the component values', function() {
         var values = 'rgb(139, 0, 138)'.match(RGB);
         assert.equal(values.join('|'), 'rgb(139, 0, 138)|139|0|138');
+      });
+
+      test('should not match invalid color code formats', function() {
+        assert.isFalse(RGB.test('skip a beat'), 'does not match non-color strings');
+        assert.isFalse(RGB.test('rgba(,0,0)'), 'does not match missing values');
+        assert.isFalse(RGB.test('rgba(0 0 100)'), 'does not match missing commas');
       });
 
       test('should not match other color code formats', function() {
@@ -224,27 +233,36 @@ suite('p5.Color', function() {
         RGB_PERCENT = p5.Color._patterns.RGB_PERCENT;
       });
 
-      test('should match Hex color codes of format rgb(R%,G%,B%)', function() {
+      test('should match color strings of format rgb(R%,G%,B%)', function() {
         // Exhaustive testing of spacing variations within RGB format is
         // prohibitive: spot check a set of representative values
         assert.isTrue(RGB_PERCENT.test('rgb(100%,100%,100%)'));
         assert.isTrue(RGB_PERCENT.test('rgb(0%,0%,0% )'));
         assert.isTrue(RGB_PERCENT.test('rgb(0%,50%  ,  0%)'));
-        assert.isTrue(RGB_PERCENT.test('rgb( 50%,100% ,100%)'));
+        assert.isTrue(RGB_PERCENT.test('rgb( 50%,100% ,.9%)'), 'B% without leading 0');
         assert.isTrue(RGB_PERCENT.test('rgb(10%, 50%,0%)'));
         assert.isTrue(RGB_PERCENT.test('rgb(0%,50%, 0%)'));
-        assert.isTrue(RGB_PERCENT.test('rgb( 100%, 12%, 100%)'));
+        assert.isTrue(RGB_PERCENT.test('rgb( 10.90%, 12%, 100%)'), 'decimal R%');
         assert.isTrue(RGB_PERCENT.test('rgb(0%, 0%, 0%)'));
         assert.isTrue(RGB_PERCENT.test('rgb(0%,87%, 10%)'));
       });
 
       test('should match decimal R, G or B values', function() {
-        assert.isTrue(RGB_PERCENT.test('rgb(90.5%, 40.00009%, 3.14159265%)'));
+        assert.isTrue(RGB_PERCENT.test('rgb(90.5%, 40%, 3%)'), 'decimal R value');
+        assert.isTrue(RGB_PERCENT.test('rgb(90%, 40.00009%, 3%)'), 'decimal G value');
+        assert.isTrue(RGB_PERCENT.test('rgb(90%, 40%, 3.14159265%)'), 'decimal B value');
+        assert.isTrue(RGB_PERCENT.test('rgb(90%, 40%, .9%)'), 'decimal without leading 0');
       });
 
       test('should parse out the component values', function() {
         var values = 'rgb(0%, 54%, 55%)'.match(RGB_PERCENT);
         assert.equal(values.join('|'), 'rgb(0%, 54%, 55%)|0|54|55');
+      });
+
+      test('should not match invalid color code formats', function() {
+        assert.isFalse(RGB_PERCENT.test('skip a beat'), 'does not match non-color strings');
+        assert.isFalse(RGB_PERCENT.test('rgb(,0%,0%)'), 'does not match missing values');
+        assert.isFalse(RGB_PERCENT.test('rgb(0% 0% 100%)'), 'does not match missing commas');
       });
 
       test('should not match other color code formats', function() {
@@ -263,7 +281,7 @@ suite('p5.Color', function() {
         RGBA = p5.Color._patterns.RGBA;
       });
 
-      test('should match Hex color codes of format rgba(R,G,B,A)', function() {
+      test('should match color strings of format rgba(R,G,B,A)', function() {
         // Exhaustive testing of spacing variations within RGBA format is
         // prohibitive: spot check a set of representative values
         assert.isTrue(RGBA.test('rgba(255,255,255,1)'), 'white');
@@ -277,13 +295,22 @@ suite('p5.Color', function() {
         assert.isTrue(RGBA.test('rgba(255,0, 10 , 0.33)'), 'transparent pink');
       });
 
-      test('should match decimal R, G or B values', function() {
-        assert.isTrue(RGBA.test('rgba(100.5, 40.00009, 3.14159265, 1.0)'));
+      test('should not match decimal R, G or B values', function() {
+        assert.isFalse(RGBA.test('rgba(100.5, 40, 3, 1.0)'), 'decimal R value');
+        assert.isFalse(RGBA.test('rgba(100, 40.00009, 3, 1.0)'), 'decimal G value');
+        assert.isFalse(RGBA.test('rgba(100, 40, 3.14159265, 1.0)'), 'decimal B value');
+        assert.isFalse(RGBA.test('rgba(.9, 40, 3, 1.0)'), 'decimal without leading 0');
       });
 
       test('should parse out the component values', function() {
         var values = 'rgba(139, 0, 138, 0.5)'.match(RGBA);
         assert.equal(values.join('|'), 'rgba(139, 0, 138, 0.5)|139|0|138|0.5');
+      });
+
+      test('should not match invalid color code formats', function() {
+        assert.isFalse(RGBA.test('skip a beat'), 'does not match non-color strings');
+        assert.isFalse(RGBA.test('rgba(,0,0,1)'), 'does not match missing values');
+        assert.isFalse(RGBA.test('rgba(0 0 100 1)'), 'does not match missing commas');
       });
 
       test('should not match other color code formats', function() {
@@ -301,22 +328,31 @@ suite('p5.Color', function() {
         RGBA_PERCENT = p5.Color._patterns.RGBA_PERCENT;
       });
 
-      test('should match Hex color codes of format rgba(R%,G%,B%,A)', function() {
+      test('should match color strings of format rgba(R%,G%,B%,A)', function() {
         // Exhaustive testing of spacing variations within RGBA format is
         // prohibitive: spot check a set of representative values
-        assert.isTrue(RGBA_PERCENT.test('rgba(100%,100%,100%,1)'));
+        assert.isTrue(RGBA_PERCENT.test('rgba(100%,10.9%,100%,1)'), 'decimal G%');
         assert.isTrue(RGBA_PERCENT.test('rgba(0%,0%,0%,1)'));
         assert.isTrue(RGBA_PERCENT.test('rgba(0%,50%,0%, 0.5)'));
-        assert.isTrue(RGBA_PERCENT.test('rgba( 50%,100% ,100%, 0)'));
+        assert.isTrue(RGBA_PERCENT.test('rgba( 50%,.9% ,100%, 0)'), 'G% without leading 0');
         assert.isTrue(RGBA_PERCENT.test('rgba(10%, 50%,0%, 0.2515236)'));
         assert.isTrue(RGBA_PERCENT.test('rgba(0%,50%, 0%, 0.75)'));
-        assert.isTrue(RGBA_PERCENT.test('rgba( 100%, 12%, 100%, .9)'));
+        assert.isTrue(RGBA_PERCENT.test('rgba( 100%, 12%, 100%, .9)'), 'opacity without leading 0');
         assert.isTrue(RGBA_PERCENT.test('rgba(0%, 0%, 0%, 1)'));
         assert.isTrue(RGBA_PERCENT.test('rgba(0%,87%, 10% , 0.3)'));
       });
 
+      test('should not match invalid color code formats', function() {
+        assert.isFalse(RGBA_PERCENT.test('skip a beat'), 'does not match non-color strings');
+        assert.isFalse(RGBA_PERCENT.test('rgba(,0%,0%,1)'), 'does not match missing values');
+        assert.isFalse(RGBA_PERCENT.test('rgba(0% 0% 100%, 1)'), 'does not match missing commas');
+      });
+
       test('should match decimal R, G or B values', function() {
-        assert.isTrue(RGBA_PERCENT.test('rgba(90.5%, 40.00009%, 3.14159265%, 0.45)'));
+        assert.isTrue(RGBA_PERCENT.test('rgba(90.5%, 40%, 3%, 0.45)'), 'decimal R value');
+        assert.isTrue(RGBA_PERCENT.test('rgba(90%, 40.00009%, 3%, 0.45)'), 'decimal G value');
+        assert.isTrue(RGBA_PERCENT.test('rgba(90%, 40%, 3.14159265%, 0.45)'), 'decimal B value');
+        assert.isTrue(RGBA_PERCENT.test('rgba(90%, 40%, .9%, 0.45)'), 'decimal without leading 0');
       });
 
       test('should parse out the component values', function() {
