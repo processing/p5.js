@@ -1,6 +1,6 @@
 /**
- * @module Utils
- * @submodule Color Utils
+ * module Utils
+ * submodule Color Utils
  * @for p5
  */
 define(function(require) {
