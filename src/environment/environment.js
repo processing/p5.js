@@ -378,6 +378,8 @@ define(function(require) {
       document.mozCancelFullScreen();
     } else if(document.webkitExitFullscreen) {
       document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
     }
   }
 
