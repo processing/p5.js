@@ -133,19 +133,15 @@ define(function (require) {
    * @example
    * <div><code>
    * function setup() {
-   *   const regularArr = ['ABC', 'def', createVector(), TAU, Math.E];
+   *   var regularArr = ['ABC', 'def', createVector(), TAU, Math.E];
    *   print(regularArr);
-   *   shuffle(regularArr, true); // Forced modifications to passed array!
-   *   print(regularArr), print('');
+   *   shuffle(regularArr, true); // force modifications to passed array
+   *   print(regularArr);
    *
    *   // By default shuffle() returns a shuffled cloned array:
-   *   const clonedArr = shuffle(regularArr);
-   *   print(regularArr), print(clonedArr), print('');
-   *
-   *   const typedArr = new Uint8ClampedArray([10, 20, 30, 40, 50]);
-   *   print(typedArr);
-   *   shuffle(typedArr); // TypedArrays are never cloned!
-   *   print(typedArr), print('');
+   *   var newArr = shuffle(regularArr);
+   *   print(regularArr);
+   *   print(newArr);
    * }
    * </code></div>
    */
