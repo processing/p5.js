@@ -193,7 +193,7 @@ module.exports = function(grunt) {
     release: {
       options: {
         github: {
-          repo: 'lmccart/p5.js', //put your user/repo here
+          repo: 'processing/p5.js', //put your user/repo here
           usernameVar: process.env.GITHUB_USERNAME, //ENVIRONMENT VARIABLE that contains Github username
           passwordVar: process.env.GITHUB_PASSWORD //ENVIRONMENT VARIABLE that contains Github password
         }
