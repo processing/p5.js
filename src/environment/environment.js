@@ -331,6 +331,7 @@ define(function(require) {
    * inside setup().
    *
    * @method devicePixelScaling
+   * @param  {Boolean|Number} [val] whether or how much the sketch should scale
    * @example
    * <div>
    * <code>
@@ -342,10 +343,25 @@ define(function(require) {
    * }
    * </code>
    * </div>
+   * <div>
+   * <code>
+   * function setup() {
+   *   devicePixelScaling(3.0);
+   *   createCanvas(100, 100);
+   *   background(200);
+   *   ellipse(width/2, height/2, 50, 50);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.devicePixelScaling = function(val) {
     if (val) {
-      this._pixelDensity = window.devicePixelRatio || 1;
+      if (typeof val === 'number') {
+        this._pixelDensity = val;
+      }
+      else {
+        this._pixelDensity = window.devicePixelRatio || 1;
+      }
     } else {
       this._pixelDensity = 1;
     }
