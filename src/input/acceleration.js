@@ -12,7 +12,8 @@ define(function (require){
 
   /**
    * The system variable deviceOrientation always contains the orientation of
-   * the device. The vaule of this varible will either be landscape or portrait.
+   * the device. The value of this variable will either be set 'landscape'
+   * or 'portrait'. If no data is avaliable it will be set to 'undefined'.
    *
    * @property deviceOrientation
    */
@@ -69,6 +70,11 @@ define(function (require){
    */
   p5.prototype.pAccelerationZ = 0;
 
+  /**
+   * _updatePAccelerations updates the pAcceleration values
+   *
+   * @private
+   */
   p5.prototype._updatePAccelerations = function(){
     this._setProperty('pAccelerationX', this.accelerationX);
     this._setProperty('pAccelerationY', this.accelerationY);
@@ -77,6 +83,13 @@ define(function (require){
 
   var move_threshold = 0.5;
 
+  /**
+   * The setMoveThreshold() function is used to set the movement threshold for
+   * the onDeviceMove() function.
+   *
+   * @method setMoveThreshold
+   * @param {number} value The threshold value
+   */
   p5.prototype.setMoveThreshold = function(val){
     if(typeof val === 'number'){
       move_threshold = val;
@@ -86,6 +99,57 @@ define(function (require){
   var old_max_axis = '';
   var new_max_axis = '';
 
+  /**
+   * The onDeviceMove() function is called when the devices orientation changes
+   * by more than the threshold value.
+   * @method onDeviceMove
+   * @example
+   * <div>
+   * <code>
+   * // Run this example on a mobile device
+   * // Move the device around
+   * // to change the value.
+   *
+   * var value = 0;
+   * function draw() {
+   *   fill(value);
+   *   rect(25, 25, 50, 50);
+   * }
+   * function onDeviceMove() {
+   *   value = value + 5;
+   *   if (value > 255) {
+   *     value = 0;
+   *   }
+   * }
+   * </code>
+   * </div>
+   */
+
+  /**
+   * The onDeviceTurn() function is called when the device rotates by
+   * more than 90 degrees.
+   * @method onDeviceTurn
+   * @example
+   * <div>
+   * <code>
+   * // Run this example on a mobile device
+   * // Rotate the device by 90 degrees
+   * // to change the value.
+   *
+   * var value = 0;
+   * function draw() {
+   *   fill(value);
+   *   rect(25, 25, 50, 50);
+   * }
+   * function onDeviceTurn() {
+   *   value = value + 5;
+   *   if (value > 255) {
+   *     value = 0;
+   *   }
+   * }
+   * </code>
+   * </div>
+   */
   p5.prototype.ondevicemotion = function (e) {
     this._setProperty('accelerationX', e.accelerationIncludingGravity.x);
     this._setProperty('accelerationY', e.accelerationIncludingGravity.y);
