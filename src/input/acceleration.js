@@ -1,17 +1,72 @@
+/**
+ * @module Input
+ * @submodule Acceleration
+ * @for p5
+ * @requires core
+ */
 define(function (require){
 
   'use strict';
 
   var p5 = require('core');
-  
+
+  /**
+   * The system variable deviceOrientation always contains the orientation of
+   * the device. The vaule of this varible will either be landscape or portrait.
+   *
+   * @property deviceOrientation
+   */
   p5.prototype.deviceOrientation = undefined;
 
+  /**
+   * The system variable accelerationX always contains the acceleration of the
+   * device along the x axis. Value is represented as meters per second squared.
+   *
+   * @property accelerationX
+   */
   p5.prototype.accelerationX = 0;
+
+  /**
+   * The system variable accelerationY always contains the acceleration of the
+   * device along the y axis. Value is represented as meters per second squared.
+   *
+   * @property accelerationY
+   */
   p5.prototype.accelerationY = 0;
+
+  /**
+   * The system variable accelerationZ always contains the acceleration of the
+   * device along the z axis. Value is represented as meters per second squared.
+   *
+   * @property accelerationZ
+   */
   p5.prototype.accelerationZ = 0;
 
+  /**
+   * The system variable pAccelerationX always contains the acceleration of the
+   * device along the x axis in the frame previous to the current frame. Value
+   * is represented as meters per second squared.
+   *
+   * @property pAccelerationX
+   */
   p5.prototype.pAccelerationX = 0;
+
+  /**
+   * The system variable pAccelerationY always contains the acceleration of the
+   * device along the y axis in the frame previous to the current frame. Value
+   * is represented as meters per second squared.
+   *
+   * @property pAccelerationY
+   */
   p5.prototype.pAccelerationY = 0;
+
+  /**
+   * The system variable pAccelerationZ always contains the acceleration of the
+   * device along the z axis in the frame previous to the current frame. Value
+   * is represented as meters per second squared.
+   *
+   * @property pAccelerationZ
+   */
   p5.prototype.pAccelerationZ = 0;
 
   p5.prototype._updatePAccelerations = function(){
@@ -73,7 +128,7 @@ define(function (require){
       if(Math.abs(this.accelerationZ) > max_val){
         new_max_axis = 'z'; //max_val is now irrelevant
       }
-      
+
       if(old_max_axis !== '' && old_max_axis !== new_max_axis){
         onDeviceTurn(new_max_axis);
       }
