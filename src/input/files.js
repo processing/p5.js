@@ -31,37 +31,20 @@ define(function (require) {
   /**
    * Loads a JSON file from a file or a URL, and returns an Object or Array.
    * This method is asynchronous, meaning it may not finish before the next
-   * line in your sketch is executed. Either use preload() to guarantee the
-   * file loads before setup() and draw() are called, or supply a callback
-   * function that is executed when loadStrings() completes.
-   * 
+   * line in your sketch is executed.
+   *
    * @method loadJSON
    * @param  {String}        path       name of the file or url to load
    * @param  {Function}      [callback] function to be executed after
    *                                    loadJSON()
    *                                    completes, Array is passed in as first
    *                                    argument
-   * @param  {String}       [datatype]  "json" or "jsonp"
+   * @param  {String}        [datatype] "json" or "jsonp"
    * @return {Object|Array}             JSON data
    * @example
-   * <div><code>
-   * function setup() {
-   *   noLoop();
-   *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=NewYork,USA';
-   *   loadJSON(url, drawWeather);
-   * }
    *
-   * function draw() {
-   *   background(200);
-   * }
-   *
-   * function drawWeather(weather) {
-   *   // get the humidity value out of the loaded JSON
-   *   var humidity = weather.main.humidity;
-   *   fill(0, humidity); // use the humidity value to set the alpha
-   *   ellipse(width/2, height/2, 50, 50);
-   * }
-   * </code></div>
+   * <p>Calling loadJSON() inside preload() guarantees to complete the
+   * operation before setup() and draw() are called.</p>
    *
    * <div><code>
    * var weather;
@@ -82,6 +65,29 @@ define(function (require) {
    *   ellipse(width/2, height/2, 50, 50);
    * }
    * </code></div>
+   *
+   * <p>Outside preload(), you may supply a callback function to handle the
+   * object:</p>
+
+   * <div><code>
+   * function setup() {
+   *   noLoop();
+   *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=NewYork,USA';
+   *   loadJSON(url, drawWeather);
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   * }
+   *
+   * function drawWeather(weather) {
+   *   // get the humidity value out of the loaded JSON
+   *   var humidity = weather.main.humidity;
+   *   fill(0, humidity); // use the humidity value to set the alpha
+   *   ellipse(width/2, height/2, 50, 50);
+   * }
+   * </code></div>
+   *
    */
   p5.prototype.loadJSON = function() {
     var path = arguments[0];
@@ -113,17 +119,15 @@ define(function (require) {
    * Reads the contents of a file and creates a String array of its individual
    * lines. If the name of the file is used as the parameter, as in the above
    * example, the file must be located in the sketch directory/folder.
-   * 
+   *
    * Alternatively, the file maybe be loaded from anywhere on the local
    * computer using an absolute path (something that starts with / on Unix and
    * Linux, or a drive letter on Windows), or the filename parameter can be a
    * URL for a file found on a network.
    *
    * This method is asynchronous, meaning it may not finish before the next
-   * line in your sketch is executed. Either use preload() to guarantee the
-   * file loads before setup() and draw() are called, or supply a callback
-   * function that is executed when loadStrings() completes.
-   * 
+   * line in your sketch is executed.
+   *
    * @method loadStrings
    * @param  {String}   filename   name of the file or url to load
    * @param  {Function} [callback] function to be executed after loadStrings()
@@ -131,6 +135,10 @@ define(function (require) {
    *                               argument
    * @return {Array}               Array of Strings
    * @example
+   *
+   * <p>Calling loadStrings() inside preload() guarantees to complete the
+   * operation before setup() and draw() are called.</p>
+   *
    * <div><code>
    * var result;
    * function preload() {
@@ -143,6 +151,9 @@ define(function (require) {
    *   text(result[ind], 10, 10, 80, 80);
    * }
    * </code></div>
+   *
+   * <p>Outside preload(), you may supply a callback function to handle the
+   * object:</p>
    *
    * <div><code>
    * function setup() {
@@ -176,38 +187,39 @@ define(function (require) {
   };
 
   /**
-   *  <p>Reads the contents of a file or URL and creates a p5.Table
-   *  object with its values. If a file is specified, it must be
-   *  located in the sketch's "data" folder. The filename parameter
-   *  can also be a URL to a file found online. By default, the file
-   *  is assumed to be comma-separated (in CSV format). Table only
-   *  looks for a header row if the 'header' option is included.</p>
+   * <p>Reads the contents of a file or URL and creates a p5.Table object with
+   * its values. If a file is specified, it must be located in the sketch's
+   * "data" folder. The filename parameter can also be a URL to a file found
+   * online. By default, the file is assumed to be comma-separated (in CSV
+   * format). Table only looks for a header row if the 'header' option is
+   * included.</p>
    *
-   *  <p>Possible options include:
-   *  <ul>
-   *  <li>csv - parse the table as comma-separated values</li>
-   *  <li>tsv - parse the table as tab-separated values</li>
-   *  <li>header - this table has a header (title) row</li>
-   *  </ul>
-   *  </p>
-   *  
-   *  <p>When passing in multiple options, pass them in as separate parameters,
-   *  seperated by commas.</p>
+   * <p>Possible options include:
+   * <ul>
+   * <li>csv - parse the table as comma-separated values</li>
+   * <li>tsv - parse the table as tab-separated values</li>
+   * <li>header - this table has a header (title) row</li>
+   * </ul>
+   * </p>
    *
-   *  <p> All files loaded and saved use UTF-8 encoding.</p>
-   *  
-   *  <p>This method is asynchronous, meaning it may not finish before the next
-   *  line in your sketch is executed. Either use preload() to guarantee the
-   *  file loads before setup() and draw() are called, or supply a callback
-   *  function that is executed when loadTable() completes.</p>
-   * 
-   *  @method  loadTable
-   *  @param  {String}   filename   name of the file or URL to load
-   *  @param  {String|Strings}   [options]  "header" "csv" "tsv"
-   *  @param  {Function} [callback] function to be executed after loadTable()
-   *                               completes, Table object is passed in as
-   *                               first argument
-   *  @return {Object}              Table object containing data
+   * <p>When passing in multiple options, pass them in as separate parameters,
+   * seperated by commas. For example: "csv, header".</p>
+   *
+   * <p> All files loaded and saved use UTF-8 encoding.</p>
+   *
+   * <p>This method is asynchronous, meaning it may not finish before the next
+   * line in your sketch is executed. Calling loadTable() inside preload()
+   * guarantees to complete the operation before setup() and draw() are called.
+   * Outside preload(), you may supply a callback function to handle the object.
+   * </p>
+   *
+   * @method loadTable
+   * @param  {String}         filename   name of the file or URL to load
+   * @param  {String|Strings} [options]  "header" "csv" "tsv"
+   * @param  {Function}       [callback] function to be executed after
+   *                                     loadTable() completes, Table object is
+   *                                     passed in as first argument
+   * @return {Object}                    Table object containing data
    */
   p5.prototype.loadTable = function (path) {
     var callback = null;
@@ -411,12 +423,12 @@ define(function (require) {
    * computer using an absolute path (something that starts with / on Unix and
    * Linux, or a drive letter on Windows), or the filename parameter can be a
    * URL for a file found on a network.
-   * 
+   *
    * This method is asynchronous, meaning it may not finish before the next
-   * line in your sketch is executed. Either use preload() to guarantee the
-   * file loads before setup() and draw() are called, or supply a callback
-   * function that is executed when loadXML() completes.
-   * 
+   * line in your sketch is executed. Calling loadXML() inside preload()
+   * guarantees to complete the operation before setup() and draw() are called.
+   * Outside preload(), you may supply a callback function to handle the object.
+   *
    * @method loadXML
    * @param  {String}   filename   name of the file or URL to load
    * @param  {Function} [callback] function to be executed after loadXML()
@@ -464,7 +476,7 @@ define(function (require) {
   /**
    * Method for executing an HTTP GET request. If data type is not specified,
    * p5 will try to guess based on the URL, defaulting to text.
-   * 
+   *
    * @method httpGet
    * @param  {String}        path       name of the file or url to load
    * @param  {Object}        [data]     param data passed sent with request
@@ -483,7 +495,7 @@ define(function (require) {
   /**
    * Method for executing an HTTP POST request. If data type is not specified,
    * p5 will try to guess based on the URL, defaulting to text.
-   * 
+   *
    * @method httpPost
    * @param  {String}        path       name of the file or url to load
    * @param  {Object}        [data]     param data passed sent with request
@@ -501,10 +513,10 @@ define(function (require) {
   /**
    * Method for executing an HTTP request. If data type is not specified,
    * p5 will try to guess based on the URL, defaulting to text.
-   * 
+   *
    * @method httpDo
    * @param  {String}        path       name of the file or url to load
-   * @param  {String}        [method]   either "GET", "POST", or "PUT", 
+   * @param  {String}        [method]   either "GET", "POST", or "PUT",
    *                                    defaults to "GET"
    * @param  {Object}        [data]     param data passed sent with request
    * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
