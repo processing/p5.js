@@ -590,7 +590,7 @@ define(function (require) {
       z = z || 0;
     }
 
-    return this.x == x && this.y == y && this.z == z;
+    return this.x === x && this.y === y && this.z === z;
   };
 
 
