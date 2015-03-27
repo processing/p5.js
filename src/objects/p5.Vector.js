@@ -239,7 +239,7 @@ define(function (require) {
   };
 
   /**
-   * Multiply the vector by a scalar. The static version of this method 
+   * Multiply the vector by a scalar. The static version of this method
    * creates a new p5.Vector while the non static version acts on the vector
    * directly. See the examples for more context.
    *
@@ -271,7 +271,7 @@ define(function (require) {
 
   /**
    * Divide the vector by a scalar. The static version of this method creates a
-   * new p5.Vector while the non static version acts on the vector directly. 
+   * new p5.Vector while the non static version acts on the vector directly.
    * See the examples for more context.
    *
    * @method div
@@ -388,7 +388,7 @@ define(function (require) {
    * var v2 = createVector(0, 1, 0);
    *
    * // crossProduct has components [0,0,1]
-   * var crossProduct = p5.Vector.cross(v1,v2); 
+   * var crossProduct = p5.Vector.cross(v1,v2);
    * </code>
    * </div>
    */
@@ -563,6 +563,30 @@ define(function (require) {
    */
   p5.Vector.prototype.array = function () {
     return [this.x || 0, this.y || 0, this.z || 0];
+  };
+
+  /**
+   *
+   * @method equals
+   *                                     p5.Vector or an Array
+   * @return {Boolean} whether the vectors are equals
+   */
+  p5.Vector.prototype.equals = function (x, y, z) {
+    if (x instanceof p5.Vector) {
+      x = x.x || 0;
+      y = x.y || 0;
+      z = x.z || 0;
+    } else if(x instanceof Array) {
+      x = x[0] || 0;
+      y = x[1] || 0;
+      z = x[2] || 0;
+    } else {
+      x = x || 0;
+      y = y || 0;
+      z = z || 0;
+    }
+
+    return this.x == x && this.y == y && this.z == z;
   };
 
 
