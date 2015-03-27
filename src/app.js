@@ -3,7 +3,6 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
-  
   require('p5.Color');
   require('p5.Element');
   require('p5.Graphics');
@@ -48,6 +47,7 @@ define(function (require) {
   require('typography.attributes');
   require('typography.loading_displaying');
   require('shaders');
+
   /**
    * _globalInit
    *
