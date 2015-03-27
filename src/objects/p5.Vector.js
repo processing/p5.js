@@ -580,7 +580,7 @@ define(function (require) {
       x = x.x || 0;
       y = x.y || 0;
       z = x.z || 0;
-    } else if(x instanceof Array) {
+    } else if (x instanceof Array) {
       x = x[0] || 0;
       y = x[1] || 0;
       z = x[2] || 0;
