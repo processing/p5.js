@@ -142,7 +142,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.ontouchstart = function(e) {
+  p5.prototype._ontouchstart = function(e) {
     var context = this._isGlobal ? window : this;
     var executeDefault;
     this._updateTouchCoords(e);
@@ -199,7 +199,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.ontouchmove = function(e) {
+  p5.prototype._ontouchmove = function(e) {
     var context = this._isGlobal ? window : this;
     var executeDefault;
     this._updateTouchCoords(e);
@@ -256,7 +256,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.ontouchend = function(e) {
+  p5.prototype._ontouchend = function(e) {
     this._updateTouchCoords(e);
     if (this.touches.length === 0) {
       this._setProperty('touchIsDown', false);

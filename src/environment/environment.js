@@ -247,7 +247,7 @@ define(function(require) {
    * }
    * </code></div>
    */
-  p5.prototype.onresize = function(e){
+  p5.prototype._onresize = function(e){
     this._setProperty('windowWidth', window.innerWidth);
     this._setProperty('windowHeight', window.innerHeight);
     var context = this._isGlobal ? window : this;

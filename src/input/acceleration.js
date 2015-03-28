@@ -150,19 +150,19 @@ define(function (require){
    * </code>
    * </div>
    */
-  p5.prototype.ondeviceorientation = function (e) {
+  p5.prototype._ondeviceorientation = function (e) {
     this._setProperty('accelerationX', e.beta);
     this._setProperty('accelerationY', e.gamma);
     this._setProperty('accelerationZ', e.alpha);
     this._handleMotion();
   };
-  p5.prototype.ondevicemotion = function (e) {
+  p5.prototype._ondevicemotion = function (e) {
     this._setProperty('accelerationX', e.acceleration.x * 2);
     this._setProperty('accelerationY', e.acceleration.y * 2);
     this._setProperty('accelerationZ', e.acceleration.z * 2);
     this._handleMotion();
   };
-  p5.prototype.onMozOrientation = function (e) {
+  p5.prototype._onMozOrientation = function (e) {
     this._setProperty('accelerationX', e.x);
     this._setProperty('accelerationY', e.y);
     this._setProperty('accelerationZ', e.z);

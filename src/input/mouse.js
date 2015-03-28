@@ -224,7 +224,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.onmousemove = function(e){
+  p5.prototype._onmousemove = function(e){
     var context = this._isGlobal ? window : this;
     var executeDefault;
     this._updateMouseCoords(e);
@@ -294,7 +294,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.onmousedown = function(e) {
+  p5.prototype._onmousedown = function(e) {
     var context = this._isGlobal ? window : this;
     var executeDefault;
     this._setProperty('isMousePressed', true);
@@ -357,7 +357,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.onmouseup = function(e) {
+  p5.prototype._onmouseup = function(e) {
     var context = this._isGlobal ? window : this;
     var executeDefault;
     this._setProperty('isMousePressed', false);
@@ -416,7 +416,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.onclick = function(e) {
+  p5.prototype._onclick = function(e) {
     var context = this._isGlobal ? window : this;
     if (typeof context.mouseClicked === 'function') {
       var executeDefault = context.mouseClicked(e);
@@ -440,7 +440,7 @@ define(function (require) {
    *
    * @method mouseWheel
    */
-  p5.prototype.onmousewheel = function(e) {
+  p5.prototype._onmousewheel = function(e) {
     var context = this._isGlobal ? window : this;
     if (typeof context.mouseWheel === 'function') {
       var executeDefault = context.mouseWheel(e);
