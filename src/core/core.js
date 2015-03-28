@@ -174,9 +174,17 @@ define(function (require) {
       'touchmove': null,
       'touchend': null,
       'resize': null,
-      'blur': null,
-      'devicemotion': null
+      'blur': null
     };
+
+    if (window.DeviceOrientationEvent) {
+      this._events.deviceorientation = null;
+    } else if (window.DeviceMotionEvent) {
+      this._events.devicemotion = null;
+    } else {
+      this._events.MozOrientation = null;
+    }
+
     this._loadingScreenId = 'p5_loading';
 
     this._start = function () {

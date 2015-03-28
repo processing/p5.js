@@ -150,53 +150,57 @@ define(function (require){
    * </code>
    * </div>
    */
+  p5.prototype.ondeviceorientation = function (e) {
+    this._setProperty('accelerationX', e.beta);
+    this._setProperty('accelerationY', e.gamma);
+    this._setProperty('accelerationZ', e.alpha);
+    this._handleMotion();
+  };
   p5.prototype.ondevicemotion = function (e) {
-    this._setProperty('accelerationX', e.accelerationIncludingGravity.x);
-    this._setProperty('accelerationY', e.accelerationIncludingGravity.y);
-    this._setProperty('accelerationZ', e.accelerationIncludingGravity.z);
-
-    //sets orientation property
-    //device is horizontal
-    if(window.orientation === 90 || window.orientation === -90){
+    this._setProperty('accelerationX', e.acceleration.x * 2);
+    this._setProperty('accelerationY', e.acceleration.y * 2);
+    this._setProperty('accelerationZ', e.acceleration.z * 2);
+    this._handleMotion();
+  };
+  p5.prototype.onMozOrientation = function (e) {
+    this._setProperty('accelerationX', e.x);
+    this._setProperty('accelerationY', e.y);
+    this._setProperty('accelerationZ', e.z);
+    this._handleMotion();
+  };
+  p5.prototype._handleMotion = function() {
+    if (window.orientation === 90 || window.orientation === -90) {
       this._setProperty('deviceOrientation', 'landscape');
-    }
-    else if (window.orientation === 0){ //device is vertical
+    } else if (window.orientation === 0) {
       this._setProperty('deviceOrientation', 'portrait');
-    }
-    else if (window.orientation === undefined){
-      //In case the device doesn't support this function
+    } else if (window.orientation === undefined) {
       this._setProperty('deviceOrientation', 'undefined');
     }
-
     var onDeviceMove = this.onDeviceMove || window.onDeviceMove;
     if (typeof onDeviceMove === 'function') {
-      if(Math.abs(this.accelerationX - this.pAccelerationX) > move_threshold ||
-          Math.abs(this.accelerationY - this.pAccelerationY) > move_threshold ||
-          Math.abs(this.accelerationZ - this.pAccelerationZ) > move_threshold ){
+      if (Math.abs(this.accelerationX - this.pAccelerationX) > move_threshold ||
+        Math.abs(this.accelerationY - this.pAccelerationY) > move_threshold ||
+        Math.abs(this.accelerationZ - this.pAccelerationZ) > move_threshold) {
         onDeviceMove();
       }
     }
-
     var onDeviceTurn = this.onDeviceTurn || window.onDeviceTurn;
     if (typeof onDeviceTurn === 'function') {
-      //set current_max_axis
       var max_val = 0;
-      if(Math.abs(this.accelerationX) > max_val){
+      if (Math.abs(this.accelerationX) > max_val) {
         max_val = this.accelerationX;
         new_max_axis = 'x';
       }
-      if(Math.abs(this.accelerationY) > max_val){
+      if (Math.abs(this.accelerationY) > max_val) {
         max_val = this.accelerationY;
         new_max_axis = 'y';
       }
-      if(Math.abs(this.accelerationZ) > max_val){
-        new_max_axis = 'z'; //max_val is now irrelevant
+      if (Math.abs(this.accelerationZ) > max_val) {
+        new_max_axis = 'z';
       }
-
-      if(old_max_axis !== '' && old_max_axis !== new_max_axis){
+      if (old_max_axis !== '' && old_max_axis !== new_max_axis) {
         onDeviceTurn(new_max_axis);
       }
-
       old_max_axis = new_max_axis;
     }
   };
