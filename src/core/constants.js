@@ -135,6 +135,17 @@ define(function(require) {
     DODGE: 'color-dodge',
     BURN: 'color-burn',
 
+    // FILTERS
+    THRESHOLD: 'threshold',
+    GRAY: 'gray',
+    OPAQUE: 'opaque',
+    INVERT: 'invert',
+    POSTERIZE: 'posterize',
+    DILATE: 'dilate',
+    ERODE: 'erode',
+    BLUR: 'blur',
+
+
     // TYPOGRAPHY
     NORMAL: 'normal',
     ITALIC: 'italic',
