@@ -4364,7 +4364,7 @@ var shapeattributes = function (require, core, constants) {
     };
     p5.prototype.noSmooth = function () {
       this.drawingContext.mozImageSmoothingEnabled = false;
-      this.drawingContext.webkitImageSmoothingEnabled = false;
+      this.drawingContext.imageSmoothingEnabled = false;
       return this;
     };
     p5.prototype.rectMode = function (m) {
@@ -4375,7 +4375,7 @@ var shapeattributes = function (require, core, constants) {
     };
     p5.prototype.smooth = function () {
       this.drawingContext.mozImageSmoothingEnabled = true;
-      this.drawingContext.webkitImageSmoothingEnabled = true;
+      this.drawingContext.imageSmoothingEnabled = true;
       return this;
     };
     p5.prototype.strokeCap = function (cap) {

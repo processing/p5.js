@@ -98,7 +98,7 @@ define(function (require) {
    */
   p5.prototype.noSmooth = function() {
     this.drawingContext.mozImageSmoothingEnabled = false;
-    this.drawingContext.webkitImageSmoothingEnabled = false;
+    this.drawingContext.imageSmoothingEnabled = false;
 
     return this;
   };
@@ -187,7 +187,7 @@ define(function (require) {
    */
   p5.prototype.smooth = function() {
     this.drawingContext.mozImageSmoothingEnabled = true;
-    this.drawingContext.webkitImageSmoothingEnabled = true;
+    this.drawingContext.imageSmoothingEnabled = true;
 
     return this;
   };
