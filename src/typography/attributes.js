@@ -25,8 +25,10 @@ define(function (require) {
    * the values for the x and y parameters of the text() function. 
    * 
    * @method textAlign
-   * @param {Number/Constant} a horizontal alignment, either LEFT,
+   * @param {Number/Constant} h horizontal alignment, either LEFT,
    *                            CENTER, or RIGHT
+   * @param {Number/Constant} v vertical alignment, either TOP,
+   *                            BOTTOM, CENTER, or BASELINE
    * @example
    * <div>
    * <code>
@@ -45,6 +47,12 @@ define(function (require) {
       a === constants.RIGHT ||
       a === constants.CENTER) {
       this._graphics.textAlign(a);
+    }
+    if (v === constants.TOP ||
+      v === constants.BOTTOM ||
+      v === constants.CENTER ||
+      v === constants.BASELINE) {
+      this.drawingContext.textBaseline = v;
     }
   };
 
@@ -97,6 +105,7 @@ define(function (require) {
    */
   p5.prototype.textSize = function(s) {
     this._setProperty('_textSize', s);
+    this._setProperty('_textLeading', s*1.25);
     this._applyTextProperties();
   };
 

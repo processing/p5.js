@@ -130,14 +130,13 @@ define(function (require) {
    * @method get
    * @return {p5.Vector} the copy of the p5.Vector object
    */
-  p5.Vector.prototype.get = function () {
+  p5.Vector.prototype.copy = function () {
     if (this.p5) {
       return new p5.Vector(this.p5,[this.x, this.y, this.z]);
     } else {
       return new p5.Vector(this.x,this.y,this.z);
     }
   };
-
 
   /**
    * Adds x, y, and z components to a vector, adds one vector to another, or
@@ -240,7 +239,7 @@ define(function (require) {
   };
 
   /**
-   * Multiply the vector by a scalar. The static version of this method 
+   * Multiply the vector by a scalar. The static version of this method
    * creates a new p5.Vector while the non static version acts on the vector
    * directly. See the examples for more context.
    *
@@ -272,7 +271,7 @@ define(function (require) {
 
   /**
    * Divide the vector by a scalar. The static version of this method creates a
-   * new p5.Vector while the non static version acts on the vector directly. 
+   * new p5.Vector while the non static version acts on the vector directly.
    * See the examples for more context.
    *
    * @method div
@@ -389,7 +388,7 @@ define(function (require) {
    * var v2 = createVector(0, 1, 0);
    *
    * // crossProduct has components [0,0,1]
-   * var crossProduct = p5.Vector.cross(v1,v2); 
+   * var crossProduct = p5.Vector.cross(v1,v2);
    * </code>
    * </div>
    */
@@ -431,7 +430,7 @@ define(function (require) {
    * </div>
    */
   p5.Vector.prototype.dist = function (v) {
-    var d = v.get().sub(this);
+    var d = v.copy().sub(this);
     return d.mag();
   };
 
@@ -556,7 +555,7 @@ define(function (require) {
   /**
    * Return a representation of this vector as a float array. This is only
    * for temporary use. If used in any other fashion, the contents should be
-   * copied by using the <b>p5.Vector.get()</b> method to copy into your own
+   * copied by using the <b>p5.Vector.copy()</b> method to copy into your own
    * array.
    *
    * @method array
@@ -564,6 +563,34 @@ define(function (require) {
    */
   p5.Vector.prototype.array = function () {
     return [this.x || 0, this.y || 0, this.z || 0];
+  };
+
+  /**
+   * Equality check against a p5.Vector
+   *
+   * @method equals
+   * @param {Number|p5.Vector|Array} [x] the x component of the vector or a
+   *                                     p5.Vector or an Array
+   * @param {Number}                 [y] the y component of the vector
+   * @param {Number}                 [z] the z component of the vector
+   * @return {Boolean} whether the vectors are equals
+   */
+  p5.Vector.prototype.equals = function (x, y, z) {
+    if (x instanceof p5.Vector) {
+      x = x.x || 0;
+      y = x.y || 0;
+      z = x.z || 0;
+    } else if (x instanceof Array) {
+      x = x[0] || 0;
+      y = x[1] || 0;
+      z = x[2] || 0;
+    } else {
+      x = x || 0;
+      y = y || 0;
+      z = z || 0;
+    }
+
+    return this.x === x && this.y === y && this.z === z;
   };
 
 
@@ -666,11 +693,18 @@ define(function (require) {
    * @static
    * @param  {p5.Vector} v1 a p5.Vector to add
    * @param  {p5.Vector} v2 a p5.Vector to add
-   * @return {p5.Vector}    the resulting new p5.Vector
+   * @param  {p5.Vector} target if undefined a new vector will be created
+   * @return {p5.Vector} the resulting p5.Vector
    */
 
-  p5.Vector.add = function (v1, v2) {
-    return v1.get().add(v2);
+  p5.Vector.add = function (v1, v2, target) {
+    if (!target) {
+      target = v1.copy();
+    } else {
+      target.set(v1);
+    }
+    target.add(v2);
+    return target;
   };
 
   /**
@@ -680,11 +714,18 @@ define(function (require) {
    * @static
    * @param  {p5.Vector} v1 a p5.Vector to subtract from
    * @param  {p5.Vector} v2 a p5.Vector to subtract
-   * @return {p5.Vector}    the resulting new p5.Vector
+   * @param  {p5.Vector} target if undefined a new vector will be created
+   * @return {p5.Vector} the resulting p5.Vector
    */
 
-  p5.Vector.sub = function (v1, v2) {
-    return v1.get().sub(v2);
+  p5.Vector.sub = function (v1, v2, target) {
+    if (!target) {
+      target = v1.copy();
+    } else {
+      target.set(v1);
+    }
+    target.sub(v2);
+    return target;
   };
 
 
@@ -694,10 +735,17 @@ define(function (require) {
    * @static
    * @param  {p5.Vector} v the p5.Vector to multiply
    * @param  {Number}  n the scalar
-   * @return {p5.Vector}   the resulting new p5.Vector
+   * @param  {p5.Vector} target if undefined a new vector will be created
+   * @return {p5.Vector}  the resulting new p5.Vector
    */
-  p5.Vector.mult = function (v, n) {
-    return v.get().mult(n);
+  p5.Vector.mult = function (v, n, target) {
+    if (!target) {
+      target = v.copy();
+    } else {
+      target.set(v);
+    }
+    target.mult(n);
+    return target;
   };
 
   /**
@@ -706,10 +754,17 @@ define(function (require) {
    * @static
    * @param  {p5.Vector} v the p5.Vector to divide
    * @param  {Number}  n the scalar
-   * @return {p5.Vector}   the resulting new p5.Vector
+   * @param  {p5.Vector} target if undefined a new vector will be created
+   * @return {p5.Vector} the resulting new p5.Vector
    */
-  p5.Vector.div = function (v, n) {
-    return v.get().div(n);
+  p5.Vector.div = function (v, n, target) {
+    if (!target) {
+      target = v.copy();
+    } else {
+      target.set(v);
+    }
+    target.div(n);
+    return target;
   };
 
 
@@ -761,8 +816,14 @@ define(function (require) {
    *                       (old vector) and 1.0 (new vector). 0.1 is very near
    *                       the new vector. 0.5 is halfway in between.
    */
-  p5.Vector.lerp = function (v1, v2, amt) {
-    return v1.get().lerp(v2, amt);
+  p5.Vector.lerp = function (v1, v2, amt, target) {
+    if (!target) {
+      target = v1.copy();
+    } else {
+      target.set(v1);
+    }
+    target.lerp(v2, amt);
+    return target;
   };
 
   /**

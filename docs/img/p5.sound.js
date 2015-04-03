@@ -948,7 +948,7 @@ soundfile = function () {
    * path, or an array of paths. If used outside of preload, it 
    * accepts a callback as the second parameter.</p>
    * <p>Using a <a href=
-   * "https://github.com/lmccart/p5.js/wiki/Local-server">
+   * "https://github.com/processing/p5.js/wiki/Local-server">
    * local server</a> is recommended when loading external files.</p>
    *  
    * @method loadSound

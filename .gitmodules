@@ -1,3 +1,0 @@
-[submodule "vendor/gl-matrix"]
-	path = vendor/gl-matrix
-	url = https://github.com/toji/gl-matrix.git

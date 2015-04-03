@@ -1,14 +1,14 @@
 
 
-var sketch = function(s) {
-  s.setup = function() {
-    s.createCanvas(300,300);
-    s.background(200);
+var sketch = function(p) {
+  p.setup = function() {
+    p.createCanvas(300,300);
+    p.background(200);
   }
-  s.draw = function() {
-    s.ellipse(s.mouseX, s.mouseY, 50, 50);
+  p.draw = function() {
+    p.ellipse(p.mouseX, p.mouseY, 50, 50);
   }
 };
 
-var p = new p5(sketch, 'canvas1');
+var myp5 = new p5(sketch, 'canvas1');
 

@@ -9,6 +9,8 @@ define(function (require) {
   require('p5.Graphics2D');
   require('p5.Graphics3D');
   require('p5.Image');
+  require('p5.File');
+  //require('p5.Shape');
   require('p5.Vector');
   require('p5.TableRow');
   require('p5.Table');
@@ -25,6 +27,7 @@ define(function (require) {
   require('image.pixels');
   require('input.files');
   require('input.keyboard');
+  require('input.acceleration'); //john
   require('input.mouse');
   require('input.time_date');
   require('input.touch');
@@ -56,11 +59,11 @@ define(function (require) {
    * assume "global" mode
    * and instantiate p5 automatically
    * otherwise do nothing
-   * 
+   *
    * @return {Undefined}
    */
   var _globalInit = function() {
-    if(!window.PHANTOMJS) {
+    if (!window.PHANTOMJS && !window.mocha) {
       // If there is a setup or draw function on the window
       // then instantiate p5 in "global" mode
       if((window.setup && typeof window.setup === 'function') ||
@@ -76,8 +79,6 @@ define(function (require) {
   } else {
     window.addEventListener('load', _globalInit , false);
   }
-
-  window.p5 = p5;
 
   return p5;
 

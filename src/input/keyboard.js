@@ -132,7 +132,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.onkeydown = function (e) {
+  p5.prototype._onkeydown = function (e) {
     this._setProperty('isKeyPressed', true);
     this._setProperty('keyIsPressed', true);
     this._setProperty('keyCode', e.which);
@@ -177,7 +177,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.onkeyup = function (e) {
+  p5.prototype._onkeyup = function (e) {
     var keyReleased = this.keyReleased || window.keyReleased;
     this._setProperty('isKeyPressed', false);
     this._setProperty('keyIsPressed', false);
@@ -229,7 +229,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.onkeypress = function (e) {
+  p5.prototype._onkeypress = function (e) {
     this._setProperty('keyCode', e.which);
     this._setProperty('key', String.fromCharCode(e.which));
     var keyTyped = this.keyTyped || window.keyTyped;
@@ -246,7 +246,7 @@ define(function (require) {
    * not focused on the element we must assume all keys currently down have 
    * been released.
    */
-  p5.prototype.onblur = function (e) {
+  p5.prototype._onblur = function (e) {
     downKeys = {};
   };
 
@@ -256,7 +256,7 @@ define(function (require) {
    * to be able to affect its behaviour simultaneously, such as moving a
    * sprite diagonally. You can put in any number representing the keyCode of
    * the key, or use any of the variable keyCode names listed
-   * <a href="http://localhost:8000/docs/reference/#p5/keyCode">here</a>.
+   * <a href="http://p5js.org/reference/#p5/keyCode">here</a>.
    *
    * @method keyIsDown
    * @param {Number}          code The key to check for.

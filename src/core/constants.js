@@ -78,6 +78,9 @@ define(function(require) {
     RIGHT: 'right',
     LEFT: 'left',
     CENTER: 'center',
+    TOP: 'top',
+    BOTTOM: 'bottom',
+    BASELINE: 'alphabetic',
     POINTS: 'points',
     LINES: 'lines',
     TRIANGLES: 'triangles',
@@ -135,6 +138,17 @@ define(function(require) {
     SOFT_LIGHT: 'soft-light',
     DODGE: 'color-dodge',
     BURN: 'color-burn',
+
+    // FILTERS
+    THRESHOLD: 'threshold',
+    GRAY: 'gray',
+    OPAQUE: 'opaque',
+    INVERT: 'invert',
+    POSTERIZE: 'posterize',
+    DILATE: 'dilate',
+    ERODE: 'erode',
+    BLUR: 'blur',
+
 
     // TYPOGRAPHY
     NORMAL: 'normal',

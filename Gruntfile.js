@@ -1,5 +1,11 @@
 module.exports = function(grunt) {
 
+  var reporter = 'Dot';
+  var keepalive = false;
+  if (grunt.option('keepalive')) {
+    keepalive = true;
+  }
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     jshint: {
@@ -40,8 +46,7 @@ module.exports = function(grunt) {
         //src: ['test/*.html'],
         src: ['test/**/*.html'],
         options: {
-          // reporter: 'test/reporter/simple.js',
-          reporter: 'Nyan',
+          reporter: reporter,
           run: true,
           log: true,
           logErrors: true
@@ -60,7 +65,7 @@ module.exports = function(grunt) {
         dest: 'bower.json',     // where to write to
         // the fields to update, as a String Grouping
         fields: 'name version description repository'
-      },
+      }
     },
     requirejs: {
       unmin: {
@@ -69,8 +74,12 @@ module.exports = function(grunt) {
           findNestedDependencies: true,
           include: ['src/app'],
           onBuildWrite: function( name, path, contents ) {
+            if (name === 'reqwest') {
+              contents = contents.replace('}(\'reqwest\', this, function () {', '}(\'reqwest\', amdclean, function () {');
+            }
             return require('amdclean').clean({
               code: contents,
+              'globalObject': true,
               escodegen: {
                 'comment': true,
                 'format': {
@@ -88,6 +97,7 @@ module.exports = function(grunt) {
             'app': 'src/app',
             'p5.Color': 'src/objects/p5.Color',
             'p5.Element': 'src/objects/p5.Element',
+            'p5.File': 'src/objects/p5.File',
             'p5.Graphics': 'src/objects/p5.Graphics',
             'p5.Graphics2D': 'src/objects/p5.Graphics2D',
             'p5.Graphics3D': 'src/objects/p5.Graphics3D',
@@ -108,6 +118,7 @@ module.exports = function(grunt) {
             'image.pixels': 'src/image/pixels',
             'input.files': 'src/input/files',
             'input.keyboard': 'src/input/keyboard',
+            'input.acceleration': 'src/input/acceleration',
             'input.mouse': 'src/input/mouse',
             'input.time_date': 'src/input/time_date',
             'input.touch': 'src/input/touch',
@@ -135,30 +146,22 @@ module.exports = function(grunt) {
             'shim': 'src/var/shim',
             'shaders': 'src/var/shaders',
             'reqwest': 'node_modules/reqwest/reqwest',
-            'filters': 'src/image/filters'
+            'filters': 'src/image/filters',
+            'utils.color_utils': 'src/utils/color_utils'
           },
           useStrict: true,
           wrap: {
-            start: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */\n',
-            end: ''
-          }
-        }
-      },
-      min: {
-        options: {
-          baseUrl: '.',
-          findNestedDependencies: true,
-          include: ['src/app'],
-          onBuildWrite: function( name, path, contents ) {
-            return require('amdclean').clean(contents);
-          },
-          optimize: 'uglify2',
-          out: 'lib/p5.min.js',
-          paths: '<%= requirejs.unmin.options.paths %>',
-          useStrict: true,
-          wrap: {
-            start: '/*! p5.min.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */\n',
-            end: ''
+            start:
+              ['/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */',
+              '(function (root, factory) {',
+              '  if (typeof define === \'function\' && define.amd)',
+              '    define(\'p5\', [], function () { return (root.returnExportsGlobal = factory());});',
+              '  else if (typeof exports === \'object\')',
+              '    module.exports = factory();',
+              '  else',
+              '    root[\'p5\'] = factory();',
+              '}(this, function () {\n'].join('\n'),
+            end: 'return amdclean[\'src_app\'];\n}));'
           }
         }
       },
@@ -174,6 +177,15 @@ module.exports = function(grunt) {
           wrap: true,
           paths: { 'jquery': 'empty:' }
         }
+      }
+    },
+    uglify: {
+      options: {
+        banner: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */'
+      },
+      build: {
+        src: '<%= requirejs.unmin.options.out %>',
+        dest: 'lib/p5.min.js'
       }
     },
     yuidoc: {
@@ -198,8 +210,24 @@ module.exports = function(grunt) {
           passwordVar: process.env.GITHUB_PASSWORD //ENVIRONMENT VARIABLE that contains Github password
         }
       }
+    },
+    connect: {
+      server: {
+        options: {
+          base: './test',
+          port: 9001,
+          keepalive: keepalive,
+          middleware: function(connect, options, middlewares) {
+            middlewares.unshift(function (req, res, next) {
+              res.setHeader('Access-Control-Allow-Origin', '*');
+              res.setHeader('Access-Control-Allow-Methods', '*');
+              return next();
+            });
+            return middlewares;
+          }
+        }
+      }
     }
-
   });
 
   grunt.loadNpmTasks('grunt-contrib-jshint');
@@ -210,9 +238,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-release');
   grunt.loadNpmTasks('grunt-update-json');
-  grunt.registerTask('test', ['jshint', 'mocha']);
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.registerTask('test', ['connect', 'jshint', 'mocha']);
   grunt.registerTask('yui', ['yuidoc']);
-  grunt.registerTask('notest', ['jshint', 'requirejs']);
-  grunt.registerTask('default', ['jshint', 'requirejs', 'mocha']);
+  grunt.registerTask('default', ['connect', 'jshint', 'requirejs', 'mocha', 'uglify']);
 
 };

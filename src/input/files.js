@@ -31,23 +31,70 @@ define(function (require) {
   /**
    * Loads a JSON file from a file or a URL, and returns an Object or Array.
    * This method is asynchronous, meaning it may not finish before the next
-   * line in your sketch is executed. Either use preload() to guarantee the
-   * file loads before setup() and draw() are called, or supply a callback
-   * function that is executed when loadStrings() completes.
-   * 
+   * line in your sketch is executed.
+   *
    * @method loadJSON
    * @param  {String}        path       name of the file or url to load
    * @param  {Function}      [callback] function to be executed after
    *                                    loadJSON()
    *                                    completes, Array is passed in as first
    *                                    argument
-   * @param  {String}       [datatype]  "json" or "jsonp"
+   * @param  {String}        [datatype] "json" or "jsonp"
    * @return {Object|Array}             JSON data
+   * @example
+   *
+   * <p>Calling loadJSON() inside preload() guarantees to complete the
+   * operation before setup() and draw() are called.</p>
+   *
+   * <div><code>
+   * var weather;
+   * function preload() {
+   *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=London,UK';
+   *   weather = loadJSON(url);
+   * }
+   *
+   * function setup() {
+   *   noLoop();
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   *   // get the humidity value out of the loaded JSON
+   *   var humidity = weather.main.humidity;
+   *   fill(0, humidity); // use the humidity value to set the alpha
+   *   ellipse(width/2, height/2, 50, 50);
+   * }
+   * </code></div>
+   *
+   * <p>Outside preload(), you may supply a callback function to handle the
+   * object:</p>
+
+   * <div><code>
+   * function setup() {
+   *   noLoop();
+   *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=NewYork,USA';
+   *   loadJSON(url, drawWeather);
+   * }
+   *
+   * function draw() {
+   *   background(200);
+   * }
+   *
+   * function drawWeather(weather) {
+   *   // get the humidity value out of the loaded JSON
+   *   var humidity = weather.main.humidity;
+   *   fill(0, humidity); // use the humidity value to set the alpha
+   *   ellipse(width/2, height/2, 50, 50);
+   * }
+   * </code></div>
+   *
    */
-  p5.prototype.loadJSON = function(path, callback, type) {
+  p5.prototype.loadJSON = function() {
+    var path = arguments[0];
+    var callback = arguments[1];
     var ret = []; // array needed for preload
     // assume jsonp for URLs
-    var t = path.indexOf('http') === -1 ? 'json' : 'jsonp';
+    var t = 'json'; //= path.indexOf('http') === -1 ? 'json' : 'jsonp';
 
     // check for explicit data type argument
     if (typeof type === 'string'){
@@ -72,17 +119,15 @@ define(function (require) {
    * Reads the contents of a file and creates a String array of its individual
    * lines. If the name of the file is used as the parameter, as in the above
    * example, the file must be located in the sketch directory/folder.
-   * 
+   *
    * Alternatively, the file maybe be loaded from anywhere on the local
    * computer using an absolute path (something that starts with / on Unix and
    * Linux, or a drive letter on Windows), or the filename parameter can be a
    * URL for a file found on a network.
    *
    * This method is asynchronous, meaning it may not finish before the next
-   * line in your sketch is executed. Either use preload() to guarantee the
-   * file loads before setup() and draw() are called, or supply a callback
-   * function that is executed when loadStrings() completes.
-   * 
+   * line in your sketch is executed.
+   *
    * @method loadStrings
    * @param  {String}   filename   name of the file or url to load
    * @param  {Function} [callback] function to be executed after loadStrings()
@@ -90,6 +135,10 @@ define(function (require) {
    *                               argument
    * @return {Array}               Array of Strings
    * @example
+   *
+   * <p>Calling loadStrings() inside preload() guarantees to complete the
+   * operation before setup() and draw() are called.</p>
+   *
    * <div><code>
    * var result;
    * function preload() {
@@ -102,6 +151,9 @@ define(function (require) {
    *   text(result[ind], 10, 10, 80, 80);
    * }
    * </code></div>
+   *
+   * <p>Outside preload(), you may supply a callback function to handle the
+   * object:</p>
    *
    * <div><code>
    * function setup() {
@@ -135,42 +187,46 @@ define(function (require) {
   };
 
   /**
-   *  <p>Reads the contents of a file or URL and creates a p5.Table
-   *  object with its values. If a file is specified, it must be
-   *  located in the sketch's "data" folder. The filename parameter
-   *  can also be a URL to a file found online. By default, the file
-   *  is assumed to be comma-separated (in CSV format). Table only
-   *  looks for a header row if the 'header' option is included.</p>
+   * <p>Reads the contents of a file or URL and creates a p5.Table object with
+   * its values. If a file is specified, it must be located in the sketch's
+   * "data" folder. The filename parameter can also be a URL to a file found
+   * online. By default, the file is assumed to be comma-separated (in CSV
+   * format). Table only looks for a header row if the 'header' option is
+   * included.</p>
    *
-   *  <p>Possible options include:
-   *  <ul>
-   *  <li>csv - parse the table as comma-separated values
-   *  <li>tsv - parse the table as tab-separated values
-   *  <li>newlines - this CSV file contains newlines inside individual cells
-   *  <li>header - this table has a header (title) row
-   *  </ul>
-   *  </p>
-   *  
-   *  <p> All files loaded and saved use UTF-8 encoding.</p>
-   *  
-   *  <p>This method is asynchronous, meaning it may not finish before the next
-   *  line in your sketch is executed. Either use preload() to guarantee the
-   *  file loads before setup() and draw() are called, or supply a callback
-   *  function that is executed when loadTable() completes.</p>
-   * 
-   *  @method  loadTable
-   *  @param  {String}   filename   name of the file or URL to load
-   *  @param  {String|Strings}   [options]  "header" "csv" "tsv"
-   *  @param  {Function} [callback] function to be executed after loadTable()
-   *                               completes, Table object is passed in as
-   *                               first argument
-   *  @return {Object}              Table object containing data
+   * <p>Possible options include:
+   * <ul>
+   * <li>csv - parse the table as comma-separated values</li>
+   * <li>tsv - parse the table as tab-separated values</li>
+   * <li>header - this table has a header (title) row</li>
+   * </ul>
+   * </p>
+   *
+   * <p>When passing in multiple options, pass them in as separate parameters,
+   * seperated by commas. For example: "csv, header".</p>
+   *
+   * <p> All files loaded and saved use UTF-8 encoding.</p>
+   *
+   * <p>This method is asynchronous, meaning it may not finish before the next
+   * line in your sketch is executed. Calling loadTable() inside preload()
+   * guarantees to complete the operation before setup() and draw() are called.
+   * Outside preload(), you may supply a callback function to handle the object.
+   * </p>
+   *
+   * @method loadTable
+   * @param  {String}         filename   name of the file or URL to load
+   * @param  {String|Strings} [options]  "header" "csv" "tsv"
+   * @param  {Function}       [callback] function to be executed after
+   *                                     loadTable() completes, Table object is
+   *                                     passed in as first argument
+   * @return {Object}                    Table object containing data
    */
   p5.prototype.loadTable = function (path) {
     var callback = null;
     var options = [];
     var header = false;
     var sep = ',';
+    var separatorSet = false;
     for (var i = 1; i < arguments.length; i++) {
       if (typeof(arguments[i]) === 'function' ){
         callback = arguments[i];
@@ -181,48 +237,163 @@ define(function (require) {
           header = true;
         }
         if (arguments[i] === 'csv') {
-          sep = ',';
+          if (separatorSet) {
+            throw new Error('Cannot set multiple separator types.');
+          }
+          else {
+            sep = ',';
+            separatorSet = true;
+          }
         }
         else if (arguments[i] === 'tsv') {
-          sep = '\t';
+          if (separatorSet) {
+            throw new Error('Cannot set multiple separator types.');
+          }
+          else {
+            sep = '\t';
+            separatorSet = true;
+          }
         }
       }
     }
-    var ret = [];
+
     var t = new p5.Table();
-    var req = new XMLHttpRequest();
-    req.open('GET', path, true);
-    req.onreadystatechange = function () {
-      if (req.readyState === 4 && (req.status === 200 || req.status === 0)) {
-        var arr = req.responseText.match(/[^\r\n]+/g);
-        for (var k in arr) {
-          ret[k] = arr[k];
-        }
-        if (typeof callback !== 'undefined') {
-          var i, row;
-          if (header) {
-            t.columns = new p5.TableRow(ret[0]).arr;
-            for (i = 1; i<ret.length; i++) {
-              row = new p5.TableRow(ret[i], sep);
-              row.obj = makeObject(row.arr, t.columns);
-              t.addRow(row);
+    reqwest({url: path, crossOrigin: true, type: 'csv'})
+      .then(function(resp) {
+        resp = resp.responseText;
+
+        var state = {};
+
+        // define constants
+        var PRE_TOKEN = 0,
+            MID_TOKEN = 1,
+            POST_TOKEN = 2,
+            POST_RECORD = 4;
+
+        var QUOTE = '\"',
+               CR = '\r',
+               LF = '\n';
+
+        var records = [];
+        var offset = 0;
+        var currentRecord = null;
+        var currentChar;
+
+        var recordBegin = function () {
+          state.escaped = false;
+          currentRecord = [];
+          tokenBegin();
+        };
+
+        var recordEnd = function () {
+          state.currentState = POST_RECORD;
+          records.push(currentRecord);
+          currentRecord = null;
+        };
+
+        var tokenBegin = function() {
+          state.currentState = PRE_TOKEN;
+          state.token = '';
+        };
+
+        var tokenEnd = function() {
+          currentRecord.push(state.token);
+          tokenBegin();
+        };
+
+        while(true) {
+          currentChar = resp[offset++];
+
+          // EOF
+          if(currentChar == null) {
+            if (state.escaped) {
+              throw new Error('Unclosed quote in file.');
             }
-          } else {
-            // no header: column titles will be numbers
-            for (i = 0; i < ret[0].split(sep).length; i++){
-              t.columns[i] = i.toString();
-            }
-            for (i = 0; i<ret.length; i++) {
-              row = new p5.TableRow(ret[i], sep);
-              t.addRow(row);
+            if (currentRecord){
+              tokenEnd();
+              recordEnd();
+              break;
             }
           }
+          if(currentRecord === null) {
+            recordBegin();
+          }
 
+          // Handle opening quote
+          if (state.currentState === PRE_TOKEN) {
+            if (currentChar === QUOTE) {
+              state.escaped = true;
+              state.currentState = MID_TOKEN;
+              continue;
+            }
+            state.currentState = MID_TOKEN;
+          }
+
+          // mid-token and escaped, look for sequences and end quote
+          if (state.currentState === MID_TOKEN && state.escaped) {
+            if (currentChar === QUOTE) {
+              if (resp[offset] === QUOTE) {
+                state.token += QUOTE;
+                offset++;
+              }
+              else {
+                state.escaped = false;
+                state.currentState = POST_TOKEN;
+              }
+            }
+            else {
+              state.token += currentChar;
+            }
+            continue;
+          }
+
+
+          // fall-through: mid-token or post-token, not escaped
+          if (currentChar === CR ) {
+            if( resp[offset] === LF  ) {
+              offset++;
+            }
+            tokenEnd();
+            recordEnd();
+          }
+          else if (currentChar === LF) {
+            tokenEnd();
+            recordEnd();
+          }
+          else if (currentChar === sep) {
+            tokenEnd();
+          }
+          else if( state.currentState === MID_TOKEN ){
+            state.token += currentChar;
+          }
+        }
+
+        // set up column names
+        if (header) {
+          t.columns = records.shift();
+        }
+        else {
+          for (i = 0; i < records.length; i++){
+            t.columns[i] = i.toString();
+          }
+        }
+        var row;
+        for (i =0; i<records.length; i++) {
+          row = new p5.TableRow();
+          row.arr = records[i];
+          row.obj = makeObject(records[i], t.columns);
+          t.addRow(row);
+        }
+        if (callback !== null) {
           callback(t);
         }
-      }
-    };
-    req.send(null);
+      })
+      .fail(function(err,msg){
+        if (typeof callback !== 'undefined') {
+          callback(false);
+        }
+      });
+
     return t;
   };
 
@@ -252,12 +423,12 @@ define(function (require) {
    * computer using an absolute path (something that starts with / on Unix and
    * Linux, or a drive letter on Windows), or the filename parameter can be a
    * URL for a file found on a network.
-   * 
+   *
    * This method is asynchronous, meaning it may not finish before the next
-   * line in your sketch is executed. Either use preload() to guarantee the
-   * file loads before setup() and draw() are called, or supply a callback
-   * function that is executed when loadXML() completes.
-   * 
+   * line in your sketch is executed. Calling loadXML() inside preload()
+   * guarantees to complete the operation before setup() and draw() are called.
+   * Outside preload(), you may supply a callback function to handle the object.
+   *
    * @method loadXML
    * @param  {String}   filename   name of the file or URL to load
    * @param  {Function} [callback] function to be executed after loadXML()
@@ -305,7 +476,7 @@ define(function (require) {
   /**
    * Method for executing an HTTP GET request. If data type is not specified,
    * p5 will try to guess based on the URL, defaulting to text.
-   * 
+   *
    * @method httpGet
    * @param  {String}        path       name of the file or url to load
    * @param  {Object}        [data]     param data passed sent with request
@@ -324,7 +495,7 @@ define(function (require) {
   /**
    * Method for executing an HTTP POST request. If data type is not specified,
    * p5 will try to guess based on the URL, defaulting to text.
-   * 
+   *
    * @method httpPost
    * @param  {String}        path       name of the file or url to load
    * @param  {Object}        [data]     param data passed sent with request
@@ -342,9 +513,11 @@ define(function (require) {
   /**
    * Method for executing an HTTP request. If data type is not specified,
    * p5 will try to guess based on the URL, defaulting to text.
-   * 
+   *
    * @method httpDo
    * @param  {String}        path       name of the file or url to load
+   * @param  {String}        [method]   either "GET", "POST", or "PUT",
+   *                                    defaults to "GET"
    * @param  {Object}        [data]     param data passed sent with request
    * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
    * @param  {Function}      [callback] function to be executed after

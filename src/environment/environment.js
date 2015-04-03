@@ -250,7 +250,7 @@ define(function(require) {
    * }
    * </code></div>
    */
-  p5.prototype.onresize = function(e){
+  p5.prototype._onresize = function(e){
     this._setProperty('windowWidth', window.innerWidth);
     this._setProperty('windowHeight', window.innerHeight);
     var context = this._isGlobal ? window : this;
@@ -330,8 +330,11 @@ define(function(require) {
   /**
    * Toggles pixel scaling for high pixel density displays. By default
    * pixel scaling is on, call devicePixelScaling(false) to turn it off.
+   * This devicePixelScaling() function must be the first line of code
+   * inside setup().
    *
    * @method devicePixelScaling
+   * @param  {Boolean|Number} [val] whether or how much the sketch should scale
    * @example
    * <div>
    * <code>
@@ -343,14 +346,29 @@ define(function(require) {
    * }
    * </code>
    * </div>
+   * <div>
+   * <code>
+   * function setup() {
+   *   devicePixelScaling(3.0);
+   *   createCanvas(100, 100);
+   *   background(200);
+   *   ellipse(width/2, height/2, 50, 50);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.devicePixelScaling = function(val) {
     if (val) {
-      this._pixelDensity = window.devicePixelRatio || 1;
+      if (typeof val === 'number') {
+        this._pixelDensity = val;
+      }
+      else {
+        this._pixelDensity = window.devicePixelRatio || 1;
+      }
     } else {
       this._pixelDensity = 1;
     }
-    this.resizeCanvas(this.width, this.height);
+    this.resizeCanvas(this.width, this.height, true);
   };
 
   function launchFullscreen(element) {
@@ -379,6 +397,8 @@ define(function(require) {
       document.mozCancelFullScreen();
     } else if(document.webkitExitFullscreen) {
       document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
     }
   }
 

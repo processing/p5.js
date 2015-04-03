@@ -9,6 +9,7 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
+  var Filters = require('filters');
   var canvas = require('canvas');
   var constants = require('constants');
 
@@ -22,10 +23,12 @@ define(function (require) {
    *
    * @method loadImage
    * @param  {String} path Path of the image to be loaded
-   * @param  {Function(p5.Image)} [callback]   Function to be called once the 
-   *                                 image is loaded. Will be passed the 
-                                     p5.Image.
-   * @return {p5.Image}              the p5.Image object   
+   * @param  {Function(p5.Image)} [successCallback] Function to be called once 
+   *                                the image is loaded. Will be passed the 
+   *                                p5.Image.
+   * @param  {Function(Event)}    [failureCallback] called with event error if 
+   *                                the image fails to load.
+   * @return {p5.Image}             the p5.Image object   
    * @example
    * <div>
    * <code>
@@ -49,7 +52,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.loadImage = function(path, callback) {
+  p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     var img = new Image();
     var pImg = new p5.Image(1, 1, this);
 
@@ -60,8 +63,14 @@ define(function (require) {
       // Draw the image into the backing canvas of the p5.Image
       pImg.canvas.getContext('2d').drawImage(img, 0, 0);
 
-      if (typeof callback !== 'undefined') {
-        callback(pImg);
+      if (typeof successCallback === 'function') {
+        successCallback(pImg);
+      }
+    };
+    
+    img.onerror = function(e) {
+      if (typeof failureCallback === 'function') {
+        failureCallback(e);
       }
     };
 
@@ -201,6 +210,40 @@ define(function (require) {
     this._tint = null;
   };
 
+  /**
+   * Apply the current tint color to the input image, return the resulting
+   * canvas.
+   *
+   * @param {p5.Image} The image to be tinted
+   * @return {canvas} The resulting tinted canvas
+   */
+  p5.prototype._getTintedImageCanvas = function(img) {
+    if (!img.canvas) {
+      return img;
+    }
+    var pixels = Filters._toPixels(img.canvas);
+    var tmpCanvas = document.createElement('canvas');
+    tmpCanvas.width = img.canvas.width;
+    tmpCanvas.height = img.canvas.height;
+    var tmpCtx = tmpCanvas.getContext('2d');
+    var id = tmpCtx.createImageData(img.canvas.width, img.canvas.height);
+    var newPixels = id.data;
+
+    for(var i = 0; i < pixels.length; i += 4) {
+      var r = pixels[i];
+      var g = pixels[i+1];
+      var b = pixels[i+2];
+      var a = pixels[i+3];
+
+      newPixels[i] = r*this._tint[0]/255;
+      newPixels[i+1] = g*this._tint[1]/255;
+      newPixels[i+2] = b*this._tint[2]/255;
+      newPixels[i+3] = a*this._tint[3]/255;
+    }
+
+    tmpCtx.putImageData(id, 0, 0);
+    return tmpCanvas;
+  };
 
   /**
    * Set image mode. Modifies the location from which images are drawn by

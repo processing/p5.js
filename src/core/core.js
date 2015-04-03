@@ -30,10 +30,17 @@ define(function (require) {
    * @param  {Function}    sketch a closure that can set optional preload(),
    *                              setup(), and/or draw() properties on the
    *                              given p5 instance
-   * @param  {HTMLElement} node   an element to attach the generated canvas to
+   * @param  {HTMLElement|boolean} node element to attach canvas to, if a 
+   *                                    boolean is passed in use it as sync
+   * @param  {boolean}     [sync] start synchronously (optional)
    * @return {p5}                 a p5 instance
    */
-  var p5 = function(sketch, node) {
+  var p5 = function(sketch, node, sync) {
+
+    if (arguments.length === 2 && typeof node === 'boolean') {
+      sync = node;
+      node = undefined;
+    }
 
     //////////////////////////////////////////////
     // PUBLIC p5 PROPERTIES AND METHODS
@@ -169,6 +176,15 @@ define(function (require) {
       'resize': null,
       'blur': null
     };
+
+    if (window.DeviceOrientationEvent) {
+      this._events.deviceorientation = null;
+    } else if (window.DeviceMotionEvent) {
+      this._events.devicemotion = null;
+    } else {
+      this._events.MozOrientation = null;
+    }
+
     this._loadingScreenId = 'p5_loading';
 
     this._start = function () {
@@ -205,8 +221,9 @@ define(function (require) {
       var context = this._isGlobal ? window : this;
       if (userPreload) {
         this._preloadMethods.forEach(function(f) {
-          context[f] = function(path) {
-            return context._preload(f, path);
+          context[f] = function() {
+            var argsArray = Array.prototype.slice.call(arguments);
+            return context._preload(f, argsArray);
           };
         });
         userPreload();
@@ -222,17 +239,19 @@ define(function (require) {
       }
     }.bind(this);
 
-    this._preload = function (func, path) {
+    this._preload = function (func, args) {
       var context = this._isGlobal ? window : this;
       context._setProperty('_preloadCount', context._preloadCount + 1);
-      return p5.prototype[func].call(context, path, function (resp) {
+      var preloadCallback = function (resp) {
         context._setProperty('_preloadCount', context._preloadCount - 1);
         if (context._preloadCount === 0) {
           context._setup();
           context._runFrames();
           context._draw();
         }
-      });
+      };
+      args.push(preloadCallback);
+      return p5.prototype[func].apply(context, args);
     }.bind(this);
 
     this._setup = function() {
@@ -271,13 +290,10 @@ define(function (require) {
     }.bind(this);
 
     this._draw = function () {
-      var userSetup = this.setup || window.setup;
       var now = new Date().getTime();
       this._frameRate = 1000.0/(now - this._lastFrameTime);
       this._lastFrameTime = now;
-
-      var userDraw = this.draw || window.draw;
-
+      this._setProperty('frameCount', this.frameCount + 1);
       if (this._loop) {
         if (this._drawInterval) {
           clearInterval(this._drawInterval);
@@ -287,22 +303,8 @@ define(function (require) {
         }.bind(this), 1000 / this._targetFrameRate);
       }
       // call user's draw
-      if (typeof userDraw === 'function') {
-        this.push();
-        if (typeof userSetup === 'undefined') {
-          this.scale(this._pixelDensity, this._pixelDensity);
-        }
-        // call any registered pre functions
-        this._registeredMethods.pre.forEach(function(f) {
-          f.call(this);
-        });
-        userDraw();
-        // call any registered post functions
-        this._registeredMethods.post.forEach(function(f) {
-          f.call(this);
-        });
-        this.pop();
-      }
+      this.redraw();
+      this._updatePAccelerations();
       this._updatePMouseCoords();
       this._updatePTouchCoords();
     }.bind(this);
@@ -311,9 +313,6 @@ define(function (require) {
       if (this._updateInterval) {
         clearInterval(this._updateInterval);
       }
-      this._updateInterval = setInterval(function(){
-        this._setProperty('frameCount', this.frameCount + 1);
-      }.bind(this), 1000/this._targetFrameRate);
     }.bind(this);
 
     this._setProperty = function(prop, value) {
@@ -440,7 +439,7 @@ define(function (require) {
 
     // Bind events to window (not using container div bc key events don't work)
     for (var e in this._events) {
-      var f = this['on'+e];
+      var f = this['_on'+e];
       if (f) {
         var m = f.bind(this);
         window.addEventListener(e, m);
@@ -458,12 +457,16 @@ define(function (require) {
     });
 
     // TODO: ???
-    if (document.readyState === 'complete') {
+    
+    if (sync) {
       this._start();
     } else {
-      window.addEventListener('load', this._start.bind(this), false);
+      if (document.readyState === 'complete') {
+        this._start();
+      } else {
+        window.addEventListener('load', this._start.bind(this), false);
+      }
     }
-
   };
 
 

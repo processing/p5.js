@@ -324,7 +324,7 @@ define(function (require) {
       this.height
     ];
 
-    this.drawingContext.globalCompositeOperation = 'destination-out';
+    this.drawingContext.globalCompositeOperation = 'destination-in';
     this.copy.apply(this, copyArgs);
     this.drawingContext.globalCompositeOperation = currBlend;
   };

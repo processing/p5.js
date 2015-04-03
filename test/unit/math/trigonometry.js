@@ -8,9 +8,9 @@ suite('Trigonometry', function() {
   var RADIANS = 'radians';
   var DEGREES = 'degrees';
 
-  var myp5 = new p5(function( sketch ) {
-    sketch.setup = function() {};
-    sketch.draw = function() {};
+  var myp5 = new p5(function( p ) {
+    p.setup = function() {};
+    p.draw = function() {};
   });
 
   var handleDegreesAndRadians = function(func) {

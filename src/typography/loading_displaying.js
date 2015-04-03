@@ -15,6 +15,8 @@ define(function (require) {
    * parameters. A default font will be used unless a font is set with the
    * textFont() function and a default size will be used unless a font is set
    * with textSize(). Change the color of the text with the fill() function.
+   * Change the outline of the text with the stroke() and strokeWeight() 
+   * functions.
    * The text displays in relation to the textAlign() function, which gives the
    * option to draw to the left, right, and center of the coordinates.
    *
@@ -52,8 +54,8 @@ define(function (require) {
    * </div>
    */
   p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
-    if (!this._doFill && !this._doStroke) {
-      return this;
+    if (typeof str !== 'string') {
+      str=str.toString();
     }
     this._graphics.text.apply(this._graphics, arguments);
   };

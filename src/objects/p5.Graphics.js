@@ -45,7 +45,8 @@ define(function(require) {
     this.canvas = elt;
     if (renderer === constants.P2D) {
       this.drawingContext = this.canvas.getContext('2d');
-    } else if (renderer === constants.WEBGL) {
+    }
+    else if (renderer === constants.WEBGL) {
       try {
         this.drawingContext = this.canvas.getContext('webgl', attrs) ||
           this.canvas.getContext('experimental-webgl', attrs);
