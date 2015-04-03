@@ -37,12 +37,22 @@ define(function(require) {
    */
   p5.prototype.createCanvas = function(w, h, renderer, isDefault) {
     var c = document.getElementById('defaultCanvas');
-    if (isDefault) {
+    if(c){ //if defaultCanvas already exists
+      //if(isDefault !== false){ // and isDefault is true or undefined
+      c.parentNode.removeChild(c); //replace the existing defaultCanvas
       c = document.createElement('canvas');
       c.id = 'defaultCanvas';
-    } else { // resize the default canvas if new one is created
-      c = this.canvas;
+      //}
     }
+    else {
+      c = document.createElement('canvas');
+      c.id = 'defaultCanvas';
+    }
+
+    c.setAttribute('width', w*this._pixelDensity);
+    c.setAttribute('height', h*this._pixelDensity);
+    c.setAttribute('style',
+      'width:'+w+'px !important; height:'+h+'px !important;');
 
     // set to invisible if still in setup (to prevent flashing with manipulate)
     if (!this._setupDone) {
@@ -55,20 +65,20 @@ define(function(require) {
     } else {
       document.body.appendChild(c);
     }
-    if (!this._graphics) {
-  
-      if (renderer === constants.P2D || typeof renderer === 'undefined') {
-        this._graphics = new p5.Graphics2D(c, this, true);
-      } else if (renderer === constants.WEBGL) {
-        this._graphics = new p5.Graphics3D(c, this, true);
-      }
 
-      this._elements.push(this._graphics);
+    var pg;
+    if (renderer === constants.P2D || typeof renderer === 'undefined') {
+      pg = new p5.Graphics2D(c, this);
+    } else if (renderer === constants.WEBGL) {
+      pg = new p5.Graphics3D(c, this);
     }
-    
-    this._graphics.resize(w, h);
-    this._graphics._applyDefaults();
-    return this._graphics;
+
+    if (isDefault) {
+      // store in elements array
+      this._elements.push(pg);
+    }
+    this.scale(this._pixelDensity, this._pixelDensity);
+    return pg;
   };
 
   /**

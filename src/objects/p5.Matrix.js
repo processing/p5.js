@@ -68,7 +68,7 @@ define(function (require) {
    * @return {p5.Matrix} the copy of the p5.Matrix object
    */
   p5.Matrix.prototype.get = function () {
-      return new p5.Matrix(this.mat4);
+    return new p5.Matrix(this.mat4);
   };
 
   /**
