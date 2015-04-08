@@ -242,33 +242,23 @@ define(function(require) {
     yellowgreen: '#9acd32'
   };
 
-  /**
-   * Regular Expressions for use identifying color pattern strings
-   *
-   * @property _patterns
-   * @type {Object}
-   */
+  // Regular Expressions for use identifying color pattern strings
   var colorPatterns = {
     /**
      * Regular expression for matching colors in format #XXX,
      * e.g. #416
-     * @property _patterns.HEX3
-     * @type {RegExp}
      */
     HEX3: /^#([a-f0-9])([a-f0-9])([a-f0-9])$/i,
+
     /**
      * Regular expression for matching colors in format #XXXXXX,
      * e.g. #b4d455
-     * @property _patterns.HEX6
-     * @type {RegExp}
      */
     HEX6: /^#([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})$/i,
+
     /**
      * Regular expression for matching colors in format rgb(R, G, B),
      * e.g. rgb(255, 0, 128)
-     *
-     * @property _patterns.RGB
-     * @type {RegExp}
      */
     RGB: new RegExp([
       // Defining RegExp this way makes it more obvious where whitespace
@@ -281,12 +271,10 @@ define(function(require) {
       INTEGER.source,
       '\\)$'
     ].join(WHITESPACE.source), 'i'),
+
     /**
      * Regular expression for matching colors in format rgb(R%, G%, B%),
      * e.g. rgb(100%, 0%, 28.9%)
-     *
-     * @property _patterns.RGB_PERCENT
-     * @type {RegExp}
      */
     RGB_PERCENT: new RegExp([
       // Defining RegExp this way makes it more obvious where whitespace
@@ -299,12 +287,10 @@ define(function(require) {
       PERCENT.source,
       '\\)$'
     ].join(WHITESPACE.source), 'i'),
+
     /**
      * Regular expression for matching colors in format rgb(R, G, B, A),
      * e.g. rgb(255, 0, 128, 0.25)
-     *
-     * @property _patterns.RGBA
-     * @type {RegExp}
      */
     RGBA: new RegExp([
       '^rgba\\(',
@@ -317,12 +303,10 @@ define(function(require) {
       DECIMAL.source,
       '\\)$'
     ].join(WHITESPACE.source), 'i'),
+
     /**
      * Regular expression for matching colors in format rgb(R%, G%, B%, A),
      * e.g. rgb(100%, 0%, 28.9%. 0.5)
-     *
-     * @property _patterns.RGBA_PERCENT
-     * @type {RegExp}
      */
     RGBA_PERCENT: new RegExp([
       '^rgba\\(',
@@ -336,9 +320,6 @@ define(function(require) {
       '\\)$'
     ].join(WHITESPACE.source), 'i')
   };
-
-  // Assign colorPatterns to p5.Color for testing
-  p5.Color._patterns = colorPatterns;
 
   /**
    * For a number of different inputs, returns a color formatted as
