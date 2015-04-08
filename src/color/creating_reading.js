@@ -101,20 +101,22 @@ define(function (require) {
    * as a grayscale value. Add a second value, and it will be used for alpha
    * transparency. When three values are specified, they are interpreted as
    * either RGB or HSB values. Adding a fourth value applies alpha
-   * transparency.
+   * transparency. If a single string parameter is provided it will be
+   * interpreted as a CSS-compatible color string.
    *
    * Colors are stored as Numbers or Arrays.
    *
    * @method color
-   * @param  {Number} v1      gray value or red or hue value relative to the
-   *                          current color range
-   * @param  {Number} [v2]    gray value or green or saturation value relative
-   *                          to the current color range (or alpha value if
-   *                          first param is gray value)
-   * @param  {Number} [v3]    gray value or blue or brightness value relative
-   *                          to the current color range
-   * @param  {Number} [alpha] alpha value relative to current color range
-   * @return {Array}          resulting color
+   * @param  {Number|String} v1      gray value or red or hue value relative to
+   *                                 the current color range, or a color string
+   * @param  {Number}        [v2]    gray value or green or saturation value
+   *                                 relative to the current color range (or
+   *                                 alpha value if first param is gray value)
+   * @param  {Number}        [v3]    gray value or blue or brightness value
+   *                                 relative to the current color range
+   * @param  {Number}        [alpha] alpha value relative to current color range
+   * @return {Array}                 resulting color
+   *
    * @example
    * <div>
    * <code>
@@ -143,22 +145,34 @@ define(function (require) {
    * <div>
    * <code>
    * // Named SVG & CSS colors may be used,
-   * c = color('red');
-   * c = color('papayawhip');
    * c = color('magenta');
+   * fill(c);  // Use 'c' as fill color
+   * noStroke();  // Don't draw a stroke around shapes
+   * rect(20, 20, 60, 60);  // Draw rectangle
+   * </code>
+   * </div>
    *
+   * <div>
+   * <code>
    * // as can hex color codes:
    * c = color('#4F66A1');
-   * c = color('#f00');
-   * c = color('#666666');
+   * fill(c);  // Use 'c' as fill color
+   * noStroke();  // Don't draw a stroke around shapes
+   * rect(20, 20, 60, 60);  // Draw rectangle
+   * </code>
+   * </div>
    *
+   * <div>
+   * <code>
    * // RGB and RGBA color strings are also supported:
-   * c = color('rgb(255,0,0)');
-   * c = color('rgb(100%, 0%, 20%)');
-   * c = color('rgba(177, 21, 240, 0.5)');
-   * c = color('rgba(90%, 3.14%, 15%, 1)');
-   *
-   * fill(c);  // Use updated 'c' as fill color
+   * // these all set 'c' to the same color (solid blue)
+   * c = color('rgb(0,0,255)');
+   * c = color('rgb(0%, 0%, 100%)');
+   * c = color('rgba(0, 0, 255, 1)');
+   * c = color('rgba(0%, 0%, 100%, 1)');
+   * fill(c);  // Use 'c' as fill color
+   * noStroke();  // Don't draw a stroke around shapes
+   * rect(20, 20, 60, 60);  // Draw rectangle
    * </code>
    * </div>
    *
