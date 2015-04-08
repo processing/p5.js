@@ -27,24 +27,94 @@ define(function (require) {
    * the first frame of animation or if the background need only be set once.
    *
    * @method background
-   * @param {Number|Color|p5.Image} v1   gray value, red or hue value 
-   *                                     (depending on the current color mode),
-   *                                     or color or p5.Image
-   * @param {Number|Array}          [v2] green or saturation value (depending on
-   *                                     the current color mode)
-   * @param {Number|Array}          [v3] blue or brightness value (depending on 
-   *                                     the current color mode)
-   * @param {Number|Array}          [a]  opacity of the background
+   * @param {Number|String|p5.Color|p5.Image} v1   gray value, red or hue value
+   *                                               (depending on the current
+   *                                               color mode), color string,
+   *                                               p5.Color, or p5.Image
+   * @param {Number|Array}                    [v2] green or saturation value
+   *                                               (depending on the current
+   *                                               color mode)
+   * @param {Number|Array}                    [v3] blue or brightness value
+   *                                               (depending on the current
+   *                                               color mode)
+   * @param {Number|Array}                    [a]  opacity of the background
+   *
    * @example
    * <div>
    * <code>
-   * background(51);   
+   * // Grayscale integer value
+   * background(51);
    * </code>
    * </div>
    *
    * <div>
    * <code>
+   * // R, G & B integer values
    * background(255, 204, 0);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // H, S & B integer values
+   * colorMode(HSB);
+   * background(255, 204, 100);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // Named SVG/CSS color string
+   * background('red');
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // three-digit hexadecimal RGB notation
+   * background('#fae');
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // six-digit hexadecimal RGB notation
+   * background('#222222');
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // integer RGB notation
+   * background('rgb(0,255,0)');
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // integer RGBA notation
+   * background('rgba(0,255,0, 0.25)');
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // percentage RGB notation
+   * background('rgb(100%,0%,10%)');
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // percentage RGBA notation
+   * background('rgba(100%,0%,100%,0.5)');
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // p5 Color object
+   * background(color(0, 0, 255));
    * </code>
    * </div>
    */
@@ -90,14 +160,14 @@ define(function (require) {
    * Changes the way p5.js interprets color data. By default, the parameters
    * for fill(), stroke(), background(), and color() are defined by values
    * between 0 and 255 using the RGB color model. The colorMode() function is
-   * used to switch color systems. 
-   * 
+   * used to switch color systems.
+   *
    * @method colorMode
    * @param {Number|Constant} mode either RGB or HSB, corresponding to
    *                               Red/Green/Blue and Hue/Saturation/Brightness
-   * @param {Number|Constant} max1 range for the red or hue depending on the 
+   * @param {Number|Constant} max1 range for the red or hue depending on the
    *                               current color mode, or range for all values
-   * @param {Number|Constant} max2 range for the green or saturation depending 
+   * @param {Number|Constant} max2 range for the green or saturation depending
    *                               on the current color mode
    * @param {Number|Constant} max3 range for the blue or brightness depending
    *                               on the current color mode
@@ -132,7 +202,7 @@ define(function (require) {
   p5.prototype.colorMode = function() {
     if (arguments[0] === constants.RGB || arguments[0] === constants.HSB) {
       this._colorMode = arguments[0];
-    
+
       var isRGB = this._colorMode === constants.RGB;
       var maxArr = isRGB ? this._maxRGB : this._maxHSB;
 
@@ -158,28 +228,110 @@ define(function (require) {
    * fill(204, 102, 0), all subsequent shapes will be filled with orange. This
    * color is either specified in terms of the RGB or HSB color depending on
    * the current colorMode(). (The default color space is RGB, with each value
-   * in the range from 0 to 255.) 
-   * 
+   * in the range from 0 to 255.) If a single string argument is provided, RGB,
+   * RGBA and Hex CSS color strings and all named color strings are supported.
+   * A p5 Color object can also be provided to set the fill color.
+   *
    * @method fill
-   * @param {Number|Array} v1   gray value, red or hue value (depending on the
-   *                            current color mode), or color Array
-   * @param {Number|Array} [v2] green or saturation value (depending on the
-   *                            current color mode)
-   * @param {Number|Array} [v3] blue or brightness value (depending on the
-   *                            current color mode)
-   * @param {Number|Array} [a]  opacity of the background
+   * @param {Number|Array|String|p5.Color} v1   gray value, red or hue value
+   *                                            (depending on the current color
+   *                                            mode), or color Array, or CSS
+   *                                            color string
+   * @param {Number|Array}                 [v2] green or saturation value
+   *                                            (depending on the current
+   *                                            color mode)
+   * @param {Number|Array}                 [v3] blue or brightness value
+   *                                            (depending on the current
+   *                                            color mode)
+   * @param {Number|Array}                 [a]  opacity of the background
+   *
    * @example
    * <div>
    * <code>
-   * fill(153);
-   * rect(30, 20, 55, 55);   
+   * // Grayscale integer value
+   * fill(51);
+   * rect(20, 20, 60, 60);
    * </code>
    * </div>
-   * 
+   *
    * <div>
    * <code>
-   * fill(204, 102, 0);
-   * rect(30, 20, 55, 55);
+   * // R, G & B integer values
+   * fill(255, 204, 0);
+   * rect(20, 20, 60, 60);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // H, S & B integer values
+   * colorMode(HSB);
+   * fill(255, 204, 100);
+   * rect(20, 20, 60, 60);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // Named SVG/CSS color string
+   * fill('red');
+   * rect(20, 20, 60, 60);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // three-digit hexadecimal RGB notation
+   * fill('#fae');
+   * rect(20, 20, 60, 60);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // six-digit hexadecimal RGB notation
+   * fill('#222222');
+   * rect(20, 20, 60, 60);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // integer RGB notation
+   * fill('rgb(0,255,0)');
+   * rect(20, 20, 60, 60);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // integer RGBA notation
+   * fill('rgba(0,255,0, 0.25)');
+   * rect(20, 20, 60, 60);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // percentage RGB notation
+   * fill('rgb(100%,0%,10%)');
+   * rect(20, 20, 60, 60);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // percentage RGBA notation
+   * fill('rgba(100%,0%,100%,0.5)');
+   * rect(20, 20, 60, 60);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // p5 Color object
+   * fill(color(0, 0, 255));
+   * rect(20, 20, 60, 60);
    * </code>
    * </div>
    */
@@ -200,7 +352,7 @@ define(function (require) {
    * <code>
    * rect(15, 10, 55, 55);
    * noFill();
-   * rect(30, 20, 55, 55);
+   * rect(20, 20, 60, 60);
    * </code>
    * </div>
    */
@@ -217,7 +369,7 @@ define(function (require) {
    * <div>
    * <code>
    * noStroke();
-   * rect(30, 20, 55, 55);
+   * rect(20, 20, 60, 60);
    * </code>
    * </div>
    */
@@ -229,28 +381,121 @@ define(function (require) {
    * Sets the color used to draw lines and borders around shapes. This color
    * is either specified in terms of the RGB or HSB color depending on the
    * current colorMode() (the default color space is RGB, with each value in
-   * the range from 0 to 255). 
+   * the range from 0 to 255). If a single string argument is provided, RGB,
+   * RGBA and Hex CSS color strings and all named color strings are supported.
+   * A p5 Color object can also be provided to set the stroke color.
    *
    * @method stroke
-   * @param {Number|Array} v1   gray value, red or hue value (depending on the
-   *                            current color mode), or color Array
-   * @param {Number|Array} [v2] green or saturation value (depending on the
-   *                            current color mode)
-   * @param {Number|Array} [v3] blue or brightness value (depending on the
-   *                            current color mode)
-   * @param {Number|Array} [a]  opacity of the background
+   * @param {Number|Array|String|p5.Color} v1   gray value, red or hue value
+   *                                            (depending on the current color
+   *                                            mode), or color Array, or CSS
+   *                                            color string
+   * @param {Number|Array}                 [v2] green or saturation value
+   *                                            (depending on the current
+   *                                            color mode)
+   * @param {Number|Array}                 [v3] blue or brightness value
+   *                                            (depending on the current
+   *                                            color mode)
+   * @param {Number|Array}                 [a]  opacity of the background
+   *
    * @example
    * <div>
    * <code>
-   * stroke(153);
-   * rect(30, 20, 55, 55);   
+   * // Grayscale integer value
+   * strokeWeight(4);
+   * stroke(51);
+   * rect(20, 20, 60, 60);
    * </code>
    * </div>
    *
    * <div>
    * <code>
-   * stroke(204, 102, 0);
-   * rect(30, 20, 55, 55);
+   * // R, G & B integer values
+   * stroke(255, 204, 0);
+   * strokeWeight(4);
+   * rect(20, 20, 60, 60);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // H, S & B integer values
+   * colorMode(HSB);
+   * strokeWeight(4);
+   * stroke(255, 204, 100);
+   * rect(20, 20, 60, 60);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // Named SVG/CSS color string
+   * stroke('red');
+   * strokeWeight(4);
+   * rect(20, 20, 60, 60);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // three-digit hexadecimal RGB notation
+   * stroke('#fae');
+   * strokeWeight(4);
+   * rect(20, 20, 60, 60);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // six-digit hexadecimal RGB notation
+   * stroke('#222222');
+   * strokeWeight(4);
+   * rect(20, 20, 60, 60);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // integer RGB notation
+   * stroke('rgb(0,255,0)');
+   * strokeWeight(4);
+   * rect(20, 20, 60, 60);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // integer RGBA notation
+   * stroke('rgba(0,255,0,0.25)');
+   * strokeWeight(4);
+   * rect(20, 20, 60, 60);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // percentage RGB notation
+   * stroke('rgb(100%,0%,10%)');
+   * strokeWeight(4);
+   * rect(20, 20, 60, 60);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // percentage RGBA notation
+   * stroke('rgba(100%,0%,100%,0.5)');
+   * strokeWeight(4);
+   * rect(20, 20, 60, 60);
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // p5 Color object
+   * stroke(color(0, 0, 255));
+   * strokeWeight(4);
+   * rect(20, 20, 60, 60);
    * </code>
    * </div>
    */
