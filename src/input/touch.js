@@ -33,8 +33,7 @@ define(function (require) {
   /**
    * The system variable ptouchX always contains the horizontal position of
    * one finger, relative to (0, 0) of the canvas, in the frame previous to the
-   * current frame. This is best used for single touch interactions.
-   * For multi-touch interactions, use the touches[] array.
+   * current frame.
    *
    * @property ptouchX
    */
@@ -43,8 +42,7 @@ define(function (require) {
   /**
    * The system variable ptouchY always contains the vertical position of
    * one finger, relative to (0, 0) of the canvas, in the frame previous to the
-   * current frame. This is best used for single touch interactions.
-   * For multi-touch interactions, use the touches[] array.
+   * current frame.
    *
    * @property ptouchY
    */
