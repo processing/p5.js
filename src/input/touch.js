@@ -41,7 +41,7 @@ define(function (require) {
   p5.prototype.ptouchX = 0;
 
   /**
-   * The system variable pmouseY always contains the vertical position of
+   * The system variable ptouchY always contains the vertical position of
    * one finger, relative to (0, 0) of the canvas, in the frame previous to the
    * current frame. This is best used for single touch interactions.
    * For multi-touch interactions, use the touches[] array.
