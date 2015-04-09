@@ -94,8 +94,8 @@ define(function (require) {
     i = i || 0;
     var rect = canvas.getBoundingClientRect();
     return {
-      x: e.changedTouches[i].pageX - rect.left,
-      y: e.changedTouches[i].pageY - rect.top
+      x: e.changedTouches[i].clientX - rect.left,
+      y: e.changedTouches[i].clientY - rect.top
     };
   }
 
