@@ -10,7 +10,7 @@ define(function (require) {
 
   var p5 = require('core');
 
-  /**
+/**
    * The system variable touchX always contains the horizontal position of
    * one finger, relative to (0, 0) of the canvas. This is best used for
    * single touch interactions. For multi-touch interactions, use the
@@ -21,9 +21,8 @@ define(function (require) {
   p5.prototype.touchX = 0;
 
   /**
-   * The system variable touchY always contains the horizontal position of
-   * one finger, relative to (0, 0) of the canvas in the frame previous to the
-   * current frame. This is best used for
+   * The system variable touchY always contains the vertical position of
+   * one finger, relative to (0, 0) of the canvas. This is best used for
    * single touch interactions. For multi-touch interactions, use the
    * touches[] array.
    *
@@ -32,20 +31,18 @@ define(function (require) {
   p5.prototype.touchY = 0;
 
   /**
-   * The system variable touchY always contains the horizontal position of
-   * one finger, relative to (0, 0) of the canvas in the frame previous to the
-   * current frame. This is best used for
-   * single touch interactions. For multi-touch interactions, use the
-   * touches[] array.
+   * The system variable ptouchX always contains the horizontal position of
+   * one finger, relative to (0, 0) of the canvas, in the frame previous to the
+   * current frame.
    *
    * @property ptouchX
    */
   p5.prototype.ptouchX = 0;
 
   /**
-   * The system variable pmouseY always contains the vertical position of the
-   * mouse in the frame previous to the current frame, relative to (0, 0) of
-   * the canvas.
+   * The system variable ptouchY always contains the vertical position of
+   * one finger, relative to (0, 0) of the canvas, in the frame previous to the
+   * current frame.
    *
    * @property ptouchY
    */
