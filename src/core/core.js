@@ -164,7 +164,6 @@ define(function (require) {
       'mousedown': null,
       'mouseup': null,
       'click': null,
-      'mousewheel': null,
       'mouseover': null,
       'mouseout': null,
       'keydown': null,
@@ -184,6 +183,14 @@ define(function (require) {
     } else {
       this._events.MozOrientation = null;
     }
+  
+    //FF doesn't recognize mousewheel as of FF3.x
+    if (/Firefox/i.test(navigator.userAgent)) {
+      this._events.DOMMouseScroll = null;
+    } else {
+      this._events.mousewheel = null;
+    }
+
 
     this._loadingScreenId = 'p5_loading';
 
