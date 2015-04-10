@@ -132,6 +132,7 @@ module.exports = function(grunt) {
             'output.text_area': 'src/output/text_area',
             'rendering.rendering': 'src/rendering/rendering',
             'shape.2d_primitives': 'src/shape/2d_primitives',
+            'shape.3d_primitives': 'src/shape/3d_primitives',
             'shape.attributes': 'src/shape/attributes',
             'shape.curves': 'src/shape/curves',
             //'shape.shape': 'src/shape/shape',

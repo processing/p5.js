@@ -8,11 +8,11 @@ define(function(require) {
   var PI = Math.PI;
 
   return {
-
-    // RENDERER
+    
+    // GRAPHICS RENDERER
     P2D: 'p2d',
     WEBGL: 'webgl',
-
+    
     // ENVIRONMENT
     ARROW: 'default',
     CROSS: 'crosshair',

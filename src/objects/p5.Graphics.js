@@ -1,4 +1,6 @@
 /**
+ * @todo : need to make a separate Graphics2D class and use this
+ * class to decide which renderer to go with.
  * @module Rendering
  * @submodule Rendering
  * @for p5
@@ -6,13 +8,11 @@
 define(function(require) {
 
   var p5 = require('core');
-  var constants = require('constants');
 
   /**
    * Main graphics and rendering context, as well as the base API
-   * implementation for p5.js "core". Use this class if you need to draw into
-   * an off-screen graphics buffer. A p5.Graphics object can be constructed
-   * with the <code>createGraphics()</code> function. The fields and methods
+   * implementation for p5.js "core". To be used as the superclass for 
+   * Graphics2D and Graphics3D classes, respecitvely. The fields and methods
    * for this class are extensive, but mirror the normal drawing API for p5.
    *
    * @class p5.Graphics
@@ -20,45 +20,11 @@ define(function(require) {
    * @extends p5.Element
    * @param {String} elt DOM node that is wrapped
    * @param {Object} [pInst] pointer to p5 instance
-   * @param Optional:{Object} attrs webgl initialization attributes 
-   * @example
-   * <div>
-   * <code>
-   * var pg;
-   * function setup() {
-   *   createCanvas(100, 100);
-   *   pg = createGraphics(40, 40);
-   * }
-   * function draw() {
-   *   background(200);
-   *   pg.background(100);
-   *   pg.noStroke();
-   *   pg.ellipse(pg.width/2, pg.height/2, 50, 50);
-   *   image(pg, 9, 30);
-   *   image(pg, 51, 30);
-   * }
-   * </code>
-   * </div>
+   * @param {Boolean} whether we're using it as main canvas
    */
   p5.Graphics = function(renderer, elt, pInst, attrs, isMainCanvas) {
     p5.Element.call(this, elt, pInst);
     this.canvas = elt;
-    if (renderer === constants.P2D) {
-      this.drawingContext = this.canvas.getContext('2d');
-    }
-    else if (renderer === constants.WEBGL) {
-      try {
-        this.drawingContext = this.canvas.getContext('webgl', attrs) ||
-          this.canvas.getContext('experimental-webgl', attrs);
-        if (this.drawingContext === null) {
-          throw 'Error creating webgl context';
-        } else {
-          console.log('p5.Graphics3d: enabled webgl context');
-        }
-      } catch (er){
-          console.error(er);
-        }
-    }
     this._pInst = pInst;
     if (isMainCanvas) {
       this._isMainCanvas = true;
@@ -74,13 +40,6 @@ define(function(require) {
   };
 
   p5.Graphics.prototype = Object.create(p5.Element.prototype);
-
-  p5.Graphics.prototype._applyDefaults = function() {
-    this.drawingContext.fillStyle = '#FFFFFF';
-    this.drawingContext.strokeStyle = '#000000';
-    this.drawingContext.lineCap = constants.ROUND;
-    this.drawingContext.font = 'normal 12px sans-serif';
-  };
 
   p5.Graphics.prototype.resize = function(w, h) {
     this.width = w;

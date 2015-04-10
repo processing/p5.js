@@ -314,5 +314,4 @@ define(function (require) {
   p5.Matrix.prototype.invert = function(){};
 
   return p5.Matrix;
-
 });
