@@ -440,7 +440,7 @@ define(function (require) {
    *
    * @method mouseWheel
    */
-  p5.prototype._onmousewheel = function(e) {
+  p5.prototype._onmousewheel = p5.prototype._onDOMMouseScroll = function(e) {
     var context = this._isGlobal ? window : this;
     if (typeof context.mouseWheel === 'function') {
       var executeDefault = context.mouseWheel(e);

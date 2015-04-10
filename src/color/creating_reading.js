@@ -13,7 +13,7 @@ define(function (require) {
 
   /**
    * Extracts the alpha value from a color or pixel array.
-   * 
+   *
    * @method alpha
    * @param {Object} obj p5.Color object or pixel array
    * @example
@@ -39,7 +39,7 @@ define(function (require) {
 
   /**
    * Extracts the blue value from a color or a pixel array.
-   * 
+   *
    * @method blue
    * @param {Object} obj p5.Color object or pixel array
    * @example
@@ -48,11 +48,11 @@ define(function (require) {
    * c = color(175, 100, 220);  // Define color 'c'
    * fill(c);  // Use color variable 'c' as fill color
    * rect(15, 20, 35, 60);  // Draw left rectangle
-   * 
+   *
    * blueValue = blue(c);  // Get blue in 'c'
    * println(blueValue);  // Prints "220.0"
    * fill(0, 0, blueValue);  // Use 'blueValue' in new fill
-   * rect(50, 20, 35, 60);  // Draw right rectangle   
+   * rect(50, 20, 35, 60);  // Draw right rectangle
    * </code>
    * </div>
    */
@@ -65,8 +65,8 @@ define(function (require) {
   };
 
   /**
-   * Extracts the brightness value from a color. 
-   * 
+   * Extracts the brightness value from a color.
+   *
    * @method brightness
    * @param {Object} color p5.Color object
    * @example
@@ -96,25 +96,27 @@ define(function (require) {
    * current colorMode(). The default mode is RGB values from 0 to 255
    * and, therefore, the function call color(255, 204, 0) will return a
    * bright yellow color.
-   * 
+   *
    * Note that if only one value is provided to color(), it will be interpreted
    * as a grayscale value. Add a second value, and it will be used for alpha
    * transparency. When three values are specified, they are interpreted as
    * either RGB or HSB values. Adding a fourth value applies alpha
-   * transparency.
-   * 
+   * transparency. If a single string parameter is provided it will be
+   * interpreted as a CSS-compatible color string.
+   *
    * Colors are stored as Numbers or Arrays.
-   * 
+   *
    * @method color
-   * @param  {Number} v1      gray value or red or hue value relative to the 
-   *                          current color range
-   * @param  {Number} [v2]    gray value or green or saturation value relative
-   *                          to the current color range (or alpha value if
-   *                          first param is gray value)
-   * @param  {Number} [v3]    gray value or blue or brightness value relative
-   *                          to the current color range
-   * @param  {Number} [alpha] alpha value relative to current color range
-   * @return {Array}          resulting color
+   * @param  {Number|String} v1      gray value or red or hue value relative to
+   *                                 the current color range, or a color string
+   * @param  {Number}        [v2]    gray value or green or saturation value
+   *                                 relative to the current color range (or
+   *                                 alpha value if first param is gray value)
+   * @param  {Number}        [v3]    gray value or blue or brightness value
+   *                                 relative to the current color range
+   * @param  {Number}        [alpha] alpha value relative to current color range
+   * @return {Array}                 resulting color
+   *
    * @example
    * <div>
    * <code>
@@ -131,7 +133,7 @@ define(function (require) {
    * fill(c);  // Use color variable 'c' as fill color
    * noStroke();  // Don't draw a stroke around shapes
    * ellipse(25, 25, 80, 80);  // Draw left circle
-   * 
+   *
    * // Using only one value with color()
    * // generates a grayscale value.
    * c = color(65);  // Update 'c' with grayscale value
@@ -142,14 +144,48 @@ define(function (require) {
    *
    * <div>
    * <code>
+   * // Named SVG & CSS colors may be used,
+   * c = color('magenta');
+   * fill(c);  // Use 'c' as fill color
    * noStroke();  // Don't draw a stroke around shapes
-   * 
+   * rect(20, 20, 60, 60);  // Draw rectangle
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // as can hex color codes:
+   * c = color('#4F66A1');
+   * fill(c);  // Use 'c' as fill color
+   * noStroke();  // Don't draw a stroke around shapes
+   * rect(20, 20, 60, 60);  // Draw rectangle
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * // RGB and RGBA color strings are also supported:
+   * // these all set 'c' to the same color (solid blue)
+   * c = color('rgb(0,0,255)');
+   * c = color('rgb(0%, 0%, 100%)');
+   * c = color('rgba(0, 0, 255, 1)');
+   * c = color('rgba(0%, 0%, 100%, 1)');
+   * fill(c);  // Use 'c' as fill color
+   * noStroke();  // Don't draw a stroke around shapes
+   * rect(20, 20, 60, 60);  // Draw rectangle
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * noStroke();  // Don't draw a stroke around shapes
+   *
    * // if switching from RGB to HSB both modes must be declared
    * colorMode(RGB, 255);  // Use RGB with scale of 0-255
    * c = color(50, 55, 100);  // Create a color for 'c'
    * fill(c);  // Use color variable 'c' as fill color
    * rect(0, 10, 45, 80);  // Draw left rect
-   * 
+   *
    * colorMode(HSB, 100);  // Use HSB with scale of 0-100
    * c = color(50, 55, 100);  // Update 'c' with new color
    * fill(c);  // Use updated 'c' as fill color
@@ -169,7 +205,7 @@ define(function (require) {
   };
   /**
    * Extracts the green value from a color or pixel array.
-   * 
+   *
    * @method green
    * @param {Object} color p5.Color object
    * @example
@@ -178,7 +214,7 @@ define(function (require) {
    * c = color(20, 75, 200);  // Define color 'c'
    * fill(c);  // Use color variable 'c' as fill color
    * rect(15, 20, 35, 60);  // Draw left rectangle
-   * 
+   *
    * greenValue = green(c);  // Get green in 'c'
    * println(greenValue);  // Print "75.0"
    * fill(0, greenValue, 0);  // Use 'greenValue' in new fill
@@ -195,8 +231,8 @@ define(function (require) {
   };
 
   /**
-   * Extracts the hue value from a color. 
-   * 
+   * Extracts the hue value from a color.
+   *
    * @method hue
    * @param {Object} color p5.Color object
    * @example
@@ -228,7 +264,7 @@ define(function (require) {
    * Likewise, amounts above 1 will be capped at 1. This is different from
    * the behavior of lerp(), but necessary because otherwise numbers outside
    * the range will produce strange and unexpected colors.
-   * 
+   *
    * @method lerpColor
    * @param  {Array/Number} c1  interpolate from this color
    * @param  {Array/Number} c2  interpolate to this color
@@ -274,7 +310,7 @@ define(function (require) {
 
   /**
    * Extracts the red value from a color or pixel array.
-   * 
+   *
    * @method red
    * @param {Object} obj p5.Color object or pixel array
    * @example
@@ -300,8 +336,8 @@ define(function (require) {
   };
 
   /**
-   * Extracts the saturation value from a color. 
-   * 
+   * Extracts the saturation value from a color.
+   *
    * @method saturation
    * @param {Object} color p5.Color object
    * @example
