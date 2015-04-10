@@ -6,7 +6,8 @@ define(function (require) {
 
   require('p5.Color');
   require('p5.Element');
-  require('p5.Graphics');
+  require('p5.Graphics2D');
+  require('p5.Graphics3D');
   require('p5.Image');
   require('p5.File');
   //require('p5.Shape');
@@ -40,6 +41,7 @@ define(function (require) {
   require('output.text_area');
   require('rendering.rendering');
   require('shape.2d_primitives');
+  require('shape.3d_primitives');
   require('shape.attributes');
   require('shape.curves');
   //require('shape.shape');
@@ -48,6 +50,7 @@ define(function (require) {
   require('transform');
   require('typography.attributes');
   require('typography.loading_displaying');
+  require('shaders');
 
   /**
    * _globalInit

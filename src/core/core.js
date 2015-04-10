@@ -220,6 +220,7 @@ define(function (require) {
       this.createCanvas(
         this._defaultCanvasSize.width,
         this._defaultCanvasSize.height,
+        'p2d',
         true
       );
 
