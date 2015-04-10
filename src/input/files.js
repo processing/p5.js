@@ -97,9 +97,9 @@ define(function (require) {
     var t = 'json'; //= path.indexOf('http') === -1 ? 'json' : 'jsonp';
 
     // check for explicit data type argument
-    if (typeof type === 'string'){
-      if (type === 'jsonp' || type === 'json') {
-        t = type;
+    if (typeof arguments[2] === 'string'){
+      if (arguments[2] === 'jsonp' || arguments[2] === 'json') {
+        t = arguments[2];
       }
     }
 

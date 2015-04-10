@@ -3,7 +3,6 @@
  * @submodule 2D Primitives
  * @for p5
  * @requires core
- * @requires canvas
  * @requires constants
  */
 define(function (require) {
@@ -11,7 +10,6 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
-  var canvas = require('canvas');
   var constants = require('constants');
 
   // source: https://sites.google.com/site/hansmuller/flex-blog/CircularArc.mxml
@@ -145,7 +143,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-	p5.prototype.arc = function(x, y, width, height, start, stop, mode) {
+  p5.prototype.arc = function(x, y, width, height, start, stop, mode) {
     if (!this._doStroke && !this._doFill) {
       return this;
     }

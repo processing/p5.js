@@ -42,7 +42,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.textAlign = function(a) {
+  p5.prototype.textAlign = function(a, v) {
     if (a === constants.LEFT ||
       a === constants.RIGHT ||
       a === constants.CENTER) {
