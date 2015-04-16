@@ -435,6 +435,7 @@ define(function (require) {
     }
 
     // Bind events to window (not using container div bc key events don't work)
+
     for (var e in this._events) {
       var f = this['_on'+e];
       if (f) {
