@@ -463,7 +463,13 @@ define(function (require) {
   * @example
   * <div>
   * <code>
+  * // Draw a rectangle at location (30, 25) with a width and height of 55.
   * rect(30, 20, 55, 55);
+  * // Draw a rectangle with rounded corners, each having a radius of 20.
+  * rect(30, 20, 55, 55, 20);
+  * // Draw a rectangle with rounded corners having the following radii:
+  * // top-left = 20, top-right = 15, bottom-right = 10, bottom-left = 5.
+  * rect(30, 20, 55, 55, 20, 15, 10, 5)
   * </code>
   * </div>
   */
@@ -474,6 +480,7 @@ define(function (require) {
     }
     var vals = canvas.modeAdjust(x, y, w, h, this._rectMode);
     var ctx = this.drawingContext;
+    // Translate the line by (0.5, 0.5) to draw a crisp rectangle border
     if (this._doStroke && ctx.lineWidth % 2 === 1) {
       ctx.translate(0.5, 0.5);
     }
@@ -489,7 +496,7 @@ define(function (require) {
       if (typeof br === 'undefined') { br = tr; }
       if (typeof bl === 'undefined') { bl = br; }
       
-      // Cache and precompute several values
+      // Cache and compute several values
       var _x = vals.x;
       var _y = vals.y;
       var _w = vals.w;
@@ -527,7 +534,7 @@ define(function (require) {
     }
     return this;
   };
-  
+
   /**
   * A triangle is a plane created by connecting three points. The first two
   * arguments specify the first point, the middle two arguments specify the
