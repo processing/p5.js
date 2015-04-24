@@ -444,33 +444,95 @@ define(function (require) {
   * every angle at ninety degrees. By default, the first two parameters set
   * the location of the upper-left corner, the third sets the width, and the
   * fourth sets the height. The way these parameters are interpreted, however,
-  * may be changed with the rectMode() function.
+  * may be changed with the rectMode() function. If provided, the fifth, sixth
+  * seventh and eighth parameters, if specified, determine corner radius for
+  * the top-right, top-left, lower-right and lower-left corners, respectively.
+  * An omitted corner radius parameter is set to the value of the previously
+  * specified radius value in the parameter list.
   *
   * @method rect
-  * @param  {Number} a x-coordinate of the rectangle
-  * @param  {Number} b y-coordinate of the rectangle
-  * @param  {Number} c width of the rectangle
-  * @param  {Number} d height of the rectangle
-  * @return {p5}       the p5 object
+  * @param  {Number} x  x-coordinate of the rectangle.
+  * @param  {Number} y  y-coordinate of the rectangle.
+  * @param  {Number} w  width of the rectangle.
+  * @param  {Number} h  height of the rectangle.
+  * @param  {Number} [tl] optional radius of top-left corner.
+  * @param  {Number} [tr] optional radius of top-right corner.
+  * @param  {Number} [br] optional radius of bottom-right corner.
+  * @param  {Number} [bl] optional radius of bottom-left corner.
+  * @return {p5}          the p5 object.
   * @example
   * <div>
   * <code>
+  * // Draw a rectangle at location (30, 25) with a width and height of 55.
   * rect(30, 20, 55, 55);
   * </code>
   * </div>
+  *
+  * <div>
+  * <code>
+  * // Draw a rectangle with rounded corners, each having a radius of 20.
+  * rect(30, 20, 55, 55, 20);
+  * </code>
+  * </div>
+  *
+  * <div>
+  * <code>
+  * // Draw a rectangle with rounded corners having the following radii:
+  * // top-left = 20, top-right = 15, bottom-right = 10, bottom-left = 5.
+  * rect(30, 20, 55, 55, 20, 15, 10, 5)
+  * </code>
+  * </div>
   */
-  p5.prototype.rect = function(a, b, c, d) {
+
+  p5.prototype.rect = function (x, y, w, h, tl, tr, br, bl) {
     if (!this._doStroke && !this._doFill) {
       return;
     }
-    var vals = canvas.modeAdjust(a, b, c, d, this._rectMode);
+    var vals = canvas.modeAdjust(x, y, w, h, this._rectMode);
     var ctx = this.drawingContext;
     // Translate the line by (0.5, 0.5) to draw a crisp rectangle border
     if (this._doStroke && ctx.lineWidth % 2 === 1) {
       ctx.translate(0.5, 0.5);
     }
     ctx.beginPath();
-    ctx.rect(vals.x, vals.y, vals.w, vals.h);
+
+    if (typeof tl === 'undefined') {
+      // No rounded corners
+      ctx.rect(vals.x, vals.y, vals.w, vals.h);
+    } else {
+      // At least one rounded corner
+      // Set defaults when not specified
+      if (typeof tr === 'undefined') { tr = tl; }
+      if (typeof br === 'undefined') { br = tr; }
+      if (typeof bl === 'undefined') { bl = br; }
+      
+      // Cache and compute several values
+      var _x = vals.x;
+      var _y = vals.y;
+      var _w = vals.w;
+      var _h = vals.h;
+      var hw = _w / 2;
+      var hh = _h / 2;
+
+      // Clip radii
+      if (_w < 2 * tl) { tl = hw; }
+      if (_h < 2 * tl) { tl = hh; }
+      if (_w < 2 * tr) { tr = hw; }
+      if (_h < 2 * tr) { tr = hh; }
+      if (_w < 2 * br) { br = hw; }
+      if (_h < 2 * br) { br = hh; }
+      if (_w < 2 * bl) { bl = hw; }
+      if (_h < 2 * bl) { bl = hh; }
+
+      // Draw shape
+      ctx.beginPath();
+      ctx.moveTo(_x + tl, _y);
+      ctx.arcTo(_x + _w, _y, _x + _w, _y + _h, tr);
+      ctx.arcTo(_x + _w, _y + _h, _x, _y + _h, br);
+      ctx.arcTo(_x, _y + _h, _x, _y, bl);
+      ctx.arcTo(_x, _y, _x + _w, _y, tl);
+      ctx.closePath();
+    }
     if (this._doFill) {
       ctx.fill();
     }
