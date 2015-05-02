@@ -109,17 +109,9 @@ define(function (require) {
    */
   p5.prototype.boolean = function(n) {
     if (typeof n === 'number') {
-      if (n === 0) {
-        return false;
-      } else {
-        return true;
-      }
+      return n !== 0;
     } else if (typeof n === 'string') {
-      if (n.toLowerCase() === 'true') {
-        return true;
-      } else {
-        return false;
-      }
+      return n.toLowerCase() === 'true';
     } else if (typeof n === 'boolean') {
       return n;
     } else if (n instanceof Array) {
