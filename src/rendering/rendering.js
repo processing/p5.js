@@ -7,7 +7,8 @@ define(function(require) {
 
   var p5 = require('core');
   var constants = require('constants');
-
+  require('p5.Graphics2D');
+  require('p5.Graphics3D');
 
   /**
    * Creates a canvas element in the document, and sets the dimensions of it
@@ -35,29 +36,36 @@ define(function(require) {
    * </code>
    * </div>
    */
+  
   p5.prototype.createCanvas = function(w, h, renderer) {
-    var isDefault, c, r;
-    //4th arg used when called onLoad, otherwise hidden to the public api
+    //optional: renderer, otherwise defaults to p2d
+    var r = renderer || constants.P2D;
+    var isDefault, c;
+    
+    //4th arg (isDefault) used when called onLoad, 
+    //otherwise hidden to the public api
     if(arguments[3]){
       isDefault =
-      (typeof arguments[3] === 'boolean') ? arguments[3] : undefined;
+      (typeof arguments[3] === 'boolean') ? arguments[3] : false;
     }
-    //renderer is either set explicitly, otherwise defaults to p2d
-    r = renderer || constants.P2D;
 
-    if (isDefault) {
+    if(r === constants.WEBGL){
+      c = document.getElementById('defaultCanvas');
+      if(c){ //if defaultCanvas already exists
+        c.parentNode.removeChild(c); //replace the existing defaultCanvas
+      }
       c = document.createElement('canvas');
       c.id = 'defaultCanvas';
     }
-    else if(r === constants.WEBGL) {
-      c = document.createElement('canvas');
-    }
-    // resize the default canvas if new one is created
-    // and we already have a default canvas
     else {
-      c = this.canvas;
+      if (isDefault) {
+        c = document.createElement('canvas');
+        c.id = 'defaultCanvas';
+      } else { // resize the default canvas if new one is created
+        c = this.canvas;
+      }
     }
-
+    
     c.setAttribute('width', w*this._pixelDensity);
     c.setAttribute('height', h*this._pixelDensity);
     c.setAttribute('style',
@@ -75,21 +83,20 @@ define(function(require) {
       document.body.appendChild(c);
     }
 
-    /**
-     * @warning: this could be buggy but I'm moving fast,
-     * no time to stop!!
-     */
+    // Init our graphics renderer
+    //webgl mode
     if (r === constants.WEBGL) {
-      this._currentGraphics = new p5.Graphics3D(c, this, true, r);
+      this._graphics = new p5.Graphics3D(c, this, true);
       if (!this._defaultGraphics) {
-        this._defaultGraphics = this._currentGraphics;
+        this._defaultGraphics = this._graphics;
         this._elements.push(this._defaultGraphics);
       }
     }
+    //P2D mode
     else {
-      this._currentGraphics = new p5.Graphics2D(c, this, true, r);
+      this._graphics = new p5.Graphics2D(c, this, true);
       if (!this._defaultGraphics) {
-        this._defaultGraphics = this._currentGraphics;
+        this._defaultGraphics = this._graphics;
         this._elements.push(this._defaultGraphics);
       }
     }

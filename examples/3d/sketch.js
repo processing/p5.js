@@ -7,8 +7,8 @@ function setup(){
 }
 
 function draw(){
-  // background(0,0,255);
+  background(0,255,0,255);
 
-  stroke(random(255),random(255),random(255),255);
-  line(random(displayWidth),0,random(20), mouseX, mouseY, random(100));
+  stroke(0,0,0,0);
+  line(0,0,0, mouseX, mouseY,0);
 }

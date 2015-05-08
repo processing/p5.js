@@ -144,6 +144,8 @@ define(function (require) {
    * </div>
    */
   p5.prototype.arc = function(x, y, width, height, start, stop, mode) {
+    var curves = createArc(1.0, start, stop);
+    
     if (!this._doStroke && !this._doFill) {
       return this;
     }
@@ -151,7 +153,8 @@ define(function (require) {
       start = this.radians(start);
       stop = this.radians(stop);
     }
-    this._graphics.arc(x, y, width, height, start, stop, mode);
+
+    this._graphics.arc(x, y, width, height, start, stop, mode, curves);
     return this;
   };
 
@@ -181,6 +184,8 @@ define(function (require) {
     // p5 supports negative width and heights for ellipses
     w = Math.abs(w);
     h = Math.abs(h);
+    //@TODO add catch block here if this._graphics 
+    //doesn't have the method implemented yet
     this._graphics.ellipse(x, y, w, h);
     return this;
   };
