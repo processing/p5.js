@@ -99,12 +99,12 @@ define(function(require) {
   //////////////////////////////////////////////
 
   p5.Graphics3D.prototype.background = function() {
-    // var _col = this._pInst.color.apply(this._pInst, arguments);
-    gl.clearColor(0.0,0.0,0.0,1.0);
-    // gl.clearColor( (_col.color_array[0])/255,
-    //   (_col.color_array[1])/255,
-    //   (_col.color_array[2])/255,
-    //   (_col.color_array[3])/255);
+    var _col = this._pInst.color.apply(this._pInst, arguments);
+    // gl.clearColor(0.0,0.0,0.0,1.0);
+    gl.clearColor( (_col.color_array[0])/255,
+      (_col.color_array[1])/255,
+      (_col.color_array[2])/255,
+      (_col.color_array[3])/255);
     gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
   };
   

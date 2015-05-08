@@ -36,28 +36,36 @@ define(function(require) {
    * </code>
    * </div>
    */
+  
   p5.prototype.createCanvas = function(w, h, renderer) {
+    //optional: renderer, otherwise defaults to p2d
+    var r = renderer || constants.P2D;
     var isDefault, c;
-    //4th arg used when called onLoad, otherwise hidden to the public api
+    
+    //4th arg (isDefault) used when called onLoad, 
+    //otherwise hidden to the public api
     if(arguments[3]){
       isDefault =
       (typeof arguments[3] === 'boolean') ? arguments[3] : false;
     }
-    //renderer is either set explicitly, otherwise defaults to p2d
-    var r = renderer || constants.P2D;
-    
-    if(isDefault || r === constants.WEBGL){
+
+    if(r === constants.WEBGL){
+      c = document.getElementById('defaultCanvas');
+      if(c){ //if defaultCanvas already exists
+        c.parentNode.removeChild(c); //replace the existing defaultCanvas
+      }
       c = document.createElement('canvas');
-      if(isDefault){
+      c.id = 'defaultCanvas';
+    }
+    else {
+      if (isDefault) {
+        c = document.createElement('canvas');
         c.id = 'defaultCanvas';
+      } else { // resize the default canvas if new one is created
+        c = this.canvas;
       }
     }
-    // resize the default canvas if new one is created
-    // and we already have a default canvas
-    else {
-      c = this.canvas;
-    }
-
+    
     c.setAttribute('width', w*this._pixelDensity);
     c.setAttribute('height', h*this._pixelDensity);
     c.setAttribute('style',
@@ -75,10 +83,8 @@ define(function(require) {
       document.body.appendChild(c);
     }
 
-    /**
-     * @warning: this could be buggy but I'm moving fast,
-     * no time to stop!!
-     */
+    // Init our graphics renderer
+    //webgl mode
     if (r === constants.WEBGL) {
       this._graphics = new p5.Graphics3D(c, this, true);
       if (!this._defaultGraphics) {
@@ -86,6 +92,7 @@ define(function(require) {
         this._elements.push(this._defaultGraphics);
       }
     }
+    //P2D mode
     else {
       this._graphics = new p5.Graphics2D(c, this, true);
       if (!this._defaultGraphics) {
