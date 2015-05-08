@@ -22,7 +22,7 @@ define(function(require) {
    * @param {Object} [pInst] pointer to p5 instance
    * @param {Boolean} whether we're using it as main canvas
    */
-  p5.Graphics = function(renderer, elt, pInst, attrs, isMainCanvas) {
+  p5.Graphics = function(elt, pInst, isMainCanvas) {
     p5.Element.call(this, elt, pInst);
     this.canvas = elt;
     this._pInst = pInst;
@@ -53,7 +53,7 @@ define(function(require) {
       this._pInst._setProperty('height', this.height);
     }
     this.drawingContext.scale(this._pInst._pixelDensity,
-                              this._pInst._pixelDensity);
+      this._pInst._pixelDensity);
   };
 
   return p5.Graphics;

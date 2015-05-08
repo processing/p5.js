@@ -7,7 +7,8 @@ define(function(require) {
 
   var p5 = require('core');
   var constants = require('constants');
-
+  require('p5.Graphics2D');
+  require('p5.Graphics3D');
 
   /**
    * Creates a canvas element in the document, and sets the dimensions of it
@@ -36,21 +37,20 @@ define(function(require) {
    * </div>
    */
   p5.prototype.createCanvas = function(w, h, renderer) {
-    var isDefault, c, r;
+    var isDefault, c;
     //4th arg used when called onLoad, otherwise hidden to the public api
     if(arguments[3]){
       isDefault =
-      (typeof arguments[3] === 'boolean') ? arguments[3] : undefined;
+      (typeof arguments[3] === 'boolean') ? arguments[3] : false;
     }
     //renderer is either set explicitly, otherwise defaults to p2d
-    r = renderer || constants.P2D;
-
-    if (isDefault) {
+    var r = renderer || constants.P2D;
+    
+    if(isDefault || r === constants.WEBGL){
       c = document.createElement('canvas');
-      c.id = 'defaultCanvas';
-    }
-    else if(r === constants.WEBGL) {
-      c = document.createElement('canvas');
+      if(isDefault){
+        c.id = 'defaultCanvas';
+      }
     }
     // resize the default canvas if new one is created
     // and we already have a default canvas
@@ -80,16 +80,16 @@ define(function(require) {
      * no time to stop!!
      */
     if (r === constants.WEBGL) {
-      this._currentGraphics = new p5.Graphics3D(c, this, true, r);
+      this._graphics = new p5.Graphics3D(c, this, true);
       if (!this._defaultGraphics) {
-        this._defaultGraphics = this._currentGraphics;
+        this._defaultGraphics = this._graphics;
         this._elements.push(this._defaultGraphics);
       }
     }
     else {
-      this._currentGraphics = new p5.Graphics2D(c, this, true, r);
+      this._graphics = new p5.Graphics2D(c, this, true);
       if (!this._defaultGraphics) {
-        this._defaultGraphics = this._currentGraphics;
+        this._defaultGraphics = this._graphics;
         this._elements.push(this._defaultGraphics);
       }
     }

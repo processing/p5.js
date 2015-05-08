@@ -12,7 +12,7 @@ define(function (require) {
 
   var p5 = require('core');
 
-  //@TODO fill with 3d primatives
+  //@TODO fill with 3d primitives
 
   return p5;
 });

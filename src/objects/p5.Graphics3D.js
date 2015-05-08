@@ -20,32 +20,7 @@ define(function(require) {
     /**
    * 3D graphics class.  Can also be used as an off-screen graphics buffer.
    * A p5.Graphics3D object can be constructed
-   * with the <code>createGraphics3D()</code> function. The fields and methods
-   * for this class are extensive, but mirror the normal drawing API for p5.
-   *
-   * @class p5.Graphics2D
-   * @constructor
-   * @extends p5.Element
-   * @param {String} elt DOM node that is wrapped
-   * @param {Object} [pInst] pointer to p5 instance
-   * @example
-   * <div>
-   * <code>
-   * var pg;
-   * function setup() {
-   *   createCanvas(100, 100);
-   *   pg = createGraphics3D(40, 40);
-   * }
-   * function draw() {
-   *   background(200);
-   *   pg.background(100);
-   *   pg.noStroke();
-   *   pg.ellipse(pg.width/2, pg.height/2, 50, 50);
-   *   image(pg, 9, 30);
-   *   image(pg, 51, 30);
-   * }
-   * </code>
-   * </div>
+   * 
    */
   p5.Graphics3D = function(elt, pInst, isMainCanvas) {
     p5.Graphics.call(this, elt, pInst, isMainCanvas);
@@ -79,33 +54,11 @@ define(function(require) {
 
   p5.Graphics3D.prototype = Object.create(p5.Graphics.prototype);
 
-  //////////////////////////////////////////////
-  // COLOR | Setting
-  //////////////////////////////////////////////
-
-  p5.Graphics3D.prototype.background = function() {
-    var _col = p5.Color.getNormalizedColor.apply(this._pInst, arguments);
-    gl.clearColor(_col[0]/255, _col[1]/255, _col[2]/255, _col[3]/255);
-    gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
-  };
-  
-  // p5.Graphics3D.prototype.clear = function() {
-    
-  // };
-
-  // p5.Graphics3D.prototype.fill = function() {
-    
-  // };
-
-  p5.Graphics3D.prototype.stroke = function() {
-    this._stroke = p5.Color.getNormalizedColor.apply(this._pInst, arguments);
-  };
-
   p5.Graphics3D.prototype.initShaders = function(){
     var _vertShader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(_vertShader, shaders.defaultVertShader);
     gl.compileShader(_vertShader);
-    // did our vertext shader compile?
+    // if our vertex shader failed compilation?
     if (!gl.getShaderParameter(_vertShader, gl.COMPILE_STATUS))
     {
       alert('Yikes! An error occurred compiling the shaders:' +
@@ -113,18 +66,16 @@ define(function(require) {
       return null;
     }
 
-
     var _fragShader = gl.createShader(gl.FRAGMENT_SHADER);
     gl.shaderSource(_fragShader, shaders.defaultFragShader);
     gl.compileShader(_fragShader);
-    // did our fragment shader compile?
+    // if our frag shader failed compilation?
     if (!gl.getShaderParameter(_fragShader, gl.COMPILE_STATUS))
     {
       alert('Darn! An error occurred compiling the shaders:' +
         gl.getShaderInfoLog(_fragShader));
       return null;
     }
-
 
     shaderProgram = gl.createProgram();
     gl.attachShader(shaderProgram, _vertShader);
@@ -143,9 +94,34 @@ define(function(require) {
 
   };
 
+  //////////////////////////////////////////////
+  // COLOR | Setting
+  //////////////////////////////////////////////
+
+  p5.Graphics3D.prototype.background = function() {
+    // var _col = this._pInst.color.apply(this._pInst, arguments);
+    gl.clearColor(0.0,0.0,0.0,1.0);
+    // gl.clearColor( (_col.color_array[0])/255,
+    //   (_col.color_array[1])/255,
+    //   (_col.color_array[2])/255,
+    //   (_col.color_array[3])/255);
+    gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);
+  };
+  
+  // p5.Graphics3D.prototype.clear = function() {
+    //@TODO
+  // };
+
+  // p5.Graphics3D.prototype.fill = function() {
+    //@TODO
+  // };
+
+  p5.Graphics3D.prototype.stroke = function() {
+    this._stroke = this._pInst.color.apply(this._pInst, arguments);
+  };
+
   /**
-   * @todo  move this into 3D primatives file
-   * draws a line between two 3D points
+   * Draws a line between two 3D points
    * @param  {Number} x1 starting point x
    * @param  {Number} y1 starting point y
    * @param  {Number} z1 starting point z
@@ -173,7 +149,6 @@ define(function(require) {
     gl.enableVertexAttribArray(vertexPositionAttribute);
     gl.vertexAttribPointer(vertexPositionAttribute,
       3, gl.FLOAT, false, 0, 0);
-
 
     //colors
     vertexColorAttribute =
@@ -217,9 +192,9 @@ define(function(require) {
   };
 
 
-  /*p5.Graphics3D.prototype.pop = function() {
+  p5.Graphics3D.prototype.pop = function() {
     //@TODO
-  };*/
+  };
 
 
   /**
