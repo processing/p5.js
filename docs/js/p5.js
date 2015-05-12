@@ -1731,17 +1731,17 @@ var colorcreating_reading = function (require, core, p5Color) {
       if (c1 instanceof Array) {
         var c = [];
         for (var i = 0; i < c1.length; i++) {
-          c.push(p5.prototype.lerp(c1[i], c2[i], amt));
+          c.push(Math.sqrt(p5.prototype.lerp(c1[i]*c1[i], c2[i]*c2[i], amt)));
         }
         return c;
       } else if (c1 instanceof p5.Color) {
         var pc = [];
         for (var j = 0; j < 4; j++) {
-          pc.push(p5.prototype.lerp(c1.rgba[j], c2.rgba[j], amt));
+          pc.push(Math.sqrt(p5.prototype.lerp(c1.rgba[j]*c1.rgba[j], c2.rgba[j]*c2.rgba[j], amt)));
         }
         return new p5.Color(this, pc);
       } else {
-        return p5.prototype.lerp(c1, c2, amt);
+        return Math.sqrt(p5.prototype.lerp(c1*c1, c2*c2, amt));
       }
     };
     p5.prototype.red = function (c) {
