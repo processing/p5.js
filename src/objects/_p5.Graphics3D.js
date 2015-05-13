@@ -6,7 +6,7 @@ define(function (require) {
   var gl,
     shaderProgram;
   var vertexPositionAttribute;
-  //var vertexColorAttribute;
+  var vertexColorAttribute;
 
   //@TODO should probably implement an override for these attributes
   var attributes = {
@@ -54,8 +54,8 @@ define(function (require) {
 
   p5.Graphics3D.prototype.initShaders = function () {
     var _vertShader = gl.createShader(gl.VERTEX_SHADER);
-    //gl.shaderSource(_vertShader, shaders.testVertShader);
-    gl.shaderSource(_vertShader, shaders.defaultVertShader);
+    gl.shaderSource(_vertShader, shaders.testVertShader);
+    //gl.shaderSource(_vertShader, shaders.defaultVertShader);
     gl.compileShader(_vertShader);
     // if our vertex shader failed compilation?
     if (!gl.getShaderParameter(_vertShader, gl.COMPILE_STATUS)) {
@@ -65,8 +65,8 @@ define(function (require) {
     }
 
     var _fragShader = gl.createShader(gl.FRAGMENT_SHADER);
-    //gl.shaderSource(_fragShader, shaders.defaultFragShader);
-    gl.shaderSource(_fragShader, shaders.materialFragShader);
+    gl.shaderSource(_fragShader, shaders.defaultFragShader);
+    //gl.shaderSource(_fragShader, shaders.materialFragShader);
     gl.compileShader(_fragShader);
     // if our frag shader failed compilation?
     if (!gl.getShaderParameter(_fragShader, gl.COMPILE_STATUS)) {
@@ -90,19 +90,19 @@ define(function (require) {
     // a view frustrum
     gl.uniform3f(vertexResolution, 300, 300, 1000.0);
 
-    shaderProgram.uMaterialColorLoc = gl.getUniformLocation(shaderProgram,
-      'u_MaterialColor');
+    // shaderProgram.uMaterialColorLoc = gl.getUniformLocation(shaderProgram,
+    //   'u_MaterialColor');
 
-    // Set material uniform
-    gl.uniform4f(shaderProgram.uMaterialColorLoc, 1.0, 1.0, 1.0, 1.0);
+    // // Set material uniform
+    // gl.uniform4f(shaderProgram.uMaterialColorLoc, 1.0, 1.0, 1.0, 1.0);
 
     vertexPositionAttribute =
       gl.getAttribLocation(shaderProgram, 'a_VertexPosition');
     gl.enableVertexAttribArray(vertexPositionAttribute);
 
-    // vertexColorAttribute =
-    //   gl.getAttribLocation(shaderProgram, 'a_VertexColor');
-    // gl.enableVertexAttribArray(vertexColorAttribute);
+    vertexColorAttribute =
+      gl.getAttribLocation(shaderProgram, 'a_VertexColor');
+    gl.enableVertexAttribArray(vertexColorAttribute);
 
   };
 
@@ -172,21 +172,21 @@ define(function (require) {
 
     // wowza, this really needs to be cleaned up
     // with vector/matrix math
-    // var colors = [
-    //   this._stroke[0] / 255, // first vertex color
-    //   this._stroke[1] / 255,
-    //   this._stroke[2] / 255,
-    //   this._stroke[3] / 255,
-    //   this._stroke[0] / 255, // second vertex color
-    //   this._stroke[1] / 255,
-    //   this._stroke[2] / 255,
-    //   this._stroke[3] / 255
-    // ];
+    var colors = [
+      this._stroke[0] / 255, // first vertex color
+      this._stroke[1] / 255,
+      this._stroke[2] / 255,
+      this._stroke[3] / 255,
+      this._stroke[0] / 255, // second vertex color
+      this._stroke[1] / 255,
+      this._stroke[2] / 255,
+      this._stroke[3] / 255
+    ];
 
-    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
-    // gl.vertexAttribPointer(vertexColorAttribute,
-    //   4, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(vertexColorAttribute,
+      4, gl.FLOAT, false, 0, 0);
 
     //_setMVPMatrices();//matrices for our shader uniforms
     gl.drawArrays(gl.LINES, 0, 2);
@@ -215,22 +215,23 @@ define(function (require) {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
     gl.vertexAttribPointer(
-      shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+      shaderProgram.vertexPositionAttribute, 3,
+      gl.FLOAT, false, 0, 0);
 
     // //colors
-    // var triangleVertexColorBuffer = gl.createBuffer();
-    // gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexColorBuffer);
+    var triangleVertexColorBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexColorBuffer);
 
-    // var colors = [
-    //   1.0, 0.0, 0.0, 1.0,
-    //   0.0, 1.0, 0.0, 1.0,
-    //   0.0, 0.0, 1.0, 1.0
-    // ];
+    var colors = [
+      1.0, 0.0, 0.0, 1.0,
+      0.0, 1.0, 0.0, 1.0,
+      0.0, 0.0, 1.0, 1.0
+    ];
 
-    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
-    // gl.vertexAttribPointer(vertexColorAttribute,
-    //   4, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(vertexColorAttribute,
+      4, gl.FLOAT, false, 0, 0);
 
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
@@ -255,25 +256,26 @@ define(function (require) {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
     gl.vertexAttribPointer(
-      shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+      shaderProgram.vertexPositionAttribute, 3,
+      gl.FLOAT, false, 0, 0);
 
     // shaderProgram.uMaterialColorLoc = gl.getUniformLocation(shaderProgram,
     //   'u_MaterialColor');
 
     // // Set material uniform
     // gl.uniform4f(shaderProgram.uMaterialColorLoc, 1.0, 1.0, 1.0, 1.0);
-    // var quadVertexColorBuffer = gl.createBuffer();
-    // gl.bindBuffer(gl.ARRAY_BUFFER, quadVertexColorBuffer);
+    var quadVertexColorBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, quadVertexColorBuffer);
 
-    // var colors = [];
-    // for (var i = 0; i < 4; i++) {
-    //   colors = colors.concat([0.5, 0.5, 1.0, 1.0]);
-    // }
+    var colors = [];
+    for (var i = 0; i < 4; i++) {
+      colors = colors.concat([0.5, 0.5, 1.0, 1.0]);
+    }
 
-    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
-    // gl.vertexAttribPointer(vertexColorAttribute,
-    //   4, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(vertexColorAttribute,
+      4, gl.FLOAT, false, 0, 0);
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
