@@ -3,10 +3,13 @@ define(function (require) {
   var p5 = require('core');
   var shaders = require('shaders');
   require('p5.Graphics');
+  var mat4 = require('mat4');
   var gl,
     shaderProgram;
   var vertexPositionAttribute;
   //var vertexColorAttribute;
+  var mvMatrix;
+  var pMatrix;
 
   //@TODO should probably implement an override for these attributes
   var attributes = {
@@ -100,10 +103,27 @@ define(function (require) {
       gl.getAttribLocation(shaderProgram, 'a_VertexPosition');
     gl.enableVertexAttribArray(vertexPositionAttribute);
 
+    shaderProgram.pMatrixUniform =
+      gl.getUniformLocation(shaderProgram, 'uPMatrix');
+    shaderProgram.mvMatrixUniform =
+      gl.getUniformLocation(shaderProgram, 'uMVMatrix');
     // vertexColorAttribute =
     //   gl.getAttribLocation(shaderProgram, 'a_VertexColor');
     // gl.enableVertexAttribArray(vertexColorAttribute);
+    // var modelViewMatrix = mat4.create();
 
+    // Create a projection / perspective matrix
+    mvMatrix = mat4.create();
+    pMatrix = mat4.create();
+
+    //TODO: write camera class to do this
+    // mat4.perspective(
+    //   pMatrix, 60 / 180 * Math.PI,
+    //   this.width / this.height, 0.1, 100);
+    // console.log(mat4);
+
+    gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
+    gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
   };
 
   //////////////////////////////////////////////
@@ -293,6 +313,14 @@ define(function (require) {
     //@TODO
   };
 
+  p5.Graphics3D.prototype.translate = function (x, y, z) {
+
+    mat4.identity(mvMatrix);
+    mat4.translate(mvMatrix, mvMatrix, [x, y, z]);
+
+    gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
+    gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
+  };
   /**
    * PRIVATE
    */
