@@ -10,6 +10,7 @@ define(function (require) {
   //var vertexColorAttribute;
   var mvMatrix;
   var pMatrix;
+  //var mvMatrixStack = [];
 
   //@TODO should probably implement an override for these attributes
   var attributes = {
@@ -50,11 +51,20 @@ define(function (require) {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.viewport(0, 0, this.width, this.height);
     this.initShaders(); //initialize our default shaders
+    this.initMatrix(); //initialize default pmatrix and mvatrix
     return this;
   };
 
+  /**
+   * [prototype description]
+   * @type {[type]}
+   */
   p5.Graphics3D.prototype = Object.create(p5.Graphics.prototype);
 
+  /**
+   * [initShaders description]
+   * @return {[type]} [description]
+   */
   p5.Graphics3D.prototype.initShaders = function () {
     var _vertShader = gl.createShader(gl.VERTEX_SHADER);
     //gl.shaderSource(_vertShader, shaders.testVertShader);
@@ -112,18 +122,27 @@ define(function (require) {
     // gl.enableVertexAttribArray(vertexColorAttribute);
     // var modelViewMatrix = mat4.create();
 
+  };
+
+  /**
+   * [initMatrix description]
+   * @return {[type]} [description]
+   */
+  p5.Graphics3D.prototype.initMatrix = function () {
     // Create a projection / perspective matrix
     mvMatrix = mat4.create();
     pMatrix = mat4.create();
+    mat4.perspective(
+      pMatrix, 60 / 180 * Math.PI,
+      this.width / this.height, 0.1, 100);
+  };
 
-    //TODO: write camera class to do this
-    // mat4.perspective(
-    //   pMatrix, 60 / 180 * Math.PI,
-    //   this.width / this.height, 0.1, 100);
-    // console.log(mat4);
-
-    gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
-    gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
+  /**
+   * [resetMatrix description]
+   * @return {[type]} [description]
+   */
+  p5.Graphics3D.prototype.resetMatrix = function () {
+    mat4.identity(mvMatrix);
   };
 
   //////////////////////////////////////////////
@@ -139,6 +158,7 @@ define(function (require) {
     var _a = (_col.color_array[3]) / 255;
     gl.clearColor(_r, _g, _b, _a);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    this.resetMatrix();
   };
 
   // p5.Graphics3D.prototype.clear = function() {
@@ -182,13 +202,8 @@ define(function (require) {
     gl.vertexAttribPointer(vertexPositionAttribute,
       3, gl.FLOAT, false, 0, 0);
 
-    //colors
-    // vertexColorAttribute =
-    //   gl.getAttribLocation(shaderProgram, 'a_VertexColor');
-    // gl.enableVertexAttribArray(vertexColorAttribute);
-
-    var lineVertexColorBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, lineVertexColorBuffer);
+    // var lineVertexColorBuffer = gl.createBuffer();
+    // gl.bindBuffer(gl.ARRAY_BUFFER, lineVertexColorBuffer);
 
     // wowza, this really needs to be cleaned up
     // with vector/matrix math
@@ -209,6 +224,7 @@ define(function (require) {
     //   4, gl.FLOAT, false, 0, 0);
 
     //_setMVPMatrices();//matrices for our shader uniforms
+    _setMatrixUniforms();
     gl.drawArrays(gl.LINES, 0, 2);
 
     return this;
@@ -218,10 +234,6 @@ define(function (require) {
     if (!this._pInst._doStroke) {
       return;
     }
-
-    // vertexPositionAttribute =
-    //   gl.getAttribLocation(shaderProgram, 'a_VertexPosition');
-    // gl.enableVertexAttribArray(vertexPositionAttribute);
 
     var triangleVertexPositionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
@@ -251,7 +263,7 @@ define(function (require) {
 
     // gl.vertexAttribPointer(vertexColorAttribute,
     //   4, gl.FLOAT, false, 0, 0);
-
+    _setMatrixUniforms();
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
     return this;
@@ -294,47 +306,98 @@ define(function (require) {
 
     // gl.vertexAttribPointer(vertexColorAttribute,
     //   4, gl.FLOAT, false, 0, 0);
-
+    _setMatrixUniforms();
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
     return this;
   };
 
-  p5.Graphics3D.prototype.scale = function () {
-    //@TODO
-    // return this;
+  /**
+   * [translate description]
+   * @param  {[type]} x [description]
+   * @param  {[type]} y [description]
+   * @param  {[type]} z [description]
+   * @return {[type]}   [description]
+   */
+  p5.Graphics3D.prototype.translate = function (x, y, z) {
+    mat4.translate(mvMatrix, mvMatrix, [x, y, z]);
+    return this;
+  };
+
+  /**
+   * [scale description]
+   * @param  {[type]} x [description]
+   * @param  {[type]} y [description]
+   * @param  {[type]} z [description]
+   * @return {[type]}   [description]
+   */
+  p5.Graphics3D.prototype.scale = function (x, y, z) {
+    mat4.scale(mvMatrix, mvMatrix, [x, y, z]);
+    return this;
+  };
+
+  /**
+   * [rotateX description]
+   * @param  {[type]} rad [description]
+   * @return {[type]}     [description]
+   */
+  p5.Graphics3D.prototype.rotateX = function (rad) {
+    mat4.rotateX(mvMatrix, mvMatrix, rad);
+    return this;
+  };
+
+  /**
+   * [rotateY description]
+   * @param  {[type]} rad [description]
+   * @return {[type]}     [description]
+   */
+  p5.Graphics3D.prototype.rotateY = function (rad) {
+    mat4.rotateY(mvMatrix, mvMatrix, rad);
+    return this;
+  };
+
+  /**
+   * [rotateZ description]
+   * @param  {[type]} rad [description]
+   * @return {[type]}     [description]
+   */
+  p5.Graphics3D.prototype.rotateZ = function (rad) {
+    mat4.rotateZ(mvMatrix, mvMatrix, rad);
+    return this;
   };
 
   p5.Graphics3D.prototype.push = function () {
     //@TODO
   };
-
+  /**
+   * [pop description]
+   * @return {[type]} [description]
+   */
   p5.Graphics3D.prototype.pop = function () {
     //@TODO
   };
 
-  p5.Graphics3D.prototype.translate = function (x, y, z) {
-
-    mat4.identity(mvMatrix);
-    mat4.translate(mvMatrix, mvMatrix, [x, y, z]);
-
-    gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
-    gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
-  };
   /**
-   * PRIVATE
+   * [_setMatrixUniforms description]
    */
-  // matrix methods adapted from:
-  // https://developer.mozilla.org/en-US/docs/Web/WebGL/
-  // gluPerspective
-  //
-  // function _makePerspective(fovy, aspect, znear, zfar){
-  //    var ymax = znear * Math.tan(fovy * Math.PI / 360.0);
-  //    var ymin = -ymax;
-  //    var xmin = ymin * aspect;
-  //    var xmax = ymax * aspect;
-  //    return _makeFrustum(xmin, xmax, ymin, ymax, znear, zfar);
-  //  }
+  function _setMatrixUniforms() {
+      gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
+      gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
+    }
+    /**
+     * PRIVATE
+     */
+    // matrix methods adapted from:
+    // https://developer.mozilla.org/en-US/docs/Web/WebGL/
+    // gluPerspective
+    //
+    // function _makePerspective(fovy, aspect, znear, zfar){
+    //    var ymax = znear * Math.tan(fovy * Math.PI / 360.0);
+    //    var ymin = -ymax;
+    //    var xmin = ymin * aspect;
+    //    var xmax = ymax * aspect;
+    //    return _makeFrustum(xmin, xmax, ymin, ymax, znear, zfar);
+    //  }
 
   ////
   //// glFrustum

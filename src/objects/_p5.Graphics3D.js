@@ -7,6 +7,9 @@ define(function (require) {
     shaderProgram;
   var vertexPositionAttribute;
   var vertexColorAttribute;
+  // var mat4 = require('mat4');
+  // var mvMatrix;
+  // var pMatrix;
 
   //@TODO should probably implement an override for these attributes
   var attributes = {
@@ -52,9 +55,15 @@ define(function (require) {
 
   p5.Graphics3D.prototype = Object.create(p5.Graphics.prototype);
 
+  /**
+   * [initShaders description]
+   * @return {[type]} [description]
+   */
+  //TODO: how could we switch shader??
   p5.Graphics3D.prototype.initShaders = function () {
     var _vertShader = gl.createShader(gl.VERTEX_SHADER);
-    gl.shaderSource(_vertShader, shaders.testVertShader);
+    gl.shaderSource(_vertShader, shaders.defaultColorVertShader);
+    // gl.shaderSource(_vertShader, shaders.testVertShader);
     //gl.shaderSource(_vertShader, shaders.defaultVertShader);
     gl.compileShader(_vertShader);
     // if our vertex shader failed compilation?
@@ -147,12 +156,6 @@ define(function (require) {
     if (!this._pInst._doStroke) {
       return;
     }
-    ////
-    //set up our attributes & uniforms
-    ////
-    //vertex positions
-    // vertexPositionAttribute =
-    //   gl.getAttribLocation(shaderProgram, 'a_VertexPosition');
     var lineVertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, lineVertexBuffer);
 
@@ -161,11 +164,6 @@ define(function (require) {
     // gl.enableVertexAttribArray(vertexPositionAttribute);
     gl.vertexAttribPointer(vertexPositionAttribute,
       3, gl.FLOAT, false, 0, 0);
-
-    //colors
-    // vertexColorAttribute =
-    //   gl.getAttribLocation(shaderProgram, 'a_VertexColor');
-    // gl.enableVertexAttribArray(vertexColorAttribute);
 
     var lineVertexColorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, lineVertexColorBuffer);
@@ -194,29 +192,38 @@ define(function (require) {
     return this;
   };
 
-  p5.Graphics3D.prototype.triangle = function () {
+  /**
+   * [triangle description]
+   * @param  {[type]} x1 [description]
+   * @param  {[type]} y1 [description]
+   * @param  {[type]} z1 [description]
+   * @param  {[type]} x2 [description]
+   * @param  {[type]} y2 [description]
+   * @param  {[type]} z2 [description]
+   * @param  {[type]} x3 [description]
+   * @param  {[type]} y3 [description]
+   * @param  {[type]} z3 [description]
+   * @return {[type]}    [description]
+   */
+  p5.Graphics3D.prototype.triangle = function (
+    x1, y1, z1, x2, y2, z2, x3, y3, z3) {
     if (!this._pInst._doStroke) {
       return;
     }
-
-    // vertexPositionAttribute =
-    //   gl.getAttribLocation(shaderProgram, 'a_VertexPosition');
-    // gl.enableVertexAttribArray(vertexPositionAttribute);
 
     var triangleVertexPositionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
 
     var vertices = [
-      arguments[0], arguments[1], arguments[2],
-      arguments[3], arguments[4], arguments[5],
-      arguments[6], arguments[7], arguments[8]
+      x1, y1, z1,
+      x2, y2, z2,
+      x3, y3, z3
     ];
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
     gl.vertexAttribPointer(
-      shaderProgram.vertexPositionAttribute, 3,
-      gl.FLOAT, false, 0, 0);
+      shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
 
     // //colors
     var triangleVertexColorBuffer = gl.createBuffer();
@@ -230,15 +237,15 @@ define(function (require) {
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
-    gl.vertexAttribPointer(vertexColorAttribute,
-      4, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(vertexColorAttribute, 4, gl.FLOAT, false, 0, 0);
 
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
     return this;
   };
 
-  p5.Graphics3D.prototype.quad = function () {
+  p5.Graphics3D.prototype.quad = function (
+    x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4) {
     if (!this._pInst._doStroke) {
       return;
     }
@@ -247,23 +254,17 @@ define(function (require) {
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
 
     var vertices = [
-      arguments[0], arguments[1], arguments[2],
-      arguments[3], arguments[4], arguments[5],
-      arguments[6], arguments[7], arguments[8],
-      arguments[9], arguments[10], arguments[11]
+      x1, y1, z1,
+      x2, y2, z2,
+      x3, y3, z3,
+      x4, y4, z4
     ];
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
     gl.vertexAttribPointer(
-      shaderProgram.vertexPositionAttribute, 3,
-      gl.FLOAT, false, 0, 0);
+      shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
 
-    // shaderProgram.uMaterialColorLoc = gl.getUniformLocation(shaderProgram,
-    //   'u_MaterialColor');
-
-    // // Set material uniform
-    // gl.uniform4f(shaderProgram.uMaterialColorLoc, 1.0, 1.0, 1.0, 1.0);
     var quadVertexColorBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, quadVertexColorBuffer);
 
