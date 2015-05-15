@@ -111,7 +111,7 @@ module.exports = function (grunt) {
             'p5.File': 'src/objects/p5.File',
             'p5.Graphics': 'src/objects/p5.Graphics',
             'p5.Graphics2D': 'src/objects/p5.Graphics2D',
-            'p5.Graphics3D': 'src/objects/p5.Graphics3D',
+            'p5.Graphics3D': 'src/objects/p5.Graphics3D_tryGeo',
             'p5.Image': 'src/objects/p5.Image',
             'p5.Vector': 'src/objects/p5.Vector',
             'p5.TableRow': 'src/objects/p5.TableRow',

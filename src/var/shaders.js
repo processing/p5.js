@@ -28,6 +28,20 @@ define(function (require) {
       //'v_Color = a_VertexColor;',
       '}'
     ].join('\n'),
+    defaultGeoVertShader: [
+      'attribute vec3 a_VertexPosition;',
+      //'attribute vec4 a_VertexColor;',
+
+      'uniform mat4 uMVMatrix;',
+      'uniform mat4 uPMatrix;',
+
+      //'varying vec4 vColor;',
+
+      'void main(void) {',
+      'gl_Position = uPMatrix * uMVMatrix * vec4(a_VertexPosition, 1.0);',
+      //'vColor = aVertexColor;',
+      '}'
+    ].join('\n'),
     defaultColorVertShader: [
       'attribute vec3 a_VertexPosition;',
       'attribute vec4 a_VertexColor;',
@@ -44,13 +58,6 @@ define(function (require) {
       'vec3 clipSpace = zeroToTwo - 1.0;',
       'gl_Position = vec4(clipSpace * vec3(1, -1, 1), 1.0);',
       'v_Color = a_VertexColor;',
-      '}'
-    ].join('\n'),
-    testVertShader: [
-      'attribute vec3 a_VertexPosition;',
-      'void main(void) {',
-      // Set the vertex position;
-      'gl_Position = vec4( a_VertexPosition, 1.0 );',
       '}'
     ].join('\n'),
     defaultFragShader: [

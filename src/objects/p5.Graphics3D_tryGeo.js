@@ -68,7 +68,7 @@ define(function (require) {
   p5.Graphics3D.prototype.initShaders = function () {
     var _vertShader = gl.createShader(gl.VERTEX_SHADER);
     //gl.shaderSource(_vertShader, shaders.testVertShader);
-    gl.shaderSource(_vertShader, shaders.defaultVertShader);
+    gl.shaderSource(_vertShader, shaders.defaultGeoVertShader);
     gl.compileShader(_vertShader);
     // if our vertex shader failed compilation?
     if (!gl.getShaderParameter(_vertShader, gl.COMPILE_STATUS)) {
@@ -239,9 +239,8 @@ define(function (require) {
     gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
 
     var vertices = [
-      arguments[0], arguments[1], arguments[2],
-      arguments[3], arguments[4], arguments[5],
-      arguments[6], arguments[7], arguments[8]
+      0.0, 1.0, 0.0, -1.0, -1.0, 0.0,
+      1.0, -1.0, 0.0
     ];
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
@@ -278,10 +277,8 @@ define(function (require) {
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
 
     var vertices = [
-      arguments[0], arguments[1], arguments[2],
-      arguments[3], arguments[4], arguments[5],
-      arguments[6], arguments[7], arguments[8],
-      arguments[9], arguments[10], arguments[11]
+      1.0, 1.0, 0.0, -1.0, 1.0, 0.0,
+      1.0, -1.0, 0.0, -1.0, -1.0, 0.0
     ];
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
@@ -308,6 +305,98 @@ define(function (require) {
     //   4, gl.FLOAT, false, 0, 0);
     _setMatrixUniforms();
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+
+    return this;
+  };
+
+  /**
+   * [cube description]
+   * @return {[type]} [description]
+   */
+  p5.Graphics3D.prototype.cube = function () {
+    if (!this._pInst._doStroke) {
+      return;
+    }
+
+    var cubeVertexPositionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
+
+    var vertices = [-1.0, -1.0, 1.0,
+      1.0, -1.0, 1.0,
+      1.0, 1.0, 1.0, -1.0, 1.0, 1.0,
+
+      // Back face
+      -1.0, -1.0, -1.0, -1.0, 1.0, -1.0,
+      1.0, 1.0, -1.0,
+      1.0, -1.0, -1.0,
+
+      // Top face
+      -1.0, 1.0, -1.0, -1.0, 1.0, 1.0,
+      1.0, 1.0, 1.0,
+      1.0, 1.0, -1.0,
+
+      // Bottom face
+      -1.0, -1.0, -1.0,
+      1.0, -1.0, -1.0,
+      1.0, -1.0, 1.0, -1.0, -1.0, 1.0,
+
+      // Right face
+      1.0, -1.0, -1.0,
+      1.0, 1.0, -1.0,
+      1.0, 1.0, 1.0,
+      1.0, -1.0, 1.0,
+
+      // Left face
+      -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, -1.0
+    ];
+
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+    gl.vertexAttribPointer(
+      shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+
+    _setMatrixUniforms();
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 24);
+
+    return this;
+  };
+
+  /**
+   * [pyramid description]
+   * @return {[type]} [description]
+   */
+  p5.Graphics3D.prototype.pyramid = function () {
+    if (!this._pInst._doStroke) {
+      return;
+    }
+
+    var cubeVertexPositionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
+
+    var vertices = [ // Front face
+      0.0, 1.0, 0.0, -1.0, -1.0, 1.0,
+      1.0, -1.0, 1.0,
+
+      // Right face
+      0.0, 1.0, 0.0,
+      1.0, -1.0, 1.0,
+      1.0, -1.0, -1.0,
+
+      // Back face
+      0.0, 1.0, 0.0,
+      1.0, -1.0, -1.0, -1.0, -1.0, -1.0,
+
+      // Left face
+      0.0, 1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0
+    ];
+
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+    gl.vertexAttribPointer(
+      shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+
+    _setMatrixUniforms();
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 12);
 
     return this;
   };
