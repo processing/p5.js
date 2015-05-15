@@ -13,7 +13,7 @@ define(function(require) {
    * Creates a canvas element in the document, and sets the dimensions of it
    * in pixels. This method should be called only once at the start of setup.
    * Calling createCanvas more than once in a sketch will result in very
-   * unpredicable behavior. If you want more more than one drawing canvas
+   * unpredicable behavior. If you want more than one drawing canvas
    * you could use createGraphics (hidden by default but it can be shown).<br>
    * The system variables width and height are set by the parameters passed
    * to this function. If createCanvas() is not used, the window will be
@@ -59,7 +59,7 @@ define(function(require) {
       this._defaultGraphics = new p5.Graphics(c, this, true);
       this._elements.push(this._defaultGraphics);
     }
-    
+
     this._defaultGraphics.resize(w, h);
     this._defaultGraphics._applyDefaults();
     return this._defaultGraphics;
