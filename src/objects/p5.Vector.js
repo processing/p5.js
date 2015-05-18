@@ -46,16 +46,16 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.Vector = function() {
-    var x,y,z;
+  p5.Vector = function () {
+    var x, y, z;
     // This is how it comes in with createVector()
-    if(arguments[0] instanceof p5) {
+    if (arguments[0] instanceof p5) {
       // save reference to p5 if passed in
       this.p5 = arguments[0];
-      x  = arguments[1][0] || 0;
-      y  = arguments[1][1] || 0;
-      z  = arguments[1][2] || 0;
-    // This is what we'll get with new p5.Vector()
+      x = arguments[1][0] || 0;
+      y = arguments[1][1] || 0;
+      z = arguments[1][2] || 0;
+      // This is what we'll get with new p5.Vector()
     } else {
       x = arguments[0] || 0;
       y = arguments[1] || 0;
@@ -80,7 +80,6 @@ define(function (require) {
      */
     this.z = z;
   };
-
 
   /**
    * Sets the x, y, and z component of the vector using two or three separate
@@ -132,9 +131,9 @@ define(function (require) {
    */
   p5.Vector.prototype.copy = function () {
     if (this.p5) {
-      return new p5.Vector(this.p5,[this.x, this.y, this.z]);
+      return new p5.Vector(this.p5, [this.x, this.y, this.z]);
     } else {
-      return new p5.Vector(this.x,this.y,this.z);
+      return new p5.Vector(this.x, this.y, this.z);
     }
   };
 
@@ -321,7 +320,9 @@ define(function (require) {
    * @return {number} squared magnitude of the vector
    */
   p5.Vector.prototype.magSq = function () {
-    var x = this.x, y = this.y, z = this.z;
+    var x = this.x,
+      y = this.y,
+      z = this.z;
     return (x * x + y * y + z * z);
   };
 
@@ -360,8 +361,8 @@ define(function (require) {
       return this.dot(x.x, x.y, x.z);
     }
     return this.x * (x || 0) +
-           this.y * (y || 0) +
-           this.z * (z || 0);
+      this.y * (y || 0) +
+      this.z * (z || 0);
   };
 
   /**
@@ -397,9 +398,9 @@ define(function (require) {
     var y = this.z * v.x - this.x * v.z;
     var z = this.x * v.y - this.y * v.x;
     if (this.p5) {
-      return new p5.Vector(this.p5,[x,y,z]);
+      return new p5.Vector(this.p5, [x, y, z]);
     } else {
-      return new p5.Vector(x,y,z);
+      return new p5.Vector(x, y, z);
     }
   };
 
@@ -454,7 +455,7 @@ define(function (require) {
    */
   p5.Vector.prototype.limit = function (l) {
     var mSq = this.magSq();
-    if(mSq > l*l) {
+    if (mSq > l * l) {
       this.div(Math.sqrt(mSq)); //normalize it
       this.mult(l);
     }
@@ -593,9 +594,7 @@ define(function (require) {
     return this.x === x && this.y === y && this.z === z;
   };
 
-
   // Static Methods
-
 
   /**
    * Make a new 2D unit vector from an angle
@@ -612,16 +611,16 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.Vector.fromAngle = function(angle) {
+  p5.Vector.fromAngle = function (angle) {
     if (this.p5) {
       if (this.p5._angleMode === constants.DEGREES) {
         angle = polarGeometry.degreesToRadians(angle);
       }
     }
     if (this.p5) {
-      return new p5.Vector(this.p5,[Math.cos(angle),Math.sin(angle),0]);
+      return new p5.Vector(this.p5, [Math.cos(angle), Math.sin(angle), 0]);
     } else {
-      return new p5.Vector(Math.cos(angle),Math.sin(angle),0);
+      return new p5.Vector(Math.cos(angle), Math.sin(angle), 0);
     }
   };
 
@@ -649,7 +648,7 @@ define(function (require) {
         angle = this.p5.random(constants.TWO_PI);
       }
     } else {
-      angle = Math.random()*Math.PI*2;
+      angle = Math.random() * Math.PI * 2;
     }
     return this.fromAngle(angle);
   };
@@ -668,24 +667,23 @@ define(function (require) {
    * </div>
    */
   p5.Vector.random3D = function () {
-    var angle,vz;
+    var angle, vz;
     // If we know about p5
     if (this.p5) {
-      angle = this.p5.random(0,constants.TWO_PI);
-      vz = this.p5.random(-1,1);
+      angle = this.p5.random(0, constants.TWO_PI);
+      vz = this.p5.random(-1, 1);
     } else {
-      angle = Math.random()*Math.PI*2;
-      vz = Math.random()*2-1;
+      angle = Math.random() * Math.PI * 2;
+      vz = Math.random() * 2 - 1;
     }
-    var vx = Math.sqrt(1-vz*vz)*Math.cos(angle);
-    var vy = Math.sqrt(1-vz*vz)*Math.sin(angle);
+    var vx = Math.sqrt(1 - vz * vz) * Math.cos(angle);
+    var vy = Math.sqrt(1 - vz * vz) * Math.sin(angle);
     if (this.p5) {
-      return new p5.Vector(this.p5,[vx,vy,vz]);
+      return new p5.Vector(this.p5, [vx, vy, vz]);
     } else {
-      return new p5.Vector(vx,vy,vz);
+      return new p5.Vector(vx, vy, vz);
     }
   };
-
 
   /**
    * Adds two vectors together and returns a new one.
@@ -728,7 +726,6 @@ define(function (require) {
     return target;
   };
 
-
   /**
    * Multiplies a vector by a scalar and returns a new vector.
    *
@@ -767,7 +764,6 @@ define(function (require) {
     return target;
   };
 
-
   /**
    * Calculates the dot product of two vectors.
    *
@@ -801,7 +797,7 @@ define(function (require) {
    * @param  {p5.Vector} v2 the second p5.Vector
    * @return {Number}     the distance
    */
-  p5.Vector.dist = function (v1,v2) {
+  p5.Vector.dist = function (v1, v2) {
     return v1.dist(v2);
   };
 

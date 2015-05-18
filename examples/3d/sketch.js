@@ -11,12 +11,12 @@ var theta = 0;
 function draw() {
   background(0, 255, 0, 255);
   //push()
-  translate(-1.5, 0.0, -5.0);
+  translate(-3.0, 0.0, -5.0);
   //pop()
 
   stroke(0, 0, 0, 0);
   push();
-  rotateY(theta);
+  rotateX(theta);
   //line(0, 0, 0, mouseX, mouseY, 0);
   pyramid();
   pop();
@@ -31,7 +31,9 @@ function draw() {
   translate(3, 0, 0);
   push();
   rotateZ(theta);
-  quad();
+  triangle();
   pop();
+
+  //plane();
 
 }

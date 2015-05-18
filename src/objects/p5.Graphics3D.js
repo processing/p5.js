@@ -68,7 +68,7 @@ define(function (require) {
   p5.Graphics3D.prototype.initShaders = function () {
     var _vertShader = gl.createShader(gl.VERTEX_SHADER);
     //gl.shaderSource(_vertShader, shaders.testVertShader);
-    gl.shaderSource(_vertShader, shaders.defaultVertShader);
+    gl.shaderSource(_vertShader, shaders.defaultGeoVertShader);
     gl.compileShader(_vertShader);
     // if our vertex shader failed compilation?
     if (!gl.getShaderParameter(_vertShader, gl.COMPILE_STATUS)) {
@@ -103,12 +103,6 @@ define(function (require) {
     // a view frustrum
     gl.uniform3f(vertexResolution, 300, 300, 1000.0);
 
-    shaderProgram.uMaterialColorLoc = gl.getUniformLocation(shaderProgram,
-      'u_MaterialColor');
-
-    // Set material uniform
-    gl.uniform4f(shaderProgram.uMaterialColorLoc, 1.0, 1.0, 1.0, 1.0);
-
     vertexPositionAttribute =
       gl.getAttribLocation(shaderProgram, 'a_VertexPosition');
     gl.enableVertexAttribArray(vertexPositionAttribute);
@@ -117,10 +111,16 @@ define(function (require) {
       gl.getUniformLocation(shaderProgram, 'uPMatrix');
     shaderProgram.mvMatrixUniform =
       gl.getUniformLocation(shaderProgram, 'uMVMatrix');
+
     // vertexColorAttribute =
     //   gl.getAttribLocation(shaderProgram, 'a_VertexColor');
     // gl.enableVertexAttribArray(vertexColorAttribute);
-    // var modelViewMatrix = mat4.create();
+
+    //use a uniform color just for now 
+    shaderProgram.uMaterialColorLoc = gl.getUniformLocation(shaderProgram,
+      'u_MaterialColor');
+    // Set material uniform
+    gl.uniform4f(shaderProgram.uMaterialColorLoc, 1.0, 1.0, 1.0, 1.0);
 
   };
 
@@ -189,10 +189,7 @@ define(function (require) {
     }
     ////
     //set up our attributes & uniforms
-    ////
-    //vertex positions
-    // vertexPositionAttribute =
-    //   gl.getAttribLocation(shaderProgram, 'a_VertexPosition');
+    //、、
     var lineVertexBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, lineVertexBuffer);
 
@@ -231,17 +228,13 @@ define(function (require) {
   };
 
   p5.Graphics3D.prototype.triangle = function () {
-    if (!this._pInst._doStroke) {
-      return;
-    }
 
     var triangleVertexPositionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
 
     var vertices = [
-      arguments[0], arguments[1], arguments[2],
-      arguments[3], arguments[4], arguments[5],
-      arguments[6], arguments[7], arguments[8]
+      0.0, 1.0, 0.0, -1.0, -1.0, 0.0,
+      1.0, -1.0, 0.0
     ];
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
@@ -263,6 +256,7 @@ define(function (require) {
 
     // gl.vertexAttribPointer(vertexColorAttribute,
     //   4, gl.FLOAT, false, 0, 0);
+
     _setMatrixUniforms();
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
@@ -270,27 +264,19 @@ define(function (require) {
   };
 
   p5.Graphics3D.prototype.quad = function () {
-    if (!this._pInst._doStroke) {
-      return;
-    }
 
     var squareVertexPositionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
 
     var vertices = [
-      arguments[0], arguments[1], arguments[2],
-      arguments[3], arguments[4], arguments[5],
-      arguments[6], arguments[7], arguments[8],
-      arguments[9], arguments[10], arguments[11]
+      1.0, 1.0, 0.0, -1.0, 1.0, 0.0,
+      1.0, -1.0, 0.0, -1.0, -1.0, 0.0
     ];
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
     gl.vertexAttribPointer(
       shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-
-    // shaderProgram.uMaterialColorLoc = gl.getUniformLocation(shaderProgram,
-    //   'u_MaterialColor');
 
     // // Set material uniform
     // gl.uniform4f(shaderProgram.uMaterialColorLoc, 1.0, 1.0, 1.0, 1.0);
@@ -306,10 +292,125 @@ define(function (require) {
 
     // gl.vertexAttribPointer(vertexColorAttribute,
     //   4, gl.FLOAT, false, 0, 0);
+
     _setMatrixUniforms();
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
     return this;
+  };
+
+  /**
+   * [plane description]
+   * @return {[type]} [description]
+   */
+  p5.Graphics3D.prototype.plane = function (vertices) {
+    var planeVertexPositionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, planeVertexPositionBuffer);
+
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+    gl.vertexAttribPointer(
+      shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+
+    _setMatrixUniforms();
+    gl.drawArrays(gl.TRIANGLE, 0, vertices.length);
+
+    return this;
+  };
+
+  /**
+   * [cube description]
+   * @return {[type]} [description]
+   */
+  p5.Graphics3D.prototype.cube = function () {
+
+    var cubeVertexPositionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
+
+    var vertices = [-1.0, -1.0, 1.0,
+      1.0, -1.0, 1.0,
+      1.0, 1.0, 1.0, -1.0, 1.0, 1.0,
+
+      // Back face
+      -1.0, -1.0, -1.0, -1.0, 1.0, -1.0,
+      1.0, 1.0, -1.0,
+      1.0, -1.0, -1.0,
+
+      // Top face
+      -1.0, 1.0, -1.0, -1.0, 1.0, 1.0,
+      1.0, 1.0, 1.0,
+      1.0, 1.0, -1.0,
+
+      // Bottom face
+      -1.0, -1.0, -1.0,
+      1.0, -1.0, -1.0,
+      1.0, -1.0, 1.0, -1.0, -1.0, 1.0,
+
+      // Right face
+      1.0, -1.0, -1.0,
+      1.0, 1.0, -1.0,
+      1.0, 1.0, 1.0,
+      1.0, -1.0, 1.0,
+
+      // Left face
+      -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, -1.0
+    ];
+
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+    gl.vertexAttribPointer(
+      shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+
+    _setMatrixUniforms();
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 24);
+
+    return this;
+  };
+
+  /**
+   * [pyramid description]
+   * @return {[type]} [description]
+   */
+  p5.Graphics3D.prototype.pyramid = function () {
+
+    var cubeVertexPositionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
+
+    var vertices = [ // Front face
+      0.0, 1.0, 0.0, -1.0, -1.0, 1.0,
+      1.0, -1.0, 1.0,
+
+      // Right face
+      0.0, 1.0, 0.0,
+      1.0, -1.0, 1.0,
+      1.0, -1.0, -1.0,
+
+      // Back face
+      0.0, 1.0, 0.0,
+      1.0, -1.0, -1.0, -1.0, -1.0, -1.0,
+
+      // Left face
+      0.0, 1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0
+    ];
+
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+    gl.vertexAttribPointer(
+      shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+
+    _setMatrixUniforms();
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 12);
+
+    return this;
+  };
+
+  /**
+   * [method_name description]
+   * @param  {[type]} first_argument [description]
+   * @return {[type]}                [description]
+   */
+  p5.Graphics3D.prototype.sphere = function () {
+
   };
 
   /**
