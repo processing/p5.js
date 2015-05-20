@@ -77,8 +77,7 @@ define(function (require) {
    * @return {[type]}         [description]
    */
   p5.prototype.cube = function (
-    width, height, depth,
-    detailX, detailY, detailZ) {
+    width, height, depth, detailX, detailY, detailZ) {
 
     p5.prototype.Geometry3D.call(this);
 
@@ -166,14 +165,16 @@ define(function (require) {
 
   /**
    * generate triangle geometry
-   * @async TODO: get rid of the hard coded vertives and generate it instead
    * @return {[type]} [description]
    */
   p5.prototype.triangle = function() {
+
+    //@TODO: get rid of the hard coded vertives and generate it instead
     var vertices = [
       0.0, 1.0, 0.0, -1.0, -1.0, 0.0,
       1.0, -1.0, 0.0
     ];
+    
     this._graphics.drawGeometry(vertices);
     return this;
   };
