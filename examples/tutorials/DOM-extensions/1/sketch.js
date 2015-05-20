@@ -13,7 +13,7 @@ function setup() {
   // because drawing only works with graphics elements.
 
   // Now let's try putting some more HTML in.
-  var text = createHTML("Here is some text and <a href='http://i.imgur.com/WXaUlrK.gif'>this is an HTML link</a>!");
+  var text = createP("Here is some text and <a href='http://i.imgur.com/WXaUlrK.gif'>this is an HTML link</a>!");
   var canvas = createCanvas(600, 400);
 
   // Here we call methods of each element to set the position and id, try changing these values.
