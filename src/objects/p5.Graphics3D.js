@@ -158,7 +158,7 @@ define(function (require) {
     var _a = (_col.color_array[3]) / 255;
     gl.clearColor(_r, _g, _b, _a);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    this.resetMatrix();
+    //this.resetMatrix()yra
   };
 
   // p5.Graphics3D.prototype.clear = function() {
@@ -313,7 +313,7 @@ define(function (require) {
       shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
 
     _setMatrixUniforms();
-    gl.drawArrays(gl.TRIANGLE, 0, vertices.length);
+    gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 3);
 
     return this;
   };
@@ -322,39 +322,10 @@ define(function (require) {
    * [cube description]
    * @return {[type]} [description]
    */
-  p5.Graphics3D.prototype.cube = function () {
+  p5.Graphics3D.prototype.cube = function (vertices) {
 
     var cubeVertexPositionBuffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
-
-    var vertices = [-1.0, -1.0, 1.0,
-      1.0, -1.0, 1.0,
-      1.0, 1.0, 1.0, -1.0, 1.0, 1.0,
-
-      // Back face
-      -1.0, -1.0, -1.0, -1.0, 1.0, -1.0,
-      1.0, 1.0, -1.0,
-      1.0, -1.0, -1.0,
-
-      // Top face
-      -1.0, 1.0, -1.0, -1.0, 1.0, 1.0,
-      1.0, 1.0, 1.0,
-      1.0, 1.0, -1.0,
-
-      // Bottom face
-      -1.0, -1.0, -1.0,
-      1.0, -1.0, -1.0,
-      1.0, -1.0, 1.0, -1.0, -1.0, 1.0,
-
-      // Right face
-      1.0, -1.0, -1.0,
-      1.0, 1.0, -1.0,
-      1.0, 1.0, 1.0,
-      1.0, -1.0, 1.0,
-
-      // Left face
-      -1.0, -1.0, -1.0, -1.0, -1.0, 1.0, -1.0, 1.0, 1.0, -1.0, 1.0, -1.0
-    ];
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
@@ -362,7 +333,7 @@ define(function (require) {
       shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
 
     _setMatrixUniforms();
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 24);
+    gl.drawArrays(gl.TRIANGLEs, 0, vertices.length / 3);
 
     return this;
   };
