@@ -6,7 +6,7 @@
  * @requires constants
  */
 
-define(function (require) {
+define(function(require) {
 
   'use strict';
 
@@ -35,20 +35,20 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.applyMatrix = function (n00, n01, n02, n10, n11, n12) {
+  p5.prototype.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
     this._graphics.applyMatrix(n00, n01, n02, n10, n11, n12);
     return this;
   };
 
-  p5.prototype.popMatrix = function () {
+  p5.prototype.popMatrix = function() {
     throw new Error('popMatrix() not used, see pop()');
   };
 
-  p5.prototype.printMatrix = function () {
+  p5.prototype.printMatrix = function() {
     throw new Error('printMatrix() not implemented');
   };
 
-  p5.prototype.pushMatrix = function () {
+  p5.prototype.pushMatrix = function() {
     throw new Error('pushMatrix() not used, see push()');
   };
 
@@ -64,7 +64,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.resetMatrix = function () {
+  p5.prototype.resetMatrix = function() {
     this._graphics.resetMatrix();
     return this;
   };
@@ -98,7 +98,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.rotate = function (r) {
+  p5.prototype.rotate = function(r) {
     if (this._angleMode === constants.DEGREES) {
       r = this.radians(r);
     }
@@ -111,7 +111,7 @@ define(function (require) {
    * @param  {[type]} rad [description]
    * @return {[type]}     [description]
    */
-  p5.prototype.rotateX = function (rad) {
+  p5.prototype.rotateX = function(rad) {
     if (this._graphics.isP3D) {
       this._graphics.rotateX(rad);
     } else {
@@ -125,7 +125,7 @@ define(function (require) {
    * @param  {[type]} rad [description]
    * @return {[type]}     [description]
    */
-  p5.prototype.rotateY = function (rad) {
+  p5.prototype.rotateY = function(rad) {
     if (this._graphics.isP3D) {
       this._graphics.rotateY(rad);
     } else {
@@ -139,7 +139,7 @@ define(function (require) {
    * @param  {[type]} rad [description]
    * @return {[type]}     [description]
    */
-  p5.prototype.rotateZ = function (rad) {
+  p5.prototype.rotateZ = function(rad) {
     if (this._graphics.isP3D) {
       this._graphics.rotateZ(rad);
     } else {
@@ -187,7 +187,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.scale = function () {
+  p5.prototype.scale = function() {
     if (this._graphics.isP3D) {
       this._graphics.scale(arguments[0], arguments[1], arguments[2]);
     } else {
@@ -225,7 +225,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.shearX = function (angle) {
+  p5.prototype.shearX = function(angle) {
     if (this._angleMode === constants.DEGREES) {
       angle = this.radians(angle);
     }
@@ -262,7 +262,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.shearY = function (angle) {
+  p5.prototype.shearY = function(angle) {
     if (this._angleMode === constants.DEGREES) {
       angle = this.radians(angle);
     }
@@ -304,7 +304,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.translate = function (x, y, z) {
+  p5.prototype.translate = function(x, y, z) {
     if (this._graphics.isP3D) {
       this._graphics.translate(x, y, z);
     } else {

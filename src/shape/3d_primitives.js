@@ -6,7 +6,7 @@
  * @requires canvas
  * @requires constants
  */
-define(function (require) {
+define(function(require) {
 
   'use strict';
 
@@ -14,7 +14,7 @@ define(function (require) {
 
   //inspire by lightgl.js 
   //https://github.com/evanw/lightgl.js
-  p5.prototype.Geometry3D = function () {
+  p5.prototype.Geometry3D = function() {
     this.vertices = [];
     this.faces = [];
     this.faceNormals = [];
@@ -29,7 +29,7 @@ define(function (require) {
    * @param  {Number} detailY how many segments in the y axis
    * @return {[type]}         [description]        
    */
-  p5.prototype.plane = function (width, height, detailX, detailY) {
+  p5.prototype.plane = function(width, height, detailX, detailY) {
 
     p5.prototype.Geometry3D.call(this);
 
@@ -76,8 +76,8 @@ define(function (require) {
    * @param  {Number} detailZ how many segments in the z axis
    * @return {[type]}         [description]
    */
-  p5.prototype.cube = function (
-    width, height, depth, detailX, detailY, detailZ) {
+  p5.prototype.cube = 
+  function(width, height, depth, detailX, detailY, detailZ) {
 
     p5.prototype.Geometry3D.call(this);
 
@@ -149,7 +149,7 @@ define(function (require) {
    * @param  {Number} detailZ how many segments in the z axis
    * @return {[type]}         [description]
    */
-  p5.prototype.sphere = function (radius, detailX, detailY, detalZ) {
+  p5.prototype.sphere = function(radius, detailX, detailY, detalZ) {
 
     p5.prototype.Geometry3D.call(this);
 
@@ -170,9 +170,9 @@ define(function (require) {
    */
   function verticesArray(faces, vertices) {
     var output = [];
-    faces.forEach(function (face) {
-      face.forEach(function (index) {
-        vertices[index].forEach(function (vertex) {
+    faces.forEach(function(face) {
+      face.forEach(function(index) {
+        vertices[index].forEach(function(vertex) {
           output.push(vertex);
         });
       });

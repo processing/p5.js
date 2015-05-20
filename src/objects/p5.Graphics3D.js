@@ -1,4 +1,4 @@
-define(function (require) {
+define(function(require) {
 
   var p5 = require('core');
   var shaders = require('shaders');
@@ -26,7 +26,7 @@ define(function (require) {
    * A p5.Graphics3D object can be constructed
    *
    */
-  p5.Graphics3D = function (elt, pInst, isMainCanvas) {
+  p5.Graphics3D = function(elt, pInst, isMainCanvas) {
     p5.Graphics.call(this, elt, pInst, isMainCanvas);
 
     try {
@@ -65,7 +65,7 @@ define(function (require) {
    * [initShaders description]
    * @return {[type]} [description]
    */
-  p5.Graphics3D.prototype.initShaders = function () {
+  p5.Graphics3D.prototype.initShaders = function() {
     var _vertShader = gl.createShader(gl.VERTEX_SHADER);
     //gl.shaderSource(_vertShader, shaders.testVertShader);
     gl.shaderSource(_vertShader, shaders.defaultGeoVertShader);
@@ -128,7 +128,7 @@ define(function (require) {
    * [initMatrix description]
    * @return {[type]} [description]
    */
-  p5.Graphics3D.prototype.initMatrix = function () {
+  p5.Graphics3D.prototype.initMatrix = function() {
     // Create a projection / perspective matrix
     mvMatrix = mat4.create();
     pMatrix = mat4.create();
@@ -141,7 +141,7 @@ define(function (require) {
    * [resetMatrix description]
    * @return {[type]} [description]
    */
-  p5.Graphics3D.prototype.resetMatrix = function () {
+  p5.Graphics3D.prototype.resetMatrix = function() {
     mat4.identity(mvMatrix);
   };
 
@@ -149,7 +149,7 @@ define(function (require) {
   // COLOR | Setting
   //////////////////////////////////////////////
 
-  p5.Graphics3D.prototype.background = function () {
+  p5.Graphics3D.prototype.background = function() {
     var _col = this._pInst.color.apply(this._pInst, arguments);
     // gl.clearColor(0.0,0.0,0.0,1.0);
     var _r = (_col.color_array[0]) / 255;
@@ -169,7 +169,7 @@ define(function (require) {
   //@TODO
   // };
 
-  p5.Graphics3D.prototype.stroke = function () {
+  p5.Graphics3D.prototype.stroke = function() {
     this._stroke = this._pInst.color.apply(this._pInst, arguments);
   };
 
@@ -201,7 +201,7 @@ define(function (require) {
    * @param  {[type]} z [description]
    * @return {[type]}   [description]
    */
-  p5.Graphics3D.prototype.translate = function (x, y, z) {
+  p5.Graphics3D.prototype.translate = function(x, y, z) {
     mat4.translate(mvMatrix, mvMatrix, [x, y, z]);
     return this;
   };
@@ -213,7 +213,7 @@ define(function (require) {
    * @param  {[type]} z [description]
    * @return {[type]}   [description]
    */
-  p5.Graphics3D.prototype.scale = function (x, y, z) {
+  p5.Graphics3D.prototype.scale = function(x, y, z) {
     mat4.scale(mvMatrix, mvMatrix, [x, y, z]);
     return this;
   };
@@ -223,7 +223,7 @@ define(function (require) {
    * @param  {[type]} rad [description]
    * @return {[type]}     [description]
    */
-  p5.Graphics3D.prototype.rotateX = function (rad) {
+  p5.Graphics3D.prototype.rotateX = function(rad) {
     mat4.rotateX(mvMatrix, mvMatrix, rad);
     return this;
   };
@@ -233,7 +233,7 @@ define(function (require) {
    * @param  {[type]} rad [description]
    * @return {[type]}     [description]
    */
-  p5.Graphics3D.prototype.rotateY = function (rad) {
+  p5.Graphics3D.prototype.rotateY = function(rad) {
     mat4.rotateY(mvMatrix, mvMatrix, rad);
     return this;
   };
@@ -243,12 +243,12 @@ define(function (require) {
    * @param  {[type]} rad [description]
    * @return {[type]}     [description]
    */
-  p5.Graphics3D.prototype.rotateZ = function (rad) {
+  p5.Graphics3D.prototype.rotateZ = function(rad) {
     mat4.rotateZ(mvMatrix, mvMatrix, rad);
     return this;
   };
 
-  p5.Graphics3D.prototype.push = function () {
+  p5.Graphics3D.prototype.push = function() {
     var copy = mat4.create();
     mat4.copy(copy, mvMatrix);
     mvMatrixStack.push(copy);
@@ -258,7 +258,7 @@ define(function (require) {
    * [pop description]
    * @return {[type]} [description]
    */
-  p5.Graphics3D.prototype.pop = function () {
+  p5.Graphics3D.prototype.pop = function() {
     if (mvMatrixStack.length === 0) {
       throw 'Invalid popMatrix!';
     }

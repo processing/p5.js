@@ -1,4 +1,4 @@
-function setup() {
+function setup(){
   //@todo need to implement default for 4th parameter {bool}
   //so that if user wants to write createCanvas(800,160,'webgl')
   //webgl context gets initialized properly
@@ -8,7 +8,7 @@ function setup() {
 
 var theta = 0;
 
-function draw() {
+function draw(){
   background(0, 255, 0, 255);
   
   translate(-5.0, 0.0, -10.0);
