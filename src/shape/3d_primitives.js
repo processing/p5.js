@@ -164,23 +164,6 @@ define(function (require) {
   };
 
   /**
-   * generate triangle geometry
-   * @return {[type]} [description]
-   */
-  p5.prototype.triangle = function() {
-
-    //@TODO: get rid of the hard coded vertives and generate it instead
-    var vertices = [
-      0.0, 1.0, 0.0, -1.0, -1.0, 0.0,
-      1.0, -1.0, 0.0
-    ];
-    
-    this._graphics.drawGeometry(vertices);
-    return this;
-  };
-
-
-  /**
    * get vertices array according to the faces array
    * @param {Array} faces    the faces array
    * @param {Array} vertices the vertex array

@@ -16,11 +16,11 @@ define(function (require) {
   // blog post: http://hansmuller-flex.blogspot.ca/
   //            2011/04/approximating-circular-arc-with-cubic.html
 
-  var EPSILON = 0.00001; // Roughly 1/1000th of a degree, see below
+  var EPSILON = 0.00001;  // Roughly 1/1000th of a degree, see below
 
   /**
-   *  Return a array of objects that represent bezier curves which approximate
-   *  the circular arc centered at the origin, from startAngle to endAngle
+   *  Return a array of objects that represent bezier curves which approximate 
+   *  the circular arc centered at the origin, from startAngle to endAngle 
    *  (radians) with the specified radius.
    *
    *  Each bezier curve is an object with four points, where x1,y1 and
@@ -36,7 +36,7 @@ define(function (require) {
 
     var a1 = startAngle;
     var totalAngle = Math.min(twoPI, Math.abs(endAngle - startAngle));
-    for (; totalAngle > EPSILON;) {
+    for (; totalAngle > EPSILON; ) {
       var a2 = a1 + sgn * Math.min(totalAngle, piOverTwo);
       curves.push(createSmallArc(radius, a1, a2));
       totalAngle -= Math.abs(a2 - a1);
@@ -50,11 +50,11 @@ define(function (require) {
    *  Cubic bezier approximation of a circular arc centered at the origin,
    *  from (radians) a1 to a2, where a2-a1 < pi/2.  The arc's radius is r.
    *
-   *  Returns an object with four points, where x1,y1 and x4,y4 are the arc's
+   *  Returns an object with four points, where x1,y1 and x4,y4 are the arc's 
    *  end points and x2,y2 and x3,y3 are the cubic bezier's control points.
    *
    *  This algorithm is based on the approach described in:
-   *  A. Riškus, "Approximation of a Cubic Bezier Curve by Circular Arcs and
+   *  A. Riškus, "Approximation of a Cubic Bezier Curve by Circular Arcs and 
    *  Vice Versa," Information Technology and Control, 35(4), 2006 pp. 371-378.
    */
   function createSmallArc(r, a1, a2) {
@@ -103,7 +103,7 @@ define(function (require) {
    *
    * If mode is provided draws the arc either open, chord or pie, dependent
    * on the variable provided.
-   *
+   * 
    * @method arc
    * @param  {Number} a      x-coordinate of the arc's ellipse
    * @param  {Number} b      y-coordinate of the arc's ellipse
@@ -143,9 +143,9 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.arc = function (x, y, width, height, start, stop, mode) {
+  p5.prototype.arc = function(x, y, width, height, start, stop, mode) {
     var curves = createArc(1.0, start, stop);
-
+    
     if (!this._doStroke && !this._doFill) {
       return this;
     }
@@ -162,8 +162,8 @@ define(function (require) {
    * Draws an ellipse (oval) to the screen. An ellipse with equal width and
    * height is a circle. By default, the first two parameters set the location,
    * and the third and fourth parameters set the shape's width and height. The
-   * origin may be changed with the ellipseMode() function.
-   *
+   * origin may be changed with the ellipseMode() function. 
+   * 
    * @method ellipse
    * @param  {Number} a x-coordinate of the ellipse.
    * @param  {Number} b y-coordinate of the ellipse.
@@ -177,7 +177,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.ellipse = function (x, y, w, h) {
+  p5.prototype.ellipse = function(x, y, w, h) {
     if (!this._doStroke && !this._doFill) {
       return this;
     }
@@ -196,7 +196,7 @@ define(function (require) {
    * function will not affect the color of a line. 2D lines are drawn with a
    * width of one pixel by default, but this can be changed with the
    * strokeWeight() function.
-   *
+   * 
    * @method line
    * @param  {Number} x1 the x-coordinate of the first point
    * @param  {Number} y1 the y-coordinate of the first point
@@ -220,7 +220,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-
+  
   ////commented out original
   // p5.prototype.line = function(x1, y1, x2, y2) {
   //   if (!this._doStroke) {
@@ -231,12 +231,12 @@ define(function (require) {
   //     this._graphics.line(x1, y1, x2, y2);      
   //   }
   // };
-  p5.prototype.line = function () {
+  p5.prototype.line = function() {
     if (!this._doStroke) {
       return this;
     }
     //check whether we should draw a 3d line or 2d
-    if (this._graphics.isP3D) {
+    if(this._graphics.isP3D){
       this._graphics.line(arguments[0],
         arguments[1],
         arguments[2],
@@ -255,7 +255,7 @@ define(function (require) {
    * Draws a point, a coordinate in space at the dimension of one pixel.
    * The first parameter is the horizontal value for the point, the second
    * value is the vertical value for the point.
-   *
+   * 
    * @method point
    * @param  {Number} x the x-coordinate
    * @param  {Number} y the y-coordinate
@@ -270,7 +270,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.point = function (x, y) {
+  p5.prototype.point = function(x, y) {
     if (!this._doStroke) {
       return this;
     }
@@ -278,16 +278,17 @@ define(function (require) {
     return this;
   };
 
+
   /**
    * Draw a quad. A quad is a quadrilateral, a four sided polygon. It is
    * similar to a rectangle, but the angles between its edges are not
    * constrained to ninety degrees. The first pair of parameters (x1,y1)
    * sets the first vertex and the subsequent pairs should proceed
    * clockwise or counter-clockwise around the defined shape.
-   *
+   * 
    * @method quad
    * @param {type} x1 the x-coordinate of the first point
-   * @param {type} y1 the y-coordinate of the first point
+   * @param {type} y1 the y-coordinate of the first point 
    * @param {type} x2 the x-coordinate of the second point
    * @param {type} y2 the y-coordinate of the second point
    * @param {type} x3 the x-coordinate of the third point
@@ -297,64 +298,40 @@ define(function (require) {
    * @return {p5}     the p5 object
    * @example
    * <div>
-   * <code>
+   * <code>   
    * quad(38, 31, 86, 20, 69, 63, 30, 76);
    * </code>
    * </div>
    */
-  p5.prototype.quad = function (x1, y1, x2, y2, x3, y3, x4, y4) {
+  p5.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
     if (!this._doStroke && !this._doFill) {
       return this;
     }
-    if (this._graphics.isP3D) {
-      this._graphics.quad(
-        arguments[0],
-        arguments[1],
-        arguments[2],
-        arguments[3],
-        arguments[4],
-        arguments[5],
-        arguments[6],
-        arguments[7],
-        arguments[8],
-        arguments[9],
-        arguments[10],
-        arguments[11]);
-    } else {
-      this._graphics.quad(
-        arguments[0],
-        arguments[1],
-        arguments[2],
-        arguments[3],
-        arguments[4],
-        arguments[5],
-        arguments[6],
-        arguments[7]);
-    }
+    this._graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
     return this;
   };
 
   /**
-   * Draws a rectangle to the screen. A rectangle is a four-sided shape with
-   * every angle at ninety degrees. By default, the first two parameters set
-   * the location of the upper-left corner, the third sets the width, and the
-   * fourth sets the height. The way these parameters are interpreted, however,
-   * may be changed with the rectMode() function.
-   *
-   * @method rect
-   * @param  {Number} a x-coordinate of the rectangle
-   * @param  {Number} b y-coordinate of the rectangle
-   * @param  {Number} c width of the rectangle
-   * @param  {Number} d height of the rectangle
-   * @return {p5}       the p5 object
-   * @example
-   * <div>
-   * <code>
-   * rect(30, 20, 55, 55);
-   * </code>
-   * </div>
-   */
-  p5.prototype.rect = function (a, b, c, d) {
+  * Draws a rectangle to the screen. A rectangle is a four-sided shape with
+  * every angle at ninety degrees. By default, the first two parameters set
+  * the location of the upper-left corner, the third sets the width, and the
+  * fourth sets the height. The way these parameters are interpreted, however,
+  * may be changed with the rectMode() function.
+  *
+  * @method rect
+  * @param  {Number} a x-coordinate of the rectangle
+  * @param  {Number} b y-coordinate of the rectangle
+  * @param  {Number} c width of the rectangle
+  * @param  {Number} d height of the rectangle
+  * @return {p5}       the p5 object
+  * @example
+  * <div>
+  * <code>
+  * rect(30, 20, 55, 55);
+  * </code>
+  * </div>
+  */
+  p5.prototype.rect = function(a, b, c, d) {
     if (!this._doStroke && !this._doFill) {
       return;
     }
@@ -363,49 +340,30 @@ define(function (require) {
   };
 
   /**
-   * A triangle is a plane created by connecting three points. The first two
-   * arguments specify the first point, the middle two arguments specify the
-   * second point, and the last two arguments specify the third point.
-   *
-   * @method triangle
-   * @param  {Number} x1 x-coordinate of the first point
-   * @param  {Number} y1 y-coordinate of the first point
-   * @param  {Number} x2 x-coordinate of the second point
-   * @param  {Number} y2 y-coordinate of the second point
-   * @param  {Number} x3 x-coordinate of the third point
-   * @param  {Number} y3 y-coordinate of the third point
-   * @return {p5}        the p5 object
-   * @example
-   * <div>
-   * <code>
-   * triangle(30, 75, 58, 20, 86, 75);
-   * </code>
-   * </div>
-   */
-  p5.prototype.triangle = function () {
+  * A triangle is a plane created by connecting three points. The first two
+  * arguments specify the first point, the middle two arguments specify the
+  * second point, and the last two arguments specify the third point.
+  * 
+  * @method triangle
+  * @param  {Number} x1 x-coordinate of the first point
+  * @param  {Number} y1 y-coordinate of the first point
+  * @param  {Number} x2 x-coordinate of the second point
+  * @param  {Number} y2 y-coordinate of the second point
+  * @param  {Number} x3 x-coordinate of the third point
+  * @param  {Number} y3 y-coordinate of the third point
+  * @return {p5}        the p5 object
+  * @example
+  * <div>
+  * <code>
+  * triangle(30, 75, 58, 20, 86, 75);
+  * </code>
+  * </div>
+  */
+  p5.prototype.triangle = function(x1, y1, x2, y2, x3, y3) {
     if (!this._doStroke && !this._doFill) {
       return this;
     }
-    if (this._graphics.isP3D) {
-      this._graphics.triangle(
-        arguments[0],
-        arguments[1],
-        arguments[2],
-        arguments[3],
-        arguments[4],
-        arguments[5],
-        arguments[6],
-        arguments[7],
-        arguments[8]);
-    } else {
-      this._graphics.triangle(
-        arguments[0],
-        arguments[1],
-        arguments[2],
-        arguments[3],
-        arguments[4],
-        arguments[5]);
-    }
+    this._graphics.triangle(x1, y1, x2, y2, x3, y3);
     return this;
   };
 

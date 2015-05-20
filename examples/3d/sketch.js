@@ -29,7 +29,7 @@ function draw() {
   translate(3, 0, 0);
   push();
   rotateZ(theta);
-  triangle();
+  plane();
   pop();
 
 }
