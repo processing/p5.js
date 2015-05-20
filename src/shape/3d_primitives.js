@@ -12,6 +12,7 @@ define(function (require) {
 
   var p5 = require('core');
 
+  //@TODO fill with 3d primitives
   //inspire by lightgl.js 
   //https://github.com/evanw/lightgl.js
   p5.prototype.Geometry3D = function() {
