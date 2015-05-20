@@ -158,7 +158,7 @@ define(function (require) {
     var _a = (_col.color_array[3]) / 255;
     gl.clearColor(_r, _g, _b, _a);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    //this.resetMatrix()yra
+    //this.resetMatrix();
   };
 
   // p5.Graphics3D.prototype.clear = function() {
@@ -174,138 +174,13 @@ define(function (require) {
   };
 
   /**
-   * Draws a line between two 3D points
-   * @param  {Number} x1 starting point x
-   * @param  {Number} y1 starting point y
-   * @param  {Number} z1 starting point z
-   * @param  {Number} x2 end point x
-   * @param  {Number} y2 end point y
-   * @param  {number} z2 end point z
-   * @return {[type]}    [description]
+   * draw geometry with given vertices array
+   * @param  {Array} vertices generated vertices
+   * @return {[type]}          [description]
    */
-  p5.Graphics3D.prototype.line = function (x1, y1, z1, x2, y2, z2) {
-    if (!this._pInst._doStroke) {
-      return;
-    }
-    ////
-    //set up our attributes & uniforms
-    //、、
-    var lineVertexBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, lineVertexBuffer);
-
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([x1, y1, z1, x2, y2, z2]),
-      gl.STATIC_DRAW);
-    // gl.enableVertexAttribArray(vertexPositionAttribute);
-    gl.vertexAttribPointer(vertexPositionAttribute,
-      3, gl.FLOAT, false, 0, 0);
-
-    // var lineVertexColorBuffer = gl.createBuffer();
-    // gl.bindBuffer(gl.ARRAY_BUFFER, lineVertexColorBuffer);
-
-    // wowza, this really needs to be cleaned up
-    // with vector/matrix math
-    // var colors = [
-    //   this._stroke[0] / 255, // first vertex color
-    //   this._stroke[1] / 255,
-    //   this._stroke[2] / 255,
-    //   this._stroke[3] / 255,
-    //   this._stroke[0] / 255, // second vertex color
-    //   this._stroke[1] / 255,
-    //   this._stroke[2] / 255,
-    //   this._stroke[3] / 255
-    // ];
-
-    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-
-    // gl.vertexAttribPointer(vertexColorAttribute,
-    //   4, gl.FLOAT, false, 0, 0);
-
-    //_setMVPMatrices();//matrices for our shader uniforms
-    _setMatrixUniforms();
-    gl.drawArrays(gl.LINES, 0, 2);
-
-    return this;
-  };
-
-  p5.Graphics3D.prototype.triangle = function () {
-
-    var triangleVertexPositionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexPositionBuffer);
-
-    var vertices = [
-      0.0, 1.0, 0.0, -1.0, -1.0, 0.0,
-      1.0, -1.0, 0.0
-    ];
-
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-
-    gl.vertexAttribPointer(
-      shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-
-    // //colors
-    // var triangleVertexColorBuffer = gl.createBuffer();
-    // gl.bindBuffer(gl.ARRAY_BUFFER, triangleVertexColorBuffer);
-
-    // var colors = [
-    //   1.0, 0.0, 0.0, 1.0,
-    //   0.0, 1.0, 0.0, 1.0,
-    //   0.0, 0.0, 1.0, 1.0
-    // ];
-
-    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-
-    // gl.vertexAttribPointer(vertexColorAttribute,
-    //   4, gl.FLOAT, false, 0, 0);
-
-    _setMatrixUniforms();
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
-
-    return this;
-  };
-
-  p5.Graphics3D.prototype.quad = function () {
-
-    var squareVertexPositionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, squareVertexPositionBuffer);
-
-    var vertices = [
-      1.0, 1.0, 0.0, -1.0, 1.0, 0.0,
-      1.0, -1.0, 0.0, -1.0, -1.0, 0.0
-    ];
-
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-
-    gl.vertexAttribPointer(
-      shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-
-    // // Set material uniform
-    // gl.uniform4f(shaderProgram.uMaterialColorLoc, 1.0, 1.0, 1.0, 1.0);
-    // var quadVertexColorBuffer = gl.createBuffer();
-    // gl.bindBuffer(gl.ARRAY_BUFFER, quadVertexColorBuffer);
-
-    // var colors = [];
-    // for (var i = 0; i < 4; i++) {
-    //   colors = colors.concat([0.5, 0.5, 1.0, 1.0]);
-    // }
-
-    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-
-    // gl.vertexAttribPointer(vertexColorAttribute,
-    //   4, gl.FLOAT, false, 0, 0);
-
-    _setMatrixUniforms();
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-
-    return this;
-  };
-
-  /**
-   * [plane description]
-   * @return {[type]} [description]
-   */
-  p5.Graphics3D.prototype.plane = function (vertices) {
-    var planeVertexPositionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, planeVertexPositionBuffer);
+  p5.Graphics3D.prototype.drawGeometry = function(vertices) {
+    var geoVertexPositionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, geoVertexPositionBuffer);
 
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
@@ -317,72 +192,7 @@ define(function (require) {
 
     return this;
   };
-
-  /**
-   * [cube description]
-   * @return {[type]} [description]
-   */
-  p5.Graphics3D.prototype.cube = function (vertices) {
-
-    var cubeVertexPositionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
-
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-
-    gl.vertexAttribPointer(
-      shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-
-    _setMatrixUniforms();
-    gl.drawArrays(gl.TRIANGLEs, 0, vertices.length / 3);
-
-    return this;
-  };
-
-  /**
-   * [pyramid description]
-   * @return {[type]} [description]
-   */
-  p5.Graphics3D.prototype.pyramid = function () {
-
-    var cubeVertexPositionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexPositionBuffer);
-
-    var vertices = [ // Front face
-      0.0, 1.0, 0.0, -1.0, -1.0, 1.0,
-      1.0, -1.0, 1.0,
-
-      // Right face
-      0.0, 1.0, 0.0,
-      1.0, -1.0, 1.0,
-      1.0, -1.0, -1.0,
-
-      // Back face
-      0.0, 1.0, 0.0,
-      1.0, -1.0, -1.0, -1.0, -1.0, -1.0,
-
-      // Left face
-      0.0, 1.0, 0.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0
-    ];
-
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-
-    gl.vertexAttribPointer(
-      shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-
-    _setMatrixUniforms();
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 12);
-
-    return this;
-  };
-
-  /**
-   * [method_name description]
-   * @param  {[type]} first_argument [description]
-   * @return {[type]}                [description]
-   */
-  p5.Graphics3D.prototype.sphere = function () {
-
-  };
+  
 
   /**
    * [translate description]

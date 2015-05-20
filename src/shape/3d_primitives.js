@@ -22,17 +22,12 @@ define(function (require) {
   };
 
   /**
-   * [plane description]
-   * @param  {[type]} detailX [description]
-   * @param  {[type]} detailY [description]
-   * @return {[type]}         [description]
-   * @example
-   * <div>
-   * <code>
-   * plane(5);
-   * plane(20, 10);
-   * </code>
-   * </div>
+   * generate plane geomery
+   * @param  {Number} width   the width of the plane
+   * @param  {Number} height  the height of the plane
+   * @param  {Number} detailX how many segments in the x axis
+   * @param  {Number} detailY how many segments in the y axis
+   * @return {[type]}         [description]        
    */
   p5.prototype.plane = function (width, height, detailX, detailY) {
 
@@ -66,14 +61,20 @@ define(function (require) {
       }
     }
 
-    var vertices = VerticesArray(this.faces, this.vertices);
-    this._graphics.plane(vertices);
+    var vertices = verticesArray(this.faces, this.vertices);
+    this._graphics.drawGeometry(vertices);
     return this;
   };
 
   /**
-   * [cube description]
-   * @return {[type]} [description]
+   * generate cube geometry
+   * @param  {Number} width   the width of the cube
+   * @param  {Number} height  the height of the cube
+   * @param  {Number} depth   the depth of the cube
+   * @param  {Number} detailX how many segments in the x axis
+   * @param  {Number} detailY how many segments in the y axis
+   * @param  {Number} detailZ how many segments in the z axis
+   * @return {[type]}         [description]
    */
   p5.prototype.cube = function (
     width, height, depth,
@@ -81,14 +82,16 @@ define(function (require) {
 
     p5.prototype.Geometry3D.call(this);
 
-    // width = width || 1;
-    // height = height || 1;
-    // depth = depth || 1;
+    width = width || 1;
+    height = height || 1;
+    depth = depth || 1;
 
-    // detailX = detailX || 1;
-    // detailY = detailY || 1;
-    // detailZ = detailZ || 1;
+    detailX = detailX || 1;
+    detailY = detailY || 1;
+    detailZ = detailZ || 1;
 
+    //@TODO: figure out a better way to generate 6 faces
+    
     // for (var y1 = 0; y1 <= detailY; y1++) {
     //   var t1 = y1 / detailY;
     //   for (var x1 = 0; x1 <= detailX; x1++) {
@@ -133,60 +136,21 @@ define(function (require) {
     //   }
     // }
 
-    // for (var y3 = 0; y3 <= detailY; y3++) {
-    //   var t3 = y3 / detailY;
-    //   for (var z3 = 0; z3 <= detailZ; z3++) {
-    //     var s3 = z3 / detailZ;
-    //     this.vertices.push([
-    //       width / 2,
-    //       2 * height * t3 - height,
-    //       2 * depth * s3 - depth,
-    //     ]);
 
-    //     this.uvs.push([s3, t3]);
-
-    //     this.faceNormals.push([1, 0, 0]);
-
-    //     if (y3 < detailY && z3 < detailZ) {
-    //       var i3 = y3 + z3 * (detailY + 1);
-    //       this.faces.push([i3, i3 + 1, i3 + detailY + 1]);
-    //       this.faces.push([i3 + detailY + 1, i3 + 1, i3 + detailY + 2]);
-    //     }
-    //   }
-    // }
-
-    // for (var y4 = 0; y4 <= detailY; y4++) {
-    //   var t4 = y4 / detailY;
-    //   for (var z4 = 0; z4 <= detailZ; z4++) {
-    //     var s4 = z4 / detailZ;
-    //     this.vertices.push([
-    //       -width / 2,
-    //       2 * height * t4 - height,
-    //       2 * depth * s4 - depth,
-    //     ]);
-
-    //     this.uvs.push([s4, t4]);
-
-    //     this.faceNormals.push([-1, 0, 0]);
-
-    //     if (y4 < detailY && z4 < detailZ) {
-    //       var i4 = y4 + z4 * (detailY + 1);
-    //       this.faces.push([i4, i4 + 1, i4 + detailY + 1]);
-    //       this.faces.push([i4 + detailY + 1, i4 + 1, i4 + detailY + 2]);
-    //     }
-    //   }
-    // }
-
-    var vertices = VerticesArray(this.faces, this.vertices);
-    this._graphics.cube(vertices);
+    var vertices = verticesArray(this.faces, this.vertices);
+    this._graphics.drawGeometry(vertices);
     return this;
   };
 
   /**
-   * [sphere description]
-   * @return {[type]} [description]
+   * generate sphere geometry
+   * @param  {Number} radius  the radius of the sphere
+   * @param  {Number} detailX how many segments in the x axis
+   * @param  {Number} detailY how many segments in the y axis
+   * @param  {Number} detailZ how many segments in the z axis
+   * @return {[type]}         [description]
    */
-  p5.prototype.sphere = function (radius, detailX, detailY) {
+  p5.prototype.sphere = function (radius, detailX, detailY, detalZ) {
 
     p5.prototype.Geometry3D.call(this);
 
@@ -194,22 +158,38 @@ define(function (require) {
     detailX = detailX || 1;
     detailY = detailY || 1;
 
-    //this._graphics.sphere();
+    //@TODO: figure out how to generate vertices
+    var vertices = verticesArray(this.faces, this.vertices);
+    this._graphics.drawGeometry(vertices);
     return this;
   };
 
   /**
-   * get vertices array according to the faces array
-   * then send the vertices array to the buffer
-   * @param {[type]} faces    [description]
-   * @param {[type]} vertices [description]
+   * generate triangle geometry
+   * @async TODO: get rid of the hard coded vertives and generate it instead
+   * @return {[type]} [description]
    */
-  function VerticesArray(faces, vertices) {
+  p5.prototype.triangle = function() {
+    var vertices = [
+      0.0, 1.0, 0.0, -1.0, -1.0, 0.0,
+      1.0, -1.0, 0.0
+    ];
+    this._graphics.drawGeometry(vertices);
+    return this;
+  };
+
+
+  /**
+   * get vertices array according to the faces array
+   * @param {Array} faces    the faces array
+   * @param {Array} vertices the vertex array
+   */
+  function verticesArray(faces, vertices) {
     var output = [];
     faces.forEach(function (face) {
       face.forEach(function (index) {
-        vertices[index].forEach(function (vertice) {
-          output.push(vertice);
+        vertices[index].forEach(function (vertex) {
+          output.push(vertex);
         });
       });
     });

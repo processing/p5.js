@@ -10,22 +10,19 @@ var theta = 0;
 
 function draw() {
   background(0, 255, 0, 255);
-  //push()
-  translate(-3.0, 0.0, -10.0);
-  //pop()
+  
+  translate(-5.0, 0.0, -10.0);
 
   stroke(0, 0, 0, 0);
   push();
   rotateX(theta);
-  //line(0, 0, 0, mouseX, mouseY, 0);
   plane(1, 2);
   pop();
 
   translate(3, 0, 0);
   push();
   rotateY(theta);
-  //cube(1,1,1);
-  plane(1,1);
+  plane(2, 1);
   pop();
 
   theta += 0.1;
