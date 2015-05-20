@@ -6,7 +6,7 @@
  * @requires canvas
  * @requires constants
  */
-define(function(require) {
+define(function (require) {
 
   'use strict';
 
@@ -76,7 +76,7 @@ define(function(require) {
    * @param  {Number} detailZ how many segments in the z axis
    * @return {[type]}         [description]
    */
-  p5.prototype.cube = 
+  p5.prototype.cube =
   function(width, height, depth, detailX, detailY, detailZ) {
 
     p5.prototype.Geometry3D.call(this);

@@ -5,7 +5,7 @@
  * @requires core
  * @requires constants
  */
-define(function(require) {
+define(function (require) {
 
   'use strict';
 
