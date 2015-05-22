@@ -31,7 +31,7 @@ define(function(require) {
    * @example
    * <div>
    * <code>
-   * // Example in the works. 
+   * // Example in the works.
    * </code>
    * </div>
    */
@@ -106,14 +106,46 @@ define(function(require) {
     return this;
   };
 
-  p5.prototype.rotateX = function() {
-    throw 'not yet implemented';
-    // return this
+  /**
+   * [rotateX description]
+   * @param  {[type]} rad [description]
+   * @return {[type]}     [description]
+   */
+  p5.prototype.rotateX = function(rad) {
+    if (this._graphics.isP3D) {
+      this._graphics.rotateX(rad);
+    } else {
+      throw 'not yet implemented.';
+    }
+    return this;
   };
 
-  p5.prototype.rotateY = function() {
-    throw 'not yet implemented';
-    // return this;
+  /**
+   * [rotateY description]
+   * @param  {[type]} rad [description]
+   * @return {[type]}     [description]
+   */
+  p5.prototype.rotateY = function(rad) {
+    if (this._graphics.isP3D) {
+      this._graphics.rotateY(rad);
+    } else {
+      throw 'not yet implemented.';
+    }
+    return this;
+  };
+
+  /**
+   * [rotateZ description]
+   * @param  {[type]} rad [description]
+   * @return {[type]}     [description]
+   */
+  p5.prototype.rotateZ = function(rad) {
+    if (this._graphics.isP3D) {
+      this._graphics.rotateZ(rad);
+    } else {
+      throw 'not yet implemented.';
+    }
+    return this;
   };
 
   /**
@@ -156,7 +188,11 @@ define(function(require) {
    * </div>
    */
   p5.prototype.scale = function() {
-    this._graphics.scale.apply(this._graphics, arguments);
+    if (this._graphics.isP3D) {
+      this._graphics.scale(arguments[0], arguments[1], arguments[2]);
+    } else {
+      this._graphics.scale.apply(this._graphics, arguments);
+    }
     return this;
   };
 
@@ -268,11 +304,15 @@ define(function(require) {
    * </code>
    * </div>
    */
-  p5.prototype.translate = function(x, y) {
-    this._graphics.translate(x, y);
+  p5.prototype.translate = function(x, y, z) {
+    if (this._graphics.isP3D) {
+      this._graphics.translate(x, y, z);
+    } else {
+      this._graphics.translate(x, y);
+    }
     return this;
   };
-  
+
   return p5;
 
 });
