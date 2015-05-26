@@ -18,6 +18,7 @@ define(function(require) {
     WAIT: 'wait',
 
     // TRIGONOMETRY
+    
 
     /**
      * HALF_PI is a mathematical constant with the value
@@ -25,6 +26,11 @@ define(function(require) {
      * circumference of a circle to its diameter. It is useful in
      * combination with the trigonometric functions sin() and cos().
      *
+     *  @example 
+     *  <div><code>
+     *  // constants can be used in functions!
+     *  arc(50, 55, 50, 50, 0, HALF_PI);
+     *  </div></code>
      * @property HALF_PI
      */
     HALF_PI: PI / 2,
@@ -34,6 +40,11 @@ define(function(require) {
      * of a circle to its diameter. It is useful in combination with
      * the trigonometric functions sin() and cos().
      *
+     *  @example 
+     *  <div><code>
+     *  // constants can be used in functions!
+     *  arc(50, 55, 50, 50, 0, PI);
+     *  </div></code>
      * @property PI
      */
     PI: PI,
@@ -43,6 +54,11 @@ define(function(require) {
      * its diameter. It is useful in combination with the trigonometric
      * functions sin() and cos().
      *
+     *  @example 
+     *  <div><code>
+     *  // constants can be used in functions!
+     *  arc(50, 55, 50, 50, 0, QUARTER_PI);
+     *  </div></code>
      * @property QUARTER_PI
      */
     QUARTER_PI: PI / 4,
@@ -52,6 +68,11 @@ define(function(require) {
      * circumference of a circle to its diameter. It is useful in
      * combination with the trigonometric functions sin() and cos().
      *
+     *  @example 
+     *  <div><code>
+     *  // constants can be used in functions!
+     *  arc(50, 55, 50, 50, 0, TAU);
+     *  </div></code>
      * @property TAU
      */
     TAU: PI * 2,
@@ -61,6 +82,12 @@ define(function(require) {
      * circumference of a circle to its diameter. It is useful in
      * combination with the trigonometric functions sin() and cos().
      *
+     *  @example 
+     *  <div><code>
+     *  // constants can be used in functions!
+     *  arc(50, 55, 50, 50, 0, TWO_PI);
+     *  </div></code>
+     *  
      * @property TWO_PI
      */
     TWO_PI: PI * 2,
