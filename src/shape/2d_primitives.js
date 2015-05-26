@@ -181,8 +181,18 @@ define(function (require) {
    * </div>
    */
   p5.prototype.ellipse = function(x, y, w, h) {
+    this._checkParameterExists(x, 'You need to specify a x position for ' +
+        'ellipses: ellipse(x, y, width, height) ' +
+        '[http://p5js.org/reference/#p5/ellipse]');
+    this._checkParameterExists(y, 'You need to specify a y position for ' +
+        'ellipses: ellipse(x, y, width, height)' +
+        '[http://p5js.org/reference/#p5/ellipse]');
+    this._checkParameterExists(w, 'You need to specify a width for ellipses:' +
+        ' ellipse(x, y, width, height)' +
+        '[http://p5js.org/reference/#p5/ellipse]');
     this._checkParameterExists(h, 'You need to specify a height for ellipses:' +
-        'ellipse(x, y, width, height)');
+        ' ellipse(x, y, width, height)' +
+        '[http://p5js.org/reference/#p5/ellipse]');
     //this._checkParameterIsNumeric(h, 'ellipse', 4);
 
     if (!this._doStroke && !this._doFill) {
