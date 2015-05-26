@@ -179,6 +179,10 @@ define(function (require) {
    * </div>
    */
   p5.prototype.ellipse = function(x, y, w, h) {
+		if(typeof h === "undefined") {
+			console.error("You need to specify a height for ellipses: ellipse(x, y, width, height)");
+		}  
+	  
     if (!this._doStroke && !this._doFill) {
       return this;
     }
