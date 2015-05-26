@@ -30,4 +30,6 @@ define(function (require) {
       report(message);
     }
   };
+
+  return p5;
 });
