@@ -9,10 +9,10 @@ define(function (require) {
   'use strict';
 
   require('shim');
-  require('helpers');
 
   // Core needs the PVariables object
   var constants = require('constants');
+  var helpers = require('helpers');
 
   /**
    * This is the p5 instance constructor.
