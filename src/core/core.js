@@ -12,7 +12,6 @@ define(function (require) {
 
   // Core needs the PVariables object
   var constants = require('constants');
-  var helpers = require('helpers');
 
   /**
    * This is the p5 instance constructor.
