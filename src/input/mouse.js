@@ -18,6 +18,16 @@ define(function (require) {
    * position of the mouse, relative to (0, 0) of the canvas.
    *
    * @property mouseX
+   *
+   * @example
+   * <div>
+   * <code>
+   * function draw() {
+   *  background(204);
+   *  line(mouseX, 20, mouseX, 80);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.mouseX = 0;
 
@@ -87,6 +97,37 @@ define(function (require) {
    * LEFT, RIGHT, or CENTER depending on which button is pressed. Browsers are
    * weird, USE AT YOUR OWN RISK FOR NOW!
    *
+   * @example
+   *<div>
+   *<code>
+   *function draw() {
+   *  if (mousePressed && (mouseButton == LEFT)) {
+   *    fill(0);
+   *  } else if (mousePressed && (mouseButton == RIGHT)) {
+   *    fill(255);
+   *  } else {
+   *    fill(126);
+   *  }
+   *  rect(25, 25, 50, 50);
+   *}
+   * // Click within the image and press
+   * // the left and right mouse buttons to
+   * // change the value of the rectangle
+   *function draw() {
+   *  rect(25, 25, 50, 50);
+   *}
+   *
+   *function mousePressed() {
+   *  if (mouseButton == LEFT) {
+   *    fill(0);
+   *  } else if (mouseButton == RIGHT) {
+   *    fill(255);
+   *  } else {
+   *    fill(126);
+   *  }
+   *}
+   *</code>
+   *</div>
    * @property mouseButton
    */
   p5.prototype.mouseButton = 0;
@@ -96,6 +137,22 @@ define(function (require) {
    * and false if not.
    *
    * @property mouseIsPressed
+   *
+   * @example
+   * <div>
+   * <code>
+   * // Click within the image to change
+   * // the value of the rectangle
+   * function draw() {
+   *   if (mouseIsPressed == true) {
+   *     fill(0);
+   *   } else {
+   *     fill(255);
+   *   }
+   *   rect(25, 25, 50, 50);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.mouseIsPressed = false;
   p5.prototype.isMousePressed = false; // both are supported
@@ -159,7 +216,7 @@ define(function (require) {
    * <code>
    * // Move the mouse across the page
    * // to change its value
-   *       
+   *
    * var value = 0;
    * function draw() {
    *   fill(value);
@@ -173,7 +230,7 @@ define(function (require) {
    * }
    * </code>
    * </div>
-   * 
+   *
    * <div class="norender">
    * <code>
    * function mouseMoved() {
@@ -199,7 +256,7 @@ define(function (require) {
    * <code>
    * // Drag the mouse across the page
    * // to change its value
-   *       
+   *
    * var value = 0;
    * function draw() {
    *   fill(value);
@@ -213,7 +270,7 @@ define(function (require) {
    * }
    * </code>
    * </div>
-   * 
+   *
    * <div class="norender">
    * <code>
    * function mouseDragged() {
@@ -255,7 +312,7 @@ define(function (require) {
   /**
    * The mousePressed() function is called once after every time a mouse button
    * is pressed. The mouseButton variable (see the related reference entry)
-   * can be used to determine which button has been pressed. If no 
+   * can be used to determine which button has been pressed. If no
    * mousePressed() function is defined, the touchStarted() function will be
    * called instead if it is defined.<br><br>
    * Browsers may have different default
@@ -266,9 +323,9 @@ define(function (require) {
    * @example
    * <div>
    * <code>
-   * // Click within the image to change 
+   * // Click within the image to change
    * // the value of the rectangle
-   *       
+   *
    * var value = 0;
    * function draw() {
    *   fill(value);
@@ -283,7 +340,7 @@ define(function (require) {
    * }
    * </code>
    * </div>
-   * 
+   *
    * <div class="norender">
    * <code>
    * function mousePressed() {
@@ -328,10 +385,10 @@ define(function (require) {
    * @example
    * <div>
    * <code>
-   * // Click within the image to change 
+   * // Click within the image to change
    * // the value of the rectangle
    * // after the mouse has been clicked
-   *       
+   *
    * var value = 0;
    * function draw() {
    *   fill(value);
@@ -346,7 +403,7 @@ define(function (require) {
    * }
    * </code>
    * </div>
-   * 
+   *
    * <div class="norender">
    * <code>
    * function mouseReleased() {
@@ -387,10 +444,10 @@ define(function (require) {
    * @example
    * <div>
    * <code>
-   * // Click within the image to change 
+   * // Click within the image to change
    * // the value of the rectangle
    * // after the mouse has been clicked
-   *       
+   *
    * var value = 0;
    * function draw() {
    *   fill(value);
@@ -405,7 +462,7 @@ define(function (require) {
    * }
    * </code>
    * </div>
-   * 
+   *
    * <div class="norender">
    * <code>
    * function mouseClicked() {
@@ -434,7 +491,7 @@ define(function (require) {
    * Browsers may have different default
    * behaviors attached to various mouse events. To prevent any default
    * behavior for this event, add `return false` to the end of the method.
-   * 
+   *
    * See <a href="http://www.javascriptkit.com/javatutors/onmousewheel.shtml">
    * mouse wheel event in JS</a>.
    *
