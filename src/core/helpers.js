@@ -1,10 +1,8 @@
 /**
- * @module Shape
- * @submodule 2D Primitives
+ * @module Core
+ * @submodule Helpers
  * @for p5
  * @requires core
- * @requires canvas
- * @requires constants
  */
 define(function (require) {
 
