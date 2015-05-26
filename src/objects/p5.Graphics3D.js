@@ -47,7 +47,8 @@ define(function(require) {
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.viewport(0, 0, this.width, this.height);
+    gl.viewport(0, 0, this.width * this._pInst._pixelDensity,
+      this.height * this._pInst._pixelDensity);
     this.initShaders(); //initialize our default shaders
     this.initMatrix(); //initialize default pmatrix and mvatrix
     return this;
@@ -80,7 +81,7 @@ define(function(require) {
 
     var _fragShader = gl.createShader(gl.FRAGMENT_SHADER);
     //load in our material frag shader
-    gl.shaderSource(_fragShader, shaders.materialFragShader);
+    gl.shaderSource(_fragShader, shaders.defaultMatFragShader);
     gl.compileShader(_fragShader);
     // if our frag shader failed compilation?
     if (!gl.getShaderParameter(_fragShader, gl.COMPILE_STATUS)) {
@@ -187,7 +188,7 @@ define(function(require) {
 
     gl.vertexAttribPointer(
       shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-    console.log(vertices);
+    // console.log(vertices);
     _setMatrixUniforms();
     gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 3);
 

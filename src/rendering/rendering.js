@@ -65,7 +65,8 @@ define(function(require) {
         c = this.canvas;
       }
     }
-    
+    console.log('pixel density is ', this._pixelDensity);
+
     c.setAttribute('width', w*this._pixelDensity);
     c.setAttribute('height', h*this._pixelDensity);
     c.setAttribute('style',

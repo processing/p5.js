@@ -5,7 +5,7 @@ function setup(){
 var theta = 0;
 
 function draw(){
-  background(0, 255, 0, 255);
+  background(0, 100, 200, 255);
   
   translate(0.0, 0.0, -10.0);
 
@@ -17,8 +17,12 @@ function draw(){
   //     plane(1,2);
   //   //pop();
   // }
-  plane(width, height, 0);
-
+  push();
+  translate(map(sin(theta),-1,1,0,width/12),map(sin(theta), -1,1,0,height/12),0);
+  rotateX(theta);
+  cube(width, height/2);
+  plane(width/2, height/2);
+  pop();
   // stroke(0, 0, 0, 0);
   // push();
   // rotateX(theta);
@@ -31,7 +35,7 @@ function draw(){
   // plane(2, 1);
   // pop();
 
-  // theta += 0.1;
+  theta += 0.01;
   // translate(3, 0, 0);
   // push();
   // rotateZ(theta);
