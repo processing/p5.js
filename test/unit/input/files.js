@@ -59,7 +59,7 @@ suite('Files', function() {
       assert.ok(loadJSON);
       assert.typeOf(loadJSON, 'function');
     });
-    test('should allow json to override jsonp in 3rd param',
+    /*test('should allow json to override jsonp in 3rd param',
       function(done){
         var url = 'https://maps.googleapis.com/maps/api/geocode/json?address=Atlanta';
         var datatype = 'json';
@@ -69,7 +69,7 @@ suite('Files', function() {
           done();
         };
         result = loadJSON(url,myCallback,datatype);
-    });
+    });*/
 
   });
 

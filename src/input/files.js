@@ -5,12 +5,15 @@
  * @requires core
  * @requires reqwest
  */
-define(function (require) {
+define(function(require) {
 
   'use strict';
 
   var p5 = require('core');
   var reqwest = require('reqwest');
+
+  //var opentype = require('opentype');
+  //console.log('OPENTYPE: ' + typeof opentype);
 
   //BufferedReader
   p5.prototype.createInput = function() {
@@ -97,13 +100,17 @@ define(function (require) {
     var t = 'json'; //= path.indexOf('http') === -1 ? 'json' : 'jsonp';
 
     // check for explicit data type argument
-    if (typeof arguments[2] === 'string'){
+    if (typeof arguments[2] === 'string') {
       if (arguments[2] === 'jsonp' || arguments[2] === 'json') {
         t = arguments[2];
       }
     }
 
-    reqwest({url: path, type: t, crossOrigin: true})
+    reqwest({
+        url: path,
+        type: t,
+        crossOrigin: true
+      })
       .then(function(resp) {
         for (var k in resp) {
           ret[k] = resp[k];
@@ -167,12 +174,13 @@ define(function (require) {
    * }
    * </code></div>
    */
-  p5.prototype.loadStrings = function (path, callback) {
+  p5.prototype.loadStrings = function(path, callback) {
     var ret = [];
     var req = new XMLHttpRequest();
     req.open('GET', path, true);
-    req.onreadystatechange = function () {
-      if (req.readyState === 4 && (req.status === 200 || req.status === 0)) {
+    req.onreadystatechange = function() {
+      if (req.readyState === 4 && (req.status === 200 || req.status ===
+          0)) {
         var arr = req.responseText.match(/[^\r\n]+/g);
         for (var k in arr) {
           ret[k] = arr[k];
@@ -221,17 +229,16 @@ define(function (require) {
    *                                     passed in as first argument
    * @return {Object}                    Table object containing data
    */
-  p5.prototype.loadTable = function (path) {
+  p5.prototype.loadTable = function(path) {
     var callback = null;
     var options = [];
     var header = false;
     var sep = ',';
     var separatorSet = false;
     for (var i = 1; i < arguments.length; i++) {
-      if (typeof(arguments[i]) === 'function' ){
+      if (typeof(arguments[i]) === 'function') {
         callback = arguments[i];
-      }
-      else if (typeof(arguments[i]) === 'string') {
+      } else if (typeof(arguments[i]) === 'string') {
         options.push(arguments[i]);
         if (arguments[i] === 'header') {
           header = true;
@@ -239,17 +246,14 @@ define(function (require) {
         if (arguments[i] === 'csv') {
           if (separatorSet) {
             throw new Error('Cannot set multiple separator types.');
-          }
-          else {
+          } else {
             sep = ',';
             separatorSet = true;
           }
-        }
-        else if (arguments[i] === 'tsv') {
+        } else if (arguments[i] === 'tsv') {
           if (separatorSet) {
             throw new Error('Cannot set multiple separator types.');
-          }
-          else {
+          } else {
             sep = '\t';
             separatorSet = true;
           }
@@ -258,7 +262,11 @@ define(function (require) {
     }
 
     var t = new p5.Table();
-    reqwest({url: path, crossOrigin: true, type: 'csv'})
+    reqwest({
+        url: path,
+        crossOrigin: true,
+        type: 'csv'
+      })
       .then(function(resp) {
         resp = resp.responseText;
 
@@ -266,26 +274,26 @@ define(function (require) {
 
         // define constants
         var PRE_TOKEN = 0,
-            MID_TOKEN = 1,
-            POST_TOKEN = 2,
-            POST_RECORD = 4;
+          MID_TOKEN = 1,
+          POST_TOKEN = 2,
+          POST_RECORD = 4;
 
         var QUOTE = '\"',
-               CR = '\r',
-               LF = '\n';
+          CR = '\r',
+          LF = '\n';
 
         var records = [];
         var offset = 0;
         var currentRecord = null;
         var currentChar;
 
-        var recordBegin = function () {
+        var recordBegin = function() {
           state.escaped = false;
           currentRecord = [];
           tokenBegin();
         };
 
-        var recordEnd = function () {
+        var recordEnd = function() {
           state.currentState = POST_RECORD;
           records.push(currentRecord);
           currentRecord = null;
@@ -301,21 +309,21 @@ define(function (require) {
           tokenBegin();
         };
 
-        while(true) {
+        while (true) {
           currentChar = resp[offset++];
 
           // EOF
-          if(currentChar == null) {
+          if (currentChar == null) {
             if (state.escaped) {
               throw new Error('Unclosed quote in file.');
             }
-            if (currentRecord){
+            if (currentRecord) {
               tokenEnd();
               recordEnd();
               break;
             }
           }
-          if(currentRecord === null) {
+          if (currentRecord === null) {
             recordBegin();
           }
 
@@ -335,13 +343,11 @@ define(function (require) {
               if (resp[offset] === QUOTE) {
                 state.token += QUOTE;
                 offset++;
-              }
-              else {
+              } else {
                 state.escaped = false;
                 state.currentState = POST_TOKEN;
               }
-            }
-            else {
+            } else {
               state.token += currentChar;
             }
             continue;
@@ -349,21 +355,18 @@ define(function (require) {
 
 
           // fall-through: mid-token or post-token, not escaped
-          if (currentChar === CR ) {
-            if( resp[offset] === LF  ) {
+          if (currentChar === CR) {
+            if (resp[offset] === LF) {
               offset++;
             }
             tokenEnd();
             recordEnd();
-          }
-          else if (currentChar === LF) {
+          } else if (currentChar === LF) {
             tokenEnd();
             recordEnd();
-          }
-          else if (currentChar === sep) {
+          } else if (currentChar === sep) {
             tokenEnd();
-          }
-          else if( state.currentState === MID_TOKEN ){
+          } else if (state.currentState === MID_TOKEN) {
             state.token += currentChar;
           }
         }
@@ -371,14 +374,13 @@ define(function (require) {
         // set up column names
         if (header) {
           t.columns = records.shift();
-        }
-        else {
-          for (i = 0; i < records.length; i++){
+        } else {
+          for (i = 0; i < records.length; i++) {
             t.columns[i] = i.toString();
           }
         }
         var row;
-        for (i =0; i<records.length; i++) {
+        for (i = 0; i < records.length; i++) {
           row = new p5.TableRow();
           row.arr = records[i];
           row.obj = makeObject(records[i], t.columns);
@@ -388,7 +390,7 @@ define(function (require) {
           callback(t);
         }
       })
-      .fail(function(err,msg){
+      .fail(function(err, msg) {
         if (typeof callback !== 'undefined') {
           callback(false);
         }
@@ -401,12 +403,12 @@ define(function (require) {
   function makeObject(row, headers) {
     var ret = {};
     headers = headers || [];
-    if (typeof(headers) === 'undefined'){
-      for (var j = 0; j < row.length; j++ ){
+    if (typeof(headers) === 'undefined') {
+      for (var j = 0; j < row.length; j++) {
         headers[j.toString()] = j;
       }
     }
-    for (var i = 0; i < headers.length; i++){
+    for (var i = 0; i < headers.length; i++) {
       var key = headers[i];
       var val = row[i];
       ret[key] = val;
@@ -439,11 +441,11 @@ define(function (require) {
   p5.prototype.loadXML = function(path, callback) {
     var ret = [];
     reqwest({
-      url: path,
-      type: 'xml',
-      crossOrigin: true,
-    })
-      .then(function(resp){
+        url: path,
+        type: 'xml',
+        crossOrigin: true,
+      })
+      .then(function(resp) {
         callback(resp);
       });
     return ret;
@@ -485,7 +487,7 @@ define(function (require) {
    *                                    httpGet() completes, data is passed in
    *                                    as first argument
    */
-  p5.prototype.httpGet = function () {
+  p5.prototype.httpGet = function() {
     var args = Array.prototype.slice.call(arguments);
     args.push('GET');
     p5.prototype.httpDo.apply(this, args);
@@ -504,7 +506,7 @@ define(function (require) {
    *                                    httpGet() completes, data is passed in
    *                                    as first argument
    */
-  p5.prototype.httpPost = function () {
+  p5.prototype.httpPost = function() {
     var args = Array.prototype.slice.call(arguments);
     args.push('POST');
     p5.prototype.httpDo.apply(this, args);
@@ -531,7 +533,7 @@ define(function (require) {
     var type = '';
     var callback;
 
-    for (var i=1; i<arguments.length; i++) {
+    for (var i = 1; i < arguments.length; i++) {
       var a = arguments[i];
       if (typeof a === 'string') {
         if (a === 'GET' || a === 'POST' || a === 'PUT') {
@@ -563,7 +565,7 @@ define(function (require) {
       data: data,
       type: type,
       crossOrigin: true,
-      success: function (resp) {
+      success: function(resp) {
         if (typeof callback !== 'undefined') {
           if (type === 'text') {
             callback(resp.response);

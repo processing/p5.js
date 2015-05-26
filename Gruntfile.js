@@ -10,15 +10,22 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
     jshint: {
       build: {
-        options: {jshintrc: '.jshintrc'},
+        options: {
+          jshintrc: '.jshintrc'
+        },
         src: ['Gruntfile.js']
       },
       source: {
-        options: {jshintrc: 'src/.jshintrc'},
+        options: {
+          jshintrc: 'src/.jshintrc',
+          ignores: ['src/lib/opentype.js']
+        },
         src: ['src/**/*.js']
       },
       test: {
-        options: {jshintrc: 'test/.jshintrc'},
+        options: {
+          jshintrc: 'test/.jshintrc'
+        },
         src: ['test/unit/**/*.js']
       }
     },
@@ -27,13 +34,18 @@ module.exports = function(grunt) {
       main: {
         files: ['src/**/*.js'],
         tasks: ['jshint', 'requirejs'],
-        options: { livereload: true }
+        options: {
+          livereload: true
+        }
       },
       // reference
       reference_build: {
         files: ['docs/yuidoc-p5-theme/**/*'],
         tasks: ['yuidoc'],
-        options: { livereload: true, interrupt: true }
+        options: {
+          livereload: true,
+          interrupt: true
+        }
       },
       // scripts for yuidoc/reference theme
       yuidoc_theme_build: {
@@ -61,8 +73,8 @@ module.exports = function(grunt) {
       },
       // update bower.json with data from package.json
       bower: {
-        src: 'package.json',    // where to read from
-        dest: 'bower.json',     // where to write to
+        src: 'package.json', // where to read from
+        dest: 'bower.json', // where to write to
         // the fields to update, as a String Grouping
         fields: 'name version description repository'
       }
@@ -73,10 +85,17 @@ module.exports = function(grunt) {
           baseUrl: '.',
           findNestedDependencies: true,
           include: ['src/app'],
-          onBuildWrite: function( name, path, contents ) {
+          onBuildWrite: function(name, path, contents) {
             if (name === 'reqwest') {
-              contents = contents.replace('}(\'reqwest\', this, function () {', '}(\'reqwest\', amdclean, function () {');
+              contents = contents.replace(
+                '}(\'reqwest\', this, function () {',
+                '}(\'reqwest\', amdclean, function () {');
             }
+            /*if (name === 'opentype') {
+              contents = contents.replace(
+                '}(\'opentype\', this, function () {',
+                '}(\'opentype\', amdclean, function () {');
+            }*/
             return require('amdclean').clean({
               code: contents,
               'globalObject': true,
@@ -126,6 +145,7 @@ module.exports = function(grunt) {
             'math.random': 'src/math/random',
             'math.noise': 'src/math/noise',
             'math.trigonometry': 'src/math/trigonometry',
+            'opentype': 'src/lib/opentype',
             'output.files': 'src/output/files',
             'output.image': 'src/output/image',
             'output.text_area': 'src/output/text_area',
@@ -149,8 +169,8 @@ module.exports = function(grunt) {
           },
           useStrict: true,
           wrap: {
-            start:
-              ['/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */',
+            start: [
+              '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */',
               '(function (root, factory) {',
               '  if (typeof define === \'function\' && define.amd)',
               '    define(\'p5\', [], function () { return (root.returnExportsGlobal = factory());});',
@@ -158,7 +178,8 @@ module.exports = function(grunt) {
               '    module.exports = factory();',
               '  else',
               '    root[\'p5\'] = factory();',
-              '}(this, function () {\n'].join('\n'),
+              '}(this, function () {\n'
+            ].join('\n'),
             end: 'return amdclean[\'src_app\'];\n}));'
           }
         }
@@ -173,7 +194,9 @@ module.exports = function(grunt) {
           generateSourceMaps: true,
           findNestedDependencies: true,
           wrap: true,
-          paths: { 'jquery': 'empty:' }
+          paths: {
+            'jquery': 'empty:'
+          }
         }
       }
     },
@@ -216,7 +239,7 @@ module.exports = function(grunt) {
           port: 9001,
           keepalive: keepalive,
           middleware: function(connect, options, middlewares) {
-            middlewares.unshift(function (req, res, next) {
+            middlewares.unshift(function(req, res, next) {
               res.setHeader('Access-Control-Allow-Origin', '*');
               res.setHeader('Access-Control-Allow-Methods', '*');
               return next();
@@ -240,6 +263,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.registerTask('test', ['connect', 'jshint', 'mocha']);
   grunt.registerTask('yui', ['yuidoc']);
-  grunt.registerTask('default', ['connect', 'jshint', 'requirejs', 'mocha', 'uglify']);
+  grunt.registerTask('default', ['connect', 'jshint', 'requirejs', 'mocha',
+    'uglify'
+  ]);
 
 };

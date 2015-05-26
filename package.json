@@ -20,17 +20,14 @@
     "grunt-lib-phantomjs": "~0.4.0",
     "grunt-mocha": "~0.4.6",
     "grunt-release": "^0.7.0",
-    "grunt-update-json": "^0.1.3",
+    "grunt-update-json": "^0.2.1",
     "phantomjs": "~1.9.2-4"
   },
-  "licenses": [
-    {
-      "type": "LGPL",
-      "url": "https://www.gnu.org/licenses/lgpl-2.1.html"
-    }
-  ],
+  "licenses": [{
+    "type": "LGPL",
+    "url": "https://www.gnu.org/licenses/lgpl-2.1.html"
+  }],
   "dependencies": {
-    "grunt-update-json": "^0.2.1",
     "reqwest": "1.1.5"
   },
   "main": "./lib/p5.js",
