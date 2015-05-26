@@ -12,6 +12,8 @@ define(function (require) {
   var p5 = require('core');
   var constants = require('constants');
 
+  require('helpers');
+
   // source: https://sites.google.com/site/hansmuller/flex-blog/CircularArc.mxml
   // blog post: http://hansmuller-flex.blogspot.ca/
   //            2011/04/approximating-circular-arc-with-cubic.html
