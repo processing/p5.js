@@ -12,21 +12,13 @@ define(function (require) {
 
   var p5 = require('core');
 
-  function getStackTrace() {
-    var obj = {};
-    Error.captureStackTrace(obj, getStackTrace);
-    console.log(obj)
-    return obj.stack;
-  }
-
-  function getLineNumber() {
-    var obj = {};
-    Error.captureStackTrace(obj, getStackTrace);
-    return obj.stack;
-  }
-
   function report(message) {
-    console.error(message + ' Try line '+getStackTrace());
+    console.error(message);
+  }
+
+  // Based on the jQuery method
+  function isNumeric(obj) {
+    return Array.isArray(obj) && (obj - parseFloat(obj) + 1) >= 0;
   }
 
   p5.prototype._checkParameterExists = function(param, message) {
@@ -36,7 +28,12 @@ define(function (require) {
   };
 
   p5.prototype._checkParameterIsNumeric = function(param, func, order) {
+    if (!isNumeric(param)) {
+      report(func + ' was expecting a number, received "'+ param +
+        '" (parameter #' + order + ')');
+    }
   };
+
 
   return p5;
 });
