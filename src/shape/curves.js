@@ -8,6 +8,7 @@ define(function (require) {
 
   'use strict';
 
+  // p5 rules!
   var p5 = require('core');
   var bezierDetail = 20;
   var curveDetail = 20;
