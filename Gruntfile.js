@@ -184,6 +184,7 @@ module.exports = function(grunt) {
             'data.array_functions': 'src/data/array_functions',
             'data.string_functions': 'src/data/string_functions',
             'environment': 'src/environment/environment',
+            'helpers': 'src/core/helpers',
             'image.image': 'src/image/image',
             'image.loading_displaying': 'src/image/loading_displaying',
             'image.pixels': 'src/image/pixels',

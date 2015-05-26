@@ -179,19 +179,9 @@ define(function (require) {
    * </div>
    */
   p5.prototype.ellipse = function(x, y, w, h) {
-    /* == PARAMETER HELPERS == */
-    if (typeof h === 'undefined') {
-      console.info('You need to specify a height for ellipses:'
-        + 'ellipse(x, y, width, height)';
-      var obj = {};
-      Error.captureStackTrace(obj, getStackTrace);
-      console.info(obj.stack);
-    }
-    if (typeof h !== 'Number') {
-      console.info('You need to specify a height for ellipses:'
-        + 'ellipse(x, y, width, height)';
-    }
-    /* == END PARAMETER HELPERS == */
+    this._checkParameterExists(h, 'You need to specify a height for ellipses:'
+        + 'ellipse(x, y, width, height)');
+    this._checkParameterIsNumeric(h, 'ellipse', 4);
 
     if (!this._doStroke && !this._doFill) {
       return this;
