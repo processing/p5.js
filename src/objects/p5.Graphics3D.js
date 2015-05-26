@@ -6,8 +6,6 @@ define(function(require) {
   var mat4 = require('mat4');
   var gl,
     shaderProgram;
-  var vertexPositionAttribute;
-  //var vertexColorAttribute;
   var mvMatrix;
   var pMatrix;
   var mvMatrixStack = [];
@@ -66,9 +64,12 @@ define(function(require) {
    * @return {[type]} [description]
    */
   p5.Graphics3D.prototype.initShaders = function() {
+    //set up our default shaders by:
+    // 1. create the shader, 2. load the shader source,
+    // 3. compile the shader
     var _vertShader = gl.createShader(gl.VERTEX_SHADER);
-    //gl.shaderSource(_vertShader, shaders.testVertShader);
-    gl.shaderSource(_vertShader, shaders.defaultGeoVertShader);
+    //load in our default vertex shader
+    gl.shaderSource(_vertShader, shaders.defaultVertShader);
     gl.compileShader(_vertShader);
     // if our vertex shader failed compilation?
     if (!gl.getShaderParameter(_vertShader, gl.COMPILE_STATUS)) {
@@ -78,7 +79,7 @@ define(function(require) {
     }
 
     var _fragShader = gl.createShader(gl.FRAGMENT_SHADER);
-    //gl.shaderSource(_fragShader, shaders.defaultFragShader);
+    //load in our material frag shader
     gl.shaderSource(_fragShader, shaders.materialFragShader);
     gl.compileShader(_fragShader);
     // if our frag shader failed compilation?
@@ -96,27 +97,27 @@ define(function(require) {
       alert('Snap! Error linking shader program');
     }
     gl.useProgram(shaderProgram);
+    //END SHADERS SETUP
 
-    var vertexResolution =
-      gl.getUniformLocation(shaderProgram, 'u_resolution');
+    // var vertexResolution =
+      // gl.getUniformLocation(shaderProgram, 'u_resolution');
     // @TODO replace 4th argument with far plane once we implement
     // a view frustrum
-    gl.uniform3f(vertexResolution, 300, 300, 1000.0);
 
-    vertexPositionAttribute =
+    //vertex position Attribute
+    shaderProgram.vertexPositionAttribute =
       gl.getAttribLocation(shaderProgram, 'a_VertexPosition');
-    gl.enableVertexAttribArray(vertexPositionAttribute);
+    gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
+    //projection Matrix uniform
     shaderProgram.pMatrixUniform =
       gl.getUniformLocation(shaderProgram, 'uPMatrix');
+    //model view Matrix uniform
     shaderProgram.mvMatrixUniform =
       gl.getUniformLocation(shaderProgram, 'uMVMatrix');
 
-    // vertexColorAttribute =
-    //   gl.getAttribLocation(shaderProgram, 'a_VertexColor');
-    // gl.enableVertexAttribArray(vertexColorAttribute);
-
-    //use a uniform color just for now 
+    //material color uniform
+    //@TODO: remove hard coded white rgba 
     shaderProgram.uMaterialColorLoc = gl.getUniformLocation(shaderProgram,
       'u_MaterialColor');
     // Set material uniform
@@ -179,14 +180,14 @@ define(function(require) {
    * @return {[type]}          [description]
    */
   p5.Graphics3D.prototype.drawGeometry = function(vertices) {
-    var geoVertexPositionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, geoVertexPositionBuffer);
-
+    var geomVertexPositionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, geomVertexPositionBuffer);
+    
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
     gl.vertexAttribPointer(
       shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-
+    console.log(vertices);
     _setMatrixUniforms();
     gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 3);
 
