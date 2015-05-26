@@ -15,20 +15,28 @@ define(function (require) {
   function getStackTrace() {
     var obj = {};
     Error.captureStackTrace(obj, getStackTrace);
+    console.log(obj)
+    return obj.stack;
+  }
+
+  function getLineNumber() {
+    var obj = {};
+    Error.captureStackTrace(obj, getStackTrace);
+    if
     return obj.stack;
   }
 
   function report(message) {
-    console.info(message);
-    var obj = {};
-    Error.captureStackTrace(obj, getStackTrace);
-    console.info(getStackTrace());
+    console.error(message + ' Try line '+getStackTrace());
   }
 
   p5.prototype._checkParameterExists = function(param, message) {
     if (typeof param === 'undefined') {
       report(message);
     }
+  };
+
+  p5.prototype._checkParameterIsNumeric = function(param, func, order) {
   };
 
   return p5;
