@@ -22,7 +22,6 @@ define(function (require) {
   function getLineNumber() {
     var obj = {};
     Error.captureStackTrace(obj, getStackTrace);
-    if
     return obj.stack;
   }
 
