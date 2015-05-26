@@ -181,19 +181,20 @@ define(function (require) {
    * </div>
    */
   p5.prototype.ellipse = function(x, y, w, h) {
-    this._checkParameterExists(x, 'You need to specify a x position for ' +
+    this._checkParameterExists(x, 'You need to provide 4 numbers to create ' +
         'ellipses: ellipse(x, y, width, height) ' +
         '[http://p5js.org/reference/#p5/ellipse]');
-    this._checkParameterExists(y, 'You need to specify a y position for ' +
-        'ellipses: ellipse(x, y, width, height)' +
+    this._checkParameterExists(y, 'You need to specify a y position and size ' +
+        'for ellipses: ellipse(x, y, width, height)' +
         '[http://p5js.org/reference/#p5/ellipse]');
-    this._checkParameterExists(w, 'You need to specify a width for ellipses:' +
+    this._checkParameterExists(w, 'You need to provide two numbers for the ' +
+        'size of your ellipse: ' +
         ' ellipse(x, y, width, height)' +
         '[http://p5js.org/reference/#p5/ellipse]');
-    this._checkParameterExists(h, 'You need to specify a height for ellipses:' +
+    this._checkParameterExists(h, 'You need to specify a height for ellipses.' +
+        ' If you want a perfect circe, make this number the same as width. ' +
         ' ellipse(x, y, width, height)' +
         '[http://p5js.org/reference/#p5/ellipse]');
-    //this._checkParameterIsNumeric(h, 'ellipse', 4);
 
     if (!this._doStroke && !this._doFill) {
       return this;
