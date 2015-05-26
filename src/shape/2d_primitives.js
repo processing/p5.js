@@ -146,7 +146,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-	p5.prototype.arc = function(x, y, width, height, start, stop, mode) {
+  p5.prototype.arc = function(x, y, width, height, start, stop, mode) {
     if (!this._doStroke && !this._doFill) {
       return this;
     }
@@ -179,11 +179,11 @@ define(function (require) {
    * </div>
    */
   p5.prototype.ellipse = function(x, y, w, h) {
-		if (typeof h === 'undefined') {
-			console.error('You need to specify a height for ellipses:');
-			console.info('ellipse(x, y, width, height)');
-		}  
-	  
+    if (typeof h === 'undefined') {
+      console.error('You need to specify a height for ellipses:');
+      console.info('ellipse(x, y, width, height)');
+    }  
+    
     if (!this._doStroke && !this._doFill) {
       return this;
     }
