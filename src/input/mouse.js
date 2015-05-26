@@ -36,6 +36,16 @@ define(function (require) {
    * of the mouse, relative to (0, 0) of the canvas.
    *
    * @property mouseY
+   *
+   * @example
+   * <div>
+   * <code>
+   * function draw() {
+   *  background(204);
+   *  line(20, mouseY, 80, mouseY);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.mouseY = 0;
 
@@ -45,6 +55,17 @@ define(function (require) {
    * of the canvas.
    *
    * @property pmouseX
+   *
+   * @example
+   * <div>
+   * <code>
+   * function draw() {
+   *  background(204);
+   *  line(mouseX, 20, pmouseX, 80);
+   *  print(mouseX + " : " + pmouseX);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.pmouseX = 0;
 
@@ -54,6 +75,17 @@ define(function (require) {
    * the canvas.
    *
    * @property pmouseY
+   *
+   * @example
+   * <div>
+   * <code>
+   * function draw() {
+   *  background(204);
+   *  line(mouseX, 20, pmouseX, 80);
+   *  print(mouseX + " : " + pmouseX);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.pmouseY = 0;
 
