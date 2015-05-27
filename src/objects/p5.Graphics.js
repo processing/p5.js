@@ -70,16 +70,16 @@ define(function(require) {
   p5.Graphics.prototype.resize = function(w, h) {
     this.width = w;
     this.height = h;
-    this.elt.width = w * this._pInst._pixelDensity;
-    this.elt.height = h * this._pInst._pixelDensity;
+    this.elt.width = w * this._pInst.pixelDensity;
+    this.elt.height = h * this._pInst.pixelDensity;
     this.elt.style.width = w +'px';
     this.elt.style.height = h + 'px';
     if (this._isMainCanvas) {
       this._pInst._setProperty('width', this.width);
       this._pInst._setProperty('height', this.height);
     }
-    this.drawingContext.scale(this._pInst._pixelDensity,
-                              this._pInst._pixelDensity);
+    this.drawingContext.scale(this._pInst.pixelDensity,
+                              this._pInst.pixelDensity);
   };
 
   return p5.Graphics;

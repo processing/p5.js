@@ -15,20 +15,36 @@ define(function (require) {
   /**
    * <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
    * /Global_Objects/Uint8ClampedArray' target='_blank'>Uint8ClampedArray</a>
-   * containing the values for all the pixels in the display
-   * window. These values are numbers. This array is the size of the display 
-   * window x4, representing the R, G, B, A values in order for each pixel, 
-   * moving from left to right across each row, then down each column. For 
-   * example, if the image is 100x100 pixels, there will be 40000. The 
-   * first four values (indices 0-3) in the array will be the R, G, B, A  
-   * values of the pixel at (0, 0). The second four values (indices 4-7) will 
-   * contain the R, G, B, A values of the pixel at (1, 0). More generally, to 
-   * set values for a pixel at (x, y): 
-   * <br>
-   * <code>pixels[y*width+x] = r; 
-   * pixels[y*width+x+1] = g;
-   * pixels[y*width+x+2] = b;
-   * pixels[y*width+x+3] = a;</code>
+   * containing the values for all the pixels in the display window.
+   * These values are numbers. This array is the size (include an appropriate
+   * factor for pixelDensity) of the display window x4,
+   * representing the R, G, B, A values in order for each pixel, moving from 
+   * left to right across each row, then down each column. Retina and other
+   * high denisty displays will have more pixels[] (by a factor of
+   * pixelDensity^2).
+   * For example, if the image is 100x100 pixels, there will be 40,000. On a
+   * retina display, there will be 160,000. The first four values
+   * (indices 0-3) in the array will be the R, G, B, A values of the pixel at 
+   * (0, 0). The second four values (indices 4-7) will contain the R, G, B, A
+   * values of the pixel at (1, 0). More generally, to set values for a pixel
+   * at (x, y): 
+   * <code><pre>var d = pixelDensity;
+   * for (var i = 0; i < d; i++) {
+   *   for (var j = 0; j < d; j++) {
+   *     // loop over
+   *     idx = 4*((y * d + j) * width * d + (x * d + i));
+   *     pixels[idx] = r;
+   *     pixels[idx+1] = g;
+   *     pixels[idx+2] = b;
+   *     pixels[idx+3] = a;
+   *   }
+   * }
+   * </pre></code>
+   * While the above method is complex, it is flexible enough to work with
+   * any pixelDensity. Note that set() will automatically take care of
+   * setting all the appropriate values in pixels[] for a given (x, y) at
+   * any pixelDensity, but the performance may not be as fast when lots of
+   * modifications are made to the pixel array.
    * <br><br>
    * Before accessing this array, the data must loaded with the loadPixels()
    * function. After the array data has been modified, the updatePixels()
@@ -45,7 +61,9 @@ define(function (require) {
    * <code>
    * var pink = color(255, 102, 204);
    * loadPixels();
-   * for (var i = 0; i < 4*(width*height/2); i+=4) {
+   * var d = pixelDensity;
+   * var halfImage = 4 * (width * d) * (height/2 * d);
+   * for (var i = 0; i < halfImage; i+=4) {
    *   pixels[i] = red(pink);
    *   pixels[i+1] = green(pink);
    *   pixels[i+2] = blue(pink);
@@ -218,9 +236,12 @@ define(function (require) {
    *
    * Getting the color of a single pixel with get(x, y) is easy, but not as fast
    * as grabbing the data directly from pixels[]. The equivalent statement to
-   * get(x, y) using pixels[] is [ pixels[y*width+x], pixels[y*width+x+1], 
-   * pixels[y*width+x+2], pixels[y*width+3] ]. See the reference for
-   * pixels[] for more information.
+   * get(x, y) using pixels[] with pixel density d is 
+   * [pixels[(y*width*d+x)*d],
+   * pixels[(y*width*d+x)*d+1], 
+   * pixels[(y*width*d+x)*d+2],
+   * pixels[(y*width*d+x)*d+3] ].
+   * See the reference for pixels[] for more information.
    *
    * @method get
    * @param  {Number}         [x] x-coordinate of the pixel
@@ -276,10 +297,9 @@ define(function (require) {
       return [0, 0, 0, 255];
     }
 
-    var imageData = this.drawingContext.getImageData(x, y, w, h);
-    var data = imageData.data;
-
     if (w === 1 && h === 1){
+      var imageData = this.drawingContext.getImageData(x, y, w, h);
+      var data = imageData.data;
       var pixels = [];
       
       for (var i = 0; i < data.length; i += 4) {
@@ -288,13 +308,18 @@ define(function (require) {
       
       return pixels;
     } else {
+      var sx = x * this.pixelDensity;
+      var sy = y * this.pixelDensity;
       //auto constrain the width and height to
       //dimensions of the source image
-      w = Math.min(w, this.width);
-      h = Math.min(h, this.height);
+      var dw = Math.min(w, this.width);
+      var dh = Math.min(h, this.height);
+      var sw = dw * this.pixelDensity;
+      var sh = dh * this.pixelDensity;
 
-      var region = new p5.Image(w, h);
-      region.canvas.getContext('2d').putImageData(imageData, 0, 0, 0, 0, w, h);
+      var region = new p5.Image(dw, dh);
+      region.canvas.getContext('2d').drawImage(this.canvas, sx, sy, sw, sh,
+        0, 0, dw, dh);
 
       return region;
     }
@@ -315,7 +340,8 @@ define(function (require) {
    * 
    * function setup() {
    *   image(img, 0, 0);
-   *   var halfImage = 4 * img.width * img.height/2;
+   *   var d = pixelDensity;
+   *   var halfImage = 4 * (img.width * d) * (img.height/2 * d);
    *   loadPixels();
    *   for (var i = 0; i < halfImage; i++) {
    *     pixels[i+halfImage] = pixels[i];
@@ -326,8 +352,8 @@ define(function (require) {
    * </div>
    */
   p5.prototype.loadPixels = function() {
-    var width = this.width;
-    var height = this.height;
+    var width = this.width * this.pixelDensity;
+    var height = this.height * this.pixelDensity;
     var imageData = this.drawingContext.getImageData(
       0,
       0,
@@ -351,12 +377,10 @@ define(function (require) {
    * appear.  This should be called once all pixels have been set.
    * </p>
    * <p>Setting the color of a single pixel with set(x, y) is easy, but not as
-   * fast as putting the data directly into pixels[]. The equivalent statement
-   * to set(x, y, [100, 50, 10, 255]) using pixels[] is:</p>
-   * <pre><code class="language-markup">pixels[4*(y*width+x)] = 100;
-   * pixels[4*(y*width+x)+1] = 50;
-   * pixels[4*(y*width+x)+2] = 10;
-   * pixels[4*(y*width+x)+3] = 255;</code></pre>
+   * fast as putting the data directly into pixels[]. Setting the pixels[]
+   * values directly may be complicated when working with a retina display,
+   * but will perform better when lots of pixels need to be set directly on
+   * every loop.</p>
    * <p>See the reference for pixels[] for more information.</p>
    *
    * @method set
@@ -408,21 +432,23 @@ define(function (require) {
     if (imgOrCol instanceof p5.Image) {
       this.drawingContext.save();
       this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-      this.drawingContext.scale(this._pixelDensity, this._pixelDensity);
+      this.drawingContext.scale(this.pixelDensity, this.pixelDensity);
       this.drawingContext.drawImage(imgOrCol.canvas, x, y);
       this.loadPixels.call(this);
       this.drawingContext.restore();
     } else {
-      var idx = 4*(y * this.width + x);
+      var r = 0, g = 0, b = 0, a = 0;
+      var idx = 4*((y * this.pixelDensity) * (this.width * this.pixelDensity) +
+        (x * this.pixelDensity));
       if (!this.imageData) {
         this.loadPixels.call(this);
       }
       if (typeof imgOrCol === 'number') {
         if (idx < this.pixels.length) {
-          this.pixels[idx] = imgOrCol;
-          this.pixels[idx+1] = imgOrCol;
-          this.pixels[idx+2] = imgOrCol;
-          this.pixels[idx+3] = 255;
+          r = imgOrCol;
+          g = imgOrCol;
+          b = imgOrCol;
+          a = 255;
           //this.updatePixels.call(this);
         }
       }
@@ -431,19 +457,31 @@ define(function (require) {
           throw new Error('pixel array must be of the form [R, G, B, A]');
         }
         if (idx < this.pixels.length) {
-          this.pixels[idx] = imgOrCol[0];
-          this.pixels[idx+1] = imgOrCol[1];
-          this.pixels[idx+2] = imgOrCol[2];
-          this.pixels[idx+3] = imgOrCol[3];
+          r = imgOrCol[0];
+          g = imgOrCol[1];
+          b = imgOrCol[2];
+          a = imgOrCol[3];
           //this.updatePixels.call(this);
         }
       } else if (imgOrCol instanceof p5.Color) {
         if (idx < this.pixels.length) {
-          this.pixels[idx] = imgOrCol.rgba[0];
-          this.pixels[idx+1] = imgOrCol.rgba[1];
-          this.pixels[idx+2] = imgOrCol.rgba[2];
-          this.pixels[idx+3] = imgOrCol.rgba[3];
+          r = imgOrCol.rgba[0];
+          g = imgOrCol.rgba[1];
+          b = imgOrCol.rgba[2];
+          a = imgOrCol.rgba[3];
           //this.updatePixels.call(this);
+        }
+      }
+      // loop over pixelDensity * pixelDensity
+      for (var i = 0; i < this.pixelDensity; i++) {
+        for (var j = 0; j < this.pixelDensity; j++) {
+          // loop over
+          idx = 4*((y * this.pixelDensity + j) * this.width *
+            this.pixelDensity + (x * this.pixelDensity + i));
+          this.pixels[idx] = r;
+          this.pixels[idx+1] = g;
+          this.pixels[idx+2] = b;
+          this.pixels[idx+3] = a;
         }
       }
     }
@@ -472,7 +510,8 @@ define(function (require) {
    * 
    * function setup() {
    *   image(img, 0, 0);
-   *   var halfImage = 4 * img.width * img.height/2;
+   *   var halfImage = 4 * (img.width * pixelDensity) *
+   *     (img.height * pixelDensity/2);
    *   loadPixels();
    *   for (var i = 0; i < halfImage; i++) {
    *     pixels[i+halfImage] = pixels[i];
@@ -489,8 +528,8 @@ define(function (require) {
       h === undefined) {
       x = 0;
       y = 0;
-      w = this.width;
-      h = this.height;
+      w = this.width * this.pixelDensity;
+      h = this.height * this.pixelDensity;
     }
     this.drawingContext.putImageData(this.imageData, x, y, 0, 0, w, h);
   };

@@ -357,13 +357,13 @@ define(function(require) {
   p5.prototype.devicePixelScaling = function(val) {
     if (val) {
       if (typeof val === 'number') {
-        this._pixelDensity = val;
+        this.pixelDensity = val;
       }
       else {
-        this._pixelDensity = window.devicePixelRatio || 1;
+        this.pixelDensity = window.devicePixelRatio || 1;
       }
     } else {
-      this._pixelDensity = 1;
+      this.pixelDensity = 1;
     }
     this.resizeCanvas(this.width, this.height, true);
   };
