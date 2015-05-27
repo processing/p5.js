@@ -328,12 +328,8 @@ define(function (require) {
      * @method remove
      * @example
      * <div class='norender'><code>
-     * function setup() {
-     *   createCanvas(200, 200);
-     * }
-     *
      * function draw() {
-     *   ellipse(width/2, height/2, 0, 0);
+     *   ellipse(50, 50, 10, 10);
      * }
      *
      * function mousePressed() {

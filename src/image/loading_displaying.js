@@ -228,6 +228,21 @@ define(function (require) {
    * displaying images with their original hues.
    *
    * @method noTint
+      * @example
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/laDefense.jpg");
+   * }
+   * function setup() {
+   *   tint(0, 153, 204);  // Tint blue
+   *   image(img, 0, 0);
+   *   noTint();  // Disable tint
+   *   image(img, 50, 0);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.noTint = function() {
     this._tint = null;
