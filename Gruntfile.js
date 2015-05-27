@@ -140,7 +140,7 @@ module.exports = function(grunt) {
             'math.random': 'src/math/random',
             'math.noise': 'src/math/noise',
             'math.trigonometry': 'src/math/trigonometry',
-            'opentype': 'node_modules/opentype.js/dist/opentype',
+            //'opentype': 'node_modules/opentype.js/dist/opentype',
             'output.files': 'src/output/files',
             'output.image': 'src/output/image',
             'output.text_area': 'src/output/text_area',

@@ -9,7 +9,7 @@ define(function(require) {
   require('p5.Graphics');
   require('p5.Image');
   require('p5.File');
-  //require('p5.Font');
+  require('p5.Font');
   //require('p5.Shape');
   require('p5.Vector');
   require('p5.TableRow');
@@ -36,7 +36,7 @@ define(function(require) {
   require('math.random');
   require('math.noise');
   require('math.trigonometry');
-  require('opentype');
+  //require('opentype');
   require('output.files');
   require('output.image');
   require('output.text_area');
