@@ -47,47 +47,77 @@ define(function (require) {
   // -- End borrow --
 
   p5.prototype._validateParameters = function(func, args, types) {
-    // Parameter numbers
-    if (isArray(types[0])) {
-      var diff = 1e6;
-      var tindex = -1;
-      for (var i=0, len=types.length; i<len; i++) {
-        var d = Math.abs(args.length-types[i].length);
-        if (d <= diff) {
-          tindex = i;
-          diff = d;
-        }
-      }
-      if(diff > 0) {
-        report('Try ' + func + '(' + types[tindex].join(', ') + '). ' +
-          func + ' takes different numbers of parameters depending on ' +
-          'what you want to do, but it doesn\'t know what to do with ' +
-          args.length + ' of them. ', func);
-      }
-    } else {
-      if (args.length !== types.length) {
-        report(func + ' is expecting ' + types.length +
-          ' parameters, we found ' + args.length + '.', func);
-      }
-    }
-    // Type checking
     if (!isArray(types[0])) {
       types = [types];
     }
-    // Check types
+    /**
+     * Check number of parameters
+     *
+     * Example: "You gave us ellipse(X,X,X). ellipse was expecting 4
+     *           parameters. Try ellipse(X,X,X,X)."
+     */
+    var diff = Math.abs(args.length-types[0].length);
+    var message, tindex = 0;
+    for (var i=1, len=types.length; i<len; i++) {
+      var d = Math.abs(args.length-types[i].length);
+      if (d <= diff) {
+        tindex = i;
+        diff = d;
+      }
+    }
+    var symbol = 'X'; // Parameter placeholder
+    if(diff > 0) {
+      message = 'You gave us ' + func + '(';
+      // Concat an appropriate number of placeholders for call
+      if (args.length > 0) {
+        message += symbol + (','+symbol).repeat(args.length-1);
+      }
+      message += '). ' + func + ' was expecting ' + types[tindex].length +
+        ' parameters. Try ' + func + '(';
+      // Concat an appropriate number of placeholders for definition
+      if (types[tindex].length > 0) {
+        message += symbol + (','+symbol).repeat(types[tindex].length-1);
+      }
+      message += ').';
+      // If multiple definitions
+      if (types.length > 1) {
+        message += ' ' + func + ' takes different numbers of parameters ' +
+          'depending on what you want to do. Click this link to learn more: ';
+      }
+    }
+    /**
+     * Type checking
+     *
+     * Example: "It looks like ellipse received an empty variable in spot #2."
+     * Example: "ellipse was expecting a number for parameter #1,
+     *           received "foo" instead."
+     */
     for (var format=0; format<types.length; format++) {
       for (var p=0; p < types[format].length && p < args.length; p++) {
         var type = types[format][p];
-        if (getType(args[p]) === 'undefined') {
+        var argType = getType(args[p]);
+        if (argType === 'undefined') {
           report('It looks like ' + func +
             ' received an empty variable in spot #' + (p+1) + '.', func);
         } else if (
           (['Number', 'Integer', 'Number/Constant'].indexOf(type) > -1 &&
             !isNumeric(args[p])) ||
-          (type === 'String' && getType(args[p]) !== 'string')
+          (type === 'String' && argType) !== 'string')
         ) {
-          report(func + ' was expecting a ' + type + ' for parameter #' +
-            (p+1) + ', received "' + args[p] + '" instead.', func);
+          message = func + ' was expecting a ' + type.toLowerCase() +
+            ' for parameter #' + (p+1) + ', received ';
+          // Wrap strings in quotes
+          message += 'string' === argType
+            ? '"' + args[p] + '"'
+            : args[p];
+          message += ' instead.';
+          // If multiple definitions
+          if (types.length > 1) {
+            message += ' ' + func + ' takes different numbers of parameters ' +
+              'depending on what you want to do. ' +
+              'Click this link to learn more:';
+          }
+          report(message, func);
         }
       }
     }
