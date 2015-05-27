@@ -91,11 +91,6 @@ module.exports = function(grunt) {
                 '}(\'reqwest\', this, function () {',
                 '}(\'reqwest\', amdclean, function () {');
             }
-            /*if (name === 'opentype') {
-              contents = contents.replace(
-                '}(\'opentype\', this, function () {',
-                '}(\'opentype\', amdclean, function () {');
-            }*/
             return require('amdclean').clean({
               code: contents,
               'globalObject': true,
@@ -145,7 +140,7 @@ module.exports = function(grunt) {
             'math.random': 'src/math/random',
             'math.noise': 'src/math/noise',
             'math.trigonometry': 'src/math/trigonometry',
-            'opentype': 'src/lib/opentype',
+            'opentype': 'node_modules/opentype.js/dist/opentype',
             'output.files': 'src/output/files',
             'output.image': 'src/output/image',
             'output.text_area': 'src/output/text_area',
@@ -263,8 +258,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.registerTask('test', ['connect', 'jshint', 'mocha']);
   grunt.registerTask('yui', ['yuidoc']);
-  grunt.registerTask('default', ['connect', 'jshint', 'requirejs', 'mocha',
-    'uglify'
-  ]);
+  grunt.registerTask('default', ['connect', 'jshint', 'requirejs', 'mocha', 'uglify']);
 
 };
