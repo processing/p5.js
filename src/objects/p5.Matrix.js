@@ -1,5 +1,5 @@
 /**
- * @module Math
+ * @module Matrix
  * @submodule Math
  * @requires constants
  * @todo see methods below needing further implementation.

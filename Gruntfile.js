@@ -148,7 +148,8 @@ module.exports = function(grunt) {
             'shaders': 'src/var/shaders',
             'reqwest': 'node_modules/reqwest/reqwest',
             'filters': 'src/image/filters',
-            'utils.color_utils': 'src/utils/color_utils'
+            'utils.color_utils': 'src/utils/color_utils',
+            'mat4': 'src/objects/mat4'
           },
           useStrict: true,
           wrap: {
@@ -244,5 +245,4 @@ module.exports = function(grunt) {
   grunt.registerTask('test', ['connect', 'jshint', 'mocha']);
   grunt.registerTask('yui', ['yuidoc']);
   grunt.registerTask('default', ['connect', 'jshint', 'requirejs', 'mocha', 'uglify']);
-
 };
