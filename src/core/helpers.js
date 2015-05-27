@@ -46,6 +46,14 @@ define(function (require) {
   };
   // -- End borrow --
 
+  var numberTypes = ['Number', 'Integer', 'Number/Constant'];
+  function typeMatches(defType, argType, arg) {
+    // 'Function', 'Array', 'Date', 'RegExp', 'Object', 'Error'
+    return (defType === 'Boolean' && (arg === true || arg === false)) ||
+      (defType.toLowerCase() === argType) ||
+      (numberTypes.indexOf(defType) > -1 && isNumeric(arg));
+  }
+
   p5.prototype._validateParameters = function(func, args, types) {
     if (!isArray(types[0])) {
       types = [types];
@@ -94,22 +102,16 @@ define(function (require) {
      */
     for (var format=0; format<types.length; format++) {
       for (var p=0; p < types[format].length && p < args.length; p++) {
-        var type = types[format][p];
+        var defType = types[format][p];
         var argType = getType(args[p]);
         if (argType === 'undefined') {
           report('It looks like ' + func +
             ' received an empty variable in spot #' + (p+1) + '.', func);
-        } else if (
-          (['Number', 'Integer', 'Number/Constant'].indexOf(type) > -1 &&
-            !isNumeric(args[p])) ||
-          (type === 'String' && argType) !== 'string')
-        ) {
-          message = func + ' was expecting a ' + type.toLowerCase() +
+        } else if (!typeMatches(defType, argType, args[p])) {
+          message = func + ' was expecting a ' + defType.toLowerCase() +
             ' for parameter #' + (p+1) + ', received ';
           // Wrap strings in quotes
-          message += 'string' === argType
-            ? '"' + args[p] + '"'
-            : args[p];
+          message += 'string' === argType ? '"' + args[p] + '"' : args[p];
           message += ' instead.';
           // If multiple definitions
           if (types.length > 1) {
