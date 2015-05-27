@@ -92,49 +92,49 @@ define(function (require) {
 
     //@TODO: figure out a better way to generate 6 faces
     
-    // for (var y1 = 0; y1 <= detailY; y1++) {
-    //   var t1 = y1 / detailY;
-    //   for (var x1 = 0; x1 <= detailX; x1++) {
-    //     var s1 = x1 / detailX;
-    //     this.vertices.push([
-    //       2 * width * s1 - width,
-    //       2 * height * t1 - height,
-    //       depth / 2
-    //     ]);
+    for (var y1 = 0; y1 <= detailY; y1++) {
+      var t1 = y1 / detailY;
+      for (var x1 = 0; x1 <= detailX; x1++) {
+        var s1 = x1 / detailX;
+        this.vertices.push([
+          2 * width * s1 - width,
+          2 * height * t1 - height,
+          depth / 2
+        ]);
 
-    //     this.uvs.push([s1, t1]);
+        this.uvs.push([s1, t1]);
 
-    //     this.faceNormals.push([0, 0, 1]);
+        this.faceNormals.push([0, 0, 1]);
 
-    //     if (x1 < detailX && y1 < detailY) {
-    //       var i1 = x1 + y1 * (detailX + 1);
-    //       this.faces.push([i1, i1 + 1, i1 + detailX + 1]);
-    //       this.faces.push([i1 + detailX + 1, i1 + 1, i1 + detailX + 2]);
-    //     }
-    //   }
-    // }
+        if (x1 < detailX && y1 < detailY) {
+          var i1 = x1 + y1 * (detailX + 1);
+          this.faces.push([i1, i1 + 1, i1 + detailX + 1]);
+          this.faces.push([i1 + detailX + 1, i1 + 1, i1 + detailX + 2]);
+        }
+      }
+    }
 
-    // for (var y2 = 0; y2 <= detailY; y2++) {
-    //   var t2 = y2 / detailY;
-    //   for (var x2 = 0; x2 <= detailX; x2++) {
-    //     var s2 = x2 / detailX;
-    //     this.vertices.push([
-    //       2 * width * s2 - width,
-    //       2 * height * t2 - height,
-    //       -depth / 2
-    //     ]);
+    for (var y2 = 0; y2 <= detailY; y2++) {
+      var t2 = y2 / detailY;
+      for (var x2 = 0; x2 <= detailX; x2++) {
+        var s2 = x2 / detailX;
+        this.vertices.push([
+          2 * width * s2 - width,
+          2 * height * t2 - height,
+          -depth / 2
+        ]);
 
-    //     this.uvs.push([s2, t2]);
+        this.uvs.push([s2, t2]);
 
-    //     this.faceNormals.push([0, 0, -1]);
+        this.faceNormals.push([0, 0, -1]);
 
-    //     if (x2 < detailX && y2 < detailY) {
-    //       var i2 = x2 + y2 * (detailX + 1);
-    //       this.faces.push([i2, i2 + 1, i2 + detailX + 1]);
-    //       this.faces.push([i2 + detailX + 1, i2 + 1, i2 + detailX + 2]);
-    //     }
-    //   }
-    // }
+        if (x2 < detailX && y2 < detailY) {
+          var i2 = x2 + y2 * (detailX + 1);
+          this.faces.push([i2, i2 + 1, i2 + detailX + 1]);
+          this.faces.push([i2 + detailX + 1, i2 + 1, i2 + detailX + 2]);
+        }
+      }
+    }
 
 
     var vertices = verticesArray(this.faces, this.vertices);

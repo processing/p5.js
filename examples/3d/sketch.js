@@ -18,10 +18,11 @@ function draw(){
   //   //pop();
   // }
   push();
-  translate(map(sin(theta),-1,1,0,width/12),map(sin(theta), -1,1,0,height/12),0);
+  translate(sin(theta),cos(theta),0);
   rotateX(theta);
-  cube(width, height/2);
-  plane(width/2, height/2);
+  cube(width,height);
+  // plane(width/2, height/2);
+  // sphere();
   pop();
   // stroke(0, 0, 0, 0);
   // push();
