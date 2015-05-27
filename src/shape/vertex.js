@@ -19,7 +19,7 @@ define(function (require) {
   var isQuadratic = false;
   var isContour = false;
 
-  /* 
+  /*
    * Helper method
    */
   p5.prototype._doFillStrokeClose = function() {
@@ -36,13 +36,13 @@ define(function (require) {
    * Use the beginContour() and endContour() functions to create negative
    * shapes within shapes such as the center of the letter 'O'. beginContour()
    * begins recording vertices for the shape and endContour() stops recording.
-   * The vertices that define a negative shape must "wind" in the opposite 
+   * The vertices that define a negative shape must "wind" in the opposite
    * direction from the exterior shape. First draw vertices for the exterior
-   * clockwise order, then for internal shapes, draw vertices 
+   * clockwise order, then for internal shapes, draw vertices
    * shape in counter-clockwise.
    * <br><br>
    * These functions can only be used within a beginShape()/endShape() pair and
-   * transformations such as translate(), rotate(), and scale() do not work 
+   * transformations such as translate(), rotate(), and scale() do not work
    * within a beginContour()/endContour() pair. It is also not possible to use
    * other shapes, such as ellipse() or rect() within.
    *
@@ -111,7 +111,7 @@ define(function (require) {
    *
    * <div>
    * <code>
-   * // currently not working   
+   * // currently not working
    * beginShape(POINTS);
    * vertex(30, 20);
    * vertex(85, 20);
@@ -187,11 +187,11 @@ define(function (require) {
    * <code>
    * beginShape(TRIANGLE_FAN);
    * vertex(57.5, 50);
-   * vertex(57.5, 15); 
-   * vertex(92, 50); 
-   * vertex(57.5, 85); 
-   * vertex(22, 50); 
-   * vertex(57.5, 15); 
+   * vertex(57.5, 15);
+   * vertex(92, 50);
+   * vertex(57.5, 85);
+   * vertex(22, 50);
+   * vertex(57.5, 15);
    * endShape();
    * </code>
    * </div>
@@ -212,16 +212,16 @@ define(function (require) {
    * </div>
    *
    * <div>
-   * <code>  
-   * beginShape(QUAD_STRIP); 
-   * vertex(30, 20); 
-   * vertex(30, 75); 
+   * <code>
+   * beginShape(QUAD_STRIP);
+   * vertex(30, 20);
+   * vertex(30, 75);
    * vertex(50, 20);
    * vertex(50, 75);
-   * vertex(65, 20); 
-   * vertex(65, 75); 
+   * vertex(65, 20);
+   * vertex(65, 75);
    * vertex(85, 20);
-   * vertex(85, 75); 
+   * vertex(85, 75);
    * endShape();
    * </code>
    * </div>
@@ -355,13 +355,13 @@ define(function (require) {
    * Use the beginContour() and endContour() functions to create negative
    * shapes within shapes such as the center of the letter 'O'. beginContour()
    * begins recording vertices for the shape and endContour() stops recording.
-   * The vertices that define a negative shape must "wind" in the opposite 
+   * The vertices that define a negative shape must "wind" in the opposite
    * direction from the exterior shape. First draw vertices for the exterior
-   * clockwise order, then for internal shapes, draw vertices 
+   * clockwise order, then for internal shapes, draw vertices
    * shape in counter-clockwise.
    * <br><br>
    * These functions can only be used within a beginShape()/endShape() pair and
-   * transformations such as translate(), rotate(), and scale() do not work 
+   * transformations such as translate(), rotate(), and scale() do not work
    * within a beginContour()/endContour() pair. It is also not possible to use
    * other shapes, such as ellipse() or rect() within.
    *
@@ -416,13 +416,13 @@ define(function (require) {
    * <div>
    * <code>
    * noFill();
-   * 
+   *
    * beginShape();
    * vertex(20, 20);
    * vertex(45, 20);
    * vertex(45, 80);
    * endShape(CLOSE);
-   * 
+   *
    * beginShape();
    * vertex(50, 20);
    * vertex(75, 20);
@@ -519,7 +519,7 @@ define(function (require) {
         for (i = 0; i < numVerts; i++) {
           v = vertices[i];
           if (this._doStroke) {
-            this.stroke(v[6]);
+            this.drawingContext.strokeStyle = v[6];
           }
           this.point(v[0], v[1]);
         }
@@ -527,7 +527,7 @@ define(function (require) {
         for (i = 0; (i + 1) < numVerts; i+=2) {
           v = vertices[i];
           if (this._doStroke) {
-            this.stroke(vertices[i+1][6]);
+            this.drawingContext.strokeStyle = vertices[i+1][6];
           }
           this.line(v[0], v[1], vertices[i+1][0], vertices[i+1][1]);
         }
@@ -541,11 +541,11 @@ define(function (require) {
           this.drawingContext.lineTo(v[0], v[1]);
 
           if (this._doFill) {
-            this.fill(vertices[i+2][5]);
+            this.drawingContext.fillStyle = vertices[i+2][5];
             this.drawingContext.fill();
           }
           if (this._doStroke) {
-            this.stroke(vertices[i+2][6]);
+            this.drawingContext.strokeStyle = vertices[i+2][6];
             this.drawingContext.stroke();
           }
 
@@ -559,19 +559,19 @@ define(function (require) {
           this.drawingContext.lineTo(v[0], v[1]);
 
           if (this._doStroke) {
-            this.stroke(vertices[i+1][6]);
+            this.drawingContext.strokeStyle = vertices[i+1][6];
           }
           if (this._doFill) {
-            this.fill(vertices[i+1][5]);
+            this.drawingContext.fillStyle = vertices[i+1][5];
           }
 
           if (i + 2 < numVerts) {
             this.drawingContext.lineTo(vertices[i+2][0], vertices[i+2][1]);
             if (this._doStroke) {
-              this.stroke(vertices[i+2][6]);
+              this.drawingContext.strokeStyle = vertices[i+2][6];
             }
             if (this._doFill) {
-              this.fill(vertices[i+2][5]);
+              this.drawingContext.fillStyle = vertices[i+2][5];
             }
           }
           this._doFillStrokeClose();
@@ -584,10 +584,10 @@ define(function (require) {
           this.drawingContext.lineTo(vertices[2][0], vertices[2][1]);
 
           if (this._doFill) {
-            this.fill(vertices[2][5]);
+            this.drawingContext.fillStyle = vertices[2][5];
           }
           if (this._doStroke) {
-            this.stroke(vertices[2][6]);
+            this.drawingContext.strokeStyle = vertices[2][6];
           }
           this._doFillStrokeClose();
 
@@ -599,10 +599,10 @@ define(function (require) {
             this.drawingContext.lineTo(v[0], v[1]);
 
             if (this._doFill) {
-              this.fill(v[5]);
+              this.drawingContext.fillStyle = v[5];
             }
             if (this._doStroke) {
-              this.stroke(v[6]);
+              this.drawingContext.strokeStyle = v[6];
             }
             this._doFillStrokeClose();
           }
@@ -618,10 +618,10 @@ define(function (require) {
           this.drawingContext.lineTo(v[0], v[1]);
 
           if (this._doFill) {
-            this.fill(vertices[i+3][5]);
+            this.drawingContext.fillStyle = vertices[i+3][5];
           }
           if (this._doStroke) {
-            this.stroke(vertices[i+3][6]);
+            this.drawingContext.strokeStyle = vertices[i+3][6];
           }
 
           this._doFillStrokeClose();
@@ -638,10 +638,10 @@ define(function (require) {
               this.drawingContext.lineTo(vertices[i+3][0], vertices[i+3][1]);
 
               if (this._doFill) {
-                this.fill(vertices[i+3][5]);
+                this.drawingContext.fillStyle = vertices[i+3][5];
               }
               if (this._doStroke) {
-                this.stroke(vertices[i+3][6]);
+                this.drawingContext.strokeStyle = vertices[i+3][6];
               }
             } else {
               this.drawingContext.moveTo(v[0], v[1]);
@@ -690,7 +690,7 @@ define(function (require) {
    * must be prefaced with a call to vertex() to set the first anchor point.
    * This function must be used between beginShape() and endShape() and only
    * when there is no MODE parameter specified to beginShape().
-   * 
+   *
    * @method quadraticVertex
    * @param  {Number} cx x-coordinate for the control point
    * @param  {Number} cy y-coordinate for the control point
