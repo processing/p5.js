@@ -1,9 +1,6 @@
-/* global opentype: false */
-
 suite('Files', function() {
 
   var loadJSON = p5.prototype.loadJSON;
-  var loadFont = p5.prototype.loadFont;
   // var loadStrings = p5.prototype.loadStrings;
 
   //variable for preload
@@ -17,46 +14,22 @@ suite('Files', function() {
     assert.typeOf(preload, 'Boolean');
   });
 
-  suite('loadFont() in Preload', function () {
-
-    test('should be opentype', function() {
-      assert.ok(opentype);
-      assert.isObject(opentype);
-    });
-
-    test('should be a function', function() {
-      assert.ok(loadFont);
-      assert.typeOf(loadFont, 'function');
-    });
-
-    test('should return an object', function() {
-      result = loadFont(opentype, './acmesa.ttf');
-      assert.ok(result);
-      assert.isObject(result);
-      //assert.isObject(result.font);
-    });
-  });
-
   suite('loadJSON() in Preload', function () {
-
     test('should be a function', function() {
       assert.ok(loadJSON);
       assert.typeOf(loadJSON, 'function');
     });
-
     test('should return an Array', function() {
-      result = loadJSON('../assets/array.json');
+      result = loadJSON('array.json');
       assert.ok(result);
       // assert.isObject(result, 'result is an object');
       assert.typeOf(result, 'Array');
       // assert.lengthOf(result, 2);
     });
-
     // test('should return an Object', function() {
     //   assert.isObject(result, ['the result is an object'])
     // });
   });
-
 
 
   //   test('should be a function', function( {
@@ -64,17 +37,17 @@ suite('Files', function() {
   //     assert.typeOf(loadJSON, 'function');
   //   });
   //   test('in preload, should return an object', function() {
-  //     result = loadJSON("../assets/array.json");
+  //     result = loadJSON("array.json");
   //     assert.typeOf(result, 'Object');
   //   });
   //   test('should return an error', function() {
-  //     result = loadJSON("../assets/arr.json");
+  //     result = loadJSON("arr.json");
   //     assert.typeOf(result, 'nothing');
   //   });
   // });
 
   // test('loadStrings in preload without callback', function(
-  // result = loadStrings('../assets/sentences.txt');
+  // result = loadStrings('sentences.txt');
   // assert.ok(result);
   // )};
 
@@ -86,27 +59,27 @@ suite('Files', function() {
       assert.ok(loadJSON);
       assert.typeOf(loadJSON, 'function');
     });
-    /*test('should allow json to override jsonp in 3rd param',
+    test('should allow json to override jsonp in 3rd param',
       function(done){
 
-        var url = 'http://localhost:9001/unit/assets/array.json';
+        var url = 'http://localhost:9001/unit/input/array.json';
         var datatype = 'json';
         var myCallback = function(resp){
           assert.ok(resp);
-          //assert.typeOf(resp,'Object');
+          assert.typeOf(resp,'Array');
           done();
         };
         result = loadJSON(url,myCallback,datatype);
-    });*/
+    });
 
   });
-/*
+
   var loadTable = p5.prototype.loadTable;
 
 
   suite('p5.prototype.loadTable',function(){
-    var url = 'http://localhost:9001/unit/assets/csv.csv';
-
+    var url = 'http://localhost:9001/unit/input/csv.csv';
+    
     test('should be a function', function(){
       assert.isFunction(loadTable);
     });
@@ -182,5 +155,5 @@ suite('Files', function() {
       loadTable(url,myCallback);
     });
   });
-*/
+
 });

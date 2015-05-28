@@ -94,13 +94,13 @@ define(function (require) {
    *   if (x > width) {
    *     x = 0;
    *   }
-   *   line(x, 0, x, height); 
+   *   line(x, 0, x, height);
    * }
-   * 
+   *
    * function mousePressed() {
    *   loop();
    * }
-   * 
+   *
    * function mouseReleased() {
    *   noLoop();
    * }
@@ -296,7 +296,7 @@ define(function (require) {
     if (typeof userDraw === 'function') {
       this.push();
       if (typeof userSetup === 'undefined') {
-        this.scale(this.pixelDensity, this.pixelDensity);
+        this.scale(this._pixelDensity, this._pixelDensity);
       }
       this._registeredMethods.pre.forEach(function (f) {
         f.call(this);

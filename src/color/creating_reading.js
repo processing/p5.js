@@ -84,11 +84,10 @@ define(function (require) {
    * </div>
    */
   p5.prototype.brightness = function(c) {
-    if (c instanceof p5.Color || c instanceof Array) {
-      return this.color(c).getBrightness();
-    } else {
-      throw new Error('Needs p5.Color or pixel array as argument.');
+    if (!c instanceof p5.Color) {
+      throw new Error('Needs p5.Color as argument.');
     }
+    return c.getBrightness();
   };
 
   /**
@@ -267,10 +266,10 @@ define(function (require) {
    * the behavior of lerp(), but necessary because otherwise numbers outside
    * the range will produce strange and unexpected colors.
    *
-   * The regular RGB color representation stores the square root of the 
-   * displayed color, not the value itself. Your monitor behaves as if it 
+   * The regular RGB color representation stores the square root of the
+   * displayed color, not the value itself. Your monitor behaves as if it
    * squares the color values before displaying it. lerpColor first transforms
-   * colors into the linear color space before blending, to correctly mix the 
+   * colors into the linear color space before blending, to correctly mix the
    * colors as two rays of light.
    *
    * @method lerpColor
