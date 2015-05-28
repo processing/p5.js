@@ -65,7 +65,6 @@ define(function(require) {
         c = this.canvas;
       }
     }
-    console.log('pixel density is ', this._pixelDensity);
 
     // set to invisible if still in setup (to prevent flashing with manipulate)
     if (!this._setupDone) {
@@ -184,10 +183,10 @@ define(function(require) {
    */
   p5.prototype.createGraphics = function(w, h, renderer){
     if (renderer === constants.WEBGL) {
-      this._createGraphics3D(w,h);
+      return this._createGraphics3D(w,h);
     }
     else {
-      this._createGraphics2D(w,h);
+      return this._createGraphics2D(w,h);
     }
   };
   /**
@@ -206,7 +205,7 @@ define(function(require) {
     this._elements.push(pg);
 
     for (var p in p5.prototype) {
-      if (!pg.hasOwnProperty(p)) {
+      if (!pg[p]) {
         if (typeof p5.prototype[p] === 'function') {
           pg[p] = p5.prototype[p].bind(pg);
         } else {
