@@ -32,7 +32,6 @@ define(function (require) {
    * </code>
    * </div>
    */
-   */
   p5.prototype.join = function(list, separator) {
     return list.join(separator);
   };
