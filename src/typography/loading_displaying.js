@@ -82,12 +82,14 @@ define(function(require) {
           if (typeof maxWidth !== 'undefined' && testWidth > maxWidth) {
             if (this._doFill) {
 
-              fillText(this._textFont, line, x, y, this._textSize, this.drawingContext);
+              fillText(this._textFont, line, x, y,
+                this._textSize, this.drawingContext);
               //this.drawingContext.fillText(line, x, y);
             }
             if (this._doStroke) {
 
-              strokeText(this._textFont, line, x, y, this._textSize, this.drawingContext);
+              strokeText(this._textFont, line, x, y,
+                this._textSize, this.drawingContext);
               //this.drawingContext.strokeText(line, x, y);
 
             }
@@ -100,12 +102,14 @@ define(function(require) {
       }
 
       if (this._doFill) {
-        fillText(this._textFont, line, x, y, this._textSize, this.drawingContext);
+        fillText(this._textFont, line, x, y,
+          this._textSize, this.drawingContext);
         //this.drawingContext.fillText(line, x, y);
       }
 
       if (this._doStroke) {
-        strokeText(this._textFont, line, x, y, this._textSize, this.drawingContext);
+        strokeText(this._textFont, line, x, y,
+          this._textSize, this.drawingContext);
         //this.drawingContext.strokeText(line, x, y);
       }
 
@@ -169,7 +173,9 @@ define(function(require) {
       theFont = theFont.font;
     }
 
-    if (!theFont) throw 'null font passed to textFont';
+    if (!theFont) {
+      throw 'null font passed to textFont';
+    }
 
     this._setProperty('_textFont', theFont);
 

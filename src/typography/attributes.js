@@ -223,8 +223,9 @@ define(function(require) {
 
     //console.log('textBounds::',str, this._textFont);
 
-    if (typeof this._textFont != 'object')
+    if (typeof this._textFont !== 'object') {
       throw 'not supported for system fonts';
+    }
 
     x = x !== undefined ? x : 0;
     y = y !== undefined ? y : 0;
@@ -235,7 +236,7 @@ define(function(require) {
 
     this._textFont.forEachGlyph(str, x, y, this._textSize, {},
       function(glyph, gX, gY, gFontSize) {
-        if (glyph.name != 'space') {
+        if (glyph.name !== 'space') {
 
           gX = gX !== undefined ? gX : 0;
           gY = gY !== undefined ? gY : 0;
@@ -274,7 +275,8 @@ define(function(require) {
     
     //console.log(fontSize, font);
     
-    font.forEachGlyph(text, x, y, fontSize, {}, function(glyph, gX, gY, gFontSize) {
+    font.forEachGlyph(text, x, y, fontSize, 
+      {}, function(glyph, gX, gY, gFontSize) {
     
         var gm = glyph.getMetrics();
         
@@ -363,11 +365,6 @@ define(function(require) {
       this._setProperty('_textAscent', Math.abs(tb.y));
       this._setProperty('_textDescent', tb.h - Math.abs(tb.y));
       return this;
-    }
-
-    if (typeof this._textFont === 'string') {
-      this._setProperty('_textAscent', ascent);
-      this._setProperty('_textDescent', descent);
     }
 
     var text = document.createElement('span');

@@ -1,3 +1,5 @@
+/* global opentype: false */
+
 suite('Files', function() {
 
   var loadJSON = p5.prototype.loadJSON;

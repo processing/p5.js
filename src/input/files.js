@@ -12,6 +12,26 @@ define(function(require) {
   var p5 = require('core');
   var reqwest = require('reqwest');
 
+  p5.prototype.loadFont = function() {
+
+    var opentype = arguments[0];
+    var path = arguments[1];
+    var callback = arguments.length > 2 ? arguments[2] : null;
+    var p5Font = new p5.Font();
+
+    opentype.load(path, function(err, font) {
+      if (err) {
+        throw Error(err);
+      }
+      p5Font.font = font;
+      if (typeof callback !== 'undefined') {
+        callback(p5Font);
+      }
+    });
+
+    return p5Font;
+  };
+
   //BufferedReader
   p5.prototype.createInput = function() {
     // TODO
