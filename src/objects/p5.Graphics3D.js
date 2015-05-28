@@ -9,6 +9,7 @@ define(function(require) {
   var mvMatrix;
   var pMatrix;
   var mvMatrixStack = [];
+  var vertexBuffer;
 
   //@TODO should probably implement an override for these attributes
   var attributes = {
@@ -124,6 +125,8 @@ define(function(require) {
     // Set material uniform
     gl.uniform4f(shaderProgram.uMaterialColorLoc, 1.0, 1.0, 1.0, 1.0);
 
+    vertexBuffer = gl.createBuffer();
+
   };
 
   /**
@@ -181,8 +184,7 @@ define(function(require) {
    * @return {[type]}          [description]
    */
   p5.Graphics3D.prototype.drawGeometry = function(vertices) {
-    var geomVertexPositionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, geomVertexPositionBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
