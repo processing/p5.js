@@ -18,12 +18,37 @@ define(function (require) {
 
   /**
    * The inverse of cos(), returns the arc cosine of a value. This function
-   * expects the values in the range of -1 to 1 and values are returned in
-   * the range 0 to PI (3.1415927).
-   * 
+   * expects the values in the range of -1 to 1.
+   * <br><br>
+   * This function takes into account the current angleMode. 
+   * If the current mode is RADIANS, the values are returned in
+   * the range 0 to PI (3.1415927), otherwise the values are in the range
+   * 0 to 180.
+   * <br><br>
    * @method acos
    * @param  {Number} value the value whose arc cosine is to be returned
    * @return {Number}       the arc cosine of the given value
+   * @example
+   * <div><code>
+   * angleMode(DEGREES);
+   * fill(0);
+   * line(30,5,30,80);
+   * line(30,80,95,80);
+   * noStroke();
+   * textAlign(RIGHT);
+   * text("180º", 30, 10);
+   * text("0º", 30, 80);
+   * text("-1", 40, 92);
+   * text("1", 100, 92);
+   * var red = color(200,0,0);
+   * for(var i = -1.0; i < 1.0; i += 0.01) {
+   *   var acosX = acos(i);
+   *   var x = floor(map(i,-1,1,30,95));
+   *   var y = floor(map(acosX,180,0,5,80));
+   *   set(x,y,red);
+   * }
+   * updatePixels();
+   *  </code></div>
    */
   p5.prototype.acos = function(ratio) {
     if (this._angleMode === constants.RADIANS) {
@@ -35,12 +60,37 @@ define(function (require) {
 
   /**
    * The inverse of sin(), returns the arc sine of a value. This function
-   * expects the values in the range of -1 to 1 and values are returned
-   * in the range -PI/2 to PI/2.
+   * expects the values in the range of -1 to 1.
+   * <br><br>
+   * This function takes into account the current angleMode. 
+   * If the current mode is RADIANS, the values are returned in
+   * the range PI/2 to PI/2, otherwise the values are in the range
+   * -90 to 90.
    *
    * @method asin
    * @param  {Number} value the value whose arc sine is to be returned
    * @return {Number}       the arc sine of the given value
+   * @example
+   * <div><code>
+   * angleMode(DEGREES);
+   * fill(0);
+   * line(30,5,30,80);
+   * line(30,80,95,80);
+   * noStroke();
+   * textAlign(RIGHT);
+   * text("90º", 30, 10);
+   * text("-90º", 30, 80);
+   * text("-1", 40, 92);
+   * text("1", 100, 92);
+   * var red = color(200,0,0);
+   * for(var i = -1.0; i < 1.0; i += 0.01) {
+   *   var asinX = asin(i);
+   *   var x = floor(map(i,-1,1,30,95));
+   *   var y = floor(map(asinX,90,-90,5,80));
+   *   set(x,y,red);
+   * }
+   * updatePixels();
+   *  </code></div>
    */
   p5.prototype.asin = function(ratio) {
     if (this._angleMode === constants.RADIANS) {
@@ -95,6 +145,27 @@ define(function (require) {
    * @method cos
    * @param  {Number} angle the angle 
    * @return {Number}       the cosine of the angle
+   * @example
+   * <div><code>
+   *   angleMode(DEGREES);
+   *  fill(0);
+   *  line(20,5,20,80);
+   *  line(20,80,95,80);
+   *  noStroke();
+   *  textAlign(RIGHT);
+   *  text("1", 20, 10);
+   *  text("-1", 20, 80);
+   *  text("0º", 30, 92);
+   *  text("360º", 100, 92);
+   *  var red = color(200,0,0);
+   *  for(var i = 0; i < 360; i++) {
+   *    var cosX = cos(i);
+   *    var x = floor(map(i,0,360,20,95));
+   *    var y = floor(map(cosX,-1,1,5,80));
+   *    set(x,y,red);
+   *  }
+   *  updatePixels();
+   *  </code></div>
    */
   p5.prototype.cos = function(angle) {
     if (this._angleMode === constants.RADIANS) {
@@ -111,6 +182,27 @@ define(function (require) {
    * @method sin
    * @param  {Number} angle the angle 
    * @return {Number}       the sine of the angle
+   * @example
+   * <div><code>
+   *   angleMode(DEGREES);
+   *  fill(0);
+   *  line(20,5,20,80);
+   *  line(20,80,95,80);
+   *  noStroke();
+   *  textAlign(RIGHT);
+   *  text("1", 20, 10);
+   *  text("-1", 20, 80);
+   *  text("0º", 30, 92);
+   *  text("360º", 100, 92);
+   *  var red = color(200,0,0);
+   *  for(var i = 0; i < 360; i++) {
+   *    var sinX = sin(i);
+   *    var x = floor(map(i,0,360,20,95));
+   *    var y = floor(map(sinX,-1,1,5,80));
+   *    set(x,y,red);
+   *  }
+   *  updatePixels();
+   *  </code></div>
    */
   p5.prototype.sin = function(angle) {
     if (this._angleMode === constants.RADIANS) {
@@ -122,11 +214,32 @@ define(function (require) {
 
   /**
    * Calculates the tangent of an angle. This function takes into account
-   * the current angleMode. Values are returned in the range -1 to 1.
+   * the current _angleMode.
    * 
    * @method tan
    * @param  {Number} angle the angle 
    * @return {Number}       the tangent of the angle
+   * @example
+   * <div><code>
+   *   angleMode(DEGREES);
+   *  fill(0);
+   *  line(20,5,20,80);
+   *  line(20,80,95,80);
+   *  noStroke();
+   *  textAlign(RIGHT);
+   *  text("10", 20, 10);
+   *  text("-10", 20, 80);
+   *  text("0º", 30, 92);
+   *  text("360º", 100, 92);
+   *  var red = color(200,0,0);
+   *  for(var i = 0; i < 360; i++) {
+   *    var tanX = tan(i);
+   *    var x = floor(map(i,0,360,20,95));
+   *    var y = floor(map(tanX,-10,10,5,80));
+   *    set(x,y,red);
+   *  }
+   *  updatePixels();
+   *  </code></div>
    */
   p5.prototype.tan = function(angle) {
     if (this._angleMode === constants.RADIANS) {
