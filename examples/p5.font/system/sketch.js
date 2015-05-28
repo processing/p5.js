@@ -2,14 +2,120 @@ var textSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
     p.textSize(18);
+    p.text("Default Text", 10, 30);
     p.noStroke();
     p.fill(0, 102, 153);
-    p.text("Simple Blue Text", 10, 30);
-    p.fill(0);
-    p.text("Simple Black Text font 1", 10, 60);
+    p.text("Black No Stroke Text", 10, 60);
     p.textSize(12);
     p.fill(120);
-    p.text("Simple long Text font 2: Lorem Ipsum is simply dummy text of the printing and typesetting industry. ", 10, 90, 220, 60);
+    p.text("Simple long Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry. ", 10, 90, 220, 60);
+  };
+};
+
+var textLineSketch = function(p) {
+  p.setup = function() {
+    p.createCanvas(240*4, 160);
+    p.textSize(10);
+    p.stroke(0);
+    //1
+    p.fill(255);
+    p.strokeWeight(1);
+    p.line(10, 10, 220, 10);
+    p.strokeWeight(0);
+    p.fill(0);
+    p.textAlign(p.LEFT, p.TOP);
+    p.text("LEFT TOP is simply dummy text.", 10, 10);
+    //2
+    p.fill(255);
+    p.strokeWeight(1);
+    p.line(10, 60, 220, 60);
+    p.strokeWeight(0);
+    p.fill(0);
+    p.textAlign(p.CENTER, p.TOP);
+    p.text("CENTER TOP is simply dummy text.", 10, 60);
+    //3
+    p.fill(255);
+    p.strokeWeight(1);
+    p.line(10, 110, 220, 110);
+    p.strokeWeight(0);
+    p.fill(0);
+    p.textAlign(p.RIGHT, p.TOP);
+    p.text("RIGHT TOP is simply dummy text.", 10, 110);
+
+    //1
+    p.fill(255);
+    p.strokeWeight(1);
+    p.line(250, 10, 470, 10);
+    p.strokeWeight(0);
+    p.fill(0);
+    p.textAlign(p.LEFT, p.CENTER);
+    p.text("LEFT CENTER is simply dummy text.", 250, 10);
+    //2
+    p.fill(255);
+    p.strokeWeight(1);
+    p.line(250, 60, 470, 60);
+    p.strokeWeight(0);
+    p.fill(0);
+    p.textAlign(p.CENTER, p.CENTER);
+    p.text("CENTER CENTER is simply dummy text.", 250, 60);
+    //3
+    p.fill(255);
+    p.strokeWeight(1);
+    p.line(250, 110, 470, 110);
+    p.strokeWeight(0);
+    p.fill(0);
+    p.textAlign(p.RIGHT, p.CENTER);
+    p.text("RIGHT CENTER is simply dummy text.", 250, 110);
+
+    //1
+    p.fill(255);
+    p.strokeWeight(1);
+    p.line(490, 10, 710, 10);
+    p.strokeWeight(0);
+    p.fill(0);
+    p.textAlign(p.LEFT, p.BOTTOM);
+    p.text("LEFT BOTTOM is simply dummy text.", 490, 10);
+    //2
+    p.fill(255);
+    p.strokeWeight(1);
+    p.line(490, 60, 710, 60);
+    p.strokeWeight(0);
+    p.fill(0);
+    p.textAlign(p.CENTER, p.BOTTOM);
+    p.text("CENTER BOTTOM is simply dummy text.", 490, 60);
+    //3
+    p.fill(255);
+    p.strokeWeight(1);
+    p.line(490, 110, 710, 110);
+    p.strokeWeight(0);
+    p.fill(0);
+    p.textAlign(p.RIGHT, p.BOTTOM);
+    p.text("RIGHT BOTTOM is simply dummy text.", 490, 110);
+
+    //1
+    p.fill(255);
+    p.strokeWeight(1);
+    p.line(730, 10, 950, 10);
+    p.strokeWeight(0);
+    p.fill(0);
+    p.textAlign(p.LEFT, p.BASELINE);
+    p.text("LEFT BASELINE is simply dummy text.", 730, 10);
+    //2
+    p.fill(255);
+    p.strokeWeight(1);
+    p.line(730, 60, 950, 60);
+    p.strokeWeight(0);
+    p.fill(0);
+    p.textAlign(p.CENTER, p.BASELINE);
+    p.text("CENTER BASELINE is simply dummy text.", 730, 60);
+    //3
+    p.fill(255);
+    p.strokeWeight(1);
+    p.line(730, 110, 950, 110);
+    p.strokeWeight(0);
+    p.fill(0);
+    p.textAlign(p.RIGHT, p.BASELINE);
+    p.text("RIGHT BASELINE is simply dummy text.", 730, 110);
   };
 };
 
@@ -393,20 +499,21 @@ var typographyLetterSketch = function(p) {
   };
 };
 
-new p5(textSketch);
-new p5(textWrapSketch);
-new p5(textFontSketch);
-new p5(textAlignSketch);
-new p5(textLeadingSketch);
-new p5(textSizeSketch);
-new p5(textStyleSketch);
-new p5(textWidthSketch);
-new p5(textOverlapSketch);
-new p5(textFlySketch);
-new p5(textFlickerSketch);
-new p5(textFadeSketch);
-new p5(textRotateSketch);
-new p5(textGrowSketch);
-new p5(textAvoidSketch);
-new p5(textBendSketch);
-new p5(typographyLetterSketch);
+new p5(textSketch, 'textSketch');
+new p5(textLineSketch, 'textLineSketch');
+new p5(textWrapSketch, 'textWrapSketch');
+new p5(textFontSketch, 'textFontSketch');
+new p5(textAlignSketch, 'textAlignSketch');
+new p5(textLeadingSketch, 'textLeadingSketch');
+new p5(textSizeSketch, 'textSizeSketch');
+new p5(textStyleSketch, 'textStyleSketch');
+new p5(textWidthSketch, 'textWidthSketch');
+new p5(textOverlapSketch, 'textOverlapSketch');
+new p5(textFlySketch, 'textFlySketch');
+new p5(textFlickerSketch, 'textFlickerSketch');
+new p5(textFadeSketch, 'textFadeSketch');
+new p5(textRotateSketch, 'textRotateSketch');
+new p5(textGrowSketch, 'textGrowSketch');
+new p5(textAvoidSketch, 'textAvoidSketch');
+new p5(textBendSketch, 'textBendSketch');
+new p5(typographyLetterSketch, 'typographyLetterSketch');
