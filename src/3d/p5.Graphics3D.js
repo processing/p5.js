@@ -8,8 +8,11 @@ define(function(require) {
     shaderProgram;
   var mvMatrix;
   var pMatrix;
+  var nMatrix;
   var mvMatrixStack = [];
   var vertexBuffer;
+  var indexBuffer;
+  //var normalBuffer;
 
   //@TODO should probably implement an override for these attributes
   var attributes = {
@@ -118,6 +121,10 @@ define(function(require) {
     shaderProgram.mvMatrixUniform =
       gl.getUniformLocation(shaderProgram, 'uMVMatrix');
 
+    //normal Matrix uniform
+    // shaderProgram.nMatrixUniform =
+    // gl.getUniformLocation(shaderProgram, 'uNVMatrix');
+
     //material color uniform
     //@TODO: remove hard coded white rgba 
     shaderProgram.uMaterialColorLoc = gl.getUniformLocation(shaderProgram,
@@ -126,6 +133,8 @@ define(function(require) {
     gl.uniform4f(shaderProgram.uMaterialColorLoc, 1.0, 1.0, 1.0, 1.0);
 
     vertexBuffer = gl.createBuffer();
+    indexBuffer = gl.createBuffer();
+
 
   };
 
@@ -137,6 +146,7 @@ define(function(require) {
     // Create a projection / perspective matrix
     mvMatrix = mat4.create();
     pMatrix = mat4.create();
+    nMatrix = mat4.create();
     mat4.perspective(
       pMatrix, 60 / 180 * Math.PI,
       this.width / this.height, 0.1, 100);
@@ -183,16 +193,19 @@ define(function(require) {
    * @param  {Array} vertices generated vertices
    * @return {[type]}          [description]
    */
-  p5.Graphics3D.prototype.drawGeometry = function(vertices) {
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-    
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+  p5.Graphics3D.prototype.drawGeometry = function(vertices, faces) {
 
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
     gl.vertexAttribPointer(
       shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-    // console.log(vertices);
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bufferData
+    (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(faces), gl.STATIC_DRAW);
+
     _setMatrixUniforms();
-    gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 3);
+    gl.drawElements(gl.TRIANGLES, faces.length, gl.UNSIGNED_SHORT, 0);
 
     return this;
   };
@@ -273,8 +286,12 @@ define(function(require) {
    * [_setMatrixUniforms description]
    */
   function _setMatrixUniforms() {
+      // mat4.identity( nMatrix );
+      // mat4.invert( nMatrix, mvMatrix );
+      // mat4.transpose( nMatrix, nMatrix );
       gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
       gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
+      //gl.uniformMatrix4fv(shaderProgram.nMatrixUniform, false, nMatrix);
     }
     /**
      * PRIVATE
