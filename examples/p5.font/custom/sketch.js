@@ -1,14 +1,14 @@
+/* FONT PATH NOT WORKING */
 var textSketch = function(p) {
   var font1, font2;
   p.preload = function() {
     font1 = p.loadFont(opentype, "SourceSansPro-Regular.otf");
     font2 = p.loadFont(opentype, "acmesa.ttf");
   };
-
   p.setup = function() {
     p.createCanvas(240, 160);
     p.textSize(18);
-    p.strokeWeight(0);
+    p.noStroke();
     p.fill(0, 102, 153);
     p.text("Simple Blue Text", 10, 30);
     p.fill(0);
@@ -22,8 +22,13 @@ var textSketch = function(p) {
 };
 
 var textWrapSketch = function(p) {
+  var font;
+  p.preload = function() {
+    font = p.loadFont(opentype, "SourceSansPro-Regular.otf");
+  };
   p.setup = function() {
     p.createCanvas(240*4, 160);
+    p.textFont(font);
     p.textSize(10);
     p.stroke(0);
     //1
@@ -129,8 +134,13 @@ var textWrapSketch = function(p) {
 };
 
 var textFontSketch = function(p) {
+  var font;
+  p.preload = function() {
+    font = p.loadFont(opentype, "SourceSansPro-Regular.otf");
+  };
   p.setup = function() {
     p.createCanvas(240, 160);
+    p.textFont(font);
     p.textSize(20);
     p.fill(0);
     p.strokeWeight(0);
@@ -144,8 +154,13 @@ var textFontSketch = function(p) {
 };
 
 var textAlignSketch = function(p) {
+  var font;
+  p.preload = function() {
+    font = p.loadFont(opentype, "SourceSansPro-Regular.otf");
+  };
   p.setup = function() {
     p.createCanvas(240, 160);
+    p.textFont(font);
     p.fill(0);
     p.strokeWeight(0);
     p.textSize(12);
@@ -163,8 +178,13 @@ var textAlignSketch = function(p) {
 };
 
 var textLeadingSketch = function(p) {
+  var font;
+  p.preload = function() {
+    font = p.loadFont(opentype, "SourceSansPro-Regular.otf");
+  };
   p.setup = function() {
     p.createCanvas(240, 160);
+    p.textFont(font);
     p.fill(0);
     p.strokeWeight(0);
     p.textSize(12);
@@ -179,8 +199,13 @@ var textLeadingSketch = function(p) {
 };
 
 var textSizeSketch = function(p) {
+  var font;
+  p.preload = function() {
+    font = p.loadFont(opentype, "SourceSansPro-Regular.otf");
+  };
   p.setup = function() {
     p.createCanvas(240, 160);
+    p.textFont(font);
     p.fill(0);
     p.strokeWeight(0);
     p.textSize(12);
@@ -193,8 +218,13 @@ var textSizeSketch = function(p) {
 };
 
 var textStyleSketch = function(p) {
+  var font;
+  p.preload = function() {
+    font = p.loadFont(opentype, "SourceSansPro-Regular.otf");
+  };
   p.setup = function() {
     p.createCanvas(240, 160);
+    p.textFont(font);
     p.fill(0);
     p.strokeWeight(0);
     p.textSize(12);
@@ -208,8 +238,13 @@ var textStyleSketch = function(p) {
 };
 
 var textWidthSketch = function(p) {
+  var font;
+  p.preload = function() {
+    font = p.loadFont(opentype, "SourceSansPro-Regular.otf");
+  };
   p.setup = function() {
     p.createCanvas(240, 160);
+    p.textFont(font);
     p.fill(0);
     p.strokeWeight(0);
     p.textSize(12);
@@ -222,8 +257,13 @@ var textWidthSketch = function(p) {
 };
 
 var textOverlapSketch = function(p) {
+  var font;
+  p.preload = function() {
+    font = p.loadFont(opentype, "SourceSansPro-Regular.otf");
+  };
   p.setup = function() {
     p.createCanvas(240, 160);
+    p.textFont(font);
     p.fill(0);
     p.strokeWeight(0);
     p.textSize(72);
@@ -239,10 +279,15 @@ var textOverlapSketch = function(p) {
 };
 
 var textFlySketch = function(p) {
+  var font;
+  p.preload = function() {
+    font = p.loadFont(opentype, "SourceSansPro-Regular.otf");
+  };
   var x1 = 100;
   var x2 = 0;
   p.setup = function(){
     p.createCanvas(240, 160);
+    p.textFont(font);
     p.fill(0);
     p.textSize(48);
   };
@@ -262,8 +307,13 @@ var textFlySketch = function(p) {
 };
 
 var textFlickerSketch = function(p) {
+  var font;
+  p.preload = function() {
+    font = p.loadFont(opentype, "SourceSansPro-Regular.otf");
+  };
   p.setup = function(){
     p.createCanvas(240, 160);
+    p.textFont(font);
     p.textSize(48);
     p.noStroke();
   };
@@ -276,10 +326,15 @@ var textFlickerSketch = function(p) {
 };
 
 var textFadeSketch = function(p) {
+  var font;
+  p.preload = function() {
+    font = p.loadFont(opentype, "SourceSansPro-Regular.otf");
+  };
   var opacity = 0;
   var direction = 1;
   p.setup = function(){
     p.createCanvas(240, 160);
+    p.textFont(font);
     p.textSize(72);
     p.noStroke();
   };
@@ -295,9 +350,14 @@ var textFadeSketch = function(p) {
 };
 
 var textRotateSketch = function(p) {
+  var font;
+  p.preload = function() {
+    font = p.loadFont(opentype, "SourceSansPro-Regular.otf");
+  };
   var angle = 0.0;
   p.setup = function(){
     p.createCanvas(240, 160);
+    p.textFont(font);
     p.textSize(24);
     p.noStroke();
     p.fill(0);
@@ -315,10 +375,15 @@ var textRotateSketch = function(p) {
 };
 
 var textGrowSketch = function(p) {
+  var font;
+  p.preload = function() {
+    font = p.loadFont(opentype, "SourceSansPro-Regular.otf");
+  };
   var angle = 0.0;
   var str = "GROW";
   p.setup = function(){
     p.createCanvas(240, 160);
+    p.textFont(font);
     p.textSize(24);
     p.noStroke();
     p.fill(0, 0, 0, 120);
@@ -335,8 +400,13 @@ var textGrowSketch = function(p) {
 };
 
 var textAvoidSketch = function(p) {
+  var font;
+  p.preload = function() {
+    font = p.loadFont(opentype, "SourceSansPro-Regular.otf");
+  };
   p.setup = function(){
     p.createCanvas(240, 160);
+    p.textFont(font);
     p.textSize(24);
     p.noStroke();
     p.fill(0);
@@ -349,9 +419,14 @@ var textAvoidSketch = function(p) {
 };
 
 var textBendSketch = function(p) {
+  var font;
+  p.preload = function() {
+    font = p.loadFont(opentype, "SourceSansPro-Regular.otf");
+  };
   var str = "Flexibility";
   p.setup = function(){
     p.createCanvas(240, 160);
+    p.textFont(font);
     p.textSize(30);
     p.noStroke();
     p.fill(0);
@@ -371,11 +446,16 @@ var textBendSketch = function(p) {
 };
 
 var typographyLetterSketch = function(p) {
+  var font;
+  p.preload = function() {
+    font = p.loadFont(opentype, "SourceSansPro-Regular.otf");
+  };
   var margin = 10;
   var gap = 46;
   var counter = 35;
   p.setup = function(){
     p.createCanvas(720, 320);
+    p.textFont(font);
     p.background(0);
     p.textFont("Georgia");
     p.textSize(24);
