@@ -13,8 +13,6 @@ define(function (require) {
   var p5 = require('core');
 
   //@TODO fill with 3d primitives
-  //inspire by lightgl.js 
-  //https://github.com/evanw/lightgl.js
   p5.prototype.Geometry3D = function() {
     this.vertices = [];
     this.faces = [];
@@ -28,7 +26,7 @@ define(function (require) {
    * @param  {Number} height  the height of the plane
    * @param  {Number} detailX how many segments in the x axis
    * @param  {Number} detailY how many segments in the y axis
-   * @return {[type]}         [description]        
+   * @return {Object}         return a p5 plane object        
    */
   p5.prototype.plane = function(width, height, detailX, detailY) {
 
@@ -74,7 +72,7 @@ define(function (require) {
    * @param  {Number} detailX how many segments in the x axis
    * @param  {Number} detailY how many segments in the y axis
    * @param  {Number} detailZ how many segments in the z axis
-   * @return {[type]}         [description]
+   * @return {Object}         return a p5 cube object
    */
   p5.prototype.cube =
   function(width, height, depth, detailX, detailY, detailZ) {
@@ -244,7 +242,7 @@ define(function (require) {
    * @param  {Number} detailX how many segments in the x axis
    * @param  {Number} detailY how many segments in the y axis
    * @param  {Number} detailZ how many segments in the z axis
-   * @return {[type]}         [description]
+   * @return {Object}         return a P5 sphere object
    */
   
   //inspired by three.js SphereGeometry.js
@@ -285,7 +283,6 @@ define(function (require) {
 
       verticesArr.push(verticesRow);
       //uvsArr.push(uvsRow);
-
     }
 
     for (y = 0; y < detailY; y++) {
@@ -324,7 +321,6 @@ define(function (require) {
           //this.normals.push([ n2.clone(), n3, n4.clone() ]);
           //this.faceVertexUvs[ 0 ].push( uv2.clone(), uv3, uv4.clone()] );
         }
-
       }
     }
 
@@ -332,6 +328,11 @@ define(function (require) {
     return this;
   };
 
+  /**
+   * flatten a two-dimensional array into a one dimensional array
+   * @param  {Array} arrs  a two dimensional array
+   * @return {Array}       a one dimensional array
+   */
   function _flatten(arrs){
     return arrs.reduce(function(a, b){
       return a.concat(b);

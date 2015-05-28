@@ -42,18 +42,8 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.textAlign = function(a, v) {
-    if (a === constants.LEFT ||
-      a === constants.RIGHT ||
-      a === constants.CENTER) {
-      this._graphics.textAlign(a);
-    }
-    if (v === constants.TOP ||
-      v === constants.BOTTOM ||
-      v === constants.CENTER ||
-      v === constants.BASELINE) {
-      this.drawingContext.textBaseline = v;
-    }
+  p5.prototype.textAlign = function(h, v) {
+    this._graphics.textAlign(h,v);
   };
 
   /**
@@ -160,7 +150,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.textWidth = function(s) {
-    return this._graphics.textWidth();
+    return this._graphics.textWidth(s);
   };
 
   /**
@@ -219,7 +209,9 @@ define(function (require) {
   p5.prototype._applyTextProperties = function () {
     this._setProperty('_textAscent', null);
     this._setProperty('_textDescent', null);
-    this._graphics._applyTextProperties();
+    this._graphics._applyTextProperties(this._textStyle,
+      this._textSize,
+      this._textFont);
   };
 
   /**

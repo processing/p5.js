@@ -15,6 +15,8 @@ define(function (require) {
   // source: https://sites.google.com/site/hansmuller/flex-blog/CircularArc.mxml
   // blog post: http://hansmuller-flex.blogspot.ca/
   //            2011/04/approximating-circular-arc-with-cubic.html
+  // update to blog post: http://hansmuller-flex.blogspot.com/2011/10/
+  //                      more-about-approximating-circular-arcs.html
 
   var EPSILON = 0.00001;  // Roughly 1/1000th of a degree, see below
 
@@ -27,7 +29,7 @@ define(function (require) {
    *  x4,y4 are the arc's end points and x2,y2 and x3,y3 are the cubic bezier's
    *  control points.
    */
-  function createArc(radius, startAngle, endAngle) {
+  p5.prototype._createArc = function(radius, startAngle, endAngle) {
     var twoPI = Math.PI * 2;
 
     var curves = [];
@@ -36,15 +38,15 @@ define(function (require) {
 
     var a1 = startAngle;
     var totalAngle = Math.min(twoPI, Math.abs(endAngle - startAngle));
-    for (; totalAngle > EPSILON; ) {
+    while (totalAngle > EPSILON) {
       var a2 = a1 + sgn * Math.min(totalAngle, piOverTwo);
-      curves.push(createSmallArc(radius, a1, a2));
+      curves.push(this._createSmallArc(radius, a1, a2));
       totalAngle -= Math.abs(a2 - a1);
       a1 = a2;
     }
 
     return curves;
-  }
+  };
 
   /**
    *  Cubic bezier approximation of a circular arc centered at the origin,
@@ -57,7 +59,7 @@ define(function (require) {
    *  A. Riškus, "Approximation of a Cubic Bezier Curve by Circular Arcs and 
    *  Vice Versa," Information Technology and Control, 35(4), 2006 pp. 371-378.
    */
-  function createSmallArc(r, a1, a2) {
+  p5.prototype._createSmallArc = function(r, a1, a2) {
     // Compute all four points for an arc that subtends the same total angle
     // but is centered on the X-axis
 
@@ -68,11 +70,12 @@ define(function (require) {
     var x1 = x4;
     var y1 = -y4;
 
-    var k = 0.5522847498;
-    var f = k * Math.tan(a);
+    var q1 = x1*x1 + y1*y1;
+    var q2 = q1 + x1*x4 + y1*y4;
+    var k2 = 4/3 * (Math.sqrt(2 * q1 * q2) - q2) / (x1 * y4 - y1 * x4);
 
-    var x2 = x1 + f * y4;
-    var y2 = y1 + f * x4;
+    var x2 = x1 - k2 * y1;
+    var y2 = y1 + k2 * x1;
     var x3 = x2;
     var y3 = -y2;
 
@@ -93,7 +96,7 @@ define(function (require) {
       x4: r * Math.cos(a2),
       y4: r * Math.sin(a2)
     };
-  }
+  };
 
   /**
    * Draw an arc.
@@ -143,9 +146,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.arc = function(x, y, width, height, start, stop, mode) {
-    var curves = createArc(1.0, start, stop);
-    
+	p5.prototype.arc = function(x, y, width, height, start, stop, mode) {
     if (!this._doStroke && !this._doFill) {
       return this;
     }
@@ -153,7 +154,7 @@ define(function (require) {
       start = this.radians(start);
       stop = this.radians(stop);
     }
-
+    var curves = this._createArc(1.0, start, stop);
     this._graphics.arc(x, y, width, height, start, stop, mode, curves);
     return this;
   };
@@ -316,26 +317,51 @@ define(function (require) {
   * every angle at ninety degrees. By default, the first two parameters set
   * the location of the upper-left corner, the third sets the width, and the
   * fourth sets the height. The way these parameters are interpreted, however,
-  * may be changed with the rectMode() function.
+  * may be changed with the rectMode() function. If provided, the fifth, sixth
+  * seventh and eighth parameters, if specified, determine corner radius for
+  * the top-right, top-left, lower-right and lower-left corners, respectively.
+  * An omitted corner radius parameter is set to the value of the previously
+  * specified radius value in the parameter list.
   *
   * @method rect
-  * @param  {Number} a x-coordinate of the rectangle
-  * @param  {Number} b y-coordinate of the rectangle
-  * @param  {Number} c width of the rectangle
-  * @param  {Number} d height of the rectangle
-  * @return {p5}       the p5 object
+  * @param  {Number} x  x-coordinate of the rectangle.
+  * @param  {Number} y  y-coordinate of the rectangle.
+  * @param  {Number} w  width of the rectangle.
+  * @param  {Number} h  height of the rectangle.
+  * @param  {Number} [tl] optional radius of top-left corner.
+  * @param  {Number} [tr] optional radius of top-right corner.
+  * @param  {Number} [br] optional radius of bottom-right corner.
+  * @param  {Number} [bl] optional radius of bottom-left corner.
+  * @return {p5}          the p5 object.
   * @example
   * <div>
   * <code>
+  * // Draw a rectangle at location (30, 25) with a width and height of 55.
   * rect(30, 20, 55, 55);
   * </code>
   * </div>
+  *
+  * <div>
+  * <code>
+  * // Draw a rectangle with rounded corners, each having a radius of 20.
+  * rect(30, 20, 55, 55, 20);
+  * </code>
+  * </div>
+  *
+  * <div>
+  * <code>
+  * // Draw a rectangle with rounded corners having the following radii:
+  * // top-left = 20, top-right = 15, bottom-right = 10, bottom-left = 5.
+  * rect(30, 20, 55, 55, 20, 15, 10, 5)
+  * </code>
+  * </div>
   */
-  p5.prototype.rect = function(a, b, c, d) {
+
+  p5.prototype.rect = function (x, y, w, h, tl, tr, br, bl) {
     if (!this._doStroke && !this._doFill) {
       return;
     }
-    this._graphics.rect(a, b, c, d);
+    this._graphics.rect(x, y, w, h, tl, tr, br, bl);
     return this;
   };
 

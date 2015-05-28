@@ -134,8 +134,6 @@ define(function(require) {
 
     vertexBuffer = gl.createBuffer();
     indexBuffer = gl.createBuffer();
-
-
   };
 
   /**
@@ -286,13 +284,13 @@ define(function(require) {
    * [_setMatrixUniforms description]
    */
   function _setMatrixUniforms() {
-      // mat4.identity( nMatrix );
-      // mat4.invert( nMatrix, mvMatrix );
-      // mat4.transpose( nMatrix, nMatrix );
-      gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
-      gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
-      //gl.uniformMatrix4fv(shaderProgram.nMatrixUniform, false, nMatrix);
-    }
+    // mat4.identity( nMatrix );
+    // mat4.invert( nMatrix, mvMatrix );
+    // mat4.transpose( nMatrix, nMatrix );
+    gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
+    gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
+    //gl.uniformMatrix4fv(shaderProgram.nMatrixUniform, false, nMatrix);
+  }
     /**
      * PRIVATE
      */
