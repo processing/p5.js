@@ -9,6 +9,9 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
+
+  require('helpers');
+
   var bezierDetail = 20;
   var curveDetail = 20;
   p5.prototype._curveTightness = 0;

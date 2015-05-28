@@ -13,6 +13,8 @@ define(function (require) {
   var canvas = require('canvas');
   var constants = require('constants');
 
+  require('helpers');
+
   /**
    * Loads an image from a path and creates a p5.Image from it.
    *
@@ -23,12 +25,12 @@ define(function (require) {
    *
    * @method loadImage
    * @param  {String} path Path of the image to be loaded
-   * @param  {Function(p5.Image)} [successCallback] Function to be called once 
-   *                                the image is loaded. Will be passed the 
+   * @param  {Function(p5.Image)} [successCallback] Function to be called once
+   *                                the image is loaded. Will be passed the
    *                                p5.Image.
-   * @param  {Function(Event)}    [failureCallback] called with event error if 
+   * @param  {Function(Event)}    [failureCallback] called with event error if
    *                                the image fails to load.
-   * @return {p5.Image}             the p5.Image object   
+   * @return {p5.Image}             the p5.Image object
    * @example
    * <div>
    * <code>
@@ -67,7 +69,7 @@ define(function (require) {
         successCallback(pImg);
       }
     };
-    
+
     img.onerror = function(e) {
       if (typeof failureCallback === 'function') {
         failureCallback(e);
@@ -122,6 +124,15 @@ define(function (require) {
    * </div>
    */
   p5.prototype.image = function(img, x, y, width, height) {
+    this._validateParameters(
+      'image',
+      arguments,
+      [
+        ['p5.Image', 'Number', 'Number'],
+        ['p5.Image', 'Number', 'Number', 'Number', 'Number']
+      ]
+    );
+
     // set defaults
     x = x || 0;
     y = y || 0;
