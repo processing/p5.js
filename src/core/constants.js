@@ -30,6 +30,12 @@ define(function(require) {
      * combination with the trigonometric functions sin() and cos().
      *
      * @property HALF_PI
+     *
+     * @example
+     * <div><code>
+     * arc(50, 50, 80, 80, 0, HALF_PI);
+     * </code></div>
+     *
      */
     HALF_PI: PI / 2,
     /**
@@ -39,6 +45,11 @@ define(function(require) {
      * the trigonometric functions sin() and cos().
      *
      * @property PI
+     *
+     * @example
+     * <div><code>
+     * arc(50, 50, 80, 80, 0, PI);
+     * </code></div>
      */
     PI: PI,
     /**
@@ -48,6 +59,12 @@ define(function(require) {
      * functions sin() and cos().
      *
      * @property QUARTER_PI
+     *
+     * @example
+     * <div><code>
+     * arc(50, 50, 80, 80, 0, QUARTER_PI);
+     * </code></div>
+     * 
      */
     QUARTER_PI: PI / 4,
     /**
@@ -57,6 +74,12 @@ define(function(require) {
      * combination with the trigonometric functions sin() and cos().
      *
      * @property TAU
+     *
+     * @example
+     * <div><code>
+     * arc(50, 50, 80, 80, 0, TAU);
+     * </code></div>
+     * 
      */
     TAU: PI * 2,
     /**
@@ -66,6 +89,12 @@ define(function(require) {
      * combination with the trigonometric functions sin() and cos().
      *
      * @property TWO_PI
+     *
+     * @example
+     * <div><code>
+     * arc(50, 50, 80, 80, 0, TWO_PI);
+     * </code></div>
+     * 
      */
     TWO_PI: PI * 2,
     DEGREES: 'degrees',
