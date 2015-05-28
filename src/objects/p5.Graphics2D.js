@@ -232,16 +232,17 @@ define(function(require) {
     }
   };
 
-  p5.Graphics2D.prototype.loadPixels = function() {
-    var imageData = this.drawingContext.getImageData(
-      0,
-      0,
-      this.width,
-      this.height);
-    this._pInst._setProperty('imageData', imageData);
-    this._pInst._setProperty('pixels', imageData.data);
+  p5.Graphics2D.prototype.loadPixels = function () {
+    var imageData = this.drawingContext.getImageData(0, 0,
+      this.width, this.height);
+    if (this._pInst) {
+      this._pInst._setProperty('imageData', imageData);
+      this._pInst._setProperty('pixels', imageData.data);
+    } else { // if called by p5.Image
+      this._setProperty('imageData', imageData);
+      this._setProperty('pixels', imageData.data);
+    }
   };
-
   p5.Graphics2D.prototype.set = function (x, y, imgOrCol) {
     if (imgOrCol instanceof p5.Image) {
       this.drawingContext.save();
@@ -252,40 +253,46 @@ define(function(require) {
       this.loadPixels.call(this._pInst);
       this.drawingContext.restore();
     } else {
-      var idx = 4*(y * this.width + x);
+      var ctx = this._pInst || this;
+      var idx = 4 * (y * this.width + x);
       if (!this.imageData) {
-        this._pInst.loadPixels.call(this._pInst);
+        ctx.loadPixels.call(ctx);
       }
       if (typeof imgOrCol === 'number') {
-        if (idx < this.pixels.length) {
-          this._pInst.pixels[idx] = imgOrCol;
-          this._pInst.pixels[idx+1] = imgOrCol;
-          this._pInst.pixels[idx+2] = imgOrCol;
-          this._pInst.pixels[idx+3] = 255;
+        if (idx < ctx.pixels.length) {
+          ctx.pixels[idx] = imgOrCol;
+          ctx.pixels[idx + 1] = imgOrCol;
+          ctx.pixels[idx + 2] = imgOrCol;
+          ctx.pixels[idx + 3] = 255;
         }
-      }
-      else if (imgOrCol instanceof Array) {
+      } else if (imgOrCol instanceof Array) {
         if (imgOrCol.length < 4) {
           throw new Error('pixel array must be of the form [R, G, B, A]');
         }
-        if (idx < this.pixels.length) {
-          this._pInst.pixels[idx] = imgOrCol[0];
-          this._pInst.pixels[idx+1] = imgOrCol[1];
-          this._pInst.pixels[idx+2] = imgOrCol[2];
-          this._pInst.pixels[idx+3] = imgOrCol[3];
+        if (idx < ctx.pixels.length) {
+          ctx.pixels[idx] = imgOrCol[0];
+          ctx.pixels[idx + 1] = imgOrCol[1];
+          ctx.pixels[idx + 2] = imgOrCol[2];
+          ctx.pixels[idx + 3] = imgOrCol[3];
         }
       } else if (imgOrCol instanceof p5.Color) {
-        if (idx < this.pixels.length) {
-          this._pInst.pixels[idx] = imgOrCol.rgba[0];
-          this._pInst.pixels[idx+1] = imgOrCol.rgba[1];
-          this._pInst.pixels[idx+2] = imgOrCol.rgba[2];
-          this._pInst.pixels[idx+3] = imgOrCol.rgba[3];
+        if (idx < ctx.pixels.length) {
+          ctx.pixels[idx] = imgOrCol.rgba[0];
+          ctx.pixels[idx + 1] = imgOrCol.rgba[1];
+          ctx.pixels[idx + 2] = imgOrCol.rgba[2];
+          ctx.pixels[idx + 3] = imgOrCol.rgba[3];
         }
       }
     }
   };
-
   p5.Graphics2D.prototype.updatePixels = function (x, y, w, h) {
+    if (x === undefined && y === undefined &&
+      w === undefined && h === undefined) {
+      x = 0;
+      y = 0;
+      w = this.width;
+      h = this.height;
+    }
     this.drawingContext.putImageData(this.imageData, x, y, 0, 0, w, h);
   };
 
