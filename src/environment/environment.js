@@ -28,11 +28,14 @@ define(function(require) {
    *   <div><code>
    *     function setup() {
    *       frameRate(30);
+   *       textSize(20);
+   *       textSize(30);
+   *       textAlign(CENTER);
    *     }
    *
    *     function draw() {
-   *       line(0, 0, width, height);
-   *       print(frameCount);
+   *       background(200);
+   *       text(frameCount, width/2, height/2);
    *     }
    *   </code></div>
    */

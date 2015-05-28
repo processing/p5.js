@@ -3,7 +3,6 @@
  * @submodule 2D Primitives
  * @for p5
  * @requires core
- * @requires canvas
  * @requires constants
  */
 define(function (require) {
@@ -11,7 +10,6 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
-  var canvas = require('canvas');
   var constants = require('constants');
 
   // source: https://sites.google.com/site/hansmuller/flex-blog/CircularArc.mxml
@@ -31,7 +29,7 @@ define(function (require) {
    *  x4,y4 are the arc's end points and x2,y2 and x3,y3 are the cubic bezier's
    *  control points.
    */
-  function createArc(radius, startAngle, endAngle) {
+  p5.prototype._createArc = function(radius, startAngle, endAngle) {
     var twoPI = Math.PI * 2;
 
     var curves = [];
@@ -40,15 +38,15 @@ define(function (require) {
 
     var a1 = startAngle;
     var totalAngle = Math.min(twoPI, Math.abs(endAngle - startAngle));
-    for (; totalAngle > EPSILON; ) {
+    while (totalAngle > EPSILON) {
       var a2 = a1 + sgn * Math.min(totalAngle, piOverTwo);
-      curves.push(createSmallArc(radius, a1, a2));
+      curves.push(this._createSmallArc(radius, a1, a2));
       totalAngle -= Math.abs(a2 - a1);
       a1 = a2;
     }
 
     return curves;
-  }
+  };
 
   /**
    *  Cubic bezier approximation of a circular arc centered at the origin,
@@ -61,7 +59,7 @@ define(function (require) {
    *  A. Riškus, "Approximation of a Cubic Bezier Curve by Circular Arcs and 
    *  Vice Versa," Information Technology and Control, 35(4), 2006 pp. 371-378.
    */
-  function createSmallArc(r, a1, a2) {
+  p5.prototype._createSmallArc = function(r, a1, a2) {
     // Compute all four points for an arc that subtends the same total angle
     // but is centered on the X-axis
 
@@ -98,7 +96,7 @@ define(function (require) {
       x4: r * Math.cos(a2),
       y4: r * Math.sin(a2)
     };
-  }
+  };
 
   /**
    * Draw an arc.
@@ -150,68 +148,14 @@ define(function (require) {
    */
 	p5.prototype.arc = function(x, y, width, height, start, stop, mode) {
     if (!this._doStroke && !this._doFill) {
-      return;
+      return this;
     }
     if (this._angleMode === constants.DEGREES) {
       start = this.radians(start);
       stop = this.radians(stop);
     }
-    var ctx = this.drawingContext;
-    var vals = canvas.arcModeAdjust(
-      x,
-      y,
-      width,
-      height,
-      this._ellipseMode
-    );
-
-    var curves = createArc(1.0, start, stop);
-    var rx = vals.w / 2;
-    var ry = vals.h / 2;
-
-    ctx.beginPath();
-    curves.forEach(function (curve, index) {
-      if (index === 0) {
-        ctx.moveTo(vals.x + curve.x1 * rx, vals.y + curve.y1 * ry);
-      }
-      ctx.bezierCurveTo(
-        vals.x + curve.x2 * rx, vals.y + curve.y2 * ry,
-        vals.x + curve.x3 * rx, vals.y + curve.y3 * ry,
-        vals.x + curve.x4 * rx, vals.y + curve.y4 * ry
-      );
-    });
-
-    if (this._doFill) {
-      if (mode === constants.PIE || mode == null) {
-        ctx.lineTo(vals.x, vals.y);
-      }
-      ctx.closePath();
-      ctx.fill();
-      if (this._doStroke) {
-        if (mode === constants.CHORD || mode === constants.PIE) {
-          ctx.stroke();
-          return this;
-        }
-      }
-    }
-
-    if (this._doStroke) {
-      if (mode === constants.OPEN || mode == null) {
-        ctx.beginPath();
-        curves.forEach(function (curve, index) {
-          if (index === 0) {
-            ctx.moveTo(vals.x + curve.x1 * rx, vals.y + curve.y1 * ry);
-          }
-          ctx.bezierCurveTo(
-            vals.x + curve.x2 * rx, vals.y + curve.y2 * ry,
-            vals.x + curve.x3 * rx, vals.y + curve.y3 * ry,
-            vals.x + curve.x4 * rx, vals.y + curve.y4 * ry
-          );
-        });
-        ctx.stroke();
-      }
-    }
-
+    var curves = this._createArc(1.0, start, stop);
+    this._graphics.arc(x, y, width, height, start, stop, mode, curves);
     return this;
   };
 
@@ -236,66 +180,14 @@ define(function (require) {
    */
   p5.prototype.ellipse = function(x, y, w, h) {
     if (!this._doStroke && !this._doFill) {
-      return;
+      return this;
     }
-
-    // processing supports negative width and heights for ellipses
+    // p5 supports negative width and heights for ellipses
     w = Math.abs(w);
     h = Math.abs(h);
-
-    var ctx = this.drawingContext;
-    var vals = canvas.modeAdjust(
-      x,
-      y,
-      w,
-      h,
-      this._ellipseMode
-    );
-    ctx.beginPath();
-    if (w === h) {
-      ctx.arc(vals.x+vals.w/2, vals.y+vals.w/2, vals.w/2, 0, 2*Math.PI, false);
-    } else {
-      var kappa = 0.5522848,
-        ox = (vals.w / 2) * kappa, // control point offset horizontal
-        oy = (vals.h / 2) * kappa, // control point offset vertical
-        xe = vals.x + vals.w,      // x-end
-        ye = vals.y + vals.h,      // y-end
-        xm = vals.x + vals.w / 2,  // x-middle
-        ym = vals.y + vals.h / 2;  // y-middle
-      ctx.moveTo(vals.x, ym);
-      ctx.bezierCurveTo(
-        vals.x,
-        ym - oy,
-        xm - ox,
-        vals.y,
-        xm,
-        vals.y
-      );
-      ctx.bezierCurveTo(
-        xm + ox,
-        vals.y,
-        xe,
-        ym - oy,
-        xe,
-        ym
-      );
-      ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-      ctx.bezierCurveTo(
-        xm - ox,
-        ye,
-        vals.x,
-        ym + oy,
-        vals.x,
-        ym
-      );
-      ctx.closePath();
-    }
-    if (this._doFill) {
-      ctx.fill();
-    }
-    if (this._doStroke) {
-      ctx.stroke();
-    }
+    //@TODO add catch block here if this._graphics 
+    //doesn't have the method implemented yet
+    this._graphics.ellipse(x, y, w, h);
     return this;
   };
   /**
@@ -329,20 +221,35 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.line = function(x1, y1, x2, y2) {
+  
+  ////commented out original
+  // p5.prototype.line = function(x1, y1, x2, y2) {
+  //   if (!this._doStroke) {
+  //     return this;
+  //   }
+  //   if(this._graphics.isP3D){
+  //   } else {
+  //     this._graphics.line(x1, y1, x2, y2);      
+  //   }
+  // };
+  p5.prototype.line = function() {
     if (!this._doStroke) {
-      return;
+      return this;
     }
-    var ctx = this.drawingContext;
-    if (ctx.strokeStyle === 'rgba(0,0,0,0)') {
-      return;
+    //check whether we should draw a 3d line or 2d
+    if(this._graphics.isP3D){
+      this._graphics.line(arguments[0],
+        arguments[1],
+        arguments[2],
+        arguments[3],
+        arguments[4],
+        arguments[5]);
+    } else {
+      this._graphics.line(arguments[0],
+        arguments[1],
+        arguments[2],
+        arguments[3]);
     }
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
-
-    return this;
   };
 
   /**
@@ -366,33 +273,9 @@ define(function (require) {
    */
   p5.prototype.point = function(x, y) {
     if (!this._doStroke) {
-      return;
+      return this;
     }
-    var ctx = this.drawingContext;
-    var s = ctx.strokeStyle;
-    var f = ctx.fillStyle;
-    if (s === 'rgba(0,0,0,0)') {
-      return;
-    }
-    x = Math.round(x);
-    y = Math.round(y);
-    ctx.fillStyle = s;
-    if (ctx.lineWidth > 1) {
-      ctx.beginPath();
-      ctx.arc(
-        x,
-        y,
-        ctx.lineWidth / 2,
-        0,
-        constants.TWO_PI,
-        false
-      );
-      ctx.fill();
-    } else {
-      ctx.fillRect(x, y, 1, 1);
-    }
-    ctx.fillStyle = f;
-
+    this._graphics.point(x, y);
     return this;
   };
 
@@ -423,22 +306,9 @@ define(function (require) {
    */
   p5.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
     if (!this._doStroke && !this._doFill) {
-      return;
+      return this;
     }
-    var ctx = this.drawingContext;
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.lineTo(x3, y3);
-    ctx.lineTo(x4, y4);
-    ctx.closePath();
-    if (this._doFill) {
-      ctx.fill();
-    }
-    if (this._doStroke) {
-      ctx.stroke();
-    }
-
+    this._graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
     return this;
   };
 
@@ -491,60 +361,7 @@ define(function (require) {
     if (!this._doStroke && !this._doFill) {
       return;
     }
-    var vals = canvas.modeAdjust(x, y, w, h, this._rectMode);
-    var ctx = this.drawingContext;
-    // Translate the line by (0.5, 0.5) to draw a crisp rectangle border
-    if (this._doStroke && ctx.lineWidth % 2 === 1) {
-      ctx.translate(0.5, 0.5);
-    }
-    ctx.beginPath();
-
-    if (typeof tl === 'undefined') {
-      // No rounded corners
-      ctx.rect(vals.x, vals.y, vals.w, vals.h);
-    } else {
-      // At least one rounded corner
-      // Set defaults when not specified
-      if (typeof tr === 'undefined') { tr = tl; }
-      if (typeof br === 'undefined') { br = tr; }
-      if (typeof bl === 'undefined') { bl = br; }
-      
-      // Cache and compute several values
-      var _x = vals.x;
-      var _y = vals.y;
-      var _w = vals.w;
-      var _h = vals.h;
-      var hw = _w / 2;
-      var hh = _h / 2;
-
-      // Clip radii
-      if (_w < 2 * tl) { tl = hw; }
-      if (_h < 2 * tl) { tl = hh; }
-      if (_w < 2 * tr) { tr = hw; }
-      if (_h < 2 * tr) { tr = hh; }
-      if (_w < 2 * br) { br = hw; }
-      if (_h < 2 * br) { br = hh; }
-      if (_w < 2 * bl) { bl = hw; }
-      if (_h < 2 * bl) { bl = hh; }
-
-      // Draw shape
-      ctx.beginPath();
-      ctx.moveTo(_x + tl, _y);
-      ctx.arcTo(_x + _w, _y, _x + _w, _y + _h, tr);
-      ctx.arcTo(_x + _w, _y + _h, _x, _y + _h, br);
-      ctx.arcTo(_x, _y + _h, _x, _y, bl);
-      ctx.arcTo(_x, _y, _x + _w, _y, tl);
-      ctx.closePath();
-    }
-    if (this._doFill) {
-      ctx.fill();
-    }
-    if (this._doStroke) {
-      ctx.stroke();
-    }
-    if (this._doStroke && ctx.lineWidth % 2 === 1) {
-      ctx.translate(-0.5, -0.5);
-    }
+    this._graphics.rect(x, y, w, h, tl, tr, br, bl);
     return this;
   };
 
@@ -570,21 +387,9 @@ define(function (require) {
   */
   p5.prototype.triangle = function(x1, y1, x2, y2, x3, y3) {
     if (!this._doStroke && !this._doFill) {
-      return;
+      return this;
     }
-    var ctx = this.drawingContext;
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.lineTo(x3, y3);
-    ctx.closePath();
-    if (this._doFill) {
-      ctx.fill();
-    }
-    if (this._doStroke) {
-      ctx.stroke();
-    }
-
+    this._graphics.triangle(x1, y1, x2, y2, x3, y3);
     return this;
   };
 

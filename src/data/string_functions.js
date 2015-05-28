@@ -196,7 +196,7 @@ define(function (require) {
    * @return {String|Array}         formatted String 
    */
   p5.prototype.nfp = function() {
-    var nfRes = this.nf(arguments);
+    var nfRes = this.nf.apply(this, arguments);
     if (nfRes instanceof Array) {
       return nfRes.map(addNfp);
     } else {
@@ -228,7 +228,7 @@ define(function (require) {
    * @return {String|Array}         formatted String 
    */
   p5.prototype.nfs = function() {
-    var nfRes = this.nf(arguments);
+    var nfRes = this.nf.apply(this, arguments);
     if (nfRes instanceof Array) {
       return nfRes.map(addNfs);
     } else {
