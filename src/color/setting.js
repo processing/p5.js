@@ -119,22 +119,11 @@ define(function (require) {
    * </div>
    */
   p5.prototype.background = function() {
-    this.drawingContext.save();
-    this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-    this.drawingContext.scale(this._pixelDensity, this._pixelDensity);
     if (arguments[0] instanceof p5.Image) {
       this.image(arguments[0], 0, 0, this.width, this.height);
     } else {
-      var curFill = this.drawingContext.fillStyle;
-      // create background rect
-      var color = this.color.apply(this, arguments);
-      var newFill = color.toString();
-      this.drawingContext.fillStyle = newFill;
-      this.drawingContext.fillRect(0, 0, this.width, this.height);
-      // reset fill
-      this.drawingContext.fillStyle = curFill;
+      this._graphics.background.apply(this._graphics, arguments);
     }
-    this.drawingContext.restore();
   };
 
   /**
@@ -153,7 +142,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.clear = function() {
-    this.drawingContext.clearRect(0, 0, this.width, this.height);
+    this._graphics.clear();
   };
 
   /**
@@ -337,9 +326,7 @@ define(function (require) {
    */
   p5.prototype.fill = function() {
     this._setProperty('_doFill', true);
-    var ctx = this.drawingContext;
-    var color = this.color.apply(this, arguments);
-    ctx.fillStyle = color.toString();
+    this._graphics.fill.apply(this._graphics, arguments);
   };
 
   /**
@@ -501,9 +488,7 @@ define(function (require) {
    */
   p5.prototype.stroke = function() {
     this._setProperty('_doStroke', true);
-    var ctx = this.drawingContext;
-    var color = this.color.apply(this, arguments);
-    ctx.strokeStyle = color.toString();
+    this._graphics.stroke.apply(this._graphics, arguments);
   };
 
 

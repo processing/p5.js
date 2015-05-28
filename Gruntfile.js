@@ -99,8 +99,9 @@ module.exports = function(grunt) {
             'p5.Element': 'src/objects/p5.Element',
             'p5.File': 'src/objects/p5.File',
             'p5.Graphics': 'src/objects/p5.Graphics',
+            'p5.Graphics2D': 'src/objects/p5.Graphics2D',
+            'p5.Graphics3D': 'src/objects/p5.Graphics3D',
             'p5.Image': 'src/objects/p5.Image',
-            //'p5.Shape': 'src/objects/p5.Shape',
             'p5.Vector': 'src/objects/p5.Vector',
             'p5.TableRow': 'src/objects/p5.TableRow',
             'p5.Table': 'src/objects/p5.Table',
@@ -131,6 +132,7 @@ module.exports = function(grunt) {
             'output.text_area': 'src/output/text_area',
             'rendering.rendering': 'src/rendering/rendering',
             'shape.2d_primitives': 'src/shape/2d_primitives',
+            'shape.3d_primitives': 'src/shape/3d_primitives',
             'shape.attributes': 'src/shape/attributes',
             'shape.curves': 'src/shape/curves',
             //'shape.shape': 'src/shape/shape',
@@ -143,9 +145,11 @@ module.exports = function(grunt) {
             'linearalgebra': 'src/var/linearalgebra',
             'polargeometry': 'src/var/polargeometry',
             'shim': 'src/var/shim',
+            'shaders': 'src/var/shaders',
             'reqwest': 'node_modules/reqwest/reqwest',
             'filters': 'src/image/filters',
-            'utils.color_utils': 'src/utils/color_utils'
+            'utils.color_utils': 'src/utils/color_utils',
+            'mat4': 'src/objects/mat4'
           },
           useStrict: true,
           wrap: {
@@ -203,7 +207,7 @@ module.exports = function(grunt) {
     release: {
       options: {
         github: {
-          repo: 'lmccart/p5.js', //put your user/repo here
+          repo: 'processing/p5.js', //put your user/repo here
           usernameVar: process.env.GITHUB_USERNAME, //ENVIRONMENT VARIABLE that contains Github username
           passwordVar: process.env.GITHUB_PASSWORD //ENVIRONMENT VARIABLE that contains Github password
         }
@@ -241,5 +245,4 @@ module.exports = function(grunt) {
   grunt.registerTask('test', ['connect', 'jshint', 'mocha']);
   grunt.registerTask('yui', ['yuidoc']);
   grunt.registerTask('default', ['connect', 'jshint', 'requirejs', 'mocha', 'uglify']);
-
 };

@@ -31,12 +31,12 @@ define(function(require) {
    * @example
    * <div>
    * <code>
-   * // Example in the works. 
+   * // Example in the works.
    * </code>
    * </div>
    */
   p5.prototype.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
-    this.drawingContext.transform(n00, n01, n02, n10, n11, n12);
+    this._graphics.applyMatrix(n00, n01, n02, n10, n11, n12);
     return this;
   };
 
@@ -65,7 +65,7 @@ define(function(require) {
    * </div>
    */
   p5.prototype.resetMatrix = function() {
-    this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
+    this._graphics.resetMatrix();
     return this;
   };
 
@@ -102,18 +102,50 @@ define(function(require) {
     if (this._angleMode === constants.DEGREES) {
       r = this.radians(r);
     }
-    this.drawingContext.rotate(r);
+    this._graphics.rotate(r);
     return this;
   };
 
-  p5.prototype.rotateX = function() {
-    throw 'not yet implemented';
-    // return this
+  /**
+   * [rotateX description]
+   * @param  {[type]} rad [description]
+   * @return {[type]}     [description]
+   */
+  p5.prototype.rotateX = function(rad) {
+    if (this._graphics.isP3D) {
+      this._graphics.rotateX(rad);
+    } else {
+      throw 'not yet implemented.';
+    }
+    return this;
   };
 
-  p5.prototype.rotateY = function() {
-    throw 'not yet implemented';
-    // return this;
+  /**
+   * [rotateY description]
+   * @param  {[type]} rad [description]
+   * @return {[type]}     [description]
+   */
+  p5.prototype.rotateY = function(rad) {
+    if (this._graphics.isP3D) {
+      this._graphics.rotateY(rad);
+    } else {
+      throw 'not yet implemented.';
+    }
+    return this;
+  };
+
+  /**
+   * [rotateZ description]
+   * @param  {[type]} rad [description]
+   * @return {[type]}     [description]
+   */
+  p5.prototype.rotateZ = function(rad) {
+    if (this._graphics.isP3D) {
+      this._graphics.rotateZ(rad);
+    } else {
+      throw 'not supported in p2d. Please use webgl mode';
+    }
+    return this;
   };
 
   /**
@@ -156,15 +188,11 @@ define(function(require) {
    * </div>
    */
   p5.prototype.scale = function() {
-    var x = 1.0,
-      y = 1.0;
-    if (arguments.length === 1) {
-      x = y = arguments[0];
+    if (this._graphics.isP3D) {
+      this._graphics.scale(arguments[0], arguments[1], arguments[2]);
     } else {
-      x = arguments[0];
-      y = arguments[1];
+      this._graphics.scale.apply(this._graphics, arguments);
     }
-    this.drawingContext.scale(x, y);
     return this;
   };
 
@@ -201,7 +229,7 @@ define(function(require) {
     if (this._angleMode === constants.DEGREES) {
       angle = this.radians(angle);
     }
-    this.drawingContext.transform(1, 0, this.tan(angle), 1, 0, 0);
+    this._graphics.shearX(angle);
     return this;
   };
 
@@ -238,7 +266,7 @@ define(function(require) {
     if (this._angleMode === constants.DEGREES) {
       angle = this.radians(angle);
     }
-    this.drawingContext.transform(1, this.tan(angle), 0, 1, 0, 0);
+    this._graphics.shearY(angle);
     return this;
   };
 
@@ -276,8 +304,12 @@ define(function(require) {
    * </code>
    * </div>
    */
-  p5.prototype.translate = function(x, y) {
-    this.drawingContext.translate(x, y);
+  p5.prototype.translate = function(x, y, z) {
+    if (this._graphics.isP3D) {
+      this._graphics.translate(x, y, z);
+    } else {
+      this._graphics.translate(x, y);
+    }
     return this;
   };
 
