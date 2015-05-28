@@ -14,8 +14,6 @@ define(function(require) {
   /*
    * ISSUES:
    *  default stroke/fill (wait)
-   *  path to font file broken
-   *  textWrap broken (everywhere), was working yesterday
    *  Vertical Center-Align broken: does top instead (system, custom?)
    */
 
