@@ -20,8 +20,8 @@ function draw(){
   push();
   translate(sin(theta),cos(theta),0);
   rotateX(theta);
-  cube(width,height);
-  // plane(width/2, height/2);
+  //cube(width,height);
+  plane(width/2, height/2);
   // sphere();
   pop();
   // stroke(0, 0, 0, 0);
