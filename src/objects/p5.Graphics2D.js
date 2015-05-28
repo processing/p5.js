@@ -848,12 +848,12 @@ define(function(require) {
     return this;
   };
   p5.Graphics2D.prototype.curve = function (x1, y1, x2, y2, x3, y3, x4, y4) {
-    this.beginShape();
-    this.curveVertex(x1, y1);
-    this.curveVertex(x2, y2);
-    this.curveVertex(x3, y3);
-    this.curveVertex(x4, y4);
-    this.endShape();
+    this._pInst.beginShape();
+    this._pInst.curveVertex(x1, y1);
+    this._pInst.curveVertex(x2, y2);
+    this._pInst.curveVertex(x3, y3);
+    this._pInst.curveVertex(x4, y4);
+    this._pInst.endShape();
     return this;
   };
 
@@ -947,11 +947,11 @@ define(function(require) {
           var metrics = this.drawingContext.measureText(testLine);
           var testWidth = metrics.width;
           if (typeof maxWidth !== 'undefined' && testWidth > maxWidth) {
-            if (this._doFill) {
+            if (this._pInst._doFill) {
               this.drawingContext.fillText(line, x, y);
             }
-            if (this._doStroke) {
-              this.drawingContext.strokeText(line, x, y);
+            if (this._pInst._doStroke) {
+              this._pInst.drawingContext.strokeText(line, x, y);
             }
             line = words[n] + ' ';
             y += this._pInst._textLeading;
