@@ -27,10 +27,17 @@ define(function(require) {
     this.font = undefined;
   };
 
-  p5.Font.prototype.list = function() {
+  p5.Font.prototype.renderPath = function(line, x, y, fontSize, options) {
 
-    // TODO
-    throw 'not yet implemented';
+    var path, p = this.parent;
+
+    fontSize = fontSize || p._textSize;
+    options = options || {};
+
+    path = this.font.getPath(line, x, y, fontSize, options);
+    path.stroke = p._doStroke && p.drawingContext.strokeStyle;
+    path.fill = p._doFill && p.drawingContext.fillStyle;
+    path.draw(p.drawingContext);
   };
 
   p5.Font.prototype.textBounds = function(str, x, y, fontSize) {
@@ -40,7 +47,6 @@ define(function(require) {
     if (!this.parent._isOpenType()) {
       throw Error('not supported for system fonts');
     }
-
 
     x = x !== undefined ? x : 0;
     y = y !== undefined ? y : 0;
@@ -82,6 +88,12 @@ define(function(require) {
       w: maxX - minX,
       h: maxY - minY
     };
+  };
+
+  p5.Font.prototype.list = function() {
+
+    // TODO
+    throw 'not yet implemented';
   };
 
   return p5.Font;

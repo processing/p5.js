@@ -107,16 +107,13 @@ define(function(require) {
     return this;
   };
 
+
+
   function renderText(p, line, x, y) {
 
     if (p._isOpenType()) {
 
-      var path = p._textFont.font.getPath(line, x, y, p._textSize, {});
-      path.stroke = p._doStroke && p.drawingContext.strokeStyle;
-      path.fill = p._doFill && p.drawingContext.fillStyle;
-      path.draw(p.drawingContext);
-
-      return;
+      return p._textFont.renderPath(line, x, y);
     }
 
     if (p._doFill) {

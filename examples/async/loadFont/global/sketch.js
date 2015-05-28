@@ -38,7 +38,6 @@ function setup() {
   line(x,0,x,200);
 
   var tb = font1.textBounds(words, x, y); // tight
-  console.log(tb);
   noFill();
   stroke(200,0,0);
   rect(tb.x,tb.y,tb.w,tb.h);
