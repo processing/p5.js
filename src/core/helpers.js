@@ -10,7 +10,23 @@ define(function (require) {
 
   var p5 = require('core');
 
-  function report(message, func) {
+  // Wrong number of params, undefined param, wrong type
+  var PARAM_COUNT = 0;
+  var EMPTY_VAR = 1;
+  var WRONG_TYPE = 2;
+  var typeColors = ['#008851', '#C83C00', '#4DB200'];
+
+  function report(message, func, color) {
+    // p5.js brand - magenta: #ED225D, blue: #2D7BB6
+    // Pallete off magenta:      cyan: #1CC581, orange: #FF6625, green: #79EB22
+    // - Dark: magenta: #B40033, cyan: #008851, orange: #C83C00, green: #4DB200
+    // TODO: Alternate colors for rows?
+    // TODO: Emphasized colors? Highlighting?
+    if ('undefined' === getType(color)) {
+      color   = '#B40033'; // dark magenta
+    } else if (getType(color) === 'number') { // Type to color
+      color = typeColors[color];
+    }
     console.log(
       '%c' + message + ' [http://p5js.org/reference/#p5/' + func + ']',
       'background-color:#ED225D;color:#FFF;padding:2px;'
@@ -104,9 +120,11 @@ define(function (require) {
       for (var p=0; p < types[format].length && p < args.length; p++) {
         var defType = types[format][p];
         var argType = getType(args[p]);
-        if (argType === 'undefined') {
+        if ('undefined' === argType || null === argType) {
           report('It looks like ' + func +
-            ' received an empty variable in spot #' + (p+1) + '.', func);
+            ' received an empty variable in spot #' + (p+1) +
+            '. If not intentional, this is often a problem with scope: ' +
+            '[link to scope].', func, EMPTY_VAR);
         } else if (!typeMatches(defType, argType, args[p])) {
           message = func + ' was expecting a ' + defType.toLowerCase() +
             ' for parameter #' + (p+1) + ', received ';
