@@ -1,6 +1,7 @@
 suite('Files', function() {
 
   var loadJSON = p5.prototype.loadJSON;
+  var loadFont = p5.prototype.loadFont;
   // var loadStrings = p5.prototype.loadStrings;
 
   //variable for preload
@@ -14,11 +15,33 @@ suite('Files', function() {
     assert.typeOf(preload, 'Boolean');
   });
 
+  suite('loadFont() in Preload', function () {
+  
+    test('should be opentype', function() {
+      assert.ok(opentype);
+      assert.isObject(opentype);
+    });
+    
+    test('should be a function', function() {
+      assert.ok(loadFont);
+      assert.typeOf(loadFont, 'function');
+    });
+    
+    test('should return an object', function() {
+      result = loadFont(opentype, './acmesa.ttf');
+      assert.ok(result);
+      assert.isObject(result);
+      //assert.isObject(result.font);
+    });
+  });
+
   suite('loadJSON() in Preload', function () {
+  
     test('should be a function', function() {
       assert.ok(loadJSON);
       assert.typeOf(loadJSON, 'function');
     });
+    
     test('should return an Array', function() {
       result = loadJSON('array.json');
       assert.ok(result);
@@ -26,10 +49,12 @@ suite('Files', function() {
       assert.typeOf(result, 'Array');
       // assert.lengthOf(result, 2);
     });
+    
     // test('should return an Object', function() {
     //   assert.isObject(result, ['the result is an object'])
     // });
   });
+
 
 
   //   test('should be a function', function( {
@@ -61,19 +86,18 @@ suite('Files', function() {
     });
     /*test('should allow json to override jsonp in 3rd param',
       function(done){
-
-        var url = 'http://localhost:9001/unit/input/array.json';
+        var url = 'https://maps.googleapis.com/maps/api/geocode/json?address=Atlanta';
         var datatype = 'json';
         var myCallback = function(resp){
           assert.ok(resp);
-          assert.typeOf(resp,'Array');
+          //assert.typeOf(resp,'Object');
           done();
         };
         result = loadJSON(url,myCallback,datatype);
     });*/
 
   });
-
+/*
   var loadTable = p5.prototype.loadTable;
 
 
@@ -155,5 +179,5 @@ suite('Files', function() {
       loadTable(url,myCallback);
     });
   });
-
+*/
 });

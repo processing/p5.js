@@ -12,9 +12,6 @@ define(function(require) {
   var p5 = require('core');
   var reqwest = require('reqwest');
 
-  //var opentype = require('opentype');
-  //console.log('OPENTYPE: ' + typeof opentype);
-
   //BufferedReader
   p5.prototype.createInput = function() {
     // TODO
@@ -180,7 +177,7 @@ define(function(require) {
     req.open('GET', path, true);
     req.onreadystatechange = function() {
       if (req.readyState === 4 && (req.status === 200 || req.status ===
-          0)) {
+        0)) {
         var arr = req.responseText.match(/[^\r\n]+/g);
         for (var k in arr) {
           ret[k] = arr[k];
@@ -211,12 +208,7 @@ define(function(require) {
    * </p>
    *
    * <p>When passing in multiple options, pass them in as separate parameters,
-   * seperated by commas. For example:
-   * <br><br>
-   * <code>
-   *   loadTable("my_csv_file.csv", "csv", "header")
-   * </code>
-   * </p>
+   * seperated by commas. For example: "csv, header".</p>
    *
    * <p> All files loaded and saved use UTF-8 encoding.</p>
    *

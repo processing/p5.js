@@ -52,7 +52,7 @@ define(function (require) {
      * asynchronous loading of external files. If a preload function is
      * defined, setup() will wait until any load calls within have finished.
      * Nothing besides load calls should be inside preload (loadImage,
-     * loadJSON, loadStrings, etc).
+     * loadJSON, loadFont, loadStrings, etc).
      *
      * @method preload
      * @example
@@ -472,7 +472,8 @@ define(function (require) {
     'loadStrings',
     'loadXML',
     'loadShape',
-    'loadTable'
+    'loadTable',
+    'loadFont'
   ];
 
   p5.prototype._registeredMethods = { pre: [], post: [], remove: [] };
