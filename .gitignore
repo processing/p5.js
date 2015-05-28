@@ -1,4 +1,5 @@
 *.DS_STORE
+.project
 node_modules/*
 experiments/*
 lib_old/*
