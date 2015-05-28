@@ -49,7 +49,7 @@ define(function (require) {
   var numberTypes = ['Number', 'Integer', 'Number/Constant'];
   function typeMatches(defType, argType, arg) {
     // 'Function', 'Array', 'Date', 'RegExp', 'Object', 'Error'
-    return (defType === 'Boolean' && (arg === true || arg === false)) ||
+    return (defType === 'Boolean' || // Anything is truthy, cover in Debug Guide
       (defType.toLowerCase() === argType) ||
       (numberTypes.indexOf(defType) > -1 && isNumeric(arg));
   }
@@ -61,7 +61,7 @@ define(function (require) {
     /**
      * Check number of parameters
      *
-     * Example: "You gave us ellipse(X,X,X). ellipse was expecting 4
+     * Example: "You wrote ellipse(X,X,X). ellipse was expecting 4
      *           parameters. Try ellipse(X,X,X,X)."
      */
     var diff = Math.abs(args.length-types[0].length);
@@ -75,7 +75,7 @@ define(function (require) {
     }
     var symbol = 'X'; // Parameter placeholder
     if(diff > 0) {
-      message = 'You gave us ' + func + '(';
+      message = 'You wrote ' + func + '(';
       // Concat an appropriate number of placeholders for call
       if (args.length > 0) {
         message += symbol + (','+symbol).repeat(args.length-1);
