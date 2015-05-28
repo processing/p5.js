@@ -295,20 +295,13 @@ define(function(require) {
   // SHAPE | 2D Primitives
   //////////////////////////////////////////////
 
-  p5.Graphics2D.prototype.arc = function(x, y, w, h, start, stop, mode) {
+  p5.Graphics2D.prototype.arc =
+    function(x, y, w, h, start, stop, mode, curves) {
     if (!this._pInst._doStroke && !this._pInst._doFill) {
       return;
     }
-    if (this._pInst._angleMode === constants.DEGREES) {
-      start = this._pInst.radians(start);
-      stop = this._pInst.radians(stop);
-    }
     var ctx = this.drawingContext;
-    var vals = canvas.arcModeAdjust(x, y,
-      this.width,
-      this.height,
-      this._pInst._ellipseMode);
-    var curves = this._pInst._createArc(1, start, stop);
+    var vals = canvas.arcModeAdjust(x, y, w, h, this._pInst._ellipseMode);
     var rx = vals.w / 2;
     var ry = vals.h / 2;
     ctx.beginPath();
