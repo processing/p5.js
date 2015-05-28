@@ -147,8 +147,8 @@ define(function (require) {
    * @param  {Integer} dw destination image width
    * @param  {Integer} dh destination image height
    */
-  p5.prototype.copy = function() {
-    this._graphics.copy.apply(this._graphics, arguments);
+  p5.prototype.copy = function () {
+    p5.Graphics2D._copyHelper.apply(this, arguments);
   };
 
   /**

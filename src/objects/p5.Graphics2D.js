@@ -98,19 +98,14 @@ define(function(require) {
   // IMAGE | Loading & Displaying
   //////////////////////////////////////////////
 
-  p5.Graphics2D.prototype.image = function(img, x, y, w, h) {
+  p5.Graphics2D.prototype.image = function (img, x, y, w, h) {
     var frame = img.canvas || img.elt;
-    x = x || 0;
-    y = y || 0;
-    w = w || img.width;
-    h = h || img.height;
-    var vals = canvas.modeAdjust(x, y, w, h, this._pInst._imageMode);
     try {
       if (this._pInst._tint && img.canvas) {
         this.drawingContext.drawImage(this._getTintedImageCanvas(img),
-          vals.x, vals.y, vals.w, vals.h);
+          x, y, w, h);
       } else {
-        this.drawingContext.drawImage(frame, vals.x, vals.y, vals.w, vals.h);
+        this.drawingContext.drawImage(frame, x, y, w, h);
       }
     } catch (e) {
       if (e.name !== 'NS_ERROR_NOT_AVAILABLE') {
@@ -164,10 +159,9 @@ define(function(require) {
     this.drawingContext.globalCompositeOperation = currBlend;
   };
 
-  p5.Graphics2D.prototype.copy = function() {
-
+  p5.Graphics2D.prototype.copy = function () {
     var srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
-    if(arguments.length === 9){
+    if (arguments.length === 9) {
       srcImage = arguments[0];
       sx = arguments[1];
       sy = arguments[2];
@@ -177,7 +171,8 @@ define(function(require) {
       dy = arguments[6];
       dw = arguments[7];
       dh = arguments[8];
-    } else if(arguments.length === 8){
+    } else if (arguments.length === 8) {
+      srcImage = this._pInst;
       sx = arguments[0];
       sy = arguments[1];
       sw = arguments[2];
@@ -186,14 +181,17 @@ define(function(require) {
       dy = arguments[5];
       dw = arguments[6];
       dh = arguments[7];
-      srcImage = this._pInst;
     } else {
       throw new Error('Signature not supported');
     }
+    p5.Graphics2D._copyHelper(srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
+  };
 
+  p5.Graphics2D._copyHelper =
+  function (srcImage, sx, sy, sw, sh, dx, dy, dw, dh) {
+    var s = srcImage.canvas.width / srcImage.width;
     this.drawingContext.drawImage(srcImage.canvas,
-      sx, sy, sw, sh, dx, dy, dw, dh
-    );
+      s * sx, s * sy, s * sw, s * sh, dx, dy, dw, dh);
   };
 
   p5.Graphics2D.prototype.get = function(x, y, w, h) {

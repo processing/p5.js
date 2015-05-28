@@ -194,10 +194,9 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.tint = function() {
-    var c = p5.Color._getFormattedColor.apply(this, arguments);
-    c = p5.Color._normalizeColorArray.call(this, c);
-    this._tint = c;
+  p5.prototype.tint = function () {
+    var c = this.color.apply(this, arguments);
+    this._tint = c.rgba;
   };
 
   /**
