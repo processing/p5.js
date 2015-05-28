@@ -87,7 +87,7 @@ define(function(require) {
 
           if (typeof maxWidth !== 'undefined' && testWidth > maxWidth) {
 
-            drawText(this, line, x, y);
+            renderText(this, line, x, y);
 
             line = words[n] + ' ';
             y += this._textLeading;
@@ -99,14 +99,14 @@ define(function(require) {
         }
       }
 
-      drawText(this, line, x, y);
+      renderText(this, line, x, y);
       y += this._textLeading;
     }
 
     return this;
   };
 
-  function drawText(p, line, x, y) {
+  function renderText(p, line, x, y) {
 
     if (typeof p._textFont === 'object') {
 
