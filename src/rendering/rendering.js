@@ -157,9 +157,11 @@ define(function(require) {
    * to draw into an off-screen graphics buffer. The two parameters define the
    * width and height in pixels.
    *
-   * @method createGraphics2D
+   * @method createGraphics
    * @param  {Number} w width of the offscreen graphics buffer
    * @param  {Number} h height of the offscreen graphics buffer
+   * @param {String} renderer either 'p2d' or 'webgl'. 
+   * undefined defaults to p2d
    * @return {Object} offscreen graphics buffer
    * @example
    * <div>
@@ -167,7 +169,7 @@ define(function(require) {
    * var pg;
    * function setup() {
    *   createCanvas(100, 100);
-   *   pg = createGraphics2D(100, 100);
+   *   pg = createGraphics(100, 100);
    * }
    * function draw() {
    *   background(200);
@@ -180,7 +182,20 @@ define(function(require) {
    * </code>
    * </div>
    */
-  p5.prototype.createGraphics2D = function(w, h) {
+  p5.prototype.createGraphics = function(w, h, renderer){
+    if (renderer === constants.WEBGL) {
+      this._createGraphics3D(w,h);
+    }
+    else {
+      this._createGraphics2D(w,h);
+    }
+  };
+  /**
+   * Creates and returns a new p5.Graphics2D object. Use this class if you need
+   * to draw into an off-screen graphics buffer. The two parameters define the
+   * width and height in pixels.
+   */
+  p5.prototype._createGraphics2D = function(w, h) {
     var c = document.createElement('canvas');
     //c.style.visibility='hidden';
     var node = this._userNode || document.body;
@@ -209,31 +224,8 @@ define(function(require) {
    * Creates and returns a new p5.Graphics3D object. Use this class if you need
    * to draw into an off-screen graphics buffer. The two parameters define the
    * width and height in pixels.
-   *
-   * @method createGraphics3D
-   * @param  {Number} w width of the offscreen graphics buffer
-   * @param  {Number} h height of the offscreen graphics buffer
-   * @return {Object} offscreen graphics buffer
-   * @example
-   * <div>
-   * <code>
-   * var pg;
-   * function setup() {
-   *   createCanvas(100, 100);
-   *   pg = createGraphics3D(100, 100);
-   * }
-   * function draw() {
-   *   background(200);
-   *   pg.background(100);
-   *   pg.noStroke();
-   *   pg.ellipse(pg.width/2, pg.height/2, 50, 50);
-   *   image(pg, 50, 50);
-   *   image(pg, 0, 0, 50, 50);
-   * }
-   * </code>
-   * </div>
    */
-  p5.prototype.createGraphics3D = function(w, h) {
+  p5.prototype._createGraphics3D = function(w, h) {
     var c = document.createElement('canvas');
     //c.style.visibility='hidden';
     var node = this._userNode || document.body;
