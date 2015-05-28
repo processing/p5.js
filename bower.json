@@ -1,6 +1,6 @@
 {
   "name": "p5.js",
-  "version": "0.3.7",
+  "version": "0.4.4",
   "main": "lib/p5.min.js",
   "homepage": "http://p5js.org/",
   "authors": [

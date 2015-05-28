@@ -143,7 +143,7 @@ define(function(require) {
     if (this._graphics.isP3D) {
       this._graphics.rotateZ(rad);
     } else {
-      throw 'not yet implemented.';
+      throw 'not supported in p2d. Please use webgl mode';
     }
     return this;
   };

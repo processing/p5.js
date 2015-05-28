@@ -14,7 +14,7 @@ define(function(require) {
    * Creates a canvas element in the document, and sets the dimensions of it
    * in pixels. This method should be called only once at the start of setup.
    * Calling createCanvas more than once in a sketch will result in very
-   * unpredicable behavior. If you want more more than one drawing canvas
+   * unpredicable behavior. If you want more than one drawing canvas
    * you could use createGraphics (hidden by default but it can be shown).<br>
    * The system variables width and height are set by the parameters passed
    * to this function. If createCanvas() is not used, the window will be
@@ -66,11 +66,6 @@ define(function(require) {
       }
     }
     console.log('pixel density is ', this._pixelDensity);
-
-    c.setAttribute('width', w*this._pixelDensity);
-    c.setAttribute('height', h*this._pixelDensity);
-    c.setAttribute('style',
-      'width:'+w+'px !important; height:'+h+'px !important;');
 
     // set to invisible if still in setup (to prevent flashing with manipulate)
     if (!this._setupDone) {
@@ -127,11 +122,13 @@ define(function(require) {
    * }
    * </code></div>
    */
-  p5.prototype.resizeCanvas = function (w, h) {
+  p5.prototype.resizeCanvas = function (w, h, noRedraw) {
     if (this._graphics) {
       this._graphics.resize(w, h);
       this._graphics._applyDefaults();
-      this.redraw();
+      if (!noRedraw) {
+        this.redraw();
+      }
     }
   };
 
