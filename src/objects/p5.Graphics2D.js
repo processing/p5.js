@@ -831,33 +831,21 @@ define(function(require) {
   //////////////////////////////////////////////
   // SHAPE | Curves
   //////////////////////////////////////////////
-
-  p5.Graphics2D.prototype.bezier = function(x1, y1, x2, y2, x3, y3, x4, y4) {
-    var ctx = this.drawingContext;
-    ctx.beginPath();
-    ctx.moveTo(x1, y1);
-    //for each point as considered by detail, iterate
-    for (var i = 0; i <= this._pInst._bezierDetail; i++) {
-      var t = i / parseFloat(this._pInst._bezierDetail);
-      var x = p5.prototype.bezierPoint(x1, x2, x3, x4, t);
-      var y = p5.prototype.bezierPoint(y1, y2, y3, y4, t);
-      ctx.lineTo(x, y);
-    }
-    ctx.stroke();
+  p5.Graphics2D.prototype.bezier = function (x1, y1, x2, y2, x3, y3, x4, y4) {
+    this._pInst.beginShape();
+    this._pInst.vertex(x1, y1);
+    this._pInst.bezierVertex(x2, y2, x3, y3, x4, y4);
+    this._pInst.endShape();
+    return this;
   };
-
-  p5.Graphics2D.prototype.curve = function(x1, y1, x2, y2, x3, y3, x4, y4) {
-    var ctx = this.drawingContext;
-    ctx.moveTo(x1,y1);
-    ctx.beginPath();
-    for (var i = 0; i <= this._pInst._curveDetail; i++) {
-      var t = parseFloat(i/this._pInst._curveDetail);
-      var x = p5.prototype.curvePoint(x1,x2,x3,x4,t);
-      var y = p5.prototype.curvePoint(y1,y2,y3,y4,t);
-      ctx.lineTo(x,y);
-    }
-    ctx.stroke();
-    ctx.closePath();
+  p5.Graphics2D.prototype.curve = function (x1, y1, x2, y2, x3, y3, x4, y4) {
+    this.beginShape();
+    this.curveVertex(x1, y1);
+    this.curveVertex(x2, y2);
+    this.curveVertex(x3, y3);
+    this.curveVertex(x4, y4);
+    this.endShape();
+    return this;
   };
 
   //////////////////////////////////////////////
