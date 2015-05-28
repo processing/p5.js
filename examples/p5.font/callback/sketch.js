@@ -1,9 +1,13 @@
-var textSketch = function(p) {
-  var font1, font2;
+var font1, font2;
+var loadingFont = function(p) {
   p.preload = function() {
     font1 = p.loadFont(opentype, "SourceSansPro-Regular.otf");
     font2 = p.loadFont(opentype, "acmesa.ttf");
+    loadSketches();
   };
+};
+
+var textSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
     p.textSize(18);
@@ -21,13 +25,9 @@ var textSketch = function(p) {
 };
 
 var textWrapSketch = function(p) {
-  var font1, font2;
-  p.preload = function() {
-    font1 = p.loadFont(opentype, "SourceSansPro-Regular.otf");
-    font2 = p.loadFont(opentype, "acmesa.ttf");
-  };
   p.setup = function() {
     p.createCanvas(240*4, 160);
+    p.textFont(font1);
     p.textSize(10);
     p.stroke(0);
     //1
@@ -135,6 +135,7 @@ var textWrapSketch = function(p) {
 var textFontSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
+    p.textFont(font1);
     p.textSize(20);
     p.fill(0);
     p.strokeWeight(0);
@@ -150,6 +151,7 @@ var textFontSketch = function(p) {
 var textAlignSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
+    p.textFont(font1);
     p.fill(0);
     p.strokeWeight(0);
     p.textSize(12);
@@ -169,6 +171,7 @@ var textAlignSketch = function(p) {
 var textLeadingSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
+    p.textFont(font1);
     p.fill(0);
     p.strokeWeight(0);
     p.textSize(12);
@@ -185,6 +188,7 @@ var textLeadingSketch = function(p) {
 var textSizeSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
+    p.textFont(font1);
     p.fill(0);
     p.strokeWeight(0);
     p.textSize(12);
@@ -199,6 +203,7 @@ var textSizeSketch = function(p) {
 var textStyleSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
+    p.textFont(font1);
     p.fill(0);
     p.strokeWeight(0);
     p.textSize(12);
@@ -214,6 +219,7 @@ var textStyleSketch = function(p) {
 var textWidthSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
+    p.textFont(font1);
     p.fill(0);
     p.strokeWeight(0);
     p.textSize(12);
@@ -228,6 +234,7 @@ var textWidthSketch = function(p) {
 var textOverlapSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
+    p.textFont(font1);
     p.fill(0);
     p.strokeWeight(0);
     p.textSize(72);
@@ -247,6 +254,7 @@ var textFlySketch = function(p) {
   var x2 = 0;
   p.setup = function(){
     p.createCanvas(240, 160);
+    p.textFont(font1);
     p.fill(0);
     p.textSize(48);
   };
@@ -268,6 +276,7 @@ var textFlySketch = function(p) {
 var textFlickerSketch = function(p) {
   p.setup = function(){
     p.createCanvas(240, 160);
+    p.textFont(font1);
     p.textSize(48);
     p.noStroke();
   };
@@ -284,6 +293,7 @@ var textFadeSketch = function(p) {
   var direction = 1;
   p.setup = function(){
     p.createCanvas(240, 160);
+    p.textFont(font1);
     p.textSize(72);
     p.noStroke();
   };
@@ -302,6 +312,7 @@ var textRotateSketch = function(p) {
   var angle = 0.0;
   p.setup = function(){
     p.createCanvas(240, 160);
+    p.textFont(font1);
     p.textSize(24);
     p.noStroke();
     p.fill(0);
@@ -323,6 +334,7 @@ var textGrowSketch = function(p) {
   var str = "GROW";
   p.setup = function(){
     p.createCanvas(240, 160);
+    p.textFont(font1);
     p.textSize(24);
     p.noStroke();
     p.fill(0, 0, 0, 120);
@@ -341,6 +353,7 @@ var textGrowSketch = function(p) {
 var textAvoidSketch = function(p) {
   p.setup = function(){
     p.createCanvas(240, 160);
+    p.textFont(font1);
     p.textSize(24);
     p.noStroke();
     p.fill(0);
@@ -356,6 +369,7 @@ var textBendSketch = function(p) {
   var str = "Flexibility";
   p.setup = function(){
     p.createCanvas(240, 160);
+    p.textFont(font1);
     p.textSize(30);
     p.noStroke();
     p.fill(0);
@@ -380,6 +394,7 @@ var typographyLetterSketch = function(p) {
   var counter = 35;
   p.setup = function(){
     p.createCanvas(720, 320);
+    p.textFont(font1);
     p.background(0);
     p.textFont("Georgia");
     p.textSize(24);
@@ -405,20 +420,24 @@ var typographyLetterSketch = function(p) {
   };
 };
 
-new p5(textSketch);
-new p5(textWrapSketch);
-new p5(textFontSketch);
-new p5(textAlignSketch);
-new p5(textLeadingSketch);
-new p5(textSizeSketch);
-new p5(textStyleSketch);
-new p5(textWidthSketch);
-new p5(textOverlapSketch);
-new p5(textFlySketch);
-new p5(textFlickerSketch);
-new p5(textFadeSketch);
-new p5(textRotateSketch);
-new p5(textGrowSketch);
-new p5(textAvoidSketch);
-new p5(textBendSketch);
-new p5(typographyLetterSketch);
+var loadSketches = function(){
+  new p5(textSketch);
+  new p5(textWrapSketch);
+  new p5(textFontSketch);
+  new p5(textAlignSketch);
+  new p5(textLeadingSketch);
+  new p5(textSizeSketch);
+  new p5(textStyleSketch);
+  new p5(textWidthSketch);
+  new p5(textOverlapSketch);
+  new p5(textFlySketch);
+  new p5(textFlickerSketch);
+  new p5(textFadeSketch);
+  new p5(textRotateSketch);
+  new p5(textGrowSketch);
+  new p5(textAvoidSketch);
+  new p5(textBendSketch);
+  new p5(typographyLetterSketch);
+};
+
+new p5(loadingFont);
