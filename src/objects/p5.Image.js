@@ -121,7 +121,7 @@ define(function (require) {
    * @method loadPixels
    */
   p5.Image.prototype.loadPixels = function(){
-    p5.prototype.loadPixels.call(this);
+    p5.Graphics2D.prototype.loadPixels.call(this);
   };
 
   /**
@@ -139,7 +139,7 @@ define(function (require) {
    *                              underlying canvas
    */
   p5.Image.prototype.updatePixels = function(x, y, w, h){
-    p5.prototype.updatePixels.call(this, x, y, w, h);
+    p5.Graphics2D.prototype.updatePixels.call(this, x, y, w, h);
   };
 
   /**
@@ -161,7 +161,7 @@ define(function (require) {
    *                                    [R, G, B, A] or p5.Image
    */
   p5.Image.prototype.get = function(x, y, w, h){
-    return p5.prototype.get.call(this, x, y, w, h);
+    return p5.Graphics2D.prototype.get.call(this, x, y, w, h);
   };
 
   /**
@@ -194,7 +194,7 @@ define(function (require) {
    * </div>
    */
   p5.Image.prototype.set = function(x, y, imgOrCol){
-    p5.prototype.set.call(this, x, y, imgOrCol);
+    p5.Graphics2D.prototype.set.call(this, x, y, imgOrCol);
   };
 
   /**

@@ -45,13 +45,9 @@ define(function (require) {
    */
   p5.prototype.bezier = function(x1, y1, x2, y2, x3, y3, x4, y4) {
     if (!this._doStroke) {
-      return;
+      return this;
     }
-    this.beginShape();
-    this.vertex(x1, y1);
-    this.bezierVertex(x2, y2, x3, y3, x4, y4);
-    this.endShape();
-    this.stroke();
+    this._graphics.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
     return this;
   };
 
@@ -110,7 +106,6 @@ define(function (require) {
    */
   p5.prototype.bezierPoint = function(a, b, c, d, t) {
     var adjustedT = 1-t;
-
     return Math.pow(adjustedT,3)*a +
      3*(Math.pow(adjustedT,2))*t*b +
      3*adjustedT*Math.pow(t,2)*c +
@@ -225,13 +220,7 @@ define(function (require) {
     if (!this._doStroke) {
       return;
     }
-    this.beginShape();
-    this.curveVertex(x1, y1);
-    this.curveVertex(x2, y2);
-    this.curveVertex(x3, y3);
-    this.curveVertex(x4, y4);
-    this.endShape();
-    this.stroke();
+    this._graphics.curve(x1, y1, x2, y2, x3, y3, x4, y4);
     return this;
   };
 

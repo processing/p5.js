@@ -43,17 +43,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.textAlign = function(h, v) {
-    if (h === constants.LEFT ||
-      h === constants.RIGHT ||
-      h === constants.CENTER) {
-      this.drawingContext.textAlign = h;
-    }
-    if (v === constants.TOP ||
-      v === constants.BOTTOM ||
-      v === constants.CENTER ||
-      v === constants.BASELINE) {
-      this.drawingContext.textBaseline = v;
-    }
+    this._graphics.textAlign(h,v);
   };
 
   /**
@@ -160,7 +150,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.textWidth = function(s) {
-    return this.drawingContext.measureText(s).width;
+    return this._graphics.textWidth(s);
   };
 
   /**
@@ -219,9 +209,9 @@ define(function (require) {
   p5.prototype._applyTextProperties = function () {
     this._setProperty('_textAscent', null);
     this._setProperty('_textDescent', null);
-
-    var str = this._textStyle + ' ' + this._textSize + 'px ' + this._textFont;
-    this.drawingContext.font = str;
+    this._graphics._applyTextProperties(this._textStyle,
+      this._textSize,
+      this._textFont);
   };
 
   /**

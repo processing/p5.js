@@ -220,6 +220,7 @@ define(function (require) {
       this.createCanvas(
         this._defaultCanvasSize.width,
         this._defaultCanvasSize.height,
+        'p2d',
         true
       );
 
@@ -276,9 +277,18 @@ define(function (require) {
         context.setup();
       }
 
-      // unhide hidden canvas that was created
-      this.canvas.style.visibility = '';
-      this.canvas.className = this.canvas.className.replace('p5_hidden', '');
+      // // unhide hidden canvas that was created
+      // this.canvas.style.visibility = '';
+      // this.canvas.className = this.canvas.className.replace('p5_hidden', '');
+      
+      // unhide any hidden canvases that were created
+      var reg = new RegExp(/(^|\s)p5_hidden(?!\S)/g);
+      var canvases = document.getElementsByClassName('p5_hidden');
+      for (var i = 0; i < canvases.length; i++) {
+        var k = canvases[i];
+        k.style.visibility = '';
+        k.className = k.className.replace(reg, '');
+      }
       this._setupDone = true;
 
       // Removes the loading screen if it's in the DOM
