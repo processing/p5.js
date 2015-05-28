@@ -9,7 +9,7 @@
 // This is called asynchronous loading, because it happens whenever
 // the computer is done and ready, not necessarily when you call it.
 
-var font1, x=30, y=80, words = "greeN ideaS";
+var font1, x=30, y=80, words = 'greeN ideaS';
 
 function preload() {
   font1 = loadFont(opentype, 'SourceSansPro-Regular.otf');
@@ -37,7 +37,8 @@ function setup() {
   line(0,y+descent,width,y+descent);
   line(x,0,x,200);
 
-  var tb = textBounds(words, x, y); // tight
+  var tb = font1.textBounds(words, x, y); // tight
+  console.log(tb);
   noFill();
   stroke(200,0,0);
   rect(tb.x,tb.y,tb.w,tb.h);

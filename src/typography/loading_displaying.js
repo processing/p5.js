@@ -82,7 +82,7 @@ define(function(require) {
           typeof maxHeight === 'undefined') {
 
           var testLine = line + words[n] + ' ';
-          var metrics = this.textWidth(testLine);
+          var metrics = this.drawingContext.measureText(testLine);
           var testWidth = metrics.width;
 
           if (typeof maxWidth !== 'undefined' && testWidth > maxWidth) {
@@ -100,6 +100,7 @@ define(function(require) {
       }
 
       renderText(this, line, x, y);
+
       y += this._textLeading;
     }
 
@@ -108,12 +109,13 @@ define(function(require) {
 
   function renderText(p, line, x, y) {
 
-    if (typeof p._textFont === 'object') {
+    if (p._isOpenType()) {
 
-      var path = p._textFont.getPath(line, x, y, p._textSize, {});
+      var path = p._textFont.font.getPath(line, x, y, p._textSize, {});
       path.stroke = p._doStroke && p.drawingContext.strokeStyle;
       path.fill = p._doFill && p.drawingContext.fillStyle;
       path.draw(p.drawingContext);
+
       return;
     }
 
@@ -125,35 +127,7 @@ define(function(require) {
       p.drawingContext.strokeText(line, x, y);
     }
   }
-/*
-  function fillText(p, line, x, y) {
 
-    if (typeof p._textFont === 'object') {
-
-      var path = p._textFont.getPath(line, x, y, p._textSize, {});
-      path.stroke = null;
-      path.fill = p.drawingContext.fillStyle;
-      path.draw(p.drawingContext);
-      return;
-    }
-
-    p.drawingContext.fillText(line, x, y);
-  }
-
-  function strokeText(p, line, x, y) {
-
-    if (typeof p._textFont === 'object') {
-
-      var path = p._textFont.getPath(line, x, y, p._textSize, {});
-      path.fill = null;
-      path.stroke = p.drawingContext.strokeStyle;
-      path.draw(p.drawingContext);
-      return;
-    }
-
-    p.drawingContext.strokeText(line, x, y);
-  }
-*/
   /**
    * Sets the current font that will be drawn with the text() function.
    *
@@ -174,11 +148,6 @@ define(function(require) {
   p5.prototype.textFont = function(theFont, theSize) {
 
     theSize = theSize || this._textSize;
-
-    //console.log('textFont::'+typeof theFont);
-    if (theFont && theFont.font) {
-      theFont = theFont.font;
-    }
 
     if (!theFont) {
       throw 'null font passed to textFont';

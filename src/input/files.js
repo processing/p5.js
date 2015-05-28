@@ -17,7 +17,7 @@ define(function(require) {
     var opentype = arguments[0];
     var path = arguments[1];
     var callback = arguments.length > 2 ? arguments[2] : null;
-    var p5Font = new p5.Font();
+    var p5Font = new p5.Font(this);
 
     opentype.load(path, function(err, font) {
       if (err) {
