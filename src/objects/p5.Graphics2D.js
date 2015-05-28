@@ -293,7 +293,11 @@ define(function(require) {
       w = this.width;
       h = this.height;
     }
-    this.drawingContext.putImageData(this.imageData, x, y, 0, 0, w, h);
+    if (this._pInst) {
+      this.drawingContext.putImageData(this._pInst.imageData, x, y, 0, 0, w, h);
+    } else {
+      this.drawingContext.putImageData(this.imageData, x, y, 0, 0, w, h);
+    }
   };
 
   //////////////////////////////////////////////
