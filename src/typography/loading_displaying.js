@@ -55,6 +55,10 @@ define(function(require) {
    */
   p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 
+    if (!(this._doFill || this._doStroke)) {
+      return;
+    }
+
     if (typeof str !== 'string') {
       str = str.toString();
     }
@@ -73,80 +77,83 @@ define(function(require) {
       var words = cars[ii].split(' ');
 
       for (var n = 0; n < words.length; n++) {
+
         if (y + this._textLeading <= maxHeight ||
           typeof maxHeight === 'undefined') {
+
           var testLine = line + words[n] + ' ';
-          var metrics = this.drawingContext.measureText(testLine);
+          var metrics = this.textWidth(testLine);
           var testWidth = metrics.width;
 
           if (typeof maxWidth !== 'undefined' && testWidth > maxWidth) {
-            if (this._doFill) {
 
-              fillText(this._textFont, line, x, y,
-                this._textSize, this.drawingContext);
-              //this.drawingContext.fillText(line, x, y);
-            }
-            if (this._doStroke) {
+            drawText(this, line, x, y);
 
-              strokeText(this._textFont, line, x, y,
-                this._textSize, this.drawingContext);
-              //this.drawingContext.strokeText(line, x, y);
-
-            }
             line = words[n] + ' ';
             y += this._textLeading;
+
           } else {
+
             line = testLine;
           }
         }
       }
 
-      if (this._doFill) {
-        fillText(this._textFont, line, x, y,
-          this._textSize, this.drawingContext);
-        //this.drawingContext.fillText(line, x, y);
-      }
-
-      if (this._doStroke) {
-        strokeText(this._textFont, line, x, y,
-          this._textSize, this.drawingContext);
-        //this.drawingContext.strokeText(line, x, y);
-      }
-
+      drawText(this, line, x, y);
       y += this._textLeading;
-    }
-
-    function strokeText(font, line, x, y, textSize, ctx) {
-
-      if (typeof font === 'object') {
-
-        var path = font.getPath(line, x, y, textSize, {});
-        path.fill = 'gray';
-        path.stroke = null;
-        path.draw(ctx);
-        return;
-      }
-
-      ctx.strokeText(line, x, y);
-    }
-
-    function fillText(font, line, x, y, textSize, ctx) {
-
-      if (typeof font === 'object') {
-
-        var path = font.getPath(line, x, y, textSize, {});
-        path.fill = null;
-        path.stroke = 'black';
-        path.draw(ctx);
-        return;
-      }
-
-      ctx.fillText(line, x, y);
     }
 
     return this;
   };
 
+  function drawText(p, line, x, y) {
+
+    if (typeof p._textFont === 'object') {
+
+      var path = p._textFont.getPath(line, x, y, p._textSize, {});
+      path.stroke = p._doStroke && p.drawingContext.strokeStyle;
+      path.fill = p._doFill && p.drawingContext.fillStyle;
+      path.draw(p.drawingContext);
+      return;
+    }
+
+    if (p._doFill) {
+      p.drawingContext.fillText(line, x, y);
+    }
+
+    if (p._doStroke) {
+      p.drawingContext.strokeText(line, x, y);
+    }
+  }
+/*
+  function fillText(p, line, x, y) {
+
+    if (typeof p._textFont === 'object') {
+
+      var path = p._textFont.getPath(line, x, y, p._textSize, {});
+      path.stroke = null;
+      path.fill = p.drawingContext.fillStyle;
+      path.draw(p.drawingContext);
+      return;
+    }
+
+    p.drawingContext.fillText(line, x, y);
+  }
+
+  function strokeText(p, line, x, y) {
+
+    if (typeof p._textFont === 'object') {
+
+      var path = p._textFont.getPath(line, x, y, p._textSize, {});
+      path.fill = null;
+      path.stroke = p.drawingContext.strokeStyle;
+      path.draw(p.drawingContext);
+      return;
+    }
+
+    p.drawingContext.strokeText(line, x, y);
+  }
+*/
   /**
    * Sets the current font that will be drawn with the text() function.
    *
