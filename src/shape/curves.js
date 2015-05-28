@@ -44,6 +44,13 @@ define(function (require) {
    * </div>
    */
   p5.prototype.bezier = function(x1, y1, x2, y2, x3, y3, x4, y4) {
+    this._validateParameters(
+      'bezier',
+      arguments,
+      [ 'Number', 'Number', 'Number', 'Number',
+        'Number', 'Number', 'Number', 'Number' ]
+    );
+
     if (!this._doStroke) {
       return this;
     }
@@ -146,7 +153,7 @@ define(function (require) {
    *   a += PI;
    *   stroke(255, 102, 0);
    *   line(x, y, cos(a)*30 + x, sin(a)*30 + y);
-   *   // The following line of code makes a line 
+   *   // The following line of code makes a line
    *   // inverse of the above line
    *   //line(x, y, cos(a)*-30 + x, sin(a)*-30 + y);
    *   stroke(0);
@@ -188,11 +195,11 @@ define(function (require) {
    * Draws a curved line on the screen. The first and second parameters specify
    * the beginning control point and the last two parameters specify the ending
    * control point. The middle parameters specify the start and stop of the
-   * curve. Longer curves can be created by putting a series of curve() 
+   * curve. Longer curves can be created by putting a series of curve()
    * functions together or using curveVertex(). An additional function called
    * curveTightness() provides control for the visual quality of the curve.
-   * The curve() function is an implementation of Catmull-Rom splines. 
-   * 
+   * The curve() function is an implementation of Catmull-Rom splines.
+   *
    * @method curve
    * @param  {Number} x1 x-coordinate for the beginning control point
    * @param  {Number} y1 y-coordinate for the beginning control point
@@ -209,14 +216,21 @@ define(function (require) {
    * noFill();
    * stroke(255, 102, 0);
    * curve(5, 26, 5, 26, 73, 24, 73, 61);
-   * stroke(0); 
-   * curve(5, 26, 73, 24, 73, 61, 15, 65); 
+   * stroke(0);
+   * curve(5, 26, 73, 24, 73, 61, 15, 65);
    * stroke(255, 102, 0);
    * curve(73, 24, 73, 61, 15, 65, 15, 65);
    * </code>
    * </div>
    */
   p5.prototype.curve = function(x1, y1, x2, y2, x3, y3, x4, y4) {
+    this._validateParameters(
+      'curve',
+      arguments,
+      [ 'Number', 'Number', 'Number', 'Number',
+        'Number', 'Number', 'Number', 'Number' ]
+    );
+
     if (!this._doStroke) {
       return;
     }
@@ -247,11 +261,11 @@ define(function (require) {
 
   /**
    * Modifies the quality of forms created with curve() and curveVertex().
-   * The parameter tightness determines how the curve fits to the vertex 
+   * The parameter tightness determines how the curve fits to the vertex
    * points. The value 0.0 is the default value for tightness (this value
    * defines the curves to be Catmull-Rom splines) and the value 1.0 connects
    * all the points with straight lines. Values within the range -5.0 and 5.0
-   * will deform the curves but will leave them recognizable and as values 
+   * will deform the curves but will leave them recognizable and as values
    * increase in magnitude, they will continue to deform.
    *
    * @method curveTightness
@@ -261,12 +275,12 @@ define(function (require) {
    * <div>
    * <code>
    * // Move the mouse left and right to see the curve change
-   * 
+   *
    * function setup() {
    *   createCanvas(100, 100);
    *   noFill();
    * }
-   * 
+   *
    * function draw() {
    *   background(204);
    *   var t = map(mouseX, 0, width, -5, 5);
@@ -276,7 +290,7 @@ define(function (require) {
    *   curveVertex(10, 26);
    *   curveVertex(83, 24);
    *   curveVertex(83, 61);
-   *   curveVertex(25, 65); 
+   *   curveVertex(25, 65);
    *   curveVertex(25, 65);
    *   endShape();
    * }
@@ -352,7 +366,7 @@ define(function (require) {
    * <div>
    * <code>
    * noFill();
-   * curve(5, 26, 73, 24, 73, 61, 15, 65); 
+   * curve(5, 26, 73, 24, 73, 61, 15, 65);
    * steps = 6;
    * for (i = 0; i <= steps; i++) {
    *   t = i / steps;
