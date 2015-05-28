@@ -1,8 +1,8 @@
 var font1, font2;
 var loadingFont = function(p) {
   p.preload = function() {
-    font1 = p.loadFont(opentype, "SourceSansPro-Regular.otf");
-    font2 = p.loadFont(opentype, "acmesa.ttf");
+    font1 = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
+    font2 = p.loadFont(opentype, "../acmesa.ttf");
     loadSketches();
   };
 };

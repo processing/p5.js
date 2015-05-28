@@ -2,8 +2,8 @@
 var textSketch = function(p) {
   var font1, font2;
   p.preload = function() {
-    font1 = p.loadFont(opentype, "SourceSansPro-Regular.otf");
-    font2 = p.loadFont(opentype, "acmesa.ttf");
+    font1 = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
+    font2 = p.loadFont(opentype, "../acmesa.ttf");
   };
   p.setup = function() {
     p.createCanvas(240, 160);
@@ -20,7 +20,6 @@ var textSketch = function(p) {
     p.text("Simple long Text font 2: Lorem Ipsum is simply dummy text of the printing and typesetting industry. ", 10, 90, 220, 60);
   };
 };
-
 var textWrapSketch = function(p) {
   var font;
   p.preload = function() {
@@ -482,19 +481,19 @@ var typographyLetterSketch = function(p) {
 };
 
 new p5(textSketch);
-new p5(textWrapSketch);
-new p5(textFontSketch);
-new p5(textAlignSketch);
-new p5(textLeadingSketch);
-new p5(textSizeSketch);
-new p5(textStyleSketch);
-new p5(textWidthSketch);
-new p5(textOverlapSketch);
-new p5(textFlySketch);
-new p5(textFlickerSketch);
-new p5(textFadeSketch);
-new p5(textRotateSketch);
-new p5(textGrowSketch);
-new p5(textAvoidSketch);
-new p5(textBendSketch);
-new p5(typographyLetterSketch);
+// new p5(textWrapSketch);
+// new p5(textFontSketch);
+// new p5(textAlignSketch);
+// new p5(textLeadingSketch);
+// new p5(textSizeSketch);
+// new p5(textStyleSketch);
+// new p5(textWidthSketch);
+// new p5(textOverlapSketch);
+// new p5(textFlySketch);
+// new p5(textFlickerSketch);
+// new p5(textFadeSketch);
+// new p5(textRotateSketch);
+// new p5(textGrowSketch);
+// new p5(textAvoidSketch);
+// new p5(textBendSketch);
+// new p5(typographyLetterSketch);
