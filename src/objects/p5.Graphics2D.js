@@ -60,7 +60,8 @@ define(function(require) {
   p5.Graphics2D.prototype.background = function() {
     this.drawingContext.save();
     this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-    this.drawingContext.scale(this._pixelDensity, this._pixelDensity);
+    this.drawingContext.scale(this._pInst._pixelDensity,
+      this._pInst._pixelDensity);
     if (arguments[0] instanceof p5.Image) {
       this._pInst.image(arguments[0], 0, 0, this.width, this.height);
     } else {
@@ -134,7 +135,7 @@ define(function(require) {
       var g = pixels[i + 1];
       var b = pixels[i + 2];
       var a = pixels[i + 3];
-      newPixels[i] = r * this._tint[0] / 255;
+      newPixels[i] = r * this._pInst._tint[0] / 255;
       newPixels[i + 1] = g * this._pInst._tint[1] / 255;
       newPixels[i + 2] = b * this._pInst._tint[2] / 255;
       newPixels[i + 3] = a * this._pInst._tint[3] / 255;
@@ -239,7 +240,7 @@ define(function(require) {
       0,
       this.width,
       this.height);
-    this._setProperty('imageData', imageData);
+    this._pInst._setProperty('imageData', imageData);
     this._pInst._setProperty('pixels', imageData.data);
   };
 
@@ -247,7 +248,8 @@ define(function(require) {
     if (imgOrCol instanceof p5.Image) {
       this.drawingContext.save();
       this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-      this.drawingContext.scale(this._pixelDensity, this._pixelDensity);
+      this.drawingContext.scale(this._pInst._pixelDensity,
+        this._pInst._pixelDensity);
       this.drawingContext.drawImage(imgOrCol.canvas, x, y);
       this.loadPixels.call(this._pInst);
       this.drawingContext.restore();
@@ -305,7 +307,7 @@ define(function(require) {
     var vals = canvas.arcModeAdjust(x, y,
       this.width,
       this.height,
-      this._ellipseMode);
+      this._pInst._ellipseMode);
     var curves = this._pInst._createArc(1, start, stop);
     var rx = vals.w / 2;
     var ry = vals.h / 2;
@@ -470,9 +472,9 @@ define(function(require) {
         return this;
       }
     }
-    var vals = canvas.modeAdjust(x, y, w, h, this._rectMode);
+    var vals = canvas.modeAdjust(x, y, w, h, this._pInst._rectMode);
     // Translate the line by (0.5, 0.5) to draw a crisp rectangle border
-    if (this._doStroke && ctx.lineWidth % 2 === 1) {
+    if (this._pInst._doStroke && ctx.lineWidth % 2 === 1) {
       ctx.translate(0.5, 0.5);
     }
     ctx.beginPath();
@@ -514,13 +516,13 @@ define(function(require) {
       ctx.arcTo(_x, _y, _x + _w, _y, tl);
       ctx.closePath();
     }
-    if (this._doFill) {
+    if (this._pInst._doFill) {
       ctx.fill();
     }
-    if (this._doStroke) {
+    if (this._pInst._doStroke) {
       ctx.stroke();
     }
-    if (this._doStroke && ctx.lineWidth % 2 === 1) {
+    if (this._pInst._doStroke && ctx.lineWidth % 2 === 1) {
       ctx.translate(-0.5, -0.5);
     }
     return this;
