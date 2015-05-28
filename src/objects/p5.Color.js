@@ -16,7 +16,7 @@ define(function(require) {
    */
   p5.Color = function (pInst, vals) {
     this.color_array = p5.Color._getFormattedColor.apply(pInst, vals);
-    this._converted_color = this._normalizeColorArray(pInst);
+    this._converted_color = this._convertTo255(pInst);
     
     var isHSB = pInst._colorMode === constants.HSB;
 
@@ -31,7 +31,7 @@ define(function(require) {
     return this;
   };
 
-  p5.Color.prototype._normalizeColorArray = function (pInst) {
+  p5.Color.prototype._convertTo255 = function (pInst) {
     var isRGB = pInst._colorMode === constants.RGB;
     var maxArr = isRGB ? pInst._maxRGB : pInst._maxHSB;
     // var arr = this.color_array;
