@@ -9,6 +9,7 @@ define(function(require) {
   'use strict';
 
   var p5 = require('core');
+  
   /**
    * Draws text to the screen. Displays the information specified in the first
    * parameter on the screen in the position specified by the additional
