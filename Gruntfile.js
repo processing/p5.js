@@ -146,6 +146,7 @@ module.exports = function(grunt) {
             'polargeometry': 'src/var/polargeometry',
             'shim': 'src/var/shim',
             'shaders': 'src/var/shaders',
+            'p5.Shader': 'src/objects/p5.Shader',
             'reqwest': 'node_modules/reqwest/reqwest',
             'filters': 'src/image/filters',
             'utils.color_utils': 'src/utils/color_utils'
