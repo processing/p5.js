@@ -17,6 +17,8 @@ define(function (require) {
   // source: https://sites.google.com/site/hansmuller/flex-blog/CircularArc.mxml
   // blog post: http://hansmuller-flex.blogspot.ca/
   //            2011/04/approximating-circular-arc-with-cubic.html
+  // update to blog post: http://hansmuller-flex.blogspot.com/2011/10/
+  //                      more-about-approximating-circular-arcs.html
 
   var EPSILON = 0.00001;  // Roughly 1/1000th of a degree, see below
 
@@ -70,11 +72,12 @@ define(function (require) {
     var x1 = x4;
     var y1 = -y4;
 
-    var k = 0.5522847498;
-    var f = k * Math.tan(a);
+    var q1 = x1*x1 + y1*y1;
+    var q2 = q1 + x1*x4 + y1*y4;
+    var k2 = 4/3 * (Math.sqrt(2 * q1 * q2) - q2) / (x1 * y4 - y1 * x4);
 
-    var x2 = x1 + f * y4;
-    var y2 = y1 + f * x4;
+    var x2 = x1 - k2 * y1;
+    var y2 = y1 + k2 * x1;
     var x3 = x2;
     var y3 = -y2;
 
