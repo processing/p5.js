@@ -534,13 +534,15 @@ suite('p5.Color', function() {
     });
   });
 
-  suite('new p5.Color in HSB mode', function() {
+  suite('new p5.Color in HSB-255 mode', function() {
     setup(function() {
       myp5.colorMode(myp5.HSB);
       c = myp5.color(149, 170, 30, 255);
     });
 
     test('should correctly set HSBA property', function() {
+      assert.equal(c.hsba.length, 4);
+      assert.equal(Math.round(c.getHue()), 149);
       assert.deepEqual(c.hsba, [149, 170, 30, 255]);
     });
 
@@ -551,6 +553,34 @@ suite('p5.Color', function() {
     test('should correctly render color string', function() {
       assert.equal(c.toString(), 'rgba(10,20,30,1)');
     });
+  });
+
+  suite('new p5.Color in HSB-360 mode', function() {
+    setup(function() {
+      myp5.colorMode(myp5.HSB, 360, 100, 100, 1);
+      c = myp5.color(48, 100, 100, 1);
+    });
+
+    test('should correctly set HSBA value', function(){
+      assert.deepEqual(c.hsba, [48, 100, 100, 1]);
+    });
+
+    test('should correctly set converted value', function(){
+      assert.deepEqual(c._converted_color, [34, 255, 255, 255]);
+    });
+
+    test('should return passed, unconverted, hue value', function(){
+      assert.equal(c.getHue(), 48);
+    });
+
+    test('should return passed, unconverted, saturation value', function(){
+      assert.equal(c.getSaturation(), 100);
+    });
+
+    test('should return passed, unconverted, brightness value', function(){
+      assert.equal(c.getBrightness(), 100);
+    });
+
   });
 
   suite('new p5.Color with Base 1 colors', function() {
