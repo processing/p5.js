@@ -28,11 +28,13 @@ define(function (require) {
       color = typeColors[color];
     }
     console.log(
-      '%c' + message + ' [http://p5js.org/reference/#p5/' + func + ']',
-      'background-color:#ED225D;color:#FFF;padding:2px;'
+      '%c> p5.js says: '+message+'%c [http://p5js.org/reference/#p5/'+func+']',
+      'background-color:' + color + ';color:#FFF;',
+      'background-color:transparent;color:' + color + ';'
     );
   }
 
+  // -- Borrowed from jQuery 1.11.3 --
   var class2type = {};
   var toString = class2type.toString;
   var names = ['Boolean', 'Number', 'String', 'Function',
@@ -40,8 +42,6 @@ define(function (require) {
   for (var n=0; n<names.length; n++) {
     class2type[ '[object ' + names[n] + ']' ] = names[n].toLowerCase();
   }
-
-  // -- Borrowed from jQuery 1.11.3 --
   var getType = function( obj ) {
     if ( obj == null ) {
       return obj + '';
@@ -65,7 +65,7 @@ define(function (require) {
   var numberTypes = ['Number', 'Integer', 'Number/Constant'];
   function typeMatches(defType, argType, arg) {
     // 'Function', 'Array', 'Date', 'RegExp', 'Object', 'Error'
-    return (defType === 'Boolean' || // Anything is truthy, cover in Debug Guide
+    return defType === 'Boolean' || // Anything is truthy, cover in Debug Guide
       (defType.toLowerCase() === argType) ||
       (numberTypes.indexOf(defType) > -1 && isNumeric(arg));
   }
@@ -108,6 +108,7 @@ define(function (require) {
         message += ' ' + func + ' takes different numbers of parameters ' +
           'depending on what you want to do. Click this link to learn more: ';
       }
+      report(message, func, PARAM_COUNT);
     }
     /**
      * Type checking
@@ -137,7 +138,7 @@ define(function (require) {
               'depending on what you want to do. ' +
               'Click this link to learn more:';
           }
-          report(message, func);
+          report(message, func, WRONG_TYPE);
         }
       }
     }
