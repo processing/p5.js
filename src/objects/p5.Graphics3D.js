@@ -2,6 +2,7 @@ define(function(require) {
 
   var p5 = require('core');
   var shaders = require('shaders');
+  require('p5.Shader');
   require('p5.Graphics');
   var gl,
     shaderProgram;
