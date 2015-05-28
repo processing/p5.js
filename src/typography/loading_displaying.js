@@ -109,12 +109,13 @@ define(function(require) {
 
   function renderText(p, line, x, y) {
 
-    if (p5.Font.isOpenType(p._textFont)) {
+    if (p._isOpenType()) {
 
-      var path = p._textFont.getPath(line, x, y, p._textSize, {});
+      var path = p._textFont.font.getPath(line, x, y, p._textSize, {});
       path.stroke = p._doStroke && p.drawingContext.strokeStyle;
       path.fill = p._doFill && p.drawingContext.fillStyle;
       path.draw(p.drawingContext);
+
       return;
     }
 
@@ -147,11 +148,6 @@ define(function(require) {
   p5.prototype.textFont = function(theFont, theSize) {
 
     theSize = theSize || this._textSize;
-
-    //console.log('textFont::'+typeof theFont);
-    if (theFont && theFont.font) {
-      theFont = theFont.font;
-    }
 
     if (!theFont) {
       throw 'null font passed to textFont';

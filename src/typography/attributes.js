@@ -183,9 +183,9 @@ define(function(require) {
    */
   p5.prototype.textWidth = function(s) {
 
-    if (typeof this._textFont === 'object') {
+    if (this._isOpenType()) {
 
-      var tb = this.textBounds(s, 0, 0);
+      var tb = this._textFont.textBounds(s, 0, 0);
       return tb.x + tb.w;
     }
 
@@ -219,7 +219,7 @@ define(function(require) {
     return this._textAscent;
   };
 
-  p5.prototype.textBounds = function(str, x, y, fontSize) {
+  /*p5.prototype.textBounds = function(str, x, y, fontSize) {
 
     //console.log('textBounds::',str, this._textFont);
 
@@ -265,27 +265,27 @@ define(function(require) {
       w: maxX - minX,
       h: maxY - minY
     };
-  };
+  };*/
 
   /*p5.prototype.fontMetrics = function(font, text, x, y, fontSize) {
 
     var xMins = [], yMins = [], xMaxs= [], yMaxs = [], p5 = this;
     //font = font || this._textFont;
     fontSize = fontSize || p5._textSize;
-    
+
     //console.log(fontSize, font);
-    
-    font.forEachGlyph(text, x, y, fontSize, 
+
+    font.forEachGlyph(text, x, y, fontSize,
       {}, function(glyph, gX, gY, gFontSize) {
-    
+
         var gm = glyph.getMetrics();
-        
+
         gX = gX !== undefined ? gX : 0;
         gY = gY !== undefined ? gY : 0;
         fontSize = fontSize !== undefined ? fontSize : 24;
-        
+
         var scale = 1 / font.unitsPerEm * fontSize;
-        
+
         p5.noFill();
         p5.rectMode(p5.CORNERS);
         p5.rect(gX + (gm.xMin * scale), gY + (-gm.yMin * scale),
@@ -293,7 +293,7 @@ define(function(require) {
 
         p5.rectMode(p5.CORNER);
     });
-    
+
     return { // metrics
         xMin: Math.min.apply(null, xMins),
         yMin: Math.min.apply(null, yMins),
@@ -331,6 +331,15 @@ define(function(require) {
   };
 
   /**
+   * Helper fxn to check font type (system or otf)
+   */
+  p5.prototype._isOpenType = function(f) {
+
+    f = f || this._textFont;
+    return (typeof f === 'object' && f.font && f.font.supported);
+  };
+
+  /**
    * Helper fxn to apply text properties.
    */
   p5.prototype._applyTextProperties = function() {
@@ -340,10 +349,10 @@ define(function(require) {
 
     var fontName = this._textFont;
 
-    if (typeof this._textFont === 'object') {
+    if (this._isOpenType()) {
 
-      fontName = this._textFont.familyName;
-      this._textStyle = this._textFont.styleName;
+      fontName = this._textFont.font.familyName;
+      this._textStyle = this._textFont.font.styleName;
     }
 
     var str = this._textStyle + ' ' + this._textSize + 'px ' + fontName;
@@ -359,11 +368,12 @@ define(function(require) {
    */
   p5.prototype._updateTextMetrics = function() {
 
-    if (typeof this._textFont === 'object') {
+    if (this._isOpenType()) {
 
-      var tb = this.textBounds('ABCjgq|', 0, 0);
-      this._setProperty('_textAscent', Math.abs(tb.y));
-      this._setProperty('_textDescent', tb.h - Math.abs(tb.y));
+      //console.log(Object.keys(this._textFont));
+      var bounds = this._textFont.textBounds('ABCjgq|', 0, 0);
+      this._setProperty('_textAscent', Math.abs(bounds.y));
+      this._setProperty('_textDescent', bounds.h - Math.abs(bounds.y));
       return this;
     }
 

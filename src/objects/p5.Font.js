@@ -21,34 +21,10 @@ define(function(require) {
 
   var p5 = require('core');
 
-  /*
-      textAlign()
-      textLeading()
-      textSize()
-      textStyle()
-      textWidth()
+  p5.Font = function(p) {
 
-      text()
-      textFont(obj)
-      textFont(str) ?
-      textFont() ?
-
-      loadFont(str)
-  */
-
-
-  p5.Font = function() {
-
+    this.parent = p;
     this.font = undefined;
-  };
-
-  p5.Font.isOpenType = function(f) {
-
-    var ok = (typeof f === 'object' && f.supported); // && f.font.supported);
-    if (0&&!ok) {
-      console.log('!OT: '+typeof f, Object.keys(f), f.supported);
-    }
-    return ok;
   };
 
   p5.Font.prototype.list = function() {
@@ -57,27 +33,27 @@ define(function(require) {
     throw 'not yet implemented';
   };
 
+  p5.Font.prototype.textBounds = function(str, x, y, fontSize) {
 
-  /*
-  p5.Font.prototype.textBounds = function() {
-    p5.prototype.textBounds.apply(p5, arguments);
-  }
+    //console.log('textBounds::',str, x, y, fontSize);
 
-  p5.Font.prototype.textBounds = function(str, x, y, textSize) {
+    if (!this.parent._isOpenType()) {
+      throw Error('not supported for system fonts');
+    }
 
-    //console.log('textBounds::',this._textFont);
 
     x = x !== undefined ? x : 0;
     y = y !== undefined ? y : 0;
+    fontSize = fontSize || this.parent._textSize;
 
     var xCoords = [],
-        yCoords = [],
-        scale = 1 / this.font.unitsPerEm * textSize;
+      yCoords = [],
+      scale = 1 / this.font.unitsPerEm * fontSize;
 
-    this.font.forEachGlyph(str, x, y, textSize, {},
-      function(glyph, gX, gY, gFontSize)
-      {
-        if (glyph.name != 'space') {
+    this.font.forEachGlyph(str, x, y, fontSize, {},
+      function(glyph, gX, gY) {
+
+        if (glyph.name !== 'space') {
 
           gX = gX !== undefined ? gX : 0;
           gY = gY !== undefined ? gY : 0;
@@ -93,16 +69,20 @@ define(function(require) {
           xCoords.push(x2);
           yCoords.push(y2);
         }
-    });
+      });
 
     var minX = Math.min.apply(null, xCoords);
     var minY = Math.min.apply(null, yCoords);
     var maxX = Math.max.apply(null, xCoords);
     var maxY = Math.max.apply(null, yCoords);
 
-    return { x: minX, y: minY, w: maxX-minX, h: maxY-minY };
+    return {
+      x: minX,
+      y: minY,
+      w: maxX - minX,
+      h: maxY - minY
+    };
   };
-  */
 
   return p5.Font;
 });
