@@ -228,12 +228,12 @@ define(function (require) {
    * displaying images with their original hues.
    *
    * @method noTint
-      * @example
+   * @example
    * <div>
    * <code>
    * var img;
    * function preload() {
-   *   img = loadImage("assets/laDefense.jpg");
+   *   img = loadImage("assets/bricks.jpg");
    * }
    * function setup() {
    *   tint(0, 153, 204);  // Tint blue
