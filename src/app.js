@@ -8,7 +8,6 @@ define(function (require) {
   require('p5.Graphics2D');
   require('p5.Graphics3D');
   require('p5.Image');
-  require('p5.File');
   //require('p5.Shape');
   require('p5.Vector');
   require('p5.TableRow');
@@ -35,9 +34,6 @@ define(function (require) {
   require('math.random');
   require('math.noise');
   require('math.trigonometry');
-  require('output.files');
-  require('output.image');
-  require('output.text_area');
   require('rendering.rendering');
   require('shape.2d_primitives');
   require('shape.3d_primitives');

@@ -13,8 +13,6 @@ define(function(require) {
   var p5 = require('core');
   var constants = require('constants');
 
-  require('output.text_area');
-
   /**
    * Multiplies the current matrix by the one specified through the parameters.
    * This is very slow because it will try to calculate the inverse of the

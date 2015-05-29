@@ -1,5 +1,5 @@
 /**
- * @module Input
+ * @module Events
  * @submodule Touch
  * @for p5
  * @requires core

@@ -18,6 +18,33 @@ define(function(require) {
   p5.prototype._lastFrameTime = new Date().getTime();
   p5.prototype._targetFrameRate = 60;
 
+
+  if (window.console && console.log) {
+    /**
+     * The print() function writes to the console area of your browser, it maps
+     * to console.log(). This function is often helpful for looking at the data
+     * a program is producing. This function creates a new line of text for
+     * each call to the function. More than one parameter can be passed into
+     * the function by separating them with commas. Alternatively, individual
+     * elements can be separated with quotes ("") and joined with the addition
+     * operator (+).
+
+     * @method print
+     * @param {Any} contents any combination of Number, String, Object, Boolean,
+     *                       Array to print
+     */
+     // Converts passed args into a string and then parses that string to 
+     // simulate synchronous behavior. This is a hack and is gross. 
+    p5.prototype.print = function(args) {
+      var newArgs = JSON.parse(JSON.stringify(args));
+      console.log(newArgs);
+    };
+  } else {
+    p5.prototype.print = function() {};
+  }
+  
+  p5.prototype.println = p5.prototype.print;
+
   /**
    * The system variable frameCount contains the number of frames that have
    * been displayed since the program started. Inside setup() the value is 0,
