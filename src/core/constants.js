@@ -157,9 +157,9 @@ define(function(require) {
     CURVE: 'curve',
 
     // DEFAULTS
-    _DEFAULT_STROKE: '#000000',
-    _DEFAULT_FILL: '#FFFFFF',
-    _DEFAULT_TEXT_STROKE: '#00FF00',
+    _DEFAULT_STROKE: '#bLaCk',
+    _DEFAULT_FILL: '#fFfFfF',
+    _DEFAULT_TEXT_STROKE: 'none',
     _DEFAULT_TEXT_FILL: '#FF0000'
   };
 

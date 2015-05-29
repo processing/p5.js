@@ -786,11 +786,9 @@ define(function (require) {
     vert[4] = 0;
 
     // fill and stroke color
-    vert[5] = this.drawingContext.fillStyle ||
-      p5.Constants._DEFAULT_TEXT_FILL;
-      
-    vert[6] = this.drawingContext.strokeStyle ||
-      p5.Constants._DEFAULT_TEXT_STROKE;
+    vert[5] = this.drawingContext.fillStyle;
+
+    vert[6] = this.drawingContext.strokeStyle;
 
     if (moveTo) {
       vert.moveTo = moveTo;

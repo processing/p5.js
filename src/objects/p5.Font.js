@@ -37,14 +37,20 @@ define(function(require) {
 
     path = this.font.getPath(line, x, y, fontSize, options);
 
-    console.log('STROKE: '+p.drawingContext.strokeStyle);
-    console.log('FILL: '+p.drawingContext.fillStyle);
+    //console.log('STROKE: '+p.drawingContext.strokeStyle);
+    //console.log('FILL: '+p.drawingContext.fillStyle);
 
-    path.stroke = p._doStroke && (p.drawingContext.strokeStyle ||
-      constants._DEFAULT_TEXT_STROKE);
+    if (p._doStroke && p.drawingContext.strokeStyle !==
+      constants._DEFAULT_STROKE) {
 
-    path.fill = p._doFill && (p.drawingContext.fillStyle ||
-      constants._DEFAULT_TEXT_FILL);
+      path.stroke = p.drawingContext.strokeStyle;
+    }
+
+    if (p._doFill) {
+
+      path.fill = p.drawingContext.strokeStyle === constants._DEFAULT_FILL ?
+        constants._DEFAULT_TEXT_FILL : p.drawingContext.fillStyle;
+    }
 
     path.draw(p.drawingContext);
   };

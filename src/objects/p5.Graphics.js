@@ -62,15 +62,10 @@ define(function(require) {
 
   p5.Graphics.prototype._applyDefaults = function() {
 
-    console.log('_applyDefaults()');
-
-    this.drawingContext.fillStyle = undefined;
-    this.drawingContext.strokeStyle = undefined;
+    this.drawingContext.fillStyle = constants._DEFAULT_FILL;
+    this.drawingContext.strokeStyle = constants._DEFAULT_STROKE;
     this.drawingContext.lineCap = constants.ROUND;
     this.drawingContext.font = 'normal 12px sans-serif';
-
-    console.log('_applyDefaults.STROKE: '+this.drawingContext.strokeStyle);
-    console.log('_applyDefaults.FILL: '+this.drawingContext.fillStyle);
   };
 
   p5.Graphics.prototype.resize = function(w, h) {
