@@ -47,8 +47,8 @@ define(function(require) {
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.viewport(0, 0, this.width * this._pInst._pixelDensity,
-      this.height * this._pInst._pixelDensity);
+    gl.viewport(0, 0, this.width * this._pInst.pixelDensity,
+      this.height * this._pInst.pixelDensity);
     this.initShaders(); //initialize our default shaders
     this.initMatrix(); //initialize default pmatrix and mvatrix
     return this;

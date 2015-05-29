@@ -27,7 +27,8 @@ define(function (require) {
    * 
    * .pixels gives access to an array containing the values for all the pixels 
    * in the display window.
-   * These values are numbers. This array is the size of the display window x4,
+   * These values are numbers. This array is the size (including an appropriate
+   * factor for the pixelDensity) of the display window x4,
    * representing the R, G, B, A values in order for each pixel, moving from 
    * left to right across each row, then down each column. See .pixels for
    * more info. It may also be simpler to use set() or get().
@@ -76,7 +77,9 @@ define(function (require) {
    * var pink = color(255, 102, 204);
    * img = createImage(66, 66);
    * img.loadPixels();
-   * for (var i = 0; i < 4*(width*height/2); i+=4) {
+   * var d = pixelDensity;
+   * var halfImage = 4 * (width * d) * (height/2 * d);
+   * for (var i = 0; i < halfImage; i+=4) {
    *   img.pixels[i] = red(pink);
    *   img.pixels[i+1] = green(pink);
    *   img.pixels[i+2] = blue(pink);

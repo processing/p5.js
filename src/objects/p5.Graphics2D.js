@@ -60,8 +60,9 @@ define(function(require) {
   p5.Graphics2D.prototype.background = function() {
     this.drawingContext.save();
     this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-    this.drawingContext.scale(this._pInst._pixelDensity,
-      this._pInst._pixelDensity);
+    this.drawingContext.scale(this._pInst.pixelDensity,
+                              this._pInst.pixelDensity);
+
     if (arguments[0] instanceof p5.Image) {
       this._pInst.image(arguments[0], 0, 0, this.width, this.height);
     } else {
@@ -195,10 +196,8 @@ define(function(require) {
   };
 
   p5.Graphics2D.prototype.get = function(x, y, w, h) {
-    if (x === undefined &&
-      y === undefined &&
-      w === undefined &&
-      h === undefined) {
+    if (x === undefined && y === undefined &&
+        w === undefined && h === undefined){
       x = 0;
       y = 0;
       w = this.width;
@@ -207,34 +206,44 @@ define(function(require) {
       w = 1;
       h = 1;
     }
-    if (x > this.width || y > this.height || x < 0 || y < 0) {
-      return [
-        0,
-        0,
-        0,
-        255
-      ];
+
+    if(x > this.width || y > this.height || x < 0 || y < 0){
+      return [0, 0, 0, 255];
     }
-    var imageData = this.drawingContext.getImageData(x, y, w, h);
-    var data = imageData.data;
-    if (w === 1 && h === 1) {
+
+    if (w === 1 && h === 1){
+      var imageData = this.drawingContext.getImageData(x, y, w, h);
+      var data = imageData.data;
       var pixels = [];
+      
       for (var i = 0; i < data.length; i += 4) {
-        pixels.push(data[i], data[i + 1], data[i + 2], data[i + 3]);
+        pixels.push(data[i], data[i+1], data[i+2], data[i+3]);
       }
+      
       return pixels;
     } else {
-      w = Math.min(w, this.width);
-      h = Math.min(h, this.height);
-      var region = new p5.Image(w, h);
-      region.canvas.getContext('2d').putImageData(imageData, 0, 0, 0, 0, w, h);
+      var sx = x * this._pInst.pixelDensity;
+      var sy = y * this._pInst.pixelDensity;
+      //auto constrain the width and height to
+      //dimensions of the source image
+      var dw = Math.min(w, this.width);
+      var dh = Math.min(h, this.height);
+      var sw = dw * this._pInst.pixelDensity;
+      var sh = dh * this._pInst.pixelDensity;
+
+      var region = new p5.Image(dw, dh);
+      region.canvas.getContext('2d').drawImage(this.canvas, sx, sy, sw, sh,
+        0, 0, dw, dh);
+
       return region;
     }
   };
 
   p5.Graphics2D.prototype.loadPixels = function () {
-    var imageData = this.drawingContext.getImageData(0, 0,
-      this.width, this.height);
+    var pd = this.pixelDensity || this._pInst.pixelDensity;
+    var w = this.width * pd;
+    var h = this.height * pd;
+    var imageData = this.drawingContext.getImageData(0, 0, w, h);
     if (this._pInst) {
       this._pInst._setProperty('imageData', imageData);
       this._pInst._setProperty('pixels', imageData.data);
@@ -247,52 +256,77 @@ define(function(require) {
     if (imgOrCol instanceof p5.Image) {
       this.drawingContext.save();
       this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-      this.drawingContext.scale(this._pInst._pixelDensity,
-        this._pInst._pixelDensity);
+      this.drawingContext.scale(this._pInst.pixelDensity,
+                                this._pInst.pixelDensity);
       this.drawingContext.drawImage(imgOrCol.canvas, x, y);
       this.loadPixels.call(this._pInst);
       this.drawingContext.restore();
     } else {
       var ctx = this._pInst || this;
-      var idx = 4 * (y * this.width + x);
-      if (!this.imageData) {
+      var r = 0, g = 0, b = 0, a = 0;
+      var idx = 4*((y * ctx.pixelDensity) *
+        (this.width * ctx.pixelDensity) + (x * ctx.pixelDensity));
+      if (!ctx.imageData) {
         ctx.loadPixels.call(ctx);
       }
       if (typeof imgOrCol === 'number') {
         if (idx < ctx.pixels.length) {
-          ctx.pixels[idx] = imgOrCol;
-          ctx.pixels[idx + 1] = imgOrCol;
-          ctx.pixels[idx + 2] = imgOrCol;
-          ctx.pixels[idx + 3] = 255;
+          r = imgOrCol;
+          g = imgOrCol;
+          b = imgOrCol;
+          a = 255;
+          //this.updatePixels.call(this);
         }
-      } else if (imgOrCol instanceof Array) {
+      }
+      else if (imgOrCol instanceof Array) {
         if (imgOrCol.length < 4) {
           throw new Error('pixel array must be of the form [R, G, B, A]');
         }
         if (idx < ctx.pixels.length) {
-          ctx.pixels[idx] = imgOrCol[0];
-          ctx.pixels[idx + 1] = imgOrCol[1];
-          ctx.pixels[idx + 2] = imgOrCol[2];
-          ctx.pixels[idx + 3] = imgOrCol[3];
+          r = imgOrCol[0];
+          g = imgOrCol[1];
+          b = imgOrCol[2];
+          a = imgOrCol[3];
+          //this.updatePixels.call(this);
         }
       } else if (imgOrCol instanceof p5.Color) {
         if (idx < ctx.pixels.length) {
-          ctx.pixels[idx] = imgOrCol.rgba[0];
-          ctx.pixels[idx + 1] = imgOrCol.rgba[1];
-          ctx.pixels[idx + 2] = imgOrCol.rgba[2];
-          ctx.pixels[idx + 3] = imgOrCol.rgba[3];
+          r = imgOrCol.rgba[0];
+          g = imgOrCol.rgba[1];
+          b = imgOrCol.rgba[2];
+          a = imgOrCol.rgba[3];
+          //this.updatePixels.call(this);
+        }
+      }
+      // loop over pixelDensity * pixelDensity
+      for (var i = 0; i < ctx.pixelDensity; i++) {
+        for (var j = 0; j < ctx.pixelDensity; j++) {
+          // loop over
+          idx = 4*((y * ctx.pixelDensity + j) * this.width *
+            ctx.pixelDensity + (x * ctx.pixelDensity + i));
+          ctx.pixels[idx] = r;
+          ctx.pixels[idx+1] = g;
+          ctx.pixels[idx+2] = b;
+          ctx.pixels[idx+3] = a;
         }
       }
     }
   };
+
   p5.Graphics2D.prototype.updatePixels = function (x, y, w, h) {
-    if (x === undefined && y === undefined &&
-      w === undefined && h === undefined) {
+    var pd = this.pixelDensity || this._pInst.pixelDensity;
+    if (x === undefined &&
+        y === undefined &&
+        w === undefined &&
+        h === undefined) {
       x = 0;
       y = 0;
       w = this.width;
       h = this.height;
     }
+    w *= pd;
+    h *= pd;
+
     if (this._pInst) {
       this.drawingContext.putImageData(this._pInst.imageData, x, y, 0, 0, w, h);
     } else {
