@@ -6,9 +6,13 @@ define(function(require) {
   var mat4 = require('mat4');
   var gl,
     shaderProgram;
-  var mvMatrix;
-  var pMatrix;
-  var mvMatrixStack = [];
+  var uMVMatrix;
+  var uPMatrix;
+  var nMatrix;
+  var uMVMatrixStack = [];
+  var vertexBuffer;
+  var indexBuffer;
+  //var normalBuffer;
 
   //@TODO should probably implement an override for these attributes
   var attributes = {
@@ -50,7 +54,7 @@ define(function(require) {
     gl.viewport(0, 0, this.width * this._pInst._pixelDensity,
       this.height * this._pInst._pixelDensity);
     this.initShaders(); //initialize our default shaders
-    this.initMatrix(); //initialize default pmatrix and mvatrix
+    this.initMatrix(); //initialize default uPMatrix and mvatrix
     return this;
   };
 
@@ -70,7 +74,7 @@ define(function(require) {
     // 3. compile the shader
     var _vertShader = gl.createShader(gl.VERTEX_SHADER);
     //load in our default vertex shader
-    gl.shaderSource(_vertShader, shaders.texLightVert);
+    gl.shaderSource(_vertShader, shaders.testVert);
     gl.compileShader(_vertShader);
     // if our vertex shader failed compilation?
     if (!gl.getShaderParameter(_vertShader, gl.COMPILE_STATUS)) {
@@ -81,7 +85,7 @@ define(function(require) {
 
     var _fragShader = gl.createShader(gl.FRAGMENT_SHADER);
     //load in our material frag shader
-    gl.shaderSource(_fragShader, shaders.texLightFrag);
+    gl.shaderSource(_fragShader, shaders.testFrag);
     gl.compileShader(_fragShader);
     // if our frag shader failed compilation?
     if (!gl.getShaderParameter(_fragShader, gl.COMPILE_STATUS)) {
@@ -111,18 +115,26 @@ define(function(require) {
     gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
     //projection Matrix uniform
-    shaderProgram.pMatrixUniform =
+    shaderProgram.uPMatrixUniform =
       gl.getUniformLocation(shaderProgram, 'transformMatrix');
     //model view Matrix uniform
-    shaderProgram.mvMatrixUniform =
+    shaderProgram.uMVMatrixUniform =
       gl.getUniformLocation(shaderProgram, 'modelviewMatrix');
+
+    //normal Matrix uniform
+    // shaderProgram.nMatrixUniform =
+    // gl.getUniformLocation(shaderProgram, 'uNVMatrix');
 
     //material color uniform
     //@TODO: remove hard coded white rgba 
     shaderProgram.uMaterialColorLoc = gl.getUniformLocation(shaderProgram,
-      'color');
+      'uMaterialColor');
     // Set material uniform
     gl.uniform4f(shaderProgram.uMaterialColorLoc, 1.0, 1.0, 1.0, 1.0);
+
+    vertexBuffer = gl.createBuffer();
+    indexBuffer = gl.createBuffer();
+
 
   };
 
@@ -132,10 +144,11 @@ define(function(require) {
    */
   p5.Graphics3D.prototype.initMatrix = function() {
     // Create a projection / perspective matrix
-    mvMatrix = mat4.create();
-    pMatrix = mat4.create();
+    uMVMatrix = mat4.create();
+    uPMatrix = mat4.create();
+    nMatrix = mat4.create();
     mat4.perspective(
-      pMatrix, 60 / 180 * Math.PI,
+      uPMatrix, 60 / 180 * Math.PI,
       this.width / this.height, 0.1, 100);
   };
 
@@ -144,7 +157,7 @@ define(function(require) {
    * @return {[type]} [description]
    */
   p5.Graphics3D.prototype.resetMatrix = function() {
-    mat4.identity(mvMatrix);
+    mat4.identity(uMVMatrix);
   };
 
   //////////////////////////////////////////////
@@ -180,17 +193,19 @@ define(function(require) {
    * @param  {Array} vertices generated vertices
    * @return {[type]}          [description]
    */
-  p5.Graphics3D.prototype.drawGeometry = function(vertices) {
-    var geomVertexPositionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, geomVertexPositionBuffer);
-    
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+  p5.Graphics3D.prototype.drawGeometry = function(vertices, faces) {
 
+    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
     gl.vertexAttribPointer(
       shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-    // console.log(vertices);
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bufferData
+    (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(faces), gl.STATIC_DRAW);
+    
     _setMatrixUniforms();
-    gl.drawArrays(gl.TRIANGLES, 0, vertices.length / 3);
+    gl.drawElements(gl.TRIANGLES, faces.length, gl.UNSIGNED_SHORT, 0);
 
     return this;
   };
@@ -204,7 +219,7 @@ define(function(require) {
    * @return {[type]}   [description]
    */
   p5.Graphics3D.prototype.translate = function(x, y, z) {
-    mat4.translate(mvMatrix, mvMatrix, [x, y, z]);
+    mat4.translate(uMVMatrix, uMVMatrix, [x, y, z]);
     return this;
   };
 
@@ -216,7 +231,7 @@ define(function(require) {
    * @return {[type]}   [description]
    */
   p5.Graphics3D.prototype.scale = function(x, y, z) {
-    mat4.scale(mvMatrix, mvMatrix, [x, y, z]);
+    mat4.scale(uMVMatrix, uMVMatrix, [x, y, z]);
     return this;
   };
 
@@ -226,7 +241,7 @@ define(function(require) {
    * @return {[type]}     [description]
    */
   p5.Graphics3D.prototype.rotateX = function(rad) {
-    mat4.rotateX(mvMatrix, mvMatrix, rad);
+    mat4.rotateX(uMVMatrix, uMVMatrix, rad);
     return this;
   };
 
@@ -236,7 +251,7 @@ define(function(require) {
    * @return {[type]}     [description]
    */
   p5.Graphics3D.prototype.rotateY = function(rad) {
-    mat4.rotateY(mvMatrix, mvMatrix, rad);
+    mat4.rotateY(uMVMatrix, uMVMatrix, rad);
     return this;
   };
 
@@ -246,14 +261,14 @@ define(function(require) {
    * @return {[type]}     [description]
    */
   p5.Graphics3D.prototype.rotateZ = function(rad) {
-    mat4.rotateZ(mvMatrix, mvMatrix, rad);
+    mat4.rotateZ(uMVMatrix, uMVMatrix, rad);
     return this;
   };
 
   p5.Graphics3D.prototype.push = function() {
     var copy = mat4.create();
-    mat4.copy(copy, mvMatrix);
-    mvMatrixStack.push(copy);
+    mat4.copy(copy, uMVMatrix);
+    uMVMatrixStack.push(copy);
   };
 
   /**
@@ -261,18 +276,22 @@ define(function(require) {
    * @return {[type]} [description]
    */
   p5.Graphics3D.prototype.pop = function() {
-    if (mvMatrixStack.length === 0) {
-      throw 'Invalid popMatrix!';
+    if (uMVMatrixStack.length === 0) {
+      throw 'Invalid pouPMatrix!';
     }
-    mvMatrix = mvMatrixStack.pop();
+    uMVMatrix = uMVMatrixStack.pop();
   };
 
   /**
    * [_setMatrixUniforms description]
    */
   function _setMatrixUniforms() {
-      gl.uniformMatrix4fv(shaderProgram.pMatrixUniform, false, pMatrix);
-      gl.uniformMatrix4fv(shaderProgram.mvMatrixUniform, false, mvMatrix);
+      // mat4.identity( nMatrix );
+      // mat4.invert( nMatrix, uMVMatrix );
+      // mat4.transpose( nMatrix, nMatrix );
+      gl.uniformMatrix4fv(shaderProgram.uPMatrixUniform, false, uPMatrix);
+      gl.uniformMatrix4fv(shaderProgram.uMVMatrixUniform, false, uMVMatrix);
+      //gl.uniformMatrix4fv(shaderProgram.nMatrixUniform, false, nMatrix);
     }
     /**
      * PRIVATE
@@ -312,7 +331,7 @@ define(function(require) {
   ////an identity matrix
   ////@TODO use the p5.Matrix class to abstract away our MV matrices and
   ///other math
-  //var _mvMatrix =
+  //var _uMVMatrix =
   //[
   //  1.0,0.0,0.0,0.0,
   //  0.0,1.0,0.0,0.0,
@@ -322,20 +341,20 @@ define(function(require) {
 
   //// create a perspective matrix with
   //// fovy, aspect, znear, zfar
-  //var _pMatrix = _makePerspective(45,
+  //var _uPMatrix = _makePerspective(45,
   //  gl.drawingBufferWidth/gl.drawingBufferHeight,
   //  0.1, 1000.0);
 
-  //var _pMatrixUniform =
-  //  gl.getUniformLocation(shaderProgram, 'uPMatrix');
+  //var _uPMatrixUniform =
+  //  gl.getUniformLocation(shaderProgram, 'uuPMatrix');
 
-  //var _mvMatrixUniform =
-  //  gl.getUniformLocation(shaderProgram, 'uMVMatrix');
+  //var _uMVMatrixUniform =
+  //  gl.getUniformLocation(shaderProgram, 'uuMVMatrix');
 
-  //gl.uniformMatrix4fv(_mvMatrixUniform,
-  //  false, new Float32Array(_mvMatrix));
-  //gl.uniformMatrix4fv(_pMatrixUniform,
-  //  false, new Float32Array(_pMatrix));
+  //gl.uniformMatrix4fv(_uMVMatrixUniform,
+  //  false, new Float32Array(_uMVMatrix));
+  //gl.uniformMatrix4fv(_uPMatrixUniform,
+  //  false, new Float32Array(_uPMatrix));
   // }
 
   return p5.Graphics3D;

@@ -338,8 +338,12 @@ define(function (require) {
      * @method remove
      * @example
      * <div class='norender'><code>
+     * function setup() {
+     *   createCanvas(200, 200);
+     * }
+     *
      * function draw() {
-     *   ellipse(50, 50, 10, 10);
+     *   ellipse(width/2, height/2, 0, 0);
      * }
      *
      * function mousePressed() {
@@ -441,7 +445,6 @@ define(function (require) {
     }
 
     // Bind events to window (not using container div bc key events don't work)
-
     for (var e in this._events) {
       var f = this['_on'+e];
       if (f) {

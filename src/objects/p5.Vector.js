@@ -127,7 +127,7 @@ define(function (require) {
   /**
    * Gets a copy of the vector, returns a p5.Vector object.
    *
-   * @method copy
+   * @method get
    * @return {p5.Vector} the copy of the p5.Vector object
    */
   p5.Vector.prototype.copy = function () {

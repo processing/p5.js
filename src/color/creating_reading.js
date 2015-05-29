@@ -257,20 +257,13 @@ define(function (require) {
   };
 
   /**
-   * Calculates a color or colors between two color at a specific increment,
-   * using gamma correction to blend colors in the linear RGB space.
+   * Calculates a color or colors between two color at a specific increment.
    * The amt parameter is the amount to interpolate between the two values
    * where 0.0 equal to the first point, 0.1 is very near the first point,
    * 0.5 is halfway in between, etc. An amount below 0 will be treated as 0.
    * Likewise, amounts above 1 will be capped at 1. This is different from
    * the behavior of lerp(), but necessary because otherwise numbers outside
    * the range will produce strange and unexpected colors.
-   *
-   * The regular RGB color representation stores the square root of the 
-   * displayed color, not the value itself. Your monitor behaves as if it 
-   * squares the color values before displaying it. lerpColor first transforms
-   * colors into the linear color space before blending, to correctly mix the 
-   * colors as two rays of light.
    *
    * @method lerpColor
    * @param  {Array/Number} c1  interpolate from this color
@@ -298,24 +291,20 @@ define(function (require) {
    * </div>
    */
   p5.prototype.lerpColor = function (c1, c2, amt) {
-    amt = Math.max(Math.min(amt, 1), 0);
     if (c1 instanceof Array) {
       var c = [];
       for (var i = 0; i < c1.length; i++) {
-        c.push(Math.sqrt(p5.prototype.lerp(c1[i]*c1[i], c2[i]*c2[i], amt)));
+        c.push(p5.prototype.lerp(c1[i], c2[i], amt));
       }
       return c;
     } else if (c1 instanceof p5.Color) {
       var pc = [];
       for (var j = 0; j < 4; j++) {
-        pc.push(Math.sqrt(p5.prototype.lerp(
-          c1.rgba[j]*c1.rgba[j],
-          c2.rgba[j]*c2.rgba[j],
-          amt)));
+        pc.push(p5.prototype.lerp(c1.rgba[j], c2.rgba[j], amt));
       }
       return new p5.Color(this, pc);
     } else {
-      return Math.sqrt(p5.prototype.lerp(c1*c1, c2*c2, amt));
+      return p5.prototype.lerp(c1, c2, amt);
     }
   };
 

@@ -77,7 +77,7 @@ define(function (require) {
       this._setProperty('touchY', touchPos.y);
 
       var touches = [];
-      for(var i = 0; i < e.touches.length; i++){
+      for(var i = 0; i < e.changedTouches.length; i++){
         var pos = getTouchPos(this._curElement.elt, e, i);
         touches[i] = {x: pos.x, y: pos.y};
       }
@@ -93,17 +93,16 @@ define(function (require) {
   function getTouchPos(canvas, e, i) {
     i = i || 0;
     var rect = canvas.getBoundingClientRect();
-    var touch = e.touches[i] || e.changedTouches[i];
-    return  {
-      x: touch.clientX - rect.left,
-      y: touch.clientY - rect.top
+    return {
+      x: e.changedTouches[i].clientX - rect.left,
+      y: e.changedTouches[i].clientY - rect.top
     };
   }
 
   /**
    * The touchStarted() function is called once after every time a touch is
    * registered. If no touchStarted() function is defined, the mousePressed()
-   * function will be called instead if it is defined. Browsers may have
+   * function will be called instead if it is defined. Browsers may have 
    * different default
    * behaviors attached to various touch events. To prevent any default
    * behavior for this event, add `return false` to the end of the method.
@@ -112,9 +111,9 @@ define(function (require) {
    * @example
    * <div>
    * <code>
-   * // Touch within the image to change
+   * // Touch within the image to change 
    * // the value of the rectangle
-   *
+   *       
    * var value = 0;
    * function draw() {
    *   fill(value);
@@ -129,7 +128,7 @@ define(function (require) {
    * }
    * </code>
    * </div>
-   *
+   * 
    * <div class="norender">
    * <code>
    * function touchStarted() {
@@ -172,7 +171,7 @@ define(function (require) {
    * <code>
    * // Move your finger across the page
    * // to change its value
-   *
+   *       
    * var value = 0;
    * function draw() {
    *   fill(value);
@@ -186,7 +185,7 @@ define(function (require) {
    * }
    * </code>
    * </div>
-   *
+   * 
    * <div class="norender">
    * <code>
    * function touchMoved() {
@@ -216,7 +215,7 @@ define(function (require) {
   };
 
   /**
-   * The touchEnded() function is called every time a touch ends. If no
+   * The touchEnded() function is called every time a touch ends. If no 
    * touchStarted() function is defined, the mouseReleased() function will be
    * called instead if it is defined. Browsers may have different default
    * behaviors attached to various touch events. To prevent any default
@@ -226,9 +225,9 @@ define(function (require) {
    * @example
    * <div>
    * <code>
-   * // Release touch within the image to
+   * // Release touch within the image to 
    * // change the value of the rectangle
-   *
+   *       
    * var value = 0;
    * function draw() {
    *   fill(value);
@@ -243,7 +242,7 @@ define(function (require) {
    * }
    * </code>
    * </div>
-   *
+   * 
    * <div class="norender">
    * <code>
    * function touchEnded() {

@@ -194,9 +194,10 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.tint = function () {
-    var c = this.color.apply(this, arguments);
-    this._tint = c.rgba;
+  p5.prototype.tint = function() {
+    var c = p5.Color._getFormattedColor.apply(this, arguments);
+    c = p5.Color._normalizeColorArray.call(this, c);
+    this._tint = c;
   };
 
   /**
@@ -204,21 +205,6 @@ define(function (require) {
    * displaying images with their original hues.
    *
    * @method noTint
-      * @example
-   * <div>
-   * <code>
-   * var img;
-   * function preload() {
-   *   img = loadImage("assets/laDefense.jpg");
-   * }
-   * function setup() {
-   *   tint(0, 153, 204);  // Tint blue
-   *   image(img, 0, 0);
-   *   noTint();  // Disable tint
-   *   image(img, 50, 0);
-   * }
-   * </code>
-   * </div>
    */
   p5.prototype.noTint = function() {
     this._tint = null;

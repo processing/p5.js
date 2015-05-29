@@ -177,6 +177,27 @@ define(function (require){
       'gl_FragColor = texture2D(texture,vertTexCoord.st)*',
       '(gl_FrontFacing ? vertColor : backVertColor);',
       '}'
+    ].join('\n'),
+    testVert: [
+      'attribute vec3 position;',
+      'uniform mat4 modelviewMatrix;',
+      'uniform mat4 transformMatrix;',
+      'void main(void) {',
+      'vec3 zeroToOne = position / 1000.0;',
+      // convert from 0->1 to 0->2
+      'vec3 zeroToTwo = zeroToOne * 2.0;',
+      // convert from 0->2 to -1->+1 (clipspace)
+      'vec3 clipSpace = zeroToTwo - 1.0;',
+      'vec4 positionVec4 = vec4(clipSpace * vec3(1., -1., 1.), 1.);',
+      'gl_Position = transformMatrix * modelviewMatrix * positionVec4;',
+      '}'
+    ].join('\n'),
+    testFrag: [
+      'precision mediump float;',
+      'uniform vec4 uMaterialColor;',
+      'void main(void) {',
+      'gl_FragColor = uMaterialColor;',
+      '}'
     ].join('\n')
   };
 });

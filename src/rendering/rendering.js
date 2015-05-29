@@ -66,6 +66,10 @@ define(function(require) {
       }
     }
 
+    c.setAttribute('width', w * this._pixelDensity);
+    c.setAttribute('height', h * this._pixelDensity);
+    c.setAttribute(
+      'style', 'width:' + w + 'px !important; height:' + h + 'px !important;');
     // set to invisible if still in setup (to prevent flashing with manipulate)
     if (!this._setupDone) {
       c.className += ' p5_hidden'; // tag to show later
@@ -81,16 +85,16 @@ define(function(require) {
     // Init our graphics renderer
     //webgl mode
     if (r === constants.WEBGL) {
+      this._graphics = new p5.Graphics3D(c, this, true);
       if (!this._defaultGraphics) {
-        this._graphics = new p5.Graphics3D(c, this, true);
         this._defaultGraphics = this._graphics;
         this._elements.push(this._defaultGraphics);
       }
     }
     //P2D mode
     else {
+      this._graphics = new p5.Graphics2D(c, this, true);
       if (!this._defaultGraphics) {
-        this._graphics = new p5.Graphics2D(c, this, true);
         this._defaultGraphics = this._graphics;
         this._elements.push(this._defaultGraphics);
       }

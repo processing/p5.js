@@ -280,7 +280,7 @@ define(function (require) {
    * @param  {Integer} dw destination image width
    * @param  {Integer} dh destination image height
    */
-  p5.Image.prototype.copy = function () {
+  p5.Image.prototype.copy = function() {
     p5.prototype.copy.apply(this, arguments);
   };
 

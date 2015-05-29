@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/processing/p5.js.git"
   },
-  "version": "0.4.5",
+  "version": "0.4.3",
   "devDependencies": {
     "amdclean": "~0.3.3",
     "grunt": "^0.4.5",

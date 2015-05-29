@@ -13,18 +13,15 @@ define(function (require) {
   require('p5.Color');
 
   /**
-   * <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
-   * /Global_Objects/Uint8ClampedArray' target='_blank'>Uint8ClampedArray</a>
-   * containing the values for all the pixels in the display
-   * window. These values are numbers. This array is the size of the display 
-   * window x4, representing the R, G, B, A values in order for each pixel, 
-   * moving from left to right across each row, then down each column. For 
-   * example, if the image is 100x100 pixels, there will be 40000. The 
-   * first four values (indices 0-3) in the array will be the R, G, B, A  
-   * values of the pixel at (0, 0). The second four values (indices 4-7) will 
-   * contain the R, G, B, A values of the pixel at (1, 0). More generally, to 
-   * set values for a pixel at (x, y): 
-   * <br>
+   * Array containing the values for all the pixels in the display window.
+   * These values are numbers. This array is the size of the display window x4,
+   * representing the R, G, B, A values in order for each pixel, moving from 
+   * left to right across each row, then down each column. For example, 
+   * if the image is 100x100 pixels, there will be 40000. The first four values
+   * (indices 0-3) in the array will be the R, G, B, A values of the pixel at 
+   * (0, 0). The second four values (indices 4-7) will contain the R, G, B, A
+   * values of the pixel at (1, 0). More generally, to set values for a pixel
+   * at (x, y): 
    * <code>pixels[y*width+x] = r; 
    * pixels[y*width+x+1] = g;
    * pixels[y*width+x+2] = b;
@@ -33,11 +30,6 @@ define(function (require) {
    * Before accessing this array, the data must loaded with the loadPixels()
    * function. After the array data has been modified, the updatePixels()
    * function must be run to update the changes.
-   * <br><br>
-   * Note that this is not a standard javascript array.  This means that 
-   * standard javascript functions such as <code>slice()</code> or 
-   * <code>arrayCopy()</code> do not
-   * work.
    *
    * @property pixels[]   
    * @example
@@ -147,8 +139,8 @@ define(function (require) {
    * @param  {Integer} dw destination image width
    * @param  {Integer} dh destination image height
    */
-  p5.prototype.copy = function () {
-    p5.Graphics2D._copyHelper.apply(this, arguments);
+  p5.prototype.copy = function() {
+    this._graphics.copy.apply(this._graphics, arguments);
   };
 
   /**
@@ -261,10 +253,6 @@ define(function (require) {
    * pixel array. It can also be a single grayscale value.
    * When setting an image, the x and y parameters define the coordinates for
    * the upper-left corner of the image, regardless of the current imageMode().
-   * </p>
-   * <p>
-   * After using set(), you must call updatePixels() for your changes to 
-   * appear.  This should be called once all pixels have been set.
    * </p>
    * <p>Setting the color of a single pixel with set(x, y) is easy, but not as
    * fast as putting the data directly into pixels[]. The equivalent statement
