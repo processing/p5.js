@@ -128,7 +128,7 @@ define(function (require){
       'spotExp):one_float;',
       
       'if (any(greaterThan(lightAmbient[i], zero_vec3))) {',
-      'totalAmbient       += lightAmbient[i] * falloff;',
+      'totalAmbient+= lightAmbient[i] * falloff;',
       '}',
       
       'if (any(greaterThan(lightDiffuse[i], zero_vec3))) {',
