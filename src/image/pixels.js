@@ -164,19 +164,185 @@ define(function (require) {
    * @param  {Integer} dy Y coordinate of the destination's upper left corner
    * @param  {Integer} dw destination image width
    * @param  {Integer} dh destination image height
+   *
+   * @example
+   * <div><code>
+   * var img;
+   *
+   * function preload() {
+   *   img = loadImage("assets/rockies.jpg");
+   * }
+   * 
+   * function setup() {
+   *   background(img0);
+   *   image(img1, 0, 0);
+   *   copy(7, 22, 10, 10, 35, 25, 50, 50);
+   *   stroke(255);
+   *   noFill();
+   *   // Rectangle shows area being copied
+   *   rect(7, 22, 10, 10);
+   * }
+   * </code></div>
    */
   p5.prototype.copy = function () {
     p5.Graphics2D._copyHelper.apply(this, arguments);
   };
 
   /**
-   * Applies a filter to the canvas
+   * Applies a filter to the canvas.
+   * <br><br>
+   * 
+   * The presets options are:
+   * <br><br>
+   * 
+   * THRESHOLD 
+   * Converts the image to black and white pixels depending if they are above or
+   * below the threshold defined by the level parameter. The parameter must be 
+   * between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
+   * <br><br>
+   * 
+   * GRAY 
+   * Converts any colors in the image to grayscale equivalents. No parameter
+   * is used.
+   * <br><br>
+   * 
+   * OPAQUE 
+   * Sets the alpha channel to entirely opaque. No parameter is used.
+   * <br><br>
+   * 
+   * INVERT 
+   * Sets each pixel to its inverse value. No parameter is used.
+   * <br><br>
+   * 
+   * POSTERIZE
+   * Limits each channel of the image to the number of colors specified as the
+   * parameter. The parameter can be set to values between 2 and 255, but
+   * results are most noticeable in the lower ranges.
+   * <br><br>
+   * 
+   * BLUR
+   * Executes a Guassian blur with the level parameter specifying the extent
+   * of the blurring. If no parameter is used, the blur is equivalent to
+   * Guassian blur of radius 1. Larger values increase the blur.
+   * <br><br>
+   * 
+   * ERODE
+   * Reduces the light areas. No parameter is used.
+   * <br><br>
+   * 
+   * DILATE
+   * Increases the light areas. No parameter is used.
    * 
    * @method filter
-   * @param  {String}           operation one of threshold, gray, invert,
-   *                                      posterize and opaque. see filters.js
-   *                                      for docs on each available filter
-   * @param  {Number|undefined} value
+   * @param  {String}    kind  
+   * 
+   * @param  {Number|undefined} param
+   * 
+   * 
+   * @example
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *  image(img, 0, 0);
+   *  filter(THRESHOLD); 
+   * }
+   * </code>
+   * </div>
+   * 
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *  image(img, 0, 0);
+   *  filter(GREY); 
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *  image(img, 0, 0);
+   *  filter(OPAQUE); 
+   * }
+   * </code>
+   * </div>
+   * 
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *  image(img, 0, 0);
+   *  filter(INVERT); 
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *  image(img, 0, 0);
+   *  filter(POSTERIZE,3); 
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *  image(img, 0, 0);
+   *  filter(DILATE); 
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *  image(img, 0, 0);
+   *  filter(BLUR,3); 
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *  image(img, 0, 0);
+   *  filter(ERODE); 
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.filter = function(operation, value) {
     Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);

@@ -12,17 +12,17 @@ define(function (require) {
   var p5 = require('core');
   var constants = require('constants');
 
+  require('helpers');
+
   // source: https://sites.google.com/site/hansmuller/flex-blog/CircularArc.mxml
   // blog post: http://hansmuller-flex.blogspot.ca/
   //            2011/04/approximating-circular-arc-with-cubic.html
-  // update to blog post: http://hansmuller-flex.blogspot.com/2011/10/
-  //                      more-about-approximating-circular-arcs.html
 
   var EPSILON = 0.00001;  // Roughly 1/1000th of a degree, see below
 
   /**
-   *  Return a array of objects that represent bezier curves which approximate 
-   *  the circular arc centered at the origin, from startAngle to endAngle 
+   *  Return a array of objects that represent bezier curves which approximate
+   *  the circular arc centered at the origin, from startAngle to endAngle
    *  (radians) with the specified radius.
    *
    *  Each bezier curve is an object with four points, where x1,y1 and
@@ -52,34 +52,33 @@ define(function (require) {
    *  Cubic bezier approximation of a circular arc centered at the origin,
    *  from (radians) a1 to a2, where a2-a1 < pi/2.  The arc's radius is r.
    *
-   *  Returns an object with four points, where x1,y1 and x4,y4 are the arc's 
+   *  Returns an object with four points, where x1,y1 and x4,y4 are the arc's
    *  end points and x2,y2 and x3,y3 are the cubic bezier's control points.
    *
    *  This algorithm is based on the approach described in:
-   *  A. Riškus, "Approximation of a Cubic Bezier Curve by Circular Arcs and 
+   *  A. Riškus, "Approximation of a Cubic Bezier Curve by Circular Arcs and
    *  Vice Versa," Information Technology and Control, 35(4), 2006 pp. 371-378.
    */
   p5.prototype._createSmallArc = function(r, a1, a2) {
     // Compute all four points for an arc that subtends the same total angle
     // but is centered on the X-axis
 
-    var a = (a2 - a1) / 2.0; // 
+    var a = (a2 - a1) / 2.0; //
 
     var x4 = r * Math.cos(a);
     var y4 = r * Math.sin(a);
     var x1 = x4;
     var y1 = -y4;
 
-    var q1 = x1*x1 + y1*y1;
-    var q2 = q1 + x1*x4 + y1*y4;
-    var k2 = 4/3 * (Math.sqrt(2 * q1 * q2) - q2) / (x1 * y4 - y1 * x4);
+    var k = 0.5522847498;
+    var f = k * Math.tan(a);
 
-    var x2 = x1 - k2 * y1;
-    var y2 = y1 + k2 * x1;
+    var x2 = x1 + f * y4;
+    var y2 = y1 + f * x4;
     var x3 = x2;
     var y3 = -y2;
 
-    // Find the arc points actual locations by computing x1,y1 and x4,y4 
+    // Find the arc points actual locations by computing x1,y1 and x4,y4
     // and rotating the control points by a + a1
 
     var ar = a + a1;
@@ -106,7 +105,7 @@ define(function (require) {
    *
    * If mode is provided draws the arc either open, chord or pie, dependent
    * on the variable provided.
-   * 
+   *
    * @method arc
    * @param  {Number} a      x-coordinate of the arc's ellipse
    * @param  {Number} b      y-coordinate of the arc's ellipse
@@ -146,7 +145,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-	p5.prototype.arc = function(x, y, width, height, start, stop, mode) {
+  p5.prototype.arc = function(x, y, width, height, start, stop, mode) {
     if (!this._doStroke && !this._doFill) {
       return this;
     }
@@ -163,8 +162,8 @@ define(function (require) {
    * Draws an ellipse (oval) to the screen. An ellipse with equal width and
    * height is a circle. By default, the first two parameters set the location,
    * and the third and fourth parameters set the shape's width and height. The
-   * origin may be changed with the ellipseMode() function. 
-   * 
+   * origin may be changed with the ellipseMode() function.
+   *
    * @method ellipse
    * @param  {Number} a x-coordinate of the ellipse.
    * @param  {Number} b y-coordinate of the ellipse.
@@ -179,13 +178,19 @@ define(function (require) {
    * </div>
    */
   p5.prototype.ellipse = function(x, y, w, h) {
+    this._validateParameters(
+      'ellipse',
+      arguments,
+      ['Number', 'Number', 'Number', 'Number']
+    );
+
     if (!this._doStroke && !this._doFill) {
       return this;
     }
     // p5 supports negative width and heights for ellipses
     w = Math.abs(w);
     h = Math.abs(h);
-    //@TODO add catch block here if this._graphics 
+    //@TODO add catch block here if this._graphics
     //doesn't have the method implemented yet
     this._graphics.ellipse(x, y, w, h);
     return this;
@@ -197,7 +202,7 @@ define(function (require) {
    * function will not affect the color of a line. 2D lines are drawn with a
    * width of one pixel by default, but this can be changed with the
    * strokeWeight() function.
-   * 
+   *
    * @method line
    * @param  {Number} x1 the x-coordinate of the first point
    * @param  {Number} y1 the y-coordinate of the first point
@@ -221,7 +226,6 @@ define(function (require) {
    * </code>
    * </div>
    */
-  
   ////commented out original
   // p5.prototype.line = function(x1, y1, x2, y2) {
   //   if (!this._doStroke) {
@@ -229,10 +233,19 @@ define(function (require) {
   //   }
   //   if(this._graphics.isP3D){
   //   } else {
-  //     this._graphics.line(x1, y1, x2, y2);      
+  //     this._graphics.line(x1, y1, x2, y2);
   //   }
   // };
   p5.prototype.line = function() {
+    this._validateParameters(
+      'line',
+      arguments,
+      [
+        ['Number', 'Number', 'Number', 'Number'],
+        ['Number', 'Number', 'Number', 'Number', 'Number', 'Number']
+      ]
+    );
+
     if (!this._doStroke) {
       return this;
     }
@@ -256,7 +269,7 @@ define(function (require) {
    * Draws a point, a coordinate in space at the dimension of one pixel.
    * The first parameter is the horizontal value for the point, the second
    * value is the vertical value for the point.
-   * 
+   *
    * @method point
    * @param  {Number} x the x-coordinate
    * @param  {Number} y the y-coordinate
@@ -272,6 +285,12 @@ define(function (require) {
    * </div>
    */
   p5.prototype.point = function(x, y) {
+    this._validateParameters(
+      'point',
+      arguments,
+      ['Number', 'Number']
+    );
+
     if (!this._doStroke) {
       return this;
     }
@@ -286,10 +305,10 @@ define(function (require) {
    * constrained to ninety degrees. The first pair of parameters (x1,y1)
    * sets the first vertex and the subsequent pairs should proceed
    * clockwise or counter-clockwise around the defined shape.
-   * 
+   *
    * @method quad
    * @param {type} x1 the x-coordinate of the first point
-   * @param {type} y1 the y-coordinate of the first point 
+   * @param {type} y1 the y-coordinate of the first point
    * @param {type} x2 the x-coordinate of the second point
    * @param {type} y2 the y-coordinate of the second point
    * @param {type} x3 the x-coordinate of the third point
@@ -299,12 +318,19 @@ define(function (require) {
    * @return {p5}     the p5 object
    * @example
    * <div>
-   * <code>   
+   * <code>
    * quad(38, 31, 86, 20, 69, 63, 30, 76);
    * </code>
    * </div>
    */
   p5.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
+    this._validateParameters(
+      'quad',
+      arguments,
+      [ 'Number', 'Number', 'Number', 'Number',
+        'Number', 'Number', 'Number', 'Number' ]
+    );
+
     if (!this._doStroke && !this._doFill) {
       return this;
     }
@@ -356,8 +382,18 @@ define(function (require) {
   * </code>
   * </div>
   */
-
   p5.prototype.rect = function (x, y, w, h, tl, tr, br, bl) {
+    this._validateParameters(
+      'rect',
+      arguments,
+      [
+        ['Number', 'Number', 'Number', 'Number'],
+        ['Number', 'Number', 'Number', 'Number', 'Number'],
+        [ 'Number', 'Number', 'Number', 'Number',
+          'Number', 'Number', 'Number', 'Number', 'Number' ]
+      ]
+    );
+
     if (!this._doStroke && !this._doFill) {
       return;
     }
@@ -369,7 +405,7 @@ define(function (require) {
   * A triangle is a plane created by connecting three points. The first two
   * arguments specify the first point, the middle two arguments specify the
   * second point, and the last two arguments specify the third point.
-  * 
+  *
   * @method triangle
   * @param  {Number} x1 x-coordinate of the first point
   * @param  {Number} y1 y-coordinate of the first point
@@ -386,6 +422,12 @@ define(function (require) {
   * </div>
   */
   p5.prototype.triangle = function(x1, y1, x2, y2, x3, y3) {
+    this._validateParameters(
+      'triangle',
+      arguments,
+      ['Number', 'Number', 'Number', 'Number', 'Number', 'Number']
+    );
+
     if (!this._doStroke && !this._doFill) {
       return this;
     }

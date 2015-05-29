@@ -13,6 +13,8 @@ define(function (require) {
   var canvas = require('canvas');
   var constants = require('constants');
 
+  require('helpers');
+
   /**
    * Loads an image from a path and creates a p5.Image from it.
    *
@@ -23,12 +25,12 @@ define(function (require) {
    *
    * @method loadImage
    * @param  {String} path Path of the image to be loaded
-   * @param  {Function(p5.Image)} [successCallback] Function to be called once 
-   *                                the image is loaded. Will be passed the 
+   * @param  {Function(p5.Image)} [successCallback] Function to be called once
+   *                                the image is loaded. Will be passed the
    *                                p5.Image.
-   * @param  {Function(Event)}    [failureCallback] called with event error if 
+   * @param  {Function(Event)}    [failureCallback] called with event error if
    *                                the image fails to load.
-   * @return {p5.Image}             the p5.Image object   
+   * @return {p5.Image}             the p5.Image object
    * @example
    * <div>
    * <code>
@@ -67,7 +69,7 @@ define(function (require) {
         successCallback(pImg);
       }
     };
-    
+
     img.onerror = function(e) {
       if (typeof failureCallback === 'function') {
         failureCallback(e);
@@ -122,6 +124,15 @@ define(function (require) {
    * </div>
    */
   p5.prototype.image = function(img, x, y, width, height) {
+    this._validateParameters(
+      'image',
+      arguments,
+      [
+        ['p5.Image', 'Number', 'Number'],
+        ['p5.Image', 'Number', 'Number', 'Number', 'Number']
+      ]
+    );
+
     // set defaults
     x = x || 0;
     y = y || 0;
@@ -167,6 +178,7 @@ define(function (require) {
    * }
    * </code>
    * </div>
+   * 
    * <div>
    * <code>
    * var img;
@@ -180,6 +192,7 @@ define(function (require) {
    * }
    * </code>
    * </div>
+   * 
    * <div>
    * <code>
    * var img;
@@ -204,12 +217,12 @@ define(function (require) {
    * displaying images with their original hues.
    *
    * @method noTint
-      * @example
+   * @example
    * <div>
    * <code>
    * var img;
    * function preload() {
-   *   img = loadImage("assets/laDefense.jpg");
+   *   img = loadImage("assets/bricks.jpg");
    * }
    * function setup() {
    *   tint(0, 153, 204);  // Tint blue
@@ -230,6 +243,7 @@ define(function (require) {
    *
    * @param {p5.Image} The image to be tinted
    * @return {canvas} The resulting tinted canvas
+   * 
    */
   p5.prototype._getTintedImageCanvas = function(img) {
     if (!img.canvas) {
@@ -276,6 +290,46 @@ define(function (require) {
    *
    * @method imageMode
    * @param {String} m The mode: either CORNER, CORNERS, or CENTER.
+   * @example
+   * 
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *   imageMode(CORNER);
+   *   image(img, 10, 10, 50, 50);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *   imageMode(CORNERS);
+   *   image(img, 10, 10, 90, 40);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *   imageMode(CENTER);
+   *   image(img, 50, 50, 80, 80);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.imageMode = function(m) {
     if (m === constants.CORNER ||

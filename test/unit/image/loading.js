@@ -1,7 +1,7 @@
 suite('loading images', function () {
   var myp5 = new p5(function () {
   }, true);
-  var imagePath = 'unit/image/nyan_cat.gif';
+  var imagePath = 'unit/assets/nyan_cat.gif';
 
   test('should call successCallback when image loads', function (done) {
     myp5.loadImage(

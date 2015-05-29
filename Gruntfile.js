@@ -1,7 +1,7 @@
 /**
  *  This is the Gruntfile for p5.js. Grunt is a task runner/builder
  *  which is what p5.js uses to build the source code into the library
- *  and handle other housekeeping tasks. 
+ *  and handle other housekeeping tasks.
  *
  *  There are three main tasks:
  *
@@ -17,10 +17,10 @@
  *  And there are several secondary tasks:
  *
  *
- *  grunt watch       - This watches the source for changes and rebuilds on 
+ *  grunt watch       - This watches the source for changes and rebuilds on
  *                      every file change.
- *      
- *  grunt update_json - This automates updating the bower file 
+ *
+ *  grunt update_json - This automates updating the bower file
  *                      to match the package.json
  */
 
@@ -38,7 +38,7 @@ module.exports = function(grunt) {
 
 
   grunt.initConfig({
-    
+
     // read in the package, used for knowing the current version, et al.
     pkg: grunt.file.readJSON('package.json'),
 
@@ -59,7 +59,7 @@ module.exports = function(grunt) {
     },
 
     // Set up the watch task, used for live-reloading during development.
-    // This watches both the codebase and the yuidoc theme.  Changing the 
+    // This watches both the codebase and the yuidoc theme.  Changing the
     // code touches files within the theme, so it will also recompile the
     // documentation.
     watch: {
@@ -142,7 +142,7 @@ module.exports = function(grunt) {
               '}(this, function () {\n'].join('\n'),
             end: 'return amdclean[\'src_app\'];\n}));'
           },
-          // This will transform the compiled file, reversing out the AMD loader and creating a 
+          // This will transform the compiled file, reversing out the AMD loader and creating a
           // static JS file.  This code is potentially problematic.
           onBuildWrite: function( name, path, contents ) {
             if (name === 'reqwest') {
@@ -166,61 +166,84 @@ module.exports = function(grunt) {
           // This is a list of all dependencies, mapped to their AMD identifier.
           paths: {
             'app': 'src/app',
-            'p5.Color': 'src/objects/p5.Color',
-            'p5.Element': 'src/objects/p5.Element',
-            'p5.File': 'src/objects/p5.File',
-            'p5.Graphics': 'src/objects/p5.Graphics',
-            'p5.Graphics2D': 'src/objects/p5.Graphics2D',
-            'p5.Graphics3D': 'src/objects/p5.Graphics3D',
-            'p5.Image': 'src/objects/p5.Image',
-            'p5.Vector': 'src/objects/p5.Vector',
-            'p5.TableRow': 'src/objects/p5.TableRow',
-            'p5.Table': 'src/objects/p5.Table',
-            'color.creating_reading': 'src/color/creating_reading',
-            'color.setting': 'src/color/setting',
-            'core': 'src/core/core',
+
+            // core
+            'canvas': 'src/core/canvas',
             'constants': 'src/core/constants',
-            'data.conversion': 'src/data/conversion',
-            'data.array_functions': 'src/data/array_functions',
-            'data.string_functions': 'src/data/string_functions',
-            'environment': 'src/environment/environment',
+            'core': 'src/core/core',
+            'environment': 'src/core/environment',
+            'helpers': 'src/core/helpers',
+            'output.text_area': 'src/core/text_area',
+            'p5.Element': 'src/core/p5.Element',
+            'p5.Graphics': 'src/core/p5.Graphics',
+            'p5.Graphics2D': 'src/core/p5.Graphics2D',
+            'rendering.rendering': 'src/core/rendering',
+            'shape.2d_primitives': 'src/core/2d_primitives',
+            'shape.attributes': 'src/core/attributes',
+            'shape.curves': 'src/core/curves',
+            'shape.vertex': 'src/core/vertex',
+            'shim': 'src/core/shim',
+            'structure': 'src/core/structure',
+            'transform': 'src/core/transform',
+
+            // 3d
+            'p5.Graphics3D': 'src/3d/p5.Graphics3D',
+            'mat4': 'src/3d/mat4',
+            'shaders': 'src/3d/shaders',
+            'shape.3d_primitives': 'src/3d/3d_primitives',
+            // p5.Matrix not included currently?
+
+            // image
+            'filters': 'src/image/filters',
             'image.image': 'src/image/image',
             'image.loading_displaying': 'src/image/loading_displaying',
             'image.pixels': 'src/image/pixels',
-            'input.files': 'src/input/files',
-            'input.keyboard': 'src/input/keyboard',
-            'input.acceleration': 'src/input/acceleration',
-            'input.mouse': 'src/input/mouse',
-            'input.time_date': 'src/input/time_date',
-            'input.touch': 'src/input/touch',
-            'math.math': 'src/math/math',
-            'math.calculation': 'src/math/calculation',
-            'math.random': 'src/math/random',
-            'math.noise': 'src/math/noise',
-            'math.trigonometry': 'src/math/trigonometry',
-            'output.files': 'src/output/files',
-            'output.image': 'src/output/image',
-            'output.text_area': 'src/output/text_area',
-            'rendering.rendering': 'src/rendering/rendering',
-            'shape.2d_primitives': 'src/shape/2d_primitives',
-            'shape.3d_primitives': 'src/shape/3d_primitives',
-            'shape.attributes': 'src/shape/attributes',
-            'shape.curves': 'src/shape/curves',
-            //'shape.shape': 'src/shape/shape',
-            'shape.vertex': 'src/shape/vertex',
-            'structure': 'src/structure/structure',
-            'transform': 'src/transform/transform',
+            'output.image': 'src/image/image_output',
+            'p5.Image': 'src/image/p5.Image',
+
+            // typography
             'typography.attributes': 'src/typography/attributes',
             'typography.loading_displaying': 'src/typography/loading_displaying',
-            'canvas': 'src/var/canvas',
-            'linearalgebra': 'src/var/linearalgebra',
-            'polargeometry': 'src/var/polargeometry',
-            'shim': 'src/var/shim',
-            'shaders': 'src/var/shaders',
+
+            // math
+            'p5.Vector': 'src/math/p5.Vector',
+            'polargeometry': 'src/math/polargeometry',
+            'math.calculation': 'src/math/calculation',
+            'math.math': 'src/math/math',
+            'math.noise': 'src/math/noise',
+            'math.random': 'src/math/random',
+            'math.trigonometry': 'src/math/trigonometry',
+
+            // events
+            'input.acceleration': 'src/events/acceleration',
+            'input.keyboard': 'src/events/keyboard',
+            'input.mouse': 'src/events/mouse',
+            'input.touch': 'src/events/touch',
+
+
+            // io
+            'input.files': 'src/io/files_input',
+            'output.files': 'src/io/files_output',
+            'p5.TableRow': 'src/io/p5.TableRow',
+            'p5.Table': 'src/io/p5.Table',
+
+            // utilities
+            'input.time_date': 'src/utilities/time_date',
+            'data.conversion': 'src/utilities/conversion',
+            'data.array_functions': 'src/utilities/array_functions',
+            'data.string_functions': 'src/utilities/string_functions',
+
+            // color
+            'p5.Color': 'src/color/p5.Color',
+            'color.creating_reading': 'src/color/creating_reading',
+            'color.setting': 'src/color/setting',
+            'utils.color_utils': 'src/color/color_utils',
+
+            // external library
             'reqwest': 'node_modules/reqwest/reqwest',
-            'filters': 'src/image/filters',
-            'utils.color_utils': 'src/utils/color_utils',
-            'mat4': 'src/objects/mat4'
+
+            // move this to p5.DOM file
+            'p5.File': 'lib/addons/p5.File'
           },
         }
       },
@@ -242,11 +265,12 @@ module.exports = function(grunt) {
       }
     },
 
-    // This minifies the javascript into a single file and adds a banner to the 
+    // This minifies the javascript into a single file and adds a banner to the
     // front of the file.
     uglify: {
       options: {
-        banner: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */'
+        banner: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */',
+        footer: 'p5.prototype._validateParameters = function() {};'
       },
       build: {
         src: '<%= requirejs.p5_unminified.options.out %>',
@@ -254,7 +278,7 @@ module.exports = function(grunt) {
       }
     },
 
-    // this builds the documentation for the codebase. 
+    // this builds the documentation for the codebase.
     yuidoc: {
       compile: {
         name: '<%= pkg.name %>',
@@ -277,9 +301,9 @@ module.exports = function(grunt) {
         }
       }
     },
-    // This is a static server which is used when testing connectivity for the 
+    // This is a static server which is used when testing connectivity for the
     // p5 library. This avoids needing an internet connection to run the tests.
-    // It serves all the files in the test directory at http://localhost:9001/ 
+    // It serves all the files in the test directory at http://localhost:9001/
     connect: {
       server: {
         options: {
@@ -310,7 +334,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
 
   // Create the multitasks.
-  grunt.registerTask('test', ['connect', 'jshint', 'mocha']);
+  grunt.registerTask('test', ['connect', 'jshint', 'requirejs', 'mocha']);
   grunt.registerTask('yui', ['yuidoc']);
   grunt.registerTask('default', ['connect', 'jshint', 'requirejs', 'mocha', 'uglify']);
 };
