@@ -12,13 +12,11 @@
 var font1, x=30, y=80, words = 'greeN ideaS';
 
 function preload() {
-  font1 = loadFont(opentype, 'SourceSansPro-Regular.otf');
-  font2 = loadFont(opentype, 'acmesa.ttf');
+  font1 = loadFont('SourceSansPro-Regular.otf');
+  font2 = loadFont('acmesa.ttf');
 };
 
 function setup() {
-
-  //console.log(font);
 
   createCanvas(400, 200);
 
