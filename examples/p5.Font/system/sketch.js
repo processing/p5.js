@@ -10,10 +10,7 @@ var textSketch = function(p) {
     p.text("Blue No Stroke Text Italic", 10, 80);
     p.textStyle(p.BOLD);
     p.text("Blue No Stroke Text Bold", 10, 100);
-    p.textStyle(p.NORMAL);
-    p.textSize(12);
-    p.fill(120);
-    p.text("Simple long Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry. ", 10, 90, 220, 60);
+    p.fill(120).textStyle(p.NORMAL).textSize(12).text("Simple long Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry. ", 10, 90, 220, 60);
   };
 };
 
