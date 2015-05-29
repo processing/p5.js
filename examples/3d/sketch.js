@@ -1,8 +1,9 @@
-var theta = 0;
-
 function setup(){
   createCanvas(windowWidth, windowHeight, 'webgl');
 }
+
+var theta = 0;
+
 
 function draw(){
   background(0, 100, 200, 255);

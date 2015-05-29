@@ -203,12 +203,7 @@ define(function (require) {
    * </p>
    *
    * <p>When passing in multiple options, pass them in as separate parameters,
-   * seperated by commas. For example:
-   * <br><br>
-   * <code>
-   *   loadTable("my_csv_file.csv", "csv", "header")
-   * </code>
-   * </p>
+   * seperated by commas. For example: "csv, header".</p>
    *
    * <p> All files loaded and saved use UTF-8 encoding.</p>
    *
