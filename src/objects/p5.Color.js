@@ -24,8 +24,8 @@ define(function(require) {
       this.hsba = this.color_array;
       this.rgba = color_utils.hsbaToRGBA(this._converted_color);
     } else {
-      this.rgba = this._converted_color;
-      this.hsba = color_utils.rgbaToHSBA(this.rgba);
+      this.rgba = this.color_array;
+      this.hsba = color_utils.rgbaToHSBA(this._converted_color);
     }
 
     return this;
@@ -34,13 +34,11 @@ define(function(require) {
   p5.Color.prototype._convertTo255 = function (pInst) {
     var isRGB = pInst._colorMode === constants.RGB;
     var maxArr = isRGB ? pInst._maxRGB : pInst._maxHSB;
-    // var arr = this.color_array;
     var arr = [];
     arr[0] = this.color_array[0] * 255 / maxArr[0];
     arr[1] = this.color_array[1] * 255 / maxArr[1];
     arr[2] = this.color_array[2] * 255 / maxArr[2];
     arr[3] = this.color_array[3] * 255 / maxArr[3];
-    // why does this return the arr when it is actually mutating the reference?
     return arr;
   };
 
