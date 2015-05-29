@@ -183,6 +183,11 @@ define(function(require) {
     ITALIC: 'italic',
     BOLD: 'bold',
 
+    // TYPOGRAPHY-INTERNAL
+    _DEFAULT_TEXT_FILL: '#000000',
+    _DEFAULT_LEADMULT: 1.25,
+    _CTX_MIDDLE: 'middle',
+
     // VERTICES
     LINEAR: 'linear',
     QUADRATIC: 'quadratic',
@@ -191,11 +196,7 @@ define(function(require) {
 
     // DEFAULTS
     _DEFAULT_STROKE: '#000000',
-    _DEFAULT_FILL: '#FFFFFF',
-
-    // text gets black fill and no-stroke by default
-    _DEFAULT_TEXT_FILL: '#000000',
-    _CTX_MIDDLE: 'middle'
+    _DEFAULT_FILL: '#FFFFFF'
 
   };
 

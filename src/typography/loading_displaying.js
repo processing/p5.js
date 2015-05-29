@@ -9,6 +9,7 @@ define(function(require) {
   'use strict';
 
   var p5 = require('core');
+  var constants = require('constants');
 
   /**
    * Draws text to the screen. Displays the information specified in the first
@@ -56,28 +57,9 @@ define(function(require) {
    */
   p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 
-    if (!(this._doFill || this._doStroke)) {
-      return this;
-    }
-
-    return this._graphics.text.apply(this._graphics, arguments);
+    return (!(this._doFill || this._doStroke)) ? this :
+      this._graphics.text.apply(this._graphics, arguments);
   };
-
-  function renderText(p, line, x, y) {
-
-    if (p._isOpenType()) {
-
-      return p._textFont.renderPath(line, x, y);
-    }
-
-    if (p._doFill) {
-      p.drawingContext.fillText(line, x, y);
-    }
-
-    if (p._doStroke) {
-      p.drawingContext.strokeText(line, x, y);
-    }
-  }
 
   /**
    * Sets the current font that will be drawn with the text() function.
@@ -98,17 +80,26 @@ define(function(require) {
    */
   p5.prototype.textFont = function(theFont, theSize) {
 
-    theSize = theSize || this._textSize;
+    if (arguments.length) {
 
-    if (!theFont) {
-      throw 'null font passed to textFont';
+      if (!theFont) {
+
+        throw Error('null font passed to textFont');
+      }
+
+      this._setProperty('_textFont', theFont);
+
+      if (theSize) {
+
+        this._setProperty('_textSize', theSize);
+        this._setProperty('_textLeading',
+          theSize * constants._DEFAULT_LEADMULT);
+      }
+
+      return this._graphics._applyTextProperties();
     }
 
-    this._setProperty('_textFont', theFont);
-
-    this.textSize(theSize);
-
-    return this._applyTextProperties();
+    return this;
   };
 
   return p5;

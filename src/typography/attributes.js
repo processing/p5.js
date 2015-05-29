@@ -12,9 +12,9 @@ define(function(require) {
   var p5 = require('core');
   var constants = require('constants');
 
+  p5.prototype._textSize = 12;
   p5.prototype._textLeading = 15;
   p5.prototype._textFont = 'sans-serif';
-  p5.prototype._textSize = 12;
   p5.prototype._textStyle = constants.NORMAL;
   p5.prototype._textAscent = null;
   p5.prototype._textDescent = null;
@@ -79,6 +79,7 @@ define(function(require) {
       this._setProperty('_textLeading', l);
       return this;
     }
+
     return this._textLeading;
   };
 
@@ -105,8 +106,8 @@ define(function(require) {
     if (arguments.length) {
 
       this._setProperty('_textSize', s);
-      this._setProperty('_textLeading', s * 1.25);
-      return this._applyTextProperties();
+      this._setProperty('_textLeading', s * constants._DEFAULT_LEADMULT);
+      return this._graphics._applyTextProperties();
     }
 
     return this._textSize;
@@ -145,7 +146,7 @@ define(function(require) {
         s === constants.BOLD) {
         this._setProperty('_textStyle', s);
       }
-      return this._applyTextProperties();
+      return this._graphics._applyTextProperties();
     }
 
     return this._textStyle;
@@ -200,61 +201,11 @@ define(function(require) {
     return this._textAscent;
   };
 
-  /*p5.prototype.textBounds = function(str, x, y, fontSize) {
-
-    //console.log('textBounds::',str, this._textFont);
-
-    if (typeof this._textFont !== 'object') {
-      throw 'not supported for system fonts';
-    }
-
-    x = x !== undefined ? x : 0;
-    y = y !== undefined ? y : 0;
-
-    var xCoords = [],
-      yCoords = [],
-      scale = 1 / this._textFont.unitsPerEm * this._textSize;
-
-    this._textFont.forEachGlyph(str, x, y, this._textSize, {},
-      function(glyph, gX, gY, gFontSize) {
-        if (glyph.name !== 'space') {
-
-          gX = gX !== undefined ? gX : 0;
-          gY = gY !== undefined ? gY : 0;
-
-          var gm = glyph.getMetrics();
-          var x1 = gX + (gm.xMin * scale);
-          var y1 = gY + (-gm.yMin * scale);
-          var x2 = gX + (gm.xMax * scale);
-          var y2 = gY + (-gm.yMax * scale);
-
-          xCoords.push(x1);
-          yCoords.push(y1);
-          xCoords.push(x2);
-          yCoords.push(y2);
-        }
-      });
-
-    var minX = Math.min.apply(null, xCoords);
-    var minY = Math.min.apply(null, yCoords);
-    var maxX = Math.max.apply(null, xCoords);
-    var maxY = Math.max.apply(null, yCoords);
-
-    return {
-      x: minX,
-      y: minY,
-      w: maxX - minX,
-      h: maxY - minY
-    };
-  };*/
-
   /*p5.prototype.fontMetrics = function(font, text, x, y, fontSize) {
 
     var xMins = [], yMins = [], xMaxs= [], yMaxs = [], p5 = this;
     //font = font || this._textFont;
     fontSize = fontSize || p5._textSize;
-
-    //console.log(fontSize, font);
 
     font.forEachGlyph(text, x, y, fontSize,
       {}, function(glyph, gX, gY, gFontSize) {
@@ -321,19 +272,6 @@ define(function(require) {
   };
 
   /**
-   * Helper fxn to apply text properties.
-   */
-  p5.prototype._applyTextProperties = function() {
-
-    this._setProperty('_textAscent', null);
-    this._setProperty('_textDescent', null);
-
-    return this._graphics._applyTextProperties(this._textStyle,
-      this._textSize, this._textFont);
-  };
-
-
-  /**
    * Helper fxn to measure ascent and descent.
    * Adapted from http://stackoverflow.com/a/25355178
    */
@@ -341,7 +279,6 @@ define(function(require) {
 
     if (this._isOpenType()) {
 
-      //console.log(Object.keys(this._textFont));
       var bounds = this._textFont.textBounds('ABCjgq|', 0, 0);
       this._setProperty('_textAscent', Math.abs(bounds.y));
       this._setProperty('_textDescent', bounds.h - Math.abs(bounds.y));

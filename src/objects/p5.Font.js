@@ -67,12 +67,14 @@ define(function(require) {
 
     path = this.font.getPath(line, x, y, fontSize, options);
 
+    // no stroke unless specified by user
     if (p._doStroke && p._strokeSet) {
 
       path.strokeWidth = p.drawingContext.lineWidth;
       path.stroke = p.drawingContext.strokeStyle;
     }
 
+    // if fill hasn't been set by user, use default text fill
     if (p._doFill) {
 
       path.fill = p._fillSet ? p.drawingContext.fillStyle :
