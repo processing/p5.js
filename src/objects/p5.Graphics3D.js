@@ -70,7 +70,7 @@ define(function(require) {
     // 3. compile the shader
     var _vertShader = gl.createShader(gl.VERTEX_SHADER);
     //load in our default vertex shader
-    gl.shaderSource(_vertShader, shaders.defaultVertShader);
+    gl.shaderSource(_vertShader, shaders.texLightVert);
     gl.compileShader(_vertShader);
     // if our vertex shader failed compilation?
     if (!gl.getShaderParameter(_vertShader, gl.COMPILE_STATUS)) {
@@ -81,7 +81,7 @@ define(function(require) {
 
     var _fragShader = gl.createShader(gl.FRAGMENT_SHADER);
     //load in our material frag shader
-    gl.shaderSource(_fragShader, shaders.defaultMatFragShader);
+    gl.shaderSource(_fragShader, shaders.texLightFrag);
     gl.compileShader(_fragShader);
     // if our frag shader failed compilation?
     if (!gl.getShaderParameter(_fragShader, gl.COMPILE_STATUS)) {
@@ -107,20 +107,20 @@ define(function(require) {
 
     //vertex position Attribute
     shaderProgram.vertexPositionAttribute =
-      gl.getAttribLocation(shaderProgram, 'a_VertexPosition');
+      gl.getAttribLocation(shaderProgram, 'position');
     gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
     //projection Matrix uniform
     shaderProgram.pMatrixUniform =
-      gl.getUniformLocation(shaderProgram, 'uPMatrix');
+      gl.getUniformLocation(shaderProgram, 'transformMatrix');
     //model view Matrix uniform
     shaderProgram.mvMatrixUniform =
-      gl.getUniformLocation(shaderProgram, 'uMVMatrix');
+      gl.getUniformLocation(shaderProgram, 'modelviewMatrix');
 
     //material color uniform
     //@TODO: remove hard coded white rgba 
     shaderProgram.uMaterialColorLoc = gl.getUniformLocation(shaderProgram,
-      'u_MaterialColor');
+      'color');
     // Set material uniform
     gl.uniform4f(shaderProgram.uMaterialColorLoc, 1.0, 1.0, 1.0, 1.0);
 
