@@ -1,7 +1,7 @@
 /**
  *  This is the Gruntfile for p5.js. Grunt is a task runner/builder
  *  which is what p5.js uses to build the source code into the library
- *  and handle other housekeeping tasks. 
+ *  and handle other housekeeping tasks.
  *
  *  There are three main tasks:
  *
@@ -17,10 +17,10 @@
  *  And there are several secondary tasks:
  *
  *
- *  grunt watch       - This watches the source for changes and rebuilds on 
+ *  grunt watch       - This watches the source for changes and rebuilds on
  *                      every file change.
- *      
- *  grunt update_json - This automates updating the bower file 
+ *
+ *  grunt update_json - This automates updating the bower file
  *                      to match the package.json
  */
 
@@ -38,7 +38,7 @@ module.exports = function(grunt) {
 
 
   grunt.initConfig({
-    
+
     // read in the package, used for knowing the current version, et al.
     pkg: grunt.file.readJSON('package.json'),
 
@@ -59,7 +59,7 @@ module.exports = function(grunt) {
     },
 
     // Set up the watch task, used for live-reloading during development.
-    // This watches both the codebase and the yuidoc theme.  Changing the 
+    // This watches both the codebase and the yuidoc theme.  Changing the
     // code touches files within the theme, so it will also recompile the
     // documentation.
     watch: {
@@ -142,7 +142,7 @@ module.exports = function(grunt) {
               '}(this, function () {\n'].join('\n'),
             end: 'return amdclean[\'src_app\'];\n}));'
           },
-          // This will transform the compiled file, reversing out the AMD loader and creating a 
+          // This will transform the compiled file, reversing out the AMD loader and creating a
           // static JS file.  This code is potentially problematic.
           onBuildWrite: function( name, path, contents ) {
             if (name === 'reqwest') {
@@ -243,11 +243,12 @@ module.exports = function(grunt) {
       }
     },
 
-    // This minifies the javascript into a single file and adds a banner to the 
+    // This minifies the javascript into a single file and adds a banner to the
     // front of the file.
     uglify: {
       options: {
-        banner: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */'
+        banner: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */',
+        footer: 'p5.prototype._validateParameters = function() {};'
       },
       build: {
         src: '<%= requirejs.p5_unminified.options.out %>',
@@ -255,7 +256,7 @@ module.exports = function(grunt) {
       }
     },
 
-    // this builds the documentation for the codebase. 
+    // this builds the documentation for the codebase.
     yuidoc: {
       compile: {
         name: '<%= pkg.name %>',
@@ -278,9 +279,9 @@ module.exports = function(grunt) {
         }
       }
     },
-    // This is a static server which is used when testing connectivity for the 
+    // This is a static server which is used when testing connectivity for the
     // p5 library. This avoids needing an internet connection to run the tests.
-    // It serves all the files in the test directory at http://localhost:9001/ 
+    // It serves all the files in the test directory at http://localhost:9001/
     connect: {
       server: {
         options: {
