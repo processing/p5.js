@@ -20,7 +20,6 @@ define(function(require) {
   'use strict';
 
   var p5 = require('core');
-  var constants = require('constants');
 
   p5.Font = function(p) {
 
@@ -30,22 +29,36 @@ define(function(require) {
 
   p5.Font.prototype.renderPath = function(line, x, y, fontSize, options) {
 
-    var path, p = this.parent;
+    var path, p = this.parent, textWidth, textHeight, textAscent, textDescent;
 
     fontSize = fontSize || p._textSize;
     options = options || {};
 
+    textWidth = p.textWidth(line);
+    textAscent = p.textAscent();
+    textDescent = p.textDescent();
+    textHeight = textAscent + textDescent;
+
+    if( p.drawingContext.textAlign === 'center' ) {
+      x -= textWidth / 2;
+    }
+    else if( p.drawingContext.textAlign === 'right' ){
+      x -= textWidth;
+    }
+
+    if( p.drawingContext.textBaseline === 'top') {
+      y += textHeight;
+    }
+    else if( p.drawingContext.textBaseline === 'middle') {
+      y += textHeight / 2 - textDescent;
+    }
+    else if( p.drawingContext.textBaseline === 'bottom') {
+      y -= textDescent;
+    }
+
     path = this.font.getPath(line, x, y, fontSize, options);
-
-    console.log('STROKE: '+p.drawingContext.strokeStyle);
-    console.log('FILL: '+p.drawingContext.fillStyle);
-
-    path.stroke = p._doStroke && (p.drawingContext.strokeStyle ||
-      constants._DEFAULT_TEXT_STROKE);
-
-    path.fill = p._doFill && (p.drawingContext.fillStyle ||
-      constants._DEFAULT_TEXT_FILL);
-
+    path.stroke = p._doStroke && p.drawingContext.strokeStyle;
+    path.fill = p._doFill && p.drawingContext.fillStyle;
     path.draw(p.drawingContext);
   };
 

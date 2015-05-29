@@ -103,7 +103,7 @@ define(function(require) {
           y += (maxHeight - totalHeight) / 2;
           break;
         case constants.BASELINE:
-          y += (maxHeight - totalHeight) - this._textDescent;
+          y += (maxHeight - totalHeight) - this.textDescent();
           break;
         }
       }
