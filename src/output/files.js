@@ -221,6 +221,7 @@ define(function (require) {
    *  The file saving process and location of the saved file will
    *  vary between web browsers.
    *
+   *  @method saveJSON
    *  @param  {Array|Object} json
    *  @param  {String} filename
    *  @param  {Boolean} [optimize]   If true, removes line breaks
@@ -276,6 +277,7 @@ define(function (require) {
    *  The file saving process and location of the saved file will
    *  vary between web browsers.
    *
+   *  @method saveStrings
    *  @param  {Array} list      string array to be written
    *  @param  {String} filename filename for output
    *  @example
@@ -329,6 +331,7 @@ define(function (require) {
    *  The file saving process and location of the saved file will
    *  vary between web browsers.
    *  
+   *  @method saveTable
    *  @param  {p5.Table} Table  the Table object to save to a file
    *  @param  {String} filename the filename to which the Table should be saved
    *  @param  {[String]} options  can be one of "tsv", "csv", or "html"
