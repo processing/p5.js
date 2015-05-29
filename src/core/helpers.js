@@ -15,6 +15,25 @@ define(function (require) {
   var EMPTY_VAR = 1;
   var WRONG_TYPE = 2;
   var typeColors = ['#008851', '#C83C00', '#4DB200'];
+  p5.prototype._testColors = function() {
+    var str = 'A box of biscuits, a box of mixed biscuits and a biscuit mixer';
+    report(str, 'println', '#ED225D'); // p5.js magenta
+    report(str, 'println', '#2D7BB6'); // p5.js blue
+    report(str, 'println', '#EE9900'); // p5.js orange
+    report(str, 'println', '#A67F59'); // p5.js light brown
+    report(str, 'println', '#704F21'); // p5.js gold
+    report(str, 'println', '#1CC581'); // auto cyan
+    report(str, 'println', '#FF6625'); // auto orange
+    report(str, 'println', '#79EB22'); // auto green
+    report(str, 'println', '#B40033'); // p5.js darkened magenta
+    report(str, 'println', '#084B7F'); // p5.js darkened blue
+    report(str, 'println', '#945F00'); // p5.js darkened orange
+    report(str, 'println', '#6B441D'); // p5.js darkened brown
+    report(str, 'println', '#2E1B00'); // p5.js darkened gold
+    report(str, 'println', '#008851'); // auto dark cyan
+    report(str, 'println', '#C83C00'); // auto dark orange
+    report(str, 'println', '#4DB200'); // auto dark green
+  };
 
   function report(message, func, color) {
     // p5.js brand - magenta: #ED225D, blue: #2D7BB6
