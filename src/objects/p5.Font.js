@@ -20,6 +20,7 @@ define(function(require) {
   'use strict';
 
   var p5 = require('core');
+  var constants = require('constants');
 
   p5.Font = function(p) {
 
@@ -29,7 +30,8 @@ define(function(require) {
 
   p5.Font.prototype.renderPath = function(line, x, y, fontSize, options) {
 
-    var path, p = this.parent, textWidth, textHeight, textAscent, textDescent;
+    var path, p = this.parent,
+      textWidth, textHeight, textAscent, textDescent;
 
     fontSize = fontSize || p._textSize;
     options = options || {};
@@ -39,26 +41,29 @@ define(function(require) {
     textDescent = p.textDescent();
     textHeight = textAscent + textDescent;
 
-    if( p.drawingContext.textAlign === 'center' ) {
+    if (p.drawingContext.textAlign === constants.CENTER) {
       x -= textWidth / 2;
-    }
-    else if( p.drawingContext.textAlign === 'right' ){
+    } else if (p.drawingContext.textAlign === constants.RIGHT) {
       x -= textWidth;
     }
 
-    if( p.drawingContext.textBaseline === 'top') {
+    if (p.drawingContext.textBaseline === constants.TOP) {
       y += textHeight;
-    }
-    else if( p.drawingContext.textBaseline === 'middle') {
+    } else if (p.drawingContext.textBaseline === 'middle') {
       y += textHeight / 2 - textDescent;
-    }
-    else if( p.drawingContext.textBaseline === 'bottom') {
+    } else if (p.drawingContext.textBaseline === constants.BOTTOM) {
       y -= textDescent;
     }
-
     path = this.font.getPath(line, x, y, fontSize, options);
-    path.stroke = p._doStroke && p.drawingContext.strokeStyle;
-    path.fill = p._doFill && p.drawingContext.fillStyle;
+    if (p._doStroke && p.drawingContext.strokeStyle !==
+      constants._DEFAULT_STROKE) {
+      path.stroke = p.drawingContext.strokeStyle;
+    }
+
+    if (p._doFill) {
+      path.fill = p.drawingContext.strokeStyle === constants._DEFAULT_FILL ?
+        constants._DEFAULT_TEXT_FILL : p.drawingContext.fillStyle;
+    }
     path.draw(p.drawingContext);
   };
 

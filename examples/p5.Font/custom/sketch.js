@@ -12,6 +12,9 @@ var textSketch = function(p) {
     p.noStroke();
     p.fill(0, 102, 153);
     p.text("Blue No Stroke Text", 10, 60);
+    p.stroke(0,200,0);
+    p.text("Blue with Green Stroked Text", 10, 90);
+    p.noStroke();
     p.textSize(12);
     p.fill(120);
     p.text("Simple long Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry. ", 10, 90, 220, 60);
