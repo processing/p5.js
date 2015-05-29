@@ -84,10 +84,11 @@ define(function (require) {
    * </div>
    */
   p5.prototype.brightness = function(c) {
-    if (!c instanceof p5.Color) {
-      throw new Error('Needs p5.Color as argument.');
+    if (c instanceof p5.Color || c instanceof Array) {
+      return this.color(c).getBrightness();
+    } else {
+      throw new Error('Needs p5.Color or pixel array as argument.');
     }
-    return c.getBrightness();
   };
 
   /**
