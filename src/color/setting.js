@@ -125,7 +125,7 @@ define(function (require) {
     if (arguments[0] instanceof p5.Image) {
       this.image(arguments[0], 0, 0, this.width, this.height);
     } else {
-      var curFill = this.drawingContext.fillStyle;
+      var curFill = this.drawingContext.fillStyle || p5.Constants._DEFAULT_FILL;
       // create background rect
       var color = this.color.apply(this, arguments);
       var newFill = color.toString();
