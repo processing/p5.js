@@ -24,10 +24,30 @@ define(function(require) {
 
   p5.Font.prototype.renderPath = function(line, x, y, fontSize, options) {
 
-    var path, p = this.parent;
+    var path, p = this.parent,
+      textWidth, textHeight, textAscent, textDescent;
 
     fontSize = fontSize || p._textSize;
     options = options || {};
+
+    textWidth = p.textWidth(line);
+    textAscent = p.textAscent();
+    textDescent = p.textDescent();
+    textHeight = textAscent + textDescent;
+
+    if (p.drawingContext.textAlign === constants.CENTER) {
+      x -= textWidth / 2;
+    } else if (p.drawingContext.textAlign === constants.RIGHT) {
+      x -= textWidth;
+    }
+
+    if (p.drawingContext.textBaseline === constants.TOP) {
+      y += textHeight;
+    } else if (p.drawingContext.textBaseline === 'middle') {
+      y += textHeight / 2 - textDescent;
+    } else if (p.drawingContext.textBaseline === constants.BOTTOM) {
+      y -= textDescent;
+    }
 
     path = this.font.getPath(line, x, y, fontSize, options);
 

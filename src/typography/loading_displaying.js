@@ -70,17 +70,16 @@ define(function(require) {
 
     if (typeof maxWidth !== 'undefined') {
       var totalHeight = 0;
-      var n, ii, line, testLine, testWidth, words, metrics;
+      var n, ii, line, testLine, testWidth, words;
       for (ii = 0; ii < cars.length; ii++) {
         line = '';
         words = cars[ii].split(' ');
         for (n = 0; n < words.length; n++) {
           testLine = line + words[n] + ' ';
-          metrics = this.drawingContext.measureText(testLine);
-          testWidth = metrics.width;
+          testWidth = this.textWidth(testLine);
           if (testWidth > maxWidth) {
             line = words[n] + ' ';
-            totalHeight += this._textLeading;
+            totalHeight += this.textLeading();
           } else {
             line = testLine;
           }
@@ -103,7 +102,7 @@ define(function(require) {
           y += (maxHeight - totalHeight) / 2;
           break;
         case constants.BASELINE:
-          y += (maxHeight - totalHeight) - this._textDescent;
+          y += (maxHeight - totalHeight);
           break;
         }
       }
@@ -112,24 +111,23 @@ define(function(require) {
         words = cars[ii].split(' ');
         for (n = 0; n < words.length; n++) {
           testLine = line + words[n] + ' ';
-          metrics = this.drawingContext.measureText(testLine);
-          testWidth = metrics.width;
+          testWidth = this.textWidth(testLine);
           if (testWidth > maxWidth) {
             renderText(this, line, x, y);
             line = words[n] + ' ';
-            y += this._textLeading;
+            y += this.textLeading();
           } else {
             line = testLine;
           }
         }
         renderText(this, line, x, y);
-        y += this._textLeading;
+        y += this.textLeading();
       }
     }
     else{
       for (var jj = 0; jj < cars.length; jj++) {
         renderText(this, cars[jj], x, y);
-        y += this._textLeading;
+        y += this.textLeading();
       }
     }
     return this;
