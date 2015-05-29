@@ -53,6 +53,7 @@ define(function(require) {
 
     if (p._doStroke && p._strokeSet) {
 
+      path.strokeWidth = p.drawingContext.lineWidth;
       path.stroke = p.drawingContext.strokeStyle;
     }
 

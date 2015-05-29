@@ -6,7 +6,7 @@ var textSketch = function(p) {
   };
   p.setup = function() {
     p.createCanvas(240, 160);
-    p.ellipse(20,20,50,70);
+    //p.ellipse(20,20,50,70);
     p.textFont(font);
     p.textSize(18);
     p.text("Default Text", 10, 30);
