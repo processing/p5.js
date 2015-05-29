@@ -54,7 +54,12 @@ define(function(require) {
       v === constants.BOTTOM ||
       v === constants.CENTER ||
       v === constants.BASELINE) {
-      this.drawingContext.textBaseline = v;
+      if( v === constants.CENTER ){
+        this.drawingContext.textBaseline = 'middle';
+      }
+      else {
+        this.drawingContext.textBaseline = v;
+      }
     }
 
     return this;
