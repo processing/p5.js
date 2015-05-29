@@ -17,8 +17,9 @@ function draw(){
       rotateZ(theta * 0.1);
       push();
       scale(0.6, 0.6, 0.6);
-      if(i % 2 === 0)cube(50, 50, 50); 
-      //else sphere(100); 
+      //if(i % 2 === 0){
+      cube(50, 50, 50); 
+      //}else sphere(100); 
       pop();
     }
     pop();

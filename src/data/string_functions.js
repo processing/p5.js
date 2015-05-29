@@ -22,6 +22,15 @@ define(function (require) {
    * @param  {Array}  list      array of Strings to be joined
    * @param  {String} separator String to be placed between each item
    * @return {String}           joined String
+   * @example
+   * <div>
+   * <code>
+   * var array = ["Hello", "world!"]
+   * var separator = " "
+   * var message = join(array, separator);
+   * text(message, 5, 50);
+   * </code>
+   * </div>
    */
   p5.prototype.join = function(list, separator) {
     return list.join(separator);
@@ -49,6 +58,15 @@ define(function (require) {
    * @param  {String} str    the String to be searched
    * @param  {String} regexp the regexp to be used for matching
    * @return {Array}         Array of Strings found
+   * @example
+   * <div>
+   * <code>
+   * var string = "Hello p5js*!"
+   * var regexp = "p5js\\*"
+   * var match = match(string, regexp);
+   * text(match, 5, 50);
+   * </code>
+   * </div>
    */
   p5.prototype.match =  function(str, reg) {
     return str.match(reg);
@@ -77,6 +95,15 @@ define(function (require) {
    * @param  {String} str    the String to be searched
    * @param  {String} regexp the regexp to be used for matching
    * @return {Array}         2d Array of Strings found
+   * @example
+   * <div class="norender">
+   * <code>
+   * var string = "Hello p5js*! Hello world!"
+   * var regexp = "Hello"
+   * matchAll(string, regexp);
+   * </code>
+   * </div>
+
    */
   p5.prototype.matchAll = function(str, reg) {
     var re = new RegExp(reg, 'g');
@@ -105,7 +132,7 @@ define(function (require) {
    *                                decimal point
    * @param {Number}       [right]  number of digits to the right of the
    *                                decimal point
-   * @return {String|Array}         formatted String 
+   * @return {String|Array}         formatted String
    */
   p5.prototype.nf = function() {
     if (arguments[0] instanceof Array) {
@@ -147,13 +174,20 @@ define(function (require) {
    * Utility function for formatting numbers into strings and placing
    * appropriate commas to mark units of 1000. There are two versions: one
    * for formatting ints, and one for formatting an array of ints. The value
-   * for the right parameter should always be a positive integer. 
+   * for the right parameter should always be a positive integer.
    *
    * @method nfc
    * @param  {Number|Array}   num     the Number to format
    * @param  {Number}         [right] number of digits to the right of the
    *                                  decimal point
-   * @return {String|Array}           formatted String 
+   * @return {String|Array}           formatted String
+   * @example
+   * <div>
+   * <code>
+   * var num = nfc(1000.02, 1);
+   * text(num, 5, 50);
+   * </code>
+   * </div>
    */
   p5.prototype.nfc = function() {
     if (arguments[0] instanceof Array) {
@@ -193,7 +227,7 @@ define(function (require) {
    *                                point
    * @param {Number}       [right]  number of digits to the right of the
    *                                decimal point
-   * @return {String|Array}         formatted String 
+   * @return {String|Array}         formatted String
    */
   p5.prototype.nfp = function() {
     var nfRes = this.nf.apply(this, arguments);
@@ -225,7 +259,7 @@ define(function (require) {
    *                                point
    * @param {Number}       [right]  number of digits to the right of the
    *                                decimal point
-   * @return {String|Array}         formatted String 
+   * @return {String|Array}         formatted String
    */
   p5.prototype.nfs = function() {
     var nfRes = this.nf.apply(this, arguments);
@@ -248,7 +282,7 @@ define(function (require) {
    * pieces using a character or string as the delimiter. The delim parameter
    * specifies the character or characters that mark the boundaries between
    * each piece. A String[] array is returned that contains each of the pieces.
-   * 
+   *
    * The splitTokens() function works in a similar fashion, except that it
    * splits using a range of characters instead of a specific character or
    * sequence.
@@ -256,7 +290,17 @@ define(function (require) {
    * @method split
    * @param  {String} value the String to be split
    * @param  {String} delim the String used to separate the data
-   * @return {Array}        Array of Strings 
+   * @return {Array}        Array of Strings
+   * @example
+   * <div>
+   * <code>
+   *var names = "Pat,Xio,Alex"
+   * var splitString = split(names, ",");
+   * text(splitString[0], 5, 30);
+   * text(splitString[1], 5, 50);
+   * text(splitString[2], 5, 70);
+   * </code>
+   * </div>
    */
   p5.prototype.split = function(str, delim) {
     return str.split(delim);
@@ -275,7 +319,8 @@ define(function (require) {
    * @param  {String} value   the String to be split
    * @param  {String} [delim] list of individual Strings that will be used as
    *                          separators
-   * @return {Array}          Array of Strings 
+   * @return {Array}          Array of Strings
+
    */
   p5.prototype.splitTokens = function() {
     var d = (arguments.length > 0) ? arguments[1] : /\s/g;
@@ -289,7 +334,14 @@ define(function (require) {
    *
    * @method trim
    * @param  {String|Array} [str] a String or Array of Strings to be trimmed
-   * @return {String|Array}       a trimmed String or Array of Strings 
+   * @return {String|Array}       a trimmed String or Array of Strings
+   * @example
+   * <div>
+   * <code>
+   * var string = trim("  No new lines\n   ");
+   * text(string +" here", 2, 50);
+   * </code>
+   * </div>
    */
   p5.prototype.trim = function(str) {
     if (str instanceof Array) {
