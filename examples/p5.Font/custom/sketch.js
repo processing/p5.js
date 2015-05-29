@@ -1,3 +1,4 @@
+/* FONT PATH NOT WORKING */
 var textSketch = function(p) {
   var font;
   p.preload = function() {
@@ -6,16 +7,14 @@ var textSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
     p.textFont(font);
-    p.textSize(30);
-    p.text("Default Text", 10, 30);
-    /*p.noStroke();
     p.textSize(18);
+    p.text("Default Text", 10, 30);
+    p.noStroke();
     p.fill(0, 102, 153);
     p.text("Blue No Stroke Text", 10, 60);
     p.textSize(12);
     p.fill(120);
     p.text("Simple long Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry. ", 10, 90, 220, 60);
-    */
   };
 };
 
@@ -593,20 +592,20 @@ var typographyLetterSketch = function(p) {
 };
 
 new p5(textSketch, 'textSketch');
-// new p5(textLineSketch, 'textLineSketch');
-// new p5(textWrapSketch, 'textWrapSketch');
-// new p5(textFontSketch, 'textFontSketch');
-// new p5(textAlignSketch, 'textAlignSketch');
-// new p5(textLeadingSketch, 'textLeadingSketch');
-// new p5(textSizeSketch, 'textSizeSketch');
-// new p5(textStyleSketch, 'textStyleSketch');
-// new p5(textWidthSketch, 'textWidthSketch');
-// new p5(textOverlapSketch, 'textOverlapSketch');
-// new p5(textFlySketch, 'textFlySketch');
-// new p5(textFlickerSketch, 'textFlickerSketch');
-// new p5(textFadeSketch, 'textFadeSketch');
-// new p5(textRotateSketch, 'textRotateSketch');
-// new p5(textGrowSketch, 'textGrowSketch');
-// new p5(textAvoidSketch, 'textAvoidSketch');
-// new p5(textBendSketch, 'textBendSketch');
-// new p5(typographyLetterSketch, 'typographyLetterSketch');
+new p5(textLineSketch, 'textLineSketch');
+new p5(textWrapSketch, 'textWrapSketch');
+new p5(textFontSketch, 'textFontSketch');
+new p5(textAlignSketch, 'textAlignSketch');
+new p5(textLeadingSketch, 'textLeadingSketch');
+new p5(textSizeSketch, 'textSizeSketch');
+new p5(textStyleSketch, 'textStyleSketch');
+new p5(textWidthSketch, 'textWidthSketch');
+new p5(textOverlapSketch, 'textOverlapSketch');
+new p5(textFlySketch, 'textFlySketch');
+new p5(textFlickerSketch, 'textFlickerSketch');
+new p5(textFadeSketch, 'textFadeSketch');
+new p5(textRotateSketch, 'textRotateSketch');
+new p5(textGrowSketch, 'textGrowSketch');
+new p5(textAvoidSketch, 'textAvoidSketch');
+new p5(textBendSketch, 'textBendSketch');
+new p5(typographyLetterSketch, 'typographyLetterSketch');
