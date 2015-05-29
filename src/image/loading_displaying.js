@@ -122,38 +122,14 @@ define(function (require) {
    * </div>
    */
   p5.prototype.image = function(img, x, y, width, height) {
-    var frame = img.canvas || img.elt; // may use vid src
     // set defaults
     x = x || 0;
     y = y || 0;
     width = width || img.width;
     height = height || img.height;
-
     var vals = canvas.modeAdjust(x, y, width, height, this._imageMode);
     // tint the image if there is a tint
-    try {
-      if (this._tint && img.canvas) {
-        this.drawingContext.drawImage(
-          this._getTintedImageCanvas(img),
-          vals.x,
-          vals.y,
-          vals.w,
-          vals.h);
-      } else {
-        this.drawingContext.drawImage(
-          frame,
-          vals.x,
-          vals.y,
-          vals.w,
-          vals.h);
-      }
-    } catch (e) {
-      // Firefox catch
-      // http://tinyurl.com/lh28s73
-      if (e.name !== 'NS_ERROR_NOT_AVAILABLE') {
-        throw e;
-      }
-    }
+    this._graphics.image(img, vals.x, vals.y, vals.w, vals.h);
   };
 
   /**
@@ -218,7 +194,7 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.tint = function() {
+  p5.prototype.tint = function () {
     var c = this.color.apply(this, arguments);
     this._tint = c.rgba;
   };

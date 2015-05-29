@@ -609,10 +609,10 @@ var p5DOM = (function(){
         for (var prop in k) {
           j[prop] = k[prop];
         }
-        this.elt.setAttribute('width', aW * this._pInst._pixelDensity);
-        this.elt.setAttribute('height', aH * this._pInst._pixelDensity);
+        this.elt.setAttribute('width', aW * this._pInst.pixelDensity);
+        this.elt.setAttribute('height', aH * this._pInst.pixelDensity);
         this.elt.setAttribute('style', 'width:' + aW + 'px !important; height:' + aH + 'px !important;');
-        this._pInst.scale(this._pInst._pixelDensity, this._pInst._pixelDensity);
+        this._pInst.scale(this._pInst.pixelDensity, this._pInst.pixelDensity);
         for (var prop in j) {
           this.elt.getContext('2d')[prop] = j[prop];
         }

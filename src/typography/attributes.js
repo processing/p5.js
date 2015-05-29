@@ -44,25 +44,7 @@ define(function(require) {
    */
   p5.prototype.textAlign = function(h, v) {
 
-    if (h === constants.LEFT ||
-      h === constants.RIGHT ||
-      h === constants.CENTER) {
-      this.drawingContext.textAlign = h;
-    }
-
-    if (v === constants.TOP ||
-      v === constants.BOTTOM ||
-      v === constants.CENTER ||
-      v === constants.BASELINE) {
-      if( v === constants.CENTER ){
-        this.drawingContext.textBaseline = constants._CTX_MIDDLE;
-      }
-      else {
-        this.drawingContext.textBaseline = v;
-      }
-    }
-
-    return this;
+    return this._graphics.textAlign(h,v);
   };
 
   /**
@@ -188,12 +170,7 @@ define(function(require) {
    */
   p5.prototype.textWidth = function(s) {
 
-    if (this._isOpenType()) {
-
-      return this._textFont.textBounds(s, 0, 0).w;
-    }
-
-    return this.drawingContext.measureText(s).width;
+    return this._graphics.textWidth(s);
   };
 
   /**
@@ -351,18 +328,8 @@ define(function(require) {
     this._setProperty('_textAscent', null);
     this._setProperty('_textDescent', null);
 
-    var fontName = this._textFont;
-
-    if (this._isOpenType()) {
-
-      fontName = this._textFont.font.familyName;
-      this._textStyle = this._textFont.font.styleName;
-    }
-
-    var str = this._textStyle + ' ' + this._textSize + 'px ' + fontName;
-    this.drawingContext.font = str;
-
-    return this;
+    return this._graphics._applyTextProperties(this._textStyle,
+      this._textSize, this._textFont);
   };
 
 

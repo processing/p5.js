@@ -164,7 +164,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.push = function () {
-    this.drawingContext.save();
+    this._graphics.push();
     this._styles.push({
       doStroke: this._doStroke,
       doFill: this._doFill,
@@ -232,7 +232,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.pop = function () {
-    this.drawingContext.restore();
+    this._graphics.pop();
     var lastS = this._styles.pop();
     this._doStroke = lastS.doStroke;
     this._doFill = lastS.doFill;
@@ -275,7 +275,7 @@ define(function (require) {
    *     var x = 0;
    *
    *     function setup() {
-   *       createCanvas(200, 200);
+   *       createCanvas(100, 100);
    *       noLoop();
    *     }
    *
@@ -296,7 +296,7 @@ define(function (require) {
     if (typeof userDraw === 'function') {
       this.push();
       if (typeof userSetup === 'undefined') {
-        this.scale(this._pixelDensity, this._pixelDensity);
+        this.scale(this.pixelDensity, this.pixelDensity);
       }
       this._registeredMethods.pre.forEach(function (f) {
         f.call(this);

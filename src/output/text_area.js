@@ -29,7 +29,12 @@ define(function (require) {
      * @param {Any} contents any combination of Number, String, Object, Boolean,
      *                       Array to print
      */
-    p5.prototype.print = console.log.bind(console);
+     // Converts passed args into a string and then parses that string to 
+     // simulate synchronous behavior. This is a hack and is gross. 
+    p5.prototype.print = function(args) {
+      var newArgs = JSON.parse(JSON.stringify(args));
+      console.log(newArgs);
+    };
   } else {
     p5.prototype.print = function() {};
   }
