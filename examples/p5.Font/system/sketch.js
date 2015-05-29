@@ -1,11 +1,3 @@
-/*
-src/input/files.js //loadFont
-src/objects/p5.Font.js //wrapper of opentype.js
-src/typography/attributes.js // other attributes
-src/typography/loading_display.js //text and text font function
-*/
-
-
 var textSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);

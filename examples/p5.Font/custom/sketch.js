@@ -1,8 +1,7 @@
 var textSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
-    //font = p.loadFont(opentype, "../acmesa.ttf");
+    font = p.loadFont(opentype, "../acmesa.ttf");
   };
   p.setup = function() {
     p.createCanvas(240, 160);
@@ -27,7 +26,7 @@ var textSketch = function(p) {
 var textLineSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
+    font = p.loadFont(opentype, "../acmesa.ttf");
   };
   p.setup = function() {
     p.createCanvas(240*4, 160);
@@ -139,7 +138,7 @@ var textLineSketch = function(p) {
 var textWrapSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
+    font = p.loadFont(opentype, "../acmesa.ttf");
   };
   p.setup = function() {
     p.createCanvas(240*4, 160);
@@ -251,7 +250,7 @@ var textWrapSketch = function(p) {
 var textFontSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
+    font = p.loadFont(opentype, "../acmesa.ttf");
   };
   p.setup = function() {
     p.createCanvas(240, 160);
@@ -271,7 +270,7 @@ var textFontSketch = function(p) {
 var textAlignSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
+    font = p.loadFont(opentype, "../acmesa.ttf");
   };
   p.setup = function() {
     p.createCanvas(240, 160);
@@ -295,7 +294,7 @@ var textAlignSketch = function(p) {
 var textLeadingSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
+    font = p.loadFont(opentype, "../acmesa.ttf");
   };
   p.setup = function() {
     p.createCanvas(240, 160);
@@ -316,7 +315,7 @@ var textLeadingSketch = function(p) {
 var textSizeSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
+    font = p.loadFont(opentype, "../acmesa.ttf");
   };
   p.setup = function() {
     p.createCanvas(240, 160);
@@ -335,19 +334,20 @@ var textSizeSketch = function(p) {
 var textStyleSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
+    fontRegular = p.loadFont(opentype, "../acmesa.ttf");
+    fontItalic = p.loadFont(opentype, "../SourceSansPro-Italic.ttf");
+    fontBold = p.loadFont(opentype, "../SourceSansPro-Bold.ttf");
   };
   p.setup = function() {
     p.createCanvas(240, 160);
-    p.textFont(font);
     p.fill(0);
     p.strokeWeight(0);
     p.textSize(12);
-    p.textStyle(p.NORMAL);
+    p.textFont(fontRegular);
     p.text("Font Style Normal", 10, 30);
-    p.textStyle(p.ITALIC);
+    p.textFont(fontItalic);
     p.text("Font Style Italic", 10, 60);
-    p.textStyle(p.BOLD);
+    p.textFont(fontBold);
     p.text("Font Style Bold", 10, 90);
   };
 };
@@ -355,7 +355,7 @@ var textStyleSketch = function(p) {
 var textWidthSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
+    font = p.loadFont(opentype, "../acmesa.ttf");
   };
   p.setup = function() {
     p.createCanvas(240, 160);
@@ -374,7 +374,7 @@ var textWidthSketch = function(p) {
 var textOverlapSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
+    font = p.loadFont(opentype, "../acmesa.ttf");
   };
   p.setup = function() {
     p.createCanvas(240, 160);
@@ -396,7 +396,7 @@ var textOverlapSketch = function(p) {
 var textFlySketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
+    font = p.loadFont(opentype, "../acmesa.ttf");
   };
   var x1 = 100;
   var x2 = 0;
@@ -424,7 +424,7 @@ var textFlySketch = function(p) {
 var textFlickerSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
+    font = p.loadFont(opentype, "../acmesa.ttf");
   };
   p.setup = function(){
     p.createCanvas(240, 160);
@@ -443,7 +443,7 @@ var textFlickerSketch = function(p) {
 var textFadeSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
+    font = p.loadFont(opentype, "../acmesa.ttf");
   };
   var opacity = 0;
   var direction = 1;
@@ -467,7 +467,7 @@ var textFadeSketch = function(p) {
 var textRotateSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
+    font = p.loadFont(opentype, "../acmesa.ttf");
   };
   var angle = 0.0;
   p.setup = function(){
@@ -492,7 +492,7 @@ var textRotateSketch = function(p) {
 var textGrowSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
+    font = p.loadFont(opentype, "../acmesa.ttf");
   };
   var angle = 0.0;
   var str = "GROW";
@@ -517,7 +517,7 @@ var textGrowSketch = function(p) {
 var textAvoidSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
+    font = p.loadFont(opentype, "../acmesa.ttf");
   };
   p.setup = function(){
     p.createCanvas(240, 160);
@@ -536,7 +536,7 @@ var textAvoidSketch = function(p) {
 var textBendSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
+    font = p.loadFont(opentype, "../acmesa.ttf");
   };
   var str = "Flexibility";
   p.setup = function(){
