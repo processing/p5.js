@@ -6,22 +6,21 @@
  */
 define(function(require) {
 
-/**
- * Issues
- * -- require opentype.js (awaiting dev-ops) **
- * -- var fonts = loadFont([]); **
- *-- example exposing opentype font object **
- * -- PFont functions:
- * 	-- textBounds() exists
- * 	-- glyphPaths -> object or array?
- * 	-- PFont.list()
- * -- Integrating p5.dom (later)
- * -- alignment: justified
- * -- kerning
-
- * -- truncation
- * -- drop-caps
- */
+  /**
+   * Issues
+   * -- require opentype.js (awaiting dev-ops) **
+   * -- var fonts = loadFont([]); **
+   * -- example exposing opentype font object **
+   * -- PFont functions:
+   *    textBounds() exists
+   *    glyphPaths -> object or array?
+   *    PFont.list()
+   * -- Integrating p5.dom (later)
+   * -- alignment: justified
+   * -- kerning
+   * -- truncation
+   * -- drop-caps
+   */
 
   /**
    * This module defines the p5.Font class and P5 methods for

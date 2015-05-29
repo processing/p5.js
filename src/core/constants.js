@@ -8,11 +8,11 @@ define(function(require) {
   var PI = Math.PI;
 
   return {
-    
+
     // GRAPHICS RENDERER
     P2D: 'p2d',
     WEBGL: 'webgl',
-    
+
     // ENVIRONMENT
     ARROW: 'default',
     CROSS: 'crosshair',
@@ -64,7 +64,7 @@ define(function(require) {
      * <div><code>
      * arc(50, 50, 80, 80, 0, QUARTER_PI);
      * </code></div>
-     * 
+     *
      */
     QUARTER_PI: PI / 4,
     /**
@@ -79,7 +79,7 @@ define(function(require) {
      * <div><code>
      * arc(50, 50, 80, 80, 0, TAU);
      * </code></div>
-     * 
+     *
      */
     TAU: PI * 2,
     /**
@@ -94,7 +94,7 @@ define(function(require) {
      * <div><code>
      * arc(50, 50, 80, 80, 0, TWO_PI);
      * </code></div>
-     * 
+     *
      */
     TWO_PI: PI * 2,
     DEGREES: 'degrees',
@@ -194,8 +194,8 @@ define(function(require) {
     _DEFAULT_FILL: '#FFFFFF',
 
     // text gets black fill and no-stroke by default
-    _DEFAULT_TEXT_FILL: '#000000'
-    _CTX_MIDDLE = 'middle';
+    _DEFAULT_TEXT_FILL: '#000000',
+    _CTX_MIDDLE: 'middle'
 
   };
 

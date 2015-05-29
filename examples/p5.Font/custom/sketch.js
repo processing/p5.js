@@ -12,6 +12,8 @@ var textSketch = function(p) {
     p.noStroke();
     p.fill(0, 102, 153);
     p.text("Blue No Stroke Text", 10, 60);
+    p.text("Blue No Stroke Text Italic", 10, 60);
+    p.text("Blue No Stroke Text Bold", 10, 60);
     p.stroke(0,200,0);
     p.text("Blue with Green Stroked Text", 10, 90);
     p.noStroke();

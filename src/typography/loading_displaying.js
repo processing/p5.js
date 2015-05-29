@@ -9,7 +9,6 @@ define(function(require) {
   'use strict';
 
   var p5 = require('core');
-  var constants = require('constants');
 
   /**
    * Draws text to the screen. Displays the information specified in the first
