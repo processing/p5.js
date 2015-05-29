@@ -334,19 +334,20 @@ var textSizeSketch = function(p) {
 var textStyleSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
+    fontRegular = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
+    fontItalic = p.loadFont(opentype, "../SourceSansPro-Italic.ttf");
+    fontBold = p.loadFont(opentype, "../SourceSansPro-Bold.ttf");
   };
   p.setup = function() {
     p.createCanvas(240, 160);
-    p.textFont(font);
     p.fill(0);
     p.strokeWeight(0);
     p.textSize(12);
-    p.textStyle(p.NORMAL);
+    p.textFont(fontRegular);
     p.text("Font Style Normal", 10, 30);
-    p.textStyle(p.ITALIC);
+    p.textFont(fontItalic);
     p.text("Font Style Italic", 10, 60);
-    p.textStyle(p.BOLD);
+    p.textFont(fontBold);
     p.text("Font Style Bold", 10, 90);
   };
 };

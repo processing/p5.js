@@ -14,9 +14,7 @@ var textSketch = function(p) {
     p.noStroke();
     p.fill(0, 102, 153);
     p.text("Black No Stroke Text", 10, 60);
-    p.textSize(12);
-    p.fill(120);
-    p.text("Simple long Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry. ", 10, 90, 220, 60);
+    p.textSize(12).fill(120).text("Simple long Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry. ", 10, 90, 220, 60);
   };
 };
 
