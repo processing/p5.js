@@ -310,7 +310,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
 
   // Create the multitasks.
-  grunt.registerTask('test', ['connect', 'jshint', 'mocha']);
+  grunt.registerTask('test', ['connect', 'jshint', 'requirejs', 'mocha']);
   grunt.registerTask('yui', ['yuidoc']);
   grunt.registerTask('default', ['connect', 'jshint', 'requirejs', 'mocha', 'uglify']);
 };
