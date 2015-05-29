@@ -4,7 +4,7 @@ var textToRender = "p5*js";
 var opFont;
 
 function preload(){
-  font = loadFont(opentype, 'AvenirNextLTPro-Demi.otf');
+  font = loadFont('AvenirNextLTPro-Demi.otf');
 }
 
 function setup(){
@@ -26,7 +26,7 @@ function draw() {
   doSnap(path, value);
   path.draw(this.drawingContext);
 
-  snapDistance --;
+  snapDistance--;
 }
 
 function doSnap(path, value) {
