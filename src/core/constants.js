@@ -157,10 +157,11 @@ define(function(require) {
     CURVE: 'curve',
 
     // DEFAULTS
-    _DEFAULT_STROKE: '#bLaCk',
-    _DEFAULT_FILL: '#fFfFfF',
-    _DEFAULT_TEXT_STROKE: 'none',
-    _DEFAULT_TEXT_FILL: '#FF0000'
+    _DEFAULT_STROKE: '#000000',
+    _DEFAULT_FILL: '#FFFFFF',
+
+    // text gets black fill and no-stroke by default
+    _DEFAULT_TEXT_FILL: '#000000'
   };
 
 });

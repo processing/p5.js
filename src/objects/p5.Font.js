@@ -11,12 +11,6 @@ define(function(require) {
    * drawing text to the main display canvas.
    */
 
-  /*
-   * ISSUES:
-   *  default stroke/fill (wait)
-   *  Vertical Center-Align broken: does top instead (system, custom?)
-   */
-
   'use strict';
 
   var p5 = require('core');
@@ -37,19 +31,15 @@ define(function(require) {
 
     path = this.font.getPath(line, x, y, fontSize, options);
 
-    //console.log('STROKE: '+p.drawingContext.strokeStyle);
-    //console.log('FILL: '+p.drawingContext.fillStyle);
-
-    if (p._doStroke && p.drawingContext.strokeStyle !==
-      constants._DEFAULT_STROKE) {
+    if (p._doStroke && p._strokeSet) {
 
       path.stroke = p.drawingContext.strokeStyle;
     }
 
     if (p._doFill) {
 
-      path.fill = p.drawingContext.strokeStyle === constants._DEFAULT_FILL ?
-        constants._DEFAULT_TEXT_FILL : p.drawingContext.fillStyle;
+      path.fill = p._fillSet ? p.drawingContext.fillStyle :
+        constants._DEFAULT_TEXT_FILL;
     }
 
     path.draw(p.drawingContext);
