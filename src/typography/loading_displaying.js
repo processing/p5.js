@@ -98,7 +98,7 @@ define(function(require) {
         case constants.BOTTOM:
           y += (maxHeight - totalHeight);
           break;
-        case 'middle':
+        case constants._CTX_MIDDLE:
           y += (maxHeight - totalHeight) / 2;
           break;
         case constants.BASELINE:

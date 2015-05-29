@@ -162,6 +162,8 @@ define(function(require) {
 
     // text gets black fill and no-stroke by default
     _DEFAULT_TEXT_FILL: '#000000'
+    _CTX_MIDDLE = 'middle';
+
   };
 
 });

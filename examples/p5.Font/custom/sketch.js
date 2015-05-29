@@ -1,4 +1,3 @@
-/* FONT PATH NOT WORKING */
 var textSketch = function(p) {
   var font;
   p.preload = function() {

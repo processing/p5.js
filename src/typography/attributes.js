@@ -55,7 +55,7 @@ define(function(require) {
       v === constants.CENTER ||
       v === constants.BASELINE) {
       if( v === constants.CENTER ){
-        this.drawingContext.textBaseline = 'middle';
+        this.drawingContext.textBaseline = constants._CTX_MIDDLE;
       }
       else {
         this.drawingContext.textBaseline = v;
