@@ -20,6 +20,7 @@ define(function(require) {
   'use strict';
 
   var p5 = require('core');
+  var constants = require('constants');
 
   p5.Font = function(p) {
 
@@ -35,8 +36,16 @@ define(function(require) {
     options = options || {};
 
     path = this.font.getPath(line, x, y, fontSize, options);
-    path.stroke = p._doStroke && p.drawingContext.strokeStyle;
-    path.fill = p._doFill && p.drawingContext.fillStyle;
+
+    console.log('STROKE: '+p.drawingContext.strokeStyle);
+    console.log('FILL: '+p.drawingContext.fillStyle);
+
+    path.stroke = p._doStroke && (p.drawingContext.strokeStyle ||
+      constants._DEFAULT_TEXT_STROKE);
+
+    path.fill = p._doFill && (p.drawingContext.fillStyle ||
+      constants._DEFAULT_TEXT_FILL);
+
     path.draw(p.drawingContext);
   };
 

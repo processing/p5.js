@@ -61,10 +61,16 @@ define(function(require) {
   p5.Graphics.prototype = Object.create(p5.Element.prototype);
 
   p5.Graphics.prototype._applyDefaults = function() {
-    this.drawingContext.fillStyle = '#FFFFFF';
-    this.drawingContext.strokeStyle = '#000000';
+
+    console.log('_applyDefaults()');
+
+    this.drawingContext.fillStyle = undefined;
+    this.drawingContext.strokeStyle = undefined;
     this.drawingContext.lineCap = constants.ROUND;
     this.drawingContext.font = 'normal 12px sans-serif';
+
+    console.log('_applyDefaults.STROKE: '+this.drawingContext.strokeStyle);
+    console.log('_applyDefaults.FILL: '+this.drawingContext.fillStyle);
   };
 
   p5.Graphics.prototype.resize = function(w, h) {

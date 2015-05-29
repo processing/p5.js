@@ -145,7 +145,6 @@ define(function(require) {
     ERODE: 'erode',
     BLUR: 'blur',
 
-
     // TYPOGRAPHY
     NORMAL: 'normal',
     ITALIC: 'italic',
@@ -155,8 +154,13 @@ define(function(require) {
     LINEAR: 'linear',
     QUADRATIC: 'quadratic',
     BEZIER: 'bezier',
-    CURVE: 'curve'
+    CURVE: 'curve',
 
+    // DEFAULTS
+    _DEFAULT_STROKE: '#000000',
+    _DEFAULT_FILL: '#FFFFFF',
+    _DEFAULT_TEXT_STROKE: '#00FF00',
+    _DEFAULT_TEXT_FILL: '#FF0000'
   };
 
 });
