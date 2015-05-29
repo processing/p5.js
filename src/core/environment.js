@@ -21,23 +21,32 @@ define(function(require) {
 
   if (window.console && console.log) {
     /**
-     * The print() function writes to the console area of your browser, it maps
-     * to console.log(). This function is often helpful for looking at the data
-     * a program is producing. This function creates a new line of text for
-     * each call to the function. More than one parameter can be passed into
-     * the function by separating them with commas. Alternatively, individual
-     * elements can be separated with quotes ("") and joined with the addition
-     * operator (+).
-
+     * The print() function writes to the console area of your browser. 
+     * This function is often helpful for looking at the data a program is 
+     * producing. This function creates a new line of text for each call to 
+     * the function. More than one parameter can be passed into the function by 
+     * separating them with commas. Alternatively, individual elements can be 
+     * separated with quotes ("") and joined with the addition operator (+).
+     * 
+     * While print() is similar to console.log(), it does not directly map to it 
+     * in order to simulate easier to understand behavior than console.log().
+     * Due to this, it is slower. For fastest results, use console.log(). 
+     * 
      * @method print
      * @param {Any} contents any combination of Number, String, Object, Boolean,
      *                       Array to print
      */
      // Converts passed args into a string and then parses that string to 
      // simulate synchronous behavior. This is a hack and is gross. 
+     // Since this will not work on all objects, particularly circular
+     // structures, simply console.log() on error. 
     p5.prototype.print = function(args) {
-      var newArgs = JSON.parse(JSON.stringify(args));
-      console.log(newArgs);
+      try {
+        var newArgs = JSON.parse(JSON.stringify(args));
+        console.log(newArgs);
+      } catch(err) {
+        console.log(args);
+      }
     };
   } else {
     p5.prototype.print = function() {};
