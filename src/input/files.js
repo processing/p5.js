@@ -384,6 +384,12 @@ define(function (require) {
         }
         var row;
         for (i =0; i<records.length; i++) {
+          //Handles row of 'undefined' at end of some CSVs
+          if (i === records.length - 1 && records[i].length === 1) {
+            if(records[i][0] === 'undefined'){
+              break;
+            }
+          }
           row = new p5.TableRow();
           row.arr = records[i];
           row.obj = makeObject(records[i], t.columns);
