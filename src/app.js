@@ -5,10 +5,10 @@ define(function (require) {
   var p5 = require('core');
   require('p5.Color');
   require('p5.Element');
+  require('p5.Font');
   require('p5.Graphics2D');
   require('p5.Graphics3D');
   require('p5.Image');
-  //require('p5.Shape');
   require('p5.Vector');
   require('p5.TableRow');
   require('p5.Table');
@@ -39,7 +39,6 @@ define(function (require) {
   require('shape.3d_primitives');
   require('shape.attributes');
   require('shape.curves');
-  //require('shape.shape');
   require('shape.vertex');
   require('structure');
   require('transform');

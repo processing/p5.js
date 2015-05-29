@@ -11,7 +11,7 @@ define(function(require) {
 
   /**
    * Main graphics and rendering context, as well as the base API
-   * implementation for p5.js "core". To be used as the superclass for 
+   * implementation for p5.js "core". To be used as the superclass for
    * Graphics2D and Graphics3D classes, respecitvely. The fields and methods
    * for this class are extensive, but mirror the normal drawing API for p5.
    *

@@ -1,3 +1,5 @@
+/* global opentype:false */
+
 /**
  * @module IO
  * @submodule Input
@@ -11,6 +13,24 @@ define(function (require) {
 
   var p5 = require('core');
   var reqwest = require('reqwest');
+
+  p5.prototype.loadFont = function(path, callback) {
+
+    var p5Font = new p5.Font(this);
+
+    opentype.load(path, function(err, font) {
+      if (err) {
+        throw Error(err);
+      }
+      p5Font.font = font;
+      if (typeof callback !== 'undefined') {
+        callback(p5Font);
+      }
+    });
+
+    return p5Font;
+  };
+
 
   //BufferedReader
   p5.prototype.createInput = function() {

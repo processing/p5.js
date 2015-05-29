@@ -4,7 +4,9 @@ define(function(require) {
   var canvas = require('canvas');
   var constants = require('constants');
   var filters = require('filters');
+
   require('p5.Graphics');
+
   /**
    * 2D graphics class.  Can also be used as an off-screen graphics buffer.
    * A p5.Graphics2D object can be constructed
@@ -48,11 +50,12 @@ define(function(require) {
   p5.Graphics2D.prototype = Object.create(p5.Graphics.prototype);
 
   p5.Graphics2D.prototype._applyDefaults = function() {
-    this.drawingContext.fillStyle = '#FFFFFF';
-    this.drawingContext.strokeStyle = '#000000';
+    this.drawingContext.fillStyle = constants._DEFAULT_FILL;
+    this.drawingContext.strokeStyle = constants._DEFAULT_STROKE;
     this.drawingContext.lineCap = constants.ROUND;
     this.drawingContext.font = 'normal 12px sans-serif';
   };
+
   //////////////////////////////////////////////
   // COLOR | Setting
   //////////////////////////////////////////////
@@ -77,13 +80,13 @@ define(function(require) {
     }
     this.drawingContext.restore();
   };
-  
+
   p5.Graphics2D.prototype.clear = function() {
     this.drawingContext.clearRect(0, 0, this.width, this.height);
   };
 
   p5.Graphics2D.prototype.fill = function() {
-    
+
     var ctx = this.drawingContext;
     var color = this._pInst.color.apply(this._pInst, arguments);
     ctx.fillStyle = color.toString();
@@ -218,11 +221,11 @@ define(function(require) {
       var imageData = this.drawingContext.getImageData(x * pd, y * pd, w, h);
       var data = imageData.data;
       var pixels = [];
-      
+
       for (var i = 0; i < data.length; i += 4) {
         pixels.push(data[i], data[i+1], data[i+2], data[i+3]);
       }
-      
+
       return pixels;
     } else {
       var sx = x * pd;
@@ -255,6 +258,7 @@ define(function(require) {
       this._setProperty('pixels', imageData.data);
     }
   };
+
   p5.Graphics2D.prototype.set = function (x, y, imgOrCol) {
     if (imgOrCol instanceof p5.Image) {
       this.drawingContext.save();
@@ -527,7 +531,7 @@ define(function(require) {
       if (typeof tr === 'undefined') { tr = tl; }
       if (typeof br === 'undefined') { br = tr; }
       if (typeof bl === 'undefined') { bl = br; }
-      
+
       // Cache and compute several values
       var _x = vals.x;
       var _y = vals.y;
@@ -884,6 +888,7 @@ define(function(require) {
     this._pInst.endShape();
     return this;
   };
+
   p5.Graphics2D.prototype.curve = function (x1, y1, x2, y2, x3, y3, x4, y4) {
     this._pInst.beginShape();
     this._pInst.curveVertex(x1, y1);
@@ -964,72 +969,199 @@ define(function(require) {
   //////////////////////////////////////////////
   // TYPOGRAPHY
   //////////////////////////////////////////////
+
   p5.Graphics2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
+
+    var p = this._pInst, cars, n, ii, jj, line, testLine,
+      testWidth, words, totalHeight;
+
+    if (!(p._doFill || p._doStroke)) {
+      return;
+    }
+
     if (typeof str !== 'string') {
       str = str.toString();
     }
-    if (typeof maxWidth !== 'undefined') {
-      y += this._pInst._textLeading;
-      maxHeight += y;
-    }
+
     str = str.replace(/(\t)/g, '  ');
-    var cars = str.split('\n');
-    for (var ii = 0; ii < cars.length; ii++) {
-      var line = '';
-      var words = cars[ii].split(' ');
-      for (var n = 0; n < words.length; n++) {
-        if (y + this._pInst._textLeading <= maxHeight ||
-          typeof maxHeight === 'undefined') {
-          var testLine = line + words[n] + ' ';
-          var metrics = this.drawingContext.measureText(testLine);
-          var testWidth = metrics.width;
-          if (typeof maxWidth !== 'undefined' && testWidth > maxWidth) {
-            if (this._pInst._doFill) {
-              this.drawingContext.fillText(line, x, y);
-            }
-            if (this._pInst._doStroke) {
-              this._pInst.drawingContext.strokeText(line, x, y);
-            }
+    cars = str.split('\n');
+
+    if (typeof maxWidth !== 'undefined') {
+
+      totalHeight = 0;
+      for (ii = 0; ii < cars.length; ii++) {
+        line = '';
+        words = cars[ii].split(' ');
+        for (n = 0; n < words.length; n++) {
+          testLine = line + words[n] + ' ';
+          testWidth = this.textWidth(testLine);
+          if (testWidth > maxWidth) {
             line = words[n] + ' ';
-            y += this._pInst._textLeading;
+            totalHeight += p.textLeading();
           } else {
             line = testLine;
           }
         }
       }
-      if (this._pInst._doFill) {
-        this.drawingContext.fillText(line, x, y);
+
+      switch (this.drawingContext.textAlign) {
+
+      case constants.CENTER:
+        x += maxWidth / 2;
+        break;
+      case constants.RIGHT:
+        x += maxWidth;
+        break;
       }
-      if (this._pInst._doStroke) {
-        this.drawingContext.strokeText(line, x, y);
+
+      if (typeof maxHeight !== 'undefined') {
+
+        switch (this.drawingContext.textBaseline) {
+        case constants.BOTTOM:
+          y += (maxHeight - totalHeight);
+          break;
+        case constants._CTX_MIDDLE:
+          y += (maxHeight - totalHeight) / 2;
+          break;
+        case constants.BASELINE:
+          y += (maxHeight - totalHeight);
+          break;
+        }
       }
-      y += this._pInst._textLeading;
+
+      for (ii = 0; ii < cars.length; ii++) {
+
+        line = '';
+        words = cars[ii].split(' ');
+        for (n = 0; n < words.length; n++) {
+
+          testLine = line + words[n] + ' ';
+          testWidth = this.textWidth(testLine);
+          if (testWidth > maxWidth) {
+            this._renderText(p, line, x, y);
+            line = words[n] + ' ';
+            y += p.textLeading();
+          } else {
+            line = testLine;
+          }
+        }
+
+        this._renderText(p, line, x, y);
+        y += p.textLeading();
+      }
     }
+    else {
+      for (jj = 0; jj < cars.length; jj++) {
+
+        this._renderText(p, cars[jj], x, y);
+        y += p.textLeading();
+      }
+    }
+
+    return p;
+  };
+
+  p5.Graphics2D.prototype._renderText = function(p, line, x, y) {
+
+    if (p._isOpenType()) {
+
+      return p._textFont.renderPath(line, x, y);
+    }
+
+    // no stroke unless specified by user
+    if (p._doStroke && p._strokeSet) {
+
+      this.drawingContext.strokeText(line, x, y);
+    }
+
+    if (p._doFill) {
+
+      // if fill hasn't been set by user, use default text fill
+      this.drawingContext.fillStyle =  p._fillSet ?
+      this.drawingContext.fillStyle :
+        constants._DEFAULT_TEXT_FILL;
+
+      this.drawingContext.fillText(line, x, y);
+    }
+
+    return p;
   };
 
   p5.Graphics2D.prototype.textWidth = function(s) {
+
+    var p = this._pInst;
+
+    if (p._isOpenType()) {
+
+      return p._textFont.textBounds(s, 0, 0).w;
+    }
+
     return this.drawingContext.measureText(s).width;
   };
 
-  p5.Graphics2D.prototype.textAlign = function(h,v){
-    if (h === constants.LEFT ||
-      h === constants.RIGHT ||
-      h === constants.CENTER) {
-      this.drawingContext.textAlign = h;
-    }
-    if (v === constants.TOP ||
-      v === constants.BOTTOM ||
-      v === constants.CENTER ||
-      v === constants.BASELINE) {
-      this.drawingContext.textBaseline = v;
+  p5.Graphics2D.prototype.textAlign = function(h, v) {
+
+    if (arguments.length) {
+
+      if (h === constants.LEFT ||
+        h === constants.RIGHT ||
+        h === constants.CENTER) {
+
+        this.drawingContext.textAlign = h;
+      }
+
+      if (v === constants.TOP ||
+        v === constants.BOTTOM ||
+        v === constants.CENTER ||
+        v === constants.BASELINE) {
+
+        if (v === constants.CENTER) {
+          this.drawingContext.textBaseline = constants._CTX_MIDDLE;
+        } else {
+          this.drawingContext.textBaseline = v;
+        }
+      }
+
+      return this._pInst;
+
+    } else {
+
+      var valign = this.drawingContext.textBaseline;
+
+      if (valign === constants._CTX_MIDDLE) {
+
+        valign = constants.CENTER;
+      }
+
+      return {
+
+        horizontal: this.drawingContext.textAlign,
+        vertical: valign
+      };
     }
   };
 
-  p5.Graphics2D.prototype._applyTextProperties =
-  function(textStyle, textSize, textFont){
-    var str = textStyle + ' ' + textSize + 'px ' + textFont;
-    this.drawingContext.font = str;
+  p5.Graphics2D.prototype._applyTextProperties = function() {
+
+    var font, p = this._pInst;
+
+    p._setProperty('_textAscent', null);
+    p._setProperty('_textDescent', null);
+
+    font = p._textFont;
+
+    if (p._isOpenType()) {
+
+      font = p._textFont.font.familyName;
+      p._setProperty('_textStyle', p._textFont.font.styleName);
+    }
+
+    this.drawingContext.font = p._textStyle + ' ' + p._textSize + 'px ' + font;
+
+    return p;
   };
+
+
   //////////////////////////////////////////////
   // STRUCTURE
   //////////////////////////////////////////////
