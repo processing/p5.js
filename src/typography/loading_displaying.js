@@ -9,13 +9,16 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
+
+  require('helpers');
+
   /**
    * Draws text to the screen. Displays the information specified in the first
    * parameter on the screen in the position specified by the additional
    * parameters. A default font will be used unless a font is set with the
    * textFont() function and a default size will be used unless a font is set
    * with textSize(). Change the color of the text with the fill() function.
-   * Change the outline of the text with the stroke() and strokeWeight() 
+   * Change the outline of the text with the stroke() and strokeWeight()
    * functions.
    * The text displays in relation to the textAlign() function, which gives the
    * option to draw to the left, right, and center of the coordinates.
@@ -38,11 +41,11 @@ define(function (require) {
    * <div>
    * <code>
    * textSize(32);
-   * text("word", 10, 30); 
+   * text("word", 10, 30);
    * fill(0, 102, 153);
    * text("word", 10, 60);
    * fill(0, 102, 153, 51);
-   * text("word", 10, 90); 
+   * text("word", 10, 90);
    * </code>
    * </div>
    * <div>
@@ -54,6 +57,15 @@ define(function (require) {
    * </div>
    */
   p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
+    this._validateParameters(
+      'text',
+      arguments,
+      [
+        ['String', 'Number', 'Number'],
+        ['String', 'Number', 'Number', 'Number', 'Number']
+      ]
+    );
+
     if (typeof str !== 'string') {
       str=str.toString();
     }
@@ -61,7 +73,7 @@ define(function (require) {
   };
 
   /**
-   * Sets the current font that will be drawn with the text() function. 
+   * Sets the current font that will be drawn with the text() function.
    *
    * @method textFont
    * @param {String} str name of font
