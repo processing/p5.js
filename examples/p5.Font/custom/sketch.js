@@ -1,7 +1,8 @@
 var textSketch = function(p) {
-  var font;
+  var font, font2;
   p.preload = function() {
     font = p.loadFont("../acmesa.ttf");
+    font2 = p.loadFont("../SourceSansPro-Regular.otf");
   };
   p.setup = function() {
     p.createCanvas(240, 160);
@@ -9,6 +10,7 @@ var textSketch = function(p) {
     p.textFont(font);
     p.textSize(18);
     p.text("Default Text", 10, 30);
+    p.textFont(font2  );
     p.noStroke();
     p.fill(0, 102, 153);
     p.text("Blue No Stroke Text", 10, 60);
@@ -26,7 +28,7 @@ var textSketch = function(p) {
 var textLineSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont("../acmesa.ttf");
+    font = p.loadFont("../SourceSansPro-Regular.otf");
   };
   p.setup = function() {
     p.createCanvas(240*4, 160);
@@ -138,7 +140,7 @@ var textLineSketch = function(p) {
 var textWrapSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont("../acmesa.ttf");
+    font = p.loadFont("../SourceSansPro-Regular.otf");
   };
   p.setup = function() {
     p.createCanvas(240*4, 160);
@@ -247,30 +249,10 @@ var textWrapSketch = function(p) {
   };
 };
 
-var textFontSketch = function(p) {
-  var font;
-  p.preload = function() {
-    font = p.loadFont("../acmesa.ttf");
-  };
-  p.setup = function() {
-    p.createCanvas(240, 160);
-    p.textFont(font);
-    p.textSize(20);
-    p.fill(0);
-    p.strokeWeight(0);
-    p.textFont('times');
-    p.text("Times Font", 10, 30);
-    p.textFont('arial');
-    p.text("Arial Font", 10, 60);
-    p.textFont('Courier');
-    p.text("Courier Font", 10, 90);
-  };
-};
-
 var textAlignSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont("../acmesa.ttf");
+    font = p.loadFont("../SourceSansPro-Regular.otf");
   };
   p.setup = function() {
     p.createCanvas(240, 160);
@@ -294,7 +276,7 @@ var textAlignSketch = function(p) {
 var textLeadingSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont("../acmesa.ttf");
+    font = p.loadFont("../SourceSansPro-Regular.otf");
   };
   p.setup = function() {
     p.createCanvas(240, 160);
@@ -315,7 +297,7 @@ var textLeadingSketch = function(p) {
 var textSizeSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont("../acmesa.ttf");
+    font = p.loadFont("../SourceSansPro-Regular.otf");
   };
   p.setup = function() {
     p.createCanvas(240, 160);
@@ -328,34 +310,34 @@ var textSizeSketch = function(p) {
     p.text("Font Size 14", 10, 60);
     p.textSize(16);
     p.text("Font Size 16", 10, 90);
+    p.textSize(32);
+    p.text("Font Size 32", 10, 130);
   };
 };
 
 var textStyleSketch = function(p) {
   var font;
   p.preload = function() {
-    fontRegular = p.loadFont("../acmesa.ttf");
+    fontRegular = p.loadFont("../SourceSansPro-Regular.otf");
     fontItalic = p.loadFont("../SourceSansPro-Italic.ttf");
     fontBold = p.loadFont("../SourceSansPro-Bold.ttf");
   };
   p.setup = function() {
     p.createCanvas(240, 160);
-    p.fill(0);
-    p.strokeWeight(0);
-    p.textSize(12);
+    p.fill(0).strokeWeight(0).textSize(24);
     p.textFont(fontRegular);
-    p.text("Font Style Normal", 10, 30);
+    p.text("Font Style Normal", 30, 50);
     p.textFont(fontItalic);
-    p.text("Font Style Italic", 10, 60);
+    p.text("Font Style Italic", 30, 80);
     p.textFont(fontBold);
-    p.text("Font Style Bold", 10, 90);
+    p.text("Font Style Bold", 30, 110);
   };
 };
 
 var textWidthSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont("../acmesa.ttf");
+    font = p.loadFont("../SourceSansPro-Regular.otf");
   };
   p.setup = function() {
     p.createCanvas(240, 160);
@@ -374,7 +356,7 @@ var textWidthSketch = function(p) {
 var textOverlapSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont("../acmesa.ttf");
+    font = p.loadFont("../SourceSansPro-Regular.otf");
   };
   p.setup = function() {
     p.createCanvas(240, 160);
@@ -598,7 +580,6 @@ var typographyLetterSketch = function(p) {
 new p5(textSketch, 'textSketch');
 new p5(textLineSketch, 'textLineSketch');
 new p5(textWrapSketch, 'textWrapSketch');
-new p5(textFontSketch, 'textFontSketch');
 new p5(textAlignSketch, 'textAlignSketch');
 new p5(textLeadingSketch, 'textLeadingSketch');
 new p5(textSizeSketch, 'textSizeSketch');
