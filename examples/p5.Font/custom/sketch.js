@@ -562,7 +562,7 @@ var textBendSketch = function(p) {
 var typographyLetterSketch = function(p) {
   var font;
   p.preload = function() {
-    font = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
+    font = p.loadFont(opentype, "../acmesa.ttf");
   };
   var margin = 10;
   var gap = 46;
@@ -571,7 +571,6 @@ var typographyLetterSketch = function(p) {
     p.createCanvas(720, 320);
     p.textFont(font);
     p.background(0);
-    p.textFont("Georgia");
     p.textSize(24);
     p.textStyle(p.BOLD);
     p.textAlign(p.CENTER, p.CENTER);
