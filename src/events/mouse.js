@@ -1,5 +1,5 @@
 /**
- * @module Input
+ * @module Events
  * @submodule Mouse
  * @for p5
  * @requires core

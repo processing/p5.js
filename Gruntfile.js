@@ -172,8 +172,7 @@ module.exports = function(grunt) {
             'constants': 'src/core/constants',
             'core': 'src/core/core',
             'environment': 'src/core/environment',
-            'helpers': 'src/core/helpers',
-            'output.text_area': 'src/core/text_area',
+            'helpers': 'src/core/error_helpers',
             'p5.Element': 'src/core/p5.Element',
             'p5.Graphics': 'src/core/p5.Graphics',
             'p5.Graphics2D': 'src/core/p5.Graphics2D',
@@ -198,7 +197,6 @@ module.exports = function(grunt) {
             'image.image': 'src/image/image',
             'image.loading_displaying': 'src/image/loading_displaying',
             'image.pixels': 'src/image/pixels',
-            'output.image': 'src/image/image_output',
             'p5.Image': 'src/image/p5.Image',
 
             // typography
@@ -222,8 +220,7 @@ module.exports = function(grunt) {
 
 
             // io
-            'input.files': 'src/io/files_input',
-            'output.files': 'src/io/files_output',
+            'input.files': 'src/io/files',
             'p5.TableRow': 'src/io/p5.TableRow',
             'p5.Table': 'src/io/p5.Table',
 
@@ -240,10 +237,7 @@ module.exports = function(grunt) {
             'utils.color_utils': 'src/color/color_utils',
 
             // external library
-            'reqwest': 'node_modules/reqwest/reqwest',
-
-            // move this to p5.DOM file
-            'p5.File': 'lib/addons/p5.File'
+            'reqwest': 'node_modules/reqwest/reqwest'
           },
         }
       },

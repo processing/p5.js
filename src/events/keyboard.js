@@ -1,5 +1,5 @@
 /**
- * @module Input
+ * @module Events
  * @submodule Keyboard
  * @for p5
  * @requires core
