@@ -190,8 +190,7 @@ define(function(require) {
 
     if (this._isOpenType()) {
 
-      var tb = this._textFont.textBounds(s, 0, 0);
-      return tb.x + tb.w;
+      return this._textFont.textBounds(s, 0, 0).w;
     }
 
     return this.drawingContext.measureText(s).width;
