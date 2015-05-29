@@ -167,6 +167,7 @@ define(function (require) {
    * }
    * </code>
    * </div>
+   * 
    * <div>
    * <code>
    * var img;
@@ -180,6 +181,7 @@ define(function (require) {
    * }
    * </code>
    * </div>
+   * 
    * <div>
    * <code>
    * var img;
@@ -204,12 +206,12 @@ define(function (require) {
    * displaying images with their original hues.
    *
    * @method noTint
-      * @example
+   * @example
    * <div>
    * <code>
    * var img;
    * function preload() {
-   *   img = loadImage("assets/laDefense.jpg");
+   *   img = loadImage("assets/bricks.jpg");
    * }
    * function setup() {
    *   tint(0, 153, 204);  // Tint blue
@@ -230,6 +232,7 @@ define(function (require) {
    *
    * @param {p5.Image} The image to be tinted
    * @return {canvas} The resulting tinted canvas
+   * 
    */
   p5.prototype._getTintedImageCanvas = function(img) {
     if (!img.canvas) {
@@ -276,6 +279,46 @@ define(function (require) {
    *
    * @method imageMode
    * @param {String} m The mode: either CORNER, CORNERS, or CENTER.
+   * @example
+   * 
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *   imageMode(CORNER)
+   *   image(img, 10, 10, 50, 50);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *   imageMode(CORNERS)
+   *   image(img, 10, 10, 90, 40);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *   imageMode(CENTER)
+   *   image(img, 50, 50, 80, 80);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.imageMode = function(m) {
     if (m === constants.CORNER ||
