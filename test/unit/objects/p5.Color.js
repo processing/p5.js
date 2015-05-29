@@ -561,47 +561,103 @@ suite('p5.Color', function() {
       c = myp5.color(48, 100, 100, 1);
     });
 
-    test('should correctly set HSBA value', function(){
+    test('should correctly set HSBA value', function() {
       assert.deepEqual(c.hsba, [48, 100, 100, 1]);
     });
 
-    test('should correctly set converted value', function(){
+    test('should correctly set converted value', function() {
       assert.deepEqual(c._converted_color, [34, 255, 255, 255]);
     });
 
-    test('should return passed, unconverted, hue value', function(){
+    test('should return passed, unconverted, hue value', function() {
       assert.equal(c.getHue(), 48);
     });
 
-    test('should return passed, unconverted, saturation value', function(){
+    test('should return passed, unconverted, saturation value', function() {
       assert.equal(c.getSaturation(), 100);
     });
 
-    test('should return passed, unconverted, brightness value', function(){
+    test('should return passed, unconverted, brightness value', function() {
       assert.equal(c.getBrightness(), 100);
     });
-
   });
 
-  suite('new p5.Color with Base 1 colors', function() {
-    var base_1_rgba = [0.2, 0.4, 0.6, 0.5];
-    var base_255_rgba = [51, 102, 153, 127.5];
-
+  suite('new p5.Color in HSB-illogical mode', function() {
     setup(function() {
-      myp5.colorMode(myp5.RGB, 1);
-      c = myp5.color.apply(myp5, base_1_rgba);
+      myp5.colorMode(myp5.HSB, 1000, 360, 720, 10);
+      c = myp5.color(48, 100, 100, 1);
     });
 
-    test('should correctly set RGBA', function() {
-      assert.deepEqual(c.rgba, base_255_rgba);
+    test('should correctly set HSBA value', function() {
+      assert.deepEqual(c.hsba, [48, 100, 100, 1]);
     });
 
-    test('should correctly convert to HSB', function() {
-      assert.deepEqual(c.hsba, p5.ColorUtils.rgbaToHSBA(base_255_rgba));
+    test('should correctly set converted value', function() {
+      assert.deepEqual(c._converted_color, 
+        [(48 * 255/1000), (100 * 255/360), (100 * 255/720), (1 * 255/10)]);
     });
 
-    test('should correctly set color string', function() {
-      assert.equal(c.toString(), 'rgba(51,102,153,0.5)');
+    test('should return passed, unconverted, hue value', function() {
+      assert.equal(c.getHue(), 48);
+    });
+
+    test('should return passed, unconverted, saturation value', function() {
+      assert.equal(c.getSaturation(), 100);
+    });
+
+    test('should return passed, unconverted, brightness value', function() {
+      assert.equal(c.getBrightness(), 100);
     });
   });
+
+  suite('new p5.Color in RGB-illogical mode', function() {
+    setup(function() {
+      myp5.colorMode(myp5.RGB, 400, 200, 100, 1);
+      c = myp5.color(48, 100, 100, 1);
+    });
+
+    test('should correctly set RGBA value', function() {
+      assert.deepEqual(c.rgba, [48, 100, 100, 1]);
+    });
+
+    test('should correctly set converted value', function() {
+      assert.deepEqual(c._converted_color, 
+         [(48 * 255/400), (100 * 255/200), (100 * 255/100), (1 * 255/1)]);
+    });
+
+    test('should return passed, unconverted, hue value', function() {
+      assert.equal(c.getHue(), 152);
+    });
+
+    test('should return passed, unconverted, saturation value', function() {
+      assert.equal(c.getSaturation(), 224);
+    });
+
+    test('should return passed, unconverted, brightness value', function() {
+      assert.equal(c.getBrightness(), 255);
+    });
+  });
+
+  // These tests commented out pending further discussion. 
+  // suite('new p5.Color with Base 1 colors', function() {
+  //   var base_1_rgba = [0.2, 0.4, 0.6, 0.5];
+  //   var base_255_rgba = [51, 102, 153, 127.5];
+
+  //   setup(function() {
+  //     myp5.colorMode(myp5.RGB, 1);
+  //     c = myp5.color.apply(myp5, base_1_rgba);
+  //   });
+
+  //   test('should correctly set RGBA', function() {
+  //     assert.deepEqual(c.rgba, base_255_rgba);
+  //   });
+
+  //   test('should correctly convert to HSB', function() {
+  //     assert.deepEqual(c.hsba, p5.ColorUtils.rgbaToHSBA(base_255_rgba));
+  //   });
+
+  //   test('should correctly set color string', function() {
+  //     assert.equal(c.toString(), 'rgba(51,102,153,0.5)');
+  //   });
+  // });
 });
