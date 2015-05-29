@@ -23,7 +23,8 @@ define(function (require) {
    *  <p>A rough "spec" for CSV can be found
    *  <a href="http://tools.ietf.org/html/rfc4180">here</a>.</p>
    *  <p>To load files, use the loadTable method.</p>
-   *  <p>To save tables to your computer, use the save method or the saveTable method.</p>
+   *  <p>To save tables to your computer, use the save method or the saveTable 
+   *  method.</p>
    *
    *  Possible options include:
    *  <ul>
