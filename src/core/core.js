@@ -30,7 +30,7 @@ define(function (require) {
    * @param  {Function}    sketch a closure that can set optional preload(),
    *                              setup(), and/or draw() properties on the
    *                              given p5 instance
-   * @param  {HTMLElement|boolean} node element to attach canvas to, if a 
+   * @param  {HTMLElement|boolean} node element to attach canvas to, if a
    *                                    boolean is passed in use it as sync
    * @param  {boolean}     [sync] start synchronously (optional)
    * @return {p5}                 a p5 instance
@@ -62,13 +62,13 @@ define(function (require) {
      * function preload() {  // preload() runs once
      *   img = loadImage('assets/laDefense.jpg');
      * }
-     * 
+     *
      * function setup() {  // setup() waits until preload() is done
      *   img.loadPixels();
      *   // get color of middle pixel
      *   c = img.get(img.width/2, img.height/2);
      * }
-     * 
+     *
      * function draw() {
      *   background(c);
      *   image(img, 25, 25, 50, 50);
@@ -183,7 +183,7 @@ define(function (require) {
     } else {
       this._events.MozOrientation = null;
     }
-  
+
     //FF doesn't recognize mousewheel as of FF3.x
     if (/Firefox/i.test(navigator.userAgent)) {
       this._events.DOMMouseScroll = null;
@@ -461,7 +461,7 @@ define(function (require) {
     });
 
     // TODO: ???
-    
+
     if (sync) {
       this._start();
     } else {

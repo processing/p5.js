@@ -21,7 +21,7 @@ suite('2D Primitives', function() {
         myp5.fill(0);
         myp5.ellipse(0, 0, 100, 100);
 
-        testRender('unit/shape/renders/ellipse.png', myp5, function(res) {
+        testRender('unit/assets/renders/ellipse.png', myp5, function(res) {
           assert.isTrue(res);
           done();
         });
@@ -41,7 +41,7 @@ suite('2D Primitives', function() {
         myp5.fill(0);
         myp5.line(0, 0, 100, 100);
 
-        testRender('unit/shape/renders/line.png', myp5, function(res) {
+        testRender('unit/assets/renders/line.png', myp5, function(res) {
           assert.isTrue(res);
           done();
         });

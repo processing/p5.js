@@ -33,13 +33,13 @@ define(function(require) {
    *                                               (depending on the current
    *                                               color mode), color string,
    *                                               p5.Color, or p5.Image
-   * @param {Number|Array}                    [v2] green or saturation value
+   * @param {Number}                          [v2] green or saturation value
    *                                               (depending on the current
    *                                               color mode)
-   * @param {Number|Array}                    [v3] blue or brightness value
+   * @param {Number}                          [v3] blue or brightness value
    *                                               (depending on the current
    *                                               color mode)
-   * @param {Number|Array}                    [a]  opacity of the background
+   * @param {Number}                          [a]  opacity of the background
    *
    * @example
    * <div>
@@ -153,7 +153,9 @@ define(function(require) {
    * Changes the way p5.js interprets color data. By default, the parameters
    * for fill(), stroke(), background(), and color() are defined by values
    * between 0 and 255 using the RGB color model. The colorMode() function is
-   * used to switch color systems.
+   * used to switch color systems. Regardless of color system, all value ranges
+   * are presumed to be 0–255 unless explicitly set otherwise. That is, 
+   * for a standard HSB range, one would pass colorMode(HSB, 360, 100, 100, 1).
    *
    * @method colorMode
    * @param {Number|Constant} mode either RGB or HSB, corresponding to
@@ -230,13 +232,13 @@ define(function(require) {
    *                                            (depending on the current color
    *                                            mode), or color Array, or CSS
    *                                            color string
-   * @param {Number|Array}                 [v2] green or saturation value
+   * @param {Number}                       [v2] green or saturation value
    *                                            (depending on the current
    *                                            color mode)
-   * @param {Number|Array}                 [v3] blue or brightness value
+   * @param {Number}                       [v3] blue or brightness value
    *                                            (depending on the current
    *                                            color mode)
-   * @param {Number|Array}                 [a]  opacity of the background
+   * @param {Number}                       [a]  opacity of the background
    *
    * @example
    * <div>
@@ -385,13 +387,13 @@ define(function(require) {
    *                                            (depending on the current color
    *                                            mode), or color Array, or CSS
    *                                            color string
-   * @param {Number|Array}                 [v2] green or saturation value
+   * @param {Number}                       [v2] green or saturation value
    *                                            (depending on the current
    *                                            color mode)
-   * @param {Number|Array}                 [v3] blue or brightness value
+   * @param {Number}                       [v3] blue or brightness value
    *                                            (depending on the current
    *                                            color mode)
-   * @param {Number|Array}                 [a]  opacity of the background
+   * @param {Number}                       [a]  opacity of the background
    *
    * @example
    * <div>

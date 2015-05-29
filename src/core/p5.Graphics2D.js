@@ -214,8 +214,11 @@ define(function(require) {
       return [0, 0, 0, 255];
     }
 
+    var pd = this.pixelDensity || this._pInst.pixelDensity;
+
     if (w === 1 && h === 1){
-      var imageData = this.drawingContext.getImageData(x, y, w, h);
+    
+      var imageData = this.drawingContext.getImageData(x * pd, y * pd, w, h);
       var data = imageData.data;
       var pixels = [];
 
@@ -225,14 +228,14 @@ define(function(require) {
 
       return pixels;
     } else {
-      var sx = x * this._pInst.pixelDensity;
-      var sy = y * this._pInst.pixelDensity;
+      var sx = x * pd;
+      var sy = y * pd;
       //auto constrain the width and height to
       //dimensions of the source image
       var dw = Math.min(w, this.width);
       var dh = Math.min(h, this.height);
-      var sw = dw * this._pInst.pixelDensity;
-      var sh = dh * this._pInst.pixelDensity;
+      var sw = dw * pd;
+      var sh = dh * pd;
 
       var region = new p5.Image(dw, dh);
       region.canvas.getContext('2d').drawImage(this.canvas, sx, sy, sw, sh,

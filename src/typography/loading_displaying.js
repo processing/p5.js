@@ -11,6 +11,9 @@ define(function(require) {
   var p5 = require('core');
   var constants = require('constants');
 
+  require('helpers');
+
+
   /**
    * Draws text to the screen. Displays the information specified in the first
    * parameter on the screen in the position specified by the additional
@@ -56,6 +59,15 @@ define(function(require) {
    * </div>
    */
   p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
+
+    this._validateParameters(
+      'text',
+      arguments,
+      [
+        ['String', 'Number', 'Number'],
+        ['String', 'Number', 'Number', 'Number', 'Number']
+      ]
+    );
 
     return (!(this._doFill || this._doStroke)) ? this :
       this._graphics.text.apply(this._graphics, arguments);
