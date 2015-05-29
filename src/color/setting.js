@@ -126,6 +126,7 @@ define(function(require) {
     } else {
       this._graphics.background.apply(this._graphics, arguments);
     }
+    return this;
   };
 
   /**
@@ -145,6 +146,7 @@ define(function(require) {
    */
   p5.prototype.clear = function() {
     this._graphics.clear();
+    return this;
   };
 
   /**
@@ -211,6 +213,7 @@ define(function(require) {
         maxArr[3] = arguments[4];
       }
     }
+    return this;
   };
 
   /**
@@ -329,6 +332,7 @@ define(function(require) {
     this._setProperty('_fillSet', true);
     this._setProperty('_doFill', true);
     this._graphics.fill.apply(this._graphics, arguments);
+    return this;
   };
 
   /**
@@ -347,6 +351,7 @@ define(function(require) {
    */
   p5.prototype.noFill = function() {
     this._setProperty('_doFill', false);
+    return this;
   };
 
   /**
@@ -364,6 +369,7 @@ define(function(require) {
    */
   p5.prototype.noStroke = function() {
     this._setProperty('_doStroke', false);
+    return this;
   };
 
   /**
@@ -492,6 +498,7 @@ define(function(require) {
     this._setProperty('_strokeSet', true);
     this._setProperty('_doStroke', true);
     this._graphics.stroke.apply(this._graphics, arguments);
+    return this;
   };
 
 
