@@ -288,7 +288,7 @@ define(function (require) {
    *   img = loadImage("assets/bricks.jpg");
    * }
    * function setup() {
-   *   imageMode(CORNER)
+   *   imageMode(CORNER);
    *   image(img, 10, 10, 50, 50);
    * }
    * </code>
@@ -301,7 +301,7 @@ define(function (require) {
    *   img = loadImage("assets/bricks.jpg");
    * }
    * function setup() {
-   *   imageMode(CORNERS)
+   *   imageMode(CORNERS);
    *   image(img, 10, 10, 90, 40);
    * }
    * </code>
@@ -314,7 +314,7 @@ define(function (require) {
    *   img = loadImage("assets/bricks.jpg");
    * }
    * function setup() {
-   *   imageMode(CENTER)
+   *   imageMode(CENTER);
    *   image(img, 50, 50, 80, 80);
    * }
    * </code>

@@ -41,7 +41,7 @@ define(function (require) {
    * var a = PI + PI/4.0;
    * var c = cos(a);
    * var ac = acos(c);
-   * //Prints: "3.926991 : -0.70710665 : 2.3561943"
+   * // Prints: "3.926991 : -0.70710665 : 2.3561943"
    * println(a + " : " + c + " : " +  ac);
    * </code>
    * </div>
@@ -124,7 +124,6 @@ define(function (require) {
    * </div>
    *
    */
-   */
   p5.prototype.atan = function(ratio) {
     if (this._angleMode === constants.RADIANS) {
       return Math.atan(ratio);
@@ -150,11 +149,11 @@ define(function (require) {
    * <div>
    * <code>
    * function draw() {
-   * background(204);
-   * translate(width/2, height/2);
-   * var a = atan2(mouseY-height/2, mouseX-width/2);
-   * rotate(a);
-   * rect(-30, -5, 60, 10);
+   *   background(204);
+   *   translate(width/2, height/2);
+   *   var a = atan2(mouseY-height/2, mouseX-width/2);
+   *   rotate(a);
+   *   rect(-30, -5, 60, 10);
    * }
    * </code>
    * </div>
@@ -181,8 +180,8 @@ define(function (require) {
    * var a = 0.0;
    * var inc = TWO_PI/25.0;
    * for (var i = 0; i < 25; i++) { 
-   * line(i*4, 50, i*4, 50+cos(a)*40.0);
-   * a = a + inc;
+   *   line(i*4, 50, i*4, 50+cos(a)*40.0);
+   *   a = a + inc;
    * }
    * </code>
    * </div>
@@ -210,8 +209,8 @@ define(function (require) {
    * var a = 0.0;
    * var inc = TWO_PI/25.0;
    * for (var i = 0; i < 25; i++) { 
-   * line(i*4, 50, i*4, 50+sin(a)*40.0);
-   * a = a + inc;
+   *   line(i*4, 50, i*4, 50+sin(a)*40.0);
+   *   a = a + inc;
    * }
    * </code>
    * </div>
@@ -238,8 +237,8 @@ define(function (require) {
    *   var a = 0.0;
    *   var inc = TWO_PI/50.0;
    *   for (var i = 0; i < 100; i = i+2) {
-   *   line(i, 50, i, 50+tan(a)*2.0);
-   *   a = a + inc;
+   *     line(i, 50, i, 50+tan(a)*2.0);
+   *     a = a + inc;
    *   }
    * </code>  
    * </div>
