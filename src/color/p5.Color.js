@@ -31,8 +31,8 @@ define(function(require) {
   };
 
   p5.Color.prototype._convertTo255 = function (pInst) {
-    var isRGB = pInst._colorMode === constants.RGB;
-    var maxArr = isRGB ? pInst._maxRGB : pInst._maxHSB;
+    // var isRGB = pInst._colorMode === constants.RGB;
+    var maxArr = pInst._colorMaxes[pInst._colorMode];
     var arr = [];
     arr[0] = this.color_array[0] * 255 / maxArr[0];
     arr[1] = this.color_array[1] * 255 / maxArr[1];
