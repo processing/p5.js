@@ -21,13 +21,8 @@ var textSketch = function(p) {
 };
 
 var textLineSketch = function(p) {
-  var font;
-  p.preload = function() {
-    font = p.loadFont(opentype, "../SourceSansPro-Regular.otf");
-  };
   p.setup = function() {
     p.createCanvas(240*4, 160);
-    // p.textFont(font);
     p.textSize(10);
     p.stroke(0);
     //1

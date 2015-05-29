@@ -9,6 +9,7 @@ define(function(require) {
   'use strict';
 
   var p5 = require('core');
+  var constants = require('constants');
 
   /**
    * Draws text to the screen. Displays the information specified in the first
@@ -64,47 +65,73 @@ define(function(require) {
       str = str.toString();
     }
 
-    if (typeof maxWidth !== 'undefined') {
-      y += this._textLeading;
-      maxHeight += y;
-    }
-
     str = str.replace(/(\t)/g, '  ');
-
     var cars = str.split('\n');
-    for (var ii = 0; ii < cars.length; ii++) {
 
-      var line = '';
-      var words = cars[ii].split(' ');
-
-      for (var n = 0; n < words.length; n++) {
-
-        if (y + this._textLeading <= maxHeight ||
-          typeof maxHeight === 'undefined') {
-
-          var testLine = line + words[n] + ' ';
-          var metrics = this.drawingContext.measureText(testLine);
-          var testWidth = metrics.width;
-
-          if (typeof maxWidth !== 'undefined' && testWidth > maxWidth) {
-
-            renderText(this, line, x, y);
-
+    if (typeof maxWidth !== 'undefined') {
+      var totalHeight = 0;
+      var n, ii, line, testLine, testWidth, words, metrics;
+      for (ii = 0; ii < cars.length; ii++) {
+        line = '';
+        words = cars[ii].split(' ');
+        for (n = 0; n < words.length; n++) {
+          testLine = line + words[n] + ' ';
+          metrics = this.drawingContext.measureText(testLine);
+          testWidth = metrics.width;
+          if (testWidth > maxWidth) {
             line = words[n] + ' ';
-            y += this._textLeading;
-
+            totalHeight += this._textLeading;
           } else {
-
             line = testLine;
           }
         }
       }
-
-      renderText(this, line, x, y);
-
-      y += this._textLeading;
+      switch (this.drawingContext.textAlign) {
+      case constants.CENTER:
+        x += maxWidth / 2;
+        break;
+      case constants.RIGHT:
+        x += maxWidth;
+        break;
+      }
+      if (typeof maxHeight !== 'undefined') {
+        switch (this.drawingContext.textBaseline) {
+        case constants.BOTTOM:
+          y += (maxHeight - totalHeight);
+          break;
+        case 'middle':
+          y += (maxHeight - totalHeight) / 2;
+          break;
+        case constants.BASELINE:
+          y += (maxHeight - totalHeight) - this._textDescent;
+          break;
+        }
+      }
+      for (ii = 0; ii < cars.length; ii++) {
+        line = '';
+        words = cars[ii].split(' ');
+        for (n = 0; n < words.length; n++) {
+          testLine = line + words[n] + ' ';
+          metrics = this.drawingContext.measureText(testLine);
+          testWidth = metrics.width;
+          if (testWidth > maxWidth) {
+            renderText(this, line, x, y);
+            line = words[n] + ' ';
+            y += this._textLeading;
+          } else {
+            line = testLine;
+          }
+        }
+        renderText(this, line, x, y);
+        y += this._textLeading;
+      }
     }
-
+    else{
+      for (var jj = 0; jj < cars.length; jj++) {
+        renderText(this, cars[jj], x, y);
+        y += this._textLeading;
+      }
+    }
     return this;
   };
 
