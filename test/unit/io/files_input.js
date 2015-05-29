@@ -20,7 +20,7 @@ suite('Files', function() {
       assert.typeOf(loadJSON, 'function');
     });
     test('should return an Array', function() {
-      result = loadJSON('array.json');
+      result = loadJSON('../assets/array.json');
       assert.ok(result);
       // assert.isObject(result, 'result is an object');
       assert.typeOf(result, 'Array');
@@ -37,17 +37,17 @@ suite('Files', function() {
   //     assert.typeOf(loadJSON, 'function');
   //   });
   //   test('in preload, should return an object', function() {
-  //     result = loadJSON("array.json");
+  //     result = loadJSON("../assets/array.json");
   //     assert.typeOf(result, 'Object');
   //   });
   //   test('should return an error', function() {
-  //     result = loadJSON("arr.json");
+  //     result = loadJSON("../assets/arr.json");
   //     assert.typeOf(result, 'nothing');
   //   });
   // });
 
   // test('loadStrings in preload without callback', function(
-  // result = loadStrings('sentences.txt');
+  // result = loadStrings('../assets/sentences.txt');
   // assert.ok(result);
   // )};
 
@@ -62,7 +62,7 @@ suite('Files', function() {
     test('should allow json to override jsonp in 3rd param',
       function(done){
 
-        var url = 'http://localhost:9001/unit/input/array.json';
+        var url = 'http://localhost:9001/unit/assets/array.json';
         var datatype = 'json';
         var myCallback = function(resp){
           assert.ok(resp);
@@ -78,7 +78,7 @@ suite('Files', function() {
 
 
   suite('p5.prototype.loadTable',function(){
-    var url = 'http://localhost:9001/unit/input/csv.csv';
+    var url = 'http://localhost:9001/unit/assets/csv.csv';
     
     test('should be a function', function(){
       assert.isFunction(loadTable);
