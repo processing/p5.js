@@ -1,0 +1,195 @@
+<enterprise>
+  <!-- Person Record -->
+  <person recstatus="1">
+   <sourcedid>
+    <source>Test</source>
+    <id>test-person-batchuid</id>
+   </sourcedid>
+   <userid password="11111111111111111111111111111111" pwencryptiontype="MD5">test-person-username</userid>
+   <name>
+    <fn>Mr. Test Person Jr.</fn>
+    <sort>Person, Test</sort>
+    <nickname>Tee</nickname>
+    <n>
+     <family>Person</family>
+     <given>Test</given>
+     <other>Foo</other>
+     <prefix>Mr.</prefix>
+     <suffix>Jr.</suffix>
+    </n>
+   </name>
+   <demographics>
+    <gender>2</gender>
+    <bday>2011-03-09</bday>
+   </demographics>
+   <email>test_person@example.com</email>
+   <tel teltype="0">5555551212</tel>
+   <tel teltype="1">1115551212</tel>
+   <adr>
+    <pobox>200</pobox>
+    <street>123 Fake Street</street>
+    <locality>Fake Town</locality>
+    <region>CA</region>
+    <pcode>1234567</pcode>
+    <country>US</country>
+   </adr>
+   <systemrole systemroletype="User"/>
+   <institutionrole primaryrole="Yes" institutionroletype="Student"/>
+   <extension>
+    <x_bb_available>true</x_bb_available>
+    <x_bb_company>Blackboard</x_bb_company>
+    <x_bb_company_department>PD</x_bb_company_department>
+    <x_bb_datasource_key>TestDS</x_bb_datasource_key>
+    <x_bb_education_level>senior</x_bb_education_level>
+    <x_bb_institution_role>0</x_bb_institution_role>
+    <x_bb_job_title>Software Engineer</x_bb_job_title>
+    <x_bb_row_status>0</x_bb_row_status>
+    <x_bb_systemrole>6</x_bb_systemrole>
+    <x_bb_studentid>test-person-student-id</x_bb_studentid>
+    <x_bb_webpage>http://example.com</x_bb_webpage>
+    <x_bb_portalrole>Student</x_bb_portalrole>
+   </extension>
+  </person>
+  <!-- Course -->
+  <group recstatus="1">
+   <sourcedid>
+    <source>Test</source>
+    <id>test-course-batchuid</id> 
+   </sourcedid>
+   <grouptype><typevalue level="0">0</typevalue></grouptype>
+   <description>
+    <short>test-course-id</short>
+    <long>test-course-name</long>
+    <full>test-course-description</full>
+   </description>
+   <timeframe>
+    <begin restrict="no">2010-01-01</begin>
+    <end restrict="no">2011-01-01</end>
+    <adminperiod>TestPeriod</adminperiod>
+   </timeframe>
+   <extension>
+    <x_bb_datasource_key>TestDS</x_bb_datasource_key>
+    <x_bb_row_status>0</x_bb_row_status>
+    <x_bb_available>Y</x_bb_available>
+    <x_bb_days_of_use>25</x_bb_days_of_use>
+    <x_bb_enrollment_access_code>enrollcode</x_bb_enrollment_access_code>
+    <x_bb_catalog>Y</x_bb_catalog>
+    <x_bb_description_page>Y</x_bb_description_page>
+    <x_bb_allow_guests>N</x_bb_allow_guests>
+    <x_bb_allow_observers>Y</x_bb_allow_observers>
+    <x_bb_pace>0</x_bb_pace>
+    <x_bb_institution_name>institution-name</x_bb_institution_name>
+    <x_bb_fee>12.50</x_bb_fee>
+    <x_bb_locale>en_US</x_bb_locale>
+    <x_bb_locale_enforced_indicator>Y</x_bb_locale_enforced_indicator>
+    <x_bb_enrollment_type>1</x_bb_enrollment_type>
+    <x_bb_enroll_start>2010-02-01</x_bb_enroll_start>
+    <x_bb_enroll_end>2011-02-01</x_bb_enroll_end>
+    <x_bb_navstyle>text</x_bb_navstyle>
+    <x_bb_duration>1</x_bb_duration>
+    <x_bb_absolute_limit>1000</x_bb_absolute_limit>
+    <x_bb_soft_limit>500</x_bb_soft_limit>
+    <x_bb_upload_limit>1000</x_bb_upload_limit>
+    <x_bb_lockout_indicator>Y</x_bb_lockout_indicator>
+   </extension>
+  </group>
+  <!-- Memberships -->
+  <membership>
+   <sourcedid>
+    <source>Test</source>
+    <id>test-course-batchuid</id>
+   </sourcedid>
+   <member>
+    <sourcedid>
+     <source>Test</source>
+     <id>test-person-batchuid</id>
+    </sourcedid>
+    <idtype idtype="1"/>
+    <role recstatus="1" roletype="1">
+     <status>1</status>
+     <extension>
+      <x_bb_row_status>0</x_bb_row_status>
+      <x_bb_introduction>introduction</x_bb_introduction>
+      <x_bb_private_information>personal-info</x_bb_private_information>
+      <x_bb_datasource_key>TestDS</x_bb_datasource_key>
+      <x_bb_notes>notes</x_bb_notes>
+      <x_bb_has_cartridge_access>N</x_bb_has_cartridge_access>
+      <x_bb_link_name_1>Link1</x_bb_link_name_1>
+      <x_bb_link_desc_1>Link1desc</x_bb_link_desc_1>
+      <x_bb_link_url_1>http://link1.example.com</x_bb_link_url_1>
+      <x_bb_link_name_2>Link2</x_bb_link_name_2>
+      <x_bb_link_desc_2>Link2desc</x_bb_link_desc_2>
+      <x_bb_link_url_2>http://link2.example.com</x_bb_link_url_2>
+      <x_bb_link_name_3>Link3</x_bb_link_name_3>
+      <x_bb_link_desc_3>Link3desc</x_bb_link_desc_3>
+      <x_bb_link_url_3>http://link3.example.com</x_bb_link_url_3>
+      <x_bb_receive_email>Y</x_bb_receive_email>
+      <x_bb_included_in_roster>N</x_bb_included_in_roster>
+     </extension>
+    </role>
+   </member>
+  </membership>
+  <!-- Category -->
+  <category recstatus="1" type="0">
+    <sourcedid>
+      <source>Test</source>
+      <id>test-category-batchuid</id>
+    </sourcedid>
+    <extension>
+      <x_bb_row_status>0</x_bb_row_status>
+      <x_bb_frontpage_indicator>Y</x_bb_frontpage_indicator>
+      <x_bb_available_indicator>Y</x_bb_available_indicator>
+      <x_bb_restrict_indicator>N</x_bb_restrict_indicator>
+      <x_bb_title>CategoryTitle</x_bb_title>
+      <x_bb_description>CategoryDescription</x_bb_description>
+      <x_bb_datasource_key>TestDS</x_bb_datasource_key>
+    </extension>
+  </category>  
+  <!-- Category Membership -->
+  <category_membership type="0">
+    <sourcedid>
+      <source>Test</source>
+      <id>test-course-batchuid</id>
+    </sourcedid>
+    <category_member recstatus="1">
+      <sourcedid>
+        <source>Test</source>
+        <id>test-category-batchuid</id>
+      </sourcedid>
+      <extension>
+        <x_bb_row_status>0</x_bb_row_status>
+        <x_bb_available_indicator>Y</x_bb_available_indicator>
+        <x_bb_datasource_key>TestDS</x_bb_datasource_key>
+      </extension>
+    </category_member>
+  </category_membership>  
+  <!-- Portal Role Membership -->
+  <portal_role_membership recstatus="1">
+    <sourcedid>
+      <source>Test</source>
+      <id>test-person-batchuid</id>
+    </sourcedid>
+    <role roletype="Student" />
+    <extension>
+      <x_bb_row_status>0</x_bb_row_status>
+      <x_bb_datasource_key>TestDS</x_bb_datasource_key>
+    </extension>
+  </portal_role_membership>
+  <!-- Observer Membership -->
+  <observer_membership>
+   <sourcedid>
+    <source>Test</source>
+    <id>test-observer-batchuid</id>
+   </sourcedid>
+   <observer_user recstatus="1">
+    <sourcedid>
+     <source>Test</source>
+     <id>test-user-batchuid</id>
+    </sourcedid>
+    <extension>
+     <x_bb_row_status>0</x_bb_row_status>
+     <x_bb_datasource_key>TestDS</x_bb_datasource_key>
+    </extension>
+   </observer_user>
+  </observer_membership>
+</enterprise>
