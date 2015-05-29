@@ -1,11 +1,3 @@
-/*
-src/input/files.js //loadFont
-src/objects/p5.Font.js //wrapper of opentype.js
-src/typography/attributes.js // other attributes
-src/typography/loading_display.js //text and text font function
-*/
-
-
 var textSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
@@ -13,8 +5,15 @@ var textSketch = function(p) {
     p.text("Default Text", 10, 30);
     p.noStroke();
     p.fill(0, 102, 153);
-    p.text("Black No Stroke Text", 10, 60);
-    p.textSize(12).fill(120).text("Simple long Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry. ", 10, 90, 220, 60);
+    p.text("Blue No Stroke Text", 10, 60);
+    p.textStyle(p.ITALIC);
+    p.text("Blue No Stroke Text Italic", 10, 80);
+    p.textStyle(p.BOLD);
+    p.text("Blue No Stroke Text Bold", 10, 100);
+    p.textStyle(p.NORMAL);
+    p.textSize(12);
+    p.fill(120);
+    p.text("Simple long Text: Lorem Ipsum is simply dummy text of the printing and typesetting industry. ", 10, 90, 220, 60);
   };
 };
 

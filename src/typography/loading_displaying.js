@@ -57,99 +57,9 @@ define(function(require) {
    */
   p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
 
-    if (!(this._doFill || this._doStroke)) {
-      return;
-    }
-
-    if (typeof str !== 'string') {
-      str = str.toString();
-    }
-
-    str = str.replace(/(\t)/g, '  ');
-    var cars = str.split('\n');
-
-    if (typeof maxWidth !== 'undefined') {
-      var totalHeight = 0;
-      var n, ii, line, testLine, testWidth, words;
-      for (ii = 0; ii < cars.length; ii++) {
-        line = '';
-        words = cars[ii].split(' ');
-        for (n = 0; n < words.length; n++) {
-          testLine = line + words[n] + ' ';
-          testWidth = this.textWidth(testLine);
-          if (testWidth > maxWidth) {
-            line = words[n] + ' ';
-            totalHeight += this.textLeading();
-          } else {
-            line = testLine;
-          }
-        }
-      }
-      switch (this.drawingContext.textAlign) {
-      case constants.CENTER:
-        x += maxWidth / 2;
-        break;
-      case constants.RIGHT:
-        x += maxWidth;
-        break;
-      }
-      if (typeof maxHeight !== 'undefined') {
-        switch (this.drawingContext.textBaseline) {
-        case constants.BOTTOM:
-          y += (maxHeight - totalHeight);
-          break;
-        case 'middle':
-          y += (maxHeight - totalHeight) / 2;
-          break;
-        case constants.BASELINE:
-          y += (maxHeight - totalHeight);
-          break;
-        }
-      }
-      for (ii = 0; ii < cars.length; ii++) {
-        line = '';
-        words = cars[ii].split(' ');
-        for (n = 0; n < words.length; n++) {
-          testLine = line + words[n] + ' ';
-          testWidth = this.textWidth(testLine);
-          if (testWidth > maxWidth) {
-            renderText(this, line, x, y);
-            line = words[n] + ' ';
-            y += this.textLeading();
-          } else {
-            line = testLine;
-          }
-        }
-        renderText(this, line, x, y);
-        y += this.textLeading();
-      }
-    }
-    else{
-      for (var jj = 0; jj < cars.length; jj++) {
-        renderText(this, cars[jj], x, y);
-        y += this.textLeading();
-      }
-    }
-    return this;
+    return (!(this._doFill || this._doStroke)) ? this :
+      this._graphics.text.apply(this._graphics, arguments);
   };
-
-
-
-  function renderText(p, line, x, y) {
-
-    if (p._isOpenType()) {
-
-      return p._textFont.renderPath(line, x, y);
-    }
-
-    if (p._doFill) {
-      p.drawingContext.fillText(line, x, y);
-    }
-
-    if (p._doStroke) {
-      p.drawingContext.strokeText(line, x, y);
-    }
-  }
 
   /**
    * Sets the current font that will be drawn with the text() function.
@@ -170,17 +80,26 @@ define(function(require) {
    */
   p5.prototype.textFont = function(theFont, theSize) {
 
-    theSize = theSize || this._textSize;
+    if (arguments.length) {
 
-    if (!theFont) {
-      throw 'null font passed to textFont';
+      if (!theFont) {
+
+        throw Error('null font passed to textFont');
+      }
+
+      this._setProperty('_textFont', theFont);
+
+      if (theSize) {
+
+        this._setProperty('_textSize', theSize);
+        this._setProperty('_textLeading',
+          theSize * constants._DEFAULT_LEADMULT);
+      }
+
+      return this._graphics._applyTextProperties();
     }
 
-    this._setProperty('_textFont', theFont);
-
-    this.textSize(theSize);
-
-    return this._applyTextProperties();
+    return this;
   };
 
   return p5;

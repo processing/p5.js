@@ -12,4 +12,18 @@ define(function(require) {
             window.setTimeout(callback, 1000 / 60);
           };
   })();
+
+  /**
+   * shim for Uint8ClampedArray.slice
+   * (allows arrayCopy to work with pixels[])
+   * with thanks to http://halfpapstudios.com/blog/tag/html5-canvas/
+   */
+  (function () {
+    'use strict';
+
+    if (typeof Uint8ClampedArray !== 'undefined') {
+      //Firefox and Chrome
+      Uint8ClampedArray.prototype.slice = Array.prototype.slice;
+    }
+  }());
 });

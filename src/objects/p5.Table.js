@@ -23,6 +23,8 @@ define(function (require) {
    *  <p>A rough "spec" for CSV can be found
    *  <a href="http://tools.ietf.org/html/rfc4180">here</a>.</p>
    *  <p>To load files, use the loadTable method.</p>
+   *  <p>To save tables to your computer, use the save method
+   *   or the saveTable method.</p>
    *
    *  Possible options include:
    *  <ul>
@@ -536,6 +538,52 @@ define(function (require) {
    */
   p5.Table.prototype.getString = function(row, column) {
     return this.rows[row].getString(column);
+  };
+
+  /**
+   * Retrieves all table data and returns as an object. If a column name is
+   * passed in, each row object will be stored with that attribute as its
+   * title.
+   *
+   * @method  getObject
+   * @param {String} headerColumn Name of the column which should be used to 
+   *                              title each row object (optional)
+   * @return {Object}
+   */
+  p5.Table.prototype.getObject = function (headerColumn) {
+    var tableObject = {};
+    var obj, cPos, index;
+
+    for(var i = 0; i < this.rows.length; i++) {
+      obj = this.rows[i].obj;
+
+      if (typeof(headerColumn) === 'string'){
+        cPos = this.columns.indexOf(headerColumn); // index of columnID
+        if (cPos >= 0) {
+          index = obj[headerColumn];
+          tableObject[index] = obj;
+        } else {
+          throw 'This table has no column named "' + headerColumn +'"';
+        }
+      } else {
+        tableObject[i] = this.rows[i].obj;
+      }
+    }
+    return tableObject;
+  };
+
+  /**
+   * Retrieves all table data and returns it as a multidimensional array.
+   *
+   * @method  getArray
+   * @return {Array}
+   */
+  p5.Table.prototype.getArray = function () {
+    var tableArray = [];
+    for(var i = 0; i < this.rows.length; i++) {
+      tableArray.push(this.rows[i].arr);
+    }
+    return tableArray;
   };
 
   return p5.Table;

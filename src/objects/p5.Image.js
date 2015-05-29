@@ -55,20 +55,32 @@ define(function (require) {
     this.canvas.width = this.width;
     this.canvas.height = this.height;
     this.drawingContext = this.canvas.getContext('2d');
+    this.pixelDensity = 1;
     /**
-     * Array containing the color of every pixel in the image.
-     * These values are numbers. This array is the size of the display window
-     * x 4, representing the R, G, B, A values in order for each pixel, moving 
-     * from left to right across each row, then down each column. For example, 
-     * if the image is 100x100 pixels, there will be 40000. The first four
-     * values (indices 0-3) in the array will be the R, G, B, A values of the
-     * pixel at  (0, 0). The second four values (indices 4-7) will contain the
-     * R, G, B, A values of the pixel at (1, 0). More generally, to set values
-     * for a pixel at (x, y):<br>
-     * <code>pixels[y*width+x] = r; <br>
-     * pixels[y*width+x+1] = g;<br>
-     * pixels[y*width+x+2] = b;<br>
-     * pixels[y*width+x+3] = a;</code>
+     * Array containing the values for all the pixels in the display window.
+     * These values are numbers. This array is the size (include an appropriate
+     * factor for pixelDensity) of the display window x4,
+     * representing the R, G, B, A values in order for each pixel, moving from 
+     * left to right across each row, then down each column. Retina and other
+     * high denisty displays may have more pixels[] (by a factor of
+     * pixelDensity^2).
+     * For example, if the image is 100x100 pixels, there will be 40,000. With
+     * pixelDensity = 2, there will be 160,000. The first four values
+     * (indices 0-3) in the array will be the R, G, B, A values of the pixel at 
+     * (0, 0). The second four values (indices 4-7) will contain the R, G, B, A
+     * values of the pixel at (1, 0). More generally, to set values for a pixel
+     * at (x, y): 
+     * <code><pre>var d = pixelDensity;
+     * for (var i = 0; i < d; i++) {
+     *   for (var j = 0; j < d; j++) {
+     *     // loop over
+     *     idx = 4*((y * d + j) * width * d + (x * d + i));
+     *     pixels[idx] = r;
+     *     pixels[idx+1] = g;
+     *     pixels[idx+2] = b;
+     *     pixels[idx+3] = a;
+     *   }
+     * }
      * <br><br>
      * Before accessing this array, the data must loaded with the loadPixels()
      * function. After the array data has been modified, the updatePixels()
@@ -121,7 +133,7 @@ define(function (require) {
    * @method loadPixels
    */
   p5.Image.prototype.loadPixels = function(){
-    p5.prototype.loadPixels.call(this);
+    p5.Graphics2D.prototype.loadPixels.call(this);
   };
 
   /**
@@ -139,7 +151,7 @@ define(function (require) {
    *                              underlying canvas
    */
   p5.Image.prototype.updatePixels = function(x, y, w, h){
-    p5.prototype.updatePixels.call(this, x, y, w, h);
+    p5.Graphics2D.prototype.updatePixels.call(this, x, y, w, h);
   };
 
   /**
@@ -161,7 +173,7 @@ define(function (require) {
    *                                    [R, G, B, A] or p5.Image
    */
   p5.Image.prototype.get = function(x, y, w, h){
-    return p5.prototype.get.call(this, x, y, w, h);
+    return p5.Graphics2D.prototype.get.call(this, x, y, w, h);
   };
 
   /**
@@ -194,7 +206,7 @@ define(function (require) {
    * </div>
    */
   p5.Image.prototype.set = function(x, y, imgOrCol){
-    p5.prototype.set.call(this, x, y, imgOrCol);
+    p5.Graphics2D.prototype.set.call(this, x, y, imgOrCol);
   };
 
   /**
@@ -280,7 +292,7 @@ define(function (require) {
    * @param  {Integer} dw destination image width
    * @param  {Integer} dh destination image height
    */
-  p5.Image.prototype.copy = function() {
+  p5.Image.prototype.copy = function () {
     p5.prototype.copy.apply(this, arguments);
   };
 
@@ -309,7 +321,7 @@ define(function (require) {
 
     var scaleFactor = 1;
     if (p5Image instanceof p5.Graphics) {
-      scaleFactor = p5Image._pInst._pixelDensity;
+      scaleFactor = p5Image._pInst.pixelDensity;
     }
     
     var copyArgs = [

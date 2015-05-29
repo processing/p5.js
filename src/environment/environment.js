@@ -28,11 +28,14 @@ define(function(require) {
    *   <div><code>
    *     function setup() {
    *       frameRate(30);
+   *       textSize(20);
+   *       textSize(30);
+   *       textAlign(CENTER);
    *     }
    *
    *     function draw() {
-   *       line(0, 0, width, height);
-   *       print(frameCount);
+   *       background(200);
+   *       text(frameCount, width/2, height/2);
    *     }
    *   </code></div>
    */
@@ -124,6 +127,39 @@ define(function(require) {
    * @method frameRate
    * @param  {Number} [fps] number of frames to be displayed every second
    * @return {Number}       current frameRate
+   * @example
+   * 
+   * <div><code>
+   * var rectX = 0;
+   * var fr = 30; //starting FPS 
+   * var clr = color(255,0,0);
+   * 
+   * function setup() {
+   *   background(200);
+   *   frameRate(fr); // Attempt to refresh at starting FPS
+   * }
+   * 
+   * function draw() {
+   *   background(200);
+   *   rectX = rectX += 1; // Move Rectangle
+   *   
+   *   if (rectX >= width) { // If you go off screen. 
+   *     if (fr == 30) {
+   *       clr = color(0,0,255);
+   *       fr = 10;
+   *       frameRate(fr); // make frameRate 10 FPS
+   *     } else {
+   *       clr = color(255,0,0);
+   *       fr = 30;
+   *       frameRate(fr); // make frameRate 30 FPS
+   *     }
+   *     rectX = 0;
+   *   }
+   *   fill(clr);
+   *   rect(rectX, 40, 20,20);
+   * }
+   * </div></code>
+   * 
    */
   p5.prototype.frameRate = function(fps) {
     if (typeof fps === 'undefined') {
@@ -357,13 +393,13 @@ define(function(require) {
   p5.prototype.devicePixelScaling = function(val) {
     if (val) {
       if (typeof val === 'number') {
-        this._pixelDensity = val;
+        this.pixelDensity = val;
       }
       else {
-        this._pixelDensity = window.devicePixelRatio || 1;
+        this.pixelDensity = window.devicePixelRatio || 1;
       }
     } else {
-      this._pixelDensity = 1;
+      this.pixelDensity = 1;
     }
     this.resizeCanvas(this.width, this.height, true);
   };

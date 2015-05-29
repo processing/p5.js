@@ -7,6 +7,22 @@
 define(function(require) {
 
   /**
+   * Issues
+   * -- require opentype.js (awaiting dev-ops) **
+   * -- var fonts = loadFont([]); **
+   * -- example exposing opentype font object **
+   * -- PFont functions:
+   *    textBounds() exists
+   *    glyphPaths -> object or array?
+   *    PFont.list()
+   * -- Integrating p5.dom (later)
+   * -- alignment: justified
+   * -- kerning
+   * -- truncation
+   * -- drop-caps
+   */
+
+  /**
    * This module defines the p5.Font class and P5 methods for
    * drawing text to the main display canvas.
    */
@@ -43,7 +59,7 @@ define(function(require) {
 
     if (p.drawingContext.textBaseline === constants.TOP) {
       y += textHeight;
-    } else if (p.drawingContext.textBaseline === 'middle') {
+    } else if (p.drawingContext.textBaseline === constants._CTX_MIDDLE) {
       y += textHeight / 2 - textDescent;
     } else if (p.drawingContext.textBaseline === constants.BOTTOM) {
       y -= textDescent;
@@ -51,12 +67,14 @@ define(function(require) {
 
     path = this.font.getPath(line, x, y, fontSize, options);
 
+    // no stroke unless specified by user
     if (p._doStroke && p._strokeSet) {
 
       path.strokeWidth = p.drawingContext.lineWidth;
       path.stroke = p.drawingContext.strokeStyle;
     }
 
+    // if fill hasn't been set by user, use default text fill
     if (p._doFill) {
 
       path.fill = p._fillSet ? p.drawingContext.fillStyle :

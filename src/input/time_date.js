@@ -16,6 +16,13 @@ define(function (require) {
    *
    * @method day
    * @return {Number} the current day
+   * @example
+   * <div>
+   * <code>
+   * var day = day();
+   * text("Current day: \n"+day, 5, 50);
+   * </code>
+   * </div>
    */
   p5.prototype.day = function() {
     return new Date().getDate();
@@ -27,6 +34,13 @@ define(function (require) {
    *
    * @method hour
    * @return {Number} the current hour
+   * @example
+   * <div>
+   * <code>
+   * var hour = hour();
+   * text("Current hour:\n"+hour, 5, 50);
+   * </code>
+   * </div>
    */
   p5.prototype.hour = function() {
     return new Date().getHours();
@@ -38,6 +52,13 @@ define(function (require) {
    *
    * @method minute
    * @return {Number} the current minute
+   * @example
+   * <div>
+   * <code>
+   * var minute = minute();
+   * text("Current minute: \n:"+minute, 5, 50);
+   * </code>
+   * </div>
    */
   p5.prototype.minute = function() {
     return new Date().getMinutes();
@@ -50,6 +71,13 @@ define(function (require) {
    *
    * @method millis
    * @return {Number} the number of milliseconds since starting the program
+   * @example
+   * <div>
+   * <code>
+   * var millisecond = millis();
+   * text("Milliseconds \nrunning: "+millisecond, 5, 50);
+   * </code>
+   * </div>
    */
   p5.prototype.millis = function() {
     return new Date().getTime() - this._startTime;
@@ -61,6 +89,13 @@ define(function (require) {
    *
    * @method month
    * @return {Number} the current month
+   * @example
+   * <div>
+   * <code>
+   * var month = month();
+   * text("Current month: \n"+month, 5, 50);
+   * </code>
+   * </div>
    */
   p5.prototype.month = function() {
     return new Date().getMonth() + 1; //January is 0!
@@ -72,6 +107,13 @@ define(function (require) {
    *
    * @method second
    * @return {Number} the current second
+   * @example
+   * <div>
+   * <code>
+   * var second = second();
+   * text("Current second: \n" +second, 5, 50);
+   * </code>
+   * </div>
    */
   p5.prototype.second = function() {
     return new Date().getSeconds();
@@ -83,6 +125,13 @@ define(function (require) {
    *
    * @method year
    * @return {Number} the current year
+   * @example
+   * <div>
+   * <code>
+   * var year = year();
+   * text("Current year: \n" +year, 5, 50);
+   * </code>
+   * </div>
    */
   p5.prototype.year = function() {
     return new Date().getFullYear();

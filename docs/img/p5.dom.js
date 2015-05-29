@@ -545,8 +545,8 @@ var p5DOM = (function(){
       }
       // set diff for cnv vs normal div
       if (this.elt instanceof HTMLCanvasElement) {
-        this.elt.setAttribute('width', aW * this._pInst._pixelDensity);
-        this.elt.setAttribute('height', aH * this._pInst._pixelDensity);
+        this.elt.setAttribute('width', aW * this._pInst.pixelDensity);
+        this.elt.setAttribute('height', aH * this._pInst.pixelDensity);
         this.elt.setAttribute('style', 'width:' + aW + 'px !important; height:' + aH + 'px !important;');
       } else {
         this.elt.style.width = aW;
