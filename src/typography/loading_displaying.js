@@ -22,6 +22,7 @@ define(function(require) {
    * with textSize(). Change the color of the text with the fill() function.
    * Change the outline of the text with the stroke() and strokeWeight()
    * functions.
+   *
    * The text displays in relation to the textAlign() function, which gives the
    * option to draw to the left, right, and center of the coordinates.
    *
@@ -78,7 +79,8 @@ define(function(require) {
    * Sets the current font that will be drawn with the text() function.
    *
    * @method textFont
-   * @param {String} str name of font
+   * @param {Object|String} Either a font loaded via loadFont(), or a String
+   *  representing a browser-based dfault font.
    * @return {Object} this
    * @example
    * <div>
@@ -91,8 +93,30 @@ define(function(require) {
    * text("Helvetica", 12, 90);
    * </code>
    * </div>
+   * @example
+   * <div>
+   * <code>
+   * fill(0);
+   * textSize(12);
+   * textFont(otfFont); // loaded in preload
+   * text("Custom OTF", 12, 40);
+   * textFont("Helvetica");
+   * text("Helvetica", 12, 90);
+   * </code>
+   * </div>
    */
   p5.prototype.textFont = function(theFont, theSize) {
+
+    this._validateParameters(
+      'textFont',
+      arguments,
+      [
+        ['String' ],
+        ['Object' ],
+        ['String', 'Number' ],
+        ['Object', 'Number' ]
+      ]
+    );
 
     if (arguments.length) {
 
