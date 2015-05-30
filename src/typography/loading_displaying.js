@@ -22,6 +22,7 @@ define(function(require) {
    * with textSize(). Change the color of the text with the fill() function.
    * Change the outline of the text with the stroke() and strokeWeight()
    * functions.
+   *
    * The text displays in relation to the textAlign() function, which gives the
    * option to draw to the left, right, and center of the coordinates.
    *
@@ -78,7 +79,8 @@ define(function(require) {
    * Sets the current font that will be drawn with the text() function.
    *
    * @method textFont
-   * @param {String} str name of font
+   * @param {Object|String} f a font loaded via loadFont(), or a String
+   *  representing a browser-based dfault font.
    * @return {Object} this
    * @example
    * <div>
@@ -86,13 +88,44 @@ define(function(require) {
    * fill(0);
    * textSize(12);
    * textFont("Georgia");
-   * text("Georgia", 12, 40);
+   * text("Georgia", 12, 30);
    * textFont("Helvetica");
-   * text("Helvetica", 12, 90);
+   * text("Helvetica", 12, 60);
+   * </code>
+   * </div>
+   * <div>
+   * <code>
+   * var fontRegular, fontItalic, fontBold;
+   * function preload() {
+   *    fontRegular = loadFont("./assets/fonts/Regular.otf");
+   *    fontItalic = loadFont("./assets/fonts/Italic.ttf");
+   *    fontBold = loadFont("./assets/fonts/Bold.ttf");
+   * }
+   * function setup() {
+   *    background(210);
+   *    fill(0).strokeWeight(0).textSize(10);
+   *    textFont(fontRegular);
+   *    text("Font Style Normal", 10, 30);
+   *    textFont(fontItalic);
+   *    text("Font Style Italic", 10, 50);
+   *    textFont(fontBold);
+   *    text("Font Style Bold", 10, 70);
+   * }
    * </code>
    * </div>
    */
   p5.prototype.textFont = function(theFont, theSize) {
+
+    this._validateParameters(
+      'textFont',
+      arguments,
+      [
+        ['String' ],
+        ['Object' ],
+        ['String', 'Number' ],
+        ['Object', 'Number' ]
+      ]
+    );
 
     if (arguments.length) {
 

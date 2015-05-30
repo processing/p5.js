@@ -16,9 +16,10 @@ define(function (require) {
 
 
   /**
-   * Loads an opentype font file (.otf, .ttf) from a file or a URL, and returns a PFont
-   * Object. This method is asynchronous, meaning it may not finish before the next
-   * line in your sketch is executed.
+   * Loads an opentype font file (.otf, .ttf) from a file or a URL,
+   * and returns a PFont Object. This method is asynchronous,
+   * meaning it may not finish before the next line in your sketch
+   * is executed.
    *
    * @method loadFont
    * @param  {String}        path       name of the file or url to load
@@ -33,9 +34,8 @@ define(function (require) {
    *
    * <div><code>
    * var myFont;
-   *
    * function preload() {
-   *   myFont = loadFont('./assets/AvenirNextLTPro-Demi.otf');
+   *   myFont = loadFont('./assets/fonts/AvenirNextLTPro-Demi.otf');
    * }
    *
    * function setup() {
@@ -44,26 +44,22 @@ define(function (require) {
    *   textSize(36);
    *   text('p5*js', 10, 50);
    * }
-   *
-   * function draw() {
-   * }
    * </code></div>
    *
    * <p>Outside preload(), you may supply a callback function to handle the
    * object:</p>
-
+   *
    * <div><code>
    * function setup() {
-   *   loadFont('./assets/AvenirNextLTPro-Demi.otf', drawText);
+   *   loadFont('./assets/fonts/AvenirNextLTPro-Demi.otf', drawText);
    * }
    *
    * function drawText(font) {
-   * 	 fill('#ED225D');
+   *   fill('#ED225D');
    *   textFont(font, 36);
    *   text('p5*js', 10, 50);
    * }
-   *
-   * function draw() {
+   * function draw(){
    * }
    * </code></div>
    *

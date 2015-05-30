@@ -91,16 +91,16 @@ define(function(require) {
    *
    * @method textSize
    * @param {Number} s the size of the letters in units of pixels
-   * @example
    * @return {Object|Number}
+   * @example
    * <div>
    * <code>
-   * background(0);
-   * fill(255);
-   * textSize(26);
-   * text("WORD", 10, 50);
+   * textSize(12);
+   * text("Font Size 12", 10, 30);
    * textSize(14);
-   * text("WORD", 10, 70);
+   * text("Font Size 14", 10, 60);
+   * textSize(16);
+   * text("Font Size 16", 10, 90);
    * </code>
    * </div>
    */
@@ -119,6 +119,8 @@ define(function(require) {
   /**
    * Sets/gets the style of the text to NORMAL, ITALIC, or BOLD. Note this is
    * overridden by CSS styling.
+   * (Style only apply to system font, for custom fonts, please load styled
+   * fonts instead.)
    *
    * @method textStyle
    * @param {Number/Constant} s styling for text, either NORMAL,
@@ -127,17 +129,15 @@ define(function(require) {
    * @example
    * <div>
    * <code>
-   * background(0);
-   * fill(255);
+   * fill(0);
+   * strokeWeight(0);
+   * textSize(12);
    * textStyle(NORMAL);
-   * textSize(14);
-   * text("WORD", 10, 23);
+   * text("Font Style Normal", 10, 30);
    * textStyle(ITALIC);
-   * textSize(14);
-   * text("WORD", 10, 45);
+   * text("Font Style Italic", 10, 60);
    * textStyle(BOLD);
-   * textSize(14);
-   * text("WORD", 10, 67);
+   * text("Font Style Bold", 10, 90);
    * </code>
    * </div>
    */
@@ -166,12 +166,17 @@ define(function(require) {
    * @example
    * <div>
    * <code>
-   * background(0);
-   * fill(255);
-   * textSize(14);
-   * s = "String.";
-   * text(s, 10, 23);
-   * console.log(textWidth(s));
+   * textSize(28);
+   *
+   * var c = 'P';
+   * var cw = textWidth(c);
+   * text(c, 0, 40);
+   * line(cw, 0, cw, 50);
+   *
+   * var s = "p5.js";
+   * var sw = textWidth(s);
+   * text(s, 0, 85);
+   * line(sw, 50, sw, 100);
    * </code>
    * </div>
    */
@@ -182,6 +187,7 @@ define(function(require) {
 
   /**
    * Returns ascent of the current font at its current size.
+   * @return {Number}
    * @example
    * <div>
    * <code>
@@ -242,6 +248,7 @@ define(function(require) {
 
   /**
    * Returns descent of the current font at its current size.
+   * @return {Number}
    * @example
    * <div>
    * <code>

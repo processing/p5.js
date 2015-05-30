@@ -47,16 +47,8 @@ define(function(require) {
 
   /**
    * Renders a set of glyph paths to the current graphics context
-   * @private
-   * @method renderPath
-   * @param  {string} line     a line of text
-   * @param  {Number} x        x-position
-   * @param  {Number} y        y-position
-   * @param  {Number} fontSize font size to use (optional)
-   * @param  {Object} options  opentype options (optional)
-   * @return {Object}          this object
    */
-  p5.Font.prototype.renderPath = function(line, x, y, fontSize, options) {
+  p5.Font.prototype._renderPath = function(line, x, y, fontSize, options) {
 
     var pathdata, p = this.parent, pg = p._graphics, ctx = pg.drawingContext,
       textWidth, textHeight, textAscent, textDescent;
@@ -117,13 +109,38 @@ define(function(require) {
   };
 
   /**
-   * Returns a tight bounding box for the given text string using this font
+   * Returns a tight bounding box for the given custom text string using this font
+   * (currently only support single line)
+   *
    * @method textBounds
    * @param  {string} line     a line of text
    * @param  {Number} x        x-position
    * @param  {Number} y        y-position
    * @param  {Number} fontSize font size to use (optional)
-   * @return {Object}          a rectangle with properties: x, y, w, h
+   * @return {Object}          a rectangle object with properties: x, y, w, h
+   * @example
+   * <div>
+   * <code>
+   * var font;
+   * var text = 'Lorem ipsum dolor sit amet.';
+   * function preload() {
+   *    font = loadFont('./assets/fonts/Regular.otf');
+   * };
+   * function setup() {
+   *    background(210);
+   *    textFont(font);
+   *    strokeWeight(1);
+   *    textSize(12);
+   *    var bbox = font.textBounds(text, 10, 30, 12);
+   *    fill(255);
+   *    stroke(0);
+   *    rect(bbox.x, bbox.y, bbox.w, bbox.h);
+   *    fill(0);
+   *    strokeWeight(0);
+   *    text(text, 10, 30);
+   * };
+   * </code>
+   * </div>
    */
   p5.Font.prototype.textBounds = function(str, x, y, fontSize) {
 
