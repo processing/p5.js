@@ -12,11 +12,10 @@
 var result;
 
 function preload() {
-  result = loadXML('sample.xml', choady);
+  result = loadXML('sample.xml');
 
-
-  print('In preload(), the result has not finished loading: ');
-  print(result);
+  // console.log('In preload(), the result has not finished loading: ');
+  // console.log(result);
 }
 
 function setup(){
@@ -26,10 +25,6 @@ function setup(){
   fill(0);
   noStroke();
 
-  print('In setup(), here is the result: ');
-  print(result);
-}
-
-function choady(response) {
-  console.log('chaody!! ', response);
+  console.log('In setup(), here is the result: ');
+  console.log(result);
 }

@@ -448,19 +448,19 @@ define(function (require) {
    * @return {Object}              XML object containing data
    */
   p5.prototype.loadXML = function(path, callback) {
-    var ret = {};
+    // var path = arguments[0];
+    // var callback = arguments[1];
+    var ret = [];
     reqwest({
       url: path,
       type: 'xml',
       crossOrigin: true
-    })
-      .then(function (resp) {
-        console.log('then: ', resp);
-        ret = resp;
-        console.log('RET!', ret);
+    }).then(function (resp) {
+      console.log(resp.childNodes);
+      if (typeof callback !== 'undefined') {
         callback(resp);
-      });
-
+      }
+    });
     return ret;
   };
 
