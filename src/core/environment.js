@@ -15,7 +15,7 @@ define(function(require) {
   var standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
 
   p5.prototype._frameRate = 0;
-  p5.prototype._lastFrameTime = new Date().getTime();
+  p5.prototype._lastFrameTime = window.performance.now();
   p5.prototype._targetFrameRate = 60;
 
 
