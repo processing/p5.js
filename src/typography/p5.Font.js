@@ -7,6 +7,11 @@
 define(function(require) {
 
   /**
+   * This module defines the p5.Font class and P5 methods for
+   * drawing text to the main display canvas.
+   */
+
+  /*
    * Issues
    * -- require opentype.js (awaiting dev-ops) **
    * -- var fonts = loadFont([]); **
@@ -22,22 +27,37 @@ define(function(require) {
    * -- drop-caps
    */
 
-  /**
-   * This module defines the p5.Font class and P5 methods for
-   * drawing text to the main display canvas.
-   */
-
   'use strict';
 
   var p5 = require('core');
   var constants = require('constants');
 
+  /**
+   * Base class for font handling
+   * @class p5.Font
+   * @constructor
+   * @param {Object} [pInst] pointer to p5 instance
+   */
   p5.Font = function(p) {
 
     this.parent = p;
+
+    /**
+     * Underlying opentype font implementation
+     * @property font
+     */
     this.font = undefined;
   };
 
+  /**
+   * Renders a set of glyph paths to the current graphics context
+   * @param  {string} line     [description]
+   * @param  {Number} x        [description]
+   * @param  {Number} y        [description]
+   * @param  {Number} fontSize [description]
+   * @param  {Object} options  [description]
+   * @return {p5.Font}         this object
+   */
   p5.Font.prototype.renderPath = function(line, x, y, fontSize, options) {
 
     var pathdata, p = this.parent, pg = p._graphics, ctx = pg.drawingContext,
@@ -83,17 +103,19 @@ define(function(require) {
       }
     }
 
+    // only draw stroke if manually set by user
     if (p._doStroke && p._strokeSet) {
       ctx.stroke();
     }
 
     if (p._doFill) {
 
-      // if fill hasn't been set by user, use default text fill
+      // if fill hasn't been set by user, use default-text-fill
       ctx.fillStyle = p._fillSet ? ctx.fillStyle:constants._DEFAULT_TEXT_FILL;
       ctx.fill();
     }
 
+    return this;
   };
 
   p5.Font.prototype.textBounds = function(str, x, y, fontSize) {
