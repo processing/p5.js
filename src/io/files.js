@@ -34,9 +34,8 @@ define(function (require) {
    *
    * <div><code>
    * var myFont;
-   *
    * function preload() {
-   *   myFont = loadFont('./assets/AvenirNextLTPro-Demi.otf');
+   *   myFont = loadFont('./assets/fonts/AvenirNextLTPro-Demi.otf');
    * }
    *
    * function setup() {
@@ -45,26 +44,20 @@ define(function (require) {
    *   textSize(36);
    *   text('p5*js', 10, 50);
    * }
-   *
-   * function draw() {
-   * }
    * </code></div>
    *
    * <p>Outside preload(), you may supply a callback function to handle the
    * object:</p>
-
+   *
    * <div><code>
    * function setup() {
-   *   loadFont('./assets/AvenirNextLTPro-Demi.otf', drawText);
+   *   loadFont('./assets/fonts/AvenirNextLTPro-Demi.otf', drawText);
    * }
    *
    * function drawText(font) {
    *   fill('#ED225D');
    *   textFont(font, 36);
    *   text('p5*js', 10, 50);
-   * }
-   *
-   * function draw() {
    * }
    * </code></div>
    *

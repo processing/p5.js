@@ -79,7 +79,7 @@ define(function(require) {
    * Sets the current font that will be drawn with the text() function.
    *
    * @method textFont
-   * @param {Object|String} Either a font loaded via loadFont(), or a String
+   * @param {Object|String} f a font loaded via loadFont(), or a String
    *  representing a browser-based dfault font.
    * @return {Object} this
    * @example
@@ -88,20 +88,29 @@ define(function(require) {
    * fill(0);
    * textSize(12);
    * textFont("Georgia");
-   * text("Georgia", 12, 40);
+   * text("Georgia", 12, 30);
    * textFont("Helvetica");
-   * text("Helvetica", 12, 90);
+   * text("Helvetica", 12, 60);
    * </code>
    * </div>
-   * @example
    * <div>
    * <code>
-   * fill(0);
-   * textSize(12);
-   * textFont(otfFont); // loaded in preload
-   * text("Custom OTF", 12, 40);
-   * textFont("Helvetica");
-   * text("Helvetica", 12, 90);
+   * var fontRegular, fontItalic, fontBold;
+   * function preload() {
+   *    fontRegular = loadFont("./assets/fonts/SourceSansPro-Regular.otf");
+   *    fontItalic = loadFont("./assets/fonts/SourceSansPro-Italic.ttf");
+   *    fontBold = loadFont("./assets/fonts/SourceSansPro-Bold.ttf");
+   * };
+   * function setup() {
+   *    background(210);
+   *    fill(0).strokeWeight(0).textSize(10);
+   *    textFont(fontRegular);
+   *    text("Font Style Normal", 10, 30);
+   *    textFont(fontItalic);
+   *    text("Font Style Italic", 10, 50);
+   *    textFont(fontBold);
+   *    text("Font Style Bold", 10, 70);
+   * };
    * </code>
    * </div>
    */
