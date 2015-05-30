@@ -146,7 +146,6 @@ define(function (require) {
 
     this._setupDone = false;
     this.pixelDensity = window.devicePixelRatio || 1; // for handling hidpi
-    this._startTime = new Date().getTime();
     this._userNode = node;
     this._curElement = null;
     this._elements = [];
@@ -297,7 +296,7 @@ define(function (require) {
     }.bind(this);
 
     this._draw = function () {
-      var now = new Date().getTime();
+      var now = window.performance.now();
       this._frameRate = 1000.0/(now - this._lastFrameTime);
       this._lastFrameTime = now;
       this._setProperty('frameCount', this.frameCount + 1);

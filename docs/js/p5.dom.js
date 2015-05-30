@@ -470,8 +470,9 @@ var p5DOM = (function(){
    */
   p5.Element.prototype.position = function(x, y) {
     this.elt.style.position = 'absolute';
-    this.elt.style.left = x+'px';
-    this.elt.style.top = y+'px';
+    var offset = $(this.elt).parent().offset();
+    this.elt.style.left = (x-offset.left)+'px';
+    this.elt.style.top = (y-offset.top)+'px';
     return this;
   };
 
