@@ -100,42 +100,68 @@ define(function (require) {
    *
    * @method nf
    * @param {Number|Array} num      the Number to format
-   * @param {Number}       [digits] number of digits to pad with zero
    * @param {Number}       [left]   number of digits to the left of the
    *                                decimal point
    * @param {Number}       [right]  number of digits to the right of the
    *                                decimal point
-   * @return {String|Array}         formatted String 
+   * @return {String|Array}         formatted String
    */
-  p5.prototype.nf = function() {
+  p5.prototype.nf = function () {
     if (arguments[0] instanceof Array) {
       var a = arguments[1];
       var b = arguments[2];
-      return arguments[0].map(function(x) { return doNf(x, a, b);});
-    } else {
-      return doNf.apply(this, arguments);
+      return arguments[0].map(function (x) {
+        return doNf(x, a, b);
+      });
+    }
+    else{
+      var typeOfFirst = Object.prototype.toString.call(arguments[0]);
+      if(typeOfFirst === '[object Arguments]'){
+        if(arguments[0].length===3){
+          return this.nf(arguments[0][0],arguments[0][1],arguments[0][2]);
+        }
+        else if(arguments[0].length===2){
+          return this.nf(arguments[0][0],arguments[0][1]);
+        }
+        else{
+          return this.nf(arguments[0][0]);
+        }
+      }
+       else {
+        return doNf.apply(this, arguments);
+      }
     }
   };
 
   function doNf() {
     var num = arguments[0];
-    var neg = (num < 0);
+    var neg = num < 0;
     var n = neg ? num.toString().substring(1) : num.toString();
     var decimalInd = n.indexOf('.');
-    var intPart =  decimalInd !== -1 ? n.substring(0, decimalInd) : n;
-    var decPart = decimalInd !== -1 ? n.substring(decimalInd+1) : '';
-
+    var intPart = decimalInd !== -1 ? n.substring(0, decimalInd) : n;
+    var decPart = decimalInd !== -1 ? n.substring(decimalInd + 1) : '';
     var str = neg ? '-' : '';
-
     if (arguments.length === 3) {
-      for (var i=0; i<arguments[1]-intPart.length; i++) { str += '0'; }
+      var decimal = '';
+      if(decimalInd !== -1 || arguments[2] - decPart.length > 0){
+        decimal = '.';
+      }
+      if (decPart.length > arguments[2]) {
+        decPart = decPart.substring(0, arguments[2]);
+      }
+      for (var i = 0; i < arguments[1] - intPart.length; i++) {
+        str += '0';
+      }
       str += intPart;
-      str += '.';
+      str += decimal;
       str += decPart;
-      for (var j=0; j<arguments[2]-decPart.length; j++) { str += '0'; }
+      for (var j = 0; j < arguments[2] - decPart.length; j++) {
+        str += '0';
+      }
       return str;
-    } else {
-      for (var k=0; k < Math.max(arguments[1]-intPart.length, 0); k++) {
+    }
+    else {
+      for (var k = 0; k < Math.max(arguments[1] - intPart.length, 0); k++) {
         str += '0';
       }
       str += n;
@@ -155,15 +181,16 @@ define(function (require) {
    *                                  decimal point
    * @return {String|Array}           formatted String 
    */
-  p5.prototype.nfc = function() {
+  p5.prototype.nfc = function () {
     if (arguments[0] instanceof Array) {
       var a = arguments[1];
-      return arguments[0].map(function(x) { return doNfc(x, a);});
+      return arguments[0].map(function (x) {
+        return doNfc(x, a);
+      });
     } else {
       return doNfc.apply(this, arguments);
     }
   };
-
   function doNfc() {
     var num = arguments[0].toString();
     var dec = num.indexOf('.');
@@ -173,10 +200,19 @@ define(function (require) {
     if (arguments[1] === 0) {
       rem = '';
     }
-    if (arguments.length > 1) {
-      rem = rem.substring(0, arguments[1]+1);
+    else if(arguments[1] !== undefined){
+      if(arguments[1] > rem.length){
+        rem+= dec === -1 ? '.' : '';
+        var len = arguments[1] - rem.length + 1;
+        for(var i =0; i< len; i++){
+          rem += '0';
+        }
+      }
+      else{
+        rem = rem.substring(0, arguments[1] + 1);
+      }
     }
-    return n+rem;
+    return n + rem;
   }
 
   /**
@@ -188,7 +224,6 @@ define(function (require) {
    *
    * @method nfp
    * @param {Number|Array} num      the Number to format
-   * @param {Number}       [digits] number of digits to pad with zero
    * @param {Number}       [left]   number of digits to the left of the decimal
    *                                point
    * @param {Number}       [right]  number of digits to the right of the
@@ -220,7 +255,6 @@ define(function (require) {
    *
    * @method nfs
    * @param {Number|Array} num      the Number to format
-   * @param {Number}       [digits] number of digits to pad with zero
    * @param {Number}       [left]   number of digits to the left of the decimal
    *                                point
    * @param {Number}       [right]  number of digits to the right of the
