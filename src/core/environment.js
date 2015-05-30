@@ -79,22 +79,30 @@ define(function(require) {
   p5.prototype.frameCount = 0;
 
   /**
-   * Confirms if a p5.js program is "focused," meaning that it is active and
-   * will accept mouse or keyboard input. This variable is "true" if it is
-   * focused and "false" if not.
+   * Confirms if the window a p5.js program is in is "focused," meaning that 
+   * the sketch will accept mouse or keyboard input. This variable is 
+   * "true" if the window is focused and "false" if not. 
    *
    * @property focused
    * @example
-   *   <div><code>
-   *     if (focused) {  // or "if (focused === true)"
-   *       ellipse(25, 25, 50, 50);
-   *     } else {
-   *       line(0, 0, 100, 100);
-   *       line(100, 0, 0, 100);
-   *     }
-   *   </code></div>
+   * <div><code>
+   * // To demonstrate, put two windows side by side. 
+   * // Click on the window that the p5 sketch isn't in!
+   * function draw() {
+   *   if (focused) {  // or "if (focused === true)"
+   *     noStroke();
+   *     fill(0, 200, 0);
+   *     ellipse(25, 25, 50, 50);
+   *   } else {
+   *     stroke(200,0,0); 
+   *     line(0, 0, 100, 100);
+   *     line(100, 0, 0, 100);
+   *   }
+   * }
+   *     
+   * </code></div>
    */
-  p5.prototype.focused = true;
+  p5.prototype.focused = (document.hasFocus());
 
   /**
    * Sets the cursor to a predefined symbol or an image, or makes it visible

@@ -518,15 +518,18 @@ define(function (require) {
    * @return {Object}              XML object containing data
    */
   p5.prototype.loadXML = function(path, callback) {
-    var ret = [];
+    var ret = document.implementation.createDocument(null, null);
     reqwest({
       url: path,
       type: 'xml',
-      crossOrigin: true,
-    })
-      .then(function(resp){
+      crossOrigin: true
+    }).then(function (resp) {
+      var x = resp.documentElement;
+      ret.appendChild(x);
+      if (typeof callback !== 'undefined') {
         callback(resp);
-      });
+      }
+    });
     return ret;
   };
 
