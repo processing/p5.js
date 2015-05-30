@@ -112,6 +112,9 @@ define(function (require) {
     return this;
   };
 
+  p5.Matrix.identity = function(){
+    return new p5.Matrix().mat4;
+  };
   /**
    * @return {Number} Determinant of our 4x4 matrix
    * inspired by Toji's mat4 determinant
@@ -133,6 +136,15 @@ define(function (require) {
     // Calculate the determinant
     return d00 * d11 - d01 * d10 + d02 * d09 +
       d03 * d08 - d04 * d07 + d05 * d06;
+  };
+
+  /**
+   * Copies the mat4
+   * @return {[type]} [description]
+   */
+  p5.Matrix.prototype.copyMat = function(){
+    var copied = this.mat4;
+    return copied;
   };
 
   /**
@@ -192,12 +204,34 @@ define(function (require) {
   };
 
   /**
-   * [scale description]
-   * @param  {p5.Vector} p5v A 3d vector
+   * scales a p5.Matrix by scalars or a vector
+   * @param  {p5.Vector | Array | Numbers}
+   *                      vector to scale by
    * @return {[type]}     [description]
    */
-  p5.Matrix.prototype.scale = function(p5v) {
-    var x = p5v.x, y = p5v.y, z = p5v.z;
+  p5.Matrix.prototype.scale = function() {
+    var x,y,z;
+    //if our 1st arg is a type p5.Vector
+    if (arguments[0] instanceof p5.Vector){
+      x = arguments[0].x;
+      y = arguments[0].y;
+      z = arguments[0].z;
+    }
+    //otherwise if it's an array
+    else if (arguments[0] instanceof Array){
+      x = arguments[0][0];
+      y = arguments[0][1];
+      z = arguments[0][2];
+    }
+    //otherwise it's probably some numbers
+    else {
+      //short circuit eval to make sure we maintain
+      //component size
+      x = arguments[0] || 1;
+      y = arguments[1] || 1;
+      z = arguments[2] || 1;
+    }
+
     var _dest = new Array(16);
     
     for (var i = 0; i < this.mat4.length; i++) {
@@ -301,12 +335,38 @@ define(function (require) {
   };
 
   /**
+   * @todo  finish implementing this method!
+   * translates
+   * @param  {Array} v vector to translate by
+   * @return {[type]}   [description]
+   */
+  p5.Matrix.prototype.translate = function(v){
+    var x = v[0],
+      y = v[1],
+      z = v[2];
+    this.mat4[12] =
+      this.mat4[0] * x +this.mat4[4] * y +this.mat4[8] * z +this.mat4[12];
+    this.mat4[13] =
+      this.mat4[1] * x +this.mat4[5] * y +this.mat4[9] * z +this.mat4[13];
+    this.mat4[14] =
+      this.mat4[2] * x +this.mat4[6] * y +this.mat4[10] * z +this.mat4[14];
+    this.mat4[15] =
+      this.mat4[3] * x +this.mat4[7] * y +this.mat4[11] * z +this.mat4[15];
+  };
+
+  p5.Matrix.prototype.rotateX = function(a){
+    this.rotate(a, [1,0,0]);
+  };
+  p5.Matrix.prototype.rotateY = function(a){
+    this.rotate(a, [0,1,0]);
+  };
+  p5.Matrix.prototype.rotateZ = function(a){
+    this.rotate(a, [0,0,1]);
+  };
+
+  /**
    * TODO implement these methods
    */
-  p5.Matrix.prototype.rotateX = function(){};
-  p5.Matrix.prototype.rotateY = function(){};
-  p5.Matrix.prototype.rotateZ = function(){};
-  p5.Matrix.prototype.translate = function(){};
   p5.Matrix.prototype.invert = function(){};
 
   return p5.Matrix;
