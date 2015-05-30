@@ -7,7 +7,7 @@ define([
   'use strict'; //
 
   var Router = Backbone.Router.extend({
-    
+
     routes: {
       '': 'list',
       'p5': 'list',
@@ -70,7 +70,7 @@ define([
           && !searchItem) {
         window.location.hash = '/libraries/'+searchClass;
         return;
-      } 
+      }
 
       var self = this;
       this.init(function() {
@@ -117,7 +117,7 @@ define([
         // Search for a class item
       } else if (className && itemName) {
         for (var i = 0; i < itemsCount; i++) {
-          if (items[i].class.toLowerCase() === className && 
+          if (items[i].class.toLowerCase() === className &&
             items[i].name.toLowerCase() === itemName) {
             found = items[i];
             break;
@@ -165,27 +165,25 @@ define([
         App.pageView.hideContentViews();
       });
     },
+
     /**
      * Create an hash/url for the item.
      * @param {Object} item A class, method, property or event object.
      * @returns {String} The hash string, including the '#'.
      */
-    getHash: function(item) {
-      if (!item.hash) {
-        var hash = '#/';
-        var isClass = item.hasOwnProperty('classitems');
-        var c = (item.file.indexOf('objects') === -1 && item.file.indexOf('addons') === -1 ) ? 'p5' : item.class;
-        // Create hash for links
-        if (isClass) {
-          hash += item.name;
-        } else {
-          hash += c + '/' + item.name;
-        }
-        item.hash = hash;
-      }
-      return item.hash;
-    }
-  });
+     getHash: function(item) {
+
+       if (!item.hash) {
+
+         // FIX TO INVISIBLE OBJECTS: DH (see also listView.js)
+         var clsFunc = '#/' + item.class + '.' + item.name;
+         var idx = clsFunc.lastIndexOf('.');
+         item.hash = clsFunc.substring(0,idx) + '/' + clsFunc.substring(idx+1);
+       }
+
+       return item.hash;
+     }
+   });
 
 
   // Get the router

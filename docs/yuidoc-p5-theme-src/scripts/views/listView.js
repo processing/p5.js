@@ -53,21 +53,26 @@ define([
               };
             }
 
-            if (item.file.indexOf('objects') === -1) {
+            if (item.file.indexOf('p5.') === -1) {
+
               self.groups[group].subgroups[subgroup].items.push(item);
+
             } else {
-              var found = _.find(self.groups[group].subgroups[subgroup].items, 
+
+              var found = _.find(self.groups[group].subgroups[subgroup].items,
                 function(i){ return i.name == item.class; });
 
               if (!found) {
-                var hash = item.hash;
+
+                // FIX TO INVISIBLE OBJECTS: DH (see also router.js)
                 var ind = hash.lastIndexOf('/');
-                hash = hash.substring(0, ind);
+                hash = item.hash.substring(0, ind).replace('p5/','p5.');
                 self.groups[group].subgroups[subgroup].items.push({
                   name: item.class,
                   hash: hash
                 });
               }
+
             }
           }
         });
