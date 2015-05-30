@@ -28,9 +28,10 @@ define(function(require) {
      * separating them with commas. Alternatively, individual elements can be 
      * separated with quotes ("") and joined with the addition operator (+).
      * 
-     * While print() is similar to console.log(), it does not directly map to it 
-     * in order to simulate easier to understand behavior than console.log().
-     * Due to this, it is slower. For fastest results, use console.log(). 
+     * While print() is similar to console.log(), it does not directly map to 
+     * it in order to simulate easier to understand behavior than 
+     * console.log(). Due to this, it is slower. For fastest results, use 
+     * console.log(). 
      * 
      * @method print
      * @param {Any} contents any combination of Number, String, Object, Boolean,
