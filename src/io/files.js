@@ -13,6 +13,7 @@ define(function (require) {
 
   var p5 = require('core');
   var reqwest = require('reqwest');
+  require('helpers');
 
 
   /**
@@ -64,6 +65,10 @@ define(function (require) {
    * </code></div>
    *
    */
+
+  
+  
+
   p5.prototype.loadFont = function(path, callback) {
 
     var p5Font = new p5.Font(this);
@@ -241,8 +246,9 @@ define(function (require) {
     var ret = [];
     var req = new XMLHttpRequest();
     req.open('GET', path, true);
+    var tempThis = this;
     req.onreadystatechange = function () {
-      if (req.readyState === 4 && (req.status === 200 || req.status === 0)) {
+      if (req.readyState === 4 && (req.status === 200 )) {
         var arr = req.responseText.match(/[^\r\n]+/g);
         for (var k in arr) {
           ret[k] = arr[k];
@@ -250,6 +256,9 @@ define(function (require) {
         if (typeof callback !== 'undefined') {
           callback(ret);
         }
+      }
+      else{
+        tempThis._friendlyFileLoadError(3,path);
       }
     };
     req.send(null);
@@ -333,6 +342,7 @@ define(function (require) {
     }
 
     var t = new p5.Table();
+    var thisTemp = this;
     reqwest({url: path, crossOrigin: true, type: 'csv'})
       .then(function(resp) {
         resp = resp.responseText;
@@ -470,6 +480,7 @@ define(function (require) {
         }
       })
       .fail(function(err,msg){
+        thisTemp._friendlyFileLoadError(2,path);
         if (typeof callback !== 'undefined') {
           callback(false);
         }
@@ -519,17 +530,22 @@ define(function (require) {
    */
   p5.prototype.loadXML = function(path, callback) {
     var ret = document.implementation.createDocument(null, null);
+    var thisTemp = this;
     reqwest({
       url: path,
       type: 'xml',
-      crossOrigin: true
-    }).then(function (resp) {
-      var x = resp.documentElement;
-      ret.appendChild(x);
-      if (typeof callback !== 'undefined') {
-        callback(resp);
+      crossOrigin: true,
+      error: function(err){
+        thisTemp._friendlyFileLoadError(1,path);
       }
-    });
+    })
+      .then(function(resp){
+        var x = resp.documentElement;
+        ret.appendChild(x);
+        if (typeof callback !== 'undefined') {
+          callback(resp);
+        }
+      });
     return ret;
   };
 

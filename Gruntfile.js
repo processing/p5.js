@@ -287,7 +287,8 @@ module.exports = function(grunt) {
     uglify: {
       options: {
         banner: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */',
-        footer: 'p5.prototype._validateParameters = function() {};'
+        footer: 'p5.prototype._validateParameters = function() {};'+
+        'p5.prototype._friendlyFileLoadError = function() {};'
       },
       build: {
         src: '<%= requirejs.p5_unminified.options.out %>',

@@ -7,7 +7,9 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
+  var doFriendlyWelcome = true;
 
+  
   // -- Borrowed from jQuery 1.11.3 --
   var class2type = {};
   var toString = class2type.toString;
@@ -69,20 +71,36 @@ define(function (require) {
   var PARAM_COUNT = 0;
   var EMPTY_VAR = 1;
   var WRONG_TYPE = 2;
+  var FILE_LOAD = 3;
   // p5.js blue, p5.js orange, auto dark green; fallback p5.js darkened magenta
   // See testColors below for all the color codes and names
-  var typeColors = ['#2D7BB6', '#EE9900', '#4DB200'];
+  var typeColors = ['#2D7BB6', '#EE9900', '#4DB200', '#C83C00'];
   function report(message, func, color) {
+    if(doFriendlyWelcome){
+      p5.prototype._friendlyWelcome();
+      doFriendlyWelcome =false;
+    }
     if ('undefined' === getType(color)) {
       color   = '#B40033'; // dark magenta
     } else if (getType(color) === 'number') { // Type to color
       color = typeColors[color];
     }
-    console.log(
-      '%c> p5.js says: '+message+'%c [http://p5js.org/reference/#p5/'+func+']',
-      'background-color:' + color + ';color:#FFF;',
-      'background-color:transparent;color:' + color + ';'
-    );
+    if (func.substring(0,4) === 'load'){
+      console.log(
+        '%c> p5.js says: '+message+'%c []',
+        'background-color:' + color + ';color:#FFF;',
+        'background-color:transparent;color:' + color +';',
+        'background-color:' + color + ';color:#FFF;',
+        'background-color:transparent;color:' + color +';'
+      );
+    }
+    else{
+      console.log(
+        '%c> p5.js says: '+message+'%c [http://p5js.org/reference/#p5/'+func+
+        ']', 'background-color:' + color + ';color:#FFF;',
+        'background-color:transparent;color:' + color +';'
+      );
+    }
   }
 
   /**
@@ -170,6 +188,59 @@ define(function (require) {
         }
       }
     }
+  };
+  p5.prototype._friendlyFileLoadError = function(errorType, filePath){
+    switch (errorType) {
+    case 0:
+      var reportMsg0 = 'It looks like there was a problem'+
+      ' loading your image.'+
+      ' Try checking if the file path%c [' + filePath + '] %cis correct,'+
+      ' hosting the image online, or running a local server.';
+      report(reportMsg0,'loadImage', FILE_LOAD);
+      break;
+    case 1:
+      var reportMsg1 = 'It looks like there was a problem'+
+      ' loading your XML file.'+
+      ' Try checking if the file path%c [' + filePath + '] %cis correct,'+
+      ' or running a local server.';
+      report(reportMsg1,'loadXML', FILE_LOAD);
+      break;
+    case 2:
+      var reportMsg2 = 'It looks like there was a problem'+
+      ' loading your table file.'+
+      ' Try checking if the file path%c [' + filePath + '] %cis correct,'+
+      ' or running a local server.';
+      report(reportMsg2,'loadTable', FILE_LOAD);
+      break;
+    case 3:
+      var reportMsg3 = 'It looks like there was a problem'+
+      ' loading your text file.'+
+      ' Try checking if the file path%c [' + filePath + '] %cis correct,'+
+      ' or running a local server.';
+      report(reportMsg3,'loadStrings', FILE_LOAD);
+      break;
+    default:
+    }
+  };
+  p5.prototype._friendlyWelcome = function(){
+    
+    // p5.js brand - magenta: #ED225D
+    var astrixBgColor = 'transparent';
+    var astrixTxtColor = '#ED225D';
+    var welcomeBgColor = '#ED225D';
+    var welcomeTextColor = 'white';
+    console.log(
+    '%c    _ \n'+
+    ' /\\| |/\\ \n'+
+    ' \\ ` \' /  \n'+
+    ' / , . \\  \n'+
+    ' \\/|_|\\/ '+
+    '\n\n%c> p5.js says: Welcome! '+
+    'This is your friendly debugger. ' +
+    'To turn me off switch to using “p5.min.js”.',
+    'background-color:'+astrixBgColor+';color:' + astrixTxtColor +';',
+    'background-color:'+welcomeBgColor+';color:' + welcomeTextColor +';'
+    );
   };
 
   /**
