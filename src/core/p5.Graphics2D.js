@@ -225,7 +225,7 @@ define(function(require) {
     var pd = this.pixelDensity || this._pInst.pixelDensity;
 
     if (w === 1 && h === 1){
-    
+
       var imageData = this.drawingContext.getImageData(x * pd, y * pd, w, h);
       var data = imageData.data;
       var pixels = [];
@@ -976,12 +976,18 @@ define(function(require) {
 
   //////////////////////////////////////////////
   // TYPOGRAPHY
+  //
   //////////////////////////////////////////////
 
   p5.Graphics2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
 
     var p = this._pInst, cars, n, ii, jj, line, testLine,
-      testWidth, words, totalHeight;
+      testWidth, words, totalHeight, baselineHacked;
+
+    // baselineHacked: (HACK)
+    // This is an ugly temporary fix to conform to
+    // Processing's vertical alignment implementation
+    // for BASELINE vetical alignment in a boundings box
 
     if (!(p._doFill || p._doStroke)) {
       return;
@@ -1032,7 +1038,8 @@ define(function(require) {
           y += (maxHeight - totalHeight) / 2;
           break;
         case constants.BASELINE:
-          y += (maxHeight - totalHeight);
+          baselineHacked = true;
+          this.drawingContext.textBaseline = constants.TOP;
           break;
         }
       }
@@ -1066,6 +1073,9 @@ define(function(require) {
       }
     }
 
+    if (baselineHacked) {
+      this.drawingContext.textBaseline = constants.BASELINE;
+    }
     return p;
   };
 
@@ -1086,8 +1096,7 @@ define(function(require) {
 
       // if fill hasn't been set by user, use default text fill
       this.drawingContext.fillStyle =  p._fillSet ?
-      this.drawingContext.fillStyle :
-        constants._DEFAULT_TEXT_FILL;
+        this.drawingContext.fillStyle : constants._DEFAULT_TEXT_FILL;
 
       this.drawingContext.fillText(line, x, y);
     }

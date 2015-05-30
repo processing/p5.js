@@ -29,6 +29,7 @@ define(function(require) {
    *                            CENTER, or RIGHT
    * @param {Number/Constant} v vertical alignment, either TOP,
    *                            BOTTOM, CENTER, or BASELINE
+   * @return {Number}
    * @example
    * <div>
    * <code>
@@ -48,11 +49,12 @@ define(function(require) {
   };
 
   /**
-   * Sets the spacing between lines of text in units of pixels. This
+   * Sets/gets the spacing between lines of text in units of pixels. This
    * setting will be used in all subsequent calls to the text() function.
    *
    * @method textLeading
    * @param {Number} l the size in pixels for spacing between lines
+   * @return {Object|Number}
    * @example
    * <div>
    * <code>
@@ -84,12 +86,13 @@ define(function(require) {
   };
 
   /**
-   * Sets the current font size. This size will be used in all subsequent
+   * Sets/gets the current font size. This size will be used in all subsequent
    * calls to the text() function. Font size is measured in units of pixels.
    *
    * @method textSize
    * @param {Number} s the size of the letters in units of pixels
    * @example
+   * @return {Object|Number}
    * <div>
    * <code>
    * background(0);
@@ -114,12 +117,13 @@ define(function(require) {
   };
 
   /**
-   * Sets the style of the text to NORMAL, ITALIC, or BOLD. Note this is
+   * Sets/gets the style of the text to NORMAL, ITALIC, or BOLD. Note this is
    * overridden by CSS styling.
    *
    * @method textStyle
    * @param {Number/Constant} s styling for text, either NORMAL,
    *                            ITALIC, or BOLD
+   * @return {Object|String}
    * @example
    * <div>
    * <code>
@@ -146,6 +150,7 @@ define(function(require) {
         s === constants.BOLD) {
         this._setProperty('_textStyle', s);
       }
+
       return this._graphics._applyTextProperties();
     }
 
@@ -157,6 +162,7 @@ define(function(require) {
    *
    * @method textWidth
    * @param {String} s the String of characters to measure
+   * @return {Number}
    * @example
    * <div>
    * <code>
@@ -273,7 +279,6 @@ define(function(require) {
 
   /**
    * Helper fxn to measure ascent and descent.
-   * Adapted from http://stackoverflow.com/a/25355178
    */
   p5.prototype._updateTextMetrics = function() {
 
@@ -285,6 +290,7 @@ define(function(require) {
       return this;
     }
 
+    // Adapted from http://stackoverflow.com/a/25355178
     var text = document.createElement('span');
     text.style.fontFamily = this._textFont;
     text.style.fontSize = this._textSize + 'px';
