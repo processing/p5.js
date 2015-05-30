@@ -4,7 +4,7 @@ suite('p5.ColorUtils', function() {
 
   suite('rgbaToHSBA', function() {
     test('rgba converts to hsba', function() {
-      assert.deepEqual(p5.ColorUtils.rgbaToHSBA(rgba), hsba);
+      assert.deepEqual(p5.ColorUtils.rgbaToHSBA(rgba, [255, 255, 255, 255]), hsba);
     });
   });
 
@@ -14,7 +14,7 @@ suite('p5.ColorUtils', function() {
       // var rgba = [100, 150, 200, 255];
       rgba = [100, 149, 200, 255];
 
-      assert.deepEqual(p5.ColorUtils.hsbaToRGBA(hsba), rgba);
+      assert.deepEqual(p5.ColorUtils.hsbaToRGBA(hsba, [255, 255, 255, 255]), rgba);
     });
   });
 });

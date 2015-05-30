@@ -15,13 +15,13 @@ define(function(require) {
    *                          HSB colors on a scale of 0-255
    * @return {Array} an array of RGBA values, on a scale of 0-255
    */
-  p5.ColorUtils.hsbaToRGBA = function(hsba) {
+  p5.ColorUtils.hsbaToRGBA = function(hsba, maxes) {
     var h = hsba[0];
     var s = hsba[1];
     var v = hsba[2];
-    h /= 255;
-    s /= 255;
-    v /= 255;
+    h /= maxes[0];
+    s /= maxes[1];
+    v /= maxes[2];
     // Adapted from http://www.easyrgb.com/math.html
     // hsv values = 0 - 1, rgb values = 0 - 255
     var RGBA = [];
@@ -83,10 +83,11 @@ define(function(require) {
    *                          RGB colors on a scale of 0-255
    * @return {Array} an array of HSB values, on a scale of 0-255
    */
-  p5.ColorUtils.rgbaToHSBA = function(rgba) {
-    var var_R = rgba[0]/255;
-    var var_G = rgba[1]/255;
-    var var_B = rgba[2]/255;
+  p5.ColorUtils.rgbaToHSBA = function(rgba, maxes) {
+    var var_R = rgba[0]/maxes[0];
+    var var_G = rgba[1]/maxes[1];
+    var var_B = rgba[2]/maxes[2];
+    var var_A = rgba[3]/maxes[3];
 
     var var_Min = Math.min(var_R, var_G, var_B); //Min. value of RGB
     var var_Max = Math.max(var_R, var_G, var_B); //Max. value of RGB
@@ -95,6 +96,7 @@ define(function(require) {
     var H;
     var S;
     var V = var_Max;
+    var A = var_A;
 
     if (del_Max === 0) { //This is a gray, no chroma...
       H = 0; //HSV results from 0 to 1
@@ -126,7 +128,7 @@ define(function(require) {
         Math.round(H * 255),
         Math.round(S * 255),
         Math.round(V * 255),
-        rgba[3]
+        Math.round(A * 255)
       ];
   };
   

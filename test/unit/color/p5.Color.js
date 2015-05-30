@@ -599,10 +599,6 @@ suite('p5.Color', function() {
       assert.deepEqual(c.hsba, [48, 100, 100, 1]);
     });
 
-    test('should correctly set converted value', function() {
-      assert.deepEqual(c._converted_color, [34, 255, 255, 255]);
-    });
-
     test('should return passed, unconverted, hue value', function() {
       assert.equal(c.getHue(), 48);
     });
@@ -624,11 +620,6 @@ suite('p5.Color', function() {
 
     test('should correctly set HSBA value', function() {
       assert.deepEqual(c.hsba, [48, 100, 100, 1]);
-    });
-
-    test('should correctly set converted value', function() {
-      assert.deepEqual(c._converted_color, 
-        [(48 * 255/1000), (100 * 255/360), (100 * 255/720), (1 * 255/10)]);
     });
 
     test('should return passed, unconverted, hue value', function() {
@@ -654,20 +645,15 @@ suite('p5.Color', function() {
       assert.deepEqual(c.rgba, [48, 100, 100, 1]);
     });
 
-    test('should correctly set converted value', function() {
-      assert.deepEqual(c._converted_color, 
-         [(48 * 255/400), (100 * 255/200), (100 * 255/100), (1 * 255/1)]);
-    });
-
-    test('should return passed, unconverted, hue value', function() {
+    test('should return hue value', function() {
       assert.equal(c.getHue(), 152);
     });
 
-    test('should return passed, unconverted, saturation value', function() {
+    test('should return saturation value', function() {
       assert.equal(c.getSaturation(), 224);
     });
 
-    test('should return passed, unconverted, brightness value', function() {
+    test('should return brightness value', function() {
       assert.equal(c.getBrightness(), 255);
     });
   });

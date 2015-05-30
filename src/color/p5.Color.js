@@ -15,8 +15,8 @@ define(function(require) {
    * @constructor
    */
   p5.Color = function (pInst, vals) {
+    this.maxArr = pInst._colorMaxes[pInst._colorMode];
     this.color_array = p5.Color._getFormattedColor.apply(pInst, vals);
-    this._converted_color = this._convertTo255(pInst);
     
     var isHSB = pInst._colorMode === constants.HSB,
         isRGB = pInst._colorMode === constants.RGB,
@@ -26,7 +26,7 @@ define(function(require) {
       this.hsla = this.color_array;
     } else if (isHSB) {
       this.hsba = this.color_array;
-      this.rgba = color_utils.hsbaToRGBA(this._converted_color);
+      this.rgba = color_utils.hsbaToRGBA(this.color_array, this.maxArr);
     } else if (isRGB) {
       this.rgba = this.color_array;
     } else {
@@ -36,21 +36,11 @@ define(function(require) {
     return this;
   };
 
-  p5.Color.prototype._convertTo255 = function (pInst) {
-    var maxArr = pInst._colorMaxes[pInst._colorMode];
-    var arr = [];
-    arr[0] = this.color_array[0] * 255 / maxArr[0];
-    arr[1] = this.color_array[1] * 255 / maxArr[1];
-    arr[2] = this.color_array[2] * 255 / maxArr[2];
-    arr[3] = this.color_array[3] * 255 / maxArr[3];
-    return arr;
-  };
-
   p5.Color.prototype.getHue = function() {
     if (this.hsba) {
       return this.hsba[0];
     } else {
-      this.hsba = color_utils.rgbaToHSBA(this._converted_color);
+      this.hsba = color_utils.rgbaToHSBA(this.color_array, this.maxArr);
       return this.hsba[0];
     }
   };
@@ -59,7 +49,7 @@ define(function(require) {
     if (this.hsba) {
       return this.hsba[1];
     } else {
-      this.hsba = color_utils.rgbaToHSBA(this._converted_color);
+      this.hsba = color_utils.rgbaToHSBA(this.color_array, this.maxArr);
       return this.hsba[1];
     }
   };
@@ -68,7 +58,7 @@ define(function(require) {
     if (this.hsba) {
       return this.hsba[2];
     } else {
-      this.hsba = color_utils.rgbaToHSBA(this._converted_color);
+      this.hsba = color_utils.rgbaToHSBA(this.color_array, this.maxArr);
       return this.hsba[2];
     }
   };

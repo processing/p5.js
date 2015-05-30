@@ -24,10 +24,6 @@ define(function(require) {
     hsl: [360, 100, 100, 1]
   };
 
-  // p5.prototype._maxRGB = [255, 255, 255, 255];
-  // p5.prototype._maxHSB = [255, 255, 255, 255];
-  // p5.prototype._maxHSL = [255, 255, 255, 255];
-
   /**
    * The background() function sets the color used for the background of the
    * p5.js canvas. The default background is light gray. This function is
