@@ -27,7 +27,7 @@
 module.exports = function(grunt) {
 
   // Specify what reporter we'd like to use for Mocha
-  var reporter = 'Dot';
+  var reporter = 'Nyan';
 
   // For the static server used in running tests, configure the keepalive.
   // (might not be useful at all.)
