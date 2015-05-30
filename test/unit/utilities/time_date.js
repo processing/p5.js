@@ -97,9 +97,12 @@ suite('time and date', function() {
 
 
     suite('p5.prototype.millis', function() {
-      var runningTime = 1000;
-      var p5mock = {_startTime: new Date().getTime() - runningTime};
+      var runningTime = 50;
       var millis = p5.prototype.millis;
+      var p5mock = {_startTime: 0};
+      var init_date = Date.now ();
+      // wait :\
+      while (Date.now() - init_date < runningTime) { }
       var result = millis.call(p5mock);
       suite('millis()', function() {
         test('should be a function', function() {
@@ -110,7 +113,7 @@ suite('time and date', function() {
             assert.isNumber(result);
         });
         test('result should be ' + runningTime, function() {
-            assert.closeTo(result, runningTime, 1, 'everything is ok');
+            assert.operator(result, '>', runningTime, 'everything is ok');
         });
          test('result should be > newResult', function() {
             var newResult = millis.call(p5mock);
