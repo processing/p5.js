@@ -56,6 +56,11 @@ define(function(require) {
     this.drawingContext.font = 'normal 12px sans-serif';
   };
 
+  p5.Graphics2D.prototype._resizeHelper = function() {
+    this.drawingContext.scale(this._pInst.pixelDensity,
+                              this._pInst.pixelDensity);
+  };
+
   //////////////////////////////////////////////
   // COLOR | Setting
   //////////////////////////////////////////////
@@ -148,6 +153,9 @@ define(function(require) {
   // IMAGE | Pixels
   //////////////////////////////////////////////
 
+  p5.Graphics2D.prototype.blendMode = function(mode) {
+    this.drawingContext.globalCompositeOperation = mode;
+  };
   p5.Graphics2D.prototype.blend = function() {
     var currBlend = this.drawingContext.globalCompositeOperation;
     var blendMode = arguments[arguments.length - 1];
