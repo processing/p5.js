@@ -315,7 +315,7 @@ define(function(require) {
       mode === constants.SOFT_LIGHT || mode === constants.DODGE ||
       mode === constants.BURN || mode === constants.ADD ||
       mode === constants.NORMAL) {
-      this.drawingContext.globalCompositeOperation = mode;
+      this._graphics.blendMode(mode);
     } else {
       throw new Error('Mode '+mode+' not recognized.');
     }
