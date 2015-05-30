@@ -1,21 +1,16 @@
 /**
- * @module Font
+ * This module defines the p5.Font class and P5 methods for
+ * drawing text to the main display canvas.
+ * @module Typography
  * @submodule Font
  * @requires core
  * @requires constants
  */
 define(function(require) {
 
-  /**
-   * This module defines the p5.Font class and P5 methods for
-   * drawing text to the main display canvas.
-   */
-
   /*
-   * Issues
-   * -- require opentype.js (awaiting dev-ops) **
+   * TODO:
    * -- var fonts = loadFont([]); **
-   * -- example exposing opentype font object **
    * -- PFont functions:
    *    textBounds() exists
    *    glyphPaths -> object or array?
@@ -31,6 +26,7 @@ define(function(require) {
 
   var p5 = require('core');
   var constants = require('constants');
+
 
   /**
    * Base class for font handling
@@ -51,12 +47,14 @@ define(function(require) {
 
   /**
    * Renders a set of glyph paths to the current graphics context
+   * @private
+   * @method renderPath
    * @param  {string} line     a line of text
    * @param  {Number} x        x-position
    * @param  {Number} y        y-position
    * @param  {Number} fontSize font size to use (optional)
    * @param  {Object} options  opentype options (optional)
-   * @return {Object}         this object
+   * @return {Object}          this object
    */
   p5.Font.prototype.renderPath = function(line, x, y, fontSize, options) {
 
@@ -120,6 +118,7 @@ define(function(require) {
 
   /**
    * Returns a tight bounding box for the given text string using this font
+   * @method textBounds
    * @param  {string} line     a line of text
    * @param  {Number} x        x-position
    * @param  {Number} y        y-position
