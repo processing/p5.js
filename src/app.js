@@ -1,16 +1,14 @@
-define(function(require) {
+define(function (require) {
 
   'use strict';
 
   var p5 = require('core');
   require('p5.Color');
   require('p5.Element');
+  require('p5.Font');
   require('p5.Graphics2D');
   require('p5.Graphics3D');
   require('p5.Image');
-  require('p5.File');
-  require('p5.Font');
-  //require('p5.Shape');
   require('p5.Vector');
   require('p5.TableRow');
   require('p5.Table');
@@ -36,16 +34,11 @@ define(function(require) {
   require('math.random');
   require('math.noise');
   require('math.trigonometry');
-  //require('opentype');
-  require('output.files');
-  require('output.image');
-  require('output.text_area');
   require('rendering.rendering');
   require('shape.2d_primitives');
   require('shape.3d_primitives');
   require('shape.attributes');
   require('shape.curves');
-  //require('shape.shape');
   require('shape.vertex');
   require('structure');
   require('transform');
@@ -68,7 +61,7 @@ define(function(require) {
     if (!window.PHANTOMJS && !window.mocha) {
       // If there is a setup or draw function on the window
       // then instantiate p5 in "global" mode
-      if ((window.setup && typeof window.setup === 'function') ||
+      if((window.setup && typeof window.setup === 'function') ||
         (window.draw && typeof window.draw === 'function')) {
         new p5();
       }
@@ -79,7 +72,7 @@ define(function(require) {
   if (document.readyState === 'complete') {
     _globalInit();
   } else {
-    window.addEventListener('load', _globalInit, false);
+    window.addEventListener('load', _globalInit , false);
   }
 
   return p5;

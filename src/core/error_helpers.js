@@ -10,49 +10,6 @@ define(function (require) {
 
   var p5 = require('core');
 
-  // Wrong number of params, undefined param, wrong type
-  var PARAM_COUNT = 0;
-  var EMPTY_VAR = 1;
-  var WRONG_TYPE = 2;
-  var typeColors = ['#008851', '#C83C00', '#4DB200'];
-  p5.prototype._testColors = function() {
-    var str = 'A box of biscuits, a box of mixed biscuits and a biscuit mixer';
-    report(str, 'println', '#ED225D'); // p5.js magenta
-    report(str, 'println', '#2D7BB6'); // p5.js blue
-    report(str, 'println', '#EE9900'); // p5.js orange
-    report(str, 'println', '#A67F59'); // p5.js light brown
-    report(str, 'println', '#704F21'); // p5.js gold
-    report(str, 'println', '#1CC581'); // auto cyan
-    report(str, 'println', '#FF6625'); // auto orange
-    report(str, 'println', '#79EB22'); // auto green
-    report(str, 'println', '#B40033'); // p5.js darkened magenta
-    report(str, 'println', '#084B7F'); // p5.js darkened blue
-    report(str, 'println', '#945F00'); // p5.js darkened orange
-    report(str, 'println', '#6B441D'); // p5.js darkened brown
-    report(str, 'println', '#2E1B00'); // p5.js darkened gold
-    report(str, 'println', '#008851'); // auto dark cyan
-    report(str, 'println', '#C83C00'); // auto dark orange
-    report(str, 'println', '#4DB200'); // auto dark green
-  };
-
-  function report(message, func, color) {
-    // p5.js brand - magenta: #ED225D, blue: #2D7BB6
-    // Pallete off magenta:      cyan: #1CC581, orange: #FF6625, green: #79EB22
-    // - Dark: magenta: #B40033, cyan: #008851, orange: #C83C00, green: #4DB200
-    // TODO: Alternate colors for rows?
-    // TODO: Emphasized colors? Highlighting?
-    if ('undefined' === getType(color)) {
-      color   = '#B40033'; // dark magenta
-    } else if (getType(color) === 'number') { // Type to color
-      color = typeColors[color];
-    }
-    console.log(
-      '%c> p5.js says: '+message+'%c [http://p5js.org/reference/#p5/'+func+']',
-      'background-color:' + color + ';color:#FFF;',
-      'background-color:transparent;color:' + color + ';'
-    );
-  }
-
   // -- Borrowed from jQuery 1.11.3 --
   var class2type = {};
   var toString = class2type.toString;
@@ -81,10 +38,16 @@ define(function (require) {
   };
   // -- End borrow --
 
-  var numberTypes = ['Number', 'Integer', 'Number/Constant'];
   /**
+   * Checks the definition type against the argument type
+   * If any of these passes (in order), it matches:
    *
+   * - p5.* definitions are checked with instanceof
+   * - Booleans are let through (everything is truthy or falsey)
+   * - Lowercase of the definition is checked against the js type
+   * - Number types are checked to see if they are numerically castable
    */
+  var numberTypes = ['Number', 'Integer', 'Number/Constant'];
   function typeMatches(defType, argType, arg) {
     if(defType.match(/^p5\./)) {
       var parts = defType.split('.');
@@ -95,6 +58,48 @@ define(function (require) {
       (numberTypes.indexOf(defType) > -1 && isNumeric(arg));
   }
 
+  /**
+   * Prints out a fancy, colorful message to the console log
+   *
+   * @param  {String}               message the words to be said
+   * @param  {String}               func    the name of the function to link
+   * @param  {Integer/Color String} color   CSS color string or error type
+   *
+   * @return console logs
+   */
+  // Wrong number of params, undefined param, wrong type
+  var PARAM_COUNT = 0;
+  var EMPTY_VAR = 1;
+  var WRONG_TYPE = 2;
+  // p5.js blue, p5.js orange, auto dark green; fallback p5.js darkened magenta
+  // See testColors below for all the color codes and names
+  var typeColors = ['#2D7BB6', '#EE9900', '#4DB200'];
+  function report(message, func, color) {
+    if ('undefined' === getType(color)) {
+      color   = '#B40033'; // dark magenta
+    } else if (getType(color) === 'number') { // Type to color
+      color = typeColors[color];
+    }
+    console.log(
+      '%c> p5.js says: '+message+'%c [http://p5js.org/reference/#p5/'+func+']',
+      'background-color:' + color + ';color:#FFF;',
+      'background-color:transparent;color:' + color + ';'
+    );
+  }
+
+  /**
+   * Validate all the parameters of a function for number and type
+   *
+   * @param  {String} func  name of function we're checking
+   * @param  {Array}  args  pass of the JS default arguments array
+   * @param  {Array}  types List of types accepted ['Number', 'String, ...] OR
+   *                        a list of lists for each format: [
+   *                          ['String', 'Number', 'Number'],
+   *                          ['String', 'Number', 'Number', 'Number', 'Number'
+   *                        ]
+   *
+   * @return console logs
+   */
   p5.prototype._validateParameters = function(func, args, types) {
     if (!isArray(types[0])) {
       types = [types];
@@ -167,6 +172,30 @@ define(function (require) {
         }
       }
     }
+  };
+
+  /**
+   * Prints out all the colors in the color pallete with white text.
+   * For color blindness testing.
+   */
+  p5.prototype._testColors = function() {
+    var str = 'A box of biscuits, a box of mixed biscuits and a biscuit mixer';
+    report(str, 'println', '#ED225D'); // p5.js magenta
+    report(str, 'println', '#2D7BB6'); // p5.js blue
+    report(str, 'println', '#EE9900'); // p5.js orange
+    report(str, 'println', '#A67F59'); // p5.js light brown
+    report(str, 'println', '#704F21'); // p5.js gold
+    report(str, 'println', '#1CC581'); // auto cyan
+    report(str, 'println', '#FF6625'); // auto orange
+    report(str, 'println', '#79EB22'); // auto green
+    report(str, 'println', '#B40033'); // p5.js darkened magenta
+    report(str, 'println', '#084B7F'); // p5.js darkened blue
+    report(str, 'println', '#945F00'); // p5.js darkened orange
+    report(str, 'println', '#6B441D'); // p5.js darkened brown
+    report(str, 'println', '#2E1B00'); // p5.js darkened gold
+    report(str, 'println', '#008851'); // auto dark cyan
+    report(str, 'println', '#C83C00'); // auto dark orange
+    report(str, 'println', '#4DB200'); // auto dark green
   };
 
   return p5;

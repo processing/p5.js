@@ -11,10 +11,10 @@
 
 var font1, x=30, y=80, words = 'greeN ideaS';
 
-function preload() {
-  font1 = loadFont('SourceSansPro-Regular.otf');
-  font2 = loadFont('acmesa.ttf');
-};
+// function preload() {
+//   font1 = loadFont('SourceSansPro-Regular.otf');
+//   font2 = loadFont('acmesa.ttf');
+// };
 
 function setup() {
 
