@@ -27,7 +27,7 @@
 module.exports = function(grunt) {
 
   // Specify what reporter we'd like to use for Mocha
-  var reporter = 'Dot';
+  var reporter = 'Nyan';
 
   // For the static server used in running tests, configure the keepalive.
   // (might not be useful at all.)
@@ -45,15 +45,22 @@ module.exports = function(grunt) {
     // Configure hinting for this file, the source, and the tests.
     jshint: {
       build: {
-        options: {jshintrc: '.jshintrc'},
+        options: {
+          jshintrc: '.jshintrc'
+        },
         src: ['Gruntfile.js']
       },
       source: {
-        options: {jshintrc: 'src/.jshintrc'},
+        options: {
+          jshintrc: 'src/.jshintrc',
+          ignores: [ 'src/lib/opentype.js', 'src/lib/opentype.min.js' ]
+        },
         src: ['src/**/*.js']
       },
       test: {
-        options: {jshintrc: 'test/.jshintrc'},
+        options: {
+          jshintrc: 'test/.jshintrc'
+        },
         src: ['test/unit/**/*.js']
       }
     },
@@ -67,13 +74,18 @@ module.exports = function(grunt) {
       main: {
         files: ['src/**/*.js'],
         tasks: ['jshint', 'requirejs'],
-        options: { livereload: true }
+        options: {
+          livereload: true
+        }
       },
       // watch the theme for changes
       reference_build: {
         files: ['docs/yuidoc-p5-theme/**/*'],
         tasks: ['yuidoc'],
-        options: { livereload: true, interrupt: true }
+        options: {
+          livereload: true,
+          interrupt: true
+        }
       },
       // watch the yuidoc/reference theme scripts for changes
       yuidoc_theme_build: {
@@ -106,8 +118,8 @@ module.exports = function(grunt) {
       },
       // update bower.json with data from package.json
       bower: {
-        src: 'package.json',    // where to read from
-        dest: 'bower.json',     // where to write to
+        src: 'package.json', // where to read from
+        dest: 'bower.json', // where to write to
         // the fields to update, as a String Grouping
         fields: 'name version description repository'
       }
@@ -118,20 +130,19 @@ module.exports = function(grunt) {
     requirejs: {
       p5_unminified: {
         options: {
-          baseUrl: '.',                     // from whence do the files come?
-          optimize: 'none',                 // skip running uglify on the concatenated code
-          out: 'lib/p5.js',                 // name of the output file
-          useStrict: true,                  // Allow "use strict"; be included in the RequireJS files.
+          baseUrl: '.', // from whence do the files come?
+          optimize: 'none', // skip running uglify on the concatenated code
+          out: 'lib/p5.js', // name of the output file
+          useStrict: true, // Allow "use strict"; be included in the RequireJS files.
           //findNestedDependencies: true,   // automatically find nested deps.  Doesn't appear to effect the code?
-          include: ['src/app'],             // this is the file which we are actually building
+          include: ['src/app'], // this is the file which we are actually building
 
           // This will add a prefix and a suffix to the generated code.
           // we're using this to both add a time/version stamp
           // and also to wrap this in a commonjs/AMD header.
           // there's also the **amdclean** stuff—not sure what that is yet.
           wrap: {
-            start:
-              ['/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */',
+            start: ['/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */',
               '(function (root, factory) {',
               '  if (typeof define === \'function\' && define.amd)',
               '    define(\'p5\', [], function () { return (root.returnExportsGlobal = factory());});',
@@ -139,12 +150,13 @@ module.exports = function(grunt) {
               '    module.exports = factory();',
               '  else',
               '    root[\'p5\'] = factory();',
-              '}(this, function () {\n'].join('\n'),
+              '}(this, function () {\n'
+            ].join('\n'),
             end: 'return amdclean[\'src_app\'];\n}));'
           },
           // This will transform the compiled file, reversing out the AMD loader and creating a
           // static JS file.  This code is potentially problematic.
-          onBuildWrite: function( name, path, contents ) {
+          onBuildWrite: function(name, path, contents) {
             if (name === 'reqwest') {
               contents = contents.replace('}(\'reqwest\', this, function () {', '}(\'reqwest\', amdclean, function () {');
             }
@@ -172,8 +184,7 @@ module.exports = function(grunt) {
             'constants': 'src/core/constants',
             'core': 'src/core/core',
             'environment': 'src/core/environment',
-            'helpers': 'src/core/helpers',
-            'output.text_area': 'src/core/text_area',
+            'helpers': 'src/core/error_helpers',
             'p5.Element': 'src/core/p5.Element',
             'p5.Graphics': 'src/core/p5.Graphics',
             'p5.Graphics2D': 'src/core/p5.Graphics2D',
@@ -198,10 +209,10 @@ module.exports = function(grunt) {
             'image.image': 'src/image/image',
             'image.loading_displaying': 'src/image/loading_displaying',
             'image.pixels': 'src/image/pixels',
-            'output.image': 'src/image/image_output',
             'p5.Image': 'src/image/p5.Image',
 
             // typography
+            'p5.Font': 'src/typography/p5.Font',
             'typography.attributes': 'src/typography/attributes',
             'typography.loading_displaying': 'src/typography/loading_displaying',
 
@@ -222,8 +233,7 @@ module.exports = function(grunt) {
 
 
             // io
-            'input.files': 'src/io/files_input',
-            'output.files': 'src/io/files_output',
+            'input.files': 'src/io/files',
             'p5.TableRow': 'src/io/p5.TableRow',
             'p5.Table': 'src/io/p5.Table',
 
@@ -240,11 +250,16 @@ module.exports = function(grunt) {
             'utils.color_utils': 'src/color/color_utils',
 
             // external library
-            'reqwest': 'node_modules/reqwest/reqwest',
-
-            // move this to p5.DOM file
-            'p5.File': 'lib/addons/p5.File'
+            'reqwest': 'node_modules/reqwest/reqwest'
           },
+          done: function(done, output) {
+            require('concat-files')([
+              'lib/p5.js',
+              'src/lib/opentype.min.js',
+            ], 'lib/p5.js', function() {
+              done();
+            });
+          }
         }
       },
 
@@ -260,7 +275,9 @@ module.exports = function(grunt) {
           generateSourceMaps: true,
           findNestedDependencies: true,
           wrap: true,
-          paths: { 'jquery': 'empty:' }
+          paths: {
+            'jquery': 'empty:'
+          }
         }
       }
     },
@@ -311,7 +328,7 @@ module.exports = function(grunt) {
           port: 9001,
           keepalive: keepalive,
           middleware: function(connect, options, middlewares) {
-            middlewares.unshift(function (req, res, next) {
+            middlewares.unshift(function(req, res, next) {
               res.setHeader('Access-Control-Allow-Origin', '*');
               res.setHeader('Access-Control-Allow-Methods', '*');
               return next();

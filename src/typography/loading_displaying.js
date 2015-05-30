@@ -4,13 +4,15 @@
  * @for p5
  * @requires core
  */
-define(function (require) {
+define(function(require) {
 
   'use strict';
 
   var p5 = require('core');
+  var constants = require('constants');
 
   require('helpers');
+
 
   /**
    * Draws text to the screen. Displays the information specified in the first
@@ -37,6 +39,7 @@ define(function (require) {
    *                     see rectMode() for more info
    * @param {Number} y2  by default, the height of the text box,
    *                     see rectMode() for more info
+   * @return {Object} this
    * @example
    * <div>
    * <code>
@@ -57,6 +60,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
+
     this._validateParameters(
       'text',
       arguments,
@@ -66,10 +70,8 @@ define(function (require) {
       ]
     );
 
-    if (typeof str !== 'string') {
-      str=str.toString();
-    }
-    this._graphics.text.apply(this._graphics, arguments);
+    return (!(this._doFill || this._doStroke)) ? this :
+      this._graphics.text.apply(this._graphics, arguments);
   };
 
   /**
@@ -77,11 +79,12 @@ define(function (require) {
    *
    * @method textFont
    * @param {String} str name of font
+   * @return {Object} this
    * @example
    * <div>
    * <code>
    * fill(0);
-   * textSize(36);
+   * textSize(12);
    * textFont("Georgia");
    * text("Georgia", 12, 40);
    * textFont("Helvetica");
@@ -89,9 +92,28 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.textFont = function(str) {
-    this._setProperty('_textFont', str); //pend temp?
-    this._applyTextProperties();
+  p5.prototype.textFont = function(theFont, theSize) {
+
+    if (arguments.length) {
+
+      if (!theFont) {
+
+        throw Error('null font passed to textFont');
+      }
+
+      this._setProperty('_textFont', theFont);
+
+      if (theSize) {
+
+        this._setProperty('_textSize', theSize);
+        this._setProperty('_textLeading',
+          theSize * constants._DEFAULT_LEADMULT);
+      }
+
+      return this._graphics._applyTextProperties();
+    }
+
+    return this;
   };
 
   return p5;

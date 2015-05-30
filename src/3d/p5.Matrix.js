@@ -1,6 +1,4 @@
 /**
- * @module Matrix
- * @submodule Math
  * @requires constants
  * @todo see methods below needing further implementation.
  */
@@ -44,7 +42,6 @@ define(function (require) {
   /**
    * Sets the x, y, and z component of the vector using two or three separate
    * variables, the data from a p5.Matrix, or the values from a float array.
-   * @method set
    *
    * @param {p5.Matrix|Array} [inMatrix] the input p5.Matrix or 
    *                                     an Array of length 16
@@ -64,7 +61,6 @@ define(function (require) {
   /**
    * Gets a copy of the vector, returns a p5.Matrix object.
    *
-   * @method get
    * @return {p5.Matrix} the copy of the p5.Matrix object
    */
   p5.Matrix.prototype.get = function () {

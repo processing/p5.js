@@ -381,7 +381,6 @@ define(function (require) {
 
   /**
    * Alias for {@link mat4.multiply}
-   * @function
    */
   mat4.mul = mat4.multiply;
 

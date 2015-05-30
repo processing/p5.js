@@ -1,5 +1,5 @@
 /**
- * @module Data
+ * @module IO
  * @submodule Table
  * @requires core
  */

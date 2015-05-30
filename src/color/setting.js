@@ -5,7 +5,7 @@
  * @requires core
  * @requires constants
  */
-define(function (require) {
+define(function(require) {
 
   'use strict';
 
@@ -15,6 +15,8 @@ define(function (require) {
 
   p5.prototype._doStroke = true;
   p5.prototype._doFill = true;
+  p5.prototype._strokeSet = false;
+  p5.prototype._fillSet = false;
   p5.prototype._colorMode = constants.RGB;
   p5.prototype._maxRGB = [255, 255, 255, 255];
   p5.prototype._maxHSB = [255, 255, 255, 255];
@@ -124,6 +126,7 @@ define(function (require) {
     } else {
       this._graphics.background.apply(this._graphics, arguments);
     }
+    return this;
   };
 
   /**
@@ -143,6 +146,7 @@ define(function (require) {
    */
   p5.prototype.clear = function() {
     this._graphics.clear();
+    return this;
   };
 
   /**
@@ -202,8 +206,7 @@ define(function (require) {
         maxArr[1] = arguments[1];
         maxArr[2] = arguments[1];
         maxArr[3] = arguments[1];
-      }
-      else if (arguments.length > 2) {
+      } else if (arguments.length > 2) {
         maxArr[0] = arguments[1];
         maxArr[1] = arguments[2];
         maxArr[2] = arguments[3];
@@ -212,6 +215,7 @@ define(function (require) {
         maxArr[3] = arguments[4];
       }
     }
+    return this;
   };
 
   /**
@@ -327,8 +331,10 @@ define(function (require) {
    * </div>
    */
   p5.prototype.fill = function() {
+    this._setProperty('_fillSet', true);
     this._setProperty('_doFill', true);
     this._graphics.fill.apply(this._graphics, arguments);
+    return this;
   };
 
   /**
@@ -347,6 +353,7 @@ define(function (require) {
    */
   p5.prototype.noFill = function() {
     this._setProperty('_doFill', false);
+    return this;
   };
 
   /**
@@ -364,6 +371,7 @@ define(function (require) {
    */
   p5.prototype.noStroke = function() {
     this._setProperty('_doStroke', false);
+    return this;
   };
 
   /**
@@ -489,8 +497,10 @@ define(function (require) {
    * </div>
    */
   p5.prototype.stroke = function() {
+    this._setProperty('_strokeSet', true);
     this._setProperty('_doStroke', true);
     this._graphics.stroke.apply(this._graphics, arguments);
+    return this;
   };
 
 
