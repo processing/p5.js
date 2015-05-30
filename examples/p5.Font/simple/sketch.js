@@ -4,7 +4,7 @@ var textSketch = function(p) {
   var font;
 
   p.preload = function() {
-    font = p.loadFont("../acmesa.ttf");
+    font = p.loadFont(["../acmesa.ttf", "font2.sdf"]);
   };
 
   p.setup = function() {
