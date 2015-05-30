@@ -20,8 +20,7 @@ function setup() {
 
   createCanvas(400, 200);
 
-  textSize(58);
-  textFont(font1);
+  textFont(font1, 58);
   text(words, x, y);
 
   // metrics

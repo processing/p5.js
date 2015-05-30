@@ -14,6 +14,61 @@ define(function (require) {
   var p5 = require('core');
   var reqwest = require('reqwest');
 
+
+  /**
+   * Loads an opentype font file (.otf, .ttf) from a file or a URL,
+   * and returns a PFont Object. This method is asynchronous,
+   * meaning it may not finish before the next line in your sketch
+   * is executed.
+   *
+   * @method loadFont
+   * @param  {String}        path       name of the file or url to load
+   * @param  {Function}      [callback] function to be executed after
+   *                                    loadFont()
+   *                                    completes
+   * @return {Object}                   p5.Font object
+   * @example
+   *
+   * <p>Calling loadFont() inside preload() guarantees to complete the
+   * operation before setup() and draw() are called.</p>
+   *
+   * <div><code>
+   * var myFont;
+   *
+   * function preload() {
+   *   myFont = loadFont('./assets/AvenirNextLTPro-Demi.otf');
+   * }
+   *
+   * function setup() {
+   *   fill('#ED225D');
+   *   textFont(myFont);
+   *   textSize(36);
+   *   text('p5*js', 10, 50);
+   * }
+   *
+   * function draw() {
+   * }
+   * </code></div>
+   *
+   * <p>Outside preload(), you may supply a callback function to handle the
+   * object:</p>
+
+   * <div><code>
+   * function setup() {
+   *   loadFont('./assets/AvenirNextLTPro-Demi.otf', drawText);
+   * }
+   *
+   * function drawText(font) {
+   *   fill('#ED225D');
+   *   textFont(font, 36);
+   *   text('p5*js', 10, 50);
+   * }
+   *
+   * function draw() {
+   * }
+   * </code></div>
+   *
+   */
   p5.prototype.loadFont = function(path, callback) {
 
     var p5Font = new p5.Font(this);
@@ -606,7 +661,7 @@ define(function (require) {
     });
   };
 
-  
+
 /**
  * @module IO
  * @submodule Output
@@ -701,11 +756,11 @@ define(function (require) {
 
   /**
    *  <p>Save an image, text, json, csv, wav, or html. Prompts download to
-   *  the client's computer. <b>Note that it is not recommended to call save() 
-   *  within draw if it's looping, as the save() function will open a new save 
+   *  the client's computer. <b>Note that it is not recommended to call save()
+   *  within draw if it's looping, as the save() function will open a new save
    *  dialog every frame.</b></p>
    *  <p>The default behavior is to save the canvas as an image. You can
-   *  optionally specify a filename. 
+   *  optionally specify a filename.
    *  For example:</p>
    *  <pre class='language-javascript'><code>
    *  save();
@@ -719,29 +774,29 @@ define(function (require) {
    *  (including extension). The third parameter is for options specific
    *  to this type of object. This method will save a file that fits the
    *  given paramaters. For example:</p>
-   * 
+   *
    *  <pre class='language-javascript'><code>
    *
    *  save('myCanvas.jpg');           // Saves canvas as an image
-   *  
+   *
    *  var cnv = createCanvas(100, 100);
    *  save(cnv, 'myCanvas.jpg');      // Saves canvas as an image
    *
    *  var gb = createGraphics(100, 100);
    *  save(gb, 'myGraphics.jpg');      // Saves p5.Graphics object as an image
-   * 
+   *
    *  save(myTable, 'myTable.html');  // Saves table as html file
    *  save(myTable, 'myTable.csv',);  // Comma Separated Values
    *  save(myTable, 'myTable.tsv');   // Tab Separated Values
-   * 
+   *
    *  save(myJSON, 'my.json');        // Saves pretty JSON
    *  save(myJSON, 'my.json', true);  // Optimizes JSON filesize
-   * 
+   *
    *  save(img, 'my.png');            // Saves pImage as a png image
    *
    *  save(arrayOfStrings, 'my.txt'); // Saves strings to a text file with line
    *                                  // breaks after each item in the array
-   *  </code></pre> 
+   *  </code></pre>
    *
    *  @method save
    *  @param  {[Object|String]} objectOrFilename  If filename is provided, will
@@ -836,17 +891,17 @@ define(function (require) {
    *  var json;
    *
    *  function setup() {
-   *  
+   *
    *    json = {}; // new JSON Object
-   *    
+   *
    *    json.id = 0;
    *    json.species = 'Panthera leo';
    *    json.name = 'Lion';
-   *    
+   *
    *  // To save, un-comment the line below, then click 'run'
    *  // saveJSONObject(json, 'lion.json');
    *  }
-   *  
+   *
    *  // Saves the following to a file called "lion.json":
    *  // {
    *  //   "id": 0,
@@ -886,10 +941,10 @@ define(function (require) {
    *  @example
    *  <div><code>
    *  var words = 'apple bear cat dog';
-   *  
+   *
    *  // .split() outputs an Array
    *  var list = split(words, ' ');
-   *  
+   *
    *  // To save the file, un-comment next line and click 'run'
    *  // saveStrings(list, 'nouns.txt');
    *
@@ -933,7 +988,7 @@ define(function (require) {
    *  use tab separation ('tsv'), or generate an HTML table ('html').
    *  The file saving process and location of the saved file will
    *  vary between web browsers.
-   *  
+   *
    *  @method saveTable
    *  @param  {p5.Table} Table  the Table object to save to a file
    *  @param  {String} filename the filename to which the Table should be saved
@@ -941,14 +996,14 @@ define(function (require) {
    *  @example
    *  <div><code>
    *  var table;
-   *  
+   *
    *  function setup() {
    *    table = new p5.Table();
-   *    
+   *
    *    table.addColumn('id');
    *    table.addColumn('species');
    *    table.addColumn('name');
-   *    
+   *
    *    var newRow = table.addRow();
    *    newRow.setNum('id', table.getRowCount() - 1);
    *    newRow.setString('species', 'Panthera leo');
@@ -957,7 +1012,7 @@ define(function (require) {
    *    // To save, un-comment next line then click 'run'
    *    // saveTable(table, 'new.csv');
    *    }
-   *    
+   *
    *    // Saves the following to a file called 'new.csv':
    *    // id,species,name
    *    // 0,Panthera leo,Lion
@@ -1011,7 +1066,7 @@ define(function (require) {
 
       pWriter.println('<body>');
       pWriter.println('  <table>');
-      
+
       // make header if it has values
       if (header[0] !== '0') {
         pWriter.println('    <tr>');
@@ -1022,7 +1077,7 @@ define(function (require) {
         }
         pWriter.println('    </tr>');
       }
-      
+
       // make rows
       for (var row = 0; row < table.rows.length; row++) {
         pWriter.println('    <tr>');
@@ -1082,7 +1137,7 @@ define(function (require) {
    *  and an extension (optional).
    *  This is a private function because it does not do any formatting,
    *  but it is used by saveStrings, saveJSON, saveTable etc.
-   *  
+   *
    *  @param  {String} href      i.e. an href generated by createObjectURL
    *  @param  {[String]} filename
    *  @param  {[String]} extension
@@ -1116,10 +1171,10 @@ define(function (require) {
   /**
    *  Returns a file extension, or another string
    *  if the provided parameter has no extension.
-   *  
+   *
    *  @param   {String} filename
    *  @return  {Array} [fileName, fileExtension]
-   *                               
+   *
    *  @private
    */
   function _checkFileExtension(filename, extension) {
@@ -1148,7 +1203,7 @@ define(function (require) {
   /**
    *  Returns true if the browser is Safari, false if not.
    *  Safari makes trouble for downloading files.
-   *  
+   *
    *  @return  {Boolean} [description]
    *  @private
    */
@@ -1161,7 +1216,7 @@ define(function (require) {
    *  Helper function, a callback for download that deletes
    *  an invisible anchor element from the DOM once the file
    *  has been automatically downloaded.
-   *  
+   *
    *  @private
    */
   function destroyClickedElement(event) {
