@@ -53,10 +53,27 @@ define(function (require) {
     var start, end;
 
     //gives feedback if either src or dst is not an array
-    var errMsg = 'arrayCopy takes in an Array.';
+    var errorMsg = 'arrayCopy takes in an Array.';
     var dstDefined = typeof dst !== 'undefined';
     if (src.constructor !== Array) {
-      throw new Error(errMsg + ' Source is a(n) ' + typeof src);
+      throw new Error(errorMsg + ' Source is a(n) ' + typeof src);
+    }
+    else if (dstDefined) {
+      if (typeof srcPosition === 'number') {
+        if (dst.constructor !== Array) {
+          throw new Error(errorMsg + ' Destination is a(n) ' + typeof dst);
+        }
+      }
+      else if (typeof dst === 'number') {
+        if (srcPosition.constructor !== Array) {
+          throw new Error(errorMsg+' Destination is a(n) '+typeof srcPosition);
+        }
+      }
+    }
+    else if (!dstDefined) {
+      if (srcPosition.constructor !== Array) {
+        throw new Error(errorMsg+' Destination is a(n) '+typeof srcPosition);
+      }
     }
 
     if (typeof length !== 'undefined') {
@@ -68,27 +85,10 @@ define(function (require) {
     } else {
 
       if (dstDefined) { // src, dst, length
-        //test if destination is an Array
-        if (typeof srcPosition === 'number') {
-          if (dst.constructor !== Array) {
-            throw new Error(errMsg + ' Destination is a(n) ' + typeof dst);
-          }
-        }
-        else if (typeof dst === 'number') {
-          if (srcPosition.constructor !== Array) {
-            throw new Error(errMsg+' Destination is a(n) '+typeof srcPosition);
-          }
-        }
-
         // rename  so we don't get confused
         end = dst;
         end = Math.min(end, src.length);
-      }
-      else { // src, dst
-        //test if destination is an Array
-        if (srcPosition.constructor !== Array) {
-          throw new Error(errMsg+' Destination is a(n) '+typeof srcPosition);
-        }
+      } else { // src, dst
         end = src.length;
       }
 
