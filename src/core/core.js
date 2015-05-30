@@ -297,22 +297,34 @@ define(function (require) {
 
     this._draw = function () {
       var now = window.performance.now();
-      this._frameRate = 1000.0/(now - this._lastFrameTime);
-      this._lastFrameTime = now;
-      this._setProperty('frameCount', this.frameCount + 1);
-      if (this._loop) {
-        if (this._drawInterval) {
-          clearInterval(this._drawInterval);
-        }
-        this._drawInterval = setTimeout(function() {
-          window.requestDraw(this._draw.bind(this));
-        }.bind(this), 1000 / this._targetFrameRate);
+      var time_since_last = now - this._lastFrameTime;
+      var target_time_between_frames = 1000 / this._targetFrameRate;
+
+      // only draw if we really need to; don't overextend the browser.
+      // draw if we're within 5ms of when our next frame should paint
+      // (this will prevent us from giving up opportunities to draw
+      // again when it's really about time for us to do so). fixes an
+      // issue where the frameRate is too low if our refresh loop isn't
+      // in sync with the browser. note that we have to draw once even
+      // if looping is off, so we bypass the time delay if that
+      // is the case.
+      var epsilon = 5;
+      if (!this.loop ||
+          time_since_last >= target_time_between_frames - epsilon) {
+        this._setProperty('frameCount', this.frameCount + 1);
+        this.redraw();
+        this._updatePAccelerations();
+        this._updatePMouseCoords();
+        this._updatePTouchCoords();
+        this._frameRate = 1000.0/(now - this._lastFrameTime);
+        this._lastFrameTime = now;
       }
-      // call user's draw
-      this.redraw();
-      this._updatePAccelerations();
-      this._updatePMouseCoords();
-      this._updatePTouchCoords();
+
+      // get notified the next time the browser gives us
+      // an opportunity to draw.
+      if (this._loop) {
+        window.requestAnimationFrame(this._draw);
+      }
     }.bind(this);
 
     this._runFrames = function() {
@@ -351,9 +363,6 @@ define(function (require) {
 
         // stop draw
         this._loop = false;
-        if (this._drawInterval) {
-          clearTimeout(this._drawInterval);
-        }
         if (this._updateInterval) {
           clearTimeout(this._updateInterval);
         }
