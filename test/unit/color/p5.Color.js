@@ -672,6 +672,27 @@ suite('p5.Color', function() {
     });
   });
 
+  suite('new p5.Color in HSL mode', function() {
+    setup(function() {
+      myp5.colorMode(myp5.HSL);
+      c = myp5.color(48, 100, 100, 0.2);
+    });
+
+    test('should correctly set HSLA value with integers', function() {
+      assert.deepEqual(c.hsla, [48, 100, 100, 0.2]);
+    });
+
+    test('should correctly set HSLA value with hsl string', function() {
+      c = myp5.color('hsl(48, 100%, 20%)');
+      assert.deepEqual(c.hsla, [48, 100, 20, 1]);
+    });
+
+    test('should correctly set HSLA value with hsla string', function() {
+      c = myp5.color('hsla(48, 100%, 20%, .2)');
+      assert.deepEqual(c.hsla, [48, 100, 20, 0.2]);
+    });
+  });
+
   // These tests commented out pending further discussion. 
   // suite('new p5.Color with Base 1 colors', function() {
   //   var base_1_rgba = [0.2, 0.4, 0.6, 0.5];

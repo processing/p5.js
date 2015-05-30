@@ -29,9 +29,8 @@ define(function(require) {
       this.rgba = color_utils.hsbaToRGBA(this._converted_color);
     } else if (isRGB) {
       this.rgba = this.color_array;
-      this.hsba = color_utils.rgbaToHSBA(this._converted_color);
     } else {
-      throw new Error(pInst._colorMode + 'is an invalid colorMode.')
+      throw new Error(pInst._colorMode + 'is an invalid colorMode.');
     }
 
     return this;
@@ -298,6 +297,7 @@ define(function(require) {
       INTEGER.source,
       '\\)$'
     ].join(WHITESPACE.source), 'i'),
+    
 
     /**
      * Regular expression for matching colors in format rgb(R%, G%, B%),
@@ -345,7 +345,38 @@ define(function(require) {
       ',',
       DECIMAL.source,
       '\\)$'
-    ].join(WHITESPACE.source), 'i')
+    ].join(WHITESPACE.source), 'i'),
+
+    /**
+     * Regular expression for matching colors in format hsla(H, S%, L%),
+     * e.g. hsl(100, 40%, 28.9%,)
+     */
+    HSL: new RegExp([
+      '^hsl\\(',
+      INTEGER.source,
+      ',',
+      PERCENT.source,
+      ',',
+      PERCENT.source,
+      '\\)$'
+    ].join(WHITESPACE.source), 'i'),
+
+    /**
+     * Regular expression for matching colors in format hsla(H, S%, L%, A),
+     * e.g. hsla(100, 40%, 28.9%, 0.5)
+     */
+    HSLA: new RegExp([
+      '^hsla\\(',
+      INTEGER.source,
+      ',',
+      PERCENT.source,
+      ',',
+      PERCENT.source,
+      ',',
+      DECIMAL.source,
+      '\\)$'
+    ].join(WHITESPACE.source), 'i'),
+
   };
 
   /**
@@ -373,13 +404,17 @@ define(function(require) {
    * </div>
    */
   p5.Color._getFormattedColor = function () {
-    var r, g, b, a, str, vals;
-    if (arguments.length >= 3) {
-      r = arguments[0];
-      g = arguments[1];
-      b = arguments[2];
-      a = typeof arguments[3] === 'number' ? arguments[3] : 255;
-    } else if (typeof arguments[0] === 'string') {
+    var numArgs = arguments.length,
+        mode    = this._colorMode,
+        first, second, third, alpha, str, vals;
+
+    if (numArgs >= 3) {
+      first   = arguments[0];
+      second  = arguments[1];
+      third   = arguments[2];
+      alpha   = typeof arguments[3] === 'number' ?
+                arguments[3] : this._colorMaxes[mode][3];
+    } else if (numArgs === 1 && typeof arguments[0] === 'string') {
       str = arguments[0].trim().toLowerCase();
 
       if (namedColors[str]) {
@@ -424,6 +459,14 @@ define(function(require) {
             }
             return parseInt(parseFloat(color) / 100 * 255, 10);
           });
+      } else if (colorPatterns.HSL.test(str)) {
+        vals = colorPatterns.HSL.exec(str).slice(1).map(function(color) {
+          return parseInt(color, 10);
+        });
+      } else if (colorPatterns.HSLA.test(str)) {
+        vals = colorPatterns.HSLA.exec(str).slice(1).map(function(color) {
+          return parseFloat(color, 10);
+        });
       } else {
         // Input did not match any CSS Color pattern: Default to white
         vals = [255];
@@ -431,20 +474,27 @@ define(function(require) {
 
       // Re-run _getFormattedColor with the values parsed out of the string
       return p5.Color._getFormattedColor.apply(this, vals);
-    } else {
-      if (this._colorMode === constants.RGB) {
-        r = g = b = arguments[0];
-      } else {
-        r = b = arguments[0];
-        g = 0;
+    } else if (numArgs === 1 && typeof arguments[0] === 'number') {
+      // When users pass only one argument, they are presumed to be 
+      // working in grayscale mode. 
+      if (mode === constants.RGB) {
+        first = second = third = arguments[0];
+      } else if (mode === constants.HSB || mode === constants.HSL) {
+        // In order for grayscale to work with HSB & HSL, the saturation
+        // (the second argument) must be 0.
+        first = third = arguments[0];
+        second = 0;
       }
-      a = typeof arguments[1] === 'number' ? arguments[1] : 255;
+      alpha = typeof arguments[1] === 'number' ?
+                     arguments[1] : this._colorMaxes[mode][3];
+    } else {
+      throw new Error (arguments + 'is not a valid color representation.');
     }
     return [
-      r,
-      g,
-      b,
-      a
+      first,
+      second,
+      third,
+      alpha
     ];
   };
 

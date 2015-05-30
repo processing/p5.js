@@ -21,7 +21,7 @@ define(function(require) {
   p5.prototype._colorMaxes = {
     rgb: [255, 255, 255, 255],
     hsb: [255, 255, 255, 255],
-    hsl: [255, 255, 255, 255]
+    hsl: [360, 100, 100, 1]
   };
 
   // p5.prototype._maxRGB = [255, 255, 255, 255];
@@ -202,7 +202,7 @@ define(function(require) {
    * </div>
    */
   p5.prototype.colorMode = function() {
-    if (arguments[0] === constants.RGB || 
+    if (arguments[0] === constants.RGB ||
         arguments[0] === constants.HSB ||
         arguments[0] === constants.HSL) {
       this._colorMode = arguments[0];
