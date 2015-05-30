@@ -246,7 +246,6 @@ define(function (require) {
     var ret = [];
     var req = new XMLHttpRequest();
     req.open('GET', path, true);
-    var tempThis = this;
     req.onreadystatechange = function () {
       if (req.readyState === 4 && (req.status === 200 )) {
         var arr = req.responseText.match(/[^\r\n]+/g);
@@ -258,7 +257,7 @@ define(function (require) {
         }
       }
       else{
-        tempThis._friendlyFileLoadError(3,path);
+        p5._friendlyFileLoadError(3,path);
       }
     };
     req.send(null);
@@ -342,7 +341,6 @@ define(function (require) {
     }
 
     var t = new p5.Table();
-    var thisTemp = this;
     reqwest({url: path, crossOrigin: true, type: 'csv'})
       .then(function(resp) {
         resp = resp.responseText;
@@ -480,7 +478,7 @@ define(function (require) {
         }
       })
       .fail(function(err,msg){
-        thisTemp._friendlyFileLoadError(2,path);
+        p5._friendlyFileLoadError(2,path);
         if (typeof callback !== 'undefined') {
           callback(false);
         }
@@ -530,13 +528,12 @@ define(function (require) {
    */
   p5.prototype.loadXML = function(path, callback) {
     var ret = document.implementation.createDocument(null, null);
-    var thisTemp = this;
     reqwest({
       url: path,
       type: 'xml',
       crossOrigin: true,
       error: function(err){
-        thisTemp._friendlyFileLoadError(1,path);
+        p5._friendlyFileLoadError(1,path);
       }
     })
       .then(function(resp){

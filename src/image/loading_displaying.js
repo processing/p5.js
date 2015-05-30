@@ -69,9 +69,8 @@ define(function (require) {
         successCallback(pImg);
       }
     };
-    var tempThis = this;
     img.onerror = function(e) {
-      tempThis._friendlyFileLoadError(0,img.src);
+      p5._friendlyFileLoadError(0,img.src);
       if (typeof failureCallback === 'function') {
         failureCallback(e);
       }

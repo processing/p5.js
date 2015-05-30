@@ -87,7 +87,8 @@ define(function (require) {
     }
     if (func.substring(0,4) === 'load'){
       console.log(
-        '%c> p5.js says: '+message+'%c []',
+        '%c> p5.js says: '+message+'%c'+
+        '[https://github.com/processing/p5.js/wiki/Local-server]',
         'background-color:' + color + ';color:#FFF;',
         'background-color:transparent;color:' + color +';',
         'background-color:' + color + ';color:#FFF;',
@@ -189,7 +190,7 @@ define(function (require) {
       }
     }
   };
-  p5.prototype._friendlyFileLoadError = function(errorType, filePath){
+  p5._friendlyFileLoadError = function(errorType, filePath){
     switch (errorType) {
     case 0:
       var reportMsg0 = 'It looks like there was a problem'+
