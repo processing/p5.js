@@ -628,14 +628,17 @@ define(function (require) {
   };
 
   /**
-   * The event.wheelDelta or event.detail property returns negative values if
-   * the mouse wheel if rotated up or away from the user and positive in the
-   * other direction. On OS X with "natural" scrolling enabled, the values are
-   * opposite.<br><br>
-   * Browsers may have different default
-   * behaviors attached to various mouse events. To prevent any default
-   * behavior for this event, add `return false` to the end of the method.
+   * The function mouseWheel is executed every time a scroll event is detected
+   * either triggered by an actual mouse wheel or by a touchpad.<br>
+   * The event.delta property returns -1 or +1 depending on the scroll 
+   * direction and the user's settings. (on OS X with "natural" scrolling 
+   * enabled, the values are inverted).<br><br>
+   * Browsers may have different default behaviors attached to various 
+   * mouse events. To prevent any default behavior for this event, add 
+   * `return false` to the end of the method.
    * 
+   * The event.wheelDelta or event.detail properties can also be accessed but
+   * their behavior may differ depending on the browser.
    * See <a href="http://www.javascriptkit.com/javatutors/onmousewheel.shtml">
    * mouse wheel event in JS</a>.
    *
@@ -653,14 +656,11 @@ define(function (require) {
 	* }
 	* 
 	* function mouseWheel(event) {
-	*   //browsers have different ways to detect scroll
-	*   //this delta variable is -1 or +1 depending on the
-	*   //direction
-	*   var min = Math.min(1, (event.wheelDelta || -event.detail));
-	*   var delta = Math.max(-1, min);
+	*   //event.delta can be +1 or -1 depending
+	*   //on the wheel/scroll direction
+	*   print(event.delta);
 	*   //move the square one pixel up or down
-	*   pos += delta;
-	* 
+	*   pos += event.delta;
 	*   //uncomment to block page scrolling
 	*   //return false;
 	* }
@@ -670,6 +670,9 @@ define(function (require) {
   p5.prototype._onmousewheel = p5.prototype._onDOMMouseScroll = function(e) {
     var context = this._isGlobal ? window : this;
     if (typeof context.mouseWheel === 'function') {
+      //creating a delta property (either +1 or -1)
+      //for cross-browser compatibility 
+      e.delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
       var executeDefault = context.mouseWheel(e);
       if(executeDefault === false) {
         e.preventDefault();
