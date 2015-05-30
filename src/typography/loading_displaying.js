@@ -97,10 +97,10 @@ define(function(require) {
    * <code>
    * var fontRegular, fontItalic, fontBold;
    * function preload() {
-   *    fontRegular = loadFont("./assets/fonts/SourceSansPro-Regular.otf");
-   *    fontItalic = loadFont("./assets/fonts/SourceSansPro-Italic.ttf");
-   *    fontBold = loadFont("./assets/fonts/SourceSansPro-Bold.ttf");
-   * };
+   *    fontRegular = loadFont("./assets/fonts/Regular.otf");
+   *    fontItalic = loadFont("./assets/fonts/Italic.ttf");
+   *    fontBold = loadFont("./assets/fonts/Bold.ttf");
+   * }
    * function setup() {
    *    background(210);
    *    fill(0).strokeWeight(0).textSize(10);
@@ -110,7 +110,7 @@ define(function(require) {
    *    text("Font Style Italic", 10, 50);
    *    textFont(fontBold);
    *    text("Font Style Bold", 10, 70);
-   * };
+   * }
    * </code>
    * </div>
    */

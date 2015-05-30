@@ -59,6 +59,8 @@ define(function (require) {
    *   textFont(font, 36);
    *   text('p5*js', 10, 50);
    * }
+   * function draw(){
+   * }
    * </code></div>
    *
    */

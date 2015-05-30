@@ -2,7 +2,7 @@ define(function(require) {
 
   // requestAnim shim layer by Paul Irish
   window.requestDraw = (function(){
-    return window.requestAnimationFrame       ||
+    return window.requestAnimationFrame      ||
           window.webkitRequestAnimationFrame ||
           window.mozRequestAnimationFrame    ||
           window.oRequestAnimationFrame      ||
@@ -10,6 +10,20 @@ define(function(require) {
           function(callback, element){
             // should '60' here be framerate?
             window.setTimeout(callback, 1000 / 60);
+          };
+  })();
+
+  // use window.performance() to get max fast and accurate time in milliseconds
+  window.performance = window.performance || {};
+  window.performance.now = (function(){
+    var load_date = Date.now();
+    return window.performance.now        ||
+          window.performance.mozNow      ||
+          window.performance.msNow       ||
+          window.performance.oNow        ||
+          window.performance.webkitNow   ||
+          function () {
+            return Date.now() - load_date;
           };
   })();
 

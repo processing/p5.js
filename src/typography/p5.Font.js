@@ -1,21 +1,16 @@
 /**
- * @module Font
+ * This module defines the p5.Font class and P5 methods for
+ * drawing text to the main display canvas.
+ * @module Typography
  * @submodule Font
  * @requires core
  * @requires constants
  */
 define(function(require) {
 
-  /**
-   * This module defines the p5.Font class and P5 methods for
-   * drawing text to the main display canvas.
-   */
-
   /*
-   * Issues
-   * -- require opentype.js (awaiting dev-ops) **
+   * TODO:
    * -- var fonts = loadFont([]); **
-   * -- example exposing opentype font object **
    * -- PFont functions:
    *    textBounds() exists
    *    glyphPaths -> object or array?
@@ -31,6 +26,7 @@ define(function(require) {
 
   var p5 = require('core');
   var constants = require('constants');
+
 
   /**
    * Base class for font handling
@@ -51,14 +47,8 @@ define(function(require) {
 
   /**
    * Renders a set of glyph paths to the current graphics context
-   * @param  {string} line     a line of text
-   * @param  {Number} x        x-position
-   * @param  {Number} y        y-position
-   * @param  {Number} fontSize font size to use (optional)
-   * @param  {Object} options  opentype options (optional)
-   * @return {Object}         this object
    */
-  p5.Font.prototype.renderPath = function(line, x, y, fontSize, options) {
+  p5.Font.prototype._renderPath = function(line, x, y, fontSize, options) {
 
     var pathdata, p = this.parent, pg = p._graphics, ctx = pg.drawingContext,
       textWidth, textHeight, textAscent, textDescent;
@@ -119,12 +109,38 @@ define(function(require) {
   };
 
   /**
-   * Returns a tight bounding box for the given text string using this font
+   * Returns a tight bounding box for the given custom text string using this font
+   * (currently only support single line)
+   *
+   * @method textBounds
    * @param  {string} line     a line of text
    * @param  {Number} x        x-position
    * @param  {Number} y        y-position
    * @param  {Number} fontSize font size to use (optional)
-   * @return {Object}          a rectangle with properties: x, y, w, h
+   * @return {Object}          a rectangle object with properties: x, y, w, h
+   * @example
+   * <div>
+   * <code>
+   * var font;
+   * var text = 'Lorem ipsum dolor sit amet.';
+   * function preload() {
+   *    font = loadFont('./assets/fonts/Regular.otf');
+   * };
+   * function setup() {
+   *    background(210);
+   *    textFont(font);
+   *    strokeWeight(1);
+   *    textSize(12);
+   *    var bbox = font.textBounds(text, 10, 30, 12);
+   *    fill(255);
+   *    stroke(0);
+   *    rect(bbox.x, bbox.y, bbox.w, bbox.h);
+   *    fill(0);
+   *    strokeWeight(0);
+   *    text(text, 10, 30);
+   * };
+   * </code>
+   * </div>
    */
   p5.Font.prototype.textBounds = function(str, x, y, fontSize) {
 

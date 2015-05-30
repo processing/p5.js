@@ -1,6 +1,4 @@
 /**
- * @todo : need to make a separate Graphics2D class and use this
- * class to decide which renderer to go with.
  * @module Rendering
  * @submodule Rendering
  * @for p5

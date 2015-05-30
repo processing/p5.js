@@ -1083,7 +1083,7 @@ define(function(require) {
 
     if (p._isOpenType()) {
 
-      return p._textFont.renderPath(line, x, y);
+      return p._textFont._renderPath(line, x, y);
     }
 
     // no stroke unless specified by user
