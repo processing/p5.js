@@ -202,7 +202,9 @@ define(function(require) {
    * </div>
    */
   p5.prototype.colorMode = function() {
-    if (arguments[0] === constants.RGB || arguments[0] === constants.HSB) {
+    if (arguments[0] === constants.RGB || 
+        arguments[0] === constants.HSB ||
+        arguments[0] === constants.HSL) {
       this._colorMode = arguments[0];
 
       var maxArr = this._colorMaxes[this._colorMode];

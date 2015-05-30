@@ -18,20 +18,26 @@ define(function(require) {
     this.color_array = p5.Color._getFormattedColor.apply(pInst, vals);
     this._converted_color = this._convertTo255(pInst);
     
-    var isHSB = pInst._colorMode === constants.HSB;
+    var isHSB = pInst._colorMode === constants.HSB,
+        isRGB = pInst._colorMode === constants.RGB,
+        isHSL = pInst._colorMode === constants.HSL;
 
-    if (isHSB) {
+    if (isHSL){
+      this.hsla = this.color_array;
+    } else if (isHSB) {
       this.hsba = this.color_array;
       this.rgba = color_utils.hsbaToRGBA(this._converted_color);
-    } else {
+    } else if (isRGB) {
       this.rgba = this.color_array;
+      this.hsba = color_utils.rgbaToHSBA(this._converted_color);
+    } else {
+      throw new Error(pInst._colorMode + 'is an invalid colorMode.')
     }
 
     return this;
   };
 
   p5.Color.prototype._convertTo255 = function (pInst) {
-    // var isRGB = pInst._colorMode === constants.RGB;
     var maxArr = pInst._colorMaxes[pInst._colorMode];
     var arr = [];
     arr[0] = this.color_array[0] * 255 / maxArr[0];
