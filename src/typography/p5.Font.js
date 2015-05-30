@@ -40,7 +40,7 @@ define(function(require) {
 
   p5.Font.prototype.renderPath = function(line, x, y, fontSize, options) {
 
-    var path, p = this.parent,
+    var pathdata, p = this.parent, pg = p._graphics, ctx = pg.drawingContext,
       textWidth, textHeight, textAscent, textDescent;
 
     fontSize = fontSize || p._textSize;
@@ -51,37 +51,49 @@ define(function(require) {
     textDescent = p.textDescent();
     textHeight = textAscent + textDescent;
 
-    if (p.drawingContext.textAlign === constants.CENTER) {
+    if (ctx.textAlign === constants.CENTER) {
       x -= textWidth / 2;
-    } else if (p.drawingContext.textAlign === constants.RIGHT) {
+    } else if (ctx.textAlign === constants.RIGHT) {
       x -= textWidth;
     }
 
-    if (p.drawingContext.textBaseline === constants.TOP) {
+    if (ctx.textBaseline === constants.TOP) {
       y += textHeight;
-    } else if (p.drawingContext.textBaseline === constants._CTX_MIDDLE) {
+    } else if (ctx.textBaseline === constants._CTX_MIDDLE) {
       y += textHeight / 2 - textDescent;
-    } else if (p.drawingContext.textBaseline === constants.BOTTOM) {
+    } else if (ctx.textBaseline === constants.BOTTOM) {
       y -= textDescent;
     }
 
-    path = this.font.getPath(line, x, y, fontSize, options);
+    pathdata = this.font.getPath(line, x, y, fontSize, options).commands;
 
-    // no stroke unless specified by user
-    if (p._doStroke && p._strokeSet) {
-
-      path.strokeWidth = p.drawingContext.lineWidth;
-      path.stroke = p.drawingContext.strokeStyle;
+    ctx.beginPath();
+    for (var i = 0; i < pathdata.length; i += 1) {
+      var cmd = pathdata[i];
+      if (cmd.type === 'M') {
+        ctx.moveTo(cmd.x, cmd.y);
+      } else if (cmd.type === 'L') {
+        ctx.lineTo(cmd.x, cmd.y);
+      } else if (cmd.type === 'C') {
+        ctx.bezierCurveTo(cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x, cmd.y);
+      } else if (cmd.type === 'Q') {
+        ctx.quadraticCurveTo(cmd.x1, cmd.y1, cmd.x, cmd.y);
+      } else if (cmd.type === 'Z') {
+        ctx.closePath();
+      }
     }
 
-    // if fill hasn't been set by user, use default text fill
+    if (p._doStroke && p._strokeSet) {
+      ctx.stroke();
+    }
+
     if (p._doFill) {
 
-      path.fill = p._fillSet ? p.drawingContext.fillStyle :
-        constants._DEFAULT_TEXT_FILL;
+      // if fill hasn't been set by user, use default text fill
+      ctx.fillStyle = p._fillSet ? ctx.fillStyle:constants._DEFAULT_TEXT_FILL;
+      ctx.fill();
     }
 
-    path.draw(p.drawingContext);
   };
 
   p5.Font.prototype.textBounds = function(str, x, y, fontSize) {
