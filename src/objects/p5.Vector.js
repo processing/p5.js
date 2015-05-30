@@ -95,12 +95,12 @@ define(function (require) {
    * <div class="norender">
    * <code>
    * function setup() {
-   *    var v = createVector(1,2,3);
-   *    v.set(4,5,6); // Sets vector to [4,5,6]
+   *    var v = createVector(1, 2, 3);
+   *    v.set(4,5,6); // Sets vector to [4, 5, 6]
    *
-   *    var v1 = createVector(0,0,0);
-   *    var arr = [1,2,3];
-   *    v1.set(arr); // Sets vector to [1,2,3]
+   *    var v1 = createVector(0, 0, 0);
+   *    var arr = [1, 2, 3];
+   *    v1.set(arr); // Sets vector to [1, 2, 3]
    * }
    * </code>
    * </div>
@@ -134,7 +134,8 @@ define(function (require) {
    * <code>
    * var v1 = createVector(1, 2, 3);
    * var v2 = v.copy();
-   * print(v1.x == v2.x && v1.y == v2.y && v1.z == v2.z); // Prints "true"
+   * print(v1.x == v2.x && v1.y == v2.y && v1.z == v2.z); 
+   * // Prints "true"
    * </code>
    * </div>
    */
@@ -165,7 +166,8 @@ define(function (require) {
    * <div class="norender">
    * <code>
    * var v = createVector(1, 2, 3);
-   * v.add(4,5,6); // v's compnents are set to [5,7,9]
+   * v.add(4,5,6); 
+   * // v's compnents are set to [5, 7, 9]
    * </code>
    * </div>
    * <div class="norender">
@@ -174,7 +176,8 @@ define(function (require) {
    * var v1 = createVector(1, 2, 3);
    * var v2 = createVector(2, 3, 4);
    *
-   * var v3 = p5.Vector.add(v1, v2); // v3 has components [3,5,7]
+   * var v3 = p5.Vector.add(v1, v2); 
+   * // v3 has components [3, 5, 7]
    * </code>
    * </div>
    */
@@ -214,16 +217,19 @@ define(function (require) {
    * <div class="norender">
    * <code>
    * var v = createVector(4, 5, 6);
-   * v.sub(1, 1, 1); // v's compnents are set to [3,4,5]
+   * v.sub(1, 1, 1); 
+   * // v's compnents are set to [3, 4, 5]
    * </code>
    * </div>
+   * 
    * <div class="norender">
    * <code>
    * // Static method
    * var v1 = createVector(2, 3, 4);
    * var v2 = createVector(1, 2, 3);
    *
-   * var v3 = p5.Vector.sub(v1, v2); // v3 has compnents [1,1,1]
+   * var v3 = p5.Vector.sub(v1, v2); 
+   * // v3 has compnents [1, 1, 1]
    * </code>
    * </div>
    */
@@ -259,7 +265,8 @@ define(function (require) {
    * <div class="norender">
    * <code>
    * var v = createVector(1, 2, 3);
-   * v.mult(2); // v's compnents are set to [2,4,6]
+   * v.mult(2); 
+   * // v's compnents are set to [2, 4, 6]
    * </code>
    * </div>
    * 
@@ -267,7 +274,8 @@ define(function (require) {
    * <code>
    * // Static method
    * var v1 = createVector(1, 2, 3);
-   * var v2 = p5.Vector.mult(v1, 2); // v2 has compnents [2,4,6]
+   * var v2 = p5.Vector.mult(v1, 2); 
+   * // v2 has compnents [2, 4, 6]
    * </code>
    * </div>
    */
@@ -291,7 +299,7 @@ define(function (require) {
    * <div class="norender">
    * <code>
    * var v = createVector(6, 4, 2);
-   * v.div(2); //v's compnents are set to [3,2,1]
+   * v.div(2); //v's compnents are set to [3, 2, 1]
    * </code>
    * </div>
    * 
@@ -299,7 +307,8 @@ define(function (require) {
    * <code>
    * // Static method
    * var v1  = createVector(6, 4, 2);
-   * var v2 = p5.Vector.div(v, 2); // v2 has compnents [3,2,1]
+   * var v2 = p5.Vector.div(v, 2); 
+   * // v2 has compnents [3, 2, 1]
    * </code>
    * </div>
    */
@@ -319,8 +328,8 @@ define(function (require) {
    * @example
    * <div class="norender">
    * <code>
-   * v = createVector(20.0, 30.0, 40.0);
-   * m = v.mag(10);
+   * var v = createVector(20.0, 30.0, 40.0);
+   * var m = v.mag(10);
    * print(m); // Prints "53.85164807134504"
    * </code>
    * </div>
@@ -341,7 +350,7 @@ define(function (require) {
    * <div class="norender">
    * <code>
    * // Static method
-   * var v1  = createVector(6, 4, 2);
+   * var v1 = createVector(6, 4, 2);
    * print(v1.magSq()); // Prints "56"
    * </code>
    * </div>
@@ -405,18 +414,18 @@ define(function (require) {
    * var v1 = createVector(1, 2, 3);
    * var v2 = createVector(1, 2, 3);
    *
-   * v1.cross(v2); // v's components are [0,0,0]
+   * v1.cross(v2); // v's components are [0, 0, 0]
    * </code>
    * </div>
    * 
    * <div class="norender">
    * <code>
-   * //Static method
+   * // Static method
    * var v1 = createVector(1, 0, 0);
    * var v2 = createVector(0, 1, 0);
    *
-   * var crossProduct = p5.Vector.cross(v1,v2);
-   * // crossProduct has components [0,0,1]
+   * var crossProduct = p5.Vector.cross(v1, v2);
+   * // crossProduct has components [0, 0, 1]
    * </code>
    * </div>
    */
@@ -453,7 +462,8 @@ define(function (require) {
    * var v1 = createVector(1, 0, 0);
    * var v2 = createVector(0, 1, 0);
    *
-   * var distance = p5.Vector.dist(v1,v2); // distance is 1.4142...
+   * var distance = p5.Vector.dist(v1,v2); 
+   * // distance is 1.4142...
    * </code>
    * </div>
    */
@@ -470,9 +480,11 @@ define(function (require) {
    * @example
    * <div class="norender">
    * <code>
-   * v = createVector(10, 20, 2); // v has compnents [10.0, 20.0, 2.0]
+   * var v = createVector(10, 20, 2); 
+   * // v has compnents [10.0, 20.0, 2.0]
    * v.normalize();
-   * // v's compnents are set to [0.4454354, 0.8908708, 0.089087084]
+   * // v's compnents are set to
+   * // [0.4454354, 0.8908708, 0.089087084]
    * </code>
    * </div>
    * 
@@ -491,9 +503,11 @@ define(function (require) {
    * @example
    * <div class="norender">
    * <code>
-   * v = createVector(10, 20, 2); // v has compnents [10.0, 20.0, 2.0]
+   * var v = createVector(10, 20, 2); 
+   * // v has compnents [10.0, 20.0, 2.0]
    * v.limit(5);
-   * // v's compnents are set to [2.2271771, 4.4543543, 0.4454354]
+   * // v's compnents are set to 
+   * // [2.2271771, 4.4543543, 0.4454354]
    * </code>
    * </div>
    */
@@ -516,8 +530,10 @@ define(function (require) {
    * @example
    * <div class="norender">
    * <code>
-   * v1 = createVector(10, 20, 2); // v has compnents [10.0, 20.0, 2.0]
-   * v1.setMag(10); // v's compnents are set to [ 6.0, 8.0, 0.0 ]
+   * var v1 = createVector(10, 20, 2); 
+   * // v has compnents [10.0, 20.0, 2.0]
+   * v1.setMag(10); 
+   * // v's compnents are set to [6.0, 8.0, 0.0]
    * </code>
    * </div>
    */
@@ -554,8 +570,10 @@ define(function (require) {
    * @example
    * <div class="norender">
    * <code>
-   * v = createVector(10.0, 20.0); // v has compnents [10.0, 20.0, 0.0]
-   * v.rotate(HALF_PI); // v's compnents are set to [-20.0, 9.999999, 0.0]
+   * var v = createVector(10.0, 20.0); 
+   * // v has compnents [10.0, 20.0, 0.0]
+   * v.rotate(HALF_PI); 
+   * // v's compnents are set to [-20.0, 9.999999, 0.0]
    * </code>
    * </div>
    */
@@ -591,12 +609,14 @@ define(function (require) {
    * v.lerp(3, 3, 0, 0.5); // v now has components [2,2,0]
    * </code>
    * </div>
+   * 
    * <div class="norender">
    * <code>
    * var v1 = createVector(0, 0, 0);
    * var v2 = createVector(100, 100, 0);
    *
-   * var v3 = p5.Vector.lerp(v1, v2, 0.5); // v3 has components [50,50,0]
+   * var v3 = p5.Vector.lerp(v1, v2, 0.5); 
+   * // v3 has components [50,50,0]
    * </code>
    * </div>
    */
@@ -621,8 +641,8 @@ define(function (require) {
    * @example
    * <div class="norender">
    * <code>
-   * v = createVector(10.0, 20.0, 30.0);
-   * f = v.array();
+   * var v = createVector(10.0, 20.0, 30.0);
+   * var f = v.array();
    * print(f[0]); // Prints "10.0"
    * print(f[1]); // Prints "20.0"
    * print(f[2]); // Prints "30.0"
@@ -645,9 +665,9 @@ define(function (require) {
    * @example
    * <div class="norender">
    * <code>
-   * v1 = createVector(10.0, 20.0, 30.0);
-   * v2 = createVector(10.0, 20.0, 30.0);
-   * v3 = createVector(0.0, 0.0, 0.0);
+   * var v1 = createVector(10.0, 20.0, 30.0);
+   * var v2 = createVector(10.0, 20.0, 30.0);
+   * var v3 = createVector(0.0, 0.0, 0.0);
    * print (v1.equals(v2)) // Prints "true"
    * print (v1.equals(v3)) // Prints "false"
    * </code>
@@ -685,7 +705,8 @@ define(function (require) {
    * @example
    * <div class="norender">
    * <code>
-   * var v = p5.Vector.fromAngle(PI / 2); // v has components [0,1,0]
+   * var v = p5.Vector.fromAngle(PI / 2); 
+   * // v has components [0, 1, 0]
    * </code>
    * </div>
    */
@@ -713,9 +734,9 @@ define(function (require) {
    * <code>
    * var v = p5.Vector.random2D();
    * // May make v's attributes something like:
-   * // [ 0.61554617, -0.51195765, 0.0 ] or 
-   * // [ -0.4695841, -0.14366731, 0.0 ] or 
-   * // [ 0.6091097, -0.22805278, 0.0 ]
+   * // [0.61554617, -0.51195765, 0.0] or 
+   * // [-0.4695841, -0.14366731, 0.0] or 
+   * // [0.6091097, -0.22805278, 0.0]
    * </code>
    * </div>
    */
@@ -746,9 +767,9 @@ define(function (require) {
    * <code>
    * var v = p5.Vector.random3D();
    * // May make v's attributes something like:
-   * // [ 0.61554617, -0.51195765, 0.599168 ] or 
-   * // [ -0.4695841, -0.14366731, -0.8711202 ] or 
-   * // [ 0.6091097, -0.22805278, -0.7595902 ]
+   * // [0.61554617, -0.51195765, 0.599168] or 
+   * // [-0.4695841, -0.14366731, -0.8711202] or 
+   * // [0.6091097, -0.22805278, -0.7595902]
    * </code>
    * </div>
    */
@@ -922,10 +943,10 @@ define(function (require) {
    * @example
    * <div class="norender">
    * <code>
-   * var v1 = createVector(1,0,0);
-   * var v2 = createVector(0,1,0);
+   * var v1 = createVector(1, 0, 0);
+   * var v2 = createVector(0, 1, 0);
    *
-   * var angle = p5.Vector.angleBetween(v1,v2);
+   * var angle = p5.Vector.angleBetween(v1, v2);
    * // angle is PI/2
    * </code>
    * </div>
