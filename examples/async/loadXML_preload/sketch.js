@@ -12,7 +12,7 @@
 var result;
 
 function preload() {
-  result = loadXML('sample.xml');
+  result = loadXML('books.xml');
 
   // console.log('In preload(), the result has not finished loading: ');
   // console.log(result);

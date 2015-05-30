@@ -468,15 +468,14 @@ define(function (require) {
    * @return {Object}              XML object containing data
    */
   p5.prototype.loadXML = function(path, callback) {
-    // var path = arguments[0];
-    // var callback = arguments[1];
-    var ret = [];
+    var ret = document.implementation.createDocument(null, null);
     reqwest({
       url: path,
       type: 'xml',
       crossOrigin: true
     }).then(function (resp) {
-      console.log(resp.childNodes);
+      var x = resp.documentElement;
+      ret.appendChild(x);
       if (typeof callback !== 'undefined') {
         callback(resp);
       }
