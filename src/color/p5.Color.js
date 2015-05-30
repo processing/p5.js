@@ -25,7 +25,6 @@ define(function(require) {
       this.rgba = color_utils.hsbaToRGBA(this._converted_color);
     } else {
       this.rgba = this.color_array;
-      this.hsba = color_utils.rgbaToHSBA(this._converted_color);
     }
 
     return this;
@@ -43,15 +42,30 @@ define(function(require) {
   };
 
   p5.Color.prototype.getHue = function() {
-    return this.hsba[0];
+    if (this.hsba) {
+      return this.hsba[0];
+    } else {
+      this.hsba = color_utils.rgbaToHSBA(this._converted_color);
+      return this.hsba[0];
+    }
   };
 
   p5.Color.prototype.getSaturation = function() {
-    return this.hsba[1];
+    if (this.hsba) {
+      return this.hsba[1];
+    } else {
+      this.hsba = color_utils.rgbaToHSBA(this._converted_color);
+      return this.hsba[1];
+    }
   };
 
   p5.Color.prototype.getBrightness = function() {
-    return this.hsba[2];
+    if (this.hsba) {
+      return this.hsba[2];
+    } else {
+      this.hsba = color_utils.rgbaToHSBA(this._converted_color);
+      return this.hsba[2];
+    }
   };
 
   p5.Color.prototype.getRed = function() {
@@ -67,8 +81,13 @@ define(function(require) {
   };
 
   p5.Color.prototype.getAlpha = function() {
-    return this.rgba[3];
+    if (this.hsba) {
+      return this.hsba[3];
+    } else {
+      return this.rgba[3];
+    }
   };
+
   p5.Color.prototype.toString = function() {
     var a = this.rgba;
     for (var i=0; i<3; i++) {
