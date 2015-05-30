@@ -109,8 +109,8 @@ define(function(require) {
   };
 
   /**
-   * Returns a tight bounding box for the given custom text string using this font
-   * (currently only support single line)
+   * Returns a tight bounding box for the given custom text string using this
+   * font (currently only support single line)
    *
    * @method textBounds
    * @param  {string} line     a line of text
