@@ -30,7 +30,7 @@ define(function (require) {
    * @param  {Function}    sketch a closure that can set optional preload(),
    *                              setup(), and/or draw() properties on the
    *                              given p5 instance
-   * @param  {HTMLElement|boolean} node element to attach canvas to, if a 
+   * @param  {HTMLElement|boolean} node element to attach canvas to, if a
    *                                    boolean is passed in use it as sync
    * @param  {boolean}     [sync] start synchronously (optional)
    * @return {p5}                 a p5 instance
@@ -52,7 +52,7 @@ define(function (require) {
      * asynchronous loading of external files. If a preload function is
      * defined, setup() will wait until any load calls within have finished.
      * Nothing besides load calls should be inside preload (loadImage,
-     * loadJSON, loadStrings, etc).
+     * loadJSON, loadFont, loadStrings, etc).
      *
      * @method preload
      * @example
@@ -62,13 +62,13 @@ define(function (require) {
      * function preload() {  // preload() runs once
      *   img = loadImage('assets/laDefense.jpg');
      * }
-     * 
+     *
      * function setup() {  // setup() waits until preload() is done
      *   img.loadPixels();
      *   // get color of middle pixel
      *   c = img.get(img.width/2, img.height/2);
      * }
-     * 
+     *
      * function draw() {
      *   background(c);
      *   image(img, 25, 25, 50, 50);
@@ -145,7 +145,7 @@ define(function (require) {
     //////////////////////////////////////////////
 
     this._setupDone = false;
-    this._pixelDensity = window.devicePixelRatio || 1; // for handling hidpi
+    this.pixelDensity = window.devicePixelRatio || 1; // for handling hidpi
     this._startTime = new Date().getTime();
     this._userNode = node;
     this._curElement = null;
@@ -183,7 +183,7 @@ define(function (require) {
     } else {
       this._events.MozOrientation = null;
     }
-  
+
     //FF doesn't recognize mousewheel as of FF3.x
     if (/Firefox/i.test(navigator.userAgent)) {
       this._events.DOMMouseScroll = null;
@@ -220,6 +220,7 @@ define(function (require) {
       this.createCanvas(
         this._defaultCanvasSize.width,
         this._defaultCanvasSize.height,
+        'p2d',
         true
       );
 
@@ -276,9 +277,18 @@ define(function (require) {
         context.setup();
       }
 
-      // unhide hidden canvas that was created
-      this.canvas.style.visibility = '';
-      this.canvas.className = this.canvas.className.replace('p5_hidden', '');
+      // // unhide hidden canvas that was created
+      // this.canvas.style.visibility = '';
+      // this.canvas.className = this.canvas.className.replace('p5_hidden', '');
+      
+      // unhide any hidden canvases that were created
+      var reg = new RegExp(/(^|\s)p5_hidden(?!\S)/g);
+      var canvases = document.getElementsByClassName('p5_hidden');
+      for (var i = 0; i < canvases.length; i++) {
+        var k = canvases[i];
+        k.style.visibility = '';
+        k.className = k.className.replace(reg, '');
+      }
       this._setupDone = true;
 
       // Removes the loading screen if it's in the DOM
@@ -451,7 +461,7 @@ define(function (require) {
     });
 
     // TODO: ???
-    
+
     if (sync) {
       this._start();
     } else {
@@ -472,7 +482,8 @@ define(function (require) {
     'loadStrings',
     'loadXML',
     'loadShape',
-    'loadTable'
+    'loadTable',
+    'loadFont'
   ];
 
   p5.prototype._registeredMethods = { pre: [], post: [], remove: [] };

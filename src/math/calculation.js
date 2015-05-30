@@ -17,6 +17,16 @@ define(function (require) {
    * @method abs
    * @param  {Number} n number to compute
    * @return {Number}   absolute value of given number
+   * @example
+   * <div class = "norender"><code>
+   * function setup() {
+   *   var x = -3;
+   *   var y = abs(x);
+   *   
+   *   print(x); // -3
+   *   print(y); // 3
+   * }
+   * </div></code>
    */
   p5.prototype.abs = Math.abs;
 
@@ -28,17 +38,69 @@ define(function (require) {
    * @method ceil
    * @param  {Number} n number to round up
    * @return {Number}   rounded up number
+   * @example
+   * <div><code>
+   * function draw() {
+   *   background(200);
+   *   // map, mouseX between 0 and 5. 
+   *   var ax = map(mouseX, 0, 100, 0, 5);
+   *   var ay = 66;
+   *
+   *   //Get the ceiling of the mapped number. 
+   *   var bx = ceil(map(mouseX, 0, 100, 0,5));
+   *   var by = 33;
+   *
+   *   // Multiple the mapped numbers by 20 to more easily
+   *   // see the changes. 
+   *   stroke(0);
+   *   fill(0);
+   *   line(0, ay, ax * 20, ay);
+   *   line(0, by, bx * 20, by);
+   *
+   *   // Reformat the float returned by map and draw it. 
+   *   noStroke();
+   *   text(nfc(ax, 2,2), ax, ay - 5); 
+   *   text(nfc(bx,1,1), bx, by - 5);
+   * }
+   * </div></code>
    */
   p5.prototype.ceil = Math.ceil;
 
   /**
-   * Constrains a value to not exceed a maximum and minimum value.
+   * Constrains a value between a minimum and maximum value.
    *
    * @method constrain
    * @param  {Number} n    number to constrain
    * @param  {Number} low  minimum limit
    * @param  {Number} high maximum limit
    * @return {Number}      constrained number
+   * @example
+   * <div><code>
+   * function draw() {
+   *   background(200);
+   *   
+   *   var leftWall = 25;
+   *   var rightWall = 75; 
+   *   
+   *   // xm is just the mouseX, while
+   *   // xc is the mouseX, but constrained
+   *   // between the leftWall and rightWall!
+   *   var xm = mouseX;
+   *   var xc = constrain(mouseX, leftWall, rightWall);
+   *   
+   *   // Draw the walls. 
+   *   stroke(150);
+   *   line(leftWall, 0, leftWall, height);
+   *   line(rightWall, 0, rightWall, height);
+   *   
+   *   // Draw xm and xc as circles. 
+   *   noStroke();
+   *   fill(150);
+   *   ellipse(xm, 33, 9,9); // Not Constrained
+   *   fill(0);
+   *   ellipse(xc, 66, 9,9); // Constrained
+   * }
+   * </div></code>
    */
   p5.prototype.constrain = function(n, low, high) {
     return Math.max(Math.min(n, high), low);
@@ -53,6 +115,36 @@ define(function (require) {
    * @param  {Number} x2 x-coordinate of the second point
    * @param  {Number} y2 y-coordinate of the second point
    * @return {Number}    distance between the two points
+   * @example
+   * <div><code>
+   * // Move your mouse inside the canvas to see the
+   * // change in distance between two points! 
+   * function draw() {
+   *   background(200);
+   *   fill(0);
+   *   
+   *   var x1 = 10;
+   *   var y1 = 90;
+   *   var x2 = mouseX;
+   *   var y2 = mouseY;
+   *   
+   *   line(x1, y1, x2, y2);
+   *   ellipse(x1, y1, 7, 7);
+   *   ellipse(x2, y2, 7, 7);
+   *   
+   *   // d is the length of the line
+   *   // the distance from point 1 to point 2.
+   *   var d = int(dist(x1, y1, x2, y2));
+   *   
+   *   // Let's write d along the line we are drawing!
+   *   push();
+   *   translate( (x1+x2)/2, (y1+y2)/2 );
+   *   rotate( atan2(y2-y1,x2-x1) );
+   *   text(nfc(d,1,1), 0, -5);
+   *   pop();
+   *   // Fancy! 
+   * }
+   * </div></code>
    */
   p5.prototype.dist = function(x1, y1, x2, y2) {
     return Math.sqrt( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) );
@@ -65,6 +157,42 @@ define(function (require) {
    * @method exp
    * @param  {Number} n exponent to raise
    * @return {Number}   e^n
+   * @example
+   * <div><code> 
+   * function draw() {
+   *   background(200);
+   * 
+   *   // Compute the exp() function with a value between 0 and 2
+   *   var xValue = map(mouseX, 0, width, 0, 2);
+   *   var yValue = exp(xValue);
+   *   
+   *   var y = map(yValue, 0, 8, height, 0);
+   *   
+   *   var legend = "exp (" + nfc(xValue, 3) +")\n= " + nf(yValue, 1, 4);
+   *   stroke(150);
+   *   line(mouseX, y, mouseX, height);
+   *   fill(0);
+   *   text(legend, 5, 15);
+   *   noStroke();
+   *   ellipse (mouseX,y, 7, 7);
+   *   
+   *   // Draw the exp(x) curve,
+   *   // over the domain of x from 0 to 2
+   *   noFill();
+   *   stroke(0);
+   *   beginShape();
+   *   for (var x = 0; x < width; x++) {
+   *     xValue = map(x, 0, width, 0, 2); 
+   *     yValue = exp(xValue); 
+   *     y = map(yValue, 0, 8, height, 0); 
+   *     vertex(x, y);
+   *   }
+   *   
+   *   endShape();
+   *   line(0, 0, 0, height); 
+   *   line(0, height-1, width, height-1);
+   * }
+   * </div></code>
    */
   p5.prototype.exp = Math.exp;
   
@@ -75,6 +203,31 @@ define(function (require) {
    * @method floor
    * @param  {Number} n number to round down
    * @return {Number}   rounded down number
+   * @example
+   * <div><code>
+   * function draw() {
+   *   background(200);
+   *   //map, mouseX between 0 and 5. 
+   *   var ax = map(mouseX, 0, 100, 0, 5);
+   *   var ay = 66;
+   *
+   *   //Get the floor of the mapped number. 
+   *   var bx = floor(map(mouseX, 0, 100, 0,5));
+   *   var by = 33;
+   *
+   *   // Multiple the mapped numbers by 20 to more easily
+   *   // see the changes. 
+   *   stroke(0);
+   *   fill(0);
+   *   line(0, ay, ax * 20, ay);
+   *   line(0, by, bx * 20, by);
+   *
+   *   // Reformat the float returned by map and draw it. 
+   *   noStroke();
+   *   text(nfc(ax, 2,2), ax, ay - 5); 
+   *   text(nfc(bx,1,1), bx, by - 5);
+   * }
+   * </div></code>
    */
   p5.prototype.floor = Math.floor;
   
@@ -90,6 +243,29 @@ define(function (require) {
    * @param  {Number} stop  second value
    * @param  {Number} amt   number between 0.0 and 1.0
    * @return {Number}       lerped value
+   * @example
+   * <div><code>
+   * function setup() {
+   *   background(200);
+   *   var a = 20;
+   *   var b = 80;
+   *   var c = lerp(a,b, .2);
+   *   var d = lerp(a,b, .5);
+   *   var e = lerp(a,b, .8);
+   *   
+   *   var y = 50
+   *   
+   *   strokeWeight(5);
+   *   stroke(0); // Draw the original points in black
+   *   point(a, y);
+   *   int(b, y);
+   *   
+   *   stroke(100); // Draw the lerp points in gray
+   *   point(c, y);
+   *   point(d, y);
+   *   point(e, y);
+   * }
+   * </div></code>
    */
   p5.prototype.lerp = function(start, stop, amt) {
     return amt*(stop-start)+start;

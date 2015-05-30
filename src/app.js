@@ -3,13 +3,12 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core');
-
   require('p5.Color');
   require('p5.Element');
-  require('p5.Graphics');
+  require('p5.Font');
+  require('p5.Graphics2D');
+  require('p5.Graphics3D');
   require('p5.Image');
-  require('p5.File');
-  //require('p5.Shape');
   require('p5.Vector');
   require('p5.TableRow');
   require('p5.Table');
@@ -35,19 +34,17 @@ define(function (require) {
   require('math.random');
   require('math.noise');
   require('math.trigonometry');
-  require('output.files');
-  require('output.image');
-  require('output.text_area');
   require('rendering.rendering');
   require('shape.2d_primitives');
+  require('shape.3d_primitives');
   require('shape.attributes');
   require('shape.curves');
-  //require('shape.shape');
   require('shape.vertex');
   require('structure');
   require('transform');
   require('typography.attributes');
   require('typography.loading_displaying');
+  require('shaders');
 
   /**
    * _globalInit

@@ -4,18 +4,23 @@
  * @for p5
  * @requires core
  */
-define(function (require) {
+define(function(require) {
 
   'use strict';
 
   var p5 = require('core');
+  var constants = require('constants');
+
+  require('helpers');
+
+
   /**
    * Draws text to the screen. Displays the information specified in the first
    * parameter on the screen in the position specified by the additional
    * parameters. A default font will be used unless a font is set with the
    * textFont() function and a default size will be used unless a font is set
    * with textSize(). Change the color of the text with the fill() function.
-   * Change the outline of the text with the stroke() and strokeWeight() 
+   * Change the outline of the text with the stroke() and strokeWeight()
    * functions.
    * The text displays in relation to the textAlign() function, which gives the
    * option to draw to the left, right, and center of the coordinates.
@@ -38,11 +43,11 @@ define(function (require) {
    * <div>
    * <code>
    * textSize(32);
-   * text("word", 10, 30); 
+   * text("word", 10, 30);
    * fill(0, 102, 153);
    * text("word", 10, 60);
    * fill(0, 102, 153, 51);
-   * text("word", 10, 90); 
+   * text("word", 10, 90);
    * </code>
    * </div>
    * <div>
@@ -54,56 +59,22 @@ define(function (require) {
    * </div>
    */
   p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
-    if (typeof str !== 'string') {
-      str=str.toString();
-    }
-    if (typeof maxWidth !== 'undefined') {
-      y += this._textLeading;
-      maxHeight += y;
-    }
-    str = str.replace(/(\t)/g, '  ');
-    var cars = str.split('\n');
 
-    for (var ii = 0; ii < cars.length; ii++) {
+    this._validateParameters(
+      'text',
+      arguments,
+      [
+        ['String', 'Number', 'Number'],
+        ['String', 'Number', 'Number', 'Number', 'Number']
+      ]
+    );
 
-      var line = '';
-      var words = cars[ii].split(' ');
-
-      for (var n = 0; n < words.length; n++) {
-        if (y + this._textLeading <= maxHeight ||
-          typeof maxHeight === 'undefined') {
-          var testLine = line + words[n] + ' ';
-          var metrics = this.drawingContext.measureText(testLine);
-          var testWidth = metrics.width;
-
-          if ( typeof maxWidth !== 'undefined' && testWidth > maxWidth) {
-            if (this._doFill) {
-              this.drawingContext.fillText(line, x, y);
-            }
-            if (this._doStroke) {
-              this.drawingContext.strokeText(line, x, y);
-            }
-            line = words[n] + ' ';
-            y += this._textLeading;
-          }
-          else {
-            line = testLine;
-          }
-        }
-      }
-
-      if (this._doFill) {
-        this.drawingContext.fillText(line, x, y);
-      }
-      if (this._doStroke) {
-        this.drawingContext.strokeText(line, x, y);
-      }
-      y += this._textLeading;
-    }
+    return (!(this._doFill || this._doStroke)) ? this :
+      this._graphics.text.apply(this._graphics, arguments);
   };
 
   /**
-   * Sets the current font that will be drawn with the text() function. 
+   * Sets the current font that will be drawn with the text() function.
    *
    * @method textFont
    * @param {String} str name of font
@@ -119,9 +90,28 @@ define(function (require) {
    * </code>
    * </div>
    */
-  p5.prototype.textFont = function(str) {
-    this._setProperty('_textFont', str); //pend temp?
-    this._applyTextProperties();
+  p5.prototype.textFont = function(theFont, theSize) {
+
+    if (arguments.length) {
+
+      if (!theFont) {
+
+        throw Error('null font passed to textFont');
+      }
+
+      this._setProperty('_textFont', theFont);
+
+      if (theSize) {
+
+        this._setProperty('_textSize', theSize);
+        this._setProperty('_textLeading',
+          theSize * constants._DEFAULT_LEADMULT);
+      }
+
+      return this._graphics._applyTextProperties();
+    }
+
+    return this;
   };
 
   return p5;
