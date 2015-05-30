@@ -1,6 +1,4 @@
 /**
- * @module Core
- * @submodule Helpers
  * @for p5
  * @requires core
  */
