@@ -39,6 +39,7 @@ define(function(require) {
    *                     see rectMode() for more info
    * @param {Number} y2  by default, the height of the text box,
    *                     see rectMode() for more info
+   * @return {Object} this
    * @example
    * <div>
    * <code>
@@ -78,11 +79,12 @@ define(function(require) {
    *
    * @method textFont
    * @param {String} str name of font
+   * @return {Object} this
    * @example
    * <div>
    * <code>
    * fill(0);
-   * textSize(36);
+   * textSize(12);
    * textFont("Georgia");
    * text("Georgia", 12, 40);
    * textFont("Helvetica");

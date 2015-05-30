@@ -51,12 +51,12 @@ define(function(require) {
 
   /**
    * Renders a set of glyph paths to the current graphics context
-   * @param  {string} line     [description]
-   * @param  {Number} x        [description]
-   * @param  {Number} y        [description]
-   * @param  {Number} fontSize [description]
-   * @param  {Object} options  [description]
-   * @return {p5.Font}         this object
+   * @param  {string} line     a line of text
+   * @param  {Number} x        x-position
+   * @param  {Number} y        y-position
+   * @param  {Number} fontSize font size to use (optional)
+   * @param  {Object} options  opentype options (optional)
+   * @return {Object}         this object
    */
   p5.Font.prototype.renderPath = function(line, x, y, fontSize, options) {
 
@@ -118,11 +118,20 @@ define(function(require) {
     return this;
   };
 
+  /**
+   * Returns a tight bounding box for the given text string using this font
+   * @param  {string} line     a line of text
+   * @param  {Number} x        x-position
+   * @param  {Number} y        y-position
+   * @param  {Number} fontSize font size to use (optional)
+   * @return {Object}          a rectangle with properties: x, y, w, h
+   */
   p5.Font.prototype.textBounds = function(str, x, y, fontSize) {
 
     //console.log('textBounds::',str, x, y, fontSize);
 
     if (!this.parent._isOpenType()) {
+
       throw Error('not supported for system fonts');
     }
 
@@ -131,7 +140,7 @@ define(function(require) {
     fontSize = fontSize || this.parent._textSize;
 
     var xCoords = [],
-      yCoords = [],
+      yCoords = [], minX, minY, maxX, maxY,
       scale = 1 / this.font.unitsPerEm * fontSize;
 
     this.font.forEachGlyph(str, x, y, fontSize, {},
@@ -143,22 +152,17 @@ define(function(require) {
           gY = gY !== undefined ? gY : 0;
 
           var gm = glyph.getMetrics();
-          var x1 = gX + (gm.xMin * scale);
-          var y1 = gY + (-gm.yMin * scale);
-          var x2 = gX + (gm.xMax * scale);
-          var y2 = gY + (-gm.yMax * scale);
-
-          xCoords.push(x1);
-          yCoords.push(y1);
-          xCoords.push(x2);
-          yCoords.push(y2);
+          xCoords.push(gX + (gm.xMin * scale));
+          yCoords.push(gY + (-gm.yMin * scale));
+          xCoords.push(gX + (gm.xMax * scale));
+          yCoords.push(gY + (-gm.yMax * scale));
         }
       });
 
-    var minX = Math.min.apply(null, xCoords);
-    var minY = Math.min.apply(null, yCoords);
-    var maxX = Math.max.apply(null, xCoords);
-    var maxY = Math.max.apply(null, yCoords);
+    minX = Math.min.apply(null, xCoords);
+    minY = Math.min.apply(null, yCoords);
+    maxX = Math.max.apply(null, xCoords);
+    maxY = Math.max.apply(null, yCoords);
 
     return {
       x: minX,
