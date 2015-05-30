@@ -70,9 +70,6 @@ define(function (require) {
    */
   p5.prototype.noLoop = function() {
     this._loop = false;
-    if (this._drawInterval) {
-      clearInterval(this._drawInterval);
-    }
   };
   /**
    * By default, p5.js loops through draw() continuously, executing the code
