@@ -18,6 +18,17 @@ define(function (require) {
    * position of the mouse, relative to (0, 0) of the canvas.
    *
    * @property mouseX
+   *
+   * @example
+   * <div>
+   * <code>
+   * // Move the mouse across the canvas      
+   * function draw() {
+   *   background(244, 248, 252);
+   *   line(mouseX, 0, mouseX, 100);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.mouseX = 0;
 
@@ -26,6 +37,17 @@ define(function (require) {
    * of the mouse, relative to (0, 0) of the canvas.
    *
    * @property mouseY
+   *
+   * @example
+   * <div>
+   * <code>
+   * // Move the mouse across the canvas
+   * function draw() {
+   *   background(244, 248, 252);
+   *   line(0, mouseY, 100, mouseY);
+   *}
+   * </code>
+   * </div>
    */
   p5.prototype.mouseY = 0;
 
@@ -35,6 +57,24 @@ define(function (require) {
    * of the canvas.
    *
    * @property pmouseX
+   *
+   * @example
+   * <div>
+   * <code>
+   * // Move the mouse across the canvas to leave a trail
+   * function setup() {
+   *   //slow down the frameRate to make it more visible
+   *   frameRate(10);
+   * }
+   *
+   * function draw() { 
+   *   background(244, 248, 252);
+   *   line(mouseX, mouseY, pmouseX, pmouseY); 
+   *   print(pmouseX + " -> " + mouseX);
+   * }
+   *
+   * </code>
+   * </div>
    */
   p5.prototype.pmouseX = 0;
 
@@ -44,6 +84,22 @@ define(function (require) {
    * the canvas.
    *
    * @property pmouseY
+   *
+   * @example
+   * <div>
+   * <code>
+   * function draw() { 
+   *   background(237, 34, 93);
+   *   fill(0);
+   *   //draw a square only if the mouse is not moving
+   *   if(mouseY == pmouseY && mouseX == pmouseX)
+   *     rect(20,20,60,60);
+   *   
+   *   print(pmouseY + " -> " + mouseY);
+   * }
+   *
+   * </code>
+   * </div>
    */
   p5.prototype.pmouseY = 0;
 
@@ -52,6 +108,31 @@ define(function (require) {
    * position of the mouse, relative to (0, 0) of the window.
    *
    * @property winMouseX
+   *
+   * @example
+   * <div>
+   * <code>
+   * var myCanvas;
+   *
+   * function setup() {
+   *   //use a variable to store a pointer to the canvas
+   *   myCanvas = createCanvas(100, 100);  
+   * }
+   *
+   * function draw() { 
+   *   background(237, 34, 93);
+   *   fill(0);
+   *
+   *   //move the canvas to the horizontal mouse position
+   *   //relative to the window
+   *   myCanvas.position(winMouseX+1, windowHeight/2);
+   *
+   *  //the y of the square is relative to the canvas
+   *  rect(20,mouseY,60,60);
+   * }
+   *    
+   * </code>
+   * </div>
    */
   p5.prototype.winMouseX = 0;
 
@@ -60,6 +141,31 @@ define(function (require) {
    * position of the mouse, relative to (0, 0) of the window.
    *
    * @property winMouseY
+   *
+   * @example
+   * <div>
+   * <code>
+   *var myCanvas;
+   *
+   * function setup() {
+   *   //use a variable to store a pointer to the canvas
+   *   myCanvas = createCanvas(100, 100);  
+   * }
+   *
+   * function draw() { 
+   *   background(237, 34, 93);
+   *   fill(0);
+   *
+   *   //move the canvas to the vertical mouse position
+   *   //relative to the window
+   *   myCanvas.position(windowWidth/2, winMouseY+1);
+   *
+   *  //the x of the square is relative to the canvas
+   *  rect(mouseX,20,60,60);
+   * }
+   *    
+   * </code>
+   * </div>
    */
   p5.prototype.winMouseY = 0;
 
@@ -69,6 +175,34 @@ define(function (require) {
    * (0, 0) of the window.
    *
    * @property pwinMouseX
+   *
+   * @example
+   * <div>
+   * <code>
+   *
+   * var myCanvas;
+   *
+   * function setup() {
+   *   //use a variable to store a pointer to the canvas
+   *   myCanvas = createCanvas(100, 100); 
+   *   noStroke();
+   *   fill(237, 34, 93);
+   *   }
+   *
+   * function draw() { 
+   *   clear();
+   *   //the difference between previous and 
+   *   //current x position is the horizontal mouse speed
+   *   var speed = abs(winMouseX-pwinMouseX);
+   *   //change the size of the circle
+   *   //according to the horizontal speed
+   *   ellipse(50, 50, 10+speed*5, 10+speed*5);
+   *   //move the canvas to the mouse position
+   *   myCanvas.position( winMouseX+1, winMouseY+1);
+   * }
+   *
+   * </code>
+   * </div>
    */
   p5.prototype.pwinMouseX = 0;
 
@@ -78,16 +212,66 @@ define(function (require) {
    * of the window.
    *
    * @property pwinMouseY
+   *
+   *
+   * @example
+   * <div>
+   * <code>
+   *
+   * var myCanvas;
+   *
+   * function setup() {
+   *   //use a variable to store a pointer to the canvas
+   *   myCanvas = createCanvas(100, 100); 
+   *   noStroke();
+   *   fill(237, 34, 93);
+   *   }
+   *
+   * function draw() { 
+   *   clear();
+   *   //the difference between previous and 
+   *   //current y position is the vertical mouse speed
+   *   var speed = abs(winMouseY-pwinMouseY);
+   *   //change the size of the circle
+   *   //according to the vertical speed
+   *   ellipse(50, 50, 10+speed*5, 10+speed*5);
+   *   //move the canvas to the mouse position
+   *   myCanvas.position( winMouseX+1, winMouseY+1);
+   * }
+   *
+   * </code>
+   * </div>
    */
   p5.prototype.pwinMouseY = 0;
 
   /**
    * Processing automatically tracks if the mouse button is pressed and which
    * button is pressed. The value of the system variable mouseButton is either
-   * LEFT, RIGHT, or CENTER depending on which button is pressed. Browsers are
-   * weird, USE AT YOUR OWN RISK FOR NOW!
+   * LEFT, RIGHT, or CENTER depending on which button was pressed last. 
+   * Warning: different browsers may track mouseButton differently.
    *
    * @property mouseButton
+   *
+   * @example
+	* <div>
+	* <code>
+	* function draw() {
+	*   background(237, 34, 93);
+	*   fill(0);
+	* 
+	*   if (mouseIsPressed) {
+	*     if (mouseButton == LEFT)
+	*       ellipse(50, 50, 50, 50);
+	*     if (mouseButton == RIGHT)
+	*       rect(25, 25, 50, 50);
+	*     if (mouseButton == CENTER)
+	*       triangle(23, 75, 50, 20, 78, 75);
+	*   }
+	*  
+	*   print(mouseButton);
+	* }
+	* </code>
+   * </div>
    */
   p5.prototype.mouseButton = 0;
 
@@ -96,6 +280,23 @@ define(function (require) {
    * and false if not.
    *
    * @property mouseIsPressed
+   *
+   * @example
+	* <div>
+	* <code>
+	* function draw() {
+	*   background(237, 34, 93);
+	*   fill(0);
+	* 
+	*   if (mouseIsPressed)
+	*     ellipse(50, 50, 50, 50);
+	*   else
+	*     rect(25, 25, 50, 50);
+	* 
+	*   print(mouseIsPressed);
+	* }
+	* </code>
+	* </div>
    */
   p5.prototype.mouseIsPressed = false;
   p5.prototype.isMousePressed = false; // both are supported
@@ -439,6 +640,32 @@ define(function (require) {
    * mouse wheel event in JS</a>.
    *
    * @method mouseWheel
+   *
+	* @example
+	* <div>
+	* <code>
+	* var pos = 25;
+	* 
+	* function draw() {
+	*   background(237, 34, 93);
+	*   fill(0);
+	*   rect(25, pos, 50, 50);
+	* }
+	* 
+	* function mouseWheel(event) {
+	*   //browsers have different ways to detect scroll
+	*   //this delta variable is -1 or +1 depending on the
+	*   //direction
+	*   var min = Math.min(1, (event.wheelDelta || -event.detail));
+	*   var delta = Math.max(-1, min);
+	*   //move the square one pixel up or down
+	*   pos += delta;
+	* 
+	*   //uncomment to block page scrolling
+	*   //return false;
+	* }
+	* </code>
+	* </div>
    */
   p5.prototype._onmousewheel = p5.prototype._onDOMMouseScroll = function(e) {
     var context = this._isGlobal ? window : this;
