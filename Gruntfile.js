@@ -91,6 +91,10 @@ module.exports = function(grunt) {
       yuidoc_theme_build: {
         files: ['docs/yuidoc-p5-theme-src/scripts/**/*'],
         tasks: ['requirejs:yuidoc_theme']
+      },
+      yui:{
+        files:['src/**/*.js'],
+        task:['yuidoc']
       }
     },
 
