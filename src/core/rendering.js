@@ -82,7 +82,7 @@ define(function(require) {
     //webgl mode
     if (r === constants.WEBGL) {
       if (!this._defaultGraphics) {
-        this._graphics = new p5.Graphics3D(c, this, true);
+        this._setProperty('_graphics', new p5.Graphics3D(c, this, true));
         this._defaultGraphics = this._graphics;
         this._elements.push(this._defaultGraphics);
       }
@@ -90,7 +90,7 @@ define(function(require) {
     //P2D mode
     else {
       if (!this._defaultGraphics) {
-        this._graphics = new p5.Graphics2D(c, this, true);
+        this._setProperty('_graphics', new p5.Graphics2D(c, this, true));
         this._defaultGraphics = this._graphics;
         this._elements.push(this._defaultGraphics);
       }
