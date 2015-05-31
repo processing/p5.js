@@ -39,13 +39,13 @@ function setup() {
 
 }
 
-function playBass(params, time) {
+function playBass(time, params) {
   currentBassNote = params;
   osc.freq(midiToFreq(params), 0, time);
   env.play(osc, time);
 }
 
-function playSnare(params, time) {
+function playSnare(time, params) {
   noiseEnv.play(noise, time);
 }
 
