@@ -8,12 +8,12 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
+  var p5 = require('core/core');
   var Filters = require('filters');
-  var canvas = require('canvas');
-  var constants = require('constants');
+  var canvas = require('core/canvas');
+  var constants = require('core/constants');
 
-  require('helpers');
+  require('core/error_helpers');
 
   /**
    * Loads an image from a path and creates a p5.Image from it.
@@ -178,7 +178,7 @@ define(function (require) {
    * }
    * </code>
    * </div>
-   * 
+   *
    * <div>
    * <code>
    * var img;
@@ -192,7 +192,7 @@ define(function (require) {
    * }
    * </code>
    * </div>
-   * 
+   *
    * <div>
    * <code>
    * var img;
@@ -243,7 +243,7 @@ define(function (require) {
    *
    * @param {p5.Image} The image to be tinted
    * @return {canvas} The resulting tinted canvas
-   * 
+   *
    */
   p5.prototype._getTintedImageCanvas = function(img) {
     if (!img.canvas) {
@@ -291,7 +291,7 @@ define(function (require) {
    * @method imageMode
    * @param {String} m The mode: either CORNER, CORNERS, or CENTER.
    * @example
-   * 
+   *
    * <div>
    * <code>
    * var img;

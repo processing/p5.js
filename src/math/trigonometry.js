@@ -10,9 +10,9 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
+  var p5 = require('core/core');
   var polarGeometry = require('polargeometry');
-  var constants = require('constants');
+  var constants = require('core/constants');
 
   p5.prototype._angleMode = constants.RADIANS;
 
@@ -20,11 +20,11 @@ define(function (require) {
    * The inverse of cos(), returns the arc cosine of a value. This function
    * expects the values in the range of -1 to 1 and values are returned in
    * the range 0 to PI (3.1415927).
-   * 
+   *
    * @method acos
    * @param  {Number} value the value whose arc cosine is to be returned
    * @return {Number}       the arc cosine of the given value
-   * 
+   *
    * @example
    * <div class= “norender">
    * <code>
@@ -73,7 +73,7 @@ define(function (require) {
    * println(a + " : " + s + " : " +  as);
    * </code>
    * </div>
-   * 
+   *
    * <div class= “norender">
    * <code>
    * var a = PI + PI/3.0;
@@ -97,7 +97,7 @@ define(function (require) {
    * The inverse of tan(), returns the arc tangent of a value. This function
    * expects the values in the range of -Infinity to Infinity (exclusive) and
    * values are returned in the range -PI/2 to PI/2.
-   * 
+   *
    * @method atan
    * @param  {Number} value the value whose arc tangent is to be returned
    * @return {Number}       the arc tangent of the given value
@@ -112,7 +112,7 @@ define(function (require) {
    * println(a + " : " + t + " : " +  at);
    * </code>
    * </div>
-   * 
+   *
    * <div class= “norender">
    * <code>
    * var a = PI + PI/3.0;
@@ -169,23 +169,23 @@ define(function (require) {
   /**
    * Calculates the cosine of an angle. This function takes into account the
    * current angleMode. Values are returned in the range -1 to 1.
-   * 
+   *
    * @method cos
-   * @param  {Number} angle the angle 
+   * @param  {Number} angle the angle
    * @return {Number}       the cosine of the angle
-   * 
+   *
    * @example
    * <div>
    * <code>
    * var a = 0.0;
    * var inc = TWO_PI/25.0;
-   * for (var i = 0; i < 25; i++) { 
+   * for (var i = 0; i < 25; i++) {
    *   line(i*4, 50, i*4, 50+cos(a)*40.0);
    *   a = a + inc;
    * }
    * </code>
    * </div>
-   * 
+   *
    */
   p5.prototype.cos = function(angle) {
     if (this._angleMode === constants.RADIANS) {
@@ -198,9 +198,9 @@ define(function (require) {
   /**
    * Calculates the sine of an angle. This function takes into account the
    * current angleMode. Values are returned in the range -1 to 1.
-   * 
+   *
    * @method sin
-   * @param  {Number} angle the angle 
+   * @param  {Number} angle the angle
    * @return {Number}       the sine of the angle
    *
    * @example
@@ -208,7 +208,7 @@ define(function (require) {
    * <code>
    * var a = 0.0;
    * var inc = TWO_PI/25.0;
-   * for (var i = 0; i < 25; i++) { 
+   * for (var i = 0; i < 25; i++) {
    *   line(i*4, 50, i*4, 50+sin(a)*40.0);
    *   a = a + inc;
    * }
@@ -226,11 +226,11 @@ define(function (require) {
   /**
    * Calculates the tangent of an angle. This function takes into account
    * the current angleMode. Values are returned in the range -1 to 1.
-   * 
+   *
    * @method tan
-   * @param  {Number} angle the angle 
+   * @param  {Number} angle the angle
    * @return {Number}       the tangent of the angle
-   * 
+   *
    * @example
    * <div>
    * <code>
@@ -240,9 +240,9 @@ define(function (require) {
    *     line(i, 50, i, 50+tan(a)*2.0);
    *     a = a + inc;
    *   }
-   * </code>  
+   * </code>
    * </div>
-   * 
+   *
    */
   p5.prototype.tan = function(angle) {
     if (this._angleMode === constants.RADIANS) {
@@ -259,7 +259,7 @@ define(function (require) {
    * 90° = PI/2 = 1.5707964.
    *
    * @method degrees
-   * @param  {Number} radians the radians value to convert to degrees 
+   * @param  {Number} radians the radians value to convert to degrees
    * @return {Number}         the converted angle
    *
    *
@@ -272,7 +272,7 @@ define(function (require) {
    * // Prints: 45 degrees is 0.7853981633974483 radians
    * </code>
    * </div>
-   * 
+   *
    */
   p5.prototype.degrees = function(angle) {
     return polarGeometry.radiansToDegrees(angle);
@@ -282,10 +282,10 @@ define(function (require) {
    * Converts a degree measurement to its corresponding value in radians.
    * Radians and degrees are two ways of measuring the same thing. There are
    * 360 degrees in a circle and 2*PI radians in a circle. For example,
-   * 90° = PI/2 = 1.5707964. 
+   * 90° = PI/2 = 1.5707964.
    *
    * @method radians
-   * @param  {Number} degrees the degree value to convert to radians 
+   * @param  {Number} degrees the degree value to convert to radians
    * @return {Number}         the converted angle
    *
    * @example
@@ -304,9 +304,9 @@ define(function (require) {
 
   /**
    * Sets the current mode of p5 to given mode. Default mode is RADIANS.
-   * 
+   *
    * @method angleMode
-   * @param {Number/Constant} mode either RADIANS or DEGREES 
+   * @param {Number/Constant} mode either RADIANS or DEGREES
    *
    * @example
    * <div>
@@ -326,7 +326,7 @@ define(function (require) {
    * }
    * </code>
    * </div>
-   * 
+   *
    */
   p5.prototype.angleMode = function(mode) {
     if (mode === constants.DEGREES || mode === constants.RADIANS) {

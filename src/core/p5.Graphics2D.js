@@ -1,11 +1,11 @@
 define(function(require) {
 
-  var p5 = require('core');
-  var canvas = require('canvas');
-  var constants = require('constants');
+  var p5 = require('core/core');
+  var canvas = require('core/canvas');
+  var constants = require('core/constants');
   var filters = require('filters');
 
-  require('p5.Graphics');
+  require('core/p5.Graphics');
 
   /**
    * 2D graphics class.  Can also be used as an off-screen graphics buffer.

@@ -4,13 +4,13 @@
  * @for p5
  */
 define(function(require) {
-  var p5 = require('core');
+  var p5 = require('core/core');
 
   p5.ColorUtils = {};
 
   /**
    * For a color expressed as an HSBA array, return the corresponding RGBA value
-   * 
+   *
    * @param {Array} hsba An 'array' object that represents a list of
    *                          HSB colors on a scale of 0-255
    * @return {Array} an array of RGBA values, on a scale of 0-255
@@ -78,7 +78,7 @@ define(function(require) {
 
   /**
    * For a color expressed as an RGBA array, return the corresponding HSBA value
-   * 
+   *
    * @param {Array} rgba An 'array' object that represents a list of
    *                          RGB colors on a scale of 0-255
    * @return {Array} an array of HSB values, on a scale of 0-255
@@ -90,7 +90,7 @@ define(function(require) {
 
     var var_Min = Math.min(var_R, var_G, var_B); //Min. value of RGB
     var var_Max = Math.max(var_R, var_G, var_B); //Max. value of RGB
-    var del_Max = var_Max - var_Min;             //Delta RGB value 
+    var del_Max = var_Max - var_Min;             //Delta RGB value
 
     var H;
     var S;
@@ -129,6 +129,6 @@ define(function(require) {
         rgba[3]
       ];
   };
-  
+
   return p5.ColorUtils;
 });

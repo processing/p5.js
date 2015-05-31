@@ -21,7 +21,7 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
+  var p5 = require('core/core');
 
   var PERLIN_YWRAPB = 4;
   var PERLIN_YWRAP = 1<<PERLIN_YWRAPB;

@@ -7,7 +7,7 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
+  var p5 = require('core/core');
 
 
   /**
@@ -66,7 +66,7 @@ define(function (require) {
    *
    *  If a p5.TableRow object is included as a parameter, then that row is
    *  duplicated and added to the table.
-   *  
+   *
    *  @method  addRow
    *  @param   {p5.TableRow} [row] row to be added to the table
    */
@@ -100,7 +100,7 @@ define(function (require) {
   /**
    * Returns a reference to the specified p5.TableRow. The reference
    * can then be used to get and set values of the selected row.
-   *  
+   *
    * @method  getRow
    * @param  {Number}   rowID ID number of the row to get
    * @return {TableRow} p5.TableRow object
@@ -111,7 +111,7 @@ define(function (require) {
 
   /**
    *  Gets all rows from the table. Returns an array of p5.TableRows.
-   *  
+   *
    *  @method  getRows
    *  @return {Array}   Array of p5.TableRows
    */
@@ -192,10 +192,10 @@ define(function (require) {
    *  Even if multiple rows are possible matches, only the first
    *  matching row is returned. The column to search may be
    *  specified by either its ID or title.
-   *  
+   *
    *  @method  matchRow
    *  @param  {String} regexp The regular expression to match
-   *  @param  {String|Number} column The column ID (number) or 
+   *  @param  {String|Number} column The column ID (number) or
    *                                   title (string)
    *  @return {TableRow}        TableRow object
    */
@@ -227,7 +227,7 @@ define(function (require) {
    *
    *  @method  matchRows
    *  @param  {String} regexp The regular expression to match
-   *  @param  {String|Number} [column] The column ID (number) or 
+   *  @param  {String|Number} [column] The column ID (number) or
    *                                   title (string)
    *  @return {Array}        An Array of TableRow objects
    */
@@ -301,7 +301,7 @@ define(function (require) {
 
   /**
    *  Returns the total number of columns in a Table.
-   *  
+   *
    *  @return {Number} Number of columns in this table
    */
   p5.Table.prototype.getColumnCount = function() {
@@ -320,7 +320,7 @@ define(function (require) {
 
   /**
    *  <p>Removes any of the specified characters (or "tokens").</p>
-   *  
+   *
    *  <p>If no column is specified, then the values in all columns and
    *  rows are processed. A specific column may be referenced by
    *  either its ID or title.</p>
@@ -452,7 +452,7 @@ define(function (require) {
 
   /**
    * Stores a value in the Table's specified row and column.
-   * The row is specified by its ID, while the column may be specified 
+   * The row is specified by its ID, while the column may be specified
    * by either its ID or title.
    *
    * @method  set
@@ -466,7 +466,7 @@ define(function (require) {
 
   /**
    * Stores a Float value in the Table's specified row and column.
-   * The row is specified by its ID, while the column may be specified 
+   * The row is specified by its ID, while the column may be specified
    * by either its ID or title.
    *
    * @method setNum
@@ -482,7 +482,7 @@ define(function (require) {
 
   /**
    * Stores a String value in the Table's specified row and column.
-   * The row is specified by its ID, while the column may be specified 
+   * The row is specified by its ID, while the column may be specified
    * by either its ID or title.
    *
    * @method  setString
@@ -497,7 +497,7 @@ define(function (require) {
 
   /**
    * Retrieves a value from the Table's specified row and column.
-   * The row is specified by its ID, while the column may be specified by 
+   * The row is specified by its ID, while the column may be specified by
    * either its ID or title.
    *
    * @method  get
@@ -512,7 +512,7 @@ define(function (require) {
 
   /**
    * Retrieves a Float value from the Table's specified row and column.
-   * The row is specified by its ID, while the column may be specified by 
+   * The row is specified by its ID, while the column may be specified by
    * either its ID or title.
    *
    * @method  getNum
@@ -527,7 +527,7 @@ define(function (require) {
 
   /**
    * Retrieves a String value from the Table's specified row and column.
-   * The row is specified by its ID, while the column may be specified by 
+   * The row is specified by its ID, while the column may be specified by
    * either its ID or title.
    *
    * @method  getString
@@ -546,7 +546,7 @@ define(function (require) {
    * title.
    *
    * @method  getObject
-   * @param {String} headerColumn Name of the column which should be used to 
+   * @param {String} headerColumn Name of the column which should be used to
    *                              title each row object (optional)
    * @return {Object}
    */

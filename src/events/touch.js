@@ -8,7 +8,7 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
+  var p5 = require('core/core');
 
 /**
    * The system variable touchX always contains the horizontal position of

@@ -8,14 +8,14 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
+  var p5 = require('core/core');
 
 
   /**
    * Creates a new p5.Vector (the datatype for storing vectors). This provides a
-   * two or three dimensional vector, specifically a Euclidean (also known as 
-   * geometric) vector. A vector is an entity that has both magnitude and 
-   * direction. 
+   * two or three dimensional vector, specifically a Euclidean (also known as
+   * geometric) vector. A vector is an entity that has both magnitude and
+   * direction.
    *
    * @method createVector
    * @param {Number} [x] x component of the vector

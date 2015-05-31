@@ -7,9 +7,9 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
+  var p5 = require('core/core');
   var polarGeometry = require('polargeometry');
-  var constants = require('constants');
+  var constants = require('core/constants');
 
   /**
    * A class to describe a two or three dimensional vector, specifically
@@ -84,7 +84,7 @@ define(function (require) {
   /**
    * Returns a string representation of a vector v by calling String(v)
    * or v.toString(). This method is useful for logging vectors in the
-   * console. 
+   * console.
    * @method  toString
    * @example
    * <div class = "norender"><code>
@@ -93,7 +93,7 @@ define(function (require) {
    *   print(String(v)); // prints "p5.Vector Object : [20, 30, 0]"
    * }
    * </div></code>
-   *  
+   *
    */
   p5.Vector.prototype.toString = function p5VectorToString() {
     return 'p5.Vector Object : ['+ this.x +', '+ this.y +', '+ this.z + ']';
@@ -151,7 +151,7 @@ define(function (require) {
    * <code>
    * var v1 = createVector(1, 2, 3);
    * var v2 = v.copy();
-   * print(v1.x == v2.x && v1.y == v2.y && v1.z == v2.z); 
+   * print(v1.x == v2.x && v1.y == v2.y && v1.z == v2.z);
    * // Prints "true"
    * </code>
    * </div>
@@ -183,7 +183,7 @@ define(function (require) {
    * <div class="norender">
    * <code>
    * var v = createVector(1, 2, 3);
-   * v.add(4,5,6); 
+   * v.add(4,5,6);
    * // v's compnents are set to [5, 7, 9]
    * </code>
    * </div>
@@ -193,7 +193,7 @@ define(function (require) {
    * var v1 = createVector(1, 2, 3);
    * var v2 = createVector(2, 3, 4);
    *
-   * var v3 = p5.Vector.add(v1, v2); 
+   * var v3 = p5.Vector.add(v1, v2);
    * // v3 has components [3, 5, 7]
    * </code>
    * </div>
@@ -234,18 +234,18 @@ define(function (require) {
    * <div class="norender">
    * <code>
    * var v = createVector(4, 5, 6);
-   * v.sub(1, 1, 1); 
+   * v.sub(1, 1, 1);
    * // v's compnents are set to [3, 4, 5]
    * </code>
    * </div>
-   * 
+   *
    * <div class="norender">
    * <code>
    * // Static method
    * var v1 = createVector(2, 3, 4);
    * var v2 = createVector(1, 2, 3);
    *
-   * var v3 = p5.Vector.sub(v1, v2); 
+   * var v3 = p5.Vector.sub(v1, v2);
    * // v3 has compnents [1, 1, 1]
    * </code>
    * </div>
@@ -282,16 +282,16 @@ define(function (require) {
    * <div class="norender">
    * <code>
    * var v = createVector(1, 2, 3);
-   * v.mult(2); 
+   * v.mult(2);
    * // v's compnents are set to [2, 4, 6]
    * </code>
    * </div>
-   * 
+   *
    * <div class="norender">
    * <code>
    * // Static method
    * var v1 = createVector(1, 2, 3);
-   * var v2 = p5.Vector.mult(v1, 2); 
+   * var v2 = p5.Vector.mult(v1, 2);
    * // v2 has compnents [2, 4, 6]
    * </code>
    * </div>
@@ -319,12 +319,12 @@ define(function (require) {
    * v.div(2); //v's compnents are set to [3, 2, 1]
    * </code>
    * </div>
-   * 
+   *
    * <div class="norender">
    * <code>
    * // Static method
    * var v1  = createVector(6, 4, 2);
-   * var v2 = p5.Vector.div(v, 2); 
+   * var v2 = p5.Vector.div(v, 2);
    * // v2 has compnents [3, 2, 1]
    * </code>
    * </div>
@@ -388,7 +388,7 @@ define(function (require) {
    * @param  {Number}           [y] y component of the vector
    * @param  {Number}           [z] z component of the vector
    * @return {Number}                 the dot product
-   * 
+   *
    * @example
    * <div class="norender">
    * <code>
@@ -398,7 +398,7 @@ define(function (require) {
    * print(v1.dot(v2)); // Prints "20"
    * </code>
    * </div>
-   * 
+   *
    * <div class="norender">
    * <code>
    * //Static method
@@ -434,7 +434,7 @@ define(function (require) {
    * v1.cross(v2); // v's components are [0, 0, 0]
    * </code>
    * </div>
-   * 
+   *
    * <div class="norender">
    * <code>
    * // Static method
@@ -479,7 +479,7 @@ define(function (require) {
    * var v1 = createVector(1, 0, 0);
    * var v2 = createVector(0, 1, 0);
    *
-   * var distance = p5.Vector.dist(v1,v2); 
+   * var distance = p5.Vector.dist(v1,v2);
    * // distance is 1.4142...
    * </code>
    * </div>
@@ -497,14 +497,14 @@ define(function (require) {
    * @example
    * <div class="norender">
    * <code>
-   * var v = createVector(10, 20, 2); 
+   * var v = createVector(10, 20, 2);
    * // v has compnents [10.0, 20.0, 2.0]
    * v.normalize();
    * // v's compnents are set to
    * // [0.4454354, 0.8908708, 0.089087084]
    * </code>
    * </div>
-   * 
+   *
    */
   p5.Vector.prototype.normalize = function () {
     return this.div(this.mag());
@@ -520,10 +520,10 @@ define(function (require) {
    * @example
    * <div class="norender">
    * <code>
-   * var v = createVector(10, 20, 2); 
+   * var v = createVector(10, 20, 2);
    * // v has compnents [10.0, 20.0, 2.0]
    * v.limit(5);
-   * // v's compnents are set to 
+   * // v's compnents are set to
    * // [2.2271771, 4.4543543, 0.4454354]
    * </code>
    * </div>
@@ -547,9 +547,9 @@ define(function (require) {
    * @example
    * <div class="norender">
    * <code>
-   * var v1 = createVector(10, 20, 2); 
+   * var v1 = createVector(10, 20, 2);
    * // v has compnents [10.0, 20.0, 2.0]
-   * v1.setMag(10); 
+   * v1.setMag(10);
    * // v's compnents are set to [6.0, 8.0, 0.0]
    * </code>
    * </div>
@@ -566,13 +566,13 @@ define(function (require) {
    * @example
    * <div class = "norender"><code>
    * function setup() {
-   *   var v1 = createVector(30,50); 
+   *   var v1 = createVector(30,50);
    *   print(v1.heading()); // 1.0303768265243125
-   *   
-   *   var v1 = createVector(40,50); 
+   *
+   *   var v1 = createVector(40,50);
    *   print(v1.heading()); // 0.8960553845713439
-   *   
-   *   var v1 = createVector(30,70); 
+   *
+   *   var v1 = createVector(30,70);
    *   print(v1.heading()); // 1.1659045405098132
    * }
    * </div></code>
@@ -600,9 +600,9 @@ define(function (require) {
    * @example
    * <div class="norender">
    * <code>
-   * var v = createVector(10.0, 20.0); 
+   * var v = createVector(10.0, 20.0);
    * // v has compnents [10.0, 20.0, 0.0]
-   * v.rotate(HALF_PI); 
+   * v.rotate(HALF_PI);
    * // v's compnents are set to [-20.0, 9.999999, 0.0]
    * </code>
    * </div>
@@ -639,13 +639,13 @@ define(function (require) {
    * v.lerp(3, 3, 0, 0.5); // v now has components [2,2,0]
    * </code>
    * </div>
-   * 
+   *
    * <div class="norender">
    * <code>
    * var v1 = createVector(0, 0, 0);
    * var v2 = createVector(100, 100, 0);
    *
-   * var v3 = p5.Vector.lerp(v1, v2, 0.5); 
+   * var v3 = p5.Vector.lerp(v1, v2, 0.5);
    * // v3 has components [50,50,0]
    * </code>
    * </div>
@@ -703,7 +703,7 @@ define(function (require) {
    * v1 = createVector(5,10,20);
    * v2 = createVector(5,10,20);
    * v3 = createVector(13,10,19);
-   * 
+   *
    * print(v1.equals(v2.x,v2.y,v2.z)); // true
    * print(v1.equals(v3.x,v3.y,v3.z)); // false
    * </div></code>
@@ -750,34 +750,34 @@ define(function (require) {
    * <div>
    * <code>
    * function draw() {
-   *   background (200); 
-   *   
-   *   // Create a variable, proportional to the mouseX, 
+   *   background (200);
+   *
+   *   // Create a variable, proportional to the mouseX,
    *   // varying from 0-360, to represent an angle in degrees.
    *   angleMode(DEGREES);
    *   var myDegrees = map(mouseX, 0,width, 0,360);
-   *   
+   *
    *   // Display that variable in an onscreen text.
-   *   // (Note the nfc() function to truncate additional decimal places, 
+   *   // (Note the nfc() function to truncate additional decimal places,
    *   // and the "\xB0" character for the degree symbol.)
    *   var readout = "angle = " + nfc(myDegrees,1,1) + "\xB0"
    *   noStroke();
    *   fill (0);
    *   text (readout, 5, 15);
-   *   
+   *
    *   // Create a p5.Vector using the fromAngle function,
-   *   // and extract its x and y components. 
+   *   // and extract its x and y components.
    *   var v = p5.Vector.fromAngle(radians(myDegrees));
    *   var vx = v.x;
    *   var vy = v.y;
-   *   
+   *
    *   push();
    *   translate (width/2, height/2);
    *   noFill();
-   *   stroke (150); 
+   *   stroke (150);
    *   line (0,0, 30,0);
-   *   stroke (0); 
-   *   line (0,0, 30*vx, 30*vy); 
+   *   stroke (0);
+   *   line (0,0, 30*vx, 30*vy);
    *   pop()
    * }
    * </code>
@@ -807,8 +807,8 @@ define(function (require) {
    * <code>
    * var v = p5.Vector.random2D();
    * // May make v's attributes something like:
-   * // [0.61554617, -0.51195765, 0.0] or 
-   * // [-0.4695841, -0.14366731, 0.0] or 
+   * // [0.61554617, -0.51195765, 0.0] or
+   * // [-0.4695841, -0.14366731, 0.0] or
    * // [0.6091097, -0.22805278, 0.0]
    * </code>
    * </div>
@@ -840,8 +840,8 @@ define(function (require) {
    * <code>
    * var v = p5.Vector.random3D();
    * // May make v's attributes something like:
-   * // [0.61554617, -0.51195765, 0.599168] or 
-   * // [-0.4695841, -0.14366731, -0.8711202] or 
+   * // [0.61554617, -0.51195765, 0.599168] or
+   * // [-0.4695841, -0.14366731, -0.8711202] or
    * // [0.6091097, -0.22805278, -0.7595902]
    * </code>
    * </div>
@@ -874,7 +874,7 @@ define(function (require) {
    * @param  {p5.Vector} v2 a p5.Vector to add
    * @param  {p5.Vector} target if undefined a new vector will be created
    * @return {p5.Vector} the resulting p5.Vector
-   * 
+   *
    */
 
   p5.Vector.add = function (v1, v2, target) {

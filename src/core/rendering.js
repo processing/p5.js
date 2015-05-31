@@ -5,9 +5,9 @@
  */
 define(function(require) {
 
-  var p5 = require('core');
-  var constants = require('constants');
-  require('p5.Graphics2D');
+  var p5 = require('core/core');
+  var constants = require('core/constants');
+  require('core/p5.Graphics2D');
   require('p5.Graphics3D');
 
   /**
@@ -36,13 +36,13 @@ define(function(require) {
    * </code>
    * </div>
    */
-  
+
   p5.prototype.createCanvas = function(w, h, renderer) {
     //optional: renderer, otherwise defaults to p2d
     var r = renderer || constants.P2D;
     var isDefault, c;
-    
-    //4th arg (isDefault) used when called onLoad, 
+
+    //4th arg (isDefault) used when called onLoad,
     //otherwise hidden to the public api
     if(arguments[3]){
       isDefault =
@@ -159,7 +159,7 @@ define(function(require) {
    * @method createGraphics
    * @param  {Number} w width of the offscreen graphics buffer
    * @param  {Number} h height of the offscreen graphics buffer
-   * @param {String} renderer either 'p2d' or 'webgl'. 
+   * @param {String} renderer either 'p2d' or 'webgl'.
    * undefined defaults to p2d
    * @return {Object} offscreen graphics buffer
    * @example

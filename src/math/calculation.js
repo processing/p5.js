@@ -8,12 +8,12 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
+  var p5 = require('core/core');
 
   /**
    * Calculates the absolute value (magnitude) of a number. Maps to Math.abs().
    * The absolute value of a number is always positive.
-   * 
+   *
    * @method abs
    * @param  {Number} n number to compute
    * @return {Number}   absolute value of given number
@@ -22,7 +22,7 @@ define(function (require) {
    * function setup() {
    *   var x = -3;
    *   var y = abs(x);
-   *   
+   *
    *   print(x); // -3
    *   print(y); // 3
    * }
@@ -42,24 +42,24 @@ define(function (require) {
    * <div><code>
    * function draw() {
    *   background(200);
-   *   // map, mouseX between 0 and 5. 
+   *   // map, mouseX between 0 and 5.
    *   var ax = map(mouseX, 0, 100, 0, 5);
    *   var ay = 66;
    *
-   *   //Get the ceiling of the mapped number. 
+   *   //Get the ceiling of the mapped number.
    *   var bx = ceil(map(mouseX, 0, 100, 0,5));
    *   var by = 33;
    *
    *   // Multiply the mapped numbers by 20 to more easily
-   *   // see the changes. 
+   *   // see the changes.
    *   stroke(0);
    *   fill(0);
    *   line(0, ay, ax * 20, ay);
    *   line(0, by, bx * 20, by);
    *
-   *   // Reformat the float returned by map and draw it. 
+   *   // Reformat the float returned by map and draw it.
    *   noStroke();
-   *   text(nfc(ax, 2,2), ax, ay - 5); 
+   *   text(nfc(ax, 2,2), ax, ay - 5);
    *   text(nfc(bx,1,1), bx, by - 5);
    * }
    * </div></code>
@@ -78,22 +78,22 @@ define(function (require) {
    * <div><code>
    * function draw() {
    *   background(200);
-   *   
+   *
    *   var leftWall = 25;
-   *   var rightWall = 75; 
-   *   
+   *   var rightWall = 75;
+   *
    *   // xm is just the mouseX, while
    *   // xc is the mouseX, but constrained
    *   // between the leftWall and rightWall!
    *   var xm = mouseX;
    *   var xc = constrain(mouseX, leftWall, rightWall);
-   *   
-   *   // Draw the walls. 
+   *
+   *   // Draw the walls.
    *   stroke(150);
    *   line(leftWall, 0, leftWall, height);
    *   line(rightWall, 0, rightWall, height);
-   *   
-   *   // Draw xm and xc as circles. 
+   *
+   *   // Draw xm and xc as circles.
    *   noStroke();
    *   fill(150);
    *   ellipse(xm, 33, 9,9); // Not Constrained
@@ -118,38 +118,38 @@ define(function (require) {
    * @example
    * <div><code>
    * // Move your mouse inside the canvas to see the
-   * // change in distance between two points! 
+   * // change in distance between two points!
    * function draw() {
    *   background(200);
    *   fill(0);
-   *   
+   *
    *   var x1 = 10;
    *   var y1 = 90;
    *   var x2 = mouseX;
    *   var y2 = mouseY;
-   *   
+   *
    *   line(x1, y1, x2, y2);
    *   ellipse(x1, y1, 7, 7);
    *   ellipse(x2, y2, 7, 7);
-   *   
+   *
    *   // d is the length of the line
    *   // the distance from point 1 to point 2.
    *   var d = int(dist(x1, y1, x2, y2));
-   *   
+   *
    *   // Let's write d along the line we are drawing!
    *   push();
    *   translate( (x1+x2)/2, (y1+y2)/2 );
    *   rotate( atan2(y2-y1,x2-x1) );
    *   text(nfc(d,1,1), 0, -5);
    *   pop();
-   *   // Fancy! 
+   *   // Fancy!
    * }
    * </div></code>
    */
   p5.prototype.dist = function(x1, y1, x2, y2) {
     return Math.sqrt( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) );
   };
-  
+
   /**
    * Returns Euler's number e (2.71828...) raised to the power of the n
    * parameter. Maps to Math.exp().
@@ -158,16 +158,16 @@ define(function (require) {
    * @param  {Number} n exponent to raise
    * @return {Number}   e^n
    * @example
-   * <div><code> 
+   * <div><code>
    * function draw() {
    *   background(200);
-   * 
+   *
    *   // Compute the exp() function with a value between 0 and 2
    *   var xValue = map(mouseX, 0, width, 0, 2);
    *   var yValue = exp(xValue);
-   *   
+   *
    *   var y = map(yValue, 0, 8, height, 0);
-   *   
+   *
    *   var legend = "exp (" + nfc(xValue, 3) +")\n= " + nf(yValue, 1, 4);
    *   stroke(150);
    *   line(mouseX, y, mouseX, height);
@@ -175,27 +175,27 @@ define(function (require) {
    *   text(legend, 5, 15);
    *   noStroke();
    *   ellipse (mouseX,y, 7, 7);
-   *   
+   *
    *   // Draw the exp(x) curve,
    *   // over the domain of x from 0 to 2
    *   noFill();
    *   stroke(0);
    *   beginShape();
    *   for (var x = 0; x < width; x++) {
-   *     xValue = map(x, 0, width, 0, 2); 
-   *     yValue = exp(xValue); 
-   *     y = map(yValue, 0, 8, height, 0); 
+   *     xValue = map(x, 0, width, 0, 2);
+   *     yValue = exp(xValue);
+   *     y = map(yValue, 0, 8, height, 0);
    *     vertex(x, y);
    *   }
-   *   
+   *
    *   endShape();
-   *   line(0, 0, 0, height); 
+   *   line(0, 0, 0, height);
    *   line(0, height-1, width, height-1);
    * }
    * </div></code>
    */
   p5.prototype.exp = Math.exp;
-  
+
   /**
    * Calculates the closest int value that is less than or equal to the
    * value of the parameter. Maps to Math.floor().
@@ -207,30 +207,30 @@ define(function (require) {
    * <div><code>
    * function draw() {
    *   background(200);
-   *   //map, mouseX between 0 and 5. 
+   *   //map, mouseX between 0 and 5.
    *   var ax = map(mouseX, 0, 100, 0, 5);
    *   var ay = 66;
    *
-   *   //Get the floor of the mapped number. 
+   *   //Get the floor of the mapped number.
    *   var bx = floor(map(mouseX, 0, 100, 0,5));
    *   var by = 33;
    *
    *   // Multiply the mapped numbers by 20 to more easily
-   *   // see the changes. 
+   *   // see the changes.
    *   stroke(0);
    *   fill(0);
    *   line(0, ay, ax * 20, ay);
    *   line(0, by, bx * 20, by);
    *
-   *   // Reformat the float returned by map and draw it. 
+   *   // Reformat the float returned by map and draw it.
    *   noStroke();
-   *   text(nfc(ax, 2,2), ax, ay - 5); 
+   *   text(nfc(ax, 2,2), ax, ay - 5);
    *   text(nfc(bx,1,1), bx, by - 5);
    * }
    * </div></code>
    */
   p5.prototype.floor = Math.floor;
-  
+
   /**
    * Calculates a number between two numbers at a specific increment. The amt
    * parameter is the amount to interpolate between the two values where 0.0
@@ -252,14 +252,14 @@ define(function (require) {
    *   var c = lerp(a,b, .2);
    *   var d = lerp(a,b, .5);
    *   var e = lerp(a,b, .8);
-   *   
+   *
    *   var y = 50
-   *   
+   *
    *   strokeWeight(5);
    *   stroke(0); // Draw the original points in black
    *   point(a, y);
    *   int(b, y);
-   *   
+   *
    *   stroke(100); // Draw the lerp points in gray
    *   point(c, y);
    *   point(d, y);
@@ -270,7 +270,7 @@ define(function (require) {
   p5.prototype.lerp = function(start, stop, amt) {
     return amt*(stop-start)+start;
   };
-  
+
   /**
    * Calculates the natural logarithm (the base-e logarithm) of a number. This
    * function expects the n parameter to be a value greater than 0.0. Maps to
@@ -280,20 +280,20 @@ define(function (require) {
    * @param  {Number} n number greater than 0
    * @return {Number}   natural logarithm of n
    * @example
-   * <div><code> 
+   * <div><code>
    * function draw() {
    *   background(200);
    *   var maxX = 2.8;
    *   var maxY = 1.5;
-   *   
+   *
    *   // Compute the natural log of a value between 0 and maxX
    *   var xValue = map(mouseX, 0, width, 0, maxX);
-   *   if (xValue > 0) { // Cannot take the log of a negative number. 
+   *   if (xValue > 0) { // Cannot take the log of a negative number.
    *     var yValue = log(xValue);
    *     var y = map(yValue, -maxY, maxY, height, 0);
-   *     
-   *     // Display the calculation occurring. 
-   *     var legend = "log(" + nf(xValue, 1, 2) + ")\n= " + nf(yValue, 1, 3); 
+   *
+   *     // Display the calculation occurring.
+   *     var legend = "log(" + nf(xValue, 1, 2) + ")\n= " + nf(yValue, 1, 3);
    *     stroke(150);
    *     line(mouseX, y, mouseX, height);
    *     fill(0);
@@ -301,7 +301,7 @@ define(function (require) {
    *     noStroke();
    *     ellipse (mouseX, y, 7, 7);
    *   }
-   *   
+   *
    *   // Draw the log(x) curve,
    *   // over the domain of x from 0 to maxX
    *   noFill();
@@ -320,7 +320,7 @@ define(function (require) {
    * </div></code>
    */
   p5.prototype.log = Math.log;
-  
+
   /**
    * Calculates the magnitude (or length) of a vector. A vector is a direction
    * in space commonly used in computer graphics and linear algebra. Because it
@@ -339,7 +339,7 @@ define(function (require) {
    *   var x2 = 80;
    *   var y1 = 30;
    *   var y2 = 70;
-   *   
+   *
    *   line(0, 0, x1, y1);
    *   print(mag(x1, y1));  // Prints "36.05551"
    *   line(0, 0, x2, y1);
@@ -354,7 +354,7 @@ define(function (require) {
   p5.prototype.mag = function(x, y) {
     return Math.sqrt(x*x+y*y);
   };
-  
+
   /**
    * Re-maps a number from one range to another.
    * In the first example above, the number 25 is converted from a value in the
@@ -385,16 +385,16 @@ define(function (require) {
    *     function draw() {
    *       background(204);
    *       var x1 = map(mouseX, 0, width, 50, 150);
-   *       ellipse(x1, 75, 50, 50);  
+   *       ellipse(x1, 75, 50, 50);
    *       var x2 = map(mouseX, 0, width, 0, 200);
-   *       ellipse(x2, 125, 50, 50);  
+   *       ellipse(x2, 125, 50, 50);
    *     }
    *   </div></code>
    */
   p5.prototype.map = function(n, start1, stop1, start2, stop2) {
     return ((n-start1)/(stop1-start1))*(stop2-start2)+start2;
   };
-  
+
   /**
    * Determines the largest value in a sequence of numbers, and then returns
    * that value. max() accepts any number of Number parameters, or an Array
@@ -407,19 +407,19 @@ define(function (require) {
    * <div><code>
    * function setup() {
    *   // Change the elements in the array and run the sketch
-   *   // to show how max() works! 
+   *   // to show how max() works!
    *   numArray = new Array(2,1,5,4,8,9);
    *   fill(0);
    *   noStroke();
    *   text("Array Elements", 0, 10);
    *   // Draw all numbers in the array
-   *   var spacing = 15; 
+   *   var spacing = 15;
    *   var elemsY = 25;
    *   for(var i = 0; i < numArray.length; i++) {
    *     text(numArray[i], i * spacing, elemsY);
    *   }
    *   maxX = 33;
-   *   maxY = 80; 
+   *   maxY = 80;
    *   // Draw the Maximum value in the array.
    *   textSize(32);
    *   text(max(numArray), maxX, maxY);
@@ -433,7 +433,7 @@ define(function (require) {
       return Math.max.apply(null,arguments);
     }
   };
-  
+
   /**
    * Determines the smallest value in a sequence of numbers, and then returns
    * that value. min() accepts any number of Number parameters, or an Array
@@ -446,19 +446,19 @@ define(function (require) {
    * <div><code>
    * function setup() {
    *   // Change the elements in the array and run the sketch
-   *   // to show how min() works! 
+   *   // to show how min() works!
    *   numArray = new Array(2,1,5,4,8,9);
    *   fill(0);
    *   noStroke();
    *   text("Array Elements", 0, 10);
    *   // Draw all numbers in the array
-   *   var spacing = 15; 
+   *   var spacing = 15;
    *   var elemsY = 25;
    *   for(var i = 0; i < numArray.length; i++) {
    *     text(numArray[i], i * spacing, elemsY);
    *   }
    *   maxX = 33;
-   *   maxY = 80; 
+   *   maxY = 80;
    *   // Draw the Minimum value in the array.
    *   textSize(32);
    *   text(min(numArray), maxX, maxY);
@@ -472,7 +472,7 @@ define(function (require) {
       return Math.min.apply(null,arguments);
     }
   };
-  
+
   /**
    * Normalizes a number from another range into a value between 0 and 1.
    * Identical to map(value, low, high, 0, 1).
@@ -495,18 +495,18 @@ define(function (require) {
    *   normalized = norm(currentNum, lowerBound, upperBound);
    *   lineY = 70
    *   line(0, lineY, width, lineY);
-   *   //Draw an ellipse mapped to the non-normalized value. 
+   *   //Draw an ellipse mapped to the non-normalized value.
    *   noStroke();
    *   fill(50)
    *   var s = 7; // ellipse size
    *   ellipse(currentNum, lineY, s, s);
-   *   
+   *
    *   // Draw the guide
    *   guideY = lineY + 15;
    *   text("0", 0, guideY);
    *   textAlign(RIGHT);
    *   text("100", width, guideY);
-   *   
+   *
    *   // Draw the normalized value
    *   textAlign(LEFT);
    *   fill(0);
@@ -520,7 +520,7 @@ define(function (require) {
   p5.prototype.norm = function(n, start, stop) {
     return this.map(n, start, stop, 0, 1);
   };
-  
+
   /**
    * Facilitates exponential expressions. The pow() function is an efficient
    * way of multiplying numbers by themselves (or their reciprocals) in large
@@ -534,23 +534,23 @@ define(function (require) {
    * @return {Number}   n^e
    * @example
    * <div><code>
-   * function setup() { 
-   *   //Exponentially increase the size of an ellipse. 
+   * function setup() {
+   *   //Exponentially increase the size of an ellipse.
    *   eSize = 3; // Original Size
    *   eLoc = 10; // Original Location
-   *   
+   *
    *   ellipse(eLoc, eLoc, eSize, eSize);
-   *   
+   *
    *   ellipse(eLoc*2, eLoc*2, pow(eSize, 2), pow(eSize, 2));
-   *   
+   *
    *   ellipse(eLoc*4, eLoc*4, pow(eSize, 3), pow(eSize, 3));
-   *   
+   *
    *   ellipse(eLoc*8, eLoc*8, pow(eSize, 4), pow(eSize, 4));
    * }
    * </div></code>
    */
   p5.prototype.pow = Math.pow;
-  
+
   /**
    * Calculates the integer closest to the n parameter. For example,
    * round(133.8) returns the value 134. Maps to Math.round().
@@ -562,30 +562,30 @@ define(function (require) {
    * <div><code>
    * function draw() {
    *   background(200);
-   *   //map, mouseX between 0 and 5. 
+   *   //map, mouseX between 0 and 5.
    *   var ax = map(mouseX, 0, 100, 0, 5);
    *   var ay = 66;
    *
-   *   // Round the mapped number. 
+   *   // Round the mapped number.
    *   var bx = round(map(mouseX, 0, 100, 0,5));
    *   var by = 33;
    *
    *   // Multiply the mapped numbers by 20 to more easily
-   *   // see the changes. 
+   *   // see the changes.
    *   stroke(0);
    *   fill(0);
    *   line(0, ay, ax * 20, ay);
    *   line(0, by, bx * 20, by);
    *
-   *   // Reformat the float returned by map and draw it. 
+   *   // Reformat the float returned by map and draw it.
    *   noStroke();
-   *   text(nfc(ax, 2,2), ax, ay - 5); 
+   *   text(nfc(ax, 2,2), ax, ay - 5);
    *   text(nfc(bx,1,1), bx, by - 5);
    * }
    * </div></code>
    */
   p5.prototype.round = Math.round;
-  
+
   /**
    * Squares a number (multiplies a number by itself). The result is always a
    * positive number, as multiplying two negative numbers always yields a
@@ -603,20 +603,20 @@ define(function (require) {
    *   y1 = 80;
    *   x2 = sq(x1);
    *   y2 = 20;
-   *   
-   *   // Draw the non-squared. 
+   *
+   *   // Draw the non-squared.
    *   line(0, y1, width, y1);
    *   ellipse(x1, y1, eSize, eSize);
-   *   
+   *
    *   // Draw the squared.
    *   line(0, y2, width, y2);
    *   ellipse(x2, y2, eSize, eSize);
-   *   
-   *   // Draw dividing line. 
+   *
+   *   // Draw dividing line.
    *   stroke(100)
    *   line(0, height/2, width, height/2);
-   *   
-   *   // Draw text. 
+   *
+   *   // Draw text.
    *   noStroke();
    *   fill(0);
    *   text("x = " + x1, 0, y1 + spacing);
@@ -625,7 +625,7 @@ define(function (require) {
    * </div></code>
    */
   p5.prototype.sq = function(n) { return n*n; };
-  
+
   /**
    * Calculates the square root of a number. The square root of a number is
    * always positive, even though there may be a valid negative root. The
@@ -644,20 +644,20 @@ define(function (require) {
    *   y1 = 80;
    *   x2 = sqrt(x1);
    *   y2 = 20;
-   *   
-   *   // Draw the non-squared. 
+   *
+   *   // Draw the non-squared.
    *   line(0, y1, width, y1);
    *   ellipse(x1, y1, eSize, eSize);
-   *   
+   *
    *   // Draw the squared.
    *   line(0, y2, width, y2);
    *   ellipse(x2, y2, eSize, eSize);
-   *   
-   *   // Draw dividing line. 
+   *
+   *   // Draw dividing line.
    *   stroke(100)
    *   line(0, height/2, width, height/2);
-   *   
-   *   // Draw text. 
+   *
+   *   // Draw text.
    *   noStroke();
    *   fill(0);
    *   var spacing = 15;

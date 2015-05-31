@@ -5,9 +5,9 @@
  */
 define(function(require) {
 
-  var p5 = require('core');
+  var p5 = require('core/core');
   var color_utils = require('utils.color_utils');
-  var constants = require('constants');
+  var constants = require('core/constants');
 
   /**
    *
@@ -17,7 +17,7 @@ define(function(require) {
   p5.Color = function (pInst, vals) {
     this.color_array = p5.Color._getFormattedColor.apply(pInst, vals);
     this._converted_color = this._convertTo255(pInst);
-    
+
     var isHSB = pInst._colorMode === constants.HSB;
 
     if (isHSB) {

@@ -2,11 +2,11 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
+  var p5 = require('core/core');
   require('p5.Color');
-  require('p5.Element');
+  require('core/p5.Element');
   require('p5.Font');
-  require('p5.Graphics2D');
+  require('core/p5.Graphics2D');
   require('p5.Graphics3D');
   require('p5.Image');
   require('p5.Vector');
@@ -15,11 +15,11 @@ define(function (require) {
 
   require('color.creating_reading');
   require('color.setting');
-  require('constants');
+  require('core/constants');
   require('data.conversion');
   require('data.array_functions');
   require('data.string_functions');
-  require('environment');
+  require('core/environment');
   require('image.image');
   require('image.loading_displaying');
   require('image.pixels');
@@ -34,14 +34,14 @@ define(function (require) {
   require('math.random');
   require('math.noise');
   require('math.trigonometry');
-  require('rendering.rendering');
-  require('shape.2d_primitives');
+  require('core/rendering');
+  require('core/2d_primitives');
   require('shape.3d_primitives');
-  require('shape.attributes');
-  require('shape.curves');
-  require('shape.vertex');
-  require('structure');
-  require('transform');
+  require('core/attributes');
+  require('core/curves');
+  require('core/vertex');
+  require('core/structure');
+  require('core/transform');
   require('typography.attributes');
   require('typography.loading_displaying');
   require('shaders');

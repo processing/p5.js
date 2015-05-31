@@ -8,12 +8,12 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
+  var p5 = require('core/core');
 
   /**
    * Converts a string to its floating point representation. The contents of a
-   * string must resemble a number, or NaN (not a number) will be returned. 
-   * For example, float("1234.56") evaluates to 1234.56, but float("giraffe") 
+   * string must resemble a number, or NaN (not a number) will be returned.
+   * For example, float("1234.56") evaluates to 1234.56, but float("giraffe")
    * will return NaN.
    *
    * @method float
@@ -32,7 +32,7 @@ define(function (require) {
 
   /**
    * Converts a boolean, string, or float to its integer representation.
-   * When an array of values is passed in, then an int array of the same length 
+   * When an array of values is passed in, then an int array of the same length
    * is returned.
    *
    * @method int

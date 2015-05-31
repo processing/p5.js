@@ -10,8 +10,8 @@ define(function(require) {
 
   'use strict';
 
-  var p5 = require('core');
-  var constants = require('constants');
+  var p5 = require('core/core');
+  var constants = require('core/constants');
 
   /**
    * Multiplies the current matrix by the one specified through the parameters.

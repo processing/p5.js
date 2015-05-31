@@ -8,10 +8,10 @@ define(function(require) {
 
   'use strict';
 
-  var p5 = require('core');
-  var constants = require('constants');
+  var p5 = require('core/core');
+  var constants = require('core/constants');
 
-  require('helpers');
+  require('core/error_helpers');
 
 
   /**

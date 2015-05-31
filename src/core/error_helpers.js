@@ -6,7 +6,7 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
+  var p5 = require('core/core');
 
   // -- Borrowed from jQuery 1.11.3 --
   var class2type = {};
