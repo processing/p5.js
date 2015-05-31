@@ -4,7 +4,6 @@ define(function(require) {
   var shaders = require('shaders');
   require('p5.Graphics');
   require('p5.Matrix');
-  // var mat4 = require('mat4');
   var gl,
     shaderProgram;
   var uMVMatrixStack = [];
@@ -287,7 +286,7 @@ define(function(require) {
    * @return {[type]} [description]
    */
   p5.Graphics3D.prototype.pop = function() {
-    if (mvMatrixStack.length === 0) {
+    if (uMVMatrixStack.length === 0) {
       throw 'Invalid popMatrix!';
     }
     this.uMVMatrix.mat4 = uMVMatrixStack.pop();

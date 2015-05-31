@@ -198,10 +198,9 @@ module.exports = function(grunt) {
 
             // 3d
             'p5.Graphics3D': 'src/3d/p5.Graphics3D',
-            'mat4': 'src/3d/mat4',
+            'p5.Matrix': 'src/3d/p5.Matrix',
             'shaders': 'src/3d/shaders',
             'shape.3d_primitives': 'src/3d/3d_primitives',
-            // p5.Matrix not included currently?
 
             // image
             'filters': 'src/image/filters',
