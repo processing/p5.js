@@ -19,14 +19,16 @@ define(function(require) {
     var h = hsba[0];
     var s = hsba[1];
     var v = hsba[2];
+    var a = hsba[3] || maxes[3];
     h /= maxes[0];
     s /= maxes[1];
     v /= maxes[2];
+    a /= maxes[3];
     // Adapted from http://www.easyrgb.com/math.html
     // hsv values = 0 - 1, rgb values = 0 - 255
     var RGBA = [];
     if(s===0){
-      RGBA = [Math.round(v*255), Math.round(v*255), Math.round(v*255), hsba[3]];
+      RGBA = [Math.round(v*255), Math.round(v*255), Math.round(v*255), a];
     } else {
       // h must be < 1
       var var_h = h * 6;
@@ -66,11 +68,11 @@ define(function(require) {
         var_g = var_1;
         var_b = var_2;
       }
-      RGBA= [
+      RGBA = [
         Math.round(var_r * 255),
         Math.round(var_g * 255),
         Math.round(var_b * 255),
-        hsba[3]
+        Math.round(a * 255)
       ];
     }
     return RGBA;
@@ -130,6 +132,62 @@ define(function(require) {
         Math.round(V * 255),
         Math.round(A * 255)
       ];
+  };
+
+  p5.ColorUtils.hslaToRGBA = function(hsla, maxes){
+    var h = hsla[0];
+    var s = hsla[1];
+    var l = hsla[2];
+    var a = hsla[3] || maxes[3];
+    h /= maxes[0];
+    s /= maxes[1];
+    l /= maxes[2];
+    a /= maxes[3];
+    // Adapted from http://www.easyrgb.com/math.html
+    // hsl values = 0 - 1, rgb values = 0 - 255
+    var RGBA = [];
+    if(s === 0){
+      RGBA = [Math.round(l*255), Math.round(l*255), Math.round(l*255), a];
+    } else {
+      var m, n, var_r, var_g, var_b, var_a;
+
+      n = l < 0.5 ? l * (1 + s) : (l + s) - (s * l);
+      m = 2 * l - n;
+
+      var convert = function(x, y, hue){
+        if (hue < 0) {
+          hue += 1;
+        } else if (hue > 1) {
+          hue -= 1;
+        }
+
+        if ( ( 6 * hue ) < 1 ) {
+          return ( x + ( y - x ) * 6 * hue );
+        } else if ( ( 2 * hue ) < 1 ) {
+          return ( y );
+        } else if ( ( 3 * hue ) < 2 ) {
+          return ( x + ( y - x ) * ( ( 2 / 3 ) - hue ) * 6 );
+        } else {
+          return x;
+        }
+      };
+
+      var_r = convert( m, n, h + ( 1 / 3 ) );
+      var_g = convert( m, n, h );
+      var_b = convert( m, n, h - ( 1 / 3 ) );
+      var_a = a;
+
+      RGBA = [
+        Math.round(var_r * 255),
+        Math.round(var_g * 255),
+        Math.round(var_b * 255),
+        Math.round(var_a * 255)
+      ];
+
+    }
+
+    return RGBA;
+
   };
   
   return p5.ColorUtils;

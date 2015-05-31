@@ -673,10 +673,10 @@ suite('p5.Color', function() {
       assert.deepEqual(c.hsla, [48, 100, 20, 1]);
     });
 
-    test('should correctly set HSLA value with hsla string', function() {
-      c = myp5.color('hsla(48, 100%, 20%, .2)');
-      assert.deepEqual(c.hsla, [48, 100, 20, 0.2]);
+    test('should correctly convert to rgba', function(){
+
     });
+
   });
 
   // These tests commented out pending further discussion. 
