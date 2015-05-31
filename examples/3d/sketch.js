@@ -11,7 +11,7 @@ function draw(){
 
   for(var j = 0; j < 5; j++){
     push();
-    for(var i = 0; i < 200; i++){
+    for(var i = 0; i < 20; i++){
       translate(sin(theta + j),sin(theta + j), i * 0.001);
       rotateZ(theta * 0.1);
       push();

@@ -84,35 +84,35 @@ define(function (require){
       'void main() {',
         // Vertex in clip coordinates
       'gl_Position = transformMatrix * position;',
-
+          
         // Vertex in eye coordinates
       'vec3 ecVertex = vec3(modelviewMatrix * position);',
-
+        
         // Normal vector in eye coordinates
       'vec3 ecNormal = normalize(normalMatrix * normal);',
       'vec3 ecNormalInv = ecNormal * -one_float;',
-
+      
       // Light calculations
       'vec3 totalAmbient = vec3(0, 0, 0);',
-
+      
       'vec3 totalFrontDiffuse = vec3(0, 0, 0);',
       'vec3 totalFrontSpecular = vec3(0, 0, 0);',
-
+      
       'vec3 totalBackDiffuse = vec3(0, 0, 0);',
       'vec3 totalBackSpecular = vec3(0, 0, 0);',
-
+      
       'for (int i = 0; i < 8; i++) {',
       'if (lightCount == i) break;',
-
+      
       'vec3 lightPos = lightPosition[i].xyz;',
       'bool isDir = zero_float < lightPosition[i].w;',
       'float spotCos = lightSpot[i].x;',
       'float spotExp = lightSpot[i].y;',
-
+      
       'vec3 lightDir;',
       'float falloff;',
       'float spotf;',
-
+        
       'if (isDir) {',
       'falloff = one_float;',
       'lightDir = -one_float * lightNormal[i];',
@@ -120,24 +120,24 @@ define(function (require){
       'falloff = falloffFactor(lightPos, ecVertex, lightFalloff[i]);',
       'lightDir = normalize(lightPos - ecVertex);',
       '}',
-
+    
       'spotf=spotExp > zero_float ? spotFactor(lightPos,',
       'ecVertex,',
       'lightNormal[i],',
       'spotCos,',
       'spotExp):one_float;',
-
+      
       'if (any(greaterThan(lightAmbient[i], zero_vec3))) {',
       'totalAmbient+= lightAmbient[i] * falloff;',
       '}',
-
+      
       'if (any(greaterThan(lightDiffuse[i], zero_vec3))) {',
       'totalFrontDiffuse  += lightDiffuse[i] * falloff * spotf *',
       'lambertFactor(lightDir, ecNormal);',
       'totalBackDiffuse   += lightDiffuse[i] * falloff * spotf *',
       'lambertFactor(lightDir, ecNormalInv);',
       '}',
-
+      
       'if (any(greaterThan(lightSpecular[i], zero_vec3))) {',
       'totalFrontSpecular += lightSpecular[i] * falloff * spotf * ',
       'blinnPhongFactor(lightDir, ecVertex, ecNormal, shininess);',
@@ -145,19 +145,19 @@ define(function (require){
       'blinnPhongFactor(lightDir, ecVertex, ecNormalInv, shininess);',
       '}',
       '}',
-
+        
       // Calculating final color as result of all lights (plus emissive term).
       // Transparency is determined exclusively by the diffuse component.
       'vertColor =vec4(totalAmbient, 0) * ambient + ',
       'vec4(totalFrontDiffuse, 1) * color +' ,
       'vec4(totalFrontSpecular, 0) * specular +',
       'vec4(emissive.rgb, 0);',
-
+                  
       'backVertColor = vec4(totalAmbient, 0) * ambient + ',
       'vec4(totalBackDiffuse, 1) * color +',
       'vec4(totalBackSpecular, 0) * specular +',
       'vec4(emissive.rgb, 0);',
-
+                        
         // Calculating texture coordinates, with r and q set both to one
       'vertTexCoord = texMatrix * vec4(texCoord, 1.0, 1.0);',
       '}'
@@ -176,6 +176,27 @@ define(function (require){
       'void main() {',
       'gl_FragColor = texture2D(texture,vertTexCoord.st)*',
       '(gl_FrontFacing ? vertColor : backVertColor);',
+      '}'
+    ].join('\n'),
+    testVert: [
+      'attribute vec3 position;',
+      'uniform mat4 modelviewMatrix;',
+      'uniform mat4 transformMatrix;',
+      'void main(void) {',
+      'vec3 zeroToOne = position / 1000.0;',
+      // convert from 0->1 to 0->2
+      'vec3 zeroToTwo = zeroToOne * 2.0;',
+      // convert from 0->2 to -1->+1 (clipspace)
+      'vec3 clipSpace = zeroToTwo - 1.0;',
+      'vec4 positionVec4 = vec4(clipSpace * vec3(1., -1., 1.), 1.);',
+      'gl_Position = transformMatrix * modelviewMatrix * positionVec4;',
+      '}'
+    ].join('\n'),
+    testFrag: [
+      'precision mediump float;',
+      'uniform vec4 uMaterialColor;',
+      'void main(void) {',
+      'gl_FragColor = uMaterialColor;',
       '}'
     ].join('\n')
   };

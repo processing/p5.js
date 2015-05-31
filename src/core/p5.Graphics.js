@@ -50,7 +50,6 @@ define(function(require) {
       this._pInst._setProperty('width', this.width);
       this._pInst._setProperty('height', this.height);
     }
-    this._resizeHelper();
   };
 
   return p5.Graphics;

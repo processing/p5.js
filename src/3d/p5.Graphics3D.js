@@ -76,7 +76,7 @@ define(function(require) {
     // 3. compile the shader
     var _vertShader = gl.createShader(gl.VERTEX_SHADER);
     //load in our default vertex shader
-    gl.shaderSource(_vertShader, shaders.texLightVert);
+    gl.shaderSource(_vertShader, shaders.testVert);
     gl.compileShader(_vertShader);
     // if our vertex shader failed compilation?
     if (!gl.getShaderParameter(_vertShader, gl.COMPILE_STATUS)) {
@@ -87,7 +87,7 @@ define(function(require) {
 
     var _fragShader = gl.createShader(gl.FRAGMENT_SHADER);
     //load in our material frag shader
-    gl.shaderSource(_fragShader, shaders.texLightFrag);
+    gl.shaderSource(_fragShader, shaders.testFrag);
     gl.compileShader(_fragShader);
     // if our frag shader failed compilation?
     if (!gl.getShaderParameter(_fragShader, gl.COMPILE_STATUS)) {
@@ -175,6 +175,10 @@ define(function(require) {
     gl.clearColor(_r, _g, _b, _a);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     //this.resetMatrix();
+  };
+
+  p5.Graphics3D.prototype._applyDefaults = function() {
+    return this;
   };
 
   //@TODO implement this
