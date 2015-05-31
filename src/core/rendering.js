@@ -8,7 +8,7 @@ define(function(require) {
   var p5 = require('core/core');
   var constants = require('core/constants');
   require('core/p5.Graphics2D');
-  require('p5.Graphics3D');
+  require('3d/p5.Graphics3D');
 
   /**
    * Creates a canvas element in the document, and sets the dimensions of it

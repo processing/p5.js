@@ -7,8 +7,8 @@ define(function (require) {
   require('core/p5.Element');
   require('p5.Font');
   require('core/p5.Graphics2D');
-  require('p5.Graphics3D');
-  require('p5.Image');
+  require('3d/p5.Graphics3D');
+  require('image/p5.Image');
   require('p5.Vector');
   require('p5.TableRow');
   require('p5.Table');
@@ -20,9 +20,9 @@ define(function (require) {
   require('data.array_functions');
   require('data.string_functions');
   require('core/environment');
-  require('image.image');
-  require('image.loading_displaying');
-  require('image.pixels');
+  require('image/image');
+  require('image/loading_displaying');
+  require('image/pixels');
   require('input.files');
   require('input.keyboard');
   require('input.acceleration'); //john
@@ -36,7 +36,7 @@ define(function (require) {
   require('math.trigonometry');
   require('core/rendering');
   require('core/2d_primitives');
-  require('shape.3d_primitives');
+  require('3d/3d_primitives');
   require('core/attributes');
   require('core/curves');
   require('core/vertex');
@@ -44,7 +44,7 @@ define(function (require) {
   require('core/transform');
   require('typography.attributes');
   require('typography.loading_displaying');
-  require('shaders');
+  require('3d/shaders');
 
   /**
    * _globalInit

@@ -1,9 +1,9 @@
 define(function(require) {
 
   var p5 = require('core/core');
-  var shaders = require('shaders');
+  var shaders = require('3d/shaders');
   require('core/p5.Graphics');
-  var mat4 = require('mat4');
+  var mat4 = require('3d/mat4');
   var gl,
     shaderProgram;
   var mvMatrix;

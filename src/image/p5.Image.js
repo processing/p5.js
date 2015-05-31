@@ -15,7 +15,7 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core/core');
-  var Filters = require('filters');
+  var Filters = require('image/filters');
 
   /*
    * Class methods

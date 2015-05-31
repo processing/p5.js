@@ -3,7 +3,7 @@ define(function(require) {
   var p5 = require('core/core');
   var canvas = require('core/canvas');
   var constants = require('core/constants');
-  var filters = require('filters');
+  var filters = require('image/filters');
 
   require('core/p5.Graphics');
 

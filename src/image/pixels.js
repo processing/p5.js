@@ -9,7 +9,7 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core/core');
-  var Filters = require('filters');
+  var Filters = require('image/filters');
   require('p5.Color');
 
   /**

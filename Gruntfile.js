@@ -198,18 +198,18 @@ module.exports = function(grunt) {
             // 'transform': 'core/transform',
 
             // 3d
-            'p5.Graphics3D': '3d/p5.Graphics3D',
-            'mat4': '3d/mat4',
-            'shaders': '3d/shaders',
-            'shape.3d_primitives': '3d/3d_primitives',
+            // 'p5.Graphics3D': '3d/p5.Graphics3D',
+            // 'mat4': '3d/mat4',
+            // 'shaders': '3d/shaders',
+            // 'shape.3d_primitives': '3d/3d_primitives',
             // p5.Matrix not included currently?
 
             // image
-            'filters': 'image/filters',
-            'image.image': 'image/image',
-            'image.loading_displaying': 'image/loading_displaying',
-            'image.pixels': 'image/pixels',
-            'p5.Image': 'image/p5.Image',
+            // 'filters': 'image/filters',
+            // 'image.image': 'image/image',
+            // 'image.loading_displaying': 'image/loading_displaying',
+            // 'image.pixels': 'image/pixels',
+            // 'p5.Image': 'image/p5.Image',
 
             // typography
             'p5.Font': 'typography/p5.Font',
