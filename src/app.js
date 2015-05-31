@@ -9,31 +9,31 @@ define(function (require) {
   require('core/p5.Graphics2D');
   require('3d/p5.Graphics3D');
   require('image/p5.Image');
-  require('p5.Vector');
-  require('p5.TableRow');
-  require('p5.Table');
+  require('math/p5.Vector');
+  require('io/p5.TableRow');
+  require('io/p5.Table');
 
   require('color/creating_reading');
   require('color/setting');
   require('core/constants');
-  require('data.conversion');
-  require('data.array_functions');
-  require('data.string_functions');
+  require('utilities/conversion');
+  require('utilities/array_functions');
+  require('utilities/string_functions');
   require('core/environment');
   require('image/image');
   require('image/loading_displaying');
   require('image/pixels');
-  require('input.files');
-  require('input.keyboard');
-  require('input.acceleration'); //john
-  require('input.mouse');
-  require('input.time_date');
-  require('input.touch');
-  require('math.math');
-  require('math.calculation');
-  require('math.random');
-  require('math.noise');
-  require('math.trigonometry');
+  require('io/files');
+  require('events/keyboard');
+  require('events/acceleration'); //john
+  require('events/mouse');
+  require('utilities/time_date');
+  require('events/touch');
+  require('math/math');
+  require('math/calculation');
+  require('math/random');
+  require('math/noise');
+  require('math/trigonometry');
   require('core/rendering');
   require('core/2d_primitives');
   require('3d/3d_primitives');

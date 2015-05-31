@@ -11,7 +11,7 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core/core');
-  var polarGeometry = require('polargeometry');
+  var polarGeometry = require('math/polargeometry');
   var constants = require('core/constants');
 
   p5.prototype._angleMode = constants.RADIANS;

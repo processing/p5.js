@@ -177,7 +177,7 @@ module.exports = function(grunt) {
 
           // This is a list of all dependencies, mapped to their AMD identifier.
           paths: {
-            'app': 'app',
+            // 'app': 'app',
 
             // core
             // 'canvas': 'core/canvas',
@@ -217,31 +217,31 @@ module.exports = function(grunt) {
             // 'typography.loading_displaying': 'typography/loading_displaying',
 
             // math
-            'p5.Vector': 'math/p5.Vector',
-            'polargeometry': 'math/polargeometry',
-            'math.calculation': 'math/calculation',
-            'math.math': 'math/math',
-            'math.noise': 'math/noise',
-            'math.random': 'math/random',
-            'math.trigonometry': 'math/trigonometry',
+            // 'p5.Vector': 'math/p5.Vector',
+            // 'polargeometry': 'math/polargeometry',
+            // 'math.calculation': 'math/calculation',
+            // 'math.math': 'math/math',
+            // 'math.noise': 'math/noise',
+            // 'math.random': 'math/random',
+            // 'math.trigonometry': 'math/trigonometry',
 
             // events
-            'input.acceleration': 'events/acceleration',
-            'input.keyboard': 'events/keyboard',
-            'input.mouse': 'events/mouse',
-            'input.touch': 'events/touch',
+            // 'input.acceleration': 'events/acceleration',
+            // 'input.keyboard': 'events/keyboard',
+            // 'input.mouse': 'events/mouse',
+            // 'input.touch': 'events/touch',
 
 
             // io
-            'input.files': 'io/files',
-            'p5.TableRow': 'io/p5.TableRow',
-            'p5.Table': 'io/p5.Table',
+            // 'input.files': 'io/files',
+            // 'p5.TableRow': 'io/p5.TableRow',
+            // 'p5.Table': 'io/p5.Table',
 
             // utilities
-            'input.time_date': 'utilities/time_date',
-            'data.conversion': 'utilities/conversion',
-            'data.array_functions': 'utilities/array_functions',
-            'data.string_functions': 'utilities/string_functions',
+            // 'input.time_date': 'utilities/time_date',
+            // 'data.conversion': 'utilities/conversion',
+            // 'data.array_functions': 'utilities/array_functions',
+            // 'data.string_functions': 'utilities/string_functions',
 
             // color
             // 'p5.Color': 'color/p5.Color',
