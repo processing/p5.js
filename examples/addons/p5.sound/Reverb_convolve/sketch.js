@@ -26,7 +26,7 @@ function preload() {
   cVerb.addImpulse('../_files/concrete-tunnel');
 
   // load a sound that will be processed by the p5.ConvultionReverb
-  sound = loadSound('../_files/Damscray_-_Dancing_Tiger_02');
+  sound = loadSound('../_files/Damscray_DancingTiger');
 }
 
 function setup() {

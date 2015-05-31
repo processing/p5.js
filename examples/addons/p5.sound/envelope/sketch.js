@@ -19,7 +19,7 @@ var env;
 var a;
 
 // Times and levels for the ASR envelope
-var attackTime = 0.1;
+var attackTime = 0.01;
 var attackLevel = 0.7;
 var decayTime = 0.3;
 var decayLevel = 0.2;

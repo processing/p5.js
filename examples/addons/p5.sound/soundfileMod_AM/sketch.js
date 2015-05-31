@@ -26,26 +26,30 @@ var carrier; // this is the oscillator we will hear
 var modulator; // this oscillator will modulate the amplitude of the carrier
 var fft; // we'll visualize the waveform 
 
+function preload() {
+  carrier = loadSound('../_files/Damscray_-_Dancing_Tiger_01.mp3'); // connects to master output by default
+}
+
 function setup() {
   createCanvas(800,400);
   background(30); // alpha
   noFill();
 
-  carrier = new p5.Oscillator(); // connects to master output by default
-  carrier.start();
-  carrier.freq(340);
-  carrier.amp(0.2);
+  // carrier.freq(340);
+  carrier.amp(0);
   // carrier's amp is 0 by default, giving our modulator total control
 
+  carrier.loop();
 
   modulator = new p5.Oscillator('triangle');
   modulator.disconnect();  // disconnect the modulator from master output
-  modulator.start();
   modulator.freq(5);
   modulator.amp(1);
+  modulator.start();
 
   // Modulate the carrier's amplitude with the modulator
-  carrier.amp(modulator);
+  // Optionally, we can scale the signal.
+  carrier.amp(modulator.scale(-1,1,1,-1));
 
   // create an fft to analyze the audio
   fft = new p5.FFT();
@@ -54,11 +58,11 @@ function setup() {
 function draw() {
   background(30,30,30,100); // alpha
 
-  // // map mouseY to moodulator freq between 0 and 20hz
+  // map mouseY to moodulator freq between 0 and 20hz
   var modFreq = map(mouseY, 0, height, 4, 0);
   modulator.freq(modFreq);
 
-  var modAmp = map(mouseX, 0, width, 0, 0.5);
+  var modAmp = map(mouseX, 0, width, 0, 1);
   modulator.amp(modAmp, 0.01); // fade time of 0.1 for smooth fading
 
   // analyze the waveform
