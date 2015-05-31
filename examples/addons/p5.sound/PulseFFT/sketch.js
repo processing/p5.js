@@ -14,6 +14,7 @@ var oscOn = false;
 
 function setup() {
   createCanvas(800,400);
+  noFill();
 
   widthLabel = createP('Width: ' + w);
   widthSlider = createSlider(0.0, 100.0, w*100);
@@ -63,7 +64,7 @@ function draw() {
   beginShape();
   for (var i = 0; i<waveform.length; i++){
     var x = map(i, 0, waveform.length, 0, width);
-    var y = map(waveform[i], 0, 256, -height/2, height/2);
+    var y = map(waveform[i], -1, 1, -height/2, height/2);
     vertex(x, y + height/2);
   }
   endShape();

@@ -80,7 +80,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.millis = function() {
-    return new Date().getTime() - this._startTime;
+    return window.performance.now();
   };
 
   /**

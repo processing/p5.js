@@ -15,29 +15,39 @@ define(function(require) {
   var standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
 
   p5.prototype._frameRate = 0;
-  p5.prototype._lastFrameTime = new Date().getTime();
+  p5.prototype._lastFrameTime = window.performance.now();
   p5.prototype._targetFrameRate = 60;
 
 
   if (window.console && console.log) {
     /**
-     * The print() function writes to the console area of your browser, it maps
-     * to console.log(). This function is often helpful for looking at the data
-     * a program is producing. This function creates a new line of text for
-     * each call to the function. More than one parameter can be passed into
-     * the function by separating them with commas. Alternatively, individual
-     * elements can be separated with quotes ("") and joined with the addition
-     * operator (+).
-
+     * The print() function writes to the console area of your browser. 
+     * This function is often helpful for looking at the data a program is 
+     * producing. This function creates a new line of text for each call to 
+     * the function. More than one parameter can be passed into the function by 
+     * separating them with commas. Alternatively, individual elements can be 
+     * separated with quotes ("") and joined with the addition operator (+).
+     * 
+     * While print() is similar to console.log(), it does not directly map to 
+     * it in order to simulate easier to understand behavior than 
+     * console.log(). Due to this, it is slower. For fastest results, use 
+     * console.log(). 
+     * 
      * @method print
      * @param {Any} contents any combination of Number, String, Object, Boolean,
      *                       Array to print
      */
      // Converts passed args into a string and then parses that string to 
      // simulate synchronous behavior. This is a hack and is gross. 
+     // Since this will not work on all objects, particularly circular
+     // structures, simply console.log() on error. 
     p5.prototype.print = function(args) {
-      var newArgs = JSON.parse(JSON.stringify(args));
-      console.log(newArgs);
+      try {
+        var newArgs = JSON.parse(JSON.stringify(args));
+        console.log(newArgs);
+      } catch(err) {
+        console.log(args);
+      }
     };
   } else {
     p5.prototype.print = function() {};
@@ -69,22 +79,30 @@ define(function(require) {
   p5.prototype.frameCount = 0;
 
   /**
-   * Confirms if a p5.js program is "focused," meaning that it is active and
-   * will accept mouse or keyboard input. This variable is "true" if it is
-   * focused and "false" if not.
+   * Confirms if the window a p5.js program is in is "focused," meaning that 
+   * the sketch will accept mouse or keyboard input. This variable is 
+   * "true" if the window is focused and "false" if not. 
    *
    * @property focused
    * @example
-   *   <div><code>
-   *     if (focused) {  // or "if (focused === true)"
-   *       ellipse(25, 25, 50, 50);
-   *     } else {
-   *       line(0, 0, 100, 100);
-   *       line(100, 0, 0, 100);
-   *     }
-   *   </code></div>
+   * <div><code>
+   * // To demonstrate, put two windows side by side. 
+   * // Click on the window that the p5 sketch isn't in!
+   * function draw() {
+   *   if (focused) {  // or "if (focused === true)"
+   *     noStroke();
+   *     fill(0, 200, 0);
+   *     ellipse(25, 25, 50, 50);
+   *   } else {
+   *     stroke(200,0,0); 
+   *     line(0, 0, 100, 100);
+   *     line(100, 0, 0, 100);
+   *   }
+   * }
+   *     
+   * </code></div>
    */
-  p5.prototype.focused = true;
+  p5.prototype.focused = (document.hasFocus());
 
   /**
    * Sets the cursor to a predefined symbol or an image, or makes it visible

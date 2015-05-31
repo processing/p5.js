@@ -4,8 +4,7 @@
  *  the carrier's frequency.
  * 
  *  The carrier oscillates at an audible frequency (i.e. 440 Hz)
- *  and connected to master output by default. The carrier.amp is
- *  set to zero because we will have the modulator control its amplitude.
+ *  and connected to master output by default.
  * 
  *  The modulator is typically set to a frequency that is lower
  *  than humans can hear (i.e. 1 Hz, or one cycle every second).
@@ -32,6 +31,7 @@ var fft; // we'll visualize the waveform
 
 function setup() {
   createCanvas(800,400);
+  noFill();
 
   carrier = new p5.Oscillator('sine');
   carrier.amp(1); // set amplitude
@@ -44,8 +44,8 @@ function setup() {
   modulator.freq(4); // will map to mouseY
   modulator.start();
 
-  // multiply the modulator's output (amplitude ranges from -1 to 1) by 100, then add 200
-  carrier.freq( modulator.mult(400).add(100) );
+  // multiply amplitude range by 200, then add 100
+  carrier.freq(modulator.mult(200).add(100));
 
   // create an fft to analyze the audio
   fft = new p5.FFT();
@@ -72,7 +72,7 @@ function draw() {
   beginShape();
   for (var i = 0; i<waveform.length; i++){
     var x = map(i, 0, waveform.length, 0, width);
-    var y = map(waveform[i], 0, 256, -height/2, height/2);
+    var y = map(waveform[i], -1, 1, -height/2, height/2);
     vertex(x, y + height/2);
   }
   endShape();

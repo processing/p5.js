@@ -53,7 +53,7 @@ module.exports = function(grunt) {
       source: {
         options: {
           jshintrc: 'src/.jshintrc',
-          ignores: [ 'src/lib/opentype.js', 'src/lib/opentype.min.js' ]
+          ignores: [ 'src/external/**/*.js' ]
         },
         src: ['src/**/*.js']
       },
@@ -253,7 +253,7 @@ module.exports = function(grunt) {
           done: function(done, output) {
             require('concat-files')([
               'lib/p5.js',
-              'src/lib/opentype.min.js',
+              'src/external/opentype.min.js',
             ], 'lib/p5.js', function() {
               done();
             });

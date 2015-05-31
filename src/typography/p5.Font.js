@@ -1,16 +1,16 @@
 /**
- * @module Font
+ * This module defines the p5.Font class and P5 methods for
+ * drawing text to the main display canvas.
+ * @module Typography
  * @submodule Font
  * @requires core
  * @requires constants
  */
 define(function(require) {
 
-  /**
-   * Issues
-   * -- require opentype.js (awaiting dev-ops) **
+  /*
+   * TODO:
    * -- var fonts = loadFont([]); **
-   * -- example exposing opentype font object **
    * -- PFont functions:
    *    textBounds() exists
    *    glyphPaths -> object or array?
@@ -22,25 +22,35 @@ define(function(require) {
    * -- drop-caps
    */
 
-  /**
-   * This module defines the p5.Font class and P5 methods for
-   * drawing text to the main display canvas.
-   */
-
   'use strict';
 
   var p5 = require('core');
   var constants = require('constants');
 
+
+  /**
+   * Base class for font handling
+   * @class p5.Font
+   * @constructor
+   * @param {Object} [pInst] pointer to p5 instance
+   */
   p5.Font = function(p) {
 
     this.parent = p;
+
+    /**
+     * Underlying opentype font implementation
+     * @property font
+     */
     this.font = undefined;
   };
 
-  p5.Font.prototype.renderPath = function(line, x, y, fontSize, options) {
+  /**
+   * Renders a set of glyph paths to the current graphics context
+   */
+  p5.Font.prototype._renderPath = function(line, x, y, fontSize, options) {
 
-    var path, p = this.parent,
+    var pathdata, p = this.parent, pg = p._graphics, ctx = pg.drawingContext,
       textWidth, textHeight, textAscent, textDescent;
 
     fontSize = fontSize || p._textSize;
@@ -51,44 +61,93 @@ define(function(require) {
     textDescent = p.textDescent();
     textHeight = textAscent + textDescent;
 
-    if (p.drawingContext.textAlign === constants.CENTER) {
+    if (ctx.textAlign === constants.CENTER) {
       x -= textWidth / 2;
-    } else if (p.drawingContext.textAlign === constants.RIGHT) {
+    } else if (ctx.textAlign === constants.RIGHT) {
       x -= textWidth;
     }
 
-    if (p.drawingContext.textBaseline === constants.TOP) {
+    if (ctx.textBaseline === constants.TOP) {
       y += textHeight;
-    } else if (p.drawingContext.textBaseline === constants._CTX_MIDDLE) {
+    } else if (ctx.textBaseline === constants._CTX_MIDDLE) {
       y += textHeight / 2 - textDescent;
-    } else if (p.drawingContext.textBaseline === constants.BOTTOM) {
+    } else if (ctx.textBaseline === constants.BOTTOM) {
       y -= textDescent;
     }
 
-    path = this.font.getPath(line, x, y, fontSize, options);
+    pathdata = this.font.getPath(line, x, y, fontSize, options).commands;
 
-    // no stroke unless specified by user
-    if (p._doStroke && p._strokeSet) {
-
-      path.strokeWidth = p.drawingContext.lineWidth;
-      path.stroke = p.drawingContext.strokeStyle;
+    ctx.beginPath();
+    for (var i = 0; i < pathdata.length; i += 1) {
+      var cmd = pathdata[i];
+      if (cmd.type === 'M') {
+        ctx.moveTo(cmd.x, cmd.y);
+      } else if (cmd.type === 'L') {
+        ctx.lineTo(cmd.x, cmd.y);
+      } else if (cmd.type === 'C') {
+        ctx.bezierCurveTo(cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x, cmd.y);
+      } else if (cmd.type === 'Q') {
+        ctx.quadraticCurveTo(cmd.x1, cmd.y1, cmd.x, cmd.y);
+      } else if (cmd.type === 'Z') {
+        ctx.closePath();
+      }
     }
 
-    // if fill hasn't been set by user, use default text fill
+    // only draw stroke if manually set by user
+    if (p._doStroke && p._strokeSet) {
+      ctx.stroke();
+    }
+
     if (p._doFill) {
 
-      path.fill = p._fillSet ? p.drawingContext.fillStyle :
-        constants._DEFAULT_TEXT_FILL;
+      // if fill hasn't been set by user, use default-text-fill
+      ctx.fillStyle = p._fillSet ? ctx.fillStyle:constants._DEFAULT_TEXT_FILL;
+      ctx.fill();
     }
 
-    path.draw(p.drawingContext);
+    return this;
   };
 
+  /**
+   * Returns a tight bounding box for the given custom text string using this
+   * font (currently only support single line)
+   *
+   * @method textBounds
+   * @param  {string} line     a line of text
+   * @param  {Number} x        x-position
+   * @param  {Number} y        y-position
+   * @param  {Number} fontSize font size to use (optional)
+   * @return {Object}          a rectangle object with properties: x, y, w, h
+   * @example
+   * <div>
+   * <code>
+   * var font;
+   * var text = 'Lorem ipsum dolor sit amet.';
+   * function preload() {
+   *    font = loadFont('./assets/fonts/Regular.otf');
+   * };
+   * function setup() {
+   *    background(210);
+   *    textFont(font);
+   *    strokeWeight(1);
+   *    textSize(12);
+   *    var bbox = font.textBounds(text, 10, 30, 12);
+   *    fill(255);
+   *    stroke(0);
+   *    rect(bbox.x, bbox.y, bbox.w, bbox.h);
+   *    fill(0);
+   *    strokeWeight(0);
+   *    text(text, 10, 30);
+   * };
+   * </code>
+   * </div>
+   */
   p5.Font.prototype.textBounds = function(str, x, y, fontSize) {
 
     //console.log('textBounds::',str, x, y, fontSize);
 
     if (!this.parent._isOpenType()) {
+
       throw Error('not supported for system fonts');
     }
 
@@ -97,7 +156,7 @@ define(function(require) {
     fontSize = fontSize || this.parent._textSize;
 
     var xCoords = [],
-      yCoords = [],
+      yCoords = [], minX, minY, maxX, maxY,
       scale = 1 / this.font.unitsPerEm * fontSize;
 
     this.font.forEachGlyph(str, x, y, fontSize, {},
@@ -109,22 +168,17 @@ define(function(require) {
           gY = gY !== undefined ? gY : 0;
 
           var gm = glyph.getMetrics();
-          var x1 = gX + (gm.xMin * scale);
-          var y1 = gY + (-gm.yMin * scale);
-          var x2 = gX + (gm.xMax * scale);
-          var y2 = gY + (-gm.yMax * scale);
-
-          xCoords.push(x1);
-          yCoords.push(y1);
-          xCoords.push(x2);
-          yCoords.push(y2);
+          xCoords.push(gX + (gm.xMin * scale));
+          yCoords.push(gY + (-gm.yMin * scale));
+          xCoords.push(gX + (gm.xMax * scale));
+          yCoords.push(gY + (-gm.yMax * scale));
         }
       });
 
-    var minX = Math.min.apply(null, xCoords);
-    var minY = Math.min.apply(null, yCoords);
-    var maxX = Math.max.apply(null, xCoords);
-    var maxY = Math.max.apply(null, yCoords);
+    minX = Math.min.apply(null, xCoords);
+    minY = Math.min.apply(null, yCoords);
+    maxX = Math.max.apply(null, xCoords);
+    maxY = Math.max.apply(null, yCoords);
 
     return {
       x: minX,

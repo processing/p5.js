@@ -315,6 +315,27 @@ var textSizeSketch = function(p) {
   };
 };
 
+var textBoundsSketch = function(p) {
+    var font;
+    var text = 'Lorem ipsum dolor sit amet.';
+    p.preload = function() {
+      font = p.loadFont("../SourceSansPro-Regular.otf");
+    };
+    p.setup = function() {
+      p.createCanvas(240, 160);
+      p.textFont(font);
+      p.strokeWeight(1);
+      p.textSize(16);
+      var bbox = font.textBounds(text, 30, 60, 16);
+      p.fill(255);
+      p.stroke(0);
+      p.rect(bbox.x, bbox.y, bbox.w, bbox.h);
+      p.fill(0);
+      p.strokeWeight(0);
+      p.text(text, 30, 60);
+    };
+};
+
 var textStyleSketch = function(p) {
   var font;
   p.preload = function() {
@@ -583,6 +604,7 @@ new p5(textWrapSketch, 'textWrapSketch');
 new p5(textAlignSketch, 'textAlignSketch');
 new p5(textLeadingSketch, 'textLeadingSketch');
 new p5(textSizeSketch, 'textSizeSketch');
+new p5(textBoundsSketch, 'textBoundsSketch');
 new p5(textStyleSketch, 'textStyleSketch');
 new p5(textWidthSketch, 'textWidthSketch');
 new p5(textOverlapSketch, 'textOverlapSketch');

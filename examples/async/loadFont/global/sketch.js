@@ -9,19 +9,18 @@
 // This is called asynchronous loading, because it happens whenever
 // the computer is done and ready, not necessarily when you call it.
 
-var font1, x=30, y=80, words = 'greeN ideaS';
+var font1, font2, x=30, y=80, words = 'cean eans';
 
-// function preload() {
-//   font1 = loadFont('SourceSansPro-Regular.otf');
-//   font2 = loadFont('acmesa.ttf');
-// };
+function preload() {
+  font1 = loadFont('SourceSansPro-Regular.otf');
+  font2 = loadFont('acmesa.ttf');
+};
 
 function setup() {
 
   createCanvas(400, 200);
 
-  textSize(58);
-  textFont(font1);
+  textFont(font1, 58);
   text(words, x, y);
 
   // metrics
