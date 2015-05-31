@@ -10,6 +10,9 @@ var h;
 
 function setup() {
   createCanvas(400,400);
+  noStroke();
+  fill(255);
+
   mic = new p5.AudioIn();
   mic.start();
 
@@ -28,7 +31,6 @@ function setup() {
 }
 
 function draw() {
-  stroke(255);
   background(0);
 
   // get the volume level, accepts an optional smoothing value or defaults to 0.

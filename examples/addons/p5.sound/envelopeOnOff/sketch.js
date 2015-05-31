@@ -9,9 +9,9 @@ var env;
 var a;
 
 // Times and levels for the ADSR envelope
-var attackTime = 0.1;
-var attackLevel = 0.7;
-var decayTime = 0.3;
+var attackTime = 0.001;
+var attackLevel = 0.9;
+var decayTime = 0.25;
 var decayLevel = 0.2;
 var sustainTime = 0.1;
 var sustainLevel = decayLevel;
@@ -31,10 +31,10 @@ function setup(){
   trigger = millis();
 
   triOsc = new p5.TriOsc();
-  triOsc.amp(0);
+  triOsc.freq(220);
   triOsc.start();
-
   env = new p5.Env(attackTime, attackLevel, decayTime, decayLevel, sustainTime, sustainLevel, releaseTime);
+  triOsc.amp(env);
   fill(0);
   createP('click mouse to triggerAttack, release mouse to triggerRelease');
 
@@ -49,10 +49,10 @@ function draw(){
 
 function mousePressed(){
     // The envelope gets triggered with the oscillator as input and the times and levels we defined earlier
-    env.triggerAttack(triOsc);
+    env.triggerAttack();
     trigger = millis() + duration;
 }
 
 function mouseReleased(){
-    env.triggerRelease(triOsc);
+    env.triggerRelease();
 }
