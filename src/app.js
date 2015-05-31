@@ -3,9 +3,9 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core/core');
-  require('p5.Color');
+  require('color/p5.Color');
   require('core/p5.Element');
-  require('p5.Font');
+  require('typography/p5.Font');
   require('core/p5.Graphics2D');
   require('3d/p5.Graphics3D');
   require('image/p5.Image');
@@ -13,8 +13,8 @@ define(function (require) {
   require('p5.TableRow');
   require('p5.Table');
 
-  require('color.creating_reading');
-  require('color.setting');
+  require('color/creating_reading');
+  require('color/setting');
   require('core/constants');
   require('data.conversion');
   require('data.array_functions');
@@ -42,8 +42,8 @@ define(function (require) {
   require('core/vertex');
   require('core/structure');
   require('core/transform');
-  require('typography.attributes');
-  require('typography.loading_displaying');
+  require('typography/attributes');
+  require('typography/loading_displaying');
   require('3d/shaders');
 
   /**

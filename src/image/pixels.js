@@ -10,7 +10,7 @@ define(function (require) {
 
   var p5 = require('core/core');
   var Filters = require('image/filters');
-  require('p5.Color');
+  require('color/p5.Color');
 
   /**
    * <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference

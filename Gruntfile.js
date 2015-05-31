@@ -212,9 +212,9 @@ module.exports = function(grunt) {
             // 'p5.Image': 'image/p5.Image',
 
             // typography
-            'p5.Font': 'typography/p5.Font',
-            'typography.attributes': 'typography/attributes',
-            'typography.loading_displaying': 'typography/loading_displaying',
+            // 'p5.Font': 'typography/p5.Font',
+            // 'typography.attributes': 'typography/attributes',
+            // 'typography.loading_displaying': 'typography/loading_displaying',
 
             // math
             'p5.Vector': 'math/p5.Vector',
@@ -244,10 +244,10 @@ module.exports = function(grunt) {
             'data.string_functions': 'utilities/string_functions',
 
             // color
-            'p5.Color': 'color/p5.Color',
-            'color.creating_reading': 'color/creating_reading',
-            'color.setting': 'color/setting',
-            'utils.color_utils': 'color/color_utils',
+            // 'p5.Color': 'color/p5.Color',
+            // 'color.creating_reading': 'color/creating_reading',
+            // 'color.setting': 'color/setting',
+            // 'utils.color_utils': 'color/color_utils',
 
             // external library
             'reqwest': '../node_modules/reqwest/reqwest'

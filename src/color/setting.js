@@ -11,7 +11,7 @@ define(function(require) {
 
   var p5 = require('core/core');
   var constants = require('core/constants');
-  require('p5.Color');
+  require('color/p5.Color');
 
   p5.prototype._doStroke = true;
   p5.prototype._doFill = true;

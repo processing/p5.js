@@ -6,7 +6,7 @@
 define(function(require) {
 
   var p5 = require('core/core');
-  var color_utils = require('utils.color_utils');
+  var color_utils = require('color/color_utils');
   var constants = require('core/constants');
 
   /**

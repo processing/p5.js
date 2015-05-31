@@ -9,7 +9,7 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core/core');
-  require('p5.Color');
+  require('color/p5.Color');
 
   /**
    * Extracts the alpha value from a color or pixel array.
