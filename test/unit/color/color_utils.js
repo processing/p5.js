@@ -9,13 +9,6 @@ suite('p5.ColorUtils', function() {
     });
   });
 
-  suite('hslaToRGBA', function() {
-    test('hsla converts to rgba', function() {
-      rgba = [0, 255, 72, 255];
-      assert.deepEqual(p5.ColorUtils.hslaToRGBA(hsla, [360, 100, 100, 1]), rgba);
-    });
-  });
-
   suite('hsbaToRGBA', function() {
     test('hsba converts to rgba', function() {
       // Because of rounding errors, the values are off by one
@@ -23,6 +16,20 @@ suite('p5.ColorUtils', function() {
       rgba = [99, 149, 199, 255];
 
       assert.deepEqual(p5.ColorUtils.hsbaToRGBA(hsba, [360, 100, 100, 1]), rgba);
+    });
+  });
+
+  suite('hslaToRGBA', function() {
+    test('hsla converts to rgba', function() {
+      rgba = [0, 255, 72, 255];
+      assert.deepEqual(p5.ColorUtils.hslaToRGBA(hsla, [360, 100, 100, 1]), rgba);
+    });
+  });
+
+  suite('rgbaToHSLA', function() {
+    test('rgba converts to hsla', function() {
+      rgba = [0, 255, 72, 255];
+      assert.deepEqual(p5.ColorUtils.rgbaToHSLA(rgba, [255, 255, 255, 255]), hsla);
     });
   });
 });
