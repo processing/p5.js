@@ -22,13 +22,14 @@ define(function(require) {
         isRGB = pInst._colorMode === constants.RGB,
         isHSL = pInst._colorMode === constants.HSL;
 
-    if (isHSL){
+    if (isRGB) {
+      this.rgba = this.color_array;
+    } else if (isHSL) {
       this.hsla = this.color_array;
+      this.rgba = color_utils.hslaToRGBA(this.color_array, this.maxArr);
     } else if (isHSB) {
       this.hsba = this.color_array;
       this.rgba = color_utils.hsbaToRGBA(this.color_array, this.maxArr);
-    } else if (isRGB) {
-      this.rgba = this.color_array;
     } else {
       throw new Error(pInst._colorMode + 'is an invalid colorMode.');
     }
@@ -37,29 +38,46 @@ define(function(require) {
   };
 
   p5.Color.prototype.getHue = function() {
-    if (this.hsba) {
-      return this.hsba[0];
+    // Hue is consistent in both HSL & HSB
+    if (this.hsla || this.hsba) {
+      return this.hsla ? this.hsla[0] : this.hsba[0];
     } else {
-      this.hsba = color_utils.rgbaToHSBA(this.color_array, this.maxArr);
-      return this.hsba[0];
+      this.hsla = color_utils.rgbaToHSLA(this.color_array, this.maxArr);
+      return this.hslaToRGBAa[0];
     }
   };
 
   p5.Color.prototype.getSaturation = function() {
-    if (this.hsba) {
+    // Saturation exists in both HSB and HSL, but returns different values
+    // We are preferring HSL here (because it is a web color space) 
+    // until the global flag issue can be resolved
+    if (this.hsla) {
+      return this.hsla[1];
+    } else if (this.hsba) {
       return this.hsba[1];
     } else {
-      this.hsba = color_utils.rgbaToHSBA(this.color_array, this.maxArr);
-      return this.hsba[1];
+      this.hsla = color_utils.rgbaToHSLA(this.color_array, this.maxArr);
+      return this.hsla[1];
     }
   };
 
+  // Brightness only exists as an HSB value
   p5.Color.prototype.getBrightness = function() {
     if (this.hsba) {
       return this.hsba[2];
     } else {
       this.hsba = color_utils.rgbaToHSBA(this.color_array, this.maxArr);
       return this.hsba[2];
+    }
+  };
+
+  // Lightness only exists as an HSL value
+  p5.Color.prototype.getLightness = function() {
+    if (this.hsla) {
+      return this.hsla[2];
+    } else {
+      this.hsla = color_utils.rgbaToHSLA(this.color_array, this.maxArr);
+      return this.hsla[2];
     }
   };
 
@@ -76,8 +94,11 @@ define(function(require) {
   };
 
   p5.Color.prototype.getAlpha = function() {
-    if (this.hsba) {
-      return this.hsba[3];
+    // Again this is a little sleight of hand until the global flag
+    // issue is resolved. The presumption is that if alpha has been
+    // specified in 0-1 space, the user wants that value out
+    if (this.hsba || this.hsla) {
+      return this.hsla ? this.hsla[3] : this.hsba[3];
     } else {
       return this.rgba[3];
     }
