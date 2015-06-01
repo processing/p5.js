@@ -11,8 +11,8 @@ define(function(require) {
   /**
    * For a color expressed as an HSBA array, return the corresponding RGBA value
    * 
-   * @param {Array} hsba An 'array' object that represents a list of
-   *                          HSB colors on a scale of 0-255
+   * @param {Array} hsba An 'array' object that represents a list of HSB colors
+   * @param {Array} maxes An 'array' object that represents the HSB range maxes
    * @return {Array} an array of RGBA values, on a scale of 0-255
    */
   p5.ColorUtils.hsbaToRGBA = function(hsba, maxes) {
@@ -28,7 +28,7 @@ define(function(require) {
     // hsv values = 0 - 1, rgb values = 0 - 255
     var RGBA = [];
     if(s===0){
-      RGBA = [Math.round(v*255), Math.round(v*255), Math.round(v*255), a];
+      RGBA = [Math.round(v*255), Math.round(v*255), Math.round(v*255), a*255];
     } else {
       // h must be < 1
       var var_h = h * 6;
@@ -72,7 +72,7 @@ define(function(require) {
         Math.round(var_r * 255),
         Math.round(var_g * 255),
         Math.round(var_b * 255),
-        Math.round(a * 255)
+        a * 255
       ];
     }
     return RGBA;
@@ -81,9 +81,9 @@ define(function(require) {
   /**
    * For a color expressed as an RGBA array, return the corresponding HSBA value
    * 
-   * @param {Array} rgba An 'array' object that represents a list of
-   *                          RGB colors on a scale of 0-255
-   * @return {Array} an array of HSB values, on a scale of 0-255
+   * @param {Array} rgba An 'array' object that represents a list of RGB colors
+   * @param {Array} maxes An 'array' object that represents the RGB range maxes
+   * @return {Array} an array of HSB values, scaled by the HSB-space maxes
    */
   p5.ColorUtils.rgbaToHSBA = function(rgba, maxes) {
     var var_R = rgba[0]/maxes[0];
@@ -127,13 +127,21 @@ define(function(require) {
       }
     }
     return [
-        Math.round(H * 255),
-        Math.round(S * 255),
-        Math.round(V * 255),
-        Math.round(A * 255)
+        Math.round(H * 360),
+        Math.round(S * 100),
+        Math.round(V * 100),
+        A * 1
       ];
   };
 
+  /**
+   * For a color expressed as an HSLA array, return the corresponding RGBA value
+   * 
+   * @param  {Array} hsla An 'array' object that represents a list of HSL colors
+   * @param  {Array} maxes An 'array' object that represents the HSL range maxes
+   * 
+   * @return {Array} an array of RGBA values, on a scale of 0-255
+   */
   p5.ColorUtils.hslaToRGBA = function(hsla, maxes){
     var h = hsla[0];
     var s = hsla[1];

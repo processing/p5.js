@@ -20,7 +20,7 @@ define(function(require) {
   p5.prototype._colorMode = constants.RGB;
   p5.prototype._colorMaxes = {
     rgb: [255, 255, 255, 255],
-    hsb: [255, 255, 255, 255],
+    hsb: [360, 100, 100, 1],
     hsl: [360, 100, 100, 1]
   };
 
