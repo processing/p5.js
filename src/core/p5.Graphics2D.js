@@ -447,10 +447,17 @@ define(function(require) {
     } else if(ctx.strokeStyle === styleEmpty){
       return this;
     }
+    // Translate the line by (0.5, 0.5) to draw it crisp
+    if (ctx.lineWidth % 2 === 1) {
+      ctx.translate(0.5, 0.5);
+    }
     ctx.beginPath();
     ctx.moveTo(x1, y1);
     ctx.lineTo(x2, y2);
     ctx.stroke();
+    if (ctx.lineWidth % 2 === 1) {
+      ctx.translate(-0.5, -0.5);
+    }
     return this;
   };
 
