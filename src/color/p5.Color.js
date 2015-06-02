@@ -43,7 +43,7 @@ define(function(require) {
       return this.hsla ? this.hsla[0] : this.hsba[0];
     } else {
       this.hsla = color_utils.rgbaToHSLA(this.color_array, this.maxArr);
-      return this.hslaToRGBAa[0];
+      return this.hsla[0];
     }
   };
 
