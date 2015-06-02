@@ -78,10 +78,10 @@ suite('CreatingReading', function() {
     });
 
     test('p5.prototype.brightness', function() {
-      assert.equal(myp5.brightness(colorAndAlphaArr), 3);
-      assert.equal(myp5.brightness(colorArr), 3);
-      assert.equal(myp5.brightness(color), 3);
-      assert.equal(myp5.brightness(rgbaColor), 3);
+      assert.equal(myp5.brightness(colorAndAlphaArr), 1);
+      assert.equal(myp5.brightness(colorArr), 1);
+      assert.equal(myp5.brightness(color), 1);
+      assert.equal(myp5.brightness(rgbaColor), 1);
     });
   });
 

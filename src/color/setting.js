@@ -18,8 +18,11 @@ define(function(require) {
   p5.prototype._strokeSet = false;
   p5.prototype._fillSet = false;
   p5.prototype._colorMode = constants.RGB;
-  p5.prototype._maxRGB = [255, 255, 255, 255];
-  p5.prototype._maxHSB = [255, 255, 255, 255];
+  p5.prototype._colorMaxes = {
+    rgb: [255, 255, 255, 255],
+    hsb: [360, 100, 100, 1],
+    hsl: [360, 100, 100, 1]
+  };
 
   /**
    * The background() function sets the color used for the background of the
@@ -195,11 +198,12 @@ define(function(require) {
    * </div>
    */
   p5.prototype.colorMode = function() {
-    if (arguments[0] === constants.RGB || arguments[0] === constants.HSB) {
+    if (arguments[0] === constants.RGB ||
+        arguments[0] === constants.HSB ||
+        arguments[0] === constants.HSL) {
       this._colorMode = arguments[0];
 
-      var isRGB = this._colorMode === constants.RGB;
-      var maxArr = isRGB ? this._maxRGB : this._maxHSB;
+      var maxArr = this._colorMaxes[this._colorMode];
 
       if (arguments.length === 2) {
         maxArr[0] = arguments[1];
