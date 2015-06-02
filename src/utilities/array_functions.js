@@ -8,10 +8,10 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
+  var p5 = require('core/core');
 
   /**
-   * Adds a value to the end of an array. Extends the length of 
+   * Adds a value to the end of an array. Extends the length of
    * the array by one. Maps to Array.push().
    *
    * @method append
@@ -20,13 +20,13 @@ define(function (require) {
    * @example
    * <div class = "norender"><code>
    * function setup() {
-   * 
-   * var myArray = new Array("Mango", "Apple", "Papaya") 
+   *
+   * var myArray = new Array("Mango", "Apple", "Papaya")
    * print(myArray) // ["Mango", "Apple", "Papaya"]
    *
-   * append(myArray, "Peach")  
+   * append(myArray, "Peach")
    * print(myArray) // ["Mango", "Apple", "Papaya", "Peach"]
-   * 
+   *
    * }
    * </div></code>
    */
@@ -48,8 +48,8 @@ define(function (require) {
    * arrayCopy(src, 0, dst, 0, src.length).
    *
    * Using this function is far more efficient for copying array data than
-   * iterating through a for() loop and copying each element individually. 
-   * 
+   * iterating through a for() loop and copying each element individually.
+   *
    * @method arrayCopy
    * @param {Array}  src           the source Array
    * @param {Number} [srcPosition] starting position in the source Array
@@ -60,7 +60,7 @@ define(function (require) {
    * @example
    *  <div class="norender"><code>
    *  function setup() {
-   *  
+   *
    *    var src = new Array("A", "B", "C");
    *    var dst = new Array( 1 ,  2 ,  3 );
    *    var srcPosition = 1;
@@ -69,10 +69,10 @@ define(function (require) {
    *
    *    print(src); // ["A", "B", "C"]
    *    print(dst); // [ 1 ,  2 ,  3 ]
-   *    
+   *
    *    arrayCopy(src, srcPosition, dst, dstPosition, length);
    *    print(dst); // ["B", "C", 3]
-   *    
+   *
    *    }
    *  </div></code>
    */
@@ -117,8 +117,8 @@ define(function (require) {
   };
 
   /**
-   * Concatenates two arrays, maps to Array.concat(). Does not modify the 
-   * input arrays. 
+   * Concatenates two arrays, maps to Array.concat(). Does not modify the
+   * input arrays.
    *
    * @method concat
    * @param {Array} a first Array to concatenate
@@ -130,16 +130,16 @@ define(function (require) {
    * function setup() {
    *   var arr1 = new Array("A", "B", "C");
    *   var arr2 = new Array( 1 ,  2 ,  3 );
-   *   
+   *
    *   print(arr1); // ["A","B","C"]
    *   print(arr2); // [1,2,3]
-   *   
+   *
    *   var arr3 = concat(arr1, arr2);
-   *   
+   *
    *   print(arr1); // ["A","B","C"]
    *   print(arr2); // [1,2,3]
    *   print(arr3); // ["A","B","C",1,2,3]
-   *  
+   *
    * }
    * </div></code>
    */
@@ -157,7 +157,7 @@ define(function (require) {
    * function setup() {
    *   var myArray = new Array("A", "B", "C");
    *   print(myArray); // ["A","B","C"]
-   *   
+   *
    *   reverse(myArray);
    *   print(myArray); // ["C","B","A"]
    * }
@@ -179,7 +179,7 @@ define(function (require) {
    * function setup() {
    *   var myArray = new Array("A", "B", "C");
    *   print(myArray); // ["A","B","C"]
-   *   
+   *
    *   var newArray = shorten(myArray);
    *   print(myArray); // ["A","B","C"]
    *   print(newArray); // ["A","B"]
@@ -248,7 +248,7 @@ define(function (require) {
    *   var words = new Array("banana", "apple", "pear","lime");
    *   print(words); // ["banana", "apple", "pear", "lime"]
    *   var count = 4; // length of array
-   *   
+   *
    *   sort(words, count);
    *   print(words); // ["apple", "banana", "lime", "pear"]
    * }
@@ -258,7 +258,7 @@ define(function (require) {
    *   var numbers = new Array(2,6,1,5,14,9,8,12);
    *   print(numbers); // [2,6,1,5,14,9,8,12]
    *   var count = 5; // Less than the length of the array
-   *   
+   *
    *   sort(numbers, count);
    *   print(numbers); // [1,2,5,6,14,9,8,12]
    * }
@@ -295,10 +295,10 @@ define(function (require) {
    *   var insArray = new Array("A","B","C");
    *   print(myArray); // [0,1,2,3,4]
    *   print(insArray); // ["A","B","C"]
-   *   
+   *
    *   splice(myArray, insArray, 3);
    *   print(myArray); // [0,1,2,"A","B","C",3,4]
-   * }  
+   * }
    * </div></code>
    */
   p5.prototype.splice = function(list, value, index) {
@@ -315,7 +315,7 @@ define(function (require) {
    * and count parameters specify which elements to extract. If no count is
    * given, elements will be extracted from the start to the end of the array.
    * When specifying the start, remember that the first array element is 0.
-   * This function does not change the source array. 
+   * This function does not change the source array.
    *
    * @method subset
    * @param  {Array}  list    Array to extract from
@@ -328,7 +328,7 @@ define(function (require) {
    * function setup() {
    *   var myArray = new Array(1,2,3,4,5);
    *   print(myArray); // [1,2,3,4,5]
-   *   
+   *
    *   var sub1 = subset(myArray, 0, 3);
    *   var sub2 = subset(myArray, 2, 2);
    *   print(sub1); // [1,2,3]

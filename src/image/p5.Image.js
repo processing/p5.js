@@ -14,8 +14,8 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
-  var Filters = require('filters');
+  var p5 = require('core/core');
+  var Filters = require('image/filters');
 
   /*
    * Class methods
@@ -33,11 +33,11 @@ define(function (require) {
    *
    * Before using the pixels[] array, be sure to use the loadPixels() method on
    * the image to make sure that the pixel data is properly loaded.
-   * 
+   *
    * @class p5.Image
    * @constructor
-   * @param {Number} width 
-   * @param {Number} height 
+   * @param {Number} width
+   * @param {Number} height
    * @param {Object} pInst An instance of a p5 sketch.
    */
   p5.Image = function(width, height){
@@ -60,16 +60,16 @@ define(function (require) {
      * Array containing the values for all the pixels in the display window.
      * These values are numbers. This array is the size (include an appropriate
      * factor for pixelDensity) of the display window x4,
-     * representing the R, G, B, A values in order for each pixel, moving from 
+     * representing the R, G, B, A values in order for each pixel, moving from
      * left to right across each row, then down each column. Retina and other
      * high denisty displays may have more pixels[] (by a factor of
      * pixelDensity^2).
      * For example, if the image is 100x100 pixels, there will be 40,000. With
      * pixelDensity = 2, there will be 160,000. The first four values
-     * (indices 0-3) in the array will be the R, G, B, A values of the pixel at 
+     * (indices 0-3) in the array will be the R, G, B, A values of the pixel at
      * (0, 0). The second four values (indices 4-7) will contain the R, G, B, A
      * values of the pixel at (1, 0). More generally, to set values for a pixel
-     * at (x, y): 
+     * at (x, y):
      * <code><pre>var d = pixelDensity;
      * for (var i = 0; i < d; i++) {
      *   for (var j = 0; j < d; j++) {
@@ -93,7 +93,7 @@ define(function (require) {
      * img.loadPixels();
      * for (i = 0; i < img.width; i++) {
      *   for (j = 0; j < img.height; j++) {
-     *     img.set(i, j, color(0, 90, 102)); 
+     *     img.set(i, j, color(0, 90, 102));
      *   }
      * }
      * img.updatePixels();
@@ -129,7 +129,7 @@ define(function (require) {
 
   /**
    * Loads the pixels data for this image into the [pixels] attribute.
-   * 
+   *
    * @method loadPixels
    */
   p5.Image.prototype.loadPixels = function(){
@@ -196,7 +196,7 @@ define(function (require) {
    * img.loadPixels();
    * for (i = 0; i < img.width; i++) {
    *   for (j = 0; j < img.height; j++) {
-   *     img.set(i, j, color(0, 90, 102, i % img.width * 2)); 
+   *     img.set(i, j, color(0, 90, 102, i % img.width * 2));
    *   }
    * }
    * img.updatePixels();
@@ -221,7 +221,7 @@ define(function (require) {
    * @example
    * <div><code>
    * var img;
-   * 
+   *
    * function setup() {
    *   img = loadImage("assets/rockies.jpg");
    * }
@@ -229,7 +229,7 @@ define(function (require) {
    * function draw() {
    *   image(img, 0, 0);
    * }
-   * 
+   *
    * function mousePressed() {
    *   img.resize(50, 100);
    * }
@@ -242,7 +242,7 @@ define(function (require) {
     //
     // There is a faster approach that involves just one copy and swapping the
     // this.canvas reference. We could switch to that approach if (as i think
-    // is the case) there an expectation that the user would not hold a 
+    // is the case) there an expectation that the user would not hold a
     // reference to the backing canvas of a p5.Image. But since we do not
     // enforce that at the moment, I am leaving in the slower, but safer
     // implementation.
@@ -300,7 +300,7 @@ define(function (require) {
    * Masks part of an image from displaying by loading another
    * image and using it's alpha channel as an alpha channel for
    * this image.
-   * 
+   *
    * @method mask
    * @param {p5.Image|undefined} srcImage source image
    *
@@ -309,9 +309,9 @@ define(function (require) {
    *       blue channel (which feels kind of arbitrary). Note: at the
    *       moment this method does not match native processings original
    *       functionality exactly.
-   * 
+   *
    * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
-   * 
+   *
    */
   p5.Image.prototype.mask = function(p5Image) {
     if(p5Image === undefined){
@@ -323,7 +323,7 @@ define(function (require) {
     if (p5Image instanceof p5.Graphics) {
       scaleFactor = p5Image._pInst.pixelDensity;
     }
-    
+
     var copyArgs = [
       p5Image,
       0,
@@ -343,9 +343,9 @@ define(function (require) {
 
   /**
    * Applies an image filter to a p5.Image
-   * 
+   *
    * @method filter
-   * @param {String} operation one of threshold, gray, invert, posterize and 
+   * @param {String} operation one of threshold, gray, invert, posterize and
    *                           opaque see Filters.js for docs on each available
    *                           filter
    * @param {Number|undefined} value
@@ -357,7 +357,7 @@ define(function (require) {
   /**
    * Copies a region of pixels from one image to another, using a specified
    * blend mode to do the operation.
-   * 
+   *
    * @method blend
    * @param  {p5.Image|undefined} srcImage source image
    * @param  {Integer} sx X coordinate of the source's upper left corner
@@ -370,14 +370,14 @@ define(function (require) {
    * @param  {Integer} dh destination image height
    * @param  {Integer} blendMode the blend mode
    *
-   * Available blend modes are: normal | multiply | screen | overlay | 
-   *            darken | lighten | color-dodge | color-burn | hard-light | 
-   *            soft-light | difference | exclusion | hue | saturation | 
+   * Available blend modes are: normal | multiply | screen | overlay |
+   *            darken | lighten | color-dodge | color-burn | hard-light |
+   *            soft-light | difference | exclusion | hue | saturation |
    *            color | luminosity
    *
-   * 
+   *
    * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
-   * 
+   *
    */
   p5.Image.prototype.blend = function() {
     p5.prototype.blend.apply(this, arguments);
@@ -387,7 +387,7 @@ define(function (require) {
    * Saves the image to a file and force the browser to download it.
    * Accepts two strings for filename and file extension
    * Supports png (default) and jpg.
-   * 
+   *
    * @method save
    * @param {String} filename give your file a name
    * @param  {String} extension 'png' or 'jpg'

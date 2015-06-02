@@ -8,9 +8,9 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
+  var p5 = require('core/core');
 
-  require('helpers');
+  require('core/error_helpers');
 
   var bezierDetail = 20;
   var curveDetail = 20;

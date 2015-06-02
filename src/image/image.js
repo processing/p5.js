@@ -14,8 +14,8 @@ define(function (require) {
   'use strict';
 
 
-  var p5 = require('core');
-  var constants = require('constants');
+  var p5 = require('core/core');
+  var constants = require('core/constants');
 
   p5.prototype._imageMode = constants.CORNER;
   p5.prototype._tint = null;
@@ -24,16 +24,16 @@ define(function (require) {
    * Creates a new p5.Image (the datatype for storing images). This provides a
    * fresh buffer of pixels to play with. Set the size of the buffer with the
    * width and height parameters.
-   * 
-   * .pixels gives access to an array containing the values for all the pixels 
+   *
+   * .pixels gives access to an array containing the values for all the pixels
    * in the display window.
    * These values are numbers. This array is the size (including an appropriate
    * factor for the pixelDensity) of the display window x4,
-   * representing the R, G, B, A values in order for each pixel, moving from 
+   * representing the R, G, B, A values in order for each pixel, moving from
    * left to right across each row, then down each column. See .pixels for
    * more info. It may also be simpler to use set() or get().
    * <br><br>
-   * Before accessing the pixels of an image, the data must loaded with the 
+   * Before accessing the pixels of an image, the data must loaded with the
    * loadPixels()
    * function. After the array data has been modified, the updatePixels()
    * function must be run to update the changes.
@@ -49,7 +49,7 @@ define(function (require) {
    * img.loadPixels();
    * for (i = 0; i < img.width; i++) {
    *   for (j = 0; j < img.height; j++) {
-   *     img.set(i, j, color(0, 90, 102)); 
+   *     img.set(i, j, color(0, 90, 102));
    *   }
    * }
    * img.updatePixels();
@@ -63,7 +63,7 @@ define(function (require) {
    * img.loadPixels();
    * for (i = 0; i < img.width; i++) {
    *   for (j = 0; j < img.height; j++) {
-   *     img.set(i, j, color(0, 90, 102, i % img.width * 2)); 
+   *     img.set(i, j, color(0, 90, 102, i % img.width * 2));
    *   }
    * }
    * img.updatePixels();
@@ -172,7 +172,7 @@ define(function (require) {
    *  to a server where they can be stored or converted into a movie.
    *  If no callback is provided, the browser will attempt to download
    *  all of the images that have just been created.
-   *  
+   *
    *  @method saveFrames
    *  @param  {[type]}   filename  [description]
    *  @param  {[type]}   extension [description]

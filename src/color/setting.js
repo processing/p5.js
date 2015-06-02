@@ -9,9 +9,9 @@ define(function(require) {
 
   'use strict';
 
-  var p5 = require('core');
-  var constants = require('constants');
-  require('p5.Color');
+  var p5 = require('core/core');
+  var constants = require('core/constants');
+  require('color/p5.Color');
 
   p5.prototype._doStroke = true;
   p5.prototype._doFill = true;
@@ -154,7 +154,7 @@ define(function(require) {
    * for fill(), stroke(), background(), and color() are defined by values
    * between 0 and 255 using the RGB color model. The colorMode() function is
    * used to switch color systems. Regardless of color system, all value ranges
-   * are presumed to be 0–255 unless explicitly set otherwise. That is, 
+   * are presumed to be 0–255 unless explicitly set otherwise. That is,
    * for a standard HSB range, one would pass colorMode(HSB, 360, 100, 100, 1).
    *
    * @method colorMode

@@ -11,7 +11,7 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
+  var p5 = require('core/core');
   var reqwest = require('reqwest');
 
 

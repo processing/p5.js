@@ -8,10 +8,10 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
+  var p5 = require('core/core');
 
   //@TODO fill with 3d primitives
-  //inspire by lightgl.js 
+  //inspire by lightgl.js
   //https://github.com/evanw/lightgl.js
   p5.prototype.Geometry3D = function() {
     this.vertices = [];
@@ -26,7 +26,7 @@ define(function (require) {
    * @param  {Number} height  the height of the plane
    * @param  {Number} detailX how many segments in the x axis
    * @param  {Number} detailY how many segments in the y axis
-   * @return {[type]}         [description]        
+   * @return {[type]}         [description]
    */
   p5.prototype.plane = function(width, height, detailX, detailY) {
 
@@ -89,7 +89,7 @@ define(function (require) {
     detailZ = detailZ || 1;
 
     //@TODO: figure out a better way to generate 6 faces
-    
+
     for (var y1 = 0; y1 <= detailY; y1++) {
       var t1 = y1 / detailY;
       for (var x1 = 0; x1 <= detailX; x1++) {

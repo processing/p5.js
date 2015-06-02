@@ -8,8 +8,8 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
-  require('p5.Color');
+  var p5 = require('core/core');
+  require('color/p5.Color');
 
   /**
    * Extracts the alpha value from a color or pixel array.
@@ -267,10 +267,10 @@ define(function (require) {
    * the behavior of lerp(), but necessary because otherwise numbers outside
    * the range will produce strange and unexpected colors.
    *
-   * The regular RGB color representation stores the square root of the 
-   * displayed color, not the value itself. Your monitor behaves as if it 
+   * The regular RGB color representation stores the square root of the
+   * displayed color, not the value itself. Your monitor behaves as if it
    * squares the color values before displaying it. lerpColor first transforms
-   * colors into the linear color space before blending, to correctly mix the 
+   * colors into the linear color space before blending, to correctly mix the
    * colors as two rays of light.
    *
    * @method lerpColor

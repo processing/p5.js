@@ -8,7 +8,7 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
+  var p5 = require('core/core');
 
   //return p5; //LM is this a mistake?
 
@@ -138,17 +138,17 @@ define(function (require) {
    * function setup() {
    *   background(200);
    *   var num = 112.53106115;
-   * 
+   *
    *   noStroke();
    *   fill(0);
    *   textSize(14);
    *   // Draw formatted numbers
    *   text(nf(num, 5, 2), 10, 20);
-   * 
+   *
    *   text(nf(num, 4, 3), 10, 55);
-   * 
+   *
    *   text(nf(num, 3, 6), 10, 85);
-   * 
+   *
    *   // Draw dividing lines
    *   stroke(120);
    *   line(0, 30, width, 30);
@@ -238,15 +238,15 @@ define(function (require) {
    *   background(200);
    *   var num = 11253106.115;
    *   var numArr = new Array(1,1,2);
-   *   
+   *
    *   noStroke();
-   *   fill(0); 
+   *   fill(0);
    *   textSize(12);
-   *   
+   *
    *   // Draw formatted numbers
    *   text(nfc(num, 4, 2), 10, 30);
    *   text(nfc(numArr, 2, 1), 10, 80);
-   *   
+   *
    *   // Draw dividing line
    *   stroke(120);
    *   line(0, 50, width, 50);
@@ -309,15 +309,15 @@ define(function (require) {
    *   background(200);
    *   var num1 = 11253106.115;
    *   var num2 = -11253106.115;
-   *   
+   *
    *   noStroke();
-   *   fill(0); 
+   *   fill(0);
    *   textSize(12);
-   *   
+   *
    *   // Draw formatted numbers
    *   text(nfp(num1, 4, 2), 10, 30);
    *   text(nfp(num2, 4, 2), 10, 80);
-   *   
+   *
    *   // Draw dividing line
    *   stroke(120);
    *   line(0, 50, width, 50);
@@ -343,9 +343,9 @@ define(function (require) {
 
   /**
    * Utility function for formatting numbers into strings. Similar to nf() but
-   * puts a " " (space) in front of positive numbers and a "-" in front of 
-   * negative numbers. There are two versions: one for formatting floats, and 
-   * one for formatting ints. The values for the digits, left, and right 
+   * puts a " " (space) in front of positive numbers and a "-" in front of
+   * negative numbers. There are two versions: one for formatting floats, and
+   * one for formatting ints. The values for the digits, left, and right
    * parameters should always be positive integers.
    *
    * @method nfs
@@ -362,15 +362,15 @@ define(function (require) {
    *   background(200);
    *   var num1 = 11253106.115;
    *   var num2 = -11253106.115;
-   *   
+   *
    *   noStroke();
-   *   fill(0); 
+   *   fill(0);
    *   textSize(12);
    *   // Draw formatted numbers
    *   text(nfs(num1, 4, 2), 10, 30);
-   *   
+   *
    *   text(nfs(num2, 4, 2), 10, 80);
-   *   
+   *
    *   // Draw dividing line
    *   stroke(120);
    *   line(0, 50, width, 50);
@@ -439,15 +439,15 @@ define(function (require) {
    * @return {Array}          Array of Strings
    * @example
    * <div class = "norender">
-   * <code> 
+   * <code>
    * function setup() {
    *   var myStr = "Mango, Banana, Lime";
    *   var myStrArr = splitTokens(myStr, ",");
-   *   
+   *
    *   print(myStrArr); // prints : ["Mango"," Banana"," Lime"]
    * }
    * </div>
-   * </code> 
+   * </code>
    */
   p5.prototype.splitTokens = function() {
     var d = (arguments.length > 0) ? arguments[1] : /\s/g;
