@@ -261,7 +261,7 @@ define(function (require) {
    * }
    * function setup() {
    *  image(img, 0, 0);
-   *  filter(GREY);
+   *  filter(GRAY);
    * }
    * </code>
    * </div>
