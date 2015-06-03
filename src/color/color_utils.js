@@ -39,38 +39,38 @@ define(function(require) {
       var var_1 = v*(1-s);
       var var_2 = v*(1-s*(var_h-var_i));
       var var_3 = v*(1-s*(1-(var_h-var_i)));
-      var var_r;
-      var var_g;
-      var var_b;
+      var r;
+      var g;
+      var b;
       if(var_i===0){
-        var_r = v;
-        var_g = var_3;
-        var_b = var_1;
+        r = v;
+        g = var_3;
+        b = var_1;
       }else if(var_i===1){
-        var_r = var_2;
-        var_g = v;
-        var_b = var_1;
+        r = var_2;
+        g = v;
+        b = var_1;
       }else if(var_i===2){
-        var_r = var_1;
-        var_g = v;
-        var_b = var_3;
+        r = var_1;
+        g = v;
+        b = var_3;
       }else if(var_i===3){
-        var_r = var_1;
-        var_g = var_2;
-        var_b = v;
+        r = var_1;
+        g = var_2;
+        b = v;
       }else if (var_i===4){
-        var_r = var_3;
-        var_g = var_1;
-        var_b = v;
+        r = var_3;
+        g = var_1;
+        b = v;
       }else{
-        var_r = v;
-        var_g = var_1;
-        var_b = var_2;
+        r = v;
+        g = var_1;
+        b = var_2;
       }
       RGBA = [
-        Math.round(var_r * 255),
-        Math.round(var_g * 255),
-        Math.round(var_b * 255),
+        Math.round(r * 255),
+        Math.round(g * 255),
+        Math.round(b * 255),
         a * 255
       ];
     }
@@ -79,64 +79,56 @@ define(function(require) {
 
   /**
    * For a color expressed as an RGBA array, return the corresponding HSBA value
-<<<<<<< HEAD
-   *
-   * @param {Array} rgba An 'array' object that represents a list of
-   *                          RGB colors on a scale of 0-255
-   * @return {Array} an array of HSB values, on a scale of 0-255
-=======
    * 
    * @param {Array} rgba An 'array' object that represents a list of RGB colors
    * @param {Array} maxes An 'array' object that represents the RGB range maxes
    * @return {Array} an array of HSB values, scaled by the HSB-space maxes
->>>>>>> b863d46c93bf106a1261d997abc903c1f0b31adc
    */
   p5.ColorUtils.rgbaToHSBA = function(rgba, maxes) {
-    var var_R = rgba[0]/maxes[0];
-    var var_G = rgba[1]/maxes[1];
-    var var_B = rgba[2]/maxes[2];
-    var var_A = rgba[3]/maxes[3];
+    var r = rgba[0]/maxes[0];
+    var g = rgba[1]/maxes[1];
+    var b = rgba[2]/maxes[2];
+    var a = rgba[3]/maxes[3];
 
-    var var_Min = Math.min(var_R, var_G, var_B); //Min. value of RGB
-    var var_Max = Math.max(var_R, var_G, var_B); //Max. value of RGB
-    var del_Max = var_Max - var_Min;             //Delta RGB value
+    var min = Math.min(r, g, b); //Min. value of RGB
+    var max = Math.max(r, g, b); //Max. value of RGB
+    var delta_max = max - min;             //Delta RGB value
 
-    var H;
-    var S;
-    var V = var_Max;
-    var A = var_A;
+    var h;
+    var s;
+    var v = max;
 
-    if (del_Max === 0) { //This is a gray, no chroma...
-      H = 0; //HSV results from 0 to 1
-      S = 0;
+    if (delta_max === 0) { //This is a gray, no chroma...
+      h = 0; //HSV results from 0 to 1
+      s = 0;
     }
     else { //Chromatic data...
-      S = del_Max/var_Max;
+      s = delta_max/max;
 
-      var del_R = ( ( ( var_Max - var_R ) / 6 ) + ( del_Max / 2 ) ) / del_Max;
-      var del_G = ( ( ( var_Max - var_G ) / 6 ) + ( del_Max / 2 ) ) / del_Max;
-      var del_B = ( ( ( var_Max - var_B ) / 6 ) + ( del_Max / 2 ) ) / del_Max;
+      var delta_r = ( ( ( max - r ) / 6 ) + ( delta_max / 2 ) ) / delta_max;
+      var delta_g = ( ( ( max - g ) / 6 ) + ( delta_max / 2 ) ) / delta_max;
+      var delta_b = ( ( ( max - b ) / 6 ) + ( delta_max / 2 ) ) / delta_max;
 
-      if (var_R === var_Max) {
-        H = del_B - del_G;
-      } else if (var_G === var_Max) {
-        H = 1/3 + del_R - del_B;
-      } else if (var_B === var_Max) {
-        H = 2/3 + del_G - del_R;
+      if (r === max) {
+        h = delta_b - delta_g;
+      } else if (g === max) {
+        h = 1/3 + delta_r - delta_b;
+      } else if (b === max) {
+        h = 2/3 + delta_g - delta_r;
       }
 
-      if (H<0) {
-        H += 1;
+      if (h < 0) {
+        h += 1;
       }
-      if (H>1) {
-        H -= 1;
+      if (h > 1) {
+        h -= 1;
       }
     }
     return [
-        Math.round(H * 360),
-        Math.round(S * 100),
-        Math.round(V * 100),
-        A * 1
+        Math.round(h * 360),
+        Math.round(s * 100),
+        Math.round(v * 100),
+        a * 1
       ];
   };
 
@@ -159,11 +151,11 @@ define(function(require) {
     a /= maxes[3];
     // Adapted from http://www.easyrgb.com/math.html
     // hsl values = 0 - 1, rgb values = 0 - 255
-    var RGBA = [];
+    var rgba = [];
     if(s === 0){
-      RGBA = [Math.round(l*255), Math.round(l*255), Math.round(l*255), a];
+      rgba = [Math.round(l*255), Math.round(l*255), Math.round(l*255), a];
     } else {
-      var m, n, var_r, var_g, var_b, var_a;
+      var m, n, r, g, b;
 
       n = l < 0.5 ? l * (1 + s) : (l + s) - (s * l);
       m = 2 * l - n;
@@ -186,21 +178,20 @@ define(function(require) {
         }
       };
 
-      var_r = convert( m, n, h + ( 1 / 3 ) );
-      var_g = convert( m, n, h );
-      var_b = convert( m, n, h - ( 1 / 3 ) );
-      var_a = a;
+      r = convert( m, n, h + ( 1 / 3 ) );
+      g = convert( m, n, h );
+      b = convert( m, n, h - ( 1 / 3 ) );
 
-      RGBA = [
-        Math.round(var_r * 255),
-        Math.round(var_g * 255),
-        Math.round(var_b * 255),
-        Math.round(var_a * 255)
+      rgba = [
+        Math.round(r * 255),
+        Math.round(g * 255),
+        Math.round(b * 255),
+        Math.round(a * 255)
       ];
 
     }
 
-    return RGBA;
+    return rgba;
 
   };
 
@@ -212,61 +203,60 @@ define(function(require) {
    * @return {Array} an array of HSL values, scaled by the HSL-space maxes
    */
   p5.ColorUtils.rgbaToHSLA = function(rgba, maxes) {
-    var var_R = rgba[0]/maxes[0];
-    var var_G = rgba[1]/maxes[1];
-    var var_B = rgba[2]/maxes[2];
-    var var_A = rgba[3]/maxes[3];
+    var r = rgba[0]/maxes[0];
+    var g = rgba[1]/maxes[1];
+    var b = rgba[2]/maxes[2];
+    var a = rgba[3]/maxes[3];
 
-    var var_Min = Math.min(var_R, var_G, var_B); //Min. value of RGB
-    var var_Max = Math.max(var_R, var_G, var_B); //Max. value of RGB
-    var del_Max = var_Max - var_Min;             //Delta RGB value 
+    var min = Math.min(r, g, b); //Min. value of RGB
+    var max = Math.max(r, g, b); //Max. value of RGB
+    var delta_max = max - min;             //Delta RGB value 
 
-    var H;
-    var S;
-    var L = (var_Max + var_Min) / 2;
-    var A = var_A;
+    var h;
+    var s;
+    var l = (max + min) / 2;
 
-    var del_R;
-    var del_G;
-    var del_B;
+    var delta_r;
+    var delta_g;
+    var delta_b;
 
-    if (del_Max === 0) { // This is a gray, no chroma...
-      H = 0;             // HSL results from 0 to 1
-      S = 0;
+    if (delta_max === 0) { // This is a gray, no chroma...
+      h = 0;             // HSL results from 0 to 1
+      s = 0;
     } else {              // Chromatic data...
        
-      del_R = ( ( ( var_Max - var_R ) / 6 ) + ( del_Max / 2 ) ) / del_Max;
-      del_G = ( ( ( var_Max - var_G ) / 6 ) + ( del_Max / 2 ) ) / del_Max;
-      del_B = ( ( ( var_Max - var_B ) / 6 ) + ( del_Max / 2 ) ) / del_Max;
+      delta_r = ( ( ( max - r ) / 6 ) + ( delta_max / 2 ) ) / delta_max;
+      delta_g = ( ( ( max - g ) / 6 ) + ( delta_max / 2 ) ) / delta_max;
+      delta_b = ( ( ( max - b ) / 6 ) + ( delta_max / 2 ) ) / delta_max;
 
-      if ( var_R === var_Max ){
-        H = del_B - del_G;
-      } else if ( var_G === var_Max ){
-        H = ( 1 / 3 ) + del_R - del_B;
-      } else if ( var_B === var_Max ) {
-        H = ( 2 / 3 ) + del_G - del_R;
+      if ( r === max ){
+        h = delta_b - delta_g;
+      } else if ( g === max ){
+        h = ( 1 / 3 ) + delta_r - delta_b;
+      } else if ( b === max ) {
+        h = ( 2 / 3 ) + delta_g - delta_r;
       }
 
-      if ( H < 0 ) {
-        H += 1;
+      if ( h < 0 ) {
+        h += 1;
       }
          
-      if ( H > 1 ) {
-        H -= 1;
+      if ( h > 1 ) {
+        h -= 1;
       }
 
-      if ( L < 0.5 ){
-        S = del_Max / ( var_Max + var_Min );
+      if ( l < 0.5 ){
+        s = delta_max / ( max + min );
       } else {
-        S = del_Max / ( 2 - var_Max - var_Min );
+        s = delta_max / ( 2 - max - min );
       }
 
     }
     return [
-        Math.round(H * 360),
-        Math.round(S * 100),
-        Math.round(L * 100),
-        A * 1
+        Math.round(h * 360),
+        Math.round(s * 100),
+        Math.round(l * 100),
+        a * 1
       ];
   };
 
