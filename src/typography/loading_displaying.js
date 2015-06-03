@@ -97,9 +97,9 @@ define(function(require) {
    * <code>
    * var fontRegular, fontItalic, fontBold;
    * function preload() {
-   *    fontRegular = loadFont("./assets/fonts/Regular.otf");
-   *    fontItalic = loadFont("./assets/fonts/Italic.ttf");
-   *    fontBold = loadFont("./assets/fonts/Bold.ttf");
+   *    fontRegular = loadFont("assets/Regular.otf");
+   *    fontItalic = loadFont("assets/Italic.ttf");
+   *    fontBold = loadFont("assets/Bold.ttf");
    * }
    * function setup() {
    *    background(210);

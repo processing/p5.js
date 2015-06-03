@@ -35,7 +35,7 @@ define(function (require) {
    * <div><code>
    * var myFont;
    * function preload() {
-   *   myFont = loadFont('./assets/fonts/AvenirNextLTPro-Demi.otf');
+   *   myFont = loadFont('assets/AvenirNextLTPro-Demi.otf');
    * }
    *
    * function setup() {
@@ -51,7 +51,7 @@ define(function (require) {
    *
    * <div><code>
    * function setup() {
-   *   loadFont('./assets/fonts/AvenirNextLTPro-Demi.otf', drawText);
+   *   loadFont('assets/AvenirNextLTPro-Demi.otf', drawText);
    * }
    *
    * function drawText(font) {
