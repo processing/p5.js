@@ -20,5 +20,5 @@ If you believe someone is violating the code of conduct, we ask that you report 
 Participants asked to stop any harassing behavior are expected to comply immediately. If a participant engages in harassing behavior, the p5.js Team may take any action they deem appropriate, up to and including expulsion from all p5.js spaces and identification of the participant as a harasser to other p5.js members or the general public. 
 
 ## Also
-* See our [community statement](http://p5js.org/community/) on our website.
+* Read our [community statement](http://p5js.org/community/) on our website.
 * Check out the [development](https://github.com/processing/p5.js/wiki/Development) wiki page for more in-depth details about contributing code, bug fixes, and documentation.
