@@ -58,7 +58,7 @@ define(function(require) {
    */
   p5.Font.prototype._getGlyphs = function(str) {
     return this.font.stringToGlyphs(str);
-  }
+  };
 
   /*
    * Renders a set of glyph paths to the current graphics context
@@ -157,7 +157,7 @@ define(function(require) {
    * </code>
    * </div>
    */
-   p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
+  p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
 
     if (!this.parent._isOpenType()) {
 
@@ -217,19 +217,19 @@ define(function(require) {
 
   p5.Font.prototype._drawPoints = function(str, tx, ty, fsize, options) {
 
+    var pdata, onCurvePts, offCurvePts, p = this.parent,
+      scale = (1 / this.font.unitsPerEm) * fsize;
+
     tx = tx !== undefined ? tx : 0;
     ty = ty !== undefined ? ty : 0;
     fsize = fsize || p._textSize;
 
-    var pdata, onCurvePts, offCurvePts,
-      p = this.parent, pg = p._graphics, ctx = pg.drawingContext,
-      scale = (1 / this.font.unitsPerEm) * fsize;
-
     this.font.forEachGlyph(str, tx, ty, fsize, options,
       function(glyph, x, y, fontSize) {
 
+        onCurvePts = [];
+        offCurvePts = [];
         pdata = glyph.path.commands;
-        onCurvePts = [], offCurvePts = [];
 
         for (var i = 0; i < pdata.length; i += 1) {
 
@@ -252,7 +252,7 @@ define(function(require) {
         drawCircles(onCurvePts, x, y, scale);
         p.fill(255,0,0);
         drawCircles(offCurvePts, x, y, scale);
-    });
+      });
 
     function drawCircles(l, x, y, scale) {
       for (var j = 0; j < l.length; j++) {
