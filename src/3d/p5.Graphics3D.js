@@ -1,9 +1,9 @@
 define(function(require) {
 
   var p5 = require('core/core');
-  var shaders = require('./shaders');
+  var shaders = require('3d/shaders');
   require('core/p5.Graphics');
-  require('./p5.Matrix');
+  require('3d/p5.Matrix');
   var gl,
     shaderProgram;
   var uMVMatrixStack = [];
