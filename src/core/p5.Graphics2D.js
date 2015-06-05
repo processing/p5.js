@@ -1117,7 +1117,8 @@ define(function(require) {
 
     if (p._isOpenType()) {
 
-      return p._textFont.textBounds(s, 0, 0).w;
+      var tb = p._textFont.textBounds(s, 0, 0);
+      return tb.w + tb.advance;
     }
 
     return this.drawingContext.measureText(s).width;
