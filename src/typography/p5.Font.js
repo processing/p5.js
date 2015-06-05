@@ -172,8 +172,10 @@ define(function(require) {
 
     var result = this.cache[cacheKey('textBounds', str, x, y, fontSize)];
     if (!result) {
+
       // console.log('computing');
-      var xCoords = [], advance,
+
+      var xCoords = [],
         yCoords = [], minX, minY, maxX, maxY,
         scale = 1 / this.font.unitsPerEm * fontSize;
 
@@ -208,7 +210,7 @@ define(function(require) {
 
       this.cache[cacheKey('textBounds', str, x, y, fontSize)] = result;
     }
-    else { console.log('cache-hit'); }
+    //else { console.log('cache-hit'); }
 
     return result;
   };
