@@ -5,13 +5,13 @@
  */
 define(function(require) {
 
-  var p5 = require('core');
+  var p5 = require('core/core');
 
   /**
    * Base class for all elements added to a sketch, including canvas,
    * graphics buffers, and other HTML elements. Methods in blue are
    * included in the core functionality, methods in brown are added
-   * with the <a href="http://p5js.org/libraries/">p5.dom library</a>. 
+   * with the <a href="http://p5js.org/libraries/">p5.dom library</a>.
    * It is not called directly, but p5.Element
    * objects are created by calling createCanvas, createGraphics,
    * or in the p5.dom library, createDiv, createImg, createInput, etc.
@@ -112,8 +112,8 @@ define(function(require) {
    *
    * @method mousePressed
    * @param  {Function} fxn function to be fired when mouse is
-   *                    pressed over the element. 
-   * @return {p5.Element}  
+   *                    pressed over the element.
+   * @return {p5.Element}
    * @example
    * <div class='norender'><code>
    * var cnv;
@@ -136,7 +136,7 @@ define(function(require) {
    * function mousePressed() {
    *   d = d + 10;
    * }
-   * 
+   *
    * // this function fires only when cnv is clicked
    * function changeGray() {
    *   g = random(0, 255);
@@ -187,7 +187,7 @@ define(function(require) {
 
 
   /**
-   * The .mouseClicked() function is called once after a mouse button is 
+   * The .mouseClicked() function is called once after a mouse button is
    * pressed and released over the element. This can be used to
    * attach element specific event listeners.
    *
@@ -253,8 +253,8 @@ define(function(require) {
    *
    * @method touchStarted
    * @param  {Function} fxn function to be fired when touch is
-   *                    started over the element. 
-   * @return {p5.Element}  
+   *                    started over the element.
+   * @return {p5.Element}
    * @example
    * <div class='norender'><code>
    * var cnv;
@@ -277,7 +277,7 @@ define(function(require) {
    * function touchStarted() {
    *   d = d + 10;
    * }
-   * 
+   *
    * // this function fires only when cnv is clicked
    * function changeGray() {
    *   g = random(0, 255);
@@ -297,8 +297,8 @@ define(function(require) {
    *
    * @method touchMoved
    * @param  {Function} fxn function to be fired when touch is moved
-   *                    over the element. 
-   * @return {p5.Element}  
+   *                    over the element.
+   * @return {p5.Element}
    * @example
    * <div class='norender'><code>
    * var cnv;
@@ -333,8 +333,8 @@ define(function(require) {
    *
    * @method touchEnded
    * @param  {Function} fxn function to be fired when touch is
-   *                    ended over the element. 
-   * @return {p5.Element}  
+   *                    ended over the element.
+   * @return {p5.Element}
    * @example
    * <div class='norender'><code>
    * var cnv;
@@ -357,7 +357,7 @@ define(function(require) {
    * function touchEnded() {
    *   d = d + 10;
    * }
-   * 
+   *
    * // this function fires only when cnv is clicked
    * function changeGray() {
    *   g = random(0, 255);
@@ -405,8 +405,8 @@ define(function(require) {
 
   /**
    * The .drop() function is called for each file dropped on the element.
-   * It requires a callback that is passed a p5.File object.  You can 
-   * optionally pass two callbacks, the first one (required) is triggered 
+   * It requires a callback that is passed a p5.File object.  You can
+   * optionally pass two callbacks, the first one (required) is triggered
    * for each file dropped when the file is loaded.  The second (optional)
    * is triggered just once when a file (or files) are dropped.
    *
@@ -446,23 +446,23 @@ define(function(require) {
       if (arguments.length > 1) {
         attachListener('drop', fxn, this);
       }
-      
+
       // Deal with the files
       attachListener('drop', function(evt) {
 
         evt.stopPropagation();
         evt.preventDefault();
-        
+
         // A FileList
         var files = evt.dataTransfer.files;
-        
+
         // Load each one and trigger the callback
         for (var i = 0; i < files.length; i++) {
           var f = files[i];
           var reader = new FileReader();
           reader.onload = makeLoader(f);
 
-          
+
           // Text of data?
           // This should likely be improved
           if (f.type === 'text') {
@@ -499,6 +499,6 @@ define(function(require) {
     this[prop] = value;
   };
 
-  
+
   return p5.Element;
 });

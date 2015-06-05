@@ -1,9 +1,9 @@
 define(function(require) {
 
-  var p5 = require('core');
-  var shaders = require('shaders');
-  require('p5.Graphics');
-  require('p5.Matrix');
+  var p5 = require('core/core');
+  var shaders = require('./shaders');
+  require('core/p5.Graphics');
+  require('./p5.Matrix');
   var gl,
     shaderProgram;
   var uMVMatrixStack = [];
@@ -128,7 +128,7 @@ define(function(require) {
     // gl.getUniformLocation(shaderProgram, 'uNVMatrix');
 
     //material color uniform
-    //@TODO: remove hard coded white rgba 
+    //@TODO: remove hard coded white rgba
     shaderProgram.uMaterialColorLoc = gl.getUniformLocation(shaderProgram,
       'color');
     // Set material uniform
@@ -201,6 +201,10 @@ define(function(require) {
    * @return {[type]}          [description]
    */
   p5.Graphics3D.prototype.drawGeometry = function(vertices, faces) {
+    var geomVertexPositionBuffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, geomVertexPositionBuffer);
+
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
@@ -218,7 +222,7 @@ define(function(require) {
 
     return this;
   };
-  
+
 
   /**
    * [translate description]

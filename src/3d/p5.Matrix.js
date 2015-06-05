@@ -6,12 +6,12 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
-  var polarGeometry = require('polargeometry');
-  var constants = require('constants');
+  var p5 = require('core/core');
+  var polarGeometry = require('math/polargeometry');
+  var constants = require('core/constants');
 
   /**
-   * A class to describe a 4x4 matrix 
+   * A class to describe a 4x4 matrix
    * for model and view matrix manipulation in the p5js webgl renderer.
    * @class p5.Matrix
    * @constructor
@@ -43,7 +43,7 @@ define(function (require) {
    * Sets the x, y, and z component of the vector using two or three separate
    * variables, the data from a p5.Matrix, or the values from a float array.
    *
-   * @param {p5.Matrix|Array} [inMatrix] the input p5.Matrix or 
+   * @param {p5.Matrix|Array} [inMatrix] the input p5.Matrix or
    *                                     an Array of length 16
    */
   p5.Matrix.prototype.set = function (inMatrix) {
@@ -197,7 +197,7 @@ define(function (require) {
     _dest[13] = b0*_src[1] + b1*_src[5] + b2*_src[9] + b3*_src[13];
     _dest[14] = b0*_src[2] + b1*_src[6] + b2*_src[10] + b3*_src[14];
     _dest[15] = b0*_src[3] + b1*_src[7] + b2*_src[11] + b3*_src[15];
-    
+
     this.mat4 = _dest;
 
     return this;
@@ -233,7 +233,7 @@ define(function (require) {
     }
 
     var _dest = new Array(16);
-    
+
     for (var i = 0; i < this.mat4.length; i++) {
       var row = i % 4;
       switch(row){
@@ -288,7 +288,7 @@ define(function (require) {
     x *= (1/len);
     y *= (1/len);
     z *= (1/len);
-    
+
     var a00 = this.mat4[0];
     var a01 = this.mat4[1];
     var a02 = this.mat4[2];

@@ -8,7 +8,7 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
+  var p5 = require('core/core');
 
   /**
    * Holds the key codes of currently pressed keys.
@@ -54,7 +54,7 @@ define(function (require) {
    *   fill(245, 123, 158);
    *   textSize(50);
    * }
-   * 
+   *
    * function draw() {
    *   background(200);
    *   text(key, 33,65); // Display last key pressed.
@@ -76,13 +76,13 @@ define(function (require) {
    *   fill(fillVal);
    *   rect(25, 25, 50, 50);
    * }
-   * 
+   *
    * function keyPressed() {
    *   if (keyCode == UP_ARROW) {
    *     fillVal = 255;
    *   } else if (keyCode == DOWN_ARROW) {
    *     fillVal = 0;
-   *   } 
+   *   }
    *   return false; // prevent default
    * }
    * </code></div>
@@ -257,7 +257,7 @@ define(function (require) {
   /**
    * The onblur function is called when the user is no longer focused
    * on the p5 element. Because the keyup events will no fire if the user is
-   * not focused on the element we must assume all keys currently down have 
+   * not focused on the element we must assume all keys currently down have
    * been released.
    */
   p5.prototype._onblur = function (e) {

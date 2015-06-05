@@ -5,9 +5,9 @@
  */
 define(function(require) {
 
-  var p5 = require('core');
-  var color_utils = require('utils.color_utils');
-  var constants = require('constants');
+  var p5 = require('core/core');
+  var color_utils = require('color/color_utils');
+  var constants = require('core/constants');
 
   /**
    *
@@ -15,56 +15,68 @@ define(function(require) {
    * @constructor
    */
   p5.Color = function (pInst, vals) {
+    this.maxArr = pInst._colorMaxes[pInst._colorMode];
     this.color_array = p5.Color._getFormattedColor.apply(pInst, vals);
-    this._converted_color = this._convertTo255(pInst);
-    
-    var isHSB = pInst._colorMode === constants.HSB;
+    var isHSB = pInst._colorMode === constants.HSB,
+        isRGB = pInst._colorMode === constants.RGB,
+        isHSL = pInst._colorMode === constants.HSL;
 
-    if (isHSB) {
-      this.hsba = this.color_array;
-      this.rgba = color_utils.hsbaToRGBA(this._converted_color);
-    } else {
+    if (isRGB) {
       this.rgba = this.color_array;
+    } else if (isHSL) {
+      this.hsla = this.color_array;
+      this.rgba = color_utils.hslaToRGBA(this.color_array, this.maxArr);
+    } else if (isHSB) {
+      this.hsba = this.color_array;
+      this.rgba = color_utils.hsbaToRGBA(this.color_array, this.maxArr);
+    } else {
+      throw new Error(pInst._colorMode + 'is an invalid colorMode.');
     }
 
     return this;
   };
 
-  p5.Color.prototype._convertTo255 = function (pInst) {
-    var isRGB = pInst._colorMode === constants.RGB;
-    var maxArr = isRGB ? pInst._maxRGB : pInst._maxHSB;
-    var arr = [];
-    arr[0] = this.color_array[0] * 255 / maxArr[0];
-    arr[1] = this.color_array[1] * 255 / maxArr[1];
-    arr[2] = this.color_array[2] * 255 / maxArr[2];
-    arr[3] = this.color_array[3] * 255 / maxArr[3];
-    return arr;
-  };
-
   p5.Color.prototype.getHue = function() {
-    if (this.hsba) {
-      return this.hsba[0];
+    // Hue is consistent in both HSL & HSB
+    if (this.hsla || this.hsba) {
+      return this.hsla ? this.hsla[0] : this.hsba[0];
     } else {
-      this.hsba = color_utils.rgbaToHSBA(this._converted_color);
-      return this.hsba[0];
+      this.hsla = color_utils.rgbaToHSLA(this.color_array, this.maxArr);
+      return this.hsla[0];
     }
   };
 
   p5.Color.prototype.getSaturation = function() {
-    if (this.hsba) {
+    // Saturation exists in both HSB and HSL, but returns different values
+    // We are preferring HSL here (because it is a web color space) 
+    // until the global flag issue can be resolved
+    if (this.hsla) {
+      return this.hsla[1];
+    } else if (this.hsba) {
       return this.hsba[1];
     } else {
-      this.hsba = color_utils.rgbaToHSBA(this._converted_color);
-      return this.hsba[1];
+      this.hsla = color_utils.rgbaToHSLA(this.color_array, this.maxArr);
+      return this.hsla[1];
     }
   };
 
+  // Brightness only exists as an HSB value
   p5.Color.prototype.getBrightness = function() {
     if (this.hsba) {
       return this.hsba[2];
     } else {
-      this.hsba = color_utils.rgbaToHSBA(this._converted_color);
+      this.hsba = color_utils.rgbaToHSBA(this.color_array, this.maxArr);
       return this.hsba[2];
+    }
+  };
+
+  // Lightness only exists as an HSL value
+  p5.Color.prototype.getLightness = function() {
+    if (this.hsla) {
+      return this.hsla[2];
+    } else {
+      this.hsla = color_utils.rgbaToHSLA(this.color_array, this.maxArr);
+      return this.hsla[2];
     }
   };
 
@@ -81,8 +93,11 @@ define(function(require) {
   };
 
   p5.Color.prototype.getAlpha = function() {
-    if (this.hsba) {
-      return this.hsba[3];
+    // Again this is a little sleight of hand until the global flag
+    // issue is resolved. The presumption is that if alpha has been
+    // specified in 0-1 space, the user wants that value out
+    if (this.hsba || this.hsla) {
+      return this.hsla ? this.hsla[3] : this.hsba[3];
     } else {
       return this.rgba[3];
     }
@@ -292,6 +307,7 @@ define(function(require) {
       INTEGER.source,
       '\\)$'
     ].join(WHITESPACE.source), 'i'),
+    
 
     /**
      * Regular expression for matching colors in format rgb(R%, G%, B%),
@@ -339,7 +355,38 @@ define(function(require) {
       ',',
       DECIMAL.source,
       '\\)$'
-    ].join(WHITESPACE.source), 'i')
+    ].join(WHITESPACE.source), 'i'),
+
+    /**
+     * Regular expression for matching colors in format hsla(H, S%, L%),
+     * e.g. hsl(100, 40%, 28.9%,)
+     */
+    HSL: new RegExp([
+      '^hsl\\(',
+      INTEGER.source,
+      ',',
+      PERCENT.source,
+      ',',
+      PERCENT.source,
+      '\\)$'
+    ].join(WHITESPACE.source), 'i'),
+
+    /**
+     * Regular expression for matching colors in format hsla(H, S%, L%, A),
+     * e.g. hsla(100, 40%, 28.9%, 0.5)
+     */
+    HSLA: new RegExp([
+      '^hsla\\(',
+      INTEGER.source,
+      ',',
+      PERCENT.source,
+      ',',
+      PERCENT.source,
+      ',',
+      DECIMAL.source,
+      '\\)$'
+    ].join(WHITESPACE.source), 'i'),
+
   };
 
   /**
@@ -367,13 +414,17 @@ define(function(require) {
    * </div>
    */
   p5.Color._getFormattedColor = function () {
-    var r, g, b, a, str, vals;
-    if (arguments.length >= 3) {
-      r = arguments[0];
-      g = arguments[1];
-      b = arguments[2];
-      a = typeof arguments[3] === 'number' ? arguments[3] : 255;
-    } else if (typeof arguments[0] === 'string') {
+    var numArgs = arguments.length,
+        mode    = this._colorMode,
+        first, second, third, alpha, str, vals;
+
+    if (numArgs >= 3) {
+      first   = arguments[0];
+      second  = arguments[1];
+      third   = arguments[2];
+      alpha   = typeof arguments[3] === 'number' ?
+                arguments[3] : this._colorMaxes[mode][3];
+    } else if (numArgs === 1 && typeof arguments[0] === 'string') {
       str = arguments[0].trim().toLowerCase();
 
       if (namedColors[str]) {
@@ -418,6 +469,14 @@ define(function(require) {
             }
             return parseInt(parseFloat(color) / 100 * 255, 10);
           });
+      } else if (colorPatterns.HSL.test(str)) {
+        vals = colorPatterns.HSL.exec(str).slice(1).map(function(color) {
+          return parseInt(color, 10);
+        });
+      } else if (colorPatterns.HSLA.test(str)) {
+        vals = colorPatterns.HSLA.exec(str).slice(1).map(function(color) {
+          return parseFloat(color, 10);
+        });
       } else {
         // Input did not match any CSS Color pattern: Default to white
         vals = [255];
@@ -425,20 +484,27 @@ define(function(require) {
 
       // Re-run _getFormattedColor with the values parsed out of the string
       return p5.Color._getFormattedColor.apply(this, vals);
-    } else {
-      if (this._colorMode === constants.RGB) {
-        r = g = b = arguments[0];
-      } else {
-        r = b = arguments[0];
-        g = 0;
+    } else if (numArgs === 1 && typeof arguments[0] === 'number') {
+      // When users pass only one argument, they are presumed to be 
+      // working in grayscale mode. 
+      if (mode === constants.RGB) {
+        first = second = third = arguments[0];
+      } else if (mode === constants.HSB || mode === constants.HSL) {
+        // In order for grayscale to work with HSB & HSL, the saturation
+        // (the second argument) must be 0.
+        first = third = arguments[0];
+        second = 0;
       }
-      a = typeof arguments[1] === 'number' ? arguments[1] : 255;
+      alpha = typeof arguments[1] === 'number' ?
+                     arguments[1] : this._colorMaxes[mode][3];
+    } else {
+      throw new Error (arguments + 'is not a valid color representation.');
     }
     return [
-      r,
-      g,
-      b,
-      a
+      first,
+      second,
+      third,
+      alpha
     ];
   };
 

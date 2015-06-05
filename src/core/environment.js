@@ -9,8 +9,8 @@ define(function(require) {
 
   'use strict';
 
-  var p5 = require('core');
-  var C = require('constants');
+  var p5 = require('core/core');
+  var C = require('core/constants');
 
   var standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
 
@@ -21,26 +21,26 @@ define(function(require) {
 
   if (window.console && console.log) {
     /**
-     * The print() function writes to the console area of your browser. 
-     * This function is often helpful for looking at the data a program is 
-     * producing. This function creates a new line of text for each call to 
-     * the function. More than one parameter can be passed into the function by 
-     * separating them with commas. Alternatively, individual elements can be 
+     * The print() function writes to the console area of your browser.
+     * This function is often helpful for looking at the data a program is
+     * producing. This function creates a new line of text for each call to
+     * the function. More than one parameter can be passed into the function by
+     * separating them with commas. Alternatively, individual elements can be
      * separated with quotes ("") and joined with the addition operator (+).
-     * 
-     * While print() is similar to console.log(), it does not directly map to 
-     * it in order to simulate easier to understand behavior than 
-     * console.log(). Due to this, it is slower. For fastest results, use 
-     * console.log(). 
-     * 
+     *
+     * While print() is similar to console.log(), it does not directly map to
+     * it in order to simulate easier to understand behavior than
+     * console.log(). Due to this, it is slower. For fastest results, use
+     * console.log().
+     *
      * @method print
      * @param {Any} contents any combination of Number, String, Object, Boolean,
      *                       Array to print
      */
-     // Converts passed args into a string and then parses that string to 
-     // simulate synchronous behavior. This is a hack and is gross. 
+     // Converts passed args into a string and then parses that string to
+     // simulate synchronous behavior. This is a hack and is gross.
      // Since this will not work on all objects, particularly circular
-     // structures, simply console.log() on error. 
+     // structures, simply console.log() on error.
     p5.prototype.print = function(args) {
       try {
         var newArgs = JSON.parse(JSON.stringify(args));
@@ -52,7 +52,7 @@ define(function(require) {
   } else {
     p5.prototype.print = function() {};
   }
-  
+
   p5.prototype.println = p5.prototype.print;
 
   /**
@@ -79,14 +79,14 @@ define(function(require) {
   p5.prototype.frameCount = 0;
 
   /**
-   * Confirms if the window a p5.js program is in is "focused," meaning that 
-   * the sketch will accept mouse or keyboard input. This variable is 
-   * "true" if the window is focused and "false" if not. 
+   * Confirms if the window a p5.js program is in is "focused," meaning that
+   * the sketch will accept mouse or keyboard input. This variable is
+   * "true" if the window is focused and "false" if not.
    *
    * @property focused
    * @example
    * <div><code>
-   * // To demonstrate, put two windows side by side. 
+   * // To demonstrate, put two windows side by side.
    * // Click on the window that the p5 sketch isn't in!
    * function draw() {
    *   if (focused) {  // or "if (focused === true)"
@@ -94,12 +94,12 @@ define(function(require) {
    *     fill(0, 200, 0);
    *     ellipse(25, 25, 50, 50);
    *   } else {
-   *     stroke(200,0,0); 
+   *     stroke(200,0,0);
    *     line(0, 0, 100, 100);
    *     line(100, 0, 0, 100);
    *   }
    * }
-   *     
+   *
    * </code></div>
    */
   p5.prototype.focused = (document.hasFocus());
@@ -173,22 +173,22 @@ define(function(require) {
    * @param  {Number} [fps] number of frames to be displayed every second
    * @return {Number}       current frameRate
    * @example
-   * 
+   *
    * <div><code>
    * var rectX = 0;
-   * var fr = 30; //starting FPS 
+   * var fr = 30; //starting FPS
    * var clr = color(255,0,0);
-   * 
+   *
    * function setup() {
    *   background(200);
    *   frameRate(fr); // Attempt to refresh at starting FPS
    * }
-   * 
+   *
    * function draw() {
    *   background(200);
    *   rectX = rectX += 1; // Move Rectangle
-   *   
-   *   if (rectX >= width) { // If you go off screen. 
+   *
+   *   if (rectX >= width) { // If you go off screen.
    *     if (fr == 30) {
    *       clr = color(0,0,255);
    *       fr = 10;
@@ -204,7 +204,7 @@ define(function(require) {
    *   rect(rectX, 40, 20,20);
    * }
    * </div></code>
-   * 
+   *
    */
   p5.prototype.frameRate = function(fps) {
     if (typeof fps === 'undefined') {
@@ -309,7 +309,7 @@ define(function(require) {
 
   /**
    * The windowResized() function is called once every time the browser window
-   * is resized. This is a good place to resize the canvas or do any other 
+   * is resized. This is a good place to resize the canvas or do any other
    * adjustements to accomodate the new window size.
    *
    * @property windowResized
@@ -489,14 +489,14 @@ define(function(require) {
    * <div>
    * <code>
    * var url;
-   * var x = 100;    
-   * 
+   * var x = 100;
+   *
    * function setup() {
    *   fill(0);
    *   noStroke();
-   *   url = getURL();    
-   * }    
-   * 
+   *   url = getURL();
+   * }
+   *
    * function draw() {
    *   background(200);
    *   text(url, x, height/2);
@@ -533,13 +533,13 @@ define(function(require) {
    * <div class='norender'>
    * <code>
    * // Example: http://p5js.org?year=2014&month=May&day=15
-   * 
+   *
    * function setup() {
-   *   var params = getURLParams();  
+   *   var params = getURLParams();
    *   text(params.day, 10, 20);
    *   text(params.month, 10, 40);
-   *   text(params.year, 10, 60);  
-   * }    
+   *   text(params.year, 10, 60);
+   * }
    * </code>
    * </div>
    */

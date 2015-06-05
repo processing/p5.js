@@ -130,6 +130,7 @@ define(function(require) {
     // COLOR
     RGB: 'rgb',
     HSB: 'hsb',
+    HSL: 'hsl',
 
     // DOM EXTENSION
     AUTO: 'auto',

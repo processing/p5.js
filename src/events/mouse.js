@@ -10,8 +10,8 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
-  var constants = require('constants');
+  var p5 = require('core/core');
+  var constants = require('core/constants');
 
   /**
    * The system variable mouseX always contains the current horizontal
@@ -22,7 +22,7 @@ define(function (require) {
    * @example
    * <div>
    * <code>
-   * // Move the mouse across the canvas      
+   * // Move the mouse across the canvas
    * function draw() {
    *   background(244, 248, 252);
    *   line(mouseX, 0, mouseX, 100);
@@ -67,9 +67,9 @@ define(function (require) {
    *   frameRate(10);
    * }
    *
-   * function draw() { 
+   * function draw() {
    *   background(244, 248, 252);
-   *   line(mouseX, mouseY, pmouseX, pmouseY); 
+   *   line(mouseX, mouseY, pmouseX, pmouseY);
    *   print(pmouseX + " -> " + mouseX);
    * }
    *
@@ -88,13 +88,13 @@ define(function (require) {
    * @example
    * <div>
    * <code>
-   * function draw() { 
+   * function draw() {
    *   background(237, 34, 93);
    *   fill(0);
    *   //draw a square only if the mouse is not moving
    *   if(mouseY == pmouseY && mouseX == pmouseX)
    *     rect(20,20,60,60);
-   *   
+   *
    *   print(pmouseY + " -> " + mouseY);
    * }
    *
@@ -116,10 +116,10 @@ define(function (require) {
    *
    * function setup() {
    *   //use a variable to store a pointer to the canvas
-   *   myCanvas = createCanvas(100, 100);  
+   *   myCanvas = createCanvas(100, 100);
    * }
    *
-   * function draw() { 
+   * function draw() {
    *   background(237, 34, 93);
    *   fill(0);
    *
@@ -130,7 +130,7 @@ define(function (require) {
    *  //the y of the square is relative to the canvas
    *  rect(20,mouseY,60,60);
    * }
-   *    
+   *
    * </code>
    * </div>
    */
@@ -149,10 +149,10 @@ define(function (require) {
    *
    * function setup() {
    *   //use a variable to store a pointer to the canvas
-   *   myCanvas = createCanvas(100, 100);  
+   *   myCanvas = createCanvas(100, 100);
    * }
    *
-   * function draw() { 
+   * function draw() {
    *   background(237, 34, 93);
    *   fill(0);
    *
@@ -163,7 +163,7 @@ define(function (require) {
    *  //the x of the square is relative to the canvas
    *  rect(mouseX,20,60,60);
    * }
-   *    
+   *
    * </code>
    * </div>
    */
@@ -184,14 +184,14 @@ define(function (require) {
    *
    * function setup() {
    *   //use a variable to store a pointer to the canvas
-   *   myCanvas = createCanvas(100, 100); 
+   *   myCanvas = createCanvas(100, 100);
    *   noStroke();
    *   fill(237, 34, 93);
    *   }
    *
-   * function draw() { 
+   * function draw() {
    *   clear();
-   *   //the difference between previous and 
+   *   //the difference between previous and
    *   //current x position is the horizontal mouse speed
    *   var speed = abs(winMouseX-pwinMouseX);
    *   //change the size of the circle
@@ -222,14 +222,14 @@ define(function (require) {
    *
    * function setup() {
    *   //use a variable to store a pointer to the canvas
-   *   myCanvas = createCanvas(100, 100); 
+   *   myCanvas = createCanvas(100, 100);
    *   noStroke();
    *   fill(237, 34, 93);
    *   }
    *
-   * function draw() { 
+   * function draw() {
    *   clear();
-   *   //the difference between previous and 
+   *   //the difference between previous and
    *   //current y position is the vertical mouse speed
    *   var speed = abs(winMouseY-pwinMouseY);
    *   //change the size of the circle
@@ -247,7 +247,7 @@ define(function (require) {
   /**
    * Processing automatically tracks if the mouse button is pressed and which
    * button is pressed. The value of the system variable mouseButton is either
-   * LEFT, RIGHT, or CENTER depending on which button was pressed last. 
+   * LEFT, RIGHT, or CENTER depending on which button was pressed last.
    * Warning: different browsers may track mouseButton differently.
    *
    * @property mouseButton
@@ -258,7 +258,7 @@ define(function (require) {
 	* function draw() {
 	*   background(237, 34, 93);
 	*   fill(0);
-	* 
+	*
 	*   if (mouseIsPressed) {
 	*     if (mouseButton == LEFT)
 	*       ellipse(50, 50, 50, 50);
@@ -267,7 +267,7 @@ define(function (require) {
 	*     if (mouseButton == CENTER)
 	*       triangle(23, 75, 50, 20, 78, 75);
 	*   }
-	*  
+	*
 	*   print(mouseButton);
 	* }
 	* </code>
@@ -287,12 +287,12 @@ define(function (require) {
 	* function draw() {
 	*   background(237, 34, 93);
 	*   fill(0);
-	* 
+	*
 	*   if (mouseIsPressed)
 	*     ellipse(50, 50, 50, 50);
 	*   else
 	*     rect(25, 25, 50, 50);
-	* 
+	*
 	*   print(mouseIsPressed);
 	* }
 	* </code>
@@ -360,7 +360,7 @@ define(function (require) {
    * <code>
    * // Move the mouse across the page
    * // to change its value
-   *       
+   *
    * var value = 0;
    * function draw() {
    *   fill(value);
@@ -374,7 +374,7 @@ define(function (require) {
    * }
    * </code>
    * </div>
-   * 
+   *
    * <div class="norender">
    * <code>
    * function mouseMoved() {
@@ -400,7 +400,7 @@ define(function (require) {
    * <code>
    * // Drag the mouse across the page
    * // to change its value
-   *       
+   *
    * var value = 0;
    * function draw() {
    *   fill(value);
@@ -414,7 +414,7 @@ define(function (require) {
    * }
    * </code>
    * </div>
-   * 
+   *
    * <div class="norender">
    * <code>
    * function mouseDragged() {
@@ -456,7 +456,7 @@ define(function (require) {
   /**
    * The mousePressed() function is called once after every time a mouse button
    * is pressed. The mouseButton variable (see the related reference entry)
-   * can be used to determine which button has been pressed. If no 
+   * can be used to determine which button has been pressed. If no
    * mousePressed() function is defined, the touchStarted() function will be
    * called instead if it is defined.<br><br>
    * Browsers may have different default
@@ -467,9 +467,9 @@ define(function (require) {
    * @example
    * <div>
    * <code>
-   * // Click within the image to change 
+   * // Click within the image to change
    * // the value of the rectangle
-   *       
+   *
    * var value = 0;
    * function draw() {
    *   fill(value);
@@ -484,7 +484,7 @@ define(function (require) {
    * }
    * </code>
    * </div>
-   * 
+   *
    * <div class="norender">
    * <code>
    * function mousePressed() {
@@ -529,10 +529,10 @@ define(function (require) {
    * @example
    * <div>
    * <code>
-   * // Click within the image to change 
+   * // Click within the image to change
    * // the value of the rectangle
    * // after the mouse has been clicked
-   *       
+   *
    * var value = 0;
    * function draw() {
    *   fill(value);
@@ -547,7 +547,7 @@ define(function (require) {
    * }
    * </code>
    * </div>
-   * 
+   *
    * <div class="norender">
    * <code>
    * function mouseReleased() {
@@ -588,10 +588,10 @@ define(function (require) {
    * @example
    * <div>
    * <code>
-   * // Click within the image to change 
+   * // Click within the image to change
    * // the value of the rectangle
    * // after the mouse has been clicked
-   *       
+   *
    * var value = 0;
    * function draw() {
    *   fill(value);
@@ -606,7 +606,7 @@ define(function (require) {
    * }
    * </code>
    * </div>
-   * 
+   *
    * <div class="norender">
    * <code>
    * function mouseClicked() {
@@ -630,13 +630,13 @@ define(function (require) {
   /**
    * The function mouseWheel is executed every time a scroll event is detected
    * either triggered by an actual mouse wheel or by a touchpad.<br>
-   * The event.delta property returns -1 or +1 depending on the scroll 
-   * direction and the user's settings. (on OS X with "natural" scrolling 
+   * The event.delta property returns -1 or +1 depending on the scroll
+   * direction and the user's settings. (on OS X with "natural" scrolling
    * enabled, the values are inverted).<br><br>
-   * Browsers may have different default behaviors attached to various 
-   * mouse events. To prevent any default behavior for this event, add 
+   * Browsers may have different default behaviors attached to various
+   * mouse events. To prevent any default behavior for this event, add
    * `return false` to the end of the method.
-   * 
+   *
    * The event.wheelDelta or event.detail properties can also be accessed but
    * their behavior may differ depending on the browser.
    * See <a href="http://www.javascriptkit.com/javatutors/onmousewheel.shtml">
@@ -648,13 +648,13 @@ define(function (require) {
 	* <div>
 	* <code>
 	* var pos = 25;
-	* 
+	*
 	* function draw() {
 	*   background(237, 34, 93);
 	*   fill(0);
 	*   rect(25, pos, 50, 50);
 	* }
-	* 
+	*
 	* function mouseWheel(event) {
 	*   //event.delta can be +1 or -1 depending
 	*   //on the wheel/scroll direction
@@ -671,7 +671,7 @@ define(function (require) {
     var context = this._isGlobal ? window : this;
     if (typeof context.mouseWheel === 'function') {
       //creating a delta property (either +1 or -1)
-      //for cross-browser compatibility 
+      //for cross-browser compatibility
       e.delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
       var executeDefault = context.mouseWheel(e);
       if(executeDefault === false) {

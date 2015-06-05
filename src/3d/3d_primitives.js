@@ -8,9 +8,8 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
+  var p5 = require('core/core');
 
-  //@TODO fill with 3d primitives
   p5.prototype.Geometry3D = function() {
     this.vertices = [];
     this.faces = [];
@@ -84,10 +83,7 @@ define(function (require) {
     detailX = detailX || 1;
     detailY = detailY || 1;
     detailZ = detailZ || 1;
-
-    //@TODO: figure out a better way to this
-    //other than do it 6 times
-    
+    //@TODO: figure out a better way to generate 6 faces
     for (var y1 = 0; y1 <= detailY; y1++) {
       var t1 = y1 / detailY;
       for (var x1 = 0; x1 <= detailX; x1++) {

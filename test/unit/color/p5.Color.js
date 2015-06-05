@@ -28,10 +28,11 @@ suite('p5.Color', function() {
       assert.equal(c.getAlpha(), 255);
     });
 
-    test('should correctly set HSB values', function() {
-      assert.equal(c.getHue(), 149);
-      assert.equal(c.getSaturation(), 170);
-      assert.equal(c.getBrightness(), 30);
+    test('should correctly set HSL/HSB values', function() {
+      assert.equal(c.getHue(), 210);
+      assert.equal(c.getSaturation(), 50);
+      assert.equal(c.getBrightness(), 12);
+      assert.equal(c.getLightness(), 8);
     });
 
     test('should correctly render color string', function() {
@@ -58,10 +59,11 @@ suite('p5.Color', function() {
       assert.equal(c.getAlpha(), 255);
     });
 
-    test('should correctly set HSB values', function() {
-      assert.equal(c.getHue(), 202);
-      assert.equal(c.getSaturation(), 113);
-      assert.equal(c.getBrightness(), 153);
+    test('should correctly set HSL/HSB values', function() {
+      assert.equal(c.getHue(), 285);
+      assert.equal(c.getSaturation(), 29);
+      assert.equal(c.getBrightness(), 60);
+      assert.equal(c.getLightness(), 47);
     });
 
     test('should correctly render color string', function() {
@@ -113,10 +115,11 @@ suite('p5.Color', function() {
       assert.equal(c.getAlpha(), 255);
     });
 
-    test('should correctly set HSB values', function() {
-      assert.equal(c.getHue(), 147);
-      assert.equal(c.getSaturation(), 237);
-      assert.equal(c.getBrightness(), 140);
+    test('should correctly set HSB/HSL values', function() {
+      assert.equal(c.getHue(), 208);
+      assert.equal(c.getSaturation(), 87);
+      assert.equal(c.getBrightness(), 55);
+      assert.equal(c.getLightness(), 29);
     });
 
     test('should correctly render color string', function() {
@@ -160,15 +163,15 @@ suite('p5.Color', function() {
       assert.deepEqual(c.rgba, [10, 80, 140, 255]);
     });
 
-    test('should correctly set HSBA when access func is called', function() {
+    test('should correctly set HSLA when access func is called', function() {
       c.getHue();
-      assert.deepEqual(c.hsba, [147, 237, 140, 255]);
+      assert.deepEqual(c.hsla, [208, 87, 29, 1]);
       c.hsba = undefined;
       c.getSaturation();
-      assert.deepEqual(c.hsba, [147, 237, 140, 255]);
+      assert.deepEqual(c.hsla, [208, 87, 29, 1]);
       c.hsba = undefined;
       c.getBrightness();
-      assert.deepEqual(c.hsba, [147, 237, 140, 255]);
+      assert.deepEqual(c.hsla, [208, 87, 29, 1]);
     });
 
     test('should correctly set RGBA values', function() {
@@ -176,12 +179,6 @@ suite('p5.Color', function() {
       assert.equal(c.getGreen(), 80);
       assert.equal(c.getBlue(), 140);
       assert.equal(c.getAlpha(), 255);
-    });
-
-    test('should correctly set HSB values', function() {
-      assert.equal(c.getHue(), 147);
-      assert.equal(c.getSaturation(), 237);
-      assert.equal(c.getBrightness(), 140);
     });
 
     test('should correctly render color string', function() {
@@ -235,15 +232,18 @@ suite('p5.Color', function() {
       assert.deepEqual(c.rgba, [10, 80, 140, 255]);
     });
 
-    test('should correctly set HSBA when access func is called', function() {
+    test('should correctly set HSLA when access func is called', function() {
       c.getHue();
-      assert.deepEqual(c.hsba, [147, 237, 140, 255]);
-      c.hsba = undefined;
+      assert.deepEqual(c.hsla, [208, 87, 29, 1]);
+      c.hsla = undefined;
       c.getSaturation();
-      assert.deepEqual(c.hsba, [147, 237, 140, 255]);
+      assert.deepEqual(c.hsla, [208, 87, 29, 1]);
       c.hsba = undefined;
       c.getBrightness();
-      assert.deepEqual(c.hsba, [147, 237, 140, 255]);
+      assert.deepEqual(c.hsba, [208, 93, 55, 1]);
+      c.hsla = undefined;
+      c.getLightness();
+      assert.deepEqual(c.hsla, [208, 87, 29, 1]);
     });
 
     test('should correctly set RGBA values', function() {
@@ -251,12 +251,6 @@ suite('p5.Color', function() {
       assert.equal(c.getGreen(), 80);
       assert.equal(c.getBlue(), 140);
       assert.equal(c.getAlpha(), 255);
-    });
-
-    test('should correctly set HSB values', function() {
-      assert.equal(c.getHue(), 147);
-      assert.equal(c.getSaturation(), 237);
-      assert.equal(c.getBrightness(), 140);
     });
 
     test('should correctly render color string', function() {
@@ -313,15 +307,17 @@ suite('p5.Color', function() {
       assert.deepEqual(c.rgba, [10, 80, 140, 204]);
     });
 
-    test('should correctly set HSBA when access func is called', function() {
+    test('should correctly set HSLA/HSBA when access func is called', function() {
       c.getHue();
-      assert.deepEqual(c.hsba, [147, 237, 140, 204]);
-      c.hsba = undefined;
+      assert.deepEqual(c.hsla, [208, 87, 29, 0.8]);
+      c.hsla = undefined;
       c.getSaturation();
-      assert.deepEqual(c.hsba, [147, 237, 140, 204]);
-      c.hsba = undefined;
+      assert.deepEqual(c.hsla, [208, 87, 29, 0.8]);
+      c.hsla = undefined;
       c.getBrightness();
-      assert.deepEqual(c.hsba, [147, 237, 140, 204]);
+      assert.deepEqual(c.hsba, [208, 93, 55, 0.8]);
+      c.getLightness();
+      assert.deepEqual(c.hsla, [208, 87, 29, 0.8]);
     });
 
     test('should correctly set RGBA values', function() {
@@ -329,12 +325,6 @@ suite('p5.Color', function() {
       assert.equal(c.getGreen(), 80);
       assert.equal(c.getBlue(), 140);
       assert.equal(c.getAlpha(), 204);
-    });
-
-    test('should correctly set HSB values', function() {
-      assert.equal(c.getHue(), 147);
-      assert.equal(c.getSaturation(), 237);
-      assert.equal(c.getBrightness(), 140);
     });
 
     test('should correctly render color string', function() {
@@ -391,13 +381,15 @@ suite('p5.Color', function() {
 
     test('should correctly set HSBA when access func is called', function() {
       c.getHue();
-      assert.deepEqual(c.hsba, [147, 237, 140, 153]);
-      c.hsba = undefined;
+      assert.deepEqual(c.hsla, [208, 87, 29, 0.6]);
+      c.hsla = undefined;
       c.getSaturation();
-      assert.deepEqual(c.hsba, [147, 237, 140, 153]);
-      c.hsba = undefined;
+      assert.deepEqual(c.hsla, [208, 87, 29, 0.6]);
+      c.hsla = undefined;
       c.getBrightness();
-      assert.deepEqual(c.hsba, [147, 237, 140, 153]);
+      assert.deepEqual(c.hsba, [208, 93, 55, 0.6]);
+      c.getLightness();
+      assert.deepEqual(c.hsla, [208, 87, 29, 0.6]);
     });
 
     test('should correctly set RGBA values', function() {
@@ -405,12 +397,6 @@ suite('p5.Color', function() {
       assert.equal(c.getGreen(), 80);
       assert.equal(c.getBlue(), 140);
       assert.equal(c.getAlpha(), 153);
-    });
-
-    test('should correctly set HSB values', function() {
-      assert.equal(c.getHue(), 147);
-      assert.equal(c.getSaturation(), 237);
-      assert.equal(c.getBrightness(), 140);
     });
 
     test('should correctly render color string', function() {
@@ -478,13 +464,15 @@ suite('p5.Color', function() {
 
     test('should correctly set HSBA when access func is called', function() {
       c.getHue();
-      assert.deepEqual(c.hsba, [26, 42, 255, 255]);
-      c.hsba = undefined;
+      assert.deepEqual(c.hsla, [37, 100, 92, 1]);
+      c.hsla = undefined;
       c.getSaturation();
-      assert.deepEqual(c.hsba, [26, 42, 255, 255]);
-      c.hsba = undefined;
+      assert.deepEqual(c.hsla, [37, 100, 92, 1]);
+      c.hsla = undefined;
       c.getBrightness();
-      assert.deepEqual(c.hsba, [26, 42, 255, 255]);
+      assert.deepEqual(c.hsba, [37, 16, 100, 1]);
+      c.getLightness();
+      assert.deepEqual(c.hsla, [37, 100, 92, 1]);
     });
 
     test('should correctly set RGBA values', function() {
@@ -492,12 +480,6 @@ suite('p5.Color', function() {
       assert.equal(c.getGreen(), 239);
       assert.equal(c.getBlue(), 213);
       assert.equal(c.getAlpha(), 255);
-    });
-
-    test('should correctly set HSB values', function() {
-      assert.equal(c.getHue(), 26);
-      assert.equal(c.getSaturation(), 42);
-      assert.equal(c.getBrightness(), 255);
     });
 
     test('should correctly render color string', function() {
@@ -528,26 +510,21 @@ suite('p5.Color', function() {
 
     test('should correctly set HSBA when access func is called', function() {
       c.getHue();
-      assert.deepEqual(c.hsba, [149, 170, 30, 51]);
-      c.hsba = undefined;
+      assert.deepEqual(c.hsla, [210, 50, 8, 0.2]);
+      c.hsla = undefined;
       c.getSaturation();
-      assert.deepEqual(c.hsba, [149, 170, 30, 51]);
-      c.hsba = undefined;
+      assert.deepEqual(c.hsla, [210, 50, 8, 0.2]);
+      c.hsla = undefined;
       c.getBrightness();
-      assert.deepEqual(c.hsba, [149, 170, 30, 51]);
+      assert.deepEqual(c.hsba, [210, 67, 12, 0.2]);
+      c.getLightness();
+      assert.deepEqual(c.hsla, [210, 50, 8, 0.2]);
     });
 
     test('should correctly set RGBA values', function() {
       assert.equal(c.getRed(), 10);
       assert.equal(c.getGreen(), 20);
       assert.equal(c.getBlue(), 30);
-      assert.equal(c.getAlpha(), 51);
-    });
-
-    test('should correctly set HSB values', function() {
-      assert.equal(c.getHue(), 149);
-      assert.equal(c.getSaturation(), 170);
-      assert.equal(c.getBrightness(), 30);
       assert.equal(c.getAlpha(), 51);
     });
 
@@ -570,17 +547,16 @@ suite('p5.Color', function() {
 
   suite('new p5.Color in HSB-255 mode', function() {
     setup(function() {
-      myp5.colorMode(myp5.HSB);
+      myp5.colorMode(myp5.HSB, 255, 255, 255, 255);
       c = myp5.color(149, 170, 30, 255);
     });
 
     test('should correctly set HSBA property', function() {
-      assert.equal(c.hsba.length, 4);
-      assert.equal(Math.round(c.getHue()), 149);
       assert.deepEqual(c.hsba, [149, 170, 30, 255]);
     });
 
     test('should correctly convert to RGBA', function() {
+
       assert.deepEqual(c.rgba, [10, 20, 30, 255]);
     });
 
@@ -597,10 +573,6 @@ suite('p5.Color', function() {
 
     test('should correctly set HSBA value', function() {
       assert.deepEqual(c.hsba, [48, 100, 100, 1]);
-    });
-
-    test('should correctly set converted value', function() {
-      assert.deepEqual(c._converted_color, [34, 255, 255, 255]);
     });
 
     test('should return passed, unconverted, hue value', function() {
@@ -626,11 +598,6 @@ suite('p5.Color', function() {
       assert.deepEqual(c.hsba, [48, 100, 100, 1]);
     });
 
-    test('should correctly set converted value', function() {
-      assert.deepEqual(c._converted_color, 
-        [(48 * 255/1000), (100 * 255/360), (100 * 255/720), (1 * 255/10)]);
-    });
-
     test('should return passed, unconverted, hue value', function() {
       assert.equal(c.getHue(), 48);
     });
@@ -654,22 +621,38 @@ suite('p5.Color', function() {
       assert.deepEqual(c.rgba, [48, 100, 100, 1]);
     });
 
-    test('should correctly set converted value', function() {
-      assert.deepEqual(c._converted_color, 
-         [(48 * 255/400), (100 * 255/200), (100 * 255/100), (1 * 255/1)]);
+    test('should return hue value', function() {
+      assert.equal(c.getHue(), 214);
     });
 
-    test('should return passed, unconverted, hue value', function() {
-      assert.equal(c.getHue(), 152);
+    test('should return saturation value', function() {
+      assert.equal(c.getSaturation(), 100);
     });
 
-    test('should return passed, unconverted, saturation value', function() {
-      assert.equal(c.getSaturation(), 224);
+    test('should return brightness value', function() {
+      assert.equal(c.getBrightness(), 100);
+    });
+  });
+
+  suite('new p5.Color in HSL mode', function() {
+    setup(function() {
+      myp5.colorMode(myp5.HSL);
+      c = myp5.color(48, 100, 100, 0.2);
     });
 
-    test('should return passed, unconverted, brightness value', function() {
-      assert.equal(c.getBrightness(), 255);
+    test('should correctly set HSLA value with integers', function() {
+      assert.deepEqual(c.hsla, [48, 100, 100, 0.2]);
     });
+
+    test('should correctly set HSLA value with hsl string', function() {
+      c = myp5.color('hsl(48, 100%, 20%)');
+      assert.deepEqual(c.hsla, [48, 100, 20, 1]);
+    });
+
+    test('should correctly convert to rgba', function(){
+
+    });
+
   });
 
   // These tests commented out pending further discussion. 

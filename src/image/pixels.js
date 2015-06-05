@@ -8,9 +8,9 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
-  var Filters = require('filters');
-  require('p5.Color');
+  var p5 = require('core/core');
+  var Filters = require('image/filters');
+  require('color/p5.Color');
 
   /**
    * <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
@@ -39,7 +39,7 @@ define(function (require) {
    * <code>arrayCopy()</code> do not
    * work.
    *
-   * @property pixels[]   
+   * @property pixels[]
    * @example
    * <div>
    * <code>
@@ -60,11 +60,11 @@ define(function (require) {
   /**
    * Copies a region of pixels from one image to another, using a specified
    * blend mode to do the operation.<br><br>
-   * Available blend modes are: BLEND | DARKEST | LIGHTEST | DIFFERENCE | 
-   * MULTIPLY| EXCLUSION | SCREEN | REPLACE | OVERLAY | HARD_LIGHT | 
+   * Available blend modes are: BLEND | DARKEST | LIGHTEST | DIFFERENCE |
+   * MULTIPLY| EXCLUSION | SCREEN | REPLACE | OVERLAY | HARD_LIGHT |
    * SOFT_LIGHT | DODGE | BURN | ADD | NORMAL
    *
-   * 
+   *
    * @method blend
    * @param  {p5.Image|undefined} srcImage source image
    * @param  {Integer} sx X coordinate of the source's upper left corner
@@ -86,7 +86,7 @@ define(function (require) {
    *   img0 = loadImage("assets/rockies.jpg");
    *   img1 = loadImage("assets/bricks_third.jpg");
    * }
-   * 
+   *
    * function setup() {
    *   background(img0);
    *   image(img1, 0, 0);
@@ -101,7 +101,7 @@ define(function (require) {
    *   img0 = loadImage("assets/rockies.jpg");
    *   img1 = loadImage("assets/bricks_third.jpg");
    * }
-   * 
+   *
    * function setup() {
    *   background(img0);
    *   image(img1, 0, 0);
@@ -116,7 +116,7 @@ define(function (require) {
    *   img0 = loadImage("assets/rockies.jpg");
    *   img1 = loadImage("assets/bricks_third.jpg");
    * }
-   * 
+   *
    * function setup() {
    *   background(img0);
    *   image(img1, 0, 0);
@@ -129,7 +129,7 @@ define(function (require) {
   };
 
   /**
-   * Copies a region of the canvas to another region of the canvas  
+   * Copies a region of the canvas to another region of the canvas
    * and copies a region of pixels from an image used as the srcImg parameter
    * into the canvas srcImage is specified this is used as the source. If
    * the source and destination regions aren't the same size, it will
@@ -166,13 +166,13 @@ define(function (require) {
 
   /**
    * Returns an array of [R,G,B,A] values for any pixel or grabs a section of
-   * an image. If no parameters are specified, the entire image is returned. 
+   * an image. If no parameters are specified, the entire image is returned.
    * Use the x and y parameters to get the value of one pixel. Get a section of
-   * the display window by specifying additional w and h parameters. When 
-   * getting an image, the x and y parameters define the coordinates for the 
+   * the display window by specifying additional w and h parameters. When
+   * getting an image, the x and y parameters define the coordinates for the
    * upper-left corner of the image, regardless of the current imageMode().
    *
-   * If the pixel requested is outside of the image window, [0,0,0,255] is 
+   * If the pixel requested is outside of the image window, [0,0,0,255] is
    * returned. To get the numbers scaled according to the current color ranges
    * and taking into account colorMode, use getColor instead of get.
    *
@@ -203,7 +203,7 @@ define(function (require) {
    * }
    * </code>
    * </div>
-   * 
+   *
    * <div>
    * <code>
    * var img;
@@ -228,7 +228,7 @@ define(function (require) {
    * Loads the pixel data for the display window into the pixels[] array. This
    * function must always be called before reading from or writing to pixels[].
    *
-   * @method loadPixels   
+   * @method loadPixels
    * @example
    * <div>
    * <code>
@@ -236,7 +236,7 @@ define(function (require) {
    * function preload() {
    *   img = loadImage("assets/rockies.jpg");
    * }
-   * 
+   *
    * function setup() {
    *   image(img, 0, 0);
    *   var halfImage = 4 * img.width * img.height/2;
@@ -254,7 +254,7 @@ define(function (require) {
   };
 
   /**
-   * <p>Changes the color of any pixel, or writes an image directly to the 
+   * <p>Changes the color of any pixel, or writes an image directly to the
    * display window.</p>
    * <p>The x and y parameters specify the pixel to change and the c parameter
    * specifies the color value. This can be a p5.COlor object, or [R, G, B, A]
@@ -279,7 +279,7 @@ define(function (require) {
    * @param {Number}              x x-coordinate of the pixel
    * @param {Number}              y y-coordinate of the pixel
    * @param {Number|Array|Object} c insert a grayscale value | a pixel array |
-   *                                a p5.Color object | a p5.Image to copy   
+   *                                a p5.Color object | a p5.Image to copy
    * @example
    * <div>
    * <code>
@@ -290,7 +290,7 @@ define(function (require) {
    * set(30, 75, black);
    * updatePixels();
    * </code>
-   * </div> 
+   * </div>
    *
    * <div>
    * <code>
@@ -302,7 +302,7 @@ define(function (require) {
    * }
    * updatePixels();
    * </code>
-   * </div> 
+   * </div>
    *
    * <div>
    * <code>
@@ -327,13 +327,13 @@ define(function (require) {
    * Updates the display window with the data in the pixels[] array.
    * Use in conjunction with loadPixels(). If you're only reading pixels from
    * the array, there's no need to call updatePixels() — updating is only
-   * necessary to apply changes. updatePixels() should be called anytime the 
+   * necessary to apply changes. updatePixels() should be called anytime the
    * pixels array is manipulated or set() is called.
    *
-   * @method updatePixels  
-   * @param  {Number} [x]    x-coordinate of the upper-left corner of region 
+   * @method updatePixels
+   * @param  {Number} [x]    x-coordinate of the upper-left corner of region
    *                         to update
-   * @param  {Number} [y]    y-coordinate of the upper-left corner of region 
+   * @param  {Number} [y]    y-coordinate of the upper-left corner of region
    *                         to update
    * @param  {Number} [w]    width of region to update
    * @param  {Number} [w]    height of region to update
@@ -344,7 +344,7 @@ define(function (require) {
    * function preload() {
    *   img = loadImage("assets/rockies.jpg");
    * }
-   * 
+   *
    * function setup() {
    *   image(img, 0, 0);
    *   var halfImage = 4 * img.width * img.height/2;

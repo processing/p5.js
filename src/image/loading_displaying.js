@@ -8,11 +8,10 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
-  var Filters = require('filters');
-  var canvas = require('canvas');
-  var constants = require('constants');
-
+  var p5 = require('core/core');
+  var Filters = require('image/filters');
+  var canvas = require('core/canvas');
+  var constants = require('core/constants');
   /**
    * Loads an image from a path and creates a p5.Image from it.
    *

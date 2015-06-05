@@ -5,7 +5,7 @@
  */
 define(function(require) {
 
-  var p5 = require('core');
+  var p5 = require('core/core');
 
   /**
    * Main graphics and rendering context, as well as the base API

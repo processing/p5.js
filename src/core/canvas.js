@@ -3,7 +3,7 @@
  */
 define(function(require) {
 
-  var constants = require('constants');
+  var constants = require('core/constants');
 
   return {
 
@@ -30,7 +30,7 @@ define(function(require) {
         return { x: a, y: b, w: c, h: d };
       }
     }
-    
+
   };
 
 });

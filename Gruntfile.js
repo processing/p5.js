@@ -91,6 +91,10 @@ module.exports = function(grunt) {
       yuidoc_theme_build: {
         files: ['docs/yuidoc-p5-theme-src/scripts/**/*'],
         tasks: ['requirejs:yuidoc_theme']
+      },
+      yui:{
+        files:['src/**/*.js'],
+        task:['yuidoc']
       }
     },
 
@@ -130,12 +134,12 @@ module.exports = function(grunt) {
     requirejs: {
       p5_unminified: {
         options: {
-          baseUrl: '.', // from whence do the files come?
+          baseUrl: 'src', // from whence do the files come?
           optimize: 'none', // skip running uglify on the concatenated code
           out: 'lib/p5.js', // name of the output file
           useStrict: true, // Allow "use strict"; be included in the RequireJS files.
           //findNestedDependencies: true,   // automatically find nested deps.  Doesn't appear to effect the code?
-          include: ['src/app'], // this is the file which we are actually building
+          include: ['app'], // this is the file which we are actually building
 
           // This will add a prefix and a suffix to the generated code.
           // we're using this to both add a time/version stamp
@@ -152,7 +156,7 @@ module.exports = function(grunt) {
               '    root[\'p5\'] = factory();',
               '}(this, function () {\n'
             ].join('\n'),
-            end: 'return amdclean[\'src_app\'];\n}));'
+            end: 'return amdclean[\'app\'];\n}));'
           },
           // This will transform the compiled file, reversing out the AMD loader and creating a
           // static JS file.  This code is potentially problematic.
@@ -177,78 +181,78 @@ module.exports = function(grunt) {
 
           // This is a list of all dependencies, mapped to their AMD identifier.
           paths: {
-            'app': 'src/app',
+            'app': 'app',
             // core
-            'canvas': 'src/core/canvas',
-            'constants': 'src/core/constants',
-            'core': 'src/core/core',
-            'environment': 'src/core/environment',
-            'helpers': 'src/core/error_helpers',
-            'p5.Element': 'src/core/p5.Element',
-            'p5.Graphics': 'src/core/p5.Graphics',
-            'p5.Graphics2D': 'src/core/p5.Graphics2D',
-            'rendering.rendering': 'src/core/rendering',
-            'shape.2d_primitives': 'src/core/2d_primitives',
-            'shape.attributes': 'src/core/attributes',
-            'shape.curves': 'src/core/curves',
-            'shape.vertex': 'src/core/vertex',
-            'shim': 'src/core/shim',
-            'structure': 'src/core/structure',
-            'transform': 'src/core/transform',
+            // 'canvas': 'core/canvas',
+            // 'constants': 'core/constants',
+            // 'core': 'core/core',
+            // 'environment': 'core/environment',
+            // 'helpers': 'core/error_helpers',
+            // 'p5.Element': 'core/p5.Element',
+            // 'p5.Graphics': 'core/p5.Graphics',
+            // 'p5.Graphics2D': 'core/p5.Graphics2D',
+            // 'rendering.rendering': 'core/rendering',
+            // 'shape.2d_primitives': 'core/2d_primitives',
+            // 'shape.attributes': 'core/attributes',
+            // 'shape.curves': 'core/curves',
+            // 'shape.vertex': 'core/vertex',
+            // 'shim': 'core/shim',
+            // 'structure': 'core/structure',
+            // 'transform': 'core/transform',
 
             // 3d
-            'p5.Graphics3D': 'src/3d/p5.Graphics3D',
-            'p5.Matrix': 'src/3d/p5.Matrix',
-            'shaders': 'src/3d/shaders',
-            'shape.3d_primitives': 'src/3d/3d_primitives',
+            'p5.Graphics3D': '3d/p5.Graphics3D',
+            'p5.Matrix': '3d/p5.Matrix',
+            'shaders': '3d/shaders',
+            'shape.3d_primitives': '3d/3d_primitives',
 
             // image
-            'filters': 'src/image/filters',
-            'image.image': 'src/image/image',
-            'image.loading_displaying': 'src/image/loading_displaying',
-            'image.pixels': 'src/image/pixels',
-            'p5.Image': 'src/image/p5.Image',
+            // 'filters': 'image/filters',
+            // 'image.image': 'image/image',
+            // 'image.loading_displaying': 'image/loading_displaying',
+            // 'image.pixels': 'image/pixels',
+            // 'p5.Image': 'image/p5.Image',
 
             // typography
-            'p5.Font': 'src/typography/p5.Font',
-            'typography.attributes': 'src/typography/attributes',
-            'typography.loading_displaying': 'src/typography/loading_displaying',
+            // 'p5.Font': 'typography/p5.Font',
+            // 'typography.attributes': 'typography/attributes',
+            // 'typography.loading_displaying': 'typography/loading_displaying',
 
             // math
-            'p5.Vector': 'src/math/p5.Vector',
-            'polargeometry': 'src/math/polargeometry',
-            'math.calculation': 'src/math/calculation',
-            'math.math': 'src/math/math',
-            'math.noise': 'src/math/noise',
-            'math.random': 'src/math/random',
-            'math.trigonometry': 'src/math/trigonometry',
+            // 'p5.Vector': 'math/p5.Vector',
+            // 'polargeometry': 'math/polargeometry',
+            // 'math.calculation': 'math/calculation',
+            // 'math.math': 'math/math',
+            // 'math.noise': 'math/noise',
+            // 'math.random': 'math/random',
+            // 'math.trigonometry': 'math/trigonometry',
 
             // events
-            'input.acceleration': 'src/events/acceleration',
-            'input.keyboard': 'src/events/keyboard',
-            'input.mouse': 'src/events/mouse',
-            'input.touch': 'src/events/touch',
+            // 'input.acceleration': 'events/acceleration',
+            // 'input.keyboard': 'events/keyboard',
+            // 'input.mouse': 'events/mouse',
+            // 'input.touch': 'events/touch',
 
 
             // io
-            'input.files': 'src/io/files',
-            'p5.TableRow': 'src/io/p5.TableRow',
-            'p5.Table': 'src/io/p5.Table',
+            // 'input.files': 'io/files',
+            // 'p5.TableRow': 'io/p5.TableRow',
+            // 'p5.Table': 'io/p5.Table',
 
             // utilities
-            'input.time_date': 'src/utilities/time_date',
-            'data.conversion': 'src/utilities/conversion',
-            'data.array_functions': 'src/utilities/array_functions',
-            'data.string_functions': 'src/utilities/string_functions',
+            // 'input.time_date': 'utilities/time_date',
+            // 'data.conversion': 'utilities/conversion',
+            // 'data.array_functions': 'utilities/array_functions',
+            // 'data.string_functions': 'utilities/string_functions',
 
             // color
-            'p5.Color': 'src/color/p5.Color',
-            'color.creating_reading': 'src/color/creating_reading',
-            'color.setting': 'src/color/setting',
-            'utils.color_utils': 'src/color/color_utils',
+            // 'p5.Color': 'color/p5.Color',
+            // 'color.creating_reading': 'color/creating_reading',
+            // 'color.setting': 'color/setting',
+            // 'utils.color_utils': 'color/color_utils',
 
             // external library
-            'reqwest': 'node_modules/reqwest/reqwest'
+            'reqwest': '../node_modules/reqwest/reqwest'
           },
           done: function(done, output) {
             require('concat-files')([

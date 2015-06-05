@@ -190,9 +190,9 @@ define(function (require) {
       var r = pixels[i];
       var g = pixels[i + 1];
       var b = pixels[i + 2];
-      var grey = (0.2126 * r + 0.7152 * g + 0.0722 * b);
+      var gray = (0.2126 * r + 0.7152 * g + 0.0722 * b);
       var val;
-      if (grey >= thresh) {
+      if (gray >= thresh) {
         val = 255;
       } else {
         val = 0;

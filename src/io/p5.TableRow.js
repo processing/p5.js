@@ -7,12 +7,12 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
+  var p5 = require('core/core');
 
   /**
    *  A TableRow object represents a single row of data values,
    *  stored in columns, from a table.
-   *  
+   *
    *  A Table Row contains both an ordered array, and an unordered
    *  JSON object.
    *
