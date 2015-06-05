@@ -6,7 +6,7 @@
 // So we use preload() for this type of load operations, which guarantees
 // such functions will complete before setup() is called.
 //
-var font1, font2, x=30, y=80, words = 'Green Ideas';
+var font1, font2, x=30, y=80, words = 'green ideas';
 
 function preload() {
   font1 = loadFont('SourceSansPro-Regular.otf');
