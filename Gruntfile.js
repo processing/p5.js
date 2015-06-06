@@ -201,10 +201,10 @@ module.exports = function(grunt) {
             // 'transform': 'core/transform',
 
             // 3d
-            'p5.Graphics3D': '3d/p5.Graphics3D',
-            'p5.Matrix': '3d/p5.Matrix',
-            'shaders': '3d/shaders',
-            'shape.3d_primitives': '3d/3d_primitives',
+            // 'p5.Graphics3D': '3d/p5.Graphics3D',
+            // 'p5.Matrix': '3d/p5.Matrix',
+            // 'shaders': '3d/shaders',
+            // 'shape.3d_primitives': '3d/3d_primitives',
 
             // image
             // 'filters': 'image/filters',

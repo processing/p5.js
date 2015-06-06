@@ -180,23 +180,26 @@ define(function (require){
     ].join('\n'),
     testVert: [
       'attribute vec3 position;',
+      'attribute vec3 normal;',
+
       'uniform mat4 modelviewMatrix;',
       'uniform mat4 transformMatrix;',
+      'uniform mat4 normalMatrix;',
+
+      'varying vec3 vertexNormal;',
+
       'void main(void) {',
       'vec3 zeroToOne = position / 1000.0;',
-      // convert from 0->1 to 0->2
-      'vec3 zeroToTwo = zeroToOne * 2.0;',
-      // convert from 0->2 to -1->+1 (clipspace)
-      'vec3 clipSpace = zeroToTwo - 1.0;',
-      'vec4 positionVec4 = vec4(clipSpace * vec3(1., -1., 1.), 1.);',
+      'vec4 positionVec4 = vec4(zeroToOne, 1.);',
       'gl_Position = transformMatrix * modelviewMatrix * positionVec4;',
+      'vertexNormal = vec3( normalMatrix * vec4( normal, 1.0 ) );',
       '}'
     ].join('\n'),
     testFrag: [
       'precision mediump float;',
-      'uniform vec4 uMaterialColor;',
+      'varying vec3 vertexNormal;',
       'void main(void) {',
-      'gl_FragColor = uMaterialColor;',
+      'gl_FragColor = vec4(vertexNormal, 1.0);',
       '}'
     ].join('\n')
   };
