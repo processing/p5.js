@@ -116,17 +116,6 @@ define(function(require) {
    */
   p5.prototype.textFont = function(theFont, theSize) {
 
-    this._validateParameters(
-      'textFont',
-      arguments,
-      [
-        ['String' ],
-        ['Object' ],
-        ['String', 'Number' ],
-        ['Object', 'Number' ]
-      ]
-    );
-
     if (arguments.length) {
 
       if (!theFont) {
