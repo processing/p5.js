@@ -46,7 +46,6 @@ define(function(require) {
     this.font = undefined;
   };
 
-
   /**
    * Returns the set of opentype glyphs for the supplied string.
    * Note that there is not a strict one-to-one mapping between characters
@@ -60,37 +59,57 @@ define(function(require) {
     return this.font.stringToGlyphs(str);
   };
 
+  /**
+   * Returns an opentype path for the supplied string
+   *
+   * @param  {string} line     a line of text
+   * @param  {Number} x        x-position
+   * @param  {Number} y        y-position
+   * @param  {Number} fontSize font size to use (optional)
+   * @return {Object}     the opentype path
+   */
+  p5.Font.prototype._getPath = function(line, x, y, fontSize, options) {
+
+    fontSize = fontSize || this.parent._textSize;
+    return this.font.getPath.apply(this.font, arguments);
+  };
+
   /*
    * Renders a set of glyph paths to the current graphics context
    */
   p5.Font.prototype._renderPath = function(line, x, y, fontSize, options) {
 
+    // /console.log('_renderPath', typeof line);
     var pdata, p = this.parent, pg = p._graphics, ctx = pg.drawingContext,
       textWidth, textHeight, textAscent, textDescent;
 
     fontSize = fontSize || p._textSize;
-    options = options || {};
 
-    textWidth = p.textWidth(line);
-    textAscent = p.textAscent();
-    textDescent = p.textDescent();
-    textHeight = textAscent + textDescent;
+    if (typeof line === 'string') {
 
-    if (ctx.textAlign === constants.CENTER) {
-      x -= textWidth / 2;
-    } else if (ctx.textAlign === constants.RIGHT) {
-      x -= textWidth;
+      textWidth = p.textWidth(line);
+      textAscent = p.textAscent();
+      textDescent = p.textDescent();
+      textHeight = textAscent + textDescent;
+
+      if (ctx.textAlign === constants.CENTER) {
+        x -= textWidth / 2;
+      } else if (ctx.textAlign === constants.RIGHT) {
+        x -= textWidth;
+      }
+
+      if (ctx.textBaseline === constants.TOP) {
+        y += textHeight;
+      } else if (ctx.textBaseline === constants._CTX_MIDDLE) {
+        y += textHeight / 2 - textDescent;
+      } else if (ctx.textBaseline === constants.BOTTOM) {
+        y -= textDescent;
+      }
+      pdata = this.font.getPath(line, x, y, fontSize, options).commands;
     }
-
-    if (ctx.textBaseline === constants.TOP) {
-      y += textHeight;
-    } else if (ctx.textBaseline === constants._CTX_MIDDLE) {
-      y += textHeight / 2 - textDescent;
-    } else if (ctx.textBaseline === constants.BOTTOM) {
-      y -= textDescent;
+    else if (typeof line === 'object' && line.commands) {
+      pdata = line.commands;
     }
-
-    pdata = this.font.getPath(line, x, y, fontSize, options).commands;
 
     ctx.beginPath();
     for (var i = 0; i < pdata.length; i += 1) {
