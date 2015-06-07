@@ -48,6 +48,7 @@ define(function(require) {
 
   /**
    * Returns the set of opentype glyphs for the supplied string.
+   *
    * Note that there is not a strict one-to-one mapping between characters
    * and glyphs, so the list of returned glyphs can be larger or smaller
    *  than the length of the given string.
@@ -56,63 +57,59 @@ define(function(require) {
    * @return {array}     the opentype glyphs
    */
   p5.Font.prototype._getGlyphs = function(str) {
+
     return this.font.stringToGlyphs(str);
   };
 
   /**
-   * Returns an opentype path for the supplied string
+   * Returns an opentype path for the supplied string and position.
    *
    * @param  {string} line     a line of text
    * @param  {Number} x        x-position
    * @param  {Number} y        y-position
-   * @param  {Number} fontSize font size to use (optional)
+   * @param  {Number} options opentype options (optional)
    * @return {Object}     the opentype path
    */
-  p5.Font.prototype._getPath = function(line, x, y, fontSize, options) {
+  p5.Font.prototype._getPath = function(line, x, y, options) {
 
-    fontSize = fontSize || this.parent._textSize;
-    return this.font.getPath.apply(this.font, arguments);
+    var p = this.parent, pg = p._graphics, ctx = pg.drawingContext,
+      pos = handleAlignment(p, ctx, line, x, y);
+
+    return this.font.getPath(line, pos.x, pos.y, p._textSize, options);
   };
 
   /*
-   * Renders a set of glyph paths to the current graphics context
+   * Renders an opentype path or a string/position to
+   * the current graphics context
+   *
+   * @param  {Object} path    an opentype path, OR the following:
+   *
+   * @param  {string} line     a line of text
+   * @param  {Number} x        x-position
+   * @param  {Number} y        y-position
+   * @param  {Number} options opentype options (optional)
+   *
+   * @return {Object}     this p5.Font object
    */
-  p5.Font.prototype._renderPath = function(line, x, y, fontSize, options) {
+  p5.Font.prototype._renderPath = function(line, x, y, options) {
 
     // /console.log('_renderPath', typeof line);
-    var pdata, p = this.parent, pg = p._graphics, ctx = pg.drawingContext,
-      textWidth, textHeight, textAscent, textDescent;
+    var pdata, pos, p = this.parent, pg = p._graphics, ctx = pg.drawingContext;
 
-    fontSize = fontSize || p._textSize;
+    if (typeof line === 'object' && line.commands) {
 
-    if (typeof line === 'string') {
-
-      textWidth = p.textWidth(line);
-      textAscent = p.textAscent();
-      textDescent = p.textDescent();
-      textHeight = textAscent + textDescent;
-
-      if (ctx.textAlign === constants.CENTER) {
-        x -= textWidth / 2;
-      } else if (ctx.textAlign === constants.RIGHT) {
-        x -= textWidth;
-      }
-
-      if (ctx.textBaseline === constants.TOP) {
-        y += textHeight;
-      } else if (ctx.textBaseline === constants._CTX_MIDDLE) {
-        y += textHeight / 2 - textDescent;
-      } else if (ctx.textBaseline === constants.BOTTOM) {
-        y -= textDescent;
-      }
-      pdata = this.font.getPath(line, x, y, fontSize, options).commands;
-    }
-    else if (typeof line === 'object' && line.commands) {
       pdata = line.commands;
+    }
+    else {
+
+      pos = handleAlignment(p, ctx, line, x, y);
+      pdata = this.font.getPath
+        (line, pos.x, pos.y, p._textSize, options).commands;
     }
 
     ctx.beginPath();
     for (var i = 0; i < pdata.length; i += 1) {
+
       var cmd = pdata[i];
       if (cmd.type === 'M') {
         ctx.moveTo(cmd.x, cmd.y);
@@ -129,6 +126,7 @@ define(function(require) {
 
     // only draw stroke if manually set by user
     if (p._doStroke && p._strokeSet) {
+
       ctx.stroke();
     }
 
@@ -151,7 +149,10 @@ define(function(require) {
    * @param  {Number} x        x-position
    * @param  {Number} y        y-position
    * @param  {Number} fontSize font size to use (optional)
+   * @param  {Number} options opentype options (optional)
+   *
    * @return {Object}          a rectangle object with properties: x, y, w, h
+   *
    * @example
    * <div>
    * <code>
@@ -223,7 +224,7 @@ define(function(require) {
         x: minX,
         y: minY,
         h: maxY - minY,
-        w: (maxX - minX),
+        w: maxX - minX,
         advance: minX - x
       };
 
@@ -234,16 +235,15 @@ define(function(require) {
     return result;
   };
 
-  p5.Font.prototype._drawPoints = function(str, tx, ty, fsize, options) {
+  p5.Font.prototype._drawPoints = function(str, tx, ty, options) {
 
     var pdata, onCurvePts, offCurvePts, p = this.parent,
-      scale = (1 / this.font.unitsPerEm) * fsize;
+      scale = (1 / this.font.unitsPerEm) * p._textSize;
 
     tx = tx !== undefined ? tx : 0;
     ty = ty !== undefined ? ty : 0;
-    fsize = fsize || p._textSize;
 
-    this.font.forEachGlyph(str, tx, ty, fsize, options,
+    this.font.forEachGlyph(str, tx, ty, p._textSize, options,
       function(glyph, x, y, fontSize) {
 
         onCurvePts = [];
@@ -287,6 +287,30 @@ define(function(require) {
   };
 
   // helpers
+
+  function handleAlignment(p, ctx, line, x, y) {
+
+    var textWidth = p.textWidth(line),
+      textAscent = p.textAscent(),
+      textDescent = p.textDescent(),
+      textHeight = textAscent + textDescent;
+
+    if (ctx.textAlign === constants.CENTER) {
+      x -= textWidth / 2;
+    } else if (ctx.textAlign === constants.RIGHT) {
+      x -= textWidth;
+    }
+
+    if (ctx.textBaseline === constants.TOP) {
+      y += textHeight;
+    } else if (ctx.textBaseline === constants._CTX_MIDDLE) {
+      y += textHeight / 2 - textDescent;
+    } else if (ctx.textBaseline === constants.BOTTOM) {
+      y -= textDescent;
+    }
+
+    return { x: x, y: y };
+  }
 
   function cacheKey() {
     var args = Array.prototype.slice.call(arguments),

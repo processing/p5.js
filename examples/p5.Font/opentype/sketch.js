@@ -11,13 +11,14 @@ function setup() {
   createCanvas(720, 480);
   frameRate(24);
   fill(255);
+  textSize(150);
 }
 
 function draw() {
 
   background(237,34,93);
 
-  var path = font._getPath('p5*js', 170, 275, 150);
+  var path = font._getPath('p5*js', 170, 275);
   doSnap(path, snapDistance);
   font._renderPath(path);
 
