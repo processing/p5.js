@@ -15,20 +15,36 @@ define(function (require) {
   /**
    * <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
    * /Global_Objects/Uint8ClampedArray' target='_blank'>Uint8ClampedArray</a>
-   * containing the values for all the pixels in the display
-   * window. These values are numbers. This array is the size of the display
-   * window x4, representing the R, G, B, A values in order for each pixel,
-   * moving from left to right across each row, then down each column. For
-   * example, if the image is 100x100 pixels, there will be 40000. The
-   * first four values (indices 0-3) in the array will be the R, G, B, A
-   * values of the pixel at (0, 0). The second four values (indices 4-7) will
-   * contain the R, G, B, A values of the pixel at (1, 0). More generally, to
-   * set values for a pixel at (x, y):
-   * <br>
-   * <code>pixels[y*width+x] = r; 
-   * pixels[y*width+x+1] = g;
-   * pixels[y*width+x+2] = b;
-   * pixels[y*width+x+3] = a;</code>
+   * containing the values for all the pixels in the display window.
+   * These values are numbers. This array is the size (include an appropriate
+   * factor for pixelDensity) of the display window x4,
+   * representing the R, G, B, A values in order for each pixel, moving from
+   * left to right across each row, then down each column. Retina and other
+   * high denisty displays will have more pixels[] (by a factor of
+   * pixelDensity^2).
+   * For example, if the image is 100x100 pixels, there will be 40,000. On a
+   * retina display, there will be 160,000. The first four values
+   * (indices 0-3) in the array will be the R, G, B, A values of the pixel at
+   * (0, 0). The second four values (indices 4-7) will contain the R, G, B, A
+   * values of the pixel at (1, 0). More generally, to set values for a pixel
+   * at (x, y):
+   * <code><pre>var d = pixelDensity;
+   * for (var i = 0; i < d; i++) {
+   *   for (var j = 0; j < d; j++) {
+   *     // loop over
+   *     idx = 4*((y * d + j) * width * d + (x * d + i));
+   *     pixels[idx] = r;
+   *     pixels[idx+1] = g;
+   *     pixels[idx+2] = b;
+   *     pixels[idx+3] = a;
+   *   }
+   * }
+   * </pre></code>
+   * While the above method is complex, it is flexible enough to work with
+   * any pixelDensity. Note that set() will automatically take care of
+   * setting all the appropriate values in pixels[] for a given (x, y) at
+   * any pixelDensity, but the performance may not be as fast when lots of
+   * modifications are made to the pixel array.
    * <br><br>
    * Before accessing this array, the data must loaded with the loadPixels()
    * function. After the array data has been modified, the updatePixels()
@@ -45,7 +61,9 @@ define(function (require) {
    * <code>
    * var pink = color(255, 102, 204);
    * loadPixels();
-   * for (var i = 0; i < 4*(width*height/2); i+=4) {
+   * var d = pixelDensity;
+   * var halfImage = 4 * (width * d) * (height/2 * d);
+   * for (var i = 0; i < halfImage; i+=4) {
    *   pixels[i] = red(pink);
    *   pixels[i+1] = green(pink);
    *   pixels[i+2] = blue(pink);
@@ -146,19 +164,185 @@ define(function (require) {
    * @param  {Integer} dy Y coordinate of the destination's upper left corner
    * @param  {Integer} dw destination image width
    * @param  {Integer} dh destination image height
+   *
+   * @example
+   * <div><code>
+   * var img;
+   *
+   * function preload() {
+   *   img = loadImage("assets/rockies.jpg");
+   * }
+   *
+   * function setup() {
+   *   background(img0);
+   *   image(img1, 0, 0);
+   *   copy(7, 22, 10, 10, 35, 25, 50, 50);
+   *   stroke(255);
+   *   noFill();
+   *   // Rectangle shows area being copied
+   *   rect(7, 22, 10, 10);
+   * }
+   * </code></div>
    */
-  p5.prototype.copy = function() {
-    this._graphics.copy.apply(this._graphics, arguments);
+  p5.prototype.copy = function () {
+    p5.Graphics2D._copyHelper.apply(this, arguments);
   };
 
   /**
-   * Applies a filter to the canvas
-   * 
+   * Applies a filter to the canvas.
+   * <br><br>
+   *
+   * The presets options are:
+   * <br><br>
+   *
+   * THRESHOLD
+   * Converts the image to black and white pixels depending if they are above or
+   * below the threshold defined by the level parameter. The parameter must be
+   * between 0.0 (black) and 1.0 (white). If no level is specified, 0.5 is used.
+   * <br><br>
+   *
+   * GRAY
+   * Converts any colors in the image to grayscale equivalents. No parameter
+   * is used.
+   * <br><br>
+   *
+   * OPAQUE
+   * Sets the alpha channel to entirely opaque. No parameter is used.
+   * <br><br>
+   *
+   * INVERT
+   * Sets each pixel to its inverse value. No parameter is used.
+   * <br><br>
+   *
+   * POSTERIZE
+   * Limits each channel of the image to the number of colors specified as the
+   * parameter. The parameter can be set to values between 2 and 255, but
+   * results are most noticeable in the lower ranges.
+   * <br><br>
+   *
+   * BLUR
+   * Executes a Guassian blur with the level parameter specifying the extent
+   * of the blurring. If no parameter is used, the blur is equivalent to
+   * Guassian blur of radius 1. Larger values increase the blur.
+   * <br><br>
+   *
+   * ERODE
+   * Reduces the light areas. No parameter is used.
+   * <br><br>
+   *
+   * DILATE
+   * Increases the light areas. No parameter is used.
+   *
    * @method filter
-   * @param  {String}           operation one of threshold, gray, invert,
-   *                                      posterize and opaque. see filters.js
-   *                                      for docs on each available filter
-   * @param  {Number|undefined} value
+   * @param  {String}    kind
+   *
+   * @param  {Number|undefined} param
+   *
+   *
+   * @example
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *  image(img, 0, 0);
+   *  filter(THRESHOLD);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *  image(img, 0, 0);
+   *  filter(GRAY);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *  image(img, 0, 0);
+   *  filter(OPAQUE);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *  image(img, 0, 0);
+   *  filter(INVERT);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *  image(img, 0, 0);
+   *  filter(POSTERIZE,3);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *  image(img, 0, 0);
+   *  filter(DILATE);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *  image(img, 0, 0);
+   *  filter(BLUR,3);
+   * }
+   * </code>
+   * </div>
+   *
+   * <div>
+   * <code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/bricks.jpg");
+   * }
+   * function setup() {
+   *  image(img, 0, 0);
+   *  filter(ERODE);
+   * }
+   * </code>
+   * </div>
    */
   p5.prototype.filter = function(operation, value) {
     Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
@@ -178,9 +362,12 @@ define(function (require) {
    *
    * Getting the color of a single pixel with get(x, y) is easy, but not as fast
    * as grabbing the data directly from pixels[]. The equivalent statement to
-   * get(x, y) using pixels[] is [ pixels[y*width+x], pixels[y*width+x+1], 
-   * pixels[y*width+x+2], pixels[y*width+3] ]. See the reference for
-   * pixels[] for more information.
+   * get(x, y) using pixels[] with pixel density d is
+   * [pixels[(y*width*d+x)*d],
+   * pixels[(y*width*d+x)*d+1],
+   * pixels[(y*width*d+x)*d+2],
+   * pixels[(y*width*d+x)*d+3] ].
+   * See the reference for pixels[] for more information.
    *
    * @method get
    * @param  {Number}         [x] x-coordinate of the pixel
@@ -239,7 +426,9 @@ define(function (require) {
    *
    * function setup() {
    *   image(img, 0, 0);
-   *   var halfImage = 4 * img.width * img.height/2;
+   *   var d = pixelDensity;
+   *   var halfImage = 4 * (img.width * d) *
+         (img.height/2 * d);
    *   loadPixels();
    *   for (var i = 0; i < halfImage; i++) {
    *     pixels[i+halfImage] = pixels[i];
@@ -267,12 +456,10 @@ define(function (require) {
    * appear.  This should be called once all pixels have been set.
    * </p>
    * <p>Setting the color of a single pixel with set(x, y) is easy, but not as
-   * fast as putting the data directly into pixels[]. The equivalent statement
-   * to set(x, y, [100, 50, 10, 255]) using pixels[] is:</p>
-   * <pre><code class="language-markup">pixels[4*(y*width+x)] = 100;
-   * pixels[4*(y*width+x)+1] = 50;
-   * pixels[4*(y*width+x)+2] = 10;
-   * pixels[4*(y*width+x)+3] = 255;</code></pre>
+   * fast as putting the data directly into pixels[]. Setting the pixels[]
+   * values directly may be complicated when working with a retina display,
+   * but will perform better when lots of pixels need to be set directly on
+   * every loop.</p>
    * <p>See the reference for pixels[] for more information.</p>
    *
    * @method set
@@ -347,7 +534,8 @@ define(function (require) {
    *
    * function setup() {
    *   image(img, 0, 0);
-   *   var halfImage = 4 * img.width * img.height/2;
+   *   var halfImage = 4 * (img.width * pixelDensity) *
+   *     (img.height * pixelDensity/2);
    *   loadPixels();
    *   for (var i = 0; i < halfImage; i++) {
    *     pixels[i+halfImage] = pixels[i];
@@ -358,13 +546,6 @@ define(function (require) {
    * </div>
    */
   p5.prototype.updatePixels = function (x, y, w, h) {
-    if (x === undefined && y === undefined &&
-      w === undefined && h === undefined) {
-      x = 0;
-      y = 0;
-      w = this.width;
-      h = this.height;
-    }
     this._graphics.updatePixels(x, y, w, h);
   };
 

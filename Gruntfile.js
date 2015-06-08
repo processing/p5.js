@@ -181,7 +181,8 @@ module.exports = function(grunt) {
 
           // This is a list of all dependencies, mapped to their AMD identifier.
           paths: {
-            'app': 'app',
+            //'app': 'app',
+
             // core
             // 'canvas': 'core/canvas',
             // 'constants': 'core/constants',

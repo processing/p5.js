@@ -364,9 +364,6 @@ define(function (require) {
     this.rotate(a, [0,0,1]);
   };
 
-  /**
-   * TODO implement these methods
-   */
   p5.Matrix.prototype.invert = function(a){
     var a00 = a[0],
       a01 = a[1],
