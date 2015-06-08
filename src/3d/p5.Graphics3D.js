@@ -4,12 +4,9 @@ define(function(require) {
   var shaders = require('3d/shaders');
   require('core/p5.Graphics');
   require('3d/p5.Matrix');
-  var gl,
-    shaderProgram;
+  var gl, shaderProgram;
   var uMVMatrixStack = [];
-  var vertexBuffer;
-  var indexBuffer;
-  //var normalBuffer;
+  var vertexBuffer, indexBuffer, normalBuffer;
 
   //@TODO should probably implement an override for these attributes
   var attributes = {
@@ -53,8 +50,8 @@ define(function(require) {
     this.initShaders(); //initialize our default shaders
     //create our default matrices
     this.uMVMatrix = new p5.Matrix();
-    this.nMatrix = new p5.Matrix();
     this.uPMatrix  = new p5.Matrix();
+    this.uNMatrix = new p5.Matrix();
     this._perspective(60 / 180 * Math.PI,this.width / this.height, 0.1, 100);
     return this;
   };
@@ -116,26 +113,25 @@ define(function(require) {
       gl.getAttribLocation(shaderProgram, 'position');
     gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
+    //vertex normal Attribute
+    shaderProgram.vertexNormalAttribute =
+      gl.getAttribLocation(shaderProgram, 'normal');
+    gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
+
     //projection Matrix uniform
-    shaderProgram.pMatrixUniform =
+    shaderProgram.uPMatrixUniform =
       gl.getUniformLocation(shaderProgram, 'transformMatrix');
     //model view Matrix uniform
-    shaderProgram.mvMatrixUniform =
+    shaderProgram.uMVMatrixUniform =
       gl.getUniformLocation(shaderProgram, 'modelviewMatrix');
 
     //normal Matrix uniform
-    // shaderProgram.nMatrixUniform =
-    // gl.getUniformLocation(shaderProgram, 'uNVMatrix');
-
-    //material color uniform
-    //@TODO: remove hard coded white rgba
-    shaderProgram.uMaterialColorLoc = gl.getUniformLocation(shaderProgram,
-      'color');
-    // Set material uniform
-    gl.uniform4f(shaderProgram.uMaterialColorLoc, 1.0, 1.0, 1.0, 1.0);
+    shaderProgram.uNMatrixUniform =
+    gl.getUniformLocation(shaderProgram, 'normalMatrix');
 
     vertexBuffer = gl.createBuffer();
     indexBuffer = gl.createBuffer();
+    normalBuffer = gl.createBuffer();
   };
 
   /**
@@ -174,7 +170,7 @@ define(function(require) {
     var _a = (_col.color_array[3]) / 255;
     gl.clearColor(_r, _g, _b, _a);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    //this.resetMatrix();
+    this.resetMatrix();
   };
 
   p5.Graphics3D.prototype._applyDefaults = function() {
@@ -200,24 +196,29 @@ define(function(require) {
    * @param  {Array} vertices generated vertices
    * @return {[type]}          [description]
    */
-  p5.Graphics3D.prototype.drawGeometry = function(vertices, faces) {
-    var geomVertexPositionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, geomVertexPositionBuffer);
-
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+  p5.Graphics3D.prototype.drawGeometry = function(obj) {
+    
+    var vertices = obj.vertices;
+    var vertexNormals = obj.vertexNormals;
+    var faces = obj.faces;
 
     gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+    gl.bufferData(
+      gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
     gl.vertexAttribPointer(
       shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
     gl.bufferData(
-      gl.ELEMENT_ARRAY_BUFFER,
-      new Uint16Array(faces),
-      gl.STATIC_DRAW);
+      gl.ARRAY_BUFFER, new Float32Array(vertexNormals), gl.STATIC_DRAW);
+    gl.vertexAttribPointer(
+      shaderProgram.vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bufferData
+     (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(faces), gl.STATIC_DRAW);
     
-    _setMatrixUniforms(this.uPMatrix.mat4, this.uMVMatrix.mat4);
+    _setMatrixUniforms();
     gl.drawElements(gl.TRIANGLES, faces.length, gl.UNSIGNED_SHORT, 0);
 
     return this;
@@ -233,6 +234,9 @@ define(function(require) {
    * @todo implement handle for components or vector as args
    */
   p5.Graphics3D.prototype.translate = function(x, y, z) {
+    x = x / 100;
+    y = y / 100;
+    z = z / 100;
     this.uMVMatrix.translate([x,y,z]);
     return this;
   };
@@ -304,9 +308,13 @@ define(function(require) {
    * @param {Array float} projection projection matrix
    * @param {Array float} modelView  model view matrix
    */
-  function _setMatrixUniforms(projection, modelView) {
-    gl.uniformMatrix4fv(shaderProgram.uPMatrixUniform, false, projection);
-    gl.uniformMatrix4fv(shaderProgram.uMVMatrixUniform, false, modelView);
+  function _setMatrixUniforms() {
+    gl.uniformMatrix4fv(shaderProgram.uPMatrixUniform, false, this.uPMatrix);
+    gl.uniformMatrix4fv(shaderProgram.uMVMatrixUniform, false, this.uMVMatrix);
+    this.uNMatrix = p5.Matrix.identity();
+    this.uNMatrix.invert(this.uMVMatrix);
+    this.uNMatrix.transpose(this.uNMatrix);
+    gl.uniformMatrix4fv(shaderProgram.uNMatrixUniform, false, this.uNMatrix);
   }
     /**
      * PRIVATE
