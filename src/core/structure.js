@@ -293,7 +293,7 @@ define(function (require) {
     if (typeof userDraw === 'function') {
       this.push();
       if (typeof userSetup === 'undefined') {
-        this.scale(this._pixelDensity, this._pixelDensity);
+        this.scale(this.pixelDensity, this.pixelDensity);
       }
       this._registeredMethods.pre.forEach(function (f) {
         f.call(this);
