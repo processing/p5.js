@@ -1,4 +1,6 @@
 /**
+ * @module Shape
+ * @submodule 3D Primitives
  * @for p5
  * @requires core
  * @requires canvas
@@ -9,16 +11,7 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core/core');
-
-  //@TODO fill with 3d primitives
-  //inspire by lightgl.js
-  //https://github.com/evanw/lightgl.js
-  p5.prototype.Geometry3D = function() {
-    this.vertices = [];
-    this.faces = [];
-    this.faceNormals = [];
-    this.uvs = [];
-  };
+  require('3d/p5.Geometry3D');
 
   /**
    * generate plane geomery
@@ -26,11 +19,11 @@ define(function (require) {
    * @param  {Number} height  the height of the plane
    * @param  {Number} detailX how many segments in the x axis
    * @param  {Number} detailY how many segments in the y axis
-   * @return {[type]}         [description]
+   * @return {[type]}         [description]        
    */
-  p5.prototype.plane = function(width, height, detailX, detailY) {
+  p5.prototype.plane = function(width, height, detailX, detailY){
 
-    p5.prototype.Geometry3D.call(this);
+    var geometry3d = new p5.Geometry3D();
 
     width = width || 1;
     height = height || 1;
@@ -38,47 +31,180 @@ define(function (require) {
     detailX = detailX || 1;
     detailY = detailY || 1;
 
-    for (var y = 0; y <= detailY; y++) {
-      var t = y / detailY;
-      for (var x = 0; x <= detailX; x++) {
-        var s = x / detailX;
-        this.vertices.push([
-          2 * width * s - width,
-          2 * height * t - height,
-          0
-        ]);
+    function createPlane(u, v){
+      var x = 2 * width * u - width;
+      var y = 2 * height * v - height;
+      var z = 0;
+      return new p5.Vector(x, y, z);
+    }
+    
+    geometry3d.parametricGeometry(createPlane, detailX, detailY);
+    
+    var obj = geometry3d.generateObj();
 
-        this.uvs.push([s, t]);
+    this._graphics.drawGeometry(obj);
 
-        this.faceNormals.push([0, 0, 1]);
+  };
 
-        if (x < detailX && y < detailY) {
-          var i = x + y * (detailX + 1);
-          this.faces.push([i, i + 1, i + detailX + 1]);
-          this.faces.push([i + detailX + 1, i + 1, i + detailX + 2]);
-        }
-      }
+  //TODO: a lookup table for sin cos
+
+  /**
+   * [sphere description]
+   * @param  {[type]} radius  [description]
+   * @param  {[type]} detailX [description]
+   * @param  {[type]} detailY [description]
+   * @return {[type]}         [description]
+   */
+  p5.prototype.sphere = function(radius, detailX, detailY){
+    
+    var geometry3d = new p5.Geometry3D();
+
+    radius = radius || 50;
+
+    detailX = detailX || 10;
+    detailY = detailY || 6;
+
+    function createSphere(u, v){
+      var theta = 2 * Math.PI * u;
+      var phi = Math.PI * v - Math.PI / 2;
+      var x = radius * Math.cos(phi) * Math.sin(theta);
+      var y = radius * Math.sin(phi);
+      var z = radius * Math.cos(phi) * Math.cos(theta);
+      return new p5.Vector(x, y, z);
     }
 
-    var vertices = verticesArray(this.faces, this.vertices);
-    this._graphics.drawGeometry(vertices);
+    geometry3d.parametricGeometry(createSphere, detailX, detailY);
+
+    var obj = geometry3d.generateObj();
+
+    this._graphics.drawGeometry(obj);
+
     return this;
   };
 
   /**
-   * generate cube geometry
-   * @param  {Number} width   the width of the cube
-   * @param  {Number} height  the height of the cube
-   * @param  {Number} depth   the depth of the cube
-   * @param  {Number} detailX how many segments in the x axis
-   * @param  {Number} detailY how many segments in the y axis
-   * @param  {Number} detailZ how many segments in the z axis
+   * [cylinder description]
+   * @param  {[type]} radius  [description]
+   * @param  {[type]} detailX [description]
+   * @param  {[type]} detailY [description]
    * @return {[type]}         [description]
    */
-  p5.prototype.cube =
-  function(width, height, depth, detailX, detailY, detailZ) {
+  p5.prototype.cylinder = function(radius, height, detailX, detailY){
+    
+    var geometry3d = new p5.Geometry3D();
 
-    p5.prototype.Geometry3D.call(this);
+    radius = radius || 50;
+    height = height || 50;
+
+    detailX = detailX || 10;
+    detailY = detailY || 6;
+
+    function createCylinder(u, v){
+      var theta = 2 * Math.PI * u;
+      var x = radius * Math.sin(theta);
+      var y = 2 * height * v - height;
+      var z = radius * Math.cos(theta);
+      return new p5.Vector(x, y, z);
+    }
+    
+    geometry3d.parametricGeometry(createCylinder, detailX, detailY);
+
+    //TODO: top and bottom faces
+    //this.vertices.push(new p5.Vector(0, height/2, 0));  
+    //this.vertices.push(new p5.Vector(0, -height/2, 0));
+
+    var obj = geometry3d.generateObj();
+
+    this._graphics.drawGeometry(obj);
+
+    return this;
+  };
+
+  /**
+   * [cone description]
+   * @param  {[type]} radius  [description]
+   * @param  {[type]} height  [description]
+   * @param  {[type]} detailX [description]
+   * @param  {[type]} detailY [description]
+   * @return {[type]}         [description]
+   */
+  p5.prototype.cone = function(radius, height, detailX, detailY){
+    
+    var geometry3d = new p5.Geometry3D();
+
+    radius = radius || 50;
+    height = height || 50;
+
+    detailX = detailX || 10;
+    detailY = detailY || 6;
+
+    function createCone(u, v){
+      var theta = 2 * Math.PI * u;
+      var x = radius * (1 - v) * Math.sin(theta);
+      var y = 2 * height * v - height;
+      var z = radius * (1 - v) * Math.cos(theta);
+      return new p5.Vector(x, y, z);
+    }
+
+    geometry3d.parametricGeometry(createCone, detailX, detailY);
+
+    //@TODO: add bottom face
+
+    var obj = geometry3d.generateObj();
+
+    this._graphics.drawGeometry(obj);
+
+    return this;
+  };
+
+  /**
+   * [torus description]
+   * @param  {[type]} radius  [description]
+   * @param  {[type]} height  [description]
+   * @param  {[type]} detailX [description]
+   * @param  {[type]} detailY [description]
+   * @return {[type]}         [description]
+   */
+  p5.prototype.torus = function(radius, tube, detailX, detailY){
+    
+    var geometry3d = new p5.Geometry3D();
+
+    radius = radius || 50;
+    tube = tube || 20;
+
+    detailX = detailX || 10;
+    detailY = detailY || 6;
+
+    function createTorus(u, v){
+      var theta = 2 * Math.PI * u;
+      var phi = 2 * Math.PI * v;
+      var x = (radius + tube * Math.cos(phi)) * Math.cos(theta);
+      var y = (radius + tube * Math.cos(phi)) * Math.sin(theta);
+      var z = tube * Math.sin(phi);
+      return new p5.Vector(x, y, z);
+    }
+
+    geometry3d.parametricGeometry(createTorus, detailX, detailY);
+
+    var obj = geometry3d.generateObj();
+
+    this._graphics.drawGeometry(obj);
+
+    return this;
+  };
+
+  /**
+   * [cube description]
+   * @param  {[type]} width   [description]
+   * @param  {[type]} height  [description]
+   * @param  {[type]} depth   [description]
+   * @param  {[type]} detailX [description]
+   * @param  {[type]} detailY [description]
+   * @return {[type]}         [description]
+   */
+  p5.prototype.cube = function(width, height, depth, detailX, detailY){
+
+    var geometry3d = new p5.Geometry3D();
 
     width = width || 1;
     height = height || 1;
@@ -86,98 +212,63 @@ define(function (require) {
 
     detailX = detailX || 1;
     detailY = detailY || 1;
-    detailZ = detailZ || 1;
 
-    //@TODO: figure out a better way to generate 6 faces
-
-    for (var y1 = 0; y1 <= detailY; y1++) {
-      var t1 = y1 / detailY;
-      for (var x1 = 0; x1 <= detailX; x1++) {
-        var s1 = x1 / detailX;
-        this.vertices.push([
-          2 * width * s1 - width,
-          2 * height * t1 - height,
-          depth / 2
-        ]);
-
-        this.uvs.push([s1, t1]);
-
-        this.faceNormals.push([0, 0, 1]);
-
-        if (x1 < detailX && y1 < detailY) {
-          var i1 = x1 + y1 * (detailX + 1);
-          this.faces.push([i1, i1 + 1, i1 + detailX + 1]);
-          this.faces.push([i1 + detailX + 1, i1 + 1, i1 + detailX + 2]);
-        }
-      }
+    function createPlane1(u, v){
+      var x = 2 * width * u - width;
+      var y = 2 * height * v - height;
+      var z = depth;
+      return new p5.Vector(x, y, z);
     }
-
-    for (var y2 = 0; y2 <= detailY; y2++) {
-      var t2 = y2 / detailY;
-      for (var x2 = 0; x2 <= detailX; x2++) {
-        var s2 = x2 / detailX;
-        this.vertices.push([
-          2 * width * s2 - width,
-          2 * height * t2 - height,
-          -depth / 2
-        ]);
-
-        this.uvs.push([s2, t2]);
-
-        this.faceNormals.push([0, 0, -1]);
-
-        if (x2 < detailX && y2 < detailY) {
-          var i2 = x2 + y2 * (detailX + 1);
-          this.faces.push([i2, i2 + 1, i2 + detailX + 1]);
-          this.faces.push([i2 + detailX + 1, i2 + 1, i2 + detailX + 2]);
-        }
-      }
+    function createPlane2(u, v){
+      var x = 2 * width * u - width;
+      var y = 2 * height * v - height;
+      var z = -depth;
+      return new p5.Vector(x, y, z);
     }
+    function createPlane3(u, v){
+      var x = 2 * width * u - width;
+      var y = height;
+      var z = 2 * depth * v - depth;
+      return new p5.Vector(x, y, z);
+    }
+    function createPlane4(u, v){
+      var x = 2 * width * u - width;
+      var y = -height;
+      var z = 2 * depth * v - depth;
+      return new p5.Vector(x, y, z);
+    }
+    function createPlane5(u, v){
+      var x = width;
+      var y = 2 * height * u - height;
+      var z = 2 * depth * v - depth;
+      return new p5.Vector(x, y, z);
+    }
+    function createPlane6(u, v){
+      var x = -width;
+      var y = 2 * height * u - height;
+      var z = 2 * depth * v - depth;
+      return new p5.Vector(x, y, z);
+    }
+    
+    geometry3d.parametricGeometry(
+      createPlane1, detailX, detailY, geometry3d.vertices.length);
+    geometry3d.parametricGeometry(
+      createPlane2, detailX, detailY, geometry3d.vertices.length);
+    geometry3d.parametricGeometry(
+      createPlane3, detailX, detailY, geometry3d.vertices.length);
+    geometry3d.parametricGeometry(
+      createPlane4, detailX, detailY, geometry3d.vertices.length);
+    geometry3d.parametricGeometry(
+      createPlane5, detailX, detailY, geometry3d.vertices.length);
+    geometry3d.parametricGeometry(
+      createPlane6, detailX, detailY, geometry3d.vertices.length);
+    
+    var obj = geometry3d.generateObj(true);
 
+    this._graphics.drawGeometry(obj);
 
-    var vertices = verticesArray(this.faces, this.vertices);
-    this._graphics.drawGeometry(vertices);
-    return this;
   };
-
-  /**
-   * generate sphere geometry
-   * @param  {Number} radius  the radius of the sphere
-   * @param  {Number} detailX how many segments in the x axis
-   * @param  {Number} detailY how many segments in the y axis
-   * @param  {Number} detailZ how many segments in the z axis
-   * @return {[type]}         [description]
-   */
-  p5.prototype.sphere = function(radius, detailX, detailY, detalZ) {
-
-    p5.prototype.Geometry3D.call(this);
-
-    radius = radius || 6;
-    detailX = detailX || 1;
-    detailY = detailY || 1;
-
-    //@TODO: figure out how to generate vertices
-    var vertices = verticesArray(this.faces, this.vertices);
-    this._graphics.drawGeometry(vertices);
-    return this;
-  };
-
-  /**
-   * get vertices array according to the faces array
-   * @param {Array} faces    the faces array
-   * @param {Array} vertices the vertex array
-   */
-  function verticesArray(faces, vertices) {
-    var output = [];
-    faces.forEach(function(face) {
-      face.forEach(function(index) {
-        vertices[index].forEach(function(vertex) {
-          output.push(vertex);
-        });
-      });
-    });
-    return output;
-  }
 
   return p5;
+
 });

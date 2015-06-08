@@ -81,11 +81,9 @@ define(function(require) {
     // Init our graphics renderer
     //webgl mode
     if (r === constants.WEBGL) {
-      if (!this._defaultGraphics) {
-        this._setProperty('_graphics', new p5.Graphics3D(c, this, true));
-        this._defaultGraphics = this._graphics;
-        this._elements.push(this._defaultGraphics);
-      }
+      this._setProperty('_graphics', new p5.Graphics3D(c, this, true));
+      this._defaultGraphics = this._graphics;
+      this._elements.push(this._defaultGraphics);
     }
     //P2D mode
     else {

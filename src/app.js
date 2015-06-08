@@ -7,7 +7,7 @@ define(function (require) {
   require('core/p5.Element');
   require('typography/p5.Font');
   require('core/p5.Graphics2D');
-  require('3d/p5.Graphics3D');
+
   require('image/p5.Image');
   require('math/p5.Vector');
   require('io/p5.TableRow');
@@ -36,7 +36,7 @@ define(function (require) {
   require('math/trigonometry');
   require('core/rendering');
   require('core/2d_primitives');
-  require('3d/3d_primitives');
+  
   require('core/attributes');
   require('core/curves');
   require('core/vertex');
@@ -44,7 +44,12 @@ define(function (require) {
   require('core/transform');
   require('typography/attributes');
   require('typography/loading_displaying');
+  
+  require('3d/p5.Graphics3D');
+  require('3d/p5.Geometry3D');
+  require('3d/3d_primitives');
   require('3d/shaders');
+  require('3d/p5.Matrix');
 
   /**
    * _globalInit

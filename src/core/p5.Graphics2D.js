@@ -56,7 +56,8 @@ define(function(require) {
     this.drawingContext.font = 'normal 12px sans-serif';
   };
 
-  p5.Graphics2D.prototype._resizeHelper = function() {
+  p5.Graphics2D.prototype.resize = function(w,h) {
+    p5.Graphics.prototype.resize.call(this, w,h);
     this.drawingContext.scale(this._pInst.pixelDensity,
                               this._pInst.pixelDensity);
   };

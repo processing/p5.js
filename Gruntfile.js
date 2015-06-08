@@ -186,7 +186,7 @@ module.exports = function(grunt) {
 
           // This is a list of all dependencies, mapped to their AMD identifier.
           paths: {
-            // 'app': 'app',
+            //'app': 'app',
 
             // core
             // 'canvas': 'core/canvas',
@@ -208,10 +208,9 @@ module.exports = function(grunt) {
 
             // 3d
             // 'p5.Graphics3D': '3d/p5.Graphics3D',
-            // 'mat4': '3d/mat4',
+            // 'p5.Matrix': '3d/p5.Matrix',
             // 'shaders': '3d/shaders',
             // 'shape.3d_primitives': '3d/3d_primitives',
-            // p5.Matrix not included currently?
 
             // image
             // 'filters': 'image/filters',
