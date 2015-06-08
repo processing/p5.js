@@ -18,7 +18,11 @@
  *
  *
  *  grunt watch       - This watches the source for changes and rebuilds on
- *                      every file change.
+ *                      every file change, running the linter and tests.
+ *
+ *  grunt watch:main  - This watches the source for changes and rebuilds on
+ *                      every file change, but does not rebuild the docs.
+ *                      It's faster than the default watch.
  *
  *  grunt update_json - This automates updating the bower file
  *                      to match the package.json
@@ -73,7 +77,7 @@ module.exports = function(grunt) {
       // Watch the codebase for changes
       main: {
         files: ['src/**/*.js'],
-        tasks: ['jshint', 'requirejs'],
+        tasks: ['newer:jshint:source','requirejs:p5_unminified','mocha'],
         options: {
           livereload: true
         }
@@ -92,6 +96,7 @@ module.exports = function(grunt) {
         files: ['docs/yuidoc-p5-theme-src/scripts/**/*'],
         tasks: ['requirejs:yuidoc_theme']
       },
+      // Watch the codebase for doc updates
       yui:{
         files:['src/**/*.js'],
         task:['yuidoc']
@@ -353,9 +358,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-update-json');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-newer');
 
   // Create the multitasks.
-  grunt.registerTask('test', ['connect', 'jshint', 'requirejs', 'mocha']);
+  grunt.registerTask('test', ['connect', 'newer:jshint', 'requirejs', 'mocha']);
   grunt.registerTask('yui', ['yuidoc']);
-  grunt.registerTask('default', ['connect', 'jshint', 'requirejs', 'mocha', 'uglify']);
+  grunt.registerTask('default', ['connect', 'newer:jshint', 'requirejs', 'mocha', 'uglify']);
 };

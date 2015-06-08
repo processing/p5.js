@@ -17,6 +17,7 @@
     "grunt-contrib-yuidoc": "0.5.2",
     "grunt-lib-phantomjs": "~0.4.0",
     "grunt-mocha": "~0.4.6",
+    "grunt-newer": "^1.1.0",
     "grunt-update-json": "^0.2.1",
     "phantomjs": "~1.9.2-4"
   },
