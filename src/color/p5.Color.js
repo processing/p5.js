@@ -418,12 +418,16 @@ define(function(require) {
         mode    = this._colorMode,
         first, second, third, alpha, str, vals;
 
+
+    // Handle [r,g,b,a] or [h,s,l,a] color values
     if (numArgs >= 3) {
       first   = arguments[0];
       second  = arguments[1];
       third   = arguments[2];
       alpha   = typeof arguments[3] === 'number' ?
                 arguments[3] : this._colorMaxes[mode][3];
+    
+    // Handle strings: named colors, hex values, css strings
     } else if (numArgs === 1 && typeof arguments[0] === 'string') {
       str = arguments[0].trim().toLowerCase();
 
@@ -484,6 +488,8 @@ define(function(require) {
 
       // Re-run _getFormattedColor with the values parsed out of the string
       return p5.Color._getFormattedColor.apply(this, vals);
+
+    // Handle greyscale color mode
     } else if (numArgs === 1 && typeof arguments[0] === 'number') {
       // When users pass only one argument, they are presumed to be 
       // working in grayscale mode. 
@@ -497,6 +503,22 @@ define(function(require) {
       }
       alpha = typeof arguments[1] === 'number' ?
                      arguments[1] : this._colorMaxes[mode][3];
+    
+    // Handle brightness and alpha (grayscale)
+    } else if (numArgs === 2 &&
+               typeof arguments[0] === 'number' &&
+               typeof arguments[1] === 'number') {
+      // When users pass only one argument, they are presumed to be 
+      // working in grayscale mode. 
+      if (mode === constants.RGB) {
+        first = second = third = arguments[0];
+      } else if (mode === constants.HSB || mode === constants.HSL) {
+        // In order for grayscale to work with HSB & HSL, the saturation
+        // (the second argument) must be 0.
+        first = third = arguments[0];
+        second = 0;
+      }
+      alpha = arguments[1];
     } else {
       throw new Error (arguments + 'is not a valid color representation.');
     }
