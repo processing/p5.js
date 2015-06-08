@@ -33,6 +33,17 @@ suite('CreatingReading', function() {
       });
     });
 
+    suite('color(brightness,opacity)', function() {
+      setup(function() {
+        color = myp5.color(1,2);
+      });
+      test('should return a p5.Color', function() {
+        assert.instanceOf(color, p5.Color);
+        assert.deepEqual(color.rgba, [1,1,1,2]);
+      });
+    });
+
+
     suite('color(p5.Color)', function() {
       setup(function() {
         var tempColor = myp5.color([1,2,3]);
