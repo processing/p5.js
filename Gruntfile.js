@@ -77,7 +77,7 @@ module.exports = function(grunt) {
       // Watch the codebase for changes
       main: {
         files: ['src/**/*.js'],
-        tasks: ['newer:jshint:source','mocha','requirejs:p5_unminified'],
+        tasks: ['newer:jshint:source','requirejs:p5_unminified','mocha'],
         options: {
           livereload: true
         }
