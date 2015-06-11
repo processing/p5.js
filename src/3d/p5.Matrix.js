@@ -9,6 +9,7 @@ define(function (require) {
   var p5 = require('core/core');
   var polarGeometry = require('math/polargeometry');
   var constants = require('core/constants');
+  var Mat4 = require('3d/Mat4');
 
   /**
    * A class to describe a 4x4 matrix
@@ -23,20 +24,12 @@ define(function (require) {
       // save reference to p5 if passed in
       this.p5 = arguments[0];
       this.mat4  = arguments[1] ||
-      new Float32Array(
-        [1,0,0,0,
-         0,1,0,0,
-         0,0,1,0,
-         0,0,0,1]);
+      Mat4.create();
     // This is what we'll get with new p5.Matrix()
     // a mat4 identity matrix
     } else {
       this.mat4 = arguments[0] ||
-      new Float32Array(
-        [1,0,0,0,
-         0,1,0,0,
-         0,0,1,0,
-         0,0,0,1]);
+      Mat4.create();
     }
   };
 
@@ -69,53 +62,66 @@ define(function (require) {
   };
 
   /**
+   * Copies the mat4
+   * @return {[type]} [description]
+   */
+  p5.Matrix.prototype.copy = function(){
+    var copied = new Float32Array(16);
+    copied[0] = this.mat4[0];
+    copied[1] = this.mat4[1];
+    copied[2] = this.mat4[2];
+    copied[3] = this.mat4[3];
+    copied[4] = this.mat4[4];
+    copied[5] = this.mat4[5];
+    copied[6] = this.mat4[6];
+    copied[7] = this.mat4[7];
+    copied[8] = this.mat4[8];
+    copied[9] = this.mat4[9];
+    copied[10] = this.mat4[10];
+    copied[11] = this.mat4[11];
+    copied[12] = this.mat4[12];
+    copied[13] = this.mat4[13];
+    copied[14] = this.mat4[14];
+    copied[15] = this.mat4[15];
+    return copied;
+  };
+
+  /**
+   * return an identity matrix
+   * @return {[type]} [description]
+   */
+  p5.Matrix.identity = function(){
+    return new p5.Matrix();
+  };
+
+  /**
    * transposes values of our mat4 matrix
    * @param {p5.Matrix | Array } [varname] [description]
    * @return {p5.Matrix} our transposed matrix
    */
-  p5.Matrix.prototype.transpose = function(transposeMatrix){
-    if(transposeMatrix instanceof p5.Matrix){
-      this.mat4[0] = transposeMatrix.mat4[0];
-      this.mat4[1] = transposeMatrix.mat4[4];
-      this.mat4[2] = transposeMatrix.mat4[8];
-      this.mat4[3] = transposeMatrix.mat4[12];
-      this.mat4[4] = transposeMatrix.mat4[1];
-      this.mat4[5] = transposeMatrix.mat4[5];
-      this.mat4[6] = transposeMatrix.mat4[9];
-      this.mat4[7] = transposeMatrix.mat4[13];
-      this.mat4[8] = transposeMatrix.mat4[2];
-      this.mat4[9] = transposeMatrix.mat4[6];
-      this.mat4[10] = transposeMatrix.mat4[10];
-      this.mat4[11] = transposeMatrix.mat4[14];
-      this.mat4[12] = transposeMatrix.mat4[3];
-      this.mat4[13] = transposeMatrix.mat4[7];
-      this.mat4[14] = transposeMatrix.mat4[11];
-      this.mat4[15] = transposeMatrix.mat4[15];
-    }
-    else if(transposeMatrix instanceof Float32Array) {
-      this.mat4[0] = transposeMatrix[0];
-      this.mat4[1] = transposeMatrix[4];
-      this.mat4[2] = transposeMatrix[8];
-      this.mat4[3] = transposeMatrix[12];
-      this.mat4[4] = transposeMatrix[1];
-      this.mat4[5] = transposeMatrix[5];
-      this.mat4[6] = transposeMatrix[9];
-      this.mat4[7] = transposeMatrix[13];
-      this.mat4[8] = transposeMatrix[2];
-      this.mat4[9] = transposeMatrix[6];
-      this.mat4[10] = transposeMatrix[10];
-      this.mat4[11] = transposeMatrix[14];
-      this.mat4[12] = transposeMatrix[3];
-      this.mat4[13] = transposeMatrix[7];
-      this.mat4[14] = transposeMatrix[11];
-      this.mat4[15] = transposeMatrix[15];
+  p5.Matrix.prototype.transpose = function(source){
+    if(source instanceof p5.Matrix){
+      Mat4.transpose(this.mat4, source.mat4);
+    }else if(source instanceof Float32Array){
+      Mat4.transpose(this.mat4, source);
     }
     return this;
   };
 
-  p5.Matrix.identity = function(){
-    return new p5.Matrix();
+  /**
+   * [invert description]
+   * @param  {[type]} source [description]
+   * @return {[type]}        [description]
+   */
+  p5.Matrix.prototype.invert = function(source){
+    if(source instanceof p5.Matrix){
+      Mat4.invert(this.mat4, source.mat4);
+    }else if(source instanceof Float32Array){
+      Mat4.invert(this.mat4, source);
+    }
+    return this;
   };
+
   /**
    * @return {Number} Determinant of our 4x4 matrix
    * inspired by Toji's mat4 determinant
@@ -137,31 +143,6 @@ define(function (require) {
     // Calculate the determinant
     return d00 * d11 - d01 * d10 + d02 * d09 +
       d03 * d08 - d04 * d07 + d05 * d06;
-  };
-
-  /**
-   * Copies the mat4
-   * @return {[type]} [description]
-   */
-  p5.Matrix.prototype.copyMat = function(){
-    var copied = new Float32Array(16);
-    copied[0] = this.mat4[0];
-    copied[1] = this.mat4[1];
-    copied[2] = this.mat4[2];
-    copied[3] = this.mat4[3];
-    copied[4] = this.mat4[4];
-    copied[5] = this.mat4[5];
-    copied[6] = this.mat4[6];
-    copied[7] = this.mat4[7];
-    copied[8] = this.mat4[8];
-    copied[9] = this.mat4[9];
-    copied[10] = this.mat4[10];
-    copied[11] = this.mat4[11];
-    copied[12] = this.mat4[12];
-    copied[13] = this.mat4[13];
-    copied[14] = this.mat4[14];
-    copied[15] = this.mat4[15];
-    return copied;
   };
 
   /**
@@ -235,7 +216,7 @@ define(function (require) {
       z = arguments[0].z;
     }
     //otherwise if it's an array
-    else if (arguments[0] instanceof Float32Array){
+    else if (arguments[0] instanceof Array){
       x = arguments[0][0];
       y = arguments[0][1];
       z = arguments[0][2];
@@ -295,7 +276,7 @@ define(function (require) {
       y = axis.y;
       z = axis.z;
     }
-    else if (axis instanceof Float32Array) {
+    else if (axis instanceof Array) {
       x = axis[0];
       y = axis[1];
       z = axis[2];
@@ -379,66 +360,6 @@ define(function (require) {
   };
   p5.Matrix.prototype.rotateZ = function(a){
     this.rotate(a, [0,0,1]);
-  };
-
-  p5.Matrix.prototype.invert = function(a){
-    var a00 = a[0],
-      a01 = a[1],
-      a02 = a[2],
-      a03 = a[3],
-      a10 = a[4],
-      a11 = a[5],
-      a12 = a[6],
-      a13 = a[7],
-      a20 = a[8],
-      a21 = a[9],
-      a22 = a[10],
-      a23 = a[11],
-      a30 = a[12],
-      a31 = a[13],
-      a32 = a[14],
-      a33 = a[15],
-
-      b00 = a00 * a11 - a01 * a10,
-      b01 = a00 * a12 - a02 * a10,
-      b02 = a00 * a13 - a03 * a10,
-      b03 = a01 * a12 - a02 * a11,
-      b04 = a01 * a13 - a03 * a11,
-      b05 = a02 * a13 - a03 * a12,
-      b06 = a20 * a31 - a21 * a30,
-      b07 = a20 * a32 - a22 * a30,
-      b08 = a20 * a33 - a23 * a30,
-      b09 = a21 * a32 - a22 * a31,
-      b10 = a21 * a33 - a23 * a31,
-      b11 = a22 * a33 - a23 * a32,
-
-      // Calculate the determinant
-      det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 -
-      b04 * b07 + b05 * b06;
-
-    if (!det) {
-      return null;
-    }
-    det = 1.0 / det;
-
-    this.mat4[0] = (a11 * b11 - a12 * b10 + a13 * b09) * det;
-    this.mat4[1] = (a02 * b10 - a01 * b11 - a03 * b09) * det;
-    this.mat4[2] = (a31 * b05 - a32 * b04 + a33 * b03) * det;
-    this.mat4[3] = (a22 * b04 - a21 * b05 - a23 * b03) * det;
-    this.mat4[4] = (a12 * b08 - a10 * b11 - a13 * b07) * det;
-    this.mat4[5] = (a00 * b11 - a02 * b08 + a03 * b07) * det;
-    this.mat4[6] = (a32 * b02 - a30 * b05 - a33 * b01) * det;
-    this.mat4[7] = (a20 * b05 - a22 * b02 + a23 * b01) * det;
-    this.mat4[8] = (a10 * b10 - a11 * b08 + a13 * b06) * det;
-    this.mat4[9] = (a01 * b08 - a00 * b10 - a03 * b06) * det;
-    this.mat4[10] = (a30 * b04 - a31 * b02 + a33 * b00) * det;
-    this.mat4[11] = (a21 * b02 - a20 * b04 - a23 * b00) * det;
-    this.mat4[12] = (a11 * b07 - a10 * b09 - a12 * b06) * det;
-    this.mat4[13] = (a00 * b09 - a01 * b07 + a02 * b06) * det;
-    this.mat4[14] = (a31 * b01 - a30 * b03 - a32 * b00) * det;
-    this.mat4[15] = (a20 * b03 - a21 * b01 + a22 * b00) * det;
-
-    return this;
   };
 
   return p5.Matrix;

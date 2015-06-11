@@ -84,6 +84,10 @@ define(function (require){
 
   };
 
+  /**
+   * [mergeVertices description]
+   * @return {[type]} [description]
+   */
   p5.Geometry3D.prototype.mergeVertices= function () {
 
     var verticesMap = {};
@@ -103,15 +107,11 @@ define(function (require){
       Math.round(v.z * precision);
 
       if (verticesMap[key] === undefined) {
-
         verticesMap[key] = i;
         unique.push(this.vertices[i]);
         changes[i] = unique.length - 1;
-
       } else {
-
         changes[i] = changes[verticesMap[key]];
-
       }
 
     }
@@ -135,14 +135,11 @@ define(function (require){
       // we have to remove the face as nothing can be saved
       for (var n = 0; n < 3; n ++) {
         if (indices[n] === indices[(n + 1) % 3]) {
-
           dupIndex = n;
           faceIndicesToRemove.push(i);
           break;
-
         }
       }
-
     }
 
     for (i = faceIndicesToRemove.length - 1; i >= 0; i --) {
@@ -151,7 +148,6 @@ define(function (require){
     }
 
     // Use unique set of vertices
-
     var diff = this.vertices.length - unique.length;
     this.vertices = unique;
     return diff;
@@ -200,6 +196,10 @@ define(function (require){
     }
   };
 
+  /**
+   * [computeVertexNormals description]
+   * @return {[type]} [description]
+   */
   p5.Geometry3D.prototype.computeVertexNormals = function (){
 
     var v, f, face, faceNormal, vertices;

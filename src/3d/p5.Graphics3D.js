@@ -136,26 +136,12 @@ define(function(require) {
   };
 
   /**
-   * [initMatrices description]
-   * @return {[type]} [description]
-   */
-  // p5.Graphics3D.prototype.initMatrices = function() {
-  //   // Create a projection / perspective matrix
-  //   uMVMatrix = new p5.Matrix();
-  //   uPMatrix = new p5.Matrix();
-  //   nMatrix = new p5.Matrix();
-  //   mat4.perspective(
-  //     uPMatrix, 60 / 180 * Math.PI,
-  //     this.width / this.height, 0.1, 100);
-  // };
-
-  /**
    * resets the model view matrix to a mat4 identity
    * matrix.
    * @return {void}
    */
   p5.Graphics3D.prototype.resetMatrix = function() {
-    this.uMVMatrix = new p5.Matrix();
+    this.uMVMatrix = p5.Matrix.identity();
   };
 
   //////////////////////////////////////////////
@@ -303,7 +289,7 @@ define(function(require) {
    * @return {[type]} [description]
    */
   p5.Graphics3D.prototype.push = function() {
-    uMVMatrixStack.push(this.uMVMatrix.copyMat());
+    uMVMatrixStack.push(this.uMVMatrix.copy());
   };
 
   /**
@@ -325,8 +311,10 @@ define(function(require) {
     gl.uniformMatrix4fv(shaderProgram.uPMatrixUniform, false, pMatrix.mat4);
     gl.uniformMatrix4fv(shaderProgram.uMVMatrixUniform, false, mvMatrix.mat4);
     var nMatrix = p5.Matrix.identity();
-    nMatrix.invert(mvMatrix);
-    nMatrix.transpose(nMatrix);
+    nMatrix = nMatrix.invert(mvMatrix);
+    //console.log(nMatrix);
+    nMatrix = nMatrix.transpose(nMatrix);
+    //console.log(nMatrix);
     gl.uniformMatrix4fv(shaderProgram.uNMatrixUniform, false, nMatrix.mat4);
   }
     /**

@@ -28,14 +28,14 @@ define(function (require) {
       typeof Float32Array !== 'undefined') ?
     Float32Array : Array;
 
-  var mat4 = {};
+  var Mat4 = {};
 
   /**
    * Creates a new identity mat4
    *
    * @returns {mat4} a new 4x4 matrix
    */
-  mat4.create = function () {
+  Mat4.create = function () {
     var out = new GLMAT_ARRAY_TYPE(16);
     out[0] = 1;
     out[1] = 0;
@@ -62,7 +62,7 @@ define(function (require) {
    * @param {mat4} a matrix to clone
    * @returns {mat4} a new 4x4 matrix
    */
-  mat4.clone = function (a) {
+  Mat4.clone = function (a) {
     var out = new GLMAT_ARRAY_TYPE(16);
     out[0] = a[0];
     out[1] = a[1];
@@ -90,7 +90,7 @@ define(function (require) {
    * @param {mat4} a the source matrix
    * @returns {mat4} out
    */
-  mat4.copy = function (out, a) {
+  Mat4.copy = function (out, a) {
     out[0] = a[0];
     out[1] = a[1];
     out[2] = a[2];
@@ -116,7 +116,7 @@ define(function (require) {
    * @param {mat4} out the receiving matrix
    * @returns {mat4} out
    */
-  mat4.identity = function (out) {
+  Mat4.identity = function (out) {
     out[0] = 1;
     out[1] = 0;
     out[2] = 0;
@@ -143,7 +143,7 @@ define(function (require) {
    * @param {mat4} a the source matrix
    * @returns {mat4} out
    */
-  mat4.transpose = function (out, a) {
+  Mat4.transpose = function (out, a) {
 
     if (out === a) {
       var a01 = a[1],
@@ -194,7 +194,7 @@ define(function (require) {
    * @param {mat4} a the source matrix
    * @returns {mat4} out
    */
-  mat4.invert = function (out, a) {
+  Mat4.invert = function (out, a) {
     var a00 = a[0],
       a01 = a[1],
       a02 = a[2],
@@ -261,7 +261,7 @@ define(function (require) {
    * @param {mat4} a the source matrix
    * @returns {mat4} out
    */
-  mat4.adjoint = function (out, a) {
+  Mat4.adjoint = function (out, a) {
     var a00 = a[0],
       a01 = a[1],
       a02 = a[2],
@@ -322,7 +322,7 @@ define(function (require) {
    * @param {mat4} b the second operand
    * @returns {mat4} out
    */
-  mat4.multiply = function (out, a, b) {
+  Mat4.multiply = function (out, a, b) {
     var a00 = a[0],
       a01 = a[1],
       a02 = a[2],
@@ -380,9 +380,9 @@ define(function (require) {
   };
 
   /**
-   * Alias for {@link mat4.multiply}
+   * Alias for {@link Mat4.multiply}
    */
-  mat4.mul = mat4.multiply;
+  Mat4.mul = Mat4.multiply;
 
   /**
    * Translate a mat4 by the given vector
@@ -392,7 +392,7 @@ define(function (require) {
    * @param {vec3} v vector to translate by
    * @returns {mat4} out
    */
-  mat4.translate = function (out, a, v) {
+  Mat4.translate = function (out, a, v) {
     var x = v[0],
       y = v[1],
       z = v[2],
@@ -449,7 +449,7 @@ define(function (require) {
    * @param {vec3} v the vec3 to scale the matrix by
    * @returns {mat4} out
    **/
-  mat4.scale = function (out, a, v) {
+  Mat4.scale = function (out, a, v) {
     var x = v[0],
       y = v[1],
       z = v[2];
@@ -482,7 +482,7 @@ define(function (require) {
    * @param {vec3} axis the axis to rotate around
    * @returns {mat4} out
    */
-  mat4.rotate = function (out, a, rad, axis) {
+  Mat4.rotate = function (out, a, rad, axis) {
     var x = axis[0],
       y = axis[1],
       z = axis[2],
@@ -563,7 +563,7 @@ define(function (require) {
    * @param {Number} rad the angle to rotate the matrix by
    * @returns {mat4} out
    */
-  mat4.rotateX = function (out, a, rad) {
+  Mat4.rotateX = function (out, a, rad) {
     var s = Math.sin(rad),
       c = Math.cos(rad),
       a10 = a[4],
@@ -606,7 +606,7 @@ define(function (require) {
    * @param {Number} rad the angle to rotate the matrix by
    * @returns {mat4} out
    */
-  mat4.rotateY = function (out, a, rad) {
+  Mat4.rotateY = function (out, a, rad) {
     var s = Math.sin(rad),
       c = Math.cos(rad),
       a00 = a[0],
@@ -649,7 +649,7 @@ define(function (require) {
    * @param {Number} rad the angle to rotate the matrix by
    * @returns {mat4} out
    */
-  mat4.rotateZ = function (out, a, rad) {
+  Mat4.rotateZ = function (out, a, rad) {
     var s = Math.sin(rad),
       c = Math.cos(rad),
       a00 = a[0],
@@ -696,7 +696,7 @@ define(function (require) {
    * @param {Number} far Far bound of the frustum
    * @returns {mat4} out
    */
-  mat4.frustum = function (out, left, right, bottom, top, near, far) {
+  Mat4.frustum = function (out, left, right, bottom, top, near, far) {
     var rl = 1 / (right - left),
       tb = 1 / (top - bottom),
       nf = 1 / (near - far);
@@ -729,7 +729,7 @@ define(function (require) {
    * @param {number} far Far bound of the frustum
    * @returns {mat4} out
    */
-  mat4.perspective = function (out, fovy, aspect, near, far) {
+  Mat4.perspective = function (out, fovy, aspect, near, far) {
     var f = 1.0 / Math.tan(fovy / 2),
       nf = 1 / (near - far);
     out[0] = f / aspect;
@@ -763,7 +763,7 @@ define(function (require) {
    * @param {number} far Far bound of the frustum
    * @returns {mat4} out
    */
-  mat4.ortho = function (out, left, right, bottom, top, near, far) {
+  Mat4.ortho = function (out, left, right, bottom, top, near, far) {
     var lr = 1 / (left - right),
       bt = 1 / (bottom - top),
       nf = 1 / (near - far);
@@ -786,5 +786,5 @@ define(function (require) {
     return out;
   };
 
-  return mat4;
+  return Mat4;
 });
