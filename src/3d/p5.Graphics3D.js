@@ -17,6 +17,7 @@ define(function(require) {
     premultipliedAlpha: false,
     preserveDrawingBuffer: false
   };
+
   /**
    * 3D graphics class.  Can also be used as an off-screen graphics buffer.
    * A p5.Graphics3D object can be constructed
@@ -161,6 +162,10 @@ define(function(require) {
   // COLOR | Setting
   //////////////////////////////////////////////
 
+  /**
+   * [background description]
+   * @return {[type]} [description]
+   */
   p5.Graphics3D.prototype.background = function() {
     var _col = this._pInst.color.apply(this._pInst, arguments);
     // gl.clearColor(0.0,0.0,0.0,1.0);
@@ -173,6 +178,10 @@ define(function(require) {
     this.resetMatrix();
   };
 
+  /**
+   * [_applyDefaults description]
+   * @return {[type]} [description]
+   */
   p5.Graphics3D.prototype._applyDefaults = function() {
     return this;
   };
@@ -187,6 +196,10 @@ define(function(require) {
   //@TODO
   // };
 
+  /**
+   * [stroke description]
+   * @return {[type]} [description]
+   */
   p5.Graphics3D.prototype.stroke = function() {
     this._stroke = this._pInst.color.apply(this._pInst, arguments);
   };
@@ -218,7 +231,7 @@ define(function(require) {
     gl.bufferData
      (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(faces), gl.STATIC_DRAW);
     
-    _setMatrixUniforms();
+    _setMatrixUniforms(this.uPMatrix, this.uMVMatrix);
     gl.drawElements(gl.TRIANGLES, faces.length, gl.UNSIGNED_SHORT, 0);
 
     return this;
@@ -308,13 +321,13 @@ define(function(require) {
    * @param {Array float} projection projection matrix
    * @param {Array float} modelView  model view matrix
    */
-  function _setMatrixUniforms() {
-    gl.uniformMatrix4fv(shaderProgram.uPMatrixUniform, false, this.uPMatrix);
-    gl.uniformMatrix4fv(shaderProgram.uMVMatrixUniform, false, this.uMVMatrix);
-    this.uNMatrix = p5.Matrix.identity();
-    this.uNMatrix.invert(this.uMVMatrix);
-    this.uNMatrix.transpose(this.uNMatrix);
-    gl.uniformMatrix4fv(shaderProgram.uNMatrixUniform, false, this.uNMatrix);
+  function _setMatrixUniforms(pMatrix, mvMatrix) {
+    gl.uniformMatrix4fv(shaderProgram.uPMatrixUniform, false, pMatrix.mat4);
+    gl.uniformMatrix4fv(shaderProgram.uMVMatrixUniform, false, mvMatrix.mat4);
+    var nMatrix = p5.Matrix.identity();
+    nMatrix.invert(mvMatrix);
+    nMatrix.transpose(nMatrix);
+    gl.uniformMatrix4fv(shaderProgram.uNMatrixUniform, false, nMatrix.mat4);
   }
     /**
      * PRIVATE

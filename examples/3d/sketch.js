@@ -10,7 +10,7 @@ var theta = 0;
 function draw(){
   background(0, 100, 200, 255)
 
-  translate(-150, 0.0, -200)
+  translate(0, 0, -100)
   push()
   rotateZ(theta)
   rotateX(theta * 1.5)

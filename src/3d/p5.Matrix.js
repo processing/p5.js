@@ -23,21 +23,22 @@ define(function (require) {
       // save reference to p5 if passed in
       this.p5 = arguments[0];
       this.mat4  = arguments[1] ||
+      new Float32Array(
         [1,0,0,0,
          0,1,0,0,
          0,0,1,0,
-         0,0,0,1];
+         0,0,0,1]);
     // This is what we'll get with new p5.Matrix()
     // a mat4 identity matrix
     } else {
       this.mat4 = arguments[0] ||
+      new Float32Array(
         [1,0,0,0,
          0,1,0,0,
          0,0,1,0,
-         0,0,0,1];
+         0,0,0,1]);
     }
   };
-
 
   /**
    * Sets the x, y, and z component of the vector using two or three separate
@@ -51,7 +52,7 @@ define(function (require) {
       this.mat4 = inMatrix.mat4;
       return this;
     }
-    else if (inMatrix instanceof Array) {
+    else if (inMatrix instanceof Float32Array) {
       this.mat4 = inMatrix;
       return this;
     }
@@ -91,7 +92,7 @@ define(function (require) {
       this.mat4[14] = transposeMatrix.mat4[11];
       this.mat4[15] = transposeMatrix.mat4[15];
     }
-    else if(transposeMatrix instanceof Array) {
+    else if(transposeMatrix instanceof Float32Array) {
       this.mat4[0] = transposeMatrix[0];
       this.mat4[1] = transposeMatrix[4];
       this.mat4[2] = transposeMatrix[8];
@@ -113,7 +114,7 @@ define(function (require) {
   };
 
   p5.Matrix.identity = function(){
-    return new p5.Matrix().mat4;
+    return new p5.Matrix();
   };
   /**
    * @return {Number} Determinant of our 4x4 matrix
@@ -143,7 +144,23 @@ define(function (require) {
    * @return {[type]} [description]
    */
   p5.Matrix.prototype.copyMat = function(){
-    var copied = this.mat4;
+    var copied = new Float32Array(16);
+    copied[0] = this.mat4[0];
+    copied[1] = this.mat4[1];
+    copied[2] = this.mat4[2];
+    copied[3] = this.mat4[3];
+    copied[4] = this.mat4[4];
+    copied[5] = this.mat4[5];
+    copied[6] = this.mat4[6];
+    copied[7] = this.mat4[7];
+    copied[8] = this.mat4[8];
+    copied[9] = this.mat4[9];
+    copied[10] = this.mat4[10];
+    copied[11] = this.mat4[11];
+    copied[12] = this.mat4[12];
+    copied[13] = this.mat4[13];
+    copied[14] = this.mat4[14];
+    copied[15] = this.mat4[15];
     return copied;
   };
 
@@ -153,13 +170,13 @@ define(function (require) {
    * @return {[type]} [description]
    */
   p5.Matrix.prototype.mult = function(multMatrix){
-    var _dest = new Array(16);
-    var _src = new Array(16);
+    var _dest = new Float32Array(16);
+    var _src = new Float32Array(16);
 
     if(multMatrix instanceof p5.Matrix) {
       _src = multMatrix.mat4;
     }
-    else if(multMatrix instanceof Array){
+    else if(multMatrix instanceof Float32Array){
       _src = multMatrix;
     }
 
@@ -218,7 +235,7 @@ define(function (require) {
       z = arguments[0].z;
     }
     //otherwise if it's an array
-    else if (arguments[0] instanceof Array){
+    else if (arguments[0] instanceof Float32Array){
       x = arguments[0][0];
       y = arguments[0][1];
       z = arguments[0][2];
@@ -232,7 +249,7 @@ define(function (require) {
       z = arguments[2] || 1;
     }
 
-    var _dest = new Array(16);
+    var _dest = new Float32Array(16);
 
     for (var i = 0; i < this.mat4.length; i++) {
       var row = i % 4;
@@ -278,7 +295,7 @@ define(function (require) {
       y = axis.y;
       z = axis.z;
     }
-    else if (axis instanceof Array) {
+    else if (axis instanceof Float32Array) {
       x = axis[0];
       y = axis[1];
       z = axis[2];
