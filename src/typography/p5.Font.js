@@ -53,7 +53,7 @@ define(function(require) {
    * and glyphs, so the list of returned glyphs can be larger or smaller
    *  than the length of the given string.
    *
-   * @param  {string} str the string to be converted
+   * @param  {String} str the string to be converted
    * @return {array}     the opentype glyphs
    */
   p5.Font.prototype._getGlyphs = function(str) {
@@ -64,10 +64,10 @@ define(function(require) {
   /**
    * Returns an opentype path for the supplied string and position.
    *
-   * @param  {string} line     a line of text
+   * @param  {String} line     a line of text
    * @param  {Number} x        x-position
    * @param  {Number} y        y-position
-   * @param  {Number} options opentype options (optional)
+   * @param  {Object} options opentype options (optional)
    * @return {Object}     the opentype path
    */
   p5.Font.prototype._getPath = function(line, x, y, options) {
@@ -79,15 +79,105 @@ define(function(require) {
   };
 
   /*
-   * Renders an opentype path or a string/position to
-   * the current graphics context
+   * Creates an SVG-formatted path-data string
+   * (See http://www.w3.org/TR/SVG/paths.html#PathData)
+   * from the given opentype path or string/position
    *
    * @param  {Object} path    an opentype path, OR the following:
    *
-   * @param  {string} line     a line of text
+   * @param  {String} line     a line of text
    * @param  {Number} x        x-position
    * @param  {Number} y        y-position
-   * @param  {Number} options opentype options (optional)
+   * @param  {Object} options opentype options (optional), set options.decimals
+   * to set the decimal precision of the path-data
+   *
+   * @return {Object}     this p5.Font object
+   */
+  p5.Font.prototype._getPathData = function(line, x, y, options) {
+
+    var decimals = 3;
+
+    // create path from string/position
+    if (typeof line === 'string' && arguments.length > 2) {
+
+      line = this._getPath(line, x, y, options);
+    }
+    // handle options specified in 2nd arg
+    else if (typeof x === 'object') {
+
+      options = x;
+    }
+
+    // handle svg arguments
+    if (options && typeof options.decimals === 'number') {
+
+      decimals = options.decimals;
+    }
+
+    return line.toPathData(decimals);
+  };
+
+  /*
+   * Creates an SVG <path> element, as a string, from the
+   * from the given opentype path or string/position
+   *
+   * @param  {Object} path    an opentype path, OR the following:
+   *
+   * @param  {String} line     a line of text
+   * @param  {Number} x        x-position
+   * @param  {Number} y        y-position
+   * @param  {Object} options opentype options (optional), set options.decimals
+   * to set the decimal precision of the path-data in the <path> element,
+   *  options.fill to set the fill color for the <path> element,
+   *  options.stroke to set the stroke color for the <path> element,
+   *  options.strokeWidth to set the strokeWidth for the <path> element.
+   *
+   * @return {Object}     this p5.Font object
+   */
+  p5.Font.prototype._getSVG = function(line, x, y, options) {
+
+    var decimals = 3;
+
+    // create path from string/position
+    if (typeof line === 'string' && arguments.length > 2) {
+
+      line = this._getPath(line, x, y, options);
+    }
+    // handle options specified in 2nd arg
+    else if (typeof x === 'object') {
+
+      options = x;
+    }
+
+    // handle svg arguments
+    if (options) {
+      if (typeof options.decimals === 'number') {
+        decimals = options.decimals;
+      }
+      if (typeof options.strokeWidth === 'number') {
+        line.strokeWidth = options.strokeWidth;
+      }
+      if (typeof options.fill !== undefined) {
+        line.fill = options.fill;
+      }
+      if (typeof options.stroke !== undefined) {
+        line.stroke = options.stroke;
+      }
+    }
+
+    return line.toSVG(decimals);
+  };
+
+  /*
+   * Renders an opentype path or string/position
+   * to the current graphics context
+   *
+   * @param  {Object} path    an opentype path, OR the following:
+   *
+   * @param  {String} line     a line of text
+   * @param  {Number} x        x-position
+   * @param  {Number} y        y-position
+   * @param  {Object} options opentype options (optional)
    *
    * @return {Object}     this p5.Font object
    */
@@ -145,11 +235,11 @@ define(function(require) {
    * font (currently only support single line)
    *
    * @method textBounds
-   * @param  {string} line     a line of text
+   * @param  {String} line     a line of text
    * @param  {Number} x        x-position
    * @param  {Number} y        y-position
    * @param  {Number} fontSize font size to use (optional)
-   * @param  {Number} options opentype options (optional)
+   * @param  {Object} options opentype options (optional)
    *
    * @return {Object}          a rectangle object with properties: x, y, w, h
    *
@@ -178,11 +268,6 @@ define(function(require) {
    * </div>
    */
   p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
-
-    if (!this.parent._isOpenType()) {
-
-      throw Error('not supported for system fonts');
-    }
 
     x = x !== undefined ? x : 0;
     y = y !== undefined ? y : 0;
