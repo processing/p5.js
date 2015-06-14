@@ -50,10 +50,8 @@ define(function(require) {
       this.height * this._pInst.pixelDensity);
     this.initShaders(); //initialize our default shaders
     //create our default matrices
-    this.uMVMatrix = new p5.Matrix();
-    this.uPMatrix  = new p5.Matrix();
-    this.uNMatrix = new p5.Matrix();
-    this._perspective(60 / 180 * Math.PI,this.width / this.height, 0.1, 100);
+    this.initBuffer();
+    this.initMatrix();
     return this;
   };
 
@@ -129,10 +127,27 @@ define(function(require) {
     //normal Matrix uniform
     shaderProgram.uNMatrixUniform =
     gl.getUniformLocation(shaderProgram, 'normalMatrix');
+  };
 
+  /**
+   * [initBuffer description]
+   * @return {[type]} [description]
+   */
+  p5.Graphics3D.prototype.initBuffer = function(){
     vertexBuffer = gl.createBuffer();
     indexBuffer = gl.createBuffer();
     normalBuffer = gl.createBuffer();
+  };
+
+  /**
+   * [initMatrix description]
+   * @return {[type]} [description]
+   */
+  p5.Graphics3D.prototype.initMatrix = function(){
+    this.uMVMatrix = new p5.Matrix();
+    this.uPMatrix  = new p5.Matrix();
+    this.uNMatrix = new p5.Matrix();
+    this._perspective(60 / 180 * Math.PI, this.width / this.height, 0.1, 100);
   };
 
   /**
