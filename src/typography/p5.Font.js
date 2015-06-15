@@ -306,40 +306,53 @@ define(function(require) {
     if (!result) {
 
       // console.log('computing');
+      if (str !== ' ') {
 
-      var xCoords = [],
-        yCoords = [],
-        scale = this._scale(fontSize),
-        minX, minY, maxX, maxY;
+        var xCoords = [],
+          yCoords = [],
+          scale = this._scale(fontSize),
+          minX, minY, maxX, maxY;
 
-      this.font.forEachGlyph(str, x, y, fontSize, options,
-        function(glyph, gX, gY, gFontSize) {
+        this.font.forEachGlyph(str, x, y, fontSize, options,
+          function(glyph, gX, gY, gFontSize) {
 
-          if (glyph.name !== 'space') {
+            if (glyph.name !== 'space') {
 
-            gX = gX !== undefined ? gX : 0;
-            gY = gY !== undefined ? gY : 0;
+              gX = gX !== undefined ? gX : 0;
+              gY = gY !== undefined ? gY : 0;
 
-            var gm = glyph.getMetrics();
-            xCoords.push(gX + (gm.xMin * scale));
-            yCoords.push(gY + (-gm.yMin * scale));
-            xCoords.push(gX + (gm.xMax * scale));
-            yCoords.push(gY + (-gm.yMax * scale));
-          }
-        });
+              var gm = glyph.getMetrics();
+              xCoords.push(gX + (gm.xMin * scale));
+              yCoords.push(gY + (-gm.yMin * scale));
+              xCoords.push(gX + (gm.xMax * scale));
+              yCoords.push(gY + (-gm.yMax * scale));
+            }
+          });
 
-      minX = Math.min.apply(null, xCoords);
-      minY = Math.min.apply(null, yCoords);
-      maxX = Math.max.apply(null, xCoords);
-      maxY = Math.max.apply(null, yCoords);
+        minX = Math.min.apply(null, xCoords);
+        minY = Math.min.apply(null, yCoords);
+        maxX = Math.max.apply(null, xCoords);
+        maxY = Math.max.apply(null, yCoords);
 
-      result = {
-        x: minX,
-        y: minY,
-        h: maxY - minY,
-        w: maxX - minX,
-        advance: minX - x
-      };
+        result = {
+          x: minX,
+          y: minY,
+          h: maxY - minY,
+          w: maxX - minX,
+          advance: minX - x
+        };
+      }
+      else { // special case ' ' for now
+
+        var tw = this._textWidth(str);
+        result = {
+          x: x,
+          y: y,
+          h: 0,
+          w: tw,
+          advance: 0 // ?
+        };
+      }
 
       this.cache[cacheKey('textBounds', str, x, y, fontSize)] = result;
     }
