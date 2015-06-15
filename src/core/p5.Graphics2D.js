@@ -1114,12 +1114,9 @@ define(function(require) {
 
   p5.Graphics2D.prototype.textWidth = function(s) {
 
-    var p = this._pInst;
+    if (this._pInst._isOpenType()) {
 
-    if (p._isOpenType()) {
-
-      var tb = p._textFont.textBounds(s, 0, 0);
-      return tb.w + tb.advance;
+      return this._pInst._textFont._textWidth(s);
     }
 
     return this.drawingContext.measureText(s).width;

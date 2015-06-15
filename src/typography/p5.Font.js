@@ -72,8 +72,8 @@ define(function(require) {
    */
   p5.Font.prototype._getPath = function(line, x, y, options) {
 
-    var p = this.parent, pg = p._graphics, ctx = pg.drawingContext,
-      pos = handleAlignment(p, ctx, line, x, y);
+    var p = this.parent, ctx = p._graphics.drawingContext,
+      pos = this._handleAlignment(p, ctx, line, x, y);
 
     return this.font.getPath(line, pos.x, pos.y, p._textSize, options);
   };
@@ -184,7 +184,7 @@ define(function(require) {
   p5.Font.prototype._renderPath = function(line, x, y, options) {
 
     // /console.log('_renderPath', typeof line);
-    var pdata, pos, p = this.parent, pg = p._graphics, ctx = pg.drawingContext;
+    var pdata, p = this.parent, pg = p._graphics, ctx = pg.drawingContext;
 
     if (typeof line === 'object' && line.commands) {
 
@@ -192,9 +192,8 @@ define(function(require) {
     }
     else {
 
-      pos = handleAlignment(p, ctx, line, x, y);
-      pdata = this.font.getPath
-        (line, pos.x, pos.y, p._textSize, options).commands;
+      //pos = handleAlignment(p, ctx, line, x, y);
+      pdata = this._getPath(line, x, y, p._textSize, options).commands;
     }
 
     ctx.beginPath();
@@ -228,6 +227,34 @@ define(function(require) {
     }
 
     return this;
+  };
+
+  p5.Font.prototype._textWidth = function(str) {
+
+    if (str === ' ') { // special case for now
+
+      return this.font.charToGlyph(' ').advanceWidth * this._scale();
+    }
+
+    var bounds = this.textBounds(str);
+    return bounds.w + bounds.advance;
+  };
+
+  p5.Font.prototype._textAscent = function() {
+
+    var bounds = this.textBounds('ABCjgq|');
+    return Math.abs(bounds.y);
+  };
+
+  p5.Font.prototype._textDescent = function() {
+
+    var bounds = this.textBounds('ABCjgq|');
+    return bounds.h - Math.abs(bounds.y);
+  };
+
+  p5.Font.prototype._scale = function(fontSize) {
+
+    return (1 / this.font.unitsPerEm) * (fontSize || this.parent._textSize);
   };
 
   /**
@@ -273,7 +300,7 @@ define(function(require) {
     y = y !== undefined ? y : 0;
     fontSize = fontSize || this.parent._textSize;
 
-    //console.log('textBounds(',str, x, y, fontSize,")");
+    //console.log('textBounds(',str, x, y, fontSize,')');
 
     var result = this.cache[cacheKey('textBounds', str, x, y, fontSize)];
     if (!result) {
@@ -281,8 +308,9 @@ define(function(require) {
       // console.log('computing');
 
       var xCoords = [],
-        yCoords = [], minX, minY, maxX, maxY,
-        scale = 1 / this.font.unitsPerEm * fontSize;
+        yCoords = [],
+        scale = this._scale(fontSize),
+        minX, minY, maxX, maxY;
 
       this.font.forEachGlyph(str, x, y, fontSize, options,
         function(glyph, gX, gY, gFontSize) {
@@ -320,10 +348,9 @@ define(function(require) {
     return result;
   };
 
-  p5.Font.prototype._drawPoints = function(str, tx, ty, options) {
+  p5.Font.prototype._drawPoints = function(str, tx, ty, options) { // remove?
 
-    var pdata, onCurvePts, offCurvePts, p = this.parent,
-      scale = (1 / this.font.unitsPerEm) * p._textSize;
+    var pdata, onCurvePts, offCurvePts, p = this.parent, scale = this._scale();
 
     tx = tx !== undefined ? tx : 0;
     ty = ty !== undefined ? ty : 0;
@@ -373,11 +400,11 @@ define(function(require) {
 
   // helpers
 
-  function handleAlignment(p, ctx, line, x, y) {
+  p5.Font.prototype._handleAlignment = function(p, ctx, line, x, y) {
 
-    var textWidth = p.textWidth(line),
-      textAscent = p.textAscent(),
-      textDescent = p.textDescent(),
+    var textWidth = this._textWidth(line),
+      textAscent = this._textAscent(),
+      textDescent = this._textDescent(),
       textHeight = textAscent + textDescent;
 
     if (ctx.textAlign === constants.CENTER) {
@@ -395,7 +422,7 @@ define(function(require) {
     }
 
     return { x: x, y: y };
-  }
+  };
 
   function cacheKey() {
     var args = Array.prototype.slice.call(arguments),

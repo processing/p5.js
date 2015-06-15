@@ -58,10 +58,10 @@ function setup() {
 
   // tight bounds
   stroke(200,0,0);
-  tb = font2.textBounds('sleep furiously', x2, y2); // tight bounds
+  tb = font2.textBounds(words2, x2, y2); // tight bounds
   rect(tb.x,tb.y,tb.w,tb.h);
 
   fill(0,100,0);
   noStroke();
-  text('sleep furiously', x2, y2);
+  text(words2, x2, y2);
 };
