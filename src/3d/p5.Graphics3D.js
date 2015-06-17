@@ -48,6 +48,7 @@ define(function(require) {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.viewport(0, 0, this.width * this._pInst.pixelDensity,
       this.height * this._pInst.pixelDensity);
+    console.log(this._pInst.pixelDensity);
     this.initShaders(); //initialize our default shaders
     //create our default matrices
     this.initBuffer();
@@ -147,7 +148,7 @@ define(function(require) {
     this.uMVMatrix = new p5.Matrix();
     this.uPMatrix  = new p5.Matrix();
     this.uNMatrix = new p5.Matrix();
-    this._perspective(60 / 180 * Math.PI, this.width / this.height, 0.1, 100);
+    this._perspective(60 / 180 * Math.PI, this.width / this.height, 0.1, 1000);
   };
 
   /**
@@ -232,7 +233,7 @@ define(function(require) {
     gl.bufferData
      (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(faces), gl.STATIC_DRAW);
     
-    _setMatrixUniforms(this.uPMatrix, this.uMVMatrix);
+    this.setMatrixUniforms();
     gl.drawElements(gl.TRIANGLES, faces.length, gl.UNSIGNED_SHORT, 0);
 
     return this;
@@ -315,23 +316,25 @@ define(function(require) {
     if (uMVMatrixStack.length === 0) {
       throw 'Invalid popMatrix!';
     }
-    this.uMVMatrix.mat4 = uMVMatrixStack.pop();
+    this.uMVMatrix = uMVMatrixStack.pop();
   };
+
   /**
    * Sets the Matrix Uniforms inside our default shader.
    * @param {Array float} projection projection matrix
    * @param {Array float} modelView  model view matrix
    */
-  function _setMatrixUniforms(pMatrix, mvMatrix) {
-    gl.uniformMatrix4fv(shaderProgram.uPMatrixUniform, false, pMatrix.mat4);
-    gl.uniformMatrix4fv(shaderProgram.uMVMatrixUniform, false, mvMatrix.mat4);
-    var nMatrix = p5.Matrix.identity();
-    nMatrix = nMatrix.invert(mvMatrix);
-    //console.log(nMatrix);
-    nMatrix = nMatrix.transpose(nMatrix);
-    //console.log(nMatrix);
-    gl.uniformMatrix4fv(shaderProgram.uNMatrixUniform, false, nMatrix.mat4);
-  }
+  p5.Graphics3D.prototype.setMatrixUniforms = function() {
+    gl.uniformMatrix4fv(
+      shaderProgram.uPMatrixUniform, false, this.uPMatrix.mat4);
+    gl.uniformMatrix4fv(
+      shaderProgram.uMVMatrixUniform, false, this.uMVMatrix.mat4);
+    this.uNMatrix = new p5.Matrix();
+    this.uNMatrix.invert(this.uMVMatrix);
+    this.uNMatrix.transpose(this.uNMatrix);
+    gl.uniformMatrix4fv(
+      shaderProgram.uNMatrixUniform, false, this.uNMatrix.mat4);
+  };
     /**
      * PRIVATE
      */
