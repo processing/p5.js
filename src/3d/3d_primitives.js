@@ -23,20 +23,17 @@ define(function (require) {
    */
   p5.prototype.plane = function(width, height, detailX, detailY){
 
-    var uuid = 'plane-';
-    var params = Array.prototype.slice.call(arguments, 0);
-    params.forEach(function(param){
-      uuid += (param + '-');
-    });
+    width = width || 1;
+    height = height || 1;
+
+    detailX = detailX || 1;
+    detailY = detailY || 1;
+
+    var uuid = 'plane|'+width+'|'+height+'|'+detailX+'|'+detailY;
  
     if(this._graphics.notInHash(uuid)){
+
       var geometry3d = new p5.Geometry3D();
-
-      width = width || 1;
-      height = height || 1;
-
-      detailX = detailX || 1;
-      detailY = detailY || 1;
 
       var createPlane = function(u, v){
         var x = 2 * width * u - width;
@@ -49,15 +46,13 @@ define(function (require) {
       
       var obj = geometry3d.generateObj();
  
-      this._graphics.initGeometry(uuid, obj);
+      this._graphics.initBuffer(uuid, obj);
     
     }
 
-    this._graphics.drawGeometry(uuid);
+    this._graphics.drawBuffer(uuid);
 
   };
-
-  //TODO: a lookup table for sin cos
 
   /**
    * [sphere description]

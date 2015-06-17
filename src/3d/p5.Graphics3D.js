@@ -136,6 +136,7 @@ define(function(require) {
    */
   p5.Graphics3D.prototype.initHash = function(){
     this.hash = {};
+    window.hash = this.hash;//for debug
   };
 
   /**
@@ -219,33 +220,32 @@ define(function(require) {
     return this.hash[uuid] === undefined;
   };
 
-  p5.Graphics3D.prototype.initGeometry = function(uuid, obj) {
+  p5.Graphics3D.prototype.initBuffer = function(uuid, obj) {
+    console.log(obj);
 
-    var _obj = {};
-    _obj.vertexBuffer = gl.createBuffer();
-    _obj.normalBuffer = gl.createBuffer();
-    _obj.indexBuffer = gl.createBuffer();
+    this.hash[uuid] = {};
+    this.hash[uuid].vertexBuffer = gl.createBuffer();
+    this.hash[uuid].normalBuffer = gl.createBuffer();
+    this.hash[uuid].indexBuffer = gl.createBuffer();
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, _obj.vertexBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.hash[uuid].vertexBuffer);
     gl.bufferData(
       gl.ARRAY_BUFFER, new Float32Array(obj.vertices), gl.STATIC_DRAW);
     gl.vertexAttribPointer(
       shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, _obj.normalBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.hash[uuid].normalBuffer);
     gl.bufferData(
       gl.ARRAY_BUFFER, new Float32Array(obj.vertexNormals), gl.STATIC_DRAW);
     gl.vertexAttribPointer(
       shaderProgram.vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _obj.indexBuffer);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.hash[uuid].indexBuffer);
     gl.bufferData
      (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(obj.faces), gl.STATIC_DRAW);
-  
-    this.hash[uuid] = _obj;
   };
 
-  p5.Graphics3D.prototype.drawGeometry = function(uuid) {
+  p5.Graphics3D.prototype.drawBuffer = function(uuid) {
     
     gl.bindBuffer(gl.ARRAY_BUFFER, this.hash[uuid].vertexBuffer);
     gl.vertexAttribPointer(
