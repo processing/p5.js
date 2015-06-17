@@ -48,7 +48,6 @@ define(function(require) {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.viewport(0, 0, this.width * this._pInst.pixelDensity,
       this.height * this._pInst.pixelDensity);
-    console.log(this._pInst.pixelDensity);
     this.initShaders(); //initialize our default shaders
     //create our default matrices
     this.initBuffer();
@@ -148,7 +147,7 @@ define(function(require) {
     this.uMVMatrix = new p5.Matrix();
     this.uPMatrix  = new p5.Matrix();
     this.uNMatrix = new p5.Matrix();
-    this._perspective(60 / 180 * Math.PI, this.width / this.height, 0.1, 1000);
+    this._perspective(60 / 180 * Math.PI, this.width / this.height, 0.1, 100);
   };
 
   /**
