@@ -23,26 +23,37 @@ define(function (require) {
    */
   p5.prototype.plane = function(width, height, detailX, detailY){
 
-    var geometry3d = new p5.Geometry3D();
+    var uuid = 'plane-';
+    var params = Array.prototype.slice.call(arguments, 0);
+    params.forEach(function(param){
+      uuid += (param + '-');
+    });
+ 
+    if(this._graphics.notInHash(uuid)){
+      var geometry3d = new p5.Geometry3D();
 
-    width = width || 1;
-    height = height || 1;
+      width = width || 1;
+      height = height || 1;
 
-    detailX = detailX || 1;
-    detailY = detailY || 1;
+      detailX = detailX || 1;
+      detailY = detailY || 1;
 
-    function createPlane(u, v){
-      var x = 2 * width * u - width;
-      var y = 2 * height * v - height;
-      var z = 0;
-      return new p5.Vector(x, y, z);
+      var createPlane = function(u, v){
+        var x = 2 * width * u - width;
+        var y = 2 * height * v - height;
+        var z = 0;
+        return new p5.Vector(x, y, z);
+      };
+      
+      geometry3d.parametricGeometry(createPlane, detailX, detailY);
+      
+      var obj = geometry3d.generateObj();
+ 
+      this._graphics.initGeometry(uuid, obj);
+    
     }
-    
-    geometry3d.parametricGeometry(createPlane, detailX, detailY);
-    
-    var obj = geometry3d.generateObj();
 
-    this._graphics.drawGeometry(obj);
+    this._graphics.drawGeometry(uuid);
 
   };
 

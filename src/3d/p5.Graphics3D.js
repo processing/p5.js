@@ -6,7 +6,6 @@ define(function(require) {
   require('3d/p5.Matrix');
   var gl, shaderProgram;
   var uMVMatrixStack = [];
-  var vertexBuffer, indexBuffer, normalBuffer;
 
   //@TODO should probably implement an override for these attributes
   var attributes = {
@@ -50,7 +49,7 @@ define(function(require) {
       this.height * this._pInst.pixelDensity);
     this.initShaders(); //initialize our default shaders
     //create our default matrices
-    this.initBuffer();
+    this.initHash();
     this.initMatrix();
     return this;
   };
@@ -135,10 +134,8 @@ define(function(require) {
    * [initBuffer description]
    * @return {[type]} [description]
    */
-  p5.Graphics3D.prototype.initBuffer = function(){
-    vertexBuffer = gl.createBuffer();
-    indexBuffer = gl.createBuffer();
-    normalBuffer = gl.createBuffer();
+  p5.Graphics3D.prototype.initHash = function(){
+    this.hash = {};
   };
 
   /**
@@ -189,6 +186,16 @@ define(function(require) {
     return this;
   };
 
+  /**
+   * [resize description]
+   * @param  {[type]} w [description]
+   * @param  {[type]} h [description]
+   * @return {[type]}   [description]
+   */
+  p5.Graphics3D.prototype.resize = function(w,h) {
+    p5.Graphics.prototype.resize.call(this, w,h);
+    
+  };
   //@TODO implement this
   // p5.Graphics3D.prototype.clear = function() {
   //@TODO
@@ -207,39 +214,54 @@ define(function(require) {
     this._stroke = this._pInst.color.apply(this._pInst, arguments);
   };
 
-  /**
-   * draw geometry with given vertices array
-   * @param  {Array} vertices generated vertices
-   * @return {[type]}          [description]
-   */
-  p5.Graphics3D.prototype.drawGeometry = function(obj) {
-    
-    var vertices = obj.vertices;
-    var vertexNormals = obj.vertexNormals;
-    var faces = obj.faces;
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+  p5.Graphics3D.prototype.notInHash = function(uuid){
+    return this.hash[uuid] === undefined;
+  };
+
+  p5.Graphics3D.prototype.initGeometry = function(uuid, obj) {
+
+    var _obj = {};
+    _obj.vertexBuffer = gl.createBuffer();
+    _obj.normalBuffer = gl.createBuffer();
+    _obj.indexBuffer = gl.createBuffer();
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, _obj.vertexBuffer);
     gl.bufferData(
-      gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+      gl.ARRAY_BUFFER, new Float32Array(obj.vertices), gl.STATIC_DRAW);
     gl.vertexAttribPointer(
       shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
 
-    gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, _obj.normalBuffer);
     gl.bufferData(
-      gl.ARRAY_BUFFER, new Float32Array(vertexNormals), gl.STATIC_DRAW);
+      gl.ARRAY_BUFFER, new Float32Array(obj.vertexNormals), gl.STATIC_DRAW);
     gl.vertexAttribPointer(
       shaderProgram.vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
 
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, _obj.indexBuffer);
     gl.bufferData
-     (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(faces), gl.STATIC_DRAW);
-    
-    this.setMatrixUniforms();
-    gl.drawElements(gl.TRIANGLES, faces.length, gl.UNSIGNED_SHORT, 0);
-
-    return this;
+     (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(obj.faces), gl.STATIC_DRAW);
+  
+    this.hash[uuid] = _obj;
   };
 
+  p5.Graphics3D.prototype.drawGeometry = function(uuid) {
+    
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.hash[uuid].vertexBuffer);
+    gl.vertexAttribPointer(
+      shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.hash[uuid].normalBuffer);
+    gl.vertexAttribPointer(
+      shaderProgram.vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
+
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.hash[uuid].indexBuffer);
+    
+    this.setMatrixUniforms();
+    gl.drawElements(
+      gl.TRIANGLES, this.hash[uuid].indexBuffer.length / 3,
+       gl.UNSIGNED_SHORT, 0);
+  };
 
   /**
    * [translate description]
