@@ -15,20 +15,23 @@ var sketch = function(p) {
   p.preload = function() {
 
     font1 = p.loadFont('SourceSansPro-Regular.otf');
-    font2 = p.loadFont('acmesa.ttf');
+    font2 = p.loadFont('acmesa.ttf'); 
   };
 
   p.setup = function() {
 
-    p.createCanvas(600, 200);
+    p.createCanvas(600, 600);
     p.fill(20);
 
-    p.textSize(64);
-    p.textFont('times');
-    p.text("Lexical Projection...", 30, 50);
+    p.textFont('times', 64);
+    p.text("Lexical Rejection", 30, 50);
 
-    p.textFont(font2, 48);
-    p.text("Indexical Rejection", 30, 100);
+    /*p.textFont(font1, 70);
+    p.text("Lexical Injection", 30, 120);
+
+    // TODO: this is a bug... (should still be at 120)
+    p.textFont(font2, 64);
+    p.text("Lexical Projection", 30, 120, 200, 200);*/
   };
 
 }

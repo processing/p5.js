@@ -19,7 +19,7 @@ function draw(){
   rotateZ(theta)
   rotateX(theta * 1.5)
   rotateY(theta * 0.5)
-  cube(100, 100, 100)
+  cube(100,100,100)
   pop()
   translate(50, 0, 0)
   push()
@@ -45,5 +45,5 @@ function draw(){
   rotateX(theta)
   sphere(100, 100)
   pop()
-  theta += 0.02
+  theta += 0.05
 }

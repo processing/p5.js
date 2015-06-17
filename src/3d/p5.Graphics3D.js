@@ -52,6 +52,7 @@ define(function(require) {
     //create our default matrices
     this.initBuffer();
     this.initMatrix();
+    console.log(this.width, this.height);
     return this;
   };
 
@@ -127,8 +128,6 @@ define(function(require) {
     //normal Matrix uniform
     shaderProgram.uNMatrixUniform =
     gl.getUniformLocation(shaderProgram, 'normalMatrix');
-  
-    console.log(this.width, this.height);
   };
 
   /**

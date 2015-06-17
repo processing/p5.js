@@ -291,8 +291,9 @@ define(function(require) {
 
     if (this._isOpenType()) {
 
-      this._setProperty('_textAscent', this._textFont._textAscent());
-      this._setProperty('_textDescent', this._textFont._textDescent());
+      var bounds = this._textFont.textBounds('ABCjgq|', 0, 0);
+      this._setProperty('_textAscent', Math.abs(bounds.y));
+      this._setProperty('_textDescent', bounds.h - Math.abs(bounds.y));
       return this;
     }
 
