@@ -124,14 +124,15 @@ define(function (require) {
    * </div>
    */
   p5.prototype.image = function(img, x, y, width, height) {
-    this._validateParameters(
-      'image',
-      arguments,
-      [
-        ['p5.Image', 'Number', 'Number'],
-        ['p5.Image', 'Number', 'Number', 'Number', 'Number']
-      ]
-    );
+    // Temporarily disabling until options for p5.Graphics are added.
+    // this._validateParameters(
+    //   'image',
+    //   arguments,
+    //   [
+    //     ['p5.Image', 'Number', 'Number'],
+    //     ['p5.Image', 'Number', 'Number', 'Number', 'Number']
+    //   ]
+    // );
 
     // set defaults
     x = x || 0;

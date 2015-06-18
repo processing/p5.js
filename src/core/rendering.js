@@ -192,16 +192,25 @@ define(function(require) {
    * to draw into an off-screen graphics buffer. The two parameters define the
    * width and height in pixels.
    */
-  p5.prototype._createGraphics2D = function(w, h) {
+  p5.prototype._createGraphics2D = function (w, h) {
     var c = document.createElement('canvas');
-    //c.style.visibility='hidden';
     var node = this._userNode || document.body;
     node.appendChild(c);
 
-    var pg = new p5.Graphics2D(c, this, false);
-    // store in elements array
+    // graphics element return is actually a p5.Element
+    // with a p5.Graphics object set to the _graphics property
+    var pg = new p5.Element(c, this, false);
+    pg._styles = [];
+    pg.width = w;
+    pg.height = h;
+    pg.pixelDensity = this.pixelDensity;
+
+    pg._graphics = new p5.Graphics2D(c, pg, false);
+    pg._graphics.resize(w, h);
+    pg._graphics._applyDefaults();
     this._elements.push(pg);
 
+    // bind methods and props of p5 to the new object
     for (var p in p5.prototype) {
       if (!pg[p]) {
         if (typeof p5.prototype[p] === 'function') {
@@ -211,8 +220,7 @@ define(function(require) {
         }
       }
     }
-    pg.resize(w, h);
-    pg._applyDefaults();
+
     return pg;
   };
 
