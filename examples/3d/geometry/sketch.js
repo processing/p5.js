@@ -19,7 +19,7 @@ function draw(){
   rotateZ(theta)
   rotateX(theta * 1.5)
   rotateY(theta * 0.5)
-  cube(100,100,100)
+  box(100,200,100)
   pop()
   translate(50, 0, 0)
   push()

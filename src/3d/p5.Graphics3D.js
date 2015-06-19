@@ -225,7 +225,6 @@ define(function(require) {
   };
 
   p5.Graphics3D.prototype.initBuffer = function(uuid, obj) {
-    console.log(obj);
 
     this.hash[uuid] = {};
     this.hash[uuid].vertexBuffer = gl.createBuffer();

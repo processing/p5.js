@@ -5,20 +5,19 @@ function setup(){
 }
 
 function draw(){
-
-background(0, 100, 200, 255);
+  background(200, 200, 200, 255);
  
   translate(-10, 0, -100);
 
   for(var j = 0; j < 5; j++){
     push();
-    for(var i = 0; i < 50; i++){
-      translate(sin(theta + j),sin(theta + j), i * 0.001);
+    for(var i = 0; i < 200; i++){
+      translate(sin(theta + j) * 10, sin(theta + j) * 10, i * 0.001);
       rotateZ(theta * 0.1);
       rotateY(theta);
       push();
       scale(0.6, 0.6, 0.6);
-      cube(50, 50, 50); 
+      sphere(20); 
       pop();
     }
     pop();

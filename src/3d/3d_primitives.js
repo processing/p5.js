@@ -236,14 +236,15 @@ define(function (require) {
    * @param  {[type]} detailY [description]
    * @return {[type]}         [description]
    */
-  p5.prototype.cube = function(width, height, depth, detailX, detailY){
+  p5.prototype.box = function(width, height, depth){
 
-    width = width || 1;
-    height = height || 1;
-    depth = depth || 1;
+    width = width || 10;
+    height = height || width;
+    depth = depth || width;
 
-    detailX = detailX || 1;
-    detailY = detailY || 1;
+    //detail for box as optional
+    var detailX = typeof arguments[3] === Number ? arguments[3] : 1;
+    var detailY = typeof arguments[4] === Number ? arguments[4] : 1;
 
     var uuid = 'cube|'+width+'|'+height+'|'+depth+'|'+detailX+'|'+detailY;
 
