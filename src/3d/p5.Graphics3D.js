@@ -37,7 +37,6 @@ define(function(require) {
       console.error(er);
     }
 
-    this._pInst._setProperty('_graphics', this);
     this.isP3D = true; //lets us know we're in 3d mode
     gl = this.drawingContext;
     gl.clearColor(1.0, 1.0, 1.0, 1.0); //background is initialized white
@@ -45,8 +44,7 @@ define(function(require) {
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.viewport(0, 0, this.width * this._pInst.pixelDensity,
-      this.height * this._pInst.pixelDensity);
+    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
     this.initShaders(); //initialize our default shaders
     //create our default matrices
     this.initHash();
@@ -59,6 +57,12 @@ define(function(require) {
    * @type {[type]}
    */
   p5.Graphics3D.prototype = Object.create(p5.Graphics.prototype);
+
+
+  p5.Graphics3D.prototype.resize = function(w,h) {
+    p5.Graphics.prototype.resize.call(this, w,h);
+    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+  };
 
   /**
    * [initShaders description]
