@@ -197,9 +197,9 @@ define(function(require) {
    * @param  {[type]} h [description]
    * @return {[type]}   [description]
    */
-  p5.Graphics3D.prototype.resize = function(w,h) {
-    p5.Graphics.prototype.resize.call(this, w,h);
-    
+  p5.Graphics3D.prototype.resize = function(w, h) {
+    p5.Graphics.prototype.resize.call(this, w, h);
+    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
   };
   //@TODO implement this
   // p5.Graphics3D.prototype.clear = function() {

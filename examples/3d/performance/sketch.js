@@ -5,8 +5,10 @@ function setup(){
 }
 
 function draw(){
-  background(0, 100, 200, 255);
-  translate(-10, 0, -100.0);
+
+background(0, 100, 200, 255);
+ 
+  translate(-10, 0, -100);
 
   for(var j = 0; j < 5; j++){
     push();
@@ -16,11 +18,12 @@ function draw(){
       rotateY(theta);
       push();
       scale(0.6, 0.6, 0.6);
-      cube(50, 50, 50);
+      cube(50, 50, 50); 
       pop();
     }
     pop();
   }
-  theta += 0.01;
+
+  theta += 0.05;
 
 }
