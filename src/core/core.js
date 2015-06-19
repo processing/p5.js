@@ -216,6 +216,7 @@ define(function (require) {
       // Always create a default canvas.
       // Later on if the user calls createCanvas, this default one
       // will be replaced
+      
       this.createCanvas(
         this._defaultCanvasSize.width,
         this._defaultCanvasSize.height,

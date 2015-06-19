@@ -77,25 +77,25 @@ define(function(require) {
     } else {
       document.body.appendChild(c);
     }
+    
+
 
     // Init our graphics renderer
     //webgl mode
     if (r === constants.WEBGL) {
       this._setProperty('_graphics', new p5.Graphics3D(c, this, true));
-      this._defaultGraphics = this._graphics;
-      this._elements.push(this._defaultGraphics);
+      this._isdefaultGraphics = true;
     }
     //P2D mode
     else {
-      if (!this._defaultGraphics) {
+      if (!this._isdefaultGraphics) {
         this._setProperty('_graphics', new p5.Graphics2D(c, this, true));
-        this._defaultGraphics = this._graphics;
-        this._elements.push(this._defaultGraphics);
+        this._isdefaultGraphics = true;
       }
     }
-    this._defaultGraphics.resize(w, h);
-    this._defaultGraphics._applyDefaults();
-    return this._defaultGraphics;
+    this._graphics.resize(w, h);
+    this._graphics._applyDefaults();
+    return this._graphics;
   };
 
   /**
