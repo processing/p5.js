@@ -17,6 +17,7 @@ define(function(require) {
     premultipliedAlpha: false,
     preserveDrawingBuffer: false
   };
+
   /**
    * 3D graphics class.  Can also be used as an off-screen graphics buffer.
    * A p5.Graphics3D object can be constructed
@@ -37,7 +38,6 @@ define(function(require) {
       console.error(er);
     }
 
-    this._pInst._setProperty('_graphics', this);
     this.isP3D = true; //lets us know we're in 3d mode
     gl = this.drawingContext;
     gl.clearColor(1.0, 1.0, 1.0, 1.0); //background is initialized white
@@ -45,14 +45,11 @@ define(function(require) {
     gl.enable(gl.DEPTH_TEST);
     gl.depthFunc(gl.LEQUAL);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-    gl.viewport(0, 0, this.width * this._pInst.pixelDensity,
-      this.height * this._pInst.pixelDensity);
+    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
     this.initShaders(); //initialize our default shaders
     //create our default matrices
-    this.uMVMatrix = new p5.Matrix();
-    this.uPMatrix  = new p5.Matrix();
-    this.uNMatrix = new p5.Matrix();
-    this._perspective(60 / 180 * Math.PI,this.width / this.height, 0.1, 100);
+    this.initBuffer();
+    this.initMatrix();
     return this;
   };
 
@@ -61,6 +58,12 @@ define(function(require) {
    * @type {[type]}
    */
   p5.Graphics3D.prototype = Object.create(p5.Graphics.prototype);
+
+
+  p5.Graphics3D.prototype.resize = function(w,h) {
+    p5.Graphics.prototype.resize.call(this, w,h);
+    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+  };
 
   /**
    * [initShaders description]
@@ -128,25 +131,30 @@ define(function(require) {
     //normal Matrix uniform
     shaderProgram.uNMatrixUniform =
     gl.getUniformLocation(shaderProgram, 'normalMatrix');
+  
+    console.log(this.width, this.height);
+  };
 
+  /**
+   * [initBuffer description]
+   * @return {[type]} [description]
+   */
+  p5.Graphics3D.prototype.initBuffer = function(){
     vertexBuffer = gl.createBuffer();
     indexBuffer = gl.createBuffer();
     normalBuffer = gl.createBuffer();
   };
 
   /**
-   * [initMatrices description]
+   * [initMatrix description]
    * @return {[type]} [description]
    */
-  // p5.Graphics3D.prototype.initMatrices = function() {
-  //   // Create a projection / perspective matrix
-  //   uMVMatrix = new p5.Matrix();
-  //   uPMatrix = new p5.Matrix();
-  //   nMatrix = new p5.Matrix();
-  //   mat4.perspective(
-  //     uPMatrix, 60 / 180 * Math.PI,
-  //     this.width / this.height, 0.1, 100);
-  // };
+  p5.Graphics3D.prototype.initMatrix = function(){
+    this.uMVMatrix = new p5.Matrix();
+    this.uPMatrix  = new p5.Matrix();
+    this.uNMatrix = new p5.Matrix();
+    this._perspective(60 / 180 * Math.PI, this.width / this.height, 0.1, 100);
+  };
 
   /**
    * resets the model view matrix to a mat4 identity
@@ -154,13 +162,17 @@ define(function(require) {
    * @return {void}
    */
   p5.Graphics3D.prototype.resetMatrix = function() {
-    this.uMVMatrix = new p5.Matrix();
+    this.uMVMatrix = p5.Matrix.identity();
   };
 
   //////////////////////////////////////////////
   // COLOR | Setting
   //////////////////////////////////////////////
 
+  /**
+   * [background description]
+   * @return {[type]} [description]
+   */
   p5.Graphics3D.prototype.background = function() {
     var _col = this._pInst.color.apply(this._pInst, arguments);
     // gl.clearColor(0.0,0.0,0.0,1.0);
@@ -173,6 +185,10 @@ define(function(require) {
     this.resetMatrix();
   };
 
+  /**
+   * [_applyDefaults description]
+   * @return {[type]} [description]
+   */
   p5.Graphics3D.prototype._applyDefaults = function() {
     return this;
   };
@@ -187,6 +203,10 @@ define(function(require) {
   //@TODO
   // };
 
+  /**
+   * [stroke description]
+   * @return {[type]} [description]
+   */
   p5.Graphics3D.prototype.stroke = function() {
     this._stroke = this._pInst.color.apply(this._pInst, arguments);
   };
@@ -218,7 +238,7 @@ define(function(require) {
     gl.bufferData
      (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(faces), gl.STATIC_DRAW);
     
-    _setMatrixUniforms();
+    this.setMatrixUniforms();
     gl.drawElements(gl.TRIANGLES, faces.length, gl.UNSIGNED_SHORT, 0);
 
     return this;
@@ -290,7 +310,7 @@ define(function(require) {
    * @return {[type]} [description]
    */
   p5.Graphics3D.prototype.push = function() {
-    uMVMatrixStack.push(this.uMVMatrix.copyMat());
+    uMVMatrixStack.push(this.uMVMatrix.copy());
   };
 
   /**
@@ -301,21 +321,25 @@ define(function(require) {
     if (uMVMatrixStack.length === 0) {
       throw 'Invalid popMatrix!';
     }
-    this.uMVMatrix.mat4 = uMVMatrixStack.pop();
+    this.uMVMatrix = uMVMatrixStack.pop();
   };
+
   /**
    * Sets the Matrix Uniforms inside our default shader.
    * @param {Array float} projection projection matrix
    * @param {Array float} modelView  model view matrix
    */
-  function _setMatrixUniforms() {
-    gl.uniformMatrix4fv(shaderProgram.uPMatrixUniform, false, this.uPMatrix);
-    gl.uniformMatrix4fv(shaderProgram.uMVMatrixUniform, false, this.uMVMatrix);
-    this.uNMatrix = p5.Matrix.identity();
+  p5.Graphics3D.prototype.setMatrixUniforms = function() {
+    gl.uniformMatrix4fv(
+      shaderProgram.uPMatrixUniform, false, this.uPMatrix.mat4);
+    gl.uniformMatrix4fv(
+      shaderProgram.uMVMatrixUniform, false, this.uMVMatrix.mat4);
+    this.uNMatrix = new p5.Matrix();
     this.uNMatrix.invert(this.uMVMatrix);
     this.uNMatrix.transpose(this.uNMatrix);
-    gl.uniformMatrix4fv(shaderProgram.uNMatrixUniform, false, this.uNMatrix);
-  }
+    gl.uniformMatrix4fv(
+      shaderProgram.uNMatrixUniform, false, this.uNMatrix.mat4);
+  };
     /**
      * PRIVATE
      */

@@ -1,8 +1,5 @@
 function setup(){
   createCanvas(windowWidth, windowHeight, 'webgl');
-  // background(0, 100, 200, 255)
-  // translate(0, 0.0, -200)
-  // cube(100, 100, 100)
 }
 
 var theta = 0;
@@ -10,19 +7,19 @@ var theta = 0;
 function draw(){
   background(0, 100, 200, 255)
 
-  translate(-150, 0.0, -200)
+  translate(0, 0, -100)
   push()
   rotateZ(theta)
   rotateX(theta * 1.5)
   rotateY(theta * 0.5)
-  plane(100, 100)
+  plane(100,100)
   pop()
   translate(50, 0, 0)
   push()
   rotateZ(theta)
   rotateX(theta * 1.5)
   rotateY(theta * 0.5)
-  cube(100, 100, 100)
+  cube(100,100,100)
   pop()
   translate(50, 0, 0)
   push()
