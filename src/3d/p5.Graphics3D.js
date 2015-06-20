@@ -130,8 +130,6 @@ define(function(require) {
     //normal Matrix uniform
     shaderProgram.uNMatrixUniform =
     gl.getUniformLocation(shaderProgram, 'normalMatrix');
-  
-    console.log(this.width, this.height);
   };
 
   /**
