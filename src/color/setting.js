@@ -5,19 +5,24 @@
  * @requires core
  * @requires constants
  */
-define(function (require) {
+define(function(require) {
 
   'use strict';
 
-  var p5 = require('core');
-  var constants = require('constants');
-  require('p5.Color');
+  var p5 = require('core/core');
+  var constants = require('core/constants');
+  require('color/p5.Color');
 
   p5.prototype._doStroke = true;
   p5.prototype._doFill = true;
+  p5.prototype._strokeSet = false;
+  p5.prototype._fillSet = false;
   p5.prototype._colorMode = constants.RGB;
-  p5.prototype._maxRGB = [255, 255, 255, 255];
-  p5.prototype._maxHSB = [255, 255, 255, 255];
+  p5.prototype._colorMaxes = {
+    rgb: [255, 255, 255, 255],
+    hsb: [360, 100, 100, 1],
+    hsl: [360, 100, 100, 1]
+  };
 
   /**
    * The background() function sets the color used for the background of the
@@ -31,13 +36,13 @@ define(function (require) {
    *                                               (depending on the current
    *                                               color mode), color string,
    *                                               p5.Color, or p5.Image
-   * @param {Number|Array}                    [v2] green or saturation value
+   * @param {Number}                          [v2] green or saturation value
    *                                               (depending on the current
    *                                               color mode)
-   * @param {Number|Array}                    [v3] blue or brightness value
+   * @param {Number}                          [v3] blue or brightness value
    *                                               (depending on the current
    *                                               color mode)
-   * @param {Number|Array}                    [a]  opacity of the background
+   * @param {Number}                          [a]  opacity of the background
    *
    * @example
    * <div>
@@ -119,22 +124,12 @@ define(function (require) {
    * </div>
    */
   p5.prototype.background = function() {
-    this.drawingContext.save();
-    this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-    this.drawingContext.scale(this._pixelDensity, this._pixelDensity);
     if (arguments[0] instanceof p5.Image) {
       this.image(arguments[0], 0, 0, this.width, this.height);
     } else {
-      var curFill = this.drawingContext.fillStyle;
-      // create background rect
-      var color = this.color.apply(this, arguments);
-      var newFill = color.toString();
-      this.drawingContext.fillStyle = newFill;
-      this.drawingContext.fillRect(0, 0, this.width, this.height);
-      // reset fill
-      this.drawingContext.fillStyle = curFill;
+      this._graphics.background.apply(this._graphics, arguments);
     }
-    this.drawingContext.restore();
+    return this;
   };
 
   /**
@@ -153,14 +148,17 @@ define(function (require) {
    * </div>
    */
   p5.prototype.clear = function() {
-    this.drawingContext.clearRect(0, 0, this.width, this.height);
+    this._graphics.clear();
+    return this;
   };
 
   /**
    * Changes the way p5.js interprets color data. By default, the parameters
    * for fill(), stroke(), background(), and color() are defined by values
    * between 0 and 255 using the RGB color model. The colorMode() function is
-   * used to switch color systems.
+   * used to switch color systems. Regardless of color system, all value ranges
+   * are presumed to be 0–255 unless explicitly set otherwise. That is,
+   * for a standard HSB range, one would pass colorMode(HSB, 360, 100, 100, 1).
    *
    * @method colorMode
    * @param {Number|Constant} mode either RGB or HSB, corresponding to
@@ -200,19 +198,19 @@ define(function (require) {
    * </div>
    */
   p5.prototype.colorMode = function() {
-    if (arguments[0] === constants.RGB || arguments[0] === constants.HSB) {
+    if (arguments[0] === constants.RGB ||
+        arguments[0] === constants.HSB ||
+        arguments[0] === constants.HSL) {
       this._colorMode = arguments[0];
 
-      var isRGB = this._colorMode === constants.RGB;
-      var maxArr = isRGB ? this._maxRGB : this._maxHSB;
+      var maxArr = this._colorMaxes[this._colorMode];
 
       if (arguments.length === 2) {
         maxArr[0] = arguments[1];
         maxArr[1] = arguments[1];
         maxArr[2] = arguments[1];
         maxArr[3] = arguments[1];
-      }
-      else if (arguments.length > 2) {
+      } else if (arguments.length > 2) {
         maxArr[0] = arguments[1];
         maxArr[1] = arguments[2];
         maxArr[2] = arguments[3];
@@ -221,6 +219,7 @@ define(function (require) {
         maxArr[3] = arguments[4];
       }
     }
+    return this;
   };
 
   /**
@@ -237,13 +236,13 @@ define(function (require) {
    *                                            (depending on the current color
    *                                            mode), or color Array, or CSS
    *                                            color string
-   * @param {Number|Array}                 [v2] green or saturation value
+   * @param {Number}                       [v2] green or saturation value
    *                                            (depending on the current
    *                                            color mode)
-   * @param {Number|Array}                 [v3] blue or brightness value
+   * @param {Number}                       [v3] blue or brightness value
    *                                            (depending on the current
    *                                            color mode)
-   * @param {Number|Array}                 [a]  opacity of the background
+   * @param {Number}                       [a]  opacity of the background
    *
    * @example
    * <div>
@@ -336,10 +335,10 @@ define(function (require) {
    * </div>
    */
   p5.prototype.fill = function() {
+    this._setProperty('_fillSet', true);
     this._setProperty('_doFill', true);
-    var ctx = this.drawingContext;
-    var color = this.color.apply(this, arguments);
-    ctx.fillStyle = color.toString();
+    this._graphics.fill.apply(this._graphics, arguments);
+    return this;
   };
 
   /**
@@ -358,6 +357,7 @@ define(function (require) {
    */
   p5.prototype.noFill = function() {
     this._setProperty('_doFill', false);
+    return this;
   };
 
   /**
@@ -375,6 +375,7 @@ define(function (require) {
    */
   p5.prototype.noStroke = function() {
     this._setProperty('_doStroke', false);
+    return this;
   };
 
   /**
@@ -390,13 +391,13 @@ define(function (require) {
    *                                            (depending on the current color
    *                                            mode), or color Array, or CSS
    *                                            color string
-   * @param {Number|Array}                 [v2] green or saturation value
+   * @param {Number}                       [v2] green or saturation value
    *                                            (depending on the current
    *                                            color mode)
-   * @param {Number|Array}                 [v3] blue or brightness value
+   * @param {Number}                       [v3] blue or brightness value
    *                                            (depending on the current
    *                                            color mode)
-   * @param {Number|Array}                 [a]  opacity of the background
+   * @param {Number}                       [a]  opacity of the background
    *
    * @example
    * <div>
@@ -500,10 +501,10 @@ define(function (require) {
    * </div>
    */
   p5.prototype.stroke = function() {
+    this._setProperty('_strokeSet', true);
     this._setProperty('_doStroke', true);
-    var ctx = this.drawingContext;
-    var color = this.color.apply(this, arguments);
-    ctx.strokeStyle = color.toString();
+    this._graphics.stroke.apply(this._graphics, arguments);
+    return this;
   };
 
 

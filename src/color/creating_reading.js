@@ -8,8 +8,8 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
-  require('p5.Color');
+  var p5 = require('core/core');
+  require('color/p5.Color');
 
   /**
    * Extracts the alpha value from a color or pixel array.
@@ -84,10 +84,11 @@ define(function (require) {
    * </div>
    */
   p5.prototype.brightness = function(c) {
-    if (!c instanceof p5.Color) {
-      throw new Error('Needs p5.Color as argument.');
+    if (c instanceof p5.Color || c instanceof Array) {
+      return this.color(c).getBrightness();
+    } else {
+      throw new Error('Needs p5.Color or pixel array as argument.');
     }
-    return c.getBrightness();
   };
 
   /**
@@ -176,11 +177,31 @@ define(function (require) {
    * </code>
    * </div>
    *
+   *
    * <div>
    * <code>
+   * // HSL color is also supported and can be specified
+   * // by value
+   * colorMode(HSL)
+   * c = color(156, 100, 50, 1);
+   * fill(c);  // Use 'c' as fill color
    * noStroke();  // Don't draw a stroke around shapes
+   * rect(20, 20, 60, 60);  // Draw rectangle
+   * </code>
+   * </div>
    *
-   * // if switching from RGB to HSB both modes must be declared
+   * <div>
+   * <code>
+   * // or by string
+   * c = color('hsla(156, 100%, 50%, 1)');
+   * fill(c);  // Use 'c' as fill color
+   * noStroke();  // Don't draw a stroke around shapes
+   * rect(20, 20, 60, 60);  // Draw rectangle
+   * </code>
+   * </div>
+   * 
+   *
+   * // if switching from RGB to HSB or HSL both modes must be declared
    * colorMode(RGB, 255);  // Use RGB with scale of 0-255
    * c = color(50, 55, 100);  // Create a color for 'c'
    * fill(c);  // Use color variable 'c' as fill color
@@ -257,13 +278,20 @@ define(function (require) {
   };
 
   /**
-   * Calculates a color or colors between two color at a specific increment.
+   * Calculates a color or colors between two color at a specific increment,
+   * using gamma correction to blend colors in the linear RGB space.
    * The amt parameter is the amount to interpolate between the two values
    * where 0.0 equal to the first point, 0.1 is very near the first point,
    * 0.5 is halfway in between, etc. An amount below 0 will be treated as 0.
    * Likewise, amounts above 1 will be capped at 1. This is different from
    * the behavior of lerp(), but necessary because otherwise numbers outside
    * the range will produce strange and unexpected colors.
+   *
+   * The regular RGB color representation stores the square root of the
+   * displayed color, not the value itself. Your monitor behaves as if it
+   * squares the color values before displaying it. lerpColor first transforms
+   * colors into the linear color space before blending, to correctly mix the
+   * colors as two rays of light.
    *
    * @method lerpColor
    * @param  {Array/Number} c1  interpolate from this color
@@ -291,20 +319,52 @@ define(function (require) {
    * </div>
    */
   p5.prototype.lerpColor = function (c1, c2, amt) {
+    amt = Math.max(Math.min(amt, 1), 0);
     if (c1 instanceof Array) {
       var c = [];
       for (var i = 0; i < c1.length; i++) {
-        c.push(p5.prototype.lerp(c1[i], c2[i], amt));
+        c.push(Math.sqrt(p5.prototype.lerp(c1[i]*c1[i], c2[i]*c2[i], amt)));
       }
       return c;
     } else if (c1 instanceof p5.Color) {
       var pc = [];
       for (var j = 0; j < 4; j++) {
-        pc.push(p5.prototype.lerp(c1.rgba[j], c2.rgba[j], amt));
+        pc.push(Math.sqrt(p5.prototype.lerp(
+          c1.rgba[j]*c1.rgba[j],
+          c2.rgba[j]*c2.rgba[j],
+          amt)));
       }
       return new p5.Color(this, pc);
     } else {
-      return p5.prototype.lerp(c1, c2, amt);
+      return Math.sqrt(p5.prototype.lerp(c1*c1, c2*c2, amt));
+    }
+  };
+
+  /**
+   * Extracts the lightness value from a color.
+   *
+   * @method lightness
+   * @param {Object} color p5.Color object
+   * @example
+   * <div>
+   * <code>
+   * noStroke();
+   * colorMode(HSL);
+   * c = color(156, 100, 50, 1);
+   * fill(c);
+   * rect(15, 20, 35, 60);
+   * value = lightness(c);  // Sets 'value' to 50
+   * fill(value);
+   * rect(50, 20, 35, 60);
+   * </code>
+   * </div>
+   */
+
+  p5.prototype.lightness = function(c) {
+    if (c instanceof p5.Color || c instanceof Array) {
+      return this.color(c).getLightness();
+    } else {
+      throw new Error('Needs p5.Color or pixel array as argument.');
     }
   };
 

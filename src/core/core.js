@@ -8,10 +8,10 @@ define(function (require) {
 
   'use strict';
 
-  require('shim');
+  require('core/shim');
 
   // Core needs the PVariables object
-  var constants = require('constants');
+  var constants = require('core/constants');
 
   /**
    * This is the p5 instance constructor.
@@ -30,7 +30,7 @@ define(function (require) {
    * @param  {Function}    sketch a closure that can set optional preload(),
    *                              setup(), and/or draw() properties on the
    *                              given p5 instance
-   * @param  {HTMLElement|boolean} node element to attach canvas to, if a 
+   * @param  {HTMLElement|boolean} node element to attach canvas to, if a
    *                                    boolean is passed in use it as sync
    * @param  {boolean}     [sync] start synchronously (optional)
    * @return {p5}                 a p5 instance
@@ -52,7 +52,7 @@ define(function (require) {
      * asynchronous loading of external files. If a preload function is
      * defined, setup() will wait until any load calls within have finished.
      * Nothing besides load calls should be inside preload (loadImage,
-     * loadJSON, loadStrings, etc).
+     * loadJSON, loadFont, loadStrings, etc).
      *
      * @method preload
      * @example
@@ -62,13 +62,13 @@ define(function (require) {
      * function preload() {  // preload() runs once
      *   img = loadImage('assets/laDefense.jpg');
      * }
-     * 
+     *
      * function setup() {  // setup() waits until preload() is done
      *   img.loadPixels();
      *   // get color of middle pixel
      *   c = img.get(img.width/2, img.height/2);
      * }
-     * 
+     *
      * function draw() {
      *   background(c);
      *   image(img, 25, 25, 50, 50);
@@ -145,8 +145,7 @@ define(function (require) {
     //////////////////////////////////////////////
 
     this._setupDone = false;
-    this._pixelDensity = window.devicePixelRatio || 1; // for handling hidpi
-    this._startTime = new Date().getTime();
+    this.pixelDensity = window.devicePixelRatio || 1; // for handling hidpi
     this._userNode = node;
     this._curElement = null;
     this._elements = [];
@@ -183,7 +182,7 @@ define(function (require) {
     } else {
       this._events.MozOrientation = null;
     }
-  
+
     //FF doesn't recognize mousewheel as of FF3.x
     if (/Firefox/i.test(navigator.userAgent)) {
       this._events.DOMMouseScroll = null;
@@ -220,6 +219,7 @@ define(function (require) {
       this.createCanvas(
         this._defaultCanvasSize.width,
         this._defaultCanvasSize.height,
+        'p2d',
         true
       );
 
@@ -276,9 +276,18 @@ define(function (require) {
         context.setup();
       }
 
-      // unhide hidden canvas that was created
-      this.canvas.style.visibility = '';
-      this.canvas.className = this.canvas.className.replace('p5_hidden', '');
+      // // unhide hidden canvas that was created
+      // this.canvas.style.visibility = '';
+      // this.canvas.className = this.canvas.className.replace('p5_hidden', '');
+
+      // unhide any hidden canvases that were created
+      var reg = new RegExp(/(^|\s)p5_hidden(?!\S)/g);
+      var canvases = document.getElementsByClassName('p5_hidden');
+      for (var i = 0; i < canvases.length; i++) {
+        var k = canvases[i];
+        k.style.visibility = '';
+        k.className = k.className.replace(reg, '');
+      }
       this._setupDone = true;
 
       // Removes the loading screen if it's in the DOM
@@ -287,23 +296,35 @@ define(function (require) {
     }.bind(this);
 
     this._draw = function () {
-      var now = new Date().getTime();
-      this._frameRate = 1000.0/(now - this._lastFrameTime);
-      this._lastFrameTime = now;
-      this._setProperty('frameCount', this.frameCount + 1);
-      if (this._loop) {
-        if (this._drawInterval) {
-          clearInterval(this._drawInterval);
-        }
-        this._drawInterval = setTimeout(function() {
-          window.requestDraw(this._draw.bind(this));
-        }.bind(this), 1000 / this._targetFrameRate);
+      var now = window.performance.now();
+      var time_since_last = now - this._lastFrameTime;
+      var target_time_between_frames = 1000 / this._targetFrameRate;
+
+      // only draw if we really need to; don't overextend the browser.
+      // draw if we're within 5ms of when our next frame should paint
+      // (this will prevent us from giving up opportunities to draw
+      // again when it's really about time for us to do so). fixes an
+      // issue where the frameRate is too low if our refresh loop isn't
+      // in sync with the browser. note that we have to draw once even
+      // if looping is off, so we bypass the time delay if that
+      // is the case.
+      var epsilon = 5;
+      if (!this.loop ||
+          time_since_last >= target_time_between_frames - epsilon) {
+        this._setProperty('frameCount', this.frameCount + 1);
+        this.redraw();
+        this._updatePAccelerations();
+        this._updatePMouseCoords();
+        this._updatePTouchCoords();
+        this._frameRate = 1000.0/(now - this._lastFrameTime);
+        this._lastFrameTime = now;
       }
-      // call user's draw
-      this.redraw();
-      this._updatePAccelerations();
-      this._updatePMouseCoords();
-      this._updatePTouchCoords();
+
+      // get notified the next time the browser gives us
+      // an opportunity to draw.
+      if (this._loop) {
+        window.requestAnimationFrame(this._draw);
+      }
     }.bind(this);
 
     this._runFrames = function() {
@@ -328,12 +349,8 @@ define(function (require) {
      * @method remove
      * @example
      * <div class='norender'><code>
-     * function setup() {
-     *   createCanvas(200, 200);
-     * }
-     *
      * function draw() {
-     *   ellipse(width/2, height/2, 0, 0);
+     *   ellipse(50, 50, 10, 10);
      * }
      *
      * function mousePressed() {
@@ -346,9 +363,6 @@ define(function (require) {
 
         // stop draw
         this._loop = false;
-        if (this._drawInterval) {
-          clearTimeout(this._drawInterval);
-        }
         if (this._updateInterval) {
           clearTimeout(this._updateInterval);
         }
@@ -435,6 +449,7 @@ define(function (require) {
     }
 
     // Bind events to window (not using container div bc key events don't work)
+
     for (var e in this._events) {
       var f = this['_on'+e];
       if (f) {
@@ -454,7 +469,7 @@ define(function (require) {
     });
 
     // TODO: ???
-    
+
     if (sync) {
       this._start();
     } else {
@@ -475,7 +490,8 @@ define(function (require) {
     'loadStrings',
     'loadXML',
     'loadShape',
-    'loadTable'
+    'loadTable',
+    'loadFont'
   ];
 
   p5.prototype._registeredMethods = { pre: [], post: [], remove: [] };

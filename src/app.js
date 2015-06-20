@@ -2,52 +2,54 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
+  var p5 = require('core/core');
+  require('color/p5.Color');
+  require('core/p5.Element');
+  require('typography/p5.Font');
+  require('core/p5.Graphics2D');
 
-  require('p5.Color');
-  require('p5.Element');
-  require('p5.Graphics');
-  require('p5.Image');
-  require('p5.File');
-  //require('p5.Shape');
-  require('p5.Vector');
-  require('p5.TableRow');
-  require('p5.Table');
+  require('image/p5.Image');
+  require('math/p5.Vector');
+  require('io/p5.TableRow');
+  require('io/p5.Table');
 
-  require('color.creating_reading');
-  require('color.setting');
-  require('constants');
-  require('data.conversion');
-  require('data.array_functions');
-  require('data.string_functions');
-  require('environment');
-  require('image.image');
-  require('image.loading_displaying');
-  require('image.pixels');
-  require('input.files');
-  require('input.keyboard');
-  require('input.acceleration'); //john
-  require('input.mouse');
-  require('input.time_date');
-  require('input.touch');
-  require('math.math');
-  require('math.calculation');
-  require('math.random');
-  require('math.noise');
-  require('math.trigonometry');
-  require('output.files');
-  require('output.image');
-  require('output.text_area');
-  require('rendering.rendering');
-  require('shape.2d_primitives');
-  require('shape.attributes');
-  require('shape.curves');
-  //require('shape.shape');
-  require('shape.vertex');
-  require('structure');
-  require('transform');
-  require('typography.attributes');
-  require('typography.loading_displaying');
+  require('color/creating_reading');
+  require('color/setting');
+  require('core/constants');
+  require('utilities/conversion');
+  require('utilities/array_functions');
+  require('utilities/string_functions');
+  require('core/environment');
+  require('image/image');
+  require('image/loading_displaying');
+  require('image/pixels');
+  require('io/files');
+  require('events/keyboard');
+  require('events/acceleration'); //john
+  require('events/mouse');
+  require('utilities/time_date');
+  require('events/touch');
+  require('math/math');
+  require('math/calculation');
+  require('math/random');
+  require('math/noise');
+  require('math/trigonometry');
+  require('core/rendering');
+  require('core/2d_primitives');
+  
+  require('core/attributes');
+  require('core/curves');
+  require('core/vertex');
+  require('core/structure');
+  require('core/transform');
+  require('typography/attributes');
+  require('typography/loading_displaying');
+  
+  require('3d/p5.Graphics3D');
+  require('3d/p5.Geometry3D');
+  require('3d/3d_primitives');
+  require('3d/shaders');
+  require('3d/p5.Matrix');
 
   /**
    * _globalInit
