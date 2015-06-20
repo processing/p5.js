@@ -34,13 +34,13 @@ define(function (require){
   /**
    * [parametricGeometry description]
    * @param  {[type]} func   [description]
-   * @param  {[type]} slices [description]
-   * @param  {[type]} stacks [description]
+   * @param  {[type]} detailX [description]
+   * @param  {[type]} detailY [description]
    * @param  {[type]} offset [description]
    * @return {[type]}        [description]
    */
   p5.Geometry3D.prototype.parametricGeometry =
-    function(func, slices, stacks, offset){
+    function(func, detailX, detailY, offset){
     
     var i, j, p;
     var u, v;
@@ -49,11 +49,11 @@ define(function (require){
     //0,0---0,1
     // |     |
     //1,0---1,1
-    var sliceCount = slices + 1;
-    for (i = 0; i <= stacks; i++){
-      v = i / stacks;
-      for (j = 0; j <= slices; j++){
-        u = j / slices;
+    var sliceCount = detailX + 1;
+    for (i = 0; i <= detailY; i++){
+      v = i / detailY;
+      for (j = 0; j <= detailX; j++){
+        u = j / detailX;
         p = func(u, v);
         this.vertices.push(p);
       }
@@ -62,17 +62,17 @@ define(function (require){
     var a, b, c, d;
     var uva, uvb, uvc, uvd;
 
-    for (i = 0; i < stacks; i++){
-      for (j = 0; j < slices; j++){
+    for (i = 0; i < detailY; i++){
+      for (j = 0; j < detailX; j++){
         a = i * sliceCount + j + offset;
         b = i * sliceCount + j + 1 + offset;
         c = (i + 1)* sliceCount + j + 1 + offset;
         d = (i + 1)* sliceCount + j + offset;
 
-        uva = [j/slices, i/stacks];
-        uvb = [(j + 1)/ slices, i/stacks];
-        uvc = [(j + 1)/ slices, (i + 1)/stacks];
-        uvd = [j/slices, (i + 1)/stacks];
+        uva = [j/detailX, i/detailY];
+        uvb = [(j + 1)/ detailX, i/detailY];
+        uvc = [(j + 1)/ detailX, (i + 1)/detailY];
+        uvd = [j/detailX, (i + 1)/detailY];
 
         this.faces.push([a, b, d]);
         this.uvs.push([uva, uvb, uvd]);
@@ -158,9 +158,9 @@ define(function (require){
    * [computeFaceNormals description]
    * @return {[type]} [description]
    */
-  p5.Geometry3D.prototype.computeFaceNormals = function(cube){
+  p5.Geometry3D.prototype.computeFaceNormals = function(box){
 
-    if(!cube){
+    if(!box){
       var cb = new p5.Vector();
       var ab = new p5.Vector();
 
@@ -245,17 +245,18 @@ define(function (require){
    * [generateObj description]
    * @return {[type]} [description]
    */
-  p5.Geometry3D.prototype.generateObj = function(cube){
-    if(!cube){
+  p5.Geometry3D.prototype.generateObj = function(box){
+    if(!box){
       this.mergeVertices();
     }
-    this.computeFaceNormals(cube);
+    this.computeFaceNormals(box);
     this.computeVertexNormals();
 
     var obj = {
       vertices: turnVectorArrayIntoNumberArray(this.vertices),
       vertexNormals: turnVectorArrayIntoNumberArray(this.vertexNormals),
-      faces: flatten(this.faces)
+      faces: flatten(this.faces),
+      len: this.faces.length * 3
     };
     return obj;
   };

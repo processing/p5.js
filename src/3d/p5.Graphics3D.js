@@ -58,7 +58,20 @@ define(function(require) {
    */
   p5.Graphics3D.prototype = Object.create(p5.Graphics.prototype);
 
+  /**
+   * [_applyDefaults description]
+   * @return {[type]} [description]
+   */
+  p5.Graphics3D.prototype._applyDefaults = function() {
+    return this;
+  };
 
+  /**
+   * [resize description]
+   * @param  {[type]} w [description]
+   * @param  {[type]} h [description]
+   * @return {[type]}   [description]
+   */
   p5.Graphics3D.prototype.resize = function(w,h) {
     p5.Graphics.prototype.resize.call(this, w,h);
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -181,24 +194,6 @@ define(function(require) {
     this.resetMatrix();
   };
 
-  /**
-   * [_applyDefaults description]
-   * @return {[type]} [description]
-   */
-  p5.Graphics3D.prototype._applyDefaults = function() {
-    return this;
-  };
-
-  /**
-   * [resize description]
-   * @param  {[type]} w [description]
-   * @param  {[type]} h [description]
-   * @return {[type]}   [description]
-   */
-  p5.Graphics3D.prototype.resize = function(w, h) {
-    p5.Graphics.prototype.resize.call(this, w, h);
-    gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-  };
   //@TODO implement this
   // p5.Graphics3D.prototype.clear = function() {
   //@TODO
@@ -225,6 +220,7 @@ define(function(require) {
   p5.Graphics3D.prototype.initBuffer = function(uuid, obj) {
 
     this.hash[uuid] = {};
+    this.hash[uuid].len = obj.len;
     this.hash[uuid].vertexBuffer = gl.createBuffer();
     this.hash[uuid].normalBuffer = gl.createBuffer();
     this.hash[uuid].indexBuffer = gl.createBuffer();
@@ -260,7 +256,7 @@ define(function(require) {
     
     this.setMatrixUniforms();
     gl.drawElements(
-      gl.TRIANGLES, this.hash[uuid].indexBuffer.length / 3,
+      gl.TRIANGLES, this.hash[uuid].len,
        gl.UNSIGNED_SHORT, 0);
   };
 
