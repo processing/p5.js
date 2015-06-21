@@ -38,7 +38,13 @@ define(function(require) {
   };
 
   p5.Graphics.prototype = Object.create(p5.Element.prototype);
-
+  
+  /**
+   * Resize our canvas element.
+   * @param  {Number} w pixel width
+   * @param  {Number} h pixel height
+   * @return {void}   [description]
+   */
   p5.Graphics.prototype.resize = function(w, h) {
     this.width = w;
     this.height = h;

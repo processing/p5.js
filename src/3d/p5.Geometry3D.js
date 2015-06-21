@@ -34,13 +34,13 @@ define(function (require){
   /**
    * [parametricGeometry description]
    * @param  {[type]} func   [description]
-   * @param  {[type]} slices [description]
-   * @param  {[type]} stacks [description]
+   * @param  {[type]} detailX [description]
+   * @param  {[type]} detailY [description]
    * @param  {[type]} offset [description]
    * @return {[type]}        [description]
    */
   p5.Geometry3D.prototype.parametricGeometry =
-    function(func, slices, stacks, offset){
+    function(func, detailX, detailY, offset){
     
     var i, j, p;
     var u, v;
@@ -49,11 +49,11 @@ define(function (require){
     //0,0---0,1
     // |     |
     //1,0---1,1
-    var sliceCount = slices + 1;
-    for (i = 0; i <= stacks; i++){
-      v = i / stacks;
-      for (j = 0; j <= slices; j++){
-        u = j / slices;
+    var sliceCount = detailX + 1;
+    for (i = 0; i <= detailY; i++){
+      v = i / detailY;
+      for (j = 0; j <= detailX; j++){
+        u = j / detailX;
         p = func(u, v);
         this.vertices.push(p);
       }
@@ -62,17 +62,17 @@ define(function (require){
     var a, b, c, d;
     var uva, uvb, uvc, uvd;
 
-    for (i = 0; i < stacks; i++){
-      for (j = 0; j < slices; j++){
+    for (i = 0; i < detailY; i++){
+      for (j = 0; j < detailX; j++){
         a = i * sliceCount + j + offset;
         b = i * sliceCount + j + 1 + offset;
         c = (i + 1)* sliceCount + j + 1 + offset;
         d = (i + 1)* sliceCount + j + offset;
 
-        uva = [j/slices, i/stacks];
-        uvb = [(j + 1)/ slices, i/stacks];
-        uvc = [(j + 1)/ slices, (i + 1)/stacks];
-        uvd = [j/slices, (i + 1)/stacks];
+        uva = [j/detailX, i/detailY];
+        uvb = [(j + 1)/ detailX, i/detailY];
+        uvc = [(j + 1)/ detailX, (i + 1)/detailY];
+        uvd = [j/detailX, (i + 1)/detailY];
 
         this.faces.push([a, b, d]);
         this.uvs.push([uva, uvb, uvd]);
@@ -84,6 +84,10 @@ define(function (require){
 
   };
 
+  /**
+   * [mergeVertices description]
+   * @return {[type]} [description]
+   */
   p5.Geometry3D.prototype.mergeVertices= function () {
 
     var verticesMap = {};
@@ -103,15 +107,11 @@ define(function (require){
       Math.round(v.z * precision);
 
       if (verticesMap[key] === undefined) {
-
         verticesMap[key] = i;
         unique.push(this.vertices[i]);
         changes[i] = unique.length - 1;
-
       } else {
-
         changes[i] = changes[verticesMap[key]];
-
       }
 
     }
@@ -135,14 +135,11 @@ define(function (require){
       // we have to remove the face as nothing can be saved
       for (var n = 0; n < 3; n ++) {
         if (indices[n] === indices[(n + 1) % 3]) {
-
           dupIndex = n;
           faceIndicesToRemove.push(i);
           break;
-
         }
       }
-
     }
 
     for (i = faceIndicesToRemove.length - 1; i >= 0; i --) {
@@ -151,7 +148,6 @@ define(function (require){
     }
 
     // Use unique set of vertices
-
     var diff = this.vertices.length - unique.length;
     this.vertices = unique;
     return diff;
@@ -162,44 +158,33 @@ define(function (require){
    * [computeFaceNormals description]
    * @return {[type]} [description]
    */
-  p5.Geometry3D.prototype.computeFaceNormals = function(cube){
+  p5.Geometry3D.prototype.computeFaceNormals = function(){
 
-    if(!cube){
-      var cb = new p5.Vector();
-      var ab = new p5.Vector();
+    //if(!box){
+    var cb = new p5.Vector();
+    var ab = new p5.Vector();
 
-      for (var f = 0; f < this.faces.length; f++){
-        var face = this.faces[f];
-        var vA = this.vertices[face[0]];
-        var vB = this.vertices[face[1]];
-        var vC = this.vertices[face[2]];
+    for (var f = 0; f < this.faces.length; f++){
+      var face = this.faces[f];
+      var vA = this.vertices[face[0]];
+      var vB = this.vertices[face[1]];
+      var vC = this.vertices[face[2]];
 
-        p5.Vector.sub(vC, vB, cb);
-        p5.Vector.sub(vA, vB, ab);
+      p5.Vector.sub(vC, vB, cb);
+      p5.Vector.sub(vA, vB, ab);
 
-        var normal = p5.Vector.cross(ab, cb);
-        normal.normalize();
-        normal.mult(-1);
-        this.faceNormals[f] = normal;
-      }
-
-    }else{
-
-      this.faceNormals.push(new p5.Vector(0, 0, 1));
-      this.faceNormals.push(new p5.Vector(0, 0, 1));
-      this.faceNormals.push(new p5.Vector(0, 0, -1));
-      this.faceNormals.push(new p5.Vector(0, 0, -1));
-      this.faceNormals.push(new p5.Vector(0, 1, 0));
-      this.faceNormals.push(new p5.Vector(0, 1, 0));
-      this.faceNormals.push(new p5.Vector(0, -1, 0));
-      this.faceNormals.push(new p5.Vector(0, -1, 0));
-      this.faceNormals.push(new p5.Vector(1, 0, 0));
-      this.faceNormals.push(new p5.Vector(1, 0, 0));
-      this.faceNormals.push(new p5.Vector(-1, 0, 0));
-      this.faceNormals.push(new p5.Vector(-1, 0, 0));
+      var normal = p5.Vector.cross(ab, cb);
+      normal.normalize();
+      normal.mult(-1);
+      this.faceNormals[f] = normal;
     }
+
   };
 
+  /**
+   * [computeVertexNormals description]
+   * @return {[type]} [description]
+   */
   p5.Geometry3D.prototype.computeVertexNormals = function (){
 
     var v, f, face, faceNormal, vertices;
@@ -245,17 +230,18 @@ define(function (require){
    * [generateObj description]
    * @return {[type]} [description]
    */
-  p5.Geometry3D.prototype.generateObj = function(cube){
-    if(!cube){
+  p5.Geometry3D.prototype.generateObj = function(box){
+    if(!box){
       this.mergeVertices();
     }
-    this.computeFaceNormals(cube);
+    this.computeFaceNormals();
     this.computeVertexNormals();
 
     var obj = {
       vertices: turnVectorArrayIntoNumberArray(this.vertices),
       vertexNormals: turnVectorArrayIntoNumberArray(this.vertexNormals),
-      faces: flatten(this.faces)
+      faces: flatten(this.faces),
+      len: this.faces.length * 3
     };
     return obj;
   };
