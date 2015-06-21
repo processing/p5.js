@@ -158,42 +158,27 @@ define(function (require){
    * [computeFaceNormals description]
    * @return {[type]} [description]
    */
-  p5.Geometry3D.prototype.computeFaceNormals = function(box){
+  p5.Geometry3D.prototype.computeFaceNormals = function(){
 
-    if(!box){
-      var cb = new p5.Vector();
-      var ab = new p5.Vector();
+    //if(!box){
+    var cb = new p5.Vector();
+    var ab = new p5.Vector();
 
-      for (var f = 0; f < this.faces.length; f++){
-        var face = this.faces[f];
-        var vA = this.vertices[face[0]];
-        var vB = this.vertices[face[1]];
-        var vC = this.vertices[face[2]];
+    for (var f = 0; f < this.faces.length; f++){
+      var face = this.faces[f];
+      var vA = this.vertices[face[0]];
+      var vB = this.vertices[face[1]];
+      var vC = this.vertices[face[2]];
 
-        p5.Vector.sub(vC, vB, cb);
-        p5.Vector.sub(vA, vB, ab);
+      p5.Vector.sub(vC, vB, cb);
+      p5.Vector.sub(vA, vB, ab);
 
-        var normal = p5.Vector.cross(ab, cb);
-        normal.normalize();
-        normal.mult(-1);
-        this.faceNormals[f] = normal;
-      }
-
-    }else{
-
-      this.faceNormals.push(new p5.Vector(0, 0, 1));
-      this.faceNormals.push(new p5.Vector(0, 0, 1));
-      this.faceNormals.push(new p5.Vector(0, 0, -1));
-      this.faceNormals.push(new p5.Vector(0, 0, -1));
-      this.faceNormals.push(new p5.Vector(0, 1, 0));
-      this.faceNormals.push(new p5.Vector(0, 1, 0));
-      this.faceNormals.push(new p5.Vector(0, -1, 0));
-      this.faceNormals.push(new p5.Vector(0, -1, 0));
-      this.faceNormals.push(new p5.Vector(1, 0, 0));
-      this.faceNormals.push(new p5.Vector(1, 0, 0));
-      this.faceNormals.push(new p5.Vector(-1, 0, 0));
-      this.faceNormals.push(new p5.Vector(-1, 0, 0));
+      var normal = p5.Vector.cross(ab, cb);
+      normal.normalize();
+      normal.mult(-1);
+      this.faceNormals[f] = normal;
     }
+
   };
 
   /**
@@ -249,7 +234,7 @@ define(function (require){
     if(!box){
       this.mergeVertices();
     }
-    this.computeFaceNormals(box);
+    this.computeFaceNormals();
     this.computeVertexNormals();
 
     var obj = {

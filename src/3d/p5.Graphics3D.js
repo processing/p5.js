@@ -270,7 +270,7 @@ define(function(require) {
    */
   p5.Graphics3D.prototype.translate = function(x, y, z) {
     x = x / 100;
-    y = y / 100;
+    y = -y / 100;
     z = z / 100;
     this.uMVMatrix.translate([x,y,z]);
     return this;
