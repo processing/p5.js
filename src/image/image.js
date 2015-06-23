@@ -112,10 +112,10 @@ define(function (require) {
    *  @method saveCanvas
    *  @param  {[String]} filename
    *  @param  {[String]} extension 'jpg' or 'png'
-   *  @param  {[Canvas]} canvas a variable representing a
+   *  @param  {[selectedCanvas]} canvas a variable representing a
    *                             specific html5 canvas (optional).
    */
-  p5.prototype.saveCanvas = function(_cnv, filename, extension) {
+  p5.prototype.saveCanvas = function(filename, extension, selectedCanvas) {
     if (!extension) {
       extension = p5.prototype._checkFileExtension(filename, extension)[1];
       if (extension === '') {
@@ -123,8 +123,8 @@ define(function (require) {
       }
     }
     var cnv;
-    if (_cnv) {
-      cnv = _cnv;
+    if (selectedCanvas) {
+      cnv = selectedCanvas;
     } else if (this._curElement && this._curElement.elt) {
       cnv = this._curElement.elt;
     }
