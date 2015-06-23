@@ -820,7 +820,7 @@ define(function (require) {
    *  save(cnv, 'myCanvas.jpg');      // Saves canvas as an image
    *
    *  var gb = createGraphics(100, 100);
-   *  save(gb, 'myGraphics.jpg');      // Saves p5.Graphics object as an image
+   *  save(gb, 'myGraphics.jpg');      // Saves p5.Renderer object as an image
    *
    *  save(myTable, 'myTable.html');  // Saves table as html file
    *  save(myTable, 'myTable.csv',);  // Comma Separated Values
@@ -870,7 +870,7 @@ define(function (require) {
     // otherwise, parse the arguments
 
     // if first param is a p5Graphics, then saveCanvas
-    else if (args[0] instanceof p5.Graphics) {
+    else if (args[0] instanceof p5.Renderer) {
       p5.prototype.saveCanvas(args[0].elt, args[1], args[2]);
       return;
     }

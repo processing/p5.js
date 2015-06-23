@@ -185,7 +185,7 @@ define(function (require) {
    * </code></div>
    */
   p5.prototype.copy = function () {
-    p5.Graphics2D._copyHelper.apply(this, arguments);
+    p5.Renderer2D._copyHelper.apply(this, arguments);
   };
 
   /**
