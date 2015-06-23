@@ -173,7 +173,7 @@ define(function (require) {
             ' received an empty variable in spot #' + (p+1) +
             '. If not intentional, this is often a problem with scope: ' +
             '[link to scope].', func, EMPTY_VAR);
-        } else if (!typeMatches(defType, argType, args[p])) {
+        } else if (defType !== '*' && !typeMatches(defType, argType, args[p])) {
           message = func + ' was expecting a ' + defType.toLowerCase() +
             ' for parameter #' + (p+1) + ', received ';
           // Wrap strings in quotes
