@@ -13,6 +13,7 @@ define(function (require) {
 
   var p5 = require('core/core');
   var reqwest = require('reqwest');
+  require('core/error_helpers');
 
 
   /**
@@ -64,6 +65,10 @@ define(function (require) {
    * </code></div>
    *
    */
+
+  
+  
+
   p5.prototype.loadFont = function(path, callback) {
 
     var p5Font = new p5.Font(this);
@@ -242,7 +247,7 @@ define(function (require) {
     var req = new XMLHttpRequest();
     req.open('GET', path, true);
     req.onreadystatechange = function () {
-      if (req.readyState === 4 && (req.status === 200 || req.status === 0)) {
+      if (req.readyState === 4 && (req.status === 200 )) {
         var arr = req.responseText.match(/[^\r\n]+/g);
         for (var k in arr) {
           ret[k] = arr[k];
@@ -250,6 +255,9 @@ define(function (require) {
         if (typeof callback !== 'undefined') {
           callback(ret);
         }
+      }
+      else{
+        p5._friendlyFileLoadError(3,path);
       }
     };
     req.send(null);
@@ -509,6 +517,7 @@ define(function (require) {
         }
       })
       .fail(function(err,msg){
+        p5._friendlyFileLoadError(2,path);
         if (typeof callback !== 'undefined') {
           callback(false);
         }
@@ -561,14 +570,18 @@ define(function (require) {
     reqwest({
       url: path,
       type: 'xml',
-      crossOrigin: true
-    }).then(function (resp) {
-      var x = resp.documentElement;
-      ret.appendChild(x);
-      if (typeof callback !== 'undefined') {
-        callback(resp);
+      crossOrigin: true,
+      error: function(err){
+        p5._friendlyFileLoadError(1,path);
       }
-    });
+    })
+      .then(function(resp){
+        var x = resp.documentElement;
+        ret.appendChild(x);
+        if (typeof callback !== 'undefined') {
+          callback(resp);
+        }
+      });
     return ret;
   };
 
