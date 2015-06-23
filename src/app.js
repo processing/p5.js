@@ -6,6 +6,7 @@ define(function (require) {
   require('color/p5.Color');
   require('core/p5.Element');
   require('typography/p5.Font');
+  require('core/p5.Graphics');
   require('core/p5.Renderer2D');
 
   require('image/p5.Image');

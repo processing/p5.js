@@ -10,8 +10,7 @@ define(function(require) {
   /**
    * Main graphics and rendering context, as well as the base API
    * implementation for p5.js "core". To be used as the superclass for
-   * Renderer2D and Renderer3D classes, respecitvely. The fields and methods
-   * for this class are extensive, but mirror the normal drawing API for p5.
+   * Renderer2D and Renderer3D classes, respecitvely.
    *
    * @class p5.Renderer
    * @constructor

@@ -7,6 +7,7 @@ define(function(require) {
 
   var p5 = require('core/core');
   var constants = require('core/constants');
+  require('core/p5.Graphics');
   require('core/p5.Renderer2D');
   require('3d/p5.Renderer3D');
 
@@ -180,70 +181,7 @@ define(function(require) {
    * </div>
    */
   p5.prototype.createGraphics = function(w, h, renderer){
-    if (renderer === constants.WEBGL) {
-      return this._createRenderer3D(w,h);
-    }
-    else {
-      return this._createRenderer2D(w,h);
-    }
-  };
-  /**
-   * Creates and returns a new p5.Renderer2D object. Use this class if you need
-   * to draw into an off-screen graphics buffer. The two parameters define the
-   * width and height in pixels.
-   */
-  p5.prototype._createRenderer2D = function(w, h) {
-    var c = document.createElement('canvas');
-    //c.style.visibility='hidden';
-    var node = this._userNode || document.body;
-    node.appendChild(c);
-
-    var pg = new p5.Renderer2D(c, this, false);
-    // store in elements array
-    this._elements.push(pg);
-
-    for (var p in p5.prototype) {
-      if (!pg[p]) {
-        if (typeof p5.prototype[p] === 'function') {
-          pg[p] = p5.prototype[p].bind(pg);
-        } else {
-          pg[p] = p5.prototype[p];
-        }
-      }
-    }
-    pg.resize(w, h);
-    pg._applyDefaults();
-    return pg;
-  };
-
-
-   /**
-   * Creates and returns a new p5.Renderer3D object. Use this class if you need
-   * to draw into an off-screen graphics buffer. The two parameters define the
-   * width and height in pixels.
-   */
-  p5.prototype._createRenderer3D = function(w, h) {
-    var c = document.createElement('canvas');
-    //c.style.visibility='hidden';
-    var node = this._userNode || document.body;
-    node.appendChild(c);
-
-    var pg = new p5.Renderer3D(c, this, false);
-    // store in elements array
-    this._elements.push(pg);
-
-    for (var p in p5.prototype) {
-      if (!pg.hasOwnProperty(p)) {
-        if (typeof p5.prototype[p] === 'function') {
-          pg[p] = p5.prototype[p].bind(pg);
-        } else {
-          pg[p] = p5.prototype[p];
-        }
-      }
-    }
-    pg.resize(w, h);
-    pg._applyDefaults();
-    return pg;
+    return new p5.Graphics(w, h, renderer, this);
   };
 
   /**
