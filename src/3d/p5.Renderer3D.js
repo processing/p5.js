@@ -2,7 +2,7 @@ define(function(require) {
 
   var p5 = require('core/core');
   var shaders = require('3d/shaders');
-  require('core/p5.Graphics');
+  require('core/p5.Renderer');
   require('3d/p5.Matrix');
   var gl, shaderProgram;
   var uMVMatrixStack = [];
@@ -19,11 +19,11 @@ define(function(require) {
 
   /**
    * 3D graphics class.  Can also be used as an off-screen graphics buffer.
-   * A p5.Graphics3D object can be constructed
+   * A p5.Renderer3D object can be constructed
    *
    */
-  p5.Graphics3D = function(elt, pInst, isMainCanvas) {
-    p5.Graphics.call(this, elt, pInst, isMainCanvas);
+  p5.Renderer3D = function(elt, pInst, isMainCanvas) {
+    p5.Renderer.call(this, elt, pInst, isMainCanvas);
 
     try {
       this.drawingContext = this.canvas.getContext('webgl', attributes) ||
@@ -31,7 +31,7 @@ define(function(require) {
       if (this.drawingContext === null) {
         throw 'Error creating webgl context';
       } else {
-        console.log('p5.Graphics3d: enabled webgl context');
+        console.log('p5.Renderer3D: enabled webgl context');
       }
     } catch (er) {
       console.error(er);
@@ -56,13 +56,13 @@ define(function(require) {
    * [prototype description]
    * @type {[type]}
    */
-  p5.Graphics3D.prototype = Object.create(p5.Graphics.prototype);
+  p5.Renderer3D.prototype = Object.create(p5.Renderer.prototype);
 
   /**
    * [_applyDefaults description]
    * @return {[type]} [description]
    */
-  p5.Graphics3D.prototype._applyDefaults = function() {
+  p5.Renderer3D.prototype._applyDefaults = function() {
     return this;
   };
 
@@ -72,8 +72,8 @@ define(function(require) {
    * @param  {[type]} h [description]
    * @return {[type]}   [description]
    */
-  p5.Graphics3D.prototype.resize = function(w,h) {
-    p5.Graphics.prototype.resize.call(this, w,h);
+  p5.Renderer3D.prototype.resize = function(w,h) {
+    p5.Renderer.prototype.resize.call(this, w,h);
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
   };
 
@@ -81,7 +81,7 @@ define(function(require) {
    * [initShaders description]
    * @return {[type]} [description]
    */
-  p5.Graphics3D.prototype.initShaders = function() {
+  p5.Renderer3D.prototype.initShaders = function() {
     //set up our default shaders by:
     // 1. create the shader,
     // 2. load the shader source,
@@ -149,7 +149,7 @@ define(function(require) {
    * [initBuffer description]
    * @return {[type]} [description]
    */
-  p5.Graphics3D.prototype.initHash = function(){
+  p5.Renderer3D.prototype.initHash = function(){
     this.hash = {};
     window.hash = this.hash;//for debug
   };
@@ -158,7 +158,7 @@ define(function(require) {
    * [initMatrix description]
    * @return {[type]} [description]
    */
-  p5.Graphics3D.prototype.initMatrix = function(){
+  p5.Renderer3D.prototype.initMatrix = function(){
     this.uMVMatrix = new p5.Matrix();
     this.uPMatrix  = new p5.Matrix();
     this.uNMatrix = new p5.Matrix();
@@ -170,7 +170,7 @@ define(function(require) {
    * matrix.
    * @return {void}
    */
-  p5.Graphics3D.prototype.resetMatrix = function() {
+  p5.Renderer3D.prototype.resetMatrix = function() {
     this.uMVMatrix = p5.Matrix.identity();
   };
 
@@ -182,7 +182,7 @@ define(function(require) {
    * [background description]
    * @return {[type]} [description]
    */
-  p5.Graphics3D.prototype.background = function() {
+  p5.Renderer3D.prototype.background = function() {
     var _col = this._pInst.color.apply(this._pInst, arguments);
     // gl.clearColor(0.0,0.0,0.0,1.0);
     var _r = (_col.color_array[0]) / 255;
@@ -195,12 +195,12 @@ define(function(require) {
   };
 
   //@TODO implement this
-  // p5.Graphics3D.prototype.clear = function() {
+  // p5.Renderer3D.prototype.clear = function() {
   //@TODO
   // };
 
   //@TODO implement this
-  // p5.Graphics3D.prototype.fill = function() {
+  // p5.Renderer3D.prototype.fill = function() {
   //@TODO
   // };
 
@@ -208,16 +208,16 @@ define(function(require) {
    * [stroke description]
    * @return {[type]} [description]
    */
-  p5.Graphics3D.prototype.stroke = function() {
+  p5.Renderer3D.prototype.stroke = function() {
     this._stroke = this._pInst.color.apply(this._pInst, arguments);
   };
 
 
-  p5.Graphics3D.prototype.notInHash = function(uuid){
+  p5.Renderer3D.prototype.notInHash = function(uuid){
     return this.hash[uuid] === undefined;
   };
 
-  p5.Graphics3D.prototype.initBuffer = function(uuid, obj) {
+  p5.Renderer3D.prototype.initBuffer = function(uuid, obj) {
 
     this.hash[uuid] = {};
     this.hash[uuid].len = obj.len;
@@ -242,7 +242,7 @@ define(function(require) {
      (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(obj.faces), gl.STATIC_DRAW);
   };
 
-  p5.Graphics3D.prototype.drawBuffer = function(uuid) {
+  p5.Renderer3D.prototype.drawBuffer = function(uuid) {
     
     gl.bindBuffer(gl.ARRAY_BUFFER, this.hash[uuid].vertexBuffer);
     gl.vertexAttribPointer(
@@ -268,7 +268,7 @@ define(function(require) {
    * @return {[type]}   [description]
    * @todo implement handle for components or vector as args
    */
-  p5.Graphics3D.prototype.translate = function(x, y, z) {
+  p5.Renderer3D.prototype.translate = function(x, y, z) {
     x = x / 100;
     y = -y / 100;
     z = z / 100;
@@ -283,7 +283,7 @@ define(function(require) {
    * @param  {Number} z [description]
    * @return {this}   [description]
    */
-  p5.Graphics3D.prototype.scale = function(x, y, z) {
+  p5.Renderer3D.prototype.scale = function(x, y, z) {
     this.uMVMatrix.scale([x,y,z]);
     return this;
   };
@@ -293,7 +293,7 @@ define(function(require) {
    * @param  {[type]} rad [description]
    * @return {[type]}     [description]
    */
-  p5.Graphics3D.prototype.rotateX = function(rad) {
+  p5.Renderer3D.prototype.rotateX = function(rad) {
     this.uMVMatrix.rotateX(rad);
     return this;
   };
@@ -303,7 +303,7 @@ define(function(require) {
    * @param  {[type]} rad [description]
    * @return {[type]}     [description]
    */
-  p5.Graphics3D.prototype.rotateY = function(rad) {
+  p5.Renderer3D.prototype.rotateY = function(rad) {
     this.uMVMatrix.rotateY(rad);
     return this;
   };
@@ -313,7 +313,7 @@ define(function(require) {
    * @param  {[type]} rad [description]
    * @return {[type]}     [description]
    */
-  p5.Graphics3D.prototype.rotateZ = function(rad) {
+  p5.Renderer3D.prototype.rotateZ = function(rad) {
     this.uMVMatrix.rotateZ(rad);
     return this;
   };
@@ -324,7 +324,7 @@ define(function(require) {
    * NOTE to self: could probably make this more readable
    * @return {[type]} [description]
    */
-  p5.Graphics3D.prototype.push = function() {
+  p5.Renderer3D.prototype.push = function() {
     uMVMatrixStack.push(this.uMVMatrix.copy());
   };
 
@@ -332,7 +332,7 @@ define(function(require) {
    * [pop description]
    * @return {[type]} [description]
    */
-  p5.Graphics3D.prototype.pop = function() {
+  p5.Renderer3D.prototype.pop = function() {
     if (uMVMatrixStack.length === 0) {
       throw 'Invalid popMatrix!';
     }
@@ -344,7 +344,7 @@ define(function(require) {
    * @param {Array float} projection projection matrix
    * @param {Array float} modelView  model view matrix
    */
-  p5.Graphics3D.prototype.setMatrixUniforms = function() {
+  p5.Renderer3D.prototype.setMatrixUniforms = function() {
     gl.uniformMatrix4fv(
       shaderProgram.uPMatrixUniform, false, this.uPMatrix.mat4);
     gl.uniformMatrix4fv(
@@ -415,7 +415,7 @@ define(function(require) {
    * @param  {Number} far    far clipping plane
    * @return {void}
    */
-  p5.Graphics3D.prototype._perspective = function(){
+  p5.Renderer3D.prototype._perspective = function(){
     var fovy = arguments[0];
     var aspect = arguments[1];
     var near = arguments[2];
@@ -446,5 +446,5 @@ define(function(require) {
   //var _pMatrix = _makePerspective(45,
   //  gl.drawingBufferWidth/gl.drawingBufferHeight,
   //  0.1, 1000.0);
-  return p5.Graphics3D;
+  return p5.Renderer3D;
 });

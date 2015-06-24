@@ -66,8 +66,8 @@ define(function(require) {
       'text',
       arguments,
       [
-        ['String', 'Number', 'Number'],
-        ['String', 'Number', 'Number', 'Number', 'Number']
+        ['*', 'Number', 'Number'],
+        ['*', 'Number', 'Number', 'Number', 'Number']
       ]
     );
 

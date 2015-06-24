@@ -6,12 +6,14 @@
 define(function(require) {
 
   var p5 = require('core/core');
+  var constants = require('core/constants');
 
   /**
-   * Main graphics and rendering context, as well as the base API
-   * implementation for p5.js "core". To be used as the superclass for
-   * Graphics2D and Graphics3D classes, respecitvely. The fields and methods
-   * for this class are extensive, but mirror the normal drawing API for p5.
+   * Thin wrapper around a renderer, to be used for creating a
+   * graphics buffer object. Use this class if you need
+   * to draw into an off-screen graphics buffer. The two parameters define the
+   * width and height in pixels. The fields and methods for this class are 
+   * extensive, but mirror the normal drawing API for p5.
    *
    * @class p5.Graphics
    * @constructor
@@ -20,43 +22,46 @@ define(function(require) {
    * @param {Object} [pInst] pointer to p5 instance
    * @param {Boolean} whether we're using it as main canvas
    */
-  p5.Graphics = function(elt, pInst, isMainCanvas) {
-    p5.Element.call(this, elt, pInst);
-    this.canvas = elt;
-    this._pInst = pInst;
-    if (isMainCanvas) {
-      this._isMainCanvas = true;
-      // for pixel method sharing with pimage
-      this._pInst._setProperty('_curElement', this);
-      this._pInst._setProperty('canvas', this.canvas);
-      this._pInst._setProperty('width', this.width);
-      this._pInst._setProperty('height', this.height);
-    } else { // hide if offscreen buffer by default
-      this.canvas.style.display = 'none';
-      this._styles = []; // non-main elt styles stored in p5.Graphics
+  p5.Graphics = function(w, h, renderer, pInst) {
+
+    var r = renderer || constants.P2D;
+
+    var c = document.createElement('canvas');
+    var node = this._userNode || document.body;
+    node.appendChild(c);
+
+    p5.Element.call(this, c, pInst, false);
+    this._styles = [];
+    this.width = w;
+    this.height = h;
+    this.pixelDensity = pInst.pixelDensity;
+
+    if (r === constants.WEBGL) {
+      this._graphics = new p5.Renderer3D(c, this, false);
+    } else {
+      this._graphics = new p5.Renderer2D(c, this, false);
     }
+
+    this._graphics.resize(w, h);
+    this._graphics._applyDefaults();
+
+    pInst._elements.push(this);
+
+    // bind methods and props of p5 to the new object
+    for (var p in p5.prototype) {
+      if (!this[p]) {
+        if (typeof p5.prototype[p] === 'function') {
+          this[p] = p5.prototype[p].bind(this);
+        } else {
+          this[p] = p5.prototype[p];
+        }
+      }
+    }
+
+    return this;
   };
 
   p5.Graphics.prototype = Object.create(p5.Element.prototype);
   
-  /**
-   * Resize our canvas element.
-   * @param  {Number} w pixel width
-   * @param  {Number} h pixel height
-   * @return {void}   [description]
-   */
-  p5.Graphics.prototype.resize = function(w, h) {
-    this.width = w;
-    this.height = h;
-    this.elt.width = w * this._pInst.pixelDensity;
-    this.elt.height = h * this._pInst.pixelDensity;
-    this.elt.style.width = w +'px';
-    this.elt.style.height = h + 'px';
-    if (this._isMainCanvas) {
-      this._pInst._setProperty('width', this.width);
-      this._pInst._setProperty('height', this.height);
-    }
-  };
-
   return p5.Graphics;
 });

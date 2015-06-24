@@ -7,7 +7,9 @@ define(function (require) {
   'use strict';
 
   var p5 = require('core/core');
+  var doFriendlyWelcome = true;
 
+  
   // -- Borrowed from jQuery 1.11.3 --
   var class2type = {};
   var toString = class2type.toString;
@@ -69,20 +71,37 @@ define(function (require) {
   var PARAM_COUNT = 0;
   var EMPTY_VAR = 1;
   var WRONG_TYPE = 2;
+  var FILE_LOAD = 3;
   // p5.js blue, p5.js orange, auto dark green; fallback p5.js darkened magenta
   // See testColors below for all the color codes and names
-  var typeColors = ['#2D7BB6', '#EE9900', '#4DB200'];
+  var typeColors = ['#2D7BB6', '#EE9900', '#4DB200', '#C83C00'];
   function report(message, func, color) {
+    if(doFriendlyWelcome){
+      friendlyWelcome();
+      doFriendlyWelcome =false;
+    }
     if ('undefined' === getType(color)) {
       color   = '#B40033'; // dark magenta
     } else if (getType(color) === 'number') { // Type to color
       color = typeColors[color];
     }
-    console.log(
-      '%c> p5.js says: '+message+'%c [http://p5js.org/reference/#p5/'+func+']',
-      'background-color:' + color + ';color:#FFF;',
-      'background-color:transparent;color:' + color + ';'
-    );
+    if (func.substring(0,4) === 'load'){
+      console.log(
+        '%c> p5.js says: '+message+'%c'+
+        '[https://github.com/processing/p5.js/wiki/Local-server]',
+        'background-color:' + color + ';color:#FFF;',
+        'background-color:transparent;color:' + color +';',
+        'background-color:' + color + ';color:#FFF;',
+        'background-color:transparent;color:' + color +';'
+      );
+    }
+    else{
+      console.log(
+        '%c> p5.js says: '+message+'%c [http://p5js.org/reference/#p5/'+func+
+        ']', 'background-color:' + color + ';color:#FFF;',
+        'background-color:transparent;color:' + color +';'
+      );
+    }
   }
 
   /**
@@ -154,7 +173,7 @@ define(function (require) {
             ' received an empty variable in spot #' + (p+1) +
             '. If not intentional, this is often a problem with scope: ' +
             '[link to scope].', func, EMPTY_VAR);
-        } else if (!typeMatches(defType, argType, args[p])) {
+        } else if (defType !== '*' && !typeMatches(defType, argType, args[p])) {
           message = func + ' was expecting a ' + defType.toLowerCase() +
             ' for parameter #' + (p+1) + ', received ';
           // Wrap strings in quotes
@@ -171,12 +190,59 @@ define(function (require) {
       }
     }
   };
+  var errorCases = {
+    '0': {
+      fileType: 'image',
+      method: 'loadImage',
+      message: ' hosting the image online,'
+    },
+    '1': {
+      fileType: 'XML file',
+      method: 'loadXML'
+    },
+    '2': {
+      fileType: 'table file',
+      method: 'loadTable'
+    },
+    '3': {
+      fileType: 'text file',
+      method: 'loadStrings'
+    }
+  };
+  p5._friendlyFileLoadError = function (errorType, filePath) {
+    var errorInfo = errorCases[ errorType ];
+    var message = 'It looks like there was a problem' +
+    ' loading your ' + errorInfo.fileType + '.' +
+    ' Try checking if the file path%c [' + filePath + '] %cis correct,' +
+    (errorInfo.message || '') + ' or running a local server.';
+    report(message, errorInfo.method, FILE_LOAD);
+  };
+
+  function friendlyWelcome() {
+    // p5.js brand - magenta: #ED225D
+    var astrixBgColor = 'transparent';
+    var astrixTxtColor = '#ED225D';
+    var welcomeBgColor = '#ED225D';
+    var welcomeTextColor = 'white';
+    console.log(
+    '%c    _ \n'+
+    ' /\\| |/\\ \n'+
+    ' \\ ` \' /  \n'+
+    ' / , . \\  \n'+
+    ' \\/|_|\\/ '+
+    '\n\n%c> p5.js says: Welcome! '+
+    'This is your friendly debugger. ' +
+    'To turn me off switch to using “p5.min.js”.',
+    'background-color:'+astrixBgColor+';color:' + astrixTxtColor +';',
+    'background-color:'+welcomeBgColor+';color:' + welcomeTextColor +';'
+    );
+  }
 
   /**
    * Prints out all the colors in the color pallete with white text.
    * For color blindness testing.
    */
-  p5.prototype._testColors = function() {
+  /* function testColors() {
     var str = 'A box of biscuits, a box of mixed biscuits and a biscuit mixer';
     report(str, 'println', '#ED225D'); // p5.js magenta
     report(str, 'println', '#2D7BB6'); // p5.js blue
@@ -194,7 +260,7 @@ define(function (require) {
     report(str, 'println', '#008851'); // auto dark cyan
     report(str, 'println', '#C83C00'); // auto dark orange
     report(str, 'println', '#4DB200'); // auto dark green
-  };
+  } */
 
   return p5;
 

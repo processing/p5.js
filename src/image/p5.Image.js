@@ -133,7 +133,7 @@ define(function (require) {
    * @method loadPixels
    */
   p5.Image.prototype.loadPixels = function(){
-    p5.Graphics2D.prototype.loadPixels.call(this);
+    p5.Renderer2D.prototype.loadPixels.call(this);
   };
 
   /**
@@ -151,7 +151,7 @@ define(function (require) {
    *                              underlying canvas
    */
   p5.Image.prototype.updatePixels = function(x, y, w, h){
-    p5.Graphics2D.prototype.updatePixels.call(this, x, y, w, h);
+    p5.Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
   };
 
   /**
@@ -173,7 +173,7 @@ define(function (require) {
    *                                    [R, G, B, A] or p5.Image
    */
   p5.Image.prototype.get = function(x, y, w, h){
-    return p5.Graphics2D.prototype.get.call(this, x, y, w, h);
+    return p5.Renderer2D.prototype.get.call(this, x, y, w, h);
   };
 
   /**
@@ -206,7 +206,7 @@ define(function (require) {
    * </div>
    */
   p5.Image.prototype.set = function(x, y, imgOrCol){
-    p5.Graphics2D.prototype.set.call(this, x, y, imgOrCol);
+    p5.Renderer2D.prototype.set.call(this, x, y, imgOrCol);
   };
 
   /**
@@ -320,7 +320,7 @@ define(function (require) {
     var currBlend = this.drawingContext.globalCompositeOperation;
 
     var scaleFactor = 1;
-    if (p5Image instanceof p5.Graphics) {
+    if (p5Image instanceof p5.Renderer) {
       scaleFactor = p5Image._pInst.pixelDensity;
     }
 

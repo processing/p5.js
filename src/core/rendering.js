@@ -7,8 +7,9 @@ define(function(require) {
 
   var p5 = require('core/core');
   var constants = require('core/constants');
-  require('core/p5.Graphics2D');
-  require('3d/p5.Graphics3D');
+  require('core/p5.Graphics');
+  require('core/p5.Renderer2D');
+  require('3d/p5.Renderer3D');
 
   /**
    * Creates a canvas element in the document, and sets the dimensions of it
@@ -83,13 +84,13 @@ define(function(require) {
     // Init our graphics renderer
     //webgl mode
     if (r === constants.WEBGL) {
-      this._setProperty('_graphics', new p5.Graphics3D(c, this, true));
+      this._setProperty('_graphics', new p5.Renderer3D(c, this, true));
       this._isdefaultGraphics = true;
     }
     //P2D mode
     else {
       if (!this._isdefaultGraphics) {
-        this._setProperty('_graphics', new p5.Graphics2D(c, this, true));
+        this._setProperty('_graphics', new p5.Renderer2D(c, this, true));
         this._isdefaultGraphics = true;
       }
     }
@@ -150,7 +151,7 @@ define(function(require) {
   };
 
   /**
-   * Creates and returns a new p5.Graphics object. Use this class if you need
+   * Creates and returns a new p5.Renderer object. Use this class if you need
    * to draw into an off-screen graphics buffer. The two parameters define the
    * width and height in pixels.
    *
@@ -180,70 +181,7 @@ define(function(require) {
    * </div>
    */
   p5.prototype.createGraphics = function(w, h, renderer){
-    if (renderer === constants.WEBGL) {
-      return this._createGraphics3D(w,h);
-    }
-    else {
-      return this._createGraphics2D(w,h);
-    }
-  };
-  /**
-   * Creates and returns a new p5.Graphics2D object. Use this class if you need
-   * to draw into an off-screen graphics buffer. The two parameters define the
-   * width and height in pixels.
-   */
-  p5.prototype._createGraphics2D = function(w, h) {
-    var c = document.createElement('canvas');
-    //c.style.visibility='hidden';
-    var node = this._userNode || document.body;
-    node.appendChild(c);
-
-    var pg = new p5.Graphics2D(c, this, false);
-    // store in elements array
-    this._elements.push(pg);
-
-    for (var p in p5.prototype) {
-      if (!pg[p]) {
-        if (typeof p5.prototype[p] === 'function') {
-          pg[p] = p5.prototype[p].bind(pg);
-        } else {
-          pg[p] = p5.prototype[p];
-        }
-      }
-    }
-    pg.resize(w, h);
-    pg._applyDefaults();
-    return pg;
-  };
-
-
-   /**
-   * Creates and returns a new p5.Graphics3D object. Use this class if you need
-   * to draw into an off-screen graphics buffer. The two parameters define the
-   * width and height in pixels.
-   */
-  p5.prototype._createGraphics3D = function(w, h) {
-    var c = document.createElement('canvas');
-    //c.style.visibility='hidden';
-    var node = this._userNode || document.body;
-    node.appendChild(c);
-
-    var pg = new p5.Graphics3D(c, this, false);
-    // store in elements array
-    this._elements.push(pg);
-
-    for (var p in p5.prototype) {
-      if (!pg.hasOwnProperty(p)) {
-        if (typeof p5.prototype[p] === 'function') {
-          pg[p] = p5.prototype[p].bind(pg);
-        } else {
-          pg[p] = p5.prototype[p];
-        }
-      }
-    }
-    pg.resize(w, h);
-    pg._applyDefaults();
-    return pg;
+    return new p5.Graphics(w, h, renderer, this);
   };
 
   /**
