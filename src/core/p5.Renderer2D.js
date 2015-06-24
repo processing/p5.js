@@ -847,14 +847,34 @@ define(function(require) {
   //////////////////////////////////////////////
 
   p5.Renderer2D.prototype.noSmooth = function() {
-    this.drawingContext.mozImageSmoothingEnabled = false;
-    this.drawingContext.webkitImageSmoothingEnabled = false;
+    if ('imageSmoothingEnabled' in this.drawingContext) {
+      this.drawingContext.imageSmoothingEnabled = false;
+    }
+    else if ('mozImageSmoothingEnabled' in this.drawingContext) {
+      this.drawingContext.mozImageSmoothingEnabled = false;
+    }
+    else if ('webkitImageSmoothingEnabled' in this.drawingContext) {
+      this.drawingContext.webkitImageSmoothingEnabled = false;
+    }
+    else if ('msImageSmoothingEnabled' in this.drawingContext) {
+      this.drawingContext.msImageSmoothingEnabled = false;
+    }
     return this;
   };
 
   p5.Renderer2D.prototype.smooth = function() {
-    this.drawingContext.mozImageSmoothingEnabled = true;
-    this.drawingContext.webkitImageSmoothingEnabled = true;
+    if ('imageSmoothingEnabled' in this.drawingContext) {
+      this.drawingContext.imageSmoothingEnabled = true;
+    }
+    else if ('mozImageSmoothingEnabled' in this.drawingContext) {
+      this.drawingContext.mozImageSmoothingEnabled = true;
+    }
+    else if ('webkitImageSmoothingEnabled' in this.drawingContext) {
+      this.drawingContext.webkitImageSmoothingEnabled = true;
+    }
+    else if ('msImageSmoothingEnabled' in this.drawingContext) {
+      this.drawingContext.msImageSmoothingEnabled = true;
+    }
     return this;
   };
 
