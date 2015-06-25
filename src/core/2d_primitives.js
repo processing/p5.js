@@ -79,34 +79,32 @@ define(function (require) {
     }
 
     // Adjust angles to counter linear scaling.
-    var half_pi = Math.PI / 2.0;
-    if (start >= half_pi && start < 3 * half_pi) {
-      start = Math.atan(w / h * Math.tan(start)) + 2 * half_pi;
+    if (start >= constants.HALF_PI && start < 3 * constants.HALF_PI) {
+      start = Math.atan(w / h * Math.tan(start)) + 2 * constants.HALF_PI;
     } else {
       start = Math.atan(w / h * Math.tan(start));
     }
-    if (stop >= half_pi && stop < 3 * half_pi) {
-      stop = Math.atan(w / h * Math.tan(stop)) + 2 * half_pi;
+    if (stop >= constants.HALF_PI && stop < 3 * constants.HALF_PI) {
+      stop = Math.atan(w / h * Math.tan(stop)) + 2 * constants.HALF_PI;
     } else {
       stop = Math.atan(w / h * Math.tan(stop));
     }
 
     // Make all angles positive...
-    var two_pi = Math.PI * 2.0;
     while (start < 0) {
-      start += two_pi;
+      start += constants.TWO_PI;
     }
     while (stop < 0) {
-      stop += two_pi;
+      stop += constants.TWO_PI;
     }
     // ...and confine them to the interval [0,TWO_PI).
-    start %= two_pi;
-    stop %= two_pi;
+    start %= constants.TWO_PI;
+    stop %= constants.TWO_PI;
 
     // Exceed the interval if necessary in order to preserve the size and
     // orientation of the arc.
     if (start > stop) {
-      stop += two_pi;
+      stop += constants.TWO_PI;
     }
     // p5 supports negative width and heights for ellipses
     w = Math.abs(w);
