@@ -1046,6 +1046,12 @@ define(function(require) {
         }
       }
 
+      if (this._pInst._rectMode === constants.CENTER ){
+        
+        x -= maxWidth / 2;
+        y -= maxHeight / 2;
+      }
+
       switch (this.drawingContext.textAlign) {
 
       case constants.CENTER:
