@@ -393,11 +393,12 @@ define(function(require) {
     var vals = canvas.arcModeAdjust(x, y, w, h, this._pInst._ellipseMode);
     var rx = vals.w / 2.0;
     var ry = vals.h / 2.0;
+    var epsilon = 0.00001;  // Smallest visible angle on displays up to 4K.
     var arcToDraw = 0;
     var curves = [];
 
     // Create curves
-    while(stop - start > 0.00001) {
+    while(stop - start > epsilon) {
       arcToDraw = Math.min(stop - start, constants.HALF_PI);
       curves.push(this._acuteArcToBezier(start, arcToDraw));
       start += arcToDraw;
