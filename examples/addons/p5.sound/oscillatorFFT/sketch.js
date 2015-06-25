@@ -14,6 +14,7 @@ var oscOn = false;
 
 function setup() {
   createCanvas(800,400);
+  noFill();
 
   freqLabel = createP('Frequency: ');
   freqSlider = createSlider(1, 700, freq);

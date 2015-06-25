@@ -36,7 +36,7 @@ function togglePlayMode(){
 
 function keyPressed(k) {
   if (k.keyCode == 65) {
-    sample1.play(.6);
+    sample1.play(0, 1, .6);
 
     // Get even more monophonic by only letting one sample play at a time
     if ( playMode =='restart' && sample2.isPlaying() ){
@@ -47,6 +47,6 @@ function keyPressed(k) {
     if ( playMode =='restart' && sample1.isPlaying() ){
       sample1.stopAll();
     }
-    sample2.play(.6);
+    sample2.play(0, 1, .6);
   }
 }

@@ -1,0 +1,22 @@
+<!doctype html>
+<html>
+<head>
+  <script data-main="../src/app" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.18/require.js"></script>
+  <script>
+  require.config({
+    paths: {
+      reqwest: '../node_modules/reqwest/reqwest'
+    }
+  });
+  require(['app'], function( p5 ) {
+    new p5(function( p ) {
+      p.setup = function() {
+        p.fill('red');
+        p.rect(0,0,10,10);
+      };
+    }, null, true);
+  });
+  </script>
+</head>
+<body></body>
+</html>

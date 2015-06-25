@@ -8,12 +8,12 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core');
+  var p5 = require('core/core');
 
   var seeded = false;
 
   // Linear Congruential Generator
-  // Variant of a Lehman Generator 
+  // Variant of a Lehman Generator
   var lcg = (function() {
     // Set to values from http://en.wikipedia.org/wiki/Numerical_Recipes
         // m is basically chosen to be large (as it is the max period)
@@ -36,7 +36,7 @@ define(function (require) {
       rand : function() {
         // define the recurrence relationship
         z = (a * z + c) % m;
-        // return a float in [0, 1) 
+        // return a float in [0, 1)
         // if z = m then z / m = 0 therefore (z % m) / m < 1 always
         return z / m;
       }
@@ -44,10 +44,10 @@ define(function (require) {
   }());
 
   /**
-   * Sets the seed value for random(). 
-   * 
-   * By default, random() produces different results each time the program 
-   * is run. Set the seed parameter to a constant to return the same 
+   * Sets the seed value for random().
+   *
+   * By default, random() produces different results each time the program
+   * is run. Set the seed parameter to a constant to return the same
    * pseudo-random numbers each time the software is run.
    *
    * @method randomSeed
@@ -143,7 +143,7 @@ define(function (require) {
    * value that <b>randomGaussian()</b> might return. Rather, there is
    * just a very low probability that values far from the mean will be
    * returned; and a higher probability that numbers near the mean will
-   * be returned.   
+   * be returned.
    * Takes either 0, 1 or 2 arguments.
    * If no args, returns a mean of 0 and standard deviation of 1
    * If one arg, that arg is the mean (standard deviation is 1)
@@ -162,21 +162,21 @@ define(function (require) {
    * </code>
    * </div>
    * <div>
-   * <code> 
+   * <code>
    *var distribution = new Array(360);
-   * 
+   *
    *function setup() {
    *  createCanvas(100, 100);
    *  for (var i = 0; i < distribution.length; i++) {
    *    distribution[i] = floor(randomGaussian(0,15));
    *  }
    *}
-   * 
+   *
    *function draw() {
    *  background(204);
-   *   
+   *
    *  translate(width/2, width/2);
-   * 
+   *
    *  for (var i = 0; i < distribution.length; i++) {
    *    rotate(TWO_PI/distribution.length);
    *    stroke(0);

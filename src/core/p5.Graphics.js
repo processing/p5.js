@@ -1,0 +1,67 @@
+/**
+ * @module Rendering
+ * @submodule Rendering
+ * @for p5
+ */
+define(function(require) {
+
+  var p5 = require('core/core');
+  var constants = require('core/constants');
+
+  /**
+   * Thin wrapper around a renderer, to be used for creating a
+   * graphics buffer object. Use this class if you need
+   * to draw into an off-screen graphics buffer. The two parameters define the
+   * width and height in pixels. The fields and methods for this class are 
+   * extensive, but mirror the normal drawing API for p5.
+   *
+   * @class p5.Graphics
+   * @constructor
+   * @extends p5.Element
+   * @param {String} elt DOM node that is wrapped
+   * @param {Object} [pInst] pointer to p5 instance
+   * @param {Boolean} whether we're using it as main canvas
+   */
+  p5.Graphics = function(w, h, renderer, pInst) {
+
+    var r = renderer || constants.P2D;
+
+    var c = document.createElement('canvas');
+    var node = this._userNode || document.body;
+    node.appendChild(c);
+
+    p5.Element.call(this, c, pInst, false);
+    this._styles = [];
+    this.width = w;
+    this.height = h;
+    this.pixelDensity = pInst.pixelDensity;
+
+    if (r === constants.WEBGL) {
+      this._graphics = new p5.Renderer3D(c, this, false);
+    } else {
+      this._graphics = new p5.Renderer2D(c, this, false);
+    }
+
+    this._graphics.resize(w, h);
+    this._graphics._applyDefaults();
+
+    pInst._elements.push(this);
+
+    // bind methods and props of p5 to the new object
+    for (var p in p5.prototype) {
+      if (!this[p]) {
+        if (typeof p5.prototype[p] === 'function') {
+          this[p] = p5.prototype[p].bind(this);
+        } else {
+          this[p] = p5.prototype[p];
+        }
+      }
+    }
+
+    return this;
+  };
+
+  p5.Graphics.prototype = Object.create(p5.Element.prototype);
+  
+  return p5.Graphics;
+});

@@ -59,28 +59,36 @@
     <!-- identity -->
     <div id="lockup">
       <a href="../">
-        <img type="image/svg+xml" src="../img/p5js-beta.svg" class="logo" />
+        <img type="image/svg+xml" src="../img/p5js-beta.svg" id="logo_image" class="logo"  />
+        <div id='p5_logo'></div>
       </a>
       <p>Processing intuition times JavaScript power</p>
     </div>
+
 
     <!-- site navigation -->
     <div class="column-span">
     <ul id="menu">
       <li><a href="../">Home</a></li>
+
       <li><a href="../download/">Download</a></li> 
-      <li><a href="../get-started/">Get&nbsp;Started</a></li>
+      <li><a href="../gallery/">Gallery</a></li>
+      <li><a href="../get-started/">Get Started</a></li>
       <li><a href="../reference/">Reference</a></li>
       <li><a href="../libraries/">Libraries</a></li>
-      <li><a href="../learn/">Learn</a></li>
-      <li><a href="../learn/#examples">Examples</a></li>
+      <li><a href="../tutorials/">Tutorials</a></li>
+      <li><a href="../examples/">Examples</a></li>
+      <li><a href="../community/">Community</a></li>
       <li><a href="../contribute/">Contribute</a></li>
+      
       <li><a href="http://forum.processing.org/two/" target=_blank class="other-link">Forum</a></li>
       <li><a href="http://github.com/processing/p5.js" target=_blank class="other-link">Github</a></li>
       <li><a href="http://twitter.com/p5xjs" target=_blank class="other-link">Twitter</a></li>
     </ul>
     <br />
     </div>
+
+
 
     <div class="column-span">
       <section id="reference">
@@ -101,8 +109,8 @@
 
 
       <footer>
-        <p>p5.js is developed by a group of collaborators, 
-        with support from <a href="http://processing.org/foundation/" target="_blank">Processing Foundation</a> 
+        <p>p5.js is developed by a community of collaborators, 
+        with support from the <a href="http://processing.org/foundation/" target="_blank">Processing Foundation</a> 
         and <a href="http://itp.nyu.edu/itp/" target="_blank">NYU ITP</a>.<br>
         <a href="<?php echo getRoot(); ?>copyright.php">&copy; Info.</a> Updated <?php include('updated.php'); ?>.</p>
       </footer>
@@ -129,6 +137,7 @@
 
     <script src="{{projectAssets}}/js/require.min.js"></script>
     <script src="{{projectAssets}}/js/reference.js"></script>
+    <script src="../js/logo.js"></script>
 
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. 

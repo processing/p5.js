@@ -13,10 +13,9 @@ var result;
 
 function preload() {
   result = loadJSON('http://api.openweathermap.org/data/2.5/weather?id=5128581&units=imperial');
+  console.log('In preload(), the result has not finished loading: ');
+  console.log(result);
 
-
-  print('In preload(), the result has not finished loading: ');
-  print(result);
 }
 
 function setup(){
@@ -26,8 +25,8 @@ function setup(){
   fill(0);
   noStroke();
 
-  print('In setup(), here is the result: ');
-  print(result);
+  console.log('In setup(), here is the result: ');
+  console.log(result);
 
   var location = result.name;
   var currentTemp = result.main.temp;
