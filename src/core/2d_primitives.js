@@ -78,6 +78,17 @@ define(function (require) {
       stop = this.radians(stop);
     }
 
+    // Make all angles positive...
+    while (start < 0) {
+      start += constants.TWO_PI;
+    }
+    while (stop < 0) {
+      stop += constants.TWO_PI;
+    }
+    // ...and confine them to the interval [0,TWO_PI).
+    start %= constants.TWO_PI;
+    stop %= constants.TWO_PI;
+
     // Adjust angles to counter linear scaling.
     if (start >= constants.HALF_PI && start < 3 * constants.HALF_PI) {
       start = Math.atan(w / h * Math.tan(start)) + 2 * constants.HALF_PI;
@@ -89,17 +100,6 @@ define(function (require) {
     } else {
       stop = Math.atan(w / h * Math.tan(stop));
     }
-
-    // Make all angles positive...
-    while (start < 0) {
-      start += constants.TWO_PI;
-    }
-    while (stop < 0) {
-      stop += constants.TWO_PI;
-    }
-    // ...and confine them to the interval [0,TWO_PI).
-    start %= constants.TWO_PI;
-    stop %= constants.TWO_PI;
 
     // Exceed the interval if necessary in order to preserve the size and
     // orientation of the arc.
