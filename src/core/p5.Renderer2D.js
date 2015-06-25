@@ -354,54 +354,92 @@ define(function(require) {
   // SHAPE | 2D Primitives
   //////////////////////////////////////////////
 
+  /**
+   * Generate a cubic Bezier representing an arc on the unit circle of total
+   * angle `size` radians, beginning `start` radians above the x-axis. Up to
+   * four of these curves are combined to make a full arc.
+   *
+   * See www.joecridge.me/bezier.pdf for an explanation of the method.
+   */
+  p5.Renderer2D.prototype._acuteArcToBezier =
+    function _acuteArcToBezier(start, size) {
+    // Evauate constants.
+    var alpha = size / 2.0,
+      cos_alpha = Math.cos(alpha),
+      sin_alpha = Math.sin(alpha),
+      cot_alpha = 1.0 / Math.tan(alpha),
+      phi = start + alpha,  // This is how far the arc needs to be rotated.
+      cos_phi = Math.cos(phi),
+      sin_phi = Math.sin(phi),
+      lambda = (4.0 - cos_alpha) / 3.0,
+      mu = sin_alpha + (cos_alpha - lambda) * cot_alpha;
+
+    // Return rotated waypoints.
+    return {
+      ax: Math.cos(start),
+      ay: Math.sin(start),
+      bx: lambda * cos_phi + mu * sin_phi,
+      by: lambda * sin_phi - mu * cos_phi,
+      cx: lambda * cos_phi - mu * sin_phi,
+      cy: lambda * sin_phi + mu * cos_phi,
+      dx: Math.cos(start + size),
+      dy: Math.sin(start + size)
+    };
+  };
+
   p5.Renderer2D.prototype.arc =
-    function(x, y, w, h, start, stop, mode, curves) {
-    if (!this._pInst._doStroke && !this._pInst._doFill) {
-      return;
-    }
+    function(x, y, w, h, start, stop, mode) {
     var ctx = this.drawingContext;
     var vals = canvas.arcModeAdjust(x, y, w, h, this._pInst._ellipseMode);
-    var rx = vals.w / 2;
-    var ry = vals.h / 2;
-    ctx.beginPath();
-    curves.forEach(function (curve, index) {
-      if (index === 0) {
-        ctx.moveTo(vals.x + curve.x1 * rx, vals.y + curve.y1 * ry);
-      }
-      ctx.bezierCurveTo(vals.x + curve.x2 * rx,
-        vals.y + curve.y2 * ry,
-        vals.x + curve.x3 * rx,
-        vals.y + curve.y3 * ry,
-        vals.x + curve.x4 * rx,
-        vals.y + curve.y4 * ry);
-    });
+    var rx = vals.w / 2.0;
+    var ry = vals.h / 2.0;
+    var half_pi = Math.PI / 2.0;
+    var arcToDraw = 0;
+    var curves = [];
+
+    // Create curves
+    while(stop - start > 0.00001) {
+      arcToDraw = Math.min(stop - start, half_pi);
+      curves.push(this._acuteArcToBezier(start, arcToDraw));
+      start += arcToDraw;
+    }
+
+    // Fill curves
     if (this._pInst._doFill) {
+      ctx.beginPath();
+      curves.forEach(function (curve, index) {
+        if (index === 0) {
+          ctx.moveTo(vals.x + curve.ax * rx, vals.y + curve.ay * ry);
+        }
+        ctx.bezierCurveTo(vals.x + curve.bx * rx, vals.y + curve.by * ry,
+                          vals.x + curve.cx * rx, vals.y + curve.cy * ry,
+                          vals.x + curve.dx * rx, vals.y + curve.dy * ry);
+      });
       if (mode === constants.PIE || mode == null) {
         ctx.lineTo(vals.x, vals.y);
       }
       ctx.closePath();
       ctx.fill();
-      if (this._pInst._doStroke) {
-        if (mode === constants.CHORD || mode === constants.PIE) {
-          ctx.stroke();
-          return this;
-        }
-      }
     }
+
+    // Stroke curves
     if (this._pInst._doStroke) {
-      if (mode === constants.OPEN || mode == null) {
-        ctx.beginPath();
-        curves.forEach(function (curve, index) {
-          if (index === 0) {
-            ctx.moveTo(vals.x + curve.x1 * rx, vals.y + curve.y1 * ry);
-          }
-          ctx.bezierCurveTo(vals.x + curve.x2 * rx,
-            vals.y + curve.y2 * ry, vals.x + curve.x3 * rx,
-            vals.y + curve.y3 * ry, vals.x + curve.x4 * rx,
-            vals.y + curve.y4 * ry);
-        });
-        ctx.stroke();
+      ctx.beginPath();
+      curves.forEach(function (curve, index) {
+        if (index === 0) {
+          ctx.moveTo(vals.x + curve.ax * rx, vals.y + curve.ay * ry);
+        }
+        ctx.bezierCurveTo(vals.x + curve.bx * rx, vals.y + curve.by * ry,
+                          vals.x + curve.cx * rx, vals.y + curve.cy * ry,
+                          vals.x + curve.dx * rx, vals.y + curve.dy * ry);
+      });
+      if (mode === constants.PIE) {
+        ctx.lineTo(vals.x, vals.y);
+        ctx.closePath();
+      } else if (mode === constants.CHORD) {
+        ctx.closePath();
       }
+      ctx.stroke();
     }
     return this;
   };
@@ -419,7 +457,7 @@ define(function(require) {
       }
     }
     var vals = canvas.modeAdjust(x, y, w, h, this._pInst._ellipseMode);
-    var kappa = 0.5522848,
+    var kappa = 0.5522847498,
       ox = (vals.w / 2) * kappa, // control point offset horizontal
       oy = (vals.h / 2) * kappa, // control point offset vertical
       xe = vals.x + vals.w,      // x-end
