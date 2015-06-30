@@ -73,8 +73,8 @@ define(function (require) {
   };
 
   /**
-   * Copies the mat4
-   * @return {[type]} [description]
+   * return a copy of a matrix
+   * @return {p5.Matrix}   the result matrix
    */
   p5.Matrix.prototype.copy = function(){
     var copied = new p5.Matrix();
@@ -99,16 +99,16 @@ define(function (require) {
 
   /**
    * return an identity matrix
-   * @return {[type]} [description]
+   * @return {p5.Matrix}   the result matrix
    */
   p5.Matrix.identity = function(){
     return new p5.Matrix();
   };
 
   /**
-   * [transpose description]
-   * @param  {[type]} a [description]
-   * @return {[type]}   [description]
+   * transpose according to a given matrix
+   * @param  {p5.Matrix | Typed Array} a   the matrix to be based on to transpose
+   * @return {p5.Matrix}                   this
    */
   p5.Matrix.prototype.transpose = function(a){
     var a01, a02, a03, a12, a13, a23;
@@ -166,9 +166,9 @@ define(function (require) {
   };
 
   /**
-   * [invert description]
-   * @param  {[type]} a [description]
-   * @return {[type]}   [description]
+   * invert  matrix according to a give matrix
+   * @param  {p5.Matrix or Typed Array} a   the matrix to be based on to invert
+   * @return {p5.Matrix}                    this
    */
   p5.Matrix.prototype.invert = function(a){
     var a00, a01, a02, a03, a10, a11, a12, a13,
@@ -251,8 +251,8 @@ define(function (require) {
   };
 
   /**
-   * @return {Number} Determinant of our 4x4 matrix
    * inspired by Toji's mat4 determinant
+   * @return {Number} Determinant of our 4x4 matrix
    */
   p5.Matrix.prototype.determinant = function(){
     var d00 = (this.mat4[0] * this.mat4[5]) - (this.mat4[1] * this.mat4[4]),
@@ -275,8 +275,8 @@ define(function (require) {
 
   /**
    * multiply two mat4s
-   * @param {p5.Matrix | Array} multMatrix The matrix we want to multiply by
-   * @return {[type]} [description]
+   * @param {p5.Matrix | Array}             multMatrix The matrix we want to multiply by
+   * @return {p5.Matrix}                    this
    */
   p5.Matrix.prototype.mult = function(multMatrix){
     var _dest = new GLMAT_ARRAY_TYPE(16);
@@ -333,7 +333,7 @@ define(function (require) {
    * scales a p5.Matrix by scalars or a vector
    * @param  {p5.Vector | Array | Numbers}
    *                      vector to scale by
-   * @return {[type]}     [description]
+   * @return {p5.Matrix}  this
    */
   p5.Matrix.prototype.scale = function() {
     var x,y,z;
@@ -385,7 +385,7 @@ define(function (require) {
    * rotate our Matrix around an axis by the given angle.
    * @param  {Number} a The angle of rotation in radians
    * @param  {p5.Vector | Array} axis  the axis(es) to rotate around
-   * @return {[type]}       [description]
+   * @return {p5.Matrix}                    this
    * inspired by Toji's gl-matrix lib, mat4 rotation
    */
   p5.Matrix.prototype.rotate = function(a, axis){
@@ -464,7 +464,7 @@ define(function (require) {
    * @todo  finish implementing this method!
    * translates
    * @param  {Array} v vector to translate by
-   * @return {[type]}   [description]
+   * @return {p5.Matrix}                    this
    */
   p5.Matrix.prototype.translate = function(v){
     var x = v[0],
