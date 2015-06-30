@@ -3,13 +3,12 @@
  * @submodule Math
  * @requires constants
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
-  var polarGeometry = require('math/polargeometry');
-  var constants = require('core/constants');
+  var p5 = require('../core/core');
+  var polarGeometry = require('./polargeometry');
+  var constants = require('../core/constants');
 
   /**
    * A class to describe a two or three dimensional vector, specifically
@@ -1034,6 +1033,4 @@ define(function (require) {
     return angle;
   };
 
-  return p5.Vector;
-
-});
+  module.exports = p5.Vector;

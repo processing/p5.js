@@ -5,12 +5,11 @@
  * @requires core
  * @requires constants
  */
-define(function(require) {
 
   'use strict';
 
-  var p5 = require('core/core');
-  var C = require('core/constants');
+  var p5 = require('./core');
+  var C = require('./constants');
 
   var standardCursors = [C.ARROW, C.CROSS, C.HAND, C.MOVE, C.TEXT, C.WAIT];
 
@@ -556,6 +555,4 @@ define(function(require) {
     return v;
   };
 
-  return p5;
-
-});
+  module.exports = p5;

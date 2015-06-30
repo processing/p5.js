@@ -3,8 +3,8 @@
  * submodule Color Utils
  * @for p5
  */
-define(function(require) {
-  var p5 = require('core/core');
+
+  var p5 = require('../core/core');
 
   p5.ColorUtils = {};
 
@@ -79,7 +79,7 @@ define(function(require) {
 
   /**
    * For a color expressed as an RGBA array, return the corresponding HSBA value
-   * 
+   *
    * @param {Array} rgba An 'array' object that represents a list of RGB colors
    * @param {Array} maxes An 'array' object that represents the RGB range maxes
    * @return {Array} an array of HSB values, scaled by the HSB-space maxes
@@ -134,10 +134,10 @@ define(function(require) {
 
   /**
    * For a color expressed as an HSLA array, return the corresponding RGBA value
-   * 
+   *
    * @param  {Array} hsla An 'array' object that represents a list of HSL colors
    * @param  {Array} maxes An 'array' object that represents the HSL range maxes
-   * 
+   *
    * @return {Array} an array of RGBA values, on a scale of 0-255
    */
   p5.ColorUtils.hslaToRGBA = function(hsla, maxes){
@@ -197,7 +197,7 @@ define(function(require) {
 
   /**
    * For a color expressed as an RGBA array, return the corresponding HSBA value
-   * 
+   *
    * @param {Array} rgba An 'array' object that represents a list of RGB colors
    * @param {Array} maxes An 'array' object that represents the RGB range maxes
    * @return {Array} an array of HSL values, scaled by the HSL-space maxes
@@ -210,7 +210,7 @@ define(function(require) {
 
     var min = Math.min(r, g, b); //Min. value of RGB
     var max = Math.max(r, g, b); //Max. value of RGB
-    var delta_max = max - min;             //Delta RGB value 
+    var delta_max = max - min;             //Delta RGB value
 
     var h;
     var s;
@@ -224,7 +224,7 @@ define(function(require) {
       h = 0;             // HSL results from 0 to 1
       s = 0;
     } else {              // Chromatic data...
-       
+
       delta_r = ( ( ( max - r ) / 6 ) + ( delta_max / 2 ) ) / delta_max;
       delta_g = ( ( ( max - g ) / 6 ) + ( delta_max / 2 ) ) / delta_max;
       delta_b = ( ( ( max - b ) / 6 ) + ( delta_max / 2 ) ) / delta_max;
@@ -240,7 +240,7 @@ define(function(require) {
       if ( h < 0 ) {
         h += 1;
       }
-         
+
       if ( h > 1 ) {
         h -= 1;
       }
@@ -260,5 +260,4 @@ define(function(require) {
       ];
   };
 
-  return p5.ColorUtils;
-});
+  module.exports = p5.ColorUtils;

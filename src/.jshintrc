@@ -2,7 +2,6 @@
   "boss": true,
   "curly": true,
   "trailing": true,
-  "indent": 2,
   "devel": true,
   "eqeqeq": true,
   "eqnull": true,
@@ -16,9 +15,8 @@
   "maxlen": 80,
 
   "browser": true,
+  "node": true,
   "globals": {
-    "define": false,
-    "require": false,
     "PImage": false
   }
 }

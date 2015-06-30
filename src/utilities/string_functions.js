@@ -4,11 +4,10 @@
  * @for p5
  * @requires core
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
+  var p5 = require('../core/core');
 
   //return p5; //LM is this a mistake?
 
@@ -478,6 +477,4 @@ define(function (require) {
     }
   };
 
-  return p5;
-
-});
+  module.exports = p5;

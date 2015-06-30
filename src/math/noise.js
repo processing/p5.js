@@ -17,11 +17,10 @@
  * @for p5
  * @requires core
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
+  var p5 = require('../core/core');
 
   var PERLIN_YWRAPB = 4;
   var PERLIN_YWRAP = 1<<PERLIN_YWRAPB;
@@ -313,7 +312,4 @@ define(function (require) {
     }
   };
 
-  return p5;
-});
-
-
+  module.exports = p5;

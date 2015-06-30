@@ -1,14 +1,13 @@
-define(function(require) {
 
-  var p5 = require('core/core');
-  var canvas = require('core/canvas');
-  var constants = require('core/constants');
-  var filters = require('image/filters');
+  var p5 = require('./core');
+  var canvas = require('./canvas');
+  var constants = require('./constants');
+  var filters = require('../image/filters');
 
-  require('core/p5.Renderer');
+  require('./p5.Renderer');
 
   /**
-   * 2D graphics renderer class.  Can also be used as an off-screen 
+   * 2D graphics renderer class.  Can also be used as an off-screen
    * graphics buffer. A p5.Renderer2D object can be constructed
    * with the <code>createRenderer2D()</code> function. The fields and methods
    * for this class are extensive, but mirror the normal drawing API for p5.
@@ -1085,7 +1084,7 @@ define(function(require) {
       }
 
       if (this._pInst._rectMode === constants.CENTER ){
-        
+
         x -= maxWidth / 2;
         y -= maxHeight / 2;
       }
@@ -1261,5 +1260,4 @@ define(function(require) {
     this.drawingContext.restore();
   };
 
-  return p5.Renderer2D;
-});
+  module.exports = p5.Renderer2D;

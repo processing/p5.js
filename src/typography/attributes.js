@@ -5,12 +5,11 @@
  * @requires core
  * @requires constants
  */
-define(function(require) {
 
   'use strict';
 
-  var p5 = require('core/core');
-  var constants = require('core/constants');
+  var p5 = require('../core/core');
+  var constants = require('../core/constants');
 
   p5.prototype._textSize = 12;
   p5.prototype._textLeading = 15;
@@ -353,6 +352,4 @@ define(function(require) {
     return [currentLeft, currentTop];
   };
 
-  return p5;
-
-});
+  module.exports = p5;

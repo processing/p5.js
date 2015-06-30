@@ -5,13 +5,12 @@
  * @requires core
  * @requires constants
  */
-define(function(require) {
 
   'use strict';
 
-  var p5 = require('core/core');
-  var constants = require('core/constants');
-  require('color/p5.Color');
+  var p5 = require('../core/core');
+  var constants = require('../core/constants');
+  require('./p5.Color');
 
   p5.prototype._doStroke = true;
   p5.prototype._doFill = true;
@@ -509,6 +508,4 @@ define(function(require) {
 
 
 
-  return p5;
-
-});
+  module.exports = p5;

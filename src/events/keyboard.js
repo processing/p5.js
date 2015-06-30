@@ -4,11 +4,10 @@
  * @for p5
  * @requires core
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
+  var p5 = require('../core/core');
 
   /**
    * Holds the key codes of currently pressed keys.
@@ -307,6 +306,4 @@ define(function (require) {
     return downKeys[code];
   };
 
-  return p5;
-
-});
+  module.exports = p5;

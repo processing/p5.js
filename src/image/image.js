@@ -4,7 +4,6 @@
  * @for p5
  * @requires core
  */
-define(function (require) {
 
   /**
    * This module defines the p5 methods for the p5.Image class
@@ -14,8 +13,8 @@ define(function (require) {
   'use strict';
 
 
-  var p5 = require('core/core');
-  var constants = require('core/constants');
+  var p5 = require('../core/core');
+  var constants = require('../core/constants');
 
   p5.prototype._imageMode = constants.CORNER;
   p5.prototype._tint = null;
@@ -249,7 +248,5 @@ define(function (require) {
     thisFrame.ext = extension;
     frames.push(thisFrame);
   };
-  return p5;
-});
 
-
+  module.exports = p5;

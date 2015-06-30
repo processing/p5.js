@@ -5,7 +5,6 @@
  * @requires constants
  * @requires filters
  */
-define(function (require) {
 
   /**
    * This module defines the p5.Image class and P5 methods for
@@ -14,8 +13,8 @@ define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
-  var Filters = require('image/filters');
+  var p5 = require('../core/core');
+  var Filters = require('./filters');
 
   /*
    * Class methods
@@ -422,5 +421,5 @@ define(function (require) {
     //Make the browser download the file
     p5.prototype.downloadFile(imageData, filename, extension);
   };
-  return p5.Image;
-});
+
+  module.exports = p5.Image;

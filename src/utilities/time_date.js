@@ -4,11 +4,10 @@
  * @for p5
  * @requires core
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
+  var p5 = require('../core/core');
 
   /**
    * p5.js communicates with the clock on your computer. The day() function
@@ -137,6 +136,4 @@ define(function (require) {
     return new Date().getFullYear();
   };
 
-  return p5;
-
-});
+  module.exports = p5;

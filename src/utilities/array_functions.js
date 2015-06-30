@@ -4,11 +4,10 @@
  * @for p5
  * @requires core
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
+  var p5 = require('../core/core');
 
   /**
    * Adds a value to the end of an array. Extends the length of
@@ -344,6 +343,4 @@ define(function (require) {
     }
   };
 
-  return p5;
-
-});
+  module.exports = p5;

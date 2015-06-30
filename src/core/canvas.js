@@ -1,11 +1,10 @@
 /**
  * @requires constants
  */
-define(function(require) {
 
-  var constants = require('core/constants');
+  var constants = require('./constants');
 
-  return {
+  module.exports = {
 
     modeAdjust: function(a, b, c, d, mode) {
       if (mode === constants.CORNER) {
@@ -33,4 +32,3 @@ define(function(require) {
 
   };
 
-});

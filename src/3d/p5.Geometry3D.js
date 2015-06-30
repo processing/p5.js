@@ -5,11 +5,10 @@
  * @requires canvas
  * @requires constants
  */
-define(function (require){
 
   'use strict';
 
-  var p5 = require('core/core');
+  var p5 = require('../core/core');
   /**
    * p5 Geometry3D class
    */
@@ -41,7 +40,7 @@ define(function (require){
    */
   p5.Geometry3D.prototype.parametricGeometry =
     function(func, detailX, detailY, offset){
-    
+
     var i, j, p;
     var u, v;
     offset = offset || 0;
@@ -153,7 +152,7 @@ define(function (require){
     return diff;
 
   };
-  
+
   /**
    * [computeFaceNormals description]
    * @return {[type]} [description]
@@ -215,7 +214,7 @@ define(function (require){
       vertexNormals[f][1]= vertices[face[1]].copy();
       vertexNormals[f][2]= vertices[face[2]].copy();
     }
-    
+
     for (f = 0; f < this.faces.length; f++){
       face = this.faces[f];
       faceNormal = this.faceNormals[f];
@@ -223,7 +222,7 @@ define(function (require){
       this.vertexNormals[face[1]] = vertexNormals[f][1];
       this.vertexNormals[face[2]] = vertexNormals[f][2];
     }
-    
+
   };
 
   /**
@@ -271,6 +270,4 @@ define(function (require){
     }));
   }
 
-  return p5.Geometry3D;
-
-});
+  module.exports = p5.Geometry3D;

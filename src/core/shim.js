@@ -1,4 +1,3 @@
-define(function(require) {
 
   // requestAnim shim layer by Paul Irish
   window.requestAnimationFrame = (function(){
@@ -43,7 +42,7 @@ define(function(require) {
         window[vendors[x]+'CancelAnimationFrame'] ||
         window[vendors[x]+'CancelRequestAnimationFrame'];
     }
- 
+
     if (!window.requestAnimationFrame) {
       window.requestAnimationFrame = function(callback, element) {
         var currTime = new Date().getTime();
@@ -54,7 +53,7 @@ define(function(require) {
         return id;
       };
     }
- 
+
     if (!window.cancelAnimationFrame) {
       window.cancelAnimationFrame = function(id) {
         clearTimeout(id);
@@ -76,4 +75,4 @@ define(function(require) {
       Uint8ClampedArray.prototype.slice = Array.prototype.slice;
     }
   }());
-});
+

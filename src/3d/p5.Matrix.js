@@ -2,13 +2,12 @@
  * @requires constants
  * @todo see methods below needing further implementation.
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
-  var polarGeometry = require('math/polargeometry');
-  var constants = require('core/constants');
+  var p5 = require('../core/core');
+  var polarGeometry = require('../math/polargeometry');
+  var constants = require('../core/constants');
   var GLMAT_ARRAY_TYPE = (
       typeof Float32Array !== 'undefined') ?
     Float32Array : Array;
@@ -490,5 +489,4 @@ define(function (require) {
     this.rotate(a, [0,0,1]);
   };
 
-  return p5.Matrix;
-});
+  module.exports = p5.Matrix;

@@ -5,12 +5,11 @@
  * @requires core
  * @requires constants
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
-  var constants = require('core/constants');
+  var p5 = require('./core');
+  var constants = require('./constants');
   var shapeKind = null;
   var vertices = [];
   var contourVertices = [];
@@ -566,6 +565,4 @@ define(function (require) {
     return this;
   };
 
-  return p5;
-
-});
+  module.exports = p5;
