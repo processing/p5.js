@@ -25,19 +25,18 @@ define(function (require){
     this.faces = [];
     //an array holding every noraml for each face
     //each faceNormal is a p5.Vector
-    //[[p5.Vector, p5.Vector, p5.Vector], [p5.Vector, p5.Vector, p5.Vector],...]
+    //[[p5.Vector, p5.Vector, p5.Vector], [p5.Vector, p5.Vector, p5.Vector], ...]
     this.faceNormals = [];
     //an array of p5.Vector holding uvs
     this.uvs = [];
   };
 
   /**
-   * [parametricGeometry description]
-   * @param  {[type]} func   [description]
-   * @param  {[type]} detailX [description]
-   * @param  {[type]} detailY [description]
-   * @param  {[type]} offset [description]
-   * @return {[type]}        [description]
+   * generate geometriy with parametric method
+   * @param  {Function} func  callback function for how to generate geometry
+   * @param  {Number} detailX number of vertices on horizontal surface
+   * @param  {Number} detailY number of vertices on horizontal surface
+   * @param  {Number} offset  offset of vertices index
    */
   p5.Geometry3D.prototype.parametricGeometry =
     function(func, detailX, detailY, offset){
@@ -82,8 +81,7 @@ define(function (require){
   };
 
   /**
-   * [mergeVertices description]
-   * @return {[type]} [description]
+   * merge duplicated vertices 
    */
   p5.Geometry3D.prototype.mergeVertices= function () {
 
@@ -152,8 +150,7 @@ define(function (require){
   };
   
   /**
-   * [computeFaceNormals description]
-   * @return {[type]} [description]
+   * compute faceNormals for a geometry
    */
   p5.Geometry3D.prototype.computeFaceNormals = function(){
 
@@ -178,8 +175,7 @@ define(function (require){
   };
 
   /**
-   * [computeVertexNormals description]
-   * @return {[type]} [description]
+   * compute vertexNormals for a geometry
    */
   p5.Geometry3D.prototype.computeVertexNormals = function (){
 
@@ -223,8 +219,7 @@ define(function (require){
   };
 
   /**
-   * [generateObj description]
-   * @return {[type]} [description]
+   * generate an object containing information needed to create buffer
    */
   p5.Geometry3D.prototype.generateObj = function(noMerge){
     if(!noMerge){
