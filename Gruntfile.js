@@ -191,7 +191,7 @@ module.exports = function(grunt) {
         'p5.prototype._friendlyFileLoadError = function() {};'
       },
       build: {
-        src: '<%= requirejs.p5_unminified.options.out %>',
+        src: 'lib/p5.js',
         dest: 'lib/p5.min.js'
       }
     },
