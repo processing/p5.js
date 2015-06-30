@@ -255,8 +255,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-newer');
 
   // Create the multitasks.
-  grunt.registerTask('build', ['browserify', 'concat']);
-  grunt.registerTask('test', ['connect', 'build', 'requirejs', 'mocha']);
+  // TODO: "requirejs" is in here to run the "yuidoc_themes" subtask. Is this needed?
+  grunt.registerTask('build', ['browserify', 'concat', 'uglify', 'requirejs']);
+  grunt.registerTask('test', ['connect', 'jshint', 'build', 'mocha']);
   grunt.registerTask('yui', ['yuidoc']);
-  grunt.registerTask('default', ['test', 'uglify']);
+  grunt.registerTask('default', ['test']);
 };

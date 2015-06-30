@@ -1031,6 +1031,19 @@
 
   };
 
+  // =======
+  // HELPERS
+  // =======
+
+  function escapeHelper(content) {
+    return content
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   /**
    *  Writes the contents of a Table object to a file. Defaults to a
    *  text file with comma-separated-values ('csv') but can also
@@ -1146,19 +1159,6 @@
     pWriter.close();
     pWriter.flush();
   }; // end saveTable()
-
-  // =======
-  // HELPERS
-  // =======
-
-  var escapeHelper = function(content) {
-    return content
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  };
 
   /**
    *  Generate a blob of file data as a url to prepare for download.

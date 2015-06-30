@@ -14,9 +14,11 @@
   "unused": "vars",
   "maxlen": 80,
 
+  "browserify": true,
   "browser": true,
-  "node": true,
   "globals": {
+    "require": false,
+    "module": false,
     "PImage": false
   }
 }

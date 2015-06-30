@@ -497,13 +497,13 @@
 
   p5.prototype.registerPreloadMethod = function(m) {
     p5.prototype._preloadMethods.push(m);
-  }.bind(this);
+  };
 
   p5.prototype.registerMethod = function(name, m) {
     if (!p5.prototype._registeredMethods.hasOwnProperty(name)) {
       p5.prototype._registeredMethods[name] = [];
     }
     p5.prototype._registeredMethods[name].push(m);
-  }.bind(this);
+  };
 
   module.exports = p5;

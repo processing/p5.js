@@ -270,7 +270,7 @@
    * </div>
    */
   p5.prototype.hue = function(c) {
-    if (!c instanceof p5.Color) {
+    if (!(c instanceof p5.Color)) {
       throw new Error('Needs p5.Color as argument.');
     }
     return c.getHue();
@@ -414,7 +414,7 @@
    * </div>
    */
   p5.prototype.saturation = function(c) {
-    if (!c instanceof p5.Color) {
+    if (!(c instanceof p5.Color)) {
       throw new Error('Needs p5.Color as argument.');
     }
     return c.getSaturation();

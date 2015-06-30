@@ -9,12 +9,17 @@
    * This module defines the p5 methods for the p5.Image class
    * for drawing images to the main display canvas.
    */
-
   'use strict';
 
 
   var p5 = require('../core/core');
   var constants = require('../core/constants');
+
+  /* global frames:true */// This is not global, but JSHint is not aware that
+  // this module is implicitly enclosed with Browserify: this overrides the
+  // redefined-global error and permits using the name "frames" for the array
+  // of saved animation frames.
+  var frames = [];
 
   p5.prototype._imageMode = constants.CORNER;
   p5.prototype._tint = null;
@@ -92,15 +97,6 @@
   p5.prototype.createImage = function(width, height) {
     return new p5.Image(width, height);
   };
-
-
-  /**
-   * @module Image
-   * @submodule Output
-   * @for p5
-   * @requires core
-   */
-  var frames = [];
 
   /**
    *  Save the current canvas as an image. In Safari, will open the
