@@ -107,8 +107,8 @@ define(function (require) {
 
   /**
    * transpose according to a given matrix
-   * @param  {p5.Matrix | Typed Array} a   the matrix to be based on to transpose
-   * @return {p5.Matrix}                   this
+   * @param  {p5.Matrix | Typed Array} a  the matrix to be based on to transpose
+   * @return {p5.Matrix}                  this
    */
   p5.Matrix.prototype.transpose = function(a){
     var a01, a02, a03, a12, a13, a23;
@@ -275,8 +275,8 @@ define(function (require) {
 
   /**
    * multiply two mat4s
-   * @param {p5.Matrix | Array}             multMatrix The matrix we want to multiply by
-   * @return {p5.Matrix}                    this
+   * @param {p5.Matrix | Array}  multMatrix The matrix we want to multiply by
+   * @return {p5.Matrix}         this
    */
   p5.Matrix.prototype.mult = function(multMatrix){
     var _dest = new GLMAT_ARRAY_TYPE(16);

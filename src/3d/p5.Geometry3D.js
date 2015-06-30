@@ -25,7 +25,7 @@ define(function (require){
     this.faces = [];
     //an array holding every noraml for each face
     //each faceNormal is a p5.Vector
-    //[[p5.Vector, p5.Vector, p5.Vector], [p5.Vector, p5.Vector, p5.Vector], ...]
+    //[[p5.Vector, p5.Vector, p5.Vector],[p5.Vector, p5.Vector, p5.Vector],...]
     this.faceNormals = [];
     //an array of p5.Vector holding uvs
     this.uvs = [];

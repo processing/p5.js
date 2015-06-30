@@ -77,7 +77,6 @@ define(function (require) {
 
   /**
    * draw a sphere with given raduis
-   * optinal second and third parameters controls the number of vertices of the sphere mesh
    * @param  {Number} radius            radius of the sphere
    * @param  {Number} detailX(optional) number of vertices on horizontal surface
    * @param  {Number} detailY(optional) number of vertices on vertical surface
@@ -140,10 +139,10 @@ define(function (require) {
 
   /**
    * draw a cylinder with given radius and height
-   * @param  {Number} radius              radius of the surface
-   * @param  {Number} height              height of the cylinder
-   * @param  {Number} detailX(optional)   number of vertices on horizontal surface
-   * @param  {Number} detailY(optional)   number of vertices on vertical surface
+   * @param  {Number} radius            radius of the surface
+   * @param  {Number} height            height of the cylinder
+   * @param  {Number} detailX(optional) number of vertices on horizontal surface
+   * @param  {Number} detailY(optional) number of vertices on vertical surface
    * @example
    * <div class="norender">
    * <code>
@@ -236,10 +235,10 @@ define(function (require) {
 
   /**
    * draw a cone with given radius and height
-   * @param  {Number} radius              radius of the bottom surface
-   * @param  {Number} height              height of the cone
-   * @param  {Number} detailX(optional)   number of vertices on horizontal surface
-   * @param  {Number} detailY(optional)   number of vertices on vertical surface
+   * @param  {Number} radius            radius of the bottom surface
+   * @param  {Number} height            height of the cone
+   * @param  {Number} detailX(optional) number of vertices on horizontal surface
+   * @param  {Number} detailY(optional) number of vertices on vertical surface
    * @example
    * <div class="norender">
    * <code>
@@ -312,10 +311,10 @@ define(function (require) {
 
   /**
    * draw a torus with given radius and tube radius
-   * @param  {Number} radius              radius of the whole ring
-   * @param  {Number} tubeRadius          radius of the tube
-   * @param  {Number} detailX(optional)   number of vertices on horizontal surface
-   * @param  {Number} detailY(optional)   number of vertices on vertical surface
+   * @param  {Number} radius            radius of the whole ring
+   * @param  {Number} tubeRadius        radius of the tube
+   * @param  {Number} detailX(optional) number of vertices on horizontal surface
+   * @param  {Number} detailY(optional) number of vertices on vertical surface
    * @example
    * <div class="norender">
    * <code>
@@ -342,12 +341,12 @@ define(function (require) {
   p5.prototype.torus = function(radius, tubeRadius, detailX, detailY){
     
     radius = radius || 50;
-    tube = tube || 20;
+    tubeRadius = tubeRadius || 20;
 
     detailX = detailX || 12;
     detailY = detailY || 6;
 
-    var uuid = 'torus|'+radius+'|'+tube+'|'+detailX+'|'+detailY;
+    var uuid = 'torus|'+radius+'|'+tubeRadius+'|'+detailX+'|'+detailY;
 
     if(this._graphics.notInHash(uuid)){
 
@@ -356,9 +355,9 @@ define(function (require) {
       var createTorus = function(u, v){
         var theta = 2 * Math.PI * u;
         var phi = 2 * Math.PI * v;
-        var x = (radius + tube * Math.cos(phi)) * Math.cos(theta);
-        var y = (radius + tube * Math.cos(phi)) * Math.sin(theta);
-        var z = tube * Math.sin(phi);
+        var x = (radius + tubeRadius * Math.cos(phi)) * Math.cos(theta);
+        var y = (radius + tubeRadius * Math.cos(phi)) * Math.sin(theta);
+        var z = tubeRadius * Math.sin(phi);
         return new p5.Vector(x, y, z);
       };
 
