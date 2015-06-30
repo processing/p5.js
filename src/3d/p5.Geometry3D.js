@@ -46,9 +46,6 @@ define(function (require){
     var u, v;
     offset = offset || 0;
 
-    //0,0---0,1
-    // |     |
-    //1,0---1,1
     var sliceCount = detailX + 1;
     for (i = 0; i <= detailY; i++){
       v = i / detailY;
@@ -73,7 +70,7 @@ define(function (require){
         uvb = [(j + 1)/ detailX, i/detailY];
         uvc = [(j + 1)/ detailX, (i + 1)/detailY];
         uvd = [j/detailX, (i + 1)/detailY];
-
+        
         this.faces.push([a, b, d]);
         this.uvs.push([uva, uvb, uvd]);
 
