@@ -125,8 +125,10 @@ define(function (require) {
       };
 
       geometry3d.parametricGeometry(createCylinder, detailX, detailY);
-      geometry3d.mergeVertices();
-     
+      var obj = geometry3d.generateObj();
+
+
+     var top = new p5.Geometry3D();
       var createTop = function(u, v){
         var theta = 2 * Math.PI * u;
         var x = radius * Math.sin(-theta);
@@ -140,9 +142,11 @@ define(function (require) {
         }
       };
 
-      geometry3d.parametricGeometry(
+      top.parametricGeometry(
         createTop, detailX, 1, geometry3d.vertices.length);
+      var obj1 = top.generateObj();
 
+      var bottom = new p5.Geometry3D();
       var createBottom = function(u, v){
         var theta = 2 * Math.PI * u;
         var x = radius * Math.sin(theta);
@@ -155,10 +159,17 @@ define(function (require) {
         }
       };
 
-      geometry3d.parametricGeometry(
-        createBottom, detailX, 1, geometry3d.vertices.length);
+      bottom.parametricGeometry(
+        createBottom, detailX, 1, 
+        geometry3d.vertices.length + top.vertices.length);
+      var obj2 = bottom.generateObj();
 
-      var obj = geometry3d.generateObj(true);
+      obj.vertices = obj.vertices.concat(obj1.vertices).concat(obj2.vertices);
+      obj.vertexNormal = obj.vertexNormal
+      .concat(obj1.vertexNormal)
+      .concat(obj2.vertexNormal);
+      obj.faces = obj.faces.concat(obj1.faces).concat(obj2.faces);
+      obj.len = obj.len + obj1.len + obj2.len;
 
       this._graphics.initBuffer(uuid, obj);
     }
