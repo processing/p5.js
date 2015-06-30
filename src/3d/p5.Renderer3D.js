@@ -217,6 +217,11 @@ define(function(require) {
     return this.hash[uuid] === undefined;
   };
 
+  /**
+   * [initBuffer description]
+   * @param  {String} uuid key of the mesh object
+   * @param  {Object} obj  an object containing geometry information
+   */
   p5.Renderer3D.prototype.initBuffer = function(uuid, obj) {
 
     this.hash[uuid] = {};
@@ -242,6 +247,10 @@ define(function(require) {
      (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(obj.faces), gl.STATIC_DRAW);
   };
 
+  /**
+   * [drawBuffer description]
+   * @param  {String} uuid key of the mesh object
+   */
   p5.Renderer3D.prototype.drawBuffer = function(uuid) {
     
     gl.bindBuffer(gl.ARRAY_BUFFER, this.hash[uuid].vertexBuffer);

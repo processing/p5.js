@@ -160,7 +160,6 @@ define(function (require){
    */
   p5.Geometry3D.prototype.computeFaceNormals = function(){
 
-    //if(!box){
     var cb = new p5.Vector();
     var ab = new p5.Vector();
 
@@ -230,8 +229,8 @@ define(function (require){
    * [generateObj description]
    * @return {[type]} [description]
    */
-  p5.Geometry3D.prototype.generateObj = function(box){
-    if(!box){
+  p5.Geometry3D.prototype.generateObj = function(noMerge){
+    if(!noMerge){
       this.mergeVertices();
     }
     this.computeFaceNormals();

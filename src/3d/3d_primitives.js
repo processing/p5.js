@@ -107,8 +107,8 @@ define(function (require) {
     radius = radius || 50;
     height = height || 50;
 
-    detailX = detailX || 10;
-    detailY = detailY || 6;
+    detailX = detailX || 12;
+    detailY = detailY || 8;
 
     var uuid = 'cylinder|'+radius+'|'+height+'|'+detailX+'|'+detailY;
 
@@ -123,14 +123,42 @@ define(function (require) {
         var z = radius * Math.cos(theta);
         return new p5.Vector(x, y, z);
       };
-      
+
       geometry3d.parametricGeometry(createCylinder, detailX, detailY);
+      geometry3d.mergeVertices();
+     
+      var createTop = function(u, v){
+        var theta = 2 * Math.PI * u;
+        var x = radius * Math.sin(-theta);
+        var y = height;
+        var z = radius * Math.cos(theta);
+        if(v === 0){
+          return new p5.Vector(0, height, 0);
+        }
+        else{
+          return new p5.Vector(x, y, z);
+        }
+      };
 
-      //TODO: top and bottom faces
-      //this.vertices.push(new p5.Vector(0, height/2, 0));  
-      //this.vertices.push(new p5.Vector(0, -height/2, 0));
+      geometry3d.parametricGeometry(
+        createTop, detailX, 1, geometry3d.vertices.length);
 
-      var obj = geometry3d.generateObj();
+      var createBottom = function(u, v){
+        var theta = 2 * Math.PI * u;
+        var x = radius * Math.sin(theta);
+        var y = -height;
+        var z = radius * Math.cos(theta);
+        if(v === 0){
+          return new p5.Vector(0, -height, 0);
+        }else{
+          return new p5.Vector(x, y, z);
+        }
+      };
+
+      geometry3d.parametricGeometry(
+        createBottom, detailX, 1, geometry3d.vertices.length);
+
+      var obj = geometry3d.generateObj(true);
 
       this._graphics.initBuffer(uuid, obj);
     }
@@ -171,10 +199,20 @@ define(function (require) {
       };
 
       geometry3d.parametricGeometry(createCone, detailX, detailY);
+      geometry3d.mergeVertices();
 
-      //@TODO: add bottom face
-      //
-      var obj = geometry3d.generateObj();
+      var createBottom = function(u, v){
+        var theta = 2 * Math.PI * u;
+        var x = radius * (1 - v) * Math.sin(-theta);
+        var y = -height;
+        var z = radius * (1 - v) * Math.cos(theta);
+        return new p5.Vector(x, y, z);
+      };
+
+      geometry3d.parametricGeometry(
+        createBottom, detailX, 1, geometry3d.vertices.length);
+
+      var obj = geometry3d.generateObj(true);
 
       this._graphics.initBuffer(uuid, obj);
     }
@@ -197,7 +235,7 @@ define(function (require) {
     radius = radius || 50;
     tube = tube || 20;
 
-    detailX = detailX || 10;
+    detailX = detailX || 12;
     detailY = detailY || 6;
 
     var uuid = 'torus|'+radius+'|'+tube+'|'+detailX+'|'+detailY;
@@ -259,7 +297,7 @@ define(function (require) {
         return new p5.Vector(x, y, z);
       };
       var createPlane2 = function(u, v){
-        var x = 2 * width * u - width;
+        var x = 2 * width * ( 1 - u ) - width;
         var y = 2 * height * v - height;
         var z = -depth;
         return new p5.Vector(x, y, z);
@@ -267,7 +305,7 @@ define(function (require) {
       var createPlane3 = function(u, v){
         var x = 2 * width * u - width;
         var y = height;
-        var z = 2 * depth * v - depth;
+        var z = 2 * depth * ( 1- v ) - depth;
         return new p5.Vector(x, y, z);
       };
       var createPlane4 = function(u, v){
@@ -284,7 +322,7 @@ define(function (require) {
       };
       var createPlane6 = function(u, v){
         var x = -width;
-        var y = 2 * height * u - height;
+        var y = 2 * height * ( 1 - u ) - height;
         var z = 2 * depth * v - depth;
         return new p5.Vector(x, y, z);
       };

@@ -5,24 +5,24 @@ function setup(){
 }
 
 function draw(){
-  background(200, 200, 200, 255);
+  background(250, 250, 250, 255);
  
   translate(-10, 0, -100);
 
   for(var j = 0; j < 5; j++){
     push();
-    for(var i = 0; i < 200; i++){
-      translate(sin(theta + j) * 10, sin(theta + j) * 10, i * 0.001);
-      rotateZ(theta * 0.1);
+    for(var i = 0; i < 100; i++){
+      translate(sin(theta + j) * 4, sin(theta + j) * 4, i * 0.001);
+      rotateX(theta * 0.1);
       rotateY(theta);
+      rotateZ(theta * 0.2);
       push();
-      scale(0.6, 0.6, 0.6);
-      sphere(20); 
+      sphere(8); 
       pop();
     }
     pop();
   }
 
-  theta += 0.05;
+  theta += 0.03;
 
 }
