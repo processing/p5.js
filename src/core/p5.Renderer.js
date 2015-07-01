@@ -40,9 +40,6 @@ define(function(require) {
   
   /**
    * Resize our canvas element.
-   * @param  {Number} w pixel width
-   * @param  {Number} h pixel height
-   * @return {void}   [description]
    */
   p5.Renderer.prototype.resize = function(w, h) {
     this.width = w;
