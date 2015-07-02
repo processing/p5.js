@@ -1,7 +1,5 @@
 /*global ImageData:false */
 
-define(function (require) {
-
   /**
    * This module defines the filters for use with image buffers.
    *
@@ -18,7 +16,6 @@ define(function (require) {
    */
 
   'use strict';
-
 
   var Filters = {};
 
@@ -601,6 +598,4 @@ define(function (require) {
   };
 
 
-  return Filters;
-
-});
+  module.exports = Filters;

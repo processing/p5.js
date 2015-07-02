@@ -3,11 +3,10 @@
  * @submodule Creating & Reading
  * @for p5
  */
-define(function(require) {
 
-  var p5 = require('core/core');
-  var color_utils = require('color/color_utils');
-  var constants = require('core/constants');
+  var p5 = require('../core/core');
+  var color_utils = require('./color_utils');
+  var constants = require('../core/constants');
 
   /**
    *
@@ -48,7 +47,7 @@ define(function(require) {
 
   p5.Color.prototype.getSaturation = function() {
     // Saturation exists in both HSB and HSL, but returns different values
-    // We are preferring HSL here (because it is a web color space) 
+    // We are preferring HSL here (because it is a web color space)
     // until the global flag issue can be resolved
     if (this.hsla) {
       return this.hsla[1];
@@ -307,7 +306,7 @@ define(function(require) {
       INTEGER.source,
       '\\)$'
     ].join(WHITESPACE.source), 'i'),
-    
+
 
     /**
      * Regular expression for matching colors in format rgb(R%, G%, B%),
@@ -426,7 +425,7 @@ define(function(require) {
       third   = arguments[2];
       alpha   = typeof arguments[3] === 'number' ?
                 arguments[3] : this._colorMaxes[mode][3];
-    
+
     // Handle strings: named colors, hex values, css strings
     } else if (numArgs === 1 && typeof arguments[0] === 'string') {
       str = arguments[0].trim().toLowerCase();
@@ -491,8 +490,8 @@ define(function(require) {
 
     // Handle greyscale color mode
     } else if (numArgs === 1 && typeof arguments[0] === 'number') {
-      // When users pass only one argument, they are presumed to be 
-      // working in grayscale mode. 
+      // When users pass only one argument, they are presumed to be
+      // working in grayscale mode.
       if (mode === constants.RGB) {
         first = second = third = arguments[0];
       } else if (mode === constants.HSB || mode === constants.HSL) {
@@ -503,13 +502,13 @@ define(function(require) {
       }
       alpha = typeof arguments[1] === 'number' ?
                      arguments[1] : this._colorMaxes[mode][3];
-    
+
     // Handle brightness and alpha (grayscale)
     } else if (numArgs === 2 &&
                typeof arguments[0] === 'number' &&
                typeof arguments[1] === 'number') {
-      // When users pass only one argument, they are presumed to be 
-      // working in grayscale mode. 
+      // When users pass only one argument, they are presumed to be
+      // working in grayscale mode.
       if (mode === constants.RGB) {
         first = second = third = arguments[0];
       } else if (mode === constants.HSB || mode === constants.HSL) {
@@ -530,5 +529,4 @@ define(function(require) {
     ];
   };
 
-  return p5.Color;
-});
+  module.exports = p5.Color;

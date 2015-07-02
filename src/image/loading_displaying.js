@@ -4,16 +4,15 @@
  * @for p5
  * @requires core
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
-  var Filters = require('image/filters');
-  var canvas = require('core/canvas');
-  var constants = require('core/constants');
+  var p5 = require('../core/core');
+  var Filters = require('./filters');
+  var canvas = require('../core/canvas');
+  var constants = require('../core/constants');
 
-  require('core/error_helpers');
+  require('../core/error_helpers');
 
   /**
    * Loads an image from a path and creates a p5.Image from it.
@@ -341,6 +340,4 @@ define(function (require) {
   };
 
 
-  return p5;
-
-});
+  module.exports = p5;

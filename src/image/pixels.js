@@ -4,13 +4,12 @@
  * @for p5
  * @requires core
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
-  var Filters = require('image/filters');
-  require('color/p5.Color');
+  var p5 = require('../core/core');
+  var Filters = require('./filters');
+  require('../color/p5.Color');
 
   /**
    * <a href='https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference
@@ -549,6 +548,4 @@ define(function (require) {
     this._graphics.updatePixels(x, y, w, h);
   };
 
-  return p5;
-
-});
+  module.exports = p5;

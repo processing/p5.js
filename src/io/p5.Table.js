@@ -3,11 +3,10 @@
  * @submodule Table
  * @requires core
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
+  var p5 = require('../core/core');
 
 
   /**
@@ -73,29 +72,29 @@ define(function (require) {
    * @example
 	* <div class="norender">
 	* <code>
-	* // Given the CSV file "mammals.csv" 
+	* // Given the CSV file "mammals.csv"
 	* // in the project's "assets" folder:
 	* //
 	* // id,species,name
 	* // 0,Capra hircus,Goat
 	* // 1,Panthera pardus,Leopard
 	* // 2,Equus zebra,Zebra
-	* 
+	*
 	* var table;
-	* 
+	*
 	* function preload() {
 	*   //my table is comma separated value "csv"
 	*   //and has a header specifying the columns labels
 	*   table = loadTable("assets/mammals.csv", "csv", "header");
 	* }
-	* 
+	*
 	* function setup() {
 	*   //add a row
 	*   var newRow = table.addRow();
 	*   newRow.setString("id", table.getRowCount() - 1);
 	*   newRow.setString("species", "Canis Lupus");
 	*   newRow.setString("name", "Wolf");
-	* 
+	*
 	*   //print the results
 	*   for (var r = 0; r < table.getRowCount(); r++)
 	*     for (var c = 0; c < table.getColumnCount(); c++)
@@ -126,26 +125,26 @@ define(function (require) {
    * @example
 	* <div class="norender">
 	* <code>
-	* // Given the CSV file "mammals.csv" 
+	* // Given the CSV file "mammals.csv"
 	* // in the project's "assets" folder:
 	* //
 	* // id,species,name
 	* // 0,Capra hircus,Goat
 	* // 1,Panthera pardus,Leopard
 	* // 2,Equus zebra,Zebra
-	* 
+	*
 	* var table;
-	* 
+	*
 	* function preload() {
 	*   //my table is comma separated value "csv"
 	*   //and has a header specifying the columns labels
 	*   table = loadTable("assets/mammals.csv", "csv", "header");
 	* }
-	* 
+	*
 	* function setup() {
 	*   //remove the first row
 	*   var r = table.removeRow(0);
-	* 
+	*
 	*   //print the results
 	*   for (var r = 0; r < table.getRowCount(); r++)
 	*     for (var c = 0; c < table.getColumnCount(); c++)
@@ -173,22 +172,22 @@ define(function (require) {
    * @example
 	* <div class="norender">
 	* <code>
-	* // Given the CSV file "mammals.csv" 
+	* // Given the CSV file "mammals.csv"
 	* // in the project's "assets" folder:
 	* //
 	* // id,species,name
 	* // 0,Capra hircus,Goat
 	* // 1,Panthera pardus,Leopard
 	* // 2,Equus zebra,Zebra
-	* 
+	*
 	* var table;
-	* 
+	*
 	* function preload() {
 	*   //my table is comma separated value "csv"
 	*   //and has a header specifying the columns labels
 	*   table = loadTable("assets/mammals.csv", "csv", "header");
 	* }
-	* 
+	*
 	* function setup() {
 	*   var row = table.getRow(1);
 	*   //print it column by column
@@ -212,29 +211,29 @@ define(function (require) {
    * @example
 	* <div class="norender">
 	* <code>
-	* // Given the CSV file "mammals.csv" 
+	* // Given the CSV file "mammals.csv"
 	* // in the project's "assets" folder:
 	* //
 	* // id,species,name
 	* // 0,Capra hircus,Goat
 	* // 1,Panthera pardus,Leopard
 	* // 2,Equus zebra,Zebra
-	* 
+	*
 	* var table;
-	* 
+	*
 	* function preload() {
 	*   //my table is comma separated value "csv"
 	*   //and has a header specifying the columns labels
 	*   table = loadTable("assets/mammals.csv", "csv", "header");
 	* }
-	* 
+	*
 	* function setup() {
 	*   var rows = table.getRows();
-	* 
+	*
 	*   //warning: rows is an array of objects
 	*   for (var r = 0; r < rows.length; r++)
 	*     rows[r].set("name", "Unicorn");
-	* 
+	*
 	*   //print the results
 	*   for (var r = 0; r < table.getRowCount(); r++)
 	*     for (var c = 0; c < table.getColumnCount(); c++)
@@ -263,22 +262,22 @@ define(function (require) {
    * @example
 	* <div class="norender">
 	* <code>
-	* // Given the CSV file "mammals.csv" 
+	* // Given the CSV file "mammals.csv"
 	* // in the project's "assets" folder:
 	* //
 	* // id,species,name
 	* // 0,Capra hircus,Goat
 	* // 1,Panthera pardus,Leopard
 	* // 2,Equus zebra,Zebra
-	* 
+	*
 	* var table;
-	* 
+	*
 	* function preload() {
 	*   //my table is comma separated value "csv"
 	*   //and has a header specifying the columns labels
 	*   table = loadTable("assets/mammals.csv", "csv", "header");
 	* }
-	* 
+	*
 	* function setup() {
 	*   //find the animal named zebra
 	*   var row = table.findRow("Zebra", "name");
@@ -325,29 +324,29 @@ define(function (require) {
    * @example
 	* <div class="norender">
 	* <code>
-	* // Given the CSV file "mammals.csv" 
+	* // Given the CSV file "mammals.csv"
 	* // in the project's "assets" folder:
 	* //
 	* // id,species,name
 	* // 0,Capra hircus,Goat
 	* // 1,Panthera pardus,Leopard
 	* // 2,Equus zebra,Zebra
-	* 
+	*
 	* var table;
-	* 
+	*
 	* function preload() {
 	*   //my table is comma separated value "csv"
 	*   //and has a header specifying the columns labels
 	*   table = loadTable("assets/mammals.csv", "csv", "header");
 	* }
-	* 
+	*
 	* function setup() {
 	*   //add another goat
 	*   var newRow = table.addRow();
 	*   newRow.setString("id", table.getRowCount() - 1);
 	*   newRow.setString("species", "Scape Goat");
 	*   newRow.setString("name", "Goat");
-	* 
+	*
 	*   //find the rows containing animals named Goat
 	*   var rows = table.findRows("Goat", "name");
 	*   print(rows.length + " Goats found");
@@ -452,22 +451,22 @@ define(function (require) {
    * @example
 	* <div class="norender">
 	* <code>
-	* // Given the CSV file "mammals.csv" 
+	* // Given the CSV file "mammals.csv"
 	* // in the project's "assets" folder:
 	* //
 	* // id,species,name
 	* // 0,Capra hircus,Goat
 	* // 1,Panthera pardus,Leopard
 	* // 2,Equus zebra,Zebra
-	* 
+	*
 	* var table;
-	* 
+	*
 	* function preload() {
 	*   //my table is comma separated value "csv"
 	*   //and has a header specifying the columns labels
 	*   table = loadTable("assets/mammals.csv", "csv", "header");
 	* }
-	* 
+	*
 	* function setup() {
 	*   //getColumn returns an array that can be printed directly
 	*   print(table.getColumn("species"));
@@ -499,22 +498,22 @@ define(function (require) {
    * @example
 	* <div class="norender">
 	* <code>
-	* // Given the CSV file "mammals.csv" 
+	* // Given the CSV file "mammals.csv"
 	* // in the project's "assets" folder:
 	* //
 	* // id,species,name
 	* // 0,Capra hircus,Goat
 	* // 1,Panthera pardus,Leopard
 	* // 2,Equus zebra,Zebra
-	* 
+	*
 	* var table;
-	* 
+	*
 	* function preload() {
 	*   //my table is comma separated value "csv"
 	*   //and has a header specifying the columns labels
 	*   table = loadTable("assets/mammals.csv", "csv", "header");
 	* }
-	* 
+	*
 	* function setup() {
 	*   table.clearRows();
 	*   print(table.getRowCount() + " total rows in table");
@@ -540,28 +539,28 @@ define(function (require) {
    * @example
 	* <div class="norender">
 	* <code>
-	* // Given the CSV file "mammals.csv" 
+	* // Given the CSV file "mammals.csv"
 	* // in the project's "assets" folder:
 	* //
 	* // id,species,name
 	* // 0,Capra hircus,Goat
 	* // 1,Panthera pardus,Leopard
 	* // 2,Equus zebra,Zebra
-	* 
+	*
 	* var table;
-	* 
+	*
 	* function preload() {
 	*   //my table is comma separated value "csv"
 	*   //and has a header specifying the columns labels
 	*   table = loadTable("assets/mammals.csv", "csv", "header");
 	* }
-	* 
+	*
 	* function setup() {
 	*   table.addColumn("carnivore");
 	*   table.set(0, "carnivore", "no");
 	*   table.set(1, "carnivore", "yes");
 	*   table.set(2, "carnivore", "no");
-	* 
+	*
 	*   //print the results
 	*   for (var r = 0; r < table.getRowCount(); r++)
 	*     for (var c = 0; c < table.getColumnCount(); c++)
@@ -589,7 +588,7 @@ define(function (require) {
    *
    *  @method  getRowCount
    *  @return {Number} Number of rows in this table
-   
+
    */
   p5.Table.prototype.getRowCount = function() {
     return this.rows.length;
@@ -701,22 +700,22 @@ define(function (require) {
    * @example
 	* <div class="norender">
 	* <code>
-	* // Given the CSV file "mammals.csv" 
+	* // Given the CSV file "mammals.csv"
 	* // in the project's "assets" folder:
 	* //
 	* // id,species,name
 	* // 0,Capra hircus,Goat
 	* // 1,Panthera pardus,Leopard
 	* // 2,Equus zebra,Zebra
-	* 
+	*
 	* var table;
-	* 
+	*
 	* function preload() {
 	*   //my table is comma separated value "csv"
 	*   //and has a header specifying the columns labels
 	*   table = loadTable("assets/mammals.csv", "csv", "header");
 	* }
-	* 
+	*
 	* function setup() {
 	*   table.removeColumn("id");
 	*   print(table.getColumnCount());
@@ -766,26 +765,26 @@ define(function (require) {
    * @example
 	* <div class="norender">
 	* <code>
-	* // Given the CSV file "mammals.csv" 
+	* // Given the CSV file "mammals.csv"
 	* // in the project's "assets" folder:
 	* //
 	* // id,species,name
 	* // 0,Capra hircus,Goat
 	* // 1,Panthera pardus,Leopard
 	* // 2,Equus zebra,Zebra
-	* 
+	*
 	* var table;
-	* 
+	*
 	* function preload() {
 	*   //my table is comma separated value "csv"
 	*   //and has a header specifying the columns labels
 	*   table = loadTable("assets/mammals.csv", "csv", "header");
 	* }
-	* 
+	*
 	* function setup() {
 	*   table.set(0, "species", "Canis Lupus");
 	*   table.set(0, "name", "Wolf");
-	* 
+	*
 	*   //print the results
 	*   for (var r = 0; r < table.getRowCount(); r++)
 	*     for (var c = 0; c < table.getColumnCount(); c++)
@@ -812,25 +811,25 @@ define(function (require) {
    * @example
 	* <div class="norender">
 	* <code>
-	* // Given the CSV file "mammals.csv" 
+	* // Given the CSV file "mammals.csv"
 	* // in the project's "assets" folder:
 	* //
 	* // id,species,name
 	* // 0,Capra hircus,Goat
 	* // 1,Panthera pardus,Leopard
 	* // 2,Equus zebra,Zebra
-	* 
+	*
 	* var table;
-	* 
+	*
 	* function preload() {
 	*   //my table is comma separated value "csv"
 	*   //and has a header specifying the columns labels
 	*   table = loadTable("assets/mammals.csv", "csv", "header");
 	* }
-	* 
+	*
 	* function setup() {
 	*   table.setNum(1, "id", 1);
-	* 
+	*
 	*   print(table.getColumn(0));
 	*   //["0", 1, "2"]
 	* }
@@ -871,22 +870,22 @@ define(function (require) {
    * @example
 	* <div class="norender">
 	* <code>
-	* // Given the CSV file "mammals.csv" 
+	* // Given the CSV file "mammals.csv"
 	* // in the project's "assets" folder:
 	* //
 	* // id,species,name
 	* // 0,Capra hircus,Goat
 	* // 1,Panthera pardus,Leopard
 	* // 2,Equus zebra,Zebra
-	* 
+	*
 	* var table;
-	* 
+	*
 	* function preload() {
 	*   //my table is comma separated value "csv"
 	*   //and has a header specifying the columns labels
 	*   table = loadTable("assets/mammals.csv", "csv", "header");
 	* }
-	* 
+	*
 	* function setup() {
 	*   print(table.get(0, 1));
 	*   //Capra hircus
@@ -914,22 +913,22 @@ define(function (require) {
    * @example
 	* <div class="norender">
 	* <code>
-	* // Given the CSV file "mammals.csv" 
+	* // Given the CSV file "mammals.csv"
 	* // in the project's "assets" folder:
 	* //
 	* // id,species,name
 	* // 0,Capra hircus,Goat
 	* // 1,Panthera pardus,Leopard
 	* // 2,Equus zebra,Zebra
-	* 
+	*
 	* var table;
-	* 
+	*
 	* function preload() {
 	*   //my table is comma separated value "csv"
 	*   //and has a header specifying the columns labels
 	*   table = loadTable("assets/mammals.csv", "csv", "header");
 	* }
-	* 
+	*
 	* function setup() {
 	*   print(table.getNum(1, 0) + 100);
 	*   //id 1 + 100 = 101
@@ -955,25 +954,25 @@ define(function (require) {
    * @example
 	* <div class="norender">
 	* <code>
-	* // Given the CSV file "mammals.csv" 
+	* // Given the CSV file "mammals.csv"
 	* // in the project's "assets" folder:
 	* //
 	* // id,species,name
 	* // 0,Capra hircus,Goat
 	* // 1,Panthera pardus,Leopard
 	* // 2,Equus zebra,Zebra
-	* 
+	*
 	* var table;
-	* 
+	*
 	* function preload() {
 	*   //my table is comma separated value "csv"
 	*   //and has a header specifying the columns labels
 	*   table = loadTable("assets/mammals.csv", "csv", "header");
 	* }
-	* 
+	*
 	* function setup() {
 	*   var tableArray = table.getArray();
-	* 
+	*
 	*   //output each row as array
 	*   for (var i = 0; i < tableArray.length; i++)
 	*     print(tableArray[i]);
@@ -998,25 +997,25 @@ define(function (require) {
    * @example
 	* <div class="norender">
 	* <code>
-	* // Given the CSV file "mammals.csv" 
+	* // Given the CSV file "mammals.csv"
 	* // in the project's "assets" folder:
 	* //
 	* // id,species,name
 	* // 0,Capra hircus,Goat
 	* // 1,Panthera pardus,Leopard
 	* // 2,Equus zebra,Zebra
-	* 
+	*
 	* var table;
-	* 
+	*
 	* function preload() {
 	*   //my table is comma separated value "csv"
 	*   //and has a header specifying the columns labels
 	*   table = loadTable("assets/mammals.csv", "csv", "header");
 	* }
-	* 
+	*
 	* function setup() {
 	*   var tableObject = table.getObject();
-	* 
+	*
 	*   print(tableObject);
 	*   //outputs an object
 	* }
@@ -1060,6 +1059,4 @@ define(function (require) {
     return tableArray;
   };
 
-  return p5.Table;
-
-});
+  module.exports = p5.Table;

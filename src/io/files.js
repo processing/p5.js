@@ -7,13 +7,12 @@
  * @requires core
  * @requires reqwest
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
+  var p5 = require('../core/core');
   var reqwest = require('reqwest');
-  require('core/error_helpers');
+  require('../core/error_helpers');
 
 
   /**
@@ -66,8 +65,8 @@ define(function (require) {
    *
    */
 
-  
-  
+
+
 
   p5.prototype.loadFont = function(path, callback) {
 
@@ -303,37 +302,37 @@ define(function (require) {
    *                                     loadTable() completes, Table object is
    *                                     passed in as first argument
    * @return {Object}                    Table object containing data
-   *  
+   *
    * @example
 	* <div class="norender">
 	* <code>
-	* // Given the following CSV file called "mammals.csv" 
+	* // Given the following CSV file called "mammals.csv"
    * // located in the project's "assets" folder:
-   * // 
+   * //
 	* // id,species,name
 	* // 0,Capra hircus,Goat
 	* // 1,Panthera pardus,Leopard
 	* // 2,Equus zebra,Zebra
-	* 
+	*
 	* var table;
-	* 
+	*
 	* function preload() {
 	*   //my table is comma separated value "csv"
 	*   //and has a header specifying the columns labels
 	*   table = loadTable("assets/mammals.csv", "csv", "header");
 	*   //the file can be remote
-	*   //table = loadTable("http://p5js.org/reference/assets/mammals.csv", 
+	*   //table = loadTable("http://p5js.org/reference/assets/mammals.csv",
 	*   //                  "csv", "header");
 	* }
-	* 
+	*
 	* function setup() {
 	*   //count the columns
 	*   print(table.getRowCount() + " total rows in table");
 	*   print(table.getColumnCount() + " total columns in table");
-	* 
+	*
 	*   print(table.getColumn("name"));
 	*   //["Goat", "Leopard", "Zebra"]
-	* 
+	*
 	*   //cycle through the table
 	*   for (var r = 0; r < table.getRowCount(); r++)
 	*     for (var c = 0; c < table.getColumnCount(); c++) {
@@ -1032,6 +1031,19 @@ define(function (require) {
 
   };
 
+  // =======
+  // HELPERS
+  // =======
+
+  function escapeHelper(content) {
+    return content
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   /**
    *  Writes the contents of a Table object to a file. Defaults to a
    *  text file with comma-separated-values ('csv') but can also
@@ -1148,19 +1160,6 @@ define(function (require) {
     pWriter.flush();
   }; // end saveTable()
 
-  // =======
-  // HELPERS
-  // =======
-
-  var escapeHelper = function(content) {
-    return content
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  };
-
   /**
    *  Generate a blob of file data as a url to prepare for download.
    *  Accepts an array of data, a filename, and an extension (optional).
@@ -1273,5 +1272,4 @@ define(function (require) {
     document.body.removeChild(event.target);
   }
 
-  return p5;
-});
+  module.exports = p5;

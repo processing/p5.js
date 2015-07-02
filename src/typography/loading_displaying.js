@@ -4,14 +4,13 @@
  * @for p5
  * @requires core
  */
-define(function(require) {
 
   'use strict';
 
-  var p5 = require('core/core');
-  var constants = require('core/constants');
+  var p5 = require('../core/core');
+  var constants = require('../core/constants');
 
-  require('core/error_helpers');
+  require('../core/error_helpers');
 
 
   /**
@@ -138,6 +137,4 @@ define(function(require) {
     return this;
   };
 
-  return p5;
-
-});
+  module.exports = p5;

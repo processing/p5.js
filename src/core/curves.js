@@ -4,13 +4,12 @@
  * @for p5
  * @requires core
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
+  var p5 = require('./core');
 
-  require('core/error_helpers');
+  require('./error_helpers');
 
   var bezierDetail = 20;
   var curveDetail = 20;
@@ -394,6 +393,4 @@ define(function (require) {
     return a*f1 + b*f2 + c*f3 + d*f4;
   };
 
-  return p5;
-
-});
+  module.exports = p5;

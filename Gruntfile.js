@@ -134,142 +134,34 @@ module.exports = function(grunt) {
       }
     },
 
+    // Build p5 into a single, UMD-wrapped file
+    browserify: {
+      p5: {
+        options: {
+          browserifyOptions: {
+            standalone: 'p5'
+          }
+        },
+        src: 'src/app.js',
+        dest: 'lib/p5.js'
+      }
+    },
+
+    // Concatenate p5 together with OpenType
+    // TODO: There may be an opportunity to move this into the main p5 build
+    concat: {
+      p5: {
+        src: [
+          'lib/p5.js',
+          'src/external/opentype.min.js'
+        ],
+        dest: 'lib/p5.js',
+      },
+    },
+
     // The actual compile step:  This should collect all the dependencies
     // and compile them into a single file.
     requirejs: {
-      p5_unminified: {
-        options: {
-          baseUrl: 'src', // from whence do the files come?
-          optimize: 'none', // skip running uglify on the concatenated code
-          out: 'lib/p5.js', // name of the output file
-          useStrict: true, // Allow "use strict"; be included in the RequireJS files.
-          //findNestedDependencies: true,   // automatically find nested deps.  Doesn't appear to effect the code?
-          include: ['app'], // this is the file which we are actually building
-
-          // This will add a prefix and a suffix to the generated code.
-          // we're using this to both add a time/version stamp
-          // and also to wrap this in a commonjs/AMD header.
-          // there's also the **amdclean** stuff—not sure what that is yet.
-          wrap: {
-            start: ['/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */',
-              '(function (root, factory) {',
-              '  if (typeof define === \'function\' && define.amd)',
-              '    define(\'p5\', [], function () { return (root.returnExportsGlobal = factory());});',
-              '  else if (typeof exports === \'object\')',
-              '    module.exports = factory();',
-              '  else',
-              '    root[\'p5\'] = factory();',
-              '}(this, function () {\n'
-            ].join('\n'),
-            end: 'return amdclean[\'app\'];\n}));'
-          },
-          // This will transform the compiled file, reversing out the AMD loader and creating a
-          // static JS file.  This code is potentially problematic.
-          onBuildWrite: function(name, path, contents) {
-            if (name === 'reqwest') {
-              contents = contents.replace('}(\'reqwest\', this, function () {', '}(\'reqwest\', amdclean, function () {');
-            }
-            return require('amdclean').clean({
-              code: contents,
-              'globalObject': true,
-              escodegen: {
-                'comment': true,
-                'format': {
-                  'indent': {
-                    'style': '  ',
-                    'adjustMultilineComment': true
-                  }
-                }
-              }
-            });
-          },
-
-          // This is a list of all dependencies, mapped to their AMD identifier.
-          paths: {
-            //'app': 'app',
-
-            // core
-            // 'canvas': 'core/canvas',
-            // 'constants': 'core/constants',
-            // 'core': 'core/core',
-            // 'environment': 'core/environment',
-            // 'helpers': 'core/error_helpers',
-            // 'p5.Element': 'core/p5.Element',
-            // 'p5.Graphics': 'core/p5.Graphics',
-            // 'p5.Graphics2D': 'core/p5.Graphics2D',
-            // 'rendering.rendering': 'core/rendering',
-            // 'shape.2d_primitives': 'core/2d_primitives',
-            // 'shape.attributes': 'core/attributes',
-            // 'shape.curves': 'core/curves',
-            // 'shape.vertex': 'core/vertex',
-            // 'shim': 'core/shim',
-            // 'structure': 'core/structure',
-            // 'transform': 'core/transform',
-
-            // 3d
-            // 'p5.Graphics3D': '3d/p5.Graphics3D',
-            // 'p5.Matrix': '3d/p5.Matrix',
-            // 'shaders': '3d/shaders',
-            // 'shape.3d_primitives': '3d/3d_primitives',
-
-            // image
-            // 'filters': 'image/filters',
-            // 'image.image': 'image/image',
-            // 'image.loading_displaying': 'image/loading_displaying',
-            // 'image.pixels': 'image/pixels',
-            // 'p5.Image': 'image/p5.Image',
-
-            // typography
-            // 'p5.Font': 'typography/p5.Font',
-            // 'typography.attributes': 'typography/attributes',
-            // 'typography.loading_displaying': 'typography/loading_displaying',
-
-            // math
-            // 'p5.Vector': 'math/p5.Vector',
-            // 'polargeometry': 'math/polargeometry',
-            // 'math.calculation': 'math/calculation',
-            // 'math.math': 'math/math',
-            // 'math.noise': 'math/noise',
-            // 'math.random': 'math/random',
-            // 'math.trigonometry': 'math/trigonometry',
-
-            // events
-            // 'input.acceleration': 'events/acceleration',
-            // 'input.keyboard': 'events/keyboard',
-            // 'input.mouse': 'events/mouse',
-            // 'input.touch': 'events/touch',
-
-
-            // io
-            // 'input.files': 'io/files',
-            // 'p5.TableRow': 'io/p5.TableRow',
-            // 'p5.Table': 'io/p5.Table',
-
-            // utilities
-            // 'input.time_date': 'utilities/time_date',
-            // 'data.conversion': 'utilities/conversion',
-            // 'data.array_functions': 'utilities/array_functions',
-            // 'data.string_functions': 'utilities/string_functions',
-
-            // color
-            // 'p5.Color': 'color/p5.Color',
-            // 'color.creating_reading': 'color/creating_reading',
-            // 'color.setting': 'color/setting',
-            // 'utils.color_utils': 'color/color_utils',
-
-            // external library
-            'reqwest': '../node_modules/reqwest/reqwest'
-          },
-          done: function(done, output) {
-            require('concat-files')([
-              'lib/p5.js',
-              'src/external/opentype.min.js',
-            ], 'lib/p5.js', function() {
-              done();
-            });
-          }
-        }
-      },
 
       // This generates the theme for the documentation from the theme source
       // files.
@@ -299,7 +191,7 @@ module.exports = function(grunt) {
         'p5.prototype._friendlyFileLoadError = function() {};'
       },
       build: {
-        src: '<%= requirejs.p5_unminified.options.out %>',
+        src: 'lib/p5.js',
         dest: 'lib/p5.min.js'
       }
     },
@@ -350,6 +242,8 @@ module.exports = function(grunt) {
   });
 
   // Load the external libraries used.
+  grunt.loadNpmTasks('grunt-browserify');
+  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
@@ -361,7 +255,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-newer');
 
   // Create the multitasks.
-  grunt.registerTask('test', ['connect', 'newer:jshint', 'requirejs', 'mocha']);
+  // TODO: "requirejs" is in here to run the "yuidoc_themes" subtask. Is this needed?
+  grunt.registerTask('build', ['browserify', 'concat', 'uglify', 'requirejs']);
+  grunt.registerTask('test', ['connect', 'jshint', 'build', 'mocha']);
   grunt.registerTask('yui', ['yuidoc']);
-  grunt.registerTask('default', ['connect', 'newer:jshint', 'requirejs', 'mocha', 'uglify']);
+  grunt.registerTask('default', ['test']);
 };

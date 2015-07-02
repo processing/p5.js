@@ -5,12 +5,11 @@
  * @requires core
  * @requires constants
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
-  var constants = require('core/constants');
+  var p5 = require('./core');
+  var constants = require('./constants');
 
   p5.prototype._rectMode = constants.CORNER;
   p5.prototype._ellipseMode = constants.CENTER;
@@ -298,6 +297,4 @@ define(function (require) {
     return this;
   };
 
-  return p5;
-
-});
+  module.exports = p5;

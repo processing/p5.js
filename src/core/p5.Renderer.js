@@ -3,9 +3,8 @@
  * @submodule Rendering
  * @for p5
  */
-define(function(require) {
 
-  var p5 = require('core/core');
+  var p5 = require('./core');
 
   /**
    * Main graphics and rendering context, as well as the base API
@@ -37,7 +36,7 @@ define(function(require) {
   };
 
   p5.Renderer.prototype = Object.create(p5.Element.prototype);
-  
+
   /**
    * Resize our canvas element.
    */
@@ -54,5 +53,4 @@ define(function(require) {
     }
   };
 
-  return p5.Renderer;
-});
+  module.exports = p5.Renderer;

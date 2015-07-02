@@ -3,16 +3,15 @@
  * @submodule Rendering
  * @for p5
  */
-define(function(require) {
 
-  var p5 = require('core/core');
-  var constants = require('core/constants');
+  var p5 = require('./core');
+  var constants = require('./constants');
 
   /**
    * Thin wrapper around a renderer, to be used for creating a
    * graphics buffer object. Use this class if you need
    * to draw into an off-screen graphics buffer. The two parameters define the
-   * width and height in pixels. The fields and methods for this class are 
+   * width and height in pixels. The fields and methods for this class are
    * extensive, but mirror the normal drawing API for p5.
    *
    * @class p5.Graphics
@@ -62,6 +61,5 @@ define(function(require) {
   };
 
   p5.Graphics.prototype = Object.create(p5.Element.prototype);
-  
-  return p5.Graphics;
-});
+
+  module.exports = p5.Graphics;

@@ -4,12 +4,11 @@
  * @for p5
  * @requires core
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
-  require('color/p5.Color');
+  var p5 = require('../core/core');
+  require('./p5.Color');
 
   /**
    * Extracts the alpha value from a color or pixel array.
@@ -199,7 +198,7 @@ define(function (require) {
    * rect(20, 20, 60, 60);  // Draw rectangle
    * </code>
    * </div>
-   * 
+   *
    *
    * // if switching from RGB to HSB or HSL both modes must be declared
    * colorMode(RGB, 255);  // Use RGB with scale of 0-255
@@ -271,7 +270,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.hue = function(c) {
-    if (!c instanceof p5.Color) {
+    if (!(c instanceof p5.Color)) {
       throw new Error('Needs p5.Color as argument.');
     }
     return c.getHue();
@@ -415,7 +414,7 @@ define(function (require) {
    * </div>
    */
   p5.prototype.saturation = function(c) {
-    if (!c instanceof p5.Color) {
+    if (!(c instanceof p5.Color)) {
       throw new Error('Needs p5.Color as argument.');
     }
     return c.getSaturation();
@@ -423,6 +422,4 @@ define(function (require) {
 
 
 
-  return p5;
-
-});
+  module.exports = p5;

@@ -3,11 +3,10 @@
  * @submodule Table
  * @requires core
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
+  var p5 = require('../core/core');
 
   /**
    *  A TableRow object represents a single row of data values,
@@ -166,6 +165,4 @@ define(function (require) {
     }
   };
 
-  return p5.TableRow;
-
-});
+  module.exports = p5.TableRow;

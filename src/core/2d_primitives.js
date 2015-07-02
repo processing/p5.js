@@ -5,14 +5,13 @@
  * @requires core
  * @requires constants
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
-  var constants = require('core/constants');
+  var p5 = require('./core');
+  var constants = require('./constants');
 
-  require('core/error_helpers');
+  require('./error_helpers');
 
   /**
    * Draw an arc to the screen. If called with only a, b, c, d, start, and
@@ -394,6 +393,4 @@ define(function (require) {
     return this;
   };
 
-  return p5;
-
-});
+  module.exports = p5;

@@ -4,11 +4,10 @@
  * @for p5
  * @requires core
  */
-define(function (require){
 
   'use strict';
 
-  var p5 = require('core/core');
+  var p5 = require('../core/core');
 
   /**
    * The system variable deviceOrientation always contains the orientation of
@@ -206,5 +205,4 @@ define(function (require){
   };
 
 
-  return p5;
-});
+  module.exports = p5;

@@ -3,13 +3,12 @@
  * @submodule Rendering
  * @for p5
  */
-define(function(require) {
 
-  var p5 = require('core/core');
-  var constants = require('core/constants');
-  require('core/p5.Graphics');
-  require('core/p5.Renderer2D');
-  require('3d/p5.Renderer3D');
+  var p5 = require('./core');
+  var constants = require('./constants');
+  require('./p5.Graphics');
+  require('./p5.Renderer2D');
+  require('../3d/p5.Renderer3D');
 
   /**
    * Creates a canvas element in the document, and sets the dimensions of it
@@ -78,7 +77,7 @@ define(function(require) {
     } else {
       document.body.appendChild(c);
     }
-    
+
 
 
     // Init our graphics renderer
@@ -257,6 +256,4 @@ define(function(require) {
     }
   };
 
-  return p5;
-
-});
+module.exports = p5;

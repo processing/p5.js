@@ -6,7 +6,6 @@
  * @requires core
  * @requires constants
  */
-define(function(require) {
 
   /*
    * TODO:
@@ -24,8 +23,8 @@ define(function(require) {
 
   'use strict';
 
-  var p5 = require('core/core');
-  var constants = require('core/constants');
+  var p5 = require('../core/core');
+  var constants = require('../core/constants');
 
   /**
    * Base class for font handling
@@ -449,5 +448,4 @@ define(function(require) {
     return hash;
   }
 
-  return p5.Font;
-});
+  module.exports = p5.Font;

@@ -4,11 +4,10 @@
  * @for p5
  * @requires core
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
+  var p5 = require('../core/core');
 
   /**
    * Converts a string to its floating point representation. The contents of a
@@ -257,5 +256,4 @@ define(function (require) {
     }
   };
 
-  return p5;
-});
+  module.exports = p5;

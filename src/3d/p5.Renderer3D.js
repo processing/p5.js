@@ -1,9 +1,8 @@
-define(function(require) {
 
-  var p5 = require('core/core');
-  var shaders = require('3d/shaders');
-  require('core/p5.Renderer');
-  require('3d/p5.Matrix');
+  var p5 = require('../core/core');
+  var shaders = require('./shaders');
+  require('../core/p5.Renderer');
+  require('./p5.Matrix');
   var gl, shaderProgram;
   var uMVMatrixStack = [];
 
@@ -243,7 +242,7 @@ define(function(require) {
   };
 
   p5.Renderer3D.prototype.drawBuffer = function(uuid) {
-    
+
     gl.bindBuffer(gl.ARRAY_BUFFER, this.hash[uuid].vertexBuffer);
     gl.vertexAttribPointer(
       shaderProgram.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
@@ -253,7 +252,7 @@ define(function(require) {
       shaderProgram.vertexNormalAttribute, 3, gl.FLOAT, false, 0, 0);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.hash[uuid].indexBuffer);
-    
+
     this.setMatrixUniforms();
     gl.drawElements(
       gl.TRIANGLES, this.hash[uuid].len,
@@ -446,5 +445,4 @@ define(function(require) {
   //var _pMatrix = _makePerspective(45,
   //  gl.drawingBufferWidth/gl.drawingBufferHeight,
   //  0.1, 1000.0);
-  return p5.Renderer3D;
-});
+  module.exports = p5.Renderer3D;

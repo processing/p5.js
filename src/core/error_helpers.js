@@ -2,14 +2,12 @@
  * @for p5
  * @requires core
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
+  var p5 = require('./core');
   var doFriendlyWelcome = true;
 
-  
   // -- Borrowed from jQuery 1.11.3 --
   var class2type = {};
   var toString = class2type.toString;
@@ -262,6 +260,4 @@ define(function (require) {
     report(str, 'println', '#4DB200'); // auto dark green
   } */
 
-  return p5;
-
-});
+  module.exports = p5;
