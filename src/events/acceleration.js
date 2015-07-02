@@ -85,7 +85,7 @@ define(function (require){
 
   /**
    * The setMoveThreshold() function is used to set the movement threshold for
-   * the onDeviceMove() function.
+   * the deviceMoved() function.
    *
    * @method setMoveThreshold
    * @param {number} value The threshold value
@@ -100,9 +100,9 @@ define(function (require){
   var new_max_axis = '';
 
   /**
-   * The onDeviceMove() function is called when the devices orientation changes
+   * The deviceMoved() function is called when the devices orientation changes
    * by more than the threshold value.
-   * @method onDeviceMove
+   * @method deviceMoved
    * @example
    * <div>
    * <code>
@@ -115,7 +115,7 @@ define(function (require){
    *   fill(value);
    *   rect(25, 25, 50, 50);
    * }
-   * function onDeviceMove() {
+   * function deviceMoved() {
    *   value = value + 5;
    *   if (value > 255) {
    *     value = 0;
@@ -126,9 +126,9 @@ define(function (require){
    */
 
   /**
-   * The onDeviceTurn() function is called when the device rotates by
+   * The deviceTurned() function is called when the device rotates by
    * more than 90 degrees.
-   * @method onDeviceTurn
+   * @method deviceTurned
    * @example
    * <div>
    * <code>
@@ -141,7 +141,7 @@ define(function (require){
    *   fill(value);
    *   rect(25, 25, 50, 50);
    * }
-   * function onDeviceTurn() {
+   * function deviceTurned() {
    *   value = value + 5;
    *   if (value > 255) {
    *     value = 0;
@@ -162,6 +162,7 @@ define(function (require){
     this._setProperty('accelerationZ', e.acceleration.z * 2);
     this._handleMotion();
   };
+
   p5.prototype._onMozOrientation = function (e) {
     this._setProperty('accelerationX', e.x);
     this._setProperty('accelerationY', e.y);
@@ -176,16 +177,16 @@ define(function (require){
     } else if (window.orientation === undefined) {
       this._setProperty('deviceOrientation', 'undefined');
     }
-    var onDeviceMove = this.onDeviceMove || window.onDeviceMove;
-    if (typeof onDeviceMove === 'function') {
+    var deviceMoved = this.deviceMoved || window.deviceMoved;
+    if (typeof deviceMoved === 'function') {
       if (Math.abs(this.accelerationX - this.pAccelerationX) > move_threshold ||
         Math.abs(this.accelerationY - this.pAccelerationY) > move_threshold ||
         Math.abs(this.accelerationZ - this.pAccelerationZ) > move_threshold) {
-        onDeviceMove();
+        deviceMoved();
       }
     }
-    var onDeviceTurn = this.onDeviceTurn || window.onDeviceTurn;
-    if (typeof onDeviceTurn === 'function') {
+    var deviceTurned = this.deviceTurned || window.deviceTurned;
+    if (typeof deviceTurned === 'function') {
       var max_val = 0;
       if (Math.abs(this.accelerationX) > max_val) {
         max_val = this.accelerationX;
@@ -199,7 +200,7 @@ define(function (require){
         new_max_axis = 'z';
       }
       if (old_max_axis !== '' && old_max_axis !== new_max_axis) {
-        onDeviceTurn(new_max_axis);
+        deviceTurned(new_max_axis);
       }
       old_max_axis = new_max_axis;
     }
