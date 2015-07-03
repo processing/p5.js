@@ -1,11 +1,11 @@
 suite('Core', function(){
   var node;
-  
+
   setup(function () {
     node = document.createElement('div');
     document.body.appendChild(node);
   });
-  
+
   teardown(function () {
     document.body.removeChild(node);
   });
