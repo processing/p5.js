@@ -278,7 +278,7 @@ module.exports = function(grunt) {
   // Create the multitasks.
   // TODO: "requirejs" is in here to run the "yuidoc_themes" subtask. Is this needed?
   grunt.registerTask('build', ['browserify', 'concat', 'uglify', 'requirejs']);
-  grunt.registerTask('test', ['connect', 'jshint', 'build', 'mocha']);
+  grunt.registerTask('test', ['connect', 'jshint', 'jscs', 'build', 'mocha']);
   grunt.registerTask('yui', ['yuidoc']);
   grunt.registerTask('default', ['test']);
 };
