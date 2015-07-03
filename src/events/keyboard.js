@@ -88,7 +88,7 @@ p5.prototype.key = '';
  */
 p5.prototype.keyCode = 0;
 
- /**
+/**
  * The keyPressed() function is called once every time a key is pressed. The
  * keyCode for the key that was pressed is stored in the keyCode variable.
  * <br><br>
@@ -163,7 +163,7 @@ p5.prototype._onkeydown = function (e) {
     }
   }
 };
- /**
+/**
  * The keyReleased() function is called once every time a key is released.
  * See key and keyCode for more information.<br><br>
  * Browsers may have different default

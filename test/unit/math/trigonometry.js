@@ -27,7 +27,7 @@ suite('Trigonometry', function() {
     });
   };
 
- var ahandleDegreesAndRadians = function(func) {
+  var ahandleDegreesAndRadians = function(func) {
     test('should handle degrees', function() {
       myp5.angleMode(DEGREES);
       assert.equal(myp5.degrees(Math[func](ratio)), myp5[func](ratio));

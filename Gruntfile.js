@@ -46,6 +46,26 @@ module.exports = function(grunt) {
     // read in the package, used for knowing the current version, et al.
     pkg: grunt.file.readJSON('package.json'),
 
+    // Configure style consistency checking for this file, the source, and the tests.
+    jscs: {
+      options: {
+        config: '.jscsrc',
+        reporter: require('jscs-stylish').path
+      },
+      build: {
+        src: ['Gruntfile.js']
+      },
+      source: {
+        src: [
+          'src/**/*.js',
+          '!src/external/**/*.js'
+        ]
+      },
+      test: {
+        src: ['test/unit/**/*.js']
+      }
+    },
+
     // Configure hinting for this file, the source, and the tests.
     jshint: {
       build: {
@@ -244,6 +264,7 @@ module.exports = function(grunt) {
   // Load the external libraries used.
   grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-contrib-concat');
+  grunt.loadNpmTasks('grunt-jscs');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-requirejs');

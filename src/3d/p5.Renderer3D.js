@@ -118,7 +118,7 @@ p5.Renderer3D.prototype.initShaders = function() {
   //END SHADERS SETUP
 
   // var vertexResolution =
-    // gl.getUniformLocation(shaderProgram, 'u_resolution');
+  // gl.getUniformLocation(shaderProgram, 'u_resolution');
   // @TODO replace 4th argument with far plane once we implement
   // a view frustrum
 
@@ -354,20 +354,20 @@ p5.Renderer3D.prototype.setMatrixUniforms = function() {
   gl.uniformMatrix4fv(
     shaderProgram.uNMatrixUniform, false, this.uNMatrix.mat4);
 };
-  /**
-   * PRIVATE
-   */
-  // matrix methods adapted from:
-  // https://developer.mozilla.org/en-US/docs/Web/WebGL/
-  // gluPerspective
-  //
-  // function _makePerspective(fovy, aspect, znear, zfar){
-  //    var ymax = znear * Math.tan(fovy * Math.PI / 360.0);
-  //    var ymin = -ymax;
-  //    var xmin = ymin * aspect;
-  //    var xmax = ymax * aspect;
-  //    return _makeFrustum(xmin, xmax, ymin, ymax, znear, zfar);
-  //  }
+/**
+ * PRIVATE
+ */
+// matrix methods adapted from:
+// https://developer.mozilla.org/en-US/docs/Web/WebGL/
+// gluPerspective
+//
+// function _makePerspective(fovy, aspect, znear, zfar){
+//    var ymax = znear * Math.tan(fovy * Math.PI / 360.0);
+//    var ymin = -ymax;
+//    var xmin = ymin * aspect;
+//    var xmax = ymax * aspect;
+//    return _makeFrustum(xmin, xmax, ymin, ymax, znear, zfar);
+//  }
 
 ////
 //// glFrustum
