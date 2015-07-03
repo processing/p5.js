@@ -225,12 +225,15 @@
       var userPreload = this.preload || window.preload; // look for "preload"
       var context = this._isGlobal ? window : this;
       if (userPreload) {
-        this._preloadMethods.forEach(function(f) {
+
+        var methods = this._preloadMethods;
+        Object.keys(methods).forEach(function(f) {
           context[f] = function() {
             var argsArray = Array.prototype.slice.call(arguments);
-            return context._preload(f, argsArray);
+            return context._preload(f, methods[f], argsArray);
           };
         });
+
         userPreload();
         if (this._preloadCount === 0) {
           this._setup();
@@ -244,7 +247,7 @@
       }
     }.bind(this);
 
-    this._preload = function (func, args) {
+    this._preload = function (func, obj, args) {
       var context = this._isGlobal ? window : this;
       context._setProperty('_preloadCount', context._preloadCount + 1);
       var preloadCallback = function (resp) {
@@ -256,7 +259,7 @@
         }
       };
       args.push(preloadCallback);
-      return p5.prototype[func].apply(context, args);
+      return context[obj].prototype[func].apply(context, args);
     }.bind(this);
 
     this._setup = function() {
@@ -264,9 +267,10 @@
       // return preload functions to their normal vals if switched by preload
       var context = this._isGlobal ? window : this;
       if (typeof context.preload === 'function') {
-        this._preloadMethods.forEach(function (f) {
-          context[f] = p5.prototype[f];
-        });
+        for (var f in this._preloadMethods) {
+          var o = this._preloadMethods[f];
+          context[f] = context[o].prototype[f];
+        }
       }
 
       // Short-circuit on this, in case someone used the library in "global"
@@ -483,20 +487,23 @@
 
   // functions that cause preload to wait
   // more can be added by using registerPreloadMethod(func)
-  p5.prototype._preloadMethods = [
-    'loadJSON',
-    'loadImage',
-    'loadStrings',
-    'loadXML',
-    'loadShape',
-    'loadTable',
-    'loadFont'
-  ];
+  p5.prototype._preloadMethods = {
+    'loadJSON': 'p5',
+    'loadImage': 'p5',
+    'loadStrings': 'p5',
+    'loadXML': 'p5',
+    'loadShape': 'p5',
+    'loadTable': 'p5',
+    'loadFont': 'p5'
+  };
 
   p5.prototype._registeredMethods = { pre: [], post: [], remove: [] };
 
-  p5.prototype.registerPreloadMethod = function(m) {
-    p5.prototype._preloadMethods.push(m);
+  p5.prototype.registerPreloadMethod = function(f, o) {
+    o = o || 'p5';
+    if (!p5.prototype._preloadMethods.hasOwnProperty(f)) {
+      p5.prototype._preloadMethods[f] = o;
+    }
   };
 
   p5.prototype.registerMethod = function(name, m) {
