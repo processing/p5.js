@@ -489,4 +489,73 @@ p5.Matrix.prototype.rotateZ = function(a){
   this.rotate(a, [0,0,1]);
 };
 
+/**
+ * sets the perspective matrix
+ * @param  {Number} fovy   [description]
+ * @param  {Number} aspect [description]
+ * @param  {Number} near   near clipping plane
+ * @param  {Number} far    far clipping plane
+ * @return {void}
+ */
+p5.Matrix.prototype.perspective = function(fovy,aspect,near,far){
+
+  var f = 1.0 / Math.tan(fovy / 2),
+    nf = 1 / (near - far);
+  
+  this.mat4[0] = f / aspect;
+  this.mat4[1] = 0;
+  this.mat4[2] = 0;
+  this.mat4[3] = 0;
+  this.mat4[4] = 0;
+  this.mat4[5] = f;
+  this.mat4[6] = 0;
+  this.mat4[7] = 0;
+  this.mat4[8] = 0;
+  this.mat4[9] = 0;
+  this.mat4[10] = (far + near) * nf;
+  this.mat4[11] = -1;
+  this.mat4[12] = 0;
+  this.mat4[13] = 0;
+  this.mat4[14] = (2 * far * near) * nf;
+  this.mat4[15] = 0;
+  
+  return this;
+
+};
+
+/**
+ * sets the ortho matrix
+ * @param  {Number} left   [description]
+ * @param  {Number} right  [description]
+ * @param  {Number} bottom [description]
+ * @param  {Number} top    [description]
+ * @param  {Number} near   near clipping plane
+ * @param  {Number} far    far clipping plane
+ * @return {void}
+ */
+p5.Matrix.prototype.ortho = function(left,right,bottom,top,near,far){
+
+  var lr = 1 / (left - right),
+    bt = 1 / (bottom - top),
+    nf = 1 / (near - far);
+  this.mat4[0] = -2 * lr;
+  this.mat4[1] = 0;
+  this.mat4[2] = 0;
+  this.mat4[3] = 0;
+  this.mat4[4] = 0;
+  this.mat4[5] = -2 * bt;
+  this.mat4[6] = 0;
+  this.mat4[7] = 0;
+  this.mat4[8] = 0;
+  this.mat4[9] = 0;
+  this.mat4[10] = 2 * nf;
+  this.mat4[11] = 0;
+  this.mat4[12] = (left + right) * lr;
+  this.mat4[13] = (top + bottom) * bt;
+  this.mat4[14] = (far + near) * nf;
+  this.mat4[15] = 1;
+
+  return this;
+};
+
 module.exports = p5.Matrix;

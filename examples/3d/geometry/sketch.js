@@ -1,5 +1,6 @@
 function setup(){
   createCanvas(windowWidth, windowHeight, 'webgl');
+  perspective(60 / 180 * Math.PI, windowWidth / windowHeight , 0.1, 100);
 }
 
 var theta = 0;
@@ -7,7 +8,9 @@ var theta = 0;
 function draw(){
   background(0, 100, 200, 255);
 
-  translate(-100, 0, -100);
+
+
+  translate(-125, 0, -150);
   push();
   rotateZ(theta);
   rotateX(theta * 1.5);
