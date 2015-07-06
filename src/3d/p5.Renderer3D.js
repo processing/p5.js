@@ -45,7 +45,8 @@ define(function(require) {
     gl.depthFunc(gl.LEQUAL);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-    this.initShaders(); //initialize our default shaders
+    //initialize our default shaders
+    // this.initShaders(shaders.testVert, shaders.testFrag);
     //create our default matrices
     this.initHash();
     this.initMatrix();
@@ -81,14 +82,14 @@ define(function(require) {
    * [initShaders description]
    * @return {[type]} [description]
    */
-  p5.Renderer3D.prototype.initShaders = function() {
+  p5.Renderer3D.prototype.initShaders = function(vertShaderId, fragShaderId) {
     //set up our default shaders by:
     // 1. create the shader,
     // 2. load the shader source,
     // 3. compile the shader
     var _vertShader = gl.createShader(gl.VERTEX_SHADER);
     //load in our default vertex shader
-    gl.shaderSource(_vertShader, shaders.testVert);
+    gl.shaderSource(_vertShader, vertShaderId);
     gl.compileShader(_vertShader);
     // if our vertex shader failed compilation?
     if (!gl.getShaderParameter(_vertShader, gl.COMPILE_STATUS)) {
@@ -99,7 +100,7 @@ define(function(require) {
 
     var _fragShader = gl.createShader(gl.FRAGMENT_SHADER);
     //load in our material frag shader
-    gl.shaderSource(_fragShader, shaders.testFrag);
+    gl.shaderSource(_fragShader, fragShaderId);
     gl.compileShader(_fragShader);
     // if our frag shader failed compilation?
     if (!gl.getShaderParameter(_fragShader, gl.COMPILE_STATUS)) {
@@ -143,6 +144,8 @@ define(function(require) {
     //normal Matrix uniform
     shaderProgram.uNMatrixUniform =
     gl.getUniformLocation(shaderProgram, 'normalMatrix');
+
+    return shaderProgram;
   };
 
   /**
@@ -229,6 +232,8 @@ define(function(require) {
     this.hash[uuid].vertexBuffer = gl.createBuffer();
     this.hash[uuid].normalBuffer = gl.createBuffer();
     this.hash[uuid].indexBuffer = gl.createBuffer();
+    this.hash[uuid].shaderProgram =
+      this.initShaders(shaders.testVert, shaders.testFrag);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, this.hash[uuid].vertexBuffer);
     gl.bufferData(
