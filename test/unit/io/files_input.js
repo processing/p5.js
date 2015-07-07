@@ -100,7 +100,7 @@ suite('Files', function() {
     });*/
 
   });
-/*
+  /*
   var loadTable = p5.prototype.loadTable;
 
 
@@ -182,5 +182,5 @@ suite('Files', function() {
       loadTable(url,myCallback);
     });
   });
-*/
+  */
 });

@@ -157,7 +157,7 @@ suite('Calculation', function() {
       });
     });
   });
-  
+
   suite('p5.prototype.mag', function() {
     var mag = p5.prototype.mag;
     var result;
@@ -231,7 +231,7 @@ suite('Calculation', function() {
       test('should return single value from array', function() {
         result = max([10,10]);
         assert.equal(result, 10);
-      });      
+      });
     });
   });
 

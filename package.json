@@ -17,10 +17,12 @@
     "grunt-contrib-uglify": "^0.7.0",
     "grunt-contrib-watch": "~0.5.3",
     "grunt-contrib-yuidoc": "0.5.2",
+    "grunt-jscs": "^1.8.0",
     "grunt-lib-phantomjs": "~0.4.0",
     "grunt-mocha": "~0.4.6",
     "grunt-newer": "^1.1.0",
     "grunt-update-json": "^0.2.1",
+    "jscs-stylish": "^0.3.1",
     "phantomjs": "~1.9.2-4"
   },
   "licenses": [
