@@ -488,13 +488,13 @@
   // functions that cause preload to wait
   // more can be added by using registerPreloadMethod(func)
   p5.prototype._preloadMethods = {
-    'loadJSON': 'p5',
-    'loadImage': 'p5',
-    'loadStrings': 'p5',
-    'loadXML': 'p5',
-    'loadShape': 'p5',
-    'loadTable': 'p5',
-    'loadFont': 'p5'
+    loadJSON: 'p5',
+    loadImage: 'p5',
+    loadStrings: 'p5',
+    loadXML: 'p5',
+    loadShape: 'p5',
+    loadTable: 'p5',
+    loadFont: 'p5'
   };
 
   p5.prototype._registeredMethods = { pre: [], post: [], remove: [] };
