@@ -38,7 +38,10 @@ p5.Geometry3D = function(){
  * @param  {[type]} offset [description]
  * @return {[type]}        [description]
  */
-p5.Geometry3D.prototype.parametricGeometry = function(func, detailX, detailY, offset){
+p5.Geometry3D.prototype.parametricGeometry = function(func,
+                                                      detailX,
+                                                      detailY,
+                                                      offset) {
 
   var i, j, p;
   var u, v;
