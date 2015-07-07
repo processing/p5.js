@@ -259,7 +259,7 @@ var p5 = function(sketch, node, sync) {
       }
     };
     args.push(preloadCallback);
-    return context[obj].prototype[func].apply(context, args);
+    return window[obj].prototype[func].apply(context, args);
   }.bind(this);
 
   this._setup = function() {
@@ -269,7 +269,7 @@ var p5 = function(sketch, node, sync) {
     if (typeof context.preload === 'function') {
       for (var f in this._preloadMethods) {
         var o = this._preloadMethods[f];
-        context[f] = context[o].prototype[f];
+        context[f] = window[o].prototype[f];
       }
     }
 
