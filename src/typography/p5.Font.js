@@ -7,24 +7,32 @@
  * @requires constants
  */
 
-/*
- * TODO:
- * -- var fonts = loadFont([]); **
- * -- PFont functions:
- *    textBounds() exists
- *    glyphPaths -> object or array?
- *    PFont.list()
- * -- Integrating p5.dom (later)
- * -- alignment: justified
- * -- kerning
- * -- truncation
- * -- drop-caps
- */
-
 'use strict';
 
 var p5 = require('../core/core');
 var constants = require('../core/constants');
+
+/*
+ * TODO:
+ *
+ * API:
+ * -- textBounds()
+ * -- getPath()
+ * -- getPoints()
+ *
+ * ===========================================
+ *
+ * -- var fonts = loadFont([]);
+ *
+ * -- PFont functions:
+ *    PFont.list()
+ *
+ * -- kerning
+ * -- Integrating p5.dom (later)
+ * -- alignment: justified?
+ * -- truncation?
+ * -- drop-caps?
+ */
 
 /**
  * Base class for font handling
@@ -44,6 +52,117 @@ p5.Font = function(p) {
    */
   this.font = undefined;
 };
+
+p5.Font.prototype.list = function() {
+
+  // TODO
+  throw 'not yet implemented';
+};
+
+/**
+ * Returns a tight bounding box for the given text string using this
+ * font (currently only supports single lines)
+ *
+ * @method textBounds
+ * @param  {String} line     a line of text
+ * @param  {Number} x        x-position
+ * @param  {Number} y        y-position
+ * @param  {Number} fontSize font size to use (optional)
+ * @param  {Object} options opentype options (optional)
+ *
+ * @return {Object}          a rectangle object with properties: x, y, w, h
+ *
+ * @example
+ * <div>
+ * <code>
+ * var font;
+ * var text = 'Lorem ipsum dolor sit amet.';
+ * function preload() {
+ *    font = loadFont('./assets/fonts/Regular.otf');
+ * };
+ * function setup() {
+ *    background(210);
+
+ *    var bbox = font.textBounds(text, 10, 30, 12);
+ *    fill(255);
+ *    stroke(0);
+ *    rect(bbox.x, bbox.y, bbox.w, bbox.h);
+ *    fill(0);
+ *    noStroke();
+ *     *    textFont(font);
+  *    textSize(12);
+ *    text(text, 10, 30);
+ * };
+ * </code>
+ * </div>
+ */
+p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
+
+  x = x !== undefined ? x : 0;
+  y = y !== undefined ? y : 0;
+  fontSize = fontSize || this.parent._textSize;
+
+  //console.log('textBounds(',str, x, y, fontSize,')');
+
+  var result = this.cache[cacheKey('textBounds', str, x, y, fontSize)];
+  if (!result) {
+
+    // console.log('computing');
+    if (str !== ' ') {
+
+      var xCoords = [],
+        yCoords = [],
+        scale = this._scale(fontSize),
+        minX, minY, maxX, maxY;
+
+      this.font.forEachGlyph(str, x, y, fontSize, options,
+        function(glyph, gX, gY, gFontSize) {
+
+          if (glyph.name !== 'space') {
+
+            gX = gX !== undefined ? gX : 0;
+            gY = gY !== undefined ? gY : 0;
+
+            var gm = glyph.getMetrics();
+            xCoords.push(gX + (gm.xMin * scale));
+            yCoords.push(gY + (-gm.yMin * scale));
+            xCoords.push(gX + (gm.xMax * scale));
+            yCoords.push(gY + (-gm.yMax * scale));
+          }
+        });
+
+      minX = Math.min.apply(null, xCoords);
+      minY = Math.min.apply(null, yCoords);
+      maxX = Math.max.apply(null, xCoords);
+      maxY = Math.max.apply(null, yCoords);
+
+      result = {
+        x: minX,
+        y: minY,
+        h: maxY - minY,
+        w: maxX - minX,
+        advance: minX - x
+      };
+    } else { // special case ' ' for now
+
+      var tw = this._textWidth(str);
+      result = {
+        x: x,
+        y: y,
+        h: 0,
+        w: tw,
+        advance: 0 // ?
+      };
+    }
+
+    this.cache[cacheKey('textBounds', str, x, y, fontSize)] = result;
+  }
+  //else { console.log('cache-hit'); }
+
+  return result;
+};
+
+// ----------------------------- End API ------------------------------
 
 /**
  * Returns the set of opentype glyphs for the supplied string.
@@ -71,7 +190,8 @@ p5.Font.prototype._getGlyphs = function(str) {
  */
 p5.Font.prototype._getPath = function(line, x, y, options) {
 
-  var p = this.parent, ctx = p._graphics.drawingContext,
+  var p = this.parent,
+    ctx = p._graphics.drawingContext,
     pos = this._handleAlignment(p, ctx, line, x, y);
 
   return this.font.getPath(line, pos.x, pos.y, p._textSize, options);
@@ -156,10 +276,10 @@ p5.Font.prototype._getSVG = function(line, x, y, options) {
     if (typeof options.strokeWidth === 'number') {
       line.strokeWidth = options.strokeWidth;
     }
-    if (typeof options.fill !== undefined) {
+    if (typeof options.fill !== 'undefined') {
       line.fill = options.fill;
     }
-    if (typeof options.stroke !== undefined) {
+    if (typeof options.stroke !== 'undefined') {
       line.stroke = options.stroke;
     }
   }
@@ -183,13 +303,14 @@ p5.Font.prototype._getSVG = function(line, x, y, options) {
 p5.Font.prototype._renderPath = function(line, x, y, options) {
 
   // /console.log('_renderPath', typeof line);
-  var pdata, p = this.parent, pg = p._graphics, ctx = pg.drawingContext;
+  var pdata, p = this.parent,
+    pg = p._graphics,
+    ctx = pg.drawingContext;
 
   if (typeof line === 'object' && line.commands) {
 
     pdata = line.commands;
-  }
-  else {
+  } else {
 
     //pos = handleAlignment(p, ctx, line, x, y);
     pdata = this._getPath(line, x, y, p._textSize, options).commands;
@@ -221,33 +342,33 @@ p5.Font.prototype._renderPath = function(line, x, y, options) {
   if (p._doFill) {
 
     // if fill hasn't been set by user, use default-text-fill
-    ctx.fillStyle = p._fillSet ? ctx.fillStyle:constants._DEFAULT_TEXT_FILL;
+    ctx.fillStyle = p._fillSet ? ctx.fillStyle : constants._DEFAULT_TEXT_FILL;
     ctx.fill();
   }
 
   return this;
 };
 
-p5.Font.prototype._textWidth = function(str) {
+p5.Font.prototype._textWidth = function(str, fontSize) {
 
   if (str === ' ') { // special case for now
 
-    return this.font.charToGlyph(' ').advanceWidth * this._scale();
+    return this.font.charToGlyph(' ').advanceWidth * this._scale(fontSize);
   }
 
-  var bounds = this.textBounds(str);
+  var bounds = this.textBounds(str, 0, 0, fontSize);
   return bounds.w + bounds.advance;
 };
 
-p5.Font.prototype._textAscent = function() {
+p5.Font.prototype._textAscent = function(fontSize) {
 
-  var bounds = this.textBounds('ABCjgq|');
+  var bounds = this.textBounds('ABCjgq|', 0, 0, fontSize);
   return Math.abs(bounds.y);
 };
 
-p5.Font.prototype._textDescent = function() {
+p5.Font.prototype._textDescent = function(fontSize) {
 
-  var bounds = this.textBounds('ABCjgq|');
+  var bounds = this.textBounds('ABCjgq|', 0, 0, fontSize);
   return bounds.h - Math.abs(bounds.y);
 };
 
@@ -255,162 +376,6 @@ p5.Font.prototype._scale = function(fontSize) {
 
   return (1 / this.font.unitsPerEm) * (fontSize || this.parent._textSize);
 };
-
-/**
- * Returns a tight bounding box for the given custom text string using this
- * font (currently only support single line)
- *
- * @method textBounds
- * @param  {String} line     a line of text
- * @param  {Number} x        x-position
- * @param  {Number} y        y-position
- * @param  {Number} fontSize font size to use (optional)
- * @param  {Object} options opentype options (optional)
- *
- * @return {Object}          a rectangle object with properties: x, y, w, h
- *
- * @example
- * <div>
- * <code>
- * var font;
- * var text = 'Lorem ipsum dolor sit amet.';
- * function preload() {
- *    font = loadFont('./assets/fonts/Regular.otf');
- * };
- * function setup() {
- *    background(210);
- *    textFont(font);
- *    strokeWeight(1);
- *    textSize(12);
- *    var bbox = font.textBounds(text, 10, 30, 12);
- *    fill(255);
- *    stroke(0);
- *    rect(bbox.x, bbox.y, bbox.w, bbox.h);
- *    fill(0);
- *    strokeWeight(0);
- *    text(text, 10, 30);
- * };
- * </code>
- * </div>
- */
-p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
-
-  x = x !== undefined ? x : 0;
-  y = y !== undefined ? y : 0;
-  fontSize = fontSize || this.parent._textSize;
-
-  //console.log('textBounds(',str, x, y, fontSize,')');
-
-  var result = this.cache[cacheKey('textBounds', str, x, y, fontSize)];
-  if (!result) {
-
-    // console.log('computing');
-    if (str !== ' ') {
-
-      var xCoords = [],
-        yCoords = [],
-        scale = this._scale(fontSize),
-        minX, minY, maxX, maxY;
-
-      this.font.forEachGlyph(str, x, y, fontSize, options,
-        function(glyph, gX, gY, gFontSize) {
-
-          if (glyph.name !== 'space') {
-
-            gX = gX !== undefined ? gX : 0;
-            gY = gY !== undefined ? gY : 0;
-
-            var gm = glyph.getMetrics();
-            xCoords.push(gX + (gm.xMin * scale));
-            yCoords.push(gY + (-gm.yMin * scale));
-            xCoords.push(gX + (gm.xMax * scale));
-            yCoords.push(gY + (-gm.yMax * scale));
-          }
-        });
-
-      minX = Math.min.apply(null, xCoords);
-      minY = Math.min.apply(null, yCoords);
-      maxX = Math.max.apply(null, xCoords);
-      maxY = Math.max.apply(null, yCoords);
-
-      result = {
-        x: minX,
-        y: minY,
-        h: maxY - minY,
-        w: maxX - minX,
-        advance: minX - x
-      };
-    }
-    else { // special case ' ' for now
-
-      var tw = this._textWidth(str);
-      result = {
-        x: x,
-        y: y,
-        h: 0,
-        w: tw,
-        advance: 0 // ?
-      };
-    }
-
-    this.cache[cacheKey('textBounds', str, x, y, fontSize)] = result;
-  }
-  //else { console.log('cache-hit'); }
-
-  return result;
-};
-
-p5.Font.prototype._drawPoints = function(str, tx, ty, options) { // remove?
-
-  var pdata, onCurvePts, offCurvePts, p = this.parent, scale = this._scale();
-
-  tx = tx !== undefined ? tx : 0;
-  ty = ty !== undefined ? ty : 0;
-
-  this.font.forEachGlyph(str, tx, ty, p._textSize, options,
-    function(glyph, x, y, fontSize) {
-
-      onCurvePts = [];
-      offCurvePts = [];
-      pdata = glyph.path.commands;
-
-      for (var i = 0; i < pdata.length; i += 1) {
-
-        var cmd = pdata[i];
-        if (cmd.x !== undefined) {
-          onCurvePts.push({ x: cmd.x, y: -cmd.y });
-        }
-
-        if (cmd.x1 !== undefined) {
-          offCurvePts.push({ x: cmd.x1, y: -cmd.y1 });
-        }
-
-        if (cmd.x2 !== undefined) {
-          offCurvePts.push({ x: cmd.x2, y: -cmd.y2 });
-        }
-      }
-
-      p.noStroke();
-      p.fill(0,0,255);
-      drawCircles(onCurvePts, x, y, scale);
-      p.fill(255,0,0);
-      drawCircles(offCurvePts, x, y, scale);
-    });
-
-  function drawCircles(l, x, y, scale) {
-    for (var j = 0; j < l.length; j++) {
-      p.ellipse(x + (l[j].x * scale), y + (l[j].y * scale), 3, 3);
-    }
-  }
-};
-
-p5.Font.prototype.list = function() {
-
-  // TODO
-  throw 'not yet implemented';
-};
-
-// helpers
 
 p5.Font.prototype._handleAlignment = function(p, ctx, line, x, y) {
 
@@ -433,8 +398,13 @@ p5.Font.prototype._handleAlignment = function(p, ctx, line, x, y) {
     y -= textDescent;
   }
 
-  return { x: x, y: y };
+  return {
+    x: x,
+    y: y
+  };
 };
+
+// helpers
 
 function cacheKey() {
   var args = Array.prototype.slice.call(arguments),
