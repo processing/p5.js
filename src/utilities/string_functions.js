@@ -177,7 +177,7 @@ p5.prototype.nf = function () {
         return this.nf(arguments[0][0]);
       }
     }
-     else {
+    else {
       return doNf.apply(this, arguments);
     }
   }

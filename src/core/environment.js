@@ -36,10 +36,10 @@ if (window.console && console.log) {
    * @param {Any} contents any combination of Number, String, Object, Boolean,
    *                       Array to print
    */
-   // Converts passed args into a string and then parses that string to
-   // simulate synchronous behavior. This is a hack and is gross.
-   // Since this will not work on all objects, particularly circular
-   // structures, simply console.log() on error.
+  // Converts passed args into a string and then parses that string to
+  // simulate synchronous behavior. This is a hack and is gross.
+  // Since this will not work on all objects, particularly circular
+  // structures, simply console.log() on error.
   p5.prototype.print = function(args) {
     try {
       var newArgs = JSON.parse(JSON.stringify(args));

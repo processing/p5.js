@@ -1,5 +1,5 @@
 suite('CreatingReading', function() {
-  
+
   // p5 instance
   var myp5 = new p5(function( sketch ) {
     sketch.setup = function() {};
@@ -7,7 +7,7 @@ suite('CreatingReading', function() {
   });
 
   setup(function() {
-    myp5.colorMode(myp5.RGB, 255); 
+    myp5.colorMode(myp5.RGB, 255);
   });
 
   suite('p5.prototype.color', function() {

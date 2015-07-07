@@ -655,7 +655,7 @@ suite('p5.Color', function() {
 
   });
 
-  // These tests commented out pending further discussion. 
+  // These tests commented out pending further discussion.
   // suite('new p5.Color with Base 1 colors', function() {
   //   var base_1_rgba = [0.2, 0.4, 0.6, 0.5];
   //   var base_255_rgba = [51, 102, 153, 127.5];

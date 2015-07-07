@@ -118,7 +118,7 @@ p5.prototype.noise = function(x,y,z) {
   if (perlin == null) {
     // need to deal with seeding?
     //if (perlinRandom == null) {
-      //perlinRandom = new Random();
+    //  perlinRandom = new Random();
     //}
 
     perlin = new Array(PERLIN_SIZE + 1);
@@ -288,8 +288,8 @@ p5.prototype.noiseSeed = function(seed) {
     seed, z;
     return {
       setSeed : function(val) {
-      // pick a random seed if val is undefined or null
-      // the >>> 0 casts the seed to an unsigned 32-bit integer
+        // pick a random seed if val is undefined or null
+        // the >>> 0 casts the seed to an unsigned 32-bit integer
         z = seed = (val == null ? Math.random() * m : val) >>> 0;
       },
       getSeed : function() {

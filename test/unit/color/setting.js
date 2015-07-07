@@ -1,5 +1,5 @@
 suite('Color', function() {
-  
+
   // p5 instance
   var myp5 = new p5(function( p ) {
     p.setup = function() {};
@@ -13,7 +13,7 @@ suite('Color', function() {
         assert.ok(colorMode);
       });
       test('should set mode to HSB', function() {
-        myp5.colorMode(myp5.HSB); 
+        myp5.colorMode(myp5.HSB);
         assert.equal(myp5._colorMode, myp5.HSB);
       });
     });
