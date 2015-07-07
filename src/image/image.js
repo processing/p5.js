@@ -4,18 +4,22 @@
  * @for p5
  * @requires core
  */
-define(function (require) {
 
   /**
    * This module defines the p5 methods for the p5.Image class
    * for drawing images to the main display canvas.
    */
-
   'use strict';
 
 
-  var p5 = require('core/core');
-  var constants = require('core/constants');
+  var p5 = require('../core/core');
+  var constants = require('../core/constants');
+
+  /* global frames:true */// This is not global, but JSHint is not aware that
+  // this module is implicitly enclosed with Browserify: this overrides the
+  // redefined-global error and permits using the name "frames" for the array
+  // of saved animation frames.
+  var frames = [];
 
   p5.prototype._imageMode = constants.CORNER;
   p5.prototype._tint = null;
@@ -94,15 +98,6 @@ define(function (require) {
     return new p5.Image(width, height);
   };
 
-
-  /**
-   * @module Image
-   * @submodule Output
-   * @for p5
-   * @requires core
-   */
-  var frames = [];
-
   /**
    *  Save the current canvas as an image. In Safari, will open the
    *  image in the window and the user must provide their own
@@ -112,10 +107,10 @@ define(function (require) {
    *  @method saveCanvas
    *  @param  {[String]} filename
    *  @param  {[String]} extension 'jpg' or 'png'
-   *  @param  {[Canvas]} canvas a variable representing a
+   *  @param  {[selectedCanvas]} canvas a variable representing a
    *                             specific html5 canvas (optional).
    */
-  p5.prototype.saveCanvas = function(_cnv, filename, extension) {
+  p5.prototype.saveCanvas = function(filename, extension, selectedCanvas) {
     if (!extension) {
       extension = p5.prototype._checkFileExtension(filename, extension)[1];
       if (extension === '') {
@@ -123,8 +118,8 @@ define(function (require) {
       }
     }
     var cnv;
-    if (_cnv) {
-      cnv = _cnv;
+    if (selectedCanvas) {
+      cnv = selectedCanvas;
     } else if (this._curElement && this._curElement.elt) {
       cnv = this._curElement.elt;
     }
@@ -249,7 +244,5 @@ define(function (require) {
     thisFrame.ext = extension;
     frames.push(thisFrame);
   };
-  return p5;
-});
 
-
+  module.exports = p5;

@@ -3,11 +3,10 @@
  * @submodule Constants
  * @for p5
  */
-define(function(require) {
 
   var PI = Math.PI;
 
-  return {
+  module.exports = {
 
     // GRAPHICS RENDERER
     P2D: 'p2d',
@@ -200,5 +199,3 @@ define(function(require) {
     _DEFAULT_FILL: '#FFFFFF'
 
   };
-
-});

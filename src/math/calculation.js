@@ -4,11 +4,10 @@
  * @for p5
  * @requires core
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
+  var p5 = require('../core/core');
 
   /**
    * Calculates the absolute value (magnitude) of a number. Maps to Math.abs().
@@ -668,6 +667,4 @@ define(function (require) {
    */
   p5.prototype.sqrt = Math.sqrt;
 
-  return p5;
-
-});
+  module.exports = p5;

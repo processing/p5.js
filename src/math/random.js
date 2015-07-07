@@ -4,11 +4,10 @@
  * @for p5
  * @requires core
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
+  var p5 = require('../core/core');
 
   var seeded = false;
 
@@ -211,9 +210,4 @@ define(function (require) {
     return y1*s + m;
   };
 
-  return p5;
-
-});
-
-
-
+  module.exports = p5;

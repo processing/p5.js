@@ -4,14 +4,13 @@
  * @for p5
  * @requires constants
  */
-define(function (require) {
 
   'use strict';
 
-  require('core/shim');
+  require('./shim');
 
   // Core needs the PVariables object
-  var constants = require('core/constants');
+  var constants = require('./constants');
 
   /**
    * This is the p5 instance constructor.
@@ -498,15 +497,13 @@ define(function (require) {
 
   p5.prototype.registerPreloadMethod = function(m) {
     p5.prototype._preloadMethods.push(m);
-  }.bind(this);
+  };
 
   p5.prototype.registerMethod = function(name, m) {
     if (!p5.prototype._registeredMethods.hasOwnProperty(name)) {
       p5.prototype._registeredMethods[name] = [];
     }
     p5.prototype._registeredMethods[name].push(m);
-  }.bind(this);
+  };
 
-  return p5;
-
-});
+  module.exports = p5;

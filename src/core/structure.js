@@ -4,11 +4,10 @@
  * @for p5
  * @requires core
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
+  var p5 = require('./core');
 
   p5.prototype.exit = function() {
     throw 'exit() not implemented, see remove()';
@@ -311,6 +310,4 @@ define(function (require) {
   };
 
 
-  return p5;
-
-});
+  module.exports = p5;

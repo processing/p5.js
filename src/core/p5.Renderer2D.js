@@ -1,21 +1,20 @@
-define(function(require) {
 
-  var p5 = require('core/core');
-  var canvas = require('core/canvas');
-  var constants = require('core/constants');
-  var filters = require('image/filters');
+  var p5 = require('./core');
+  var canvas = require('./canvas');
+  var constants = require('./constants');
+  var filters = require('../image/filters');
 
-  require('core/p5.Graphics');
+  require('./p5.Renderer');
 
   /**
-   * 2D graphics class.  Can also be used as an off-screen graphics buffer.
-   * A p5.Graphics2D object can be constructed
-   * with the <code>createGraphics2D()</code> function. The fields and methods
+   * 2D graphics renderer class.  Can also be used as an off-screen
+   * graphics buffer. A p5.Renderer2D object can be constructed
+   * with the <code>createRenderer2D()</code> function. The fields and methods
    * for this class are extensive, but mirror the normal drawing API for p5.
    *
-   * @class p5.Graphics2D
+   * @class p5.Renderer2D
    * @constructor
-   * @extends p5.Element
+   * @extends p5.Renderer
    * @param {String} elt DOM node that is wrapped
    * @param {Object} [pInst] pointer to p5 instance
    * @example
@@ -24,7 +23,7 @@ define(function(require) {
    * var pg;
    * function setup() {
    *   createCanvas(100, 100);
-   *   pg = createGraphics2D(40, 40);
+   *   pg = createRenderer2D(40, 40);
    * }
    * function draw() {
    *   background(200);
@@ -40,24 +39,24 @@ define(function(require) {
   var styleEmpty = 'rgba(0,0,0,0)';
   // var alphaThreshold = 0.00125; // minimum visible
 
-  p5.Graphics2D = function(elt, pInst, isMainCanvas){
-    p5.Graphics.call(this, elt, pInst, isMainCanvas);
+  p5.Renderer2D = function(elt, pInst, isMainCanvas){
+    p5.Renderer.call(this, elt, pInst, isMainCanvas);
     this.drawingContext = this.canvas.getContext('2d');
     this._pInst._setProperty('drawingContext', this.drawingContext);
     return this;
   };
 
-  p5.Graphics2D.prototype = Object.create(p5.Graphics.prototype);
+  p5.Renderer2D.prototype = Object.create(p5.Renderer.prototype);
 
-  p5.Graphics2D.prototype._applyDefaults = function() {
+  p5.Renderer2D.prototype._applyDefaults = function() {
     this.drawingContext.fillStyle = constants._DEFAULT_FILL;
     this.drawingContext.strokeStyle = constants._DEFAULT_STROKE;
     this.drawingContext.lineCap = constants.ROUND;
     this.drawingContext.font = 'normal 12px sans-serif';
   };
 
-  p5.Graphics2D.prototype.resize = function(w,h) {
-    p5.Graphics.prototype.resize.call(this, w,h);
+  p5.Renderer2D.prototype.resize = function(w,h) {
+    p5.Renderer.prototype.resize.call(this, w,h);
     this.drawingContext.scale(this._pInst.pixelDensity,
                               this._pInst.pixelDensity);
   };
@@ -66,7 +65,7 @@ define(function(require) {
   // COLOR | Setting
   //////////////////////////////////////////////
 
-  p5.Graphics2D.prototype.background = function() {
+  p5.Renderer2D.prototype.background = function() {
     this.drawingContext.save();
     this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
     this.drawingContext.scale(this._pInst.pixelDensity,
@@ -87,18 +86,18 @@ define(function(require) {
     this.drawingContext.restore();
   };
 
-  p5.Graphics2D.prototype.clear = function() {
+  p5.Renderer2D.prototype.clear = function() {
     this.drawingContext.clearRect(0, 0, this.width, this.height);
   };
 
-  p5.Graphics2D.prototype.fill = function() {
+  p5.Renderer2D.prototype.fill = function() {
 
     var ctx = this.drawingContext;
     var color = this._pInst.color.apply(this._pInst, arguments);
     ctx.fillStyle = color.toString();
   };
 
-  p5.Graphics2D.prototype.stroke = function() {
+  p5.Renderer2D.prototype.stroke = function() {
     var ctx = this.drawingContext;
     var color = this._pInst.color.apply(this._pInst, arguments);
     ctx.strokeStyle = color.toString();
@@ -108,7 +107,7 @@ define(function(require) {
   // IMAGE | Loading & Displaying
   //////////////////////////////////////////////
 
-  p5.Graphics2D.prototype.image = function (img, x, y, w, h) {
+  p5.Renderer2D.prototype.image = function (img, x, y, w, h) {
     var frame = img.canvas || img.elt;
     try {
       if (this._pInst._tint && img.canvas) {
@@ -124,7 +123,7 @@ define(function(require) {
     }
   };
 
-  p5.Graphics2D.prototype._getTintedImageCanvas = function (img) {
+  p5.Renderer2D.prototype._getTintedImageCanvas = function (img) {
     if (!img.canvas) {
       return img;
     }
@@ -154,10 +153,10 @@ define(function(require) {
   // IMAGE | Pixels
   //////////////////////////////////////////////
 
-  p5.Graphics2D.prototype.blendMode = function(mode) {
+  p5.Renderer2D.prototype.blendMode = function(mode) {
     this.drawingContext.globalCompositeOperation = mode;
   };
-  p5.Graphics2D.prototype.blend = function() {
+  p5.Renderer2D.prototype.blend = function() {
     var currBlend = this.drawingContext.globalCompositeOperation;
     var blendMode = arguments[arguments.length - 1];
 
@@ -172,7 +171,7 @@ define(function(require) {
     this.drawingContext.globalCompositeOperation = currBlend;
   };
 
-  p5.Graphics2D.prototype.copy = function () {
+  p5.Renderer2D.prototype.copy = function () {
     var srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
     if (arguments.length === 9) {
       srcImage = arguments[0];
@@ -197,17 +196,17 @@ define(function(require) {
     } else {
       throw new Error('Signature not supported');
     }
-    p5.Graphics2D._copyHelper(srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
+    p5.Renderer2D._copyHelper(srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
   };
 
-  p5.Graphics2D._copyHelper =
+  p5.Renderer2D._copyHelper =
   function (srcImage, sx, sy, sw, sh, dx, dy, dw, dh) {
     var s = srcImage.canvas.width / srcImage.width;
     this.drawingContext.drawImage(srcImage.canvas,
       s * sx, s * sy, s * sw, s * sh, dx, dy, dw, dh);
   };
 
-  p5.Graphics2D.prototype.get = function(x, y, w, h) {
+  p5.Renderer2D.prototype.get = function(x, y, w, h) {
     if (x === undefined && y === undefined &&
         w === undefined && h === undefined){
       x = 0;
@@ -254,7 +253,7 @@ define(function(require) {
     }
   };
 
-  p5.Graphics2D.prototype.loadPixels = function () {
+  p5.Renderer2D.prototype.loadPixels = function () {
     var pd = this.pixelDensity || this._pInst.pixelDensity;
     var w = this.width * pd;
     var h = this.height * pd;
@@ -268,7 +267,7 @@ define(function(require) {
     }
   };
 
-  p5.Graphics2D.prototype.set = function (x, y, imgOrCol) {
+  p5.Renderer2D.prototype.set = function (x, y, imgOrCol) {
     if (imgOrCol instanceof p5.Image) {
       this.drawingContext.save();
       this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
@@ -329,7 +328,7 @@ define(function(require) {
     }
   };
 
-  p5.Graphics2D.prototype.updatePixels = function (x, y, w, h) {
+  p5.Renderer2D.prototype.updatePixels = function (x, y, w, h) {
     var pd = this.pixelDensity || this._pInst.pixelDensity;
     if (x === undefined &&
         y === undefined &&
@@ -354,59 +353,97 @@ define(function(require) {
   // SHAPE | 2D Primitives
   //////////////////////////////////////////////
 
-  p5.Graphics2D.prototype.arc =
-    function(x, y, w, h, start, stop, mode, curves) {
-    if (!this._pInst._doStroke && !this._pInst._doFill) {
-      return;
-    }
+  /**
+   * Generate a cubic Bezier representing an arc on the unit circle of total
+   * angle `size` radians, beginning `start` radians above the x-axis. Up to
+   * four of these curves are combined to make a full arc.
+   *
+   * See www.joecridge.me/bezier.pdf for an explanation of the method.
+   */
+  p5.Renderer2D.prototype._acuteArcToBezier =
+    function _acuteArcToBezier(start, size) {
+    // Evauate constants.
+    var alpha = size / 2.0,
+      cos_alpha = Math.cos(alpha),
+      sin_alpha = Math.sin(alpha),
+      cot_alpha = 1.0 / Math.tan(alpha),
+      phi = start + alpha,  // This is how far the arc needs to be rotated.
+      cos_phi = Math.cos(phi),
+      sin_phi = Math.sin(phi),
+      lambda = (4.0 - cos_alpha) / 3.0,
+      mu = sin_alpha + (cos_alpha - lambda) * cot_alpha;
+
+    // Return rotated waypoints.
+    return {
+      ax: Math.cos(start),
+      ay: Math.sin(start),
+      bx: lambda * cos_phi + mu * sin_phi,
+      by: lambda * sin_phi - mu * cos_phi,
+      cx: lambda * cos_phi - mu * sin_phi,
+      cy: lambda * sin_phi + mu * cos_phi,
+      dx: Math.cos(start + size),
+      dy: Math.sin(start + size)
+    };
+  };
+
+  p5.Renderer2D.prototype.arc =
+    function(x, y, w, h, start, stop, mode) {
     var ctx = this.drawingContext;
     var vals = canvas.arcModeAdjust(x, y, w, h, this._pInst._ellipseMode);
-    var rx = vals.w / 2;
-    var ry = vals.h / 2;
-    ctx.beginPath();
-    curves.forEach(function (curve, index) {
-      if (index === 0) {
-        ctx.moveTo(vals.x + curve.x1 * rx, vals.y + curve.y1 * ry);
-      }
-      ctx.bezierCurveTo(vals.x + curve.x2 * rx,
-        vals.y + curve.y2 * ry,
-        vals.x + curve.x3 * rx,
-        vals.y + curve.y3 * ry,
-        vals.x + curve.x4 * rx,
-        vals.y + curve.y4 * ry);
-    });
+    var rx = vals.w / 2.0;
+    var ry = vals.h / 2.0;
+    var epsilon = 0.00001;  // Smallest visible angle on displays up to 4K.
+    var arcToDraw = 0;
+    var curves = [];
+
+    // Create curves
+    while(stop - start > epsilon) {
+      arcToDraw = Math.min(stop - start, constants.HALF_PI);
+      curves.push(this._acuteArcToBezier(start, arcToDraw));
+      start += arcToDraw;
+    }
+
+    // Fill curves
     if (this._pInst._doFill) {
+      ctx.beginPath();
+      curves.forEach(function (curve, index) {
+        if (index === 0) {
+          ctx.moveTo(vals.x + curve.ax * rx, vals.y + curve.ay * ry);
+        }
+        ctx.bezierCurveTo(vals.x + curve.bx * rx, vals.y + curve.by * ry,
+                          vals.x + curve.cx * rx, vals.y + curve.cy * ry,
+                          vals.x + curve.dx * rx, vals.y + curve.dy * ry);
+      });
       if (mode === constants.PIE || mode == null) {
         ctx.lineTo(vals.x, vals.y);
       }
       ctx.closePath();
       ctx.fill();
-      if (this._pInst._doStroke) {
-        if (mode === constants.CHORD || mode === constants.PIE) {
-          ctx.stroke();
-          return this;
-        }
-      }
     }
+
+    // Stroke curves
     if (this._pInst._doStroke) {
-      if (mode === constants.OPEN || mode == null) {
-        ctx.beginPath();
-        curves.forEach(function (curve, index) {
-          if (index === 0) {
-            ctx.moveTo(vals.x + curve.x1 * rx, vals.y + curve.y1 * ry);
-          }
-          ctx.bezierCurveTo(vals.x + curve.x2 * rx,
-            vals.y + curve.y2 * ry, vals.x + curve.x3 * rx,
-            vals.y + curve.y3 * ry, vals.x + curve.x4 * rx,
-            vals.y + curve.y4 * ry);
-        });
-        ctx.stroke();
+      ctx.beginPath();
+      curves.forEach(function (curve, index) {
+        if (index === 0) {
+          ctx.moveTo(vals.x + curve.ax * rx, vals.y + curve.ay * ry);
+        }
+        ctx.bezierCurveTo(vals.x + curve.bx * rx, vals.y + curve.by * ry,
+                          vals.x + curve.cx * rx, vals.y + curve.cy * ry,
+                          vals.x + curve.dx * rx, vals.y + curve.dy * ry);
+      });
+      if (mode === constants.PIE) {
+        ctx.lineTo(vals.x, vals.y);
+        ctx.closePath();
+      } else if (mode === constants.CHORD) {
+        ctx.closePath();
       }
+      ctx.stroke();
     }
     return this;
   };
 
-  p5.Graphics2D.prototype.ellipse = function(x, y, w, h) {
+  p5.Renderer2D.prototype.ellipse = function(x, y, w, h) {
     var ctx = this.drawingContext;
     var doFill = this._pInst._doFill, doStroke = this._pInst._doStroke;
     if (doFill && !doStroke) {
@@ -419,7 +456,7 @@ define(function(require) {
       }
     }
     var vals = canvas.modeAdjust(x, y, w, h, this._pInst._ellipseMode);
-    var kappa = 0.5522848,
+    var kappa = 0.5522847498,
       ox = (vals.w / 2) * kappa, // control point offset horizontal
       oy = (vals.h / 2) * kappa, // control point offset vertical
       xe = vals.x + vals.w,      // x-end
@@ -441,7 +478,7 @@ define(function(require) {
     }
   };
 
-  p5.Graphics2D.prototype.line = function(x1, y1, x2, y2) {
+  p5.Renderer2D.prototype.line = function(x1, y1, x2, y2) {
     var ctx = this.drawingContext;
     if (!this._pInst._doStroke) {
       return this;
@@ -462,7 +499,7 @@ define(function(require) {
     return this;
   };
 
-  p5.Graphics2D.prototype.point = function(x, y) {
+  p5.Renderer2D.prototype.point = function(x, y) {
     var ctx = this.drawingContext;
     var s = ctx.strokeStyle;
     var f = ctx.fillStyle;
@@ -491,7 +528,7 @@ define(function(require) {
     ctx.fillStyle = f;
   };
 
-  p5.Graphics2D.prototype.quad =
+  p5.Renderer2D.prototype.quad =
     function(x1, y1, x2, y2, x3, y3, x4, y4) {
     var ctx = this.drawingContext;
     var doFill = this._pInst._doFill, doStroke = this._pInst._doStroke;
@@ -519,7 +556,7 @@ define(function(require) {
     return this;
   };
 
-  p5.Graphics2D.prototype.rect = function(x, y, w, h, tl, tr, br, bl) {
+  p5.Renderer2D.prototype.rect = function(x, y, w, h, tl, tr, br, bl) {
     var ctx = this.drawingContext;
     var doFill = this._pInst._doFill, doStroke = this._pInst._doStroke;
     if (doFill && !doStroke) {
@@ -587,7 +624,7 @@ define(function(require) {
     return this;
   };
 
-  p5.Graphics2D.prototype.triangle = function(x1, y1, x2, y2, x3, y3) {
+  p5.Renderer2D.prototype.triangle = function(x1, y1, x2, y2, x3, y3) {
     var ctx = this.drawingContext;
     var doFill = this._pInst._doFill, doStroke = this._pInst._doStroke;
     if (doFill && !doStroke) {
@@ -612,7 +649,7 @@ define(function(require) {
     }
   };
 
-  p5.Graphics2D.prototype.endShape =
+  p5.Renderer2D.prototype.endShape =
   function (mode, vertices, isCurve, isBezier,
       isQuadratic, isContour, shapeKind) {
     if (vertices.length === 0) {
@@ -846,19 +883,39 @@ define(function(require) {
   // SHAPE | Attributes
   //////////////////////////////////////////////
 
-  p5.Graphics2D.prototype.noSmooth = function() {
-    this.drawingContext.mozImageSmoothingEnabled = false;
-    this.drawingContext.webkitImageSmoothingEnabled = false;
+  p5.Renderer2D.prototype.noSmooth = function() {
+    if ('imageSmoothingEnabled' in this.drawingContext) {
+      this.drawingContext.imageSmoothingEnabled = false;
+    }
+    else if ('mozImageSmoothingEnabled' in this.drawingContext) {
+      this.drawingContext.mozImageSmoothingEnabled = false;
+    }
+    else if ('webkitImageSmoothingEnabled' in this.drawingContext) {
+      this.drawingContext.webkitImageSmoothingEnabled = false;
+    }
+    else if ('msImageSmoothingEnabled' in this.drawingContext) {
+      this.drawingContext.msImageSmoothingEnabled = false;
+    }
     return this;
   };
 
-  p5.Graphics2D.prototype.smooth = function() {
-    this.drawingContext.mozImageSmoothingEnabled = true;
-    this.drawingContext.webkitImageSmoothingEnabled = true;
+  p5.Renderer2D.prototype.smooth = function() {
+    if ('imageSmoothingEnabled' in this.drawingContext) {
+      this.drawingContext.imageSmoothingEnabled = true;
+    }
+    else if ('mozImageSmoothingEnabled' in this.drawingContext) {
+      this.drawingContext.mozImageSmoothingEnabled = true;
+    }
+    else if ('webkitImageSmoothingEnabled' in this.drawingContext) {
+      this.drawingContext.webkitImageSmoothingEnabled = true;
+    }
+    else if ('msImageSmoothingEnabled' in this.drawingContext) {
+      this.drawingContext.msImageSmoothingEnabled = true;
+    }
     return this;
   };
 
-  p5.Graphics2D.prototype.strokeCap = function(cap) {
+  p5.Renderer2D.prototype.strokeCap = function(cap) {
     if (cap === constants.ROUND ||
       cap === constants.SQUARE ||
       cap === constants.PROJECT) {
@@ -867,7 +924,7 @@ define(function(require) {
     return this;
   };
 
-  p5.Graphics2D.prototype.strokeJoin = function(join) {
+  p5.Renderer2D.prototype.strokeJoin = function(join) {
     if (join === constants.ROUND ||
       join === constants.BEVEL ||
       join === constants.MITER) {
@@ -876,7 +933,7 @@ define(function(require) {
     return this;
   };
 
-  p5.Graphics2D.prototype.strokeWeight = function(w) {
+  p5.Renderer2D.prototype.strokeWeight = function(w) {
     if (typeof w === 'undefined' || w === 0) {
       // hack because lineWidth 0 doesn't work
       this.drawingContext.lineWidth = 0.0001;
@@ -886,18 +943,18 @@ define(function(require) {
     return this;
   };
 
-  p5.Graphics2D.prototype._getFill = function(){
+  p5.Renderer2D.prototype._getFill = function(){
     return this.drawingContext.fillStyle;
   };
 
-  p5.Graphics2D.prototype._getStroke = function(){
+  p5.Renderer2D.prototype._getStroke = function(){
     return this.drawingContext.strokeStyle;
   };
 
   //////////////////////////////////////////////
   // SHAPE | Curves
   //////////////////////////////////////////////
-  p5.Graphics2D.prototype.bezier = function (x1, y1, x2, y2, x3, y3, x4, y4) {
+  p5.Renderer2D.prototype.bezier = function (x1, y1, x2, y2, x3, y3, x4, y4) {
     this._pInst.beginShape();
     this._pInst.vertex(x1, y1);
     this._pInst.bezierVertex(x2, y2, x3, y3, x4, y4);
@@ -905,7 +962,7 @@ define(function(require) {
     return this;
   };
 
-  p5.Graphics2D.prototype.curve = function (x1, y1, x2, y2, x3, y3, x4, y4) {
+  p5.Renderer2D.prototype.curve = function (x1, y1, x2, y2, x3, y3, x4, y4) {
     this._pInst.beginShape();
     this._pInst.curveVertex(x1, y1);
     this._pInst.curveVertex(x2, y2);
@@ -919,7 +976,7 @@ define(function(require) {
   // SHAPE | Vertex
   //////////////////////////////////////////////
 
-  p5.Graphics2D.prototype._doFillStrokeClose = function () {
+  p5.Renderer2D.prototype._doFillStrokeClose = function () {
     if (this._pInst._doFill) {
       this.drawingContext.fill();
     }
@@ -933,21 +990,21 @@ define(function(require) {
   // TRANSFORM
   //////////////////////////////////////////////
 
-  p5.Graphics2D.prototype.applyMatrix =
+  p5.Renderer2D.prototype.applyMatrix =
   function(n00, n01, n02, n10, n11, n12) {
     this.drawingContext.transform(n00, n01, n02, n10, n11, n12);
   };
 
-  p5.Graphics2D.prototype.resetMatrix = function() {
+  p5.Renderer2D.prototype.resetMatrix = function() {
     this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
     return this;
   };
 
-  p5.Graphics2D.prototype.rotate = function(r) {
+  p5.Renderer2D.prototype.rotate = function(r) {
     this.drawingContext.rotate(r);
   };
 
-  p5.Graphics2D.prototype.scale = function() {
+  p5.Renderer2D.prototype.scale = function() {
     var x = 1.0,
       y = 1.0;
     if (arguments.length === 1) {
@@ -961,7 +1018,7 @@ define(function(require) {
     return this;
   };
 
-  p5.Graphics2D.prototype.shearX = function(angle) {
+  p5.Renderer2D.prototype.shearX = function(angle) {
     if (this._pInst._angleMode === constants.DEGREES) {
       angle = this._pInst.radians(angle);
     }
@@ -969,7 +1026,7 @@ define(function(require) {
     return this;
   };
 
-  p5.Graphics2D.prototype.shearY = function(angle) {
+  p5.Renderer2D.prototype.shearY = function(angle) {
     if (this._pInst._angleMode === constants.DEGREES) {
       angle = this._pInst.radians(angle);
     }
@@ -977,7 +1034,7 @@ define(function(require) {
     return this;
   };
 
-  p5.Graphics2D.prototype.translate = function(x, y) {
+  p5.Renderer2D.prototype.translate = function(x, y) {
     this.drawingContext.translate(x, y);
     return this;
   };
@@ -987,7 +1044,7 @@ define(function(require) {
   //
   //////////////////////////////////////////////
 
-  p5.Graphics2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
+  p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
 
     var p = this._pInst, cars, n, ii, jj, line, testLine,
       testWidth, words, totalHeight, baselineHacked;
@@ -1024,6 +1081,12 @@ define(function(require) {
             line = testLine;
           }
         }
+      }
+
+      if (this._pInst._rectMode === constants.CENTER ){
+
+        x -= maxWidth / 2;
+        y -= maxHeight / 2;
       }
 
       switch (this.drawingContext.textAlign) {
@@ -1087,7 +1150,7 @@ define(function(require) {
     return p;
   };
 
-  p5.Graphics2D.prototype._renderText = function(p, line, x, y) {
+  p5.Renderer2D.prototype._renderText = function(p, line, x, y) {
 
     if (p._isOpenType()) {
 
@@ -1112,7 +1175,7 @@ define(function(require) {
     return p;
   };
 
-  p5.Graphics2D.prototype.textWidth = function(s) {
+  p5.Renderer2D.prototype.textWidth = function(s) {
 
     if (this._pInst._isOpenType()) {
 
@@ -1122,7 +1185,7 @@ define(function(require) {
     return this.drawingContext.measureText(s).width;
   };
 
-  p5.Graphics2D.prototype.textAlign = function(h, v) {
+  p5.Renderer2D.prototype.textAlign = function(h, v) {
 
     if (arguments.length) {
 
@@ -1164,7 +1227,7 @@ define(function(require) {
     }
   };
 
-  p5.Graphics2D.prototype._applyTextProperties = function() {
+  p5.Renderer2D.prototype._applyTextProperties = function() {
 
     var font, p = this._pInst;
 
@@ -1189,13 +1252,12 @@ define(function(require) {
   // STRUCTURE
   //////////////////////////////////////////////
 
-  p5.Graphics2D.prototype.push = function() {
+  p5.Renderer2D.prototype.push = function() {
     this.drawingContext.save();
   };
 
-  p5.Graphics2D.prototype.pop = function() {
+  p5.Renderer2D.prototype.pop = function() {
     this.drawingContext.restore();
   };
 
-  return p5.Graphics2D;
-});
+  module.exports = p5.Renderer2D;

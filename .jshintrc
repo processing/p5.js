@@ -13,8 +13,7 @@
   "unused": "vars",
 
   "node": true,
-  
+
   "trailing": true,
-  "curly": true,
-  "indent": 2
+  "curly": true
 }

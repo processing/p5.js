@@ -6,12 +6,11 @@
  * @requires canvas
  * @requires constants
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
-  require('3d/p5.Geometry3D');
+  var p5 = require('../core/core');
+  require('./p5.Geometry3D');
 
   /**
    * generate plane geomery
@@ -19,7 +18,7 @@ define(function (require) {
    * @param  {Number} height  the height of the plane
    * @param  {Number} detailX how many segments in the x axis
    * @param  {Number} detailY how many segments in the y axis
-   * @return {[type]}         [description]        
+   * @return {[type]}         [description]
    */
   p5.prototype.plane = function(width, height, detailX, detailY){
 
@@ -30,7 +29,7 @@ define(function (require) {
     detailY = detailY || 1;
 
     var uuid = 'plane|'+width+'|'+height+'|'+detailX+'|'+detailY;
- 
+
     if(this._graphics.notInHash(uuid)){
 
       var geometry3d = new p5.Geometry3D();
@@ -41,13 +40,13 @@ define(function (require) {
         var z = 0;
         return new p5.Vector(x, y, z);
       };
-      
+
       geometry3d.parametricGeometry(createPlane, detailX, detailY);
-      
+
       var obj = geometry3d.generateObj();
- 
+
       this._graphics.initBuffer(uuid, obj);
-    
+
     }
 
     this._graphics.drawBuffer(uuid);
@@ -71,7 +70,7 @@ define(function (require) {
     var uuid = 'sphere|'+radius+'|'+detailX+'|'+detailY;
 
     if(this._graphics.notInHash(uuid)){
-    
+
       var geometry3d = new p5.Geometry3D();
 
       var createSphere = function(u, v){
@@ -123,11 +122,11 @@ define(function (require) {
         var z = radius * Math.cos(theta);
         return new p5.Vector(x, y, z);
       };
-      
+
       geometry3d.parametricGeometry(createCylinder, detailX, detailY);
 
       //TODO: top and bottom faces
-      //this.vertices.push(new p5.Vector(0, height/2, 0));  
+      //this.vertices.push(new p5.Vector(0, height/2, 0));
       //this.vertices.push(new p5.Vector(0, -height/2, 0));
 
       var obj = geometry3d.generateObj();
@@ -149,7 +148,7 @@ define(function (require) {
    * @return {[type]}         [description]
    */
   p5.prototype.cone = function(radius, height, detailX, detailY){
-    
+
     radius = radius || 50;
     height = height || 50;
 
@@ -193,7 +192,7 @@ define(function (require) {
    * @return {[type]}         [description]
    */
   p5.prototype.torus = function(radius, tube, detailX, detailY){
-    
+
     radius = radius || 50;
     tube = tube || 20;
 
@@ -288,7 +287,7 @@ define(function (require) {
         var z = 2 * depth * v - depth;
         return new p5.Vector(x, y, z);
       };
-      
+
       geometry3d.parametricGeometry(
         createPlane1, detailX, detailY, geometry3d.vertices.length);
       geometry3d.parametricGeometry(
@@ -301,7 +300,7 @@ define(function (require) {
         createPlane5, detailX, detailY, geometry3d.vertices.length);
       geometry3d.parametricGeometry(
         createPlane6, detailX, detailY, geometry3d.vertices.length);
-      
+
       var obj = geometry3d.generateObj(true);
 
       this._graphics.initBuffer(uuid, obj);
@@ -313,6 +312,4 @@ define(function (require) {
 
   };
 
-  return p5;
-
-});
+  module.exports = p5;

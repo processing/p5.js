@@ -6,12 +6,11 @@
  * @requires constants
  */
 
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
-  var constants = require('core/constants');
+  var p5 = require('../core/core');
+  var constants = require('../core/constants');
 
   /**
    * The system variable mouseX always contains the current horizontal
@@ -680,6 +679,4 @@ define(function (require) {
     }
   };
 
-  return p5;
-
-});
+  module.exports = p5;

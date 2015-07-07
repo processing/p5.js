@@ -3,9 +3,8 @@
  * @submodule DOM
  * @for p5.Element
  */
-define(function(require) {
 
-  var p5 = require('core/core');
+  var p5 = require('./core');
 
   /**
    * Base class for all elements added to a sketch, including canvas,
@@ -500,5 +499,4 @@ define(function(require) {
   };
 
 
-  return p5.Element;
-});
+  module.exports = p5.Element;

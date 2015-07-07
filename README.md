@@ -14,7 +14,7 @@ If you have found a bug in the p5.js library, you can file it here under the [â€
 
 ##p5.js library
 
-You can [download the p5.js library here](http://p5js.org/download) or use `lib/p5.js` for the less stable, newest version.
+To use p5.js, you can [download the p5.js library here](http://p5js.org/download).  If you are interested in the most recent, less stable version, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [development](https://github.com/processing/p5.js/wiki/Development) wiki for more information about our build process.
 
 ##Learning
 

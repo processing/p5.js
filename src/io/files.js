@@ -7,12 +7,12 @@
  * @requires core
  * @requires reqwest
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
+  var p5 = require('../core/core');
   var reqwest = require('reqwest');
+  require('../core/error_helpers');
 
 
   /**
@@ -64,6 +64,10 @@ define(function (require) {
    * </code></div>
    *
    */
+
+
+
+
   p5.prototype.loadFont = function(path, callback) {
 
     var p5Font = new p5.Font(this);
@@ -242,7 +246,7 @@ define(function (require) {
     var req = new XMLHttpRequest();
     req.open('GET', path, true);
     req.onreadystatechange = function () {
-      if (req.readyState === 4 && (req.status === 200 || req.status === 0)) {
+      if (req.readyState === 4 && (req.status === 200 )) {
         var arr = req.responseText.match(/[^\r\n]+/g);
         for (var k in arr) {
           ret[k] = arr[k];
@@ -250,6 +254,9 @@ define(function (require) {
         if (typeof callback !== 'undefined') {
           callback(ret);
         }
+      }
+      else{
+        p5._friendlyFileLoadError(3,path);
       }
     };
     req.send(null);
@@ -295,37 +302,37 @@ define(function (require) {
    *                                     loadTable() completes, Table object is
    *                                     passed in as first argument
    * @return {Object}                    Table object containing data
-   *  
+   *
    * @example
 	* <div class="norender">
 	* <code>
-	* // Given the following CSV file called "mammals.csv" 
+	* // Given the following CSV file called "mammals.csv"
    * // located in the project's "assets" folder:
-   * // 
+   * //
 	* // id,species,name
 	* // 0,Capra hircus,Goat
 	* // 1,Panthera pardus,Leopard
 	* // 2,Equus zebra,Zebra
-	* 
+	*
 	* var table;
-	* 
+	*
 	* function preload() {
 	*   //my table is comma separated value "csv"
 	*   //and has a header specifying the columns labels
 	*   table = loadTable("assets/mammals.csv", "csv", "header");
 	*   //the file can be remote
-	*   //table = loadTable("http://p5js.org/reference/assets/mammals.csv", 
+	*   //table = loadTable("http://p5js.org/reference/assets/mammals.csv",
 	*   //                  "csv", "header");
 	* }
-	* 
+	*
 	* function setup() {
 	*   //count the columns
 	*   print(table.getRowCount() + " total rows in table");
 	*   print(table.getColumnCount() + " total columns in table");
-	* 
+	*
 	*   print(table.getColumn("name"));
 	*   //["Goat", "Leopard", "Zebra"]
-	* 
+	*
 	*   //cycle through the table
 	*   for (var r = 0; r < table.getRowCount(); r++)
 	*     for (var c = 0; c < table.getColumnCount(); c++) {
@@ -509,6 +516,7 @@ define(function (require) {
         }
       })
       .fail(function(err,msg){
+        p5._friendlyFileLoadError(2,path);
         if (typeof callback !== 'undefined') {
           callback(false);
         }
@@ -561,14 +569,18 @@ define(function (require) {
     reqwest({
       url: path,
       type: 'xml',
-      crossOrigin: true
-    }).then(function (resp) {
-      var x = resp.documentElement;
-      ret.appendChild(x);
-      if (typeof callback !== 'undefined') {
-        callback(resp);
+      crossOrigin: true,
+      error: function(err){
+        p5._friendlyFileLoadError(1,path);
       }
-    });
+    })
+      .then(function(resp){
+        var x = resp.documentElement;
+        ret.appendChild(x);
+        if (typeof callback !== 'undefined') {
+          callback(resp);
+        }
+      });
     return ret;
   };
 
@@ -820,7 +832,7 @@ define(function (require) {
    *  save(cnv, 'myCanvas.jpg');      // Saves canvas as an image
    *
    *  var gb = createGraphics(100, 100);
-   *  save(gb, 'myGraphics.jpg');      // Saves p5.Graphics object as an image
+   *  save(gb, 'myGraphics.jpg');      // Saves p5.Renderer object as an image
    *
    *  save(myTable, 'myTable.html');  // Saves table as html file
    *  save(myTable, 'myTable.csv',);  // Comma Separated Values
@@ -870,7 +882,7 @@ define(function (require) {
     // otherwise, parse the arguments
 
     // if first param is a p5Graphics, then saveCanvas
-    else if (args[0] instanceof p5.Graphics) {
+    else if (args[0] instanceof p5.Renderer) {
       p5.prototype.saveCanvas(args[0].elt, args[1], args[2]);
       return;
     }
@@ -1019,6 +1031,19 @@ define(function (require) {
 
   };
 
+  // =======
+  // HELPERS
+  // =======
+
+  function escapeHelper(content) {
+    return content
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
   /**
    *  Writes the contents of a Table object to a file. Defaults to a
    *  text file with comma-separated-values ('csv') but can also
@@ -1135,19 +1160,6 @@ define(function (require) {
     pWriter.flush();
   }; // end saveTable()
 
-  // =======
-  // HELPERS
-  // =======
-
-  var escapeHelper = function(content) {
-    return content
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
-  };
-
   /**
    *  Generate a blob of file data as a url to prepare for download.
    *  Accepts an array of data, a filename, and an extension (optional).
@@ -1260,5 +1272,4 @@ define(function (require) {
     document.body.removeChild(event.target);
   }
 
-  return p5;
-});
+  module.exports = p5;

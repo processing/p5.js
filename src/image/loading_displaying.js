@@ -4,16 +4,15 @@
  * @for p5
  * @requires core
  */
-define(function (require) {
 
   'use strict';
 
-  var p5 = require('core/core');
-  var Filters = require('image/filters');
-  var canvas = require('core/canvas');
-  var constants = require('core/constants');
+  var p5 = require('../core/core');
+  var Filters = require('./filters');
+  var canvas = require('../core/canvas');
+  var constants = require('../core/constants');
 
-  require('core/error_helpers');
+  require('../core/error_helpers');
 
   /**
    * Loads an image from a path and creates a p5.Image from it.
@@ -69,8 +68,8 @@ define(function (require) {
         successCallback(pImg);
       }
     };
-
     img.onerror = function(e) {
+      p5._friendlyFileLoadError(0,img.src);
       if (typeof failureCallback === 'function') {
         failureCallback(e);
       }
@@ -124,14 +123,15 @@ define(function (require) {
    * </div>
    */
   p5.prototype.image = function(img, x, y, width, height) {
-    this._validateParameters(
-      'image',
-      arguments,
-      [
-        ['p5.Image', 'Number', 'Number'],
-        ['p5.Image', 'Number', 'Number', 'Number', 'Number']
-      ]
-    );
+    // Temporarily disabling until options for p5.Graphics are added.
+    // this._validateParameters(
+    //   'image',
+    //   arguments,
+    //   [
+    //     ['p5.Image', 'Number', 'Number'],
+    //     ['p5.Image', 'Number', 'Number', 'Number', 'Number']
+    //   ]
+    // );
 
     // set defaults
     x = x || 0;
@@ -340,6 +340,4 @@ define(function (require) {
   };
 
 
-  return p5;
-
-});
+  module.exports = p5;
