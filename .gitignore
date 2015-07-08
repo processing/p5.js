@@ -6,3 +6,4 @@ lib_old/*
 lib/*
 docs/reference/*
 docs/yuidoc-p5-theme/assets/js/reference.js*
+!*.gitkeep

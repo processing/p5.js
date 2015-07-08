@@ -1,5 +1,5 @@
 suite('2D Primitives', function() {
-  
+
   var myp5 = new p5(function( p ) {
     p.setup = function() {};
     p.draw = function() {};

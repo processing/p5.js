@@ -1,0 +1,7 @@
+If you expected to see `p5.js`, `p5.min.js`, or other javascript files here, you probably need to run 
+
+```javascript
+grunt
+```
+
+on the command line from the root directory of this project.
