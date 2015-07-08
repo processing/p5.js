@@ -50,9 +50,9 @@ define(function (require) {
     detailX = detailX || 1;
     detailY = detailY || 1;
 
-    var uuid = 'plane|'+width+'|'+height+'|'+detailX+'|'+detailY;
+    var gId = 'plane|'+width+'|'+height+'|'+detailX+'|'+detailY;
  
-    if(!this._graphics.geoInHash(uuid)){
+    if(!this._graphics.geometryInHash(gId)){
 
       var geometry3d = new p5.Geometry3D();
 
@@ -67,11 +67,11 @@ define(function (require) {
       
       var obj = geometry3d.generateObj();
  
-      this._graphics.initBuffer(uuid, obj);
+      this._graphics.initBuffer(gId, obj);
     
     }
 
-    this._graphics.drawBuffer(uuid);
+    this._graphics.drawBuffer(gId);
 
   };
 
@@ -110,9 +110,9 @@ define(function (require) {
     detailX = detailX || 10;
     detailY = detailY || 6;
 
-    var uuid = 'sphere|'+radius+'|'+detailX+'|'+detailY;
+    var gId = 'sphere|'+radius+'|'+detailX+'|'+detailY;
 
-    if(!this._graphics.geoInHash(uuid)){
+    if(!this._graphics.geometryInHash(gId)){
     
       var geometry3d = new p5.Geometry3D();
 
@@ -129,10 +129,10 @@ define(function (require) {
 
       var obj = geometry3d.generateObj();
 
-      this._graphics.initBuffer(uuid, obj);
+      this._graphics.initBuffer(gId, obj);
     }
 
-    this._graphics.drawBuffer(uuid);
+    this._graphics.drawBuffer(gId);
 
     return this;
   };
@@ -174,9 +174,9 @@ define(function (require) {
     detailX = detailX || 12;
     detailY = detailY || 8;
 
-    var uuid = 'cylinder|'+radius+'|'+height+'|'+detailX+'|'+detailY;
+    var gId = 'cylinder|'+radius+'|'+height+'|'+detailX+'|'+detailY;
 
-    if(!this._graphics.geoInHash(uuid)){
+    if(!this._graphics.geometryInHash(gId)){
 
       var geometry3d = new p5.Geometry3D();
 
@@ -224,10 +224,10 @@ define(function (require) {
 
       var obj = geometry3d.generateObj(true);
 
-      this._graphics.initBuffer(uuid, obj);
+      this._graphics.initBuffer(gId, obj);
     }
 
-    this._graphics.drawBuffer(uuid);
+    this._graphics.drawBuffer(gId);
 
     return this;
   };
@@ -270,9 +270,9 @@ define(function (require) {
     detailX = detailX || 10;
     detailY = detailY || 6;
 
-    var uuid = 'cone|'+radius+'|'+height+'|'+detailX+'|'+detailY;
+    var gId = 'cone|'+radius+'|'+height+'|'+detailX+'|'+detailY;
 
-    if(!this._graphics.geoInHash(uuid)){
+    if(!this._graphics.geometryInHash(gId)){
 
       var geometry3d = new p5.Geometry3D();
 
@@ -300,10 +300,10 @@ define(function (require) {
 
       var obj = geometry3d.generateObj(true);
 
-      this._graphics.initBuffer(uuid, obj);
+      this._graphics.initBuffer(gId, obj);
     }
 
-    this._graphics.drawBuffer(uuid);
+    this._graphics.drawBuffer(gId);
 
     return this;
   };
@@ -346,9 +346,9 @@ define(function (require) {
     detailX = detailX || 12;
     detailY = detailY || 6;
 
-    var uuid = 'torus|'+radius+'|'+tubeRadius+'|'+detailX+'|'+detailY;
+    var gId = 'torus|'+radius+'|'+tubeRadius+'|'+detailX+'|'+detailY;
 
-    if(!this._graphics.geoInHash(uuid)){
+    if(!this._graphics.geometryInHash(gId)){
 
       var geometry3d = new p5.Geometry3D();
 
@@ -365,10 +365,10 @@ define(function (require) {
 
       var obj = geometry3d.generateObj();
 
-      this._graphics.initBuffer(uuid, obj);
+      this._graphics.initBuffer(gId, obj);
     }
 
-    this._graphics.drawBuffer(uuid);
+    this._graphics.drawBuffer(gId);
 
     return this;
   };
@@ -412,10 +412,8 @@ define(function (require) {
     var detailY = typeof arguments[4] === Number ? arguments[4] : 1;
 
     var gId = 'cube|'+width+'|'+height+'|'+depth+'|'+detailX+'|'+detailY;
-    var mId = this._graphics.getCurShaderId();
-    var uuid = gId + '_' + mId;
 
-    if(!this._graphics.IsInHash(uuid)){
+    if(!this._graphics.geometryInHash(gId)){
 
       var geometry3d = new p5.Geometry3D();
 
@@ -471,10 +469,10 @@ define(function (require) {
       
       var obj = geometry3d.generateObj(true);
 
-      this._graphics.initBuffer(uuid, obj, mId);
+      this._graphics.initBuffer(gId, obj);
     }
 
-    this._graphics.drawBuffer(uuid);
+    this._graphics.drawBuffer(gId);
 
     return this;
 

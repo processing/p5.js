@@ -208,7 +208,7 @@ define(function (require){
       //'uniform vec3 uBasic'
       'void main(void) {',
       // 'gl_FragColor = vec4(vertexNormal * uBasic, 1.0);',
-      'gl_FragColor = vec4(vertexNormal * vec3(0.1, 0.1, 0.1), 1.0);',
+      'gl_FragColor = vec4(vertexNormal * vec3(0.5, 0.5, 0.5), 1.0);',
       '}'
     ].join('\n')
   };

@@ -18,13 +18,13 @@ define(function (require) {
   */
   p5.prototype.normalMaterial = function(){
 
-    var uuid = 'testVert|normalFrag';
+    var mId = 'testVert|normalFrag';
     
-    // if(!this._graphics.materialInHash(uuid)){
-    //   this._graphics.initShaders('testVert', 'normalFrag');
-    // }
+    if(!this._graphics.materialInHash(mId)){
+      this._graphics.initShaders('testVert', 'normalFrag');
+    }
 
-    this._graphics.saveShaders(uuid);
+    this._graphics.saveShaders(mId);
 
 
     return this;
@@ -46,21 +46,21 @@ define(function (require) {
     b = b / 255 || r;
     a = a || 1.0;
 
-    var uuid = 'testVert|basicFrag';
+    var mId = 'testVert|basicFrag';
     
-    // if(!this._graphics.materialInHash(uuid)){
-    //   //@TODO: figure out how to do this
-    //   // var sp = this._graphics.initShaders(
-    //   // shaders.testVert, shaders.basicFrag, {
-    //   //   uMaterialColor: [r, g, b, a]
-    //   // });
-    //   // sp.uMaterialColorLoc = gl.getUniformLocation(
-    //   // shaderProgram, 'uMaterialColor' );
-    //   //  gl.uniform4f( program.uMaterialColorLoc, 1.0, 1.0, 1.0, 1.0 );
-    //   this._graphics.initShaders('testVert', 'basicFrag');
-    // }
+    if(!this._graphics.materialInHash(mId)){
+      //@TODO: figure out how to do this
+      // var sp = this._graphics.initShaders(
+      // shaders.testVert, shaders.basicFrag, {
+      //   uMaterialColor: [r, g, b, a]
+      // });
+      // sp.uMaterialColorLoc = gl.getUniformLocation(
+      // shaderProgram, 'uMaterialColor' );
+      //  gl.uniform4f( program.uMaterialColorLoc, 1.0, 1.0, 1.0, 1.0 );
+      this._graphics.initShaders('testVert', 'basicFrag');
+    }
 
-    this._graphics.saveShaders(uuid);
+    this._graphics.saveShaders(mId);
 
     return this;
 
