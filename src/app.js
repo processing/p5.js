@@ -51,6 +51,7 @@ define(function (require) {
   require('3d/3d_primitives');
   require('3d/shaders');
   require('3d/p5.Matrix');
+  require('3d/material');
 
   /**
    * _globalInit

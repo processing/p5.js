@@ -195,11 +195,20 @@ define(function (require){
       'vertexNormal = vec3( normalMatrix * vec4( normal, 1.0 ) );',
       '}'
     ].join('\n'),
-    testFrag: [
+    normalFrag: [
       'precision mediump float;',
       'varying vec3 vertexNormal;',
       'void main(void) {',
       'gl_FragColor = vec4(vertexNormal, 1.0);',
+      '}'
+    ].join('\n'),
+    basicFrag: [
+      'precision mediump float;',
+      'varying vec3 vertexNormal;',
+      //'uniform vec3 uBasic'
+      'void main(void) {',
+      // 'gl_FragColor = vec4(vertexNormal * uBasic, 1.0);',
+      'gl_FragColor = vec4(vertexNormal * vec3(0.1, 0.1, 0.1), 1.0);',
       '}'
     ].join('\n')
   };

@@ -52,7 +52,7 @@ define(function (require) {
 
     var uuid = 'plane|'+width+'|'+height+'|'+detailX+'|'+detailY;
  
-    if(this._graphics.notInHash(uuid)){
+    if(!this._graphics.geoInHash(uuid)){
 
       var geometry3d = new p5.Geometry3D();
 
@@ -112,7 +112,7 @@ define(function (require) {
 
     var uuid = 'sphere|'+radius+'|'+detailX+'|'+detailY;
 
-    if(this._graphics.notInHash(uuid)){
+    if(!this._graphics.geoInHash(uuid)){
     
       var geometry3d = new p5.Geometry3D();
 
@@ -176,7 +176,7 @@ define(function (require) {
 
     var uuid = 'cylinder|'+radius+'|'+height+'|'+detailX+'|'+detailY;
 
-    if(this._graphics.notInHash(uuid)){
+    if(!this._graphics.geoInHash(uuid)){
 
       var geometry3d = new p5.Geometry3D();
 
@@ -272,7 +272,7 @@ define(function (require) {
 
     var uuid = 'cone|'+radius+'|'+height+'|'+detailX+'|'+detailY;
 
-    if(this._graphics.notInHash(uuid)){
+    if(!this._graphics.geoInHash(uuid)){
 
       var geometry3d = new p5.Geometry3D();
 
@@ -348,7 +348,7 @@ define(function (require) {
 
     var uuid = 'torus|'+radius+'|'+tubeRadius+'|'+detailX+'|'+detailY;
 
-    if(this._graphics.notInHash(uuid)){
+    if(!this._graphics.geoInHash(uuid)){
 
       var geometry3d = new p5.Geometry3D();
 
@@ -411,9 +411,11 @@ define(function (require) {
     var detailX = typeof arguments[3] === Number ? arguments[3] : 1;
     var detailY = typeof arguments[4] === Number ? arguments[4] : 1;
 
-    var uuid = 'cube|'+width+'|'+height+'|'+depth+'|'+detailX+'|'+detailY;
+    var gId = 'cube|'+width+'|'+height+'|'+depth+'|'+detailX+'|'+detailY;
+    var mId = this._graphics.getCurShaderId();
+    var uuid = gId + '_' + mId;
 
-    if(this._graphics.notInHash(uuid)){
+    if(!this._graphics.IsInHash(uuid)){
 
       var geometry3d = new p5.Geometry3D();
 
@@ -469,7 +471,7 @@ define(function (require) {
       
       var obj = geometry3d.generateObj(true);
 
-      this._graphics.initBuffer(uuid, obj);
+      this._graphics.initBuffer(uuid, obj, mId);
     }
 
     this._graphics.drawBuffer(uuid);

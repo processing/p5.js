@@ -8,7 +8,7 @@ function draw(){
   background(250, 250, 250, 255);
  
   translate(-10, 0, -100);
-
+  normal();
   for(var j = 0; j < 5; j++){
     push();
     for(var i = 0; i < 100; i++){
