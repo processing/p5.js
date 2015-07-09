@@ -29,7 +29,6 @@ require('./p5.Geometry3D');
  *
  * function draw(){
  *   background(255, 255, 255, 255);
- *
  *   translate(-120, 0, -170);
  *   push();
  *   rotateZ(theta);
@@ -90,7 +89,6 @@ p5.prototype.plane = function(width, height, detailX, detailY){
  *
  * function draw(){
  *   background(255, 255, 255, 255);
- *
  *   translate(-120, 0, -170);
  *   push();
  *   rotateZ(theta);
@@ -153,7 +151,6 @@ p5.prototype.sphere = function(radius, detailX, detailY){
  *
  * function draw(){
  *   background(255, 255, 255, 255);
- *
  *   translate(-120, 0, -170);
  *   push();
  *   rotateZ(theta);
@@ -249,7 +246,6 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY){
  *
  * function draw(){
  *   background(255, 255, 255, 255);
- *
  *   translate(-120, 0, -170);
  *   push();
  *   rotateZ(theta);
@@ -325,7 +321,6 @@ p5.prototype.cone = function(radius, height, detailX, detailY){
  *
  * function draw(){
  *   background(255, 255, 255, 255);
- *
  *   translate(-120, 0, -170);
  *   push();
  *   rotateZ(theta);
@@ -388,7 +383,6 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY){
  *
  * function draw(){
  *   background(255, 255, 255, 255);
- *
  *   translate(-120, 0, -170);
  *   push();
  *   rotateZ(theta);

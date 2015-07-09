@@ -17,10 +17,10 @@ var p5 = require('../core/core');
 */
 p5.prototype.normalMaterial = function(){
 
-  var mId = 'testVert|normalFrag';
+  var mId = 'normalVert|normalFrag';
 
   if(!this._graphics.materialInHash(mId)){
-    this._graphics.initShaders('testVert', 'normalFrag');
+    this._graphics.initShaders('normalVert', 'normalFrag');
   }
 
   this._graphics.saveShaders(mId);
@@ -44,18 +44,18 @@ p5.prototype.basicMaterial = function(r, g, b, a){
   b = b / 255 || r;
   a = a || 1.0;
 
-  var mId = 'testVert|basicFrag';
+  var mId = 'normalVert|basicFrag';
 
   if(!this._graphics.materialInHash(mId)){
     //@TODO: figure out how to do this
     // var sp = this._graphics.initShaders(
-    // shaders.testVert, shaders.basicFrag, {
+    // shaders.normalVert, shaders.basicFrag, {
     //   uMaterialColor: [r, g, b, a]
     // });
     // sp.uMaterialColorLoc = gl.getUniformLocation(
     // shaderProgram, 'uMaterialColor' );
     //  gl.uniform4f( program.uMaterialColorLoc, 1.0, 1.0, 1.0, 1.0 );
-    this._graphics.initShaders('testVert', 'basicFrag');
+    this._graphics.initShaders('normalVert', 'basicFrag');
   }
 
   this._graphics.saveShaders(mId);

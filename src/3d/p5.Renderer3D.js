@@ -210,8 +210,8 @@ p5.Renderer3D.prototype.getCurShaderKey = function(){
   var key = shaderStack[shaderStack.length - 1];
   if(key === undefined){
     //@TODO: make a default shader
-    key = 'testVert|normalFrag';
-    this.initShaders('testVert', 'normalFrag');
+    key = 'normalVert|normalFrag';
+    this.initShaders('normalVert', 'normalFrag');
     this.saveShaders(key);
   }
   return key;
