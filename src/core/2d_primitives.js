@@ -209,18 +209,21 @@ p5.prototype.line = function() {
   }
   //check whether we should draw a 3d line or 2d
   if(this._graphics.isP3D){
-    this._graphics.line(arguments[0],
+    this._graphics.line(
+      arguments[0],
       arguments[1],
       arguments[2],
       arguments[3],
       arguments[4],
       arguments[5]);
   } else {
-    this._graphics.line(arguments[0],
+    this._graphics.line(
+      arguments[0],
       arguments[1],
       arguments[2],
       arguments[3]);
   }
+  return this;
 };
 
 /**
@@ -242,7 +245,7 @@ p5.prototype.line = function() {
  * </code>
  * </div>
  */
-p5.prototype.point = function(x, y) {
+p5.prototype.point = function() {
   this._validateParameters(
     'point',
     arguments,
@@ -252,7 +255,19 @@ p5.prototype.point = function(x, y) {
   if (!this._doStroke) {
     return this;
   }
-  this._graphics.point(x, y);
+  //check whether we should draw a 3d line or 2d
+  if(this._graphics.isP3D){
+    this._graphics.point(
+      arguments[0],
+      arguments[1],
+      arguments[2]
+      );
+  } else {
+    this._graphics.point(
+      arguments[0],
+      arguments[1]
+    );
+  }
   return this;
 };
 
