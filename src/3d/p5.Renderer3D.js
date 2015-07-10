@@ -253,17 +253,28 @@ p5.Renderer3D.prototype.materialInHash = function(mId){
 //////////////////////////////////////////////
 
 /**
- * [initBuffer description]
- * @param  {String} gId    key of the geometry object
- * @param  {Object} obj    an object containing geometry information
+ * [createBuffer description]
+ * @param  {[type]} gId [description]
+ * @param  {[type]} obj [description]
+ * @return {[type]}     [description]
  */
-p5.Renderer3D.prototype.initBuffer = function(gId, obj) {
+p5.Renderer3D.prototype.createBuffer = function(gId, obj) {
 
   this.gHash[gId] = {};
   this.gHash[gId].len = obj.len;
   this.gHash[gId].vertexBuffer = gl.createBuffer();
   this.gHash[gId].normalBuffer = gl.createBuffer();
   this.gHash[gId].indexBuffer = gl.createBuffer();
+};
+
+/**
+ * [initBuffer description]
+ * @param  {String} gId    key of the geometry object
+ * @param  {Object} obj    an object containing geometry information
+ */
+p5.Renderer3D.prototype.initBuffer = function(gId, obj) {
+
+  this.createBuffer(gId, obj);
 
   var shaderProgram = this.mHash[this.getCurShaderKey()];
 
