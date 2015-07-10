@@ -353,7 +353,9 @@ p5.Renderer3D.prototype.initMatrix = function(){
   this.uMVMatrix = new p5.Matrix();
   this.uPMatrix  = new p5.Matrix();
   this.uNMatrix = new p5.Matrix();
-  this._perspective(60 / 180 * Math.PI, this.width / this.height, 0.1, 100);
+  var _w = this.width;
+  var _h = this.height;
+  this.uPMatrix.perspective(60 / 180 * Math.PI, _w / _h, 0.1, 100);
 };
 
 /**
@@ -504,50 +506,4 @@ p5.prototype.orbitControl = function(){
 //  0.0,0.0,0.0,1.0
 //];
 
-//////////////////////////////////////////
-/// CAMERA
-//////////////////////////////////////////
-p5.prototype.perspective = function(fovy,aspect,near,far){
-  this._pInst._graphics._perspective(arguments);
-};
-/**
- * sets the perspective matrix
- * @param  {Number} fovy   [description]
- * @param  {Number} aspect [description]
- * @param  {Number} near   near clipping plane
- * @param  {Number} far    far clipping plane
- * @return {void}
- */
-p5.Renderer3D.prototype._perspective = function(){
-  var fovy = arguments[0];
-  var aspect = arguments[1];
-  var near = arguments[2];
-  var far = arguments[3];
-
-  var f = 1.0 / Math.tan(fovy / 2),
-    nf = 1 / (near - far);
-  this.uPMatrix.mat4[0] = f / aspect;
-  this.uPMatrix.mat4[1] = 0;
-  this.uPMatrix.mat4[2] = 0;
-  this.uPMatrix.mat4[3] = 0;
-  this.uPMatrix.mat4[4] = 0;
-  this.uPMatrix.mat4[5] = f;
-  this.uPMatrix.mat4[6] = 0;
-  this.uPMatrix.mat4[7] = 0;
-  this.uPMatrix.mat4[8] = 0;
-  this.uPMatrix.mat4[9] = 0;
-  this.uPMatrix.mat4[10] = (far + near) * nf;
-  this.uPMatrix.mat4[11] = -1;
-  this.uPMatrix.mat4[12] = 0;
-  this.uPMatrix.mat4[13] = 0;
-  this.uPMatrix.mat4[14] = (2 * far * near) * nf;
-  this.uPMatrix.mat4[15] = 0;
-  return this;
-};
-
-//// create a perspective matrix with
-//// fovy, aspect, znear, zfar
-//var _pMatrix = _makePerspective(45,
-//  gl.drawingBufferWidth/gl.drawingBufferHeight,
-//  0.1, 1000.0);
 module.exports = p5.Renderer3D;
