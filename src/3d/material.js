@@ -1,12 +1,3 @@
-/**
-* @module material
-* @generate shader material for mesh
-* @for p5
-* @requires core
-* @requires canvas
-* @requires constants
-*/
-
 'use strict';
 
 var p5 = require('../core/core');

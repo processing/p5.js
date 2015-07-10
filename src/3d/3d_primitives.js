@@ -18,7 +18,7 @@ require('./p5.Geometry3D');
  * @param  {Number} height            the height of the plane
  * @param  {Number} detailX(optional) number of vertices on horizontal surface
  * @param  {Number} detailY(optional) number of vertices on horizontal surface
- * @example
+ * example
  * <div class="norender">
  * <code>
  * function setup(){
@@ -29,7 +29,7 @@ require('./p5.Geometry3D');
  *
  * function draw(){
  *   background(255, 255, 255, 255);
- *   translate(-120, 0, -170);
+ *   translate(0, 0, -100);
  *   push();
  *   rotateZ(theta);
  *   rotateX(theta);
@@ -78,7 +78,7 @@ p5.prototype.plane = function(width, height, detailX, detailY){
  * @param  {Number} radius            radius of the sphere
  * @param  {Number} detailX(optional) number of vertices on horizontal surface
  * @param  {Number} detailY(optional) number of vertices on vertical surface
- * @example
+ * example
  * <div class="norender">
  * <code>
  * function setup(){
@@ -89,7 +89,7 @@ p5.prototype.plane = function(width, height, detailX, detailY){
  *
  * function draw(){
  *   background(255, 255, 255, 255);
- *   translate(-120, 0, -170);
+ *   translate(0, 0, -100);
  *   push();
  *   rotateZ(theta);
  *   rotateX(theta);
@@ -140,7 +140,7 @@ p5.prototype.sphere = function(radius, detailX, detailY){
  * @param  {Number} height            height of the cylinder
  * @param  {Number} detailX(optional) number of vertices on horizontal surface
  * @param  {Number} detailY(optional) number of vertices on vertical surface
- * @example
+ * example
  * <div class="norender">
  * <code>
  * function setup(){
@@ -151,7 +151,7 @@ p5.prototype.sphere = function(radius, detailX, detailY){
  *
  * function draw(){
  *   background(255, 255, 255, 255);
- *   translate(-120, 0, -170);
+ *   translate(0, 0, -100);
  *   push();
  *   rotateZ(theta);
  *   rotateX(theta);
@@ -235,7 +235,7 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY){
  * @param  {Number} height            height of the cone
  * @param  {Number} detailX(optional) number of vertices on horizontal surface
  * @param  {Number} detailY(optional) number of vertices on vertical surface
- * @example
+ * example
  * <div class="norender">
  * <code>
  * function setup(){
@@ -246,7 +246,7 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY){
  *
  * function draw(){
  *   background(255, 255, 255, 255);
- *   translate(-120, 0, -170);
+ *   translate(0, 0, -100);
  *   push();
  *   rotateZ(theta);
  *   rotateX(theta);
@@ -310,7 +310,7 @@ p5.prototype.cone = function(radius, height, detailX, detailY){
  * @param  {Number} tubeRadius        radius of the tube
  * @param  {Number} detailX(optional) number of vertices on horizontal surface
  * @param  {Number} detailY(optional) number of vertices on vertical surface
- * @example
+ * example
  * <div class="norender">
  * <code>
  * function setup(){
@@ -321,7 +321,7 @@ p5.prototype.cone = function(radius, height, detailX, detailY){
  *
  * function draw(){
  *   background(255, 255, 255, 255);
- *   translate(-120, 0, -170);
+ *   translate(0, 0, -100);
  *   push();
  *   rotateZ(theta);
  *   rotateX(theta);
@@ -369,10 +369,10 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY){
 
 /**
  * draw a box with given widht, height and depth
- * @param  {[type]} width  width of the box
- * @param  {[type]} height height of the box
- * @param  {[type]} depth  depth of the box
- * @example
+ * @param  {Number} width  width of the box
+ * @param  {Number} height height of the box
+ * @param  {Number} depth  depth of the box
+ * example
  * <div class="norender">
  * <code>
  * function setup(){
@@ -383,7 +383,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY){
  *
  * function draw(){
  *   background(255, 255, 255, 255);
- *   translate(-120, 0, -170);
+ *   translate(0, 0, -100);
  *   push();
  *   rotateZ(theta);
  *   rotateX(theta);

@@ -217,7 +217,6 @@ module.exports = {
 
     'uniform mat4 modelviewMatrix;',
     'uniform mat4 transformMatrix;',
-    'uniform mat4 normalMatrix;',
 
     'varying vec4 vColor;',
     'void main(void) {',
@@ -227,7 +226,7 @@ module.exports = {
     'vColor = aVertexColor;',
     '}'
   ].join('\n'),
-  vertexCorlorFrag:[
+  vertexColorFrag:[
     'precision mediump float;',
     'varying vec4 vColor;',
     'void main(void) {',

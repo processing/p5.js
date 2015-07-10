@@ -1,11 +1,3 @@
-/**
-* @module Geometry3D
-* @for p5
-* @requires core
-* @requires canvas
-* @requires constants
-*/
-
 'use strict';
 
 var p5 = require('../core/core');
