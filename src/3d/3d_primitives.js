@@ -1,12 +1,3 @@
-/**
- * @module Shape
- * @submodule 3D Primitives
- * @for p5
- * @requires core
- * @requires canvas
- * @requires constants
- */
-
 'use strict';
 
 var p5 = require('../core/core');
