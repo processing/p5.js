@@ -367,7 +367,7 @@ p5.Font.prototype._textAscent = function(fontSize) {
 
 p5.Font.prototype._textDescent = function(fontSize) {
 
-  return this.font.descender * this._scale(fontSize);
+  return -this.font.descender * this._scale(fontSize);
 };
 
 p5.Font.prototype._scale = function(fontSize) {
