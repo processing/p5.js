@@ -362,14 +362,12 @@ p5.Font.prototype._textWidth = function(str, fontSize) {
 
 p5.Font.prototype._textAscent = function(fontSize) {
 
-  var bounds = this.textBounds('ABCjgq|', 0, 0, fontSize);
-  return Math.abs(bounds.y);
+  return this.font.ascender * this._scale(fontSize);
 };
 
 p5.Font.prototype._textDescent = function(fontSize) {
 
-  var bounds = this.textBounds('ABCjgq|', 0, 0, fontSize);
-  return bounds.h - Math.abs(bounds.y);
+  return -this.font.descender * this._scale(fontSize);
 };
 
 p5.Font.prototype._scale = function(fontSize) {
