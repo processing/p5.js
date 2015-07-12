@@ -1154,24 +1154,26 @@ p5.Renderer2D.prototype._renderText = function(p, line, x, y) {
 
   p.push(); // fix to #803
 
-  if (p._isOpenType()) {
+  if (!p._isOpenType()) {  // a system/browser font
 
-    return p._textFont._renderPath(line, x, y);
+    // no stroke unless specified by user
+    if (p._doStroke && p._strokeSet) {
+
+      this.drawingContext.strokeText(line, x, y);
+    }
+
+    if (p._doFill) {
+
+      // if fill hasn't been set by user, use default text fill
+      this.drawingContext.fillStyle =  p._fillSet ?
+        this.drawingContext.fillStyle : constants._DEFAULT_TEXT_FILL;
+
+      this.drawingContext.fillText(line, x, y);
+    }
   }
+  else { // an opentype font, let it handle the rendering
 
-  // no stroke unless specified by user
-  if (p._doStroke && p._strokeSet) {
-
-    this.drawingContext.strokeText(line, x, y);
-  }
-
-  if (p._doFill) {
-
-    // if fill hasn't been set by user, use default text fill
-    this.drawingContext.fillStyle =  p._fillSet ?
-      this.drawingContext.fillStyle : constants._DEFAULT_TEXT_FILL;
-
-    this.drawingContext.fillText(line, x, y);
+    p._textFont._renderPath(line, x, y);
   }
 
   p.pop();
