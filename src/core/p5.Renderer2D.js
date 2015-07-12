@@ -1152,6 +1152,8 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
 
 p5.Renderer2D.prototype._renderText = function(p, line, x, y) {
 
+  p.push(); // fix to #803
+
   if (p._isOpenType()) {
 
     return p._textFont._renderPath(line, x, y);
@@ -1171,6 +1173,8 @@ p5.Renderer2D.prototype._renderText = function(p, line, x, y) {
 
     this.drawingContext.fillText(line, x, y);
   }
+
+  p.pop();
 
   return p;
 };
