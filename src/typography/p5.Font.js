@@ -1,6 +1,6 @@
 /**
- * This module defines the p5.Font class and P5 methods for
- * drawing text to the main display canvas.
+ * This module defines the p5.Font class and functions for
+ * drawing text to the display canvas.
  * @module Typography
  * @submodule Font
  * @requires core
@@ -21,17 +21,12 @@ var constants = require('../core/constants');
  * -- getPoints()
  *
  * ===========================================
- *
- * -- var fonts = loadFont([]);
- *
  * -- PFont functions:
  *    PFont.list()
  *
  * -- kerning
- * -- Integrating p5.dom (later)
  * -- alignment: justified?
- * -- truncation?
- * -- drop-caps?
+ * -- integrate p5.dom? (later)
  */
 
 /**
@@ -102,62 +97,49 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
   y = y !== undefined ? y : 0;
   fontSize = fontSize || this.parent._textSize;
 
-  //console.log('textBounds(',str, x, y, fontSize,')');
-
   var result = this.cache[cacheKey('textBounds', str, x, y, fontSize)];
   if (!result) {
 
-    // console.log('computing');
-    if (str !== ' ') {
+    var xCoords = [], yCoords = [], self = this,
+      scale = this._scale(fontSize), minX, minY, maxX, maxY;
 
-      var xCoords = [],
-        yCoords = [],
-        scale = this._scale(fontSize),
-        minX, minY, maxX, maxY;
+    this.font.forEachGlyph(str, x, y, fontSize, options,
+      function(glyph, gX, gY, gFontSize) {
 
-      this.font.forEachGlyph(str, x, y, fontSize, options,
-        function(glyph, gX, gY, gFontSize) {
+        xCoords.push(gX);
+        yCoords.push(gY);
 
-          if (glyph.name !== 'space') {
+        if (glyph.name !== 'space') {
 
-            gX = gX !== undefined ? gX : 0;
-            gY = gY !== undefined ? gY : 0;
+          var gm = glyph.getMetrics();
 
-            var gm = glyph.getMetrics();
-            xCoords.push(gX + (gm.xMin * scale));
-            yCoords.push(gY + (-gm.yMin * scale));
-            xCoords.push(gX + (gm.xMax * scale));
-            yCoords.push(gY + (-gm.yMax * scale));
-          }
-        });
+          xCoords.push(gX + (gm.xMax * scale));
+          yCoords.push(gY + (-gm.yMin * scale));
+          yCoords.push(gY + (-gm.yMax * scale));
 
-      minX = Math.min.apply(null, xCoords);
-      minY = Math.min.apply(null, yCoords);
-      maxX = Math.max.apply(null, xCoords);
-      maxY = Math.max.apply(null, yCoords);
+        } else {
 
-      result = {
-        x: minX,
-        y: minY,
-        h: maxY - minY,
-        w: maxX - minX,
-        advance: minX - x
-      };
-    } else { // special case ' ' for now
+          xCoords.push(gX + self.font.charToGlyph(' ').advanceWidth *
+            self._scale(fontSize));
+        }
+      });
 
-      var tw = this._textWidth(str);
-      result = {
-        x: x,
-        y: y,
-        h: 0,
-        w: tw,
-        advance: 0 // ?
-      };
-    }
+    minX = Math.max(0, Math.min.apply(null, xCoords));
+    minY = Math.max(0, Math.min.apply(null, yCoords));
+    maxX = Math.max(0, Math.max.apply(null, xCoords));
+    maxY = Math.max(0, Math.max.apply(null, yCoords));
+
+    result = {
+      x: minX,
+      y: minY,
+      h: maxY - minY,
+      w: maxX - minX,
+      advance: minX - x
+    };
 
     this.cache[cacheKey('textBounds', str, x, y, fontSize)] = result;
   }
-  //else { console.log('cache-hit'); }
+  //else console.log('cache-hit');
 
   return result;
 };
@@ -237,7 +219,7 @@ p5.Font.prototype._getPathData = function(line, x, y, options) {
 };
 
 /*
- * Creates an SVG <path> element, as a string, from the
+ * Creates an SVG <path> element, as a string,
  * from the given opentype path or string/position
  *
  * @param  {Object} path    an opentype path, OR the following:
@@ -396,13 +378,8 @@ p5.Font.prototype._handleAlignment = function(p, ctx, line, x, y) {
     y -= textDescent;
   }
 
-  return {
-    x: x,
-    y: y
-  };
+  return { x: x, y: y };
 };
-
-// helpers
 
 function cacheKey() {
   var args = Array.prototype.slice.call(arguments),
