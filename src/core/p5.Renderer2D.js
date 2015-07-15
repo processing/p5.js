@@ -997,6 +997,8 @@ function(n00, n01, n02, n10, n11, n12) {
 
 p5.Renderer2D.prototype.resetMatrix = function() {
   this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
+  this.drawingContext.scale(this._pInst.pixelDensity,
+                            this._pInst.pixelDensity);
   return this;
 };
 
