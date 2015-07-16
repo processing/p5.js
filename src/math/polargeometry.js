@@ -1,15 +1,12 @@
-define(function(require) {
 
-  return {
+module.exports = {
 
-    degreesToRadians: function(x) {
-      return 2 * Math.PI * x / 360;
-    },
+  degreesToRadians: function(x) {
+    return 2 * Math.PI * x / 360;
+  },
 
-    radiansToDegrees: function(x) {
-      return 360 * x / (2 * Math.PI);
-    }
+  radiansToDegrees: function(x) {
+    return 360 * x / (2 * Math.PI);
+  }
 
-  };
-
-});
+};

@@ -59,7 +59,7 @@ suite('p5.Vector', function() {
       assert.equal(v.y, 2);
       assert.equal(v.z, 3);
     });
-  });  
+  });
 
   suite('new p5.Vector(1,2,undefined)', function() {
     setup(function() {
@@ -71,7 +71,7 @@ suite('p5.Vector', function() {
       assert.equal(v.y, 2);
       assert.equal(v.z, 0);
     });
-  });   
+  });
 
   suite('new p5.Vector(1,2,undefined)', function() {
     setup(function() {
@@ -376,7 +376,7 @@ suite('p5.Vector', function() {
 //       this.sut.y = 1;
 //       this.sut.z = 1;
 //     });
- 
+
 //     it('should return a number', function() {
 //        expect(typeof(this.sut.dot(new p5.Vector())) ===  'number').to.eql(true);
 //     });
@@ -448,7 +448,7 @@ suite('p5.Vector', function() {
 //         expect(res).to.not.eql(undefined);
 //       });
 
- 
+
 //       it('should return neither v1 nor v2', function() {
 //         expect(res).to.not.eql(v1);
 //         expect(res).to.not.eql(v2);
@@ -749,7 +749,7 @@ suite('p5.Vector', function() {
 //     it('should be a unit p5.Vector', function() {
 //       expect(res.mag()).to.be.closeTo(1,0.01);
 //     });
-//   });  
+//   });
 //   describe('p5.Vector.random3D()', function() {
 //     var res;
 //     beforeEach(function() {
@@ -758,7 +758,7 @@ suite('p5.Vector', function() {
 //     it('should be a unit p5.Vector', function() {
 //       expect(res.mag()).to.be.closeTo(1,0.01);
 //     });
-//   });  
+//   });
 //   describe('p5.Vector.angleBetween(v1, v2)', function() {
 //     var res, v1, v2;
 //     beforeEach(function() {
