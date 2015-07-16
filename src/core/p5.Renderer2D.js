@@ -1086,7 +1086,7 @@ define(function(require) {
 
           testLine = line + words[n] + ' ';
           testWidth = this.textWidth(testLine);
-          if (testWidth > maxWidth) {
+          if (testWidth > maxWidth && line.length > 0) {
             this._renderText(p, line, x, y);
             line = words[n] + ' ';
             y += p.textLeading();
