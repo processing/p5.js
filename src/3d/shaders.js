@@ -177,7 +177,7 @@ module.exports = {
     '(gl_FrontFacing ? vertColor : backVertColor);',
     '}'
   ].join('\n'),
-  testVert: [
+  normalVert: [
     'attribute vec3 position;',
     'attribute vec3 normal;',
 
@@ -194,11 +194,43 @@ module.exports = {
     'vertexNormal = vec3( normalMatrix * vec4( normal, 1.0 ) );',
     '}'
   ].join('\n'),
-  testFrag: [
+  normalFrag: [
     'precision mediump float;',
     'varying vec3 vertexNormal;',
     'void main(void) {',
     'gl_FragColor = vec4(vertexNormal, 1.0);',
+    '}'
+  ].join('\n'),
+  basicFrag: [
+    'precision mediump float;',
+    'varying vec3 vertexNormal;',
+    //'uniform vec3 uBasic'
+    'void main(void) {',
+    // 'gl_FragColor = vec4(vertexNormal * uBasic, 1.0);',
+    'gl_FragColor = vec4(vertexNormal * vec3(0.5, 0.5, 0.5), 1.0);',
+    '}'
+   ].join('\n'),
+  vertexColorVert:[
+    'attribute vec3 position;',
+
+    'attribute vec4 aVertexColor;',
+
+    'uniform mat4 modelviewMatrix;',
+    'uniform mat4 transformMatrix;',
+
+    'varying vec4 vColor;',
+    'void main(void) {',
+    'vec3 zeroToOne = position / 1000.0;',
+    'vec4 positionVec4 = vec4(zeroToOne, 1.);',
+    'gl_Position = transformMatrix * modelviewMatrix * positionVec4;',
+    'vColor = aVertexColor;',
+    '}'
+  ].join('\n'),
+  vertexColorFrag:[
+    'precision mediump float;',
+    'varying vec4 vColor;',
+    'void main(void) {',
+    '    gl_FragColor = vColor;',
     '}'
   ].join('\n')
 };
