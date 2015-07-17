@@ -105,23 +105,78 @@ p5.prototype.createImage = function(width, height) {
  *  file immediately, or prompt the user with a dialogue window.
  *
  *  @method saveCanvas
+ *  @param  {[selectedCanvas]} canvas a variable representing a
+ *                             specific html5 canvas (optional)
  *  @param  {[String]} filename
  *  @param  {[String]} extension 'jpg' or 'png'
- *  @param  {[selectedCanvas]} canvas a variable representing a
- *                             specific html5 canvas (optional).
+ *  @example
+ *  <div class='norender'><code>
+ *  function setup() {
+ *    var c = createCanvas(100, 100);
+ *    background(255, 0, 0);
+ *    saveCanvas(c, 'myCanvas', 'jpg');
+ *  }
+ *  </code></div>
+ *  <div class='norender'><code>
+ *  // note that this example has the same result as above
+ *  // if no canvas is specified, defaults to main canvas
+ *  function setup() {
+ *    createCanvas(100, 100);
+ *    background(255, 0, 0);
+ *    saveCanvas('myCanvas', 'jpg');
+ *  }
+ *  </code></div>
+ *  <div class='norender'><code>
+ *  // all of the following are valid
+ *  saveCanvas(c, 'myCanvas', 'jpg');
+ *  saveCanvas(c, 'myCanvas');
+ *  saveCanvas(c);
+ *  saveCanvas('myCanvas', 'png');
+ *  saveCanvas('myCanvas');
+ *  saveCanvas();
+ *  </code></div>
  */
-p5.prototype.saveCanvas = function(filename, extension, selectedCanvas) {
+p5.prototype.saveCanvas = function() {
+
+  var cnv, filename, extension;
+  if (arguments.length === 3) {
+    cnv = arguments[0];
+    filename = arguments[1];
+    extension = arguments[2];
+  } else if (arguments.length === 2) {
+    if (typeof arguments[0] === 'object') {
+      cnv = arguments[0];
+      filename = arguments[1];
+    } else {
+      filename = arguments[0];
+      extension = arguments[1];
+    }
+  } else if (arguments.length === 1) {
+    if (typeof arguments[0] === 'object') {
+      cnv = arguments[0];
+    } else {
+      filename = arguments[0];
+    }
+  }
+
+  if (cnv instanceof p5.Element) {
+    cnv = cnv.elt;
+  }
+  if (!(cnv instanceof HTMLCanvasElement)) {
+    cnv = null;
+  }
+
   if (!extension) {
     extension = p5.prototype._checkFileExtension(filename, extension)[1];
     if (extension === '') {
       extension = 'png';
     }
   }
-  var cnv;
-  if (selectedCanvas) {
-    cnv = selectedCanvas;
-  } else if (this._curElement && this._curElement.elt) {
-    cnv = this._curElement.elt;
+
+  if (!cnv) {
+    if (this._curElement && this._curElement.elt) {
+      cnv = this._curElement.elt;
+    }
   }
 
   if ( p5.prototype._isSafari() ) {
