@@ -53,6 +53,7 @@ require('./3d/p5.Matrix');
 require('./3d/material');
 require('./3d/3d_retainedMode');
 require('./3d/3d_immediateMode');
+require('./3d/interaction');
 
 /**
  * _globalInit
