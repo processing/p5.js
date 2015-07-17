@@ -2,10 +2,6 @@
 
 var p5 = require('../core/core');
 
-//////////////////////////////////////////////
-// BUFFER | deal with gl buffer
-//////////////////////////////////////////////
-
 /**
  * [createBuffer description]
  * @param  {[type]} gId [description]

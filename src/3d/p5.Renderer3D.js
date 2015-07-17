@@ -101,16 +101,6 @@ p5.Renderer3D.prototype.background = function() {
   this.emptyStack();
 };
 
-//@TODO implement this
-// p5.Renderer3D.prototype.clear = function() {
-//@TODO
-// };
-
-//@TODO implement this
-// p5.Renderer3D.prototype.fill = function() {
-//@TODO
-// };
-
 //////////////////////////////////////////////
 // SHADER
 //////////////////////////////////////////////
@@ -192,33 +182,15 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
   return shaderProgram;
 };
 
-/**
- * [saveShaders description]
- * @return {[type]} [description]
- */
+//////////////////////////////////////////////
+// STACK | for shader, vertex, color and mode
+//////////////////////////////////////////////
+
+
 p5.Renderer3D.prototype.saveShaders = function(mId){
   shaderStack.push(mId);
 };
 
-p5.Renderer3D.prototype.initStack = function(){
-  this.colorStack = [];
-  this.modeStack = [];
-  this.verticeStack = [];
-};
-/**
- * [emptyShaderStack description]
- * @return {[type]} [description]
- */
-p5.Renderer3D.prototype.emptyStack = function(){
-  shaderStack = [];
-  this.colorStack = [];
-  this.modeStack = [];
-};
-
-/**
- * [getCurShader description]
- * @return {[type]} [description]
- */
 p5.Renderer3D.prototype.getCurShaderKey = function(){
   var key = shaderStack[shaderStack.length - 1];
   if(key === undefined){
@@ -230,8 +202,20 @@ p5.Renderer3D.prototype.getCurShaderKey = function(){
   return key;
 };
 
+p5.Renderer3D.prototype.initStack = function(){
+  this.colorStack = [];
+  this.modeStack = [];
+  this.verticeStack = [];
+};
+
+p5.Renderer3D.prototype.emptyStack = function(){
+  shaderStack = [];
+  this.colorStack = [];
+  this.modeStack = [];
+};
+
 //////////////////////////////////////////////
-// HASH | Stroing geometriy and materil info
+// HASH | for material and geometry
 //////////////////////////////////////////////
 
 /**
@@ -259,83 +243,6 @@ p5.Renderer3D.prototype.geometryInHash = function(gId){
  */
 p5.Renderer3D.prototype.materialInHash = function(mId){
   return this.mHash[mId] !== undefined;
-};
-
-//////////////////////////////////////////////
-// BUFFER | deal with gl buffer
-//////////////////////////////////////////////
-
-/**
- * [createBuffer description]
- * @param  {[type]} gId [description]
- * @param  {[type]} obj [description]
- * @return {[type]}     [description]
- */
-p5.Renderer3D.prototype.createBuffer = function(gId, obj) {
-  var gl = this.GL;
-  this.gHash[gId] = {};
-  this.gHash[gId].len = obj.len;
-  this.gHash[gId].vertexBuffer = gl.createBuffer();
-  this.gHash[gId].normalBuffer = gl.createBuffer();
-  this.gHash[gId].indexBuffer = gl.createBuffer();
-};
-
-/**
- * [initBuffer description]
- * @param  {String} gId    key of the geometry object
- * @param  {Object} obj    an object containing geometry information
- */
-p5.Renderer3D.prototype.initBuffer = function(gId, obj) {
-  var gl = this.GL;
-  this.createBuffer(gId, obj);
-
-  var shaderProgram = this.mHash[this.getCurShaderKey()];
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
-  gl.bufferData(
-    gl.ARRAY_BUFFER, new Float32Array(obj.vertices), gl.STATIC_DRAW);
-  gl.vertexAttribPointer(
-    shaderProgram.vertexPositionAttribute,
-    3, gl.FLOAT, false, 0, 0);
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
-  gl.bufferData(
-    gl.ARRAY_BUFFER, new Float32Array(obj.vertexNormals), gl.STATIC_DRAW);
-  gl.vertexAttribPointer(
-    shaderProgram.vertexNormalAttribute,
-    3, gl.FLOAT, false, 0, 0);
-
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
-  gl.bufferData
-   (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(obj.faces), gl.STATIC_DRAW);
-};
-
-/**
- * [drawBuffer description]
- * @param  {String} gId     key of the geometery object
- */
-p5.Renderer3D.prototype.drawBuffer = function(gId) {
-  var gl = this.GL;
-  var shaderKey = this.getCurShaderKey();
-  var shaderProgram = this.mHash[shaderKey];
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
-  gl.vertexAttribPointer(
-    shaderProgram.vertexPositionAttribute,
-    3, gl.FLOAT, false, 0, 0);
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
-  gl.vertexAttribPointer(
-    shaderProgram.vertexNormalAttribute,
-    3, gl.FLOAT, false, 0, 0);
-
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
-
-  this.setMatrixUniforms(shaderKey);
-
-  gl.drawElements(
-    gl.TRIANGLES, this.gHash[gId].len,
-     gl.UNSIGNED_SHORT, 0);
 };
 
 /**
@@ -480,11 +387,10 @@ p5.Renderer3D.prototype.pop = function() {
 //@TODO
 // };
 
-//@TODO: figure out how to hit this function
 p5.Renderer3D.prototype.fill = function(r, g, b, a) {
   r = r / 255;
-  g = g !== undefined ? g/ 255 : r;
-  b = b !== undefined ? b/ 255 : r;
+  g = g === undefined ? r : g / 255;
+  b = b === undefined ? r : b / 255;
   a = a || 1;
   this.colorStack.push([r, g, b, a]);
   return this;
@@ -493,8 +399,8 @@ p5.Renderer3D.prototype.fill = function(r, g, b, a) {
 //@TODO: figure out how to hit this function
 p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
   r = r / 255;
-  g = g !== undefined ? g/ 255 : r;
-  b = b !== undefined ? b/ 255 : r;
+  g = g === undefined ? r : g / 255;
+  b = b === undefined ? r : b / 255;
   a = a || 1;
   this.colorStack.push([r, g, b, a]);
   return this;
