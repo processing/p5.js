@@ -4,7 +4,6 @@ var p5 = require('../core/core');
 var shaders = require('./shaders');
 require('../core/p5.Renderer');
 require('./p5.Matrix');
-var gl;
 var uMVMatrixStack = [];
 var shaderStack = [];
 
@@ -39,7 +38,8 @@ p5.Renderer3D = function(elt, pInst, isMainCanvas) {
   }
 
   this.isP3D = true; //lets us know we're in 3d mode
-  gl = this.drawingContext;
+  this.GL = this.drawingContext;
+  var gl = this.GL;
   gl.clearColor(1.0, 1.0, 1.0, 1.0); //background is initialized white
   gl.clearDepth(1);
   gl.enable(gl.DEPTH_TEST);
@@ -47,8 +47,9 @@ p5.Renderer3D = function(elt, pInst, isMainCanvas) {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
   //create our default matrices
-  this.initHash();
   this.initMatrix();
+  this.initHash();
+  this.initStack();
   return this;
 };
 
@@ -73,6 +74,7 @@ p5.Renderer3D.prototype._applyDefaults = function() {
  * @return {[type]}   [description]
  */
 p5.Renderer3D.prototype.resize = function(w,h) {
+  var gl = this.GL;
   p5.Renderer.prototype.resize.call(this, w,h);
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 };
@@ -86,6 +88,7 @@ p5.Renderer3D.prototype.resize = function(w,h) {
  * @return {[type]} [description]
  */
 p5.Renderer3D.prototype.background = function() {
+  var gl = this.GL;
   var _col = this._pInst.color.apply(this._pInst, arguments);
   // gl.clearColor(0.0,0.0,0.0,1.0);
   var _r = (_col.color_array[0]) / 255;
@@ -95,7 +98,7 @@ p5.Renderer3D.prototype.background = function() {
   gl.clearColor(_r, _g, _b, _a);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   this.resetMatrix();
-  this.emptyShaderStack();
+  this.emptyStack();
 };
 
 //@TODO implement this
@@ -118,7 +121,8 @@ p5.Renderer3D.prototype.background = function() {
  * @param  {[type]} fragId [description]
  * @return {[type]}        [description]
  */
-p5.Renderer3D.prototype.initShaders = function(vertId, fragId) {
+p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
+  var gl = this.GL;
   //set up our default shaders by:
   // 1. create the shader,
   // 2. load the shader source,
@@ -165,10 +169,16 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId) {
     gl.getAttribLocation(shaderProgram, 'position');
   gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
-  //vertex normal Attribute
-  shaderProgram.vertexNormalAttribute =
-    gl.getAttribLocation(shaderProgram, 'normal');
-  gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
+  if(immediateMode === undefined){
+    //vertex normal Attribute
+    shaderProgram.vertexNormalAttribute =
+      gl.getAttribLocation(shaderProgram, 'normal');
+    gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
+
+    //normal Matrix uniform
+    shaderProgram.uNMatrixUniform =
+    gl.getUniformLocation(shaderProgram, 'normalMatrix');
+  }
 
   //projection Matrix uniform
   shaderProgram.uPMatrixUniform =
@@ -176,10 +186,6 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId) {
   //model view Matrix uniform
   shaderProgram.uMVMatrixUniform =
     gl.getUniformLocation(shaderProgram, 'modelviewMatrix');
-
-  //normal Matrix uniform
-  shaderProgram.uNMatrixUniform =
-  gl.getUniformLocation(shaderProgram, 'normalMatrix');
 
   this.mHash[vertId + '|' + fragId] = shaderProgram;
 
@@ -194,12 +200,19 @@ p5.Renderer3D.prototype.saveShaders = function(mId){
   shaderStack.push(mId);
 };
 
+p5.Renderer3D.prototype.initStack = function(){
+  this.colorStack = [];
+  this.modeStack = [];
+  this.verticeStack = [];
+};
 /**
  * [emptyShaderStack description]
  * @return {[type]} [description]
  */
-p5.Renderer3D.prototype.emptyShaderStack = function(){
+p5.Renderer3D.prototype.emptyStack = function(){
   shaderStack = [];
+  this.colorStack = [];
+  this.modeStack = [];
 };
 
 /**
@@ -259,7 +272,7 @@ p5.Renderer3D.prototype.materialInHash = function(mId){
  * @return {[type]}     [description]
  */
 p5.Renderer3D.prototype.createBuffer = function(gId, obj) {
-
+  var gl = this.GL;
   this.gHash[gId] = {};
   this.gHash[gId].len = obj.len;
   this.gHash[gId].vertexBuffer = gl.createBuffer();
@@ -273,7 +286,7 @@ p5.Renderer3D.prototype.createBuffer = function(gId, obj) {
  * @param  {Object} obj    an object containing geometry information
  */
 p5.Renderer3D.prototype.initBuffer = function(gId, obj) {
-
+  var gl = this.GL;
   this.createBuffer(gId, obj);
 
   var shaderProgram = this.mHash[this.getCurShaderKey()];
@@ -302,7 +315,7 @@ p5.Renderer3D.prototype.initBuffer = function(gId, obj) {
  * @param  {String} gId     key of the geometery object
  */
 p5.Renderer3D.prototype.drawBuffer = function(gId) {
-
+  var gl = this.GL;
   var shaderKey = this.getCurShaderKey();
   var shaderProgram = this.mHash[shaderKey];
 
@@ -330,7 +343,7 @@ p5.Renderer3D.prototype.drawBuffer = function(gId) {
  * @param {String} shaderKey key of current shader
  */
 p5.Renderer3D.prototype.setMatrixUniforms = function(shaderKey) {
-
+  var gl = this.GL;
   var shaderProgram = this.mHash[shaderKey];
 
   gl.useProgram(shaderProgram);
@@ -459,20 +472,48 @@ p5.Renderer3D.prototype.pop = function() {
 };
 
 //////////////////////////////////////////////
-// INTERACTION
+// COLOR
 //////////////////////////////////////////////
 
-/**
- * [orbitControl description]
- * @return {[type]} [description]
- */
-//@TODO: fix this fake orbitControl
-p5.prototype.orbitControl = function(){
-  if(this.mouseIsPressed){
-    this.rotateX((this.mouseX - this.width / 2) / (this.width / 2));
-    this.rotateY((this.mouseY - this.height / 2) / (this.width / 2));
-  }
+//@TODO implement this
+// p5.Renderer3D.prototype.clear = function() {
+//@TODO
+// };
+
+//@TODO: figure out how to hit this function
+p5.Renderer3D.prototype.fill = function(r, g, b, a) {
+  r = r / 255;
+  g = g !== undefined ? g/ 255 : r;
+  b = b !== undefined ? b/ 255 : r;
+  a = a || 1;
+  this.colorStack.push([r, g, b, a]);
   return this;
+};
+
+//@TODO: figure out how to hit this function
+p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
+  r = r / 255;
+  g = g !== undefined ? g/ 255 : r;
+  b = b !== undefined ? b/ 255 : r;
+  a = a || 1;
+  this.colorStack.push([r, g, b, a]);
+  return this;
+};
+
+p5.Renderer3D.prototype.getColorVertexShader = function(){
+  var gl = this.GL;
+  var mId = 'vertexColorVert|vertexColorFrag';
+  var shaderProgram;
+  if(!this.materialInHash(mId)){
+    shaderProgram =
+      this.initShaders('vertexColorVert', 'vertexColorFrag', true);
+    shaderProgram.vertexColorAttribute =
+    gl.getAttribLocation(shaderProgram, 'aVertexColor');
+    gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
+  }else{
+    shaderProgram = this.mHash[mId];
+  }
+  return shaderProgram;
 };
 
 module.exports = p5.Renderer3D;
