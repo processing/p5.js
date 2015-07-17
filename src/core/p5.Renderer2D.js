@@ -1122,10 +1122,9 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
       line = '';
       words = cars[ii].split(' ');
       for (n = 0; n < words.length; n++) {
-
         testLine = line + words[n] + ' ';
         testWidth = this.textWidth(testLine);
-        if (testWidth > maxWidth) {
+        if (testWidth > maxWidth && line.length > 0) {
           this._renderText(p, line, x, y);
           line = words[n] + ' ';
           y += p.textLeading();
