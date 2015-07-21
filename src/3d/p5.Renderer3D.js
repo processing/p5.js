@@ -156,11 +156,9 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
 
   // @TODO replace 4th argument with far plane once we implement
   // a view frustrum
-  var resolution = 1000;
-  console.log(resolution);
   shaderProgram.uResolution =
     gl.getUniformLocation(shaderProgram, 'uResolution');
-  gl.uniform1f(shaderProgram.uResolution, resolution);
+  gl.uniform3f(shaderProgram.uResolution, this.width, this.height, 0);
 
   //vertex position Attribute
   shaderProgram.vertexPositionAttribute =
