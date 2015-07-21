@@ -47,12 +47,12 @@ require('./typography/loading_displaying');
 
 require('./3d/p5.Renderer3D');
 require('./3d/p5.Geometry3D');
+require('./3d/retainedMode3D');
+require('./3d/immediateMode3D');
 require('./3d/3d_primitives');
-require('./3d/shaders');
 require('./3d/p5.Matrix');
 require('./3d/material');
-require('./3d/3d_retainedMode');
-require('./3d/3d_immediateMode');
+require('./3d/shaders');
 require('./3d/interaction');
 
 /**
