@@ -204,10 +204,9 @@ module.exports = {
   basicFrag: [
     'precision mediump float;',
     'varying vec3 vertexNormal;',
-    //'uniform vec3 uBasic'
+    'uniform vec4 uMaterialColor;',
     'void main(void) {',
-    // 'gl_FragColor = vec4(vertexNormal * uBasic, 1.0);',
-    'gl_FragColor = vec4(vertexNormal * vec3(0.5, 0.5, 0.5), 1.0);',
+    'gl_FragColor = uMaterialColor;',
     '}'
    ].join('\n'),
   vertexColorVert:[

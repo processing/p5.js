@@ -2,6 +2,10 @@
 
 var p5 = require('../core/core');
 
+//////////////////////////////////////////////
+// Primitives2D in 3D space
+//////////////////////////////////////////////
+
 p5.Renderer3D.prototype.primitives2D = function(arr){
 
   var gl = this.GL;
@@ -99,6 +103,52 @@ p5.Renderer3D.prototype.endShape = function(){
       break;
   }
   return this;
+};
+
+//////////////////////////////////////////////
+// COLOR
+//////////////////////////////////////////////
+
+p5.Renderer3D.prototype.fill = function(r, g, b, a) {
+  r = r / 255;
+  g = g === undefined ? r : g / 255;
+  b = b === undefined ? r : b / 255;
+  a = a || 1;
+  this.colorStack.push([r, g, b, a]);
+  this.drawModeStack.push('fill');
+  return this;
+};
+
+//@TODO: figure out how to actually do stroke on shapes in 3D
+p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
+  throw new Error('stroke in P3D not yet implemented');
+
+  //some possible steps for the solution
+  //have a stack to hole the drawMode
+  //then draw it depend on fill / stroke
+  // r = r / 255;
+  // g = g === undefined ? r : g / 255;
+  // b = b === undefined ? r : b / 255;
+  // a = a || 1;
+  // this.colorStack.push([r, g, b, a]);
+  // this.drawModeStack.push('stroke');
+  // return this;
+};
+
+p5.Renderer3D.prototype.getColorVertexShader = function(){
+  var gl = this.GL;
+  var mId = 'vertexColorVert|vertexColorFrag';
+  var shaderProgram;
+  if(!this.materialInHash(mId)){
+    shaderProgram =
+      this.initShaders('vertexColorVert', 'vertexColorFrag', true);
+    shaderProgram.vertexColorAttribute =
+    gl.getAttribLocation(shaderProgram, 'aVertexColor');
+    gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
+  }else{
+    shaderProgram = this.mHash[mId];
+  }
+  return shaderProgram;
 };
 
 module.exports = p5.Renderer3D;

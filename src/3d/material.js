@@ -31,22 +31,20 @@ p5.prototype.normalMaterial = function(){
 p5.prototype.basicMaterial = function(r, g, b, a){
 
   r = r / 255 || 0.5;
-  g = g / 255 || r;
-  b = b / 255 || r;
+  g = g === undefined? r : g / 255;
+  b = b === undefined? r : b / 255;
   a = a || 1.0;
 
   var mId = 'normalVert|basicFrag';
 
   if(!this._graphics.materialInHash(mId)){
     //@TODO: figure out how to do this
-    // var sp = this._graphics.initShaders(
-    // shaders.normalVert, shaders.basicFrag, {
-    //   uMaterialColor: [r, g, b, a]
-    // });
-    // sp.uMaterialColorLoc = gl.getUniformLocation(
-    // shaderProgram, 'uMaterialColor' );
-    //  gl.uniform4f( program.uMaterialColorLoc, 1.0, 1.0, 1.0, 1.0 );
-    this._graphics.initShaders('normalVert', 'basicFrag');
+    var gl = this._graphics.GL;
+    var shaderProgram =
+     this._graphics.initShaders('normalVert', 'basicFrag');
+    shaderProgram.uMaterialColor = gl.getUniformLocation(
+    shaderProgram, 'uMaterialColor' );
+    gl.uniform4f( shaderProgram.uMaterialColor, r, g, b, a );
   }
 
   this._graphics.saveShaders(mId);

@@ -49,7 +49,7 @@ p5.Renderer3D = function(elt, pInst, isMainCanvas) {
   //create our default matrices
   this.initMatrix();
   this.initHash();
-  this.initStack();
+  this.resetStack();
   return this;
 };
 
@@ -80,7 +80,7 @@ p5.Renderer3D.prototype.resize = function(w,h) {
 };
 
 //////////////////////////////////////////////
-// COLOR | Setting
+// BACKGROUND | Setting
 //////////////////////////////////////////////
 
 /**
@@ -98,8 +98,13 @@ p5.Renderer3D.prototype.background = function() {
   gl.clearColor(_r, _g, _b, _a);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   this.resetMatrix();
-  this.emptyStack();
+  this.resetStack();
 };
+
+//@TODO implement this
+// p5.Renderer3D.prototype.clear = function() {
+//@TODO
+// };
 
 //////////////////////////////////////////////
 // SHADER
@@ -186,7 +191,6 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
 // STACK | for shader, vertex, color and mode
 //////////////////////////////////////////////
 
-
 p5.Renderer3D.prototype.saveShaders = function(mId){
   shaderStack.push(mId);
 };
@@ -202,16 +206,16 @@ p5.Renderer3D.prototype.getCurShaderKey = function(){
   return key;
 };
 
-p5.Renderer3D.prototype.initStack = function(){
-  this.colorStack = [];
-  this.modeStack = [];
-  this.verticeStack = [];
-};
-
-p5.Renderer3D.prototype.emptyStack = function(){
+p5.Renderer3D.prototype.resetStack = function(){
   shaderStack = [];
+  //holding colors declaration, like [0, 120, 0]
   this.colorStack = [];
+  //holding mode, like TIANGLE or 'LINES'
   this.modeStack = [];
+  //holding 'fill' or 'stroke'
+  this.drawModeStack = [];
+  //holding an array of vertex position
+  this.verticeStack = [];
 };
 
 //////////////////////////////////////////////
@@ -243,33 +247,6 @@ p5.Renderer3D.prototype.geometryInHash = function(gId){
  */
 p5.Renderer3D.prototype.materialInHash = function(mId){
   return this.mHash[mId] !== undefined;
-};
-
-/**
- * Sets the Matrix Uniforms inside our default shader.
- * @param {String} shaderKey key of current shader
- */
-p5.Renderer3D.prototype.setMatrixUniforms = function(shaderKey) {
-  var gl = this.GL;
-  var shaderProgram = this.mHash[shaderKey];
-
-  gl.useProgram(shaderProgram);
-
-  gl.uniformMatrix4fv(
-    shaderProgram.uPMatrixUniform,
-    false, this.uPMatrix.mat4);
-
-  gl.uniformMatrix4fv(
-    shaderProgram.uMVMatrixUniform,
-    false, this.uMVMatrix.mat4);
-
-  this.uNMatrix = new p5.Matrix();
-  this.uNMatrix.invert(this.uMVMatrix);
-  this.uNMatrix.transpose(this.uNMatrix);
-
-  gl.uniformMatrix4fv(
-    shaderProgram.uNMatrixUniform,
-    false, this.uNMatrix.mat4);
 };
 
 //////////////////////////////////////////////
@@ -376,50 +353,6 @@ p5.Renderer3D.prototype.pop = function() {
     throw 'Invalid popMatrix!';
   }
   this.uMVMatrix = uMVMatrixStack.pop();
-};
-
-//////////////////////////////////////////////
-// COLOR
-//////////////////////////////////////////////
-
-//@TODO implement this
-// p5.Renderer3D.prototype.clear = function() {
-//@TODO
-// };
-
-p5.Renderer3D.prototype.fill = function(r, g, b, a) {
-  r = r / 255;
-  g = g === undefined ? r : g / 255;
-  b = b === undefined ? r : b / 255;
-  a = a || 1;
-  this.colorStack.push([r, g, b, a]);
-  return this;
-};
-
-//@TODO: figure out how to hit this function
-p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
-  r = r / 255;
-  g = g === undefined ? r : g / 255;
-  b = b === undefined ? r : b / 255;
-  a = a || 1;
-  this.colorStack.push([r, g, b, a]);
-  return this;
-};
-
-p5.Renderer3D.prototype.getColorVertexShader = function(){
-  var gl = this.GL;
-  var mId = 'vertexColorVert|vertexColorFrag';
-  var shaderProgram;
-  if(!this.materialInHash(mId)){
-    shaderProgram =
-      this.initShaders('vertexColorVert', 'vertexColorFrag', true);
-    shaderProgram.vertexColorAttribute =
-    gl.getAttribLocation(shaderProgram, 'aVertexColor');
-    gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
-  }else{
-    shaderProgram = this.mHash[mId];
-  }
-  return shaderProgram;
 };
 
 module.exports = p5.Renderer3D;
