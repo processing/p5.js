@@ -56,4 +56,8 @@ p5.prototype.basicMaterial = function(r, g, b, a){
 
 };
 
+// p5.prototype.phongMaterial = function(){
+  
+// }
+
 module.exports = p5;
