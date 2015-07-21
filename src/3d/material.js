@@ -36,16 +36,20 @@ p5.prototype.basicMaterial = function(r, g, b, a){
   a = a || 1.0;
 
   var mId = 'normalVert|basicFrag';
+  var gl = this._graphics.GL;
+  var shaderProgram;
 
   if(!this._graphics.materialInHash(mId)){
     //@TODO: figure out how to do this
-    var gl = this._graphics.GL;
-    var shaderProgram =
+    shaderProgram =
      this._graphics.initShaders('normalVert', 'basicFrag');
-    shaderProgram.uMaterialColor = gl.getUniformLocation(
-    shaderProgram, 'uMaterialColor' );
-    gl.uniform4f( shaderProgram.uMaterialColor, r, g, b, a );
   }
+
+  shaderProgram = this._graphics.mHash[mId];
+  gl.useProgram(shaderProgram);
+  shaderProgram.uMaterialColor = gl.getUniformLocation(
+    shaderProgram, 'uMaterialColor' );
+  gl.uniform4f( shaderProgram.uMaterialColor, r, g, b, a );
 
   this._graphics.saveShaders(mId);
 
