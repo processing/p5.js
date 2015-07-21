@@ -1,3 +1,5 @@
+//retained mode is used by rendering 3d_primitives
+
 'use strict';
 
 var p5 = require('../core/core');

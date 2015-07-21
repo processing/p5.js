@@ -7,4 +7,5 @@ lib/p5.*
 docs/reference/*
 docs/yuidoc-p5-theme/assets/js/reference.js*
 !*.gitkeep
+npm-debug.log
 src/3d/mat4

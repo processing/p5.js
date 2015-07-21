@@ -40,12 +40,11 @@ p5.prototype.basicMaterial = function(r, g, b, a){
   var shaderProgram;
 
   if(!this._graphics.materialInHash(mId)){
-    //@TODO: figure out how to do this
     shaderProgram =
      this._graphics.initShaders('normalVert', 'basicFrag');
+  }else{
+    shaderProgram = this._graphics.mHash[mId];
   }
-
-  shaderProgram = this._graphics.mHash[mId];
   gl.useProgram(shaderProgram);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
