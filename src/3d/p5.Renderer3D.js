@@ -6,6 +6,7 @@ require('../core/p5.Renderer');
 require('./p5.Matrix');
 var uMVMatrixStack = [];
 var shaderStack = [];
+var RESOLUTION = 1000;
 
 //@TODO should probably implement an override for these attributes
 var attributes = {
@@ -158,7 +159,7 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
   // a view frustrum
   shaderProgram.uResolution =
     gl.getUniformLocation(shaderProgram, 'uResolution');
-  gl.uniform3f(shaderProgram.uResolution, this.width, this.height, 0);
+  gl.uniform1f(shaderProgram.uResolution, RESOLUTION);
 
   //vertex position Attribute
   shaderProgram.vertexPositionAttribute =
@@ -313,9 +314,9 @@ p5.Renderer3D.prototype.resetMatrix = function() {
  */
 p5.Renderer3D.prototype.translate = function(x, y, z) {
   //@TODO: figure out how to fit the resolution
-  x = x / 100;
-  y = -y / 100;
-  z = z / 100;
+  x = x / RESOLUTION;
+  y = -y / RESOLUTION;
+  z = z / RESOLUTION;
   this.uMVMatrix.translate([x,y,z]);
   return this;
 };

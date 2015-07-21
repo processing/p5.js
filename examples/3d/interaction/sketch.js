@@ -4,8 +4,8 @@ function setup(){
 
 function draw(){
   background(250, 250, 250, 255);
-  var radius = width / 6;
-  translate(-10, 0, -200);
+  var radius = width;
+  translate(0, 0, -2000);
   orbitControl();
   
   if(!mouseIsPressed){
@@ -17,7 +17,7 @@ function draw(){
       push();
       var a = j/20 * PI;
       var b = i/20 * PI
-      translate(sin(2 * a) * radius * sin(b), cos(b) * 50 , cos(2 * a) * radius * sin(b));
+      translate(sin(2 * a) * radius * sin(b), cos(b) * radius / 2 , cos(2 * a) * radius * sin(b));
       if(j % 2 === 0) {
         box(60, 60, 60);
       }

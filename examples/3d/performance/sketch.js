@@ -7,11 +7,11 @@ function setup(){
 function draw(){
   background(250, 250, 250, 255);
  
-  translate(-10, 0, -100);
+  translate(0, 0, -1000);
   for(var j = 0; j < 5; j++){
     push();
     for(var i = 0; i < 100; i++){
-      translate(sin(theta + j) * 4, sin(theta + j) * 4, i * 0.001);
+      translate(sin(theta + j) * 40, sin(theta + j) * 40, i * 0.005);
       rotateX(theta * 0.1);
       rotateY(theta);
       rotateZ(theta * 0.2);

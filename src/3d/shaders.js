@@ -184,12 +184,12 @@ module.exports = {
     'uniform mat4 modelviewMatrix;',
     'uniform mat4 transformMatrix;',
     'uniform mat4 normalMatrix;',
-    'uniform vec3 uResolution;',
+    'uniform float uResolution;',
 
     'varying vec3 vertexNormal;',
 
     'void main(void) {',
-    'vec3 zeroToOne = vec3(position.xy / uResolution.xy, 0);',
+    'vec3 zeroToOne = position / uResolution;',
     'vec4 positionVec4 = vec4(zeroToOne, 1.);',
     'gl_Position = transformMatrix * modelviewMatrix * positionVec4;',
     'vertexNormal = vec3( normalMatrix * vec4( normal, 1.0 ) );',

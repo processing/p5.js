@@ -7,7 +7,7 @@ function setup(){
 function draw(){
   background(250, 250, 250, 255);
  
-  translate(0, 0, -100);
+  translate(0, 0, -1000);
   rotateY(frameCount * 0.01);
 
   stroke(0);
@@ -18,7 +18,7 @@ function draw(){
   fill(255,0,0);
   for(var i = 0; i < 10; i++){
     push()
-    translate(20 * i, i, 0)
+    translate(200 * i, i*10, 0)
     triangle(100, 100, 100, 300 * sin(frameCount * 0.1 + i), 100, 100, 0, 300, 0);
     pop()
   }
