@@ -187,6 +187,33 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
   return shaderProgram;
 };
 
+/**
+ * Sets the Matrix Uniforms inside our default shader.
+ * @param {String} shaderKey key of current shader
+ */
+p5.Renderer3D.prototype.setMatrixUniforms = function(shaderKey) {
+  var gl = this.GL;
+  var shaderProgram = this.mHash[shaderKey];
+
+  gl.useProgram(shaderProgram);
+
+  gl.uniformMatrix4fv(
+    shaderProgram.uPMatrixUniform,
+    false, this.uPMatrix.mat4);
+
+  gl.uniformMatrix4fv(
+    shaderProgram.uMVMatrixUniform,
+    false, this.uMVMatrix.mat4);
+
+  this.uNMatrix = new p5.Matrix();
+  this.uNMatrix.invert(this.uMVMatrix);
+  this.uNMatrix.transpose(this.uNMatrix);
+
+  gl.uniformMatrix4fv(
+    shaderProgram.uNMatrixUniform,
+    false, this.uNMatrix.mat4);
+};
+
 //////////////////////////////////////////////
 // STACK | for shader, vertex, color and mode
 //////////////////////////////////////////////
