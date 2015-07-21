@@ -6,11 +6,10 @@ function setup(){
 
 function draw(){
   background(250, 250, 250, 255);
- 
-  translate(0, 0, -1000);
   // directionalLight(153, 153, 153, .5, 0, -1);
   // ambientLight(153, 102, 0);
   // ambient(51, 26, 0);
+  translate(0, 0, -1000);
   push();
   rotateX(theta * 0.1);
   rotateZ(theta);
