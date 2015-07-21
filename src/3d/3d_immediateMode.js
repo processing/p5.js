@@ -56,6 +56,7 @@ p5.Renderer3D.prototype.triangle = function
 (x1, y1, z1, x2, y2, z2, x3, y3, z3){
   var gl = this.GL;
   this.primitives2D([x1, y1, z1, x2, y2, z2, x3, y3, z3]);
+  this._strokeCheck();
   gl.drawArrays(gl.TRIANGLES, 0, 3);
   return this;
 };
@@ -65,6 +66,7 @@ p5.Renderer3D.prototype.quad = function
   var gl = this.GL;
   this.primitives2D(
     [x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4]);
+  this._strokeCheck();
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   return this;
 };
@@ -85,6 +87,7 @@ p5.Renderer3D.prototype.endShape = function(){
   this.primitives2D(this.verticeStack);
   this.verticeStack = [];
   var mode = this.modeStack.pop();
+
   switch(mode){
     case 'POINTS':
       gl.drawArrays(gl.POINTS, 0, 1);
@@ -93,16 +96,28 @@ p5.Renderer3D.prototype.endShape = function(){
       gl.drawArrays(gl.LINES, 0, 2);
       break;
     case 'TRIANGLES':
+      this._strokeCheck();
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       break;
     case 'TRIANGLE_STRIP':
+      this._strokeCheck();
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       break;
     default:
+      this._strokeCheck();
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       break;
   }
   return this;
+};
+
+p5.Renderer3D.prototype._strokeCheck = function(){
+  var drawMode = this.drawModeStack[this.drawModeStack.length-1];
+  if(drawMode === 'stroke'){
+    throw new Error(
+      'stroke for shapes in 3D not yet implemented, use fill for now :('
+    );
+  }
 };
 
 //////////////////////////////////////////////
@@ -121,18 +136,13 @@ p5.Renderer3D.prototype.fill = function(r, g, b, a) {
 
 //@TODO: figure out how to actually do stroke on shapes in 3D
 p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
-  throw new Error('stroke in P3D not yet implemented');
-
-  //some possible steps for the solution
-  //have a stack to hole the drawMode
-  //then draw it depend on fill / stroke
-  // r = r / 255;
-  // g = g === undefined ? r : g / 255;
-  // b = b === undefined ? r : b / 255;
-  // a = a || 1;
-  // this.colorStack.push([r, g, b, a]);
-  // this.drawModeStack.push('stroke');
-  // return this;
+  r = r / 255;
+  g = g === undefined ? r : g / 255;
+  b = b === undefined ? r : b / 255;
+  a = a || 1;
+  this.colorStack.push([r, g, b, a]);
+  this.drawModeStack.push('stroke');
+  return this;
 };
 
 p5.Renderer3D.prototype.getColorVertexShader = function(){

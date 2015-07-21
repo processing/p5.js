@@ -18,8 +18,12 @@ function draw(){
       var a = j/20 * PI;
       var b = i/20 * PI
       translate(sin(2 * a) * radius * sin(b), cos(b) * 50 , cos(2 * a) * radius * sin(b));
-      if(j % 2 === 0) box(60, 60, 60);
-      else cone(60, 60);
+      if(j % 2 === 0) {
+        box(60, 60, 60);
+      }
+      else{
+        cone(60, 60);
+      }
       pop();
     }
   }

@@ -35,10 +35,10 @@ function draw(){
   push()
   rotateX(PI)
   beginShape('TRIANGLE_STRIP')
-  vertex(0, 0, 100);
+  vertex(0, 0, cos(frameCount * 0.1) * 100);
   vertex(0, 200, 100);  
   vertex(100, 100, 100);  
-  vertex(100, 0, 100);
+  vertex(100, 0, sin(frameCount * 0.1) * 100);
   pop()   
   endShape();
 
