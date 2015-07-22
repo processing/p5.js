@@ -1,24 +1,35 @@
-/**
- * @module Shape
- * @submodule 3D Primitives
- * @for p5
- * @requires core
- * @requires canvas
- * @requires constants
- */
-
 'use strict';
 
 var p5 = require('../core/core');
 require('./p5.Geometry3D');
 
 /**
- * generate plane geomery
- * @param  {Number} width   the width of the plane
- * @param  {Number} height  the height of the plane
- * @param  {Number} detailX how many segments in the x axis
- * @param  {Number} detailY how many segments in the y axis
- * @return {[type]}         [description]
+ * draw a plane with given a width and height
+ * @param  {Number} width             the width of the plane
+ * @param  {Number} height            the height of the plane
+ * @param  {Number} detailX(optional) number of vertices on horizontal surface
+ * @param  {Number} detailY(optional) number of vertices on horizontal surface
+ * example
+ * <div class="norender">
+ * <code>
+ * function setup(){
+ *   createCanvas(windowWidth, windowHeight, 'webgl');
+ * }
+ *
+ * var theta = 0;
+ *
+ * function draw(){
+ *   background(255, 255, 255, 255);
+ *   translate(0, 0, -100);
+ *   push();
+ *   rotateZ(theta);
+ *   rotateX(theta);
+ *   rotateY(theta);
+ *   plane(100, 100);
+ *   pop();
+ *   theta += 0.05;
+ * </code>
+ * </div>
  */
 p5.prototype.plane = function(width, height, detailX, detailY){
 
@@ -28,9 +39,9 @@ p5.prototype.plane = function(width, height, detailX, detailY){
   detailX = detailX || 1;
   detailY = detailY || 1;
 
-  var uuid = 'plane|'+width+'|'+height+'|'+detailX+'|'+detailY;
+  var gId = 'plane|'+width+'|'+height+'|'+detailX+'|'+detailY;
 
-  if(this._graphics.notInHash(uuid)){
+  if(!this._graphics.geometryInHash(gId)){
 
     var geometry3d = new p5.Geometry3D();
 
@@ -45,20 +56,40 @@ p5.prototype.plane = function(width, height, detailX, detailY){
 
     var obj = geometry3d.generateObj();
 
-    this._graphics.initBuffer(uuid, obj);
+    this._graphics.initBuffer(gId, obj);
 
   }
 
-  this._graphics.drawBuffer(uuid);
+  this._graphics.drawBuffer(gId);
 
 };
 
 /**
- * [sphere description]
- * @param  {[type]} radius  [description]
- * @param  {[type]} detailX [description]
- * @param  {[type]} detailY [description]
- * @return {[type]}         [description]
+ * draw a sphere with given raduis
+ * @param  {Number} radius            radius of the sphere
+ * @param  {Number} detailX(optional) number of vertices on horizontal surface
+ * @param  {Number} detailY(optional) number of vertices on vertical surface
+ * example
+ * <div class="norender">
+ * <code>
+ * function setup(){
+ *   createCanvas(windowWidth, windowHeight, 'webgl');
+ * }
+ *
+ * var theta = 0;
+ *
+ * function draw(){
+ *   background(255, 255, 255, 255);
+ *   translate(0, 0, -100);
+ *   push();
+ *   rotateZ(theta);
+ *   rotateX(theta);
+ *   rotateY(theta);
+ *   sphere(100);
+ *   pop();
+ *   theta += 0.05;
+ * </code>
+ * </div>
  */
 p5.prototype.sphere = function(radius, detailX, detailY){
 
@@ -67,9 +98,9 @@ p5.prototype.sphere = function(radius, detailX, detailY){
   detailX = detailX || 10;
   detailY = detailY || 6;
 
-  var uuid = 'sphere|'+radius+'|'+detailX+'|'+detailY;
+  var gId = 'sphere|'+radius+'|'+detailX+'|'+detailY;
 
-  if(this._graphics.notInHash(uuid)){
+  if(!this._graphics.geometryInHash(gId)){
 
     var geometry3d = new p5.Geometry3D();
 
@@ -86,32 +117,53 @@ p5.prototype.sphere = function(radius, detailX, detailY){
 
     var obj = geometry3d.generateObj();
 
-    this._graphics.initBuffer(uuid, obj);
+    this._graphics.initBuffer(gId, obj);
   }
 
-  this._graphics.drawBuffer(uuid);
+  this._graphics.drawBuffer(gId);
 
   return this;
 };
 
 /**
- * [cylinder description]
- * @param  {[type]} radius  [description]
- * @param  {[type]} detailX [description]
- * @param  {[type]} detailY [description]
- * @return {[type]}         [description]
+ * draw a cylinder with given radius and height
+ * @param  {Number} radius            radius of the surface
+ * @param  {Number} height            height of the cylinder
+ * @param  {Number} detailX(optional) number of vertices on horizontal surface
+ * @param  {Number} detailY(optional) number of vertices on vertical surface
+ * example
+ * <div class="norender">
+ * <code>
+ * function setup(){
+ *   createCanvas(windowWidth, windowHeight, 'webgl');
+ * }
+ *
+ * var theta = 0;
+ *
+ * function draw(){
+ *   background(255, 255, 255, 255);
+ *   translate(0, 0, -100);
+ *   push();
+ *   rotateZ(theta);
+ *   rotateX(theta);
+ *   rotateY(theta);
+ *   cylinder(100, 200);
+ *   pop();
+ *   theta += 0.05;
+ * </code>
+ * </div>
  */
 p5.prototype.cylinder = function(radius, height, detailX, detailY){
 
   radius = radius || 50;
   height = height || 50;
 
-  detailX = detailX || 10;
-  detailY = detailY || 6;
+  detailX = detailX || 12;
+  detailY = detailY || 8;
 
-  var uuid = 'cylinder|'+radius+'|'+height+'|'+detailX+'|'+detailY;
+  var gId = 'cylinder|'+radius+'|'+height+'|'+detailX+'|'+detailY;
 
-  if(this._graphics.notInHash(uuid)){
+  if(!this._graphics.geometryInHash(gId)){
 
     var geometry3d = new p5.Geometry3D();
 
@@ -124,28 +176,77 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY){
     };
 
     geometry3d.parametricGeometry(createCylinder, detailX, detailY);
+    geometry3d.mergeVertices();
 
-    //TODO: top and bottom faces
-    //this.vertices.push(new p5.Vector(0, height/2, 0));
-    //this.vertices.push(new p5.Vector(0, -height/2, 0));
+    var createTop = function(u, v){
+      var theta = 2 * Math.PI * u;
+      var x = radius * Math.sin(-theta);
+      var y = height;
+      var z = radius * Math.cos(theta);
+      if(v === 0){
+        return new p5.Vector(0, height, 0);
+      }
+      else{
+        return new p5.Vector(x, y, z);
+      }
+    };
 
-    var obj = geometry3d.generateObj();
+    geometry3d.parametricGeometry(
+      createTop, detailX, 1, geometry3d.vertices.length);
 
-    this._graphics.initBuffer(uuid, obj);
+    var createBottom = function(u, v){
+      var theta = 2 * Math.PI * u;
+      var x = radius * Math.sin(theta);
+      var y = -height;
+      var z = radius * Math.cos(theta);
+      if(v === 0){
+        return new p5.Vector(0, -height, 0);
+      }else{
+        return new p5.Vector(x, y, z);
+      }
+    };
+
+    geometry3d.parametricGeometry(
+      createBottom, detailX, 1, geometry3d.vertices.length);
+
+    var obj = geometry3d.generateObj(true);
+
+    this._graphics.initBuffer(gId, obj);
   }
 
-  this._graphics.drawBuffer(uuid);
+  this._graphics.drawBuffer(gId);
 
   return this;
 };
 
+
 /**
- * [cone description]
- * @param  {[type]} radius  [description]
- * @param  {[type]} height  [description]
- * @param  {[type]} detailX [description]
- * @param  {[type]} detailY [description]
- * @return {[type]}         [description]
+ * draw a cone with given radius and height
+ * @param  {Number} radius            radius of the bottom surface
+ * @param  {Number} height            height of the cone
+ * @param  {Number} detailX(optional) number of vertices on horizontal surface
+ * @param  {Number} detailY(optional) number of vertices on vertical surface
+ * example
+ * <div class="norender">
+ * <code>
+ * function setup(){
+ *   createCanvas(windowWidth, windowHeight, 'webgl');
+ * }
+ *
+ * var theta = 0;
+ *
+ * function draw(){
+ *   background(255, 255, 255, 255);
+ *   translate(0, 0, -100);
+ *   push();
+ *   rotateZ(theta);
+ *   rotateX(theta);
+ *   rotateY(theta);
+ *   cone(100, 200);
+ *   pop();
+ *   theta += 0.05;
+ * </code>
+ * </div>
  */
 p5.prototype.cone = function(radius, height, detailX, detailY){
 
@@ -155,9 +256,9 @@ p5.prototype.cone = function(radius, height, detailX, detailY){
   detailX = detailX || 10;
   detailY = detailY || 6;
 
-  var uuid = 'cone|'+radius+'|'+height+'|'+detailX+'|'+detailY;
+  var gId = 'cone|'+radius+'|'+height+'|'+detailX+'|'+detailY;
 
-  if(this._graphics.notInHash(uuid)){
+  if(!this._graphics.geometryInHash(gId)){
 
     var geometry3d = new p5.Geometry3D();
 
@@ -170,47 +271,78 @@ p5.prototype.cone = function(radius, height, detailX, detailY){
     };
 
     geometry3d.parametricGeometry(createCone, detailX, detailY);
+    geometry3d.mergeVertices();
 
-    //@TODO: add bottom face
-    //
-    var obj = geometry3d.generateObj();
+    var createBottom = function(u, v){
+      var theta = 2 * Math.PI * u;
+      var x = radius * (1 - v) * Math.sin(-theta);
+      var y = -height;
+      var z = radius * (1 - v) * Math.cos(theta);
+      return new p5.Vector(x, y, z);
+    };
 
-    this._graphics.initBuffer(uuid, obj);
+    geometry3d.parametricGeometry(
+      createBottom, detailX, 1, geometry3d.vertices.length);
+
+    var obj = geometry3d.generateObj(true);
+
+    this._graphics.initBuffer(gId, obj);
   }
 
-  this._graphics.drawBuffer(uuid);
+  this._graphics.drawBuffer(gId);
 
   return this;
 };
 
+
 /**
- * [torus description]
- * @param  {[type]} radius  [description]
- * @param  {[type]} height  [description]
- * @param  {[type]} detailX [description]
- * @param  {[type]} detailY [description]
- * @return {[type]}         [description]
+ * draw a torus with given radius and tube radius
+ * @param  {Number} radius            radius of the whole ring
+ * @param  {Number} tubeRadius        radius of the tube
+ * @param  {Number} detailX(optional) number of vertices on horizontal surface
+ * @param  {Number} detailY(optional) number of vertices on vertical surface
+ * example
+ * <div class="norender">
+ * <code>
+ * function setup(){
+ *   createCanvas(windowWidth, windowHeight, 'webgl');
+ * }
+ *
+ * var theta = 0;
+ *
+ * function draw(){
+ *   background(255, 255, 255, 255);
+ *   translate(0, 0, -100);
+ *   push();
+ *   rotateZ(theta);
+ *   rotateX(theta);
+ *   rotateY(theta);
+ *   torus(100, 20);
+ *   pop();
+ *   theta += 0.05;
+ * </code>
+ * </div>
  */
-p5.prototype.torus = function(radius, tube, detailX, detailY){
+p5.prototype.torus = function(radius, tubeRadius, detailX, detailY){
 
   radius = radius || 50;
-  tube = tube || 20;
+  tubeRadius = tubeRadius || 20;
 
-  detailX = detailX || 10;
+  detailX = detailX || 12;
   detailY = detailY || 6;
 
-  var uuid = 'torus|'+radius+'|'+tube+'|'+detailX+'|'+detailY;
+  var gId = 'torus|'+radius+'|'+tubeRadius+'|'+detailX+'|'+detailY;
 
-  if(this._graphics.notInHash(uuid)){
+  if(!this._graphics.geometryInHash(gId)){
 
     var geometry3d = new p5.Geometry3D();
 
     var createTorus = function(u, v){
       var theta = 2 * Math.PI * u;
       var phi = 2 * Math.PI * v;
-      var x = (radius + tube * Math.cos(phi)) * Math.cos(theta);
-      var y = (radius + tube * Math.cos(phi)) * Math.sin(theta);
-      var z = tube * Math.sin(phi);
+      var x = (radius + tubeRadius * Math.cos(phi)) * Math.cos(theta);
+      var y = (radius + tubeRadius * Math.cos(phi)) * Math.sin(theta);
+      var z = tubeRadius * Math.sin(phi);
       return new p5.Vector(x, y, z);
     };
 
@@ -218,22 +350,40 @@ p5.prototype.torus = function(radius, tube, detailX, detailY){
 
     var obj = geometry3d.generateObj();
 
-    this._graphics.initBuffer(uuid, obj);
+    this._graphics.initBuffer(gId, obj);
   }
 
-  this._graphics.drawBuffer(uuid);
+  this._graphics.drawBuffer(gId);
 
   return this;
 };
 
 /**
- * [cube description]
- * @param  {[type]} width   [description]
- * @param  {[type]} height  [description]
- * @param  {[type]} depth   [description]
- * @param  {[type]} detailX [description]
- * @param  {[type]} detailY [description]
- * @return {[type]}         [description]
+ * draw a box with given widht, height and depth
+ * @param  {Number} width  width of the box
+ * @param  {Number} height height of the box
+ * @param  {Number} depth  depth of the box
+ * example
+ * <div class="norender">
+ * <code>
+ * function setup(){
+ *   createCanvas(windowWidth, windowHeight, 'webgl');
+ * }
+ *
+ * var theta = 0;
+ *
+ * function draw(){
+ *   background(255, 255, 255, 255);
+ *   translate(0, 0, -100);
+ *   push();
+ *   rotateZ(theta);
+ *   rotateX(theta);
+ *   rotateY(theta);
+ *   box(100, 100, 100);
+ *   pop();
+ *   theta += 0.05;
+ * </code>
+ * </div>
  */
 p5.prototype.box = function(width, height, depth){
 
@@ -245,9 +395,9 @@ p5.prototype.box = function(width, height, depth){
   var detailX = typeof arguments[3] === Number ? arguments[3] : 1;
   var detailY = typeof arguments[4] === Number ? arguments[4] : 1;
 
-  var uuid = 'cube|'+width+'|'+height+'|'+depth+'|'+detailX+'|'+detailY;
+  var gId = 'cube|'+width+'|'+height+'|'+depth+'|'+detailX+'|'+detailY;
 
-  if(this._graphics.notInHash(uuid)){
+  if(!this._graphics.geometryInHash(gId)){
 
     var geometry3d = new p5.Geometry3D();
 
@@ -258,13 +408,13 @@ p5.prototype.box = function(width, height, depth){
       return new p5.Vector(x, y, z);
     };
     var createPlane2 = function(u, v){
-      var x = 2 * width * u - width;
+      var x = 2 * width * ( 1 - u ) - width;
       var y = 2 * height * v - height;
       var z = -depth;
       return new p5.Vector(x, y, z);
     };
     var createPlane3 = function(u, v){
-      var x = 2 * width * u - width;
+      var x = 2 * width * ( 1 - u ) - width;
       var y = height;
       var z = 2 * depth * v - depth;
       return new p5.Vector(x, y, z);
@@ -283,7 +433,7 @@ p5.prototype.box = function(width, height, depth){
     };
     var createPlane6 = function(u, v){
       var x = -width;
-      var y = 2 * height * u - height;
+      var y = 2 * height * ( 1 - u ) - height;
       var z = 2 * depth * v - depth;
       return new p5.Vector(x, y, z);
     };
@@ -303,10 +453,10 @@ p5.prototype.box = function(width, height, depth){
 
     var obj = geometry3d.generateObj(true);
 
-    this._graphics.initBuffer(uuid, obj);
+    this._graphics.initBuffer(gId, obj);
   }
 
-  this._graphics.drawBuffer(uuid);
+  this._graphics.drawBuffer(gId);
 
   return this;
 

@@ -268,11 +268,11 @@ p5.Renderer2D.prototype.loadPixels = function () {
 };
 
 p5.Renderer2D.prototype.set = function (x, y, imgOrCol) {
+  var pd = this.pixelDensity || this._pInst.pixelDensity;
   if (imgOrCol instanceof p5.Image) {
     this.drawingContext.save();
     this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-    this.drawingContext.scale(this._pInst.pixelDensity,
-                              this._pInst.pixelDensity);
+    this.drawingContext.scale(pd);
     this.drawingContext.drawImage(imgOrCol.canvas, x, y);
     this.loadPixels.call(this._pInst);
     this.drawingContext.restore();
@@ -997,6 +997,8 @@ function(n00, n01, n02, n10, n11, n12) {
 
 p5.Renderer2D.prototype.resetMatrix = function() {
   this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
+  this.drawingContext.scale(this._pInst.pixelDensity,
+                            this._pInst.pixelDensity);
   return this;
 };
 
@@ -1120,10 +1122,9 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
       line = '';
       words = cars[ii].split(' ');
       for (n = 0; n < words.length; n++) {
-
         testLine = line + words[n] + ' ';
         testWidth = this.textWidth(testLine);
-        if (testWidth > maxWidth) {
+        if (testWidth > maxWidth && line.length > 0) {
           this._renderText(p, line, x, y);
           line = words[n] + ' ';
           y += p.textLeading();
@@ -1152,25 +1153,31 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
 
 p5.Renderer2D.prototype._renderText = function(p, line, x, y) {
 
-  if (p._isOpenType()) {
+  p.push(); // fix to #803
 
-    return p._textFont._renderPath(line, x, y);
+  if (!p._isOpenType()) {  // a system/browser font
+
+    // no stroke unless specified by user
+    if (p._doStroke && p._strokeSet) {
+
+      this.drawingContext.strokeText(line, x, y);
+    }
+
+    if (p._doFill) {
+
+      // if fill hasn't been set by user, use default text fill
+      this.drawingContext.fillStyle =  p._fillSet ?
+        this.drawingContext.fillStyle : constants._DEFAULT_TEXT_FILL;
+
+      this.drawingContext.fillText(line, x, y);
+    }
+  }
+  else { // an opentype font, let it handle the rendering
+
+    p._textFont._renderPath(line, x, y);
   }
 
-  // no stroke unless specified by user
-  if (p._doStroke && p._strokeSet) {
-
-    this.drawingContext.strokeText(line, x, y);
-  }
-
-  if (p._doFill) {
-
-    // if fill hasn't been set by user, use default text fill
-    this.drawingContext.fillStyle =  p._fillSet ?
-      this.drawingContext.fillStyle : constants._DEFAULT_TEXT_FILL;
-
-    this.drawingContext.fillText(line, x, y);
-  }
+  p.pop();
 
   return p;
 };
