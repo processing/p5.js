@@ -8,6 +8,7 @@ function draw(){
   background(255, 255, 255, 255);
 
   translate(-width/2, 0, -1000);
+  normalMaterial();
   push();
   rotateZ(theta * mouseX * 0.001);
   rotateX(theta * mouseX * 0.001);

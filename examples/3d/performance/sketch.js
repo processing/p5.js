@@ -7,13 +7,14 @@ function setup(){
 function draw(){
   background(250, 250, 250, 255);
  
-  translate(0, 0, -1000);
+  translate(0, 0, -1500);
+  normalMaterial();
+  rotateY(frameCount * 0.01);
+
   for(var j = 0; j < 5; j++){
     push();
-    for(var i = 0; i < 100; i++){
-      translate(sin(theta + j) * 40, sin(theta + j) * 40, i * 0.005);
-      rotateX(theta * 0.1);
-      rotateY(theta);
+    for(var i = 0; i < 200; i++){
+      translate(sin(theta + j) * 100, sin(theta + j) * 100, i * 0.1);
       rotateZ(theta * 0.2);
       push();
       sphere(8); 

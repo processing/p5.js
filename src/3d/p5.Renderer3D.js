@@ -107,9 +107,9 @@ p5.Renderer3D.prototype.background = function() {
  * @param  {[type]} mode [description]
  * @return {[type]}      [description]
  */
-p5.Renderer3D.prototype.originMode = function(mode){
+p5.prototype.originMode = function(mode){
   if(mode === 'TOP_LEFT'){
-    this.translate(-this.width/2, -this.height/2, 0);
+    this._graphics.translate(-this.width/2, -this.height/2, 0);
   }
 };
 
@@ -239,15 +239,22 @@ p5.Renderer3D.prototype.getCurColor = function() {
   return this.colorStack[this.colorStack.length-1] || [0.5, 0.5, 0.5, 1.0];
 };
 
-p5.Renderer3D.prototype.getCurShaderKey = function(){
-  var key = shaderStack[shaderStack.length - 1];
-  if(key === undefined){
+p5.Renderer3D.prototype.getCurShaderId = function(){
+  var mId = shaderStack[shaderStack.length - 1];
+  if(mId === undefined){
     //default shader: basicMaterial
-    key = 'normalVert|basicFrag';
-    var color = this.getCurColor();
-    this.basicMaterial(color[0], color[1], color[2], color[3]);
+    mId = 'normalVert|basicFrag';
+    var gl = this.GL;
+    var shaderProgram =
+     this.initShaders('normalVert', 'basicFrag');
+    shaderProgram.uMaterialColor = gl.getUniformLocation(
+      shaderProgram, 'uMaterialColor' );
+    var colors = this.getCurColor();
+    gl.uniform4f( shaderProgram.uMaterialColor,
+    colors[0], colors[1], colors[2], colors[3]);
+    this.saveShaders(mId);
   }
-  return key;
+  return mId;
 };
 
 p5.Renderer3D.prototype.resetStack = function(){

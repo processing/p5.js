@@ -129,14 +129,20 @@ p5.Renderer3D.prototype._strokeCheck = function(){
 
 p5.Renderer3D.prototype.fill = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
-  this.colorStack.push(_normalizeColor(color.rgba));
+  var colorNormalized = _normalizeColor(color.rgba);
+  if( colorNormalized !== this.getCurColor()){
+    this.colorStack.push(colorNormalized);
+  }
   this.drawModeStack.push('fill');
   return this;
 };
 
 p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
-  this.colorStack.push(_normalizeColor(color.rgba));
+  var colorNormalized = _normalizeColor(color.rgba);
+  if( colorNormalized !== this.getCurColor()){
+    this.colorStack.push(colorNormalized);
+  }
   this.drawModeStack.push('stroke');
   return this;
 };

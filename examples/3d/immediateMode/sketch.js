@@ -8,6 +8,7 @@ function draw(){
   background(250, 250, 250, 255);
 
   originMode('TOP_LEFT');
+  colorMode(HSB);
 
   translate(0, 0, -1000);
 
@@ -18,7 +19,7 @@ function draw(){
 
   point(0, 310, 0);
 
-  fill(255,0,0);
+  fill(100,120, 100);
   for(var i = 0; i < 10; i++){
     push()
     translate(200 * i, i*10, 0)
@@ -34,7 +35,7 @@ function draw(){
     -100, 100, 0
     );
 
-  fill(0,0,0);
+  fill(30,120,120);
   push()
   rotateX(PI)
   beginShape('TRIANGLE_STRIP')
@@ -45,6 +46,7 @@ function draw(){
   pop()   
   endShape();
 
+  fill(10,255,255)
   box(60, 60, 60);
 
 }

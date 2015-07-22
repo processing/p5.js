@@ -14,7 +14,9 @@ p5.prototype.normalMaterial = function(){
     this._graphics.initShaders('normalVert', 'normalFrag');
   }
 
-  this._graphics.saveShaders(mId);
+  if(mId !== this._graphics.getCurShaderId){
+    this._graphics.saveShaders(mId);
+  }
 
   return this;
 
@@ -51,7 +53,9 @@ p5.prototype.basicMaterial = function(r, g, b, a){
   gl.uniform4f( shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);
 
-  this._graphics.saveShaders(mId);
+  if(mId !== this._graphics.getCurShaderId){
+    this._graphics.saveShaders(mId);
+  }
 
   return this;
 
