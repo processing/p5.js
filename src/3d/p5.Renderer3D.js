@@ -76,7 +76,7 @@ p5.Renderer3D.prototype._applyDefaults = function() {
  */
 p5.Renderer3D.prototype.resize = function(w,h) {
   var gl = this.GL;
-  p5.Renderer.prototype.resize.call(this, w,h);
+  p5.Renderer.prototype.resize.call(this, w, h);
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 };
 
@@ -100,6 +100,17 @@ p5.Renderer3D.prototype.background = function() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   this.resetMatrix();
   this.resetStack();
+};
+
+/**
+ * [originMode description]
+ * @param  {[type]} mode [description]
+ * @return {[type]}      [description]
+ */
+p5.Renderer3D.prototype.originMode = function(mode){
+  if(mode === 'TOP_LEFT'){
+    this.translate(-this.width/2, -this.height/2, 0);
+  }
 };
 
 //@TODO implement this
@@ -224,13 +235,17 @@ p5.Renderer3D.prototype.saveShaders = function(mId){
   shaderStack.push(mId);
 };
 
+p5.Renderer3D.prototype.getCurColor = function() {
+  return this.colorStack[this.colorStack.length-1] || [0.5, 0.5, 0.5, 1.0];
+};
+
 p5.Renderer3D.prototype.getCurShaderKey = function(){
   var key = shaderStack[shaderStack.length - 1];
   if(key === undefined){
-    //@TODO: make a default shader
-    key = 'normalVert|normalFrag';
-    this.initShaders('normalVert', 'normalFrag');
-    this.saveShaders(key);
+    //default shader: basicMaterial
+    key = 'normalVert|basicFrag';
+    var color = this.getCurColor();
+    this.basicMaterial(color[0], color[1], color[2], color[3]);
   }
   return key;
 };

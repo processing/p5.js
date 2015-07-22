@@ -6,8 +6,11 @@ function setup(){
 
 function draw(){
   background(250, 250, 250, 255);
- 
+
+  originMode('TOP_LEFT');
+
   translate(0, 0, -1000);
+
   rotateY(frameCount * 0.01);
 
   stroke(0);

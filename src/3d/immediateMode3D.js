@@ -1,3 +1,5 @@
+//@TODO: documentation of immediate mode
+
 'use strict';
 
 var p5 = require('../core/core');
@@ -23,7 +25,7 @@ p5.Renderer3D.prototype.primitives2D = function(arr){
   //create vertexcolor buffer
   var vertexColorBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
-  var color = this.colorStack[this.colorStack.length-1] || [0.5, 0.5, 0.5, 1.0];
+  var color = this.getCurColor();
   var colors = [];
   for(var i = 0; i < arr.length / 3; i++){
     colors = colors.concat(color);
@@ -111,6 +113,7 @@ p5.Renderer3D.prototype.endShape = function(){
   return this;
 };
 
+//@TODO: figure out how to actually do stroke on shapes in 3D
 p5.Renderer3D.prototype._strokeCheck = function(){
   var drawMode = this.drawModeStack[this.drawModeStack.length-1];
   if(drawMode === 'stroke'){
@@ -125,22 +128,15 @@ p5.Renderer3D.prototype._strokeCheck = function(){
 //////////////////////////////////////////////
 
 p5.Renderer3D.prototype.fill = function(r, g, b, a) {
-  r = r / 255;
-  g = g === undefined ? r : g / 255;
-  b = b === undefined ? r : b / 255;
-  a = a || 1;
-  this.colorStack.push([r, g, b, a]);
+  var color = this._pInst.color.apply(this._pInst, arguments);
+  this.colorStack.push(_normalizeColor(color.rgba));
   this.drawModeStack.push('fill');
   return this;
 };
 
-//@TODO: figure out how to actually do stroke on shapes in 3D
 p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
-  r = r / 255;
-  g = g === undefined ? r : g / 255;
-  b = b === undefined ? r : b / 255;
-  a = a || 1;
-  this.colorStack.push([r, g, b, a]);
+  var color = this._pInst.color.apply(this._pInst, arguments);
+  this.colorStack.push(_normalizeColor(color.rgba));
   this.drawModeStack.push('stroke');
   return this;
 };
@@ -160,5 +156,13 @@ p5.Renderer3D.prototype.getColorVertexShader = function(){
   }
   return shaderProgram;
 };
+
+function _normalizeColor(_arr){
+  var arr = [];
+  _arr.forEach(function(val){
+    arr.push(val/255);
+  });
+  return arr;
+}
 
 module.exports = p5.Renderer3D;
