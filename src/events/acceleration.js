@@ -43,30 +43,6 @@ p5.prototype.accelerationY = 0;
 p5.prototype.accelerationZ = 0;
 
 /**
- * The system variable accelerationX always contains the acceleration of the
- * device along the x axis. Value is represented as meters per second squared.
- *
- * @property accelerationX
- */
-p5.prototype.accelerationGravityX = 0;
-
-/**
- * The system variable accelerationY always contains the acceleration of the
- * device along the y axis. Value is represented as meters per second squared.
- *
- * @property accelerationY
- */
-p5.prototype.accelerationGravityY = 0;
-
-/**
- * The system variable accelerationZ always contains the acceleration of the
- * device along the z axis. Value is represented as meters per second squared.
- *
- * @property accelerationZ
- */
-p5.prototype.accelerationGravityZ = 0;
-
-/**
  * The system variable pAccelerationX always contains the acceleration of the
  * device along the x axis in the frame previous to the current frame. Value
  * is represented as meters per second squared.
@@ -183,9 +159,6 @@ p5.prototype._ondevicemotion = function (e) {
   this._setProperty('accelerationX', e.acceleration.x * 2);
   this._setProperty('accelerationY', e.acceleration.y * 2);
   this._setProperty('accelerationZ', e.acceleration.z * 2);
-  this._setProperty('accelerationGravityX', e.accelerationIncludingGravity.x);
-  this._setProperty('accelerationGravityY', e.accelerationIncludingGravity.y);
-  this._setProperty('accelerationGravityZ', e.accelerationIncludingGravity.z);
   this._handleMotion();
 };
 p5.prototype._onMozOrientation = function (e) {
