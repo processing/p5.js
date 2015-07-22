@@ -40,6 +40,7 @@ p5.Renderer3D.prototype.primitives2D = function(arr){
   this.setMatrixUniforms(mId);
 };
 
+//@TODO: point does not show up, gotta fix it.
 p5.Renderer3D.prototype.point = function(x, y, z){
   var gl = this.GL;
   this.primitives2D([x, y, z]);
@@ -63,6 +64,7 @@ p5.Renderer3D.prototype.triangle = function
   return this;
 };
 
+//@TODO: how to define the order of 4 points
 p5.Renderer3D.prototype.quad = function
 (x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4){
   var gl = this.GL;
