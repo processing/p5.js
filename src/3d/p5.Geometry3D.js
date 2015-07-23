@@ -31,6 +31,7 @@ p5.Geometry3D = function(){
  * @param  {Number} offset  offset of vertices index
  */
 p5.Geometry3D.prototype.parametricGeometry = function
+//@TODO: put func as the last parameters
 (func, detailX, detailY, offset){
 
   var i, j, p;

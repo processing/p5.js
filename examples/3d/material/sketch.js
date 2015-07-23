@@ -6,33 +6,34 @@ function setup(){
 
 function draw(){
   background(250, 250, 250, 255);
- 
-  translate(-10, 0, -100);
   // directionalLight(153, 153, 153, .5, 0, -1);
   // ambientLight(153, 102, 0);
   // ambient(51, 26, 0);
+  translate(-100, 0, -1000);
   push();
   rotateX(theta * 0.1);
   rotateZ(theta);
   rotateY(theta * 0.1);
+  normalMaterial();
   box(60, 60, 60); 
   pop();
-  translate(30, 0, 0);
-  basicMaterial();
+  translate(300, 0, 0);
   push();
   rotateX(-theta * 0.1);
   rotateZ(-theta);
   rotateY(-theta * 0.1);
+  normalMaterial();
   sphere(60); 
-  translate(30, 0, 0);
+  translate(300, 0, 0);
+  basicMaterial(0, 255, 0);
   box(60,60,60);
   pop();
-  translate(30, 0, 0);
-  normalMaterial();
+  translate(300, 0, 0);
   push();
   rotateX(theta * 0.1);
   rotateZ(theta);
   rotateY(theta * 0.1);
+  basicMaterial(250, 0, 200);
   plane(60, 60); 
   pop();
   theta += 0.03;
