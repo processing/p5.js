@@ -209,18 +209,21 @@ p5.prototype.line = function() {
   }
   //check whether we should draw a 3d line or 2d
   if(this._graphics.isP3D){
-    this._graphics.line(arguments[0],
+    this._graphics.line(
+      arguments[0],
       arguments[1],
       arguments[2],
       arguments[3],
       arguments[4],
       arguments[5]);
   } else {
-    this._graphics.line(arguments[0],
+    this._graphics.line(
+      arguments[0],
       arguments[1],
       arguments[2],
       arguments[3]);
   }
+  return this;
 };
 
 /**
@@ -242,17 +245,32 @@ p5.prototype.line = function() {
  * </code>
  * </div>
  */
-p5.prototype.point = function(x, y) {
+p5.prototype.point = function() {
   this._validateParameters(
     'point',
     arguments,
-    ['Number', 'Number']
+    [
+      ['Number', 'Number'],
+      ['Number', 'Number', 'Number']
+    ]
   );
 
   if (!this._doStroke) {
     return this;
   }
-  this._graphics.point(x, y);
+  //check whether we should draw a 3d line or 2d
+  if(this._graphics.isP3D){
+    this._graphics.point(
+      arguments[0],
+      arguments[1],
+      arguments[2]
+      );
+  } else {
+    this._graphics.point(
+      arguments[0],
+      arguments[1]
+    );
+  }
   return this;
 };
 
@@ -281,18 +299,50 @@ p5.prototype.point = function(x, y) {
  * </code>
  * </div>
  */
-p5.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
+p5.prototype.quad = function() {
   this._validateParameters(
     'quad',
     arguments,
-    [ 'Number', 'Number', 'Number', 'Number',
-      'Number', 'Number', 'Number', 'Number' ]
+    [
+      [ 'Number', 'Number', 'Number', 'Number',
+        'Number', 'Number', 'Number', 'Number' ],
+      [ 'Number', 'Number', 'Number',
+        'Number', 'Number', 'Number',
+        'Number', 'Number', 'Number',
+        'Number', 'Number', 'Number']
+    ]
   );
 
   if (!this._doStroke && !this._doFill) {
     return this;
   }
-  this._graphics.quad(x1, y1, x2, y2, x3, y3, x4, y4);
+  if(this._graphics.isP3D){
+    this._graphics.quad(
+      arguments[0],
+      arguments[1],
+      arguments[2],
+      arguments[3],
+      arguments[4],
+      arguments[5],
+      arguments[6],
+      arguments[7],
+      arguments[8],
+      arguments[9],
+      arguments[10],
+      arguments[11]
+      );
+  } else {
+    this._graphics.quad(
+     arguments[0],
+     arguments[1],
+     arguments[2],
+     arguments[3],
+     arguments[4],
+     arguments[5],
+     arguments[6],
+    arguments[7]
+    );
+  }
   return this;
 };
 
@@ -379,17 +429,42 @@ p5.prototype.rect = function (x, y, w, h, tl, tr, br, bl) {
 * </code>
 * </div>
 */
-p5.prototype.triangle = function(x1, y1, x2, y2, x3, y3) {
+p5.prototype.triangle = function() {
   this._validateParameters(
     'triangle',
     arguments,
-    ['Number', 'Number', 'Number', 'Number', 'Number', 'Number']
+    [
+      ['Number', 'Number', 'Number', 'Number', 'Number', 'Number'],
+      ['Number', 'Number', 'Number', 'Number', 'Number', 'Number',
+       'Number', 'Number', 'Number']
+    ]
   );
 
   if (!this._doStroke && !this._doFill) {
     return this;
   }
-  this._graphics.triangle(x1, y1, x2, y2, x3, y3);
+  if(this._graphics.isP3D){
+    this._graphics.triangle(
+      arguments[0],
+      arguments[1],
+      arguments[2],
+      arguments[3],
+      arguments[4],
+      arguments[5],
+      arguments[6],
+      arguments[7],
+      arguments[8]
+      );
+  } else {
+    this._graphics.triangle(
+     arguments[0],
+     arguments[1],
+     arguments[2],
+     arguments[3],
+     arguments[4],
+     arguments[5]
+    );
+  }
   return this;
 };
 

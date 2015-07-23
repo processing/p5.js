@@ -184,11 +184,12 @@ module.exports = {
     'uniform mat4 modelviewMatrix;',
     'uniform mat4 transformMatrix;',
     'uniform mat4 normalMatrix;',
+    'uniform float uResolution;',
 
     'varying vec3 vertexNormal;',
 
     'void main(void) {',
-    'vec3 zeroToOne = position / 1000.0;',
+    'vec3 zeroToOne = position / uResolution;',
     'vec4 positionVec4 = vec4(zeroToOne, 1.);',
     'gl_Position = transformMatrix * modelviewMatrix * positionVec4;',
     'vertexNormal = vec3( normalMatrix * vec4( normal, 1.0 ) );',
@@ -204,10 +205,9 @@ module.exports = {
   basicFrag: [
     'precision mediump float;',
     'varying vec3 vertexNormal;',
-    //'uniform vec3 uBasic'
+    'uniform vec4 uMaterialColor;',
     'void main(void) {',
-    // 'gl_FragColor = vec4(vertexNormal * uBasic, 1.0);',
-    'gl_FragColor = vec4(vertexNormal * vec3(0.5, 0.5, 0.5), 1.0);',
+    'gl_FragColor = uMaterialColor;',
     '}'
    ].join('\n'),
   vertexColorVert:[
@@ -221,7 +221,7 @@ module.exports = {
     'varying vec4 vColor;',
     'void main(void) {',
     'vec3 zeroToOne = position / 1000.0;',
-    'vec4 positionVec4 = vec4(zeroToOne, 1.);',
+    'vec4 positionVec4 = vec4(zeroToOne * vec3(1., -1., 1.), 1.);',
     'gl_Position = transformMatrix * modelviewMatrix * positionVec4;',
     'vColor = aVertexColor;',
     '}'
