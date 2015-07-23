@@ -306,7 +306,7 @@ p5.prototype.redraw = function () {
 };
 
 p5.prototype.size = function() {
-  throw 'size() is not a valid p5 function, to create a drawing window please use createCanvas() instead';
+  throw 'size() is not a valid p5 function, to set the size of a drawing canvas please use createCanvas() instead';
 };
 
 
