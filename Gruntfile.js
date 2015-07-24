@@ -45,7 +45,6 @@ module.exports = function(grunt) {
 
     // read in the package, used for knowing the current version, et al.
     pkg: grunt.file.readJSON('package.json'),
-
     // Configure style consistency checking for this file, the source, and the tests.
     jscs: {
       options: {
@@ -160,7 +159,8 @@ module.exports = function(grunt) {
         options: {
           browserifyOptions: {
             standalone: 'p5'
-          }
+          },
+          banner: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */'
         },
         src: 'src/app.js',
         dest: 'lib/p5.js'

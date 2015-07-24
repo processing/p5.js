@@ -10,7 +10,7 @@
     "docs": "grunt yui",
     "test": "grunt"
   },
-  "version": "0.4.6",
+  "version": "0.4.7",
   "devDependencies": {
     "amdclean": "~0.3.3",
     "concat-files": "^0.1.0",

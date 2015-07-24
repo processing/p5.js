@@ -1,7 +1,7 @@
 /**
- * @requires constants
- * @todo see methods below needing further implementation.
- */
+* @requires constants
+* @todo see methods below needing further implementation.
+*/
 
 'use strict';
 
@@ -72,8 +72,8 @@ p5.Matrix.prototype.get = function () {
 };
 
 /**
- * Copies the mat4
- * @return {[type]} [description]
+ * return a copy of a matrix
+ * @return {p5.Matrix}   the result matrix
  */
 p5.Matrix.prototype.copy = function(){
   var copied = new p5.Matrix();
@@ -98,16 +98,16 @@ p5.Matrix.prototype.copy = function(){
 
 /**
  * return an identity matrix
- * @return {[type]} [description]
+ * @return {p5.Matrix}   the result matrix
  */
 p5.Matrix.identity = function(){
   return new p5.Matrix();
 };
 
 /**
- * [transpose description]
- * @param  {[type]} a [description]
- * @return {[type]}   [description]
+ * transpose according to a given matrix
+ * @param  {p5.Matrix | Typed Array} a  the matrix to be based on to transpose
+ * @return {p5.Matrix}                  this
  */
 p5.Matrix.prototype.transpose = function(a){
   var a01, a02, a03, a12, a13, a23;
@@ -165,9 +165,9 @@ p5.Matrix.prototype.transpose = function(a){
 };
 
 /**
- * [invert description]
- * @param  {[type]} a [description]
- * @return {[type]}   [description]
+ * invert  matrix according to a give matrix
+ * @param  {p5.Matrix or Typed Array} a   the matrix to be based on to invert
+ * @return {p5.Matrix}                    this
  */
 p5.Matrix.prototype.invert = function(a){
   var a00, a01, a02, a03, a10, a11, a12, a13,
@@ -250,8 +250,8 @@ p5.Matrix.prototype.invert = function(a){
 };
 
 /**
- * @return {Number} Determinant of our 4x4 matrix
  * inspired by Toji's mat4 determinant
+ * @return {Number} Determinant of our 4x4 matrix
  */
 p5.Matrix.prototype.determinant = function(){
   var d00 = (this.mat4[0] * this.mat4[5]) - (this.mat4[1] * this.mat4[4]),
@@ -274,8 +274,8 @@ p5.Matrix.prototype.determinant = function(){
 
 /**
  * multiply two mat4s
- * @param {p5.Matrix | Array} multMatrix The matrix we want to multiply by
- * @return {[type]} [description]
+ * @param {p5.Matrix | Array}  multMatrix The matrix we want to multiply by
+ * @return {p5.Matrix}         this
  */
 p5.Matrix.prototype.mult = function(multMatrix){
   var _dest = new GLMAT_ARRAY_TYPE(16);
@@ -332,7 +332,7 @@ p5.Matrix.prototype.mult = function(multMatrix){
  * scales a p5.Matrix by scalars or a vector
  * @param  {p5.Vector | Array | Numbers}
  *                      vector to scale by
- * @return {[type]}     [description]
+ * @return {p5.Matrix}  this
  */
 p5.Matrix.prototype.scale = function() {
   var x,y,z;
@@ -384,7 +384,7 @@ p5.Matrix.prototype.scale = function() {
  * rotate our Matrix around an axis by the given angle.
  * @param  {Number} a The angle of rotation in radians
  * @param  {p5.Vector | Array} axis  the axis(es) to rotate around
- * @return {[type]}       [description]
+ * @return {p5.Matrix}                    this
  * inspired by Toji's gl-matrix lib, mat4 rotation
  */
 p5.Matrix.prototype.rotate = function(a, axis){
@@ -463,7 +463,7 @@ p5.Matrix.prototype.rotate = function(a, axis){
  * @todo  finish implementing this method!
  * translates
  * @param  {Array} v vector to translate by
- * @return {[type]}   [description]
+ * @return {p5.Matrix}                    this
  */
 p5.Matrix.prototype.translate = function(v){
   var x = v[0],
@@ -487,6 +487,75 @@ p5.Matrix.prototype.rotateY = function(a){
 };
 p5.Matrix.prototype.rotateZ = function(a){
   this.rotate(a, [0,0,1]);
+};
+
+/**
+ * sets the perspective matrix
+ * @param  {Number} fovy   [description]
+ * @param  {Number} aspect [description]
+ * @param  {Number} near   near clipping plane
+ * @param  {Number} far    far clipping plane
+ * @return {void}
+ */
+p5.Matrix.prototype.perspective = function(fovy,aspect,near,far){
+
+  var f = 1.0 / Math.tan(fovy / 2),
+    nf = 1 / (near - far);
+
+  this.mat4[0] = f / aspect;
+  this.mat4[1] = 0;
+  this.mat4[2] = 0;
+  this.mat4[3] = 0;
+  this.mat4[4] = 0;
+  this.mat4[5] = f;
+  this.mat4[6] = 0;
+  this.mat4[7] = 0;
+  this.mat4[8] = 0;
+  this.mat4[9] = 0;
+  this.mat4[10] = (far + near) * nf;
+  this.mat4[11] = -1;
+  this.mat4[12] = 0;
+  this.mat4[13] = 0;
+  this.mat4[14] = (2 * far * near) * nf;
+  this.mat4[15] = 0;
+
+  return this;
+
+};
+
+/**
+ * sets the ortho matrix
+ * @param  {Number} left   [description]
+ * @param  {Number} right  [description]
+ * @param  {Number} bottom [description]
+ * @param  {Number} top    [description]
+ * @param  {Number} near   near clipping plane
+ * @param  {Number} far    far clipping plane
+ * @return {void}
+ */
+p5.Matrix.prototype.ortho = function(left,right,bottom,top,near,far){
+
+  var lr = 1 / (left - right),
+    bt = 1 / (bottom - top),
+    nf = 1 / (near - far);
+  this.mat4[0] = -2 * lr;
+  this.mat4[1] = 0;
+  this.mat4[2] = 0;
+  this.mat4[3] = 0;
+  this.mat4[4] = 0;
+  this.mat4[5] = -2 * bt;
+  this.mat4[6] = 0;
+  this.mat4[7] = 0;
+  this.mat4[8] = 0;
+  this.mat4[9] = 0;
+  this.mat4[10] = 2 * nf;
+  this.mat4[11] = 0;
+  this.mat4[12] = (left + right) * lr;
+  this.mat4[13] = (top + bottom) * bt;
+  this.mat4[14] = (far + near) * nf;
+  this.mat4[15] = 1;
+
+  return this;
 };
 
 module.exports = p5.Matrix;
