@@ -39,6 +39,7 @@
     }
   ],
   "dependencies": {
+    "brfs": "^1.4.0",
     "reqwest": "^1.1.5"
   },
   "main": "./lib/p5.js",
