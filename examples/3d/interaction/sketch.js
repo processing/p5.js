@@ -5,7 +5,7 @@ function setup(){
 function draw(){
   background(250, 250, 250, 255);
   var radius = width;
-  translate(0, 0, -2000);
+  translate(0, 0, -1600);
   orbitControl();
   
   if(!mouseIsPressed){
