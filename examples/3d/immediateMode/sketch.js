@@ -45,7 +45,7 @@ function draw(){
 
   //triangle strip
   translate(200, 0, 0);
-  for(var i = 0; i < 10; i++){
+  for(var i = 0; i < 30; i++){
     fill(i * 10, 120, 120);
     translate(100, -50, 0);
     beginShape('TRIANGLE_STRIP')

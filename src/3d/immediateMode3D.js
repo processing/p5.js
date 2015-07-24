@@ -14,7 +14,7 @@ p5.Renderer3D.prototype.primitives2D = function(arr){
   var shaderProgram = this.getColorVertexShader();
 
   //create vertice buffer
-  var vertexPositionBuffer = gl.createBuffer();
+  var vertexPositionBuffer = this.verticeBuffer;
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
 
   gl.bufferData(
@@ -23,7 +23,7 @@ p5.Renderer3D.prototype.primitives2D = function(arr){
     3, gl.FLOAT, false, 0, 0);
 
   //create vertexcolor buffer
-  var vertexColorBuffer = gl.createBuffer();
+  var vertexColorBuffer = this.colorBuffer;
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
   var color = this.getCurColor();
   var colors = [];

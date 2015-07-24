@@ -51,6 +51,9 @@ p5.Renderer3D = function(elt, pInst, isMainCanvas) {
   this.initMatrix();
   this.initHash();
   this.resetStack();
+  //for immedidate mode
+  this.verticeBuffer = gl.createBuffer();
+  this.colorBuffer = gl.createBuffer();
   return this;
 };
 
