@@ -1,7 +1,7 @@
 'use strict';
 
 var p5 = require('../core/core');
-var shaders = require('./shaders');
+var shader = require('./shader');
 require('../core/p5.Renderer');
 require('./p5.Matrix');
 var uMVMatrixStack = [];
@@ -136,7 +136,7 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
   // 3. compile the shader
   var _vertShader = gl.createShader(gl.VERTEX_SHADER);
   //load in our default vertex shader
-  gl.shaderSource(_vertShader, shaders[vertId]);
+  gl.shaderSource(_vertShader, shader[vertId]);
   gl.compileShader(_vertShader);
   // if our vertex shader failed compilation?
   if (!gl.getShaderParameter(_vertShader, gl.COMPILE_STATUS)) {
@@ -147,7 +147,7 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
 
   var _fragShader = gl.createShader(gl.FRAGMENT_SHADER);
   //load in our material frag shader
-  gl.shaderSource(_fragShader, shaders[fragId]);
+  gl.shaderSource(_fragShader, shader[fragId]);
   gl.compileShader(_fragShader);
   // if our frag shader failed compilation?
   if (!gl.getShaderParameter(_fragShader, gl.COMPILE_STATUS)) {
