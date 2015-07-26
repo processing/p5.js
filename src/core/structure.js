@@ -294,19 +294,22 @@ p5.prototype.redraw = function () {
     if (typeof userSetup === 'undefined') {
       this.scale(this.pixelDensity, this.pixelDensity);
     }
+    var self = this;
     this._registeredMethods.pre.forEach(function (f) {
-      f.call(this);
+      f.call(self);
     });
     userDraw();
     this._registeredMethods.post.forEach(function (f) {
-      f.call(this);
+      f.call(self);
     });
     this.pop();
   }
 };
 
 p5.prototype.size = function() {
-  throw 'size() not implemented, see createCanvas()';
+  var s = 'size() is not a valid p5 function, to set the size of the ';
+  s += 'drawing canvas, please use createCanvas() instead';
+  throw s;
 };
 
 

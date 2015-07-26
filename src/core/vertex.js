@@ -226,19 +226,23 @@ p5.prototype.beginContour = function() {
  * </div>
  */
 p5.prototype.beginShape = function(kind) {
-  if (kind === constants.POINTS ||
-    kind === constants.LINES ||
-    kind === constants.TRIANGLES ||
-    kind === constants.TRIANGLE_FAN ||
-    kind === constants.TRIANGLE_STRIP ||
-    kind === constants.QUADS ||
-    kind === constants.QUAD_STRIP) {
-    shapeKind = kind;
-  } else {
-    shapeKind = null;
+  if(this._graphics.isP3D){
+    this._graphics.beginShape(kind);
+  }else{
+    if (kind === constants.POINTS ||
+      kind === constants.LINES ||
+      kind === constants.TRIANGLES ||
+      kind === constants.TRIANGLE_FAN ||
+      kind === constants.TRIANGLE_STRIP ||
+      kind === constants.QUADS ||
+      kind === constants.QUAD_STRIP) {
+      shapeKind = kind;
+    } else {
+      shapeKind = null;
+    }
+    vertices = [];
+    contourVertices = [];
   }
-  vertices = [];
-  contourVertices = [];
   return this;
 };
 
@@ -418,30 +422,34 @@ p5.prototype.endContour = function() {
  * </div>
  */
 p5.prototype.endShape = function(mode) {
-  if (vertices.length === 0) { return this; }
-  if (!this._doStroke && !this._doFill) { return this; }
+  if(this._graphics.isP3D){
+    this._graphics.endShape();
+  }else{
+    if (vertices.length === 0) { return this; }
+    if (!this._doStroke && !this._doFill) { return this; }
 
-  var closeShape = mode === constants.CLOSE;
+    var closeShape = mode === constants.CLOSE;
 
-  // if the shape is closed, the first element is also the last element
-  if (closeShape && !isContour) {
-    vertices.push(vertices[0]);
-  }
+    // if the shape is closed, the first element is also the last element
+    if (closeShape && !isContour) {
+      vertices.push(vertices[0]);
+    }
 
-  this._graphics.endShape(mode, vertices, isCurve, isBezier,
-    isQuadratic, isContour, shapeKind);
+    this._graphics.endShape(mode, vertices, isCurve, isBezier,
+      isQuadratic, isContour, shapeKind);
 
-  // Reset some settings
-  isCurve = false;
-  isBezier = false;
-  isQuadratic = false;
-  isContour = false;
+    // Reset some settings
+    isCurve = false;
+    isBezier = false;
+    isQuadratic = false;
+    isContour = false;
 
-  // If the shape is closed, the first element was added as last element.
-  // We must remove it again to prevent the list of vertices from growing
-  // over successive calls to endShape(CLOSE)
-  if (closeShape) {
-    vertices.pop();
+    // If the shape is closed, the first element was added as last element.
+    // We must remove it again to prevent the list of vertices from growing
+    // over successive calls to endShape(CLOSE)
+    if (closeShape) {
+      vertices.pop();
+    }
   }
   return this;
 };
@@ -541,26 +549,31 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  * </div>
  */
 p5.prototype.vertex = function(x, y, moveTo) {
-  var vert = [];
-  vert.isVert = true;
-  vert[0] = x;
-  vert[1] = y;
-  vert[2] = 0;
-  vert[3] = 0;
-  vert[4] = 0;
-  vert[5] = this._graphics._getFill();
-  vert[6] = this._graphics._getStroke();
+  if(this._graphics.isP3D){
+    this._graphics.vertex
+    (arguments[0], arguments[1], arguments[2]);
+  }else{
+    var vert = [];
+    vert.isVert = true;
+    vert[0] = x;
+    vert[1] = y;
+    vert[2] = 0;
+    vert[3] = 0;
+    vert[4] = 0;
+    vert[5] = this._graphics._getFill();
+    vert[6] = this._graphics._getStroke();
 
-  if (moveTo) {
-    vert.moveTo = moveTo;
-  }
-  if (isContour) {
-    if (contourVertices.length === 0) {
-      vert.moveTo = true;
+    if (moveTo) {
+      vert.moveTo = moveTo;
     }
-    contourVertices.push(vert);
-  } else {
-    vertices.push(vert);
+    if (isContour) {
+      if (contourVertices.length === 0) {
+        vert.moveTo = true;
+      }
+      contourVertices.push(vert);
+    } else {
+      vertices.push(vert);
+    }
   }
   return this;
 };

@@ -1,12 +1,12 @@
 'use strict';
 
 var p5 = require('../core/core');
-var shaders = require('./shaders');
+var shader = require('./shader');
 require('../core/p5.Renderer');
 require('./p5.Matrix');
-var gl;
 var uMVMatrixStack = [];
 var shaderStack = [];
+var RESOLUTION = 1000;
 
 //@TODO should probably implement an override for these attributes
 var attributes = {
@@ -39,7 +39,8 @@ p5.Renderer3D = function(elt, pInst, isMainCanvas) {
   }
 
   this.isP3D = true; //lets us know we're in 3d mode
-  gl = this.drawingContext;
+  this.GL = this.drawingContext;
+  var gl = this.GL;
   gl.clearColor(1.0, 1.0, 1.0, 1.0); //background is initialized white
   gl.clearDepth(1);
   gl.enable(gl.DEPTH_TEST);
@@ -47,8 +48,12 @@ p5.Renderer3D = function(elt, pInst, isMainCanvas) {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
   //create our default matrices
-  this.initHash();
   this.initMatrix();
+  this.initHash();
+  this.resetStack();
+  //for immedidate mode
+  this.verticeBuffer = gl.createBuffer();
+  this.colorBuffer = gl.createBuffer();
   return this;
 };
 
@@ -73,12 +78,13 @@ p5.Renderer3D.prototype._applyDefaults = function() {
  * @return {[type]}   [description]
  */
 p5.Renderer3D.prototype.resize = function(w,h) {
-  p5.Renderer.prototype.resize.call(this, w,h);
+  var gl = this.GL;
+  p5.Renderer.prototype.resize.call(this, w, h);
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 };
 
 //////////////////////////////////////////////
-// COLOR | Setting
+// BACKGROUND | Setting
 //////////////////////////////////////////////
 
 /**
@@ -86,6 +92,7 @@ p5.Renderer3D.prototype.resize = function(w,h) {
  * @return {[type]} [description]
  */
 p5.Renderer3D.prototype.background = function() {
+  var gl = this.GL;
   var _col = this._pInst.color.apply(this._pInst, arguments);
   // gl.clearColor(0.0,0.0,0.0,1.0);
   var _r = (_col.color_array[0]) / 255;
@@ -95,16 +102,22 @@ p5.Renderer3D.prototype.background = function() {
   gl.clearColor(_r, _g, _b, _a);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   this.resetMatrix();
-  this.emptyShaderStack();
+  this.resetStack();
+};
+
+/**
+ * [originMode description]
+ * @param  {[type]} mode [description]
+ * @return {[type]}      [description]
+ */
+p5.prototype.originMode = function(mode){
+  if(mode === 'TOP_LEFT'){
+    this._graphics.translate(-this.width/2, -this.height/2, 0);
+  }
 };
 
 //@TODO implement this
 // p5.Renderer3D.prototype.clear = function() {
-//@TODO
-// };
-
-//@TODO implement this
-// p5.Renderer3D.prototype.fill = function() {
 //@TODO
 // };
 
@@ -118,14 +131,15 @@ p5.Renderer3D.prototype.background = function() {
  * @param  {[type]} fragId [description]
  * @return {[type]}        [description]
  */
-p5.Renderer3D.prototype.initShaders = function(vertId, fragId) {
+p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
+  var gl = this.GL;
   //set up our default shaders by:
   // 1. create the shader,
   // 2. load the shader source,
   // 3. compile the shader
   var _vertShader = gl.createShader(gl.VERTEX_SHADER);
   //load in our default vertex shader
-  gl.shaderSource(_vertShader, shaders[vertId]);
+  gl.shaderSource(_vertShader, shader[vertId]);
   gl.compileShader(_vertShader);
   // if our vertex shader failed compilation?
   if (!gl.getShaderParameter(_vertShader, gl.COMPILE_STATUS)) {
@@ -136,7 +150,7 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId) {
 
   var _fragShader = gl.createShader(gl.FRAGMENT_SHADER);
   //load in our material frag shader
-  gl.shaderSource(_fragShader, shaders[fragId]);
+  gl.shaderSource(_fragShader, shader[fragId]);
   gl.compileShader(_fragShader);
   // if our frag shader failed compilation?
   if (!gl.getShaderParameter(_fragShader, gl.COMPILE_STATUS)) {
@@ -155,20 +169,27 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId) {
   gl.useProgram(shaderProgram);
   //END SHADERS SETUP
 
-  // var vertexResolution =
-  // gl.getUniformLocation(shaderProgram, 'u_resolution');
   // @TODO replace 4th argument with far plane once we implement
   // a view frustrum
+  shaderProgram.uResolution =
+    gl.getUniformLocation(shaderProgram, 'uResolution');
+  gl.uniform1f(shaderProgram.uResolution, RESOLUTION);
 
   //vertex position Attribute
   shaderProgram.vertexPositionAttribute =
     gl.getAttribLocation(shaderProgram, 'position');
   gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
-  //vertex normal Attribute
-  shaderProgram.vertexNormalAttribute =
-    gl.getAttribLocation(shaderProgram, 'normal');
-  gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
+  if(immediateMode === undefined){
+    //vertex normal Attribute
+    shaderProgram.vertexNormalAttribute =
+      gl.getAttribLocation(shaderProgram, 'normal');
+    gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
+
+    //normal Matrix uniform
+    shaderProgram.uNMatrixUniform =
+    gl.getUniformLocation(shaderProgram, 'normalMatrix');
+  }
 
   //projection Matrix uniform
   shaderProgram.uPMatrixUniform =
@@ -177,48 +198,84 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId) {
   shaderProgram.uMVMatrixUniform =
     gl.getUniformLocation(shaderProgram, 'modelviewMatrix');
 
-  //normal Matrix uniform
-  shaderProgram.uNMatrixUniform =
-  gl.getUniformLocation(shaderProgram, 'normalMatrix');
-
   this.mHash[vertId + '|' + fragId] = shaderProgram;
 
   return shaderProgram;
 };
 
 /**
- * [saveShaders description]
- * @return {[type]} [description]
+ * Sets the Matrix Uniforms inside our default shader.
+ * @param {String} shaderKey key of current shader
  */
+p5.Renderer3D.prototype.setMatrixUniforms = function(shaderKey) {
+  var gl = this.GL;
+  var shaderProgram = this.mHash[shaderKey];
+
+  gl.useProgram(shaderProgram);
+
+  gl.uniformMatrix4fv(
+    shaderProgram.uPMatrixUniform,
+    false, this.uPMatrix.mat4);
+
+  gl.uniformMatrix4fv(
+    shaderProgram.uMVMatrixUniform,
+    false, this.uMVMatrix.mat4);
+
+  this.uNMatrix = new p5.Matrix();
+  this.uNMatrix.invert(this.uMVMatrix);
+  this.uNMatrix.transpose(this.uNMatrix);
+
+  gl.uniformMatrix4fv(
+    shaderProgram.uNMatrixUniform,
+    false, this.uNMatrix.mat4);
+};
+
+//////////////////////////////////////////////
+// STACK | for shader, vertex, color and mode
+//////////////////////////////////////////////
+
 p5.Renderer3D.prototype.saveShaders = function(mId){
   shaderStack.push(mId);
 };
 
-/**
- * [emptyShaderStack description]
- * @return {[type]} [description]
- */
-p5.Renderer3D.prototype.emptyShaderStack = function(){
-  shaderStack = [];
+p5.Renderer3D.prototype.getCurColor = function() {
+  return this.colorStack[this.colorStack.length-1] || [0.5, 0.5, 0.5, 1.0];
 };
 
-/**
- * [getCurShader description]
- * @return {[type]} [description]
- */
-p5.Renderer3D.prototype.getCurShaderKey = function(){
-  var key = shaderStack[shaderStack.length - 1];
-  if(key === undefined){
-    //@TODO: make a default shader
-    key = 'normalVert|normalFrag';
-    this.initShaders('normalVert', 'normalFrag');
-    this.saveShaders(key);
+p5.Renderer3D.prototype.getCurShaderId = function(){
+  var mId = shaderStack[shaderStack.length - 1];
+  if(mId === undefined){
+    //default shader: basicMaterial
+    mId = 'normalVert|basicFrag';
+    var gl = this.GL;
+    var shaderProgram =
+     this.initShaders('normalVert', 'basicFrag');
+    shaderProgram.uMaterialColor = gl.getUniformLocation(
+      shaderProgram, 'uMaterialColor' );
+    var colors = this.getCurColor();
+    gl.uniform4f( shaderProgram.uMaterialColor,
+    colors[0], colors[1], colors[2], colors[3]);
+    this.saveShaders(mId);
   }
-  return key;
+  return mId;
+};
+
+p5.Renderer3D.prototype.resetStack = function(){
+  shaderStack = [];
+  //holding colors declaration, like [0, 120, 0]
+  this.colorStack = [];
+  //holding mode, like TIANGLE or 'LINES'
+  this.modeStack = [];
+  //holding 'fill' or 'stroke'
+  this.drawModeStack = [];
+  //holding an array of vertex position
+  this.verticeStack = [];
+  //holding lights
+  this.lightStack = [];
 };
 
 //////////////////////////////////////////////
-// HASH | Stroing geometriy and materil info
+// HASH | for material and geometry
 //////////////////////////////////////////////
 
 /**
@@ -246,99 +303,6 @@ p5.Renderer3D.prototype.geometryInHash = function(gId){
  */
 p5.Renderer3D.prototype.materialInHash = function(mId){
   return this.mHash[mId] !== undefined;
-};
-
-//////////////////////////////////////////////
-// BUFFER | deal with gl buffer
-//////////////////////////////////////////////
-
-/**
- * [initBuffer description]
- * @param  {String} gId    key of the geometry object
- * @param  {Object} obj    an object containing geometry information
- */
-p5.Renderer3D.prototype.initBuffer = function(gId, obj) {
-
-  this.gHash[gId] = {};
-  this.gHash[gId].len = obj.len;
-  this.gHash[gId].vertexBuffer = gl.createBuffer();
-  this.gHash[gId].normalBuffer = gl.createBuffer();
-  this.gHash[gId].indexBuffer = gl.createBuffer();
-
-  var shaderProgram = this.mHash[this.getCurShaderKey()];
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
-  gl.bufferData(
-    gl.ARRAY_BUFFER, new Float32Array(obj.vertices), gl.STATIC_DRAW);
-  gl.vertexAttribPointer(
-    shaderProgram.vertexPositionAttribute,
-    3, gl.FLOAT, false, 0, 0);
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
-  gl.bufferData(
-    gl.ARRAY_BUFFER, new Float32Array(obj.vertexNormals), gl.STATIC_DRAW);
-  gl.vertexAttribPointer(
-    shaderProgram.vertexNormalAttribute,
-    3, gl.FLOAT, false, 0, 0);
-
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
-  gl.bufferData
-   (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(obj.faces), gl.STATIC_DRAW);
-};
-
-/**
- * [drawBuffer description]
- * @param  {String} gId     key of the geometery object
- */
-p5.Renderer3D.prototype.drawBuffer = function(gId) {
-
-  var shaderKey = this.getCurShaderKey();
-  var shaderProgram = this.mHash[shaderKey];
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
-  gl.vertexAttribPointer(
-    shaderProgram.vertexPositionAttribute,
-    3, gl.FLOAT, false, 0, 0);
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
-  gl.vertexAttribPointer(
-    shaderProgram.vertexNormalAttribute,
-    3, gl.FLOAT, false, 0, 0);
-
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
-
-  this.setMatrixUniforms(shaderKey);
-
-  gl.drawElements(
-    gl.TRIANGLES, this.gHash[gId].len,
-     gl.UNSIGNED_SHORT, 0);
-};
-
-/**
- * Sets the Matrix Uniforms inside our default shader.
- * @param {String} shaderKey key of current shader
- */
-p5.Renderer3D.prototype.setMatrixUniforms = function(shaderKey) {
-
-  var shaderProgram = this.mHash[shaderKey];
-
-  gl.useProgram(shaderProgram);
-
-  gl.uniformMatrix4fv(
-    shaderProgram.uPMatrixUniform,
-    false, this.uPMatrix.mat4);
-
-  gl.uniformMatrix4fv(
-    shaderProgram.uMVMatrixUniform,
-    false, this.uMVMatrix.mat4);
-
-  this.uNMatrix = new p5.Matrix();
-  this.uNMatrix.invert(this.uMVMatrix);
-  this.uNMatrix.transpose(this.uNMatrix);
-
-  gl.uniformMatrix4fv(
-    shaderProgram.uNMatrixUniform,
-    false, this.uNMatrix.mat4);
 };
 
 //////////////////////////////////////////////
@@ -377,9 +341,9 @@ p5.Renderer3D.prototype.resetMatrix = function() {
  */
 p5.Renderer3D.prototype.translate = function(x, y, z) {
   //@TODO: figure out how to fit the resolution
-  x = x / 100;
-  y = -y / 100;
-  z = z / 100;
+  x = x / RESOLUTION;
+  y = -y / RESOLUTION;
+  z = z / RESOLUTION;
   this.uMVMatrix.translate([x,y,z]);
   return this;
 };
@@ -446,64 +410,5 @@ p5.Renderer3D.prototype.pop = function() {
   }
   this.uMVMatrix = uMVMatrixStack.pop();
 };
-
-/**
- * [orbitControl description]
- * @return {[type]} [description]
- */
-//@TODO: fix this fake orbitControl
-p5.prototype.orbitControl = function(){
-  if(this.mouseIsPressed){
-    this.rotateX((this.mouseX - this.width / 2) / (this.width / 2));
-    this.rotateY((this.mouseY - this.height / 2) / (this.width / 2));
-  }
-  return this;
-};
-
-/**
- * PRIVATE
- */
-// matrix methods adapted from:
-// https://developer.mozilla.org/en-US/docs/Web/WebGL/
-// gluPerspective
-//
-// function _makePerspective(fovy, aspect, znear, zfar){
-//    var ymax = znear * Math.tan(fovy * Math.PI / 360.0);
-//    var ymin = -ymax;
-//    var xmin = ymin * aspect;
-//    var xmax = ymax * aspect;
-//    return _makeFrustum(xmin, xmax, ymin, ymax, znear, zfar);
-//  }
-
-////
-//// glFrustum
-////
-//function _makeFrustum(left, right, bottom, top, znear, zfar){
-//  var X = 2*znear/(right-left);
-//  var Y = 2*znear/(top-bottom);
-//  var A = (right+left)/(right-left);
-//  var B = (top+bottom)/(top-bottom);
-//  var C = -(zfar+znear)/(zfar-znear);
-//  var D = -2*zfar*znear/(zfar-znear);
-//  var frustrumMatrix =[
-//  X, 0, A, 0,
-//  0, Y, B, 0,
-//  0, 0, C, D,
-//  0, 0, -1, 0
-//];
-//return frustrumMatrix;
-// }
-
-// function _setMVPMatrices(){
-////an identity matrix
-////@TODO use the p5.Matrix class to abstract away our MV matrices and
-///other math
-//var _mvMatrix =
-//[
-//  1.0,0.0,0.0,0.0,
-//  0.0,1.0,0.0,0.0,
-//  0.0,0.0,1.0,0.0,
-//  0.0,0.0,0.0,1.0
-//];
 
 module.exports = p5.Renderer3D;

@@ -157,6 +157,7 @@ module.exports = function(grunt) {
     browserify: {
       p5: {
         options: {
+          transform: ['brfs'],
           browserifyOptions: {
             standalone: 'p5'
           },
