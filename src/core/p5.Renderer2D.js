@@ -225,16 +225,12 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
   var pd = this.pixelDensity || this._pInst.pixelDensity;
 
   if (w === 1 && h === 1){
-
-    var imageData = this.drawingContext.getImageData(x * pd, y * pd, w, h);
-    var data = imageData.data;
-    var pixels = [];
-
-    for (var i = 0; i < data.length; i += 4) {
-      pixels.push(data[i], data[i+1], data[i+2], data[i+3]);
-    }
-
-    return pixels;
+    return [
+      this.pixels[pd*4*(y*this.width+x)],
+      this.pixels[pd*(4*(y*this.width+x)+1)],
+      this.pixels[pd*(4*(y*this.width+x)+2)],
+      this.pixels[pd*(4*(y*this.width+x)+3)]
+    ];
   } else {
     var sx = x * pd;
     var sy = y * pd;
@@ -268,11 +264,11 @@ p5.Renderer2D.prototype.loadPixels = function () {
 };
 
 p5.Renderer2D.prototype.set = function (x, y, imgOrCol) {
-  var pd = this.pixelDensity || this._pInst.pixelDensity;
   if (imgOrCol instanceof p5.Image) {
     this.drawingContext.save();
     this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-    this.drawingContext.scale(pd);
+    this.drawingContext.scale(this._pInst.pixelDensity,
+      this._pInst.pixelDensity);
     this.drawingContext.drawImage(imgOrCol.canvas, x, y);
     this.loadPixels.call(this._pInst);
     this.drawingContext.restore();
