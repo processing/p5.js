@@ -206,7 +206,7 @@ module.exports = function(grunt) {
     // front of the file.
     uglify: {
       options: {
-        banner: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */',
+        banner: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */ ',
         footer: 'p5.prototype._validateParameters = function() {};'+
         'p5.prototype._friendlyFileLoadError = function() {};'
       },
