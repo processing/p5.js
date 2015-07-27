@@ -17,11 +17,10 @@ suite('Files', function() {
     assert.typeOf(preload, 'Boolean');
   });
 
-  suite('loadFont() in Preload', function () {
+  suite('loadFont() in Preload', function() {
 
-    test('should be opentype', function() {
-      assert.ok(opentype);
-      assert.isObject(opentype);
+    test('opentype should be defined', function() {
+      assert.typeOf(opentype, 'object');
     });
 
     test('should be a function', function() {
@@ -29,15 +28,44 @@ suite('Files', function() {
       assert.typeOf(loadFont, 'function');
     });
 
-    test('should return an object', function() {
-      result = loadFont(opentype, './acmesa.ttf');
-      assert.ok(result);
-      assert.isObject(result);
-      //assert.isObject(result.font);
+    test('should call success-callback with object when font loads', function(done) {
+      loadFont('../examples/p5.Font/acmesa.ttf',
+        function(result) {
+          assert.ok(result);
+          assert.ok(result.font);
+          assert.isObject(result);
+          assert.isObject(result.font);
+          done();
+        },
+        function(event) {
+          //assert.fail();
+          done();
+        }
+      );
+    });
+
+    test('should call error-callback when font does not load', function(done) {
+      try {
+        loadFont('invalid.path',
+          function(result) {
+            assert.ok(false);
+            done();
+          },
+          function(err) {
+            assert.ok(err);
+            //assert.isTrue(p5._friendlyFileLoadError.called);
+            done();
+          }
+        );
+      } catch (e) {
+        console.log('CAUGHT ERROR2');
+        assert.ok('error');
+        done();
+      }
     });
   });
 
-  suite('loadJSON() in Preload', function () {
+  suite('loadJSON() in Preload', function() {
 
     test('should be a function', function() {
       assert.ok(loadJSON);
@@ -81,8 +109,8 @@ suite('Files', function() {
   //tests while preload is false with callbacks
   preload = false;
 
-  suite('p5.prototype.loadJSON', function(){
-    test('should be a function', function(){
+  suite('p5.prototype.loadJSON', function() {
+    test('should be a function', function() {
       assert.ok(loadJSON);
       assert.typeOf(loadJSON, 'function');
     });
