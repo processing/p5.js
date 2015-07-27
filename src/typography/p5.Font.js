@@ -45,7 +45,7 @@ p5.Font = function(p) {
    * Underlying opentype font implementation
    * @property font
    */
-  this.font = undefined;
+  this.font = null;
 };
 
 p5.Font.prototype.list = function() {
