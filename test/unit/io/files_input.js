@@ -30,10 +30,9 @@ suite('Files', function() {
     });
 
     test('should return an object', function() {
-      result = loadFont(opentype, './acmesa.ttf');
+      result = loadFont('/test/unit/assets/acmesa.ttf');
       assert.ok(result);
       assert.isObject(result);
-      //assert.isObject(result.font);
     });
   });
 
@@ -45,7 +44,7 @@ suite('Files', function() {
     });
 
     test('should return an Array', function() {
-      result = loadJSON('../assets/array.json');
+      result = loadJSON('/test/unit/assets/array.json');
       assert.ok(result);
       // assert.isObject(result, 'result is an object');
       assert.typeOf(result, 'Array');
