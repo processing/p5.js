@@ -83,9 +83,9 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
     if (typeof onSuccess !== 'undefined') {
       onSuccess(p5Font);
     }
-  });
 
-  return p5Font;
+    return p5Font;
+  });
 };
 
 

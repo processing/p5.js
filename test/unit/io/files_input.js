@@ -10,14 +10,15 @@ suite('Files', function() {
   var preload = p5.prototype.preload;
   var result;
 
-
-  //tests while preload is true without callbacks
+  // tests while preload is true without callbacks
+  //p5.prototype.preload = function() {};
   preload = true;
+
   test('preload is a Boolean', function() {
     assert.typeOf(preload, 'Boolean');
   });
 
-  suite('loadFont() in Preload', function() {
+  suite('loadFont() via preload', function() {
 
     test('opentype should be defined', function() {
       assert.typeOf(opentype, 'object');
@@ -28,42 +29,41 @@ suite('Files', function() {
       assert.typeOf(loadFont, 'function');
     });
 
-    test('should call success-callback with object when font loads', function(done) {
-      loadFont('../examples/p5.Font/acmesa.ttf',
+  });
+
+  /*suite('loadFont() with callback', function() {
+
+    test('should call success-callback with object when font loads',
+      function(done) {
+        loadFont('../examples/p5.Font/acmesa.ttf',
+          function(result) {
+            assert.ok(result);
+            assert.ok(result.font);
+            assert.isObject(result);
+            assert.isObject(result.font);
+            done();
+          },
+          function(event) {
+            assert.ok(false);
+            done();
+          });
+      }
+    );
+
+    test('should call error-callback when font does not load', function(done) {
+      loadFont('invalid.path',
         function(result) {
-          assert.ok(result);
-          assert.ok(result.font);
-          assert.isObject(result);
-          assert.isObject(result.font);
+          assert.ok(false);
           done();
         },
-        function(event) {
-          //assert.fail();
+        function(err) {
+          assert.ok(err);
+          //assert.isTrue(p5._friendlyFileLoadError.called);
           done();
         }
       );
     });
-
-    test('should call error-callback when font does not load', function(done) {
-      try {
-        loadFont('invalid.path',
-          function(result) {
-            assert.ok(false);
-            done();
-          },
-          function(err) {
-            assert.ok(err);
-            //assert.isTrue(p5._friendlyFileLoadError.called);
-            done();
-          }
-        );
-      } catch (e) {
-        console.log('CAUGHT ERROR2');
-        assert.ok('error');
-        done();
-      }
-    });
-  });
+  });*/
 
   suite('loadJSON() in Preload', function() {
 
@@ -79,10 +79,6 @@ suite('Files', function() {
       assert.typeOf(result, 'Array');
       // assert.lengthOf(result, 2);
     });
-
-    // test('should return an Object', function() {
-    //   assert.isObject(result, ['the result is an object'])
-    // });
   });
 
 
