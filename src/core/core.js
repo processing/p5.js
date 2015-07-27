@@ -269,7 +269,7 @@ var p5 = function(sketch, node, sync) {
     if (typeof context.preload === 'function') {
       for (var f in this._preloadMethods) {
         var o = this._preloadMethods[f];
-        context[f] = window[o].prototype[f];
+        context[f] = window[o][f];
       }
     }
 
