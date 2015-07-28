@@ -23,15 +23,15 @@ p5.prototype.normalMaterial = function(){
 };
 
 /**
- * [uvMaterial description]
+ * [textureMaterial description]
  * @return {[type]} [description]
  */
-p5.prototype.uvMaterial = function(){
+p5.prototype.textureMaterial = function(){
 
-  var mId = 'normalVert|uvFrag';
+  var mId = 'normalVert|textureFrag';
 
   if(!this._graphics.materialInHash(mId)){
-    this._graphics.initShaders('normalVert', 'uvFrag');
+    this._graphics.initShaders('normalVert', 'textureFrag');
   }
 
   if(mId !== this._graphics.getCurShaderId()){
