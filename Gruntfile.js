@@ -10,9 +10,15 @@
  *
  *  grunt yui   - This will build the inline documentation for p5.js.
  *
- *  grunt test  - This only runs the automated tests, which is faster than
- *                rebuilding entirely from source because it skips minification
- *                and concatination.
+ *  grunt test  - This rebuilds the source and runs the automated tests on
+ *                both the minified and unminified code. If you need to debug
+ *                a test suite in a browser, `grunt test --keepalive` will
+ *                start the connect server and leave it running; the tests
+ *                can then be opened at localhost:9001/test/test.html
+ *
+ *  Note: `grunt test:nobuild` will skip the build step when running the tests,
+ *  and only runs the test files themselves through the linter: this can save
+ *  a lot of time when authoring test specs without making any build changes.
  *
  *  And there are several secondary tasks:
  *
@@ -96,7 +102,7 @@ module.exports = function(grunt) {
       // Watch the codebase for changes
       main: {
         files: ['src/**/*.js'],
-        tasks: ['newer:jshint:source','requirejs:p5_unminified','mocha'],
+        tasks: ['newer:jshint:source','test'],
         options: {
           livereload: true
         }
@@ -125,8 +131,11 @@ module.exports = function(grunt) {
     // Set up the mocha task, used for running the automated tests.
     mocha: {
       test: {
-        src: ['test/**/*.html'],
         options: {
+          urls: [
+            'http://localhost:9001/test/test.html',
+            'http://localhost:9001/test/test-minified.html'
+          ],
           reporter: reporter,
           run: true,
           log: true,
@@ -157,6 +166,7 @@ module.exports = function(grunt) {
     browserify: {
       p5: {
         options: {
+          transform: ['brfs'],
           browserifyOptions: {
             standalone: 'p5'
           },
@@ -206,7 +216,7 @@ module.exports = function(grunt) {
     // front of the file.
     uglify: {
       options: {
-        banner: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */',
+        banner: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */ ',
         footer: 'p5.prototype._validateParameters = function() {};'+
         'p5.prototype._friendlyFileLoadError = function() {};'
       },
@@ -245,7 +255,7 @@ module.exports = function(grunt) {
     connect: {
       server: {
         options: {
-          base: './test',
+          base: './',
           port: 9001,
           keepalive: keepalive,
           middleware: function(connect, options, middlewares) {
@@ -278,7 +288,8 @@ module.exports = function(grunt) {
   // Create the multitasks.
   // TODO: "requirejs" is in here to run the "yuidoc_themes" subtask. Is this needed?
   grunt.registerTask('build', ['browserify', 'concat', 'uglify', 'requirejs']);
-  grunt.registerTask('test', ['connect', 'jshint', 'jscs', 'build', 'mocha']);
+  grunt.registerTask('test', ['jshint', 'jscs', 'build', 'connect', 'mocha']);
+  grunt.registerTask('test:nobuild', ['jshint:test', 'jscs:test', 'connect', 'mocha']);
   grunt.registerTask('yui', ['yuidoc']);
   grunt.registerTask('default', ['test']);
 };

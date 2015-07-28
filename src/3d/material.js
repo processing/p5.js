@@ -14,7 +14,9 @@ p5.prototype.normalMaterial = function(){
     this._graphics.initShaders('normalVert', 'normalFrag');
   }
 
-  this._graphics.saveShaders(mId);
+  if(mId !== this._graphics.getCurShaderId()){
+    this._graphics.saveShaders(mId);
+  }
 
   return this;
 
@@ -30,29 +32,41 @@ p5.prototype.normalMaterial = function(){
 */
 p5.prototype.basicMaterial = function(r, g, b, a){
 
-  r = r / 255 || 0.5;
-  g = g / 255 || r;
-  b = b / 255 || r;
-  a = a || 1.0;
-
   var mId = 'normalVert|basicFrag';
+  var gl = this._graphics.GL;
+  var shaderProgram;
 
   if(!this._graphics.materialInHash(mId)){
-    //@TODO: figure out how to do this
-    // var sp = this._graphics.initShaders(
-    // shaders.normalVert, shaders.basicFrag, {
-    //   uMaterialColor: [r, g, b, a]
-    // });
-    // sp.uMaterialColorLoc = gl.getUniformLocation(
-    // shaderProgram, 'uMaterialColor' );
-    //  gl.uniform4f( program.uMaterialColorLoc, 1.0, 1.0, 1.0, 1.0 );
-    this._graphics.initShaders('normalVert', 'basicFrag');
+    shaderProgram =
+     this._graphics.initShaders('normalVert', 'basicFrag');
+  }else{
+    shaderProgram = this._graphics.mHash[mId];
   }
+  gl.useProgram(shaderProgram);
+  shaderProgram.uMaterialColor = gl.getUniformLocation(
+    shaderProgram, 'uMaterialColor' );
 
-  this._graphics.saveShaders(mId);
+  var color = this._graphics._pInst.color.apply(
+    this._graphics._pInst, arguments);
+  var colors = _normalizeColor(color.rgba);
+
+  gl.uniform4f( shaderProgram.uMaterialColor,
+    colors[0], colors[1], colors[2], colors[3]);
+
+  if(mId !== this._graphics.getCurShaderId()){
+    this._graphics.saveShaders(mId);
+  }
 
   return this;
 
 };
+
+function _normalizeColor(_arr){
+  var arr = [];
+  _arr.forEach(function(val){
+    arr.push(val/255);
+  });
+  return arr;
+}
 
 module.exports = p5;

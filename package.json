@@ -32,13 +32,9 @@
     "jscs-stylish": "^0.3.1",
     "phantomjs": "~1.9.2-4"
   },
-  "licenses": [
-    {
-      "type": "LGPL",
-      "url": "https://www.gnu.org/licenses/lgpl-2.1.html"
-    }
-  ],
+  "license": "LGPL-2.1",
   "dependencies": {
+    "brfs": "^1.4.0",
     "reqwest": "^1.1.5"
   },
   "main": "./lib/p5.js",

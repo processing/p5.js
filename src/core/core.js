@@ -200,18 +200,6 @@ var p5 = function(sketch, node, sync) {
       }
     }
 
-    // Setup loading screen
-    // Set loading scfeen into dom if not present
-    // Otherwise displays and removes user provided loading screen
-    this._loadingScreen = document.getElementById(this._loadingScreenId);
-    if(!this._loadingScreen){
-      this._loadingScreen = document.createElement('loadingDiv');
-      this._loadingScreen.innerHTML = 'loading...';
-      this._loadingScreen.style.position = 'absolute';
-      var node = this._userNode || document.body;
-      node.appendChild(this._loadingScreen);
-    }
-
     // Always create a default canvas.
     // Later on if the user calls createCanvas, this default one
     // will be replaced
@@ -226,6 +214,19 @@ var p5 = function(sketch, node, sync) {
     var context = this._isGlobal ? window : this;
     if (userPreload) {
 
+      // Setup loading screen
+      // Set loading scfeen into dom if not present
+      // Otherwise displays and removes user provided loading screen
+      var loadingScreen = document.getElementById(this._loadingScreenId);
+      if(!loadingScreen){
+        loadingScreen = document.createElement('div');
+        loadingScreen.innerHTML = 'Loading...';
+        loadingScreen.style.position = 'absolute';
+        loadingScreen.id = this._loadingScreenId;
+        var node = this._userNode || document.body;
+        node.appendChild(loadingScreen);
+      }
+
       var methods = this._preloadMethods;
       Object.keys(methods).forEach(function(f) {
         context[f] = function() {
@@ -235,11 +236,6 @@ var p5 = function(sketch, node, sync) {
       });
 
       userPreload();
-      if (this._preloadCount === 0) {
-        this._setup();
-        this._runFrames();
-        this._draw();
-      }
     } else {
       this._setup();
       this._runFrames();
@@ -253,6 +249,10 @@ var p5 = function(sketch, node, sync) {
     var preloadCallback = function (resp) {
       context._setProperty('_preloadCount', context._preloadCount - 1);
       if (context._preloadCount === 0) {
+        var loadingScreen = document.getElementById(context._loadingScreenId);
+        if (loadingScreen) {
+          loadingScreen.parentNode.removeChild(loadingScreen);
+        }
         context._setup();
         context._runFrames();
         context._draw();
@@ -269,7 +269,7 @@ var p5 = function(sketch, node, sync) {
     if (typeof context.preload === 'function') {
       for (var f in this._preloadMethods) {
         var o = this._preloadMethods[f];
-        context[f] = window[o].prototype[f];
+        context[f] = window[o][f];
       }
     }
 
@@ -292,9 +292,6 @@ var p5 = function(sketch, node, sync) {
       k.className = k.className.replace(reg, '');
     }
     this._setupDone = true;
-
-    // Removes the loading screen if it's in the DOM
-    this._loadingScreen.parentNode.removeChild(this._loadingScreen);
 
   }.bind(this);
 
