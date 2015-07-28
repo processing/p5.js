@@ -189,6 +189,14 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
     //normal Matrix uniform
     shaderProgram.uNMatrixUniform =
     gl.getUniformLocation(shaderProgram, 'normalMatrix');
+
+    //texture coordinate Attribute
+    shaderProgram.textureCoordAttribute =
+      gl.getAttribLocation(shaderProgram, 'texCoord');
+    gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
+
+    // shaderProgram.samplerUniform =
+    //   gl.getUniformLocation(shaderProgram, "uSampler");
   }
 
   //projection Matrix uniform

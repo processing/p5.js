@@ -25,7 +25,7 @@ function draw(){
   normalMaterial();
   sphere(60); 
   translate(300, 0, 0);
-  basicMaterial(0, 255, 0);
+  uvMaterial();
   box(60,60,60);
   pop();
   translate(300, 0, 0);
