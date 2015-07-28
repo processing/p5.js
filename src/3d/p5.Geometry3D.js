@@ -19,8 +19,8 @@ p5.Geometry3D = function(){
   //each faceNormal is a p5.Vector
   //[[p5.Vector, p5.Vector, p5.Vector],[p5.Vector, p5.Vector, p5.Vector],...]
   this.faceNormals = [];
-  //an array of array holding uvs
-  //[[0, 0], [1, 0], [1, 0], [1, 1],...]
+  //an array of array holding uvs (group according to faces)
+  //[[[0, 0], [1, 0], [1, 0]],...]
   this.uvs = [];
 };
 
@@ -221,12 +221,10 @@ p5.Geometry3D.prototype.generateUV = function(faces, uvs){
 
   faces = flatten(faces);
   uvs = flatten(uvs);
-
   var arr = [];
   faces.forEach(function(item, index){
     arr[item] = uvs[index];
   });
-
   return flatten(arr);
 };
 
