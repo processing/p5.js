@@ -2,8 +2,7 @@
 
 suite('Fonts', function() {
 
-  var p5Font,
-    loadFont = p5.prototype.loadFont;
+  var loadFont = p5.prototype.loadFont;
 
   suite('loadFont() with preload', function() {
 
@@ -16,42 +15,22 @@ suite('Fonts', function() {
       assert.typeOf(loadFont, 'function');
     });
 
-    test('loadFont() should wait for load before calling setup', function() {
-      window.preload = function() {
-        console.log('PRELOAD');
-        p5Font = loadFont('../examples/p5.Font/acmesa.ttf');
-        assert.notOK(p5Font);
-      }();
-      window.setup = function() {
-        console.log('SETUP');
-        assert.isTrue(p5Font instanceof p5.Font);
-        assert.isObject(p5Font);
-        assert.isObject(p5Font.font);
-        done();
-      }
-    });
+    // TODO: actually test loading from within preload
   });
 
-  var loadFont = p5.prototype.loadFont;
-
-  //console.log("p5.preload", Object.keys(p5.prototype._preloadMethods));
-
-  //suite('loadFont() with preload', function() {});
-
-  return;
   suite('loadFont() with callback', function() {
 
     test('should call success-callback with object when font loads',
       function(done) {
         loadFont('../examples/p5.Font/acmesa.ttf',
           function(p5Font) {
-            assert.isTrue(p5Font instanceof p5.Font);
             assert.isObject(p5Font);
+            assert.isTrue(p5Font instanceof p5.Font);
             assert.isObject(p5Font.font);
             done();
           },
-          function(event) {
-            assert.ok(false);
+          function(err) {
+            assert.isNull(err); // fail here
             done();
           });
       }
