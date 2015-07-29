@@ -1,5 +1,3 @@
-/* global opentype: false */
-
 suite('Files', function() {
 
   var loadJSON = p5.prototype.loadJSON;
@@ -18,12 +16,6 @@ suite('Files', function() {
   });
 
   suite('loadFont() in Preload', function () {
-
-    test('should be opentype', function() {
-      assert.ok(opentype);
-      assert.isObject(opentype);
-    });
-
     test('should be a function', function() {
       assert.ok(loadFont);
       assert.typeOf(loadFont, 'function');
@@ -33,6 +25,14 @@ suite('Files', function() {
       result = loadFont('/test/unit/assets/acmesa.ttf');
       assert.ok(result);
       assert.isObject(result);
+    });
+
+    test('should load the font', function(done) {
+      result = loadFont('/test/unit/assets/acmesa.ttf', function() {
+        assert.typeOf(result.font, 'object');
+        assert.equal(result.font.familyName, 'A.C.M.E. Secret Agent');
+        done();
+      });
     });
   });
 
