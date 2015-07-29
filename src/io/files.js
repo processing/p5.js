@@ -1,5 +1,3 @@
-/* global opentype:false */
-
 /**
  * @module IO
  * @submodule Input
@@ -12,6 +10,7 @@
 
 var p5 = require('../core/core');
 var reqwest = require('reqwest');
+var opentype = require('opentype.js');
 require('../core/error_helpers');
 
 
@@ -29,8 +28,8 @@ require('../core/error_helpers');
  * @return {Object}                   p5.Font object
  * @example
  *
- * <p>Calling loadFont() inside preload() guarantees to complete the
- * operation before setup() and draw() are called.</p>
+ * <p>Calling loadFont() inside preload() guarantees that the load
+ * operation will have completed before setup() and draw() are called.</p>
  *
  * <div><code>
  * var myFont;

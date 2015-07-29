@@ -15,8 +15,7 @@ suite('Files', function() {
     assert.typeOf(preload, 'Boolean');
   });
 
-  suite('loadJSON() in Preload', function() {
-
+  suite('loadJSON() in Preload', function () {
     test('should be a function', function() {
       assert.ok(loadJSON);
       assert.typeOf(loadJSON, 'function');
