@@ -6,10 +6,6 @@ suite('Fonts', function() {
 
   suite('loadFont() with preload', function() {
 
-    test('opentype should be defined', function() {
-      assert.typeOf(opentype, 'object');
-    });
-
     test('loadFont should be a function', function() {
       assert.ok(loadFont);
       assert.typeOf(loadFont, 'function');
