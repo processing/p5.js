@@ -58,26 +58,28 @@ require('../core/error_helpers');
  *   textFont(font, 36);
  *   text('p5*js', 10, 50);
  * }
- * function draw(){
- * }
+ *
  * </code></div>
  *
  */
-
-
-
-
-p5.prototype.loadFont = function(path, callback) {
+p5.prototype.loadFont = function(path, onSuccess, onError) {
 
   var p5Font = new p5.Font(this);
 
   opentype.load(path, function(err, font) {
+
     if (err) {
-      throw Error(err);
+
+      if (typeof onError !== 'undefined') {
+        return onError(err);
+      }
+      throw err;
     }
+
     p5Font.font = font;
-    if (typeof callback !== 'undefined') {
-      callback(p5Font);
+
+    if (typeof onSuccess !== 'undefined') {
+      onSuccess(p5Font);
     }
   });
 
