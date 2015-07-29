@@ -1,5 +1,3 @@
-/* global opentype: false */
-
 suite('Fonts', function() {
 
   var loadFont = p5.prototype.loadFont;
