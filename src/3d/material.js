@@ -23,6 +23,26 @@ p5.prototype.normalMaterial = function(){
 };
 
 /**
+ * [textureMaterial description]
+ * @return {[type]} [description]
+ */
+p5.prototype.textureMaterial = function(){
+
+  var mId = 'normalVert|textureFrag';
+
+  if(!this._graphics.materialInHash(mId)){
+    this._graphics.initShaders('normalVert', 'textureFrag');
+  }
+
+  if(mId !== this._graphics.getCurShaderId()){
+    this._graphics.saveShaders(mId);
+  }
+
+  return this;
+
+};
+
+/**
 * [basic description]
 * @param  {[type]} r [description]
 * @param  {[type]} g [description]

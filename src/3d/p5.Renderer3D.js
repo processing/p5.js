@@ -30,12 +30,12 @@ p5.Renderer3D = function(elt, pInst, isMainCanvas) {
     this.drawingContext = this.canvas.getContext('webgl', attributes) ||
       this.canvas.getContext('experimental-webgl', attributes);
     if (this.drawingContext === null) {
-      throw 'Error creating webgl context';
+      throw new Error('Error creating webgl context');
     } else {
       console.log('p5.Renderer3D: enabled webgl context');
     }
   } catch (er) {
-    console.error(er);
+    throw new Error(er);
   }
 
   this.isP3D = true; //lets us know we're in 3d mode
@@ -103,17 +103,6 @@ p5.Renderer3D.prototype.background = function() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   this.resetMatrix();
   this.resetStack();
-};
-
-/**
- * [originMode description]
- * @param  {[type]} mode [description]
- * @return {[type]}      [description]
- */
-p5.prototype.originMode = function(mode){
-  if(mode === 'TOP_LEFT'){
-    this._graphics.translate(-this.width/2, -this.height/2, 0);
-  }
 };
 
 //@TODO implement this
@@ -189,6 +178,14 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
     //normal Matrix uniform
     shaderProgram.uNMatrixUniform =
     gl.getUniformLocation(shaderProgram, 'normalMatrix');
+
+    //texture coordinate Attribute
+    shaderProgram.textureCoordAttribute =
+      gl.getAttribLocation(shaderProgram, 'texCoord');
+    gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
+
+    // shaderProgram.samplerUniform =
+    //   gl.getUniformLocation(shaderProgram, "uSampler");
   }
 
   //projection Matrix uniform

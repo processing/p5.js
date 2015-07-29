@@ -19,7 +19,8 @@ p5.Geometry3D = function(){
   //each faceNormal is a p5.Vector
   //[[p5.Vector, p5.Vector, p5.Vector],[p5.Vector, p5.Vector, p5.Vector],...]
   this.faceNormals = [];
-  //an array of p5.Vector holding uvs
+  //an array of array holding uvs (group according to faces)
+  //[[[0, 0], [1, 0], [1, 0]],...]
   this.uvs = [];
 };
 
@@ -70,7 +71,6 @@ p5.Geometry3D.prototype.parametricGeometry = function
       this.uvs.push([uvb, uvc, uvd]);
     }
   }
-
 };
 
 /**
@@ -212,6 +212,24 @@ p5.Geometry3D.prototype.computeVertexNormals = function (){
 };
 
 /**
+ * [generateUV description]
+ * @param  {[type]} faces [description]
+ * @param  {[type]} uvs   [description]
+ * @return {[type]}       [description]
+ */
+p5.Geometry3D.prototype.generateUV = function(faces, uvs){
+
+  faces = flatten(faces);
+  uvs = flatten(uvs);
+  var arr = [];
+  faces.forEach(function(item, index){
+    arr[item] = uvs[index];
+  });
+  return flatten(arr);
+};
+
+
+/**
  * generate an object containing information needed to create buffer
  */
 p5.Geometry3D.prototype.generateObj = function(noMerge){
@@ -224,6 +242,7 @@ p5.Geometry3D.prototype.generateObj = function(noMerge){
   var obj = {
     vertices: turnVectorArrayIntoNumberArray(this.vertices),
     vertexNormals: turnVectorArrayIntoNumberArray(this.vertexNormals),
+    uvs: this.generateUV(this.faces, this.uvs),
     faces: flatten(this.faces),
     len: this.faces.length * 3
   };
