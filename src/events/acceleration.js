@@ -81,6 +81,7 @@ p5.prototype._updatePAccelerations = function(){
 };
 
 var move_threshold = 0.5;
+var shake_threshold = 30;
 
 /**
  * The setMoveThreshold() function is used to set the movement threshold for
@@ -92,6 +93,19 @@ var move_threshold = 0.5;
 p5.prototype.setMoveThreshold = function(val){
   if(typeof val === 'number'){
     move_threshold = val;
+  }
+};
+
+/**
+ * The setShakeThreshold() function is used to set the movement threshold for
+ * the deviceShaked() function.
+ *
+ * @method setShakeThreshold
+ * @param {number} value The threshold value
+ */
+p5.prototype.setShakeThreshold = function(val){
+  if(typeof val === 'number'){
+    shake_threshold = val;
   }
 };
 
@@ -149,6 +163,32 @@ var new_max_axis = '';
  * </code>
  * </div>
  */
+
+ /**
+ * The deviceShaken() function is called when the device total acceleration 
+ * changes more than the threshold value.
+ * @method deviceShaken
+ * @example
+ * <div>
+ * <code>
+ * // Run this example on a mobile device
+ * // Shake the device to change the value. 
+ *
+ * var value = 0;
+ * function draw() {
+ *   fill(value);
+ *   rect(25, 25, 50, 50);
+ * }
+ * function deviceShaken() {
+ *   value = value + 5;
+ *   if (value > 255) {
+ *     value = 0;
+ *   }
+ * }
+ * </code>
+ * </div>
+ */
+
 p5.prototype._ondeviceorientation = function (e) {
   this._setProperty('accelerationX', e.beta);
   this._setProperty('accelerationY', e.gamma);
@@ -202,6 +242,18 @@ p5.prototype._handleMotion = function() {
 
     }
     old_max_axis = new_max_axis;
+  }
+  var deviceShaken = this.deviceShaken || window.deviceShaken;
+  if (typeof deviceShaken === 'function') {
+    var accelerationChange = {};
+    if (this.pAccelerationX !== null) {
+      accelerationChange.x = Math.abs(this.accelerationX - this.pAccelerationX);
+      accelerationChange.y = Math.abs(this.accelerationY - this.pAccelerationY);
+      accelerationChange.z = Math.abs(this.accelerationZ - this.pAccelerationZ);
+    }
+    if (accelerationChange.x + accelerationChange.y > shake_threshold) {
+      deviceShaken();
+    }   
   }
 };
 
