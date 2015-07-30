@@ -98,7 +98,7 @@ p5.prototype.setMoveThreshold = function(val){
 
 /**
  * The setShakeThreshold() function is used to set the movement threshold for
- * the deviceShaked() function.
+ * the deviceShaken() function. The default threshold is set to 30.
  *
  * @method setShakeThreshold
  * @param {number} value The threshold value
@@ -165,8 +165,9 @@ var new_max_axis = '';
  */
 
 /**
- * The deviceShaken() function is called when the device total acceleration.
- * changes more than the threshold value.
+ * The deviceShaken() function is called when the device total acceleration
+ * changes of accelerationX and accelerationY values is more than
+ * the threshold value. The default threshold is set to 30.
  * @method deviceShaken
  * @example
  * <div>
