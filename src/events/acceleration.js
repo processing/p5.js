@@ -164,15 +164,15 @@ var new_max_axis = '';
  * </div>
  */
 
- /**
- * The deviceShaken() function is called when the device total acceleration 
+/**
+ * The deviceShaken() function is called when the device total acceleration.
  * changes more than the threshold value.
  * @method deviceShaken
  * @example
  * <div>
  * <code>
  * // Run this example on a mobile device
- * // Shake the device to change the value. 
+ * // Shake the device to change the value.
  *
  * var value = 0;
  * function draw() {
@@ -253,7 +253,7 @@ p5.prototype._handleMotion = function() {
     }
     if (accelerationChange.x + accelerationChange.y > shake_threshold) {
       deviceShaken();
-    }   
+    }
   }
 };
 
