@@ -246,13 +246,14 @@ p5.prototype._handleMotion = function() {
   }
   var deviceShaken = this.deviceShaken || window.deviceShaken;
   if (typeof deviceShaken === 'function') {
-    var accelerationChange = {};
+    var accelerationChangeX;
+    var accelerationChangeY;
+    // Add accelerationChangeZ if acceleration change on Z is needed
     if (this.pAccelerationX !== null) {
-      accelerationChange.x = Math.abs(this.accelerationX - this.pAccelerationX);
-      accelerationChange.y = Math.abs(this.accelerationY - this.pAccelerationY);
-      accelerationChange.z = Math.abs(this.accelerationZ - this.pAccelerationZ);
+      accelerationChangeX = Math.abs(this.accelerationX - this.pAccelerationX);
+      accelerationChangeY = Math.abs(this.accelerationY - this.pAccelerationY);
     }
-    if (accelerationChange.x + accelerationChange.y > shake_threshold) {
+    if (accelerationChangeX + accelerationChangeY > shake_threshold) {
       deviceShaken();
     }
   }
