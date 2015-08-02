@@ -1,5 +1,3 @@
-/* global opentype:false */
-
 /**
  * @module IO
  * @submodule Input
@@ -12,6 +10,7 @@
 
 var p5 = require('../core/core');
 var reqwest = require('reqwest');
+var opentype = require('opentype.js');
 require('../core/error_helpers');
 
 
@@ -29,8 +28,8 @@ require('../core/error_helpers');
  * @return {Object}                   p5.Font object
  * @example
  *
- * <p>Calling loadFont() inside preload() guarantees to complete the
- * operation before setup() and draw() are called.</p>
+ * <p>Calling loadFont() inside preload() guarantees that the load
+ * operation will have completed before setup() and draw() are called.</p>
  *
  * <div><code>
  * var myFont;
@@ -59,26 +58,28 @@ require('../core/error_helpers');
  *   textFont(font, 36);
  *   text('p5*js', 10, 50);
  * }
- * function draw(){
- * }
+ *
  * </code></div>
  *
  */
-
-
-
-
-p5.prototype.loadFont = function(path, callback) {
+p5.prototype.loadFont = function(path, onSuccess, onError) {
 
   var p5Font = new p5.Font(this);
 
   opentype.load(path, function(err, font) {
+
     if (err) {
-      throw Error(err);
+
+      if (typeof onError !== 'undefined') {
+        return onError(err);
+      }
+      throw err;
     }
+
     p5Font.font = font;
-    if (typeof callback !== 'undefined') {
-      callback(p5Font);
+
+    if (typeof onSuccess !== 'undefined') {
+      onSuccess(p5Font);
     }
   });
 
