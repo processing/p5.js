@@ -3,12 +3,16 @@ function setup(){
 }
 
 function draw(){
-  background(250);
-  translate(0, 0, -800);
+  background(0);
+  translate(0, 0, -400);
   rotateX(frameCount * 0.01);
   rotateY(frameCount * 0.01);
-  ambientLight(102, 102, 102);
-  directionalLight(150, 102, 126, -0.25, -0.25, -1);
-  ambientMaterial(100, 120, 120);
+  ambientLight(100, 102, 2);
+  directionalLight(150, 100, 126, 0.25, 0.25, 0.25);
+  ambientMaterial(250);
+  translate(-100,0,0);
   box(60, 60, 60);
+  translate(300,0,0);
+  ambientMaterial(250, 100, 250);
+  sphere(60);
 }

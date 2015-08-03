@@ -16,8 +16,8 @@ p5.prototype.ambientLight = function(r, g, b, a){
     this._graphics._pInst, arguments);
   var colors = _normalizeColor(color.rgba);
 
-  gl.uniform4f( shaderProgram.uAmbientColor,
-    colors[0], colors[1], colors[2], colors[3]);
+  gl.uniform3f( shaderProgram.uAmbientColor,
+    colors[0], colors[1], colors[2]);
 
   return this;
 };
@@ -33,15 +33,18 @@ p5.prototype.directionalLight = function(r, g, b, a, x, y, z) {
     shaderProgram, 'uDirectionalColor' );
 
   var color = this._graphics._pInst.color.apply(
-    this._graphics._pInst, [r, g, b, a]);
+    this._graphics._pInst, [r, g, b]);
   var colors = _normalizeColor(color.rgba);
 
-  gl.uniform4f( shaderProgram.uDirectionalColor,
-    colors[0], colors[1], colors[2], colors[3]);
+  gl.uniform3f( shaderProgram.uDirectionalColor,
+    colors[0], colors[1], colors[2]);
 
   shaderProgram.uLightingDirection = gl.getUniformLocation(
     shaderProgram, 'uLightingDirection' );
-  gl.uniform3f( shaderProgram.uLightingDirection, x, y, z);
+  gl.uniform3f( shaderProgram.uLightingDirection,
+    arguments[arguments.length-3],
+    arguments[arguments.length-2],
+    arguments[arguments.length-1]);
 
   return this;
 };
