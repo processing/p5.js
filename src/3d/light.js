@@ -19,6 +19,11 @@ p5.prototype.ambientLight = function(r, g, b, a){
   gl.uniform3f( shaderProgram.uAmbientColor,
     colors[0], colors[1], colors[2]);
 
+  //in case there's no material color for the geometry
+  shaderProgram.uMaterialColor = gl.getUniformLocation(
+    shaderProgram, 'uMaterialColor' );
+  gl.uniform4f( shaderProgram.uMaterialColor, 1, 1, 1, 1);
+
   return this;
 };
 
@@ -45,6 +50,11 @@ p5.prototype.directionalLight = function(r, g, b, a, x, y, z) {
     arguments[arguments.length-3],
     arguments[arguments.length-2],
     arguments[arguments.length-1]);
+
+  //in case there's no material color for the geometry
+  shaderProgram.uMaterialColor = gl.getUniformLocation(
+    shaderProgram, 'uMaterialColor' );
+  gl.uniform4f( shaderProgram.uMaterialColor, 1, 1, 1, 1);
 
   return this;
 };
