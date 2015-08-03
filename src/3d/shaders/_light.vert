@@ -17,10 +17,15 @@
   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
  */
+attribute vec4 position;
+attribute vec4 color;
+attribute vec3 normal;
+attribute vec2 texCoord;
 
 uniform mat4 modelviewMatrix;
 uniform mat4 transformMatrix;
 uniform mat3 normalMatrix;
+uniform float uResolution;
 
 uniform int lightCount;
 uniform vec4 lightPosition[8];
@@ -31,10 +36,6 @@ uniform vec3 lightSpecular[8];
 uniform vec3 lightFalloff[8];
 uniform vec2 lightSpot[8];
 
-attribute vec4 position;
-attribute vec4 color;
-attribute vec3 normal;
-
 attribute vec4 ambient;
 attribute vec4 specular;
 attribute vec4 emissive;
@@ -42,6 +43,8 @@ attribute float shininess;
 
 varying vec4 vertColor;
 varying vec4 backVertColor;
+varying vec3 vertexNormal;
+varying vec2 vertTexCoord;
 
 const float zero_float = 0.0;
 const float one_float = 1.0;
@@ -74,7 +77,9 @@ float blinnPhongFactor(vec3 lightDir, vec3 vertPos, vec3 vecNormal, float shine)
 
 void main() {
   // Vertex in clip coordinates
-  gl_Position = transformMatrix * position;
+  vec3 zeroToOne = position / uResolution;
+  vec4 positionVec4 = vec4(zeroToOne, 1.);
+  gl_Position = transformMatrix * modelviewMatrix * positionVec4;
     
   // Vertex in eye coordinates
   vec3 ecVertex = vec3(modelviewMatrix * position);
@@ -146,4 +151,7 @@ void main() {
                   vec4(totalBackDiffuse, 1) * color + 
                   vec4(totalBackSpecular, 0) * specular + 
                   vec4(emissive.rgb, 0);
+                  
+  vertexNormal = vec3( normalMatrix * vec4( normal, 1.0 ) );                  
+  vertTexCoord = texCoord;                  
 }

@@ -44,6 +44,21 @@ p5.prototype.basicMaterial = function(){
 
 p5.prototype.ambientMaterial = function() {
 
+  var gl = this._graphics.GL;
+  var mId = this._graphics.getCurShaderId();
+  var shaderProgram = this._graphics.mHash[mId];
+
+  gl.useProgram(shaderProgram);
+  shaderProgram.uMaterialColor = gl.getUniformLocation(
+    shaderProgram, 'uMaterialColor' );
+
+  var color = this._graphics._pInst.color.apply(
+    this._graphics._pInst, arguments);
+  var colors = _normalizeColor(color.rgba);
+
+  gl.uniform4f( shaderProgram.uMaterialColor,
+    colors[0], colors[1], colors[2], colors[3]);
+
   return this;
 };
 
