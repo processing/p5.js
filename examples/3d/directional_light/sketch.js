@@ -5,16 +5,9 @@ function setup(){
 function draw(){
   background(0);
   translate(-width/2, 0, -800);
-  // rotateX(frameCount * 0.01);
-  // rotateY(frameCount * 0.01);
   ambientLight(150);
   directionalLight(250, 250, 250, 0.25, 0.25, 0.25);
   ambientMaterial(250);
-  // translate(-100,0,0);
-  // box(60, 60, 60);
-  // translate(300,0,0);
-  // ambientMaterial(250, 100, 250);
-  // sphere(60);
   push();
   rotateZ(frameCount * 0.02);
   rotateX(frameCount * 0.02);
