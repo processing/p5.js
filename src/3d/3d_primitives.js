@@ -95,8 +95,8 @@ p5.prototype.sphere = function(radius, detailX, detailY){
 
   radius = radius || 50;
 
-  detailX = detailX || 10;
-  detailY = detailY || 6;
+  detailX = detailX || 12;
+  detailY = detailY || 8;
 
   var gId = 'sphere|'+radius+'|'+detailX+'|'+detailY;
 
@@ -253,8 +253,8 @@ p5.prototype.cone = function(radius, height, detailX, detailY){
   radius = radius || 50;
   height = height || 50;
 
-  detailX = detailX || 10;
-  detailY = detailY || 6;
+  detailX = detailX || 12;
+  detailY = detailY || 8;
 
   var gId = 'cone|'+radius+'|'+height+'|'+detailX+'|'+detailY;
 
@@ -329,7 +329,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY){
   tubeRadius = tubeRadius || 20;
 
   detailX = detailX || 12;
-  detailY = detailY || 6;
+  detailY = detailY || 8;
 
   var gId = 'torus|'+radius+'|'+tubeRadius+'|'+detailX+'|'+detailY;
 
