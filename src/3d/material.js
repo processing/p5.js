@@ -23,21 +23,33 @@ p5.prototype.normalMaterial = function(){
 };
 
 /**
- * [textureMaterial description]
+ * Binds a texture material to current object.
+ * @param {image} image
  * @return {[type]} [description]
  */
-p5.prototype.textureMaterial = function(){
+p5.prototype.texture = function(image){
 
   var mId = 'normalVert|textureFrag';
+  var gl = this._graphics.GL;
+  var shaderProgram;
 
   if(!this._graphics.materialInHash(mId)){
-    this._graphics.initShaders('normalVert', 'textureFrag');
+    shaderProgram = this._graphics.initShaders('normalVert', 'textureFrag');
   }
 
   if(mId !== this._graphics.getCurShaderId()){
     this._graphics.saveShaders(mId);
   }
-
+  //create a texture on the graphics card
+  var tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D,
+    gl.TEXTURE_MIN_FILTER,
+    gl.LINEAR_MIPMAP_NEAREST);
+  gl.generateMipmap(gl.TEXTURE_2D);
+  gl.bindTexture(gl.TEXTURE_2D, null);
   return this;
 
 };
