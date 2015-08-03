@@ -177,18 +177,6 @@ module.exports = function(grunt) {
       }
     },
 
-    // Concatenate p5 together with OpenType
-    // TODO: There may be an opportunity to move this into the main p5 build
-    concat: {
-      p5: {
-        src: [
-          'lib/p5.js',
-          'src/external/opentype.min.js'
-        ],
-        dest: 'lib/p5.js',
-      },
-    },
-
     // The actual compile step:  This should collect all the dependencies
     // and compile them into a single file.
     requirejs: {
@@ -273,7 +261,6 @@ module.exports = function(grunt) {
 
   // Load the external libraries used.
   grunt.loadNpmTasks('grunt-browserify');
-  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-jscs');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -287,7 +274,7 @@ module.exports = function(grunt) {
 
   // Create the multitasks.
   // TODO: "requirejs" is in here to run the "yuidoc_themes" subtask. Is this needed?
-  grunt.registerTask('build', ['browserify', 'concat', 'uglify', 'requirejs']);
+  grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);
   grunt.registerTask('test', ['jshint', 'jscs', 'build', 'connect', 'mocha']);
   grunt.registerTask('test:nobuild', ['jshint:test', 'jscs:test', 'connect', 'mocha']);
   grunt.registerTask('yui', ['yuidoc']);
