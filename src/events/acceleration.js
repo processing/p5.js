@@ -81,6 +81,7 @@ p5.prototype._updatePAccelerations = function(){
 };
 
 var move_threshold = 0.5;
+var shake_threshold = 30;
 
 /**
  * The setMoveThreshold() function is used to set the movement threshold for
@@ -92,6 +93,19 @@ var move_threshold = 0.5;
 p5.prototype.setMoveThreshold = function(val){
   if(typeof val === 'number'){
     move_threshold = val;
+  }
+};
+
+/**
+ * The setShakeThreshold() function is used to set the movement threshold for
+ * the deviceShaken() function. The default threshold is set to 30.
+ *
+ * @method setShakeThreshold
+ * @param {number} value The threshold value
+ */
+p5.prototype.setShakeThreshold = function(val){
+  if(typeof val === 'number'){
+    shake_threshold = val;
   }
 };
 
@@ -149,6 +163,33 @@ var new_max_axis = '';
  * </code>
  * </div>
  */
+
+/**
+ * The deviceShaken() function is called when the device total acceleration
+ * changes of accelerationX and accelerationY values is more than
+ * the threshold value. The default threshold is set to 30.
+ * @method deviceShaken
+ * @example
+ * <div>
+ * <code>
+ * // Run this example on a mobile device
+ * // Shake the device to change the value.
+ *
+ * var value = 0;
+ * function draw() {
+ *   fill(value);
+ *   rect(25, 25, 50, 50);
+ * }
+ * function deviceShaken() {
+ *   value = value + 5;
+ *   if (value > 255) {
+ *     value = 0;
+ *   }
+ * }
+ * </code>
+ * </div>
+ */
+
 p5.prototype._ondeviceorientation = function (e) {
   this._setProperty('accelerationX', e.beta);
   this._setProperty('accelerationY', e.gamma);
@@ -202,6 +243,19 @@ p5.prototype._handleMotion = function() {
 
     }
     old_max_axis = new_max_axis;
+  }
+  var deviceShaken = this.deviceShaken || window.deviceShaken;
+  if (typeof deviceShaken === 'function') {
+    var accelerationChangeX;
+    var accelerationChangeY;
+    // Add accelerationChangeZ if acceleration change on Z is needed
+    if (this.pAccelerationX !== null) {
+      accelerationChangeX = Math.abs(this.accelerationX - this.pAccelerationX);
+      accelerationChangeY = Math.abs(this.accelerationY - this.pAccelerationY);
+    }
+    if (accelerationChangeX + accelerationChangeY > shake_threshold) {
+      deviceShaken();
+    }
   }
 };
 
