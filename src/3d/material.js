@@ -7,19 +7,8 @@ var p5 = require('../core/core');
 * @return {[type]} [description]
 */
 p5.prototype.normalMaterial = function(){
-
-  var mId = 'normalVert|normalFrag';
-
-  if(!this._graphics.materialInHash(mId)){
-    this._graphics.initShaders('normalVert', 'normalFrag');
-  }
-
-  if(mId !== this._graphics.getCurShaderId()){
-    this._graphics.saveShaders(mId);
-  }
-
+  this._graphics.getShader('normalVert', 'normalFrag');
   return this;
-
 };
 
 /**
@@ -27,41 +16,17 @@ p5.prototype.normalMaterial = function(){
  * @return {[type]} [description]
  */
 p5.prototype.textureMaterial = function(){
-
-  var mId = 'normalVert|textureFrag';
-
-  if(!this._graphics.materialInHash(mId)){
-    this._graphics.initShaders('normalVert', 'textureFrag');
-  }
-
-  if(mId !== this._graphics.getCurShaderId()){
-    this._graphics.saveShaders(mId);
-  }
-
+  this._graphics.getShader('normalVert', 'textureFrag');
   return this;
 
 };
 
-/**
-* [basic description]
-* @param  {[type]} r [description]
-* @param  {[type]} g [description]
-* @param  {[type]} b [description]
-* @param  {[type]} a [description]
-* @return {[type]}   [description]
-*/
-p5.prototype.basicMaterial = function(r, g, b, a){
+p5.prototype.basicMaterial = function(){
 
-  var mId = 'normalVert|basicFrag';
   var gl = this._graphics.GL;
-  var shaderProgram;
 
-  if(!this._graphics.materialInHash(mId)){
-    shaderProgram =
-     this._graphics.initShaders('normalVert', 'basicFrag');
-  }else{
-    shaderProgram = this._graphics.mHash[mId];
-  }
+  var shaderProgram = this._graphics.getShader('normalVert', 'basicFrag');
+
   gl.useProgram(shaderProgram);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
@@ -73,13 +38,20 @@ p5.prototype.basicMaterial = function(r, g, b, a){
   gl.uniform4f( shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);
 
-  if(mId !== this._graphics.getCurShaderId()){
-    this._graphics.saveShaders(mId);
-  }
-
   return this;
 
 };
+
+p5.prototype.ambientMaterial = function() {
+
+  return this;
+};
+
+p5.prototype.specularMaterial = function() {
+
+  return this;
+};
+
 
 function _normalizeColor(_arr){
   var arr = [];

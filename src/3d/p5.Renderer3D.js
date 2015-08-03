@@ -169,6 +169,7 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
     gl.getAttribLocation(shaderProgram, 'position');
   gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
+  //@TODO: figure out a better way instead of if statement
   if(immediateMode === undefined){
     //vertex normal Attribute
     shaderProgram.vertexNormalAttribute =
@@ -186,6 +187,7 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
 
     // shaderProgram.samplerUniform =
     //   gl.getUniformLocation(shaderProgram, "uSampler");
+
   }
 
   //projection Matrix uniform
@@ -198,6 +200,20 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
   this.mHash[vertId + '|' + fragId] = shaderProgram;
 
   return shaderProgram;
+};
+
+p5.Renderer3D.prototype.getShader = function(vertId, fragId) {
+  var mId = vertId+ '|' + fragId;
+
+  if(!this.materialInHash(mId)){
+    this.initShaders(vertId, fragId);
+  }
+
+  if(mId !== this.getCurShaderId()){
+    this.saveShaders(mId);
+  }
+
+  return this.mHash[mId];
 };
 
 /**
