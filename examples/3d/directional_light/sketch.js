@@ -5,9 +5,20 @@ function setup(){
 function draw(){
   background(0);
   translate(-width/2, 0, -800);
+
+  var dirY = (mouseY / height - 0.5) *2;
+  var dirX = (mouseX / width - 0.5) *2;
+
   ambientLight(150);
-  directionalLight(250, 250, 250, 0.25, 0.25, 0.25);
-  ambientMaterial(250);
+  directionalLight(250, 0, 0, dirX, -dirY, 0.25);
+
+  // directionalLight(0, 0, 250, -dirX, -dirY, 0.25);
+  // ambientMaterial(250);
+  // sphere(60);
+  //   directionalLight(0, 0, 250, -dirX, -dirY, 0.25);
+  // directionalLight(250, 0, 0, dirX, dirY, 0.25);
+  // translate(200, 0,0);
+  // sphere(60);
   push();
   rotateZ(frameCount * 0.02);
   rotateX(frameCount * 0.02);
