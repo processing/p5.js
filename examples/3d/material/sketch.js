@@ -25,7 +25,7 @@ function draw(){
   normalMaterial();
   sphere(60); 
   translate(300, 0, 0);
-  textureMaterial();
+  texture();
   box(60,60,60);
   pop();
   translate(300, 0, 0);

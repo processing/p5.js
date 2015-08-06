@@ -1,19 +1,19 @@
-attribute vec3 position;
-attribute vec3 normal;
+attribute vec3 aPosition;
+attribute vec3 aNormal;
 attribute vec2 aTexCoord;
 
-uniform mat4 modelviewMatrix;
-uniform mat4 transformMatrix;
-uniform mat4 normalMatrix;
+uniform mat4 uModelviewMatrix;
+uniform mat4 uTransformMatrix;
+uniform mat4 uNormalMatrix;
 uniform float uResolution;
 
-varying vec3 vertexNormal;
+varying vec3 vVertexNormal;
 varying highp vec2 vVertTexCoord;
 
 void main(void) {
-  vec3 zeroToOne = position / uResolution;
+  vec3 zeroToOne = aPosition / uResolution;
   vec4 positionVec4 = vec4(zeroToOne, 1.);
-  gl_Position = transformMatrix * modelviewMatrix * positionVec4;
-  vertexNormal = vec3( normalMatrix * vec4( normal, 1.0 ) );
+  gl_Position = uTransformMatrix * uModelviewMatrix * positionVec4;
+  vVertexNormal = vec3( uNormalMatrix * vec4( aNormal, 1.0 ) );
   vVertTexCoord = aTexCoord;
 }
