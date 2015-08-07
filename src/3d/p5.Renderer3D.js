@@ -74,7 +74,7 @@ p5.Renderer3D.prototype._applyDefaults = function() {
 /**
  * [resize description]
  * @param  {[type]} w [description]
- * @param  {[type]} h [description]
+ * @param  {  } h [description]
  * @return {[type]}   [description]
  */
 p5.Renderer3D.prototype.resize = function(w,h) {
@@ -184,8 +184,8 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
       gl.getAttribLocation(shaderProgram, 'aTexCoord');
     gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
 
-    // shaderProgram.samplerUniform =
-    //   gl.getUniformLocation(shaderProgram, "uSampler");
+    shaderProgram.samplerUniform =
+    gl.getUniformLocation(shaderProgram, 'uSampler');
   }
 
   //projection Matrix uniform
