@@ -14,6 +14,25 @@ p5.prototype.normalMaterial = function(){
 /**
  * [textureMaterial description]
  * @return {[type]} [description]
+ * @example
+ * <div>
+ * <code>
+ * var img;
+ * var theta = 0;
+ * img = loadImage("assets/cat.jpg");
+ * background(255, 255, 255, 255);
+ * translate(0, 0, -200);
+ * push();
+ * rotateZ(theta * mouseX * 0.001);
+ * rotateX(theta * mouseX * 0.001);
+ * rotateY(theta * mouseX * 0.001);
+ * // pass image as texture
+ * texture(img);
+ * box(40);
+ * pop();
+ * theta += 0.05;
+ * </code>
+ * </div>
  */
 p5.prototype.texture = function(image){
   var gl = this._graphics.GL;
