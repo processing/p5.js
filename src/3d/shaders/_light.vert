@@ -34,6 +34,7 @@ uniform vec2 uLightSpot[8];
 attribute vec4 aPosition;
 attribute vec4 aColor;
 attribute vec3 aNormal;
+attribute vec2 aTexCoord;
 
 attribute vec4 aAmbient;
 attribute vec4 aSpecular;
@@ -74,7 +75,10 @@ float blinnPhongFactor(vec3 lightDir, vec3 vertPos, vec3 vecNormal, float shine)
 
 void main() {
   // Vertex in clip coordinates
-  gl_Position = uTransformMatrix * aPosition;
+
+  vec3 zeroToOne = aPosition / uResolution;
+  vec4 positionVec4 = vec4(zeroToOne, 1.);
+  gl_Position = uTransformMatrix * modelviewMatrix * positionVec4;
     
   // Vertex in eye coordinates
   vec3 ecVertex = vec3(uModelviewMatrix * aPosition);
@@ -146,4 +150,7 @@ void main() {
                   vec4(totalBackDiffuse, 1) * color + 
                   vec4(totalBackSpecular, 0) * specular + 
                   vec4(emissive.rgb, 0);
+                  
+  vertexNormal = vec3( normalMatrix * vec4( normal, 1.0 ) );                  
+  vertTexCoord = texCoord;                  
 }

@@ -7,36 +7,17 @@ var p5 = require('../core/core');
 * @return {[type]} [description]
 */
 p5.prototype.normalMaterial = function(){
-
-  var mId = 'normalVert|normalFrag';
-
-  if(!this._graphics.materialInHash(mId)){
-    this._graphics.initShaders('normalVert', 'normalFrag');
-  }
-
-  if(mId !== this._graphics.getCurShaderId()){
-    this._graphics.saveShaders(mId);
-  }
-
+  this._graphics.getShader('normalVert', 'normalFrag');
   return this;
-
 };
 
 /**
- * Binds a texture material to current object.
- * @param {image} image
+ * [textureMaterial description]
  * @return {[type]} [description]
  */
 p5.prototype.texture = function(image){
-
-  var mId = 'normalVert|textureFrag';
   var gl = this._graphics.GL;
-  var shaderProgram;
-
-  if(!this._graphics.materialInHash(mId)){
-    shaderProgram = this._graphics.initShaders('normalVert', 'textureFrag');
-    gl.useProgram(shaderProgram);
-  }
+  this._graphics.getShader('normalVert', 'textureFrag');
   //create a texture on the graphics card
   var tex = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, tex);
@@ -66,49 +47,8 @@ p5.prototype.texture = function(image){
   }
   gl.bindTexture(gl.TEXTURE_2D, null);
 
-  if(mId !== this._graphics.getCurShaderId()){
-    this._graphics.saveShaders(mId);
-  }
   return this;
 };
-
-/*
-@TODO:
-function initTextureFramebuffer (gl){
-  var rttFramebuffer;
-  var rttTexture;
-  rttFramebuffer = gl.createFramebuffer();
-  gl.bindFramebuffer(gl.FRAMEBUFFER, rttFramebuffer);
-  rttFramebuffer.width = 512;
-  rttFramebuffer.height = 512;
-
-  rttTexture = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, rttTexture);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER,
-    gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER,
-    gl.LINEAR_MIPMAP_NEAREST);
-  gl.generateMipmap(gl.TEXTURE_2D);
-
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA,
-    rttFramebuffer.width, rttFramebuffer.height,
-    0, gl.RGBA, gl.UNSIGNED_BYTE, null);
-
-  var renderbuffer = gl.createRenderbuffer();
-  gl.bindRenderbuffer(gl.RENDERBUFFER, renderbuffer);
-  gl.renderbufferStorage(gl.RENDERBUFFER, gl.DEPTH_COMPONENT16,
-    rttFramebuffer.width, rttFramebuffer.height);
-
-  gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0,
-    gl.TEXTURE_2D, rttTexture, 0);
-  gl.framebufferRenderbuffer(gl.FRAMEBUFFER, gl.DEPTH_ATTACHMENT,
-    gl.RENDERBUFFER, renderbuffer);
-
-  gl.bindTexture(gl.TEXTURE_2D, null);
-  gl.bindRenderbuffer(gl.RENDERBUFFER, null);
-  gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-}
-*/
 
 /**
  * Checks whether val is a pot so we
@@ -120,26 +60,12 @@ function _isPowerOf2 (value) {
   return (value & (value - 1)) === 0;
 }
 
-/**
-* [basic description]
-* @param  {[type]} r [description]
-* @param  {[type]} g [description]
-* @param  {[type]} b [description]
-* @param  {[type]} a [description]
-* @return {[type]}   [description]
-*/
-p5.prototype.basicMaterial = function(r, g, b, a){
+p5.prototype.basicMaterial = function(){
 
-  var mId = 'normalVert|basicFrag';
   var gl = this._graphics.GL;
-  var shaderProgram;
 
-  if(!this._graphics.materialInHash(mId)){
-    shaderProgram =
-     this._graphics.initShaders('normalVert', 'basicFrag');
-  }else{
-    shaderProgram = this._graphics.mHash[mId];
-  }
+  var shaderProgram = this._graphics.getShader('normalVert', 'basicFrag');
+
   gl.useProgram(shaderProgram);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
@@ -151,13 +77,35 @@ p5.prototype.basicMaterial = function(r, g, b, a){
   gl.uniform4f( shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);
 
-  if(mId !== this._graphics.getCurShaderId()){
-    this._graphics.saveShaders(mId);
-  }
-
   return this;
 
 };
+
+p5.prototype.ambientMaterial = function() {
+
+  var gl = this._graphics.GL;
+  var mId = this._graphics.getCurShaderId();
+  var shaderProgram = this._graphics.mHash[mId];
+
+  gl.useProgram(shaderProgram);
+  shaderProgram.uMaterialColor = gl.getUniformLocation(
+    shaderProgram, 'uMaterialColor' );
+
+  var color = this._graphics._pInst.color.apply(
+    this._graphics._pInst, arguments);
+  var colors = _normalizeColor(color.rgba);
+
+  gl.uniform4f( shaderProgram.uMaterialColor,
+    colors[0], colors[1], colors[2], colors[3]);
+
+  return this;
+};
+
+p5.prototype.specularMaterial = function() {
+
+  return this;
+};
+
 
 function _normalizeColor(_arr){
   var arr = [];

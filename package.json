@@ -35,6 +35,7 @@
   "license": "LGPL-2.1",
   "dependencies": {
     "brfs": "^1.4.0",
+    "opentype.js": "^0.4.9",
     "reqwest": "^1.1.5"
   },
   "main": "./lib/p5.js",
