@@ -10,7 +10,6 @@ function draw(){
   // ambientLight(153, 102, 0);
   // ambient(51, 26, 0);
   translate(-100, 0, -1000);
-  /*
   push();
   rotateX(theta * 0.1);
   rotateZ(theta);
@@ -27,7 +26,6 @@ function draw(){
   sphere(60);
   pop();
   translate(300, 0, 0);
-  */
   push();
   rotateX(theta * 0.1);
   rotateZ(theta);

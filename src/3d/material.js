@@ -17,7 +17,9 @@ p5.prototype.normalMaterial = function(){
  */
 p5.prototype.texture = function(image){
   var gl = this._graphics.GL;
-  this._graphics.getShader('normalVert', 'textureFrag');
+  var shaderProgram = this._graphics.getShader('normalVert',
+    'textureFrag');
+  gl.useProgram(shaderProgram);
   //create a texture on the graphics card
   var tex = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, tex);
@@ -31,7 +33,6 @@ p5.prototype.texture = function(image){
   }
   else {
     //@TODO handle following cases:
-    //- raw Image() src data
     //- 2D canvas (p5 inst)
     //- video and pass into fbo
   }
@@ -45,14 +46,15 @@ p5.prototype.texture = function(image){
     gl.texParameteri(gl.TETXURE_2D,
       gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   }
-  gl.bindTexture(gl.TEXTURE_2D, null);
-
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'uSampler'), 0);
   return this;
 };
 
 /**
- * Checks whether val is a pot so we
- * don't throw mipmap errors
+ * Helper function; Checks whether val is a pot
+ * more info on power of 2 here:
+ * https://www.opengl.org/wiki/NPOT_Texture
  * @param  {Number}  value
  * @return {Boolean}
  */

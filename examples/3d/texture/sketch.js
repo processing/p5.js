@@ -3,12 +3,11 @@
  */
 var img;
 var debug = false;
-/*
+
 function preload(){
   //load our image
   img = loadImage("assets/cat.jpg");
 }
-*/
 
 function setup(){
   if(!debug){
@@ -26,13 +25,13 @@ function draw(){
 if(!debug){
   translate(0, 0, -200);
   // pass image as texture
-  // texture(img);
+  
 
   push();
   rotateZ(theta * mouseX * 0.001);
   rotateX(theta * mouseX * 0.001);
   rotateY(theta * mouseX * 0.001);
-  basicMaterial(250, 0, 0);
+  texture(img);
   box(40);
   pop();
   
