@@ -259,8 +259,10 @@ module.exports = function(grunt) {
     }
   });
 
+  // Load task definitions
+  grunt.loadTasks('build/tasks');
+
   // Load the external libraries used.
-  grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-jscs');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
