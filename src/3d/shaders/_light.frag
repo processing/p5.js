@@ -1,9 +1,9 @@
 precision mediump float;
 precision mediump int;
 
-varying vec4 vertColor;
-varying vec4 backVertColor;
+varying vec4 vVertColor;
+varying vec4 vBackVertColor;
 
 void main() {
-  gl_FragColor = gl_FrontFacing ? vertColor : backVertColor;
+  gl_FragColor = gl_FrontFacing ? vVertColor : vBackVertColor;
 }

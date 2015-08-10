@@ -14,12 +14,72 @@ p5.prototype.normalMaterial = function(){
 /**
  * [textureMaterial description]
  * @return {[type]} [description]
+ * @example
+ * <div>
+ * <code>
+ * var img;
+ * var theta = 0;
+ * img = loadImage("assets/cat.jpg");
+ * background(255, 255, 255, 255);
+ * translate(0, 0, -200);
+ * push();
+ * rotateZ(theta * mouseX * 0.001);
+ * rotateX(theta * mouseX * 0.001);
+ * rotateY(theta * mouseX * 0.001);
+ * // pass image as texture
+ * texture(img);
+ * box(40);
+ * pop();
+ * theta += 0.05;
+ * </code>
+ * </div>
  */
-p5.prototype.textureMaterial = function(){
-  this._graphics.getShader('normalVert', 'textureFrag');
-  return this;
+p5.prototype.texture = function(image){
+  var gl = this._graphics.GL;
+  var shaderProgram = this._graphics.getShader('normalVert',
+    'textureFrag');
+  gl.useProgram(shaderProgram);
+  //create a texture on the graphics card
+  var tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
 
+  if (image instanceof p5.Image) {
+    image.loadPixels();
+    var data = new Uint8Array(image.pixels);
+    gl.texImage2D(gl.TEXTURE_2D, 0,
+      gl.RGBA, image.width, image.height,
+      0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+  }
+  else {
+    //@TODO handle following cases:
+    //- 2D canvas (p5 inst)
+    //- video and pass into fbo
+  }
+  if (_isPowerOf2(image.width) && _isPowerOf2(image.height)) {
+    gl.generateMipmap(gl.TEXTURE_2D);
+  } else {
+    gl.texParameteri(gl.TETXURE_2D,
+      gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TETXURE_2D,
+      gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TETXURE_2D,
+      gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  }
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'uSampler'), 0);
+  return this;
 };
+
+/**
+ * Helper function; Checks whether val is a pot
+ * more info on power of 2 here:
+ * https://www.opengl.org/wiki/NPOT_Texture
+ * @param  {Number}  value
+ * @return {Boolean}
+ */
+function _isPowerOf2 (value) {
+  return (value & (value - 1)) === 0;
+}
 
 p5.prototype.basicMaterial = function(){
 

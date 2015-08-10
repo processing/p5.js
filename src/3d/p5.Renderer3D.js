@@ -74,7 +74,7 @@ p5.Renderer3D.prototype._applyDefaults = function() {
 /**
  * [resize description]
  * @param  {[type]} w [description]
- * @param  {[type]} h [description]
+ * @param  {  } h [description]
  * @return {[type]}   [description]
  */
 p5.Renderer3D.prototype.resize = function(w,h) {
@@ -166,36 +166,35 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
 
   //vertex position Attribute
   shaderProgram.vertexPositionAttribute =
-    gl.getAttribLocation(shaderProgram, 'position');
+    gl.getAttribLocation(shaderProgram, 'aPosition');
   gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
   //@TODO: figure out a better way instead of if statement
   if(immediateMode === undefined){
     //vertex normal Attribute
     shaderProgram.vertexNormalAttribute =
-      gl.getAttribLocation(shaderProgram, 'normal');
+      gl.getAttribLocation(shaderProgram, 'aNormal');
     gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
 
     //normal Matrix uniform
     shaderProgram.uNMatrixUniform =
-    gl.getUniformLocation(shaderProgram, 'normalMatrix');
+    gl.getUniformLocation(shaderProgram, 'uNormalMatrix');
 
     //texture coordinate Attribute
     shaderProgram.textureCoordAttribute =
-      gl.getAttribLocation(shaderProgram, 'texCoord');
+      gl.getAttribLocation(shaderProgram, 'aTexCoord');
     gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
 
-    // shaderProgram.samplerUniform =
-    //   gl.getUniformLocation(shaderProgram, "uSampler");
-
+    shaderProgram.samplerUniform =
+    gl.getUniformLocation(shaderProgram, 'uSampler');
   }
 
   //projection Matrix uniform
   shaderProgram.uPMatrixUniform =
-    gl.getUniformLocation(shaderProgram, 'transformMatrix');
+    gl.getUniformLocation(shaderProgram, 'uTransformMatrix');
   //model view Matrix uniform
   shaderProgram.uMVMatrixUniform =
-    gl.getUniformLocation(shaderProgram, 'modelviewMatrix');
+    gl.getUniformLocation(shaderProgram, 'uModelviewMatrix');
 
   this.mHash[vertId + '|' + fragId] = shaderProgram;
 

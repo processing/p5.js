@@ -17,34 +17,32 @@
   Free Software Foundation, Inc., 59 Temple Place, Suite 330,
   Boston, MA  02111-1307  USA
  */
-attribute vec4 position;
-attribute vec4 color;
-attribute vec3 normal;
-attribute vec2 texCoord;
 
-uniform mat4 modelviewMatrix;
-uniform mat4 transformMatrix;
-uniform mat3 normalMatrix;
-uniform float uResolution;
+uniform mat4 uModelviewMatrix;
+uniform mat4 uTransformMatrix;
+uniform mat3 uNormalMatrix;
 
-uniform int lightCount;
-uniform vec4 lightPosition[8];
-uniform vec3 lightNormal[8];
-uniform vec3 lightAmbient[8];
-uniform vec3 lightDiffuse[8];
-uniform vec3 lightSpecular[8];      
-uniform vec3 lightFalloff[8];
-uniform vec2 lightSpot[8];
+uniform int uLightCount;
+uniform vec4 uLightPosition[8];
+uniform vec3 uLightNormal[8];
+uniform vec3 uLightAmbient[8];
+uniform vec3 uLightDiffuse[8];
+uniform vec3 uLightSpecular[8];      
+uniform vec3 uLightFalloff[8];
+uniform vec2 uLightSpot[8];
 
-attribute vec4 ambient;
-attribute vec4 specular;
-attribute vec4 emissive;
-attribute float shininess;
+attribute vec4 aPosition;
+attribute vec4 aColor;
+attribute vec3 aNormal;
+attribute vec2 aTexCoord;
 
-varying vec4 vertColor;
-varying vec4 backVertColor;
-varying vec3 vertexNormal;
-varying vec2 vertTexCoord;
+attribute vec4 aAmbient;
+attribute vec4 aSpecular;
+attribute vec4 aEmissive;
+attribute float aShininess;
+
+varying vec4 vVertColor;
+varying vec4 vBackVertColor;
 
 const float zero_float = 0.0;
 const float one_float = 1.0;
@@ -77,15 +75,16 @@ float blinnPhongFactor(vec3 lightDir, vec3 vertPos, vec3 vecNormal, float shine)
 
 void main() {
   // Vertex in clip coordinates
-  vec3 zeroToOne = position / uResolution;
+
+  vec3 zeroToOne = aPosition / uResolution;
   vec4 positionVec4 = vec4(zeroToOne, 1.);
-  gl_Position = transformMatrix * modelviewMatrix * positionVec4;
+  gl_Position = uTransformMatrix * modelviewMatrix * positionVec4;
     
   // Vertex in eye coordinates
-  vec3 ecVertex = vec3(modelviewMatrix * position);
+  vec3 ecVertex = vec3(uModelviewMatrix * aPosition);
   
   // Normal vector in eye coordinates
-  vec3 ecNormal = normalize(normalMatrix * normal);
+  vec3 ecNormal = normalize(uNormalMatrix * aNormal);
   vec3 ecNormalInv = ecNormal * -one_float;
   
   // Light calculations
@@ -111,13 +110,13 @@ void main() {
       
     if (isDir) {
       falloff = one_float;
-      lightDir = -one_float * lightNormal[i];
+      lightDir = -one_float * uLightNormal[i];
     } else {
       falloff = falloffFactor(lightPos, ecVertex, lightFalloff[i]);  
       lightDir = normalize(lightPos - ecVertex);
     }
   
-    spotf = spotExp > zero_float ? spotFactor(lightPos, ecVertex, lightNormal[i], 
+    spotf = spotExp > zero_float ? spotFactor(lightPos, ecVertex, uLightNormal[i], 
                                               spotCos, spotExp) 
                                  : one_float;
     

@@ -62,7 +62,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     pImg.height = pImg.canvas.height = img.height;
 
     // Draw the image into the backing canvas of the p5.Image
-    pImg.canvas.getContext('2d').drawImage(img, 0, 0);
+    pImg.drawingContext.drawImage(img, 0, 0);
 
     if (typeof successCallback === 'function') {
       successCallback(pImg);

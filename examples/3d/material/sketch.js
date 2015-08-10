@@ -22,10 +22,7 @@ function draw(){
   rotateZ(-theta);
   rotateY(-theta * 0.1);
   normalMaterial();
-  sphere(60); 
-  translate(300, 0, 0);
-  textureMaterial();
-  box(60,60,60);
+  sphere(60);
   pop();
   translate(300, 0, 0);
   push();
