@@ -191,7 +191,7 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
 
   //projection Matrix uniform
   shaderProgram.uPMatrixUniform =
-    gl.getUniformLocation(shaderProgram, 'uTransformMatrix');
+    gl.getUniformLocation(shaderProgram, 'uProjectionMatrix');
   //model view Matrix uniform
   shaderProgram.uMVMatrixUniform =
     gl.getUniformLocation(shaderProgram, 'uModelviewMatrix');

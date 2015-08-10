@@ -1,6 +1,6 @@
 attribute vec3 aPosition;
 attribute vec3 aNormal;
-attribute vec2 aVertexColor;
+attribute vec2 aVexCoord;
 
 uniform mat4 uModelviewMatrix;
 uniform mat4 uProjectionMatrix;
@@ -18,7 +18,7 @@ varying vec4 vLightWeighting;
 void main(void) {
   vec4 positionVec4 = vec4(aPosition / uResolution, 1.);
   gl_Position = uProjectionMatrix * uModelviewMatrix * positionVec4;
-  vertTexCoord = aVertexColor;
+  vertTexCoord = aVexCoord;
 
   vec3 lightDirection = normalize(uPointLightingLocation - aPosition.xyz);
   vec3 transformedNormal = uNormalMatrix * vVertexNormal;
