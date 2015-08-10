@@ -1,10 +1,10 @@
-attribute vec3 position;
-attribute vec3 normal;
-attribute vec2 texCoord;
+attribute vec3 aPosition;
+attribute vec3 aNormal;
+attribute vec2 aTexCoord;
 
-uniform mat4 modelviewMatrix;
-uniform mat4 transformMatrix;
-uniform mat4 normalMatrix;
+uniform mat4 uModelviewMatrix;
+uniform mat4 uProjectionMatrix;
+uniform mat4 uNormalMatrix;
 uniform float uResolution;
 
 uniform vec3 uAmbientColor;
@@ -15,11 +15,10 @@ varying vec2 vertTexCoord;
 varying vec3 vLightWeighting;
 
 void main(void) {
-  vec3 zeroToOne = position / uResolution;
-  vec4 positionVec4 = vec4(zeroToOne, 1.);
-  gl_Position = transformMatrix * modelviewMatrix * positionVec4;
-  vec3 vertexNormal = vec3( normalMatrix * vec4( normal, 1.0 ) );
-  vertTexCoord = texCoord;
+  vec4 positionVec4 = vec4(aPosition / uResolution, 1.);
+  gl_Position = uProjectionMatrix * uModelviewMatrix * positionVec4;
+  vec3 vertexNormal = vec3( uNormalMatrix * vec4( aNormal, 1.0 ) );
+  vertTexCoord = aTexCoord;
 
   float directionalLightWeighting = max(dot(vertexNormal, uLightingDirection), 0.0);
   vLightWeighting = uAmbientColor + uDirectionalColor * directionalLightWeighting;
