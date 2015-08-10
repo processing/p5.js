@@ -8,7 +8,6 @@ function draw(){
   background(250, 250, 250, 255);
   // directionalLight(153, 153, 153, .5, 0, -1);
   // ambientLight(153, 102, 0);
-  // ambient(51, 26, 0);
   translate(-100, 0, -1000);
   push();
   rotateX(theta * 0.1);
@@ -37,5 +36,4 @@ function draw(){
   plane(60, 60); 
   pop();
   theta += 0.03;
-
 }
