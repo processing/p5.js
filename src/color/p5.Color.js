@@ -420,11 +420,11 @@ p5.Color._getFormattedColor = function () {
 
   // Handle [r,g,b,a] or [h,s,l,a] color values
   if (numArgs >= 3) {
-    first   = arguments[0];
-    second  = arguments[1];
-    third   = arguments[2];
+    first   = parseInt(arguments[0]) / this._colorMaxes[mode][0] * 255;
+    second  = parseInt(arguments[1]) / this._colorMaxes[mode][1] * 255;
+    third   = parseInt(arguments[2]) / this._colorMaxes[mode][2] * 255;
     alpha   = typeof arguments[3] === 'number' ?
-              arguments[3] : this._colorMaxes[mode][3];
+              arguments[3] / this._colorMaxes[mode][3] * 255 : this._colorMaxes[mode][3];
 
   // Handle strings: named colors, hex values, css strings
   } else if (numArgs === 1 && typeof arguments[0] === 'string') {
