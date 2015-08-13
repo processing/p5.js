@@ -311,7 +311,7 @@ p5.prototype.windowHeight = window.innerHeight;
  * is resized. This is a good place to resize the canvas or do any other
  * adjustements to accomodate the new window size.
  *
- * @property windowResized
+ * @method windowResized()
  * @example
  * <div class="norender"><code>
  * function setup() {
@@ -369,7 +369,7 @@ p5.prototype.height = 0;
  * be called on user input, for example, on mouse press like the example
  * below.
  *
- * @method fullscreen
+ * @method fullScreen
  * @param  {Boolean} [val] whether the sketch should be fullscreened or not
  * @return {Boolean} current fullscreen state
  * @example
@@ -381,14 +381,14 @@ p5.prototype.height = 0;
  * }
  * function mousePressed() {
  *   if (mouseX > 0 && mouseX < 100 && mouseY > 0 && mouseY < 100) {
- *     var fs = fullscreen();
+ *     var fs = fullScreen();
  *     fullscreen(!fs);
  *   }
  * }
  * </code>
  * </div>
  */
-p5.prototype.fullscreen = function(val) {
+p5.prototype.fullScreen = function(val) {
   // no arguments, return fullscreen or not
   if (typeof val === 'undefined') {
     return document.fullscreenElement ||

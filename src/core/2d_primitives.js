@@ -397,8 +397,8 @@ p5.prototype.rect = function (x, y, w, h, tl, tr, br, bl) {
     [
       ['Number', 'Number', 'Number', 'Number'],
       ['Number', 'Number', 'Number', 'Number', 'Number'],
-      [ 'Number', 'Number', 'Number', 'Number',
-        'Number', 'Number', 'Number', 'Number', 'Number' ]
+      ['Number', 'Number', 'Number', 'Number',
+       'Number', 'Number', 'Number', 'Number']
     ]
   );
 
