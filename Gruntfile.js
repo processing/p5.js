@@ -162,21 +162,6 @@ module.exports = function(grunt) {
       }
     },
 
-    // Build p5 into a single, UMD-wrapped file
-    browserify: {
-      p5: {
-        options: {
-          transform: ['brfs'],
-          browserifyOptions: {
-            standalone: 'p5'
-          },
-          banner: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */'
-        },
-        src: 'src/app.js',
-        dest: 'lib/p5.js'
-      }
-    },
-
     // The actual compile step:  This should collect all the dependencies
     // and compile them into a single file.
     requirejs: {
