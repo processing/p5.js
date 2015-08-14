@@ -31,7 +31,6 @@ p5.Color = function (pInst, vals) {
   } else {
     throw new Error(pInst._colorMode + 'is an invalid colorMode.');
   }
-
   return this;
 };
 

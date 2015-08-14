@@ -209,12 +209,15 @@ p5.prototype.colorMode = function() {
       maxArr[1] = arguments[1];
       maxArr[2] = arguments[1];
       maxArr[3] = arguments[1];
-    } else if (arguments.length > 2) {
+    } else if (arguments.length === 4) {
       maxArr[0] = arguments[1];
       maxArr[1] = arguments[2];
       maxArr[2] = arguments[3];
     }
     if (arguments.length === 5) {
+      maxArr[0] = arguments[1];
+      maxArr[1] = arguments[2];
+      maxArr[2] = arguments[3];
       maxArr[3] = arguments[4];
     }
   }
