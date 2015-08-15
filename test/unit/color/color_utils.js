@@ -1,7 +1,7 @@
 suite('p5.ColorUtils', function() {
-  var rgba = [100, 150, 200, 255];
-  var hsba = [210, 50, 78, 1];
-  var hsla = [137, 100, 50, 1];
+  var rgba = [255, 0, 102, 204];
+  var hsla = [336, 100, 50, 0.8];
+  var hsba = [336, 100, 100, 0.8];
   var one;
 
   suite('rgbaToHSBA', function() {
@@ -18,9 +18,6 @@ suite('p5.ColorUtils', function() {
 
   suite('hsbaToRGBA', function() {
     test('hsba converts to rgba', function() {
-      // Because of rounding errors, the values are off by one
-      // var rgba = [100, 150, 200, 255];
-      rgba = [99, 149, 199, 255];
       one = p5.ColorUtils.hsbaToRGBA(hsba, [360, 100, 100, 1]);
       assert.deepEqual([
         Math.round(one[0] * 255),
@@ -33,7 +30,6 @@ suite('p5.ColorUtils', function() {
 
   suite('hslaToRGBA', function() {
     test('hsla converts to rgba', function() {
-      rgba = [0, 255, 72, 255];
       one = p5.ColorUtils.hslaToRGBA(hsla, [360, 100, 100, 1]);
       assert.deepEqual([
         Math.round(one[0] * 255),
@@ -46,7 +42,6 @@ suite('p5.ColorUtils', function() {
 
   suite('rgbaToHSLA', function() {
     test('rgba converts to hsla', function() {
-      rgba = [0, 255, 72, 255];
       one = p5.ColorUtils.rgbaToHSLA(rgba, [255, 255, 255, 255]);
       assert.deepEqual([
         Math.round(one[0] * 360),

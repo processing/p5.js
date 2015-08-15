@@ -100,7 +100,7 @@ p5.Color.prototype.getBlue = function() {
 };
 
 p5.Color.prototype.getAlpha = function() {
-  return this._array[3] * this.maxes[constants.RGB][3];
+  return this._array[3] * this.maxes[this.mode][3];
 };
 
 p5.Color.prototype.toString = function() {
@@ -520,7 +520,11 @@ p5.Color._getFormattedColor = function () {
       rgbaArr = color_utils.hslaToRGBA(hslaArr,
                 this._colorMaxes[constants.HSL]);
     } else if (colorPatterns.HSLA.test(str)) {
-      hslaArr = colorPatterns.HSLA.exec(str).slice(1).map(function(color) {
+      hslaArr = colorPatterns.HSLA.exec(str).slice(1)
+        .map(function(color, idx) {
+        if (idx === 3) {
+          return parseFloat(color);
+        }
         return parseInt(color, 10);
       });
       rgbaArr = color_utils.hslaToRGBA(hslaArr,
@@ -532,7 +536,11 @@ p5.Color._getFormattedColor = function () {
       rgbaArr = color_utils.hsbaToRGBA(hsbaArr,
                 this._colorMaxes[constants.HSB]);
     } else if (colorPatterns.HSBA.test(str)) {
-      hsbaArr = colorPatterns.HSBA.exec(str).slice(1).map(function(color) {
+      hsbaArr = colorPatterns.HSBA.exec(str).slice(1)
+        .map(function(color, idx) {
+        if (idx === 3) {
+          return parseFloat(color);
+        }
         return parseInt(color, 10);
       });
       rgbaArr = color_utils.hsbaToRGBA(hsbaArr,

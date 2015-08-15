@@ -9302,6 +9302,7 @@ module.exports = p5.ColorUtils;
 'use strict';
 
 var p5 = require('../core/core');
+var constants = require('../core/constants');
 require('./p5.Color');
 
 /**
@@ -9534,7 +9535,7 @@ p5.prototype.brightness = function(c) {
  * </code>
  * </div>
  */
-p5.prototype.color = function () {
+p5.prototype.color = function() {
   if (arguments[0] instanceof p5.Color) {
     return arguments[0];
   } else if (arguments[0] instanceof Array) {
@@ -9638,26 +9639,30 @@ p5.prototype.hue = function(c) {
  * </code>
  * </div>
  */
-p5.prototype.lerpColor = function (c1, c2, amt) {
-  amt = Math.max(Math.min(amt, 1), 0);
-  if (c1 instanceof Array) {
-    var c = [];
-    for (var i = 0; i < c1.length; i++) {
-      c.push(Math.sqrt(p5.prototype.lerp(c1[i]*c1[i], c2[i]*c2[i], amt)));
-    }
-    return c;
-  } else if (c1 instanceof p5.Color) {
-    var pc = [];
-    for (var j = 0; j < 4; j++) {
-      pc.push(Math.sqrt(p5.prototype.lerp(
-        c1.rgba[j]*c1.rgba[j],
-        c2.rgba[j]*c2.rgba[j],
-        amt)));
-    }
-    return new p5.Color(this, pc);
-  } else {
-    return Math.sqrt(p5.prototype.lerp(c1*c1, c2*c2, amt));
+p5.prototype.lerpColor = function(c1, c2, amt) {
+  var l1, l2, l3, l4;
+  var fromColor, toColor;
+
+  if(this._colorMode === constants.RGB) {
+    fromColor = this.color(c1).rgba;
+    toColor = this.color(c2).rgba;
   }
+  else if (this._colorMode === constants.HSB) {
+    fromColor = this.color(c1).hsba;
+    toColor = this.color(c2).hsba;
+  }
+  else if(this._colorMode === constants.HSL) {
+    fromColor = this.color(c1).hsla;
+    toColor = this.color(c2).hsla;
+  }
+  else {
+    return;
+  }
+  l1 = this.lerp(fromColor[0], toColor[0], amt);
+  l2 = this.lerp(fromColor[1], toColor[1], amt);
+  l3 = this.lerp(fromColor[2], toColor[2], amt);
+  l4 = this.lerp(fromColor[3], toColor[3], amt);
+  return this.color(l1, l2, l3, l4);
 };
 
 /**
@@ -9755,7 +9760,7 @@ p5.prototype.saturation = function(c) {
 
 module.exports = p5;
 
-},{"../core/core":49,"./p5.Color":43}],43:[function(require,module,exports){
+},{"../core/constants":48,"../core/core":49,"./p5.Color":43}],43:[function(require,module,exports){
 /**
  * @module Color
  * @submodule Creating & Reading
@@ -9858,7 +9863,7 @@ p5.Color.prototype.getBlue = function() {
 };
 
 p5.Color.prototype.getAlpha = function() {
-  return this._array[3] * this.maxes[constants.RGB][3];
+  return this._array[3] * this.maxes[this.mode][3];
 };
 
 p5.Color.prototype.toString = function() {
@@ -10278,7 +10283,11 @@ p5.Color._getFormattedColor = function () {
       rgbaArr = color_utils.hslaToRGBA(hslaArr,
                 this._colorMaxes[constants.HSL]);
     } else if (colorPatterns.HSLA.test(str)) {
-      hslaArr = colorPatterns.HSLA.exec(str).slice(1).map(function(color) {
+      hslaArr = colorPatterns.HSLA.exec(str).slice(1)
+        .map(function(color, idx) {
+        if (idx === 3) {
+          return parseFloat(color);
+        }
         return parseInt(color, 10);
       });
       rgbaArr = color_utils.hslaToRGBA(hslaArr,
@@ -10290,7 +10299,11 @@ p5.Color._getFormattedColor = function () {
       rgbaArr = color_utils.hsbaToRGBA(hsbaArr,
                 this._colorMaxes[constants.HSB]);
     } else if (colorPatterns.HSBA.test(str)) {
-      hsbaArr = colorPatterns.HSBA.exec(str).slice(1).map(function(color) {
+      hsbaArr = colorPatterns.HSBA.exec(str).slice(1)
+        .map(function(color, idx) {
+        if (idx === 3) {
+          return parseFloat(color);
+        }
         return parseInt(color, 10);
       });
       rgbaArr = color_utils.hsbaToRGBA(hsbaArr,
