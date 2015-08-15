@@ -12,7 +12,7 @@ p5.ColorUtils = {};
  * For a color expressed as an HSBA array, return the corresponding RGBA value
  * @param {Array} hsba An 'array' object that represents a list of HSB colors
  * @param {Array} maxes An 'array' object that represents the HSB range maxes
- * @return {Array} an array of RGBA values, on a scale of 0-255
+ * @return {Array} an array of RGBA values, on a scale of 0-1
  */
 p5.ColorUtils.hsbaToRGBA = function(hsba, maxes) {
   var h = hsba[0];
@@ -27,10 +27,7 @@ p5.ColorUtils.hsbaToRGBA = function(hsba, maxes) {
   // hsv values = 0 - 1, rgb values = 0 - 255
   var RGBA = [];
   if(s===0){
-    RGBA = [Math.round(v*255),
-            Math.round(v*255),
-            Math.round(v*255),
-            Math.round(a*255)];
+    RGBA = [v, v, v, a];
   } else {
     // h must be < 1
     var var_h = h * 6;
@@ -70,12 +67,7 @@ p5.ColorUtils.hsbaToRGBA = function(hsba, maxes) {
       g = var_1;
       b = var_2;
     }
-    RGBA = [
-      Math.round(r * 255),
-      Math.round(g * 255),
-      Math.round(b * 255),
-      Math.round(a * 255)
-    ];
+    RGBA = [r, g, b, a];
   }
   return RGBA;
 };
@@ -131,12 +123,7 @@ p5.ColorUtils.rgbaToHSBA = function(rgba, maxes) {
       h -= 1;
     }
   }
-  return [
-      Math.round(h * 360),
-      Math.round(s * 100),
-      Math.round(v * 100),
-      a * 1
-    ];
+  return [h, s, v, a];
 };
 
 /**
@@ -157,13 +144,10 @@ p5.ColorUtils.hslaToRGBA = function(hsla, maxes){
   l /= maxes[2];
   a /= maxes[3];
   // Adapted from http://www.easyrgb.com/math.html
-  // hsl values = 0 - 1, rgb values = 0 - 255
+  // hsl values = 0 - 1, rgb values = 0 - 1
   var rgba = [];
   if(s === 0){
-    rgba = [Math.round(l*255),
-            Math.round(l*255),
-            Math.round(l*255),
-            Math.round(a*255)];
+    rgba = [l, l, l, a];
   } else {
     var m, n, r, g, b;
 
@@ -192,17 +176,10 @@ p5.ColorUtils.hslaToRGBA = function(hsla, maxes){
     g = convert( m, n, h );
     b = convert( m, n, h - ( 1 / 3 ) );
 
-    rgba = [
-      Math.round(r * 255),
-      Math.round(g * 255),
-      Math.round(b * 255),
-      Math.round(a * 255)
-    ];
-
+    rgba = [r, g, b, a];
   }
 
   return rgba;
-
 };
 
 /**
@@ -266,12 +243,7 @@ p5.ColorUtils.rgbaToHSLA = function(rgba, maxes) {
     }
 
   }
-  return [
-      Math.round(h * 360),
-      Math.round(s * 100),
-      Math.round(l * 100),
-      a * 1
-    ];
+  return [h, s, l, a];
 };
 
 module.exports = p5.ColorUtils;

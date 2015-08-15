@@ -12,7 +12,7 @@ var constants = require('../core/constants');
  *
  * @class p5.Color
  * @constructor
- * rgba is normalized rgba array: 255, 255, 255, 255
+ * rgba is normalized rgba array: 1, 1, 1, 1
  * hsba is normalized hsba array: 360, 100, 100, 1
  * hsla is normalized hsla array: 360, 100, 100, 1
  *
@@ -20,16 +20,22 @@ var constants = require('../core/constants');
 p5.Color = function (pInst, vals) {
   this.mode = pInst._colorMode;
   this.maxes = pInst._colorMaxes;
-  this.rgba = p5.Color._getFormattedColor.apply(pInst, vals);
+  this.color_array = p5.Color._getFormattedColor.apply(pInst, vals);
   var isHSB = this.mode === constants.HSB,
       isRGB = this.mode === constants.RGB,
       isHSL = this.mode === constants.HSL;
 
-  if (isHSL) {
-    this.hsla = color_utils.rgbaToHSLA(this.rgba, [255, 255, 255, 255]);
+  this.rgba = [Math.round(this.color_array[0] * 255),
+               Math.round(this.color_array[1] * 255),
+               Math.round(this.color_array[2] * 255),
+               Math.round(this.color_array[3] * 255)];
+
+  if (isRGB) {
   } else if (isHSB) {
-    this.hsba = color_utils.rgbaToHSBA(this.rgba, [255, 255, 255, 255]);
-  } else if (!isRGB){
+    this.hsba = color_utils.rgbaToHSBA(this.color_array, [1, 1, 1, 1]);
+  } else if (isHSL){
+    this.hsla = color_utils.rgbaToHSLA(this.color_array, [1, 1, 1, 1]);
+  } else {
     throw new Error(pInst._colorMode + ' is an invalid colorMode.');
   }
   return this;
@@ -38,12 +44,12 @@ p5.Color = function (pInst, vals) {
 p5.Color.prototype.getHue = function() {
   // Hue is consistent in both HSL & HSB
   if (this.hsla) {
-    return Math.round(this.hsla[0] / 360 * this.maxes[constants.HSL][0]);
+    return Math.round(this.hsla[0] * this.maxes[constants.HSL][0]);
   } else if (this.hsba) {
-    return Math.round(this.hsba[0] / 360 * this.maxes[constants.HSB][0]);
+    return Math.round(this.hsba[0] * this.maxes[constants.HSB][0]);
   } else {
-    this.hsla = color_utils.rgbaToHSLA(this.rgba, [255, 255, 255, 255]);
-    return Math.round(this.hsla[0] / 360 * this.maxes[constants.HSL][0]);
+    this.hsla = color_utils.rgbaToHSLA(this.color_array, [1, 1, 1, 1]);
+    return Math.round(this.hsla[0] * this.maxes[constants.HSL][0]);
   }
 };
 
@@ -52,54 +58,55 @@ p5.Color.prototype.getSaturation = function() {
   // We are preferring HSL here (because it is a web color space)
   // until the global flag issue can be resolved
   if (this.hsla) {
-    return Math.round(this.hsla[1] / 100 * this.maxes[constants.HSL][1]);
+    return Math.round(this.hsla[1] * this.maxes[constants.HSL][1]);
   } else if (this.hsba) {
-    return Math.round(this.hsba[1] / 100 * this.maxes[constants.HSB][1]);
+    return Math.round(this.hsba[1] * this.maxes[constants.HSB][1]);
   } else {
-    this.hsla = color_utils.rgbaToHSLA(this.rgba, [255, 255, 255, 255]);
-    return Math.round(this.hsla[1] / 100 * this.maxes[constants.HSL][1]);
+    this.hsla = color_utils.rgbaToHSLA(this.color_array, [1, 1, 1, 1]);
+    return Math.round(this.hsla[1] * this.maxes[constants.HSL][1]);
   }
 };
 
 // Brightness only exists as an HSB value
 p5.Color.prototype.getBrightness = function() {
   if (this.hsba) {
-    return Math.round(this.hsba[2] / 100 * this.maxes[constants.HSB][2]);
+    return Math.round(this.hsba[2] * this.maxes[constants.HSB][2]);
   } else {
-    this.hsba = color_utils.rgbaToHSBA(this.rgba, [255, 255, 255, 255]);
-    return Math.round(this.hsba[2] / 100 * this.maxes[constants.HSB][2]);
+    this.hsba = color_utils.rgbaToHSBA(this.color_array, [1, 1, 1, 1]);
+    return Math.round(this.hsba[2] * this.maxes[constants.HSB][2]);
   }
 };
 
 // Lightness only exists as an HSL value
 p5.Color.prototype.getLightness = function() {
   if (this.hsla) {
-    return Math.round(this.hsla[2] / 100 * this.maxes[constants.HSL][2]);
+    return Math.round(this.hsla[2] * this.maxes[constants.HSL][2]);
   } else {
-    this.hsla = color_utils.rgbaToHSLA(this.rgba, [255, 255, 255, 255]);
-    return Math.round(this.hsla[2] / 100 * this.maxes[constants.HSL][2]);
+    this.hsla = color_utils.rgbaToHSLA(this.color_array, [1, 1, 1, 1]);
+    return Math.round(this.hsla[2] * this.maxes[constants.HSL][2]);
   }
 };
 
 p5.Color.prototype.getRed = function() {
-  return Math.round(this.rgba[0] / 255 * this.maxes[constants.RGB][0]);
+  return Math.round(this.color_array[0] * this.maxes[constants.RGB][0]);
 };
 
 p5.Color.prototype.getGreen = function() {
-  return Math.round(this.rgba[1] / 255 * this.maxes[constants.RGB][0]);
+  return Math.round(this.color_array[1] * this.maxes[constants.RGB][1]);
 };
 
 p5.Color.prototype.getBlue = function() {
-  return Math.round(this.rgba[2] / 255 * this.maxes[constants.RGB][0]);
+  return Math.round(this.color_array[2] * this.maxes[constants.RGB][2]);
 };
 
 p5.Color.prototype.getAlpha = function() {
-  return this.rgba[3] / 255 * this.maxes[constants.RGB][3];
+  return this.color_array[3] * this.maxes[constants.RGB][3];
 };
 
 p5.Color.prototype.toString = function() {
   var a = this.rgba;
-  return 'rgba('+a[0]+','+a[1]+','+a[2]+','+ a[3] / 255 +')';
+  a[3] = this.color_array[3];
+  return 'rgba('+a[0]+','+a[1]+','+a[2]+','+ a[3] +')';
 };
 
 /**
@@ -442,21 +449,17 @@ p5.Color._getFormattedColor = function () {
   // Handle [r,g,b,a] or [h,s,l,a] color values
   if (numArgs >= 3) {
     if (mode === constants.RGB) {
-      rgbaArr[0] = Math.round(arguments[0] / maxArr[0] * 255);
-      rgbaArr[1] = Math.round(arguments[1] / maxArr[1] * 255);
-      rgbaArr[2] = Math.round(arguments[2] / maxArr[2] * 255);
+      rgbaArr[0] = arguments[0] / maxArr[0];
+      rgbaArr[1] = arguments[1] / maxArr[1];
+      rgbaArr[2] = arguments[2] / maxArr[2];
       rgbaArr[3] = typeof arguments[3] === 'number' ?
-                Math.round(arguments[3] / maxArr[3] * 255) : 255;
+                arguments[3] / maxArr[3] : 1;
     } else if (mode === constants.HSB) {
-      // In order for grayscale to work with HSB, the saturation
-      // (the second argument) must be 0.
       alpha = typeof arguments[3] === 'number' ?
                   arguments[3] : maxArr[3];
       hsbaArr = [arguments[0], arguments[1], arguments[2], alpha];
       rgbaArr = color_utils.hsbaToRGBA(hsbaArr, maxArr);
     } else if (mode === constants.HSL) {
-      // In order for grayscale to work with HSL, the saturation
-      // (the second argument) must be 0.
       alpha = typeof arguments[3] === 'number' ?
                      arguments[3] : maxArr[3];
       hslaArr = [arguments[0], arguments[1], arguments[2], alpha];
@@ -475,58 +478,68 @@ p5.Color._getFormattedColor = function () {
     if (colorPatterns.HEX3.test(str)) {
       rgbaArr = colorPatterns.HEX3.exec(str).slice(1).map(function(color) {
         // Expand #RGB to #RRGGBB
-        return parseInt(color + color, 16);
+        return parseInt(color + color, 16) / 255;
       });
-      rgbaArr[3] = 255;
+      rgbaArr[3] = 1;
     } else if (colorPatterns.HEX6.test(str)) {
       rgbaArr = colorPatterns.HEX6.exec(str).slice(1).map(function(color) {
-        return parseInt(color, 16);
+        return parseInt(color, 16) / 255;
       });
-      rgbaArr[3] = 255;
+      rgbaArr[3] = 1;
     } else if (colorPatterns.RGB.test(str)) {
       rgbaArr = colorPatterns.RGB.exec(str).slice(1).map(function(color) {
-        return parseInt(color, 10);
+        return color / 255;
       });
-      rgbaArr[3] = 255;
+      rgbaArr[3] = 1;
     } else if (colorPatterns.RGB_PERCENT.test(str)) {
       rgbaArr = colorPatterns.RGB_PERCENT.exec(str).slice(1)
         .map(function(color) {
-          return parseInt(parseFloat(color) / 100 * 255, 10);
+          return parseFloat(color) / 100;
         });
-      rgbaArr[3] = 255;
+      rgbaArr[3] = 1;
     } else if (colorPatterns.RGBA.test(str)) {
       rgbaArr = colorPatterns.RGBA.exec(str).slice(1)
         .map(function(color, idx) {
           if (idx === 3) {
-            // Alpha value is a decimal: multiply by 255
-            return parseInt(parseFloat(color) * 255, 10);
+            return parseFloat(color);
           }
-          return parseInt(color, 10);
+          return color / 255;
         });
     } else if (colorPatterns.RGBA_PERCENT.test(str)) {
       rgbaArr = colorPatterns.RGBA_PERCENT.exec(str).slice(1)
         .map(function(color, idx) {
           if (idx === 3) {
-            // Alpha value is a decimal: multiply by 255
-            return parseInt(parseFloat(color) * 255, 10);
+            return parseFloat(color);
           }
-          return parseInt(parseFloat(color) / 100 * 255, 10);
+          return parseFloat(color) / 100;
         });
-    } else if (colorPatterns.HSL.test(str) || colorPatterns.HSLA.test(str)) {
+    } else if (colorPatterns.HSL.test(str)) {
       hslaArr = colorPatterns.HSL.exec(str).slice(1).map(function(color) {
         return parseInt(color, 10);
       });
       rgbaArr = color_utils.hslaToRGBA(hslaArr,
                 this._colorMaxes[constants.HSL]);
-    } else if (colorPatterns.HSB.test(str) || colorPatterns.HSBA.test(str)) {
+    } else if (colorPatterns.HSLA.test(str)) {
+      hslaArr = colorPatterns.HSLA.exec(str).slice(1).map(function(color) {
+        return parseInt(color, 10);
+      });
+      rgbaArr = color_utils.hslaToRGBA(hslaArr,
+                this._colorMaxes[constants.HSL]);
+    } else if (colorPatterns.HSB.test(str)) {
       hsbaArr = colorPatterns.HSB.exec(str).slice(1).map(function(color) {
+        return parseInt(color, 10);
+      });
+      rgbaArr = color_utils.hsbaToRGBA(hsbaArr,
+                this._colorMaxes[constants.HSB]);
+    } else if (colorPatterns.HSBA.test(str)) {
+      hsbaArr = colorPatterns.HSBA.exec(str).slice(1).map(function(color) {
         return parseInt(color, 10);
       });
       rgbaArr = color_utils.hsbaToRGBA(hsbaArr,
                 this._colorMaxes[constants.HSB]);
     } else {
       // Input did not match any CSS Color pattern: Default to white
-      rgbaArr = [255, 255, 255, 255];
+      rgbaArr = [1, 1, 1, 1];
     }
   } // Handle greyscale color mode
   else if((numArgs === 1 || numArgs === 2)&& typeof arguments[0] === 'number')
@@ -534,11 +547,11 @@ p5.Color._getFormattedColor = function () {
     // When users pass only one argument, they are presumed to be
     // working in grayscale mode.
     if (mode === constants.RGB) {
-      rgbaArr[0] = arguments[0] / maxArr[0] * 255;
-      rgbaArr[1] = arguments[0] / maxArr[1] * 255;
-      rgbaArr[2] = arguments[0] / maxArr[2] * 255;
+      rgbaArr[0] = arguments[0] / maxArr[0];
+      rgbaArr[1] = arguments[0] / maxArr[1];
+      rgbaArr[2] = arguments[0] / maxArr[2];
       rgbaArr[3] = typeof arguments[1] === 'number' ?
-                     Math.round(arguments[1] / maxArr[3] * 255) : 255;
+                     arguments[1] / maxArr[3] : 1;
     } else if (mode === constants.HSB) {
       // In order for grayscale to work with HSB, the saturation
       // (the second argument) must be 0.
