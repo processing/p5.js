@@ -20,21 +20,21 @@ var constants = require('../core/constants');
 p5.Color = function (pInst, vals) {
   this.mode = pInst._colorMode;
   this.maxes = pInst._colorMaxes;
-  this.color_array = p5.Color._getFormattedColor.apply(pInst, vals);
+  this._array = p5.Color._getFormattedColor.apply(pInst, vals);
   var isHSB = this.mode === constants.HSB,
       isRGB = this.mode === constants.RGB,
       isHSL = this.mode === constants.HSL;
 
-  this.rgba = [Math.round(this.color_array[0] * 255),
-               Math.round(this.color_array[1] * 255),
-               Math.round(this.color_array[2] * 255),
-               Math.round(this.color_array[3] * 255)];
+  this.rgba = [Math.round(this._array[0] * 255),
+               Math.round(this._array[1] * 255),
+               Math.round(this._array[2] * 255),
+               Math.round(this._array[3] * 255)];
 
   if (isRGB) {
   } else if (isHSB) {
-    this.hsba = color_utils.rgbaToHSBA(this.color_array, [1, 1, 1, 1]);
+    this.hsba = color_utils.rgbaToHSBA(this._array, [1, 1, 1, 1]);
   } else if (isHSL){
-    this.hsla = color_utils.rgbaToHSLA(this.color_array, [1, 1, 1, 1]);
+    this.hsla = color_utils.rgbaToHSLA(this._array, [1, 1, 1, 1]);
   } else {
     throw new Error(pInst._colorMode + ' is an invalid colorMode.');
   }
@@ -44,12 +44,12 @@ p5.Color = function (pInst, vals) {
 p5.Color.prototype.getHue = function() {
   // Hue is consistent in both HSL & HSB
   if (this.hsla) {
-    return Math.round(this.hsla[0] * this.maxes[constants.HSL][0]);
+    return this.hsla[0] * this.maxes[constants.HSL][0];
   } else if (this.hsba) {
-    return Math.round(this.hsba[0] * this.maxes[constants.HSB][0]);
+    return this.hsba[0] * this.maxes[constants.HSB][0];
   } else {
-    this.hsla = color_utils.rgbaToHSLA(this.color_array, [1, 1, 1, 1]);
-    return Math.round(this.hsla[0] * this.maxes[constants.HSL][0]);
+    this.hsla = color_utils.rgbaToHSLA(this._array, [1, 1, 1, 1]);
+    return this.hsla[0] * this.maxes[constants.HSL][0];
   }
 };
 
@@ -57,55 +57,55 @@ p5.Color.prototype.getSaturation = function() {
   // Saturation exists in both HSB and HSL, but returns different values
   // We are preferring HSL here (because it is a web color space)
   // until the global flag issue can be resolved
-  if (this.hsla) {
-    return Math.round(this.hsla[1] * this.maxes[constants.HSL][1]);
-  } else if (this.hsba) {
-    return Math.round(this.hsba[1] * this.maxes[constants.HSB][1]);
+  if (this.hsba && this.mode === constants.HSB) {
+    return this.hsba[1] * this.maxes[constants.HSB][1];
   } else {
-    this.hsla = color_utils.rgbaToHSLA(this.color_array, [1, 1, 1, 1]);
-    return Math.round(this.hsla[1] * this.maxes[constants.HSL][1]);
+    if( !this.hsla ) {
+      this.hsla = color_utils.rgbaToHSLA(this._array, [1, 1, 1, 1]);
+    }
+    return this.hsla[1] * this.maxes[constants.HSL][1];
   }
 };
 
 // Brightness only exists as an HSB value
 p5.Color.prototype.getBrightness = function() {
   if (this.hsba) {
-    return Math.round(this.hsba[2] * this.maxes[constants.HSB][2]);
+    return this.hsba[2] * this.maxes[constants.HSB][2];
   } else {
-    this.hsba = color_utils.rgbaToHSBA(this.color_array, [1, 1, 1, 1]);
-    return Math.round(this.hsba[2] * this.maxes[constants.HSB][2]);
+    this.hsba = color_utils.rgbaToHSBA(this._array, [1, 1, 1, 1]);
+    return this.hsba[2] * this.maxes[constants.HSB][2];
   }
 };
 
 // Lightness only exists as an HSL value
 p5.Color.prototype.getLightness = function() {
   if (this.hsla) {
-    return Math.round(this.hsla[2] * this.maxes[constants.HSL][2]);
+    return this.hsla[2] * this.maxes[constants.HSL][2];
   } else {
-    this.hsla = color_utils.rgbaToHSLA(this.color_array, [1, 1, 1, 1]);
-    return Math.round(this.hsla[2] * this.maxes[constants.HSL][2]);
+    this.hsla = color_utils.rgbaToHSLA(this._array, [1, 1, 1, 1]);
+    return this.hsla[2] * this.maxes[constants.HSL][2];
   }
 };
 
 p5.Color.prototype.getRed = function() {
-  return Math.round(this.color_array[0] * this.maxes[constants.RGB][0]);
+  return this._array[0] * this.maxes[constants.RGB][0];
 };
 
 p5.Color.prototype.getGreen = function() {
-  return Math.round(this.color_array[1] * this.maxes[constants.RGB][1]);
+  return this._array[1] * this.maxes[constants.RGB][1];
 };
 
 p5.Color.prototype.getBlue = function() {
-  return Math.round(this.color_array[2] * this.maxes[constants.RGB][2]);
+  return this._array[2] * this.maxes[constants.RGB][2];
 };
 
 p5.Color.prototype.getAlpha = function() {
-  return this.color_array[3] * this.maxes[constants.RGB][3];
+  return this._array[3] * this.maxes[constants.RGB][3];
 };
 
 p5.Color.prototype.toString = function() {
   var a = this.rgba;
-  a[3] = this.color_array[3];
+  a[3] = this._array[3];
   return 'rgba('+a[0]+','+a[1]+','+a[2]+','+ a[3] +')';
 };
 
