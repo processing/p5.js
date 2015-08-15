@@ -412,7 +412,7 @@ p5.prototype.lightness = function(c) {
  * rect(50, 20, 35, 60);  // Draw right rectangle
  * </code>
  * </div>
- * 
+ *
  * <div>
  * <code>
  * colorMode(RGB, 255);

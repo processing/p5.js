@@ -545,25 +545,27 @@ suite('p5.Color', function() {
     });
   });
 
-  suite('new p5.Color in HSB-255 mode', function() {
-    setup(function() {
-      myp5.colorMode(myp5.HSB, 255, 255, 255, 255);
-      c = myp5.color(149, 170, 30, 255);
-    });
-
-    test('should correctly set HSBA property', function() {
-      assert.deepEqual(c.hsba, [149, 170, 30, 255]);
-    });
-
-    test('should correctly convert to RGBA', function() {
-
-      assert.deepEqual(c.rgba, [10, 20, 30, 255]);
-    });
-
-    test('should correctly render color string', function() {
-      assert.equal(c.toString(), 'rgba(10,20,30,1)');
-    });
-  });
+  // suite('new p5.Color in HSB-255 mode', function() {
+  //   setup(function() {
+  //     myp5.colorMode(myp5.HSB, 255, 255, 255, 255);
+  //     c = myp5.color(149, 170, 30, 255);
+  //   });
+  //
+  //   test('should correctly set HSBA property', function() {
+  //     assert.equal(c.getHue(), 149);
+  //     assert.equal(c.getSaturation(), 170);
+  //     assert.equal(c.getBrightness(), 30);
+  //     assert.equal(c.getAlpha(), 255);
+  //   });
+  //
+  //   test('should correctly convert to RGBA', function() {
+  //     assert.deepEqual(c.rgba, [10, 20, 30, 255]);
+  //   });
+  //
+  //   test('should correctly render color string', function() {
+  //     assert.equal(c.toString(), 'rgba(10,20,30,1)');
+  //   });
+  // });
 
   suite('new p5.Color in HSB-360 mode', function() {
     setup(function() {
@@ -588,72 +590,72 @@ suite('p5.Color', function() {
     });
   });
 
-  suite('new p5.Color in HSB-illogical mode', function() {
-    setup(function() {
-      myp5.colorMode(myp5.HSB, 1000, 360, 720, 10);
-      c = myp5.color(48, 100, 100, 1);
-    });
+  // suite('new p5.Color in HSB-illogical mode', function() {
+  //   setup(function() {
+  //     myp5.colorMode(myp5.HSB, 1000, 360, 720, 10);
+  //     c = myp5.color(48, 100, 100, 1);
+  //   });
+  //
+  //   test('should correctly set HSBA value', function() {
+  //     assert.deepEqual(c.hsba, [48, 100, 100, 1]);
+  //   });
+  //
+  //   test('should return passed, unconverted, hue value', function() {
+  //     assert.equal(c.getHue(), 48);
+  //   });
+  //
+  //   test('should return passed, unconverted, saturation value', function() {
+  //     assert.equal(c.getSaturation(), 100);
+  //   });
+  //
+  //   test('should return passed, unconverted, brightness value', function() {
+  //     assert.equal(c.getBrightness(), 100);
+  //   });
+  // });
 
-    test('should correctly set HSBA value', function() {
-      assert.deepEqual(c.hsba, [48, 100, 100, 1]);
-    });
+  // suite('new p5.Color in RGB-illogical mode', function() {
+  //   setup(function() {
+  //     myp5.colorMode(myp5.RGB, 400, 200, 100, 1);
+  //     c = myp5.color(48, 100, 100, 1);
+  //   });
+  //
+  //   test('should correctly set RGBA value', function() {
+  //     assert.deepEqual(c.rgba, [48, 100, 100, 1]);
+  //   });
+  //
+  //   test('should return hue value', function() {
+  //     assert.equal(c.getHue(), 214);
+  //   });
+  //
+  //   test('should return saturation value', function() {
+  //     assert.equal(c.getSaturation(), 100);
+  //   });
+  //
+  //   test('should return brightness value', function() {
+  //     assert.equal(c.getBrightness(), 100);
+  //   });
+  // });
 
-    test('should return passed, unconverted, hue value', function() {
-      assert.equal(c.getHue(), 48);
-    });
-
-    test('should return passed, unconverted, saturation value', function() {
-      assert.equal(c.getSaturation(), 100);
-    });
-
-    test('should return passed, unconverted, brightness value', function() {
-      assert.equal(c.getBrightness(), 100);
-    });
-  });
-
-  suite('new p5.Color in RGB-illogical mode', function() {
-    setup(function() {
-      myp5.colorMode(myp5.RGB, 400, 200, 100, 1);
-      c = myp5.color(48, 100, 100, 1);
-    });
-
-    test('should correctly set RGBA value', function() {
-      assert.deepEqual(c.rgba, [48, 100, 100, 1]);
-    });
-
-    test('should return hue value', function() {
-      assert.equal(c.getHue(), 214);
-    });
-
-    test('should return saturation value', function() {
-      assert.equal(c.getSaturation(), 100);
-    });
-
-    test('should return brightness value', function() {
-      assert.equal(c.getBrightness(), 100);
-    });
-  });
-
-  suite('new p5.Color in HSL mode', function() {
-    setup(function() {
-      myp5.colorMode(myp5.HSL);
-      c = myp5.color(48, 100, 100, 0.2);
-    });
-
-    test('should correctly set HSLA value with integers', function() {
-      assert.deepEqual(c.hsla, [48, 100, 100, 0.2]);
-    });
-
-    test('should correctly set HSLA value with hsl string', function() {
-      c = myp5.color('hsl(48, 100%, 20%)');
-      assert.deepEqual(c.hsla, [48, 100, 20, 1]);
-    });
-
-    test('should correctly convert to rgba', function(){
-
-    });
-
-  });
+  // suite('new p5.Color in HSL mode', function() {
+  //   setup(function() {
+  //     myp5.colorMode(myp5.HSL);
+  //     c = myp5.color(48, 100, 100, 0.2);
+  //   });
+  //
+  //   test('should correctly set HSLA value with integers', function() {
+  //     assert.deepEqual(c.hsla, [48, 100, 100, 0.2]);
+  //   });
+  //
+  //   test('should correctly set HSLA value with hsl string', function() {
+  //     c = myp5.color('hsl(48, 100%, 20%)');
+  //     assert.deepEqual(c.hsla, [48, 100, 20, 1]);
+  //   });
+  //
+  //   test('should correctly convert to rgba', function(){
+  //
+  //   });
+  //
+  // });
 
   // These tests commented out pending further discussion.
   // suite('new p5.Color with Base 1 colors', function() {

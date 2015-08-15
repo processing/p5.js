@@ -27,7 +27,10 @@ p5.ColorUtils.hsbaToRGBA = function(hsba, maxes) {
   // hsv values = 0 - 1, rgb values = 0 - 255
   var RGBA = [];
   if(s===0){
-    RGBA = [Math.round(v*255), Math.round(v*255), Math.round(v*255), a*255];
+    RGBA = [Math.round(v*255),
+            Math.round(v*255),
+            Math.round(v*255),
+            Math.round(a*255)];
   } else {
     // h must be < 1
     var var_h = h * 6;
@@ -71,7 +74,7 @@ p5.ColorUtils.hsbaToRGBA = function(hsba, maxes) {
       Math.round(r * 255),
       Math.round(g * 255),
       Math.round(b * 255),
-      a * 255
+      Math.round(a * 255)
     ];
   }
   return RGBA;
@@ -85,10 +88,14 @@ p5.ColorUtils.hsbaToRGBA = function(hsba, maxes) {
  * @return {Array} an array of HSB values, scaled by the HSB-space maxes
  */
 p5.ColorUtils.rgbaToHSBA = function(rgba, maxes) {
-  var r = rgba[0]/maxes[0];
-  var g = rgba[1]/maxes[1];
-  var b = rgba[2]/maxes[2];
-  var a = rgba[3]/maxes[3];
+  var r = rgba[0];
+  var g = rgba[1];
+  var b = rgba[2];
+  var a = rgba[3] || maxes[3];
+  r /= maxes[0];
+  g /= maxes[1];
+  b /= maxes[2];
+  a /= maxes[3];
 
   var min = Math.min(r, g, b); //Min. value of RGB
   var max = Math.max(r, g, b); //Max. value of RGB
@@ -153,7 +160,10 @@ p5.ColorUtils.hslaToRGBA = function(hsla, maxes){
   // hsl values = 0 - 1, rgb values = 0 - 255
   var rgba = [];
   if(s === 0){
-    rgba = [Math.round(l*255), Math.round(l*255), Math.round(l*255), a];
+    rgba = [Math.round(l*255),
+            Math.round(l*255),
+            Math.round(l*255),
+            Math.round(a*255)];
   } else {
     var m, n, r, g, b;
 
@@ -203,10 +213,14 @@ p5.ColorUtils.hslaToRGBA = function(hsla, maxes){
  * @return {Array} an array of HSL values, scaled by the HSL-space maxes
  */
 p5.ColorUtils.rgbaToHSLA = function(rgba, maxes) {
-  var r = rgba[0]/maxes[0];
-  var g = rgba[1]/maxes[1];
-  var b = rgba[2]/maxes[2];
-  var a = rgba[3]/maxes[3];
+  var r = rgba[0];
+  var g = rgba[1];
+  var b = rgba[2];
+  var a = rgba[3] || maxes[3];
+  r /= maxes[0];
+  g /= maxes[1];
+  b /= maxes[2];
+  a /= maxes[3];
 
   var min = Math.min(r, g, b); //Min. value of RGB
   var max = Math.max(r, g, b); //Max. value of RGB
