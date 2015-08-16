@@ -883,7 +883,8 @@ p5.prototype.save = function(object, _filename, _options) {
   // otherwise, parse the arguments
 
   // if first param is a p5Graphics, then saveCanvas
-  else if (args[0] instanceof p5.Renderer) {
+  else if (args[0] instanceof p5.Renderer ||
+    args[0] instanceof p5.Graphics) {
     p5.prototype.saveCanvas(args[0].elt, args[1], args[2]);
     return;
   }
