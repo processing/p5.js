@@ -11,18 +11,13 @@ p5.ColorUtils = {};
 /**
  * For a color expressed as an HSBA array, return the corresponding RGBA value
  * @param {Array} hsba An 'array' object that represents a list of HSB colors
- * @param {Array} maxes An 'array' object that represents the HSB range maxes
  * @return {Array} an array of RGBA values, on a scale of 0-1
  */
-p5.ColorUtils.hsbaToRGBA = function(hsba, maxes) {
+p5.ColorUtils.hsbaToRGBA = function(hsba) {
   var h = hsba[0];
   var s = hsba[1];
   var v = hsba[2];
-  var a = hsba[3] || maxes[3];
-  h /= maxes[0];
-  s /= maxes[1];
-  v /= maxes[2];
-  a /= maxes[3];
+  var a = hsba[3] || 1;
   // Adapted from http://www.easyrgb.com/math.html
   // hsv values = 0 - 1, rgb values = 0 - 255
   var RGBA = [];
@@ -76,18 +71,13 @@ p5.ColorUtils.hsbaToRGBA = function(hsba, maxes) {
  * For a color expressed as an RGBA array, return the corresponding HSBA value
  *
  * @param {Array} rgba An 'array' object that represents a list of RGB colors
- * @param {Array} maxes An 'array' object that represents the RGB range maxes
- * @return {Array} an array of HSB values, scaled by the HSB-space maxes
+ * @return {Array} an array of HSB values
  */
-p5.ColorUtils.rgbaToHSBA = function(rgba, maxes) {
+p5.ColorUtils.rgbaToHSBA = function(rgba) {
   var r = rgba[0];
   var g = rgba[1];
   var b = rgba[2];
-  var a = rgba[3] || maxes[3];
-  r /= maxes[0];
-  g /= maxes[1];
-  b /= maxes[2];
-  a /= maxes[3];
+  var a = rgba[3] || 1;
 
   var min = Math.min(r, g, b); //Min. value of RGB
   var max = Math.max(r, g, b); //Max. value of RGB
@@ -130,19 +120,14 @@ p5.ColorUtils.rgbaToHSBA = function(rgba, maxes) {
  * For a color expressed as an HSLA array, return the corresponding RGBA value
  *
  * @param  {Array} hsla An 'array' object that represents a list of HSL colors
- * @param  {Array} maxes An 'array' object that represents the HSL range maxes
- *
- * @return {Array} an array of RGBA values, on a scale of 0-255
+ * @return {Array} an array of RGBA values, on a scale of 0-1
  */
-p5.ColorUtils.hslaToRGBA = function(hsla, maxes){
+p5.ColorUtils.hslaToRGBA = function(hsla){
   var h = hsla[0];
   var s = hsla[1];
   var l = hsla[2];
-  var a = hsla[3] || maxes[3];
-  h /= maxes[0];
-  s /= maxes[1];
-  l /= maxes[2];
-  a /= maxes[3];
+  var a = hsla[3] || 1;
+
   // Adapted from http://www.easyrgb.com/math.html
   // hsl values = 0 - 1, rgb values = 0 - 1
   var rgba = [];
@@ -186,18 +171,13 @@ p5.ColorUtils.hslaToRGBA = function(hsla, maxes){
  * For a color expressed as an RGBA array, return the corresponding HSBA value
  *
  * @param {Array} rgba An 'array' object that represents a list of RGB colors
- * @param {Array} maxes An 'array' object that represents the RGB range maxes
- * @return {Array} an array of HSL values, scaled by the HSL-space maxes
+ * @return {Array} an array of HSL values
  */
-p5.ColorUtils.rgbaToHSLA = function(rgba, maxes) {
+p5.ColorUtils.rgbaToHSLA = function(rgba) {
   var r = rgba[0];
   var g = rgba[1];
   var b = rgba[2];
-  var a = rgba[3] || maxes[3];
-  r /= maxes[0];
-  g /= maxes[1];
-  b /= maxes[2];
-  a /= maxes[3];
+  var a = rgba[3] || 1;
 
   var min = Math.min(r, g, b); //Min. value of RGB
   var max = Math.max(r, g, b); //Max. value of RGB
@@ -244,6 +224,37 @@ p5.ColorUtils.rgbaToHSLA = function(rgba, maxes) {
 
   }
   return [h, s, l, a];
+};
+
+/**
+ * For a color expressed as an hsla array, return the corresponding HSBA value
+ *
+ * @param {Array} hsla An 'array' object that represents a list of HSLA colors
+ * @return {Array} an array of HSBA values
+ */
+p5.ColorUtils.hslaToHSBA = function(hsla) {
+  var h = hsla[0];
+  var s = hsla[1];
+  var l = hsla[2];
+  var a = hsla[3] || 1;
+
+  s *= l < 0.5 ? l : 1 - l;
+  return[ h, 2*s/(l+s), l+s, a];
+};
+
+/**
+ * For a color expressed as an hsba array, return the corresponding HSLA value
+ *
+ * @param {Array} hsba An 'array' object that represents a list of HSBA colors
+ * @return {Array} an array of HSLA values
+ */
+p5.ColorUtils.hsbaToHSLA = function(hsba) {
+  var h = hsba[0];
+  var s = hsba[1];
+  var v = hsba[2];
+  var a = hsba[3] || 1;
+
+  return [ h, s*v/((h=(2-s)*v)<1?h:2-h), h/2, a];
 };
 
 module.exports = p5.ColorUtils;

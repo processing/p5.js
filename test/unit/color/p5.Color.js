@@ -523,8 +523,50 @@ suite('p5.Color', function() {
 
     test('should correctly render color string', function() {
       assert.equal(c.toString(), 'rgba(255,0,102,0.8)');
-      //reset hsb
+    });
+  });
+
+  suite('p5.Color in HSL mode with HSL string', function() {
+    setup(function() {
       myp5.colorMode(myp5.HSL, 360, 100, 100, 1);
+      c = myp5.color('hsla(336, 100%, 50%, 0.8)');
+    });
+
+    test('should correctly get HSLA property', function() {
+      assert.equal(Math.round(c.getHue()), 336);
+      assert.equal(Math.round(c.getSaturation()), 100);
+      assert.equal(Math.round(c.getLightness()), 50);
+      assert.equal(c.getAlpha(), 0.8);
+    });
+
+    test('should correctly convert to RGBA', function() {
+      assert.deepEqual(c.rgba, [255, 0, 102, 204]);
+    });
+
+    test('should correctly render color string', function() {
+      assert.equal(c.toString(), 'rgba(255,0,102,0.8)');
+    });
+  });
+
+  suite('p5.Color in HSL mode with HSB string', function() {
+    setup(function() {
+      myp5.colorMode(myp5.HSL, 360, 100, 100, 1);
+      c = myp5.color('hsba(336, 100%, 100%, 0.8)');
+    });
+
+    test('should correctly get HSLA property', function() {
+      assert.equal(Math.round(c.getHue()), 336);
+      assert.equal(Math.round(c.getSaturation()), 100);
+      assert.equal(Math.round(c.getLightness()), 50);
+      assert.equal(c.getAlpha(), 0.8);
+    });
+
+    test('should correctly convert to RGBA', function() {
+      assert.deepEqual(c.rgba, [255, 0, 102, 204]);
+    });
+
+    test('should correctly render color string', function() {
+      assert.equal(c.toString(), 'rgba(255,0,102,0.8)');
     });
   });
 
@@ -587,6 +629,50 @@ suite('p5.Color', function() {
     setup(function() {
       myp5.colorMode(myp5.HSB, 360, 100, 100, 1);
       c = myp5.color('rgba(255, 0, 102, 0.8)');
+    });
+
+    test('should correctly get HSBA property', function() {
+      assert.equal(Math.round(c.getHue()), 336);
+      assert.equal(Math.round(c.getSaturation()), 100);
+      assert.equal(Math.round(c.getBrightness()), 100);
+      assert.equal(c.getAlpha(), 0.8);
+    });
+
+    test('should correctly convert to RGBA', function() {
+      assert.deepEqual(c.rgba, [255, 0, 102, 204]);
+    });
+
+    test('should correctly render color string', function() {
+      assert.equal(c.toString(), 'rgba(255,0,102,0.8)');
+    });
+  });
+
+  suite('p5.Color in HSB mode with HSB string', function() {
+    setup(function() {
+      myp5.colorMode(myp5.HSB, 360, 100, 100, 1);
+      c = myp5.color('hsba(336, 100%, 100%, 0.8)');
+    });
+
+    test('should correctly get HSBA property', function() {
+      assert.equal(Math.round(c.getHue()), 336);
+      assert.equal(Math.round(c.getSaturation()), 100);
+      assert.equal(Math.round(c.getBrightness()), 100);
+      assert.equal(c.getAlpha(), 0.8);
+    });
+
+    test('should correctly convert to RGBA', function() {
+      assert.deepEqual(c.rgba, [255, 0, 102, 204]);
+    });
+
+    test('should correctly render color string', function() {
+      assert.equal(c.toString(), 'rgba(255,0,102,0.8)');
+    });
+  });
+
+  suite('p5.Color in HSB mode with HSL string', function() {
+    setup(function() {
+      myp5.colorMode(myp5.HSB, 360, 100, 100, 1);
+      c = myp5.color('hsla(336, 100%, 50%, 0.8)');
     });
 
     test('should correctly get HSBA property', function() {
