@@ -1,4 +1,4 @@
-/*! p5.js v0.4.7 August 15, 2015 */
+/*! p5.js v0.4.7 August 17, 2015 */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.p5 = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
 },{}],2:[function(require,module,exports){
@@ -9281,8 +9281,14 @@ p5.ColorUtils.hslaToHSBA = function(hsla) {
   var l = hsla[2];
   var a = hsla[3] || 1;
 
+  var v;
+
+  //Hue and Alpha stay the same
   s *= l < 0.5 ? l : 1 - l;
-  return[ h, 2*s/(l+s), l+s, a];
+  v = l + s;
+  s = 2 * s / (l + s);
+
+  return[ h, s, v, a];
 };
 
 /**
@@ -9297,7 +9303,26 @@ p5.ColorUtils.hsbaToHSLA = function(hsba) {
   var v = hsba[2];
   var a = hsba[3] || 1;
 
-  return [ h, s*v/((h=(2-s)*v)<1?h:2-h), h/2, a];
+  //Hue and Alpha stay the same
+  //Lightness is (2 - s) * v / 2
+  var l = (2 - s) * v / 2;
+
+  //Saturation is very different between the two color spaces
+  //If l < 0.5 set it to s / (2 - s)
+  //Otherwise s * v / (2 - (2 - s) * v)
+  if( l !== 0 ){
+    if( l === 1 ){
+      s = 0;
+    }
+    else if( l < 0.5 ){
+      s = s / (2 - s);
+    }
+    else{
+      s = s * v / (2 - l * 2);
+    }
+  }
+
+  return [ h, s, l, a];
 };
 
 module.exports = p5.ColorUtils;
