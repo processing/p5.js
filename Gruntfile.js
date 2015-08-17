@@ -58,7 +58,10 @@ module.exports = function(grunt) {
         reporter: require('jscs-stylish').path
       },
       build: {
-        src: ['Gruntfile.js']
+        src: [
+          'Gruntfile.js',
+          'build/**/*.js'
+        ]
       },
       source: {
         src: [
@@ -77,7 +80,10 @@ module.exports = function(grunt) {
         options: {
           jshintrc: '.jshintrc'
         },
-        src: ['Gruntfile.js']
+        src: [
+          'Gruntfile.js',
+          'build/**/*.js'
+        ]
       },
       source: {
         options: {

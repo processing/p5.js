@@ -1,16 +1,17 @@
 'use strict';
 
 var path = require('path');
-var fs = require('fs');
 var browserify = require('browserify');
-var derequire = require('derequire'); // This is a silly thing to type
+var derequire = require('derequire');
 
 var bannerTemplate = '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */';
 
 module.exports = function(grunt) {
 
-  var libFilePath = path.join(process.cwd(), 'lib/p5.js');
-  var srcFilePath = path.join(process.cwd(), 'src/app.js');
+  var srcFilePath = require.resolve('../../src/app.js');
+
+  // This file will not exist until it has been built
+  var libFilePath = path.resolve('lib/p5.js');
 
   grunt.registerTask('browserify', 'Compile the p5.js source with Browserify', function() {
     // Reading and writing files is asynchronous
@@ -33,12 +34,19 @@ module.exports = function(grunt) {
     bundle.on('data', function(data) {
       code += data;
     }).on('end', function() {
+
       // "code" is complete: create the distributable UMD build by running
       // the bundle through derequire, then write the bundle to disk.
       // (Derequire changes the bundle's internal "require" function to
       // something that will not interfere with this module being used
       // within a separate browserify bundle.)
-      fs.writeFile(libFilePath, derequire(code), done);
+      grunt.file.write(libFilePath, derequire(code));
+
+      // Print a success message
+      grunt.log.writeln('>>'.green + ' Bundle ' + 'lib/p5.js'.cyan + ' created.');
+
+      // Complete the task
+      done();
     });
   });
 };
