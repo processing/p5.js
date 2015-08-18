@@ -229,12 +229,12 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
       ctx.loadPixels.call(ctx);
     }
     var idx = 4 * ((pd * y) * (this.width * pd) + x * pd );
-    return [
-      ctx.pixels[idx],
-      ctx.pixels[idx + 1],
-      ctx.pixels[idx + 2],
-      ctx.pixels[idx + 3]
-    ];
+    var color = ctx.color.apply(ctx,
+      ['rgba(' + ctx.pixels[idx] + ', ' +
+      ctx.pixels[idx + 1] + ', ' +
+      ctx.pixels[idx + 2] + ', ' +
+      ctx.pixels[idx + 3] / 255.0 + ')']);
+    return color;
   } else {
     var sx = x * pd;
     var sy = y * pd;
