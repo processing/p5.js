@@ -10,7 +10,7 @@
     "docs": "grunt yui",
     "test": "grunt"
   },
-  "version": "0.4.7",
+  "version": "0.4.8",
   "devDependencies": {
     "amdclean": "~0.3.3",
     "browserify": "^11.0.1",
