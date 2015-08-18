@@ -91,7 +91,6 @@ p5.Renderer2D.prototype.clear = function() {
 };
 
 p5.Renderer2D.prototype.fill = function() {
-
   var ctx = this.drawingContext;
   var color = this._pInst.color.apply(this._pInst, arguments);
   ctx.fillStyle = color.toString();
@@ -225,11 +224,16 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
   var pd = this.pixelDensity || this._pInst.pixelDensity;
 
   if (w === 1 && h === 1){
+    var ctx = this._pInst || this;
+    if (!ctx.imageData) {
+      ctx.loadPixels.call(ctx);
+    }
+    var idx = 4 * ((pd * y) * (this.width * pd) + x * pd );
     return [
-      this.pixels[pd*4*(y*this.width+x)],
-      this.pixels[pd*(4*(y*this.width+x)+1)],
-      this.pixels[pd*(4*(y*this.width+x)+2)],
-      this.pixels[pd*(4*(y*this.width+x)+3)]
+      ctx.pixels[idx],
+      ctx.pixels[idx + 1],
+      ctx.pixels[idx + 2],
+      ctx.pixels[idx + 3]
     ];
   } else {
     var sx = x * pd;

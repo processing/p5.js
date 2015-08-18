@@ -14247,9 +14247,9 @@ p5.Graphics = function(w, h, renderer, pInst) {
   this.pixelDensity = pInst.pixelDensity;
 
   if (r === constants.WEBGL) {
-    this._graphics = new p5.Renderer3D(c, this, false);
+    this._graphics = new p5.Renderer3D(c, pInst, false);
   } else {
-    this._graphics = new p5.Renderer2D(c, this, false);
+    this._graphics = new p5.Renderer2D(c, pInst, false);
   }
 
   this._graphics.resize(w, h);
@@ -14427,7 +14427,6 @@ p5.Renderer2D.prototype.clear = function() {
 };
 
 p5.Renderer2D.prototype.fill = function() {
-
   var ctx = this.drawingContext;
   var color = this._pInst.color.apply(this._pInst, arguments);
   ctx.fillStyle = color.toString();
@@ -14561,11 +14560,16 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
   var pd = this.pixelDensity || this._pInst.pixelDensity;
 
   if (w === 1 && h === 1){
+    var ctx = this._pInst || this;
+    if (!ctx.imageData) {
+      ctx.loadPixels.call(ctx);
+    }
+    var idx = 4 * ((pd * y) * (this.width * pd) + x * pd );
     return [
-      this.pixels[pd*4*(y*this.width+x)],
-      this.pixels[pd*(4*(y*this.width+x)+1)],
-      this.pixels[pd*(4*(y*this.width+x)+2)],
-      this.pixels[pd*(4*(y*this.width+x)+3)]
+      ctx.pixels[idx],
+      ctx.pixels[idx + 1],
+      ctx.pixels[idx + 2],
+      ctx.pixels[idx + 3]
     ];
   } else {
     var sx = x * pd;
@@ -21816,7 +21820,8 @@ p5.prototype.save = function(object, _filename, _options) {
   // otherwise, parse the arguments
 
   // if first param is a p5Graphics, then saveCanvas
-  else if (args[0] instanceof p5.Renderer) {
+  else if (args[0] instanceof p5.Renderer ||
+    args[0] instanceof p5.Graphics) {
     p5.prototype.saveCanvas(args[0].elt, args[1], args[2]);
     return;
   }
