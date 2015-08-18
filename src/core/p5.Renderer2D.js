@@ -217,14 +217,15 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
     h = 1;
   }
 
+  var ctx = this._pInst || this;
+  // return black color
   if(x > this.width || y > this.height || x < 0 || y < 0){
-    return [0, 0, 0, 255];
+    return ctx.color.apply(ctx, ['rgba(0, 0, 0, 1)']);
   }
 
   var pd = this.pixelDensity || this._pInst.pixelDensity;
 
   if (w === 1 && h === 1){
-    var ctx = this._pInst || this;
     if (!ctx.imageData) {
       ctx.loadPixels.call(ctx);
     }
