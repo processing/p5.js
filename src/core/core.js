@@ -229,9 +229,11 @@ var p5 = function(sketch, node, sync) {
 
       var methods = this._preloadMethods;
       Object.keys(methods).forEach(function(f) {
-        context[f] = function() {
+        var methodContext = methods[f];
+        var originalFunc = methodContext[f];
+        methodContext[f] = function() {
           var argsArray = Array.prototype.slice.call(arguments);
-          return context._preload(f, methods[f], argsArray);
+          return context._preload(originalFunc, methodContext, argsArray);
         };
       });
 
@@ -259,7 +261,7 @@ var p5 = function(sketch, node, sync) {
       }
     };
     args.push(preloadCallback);
-    return obj[func].apply(context, args);
+    return func.apply(obj, args);
   }.bind(this);
 
   this._setup = function() {
