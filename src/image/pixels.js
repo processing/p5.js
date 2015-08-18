@@ -348,14 +348,14 @@ p5.prototype.filter = function(operation, value) {
 };
 
 /**
- * Returns an array of [R,G,B,A] values for any pixel or grabs a section of
+ * Returns an color object for any pixel or grabs a section of
  * an image. If no parameters are specified, the entire image is returned.
  * Use the x and y parameters to get the value of one pixel. Get a section of
  * the display window by specifying additional w and h parameters. When
  * getting an image, the x and y parameters define the coordinates for the
  * upper-left corner of the image, regardless of the current imageMode().
  *
- * If the pixel requested is outside of the image window, [0,0,0,255] is
+ * If the pixel requested is outside of the image window, black color is
  * returned. To get the numbers scaled according to the current color ranges
  * and taking into account colorMode, use getColor instead of get.
  *
@@ -373,7 +373,7 @@ p5.prototype.filter = function(operation, value) {
  * @param  {Number}         [y] y-coordinate of the pixel
  * @param  {Number}         [w] width
  * @param  {Number}         [h] height
- * @return {Array|p5.Image}     values of pixel at x,y in array format
+ * @return {p5.Color|p5.Image}     values of pixel at x,y in color format
  *                              [R, G, B, A] or p5.Image
  * @example
  * <div>

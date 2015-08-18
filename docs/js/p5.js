@@ -1,4 +1,4 @@
-/*! p5.js v0.4.7 August 17, 2015 */
+/*! p5.js v0.4.7 August 18, 2015 */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.p5 = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 
 },{}],2:[function(require,module,exports){
@@ -14247,9 +14247,9 @@ p5.Graphics = function(w, h, renderer, pInst) {
   this.pixelDensity = pInst.pixelDensity;
 
   if (r === constants.WEBGL) {
-    this._graphics = new p5.Renderer3D(c, this, false);
+    this._graphics = new p5.Renderer3D(c, pInst, false);
   } else {
-    this._graphics = new p5.Renderer2D(c, this, false);
+    this._graphics = new p5.Renderer2D(c, pInst, false);
   }
 
   this._graphics.resize(w, h);
@@ -14427,7 +14427,6 @@ p5.Renderer2D.prototype.clear = function() {
 };
 
 p5.Renderer2D.prototype.fill = function() {
-
   var ctx = this.drawingContext;
   var color = this._pInst.color.apply(this._pInst, arguments);
   ctx.fillStyle = color.toString();
@@ -14554,19 +14553,25 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
     h = 1;
   }
 
+  var ctx = this._pInst || this;
+  // return black color
   if(x > this.width || y > this.height || x < 0 || y < 0){
-    return [0, 0, 0, 255];
+    return ctx.color.apply(ctx, ['rgba(0, 0, 0, 1)']);
   }
 
   var pd = this.pixelDensity || this._pInst.pixelDensity;
 
   if (w === 1 && h === 1){
-    return [
-      this.pixels[pd*4*(y*this.width+x)],
-      this.pixels[pd*(4*(y*this.width+x)+1)],
-      this.pixels[pd*(4*(y*this.width+x)+2)],
-      this.pixels[pd*(4*(y*this.width+x)+3)]
-    ];
+    if (!ctx.imageData) {
+      ctx.loadPixels.call(ctx);
+    }
+    var idx = 4 * ((pd * y) * (this.width * pd) + x * pd );
+    var color = ctx.color.apply(ctx,
+      ['rgba(' + ctx.pixels[idx] + ', ' +
+      ctx.pixels[idx + 1] + ', ' +
+      ctx.pixels[idx + 2] + ', ' +
+      ctx.pixels[idx + 3] / 255.0 + ')']);
+    return color;
   } else {
     var sx = x * pd;
     var sy = y * pd;
@@ -20728,14 +20733,14 @@ p5.prototype.filter = function(operation, value) {
 };
 
 /**
- * Returns an array of [R,G,B,A] values for any pixel or grabs a section of
+ * Returns an color object for any pixel or grabs a section of
  * an image. If no parameters are specified, the entire image is returned.
  * Use the x and y parameters to get the value of one pixel. Get a section of
  * the display window by specifying additional w and h parameters. When
  * getting an image, the x and y parameters define the coordinates for the
  * upper-left corner of the image, regardless of the current imageMode().
  *
- * If the pixel requested is outside of the image window, [0,0,0,255] is
+ * If the pixel requested is outside of the image window, black color is
  * returned. To get the numbers scaled according to the current color ranges
  * and taking into account colorMode, use getColor instead of get.
  *
@@ -20753,7 +20758,7 @@ p5.prototype.filter = function(operation, value) {
  * @param  {Number}         [y] y-coordinate of the pixel
  * @param  {Number}         [w] width
  * @param  {Number}         [h] height
- * @return {Array|p5.Image}     values of pixel at x,y in array format
+ * @return {p5.Color|p5.Image}     values of pixel at x,y in color format
  *                              [R, G, B, A] or p5.Image
  * @example
  * <div>
@@ -21816,7 +21821,8 @@ p5.prototype.save = function(object, _filename, _options) {
   // otherwise, parse the arguments
 
   // if first param is a p5Graphics, then saveCanvas
-  else if (args[0] instanceof p5.Renderer) {
+  else if (args[0] instanceof p5.Renderer ||
+    args[0] instanceof p5.Graphics) {
     p5.prototype.saveCanvas(args[0].elt, args[1], args[2]);
     return;
   }

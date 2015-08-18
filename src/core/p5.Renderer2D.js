@@ -91,7 +91,6 @@ p5.Renderer2D.prototype.clear = function() {
 };
 
 p5.Renderer2D.prototype.fill = function() {
-
   var ctx = this.drawingContext;
   var color = this._pInst.color.apply(this._pInst, arguments);
   ctx.fillStyle = color.toString();
@@ -218,19 +217,25 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
     h = 1;
   }
 
+  var ctx = this._pInst || this;
+  // return black color
   if(x > this.width || y > this.height || x < 0 || y < 0){
-    return [0, 0, 0, 255];
+    return ctx.color.apply(ctx, ['rgba(0, 0, 0, 1)']);
   }
 
   var pd = this.pixelDensity || this._pInst.pixelDensity;
 
   if (w === 1 && h === 1){
-    return [
-      this.pixels[pd*4*(y*this.width+x)],
-      this.pixels[pd*(4*(y*this.width+x)+1)],
-      this.pixels[pd*(4*(y*this.width+x)+2)],
-      this.pixels[pd*(4*(y*this.width+x)+3)]
-    ];
+    if (!ctx.imageData) {
+      ctx.loadPixels.call(ctx);
+    }
+    var idx = 4 * ((pd * y) * (this.width * pd) + x * pd );
+    var color = ctx.color.apply(ctx,
+      ['rgba(' + ctx.pixels[idx] + ', ' +
+      ctx.pixels[idx + 1] + ', ' +
+      ctx.pixels[idx + 2] + ', ' +
+      ctx.pixels[idx + 3] / 255.0 + ')']);
+    return color;
   } else {
     var sx = x * pd;
     var sy = y * pd;
