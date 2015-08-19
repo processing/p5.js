@@ -289,9 +289,10 @@ p5.Renderer3D.prototype.resetStack = function(){
   this.drawModeStack = [];
   //holding an array of vertex position
   this.verticeStack = [];
-  //holding lights
-  this.directionalLightCount = 0;
+  //holding lights number
   this.ambientLightCount = 0;
+  this.directionalLightCount = 0;
+  this.pointLightCount = 0;
 };
 
 //////////////////////////////////////////////

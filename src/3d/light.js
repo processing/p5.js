@@ -30,7 +30,7 @@ p5.prototype.ambientLight = function(r, g, b, a){
   this._graphics.ambientLightCount ++;
   shaderProgram.uAmbientLightCount =
     gl.getUniformLocation(shaderProgram, 'uAmbientLightCount');
-  gl.uniform1i(shaderProgram.ambientLightCount,
+  gl.uniform1i(shaderProgram.uAmbientLightCount,
     this._graphics.ambientLightCount);
 
   return this;
@@ -76,8 +76,44 @@ p5.prototype.directionalLight = function(r, g, b, a, x, y, z) {
   return this;
 };
 
-p5.prototype.pointLight = function() {
-  // body...
+p5.prototype.pointLight = function(r, g, b, a, x, y, z) {
+
+  var gl = this._graphics.GL;
+  var shaderProgram = this._graphics.getShader(
+    'lightVert', 'lightFrag');
+
+  gl.useProgram(shaderProgram);
+  shaderProgram.uPointLightColor = gl.getUniformLocation(
+    shaderProgram,
+    'uPointLightColor[' + this._graphics.pointLightCount + ']');
+
+  var color = this._graphics._pInst.color.apply(
+    this._graphics._pInst, [r, g, b]);
+  var colors = _normalizeColor(color.rgba);
+
+  gl.uniform3f( shaderProgram.uPointLightColor,
+    colors[0], colors[1], colors[2]);
+
+  shaderProgram.uPointLightLocation = gl.getUniformLocation(
+    shaderProgram,
+    'uPointLightLocation[' + this._graphics.pointLightCount + ']');
+  gl.uniform3f( shaderProgram.uPointLightLocation,
+    arguments[arguments.length-3],
+    arguments[arguments.length-2],
+    arguments[arguments.length-1]);
+
+  //in case there's no material color for the geometry
+  shaderProgram.uMaterialColor = gl.getUniformLocation(
+    shaderProgram, 'uMaterialColor' );
+  gl.uniform4f( shaderProgram.uMaterialColor, 1, 1, 1, 1);
+
+  this._graphics.pointLightCount ++;
+  shaderProgram.uPointLightCount =
+    gl.getUniformLocation(shaderProgram, 'uPointLightCount');
+  gl.uniform1i(shaderProgram.uPointLightCount,
+    this._graphics.pointLightCount);
+
+  return this;
 };
 
 function _normalizeColor(_arr){

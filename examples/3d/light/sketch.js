@@ -11,7 +11,9 @@ function draw(){
 
   ambientLight(50);
   directionalLight(250, 0, 0, dirX, -dirY, 0.25);
-  directionalLight(0, 0, 250, 0.5, 0.5, 0.25);
+  //directionalLight(0, 250, 0, 0, 0, 0.25);
+  pointLight(0, 0, 250, 70, 100, 0);
+  pointLight(250, 250, 0, -70, -100, 0);
 
   push();
   rotateZ(frameCount * 0.02);

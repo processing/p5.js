@@ -8,12 +8,13 @@ uniform mat4 uNormalMatrix;
 uniform float uResolution;
 uniform int uAmbientLightCount;
 uniform int uDirectionalLightCount;
+uniform int uPointLightCount;
 
 uniform vec3 uAmbientColor[8];
 uniform vec3 uLightingDirection[8];
 uniform vec3 uDirectionalColor[8];
-//uniform vec3 uPointLightingLocation[8];
-//uniform vec4 uPointLightingColor[8];
+uniform vec3 uPointLightLocation[8];
+uniform vec3 uPointLightColor[8];
 
 varying vec3 vVertexNormal;
 varying vec2 vVertTexCoord;
@@ -21,9 +22,11 @@ varying vec3 vLightWeighting;
 
 vec3 ambientLightFactor = vec3(0., 0., 0.);
 vec3 directionalLightFactor = vec3(0., 0., 0.);
+vec3 pointLightingFactor = vec3(0., 0., 0.);
 
 void main(void){
 
+  vec4 mvPosition = uModelviewMatrix * vec4(aPosition, 1.0);
   vec4 positionVec4 = vec4(aPosition / uResolution, 1.);
   gl_Position = uProjectionMatrix * uModelviewMatrix * positionVec4;
 
@@ -31,7 +34,6 @@ void main(void){
   vVertexNormal = vertexNormal;
   vVertTexCoord = aTexCoord;
 
-  //vec4 pointLightingFactor;
   for(int i = 0; i < 8; i++){
     if(uAmbientLightCount == i) break;
     ambientLightFactor += uAmbientColor[i];
@@ -43,6 +45,16 @@ void main(void){
     directionalLightFactor += uDirectionalColor[j] * directionalLightWeighting;
   }
 
-  vLightWeighting = ambientLightFactor + directionalLightFactor;
+  for(int k = 0; k < 8; k++){
+    if(uPointLightCount == k) break;
+    vec3 loc = uPointLightLocation[k];
+    //loc = loc / uResolution;
+    vec3 lightDirection = normalize(loc - mvPosition.xyz);
+
+    float directionalLightWeighting = max(dot(vertexNormal, lightDirection), 0.0);
+    pointLightingFactor += uPointLightColor[k] * directionalLightWeighting;
+  }
+
+  vLightWeighting = ambientLightFactor + directionalLightFactor + pointLightingFactor;
 
 }
