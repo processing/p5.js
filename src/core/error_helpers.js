@@ -139,13 +139,13 @@ p5.prototype._validateParameters = function(func, args, types) {
     message = 'You wrote ' + func + '(';
     // Concat an appropriate number of placeholders for call
     if (args.length > 0) {
-      message += symbol + (','+symbol).repeat(args.length-1);
+      message += symbol + Array(args.length).join(',' + symbol);
     }
     message += '). ' + func + ' was expecting ' + types[tindex].length +
       ' parameters. Try ' + func + '(';
     // Concat an appropriate number of placeholders for definition
     if (types[tindex].length > 0) {
-      message += symbol + (','+symbol).repeat(types[tindex].length-1);
+      message += symbol + Array(types[tindex].length).join(',' + symbol);
     }
     message += ').';
     // If multiple definitions
