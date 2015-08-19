@@ -30,7 +30,7 @@ p5.prototype.ambientLight = function(r, g, b, a){
   this._graphics.ambientLightCount ++;
   shaderProgram.uAmbientLightCount =
     gl.getUniformLocation(shaderProgram, 'uAmbientLightCount');
-  gl.uniform1f(shaderProgram.ambientLightCount,
+  gl.uniform1i(shaderProgram.ambientLightCount,
     this._graphics.ambientLightCount);
 
   return this;
@@ -70,7 +70,7 @@ p5.prototype.directionalLight = function(r, g, b, a, x, y, z) {
   this._graphics.directionalLightCount ++;
   shaderProgram.uDirectionalLightCount =
     gl.getUniformLocation(shaderProgram, 'uDirectionalLightCount');
-  gl.uniform1f(shaderProgram.uDirectionalLightCount,
+  gl.uniform1i(shaderProgram.uDirectionalLightCount,
     this._graphics.directionalLightCount);
 
   return this;

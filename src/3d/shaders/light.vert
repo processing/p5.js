@@ -32,13 +32,13 @@ void main(void){
   vVertTexCoord = aTexCoord;
 
   //vec4 pointLightingFactor;
-  for(int i = 0; i < 1; i++){
-    //if(uAmbientLightCount == i) break;
+  for(int i = 0; i < 8; i++){
+    if(uAmbientLightCount == i) break;
     ambientLightFactor += uAmbientColor[i];
   }
 
-  for(int j = 0; j < 2; j++){
-    //if(uDirectionalLightCount == j) break;
+  for(int j = 0; j < 8; j++){
+    if(uDirectionalLightCount == j) break;
     float directionalLightWeighting = max(dot(vertexNormal, uLightingDirection[j]), 0.0);
     directionalLightFactor += uDirectionalColor[j] * directionalLightWeighting;
   }

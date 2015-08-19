@@ -16,9 +16,5 @@ module.exports = {
   lightVert:
     fs.readFileSync(__dirname +'/shaders/light.vert', 'utf-8'),
   lightFrag:
-    fs.readFileSync(__dirname +'/shaders/light.frag', 'utf-8'),
-  directionalLightVert:
-    fs.readFileSync(__dirname +'/shaders/directionalLight.vert', 'utf-8'),
-  spotLightVert:
-    fs.readFileSync(__dirname +'/shaders/pointLight.vert', 'utf-8')
+    fs.readFileSync(__dirname +'/shaders/light.frag', 'utf-8')
 };
