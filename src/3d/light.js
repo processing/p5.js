@@ -56,7 +56,7 @@ p5.prototype.directionalLight = function(r, g, b, a, x, y, z) {
 
   shaderProgram.uLightingDirection = gl.getUniformLocation(
     shaderProgram,
-    'uLightingDirection' + this._graphics.directionalLightCount + ']');
+    'uLightingDirection[' + this._graphics.directionalLightCount + ']');
   gl.uniform3f( shaderProgram.uLightingDirection,
     arguments[arguments.length-3],
     arguments[arguments.length-2],
@@ -71,7 +71,7 @@ p5.prototype.directionalLight = function(r, g, b, a, x, y, z) {
   shaderProgram.uDirectionalLightCount =
     gl.getUniformLocation(shaderProgram, 'uDirectionalLightCount');
   gl.uniform1f(shaderProgram.uDirectionalLightCount,
-    this._graphics.uDirectionalLightCount);
+    this._graphics.directionalLightCount);
 
   return this;
 };

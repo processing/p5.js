@@ -19,6 +19,9 @@ varying vec3 vVertexNormal;
 varying vec2 vVertTexCoord;
 varying vec3 vLightWeighting;
 
+vec3 ambientLightFactor = vec3(0., 0., 0.);
+vec3 directionalLightFactor = vec3(0., 0., 0.);
+
 void main(void){
 
   vec4 positionVec4 = vec4(aPosition / uResolution, 1.);
@@ -27,21 +30,17 @@ void main(void){
   vec3 vertexNormal = vec3( uNormalMatrix * vec4( aNormal, 1.0 ) );
   vVertexNormal = vertexNormal;
   vVertTexCoord = aTexCoord;
-  
-  vec3 ambientLightFactor;
-  vec3 directionalLightFactor;
+
   //vec4 pointLightingFactor;
-  
-  for(int i = 0; i < 8; i++){
-    if( i == uAmbientLightCount) break;
+  for(int i = 0; i < 1; i++){
+    //if(uAmbientLightCount == i) break;
     ambientLightFactor += uAmbientColor[i];
   }
 
-  for(int j = 0; j < 8; j++){
-    if(j == uDirectionalLightCount) break;
+  for(int j = 0; j < 2; j++){
+    //if(uDirectionalLightCount == j) break;
     float directionalLightWeighting = max(dot(vertexNormal, uLightingDirection[j]), 0.0);
     directionalLightFactor += uDirectionalColor[j] * directionalLightWeighting;
-
   }
 
   vLightWeighting = ambientLightFactor + directionalLightFactor;
