@@ -169,6 +169,13 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
     gl.getAttribLocation(shaderProgram, 'aPosition');
   gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
+  //projection Matrix uniform
+  shaderProgram.uPMatrixUniform =
+    gl.getUniformLocation(shaderProgram, 'uProjectionMatrix');
+  //model view Matrix uniform
+  shaderProgram.uMVMatrixUniform =
+    gl.getUniformLocation(shaderProgram, 'uModelviewMatrix');
+
   //@TODO: figure out a better way instead of if statement
   if(immediateMode === undefined){
     //vertex normal Attribute
@@ -189,18 +196,17 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
     gl.getUniformLocation(shaderProgram, 'uSampler');
   }
 
-  //projection Matrix uniform
-  shaderProgram.uPMatrixUniform =
-    gl.getUniformLocation(shaderProgram, 'uProjectionMatrix');
-  //model view Matrix uniform
-  shaderProgram.uMVMatrixUniform =
-    gl.getUniformLocation(shaderProgram, 'uModelviewMatrix');
-
   this.mHash[vertId + '|' + fragId] = shaderProgram;
 
   return shaderProgram;
 };
 
+/**
+ * [getShader description]
+ * @param  {[type]} vertId [description]
+ * @param  {[type]} fragId [description]
+ * @return {[type]}        [description]
+ */
 p5.Renderer3D.prototype.getShader = function(vertId, fragId) {
   var mId = vertId+ '|' + fragId;
 
@@ -251,6 +257,7 @@ p5.Renderer3D.prototype.saveShaders = function(mId){
 };
 
 p5.Renderer3D.prototype.getCurColor = function() {
+  //default color: gray
   return this.colorStack[this.colorStack.length-1] || [0.5, 0.5, 0.5, 1.0];
 };
 
@@ -283,7 +290,8 @@ p5.Renderer3D.prototype.resetStack = function(){
   //holding an array of vertex position
   this.verticeStack = [];
   //holding lights
-  this.lightStack = [];
+  this.directionalLightCount = 0;
+  this.ambientLightCount = 0;
 };
 
 //////////////////////////////////////////////
