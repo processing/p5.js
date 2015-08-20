@@ -58,7 +58,10 @@ module.exports = function(grunt) {
         reporter: require('jscs-stylish').path
       },
       build: {
-        src: ['Gruntfile.js']
+        src: [
+          'Gruntfile.js',
+          'build/**/*.js'
+        ]
       },
       source: {
         src: [
@@ -77,7 +80,10 @@ module.exports = function(grunt) {
         options: {
           jshintrc: '.jshintrc'
         },
-        src: ['Gruntfile.js']
+        src: [
+          'Gruntfile.js',
+          'build/**/*.js'
+        ]
       },
       source: {
         options: {
@@ -162,33 +168,6 @@ module.exports = function(grunt) {
       }
     },
 
-    // Build p5 into a single, UMD-wrapped file
-    browserify: {
-      p5: {
-        options: {
-          transform: ['brfs'],
-          browserifyOptions: {
-            standalone: 'p5'
-          },
-          banner: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */'
-        },
-        src: 'src/app.js',
-        dest: 'lib/p5.js'
-      }
-    },
-
-    // Concatenate p5 together with OpenType
-    // TODO: There may be an opportunity to move this into the main p5 build
-    concat: {
-      p5: {
-        src: [
-          'lib/p5.js',
-          'src/external/opentype.min.js'
-        ],
-        dest: 'lib/p5.js',
-      },
-    },
-
     // The actual compile step:  This should collect all the dependencies
     // and compile them into a single file.
     requirejs: {
@@ -271,9 +250,10 @@ module.exports = function(grunt) {
     }
   });
 
+  // Load task definitions
+  grunt.loadTasks('build/tasks');
+
   // Load the external libraries used.
-  grunt.loadNpmTasks('grunt-browserify');
-  grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-jscs');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -287,7 +267,7 @@ module.exports = function(grunt) {
 
   // Create the multitasks.
   // TODO: "requirejs" is in here to run the "yuidoc_themes" subtask. Is this needed?
-  grunt.registerTask('build', ['browserify', 'concat', 'uglify', 'requirejs']);
+  grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);
   grunt.registerTask('test', ['jshint', 'jscs', 'build', 'connect', 'mocha']);
   grunt.registerTask('test:nobuild', ['jshint:test', 'jscs:test', 'connect', 'mocha']);
   grunt.registerTask('yui', ['yuidoc']);

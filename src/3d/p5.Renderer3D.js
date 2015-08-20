@@ -30,12 +30,12 @@ p5.Renderer3D = function(elt, pInst, isMainCanvas) {
     this.drawingContext = this.canvas.getContext('webgl', attributes) ||
       this.canvas.getContext('experimental-webgl', attributes);
     if (this.drawingContext === null) {
-      throw 'Error creating webgl context';
+      throw new Error('Error creating webgl context');
     } else {
       console.log('p5.Renderer3D: enabled webgl context');
     }
   } catch (er) {
-    console.error(er);
+    throw new Error(er);
   }
 
   this.isP3D = true; //lets us know we're in 3d mode
@@ -74,7 +74,7 @@ p5.Renderer3D.prototype._applyDefaults = function() {
 /**
  * [resize description]
  * @param  {[type]} w [description]
- * @param  {[type]} h [description]
+ * @param  {  } h [description]
  * @return {[type]}   [description]
  */
 p5.Renderer3D.prototype.resize = function(w,h) {
@@ -95,25 +95,14 @@ p5.Renderer3D.prototype.background = function() {
   var gl = this.GL;
   var _col = this._pInst.color.apply(this._pInst, arguments);
   // gl.clearColor(0.0,0.0,0.0,1.0);
-  var _r = (_col.color_array[0]) / 255;
-  var _g = (_col.color_array[1]) / 255;
-  var _b = (_col.color_array[2]) / 255;
-  var _a = (_col.color_array[3]) / 255;
+  var _r = (_col.rgba[0]) / 255;
+  var _g = (_col.rgba[1]) / 255;
+  var _b = (_col.rgba[2]) / 255;
+  var _a = (_col.rgba[3]) / 255;
   gl.clearColor(_r, _g, _b, _a);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   this.resetMatrix();
   this.resetStack();
-};
-
-/**
- * [originMode description]
- * @param  {[type]} mode [description]
- * @return {[type]}      [description]
- */
-p5.prototype.originMode = function(mode){
-  if(mode === 'TOP_LEFT'){
-    this._graphics.translate(-this.width/2, -this.height/2, 0);
-  }
 };
 
 //@TODO implement this
@@ -177,30 +166,53 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
 
   //vertex position Attribute
   shaderProgram.vertexPositionAttribute =
-    gl.getAttribLocation(shaderProgram, 'position');
+    gl.getAttribLocation(shaderProgram, 'aPosition');
   gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
+  //@TODO: figure out a better way instead of if statement
   if(immediateMode === undefined){
     //vertex normal Attribute
     shaderProgram.vertexNormalAttribute =
-      gl.getAttribLocation(shaderProgram, 'normal');
+      gl.getAttribLocation(shaderProgram, 'aNormal');
     gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
 
     //normal Matrix uniform
     shaderProgram.uNMatrixUniform =
-    gl.getUniformLocation(shaderProgram, 'normalMatrix');
+    gl.getUniformLocation(shaderProgram, 'uNormalMatrix');
+
+    //texture coordinate Attribute
+    shaderProgram.textureCoordAttribute =
+      gl.getAttribLocation(shaderProgram, 'aTexCoord');
+    gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
+
+    shaderProgram.samplerUniform =
+    gl.getUniformLocation(shaderProgram, 'uSampler');
   }
 
   //projection Matrix uniform
   shaderProgram.uPMatrixUniform =
-    gl.getUniformLocation(shaderProgram, 'transformMatrix');
+    gl.getUniformLocation(shaderProgram, 'uTransformMatrix');
   //model view Matrix uniform
   shaderProgram.uMVMatrixUniform =
-    gl.getUniformLocation(shaderProgram, 'modelviewMatrix');
+    gl.getUniformLocation(shaderProgram, 'uModelviewMatrix');
 
   this.mHash[vertId + '|' + fragId] = shaderProgram;
 
   return shaderProgram;
+};
+
+p5.Renderer3D.prototype.getShader = function(vertId, fragId) {
+  var mId = vertId+ '|' + fragId;
+
+  if(!this.materialInHash(mId)){
+    this.initShaders(vertId, fragId);
+  }
+
+  if(mId !== this.getCurShaderId()){
+    this.saveShaders(mId);
+  }
+
+  return this.mHash[mId];
 };
 
 /**

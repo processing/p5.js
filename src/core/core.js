@@ -229,9 +229,11 @@ var p5 = function(sketch, node, sync) {
 
       var methods = this._preloadMethods;
       Object.keys(methods).forEach(function(f) {
-        context[f] = function() {
+        var methodContext = methods[f];
+        var originalFunc = methodContext[f];
+        methodContext[f] = function() {
           var argsArray = Array.prototype.slice.call(arguments);
-          return context._preload(f, methods[f], argsArray);
+          return context._preload(originalFunc, methodContext, argsArray);
         };
       });
 
@@ -259,7 +261,7 @@ var p5 = function(sketch, node, sync) {
       }
     };
     args.push(preloadCallback);
-    return window[obj].prototype[func].apply(context, args);
+    return func.apply(obj, args);
   }.bind(this);
 
   this._setup = function() {
@@ -268,8 +270,8 @@ var p5 = function(sketch, node, sync) {
     var context = this._isGlobal ? window : this;
     if (typeof context.preload === 'function') {
       for (var f in this._preloadMethods) {
-        var o = this._preloadMethods[f];
-        context[f] = window[o][f];
+        //var o = this._preloadMethods[f];
+        context[f] = this._preloadMethods[f][f];
       }
     }
 
@@ -485,19 +487,19 @@ var p5 = function(sketch, node, sync) {
 // functions that cause preload to wait
 // more can be added by using registerPreloadMethod(func)
 p5.prototype._preloadMethods = {
-  loadJSON: 'p5',
-  loadImage: 'p5',
-  loadStrings: 'p5',
-  loadXML: 'p5',
-  loadShape: 'p5',
-  loadTable: 'p5',
-  loadFont: 'p5'
+  loadJSON: p5.prototype,
+  loadImage: p5.prototype,
+  loadStrings: p5.prototype,
+  loadXML: p5.prototype,
+  loadShape: p5.prototype,
+  loadTable: p5.prototype,
+  loadFont: p5.prototype
 };
 
 p5.prototype._registeredMethods = { pre: [], post: [], remove: [] };
 
 p5.prototype.registerPreloadMethod = function(f, o) {
-  o = o || 'p5';
+  o = o || p5;
   if (!p5.prototype._preloadMethods.hasOwnProperty(f)) {
     p5.prototype._preloadMethods[f] = o;
   }

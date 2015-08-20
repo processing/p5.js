@@ -16,6 +16,7 @@ p5.Renderer3D.prototype.createBuffer = function(gId, obj) {
   this.gHash[gId].len = obj.len;
   this.gHash[gId].vertexBuffer = gl.createBuffer();
   this.gHash[gId].normalBuffer = gl.createBuffer();
+  this.gHash[gId].uvBuffer = gl.createBuffer();
   this.gHash[gId].indexBuffer = gl.createBuffer();
 };
 
@@ -44,6 +45,13 @@ p5.Renderer3D.prototype.initBuffer = function(gId, obj) {
     shaderProgram.vertexNormalAttribute,
     3, gl.FLOAT, false, 0, 0);
 
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
+  gl.bufferData(
+    gl.ARRAY_BUFFER, new Float32Array(obj.uvs), gl.STATIC_DRAW);
+  gl.vertexAttribPointer(
+    shaderProgram.textureCoordAttribute,
+    2, gl.FLOAT, false, 0, 0);
+
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
   gl.bufferData
    (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(obj.faces), gl.STATIC_DRAW);
@@ -67,6 +75,11 @@ p5.Renderer3D.prototype.drawBuffer = function(gId) {
   gl.vertexAttribPointer(
     shaderProgram.vertexNormalAttribute,
     3, gl.FLOAT, false, 0, 0);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
+  gl.vertexAttribPointer(
+    shaderProgram.textureCoordAttribute,
+    2, gl.FLOAT, false, 0, 0);
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
 
