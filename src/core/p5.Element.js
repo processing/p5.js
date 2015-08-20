@@ -69,6 +69,9 @@ p5.Element = function(elt, pInst) {
  * </code></div>
  */
 p5.Element.prototype.parent = function(p) {
+  if (arguments.length === 0){
+      return this.elt.parentNode
+    }
   if (typeof p === 'string') {
     p = document.getElementById(p);
   } else if (p instanceof p5.Element) {
