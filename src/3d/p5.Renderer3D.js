@@ -54,6 +54,7 @@ p5.Renderer3D = function(elt, pInst, isMainCanvas) {
   //for immedidate mode
   this.verticeBuffer = gl.createBuffer();
   this.colorBuffer = gl.createBuffer();
+  this.setCamera = false;
   return this;
 };
 
@@ -103,6 +104,7 @@ p5.Renderer3D.prototype.background = function() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   this.resetMatrix();
   this.resetStack();
+  this.setCamera = false;
 };
 
 //@TODO implement this
@@ -342,12 +344,14 @@ p5.Renderer3D.prototype.initMatrix = function(){
 
 //@TODO: figure out how to detect if user didn't set the camera
 //then call this function below
-p5.Renderer3D.prototype.setDefaultCamera = function() {
-  var _w = this.width;
-  var _h = this.height;
-  this.translate(0, 0, -800);
-  this.uPMatrix.perspective(60 / 180 * Math.PI, _w / _h, 0.1, 100);
-  this.setCamera = true;
+p5.Renderer3D.prototype.setDefaultCamera = function(){
+  if(!this.setCamera){
+    var _w = this.width;
+    var _h = this.height;
+    this.translate(0, 0, -800);
+    this.uPMatrix.perspective(60 / 180 * Math.PI, _w / _h, 0.1, 100);
+    this.setCamera = true;
+  }
 };
 
 /**
