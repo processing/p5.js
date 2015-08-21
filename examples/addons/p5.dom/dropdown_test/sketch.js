@@ -1,23 +1,25 @@
 var dropdown;
 
 function setup() {
-  dropdown = createDropdown(); // or create dropdown?
+  dropdown = createSelect(); // or create dropdown?
   dropdown.option('apple','1');
   dropdown.option('orange','2');
-  dropdown.option('pear', '3');
-  //dropdown.value(3);
+  //dropdown.option('pear', 'pear');
+  dropdown.option('pear');
 
-  //dropdown.changed(mySelectEvent);
+  dropdown.value('2');
+
+  dropdown.changed(mySelectEvent);
 }
 
 function mousePressed() {
-  dropdown.value()
+  println(dropdown.value());
 }
 
 function draw() {
   background(0);
-  if (dropdown.value() === '3') {
-    background(0,255,0);
+  if (dropdown.value() === 'pear') {
+    background(0, 255, 0);
   }
 }
 
