@@ -33,8 +33,8 @@ require('./p5.Geometry3D');
  */
 p5.prototype.plane = function(width, height, detailX, detailY){
 
-  width = width || 1;
-  height = height || 1;
+  width = width || 50;
+  height = height || 50;
 
   detailX = detailX || 1;
   detailY = detailY || 1;
@@ -387,7 +387,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY){
  */
 p5.prototype.box = function(width, height, depth){
 
-  width = width || 10;
+  width = width || 50;
   height = height || width;
   depth = depth || width;
 
