@@ -338,9 +338,6 @@ p5.Renderer3D.prototype.initMatrix = function(){
   this.uMVMatrix = new p5.Matrix();
   this.uPMatrix  = new p5.Matrix();
   this.uNMatrix = new p5.Matrix();
-  var _w = this.width;
-  var _h = this.height;
-  this.uPMatrix.perspective(60 / 180 * Math.PI, _w/_h, 0.1, 100);
 };
 
 /**
@@ -350,6 +347,7 @@ p5.Renderer3D.prototype.initMatrix = function(){
  */
 p5.Renderer3D.prototype.resetMatrix = function() {
   this.uMVMatrix = p5.Matrix.identity();
+  this.uPMatrix = p5.Matrix.identity();
 };
 
 /**

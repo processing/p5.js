@@ -5,7 +5,8 @@ function setup(){
 function draw(){
   background(250, 250, 250, 255);
   var radius = width;
-  translate(0, 0, -1600);
+  camera(0, 0, 1600);
+  perspective(60 / 180 * Math.PI, width/height, 0.1, 100);
   orbitControl();
   
   if(!mouseIsPressed){

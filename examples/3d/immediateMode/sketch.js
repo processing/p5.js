@@ -9,7 +9,8 @@ function draw(){
   background('white');
   colorMode(HSB);
 
-  translate(0, 0, -1000);
+  camera(0, 0, 1000);
+  perspective(60 / 180 * Math.PI, width/height, 0.1, 100);
 
   rotateY(frameCount * 0.01);
 

@@ -15,7 +15,8 @@ function setup(){
 
 function draw(){
   background(255, 255, 255, 255);
-  translate(0, 0, -200);
+  camera(0, 0, 200);
+  perspective(60 / 180 * Math.PI, width/height, 0.1, 100);
   push();
     rotateZ(theta * mouseX * 0.001);
     rotateX(theta * mouseX * 0.001);

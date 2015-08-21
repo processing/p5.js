@@ -6,8 +6,8 @@ var theta = 0;
 
 function draw(){
   background(255, 255, 255, 255);
-
-  translate(-width/2, 0, -800);
+  camera(width/2, 0, 800);
+  perspective(60 / 180 * Math.PI, width/height, 0.1, 100);
   normalMaterial();
   push();
   rotateZ(theta * mouseX * 0.001);

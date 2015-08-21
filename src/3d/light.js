@@ -1,7 +1,5 @@
 'use strict';
-/**
- * @todo WIP
- */
+
 var p5 = require('../core/core');
 
 p5.prototype.ambientLight = function(r, g, b, a){

@@ -8,7 +8,9 @@ function draw(){
   background(250, 250, 250, 255);
   // directionalLight(153, 153, 153, .5, 0, -1);
   // ambientLight(153, 102, 0);
-  translate(-100, 0, -1000);
+  camera(width/2, 0, 1000);
+  perspective(60 / 180 * Math.PI, width/height, 0.1, 100);
+
   push();
   rotateX(theta * 0.1);
   rotateZ(theta);

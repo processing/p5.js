@@ -6,7 +6,8 @@ function draw(){
 
   background(255);
 
-  translate( -width/2, -height/2, -600);
+  camera(width/2, height/2, 800);
+  perspective(60 / 180 * Math.PI, width/height, 0.1, 100);
 
   rotateY(frameCount * 0.01);
 

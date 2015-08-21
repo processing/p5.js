@@ -7,7 +7,9 @@ function setup(){
 function draw(){
   background(250, 250, 250, 255);
  
-  translate(0, 0, -1500);
+  camera(0, 0, 1500);
+  perspective(60 / 180 * Math.PI, width/height, 0.1, 100);
+  
   normalMaterial();
   rotateY(frameCount * 0.01);
 
