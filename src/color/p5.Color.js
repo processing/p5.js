@@ -109,6 +109,12 @@ p5.Color.prototype.toString = function() {
   return 'rgba('+a[0]+','+a[1]+','+a[2]+','+ a[3] +')';
 };
 
+p5.Color.prototype._normalize = function(){
+  this.rgba.map(function(value){
+    return value / 255;
+  });
+};
+
 /**
  * These Regular Expressions are used to build up the patterns for matching
  * viable CSS color strings: fragmenting the regexes in this way increases

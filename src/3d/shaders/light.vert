@@ -21,14 +21,14 @@ varying vec2 vVertTexCoord;
 varying vec3 vLightWeighting;
 varying vec3 vLightWeighting2;
 
-vec3 ambientLightFactor = vec3(0., 0., 0.);
-vec3 directionalLightFactor = vec3(0., 0., 0.);
-vec3 pointLightFactor = vec3(0., 0., 0.);
-vec3 pointLightFactor2 = vec3(0., 0., 0.);
+vec3 ambientLightFactor = vec3(0.0, 0.0, 0.0);
+vec3 directionalLightFactor = vec3(0.0, 0.0, 0.0);
+vec3 pointLightFactor = vec3(0.0, 0.0, 0.0);
+vec3 pointLightFactor2 = vec3(0.0, 0.0, 0.0);
 
 void main(void){
 
-  vec4 positionVec4 = vec4(aPosition / uResolution, 1.);
+  vec4 positionVec4 = vec4(aPosition / uResolution, 1.0);
   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
 
   vec3 vertexNormal = vec3( uNormalMatrix * vec4( aNormal, 1.0 ) );

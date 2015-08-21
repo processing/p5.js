@@ -93,7 +93,7 @@ p5.prototype.basicMaterial = function(r, g, b, a){
 
   var color = this._graphics._pInst.color.apply(
     this._graphics._pInst, arguments);
-  var colors = _normalizeColor(color.rgba);
+  var colors = color._normalize();
 
   gl.uniform4f( shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);
@@ -113,7 +113,7 @@ p5.prototype.ambientMaterial = function(r, g, b, a) {
 
   var color = this._graphics._pInst.color.apply(
     this._graphics._pInst, arguments);
-  var colors = _normalizeColor(color.rgba);
+  var colors = color._normalize();
 
   gl.uniform4f( shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);
@@ -121,31 +121,23 @@ p5.prototype.ambientMaterial = function(r, g, b, a) {
   return this;
 };
 
-p5.prototype.specularMaterial = function(r, g, b, a) {
+// p5.prototype.specularMaterial = function(r, g, b, a) {
 
-  var gl = this._graphics.GL;
-  var shaderProgram = this._graphics.getShader('lightVert', 'specularFrag');
+//   var gl = this._graphics.GL;
+//   var shaderProgram = this._graphics.getShader('lightVert', 'specularFrag');
 
-  gl.useProgram(shaderProgram);
-  shaderProgram.uMaterialColor = gl.getUniformLocation(
-    shaderProgram, 'uMaterialColor' );
+//   gl.useProgram(shaderProgram);
+//   shaderProgram.uMaterialColor = gl.getUniformLocation(
+//     shaderProgram, 'uMaterialColor' );
 
-  var color = this._graphics._pInst.color.apply(
-    this._graphics._pInst, arguments);
-  var colors = _normalizeColor(color.rgba);
+//   var color = this._graphics._pInst.color.apply(
+//     this._graphics._pInst, arguments);
+//   var colors = color._normalize();
 
-  gl.uniform4f( shaderProgram.uMaterialColor,
-    colors[0], colors[1], colors[2], colors[3]);
+//   gl.uniform4f( shaderProgram.uMaterialColor,
+//     colors[0], colors[1], colors[2], colors[3]);
 
-  return this;
-};
-
-function _normalizeColor(_arr){
-  var arr = [];
-  _arr.forEach(function(val){
-    arr.push(val/255);
-  });
-  return arr;
-}
+//   return this;
+// };
 
 module.exports = p5;

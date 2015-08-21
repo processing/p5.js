@@ -131,7 +131,7 @@ p5.Renderer3D.prototype._strokeCheck = function(){
 
 p5.Renderer3D.prototype.fill = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
-  var colorNormalized = _normalizeColor(color.rgba);
+  var colorNormalized = color._normalize();
   if( colorNormalized !== this.getCurColor()){
     this.colorStack.push(colorNormalized);
   }
@@ -141,7 +141,7 @@ p5.Renderer3D.prototype.fill = function(r, g, b, a) {
 
 p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
-  var colorNormalized = _normalizeColor(color.rgba);
+  var colorNormalized = color._normalize();
   if( colorNormalized !== this.getCurColor()){
     this.colorStack.push(colorNormalized);
   }
@@ -164,13 +164,5 @@ p5.Renderer3D.prototype.getColorVertexShader = function(){
   }
   return shaderProgram;
 };
-
-function _normalizeColor(_arr){
-  var arr = [];
-  _arr.forEach(function(val){
-    arr.push(val/255);
-  });
-  return arr;
-}
 
 module.exports = p5.Renderer3D;

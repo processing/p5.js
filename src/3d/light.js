@@ -17,7 +17,7 @@ p5.prototype.ambientLight = function(r, g, b, a){
 
   var color = this._graphics._pInst.color.apply(
     this._graphics._pInst, arguments);
-  var colors = _normalizeColor(color.rgba);
+  var colors = color._normalize();
 
   gl.uniform3f( shaderProgram.uAmbientColor,
     colors[0], colors[1], colors[2]);
@@ -49,7 +49,7 @@ p5.prototype.directionalLight = function(r, g, b, a, x, y, z) {
 
   var color = this._graphics._pInst.color.apply(
     this._graphics._pInst, [r, g, b]);
-  var colors = _normalizeColor(color.rgba);
+  var colors = color._normalize();
 
   gl.uniform3f( shaderProgram.uDirectionalColor,
     colors[0], colors[1], colors[2]);
@@ -89,7 +89,7 @@ p5.prototype.pointLight = function(r, g, b, a, x, y, z) {
 
   var color = this._graphics._pInst.color.apply(
     this._graphics._pInst, [r, g, b]);
-  var colors = _normalizeColor(color.rgba);
+  var colors = color._normalize();
 
   gl.uniform3f( shaderProgram.uPointLightColor,
     colors[0], colors[1], colors[2]);
@@ -115,13 +115,5 @@ p5.prototype.pointLight = function(r, g, b, a, x, y, z) {
 
   return this;
 };
-
-function _normalizeColor(_arr){
-  var arr = [];
-  _arr.forEach(function(val){
-    arr.push(val/255);
-  });
-  return arr;
-}
 
 module.exports = p5;
