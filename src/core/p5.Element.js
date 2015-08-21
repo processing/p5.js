@@ -233,16 +233,16 @@ p5.Element.prototype.mouseOver = function (fxn) {
 
 
 /**
- * The .onChange() function is called when the value of an element is changed.
+ * The .changed() function is called when the value of an element is changed.
  * This can be used to attach an element specific event listener.
  *
- * @method onChange
+ * @method changed
  * @param  {Function} fxn function to be fired when mouse is
  *                    moved over the element.
  * @return {p5.Element}
  */
 p5.Element.prototype.changed = function (fxn) {
-  attachListener('onchange', fxn, this);
+  attachListener('change', fxn, this);
   return this;
 };
 
