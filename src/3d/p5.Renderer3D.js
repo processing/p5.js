@@ -340,6 +340,16 @@ p5.Renderer3D.prototype.initMatrix = function(){
   this.uNMatrix = new p5.Matrix();
 };
 
+//@TODO: figure out how to detect if user didn't set the camera
+//then call this function below
+p5.Renderer3D.prototype.setDefaultCamera = function() {
+  var _w = this.width;
+  var _h = this.height;
+  this.translate(0, 0, -800);
+  this.uPMatrix.perspective(60 / 180 * Math.PI, _w / _h, 0.1, 100);
+  this.setCamera = true;
+};
+
 /**
  * resets the model view matrix to a mat4 identity
  * matrix.
