@@ -110,9 +110,10 @@ p5.Color.prototype.toString = function() {
 };
 
 p5.Color.prototype._normalize = function(){
-  this.rgba.map(function(value){
+  var arr = this.rgba.map(function(value){
     return value / 255;
   });
+  return arr;
 };
 
 /**
