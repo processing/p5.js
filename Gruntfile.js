@@ -58,7 +58,10 @@ module.exports = function(grunt) {
         reporter: require('jscs-stylish').path
       },
       build: {
-        src: ['Gruntfile.js']
+        src: [
+          'Gruntfile.js',
+          'build/**/*.js'
+        ]
       },
       source: {
         src: [
@@ -77,7 +80,10 @@ module.exports = function(grunt) {
         options: {
           jshintrc: '.jshintrc'
         },
-        src: ['Gruntfile.js']
+        src: [
+          'Gruntfile.js',
+          'build/**/*.js'
+        ]
       },
       source: {
         options: {
@@ -159,21 +165,6 @@ module.exports = function(grunt) {
         dest: 'bower.json', // where to write to
         // the fields to update, as a String Grouping
         fields: 'name version description repository'
-      }
-    },
-
-    // Build p5 into a single, UMD-wrapped file
-    browserify: {
-      p5: {
-        options: {
-          transform: ['brfs'],
-          browserifyOptions: {
-            standalone: 'p5'
-          },
-          banner: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */'
-        },
-        src: 'src/app.js',
-        dest: 'lib/p5.js'
       }
     },
 
@@ -259,8 +250,10 @@ module.exports = function(grunt) {
     }
   });
 
+  // Load task definitions
+  grunt.loadTasks('build/tasks');
+
   // Load the external libraries used.
-  grunt.loadNpmTasks('grunt-browserify');
   grunt.loadNpmTasks('grunt-jscs');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
