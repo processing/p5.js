@@ -38,8 +38,8 @@ void main(void){
   vec4 mvPosition = uModelviewMatrix * vec4(aPosition, 1.0);
   vec3 eyeDirection = normalize(-mvPosition.xyz);
   float shininess = 32.0;
-  float specularFactor = 1.0;
-  float diffuseFactor = 1.0;
+  float specularFactor = 2.0;
+  float diffuseFactor = 0.5;
 
   for(int i = 0; i < 8; i++){
     if(uAmbientLightCount == i) break;

@@ -10,10 +10,10 @@ function draw(){
   var dirX = (mouseX / width - 0.5) *2;
 
   ambientLight(50);
-  directionalLight(250, 0, 0, dirX, -dirY, 0.25);
+  directionalLight(250, 250, 250, dirX, -dirY, 0.25);
   //directionalLight(0, 250, 0, 0, 0, 0.25);
-  pointLight(0, 0, 250, 70, 70, 0);
-  pointLight(250, 250, 0, -70, -70, 0);
+  pointLight(0, 0, 250, 70, 80, 0);
+  pointLight(250, 0, 0, -70, -80, 0);
 
   push();
   rotateZ(frameCount * 0.02);
