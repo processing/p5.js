@@ -257,7 +257,7 @@ p5.prototype.floor = Math.floor;
  *   strokeWeight(5);
  *   stroke(0); // Draw the original points in black
  *   point(a, y);
- *   int(b, y);
+ *   point(b, y);
  *
  *   stroke(100); // Draw the lerp points in gray
  *   point(c, y);

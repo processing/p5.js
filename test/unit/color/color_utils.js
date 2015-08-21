@@ -1,35 +1,78 @@
 suite('p5.ColorUtils', function() {
-  var rgba = [100, 150, 200, 255];
-  var hsba = [210, 50, 78, 1];
-  var hsla = [137, 100, 50, 1];
+  var rgba = [1, 0, 0.4, 0.8];
+  var hsla = [336/360, 1, 0.5, 0.8];
+  var hsba = [336/360, 1, 1, 0.8];
+  var one;
 
   suite('rgbaToHSBA', function() {
     test('rgba converts to hsba', function() {
-      assert.deepEqual(p5.ColorUtils.rgbaToHSBA(rgba, [255, 255, 255, 255]), hsba);
+      one = p5.ColorUtils.rgbaToHSBA(rgba);
+      assert.deepEqual([
+        Math.round(one[0] * 360),
+        Math.round(one[1] * 100),
+        Math.round(one[2] * 100),
+        one[3]
+      ], [336, 100, 100, 0.8]);
     });
   });
 
   suite('hsbaToRGBA', function() {
     test('hsba converts to rgba', function() {
-      // Because of rounding errors, the values are off by one
-      // var rgba = [100, 150, 200, 255];
-      rgba = [99, 149, 199, 255];
-
-      assert.deepEqual(p5.ColorUtils.hsbaToRGBA(hsba, [360, 100, 100, 1]), rgba);
+      one = p5.ColorUtils.hsbaToRGBA(hsba);
+      assert.deepEqual([
+        Math.round(one[0] * 255),
+        Math.round(one[1] * 255),
+        Math.round(one[2] * 255),
+        Math.round(one[3] * 255)
+      ], [255, 0, 102, 204]);
     });
   });
 
   suite('hslaToRGBA', function() {
     test('hsla converts to rgba', function() {
-      rgba = [0, 255, 72, 255];
-      assert.deepEqual(p5.ColorUtils.hslaToRGBA(hsla, [360, 100, 100, 1]), rgba);
+      one = p5.ColorUtils.hslaToRGBA(hsla);
+      assert.deepEqual([
+        Math.round(one[0] * 255),
+        Math.round(one[1] * 255),
+        Math.round(one[2] * 255),
+        Math.round(one[3] * 255)
+      ], [255, 0, 102, 204]);
     });
   });
 
   suite('rgbaToHSLA', function() {
     test('rgba converts to hsla', function() {
-      rgba = [0, 255, 72, 255];
-      assert.deepEqual(p5.ColorUtils.rgbaToHSLA(rgba, [255, 255, 255, 255]), hsla);
+      one = p5.ColorUtils.rgbaToHSLA(rgba);
+      assert.deepEqual([
+        Math.round(one[0] * 360),
+        Math.round(one[1] * 100),
+        Math.round(one[2] * 100),
+        one[3]
+      ], [336, 100, 50, 0.8]);
+    });
+  });
+
+  suite('hslaToHSBA', function() {
+    test('hsla converts to hsba', function() {
+      one = p5.ColorUtils.hslaToHSBA(hsla);
+      assert.deepEqual([
+        Math.round(one[0] * 360),
+        Math.round(one[1] * 100),
+        Math.round(one[2] * 100),
+        one[3]
+      ], [336, 100, 100, 0.8]);
+    });
+  });
+
+  suite('hsbaToHSLA', function() {
+    test('hsba converts to hsla', function() {
+      one = p5.ColorUtils.hsbaToHSLA(hsba);
+      assert.deepEqual([
+        Math.round(one[0] * 360),
+        Math.round(one[1] * 100),
+        Math.round(one[2] * 100),
+        one[3]
+      ], [336, 100, 50, 0.8]);
     });
   });
 });
