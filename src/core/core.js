@@ -211,7 +211,6 @@ var p5 = function(sketch, node, sync) {
     );
 
     var userPreload = this.preload || window.preload; // look for "preload"
-    var context = this._isGlobal ? window : this;
     if (userPreload) {
 
       // Setup loading screen
@@ -226,16 +225,16 @@ var p5 = function(sketch, node, sync) {
         var node = this._userNode || document.body;
         node.appendChild(loadingScreen);
       }
-
-      var methods = this._preloadMethods;
-      Object.keys(methods).forEach(function(f) {
-        var methodContext = methods[f];
-        var originalFunc = methodContext[f];
-        methodContext[f] = function() {
-          var argsArray = Array.prototype.slice.call(arguments);
-          return context._preload(originalFunc, methodContext, argsArray);
-        };
-      });
+      // var methods = this._preloadMethods;
+      for (var method in this._preloadMethods){
+        var obj = this._preloadMethods[method];
+        //it's p5, check if it's global or instance
+        if (obj === p5.prototype){
+          obj = this._isGlobal ? window : this;
+        }
+        this._registeredPreloadMethods[method] = obj[method];
+        obj[method] = this._wrapPreload(obj, method);
+      }
 
       userPreload();
     } else {
@@ -245,24 +244,35 @@ var p5 = function(sketch, node, sync) {
     }
   }.bind(this);
 
-  this._preload = function (func, obj, args) {
+  this._decrementPreload = function(){
+    var context = this._isGlobal ? window : this;
+    context._setProperty('_preloadCount', context._preloadCount - 1);
+    if (context._preloadCount === 0) {
+      var loadingScreen = document.getElementById(context._loadingScreenId);
+      if (loadingScreen) {
+        loadingScreen.parentNode.removeChild(loadingScreen);
+      }
+      context._setup();
+      context._runFrames();
+      context._draw();
+    }
+  };
+
+  this._wrapPreload = function(obj, fnName){
+    return function(){
+      //increment counter
+      this._incrementPreload();
+      //call original function
+      var args = Array.prototype.slice.call(arguments);
+      args.push(this._decrementPreload.bind(this));
+      return this._registeredPreloadMethods[fnName].apply(obj, args);
+    }.bind(this);
+  };
+
+  this._incrementPreload = function(){
     var context = this._isGlobal ? window : this;
     context._setProperty('_preloadCount', context._preloadCount + 1);
-    var preloadCallback = function (resp) {
-      context._setProperty('_preloadCount', context._preloadCount - 1);
-      if (context._preloadCount === 0) {
-        var loadingScreen = document.getElementById(context._loadingScreenId);
-        if (loadingScreen) {
-          loadingScreen.parentNode.removeChild(loadingScreen);
-        }
-        context._setup();
-        context._runFrames();
-        context._draw();
-      }
-    };
-    args.push(preloadCallback);
-    return func.apply(obj, args);
-  }.bind(this);
+  };
 
   this._setup = function() {
 
@@ -498,10 +508,12 @@ p5.prototype._preloadMethods = {
 
 p5.prototype._registeredMethods = { pre: [], post: [], remove: [] };
 
-p5.prototype.registerPreloadMethod = function(f, o) {
-  o = o || p5;
-  if (!p5.prototype._preloadMethods.hasOwnProperty(f)) {
-    p5.prototype._preloadMethods[f] = o;
+p5.prototype._registeredPreloadMethods = {};
+
+p5.prototype.registerPreloadMethod = function(fnString, obj) {
+  // obj = obj || p5.prototype;
+  if (!p5.prototype._preloadMethods.hasOwnProperty(fnString)) {
+    p5.prototype._preloadMethods[fnString] = obj;
   }
 };
 
