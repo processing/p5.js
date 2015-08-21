@@ -174,7 +174,7 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
     gl.getUniformLocation(shaderProgram, 'uProjectionMatrix');
   //model view Matrix uniform
   shaderProgram.uMVMatrixUniform =
-    gl.getUniformLocation(shaderProgram, 'uModelviewMatrix');
+    gl.getUniformLocation(shaderProgram, 'uModelViewMatrix');
 
   //@TODO: figure out a better way instead of if statement
   if(immediateMode === undefined){
@@ -338,9 +338,9 @@ p5.Renderer3D.prototype.initMatrix = function(){
   this.uMVMatrix = new p5.Matrix();
   this.uPMatrix  = new p5.Matrix();
   this.uNMatrix = new p5.Matrix();
-  var _w = this.width;
-  var _h = this.height;
-  this.uPMatrix.perspective(60 / 180 * Math.PI, _w / _h, 0.1, 100);
+  // var _w = this.width;
+  // var _h = this.width;
+  this.uPMatrix.perspective(60 / 180 * Math.PI, 1.0, 0.1, 100);
 };
 
 /**

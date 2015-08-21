@@ -2,7 +2,7 @@ attribute vec3 aPosition;
 attribute vec3 aNormal;
 attribute vec2 aTexCoord;
 
-uniform mat4 uModelviewMatrix;
+uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 uniform mat4 uNormalMatrix;
 uniform float uResolution;
@@ -29,13 +29,13 @@ vec3 pointLightFactor2 = vec3(0., 0., 0.);
 void main(void){
 
   vec4 positionVec4 = vec4(aPosition / uResolution, 1.);
-  gl_Position = uProjectionMatrix * uModelviewMatrix * positionVec4;
+  gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
 
   vec3 vertexNormal = vec3( uNormalMatrix * vec4( aNormal, 1.0 ) );
   vVertexNormal = vertexNormal;
   vVertTexCoord = aTexCoord;
 
-  vec4 mvPosition = uModelviewMatrix * vec4(aPosition, 1.0);
+  vec4 mvPosition = uModelViewMatrix * vec4(aPosition, 1.0);
   vec3 eyeDirection = normalize(-mvPosition.xyz);
   float shininess = 32.0;
   float specularFactor = 2.0;
