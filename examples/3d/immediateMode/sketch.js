@@ -12,11 +12,16 @@ function draw(){
   camera(0, 0, 1000);
   perspective(60 / 180 * Math.PI, width/height, 0.1, 100);
 
-  rotateY(frameCount * 0.01);
-
   //point
-  stroke(0, 200, 200);
-  point(0, 0, 0);
+  push();
+  for(var i = 0; i < 10; i++){
+    translate(10, 0, 0);
+    stroke(0, 200, 200);
+    point(0, 0, 0);
+  }
+  pop();
+
+  rotateY(frameCount * 0.01);
 
   //lines
   translate(100, 0, 0);

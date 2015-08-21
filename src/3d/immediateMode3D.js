@@ -40,7 +40,11 @@ p5.Renderer3D.prototype.primitives2D = function(arr){
   this.setMatrixUniforms(mId);
 };
 
-//@TODO: point does not show up, gotta fix it.
+//@TODO:
+p5.Renderer3D.prototype.strokeWeight = function() {
+  throw new Error('strokeWeight for 3d not yet implemented');
+};
+
 p5.Renderer3D.prototype.point = function(x, y, z){
   var gl = this.GL;
   this.primitives2D([x, y, z]);
