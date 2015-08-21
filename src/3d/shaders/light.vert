@@ -19,20 +19,27 @@ uniform vec3 uPointLightColor[8];
 varying vec3 vVertexNormal;
 varying vec2 vVertTexCoord;
 varying vec3 vLightWeighting;
+varying vec3 vLightWeighting2;
 
 vec3 ambientLightFactor = vec3(0., 0., 0.);
 vec3 directionalLightFactor = vec3(0., 0., 0.);
-vec3 pointLightingFactor = vec3(0., 0., 0.);
+vec3 pointLightFactor = vec3(0., 0., 0.);
+vec3 pointLightFactor2 = vec3(0., 0., 0.);
 
 void main(void){
 
-  vec4 mvPosition = uModelviewMatrix * vec4(aPosition, 1.0);
   vec4 positionVec4 = vec4(aPosition / uResolution, 1.);
   gl_Position = uProjectionMatrix * uModelviewMatrix * positionVec4;
 
   vec3 vertexNormal = vec3( uNormalMatrix * vec4( aNormal, 1.0 ) );
   vVertexNormal = vertexNormal;
   vVertTexCoord = aTexCoord;
+
+  vec4 mvPosition = uModelviewMatrix * vec4(aPosition, 1.0);
+  vec3 eyeDirection = normalize(-mvPosition.xyz);
+  float shininess = 32.0;
+  float specularFactor = 1.0;
+  float diffuseFactor = 1.0;
 
   for(int i = 0; i < 8; i++){
     if(uAmbientLightCount == i) break;
@@ -52,9 +59,22 @@ void main(void){
     vec3 lightDirection = normalize(loc - mvPosition.xyz);
 
     float directionalLightWeighting = max(dot(vertexNormal, lightDirection), 0.0);
-    pointLightingFactor += uPointLightColor[k] * directionalLightWeighting;
-  }
+    pointLightFactor += uPointLightColor[k] * directionalLightWeighting;
+  
+    //factor2
+    vec3 lightDirection2 = normalize(uPointLightLocation[k] - mvPosition.xyz);
+    vec3 normal = normalize(vVertexNormal);
+      
+    vec3 reflectionDirection = reflect(-lightDirection2, normal);
+    float specularLightWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), shininess);
 
-  vLightWeighting = ambientLightFactor + directionalLightFactor + pointLightingFactor;
+    float diffuseLightWeighting = max(dot(normal, lightDirection2), 0.0);
+
+    pointLightFactor2 += (uPointLightColor[k] * specularFactor * specularLightWeighting
+      + uPointLightColor[k] * diffuseFactor * diffuseLightWeighting);
+  }
+  
+  vLightWeighting =  ambientLightFactor + directionalLightFactor + pointLightFactor;
+  vLightWeighting2 = ambientLightFactor + directionalLightFactor + pointLightFactor2;
 
 }

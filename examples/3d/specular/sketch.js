@@ -19,7 +19,7 @@ function draw(){
   rotateZ(frameCount * 0.02);
   rotateX(frameCount * 0.02);
   rotateY(frameCount * 0.02);
-  ambientMaterial(250);
+  specularMaterial(250);
   plane(80, 80);
   pop();
   translate(250, 0, 0);
