@@ -104,7 +104,6 @@ p5.Renderer3D.prototype.background = function() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   this.resetMatrix();
   this.resetStack();
-  this.setCamera = false;
 };
 
 //@TODO implement this
@@ -157,11 +156,18 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
   if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
     alert('Snap! Error linking shader program');
   }
-  gl.useProgram(shaderProgram);
   //END SHADERS SETUP
 
-  // @TODO replace 4th argument with far plane once we implement
-  // a view frustrum
+  this.getLocation(shaderProgram, immediateMode);
+
+  this.mHash[vertId + '|' + fragId] = shaderProgram;
+
+  return shaderProgram;
+};
+
+p5.Renderer3D.prototype.getLocation = function(shaderProgram, immediateMode) {
+  var gl = this.GL;
+  gl.useProgram(shaderProgram);
   shaderProgram.uResolution =
     gl.getUniformLocation(shaderProgram, 'uResolution');
   gl.uniform1f(shaderProgram.uResolution, RESOLUTION);
@@ -197,10 +203,6 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
     shaderProgram.samplerUniform =
     gl.getUniformLocation(shaderProgram, 'uSampler');
   }
-
-  this.mHash[vertId + '|' + fragId] = shaderProgram;
-
-  return shaderProgram;
 };
 
 /**
@@ -362,6 +364,7 @@ p5.Renderer3D.prototype.setDefaultCamera = function(){
 p5.Renderer3D.prototype.resetMatrix = function() {
   this.uMVMatrix = p5.Matrix.identity();
   this.uPMatrix = p5.Matrix.identity();
+  this.setCamera = false;
 };
 
 /**
