@@ -115,29 +115,37 @@ p5.prototype.ambientMaterial = function(r, g, b, a) {
     this._graphics._pInst, arguments);
   var colors = color._normalize();
 
-  gl.uniform4f( shaderProgram.uMaterialColor,
+  gl.uniform4f(shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);
+
+  shaderProgram.uSpecular = gl.getUniformLocation(
+    shaderProgram, 'uSpecular' );
+  gl.uniform1i(shaderProgram.uSpecular, false);
 
   return this;
 };
 
-// p5.prototype.specularMaterial = function(r, g, b, a) {
+p5.prototype.specularMaterial = function(r, g, b, a) {
 
-//   var gl = this._graphics.GL;
-//   var shaderProgram = this._graphics.getShader('lightVert', 'specularFrag');
+  var gl = this._graphics.GL;
+  var shaderProgram = this._graphics.getShader('lightVert', 'lightFrag');
 
-//   gl.useProgram(shaderProgram);
-//   shaderProgram.uMaterialColor = gl.getUniformLocation(
-//     shaderProgram, 'uMaterialColor' );
+  gl.useProgram(shaderProgram);
+  shaderProgram.uMaterialColor = gl.getUniformLocation(
+    shaderProgram, 'uMaterialColor' );
 
-//   var color = this._graphics._pInst.color.apply(
-//     this._graphics._pInst, arguments);
-//   var colors = color._normalize();
+  var color = this._graphics._pInst.color.apply(
+    this._graphics._pInst, arguments);
+  var colors = color._normalize();
 
-//   gl.uniform4f( shaderProgram.uMaterialColor,
-//     colors[0], colors[1], colors[2], colors[3]);
+  gl.uniform4f(shaderProgram.uMaterialColor,
+    colors[0], colors[1], colors[2], colors[3]);
 
-//   return this;
-// };
+  shaderProgram.uSpecular = gl.getUniformLocation(
+    shaderProgram, 'uSpecular' );
+  gl.uniform1i(shaderProgram.uSpecular, true);
+
+  return this;
+};
 
 module.exports = p5;

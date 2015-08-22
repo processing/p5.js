@@ -35,11 +35,13 @@ void main(void){
   vVertexNormal = vertexNormal;
   vVertTexCoord = aTexCoord;
 
-  vec4 mvPosition = uModelViewMatrix * vec4(aPosition, 1.0);
+  vec4 mvPosition = uModelViewMatrix * vec4(aPosition / uResolution, 1.0);
   vec3 eyeDirection = normalize(-mvPosition.xyz);
+  vec3 normal = normalize(vertexNormal);
+
   float shininess = 32.0;
   float specularFactor = 2.0;
-  float diffuseFactor = 0.5;
+  float diffuseFactor = 0.2;
 
   for(int i = 0; i < 8; i++){
     if(uAmbientLightCount == i) break;
@@ -58,20 +60,15 @@ void main(void){
     //loc = loc / uResolution;
     vec3 lightDirection = normalize(loc - mvPosition.xyz);
 
-    float directionalLightWeighting = max(dot(vertexNormal, lightDirection), 0.0);
+    float directionalLightWeighting = max(dot(normal, lightDirection), 0.0);
     pointLightFactor += uPointLightColor[k] * directionalLightWeighting;
-  
-    //factor2
-    vec3 lightDirection2 = normalize(uPointLightLocation[k] - mvPosition.xyz);
-    vec3 normal = normalize(vVertexNormal);
-      
-    vec3 reflectionDirection = reflect(-lightDirection2, normal);
+
+    //factor2 for specular
+    vec3 reflectionDirection = reflect(-lightDirection, normal);
     float specularLightWeighting = pow(max(dot(reflectionDirection, eyeDirection), 0.0), shininess);
 
-    float diffuseLightWeighting = max(dot(normal, lightDirection2), 0.0);
-
     pointLightFactor2 += (uPointLightColor[k] * specularFactor * specularLightWeighting
-      + uPointLightColor[k] * diffuseFactor * diffuseLightWeighting);
+      +  directionalLightWeighting * diffuseFactor);
   }
   
   vLightWeighting =  ambientLightFactor + directionalLightFactor + pointLightFactor;
