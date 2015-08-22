@@ -41,7 +41,7 @@ void main(void){
 
   float shininess = 32.0;
   float specularFactor = 2.0;
-  float diffuseFactor = 0.2;
+  float diffuseFactor = 0.3;
 
   for(int i = 0; i < 8; i++){
     if(uAmbientLightCount == i) break;
