@@ -19,7 +19,7 @@ function draw(){
       translate(sin(theta + j) * 100, sin(theta + j) * 100, i * 0.1);
       rotateZ(theta * 0.2);
       push();
-      sphere(8, 12, 8); 
+      sphere(8, 6, 4); 
       pop();
     }
     pop();
