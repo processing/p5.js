@@ -15,11 +15,11 @@ uniform vec3 uLightingDirection[8];
 uniform vec3 uDirectionalColor[8];
 uniform vec3 uPointLightLocation[8];
 uniform vec3 uPointLightColor[8];
+uniform bool uSpecular;
 
 varying vec3 vVertexNormal;
 varying vec2 vVertTexCoord;
 varying vec3 vLightWeighting;
-varying vec3 vLightWeighting2;
 
 vec3 ambientLightFactor = vec3(0.0, 0.0, 0.0);
 vec3 directionalLightFactor = vec3(0.0, 0.0, 0.0);
@@ -71,7 +71,10 @@ void main(void){
       +  directionalLightWeighting * diffuseFactor);
   }
   
-  vLightWeighting =  ambientLightFactor + directionalLightFactor + pointLightFactor;
-  vLightWeighting2 = ambientLightFactor + directionalLightFactor + pointLightFactor2;
+  if(!uSpecular){
+    vLightWeighting =  ambientLightFactor + directionalLightFactor + pointLightFactor;
+  }else{
+    vLightWeighting = ambientLightFactor + directionalLightFactor + pointLightFactor2;
+  }
 
 }
