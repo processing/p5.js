@@ -9,10 +9,6 @@ function setup() {
   checkbox.changed(myCheckedEvent); // even for when the user does something
 }
 
-function mousePressed() {
-  console.log(checkbox.value());
-}
-
 function draw() {
   background(0);
   // No argument return its state
@@ -21,17 +17,12 @@ function draw() {
   }
 }
 
-function mousePressed() {
-  println(checkbox.value());
-}
 
 function myCheckedEvent() {
-  console.log('changed');
-
-  if (this.checked) {
-    console.log("It's checked!");
+  if (this.checked()) {
+    console.log(checkbox.value() + " is checked!");
   } else {
-    console.log("It's not checked!");
+    console.log(checkbox.value() + " is not checked!");
   }
 }
 
