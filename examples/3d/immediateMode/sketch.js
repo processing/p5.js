@@ -25,7 +25,7 @@ function draw(){
   //triangles
   translate(0, 100, 0);
   triangle(
-    0, 0, i, 
+    0, sin( i + frameCount * 0.1) * 10, i, 
     60, 60, i, 
     -60, 60, i);
 

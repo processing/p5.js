@@ -12,6 +12,10 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
 };
 
 p5.prototype.ortho = function(left,right,bottom,top,near,far) {
+  left /= this.width;
+  right /= this.width;
+  top /= this.height;
+  bottom /= this.height;
   this._graphics.uPMatrix.ortho(left,right,bottom,top,near,far);
   this._graphics._setCamera = true;
 };
