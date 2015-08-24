@@ -7,7 +7,9 @@ function setup(){
 function draw(){
   background(250, 250, 250, 255);
  
-  translate(0, 0, -1500);
+  camera(0, 0, 1500);
+  perspective(60 / 180 * Math.PI, width/height, 0.1, 100);
+  
   normalMaterial();
   rotateY(frameCount * 0.01);
 
@@ -17,7 +19,7 @@ function draw(){
       translate(sin(theta + j) * 100, sin(theta + j) * 100, i * 0.1);
       rotateZ(theta * 0.2);
       push();
-      sphere(8); 
+      sphere(8, 6, 4); 
       pop();
     }
     pop();

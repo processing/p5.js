@@ -54,6 +54,7 @@ p5.Renderer3D = function(elt, pInst, isMainCanvas) {
   //for immedidate mode
   this.verticeBuffer = gl.createBuffer();
   this.colorBuffer = gl.createBuffer();
+  this.setCamera = false;
   return this;
 };
 
@@ -95,10 +96,10 @@ p5.Renderer3D.prototype.background = function() {
   var gl = this.GL;
   var _col = this._pInst.color.apply(this._pInst, arguments);
   // gl.clearColor(0.0,0.0,0.0,1.0);
-  var _r = (_col.color_array[0]) / 255;
-  var _g = (_col.color_array[1]) / 255;
-  var _b = (_col.color_array[2]) / 255;
-  var _a = (_col.color_array[3]) / 255;
+  var _r = (_col.rgba[0]) / 255;
+  var _g = (_col.rgba[1]) / 255;
+  var _b = (_col.rgba[2]) / 255;
+  var _a = (_col.rgba[3]) / 255;
   gl.clearColor(_r, _g, _b, _a);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   this.resetMatrix();
@@ -155,11 +156,18 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
   if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
     alert('Snap! Error linking shader program');
   }
-  gl.useProgram(shaderProgram);
   //END SHADERS SETUP
 
-  // @TODO replace 4th argument with far plane once we implement
-  // a view frustrum
+  this.getLocation(shaderProgram, immediateMode);
+
+  this.mHash[vertId + '|' + fragId] = shaderProgram;
+
+  return shaderProgram;
+};
+
+p5.Renderer3D.prototype.getLocation = function(shaderProgram, immediateMode) {
+  var gl = this.GL;
+  gl.useProgram(shaderProgram);
   shaderProgram.uResolution =
     gl.getUniformLocation(shaderProgram, 'uResolution');
   gl.uniform1f(shaderProgram.uResolution, RESOLUTION);
@@ -168,6 +176,13 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
   shaderProgram.vertexPositionAttribute =
     gl.getAttribLocation(shaderProgram, 'aPosition');
   gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+
+  //projection Matrix uniform
+  shaderProgram.uPMatrixUniform =
+    gl.getUniformLocation(shaderProgram, 'uProjectionMatrix');
+  //model view Matrix uniform
+  shaderProgram.uMVMatrixUniform =
+    gl.getUniformLocation(shaderProgram, 'uModelViewMatrix');
 
   //@TODO: figure out a better way instead of if statement
   if(immediateMode === undefined){
@@ -188,19 +203,14 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
     shaderProgram.samplerUniform =
     gl.getUniformLocation(shaderProgram, 'uSampler');
   }
-
-  //projection Matrix uniform
-  shaderProgram.uPMatrixUniform =
-    gl.getUniformLocation(shaderProgram, 'uTransformMatrix');
-  //model view Matrix uniform
-  shaderProgram.uMVMatrixUniform =
-    gl.getUniformLocation(shaderProgram, 'uModelviewMatrix');
-
-  this.mHash[vertId + '|' + fragId] = shaderProgram;
-
-  return shaderProgram;
 };
 
+/**
+ * [getShader description]
+ * @param  {[type]} vertId [description]
+ * @param  {[type]} fragId [description]
+ * @return {[type]}        [description]
+ */
 p5.Renderer3D.prototype.getShader = function(vertId, fragId) {
   var mId = vertId+ '|' + fragId;
 
@@ -251,6 +261,7 @@ p5.Renderer3D.prototype.saveShaders = function(mId){
 };
 
 p5.Renderer3D.prototype.getCurColor = function() {
+  //default color: gray
   return this.colorStack[this.colorStack.length-1] || [0.5, 0.5, 0.5, 1.0];
 };
 
@@ -282,8 +293,10 @@ p5.Renderer3D.prototype.resetStack = function(){
   this.drawModeStack = [];
   //holding an array of vertex position
   this.verticeStack = [];
-  //holding lights
-  this.lightStack = [];
+  //holding lights number
+  this.ambientLightCount = 0;
+  this.directionalLightCount = 0;
+  this.pointLightCount = 0;
 };
 
 //////////////////////////////////////////////
@@ -329,9 +342,18 @@ p5.Renderer3D.prototype.initMatrix = function(){
   this.uMVMatrix = new p5.Matrix();
   this.uPMatrix  = new p5.Matrix();
   this.uNMatrix = new p5.Matrix();
-  var _w = this.width;
-  var _h = this.height;
-  this.uPMatrix.perspective(60 / 180 * Math.PI, _w / _h, 0.1, 100);
+};
+
+//@TODO: figure out how to detect if user didn't set the camera
+//then call this function below
+p5.Renderer3D.prototype.setDefaultCamera = function(){
+  if(!this.setCamera){
+    var _w = this.width;
+    var _h = this.height;
+    this.translate(0, 0, -800);
+    this.uPMatrix.perspective(60 / 180 * Math.PI, _w / _h, 0.1, 100);
+    this.setCamera = true;
+  }
 };
 
 /**
@@ -341,6 +363,8 @@ p5.Renderer3D.prototype.initMatrix = function(){
  */
 p5.Renderer3D.prototype.resetMatrix = function() {
   this.uMVMatrix = p5.Matrix.identity();
+  this.uPMatrix = p5.Matrix.identity();
+  this.setCamera = false;
 };
 
 /**

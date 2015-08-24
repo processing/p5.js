@@ -40,7 +40,11 @@ p5.Renderer3D.prototype.primitives2D = function(arr){
   this.setMatrixUniforms(mId);
 };
 
-//@TODO: point does not show up, gotta fix it.
+//@TODO:
+p5.Renderer3D.prototype.strokeWeight = function() {
+  throw new Error('strokeWeight for 3d not yet implemented');
+};
+
 p5.Renderer3D.prototype.point = function(x, y, z){
   var gl = this.GL;
   this.primitives2D([x, y, z]);
@@ -131,7 +135,7 @@ p5.Renderer3D.prototype._strokeCheck = function(){
 
 p5.Renderer3D.prototype.fill = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
-  var colorNormalized = _normalizeColor(color.rgba);
+  var colorNormalized = color._normalize();
   if( colorNormalized !== this.getCurColor()){
     this.colorStack.push(colorNormalized);
   }
@@ -141,7 +145,7 @@ p5.Renderer3D.prototype.fill = function(r, g, b, a) {
 
 p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
-  var colorNormalized = _normalizeColor(color.rgba);
+  var colorNormalized = color._normalize();
   if( colorNormalized !== this.getCurColor()){
     this.colorStack.push(colorNormalized);
   }
@@ -164,13 +168,5 @@ p5.Renderer3D.prototype.getColorVertexShader = function(){
   }
   return shaderProgram;
 };
-
-function _normalizeColor(_arr){
-  var arr = [];
-  _arr.forEach(function(val){
-    arr.push(val/255);
-  });
-  return arr;
-}
 
 module.exports = p5.Renderer3D;

@@ -54,6 +54,7 @@ require('./3d/p5.Matrix');
 require('./3d/material');
 require('./3d/light');
 require('./3d/shader');
+require('./3d/camera');
 require('./3d/interaction');
 
 /**

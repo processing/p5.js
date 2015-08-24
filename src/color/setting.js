@@ -195,6 +195,30 @@ p5.prototype.clear = function() {
  * }
  * </code>
  * </div>
+ *
+ * <div>
+ * <code>
+ * colorMode(RGB, 255);
+ * var c = color(127, 255, 0);
+ *
+ * colorMode(RGB, 1);
+ * var myColor = c.getRed();
+ * text(myColor, 10, 10, 80, 80);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * noFill();
+ * colorMode(RGB, 255, 255, 255, 1);
+ * background(255);
+ *
+ * strokeWeight(4);
+ * stroke(255, 0 , 10, 0.3);
+ * ellipse(40, 40, 50, 50);
+ * ellipse(50, 50, 40, 40);
+ * </code>
+ * </div>
  */
 p5.prototype.colorMode = function() {
   if (arguments[0] === constants.RGB ||
@@ -209,12 +233,15 @@ p5.prototype.colorMode = function() {
       maxArr[1] = arguments[1];
       maxArr[2] = arguments[1];
       maxArr[3] = arguments[1];
-    } else if (arguments.length > 2) {
+    } else if (arguments.length === 4) {
       maxArr[0] = arguments[1];
       maxArr[1] = arguments[2];
       maxArr[2] = arguments[3];
     }
     if (arguments.length === 5) {
+      maxArr[0] = arguments[1];
+      maxArr[1] = arguments[2];
+      maxArr[2] = arguments[3];
       maxArr[3] = arguments[4];
     }
   }

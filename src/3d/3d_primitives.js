@@ -33,8 +33,8 @@ require('./p5.Geometry3D');
  */
 p5.prototype.plane = function(width, height, detailX, detailY){
 
-  width = width || 1;
-  height = height || 1;
+  width = width || 50;
+  height = height || 50;
 
   detailX = detailX || 1;
   detailY = detailY || 1;
@@ -95,8 +95,8 @@ p5.prototype.sphere = function(radius, detailX, detailY){
 
   radius = radius || 50;
 
-  detailX = detailX || 12;
-  detailY = detailY || 8;
+  detailX = detailX || 24;
+  detailY = detailY || 16;
 
   var gId = 'sphere|'+radius+'|'+detailX+'|'+detailY;
 
@@ -158,8 +158,8 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY){
   radius = radius || 50;
   height = height || 50;
 
-  detailX = detailX || 12;
-  detailY = detailY || 8;
+  detailX = detailX || 24;
+  detailY = detailY || 16;
 
   var gId = 'cylinder|'+radius+'|'+height+'|'+detailX+'|'+detailY;
 
@@ -253,8 +253,8 @@ p5.prototype.cone = function(radius, height, detailX, detailY){
   radius = radius || 50;
   height = height || 50;
 
-  detailX = detailX || 12;
-  detailY = detailY || 8;
+  detailX = detailX || 24;
+  detailY = detailY || 16;
 
   var gId = 'cone|'+radius+'|'+height+'|'+detailX+'|'+detailY;
 
@@ -326,10 +326,10 @@ p5.prototype.cone = function(radius, height, detailX, detailY){
 p5.prototype.torus = function(radius, tubeRadius, detailX, detailY){
 
   radius = radius || 50;
-  tubeRadius = tubeRadius || 20;
+  tubeRadius = tubeRadius || 10;
 
-  detailX = detailX || 12;
-  detailY = detailY || 8;
+  detailX = detailX || 24;
+  detailY = detailY || 16;
 
   var gId = 'torus|'+radius+'|'+tubeRadius+'|'+detailX+'|'+detailY;
 
@@ -387,7 +387,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY){
  */
 p5.prototype.box = function(width, height, depth){
 
-  width = width || 10;
+  width = width || 50;
   height = height || width;
   depth = depth || width;
 

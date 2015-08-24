@@ -9,13 +9,19 @@ function draw(){
   background('white');
   colorMode(HSB);
 
-  translate(0, 0, -1000);
-
-  rotateY(frameCount * 0.01);
+  camera(0, 0, 1000);
+  perspective(60 / 180 * Math.PI, width/height, 0.1, 100);
 
   //point
-  stroke(0, 200, 200);
-  point(0, 0, 0);
+  push();
+  for(var i = 0; i < 10; i++){
+    translate(10, 0, 0);
+    stroke(0, 200, 200);
+    point(0, 0, 0);
+  }
+  pop();
+
+  rotateY(frameCount * 0.01);
 
   //lines
   translate(100, 0, 0);

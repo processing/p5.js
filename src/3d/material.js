@@ -81,7 +81,7 @@ function _isPowerOf2 (value) {
   return (value & (value - 1)) === 0;
 }
 
-p5.prototype.basicMaterial = function(){
+p5.prototype.basicMaterial = function(r, g, b, a){
 
   var gl = this._graphics.GL;
 
@@ -93,7 +93,7 @@ p5.prototype.basicMaterial = function(){
 
   var color = this._graphics._pInst.color.apply(
     this._graphics._pInst, arguments);
-  var colors = _normalizeColor(color.rgba);
+  var colors = color._normalize();
 
   gl.uniform4f( shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);
@@ -102,11 +102,10 @@ p5.prototype.basicMaterial = function(){
 
 };
 
-p5.prototype.ambientMaterial = function() {
+p5.prototype.ambientMaterial = function(r, g, b, a) {
 
   var gl = this._graphics.GL;
-  var mId = this._graphics.getCurShaderId();
-  var shaderProgram = this._graphics.mHash[mId];
+  var shaderProgram = this._graphics.getShader('lightVert', 'lightFrag');
 
   gl.useProgram(shaderProgram);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
@@ -114,26 +113,39 @@ p5.prototype.ambientMaterial = function() {
 
   var color = this._graphics._pInst.color.apply(
     this._graphics._pInst, arguments);
-  var colors = _normalizeColor(color.rgba);
+  var colors = color._normalize();
 
-  gl.uniform4f( shaderProgram.uMaterialColor,
+  gl.uniform4f(shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);
 
+  shaderProgram.uSpecular = gl.getUniformLocation(
+    shaderProgram, 'uSpecular' );
+  gl.uniform1i(shaderProgram.uSpecular, false);
+
   return this;
 };
 
-p5.prototype.specularMaterial = function() {
+p5.prototype.specularMaterial = function(r, g, b, a) {
+
+  var gl = this._graphics.GL;
+  var shaderProgram = this._graphics.getShader('lightVert', 'lightFrag');
+
+  gl.useProgram(shaderProgram);
+  shaderProgram.uMaterialColor = gl.getUniformLocation(
+    shaderProgram, 'uMaterialColor' );
+
+  var color = this._graphics._pInst.color.apply(
+    this._graphics._pInst, arguments);
+  var colors = color._normalize();
+
+  gl.uniform4f(shaderProgram.uMaterialColor,
+    colors[0], colors[1], colors[2], colors[3]);
+
+  shaderProgram.uSpecular = gl.getUniformLocation(
+    shaderProgram, 'uSpecular' );
+  gl.uniform1i(shaderProgram.uSpecular, true);
 
   return this;
 };
-
-
-function _normalizeColor(_arr){
-  var arr = [];
-  _arr.forEach(function(val){
-    arr.push(val/255);
-  });
-  return arr;
-}
 
 module.exports = p5;

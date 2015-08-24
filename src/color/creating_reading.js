@@ -8,6 +8,7 @@
 'use strict';
 
 var p5 = require('../core/core');
+var constants = require('../core/constants');
 require('./p5.Color');
 
 /**
@@ -120,7 +121,7 @@ p5.prototype.brightness = function(c) {
  * @example
  * <div>
  * <code>
- * c = color(255, 204, 0);  // Define color 'c'
+ * var c = color(255, 204, 0);  // Define color 'c'
  * fill(c);  // Use color variable 'c' as fill color
  * noStroke();  // Don't draw a stroke around shapes
  * rect(30, 20, 55, 55);  // Draw rectangle
@@ -129,14 +130,14 @@ p5.prototype.brightness = function(c) {
  *
  * <div>
  * <code>
- * c = color(255, 204, 0);  // Define color 'c'
+ * var c = color(255, 204, 0);  // Define color 'c'
  * fill(c);  // Use color variable 'c' as fill color
  * noStroke();  // Don't draw a stroke around shapes
  * ellipse(25, 25, 80, 80);  // Draw left circle
  *
  * // Using only one value with color()
  * // generates a grayscale value.
- * c = color(65);  // Update 'c' with grayscale value
+ * var c = color(65);  // Update 'c' with grayscale value
  * fill(c);  // Use updated 'c' as fill color
  * ellipse(75, 75, 80, 80);  // Draw right circle
  * </code>
@@ -145,7 +146,7 @@ p5.prototype.brightness = function(c) {
  * <div>
  * <code>
  * // Named SVG & CSS colors may be used,
- * c = color('magenta');
+ * var c = color('magenta');
  * fill(c);  // Use 'c' as fill color
  * noStroke();  // Don't draw a stroke around shapes
  * rect(20, 20, 60, 60);  // Draw rectangle
@@ -155,53 +156,80 @@ p5.prototype.brightness = function(c) {
  * <div>
  * <code>
  * // as can hex color codes:
- * c = color('#4F66A1');
- * fill(c);  // Use 'c' as fill color
  * noStroke();  // Don't draw a stroke around shapes
- * rect(20, 20, 60, 60);  // Draw rectangle
+ * var c = color('#0f0');
+ * fill(c);  // Use 'c' as fill color
+ * rect(0, 10, 45, 80);  // Draw rectangle
+ *
+ * c = color('#00ff00');
+ * fill(c);  // Use updated 'c' as fill color
+ * rect(55, 10, 45, 80);  // Draw rectangle
  * </code>
  * </div>
  *
  * <div>
  * <code>
  * // RGB and RGBA color strings are also supported:
- * // these all set 'c' to the same color (solid blue)
- * c = color('rgb(0,0,255)');
- * c = color('rgb(0%, 0%, 100%)');
- * c = color('rgba(0, 0, 255, 1)');
- * c = color('rgba(0%, 0%, 100%, 1)');
- * fill(c);  // Use 'c' as fill color
+ * // these all set to the same color (solid blue)
+ * var c;
  * noStroke();  // Don't draw a stroke around shapes
- * rect(20, 20, 60, 60);  // Draw rectangle
+ * c = color('rgb(0,0,255)');
+ * fill(c); // Use 'c' as fill color
+ * rect(10, 10, 35, 35);  // Draw rectangle
+ *
+ * c = color('rgb(0%, 0%, 100%)');
+ * fill(c); // Use updated 'c' as fill color
+ * rect(55, 10, 35, 35);  // Draw rectangle
+ *
+ * c = color('rgba(0, 0, 255, 1)');
+ * fill(c); // Use updated 'c' as fill color
+ * rect(10, 55, 35, 35);  // Draw rectangle
+ *
+ * c = color('rgba(0%, 0%, 100%, 1)');
+ * fill(c); // Use updated 'c' as fill color
+ * rect(55, 55, 35, 35);  // Draw rectangle
  * </code>
  * </div>
- *
  *
  * <div>
  * <code>
  * // HSL color is also supported and can be specified
  * // by value
- * colorMode(HSL)
- * c = color(156, 100, 50, 1);
- * fill(c);  // Use 'c' as fill color
+ * var c;
  * noStroke();  // Don't draw a stroke around shapes
- * rect(20, 20, 60, 60);  // Draw rectangle
+ * c = color('hsl(160, 100%, 50%)');
+ * fill(c);  // Use 'c' as fill color
+ * rect(0, 10, 45, 80);  // Draw rectangle
+ *
+ * c = color('hsla(160, 100%, 50%, 0.5)');
+ * fill(c); // Use updated 'c' as fill color
+ * rect(55, 10, 45, 80);  // Draw rectangle
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * // or by string
- * c = color('hsla(156, 100%, 50%, 1)');
- * fill(c);  // Use 'c' as fill color
+ * // HSB color is also supported and can be specified
+ * // by value
+ * var c;
  * noStroke();  // Don't draw a stroke around shapes
- * rect(20, 20, 60, 60);  // Draw rectangle
+ * c = color('hsb(160, 100%, 50%)');
+ * fill(c);  // Use 'c' as fill color
+ * rect(0, 10, 45, 80);  // Draw rectangle
+ *
+ * c = color('hsba(160, 100%, 50%, 0.5)');
+ * fill(c); // Use updated 'c' as fill color
+ * rect(55, 10, 45, 80);  // Draw rectangle
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * var c;  // Declare color 'c'
+ * noStroke();  // Don't draw a stroke around shapes
  *
- * // if switching from RGB to HSB or HSL both modes must be declared
- * colorMode(RGB, 255);  // Use RGB with scale of 0-255
+ * // If no colorMode is specified, then the
+ * // default of RGB with scale of 0-255 is used.
  * c = color(50, 55, 100);  // Create a color for 'c'
  * fill(c);  // Use color variable 'c' as fill color
  * rect(0, 10, 45, 80);  // Draw left rect
@@ -213,7 +241,7 @@ p5.prototype.brightness = function(c) {
  * </code>
  * </div>
  */
-p5.prototype.color = function () {
+p5.prototype.color = function() {
   if (arguments[0] instanceof p5.Color) {
     return arguments[0];
   } else if (arguments[0] instanceof Array) {
@@ -317,26 +345,30 @@ p5.prototype.hue = function(c) {
  * </code>
  * </div>
  */
-p5.prototype.lerpColor = function (c1, c2, amt) {
-  amt = Math.max(Math.min(amt, 1), 0);
-  if (c1 instanceof Array) {
-    var c = [];
-    for (var i = 0; i < c1.length; i++) {
-      c.push(Math.sqrt(p5.prototype.lerp(c1[i]*c1[i], c2[i]*c2[i], amt)));
-    }
-    return c;
-  } else if (c1 instanceof p5.Color) {
-    var pc = [];
-    for (var j = 0; j < 4; j++) {
-      pc.push(Math.sqrt(p5.prototype.lerp(
-        c1.rgba[j]*c1.rgba[j],
-        c2.rgba[j]*c2.rgba[j],
-        amt)));
-    }
-    return new p5.Color(this, pc);
-  } else {
-    return Math.sqrt(p5.prototype.lerp(c1*c1, c2*c2, amt));
+p5.prototype.lerpColor = function(c1, c2, amt) {
+  var l1, l2, l3, l4;
+  var fromColor, toColor;
+
+  if(this._colorMode === constants.RGB) {
+    fromColor = this.color(c1).rgba;
+    toColor = this.color(c2).rgba;
   }
+  else if (this._colorMode === constants.HSB) {
+    fromColor = this.color(c1).hsba;
+    toColor = this.color(c2).hsba;
+  }
+  else if(this._colorMode === constants.HSL) {
+    fromColor = this.color(c1).hsla;
+    toColor = this.color(c2).hsla;
+  }
+  else {
+    return;
+  }
+  l1 = this.lerp(fromColor[0], toColor[0], amt);
+  l2 = this.lerp(fromColor[1], toColor[1], amt);
+  l3 = this.lerp(fromColor[2], toColor[2], amt);
+  l4 = this.lerp(fromColor[3], toColor[3], amt);
+  return this.color(l1, l2, l3, l4);
 };
 
 /**
@@ -383,6 +415,16 @@ p5.prototype.lightness = function(c) {
  * println(redValue);  // Print "255.0"
  * fill(redValue, 0, 0);  // Use 'redValue' in new fill
  * rect(50, 20, 35, 60);  // Draw right rectangle
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * colorMode(RGB, 255);
+ * var c = color(127, 255, 0);
+ * colorMode(RGB, 1);
+ * var myColor = red(c);
+ * print(myColor);
  * </code>
  * </div>
  */
