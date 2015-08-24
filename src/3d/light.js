@@ -6,12 +6,14 @@ p5.prototype.ambientLight = function(r, g, b, a){
   this._validateParameters(
     'ambientLight',
     arguments,
-    //rgba
-    ['Number', 'Number', 'Number', 'Number'],
-    //rgb
-    ['Number', 'Number', 'Number'],
-    //c
-    ['Number']
+    [
+      //rgba
+      ['Number', 'Number', 'Number', 'Number'],
+      //rgb
+      ['Number', 'Number', 'Number'],
+      //c
+      ['Number']
+    ]
   );
   var gl = this._graphics.GL;
   var shaderProgram = this._graphics._getShader(
@@ -47,12 +49,14 @@ p5.prototype.directionalLight = function(r, g, b, a, x, y, z) {
   this._validateParameters(
     'directionalLight',
     arguments,
-    //rgbaxyz
-    ['Number', 'Number', 'Number', 'Number', 'Number', 'Number', 'Number'],
-    //rgbxyz
-    ['Number', 'Number', 'Number', 'Number', 'Number', 'Number'],
-    //cxyz
-    ['Number', 'Number', 'Number', 'Number']
+    [
+      //rgbaxyz
+      ['Number', 'Number', 'Number', 'Number', 'Number', 'Number', 'Number'],
+      //rgbxyz
+      ['Number', 'Number', 'Number', 'Number', 'Number', 'Number'],
+      //cxyz
+      ['Number', 'Number', 'Number', 'Number']
+    ]
   );
 
   var gl = this._graphics.GL;
@@ -97,12 +101,14 @@ p5.prototype.pointLight = function(r, g, b, a, x, y, z) {
   this._validateParameters(
     'pointLight',
     arguments,
-    //rgbaxyz
-    ['Number', 'Number', 'Number', 'Number', 'Number', 'Number', 'Number'],
-    //rgbxyz
-    ['Number', 'Number', 'Number', 'Number', 'Number', 'Number'],
-    //cxyz
-    ['Number', 'Number', 'Number', 'Number']
+    [
+      //rgbaxyz
+      ['Number', 'Number', 'Number', 'Number', 'Number', 'Number', 'Number'],
+      //rgbxyz
+      ['Number', 'Number', 'Number', 'Number', 'Number', 'Number'],
+      //cxyz
+      ['Number', 'Number', 'Number', 'Number']
+    ]
   );
 
   var gl = this._graphics.GL;

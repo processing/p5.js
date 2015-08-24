@@ -78,7 +78,7 @@ p5.Renderer3D.prototype._init = function(first_argument) {
   this.pointLightCount = 0;
 };
 
-p5.Renderer3D.prototype._reset = function() {
+p5.Renderer3D.prototype._update = function() {
   this.resetMatrix();
   this.resetStack();
   this._setCamera = false;
@@ -114,7 +114,6 @@ p5.Renderer3D.prototype.background = function() {
   var _a = (_col.rgba[3]) / 255;
   gl.clearColor(_r, _g, _b, _a);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-  this._reset();
 };
 
 //@TODO implement this
@@ -145,7 +144,7 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
   // if our vertex shader failed compilation?
   if (!gl.getShaderParameter(_vertShader, gl.COMPILE_STATUS)) {
     alert('Yikes! An error occurred compiling the shaders:' +
-      gl._getShaderInfoLog(_vertShader));
+      gl.getShaderInfoLog(_vertShader));
     return null;
   }
 
@@ -156,7 +155,7 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
   // if our frag shader failed compilation?
   if (!gl.getShaderParameter(_fragShader, gl.COMPILE_STATUS)) {
     alert('Darn! An error occurred compiling the shaders:' +
-      gl._getShaderInfoLog(_fragShader));
+      gl.getShaderInfoLog(_fragShader));
     return null;
   }
 
@@ -170,8 +169,6 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
   //END SHADERS SETUP
 
   this._getLocation(shaderProgram, immediateMode);
-
-  this.mHash[vertId + '|' + fragId] = shaderProgram;
 
   return shaderProgram;
 };
@@ -239,23 +236,6 @@ p5.Renderer3D.prototype.setMatrixUniforms = function(shaderKey) {
     false, this.uNMatrix.mat4);
 };
 
-p5.Renderer3D.prototype._getShader = function(vertId, fragId) {
-  var mId = vertId+ '|' + fragId;
-
-  //if shader is not created yet
-
-  //create it and put it into hashTable
-  if(!this.materialInHash(mId)){
-    this.initShaders(vertId, fragId);
-  }
-  //also put its name into stack
-  if(mId !== this._getCurShaderId()){
-    this._saveShader(mId);
-  }
-  //return shader
-  return this.mHash[mId];
-};
-
 //////////////////////////////////////////////
 // STACK | for shader, vertex, color and mode
 //////////////////////////////////////////////
@@ -272,33 +252,47 @@ p5.Renderer3D.prototype.resetStack = function(){
   this.verticeStack = [];
 };
 
-p5.Renderer3D.prototype._saveShader = function(mId){
+p5.Renderer3D.prototype._saveShaderInStack = function(mId) {
   shaderStack.push(mId);
+};
+
+p5.Renderer3D.prototype._saveShaderInHash = function(mId, shaderProgram) {
+  this.mHash[mId] = shaderProgram;
+};
+
+p5.Renderer3D.prototype._getShader = function(vertId, fragId, immediateMode) {
+  var mId = vertId+ '|' + fragId;
+  //create it and put it into hashTable
+  if(!this.materialInHash(mId)){
+    var shaderProgram = this.initShaders(vertId, fragId, immediateMode);
+    this._saveShaderInHash(mId, shaderProgram);
+  }
+  //also put its name into stack
+  if(mId !== this._getCurShaderId()){
+    this._saveShaderInStack(mId);
+  }
+  return this.mHash[mId];
+};
+
+p5.Renderer3D.prototype._getCurShaderId = function(){
+  var mId;
+  //if there's nothing in the stack
+  if(shaderStack.length === 0){
+
+    //default shader: normalMaterial()
+    mId = 'normalVert|normalFrag';
+    var shaderProgram = this.initShaders('normalVert', 'normalFrag');
+    this._saveShaderInHash(mId, shaderProgram);
+    this._saveShaderInStack(mId);
+  }else{
+    mId = shaderStack[shaderStack.length - 1];
+  }
+  return mId;
 };
 
 p5.Renderer3D.prototype._getCurColor = function() {
   //default color: gray
   return this.colorStack[this.colorStack.length-1] || [0.5, 0.5, 0.5, 1.0];
-};
-
-p5.Renderer3D.prototype._getCurShaderId = function(){
-  var mId = shaderStack[shaderStack.length - 1];
-
-  //if there's nothing in the stack
-  if(mId === undefined){
-    //create and return default shader: basicMaterial
-    mId = 'normalVert|basicFrag';
-    var gl = this.GL;
-    var shaderProgram =
-     this.initShaders('normalVert', 'basicFrag');
-    shaderProgram.uMaterialColor = gl.getUniformLocation(
-      shaderProgram, 'uMaterialColor' );
-    var colors = this._getCurColor();
-    gl.uniform4f( shaderProgram.uMaterialColor,
-    colors[0], colors[1], colors[2], colors[3]);
-    this._saveShader(mId);
-  }
-  return mId;
 };
 
 //////////////////////////////////////////////

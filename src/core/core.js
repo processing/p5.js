@@ -294,7 +294,6 @@ var p5 = function(sketch, node, sync) {
       k.className = k.className.replace(reg, '');
     }
     this._setupDone = true;
-
   }.bind(this);
 
   this._draw = function () {
@@ -320,6 +319,11 @@ var p5 = function(sketch, node, sync) {
       this._updatePTouchCoords();
       this._frameRate = 1000.0/(now - this._lastFrameTime);
       this._lastFrameTime = now;
+    }
+
+    //mandatory update values for 3d
+    if(this._graphics.isP3D){
+      this._graphics._update();
     }
 
     // get notified the next time the browser gives us
