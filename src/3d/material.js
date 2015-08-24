@@ -82,7 +82,16 @@ function _isPowerOf2 (value) {
 }
 
 p5.prototype.basicMaterial = function(r, g, b, a){
-
+  this._validateParameters(
+    'basicMaterial',
+    arguments,
+    //rgba
+    ['Number', 'Number', 'Number', 'Number'],
+    //rgb
+    ['Number', 'Number', 'Number'],
+    //c
+    ['Number']
+  );
   var gl = this._graphics.GL;
 
   var shaderProgram = this._graphics._getShader('normalVert', 'basicFrag');

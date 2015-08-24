@@ -28,7 +28,7 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
 p5.prototype.ortho = function(left,right,bottom,top,near,far) {
   this._validateParameters(
     'ortho',
-    perspective,
+    arguments,
     [
       ['Number', 'Number', 'Number', 'Number', 'Number', 'Number']
     ]
