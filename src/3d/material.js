@@ -103,7 +103,16 @@ p5.prototype.basicMaterial = function(r, g, b, a){
 };
 
 p5.prototype.ambientMaterial = function(r, g, b, a) {
-
+  this._validateParameters(
+    'ambientMaterial',
+    arguments,
+    //rgba
+    ['Number', 'Number', 'Number', 'Number'],
+    //rgb
+    ['Number', 'Number', 'Number'],
+    //c
+    ['Number']
+  );
   var gl = this._graphics.GL;
   var shaderProgram = this._graphics._getShader('lightVert', 'lightFrag');
 
@@ -126,7 +135,16 @@ p5.prototype.ambientMaterial = function(r, g, b, a) {
 };
 
 p5.prototype.specularMaterial = function(r, g, b, a) {
-
+  this._validateParameters(
+    'specularMaterial',
+    arguments,
+    //rgba
+    ['Number', 'Number', 'Number', 'Number'],
+    //rgb
+    ['Number', 'Number', 'Number'],
+    //c
+    ['Number']
+  );
   var gl = this._graphics.GL;
   var shaderProgram = this._graphics._getShader('lightVert', 'lightFrag');
 
