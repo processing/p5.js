@@ -5,9 +5,6 @@ function setup(){
 function draw(){
   background(0);
 
-  camera(0, 0, 800);
-  perspective(60 / 180 * Math.PI, width/height, 0.1, 100);
-
   var locY = (mouseY / height - 0.5) * (-2);
   var locX = (mouseX / width - 0.5) *2;
 

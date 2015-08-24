@@ -3,13 +3,13 @@ function setup(){
 }
 
 function draw(){
-  background(250, 250, 250, 255);
+  background(250);
   var radius = width;
-  camera(0, 0, 1600);
-  perspective(60 / 180 * Math.PI, width/height, 0.1, 100);
+  
   orbitControl();
 
   normalMaterial();
+  translate(0, 0, -1000);
   for(var i = 0; i <= 20; i++){
     for(var j = 0; j <= 20; j++){
       push();

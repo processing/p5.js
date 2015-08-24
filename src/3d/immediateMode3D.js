@@ -5,13 +5,13 @@
 var p5 = require('../core/core');
 
 //////////////////////////////////////////////
-// Primitives2D in 3D space
+// _primitives2D in 3D space
 //////////////////////////////////////////////
 
-p5.Renderer3D.prototype.primitives2D = function(arr){
-
+p5.Renderer3D.prototype._primitives2D = function(arr){
+  this._setDefaultCamera();
   var gl = this.GL;
-  var shaderProgram = this.getColorVertexShader();
+  var shaderProgram = this._getColorVertexShader();
 
   //create vertice buffer
   var vertexPositionBuffer = this.verticeBuffer;
@@ -40,21 +40,16 @@ p5.Renderer3D.prototype.primitives2D = function(arr){
   this.setMatrixUniforms(mId);
 };
 
-//@TODO:
-p5.Renderer3D.prototype.strokeWeight = function() {
-  throw new Error('strokeWeight for 3d not yet implemented');
-};
-
 p5.Renderer3D.prototype.point = function(x, y, z){
   var gl = this.GL;
-  this.primitives2D([x, y, z]);
+  this._primitives2D([x, y, z]);
   gl.drawArrays(gl.POINTS, 0, 1);
   return this;
 };
 
 p5.Renderer3D.prototype.line = function(x1, y1, z1, x2, y2, z2){
   var gl = this.GL;
-  this.primitives2D([x1, y1, z1, x2, y2, z2]);
+  this._primitives2D([x1, y1, z1, x2, y2, z2]);
   gl.drawArrays(gl.LINES, 0, 2);
   return this;
 };
@@ -62,7 +57,7 @@ p5.Renderer3D.prototype.line = function(x1, y1, z1, x2, y2, z2){
 p5.Renderer3D.prototype.triangle = function
 (x1, y1, z1, x2, y2, z2, x3, y3, z3){
   var gl = this.GL;
-  this.primitives2D([x1, y1, z1, x2, y2, z2, x3, y3, z3]);
+  this._primitives2D([x1, y1, z1, x2, y2, z2, x3, y3, z3]);
   this._strokeCheck();
   gl.drawArrays(gl.TRIANGLES, 0, 3);
   return this;
@@ -72,7 +67,7 @@ p5.Renderer3D.prototype.triangle = function
 p5.Renderer3D.prototype.quad = function
 (x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4){
   var gl = this.GL;
-  this.primitives2D(
+  this._primitives2D(
     [x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4]);
   this._strokeCheck();
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
@@ -92,7 +87,7 @@ p5.Renderer3D.prototype.vertex = function(x, y, z){
 
 p5.Renderer3D.prototype.endShape = function(){
   var gl = this.GL;
-  this.primitives2D(this.verticeStack);
+  this._primitives2D(this.verticeStack);
   this.verticeStack = [];
   var mode = this.modeStack.pop();
 
@@ -129,6 +124,11 @@ p5.Renderer3D.prototype._strokeCheck = function(){
   }
 };
 
+//@TODO
+p5.Renderer3D.prototype.strokeWeight = function() {
+  throw new Error('strokeWeight for 3d not yet implemented');
+};
+
 //////////////////////////////////////////////
 // COLOR
 //////////////////////////////////////////////
@@ -153,7 +153,7 @@ p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
   return this;
 };
 
-p5.Renderer3D.prototype.getColorVertexShader = function(){
+p5.Renderer3D.prototype._getColorVertexShader = function(){
   var gl = this.GL;
   var mId = 'vertexColorVert|vertexColorFrag';
   var shaderProgram;

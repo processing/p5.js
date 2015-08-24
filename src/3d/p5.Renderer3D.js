@@ -62,7 +62,8 @@ p5.Renderer3D.prototype._applyDefaults = function() {
 //////////////////////////////////////////////
 
 p5.Renderer3D.prototype._init = function(first_argument) {
-   //for our default matrices
+  var gl = this.GL;
+  //for our default matrices
   this.initMatrix();
   this.initHash();
   //for immedidate mode
@@ -70,7 +71,7 @@ p5.Renderer3D.prototype._init = function(first_argument) {
   this.verticeBuffer = gl.createBuffer();
   this.colorBuffer = gl.createBuffer();
   //for camera
-  this.setCamera = false;
+  this._setCamera = false;
   //for counting lights
   this.ambientLightCount = 0;
   this.directionalLightCount = 0;
@@ -80,9 +81,11 @@ p5.Renderer3D.prototype._init = function(first_argument) {
 p5.Renderer3D.prototype._reset = function() {
   this.resetMatrix();
   this.resetStack();
+  this._setCamera = false;
   this.ambientLightCount = 0;
   this.directionalLightCount = 0;
   this.pointLightCount = 0;
+  this.translate(0, 0, -800);
 };
 
 /**
@@ -140,7 +143,7 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
   gl.shaderSource(_vertShader, shader[vertId]);
   gl.compileShader(_vertShader);
   // if our vertex shader failed compilation?
-  if (!gl._getShaderParameter(_vertShader, gl.COMPILE_STATUS)) {
+  if (!gl.getShaderParameter(_vertShader, gl.COMPILE_STATUS)) {
     alert('Yikes! An error occurred compiling the shaders:' +
       gl._getShaderInfoLog(_vertShader));
     return null;
@@ -151,7 +154,7 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
   gl.shaderSource(_fragShader, shader[fragId]);
   gl.compileShader(_fragShader);
   // if our frag shader failed compilation?
-  if (!gl._getShaderParameter(_fragShader, gl.COMPILE_STATUS)) {
+  if (!gl.getShaderParameter(_fragShader, gl.COMPILE_STATUS)) {
     alert('Darn! An error occurred compiling the shaders:' +
       gl._getShaderInfoLog(_fragShader));
     return null;
@@ -240,7 +243,7 @@ p5.Renderer3D.prototype._getShader = function(vertId, fragId) {
   var mId = vertId+ '|' + fragId;
 
   //if shader is not created yet
-  
+
   //create it and put it into hashTable
   if(!this.materialInHash(mId)){
     this.initShaders(vertId, fragId);
@@ -328,18 +331,16 @@ p5.Renderer3D.prototype.initMatrix = function(){
 p5.Renderer3D.prototype.resetMatrix = function() {
   this.uMVMatrix = p5.Matrix.identity();
   this.uPMatrix = p5.Matrix.identity();
-  this.setCamera = false;
 };
 
 //@TODO: figure out how to detect if user didn't set the camera
 //then call this function below
 p5.Renderer3D.prototype._setDefaultCamera = function(){
-  if(!this.setCamera){
+  if(!this._setCamera){
     var _w = this.width;
     var _h = this.height;
-    this.translate(0, 0, -800);
     this.uPMatrix.perspective(60 / 180 * Math.PI, _w / _h, 0.1, 100);
-    this.setCamera = true;
+    this._setCamera = true;
   }
 };
 

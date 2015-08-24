@@ -7,10 +7,8 @@ function setup(){
 function draw(){
   background(250, 250, 250, 255);
  
-  camera(0, 0, 1500);
-  perspective(60 / 180 * Math.PI, width/height, 0.1, 100);
-  
   normalMaterial();
+  translate(0, 0, -800);
   rotateY(frameCount * 0.01);
 
   for(var j = 0; j < 5; j++){
@@ -25,6 +23,6 @@ function draw(){
     pop();
   }
 
-  theta += 0.03;
+  theta += 0.02;
 
 }

@@ -26,6 +26,7 @@ p5.Renderer3D.prototype.createBuffer = function(gId, obj) {
  * @param  {Object} obj    an object containing geometry information
  */
 p5.Renderer3D.prototype.initBuffer = function(gId, obj) {
+  this._setDefaultCamera();
   var gl = this.GL;
   this.createBuffer(gId, obj);
 
@@ -62,6 +63,7 @@ p5.Renderer3D.prototype.initBuffer = function(gId, obj) {
  * @param  {String} gId     key of the geometery object
  */
 p5.Renderer3D.prototype.drawBuffer = function(gId) {
+  this._setDefaultCamera();
   var gl = this.GL;
   var shaderKey = this._getCurShaderId();
   var shaderProgram = this.mHash[shaderKey];
