@@ -25,7 +25,7 @@ p5.Renderer3D.prototype.primitives2D = function(arr){
   //create vertexcolor buffer
   var vertexColorBuffer = this.colorBuffer;
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
-  var color = this.getCurColor();
+  var color = this._getCurColor();
   var colors = [];
   for(var i = 0; i < arr.length / 3; i++){
     colors = colors.concat(color);
@@ -136,7 +136,7 @@ p5.Renderer3D.prototype._strokeCheck = function(){
 p5.Renderer3D.prototype.fill = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
   var colorNormalized = color._normalize();
-  if( colorNormalized !== this.getCurColor()){
+  if( colorNormalized !== this._getCurColor()){
     this.colorStack.push(colorNormalized);
   }
   this.drawModeStack.push('fill');
@@ -146,7 +146,7 @@ p5.Renderer3D.prototype.fill = function(r, g, b, a) {
 p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
   var colorNormalized = color._normalize();
-  if( colorNormalized !== this.getCurColor()){
+  if( colorNormalized !== this._getCurColor()){
     this.colorStack.push(colorNormalized);
   }
   this.drawModeStack.push('stroke');

@@ -7,7 +7,7 @@ var p5 = require('../core/core');
 * @return {[type]} [description]
 */
 p5.prototype.normalMaterial = function(){
-  this._graphics.getShader('normalVert', 'normalFrag');
+  this._graphics._getShader('normalVert', 'normalFrag');
   return this;
 };
 
@@ -36,7 +36,7 @@ p5.prototype.normalMaterial = function(){
  */
 p5.prototype.texture = function(image){
   var gl = this._graphics.GL;
-  var shaderProgram = this._graphics.getShader('normalVert',
+  var shaderProgram = this._graphics._getShader('normalVert',
     'textureFrag');
   gl.useProgram(shaderProgram);
   //create a texture on the graphics card
@@ -85,7 +85,7 @@ p5.prototype.basicMaterial = function(r, g, b, a){
 
   var gl = this._graphics.GL;
 
-  var shaderProgram = this._graphics.getShader('normalVert', 'basicFrag');
+  var shaderProgram = this._graphics._getShader('normalVert', 'basicFrag');
 
   gl.useProgram(shaderProgram);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
@@ -105,7 +105,7 @@ p5.prototype.basicMaterial = function(r, g, b, a){
 p5.prototype.ambientMaterial = function(r, g, b, a) {
 
   var gl = this._graphics.GL;
-  var shaderProgram = this._graphics.getShader('lightVert', 'lightFrag');
+  var shaderProgram = this._graphics._getShader('lightVert', 'lightFrag');
 
   gl.useProgram(shaderProgram);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
@@ -128,7 +128,7 @@ p5.prototype.ambientMaterial = function(r, g, b, a) {
 p5.prototype.specularMaterial = function(r, g, b, a) {
 
   var gl = this._graphics.GL;
-  var shaderProgram = this._graphics.getShader('lightVert', 'lightFrag');
+  var shaderProgram = this._graphics._getShader('lightVert', 'lightFrag');
 
   gl.useProgram(shaderProgram);
   shaderProgram.uMaterialColor = gl.getUniformLocation(

@@ -5,7 +5,7 @@ var p5 = require('../core/core');
 p5.prototype.ambientLight = function(r, g, b, a){
 
   var gl = this._graphics.GL;
-  var shaderProgram = this._graphics.getShader(
+  var shaderProgram = this._graphics._getShader(
     'lightVert', 'lightFrag');
 
   gl.useProgram(shaderProgram);
@@ -37,7 +37,7 @@ p5.prototype.ambientLight = function(r, g, b, a){
 p5.prototype.directionalLight = function(r, g, b, a, x, y, z) {
 
   var gl = this._graphics.GL;
-  var shaderProgram = this._graphics.getShader(
+  var shaderProgram = this._graphics._getShader(
     'lightVert', 'lightFrag');
 
   gl.useProgram(shaderProgram);
@@ -77,7 +77,7 @@ p5.prototype.directionalLight = function(r, g, b, a, x, y, z) {
 p5.prototype.pointLight = function(r, g, b, a, x, y, z) {
 
   var gl = this._graphics.GL;
-  var shaderProgram = this._graphics.getShader(
+  var shaderProgram = this._graphics._getShader(
     'lightVert', 'lightFrag');
 
   gl.useProgram(shaderProgram);
