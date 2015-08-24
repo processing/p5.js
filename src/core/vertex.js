@@ -550,9 +550,24 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  */
 p5.prototype.vertex = function(x, y, moveTo) {
   if(this._graphics.isP3D){
+    this._validateParameters(
+      'vertex',
+      arguments,
+      [
+        ['Number', 'Number', 'Number']
+      ]
+    );
     this._graphics.vertex
     (arguments[0], arguments[1], arguments[2]);
   }else{
+    this._validateParameters(
+      'vertex',
+      arguments,
+      [
+        ['Number', 'Number'],
+        ['Number', 'Number', 'Number']
+      ]
+    );
     var vert = [];
     vert.isVert = true;
     vert[0] = x;
