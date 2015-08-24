@@ -14,13 +14,17 @@ function draw(){
 
   for(var i = -2; i < 3; i++){
     for(var j = -2; j < 3; j++){
-      fill( (i+2) * 40, (j+2) * 40, 0);
-      quad(
-        i * gap, j * gap, 0,
-        i * gap + w, j * gap, 0,
-        i * gap, j * gap + h, 0,
-        i * gap + w, j * gap + h, 0
-        );
+      basicMaterial( (i+2) * 40, (j+2) * 40, 0);
+      push();
+      translate(i*gap, j*gap,0);
+      plane();
+      pop();
+      // quad(
+      //   i * gap, j * gap, 0,
+      //   i * gap + w, j * gap, 0,
+      //   i * gap, j * gap + h, 0,
+      //   i * gap + w, j * gap + h, 0
+      //   );
     }
   }
   
