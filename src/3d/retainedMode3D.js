@@ -5,10 +5,9 @@
 var p5 = require('../core/core');
 
 /**
- * [createBuffer description]
- * @param  {[type]} gId [description]
- * @param  {[type]} obj [description]
- * @return {[type]}     [description]
+ * createBuffer
+ * @param  {String} gId [description]
+ * @param  {String} obj [description]
  */
 p5.Renderer3D.prototype.createBuffer = function(gId, obj) {
   var gl = this.GL;
@@ -21,7 +20,7 @@ p5.Renderer3D.prototype.createBuffer = function(gId, obj) {
 };
 
 /**
- * [initBuffer description]
+ * initBuffer description
  * @param  {String} gId    key of the geometry object
  * @param  {Object} obj    an object containing geometry information
  */
@@ -59,7 +58,7 @@ p5.Renderer3D.prototype.initBuffer = function(gId, obj) {
 };
 
 /**
- * [drawBuffer description]
+ * drawBuffer
  * @param  {String} gId     key of the geometery object
  */
 p5.Renderer3D.prototype.drawBuffer = function(gId) {
