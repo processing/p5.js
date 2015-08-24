@@ -110,6 +110,13 @@ p5.prototype.rotate = function(r) {
  */
 p5.prototype.rotateX = function(rad) {
   if (this._graphics.isP3D) {
+    this._validateParameters(
+      'rotateX',
+      arguments,
+      [
+        ['Number']
+      ]
+    );
     this._graphics.rotateX(rad);
   } else {
     throw 'not yet implemented.';
@@ -124,6 +131,13 @@ p5.prototype.rotateX = function(rad) {
  */
 p5.prototype.rotateY = function(rad) {
   if (this._graphics.isP3D) {
+    this._validateParameters(
+      'rotateY',
+      arguments,
+      [
+        ['Number']
+      ]
+    );
     this._graphics.rotateY(rad);
   } else {
     throw 'not yet implemented.';
@@ -138,6 +152,13 @@ p5.prototype.rotateY = function(rad) {
  */
 p5.prototype.rotateZ = function(rad) {
   if (this._graphics.isP3D) {
+    this._validateParameters(
+      'rotateZ',
+      arguments,
+      [
+        ['Number']
+      ]
+    );
     this._graphics.rotateZ(rad);
   } else {
     throw 'not supported in p2d. Please use webgl mode';
@@ -186,8 +207,24 @@ p5.prototype.rotateZ = function(rad) {
  */
 p5.prototype.scale = function() {
   if (this._graphics.isP3D) {
+    this._validateParameters(
+      'scale',
+      arguments,
+      [
+        //p3d
+        ['Number', 'Number', 'Number']
+      ]
+    );
     this._graphics.scale(arguments[0], arguments[1], arguments[2]);
   } else {
+    this._validateParameters(
+      'scale',
+      arguments,
+      [
+        //p2d
+        ['Number', 'Number']
+      ]
+    );
     this._graphics.scale.apply(this._graphics, arguments);
   }
   return this;
@@ -303,8 +340,24 @@ p5.prototype.shearY = function(angle) {
  */
 p5.prototype.translate = function(x, y, z) {
   if (this._graphics.isP3D) {
+    this._validateParameters(
+      'translate',
+      arguments,
+      [
+        //p3d
+        ['Number', 'Number', 'Number']
+      ]
+    );
     this._graphics.translate(x, y, z);
   } else {
+    this._validateParameters(
+      'translate',
+      arguments,
+      [
+        //p2d
+        ['Number', 'Number']
+      ]
+    );
     this._graphics.translate(x, y);
   }
   return this;
