@@ -3,13 +3,12 @@
  * @submodule Material
  * @for p5
  * @requires core
- * @requires p5.Texture
  */
 
 'use strict';
 
 var p5 = require('../core/core');
-require('./p5.Texture');
+//require('./p5.Texture');
 
 /**
  * normal material for geometry
@@ -63,7 +62,7 @@ p5.prototype.normalMaterial = function(){
  */
 p5.prototype.texture = function(image){
   var gl = this._graphics.GL;
-  var shaderProgram = this._graphics.getShader('normalVert',
+  var shaderProgram = this._graphics._getShader('normalVert',
     'textureFrag');
   gl.useProgram(shaderProgram);
   var tex = gl.createTexture();
@@ -92,7 +91,7 @@ p5.prototype.texture = function(image){
     //@TODO handle following cases:
     //- 2D canvas (p5 inst)
   }
-  
+
   if (_isPowerOf2(image.width) && _isPowerOf2(image.height)) {
     gl.generateMipmap(gl.TEXTURE_2D);
   } else {
