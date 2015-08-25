@@ -1,36 +1,61 @@
+/**
+ * @module Lights, Camera
+ * @submodule Material
+ * @for p5
+ * @requires core
+ */
+
 'use strict';
 
 var p5 = require('../core/core');
 
 /**
-* [normal description]
-* @return {[type]} [description]
-*/
+ * normal material for geometry
+ * @method normalMaterial
+ * @return {p5}
+ * @example
+ * <div>
+ * <code>
+ * //please call this function before doing any transformation
+ * function setup(){
+ *   createCanvas(windowWidth, windowHeight, 'webgl');
+ * }
+ * function draw(){
+ *  background(255);
+ *  normalMaterial();
+ *  sphere(100);
+ * }
+ * </code>
+ * </div>
+ */
 p5.prototype.normalMaterial = function(){
   this._graphics._getShader('normalVert', 'normalFrag');
   return this;
 };
 
 /**
- * [textureMaterial description]
- * @return {[type]} [description]
+ * texture for geometry
+ * @method texture
+ * @return {p5}
  * @example
  * <div>
  * <code>
  * var img;
- * var theta = 0;
- * img = loadImage("assets/cat.jpg");
- * background(255, 255, 255, 255);
- * translate(0, 0, -200);
- * push();
- * rotateZ(theta * mouseX * 0.001);
- * rotateX(theta * mouseX * 0.001);
- * rotateY(theta * mouseX * 0.001);
- * // pass image as texture
- * texture(img);
- * box(40);
- * pop();
- * theta += 0.05;
+ * function preload(){
+ *   img = loadImage("assets/cat.jpg");
+ * }
+ * function setup(){
+ *   createCanvas(windowWidth, windowHeight, 'webgl');
+ * }
+ * function draw(){
+ *   background(255);
+ *   rotateZ(frameCount * 0.02);
+ *   rotateX(frameCount * 0.02);
+ *   rotateY(frameCount * 0.02);
+ *   // pass image as texture
+ *   texture(img);
+ *   box(60);
+ * }
  * </code>
  * </div>
  */
@@ -81,19 +106,33 @@ function _isPowerOf2 (value) {
   return (value & (value - 1)) === 0;
 }
 
-p5.prototype.basicMaterial = function(r, g, b, a){
-  this._validateParameters(
-    'basicMaterial',
-    arguments,
-    [
-      //rgba
-      ['Number', 'Number', 'Number', 'Number'],
-      //rgb
-      ['Number', 'Number', 'Number'],
-      //c
-      ['Number']
-    ]
-  );
+/**
+ * basic material for geometry with a given color
+ * @method  basicMaterial
+ * @param  {Number|Array|String|p5.Color} v1  gray value,
+ * red or hue value (depending on the current color mode),
+ * or color Array, or CSS color string
+ * @param  {Number}            [v2] optional: green or saturation value
+ * @param  {Number}            [v3] optional: blue or brightness value
+ * @param  {Number}            [a]  optional: opacity
+ * @return {p5}
+ * @example
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(windowWidth, windowHeight, 'webgl');
+ * }
+ * function draw(){
+ *  background(0);
+ *  rotateX(frameCount * 0.02);
+ *  rotateZ(frameCount * 0.02);
+ *  basicMaterial(250, 0, 0);
+ *  box(100);
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.basicMaterial = function(v1, v2, v3, a){
   var gl = this._graphics.GL;
 
   var shaderProgram = this._graphics._getShader('normalVert', 'basicFrag');
@@ -113,19 +152,32 @@ p5.prototype.basicMaterial = function(r, g, b, a){
 
 };
 
-p5.prototype.ambientMaterial = function(r, g, b, a) {
-  this._validateParameters(
-    'ambientMaterial',
-    arguments,
-    [
-      //rgba
-      ['Number', 'Number', 'Number', 'Number'],
-      //rgb
-      ['Number', 'Number', 'Number'],
-      //c
-      ['Number']
-    ]
-  );
+/**
+ * ambient material for geometry with a given color
+ * @method  ambientMaterial
+ * @param  {Number|Array|String|p5.Color} v1  gray value,
+ * red or hue value (depending on the current color mode),
+ * or color Array, or CSS color string
+ * @param  {Number}            [v2] optional: green or saturation value
+ * @param  {Number}            [v3] optional: blue or brightness value
+ * @param  {Number}            [a]  optional: opacity
+ * @return {p5}
+ * @example
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(windowWidth, windowHeight, 'webgl');
+ * }
+ * function draw(){
+ *  background(0);
+ *  pointLight(250, 250, 250, 100, 100, 0);
+ *  ambientMaterial(250);
+ *  sphere(100, 128);
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   var gl = this._graphics.GL;
   var shaderProgram = this._graphics._getShader('lightVert', 'lightFrag');
 
@@ -147,19 +199,32 @@ p5.prototype.ambientMaterial = function(r, g, b, a) {
   return this;
 };
 
-p5.prototype.specularMaterial = function(r, g, b, a) {
-  this._validateParameters(
-    'specularMaterial',
-    arguments,
-    [
-      //rgba
-      ['Number', 'Number', 'Number', 'Number'],
-      //rgb
-      ['Number', 'Number', 'Number'],
-      //c
-      ['Number']
-    ]
-  );
+/**
+ * specular material for geometry with a given color
+ * @method specularMaterial
+ * @param  {Number|Array|String|p5.Color} v1  gray value,
+ * red or hue value (depending on the current color mode),
+ * or color Array, or CSS color string
+ * @param  {Number}            [v2] optional: green or saturation value
+ * @param  {Number}            [v3] optional: blue or brightness value
+ * @param  {Number}            [a]  optional: opacity
+ * @return {p5}
+ * @example
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(windowWidth, windowHeight, 'webgl');
+ * }
+ * function draw(){
+ *  background(0);
+ *  pointLight(250, 250, 250, 100, 100, 0);
+ *  specularMaterial(250);
+ *  sphere(100, 128);
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   var gl = this._graphics.GL;
   var shaderProgram = this._graphics._getShader('lightVert', 'lightFrag');
 
