@@ -332,7 +332,7 @@ p5.Renderer3D.prototype._setDefaultCamera = function(){
   if(!this._setCamera){
     var _w = this.width;
     var _h = this.height;
-    this._graphics.uPMatrix = p5.Matrix.identity();
+    this.uPMatrix = p5.Matrix.identity();
     this.uPMatrix.perspective(60 / 180 * Math.PI, _w / _h, 0.1, 100);
     this._setCamera = true;
   }

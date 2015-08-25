@@ -50,7 +50,8 @@ void main(void){
 
   for(int j = 0; j < 8; j++){
     if(uDirectionalLightCount == j) break;
-    float directionalLightWeighting = max(dot(vertexNormal, uLightingDirection[j]), 0.0);
+    vec3 dir = uLightingDirection[j];
+    float directionalLightWeighting = max(dot(vertexNormal, dir), 0.0);
     directionalLightFactor += uDirectionalColor[j] * directionalLightWeighting;
   }
 
