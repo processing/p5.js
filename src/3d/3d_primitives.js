@@ -71,7 +71,7 @@ p5.prototype.plane = function(width, height){
  * draw a sphere with given raduis
  * @method sphere
  * @param  {Number} radius            radius of circle
- * @param  {Number} detail(optional)  number of segments,
+ * @param  {Number} [detail]          optional: number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
  * @return {p5}
@@ -129,7 +129,7 @@ p5.prototype.sphere = function(radius, detail){
  * @method  cylinder
  * @param  {Number} radius            radius of the surface
  * @param  {Number} height            height of the cylinder
- * @param  {Number} detail(optional)  number of segments,
+ * @param  {Number} [detail]          optional: number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
  * @return {p5}
@@ -220,7 +220,7 @@ p5.prototype.cylinder = function(radius, height, detail){
  * @method cone
  * @param  {Number} radius            radius of the bottom surface
  * @param  {Number} height            height of the cone
- * @param  {Number} detail(optional)  number of segments,
+ * @param  {Number} [detail]          optional: number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
  * @return {p5}
@@ -291,7 +291,7 @@ p5.prototype.cone = function(radius, height, detail){
  * @method torus
  * @param  {Number} radius            radius of the whole ring
  * @param  {Number} tubeRadius        radius of the tube
- * @param  {Number} detail(optional)  number of segments,
+ * @param  {Number} [detail]          optional: number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
  * @return {p5}
