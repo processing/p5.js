@@ -19,6 +19,7 @@ var p5 = require('../core/core');
  * @example
  * <div>
  * <code>
+ * //please call this function before doing any transformation
  * function setup(){
  *   createCanvas(windowWidth, windowHeight, 'webgl');
  * }
@@ -122,9 +123,7 @@ p5.prototype.ortho = function(left,right,bottom,top,near,far) {
   this._validateParameters(
     'ortho',
     arguments,
-    [
       ['Number', 'Number', 'Number', 'Number', 'Number', 'Number']
-    ]
   );
   left /= this.width;
   right /= this.width;
