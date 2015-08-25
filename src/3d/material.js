@@ -42,11 +42,9 @@ p5.prototype.normalMaterial = function(){
  * <div>
  * <code>
  * var img;
- * function preload(){
- *   img = loadImage("assets/cat.jpg");
- * }
  * function setup(){
  *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   img = loadImage("assets/cat.jpg");
  * }
  * function draw(){
  *   background(255);
