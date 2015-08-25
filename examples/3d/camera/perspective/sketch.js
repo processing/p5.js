@@ -1,22 +1,17 @@
 function setup(){
   createCanvas(windowWidth, windowHeight, 'webgl');
+  perspective(60 / 180 * PI, width/height, 0.1, 100);
 }
 
 function draw(){
   background(0);
   orbitControl();
-
-  perspective(60 / 180 * Math.PI, width/height, 0.1, 100);
-
-  translate(-width/2, 0, -100);
-
-  for(var i = 0; i < 10; i++){
-    for(var j = 0; j < 10; j++){
+  for(var i = -5; i < 6; i++){
+    for(var j = -5; j < 6; j++){
       push();
-      translate(i*150, 0, -j*150);
-      sphere();
+      translate(i*100, 0, j*100);
+      sphere(20);
       pop();
     }
   }
-  
 }

@@ -80,12 +80,11 @@ p5.Renderer3D.prototype._init = function(first_argument) {
 
 p5.Renderer3D.prototype._update = function() {
   this.resetMatrix();
-  this.resetStack();
-  this._setCamera = false;
+  this.translate(0, 0, -800);
   this.ambientLightCount = 0;
   this.directionalLightCount = 0;
   this.pointLightCount = 0;
-  this.translate(0, 0, -800);
+  this.resetStack();
 };
 
 /**
@@ -324,15 +323,16 @@ p5.Renderer3D.prototype.initMatrix = function(){
 
 p5.Renderer3D.prototype.resetMatrix = function() {
   this.uMVMatrix = p5.Matrix.identity();
-  this.uPMatrix = p5.Matrix.identity();
+  //this.uPMatrix = p5.Matrix.identity();
 };
 
-//@TODO: figure out how to detect if user didn't set the camera
+//detect if user didn't set the camera
 //then call this function below
 p5.Renderer3D.prototype._setDefaultCamera = function(){
   if(!this._setCamera){
     var _w = this.width;
     var _h = this.height;
+    this._graphics.uPMatrix = p5.Matrix.identity();
     this.uPMatrix.perspective(60 / 180 * Math.PI, _w / _h, 0.1, 100);
     this._setCamera = true;
   }
