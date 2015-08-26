@@ -227,6 +227,8 @@ var p5 = function(sketch, node, sync) {
       }
       // var methods = this._preloadMethods;
       for (var method in this._preloadMethods){
+        // default to p5 if no object defined
+        this._preloadMethods[method] = this._preloadMethods[method] || p5;
         var obj = this._preloadMethods[method];
         //it's p5, check if it's global or instance
         if (obj === p5.prototype){
@@ -280,7 +282,6 @@ var p5 = function(sketch, node, sync) {
     var context = this._isGlobal ? window : this;
     if (typeof context.preload === 'function') {
       for (var f in this._preloadMethods) {
-        //var o = this._preloadMethods[f];
         context[f] = this._preloadMethods[f][f];
       }
     }
