@@ -195,20 +195,18 @@ p5.prototype.ellipse = function(x, y, w, h) {
 //   }
 // };
 p5.prototype.line = function() {
-  this._validateParameters(
-    'line',
-    arguments,
-    [
-      ['Number', 'Number', 'Number', 'Number'],
-      ['Number', 'Number', 'Number', 'Number', 'Number', 'Number']
-    ]
-  );
-
   if (!this._doStroke) {
     return this;
   }
   //check whether we should draw a 3d line or 2d
   if(this._graphics.isP3D){
+    this._validateParameters(
+      'line',
+      arguments,
+      [
+        ['Number', 'Number', 'Number', 'Number', 'Number', 'Number']
+      ]
+    );
     this._graphics.line(
       arguments[0],
       arguments[1],
@@ -217,6 +215,13 @@ p5.prototype.line = function() {
       arguments[4],
       arguments[5]);
   } else {
+    this._validateParameters(
+      'line',
+      arguments,
+      [
+        ['Number', 'Number', 'Number', 'Number'],
+      ]
+    );
     this._graphics.line(
       arguments[0],
       arguments[1],
@@ -246,26 +251,31 @@ p5.prototype.line = function() {
  * </div>
  */
 p5.prototype.point = function() {
-  this._validateParameters(
-    'point',
-    arguments,
-    [
-      ['Number', 'Number'],
-      ['Number', 'Number', 'Number']
-    ]
-  );
-
   if (!this._doStroke) {
     return this;
   }
   //check whether we should draw a 3d line or 2d
   if(this._graphics.isP3D){
+    this._validateParameters(
+      'point',
+      arguments,
+      [
+        ['Number', 'Number', 'Number']
+      ]
+    );
     this._graphics.point(
       arguments[0],
       arguments[1],
       arguments[2]
       );
   } else {
+    this._validateParameters(
+      'point',
+      arguments,
+      [
+        ['Number', 'Number']
+      ]
+    );
     this._graphics.point(
       arguments[0],
       arguments[1]
@@ -300,23 +310,20 @@ p5.prototype.point = function() {
  * </div>
  */
 p5.prototype.quad = function() {
-  this._validateParameters(
-    'quad',
-    arguments,
-    [
-      [ 'Number', 'Number', 'Number', 'Number',
-        'Number', 'Number', 'Number', 'Number' ],
-      [ 'Number', 'Number', 'Number',
-        'Number', 'Number', 'Number',
-        'Number', 'Number', 'Number',
-        'Number', 'Number', 'Number']
-    ]
-  );
-
   if (!this._doStroke && !this._doFill) {
     return this;
   }
   if(this._graphics.isP3D){
+    this._validateParameters(
+      'quad',
+      arguments,
+      [
+        [ 'Number', 'Number', 'Number',
+          'Number', 'Number', 'Number',
+          'Number', 'Number', 'Number',
+          'Number', 'Number', 'Number']
+      ]
+    );
     this._graphics.quad(
       arguments[0],
       arguments[1],
@@ -332,6 +339,14 @@ p5.prototype.quad = function() {
       arguments[11]
       );
   } else {
+    this._validateParameters(
+      'quad',
+      arguments,
+      [
+        [ 'Number', 'Number', 'Number', 'Number',
+          'Number', 'Number', 'Number', 'Number' ]
+      ]
+    );
     this._graphics.quad(
      arguments[0],
      arguments[1],
@@ -430,20 +445,19 @@ p5.prototype.rect = function (x, y, w, h, tl, tr, br, bl) {
 * </div>
 */
 p5.prototype.triangle = function() {
-  this._validateParameters(
-    'triangle',
-    arguments,
-    [
-      ['Number', 'Number', 'Number', 'Number', 'Number', 'Number'],
-      ['Number', 'Number', 'Number', 'Number', 'Number', 'Number',
-       'Number', 'Number', 'Number']
-    ]
-  );
 
   if (!this._doStroke && !this._doFill) {
     return this;
   }
   if(this._graphics.isP3D){
+    this._validateParameters(
+      'triangle',
+      arguments,
+      [
+        ['Number', 'Number', 'Number', 'Number', 'Number', 'Number',
+         'Number', 'Number', 'Number']
+      ]
+    );
     this._graphics.triangle(
       arguments[0],
       arguments[1],
@@ -456,6 +470,13 @@ p5.prototype.triangle = function() {
       arguments[8]
       );
   } else {
+    this._validateParameters(
+      'triangle',
+      arguments,
+      [
+        ['Number', 'Number', 'Number', 'Number', 'Number', 'Number']
+      ]
+    );
     this._graphics.triangle(
      arguments[0],
      arguments[1],

@@ -5,8 +5,7 @@ function setup(){
 function draw(){
   background(0);
 
-  camera(width/4, 0, 600);
-  perspective(60 / 180 * Math.PI, width/height, 0.1, 100);
+  translate(-width/4, 0, 0);
 
   ambientLight(50);
   pointLight(250, 250, 250, -70, 70, 0);
@@ -22,10 +21,10 @@ function draw(){
   translate(250, 0, 0);
 
   ambientMaterial(250);
-  sphere();
+  sphere(50, 128);
   
   translate(250, 0, 0);
 
   specularMaterial(250);
-  sphere(50, 64);
+  sphere(50, 128);
 }
