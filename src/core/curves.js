@@ -219,13 +219,15 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * @example
  * <div>
  * <code>
+ * p1 = {x: 5, y: 26}, p2 = {x: 73, y: 24}
+ * p3 = {x: 73, y: 61}, p4 = {x: 15, y: 65}
  * noFill();
  * stroke(255, 102, 0);
- * curve(5, 26, 5, 26, 73, 24, 73, 61);
+ * curve(p1.x, p1.y, p1.x, p1.y, p2.x, p2.y)
  * stroke(0);
- * curve(5, 26, 73, 24, 73, 61, 15, 65);
+ * curve(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y)
  * stroke(255, 102, 0);
- * curve(73, 24, 73, 61, 15, 65, 15, 65);
+ * curve(p2.x, p2.y, p3.x, p3.y, p4.x, p4.y, p4.x, p4.y)
  * </code>
  * </div>
  */
