@@ -110,8 +110,8 @@ p5.prototype.bezierDetail = function(d) {
  * steps = 10;
  * for (i = 0; i <= steps; i++) {
  *   t = i / steps;
- *   x = bezierPoint(x1, x2, x3, x4);
- *   y = bezierPoint(y1, y2, y3, y4);
+ *   x = bezierPoint(x1, x2, x3, x4, t);
+ *   y = bezierPoint(y1, y2, y3, y4, t);
  *   ellipse(x, y, 5, 5);
  * }
  * </code>
@@ -219,6 +219,18 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * @example
  * <div>
  * <code>
+ * noFill();
+ * stroke(255, 102, 0);
+ * curve(5, 26, 5, 26, 73, 24, 73, 61);
+ * stroke(0);
+ * curve(5, 26, 73, 24, 73, 61, 15, 65);
+ * stroke(255, 102, 0);
+ * curve(73, 24, 73, 61, 15, 65, 15, 65);
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * // Define the curve points as JavaScript objects
  * p1 = {x: 5, y: 26}, p2 = {x: 73, y: 24}
  * p3 = {x: 73, y: 61}, p4 = {x: 15, y: 65}
  * noFill();
