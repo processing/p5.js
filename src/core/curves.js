@@ -16,12 +16,12 @@ var curveDetail = 20;
 p5.prototype._curveTightness = 0;
 
 /**
- * Draws a Bezier curve on the screen. These curves are defined by a series
+ * Draws a cubic Bezier curve on the screen. These curves are defined by a series
  * of anchor and control points. The first two parameters specify the first
- * anchor point and the last two parameters specify the other anchor point.
- * The middle parameters specify the control points which define the shape
- * of the curve. Bezier curves were developed by French engineer Pierre
- * Bezier.
+ * anchor point and the last two parameters specify the other anchor point, which become the first and last points on the curve.
+ * The middle parameters specify the two control points which define the shape
+ * of the curve. Approximately speaking, control points "pull" the curve towards them.<br /><br />Bezier curves were developed by French automotive engineer Pierre
+ * Bezier, and are commonly used in computer graphics to define gently sloping curves. See also curve().
  *
  * @method bezier
  * @param  {Number} x1 x-coordinate for the first anchor point
