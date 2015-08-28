@@ -103,13 +103,15 @@ p5.prototype.bezierDetail = function(d) {
  * <div>
  * <code>
  * noFill();
- * bezier(85, 20, 10, 10, 90, 90, 15, 80);
+ * x1 = 85, x2 = 10, x3 = 90, x4 = 15;
+ * y1 = 20, y2 = 10, y3 = 90, y4 = 80;
+ * bezier(x1, y1, x2, y2, x3, y3, x4, y4);
  * fill(255);
  * steps = 10;
  * for (i = 0; i <= steps; i++) {
  *   t = i / steps;
- *   x = bezierPoint(85, 10, 90, 15, t);
- *   y = bezierPoint(20, 10, 90, 80, t);
+ *   x = bezierPoint(x1, x2, x3, x4);
+ *   y = bezierPoint(y1, y2, y3, y4);
  *   ellipse(x, y, 5, 5);
  * }
  * </code>
