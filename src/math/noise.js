@@ -59,10 +59,10 @@ var perlin;
  * shapes, terrains etc.<br /><br /> The main difference to the
  * <b>random()</b> function is that Perlin noise is defined in an infinite
  * n-dimensional space where each pair of coordinates corresponds to a
- * fixed semi-random value (fixed only for the lifespan of the program).
- * The resulting value will always be between 0.0 and 1.0. p5.js can
- * compute 1D, 2D and 3D noise, depending on the number of coordinates
- * given. The noise value can be animated by moving through the noise space
+ * fixed semi-random value (fixed only for the lifespan of the program; see the noiseSeed() function).
+ * p5.js can compute 1D, 2D and 3D noise, depending on the number of coordinates given.
+ * The resulting value will always be between 0.0 and 1.0.
+ * The noise value can be animated by moving through the noise space
  * as demonstrated in the example above. The 2nd and 3rd dimension can also
  * be interpreted as time.<br /><br />The actual noise is structured
  * similar to an audio signal, in respect to the function's use of
