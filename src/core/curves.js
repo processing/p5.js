@@ -16,12 +16,15 @@ var curveDetail = 20;
 p5.prototype._curveTightness = 0;
 
 /**
- * Draws a cubic Bezier curve on the screen. These curves are defined by a series
- * of anchor and control points. The first two parameters specify the first
- * anchor point and the last two parameters specify the other anchor point, which become the first and last points on the curve.
- * The middle parameters specify the two control points which define the shape
- * of the curve. Approximately speaking, control points "pull" the curve towards them.<br /><br />Bezier curves were developed by French automotive engineer Pierre
- * Bezier, and are commonly used in computer graphics to define gently sloping curves. See also curve().
+ * Draws a cubic Bezier curve on the screen. These curves are defined by a
+ * series of anchor and control points. The first two parameters specify
+ * the first anchor point and the last two parameters specify the other
+ * anchor point, which become the first and last points on the curve. The
+ * middle parameters specify the two control points which define the shape
+ * of the curve. Approximately speaking, control points "pull" the curve
+ * towards them.<br /><br />Bezier curves were developed by French
+ * automotive engineer Pierre Bezier, and are commonly used in computer
+ * graphics to define gently sloping curves. See also curve().
  *
  * @method bezier
  * @param  {Number} x1 x-coordinate for the first anchor point
@@ -196,8 +199,8 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * middle four parameters. The first two parameters are a control point, as
  * if the curve came from this point even though it's not drawn. The last
  * two parameters similarly describe the other control point. <br /><br />
- * Longer curves can be created by putting a series of curve()
- * functions together or using curveVertex(). An additional function called
+ * Longer curves can be created by putting a series of curve() functions
+ * together or using curveVertex(). An additional function called
  * curveTightness() provides control for the visual quality of the curve.
  * The curve() function is an implementation of Catmull-Rom splines.
  *
@@ -349,8 +352,8 @@ p5.prototype.curvePoint = function(a, b, c, d, t) {
 
 /**
  * Evaluates the tangent to the curve at position t for points a, b, c, d.
- * The parameter t varies between 0 and 1, a and d are points
- * on the curve, and b and c are the control points
+ * The parameter t varies between 0 and 1, a and d are points on the curve,
+ * and b and c are the control points
  *
  * @method curveTangent
  * @param {Number} a coordinate of first point on the curve
