@@ -194,10 +194,11 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
 };
 
 /**
- * Draws a curved line on the screen. The first and second parameters specify
- * the beginning control point and the last two parameters specify the ending
- * control point. The middle parameters specify the start and stop of the
- * curve. Longer curves can be created by putting a series of curve()
+ * Draws a curved line on the screen between two points, given as the
+ * middle four parameters. The first two parameters are a control point, as
+ * if the curve came from this point even though it's not drawn. The last
+ * two parameters similarly describe the other control point. <br /><br />
+ * Longer curves can be created by putting a series of curve()
  * functions together or using curveVertex(). An additional function called
  * curveTightness() provides control for the visual quality of the curve.
  * The curve() function is an implementation of Catmull-Rom splines.
@@ -340,7 +341,7 @@ p5.prototype.curveTightness = function (t) {
  * </code>
  * </div>
  */
-p5.prototype.curvePoint = function(a, b,c, d, t) {
+p5.prototype.curvePoint = function(a, b, c, d, t) {
   var t3 = t*t*t,
     t2 = t*t,
     f1 = -0.5 * t3 + t2 - 0.5 * t,
