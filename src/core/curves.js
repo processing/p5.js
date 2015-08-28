@@ -82,11 +82,10 @@ p5.prototype.bezierDetail = function(d) {
 };
 
 /**
- * Calculate a point on the Bezier Curve
- *
- * Evaluates the Bezier at point t for points a, b, c, d.
- * The parameter t varies between 0 and 1, a and d are points
+ * Evaluates the Bezier at position t for points a, b, c, d.
+ * The parameters a and d are the first and last points
  * on the curve, and b and c are the control points.
+ * The final parameter t varies between 0 and 1.
  * This can be done once with the x coordinates and a second time
  * with the y coordinates to get the location of a bezier curve at t.
  *
@@ -96,7 +95,7 @@ p5.prototype.bezierDetail = function(d) {
  * @param {Number} c coordinate of second control point
  * @param {Number} d coordinate of second point on the curve
  * @param {Number} t value between 0 and 1
- * @return {Number} the value of the Bezier at point t
+ * @return {Number} the value of the Bezier at position t
  * @example
  * <div>
  * <code>
@@ -122,11 +121,10 @@ p5.prototype.bezierPoint = function(a, b, c, d, t) {
 };
 
 /**
- * Calculates the tangent of a point on a Bezier curve
- *
- * Evaluates the tangent at point t for points a, b, c, d.
- * The parameter t varies between 0 and 1, a and d are points
- * on the curve, and b and c are the control points
+ * Evaluates the tangent to the Bezier at position t for points a, b, c, d.
+ * The parameters a and d are the first and last points
+ * on the curve, and b and c are the control points.
+ * The final parameter t varies between 0 and 1.
  *
  * @method bezierTangent
  * @param {Number} a coordinate of first point on the curve
@@ -134,7 +132,7 @@ p5.prototype.bezierPoint = function(a, b, c, d, t) {
  * @param {Number} c coordinate of second control point
  * @param {Number} d coordinate of second point on the curve
  * @param {Number} t value between 0 and 1
- * @return {Number} the tangent at point t
+ * @return {Number} the tangent at position t
  * @example
  * <div>
  * <code>
@@ -305,9 +303,7 @@ p5.prototype.curveTightness = function (t) {
 };
 
 /**
- * Calculate a point on the Curve
- *
- * Evaluates the Bezier at point t for points a, b, c, d.
+ * Evaluates the curve at position t for points a, b, c, d.
  * The parameter t varies between 0 and 1, a and d are points
  * on the curve, and b and c are the control points.
  * This can be done once with the x coordinates and a second time
@@ -319,7 +315,7 @@ p5.prototype.curveTightness = function (t) {
  * @param {Number} c coordinate of second control point
  * @param {Number} d coordinate of second point on the curve
  * @param {Number} t value between 0 and 1
- * @return {Number} bezier value at point t
+ * @return {Number} bezier value at position t
  * @example
  * <div>
  * <code>
@@ -352,9 +348,7 @@ p5.prototype.curvePoint = function(a, b, c, d, t) {
 };
 
 /**
- * Calculates the tangent of a point on a curve
- *
- * Evaluates the tangent at point t for points a, b, c, d.
+ * Evaluates the tangent to the curve at position t for points a, b, c, d.
  * The parameter t varies between 0 and 1, a and d are points
  * on the curve, and b and c are the control points
  *
@@ -364,7 +358,7 @@ p5.prototype.curvePoint = function(a, b, c, d, t) {
  * @param {Number} c coordinate of second control point
  * @param {Number} d coordinate of second point on the curve
  * @param {Number} t value between 0 and 1
- * @return {Number} the tangent at point t
+ * @return {Number} the tangent at position t
  * @example
  * <div>
  * <code>
