@@ -31,23 +31,11 @@ var PERLIN_SIZE = 4095;
 var perlin_octaves = 4; // default to medium smooth
 var perlin_amp_falloff = 0.5; // 50% reduction/octave
 
-// [toxi 031112]
-// Maybe we should have a lookup table for speed
+var scaled_cosine = function(i) {
+  return 0.5*(1.0-Math.cos(i*Math.PI));
+};
 
-var SINCOS_PRECISION = 0.5;
-var SINCOS_LENGTH = Math.floor(360 / SINCOS_PRECISION);
-var sinLUT = new Array(SINCOS_LENGTH);
-var cosLUT = new Array(SINCOS_LENGTH);
-var DEG_TO_RAD = Math.PI/180.0;
-for (var i = 0; i < SINCOS_LENGTH; i++) {
-  sinLUT[i] = Math.sin(i * DEG_TO_RAD * SINCOS_PRECISION);
-  cosLUT[i] = Math.cos(i * DEG_TO_RAD * SINCOS_PRECISION);
-}
-
-var perlin_PI = SINCOS_LENGTH;
-perlin_PI >>= 1;
-
-var perlin;
+var perlin; // will be initialized lazily by noise() or noiseSeed()
 
 
 /**
@@ -59,23 +47,23 @@ var perlin;
  * shapes, terrains etc.<br /><br /> The main difference to the
  * <b>random()</b> function is that Perlin noise is defined in an infinite
  * n-dimensional space where each pair of coordinates corresponds to a
- * fixed semi-random value (fixed only for the lifespan of the program).
- * The resulting value will always be between 0.0 and 1.0. p5.js can
- * compute 1D, 2D and 3D noise, depending on the number of coordinates
- * given. The noise value can be animated by moving through the noise space
- * as demonstrated in the example above. The 2nd and 3rd dimension can also
- * be interpreted as time.<br /><br />The actual noise is structured
- * similar to an audio signal, in respect to the function's use of
- * frequencies. Similar to the concept of harmonics in physics, perlin
- * noise is computed over several octaves which are added together for the
- * final result. <br /><br />Another way to adjust the character of the
- * resulting sequence is the scale of the input coordinates. As the
- * function works within an infinite space the value of the coordinates
- * doesn't matter as such, only the distance between successive coordinates
- * does (eg. when using <b>noise()</b> within a loop). As a general rule
- * the smaller the difference between coordinates, the smoother the
- * resulting noise sequence will be. Steps of 0.005-0.03 work best for most
- * applications, but this will differ depending on use.
+ * fixed semi-random value (fixed only for the lifespan of the program; see
+ * the noiseSeed() function). p5.js can compute 1D, 2D and 3D noise,
+ * depending on the number of coordinates given. The resulting value will
+ * always be between 0.0 and 1.0. The noise value can be animated by moving
+ * through the noise space as demonstrated in the example above. The 2nd
+ * and 3rd dimension can also be interpreted as time.<br /><br />The actual
+ * noise is structured similar to an audio signal, in respect to the
+ * function's use of frequencies. Similar to the concept of harmonics in
+ * physics, perlin noise is computed over several octaves which are added
+ * together for the final result. <br /><br />Another way to adjust the
+ * character of the resulting sequence is the scale of the input
+ * coordinates. As the function works within an infinite space the value of
+ * the coordinates doesn't matter as such, only the distance between
+ * successive coordinates does (eg. when using <b>noise()</b> within a
+ * loop). As a general rule the smaller the difference between coordinates,
+ * the smoother the resulting noise sequence will be. Steps of 0.005-0.03
+ * work best for most applications, but this will differ depending on use.
  *
  *
  * @method noise
@@ -111,16 +99,10 @@ var perlin;
  * </div>
  */
 p5.prototype.noise = function(x,y,z) {
-  // is this legit?
   y = y || 0;
   z = z || 0;
 
   if (perlin == null) {
-    // need to deal with seeding?
-    //if (perlinRandom == null) {
-    //  perlinRandom = new Random();
-    //}
-
     perlin = new Array(PERLIN_SIZE + 1);
     for (var i = 0; i < PERLIN_SIZE + 1; i++) {
       perlin[i] = Math.random();
@@ -142,17 +124,11 @@ p5.prototype.noise = function(x,y,z) {
 
   var n1,n2,n3;
 
-  // Is this right do just have this here?
-  var noise_fsc = function(i) {
-    // using cosine lookup table
-    return 0.5*(1.0-cosLUT[Math.floor(i*perlin_PI)%SINCOS_LENGTH]);
-  };
-
   for (var o=0; o<perlin_octaves; o++) {
     var of=xi+(yi<<PERLIN_YWRAPB)+(zi<<PERLIN_ZWRAPB);
 
-    rxf= noise_fsc(xf);
-    ryf= noise_fsc(yf);
+    rxf = scaled_cosine(xf);
+    ryf = scaled_cosine(yf);
 
     n1  = perlin[of&PERLIN_SIZE];
     n1 += rxf*(perlin[(of+1)&PERLIN_SIZE]-n1);
@@ -167,7 +143,7 @@ p5.prototype.noise = function(x,y,z) {
     n3 += rxf*(perlin[(of+PERLIN_YWRAP+1)&PERLIN_SIZE]-n3);
     n2 += ryf*(n3-n2);
 
-    n1 += noise_fsc(zf)*(n2-n1);
+    n1 += scaled_cosine(zf)*(n2-n1);
 
     r += n1*ampl;
     ampl *= perlin_amp_falloff;
@@ -185,12 +161,6 @@ p5.prototype.noise = function(x,y,z) {
   return r;
 };
 
-
-
-// [toxi 040903]
-// make perlin noise quality user controlled to allow
-// for different levels of detail. lower values will produce
-// smoother results as higher octaves are suppressed
 
 /**
  *
