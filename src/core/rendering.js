@@ -95,6 +95,9 @@ p5.prototype.createCanvas = function(w, h, renderer) {
   }
   this._graphics.resize(w, h);
   this._graphics._applyDefaults();
+  if (isDefault) { // only push once
+    this._elements.push(this._graphics);
+  }
   return this._graphics;
 };
 

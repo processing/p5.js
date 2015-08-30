@@ -148,8 +148,8 @@ var p5 = function(sketch, node, sync) {
   this._userNode = node;
   this._curElement = null;
   this._elements = [];
+  this._requestAnimId = 0;
   this._preloadCount = 0;
-  this._updateInterval = 0;
   this._isGlobal = false;
   this._loop = true;
   this._styles = [];
@@ -336,7 +336,7 @@ var p5 = function(sketch, node, sync) {
     // get notified the next time the browser gives us
     // an opportunity to draw.
     if (this._loop) {
-      window.requestAnimationFrame(this._draw);
+      this._requestAnimId = window.requestAnimationFrame(this._draw);
     }
   }.bind(this);
 
@@ -376,8 +376,8 @@ var p5 = function(sketch, node, sync) {
 
       // stop draw
       this._loop = false;
-      if (this._updateInterval) {
-        clearTimeout(this._updateInterval);
+      if (this._requestAnimId) {
+        window.cancelAnimationFrame(this._requestAnimId);
       }
 
       // unregister events sketch-wide
