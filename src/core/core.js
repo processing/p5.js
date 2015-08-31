@@ -231,7 +231,7 @@ var p5 = function(sketch, node, sync) {
         this._preloadMethods[method] = this._preloadMethods[method] || p5;
         var obj = this._preloadMethods[method];
         //it's p5, check if it's global or instance
-        if (obj === p5.prototype){
+        if (obj === p5.prototype || obj === p5){
           obj = this._isGlobal ? window : this;
         }
         this._registeredPreloadMethods[method] = obj[method];
