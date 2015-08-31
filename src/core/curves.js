@@ -235,7 +235,7 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * p3 = {x: 73, y: 61}, p4 = {x: 15, y: 65}
  * noFill();
  * stroke(255, 102, 0);
- * curve(p1.x, p1.y, p1.x, p1.y, p2.x, p2.y)
+ * curve(p1.x, p1.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y)
  * stroke(0);
  * curve(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y)
  * stroke(255, 102, 0);
