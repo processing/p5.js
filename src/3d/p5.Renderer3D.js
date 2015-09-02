@@ -66,7 +66,7 @@ p5.Renderer3D.prototype._init = function(first_argument) {
   this.initMatrix();
   this.initHash();
   //for immedidate mode
-  this.resetStack();
+  this.verticeStack = [];
   this.verticeBuffer = gl.createBuffer();
   this.colorBuffer = gl.createBuffer();
   //for camera
@@ -83,7 +83,7 @@ p5.Renderer3D.prototype._update = function() {
   this.ambientLightCount = 0;
   this.directionalLightCount = 0;
   this.pointLightCount = 0;
-  this.resetStack();
+  this.verticeStack = [];
 };
 
 /**
@@ -235,19 +235,8 @@ p5.Renderer3D.prototype.setMatrixUniforms = function(shaderKey) {
 };
 
 //////////////////////////////////////////////
-// STACK | for shader, vertex, color and mode
+// GET CURRENT | for shader and color
 //////////////////////////////////////////////
-
-p5.Renderer3D.prototype.resetStack = function(){
-  //holding colors declaration, like [0, 120, 0]
-  this.colorStack = [];
-  //holding mode, like TIANGLE or 'LINES'
-  this.modeStack = [];
-  //holding 'fill' or 'stroke'
-  this.drawModeStack = [];
-  //holding an array of vertex position
-  this.verticeStack = [];
-};
 
 p5.Renderer3D.prototype._getShader = function(vertId, fragId, immediateMode) {
   var mId = vertId+ '|' + fragId;
@@ -276,7 +265,10 @@ p5.Renderer3D.prototype._getCurShaderId = function(){
 
 p5.Renderer3D.prototype._getCurColor = function() {
   //default color: gray
-  return this.colorStack[this.colorStack.length-1] || [0.5, 0.5, 0.5, 1.0];
+  if(this.curColor === undefined) {
+    this.curColor = [0.5, 0.5, 0.5, 1.0];
+  }
+  return this.curColor;
 };
 
 //////////////////////////////////////////////
