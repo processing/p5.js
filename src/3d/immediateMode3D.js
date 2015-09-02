@@ -161,7 +161,7 @@ p5.Renderer3D.prototype._getColorVertexShader = function(){
   if(!this.materialInHash(mId)){
     shaderProgram =
       this.initShaders('vertexColorVert', 'vertexColorFrag', true);
-    this._saveShaderInHash(mId, shaderProgram);
+    this.mHash[mId] = shaderProgram;
     shaderProgram.vertexColorAttribute =
     gl.getAttribLocation(shaderProgram, 'aVertexColor');
     gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
