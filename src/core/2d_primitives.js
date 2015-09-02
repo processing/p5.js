@@ -234,7 +234,8 @@ p5.prototype.line = function() {
 /**
  * Draws a point, a coordinate in space at the dimension of one pixel.
  * The first parameter is the horizontal value for the point, the second
- * value is the vertical value for the point.
+ * value is the vertical value for the point. The color of the point is
+ * determined by the current stroke.
  *
  * @method point
  * @param  {Number} x the x-coordinate
