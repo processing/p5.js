@@ -382,7 +382,7 @@ p5.prototype.height = 0;
  * function mousePressed() {
  *   if (mouseX > 0 && mouseX < 100 && mouseY > 0 && mouseY < 100) {
  *     var fs = fullScreen();
- *     fullscreen(!fs);
+ *     fullScreen(!fs);
  *   }
  * }
  * </code>
