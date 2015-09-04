@@ -1,12 +1,12 @@
 function setup(){
-  createCanvas(windowWidth, windowHeight, 'webgl');
+  createCanvas(windowWidth, windowHeight, WEBGL);
 }
 
 function draw(){
 
   background(255);
 
-  translate( -width/2, -height/2, -600);
+  translate(-width/2, -height/2, 0);
 
   rotateY(frameCount * 0.01);
 
@@ -21,7 +21,7 @@ function draw(){
         i * gap, j * gap, 0,
         i * gap + w, j * gap, 0,
         i * gap, j * gap + h, 0,
-        i * gap + w, j * gap + h/2 * (sin(frameCount * 0.1 + i + j) + 1), 0
+        i * gap + w, j * gap + h, 0
         );
     }
   }

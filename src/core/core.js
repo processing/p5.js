@@ -333,6 +333,11 @@ var p5 = function(sketch, node, sync) {
       this._lastFrameTime = now;
     }
 
+    //mandatory update values(matrixs and stack) for 3d
+    if(this._graphics.isP3D){
+      this._graphics._update();
+    }
+
     // get notified the next time the browser gives us
     // an opportunity to draw.
     if (this._loop) {
