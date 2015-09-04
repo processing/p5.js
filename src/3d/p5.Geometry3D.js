@@ -211,12 +211,6 @@ p5.Geometry3D.prototype.computeVertexNormals = function (){
 
 };
 
-/**
- * [generateUV description]
- * @param  {[type]} faces [description]
- * @param  {[type]} uvs   [description]
- * @return {[type]}       [description]
- */
 p5.Geometry3D.prototype.generateUV = function(faces, uvs){
 
   faces = flatten(faces);
