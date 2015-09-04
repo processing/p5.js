@@ -243,7 +243,7 @@ p5.Renderer3D.prototype.resetStack = function(){
   shaderStack = [];
   //holding colors declaration, like [0, 120, 0]
   this.colorStack = [];
-  //holding mode, like TIANGLE or 'LINES'
+  //holding mode, like TRIANGLE or 'LINES'
   this.modeStack = [];
   //holding 'fill' or 'stroke'
   this.drawModeStack = [];
@@ -368,8 +368,19 @@ p5.Renderer3D.prototype.scale = function(x, y, z) {
 };
 
 /**
+ * [rotate description]
+ * @param  {Number} rad  angle in radians
+ * @param  {p5.Vector | Array} axis axis to rotate around
+ * @return {p5.Renderer3D}      [description]
+ */
+p5.Renderer3D.prototype.rotate = function(rad, axis){
+  this.uMVMatrix.rotate(rad, axis);
+  return this;
+};
+
+/**
  * [rotateX description]
- * @param  {[type]} rad [description]
+ * @param  {Number} rad radians to rotate
  * @return {[type]}     [description]
  */
 p5.Renderer3D.prototype.rotateX = function(rad) {
@@ -379,7 +390,7 @@ p5.Renderer3D.prototype.rotateX = function(rad) {
 
 /**
  * [rotateY description]
- * @param  {[type]} rad [description]
+ * @param  {Number} rad rad radians to rotate
  * @return {[type]}     [description]
  */
 p5.Renderer3D.prototype.rotateY = function(rad) {
@@ -389,7 +400,7 @@ p5.Renderer3D.prototype.rotateY = function(rad) {
 
 /**
  * [rotateZ description]
- * @param  {[type]} rad [description]
+ * @param  {Number} rad rad radians to rotate
  * @return {[type]}     [description]
  */
 p5.Renderer3D.prototype.rotateZ = function(rad) {

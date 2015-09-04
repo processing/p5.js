@@ -10,7 +10,7 @@
 var p5 = require('../core/core');
 
 /**
- * set camera position
+ * sets camera position
  * @method camera
  * @param  {Number} x  camera postion value on x axis
  * @param  {Number} y  camera postion value on y axis
@@ -19,7 +19,6 @@ var p5 = require('../core/core');
  * @example
  * <div>
  * <code>
- * //please call this function before doing any transformation
  * function setup(){
  *   createCanvas(windowWidth, windowHeight, 'webgl');
  * }
@@ -41,14 +40,13 @@ p5.prototype.camera = function(x, y, z){
 };
 
 /**
- * setup perspective camera
+ * sets perspective camera
  * @method  perspective
  * @param  {Number} fovy   camera frustum vertical field of view,
  *                         from bottom to top of view, in degrees
- * @param  {Number} aspect camera frustum aspect ratio,
- *                         window width divided by window height
- * @param  {Number} near   camera frustum near plane
- * @param  {Number} far    camera frustum far plane
+ * @param  {Number} aspect camera frustum aspect ratio
+ * @param  {Number} near   frustum near plane length
+ * @param  {Number} far    frustum far plane length
  * @return {p5}
  * @example
  * <div>
@@ -98,8 +96,6 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
  * @example
  * <div>
  * <code>
- * //drag mouse to toggle the world
- * //you will see there's no vanish point
  * function setup(){
  *   createCanvas(windowWidth, windowHeight, 'webgl');
  *   ortho(-width/2, width/2, height/2, -height/2, 0.1, 100);
