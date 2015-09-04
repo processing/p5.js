@@ -7,7 +7,7 @@ var vid;
 var theta = 0;
 
 function setup(){
-  createCanvas(windowWidth, windowHeight, 'webgl');
+  createCanvas(windowWidth, windowHeight, WEBGL);
   
   //2D renderer
   // createCanvas(windowWidth, windowHeight);

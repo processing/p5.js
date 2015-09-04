@@ -137,19 +137,34 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
 
   //@TODO: check parameters number
   var color = this._graphics._pInst.color.apply(
-    this._graphics._pInst, [v1,[v2],[v3]]);
+    this._graphics._pInst, [v1, v2, v3]);
   var colors = color._normalize();
 
   gl.uniform3f( shaderProgram.uDirectionalColor,
     colors[0], colors[1], colors[2]);
 
+  var _x, _y, _z;
+
+  if(typeof arguments[arguments.length-1] === 'number'){
+    _x = arguments[arguments.length-3];
+    _y = arguments[arguments.length-2];
+    _z = arguments[arguments.length-1];
+
+  }else{
+    try{
+      _x = arguments[arguments.length-1].x;
+      _y = arguments[arguments.length-1].y;
+      _z = arguments[arguments.length-1].z;
+    }
+    catch(error){
+      throw error;
+    }
+  }
+
   shaderProgram.uLightingDirection = gl.getUniformLocation(
     shaderProgram,
     'uLightingDirection[' + this._graphics.directionalLightCount + ']');
-  gl.uniform3f( shaderProgram.uLightingDirection,
-    arguments[arguments.length-3],
-    arguments[arguments.length-2],
-    arguments[arguments.length-1]);
+  gl.uniform3f( shaderProgram.uLightingDirection, _x, _y, _z);
 
   //in case there's no material color for the geometry
   shaderProgram.uMaterialColor = gl.getUniformLocation(
@@ -250,13 +265,28 @@ p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
   gl.uniform3f( shaderProgram.uPointLightColor,
     colors[0], colors[1], colors[2]);
 
+  var _x, _y, _z;
+
+  if(typeof arguments[arguments.length-1] === 'number'){
+    _x = arguments[arguments.length-3];
+    _y = arguments[arguments.length-2];
+    _z = arguments[arguments.length-1];
+
+  }else{
+    try{
+      _x = arguments[arguments.length-1].x;
+      _y = arguments[arguments.length-1].y;
+      _z = arguments[arguments.length-1].z;
+    }
+    catch(error){
+      throw error;
+    }
+  }
+
   shaderProgram.uPointLightLocation = gl.getUniformLocation(
     shaderProgram,
     'uPointLightLocation[' + this._graphics.pointLightCount + ']');
-  gl.uniform3f( shaderProgram.uPointLightLocation,
-    arguments[arguments.length-3],
-    arguments[arguments.length-2],
-    arguments[arguments.length-1]);
+  gl.uniform3f( shaderProgram.uPointLightLocation, _x, _y, _z);
 
   //in case there's no material color for the geometry
   shaderProgram.uMaterialColor = gl.getUniformLocation(

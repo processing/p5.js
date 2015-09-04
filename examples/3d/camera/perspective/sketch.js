@@ -1,11 +1,12 @@
 function setup(){
-  createCanvas(windowWidth, windowHeight, 'webgl');
+  createCanvas(windowWidth, windowHeight, WEBGL);
   perspective(60 / 180 * PI, width/height, 0.1, 100);
 }
 
 function draw(){
   background(0);
-  orbitControl();
+  rotateX(map(mouseY, 0, height, 0, TWO_PI));
+  rotateY(map(mouseX, 0, width, 0, TWO_PI));
   for(var i = -5; i < 6; i++){
     for(var j = -5; j < 6; j++){
       push();

@@ -5,7 +5,6 @@ var shader = require('./shader');
 require('../core/p5.Renderer');
 require('./p5.Matrix');
 var uMVMatrixStack = [];
-var shaderStack = [];
 var RESOLUTION = 1000;
 
 //@TODO should probably implement an override for these attributes
@@ -67,7 +66,7 @@ p5.Renderer3D.prototype._init = function(first_argument) {
   this.initMatrix();
   this.initHash();
   //for immedidate mode
-  this.resetStack();
+  this.verticeStack = [];
   this.verticeBuffer = gl.createBuffer();
   this.colorBuffer = gl.createBuffer();
   //for camera
@@ -84,7 +83,7 @@ p5.Renderer3D.prototype._update = function() {
   this.ambientLightCount = 0;
   this.directionalLightCount = 0;
   this.pointLightCount = 0;
-  this.resetStack();
+  this.verticeStack = [];
 };
 
 /**
@@ -236,62 +235,39 @@ p5.Renderer3D.prototype.setMatrixUniforms = function(shaderKey) {
 };
 
 //////////////////////////////////////////////
-// STACK | for shader, vertex, color and mode
+// GET CURRENT | for shader and color
 //////////////////////////////////////////////
-
-p5.Renderer3D.prototype.resetStack = function(){
-  shaderStack = [];
-  //holding colors declaration, like [0, 120, 0]
-  this.colorStack = [];
-  //holding mode, like TRIANGLE or 'LINES'
-  this.modeStack = [];
-  //holding 'fill' or 'stroke'
-  this.drawModeStack = [];
-  //holding an array of vertex position
-  this.verticeStack = [];
-};
-
-p5.Renderer3D.prototype._saveShaderInStack = function(mId) {
-  shaderStack.push(mId);
-};
-
-p5.Renderer3D.prototype._saveShaderInHash = function(mId, shaderProgram) {
-  this.mHash[mId] = shaderProgram;
-};
-
 p5.Renderer3D.prototype._getShader = function(vertId, fragId, immediateMode) {
   var mId = vertId+ '|' + fragId;
   //create it and put it into hashTable
   if(!this.materialInHash(mId)){
     var shaderProgram = this.initShaders(vertId, fragId, immediateMode);
-    this._saveShaderInHash(mId, shaderProgram);
+    this.mHash[mId] = shaderProgram;
   }
-  //also put its name into stack
-  if(mId !== this._getCurShaderId()){
-    this._saveShaderInStack(mId);
-  }
-  return this.mHash[mId];
+  this.curShaderId = mId;
+
+  return this.mHash[this.curShaderId];
 };
 
 p5.Renderer3D.prototype._getCurShaderId = function(){
-  var mId;
-  //if there's nothing in the stack
-  if(shaderStack.length === 0){
-
+  //if it's not defined yet
+  if(this.curShaderId === undefined){
     //default shader: normalMaterial()
-    mId = 'normalVert|normalFrag';
+    var mId = 'normalVert|normalFrag';
     var shaderProgram = this.initShaders('normalVert', 'normalFrag');
-    this._saveShaderInHash(mId, shaderProgram);
-    this._saveShaderInStack(mId);
-  }else{
-    mId = shaderStack[shaderStack.length - 1];
+    this.mHash[mId] = shaderProgram;
+    this.curShaderId = mId;
   }
-  return mId;
+
+  return this.curShaderId;
 };
 
 p5.Renderer3D.prototype._getCurColor = function() {
   //default color: gray
-  return this.colorStack[this.colorStack.length-1] || [0.5, 0.5, 0.5, 1.0];
+  if(this.curColor === undefined) {
+    this.curColor = [0.5, 0.5, 0.5, 1.0];
+  }
+  return this.curColor;
 };
 
 //////////////////////////////////////////////

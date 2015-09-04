@@ -75,7 +75,7 @@ p5.Renderer3D.prototype.quad = function
 };
 
 p5.Renderer3D.prototype.beginShape = function(mode){
-  this.modeStack.push(mode);
+  this.shapeMode = mode;
   this.verticeStack = [];
   return this;
 };
@@ -89,9 +89,8 @@ p5.Renderer3D.prototype.endShape = function(){
   var gl = this.GL;
   this._primitives2D(this.verticeStack);
   this.verticeStack = [];
-  var mode = this.modeStack.pop();
 
-  switch(mode){
+  switch(this.shapeMode){
     case 'POINTS':
       gl.drawArrays(gl.POINTS, 0, 1);
       break;
@@ -116,8 +115,7 @@ p5.Renderer3D.prototype.endShape = function(){
 
 //@TODO: figure out how to actually do stroke on shapes in 3D
 p5.Renderer3D.prototype._strokeCheck = function(){
-  var drawMode = this.drawModeStack[this.drawModeStack.length-1];
-  if(drawMode === 'stroke'){
+  if(this.drawMode === 'stroke'){
     throw new Error(
       'stroke for shapes in 3D not yet implemented, use fill for now :('
     );
@@ -136,20 +134,16 @@ p5.Renderer3D.prototype.strokeWeight = function() {
 p5.Renderer3D.prototype.fill = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
   var colorNormalized = color._normalize();
-  if( colorNormalized !== this._getCurColor()){
-    this.colorStack.push(colorNormalized);
-  }
-  this.drawModeStack.push('fill');
+  this.curColor = colorNormalized;
+  this.drawMode = 'fill';
   return this;
 };
 
 p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
   var colorNormalized = color._normalize();
-  if( colorNormalized !== this._getCurColor()){
-    this.colorStack.push(colorNormalized);
-  }
-  this.drawModeStack.push('stroke');
+  this.curColor = colorNormalized;
+  this.drawMode = 'stroke';
   return this;
 };
 
@@ -161,7 +155,7 @@ p5.Renderer3D.prototype._getColorVertexShader = function(){
   if(!this.materialInHash(mId)){
     shaderProgram =
       this.initShaders('vertexColorVert', 'vertexColorFrag', true);
-    this._saveShaderInHash(mId, shaderProgram);
+    this.mHash[mId] = shaderProgram;
     shaderProgram.vertexColorAttribute =
     gl.getAttribLocation(shaderProgram, 'aVertexColor');
     gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
