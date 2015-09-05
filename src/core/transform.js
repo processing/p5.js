@@ -95,11 +95,18 @@ p5.prototype.resetMatrix = function() {
  * </code>
  * </div>
  */
-p5.prototype.rotate = function(r) {
+p5.prototype.rotate = function() {
+  var r = arguments[0];
   if (this._angleMode === constants.DEGREES) {
     r = this.radians(r);
   }
-  this._graphics.rotate(r);
+  //in webgl mode
+  if(arguments.length > 1){
+    this._graphics.rotate(r, arguments[1]);
+  }
+  else {
+    this._graphics.rotate(r);
+  }
   return this;
 };
 

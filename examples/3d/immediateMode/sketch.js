@@ -1,7 +1,7 @@
 var theta = 0;
 
 function setup(){
-  createCanvas(windowWidth, windowHeight, 'webgl');
+  createCanvas(windowWidth, windowHeight, WEBGL);
 }
 
 function draw(){

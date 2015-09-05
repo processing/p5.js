@@ -89,7 +89,6 @@ p5.prototype.texture = function(image){
     //@TODO handle following cases:
     //- 2D canvas (p5 inst)
   }
-
   if (_isPowerOf2(image.width) && _isPowerOf2(image.height)) {
     gl.generateMipmap(gl.TEXTURE_2D);
   } else {

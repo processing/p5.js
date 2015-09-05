@@ -1,5 +1,5 @@
 function setup(){
-  createCanvas(windowWidth, windowHeight, 'webgl');
+  createCanvas(windowWidth, windowHeight, WEBGL);
 }
 
 var theta = 0;
