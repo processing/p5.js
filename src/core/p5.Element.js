@@ -118,7 +118,6 @@ p5.Element.prototype.isHidden = function(){
   return (this.elt.offsetParent === null)
 }
 
-
 /**
  * The .mousePressed() function is called once after every time a
  * mouse button is pressed over the element. This can be used to
