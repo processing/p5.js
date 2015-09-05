@@ -221,12 +221,26 @@ module.exports = function(grunt) {
     },
     release: {
       options: {
+        folder: 'p5-release', //default project root
         github: {
           repo: 'processing/p5.js', //put your user/repo here
-          usernameVar: process.env.GITHUB_USERNAME, //ENVIRONMENT VARIABLE that contains Github username
-          passwordVar: process.env.GITHUB_PASSWORD //ENVIRONMENT VARIABLE that contains Github password
+          accessTokenVar: process.env.GITHUB_TOKEN
         }
       }
+    },
+    'release-it': {
+        options: {
+            pkgFiles: ['package.json'],
+            commitMessage: 'release %s',
+            tagName: '%s',
+            tagAnnotation: 'release %s',
+            buildCommand: false,
+            distRepo: 'https://github.com/lmccart/p5.js-release',
+            distStageDir: '.stage',
+            distFiles: ['p5.*', 'addons/p5.*.js'],
+            distBase: 'lib',
+            publish: false
+        }
     },
     // This is a static server which is used when testing connectivity for the
     // p5 library. This avoids needing an internet connection to run the tests.
@@ -264,6 +278,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-newer');
+  grunt.loadNpmTasks('grunt-release-it');
 
   // Create the multitasks.
   // TODO: "requirejs" is in here to run the "yuidoc_themes" subtask. Is this needed?
