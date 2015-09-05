@@ -1151,7 +1151,7 @@ p5.Renderer2D.prototype._renderText = function(p, line, x, y) {
 
   p.push(); // fix to #803
 
-  if (!p._isOpenType()) {  // a system/browser font
+  if (!this._isOpenType()) {  // a system/browser font
 
     // no stroke unless specified by user
     if (p._doStroke && p._strokeSet) {
@@ -1170,7 +1170,7 @@ p5.Renderer2D.prototype._renderText = function(p, line, x, y) {
   }
   else { // an opentype font, let it handle the rendering
 
-    p._textFont._renderPath(line, x, y);
+    this._textFont._renderPath(line, x, y);
   }
 
   p.pop();
@@ -1234,18 +1234,19 @@ p5.Renderer2D.prototype._applyTextProperties = function() {
 
   var font, p = this._pInst;
 
-  p._setProperty('_textAscent', null);
-  p._setProperty('_textDescent', null);
+  this._setProperty('_textAscent', null);
+  this._setProperty('_textDescent', null);
 
-  font = p._textFont;
+  font = this._textFont;
 
-  if (p._isOpenType()) {
+  if (this._isOpenType()) {
 
-    font = p._textFont.font.familyName;
-    p._setProperty('_textStyle', p._textFont.font.styleName);
+    font = this._textFont.font.familyName;
+    this._setProperty('_textStyle', this._textFont.font.styleName);
   }
 
-  this.drawingContext.font = p._textStyle + ' ' + p._textSize + 'px ' + font;
+  this.drawingContext.font = this._textStyle + ' ' +
+  this._textSize + 'px ' + font;
 
   return p;
 };

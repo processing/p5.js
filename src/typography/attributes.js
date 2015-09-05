@@ -9,14 +9,6 @@
 'use strict';
 
 var p5 = require('../core/core');
-var constants = require('../core/constants');
-
-p5.prototype._textSize = 12;
-p5.prototype._textLeading = 15;
-p5.prototype._textFont = 'sans-serif';
-p5.prototype._textStyle = constants.NORMAL;
-p5.prototype._textAscent = null;
-p5.prototype._textDescent = null;
 
 /**
  * Sets the current alignment for drawing text. The parameters LEFT, CENTER,
@@ -43,7 +35,6 @@ p5.prototype._textDescent = null;
  * </div>
  */
 p5.prototype.textAlign = function(h, v) {
-
   return this._graphics.textAlign(h,v);
 };
 
@@ -74,14 +65,7 @@ p5.prototype.textAlign = function(h, v) {
  * </div>
  */
 p5.prototype.textLeading = function(l) {
-
-  if (arguments.length) {
-
-    this._setProperty('_textLeading', l);
-    return this;
-  }
-
-  return this._textLeading;
+  return this._graphics.textLeading(l);
 };
 
 /**
@@ -104,15 +88,7 @@ p5.prototype.textLeading = function(l) {
  * </div>
  */
 p5.prototype.textSize = function(s) {
-
-  if (arguments.length) {
-
-    this._setProperty('_textSize', s);
-    this._setProperty('_textLeading', s * constants._DEFAULT_LEADMULT);
-    return this._graphics._applyTextProperties();
-  }
-
-  return this._textSize;
+  return this._graphics.textSize(s);
 };
 
 /**
@@ -141,19 +117,7 @@ p5.prototype.textSize = function(s) {
  * </div>
  */
 p5.prototype.textStyle = function(s) {
-
-  if (arguments.length) {
-
-    if (s === constants.NORMAL ||
-      s === constants.ITALIC ||
-      s === constants.BOLD) {
-      this._setProperty('_textStyle', s);
-    }
-
-    return this._graphics._applyTextProperties();
-  }
-
-  return this._textStyle;
+  return this._graphics.textStyle(s);
 };
 
 /**
@@ -180,7 +144,6 @@ p5.prototype.textStyle = function(s) {
  * </div>
  */
 p5.prototype.textWidth = function(s) {
-
   return this._graphics.textWidth(s);
 };
 
@@ -206,10 +169,7 @@ p5.prototype.textWidth = function(s) {
  * </div>
  */
 p5.prototype.textAscent = function() {
-  if (this._textAscent === null) {
-    this._updateTextMetrics();
-  }
-  return this._textAscent;
+  return this._graphics.textAscent();
 };
 
 /*p5.prototype.fontMetrics = function(font, text, x, y, fontSize) {
@@ -267,89 +227,14 @@ p5.prototype.textAscent = function() {
  * </div>
  */
 p5.prototype.textDescent = function() {
-
-  if (this._textDescent === null) {
-    this._updateTextMetrics();
-  }
-  return this._textDescent;
-};
-
-/**
- * Helper fxn to check font type (system or otf)
- */
-p5.prototype._isOpenType = function(f) {
-
-  f = f || this._textFont;
-  return (typeof f === 'object' && f.font && f.font.supported);
+  return this._graphics.textDescent();
 };
 
 /**
  * Helper fxn to measure ascent and descent.
  */
 p5.prototype._updateTextMetrics = function() {
-
-  if (this._isOpenType()) {
-
-    this._setProperty('_textAscent', this._textFont._textAscent());
-    this._setProperty('_textDescent', this._textFont._textDescent());
-    return this;
-  }
-
-  // Adapted from http://stackoverflow.com/a/25355178
-  var text = document.createElement('span');
-  text.style.fontFamily = this._textFont;
-  text.style.fontSize = this._textSize + 'px';
-  text.innerHTML = 'ABCjgq|';
-
-  var block = document.createElement('div');
-  block.style.display = 'inline-block';
-  block.style.width = '1px';
-  block.style.height = '0px';
-
-  var container = document.createElement('div');
-  container.appendChild(text);
-  container.appendChild(block);
-
-  container.style.height = '0px';
-  container.style.overflow = 'hidden';
-  document.body.appendChild(container);
-
-  block.style.verticalAlign = 'baseline';
-  var blockOffset = this._calculateOffset(block);
-  var textOffset = this._calculateOffset(text);
-  var ascent = blockOffset[1] - textOffset[1];
-
-  block.style.verticalAlign = 'bottom';
-  blockOffset = this._calculateOffset(block);
-  textOffset = this._calculateOffset(text);
-  var height = blockOffset[1] - textOffset[1];
-  var descent = height - ascent;
-
-  document.body.removeChild(container);
-
-  this._setProperty('_textAscent', ascent);
-  this._setProperty('_textDescent', descent);
-
-  return this;
-};
-
-/**
- * Helper fxn to measure ascent and descent.
- * Adapted from http://stackoverflow.com/a/25355178
- */
-p5.prototype._calculateOffset = function(object) {
-  var currentLeft = 0,
-    currentTop = 0;
-  if (object.offsetParent) {
-    do {
-      currentLeft += object.offsetLeft;
-      currentTop += object.offsetTop;
-    } while (object = object.offsetParent);
-  } else {
-    currentLeft += object.offsetLeft;
-    currentTop += object.offsetTop;
-  }
-  return [currentLeft, currentTop];
+  return this._graphics._updateTextMetrics();
 };
 
 module.exports = p5;
