@@ -221,6 +221,8 @@ module.exports = function(grunt) {
     },
     release: {
       options: {
+        npm: false,
+        folder: 'p5-release',
         github: {
           repo: 'processing/p5.js',
           accessTokenVar: 'GITHUB_TOKEN'
