@@ -1154,15 +1154,15 @@ p5.Renderer2D.prototype._renderText = function(p, line, x, y) {
   if (!this._isOpenType()) {  // a system/browser font
 
     // no stroke unless specified by user
-    if (p._doStroke && p._strokeSet) {
+    if (this._doStroke && this._strokeSet) {
 
       this.drawingContext.strokeText(line, x, y);
     }
 
-    if (p._doFill) {
+    if (this._doFill) {
 
       // if fill hasn't been set by user, use default text fill
-      this.drawingContext.fillStyle =  p._fillSet ?
+      this.drawingContext.fillStyle =  this._fillSet ?
         this.drawingContext.fillStyle : constants._DEFAULT_TEXT_FILL;
 
       this.drawingContext.fillText(line, x, y);
@@ -1180,9 +1180,9 @@ p5.Renderer2D.prototype._renderText = function(p, line, x, y) {
 
 p5.Renderer2D.prototype.textWidth = function(s) {
 
-  if (this._pInst._isOpenType()) {
+  if (this._isOpenType()) {
 
-    return this._pInst._textFont._textWidth(s);
+    return this._textFont._textWidth(s);
   }
 
   return this.drawingContext.measureText(s).width;
