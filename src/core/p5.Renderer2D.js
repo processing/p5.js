@@ -1052,7 +1052,7 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
   // Processing's vertical alignment implementation
   // for BASELINE vetical alignment in a boundings box
 
-  if (!(p._doFill || p._doStroke)) {
+  if (!(this._doFill || this._doStroke)) {
     return;
   }
 

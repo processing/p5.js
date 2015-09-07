@@ -169,10 +169,10 @@ p5.prototype.push = function () {
     rectMode: this._graphics._rectMode,
     ellipseMode: this._graphics._ellipseMode,
     colorMode: this._graphics._colorMode,
-    textFont: this._graphics.textFont,
-    textLeading: this._graphics.textLeading,
-    textSize: this._graphics.textSize,
-    textStyle: this._graphics.textStyle
+    textFont: this._graphics._textFont,
+    textLeading: this._graphics._textLeading,
+    textSize: this._graphics._textSize,
+    textStyle: this._graphics._textStyle
   });
 };
 
@@ -237,10 +237,10 @@ p5.prototype.pop = function () {
   this._graphics._rectMode = lastS.rectMode;
   this._graphics._ellipseMode = lastS.ellipseMode;
   this._graphics._colorMode = lastS.colorMode;
-  this._graphics.textFont = lastS.textFont;
-  this._graphics.textLeading = lastS.textLeading;
-  this._graphics.textSize = lastS.textSize;
-  this._graphics.textStyle = lastS.textStyle;
+  this._graphics._textFont = lastS.textFont;
+  this._graphics._textLeading = lastS.textLeading;
+  this._graphics._textSize = lastS.textSize;
+  this._graphics._textStyle = lastS.textStyle;
 };
 
 p5.prototype.pushStyle = function() {

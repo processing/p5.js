@@ -353,7 +353,8 @@ p5.Font.prototype._textDescent = function(fontSize) {
 
 p5.Font.prototype._scale = function(fontSize) {
 
-  return (1 / this.font.unitsPerEm) * (fontSize || this.parent._textSize);
+  return (1 / this.font.unitsPerEm) * (fontSize ||
+    this.parent._graphics._textSize);
 };
 
 p5.Font.prototype._handleAlignment = function(p, ctx, line, x, y) {

@@ -112,7 +112,7 @@ p5.Renderer.prototype.resize = function(w, h) {
  */
 p5.Renderer.prototype.textLeading = function(l) {
 
-  if (arguments.length) {
+  if (arguments.length && arguments[0]) {
 
     this._setProperty('_textLeading', l);
     return this;
@@ -142,7 +142,7 @@ p5.Renderer.prototype.textLeading = function(l) {
  */
 p5.Renderer.prototype.textSize = function(s) {
 
-  if (arguments.length) {
+  if (arguments.length && arguments[0]) {
 
     this._setProperty('_textSize', s);
     this._setProperty('_textLeading', s * constants._DEFAULT_LEADMULT);
@@ -179,7 +179,7 @@ p5.Renderer.prototype.textSize = function(s) {
  */
 p5.Renderer.prototype.textStyle = function(s) {
 
-  if (arguments.length) {
+  if (arguments.length && arguments[0]) {
 
     if (s === constants.NORMAL ||
       s === constants.ITALIC ||
