@@ -426,7 +426,7 @@ p5.prototype.endShape = function(mode) {
     this._graphics.endShape();
   }else{
     if (vertices.length === 0) { return this; }
-    if (!this._doStroke && !this._doFill) { return this; }
+    if (!this._graphics._doStroke && !this._graphics._doFill) { return this; }
 
     var closeShape = mode === constants.CLOSE;
 

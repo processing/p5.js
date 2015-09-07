@@ -55,7 +55,7 @@ p5.prototype.bezier = function(x1, y1, x2, y2, x3, y3, x4, y4) {
       'Number', 'Number', 'Number', 'Number' ]
   );
 
-  if (!this._doStroke) {
+  if (!this._graphics._doStroke) {
     return this;
   }
   this._graphics.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
@@ -250,7 +250,7 @@ p5.prototype.curve = function(x1, y1, x2, y2, x3, y3, x4, y4) {
       'Number', 'Number', 'Number', 'Number' ]
   );
 
-  if (!this._doStroke) {
+  if (!this._graphics._doStroke) {
     return;
   }
   this._graphics.curve(x1, y1, x2, y2, x3, y3, x4, y4);
