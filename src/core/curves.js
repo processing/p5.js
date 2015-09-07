@@ -13,7 +13,6 @@ require('./error_helpers');
 
 var bezierDetail = 20;
 var curveDetail = 20;
-p5.prototype._curveTightness = 0;
 
 /**
  * Draws a cubic Bezier curve on the screen. These curves are defined by a
@@ -318,7 +317,7 @@ p5.prototype.curveDetail = function(d) {
  * </div>
  */
 p5.prototype.curveTightness = function (t) {
-  this._setProperty('_curveTightness', t);
+  this._graphics._curveTightness = t;
 };
 
 /**
