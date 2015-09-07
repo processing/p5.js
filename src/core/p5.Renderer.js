@@ -43,27 +43,28 @@ p5.Renderer = function(elt, pInst, isMainCanvas) {
   this._textAscent = null;
   this._textDescent = null;
 
+
+  this._rectMode = constants.CORNER;
+  this._ellipseMode = constants.CENTER;
+  this._curveTightness = 0;
+  this._imageMode = constants.CORNER;
+
+  this._tint = null;
+  this._doStroke = true;
+  this._doFill = true;
+  this._strokeSet = false;
+  this._fillSet = false;
+  this._colorMode = constants.RGB;
+  this._colorMaxes = {
+    rgb: [255, 255, 255, 255],
+    hsb: [360, 100, 100, 1],
+    hsl: [360, 100, 100, 1]
+  };
+
 };
 
 p5.Renderer.prototype = Object.create(p5.Element.prototype);
 
-
-p5.Renderer.prototype._rectMode = constants.CORNER;
-p5.Renderer.prototype._ellipseMode = constants.CENTER;
-p5.Renderer.prototype._curveTightness = 0;
-p5.Renderer.prototype._imageMode = constants.CORNER;
-p5.Renderer.prototype._tint = null;
-
-p5.Renderer.prototype._doStroke = true;
-p5.Renderer.prototype._doFill = true;
-p5.Renderer.prototype._strokeSet = false;
-p5.Renderer.prototype._fillSet = false;
-p5.Renderer.prototype._colorMode = constants.RGB;
-p5.Renderer.prototype._colorMaxes = {
-  rgb: [255, 255, 255, 255],
-  hsb: [360, 100, 100, 1],
-  hsl: [360, 100, 100, 1]
-};
 
 
 
