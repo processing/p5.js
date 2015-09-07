@@ -316,7 +316,7 @@ p5.prototype.windowHeight = window.innerHeight;
  * is resized. This is a good place to resize the canvas or do any other
  * adjustements to accomodate the new window size.
  *
- * @method windowResized()
+ * @method windowResized
  * @example
  * <div class="norender"><code>
  * function setup() {
