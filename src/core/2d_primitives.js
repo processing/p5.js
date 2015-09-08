@@ -69,7 +69,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
     ]
   );
 
-  if (!this._doStroke && !this._doFill) {
+  if (!this._graphics._doStroke && !this._graphics._doFill) {
     return this;
   }
   if (this._angleMode === constants.DEGREES) {
@@ -142,7 +142,7 @@ p5.prototype.ellipse = function(x, y, w, h) {
     ['Number', 'Number', 'Number', 'Number']
   );
 
-  if (!this._doStroke && !this._doFill) {
+  if (!this._graphics._doStroke && !this._graphics._doFill) {
     return this;
   }
   // p5 supports negative width and heights for ellipses
@@ -186,7 +186,7 @@ p5.prototype.ellipse = function(x, y, w, h) {
  */
 ////commented out original
 // p5.prototype.line = function(x1, y1, x2, y2) {
-//   if (!this._doStroke) {
+//   if (!this._graphics._doStroke) {
 //     return this;
 //   }
 //   if(this._graphics.isP3D){
@@ -195,7 +195,7 @@ p5.prototype.ellipse = function(x, y, w, h) {
 //   }
 // };
 p5.prototype.line = function() {
-  if (!this._doStroke) {
+  if (!this._graphics._doStroke) {
     return this;
   }
   //check whether we should draw a 3d line or 2d
@@ -252,7 +252,7 @@ p5.prototype.line = function() {
  * </div>
  */
 p5.prototype.point = function() {
-  if (!this._doStroke) {
+  if (!this._graphics._doStroke) {
     return this;
   }
   //check whether we should draw a 3d line or 2d
@@ -311,7 +311,7 @@ p5.prototype.point = function() {
  * </div>
  */
 p5.prototype.quad = function() {
-  if (!this._doStroke && !this._doFill) {
+  if (!this._graphics._doStroke && !this._graphics._doFill) {
     return this;
   }
   if(this._graphics.isP3D){
@@ -418,7 +418,7 @@ p5.prototype.rect = function (x, y, w, h, tl, tr, br, bl) {
     ]
   );
 
-  if (!this._doStroke && !this._doFill) {
+  if (!this._graphics._doStroke && !this._graphics._doFill) {
     return;
   }
   this._graphics.rect(x, y, w, h, tl, tr, br, bl);
@@ -447,7 +447,7 @@ p5.prototype.rect = function (x, y, w, h, tl, tr, br, bl) {
 */
 p5.prototype.triangle = function() {
 
-  if (!this._doStroke && !this._doFill) {
+  if (!this._graphics._doStroke && !this._graphics._doFill) {
     return this;
   }
   if(this._graphics.isP3D){

@@ -162,17 +162,17 @@ p5.prototype.loop = function() {
 p5.prototype.push = function () {
   this._graphics.push();
   this._styles.push({
-    doStroke: this._doStroke,
-    doFill: this._doFill,
-    tint: this._tint,
-    imageMode: this._imageMode,
-    rectMode: this._rectMode,
-    ellipseMode: this._ellipseMode,
-    colorMode: this._colorMode,
-    textFont: this.textFont,
-    textLeading: this.textLeading,
-    textSize: this.textSize,
-    textStyle: this.textStyle
+    doStroke: this._graphics._doStroke,
+    doFill: this._graphics._doFill,
+    tint: this._graphics._tint,
+    imageMode: this._graphics._imageMode,
+    rectMode: this._graphics._rectMode,
+    ellipseMode: this._graphics._ellipseMode,
+    colorMode: this._graphics._colorMode,
+    textFont: this._graphics._textFont,
+    textLeading: this._graphics._textLeading,
+    textSize: this._graphics._textSize,
+    textStyle: this._graphics._textStyle
   });
 };
 
@@ -230,17 +230,17 @@ p5.prototype.push = function () {
 p5.prototype.pop = function () {
   this._graphics.pop();
   var lastS = this._styles.pop();
-  this._doStroke = lastS.doStroke;
-  this._doFill = lastS.doFill;
-  this._tint = lastS.tint;
-  this._imageMode = lastS.imageMode;
-  this._rectMode = lastS.rectMode;
-  this._ellipseMode = lastS.ellipseMode;
-  this._colorMode = lastS.colorMode;
-  this.textFont = lastS.textFont;
-  this.textLeading = lastS.textLeading;
-  this.textSize = lastS.textSize;
-  this.textStyle = lastS.textStyle;
+  this._graphics._doStroke = lastS.doStroke;
+  this._graphics._doFill = lastS.doFill;
+  this._graphics._tint = lastS.tint;
+  this._graphics._imageMode = lastS.imageMode;
+  this._graphics._rectMode = lastS.rectMode;
+  this._graphics._ellipseMode = lastS.ellipseMode;
+  this._graphics._colorMode = lastS.colorMode;
+  this._graphics._textFont = lastS.textFont;
+  this._graphics._textLeading = lastS.textLeading;
+  this._graphics._textSize = lastS.textSize;
+  this._graphics._textStyle = lastS.textStyle;
 };
 
 p5.prototype.pushStyle = function() {

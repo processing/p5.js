@@ -95,7 +95,7 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
 
   x = x !== undefined ? x : 0;
   y = y !== undefined ? y : 0;
-  fontSize = fontSize || this.parent._textSize;
+  fontSize = fontSize || this.parent._graphics._textSize;
 
   var result = this.cache[cacheKey('textBounds', str, x, y, fontSize)];
   if (!result) {
@@ -176,7 +176,7 @@ p5.Font.prototype._getPath = function(line, x, y, options) {
     ctx = p._graphics.drawingContext,
     pos = this._handleAlignment(p, ctx, line, x, y);
 
-  return this.font.getPath(line, pos.x, pos.y, p._textSize, options);
+  return this.font.getPath(line, pos.x, pos.y, p._graphics._textSize, options);
 };
 
 /*
@@ -285,8 +285,7 @@ p5.Font.prototype._getSVG = function(line, x, y, options) {
 p5.Font.prototype._renderPath = function(line, x, y, options) {
 
   // /console.log('_renderPath', typeof line);
-  var pdata, p = this.parent,
-    pg = p._graphics,
+  var pdata, pg = this.parent._graphics,
     ctx = pg.drawingContext;
 
   if (typeof line === 'object' && line.commands) {
@@ -295,7 +294,7 @@ p5.Font.prototype._renderPath = function(line, x, y, options) {
   } else {
 
     //pos = handleAlignment(p, ctx, line, x, y);
-    pdata = this._getPath(line, x, y, p._textSize, options).commands;
+    pdata = this._getPath(line, x, y, pg._textSize, options).commands;
   }
 
   ctx.beginPath();
@@ -316,15 +315,15 @@ p5.Font.prototype._renderPath = function(line, x, y, options) {
   }
 
   // only draw stroke if manually set by user
-  if (p._doStroke && p._strokeSet) {
+  if (pg._doStroke && pg._strokeSet) {
 
     ctx.stroke();
   }
 
-  if (p._doFill) {
+  if (pg._doFill) {
 
     // if fill hasn't been set by user, use default-text-fill
-    ctx.fillStyle = p._fillSet ? ctx.fillStyle : constants._DEFAULT_TEXT_FILL;
+    ctx.fillStyle = pg._fillSet ? ctx.fillStyle : constants._DEFAULT_TEXT_FILL;
     ctx.fill();
   }
 
@@ -354,7 +353,8 @@ p5.Font.prototype._textDescent = function(fontSize) {
 
 p5.Font.prototype._scale = function(fontSize) {
 
-  return (1 / this.font.unitsPerEm) * (fontSize || this.parent._textSize);
+  return (1 / this.font.unitsPerEm) * (fontSize ||
+    this.parent._graphics._textSize);
 };
 
 p5.Font.prototype._handleAlignment = function(p, ctx, line, x, y) {

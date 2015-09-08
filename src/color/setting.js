@@ -12,17 +12,6 @@ var p5 = require('../core/core');
 var constants = require('../core/constants');
 require('./p5.Color');
 
-p5.prototype._doStroke = true;
-p5.prototype._doFill = true;
-p5.prototype._strokeSet = false;
-p5.prototype._fillSet = false;
-p5.prototype._colorMode = constants.RGB;
-p5.prototype._colorMaxes = {
-  rgb: [255, 255, 255, 255],
-  hsb: [360, 100, 100, 1],
-  hsl: [360, 100, 100, 1]
-};
-
 /**
  * The background() function sets the color used for the background of the
  * p5.js canvas. The default background is light gray. This function is
@@ -224,9 +213,9 @@ p5.prototype.colorMode = function() {
   if (arguments[0] === constants.RGB ||
       arguments[0] === constants.HSB ||
       arguments[0] === constants.HSL) {
-    this._colorMode = arguments[0];
+    this._graphics._colorMode = arguments[0];
 
-    var maxArr = this._colorMaxes[this._colorMode];
+    var maxArr = this._graphics._colorMaxes[this._graphics._colorMode];
 
     if (arguments.length === 2) {
       maxArr[0] = arguments[1];
@@ -361,8 +350,8 @@ p5.prototype.colorMode = function() {
  * </div>
  */
 p5.prototype.fill = function() {
-  this._setProperty('_fillSet', true);
-  this._setProperty('_doFill', true);
+  this._graphics._setProperty('_fillSet', true);
+  this._graphics._setProperty('_doFill', true);
   this._graphics.fill.apply(this._graphics, arguments);
   return this;
 };
@@ -382,7 +371,7 @@ p5.prototype.fill = function() {
  * </div>
  */
 p5.prototype.noFill = function() {
-  this._setProperty('_doFill', false);
+  this._graphics._setProperty('_doFill', false);
   return this;
 };
 
@@ -400,7 +389,7 @@ p5.prototype.noFill = function() {
  * </div>
  */
 p5.prototype.noStroke = function() {
-  this._setProperty('_doStroke', false);
+  this._graphics._setProperty('_doStroke', false);
   return this;
 };
 
@@ -527,8 +516,8 @@ p5.prototype.noStroke = function() {
  * </div>
  */
 p5.prototype.stroke = function() {
-  this._setProperty('_strokeSet', true);
-  this._setProperty('_doStroke', true);
+  this._graphics._setProperty('_strokeSet', true);
+  this._graphics._setProperty('_doStroke', true);
   this._graphics.stroke.apply(this._graphics, arguments);
   return this;
 };

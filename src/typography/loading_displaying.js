@@ -70,7 +70,7 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
     ]
   );
 
-  return (!(this._doFill || this._doStroke)) ? this :
+  return (!(this._graphics._doFill || this._graphics._doStroke)) ? this :
     this._graphics.text.apply(this._graphics, arguments);
 };
 
@@ -122,12 +122,12 @@ p5.prototype.textFont = function(theFont, theSize) {
       throw Error('null font passed to textFont');
     }
 
-    this._setProperty('_textFont', theFont);
+    this._graphics._setProperty('_textFont', theFont);
 
     if (theSize) {
 
-      this._setProperty('_textSize', theSize);
-      this._setProperty('_textLeading',
+      this._graphics._setProperty('_textSize', theSize);
+      this._graphics._setProperty('_textLeading',
         theSize * constants._DEFAULT_LEADMULT);
     }
 

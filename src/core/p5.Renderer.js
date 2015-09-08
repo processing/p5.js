@@ -43,9 +43,30 @@ p5.Renderer = function(elt, pInst, isMainCanvas) {
   this._textAscent = null;
   this._textDescent = null;
 
+
+  this._rectMode = constants.CORNER;
+  this._ellipseMode = constants.CENTER;
+  this._curveTightness = 0;
+  this._imageMode = constants.CORNER;
+
+  this._tint = null;
+  this._doStroke = true;
+  this._doFill = true;
+  this._strokeSet = false;
+  this._fillSet = false;
+  this._colorMode = constants.RGB;
+  this._colorMaxes = {
+    rgb: [255, 255, 255, 255],
+    hsb: [360, 100, 100, 1],
+    hsl: [360, 100, 100, 1]
+  };
+
 };
 
 p5.Renderer.prototype = Object.create(p5.Element.prototype);
+
+
+
 
 /**
  * Resize our canvas element.
@@ -65,7 +86,7 @@ p5.Renderer.prototype.resize = function(w, h) {
 
 p5.Renderer.prototype.textLeading = function(l) {
 
-  if (arguments.length) {
+  if (arguments.length && arguments[0]) {
 
     this._setProperty('_textLeading', l);
     return this;
@@ -76,7 +97,7 @@ p5.Renderer.prototype.textLeading = function(l) {
 
 p5.Renderer.prototype.textSize = function(s) {
 
-  if (arguments.length) {
+  if (arguments.length && arguments[0]) {
 
     this._setProperty('_textSize', s);
     this._setProperty('_textLeading', s * constants._DEFAULT_LEADMULT);
@@ -88,7 +109,7 @@ p5.Renderer.prototype.textSize = function(s) {
 
 p5.Renderer.prototype.textStyle = function(s) {
 
-  if (arguments.length) {
+  if (arguments.length && arguments[0]) {
 
     if (s === constants.NORMAL ||
       s === constants.ITALIC ||

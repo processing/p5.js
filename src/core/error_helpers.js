@@ -104,6 +104,8 @@ function report(message, func, color) {
 
 /**
  * Validate all the parameters of a function for number and type
+ * NOTE THIS FUNCTION IS TEMPORARILY DISABLED UNTIL FURTHER WORK
+ * AND UPDATES ARE IMPLEMENTED. -LMCCART
  *
  * @param  {String} func  name of function we're checking
  * @param  {Array}  args  pass of the JS default arguments array
@@ -119,12 +121,9 @@ p5.prototype._validateParameters = function(func, args, types) {
   if (!isArray(types[0])) {
     types = [types];
   }
-  /**
-   * Check number of parameters
-   *
-   * Example: "You wrote ellipse(X,X,X). ellipse was expecting 4
-   *           parameters. Try ellipse(X,X,X,X)."
-   */
+  // Check number of parameters
+  // Example: "You wrote ellipse(X,X,X). ellipse was expecting 4
+  //          parameters. Try ellipse(X,X,X,X)."
   var diff = Math.abs(args.length-types[0].length);
   var message, tindex = 0;
   for (var i=1, len=types.length; i<len; i++) {
@@ -155,13 +154,10 @@ p5.prototype._validateParameters = function(func, args, types) {
     }
     report(message, func, PARAM_COUNT);
   }
-  /**
-   * Type checking
-   *
-   * Example: "It looks like ellipse received an empty variable in spot #2."
-   * Example: "ellipse was expecting a number for parameter #1,
-   *           received "foo" instead."
-   */
+  // Type checking
+  // Example: "It looks like ellipse received an empty variable in spot #2."
+  // Example: "ellipse was expecting a number for parameter #1,
+  //           received "foo" instead."
   for (var format=0; format<types.length; format++) {
     for (var p=0; p < types[format].length && p < args.length; p++) {
       var defType = types[format][p];
@@ -188,6 +184,14 @@ p5.prototype._validateParameters = function(func, args, types) {
     }
   }
 };
+/*
+ * NOTE THIS FUNCTION IS TEMPORARILY DISABLED UNTIL FURTHER WORK
+ * AND UPDATES ARE IMPLEMENTED. -LMCCART
+ */
+p5.prototype._validateParameters = function() {
+  return true;
+};
+
 var errorCases = {
   '0': {
     fileType: 'image',

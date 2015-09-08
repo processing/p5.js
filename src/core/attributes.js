@@ -11,9 +11,6 @@
 var p5 = require('./core');
 var constants = require('./constants');
 
-p5.prototype._rectMode = constants.CORNER;
-p5.prototype._ellipseMode = constants.CENTER;
-
 /**
  * Modifies the location from which ellipses are drawn by changing the way
  * in which parameters given to ellipse() are interpreted.
@@ -70,7 +67,7 @@ p5.prototype.ellipseMode = function(m) {
     m === constants.CORNERS ||
     m === constants.RADIUS ||
     m === constants.CENTER) {
-    this._ellipseMode = m;
+    this._graphics._ellipseMode = m;
   }
   return this;
 };
@@ -155,7 +152,7 @@ p5.prototype.rectMode = function(m) {
     m === constants.CORNERS ||
     m === constants.RADIUS ||
     m === constants.CENTER) {
-    this._rectMode = m;
+    this._graphics._rectMode = m;
   }
   return this;
 };

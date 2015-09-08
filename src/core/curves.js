@@ -13,7 +13,6 @@ require('./error_helpers');
 
 var bezierDetail = 20;
 var curveDetail = 20;
-p5.prototype._curveTightness = 0;
 
 /**
  * Draws a cubic Bezier curve on the screen. These curves are defined by a
@@ -56,7 +55,7 @@ p5.prototype.bezier = function(x1, y1, x2, y2, x3, y3, x4, y4) {
       'Number', 'Number', 'Number', 'Number' ]
   );
 
-  if (!this._doStroke) {
+  if (!this._graphics._doStroke) {
     return this;
   }
   this._graphics.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
@@ -251,7 +250,7 @@ p5.prototype.curve = function(x1, y1, x2, y2, x3, y3, x4, y4) {
       'Number', 'Number', 'Number', 'Number' ]
   );
 
-  if (!this._doStroke) {
+  if (!this._graphics._doStroke) {
     return;
   }
   this._graphics.curve(x1, y1, x2, y2, x3, y3, x4, y4);
@@ -318,7 +317,7 @@ p5.prototype.curveDetail = function(d) {
  * </div>
  */
 p5.prototype.curveTightness = function (t) {
-  this._setProperty('_curveTightness', t);
+  this._graphics._curveTightness = t;
 };
 
 /**

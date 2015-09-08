@@ -13,7 +13,6 @@
 
 
 var p5 = require('../core/core');
-var constants = require('../core/constants');
 
 /* global frames:true */// This is not global, but JSHint is not aware that
 // this module is implicitly enclosed with Browserify: this overrides the
@@ -21,8 +20,6 @@ var constants = require('../core/constants');
 // of saved animation frames.
 var frames = [];
 
-p5.prototype._imageMode = constants.CORNER;
-p5.prototype._tint = null;
 
 /**
  * Creates a new p5.Image (the datatype for storing images). This provides a
