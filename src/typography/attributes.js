@@ -35,7 +35,7 @@ var p5 = require('../core/core');
  * </div>
  */
 p5.prototype.textAlign = function(horizAlign, vertAlign) {
-  return this._graphics.textAlign(horizAlign, vertAlign);
+  return this._graphics.textAlign.apply(this._graphics, arguments);
 };
 
 /**
@@ -64,7 +64,7 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  * </div>
  */
 p5.prototype.textLeading = function(theLeading) {
-  return this._graphics.textLeading(theLeading);
+  return this._graphics.textLeading.apply(this._graphics, arguments);
 };
 
 /**
@@ -87,7 +87,7 @@ p5.prototype.textLeading = function(theLeading) {
  * </div>
  */
 p5.prototype.textSize = function(theSize) {
-  return this._graphics.textSize(theSize);
+  return this._graphics.textSize.apply(this._graphics, arguments);
 };
 
 /**
@@ -114,7 +114,7 @@ p5.prototype.textSize = function(theSize) {
  * </div>
  */
 p5.prototype.textStyle = function(theStyle) {
-  return this._graphics.textStyle(theStyle);
+  return this._graphics.textStyle.apply(this._graphics, arguments);
 };
 
 /**
@@ -141,7 +141,7 @@ p5.prototype.textStyle = function(theStyle) {
  * </div>
  */
 p5.prototype.textWidth = function(theText) {
-  return this._graphics.textWidth(theText);
+  return this._graphics.textWidth.apply(this._graphics, arguments);
 };
 
 /**
