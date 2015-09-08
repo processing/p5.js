@@ -109,15 +109,15 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
         xCoords.push(gX);
         yCoords.push(gY);
 
-        if (glyph.name !== 'space') {
+        var gm = glyph.getMetrics();
 
-          var gm = glyph.getMetrics();
+        if (glyph.name !== 'space') {
 
           xCoords.push(gX + (gm.xMax * scale));
           yCoords.push(gY + (-gm.yMin * scale));
           yCoords.push(gY + (-gm.yMax * scale));
 
-        } else {
+        } else { // NOTE: deals with broken metrics for spaces in opentype.js
 
           xCoords.push(gX + self.font.charToGlyph(' ').advanceWidth *
             self._scale(fontSize));
