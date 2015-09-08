@@ -1180,7 +1180,7 @@ p5.Renderer2D.prototype._renderText = function(p, line, x, y) {
 
 p5.Renderer2D.prototype.textWidth = function(s) {
 
-  if (this._pInst._isOpenType()) {
+  if (this._isOpenType()) {
 
     return this._pInst._textFont._textWidth(s);
   }
