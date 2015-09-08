@@ -222,27 +222,30 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
     return [0, 0, 0, 255];
   }
 
-  var pd = this.pixelDensity || this._pInst.pixelDensity;
+  var ctx = this._pInst || this;
+
+  var pd = ctx.pixelDensity || ctx._pInst.pixelDensity;
 
   if (w === 1 && h === 1){
+
     return [
-      this.pixels[pd*4*(y*this.width+x)],
-      this.pixels[pd*(4*(y*this.width+x)+1)],
-      this.pixels[pd*(4*(y*this.width+x)+2)],
-      this.pixels[pd*(4*(y*this.width+x)+3)]
+      ctx.pixels[pd*4*(y*this.width+x)],
+      ctx.pixels[pd*(4*(y*this.width+x)+1)],
+      ctx.pixels[pd*(4*(y*this.width+x)+2)],
+      ctx.pixels[pd*(4*(y*this.width+x)+3)]
     ];
   } else {
     var sx = x * pd;
     var sy = y * pd;
     //auto constrain the width and height to
     //dimensions of the source image
-    var dw = Math.min(w, this.width);
-    var dh = Math.min(h, this.height);
+    var dw = Math.min(w, ctx.width);
+    var dh = Math.min(h, ctx.height);
     var sw = dw * pd;
     var sh = dh * pd;
 
     var region = new p5.Image(dw, dh);
-    region.canvas.getContext('2d').drawImage(this.canvas, sx, sy, sw, sh,
+    region.canvas.getContext('2d').drawImage(ctx.canvas, sx, sy, sw, sh,
       0, 0, dw, dh);
 
     return region;
@@ -254,6 +257,8 @@ p5.Renderer2D.prototype.loadPixels = function () {
   var w = this.width * pd;
   var h = this.height * pd;
   var imageData = this.drawingContext.getImageData(0, 0, w, h);
+  // @todo this should actually set pixels per object, so diff buffers can
+  // have diff pixel arrays.
   if (this._pInst) {
     this._pInst._setProperty('imageData', imageData);
     this._pInst._setProperty('pixels', imageData.data);
