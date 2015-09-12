@@ -20,10 +20,11 @@ function draw() {
     for (var x=0; x<width; x++) {
       if (pow((x-mouseX), 2)+ pow((y-mouseY), 2)<pow(radius, 2))  {
         var c = img.get(x, y);
-        pixels[4*(y*width+x)] = c[0];
-        pixels[4*(y*width+x)+1] = c[1];
-        pixels[4*(y*width+x)+2] = c[2];
-        pixels[4*(y*width+x)+3] = c[3];
+        set(x, y, c);
+        //pixels[4*(y*width+x)] = c[0];
+        //pixels[4*(y*width+x)+1] = c[1];
+        //pixels[4*(y*width+x)+2] = c[2];
+        //pixels[4*(y*width+x)+3] = c[3];
       }
     }
   }

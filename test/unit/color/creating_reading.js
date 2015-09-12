@@ -1,72 +1,21 @@
 suite('CreatingReading', function() {
-  
-  // p5 instance
   var myp5 = new p5(function( sketch ) {
     sketch.setup = function() {};
     sketch.draw = function() {};
   });
 
-  setup(function() {
-    myp5.colorMode(myp5.RGB, 255); 
-  });
-
-  suite('p5.prototype.color', function() {
-    var color;
-
-    suite('color([])', function() {
-      setup(function() {
-        color = myp5.color([1,2,3]);
-      });
-      test('should return a p5.Color', function() {
-        assert.instanceOf(color, p5.Color);
-        assert.deepEqual(color.rgba, [1,2,3,255]);
-      });
-    });
-
-    suite('color(a,b,c)', function() {
-      setup(function() {
-        color = myp5.color(1,2,3);
-      });
-      test('should return a p5.Color', function() {
-        assert.instanceOf(color, p5.Color);
-        assert.deepEqual(color.rgba, [1,2,3,255]);
-      });
-    });
-
-    suite('color(p5.Color)', function() {
-      setup(function() {
-        var tempColor = myp5.color([1,2,3]);
-        color = myp5.color(tempColor);
-      });
-      test('should return a p5.Color', function() {
-        assert.instanceOf(color, p5.Color);
-        assert.deepEqual(color.rgba, [1,2,3,255]);
-      });
-    });
-  });
-
-  suite('p5.prototype.red,green,blue', function() {
-    var color, colorArr;
-
+  var fromColor;
+  var toColor;
+  suite('p5.prototype.lerpColor', function() {
     setup(function() {
-      colorArr = [1,2,3];
-      color = myp5.color(colorArr);
+      fromColor = myp5.color(204, 102, 0);
+      toColor = myp5.color(0, 102, 153);
     });
-
-    test('p5.prototype.red', function() {
-      assert.equal(myp5.red(colorArr), 1);
-      assert.equal(myp5.red(color), 1);
-    });
-
-    test('p5.prototype.green', function() {
-      assert.equal(myp5.green(colorArr), 2);
-      assert.equal(myp5.green(color), 2);
-    });
-
-    test('p5.prototype.blue', function() {
-      assert.equal(myp5.blue(colorArr), 3);
-      assert.equal(myp5.blue(color), 3);
+    test('should correctly get lerp colors', function() {
+      var interA = myp5.lerpColor(fromColor, toColor, 0.33);
+      var interB = myp5.lerpColor(fromColor, toColor, 0.66);
+      assert.deepEqual(interA.rgba, [137, 102, 50, 255]);
+      assert.deepEqual(interB.rgba, [69, 102, 101, 255]);
     });
   });
-
 });

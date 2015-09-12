@@ -21,7 +21,8 @@ function preload() {
 function setup() {
   createCanvas(400, 400); 
   background(0);
-  stroke(255);
+  noStroke();
+  fill(255);
 
   soundFile.loop();
 
@@ -76,6 +77,16 @@ function keyPressed(e) {
     amplitude.toggleNormalize();
   }
 
+}
+
+function mouseClicked() {
+if (mouseX > 0 && mouseX < width && mouseY > 0 && mouseY < height) {
+if ( getMasterVolume() == 0) {
+setMasterVolume(0, 1);
+} else {
+setMasterVolume(0.1),1;
+}
+}
 }
 
 

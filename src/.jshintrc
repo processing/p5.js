@@ -2,7 +2,6 @@
   "boss": true,
   "curly": true,
   "trailing": true,
-  "indent": 2,
   "devel": true,
   "eqeqeq": true,
   "eqnull": true,
@@ -15,10 +14,11 @@
   "unused": "vars",
   "maxlen": 80,
 
+  "browserify": true,
   "browser": true,
   "globals": {
-    "define": false,
     "require": false,
+    "module": false,
     "PImage": false
   }
 }

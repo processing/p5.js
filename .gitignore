@@ -1,6 +1,9 @@
 *.DS_STORE
+.project
 node_modules/*
 experiments/*
 lib_old/*
+lib/p5.*
 docs/reference/*
 docs/yuidoc-p5-theme/assets/js/reference.js*
+!*.gitkeep

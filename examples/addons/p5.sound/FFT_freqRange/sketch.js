@@ -18,8 +18,6 @@ function preload() {
 }
 
 function setup() {
-  soundFile.loop();
-
   createCanvas(1024, 400); 
   fill(255, 40, 255);
   noStroke();
@@ -53,7 +51,8 @@ function draw() {
     // Rectangle height represents the average value of this frequency range
     var h = -height + map(freqValue, 0, 255, height, 0);
     rect((i+1)*width/8 - width/8, height, width/8, h);
-    stroke(255);
+
+    fill(255);
     text( loFreq.toFixed(0) +' Hz - ' + hiFreq.toFixed(0)+' Hz', (i+1)*width/8 - width/8/2, 30);
   }
 }
@@ -62,13 +61,13 @@ function keyPressed() {
   if (soundFile.isPlaying()){
     soundFile.pause();
   } else {
-    soundFile.play();
+    soundFile.loop();
   }
 }
 
 // Change description text if the song is loading, playing or paused
 function updateDescription() {
-  if (soundFile.isPaused()) {
+  if (!soundFile.isPlaying()) {
     description = 'Paused...';
     p.html(description);
   }
