@@ -16,11 +16,15 @@ require('../core/error_helpers');
 
 /**
  * Loads an image from a path and creates a p5.Image from it.
- *
+ * <br><br>
  * The image may not be immediately available for rendering
  * If you want to ensure that the image is ready before doing
  * anything with it you can do perform those operations in the
  * callback, or place the loadImage() call in preload().
+ * <br><br>
+ * The path to the image needs to be relative to the HTML file
+ * that links in your sketch. It is not possible to load an
+ * image from a URL or other remote location.
  *
  * @method loadImage
  * @param  {String} path Path of the image to be loaded
