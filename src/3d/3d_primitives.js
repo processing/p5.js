@@ -44,7 +44,7 @@ p5.prototype.plane = function(width, height){
 
   var gId = 'plane|'+width+'|'+height+'|'+detailX+'|'+detailY;
 
-  if(!this._graphics.geometryInHash(gId)){
+  if(!this._renderer.geometryInHash(gId)){
 
     var geometry3d = new p5.Geometry3D();
 
@@ -59,11 +59,11 @@ p5.prototype.plane = function(width, height){
 
     var obj = geometry3d.generateObj();
 
-    this._graphics.initBuffer(gId, obj);
+    this._renderer.initBuffer(gId, obj);
 
   }
 
-  this._graphics.drawBuffer(gId);
+  this._renderer.drawBuffer(gId);
 
 };
 
@@ -99,7 +99,7 @@ p5.prototype.sphere = function(radius, detail){
 
   var gId = 'sphere|'+radius+'|'+detailX+'|'+detailY;
 
-  if(!this._graphics.geometryInHash(gId)){
+  if(!this._renderer.geometryInHash(gId)){
 
     var geometry3d = new p5.Geometry3D();
 
@@ -116,10 +116,10 @@ p5.prototype.sphere = function(radius, detail){
 
     var obj = geometry3d.generateObj();
 
-    this._graphics.initBuffer(gId, obj);
+    this._renderer.initBuffer(gId, obj);
   }
 
-  this._graphics.drawBuffer(gId);
+  this._renderer.drawBuffer(gId);
 
   return this;
 };
@@ -158,7 +158,7 @@ p5.prototype.cylinder = function(radius, height, detail){
 
   var gId = 'cylinder|'+radius+'|'+height+'|'+detailX+'|'+detailY;
 
-  if(!this._graphics.geometryInHash(gId)){
+  if(!this._renderer.geometryInHash(gId)){
 
     var geometry3d = new p5.Geometry3D();
 
@@ -206,10 +206,10 @@ p5.prototype.cylinder = function(radius, height, detail){
 
     var obj = geometry3d.generateObj(true);
 
-    this._graphics.initBuffer(gId, obj);
+    this._renderer.initBuffer(gId, obj);
   }
 
-  this._graphics.drawBuffer(gId);
+  this._renderer.drawBuffer(gId);
 
   return this;
 };
@@ -249,7 +249,7 @@ p5.prototype.cone = function(radius, height, detail){
 
   var gId = 'cone|'+radius+'|'+height+'|'+detailX+'|'+detailY;
 
-  if(!this._graphics.geometryInHash(gId)){
+  if(!this._renderer.geometryInHash(gId)){
 
     var geometry3d = new p5.Geometry3D();
 
@@ -277,10 +277,10 @@ p5.prototype.cone = function(radius, height, detail){
 
     var obj = geometry3d.generateObj(true);
 
-    this._graphics.initBuffer(gId, obj);
+    this._renderer.initBuffer(gId, obj);
   }
 
-  this._graphics.drawBuffer(gId);
+  this._renderer.drawBuffer(gId);
 
   return this;
 };
@@ -322,7 +322,7 @@ p5.prototype.torus = function(radius, tubeRadius, detail){
 
   var gId = 'torus|'+radius+'|'+tubeRadius+'|'+detailX+'|'+detailY;
 
-  if(!this._graphics.geometryInHash(gId)){
+  if(!this._renderer.geometryInHash(gId)){
 
     var geometry3d = new p5.Geometry3D();
 
@@ -339,10 +339,10 @@ p5.prototype.torus = function(radius, tubeRadius, detail){
 
     var obj = geometry3d.generateObj();
 
-    this._graphics.initBuffer(gId, obj);
+    this._renderer.initBuffer(gId, obj);
   }
 
-  this._graphics.drawBuffer(gId);
+  this._renderer.drawBuffer(gId);
 
   return this;
 };
@@ -383,7 +383,7 @@ p5.prototype.box = function(width, height, depth){
 
   var gId = 'cube|'+width+'|'+height+'|'+depth+'|'+detailX+'|'+detailY;
 
-  if(!this._graphics.geometryInHash(gId)){
+  if(!this._renderer.geometryInHash(gId)){
 
     var geometry3d = new p5.Geometry3D();
 
@@ -439,10 +439,10 @@ p5.prototype.box = function(width, height, depth){
 
     var obj = geometry3d.generateObj(true);
 
-    this._graphics.initBuffer(gId, obj);
+    this._renderer.initBuffer(gId, obj);
   }
 
-  this._graphics.drawBuffer(gId);
+  this._renderer.drawBuffer(gId);
 
   return this;
 

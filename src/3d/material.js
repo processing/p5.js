@@ -30,7 +30,7 @@ var p5 = require('../core/core');
  * </div>
  */
 p5.prototype.normalMaterial = function(){
-  this._graphics._getShader('normalVert', 'normalFrag');
+  this._renderer._getShader('normalVert', 'normalFrag');
   return this;
 };
 
@@ -59,8 +59,8 @@ p5.prototype.normalMaterial = function(){
  * </div>
  */
 p5.prototype.texture = function(image){
-  var gl = this._graphics.GL;
-  var shaderProgram = this._graphics._getShader('normalVert',
+  var gl = this._renderer.GL;
+  var shaderProgram = this._renderer._getShader('normalVert',
     'textureFrag');
   gl.useProgram(shaderProgram);
   var tex = gl.createTexture();
@@ -162,16 +162,16 @@ function _nextHighestPOT (value){
  * </div>
  */
 p5.prototype.basicMaterial = function(v1, v2, v3, a){
-  var gl = this._graphics.GL;
+  var gl = this._renderer.GL;
 
-  var shaderProgram = this._graphics._getShader('normalVert', 'basicFrag');
+  var shaderProgram = this._renderer._getShader('normalVert', 'basicFrag');
 
   gl.useProgram(shaderProgram);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
 
-  var color = this._graphics._pInst.color.apply(
-    this._graphics._pInst, arguments);
+  var color = this._renderer._pInst.color.apply(
+    this._renderer._pInst, arguments);
   var colors = color._normalize();
 
   gl.uniform4f( shaderProgram.uMaterialColor,
@@ -207,15 +207,15 @@ p5.prototype.basicMaterial = function(v1, v2, v3, a){
  * </div>
  */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
-  var gl = this._graphics.GL;
-  var shaderProgram = this._graphics._getShader('lightVert', 'lightFrag');
+  var gl = this._renderer.GL;
+  var shaderProgram = this._renderer._getShader('lightVert', 'lightFrag');
 
   gl.useProgram(shaderProgram);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
 
-  var color = this._graphics._pInst.color.apply(
-    this._graphics._pInst, arguments);
+  var color = this._renderer._pInst.color.apply(
+    this._renderer._pInst, arguments);
   var colors = color._normalize();
 
   gl.uniform4f(shaderProgram.uMaterialColor,
@@ -254,15 +254,15 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * </div>
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
-  var gl = this._graphics.GL;
-  var shaderProgram = this._graphics._getShader('lightVert', 'lightFrag');
+  var gl = this._renderer.GL;
+  var shaderProgram = this._renderer._getShader('lightVert', 'lightFrag');
 
   gl.useProgram(shaderProgram);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
 
-  var color = this._graphics._pInst.color.apply(
-    this._graphics._pInst, arguments);
+  var color = this._renderer._pInst.color.apply(
+    this._renderer._pInst, arguments);
   var colors = color._normalize();
 
   gl.uniform4f(shaderProgram.uMaterialColor,
