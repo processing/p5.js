@@ -1,7 +1,7 @@
 /**
- * @module Lights, Camera
- * @submodule Camera
- * @for p5
+ * module Lights, Camera
+ * submodule Camera
+ * for p5
  * @requires core
  */
 
@@ -11,7 +11,7 @@ var p5 = require('../core/core');
 
 /**
  * sets camera position
- * @method camera
+ * method camera
  * @param  {Number} x  camera postion value on x axis
  * @param  {Number} y  camera postion value on y axis
  * @param  {Number} z  camera postion value on z axis
@@ -41,7 +41,7 @@ p5.prototype.camera = function(x, y, z){
 
 /**
  * sets perspective camera
- * @method  perspective
+ * method  perspective
  * @param  {Number} fovy   camera frustum vertical field of view,
  *                         from bottom to top of view, in degrees
  * @param  {Number} aspect camera frustum aspect ratio
@@ -85,7 +85,7 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
 
 /**
  * setup ortho camera
- * @method  ortho
+ * method  ortho
  * @param  {Number} left   camera frustum left plane
  * @param  {Number} right  camera frustum right plane
  * @param  {Number} bottom camera frustum bottom plane

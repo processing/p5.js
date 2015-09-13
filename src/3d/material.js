@@ -1,7 +1,7 @@
 /**
- * @module Lights, Camera
- * @submodule Material
- * @for p5
+ * module Lights, Camera
+ * submodule Material
+ * for p5
  * @requires core
  */
 
@@ -12,7 +12,7 @@ var p5 = require('../core/core');
 
 /**
  * normal material for geometry
- * @method normalMaterial
+ * method normalMaterial
  * @return {p5}
  * @example
  * <div>
@@ -36,7 +36,7 @@ p5.prototype.normalMaterial = function(){
 
 /**
  * texture for geometry
- * @method texture
+ * method texture
  * @return {p5}
  * @example
  * <div>
@@ -137,7 +137,7 @@ function _nextHighestPOT (value){
 
 /**
  * basic material for geometry with a given color
- * @method  basicMaterial
+ * method  basicMaterial
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
@@ -183,7 +183,7 @@ p5.prototype.basicMaterial = function(v1, v2, v3, a){
 
 /**
  * ambient material for geometry with a given color
- * @method  ambientMaterial
+ * method  ambientMaterial
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
@@ -230,7 +230,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
 
 /**
  * specular material for geometry with a given color
- * @method specularMaterial
+ * method specularMaterial
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
