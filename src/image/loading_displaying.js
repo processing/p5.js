@@ -22,9 +22,10 @@ require('../core/error_helpers');
  * anything with it you can do perform those operations in the
  * callback, or place the loadImage() call in preload().
  * <br><br>
- * The path to the image needs to be relative to the HTML file
- * that links in your sketch. It is not possible to load an
- * image from a URL or other remote location.
+ * The path to the image should be relative to the HTML file
+ * that links in your sketch. Loading an from a URL or other
+ * remote location may be blocked due to your browser's built-in
+ * security.
  *
  * @method loadImage
  * @param  {String} path Path of the image to be loaded
