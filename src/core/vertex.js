@@ -226,20 +226,20 @@ p5.prototype.beginContour = function() {
  * </div>
  */
 p5.prototype.beginShape = function(kind) {
-  if(this._graphics.isP3D){
-    this._graphics.beginShape(kind);
-  }else{
-    if (kind === constants.POINTS ||
-      kind === constants.LINES ||
-      kind === constants.TRIANGLES ||
-      kind === constants.TRIANGLE_FAN ||
-      kind === constants.TRIANGLE_STRIP ||
-      kind === constants.QUADS ||
-      kind === constants.QUAD_STRIP) {
-      shapeKind = kind;
-    } else {
-      shapeKind = null;
-    }
+  if (kind === constants.POINTS ||
+    kind === constants.LINES ||
+    kind === constants.TRIANGLES ||
+    kind === constants.TRIANGLE_FAN ||
+    kind === constants.TRIANGLE_STRIP ||
+    kind === constants.QUADS ||
+    kind === constants.QUAD_STRIP) {
+    shapeKind = kind;
+  } else {
+    shapeKind = null;
+  }
+  if(this._renderer.isP3D){
+    this._renderer.beginShape(kind);
+  } else {
     vertices = [];
     contourVertices = [];
   }
@@ -422,11 +422,11 @@ p5.prototype.endContour = function() {
  * </div>
  */
 p5.prototype.endShape = function(mode) {
-  if(this._graphics.isP3D){
-    this._graphics.endShape();
+  if(this._renderer.isP3D){
+    this._renderer.endShape();
   }else{
     if (vertices.length === 0) { return this; }
-    if (!this._doStroke && !this._doFill) { return this; }
+    if (!this._renderer._doStroke && !this._renderer._doFill) { return this; }
 
     var closeShape = mode === constants.CLOSE;
 
@@ -435,7 +435,7 @@ p5.prototype.endShape = function(mode) {
       vertices.push(vertices[0]);
     }
 
-    this._graphics.endShape(mode, vertices, isCurve, isBezier,
+    this._renderer.endShape(mode, vertices, isCurve, isBezier,
       isQuadratic, isContour, shapeKind);
 
     // Reset some settings
@@ -549,7 +549,7 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  * </div>
  */
 p5.prototype.vertex = function(x, y, moveTo) {
-  if(this._graphics.isP3D){
+  if(this._renderer.isP3D){
     this._validateParameters(
       'vertex',
       arguments,
@@ -557,7 +557,7 @@ p5.prototype.vertex = function(x, y, moveTo) {
         ['Number', 'Number', 'Number']
       ]
     );
-    this._graphics.vertex
+    this._renderer.vertex
     (arguments[0], arguments[1], arguments[2]);
   }else{
     this._validateParameters(
@@ -575,8 +575,8 @@ p5.prototype.vertex = function(x, y, moveTo) {
     vert[2] = 0;
     vert[3] = 0;
     vert[4] = 0;
-    vert[5] = this._graphics._getFill();
-    vert[6] = this._graphics._getStroke();
+    vert[5] = this._renderer._getFill();
+    vert[6] = this._renderer._getStroke();
 
     if (moveTo) {
       vert.moveTo = moveTo;

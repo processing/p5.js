@@ -16,11 +16,16 @@ require('../core/error_helpers');
 
 /**
  * Loads an image from a path and creates a p5.Image from it.
- *
+ * <br><br>
  * The image may not be immediately available for rendering
  * If you want to ensure that the image is ready before doing
  * anything with it you can do perform those operations in the
  * callback, or place the loadImage() call in preload().
+ * <br><br>
+ * The path to the image should be relative to the HTML file
+ * that links in your sketch. Loading an from a URL or other
+ * remote location may be blocked due to your browser's built-in
+ * security.
  *
  * @method loadImage
  * @param  {String} path Path of the image to be loaded
@@ -138,7 +143,7 @@ p5.prototype.image = function(img, x, y, width, height) {
   y = y || 0;
   width = width || img.width;
   height = height || img.height;
-  var vals = canvas.modeAdjust(x, y, width, height, this._imageMode);
+  var vals = canvas.modeAdjust(x, y, width, height, this._graphics._imageMode);
   // tint the image if there is a tint
   this._graphics.image(img, vals.x, vals.y, vals.w, vals.h);
 };
@@ -209,7 +214,7 @@ p5.prototype.image = function(img, x, y, width, height) {
  */
 p5.prototype.tint = function () {
   var c = this.color.apply(this, arguments);
-  this._tint = c.rgba;
+  this._graphics._tint = c.rgba;
 };
 
 /**
@@ -234,7 +239,7 @@ p5.prototype.tint = function () {
  * </div>
  */
 p5.prototype.noTint = function() {
-  this._tint = null;
+  this._graphics._tint = null;
 };
 
 /**
@@ -263,10 +268,10 @@ p5.prototype._getTintedImageCanvas = function(img) {
     var b = pixels[i+2];
     var a = pixels[i+3];
 
-    newPixels[i] = r*this._tint[0]/255;
-    newPixels[i+1] = g*this._tint[1]/255;
-    newPixels[i+2] = b*this._tint[2]/255;
-    newPixels[i+3] = a*this._tint[3]/255;
+    newPixels[i] = r*this._graphics._tint[0]/255;
+    newPixels[i+1] = g*this._graphics._tint[1]/255;
+    newPixels[i+2] = b*this._graphics._tint[2]/255;
+    newPixels[i+3] = a*this._graphics._tint[3]/255;
   }
 
   tmpCtx.putImageData(id, 0, 0);
@@ -335,7 +340,7 @@ p5.prototype.imageMode = function(m) {
   if (m === constants.CORNER ||
     m === constants.CORNERS ||
     m === constants.CENTER) {
-    this._imageMode = m;
+    this._graphics._imageMode = m;
   }
 };
 

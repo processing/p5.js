@@ -1,7 +1,7 @@
 /**
- * @module Lights, Camera
- * @submodule Material
- * @for p5
+ * module Lights, Camera
+ * submodule Material
+ * for p5
  * @requires core
  */
 
@@ -12,7 +12,7 @@ var p5 = require('../core/core');
 
 /**
  * normal material for geometry
- * @method normalMaterial
+ * method normalMaterial
  * @return {p5}
  * @example
  * <div>
@@ -30,13 +30,13 @@ var p5 = require('../core/core');
  * </div>
  */
 p5.prototype.normalMaterial = function(){
-  this._graphics._getShader('normalVert', 'normalFrag');
+  this._renderer._getShader('normalVert', 'normalFrag');
   return this;
 };
 
 /**
  * texture for geometry
- * @method texture
+ * method texture
  * @return {p5}
  * @example
  * <div>
@@ -59,8 +59,8 @@ p5.prototype.normalMaterial = function(){
  * </div>
  */
 p5.prototype.texture = function(image){
-  var gl = this._graphics.GL;
-  var shaderProgram = this._graphics._getShader('normalVert',
+  var gl = this._renderer.GL;
+  var shaderProgram = this._renderer._getShader('normalVert',
     'textureFrag');
   gl.useProgram(shaderProgram);
   var tex = gl.createTexture();
@@ -137,7 +137,7 @@ function _nextHighestPOT (value){
 
 /**
  * basic material for geometry with a given color
- * @method  basicMaterial
+ * method  basicMaterial
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
@@ -162,16 +162,16 @@ function _nextHighestPOT (value){
  * </div>
  */
 p5.prototype.basicMaterial = function(v1, v2, v3, a){
-  var gl = this._graphics.GL;
+  var gl = this._renderer.GL;
 
-  var shaderProgram = this._graphics._getShader('normalVert', 'basicFrag');
+  var shaderProgram = this._renderer._getShader('normalVert', 'basicFrag');
 
   gl.useProgram(shaderProgram);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
 
-  var color = this._graphics._pInst.color.apply(
-    this._graphics._pInst, arguments);
+  var color = this._renderer._pInst.color.apply(
+    this._renderer._pInst, arguments);
   var colors = color._normalize();
 
   gl.uniform4f( shaderProgram.uMaterialColor,
@@ -183,7 +183,7 @@ p5.prototype.basicMaterial = function(v1, v2, v3, a){
 
 /**
  * ambient material for geometry with a given color
- * @method  ambientMaterial
+ * method  ambientMaterial
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
@@ -207,15 +207,15 @@ p5.prototype.basicMaterial = function(v1, v2, v3, a){
  * </div>
  */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
-  var gl = this._graphics.GL;
-  var shaderProgram = this._graphics._getShader('lightVert', 'lightFrag');
+  var gl = this._renderer.GL;
+  var shaderProgram = this._renderer._getShader('lightVert', 'lightFrag');
 
   gl.useProgram(shaderProgram);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
 
-  var color = this._graphics._pInst.color.apply(
-    this._graphics._pInst, arguments);
+  var color = this._renderer._pInst.color.apply(
+    this._renderer._pInst, arguments);
   var colors = color._normalize();
 
   gl.uniform4f(shaderProgram.uMaterialColor,
@@ -230,7 +230,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
 
 /**
  * specular material for geometry with a given color
- * @method specularMaterial
+ * method specularMaterial
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
@@ -254,15 +254,15 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * </div>
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
-  var gl = this._graphics.GL;
-  var shaderProgram = this._graphics._getShader('lightVert', 'lightFrag');
+  var gl = this._renderer.GL;
+  var shaderProgram = this._renderer._getShader('lightVert', 'lightFrag');
 
   gl.useProgram(shaderProgram);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
 
-  var color = this._graphics._pInst.color.apply(
-    this._graphics._pInst, arguments);
+  var color = this._renderer._pInst.color.apply(
+    this._renderer._pInst, arguments);
   var colors = color._normalize();
 
   gl.uniform4f(shaderProgram.uMaterialColor,

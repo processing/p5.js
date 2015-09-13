@@ -110,7 +110,7 @@ p5.Renderer2D.prototype.stroke = function() {
 p5.Renderer2D.prototype.image = function (img, x, y, w, h) {
   var frame = img.canvas || img.elt;
   try {
-    if (this._pInst._tint && img.canvas) {
+    if (this._tint && img.canvas) {
       this.drawingContext.drawImage(this._getTintedImageCanvas(img),
         x, y, w, h);
     } else {
@@ -139,10 +139,10 @@ p5.Renderer2D.prototype._getTintedImageCanvas = function (img) {
     var g = pixels[i + 1];
     var b = pixels[i + 2];
     var a = pixels[i + 3];
-    newPixels[i] = r * this._pInst._tint[0] / 255;
-    newPixels[i + 1] = g * this._pInst._tint[1] / 255;
-    newPixels[i + 2] = b * this._pInst._tint[2] / 255;
-    newPixels[i + 3] = a * this._pInst._tint[3] / 255;
+    newPixels[i] = r * this._tint[0] / 255;
+    newPixels[i + 1] = g * this._tint[1] / 255;
+    newPixels[i + 2] = b * this._tint[2] / 255;
+    newPixels[i + 3] = a * this._tint[3] / 255;
   }
   tmpCtx.putImageData(id, 0, 0);
   return tmpCanvas;
@@ -222,27 +222,32 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
     return [0, 0, 0, 255];
   }
 
-  var pd = this.pixelDensity || this._pInst.pixelDensity;
+  var ctx = this._pInst || this;
+
+  var pd = ctx.pixelDensity || ctx._pInst.pixelDensity;
+
+  this.loadPixels.call(ctx);
 
   if (w === 1 && h === 1){
+
     return [
-      this.pixels[pd*4*(y*this.width+x)],
-      this.pixels[pd*(4*(y*this.width+x)+1)],
-      this.pixels[pd*(4*(y*this.width+x)+2)],
-      this.pixels[pd*(4*(y*this.width+x)+3)]
+      ctx.pixels[pd*4*(y*this.width+x)],
+      ctx.pixels[pd*(4*(y*this.width+x)+1)],
+      ctx.pixels[pd*(4*(y*this.width+x)+2)],
+      ctx.pixels[pd*(4*(y*this.width+x)+3)]
     ];
   } else {
     var sx = x * pd;
     var sy = y * pd;
     //auto constrain the width and height to
     //dimensions of the source image
-    var dw = Math.min(w, this.width);
-    var dh = Math.min(h, this.height);
+    var dw = Math.min(w, ctx.width);
+    var dh = Math.min(h, ctx.height);
     var sw = dw * pd;
     var sh = dh * pd;
 
     var region = new p5.Image(dw, dh);
-    region.canvas.getContext('2d').drawImage(this.canvas, sx, sy, sw, sh,
+    region.canvas.getContext('2d').drawImage(ctx.canvas, sx, sy, sw, sh,
       0, 0, dw, dh);
 
     return region;
@@ -254,6 +259,8 @@ p5.Renderer2D.prototype.loadPixels = function () {
   var w = this.width * pd;
   var h = this.height * pd;
   var imageData = this.drawingContext.getImageData(0, 0, w, h);
+  // @todo this should actually set pixels per object, so diff buffers can
+  // have diff pixel arrays.
   if (this._pInst) {
     this._pInst._setProperty('imageData', imageData);
     this._pInst._setProperty('pixels', imageData.data);
@@ -385,7 +392,7 @@ p5.Renderer2D.prototype._acuteArcToBezier =
 p5.Renderer2D.prototype.arc =
   function(x, y, w, h, start, stop, mode) {
   var ctx = this.drawingContext;
-  var vals = canvas.arcModeAdjust(x, y, w, h, this._pInst._ellipseMode);
+  var vals = canvas.arcModeAdjust(x, y, w, h, this._ellipseMode);
   var rx = vals.w / 2.0;
   var ry = vals.h / 2.0;
   var epsilon = 0.00001;  // Smallest visible angle on displays up to 4K.
@@ -400,7 +407,7 @@ p5.Renderer2D.prototype.arc =
   }
 
   // Fill curves
-  if (this._pInst._doFill) {
+  if (this._doFill) {
     ctx.beginPath();
     curves.forEach(function (curve, index) {
       if (index === 0) {
@@ -418,7 +425,7 @@ p5.Renderer2D.prototype.arc =
   }
 
   // Stroke curves
-  if (this._pInst._doStroke) {
+  if (this._doStroke) {
     ctx.beginPath();
     curves.forEach(function (curve, index) {
       if (index === 0) {
@@ -441,7 +448,7 @@ p5.Renderer2D.prototype.arc =
 
 p5.Renderer2D.prototype.ellipse = function(x, y, w, h) {
   var ctx = this.drawingContext;
-  var doFill = this._pInst._doFill, doStroke = this._pInst._doStroke;
+  var doFill = this._doFill, doStroke = this._doStroke;
   if (doFill && !doStroke) {
     if(ctx.fillStyle === styleEmpty) {
       return this;
@@ -451,7 +458,7 @@ p5.Renderer2D.prototype.ellipse = function(x, y, w, h) {
       return this;
     }
   }
-  var vals = canvas.modeAdjust(x, y, w, h, this._pInst._ellipseMode);
+  var vals = canvas.modeAdjust(x, y, w, h, this._ellipseMode);
   var kappa = 0.5522847498,
     ox = (vals.w / 2) * kappa, // control point offset horizontal
     oy = (vals.h / 2) * kappa, // control point offset vertical
@@ -476,7 +483,7 @@ p5.Renderer2D.prototype.ellipse = function(x, y, w, h) {
 
 p5.Renderer2D.prototype.line = function(x1, y1, x2, y2) {
   var ctx = this.drawingContext;
-  if (!this._pInst._doStroke) {
+  if (!this._doStroke) {
     return this;
   } else if(ctx.strokeStyle === styleEmpty){
     return this;
@@ -499,7 +506,7 @@ p5.Renderer2D.prototype.point = function(x, y) {
   var ctx = this.drawingContext;
   var s = ctx.strokeStyle;
   var f = ctx.fillStyle;
-  if (!this._pInst._doStroke) {
+  if (!this._doStroke) {
     return this;
   } else if(ctx.strokeStyle === styleEmpty){
     return this;
@@ -527,7 +534,7 @@ p5.Renderer2D.prototype.point = function(x, y) {
 p5.Renderer2D.prototype.quad =
   function(x1, y1, x2, y2, x3, y3, x4, y4) {
   var ctx = this.drawingContext;
-  var doFill = this._pInst._doFill, doStroke = this._pInst._doStroke;
+  var doFill = this._doFill, doStroke = this._doStroke;
   if (doFill && !doStroke) {
     if(ctx.fillStyle === styleEmpty) {
       return this;
@@ -554,7 +561,7 @@ p5.Renderer2D.prototype.quad =
 
 p5.Renderer2D.prototype.rect = function(x, y, w, h, tl, tr, br, bl) {
   var ctx = this.drawingContext;
-  var doFill = this._pInst._doFill, doStroke = this._pInst._doStroke;
+  var doFill = this._doFill, doStroke = this._doStroke;
   if (doFill && !doStroke) {
     if(ctx.fillStyle === styleEmpty) {
       return this;
@@ -564,9 +571,9 @@ p5.Renderer2D.prototype.rect = function(x, y, w, h, tl, tr, br, bl) {
       return this;
     }
   }
-  var vals = canvas.modeAdjust(x, y, w, h, this._pInst._rectMode);
+  var vals = canvas.modeAdjust(x, y, w, h, this._rectMode);
   // Translate the line by (0.5, 0.5) to draw a crisp rectangle border
-  if (this._pInst._doStroke && ctx.lineWidth % 2 === 1) {
+  if (this._doStroke && ctx.lineWidth % 2 === 1) {
     ctx.translate(0.5, 0.5);
   }
   ctx.beginPath();
@@ -608,13 +615,13 @@ p5.Renderer2D.prototype.rect = function(x, y, w, h, tl, tr, br, bl) {
     ctx.arcTo(_x, _y, _x + _w, _y, tl);
     ctx.closePath();
   }
-  if (this._pInst._doFill) {
+  if (this._doFill) {
     ctx.fill();
   }
-  if (this._pInst._doStroke) {
+  if (this._doStroke) {
     ctx.stroke();
   }
-  if (this._pInst._doStroke && ctx.lineWidth % 2 === 1) {
+  if (this._doStroke && ctx.lineWidth % 2 === 1) {
     ctx.translate(-0.5, -0.5);
   }
   return this;
@@ -622,7 +629,7 @@ p5.Renderer2D.prototype.rect = function(x, y, w, h, tl, tr, br, bl) {
 
 p5.Renderer2D.prototype.triangle = function(x1, y1, x2, y2, x3, y3) {
   var ctx = this.drawingContext;
-  var doFill = this._pInst._doFill, doStroke = this._pInst._doStroke;
+  var doFill = this._doFill, doStroke = this._doStroke;
   if (doFill && !doStroke) {
     if(ctx.fillStyle === styleEmpty) {
       return this;
@@ -651,7 +658,7 @@ function (mode, vertices, isCurve, isBezier,
   if (vertices.length === 0) {
     return this;
   }
-  if (!this._pInst._doStroke && !this._pInst._doFill) {
+  if (!this._doStroke && !this._doFill) {
     return this;
   }
   var closeShape = mode === constants.CLOSE;
@@ -663,7 +670,7 @@ function (mode, vertices, isCurve, isBezier,
   var numVerts = vertices.length;
   if (isCurve && (shapeKind === constants.POLYGON || shapeKind === null)) {
     if (numVerts > 3) {
-      var b = [], s = 1 - this._pInst._curveTightness;
+      var b = [], s = 1 - this._curveTightness;
       this.drawingContext.beginPath();
       this.drawingContext.moveTo(vertices[1][0], vertices[1][1]);
       for (i = 1; i + 2 < numVerts; i++) {
@@ -728,7 +735,7 @@ function (mode, vertices, isCurve, isBezier,
     if (shapeKind === constants.POINTS) {
       for (i = 0; i < numVerts; i++) {
         v = vertices[i];
-        if (this._pInst._doStroke) {
+        if (this._doStroke) {
           this._pInst.stroke(v[6]);
         }
         this._pInst.point(v[0], v[1]);
@@ -736,7 +743,7 @@ function (mode, vertices, isCurve, isBezier,
     } else if (shapeKind === constants.LINES) {
       for (i = 0; i + 1 < numVerts; i += 2) {
         v = vertices[i];
-        if (this._pInst._doStroke) {
+        if (this._doStroke) {
           this._pInst.stroke(vertices[i + 1][6]);
         }
         this._pInst.line(v[0], v[1], vertices[i + 1][0], vertices[i + 1][1]);
@@ -749,11 +756,11 @@ function (mode, vertices, isCurve, isBezier,
         this.drawingContext.lineTo(vertices[i + 1][0], vertices[i + 1][1]);
         this.drawingContext.lineTo(vertices[i + 2][0], vertices[i + 2][1]);
         this.drawingContext.lineTo(v[0], v[1]);
-        if (this._pInst._doFill) {
+        if (this._doFill) {
           this._pInst.fill(vertices[i + 2][5]);
           this.drawingContext.fill();
         }
-        if (this._pInst._doStroke) {
+        if (this._doStroke) {
           this._pInst.stroke(vertices[i + 2][6]);
           this.drawingContext.stroke();
         }
@@ -765,18 +772,18 @@ function (mode, vertices, isCurve, isBezier,
         this.drawingContext.beginPath();
         this.drawingContext.moveTo(vertices[i + 1][0], vertices[i + 1][1]);
         this.drawingContext.lineTo(v[0], v[1]);
-        if (this._pInst._doStroke) {
+        if (this._doStroke) {
           this._pInst.stroke(vertices[i + 1][6]);
         }
-        if (this._pInst._doFill) {
+        if (this._doFill) {
           this._pInst.fill(vertices[i + 1][5]);
         }
         if (i + 2 < numVerts) {
           this.drawingContext.lineTo(vertices[i + 2][0], vertices[i + 2][1]);
-          if (this._pInst._doStroke) {
+          if (this._doStroke) {
             this._pInst.stroke(vertices[i + 2][6]);
           }
-          if (this._pInst._doFill) {
+          if (this._doFill) {
             this._pInst.fill(vertices[i + 2][5]);
           }
         }
@@ -788,10 +795,10 @@ function (mode, vertices, isCurve, isBezier,
         this.drawingContext.moveTo(vertices[0][0], vertices[0][1]);
         this.drawingContext.lineTo(vertices[1][0], vertices[1][1]);
         this.drawingContext.lineTo(vertices[2][0], vertices[2][1]);
-        if (this._pInst._doFill) {
+        if (this._doFill) {
           this._pInst.fill(vertices[2][5]);
         }
-        if (this._pInst._doStroke) {
+        if (this._doStroke) {
           this._pInst.stroke(vertices[2][6]);
         }
         this._doFillStrokeClose();
@@ -801,10 +808,10 @@ function (mode, vertices, isCurve, isBezier,
           this.drawingContext.moveTo(vertices[0][0], vertices[0][1]);
           this.drawingContext.lineTo(vertices[i - 1][0], vertices[i - 1][1]);
           this.drawingContext.lineTo(v[0], v[1]);
-          if (this._pInst._doFill) {
+          if (this._doFill) {
             this._pInst.fill(v[5]);
           }
-          if (this._pInst._doStroke) {
+          if (this._doStroke) {
             this._pInst.stroke(v[6]);
           }
           this._doFillStrokeClose();
@@ -819,10 +826,10 @@ function (mode, vertices, isCurve, isBezier,
           this.drawingContext.lineTo(vertices[i + j][0], vertices[i + j][1]);
         }
         this.drawingContext.lineTo(v[0], v[1]);
-        if (this._pInst._doFill) {
+        if (this._doFill) {
           this._pInst.fill(vertices[i + 3][5]);
         }
-        if (this._pInst._doStroke) {
+        if (this._doStroke) {
           this._pInst.stroke(vertices[i + 3][6]);
         }
         this._doFillStrokeClose();
@@ -837,10 +844,10 @@ function (mode, vertices, isCurve, isBezier,
             this.drawingContext.lineTo(v[0], v[1]);
             this.drawingContext.lineTo(vertices[i + 1][0], vertices[i+1][1]);
             this.drawingContext.lineTo(vertices[i + 3][0], vertices[i+3][1]);
-            if (this._pInst._doFill) {
+            if (this._doFill) {
               this._pInst.fill(vertices[i + 3][5]);
             }
-            if (this._pInst._doStroke) {
+            if (this._doStroke) {
               this._pInst.stroke(vertices[i + 3][6]);
             }
           } else {
@@ -973,10 +980,10 @@ p5.Renderer2D.prototype.curve = function (x1, y1, x2, y2, x3, y3, x4, y4) {
 //////////////////////////////////////////////
 
 p5.Renderer2D.prototype._doFillStrokeClose = function () {
-  if (this._pInst._doFill) {
+  if (this._doFill) {
     this.drawingContext.fill();
   }
-  if (this._pInst._doStroke) {
+  if (this._doStroke) {
     this.drawingContext.stroke();
   }
   this.drawingContext.closePath();
@@ -1052,7 +1059,7 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
   // Processing's vertical alignment implementation
   // for BASELINE vetical alignment in a boundings box
 
-  if (!(p._doFill || p._doStroke)) {
+  if (!(this._doFill || this._doStroke)) {
     return;
   }
 
@@ -1081,7 +1088,7 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
       }
     }
 
-    if (this._pInst._rectMode === constants.CENTER ){
+    if (this._rectMode === constants.CENTER ){
 
       x -= maxWidth / 2;
       y -= maxHeight / 2;
@@ -1151,18 +1158,18 @@ p5.Renderer2D.prototype._renderText = function(p, line, x, y) {
 
   p.push(); // fix to #803
 
-  if (!p._isOpenType()) {  // a system/browser font
+  if (!this._isOpenType()) {  // a system/browser font
 
     // no stroke unless specified by user
-    if (p._doStroke && p._strokeSet) {
+    if (this._doStroke && this._strokeSet) {
 
       this.drawingContext.strokeText(line, x, y);
     }
 
-    if (p._doFill) {
+    if (this._doFill) {
 
       // if fill hasn't been set by user, use default text fill
-      this.drawingContext.fillStyle =  p._fillSet ?
+      this.drawingContext.fillStyle =  this._fillSet ?
         this.drawingContext.fillStyle : constants._DEFAULT_TEXT_FILL;
 
       this.drawingContext.fillText(line, x, y);
@@ -1170,7 +1177,7 @@ p5.Renderer2D.prototype._renderText = function(p, line, x, y) {
   }
   else { // an opentype font, let it handle the rendering
 
-    p._textFont._renderPath(line, x, y);
+    this._textFont._renderPath(line, x, y);
   }
 
   p.pop();
@@ -1180,9 +1187,9 @@ p5.Renderer2D.prototype._renderText = function(p, line, x, y) {
 
 p5.Renderer2D.prototype.textWidth = function(s) {
 
-  if (this._pInst._isOpenType()) {
+  if (this._isOpenType()) {
 
-    return this._pInst._textFont._textWidth(s);
+    return this._textFont._textWidth(s);
   }
 
   return this.drawingContext.measureText(s).width;
@@ -1234,18 +1241,19 @@ p5.Renderer2D.prototype._applyTextProperties = function() {
 
   var font, p = this._pInst;
 
-  p._setProperty('_textAscent', null);
-  p._setProperty('_textDescent', null);
+  this._setProperty('_textAscent', null);
+  this._setProperty('_textDescent', null);
 
-  font = p._textFont;
+  font = this._textFont;
 
-  if (p._isOpenType()) {
+  if (this._isOpenType()) {
 
-    font = p._textFont.font.familyName;
-    p._setProperty('_textStyle', p._textFont.font.styleName);
+    font = this._textFont.font.familyName;
+    this._setProperty('_textStyle', this._textFont.font.styleName);
   }
 
-  this.drawingContext.font = p._textStyle + ' ' + p._textSize + 'px ' + font;
+  this.drawingContext.font = this._textStyle + ' ' +
+  this._textSize + 'px ' + font;
 
   return p;
 };

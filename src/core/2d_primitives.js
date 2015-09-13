@@ -17,7 +17,12 @@ require('./error_helpers');
  * Draw an arc to the screen. If called with only a, b, c, d, start, and
  * stop, the arc will pe drawn as an open pie. If mode is provided, the arc
  * will be drawn either open, as a chord, or as a pie as specified. The
- * origin may be changed with the ellipseMode() function.
+ * origin may be changed with the ellipseMode() function.<br><br>
+ * Note that drawing a full circle (ex: 0 to TWO_PI) will appear blank
+ * because 0 and TWO_PI are the same position on the unit circle. The
+ * best way to handle this is by using the ellipse() function instead
+ * to create a closed ellipse, and to use the arc() function
+ * only to draw parts of an ellipse.
  *
  * @method arc
  * @param  {Number} a      x-coordinate of the arc's ellipse
@@ -69,7 +74,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
     ]
   );
 
-  if (!this._doStroke && !this._doFill) {
+  if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
   if (this._angleMode === constants.DEGREES) {
@@ -112,7 +117,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
   // p5 supports negative width and heights for ellipses
   w = Math.abs(w);
   h = Math.abs(h);
-  this._graphics.arc(x, y, w, h, start, stop, mode);
+  this._renderer.arc(x, y, w, h, start, stop, mode);
   return this;
 };
 
@@ -142,15 +147,15 @@ p5.prototype.ellipse = function(x, y, w, h) {
     ['Number', 'Number', 'Number', 'Number']
   );
 
-  if (!this._doStroke && !this._doFill) {
+  if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
   // p5 supports negative width and heights for ellipses
   w = Math.abs(w);
   h = Math.abs(h);
-  //@TODO add catch block here if this._graphics
+  //@TODO add catch block here if this._renderer
   //doesn't have the method implemented yet
-  this._graphics.ellipse(x, y, w, h);
+  this._renderer.ellipse(x, y, w, h);
   return this;
 };
 /**
@@ -186,20 +191,20 @@ p5.prototype.ellipse = function(x, y, w, h) {
  */
 ////commented out original
 // p5.prototype.line = function(x1, y1, x2, y2) {
-//   if (!this._doStroke) {
+//   if (!this._renderer._doStroke) {
 //     return this;
 //   }
-//   if(this._graphics.isP3D){
+//   if(this._renderer.isP3D){
 //   } else {
-//     this._graphics.line(x1, y1, x2, y2);
+//     this._renderer.line(x1, y1, x2, y2);
 //   }
 // };
 p5.prototype.line = function() {
-  if (!this._doStroke) {
+  if (!this._renderer._doStroke) {
     return this;
   }
   //check whether we should draw a 3d line or 2d
-  if(this._graphics.isP3D){
+  if(this._renderer.isP3D){
     this._validateParameters(
       'line',
       arguments,
@@ -207,7 +212,7 @@ p5.prototype.line = function() {
         ['Number', 'Number', 'Number', 'Number', 'Number', 'Number']
       ]
     );
-    this._graphics.line(
+    this._renderer.line(
       arguments[0],
       arguments[1],
       arguments[2],
@@ -222,7 +227,7 @@ p5.prototype.line = function() {
         ['Number', 'Number', 'Number', 'Number'],
       ]
     );
-    this._graphics.line(
+    this._renderer.line(
       arguments[0],
       arguments[1],
       arguments[2],
@@ -252,11 +257,11 @@ p5.prototype.line = function() {
  * </div>
  */
 p5.prototype.point = function() {
-  if (!this._doStroke) {
+  if (!this._renderer._doStroke) {
     return this;
   }
   //check whether we should draw a 3d line or 2d
-  if(this._graphics.isP3D){
+  if(this._renderer.isP3D){
     this._validateParameters(
       'point',
       arguments,
@@ -264,7 +269,7 @@ p5.prototype.point = function() {
         ['Number', 'Number', 'Number']
       ]
     );
-    this._graphics.point(
+    this._renderer.point(
       arguments[0],
       arguments[1],
       arguments[2]
@@ -277,7 +282,7 @@ p5.prototype.point = function() {
         ['Number', 'Number']
       ]
     );
-    this._graphics.point(
+    this._renderer.point(
       arguments[0],
       arguments[1]
     );
@@ -311,10 +316,10 @@ p5.prototype.point = function() {
  * </div>
  */
 p5.prototype.quad = function() {
-  if (!this._doStroke && !this._doFill) {
+  if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
-  if(this._graphics.isP3D){
+  if(this._renderer.isP3D){
     this._validateParameters(
       'quad',
       arguments,
@@ -325,7 +330,7 @@ p5.prototype.quad = function() {
           'Number', 'Number', 'Number']
       ]
     );
-    this._graphics.quad(
+    this._renderer.quad(
       arguments[0],
       arguments[1],
       arguments[2],
@@ -348,7 +353,7 @@ p5.prototype.quad = function() {
           'Number', 'Number', 'Number', 'Number' ]
       ]
     );
-    this._graphics.quad(
+    this._renderer.quad(
      arguments[0],
      arguments[1],
      arguments[2],
@@ -418,10 +423,10 @@ p5.prototype.rect = function (x, y, w, h, tl, tr, br, bl) {
     ]
   );
 
-  if (!this._doStroke && !this._doFill) {
+  if (!this._renderer._doStroke && !this._renderer._doFill) {
     return;
   }
-  this._graphics.rect(x, y, w, h, tl, tr, br, bl);
+  this._renderer.rect(x, y, w, h, tl, tr, br, bl);
   return this;
 };
 
@@ -447,10 +452,10 @@ p5.prototype.rect = function (x, y, w, h, tl, tr, br, bl) {
 */
 p5.prototype.triangle = function() {
 
-  if (!this._doStroke && !this._doFill) {
+  if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
-  if(this._graphics.isP3D){
+  if(this._renderer.isP3D){
     this._validateParameters(
       'triangle',
       arguments,
@@ -459,7 +464,7 @@ p5.prototype.triangle = function() {
          'Number', 'Number', 'Number']
       ]
     );
-    this._graphics.triangle(
+    this._renderer.triangle(
       arguments[0],
       arguments[1],
       arguments[2],
@@ -478,7 +483,7 @@ p5.prototype.triangle = function() {
         ['Number', 'Number', 'Number', 'Number', 'Number', 'Number']
       ]
     );
-    this._graphics.triangle(
+    this._renderer.triangle(
      arguments[0],
      arguments[1],
      arguments[2],
