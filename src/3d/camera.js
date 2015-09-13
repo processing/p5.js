@@ -36,7 +36,7 @@ p5.prototype.camera = function(x, y, z){
     ['Number', 'Number', 'Number']
   );
   //what it manipulates is the model view matrix
-  this._graphics.translate(-x, -y, -z);
+  this._renderer.translate(-x, -y, -z);
 };
 
 /**
@@ -78,9 +78,9 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
     arguments,
     ['Number', 'Number', 'Number', 'Number']
   );
-  this._graphics.uPMatrix = p5.Matrix.identity();
-  this._graphics.uPMatrix.perspective(fovy,aspect,near,far);
-  this._graphics._setCamera = true;
+  this._renderer.uPMatrix = p5.Matrix.identity();
+  this._renderer.uPMatrix.perspective(fovy,aspect,near,far);
+  this._renderer._setCamera = true;
 };
 
 /**
@@ -125,9 +125,9 @@ p5.prototype.ortho = function(left,right,bottom,top,near,far) {
   right /= this.width;
   top /= this.height;
   bottom /= this.height;
-  this._graphics.uPMatrix = p5.Matrix.identity();
-  this._graphics.uPMatrix.ortho(left,right,bottom,top,near,far);
-  this._graphics._setCamera = true;
+  this._renderer.uPMatrix = p5.Matrix.identity();
+  this._renderer.uPMatrix.ortho(left,right,bottom,top,near,far);
+  this._renderer._setCamera = true;
 };
 
 module.exports = p5;

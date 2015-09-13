@@ -334,8 +334,8 @@ var p5 = function(sketch, node, sync) {
     }
 
     //mandatory update values(matrixs and stack) for 3d
-    if(this._graphics.isP3D){
-      this._graphics._update();
+    if(this._renderer.isP3D){
+      this._renderer._update();
     }
 
     // get notified the next time the browser gives us

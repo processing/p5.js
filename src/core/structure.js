@@ -160,19 +160,19 @@ p5.prototype.loop = function() {
  * </div>
  */
 p5.prototype.push = function () {
-  this._graphics.push();
+  this._renderer.push();
   this._styles.push({
-    doStroke: this._graphics._doStroke,
-    doFill: this._graphics._doFill,
-    tint: this._graphics._tint,
-    imageMode: this._graphics._imageMode,
-    rectMode: this._graphics._rectMode,
-    ellipseMode: this._graphics._ellipseMode,
-    colorMode: this._graphics._colorMode,
-    textFont: this._graphics._textFont,
-    textLeading: this._graphics._textLeading,
-    textSize: this._graphics._textSize,
-    textStyle: this._graphics._textStyle
+    doStroke: this._renderer._doStroke,
+    doFill: this._renderer._doFill,
+    tint: this._renderer._tint,
+    imageMode: this._renderer._imageMode,
+    rectMode: this._renderer._rectMode,
+    ellipseMode: this._renderer._ellipseMode,
+    colorMode: this._renderer._colorMode,
+    textFont: this._renderer._textFont,
+    textLeading: this._renderer._textLeading,
+    textSize: this._renderer._textSize,
+    textStyle: this._renderer._textStyle
   });
 };
 
@@ -228,19 +228,19 @@ p5.prototype.push = function () {
  * </div>
  */
 p5.prototype.pop = function () {
-  this._graphics.pop();
+  this._renderer.pop();
   var lastS = this._styles.pop();
-  this._graphics._doStroke = lastS.doStroke;
-  this._graphics._doFill = lastS.doFill;
-  this._graphics._tint = lastS.tint;
-  this._graphics._imageMode = lastS.imageMode;
-  this._graphics._rectMode = lastS.rectMode;
-  this._graphics._ellipseMode = lastS.ellipseMode;
-  this._graphics._colorMode = lastS.colorMode;
-  this._graphics._textFont = lastS.textFont;
-  this._graphics._textLeading = lastS.textLeading;
-  this._graphics._textSize = lastS.textSize;
-  this._graphics._textStyle = lastS.textStyle;
+  this._renderer._doStroke = lastS.doStroke;
+  this._renderer._doFill = lastS.doFill;
+  this._renderer._tint = lastS.tint;
+  this._renderer._imageMode = lastS.imageMode;
+  this._renderer._rectMode = lastS.rectMode;
+  this._renderer._ellipseMode = lastS.ellipseMode;
+  this._renderer._colorMode = lastS.colorMode;
+  this._renderer._textFont = lastS.textFont;
+  this._renderer._textLeading = lastS.textLeading;
+  this._renderer._textSize = lastS.textSize;
+  this._renderer._textStyle = lastS.textStyle;
 };
 
 p5.prototype.pushStyle = function() {

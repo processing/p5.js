@@ -55,10 +55,10 @@ p5.prototype.bezier = function(x1, y1, x2, y2, x3, y3, x4, y4) {
       'Number', 'Number', 'Number', 'Number' ]
   );
 
-  if (!this._graphics._doStroke) {
+  if (!this._renderer._doStroke) {
     return this;
   }
-  this._graphics.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
+  this._renderer.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
   return this;
 };
 
@@ -250,10 +250,10 @@ p5.prototype.curve = function(x1, y1, x2, y2, x3, y3, x4, y4) {
       'Number', 'Number', 'Number', 'Number' ]
   );
 
-  if (!this._graphics._doStroke) {
+  if (!this._renderer._doStroke) {
     return;
   }
-  this._graphics.curve(x1, y1, x2, y2, x3, y3, x4, y4);
+  this._renderer.curve(x1, y1, x2, y2, x3, y3, x4, y4);
   return this;
 };
 
@@ -317,7 +317,7 @@ p5.prototype.curveDetail = function(d) {
  * </div>
  */
 p5.prototype.curveTightness = function (t) {
-  this._graphics._curveTightness = t;
+  this._renderer._curveTightness = t;
 };
 
 /**
