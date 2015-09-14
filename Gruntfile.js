@@ -235,12 +235,13 @@ module.exports = function(grunt) {
         commitMessage: 'Release %s',
         tagName: '%s',
         tagAnnotation: 'Release %s',
-        buildCommand: false,
+        buildCommand: 'grunt',
         distRepo: 'git@github.com:lmccart/p5.js-release.git',
         distStageDir: '.stage',
         distFiles: ['lib/*.js', 'lib/addons/*.js', 'license.txt'],
-        distBase: '',
-        publish: false
+        distBase: 'lib/',
+        publish: false,
+        'private': true
       }
     },
     // This is a static server which is used when testing connectivity for the
