@@ -229,7 +229,7 @@ module.exports = function(grunt) {
         changelogCommand: 'git log --pretty=format:"* %s (%h)" [REV_RANGE]',
         distRepo: 'git@github.com:lmccart/p5.js-release.git',
         distStageDir: '.stage',
-        distFiles: ['lib/*.js', 'lib/addons/*.js', 'license.txt'],
+        distFiles: ['lib/*.js', 'lib/addons/*.js'],
         distBase: 'lib/',
         npm: {
           publish: false,
