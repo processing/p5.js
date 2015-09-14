@@ -238,7 +238,7 @@ module.exports = function(grunt) {
         buildCommand: false,
         distRepo: 'git@github.com:lmccart/p5.js-release.git',
         distStageDir: '.stage',
-        distFiles: ['lib/*', 'license.txt'],
+        distFiles: ['lib/*.js', 'lib/addons/*.js', 'license.txt'],
         distBase: '',
         publish: false
       }
