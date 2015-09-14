@@ -222,9 +222,9 @@ module.exports = function(grunt) {
     'release-it': {
       options: {
         pkgFiles: ['package.json'],
-        commitMessage: 'Release %s',
+        commitMessage: 'release v%s',
         tagName: '%s',
-        tagAnnotation: 'Release %s',
+        tagAnnotation: 'release v%s',
         buildCommand: 'grunt',
         changelogCommand: 'git log --pretty=format:"* %s (%h)" [REV_RANGE]',
         distRepo: 'git@github.com:lmccart/p5.js-release.git',
