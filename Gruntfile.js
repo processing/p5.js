@@ -219,16 +219,6 @@ module.exports = function(grunt) {
         }
       }
     },
-    release: {
-      options: {
-        npm: false, // temporary
-        folder: 'p5-release',
-        github: {
-          repo: 'processing/p5.js',
-          accessTokenVar: 'GITHUB_TOKEN'
-        }
-      }
-    },
     'release-it': {
       options: {
         pkgFiles: ['package.json'],
@@ -236,12 +226,15 @@ module.exports = function(grunt) {
         tagName: '%s',
         tagAnnotation: 'Release %s',
         buildCommand: 'grunt',
+        changelogCommand: 'git log --pretty=format:"* %s (%h)" [REV_RANGE]',
         distRepo: 'git@github.com:lmccart/p5.js-release.git',
         distStageDir: '.stage',
         distFiles: ['lib/*.js', 'lib/addons/*.js', 'license.txt'],
         distBase: 'lib/',
-        publish: false,
-        'private': true
+        npm: {
+          publish: false,
+          publishPath: 'lib/'
+        }
       }
     },
     // This is a static server which is used when testing connectivity for the
@@ -280,7 +273,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-newer');
-  grunt.loadNpmTasks('grunt-release');
   grunt.loadNpmTasks('grunt-release-it');
 
   // Create the multitasks.
