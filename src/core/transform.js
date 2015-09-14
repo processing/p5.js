@@ -33,7 +33,7 @@ var constants = require('./constants');
  * </div>
  */
 p5.prototype.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
-  this._graphics.applyMatrix(n00, n01, n02, n10, n11, n12);
+  this._renderer.applyMatrix(n00, n01, n02, n10, n11, n12);
   return this;
 };
 
@@ -62,7 +62,7 @@ p5.prototype.pushMatrix = function() {
  * </div>
  */
 p5.prototype.resetMatrix = function() {
-  this._graphics.resetMatrix();
+  this._renderer.resetMatrix();
   return this;
 };
 
@@ -102,10 +102,10 @@ p5.prototype.rotate = function() {
   }
   //in webgl mode
   if(arguments.length > 1){
-    this._graphics.rotate(r, arguments[1]);
+    this._renderer.rotate(r, arguments[1]);
   }
   else {
-    this._graphics.rotate(r);
+    this._renderer.rotate(r);
   }
   return this;
 };
@@ -116,7 +116,7 @@ p5.prototype.rotate = function() {
  * @return {[type]}     [description]
  */
 p5.prototype.rotateX = function(rad) {
-  if (this._graphics.isP3D) {
+  if (this._renderer.isP3D) {
     this._validateParameters(
       'rotateX',
       arguments,
@@ -124,7 +124,7 @@ p5.prototype.rotateX = function(rad) {
         ['Number']
       ]
     );
-    this._graphics.rotateX(rad);
+    this._renderer.rotateX(rad);
   } else {
     throw 'not yet implemented.';
   }
@@ -137,7 +137,7 @@ p5.prototype.rotateX = function(rad) {
  * @return {[type]}     [description]
  */
 p5.prototype.rotateY = function(rad) {
-  if (this._graphics.isP3D) {
+  if (this._renderer.isP3D) {
     this._validateParameters(
       'rotateY',
       arguments,
@@ -145,7 +145,7 @@ p5.prototype.rotateY = function(rad) {
         ['Number']
       ]
     );
-    this._graphics.rotateY(rad);
+    this._renderer.rotateY(rad);
   } else {
     throw 'not yet implemented.';
   }
@@ -158,7 +158,7 @@ p5.prototype.rotateY = function(rad) {
  * @return {[type]}     [description]
  */
 p5.prototype.rotateZ = function(rad) {
-  if (this._graphics.isP3D) {
+  if (this._renderer.isP3D) {
     this._validateParameters(
       'rotateZ',
       arguments,
@@ -166,7 +166,7 @@ p5.prototype.rotateZ = function(rad) {
         ['Number']
       ]
     );
-    this._graphics.rotateZ(rad);
+    this._renderer.rotateZ(rad);
   } else {
     throw 'not supported in p2d. Please use webgl mode';
   }
@@ -213,7 +213,7 @@ p5.prototype.rotateZ = function(rad) {
  * </div>
  */
 p5.prototype.scale = function() {
-  if (this._graphics.isP3D) {
+  if (this._renderer.isP3D) {
     this._validateParameters(
       'scale',
       arguments,
@@ -222,7 +222,7 @@ p5.prototype.scale = function() {
         ['Number', 'Number', 'Number']
       ]
     );
-    this._graphics.scale(arguments[0], arguments[1], arguments[2]);
+    this._renderer.scale(arguments[0], arguments[1], arguments[2]);
   } else {
     this._validateParameters(
       'scale',
@@ -232,7 +232,7 @@ p5.prototype.scale = function() {
         ['Number', 'Number']
       ]
     );
-    this._graphics.scale.apply(this._graphics, arguments);
+    this._renderer.scale.apply(this._renderer, arguments);
   }
   return this;
 };
@@ -270,7 +270,7 @@ p5.prototype.shearX = function(angle) {
   if (this._angleMode === constants.DEGREES) {
     angle = this.radians(angle);
   }
-  this._graphics.shearX(angle);
+  this._renderer.shearX(angle);
   return this;
 };
 
@@ -307,7 +307,7 @@ p5.prototype.shearY = function(angle) {
   if (this._angleMode === constants.DEGREES) {
     angle = this.radians(angle);
   }
-  this._graphics.shearY(angle);
+  this._renderer.shearY(angle);
   return this;
 };
 
@@ -346,7 +346,7 @@ p5.prototype.shearY = function(angle) {
  * </div>
  */
 p5.prototype.translate = function(x, y, z) {
-  if (this._graphics.isP3D) {
+  if (this._renderer.isP3D) {
     this._validateParameters(
       'translate',
       arguments,
@@ -355,7 +355,7 @@ p5.prototype.translate = function(x, y, z) {
         ['Number', 'Number', 'Number']
       ]
     );
-    this._graphics.translate(x, y, z);
+    this._renderer.translate(x, y, z);
   } else {
     this._validateParameters(
       'translate',
@@ -365,7 +365,7 @@ p5.prototype.translate = function(x, y, z) {
         ['Number', 'Number']
       ]
     );
-    this._graphics.translate(x, y);
+    this._renderer.translate(x, y);
   }
   return this;
 };
