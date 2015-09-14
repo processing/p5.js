@@ -221,12 +221,26 @@ module.exports = function(grunt) {
     },
     release: {
       options: {
-        npm: false,
+        npm: false, // temporary
         folder: 'p5-release',
         github: {
           repo: 'processing/p5.js',
           accessTokenVar: 'GITHUB_TOKEN'
         }
+      }
+    },
+    'release-it': {
+      options: {
+        pkgFiles: ['package.json'],
+        commitMessage: 'Release %s',
+        tagName: '%s',
+        tagAnnotation: 'Release %s',
+        buildCommand: false,
+        distRepo: 'git@github.com:lmccart/p5.js-release.git',
+        distStageDir: '.stage',
+        distFiles: ['lib/*.js', 'lib/addons/*.js', 'license.txt'],
+        distBase: '',
+        publish: false
       }
     },
     // This is a static server which is used when testing connectivity for the
@@ -266,6 +280,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-newer');
   grunt.loadNpmTasks('grunt-release');
+  grunt.loadNpmTasks('grunt-release-it');
 
   // Create the multitasks.
   // TODO: "requirejs" is in here to run the "yuidoc_themes" subtask. Is this needed?
