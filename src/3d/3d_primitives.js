@@ -1,7 +1,7 @@
 /**
- * @module Shape
- * @submodule 3D Primitives
- * @for p5
+ * module Shape
+ * submodule 3D Primitives
+ * for p5
  * @requires core
  * @requires p5.Geometry3D
  */
@@ -13,7 +13,7 @@ require('./p5.Geometry3D');
 
 /**
  * draw a plane with given a width and height
- * @method plane
+ * method plane
  * @param  {Number} width      width of the plane
  * @param  {Number} height     height of the plane
  * @return {p5}
@@ -44,7 +44,7 @@ p5.prototype.plane = function(width, height){
 
   var gId = 'plane|'+width+'|'+height+'|'+detailX+'|'+detailY;
 
-  if(!this._graphics.geometryInHash(gId)){
+  if(!this._renderer.geometryInHash(gId)){
 
     var geometry3d = new p5.Geometry3D();
 
@@ -59,17 +59,17 @@ p5.prototype.plane = function(width, height){
 
     var obj = geometry3d.generateObj();
 
-    this._graphics.initBuffer(gId, obj);
+    this._renderer.initBuffer(gId, obj);
 
   }
 
-  this._graphics.drawBuffer(gId);
+  this._renderer.drawBuffer(gId);
 
 };
 
 /**
  * draw a sphere with given raduis
- * @method sphere
+ * method sphere
  * @param  {Number} radius            radius of circle
  * @param  {Number} [detail]          optional: number of segments,
  *                                    the more segments the smoother geometry
@@ -99,7 +99,7 @@ p5.prototype.sphere = function(radius, detail){
 
   var gId = 'sphere|'+radius+'|'+detailX+'|'+detailY;
 
-  if(!this._graphics.geometryInHash(gId)){
+  if(!this._renderer.geometryInHash(gId)){
 
     var geometry3d = new p5.Geometry3D();
 
@@ -116,17 +116,17 @@ p5.prototype.sphere = function(radius, detail){
 
     var obj = geometry3d.generateObj();
 
-    this._graphics.initBuffer(gId, obj);
+    this._renderer.initBuffer(gId, obj);
   }
 
-  this._graphics.drawBuffer(gId);
+  this._renderer.drawBuffer(gId);
 
   return this;
 };
 
 /**
  * draw a cylinder with given radius and height
- * @method  cylinder
+ * method  cylinder
  * @param  {Number} radius            radius of the surface
  * @param  {Number} height            height of the cylinder
  * @param  {Number} [detail]          optional: number of segments,
@@ -158,7 +158,7 @@ p5.prototype.cylinder = function(radius, height, detail){
 
   var gId = 'cylinder|'+radius+'|'+height+'|'+detailX+'|'+detailY;
 
-  if(!this._graphics.geometryInHash(gId)){
+  if(!this._renderer.geometryInHash(gId)){
 
     var geometry3d = new p5.Geometry3D();
 
@@ -206,10 +206,10 @@ p5.prototype.cylinder = function(radius, height, detail){
 
     var obj = geometry3d.generateObj(true);
 
-    this._graphics.initBuffer(gId, obj);
+    this._renderer.initBuffer(gId, obj);
   }
 
-  this._graphics.drawBuffer(gId);
+  this._renderer.drawBuffer(gId);
 
   return this;
 };
@@ -217,7 +217,7 @@ p5.prototype.cylinder = function(radius, height, detail){
 
 /**
  * draw a cone with given radius and height
- * @method cone
+ * method cone
  * @param  {Number} radius            radius of the bottom surface
  * @param  {Number} height            height of the cone
  * @param  {Number} [detail]          optional: number of segments,
@@ -249,7 +249,7 @@ p5.prototype.cone = function(radius, height, detail){
 
   var gId = 'cone|'+radius+'|'+height+'|'+detailX+'|'+detailY;
 
-  if(!this._graphics.geometryInHash(gId)){
+  if(!this._renderer.geometryInHash(gId)){
 
     var geometry3d = new p5.Geometry3D();
 
@@ -277,10 +277,10 @@ p5.prototype.cone = function(radius, height, detail){
 
     var obj = geometry3d.generateObj(true);
 
-    this._graphics.initBuffer(gId, obj);
+    this._renderer.initBuffer(gId, obj);
   }
 
-  this._graphics.drawBuffer(gId);
+  this._renderer.drawBuffer(gId);
 
   return this;
 };
@@ -288,7 +288,7 @@ p5.prototype.cone = function(radius, height, detail){
 
 /**
  * draw a torus with given radius and tube radius
- * @method torus
+ * method torus
  * @param  {Number} radius            radius of the whole ring
  * @param  {Number} tubeRadius        radius of the tube
  * @param  {Number} [detail]          optional: number of segments,
@@ -322,7 +322,7 @@ p5.prototype.torus = function(radius, tubeRadius, detail){
 
   var gId = 'torus|'+radius+'|'+tubeRadius+'|'+detailX+'|'+detailY;
 
-  if(!this._graphics.geometryInHash(gId)){
+  if(!this._renderer.geometryInHash(gId)){
 
     var geometry3d = new p5.Geometry3D();
 
@@ -339,17 +339,17 @@ p5.prototype.torus = function(radius, tubeRadius, detail){
 
     var obj = geometry3d.generateObj();
 
-    this._graphics.initBuffer(gId, obj);
+    this._renderer.initBuffer(gId, obj);
   }
 
-  this._graphics.drawBuffer(gId);
+  this._renderer.drawBuffer(gId);
 
   return this;
 };
 
 /**
  * draw a box with given width, height and depth
- * @method  box
+ * method  box
  * @param  {Number} width  width of the box
  * @param  {Number} height height of the box
  * @param  {Number} depth  depth of the box
@@ -383,7 +383,7 @@ p5.prototype.box = function(width, height, depth){
 
   var gId = 'cube|'+width+'|'+height+'|'+depth+'|'+detailX+'|'+detailY;
 
-  if(!this._graphics.geometryInHash(gId)){
+  if(!this._renderer.geometryInHash(gId)){
 
     var geometry3d = new p5.Geometry3D();
 
@@ -439,10 +439,10 @@ p5.prototype.box = function(width, height, depth){
 
     var obj = geometry3d.generateObj(true);
 
-    this._graphics.initBuffer(gId, obj);
+    this._renderer.initBuffer(gId, obj);
   }
 
-  this._graphics.drawBuffer(gId);
+  this._renderer.drawBuffer(gId);
 
   return this;
 

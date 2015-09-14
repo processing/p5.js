@@ -226,6 +226,8 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
 
   var pd = ctx.pixelDensity || ctx._pInst.pixelDensity;
 
+  this.loadPixels.call(ctx);
+
   if (w === 1 && h === 1){
 
     return [
