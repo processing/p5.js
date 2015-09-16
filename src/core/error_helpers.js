@@ -6,7 +6,7 @@
 'use strict';
 
 var p5 = require('./core');
-var doFriendlyWelcome = true;
+var doFriendlyWelcome = false; // TEMP until we get it all working LM
 
 // -- Borrowed from jQuery 1.11.3 --
 var class2type = {};
@@ -83,23 +83,24 @@ function report(message, func, color) {
   } else if (getType(color) === 'number') { // Type to color
     color = typeColors[color];
   }
-  if (func.substring(0,4) === 'load'){
-    console.log(
-      '%c> p5.js says: '+message+'%c'+
-      '[https://github.com/processing/p5.js/wiki/Local-server]',
-      'background-color:' + color + ';color:#FFF;',
-      'background-color:transparent;color:' + color +';',
-      'background-color:' + color + ';color:#FFF;',
-      'background-color:transparent;color:' + color +';'
-    );
-  }
-  else{
-    console.log(
-      '%c> p5.js says: '+message+'%c [http://p5js.org/reference/#p5/'+func+
-      ']', 'background-color:' + color + ';color:#FFF;',
-      'background-color:transparent;color:' + color +';'
-    );
-  }
+  // LM TEMP commenting this out until we get the whole system working
+  // if (func.substring(0,4) === 'load'){
+  //   console.log(
+  //     '%c> p5.js says: '+message+'%c'+
+  //     '[https://github.com/processing/p5.js/wiki/Local-server]',
+  //     'background-color:' + color + ';color:#FFF;',
+  //     'background-color:transparent;color:' + color +';',
+  //     'background-color:' + color + ';color:#FFF;',
+  //     'background-color:transparent;color:' + color +';'
+  //   );
+  // }
+  // else{
+  //   console.log(
+  //     '%c> p5.js says: '+message+'%c [http://p5js.org/reference/#p5/'+func+
+  //     ']', 'background-color:' + color + ';color:#FFF;',
+  //     'background-color:transparent;color:' + color +';'
+  //   );
+  // }
 }
 
 /**
