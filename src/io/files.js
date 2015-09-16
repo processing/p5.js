@@ -13,7 +13,6 @@ var reqwest = require('reqwest');
 var opentype = require('opentype.js');
 require('../core/error_helpers');
 
-
 /**
  * Loads an opentype font file (.otf, .ttf) from a file or a URL,
  * and returns a PFont Object. This method is asynchronous,
