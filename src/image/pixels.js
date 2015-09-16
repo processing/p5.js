@@ -142,7 +142,7 @@ p5.prototype.pixels = [];
  * </code></div>
  */
 p5.prototype.blend = function() {
-  this._graphics.blend.apply(this._graphics, arguments);
+  this._renderer.blend.apply(this._renderer, arguments);
 };
 
 /**
@@ -407,7 +407,7 @@ p5.prototype.filter = function(operation, value) {
  * </div>
  */
 p5.prototype.get = function(x, y, w, h){
-  return this._graphics.get(x, y, w, h);
+  return this._renderer.get(x, y, w, h);
 };
 
 /**
@@ -438,7 +438,7 @@ p5.prototype.get = function(x, y, w, h){
  * </div>
  */
 p5.prototype.loadPixels = function() {
-  this._graphics.loadPixels();
+  this._renderer.loadPixels();
 };
 
 /**
@@ -507,7 +507,7 @@ p5.prototype.loadPixels = function() {
  * </div>
  */
 p5.prototype.set = function (x, y, imgOrCol) {
-  this._graphics.set(x, y, imgOrCol);
+  this._renderer.set(x, y, imgOrCol);
 };
 /**
  * Updates the display window with the data in the pixels[] array.
@@ -545,7 +545,7 @@ p5.prototype.set = function (x, y, imgOrCol) {
  * </div>
  */
 p5.prototype.updatePixels = function (x, y, w, h) {
-  this._graphics.updatePixels(x, y, w, h);
+  this._renderer.updatePixels(x, y, w, h);
 };
 
 module.exports = p5;
