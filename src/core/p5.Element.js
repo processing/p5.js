@@ -477,9 +477,9 @@ p5.Element.prototype.drop = function (callback, fxn) {
         reader.onload = makeLoader(f);
 
 
-        // Text of data?
+        // Text or data?
         // This should likely be improved
-        if (f.type === 'text') {
+        if (f.type.indexOf('text') > -1) {
           reader.readAsText(f);
         } else {
           reader.readAsDataURL(f);
