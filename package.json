@@ -10,7 +10,7 @@
     "docs": "grunt yui",
     "test": "grunt"
   },
-  "version": "0.4.9",
+  "version": "0.4.12",
   "devDependencies": {
     "amdclean": "~0.3.3",
     "browserify": "^11.0.1",
@@ -29,7 +29,7 @@
     "grunt-lib-phantomjs": "~0.4.0",
     "grunt-mocha": "~0.4.6",
     "grunt-newer": "^1.1.0",
-    "grunt-release": "^0.13.0",
+    "grunt-release-it": "^0.2.1",
     "grunt-update-json": "^0.2.1",
     "jscs-stylish": "^0.3.1",
     "phantomjs": "~1.9.2-4"

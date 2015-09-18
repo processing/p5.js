@@ -140,7 +140,14 @@ p5.prototype.keyCode = 0;
  *   } else if (keyCode === RIGHT_ARROW) {
  *     value = 0;
  *   }
- *   return false; // prevent any default behavior
+ * }
+ * </code>
+ * </div>
+ * <div class="norender">
+ * <code>
+ * function keyPressed(){
+ *   // Do something
+ *   return false; // prevent any default behaviour
  * }
  * </code>
  * </div>

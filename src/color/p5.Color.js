@@ -16,8 +16,8 @@ var constants = require('../core/constants');
  * (1, 1, 1, 1)
  */
 p5.Color = function (pInst, vals) {
-  this.mode = pInst._graphics._colorMode;
-  this.maxes = pInst._graphics._colorMaxes;
+  this.mode = pInst._renderer._colorMode;
+  this.maxes = pInst._renderer._colorMaxes;
   var isHSB = this.mode === constants.HSB,
       isRGB = this.mode === constants.RGB,
       isHSL = this.mode === constants.HSL;
@@ -31,7 +31,7 @@ p5.Color = function (pInst, vals) {
     this.hsla = p5.Color._getFormattedColor.apply(pInst, vals);
     this._array = color_utils.hslaToRGBA(this.hsla);
   } else {
-    throw new Error(pInst._graphics._colorMode + ' is an invalid colorMode.');
+    throw new Error(pInst._renderer._colorMode + ' is an invalid colorMode.');
   }
 
   this.rgba = [ Math.round(this._array[0] * 255),
@@ -448,8 +448,8 @@ var colorPatterns = {
  */
 p5.Color._getFormattedColor = function () {
   var numArgs = arguments.length;
-  var mode    = this._graphics._colorMode;
-  var maxArr  = this._graphics._colorMaxes[this._graphics._colorMode];
+  var mode    = this._renderer._colorMode;
+  var maxArr  = this._renderer._colorMaxes[this._renderer._colorMode];
   var results = [];
 
   // Handle [r,g,b,a] or [h,s,l,a] color values

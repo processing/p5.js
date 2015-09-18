@@ -349,15 +349,15 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
   var l1, l2, l3, l4;
   var fromColor, toColor;
 
-  if(this._graphics._colorMode === constants.RGB) {
+  if(this._renderer._colorMode === constants.RGB) {
     fromColor = this.color(c1).rgba;
     toColor = this.color(c2).rgba;
   }
-  else if (this._graphics._colorMode === constants.HSB) {
+  else if (this._renderer._colorMode === constants.HSB) {
     fromColor = this.color(c1).hsba;
     toColor = this.color(c2).hsba;
   }
-  else if(this._graphics._colorMode === constants.HSL) {
+  else if(this._renderer._colorMode === constants.HSL) {
     fromColor = this.color(c1).hsla;
     toColor = this.color(c2).hsla;
   }
