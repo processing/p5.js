@@ -234,7 +234,8 @@ p5.prototype.copy = function () {
  *
  * @method filter
  * @param  {String} filterType
- * @param  {Number} filterParam an optional parameter unique to each filter, see above
+ * @param  {Number} filterParam an optional parameter unique
+ *  to each filter, see above
  *
  *
  * @example
