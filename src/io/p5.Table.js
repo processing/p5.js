@@ -837,7 +837,7 @@ p5.Table.prototype.set = function(row, column, value) {
 	* </div>
  */
 p5.Table.prototype.setNum = function(row, column, value){
-  this.rows[row].set(column, value);
+  this.rows[row].setNum(column, value);
 };
 
 
@@ -853,7 +853,7 @@ p5.Table.prototype.setNum = function(row, column, value){
  * @param {String} value  value to assign
  */
 p5.Table.prototype.setString = function(row, column, value){
-  this.rows[row].set(column, value);
+  this.rows[row].setString(column, value);
 };
 
 /**

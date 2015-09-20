@@ -11,9 +11,6 @@
 var p5 = require('./core');
 var constants = require('./constants');
 
-p5.prototype._rectMode = constants.CORNER;
-p5.prototype._ellipseMode = constants.CENTER;
-
 /**
  * Modifies the location from which ellipses are drawn by changing the way
  * in which parameters given to ellipse() are interpreted.
@@ -70,7 +67,7 @@ p5.prototype.ellipseMode = function(m) {
     m === constants.CORNERS ||
     m === constants.RADIUS ||
     m === constants.CENTER) {
-    this._ellipseMode = m;
+    this._renderer._ellipseMode = m;
   }
   return this;
 };
@@ -95,7 +92,7 @@ p5.prototype.ellipseMode = function(m) {
  * </div>
  */
 p5.prototype.noSmooth = function() {
-  this._graphics.noSmooth();
+  this._renderer.noSmooth();
   return this;
 };
 
@@ -155,7 +152,7 @@ p5.prototype.rectMode = function(m) {
     m === constants.CORNERS ||
     m === constants.RADIUS ||
     m === constants.CENTER) {
-    this._rectMode = m;
+    this._renderer._rectMode = m;
   }
   return this;
 };
@@ -181,7 +178,7 @@ p5.prototype.rectMode = function(m) {
  * </div>
  */
 p5.prototype.smooth = function() {
-  this._graphics.smooth();
+  this._renderer.smooth();
   return this;
 };
 
@@ -210,7 +207,7 @@ p5.prototype.strokeCap = function(cap) {
   if (cap === constants.ROUND ||
     cap === constants.SQUARE ||
     cap === constants.PROJECT) {
-    this._graphics.strokeCap(cap);
+    this._renderer.strokeCap(cap);
   }
   return this;
 };
@@ -268,7 +265,7 @@ p5.prototype.strokeJoin = function(join) {
   if (join === constants.ROUND ||
     join === constants.BEVEL ||
     join === constants.MITER) {
-    this._graphics.strokeJoin(join);
+    this._renderer.strokeJoin(join);
   }
   return this;
 };
@@ -293,7 +290,7 @@ p5.prototype.strokeJoin = function(join) {
  * </div>
  */
 p5.prototype.strokeWeight = function(w) {
-  this._graphics.strokeWeight(w);
+  this._renderer.strokeWeight(w);
   return this;
 };
 

@@ -148,8 +148,8 @@ var p5 = function(sketch, node, sync) {
   this._userNode = node;
   this._curElement = null;
   this._elements = [];
+  this._requestAnimId = 0;
   this._preloadCount = 0;
-  this._updateInterval = 0;
   this._isGlobal = false;
   this._loop = true;
   this._styles = [];
@@ -231,7 +231,7 @@ var p5 = function(sketch, node, sync) {
         this._preloadMethods[method] = this._preloadMethods[method] || p5;
         var obj = this._preloadMethods[method];
         //it's p5, check if it's global or instance
-        if (obj === p5.prototype){
+        if (obj === p5.prototype || obj === p5){
           obj = this._isGlobal ? window : this;
         }
         this._registeredPreloadMethods[method] = obj[method];
@@ -333,10 +333,15 @@ var p5 = function(sketch, node, sync) {
       this._lastFrameTime = now;
     }
 
+    //mandatory update values(matrixs and stack) for 3d
+    if(this._renderer.isP3D){
+      this._renderer._update();
+    }
+
     // get notified the next time the browser gives us
     // an opportunity to draw.
     if (this._loop) {
-      window.requestAnimationFrame(this._draw);
+      this._requestAnimId = window.requestAnimationFrame(this._draw);
     }
   }.bind(this);
 
@@ -376,8 +381,8 @@ var p5 = function(sketch, node, sync) {
 
       // stop draw
       this._loop = false;
-      if (this._updateInterval) {
-        clearTimeout(this._updateInterval);
+      if (this._requestAnimId) {
+        window.cancelAnimationFrame(this._requestAnimId);
       }
 
       // unregister events sketch-wide

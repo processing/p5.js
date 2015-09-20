@@ -4,3 +4,4 @@ node_js:
   - "0.12"
 install: npm install
 script: npm run grunt
+sudo: false

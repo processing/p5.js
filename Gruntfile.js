@@ -219,12 +219,21 @@ module.exports = function(grunt) {
         }
       }
     },
-    release: {
+    'release-it': {
       options: {
-        github: {
-          repo: 'processing/p5.js', //put your user/repo here
-          usernameVar: process.env.GITHUB_USERNAME, //ENVIRONMENT VARIABLE that contains Github username
-          passwordVar: process.env.GITHUB_PASSWORD //ENVIRONMENT VARIABLE that contains Github password
+        pkgFiles: ['package.json'],
+        commitMessage: 'release v%s',
+        tagName: '%s',
+        tagAnnotation: 'release v%s',
+        buildCommand: 'grunt',
+        changelogCommand: 'git log --pretty=format:"* %s (%h)" [REV_RANGE]',
+        distRepo: 'git@github.com:lmccart/p5.js-release.git',
+        distStageDir: '.stage',
+        distFiles: ['lib/*.js', 'lib/addons/*.js'],
+        distBase: 'lib/',
+        npm: {
+          publish: false,
+          publishPath: 'lib/'
         }
       }
     },
@@ -264,6 +273,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-newer');
+  grunt.loadNpmTasks('grunt-release-it');
 
   // Create the multitasks.
   // TODO: "requirejs" is in here to run the "yuidoc_themes" subtask. Is this needed?

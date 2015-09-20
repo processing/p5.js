@@ -23,8 +23,7 @@ if (window.console && console.log) {
    * The print() function writes to the console area of your browser.
    * This function is often helpful for looking at the data a program is
    * producing. This function creates a new line of text for each call to
-   * the function. More than one parameter can be passed into the function by
-   * separating them with commas. Alternatively, individual elements can be
+   * the function. Individual elements can be
    * separated with quotes ("") and joined with the addition operator (+).
    *
    * While print() is similar to console.log(), it does not directly map to
@@ -35,6 +34,12 @@ if (window.console && console.log) {
    * @method print
    * @param {Any} contents any combination of Number, String, Object, Boolean,
    *                       Array to print
+   * @example
+   * <div><code class='norender'>
+   * var x = 10;
+   * print("The value of x is "+x);
+   * // prints "The value of x is 10"
+   * </code></div>
    */
   // Converts passed args into a string and then parses that string to
   // simulate synchronous behavior. This is a hack and is gross.
@@ -311,7 +316,7 @@ p5.prototype.windowHeight = window.innerHeight;
  * is resized. This is a good place to resize the canvas or do any other
  * adjustements to accomodate the new window size.
  *
- * @method windowResized()
+ * @method windowResized
  * @example
  * <div class="norender"><code>
  * function setup() {
@@ -382,7 +387,7 @@ p5.prototype.height = 0;
  * function mousePressed() {
  *   if (mouseX > 0 && mouseX < 100 && mouseY > 0 && mouseY < 100) {
  *     var fs = fullScreen();
- *     fullscreen(!fs);
+ *     fullScreen(!fs);
  *   }
  * }
  * </code>

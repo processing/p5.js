@@ -83,19 +83,22 @@ p5.prototype.createCanvas = function(w, h, renderer) {
   // Init our graphics renderer
   //webgl mode
   if (r === constants.WEBGL) {
-    this._setProperty('_graphics', new p5.Renderer3D(c, this, true));
+    this._setProperty('_renderer', new p5.Renderer3D(c, this, true));
     this._isdefaultGraphics = true;
   }
   //P2D mode
   else {
     if (!this._isdefaultGraphics) {
-      this._setProperty('_graphics', new p5.Renderer2D(c, this, true));
+      this._setProperty('_renderer', new p5.Renderer2D(c, this, true));
       this._isdefaultGraphics = true;
     }
   }
-  this._graphics.resize(w, h);
-  this._graphics._applyDefaults();
-  return this._graphics;
+  this._renderer.resize(w, h);
+  this._renderer._applyDefaults();
+  if (isDefault) { // only push once
+    this._elements.push(this._renderer);
+  }
+  return this._renderer;
 };
 
 /**
@@ -120,9 +123,9 @@ p5.prototype.createCanvas = function(w, h, renderer) {
  * </code></div>
  */
 p5.prototype.resizeCanvas = function (w, h, noRedraw) {
-  if (this._graphics) {
-    this._graphics.resize(w, h);
-    this._graphics._applyDefaults();
+  if (this._renderer) {
+    this._renderer.resize(w, h);
+    this._renderer._applyDefaults();
     if (!noRedraw) {
       this.redraw();
     }
@@ -250,7 +253,7 @@ p5.prototype.blendMode = function(mode) {
     mode === constants.SOFT_LIGHT || mode === constants.DODGE ||
     mode === constants.BURN || mode === constants.ADD ||
     mode === constants.NORMAL) {
-    this._graphics.blendMode(mode);
+    this._renderer.blendMode(mode);
   } else {
     throw new Error('Mode '+mode+' not recognized.');
   }
