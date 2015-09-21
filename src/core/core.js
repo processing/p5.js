@@ -176,10 +176,9 @@ var p5 = function(sketch, node, sync) {
 
   if (window.DeviceOrientationEvent) {
     this._events.deviceorientation = null;
-  } else if (window.DeviceMotionEvent) {
+  }
+  if (window.DeviceMotionEvent) {
     this._events.devicemotion = null;
-  } else {
-    this._events.MozOrientation = null;
   }
 
   //FF doesn't recognize mousewheel as of FF3.x
@@ -327,6 +326,7 @@ var p5 = function(sketch, node, sync) {
       this._setProperty('frameCount', this.frameCount + 1);
       this.redraw();
       this._updatePAccelerations();
+      this._updatePRotations();
       this._updatePMouseCoords();
       this._updatePTouchCoords();
       this._frameRate = 1000.0/(now - this._lastFrameTime);
