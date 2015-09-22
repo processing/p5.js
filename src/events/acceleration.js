@@ -80,10 +80,31 @@ p5.prototype._updatePAccelerations = function(){
   this._setProperty('pAccelerationZ', this.accelerationZ);
 };
 
+/**
+ * The system variable rotationX always contains the rotation of the
+ * device along the x axis. Value is represented as 0 to +/-180 degrees.
+ *
+ * @property rotationX
+ */
 p5.prototype.rotationX = 0;
 
+/**
+ * The system variable rotationY always contains the rotation of the
+ * device along the y axis. Value is represented as 0 to +/-180 degrees.
+ *
+ * @property rotationY
+ */
 p5.prototype.rotationY = 0;
 
+/**
+ * The system variable rotationZ always contains the rotation of the
+ * device along the z axis. Value is represented as 0 to 359 degrees.
+ * <br><br>
+ * Unlike rotationX and rotationY, this variable is available for devices
+ * with a built-in compass only.
+ *
+ * @property rotationZ
+ */
 p5.prototype.rotationZ = 0;
 
 p5.prototype.pRotationX = 0;
@@ -169,7 +190,12 @@ p5.prototype.setShakeThreshold = function(val){
 
 /**
  * The deviceTurned() function is called when the device rotates by
- * more than 90 degrees.
+ * more than 90 degrees continuously.
+ * <br><br>
+ * The axis that triggers the deviceTurned() method is stored in the turnAxis
+ * variable. The deviceTurned() method can be locked to trigger on any axis: 
+ * X, Y or Z by comparing the turnAxis variable to 'X', 'Y' or 'Z'.
+ *
  * @method deviceTurned
  * @example
  * <div>
@@ -184,9 +210,32 @@ p5.prototype.setShakeThreshold = function(val){
  *   rect(25, 25, 50, 50);
  * }
  * function deviceTurned() {
- *   value = value + 5;
- *   if (value > 255) {
+ *   if (value == 0){
+ *     value = 255
+ *   } else if (value == 255) {
  *     value = 0;
+ *   }
+ * }
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * // Run this example on a mobile device
+ * // Rotate the device by 90 degrees in the
+ * // X-axis to change the value.
+ *
+ * var value = 0;
+ * function draw() {
+ *   fill(value);
+ *   rect(25, 25, 50, 50);
+ * }
+ * function deviceTurned() {
+ *   if (turnAxis == 'X'){
+ *     if (value == 0){
+ *       value = 255
+ *     } else if (value == 255) {
+ *       value = 0;
+ *     }
  *   }
  * }
  * </code>
