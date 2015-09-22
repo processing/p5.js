@@ -247,43 +247,62 @@ p5.prototype._handleMotion = function() {
   }
   var deviceTurned = this.deviceTurned || window.deviceTurned;
   if (typeof deviceTurned === 'function') {
-    if (this.rotationX - this.pRotationX > 0){
+    // The angles given by rotationX etc is from range -180 to 180.
+    // The following will convert them to 0 to 360 for ease of calculation
+    // of cases when the angles wrapped around.
+    // startAngleX will be converted back at the end and updated.
+    var wRX = this.rotationX + 180;
+    var wPRX = this.pRotationX + 180;
+    var wSAX = this.startAngleX + 180;
+    if ((wRX - wPRX > 0 && wRX - wPRX < 270)|| wRX - wPRX < -270){
       this.rotateDirectionX = 'clockwise';
-    }else if (this.rotationX - this.pRotationX < 0){
+    } else if (wRX - wPRX < 0 || wRX - wPRX > 270){
       this.rotateDirectionX = 'counter-clockwise';
     }
     if (this.rotateDirectionX !== this.pRotateDirectionX){
-      this.startAngleX = this.rotationX;
+      wSAX = wRX;
     }
-    if (Math.abs(this.rotationX - this.startAngleX) > 90){
-      this.startAngleX = this.rotationX;
+    if (Math.abs(wRX - wSAX) > 90 && Math.abs(wRX - wSAX) < 270){
+      wSAX = wRX;
       deviceTurned();
     }
     this.pRotateDirectionX = this.rotateDirectionX;
+    this.startAngleX = wSAX - 180;
 
-    if (this.rotationY - this.pRotationY > 0){
+    // Y-axis is identical to X-axis except for changing some names.
+    var wRY = this.rotationY + 180;
+    var wPRY = this.pRotationY + 180;
+    var wSAY = this.startAngleY + 180;
+    if ((wRY - wPRY > 0 && wRY - wPRY < 270)|| wRY - wPRY < -270){
       this.rotateDirectionY = 'clockwise';
-    }else if (this.rotationY - this.pRotationY < 0){
+    } else if (wRY - wPRY < 0 || wRY - this.pRotationY > 270){
       this.rotateDirectionY = 'counter-clockwise';
     }
     if (this.rotateDirectionY !== this.pRotateDirectionY){
-      this.startAngleY = this.rotationY;
+      wSAY = wRY;
     }
-    if (Math.abs(this.rotationY - this.startAngleY) > 90){
-      this.startAngleY = this.rotationY;
+    if (Math.abs(wRY - wSAY) > 90 && Math.abs(wRY - wSAY) < 270){
+      wSAY = wRY;
       deviceTurned();
     }
     this.pRotateDirectionY = this.rotateDirectionY;
+    this.startAngleY = wSAY - 180;
 
-    if (this.rotationZ - this.pRotationZ > 0){
+    // Z-axis is already in the range 0 to 360
+    // so no conversion is needed.
+    if ((this.rotationZ - this.pRotationZ > 0 &&
+      this.rotationZ - this.pRotationZ < 270)||
+      this.rotationZ - this.pRotationZ < -270){
       this.rotateDirectionZ = 'clockwise';
-    }else if (this.rotationZ - this.pRotationZ < 0){
+    } else if (this.rotationZ - this.pRotationZ < 0 ||
+      this.rotationZ - this.pRotationZ > 270){
       this.rotateDirectionZ = 'counter-clockwise';
     }
     if (this.rotateDirectionZ !== this.pRotateDirectionZ){
       this.startAngleZ = this.rotationZ;
     }
-    if (Math.abs(this.rotationZ - this.startAngleZ) > 90){
+    if (Math.abs(this.rotationZ - this.startAngleZ) > 90 &&
+      Math.abs(this.rotationZ - this.startAngleZ) < 270){
       this.startAngleZ = this.rotationZ;
       deviceTurned();
     }
