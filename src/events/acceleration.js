@@ -110,6 +110,8 @@ p5.prototype._updatePRotations = function(){
   this._setProperty('pRotationZ', this.rotationZ);
 };
 
+p5.prototype.turnAxis = undefined;
+
 var move_threshold = 0.5;
 var shake_threshold = 30;
 
@@ -264,6 +266,7 @@ p5.prototype._handleMotion = function() {
     }
     if (Math.abs(wRX - wSAX) > 90 && Math.abs(wRX - wSAX) < 270){
       wSAX = wRX;
+      this._setProperty('turnAxis', 'X');
       deviceTurned();
     }
     this.pRotateDirectionX = this.rotateDirectionX;
@@ -283,6 +286,7 @@ p5.prototype._handleMotion = function() {
     }
     if (Math.abs(wRY - wSAY) > 90 && Math.abs(wRY - wSAY) < 270){
       wSAY = wRY;
+      this._setProperty('turnAxis', 'Y');
       deviceTurned();
     }
     this.pRotateDirectionY = this.rotateDirectionY;
@@ -304,9 +308,11 @@ p5.prototype._handleMotion = function() {
     if (Math.abs(this.rotationZ - this.startAngleZ) > 90 &&
       Math.abs(this.rotationZ - this.startAngleZ) < 270){
       this.startAngleZ = this.rotationZ;
+      this._setProperty('turnAxis', 'Z');
       deviceTurned();
     }
     this.pRotateDirectionZ = this.rotateDirectionZ;
+    this._setProperty('turnAxis', undefined);
   }
   var deviceShaken = this.deviceShaken || window.deviceShaken;
   if (typeof deviceShaken === 'function') {
