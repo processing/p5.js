@@ -48,9 +48,13 @@ var curveDetail = 20;
  * </div>
  */
 p5.prototype.bezier = function(x1, y1, x2, y2, x3, y3, x4, y4) {
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   this._validateParameters(
     'bezier',
-    arguments,
+    args,
     [ 'Number', 'Number', 'Number', 'Number',
       'Number', 'Number', 'Number', 'Number' ]
   );
@@ -243,9 +247,13 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * </div>
  */
 p5.prototype.curve = function(x1, y1, x2, y2, x3, y3, x4, y4) {
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   this._validateParameters(
     'curve',
-    arguments,
+    args,
     [ 'Number', 'Number', 'Number', 'Number',
       'Number', 'Number', 'Number', 'Number' ]
   );
