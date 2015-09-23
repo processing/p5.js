@@ -107,23 +107,131 @@ p5.prototype.rotationY = 0;
  */
 p5.prototype.rotationZ = 0;
 
+/**
+ * The system variable pRotationX always contains the rotation of the
+ * device along the x axis in the frame previous to the current frame. Value
+ * is represented as 0 to +/-180 degrees.
+ * <br><br>
+ * pRotationX can also be used with rotationX to determine the rotate
+ * direction of the device along the X-axis.
+ * @example
+ * <div class='norender'>
+ * <code>
+ * // A simple if statement looking at whether
+ * // rotationX - pRotationX < 0 is true or not will be
+ * // sufficient for determining the rotate direction
+ * // in most cases.
+ *
+ * // Some extra logic is needed to account for cases where
+ * // the angles wrap around.
+ * var rotateDirection = 'clockwise';
+ *
+ * // Simple range conversion to make things simpler.
+ * // This is not absolutely neccessary but the logic
+ * // will be different in that case.
+ *
+ * var rX = rotationX + 180;
+ * var pRX = pRotationX + 180;
+ *
+ * if ((rX - pRX > 0 && rX - pRX < 270)|| rX - pRX < -270){
+ *   rotateDirection = 'clockwise';
+ * } else if (rX - pRX < 0 || rX - pRX > 270){
+ *   rotateDirection = 'counter-clockwise';
+ * }
+ * </code>
+ * </div>
+ *
+ * @property pRotationX
+ */
 p5.prototype.pRotationX = 0;
 
+/**
+ * The system variable pRotationY always contains the rotation of the
+ * device along the y axis in the frame previous to the current frame. Value
+ * is represented as 0 to +/-180 degrees.
+ * <br><br>
+ * pRotationY can also be used with rotationY to determine the rotate
+ * direction of the device along the Y-axis.
+ * @example
+ * <div class='norender'>
+ * <code>
+ * // A simple if statement looking at whether
+ * // rotationY - pRotationY < 0 is true or not will be
+ * // sufficient for determining the rotate direction
+ * // in most cases.
+ *
+ * // Some extra logic is needed to account for cases where
+ * // the angles wrap around.
+ * var rotateDirection = 'clockwise';
+ *
+ * // Simple range conversion to make things simpler.
+ * // This is not absolutely neccessary but the logic
+ * // will be different in that case.
+ *
+ * var rY = rotationY + 180;
+ * var pRY = pRotationY + 180;
+ *
+ * if ((rY - pRY > 0 && rY - pRY < 270)|| rY - pRY < -270){
+ *   rotateDirection = 'clockwise';
+ * } else if (rY - pRY < 0 || rY - pRY > 270){
+ *   rotateDirection = 'counter-clockwise';
+ * }
+ * </code>
+ * </div>
+ *
+ * @property pRotationY
+ */
 p5.prototype.pRotationY = 0;
 
+/**
+ * The system variable pRotationZ always contains the rotation of the
+ * device along the z axis in the frame previous to the current frame. Value
+ * is represented as 0 to 359 degrees.
+ * <br><br>
+ * pRotationZ can also be used with rotationZ to determine the rotate
+ * direction of the device along the Z-axis.
+ * @example
+ * <div class='norender'>
+ * <code>
+ * // A simple if statement looking at whether
+ * // rotationZ - pRotationZ < 0 is true or not will be
+ * // sufficient for determining the rotate direction
+ * // in most cases.
+ *
+ * // Some extra logic is needed to account for cases where
+ * // the angles wrap around.
+ * var rotateDirection = 'clockwise';
+ *
+ * if ((rotationZ - pRotationZ > 0 &&
+ *   rotationZ - pRotationZ < 270)||
+ *   rotationZ - pRotationZ < -270){
+ *
+ *   rotateDirection = 'clockwise';
+ *
+ * } else if (rotationZ - pRotationZ < 0 ||
+ *   rotationZ - pRotationZ > 270){
+ *
+ *   rotateDirection = 'counter-clockwise';
+ *
+ * }
+ * </code>
+ * </div>
+ *
+ * @property pRotationZ
+ */
 p5.prototype.pRotationZ = 0;
 
-p5.prototype.startAngleX = 0;
-p5.prototype.startAngleY = 0;
-p5.prototype.startAngleZ = 0;
+p5.prototype._startAngleX = 0;
+p5.prototype._startAngleY = 0;
+p5.prototype._startAngleZ = 0;
 
-p5.prototype.rotateDirectionX = 'clockwise';
-p5.prototype.rotateDirectionY = 'clockwise';
-p5.prototype.rotateDirectionZ = 'clockwise';
+p5.prototype._rotateDirectionX = 'clockwise';
+p5.prototype._rotateDirectionY = 'clockwise';
+p5.prototype._rotateDirectionZ = 'clockwise';
 
-p5.prototype.pRotateDirectionX = undefined;
-p5.prototype.pRotateDirectionY = undefined;
-p5.prototype.pRotateDirectionZ = undefined;
+p5.prototype._pRotateDirectionX = undefined;
+p5.prototype._pRotateDirectionY = undefined;
+p5.prototype._pRotateDirectionZ = undefined;
 
 p5.prototype._updatePRotations = function(){
   this._setProperty('pRotationX', this.rotationX);
@@ -193,7 +301,7 @@ p5.prototype.setShakeThreshold = function(val){
  * more than 90 degrees continuously.
  * <br><br>
  * The axis that triggers the deviceTurned() method is stored in the turnAxis
- * variable. The deviceTurned() method can be locked to trigger on any axis: 
+ * variable. The deviceTurned() method can be locked to trigger on any axis:
  * X, Y or Z by comparing the turnAxis variable to 'X', 'Y' or 'Z'.
  *
  * @method deviceTurned
@@ -301,16 +409,16 @@ p5.prototype._handleMotion = function() {
     // The angles given by rotationX etc is from range -180 to 180.
     // The following will convert them to 0 to 360 for ease of calculation
     // of cases when the angles wrapped around.
-    // startAngleX will be converted back at the end and updated.
+    // _startAngleX will be converted back at the end and updated.
     var wRX = this.rotationX + 180;
     var wPRX = this.pRotationX + 180;
-    var wSAX = this.startAngleX + 180;
+    var wSAX = this._startAngleX + 180;
     if ((wRX - wPRX > 0 && wRX - wPRX < 270)|| wRX - wPRX < -270){
-      this.rotateDirectionX = 'clockwise';
+      this._rotateDirectionX = 'clockwise';
     } else if (wRX - wPRX < 0 || wRX - wPRX > 270){
-      this.rotateDirectionX = 'counter-clockwise';
+      this._rotateDirectionX = 'counter-clockwise';
     }
-    if (this.rotateDirectionX !== this.pRotateDirectionX){
+    if (this._rotateDirectionX !== this._pRotateDirectionX){
       wSAX = wRX;
     }
     if (Math.abs(wRX - wSAX) > 90 && Math.abs(wRX - wSAX) < 270){
@@ -318,19 +426,19 @@ p5.prototype._handleMotion = function() {
       this._setProperty('turnAxis', 'X');
       deviceTurned();
     }
-    this.pRotateDirectionX = this.rotateDirectionX;
-    this.startAngleX = wSAX - 180;
+    this._pRotateDirectionX = this._rotateDirectionX;
+    this._startAngleX = wSAX - 180;
 
     // Y-axis is identical to X-axis except for changing some names.
     var wRY = this.rotationY + 180;
     var wPRY = this.pRotationY + 180;
-    var wSAY = this.startAngleY + 180;
+    var wSAY = this._startAngleY + 180;
     if ((wRY - wPRY > 0 && wRY - wPRY < 270)|| wRY - wPRY < -270){
-      this.rotateDirectionY = 'clockwise';
+      this._rotateDirectionY = 'clockwise';
     } else if (wRY - wPRY < 0 || wRY - this.pRotationY > 270){
-      this.rotateDirectionY = 'counter-clockwise';
+      this._rotateDirectionY = 'counter-clockwise';
     }
-    if (this.rotateDirectionY !== this.pRotateDirectionY){
+    if (this._rotateDirectionY !== this._pRotateDirectionY){
       wSAY = wRY;
     }
     if (Math.abs(wRY - wSAY) > 90 && Math.abs(wRY - wSAY) < 270){
@@ -338,29 +446,29 @@ p5.prototype._handleMotion = function() {
       this._setProperty('turnAxis', 'Y');
       deviceTurned();
     }
-    this.pRotateDirectionY = this.rotateDirectionY;
-    this.startAngleY = wSAY - 180;
+    this._pRotateDirectionY = this._rotateDirectionY;
+    this._startAngleY = wSAY - 180;
 
     // Z-axis is already in the range 0 to 360
     // so no conversion is needed.
     if ((this.rotationZ - this.pRotationZ > 0 &&
       this.rotationZ - this.pRotationZ < 270)||
       this.rotationZ - this.pRotationZ < -270){
-      this.rotateDirectionZ = 'clockwise';
+      this._rotateDirectionZ = 'clockwise';
     } else if (this.rotationZ - this.pRotationZ < 0 ||
       this.rotationZ - this.pRotationZ > 270){
-      this.rotateDirectionZ = 'counter-clockwise';
+      this._rotateDirectionZ = 'counter-clockwise';
     }
-    if (this.rotateDirectionZ !== this.pRotateDirectionZ){
-      this.startAngleZ = this.rotationZ;
+    if (this._rotateDirectionZ !== this._pRotateDirectionZ){
+      this._startAngleZ = this.rotationZ;
     }
-    if (Math.abs(this.rotationZ - this.startAngleZ) > 90 &&
-      Math.abs(this.rotationZ - this.startAngleZ) < 270){
-      this.startAngleZ = this.rotationZ;
+    if (Math.abs(this.rotationZ - this._startAngleZ) > 90 &&
+      Math.abs(this.rotationZ - this._startAngleZ) < 270){
+      this._startAngleZ = this.rotationZ;
       this._setProperty('turnAxis', 'Z');
       deviceTurned();
     }
-    this.pRotateDirectionZ = this.rotateDirectionZ;
+    this._pRotateDirectionZ = this._rotateDirectionZ;
     this._setProperty('turnAxis', undefined);
   }
   var deviceShaken = this.deviceShaken || window.deviceShaken;
