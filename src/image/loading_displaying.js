@@ -100,14 +100,28 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  *
  * @method image
  * @param  {p5.Image} img    the image to display
- * @param  {Number}   [sx=0]   x-coordinate of the sub-rect of the source image
- * @param  {Number}   [sx=0]   y-coordinate of the sub-rect of the source image
- * @param {Number} [sWidth=img.width] width of the sub-rect of the source image
- * @param {Number} [sHeight=img.height] height of the sub-rect of the source img
- * @param  {Number}   [dx=0]    x-coordinate destination of the image
- * @param  {Number}   [dy=0]    y-coordinate destination of the image
- * @param  {Number}   [dWidth]  width to display the image
- * @param  {Number}   [dHeight] height to display the image
+ * @param  {Number}   [sx=0]   The X coordinate of the top left corner of the
+ *                             sub-rectangle of the source image to draw into
+ *                             the destination canvas.
+ * @param  {Number}   [sy=0]   The Y coordinate of the top left corner of the
+ *                             sub-rectangle of the source image to draw into
+ *                             the destination canvas.
+ * @param {Number} [sWidth=img.width] The width of the sub-rectangle of the
+ *                                    source image to draw into the destination
+ *                                    canvas.
+ * @param {Number} [sHeight=img.height] The height of the sub-rectangle of the
+ *                                      source image to draw into the
+ *                                      destination context.
+ * @param  {Number}   [dx=0]    The X coordinate in the destination canvas at
+ *                              which to place the top-left corner of the
+ *                              source image.
+ * @param  {Number}   [dy=0]    The Y coordinate in the destination canvas at
+ *                              which to place the top-left corner of the
+ *                              source image.
+ * @param  {Number}   [dWidth]  The width to draw the image in the destination
+ *                              canvas. This allows scaling of the drawn image.
+ * @param  {Number}   [dHeight] The height to draw the image in the destination
+ *                              canvas. This allows scaling of the drawn image.
  * @example
  * <div>
  * <code>
