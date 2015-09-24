@@ -1119,6 +1119,7 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
         break;
       }
 
+      // remember the max-allowed y-position for any line (fix to #928)
       finalMaxHeight = (y + maxHeight) - p.textAscent();
     }
 
@@ -1159,7 +1160,7 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
 
 p5.Renderer2D.prototype._renderText = function(p, line, x, y, maxY) {
 
-  if (y >= maxY) return; // don't render lines beyond maxY
+  if (y >= maxY) return; // don't render lines beyond our maxY position
 
   p.push(); // fix to #803
 
