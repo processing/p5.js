@@ -99,11 +99,15 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * Draw an image to the main canvas of the p5js sketch
  *
  * @method image
- * @param  {p5.Image} image    the image to display
- * @param  {Number}   [x=0]    x-coordinate of the image
- * @param  {Number}   [y=0]    y-coordinate of the image
- * @param  {Number}   [width]  width to display the image
- * @param  {Number}   [height] height to display the image
+ * @param  {p5.Image} img    the image to display
+ * @param  {Number}   [sx=0]   x-coordinate of the sub-rect of the source image
+ * @param  {Number}   [sx=0]   y-coordinate of the sub-rect of the source image
+ * @param {Number} [sWidth=img.width] width of the sub-rect of the source image
+ * @param {Number} [sHeight=img.height] height of the sub-rect of the source img
+ * @param  {Number}   [dx=0]    x-coordinate destination of the image
+ * @param  {Number}   [dy=0]    y-coordinate destination of the image
+ * @param  {Number}   [dWidth]  width to display the image
+ * @param  {Number}   [dHeight] height to display the image
  * @example
  * <div>
  * <code>
@@ -113,6 +117,8 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * }
  * function setup() {
  *   image(img, 0, 0);
+ *   image(img, 0, 0, 100, 100);
+ *   image(img, 10, 10, 50, 50, 0, 0, 50, 50);
  * }
  * </code>
  * </div>
@@ -127,7 +133,8 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * </code>
  * </div>
  */
-p5.prototype.image = function(img, x, y, width, height) {
+p5.prototype.image =
+  function(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight) {
   // Temporarily disabling until options for p5.Graphics are added.
   // this._validateParameters(
   //   'image',
@@ -138,14 +145,47 @@ p5.prototype.image = function(img, x, y, width, height) {
   //   ]
   // );
 
-  // set defaults
-  x = x || 0;
-  y = y || 0;
-  width = width || img.width;
-  height = height || img.height;
-  var vals = canvas.modeAdjust(x, y, width, height, this._renderer._imageMode);
+  // Validates clipping params. Per drawImage spec sWidth and sHight cannot be
+  // negative or greater than image intrinsic width and height
+  var sAssign = function (sVal, iVal) {
+    if (sVal > 0 && sVal < iVal) {
+      return sVal;
+    }
+    else {
+      return iVal;
+    }
+  };
+
+  // set defaults per spec: http://ow.ly/SCXr3
+  if (arguments.length <= 5) {
+    dx = sx || 0;
+    dy = sy || 0;
+    sx = 0;
+    sy = 0;
+    dWidth = sWidth || img.width;
+    dHeight = sHeight || img.height;
+    sWidth = img.width;
+    sHeight = img.height;
+  } else if (arguments.length === 9) {
+    sx = sx || 0;
+    sy = sy || 0;
+    sWidth = sAssign(sWidth, img.width);
+    sHeight = sAssign(sHeight, img.height);
+
+    dx = dx || 0;
+    dy = dy || 0;
+    dWidth = dWidth || img.width;
+    dHeight = dHeight || img.height;
+  } else {
+    throw 'Wrong number of arguments to image()';
+  }
+
+  var vals = canvas.modeAdjust(dx, dy, dWidth, dHeight,
+    this._renderer._imageMode);
+
   // tint the image if there is a tint
-  this._renderer.image(img, vals.x, vals.y, vals.w, vals.h);
+  this._renderer.image(img, sx, sy, sWidth, sHeight, vals.x, vals.y, vals.w,
+    vals.h);
 };
 
 /**
