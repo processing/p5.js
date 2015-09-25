@@ -4,11 +4,9 @@ var savanna;
 function setup() {
   frameRate(15);
   createCanvas(800, 800);
-  //background(200);
 
   savanna = loadImage('african-savanna.png');
   runningCat = loadImage('running-cat.png');
-
 }
 
 var sX = 0, sY = 0;
