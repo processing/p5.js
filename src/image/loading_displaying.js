@@ -132,7 +132,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * function setup() {
  *   image(img, 0, 0);
  *   image(img, 0, 0, 100, 100);
- *   image(img, 10, 10, 50, 50, 0, 0, 50, 50);
+ *   image(img, 0, 0, 100, 100, 0, 0, 100, 100);
  * }
  * </code>
  * </div>
