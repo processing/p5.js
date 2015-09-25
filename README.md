@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/processing/p5.js.svg?branch=master)](https://travis-ci.org/processing/p5.js)
+[![Build Status](https://travis-ci.org/processing/p5.js.svg?branch=master)](https://travis-ci.org/processing/p5.js) [![npm version](https://badge.fury.io/js/p5.svg)](https://www.npmjs.com/package/p5)
 
 #[p5.js](http://p5js.org)
 
@@ -24,7 +24,7 @@ Check out [p5js.org](http://p5js.org) for lots more! Here are some quicklinks:
 * [p5.js overview](https://github.com/processing/p5.js/wiki/p5.js-overview) — An overview of the main features and functionality of p5.js.
 * [Reference](http://p5js.org/reference) — The functionality supported by p5.js.
 * [Learn](http://p5js.org/learn) — Tutorials and short, prototypical examples exploring the basics of p5.js.
-* [Forum](http://forum.processing.org/two/) — Ask and answers questions about how to make things with p5.js here.
+* [Forum](http://forum.processing.org/two/categories/p5-js) — Ask and answers questions about how to make things with p5.js here.
 * [Libraries](http://p5js.org/libraries) — Extend p5 functionality to interact with HTML, manipulate sound, and more!
 * [FAQ](https://github.com/processing/p5.js/wiki/Frequently-Asked-Questions)
 
