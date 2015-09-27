@@ -97,9 +97,14 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
  * </div>
  */
 p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
+  // TODO(jgessner): Find an example using this and profile it.
+  // var args = new Array(arguments.length);
+  // for (var i = 0; i < args.length; ++i) {
+  //   args[i] = arguments[i];
+  // }
   // this._validateParameters(
   //   'directionalLight',
-  //   arguments,
+  //   args,
   //   [
   //     //rgbaxyz
   //     ['Number', 'Number', 'Number', 'Number', 'Number', 'Number', 'Number'],
@@ -219,6 +224,11 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
  * </div>
  */
 p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
+  // TODO(jgessner): Find an example using this and profile it.
+  // var args = new Array(arguments.length);
+  // for (var i = 0; i < args.length; ++i) {
+  //   args[i] = arguments[i];
+  // }
   // this._validateParameters(
   //   'pointLight',
   //   arguments,

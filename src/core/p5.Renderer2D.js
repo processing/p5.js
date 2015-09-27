@@ -1011,17 +1011,8 @@ p5.Renderer2D.prototype.rotate = function(r) {
   this.drawingContext.rotate(r);
 };
 
-p5.Renderer2D.prototype.scale = function() {
-  var x = 1.0,
-    y = 1.0;
-  if (arguments.length === 1) {
-    x = y = arguments[0];
-  } else {
-    x = arguments[0];
-    y = arguments[1];
-  }
+p5.Renderer2D.prototype.scale = function(x,y) {
   this.drawingContext.scale(x, y);
-
   return this;
 };
 

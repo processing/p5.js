@@ -150,9 +150,13 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
 p5.prototype.image =
   function(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight) {
   // Temporarily disabling until options for p5.Graphics are added.
+  // var args = new Array(arguments.length);
+  // for (var i = 0; i < args.length; ++i) {
+  //   args[i] = arguments[i];
+  // }
   // this._validateParameters(
   //   'image',
-  //   arguments,
+  //   args,
   //   [
   //     ['p5.Image', 'Number', 'Number'],
   //     ['p5.Image', 'Number', 'Number', 'Number', 'Number']
