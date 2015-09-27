@@ -130,7 +130,7 @@ p5.prototype.rotateX = function(rad) {
     );
     this._renderer.rotateX(rad);
   } else {
-    throw 'not yet implemented.';
+    throw 'not supported in p2d. Please use webgl mode';
   }
   return this;
 };
@@ -155,7 +155,7 @@ p5.prototype.rotateY = function(rad) {
     );
     this._renderer.rotateY(rad);
   } else {
-    throw 'not yet implemented.';
+    throw 'not supported in p2d. Please use webgl mode';
   }
   return this;
 };
@@ -202,10 +202,12 @@ p5.prototype.rotateZ = function(rad) {
  * can be further controlled with push() and pop().
  *
  * @method scale
- * @param  {Number} s   percentage to scale the object, or percentage to
+ * @param  {Number | p5.Vector | Array} s
+ *                      percent to scale the object, or percentage to
  *                      scale the object in the x-axis if multiple arguments
  *                      are given
- * @param  {Number} [y] percentage to scale the object in the y-axis
+ * @param  {Number} [y] percent to scale the object in the y-axis
+ * @param  {Number} [z] percent to scale the object in the z-axis (webgl only)
  * @return {p5}         the p5 object
  * @example
  * <div>
@@ -225,30 +227,37 @@ p5.prototype.rotateZ = function(rad) {
  * </div>
  */
 p5.prototype.scale = function() {
+  var x,y,z;
   var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
+  for(var i = 0; i < args.length; i++) {
     args[i] = arguments[i];
   }
-  if (this._renderer.isP3D) {
-    this._validateParameters(
-      'scale',
-      args,
-      [
-        //p3d
-        ['Number', 'Number', 'Number']
-      ]
-    );
-    this._renderer.scale(args[0], args[1], args[2]);
-  } else {
-    this._validateParameters(
-      'scale',
-      args,
-      [
-        //p2d
-        ['Number', 'Number']
-      ]
-    );
-    this._renderer.scale.apply(this._renderer, args);
+  if(args[0] instanceof p5.Vector){
+    x = args[0].x;
+    y = args[0].y;
+    z = args[0].z;
+  }
+  else if(args[0] instanceof Array){
+    x = args[0][0];
+    y = args[0][1];
+    z = args[0][2] || 1;
+  }
+  else {
+    if(args.length === 1){
+      x = y = z = args[0];
+    }
+    else {
+      x = args[0];
+      y = args[1];
+      z = args[2] || 1;
+    }
+  }
+
+  if(this._renderer.isP3D){
+    this._renderer.scale.call(this._renderer, x,y,z);
+  }
+  else {
+    this._renderer.scale.call(this._renderer, x,y);
   }
   return this;
 };
