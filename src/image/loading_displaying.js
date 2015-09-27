@@ -96,6 +96,24 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
 };
 
 /**
+ * Validates clipping params. Per drawImage spec sWidth and sHight cannot be
+ * negative or greater than image intrinsic width and height
+ * @private
+ * @param {Number} sVal
+ * @param {Number} iVal
+ * @returns {Number}
+ * @private
+ */
+function _sAssign(sVal, iVal) {
+  if (sVal > 0 && sVal < iVal) {
+    return sVal;
+  }
+  else {
+    return iVal;
+  }
+}
+
+/**
  * Draw an image to the main canvas of the p5js sketch
  *
  * @method image
@@ -163,18 +181,7 @@ p5.prototype.image =
   //   ]
   // );
 
-  // Validates clipping params. Per drawImage spec sWidth and sHight cannot be
-  // negative or greater than image intrinsic width and height
-  var sAssign = function (sVal, iVal) {
-    if (sVal > 0 && sVal < iVal) {
-      return sVal;
-    }
-    else {
-      return iVal;
-    }
-  };
-
-  // set defaults per spec: http://ow.ly/SCXr3
+  // set defaults per spec: https://goo.gl/3ykfOq
   if (arguments.length <= 5) {
     dx = sx || 0;
     dy = sy || 0;
@@ -187,8 +194,8 @@ p5.prototype.image =
   } else if (arguments.length === 9) {
     sx = sx || 0;
     sy = sy || 0;
-    sWidth = sAssign(sWidth, img.width);
-    sHeight = sAssign(sHeight, img.height);
+    sWidth = _sAssign(sWidth, img.width);
+    sHeight = _sAssign(sHeight, img.height);
 
     dx = dx || 0;
     dy = dy || 0;
