@@ -242,12 +242,17 @@ p5.prototype.brightness = function(c) {
  * </div>
  */
 p5.prototype.color = function() {
-  if (arguments[0] instanceof p5.Color) {
-    return arguments[0];
-  } else if (arguments[0] instanceof Array) {
-    return new p5.Color(this, arguments[0]);
+  var args = new Array(arguments.length);
+
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
+
+  if (args[0] instanceof p5.Color) {
+    return args[0];
+  } else if (args[0] instanceof Array) {
+    return new p5.Color(this, args[0]);
   } else {
-    var args = Array.prototype.slice.call(arguments);
     return new p5.Color(this, args);
   }
 };

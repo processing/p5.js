@@ -382,9 +382,12 @@ p5.Font.prototype._handleAlignment = function(p, ctx, line, x, y) {
 };
 
 function cacheKey() {
-  var args = Array.prototype.slice.call(arguments),
-    i = args.length,
-    hash = '';
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
+  i = args.length;
+  var hash = '';
 
   while (i--) {
     hash += (args[i] === Object(args[i])) ?

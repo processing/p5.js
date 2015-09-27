@@ -116,10 +116,14 @@ p5.prototype.rotate = function() {
  * @return {[type]}     [description]
  */
 p5.prototype.rotateX = function(rad) {
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   if (this._renderer.isP3D) {
     this._validateParameters(
       'rotateX',
-      arguments,
+      args,
       [
         ['Number']
       ]
@@ -138,9 +142,13 @@ p5.prototype.rotateX = function(rad) {
  */
 p5.prototype.rotateY = function(rad) {
   if (this._renderer.isP3D) {
+    var args = new Array(arguments.length);
+    for (var i = 0; i < args.length; ++i) {
+      args[i] = arguments[i];
+    }
     this._validateParameters(
       'rotateY',
-      arguments,
+      args,
       [
         ['Number']
       ]
@@ -159,9 +167,13 @@ p5.prototype.rotateY = function(rad) {
  */
 p5.prototype.rotateZ = function(rad) {
   if (this._renderer.isP3D) {
+    var args = new Array(arguments.length);
+    for (var i = 0; i < args.length; ++i) {
+      args[i] = arguments[i];
+    }
     this._validateParameters(
       'rotateZ',
-      arguments,
+      args,
       [
         ['Number']
       ]
@@ -213,26 +225,30 @@ p5.prototype.rotateZ = function(rad) {
  * </div>
  */
 p5.prototype.scale = function() {
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   if (this._renderer.isP3D) {
     this._validateParameters(
       'scale',
-      arguments,
+      args,
       [
         //p3d
         ['Number', 'Number', 'Number']
       ]
     );
-    this._renderer.scale(arguments[0], arguments[1], arguments[2]);
+    this._renderer.scale(args[0], args[1], args[2]);
   } else {
     this._validateParameters(
       'scale',
-      arguments,
+      args,
       [
         //p2d
         ['Number', 'Number']
       ]
     );
-    this._renderer.scale.apply(this._renderer, arguments);
+    this._renderer.scale.apply(this._renderer, args);
   }
   return this;
 };
@@ -346,10 +362,15 @@ p5.prototype.shearY = function(angle) {
  * </div>
  */
 p5.prototype.translate = function(x, y, z) {
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
+
   if (this._renderer.isP3D) {
     this._validateParameters(
       'translate',
-      arguments,
+      args,
       [
         //p3d
         ['Number', 'Number', 'Number']
@@ -359,7 +380,7 @@ p5.prototype.translate = function(x, y, z) {
   } else {
     this._validateParameters(
       'translate',
-      arguments,
+      args,
       [
         //p2d
         ['Number', 'Number']
