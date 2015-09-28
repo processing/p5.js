@@ -238,6 +238,7 @@ var p5 = function(sketch, node, sync) {
       }
 
       userPreload();
+      this._runIfPreloadsAreDone();
     } else {
       this._setup();
       this._runFrames();
@@ -245,9 +246,8 @@ var p5 = function(sketch, node, sync) {
     }
   }.bind(this);
 
-  this._decrementPreload = function(){
+  this._runIfPreloadsAreDone = function(){
     var context = this._isGlobal ? window : this;
-    context._setProperty('_preloadCount', context._preloadCount - 1);
     if (context._preloadCount === 0) {
       var loadingScreen = document.getElementById(context._loadingScreenId);
       if (loadingScreen) {
@@ -257,6 +257,12 @@ var p5 = function(sketch, node, sync) {
       context._runFrames();
       context._draw();
     }
+  };
+
+  this._decrementPreload = function(){
+    var context = this._isGlobal ? window : this;
+    context._setProperty('_preloadCount', context._preloadCount - 1);
+    context._runIfPreloadsAreDone();
   };
 
   this._wrapPreload = function(obj, fnName){
