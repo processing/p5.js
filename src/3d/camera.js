@@ -30,9 +30,13 @@ var p5 = require('../core/core');
  * </div>
  */
 p5.prototype.camera = function(x, y, z){
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   this._validateParameters(
     'camera',
-    arguments,
+    args,
     ['Number', 'Number', 'Number']
   );
   //what it manipulates is the model view matrix
@@ -73,9 +77,13 @@ p5.prototype.camera = function(x, y, z){
  * </div>
  */
 p5.prototype.perspective = function(fovy,aspect,near,far) {
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   this._validateParameters(
     'perspective',
-    arguments,
+    args,
     ['Number', 'Number', 'Number', 'Number']
   );
   this._renderer.uPMatrix = p5.Matrix.identity();
@@ -116,9 +124,13 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
  * </div>
  */
 p5.prototype.ortho = function(left,right,bottom,top,near,far) {
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   this._validateParameters(
     'ortho',
-    arguments,
+    args,
       ['Number', 'Number', 'Number', 'Number', 'Number', 'Number']
   );
   left /= this.width;
