@@ -69,6 +69,9 @@ p5.Element = function(elt, pInst) {
  * </code></div>
  */
 p5.Element.prototype.parent = function(p) {
+  if (arguments.length === 0){
+      return this.elt.parentNode
+    }
   if (typeof p === 'string') {
     p = document.getElementById(p);
   } else if (p instanceof p5.Element) {
@@ -103,6 +106,18 @@ p5.Element.prototype.class = function(c) {
   this.elt.className += ' '+c;
   return this;
 };
+
+/**
+ *
+ * Checks if element is hidden
+ *
+ * @method isHidden
+ * @return {Boolean}
+ */
+p5.Element.prototype.isHidden = function(){
+  return (this.elt.offsetParent === null)
+}
+
 
 /**
  * The .mousePressed() function is called once after every time a
