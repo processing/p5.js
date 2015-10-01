@@ -82,5 +82,5 @@ function draw() {
   textSize(16);
   text('myFont2', 0, y += 50);
 
-  text('Success count should be 6: ' + successCount, 0, y);
+  text('Success count should be 6: ' + successCount, 0, y + 50);
 }
