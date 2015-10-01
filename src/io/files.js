@@ -64,12 +64,19 @@ require('../core/error_helpers');
 p5.prototype.loadFont = function(path, onSuccess, onError) {
 
   var p5Font = new p5.Font(this);
+  var decrementPreload;
+
+  // when in preload decrementPreload will always be the last arg as it is set
+  // with args.push() before invocation in _wrapPreload
+  if (window.preload) {
+    decrementPreload = arguments[arguments.length - 1];
+  }
 
   opentype.load(path, function(err, font) {
 
     if (err) {
 
-      if (typeof onError !== 'undefined') {
+      if ((typeof onError !== 'undefined') && (onError !== decrementPreload)) {
         return onError(err);
       }
       throw err;
@@ -80,6 +87,11 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
     if (typeof onSuccess !== 'undefined') {
       onSuccess(p5Font);
     }
+    if ((onSuccess !== decrementPreload) &&
+      (typeof decrementPreload === 'function')) {
+      decrementPreload();
+    }
+
   });
 
   return p5Font;
@@ -166,6 +178,14 @@ p5.prototype.loadBytes = function() {
 p5.prototype.loadJSON = function() {
   var path = arguments[0];
   var callback = arguments[1];
+  var decrementPreload;
+
+  // when in preload decrementPreload will always be the last arg as it is set
+  // with args.push() before invocation in _wrapPreload
+  if (window.preload) {
+    decrementPreload = arguments[arguments.length - 1];
+  }
+
   var ret = []; // array needed for preload
   // assume jsonp for URLs
   var t = 'json'; //= path.indexOf('http') === -1 ? 'json' : 'jsonp';
@@ -184,6 +204,10 @@ p5.prototype.loadJSON = function() {
       }
       if (typeof callback !== 'undefined') {
         callback(resp);
+      }
+      if ((callback !== decrementPreload) &&
+        (typeof decrementPreload === 'function')) {
+        decrementPreload();
       }
     });
   return ret;
@@ -244,6 +268,14 @@ p5.prototype.loadJSON = function() {
 p5.prototype.loadStrings = function (path, callback) {
   var ret = [];
   var req = new XMLHttpRequest();
+  var decrementPreload;
+
+  // when in preload decrementPreload will always be the last arg as it is set
+  // with args.push() before invocation in _wrapPreload
+  if (window.preload) {
+    decrementPreload = arguments[arguments.length - 1];
+  }
+
   req.open('GET', path, true);
   req.onreadystatechange = function () {
     if (req.readyState === 4 && (req.status === 200 )) {
@@ -253,6 +285,10 @@ p5.prototype.loadStrings = function (path, callback) {
       }
       if (typeof callback !== 'undefined') {
         callback(ret);
+      }
+      if ((callback !== decrementPreload) &&
+        (typeof decrementPreload === 'function')) {
+        decrementPreload();
       }
     }
     else{
@@ -348,6 +384,14 @@ p5.prototype.loadTable = function (path) {
   var header = false;
   var sep = ',';
   var separatorSet = false;
+  var decrementPreload;
+
+  // when in preload decrementPreload will always be the last arg as it is set
+  // with args.push() before invocation in _wrapPreload
+  if (window.preload) {
+    decrementPreload = arguments[arguments.length - 1];
+  }
+
   for (var i = 1; i < arguments.length; i++) {
     if (typeof(arguments[i]) === 'function' ){
       callback = arguments[i];
@@ -514,10 +558,16 @@ p5.prototype.loadTable = function (path) {
       if (callback !== null) {
         callback(t);
       }
+      if ((callback !== decrementPreload) &&
+        (typeof decrementPreload === 'function')) {
+        decrementPreload();
+      }
     })
     .fail(function(err,msg){
       p5._friendlyFileLoadError(2,path);
-      if (typeof callback !== 'undefined') {
+      // don't get error callback mixed up with decrementPreload
+      if ((typeof callback !== 'undefined') &&
+        (callback !== decrementPreload)) {
         callback(false);
       }
     });
@@ -566,6 +616,14 @@ function makeObject(row, headers) {
  */
 p5.prototype.loadXML = function(path, callback) {
   var ret = document.implementation.createDocument(null, null);
+  var decrementPreload;
+
+  // when in preload decrementPreload will always be the last arg as it is set
+  // with args.push() before invocation in _wrapPreload
+  if (window.preload) {
+    decrementPreload = arguments[arguments.length - 1];
+  }
+
   reqwest({
     url: path,
     type: 'xml',
@@ -579,6 +637,10 @@ p5.prototype.loadXML = function(path, callback) {
       ret.appendChild(x);
       if (typeof callback !== 'undefined') {
         callback(resp);
+      }
+      if ((callback !== decrementPreload) &&
+        (typeof decrementPreload === 'function')) {
+        decrementPreload();
       }
     });
   return ret;
