@@ -25,7 +25,7 @@ var p5 = require('../core/core');
  *   print(x); // -3
  *   print(y); // 3
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.abs = Math.abs;
 
@@ -61,7 +61,7 @@ p5.prototype.abs = Math.abs;
  *   text(nfc(ax, 2,2), ax, ay - 5);
  *   text(nfc(bx,1,1), bx, by - 5);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.ceil = Math.ceil;
 
@@ -99,7 +99,7 @@ p5.prototype.ceil = Math.ceil;
  *   fill(0);
  *   ellipse(xc, 66, 9,9); // Constrained
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.constrain = function(n, low, high) {
   return Math.max(Math.min(n, high), low);
@@ -143,7 +143,7 @@ p5.prototype.constrain = function(n, low, high) {
  *   pop();
  *   // Fancy!
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.dist = function(x1, y1, x2, y2) {
   return Math.sqrt( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) );
@@ -191,7 +191,7 @@ p5.prototype.dist = function(x1, y1, x2, y2) {
  *   line(0, 0, 0, height);
  *   line(0, height-1, width, height-1);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.exp = Math.exp;
 
@@ -226,7 +226,7 @@ p5.prototype.exp = Math.exp;
  *   text(nfc(ax, 2,2), ax, ay - 5);
  *   text(nfc(bx,1,1), bx, by - 5);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.floor = Math.floor;
 
@@ -264,7 +264,7 @@ p5.prototype.floor = Math.floor;
  *   point(d, y);
  *   point(e, y);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.lerp = function(start, stop, amt) {
   return amt*(stop-start)+start;
@@ -306,7 +306,7 @@ p5.prototype.lerp = function(start, stop, amt) {
  *   noFill();
  *   stroke(0);
  *   beginShape();
- *   for(var x=0; x<width; x++) {
+ *   for(var x=0; x < width; x++) {
  *     xValue = map(x, 0, width, 0, maxX);
  *     yValue = log(xValue);
  *     y = map(yValue, -maxY, maxY, height, 0);
@@ -316,7 +316,7 @@ p5.prototype.lerp = function(start, stop, amt) {
  *   line(0,0,0,height);
  *   line(0,height/2,width, height/2);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.log = Math.log;
 
@@ -348,7 +348,7 @@ p5.prototype.log = Math.log;
  *   line(0, 0, x2, y2);
  *   print(mag(x2, y2));  // Prints "106.30146"
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.mag = function(x, y) {
   return Math.sqrt(x*x+y*y);
@@ -388,7 +388,7 @@ p5.prototype.mag = function(x, y) {
  *       var x2 = map(mouseX, 0, width, 0, 200);
  *       ellipse(x2, 125, 50, 50);
  *     }
- *   </div></code>
+ *   </code></div>
  */
 p5.prototype.map = function(n, start1, stop1, start2, stop2) {
   return ((n-start1)/(stop1-start1))*(stop2-start2)+start2;
@@ -423,7 +423,7 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2) {
  *   textSize(32);
  *   text(max(numArray), maxX, maxY);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.max = function() {
   if (arguments[0] instanceof Array) {
@@ -462,7 +462,7 @@ p5.prototype.max = function() {
  *   textSize(32);
  *   text(min(numArray), maxX, maxY);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.min = function() {
   if (arguments[0] instanceof Array) {
@@ -514,7 +514,7 @@ p5.prototype.min = function() {
  *   normalX = 20;
  *   text(normalized, normalX, normalY);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.norm = function(n, start, stop) {
   return this.map(n, start, stop, 0, 1);
@@ -546,7 +546,7 @@ p5.prototype.norm = function(n, start, stop) {
  *
  *   ellipse(eLoc*8, eLoc*8, pow(eSize, 4), pow(eSize, 4));
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.pow = Math.pow;
 
@@ -581,7 +581,7 @@ p5.prototype.pow = Math.pow;
  *   text(nfc(ax, 2,2), ax, ay - 5);
  *   text(nfc(bx,1,1), bx, by - 5);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.round = Math.round;
 
@@ -621,7 +621,7 @@ p5.prototype.round = Math.round;
  *   text("x = " + x1, 0, y1 + spacing);
  *   text("sqrt(x) = " + x2, 0, y2 + spacing);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.sq = function(n) { return n*n; };
 
@@ -663,7 +663,7 @@ p5.prototype.sq = function(n) { return n*n; };
  *   text("x = " + x1, 0, y1 + spacing);
  *   text("sqrt(x) = " + x2, 0, y2 + spacing);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.sqrt = Math.sqrt;
 
