@@ -393,7 +393,8 @@ p5.prototype.loadTable = function (path) {
   }
 
   for (var i = 1; i < arguments.length; i++) {
-    if (typeof(arguments[i]) === 'function' ){
+    if ((typeof(arguments[i]) === 'function') &&
+      (arguments[i] !== decrementPreload)) {
       callback = arguments[i];
     }
     else if (typeof(arguments[i]) === 'string') {
