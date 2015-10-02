@@ -68,7 +68,7 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
 
   // when in preload decrementPreload will always be the last arg as it is set
   // with args.push() before invocation in _wrapPreload
-  if (window.preload) {
+  if ((this && this.preload) || window.preload) {
     decrementPreload = arguments[arguments.length - 1];
   }
 
@@ -182,7 +182,7 @@ p5.prototype.loadJSON = function() {
 
   // when in preload decrementPreload will always be the last arg as it is set
   // with args.push() before invocation in _wrapPreload
-  if (window.preload) {
+  if ((this && this.preload) || window.preload) {
     decrementPreload = arguments[arguments.length - 1];
   }
 
@@ -272,7 +272,7 @@ p5.prototype.loadStrings = function (path, callback) {
 
   // when in preload decrementPreload will always be the last arg as it is set
   // with args.push() before invocation in _wrapPreload
-  if (window.preload) {
+  if ((this && this.preload) || window.preload) {
     decrementPreload = arguments[arguments.length - 1];
   }
 
@@ -388,7 +388,7 @@ p5.prototype.loadTable = function (path) {
 
   // when in preload decrementPreload will always be the last arg as it is set
   // with args.push() before invocation in _wrapPreload
-  if (window.preload) {
+  if ((this && this.preload) || window.preload) {
     decrementPreload = arguments[arguments.length - 1];
   }
 
@@ -621,7 +621,7 @@ p5.prototype.loadXML = function(path, callback) {
 
   // when in preload decrementPreload will always be the last arg as it is set
   // with args.push() before invocation in _wrapPreload
-  if (window.preload) {
+  if ((this && this.preload) || window.preload) {
     decrementPreload = arguments[arguments.length - 1];
   }
 

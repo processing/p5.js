@@ -65,7 +65,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
 
   // when in preload decrementPreload will always be the last arg as it is set
   // with args.push() before invocation in _wrapPreload
-  if (window.preload) {
+  if ((this && this.preload) || window.preload) {
     decrementPreload = arguments[arguments.length - 1];
   }
 
