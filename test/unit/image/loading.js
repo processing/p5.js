@@ -102,3 +102,48 @@ suite('loading images', function () {
     );
   });
 });
+
+var myImage1, myImage2;
+
+// Test loading image in preload() with success callback
+var mySketch = function (this_p5) {
+  this_p5.preload = function () {
+    suite('Test in preload() with success callback', function () {
+      test('Load asynchronously and use success callback', function (done) {
+        myImage1 = this_p5.loadImage('unit/assets/nyan_cat.gif', function () {
+          assert.ok(myImage1);
+          done();
+        });
+      });
+    });
+  };
+
+  this_p5.setup = function () {
+    suite('setup() after preload() with success callback', function () {
+      test('Resource should be loaded now if preload() finished', function (done) {
+        assert.isTrue(myImage1 instanceof p5.Image);
+        assert.isTrue(myImage2.width > 0 && myImage2.height > 0);
+        done();
+      });
+    });
+  };
+};
+new p5(mySketch, null, false);
+
+// Test loading image in preload() without success callback
+mySketch = function (this_p5) {
+  this_p5.preload = function () {
+    myImage2 = this_p5.loadImage('unit/assets/nyan_cat.gif');
+  };
+
+  this_p5.setup = function () {
+    suite('setup() after preload() without success callback', function () {
+      test('Resource should be loaded now if preload() finished', function (done) {
+        assert.isTrue(myImage2 instanceof p5.Image);
+        assert.isTrue(myImage2.width > 0 && myImage2.height > 0);
+        done();
+      });
+    });
+  };
+};
+new p5(mySketch, null, false);

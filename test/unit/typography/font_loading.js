@@ -7,7 +7,6 @@ var mySketch = function (this_p5) {
       test('Load asynchronously and use success callback', function (done) {
         myFont1 = this_p5.loadFont('../examples/p5.Font/acmesa.ttf', function () {
           assert.ok(myFont1);
-          console.log('Finished successfuly in preload()');
           done();
         });
       });
