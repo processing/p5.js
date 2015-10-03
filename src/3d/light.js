@@ -1,7 +1,7 @@
 /**
- * module Lights, Camera
- * submodule Lights
- * for p5
+ * @module Lights, Camera
+ * @submodule Lights
+ * @for p5
  * @requires core
  */
 
@@ -11,7 +11,7 @@ var p5 = require('../core/core');
 
 /**
  * creates an ambient light with a color
- * method  ambientLight
+ * @method  ambientLight
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
@@ -67,7 +67,7 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
 
 /**
  * creates a directional light with a color and a direction
- * method  directionalLight
+ * @method  directionalLight
  * @param  {Number|Array|String|p5.Color} v1   gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
@@ -187,7 +187,7 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
 
 /**
  * creates a point light with a color and a light position
- * method  pointLight
+ * @method  pointLight
  * @param  {Number|Array|String|p5.Color} v1   gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
