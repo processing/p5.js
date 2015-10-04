@@ -14,6 +14,24 @@ var opentype = require('opentype.js');
 require('../core/error_helpers');
 
 /**
+ * Checks if we are in preload and returns the last arg which will be the
+ * _decrementPreload function if called from a loadX() function.  Should
+ * only be used in loadX() functions.
+ * @private
+ */
+p5._getDecrementPreload = function (args) {
+  var decrementPreload;
+
+  // when in preload decrementPreload will always be the last arg as it is set
+  // with args.push() before invocation in _wrapPreload
+  if ((this && this.preload) || window.preload) {
+    decrementPreload = args[args.length - 1];
+  }
+
+  return decrementPreload;
+};
+
+/**
  * Loads an opentype font file (.otf, .ttf) from a file or a URL,
  * and returns a PFont Object. This method is asynchronous,
  * meaning it may not finish before the next line in your sketch
@@ -64,13 +82,7 @@ require('../core/error_helpers');
 p5.prototype.loadFont = function(path, onSuccess, onError) {
 
   var p5Font = new p5.Font(this);
-  var decrementPreload;
-
-  // when in preload decrementPreload will always be the last arg as it is set
-  // with args.push() before invocation in _wrapPreload
-  if ((this && this.preload) || window.preload) {
-    decrementPreload = arguments[arguments.length - 1];
-  }
+  var decrementPreload = p5._getDecrementPreload(arguments);
 
   opentype.load(path, function(err, font) {
 
@@ -178,13 +190,7 @@ p5.prototype.loadBytes = function() {
 p5.prototype.loadJSON = function() {
   var path = arguments[0];
   var callback = arguments[1];
-  var decrementPreload;
-
-  // when in preload decrementPreload will always be the last arg as it is set
-  // with args.push() before invocation in _wrapPreload
-  if ((this && this.preload) || window.preload) {
-    decrementPreload = arguments[arguments.length - 1];
-  }
+  var decrementPreload = p5._getDecrementPreload(arguments);
 
   var ret = []; // array needed for preload
   // assume jsonp for URLs
@@ -268,13 +274,7 @@ p5.prototype.loadJSON = function() {
 p5.prototype.loadStrings = function (path, callback) {
   var ret = [];
   var req = new XMLHttpRequest();
-  var decrementPreload;
-
-  // when in preload decrementPreload will always be the last arg as it is set
-  // with args.push() before invocation in _wrapPreload
-  if ((this && this.preload) || window.preload) {
-    decrementPreload = arguments[arguments.length - 1];
-  }
+  var decrementPreload = p5._getDecrementPreload(arguments);
 
   req.open('GET', path, true);
   req.onreadystatechange = function () {
@@ -384,13 +384,7 @@ p5.prototype.loadTable = function (path) {
   var header = false;
   var sep = ',';
   var separatorSet = false;
-  var decrementPreload;
-
-  // when in preload decrementPreload will always be the last arg as it is set
-  // with args.push() before invocation in _wrapPreload
-  if ((this && this.preload) || window.preload) {
-    decrementPreload = arguments[arguments.length - 1];
-  }
+  var decrementPreload = p5._getDecrementPreload(arguments);
 
   for (var i = 1; i < arguments.length; i++) {
     if ((typeof(arguments[i]) === 'function') &&
@@ -617,13 +611,7 @@ function makeObject(row, headers) {
  */
 p5.prototype.loadXML = function(path, callback) {
   var ret = document.implementation.createDocument(null, null);
-  var decrementPreload;
-
-  // when in preload decrementPreload will always be the last arg as it is set
-  // with args.push() before invocation in _wrapPreload
-  if ((this && this.preload) || window.preload) {
-    decrementPreload = arguments[arguments.length - 1];
-  }
+  var decrementPreload = p5._getDecrementPreload(arguments);
 
   reqwest({
     url: path,
