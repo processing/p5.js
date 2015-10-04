@@ -19,7 +19,7 @@ var p5 = require('../core/core');
  * <code>
  * //please call this function before doing any transformation
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   createCanvas(100, 100, 'webgl');
  * }
  * function draw(){
  *  background(255);
@@ -43,7 +43,7 @@ p5.prototype.normalMaterial = function(){
  * <code>
  * var img;
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   createCanvas(100, 100, 'webgl');
  *   img = loadImage("assets/cat.jpg");
  * }
  * function draw(){
@@ -149,7 +149,7 @@ function _nextHighestPOT (value){
  * <div>
  * <code>
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   createCanvas(100, 100, 'webgl');
  * }
  * function draw(){
  *  background(0);
@@ -195,7 +195,7 @@ p5.prototype.basicMaterial = function(v1, v2, v3, a){
  * <div>
  * <code>
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   createCanvas(100, 100, 'webgl');
  * }
  * function draw(){
  *  background(0);
@@ -242,7 +242,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * <div>
  * <code>
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   createCanvas(100, 100, 'webgl');
  * }
  * function draw(){
  *  background(0);

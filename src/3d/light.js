@@ -23,7 +23,7 @@ var p5 = require('../core/core');
  * <div>
  * <code>
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   createCanvas(100, 100, 'webgl');
  * }
  * function draw(){
  *   background(0);
@@ -82,7 +82,7 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
  * <div>
  * <code>
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   createCanvas(100, 100, 'webgl');
  * }
  * function draw(){
  *   background(0);
@@ -202,7 +202,7 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
  * <div>
  * <code>
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   createCanvas(100, 100, 'webgl');
  * }
  * function draw(){
  *   background(0);
