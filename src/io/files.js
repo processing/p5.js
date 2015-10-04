@@ -63,11 +63,10 @@ p5._getDecrementPreload = function (args) {
  * }
  * </code></div>
  *
- * <p>Outside preload(), you may supply a callback function to handle the
- * object:</p>
+ * <p>You may supply a callback function to handle the object:</p>
  *
  * <div><code>
- * function setup() {
+ * function preload() {
  *   loadFont('assets/AvenirNextLTPro-Demi.otf', drawText);
  * }
  *
@@ -164,14 +163,16 @@ p5.prototype.loadBytes = function() {
  * }
  * </code></div>
  *
- * <p>Outside preload(), you may supply a callback function to handle the
- * object:</p>
+ * <p>You may supply a callback function to handle the object:</p>
 
  * <div><code>
- * function setup() {
- *   noLoop();
+ * function preload() {
  *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=NewYork,USA';
  *   loadJSON(url, drawWeather);
+ * }
+ *
+ * function setup() {
+ *   noLoop();
  * }
  *
  * function draw() {
@@ -255,11 +256,10 @@ p5.prototype.loadJSON = function() {
  * }
  * </code></div>
  *
- * <p>Outside preload(), you may supply a callback function to handle the
- * object:</p>
+ * <p>You may supply a callback function to handle the object:</p>
  *
  * <div><code>
- * function setup() {
+ * function preload() {
  *   loadStrings('assets/test.txt', pickString);
  * }
  *
@@ -326,7 +326,7 @@ p5.prototype.loadStrings = function (path, callback) {
  * <p>This method is asynchronous, meaning it may not finish before the next
  * line in your sketch is executed. Calling loadTable() inside preload()
  * guarantees to complete the operation before setup() and draw() are called.
- * Outside preload(), you may supply a callback function to handle the object.
+ * You may supply a callback function to handle the object.
  * </p>
  *
  * @method loadTable
@@ -597,7 +597,7 @@ function makeObject(row, headers) {
  * This method is asynchronous, meaning it may not finish before the next
  * line in your sketch is executed. Calling loadXML() inside preload()
  * guarantees to complete the operation before setup() and draw() are called.
- * Outside preload(), you may supply a callback function to handle the object.
+ * You may supply a callback function to handle the object.
  *
  * @method loadXML
  * @param  {String}   filename   name of the file or URL to load
