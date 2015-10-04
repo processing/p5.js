@@ -20,15 +20,16 @@ require('../core/error_helpers');
  * @private
  */
 p5._getDecrementPreload = function (args) {
-  var decrementPreload;
+  var decrementPreload = args[args.length - 1];
 
   // when in preload decrementPreload will always be the last arg as it is set
   // with args.push() before invocation in _wrapPreload
-  if ((this && this.preload) || window.preload) {
-    decrementPreload = args[args.length - 1];
+  if (((this && this.preload) || window.preload) &&
+    typeof decrementPreload === 'function') {
+    return decrementPreload;
   }
 
-  return decrementPreload;
+  return null;
 };
 
 /**
@@ -99,8 +100,7 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
     if (typeof onSuccess !== 'undefined') {
       onSuccess(p5Font);
     }
-    if ((onSuccess !== decrementPreload) &&
-      (typeof decrementPreload === 'function')) {
+    if (decrementPreload && (onSuccess !== decrementPreload)) {
       decrementPreload();
     }
 
@@ -211,8 +211,7 @@ p5.prototype.loadJSON = function() {
       if (typeof callback !== 'undefined') {
         callback(resp);
       }
-      if ((callback !== decrementPreload) &&
-        (typeof decrementPreload === 'function')) {
+      if (decrementPreload && (callback !== decrementPreload)) {
         decrementPreload();
       }
     });
@@ -286,8 +285,7 @@ p5.prototype.loadStrings = function (path, callback) {
       if (typeof callback !== 'undefined') {
         callback(ret);
       }
-      if ((callback !== decrementPreload) &&
-        (typeof decrementPreload === 'function')) {
+      if (decrementPreload && (callback !== decrementPreload)) {
         decrementPreload();
       }
     }
@@ -553,8 +551,7 @@ p5.prototype.loadTable = function (path) {
       if (callback !== null) {
         callback(t);
       }
-      if ((callback !== decrementPreload) &&
-        (typeof decrementPreload === 'function')) {
+      if (decrementPreload && (callback !== decrementPreload)) {
         decrementPreload();
       }
     })
@@ -627,8 +624,7 @@ p5.prototype.loadXML = function(path, callback) {
       if (typeof callback !== 'undefined') {
         callback(resp);
       }
-      if ((callback !== decrementPreload) &&
-        (typeof decrementPreload === 'function')) {
+      if (decrementPreload && (callback !== decrementPreload)) {
         decrementPreload();
       }
     });

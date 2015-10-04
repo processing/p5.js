@@ -73,8 +73,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     if (typeof successCallback === 'function') {
       successCallback(pImg);
     }
-    if ((successCallback !== decrementPreload) &&
-      (typeof decrementPreload === 'function')) {
+    if (decrementPreload && (successCallback !== decrementPreload)) {
       decrementPreload();
     }
   };
