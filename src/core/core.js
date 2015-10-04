@@ -483,13 +483,17 @@ var p5 = function(sketch, node, sync) {
     }
   }
 
-  var self = this;
-  window.addEventListener('focus', function() {
-    self._setProperty('focused', true);
-  });
-
-  window.addEventListener('blur', function() {
-    self._setProperty('focused', false);
+  var focusHandler = function() {
+    this._setProperty('focused', true);
+  }.bind(this);
+  var blurHandler = function() {
+    this._setProperty('focused', false);
+  }.bind(this);
+  window.addEventListener('focus', focusHandler);
+  window.addEventListener('blur', blurHandler);
+  this.registerMethod('remove', function() {
+    window.removeEventListener(focusHandler);
+    window.removeEventListener(blurHandler);
   });
 
   // TODO: ???
