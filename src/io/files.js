@@ -18,6 +18,11 @@ require('../core/error_helpers');
  * and returns a PFont Object. This method is asynchronous,
  * meaning it may not finish before the next line in your sketch
  * is executed.
+ * <br><br>
+ * The path to the font should be relative to the HTML file
+ * that links in your sketch. Loading an from a URL or other
+ * remote location may be blocked due to your browser's built-in
+ * security.
  *
  * @method loadFont
  * @param  {String}        path       name of the file or url to load
