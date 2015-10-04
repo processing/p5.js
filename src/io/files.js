@@ -293,22 +293,27 @@ p5.prototype.loadStrings = function (path, callback) {
   var req = new XMLHttpRequest();
   var decrementPreload = p5._getDecrementPreload(arguments);
 
+  req.addEventListener('error', function () {
+    console.log('An error occurred loading strings: ' + path);
+  });
+
   req.open('GET', path, true);
   req.onreadystatechange = function () {
-    if (req.readyState === 4 && (req.status === 200 )) {
-      var arr = req.responseText.match(/[^\r\n]+/g);
-      for (var k in arr) {
-        ret[k] = arr[k];
+    if (req.readyState === 4) {
+      if (req.status === 200) {
+        var arr = req.responseText.match(/[^\r\n]+/g);
+        for (var k in arr) {
+          ret[k] = arr[k];
+        }
+        if (typeof callback !== 'undefined') {
+          callback(ret);
+        }
+        if (decrementPreload && (callback !== decrementPreload)) {
+          decrementPreload();
+        }
+      } else {
+        p5._friendlyFileLoadError(3, path);
       }
-      if (typeof callback !== 'undefined') {
-        callback(ret);
-      }
-      if (decrementPreload && (callback !== decrementPreload)) {
-        decrementPreload();
-      }
-    }
-    else{
-      p5._friendlyFileLoadError(3,path);
     }
   };
   req.send(null);
