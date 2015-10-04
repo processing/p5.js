@@ -201,8 +201,19 @@ p5.prototype.loadJSON = function() {
     }
   }
 
-  reqwest({url: path, type: t, crossOrigin: true})
-    .then(function(resp) {
+  reqwest({
+    url: path,
+    type: t,
+    crossOrigin: true,
+    error: function (resp, msg, err) {
+      if (msg) {
+        console.log(msg);
+      }
+      if (err && err.message) {
+        console.log(err.message);
+      }
+    },
+    success: function(resp) {
       for (var k in resp) {
         ret[k] = resp[k];
       }
@@ -212,7 +223,9 @@ p5.prototype.loadJSON = function() {
       if (decrementPreload && (callback !== decrementPreload)) {
         decrementPreload();
       }
-    });
+    }
+  });
+
   return ret;
 };
 
