@@ -63,8 +63,7 @@ p5._getDecrementPreload = function (args) {
  * }
  * </code></div>
  *
- * <p>Outside preload(), you may supply a callback function to handle the
- * object:</p>
+ * <p>You may supply a callback function to handle the object:</p>
  *
  * <div><code>
  * function setup() {
@@ -164,8 +163,7 @@ p5.prototype.loadBytes = function() {
  * }
  * </code></div>
  *
- * <p>Outside preload(), you may supply a callback function to handle the
- * object:</p>
+ * <p>You may supply a callback function to handle the object:</p>
 
  * <div><code>
  * function setup() {
@@ -203,8 +201,19 @@ p5.prototype.loadJSON = function() {
     }
   }
 
-  reqwest({url: path, type: t, crossOrigin: true})
-    .then(function(resp) {
+  reqwest({
+    url: path,
+    type: t,
+    crossOrigin: true,
+    error: function (resp, msg, err) {
+      if (msg) {
+        console.log(msg);
+      }
+      if (err && err.message) {
+        console.log(err.message);
+      }
+    },
+    success: function(resp) {
       for (var k in resp) {
         ret[k] = resp[k];
       }
@@ -214,7 +223,9 @@ p5.prototype.loadJSON = function() {
       if (decrementPreload && (callback !== decrementPreload)) {
         decrementPreload();
       }
-    });
+    }
+  });
+
   return ret;
 };
 
@@ -255,8 +266,7 @@ p5.prototype.loadJSON = function() {
  * }
  * </code></div>
  *
- * <p>Outside preload(), you may supply a callback function to handle the
- * object:</p>
+ * <p>You may supply a callback function to handle the object:</p>
  *
  * <div><code>
  * function setup() {
@@ -326,7 +336,7 @@ p5.prototype.loadStrings = function (path, callback) {
  * <p>This method is asynchronous, meaning it may not finish before the next
  * line in your sketch is executed. Calling loadTable() inside preload()
  * guarantees to complete the operation before setup() and draw() are called.
- * Outside preload(), you may supply a callback function to handle the object.
+ * You may supply a callback function to handle the object.
  * </p>
  *
  * @method loadTable
@@ -597,7 +607,7 @@ function makeObject(row, headers) {
  * This method is asynchronous, meaning it may not finish before the next
  * line in your sketch is executed. Calling loadXML() inside preload()
  * guarantees to complete the operation before setup() and draw() are called.
- * Outside preload(), you may supply a callback function to handle the object.
+ * You may supply a callback function to handle the object.
  *
  * @method loadXML
  * @param  {String}   filename   name of the file or URL to load
