@@ -66,7 +66,7 @@ p5._getDecrementPreload = function (args) {
  * <p>You may supply a callback function to handle the object:</p>
  *
  * <div><code>
- * function preload() {
+ * function setup() {
  *   loadFont('assets/AvenirNextLTPro-Demi.otf', drawText);
  * }
  *
@@ -166,13 +166,10 @@ p5.prototype.loadBytes = function() {
  * <p>You may supply a callback function to handle the object:</p>
 
  * <div><code>
- * function preload() {
- *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=NewYork,USA';
- *   loadJSON(url, drawWeather);
- * }
- *
  * function setup() {
  *   noLoop();
+ *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=NewYork,USA';
+ *   loadJSON(url, drawWeather);
  * }
  *
  * function draw() {
@@ -259,7 +256,7 @@ p5.prototype.loadJSON = function() {
  * <p>You may supply a callback function to handle the object:</p>
  *
  * <div><code>
- * function preload() {
+ * function setup() {
  *   loadStrings('assets/test.txt', pickString);
  * }
  *
