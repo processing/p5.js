@@ -11,8 +11,6 @@ module.exports = {
     fs.readFileSync(__dirname + '/shaders/normal.frag', 'utf-8'),
   basicFrag:
     fs.readFileSync(__dirname + '/shaders/basic.frag', 'utf-8'),
-  textureFrag:
-    fs.readFileSync(__dirname + '/shaders/texture.frag', 'utf-8'),
   lightVert:
     fs.readFileSync(__dirname + '/shaders/light.vert', 'utf-8'),
   lightFrag:

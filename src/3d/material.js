@@ -60,8 +60,8 @@ p5.prototype.normalMaterial = function(){
  */
 p5.prototype.texture = function(image){
   var gl = this._renderer.GL;
-  var shaderProgram = this._renderer._getShader('normalVert',
-    'textureFrag');
+  var shaderProgram = this._renderer._getShader('lightVert',
+    'lightFrag');
   gl.useProgram(shaderProgram);
   var tex = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D, tex);
@@ -108,6 +108,7 @@ p5.prototype.texture = function(image){
   gl.activeTexture(gl.TEXTURE0 + 0);
   gl.bindTexture(gl.TEXTURE_2D, tex);
   gl.uniform1i(gl.getUniformLocation(shaderProgram, 'uSampler'), 0);
+  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), true);
   return this;
 };
 
@@ -225,6 +226,8 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
     shaderProgram, 'uSpecular' );
   gl.uniform1i(shaderProgram.uSpecular, false);
 
+  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
+
   return this;
 };
 
@@ -271,6 +274,8 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   shaderProgram.uSpecular = gl.getUniformLocation(
     shaderProgram, 'uSpecular' );
   gl.uniform1i(shaderProgram.uSpecular, true);
+
+  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
 
   return this;
 };
