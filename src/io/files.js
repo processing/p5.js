@@ -14,6 +14,25 @@ var opentype = require('opentype.js');
 require('../core/error_helpers');
 
 /**
+ * Checks if we are in preload and returns the last arg which will be the
+ * _decrementPreload function if called from a loadX() function.  Should
+ * only be used in loadX() functions.
+ * @private
+ */
+p5._getDecrementPreload = function (args) {
+  var decrementPreload = args[args.length - 1];
+
+  // when in preload decrementPreload will always be the last arg as it is set
+  // with args.push() before invocation in _wrapPreload
+  if (((this && this.preload) || window.preload) &&
+    typeof decrementPreload === 'function') {
+    return decrementPreload;
+  }
+
+  return null;
+};
+
+/**
  * Loads an opentype font file (.otf, .ttf) from a file or a URL,
  * and returns a PFont Object. This method is asynchronous,
  * meaning it may not finish before the next line in your sketch
@@ -64,12 +83,13 @@ require('../core/error_helpers');
 p5.prototype.loadFont = function(path, onSuccess, onError) {
 
   var p5Font = new p5.Font(this);
+  var decrementPreload = p5._getDecrementPreload(arguments);
 
   opentype.load(path, function(err, font) {
 
     if (err) {
 
-      if (typeof onError !== 'undefined') {
+      if ((typeof onError !== 'undefined') && (onError !== decrementPreload)) {
         return onError(err);
       }
       throw err;
@@ -80,6 +100,10 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
     if (typeof onSuccess !== 'undefined') {
       onSuccess(p5Font);
     }
+    if (decrementPreload && (onSuccess !== decrementPreload)) {
+      decrementPreload();
+    }
+
   });
 
   return p5Font;
@@ -166,6 +190,8 @@ p5.prototype.loadBytes = function() {
 p5.prototype.loadJSON = function() {
   var path = arguments[0];
   var callback = arguments[1];
+  var decrementPreload = p5._getDecrementPreload(arguments);
+
   var ret = []; // array needed for preload
   // assume jsonp for URLs
   var t = 'json'; //= path.indexOf('http') === -1 ? 'json' : 'jsonp';
@@ -184,6 +210,9 @@ p5.prototype.loadJSON = function() {
       }
       if (typeof callback !== 'undefined') {
         callback(resp);
+      }
+      if (decrementPreload && (callback !== decrementPreload)) {
+        decrementPreload();
       }
     });
   return ret;
@@ -244,6 +273,8 @@ p5.prototype.loadJSON = function() {
 p5.prototype.loadStrings = function (path, callback) {
   var ret = [];
   var req = new XMLHttpRequest();
+  var decrementPreload = p5._getDecrementPreload(arguments);
+
   req.open('GET', path, true);
   req.onreadystatechange = function () {
     if (req.readyState === 4 && (req.status === 200 )) {
@@ -253,6 +284,9 @@ p5.prototype.loadStrings = function (path, callback) {
       }
       if (typeof callback !== 'undefined') {
         callback(ret);
+      }
+      if (decrementPreload && (callback !== decrementPreload)) {
+        decrementPreload();
       }
     }
     else{
@@ -348,8 +382,11 @@ p5.prototype.loadTable = function (path) {
   var header = false;
   var sep = ',';
   var separatorSet = false;
+  var decrementPreload = p5._getDecrementPreload(arguments);
+
   for (var i = 1; i < arguments.length; i++) {
-    if (typeof(arguments[i]) === 'function' ){
+    if ((typeof(arguments[i]) === 'function') &&
+      (arguments[i] !== decrementPreload)) {
       callback = arguments[i];
     }
     else if (typeof(arguments[i]) === 'string') {
@@ -514,10 +551,15 @@ p5.prototype.loadTable = function (path) {
       if (callback !== null) {
         callback(t);
       }
+      if (decrementPreload && (callback !== decrementPreload)) {
+        decrementPreload();
+      }
     })
     .fail(function(err,msg){
       p5._friendlyFileLoadError(2,path);
-      if (typeof callback !== 'undefined') {
+      // don't get error callback mixed up with decrementPreload
+      if ((typeof callback !== 'undefined') &&
+        (callback !== decrementPreload)) {
         callback(false);
       }
     });
@@ -566,6 +608,8 @@ function makeObject(row, headers) {
  */
 p5.prototype.loadXML = function(path, callback) {
   var ret = document.implementation.createDocument(null, null);
+  var decrementPreload = p5._getDecrementPreload(arguments);
+
   reqwest({
     url: path,
     type: 'xml',
@@ -579,6 +623,9 @@ p5.prototype.loadXML = function(path, callback) {
       ret.appendChild(x);
       if (typeof callback !== 'undefined') {
         callback(resp);
+      }
+      if (decrementPreload && (callback !== decrementPreload)) {
+        decrementPreload();
       }
     });
   return ret;
