@@ -19,12 +19,12 @@ require('../core/error_helpers');
  * only be used in loadX() functions.
  * @private
  */
-p5._getDecrementPreload = function (args) {
+p5._getDecrementPreload = function (args, this_p5) {
   var decrementPreload = args[args.length - 1];
 
   // when in preload decrementPreload will always be the last arg as it is set
   // with args.push() before invocation in _wrapPreload
-  if (((this && this.preload) || window.preload) &&
+  if (((this_p5 && this_p5.preload) || window.preload) &&
     typeof decrementPreload === 'function') {
     return decrementPreload;
   }
@@ -88,7 +88,7 @@ p5._getDecrementPreload = function (args) {
 p5.prototype.loadFont = function(path, onSuccess, onError) {
 
   var p5Font = new p5.Font(this);
-  var decrementPreload = p5._getDecrementPreload(arguments);
+  var decrementPreload = p5._getDecrementPreload(arguments, this);
 
   opentype.load(path, function(err, font) {
 
@@ -195,7 +195,7 @@ p5.prototype.loadBytes = function() {
 p5.prototype.loadJSON = function() {
   var path = arguments[0];
   var callback = arguments[1];
-  var decrementPreload = p5._getDecrementPreload(arguments);
+  var decrementPreload = p5._getDecrementPreload(arguments, this);
 
   var ret = []; // array needed for preload
   // assume jsonp for URLs
@@ -291,7 +291,7 @@ p5.prototype.loadJSON = function() {
 p5.prototype.loadStrings = function (path, callback) {
   var ret = [];
   var req = new XMLHttpRequest();
-  var decrementPreload = p5._getDecrementPreload(arguments);
+  var decrementPreload = p5._getDecrementPreload(arguments, this);
 
   req.addEventListener('error', function () {
     console.log('An error occurred loading strings: ' + path);
@@ -406,7 +406,7 @@ p5.prototype.loadTable = function (path) {
   var header = false;
   var sep = ',';
   var separatorSet = false;
-  var decrementPreload = p5._getDecrementPreload(arguments);
+  var decrementPreload = p5._getDecrementPreload(arguments, this);
 
   for (var i = 1; i < arguments.length; i++) {
     if ((typeof(arguments[i]) === 'function') &&
@@ -634,7 +634,7 @@ function makeObject(row, headers) {
  */
 p5.prototype.loadXML = function(path, callback) {
   var ret = document.implementation.createDocument(null, null);
-  var decrementPreload = p5._getDecrementPreload(arguments);
+  var decrementPreload = p5._getDecrementPreload(arguments, this);
 
   reqwest({
     url: path,
