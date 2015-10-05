@@ -17,14 +17,14 @@ var p5 = require('../core/core');
  * @example
  * <div>
  * <code>
- * //please call this function before doing any transformation
  * function setup(){
  *   createCanvas(100, 100, 'webgl');
  * }
+ * 
  * function draw(){
  *  background(255);
  *  normalMaterial();
- *  sphere(100);
+ *  sphere(200);
  * }
  * </code>
  * </div>
@@ -46,14 +46,15 @@ p5.prototype.normalMaterial = function(){
  *   createCanvas(100, 100, 'webgl');
  *   img = loadImage("assets/cat.jpg");
  * }
+ * 
  * function draw(){
  *   background(255);
- *   rotateZ(frameCount * 0.02);
- *   rotateX(frameCount * 0.02);
- *   rotateY(frameCount * 0.02);
- *   // pass image as texture
+ *   rotateZ(frameCount * 0.01);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   //pass image as texture
  *   texture(img);
- *   box(60);
+ *   box(200, 200);
  * }
  * </code>
  * </div>
@@ -152,12 +153,14 @@ function _nextHighestPOT (value){
  * function setup(){
  *   createCanvas(100, 100, 'webgl');
  * }
+ * 
  * function draw(){
  *  background(0);
- *  rotateX(frameCount * 0.02);
- *  rotateZ(frameCount * 0.02);
  *  basicMaterial(250, 0, 0);
- *  box(100);
+ *  rotateX(frameCount * 0.01);
+ *  rotateY(frameCount * 0.01);
+ *  rotateZ(frameCount * 0.01);
+ *  box(200， 200);
  * }
  * </code>
  * </div>
@@ -200,9 +203,10 @@ p5.prototype.basicMaterial = function(v1, v2, v3, a){
  * }
  * function draw(){
  *  background(0);
+ *  ambientLight(100);
  *  pointLight(250, 250, 250, 100, 100, 0);
  *  ambientMaterial(250);
- *  sphere(100, 128);
+ *  sphere(200, 128);
  * }
  * </code>
  * </div>
@@ -249,9 +253,10 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * }
  * function draw(){
  *  background(0);
+ *  ambientLight(100);
  *  pointLight(250, 250, 250, 100, 100, 0);
  *  specularMaterial(250);
- *  sphere(100, 128);
+ *  sphere(200, 128);
  * }
  * </code>
  * </div>
