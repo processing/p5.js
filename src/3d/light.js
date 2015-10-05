@@ -37,7 +37,7 @@ var p5 = require('../core/core');
 p5.prototype.ambientLight = function(v1, v2, v3, a){
   var gl = this._renderer.GL;
   var shaderProgram = this._renderer._getShader(
-    'lightVert', 'lightFrag');
+    'lightVert', 'lightTextureFrag');
 
   gl.useProgram(shaderProgram);
   shaderProgram.uAmbientColor = gl.getUniformLocation(
@@ -133,7 +133,7 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
 
   var gl = this._renderer.GL;
   var shaderProgram = this._renderer._getShader(
-    'lightVert', 'lightFrag');
+    'lightVert', 'lightTextureFrag');
 
   gl.useProgram(shaderProgram);
   shaderProgram.uDirectionalColor = gl.getUniformLocation(
@@ -260,7 +260,7 @@ p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
 
   var gl = this._renderer.GL;
   var shaderProgram = this._renderer._getShader(
-    'lightVert', 'lightFrag');
+    'lightVert', 'lightTextureFrag');
 
   gl.useProgram(shaderProgram);
   shaderProgram.uPointLightColor = gl.getUniformLocation(
