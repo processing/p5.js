@@ -10,12 +10,12 @@
 var p5 = require('../core/core');
 
 /**
- * sets camera position
+ * Sets camera position
  * @method camera
  * @param  {Number} x  camera postion value on x axis
  * @param  {Number} y  camera postion value on y axis
  * @param  {Number} z  camera postion value on z axis
- * @return {p5}
+ * @return {p5}        the p5 object
  * @example
  * <div>
  * <code>
@@ -23,8 +23,8 @@ var p5 = require('../core/core');
  *   createCanvas(100, 100, WEBGL);
  * }
  * function draw(){
- *  //move the camera away from the plane by 100
- *  camera(0, 0, 100);
+ *  //move the camera away from the plane by a sin wave
+ *  camera(0, 0, sin(frameCount * 0.01) * 100);
  *  plane(120, 120);
  * }
  * </code>
@@ -45,14 +45,14 @@ p5.prototype.camera = function(x, y, z){
 };
 
 /**
- * sets perspective camera
+ * Sets perspective camera
  * @method  perspective
  * @param  {Number} fovy   camera frustum vertical field of view,
  *                         from bottom to top of view, in degrees
  * @param  {Number} aspect camera frustum aspect ratio
  * @param  {Number} near   frustum near plane length
  * @param  {Number} far    frustum far plane length
- * @return {p5}
+ * @return {p5}            the p5 object
  * @example
  * <div>
  * <code>
@@ -93,7 +93,7 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
 };
 
 /**
- * setup ortho camera
+ * Setup ortho camera
  * @method  ortho
  * @param  {Number} left   camera frustum left plane
  * @param  {Number} right  camera frustum right plane
@@ -101,7 +101,7 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
  * @param  {Number} top    camera frustum top plane
  * @param  {Number} near   camera frustum near plane
  * @param  {Number} far    camera frustum far plane
- * @return {p5}
+ * @return {p5}            the p5 object
  * @example
  * <div>
  * <code>

@@ -12,11 +12,11 @@ var p5 = require('../core/core');
 require('./p5.Geometry3D');
 
 /**
- * draw a plane with given a width and height
+ * Draw a plane with given a width and height
  * @method plane
  * @param  {Number} width      width of the plane
  * @param  {Number} height     height of the plane
- * @return {p5}
+ * @return {p5}                the p5 object
  * @example
  * <div>
  * <code>
@@ -67,13 +67,13 @@ p5.prototype.plane = function(width, height){
 };
 
 /**
- * draw a sphere with given raduis
+ * Draw a sphere with given raduis
  * @method sphere
  * @param  {Number} radius            radius of circle
  * @param  {Number} [detail]          optional: number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
- * @return {p5}
+ * @return {p5}                       the p5 object
  * @example
  * <div>
  * <code>
@@ -124,14 +124,14 @@ p5.prototype.sphere = function(radius, detail){
 };
 
 /**
- * draw a cylinder with given radius and height
+ * Draw a cylinder with given radius and height
  * @method  cylinder
  * @param  {Number} radius            radius of the surface
  * @param  {Number} height            height of the cylinder
  * @param  {Number} [detail]          optional: number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
- * @return {p5}
+ * @return {p5}                       the p5 object
  * @example
  * <div>
  * <code>
@@ -217,14 +217,14 @@ p5.prototype.cylinder = function(radius, height, detail){
 
 
 /**
- * draw a cone with given radius and height
+ * Draw a cone with given radius and height
  * @method cone
  * @param  {Number} radius            radius of the bottom surface
  * @param  {Number} height            height of the cone
  * @param  {Number} [detail]          optional: number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
- * @return {p5}
+ * @return {p5}                       the p5 object
  * @example
  * <div>
  * <code>
@@ -290,14 +290,14 @@ p5.prototype.cone = function(radius, height, detail){
 
 
 /**
- * draw a torus with given radius and tube radius
+ * Draw a torus with given radius and tube radius
  * @method torus
  * @param  {Number} radius            radius of the whole ring
  * @param  {Number} tubeRadius        radius of the tube
  * @param  {Number} [detail]          optional: number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
- * @return {p5}
+ * @return {p5}                       the p5 object
  * @example
  * <div>
  * <code>
@@ -351,12 +351,12 @@ p5.prototype.torus = function(radius, tubeRadius, detail){
 };
 
 /**
- * draw a box with given width, height and depth
+ * Draw a box with given width, height and depth
  * @method  box
  * @param  {Number} width  width of the box
  * @param  {Number} height height of the box
  * @param  {Number} depth  depth of the box
- * @return {p5}
+ * @return {p5}            the p5 object
  * @example
  * <div>
  * <code>

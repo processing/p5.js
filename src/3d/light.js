@@ -10,7 +10,7 @@
 var p5 = require('../core/core');
 
 /**
- * creates an ambient light with a color
+ * Creates an ambient light with a color
  * @method  ambientLight
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
@@ -18,7 +18,7 @@ var p5 = require('../core/core');
  * @param  {Number}            [v2] optional: green or saturation value
  * @param  {Number}            [v3] optional: blue or brightness value
  * @param  {Number}            [a]  optional: opacity
- * @return {p5}
+ * @return {p5}                the p5 object
  * @example
  * <div>
  * <code>
@@ -66,7 +66,7 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
 };
 
 /**
- * creates a directional light with a color and a direction
+ * Creates a directional light with a color and a direction
  * @method  directionalLight
  * @param  {Number|Array|String|p5.Color} v1   gray value,
  * red or hue value (depending on the current color mode),
@@ -77,7 +77,7 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
  * @param  {Number|p5.Vector} x   x axis direction or a p5.Vector
  * @param  {Number}          [y]  optional: y axis direction
  * @param  {Number}          [z]  optional: z axis direction
- * @return {p5}
+ * @return {p5}              the p5 object
  * @example
  * <div>
  * <code>
@@ -186,7 +186,7 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
 };
 
 /**
- * creates a point light with a color and a light position
+ * Creates a point light with a color and a light position
  * @method  pointLight
  * @param  {Number|Array|String|p5.Color} v1   gray value,
  * red or hue value (depending on the current color mode),
@@ -197,7 +197,7 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
  * @param  {Number|p5.Vector} x   x axis position or a p5.Vector
  * @param  {Number}          [y]  optional: y axis position
  * @param  {Number}          [z]  optional: z axis position
- * @return {p5}
+ * @return {p5}              the p5 object
  * @example
  * <div>
  * <code>

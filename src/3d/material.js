@@ -11,9 +11,9 @@ var p5 = require('../core/core');
 //require('./p5.Texture');
 
 /**
- * normal material for geometry
+ * Normal material for geometry
  * @method normalMaterial
- * @return {p5}
+ * @return {p5}                the p5 object
  * @example
  * <div>
  * <code>
@@ -22,7 +22,7 @@ var p5 = require('../core/core');
  * }
  *
  * function draw(){
- *  background(255);
+ *  background(0);
  *  normalMaterial();
  *  sphere(200);
  * }
@@ -35,9 +35,9 @@ p5.prototype.normalMaterial = function(){
 };
 
 /**
- * texture for geometry
+ * Texture for geometry
  * @method texture
- * @return {p5}
+ * @return {p5}                the p5 object
  * @example
  * <div>
  * <code>
@@ -48,7 +48,7 @@ p5.prototype.normalMaterial = function(){
  * }
  *
  * function draw(){
- *   background(255);
+ *   background(0);
  *   rotateZ(frameCount * 0.01);
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
@@ -138,7 +138,7 @@ function _nextHighestPOT (value){
 }
 
 /**
- * basic material for geometry with a given color
+ * Basic material for geometry with a given color
  * @method  basicMaterial
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
@@ -146,7 +146,7 @@ function _nextHighestPOT (value){
  * @param  {Number}            [v2] optional: green or saturation value
  * @param  {Number}            [v3] optional: blue or brightness value
  * @param  {Number}            [a]  optional: opacity
- * @return {p5}
+ * @return {p5}                the p5 object
  * @example
  * <div>
  * <code>
@@ -186,7 +186,7 @@ p5.prototype.basicMaterial = function(v1, v2, v3, a){
 };
 
 /**
- * ambient material for geometry with a given color
+ * Ambient material for geometry with a given color
  * @method  ambientMaterial
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
@@ -194,7 +194,7 @@ p5.prototype.basicMaterial = function(v1, v2, v3, a){
  * @param  {Number}            [v2] optional: green or saturation value
  * @param  {Number}            [v3] optional: blue or brightness value
  * @param  {Number}            [a]  optional: opacity
- * @return {p5}
+* @return {p5}                 the p5 object
  * @example
  * <div>
  * <code>
@@ -236,7 +236,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
 };
 
 /**
- * specular material for geometry with a given color
+ * Specular material for geometry with a given color
  * @method specularMaterial
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
@@ -244,7 +244,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * @param  {Number}            [v2] optional: green or saturation value
  * @param  {Number}            [v3] optional: blue or brightness value
  * @param  {Number}            [a]  optional: opacity
- * @return {p5}
+ * @return {p5}                the p5 object
  * @example
  * <div>
  * <code>
