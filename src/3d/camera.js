@@ -23,8 +23,9 @@ var p5 = require('../core/core');
  *   createCanvas(100, 100, 'webgl');
  * }
  * function draw(){
- *  camera(0, 0, 800);
- *  sphere(100);
+ *  //move the camera away from the plane by 100
+ *  camera(0, 0, 100);
+ *  plane(120, 120);
  * }
  * </code>
  * </div>
@@ -55,20 +56,20 @@ p5.prototype.camera = function(x, y, z){
  * @example
  * <div>
  * <code>
- * //drag mouse to toggle the world
+ * //drag mouse to toggle the world!
  * //you will see there's a vanish point
  * function setup(){
  *   createCanvas(100, 100, 'webgl');
  *   perspective(60 / 180 * PI, width/height, 0.1, 100);
  * }
  * function draw(){
- *  background(0);
+ *  background(200);
  *  orbitControl();
- *  for(var i = -5; i < 6; i++){
- *     for(var j = -5; j < 6; j++){
+ *  for(var i = -1; i < 2; i++){
+ *     for(var j = -2; j < 3; j++){
  *       push();
- *       translate(i*100, 0, j*100);
- *       sphere(20);
+ *       translate(i*160, 0, j*160);
+ *       box(40, 40);
  *       pop();
  *     }
  *   }
@@ -104,18 +105,20 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
  * @example
  * <div>
  * <code>
+ * //drag mouse to toggle the world!
+ * //there's no vanish point
  * function setup(){
  *   createCanvas(100, 100, 'webgl');
  *   ortho(-width/2, width/2, height/2, -height/2, 0.1, 100);
  * }
  * function draw(){
- *  background(0);
+ *  background(200);
  *  orbitControl();
- *  for(var i = -5; i < 6; i++){
- *     for(var j = -5; j < 6; j++){
+ *  for(var i = -1; i < 2; i++){
+ *     for(var j = -2; j < 3; j++){
  *       push();
- *       translate(i*100, 0, j*100);
- *       sphere(20);
+ *       translate(i*160, 0, j*160);
+ *       box(40, 40);
  *       pop();
  *     }
  *   }
