@@ -54,7 +54,7 @@ p5.prototype.normalMaterial = function(){
  *   rotateY(frameCount * 0.01);
  *   //pass image as texture
  *   texture(img);
- *   box(200, 200);
+ *   box(200, 200, 200);
  * }
  * </code>
  * </div>
@@ -160,7 +160,7 @@ function _nextHighestPOT (value){
  *  rotateX(frameCount * 0.01);
  *  rotateY(frameCount * 0.01);
  *  rotateZ(frameCount * 0.01);
- *  box(200， 200);
+ *  box(200， 200, 200);
  * }
  * </code>
  * </div>

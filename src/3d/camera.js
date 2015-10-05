@@ -69,7 +69,7 @@ p5.prototype.camera = function(x, y, z){
  *     for(var j = -2; j < 3; j++){
  *       push();
  *       translate(i*160, 0, j*160);
- *       box(40, 40);
+ *       box(40, 40, 40);
  *       pop();
  *     }
  *   }
@@ -118,7 +118,7 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
  *     for(var j = -2; j < 3; j++){
  *       push();
  *       translate(i*160, 0, j*160);
- *       box(40, 40);
+ *       box(40, 40, 40);
  *       pop();
  *     }
  *   }
