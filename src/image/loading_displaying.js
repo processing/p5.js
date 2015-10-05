@@ -61,7 +61,7 @@ require('../core/error_helpers');
 p5.prototype.loadImage = function(path, successCallback, failureCallback) {
   var img = new Image();
   var pImg = new p5.Image(1, 1, this);
-  var decrementPreload = p5._getDecrementPreload(arguments);
+  var decrementPreload = p5._getDecrementPreload(arguments, this);
 
   img.onload = function() {
     pImg.width = pImg.canvas.width = img.width;
