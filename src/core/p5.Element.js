@@ -37,7 +37,7 @@ p5.Element = function(elt, pInst) {
  *
  * Attaches the element to the parent specified. A way of setting
  * the container for the element. Accepts either a string ID, DOM
- * node, or p5.Element.
+ * node, or p5.Element. If no arguments given, parent node is returned.
  *
  * @method parent
  * @param  {String|Object} parent the ID, DOM node, or p5.Element
@@ -69,6 +69,9 @@ p5.Element = function(elt, pInst) {
  * </code></div>
  */
 p5.Element.prototype.parent = function(p) {
+  if (arguments.length === 0){
+      return this.elt.parentNode;
+    }
   if (typeof p === 'string') {
     p = document.getElementById(p);
   } else if (p instanceof p5.Element) {
