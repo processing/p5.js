@@ -70,15 +70,16 @@ p5.Element = function(elt, pInst) {
  */
 p5.Element.prototype.parent = function(p) {
   if (arguments.length === 0){
-      return this.elt.parentNode;
+    return this.elt.parentNode;
+  } else {
+    if (typeof p === 'string') {
+      p = document.getElementById(p);
+    } else if (p instanceof p5.Element) {
+      p = p.elt;
     }
-  if (typeof p === 'string') {
-    p = document.getElementById(p);
-  } else if (p instanceof p5.Element) {
-    p = p.elt;
+    p.appendChild(this.elt);
+    return this;
   }
-  p.appendChild(this.elt);
-  return this;
 };
 
 /**
