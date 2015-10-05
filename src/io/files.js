@@ -37,6 +37,11 @@ p5._getDecrementPreload = function (args) {
  * and returns a PFont Object. This method is asynchronous,
  * meaning it may not finish before the next line in your sketch
  * is executed.
+ * <br><br>
+ * The path to the font should be relative to the HTML file
+ * that links in your sketch. Loading an from a URL or other
+ * remote location may be blocked due to your browser's built-in
+ * security.
  *
  * @method loadFont
  * @param  {String}        path       name of the file or url to load
@@ -63,7 +68,7 @@ p5._getDecrementPreload = function (args) {
  * }
  * </code></div>
  *
- * <p>Outside preload(), you may supply a callback function to handle the
+ * <p>Outside of preload(), you may supply a callback function to handle the
  * object:</p>
  *
  * <div><code>
@@ -164,9 +169,9 @@ p5.prototype.loadBytes = function() {
  * }
  * </code></div>
  *
- * <p>Outside preload(), you may supply a callback function to handle the
+ *
+ * <p>Outside of preload(), you may supply a callback function to handle the
  * object:</p>
-
  * <div><code>
  * function setup() {
  *   noLoop();
@@ -203,8 +208,19 @@ p5.prototype.loadJSON = function() {
     }
   }
 
-  reqwest({url: path, type: t, crossOrigin: true})
-    .then(function(resp) {
+  reqwest({
+    url: path,
+    type: t,
+    crossOrigin: true,
+    error: function (resp, msg, err) {
+      if (msg) {
+        console.log(msg);
+      }
+      if (err && err.message) {
+        console.log(err.message);
+      }
+    },
+    success: function(resp) {
       for (var k in resp) {
         ret[k] = resp[k];
       }
@@ -214,7 +230,9 @@ p5.prototype.loadJSON = function() {
       if (decrementPreload && (callback !== decrementPreload)) {
         decrementPreload();
       }
-    });
+    }
+  });
+
   return ret;
 };
 
@@ -255,7 +273,7 @@ p5.prototype.loadJSON = function() {
  * }
  * </code></div>
  *
- * <p>Outside preload(), you may supply a callback function to handle the
+ * <p>Outside of preload(), you may supply a callback function to handle the
  * object:</p>
  *
  * <div><code>
@@ -275,22 +293,27 @@ p5.prototype.loadStrings = function (path, callback) {
   var req = new XMLHttpRequest();
   var decrementPreload = p5._getDecrementPreload(arguments);
 
+  req.addEventListener('error', function () {
+    console.log('An error occurred loading strings: ' + path);
+  });
+
   req.open('GET', path, true);
   req.onreadystatechange = function () {
-    if (req.readyState === 4 && (req.status === 200 )) {
-      var arr = req.responseText.match(/[^\r\n]+/g);
-      for (var k in arr) {
-        ret[k] = arr[k];
+    if (req.readyState === 4) {
+      if (req.status === 200) {
+        var arr = req.responseText.match(/[^\r\n]+/g);
+        for (var k in arr) {
+          ret[k] = arr[k];
+        }
+        if (typeof callback !== 'undefined') {
+          callback(ret);
+        }
+        if (decrementPreload && (callback !== decrementPreload)) {
+          decrementPreload();
+        }
+      } else {
+        p5._friendlyFileLoadError(3, path);
       }
-      if (typeof callback !== 'undefined') {
-        callback(ret);
-      }
-      if (decrementPreload && (callback !== decrementPreload)) {
-        decrementPreload();
-      }
-    }
-    else{
-      p5._friendlyFileLoadError(3,path);
     }
   };
   req.send(null);
@@ -326,7 +349,8 @@ p5.prototype.loadStrings = function (path, callback) {
  * <p>This method is asynchronous, meaning it may not finish before the next
  * line in your sketch is executed. Calling loadTable() inside preload()
  * guarantees to complete the operation before setup() and draw() are called.
- * Outside preload(), you may supply a callback function to handle the object.
+ * <p>Outside of preload(), you may supply a callback function to handle the
+ * object:</p>
  * </p>
  *
  * @method loadTable
@@ -597,7 +621,9 @@ function makeObject(row, headers) {
  * This method is asynchronous, meaning it may not finish before the next
  * line in your sketch is executed. Calling loadXML() inside preload()
  * guarantees to complete the operation before setup() and draw() are called.
- * Outside preload(), you may supply a callback function to handle the object.
+ *
+ * <p>Outside of preload(), you may supply a callback function to handle the
+ * object:</p>
  *
  * @method loadXML
  * @param  {String}   filename   name of the file or URL to load

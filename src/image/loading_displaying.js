@@ -19,8 +19,8 @@ require('../core/error_helpers');
  * <br><br>
  * The image may not be immediately available for rendering
  * If you want to ensure that the image is ready before doing
- * anything with it you can do perform those operations in the
- * callback, or place the loadImage() call in preload().
+ * anything with it, place the loadImage() call in preload().
+ * You may also supply a callback function to handle the image when it's ready.
  * <br><br>
  * The path to the image should be relative to the HTML file
  * that links in your sketch. Loading an from a URL or other
