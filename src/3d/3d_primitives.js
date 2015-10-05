@@ -139,7 +139,7 @@ p5.prototype.sphere = function(radius, detail){
  * function setup(){
  *   createCanvas(100, 100, 'webgl');
  * }
- * 
+ *
  * function draw(){
  *   background(200);
  *   rotateX(frameCount * 0.01);
@@ -232,7 +232,7 @@ p5.prototype.cylinder = function(radius, height, detail){
  * function setup(){
  *   createCanvas(100, 100, 'webgl');
  * }
- * 
+ *
  * function draw(){
  *   background(200);
  *   rotateX(frameCount * 0.01);

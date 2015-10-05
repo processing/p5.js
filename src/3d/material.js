@@ -20,7 +20,7 @@ var p5 = require('../core/core');
  * function setup(){
  *   createCanvas(100, 100, 'webgl');
  * }
- * 
+ *
  * function draw(){
  *  background(255);
  *  normalMaterial();
@@ -46,7 +46,7 @@ p5.prototype.normalMaterial = function(){
  *   createCanvas(100, 100, 'webgl');
  *   img = loadImage("assets/cat.jpg");
  * }
- * 
+ *
  * function draw(){
  *   background(255);
  *   rotateZ(frameCount * 0.01);
@@ -153,7 +153,7 @@ function _nextHighestPOT (value){
  * function setup(){
  *   createCanvas(100, 100, 'webgl');
  * }
- * 
+ *
  * function draw(){
  *  background(0);
  *  basicMaterial(250, 0, 0);
