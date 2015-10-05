@@ -18,7 +18,7 @@ var p5 = require('../core/core');
  * <div>
  * <code>
  * function setup(){
- *   createCanvas(100, 100, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
  *
  * function draw(){
@@ -43,7 +43,7 @@ p5.prototype.normalMaterial = function(){
  * <code>
  * var img;
  * function setup(){
- *   createCanvas(100, 100, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  *   img = loadImage("assets/cat.jpg");
  * }
  *
@@ -151,7 +151,7 @@ function _nextHighestPOT (value){
  * <div>
  * <code>
  * function setup(){
- *   createCanvas(100, 100, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
  *
  * function draw(){
@@ -160,7 +160,7 @@ function _nextHighestPOT (value){
  *  rotateX(frameCount * 0.01);
  *  rotateY(frameCount * 0.01);
  *  rotateZ(frameCount * 0.01);
- *  box(200， 200, 200);
+ *  box(200, 200, 200);
  * }
  * </code>
  * </div>
@@ -199,7 +199,7 @@ p5.prototype.basicMaterial = function(v1, v2, v3, a){
  * <div>
  * <code>
  * function setup(){
- *   createCanvas(100, 100, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
  * function draw(){
  *  background(0);
@@ -249,7 +249,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * <div>
  * <code>
  * function setup(){
- *   createCanvas(100, 100, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
  * function draw(){
  *  background(0);

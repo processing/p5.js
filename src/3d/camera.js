@@ -20,7 +20,7 @@ var p5 = require('../core/core');
  * <div>
  * <code>
  * function setup(){
- *   createCanvas(100, 100, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
  * function draw(){
  *  //move the camera away from the plane by 100
@@ -59,7 +59,7 @@ p5.prototype.camera = function(x, y, z){
  * //drag mouse to toggle the world!
  * //you will see there's a vanish point
  * function setup(){
- *   createCanvas(100, 100, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  *   perspective(60 / 180 * PI, width/height, 0.1, 100);
  * }
  * function draw(){
@@ -108,7 +108,7 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
  * //drag mouse to toggle the world!
  * //there's no vanish point
  * function setup(){
- *   createCanvas(100, 100, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  *   ortho(-width/2, width/2, height/2, -height/2, 0.1, 100);
  * }
  * function draw(){

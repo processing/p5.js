@@ -22,7 +22,7 @@ require('./p5.Geometry3D');
  * <code>
  * //draw a plane with width 200 and height 200
  * function setup(){
- *   createCanvas(100, 100, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
  *
  * function draw(){
@@ -79,7 +79,7 @@ p5.prototype.plane = function(width, height){
  * <code>
  * // draw a sphere with radius 200
  * function setup(){
- *   createCanvas(100, 100, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
  *
  * function draw(){
@@ -137,7 +137,7 @@ p5.prototype.sphere = function(radius, detail){
  * <code>
  * //draw a spining sylinder with radius 200 and height 200
  * function setup(){
- *   createCanvas(100, 100, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
  *
  * function draw(){
@@ -230,7 +230,7 @@ p5.prototype.cylinder = function(radius, height, detail){
  * <code>
  * //draw a spining cone with radius 200 and height 200
  * function setup(){
- *   createCanvas(100, 100, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
  *
  * function draw(){
@@ -303,7 +303,7 @@ p5.prototype.cone = function(radius, height, detail){
  * <code>
  * //draw a spining torus with radius 200 and tube radius 60
  * function setup(){
- *   createCanvas(100, 100, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
  *
  * function draw(){
@@ -362,7 +362,7 @@ p5.prototype.torus = function(radius, tubeRadius, detail){
  * <code>
  * //draw a spining box with width, height and depth 200
  * function setup(){
- *   createCanvas(100, 100, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
  *
  * function draw(){
