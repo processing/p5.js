@@ -237,16 +237,33 @@ p5.Element.prototype.mouseOver = function (fxn) {
 
 
 /**
- * The .changed() function is called when the value of an element is changed.
+ * The .changed() function is called when the value of an
+ * element is changed.
  * This can be used to attach an element specific event listener.
  *
  * @method changed
- * @param  {Function} fxn function to be fired when mouse is
- *                    moved over the element.
+ * @param  {Function} fxn function to be fired when the value of an
+ * element changes.
  * @return {p5.Element}
  */
 p5.Element.prototype.changed = function (fxn) {
   attachListener('change', fxn, this);
+  return this;
+};
+
+/**
+ * The .input() function is called when any user input is
+ * detected with an element. The input event is often used
+ * to detect keystrokes in a input element, or changes on a
+ * slider element. This can be used to attach an element specific
+ * event listener.
+ *
+ * @method input
+ * @param  {Function} fxn function to be fired on user input.
+ * @return {p5.Element}
+ */
+p5.Element.prototype.input = function (fxn) {
+  attachListener('input', fxn, this);
   return this;
 };
 
