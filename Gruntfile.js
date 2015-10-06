@@ -129,7 +129,7 @@ module.exports = function(grunt) {
       },
       // Watch the codebase for doc updates
       yui:{
-        files:['src/**/*.js'],
+        files:['src/**/*.js', 'lib/addons/*.js'],
         task:['yuidoc']
       }
     },
