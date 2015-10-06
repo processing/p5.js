@@ -33,7 +33,6 @@
  *  grunt update_json - This automates updating the bower file
  *                      to match the package.json
  */
-
 module.exports = function(grunt) {
 
   // Specify what reporter we'd like to use for Mocha
