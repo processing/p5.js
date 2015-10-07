@@ -1,7 +1,7 @@
 /**
- * module Lights, Camera
- * submodule Lights
- * for p5
+ * @module Lights, Camera
+ * @submodule Lights
+ * @for p5
  * @requires core
  */
 
@@ -10,26 +10,26 @@
 var p5 = require('../core/core');
 
 /**
- * creates an ambient light with a color
- * method  ambientLight
+ * Creates an ambient light with a color
+ * @method  ambientLight
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
  * @param  {Number}            [v2] optional: green or saturation value
  * @param  {Number}            [v3] optional: blue or brightness value
  * @param  {Number}            [a]  optional: opacity
- * @return {p5}
+ * @return {p5}                the p5 object
  * @example
  * <div>
  * <code>
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
  * function draw(){
  *   background(0);
  *   ambientLight(150);
  *   ambientMaterial(250);
- *   sphere(100);
+ *   sphere(200);
  * }
  * </code>
  * </div>
@@ -37,7 +37,7 @@ var p5 = require('../core/core');
 p5.prototype.ambientLight = function(v1, v2, v3, a){
   var gl = this._renderer.GL;
   var shaderProgram = this._renderer._getShader(
-    'lightVert', 'lightFrag');
+    'lightVert', 'lightTextureFrag');
 
   gl.useProgram(shaderProgram);
   shaderProgram.uAmbientColor = gl.getUniformLocation(
@@ -66,8 +66,8 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
 };
 
 /**
- * creates a directional light with a color and a direction
- * method  directionalLight
+ * Creates a directional light with a color and a direction
+ * @method  directionalLight
  * @param  {Number|Array|String|p5.Color} v1   gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
@@ -77,12 +77,12 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
  * @param  {Number|p5.Vector} x   x axis direction or a p5.Vector
  * @param  {Number}          [y]  optional: y axis direction
  * @param  {Number}          [z]  optional: z axis direction
- * @return {p5}
+ * @return {p5}              the p5 object
  * @example
  * <div>
  * <code>
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
  * function draw(){
  *   background(0);
@@ -91,15 +91,20 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
  *   var dirY = (mouseY / height - 0.5) *(-2);
  *   directionalLight(250, 250, 250, dirX, dirY, 0.25);
  *   ambientMaterial(250);
- *   sphere(100, 128);
+ *   sphere(200, 128);
  * }
  * </code>
  * </div>
  */
 p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
+  // TODO(jgessner): Find an example using this and profile it.
+  // var args = new Array(arguments.length);
+  // for (var i = 0; i < args.length; ++i) {
+  //   args[i] = arguments[i];
+  // }
   // this._validateParameters(
   //   'directionalLight',
-  //   arguments,
+  //   args,
   //   [
   //     //rgbaxyz
   //     ['Number', 'Number', 'Number', 'Number', 'Number', 'Number', 'Number'],
@@ -128,7 +133,7 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
 
   var gl = this._renderer.GL;
   var shaderProgram = this._renderer._getShader(
-    'lightVert', 'lightFrag');
+    'lightVert', 'lightTextureFrag');
 
   gl.useProgram(shaderProgram);
   shaderProgram.uDirectionalColor = gl.getUniformLocation(
@@ -181,8 +186,8 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
 };
 
 /**
- * creates a point light with a color and a light position
- * method  pointLight
+ * Creates a point light with a color and a light position
+ * @method  pointLight
  * @param  {Number|Array|String|p5.Color} v1   gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
@@ -192,12 +197,12 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
  * @param  {Number|p5.Vector} x   x axis position or a p5.Vector
  * @param  {Number}          [y]  optional: y axis position
  * @param  {Number}          [z]  optional: z axis position
- * @return {p5}
+ * @return {p5}              the p5 object
  * @example
  * <div>
  * <code>
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
  * function draw(){
  *   background(0);
@@ -213,12 +218,17 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
  *   // -1,-1---------1,-1
  *   pointLight(250, 250, 250, locX, locY, 0);
  *   ambientMaterial(250);
- *   sphere(100, 128);
+ *   sphere(200, 128);
  * }
  * </code>
  * </div>
  */
 p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
+  // TODO(jgessner): Find an example using this and profile it.
+  // var args = new Array(arguments.length);
+  // for (var i = 0; i < args.length; ++i) {
+  //   args[i] = arguments[i];
+  // }
   // this._validateParameters(
   //   'pointLight',
   //   arguments,
@@ -250,7 +260,7 @@ p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
 
   var gl = this._renderer.GL;
   var shaderProgram = this._renderer._getShader(
-    'lightVert', 'lightFrag');
+    'lightVert', 'lightTextureFrag');
 
   gl.useProgram(shaderProgram);
   shaderProgram.uPointLightColor = gl.getUniformLocation(

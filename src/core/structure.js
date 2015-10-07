@@ -162,17 +162,17 @@ p5.prototype.loop = function() {
 p5.prototype.push = function () {
   this._renderer.push();
   this._styles.push({
-    doStroke: this._renderer._doStroke,
-    doFill: this._renderer._doFill,
-    tint: this._renderer._tint,
-    imageMode: this._renderer._imageMode,
-    rectMode: this._renderer._rectMode,
-    ellipseMode: this._renderer._ellipseMode,
-    colorMode: this._renderer._colorMode,
-    textFont: this._renderer._textFont,
-    textLeading: this._renderer._textLeading,
-    textSize: this._renderer._textSize,
-    textStyle: this._renderer._textStyle
+    _doStroke: this._renderer._doStroke,
+    _doFill: this._renderer._doFill,
+    _tint: this._renderer._tint,
+    _imageMode: this._renderer._imageMode,
+    _rectMode: this._renderer._rectMode,
+    _ellipseMode: this._renderer._ellipseMode,
+    _colorMode: this._renderer._colorMode,
+    _textFont: this._renderer._textFont,
+    _textLeading: this._renderer._textLeading,
+    _textSize: this._renderer._textSize,
+    _textStyle: this._renderer._textStyle
   });
 };
 
@@ -230,17 +230,9 @@ p5.prototype.push = function () {
 p5.prototype.pop = function () {
   this._renderer.pop();
   var lastS = this._styles.pop();
-  this._renderer._doStroke = lastS.doStroke;
-  this._renderer._doFill = lastS.doFill;
-  this._renderer._tint = lastS.tint;
-  this._renderer._imageMode = lastS.imageMode;
-  this._renderer._rectMode = lastS.rectMode;
-  this._renderer._ellipseMode = lastS.ellipseMode;
-  this._renderer._colorMode = lastS.colorMode;
-  this._renderer._textFont = lastS.textFont;
-  this._renderer._textLeading = lastS.textLeading;
-  this._renderer._textSize = lastS.textSize;
-  this._renderer._textStyle = lastS.textStyle;
+  for(var prop in lastS){
+    this._renderer[prop] = lastS[prop];
+  }
 };
 
 p5.prototype.pushStyle = function() {

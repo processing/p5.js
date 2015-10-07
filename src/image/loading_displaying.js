@@ -19,8 +19,8 @@ require('../core/error_helpers');
  * <br><br>
  * The image may not be immediately available for rendering
  * If you want to ensure that the image is ready before doing
- * anything with it you can do perform those operations in the
- * callback, or place the loadImage() call in preload().
+ * anything with it, place the loadImage() call in preload().
+ * You may also supply a callback function to handle the image when it's ready.
  * <br><br>
  * The path to the image should be relative to the HTML file
  * that links in your sketch. Loading an from a URL or other
@@ -61,6 +61,7 @@ require('../core/error_helpers');
 p5.prototype.loadImage = function(path, successCallback, failureCallback) {
   var img = new Image();
   var pImg = new p5.Image(1, 1, this);
+  var decrementPreload = p5._getDecrementPreload(arguments, this);
 
   img.onload = function() {
     pImg.width = pImg.canvas.width = img.width;
@@ -72,10 +73,15 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     if (typeof successCallback === 'function') {
       successCallback(pImg);
     }
+    if (decrementPreload && (successCallback !== decrementPreload)) {
+      decrementPreload();
+    }
   };
   img.onerror = function(e) {
     p5._friendlyFileLoadError(0,img.src);
-    if (typeof failureCallback === 'function') {
+    // don't get failure callback mixed up with decrementPreload
+    if ((typeof failureCallback === 'function') &&
+      (failureCallback !== decrementPreload)) {
       failureCallback(e);
     }
   };
@@ -96,14 +102,50 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
 };
 
 /**
+ * Validates clipping params. Per drawImage spec sWidth and sHight cannot be
+ * negative or greater than image intrinsic width and height
+ * @private
+ * @param {Number} sVal
+ * @param {Number} iVal
+ * @returns {Number}
+ * @private
+ */
+function _sAssign(sVal, iVal) {
+  if (sVal > 0 && sVal < iVal) {
+    return sVal;
+  }
+  else {
+    return iVal;
+  }
+}
+
+/**
  * Draw an image to the main canvas of the p5js sketch
  *
  * @method image
- * @param  {p5.Image} image    the image to display
- * @param  {Number}   [x=0]    x-coordinate of the image
- * @param  {Number}   [y=0]    y-coordinate of the image
- * @param  {Number}   [width]  width to display the image
- * @param  {Number}   [height] height to display the image
+ * @param  {p5.Image} img    the image to display
+ * @param  {Number}   [sx=0]   The X coordinate of the top left corner of the
+ *                             sub-rectangle of the source image to draw into
+ *                             the destination canvas.
+ * @param  {Number}   [sy=0]   The Y coordinate of the top left corner of the
+ *                             sub-rectangle of the source image to draw into
+ *                             the destination canvas.
+ * @param {Number} [sWidth=img.width] The width of the sub-rectangle of the
+ *                                    source image to draw into the destination
+ *                                    canvas.
+ * @param {Number} [sHeight=img.height] The height of the sub-rectangle of the
+ *                                      source image to draw into the
+ *                                      destination context.
+ * @param  {Number}   [dx=0]    The X coordinate in the destination canvas at
+ *                              which to place the top-left corner of the
+ *                              source image.
+ * @param  {Number}   [dy=0]    The Y coordinate in the destination canvas at
+ *                              which to place the top-left corner of the
+ *                              source image.
+ * @param  {Number}   [dWidth]  The width to draw the image in the destination
+ *                              canvas. This allows scaling of the drawn image.
+ * @param  {Number}   [dHeight] The height to draw the image in the destination
+ *                              canvas. This allows scaling of the drawn image.
  * @example
  * <div>
  * <code>
@@ -113,6 +155,8 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * }
  * function setup() {
  *   image(img, 0, 0);
+ *   image(img, 0, 0, 100, 100);
+ *   image(img, 0, 0, 100, 100, 0, 0, 100, 100);
  * }
  * </code>
  * </div>
@@ -127,25 +171,52 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
  * </code>
  * </div>
  */
-p5.prototype.image = function(img, x, y, width, height) {
+p5.prototype.image =
+  function(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight) {
   // Temporarily disabling until options for p5.Graphics are added.
+  // var args = new Array(arguments.length);
+  // for (var i = 0; i < args.length; ++i) {
+  //   args[i] = arguments[i];
+  // }
   // this._validateParameters(
   //   'image',
-  //   arguments,
+  //   args,
   //   [
   //     ['p5.Image', 'Number', 'Number'],
   //     ['p5.Image', 'Number', 'Number', 'Number', 'Number']
   //   ]
   // );
 
-  // set defaults
-  x = x || 0;
-  y = y || 0;
-  width = width || img.width;
-  height = height || img.height;
-  var vals = canvas.modeAdjust(x, y, width, height, this._renderer._imageMode);
+  // set defaults per spec: https://goo.gl/3ykfOq
+  if (arguments.length <= 5) {
+    dx = sx || 0;
+    dy = sy || 0;
+    sx = 0;
+    sy = 0;
+    dWidth = sWidth || img.width;
+    dHeight = sHeight || img.height;
+    sWidth = img.width;
+    sHeight = img.height;
+  } else if (arguments.length === 9) {
+    sx = sx || 0;
+    sy = sy || 0;
+    sWidth = _sAssign(sWidth, img.width);
+    sHeight = _sAssign(sHeight, img.height);
+
+    dx = dx || 0;
+    dy = dy || 0;
+    dWidth = dWidth || img.width;
+    dHeight = dHeight || img.height;
+  } else {
+    throw 'Wrong number of arguments to image()';
+  }
+
+  var vals = canvas.modeAdjust(dx, dy, dWidth, dHeight,
+    this._renderer._imageMode);
+
   // tint the image if there is a tint
-  this._renderer.image(img, vals.x, vals.y, vals.w, vals.h);
+  this._renderer.image(img, sx, sy, sWidth, sHeight, vals.x, vals.y, vals.w,
+    vals.h);
 };
 
 /**

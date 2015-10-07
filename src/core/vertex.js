@@ -549,10 +549,14 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  * </div>
  */
 p5.prototype.vertex = function(x, y, moveTo) {
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   if(this._renderer.isP3D){
     this._validateParameters(
       'vertex',
-      arguments,
+      args,
       [
         ['Number', 'Number', 'Number']
       ]
@@ -562,7 +566,7 @@ p5.prototype.vertex = function(x, y, moveTo) {
   }else{
     this._validateParameters(
       'vertex',
-      arguments,
+      args,
       [
         ['Number', 'Number'],
         ['Number', 'Number', 'Number']

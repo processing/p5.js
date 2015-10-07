@@ -107,14 +107,16 @@ p5.Renderer2D.prototype.stroke = function() {
 // IMAGE | Loading & Displaying
 //////////////////////////////////////////////
 
-p5.Renderer2D.prototype.image = function (img, x, y, w, h) {
+p5.Renderer2D.prototype.image =
+  function (img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight) {
   var frame = img.canvas || img.elt;
   try {
     if (this._tint && img.canvas) {
-      this.drawingContext.drawImage(this._getTintedImageCanvas(img),
-        x, y, w, h);
+      this.drawingContext.drawImage(this._getTintedImageCanvas(img), sx, sy,
+        sWidth, sHeight, dx, dy, dWidth, dHeight);
     } else {
-      this.drawingContext.drawImage(frame, x, y, w, h);
+      this.drawingContext.drawImage(frame, sx, sy, sWidth, sHeight, dx, dy,
+        dWidth, dHeight);
     }
   } catch (e) {
     if (e.name !== 'NS_ERROR_NOT_AVAILABLE') {
@@ -1009,17 +1011,8 @@ p5.Renderer2D.prototype.rotate = function(r) {
   this.drawingContext.rotate(r);
 };
 
-p5.Renderer2D.prototype.scale = function() {
-  var x = 1.0,
-    y = 1.0;
-  if (arguments.length === 1) {
-    x = y = arguments[0];
-  } else {
-    x = arguments[0];
-    y = arguments[1];
-  }
+p5.Renderer2D.prototype.scale = function(x,y) {
   this.drawingContext.scale(x, y);
-
   return this;
 };
 

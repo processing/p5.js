@@ -333,12 +333,12 @@ p5.Renderer3D.prototype.translate = function(x, y, z) {
 
 /**
  * Scales the Model View Matrix by a vector
- * @param  {Number} x [description]
- * @param  {Number} y [description]
- * @param  {Number} z [description]
+ * @param  {Number | p5.Vector | Array} x [description]
+ * @param  {Number} [y] y-axis scalar
+ * @param  {Number} [z] z-axis scalar
  * @return {this}   [description]
  */
-p5.Renderer3D.prototype.scale = function(x, y, z) {
+p5.Renderer3D.prototype.scale = function(x,y,z) {
   this.uMVMatrix.scale([x,y,z]);
   return this;
 };
