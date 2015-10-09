@@ -1,7 +1,7 @@
 /**
- * module Shape
- * submodule 3D Primitives
- * for p5
+ * @module Shape
+ * @submodule 3D Primitives
+ * @for p5
  * @requires core
  * @requires p5.Geometry3D
  */
@@ -12,23 +12,22 @@ var p5 = require('../core/core');
 require('./p5.Geometry3D');
 
 /**
- * draw a plane with given a width and height
- * method plane
+ * Draw a plane with given a width and height
+ * @method plane
  * @param  {Number} width      width of the plane
  * @param  {Number} height     height of the plane
- * @return {p5}
+ * @return {p5}                the p5 object
  * @example
  * <div>
  * <code>
- * //draw a spining plane with width 100 and height 100
+ * //draw a plane with width 200 and height 200
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
  *
  * function draw(){
- *   background(255);
- *   rotateY(frameCount * 0.02);
- *   plane(100, 100);
+ *   background(200);
+ *   plane(200, 200);
  * }
  * </code>
  * </div>
@@ -68,24 +67,24 @@ p5.prototype.plane = function(width, height){
 };
 
 /**
- * draw a sphere with given raduis
- * method sphere
+ * Draw a sphere with given raduis
+ * @method sphere
  * @param  {Number} radius            radius of circle
  * @param  {Number} [detail]          optional: number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
- * @return {p5}
+ * @return {p5}                       the p5 object
  * @example
  * <div>
  * <code>
- * // draw a sphere with radius 100
+ * // draw a sphere with radius 200
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
  *
  * function draw(){
- *   background(255);
- *   sphere(100);
+ *   background(200);
+ *   sphere(200);
  * }
  * </code>
  * </div>
@@ -125,25 +124,27 @@ p5.prototype.sphere = function(radius, detail){
 };
 
 /**
- * draw a cylinder with given radius and height
- * method  cylinder
+ * Draw a cylinder with given radius and height
+ * @method  cylinder
  * @param  {Number} radius            radius of the surface
  * @param  {Number} height            height of the cylinder
  * @param  {Number} [detail]          optional: number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
- * @return {p5}
+ * @return {p5}                       the p5 object
  * @example
  * <div>
  * <code>
- * //draw a spining sylinder with radius 100 and height 100
+ * //draw a spining sylinder with radius 200 and height 200
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
+ *
  * function draw(){
- *   background(255);
- *   rotateX(frameCount * 0.02);
- *   cylinder(100, 100);
+ *   background(200);
+ *   rotateX(frameCount * 0.01);
+ *   rotateZ(frameCount * 0.01);
+ *   cylinder(200, 200);
  * }
  * </code>
  * </div>
@@ -216,25 +217,27 @@ p5.prototype.cylinder = function(radius, height, detail){
 
 
 /**
- * draw a cone with given radius and height
- * method cone
+ * Draw a cone with given radius and height
+ * @method cone
  * @param  {Number} radius            radius of the bottom surface
  * @param  {Number} height            height of the cone
  * @param  {Number} [detail]          optional: number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
- * @return {p5}
+ * @return {p5}                       the p5 object
  * @example
  * <div>
  * <code>
- * //draw a spining cone with radius 100 and height 100
+ * //draw a spining cone with radius 200 and height 200
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
+ *
  * function draw(){
- *   background(255);
- *   rotateX(frameCount * 0.02);
- *   cone(100, 200);
+ *   background(200);
+ *   rotateX(frameCount * 0.01);
+ *   rotateZ(frameCount * 0.01);
+ *   cone(200, 200);
  * }
  * </code>
  * </div>
@@ -287,27 +290,27 @@ p5.prototype.cone = function(radius, height, detail){
 
 
 /**
- * draw a torus with given radius and tube radius
- * method torus
+ * Draw a torus with given radius and tube radius
+ * @method torus
  * @param  {Number} radius            radius of the whole ring
  * @param  {Number} tubeRadius        radius of the tube
  * @param  {Number} [detail]          optional: number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
- * @return {p5}
+ * @return {p5}                       the p5 object
  * @example
  * <div>
  * <code>
- * //draw a spining torus with radius 100 and tube radius 20
+ * //draw a spining torus with radius 200 and tube radius 60
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
  *
  * function draw(){
- *   background(255);
- *   rotateX(frameCount * 0.02);
- *   rotateY(frameCount * 0.02);
- *   torus(100, 20);
+ *   background(200);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   torus(200, 60);
  * }
  * </code>
  * </div>
@@ -348,25 +351,25 @@ p5.prototype.torus = function(radius, tubeRadius, detail){
 };
 
 /**
- * draw a box with given width, height and depth
- * method  box
+ * Draw a box with given width, height and depth
+ * @method  box
  * @param  {Number} width  width of the box
  * @param  {Number} height height of the box
  * @param  {Number} depth  depth of the box
- * @return {p5}
+ * @return {p5}            the p5 object
  * @example
  * <div>
  * <code>
- * //draw a spining box with width, height and depth 100
+ * //draw a spining box with width, height and depth 200
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
  *
  * function draw(){
- *   background(255);
- *   rotateX(frameCount * 0.02);
- *   rotateY(frameCount * 0.02);
- *   box(100, 100, 100);
+ *   background(200);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   box(200, 200, 200);
  * }
  * </code>
  * </div>

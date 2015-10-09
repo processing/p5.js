@@ -1,3 +1,5 @@
+//functions are adjusted from Three.js(http://threejs.org)
+
 'use strict';
 
 var p5 = require('../core/core');
