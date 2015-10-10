@@ -88,8 +88,7 @@ p5._getDecrementPreload = function() {
 p5.prototype.loadFont = function(path, onSuccess, onError) {
 
   var p5Font = new p5.Font(this);
-  var decrementPreload = p5._getDecrementPreload.call(this,
-    path, onSuccess, onError);
+  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
   opentype.load(path, function(err, font) {
 
@@ -292,7 +291,7 @@ p5.prototype.loadJSON = function() {
 p5.prototype.loadStrings = function (path, callback) {
   var ret = [];
   var req = new XMLHttpRequest();
-  var decrementPreload = p5._getDecrementPreload.call(this, path, callback);
+  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
   req.addEventListener('error', function () {
     console.log('An error occurred loading strings: ' + path);
@@ -407,7 +406,7 @@ p5.prototype.loadTable = function (path) {
   var header = false;
   var sep = ',';
   var separatorSet = false;
-  var decrementPreload = p5._getDecrementPreload.call(this, path);
+  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
   for (var i = 1; i < arguments.length; i++) {
     if ((typeof(arguments[i]) === 'function') &&
@@ -635,7 +634,7 @@ function makeObject(row, headers) {
  */
 p5.prototype.loadXML = function(path, callback) {
   var ret = document.implementation.createDocument(null, null);
-  var decrementPreload = p5._getDecrementPreload.call(this, path, callback);
+  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
   reqwest({
     url: path,
