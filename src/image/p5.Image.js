@@ -80,6 +80,7 @@ p5.Image = function(width, height){
    *     pixels[idx+3] = a;
    *   }
    * }
+   * </pre></code>
    * <br><br>
    * Before accessing this array, the data must loaded with the loadPixels()
    * function. After the array data has been modified, the updatePixels()
