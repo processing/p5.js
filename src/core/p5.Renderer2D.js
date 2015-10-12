@@ -226,7 +226,7 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
 
   var ctx = this._pInst || this;
 
-  var pd = ctx.pixelDensity || ctx._pInst.pixelDensity;
+  var pd = ctx.pixelDensity;
 
   this.loadPixels.call(ctx);
 
@@ -249,7 +249,7 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
     var sh = dh * pd;
 
     var region = new p5.Image(dw, dh);
-    region.canvas.getContext('2d').drawImage(ctx.canvas, sx, sy, sw, sh,
+    region.canvas.getContext('2d').drawImage(this.canvas, sx, sy, sw, sh,
       0, 0, dw, dh);
 
     return region;
