@@ -60,7 +60,11 @@ p5.prototype.createCanvas = function(w, h, renderer) {
   else {
     if (isDefault) {
       c = document.createElement('canvas');
-      c.id = 'defaultCanvas';
+      var i = 0;
+      while (document.getElementById('defaultCanvas'+i)) {
+        i++;
+      }
+      c.id = 'defaultCanvas'+i;
     } else { // resize the default canvas if new one is created
       c = this.canvas;
     }
