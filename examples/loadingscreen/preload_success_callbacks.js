@@ -33,7 +33,7 @@ function successFont() {
 
 function preload() {
   // try with callbacks
-  myJson = loadJSON('http://api.openweathermap.org/data/2.5/weather?q=London,uk', successJSON);
+  myJson = loadJSON('test.json', successJSON);
   banana = loadImage('banana.png', successImage);
   strings = loadStrings('test.txt', successStrings);
   xml = loadXML('test.xml', successXML);
@@ -41,7 +41,7 @@ function preload() {
   myFont = loadFont('AvenirNextLTPro-Demi.otf', successFont);
 
   // try with no callbacks
-  myJson2 = loadJSON('http://api.openweathermap.org/data/2.5/weather?q=London,uk');
+  myJson2 = loadJSON('test.json');
   banana2 = loadImage('banana.png');
   strings2 = loadStrings('test.txt');
   xml2 = loadXML('test.xml');
@@ -62,8 +62,8 @@ function draw() {
   image(banana, 0, y);
   image(banana2, 0, y += 50);
 
-  text(myJson.main.humidity, 0, y += 50);
-  text(myJson2.main.humidity, 0, y += 50);
+  text(myJson.a, 0, y += 50);
+  text(myJson2.a, 0, y += 50);
 
   text(strings.length, 0, y += 50);
   text(strings2.length, 0, y += 50);
