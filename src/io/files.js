@@ -648,7 +648,7 @@ p5.prototype.loadXML = function(path, callback) {
       var x = resp.documentElement;
       ret.appendChild(x);
       if (typeof callback !== 'undefined') {
-        callback(resp);
+        callback(ret);
       }
       if (decrementPreload && (callback !== decrementPreload)) {
         decrementPreload();
