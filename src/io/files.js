@@ -152,7 +152,7 @@ p5.prototype.loadBytes = function() {
  * <div><code>
  * var weather;
  * function preload() {
- *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=London,UK';
+ *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=London,UK&APPID=7bbbb47522848e8b9c26ba35c226c734';
  *   weather = loadJSON(url);
  * }
  *
@@ -175,7 +175,7 @@ p5.prototype.loadBytes = function() {
  * <div><code>
  * function setup() {
  *   noLoop();
- *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=NewYork,USA';
+ *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=NewYork,USA&APPID=7bbbb47522848e8b9c26ba35c226c734';
  *   loadJSON(url, drawWeather);
  * }
  *
