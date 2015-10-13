@@ -9,6 +9,7 @@ var constants = require('./constants');
 require('./p5.Graphics');
 require('./p5.Renderer2D');
 require('../3d/p5.Renderer3D');
+var defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
 
 /**
  * Creates a canvas element in the document, and sets the dimensions of it
@@ -50,12 +51,12 @@ p5.prototype.createCanvas = function(w, h, renderer) {
   }
 
   if(r === constants.WEBGL){
-    c = document.getElementById('defaultCanvas');
+    c = document.getElementById(defaultId);
     if(c){ //if defaultCanvas already exists
       c.parentNode.removeChild(c); //replace the existing defaultCanvas
     }
     c = document.createElement('canvas');
-    c.id = 'defaultCanvas';
+    c.id = defaultId;
   }
   else {
     if (isDefault) {
@@ -64,7 +65,8 @@ p5.prototype.createCanvas = function(w, h, renderer) {
       while (document.getElementById('defaultCanvas'+i)) {
         i++;
       }
-      c.id = 'defaultCanvas'+i;
+      defaultId = 'defaultCanvas'+i;
+      c.id = defaultId;
     } else { // resize the default canvas if new one is created
       c = this.canvas;
     }
