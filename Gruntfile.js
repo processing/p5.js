@@ -33,7 +33,6 @@
  *  grunt update_json - This automates updating the bower file
  *                      to match the package.json
  */
-
 module.exports = function(grunt) {
 
   // Specify what reporter we'd like to use for Mocha
@@ -129,7 +128,7 @@ module.exports = function(grunt) {
       },
       // Watch the codebase for doc updates
       yui:{
-        files:['src/**/*.js'],
+        files:['src/**/*.js', 'lib/addons/*.js'],
         task:['yuidoc']
       }
     },

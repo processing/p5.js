@@ -3,6 +3,7 @@
 'use strict';
 
 var p5 = require('../core/core');
+var hashCount = 0;
 
 /**
  * createBuffer
@@ -10,6 +11,14 @@ var p5 = require('../core/core');
  * @param  {String} obj [description]
  */
 p5.Renderer3D.prototype.createBuffer = function(gId, obj) {
+
+  hashCount ++;
+  if(hashCount > 1000){
+    var key = Object.keys(this.gHash)[0];
+    delete this.gHash[key];
+    hashCount --;
+  }
+
   var gl = this.GL;
   this.gHash[gId] = {};
   this.gHash[gId].len = obj.len;

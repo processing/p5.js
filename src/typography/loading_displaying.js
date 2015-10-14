@@ -60,10 +60,13 @@ require('../core/error_helpers');
  * </div>
  */
 p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
-
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   this._validateParameters(
     'text',
-    arguments,
+    args,
     [
       ['*', 'Number', 'Number'],
       ['*', 'Number', 'Number', 'Number', 'Number']

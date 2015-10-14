@@ -107,14 +107,16 @@ p5.Renderer2D.prototype.stroke = function() {
 // IMAGE | Loading & Displaying
 //////////////////////////////////////////////
 
-p5.Renderer2D.prototype.image = function (img, x, y, w, h) {
+p5.Renderer2D.prototype.image =
+  function (img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight) {
   var frame = img.canvas || img.elt;
   try {
     if (this._tint && img.canvas) {
-      this.drawingContext.drawImage(this._getTintedImageCanvas(img),
-        x, y, w, h);
+      this.drawingContext.drawImage(this._getTintedImageCanvas(img), sx, sy,
+        sWidth, sHeight, dx, dy, dWidth, dHeight);
     } else {
-      this.drawingContext.drawImage(frame, x, y, w, h);
+      this.drawingContext.drawImage(frame, sx, sy, sWidth, sHeight, dx, dy,
+        dWidth, dHeight);
     }
   } catch (e) {
     if (e.name !== 'NS_ERROR_NOT_AVAILABLE') {
@@ -224,7 +226,7 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
 
   var ctx = this._pInst || this;
 
-  var pd = ctx.pixelDensity || ctx._pInst.pixelDensity;
+  var pd = ctx.pixelDensity;
 
   this.loadPixels.call(ctx);
 
@@ -247,7 +249,7 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
     var sh = dh * pd;
 
     var region = new p5.Image(dw, dh);
-    region.canvas.getContext('2d').drawImage(ctx.canvas, sx, sy, sw, sh,
+    region.canvas.getContext('2d').drawImage(this.canvas, sx, sy, sw, sh,
       0, 0, dw, dh);
 
     return region;
@@ -1009,17 +1011,8 @@ p5.Renderer2D.prototype.rotate = function(r) {
   this.drawingContext.rotate(r);
 };
 
-p5.Renderer2D.prototype.scale = function() {
-  var x = 1.0,
-    y = 1.0;
-  if (arguments.length === 1) {
-    x = y = arguments[0];
-  } else {
-    x = arguments[0];
-    y = arguments[1];
-  }
+p5.Renderer2D.prototype.scale = function(x,y) {
   this.drawingContext.scale(x, y);
-
   return this;
 };
 
@@ -1052,12 +1045,12 @@ p5.Renderer2D.prototype.translate = function(x, y) {
 p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
 
   var p = this._pInst, cars, n, ii, jj, line, testLine,
-    testWidth, words, totalHeight, baselineHacked;
+    testWidth, words, totalHeight, baselineHacked,
+    finalMaxHeight = Number.MAX_VALUE;
 
   // baselineHacked: (HACK)
-  // This is an ugly temporary fix to conform to
-  // Processing's vertical alignment implementation
-  // for BASELINE vetical alignment in a boundings box
+  // A temporary fix to conform to Processing's implementation
+  // of BASELINE vertical alignment in a bounding box
 
   if (!(this._doFill || this._doStroke)) {
     return;
@@ -1088,7 +1081,7 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
       }
     }
 
-    if (this._rectMode === constants.CENTER ){
+    if (this._rectMode === constants.CENTER) {
 
       x -= maxWidth / 2;
       y -= maxHeight / 2;
@@ -1118,6 +1111,9 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
         this.drawingContext.textBaseline = constants.TOP;
         break;
       }
+
+      // remember the max-allowed y-position for any line (fix to #928)
+      finalMaxHeight = (y + maxHeight) - p.textAscent();
     }
 
     for (ii = 0; ii < cars.length; ii++) {
@@ -1128,7 +1124,7 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
         testLine = line + words[n] + ' ';
         testWidth = this.textWidth(testLine);
         if (testWidth > maxWidth && line.length > 0) {
-          this._renderText(p, line, x, y);
+          this._renderText(p, line, x, y, finalMaxHeight);
           line = words[n] + ' ';
           y += p.textLeading();
         } else {
@@ -1136,14 +1132,14 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
         }
       }
 
-      this._renderText(p, line, x, y);
+      this._renderText(p, line, x, y, finalMaxHeight);
       y += p.textLeading();
     }
   }
   else {
     for (jj = 0; jj < cars.length; jj++) {
 
-      this._renderText(p, cars[jj], x, y);
+      this._renderText(p, cars[jj], x, y, finalMaxHeight);
       y += p.textLeading();
     }
   }
@@ -1151,10 +1147,15 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
   if (baselineHacked) {
     this.drawingContext.textBaseline = constants.BASELINE;
   }
+
   return p;
 };
 
-p5.Renderer2D.prototype._renderText = function(p, line, x, y) {
+p5.Renderer2D.prototype._renderText = function(p, line, x, y, maxY) {
+
+  if (y >= maxY) {
+    return; // don't render lines beyond our maxY position
+  }
 
   p.push(); // fix to #803
 

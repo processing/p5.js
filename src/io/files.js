@@ -14,10 +14,34 @@ var opentype = require('opentype.js');
 require('../core/error_helpers');
 
 /**
+ * Checks if we are in preload and returns the last arg which will be the
+ * _decrementPreload function if called from a loadX() function.  Should
+ * only be used in loadX() functions.
+ * @private
+ */
+p5._getDecrementPreload = function() {
+  var decrementPreload = arguments[arguments.length - 1];
+
+  // when in preload decrementPreload will always be the last arg as it is set
+  // with args.push() before invocation in _wrapPreload
+  if ((window.preload || this.preload) &&
+    typeof decrementPreload === 'function') {
+    return decrementPreload;
+  } else {
+    return null;
+  }
+};
+
+/**
  * Loads an opentype font file (.otf, .ttf) from a file or a URL,
  * and returns a PFont Object. This method is asynchronous,
  * meaning it may not finish before the next line in your sketch
  * is executed.
+ * <br><br>
+ * The path to the font should be relative to the HTML file
+ * that links in your sketch. Loading an from a URL or other
+ * remote location may be blocked due to your browser's built-in
+ * security.
  *
  * @method loadFont
  * @param  {String}        path       name of the file or url to load
@@ -44,7 +68,7 @@ require('../core/error_helpers');
  * }
  * </code></div>
  *
- * <p>Outside preload(), you may supply a callback function to handle the
+ * <p>Outside of preload(), you may supply a callback function to handle the
  * object:</p>
  *
  * <div><code>
@@ -64,12 +88,13 @@ require('../core/error_helpers');
 p5.prototype.loadFont = function(path, onSuccess, onError) {
 
   var p5Font = new p5.Font(this);
+  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
   opentype.load(path, function(err, font) {
 
     if (err) {
 
-      if (typeof onError !== 'undefined') {
+      if ((typeof onError !== 'undefined') && (onError !== decrementPreload)) {
         return onError(err);
       }
       throw err;
@@ -80,6 +105,10 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
     if (typeof onSuccess !== 'undefined') {
       onSuccess(p5Font);
     }
+    if (decrementPreload && (onSuccess !== decrementPreload)) {
+      decrementPreload();
+    }
+
   });
 
   return p5Font;
@@ -123,7 +152,8 @@ p5.prototype.loadBytes = function() {
  * <div><code>
  * var weather;
  * function preload() {
- *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=London,UK';
+ *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=London,UK'+
+ *    '&APPID=7bbbb47522848e8b9c26ba35c226c734';
  *   weather = loadJSON(url);
  * }
  *
@@ -140,13 +170,14 @@ p5.prototype.loadBytes = function() {
  * }
  * </code></div>
  *
- * <p>Outside preload(), you may supply a callback function to handle the
+ *
+ * <p>Outside of preload(), you may supply a callback function to handle the
  * object:</p>
-
  * <div><code>
  * function setup() {
  *   noLoop();
- *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=NewYork,USA';
+ *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=NewYork'+
+ *    '&APPID=7bbbb47522848e8b9c26ba35c226c734';
  *   loadJSON(url, drawWeather);
  * }
  *
@@ -166,6 +197,8 @@ p5.prototype.loadBytes = function() {
 p5.prototype.loadJSON = function() {
   var path = arguments[0];
   var callback = arguments[1];
+  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
+
   var ret = []; // array needed for preload
   // assume jsonp for URLs
   var t = 'json'; //= path.indexOf('http') === -1 ? 'json' : 'jsonp';
@@ -177,15 +210,31 @@ p5.prototype.loadJSON = function() {
     }
   }
 
-  reqwest({url: path, type: t, crossOrigin: true})
-    .then(function(resp) {
+  reqwest({
+    url: path,
+    type: t,
+    crossOrigin: true,
+    error: function (resp, msg, err) {
+      if (msg) {
+        console.log(msg);
+      }
+      if (err && err.message) {
+        console.log(err.message);
+      }
+    },
+    success: function(resp) {
       for (var k in resp) {
         ret[k] = resp[k];
       }
       if (typeof callback !== 'undefined') {
         callback(resp);
       }
-    });
+      if (decrementPreload && (callback !== decrementPreload)) {
+        decrementPreload();
+      }
+    }
+  });
+
   return ret;
 };
 
@@ -226,7 +275,7 @@ p5.prototype.loadJSON = function() {
  * }
  * </code></div>
  *
- * <p>Outside preload(), you may supply a callback function to handle the
+ * <p>Outside of preload(), you may supply a callback function to handle the
  * object:</p>
  *
  * <div><code>
@@ -244,19 +293,29 @@ p5.prototype.loadJSON = function() {
 p5.prototype.loadStrings = function (path, callback) {
   var ret = [];
   var req = new XMLHttpRequest();
+  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
+
+  req.addEventListener('error', function () {
+    console.log('An error occurred loading strings: ' + path);
+  });
+
   req.open('GET', path, true);
   req.onreadystatechange = function () {
-    if (req.readyState === 4 && (req.status === 200 )) {
-      var arr = req.responseText.match(/[^\r\n]+/g);
-      for (var k in arr) {
-        ret[k] = arr[k];
+    if (req.readyState === 4) {
+      if (req.status === 200) {
+        var arr = req.responseText.match(/[^\r\n]+/g);
+        for (var k in arr) {
+          ret[k] = arr[k];
+        }
+        if (typeof callback !== 'undefined') {
+          callback(ret);
+        }
+        if (decrementPreload && (callback !== decrementPreload)) {
+          decrementPreload();
+        }
+      } else {
+        p5._friendlyFileLoadError(3, path);
       }
-      if (typeof callback !== 'undefined') {
-        callback(ret);
-      }
-    }
-    else{
-      p5._friendlyFileLoadError(3,path);
     }
   };
   req.send(null);
@@ -292,7 +351,8 @@ p5.prototype.loadStrings = function (path, callback) {
  * <p>This method is asynchronous, meaning it may not finish before the next
  * line in your sketch is executed. Calling loadTable() inside preload()
  * guarantees to complete the operation before setup() and draw() are called.
- * Outside preload(), you may supply a callback function to handle the object.
+ * <p>Outside of preload(), you may supply a callback function to handle the
+ * object:</p>
  * </p>
  *
  * @method loadTable
@@ -348,8 +408,11 @@ p5.prototype.loadTable = function (path) {
   var header = false;
   var sep = ',';
   var separatorSet = false;
+  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
+
   for (var i = 1; i < arguments.length; i++) {
-    if (typeof(arguments[i]) === 'function' ){
+    if ((typeof(arguments[i]) === 'function') &&
+      (arguments[i] !== decrementPreload)) {
       callback = arguments[i];
     }
     else if (typeof(arguments[i]) === 'string') {
@@ -514,10 +577,15 @@ p5.prototype.loadTable = function (path) {
       if (callback !== null) {
         callback(t);
       }
+      if (decrementPreload && (callback !== decrementPreload)) {
+        decrementPreload();
+      }
     })
     .fail(function(err,msg){
       p5._friendlyFileLoadError(2,path);
-      if (typeof callback !== 'undefined') {
+      // don't get error callback mixed up with decrementPreload
+      if ((typeof callback !== 'undefined') &&
+        (callback !== decrementPreload)) {
         callback(false);
       }
     });
@@ -555,7 +623,9 @@ function makeObject(row, headers) {
  * This method is asynchronous, meaning it may not finish before the next
  * line in your sketch is executed. Calling loadXML() inside preload()
  * guarantees to complete the operation before setup() and draw() are called.
- * Outside preload(), you may supply a callback function to handle the object.
+ *
+ * <p>Outside of preload(), you may supply a callback function to handle the
+ * object:</p>
  *
  * @method loadXML
  * @param  {String}   filename   name of the file or URL to load
@@ -566,6 +636,8 @@ function makeObject(row, headers) {
  */
 p5.prototype.loadXML = function(path, callback) {
   var ret = document.implementation.createDocument(null, null);
+  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
+
   reqwest({
     url: path,
     type: 'xml',
@@ -578,7 +650,10 @@ p5.prototype.loadXML = function(path, callback) {
       var x = resp.documentElement;
       ret.appendChild(x);
       if (typeof callback !== 'undefined') {
-        callback(resp);
+        callback(ret);
+      }
+      if (decrementPreload && (callback !== decrementPreload)) {
+        decrementPreload();
       }
     });
   return ret;
