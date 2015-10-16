@@ -8,10 +8,10 @@ var p5 = require('../core/core');
  * p5 Geometry3D class
  */
 p5.Geometry3D = function(){
-  //an array holding every vertice
+  //an array holding every vertex
   //each vertex is a p5.Vector
   this.vertices = [];
-  //an array holding each normals for each vertice
+  //an array holding each normals for each vertex
   //each normal is a p5.Vector
   this.vertexNormals = [];
   //an array holding each three indecies of vertices that form a face
@@ -133,8 +133,11 @@ p5.Geometry3D.prototype.mergeVertices= function () {
   }
 
   for (i = faceIndicesToRemove.length - 1; i >= 0; i --) {
-    var idx = faceIndicesToRemove[i];
-    this.faces.splice(idx, 1);
+    //commented out by indefinit
+    //@TODO this code is buggy and removes extra faces
+    //var idx = faceIndicesToRemove[i];
+    //this.faces.splice(idx, 1);
+
   }
 
   // Use unique set of vertices
@@ -157,16 +160,15 @@ p5.Geometry3D.prototype.computeFaceNormals = function(){
     var vA = this.vertices[face[0]];
     var vB = this.vertices[face[1]];
     var vC = this.vertices[face[2]];
-
+    //cb = vC.sub(vB);
+    //ab = vA.sub(vB);
     p5.Vector.sub(vC, vB, cb);
     p5.Vector.sub(vA, vB, ab);
-
     var normal = p5.Vector.cross(ab, cb);
     normal.normalize();
     normal.mult(-1);
     this.faceNormals[f] = normal;
   }
-
 };
 
 /**
