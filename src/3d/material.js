@@ -95,12 +95,22 @@ p5.prototype.texture = function(image){
   } else {
     image.width = _nextHighestPOT(image.width);
     image.height = _nextHighestPOT(image.height);
-    gl.texParameteri(gl.TETXURE_2D,
-      gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TETXURE_2D,
-      gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TETXURE_2D,
-      gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+    gl.texParameteri(gl.TEXTURE_2D,
+    gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,
+    gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,
+    gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D,
+    gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+    // gl.texParameteri(gl.TETXURE_2D,
+    //   gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    // gl.texParameteri(gl.TETXURE_2D,
+    //   gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    // gl.texParameteri(gl.TETXURE_2D,
+    //   gl.TEXTURE_MIN_FILTER, gl.LINEAR);
   }
   //this is where we'd activate multi textures
   //eg. gl.activeTexture(gl.TEXTURE0 + (unit || 0));
