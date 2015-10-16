@@ -153,15 +153,36 @@ p5.prototype.keyCode = 0;
  * </div>
  */
 p5.prototype._onkeydown = function (e) {
+
+  /* Temporary Variable to store the keyCode and keyChar */  
+  var tempKeyCode = 0,
+    key = 0;
+
   this._setProperty('isKeyPressed', true);
   this._setProperty('keyIsPressed', true);
-  this._setProperty('keyCode', e.which);
+
+  /* Assigning keyCode */
+  tempKeyCode = e.keyCode;
+  if (e.key == 'CapsLock') {
+    tempKeyCode = 20;
+  }
+  if (e.key == 'Shift') {
+    tempKeyCode = 16;
+  }
+  if (e.key >= 'a' && e.key <= 'z') {
+    tempKeyCode = e.keyCode + 32;
+  }  
+  this._setProperty('keyCode', tempKeyCode); 
+
   downKeys[e.which] = true;
-  var key = String.fromCharCode(e.which);
+  //var key = String.fromCharCode(e.which);
+  /* Assigning the keyChar */
+  key = e.key;
   if (!key) {
-    key = e.which;
+    key = e.key;
   }
   this._setProperty('key', key);
+
   var keyPressed = this.keyPressed || window.keyPressed;
   if (typeof keyPressed === 'function' && !e.charCode) {
     var executeDefault = keyPressed(e);
