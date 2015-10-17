@@ -154,7 +154,7 @@ p5.prototype.keyCode = 0;
  */
 p5.prototype._onkeydown = function (e) {
 
-  /* Temporary Variable to store the keyCode and keyChar */  
+  /* Temporary Variable to store the keyCode and keyChar */
   var tempKeyCode = 0,
     key = 0;
 
@@ -171,8 +171,8 @@ p5.prototype._onkeydown = function (e) {
   }
   if (e.key >= 'a' && e.key <= 'z') {
     tempKeyCode = e.keyCode + 32;
-  }  
-  this._setProperty('keyCode', tempKeyCode); 
+  }
+  this._setProperty('keyCode', tempKeyCode);
 
   downKeys[e.which] = true;
   //var key = String.fromCharCode(e.which);
