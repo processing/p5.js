@@ -163,10 +163,10 @@ p5.prototype._onkeydown = function (e) {
 
   /* Assigning keyCode */
   tempKeyCode = e.keyCode;
-  if (e.key == 'CapsLock') {
+  if (e.key === 'CapsLock') {
     tempKeyCode = 20;
   }
-  if (e.key == 'Shift') {
+  if (e.key === 'Shift') {
     tempKeyCode = 16;
   }
   if (e.key >= 'a' && e.key <= 'z') {
