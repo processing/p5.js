@@ -147,23 +147,6 @@ p5.Geometry3D.prototype.parametricGeometry = function
 // };
 
 /**
- * [averageNormals description]
- * @return {[type]} [description]
- */
-p5.Geometry3D.prototype.averageNormals = function() {
-  // body...
-  for(var i = 0; i <= this.detailY; i++){
-    var offset = this.detailX + 1;
-    var temp = p5.Vector
-      .add(this.vertexNormals[i*offset],
-        this.vertexNormals[i*offset + this.detailX]);
-    temp = p5.Vector.div(temp, 2);
-    this.vertexNormals[i*offset] = temp;
-    this.vertexNormals[i*offset + this.detailX] = temp;
-  }
-};
-
-/**
  * compute faceNormals for a geometry
  */
 p5.Geometry3D.prototype.computeFaceNormals = function(){
@@ -232,6 +215,29 @@ p5.Geometry3D.prototype.computeVertexNormals = function (){
 
 };
 
+/**
+ * [averageNormals description]
+ * @return {[type]} [description]
+ */
+p5.Geometry3D.prototype.averageNormals = function() {
+
+  for(var i = 0; i <= this.detailY; i++){
+    var offset = this.detailX + 1;
+    var temp = p5.Vector
+      .add(this.vertexNormals[i*offset],
+        this.vertexNormals[i*offset + this.detailX]);
+    temp = p5.Vector.div(temp, 2);
+    this.vertexNormals[i*offset] = temp;
+    this.vertexNormals[i*offset + this.detailX] = temp;
+  }
+};
+
+/**
+ * [generateUV description]
+ * @param  {[type]} faces [description]
+ * @param  {[type]} uvs   [description]
+ * @return {[type]}       [description]
+ */
 p5.Geometry3D.prototype.generateUV = function(faces, uvs){
 
   faces = flatten(faces);
@@ -247,13 +253,16 @@ p5.Geometry3D.prototype.generateUV = function(faces, uvs){
 /**
  * generate an object containing information needed to create buffer
  */
-p5.Geometry3D.prototype.generateObj = function(noMerge){
+p5.Geometry3D.prototype.generateObj = function(average){
   // if(!noMerge){
   //   this.mergeVertices();
   // }
   this.computeFaceNormals();
   this.computeVertexNormals();
-  this.averageNormals();
+
+  if(average){
+    this.averageNormals();
+  }
 
   var obj = {
     vertices: turnVectorArrayIntoNumberArray(this.vertices),
