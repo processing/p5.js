@@ -172,38 +172,38 @@ p5.prototype.cylinder = function(radius, height, detail){
     };
 
     geometry3d.parametricGeometry(createCylinder, detailX, detailY);
-    geometry3d.mergeVertices();
+    //geometry3d.mergeVertices();
 
-    var createTop = function(u, v){
-      var theta = 2 * Math.PI * u;
-      var x = radius * Math.sin(-theta);
-      var y = height;
-      var z = radius * Math.cos(theta);
-      if(v === 0){
-        return new p5.Vector(0, height, 0);
-      }
-      else{
-        return new p5.Vector(x, y, z);
-      }
-    };
+    // var createTop = function(u, v){
+    //   var theta = 2 * Math.PI * u;
+    //   var x = radius * Math.sin(-theta);
+    //   var y = height;
+    //   var z = radius * Math.cos(theta);
+    //   if(v === 0){
+    //     return new p5.Vector(0, height, 0);
+    //   }
+    //   else{
+    //     return new p5.Vector(x, y, z);
+    //   }
+    // };
 
-    geometry3d.parametricGeometry(
-      createTop, detailX, 1, geometry3d.vertices.length);
+    // geometry3d.parametricGeometry(
+    //   createTop, detailX, 1, geometry3d.vertices.length);
 
-    var createBottom = function(u, v){
-      var theta = 2 * Math.PI * u;
-      var x = radius * Math.sin(theta);
-      var y = -height;
-      var z = radius * Math.cos(theta);
-      if(v === 0){
-        return new p5.Vector(0, -height, 0);
-      }else{
-        return new p5.Vector(x, y, z);
-      }
-    };
+    // var createBottom = function(u, v){
+    //   var theta = 2 * Math.PI * u;
+    //   var x = radius * Math.sin(theta);
+    //   var y = -height;
+    //   var z = radius * Math.cos(theta);
+    //   if(v === 0){
+    //     return new p5.Vector(0, -height, 0);
+    //   }else{
+    //     return new p5.Vector(x, y, z);
+    //   }
+    // };
 
-    geometry3d.parametricGeometry(
-      createBottom, detailX, 1, geometry3d.vertices.length);
+    // geometry3d.parametricGeometry(
+    //   createBottom, detailX, 1, geometry3d.vertices.length);
 
     var obj = geometry3d.generateObj(true);
 
@@ -265,18 +265,18 @@ p5.prototype.cone = function(radius, height, detail){
     };
 
     geometry3d.parametricGeometry(createCone, detailX, detailY);
-    geometry3d.mergeVertices();
+    //geometry3d.mergeVertices();
 
-    var createBottom = function(u, v){
-      var theta = 2 * Math.PI * u;
-      var x = radius * (1 - v) * Math.sin(-theta);
-      var y = -height;
-      var z = radius * (1 - v) * Math.cos(theta);
-      return new p5.Vector(x, y, z);
-    };
+    // var createBottom = function(u, v){
+    //   var theta = 2 * Math.PI * u;
+    //   var x = radius * (1 - v) * Math.sin(-theta);
+    //   var y = -height;
+    //   var z = radius * (1 - v) * Math.cos(theta);
+    //   return new p5.Vector(x, y, z);
+    // };
 
-    geometry3d.parametricGeometry(
-      createBottom, detailX, 1, geometry3d.vertices.length);
+    // geometry3d.parametricGeometry(
+    //   createBottom, detailX, 1, geometry3d.vertices.length);
 
     var obj = geometry3d.generateObj(true);
 
