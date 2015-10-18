@@ -217,7 +217,6 @@ p5.Geometry3D.prototype.computeVertexNormals = function (){
 
 /**
  * [averageNormals description]
- * @return {[type]} [description]
  */
 p5.Geometry3D.prototype.averageNormals = function() {
 
@@ -234,9 +233,8 @@ p5.Geometry3D.prototype.averageNormals = function() {
 
 /**
  * [generateUV description]
- * @param  {[type]} faces [description]
- * @param  {[type]} uvs   [description]
- * @return {[type]}       [description]
+ * @param  {Array} faces [description]
+ * @param  {Array} uvs   [description]
  */
 p5.Geometry3D.prototype.generateUV = function(faces, uvs){
 
@@ -254,9 +252,7 @@ p5.Geometry3D.prototype.generateUV = function(faces, uvs){
  * generate an object containing information needed to create buffer
  */
 p5.Geometry3D.prototype.generateObj = function(average){
-  // if(!noMerge){
-  //   this.mergeVertices();
-  // }
+
   this.computeFaceNormals();
   this.computeVertexNormals();
 

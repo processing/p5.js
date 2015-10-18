@@ -7,8 +7,8 @@ var hashCount = 0;
 
 /**
  * createBuffer
- * @param  {String} gId [description]
- * @param  {String} obj [description]
+ * @param  {String} gId  key of the geometry object
+ * @param  {Array}  arr  array holding bject containing geometry information
  */
 p5.Renderer3D.prototype.createBuffer = function(gId, arr) {
 
@@ -39,7 +39,7 @@ p5.Renderer3D.prototype.createBuffer = function(gId, arr) {
 /**
  * initBuffer description
  * @param  {String} gId    key of the geometry object
- * @param  {Object} obj    an object containing geometry information
+ * @param  {Array}  arr    array holding bject containing geometry information
  */
 p5.Renderer3D.prototype.initBuffer = function(gId, arr) {
   this._setDefaultCamera();
