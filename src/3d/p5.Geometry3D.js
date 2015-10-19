@@ -215,9 +215,6 @@ p5.Geometry3D.prototype.computeVertexNormals = function (){
 
 };
 
-/**
- * [averageNormals description]
- */
 p5.Geometry3D.prototype.averageNormals = function() {
 
   for(var i = 0; i <= this.detailY; i++){
@@ -228,6 +225,33 @@ p5.Geometry3D.prototype.averageNormals = function() {
     temp = p5.Vector.div(temp, 2);
     this.vertexNormals[i*offset] = temp;
     this.vertexNormals[i*offset + this.detailX] = temp;
+  }
+};
+
+p5.Geometry3D.prototype.averagePoleNormals = function() {
+
+  //average the north pole
+  var sum = new p5.Vector(0, 0, 0);
+  for(var i = 0; i < this.detailX; i++){
+    sum.add(this.vertexNormals[i]);
+  }
+  sum = p5.Vector.div(sum, this.detailX);
+
+  for(i = 0; i < this.detailX; i++){
+    this.vertexNormals[i] = sum;
+  }
+
+  //average the south pole
+  sum = new p5.Vector(0, 0, 0);
+  for(i = this.vertices.length - 1;
+    i > this.vertices.length - 1 - this.detailX; i--){
+    sum.add(this.vertexNormals[i]);
+  }
+  sum = p5.Vector.div(sum, this.detailX);
+
+  for(i = this.vertices.length - 1;
+    i > this.vertices.length - 1 - this.detailX; i--){
+    this.vertexNormals[i] = sum;
   }
 };
 
@@ -251,13 +275,17 @@ p5.Geometry3D.prototype.generateUV = function(faces, uvs){
 /**
  * generate an object containing information needed to create buffer
  */
-p5.Geometry3D.prototype.generateObj = function(average){
+p5.Geometry3D.prototype.generateObj = function(average, sphere){
 
   this.computeFaceNormals();
   this.computeVertexNormals();
 
   if(average){
     this.averageNormals();
+  }
+
+  if(sphere){
+    this.averagePoleNormals();
   }
 
   var obj = {

@@ -113,7 +113,7 @@ p5.prototype.sphere = function(radius, detail){
 
     geometry3d.parametricGeometry(createSphere, detailX, detailY);
 
-    var obj = geometry3d.generateObj(true);
+    var obj = geometry3d.generateObj(true, true);
 
     this._renderer.initBuffer(gId, [obj]);
   }
