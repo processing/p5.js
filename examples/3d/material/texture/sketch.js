@@ -23,8 +23,10 @@ function setup(){
 
 function draw(){
   background(255, 255, 255, 255);
+    translate(0,0,400);
+    translate(-300, 0, 0);
   push();
-    translate(-100,0,0);
+ 
     rotateZ(theta * mouseX * 0.001);
     rotateX(theta * mouseX * 0.001);
     rotateY(theta * mouseX * 0.001);
@@ -32,16 +34,36 @@ function draw(){
     // texture(vid);
     texture(img);
     // normalMaterial();
-    sphere(400);
+    sphere(60);
   pop();
+    translate(150,0,0);
+  push();
 
-  // push();
-  //   translate(100,0,0);
-  //   rotateZ(theta * 0.1);
-  //   rotateX(theta * 0.1);
-  //   rotateY(theta * 0.1);
-  //   texture(img);
-  //   box(45);
-  // pop();
+    rotateZ(theta * mouseX * 0.001);
+    rotateX(theta * mouseX * 0.001);
+    rotateY(theta * mouseX * 0.001);
+    texture(img);
+    //box(45);
+    torus();
+  pop();
+     translate(150,0,0);
+    push();
+ 
+    rotateZ(theta * mouseX * 0.001);
+    rotateX(theta * mouseX * 0.001);
+    rotateY(theta * mouseX * 0.001);
+    texture(img);
+    //box(45);
+    cone();
+  pop();
+    translate(150,0,0);
+    push(); 
+    rotateZ(theta * mouseX * 0.001);
+    rotateX(theta * mouseX * 0.001);
+    rotateY(theta * mouseX * 0.001);
+    texture(img);
+    //box(45);
+    box();
+  pop();
   theta += 0.05;
 }
