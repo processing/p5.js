@@ -49,8 +49,9 @@ p5.prototype.ptouchY = 0;
 
 /**
  * The system variable touches[] contains an array of the positions of all
- * current touch points, relative to (0, 0) of the canvas. Each element in
- * the array is an object with x and y properties.
+ * current touch points, relative to (0, 0) of the canvas, and IDs identifying a
+ * unique touch as it moves. Each element in the array is an object with x, y,
+ * and id properties.
  *
  * @property touches[]
  */
@@ -71,14 +72,13 @@ p5.prototype._updateTouchCoords = function(e) {
     this._setProperty('touchX', this.mouseX);
     this._setProperty('touchY', this.mouseY);
   } else {
-    var touchPos = getTouchPos(this._curElement.elt, e, 0);
-    this._setProperty('touchX', touchPos.x);
-    this._setProperty('touchY', touchPos.y);
+    var touchInfo = getTouchInfo(this._curElement.elt, e, 0);
+    this._setProperty('touchX', touchInfo.x);
+    this._setProperty('touchY', touchInfo.y);
 
     var touches = [];
     for(var i = 0; i < e.touches.length; i++){
-      var pos = getTouchPos(this._curElement.elt, e, i);
-      touches[i] = {x: pos.x, y: pos.y};
+      touches[i] = getTouchInfo(this._curElement.elt, e, i);
     }
     this._setProperty('touches', touches);
   }
@@ -89,13 +89,14 @@ p5.prototype._updatePTouchCoords = function() {
   this._setProperty('ptouchY', this.touchY);
 };
 
-function getTouchPos(canvas, e, i) {
+function getTouchInfo(canvas, e, i) {
   i = i || 0;
   var rect = canvas.getBoundingClientRect();
   var touch = e.touches[i] || e.changedTouches[i];
-  return  {
+  return {
     x: touch.clientX - rect.left,
-    y: touch.clientY - rect.top
+    y: touch.clientY - rect.top,
+    id: touch.identifier
   };
 }
 
