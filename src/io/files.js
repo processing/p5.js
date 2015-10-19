@@ -773,66 +773,70 @@ p5.prototype.httpPost = function () {
  *                                    in as first argument
  */
 p5.prototype.httpDo = function() {
-  var method = 'GET';
-  var path = arguments[0];
-  var data = {};
-  var type = '';
-  var callback;
-  var errorCallback;
+  if (typeof arguments[0] === 'object') {
+    reqwest(arguments[0]);
+  } else {
+    var method = 'GET';
+    var path = arguments[0];
+    var data = {};
+    var type = '';
+    var callback;
+    var errorCallback;
 
-  for (var i=1; i<arguments.length; i++) {
-    var a = arguments[i];
-    if (typeof a === 'string') {
-      if (a === 'GET' || a === 'POST' || a === 'PUT') {
-        method = a;
-      } else {
-        type = a;
-      }
-    } else if (typeof a === 'object') {
-      data = a;
-    } else if (typeof a === 'function') {
-      if (!callback) {
-        callback = a;
-      } else {
-        errorCallback = a;
-      }
-    }
-  }
-
-  // do some sort of smart type checking
-  if (type === '') {
-    if (path.indexOf('json') !== -1) {
-      type = 'json';
-    } else if (path.indexOf('xml') !== -1) {
-      type = 'xml';
-    } else {
-      type = 'text';
-    }
-  }
-
-  reqwest({
-    url: path,
-    method: method,
-    data: data,
-    type: type,
-    crossOrigin: true,
-    success: function(resp) {
-      if (typeof callback !== 'undefined') {
-        if (type === 'text') {
-          callback(resp.response);
+    for (var i=1; i<arguments.length; i++) {
+      var a = arguments[i];
+      if (typeof a === 'string') {
+        if (a === 'GET' || a === 'POST' || a === 'PUT') {
+          method = a;
         } else {
-          callback(resp);
+          type = a;
+        }
+      } else if (typeof a === 'object') {
+        data = a;
+      } else if (typeof a === 'function') {
+        if (!callback) {
+          callback = a;
+        } else {
+          errorCallback = a;
         }
       }
-    },
-    error: function(resp) {
-      if (errorCallback) {
-        errorCallback(resp);
+    }
+
+    // do some sort of smart type checking
+    if (type === '') {
+      if (path.indexOf('json') !== -1) {
+        type = 'json';
+      } else if (path.indexOf('xml') !== -1) {
+        type = 'xml';
       } else {
-        console.log(resp.statusText);
+        type = 'text';
       }
     }
-  });
+
+    reqwest({
+      url: path,
+      method: method,
+      data: data,
+      type: type,
+      crossOrigin: true,
+      success: function(resp) {
+        if (typeof callback !== 'undefined') {
+          if (type === 'text') {
+            callback(resp.response);
+          } else {
+            callback(resp);
+          }
+        }
+      },
+      error: function(resp) {
+        if (errorCallback) {
+          errorCallback(resp);
+        } else {
+          console.log(resp.statusText);
+        }
+      }
+    });
+  }
 };
 
 
