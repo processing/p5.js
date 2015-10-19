@@ -449,7 +449,12 @@ p5.prototype.split = function(str, delim) {
  * </code>
  */
 p5.prototype.splitTokens = function() {
-  var d = (arguments.length > 1) ? new RegExp('[' + arguments[1] + ']', 'g') : /\s/g;
+  var d;
+  if (arguments.length > 1) {    
+    d = new RegExp('[' + arguments[1] + ']', 'g');   
+  } else {   
+    d = /\s/g;   
+  }
   return arguments[0].split(d).filter(function(n){return n;});
 };
 
