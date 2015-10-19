@@ -11,7 +11,7 @@ void main(void) {
   if(!isTexture){
     gl_FragColor = vec4(vec3(uMaterialColor.rgb * vLightWeighting), uMaterialColor.a);
   }else{
-    vec4 textureColor = texture2D(uSampler, vec2(vVertTexCoord.s,vVertTexCoord.t));
+    vec4 textureColor = texture2D(uSampler, vVertTexCoord);
     if(vLightWeighting == vec3(0., 0., 0.)){
       gl_FragColor = textureColor;
     }else{
