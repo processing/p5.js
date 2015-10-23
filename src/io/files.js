@@ -107,19 +107,23 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
     }
     if (decrementPreload && (onSuccess !== decrementPreload)) {
       decrementPreload();
+      /*jshint multistr: true */
+      var exp =/\/[a-zA-Z]*((.ttf)|(.otf)|(.woff)|(.woff2))$/i;
+      if(!exp) {
+        return p5Font;
+      }
+      var i = (exp).exec( path ).index + 1;
+      var fontName = path.substring(i);
+      fontName = font.match(/[A-Za-z]*/);
+      var fontFamily = font[0];
+      var newStyle = document.createElement('style');
+      newStyle.appendChild(document.createTextNode('\n@font-face {\
+        \nfont-family: '+fontFamily+';\nsrc: url('+path+');\n}\n'));
+      document.head.appendChild(newStyle);
     }
 
   });
 
-  var exp =/\/[a-zA-Z]*((.ttf)|(.otf)|(.woff)|(.woff2))$/i; 
-  var i = (exp).exec( path ).index + 1;
-  var font = path.substring(i);
-  font = font.match(/[A-Za-z]*/);
-  var fontFamily = font[0];
-  var newStyle = document.createElement('style');
-  newStyle.appendChild(document.createTextNode("\n@font-face {\nfont-family: "+fontFamily+";\nsrc: url("+path+");\n}\n"));
-  document.head.appendChild(newStyle);
-  
   return p5Font;
 };
 
