@@ -63,6 +63,14 @@ suite('Calculation', function() {
         result = dist(0, 0, -2, -3);
         assert.equal(result, Math.sqrt(13));
       });
+      test('should return correct distance', function() {
+        result = dist(0, 0, 0, 2, 3, 5);
+        assert.equal(result, Math.sqrt(38));
+      });
+      test('should return positive  distance', function() {
+        result = dist(0, 0, 0, -2, -3, 5);
+        assert.equal(result, Math.sqrt(38));
+      });
     });
   });
 
