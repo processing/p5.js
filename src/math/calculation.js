@@ -111,10 +111,10 @@ p5.prototype.constrain = function(n, low, high) {
  * @method dist
  * @param  {Number} x1 x-coordinate of the first point
  * @param  {Number} y1 y-coordinate of the first point
- * @param  {Number} z1 z-coordinate of the first point (optional)
+ * @param  {Number} [z1] z-coordinate of the first point
  * @param  {Number} x2 x-coordinate of the second point
  * @param  {Number} y2 y-coordinate of the second point
- * @param  {Number} z2 z-coordinate of the second point (optional)
+ * @param  {Number} [z2] z-coordinate of the second point
  * @return {Number}    distance between the two points
  * @example
  * <div><code>
