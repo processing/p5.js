@@ -246,7 +246,7 @@ var shake_threshold = 30;
 
 /**
  * The setMoveThreshold() function is used to set the movement threshold for
- * the deviceMoved() function.
+ * the deviceMoved() function. The default threshold is set to 0.5.
  *
  * @method setMoveThreshold
  * @param {number} value The threshold value
@@ -271,8 +271,9 @@ p5.prototype.setShakeThreshold = function(val){
 };
 
 /**
- * The deviceMoved() function is called when the devices orientation changes
- * by more than the threshold value.
+ * The deviceMoved() function is called when the device is moved by more than
+ * the threshold value along X, Y or Z axis. The default threshold is set to
+ * 0.5.
  * @method deviceMoved
  * @example
  * <div>

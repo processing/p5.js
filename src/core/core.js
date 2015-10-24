@@ -177,7 +177,7 @@ var p5 = function(sketch, node, sync) {
   if (window.DeviceOrientationEvent) {
     this._events.deviceorientation = null;
   }
-  if (window.DeviceMotionEvent) {
+  if (window.DeviceMotionEvent && !window._isNodeWebkit) {
     this._events.devicemotion = null;
   }
 
