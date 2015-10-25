@@ -331,10 +331,6 @@ var p5 = function(sketch, node, sync) {
         time_since_last >= target_time_between_frames - epsilon) {
       this._setProperty('frameCount', this.frameCount + 1);
       this.redraw();
-      this._updatePAccelerations();
-      this._updatePRotations();
-      this._updatePMouseCoords();
-      this._updatePTouchCoords();
       this._frameRate = 1000.0/(now - this._lastFrameTime);
       this._lastFrameTime = now;
     }
