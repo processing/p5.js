@@ -15,7 +15,7 @@ require('./error_helpers');
 
 /**
  * Draw an arc to the screen. If called with only a, b, c, d, start, and
- * stop, the arc will pe drawn as an open pie. If mode is provided, the arc
+ * stop, the arc will be drawn as an open pie. If mode is provided, the arc
  * will be drawn either open, as a chord, or as a pie as specified. The
  * origin may be changed with the ellipseMode() function.<br><br>
  * Note that drawing a full circle (ex: 0 to TWO_PI) will appear blank
