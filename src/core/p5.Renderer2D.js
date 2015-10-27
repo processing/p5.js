@@ -224,21 +224,21 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
   if(x + w < 0 || y + h < 0 || x > this.width || y > this.height){
     return [0, 0, 0, 255];
   }
-  
+
   if(x < 0) {
     w += x;
     x = 0;
   }
-  
+
   if(y < 0) {
     h += y;
     y = 0;
   }
-  
+
   if(x + w > this.width) {
     w = this.width - x;
   }
-  
+
   if(y + h > this.height) {
     h = this.height - y;
   }
