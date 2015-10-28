@@ -1,6 +1,6 @@
 /**
- * module Utils
- * submodule Color Utils
+ * module Conversion
+ * submodule Color Conversion
  * @for p5
  */
 
@@ -12,13 +12,13 @@ var p5 = require('../core/core');
  * In these functions, hue is always in the range [0,1); all other components
  * are in the range [0,1]. 'Brightness' and 'value' are used interchangeably.
  */
-p5.ColorUtils = {};
+p5.ColorConversion = {};
 
 
 /**
  * Convert an HSBA array to HSLA.
  */
-p5.ColorUtils._hsbaToHSLA = function(hsba) {
+p5.ColorConversion._hsbaToHSLA = function(hsba) {
   var hue = hsba[0];
   var sat = hsba[1];
   var val = hsba[2];
@@ -44,7 +44,7 @@ p5.ColorUtils._hsbaToHSLA = function(hsba) {
 /**
  * Convert an HSBA array to RGBA.
  */
-p5.ColorUtils._hsbaToRGBA = function(hsba) {
+p5.ColorConversion._hsbaToRGBA = function(hsba) {
   var hue = hsba[0] * 6;  // We will split hue into 6 sectors.
   var sat = hsba[1];
   var val = hsba[2];
@@ -93,7 +93,7 @@ p5.ColorUtils._hsbaToRGBA = function(hsba) {
 /**
  * Convert an HSLA array to HSBA.
  */
-p5.ColorUtils._hslaToHSBA = function(hsla) {
+p5.ColorConversion._hslaToHSBA = function(hsla) {
   var hue = hsla[0];
   var sat = hsla[1];
   var li = hsla[2];
@@ -121,7 +121,7 @@ p5.ColorUtils._hslaToHSBA = function(hsla) {
  * components, and pick a convenient third one ('zest') so that we don't need
  * to calculate formal HSBA saturation.
  */
-p5.ColorUtils._hslaToRGBA = function(hsla){
+p5.ColorConversion._hslaToRGBA = function(hsla){
   var hue = hsla[0] * 6;  // We will split hue into 6 sectors.
   var sat = hsla[1];
   var li = hsla[2];
@@ -174,7 +174,7 @@ p5.ColorUtils._hslaToRGBA = function(hsla){
 /**
  * Convert an RGBA array to HSBA.
  */
-p5.ColorUtils._rgbaToHSBA = function(rgba) {
+p5.ColorConversion._rgbaToHSBA = function(rgba) {
   var red = rgba[0];
   var green = rgba[1];
   var blue = rgba[2];
@@ -209,7 +209,7 @@ p5.ColorUtils._rgbaToHSBA = function(rgba) {
 /**
  * Convert an RGBA array to HSLA.
  */
-p5.ColorUtils._rgbaToHSLA = function(rgba) {
+p5.ColorConversion._rgbaToHSLA = function(rgba) {
   var red = rgba[0];
   var green = rgba[1];
   var blue = rgba[2];
@@ -246,4 +246,4 @@ p5.ColorUtils._rgbaToHSLA = function(rgba) {
   return [hue / 6, sat, li / 2, rgba[3] || 1];
 };
 
-module.exports = p5.ColorUtils;
+module.exports = p5.ColorConversion;
