@@ -6,7 +6,7 @@ suite('p5.ColorUtils', function() {
 
   suite('rgbaToHSBA', function() {
     test('rgba converts to hsba', function() {
-      one = p5.ColorUtils.rgbaToHSBA(rgba);
+      one = p5.ColorUtils._rgbaToHSBA(rgba);
       assert.deepEqual([
         Math.round(one[0] * 360),
         Math.round(one[1] * 100),
@@ -18,7 +18,7 @@ suite('p5.ColorUtils', function() {
 
   suite('hsbaToRGBA', function() {
     test('hsba converts to rgba', function() {
-      one = p5.ColorUtils.hsbaToRGBA(hsba);
+      one = p5.ColorUtils._hsbaToRGBA(hsba);
       assert.deepEqual([
         Math.round(one[0] * 255),
         Math.round(one[1] * 255),
@@ -30,7 +30,7 @@ suite('p5.ColorUtils', function() {
 
   suite('hslaToRGBA', function() {
     test('hsla converts to rgba', function() {
-      one = p5.ColorUtils.hslaToRGBA(hsla);
+      one = p5.ColorUtils._hslaToRGBA(hsla);
       assert.deepEqual([
         Math.round(one[0] * 255),
         Math.round(one[1] * 255),
@@ -42,7 +42,7 @@ suite('p5.ColorUtils', function() {
 
   suite('rgbaToHSLA', function() {
     test('rgba converts to hsla', function() {
-      one = p5.ColorUtils.rgbaToHSLA(rgba);
+      one = p5.ColorUtils._rgbaToHSLA(rgba);
       assert.deepEqual([
         Math.round(one[0] * 360),
         Math.round(one[1] * 100),
@@ -54,7 +54,7 @@ suite('p5.ColorUtils', function() {
 
   suite('hslaToHSBA', function() {
     test('hsla converts to hsba', function() {
-      one = p5.ColorUtils.hslaToHSBA(hsla);
+      one = p5.ColorUtils._hslaToHSBA(hsla);
       assert.deepEqual([
         Math.round(one[0] * 360),
         Math.round(one[1] * 100),
@@ -66,7 +66,7 @@ suite('p5.ColorUtils', function() {
 
   suite('hsbaToHSLA', function() {
     test('hsba converts to hsla', function() {
-      one = p5.ColorUtils.hsbaToHSLA(hsba);
+      one = p5.ColorUtils._hsbaToHSLA(hsba);
       assert.deepEqual([
         Math.round(one[0] * 360),
         Math.round(one[1] * 100),

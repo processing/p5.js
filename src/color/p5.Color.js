@@ -26,10 +26,10 @@ p5.Color = function (pInst, vals) {
     this._array = p5.Color._getFormattedColor.apply(pInst, vals);
   } else if (isHSB) {
     this.hsba = p5.Color._getFormattedColor.apply(pInst, vals);
-    this._array = color_utils.hsbaToRGBA(this.hsba);
+    this._array = color_utils._hsbaToRGBA(this.hsba);
   } else if (isHSL){
     this.hsla = p5.Color._getFormattedColor.apply(pInst, vals);
-    this._array = color_utils.hslaToRGBA(this.hsla);
+    this._array = color_utils._hslaToRGBA(this.hsla);
   } else {
     throw new Error(pInst._renderer._colorMode + ' is an invalid colorMode.');
   }
@@ -48,7 +48,7 @@ p5.Color.prototype.getHue = function() {
   } else if (this.hsba) {
     return this.hsba[0] * this.maxes[constants.HSB][0];
   } else {
-    this.hsla = color_utils.rgbaToHSLA(this._array);
+    this.hsla = color_utils._rgbaToHSLA(this._array);
     return this.hsla[0] * this.maxes[constants.HSL][0];
   }
 };
@@ -61,7 +61,7 @@ p5.Color.prototype.getSaturation = function() {
     return this.hsba[1] * this.maxes[constants.HSB][1];
   } else {
     if( !this.hsla ) {
-      this.hsla = color_utils.rgbaToHSLA(this._array);
+      this.hsla = color_utils._rgbaToHSLA(this._array);
     }
     return this.hsla[1] * this.maxes[constants.HSL][1];
   }
@@ -72,7 +72,7 @@ p5.Color.prototype.getBrightness = function() {
   if (this.hsba) {
     return this.hsba[2] * this.maxes[constants.HSB][2];
   } else {
-    this.hsba = color_utils.rgbaToHSBA(this._array);
+    this.hsba = color_utils._rgbaToHSBA(this._array);
     return this.hsba[2] * this.maxes[constants.HSB][2];
   }
 };
@@ -82,7 +82,7 @@ p5.Color.prototype.getLightness = function() {
   if (this.hsla) {
     return this.hsla[2] * this.maxes[constants.HSL][2];
   } else {
-    this.hsla = color_utils.rgbaToHSLA(this._array);
+    this.hsla = color_utils._rgbaToHSLA(this._array);
     return this.hsla[2] * this.maxes[constants.HSL][2];
   }
 };
@@ -514,10 +514,10 @@ p5.Color._getFormattedColor = function () {
         return results;
       }
       else if( mode === constants.HSL ){
-        return color_utils.rgbaToHSLA(results);
+        return color_utils._rgbaToHSLA(results);
       }
       else if( mode === constants.HSB ){
-        return color_utils.rgbaToHSBA(results);
+        return color_utils._rgbaToHSBA(results);
       }
     }
 
@@ -546,13 +546,13 @@ p5.Color._getFormattedColor = function () {
     // convert HSLA result to correct color space
     if( results.length ){
       if( mode === constants.RGB ){
-        return color_utils.hslaToRGBA(results);
+        return color_utils._hslaToRGBA(results);
       }
       else if( mode === constants.HSL ){
         return results;
       }
       else if( mode === constants.HSB ){
-        return color_utils.hslaToHSBA(results);
+        return color_utils._hslaToHSBA(results);
       }
     }
 
@@ -581,13 +581,13 @@ p5.Color._getFormattedColor = function () {
     // convert HSBA result to correct color space
     if( results.length ){
       if( mode === constants.RGB ){
-        return color_utils.hsbaToRGBA(results);
+        return color_utils._hsbaToRGBA(results);
       }
       else if( mode === constants.HSB ){
         return results;
       }
       else if( mode === constants.HSL ){
-        return color_utils.hsbaToHSLA(results);
+        return color_utils._hsbaToHSLA(results);
       }
     }
 
