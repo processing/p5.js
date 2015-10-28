@@ -23,18 +23,16 @@ function setup(){
 
 function draw(){
   background(255, 255, 255, 255);
-    translate(0,0,400);
-    translate(-300, 0, 0);
+  translate(0,0,400);
+  translate(-300, 0, 0);
   push();
- 
-    rotateZ(theta * mouseX * 0.001);
-    rotateX(theta * mouseX * 0.001);
-    rotateY(theta * mouseX * 0.001);
+    rotate(theta * mouseX * 0.001, [1,1,1]);
+    
     //pass image as texture
     // texture(vid);
     texture(img);
     // normalMaterial();
-    sphere(60);
+    sphere(150);
   pop();
     translate(150,0,0);
   push();

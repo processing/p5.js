@@ -55,6 +55,8 @@ p5.Image = function(width, height){
   this.canvas.height = this.height;
   this.drawingContext = this.canvas.getContext('2d');
   this.pixelDensity = 1;
+  //used for webgl texturing only
+  this.isTexture = false;
   /**
    * Array containing the values for all the pixels in the display window.
    * These values are numbers. This array is the size (include an appropriate
@@ -421,6 +423,17 @@ p5.Image.prototype.save = function(filename, extension) {
 
   //Make the browser download the file
   p5.prototype.downloadFile(imageData, filename, extension);
+};
+
+/**
+ * creates a gl texture
+ * used in WEBGL mode only
+ * @param  {[type]} tex [description]
+ * @return {[type]}     [description]
+ */
+p5.Image.prototype.createTexture = function(tex){
+  //this.texture = tex;
+  return this;
 };
 
 module.exports = p5.Image;

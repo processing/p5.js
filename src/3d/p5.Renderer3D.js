@@ -233,7 +233,6 @@ p5.Renderer3D.prototype.setMatrixUniforms = function(shaderKey) {
     shaderProgram.uNMatrixUniform,
     false, this.uNMatrix.mat4);
 };
-
 //////////////////////////////////////////////
 // GET CURRENT | for shader and color
 //////////////////////////////////////////////
