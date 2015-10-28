@@ -7,10 +7,10 @@ var hashCount = 0;
 
 /**
  * createBuffer
- * @param  {String} gId [description]
- * @param  {String} obj [description]
+ * @param  {String} gId  key of the geometry object
+ * @param  {Array}  arr  array holding bject containing geometry information
  */
-p5.Renderer3D.prototype.createBuffer = function(gId, obj) {
+p5.Renderer3D.prototype.createBuffer = function(gId, arr) {
 
   hashCount ++;
   if(hashCount > 1000){
@@ -21,49 +21,59 @@ p5.Renderer3D.prototype.createBuffer = function(gId, obj) {
 
   var gl = this.GL;
   this.gHash[gId] = {};
-  this.gHash[gId].len = obj.len;
-  this.gHash[gId].vertexBuffer = gl.createBuffer();
-  this.gHash[gId].normalBuffer = gl.createBuffer();
-  this.gHash[gId].uvBuffer = gl.createBuffer();
-  this.gHash[gId].indexBuffer = gl.createBuffer();
+  this.gHash[gId].len = [];
+  this.gHash[gId].vertexBuffer = [];
+  this.gHash[gId].normalBuffer = [];
+  this.gHash[gId].uvBuffer = [];
+  this.gHash[gId].indexBuffer =[];
+
+  arr.forEach(function(obj){
+    this.gHash[gId].len.push(obj.len);
+    this.gHash[gId].vertexBuffer.push(gl.createBuffer());
+    this.gHash[gId].normalBuffer.push(gl.createBuffer());
+    this.gHash[gId].uvBuffer.push(gl.createBuffer());
+    this.gHash[gId].indexBuffer.push(gl.createBuffer());
+  }.bind(this));
 };
 
 /**
  * initBuffer description
  * @param  {String} gId    key of the geometry object
- * @param  {Object} obj    an object containing geometry information
+ * @param  {Array}  arr    array holding bject containing geometry information
  */
-p5.Renderer3D.prototype.initBuffer = function(gId, obj) {
+p5.Renderer3D.prototype.initBuffer = function(gId, arr) {
   this._setDefaultCamera();
   var gl = this.GL;
-  this.createBuffer(gId, obj);
+  this.createBuffer(gId, arr);
 
   var shaderProgram = this.mHash[this._getCurShaderId()];
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
-  gl.bufferData(
-    gl.ARRAY_BUFFER, new Float32Array(obj.vertices), gl.STATIC_DRAW);
-  gl.vertexAttribPointer(
-    shaderProgram.vertexPositionAttribute,
-    3, gl.FLOAT, false, 0, 0);
+  arr.forEach(function(obj, i){
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer[i]);
+    gl.bufferData(
+      gl.ARRAY_BUFFER, new Float32Array(obj.vertices), gl.STATIC_DRAW);
+    gl.vertexAttribPointer(
+      shaderProgram.vertexPositionAttribute,
+      3, gl.FLOAT, false, 0, 0);
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
-  gl.bufferData(
-    gl.ARRAY_BUFFER, new Float32Array(obj.vertexNormals), gl.STATIC_DRAW);
-  gl.vertexAttribPointer(
-    shaderProgram.vertexNormalAttribute,
-    3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer[i]);
+    gl.bufferData(
+      gl.ARRAY_BUFFER, new Float32Array(obj.vertexNormals), gl.STATIC_DRAW);
+    gl.vertexAttribPointer(
+      shaderProgram.vertexNormalAttribute,
+      3, gl.FLOAT, false, 0, 0);
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
-  gl.bufferData(
-    gl.ARRAY_BUFFER, new Float32Array(obj.uvs), gl.STATIC_DRAW);
-  gl.vertexAttribPointer(
-    shaderProgram.textureCoordAttribute,
-    2, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer[i]);
+    gl.bufferData(
+      gl.ARRAY_BUFFER, new Float32Array(obj.uvs), gl.STATIC_DRAW);
+    gl.vertexAttribPointer(
+      shaderProgram.textureCoordAttribute,
+      2, gl.FLOAT, false, 0, 0);
 
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
-  gl.bufferData
-   (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(obj.faces), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer[i]);
+    gl.bufferData
+     (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(obj.faces), gl.STATIC_DRAW);
+  }.bind(this));
 };
 
 /**
@@ -76,28 +86,30 @@ p5.Renderer3D.prototype.drawBuffer = function(gId) {
   var shaderKey = this._getCurShaderId();
   var shaderProgram = this.mHash[shaderKey];
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
-  gl.vertexAttribPointer(
-    shaderProgram.vertexPositionAttribute,
-    3, gl.FLOAT, false, 0, 0);
+  this.gHash[gId].len.forEach(function(d, i){
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer[i]);
+    gl.vertexAttribPointer(
+      shaderProgram.vertexPositionAttribute,
+      3, gl.FLOAT, false, 0, 0);
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
-  gl.vertexAttribPointer(
-    shaderProgram.vertexNormalAttribute,
-    3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer[i]);
+    gl.vertexAttribPointer(
+      shaderProgram.vertexNormalAttribute,
+      3, gl.FLOAT, false, 0, 0);
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
-  gl.vertexAttribPointer(
-    shaderProgram.textureCoordAttribute,
-    2, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer[i]);
+    gl.vertexAttribPointer(
+      shaderProgram.textureCoordAttribute,
+      2, gl.FLOAT, false, 0, 0);
 
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer[i]);
 
-  this.setMatrixUniforms(shaderKey);
+    this.setMatrixUniforms(shaderKey);
 
-  gl.drawElements(
-    gl.TRIANGLES, this.gHash[gId].len,
-     gl.UNSIGNED_SHORT, 0);
+    gl.drawElements(
+      gl.TRIANGLES, this.gHash[gId].len[i],
+       gl.UNSIGNED_SHORT, 0);
+  }.bind(this));
 };
 
 module.exports = p5.Renderer3D;

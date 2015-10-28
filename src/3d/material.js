@@ -64,16 +64,21 @@ p5.prototype.texture = function(image){
   var shaderProgram = this._renderer._getShader('lightVert',
     'lightTextureFrag');
   gl.useProgram(shaderProgram);
-  var tex = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, tex);
-  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-
-  // Currently buggy, likely bc of p5 object types
-  // if(!this._isPowerOf2(image.width) || !this._isPowerOf2(image.height)){
-  //   image.width = _nextHighestPOT(image.width);
-  //   image.height = _nextHighestPOT(image.height);
-  // }
   if (image instanceof p5.Image) {
+    //check if image is already used as texture
+    if(!image.isTexture){
+      //createTexture and set isTexture to true
+      var tex = gl.createTexture();
+      image.createTexture(tex);
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+      image._setProperty('isTexture', true);
+    }
+    //otherwise we're good to bind texture without creating
+    //a new one on the gl
+    else {
+      //TODO
+    }
     image.loadPixels();
     var data = new Uint8Array(image.pixels);
     gl.texImage2D(gl.TEXTURE_2D, 0,
@@ -93,21 +98,24 @@ p5.prototype.texture = function(image){
   if (_isPowerOf2(image.width) && _isPowerOf2(image.height)) {
     gl.generateMipmap(gl.TEXTURE_2D);
   } else {
-    image.width = _nextHighestPOT(image.width);
-    image.height = _nextHighestPOT(image.height);
-    gl.texParameteri(gl.TETXURE_2D,
-      gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TETXURE_2D,
-      gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TETXURE_2D,
-      gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    //@TODO this is problematic
+    //image.width = _nextHighestPOT(image.width);
+    //image.height = _nextHighestPOT(image.height);
+    gl.texParameteri(gl.TEXTURE_2D,
+    gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,
+    gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,
+    gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D,
+    gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   }
   //this is where we'd activate multi textures
   //eg. gl.activeTexture(gl.TEXTURE0 + (unit || 0));
   //but for now we just have a single texture.
   //@TODO need to extend this functionality
-  gl.activeTexture(gl.TEXTURE0 + 0);
-  gl.bindTexture(gl.TEXTURE_2D, tex);
+  //gl.activeTexture(gl.TEXTURE0 + 0);
+  //gl.bindTexture(gl.TEXTURE_2D, tex);
   gl.uniform1i(gl.getUniformLocation(shaderProgram, 'uSampler'), 0);
   gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), true);
   return this;
@@ -129,13 +137,13 @@ function _isPowerOf2 (value){
  * @param  {Number} value [description]
  * @return {Number}       [description]
  */
-function _nextHighestPOT (value){
-  --value;
-  for (var i = 1; i < 32; i <<= 1) {
-    value = value | value >> i;
-  }
-  return value + 1;
-}
+// function _nextHighestPOT (value){
+//   --value;
+//   for (var i = 1; i < 32; i <<= 1) {
+//     value = value | value >> i;
+//   }
+//   return value + 1;
+// }
 
 /**
  * Basic material for geometry with a given color
