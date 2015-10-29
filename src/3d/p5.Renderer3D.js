@@ -261,6 +261,9 @@ p5.Renderer3D.prototype._getCurShaderId = function(){
   return this.curShaderId;
 };
 
+//////////////////////////////////////////////
+// COLOR
+//////////////////////////////////////////////
 p5.Renderer3D.prototype._getCurColor = function() {
   //default color: gray
   if(this.curColor === undefined) {
@@ -269,6 +272,14 @@ p5.Renderer3D.prototype._getCurColor = function() {
   return this.curColor;
 };
 
+p5.Renderer3D.prototype.fill = function(r, g, b, a) {
+  var color = this._pInst.color.apply(this._pInst, arguments);
+  var colorNormalized = color._normalize();
+  this.curColor = colorNormalized;
+  this.drawMode = 'fill';
+  this._pInst.basicMaterial.apply(this._pInst, arguments);
+  return this;
+};
 //////////////////////////////////////////////
 // HASH | for material and geometry
 //////////////////////////////////////////////

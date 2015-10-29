@@ -113,7 +113,7 @@ p5.Renderer3D.prototype.endShape = function(){
   return this;
 };
 
-//@TODO: figure out how to actually do stroke on shapes in 3D
+//@TODO:
 p5.Renderer3D.prototype._strokeCheck = function(){
   if(this.drawMode === 'stroke'){
     throw new Error(
@@ -130,15 +130,6 @@ p5.Renderer3D.prototype.strokeWeight = function() {
 //////////////////////////////////////////////
 // COLOR
 //////////////////////////////////////////////
-
-p5.Renderer3D.prototype.fill = function(r, g, b, a) {
-  var color = this._pInst.color.apply(this._pInst, arguments);
-  var colorNormalized = color._normalize();
-  this.curColor = colorNormalized;
-  this.drawMode = 'fill';
-  return this;
-};
-
 p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
   var colorNormalized = color._normalize();
