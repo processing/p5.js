@@ -36,12 +36,12 @@ p5.Color = function(pInst, vals) {
 
   // Cache input represention and calculate normalized RGBA values.
   if (this.mode === constants.RGB) {
-    this._array = p5.Color._getFormattedColor.apply(pInst, vals);
+    this._array = p5.Color._parseInputs.apply(pInst, vals);
   } else if (this.mode === constants.HSB) {
-    this.hsba = p5.Color._getFormattedColor.apply(pInst, vals);
+    this.hsba = p5.Color._parseInputs.apply(pInst, vals);
     this._array = color_conversion._hsbaToRGBA(this.hsba);
   } else if (this.mode === constants.HSL) {
-    this.hsla = p5.Color._getFormattedColor.apply(pInst, vals);
+    this.hsla = p5.Color._parseInputs.apply(pInst, vals);
     this._array = color_conversion._hslaToRGBA(this.hsla);
   } else {
     throw new Error(pInst._renderer._colorMode + ' is an invalid colorMode.');
@@ -55,6 +55,31 @@ p5.Color = function(pInst, vals) {
   return this;
 };
 
+p5.Color.prototype.toString = function() {
+  var a = this.levels;
+  a[3] = this._array[3];  // String representation uses normalized alpha.
+  return 'rgba('+a[0]+','+a[1]+','+a[2]+','+ a[3] +')';
+};
+
+p5.Color.prototype._getAlpha = function() {
+  return this._array[3] * this.maxes[this.mode][3];
+};
+
+p5.Color.prototype._getBlue = function() {
+  return this._array[2] * this.maxes[constants.RGB][2];
+};
+
+p5.Color.prototype._getBrightness = function() {
+  if (!this.hsba) {
+    this.hsba = color_conversion._rgbaToHSBA(this._array);
+  }
+  return this.hsba[2] * this.maxes[constants.HSB][2];
+};
+
+p5.Color.prototype._getGreen = function() {
+  return this._array[1] * this.maxes[constants.RGB][1];
+};
+
 p5.Color.prototype._getHue = function() {
   if (this.hsla) {
     return this.hsla[0] * this.maxes[constants.HSL][0];
@@ -66,6 +91,16 @@ p5.Color.prototype._getHue = function() {
   }
 };
 
+p5.Color.prototype._getLightness = function() {
+  if (!this.hsla) {
+    this.hsla = color_conversion._rgbaToHSLA(this._array);
+  }
+  return this.hsla[2] * this.maxes[constants.HSL][2];
+};
+
+p5.Color.prototype._getRed = function() {
+  return this._array[0] * this.maxes[constants.RGB][0];
+};
 
 /**
  * Saturation is scaled differently in HSB and HSL. This function will return
@@ -81,42 +116,6 @@ p5.Color.prototype._getSaturation = function() {
     }
     return this.hsla[1] * this.maxes[constants.HSL][1];
   }
-};
-
-p5.Color.prototype._getBrightness = function() {
-  if (!this.hsba) {
-    this.hsba = color_conversion._rgbaToHSBA(this._array);
-  }
-  return this.hsba[2] * this.maxes[constants.HSB][2];
-};
-
-p5.Color.prototype._getLightness = function() {
-  if (!this.hsla) {
-    this.hsla = color_conversion._rgbaToHSLA(this._array);
-  }
-  return this.hsla[2] * this.maxes[constants.HSL][2];
-};
-
-p5.Color.prototype._getRed = function() {
-  return this._array[0] * this.maxes[constants.RGB][0];
-};
-
-p5.Color.prototype._getGreen = function() {
-  return this._array[1] * this.maxes[constants.RGB][1];
-};
-
-p5.Color.prototype._getBlue = function() {
-  return this._array[2] * this.maxes[constants.RGB][2];
-};
-
-p5.Color.prototype._getAlpha = function() {
-  return this._array[3] * this.maxes[this.mode][3];
-};
-
-p5.Color.prototype.toString = function() {
-  var a = this.levels;
-  a[3] = this._array[3];  // String representation uses normalized alpha.
-  return 'rgba('+a[0]+','+a[1]+','+a[2]+','+ a[3] +')';
 };
 
 /**
@@ -416,7 +415,7 @@ var colorPatterns = {
  * </code>
  * </div>
  */
-p5.Color._getFormattedColor = function () {
+p5.Color._parseInputs = function() {
   var numArgs = arguments.length;
   var mode    = this._renderer._colorMode;
   var maxArr  = this._renderer._colorMaxes[this._renderer._colorMode];
@@ -435,7 +434,7 @@ p5.Color._getFormattedColor = function () {
 
     if (namedColors[str]) {
       // Handle named color values
-      return p5.Color._getFormattedColor.apply(this, [namedColors[str]]);
+      return p5.Color._parseInputs.apply(this, [namedColors[str]]);
     }
 
     // Work through available string patterns to determine how to proceed
