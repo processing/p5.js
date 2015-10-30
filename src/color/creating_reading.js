@@ -243,20 +243,15 @@ p5.prototype.brightness = function(c) {
  * </div>
  */
 p5.prototype.color = function() {
-  var args = new Array(arguments.length);
-
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-
-  if (args[0] instanceof p5.Color) {
-    return args[0];
-  } else if (args[0] instanceof Array) {
-    return new p5.Color(this, args[0]);
+  if (arguments[0] instanceof p5.Color) {
+    return arguments[0];
+  } else if (arguments[0] instanceof Array) {
+    return new p5.Color(this, arguments[0]);
   } else {
-    return new p5.Color(this, args);
+    return new p5.Color(this, arguments);
   }
 };
+
 /**
  * Extracts the green value from a color or pixel array.
  *
@@ -304,10 +299,11 @@ p5.prototype.green = function(c) {
  * </div>
  */
 p5.prototype.hue = function(c) {
-  if (!(c instanceof p5.Color)) {
+  if (c instanceof p5.Color) {
+    return c.getHue();
+  } else {
     throw new Error('Needs p5.Color as argument.');
   }
-  return c.getHue();
 };
 
 /**
@@ -396,7 +392,6 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  * </code>
  * </div>
  */
-
 p5.prototype.lightness = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
     return this.color(c).getLightness();
@@ -462,12 +457,11 @@ p5.prototype.red = function(c) {
  * </div>
  */
 p5.prototype.saturation = function(c) {
-  if (!(c instanceof p5.Color)) {
+  if (c instanceof p5.Color) {
+    return c.getSaturation();
+  } else {
     throw new Error('Needs p5.Color as argument.');
   }
-  return c.getSaturation();
 };
-
-
 
 module.exports = p5;
