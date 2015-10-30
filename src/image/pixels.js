@@ -444,7 +444,7 @@ p5.prototype.loadPixels = function() {
  * <p>Changes the color of any pixel, or writes an image directly to the
  * display window.</p>
  * <p>The x and y parameters specify the pixel to change and the c parameter
- * specifies the color value. This can be a p5.COlor object, or [R, G, B, A]
+ * specifies the color value. This can be a p5.Color object, or [R, G, B, A]
  * pixel array. It can also be a single grayscale value.
  * When setting an image, the x and y parameters define the coordinates for
  * the upper-left corner of the image, regardless of the current imageMode().
