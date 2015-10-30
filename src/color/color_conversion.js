@@ -2,9 +2,10 @@
  * module Conversion
  * submodule Color Conversion
  * @for p5
+ * @requires core
  */
 
-var p5 = require('../core/core');
+'use strict';
 
 /**
  * Conversions adapted from <http://www.easyrgb.com/math.html>.
@@ -12,8 +13,9 @@ var p5 = require('../core/core');
  * In these functions, hue is always in the range [0,1); all other components
  * are in the range [0,1]. 'Brightness' and 'value' are used interchangeably.
  */
-p5.ColorConversion = {};
 
+var p5 = require('../core/core');
+p5.ColorConversion = {};
 
 /**
  * Convert an HSBA array to HSLA.
