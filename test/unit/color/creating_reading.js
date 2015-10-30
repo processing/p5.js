@@ -14,8 +14,8 @@ suite('CreatingReading', function() {
     test('should correctly get lerp colors', function() {
       var interA = myp5.lerpColor(fromColor, toColor, 0.33);
       var interB = myp5.lerpColor(fromColor, toColor, 0.66);
-      assert.deepEqual(interA.rgba, [137, 102, 50, 255]);
-      assert.deepEqual(interB.rgba, [69, 102, 101, 255]);
+      assert.deepEqual(interA.levels, [137, 102, 50, 255]);
+      assert.deepEqual(interB.levels, [69, 102, 101, 255]);
     });
   });
 });

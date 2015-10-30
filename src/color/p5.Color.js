@@ -12,14 +12,31 @@ var constants = require('../core/constants');
 var color_conversion = require('./color_conversion');
 
 /**
+ * We define colors to be immutable objects. Each color stores the color mode
+ * and level maxes that applied at the time of its construction. These are
+ * used to interpret the input arguments and to format the output e.g. when
+ * saturation() is requested.
+ *
+ * Internally we store an array representing the ideal RGBA values in floating
+ * point form, normalized from 0 to 1. From this we calculate the closest
+ * screen color (RGBA levels from 0 to 255) and expose this to the renderer.
+ *
+ * We also cache normalized, floating point components of the color in various
+ * representations as they are calculated. This is done to prevent repeating a
+ * conversion that has already been performed.
+ *
  * @class p5.Color
  * @constructor
  */
 p5.Color = function(pInst, vals) {
+
+  // Record color mode and maxes at time of construction.
   this.mode = pInst._renderer._colorMode;
   this.maxes = pInst._renderer._colorMaxes;
 
+  // Cache input represention and calculate normalized RGBA values.
   if (this.mode === constants.RGB) {
+    this.rgba = p5.Color._getFormattedColor.apply(pInst, vals);
     this._array = p5.Color._getFormattedColor.apply(pInst, vals);
   } else if (this.mode === constants.HSB) {
     this.hsba = p5.Color._getFormattedColor.apply(pInst, vals);
@@ -31,10 +48,11 @@ p5.Color = function(pInst, vals) {
     throw new Error(pInst._renderer._colorMode + ' is an invalid colorMode.');
   }
 
-  this.rgba = [ Math.round(this._array[0] * 255),
-                Math.round(this._array[1] * 255),
-                Math.round(this._array[2] * 255),
-                Math.round(this._array[3] * 255)];
+  // Expose closest screen color.
+  this.levels = [ Math.round(this._array[0] * 255),
+                  Math.round(this._array[1] * 255),
+                  Math.round(this._array[2] * 255),
+                  Math.round(this._array[3] * 255)];
 
   return this;
 };
@@ -102,13 +120,13 @@ p5.Color.prototype.getAlpha = function() {
 };
 
 p5.Color.prototype.toString = function() {
-  var a = this.rgba;
-  a[3] = this._array[3];
+  var a = this.levels;
+  a[3] = this._array[3];  // String representation uses normalized alpha.
   return 'rgba('+a[0]+','+a[1]+','+a[2]+','+ a[3] +')';
 };
 
 p5.Color.prototype._normalize = function(){
-  var arr = this.rgba.map(function(value){
+  var arr = this.levels.map(function(value){
     return value / 255;
   });
   return arr;
