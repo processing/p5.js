@@ -40,7 +40,7 @@ p5.ColorConversion._hsbaToHSLA = function(hsba) {
   }
 
   // Hue and alpha stay the same.
-  return [hue, sat, li, hsba[3] || 1];
+  return [hue, sat, li, hsba[3]];
 };
 
 /**
@@ -54,7 +54,7 @@ p5.ColorConversion._hsbaToRGBA = function(hsba) {
   var RGBA = [];
 
   if (sat === 0) {
-    RGBA = [val, val, val, hsba[3] || 1];  // Return early if grayscale.
+    RGBA = [val, val, val, hsba[3]];  // Return early if grayscale.
   } else {
     var sector = Math.floor(hue);
     var tint1 = val * (1 - sat);
@@ -86,7 +86,7 @@ p5.ColorConversion._hsbaToRGBA = function(hsba) {
       green = tint1;
       blue = tint2;
     }
-    RGBA = [red, green, blue, hsba[3] || 1];
+    RGBA = [red, green, blue, hsba[3]];
   }
 
   return RGBA;
@@ -112,7 +112,7 @@ p5.ColorConversion._hslaToHSBA = function(hsla) {
   sat = 2 * (val - li) / val;
 
   // Hue and alpha stay the same.
-  return [hue, sat, val, hsla[3] || 1];
+  return [hue, sat, val, hsla[3]];
 };
 
 /**
@@ -131,7 +131,7 @@ p5.ColorConversion._hslaToRGBA = function(hsla){
   var RGBA = [];
 
   if (sat === 0) {
-    RGBA = [li, li, li, hsla[3] || 1]; // Return early if grayscale.
+    RGBA = [li, li, li, hsla[3]]; // Return early if grayscale.
   } else {
 
     // Calculate brightness.
@@ -167,7 +167,7 @@ p5.ColorConversion._hslaToRGBA = function(hsla){
     RGBA = [hzvToRGB(hue + 2, zest, val),
             hzvToRGB(hue    , zest, val),
             hzvToRGB(hue - 2, zest, val),
-            hsla[3] || 1];
+            hsla[3]];
   }
 
   return RGBA;
@@ -205,7 +205,7 @@ p5.ColorConversion._rgbaToHSBA = function(rgba) {
     }
   }
 
-  return [hue / 6, sat, val, rgba[3] || 1];
+  return [hue / 6, sat, val, rgba[3]];
 };
 
 /**
@@ -245,7 +245,7 @@ p5.ColorConversion._rgbaToHSLA = function(rgba) {
     }
   }
 
-  return [hue / 6, sat, li / 2, rgba[3] || 1];
+  return [hue / 6, sat, li / 2, rgba[3]];
 };
 
 module.exports = p5.ColorConversion;
