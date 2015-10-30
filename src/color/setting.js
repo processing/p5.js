@@ -213,27 +213,29 @@ p5.prototype.colorMode = function() {
   if (arguments[0] === constants.RGB ||
       arguments[0] === constants.HSB ||
       arguments[0] === constants.HSL) {
+
+    // Set color mode.
     this._renderer._colorMode = arguments[0];
 
+    // Set color maxes.
     var maxArr = this._renderer._colorMaxes[this._renderer._colorMode];
-
     if (arguments.length === 2) {
-      maxArr[0] = arguments[1];
-      maxArr[1] = arguments[1];
-      maxArr[2] = arguments[1];
-      maxArr[3] = arguments[1];
+      maxArr[0] = arguments[1];  // Red
+      maxArr[1] = arguments[1];  // Green
+      maxArr[2] = arguments[1];  // Blue
+      maxArr[3] = arguments[1];  // Alpha
     } else if (arguments.length === 4) {
-      maxArr[0] = arguments[1];
-      maxArr[1] = arguments[2];
-      maxArr[2] = arguments[3];
-    }
-    if (arguments.length === 5) {
-      maxArr[0] = arguments[1];
-      maxArr[1] = arguments[2];
-      maxArr[2] = arguments[3];
-      maxArr[3] = arguments[4];
+      maxArr[0] = arguments[1];  // Red
+      maxArr[1] = arguments[2];  // Green
+      maxArr[2] = arguments[3];  // Blue
+    } else if (arguments.length === 5) {
+      maxArr[0] = arguments[1];  // Red
+      maxArr[1] = arguments[2];  // Green
+      maxArr[2] = arguments[3];  // Blue
+      maxArr[3] = arguments[4];  // Alpha
     }
   }
+
   return this;
 };
 
@@ -521,7 +523,5 @@ p5.prototype.stroke = function() {
   this._renderer.stroke.apply(this._renderer, arguments);
   return this;
 };
-
-
 
 module.exports = p5;
