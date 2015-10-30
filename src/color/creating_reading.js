@@ -39,7 +39,7 @@ p5.prototype.alpha = function(c) {
 };
 
 /**
- * Extracts the blue value from a color or a pixel array.
+ * Extracts the blue value from a color or pixel array.
  *
  * @method blue
  * @param {Object} obj p5.Color object or pixel array
@@ -66,10 +66,10 @@ p5.prototype.blue = function(c) {
 };
 
 /**
- * Extracts the brightness value from a color.
+ * Extracts the HSB brightness value from a color or pixel array.
  *
  * @method brightness
- * @param {Object} color p5.Color object
+ * @param {Object} color p5.Color object or pixel array
  * @example
  * <div>
  * <code>
@@ -244,7 +244,7 @@ p5.prototype.brightness = function(c) {
  */
 p5.prototype.color = function() {
   if (arguments[0] instanceof p5.Color) {
-    return arguments[0];
+    return arguments[0];  // Do nothing if argument is already a color object.
   } else if (arguments[0] instanceof Array) {
     return new p5.Color(this, arguments[0]);
   } else {
@@ -256,7 +256,7 @@ p5.prototype.color = function() {
  * Extracts the green value from a color or pixel array.
  *
  * @method green
- * @param {Object} color p5.Color object
+ * @param {Object} color p5.Color object or pixel array
  * @example
  * <div>
  * <code>
@@ -280,10 +280,10 @@ p5.prototype.green = function(c) {
 };
 
 /**
- * Extracts the hue value from a color.
+ * Extracts the hue value from a color or pixel array.
  *
  * @method hue
- * @param {Object} color p5.Color object
+ * @param {Object} color p5.Color object or pixel array
  * @example
  * <div>
  * <code>
@@ -299,10 +299,10 @@ p5.prototype.green = function(c) {
  * </div>
  */
 p5.prototype.hue = function(c) {
-  if (c instanceof p5.Color) {
-    return c.getHue();
+  if (c instanceof p5.Color || c instanceof Array) {
+    return this.color(c).getHue();
   } else {
-    throw new Error('Needs p5.Color as argument.');
+    throw new Error('Needs p5.Color or pixel array as argument.');
   }
 };
 
@@ -374,10 +374,10 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
 };
 
 /**
- * Extracts the lightness value from a color.
+ * Extracts the HSL lightness value from a color or pixel array.
  *
  * @method lightness
- * @param {Object} color p5.Color object
+ * @param {Object} color p5.Color object or pixel array
  * @example
  * <div>
  * <code>
@@ -438,10 +438,15 @@ p5.prototype.red = function(c) {
 };
 
 /**
- * Extracts the saturation value from a color.
+ * Extracts the saturation value from a color or pixel array.
+ *
+ * Saturation is scaled differently in HSB and HSL. This function will return
+ * the HSB saturation when supplied with an HSB color object (or when supplied
+ * with a pixel array while the color mode is HSB), but will default to the
+ * HSL saturation otherwise.
  *
  * @method saturation
- * @param {Object} color p5.Color object
+ * @param {Object} color p5.Color object or pixel array
  * @example
  * <div>
  * <code>
@@ -457,10 +462,10 @@ p5.prototype.red = function(c) {
  * </div>
  */
 p5.prototype.saturation = function(c) {
-  if (c instanceof p5.Color) {
-    return c.getSaturation();
+  if (c instanceof p5.Color || c instanceof Array) {
+    return this.color(c).getSaturation();
   } else {
-    throw new Error('Needs p5.Color as argument.');
+    throw new Error('Needs p5.Color or pixel array as argument.');
   }
 };
 
