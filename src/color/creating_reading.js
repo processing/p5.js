@@ -32,7 +32,7 @@ require('./p5.Color');
  */
 p5.prototype.alpha = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c).getAlpha();
+    return this.color(c)._getAlpha();
   } else {
     throw new Error('Needs p5.Color or pixel array as argument.');
   }
@@ -59,7 +59,7 @@ p5.prototype.alpha = function(c) {
  */
 p5.prototype.blue = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c).getBlue();
+    return this.color(c)._getBlue();
   } else {
     throw new Error('Needs p5.Color or pixel array as argument.');
   }
@@ -86,7 +86,7 @@ p5.prototype.blue = function(c) {
  */
 p5.prototype.brightness = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c).getBrightness();
+    return this.color(c)._getBrightness();
   } else {
     throw new Error('Needs p5.Color or pixel array as argument.');
   }
@@ -273,7 +273,7 @@ p5.prototype.color = function() {
  */
 p5.prototype.green = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c).getGreen();
+    return this.color(c)._getGreen();
   } else {
     throw new Error('Needs p5.Color or pixel array as argument.');
   }
@@ -300,7 +300,7 @@ p5.prototype.green = function(c) {
  */
 p5.prototype.hue = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c).getHue();
+    return this.color(c)._getHue();
   } else {
     throw new Error('Needs p5.Color or pixel array as argument.');
   }
@@ -394,7 +394,7 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  */
 p5.prototype.lightness = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c).getLightness();
+    return this.color(c)._getLightness();
   } else {
     throw new Error('Needs p5.Color or pixel array as argument.');
   }
@@ -431,7 +431,7 @@ p5.prototype.lightness = function(c) {
  */
 p5.prototype.red = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c).getRed();
+    return this.color(c)._getRed();
   } else {
     throw new Error('Needs p5.Color or pixel array as argument.');
   }
@@ -463,7 +463,7 @@ p5.prototype.red = function(c) {
  */
 p5.prototype.saturation = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c).getSaturation();
+    return this.color(c)._getSaturation();
   } else {
     throw new Error('Needs p5.Color or pixel array as argument.');
   }

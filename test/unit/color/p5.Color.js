@@ -400,17 +400,17 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get hue/saturation/brightness/lightness', function() {
-      assert.equal(Math.round(c.getHue()), 336);
-      assert.equal(Math.round(c.getSaturation()), 100);
-      assert.equal(Math.round(c.getBrightness()), 100);
-      assert.equal(Math.round(c.getLightness()), 50);
+      assert.equal(Math.round(c._getHue()), 336);
+      assert.equal(Math.round(c._getSaturation()), 100);
+      assert.equal(Math.round(c._getBrightness()), 100);
+      assert.equal(Math.round(c._getLightness()), 50);
     });
 
     test('should correctly get RGBA values', function() {
-      assert.equal(Math.round(c.getRed()), 255);
-      assert.equal(Math.round(c.getGreen()), 0);
-      assert.equal(Math.round(c.getBlue()), 102);
-      assert.equal(Math.round(c.getAlpha()), 204);
+      assert.equal(Math.round(c._getRed()), 255);
+      assert.equal(Math.round(c._getGreen()), 0);
+      assert.equal(Math.round(c._getBlue()), 102);
+      assert.equal(Math.round(c._getAlpha()), 204);
     });
 
     test('should correctly render color string', function() {
@@ -430,10 +430,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get RGBA property', function() {
-      assert.equal(c.getRed(), 1);
-      assert.equal(c.getGreen(), 0);
-      assert.equal(c.getBlue(), 0.4);
-      assert.equal(c.getAlpha(), 0.8);
+      assert.equal(c._getRed(), 1);
+      assert.equal(c._getGreen(), 0);
+      assert.equal(c._getBlue(), 0.4);
+      assert.equal(c._getAlpha(), 0.8);
     });
 
     test('should correctly render color string', function() {
@@ -442,10 +442,10 @@ suite('p5.Color', function() {
 
     test('should correctly get RGBA property after overwrite', function() {
       myp5.colorMode(myp5.RGB, 255, 255, 255, 255);
-      assert.equal(c.getRed(), 255);
-      assert.equal(c.getGreen(), 0);
-      assert.equal(c.getBlue(), 102);
-      assert.equal(c.getAlpha(), 204);
+      assert.equal(c._getRed(), 255);
+      assert.equal(c._getGreen(), 0);
+      assert.equal(c._getBlue(), 102);
+      assert.equal(c._getAlpha(), 204);
     });
   });
 
@@ -475,10 +475,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get hue/saturation/lightness/alpha', function() {
-      assert.equal(Math.round(c.getHue()), 336);
-      assert.equal(Math.round(c.getSaturation()), 100);
-      assert.equal(Math.round(c.getLightness()), 50);
-      assert.equal(c.getAlpha(), 0.8);
+      assert.equal(Math.round(c._getHue()), 336);
+      assert.equal(Math.round(c._getSaturation()), 100);
+      assert.equal(Math.round(c._getLightness()), 50);
+      assert.equal(c._getAlpha(), 0.8);
     });
   });
 
@@ -489,10 +489,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get HSLA property', function() {
-      assert.equal(Math.round(c.getHue()), 93);
-      assert.equal(Math.round(c.getSaturation()), 200);
-      assert.equal(Math.round(c.getLightness()), 150);
-      assert.equal(Math.round(c.getAlpha()), 8);
+      assert.equal(Math.round(c._getHue()), 93);
+      assert.equal(Math.round(c._getSaturation()), 200);
+      assert.equal(Math.round(c._getLightness()), 150);
+      assert.equal(Math.round(c._getAlpha()), 8);
     });
 
     test('should correctly convert to RGBA', function() {
@@ -511,10 +511,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get HSLA property', function() {
-      assert.equal(Math.round(c.getHue()), 336);
-      assert.equal(Math.round(c.getSaturation()), 100);
-      assert.equal(Math.round(c.getLightness()), 50);
-      assert.equal(c.getAlpha(), 0.8);
+      assert.equal(Math.round(c._getHue()), 336);
+      assert.equal(Math.round(c._getSaturation()), 100);
+      assert.equal(Math.round(c._getLightness()), 50);
+      assert.equal(c._getAlpha(), 0.8);
     });
 
     test('should correctly convert to RGBA', function() {
@@ -533,10 +533,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get HSLA property', function() {
-      assert.equal(Math.round(c.getHue()), 336);
-      assert.equal(Math.round(c.getSaturation()), 100);
-      assert.equal(Math.round(c.getLightness()), 50);
-      assert.equal(c.getAlpha(), 0.8);
+      assert.equal(Math.round(c._getHue()), 336);
+      assert.equal(Math.round(c._getSaturation()), 100);
+      assert.equal(Math.round(c._getLightness()), 50);
+      assert.equal(c._getAlpha(), 0.8);
     });
 
     test('should correctly convert to RGBA', function() {
@@ -555,10 +555,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get HSLA property', function() {
-      assert.equal(Math.round(c.getHue()), 336);
-      assert.equal(Math.round(c.getSaturation()), 100);
-      assert.equal(Math.round(c.getLightness()), 50);
-      assert.equal(c.getAlpha(), 0.8);
+      assert.equal(Math.round(c._getHue()), 336);
+      assert.equal(Math.round(c._getSaturation()), 100);
+      assert.equal(Math.round(c._getLightness()), 50);
+      assert.equal(c._getAlpha(), 0.8);
     });
 
     test('should correctly convert to RGBA', function() {
@@ -596,10 +596,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get hue/saturation/brightness/alpha', function() {
-      assert.equal(Math.round(c.getHue()), 336);
-      assert.equal(Math.round(c.getSaturation()), 100);
-      assert.equal(Math.round(c.getBrightness()), 100);
-      assert.equal(c.getAlpha(), 0.8);
+      assert.equal(Math.round(c._getHue()), 336);
+      assert.equal(Math.round(c._getSaturation()), 100);
+      assert.equal(Math.round(c._getBrightness()), 100);
+      assert.equal(c._getAlpha(), 0.8);
     });
   });
 
@@ -610,10 +610,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get HSBA property', function() {
-      assert.equal(Math.round(c.getHue()), 93);
-      assert.equal(Math.round(c.getSaturation()), 200);
-      assert.equal(Math.round(c.getBrightness()), 300);
-      assert.equal(Math.round(c.getAlpha()), 8);
+      assert.equal(Math.round(c._getHue()), 93);
+      assert.equal(Math.round(c._getSaturation()), 200);
+      assert.equal(Math.round(c._getBrightness()), 300);
+      assert.equal(Math.round(c._getAlpha()), 8);
     });
 
     test('should correctly convert to RGBA', function() {
@@ -632,10 +632,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get HSBA property', function() {
-      assert.equal(Math.round(c.getHue()), 336);
-      assert.equal(Math.round(c.getSaturation()), 100);
-      assert.equal(Math.round(c.getBrightness()), 100);
-      assert.equal(c.getAlpha(), 0.8);
+      assert.equal(Math.round(c._getHue()), 336);
+      assert.equal(Math.round(c._getSaturation()), 100);
+      assert.equal(Math.round(c._getBrightness()), 100);
+      assert.equal(c._getAlpha(), 0.8);
     });
 
     test('should correctly convert to RGBA', function() {
@@ -654,10 +654,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get HSBA property', function() {
-      assert.equal(Math.round(c.getHue()), 336);
-      assert.equal(Math.round(c.getSaturation()), 100);
-      assert.equal(Math.round(c.getBrightness()), 100);
-      assert.equal(c.getAlpha(), 0.8);
+      assert.equal(Math.round(c._getHue()), 336);
+      assert.equal(Math.round(c._getSaturation()), 100);
+      assert.equal(Math.round(c._getBrightness()), 100);
+      assert.equal(c._getAlpha(), 0.8);
     });
 
     test('should correctly convert to RGBA', function() {
@@ -676,10 +676,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get HSBA property', function() {
-      assert.equal(Math.round(c.getHue()), 336);
-      assert.equal(Math.round(c.getSaturation()), 100);
-      assert.equal(Math.round(c.getBrightness()), 100);
-      assert.equal(c.getAlpha(), 0.8);
+      assert.equal(Math.round(c._getHue()), 336);
+      assert.equal(Math.round(c._getSaturation()), 100);
+      assert.equal(Math.round(c._getBrightness()), 100);
+      assert.equal(c._getAlpha(), 0.8);
     });
 
     test('should correctly convert to RGBA', function() {
