@@ -2,32 +2,29 @@
  * @module Color
  * @submodule Creating & Reading
  * @for p5
+ * @requires core
+ * @requires constants
+ * @requires color_conversion
  */
 
 var p5 = require('../core/core');
-var color_conversion = require('./color_conversion');
 var constants = require('../core/constants');
+var color_conversion = require('./color_conversion');
 
 /**
- *
  * @class p5.Color
  * @constructor
- * rgba, hsla, hsba are normalized rgba arrays
- * (1, 1, 1, 1)
  */
-p5.Color = function (pInst, vals) {
+p5.Color = function(pInst, vals) {
   this.mode = pInst._renderer._colorMode;
   this.maxes = pInst._renderer._colorMaxes;
-  var isHSB = this.mode === constants.HSB,
-      isRGB = this.mode === constants.RGB,
-      isHSL = this.mode === constants.HSL;
 
-  if (isRGB) {
+  if (this.mode === constants.RGB) {
     this._array = p5.Color._getFormattedColor.apply(pInst, vals);
-  } else if (isHSB) {
+  } else if (this.mode === constants.HSB) {
     this.hsba = p5.Color._getFormattedColor.apply(pInst, vals);
     this._array = color_conversion._hsbaToRGBA(this.hsba);
-  } else if (isHSL){
+  } else if (this.mode === constants.HSL) {
     this.hsla = p5.Color._getFormattedColor.apply(pInst, vals);
     this._array = color_conversion._hslaToRGBA(this.hsla);
   } else {
@@ -38,6 +35,7 @@ p5.Color = function (pInst, vals) {
                 Math.round(this._array[1] * 255),
                 Math.round(this._array[2] * 255),
                 Math.round(this._array[3] * 255)];
+
   return this;
 };
 
