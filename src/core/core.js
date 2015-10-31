@@ -489,8 +489,8 @@ var p5 = function(sketch, node, sync) {
   window.addEventListener('focus', focusHandler);
   window.addEventListener('blur', blurHandler);
   this.registerMethod('remove', function() {
-    window.removeEventListener(focusHandler);
-    window.removeEventListener(blurHandler);
+    window.removeEventListener('focus', focusHandler);
+    window.removeEventListener('blur', blurHandler);
   });
 
   // TODO: ???
