@@ -690,4 +690,94 @@ suite('p5.Color', function() {
       assert.equal(c.toString(), 'rgba(255,0,102,0.8)');
     });
   });
+
+  suite('p5.Color in RGB mode with grayscale value', function() {
+    setup(function() {
+      myp5.colorMode(myp5.RGB);
+      c = myp5.color(100);
+    });
+
+    test('should create instance of p5.Color', function() {
+      assert.instanceOf(c, p5.Color);
+    });
+
+    test('should correctly set RGB levels', function() {
+      assert.deepEqual(c.levels, [100, 100, 100, 255]);
+    });
+  });
+
+  suite('p5.Color in RGB mode with grayscale value and alpha', function() {
+    setup(function() {
+      myp5.colorMode(myp5.RGB);
+      c = myp5.color(100, 70);
+    });
+
+    test('should create instance of p5.Color', function() {
+      assert.instanceOf(c, p5.Color);
+    });
+
+    test('should correctly set RGB levels', function() {
+      assert.deepEqual(c.levels, [100, 100, 100, 70]);
+    });
+  });
+
+  suite('p5.Color in HSB mode with grayscale value', function() {
+    setup(function() {
+      myp5.colorMode(myp5.HSB);
+      c = myp5.color(39.3);
+    });
+
+    test('should create instance of p5.Color', function() {
+      assert.instanceOf(c, p5.Color);
+    });
+
+    test('should correctly set RGB levels', function() {
+      assert.deepEqual(c.levels, [100, 100, 100, 255]);
+    });
+  });
+
+  suite('p5.Color in HSB mode with grayscale value and alpha', function() {
+    setup(function() {
+      myp5.colorMode(myp5.HSB);
+      c = myp5.color(39.3, 0.275);
+    });
+
+    test('should create instance of p5.Color', function() {
+      assert.instanceOf(c, p5.Color);
+    });
+
+    test('should correctly set RGB levels', function() {
+      assert.deepEqual(c.levels, [100, 100, 100, 70]);
+    });
+  });
+
+  suite('p5.Color in HSL mode with grayscale value', function() {
+    setup(function() {
+      myp5.colorMode(myp5.HSL);
+      c = myp5.color(39.3);
+    });
+
+    test('should create instance of p5.Color', function() {
+      assert.instanceOf(c, p5.Color);
+    });
+
+    test('should correctly set RGB levels', function() {
+      assert.deepEqual(c.levels, [100, 100, 100, 255]);
+    });
+  });
+
+  suite('p5.Color in HSL mode with grayscale value and alpha', function() {
+    setup(function() {
+      myp5.colorMode(myp5.HSL);
+      c = myp5.color(39.3, 0.275);
+    });
+
+    test('should create instance of p5.Color', function() {
+      assert.instanceOf(c, p5.Color);
+    });
+
+    test('should correctly set RGB levels', function() {
+      assert.deepEqual(c.levels, [100, 100, 100, 70]);
+    });
+  });
 });
