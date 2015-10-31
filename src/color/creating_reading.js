@@ -282,6 +282,12 @@ p5.prototype.green = function(c) {
 /**
  * Extracts the hue value from a color or pixel array.
  *
+ * Hue exists in both HSB and HSL. This function will return the
+ * HSB-normalized hue when supplied with an HSB color object (or when supplied
+ * with a pixel array while the color mode is HSB), but will default to the
+ * HSL-normalized hue otherwise. (The values will only be different if the
+ * maximum hue setting for each system is different.)
+ *
  * @method hue
  * @param {Object} color p5.Color object or pixel array
  * @example

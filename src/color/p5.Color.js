@@ -34,17 +34,13 @@ p5.Color = function(pInst, vals) {
   this.mode = pInst._renderer._colorMode;
   this.maxes = pInst._renderer._colorMaxes;
 
-  // Cache input represention and calculate normalized RGBA values.
-  if (this.mode === constants.RGB) {
-    this._array = p5.Color._parseInputs.apply(pInst, vals);
-  } else if (this.mode === constants.HSB) {
-    this.hsba = p5.Color._parseInputs.apply(pInst, vals);
-    this._array = color_conversion._hsbaToRGBA(this.hsba);
-  } else if (this.mode === constants.HSL) {
-    this.hsla = p5.Color._parseInputs.apply(pInst, vals);
-    this._array = color_conversion._hslaToRGBA(this.hsla);
-  } else {
+  // Calculate normalized RGBA values.
+  if (this.mode !== constants.RGB &&
+      this.mode !== constants.HSL &&
+      this.mode !== constants.HSB) {
     throw new Error(pInst._renderer._colorMode + ' is an invalid colorMode.');
+  } else {
+    this._array = p5.Color._parseInputs.apply(pInst, vals);
   }
 
   // Expose closest screen color.
@@ -80,14 +76,23 @@ p5.Color.prototype._getGreen = function() {
   return this._array[1] * this.maxes[constants.RGB][1];
 };
 
+/**
+ * Hue is the same in HSB and HSL, but the maximum value may be different.
+ * This function will return the HSB-normalized saturation when supplied with
+ * an HSB color object, but will default to the HSL-normalized saturation
+ * otherwise.
+ */
 p5.Color.prototype._getHue = function() {
-  if (this.hsla) {
+  if (this.mode === constants.HSB) {
+    if (!this.hsba) {
+      this.hsba = color_conversion._rgbaToHSBA(this._array);
+    }
+    return this.hsba[0] * this.maxes[constants.HSB][0];
+  } else {
+    if (!this.hsla) {
+      this.hsla = color_conversion._rgbaToHSLA(this._array);
+    }
     return this.hsla[0] * this.maxes[constants.HSL][0];
-  } else if (this.hsba) {
-    return this.hsba[0] * this.maxes[constants.HSB][0];
-  } else {  // Hue is the same in HSB and HSL, so we can return either.
-    this.hsba = color_conversion._rgbaToHSBA(this._array);
-    return this.hsba[0] * this.maxes[constants.HSB][0];
   }
 };
 
@@ -108,7 +113,10 @@ p5.Color.prototype._getRed = function() {
  * to the HSL saturation otherwise.
  */
 p5.Color.prototype._getSaturation = function() {
-  if (this.hsba && this.mode === constants.HSB) {
+  if (this.mode === constants.HSB) {
+    if (!this.hsba) {
+      this.hsba = color_conversion._rgbaToHSBA(this._array);
+    }
     return this.hsba[1] * this.maxes[constants.HSB][1];
   } else {
     if (!this.hsla) {
@@ -392,8 +400,8 @@ var colorPatterns = {
 };
 
 /**
- * For a number of different inputs, returns a color formatted as
- * normalized [r, g, b, a], maxes [255, 255, 255, 255]
+ * For a number of different inputs, returns a color formatted as [r, g, b, a]
+ * arrays, with each component normalized between 0 and 1.
  *
  * @param {Array-like} args An 'array-like' object that represents a list of
  *                          arguments
@@ -417,50 +425,79 @@ var colorPatterns = {
  */
 p5.Color._parseInputs = function() {
   var numArgs = arguments.length;
-  var mode    = this._renderer._colorMode;
-  var maxArr  = this._renderer._colorMaxes[this._renderer._colorMode];
+  var mode = this._renderer._colorMode;
+  var maxes = this._renderer._colorMaxes;
   var results = [];
 
-  // Handle [r,g,b,a] or [h,s,l,a] color values
-  if (numArgs >= 3) {
-    results[0] = arguments[0] / maxArr[0];
-    results[1] = arguments[1] / maxArr[1];
-    results[2] = arguments[2] / maxArr[2];
-    results[3] = typeof arguments[3] === 'number' ?
-              arguments[3] / maxArr[3] : 1;
-  // Handle strings: named colors, hex values, css strings
+  if (numArgs >= 3) {  // Argument is a list of component values.
+
+    results[0] = arguments[0] / maxes[mode][0];
+    results[1] = arguments[1] / maxes[mode][1];
+    results[2] = arguments[2] / maxes[mode][2];
+
+    // Alpha may be undefined, so default it to 100%.
+    if (typeof arguments[3] === 'number') {
+      results[3] = arguments[3] / maxes[mode][3];
+    } else {
+      results[3] = 1;
+    }
+
+    // Constrain components to the range [0,1].
+    results = results.map(function(value) {
+      if (value > 1) {
+        return 1;
+      } else if (value < 0) {
+        return 0;
+      } else {
+        return value;
+      }
+    });
+
+    // Convert to RGBA and return.
+    if (mode === constants.HSL) {
+      return color_conversion._hslaToRGBA(results);
+    } else if (mode === constants.HSB) {
+      return color_conversion._hsbaToRGBA(results);
+    } else {
+      return results;
+    }
+
   } else if (numArgs === 1 && typeof arguments[0] === 'string') {
+
     var str = arguments[0].trim().toLowerCase();
 
+    // Return if string is a named colour.
     if (namedColors[str]) {
-      // Handle named color values
       return p5.Color._parseInputs.apply(this, [namedColors[str]]);
     }
 
-    // Work through available string patterns to determine how to proceed
-    if (colorPatterns.HEX3.test(str)) {
+    // Try RGBA pattern matching.
+    if (colorPatterns.HEX3.test(str)) {  // #rgb
       results = colorPatterns.HEX3.exec(str).slice(1).map(function(color) {
-        // Expand #RGB to #RRGGBB
         return parseInt(color + color, 16) / 255;
       });
       results[3] = 1;
-    } else if (colorPatterns.HEX6.test(str)) {
+      return results;
+    } else if (colorPatterns.HEX6.test(str)) {  // #rrggbb
       results = colorPatterns.HEX6.exec(str).slice(1).map(function(color) {
         return parseInt(color, 16) / 255;
       });
       results[3] = 1;
-    } else if (colorPatterns.RGB.test(str)) {
+      return results;
+    } else if (colorPatterns.RGB.test(str)) {  // rgb(R,G,B)
       results = colorPatterns.RGB.exec(str).slice(1).map(function(color) {
         return color / 255;
       });
       results[3] = 1;
-    } else if (colorPatterns.RGB_PERCENT.test(str)) {
+      return results;
+    } else if (colorPatterns.RGB_PERCENT.test(str)) {  // rgb(R%,G%,B%)
       results = colorPatterns.RGB_PERCENT.exec(str).slice(1)
         .map(function(color) {
           return parseFloat(color) / 100;
         });
       results[3] = 1;
-    } else if (colorPatterns.RGBA.test(str)) {
+      return results;
+    } else if (colorPatterns.RGBA.test(str)) {  // rgba(R,G,B,A)
       results = colorPatterns.RGBA.exec(str).slice(1)
         .map(function(color, idx) {
           if (idx === 3) {
@@ -468,7 +505,8 @@ p5.Color._parseInputs = function() {
           }
           return color / 255;
         });
-    } else if (colorPatterns.RGBA_PERCENT.test(str)) {
+      return results;
+    } else if (colorPatterns.RGBA_PERCENT.test(str)) {  // rgba(R%,G%,B%,A%)
       results = colorPatterns.RGBA_PERCENT.exec(str).slice(1)
         .map(function(color, idx) {
           if (idx === 3) {
@@ -476,110 +514,90 @@ p5.Color._parseInputs = function() {
           }
           return parseFloat(color) / 100;
         });
-    }
-    // convert RGBA result to correct color space
-    if( results.length ){
-      if( mode === constants.RGB ){
-        return results;
-      }
-      else if( mode === constants.HSL ){
-        return color_conversion._rgbaToHSLA(results);
-      }
-      else if( mode === constants.HSB ){
-        return color_conversion._rgbaToHSBA(results);
-      }
+      return results;
     }
 
-    // test string HSLA format
-    if (colorPatterns.HSL.test(str)) {
+    // Try HSLA pattern matching.
+    if (colorPatterns.HSL.test(str)) {  // hsl(H,S,L)
       results = colorPatterns.HSL.exec(str).slice(1)
         .map(function(color, idx) {
-        if( idx === 0 ) {
+        if (idx === 0) {
           return parseInt(color, 10) / 360;
         }
         return parseInt(color, 10) / 100;
       });
       results[3] = 1;
-    } else if (colorPatterns.HSLA.test(str)) {
+    } else if (colorPatterns.HSLA.test(str)) {  // hsla(H,S,L,A)
       results = colorPatterns.HSLA.exec(str).slice(1)
         .map(function(color, idx) {
-        if( idx === 0 ){
+        if (idx === 0) {
           return parseInt(color, 10) / 360;
         }
-        else if( idx === 3 ) {
+        else if (idx === 3) {
           return parseFloat(color);
         }
         return parseInt(color, 10) / 100;
       });
     }
-    // convert HSLA result to correct color space
-    if( results.length ){
-      if( mode === constants.RGB ){
-        return color_conversion._hslaToRGBA(results);
-      }
-      else if( mode === constants.HSL ){
-        return results;
-      }
-      else if( mode === constants.HSB ){
-        return color_conversion._hslaToHSBA(results);
-      }
+    if (results.length) {
+      return color_conversion._hslaToRGBA(results);
     }
 
-    // test string HSBA format
-    if (colorPatterns.HSB.test(str)) {
+    // Try HSBA pattern matching.
+    if (colorPatterns.HSB.test(str)) {  // hsb(H,S,B)
       results = colorPatterns.HSB.exec(str).slice(1)
         .map(function(color, idx) {
-        if( idx === 0 ) {
+        if (idx === 0) {
           return parseInt(color, 10) / 360;
         }
         return parseInt(color, 10) / 100;
       });
       results[3] = 1;
-    } else if (colorPatterns.HSBA.test(str)) {
+    } else if (colorPatterns.HSBA.test(str)) {  // hsba(H,S,B,A)
       results = colorPatterns.HSBA.exec(str).slice(1)
         .map(function(color, idx) {
-        if( idx === 0 ){
+        if (idx === 0) {
           return parseInt(color, 10) / 360;
         }
-        else if( idx === 3 ) {
+        else if (idx === 3) {
           return parseFloat(color);
         }
         return parseInt(color, 10) / 100;
       });
     }
-    // convert HSBA result to correct color space
-    if( results.length ){
-      if( mode === constants.RGB ){
-        return color_conversion._hsbaToRGBA(results);
-      }
-      else if( mode === constants.HSB ){
-        return results;
-      }
-      else if( mode === constants.HSL ){
-        return color_conversion._hsbaToHSLA(results);
-      }
+    if (results.length) {
+      return color_conversion._hsbaToRGBA(results);
     }
 
-    // Input did not match any CSS Color pattern: Default to white
+    // Input did not match any CSS color pattern: default to white.
     results = [1, 1, 1, 1];
-  } // Handle greyscale color mode
-  else if((numArgs === 1 || numArgs === 2)&& typeof arguments[0] === 'number')
-  {
-    // When users pass only one argument, they are presumed to be
-    // working in grayscale mode.
-    if (mode === constants.RGB) {
-      results[0] = arguments[0] / maxArr[0];
-      results[1] = arguments[0] / maxArr[1];
-      results[2] = arguments[0] / maxArr[2];
-      results[3] = typeof arguments[1] === 'number' ?
-                     arguments[1] / maxArr[3] : 1;
+
+  } else if ((numArgs === 1 || numArgs === 2) &&
+              typeof arguments[0] === 'number' &&
+              mode === constants.RGB) {  // 'Grayscale' mode.
+
+    results[0] = arguments[0] / maxes[mode][0];
+    results[1] = arguments[0] / maxes[mode][1];
+    results[2] = arguments[0] / maxes[mode][2];
+
+    // Alpha may be undefined, so default it to 100%.
+    if (typeof arguments[1] === 'number') {
+      results[3] = arguments[1] / maxes[mode][3];
     } else {
-      results[0] = arguments[0];
-      results[1] = arguments[0];
-      results[2] = arguments[0] / maxArr[2];
-      results[3] = typeof arguments[1] === 'number' ?
-                     arguments[1] / maxArr[3] : 1;
+      results[3] = 1;
     }
+
+    // Constrain components to the range [0,1].
+    results = results.map(function(value) {
+      if (value > 1) {
+        return 1;
+      } else if (value < 0) {
+        return 0;
+      } else {
+        return value;
+      }
+    });
+
   } else {
     throw new Error (arguments + 'is not a valid color representation.');
   }
