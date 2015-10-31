@@ -331,10 +331,12 @@ p5.prototype.hue = function(c) {
  * @example
  * <div>
  * <code>
+ * colorMode(RGB);
  * stroke(255);
  * background(51);
  * from = color(218, 165, 32);
  * to = color(72, 61, 139);
+ * colorMode(RGB);  // Try changing to HSB.
  * interA = lerpColor(from, to, .33);
  * interB = lerpColor(from, to, .66);
  * fill(from);
