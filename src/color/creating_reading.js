@@ -321,6 +321,8 @@ p5.prototype.hue = function(c) {
  * but necessary because otherwise numbers outside the range will produce
  * strange and unexpected colors.
  *
+ * The way that colours are interpolated depends on the current color mode.
+ *
  * @method lerpColor
  * @param  {Array/Number} c1  interpolate from this color
  * @param  {Array/Number} c2  interpolate to this color
@@ -331,8 +333,8 @@ p5.prototype.hue = function(c) {
  * <code>
  * stroke(255);
  * background(51);
- * from = color(204, 102, 0);
- * to = color(0, 102, 153);
+ * from = color(218, 165, 32);
+ * to = color(72, 61, 139);
  * interA = lerpColor(from, to, .33);
  * interB = lerpColor(from, to, .66);
  * fill(from);
@@ -350,29 +352,26 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
   var mode = this._renderer._colorMode;
   var maxes = this._renderer._colorMaxes;
   var l0, l1, l2, l3;
-  var fromColor, toColor;
+  var fromArray, toArray;
 
-  if(this._renderer._colorMode === constants.RGB) {
-    fromColor = this.color(c1).levels.map(function(level) {
+  if (mode === constants.RGB) {
+    fromArray = c1.levels.map(function(level) {
       return level / 255;
     });
-    toColor = this.color(c2).levels.map(function(level) {
+    toArray = c2.levels.map(function(level) {
       return level / 255;
     });
-  }
-  else if (this._renderer._colorMode === constants.HSB) {
+  } else if (mode === constants.HSB) {
     c1._getBrightness();  // Cache hsba so it definitely exists.
     c2._getBrightness();
-    fromColor = c1.hsba;
-    toColor = c2.hsba;
-  }
-  else if(this._renderer._colorMode === constants.HSL) {
+    fromArray = c1.hsba;
+    toArray = c2.hsba;
+  } else if (mode === constants.HSL) {
     c1._getLightness();  // Cache hsla so it definitely exists.
     c2._getLightness();
-    fromColor = c1.hsla;
-    toColor = c2.hsla;
-  }
-  else {
+    fromArray = c1.hsla;
+    toArray = c2.hsla;
+  } else {
     throw new Error (mode + 'cannot be used for interpolation.');
   }
 
@@ -384,10 +383,10 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
   }
 
   // Perform interpolation.
-  l0 = this.lerp(fromColor[0], toColor[0], amt);
-  l1 = this.lerp(fromColor[1], toColor[1], amt);
-  l2 = this.lerp(fromColor[2], toColor[2], amt);
-  l3 = this.lerp(fromColor[3], toColor[3], amt);
+  l0 = this.lerp(fromArray[0], toArray[0], amt);
+  l1 = this.lerp(fromArray[1], toArray[1], amt);
+  l2 = this.lerp(fromArray[2], toArray[2], amt);
+  l3 = this.lerp(fromArray[3], toArray[3], amt);
 
   // Scale components.
   l0 *= maxes[mode][0];
