@@ -575,9 +575,14 @@ p5.Color._parseInputs = function() {
   } else if ((numArgs === 1 || numArgs === 2) &&
               typeof arguments[0] === 'number') {  // 'Grayscale' mode.
 
-    results[0] = arguments[0] / maxes[constants.RGB][0];
-    results[1] = arguments[0] / maxes[constants.RGB][1];
-    results[2] = arguments[0] / maxes[constants.RGB][2];
+    /**
+     * For HSB and HSL, interpret the gray level as a brightness/lightness
+     * value (they are equivalent when chroma is zero). For RGB, normalize the
+     * gray level according to the blue maximum.
+     */
+    results[0] = arguments[0] / maxes[mode][2];
+    results[1] = arguments[0] / maxes[mode][2];
+    results[2] = arguments[0] / maxes[mode][2];
 
     // Alpha may be undefined, so default it to 100%.
     if (typeof arguments[1] === 'number') {
