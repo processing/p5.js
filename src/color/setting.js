@@ -222,21 +222,21 @@ p5.prototype.colorMode = function() {
     this._renderer._colorMode = arguments[0];
 
     // Set color maxes.
-    var maxArr = this._renderer._colorMaxes[this._renderer._colorMode];
+    var maxes = this._renderer._colorMaxes[this._renderer._colorMode];
     if (arguments.length === 2) {
-      maxArr[0] = arguments[1];  // Red
-      maxArr[1] = arguments[1];  // Green
-      maxArr[2] = arguments[1];  // Blue
-      maxArr[3] = arguments[1];  // Alpha
+      maxes[0] = arguments[1];  // Red
+      maxes[1] = arguments[1];  // Green
+      maxes[2] = arguments[1];  // Blue
+      maxes[3] = arguments[1];  // Alpha
     } else if (arguments.length === 4) {
-      maxArr[0] = arguments[1];  // Red
-      maxArr[1] = arguments[2];  // Green
-      maxArr[2] = arguments[3];  // Blue
+      maxes[0] = arguments[1];  // Red
+      maxes[1] = arguments[2];  // Green
+      maxes[2] = arguments[3];  // Blue
     } else if (arguments.length === 5) {
-      maxArr[0] = arguments[1];  // Red
-      maxArr[1] = arguments[2];  // Green
-      maxArr[2] = arguments[3];  // Blue
-      maxArr[3] = arguments[4];  // Alpha
+      maxes[0] = arguments[1];  // Red
+      maxes[1] = arguments[2];  // Green
+      maxes[2] = arguments[3];  // Blue
+      maxes[3] = arguments[4];  // Alpha
     }
   }
 

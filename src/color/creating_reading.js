@@ -313,20 +313,13 @@ p5.prototype.hue = function(c) {
 };
 
 /**
- * Calculates a color or colors between two color at a specific increment,
- * using gamma correction to blend colors in the linear RGB space.
- * The amt parameter is the amount to interpolate between the two values
- * where 0.0 equal to the first point, 0.1 is very near the first point,
- * 0.5 is halfway in between, etc. An amount below 0 will be treated as 0.
- * Likewise, amounts above 1 will be capped at 1. This is different from
- * the behavior of lerp(), but necessary because otherwise numbers outside
- * the range will produce strange and unexpected colors.
- *
- * The regular RGB color representation stores the square root of the
- * displayed color, not the value itself. Your monitor behaves as if it
- * squares the color values before displaying it. lerpColor first transforms
- * colors into the linear color space before blending, to correctly mix the
- * colors as two rays of light.
+ * Blends two colors to find a third color somewhere between them. The amt
+ * parameter is the amount to interpolate between the two values where 0.0
+ * equal to the first color, 0.1 is very near the first color, 0.5 is halfway
+ * in between, etc. An amount below 0 will be treated as 0. Likewise, amounts
+ * above 1 will be capped at 1. This is different from the behavior of lerp(),
+ * but necessary because otherwise numbers outside the range will produce
+ * strange and unexpected colors.
  *
  * @method lerpColor
  * @param  {Array/Number} c1  interpolate from this color
@@ -354,29 +347,55 @@ p5.prototype.hue = function(c) {
  * </div>
  */
 p5.prototype.lerpColor = function(c1, c2, amt) {
-  var l1, l2, l3, l4;
+  var mode = this._renderer._colorMode;
+  var maxes = this._renderer._colorMaxes;
+  var l0, l1, l2, l3;
   var fromColor, toColor;
 
   if(this._renderer._colorMode === constants.RGB) {
-    fromColor = this.color(c1).levels;
-    toColor = this.color(c2).levels;
+    fromColor = this.color(c1).levels.map(function(level) {
+      return level / 255;
+    });
+    toColor = this.color(c2).levels.map(function(level) {
+      return level / 255;
+    });
   }
   else if (this._renderer._colorMode === constants.HSB) {
-    fromColor = this.color(c1).hsba;
-    toColor = this.color(c2).hsba;
+    c1._getBrightness();  // Cache hsba so it definitely exists.
+    c2._getBrightness();
+    fromColor = c1.hsba;
+    toColor = c2.hsba;
   }
   else if(this._renderer._colorMode === constants.HSL) {
-    fromColor = this.color(c1).hsla;
-    toColor = this.color(c2).hsla;
+    c1._getLightness();  // Cache hsla so it definitely exists.
+    c2._getLightness();
+    fromColor = c1.hsla;
+    toColor = c2.hsla;
   }
   else {
-    return;
+    throw new Error (mode + 'cannot be used for interpolation.');
   }
-  l1 = this.lerp(fromColor[0], toColor[0], amt);
-  l2 = this.lerp(fromColor[1], toColor[1], amt);
-  l3 = this.lerp(fromColor[2], toColor[2], amt);
-  l4 = this.lerp(fromColor[3], toColor[3], amt);
-  return this.color(l1, l2, l3, l4);
+
+  // Prevent extrapolation.
+  if (amt > 1) {
+    amt = 1;
+  } else if (amt < 0) {
+    amt = 0;
+  }
+
+  // Perform interpolation.
+  l0 = this.lerp(fromColor[0], toColor[0], amt);
+  l1 = this.lerp(fromColor[1], toColor[1], amt);
+  l2 = this.lerp(fromColor[2], toColor[2], amt);
+  l3 = this.lerp(fromColor[3], toColor[3], amt);
+
+  // Scale components.
+  l0 *= maxes[mode][0];
+  l1 *= maxes[mode][1];
+  l2 *= maxes[mode][2];
+  l3 *= maxes[mode][3];
+
+  return this.color(l0, l1, l2, l3);
 };
 
 /**
