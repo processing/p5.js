@@ -573,12 +573,11 @@ p5.Color._parseInputs = function() {
     results = [1, 1, 1, 1];
 
   } else if ((numArgs === 1 || numArgs === 2) &&
-              typeof arguments[0] === 'number' &&
-              mode === constants.RGB) {  // 'Grayscale' mode.
+              typeof arguments[0] === 'number') {  // 'Grayscale' mode.
 
-    results[0] = arguments[0] / maxes[mode][0];
-    results[1] = arguments[0] / maxes[mode][1];
-    results[2] = arguments[0] / maxes[mode][2];
+    results[0] = arguments[0] / maxes[constants.RGB][0];
+    results[1] = arguments[0] / maxes[constants.RGB][1];
+    results[2] = arguments[0] / maxes[constants.RGB][2];
 
     // Alpha may be undefined, so default it to 100%.
     if (typeof arguments[1] === 'number') {
