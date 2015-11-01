@@ -38,7 +38,7 @@ p5.Color = function(pInst, vals) {
   if (this.mode !== constants.RGB &&
       this.mode !== constants.HSL &&
       this.mode !== constants.HSB) {
-    throw new Error(pInst._renderer._colorMode + ' is an invalid colorMode.');
+    throw new Error(this.mode + ' is an invalid colorMode.');
   } else {
     this._array = p5.Color._parseInputs.apply(pInst, vals);
   }
