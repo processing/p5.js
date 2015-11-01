@@ -378,11 +378,7 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
   }
 
   // Prevent extrapolation.
-  if (amt > 1) {
-    amt = 1;
-  } else if (amt < 0) {
-    amt = 0;
-  }
+  amt = Math.max(Math.min(amt, 1), 0);
 
   // Perform interpolation.
   l0 = this.lerp(fromArray[0], toArray[0], amt);

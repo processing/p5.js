@@ -444,13 +444,7 @@ p5.Color._parseInputs = function() {
 
     // Constrain components to the range [0,1].
     results = results.map(function(value) {
-      if (value > 1) {
-        return 1;
-      } else if (value < 0) {
-        return 0;
-      } else {
-        return value;
-      }
+      return Math.max(Math.min(value, 1), 0);
     });
 
     // Convert to RGBA and return.
@@ -593,13 +587,7 @@ p5.Color._parseInputs = function() {
 
     // Constrain components to the range [0,1].
     results = results.map(function(value) {
-      if (value > 1) {
-        return 1;
-      } else if (value < 0) {
-        return 0;
-      } else {
-        return value;
-      }
+      return Math.max(Math.min(value, 1), 0);
     });
 
   } else {
