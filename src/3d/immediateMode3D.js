@@ -77,7 +77,7 @@ p5.Renderer3D.prototype.quad = function
 
 p5.Renderer3D.prototype.beginShape = function(mode){
   this.shapeMode = mode;
-  this.vertexStack = [];
+  this.vertexStack.length = 0;
   return this;
 };
 
@@ -89,7 +89,7 @@ p5.Renderer3D.prototype.vertex = function(x, y, z){
 p5.Renderer3D.prototype.endShape = function(){
   var gl = this.GL;
   this._primitives2D(this.vertexStack);
-  this.vertexStack = [];
+  this.vertexStack.length = 0;
 
   switch(this.shapeMode){
     case 'POINTS':
