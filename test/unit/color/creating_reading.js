@@ -32,6 +32,12 @@ suite('CreatingReading', function() {
       assert.deepEqual(interA.levels, [69, 192, 47, 255]);
       assert.deepEqual(interB.levels, [56, 166, 163, 255]);
     });
+    test('should not extrapolate', function() {
+      var interA = myp5.lerpColor(fromColor, toColor, -0.5);
+      var interB = myp5.lerpColor(fromColor, toColor, 1.5);
+      assert.deepEqual(interA.levels, [218, 165, 32, 255]);
+      assert.deepEqual(interB.levels, [72, 61, 139, 255]);
+    });
   });
   suite('p5.prototype.lerpColor with alpha', function() {
     setup(function() {
@@ -58,6 +64,12 @@ suite('CreatingReading', function() {
       var interB = myp5.lerpColor(fromColor, toColor, 0.66);
       assert.deepEqual(interA.levels, [69, 192, 47, 99]);
       assert.deepEqual(interB.levels, [56, 166, 163, 149]);
+    });
+    test('should not extrapolate', function() {
+      var interA = myp5.lerpColor(fromColor, toColor, -0.5);
+      var interB = myp5.lerpColor(fromColor, toColor, 1.5);
+      assert.deepEqual(interA.levels, [218, 165, 32, 49]);
+      assert.deepEqual(interB.levels, [72, 61, 139, 200]);
     });
   });
 });
