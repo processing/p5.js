@@ -10,7 +10,7 @@ var RESOLUTION = 1000;
 //@TODO should implement public method
 //to override these attributes
 var attributes = {
-  alpha: false,
+  alpha: true,
   depth: true,
   stencil: true,
   antialias: false,
