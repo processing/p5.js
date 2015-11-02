@@ -25,7 +25,8 @@ p5.Renderer3D.prototype._primitives2D = function(arr){
   //create vertexcolor buffer
   var vertexColorBuffer = this.colorBuffer;
   gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
-  var color = this._getCurColor();
+
+  var color = this.curColor || [0.5, 0.5, 0.5, 1.0];
   var colors = [];
   for(var i = 0; i < arr.length / 3; i++){
     colors = colors.concat(color);
@@ -37,7 +38,7 @@ p5.Renderer3D.prototype._primitives2D = function(arr){
 
   //matrix
   var mId = 'vertexColorVert|vertexColorFrag';
-  this.setMatrixUniforms(mId);
+  this._setMatrixUniforms(mId);
 };
 
 p5.Renderer3D.prototype.point = function(x, y, z){
@@ -76,19 +77,19 @@ p5.Renderer3D.prototype.quad = function
 
 p5.Renderer3D.prototype.beginShape = function(mode){
   this.shapeMode = mode;
-  this.verticeStack = [];
+  this.vertexStack.length = 0;
   return this;
 };
 
 p5.Renderer3D.prototype.vertex = function(x, y, z){
-  this.verticeStack.push(x, y, z);
+  this.vertexStack.push(x, y, z);
   return this;
 };
 
 p5.Renderer3D.prototype.endShape = function(){
   var gl = this.GL;
-  this._primitives2D(this.verticeStack);
-  this.verticeStack = [];
+  this._primitives2D(this.vertexStack);
+  this.vertexStack.length = 0;
 
   switch(this.shapeMode){
     case 'POINTS':
@@ -113,7 +114,8 @@ p5.Renderer3D.prototype.endShape = function(){
   return this;
 };
 
-//@TODO: figure out how to actually do stroke on shapes in 3D
+//@TODO: implement stencil buffer for geometries.
+//for now throw error.
 p5.Renderer3D.prototype._strokeCheck = function(){
   if(this.drawMode === 'stroke'){
     throw new Error(
@@ -130,15 +132,6 @@ p5.Renderer3D.prototype.strokeWeight = function() {
 //////////////////////////////////////////////
 // COLOR
 //////////////////////////////////////////////
-
-p5.Renderer3D.prototype.fill = function(r, g, b, a) {
-  var color = this._pInst.color.apply(this._pInst, arguments);
-  var colorNormalized = color._normalize();
-  this.curColor = colorNormalized;
-  this.drawMode = 'fill';
-  return this;
-};
-
 p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
   var colorNormalized = color._normalize();
@@ -154,7 +147,7 @@ p5.Renderer3D.prototype._getColorVertexShader = function(){
 
   if(!this.materialInHash(mId)){
     shaderProgram =
-      this.initShaders('vertexColorVert', 'vertexColorFrag', true);
+      this._initShaders('vertexColorVert', 'vertexColorFrag', true);
     this.mHash[mId] = shaderProgram;
     shaderProgram.vertexColorAttribute =
     gl.getAttribLocation(shaderProgram, 'aVertexColor');

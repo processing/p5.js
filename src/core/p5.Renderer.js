@@ -138,6 +138,10 @@ p5.Renderer.prototype.textDescent = function() {
   return this._textDescent;
 };
 
+p5.Renderer.prototype._applyDefaults = function(){
+  return this;
+};
+
 /**
  * Helper fxn to check font type (system or otf)
  */
