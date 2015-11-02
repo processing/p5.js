@@ -144,7 +144,8 @@ var p5 = function(sketch, node, sync) {
   //////////////////////////////////////////////
 
   this._setupDone = false;
-  this.pixelDensity = window.devicePixelRatio || 1; // for handling hidpi
+  // for handling hidpi
+  this.pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
   this._userNode = node;
   this._curElement = null;
   this._elements = [];
@@ -488,8 +489,8 @@ var p5 = function(sketch, node, sync) {
   window.addEventListener('focus', focusHandler);
   window.addEventListener('blur', blurHandler);
   this.registerMethod('remove', function() {
-    window.removeEventListener(focusHandler);
-    window.removeEventListener(blurHandler);
+    window.removeEventListener('focus', focusHandler);
+    window.removeEventListener('blur', blurHandler);
   });
 
   // TODO: ???
