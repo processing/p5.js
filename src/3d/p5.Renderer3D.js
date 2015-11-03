@@ -9,7 +9,7 @@ var RESOLUTION = 1000;
 
 //@TODO should probably implement an override for these attributes
 var attributes = {
-  alpha: false,
+  alpha: true,
   depth: true,
   stencil: true,
   antialias: false,
