@@ -24,7 +24,7 @@ p5._getDecrementPreload = function() {
 
   // when in preload decrementPreload will always be the last arg as it is set
   // with args.push() before invocation in _wrapPreload
-  if ((window.preload || this.preload) &&
+  if ((window.preload || (this && this.preload)) &&
     typeof decrementPreload === 'function') {
     return decrementPreload;
   } else {
