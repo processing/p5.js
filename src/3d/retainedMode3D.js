@@ -6,11 +6,11 @@ var p5 = require('../core/core');
 var hashCount = 0;
 
 /**
- * createBuffer
+ * _createBuffer
  * @param  {String} gId  key of the geometry object
  * @param  {Array}  arr  array holding bject containing geometry information
  */
-p5.Renderer3D.prototype.createBuffer = function(gId, arr) {
+p5.Renderer3D.prototype._createBuffer = function(gId, arr) {
 
   hashCount ++;
   if(hashCount > 1000){
@@ -44,7 +44,7 @@ p5.Renderer3D.prototype.createBuffer = function(gId, arr) {
 p5.Renderer3D.prototype.initBuffer = function(gId, arr) {
   this._setDefaultCamera();
   var gl = this.GL;
-  this.createBuffer(gId, arr);
+  this._createBuffer(gId, arr);
 
   var shaderProgram = this.mHash[this._getCurShaderId()];
 
@@ -77,8 +77,8 @@ p5.Renderer3D.prototype.initBuffer = function(gId, arr) {
 };
 
 /**
- * drawBuffer
- * @param  {String} gId     key of the geometery object
+ * Draws a buffer given a geometry key ID
+ * @param  {String} gId     ID in our geom hash
  */
 p5.Renderer3D.prototype.drawBuffer = function(gId) {
   this._setDefaultCamera();
@@ -104,7 +104,7 @@ p5.Renderer3D.prototype.drawBuffer = function(gId) {
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer[i]);
 
-    this.setMatrixUniforms(shaderKey);
+    this._setMatrixUniforms(shaderKey);
 
     gl.drawElements(
       gl.TRIANGLES, this.gHash[gId].len[i],
