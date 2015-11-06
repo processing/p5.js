@@ -88,7 +88,7 @@ p5._getDecrementPreload = function() {
  * elements.</p>
  *
  * <div><code>
- * var myFont; 
+ * var myFont;
  *
  * function preload() {
  *   myFont = loadFont('assets/Avenir.otf');
