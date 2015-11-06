@@ -10,7 +10,7 @@ var RESOLUTION = 1000;
 //@TODO should implement public method
 //to override these attributes
 var attributes = {
-  alpha: false,
+  alpha: true,
   depth: true,
   stencil: true,
   antialias: false,
@@ -29,27 +29,30 @@ var attributes = {
  */
 p5.Renderer3D = function(elt, pInst, isMainCanvas) {
   p5.Renderer.call(this, elt, pInst, isMainCanvas);
-
-  try {
-    this.drawingContext = this.canvas.getContext('webgl', attributes) ||
-      this.canvas.getContext('experimental-webgl', attributes);
-    if (this.drawingContext === null) {
-      throw new Error('Error creating webgl context');
-    } else {
-      console.log('p5.Renderer3D: enabled webgl context');
-    }
-  } catch (er) {
-    throw new Error(er);
-  }
+  this._initContext();
 
   this.isP3D = true; //lets us know we're in 3d mode
   this.GL = this.drawingContext;
-  var gl = this.GL;
-  gl.enable(gl.DEPTH_TEST);
-  gl.depthFunc(gl.LEQUAL);
-  this.clear(1.0,1.0,1.0,1.0);//background initialized white
-  gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-  this._init();
+  //Immediate mode
+  this.vertexStack = [];
+  this.vertexBuffer = this.GL.createBuffer();
+  this.colorBuffer = this.GL.createBuffer();
+  //lights
+  this.ambientLightCount = 0;
+  this.directionalLightCount = 0;
+  this.pointLightCount = 0;
+  //camera
+  this._isSetCamera = false;
+  /**
+   * model view, projection, & normal
+   * matrices
+   */
+  this.uMVMatrix = new p5.Matrix();
+  this.uPMatrix  = new p5.Matrix();
+  this.uNMatrix = new p5.Matrix();
+  //Geometry & Material hashes
+  this.gHash = {};
+  this.mHash = {};
   return this;
 };
 
@@ -59,38 +62,25 @@ p5.Renderer3D.prototype = Object.create(p5.Renderer.prototype);
 // Setting
 //////////////////////////////////////////////
 
-p5.Renderer3D.prototype._init = function() {
-  var gl = this.GL;
-  //in immediate mode, we keep track of our vertices
-  //as a js array
-  this.vertexStack = [];
-  this.vertexBuffer = gl.createBuffer();
-  this.colorBuffer = gl.createBuffer();
-  //lights
-  this.ambientLightCount = 0;
-  this.directionalLightCount = 0;
-  this.pointLightCount = 0;
-  //camera
-  this._isSetCamera = false;
-  //initialize default matrices and geom hash
-  this._initMatrices();
-  this._initHash();
+p5.Renderer3D.prototype._initContext = function() {
+  try {
+    this.drawingContext = this.canvas.getContext('webgl', attributes) ||
+      this.canvas.getContext('experimental-webgl', attributes);
+    if (this.drawingContext === null) {
+      throw new Error('Error creating webgl context');
+    } else {
+      console.log('p5.Renderer3D: enabled webgl context');
+      var gl = this.drawingContext;
+      gl.enable(gl.DEPTH_TEST);
+      gl.depthFunc(gl.LEQUAL);
+      //@TODO fix this. or do we even need to glClear on setup?
+      //this.clear(1.0,1.0,1.0,1.0);//background initialized white
+      gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+    }
+  } catch (er) {
+    throw new Error(er);
+  }
 };
-
-//////////////////////////////////////////////
-// MATRIX
-//////////////////////////////////////////////
-
-/**
- * initializes our model view, projection, & normal
- * matrices
- */
-p5.Renderer3D.prototype._initMatrices = function(){
-  this.uMVMatrix = new p5.Matrix();
-  this.uPMatrix  = new p5.Matrix();
-  this.uNMatrix = new p5.Matrix();
-};
-
 //detect if user didn't set the camera
 //then call this function below
 p5.Renderer3D.prototype._setDefaultCamera = function(){
@@ -242,7 +232,7 @@ p5.Renderer3D.prototype._getShader = function(vertId, fragId, immediateMode) {
 };
 
 p5.Renderer3D.prototype._getCurShaderId = function(){
-  //if it's not defined yet
+  //if the shader ID is not yet defined
   if(this.curShaderId === undefined){
     //default shader: normalMaterial()
     var mId = 'normalVert|normalFrag';
@@ -268,11 +258,6 @@ p5.Renderer3D.prototype.fill = function(r, g, b, a) {
 //////////////////////////////////////////////
 // HASH | for material and geometry
 //////////////////////////////////////////////
-
-p5.Renderer3D.prototype._initHash = function(){
-  this.gHash = {};
-  this.mHash = {};
-};
 
 p5.Renderer3D.prototype.geometryInHash = function(gId){
   return this.gHash[gId] !== undefined;

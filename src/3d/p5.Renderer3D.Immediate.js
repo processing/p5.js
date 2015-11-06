@@ -8,72 +8,38 @@ var p5 = require('../core/core');
 // _primitives2D in 3D space
 //////////////////////////////////////////////
 
-p5.Renderer3D.prototype._primitives2D = function(arr){
-  this._setDefaultCamera();
-  var gl = this.GL;
-  var shaderProgram = this._getColorVertexShader();
+// @TODO REMOVE THIS!
+// p5.Renderer3D.prototype._primitives2D = function(arr){
+//   this._setDefaultCamera();
+//   var gl = this.GL;
+//   var shaderProgram = this._getColorVertexShader();
 
-  //create vertice buffer
-  var vertexPositionBuffer = this.verticeBuffer;
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertexPositionBuffer);
+//   //create vertex buffer
+//   gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
 
-  gl.bufferData(
-    gl.ARRAY_BUFFER, new Float32Array(arr), gl.STATIC_DRAW);
-  gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute,
-    3, gl.FLOAT, false, 0, 0);
+//   gl.bufferData(
+//     gl.ARRAY_BUFFER, new Float32Array(arr), gl.STATIC_DRAW);
+//   gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute,
+//     3, gl.FLOAT, false, 0, 0);
 
-  //create vertexcolor buffer
-  var vertexColorBuffer = this.colorBuffer;
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
+//   //create vertexcolor buffer
+//   var vertexColorBuffer = this.colorBuffer;
+//   gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
 
-  var color = this.curColor || [0.5, 0.5, 0.5, 1.0];
-  var colors = [];
-  for(var i = 0; i < arr.length / 3; i++){
-    colors = colors.concat(color);
-  }
+//   var color = this.curColor || [0.5, 0.5, 0.5, 1.0];
+//   var colors = [];
+//   for(var i = 0; i < arr.length / 3; i++){
+//     colors = colors.concat(color);
+//   }
 
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-  gl.vertexAttribPointer(shaderProgram.vertexColorAttribute,
-    4, gl.FLOAT, false, 0, 0);
+//   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+//   gl.vertexAttribPointer(shaderProgram.vertexColorAttribute,
+//     4, gl.FLOAT, false, 0, 0);
 
-  //matrix
-  var mId = 'vertexColorVert|vertexColorFrag';
-  this._setMatrixUniforms(mId);
-};
-
-p5.Renderer3D.prototype.point = function(x, y, z){
-  var gl = this.GL;
-  this._primitives2D([x, y, z]);
-  gl.drawArrays(gl.POINTS, 0, 1);
-  return this;
-};
-
-p5.Renderer3D.prototype.line = function(x1, y1, z1, x2, y2, z2){
-  var gl = this.GL;
-  this._primitives2D([x1, y1, z1, x2, y2, z2]);
-  gl.drawArrays(gl.LINES, 0, 2);
-  return this;
-};
-
-p5.Renderer3D.prototype.triangle = function
-(x1, y1, z1, x2, y2, z2, x3, y3, z3){
-  var gl = this.GL;
-  this._primitives2D([x1, y1, z1, x2, y2, z2, x3, y3, z3]);
-  this._strokeCheck();
-  gl.drawArrays(gl.TRIANGLES, 0, 3);
-  return this;
-};
-
-//@TODO: how to define the order of 4 points
-p5.Renderer3D.prototype.quad = function
-(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4){
-  var gl = this.GL;
-  this._primitives2D(
-    [x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4]);
-  this._strokeCheck();
-  gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-  return this;
-};
+//   //matrix
+//   var mId = 'vertexColorVert|vertexColorFrag';
+//   this._setMatrixUniforms(mId);
+// };
 
 p5.Renderer3D.prototype.beginShape = function(mode){
   this.shapeMode = mode;
