@@ -60,7 +60,9 @@
     // If tests run in a real browser
     // Can alternatively do a check on window.PHANTOMJS
     if (navigator.userAgent.indexOf('PhantomJS') < 0) {
+      window.addEventListener('load', function() {
         mocha.run();
+      }, false);
     }
   </script>
 </body>

@@ -445,7 +445,7 @@ p5.prototype.devicePixelScaling = function(val) {
       this.pixelDensity = val;
     }
     else {
-      this.pixelDensity = window.devicePixelRatio || 1;
+      this.pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
     }
   } else {
     this.pixelDensity = 1;

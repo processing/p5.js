@@ -1,4 +1,4 @@
-//functions are adjusted from Three.js(http://threejs.org)
+//some of the functions are adjusted from Three.js(http://threejs.org)
 
 'use strict';
 
@@ -40,6 +40,8 @@ p5.Geometry3D.prototype.parametricGeometry = function
   var i, j, p;
   var u, v;
   offset = offset || 0;
+  this.detailX = detailX;
+  this.detailY = detailY;
 
   var sliceCount = detailX + 1;
   for (i = 0; i <= detailY; i++){
@@ -73,75 +75,6 @@ p5.Geometry3D.prototype.parametricGeometry = function
       this.uvs.push([uvb, uvc, uvd]);
     }
   }
-};
-
-/**
- * merge duplicated vertices
- */
-p5.Geometry3D.prototype.mergeVertices= function () {
-
-  var verticesMap = {};
-  var unique = [], changes = [];
-
-  var v, key;
-  var precisionPoints = 4;
-  var precision = Math.pow(10, precisionPoints);
-  var i, face;
-  var indices;
-
-  for (i = 0; i < this.vertices.length; i ++) {
-
-    v = this.vertices[i];
-    key = Math.round(v.x * precision) + '_' +
-    Math.round(v.y * precision) + '_' +
-    Math.round(v.z * precision);
-
-    if (verticesMap[key] === undefined) {
-      verticesMap[key] = i;
-      unique.push(this.vertices[i]);
-      changes[i] = unique.length - 1;
-    } else {
-      changes[i] = changes[verticesMap[key]];
-    }
-
-  }
-  // if faces are completely degenerate after merging vertices, we
-  // have to remove them from the geometry.
-  var faceIndicesToRemove = [];
-
-  for (i = 0; i < this.faces.length; i ++) {
-
-    face = this.faces[i];
-
-    face[0] = changes[face[0]];
-    face[1] = changes[face[1]];
-    face[2] = changes[face[2]];
-
-    indices = [face[0], face[1], face[2]];
-
-    var dupIndex = - 1;
-
-    // if any duplicate vertices are found in a Face
-    // we have to remove the face as nothing can be saved
-    for (var n = 0; n < 3; n ++) {
-      if (indices[n] === indices[(n + 1) % 3]) {
-        dupIndex = n;
-        faceIndicesToRemove.push(i);
-        break;
-      }
-    }
-  }
-
-  for (i = faceIndicesToRemove.length - 1; i >= 0; i --) {
-    var idx = faceIndicesToRemove[i];
-    this.faces.splice(idx, 1);
-  }
-
-  // Use unique set of vertices
-  var diff = this.vertices.length - unique.length;
-  this.vertices = unique;
-  return diff;
-
 };
 
 /**
@@ -213,6 +146,51 @@ p5.Geometry3D.prototype.computeVertexNormals = function (){
 
 };
 
+p5.Geometry3D.prototype.averageNormals = function() {
+
+  for(var i = 0; i <= this.detailY; i++){
+    var offset = this.detailX + 1;
+    var temp = p5.Vector
+      .add(this.vertexNormals[i*offset],
+        this.vertexNormals[i*offset + this.detailX]);
+    temp = p5.Vector.div(temp, 2);
+    this.vertexNormals[i*offset] = temp;
+    this.vertexNormals[i*offset + this.detailX] = temp;
+  }
+};
+
+p5.Geometry3D.prototype.averagePoleNormals = function() {
+
+  //average the north pole
+  var sum = new p5.Vector(0, 0, 0);
+  for(var i = 0; i < this.detailX; i++){
+    sum.add(this.vertexNormals[i]);
+  }
+  sum = p5.Vector.div(sum, this.detailX);
+
+  for(i = 0; i < this.detailX; i++){
+    this.vertexNormals[i] = sum;
+  }
+
+  //average the south pole
+  sum = new p5.Vector(0, 0, 0);
+  for(i = this.vertices.length - 1;
+    i > this.vertices.length - 1 - this.detailX; i--){
+    sum.add(this.vertexNormals[i]);
+  }
+  sum = p5.Vector.div(sum, this.detailX);
+
+  for(i = this.vertices.length - 1;
+    i > this.vertices.length - 1 - this.detailX; i--){
+    this.vertexNormals[i] = sum;
+  }
+};
+
+/**
+ * [generateUV description]
+ * @param  {Array} faces [description]
+ * @param  {Array} uvs   [description]
+ */
 p5.Geometry3D.prototype.generateUV = function(faces, uvs){
 
   faces = flatten(faces);
@@ -228,12 +206,18 @@ p5.Geometry3D.prototype.generateUV = function(faces, uvs){
 /**
  * generate an object containing information needed to create buffer
  */
-p5.Geometry3D.prototype.generateObj = function(noMerge){
-  if(!noMerge){
-    this.mergeVertices();
-  }
+p5.Geometry3D.prototype.generateObj = function(average, sphere){
+
   this.computeFaceNormals();
   this.computeVertexNormals();
+
+  if(average){
+    this.averageNormals();
+  }
+
+  if(sphere){
+    this.averagePoleNormals();
+  }
 
   var obj = {
     vertices: turnVectorArrayIntoNumberArray(this.vertices),

@@ -24,7 +24,7 @@ p5._getDecrementPreload = function() {
 
   // when in preload decrementPreload will always be the last arg as it is set
   // with args.push() before invocation in _wrapPreload
-  if ((window.preload || this.preload) &&
+  if ((window.preload || (this && this.preload)) &&
     typeof decrementPreload === 'function') {
     return decrementPreload;
   } else {
@@ -1142,7 +1142,7 @@ p5.prototype.saveStream = function() {
 p5.prototype.saveStrings = function(list, filename, extension) {
   var ext = extension || 'txt';
   var pWriter = this.createWriter(filename, ext);
-  for (var i in list) {
+  for (var i = 0; i < list.length; i++) {
     if (i < list.length - 1) {
       pWriter.println(list[i]);
     } else {

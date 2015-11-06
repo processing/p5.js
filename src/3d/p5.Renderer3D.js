@@ -9,7 +9,7 @@ var RESOLUTION = 1000;
 
 //@TODO should probably implement an override for these attributes
 var attributes = {
-  alpha: false,
+  alpha: true,
   depth: true,
   stencil: true,
   antialias: false,
@@ -233,7 +233,6 @@ p5.Renderer3D.prototype.setMatrixUniforms = function(shaderKey) {
     shaderProgram.uNMatrixUniform,
     false, this.uNMatrix.mat4);
 };
-
 //////////////////////////////////////////////
 // GET CURRENT | for shader and color
 //////////////////////////////////////////////

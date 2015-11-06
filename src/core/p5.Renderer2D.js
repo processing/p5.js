@@ -220,7 +220,8 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
     h = 1;
   }
 
-  if(x > this.width || y > this.height || x < 0 || y < 0){
+  // if the section does not overlap the canvas
+  if(x + w < 0 || y + h < 0 || x > this.width || y > this.height){
     return [0, 0, 0, 255];
   }
 
