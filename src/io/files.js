@@ -84,6 +84,21 @@ p5._getDecrementPreload = function() {
  *
  * </code></div>
  *
+ * <p>You can also use the string name of the font to style other HTML
+ * elements.</p>
+ *
+ * <div><code>
+ * var myFont; 
+ *
+ * function preload() {
+ *   myFont = loadFont('assets/Avenir.otf');
+ * }
+ *
+ * function setup() {
+ *   var myDiv = createDiv('hello there');
+ *   myDiv.style('font-family', 'Avenir');
+ * }
+* </code></div>
  */
 p5.prototype.loadFont = function(path, onSuccess, onError) {
 
