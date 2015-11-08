@@ -285,7 +285,7 @@ p5.prototype.image =
  */
 p5.prototype.tint = function () {
   var c = this.color.apply(this, arguments);
-  this._renderer._tint = c.rgba;
+  this._renderer._tint = c.levels;
 };
 
 /**

@@ -312,10 +312,10 @@ p5.Renderer2D.prototype.set = function (x, y, imgOrCol) {
       }
     } else if (imgOrCol instanceof p5.Color) {
       if (idx < ctx.pixels.length) {
-        r = imgOrCol.rgba[0];
-        g = imgOrCol.rgba[1];
-        b = imgOrCol.rgba[2];
-        a = imgOrCol.rgba[3];
+        r = imgOrCol.levels[0];
+        g = imgOrCol.levels[1];
+        b = imgOrCol.levels[2];
+        a = imgOrCol.levels[3];
         //this.updatePixels.call(this);
       }
     }
