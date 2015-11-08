@@ -57,8 +57,8 @@ p5.Renderer2D.prototype._applyDefaults = function() {
 
 p5.Renderer2D.prototype.resize = function(w,h) {
   p5.Renderer.prototype.resize.call(this, w,h);
-  this.drawingContext.scale(this._pInst.pixelDensity,
-                            this._pInst.pixelDensity);
+  this.drawingContext.scale(this._pInst._pixelDensity,
+                            this._pInst._pixelDensity);
 };
 
 //////////////////////////////////////////////
@@ -68,8 +68,8 @@ p5.Renderer2D.prototype.resize = function(w,h) {
 p5.Renderer2D.prototype.background = function() {
   this.drawingContext.save();
   this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-  this.drawingContext.scale(this._pInst.pixelDensity,
-                            this._pInst.pixelDensity);
+  this.drawingContext.scale(this._pInst._pixelDensity,
+                            this._pInst._pixelDensity);
 
   if (arguments[0] instanceof p5.Image) {
     this._pInst.image(arguments[0], 0, 0, this.width, this.height);
@@ -227,7 +227,7 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
 
   var ctx = this._pInst || this;
 
-  var pd = ctx.pixelDensity;
+  var pd = ctx._pixelDensity;
 
   this.loadPixels.call(ctx);
 
@@ -258,7 +258,7 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
 };
 
 p5.Renderer2D.prototype.loadPixels = function () {
-  var pd = this.pixelDensity || this._pInst.pixelDensity;
+  var pd = this._pixelDensity || this._pInst._pixelDensity;
   var w = this.width * pd;
   var h = this.height * pd;
   var imageData = this.drawingContext.getImageData(0, 0, w, h);
@@ -277,16 +277,16 @@ p5.Renderer2D.prototype.set = function (x, y, imgOrCol) {
   if (imgOrCol instanceof p5.Image) {
     this.drawingContext.save();
     this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-    this.drawingContext.scale(this._pInst.pixelDensity,
-      this._pInst.pixelDensity);
+    this.drawingContext.scale(this._pInst._pixelDensity,
+      this._pInst._pixelDensity);
     this.drawingContext.drawImage(imgOrCol.canvas, x, y);
     this.loadPixels.call(this._pInst);
     this.drawingContext.restore();
   } else {
     var ctx = this._pInst || this;
     var r = 0, g = 0, b = 0, a = 0;
-    var idx = 4*((y * ctx.pixelDensity) *
-      (this.width * ctx.pixelDensity) + (x * ctx.pixelDensity));
+    var idx = 4*((y * ctx._pixelDensity) *
+      (this.width * ctx._pixelDensity) + (x * ctx._pixelDensity));
     if (!ctx.imageData) {
       ctx.loadPixels.call(ctx);
     }
@@ -320,11 +320,11 @@ p5.Renderer2D.prototype.set = function (x, y, imgOrCol) {
       }
     }
     // loop over pixelDensity * pixelDensity
-    for (var i = 0; i < ctx.pixelDensity; i++) {
-      for (var j = 0; j < ctx.pixelDensity; j++) {
+    for (var i = 0; i < ctx._pixelDensity; i++) {
+      for (var j = 0; j < ctx._pixelDensity; j++) {
         // loop over
-        idx = 4*((y * ctx.pixelDensity + j) * this.width *
-          ctx.pixelDensity + (x * ctx.pixelDensity + i));
+        idx = 4*((y * ctx._pixelDensity + j) * this.width *
+          ctx._pixelDensity + (x * ctx._pixelDensity + i));
         ctx.pixels[idx] = r;
         ctx.pixels[idx+1] = g;
         ctx.pixels[idx+2] = b;
@@ -335,7 +335,7 @@ p5.Renderer2D.prototype.set = function (x, y, imgOrCol) {
 };
 
 p5.Renderer2D.prototype.updatePixels = function (x, y, w, h) {
-  var pd = this.pixelDensity || this._pInst.pixelDensity;
+  var pd = this._pixelDensity || this._pInst._pixelDensity;
   if (x === undefined &&
       y === undefined &&
       w === undefined &&
@@ -1003,8 +1003,8 @@ function(n00, n01, n02, n10, n11, n12) {
 
 p5.Renderer2D.prototype.resetMatrix = function() {
   this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-  this.drawingContext.scale(this._pInst.pixelDensity,
-                            this._pInst.pixelDensity);
+  this.drawingContext.scale(this._pInst._pixelDensity,
+                            this._pInst._pixelDensity);
   return this;
 };
 
