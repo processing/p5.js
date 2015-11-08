@@ -596,7 +596,7 @@ var p5DOM = (function(){
     var aW = w;
     var aH = h;
     var AUTO = p5.prototype.AUTO;
-
+console.log('hi')
     if (aW !== AUTO || aH !== AUTO) {
       if (aW === AUTO) {
         aW = h * this.elt.width / this.elt.height;
