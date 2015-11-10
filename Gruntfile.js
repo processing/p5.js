@@ -30,6 +30,11 @@
  *                      every file change, but does not rebuild the docs.
  *                      It's faster than the default watch.
  *
+ *  grunt watch:quick - This watches the source for changes and rebuilds
+ *                      p5.js on every file change, but does not rebuild
+ *                      docs, and does not perform linting, minification,
+ *                      or run tests. It's faster than watch:main.
+ *
  *  grunt update_json - This automates updating the bower file
  *                      to match the package.json
  */
@@ -104,6 +109,13 @@ module.exports = function(grunt) {
     // code touches files within the theme, so it will also recompile the
     // documentation.
     watch: {
+      quick: {
+        files: ['src/**/*.js'],
+        tasks: ['browserify'],
+        options: {
+          livereload: true
+        }
+      },
       // Watch the codebase for changes
       main: {
         files: ['src/**/*.js'],
