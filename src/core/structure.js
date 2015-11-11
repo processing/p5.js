@@ -282,7 +282,7 @@ p5.prototype.redraw = function () {
   var userSetup = this.setup || window.setup;
   var userDraw = this.draw || window.draw;
   if (typeof userDraw === 'function') {
-    this.resetMatrix();
+    this.push();
     if (typeof userSetup === 'undefined') {
       this.scale(this._pixelDensity, this._pixelDensity);
     }
@@ -290,6 +290,7 @@ p5.prototype.redraw = function () {
     this._registeredMethods.pre.forEach(function (f) {
       f.call(self);
     });
+    this.pop();
     userDraw();
     this._registeredMethods.post.forEach(function (f) {
       f.call(self);
