@@ -1,87 +1,120 @@
-//@TODO: documentation of immediate mode
-
+/**
+ * Welcome to RendererGL Immediate Mode.
+ * Immediate mode is used for drawing custom shapes
+ * from a set of vertices.  Immediate Mode is activated
+ * when you call beginShape() & de-activated when you call endShape().
+ * Immediate mode is a style of programming borrowed
+ * from OpenGL's (now-deprecated) immediate mode.
+ * It differs from p5.js' default, Retained Mode, which caches
+ * geometries and buffers on the CPU to reduce the number of webgl
+ * draw calls. Retained mode is more efficient & performative,
+ * however, Immediate Mode is useful for sketching quick
+ * geometric ideas.
+ */
 'use strict';
 
 var p5 = require('../core/core');
+var constants = require('../core/constants');
 
-//////////////////////////////////////////////
-// _primitives2D in 3D space
-//////////////////////////////////////////////
-
-// @TODO REMOVE THIS!
-// p5.Renderer3D.prototype._primitives2D = function(arr){
-//   this._setDefaultCamera();
-//   var gl = this.GL;
-//   var shaderProgram = this._getColorVertexShader();
-
-//   //create vertex buffer
-//   gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffer);
-
-//   gl.bufferData(
-//     gl.ARRAY_BUFFER, new Float32Array(arr), gl.STATIC_DRAW);
-//   gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute,
-//     3, gl.FLOAT, false, 0, 0);
-
-//   //create vertexcolor buffer
-//   var vertexColorBuffer = this.colorBuffer;
-//   gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
-
-//   var color = this.curColor || [0.5, 0.5, 0.5, 1.0];
-//   var colors = [];
-//   for(var i = 0; i < arr.length / 3; i++){
-//     colors = colors.concat(color);
-//   }
-
-//   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-//   gl.vertexAttribPointer(shaderProgram.vertexColorAttribute,
-//     4, gl.FLOAT, false, 0, 0);
-
-//   //matrix
-//   var mId = 'vertexColorVert|vertexColorFrag';
-//   this._setMatrixUniforms(mId);
-// };
-
+/**
+ * Begin shape drawing.  This is a helpful way of generating
+ * custom shapes quickly.  However in WEBGL mode, application
+ * performance will likely drop as a result of too many calls to
+ * beginShape() / endShape().  As a high performance alternative,
+ * please use p5.js geometry primitives.
+ * @param  {Number} mode webgl primitives mode.  beginShape supports the
+ *                       following modes:
+ *                       POINTS,LINES,LINE_STRIP,LINE_LOOP,TRIANGLES,
+ *                       TRIANGLE_STRIP,and TRIANGLE_FAN.
+ * @return {[type]}      [description]
+ */
 p5.Renderer3D.prototype.beginShape = function(mode){
-  this.shapeMode = mode;
-  this.vertexStack.length = 0;
-  return this;
-};
-
-p5.Renderer3D.prototype.vertex = function(x, y, z){
-  this.vertexStack.push(x, y, z);
-  return this;
-};
-
-p5.Renderer3D.prototype.endShape = function(){
-  var gl = this.GL;
-  this._primitives2D(this.vertexStack);
-  this.vertexStack.length = 0;
-
-  switch(this.shapeMode){
-    case 'POINTS':
-      gl.drawArrays(gl.POINTS, 0, 1);
-      break;
-    case 'LINES':
-      gl.drawArrays(gl.LINES, 0, 2);
-      break;
-    case 'TRIANGLES':
-      this._strokeCheck();
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
-      break;
-    case 'TRIANGLE_STRIP':
-      this._strokeCheck();
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      break;
-    default:
-      this._strokeCheck();
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
-      break;
+  //default shape mode is line_strip
+  this.immediateMode.shapeMode = (mode !== undefined ) ?
+    mode : constants.LINE_STRIP;
+  //if we haven't yet initialized our
+  //immediateMode vertices & buffers, create them now!
+  if(this.immediateMode.vertexPositions === undefined){
+    this.immediateMode.vertexPositions = [];
+    this.immediateMode.vertexBuffer = this.GL.createBuffer();
+    this.immediateMode.colorBuffer = this.GL.createBuffer();
+  } else {
+    this.immediateMode.vertexPositions.length = 0;
   }
   return this;
 };
+/**
+ * adds a vertex to be drawn in a custom Shape.
+ * @param  {Number} x x-coordinate of vertex
+ * @param  {Number} y y-coordinate of vertex
+ * @param  {Number} z z-coordinate of vertex
+ * @return {p5.Renderer3D}   [description]
+ * @TODO implement handling of p5.Vector args
+ */
+p5.Renderer3D.prototype.vertex = function(x, y, z){
+  this.immediateMode.vertexPositions.push(x, y, z);
+  return this;
+};
 
-//@TODO: implement stencil buffer for geometries.
-//for now throw error.
+/**
+ * End shape drawing and render vertices to screen.
+ * @return {p5.Renderer3D} [description]
+ */
+p5.Renderer3D.prototype.endShape = function(){
+  var gl = this.GL;
+  this._bindImmediateBuffers(this.immediateMode.vertexPositions);
+  //QUADS & QUAD_STRIP are not supported primitives modes
+  //in webgl.
+  if(this.immediateMode.shapeMode === constants.QUADS ||
+    this.immediateMode.shapeMode === constants.QUAD_STRIP){
+    throw new Error('sorry, ' + this.immediateMode.shapeMode+
+      ' not yet implemented in webgl mode.');
+  } else {
+    gl.drawArrays(this.immediateMode.shapeMode, 0,
+      this.immediateMode.vertexPositions.length / 3);
+  }
+  //clear out our vertexPositions array
+  //after rendering
+  this.immediateMode.vertexPositions.length = 0;
+  return this;
+};
+/**
+ * Bind immediateMode buffers to data,
+ * then draw gl arrays
+ * @param  {Array} vertices Numbers array representing
+ *                          vertex positions
+ * @return {p5.Renderer3D}
+ */
+p5.Renderer3D.prototype._bindImmediateBuffers = function(vertices){
+  this._setDefaultCamera();
+  var gl = this.GL;
+  var shaderProgram = this._getColorVertexShader();
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.vertexBuffer);
+
+  gl.bufferData(
+    gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
+  gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute,
+    3, gl.FLOAT, false, 0, 0);
+
+  var vertexColorBuffer = this.immediateMode.colorBuffer;
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
+
+  var color = this.curColor || [0.5, 0.5, 0.5, 1.0];
+  var colors = [];
+  for(var i = 0; i < vertices.length / 3; i++){
+    colors = colors.concat(color);
+  }
+
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.DYNAMIC_DRAW);
+  gl.vertexAttribPointer(shaderProgram.vertexColorAttribute,
+    4, gl.FLOAT, false, 0, 0);
+  //matrix
+  var mId = 'immediateVert|vertexColorFrag';
+  this._setMatrixUniforms(mId);
+  return this;
+};
+//@TODO
 p5.Renderer3D.prototype._strokeCheck = function(){
   if(this.drawMode === 'stroke'){
     throw new Error(
@@ -89,7 +122,6 @@ p5.Renderer3D.prototype._strokeCheck = function(){
     );
   }
 };
-
 //@TODO
 p5.Renderer3D.prototype.strokeWeight = function() {
   throw new Error('strokeWeight for 3d not yet implemented');
@@ -108,12 +140,12 @@ p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
 
 p5.Renderer3D.prototype._getColorVertexShader = function(){
   var gl = this.GL;
-  var mId = 'vertexColorVert|vertexColorFrag';
+  var mId = 'immediateVert|vertexColorFrag';
   var shaderProgram;
 
   if(!this.materialInHash(mId)){
     shaderProgram =
-      this._initShaders('vertexColorVert', 'vertexColorFrag', true);
+      this._initShaders('immediateVert', 'vertexColorFrag', true);
     this.mHash[mId] = shaderProgram;
     shaderProgram.vertexColorAttribute =
     gl.getAttribLocation(shaderProgram, 'aVertexColor');
