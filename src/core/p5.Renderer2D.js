@@ -109,15 +109,21 @@ p5.Renderer2D.prototype.stroke = function() {
 
 p5.Renderer2D.prototype.image =
   function (img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight) {
-  var frame = img.canvas || img.elt;
+  var cnv;
   try {
-    if (this._tint && img.canvas) {
-      this.drawingContext.drawImage(this._getTintedImageCanvas(img), sx, sy,
-        sWidth, sHeight, dx, dy, dWidth, dHeight);
-    } else {
-      this.drawingContext.drawImage(frame, sx, sy, sWidth, sHeight, dx, dy,
-        dWidth, dHeight);
+    if (this._tint) {
+      if (img instanceof p5.MediaElement) {
+        img.loadPixels();
+      }
+      if (img.canvas) {
+        cnv = this._getTintedImageCanvas(img);
+      }
     }
+    if (!cnv) {
+      cnv = img.canvas || img.elt;
+    }
+    this.drawingContext.drawImage(cnv, sx, sy, sWidth, sHeight, dx, dy,
+      dWidth, dHeight);
   } catch (e) {
     if (e.name !== 'NS_ERROR_NOT_AVAILABLE') {
       throw e;
