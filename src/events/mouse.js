@@ -304,10 +304,12 @@ p5.prototype._updateMouseCoords = function(e) {
   if(e.type === 'touchstart' ||
      e.type === 'touchmove' ||
      e.type === 'touchend') {
+    this._updatePTouchCoords();
     this._setProperty('mouseX', this.touchX);
     this._setProperty('mouseY', this.touchY);
   } else {
     if(this._curElement !== null) {
+      this._updatePMouseCoords();
       var mousePos = getMousePos(this._curElement.elt, e);
       this._setProperty('mouseX', mousePos.x);
       this._setProperty('mouseY', mousePos.y);
@@ -317,7 +319,7 @@ p5.prototype._updateMouseCoords = function(e) {
   this._setProperty('winMouseY', e.pageY);
 };
 
-p5.prototype._updatePMouseCoords = function(e) {
+p5.prototype._updatePMouseCoords = function() {
   this._setProperty('pmouseX', this.mouseX);
   this._setProperty('pmouseY', this.mouseY);
   this._setProperty('pwinMouseX', this.winMouseX);
@@ -575,6 +577,9 @@ p5.prototype._onmouseup = function(e) {
     this._updateTouchCoords(e);
   }
 };
+
+p5.prototype._ondragend = p5.prototype._onmouseup;
+p5.prototype._ondragover = p5.prototype._onmousemove;
 
 /**
  * The mouseClicked() function is called once after a mouse button has been

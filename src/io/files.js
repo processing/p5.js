@@ -24,7 +24,7 @@ p5._getDecrementPreload = function() {
 
   // when in preload decrementPreload will always be the last arg as it is set
   // with args.push() before invocation in _wrapPreload
-  if ((window.preload || this.preload) &&
+  if ((window.preload || (this && this.preload)) &&
     typeof decrementPreload === 'function') {
     return decrementPreload;
   } else {
@@ -84,12 +84,26 @@ p5._getDecrementPreload = function() {
  *
  * </code></div>
  *
+ * <p>You can also use the string name of the font to style other HTML
+ * elements.</p>
+ *
+ * <div><code>
+ * var myFont;
+ *
+ * function preload() {
+ *   myFont = loadFont('assets/Avenir.otf');
+ * }
+ *
+ * function setup() {
+ *   var myDiv = createDiv('hello there');
+ *   myDiv.style('font-family', 'Avenir');
+ * }
+* </code></div>
  */
 p5.prototype.loadFont = function(path, onSuccess, onError) {
 
   var p5Font = new p5.Font(this);
-  var decrementPreload = p5._getDecrementPreload.call(this,
-    path, onSuccess, onError);
+  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
   opentype.load(path, function(err, font) {
 
@@ -109,6 +123,19 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
     if (decrementPreload && (onSuccess !== decrementPreload)) {
       decrementPreload();
     }
+    /*jshint multistr: true */
+    var exp =/\/[a-zA-Z]*((.ttf)|(.otf)|(.woff)|(.woff2))$/i;
+    if(!exp) {
+      return p5Font;
+    }
+    var i = (exp).exec( path ).index + 1;
+    var fontName = path.substring(i);
+    fontName = fontName.match(/[A-Za-z]*/);
+    var fontFamily = fontName[0];
+    var newStyle = document.createElement('style');
+    newStyle.appendChild(document.createTextNode('\n@font-face {\
+      \nfont-family: '+fontFamily+';\nsrc: url('+path+');\n}\n'));
+    document.head.appendChild(newStyle);
 
   });
 
@@ -140,9 +167,11 @@ p5.prototype.loadBytes = function() {
  * @method loadJSON
  * @param  {String}        path       name of the file or url to load
  * @param  {Function}      [callback] function to be executed after
- *                                    loadJSON()
- *                                    completes, Array is passed in as first
- *                                    argument
+ *                                    loadJSON() completes, data is passed
+ *                                    in as first argument
+ * @param  {Function}      [errorCallback] function to be executed if
+ *                                    there is an error, response is passed
+ *                                    in as first argument
  * @param  {String}        [datatype] "json" or "jsonp"
  * @return {Object|Array}             JSON data
  * @example
@@ -153,7 +182,8 @@ p5.prototype.loadBytes = function() {
  * <div><code>
  * var weather;
  * function preload() {
- *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=London,UK';
+ *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=London,UK'+
+ *    '&APPID=7bbbb47522848e8b9c26ba35c226c734';
  *   weather = loadJSON(url);
  * }
  *
@@ -176,7 +206,8 @@ p5.prototype.loadBytes = function() {
  * <div><code>
  * function setup() {
  *   noLoop();
- *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=NewYork,USA';
+ *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=NewYork'+
+ *    '&APPID=7bbbb47522848e8b9c26ba35c226c734';
  *   loadJSON(url, drawWeather);
  * }
  *
@@ -196,6 +227,7 @@ p5.prototype.loadBytes = function() {
 p5.prototype.loadJSON = function() {
   var path = arguments[0];
   var callback = arguments[1];
+  var errorCallback;
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
   var ret = []; // array needed for preload
@@ -203,9 +235,14 @@ p5.prototype.loadJSON = function() {
   var t = 'json'; //= path.indexOf('http') === -1 ? 'json' : 'jsonp';
 
   // check for explicit data type argument
-  if (typeof arguments[2] === 'string'){
-    if (arguments[2] === 'jsonp' || arguments[2] === 'json') {
-      t = arguments[2];
+  for (var i=2; i<arguments.length; i++) {
+    var arg = arguments[i];
+    if (typeof arg === 'string'){
+      if (arg === 'jsonp' || arg === 'json') {
+        t = arg;
+      }
+    } else if (typeof arg === 'function') {
+      errorCallback = arg;
     }
   }
 
@@ -213,12 +250,12 @@ p5.prototype.loadJSON = function() {
     url: path,
     type: t,
     crossOrigin: true,
-    error: function (resp, msg, err) {
-      if (msg) {
-        console.log(msg);
-      }
-      if (err && err.message) {
-        console.log(err.message);
+    error: function (resp) {
+      // pass to error callback if defined
+      if (errorCallback) {
+        errorCallback(resp);
+      } else { // otherwise log error msg
+        console.log(resp.statusText);
       }
     },
     success: function(resp) {
@@ -255,6 +292,9 @@ p5.prototype.loadJSON = function() {
  * @param  {Function} [callback] function to be executed after loadStrings()
  *                               completes, Array is passed in as first
  *                               argument
+ * @param  {Function} [errorCallback] function to be executed if
+ *                               there is an error, response is passed
+ *                               in as first argument
  * @return {Array}               Array of Strings
  * @example
  *
@@ -289,13 +329,17 @@ p5.prototype.loadJSON = function() {
  * }
  * </code></div>
  */
-p5.prototype.loadStrings = function (path, callback) {
+p5.prototype.loadStrings = function (path, callback, errorCallback) {
   var ret = [];
   var req = new XMLHttpRequest();
-  var decrementPreload = p5._getDecrementPreload.call(this, path, callback);
+  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
-  req.addEventListener('error', function () {
-    console.log('An error occurred loading strings: ' + path);
+  req.addEventListener('error', function (resp) {
+    if (errorCallback) {
+      errorCallback(resp);
+    } else {
+      console.log(resp.responseText);
+    }
   });
 
   req.open('GET', path, true);
@@ -313,7 +357,12 @@ p5.prototype.loadStrings = function (path, callback) {
           decrementPreload();
         }
       } else {
-        p5._friendlyFileLoadError(3, path);
+        if (errorCallback) {
+          errorCallback(req);
+        } else {
+          console.log(req.statusText);
+        }
+        //p5._friendlyFileLoadError(3, path);
       }
     }
   };
@@ -407,7 +456,7 @@ p5.prototype.loadTable = function (path) {
   var header = false;
   var sep = ',';
   var separatorSet = false;
-  var decrementPreload = p5._getDecrementPreload.call(this, path);
+  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
   for (var i = 1; i < arguments.length; i++) {
     if ((typeof(arguments[i]) === 'function') &&
@@ -631,30 +680,39 @@ function makeObject(row, headers) {
  * @param  {Function} [callback] function to be executed after loadXML()
  *                               completes, XML object is passed in as
  *                               first argument
+ * @param  {Function} [errorCallback] function to be executed if
+ *                               there is an error, response is passed
+ *                               in as first argument
  * @return {Object}              XML object containing data
  */
-p5.prototype.loadXML = function(path, callback) {
+p5.prototype.loadXML = function(path, callback, errorCallback) {
   var ret = document.implementation.createDocument(null, null);
-  var decrementPreload = p5._getDecrementPreload.call(this, path, callback);
+  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
   reqwest({
     url: path,
     type: 'xml',
     crossOrigin: true,
-    error: function(err){
-      p5._friendlyFileLoadError(1,path);
+    error: function(resp){
+      // pass to error callback if defined
+      if (errorCallback) {
+        errorCallback(resp);
+      } else { // otherwise log error msg
+        console.log(resp.statusText);
+      }
+      //p5._friendlyFileLoadError(1,path);
     }
   })
-    .then(function(resp){
-      var x = resp.documentElement;
-      ret.appendChild(x);
-      if (typeof callback !== 'undefined') {
-        callback(resp);
-      }
-      if (decrementPreload && (callback !== decrementPreload)) {
-        decrementPreload();
-      }
-    });
+  .then(function(resp){
+    var x = resp.documentElement;
+    ret.appendChild(x);
+    if (typeof callback !== 'undefined') {
+      callback(ret);
+    }
+    if (decrementPreload && (callback !== decrementPreload)) {
+      decrementPreload();
+    }
+  });
   return ret;
 };
 
@@ -693,6 +751,9 @@ p5.prototype.selectInput = function() {
  * @param  {Function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
  *                                    as first argument
+ * @param  {Function}      [errorCallback] function to be executed if
+ *                                    there is an error, response is passed
+ *                                    in as first argument
  */
 p5.prototype.httpGet = function () {
   var args = Array.prototype.slice.call(arguments);
@@ -712,6 +773,9 @@ p5.prototype.httpGet = function () {
  * @param  {Function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
  *                                    as first argument
+ * @param  {Function}      [errorCallback] function to be executed if
+ *                                    there is an error, response is passed
+ *                                    in as first argument
  */
 p5.prototype.httpPost = function () {
   var args = Array.prototype.slice.call(arguments);
@@ -721,7 +785,11 @@ p5.prototype.httpPost = function () {
 
 /**
  * Method for executing an HTTP request. If data type is not specified,
- * p5 will try to guess based on the URL, defaulting to text.
+ * p5 will try to guess based on the URL, defaulting to text.<br><br>
+ * You may also pass a single object specifying all parameters for the
+ * request following the examples inside the reqwest() calls here:
+ * <a href='https://github.com/ded/reqwest#api'
+ * >https://github.com/ded/reqwest#api</a>
  *
  * @method httpDo
  * @param  {String}        path       name of the file or url to load
@@ -732,56 +800,75 @@ p5.prototype.httpPost = function () {
  * @param  {Function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
  *                                    as first argument
+ * @param  {Function}      [errorCallback] function to be executed if
+ *                                    there is an error, response is passed
+ *                                    in as first argument
  */
 p5.prototype.httpDo = function() {
-  var method = 'GET';
-  var path = arguments[0];
-  var data = {};
-  var type = '';
-  var callback;
+  if (typeof arguments[0] === 'object') {
+    reqwest(arguments[0]);
+  } else {
+    var method = 'GET';
+    var path = arguments[0];
+    var data = {};
+    var type = '';
+    var callback;
+    var errorCallback;
 
-  for (var i=1; i<arguments.length; i++) {
-    var a = arguments[i];
-    if (typeof a === 'string') {
-      if (a === 'GET' || a === 'POST' || a === 'PUT') {
-        method = a;
-      } else {
-        type = a;
-      }
-    } else if (typeof a === 'object') {
-      data = a;
-    } else if (typeof a === 'function') {
-      callback = a;
-    }
-  }
-
-  // do some sort of smart type checking
-  if (type === '') {
-    if (path.indexOf('json') !== -1) {
-      type = 'json';
-    } else if (path.indexOf('xml') !== -1) {
-      type = 'xml';
-    } else {
-      type = 'text';
-    }
-  }
-
-  reqwest({
-    url: path,
-    method: method,
-    data: data,
-    type: type,
-    crossOrigin: true,
-    success: function (resp) {
-      if (typeof callback !== 'undefined') {
-        if (type === 'text') {
-          callback(resp.response);
+    for (var i=1; i<arguments.length; i++) {
+      var a = arguments[i];
+      if (typeof a === 'string') {
+        if (a === 'GET' || a === 'POST' || a === 'PUT') {
+          method = a;
         } else {
-          callback(resp);
+          type = a;
+        }
+      } else if (typeof a === 'object') {
+        data = a;
+      } else if (typeof a === 'function') {
+        if (!callback) {
+          callback = a;
+        } else {
+          errorCallback = a;
         }
       }
     }
-  });
+
+    // do some sort of smart type checking
+    if (type === '') {
+      if (path.indexOf('json') !== -1) {
+        type = 'json';
+      } else if (path.indexOf('xml') !== -1) {
+        type = 'xml';
+      } else {
+        type = 'text';
+      }
+    }
+
+    reqwest({
+      url: path,
+      method: method,
+      data: data,
+      type: type,
+      crossOrigin: true,
+      success: function(resp) {
+        if (typeof callback !== 'undefined') {
+          if (type === 'text') {
+            callback(resp.response);
+          } else {
+            callback(resp);
+          }
+        }
+      },
+      error: function(resp) {
+        if (errorCallback) {
+          errorCallback(resp);
+        } else {
+          console.log(resp.statusText);
+        }
+      }
+    });
+  }
 };
 
 
@@ -1083,7 +1170,7 @@ p5.prototype.saveStream = function() {
 p5.prototype.saveStrings = function(list, filename, extension) {
   var ext = extension || 'txt';
   var pWriter = this.createWriter(filename, ext);
-  for (var i in list) {
+  for (var i = 0; i < list.length; i++) {
     if (i < list.length - 1) {
       pWriter.println(list[i]);
     } else {

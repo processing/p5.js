@@ -73,6 +73,9 @@ p5.Element.prototype.parent = function(p) {
     return this.elt.parentNode;
   } else {
     if (typeof p === 'string') {
+      if (p[0] === '#') {
+        p = p.substring(1);
+      }
       p = document.getElementById(p);
     } else if (p instanceof p5.Element) {
       p = p.elt;
@@ -104,7 +107,7 @@ p5.Element.prototype.id = function(id) {
  * @return {p5.Element}
  */
 p5.Element.prototype.class = function(c) {
-  this.elt.className += ' '+c;
+  this.elt.className = c;
   return this;
 };
 

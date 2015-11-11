@@ -173,9 +173,8 @@ p5.prototype.blend = function() {
  * }
  *
  * function setup() {
- *   background(img0);
- *   image(img1, 0, 0);
- *   copy(7, 22, 10, 10, 35, 25, 50, 50);
+ *   background(img);
+ *   copy(img, 7, 22, 10, 10, 35, 25, 50, 50);
  *   stroke(255);
  *   noFill();
  *   // Rectangle shows area being copied
@@ -445,7 +444,7 @@ p5.prototype.loadPixels = function() {
  * <p>Changes the color of any pixel, or writes an image directly to the
  * display window.</p>
  * <p>The x and y parameters specify the pixel to change and the c parameter
- * specifies the color value. This can be a p5.COlor object, or [R, G, B, A]
+ * specifies the color value. This can be a p5.Color object, or [R, G, B, A]
  * pixel array. It can also be a single grayscale value.
  * When setting an image, the x and y parameters define the coordinates for
  * the upper-left corner of the image, regardless of the current imageMode().

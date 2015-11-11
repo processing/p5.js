@@ -30,8 +30,10 @@
 
   <!-- Include anything you want to test -->
   <script src="../lib/p5.js" type="text/javascript" ></script>
+  <script src="../lib/addons/p5.dom.js" type="text/javascript" ></script>
 
   <!-- Spec files -->
+  <script src="unit/addons/p5.dom.js" type="text/javascript" ></script>
   <script src="unit/core/core.js" type="text/javascript" ></script>
   <!--<script src="unit/core/2d_primitives.js" type="text/javascript" ></script>-->
   <script src="unit/core/curves.js" type="text/javascript" ></script>
@@ -44,7 +46,7 @@
   <script src="unit/math/p5.Vector.js" type="text/javascript" ></script>
 
   <script src="unit/color/p5.Color.js" type="text/javascript" ></script>
-  <script src="unit/color/color_utils.js" type="text/javascript" ></script>
+  <script src="unit/color/color_conversion.js" type="text/javascript" ></script>
   <script src="unit/color/setting.js" type="text/javascript" ></script>
   <script src="unit/color/creating_reading.js" type="text/javascript" ></script>
 
@@ -63,7 +65,9 @@
     // If tests run in a real browser
     // Can alternatively do a check on window.PHANTOMJS
     if (navigator.userAgent.indexOf('PhantomJS') < 0) {
+      window.addEventListener('load', function() {
         mocha.run();
+      }, false);
     }
   </script>
 </body>

@@ -3,6 +3,7 @@
  * @submodule Creating & Reading
  * @for p5
  * @requires core
+ * @requires constants
  */
 
 'use strict';
@@ -31,14 +32,14 @@ require('./p5.Color');
  */
 p5.prototype.alpha = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c).getAlpha();
+    return this.color(c)._getAlpha();
   } else {
     throw new Error('Needs p5.Color or pixel array as argument.');
   }
 };
 
 /**
- * Extracts the blue value from a color or a pixel array.
+ * Extracts the blue value from a color or pixel array.
  *
  * @method blue
  * @param {Object} obj p5.Color object or pixel array
@@ -58,17 +59,17 @@ p5.prototype.alpha = function(c) {
  */
 p5.prototype.blue = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c).getBlue();
+    return this.color(c)._getBlue();
   } else {
     throw new Error('Needs p5.Color or pixel array as argument.');
   }
 };
 
 /**
- * Extracts the brightness value from a color.
+ * Extracts the HSB brightness value from a color or pixel array.
  *
  * @method brightness
- * @param {Object} color p5.Color object
+ * @param {Object} color p5.Color object or pixel array
  * @example
  * <div>
  * <code>
@@ -85,7 +86,7 @@ p5.prototype.blue = function(c) {
  */
 p5.prototype.brightness = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c).getBrightness();
+    return this.color(c)._getBrightness();
   } else {
     throw new Error('Needs p5.Color or pixel array as argument.');
   }
@@ -242,25 +243,20 @@ p5.prototype.brightness = function(c) {
  * </div>
  */
 p5.prototype.color = function() {
-  var args = new Array(arguments.length);
-
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-
-  if (args[0] instanceof p5.Color) {
-    return args[0];
-  } else if (args[0] instanceof Array) {
-    return new p5.Color(this, args[0]);
+  if (arguments[0] instanceof p5.Color) {
+    return arguments[0];  // Do nothing if argument is already a color object.
+  } else if (arguments[0] instanceof Array) {
+    return new p5.Color(this, arguments[0]);
   } else {
-    return new p5.Color(this, args);
+    return new p5.Color(this, arguments);
   }
 };
+
 /**
  * Extracts the green value from a color or pixel array.
  *
  * @method green
- * @param {Object} color p5.Color object
+ * @param {Object} color p5.Color object or pixel array
  * @example
  * <div>
  * <code>
@@ -277,17 +273,23 @@ p5.prototype.color = function() {
  */
 p5.prototype.green = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c).getGreen();
+    return this.color(c)._getGreen();
   } else {
     throw new Error('Needs p5.Color or pixel array as argument.');
   }
 };
 
 /**
- * Extracts the hue value from a color.
+ * Extracts the hue value from a color or pixel array.
+ *
+ * Hue exists in both HSB and HSL. This function will return the
+ * HSB-normalized hue when supplied with an HSB color object (or when supplied
+ * with a pixel array while the color mode is HSB), but will default to the
+ * HSL-normalized hue otherwise. (The values will only be different if the
+ * maximum hue setting for each system is different.)
  *
  * @method hue
- * @param {Object} color p5.Color object
+ * @param {Object} color p5.Color object or pixel array
  * @example
  * <div>
  * <code>
@@ -303,27 +305,23 @@ p5.prototype.green = function(c) {
  * </div>
  */
 p5.prototype.hue = function(c) {
-  if (!(c instanceof p5.Color)) {
-    throw new Error('Needs p5.Color as argument.');
+  if (c instanceof p5.Color || c instanceof Array) {
+    return this.color(c)._getHue();
+  } else {
+    throw new Error('Needs p5.Color or pixel array as argument.');
   }
-  return c.getHue();
 };
 
 /**
- * Calculates a color or colors between two color at a specific increment,
- * using gamma correction to blend colors in the linear RGB space.
- * The amt parameter is the amount to interpolate between the two values
- * where 0.0 equal to the first point, 0.1 is very near the first point,
- * 0.5 is halfway in between, etc. An amount below 0 will be treated as 0.
- * Likewise, amounts above 1 will be capped at 1. This is different from
- * the behavior of lerp(), but necessary because otherwise numbers outside
- * the range will produce strange and unexpected colors.
+ * Blends two colors to find a third color somewhere between them. The amt
+ * parameter is the amount to interpolate between the two values where 0.0
+ * equal to the first color, 0.1 is very near the first color, 0.5 is halfway
+ * in between, etc. An amount below 0 will be treated as 0. Likewise, amounts
+ * above 1 will be capped at 1. This is different from the behavior of lerp(),
+ * but necessary because otherwise numbers outside the range will produce
+ * strange and unexpected colors.
  *
- * The regular RGB color representation stores the square root of the
- * displayed color, not the value itself. Your monitor behaves as if it
- * squares the color values before displaying it. lerpColor first transforms
- * colors into the linear color space before blending, to correctly mix the
- * colors as two rays of light.
+ * The way that colours are interpolated depends on the current color mode.
  *
  * @method lerpColor
  * @param  {Array/Number} c1  interpolate from this color
@@ -333,10 +331,12 @@ p5.prototype.hue = function(c) {
  * @example
  * <div>
  * <code>
+ * colorMode(RGB);
  * stroke(255);
  * background(51);
- * from = color(204, 102, 0);
- * to = color(0, 102, 153);
+ * from = color(218, 165, 32);
+ * to = color(72, 61, 139);
+ * colorMode(RGB);  // Try changing to HSB.
  * interA = lerpColor(from, to, .33);
  * interB = lerpColor(from, to, .66);
  * fill(from);
@@ -351,36 +351,55 @@ p5.prototype.hue = function(c) {
  * </div>
  */
 p5.prototype.lerpColor = function(c1, c2, amt) {
-  var l1, l2, l3, l4;
-  var fromColor, toColor;
+  var mode = this._renderer._colorMode;
+  var maxes = this._renderer._colorMaxes;
+  var l0, l1, l2, l3;
+  var fromArray, toArray;
 
-  if(this._renderer._colorMode === constants.RGB) {
-    fromColor = this.color(c1).rgba;
-    toColor = this.color(c2).rgba;
+  if (mode === constants.RGB) {
+    fromArray = c1.levels.map(function(level) {
+      return level / 255;
+    });
+    toArray = c2.levels.map(function(level) {
+      return level / 255;
+    });
+  } else if (mode === constants.HSB) {
+    c1._getBrightness();  // Cache hsba so it definitely exists.
+    c2._getBrightness();
+    fromArray = c1.hsba;
+    toArray = c2.hsba;
+  } else if (mode === constants.HSL) {
+    c1._getLightness();  // Cache hsla so it definitely exists.
+    c2._getLightness();
+    fromArray = c1.hsla;
+    toArray = c2.hsla;
+  } else {
+    throw new Error (mode + 'cannot be used for interpolation.');
   }
-  else if (this._renderer._colorMode === constants.HSB) {
-    fromColor = this.color(c1).hsba;
-    toColor = this.color(c2).hsba;
-  }
-  else if(this._renderer._colorMode === constants.HSL) {
-    fromColor = this.color(c1).hsla;
-    toColor = this.color(c2).hsla;
-  }
-  else {
-    return;
-  }
-  l1 = this.lerp(fromColor[0], toColor[0], amt);
-  l2 = this.lerp(fromColor[1], toColor[1], amt);
-  l3 = this.lerp(fromColor[2], toColor[2], amt);
-  l4 = this.lerp(fromColor[3], toColor[3], amt);
-  return this.color(l1, l2, l3, l4);
+
+  // Prevent extrapolation.
+  amt = Math.max(Math.min(amt, 1), 0);
+
+  // Perform interpolation.
+  l0 = this.lerp(fromArray[0], toArray[0], amt);
+  l1 = this.lerp(fromArray[1], toArray[1], amt);
+  l2 = this.lerp(fromArray[2], toArray[2], amt);
+  l3 = this.lerp(fromArray[3], toArray[3], amt);
+
+  // Scale components.
+  l0 *= maxes[mode][0];
+  l1 *= maxes[mode][1];
+  l2 *= maxes[mode][2];
+  l3 *= maxes[mode][3];
+
+  return this.color(l0, l1, l2, l3);
 };
 
 /**
- * Extracts the lightness value from a color.
+ * Extracts the HSL lightness value from a color or pixel array.
  *
  * @method lightness
- * @param {Object} color p5.Color object
+ * @param {Object} color p5.Color object or pixel array
  * @example
  * <div>
  * <code>
@@ -395,10 +414,9 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  * </code>
  * </div>
  */
-
 p5.prototype.lightness = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c).getLightness();
+    return this.color(c)._getLightness();
   } else {
     throw new Error('Needs p5.Color or pixel array as argument.');
   }
@@ -435,17 +453,22 @@ p5.prototype.lightness = function(c) {
  */
 p5.prototype.red = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c).getRed();
+    return this.color(c)._getRed();
   } else {
     throw new Error('Needs p5.Color or pixel array as argument.');
   }
 };
 
 /**
- * Extracts the saturation value from a color.
+ * Extracts the saturation value from a color or pixel array.
+ *
+ * Saturation is scaled differently in HSB and HSL. This function will return
+ * the HSB saturation when supplied with an HSB color object (or when supplied
+ * with a pixel array while the color mode is HSB), but will default to the
+ * HSL saturation otherwise.
  *
  * @method saturation
- * @param {Object} color p5.Color object
+ * @param {Object} color p5.Color object or pixel array
  * @example
  * <div>
  * <code>
@@ -461,12 +484,11 @@ p5.prototype.red = function(c) {
  * </div>
  */
 p5.prototype.saturation = function(c) {
-  if (!(c instanceof p5.Color)) {
-    throw new Error('Needs p5.Color as argument.');
+  if (c instanceof p5.Color || c instanceof Array) {
+    return this.color(c)._getSaturation();
+  } else {
+    throw new Error('Needs p5.Color or pixel array as argument.');
   }
-  return c.getSaturation();
 };
-
-
 
 module.exports = p5;

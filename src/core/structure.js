@@ -284,17 +284,17 @@ p5.prototype.redraw = function () {
   if (typeof userDraw === 'function') {
     this.push();
     if (typeof userSetup === 'undefined') {
-      this.scale(this.pixelDensity, this.pixelDensity);
+      this.scale(this._pixelDensity, this._pixelDensity);
     }
     var self = this;
     this._registeredMethods.pre.forEach(function (f) {
       f.call(self);
     });
+    this.pop();
     userDraw();
     this._registeredMethods.post.forEach(function (f) {
       f.call(self);
     });
-    this.pop();
   }
 };
 

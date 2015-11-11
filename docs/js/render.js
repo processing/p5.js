@@ -162,7 +162,11 @@ function renderCode(sel) {
           'touchStarted', 'touchMoved', 'touchEnded', 
           'keyPressed', 'keyReleased', 'keyTyped'];
           fxns.forEach(function(f) { 
-            if (runnable.indexOf(f) !== -1) {
+            var ind = runnable.indexOf(f);
+            // this is a gross hack within a hacky script that
+            // ensures the function names found are not substrings
+            // proper use of regex would be preferable...
+            if (ind !== -1 && runnable[ind+f.length] === '(') {
               with (p) {
                 p[f] = eval(f);
               }
