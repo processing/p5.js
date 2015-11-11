@@ -33,16 +33,13 @@ p5.Renderer3D = function(elt, pInst, isMainCanvas) {
 
   this.isP3D = true; //lets us know we're in 3d mode
   this.GL = this.drawingContext;
-  //Immediate mode
-  this.vertexStack = [];
-  this.vertexBuffer = this.GL.createBuffer();
-  this.colorBuffer = this.GL.createBuffer();
   //lights
   this.ambientLightCount = 0;
   this.directionalLightCount = 0;
   this.pointLightCount = 0;
   //camera
   this._isSetCamera = false;
+
   /**
    * model view, projection, & normal
    * matrices
@@ -53,6 +50,10 @@ p5.Renderer3D = function(elt, pInst, isMainCanvas) {
   //Geometry & Material hashes
   this.gHash = {};
   this.mHash = {};
+  //Imediate Mode
+  //default drawing is done in Retained Mode
+  this.isImmediateDrawing = false;
+  this.immediateMode = {};
   return this;
 };
 
@@ -73,8 +74,6 @@ p5.Renderer3D.prototype._initContext = function() {
       var gl = this.drawingContext;
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
-      //@TODO fix this. or do we even need to glClear on setup?
-      //this.clear(1.0,1.0,1.0,1.0);//background initialized white
       gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
     }
   } catch (er) {
@@ -99,7 +98,6 @@ p5.Renderer3D.prototype._update = function() {
   this.ambientLightCount = 0;
   this.directionalLightCount = 0;
   this.pointLightCount = 0;
-  this.vertexStack = [];
 };
 
 //////////////////////////////////////////////
@@ -108,11 +106,12 @@ p5.Renderer3D.prototype._update = function() {
 
 /**
  * [_initShaders description]
- * @param  {[type]} vertId [description]
- * @param  {[type]} fragId [description]
+ * @param  {string} vertId [description]
+ * @param  {string} fragId [description]
  * @return {[type]}        [description]
  */
-p5.Renderer3D.prototype._initShaders = function(vertId, fragId, immediateMode) {
+p5.Renderer3D.prototype._initShaders =
+function(vertId, fragId, isImmediateMode) {
   var gl = this.GL;
   //set up our default shaders by:
   // 1. create the shader,
@@ -149,12 +148,13 @@ p5.Renderer3D.prototype._initShaders = function(vertId, fragId, immediateMode) {
   }
   //END SHADERS SETUP
 
-  this._getLocation(shaderProgram, immediateMode);
+  this._getLocation(shaderProgram, isImmediateMode);
 
   return shaderProgram;
 };
 
-p5.Renderer3D.prototype._getLocation = function(shaderProgram, immediateMode) {
+p5.Renderer3D.prototype._getLocation =
+function(shaderProgram, isImmediateMode) {
   var gl = this.GL;
   gl.useProgram(shaderProgram);
   shaderProgram.uResolution =
@@ -174,7 +174,7 @@ p5.Renderer3D.prototype._getLocation = function(shaderProgram, immediateMode) {
     gl.getUniformLocation(shaderProgram, 'uModelViewMatrix');
 
   //@TODO: figure out a better way instead of if statement
-  if(immediateMode === undefined){
+  if(isImmediateMode === undefined){
     //vertex normal Attribute
     shaderProgram.vertexNormalAttribute =
       gl.getAttribLocation(shaderProgram, 'aNormal');
@@ -219,11 +219,11 @@ p5.Renderer3D.prototype._setMatrixUniforms = function(shaderKey) {
 //////////////////////////////////////////////
 // GET CURRENT | for shader and color
 //////////////////////////////////////////////
-p5.Renderer3D.prototype._getShader = function(vertId, fragId, immediateMode) {
+p5.Renderer3D.prototype._getShader = function(vertId, fragId, isImmediateMode) {
   var mId = vertId + '|' + fragId;
   //create it and put it into hashTable
   if(!this.materialInHash(mId)){
-    var shaderProgram = this._initShaders(vertId, fragId, immediateMode);
+    var shaderProgram = this._initShaders(vertId, fragId, isImmediateMode);
     this.mHash[mId] = shaderProgram;
   }
   this.curShaderId = mId;
@@ -249,11 +249,30 @@ p5.Renderer3D.prototype._getCurShaderId = function(){
 //////////////////////////////////////////////
 p5.Renderer3D.prototype.fill = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
+  //@type {Array}, length 4 : vals range 0->1
   var colorNormalized = color._normalize();
   this.curColor = colorNormalized;
   this.drawMode = 'fill';
-  this._pInst.basicMaterial.apply(this._pInst, arguments);
   return this;
+};
+p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
+  var color = this._pInst.color.apply(this._pInst, arguments);
+  var colorNormalized = color._normalize();
+  this.curColor = colorNormalized;
+  this.drawMode = 'stroke';
+  return this;
+};
+//@TODO
+p5.Renderer3D.prototype._strokeCheck = function(){
+  if(this.drawMode === 'stroke'){
+    throw new Error(
+      'stroke for shapes in 3D not yet implemented, use fill for now :('
+    );
+  }
+};
+//@TODO
+p5.Renderer3D.prototype.strokeWeight = function() {
+  throw new Error('strokeWeight for 3d not yet implemented');
 };
 //////////////////////////////////////////////
 // HASH | for material and geometry

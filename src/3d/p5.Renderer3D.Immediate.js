@@ -36,11 +36,14 @@ p5.Renderer3D.prototype.beginShape = function(mode){
   //immediateMode vertices & buffers, create them now!
   if(this.immediateMode.vertexPositions === undefined){
     this.immediateMode.vertexPositions = [];
+    this.immediateMode.vertexColors = [];
     this.immediateMode.vertexBuffer = this.GL.createBuffer();
     this.immediateMode.colorBuffer = this.GL.createBuffer();
   } else {
     this.immediateMode.vertexPositions.length = 0;
+    this.immediateMode.vertexColors.length = 0;
   }
+  this.isImmediateDrawing = true;
   return this;
 };
 /**
@@ -53,6 +56,12 @@ p5.Renderer3D.prototype.beginShape = function(mode){
  */
 p5.Renderer3D.prototype.vertex = function(x, y, z){
   this.immediateMode.vertexPositions.push(x, y, z);
+  var vertexColor = this.curColor || [0.5, 0.5, 0.5, 1.0];
+  this.immediateMode.vertexColors.push(
+    vertexColor[0],
+    vertexColor[1],
+    vertexColor[2],
+    vertexColor[3]);
   return this;
 };
 
@@ -62,7 +71,9 @@ p5.Renderer3D.prototype.vertex = function(x, y, z){
  */
 p5.Renderer3D.prototype.endShape = function(){
   var gl = this.GL;
-  this._bindImmediateBuffers(this.immediateMode.vertexPositions);
+  this._bindImmediateBuffers(
+    this.immediateMode.vertexPositions,
+    this.immediateMode.vertexColors);
   //QUADS & QUAD_STRIP are not supported primitives modes
   //in webgl.
   if(this.immediateMode.shapeMode === constants.QUADS ||
@@ -73,9 +84,11 @@ p5.Renderer3D.prototype.endShape = function(){
     gl.drawArrays(this.immediateMode.shapeMode, 0,
       this.immediateMode.vertexPositions.length / 3);
   }
-  //clear out our vertexPositions array
+  //clear out our vertexPositions & colors arrays
   //after rendering
   this.immediateMode.vertexPositions.length = 0;
+  this.immediateMode.vertexColors.length = 0;
+  this.isImmediateDrawing = false;
   return this;
 };
 /**
@@ -85,7 +98,7 @@ p5.Renderer3D.prototype.endShape = function(){
  *                          vertex positions
  * @return {p5.Renderer3D}
  */
-p5.Renderer3D.prototype._bindImmediateBuffers = function(vertices){
+p5.Renderer3D.prototype._bindImmediateBuffers = function(vertices, colors){
   this._setDefaultCamera();
   var gl = this.GL;
   var shaderProgram = this._getColorVertexShader();
@@ -97,14 +110,7 @@ p5.Renderer3D.prototype._bindImmediateBuffers = function(vertices){
   gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute,
     3, gl.FLOAT, false, 0, 0);
 
-  var vertexColorBuffer = this.immediateMode.colorBuffer;
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertexColorBuffer);
-
-  var color = this.curColor || [0.5, 0.5, 0.5, 1.0];
-  var colors = [];
-  for(var i = 0; i < vertices.length / 3; i++){
-    colors = colors.concat(color);
-  }
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.colorBuffer);
 
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.DYNAMIC_DRAW);
   gl.vertexAttribPointer(shaderProgram.vertexColorAttribute,
@@ -114,29 +120,10 @@ p5.Renderer3D.prototype._bindImmediateBuffers = function(vertices){
   this._setMatrixUniforms(mId);
   return this;
 };
-//@TODO
-p5.Renderer3D.prototype._strokeCheck = function(){
-  if(this.drawMode === 'stroke'){
-    throw new Error(
-      'stroke for shapes in 3D not yet implemented, use fill for now :('
-    );
-  }
-};
-//@TODO
-p5.Renderer3D.prototype.strokeWeight = function() {
-  throw new Error('strokeWeight for 3d not yet implemented');
-};
 
 //////////////////////////////////////////////
 // COLOR
 //////////////////////////////////////////////
-p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
-  var color = this._pInst.color.apply(this._pInst, arguments);
-  var colorNormalized = color._normalize();
-  this.curColor = colorNormalized;
-  this.drawMode = 'stroke';
-  return this;
-};
 
 p5.Renderer3D.prototype._getColorVertexShader = function(){
   var gl = this.GL;
