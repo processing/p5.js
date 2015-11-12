@@ -193,10 +193,19 @@ p5.prototype.image =
     dy = sy || 0;
     sx = 0;
     sy = 0;
-    dWidth = sWidth || img.width;
-    dHeight = sHeight || img.height;
-    sWidth = img.width;
-    sHeight = img.height;
+    if (img.elt && img.elt.videoWidth && !img.canvas) { // video no canvas
+      var actualW = img.elt.videoWidth;
+      var actualH = img.elt.videoHeight;
+      dWidth = sWidth || img.width;
+      dHeight = sHeight || img.width*actualH/actualW;
+      sWidth = actualW;
+      sHeight = actualH;
+    } else {
+      dWidth = sWidth || img.width;
+      dHeight = sHeight || img.height;
+      sWidth = img.width;
+      sHeight = img.height;
+    }
   } else if (arguments.length === 9) {
     sx = sx || 0;
     sy = sy || 0;
@@ -285,7 +294,7 @@ p5.prototype.image =
  */
 p5.prototype.tint = function () {
   var c = this.color.apply(this, arguments);
-  this._renderer._tint = c.rgba;
+  this._renderer._tint = c.levels;
 };
 
 /**

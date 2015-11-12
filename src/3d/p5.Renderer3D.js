@@ -100,6 +100,33 @@ p5.Renderer3D.prototype._update = function() {
   this.pointLightCount = 0;
 };
 
+/**
+ * [resize description]
+ * @param  {[type]} w [description]
+ * @param  {[tyoe]} h [description]
+ * @return {[type]}   [description]
+ */
+p5.Renderer3D.prototype.resize = function(w,h) {
+  var gl = this.GL;
+  p5.Renderer.prototype.resize.call(this, w, h);
+  gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+};
+
+/**
+ * [background description]
+ * @return {[type]} [description]
+ */
+p5.Renderer3D.prototype.background = function() {
+  var gl = this.GL;
+  var _col = this._pInst.color.apply(this._pInst, arguments);
+  var _r = (_col.levels[0]) / 255;
+  var _g = (_col.levels[1]) / 255;
+  var _b = (_col.levels[2]) / 255;
+  var _a = (_col.levels[3]) / 255;
+  gl.clearColor(_r, _g, _b, _a);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+};
+
 //////////////////////////////////////////////
 // SHADER
 //////////////////////////////////////////////

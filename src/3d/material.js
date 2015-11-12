@@ -184,7 +184,7 @@ p5.prototype.basicMaterial = function(v1, v2, v3, a){
 
   var color = this._renderer._pInst.color.apply(
     this._renderer._pInst, arguments);
-  var colors = color._normalize();
+  var colors = color._array;
 
   gl.uniform4f( shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);
@@ -230,7 +230,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
 
   var color = this._renderer._pInst.color.apply(
     this._renderer._pInst, arguments);
-  var colors = color._normalize();
+  var colors = color._array;
 
   gl.uniform4f(shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);
@@ -281,7 +281,7 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
 
   var color = this._renderer._pInst.color.apply(
     this._renderer._pInst, arguments);
-  var colors = color._normalize();
+  var colors = color._array;
 
   gl.uniform4f(shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);

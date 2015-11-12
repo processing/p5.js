@@ -43,7 +43,7 @@
   <script src="unit/math/p5.Vector.js" type="text/javascript" ></script>
 
   <script src="unit/color/p5.Color.js" type="text/javascript" ></script>
-  <script src="unit/color/color_utils.js" type="text/javascript" ></script>
+  <script src="unit/color/color_conversion.js" type="text/javascript" ></script>
   <script src="unit/color/setting.js" type="text/javascript" ></script>
   <script src="unit/color/creating_reading.js" type="text/javascript" ></script>
 
@@ -60,7 +60,9 @@
     // If tests run in a real browser
     // Can alternatively do a check on window.PHANTOMJS
     if (navigator.userAgent.indexOf('PhantomJS') < 0) {
+      window.addEventListener('load', function() {
         mocha.run();
+      }, false);
     }
   </script>
 </body>

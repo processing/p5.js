@@ -9,9 +9,6 @@ var p5 = require('../core/core');
  */
 p5.Geometry = function
 (vertData, detailX, detailY, offset){
-  //an array containing groups of faces,vertices,normals
-  //used in complex geometries with multiple surfaces
-  this.groups = [];
   //an array containing every vertex
   //@type [p5.Vector]
   this.vertices = [];
