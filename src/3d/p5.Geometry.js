@@ -9,9 +9,6 @@ var p5 = require('../core/core');
  */
 p5.Geometry = function
 (vertData, detailX, detailY, offset){
-  //an array containing groups of faces,vertices,normals
-  //used in complex geometries with multiple surfaces
-  this.groups = [];
   //an array containing every vertex
   //@type [p5.Vector]
   this.vertices = [];
@@ -52,8 +49,8 @@ p5.Geometry.prototype._init = function
   //otherwise it's an Object
   else {
     //traverse the vertData Object
-    //either directly pushing vertices or
-    //calculating them by passing func
+    //either directly pushing vertices,
+    //or calculating them by passing func
     for(var item in vertData){
       if(vertData.hasOwnProperty(item)){
         if (vertData[item] instanceof p5.Vector){
@@ -82,6 +79,11 @@ p5.Geometry.prototype._computeVertices = function(vertFunc){
       this.vertices.push(p);
     }
   }
+};
+
+p5.Geometry.prototype.getVertices = function()
+{
+  return this.vertices;
 };
 
 p5.Geometry.prototype._computeFaces = function(offset){

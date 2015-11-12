@@ -1,5 +1,5 @@
-//retained mode is used by rendering 3d_primitives
-
+//Retained Mode. The default mode for rendering 3D primitives
+//in WEBGL.
 'use strict';
 
 var p5 = require('../core/core');
@@ -27,7 +27,7 @@ p5.Renderer3D.prototype.createBuffer = function(gId, obj) {
   var shaderProgram = this.mHash[this._getCurShaderId()];
   //@todo rename this property
   //we mult the num geom faces by 3
-  this.gHash[gId].len = obj.faces.length * 3;
+  this.gHash[gId].numberOfItems = obj.faces.length * 3;
   //replace array with object loop since we're feeding a geom obj
   gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
   gl.bufferData(
@@ -99,36 +99,27 @@ p5.Renderer3D.prototype.drawBuffer = function(gId) {
   this._setDefaultCamera();
   var gl = this.GL;
   var shaderKey = this._getCurShaderId();
-  //var shaderProgram = this.mHash[shaderKey];
-  /*
-  this.gHash[gId].len.forEach(function(d, i){
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer[i]);
-    gl.vertexAttribPointer(
-      shaderProgram.vertexPositionAttribute,
-      3, gl.FLOAT, false, 0, 0);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer[i]);
-    gl.vertexAttribPointer(
-      shaderProgram.vertexNormalAttribute,
-      3, gl.FLOAT, false, 0, 0);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer[i]);
-    gl.vertexAttribPointer(
-      shaderProgram.textureCoordAttribute,
-      2, gl.FLOAT, false, 0, 0);
-
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer[i]);
-
-    this._setMatrixUniforms(shaderKey);
-
-    gl.drawElements(
-      gl.TRIANGLES, this.gHash[gId].len[i],
-       gl.UNSIGNED_SHORT, 0);
-  }.bind(this));
-*/
+  var shaderProgram = this.mHash[shaderKey];
+  //vertex position buffer
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
+  gl.vertexAttribPointer(
+    shaderProgram.vertexPositionAttribute,
+    3, gl.FLOAT, false, 0, 0);
+  //normal buffer
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
+  gl.vertexAttribPointer(
+    shaderProgram.vertexNormalAttribute,
+    3, gl.FLOAT, false, 0, 0);
+  //uv buffer
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
+  gl.vertexAttribPointer(
+    shaderProgram.textureCoordAttribute,
+    2, gl.FLOAT, false, 0, 0);
+  //vertex index buffer
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
   this._setMatrixUniforms(shaderKey);
   gl.drawElements(
-    gl.TRIANGLES, this.gHash[gId].len,//need to figure number of faces total
+    gl.TRIANGLE_STRIP, this.gHash[gId].numberOfItems,
     gl.UNSIGNED_SHORT, 0);
 };
 
