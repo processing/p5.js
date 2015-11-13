@@ -578,6 +578,9 @@ p5.prototype._onmouseup = function(e) {
   }
 };
 
+p5.prototype._ondragend = p5.prototype._onmouseup;
+p5.prototype._ondragover = p5.prototype._onmousemove;
+
 /**
  * The mouseClicked() function is called once after a mouse button has been
  * pressed and then released.<br><br>

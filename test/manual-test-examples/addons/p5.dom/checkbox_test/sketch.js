@@ -1,4 +1,5 @@
 var checkbox;
+var testcheck;
 
 function setup() {
   checkbox = createCheckbox('the label');
@@ -7,6 +8,9 @@ function setup() {
   // What should this be called??
   // it's wrapping 'onchange'
   checkbox.changed(myCheckedEvent); // even for when the user does something
+
+  testcheck = select('#checktest');
+  testcheck.changed(myCheckedEvent);
 }
 
 function draw() {
@@ -15,14 +19,18 @@ function draw() {
   if (checkbox.checked()) {
     background(255, 0, 0);
   }
+  if (testcheck.checked()) {
+    background(255, 0, 255);
+  }
+
 }
 
 
 function myCheckedEvent() {
   if (this.checked()) {
-    console.log(checkbox.value() + " is checked!");
+    console.log(this.value() + " is checked!");
   } else {
-    console.log(checkbox.value() + " is not checked!");
+    console.log(this.value() + " is not checked!");
   }
 }
 
