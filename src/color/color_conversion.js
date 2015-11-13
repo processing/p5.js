@@ -15,8 +15,6 @@
  */
 
 var p5 = require('../core/core');
-var RGBA = [];  // We will reuse this array whenever we convert to RGBA.
-
 p5.ColorConversion = {};
 
 /**
@@ -53,7 +51,7 @@ p5.ColorConversion._hsbaToRGBA = function(hsba) {
   var sat = hsba[1];
   var val = hsba[2];
 
-  RGBA.length = 0;  // Clear persistent RGBA array.
+  var RGBA = [];
 
   if (sat === 0) {
     RGBA = [val, val, val, hsba[3]];  // Return early if grayscale.
@@ -130,7 +128,7 @@ p5.ColorConversion._hslaToRGBA = function(hsla){
   var sat = hsla[1];
   var li = hsla[2];
 
-  RGBA.length = 0;  // Clear persistent RGBA array.
+  var RGBA = [];
 
   if (sat === 0) {
     RGBA = [li, li, li, hsla[3]]; // Return early if grayscale.
