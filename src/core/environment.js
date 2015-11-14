@@ -181,11 +181,12 @@ p5.prototype.cursor = function(type, x, y) {
  * <div><code>
  * var rectX = 0;
  * var fr = 30; //starting FPS
- * var clr = color(255,0,0);
+ * var clr;
  *
  * function setup() {
  *   background(200);
  *   frameRate(fr); // Attempt to refresh at starting FPS
+ *   clr = color(255,0,0);
  * }
  *
  * function draw() {
