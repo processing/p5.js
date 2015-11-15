@@ -7,16 +7,7 @@ var hashCount = 0;
 /**
  * createBuffer description
  * @param  {String} gId    key of the geometry object
- * @param  {Object}  obj    array holding bject containing geometry information
- * format for obj parameter:
- * var obj = {
-
- *       vertices: turnVectorArrayIntoNumberArray(this.vertices),
-        vertexNormals: turnVectorArrayIntoNumberArray(this.vertexNormals),
-        uvs: this.generateUV(this.faces, this.uvs),
-        faces: flatten(this.faces),
-        len: this.faces.length * 3
-  };
+ * @param  {p5.Geometry}  obj contains geometry data
  */
 p5.Renderer3D.prototype.createBuffer = function(gId, obj) {
   var gl = this.GL;
@@ -80,6 +71,7 @@ p5.Renderer3D.prototype.createBuffer = function(gId, obj) {
 /**
  * Draws a buffer given a geometry key ID
  * @param  {String} gId     ID in our geom hash
+ * @return {p5.Renderer3D} this
  */
 p5.Renderer3D.prototype.drawBuffer = function(gId) {
   this._setDefaultCamera();
@@ -107,6 +99,7 @@ p5.Renderer3D.prototype.drawBuffer = function(gId) {
   gl.drawElements(
     gl.TRIANGLE_STRIP, this.gHash[gId].numberOfItems,
     gl.UNSIGNED_SHORT, 0);
+  return this;
 };
 
 /**
