@@ -54,6 +54,7 @@ p5.Renderer3D = function(elt, pInst, isMainCanvas) {
   //default drawing is done in Retained Mode
   this.isImmediateDrawing = false;
   this.immediateMode = {};
+  this.pointSize = 5.0;//default point/stroke
   return this;
 };
 
@@ -194,6 +195,25 @@ function(shaderProgram, isImmediateMode) {
   }
 };
 
+/**
+ * Sets a shader uniform given a shaderProgram and uniform string
+ * @param {String} shaderKey key to material Hash.
+ * @param {String} uniform location in shader.
+ * @param { Number} data data to bind uniform.  Float data type.
+ * @todo currently this function sets uniform1f data.
+ * Should generalize function to accept any uniform
+ * data type.
+ */
+p5.Renderer3D.prototype._setUniform1f = function(shaderKey,uniform,data)
+{
+  var gl = this.GL;
+  var shaderProgram = this.mHash[shaderKey];
+  gl.useProgram(shaderProgram);
+  shaderProgram[uniform] = gl.getUniformLocation(shaderProgram, uniform);
+  gl.uniform1f(shaderProgram[uniform], data);
+  return this;
+};
+
 p5.Renderer3D.prototype._setMatrixUniforms = function(shaderKey) {
   var gl = this.GL;
   var shaderProgram = this.mHash[shaderKey];
@@ -262,6 +282,7 @@ p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
   this.drawMode = 'stroke';
   return this;
 };
+
 //@TODO
 p5.Renderer3D.prototype._strokeCheck = function(){
   if(this.drawMode === 'stroke'){
@@ -270,9 +291,17 @@ p5.Renderer3D.prototype._strokeCheck = function(){
     );
   }
 };
-//@TODO
-p5.Renderer3D.prototype.strokeWeight = function() {
-  throw new Error('strokeWeight for 3d not yet implemented');
+
+/**
+ * [strokeWeight description]
+ * @param  {Number} pointSize stroke point size
+ * @return {[type]}           [description]
+ * @todo  strokeWeight currently works on points only.
+ * implement on all wireframes and strokes.
+ */
+p5.Renderer3D.prototype.strokeWeight = function(pointSize) {
+  this.pointSize = pointSize;
+  return this;
 };
 //////////////////////////////////////////////
 // HASH | for material and geometry

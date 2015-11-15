@@ -118,6 +118,10 @@ p5.Renderer3D.prototype._bindImmediateBuffers = function(vertices, colors){
   //matrix
   var mId = 'immediateVert|vertexColorFrag';
   this._setMatrixUniforms(mId);
+  //set our default point size
+  this._setUniform1f(mId,
+    'uPointSize',
+    this.pointSize);
   return this;
 };
 
