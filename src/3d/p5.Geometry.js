@@ -23,8 +23,8 @@ p5.Geometry = function
   //each faceNormal is a p5.Vector
   //[[p5.Vector, p5.Vector, p5.Vector],[p5.Vector, p5.Vector, p5.Vector],...]
   this.faceNormals = [];
-  //an array of array containing uvs (group according to faces)
-  //[[[0, 0], [1, 0], [1, 0]],...]
+  //a 2D array containing uvs (group according to faces)
+  //[[0, 0], [1, 0], [1, 0],...]
   this.uvs = [];
   this.detailX = (detailX !== undefined) ? detailX: 1;
   this.detailY = (detailY !== undefined) ? detailY: 1;
@@ -98,8 +98,6 @@ p5.Geometry.prototype._computeFaces = function(offset){
       d = (i + 1)* sliceCount + j + offset;
       this.faces.push([a, b, d]);
       this.faces.push([d, b, c]);
-      //this.faces.push([a, b, d]);
-      //this.faces.push([b, c, d]);
     }
   }
 };
@@ -238,20 +236,4 @@ p5.Geometry.prototype.averagePoleNormals = function() {
   return this;
 };
 
-/**
- * [_generateUV description]
- * @param  {Array} faces [description]
- * @param  {Array} uvs   [description]
- * @todo  remove this function. unnecessary!
- */
-// p5.Geometry.prototype._generateUV = function(faces, uvs){
-
-//   faces = flatten(faces);
-//   uvs = flatten(uvs);
-//   var arr = [];
-//   faces.forEach(function(item, index){
-//     arr[item] = uvs[index];
-//   });
-//   return flatten(arr);
-// };
 module.exports = p5.Geometry;

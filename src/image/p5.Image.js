@@ -54,7 +54,7 @@ p5.Image = function(width, height){
   this.canvas.width = this.width;
   this.canvas.height = this.height;
   this.drawingContext = this.canvas.getContext('2d');
-  this.pixelDensity = 1;
+  this._pixelDensity = 1;
   //used for webgl texturing only
   this.isTexture = false;
   /**
@@ -323,7 +323,7 @@ p5.Image.prototype.mask = function(p5Image) {
 
   var scaleFactor = 1;
   if (p5Image instanceof p5.Renderer) {
-    scaleFactor = p5Image._pInst.pixelDensity;
+    scaleFactor = p5Image._pInst._pixelDensity;
   }
 
   var copyArgs = [
