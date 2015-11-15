@@ -267,6 +267,23 @@ module.exports = function(grunt) {
           }
         }
       }
+    },
+    'saucelabs-mocha': {
+      all: {
+        options: {
+          urls: ["http://127.0.0.1:9001/test/test.html"],
+          tunnelTimeout: 5,
+          build: process.env.TRAVIS_JOB_ID,
+          concurrency: 3,
+          browsers: [
+            {browserName: 'chrome'},
+            {browserName: 'firefox', platform: 'Linux', version: '42.0'},
+            {browserName: 'safari'},
+          ],
+          testname: "p5.js mocha tests",
+          tags: ["master"]
+        }
+      }
     }
   });
 
@@ -285,6 +302,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-newer');
   grunt.loadNpmTasks('grunt-release-it');
+  grunt.loadNpmTasks('grunt-saucelabs');
 
   // Create the multitasks.
   // TODO: "requirejs" is in here to run the "yuidoc_themes" subtask. Is this needed?
@@ -293,4 +311,5 @@ module.exports = function(grunt) {
   grunt.registerTask('test:nobuild', ['jshint:test', 'jscs:test', 'connect', 'mocha']);
   grunt.registerTask('yui', ['yuidoc']);
   grunt.registerTask('default', ['test']);
+  grunt.registerTask('saucetest', ['connect', 'saucelabs-mocha']);
 };

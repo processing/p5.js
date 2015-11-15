@@ -66,7 +66,37 @@
     // Can alternatively do a check on window.PHANTOMJS
     if (navigator.userAgent.indexOf('PhantomJS') < 0) {
       window.addEventListener('load', function() {
-        mocha.run();
+        var runner = mocha.run();
+
+        // This exposes our test results to Sauce Labs. For more
+        // details, see: https://github.com/axemclion/grunt-saucelabs.
+
+        var failedTests = [];
+        runner.on('end', function(){
+          window.mochaResults = runner.stats;
+          window.mochaResults.reports = failedTests;
+        });
+
+        runner.on('fail', logFailure);
+
+        function logFailure(test, err) {
+          var flattenTitles = function(test){
+            var titles = [];
+            while (test.parent.title){
+              titles.push(test.parent.title);
+              test = test.parent;
+            }
+            return titles.reverse();
+          };
+
+          failedTests.push({
+            name: test.title,
+            result: false,
+            message: err.message,
+            stack: err.stack,
+            titles: flattenTitles(test)
+          });
+        }
       }, false);
     }
   </script>
