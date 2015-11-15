@@ -271,7 +271,7 @@ module.exports = function(grunt) {
     'saucelabs-mocha': {
       all: {
         options: {
-          urls: ["http://127.0.0.1:9001/test/test.html"],
+          urls: ['http://127.0.0.1:9001/test/test.html'],
           tunnelTimeout: 5,
           build: process.env.TRAVIS_JOB_ID,
           concurrency: 3,
@@ -280,8 +280,8 @@ module.exports = function(grunt) {
             {browserName: 'firefox', platform: 'Linux', version: '42.0'},
             {browserName: 'safari'},
           ],
-          testname: "p5.js mocha tests",
-          tags: ["master"]
+          testname: 'p5.js mocha tests',
+          tags: ['master']
         }
       }
     }
