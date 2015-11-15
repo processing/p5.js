@@ -162,11 +162,6 @@ function(shaderProgram, isImmediateMode) {
     gl.getUniformLocation(shaderProgram, 'uResolution');
   gl.uniform1f(shaderProgram.uResolution, RESOLUTION);
 
-  //vertex position Attribute
-  shaderProgram.vertexPositionAttribute =
-    gl.getAttribLocation(shaderProgram, 'aPosition');
-  gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
-
   //projection Matrix uniform
   shaderProgram.uPMatrixUniform =
     gl.getUniformLocation(shaderProgram, 'uProjectionMatrix');
@@ -176,19 +171,9 @@ function(shaderProgram, isImmediateMode) {
 
   //@TODO: figure out a better way instead of if statement
   if(isImmediateMode === undefined){
-    //vertex normal Attribute
-    shaderProgram.vertexNormalAttribute =
-      gl.getAttribLocation(shaderProgram, 'aNormal');
-    gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
-
     //normal Matrix uniform
     shaderProgram.uNMatrixUniform =
     gl.getUniformLocation(shaderProgram, 'uNormalMatrix');
-
-    //texture coordinate Attribute
-    shaderProgram.textureCoordAttribute =
-      gl.getAttribLocation(shaderProgram, 'aTexCoord');
-    gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
 
     shaderProgram.samplerUniform =
     gl.getUniformLocation(shaderProgram, 'uSampler');

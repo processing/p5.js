@@ -51,7 +51,6 @@ p5.prototype.plane = function(width, height){
     var planeGeom =
     new p5.Geometry(_plane, detailX, detailY);
     this._renderer.createBuffer(gId, planeGeom);
-    console.log(planeGeom.getVertices());
   }
 
   this._renderer.drawBuffer(gId);

@@ -14,9 +14,10 @@ p5.Geometry = function
   this.vertices = [];
   //an array containing each normals for each vertex
   //each normal is a p5.Vector
+  //[p5.Vector, p5.Vector, p5.Vector,p5.Vector, p5.Vector, p5.Vector,...]
   this.vertexNormals = [];
   //an array containing each three vertex indices that form a face
-  //[[0, 1, 2], [1, 2, 3], ...]
+  //[[0, 1, 2], [2, 1, 3], ...]
   this.faces = [];
   //an array containing every normal for each face
   //each faceNormal is a p5.Vector
@@ -96,7 +97,9 @@ p5.Geometry.prototype._computeFaces = function(offset){
       c = (i + 1)* sliceCount + j + 1 + offset;
       d = (i + 1)* sliceCount + j + offset;
       this.faces.push([a, b, d]);
-      this.faces.push([b, c, d]);
+      this.faces.push([d, b, c]);
+      //this.faces.push([a, b, d]);
+      //this.faces.push([b, c, d]);
     }
   }
 };
@@ -109,8 +112,8 @@ p5.Geometry.prototype._computeUVs = function(){
       uvb = [(j + 1)/ this.detailX, i/this.detailY];
       uvc = [(j + 1)/ this.detailX, (i + 1)/this.detailY];
       uvd = [j/this.detailX, (i + 1)/this.detailY];
-      this.uvs.push([uva, uvb, uvd]);
-      this.uvs.push([uvb, uvc, uvd]);
+      this.uvs.push(uva, uvb, uvd);
+      this.uvs.push(uvb, uvc, uvd);
     }
   }
 };

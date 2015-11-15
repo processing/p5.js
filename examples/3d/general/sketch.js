@@ -1,4 +1,10 @@
 var slider;
+var img;
+
+function preload(){
+  img = loadImage('../material/texture/assets/cat.jpg');
+}
+
 function setup(){
   createCanvas(windowWidth,windowHeight,WEBGL);
   slider = createSlider(0,255,0);
@@ -22,15 +28,19 @@ function draw(){
   //line(0,0,-400,width,height,-400);
 
   //point(0,0,0);
-  //ellipse(slider.value(),0,0,200,100);//works!
+  // ellipse(slider.value(),0,0,slider.value(),100);//works!
 
   //Immediate
+  // fill(255,0,0);
+  // strokeWeight(slider.value());
   // beginShape(POINTS);
   //   vertex(0,0,0);
-  //   vertex(0,-height/2,0);
+  //   vertex(0,-height/4,0);
   //   vertex(0,0,0);
-  //   vertex(-width/2,-height/2,0);
+  //   vertex(-width/4,-height/4,0);
   // endShape();
+
+  //works
   // fill(0);
   // beginShape(LINES);
   //   vertex(0,0,0);
@@ -39,13 +49,15 @@ function draw(){
   //   vertex(-width/2,-height/2,0);
   // endShape();
 
-  // beginShape(LINE_STRIP);
-  //   vertex(0,0,0);
-  //   vertex(0,-height/2,0);
-  //   vertex(width/2,0,0);
-  //   vertex(width/2,height/2,0);
-  // endShape();
- 
+  //works
+  beginShape(LINE_STRIP);
+    vertex(0,0,0);
+    vertex(0,-height/2,0);
+    vertex(width/2,0,0);
+    vertex(width/2,height/2,0);
+  endShape();
+
+  //works
   // beginShape(LINE_LOOP);
   //   vertex(-width/2,-height/2,0);
   //   vertex(-width/3,height/2,0);
@@ -55,6 +67,8 @@ function draw(){
   //   vertex(width/2,height/2,0);
   // endShape();
 
+  //works
+  // fill(0,255,0);
   // beginShape(TRIANGLES);
   //   vertex(0,0,0);
   //   vertex(0,-height/2,0);
@@ -71,7 +85,7 @@ function draw(){
   //   vertex(width/2,20,0);
   //   vertex(0,height/2,0);
   // endShape();
-
+  //works
   // beginShape(TRIANGLE_FAN);
   //   vertex(0,0,0);
   //   vertex(width/2,-height/6,0);
@@ -84,10 +98,12 @@ function draw(){
   ////////////
   //// 3D
   ////////////
+  //texture(img);
   //sphere(100);//works!
   //cone(100,100);//needs base
-  //torus(400,100);//works!
+  torus(400,100);//works!
   //cylinder(100);//needs top and bottom
   //box(100);//error: attempt to access out of range vertices in attr 0
-  plane(100);//works!
+  // basicMaterial(255,0,0);
+  // plane(400);//works!
 }

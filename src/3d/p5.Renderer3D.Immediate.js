@@ -102,6 +102,11 @@ p5.Renderer3D.prototype._bindImmediateBuffers = function(vertices, colors){
   this._setDefaultCamera();
   var gl = this.GL;
   var shaderProgram = this._getColorVertexShader();
+  //vertex position Attribute
+  //@todo this is messy.
+  shaderProgram.vertexPositionAttribute =
+    gl.getAttribLocation(shaderProgram, 'aPosition');
+  gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.vertexBuffer);
 
@@ -111,7 +116,6 @@ p5.Renderer3D.prototype._bindImmediateBuffers = function(vertices, colors){
     3, gl.FLOAT, false, 0, 0);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.colorBuffer);
-
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.DYNAMIC_DRAW);
   gl.vertexAttribPointer(shaderProgram.vertexColorAttribute,
     4, gl.FLOAT, false, 0, 0);

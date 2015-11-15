@@ -7,7 +7,7 @@ var hashCount = 0;
 /**
  * createBuffer description
  * @param  {String} gId    key of the geometry object
- * @param  {Array}  arr    array holding bject containing geometry information
+ * @param  {Object}  obj    array holding bject containing geometry information
  * format for obj parameter:
  * var obj = {
 
@@ -34,6 +34,11 @@ p5.Renderer3D.prototype.createBuffer = function(gId, obj) {
     gl.ARRAY_BUFFER,
     new Float32Array( vToNArray(obj.vertices) ),
     gl.STATIC_DRAW);
+  //vertex position Attribute
+  shaderProgram.vertexPositionAttribute =
+    gl.getAttribLocation(shaderProgram, 'aPosition');
+  gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+
   gl.vertexAttribPointer(
     shaderProgram.vertexPositionAttribute,
     3, gl.FLOAT, false, 0, 0);
@@ -43,6 +48,11 @@ p5.Renderer3D.prototype.createBuffer = function(gId, obj) {
     gl.ARRAY_BUFFER,
     new Float32Array( vToNArray(obj.vertexNormals) ),
     gl.STATIC_DRAW);
+  //vertex normal Attribute
+  shaderProgram.vertexNormalAttribute =
+    gl.getAttribLocation(shaderProgram, 'aNormal');
+  gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
+
   gl.vertexAttribPointer(
     shaderProgram.vertexNormalAttribute,
     3, gl.FLOAT, false, 0, 0);
@@ -52,6 +62,10 @@ p5.Renderer3D.prototype.createBuffer = function(gId, obj) {
     gl.ARRAY_BUFFER,
     new Float32Array( flatten(obj.uvs) ),
     gl.STATIC_DRAW);
+  //texture coordinate Attribute
+  shaderProgram.textureCoordAttribute =
+    gl.getAttribLocation(shaderProgram, 'aTexCoord');
+  gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
   gl.vertexAttribPointer(
     shaderProgram.textureCoordAttribute,
     2, gl.FLOAT, false, 0, 0);
@@ -61,34 +75,6 @@ p5.Renderer3D.prototype.createBuffer = function(gId, obj) {
     gl.ELEMENT_ARRAY_BUFFER,
     new Uint16Array( flatten(obj.faces) ),
     gl.STATIC_DRAW);
-  /*
-  arr.forEach(function(obj, i){
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer[i]);
-    gl.bufferData(
-      gl.ARRAY_BUFFER, new Float32Array(obj.vertices), gl.STATIC_DRAW);
-    gl.vertexAttribPointer(
-      shaderProgram.vertexPositionAttribute,
-      3, gl.FLOAT, false, 0, 0);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer[i]);
-    gl.bufferData(
-      gl.ARRAY_BUFFER, new Float32Array(obj.vertexNormals), gl.STATIC_DRAW);
-    gl.vertexAttribPointer(
-      shaderProgram.vertexNormalAttribute,
-      3, gl.FLOAT, false, 0, 0);
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer[i]);
-    gl.bufferData(
-      gl.ARRAY_BUFFER, new Float32Array(obj.uvs), gl.STATIC_DRAW);
-    gl.vertexAttribPointer(
-      shaderProgram.textureCoordAttribute,
-      2, gl.FLOAT, false, 0, 0);
-
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer[i]);
-    gl.bufferData
-     (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(obj.faces), gl.STATIC_DRAW);
-  }.bind(this));
-*/
 };
 
 /**
@@ -140,31 +126,10 @@ p5.Renderer3D.prototype._initBufferDefaults = function(gId, arr) {
   var gl = this.GL;
   //create a new entry in our gHash
   this.gHash[gId] = {};
-  // this.gHash[gId].len = [];
-  //this.gHash[gId].vertexBuffer = [];
-  //this.gHash[gId].normalBuffer = [];
-  //this.gHash[gId].uvBuffer = [];
-  //this.gHash[gId].indexBuffer =[];
-
-  //since we're now passing a Geom object instead of array
-  //we need to traverse our object to see if there are children
-  //if so, let's create buffers for them.
-
-  //Need to handle the obj.len !
-  //this.gHash[gId].len.push(obj.len);
   this.gHash[gId].vertexBuffer = gl.createBuffer();
   this.gHash[gId].normalBuffer = gl.createBuffer();
   this.gHash[gId].uvBuffer = gl.createBuffer();
   this.gHash[gId].indexBuffer = gl.createBuffer();
-  /*
-  arr.forEach(function(obj){
-    this.gHash[gId].len.push(obj.len);
-    this.gHash[gId].vertexBuffer.push(gl.createBuffer());
-    this.gHash[gId].normalBuffer.push(gl.createBuffer());
-    this.gHash[gId].uvBuffer.push(gl.createBuffer());
-    this.gHash[gId].indexBuffer.push(gl.createBuffer());
-  }.bind(this));
-*/
 };
 
 ///////////////////////////////
