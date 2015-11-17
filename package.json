@@ -10,7 +10,7 @@
     "docs": "grunt yui",
     "test": "grunt"
   },
-  "version": "0.4.18",
+  "version": "0.4.19",
   "devDependencies": {
     "amdclean": "~0.3.3",
     "browserify": "^11.0.1",
@@ -25,6 +25,7 @@
     "grunt-contrib-uglify": "^0.7.0",
     "grunt-contrib-watch": "~0.5.3",
     "grunt-contrib-yuidoc": "0.5.2",
+    "grunt-saucelabs": "8.6.1",
     "grunt-jscs": "^1.8.0",
     "grunt-lib-phantomjs": "~0.4.0",
     "grunt-mocha": "~0.4.6",

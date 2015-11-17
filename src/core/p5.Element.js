@@ -95,6 +95,8 @@ p5.Element.prototype.parent = function(p) {
  */
 p5.Element.prototype.id = function(id) {
   this.elt.id = id;
+  this.width = this.elt.offsetWidth;
+  this.height = this.elt.offsetHeight;
   return this;
 };
 
@@ -108,6 +110,8 @@ p5.Element.prototype.id = function(id) {
  */
 p5.Element.prototype.class = function(c) {
   this.elt.className = c;
+  this.width = this.elt.offsetWidth;
+  this.height = this.elt.offsetHeight;
   return this;
 };
 

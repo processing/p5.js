@@ -188,15 +188,22 @@ function renderCode(sel) {
 
     $( document ).ready(function() {
       setTimeout(function() {
-        var myp5 = new _p5(s, cnv);      
-        $( ".example-content" ).find('div').each(function() {
-          $this = $( this );
-          var pre = $this.find('pre')[0];
-          if (pre) {
-            $this.height( Math.max($(pre).height()*1.1, 100) + 20 );
-          }
-        });
-        instances[i] = myp5;
+        var myp5;
+        try {
+          myp5 = new _p5(s, cnv);
+        } finally {
+          // If the example code threw an exception, we still want to
+          // set the size of .example-content so it doesn't overflow
+          // into our description and make the documentation unreadable.
+          $( ".example-content" ).find('div').each(function() {
+            $this = $( this );
+            var pre = $this.find('pre')[0];
+            if (pre) {
+              $this.height( Math.max($(pre).height()*1.1, 100) + 20 );
+            }
+          });
+          instances[i] = myp5;
+        }
       }, 100); 
     });
 
