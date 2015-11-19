@@ -396,7 +396,6 @@
     var elt = document.createElement('button');
     elt.innerHTML = label;
     elt.value = value;
-    if (value) elt.value = value;
     return addElement(elt, this);
   };
 
