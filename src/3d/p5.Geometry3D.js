@@ -228,12 +228,14 @@ p5.Geometry3D.prototype.generateUV = function(faces, uvs){
 /**
  * generate an object containing information needed to create buffer
  */
-p5.Geometry3D.prototype.generateObj = function(noMerge){
+p5.Geometry3D.prototype.generateObj = function(noMerge, noNormals){
   if(!noMerge){
     this.mergeVertices();
   }
-  this.computeFaceNormals();
-  this.computeVertexNormals();
+  if(!noNormals) {
+    this.computeFaceNormals();
+    this.computeVertexNormals();
+  }
 
   var obj = {
     vertices: turnVectorArrayIntoNumberArray(this.vertices),

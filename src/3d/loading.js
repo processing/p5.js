@@ -13,26 +13,41 @@ require('./p5.Geometry3D');
 
 /**
  * Load a 3d model from an OBJ file.
- * @method makeModel
- * @param  {String} url        width of the plane
- * @return {p5}
+ *
+ * @method loadModel
+ * @param  {String} path Path of the model to be loaded
+ * @return {p5.Geometry3D} the p5.Geometry3D object
  * @example
  * <div>
  * <code>
- * // example goes here
+ * //draw a spinning teapot
+ * var teapot;
+ *
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   teapot = loadModel('teapot.obj');
+ * }
+ *
+ * function draw(){
+ *   background(200);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   model(teapot);
+ * }
  * </code>
  * </div>
  */
-p5.prototype.loadModel = function(path, scaleFactor){
+p5.prototype.loadModel = function ( path ) {
   var model = new p5.Geometry3D();
 
   // TODO: This shouldn't just be thrown on to the geometry object now
   model.gid = path;
 
-  // Check for a duplicate loaded object ??
-  if(!this._renderer.geometryInHash(model.gid)){
+  //Check for a duplicate loaded object ??
+  if (!this._renderer.geometryInHash(model.gid)) {
     this.loadStrings(path, function(strings) {
-      parseObj(model, strings, scaleFactor);
+      parseObj(model, strings);
     }.bind(this));
   }
 
@@ -40,54 +55,94 @@ p5.prototype.loadModel = function(path, scaleFactor){
 };
 
 /**
- * k;jlkj;lk
+ * Parse OBJ lines into model. For reference, this is what a simple model of a
+ * square might look like:
+ *
+ * v -0.5 -0.5 0.5
+ * v -0.5 -0.5 -0.5
+ * v -0.5 0.5 -0.5
+ * v -0.5 0.5 0.5
+ * 
+ * f 4 3 2 1
  */
-function parseObj(model, lines, scaleFactor){
-  var uvs = [];
-  var normals = [];
+function parseObj( model, lines ) {
+  // OBJ allows a face to specify an index for a vertex (in the above example),
+  // but it also allows you to specify a custom combination of vertex, UV
+  // coordinate, and vertex normal. So, "3/4/3" would mean, "use vertex 3 with
+  // UV coordinate 4 and vertex normal 3". In WebGL, every vertex with different
+  // parameters must be a different vertex, so loadedVerts is used to
+  // temporarily store the parsed 
+  var loadedVerts = {'v' : [],
+                     'vt' : [],
+                     'vn' : []},
+      indexedVerts = {},
+      vertexUVs = [];
 
-  for(var i = 0; i < lines.length; ++i) {
-    var tokens = lines[i].split(/\b\s+/);
+  for (var line = 0; line < lines.length; ++line) {
+    // Each line is a separate object (vertex, face, vertex normal, etc)
+    // For each line, split it into tokens on whitespace. The first token
+    // describes the type.
+    var tokens = lines[line].trim().split(/\b\s+/);
 
-    if(tokens.length > 0) {
-      if(tokens[0] === 'v') {
-        var vertex = new p5.Vector(parseFloat(tokens[1]) * scaleFactor,
-                                   parseFloat(tokens[2]) * scaleFactor,
-                                   parseFloat(tokens[3]) * scaleFactor);
-        model.vertices.push(vertex);
-      } else if(tokens[0] === 'vt') {
-        var texVertex = [parseFloat(tokens[1]), parseFloat(tokens[2])];
-        uvs.push(texVertex);
-      } else if(tokens[0] === 'vn') {
-        var normal = new p5.Vector(parseFloat(tokens[1]),
+    if (tokens.length > 0) {
+      if (tokens[0] === 'v' || tokens[0] === 'vn') {
+        // Check if this line describes a vertex or vertex normal.
+        // It will have three numeric parameters.
+        var vertex = new p5.Vector(parseFloat(tokens[1]),
                                    parseFloat(tokens[2]),
                                    parseFloat(tokens[3]));
-        normals.push(normal);
-      } else if(tokens[0] === 'f') {
-        // Parse faces
-        var faces = [];
-        for(var j = 1; j < tokens.length; ++j) {
-          faces.push(tokens[j].split('/'));
-        }
+        loadedVerts[tokens[0]].push(vertex);
+      } else if (tokens[0] === 'vt') {
+        // Check if this line describes a texture coordinate.
+        // It will have two numeric parameters.
+        var texVertex = [parseFloat(tokens[1]), parseFloat(tokens[2])];
+        loadedVerts[tokens[0]].push(texVertex);
+      } else if (tokens[0] === 'f') {
+        // Check if this line describes a face.
+        // OBJ faces can have more than three points. Triangulate points.
+        for (var tri = 3; tri < tokens.length; ++tri) {
+          var face = [];
+          var faceUVs = [];
 
-        // Triangulate faces with more than 4 vertices
-        for(var vertIndex = 1; vertIndex < faces.length - 1; ++vertIndex) {
-          var face = [parseInt(faces[0][0]) - 1,
-                      parseInt(faces[vertIndex][0]) - 1,
-                      parseInt(faces[vertIndex + 1][0]) - 1];
+          var vertexTokens = [1, tri - 1, tri];
+
+          for (var tokenInd = 0; tokenInd < vertexTokens.length; ++tokenInd) {
+            // Now, convert the given token into an index
+            var vertString = tokens[vertexTokens[tokenInd]];
+            var vertIndex = 0;
+
+            // TODO: Faces can technically use negative numbers to refer to the
+            // previous nth vertex. I haven't seen this used in practice, but
+            // it might be good to implement this in the future.
+
+            if (indexedVerts[vertString] !== undefined) {
+              vertIndex = indexedVerts[vertString];
+            } else {
+              var vertParts = vertString.split('/');
+              for (var i = 0; i < vertParts.length; i++) {
+                vertParts[i] = parseInt(vertParts[i]) - 1;
+              }
+
+              vertIndex = indexedVerts[vertString] = model.vertices.length;
+              model.vertices.push(loadedVerts.v[vertParts[0]].copy());
+              if (loadedVerts.vt[vertParts[1]]) {
+                vertexUVs.push(loadedVerts.vt[vertParts[1]].slice());
+              }
+              if (loadedVerts.vn[vertParts[2]]) {
+                model.vertexNormals.push(loadedVerts.vn[vertParts[2]].copy());
+              }
+            }
+
+            face.push(vertIndex);
+            if (vertexUVs[vertIndex]) {
+              faceUVs.push(vertexUVs[vertIndex]);
+            } else {
+              faceUVs.push([0, 0]);
+            }
+          }
+
           model.faces.push(face);
-
-          //TODO: check to make sure that there are UVs
-          var faceUVs = [uvs[parseInt(faces[0][1]) - 1],
-                         uvs[parseInt(faces[vertIndex][1]) - 1],
-                         uvs[parseInt(faces[vertIndex + 1][1]) - 1]];
           model.uvs.push(faceUVs);
-
-          //TODO: check to make sure that there are normals
-          // var faceNormals = [normals[parseInt(faces[0][2]) - 1],
-          //                    normals[parseInt(faces[vertIndex][2]) - 1],
-          //                    normals[parseInt(faces[vertIndex + 1][2]) - 1]];
-          // model.vertexNormals.push(faceUVs);
         }
       }
     }
@@ -97,13 +152,23 @@ function parseObj(model, lines, scaleFactor){
 }
 
 /**
- * Draw a 3d model
+ * Render a 3d model to the screen.
+ *
+ * @method model
+ * @param  {p5.Geometry3D} path Path of the model to be loaded
+ * @return {p5.Geometry3D} the p5.Geometry3D object
+ * @example
+ * <div>
+ * <code>
+ * // example goes here
+ * </code>
+ * </div>
  */
-p5.prototype.model = function(model){
-  // TODO: Some sort of "not loaded" flag? See what PImage does
-  if(model.vertices.length > 0) {
-    if(!this._renderer.geometryInHash(model.gid)){
-      var obj = model.generateObj();
+p5.prototype.model = function ( model ) {
+  if (model.vertices.length > 0) {
+    if (!this._renderer.geometryInHash(model.gid)) {
+      var obj = model.generateObj(true, (model.vertexNormals.length > 0));
+
       this._renderer.initBuffer(model.gid, obj);
     }
 
