@@ -30,8 +30,8 @@ p5.Geometry = function
   //each faceNormal is a p5.Vector
   //[[p5.Vector, p5.Vector, p5.Vector],[p5.Vector, p5.Vector, p5.Vector],...]
   this.faceNormals = [];
-  //an array containing uvs for every vertex
-  //@type [p5.Vector]
+  //a 2D array containing uvs for every vertex
+  //[[0.0,0.0],[1.0,0.0], ...]
   this.uvs = [];
   this.detailX = (detailX !== undefined) ? detailX: 1;
   this.detailY = (detailY !== undefined) ? detailY: 1;
@@ -48,7 +48,7 @@ p5.Geometry = function
 p5.Geometry.prototype._init = function
 (vertData){
   if(vertData instanceof Function){
-    this._computeVertices(vertData);
+    this.computeVerticesAndUVs(vertData);
   }
   //otherwise it's an Object
   else {
@@ -62,14 +62,14 @@ p5.Geometry.prototype._init = function
         }
         //otherwise the item is a vertex func
         else {
-          this._computeVertices(vertData[item]);
+          this.computeVerticesAndUVs(vertData[item]);
         }
       }
     }
   }
 };
 
-p5.Geometry.prototype.computeVertices = function(vertFunc){
+p5.Geometry.prototype.computeVerticesAndUVs = function(vertFunc){
   var u,v,p;
   for (var i = 0; i <= this.detailY; i++){
     v = i / this.detailY;
@@ -77,6 +77,7 @@ p5.Geometry.prototype.computeVertices = function(vertFunc){
       u = j / this.detailX;
       p = vertFunc(u, v);
       this.vertices.push(p);
+      this.uvs.push([u,v]);
     }
   }
   return this;
@@ -98,16 +99,17 @@ p5.Geometry.prototype.computeFaces = function(){
   return this;
 };
 
+/**
+ * compute UVs per vertex
+ */
+//@todo this function is flawed if geom has mult faces
 p5.Geometry.prototype.computeUVs = function(){
-  var uva, uvb, uvc, uvd;
-  for (var i = 0; i < this.detailY; i++){
-    for (var j = 0; j < this.detailX; j++){
-      uva = [j/this.detailX, i/this.detailY];
-      uvb = [(j + 1)/ this.detailX, i/this.detailY];
-      uvc = [(j + 1)/ this.detailX, (i + 1)/this.detailY];
-      uvd = [j/this.detailX, (i + 1)/this.detailY];
-      this.uvs.push(uva, uvb, uvd);
-      this.uvs.push(uvb, uvc, uvd);
+  var u,v;
+  for (var i = 0; i <= this.detailY; i++){
+    v = i / this.detailY;
+    for (var j = 0; j <= this.detailX; j++){
+      u = j / this.detailX;
+      this.uvs.push([u,v]);
     }
   }
   return this;

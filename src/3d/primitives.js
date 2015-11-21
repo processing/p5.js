@@ -50,7 +50,6 @@ p5.prototype.plane = function(width, height){
     };
     var planeGeom =
     new p5.Geometry(_plane, detailX, detailY, function(){
-      planeGeom.computeUVs();
       this.computeFaces();
       this.computeFaceNormals();
       this.computeVertexNormals();
@@ -151,7 +150,6 @@ p5.prototype.box = function(width, height, depth){
       detailX,
       detailY,
       function(){
-        this.computeUVs();
         this.computeFaces();
         this.computeFaceNormals();
         this.computeVertexNormals();
@@ -211,7 +209,7 @@ p5.prototype.sphere = function(radius, detail){
     };
     var sphereGeom = new p5.Geometry(_sphere, detailX, detailY,
       function(){
-        this.computeUVs();
+
         this.computeFaces();
         this.computeFaceNormals();
         this.computeVertexNormals();
@@ -299,7 +297,7 @@ p5.prototype.cylinder = function(radius, height, detail){
     };
     var cylinderGeom = new p5.Geometry(_cylinder, detailX, detailY,
       function(){
-        this.computeUVs();
+
         this.computeFaces();
         this.computeFaceNormals();
         this.computeVertexNormals();
@@ -372,7 +370,6 @@ p5.prototype.cone = function(radius, height, detail){
     var coneGeom =
     new p5.Geometry(_cone, detailX, detailY,
       function(){
-        this.computeUVs();
         this.computeFaces();
         this.computeFaceNormals();
         this.computeVertexNormals();
@@ -437,7 +434,6 @@ p5.prototype.torus = function(radius, tubeRadius, detail){
     var torusGeom =
     new p5.Geometry(_torus, detailX, detailY,
       function(){
-        this.computeUVs();
         this.computeFaces();
         this.computeFaceNormals();
         this.computeVertexNormals();
@@ -548,11 +544,7 @@ p5.Renderer3D.prototype.ellipse = function
         return new p5.Vector(_x, _y, _z);
       }
     };
-    var ellipseGeom = new p5.Geometry(_ellipse, detailX, detailY,
-      function(){
-        this.computeUVs();
-      }
-    );
+    var ellipseGeom = new p5.Geometry(_ellipse, detailX, detailY);
     this.createBuffer(gId, ellipseGeom);
   }
   this.drawBuffer(gId);
@@ -573,11 +565,7 @@ p5.Renderer3D.prototype.quad = function
       p4: new p5.Vector(x4,y4,z4)
     };
     //starting point
-    var quadGeom = new p5.Geometry(_quad,
-      function(){
-        this.computeUVs();
-      }
-    );
+    var quadGeom = new p5.Geometry(_quad);
     this.createBuffer(gId, quadGeom);
   }
   this.drawBuffer(gId);
