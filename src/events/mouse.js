@@ -632,19 +632,18 @@ p5.prototype._onclick = function(e) {
 };
 
 /**
- * The function mouseWheel is executed every time a scroll event is detected
- * either triggered by an actual mouse wheel or by a touchpad.<br>
- * The event.delta property returns -1 or +1 depending on the scroll
- * direction and the user's settings. (on OS X with "natural" scrolling
- * enabled, the values are inverted).<br><br>
+ * The function mouseWheel is executed every time a vertical mouse wheel
+ * event is detected either triggered by an actual mouse wheel or by a
+ * touchpad.<br><br>
+ * The event.delta property returns the amount the mouse wheel
+ * have scrolled. The values can be positive or negative depending on the
+ * scroll direction (on OS X with "natural" scrolling enabled, the signs
+ * are inverted).<br><br>
  * Browsers may have different default behaviors attached to various
  * mouse events. To prevent any default behavior for this event, add
- * `return false` to the end of the method.
- *
- * The event.wheelDelta or event.detail properties can also be accessed but
- * their behavior may differ depending on the browser.
- * See <a href="http://www.javascriptkit.com/javatutors/onmousewheel.shtml">
- * mouse wheel event in JS</a>.
+ * `return false` to the end of the method.<br><br>
+ * Due to the current support of the `wheel` event on Safari, the function
+ * may only work as expected if `return false` is included while using Safari.
  *
  * @method mouseWheel
  *
@@ -660,10 +659,8 @@ p5.prototype._onclick = function(e) {
 	* }
 	*
 	* function mouseWheel(event) {
-	*   //event.delta can be +1 or -1 depending
-	*   //on the wheel/scroll direction
 	*   print(event.delta);
-	*   //move the square one pixel up or down
+	*   //move the square according to the vertical scroll amount
 	*   pos += event.delta;
 	*   //uncomment to block page scrolling
 	*   //return false;
@@ -671,12 +668,10 @@ p5.prototype._onclick = function(e) {
 	* </code>
 	* </div>
  */
-p5.prototype._onmousewheel = p5.prototype._onDOMMouseScroll = function(e) {
+p5.prototype._onwheel = function(e) {
   var context = this._isGlobal ? window : this;
   if (typeof context.mouseWheel === 'function') {
-    //creating a delta property (either +1 or -1)
-    //for cross-browser compatibility
-    e.delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+    e.delta = e.deltaY;
     var executeDefault = context.mouseWheel(e);
     if(executeDefault === false) {
       e.preventDefault();

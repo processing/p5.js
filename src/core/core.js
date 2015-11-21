@@ -184,12 +184,7 @@ var p5 = function(sketch, node, sync) {
     this._events.devicemotion = null;
   }
 
-  //FF doesn't recognize mousewheel as of FF3.x
-  if (/Firefox/i.test(navigator.userAgent)) {
-    this._events.DOMMouseScroll = null;
-  } else {
-    this._events.mousewheel = null;
-  }
+  this._events.wheel = null;
 
 
   this._loadingScreenId = 'p5_loading';

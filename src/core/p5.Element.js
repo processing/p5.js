@@ -175,7 +175,7 @@ p5.Element.prototype.mousePressed = function (fxn) {
  * @return {p5.Element}
  */
 p5.Element.prototype.mouseWheel = function (fxn) {
-  attachListener('mousewheel', fxn, this);
+  attachListener('wheel', fxn, this);
   return this;
 };
 
