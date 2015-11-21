@@ -6,9 +6,16 @@ var p5 = require('../core/core');
 
 /**
  * p5 Geometry class
+ * @constructor
+ * @param  {Function | Object} vertData callback function or Object
+ *                     containing routine(s) for vertex data generation
+ * @param  {Number} [detailX] number of vertices on horizontal surface
+ * @param  {Number} [detailY] number of vertices on horizontal surface
+ * @param {Function} [callback] function to call upon object instantiation.
+ *                  
  */
 p5.Geometry = function
-(vertData, detailX, detailY, offset){
+(vertData, detailX, detailY, callback){
   //an array containing every vertex
   //@type [p5.Vector]
   this.vertices = [];
@@ -23,33 +30,25 @@ p5.Geometry = function
   //each faceNormal is a p5.Vector
   //[[p5.Vector, p5.Vector, p5.Vector],[p5.Vector, p5.Vector, p5.Vector],...]
   this.faceNormals = [];
-  //a 2D array containing uvs (group according to faces)
-  //[[0, 0], [1, 0], [1, 0],...]
+  //an array containing uvs for every vertex
+  //@type [p5.Vector]
   this.uvs = [];
   this.detailX = (detailX !== undefined) ? detailX: 1;
   this.detailY = (detailY !== undefined) ? detailY: 1;
-  this._init(vertData, offset);
-
+  this._init(vertData);
+  if(callback instanceof Function){
+    callback.call(this);
+  }
   return this;
 };
 
 /**
  * Initialize geometry with vertex data and parameters
- * @param  {Function | Object} vertData callback function or Object
- *                     containing routine(s) for vertex data generation
- * @param  {Number} detailX number of vertices on horizontal surface
- * @param  {Number} detailY number of vertices on horizontal surface
- * @param  {Number} offset  offset of vertices index
  */
 p5.Geometry.prototype._init = function
-(vertData, offset){
-  offset = offset || 0;
+(vertData){
   if(vertData instanceof Function){
     this._computeVertices(vertData);
-    this._computeFaces(offset);
-    this._computeUVs();
-    this._computeFaceNormals();
-    this._computeVertexNormals();
   }
   //otherwise it's an Object
   else {
@@ -65,17 +64,12 @@ p5.Geometry.prototype._init = function
         else {
           this._computeVertices(vertData[item]);
         }
-        this._computeFaces(offset);
-        this._computeUVs();
-        this._computeFaceNormals();
-        this._computeVertexNormals();
       }
     }
   }
-
 };
 
-p5.Geometry.prototype._computeVertices = function(vertFunc){
+p5.Geometry.prototype.computeVertices = function(vertFunc){
   var u,v,p;
   for (var i = 0; i <= this.detailY; i++){
     v = i / this.detailY;
@@ -85,29 +79,26 @@ p5.Geometry.prototype._computeVertices = function(vertFunc){
       this.vertices.push(p);
     }
   }
+  return this;
 };
 
-p5.Geometry.prototype.getVertices = function()
-{
-  return this.vertices;
-};
-
-p5.Geometry.prototype._computeFaces = function(offset){
+p5.Geometry.prototype.computeFaces = function(){
   var sliceCount = this.detailX + 1;
   var a, b, c, d;
   for (var i = 0; i < this.detailY; i++){
     for (var j = 0; j < this.detailX; j++){
-      a = i * sliceCount + j + offset;
-      b = i * sliceCount + j + 1 + offset;
-      c = (i + 1)* sliceCount + j + 1 + offset;
-      d = (i + 1)* sliceCount + j + offset;
+      a = i * sliceCount + j;// + offset;
+      b = i * sliceCount + j + 1;// + offset;
+      c = (i + 1)* sliceCount + j + 1;// + offset;
+      d = (i + 1)* sliceCount + j;// + offset;
       this.faces.push([a, b, d]);
       this.faces.push([d, b, c]);
     }
   }
+  return this;
 };
 
-p5.Geometry.prototype._computeUVs = function(){
+p5.Geometry.prototype.computeUVs = function(){
   var uva, uvb, uvc, uvd;
   for (var i = 0; i < this.detailY; i++){
     for (var j = 0; j < this.detailX; j++){
@@ -119,12 +110,13 @@ p5.Geometry.prototype._computeUVs = function(){
       this.uvs.push(uvb, uvc, uvd);
     }
   }
+  return this;
 };
 
 /**
  * compute faceNormals for a geometry
  */
-p5.Geometry.prototype._computeFaceNormals = function(){
+p5.Geometry.prototype.computeFaceNormals = function(){
 
   var cb = new p5.Vector();
   var ab = new p5.Vector();
@@ -143,13 +135,13 @@ p5.Geometry.prototype._computeFaceNormals = function(){
     normal.mult(-1);
     this.faceNormals[f] = normal;
   }
-
+  return this;
 };
 
 /**
  * compute vertexNormals for a geometry
  */
-p5.Geometry.prototype._computeVertexNormals = function (){
+p5.Geometry.prototype.computeVertexNormals = function (){
 
   var v, f, face, faceNormal, vertices;
   var vertexNormals = [];
@@ -187,7 +179,7 @@ p5.Geometry.prototype._computeVertexNormals = function (){
     this.vertexNormals[face[1]] = vertexNormals[f][1];
     this.vertexNormals[face[2]] = vertexNormals[f][2];
   }
-
+  return this;
 };
 
 /**

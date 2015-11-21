@@ -49,7 +49,12 @@ p5.prototype.plane = function(width, height){
       return new p5.Vector(x, y, z);
     };
     var planeGeom =
-    new p5.Geometry(_plane, detailX, detailY);
+    new p5.Geometry(_plane, detailX, detailY, function(){
+      planeGeom.computeUVs();
+      this.computeFaces();
+      this.computeFaceNormals();
+      this.computeVertexNormals();
+    });
     this._renderer.createBuffer(gId, planeGeom);
   }
 
@@ -142,12 +147,20 @@ p5.prototype.box = function(width, height, depth){
       }
     };
     var boxGeom = new p5.Geometry(
-      _box, detailX, detailY);//, boxGeom.vertices.length);
+      _box,
+      detailX,
+      detailY,
+      function(){
+        this.computeUVs();
+        this.computeFaces();
+        this.computeFaceNormals();
+        this.computeVertexNormals();
+      }
+    );
     //initialize our geometry buffer with
     //the key val pair:
     //geometry Id, Geom object
     this._renderer.createBuffer(gId, boxGeom);
-    console.log(boxGeom.getVertices());
   }
   this._renderer.drawBuffer(gId);
 
@@ -196,7 +209,14 @@ p5.prototype.sphere = function(radius, detail){
       var z = radius * Math.cos(phi) * Math.cos(theta);
       return new p5.Vector(x, y, z);
     };
-    var sphereGeom = new p5.Geometry(_sphere, detailX, detailY);
+    var sphereGeom = new p5.Geometry(_sphere, detailX, detailY,
+      function(){
+        this.computeUVs();
+        this.computeFaces();
+        this.computeFaceNormals();
+        this.computeVertexNormals();
+      }
+    );
     //for spheres we need to average the normals
     //and poles
     sphereGeom.averageNormals().averagePoleNormals();
@@ -277,7 +297,14 @@ p5.prototype.cylinder = function(radius, height, detail){
         }
       }
     };
-    var cylinderGeom = new p5.Geometry(_cylinder, detailX, detailY);
+    var cylinderGeom = new p5.Geometry(_cylinder, detailX, detailY,
+      function(){
+        this.computeUVs();
+        this.computeFaces();
+        this.computeFaceNormals();
+        this.computeVertexNormals();
+      }
+    );
     //for cylinders we need to average normals
     cylinderGeom.averageNormals();
     this._renderer.createBuffer(gId, cylinderGeom);
@@ -343,7 +370,14 @@ p5.prototype.cone = function(radius, height, detail){
       }
     };
     var coneGeom =
-    new p5.Geometry(_cone, detailX, detailY);
+    new p5.Geometry(_cone, detailX, detailY,
+      function(){
+        this.computeUVs();
+        this.computeFaces();
+        this.computeFaceNormals();
+        this.computeVertexNormals();
+      }
+    );
     //for cones we need to average Normals
     coneGeom.averageNormals();
     this._renderer.createBuffer(gId, coneGeom);
@@ -401,7 +435,14 @@ p5.prototype.torus = function(radius, tubeRadius, detail){
       return new p5.Vector(x, y, z);
     };
     var torusGeom =
-    new p5.Geometry(_torus, detailX, detailY);
+    new p5.Geometry(_torus, detailX, detailY,
+      function(){
+        this.computeUVs();
+        this.computeFaces();
+        this.computeFaceNormals();
+        this.computeVertexNormals();
+      }
+    );
     //for torus we need to average normals
     torusGeom.averageNormals();
     this._renderer.createBuffer(gId, torusGeom);
@@ -451,7 +492,11 @@ p5.Renderer3D.prototype.triangle = function
       p2: new p5.Vector(x2,y2,z2),
       p3: new p5.Vector(x3,y3,z3)
     };
-    var triGeom = new p5.Geometry(_triangle);
+    var triGeom = new p5.Geometry(_triangle,
+      function(){
+        this.computeUVs();
+      }
+    );
     this.createBuffer(gId, triGeom);
   }
 
@@ -503,7 +548,11 @@ p5.Renderer3D.prototype.ellipse = function
         return new p5.Vector(_x, _y, _z);
       }
     };
-    var ellipseGeom = new p5.Geometry(_ellipse, detailX, detailY);
+    var ellipseGeom = new p5.Geometry(_ellipse, detailX, detailY,
+      function(){
+        this.computeUVs();
+      }
+    );
     this.createBuffer(gId, ellipseGeom);
   }
   this.drawBuffer(gId);
@@ -524,7 +573,11 @@ p5.Renderer3D.prototype.quad = function
       p4: new p5.Vector(x4,y4,z4)
     };
     //starting point
-    var quadGeom = new p5.Geometry(_quad);
+    var quadGeom = new p5.Geometry(_quad,
+      function(){
+        this.computeUVs();
+      }
+    );
     this.createBuffer(gId, quadGeom);
   }
   this.drawBuffer(gId);
