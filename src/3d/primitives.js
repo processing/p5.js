@@ -89,57 +89,57 @@ p5.prototype.box = function(width, height, depth){
 
   var detailX = typeof arguments[3] === Number ? arguments[3] : 1;
   var detailY = typeof arguments[4] === Number ? arguments[4] : 1;
-
+  console.log('details are ', detailX, detailY);
   var gId = 'box|'+width+'|'+height+'|'+depth+'|'+detailX+'|'+detailY;
 
   if(!this._renderer.geometryInHash(gId)){
     var _box = {
       //RIGHT
-      // right:function(u, v){
-      //   var _width = width/2;
-      //   var _height = height/2;
-      //   var _depth = depth/2;
-      //   console.log('drawing right');
-      //   var x = _width;
-      //   var y = 2 * _height * u - _height;
-      //   var z = 2 * _depth * v - _depth;
-      //   return new p5.Vector(x, y, z);
-      // }//,
-      // bottom: function(u, v){
-      //   console.log('drawing bottom');
-      //   var x = 2 * width * ( 1 - u ) - width;
-      //   var y = 2 * height * v - height;
-      //   var z = -depth;
-      //   return new p5.Vector(x, y, z);
-      // }//,
-      // left: function(u, v){
-      //   console.log('drawing left');
-      //   var x = 2 * width * ( 1 - u ) - width;
-      //   var y = height;
-      //   var z = 2 * depth * v - depth;
-      //   return new p5.Vector(x, y, z);
-      // },
-      // right: function(u, v){
-      //   console.log('drawing right');
-      //   var x = 2 * width * u - width;
-      //   var y = -height;
-      //   var z = 2 * depth * v - depth;
-      //   return new p5.Vector(x, y, z);
-      // },
-      // front: function(u, v){
-      //   console.log('drawing front');
-      //   var x = 2 * width * u - width;
-      //   var y = 2 * height * v - height;
-      //   var z = depth;
-      //   return new p5.Vector(x, y, z);
-      // },
-      // back: function(u, v){
-      //   console.log('drawing back');
-      //   var x = -width;
-      //   var y = 2 * height * ( 1 - u ) - height;
-      //   var z = 2 * depth * v - depth;
-      //   return new p5.Vector(x, y, z);
-      // }
+      right:function(u, v){
+        var _width = width/2;
+        var _height = height/2;
+        var _depth = depth/2;
+        console.log('drawing right');
+        var x = _width;
+        var y = 2 * _height * u - _height;
+        var z = 2 * _depth * v - _depth;
+        return new p5.Vector(x, y, z);
+      },
+      bottom: function(u, v){
+        console.log('drawing bottom');
+        var x = 2 * width * ( 1 - u ) - width;
+        var y = 2 * height * v - height;
+        var z = -depth;
+        return new p5.Vector(x, y, z);
+      },
+      left: function(u, v){
+        console.log('drawing left');
+        var x = 2 * width * ( 1 - u ) - width;
+        var y = height;
+        var z = 2 * depth * v - depth;
+        return new p5.Vector(x, y, z);
+      },
+      top: function(u, v){
+        console.log('drawing top');
+        var x = 2 * width * u - width;
+        var y = -height;
+        var z = 2 * depth * v - depth;
+        return new p5.Vector(x, y, z);
+      },
+      front: function(u, v){
+        console.log('drawing front');
+        var x = 2 * width * u - width;
+        var y = 2 * height * v - height;
+        var z = depth;
+        return new p5.Vector(x, y, z);
+      },
+      back: function(u, v){
+        console.log('drawing back');
+        var x = -width;
+        var y = 2 * height * ( 1 - u ) - height;
+        var z = 2 * depth * v - depth;
+        return new p5.Vector(x, y, z);
+      }
     };
     var boxGeom = new p5.Geometry(
       _box, detailX, detailY);//, boxGeom.vertices.length);

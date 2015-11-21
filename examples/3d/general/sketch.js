@@ -1,9 +1,9 @@
 var slider;
-var img;
+//var img;
 
-function preload(){
-  img = loadImage('../material/texture/assets/cat.jpg');
-}
+// function preload(){
+//   //img = loadImage('../material/texture/assets/cat.jpg');
+// }
 
 function setup(){
   createCanvas(windowWidth,windowHeight,WEBGL);
@@ -50,12 +50,12 @@ function draw(){
   // endShape();
 
   //works
-  beginShape(LINE_STRIP);
-    vertex(0,0,0);
-    vertex(0,-height/2,0);
-    vertex(width/2,0,0);
-    vertex(width/2,height/2,0);
-  endShape();
+  // beginShape(LINE_STRIP);
+  //   vertex(0,0,0);
+  //   vertex(0,-height/2,0);
+  //   vertex(width/2,0,0);
+  //   vertex(width/2,height/2,0);
+  // endShape();
 
   //works
   // beginShape(LINE_LOOP);
@@ -99,11 +99,14 @@ function draw(){
   //// 3D
   ////////////
   //texture(img);
-  //sphere(100);//works!
+  //basicMaterial(100,0,0,100);
+  directionalLight(255,255,255,0,0,1);
+  specularMaterial(0,255,0,4);
+  sphere(100);//works!
   //cone(100,100);//needs base
-  torus(400,100);//works!
+  //torus(400,100);//works!
   //cylinder(100);//needs top and bottom
-  //box(100);//error: attempt to access out of range vertices in attr 0
+  //box(100,100,100,24,24);//error: attempt to access out of range vertices in attr 0
   // basicMaterial(255,0,0);
   // plane(400);//works!
 }

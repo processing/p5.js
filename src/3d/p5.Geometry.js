@@ -46,6 +46,10 @@ p5.Geometry.prototype._init = function
   offset = offset || 0;
   if(vertData instanceof Function){
     this._computeVertices(vertData);
+    this._computeFaces(offset);
+    this._computeUVs();
+    this._computeFaceNormals();
+    this._computeVertexNormals();
   }
   //otherwise it's an Object
   else {
@@ -61,13 +65,14 @@ p5.Geometry.prototype._init = function
         else {
           this._computeVertices(vertData[item]);
         }
+        this._computeFaces(offset);
+        this._computeUVs();
+        this._computeFaceNormals();
+        this._computeVertexNormals();
       }
     }
   }
-  this._computeFaces(offset);
-  this._computeUVs();
-  this._computeFaceNormals();
-  this._computeVertexNormals();
+
 };
 
 p5.Geometry.prototype._computeVertices = function(vertFunc){
