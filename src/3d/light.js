@@ -46,7 +46,7 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
 
   var color = this._renderer._pInst.color.apply(
     this._renderer._pInst, arguments);
-  var colors = color._normalize();
+  var colors = color._array;
 
   gl.uniform3f( shaderProgram.uAmbientColor,
     colors[0], colors[1], colors[2]);
@@ -143,7 +143,7 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
   //@TODO: check parameters number
   var color = this._renderer._pInst.color.apply(
     this._renderer._pInst, [v1, v2, v3]);
-  var colors = color._normalize();
+  var colors = color._array;
 
   gl.uniform3f( shaderProgram.uDirectionalColor,
     colors[0], colors[1], colors[2]);
@@ -270,7 +270,7 @@ p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
   //@TODO: check parameters number
   var color = this._renderer._pInst.color.apply(
     this._renderer._pInst, [v1, v2, v3]);
-  var colors = color._normalize();
+  var colors = color._array;
 
   gl.uniform3f( shaderProgram.uPointLightColor,
     colors[0], colors[1], colors[2]);

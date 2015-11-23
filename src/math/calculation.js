@@ -111,8 +111,10 @@ p5.prototype.constrain = function(n, low, high) {
  * @method dist
  * @param  {Number} x1 x-coordinate of the first point
  * @param  {Number} y1 y-coordinate of the first point
+ * @param  {Number} [z1] z-coordinate of the first point
  * @param  {Number} x2 x-coordinate of the second point
  * @param  {Number} y2 y-coordinate of the second point
+ * @param  {Number} [z2] z-coordinate of the second point
  * @return {Number}    distance between the two points
  * @example
  * <div><code>
@@ -145,8 +147,13 @@ p5.prototype.constrain = function(n, low, high) {
  * }
  * </code></div>
  */
-p5.prototype.dist = function(x1, y1, x2, y2) {
-  return Math.sqrt( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) );
+p5.prototype.dist = function(x1, y1, z1, x2, y2, z2) {
+  if (arguments.length === 4) {
+    // In the case of 2d: z1 means x2 and x2 means y2
+    return Math.sqrt( (z1-x1)*(z1-x1) + (x2-y1)*(x2-y1) );
+  } else if (arguments.length === 6) {
+    return Math.sqrt( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) );
+  }
 };
 
 /**

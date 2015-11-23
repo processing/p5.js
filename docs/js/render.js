@@ -162,7 +162,11 @@ function renderCode(sel) {
           'touchStarted', 'touchMoved', 'touchEnded', 
           'keyPressed', 'keyReleased', 'keyTyped'];
           fxns.forEach(function(f) { 
-            if (runnable.indexOf(f) !== -1) {
+            var ind = runnable.indexOf(f);
+            // this is a gross hack within a hacky script that
+            // ensures the function names found are not substrings
+            // proper use of regex would be preferable...
+            if (ind !== -1 && runnable[ind+f.length] === '(') {
               with (p) {
                 p[f] = eval(f);
               }
@@ -184,15 +188,22 @@ function renderCode(sel) {
 
     $( document ).ready(function() {
       setTimeout(function() {
-        var myp5 = new _p5(s, cnv);      
-        $( ".example-content" ).find('div').each(function() {
-          $this = $( this );
-          var pre = $this.find('pre')[0];
-          if (pre) {
-            $this.height( Math.max($(pre).height()*1.1, 100) + 20 );
-          }
-        });
-        instances[i] = myp5;
+        var myp5;
+        try {
+          myp5 = new _p5(s, cnv);
+        } finally {
+          // If the example code threw an exception, we still want to
+          // set the size of .example-content so it doesn't overflow
+          // into our description and make the documentation unreadable.
+          $( ".example-content" ).find('div').each(function() {
+            $this = $( this );
+            var pre = $this.find('pre')[0];
+            if (pre) {
+              $this.height( Math.max($(pre).height()*1.1, 100) + 20 );
+            }
+          });
+          instances[i] = myp5;
+        }
       }, 100); 
     });
 

@@ -144,7 +144,8 @@ var p5 = function(sketch, node, sync) {
   //////////////////////////////////////////////
 
   this._setupDone = false;
-  this.pixelDensity = window.devicePixelRatio || 1; // for handling hidpi
+  // for handling hidpi
+  this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
   this._userNode = node;
   this._curElement = null;
   this._elements = [];
@@ -161,6 +162,8 @@ var p5 = function(sketch, node, sync) {
     'mousemove': null,
     'mousedown': null,
     'mouseup': null,
+    'dragend': null,
+    'dragover': null,
     'click': null,
     'mouseover': null,
     'mouseout': null,
@@ -331,10 +334,6 @@ var p5 = function(sketch, node, sync) {
         time_since_last >= target_time_between_frames - epsilon) {
       this._setProperty('frameCount', this.frameCount + 1);
       this.redraw();
-      this._updatePAccelerations();
-      this._updatePRotations();
-      this._updatePMouseCoords();
-      this._updatePTouchCoords();
       this._frameRate = 1000.0/(now - this._lastFrameTime);
       this._lastFrameTime = now;
     }
@@ -492,8 +491,8 @@ var p5 = function(sketch, node, sync) {
   window.addEventListener('focus', focusHandler);
   window.addEventListener('blur', blurHandler);
   this.registerMethod('remove', function() {
-    window.removeEventListener(focusHandler);
-    window.removeEventListener(blurHandler);
+    window.removeEventListener('focus', focusHandler);
+    window.removeEventListener('blur', blurHandler);
   });
 
   // TODO: ???

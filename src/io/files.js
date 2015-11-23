@@ -24,7 +24,7 @@ p5._getDecrementPreload = function() {
 
   // when in preload decrementPreload will always be the last arg as it is set
   // with args.push() before invocation in _wrapPreload
-  if ((window.preload || this.preload) &&
+  if ((window.preload || (this && this.preload)) &&
     typeof decrementPreload === 'function') {
     return decrementPreload;
   } else {
@@ -84,6 +84,21 @@ p5._getDecrementPreload = function() {
  *
  * </code></div>
  *
+ * <p>You can also use the string name of the font to style other HTML
+ * elements.</p>
+ *
+ * <div><code>
+ * var myFont;
+ *
+ * function preload() {
+ *   myFont = loadFont('assets/Avenir.otf');
+ * }
+ *
+ * function setup() {
+ *   var myDiv = createDiv('hello there');
+ *   myDiv.style('font-family', 'Avenir');
+ * }
+* </code></div>
  */
 p5.prototype.loadFont = function(path, onSuccess, onError) {
 
@@ -108,6 +123,19 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
     if (decrementPreload && (onSuccess !== decrementPreload)) {
       decrementPreload();
     }
+    /*jshint multistr: true */
+    var exp =/\/[a-zA-Z]*((.ttf)|(.otf)|(.woff)|(.woff2))$/i;
+    if(!exp) {
+      return p5Font;
+    }
+    var i = (exp).exec( path ).index + 1;
+    var fontName = path.substring(i);
+    fontName = fontName.match(/[A-Za-z]*/);
+    var fontFamily = fontName[0];
+    var newStyle = document.createElement('style');
+    newStyle.appendChild(document.createTextNode('\n@font-face {\
+      \nfont-family: '+fontFamily+';\nsrc: url('+path+');\n}\n'));
+    document.head.appendChild(newStyle);
 
   });
 
@@ -1142,7 +1170,7 @@ p5.prototype.saveStream = function() {
 p5.prototype.saveStrings = function(list, filename, extension) {
   var ext = extension || 'txt';
   var pWriter = this.createWriter(filename, ext);
-  for (var i in list) {
+  for (var i = 0; i < list.length; i++) {
     if (i < list.length - 1) {
       pWriter.println(list[i]);
     } else {

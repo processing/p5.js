@@ -69,9 +69,11 @@ p5.prototype._updateTouchCoords = function(e) {
   if(e.type === 'mousedown' ||
      e.type === 'mousemove' ||
      e.type === 'mouseup'){
+    this._updatePMouseCoords();
     this._setProperty('touchX', this.mouseX);
     this._setProperty('touchY', this.mouseY);
   } else {
+    this._updatePTouchCoords();
     var touchInfo = getTouchInfo(this._curElement.elt, e, 0);
     this._setProperty('touchX', touchInfo.x);
     this._setProperty('touchY', touchInfo.y);

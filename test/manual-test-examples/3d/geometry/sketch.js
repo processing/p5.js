@@ -1,5 +1,6 @@
 function setup(){
   createCanvas(windowWidth, windowHeight, WEBGL);
+  //cylinder(50, 50);
 }
 
 var theta = 0;

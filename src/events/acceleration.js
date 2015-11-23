@@ -378,12 +378,14 @@ p5.prototype.setShakeThreshold = function(val){
  */
 
 p5.prototype._ondeviceorientation = function (e) {
+  this._updatePRotations();
   this._setProperty('rotationX', e.beta);
   this._setProperty('rotationY', e.gamma);
   this._setProperty('rotationZ', e.alpha);
   this._handleMotion();
 };
 p5.prototype._ondevicemotion = function (e) {
+  this._updatePAccelerations();
   this._setProperty('accelerationX', e.acceleration.x * 2);
   this._setProperty('accelerationY', e.acceleration.y * 2);
   this._setProperty('accelerationZ', e.acceleration.z * 2);

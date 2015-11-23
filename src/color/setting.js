@@ -141,23 +141,27 @@ p5.prototype.clear = function() {
 };
 
 /**
- * Changes the way p5.js interprets color data. By default, the parameters
- * for fill(), stroke(), background(), and color() are defined by values
- * between 0 and 255 using the RGB color model. The colorMode() function is
- * used to switch color systems. Regardless of color system, all value ranges
- * are presumed to be 0–255 unless explicitly set otherwise. That is,
- * for a standard HSB range, one would pass colorMode(HSB, 360, 100, 100, 1).
+ * colorMode() changes the way p5.js interprets color data. By default, the
+ * parameters for fill(), stroke(), background(), and color() are defined by
+ * values between 0 and 255 using the RGB color model. This is equivalent to
+ * setting colorMode(RGB, 255). Setting colorMode(HSB) lets you use the HSB
+ * system instead. By default, this is colorMode(HSB, 360, 100, 100, 1). You
+ * can also use HSL.
+ *
+ * Note: existing color objects remember the mode that they were created in,
+ * so you can change modes as you like without affecting their appearance.
  *
  * @method colorMode
- * @param {Number|Constant} mode either RGB or HSB, corresponding to
- *                               Red/Green/Blue and Hue/Saturation/Brightness
- * @param {Number|Constant} max1 range for the red or hue depending on the
- *                               current color mode, or range for all values
- * @param {Number|Constant} max2 range for the green or saturation depending
- *                               on the current color mode
- * @param {Number|Constant} max3 range for the blue or brightness depending
- *                               on the current color mode
- * @param {Number|Constant} maxA range for the alpha
+ * @param {Number|Constant} mode   either RGB or HSB, corresponding to
+ *                                 Red/Green/Blue and Hue/Saturation/Brightness
+ *                                 (or Lightness)
+ * @param {Number|Constant} [max1] range for the red or hue depending on the
+ *                                 current color mode, or range for all values
+ * @param {Number|Constant} [max2] range for the green or saturation depending
+ *                                 on the current color mode
+ * @param {Number|Constant} [max3] range for the blue or brightness/lighntess
+ *                                 depending on the current color mode
+ * @param {Number|Constant} [maxA] range for the alpha
  * @example
  * <div>
  * <code>
@@ -191,7 +195,7 @@ p5.prototype.clear = function() {
  * var c = color(127, 255, 0);
  *
  * colorMode(RGB, 1);
- * var myColor = c.getRed();
+ * var myColor = c._getRed();
  * text(myColor, 10, 10, 80, 80);
  * </code>
  * </div>
@@ -213,27 +217,29 @@ p5.prototype.colorMode = function() {
   if (arguments[0] === constants.RGB ||
       arguments[0] === constants.HSB ||
       arguments[0] === constants.HSL) {
+
+    // Set color mode.
     this._renderer._colorMode = arguments[0];
 
-    var maxArr = this._renderer._colorMaxes[this._renderer._colorMode];
-
+    // Set color maxes.
+    var maxes = this._renderer._colorMaxes[this._renderer._colorMode];
     if (arguments.length === 2) {
-      maxArr[0] = arguments[1];
-      maxArr[1] = arguments[1];
-      maxArr[2] = arguments[1];
-      maxArr[3] = arguments[1];
+      maxes[0] = arguments[1];  // Red
+      maxes[1] = arguments[1];  // Green
+      maxes[2] = arguments[1];  // Blue
+      maxes[3] = arguments[1];  // Alpha
     } else if (arguments.length === 4) {
-      maxArr[0] = arguments[1];
-      maxArr[1] = arguments[2];
-      maxArr[2] = arguments[3];
-    }
-    if (arguments.length === 5) {
-      maxArr[0] = arguments[1];
-      maxArr[1] = arguments[2];
-      maxArr[2] = arguments[3];
-      maxArr[3] = arguments[4];
+      maxes[0] = arguments[1];  // Red
+      maxes[1] = arguments[2];  // Green
+      maxes[2] = arguments[3];  // Blue
+    } else if (arguments.length === 5) {
+      maxes[0] = arguments[1];  // Red
+      maxes[1] = arguments[2];  // Green
+      maxes[2] = arguments[3];  // Blue
+      maxes[3] = arguments[4];  // Alpha
     }
   }
+
   return this;
 };
 
@@ -521,7 +527,5 @@ p5.prototype.stroke = function() {
   this._renderer.stroke.apply(this._renderer, arguments);
   return this;
 };
-
-
 
 module.exports = p5;
