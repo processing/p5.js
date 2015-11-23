@@ -162,8 +162,6 @@ function parseObj( model, lines ) {
 p5.prototype.model = function ( model ) {
   if (model.vertices.length > 0) {
     if (!this._renderer.geometryInHash(model.gid)) {
-      //var obj = model.generateObj(true, (model.vertexNormals.length > 0));
-
       this._renderer.createBuffer(model.gid, model);
     }
 
