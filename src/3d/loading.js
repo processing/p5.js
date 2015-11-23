@@ -62,7 +62,7 @@ p5.prototype.loadModel = function ( path ) {
  * v -0.5 -0.5 -0.5
  * v -0.5 0.5 -0.5
  * v -0.5 0.5 0.5
- * 
+ *
  * f 4 3 2 1
  */
 function parseObj( model, lines ) {
@@ -71,12 +71,14 @@ function parseObj( model, lines ) {
   // coordinate, and vertex normal. So, "3/4/3" would mean, "use vertex 3 with
   // UV coordinate 4 and vertex normal 3". In WebGL, every vertex with different
   // parameters must be a different vertex, so loadedVerts is used to
-  // temporarily store the parsed 
+  // temporarily store the parsed vertices, normals, etc., and indexedVerts is
+  // used to map a specific combination (keyed on, for example, the string
+  // "3/4/3"), to the actual index of the newly created vertex in the final
+  // object.
   var loadedVerts = {'v' : [],
                      'vt' : [],
                      'vn' : []},
-      indexedVerts = {},
-      vertexUVs = [];
+      indexedVerts = {};
 
   for (var line = 0; line < lines.length; ++line) {
     // Each line is a separate object (vertex, face, vertex normal, etc)
@@ -102,7 +104,6 @@ function parseObj( model, lines ) {
         // OBJ faces can have more than three points. Triangulate points.
         for (var tri = 3; tri < tokens.length; ++tri) {
           var face = [];
-          var faceUVs = [];
 
           var vertexTokens = [1, tri - 1, tri];
 
@@ -126,7 +127,7 @@ function parseObj( model, lines ) {
               vertIndex = indexedVerts[vertString] = model.vertices.length;
               model.vertices.push(loadedVerts.v[vertParts[0]].copy());
               if (loadedVerts.vt[vertParts[1]]) {
-                vertexUVs.push(loadedVerts.vt[vertParts[1]].slice());
+                model.uvs.push(loadedVerts.vt[vertParts[1]].slice());
               }
               if (loadedVerts.vn[vertParts[2]]) {
                 model.vertexNormals.push(loadedVerts.vn[vertParts[2]].copy());
@@ -134,15 +135,9 @@ function parseObj( model, lines ) {
             }
 
             face.push(vertIndex);
-            if (vertexUVs[vertIndex]) {
-              faceUVs.push(vertexUVs[vertIndex]);
-            } else {
-              faceUVs.push([0, 0]);
-            }
           }
 
           model.faces.push(face);
-          model.uvs.push(faceUVs);
         }
       }
     }
@@ -167,9 +162,9 @@ function parseObj( model, lines ) {
 p5.prototype.model = function ( model ) {
   if (model.vertices.length > 0) {
     if (!this._renderer.geometryInHash(model.gid)) {
-      var obj = model.generateObj(true, (model.vertexNormals.length > 0));
+      //var obj = model.generateObj(true, (model.vertexNormals.length > 0));
 
-      this._renderer.initBuffer(model.gid, obj);
+      this._renderer.createBuffer(model.gid, model);
     }
 
     this._renderer.drawBuffer(model.gid);

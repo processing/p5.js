@@ -12,7 +12,7 @@ var p5 = require('../core/core');
  * @param  {Number} [detailX] number of vertices on horizontal surface
  * @param  {Number} [detailY] number of vertices on horizontal surface
  * @param {Function} [callback] function to call upon object instantiation.
- *                  
+ *
  */
 p5.Geometry = function
 (vertData, detailX, detailY, callback){
