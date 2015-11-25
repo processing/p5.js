@@ -305,15 +305,29 @@ p5.Image.prototype.copy = function () {
  *
  * @method mask
  * @param {p5.Image} srcImage source image
+ * @example
+ * <div><code>
+ * var photo, maskImage;
+ * function preload() {
+ *   photo = loadImage("assets/rockies.jpg");
+ *   maskImage = loadImage("assets/mask2.png");
+ * }
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   photo.mask(maskImage);
+ *   image(photo, 0, 0);
+ * }
+ * </code></div>
  *
  * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
  *
  */
- // TODO: - Accept an array of alpha values.
- //       - Use other channels of an image. p5 uses the
- //       blue channel (which feels kind of arbitrary). Note: at the
- //       moment this method does not match native processings original
- //       functionality exactly.
+// TODO: - Accept an array of alpha values.
+//       - Use other channels of an image. p5 uses the
+//       blue channel (which feels kind of arbitrary). Note: at the
+//       moment this method does not match native processings original
+//       functionality exactly.
 p5.Image.prototype.mask = function(p5Image) {
   if(p5Image === undefined){
     p5Image = this;
