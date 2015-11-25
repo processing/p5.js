@@ -300,21 +300,20 @@ p5.Image.prototype.copy = function () {
 
 /**
  * Masks part of an image from displaying by loading another
- * image and using it's alpha channel as an alpha channel for
+ * image and using it's blue channel as an alpha channel for
  * this image.
  *
  * @method mask
- * @param {p5.Image|undefined} srcImage source image
- *
- * TODO: - Accept an array of alpha values.
- *       - Use other channels of an image. p5 uses the
- *       blue channel (which feels kind of arbitrary). Note: at the
- *       moment this method does not match native processings original
- *       functionality exactly.
+ * @param {p5.Image} srcImage source image
  *
  * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
  *
  */
+ // TODO: - Accept an array of alpha values.
+ //       - Use other channels of an image. p5 uses the
+ //       blue channel (which feels kind of arbitrary). Note: at the
+ //       moment this method does not match native processings original
+ //       functionality exactly.
 p5.Image.prototype.mask = function(p5Image) {
   if(p5Image === undefined){
     p5Image = this;
