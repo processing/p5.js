@@ -49,7 +49,7 @@ p5.Image = function(width, height){
    * function preload() {
    *   img = loadImage("assets/rockies.jpg");
    * }
-   * 
+   *
    * function setup() {
    *   createCanvas(100, 100);
    *   image(img, 0, 0);
@@ -71,7 +71,7 @@ p5.Image = function(width, height){
    * function preload() {
    *   img = loadImage("assets/rockies.jpg");
    * }
-   * 
+   *
    * function setup() {
    *   createCanvas(100, 100);
    *   image(img, 0, 0);
