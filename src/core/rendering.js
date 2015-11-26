@@ -108,10 +108,9 @@ p5.prototype.createCanvas = function(w, h, renderer) {
 };
 
 /**
- * Resizes the canvas to given width and height. Note that the
- * canvas will be cleared so anything drawn previously in setup
- * or draw will disappear on resize. Setup will not be called
- * again.
+ * Resizes the canvas to given width and height. The canvas will be cleared
+ * and draw will be called immediately, allowing the sketch to re-render itself
+ * in the resized canvas.
  * @method resizeCanvas
  * @example
  * <div class="norender"><code>
