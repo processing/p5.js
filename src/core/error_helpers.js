@@ -272,7 +272,8 @@ function friendlyWelcome() {
 //
 // For more details, see https://github.com/processing/p5.js/issues/1121.
 var misusedAtTopLevelCode = [
-  'color'
+  'color',
+  'random'
 ];
 
 function helpForMisusedAtTopLevelCode(e) {
