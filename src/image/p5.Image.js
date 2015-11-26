@@ -43,11 +43,45 @@ p5.Image = function(width, height){
   /**
    * Image width.
    * @property width
+   * @example
+   * <div><code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/rockies.jpg");
+   * }
+   * 
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   image(img, 0, 0);
+   *   for (var i=0; i < img.width; i++) {
+   *     var c = img.get(i, img.height/2);
+   *     stroke(c);
+   *     line(i, height/2, i, height);
+   *   }
+   * }
+   * </code></div>
    */
   this.width = width;
   /**
    * Image height.
    * @property height
+   * @example
+   * <div><code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/rockies.jpg");
+   * }
+   * 
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   image(img, 0, 0);
+   *   for (var i=0; i < img.height; i++) {
+   *     var c = img.get(img.width/2, i);
+   *     stroke(c);
+   *     line(0, i, width/2, i);
+   *   }
+   * }
+   * </code></div>
    */
   this.height = height;
   this.canvas = document.createElement('canvas');
