@@ -140,8 +140,8 @@ p5.prototype.resizeCanvas = function (w, h, noRedraw) {
     }
     this._renderer.resize(w, h);
     // reset canvas properties
-    for (var key in props) {
-      this.drawingContext[key] = props[key];
+    for (var savedKey in props) {
+      this.drawingContext[savedKey] = props[savedKey];
     }
     if (!noRedraw) {
       this.redraw();
