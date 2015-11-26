@@ -130,8 +130,20 @@ p5.prototype.createCanvas = function(w, h, renderer) {
  */
 p5.prototype.resizeCanvas = function (w, h, noRedraw) {
   if (this._renderer) {
+
+    // save canvas properties
+    var props = {};
+    for (var key in this.drawingContext) {
+      var val = this.drawingContext[key];
+      if (typeof val !== 'object' && typeof val !== 'function') {
+        props[key] = val;
+      }
+    }
     this._renderer.resize(w, h);
-    this._renderer._applyDefaults();
+    // reset canvas properties
+    for (var key in props) {
+      this.drawingContext[key] = props[key];
+    }
     if (!noRedraw) {
       this.redraw();
     }
