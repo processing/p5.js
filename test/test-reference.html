@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+  <link rel="stylesheet" href="mocha.css"/>
+  <style>
+  iframe { visibility: hidden; }
+  </style>
+  <title>p5 Reference Documentation Test</title>
+</head>
+<body>
+  <!-- Required for browser reporter -->
+  <div id="mocha"></div>
+
+  <!-- mocha -->
+  <script src="js/mocha.js" type="text/javascript" ></script>
+  <script type="text/javascript" >
+    // This will be overridden by mocha-helper if you run with grunt
+    mocha.setup('tdd');
+    mocha.reporter('html');
+  </script>
+
+  <!-- Include your assertion lib of choice -->
+  <script src="js/chai.js" type="text/javascript" ></script>
+  <script src="js/bind.js" type="text/javascript" ></script>
+  <script src="js/sinon.js" type="text/javascript" ></script>
+  <script src="js/testRender.js" type="text/javascript" ></script>
+  <script type="text/javascript" >
+    // Setup chai
+    var expect = chai.expect;
+    var assert = chai.assert;
+  </script>
+
+  <script>
+  var MS_TO_WAIT_AFTER_LOAD = 500;
+  var MS_TIMEOUT = 4500 + MS_TO_WAIT_AFTER_LOAD;
+  var MS_SLOW = 1000 + MS_TO_WAIT_AFTER_LOAD;
+
+  function absoluteURL(url) {
+    var a = document.createElement('a');
+    a.setAttribute('href', url);
+    return a.href;
+  }
+
+  function defineTest(info) {
+    describe(info.name + " example code @ " + info.file, function() {
+      var iframe;
+      var url = absoluteURL("../docs/reference/#/p5/" + info.name);
+
+      this.timeout(MS_TIMEOUT);
+      this.slow(MS_SLOW);
+
+      before(function() {
+        iframe = document.createElement("iframe");
+      });
+
+      after(function() {
+        if (iframe.parentNode) {
+          iframe.parentNode.removeChild(iframe);
+        }
+      });
+
+      it("should load " + url + " without errors", function(done) {
+        var errors = 0;
+        iframe.setAttribute("src", url);
+        document.body.appendChild(iframe);
+        iframe.contentWindow.addEventListener("error", function(e) {
+          errors++;
+        }, true);
+        iframe.contentWindow.addEventListener("load", function() {
+          var startTime = Date.now();
+          setTimeout(function() {
+            if (errors)
+              return done(new Error(errors + " error(s) logged"))
+            if (Date.now() - startTime > MS_TIMEOUT)
+              // This can happen if the page contained processor-intensive
+              // code that blocked the UI for too long.
+              return done(new Error("code took too long to execute"));
+            done();
+          }, MS_TO_WAIT_AFTER_LOAD);
+        });
+      });
+    });
+  }
+
+  var req = new XMLHttpRequest();
+  req.open('GET', '../docs/reference/data.json');
+  req.onload = function() {
+    var data = JSON.parse(req.responseText);
+    data.classitems.forEach(function(info) {
+      if (!info.example) return;
+      info.example = info.example.filter(function(code) {
+        return code.indexOf('norender') == -1;
+      });
+      if (info.name && info.example.length)
+        defineTest(info);
+    });
+    mocha.run();
+  };
+  req.send(null);
+  </script>
+</body>
+</html>
