@@ -125,7 +125,7 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
     }
     /*jshint multistr: true */
     var exp =/\/[a-zA-Z]*((.ttf)|(.otf)|(.woff)|(.woff2))$/i;
-    if(!exp) {
+    if(!exp.test(path)) {
       return p5Font;
     }
     var i = (exp).exec( path ).index + 1;
