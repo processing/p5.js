@@ -57,11 +57,11 @@ suite('Calculation', function() {
       });
       test('should return correct distance', function() {
         result = dist(0, 0, 2, 3);
-        assert.equal(result, 3.6055512754639896); // Math.hypot(13)
+        assert.equal(result, 3.6055512754639896); // Math.hypot(2, 3)
       });
       test('should return positive  distance', function() {
         result = dist(0, 0, -2, -3);
-        assert.equal(result, 3.6055512754639896); // Math.hypot(13)
+        assert.equal(result, 3.6055512754639896); // Math.hypot(2, 3)
       });
       test('should return correct distance', function() {
         result = dist(0, 0, 0, 2, 3, 5);
