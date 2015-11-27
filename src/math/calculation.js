@@ -148,11 +148,22 @@ p5.prototype.constrain = function(n, low, high) {
  * </code></div>
  */
 p5.prototype.dist = function(x1, y1, z1, x2, y2, z2) {
+  // Calculate the length of the hypotenuse of a right triangle
+  // This won't under- or overflow in intermediate steps
+  // https://en.wikipedia.org/wiki/Hypot
+  var hypot = function(x, y) {
+    x = Math.abs(x);
+    y = Math.abs(y);
+    var t = Math.min(x, y);
+    x = Math.max(x, y);
+    t /= x;
+    return x*Math.sqrt(1+t*t);
+  };
   if (arguments.length === 4) {
     // In the case of 2d: z1 means x2 and x2 means y2
-    return Math.sqrt( (z1-x1)*(z1-x1) + (x2-y1)*(x2-y1) );
+    return hypot(z1-x1, x2-y1);
   } else if (arguments.length === 6) {
-    return Math.sqrt( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) );
+    return hypot(x2-x1, hypot(y2-y1, z2-z1));
   }
 };
 

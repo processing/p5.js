@@ -57,19 +57,27 @@ suite('Calculation', function() {
       });
       test('should return correct distance', function() {
         result = dist(0, 0, 2, 3);
-        assert.equal(result, Math.sqrt(13));
+        assert.equal(result, 3.6055512754639896); // Math.hypot(13)
       });
       test('should return positive  distance', function() {
         result = dist(0, 0, -2, -3);
-        assert.equal(result, Math.sqrt(13));
+        assert.equal(result, 3.6055512754639896); // Math.hypot(13)
       });
       test('should return correct distance', function() {
         result = dist(0, 0, 0, 2, 3, 5);
-        assert.equal(result, Math.sqrt(38));
+        assert.equal(result, 6.164414002968976); // Math.hypot(2, Math.hypot(3, 5))
       });
       test('should return positive  distance', function() {
         result = dist(0, 0, 0, -2, -3, 5);
-        assert.equal(result, Math.sqrt(38));
+        assert.equal(result, 6.164414002968976); // Math.hypot(2, Math.hypot(3, 5))
+      });
+      test('should not underflow', function() {
+        result = dist(0, 0, 1e-200, 2e-200);
+        assert.notEqual(result, 0);
+      });
+      test('should not overflow', function() {
+        result = dist(0, 0, 1e200, 2e200);
+        assert.notEqual(result, Infinity);
       });
     });
   });
