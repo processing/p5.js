@@ -79,6 +79,14 @@ suite('Calculation', function() {
         result = dist(0, 0, 1e200, 2e200);
         assert.notEqual(result, Infinity);
       });
+      test('should return 0 for identical 2D points', function() {
+        result = dist(2, 3, 2, 3);
+        assert.equal(result, 0);
+      });
+      test('should return 0 for identical 3D points', function() {
+        result = dist(2, 3, 5, 2, 3, 5);
+        assert.equal(result, 0);
+      });
     });
   });
 

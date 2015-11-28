@@ -152,6 +152,9 @@ p5.prototype.dist = function(x1, y1, z1, x2, y2, z2) {
   // This won't under- or overflow in intermediate steps
   // https://en.wikipedia.org/wiki/Hypot
   var hypot = function(x, y) {
+    if (x === 0 && y === 0) {
+      return 0;
+    }
     x = Math.abs(x);
     y = Math.abs(y);
     var t = Math.min(x, y);
