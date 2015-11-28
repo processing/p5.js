@@ -84,7 +84,7 @@ p5.Font.prototype.list = function() {
  *    rect(bbox.x, bbox.y, bbox.w, bbox.h);
  *    fill(0);
  *    noStroke();
- *     
+ *
  *    textFont(font);
  *    textSize(12);
  *    text(textString, 10, 30);
