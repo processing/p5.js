@@ -94,7 +94,7 @@
   }
 
   function defineTest(info) {
-    suite(info.name + " documentation @ " + info.file, function() {
+    suite(info.name + " documentation", function() {
       var myp5, myp5Div;
       var div = document.createElement('div');
       var examples;
@@ -157,11 +157,25 @@
     req.open('GET', '../docs/reference/data.json');
     req.onload = function() {
       var data = JSON.parse(req.responseText);
-      data.classitems.forEach(function(info) {
-        if (!info.example) return;
-        if (info.name && info.example.length)
-          defineTest(info);
+      var files = {};
+
+      data.classitems
+        .concat(Object.keys(data.classes).map(function(name) {
+          return data.classes[name];
+        })).filter(function(info) {
+          return info.name && info.example && info.example.length;
+        }).forEach(function(info) {
+          if (!files[info.file])
+            files[info.file] = [];
+          files[info.file].push(info);
+        });
+
+      Object.keys(files).forEach(function(filename) {
+        suite(filename, function() {
+          files[filename].forEach(defineTest);
+        });
       });
+
       mocha.run();
     };
     req.send(null);
