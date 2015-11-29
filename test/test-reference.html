@@ -122,7 +122,7 @@
         var exampleCode = el.textContent
           .replace(/assets\//g, '../docs/reference/assets/');
 
-        test("example #" + (i + 1) + " works", function(done) {
+        var testFunc = function(done) {
           var startTime = Date.now();
 
           this.timeout(MS_TIMEOUT);
@@ -147,7 +147,16 @@
               done();
             };
           }), myp5Div);
-        });
+        };
+
+        testFunc.toString = function() {
+          // When a user clicks on a specific test, mocha shows its
+          // source code; in our case, we want the source of the example
+          // we're running to be shown, *not* the example runner code.
+          return exampleCode;
+        };
+
+        test("example #" + (i + 1) + " works", testFunc);
       });
     });
   }
