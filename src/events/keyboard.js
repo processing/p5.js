@@ -262,7 +262,7 @@ p5.prototype._onkeypress = function (e) {
 };
 /**
  * The onblur function is called when the user is no longer focused
- * on the p5 element. Because the keyup events will no fire if the user is
+ * on the p5 element. Because the keyup events will not fire if the user is
  * not focused on the element we must assume all keys currently down have
  * been released.
  */
