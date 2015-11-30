@@ -126,9 +126,9 @@ p5.prototype.sphere = function(radius, detail){
 /**
  * Draw an ellipsoid with given raduis
  * @method ellipsoid
- * @param  {Number} xradius           xradius of circle
- * @param  {Number} yradius           yradius of circle
- * @param  {Number} zradius           zradius of circle
+ * @param  {Number} radiusx           xradius of circle
+ * @param  {Number} radiusy           yradius of circle
+ * @param  {Number} radiusz           zradius of circle
  * @param  {Number} [detail]          optional: number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
