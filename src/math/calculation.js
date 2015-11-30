@@ -384,7 +384,7 @@ p5.prototype.mag = function(x, y) {
  *
  *   <div><code>
  *     function setup() {
- *       createCanvs(200, 200);
+ *       createCanvas(200, 200);
  *       noStroke();
  *     }
  *
@@ -623,6 +623,7 @@ p5.prototype.round = Math.round;
  *   line(0, height/2, width, height/2);
  *
  *   // Draw text.
+ *   var spacing = 15;
  *   noStroke();
  *   fill(0);
  *   text("x = " + x1, 0, y1 + spacing);

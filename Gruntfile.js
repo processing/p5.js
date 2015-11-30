@@ -226,6 +226,13 @@ module.exports = function(grunt) {
         options: {
           paths: ['src/', 'lib/addons/'],
           themedir: 'docs/yuidoc-p5-theme/',
+
+          // These helpers define URL paths to p5js.org resources
+          // based on the value of the P5_SITE_ROOT environment variable.
+          // Set it to '..' for production and leave it blank or
+          // undefined for development.
+          helpers: ['docs/yuidoc-p5-theme/helpers/helpers.js'],
+
           outdir: 'docs/reference/'
         }
       }
