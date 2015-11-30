@@ -173,6 +173,8 @@ p5.prototype.cursor = function(type, x, y) {
  * Calling frameRate() with no arguments returns the current framerate. This
  * is the same as getFrameRate().
  *
+ * Calling frameRate() with arguments that are not of the type numbers
+ * or are non positive also returns current framerate.
  * @method frameRate
  * @param  {Number} [fps] number of frames to be displayed every second
  * @return {Number}       current frameRate
@@ -212,7 +214,7 @@ p5.prototype.cursor = function(type, x, y) {
  *
  */
 p5.prototype.frameRate = function(fps) {
-  if (typeof fps === 'undefined') {
+  if (typeof fps !== 'number' || fps <= 0) {
     return this._frameRate;
   } else {
     this._setProperty('_targetFrameRate', fps);

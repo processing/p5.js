@@ -124,6 +124,70 @@ p5.prototype.sphere = function(radius, detail){
 };
 
 /**
+ * Draw an ellipsoid with given raduis
+ * @method ellipsoid
+ * @param  {Number} radiusx           xradius of circle
+ * @param  {Number} radiusy           yradius of circle
+ * @param  {Number} radiusz           zradius of circle
+ * @param  {Number} [detail]          optional: number of segments,
+ *                                    the more segments the smoother geometry
+ *                                    default is 24.Avoid detail number above
+ *                                    150.It may crash the browser.
+ * @return {p5}                       the p5 object
+ * @example
+ * <div>
+ * <code>
+ * // draw an ellipsoid with radius 200, 300 and 400 .
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw(){
+ *   background(200);
+ *   ellipsoid(200,300,400);
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.ellipsoid = function(radiusx, radiusy, radiusz, detail){
+
+  radiusx = radiusx || 50;
+  radiusy = radiusy || 50;
+  radiusz = radiusz || 50;
+
+  var detailX = detail || 24;
+  var detailY = detail || 24;
+
+  var gId = 'ellipsoid|'+radiusx+'|'+radiusy+
+  '|'+radiusz+'|'+detailX+'|'+detailY;
+
+
+  if(!this._renderer.geometryInHash(gId)){
+
+    var geometry3d = new p5.Geometry3D();
+
+    var createEllipsoid = function(u, v){
+      var theta = 2 * Math.PI * u;
+      var phi = Math.PI * v - Math.PI / 2;
+      var x = radiusx * Math.cos(phi) * Math.sin(theta);
+      var y = radiusy * Math.sin(phi);
+      var z = radiusz * Math.cos(phi) * Math.cos(theta);
+      return new p5.Vector(x, y, z);
+    };
+
+    geometry3d.parametricGeometry(createEllipsoid, detailX, detailY);
+
+    var obj = geometry3d.generateObj(true, true);
+
+    this._renderer.initBuffer(gId, [obj]);
+  }
+
+  this._renderer.drawBuffer(gId);
+
+  return this;
+};
+
+/**
  * Draw a cylinder with given radius and height
  * @method  cylinder
  * @param  {Number} radius            radius of the surface

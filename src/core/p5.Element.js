@@ -109,10 +109,14 @@ p5.Element.prototype.id = function(id) {
  * @return {p5.Element}
  */
 p5.Element.prototype.class = function(c) {
-  this.elt.className = c;
-  this.width = this.elt.offsetWidth;
-  this.height = this.elt.offsetHeight;
-  return this;
+  if (!arguments.length) {
+    return this.elt.className;
+  } else {
+    this.elt.className = c;
+    this.width = this.elt.offsetWidth;
+    this.height = this.elt.offsetHeight;
+    return this;
+  }
 };
 
 /**

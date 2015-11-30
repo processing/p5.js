@@ -265,4 +265,38 @@ function friendlyWelcome() {
   report(str, 'println', '#4DB200'); // auto dark green
 } */
 
+// This is a list of p5 functions/variables that are commonly misused
+// by beginners at top-level code, outside of setup/draw. We'd like to
+// detect these errors and help the user by suggesting they move them
+// into setup/draw.
+//
+// For more details, see https://github.com/processing/p5.js/issues/1121.
+var misusedAtTopLevelCode = [
+  'color',
+  'random'
+];
+
+function helpForMisusedAtTopLevelCode(e) {
+  misusedAtTopLevelCode.forEach(function(name) {
+    if (e.message && e.message.indexOf(name) !== -1) {
+      console.log('%c Did you just try to use p5.js\'s \'' + name + '\' ' +
+                  'function or variable? If so, you may want to ' +
+                  'move it into your sketch\'s setup() function.',
+                  'color: #B40033' /* Dark magenta */);
+    }
+  });
+}
+
+if (document.readyState !== 'complete') {
+  window.addEventListener('error', helpForMisusedAtTopLevelCode, false);
+
+  // Our job is only to catch ReferenceErrors that are thrown when
+  // global (non-instance mode) p5 APIs are used at the top-level
+  // scope of a file, so we'll unbind our error listener now to make
+  // sure we don't log false positives later.
+  window.addEventListener('load', function() {
+    window.removeEventListener('error', helpForMisusedAtTopLevelCode, false);
+  });
+}
+
 module.exports = p5;
