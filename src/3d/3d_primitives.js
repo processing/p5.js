@@ -131,7 +131,8 @@ p5.prototype.sphere = function(radius, detail){
  * @param  {Number} radiusz           zradius of circle
  * @param  {Number} [detail]          optional: number of segments,
  *                                    the more segments the smoother geometry
- *                                    default is 24
+ *                                    default is 24.Avoid detail number above
+ *                                    150.It may crash the browser.
  * @return {p5}                       the p5 object
  * @example
  * <div>
