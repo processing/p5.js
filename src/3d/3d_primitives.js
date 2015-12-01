@@ -70,10 +70,10 @@ p5.prototype.plane = function(width, height){
  * Draw a sphere with given raduis
  * @method sphere
  * @param  {Number} radius            radius of circle
- * @param  {Number} [detail]          optional: number of segments,
+ * @param  {Number} [detail]          number of segments,
  *                                    the more segments the smoother geometry
- *                                    default is 24.Avoid detail number above
- *                                    150.It may crash the browser.
+ *                                    default is 24. Avoid detail number above
+ *                                    150, it may crash the browser.
  * @example
  * <div>
  * <code>
@@ -129,10 +129,10 @@ p5.prototype.sphere = function(radius, detail){
  * @param  {Number} radiusx           xradius of circle
  * @param  {Number} radiusy           yradius of circle
  * @param  {Number} radiusz           zradius of circle
- * @param  {Number} [detail]          optional: number of segments,
+ * @param  {Number} [detail]          number of segments,
  *                                    the more segments the smoother geometry
- *                                    default is 24.Avoid detail number above
- *                                    150.It may crash the browser.
+ *                                    default is 24. Avoid detail number above
+ *                                    150. It may crash the browser.
  * @return {p5}                       the p5 object
  * @example
  * <div>
@@ -192,10 +192,10 @@ p5.prototype.ellipsoid = function(radiusx, radiusy, radiusz, detail){
  * @method  cylinder
  * @param  {Number} radius            radius of the surface
  * @param  {Number} height            height of the cylinder
- * @param  {Number} [detail]          optional: number of segments,
+ * @param  {Number} [detail]          number of segments,
  *                                    the more segments the smoother geometry
- *                                    default is 24.Avoid detail number above
- *                                    150.It may crash the browser.
+ *                                    default is 24. Avoid detail number above
+ *                                    150. It may crash the browser.
  * @return {p5}                       the p5 object
  * @example
  * <div>
@@ -289,10 +289,10 @@ p5.prototype.cylinder = function(radius, height, detail){
  * @method cone
  * @param  {Number} radius            radius of the bottom surface
  * @param  {Number} height            height of the cone
- * @param  {Number} [detail]          optional: number of segments,
+ * @param  {Number} [detail]          number of segments,
  *                                    the more segments the smoother geometry
- *                                    default is 24.Avoid detail number above
- *                                    150.It may crash the browser.
+ *                                    default is 24. Avoid detail number above
+ *                                    150. It may crash the browser.
  * @example
  * <div>
  * <code>
@@ -362,10 +362,10 @@ p5.prototype.cone = function(radius, height, detail){
  * @method torus
  * @param  {Number} radius            radius of the whole ring
  * @param  {Number} tubeRadius        radius of the tube
- * @param  {Number} [detail]          optional: number of segments,
+ * @param  {Number} [detail]          number of segments,
  *                                    the more segments the smoother geometry
- *                                    default is 24.Avoid detail number above
- *                                    150.It may crash the browser.
+ *                                    default is 24. Avoid detail number above
+ *                                    150. It may crash the browser.
  * @example
  * <div>
  * <code>
