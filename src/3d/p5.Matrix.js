@@ -466,7 +466,7 @@ p5.Matrix.prototype.rotate = function(a, axis){
 p5.Matrix.prototype.translate = function(v){
   var x = v[0],
     y = v[1],
-    z = v[2];
+    z = v[2] || 0;
   this.mat4[12] =
     this.mat4[0] * x +this.mat4[4] * y +this.mat4[8] * z +this.mat4[12];
   this.mat4[13] =
