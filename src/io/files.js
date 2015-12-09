@@ -19,7 +19,7 @@ require('../core/error_helpers');
  * only be used in loadX() functions.
  * @private
  */
-p5._getDecrementPreload = function() {
+p5._getDecrementPreload = function () {
   var decrementPreload = arguments[arguments.length - 1];
 
   // when in preload decrementPreload will always be the last arg as it is set
@@ -98,14 +98,14 @@ p5._getDecrementPreload = function() {
  *   var myDiv = createDiv('hello there');
  *   myDiv.style('font-family', 'Avenir');
  * }
-* </code></div>
+ * </code></div>
  */
-p5.prototype.loadFont = function(path, onSuccess, onError) {
+p5.prototype.loadFont = function (path, onSuccess, onError) {
 
   var p5Font = new p5.Font(this);
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
-  opentype.load(path, function(err, font) {
+  opentype.load(path, function (err, font) {
 
     if (err) {
 
@@ -120,41 +120,44 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
     if (typeof onSuccess !== 'undefined') {
       onSuccess(p5Font);
     }
+
     if (decrementPreload && (onSuccess !== decrementPreload)) {
       decrementPreload();
     }
-    /*jshint multistr: true */
-    var exp =/\/[a-zA-Z]*((.ttf)|(.otf)|(.woff)|(.woff2))$/i;
-    if(!exp.test(path)) {
-      return p5Font;
+
+    // check that we have an acceptable font type
+    var validFontTypes = [ 'ttf', 'otf', 'woff', 'woff2' ],
+      fileNoPath = path.split('\\').pop().split('/').pop(),
+      lastDotIdx = fileNoPath.lastIndexOf('.'), fontFamily, newStyle,
+      fileExt = lastDotIdx < 1 ? null : fileNoPath.substr(lastDotIdx + 1);
+
+    // if so, add it to the DOM (name-only) for use with p5.dom
+    if (validFontTypes.indexOf(fileExt) > -1) {
+
+      fontFamily = fileNoPath.substr(0, lastDotIdx);
+      newStyle = document.createElement('style');
+      newStyle.appendChild(document.createTextNode('\n@font-face {' +
+        '\nfont-family: ' + fontFamily + ';\nsrc: url(' + path + ');\n}\n'));
+      document.head.appendChild(newStyle);
     }
-    var i = (exp).exec( path ).index + 1;
-    var fontName = path.substring(i);
-    fontName = fontName.match(/[A-Za-z]*/);
-    var fontFamily = fontName[0];
-    var newStyle = document.createElement('style');
-    newStyle.appendChild(document.createTextNode('\n@font-face {\
-      \nfont-family: '+fontFamily+';\nsrc: url('+path+');\n}\n'));
-    document.head.appendChild(newStyle);
 
   });
 
   return p5Font;
 };
 
-
 //BufferedReader
-p5.prototype.createInput = function() {
+p5.prototype.createInput = function () {
   // TODO
   throw 'not yet implemented';
 };
 
-p5.prototype.createReader = function() {
+p5.prototype.createReader = function () {
   // TODO
   throw 'not yet implemented';
 };
 
-p5.prototype.loadBytes = function() {
+p5.prototype.loadBytes = function () {
   // TODO
   throw 'not yet implemented';
 };
@@ -224,7 +227,7 @@ p5.prototype.loadBytes = function() {
  * </code></div>
  *
  */
-p5.prototype.loadJSON = function() {
+p5.prototype.loadJSON = function () {
   var path = arguments[0];
   var callback = arguments[1];
   var errorCallback;
@@ -235,9 +238,9 @@ p5.prototype.loadJSON = function() {
   var t = 'json'; //= path.indexOf('http') === -1 ? 'json' : 'jsonp';
 
   // check for explicit data type argument
-  for (var i=2; i<arguments.length; i++) {
+  for (var i = 2; i < arguments.length; i++) {
     var arg = arguments[i];
-    if (typeof arg === 'string'){
+    if (typeof arg === 'string') {
       if (arg === 'jsonp' || arg === 'json') {
         t = arg;
       }
@@ -258,7 +261,7 @@ p5.prototype.loadJSON = function() {
         console.log(resp.statusText);
       }
     },
-    success: function(resp) {
+    success: function (resp) {
       for (var k in resp) {
         ret[k] = resp[k];
       }
@@ -412,43 +415,43 @@ p5.prototype.loadStrings = function (path, callback, errorCallback) {
  * @return {Object}                    Table object containing data
  *
  * @example
-	* <div class="norender">
-	* <code>
-	* // Given the following CSV file called "mammals.csv"
+ * <div class="norender">
+ * <code>
+ * // Given the following CSV file called "mammals.csv"
  * // located in the project's "assets" folder:
  * //
-	* // id,species,name
-	* // 0,Capra hircus,Goat
-	* // 1,Panthera pardus,Leopard
-	* // 2,Equus zebra,Zebra
-	*
-	* var table;
-	*
-	* function preload() {
-	*   //my table is comma separated value "csv"
-	*   //and has a header specifying the columns labels
-	*   table = loadTable("assets/mammals.csv", "csv", "header");
-	*   //the file can be remote
-	*   //table = loadTable("http://p5js.org/reference/assets/mammals.csv",
-	*   //                  "csv", "header");
-	* }
-	*
-	* function setup() {
-	*   //count the columns
-	*   print(table.getRowCount() + " total rows in table");
-	*   print(table.getColumnCount() + " total columns in table");
-	*
-	*   print(table.getColumn("name"));
-	*   //["Goat", "Leopard", "Zebra"]
-	*
-	*   //cycle through the table
-	*   for (var r = 0; r < table.getRowCount(); r++)
-	*     for (var c = 0; c < table.getColumnCount(); c++) {
-	*       print(table.getString(r, c));
-	*     }
-	* }
-	* </code>
-	* </div>
+ * // id,species,name
+ * // 0,Capra hircus,Goat
+ * // 1,Panthera pardus,Leopard
+ * // 2,Equus zebra,Zebra
+ *
+ * var table;
+ *
+ * function preload() {
+ *   //my table is comma separated value "csv"
+ *   //and has a header specifying the columns labels
+ *   table = loadTable("assets/mammals.csv", "csv", "header");
+ *   //the file can be remote
+ *   //table = loadTable("http://p5js.org/reference/assets/mammals.csv",
+ *   //                  "csv", "header");
+ * }
+ *
+ * function setup() {
+ *   //count the columns
+ *   print(table.getRowCount() + " total rows in table");
+ *   print(table.getColumnCount() + " total columns in table");
+ *
+ *   print(table.getColumn("name"));
+ *   //["Goat", "Leopard", "Zebra"]
+ *
+ *   //cycle through the table
+ *   for (var r = 0; r < table.getRowCount(); r++)
+ *     for (var c = 0; c < table.getColumnCount(); c++) {
+ *       print(table.getString(r, c));
+ *     }
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.loadTable = function (path) {
   var callback = null;
@@ -459,11 +462,10 @@ p5.prototype.loadTable = function (path) {
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
   for (var i = 1; i < arguments.length; i++) {
-    if ((typeof(arguments[i]) === 'function') &&
+    if ((typeof (arguments[i]) === 'function') &&
       (arguments[i] !== decrementPreload)) {
       callback = arguments[i];
-    }
-    else if (typeof(arguments[i]) === 'string') {
+    } else if (typeof (arguments[i]) === 'string') {
       options.push(arguments[i]);
       if (arguments[i] === 'header') {
         header = true;
@@ -471,17 +473,14 @@ p5.prototype.loadTable = function (path) {
       if (arguments[i] === 'csv') {
         if (separatorSet) {
           throw new Error('Cannot set multiple separator types.');
-        }
-        else {
+        } else {
           sep = ',';
           separatorSet = true;
         }
-      }
-      else if (arguments[i] === 'tsv') {
+      } else if (arguments[i] === 'tsv') {
         if (separatorSet) {
           throw new Error('Cannot set multiple separator types.');
-        }
-        else {
+        } else {
           sep = '\t';
           separatorSet = true;
         }
@@ -490,21 +489,25 @@ p5.prototype.loadTable = function (path) {
   }
 
   var t = new p5.Table();
-  reqwest({url: path, crossOrigin: true, type: 'csv'})
-    .then(function(resp) {
+  reqwest({
+      url: path,
+      crossOrigin: true,
+      type: 'csv'
+    })
+    .then(function (resp) {
       resp = resp.responseText;
 
       var state = {};
 
       // define constants
       var PRE_TOKEN = 0,
-          MID_TOKEN = 1,
-          POST_TOKEN = 2,
-          POST_RECORD = 4;
+        MID_TOKEN = 1,
+        POST_TOKEN = 2,
+        POST_RECORD = 4;
 
       var QUOTE = '\"',
-             CR = '\r',
-             LF = '\n';
+        CR = '\r',
+        LF = '\n';
 
       var records = [];
       var offset = 0;
@@ -523,31 +526,31 @@ p5.prototype.loadTable = function (path) {
         currentRecord = null;
       };
 
-      var tokenBegin = function() {
+      var tokenBegin = function () {
         state.currentState = PRE_TOKEN;
         state.token = '';
       };
 
-      var tokenEnd = function() {
+      var tokenEnd = function () {
         currentRecord.push(state.token);
         tokenBegin();
       };
 
-      while(true) {
+      while (true) {
         currentChar = resp[offset++];
 
         // EOF
-        if(currentChar == null) {
+        if (currentChar == null) {
           if (state.escaped) {
             throw new Error('Unclosed quote in file.');
           }
-          if (currentRecord){
+          if (currentRecord) {
             tokenEnd();
             recordEnd();
             break;
           }
         }
-        if(currentRecord === null) {
+        if (currentRecord === null) {
           recordBegin();
         }
 
@@ -567,35 +570,29 @@ p5.prototype.loadTable = function (path) {
             if (resp[offset] === QUOTE) {
               state.token += QUOTE;
               offset++;
-            }
-            else {
+            } else {
               state.escaped = false;
               state.currentState = POST_TOKEN;
             }
-          }
-          else {
+          } else {
             state.token += currentChar;
           }
           continue;
         }
 
-
         // fall-through: mid-token or post-token, not escaped
-        if (currentChar === CR ) {
-          if( resp[offset] === LF  ) {
+        if (currentChar === CR) {
+          if (resp[offset] === LF) {
             offset++;
           }
           tokenEnd();
           recordEnd();
-        }
-        else if (currentChar === LF) {
+        } else if (currentChar === LF) {
           tokenEnd();
           recordEnd();
-        }
-        else if (currentChar === sep) {
+        } else if (currentChar === sep) {
           tokenEnd();
-        }
-        else if( state.currentState === MID_TOKEN ){
+        } else if (state.currentState === MID_TOKEN) {
           state.token += currentChar;
         }
       }
@@ -603,17 +600,16 @@ p5.prototype.loadTable = function (path) {
       // set up column names
       if (header) {
         t.columns = records.shift();
-      }
-      else {
-        for (i = 0; i < records.length; i++){
+      } else {
+        for (i = 0; i < records.length; i++) {
           t.columns[i] = i.toString();
         }
       }
       var row;
-      for (i =0; i<records.length; i++) {
+      for (i = 0; i < records.length; i++) {
         //Handles row of 'undefined' at end of some CSVs
         if (i === records.length - 1 && records[i].length === 1) {
-          if(records[i][0] === 'undefined'){
+          if (records[i][0] === 'undefined') {
             break;
           }
         }
@@ -629,8 +625,8 @@ p5.prototype.loadTable = function (path) {
         decrementPreload();
       }
     })
-    .fail(function(err,msg){
-      p5._friendlyFileLoadError(2,path);
+    .fail(function (err, msg) {
+      p5._friendlyFileLoadError(2, path);
       // don't get error callback mixed up with decrementPreload
       if ((typeof callback !== 'undefined') &&
         (callback !== decrementPreload)) {
@@ -645,12 +641,12 @@ p5.prototype.loadTable = function (path) {
 function makeObject(row, headers) {
   var ret = {};
   headers = headers || [];
-  if (typeof(headers) === 'undefined'){
-    for (var j = 0; j < row.length; j++ ){
+  if (typeof (headers) === 'undefined') {
+    for (var j = 0; j < row.length; j++) {
       headers[j.toString()] = j;
     }
   }
-  for (var i = 0; i < headers.length; i++){
+  for (var i = 0; i < headers.length; i++) {
     var key = headers[i];
     var val = row[i];
     ret[key] = val;
@@ -685,34 +681,34 @@ function makeObject(row, headers) {
  *                               in as first argument
  * @return {Object}              XML object containing data
  */
-p5.prototype.loadXML = function(path, callback, errorCallback) {
+p5.prototype.loadXML = function (path, callback, errorCallback) {
   var ret = document.implementation.createDocument(null, null);
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
   reqwest({
-    url: path,
-    type: 'xml',
-    crossOrigin: true,
-    error: function(resp){
-      // pass to error callback if defined
-      if (errorCallback) {
-        errorCallback(resp);
-      } else { // otherwise log error msg
-        console.log(resp.statusText);
+      url: path,
+      type: 'xml',
+      crossOrigin: true,
+      error: function (resp) {
+        // pass to error callback if defined
+        if (errorCallback) {
+          errorCallback(resp);
+        } else { // otherwise log error msg
+          console.log(resp.statusText);
+        }
+        //p5._friendlyFileLoadError(1,path);
       }
-      //p5._friendlyFileLoadError(1,path);
-    }
-  })
-  .then(function(resp){
-    var x = resp.documentElement;
-    ret.appendChild(x);
-    if (typeof callback !== 'undefined') {
-      callback(ret);
-    }
-    if (decrementPreload && (callback !== decrementPreload)) {
-      decrementPreload();
-    }
-  });
+    })
+    .then(function (resp) {
+      var x = resp.documentElement;
+      ret.appendChild(x);
+      if (typeof callback !== 'undefined') {
+        callback(ret);
+      }
+      if (decrementPreload && (callback !== decrementPreload)) {
+        decrementPreload();
+      }
+    });
   return ret;
 };
 
@@ -722,19 +718,19 @@ p5.prototype.loadXML = function(path, callback, errorCallback) {
 
 // };
 
-p5.prototype.parseXML = function() {
+p5.prototype.parseXML = function () {
   // TODO
   throw 'not yet implemented';
 
 };
 
-p5.prototype.selectFolder = function() {
+p5.prototype.selectFolder = function () {
   // TODO
   throw 'not yet implemented';
 
 };
 
-p5.prototype.selectInput = function() {
+p5.prototype.selectInput = function () {
   // TODO
   throw 'not yet implemented';
 
@@ -760,7 +756,6 @@ p5.prototype.httpGet = function () {
   args.push('GET');
   p5.prototype.httpDo.apply(this, args);
 };
-
 
 /**
  * Method for executing an HTTP POST request. If data type is not specified,
@@ -804,7 +799,7 @@ p5.prototype.httpPost = function () {
  *                                    there is an error, response is passed
  *                                    in as first argument
  */
-p5.prototype.httpDo = function() {
+p5.prototype.httpDo = function () {
   if (typeof arguments[0] === 'object') {
     reqwest(arguments[0]);
   } else {
@@ -815,7 +810,7 @@ p5.prototype.httpDo = function() {
     var callback;
     var errorCallback;
 
-    for (var i=1; i<arguments.length; i++) {
+    for (var i = 1; i < arguments.length; i++) {
       var a = arguments[i];
       if (typeof a === 'string') {
         if (a === 'GET' || a === 'POST' || a === 'PUT') {
@@ -851,7 +846,7 @@ p5.prototype.httpDo = function() {
       data: data,
       type: type,
       crossOrigin: true,
-      success: function(resp) {
+      success: function (resp) {
         if (typeof callback !== 'undefined') {
           if (type === 'text') {
             callback(resp.response);
@@ -860,7 +855,7 @@ p5.prototype.httpDo = function() {
           }
         }
       },
-      error: function(resp) {
+      error: function (resp) {
         if (errorCallback) {
           errorCallback(resp);
         } else {
@@ -870,7 +865,6 @@ p5.prototype.httpDo = function() {
     });
   }
 };
-
 
 /**
  * @module IO
@@ -883,25 +877,25 @@ window.URL = window.URL || window.webkitURL;
 // private array of p5.PrintWriter objects
 p5.prototype._pWriters = [];
 
-p5.prototype.beginRaw = function() {
+p5.prototype.beginRaw = function () {
   // TODO
   throw 'not yet implemented';
 
 };
 
-p5.prototype.beginRecord = function() {
+p5.prototype.beginRecord = function () {
   // TODO
   throw 'not yet implemented';
 
 };
 
-p5.prototype.createOutput = function() {
+p5.prototype.createOutput = function () {
   // TODO
 
   throw 'not yet implemented';
 };
 
-p5.prototype.createWriter  = function(name, extension) {
+p5.prototype.createWriter = function (name, extension) {
   var newPW;
   // check that it doesn't already exist
   for (var i in p5.prototype._pWriters) {
@@ -910,35 +904,41 @@ p5.prototype.createWriter  = function(name, extension) {
       // return p5.prototype._pWriters[i]; // return it w/ contents intact.
       // or, could return a new, empty one with a unique name:
       newPW = new p5.PrintWriter(name + window.millis(), extension);
-      p5.prototype._pWriters.push( newPW );
+      p5.prototype._pWriters.push(newPW);
       return newPW;
     }
   }
   newPW = new p5.PrintWriter(name, extension);
-  p5.prototype._pWriters.push( newPW );
+  p5.prototype._pWriters.push(newPW);
   return newPW;
 };
 
-p5.prototype.endRaw = function() {
+p5.prototype.endRaw = function () {
   // TODO
 
   throw 'not yet implemented';
 };
 
-p5.prototype.endRecord  = function() {
+p5.prototype.endRecord = function () {
   // TODO
   throw 'not yet implemented';
 
 };
 
-p5.PrintWriter = function(filename, extension) {
+p5.PrintWriter = function (filename, extension) {
   var self = this;
   this.name = filename;
   this.content = '';
-  this.print = function(data) { this.content += data; };
-  this.println = function(data) { this.content += data + '\n'; };
-  this.flush = function() { this.content = ''; };
-  this.close = function() {
+  this.print = function (data) {
+    this.content += data;
+  };
+  this.println = function (data) {
+    this.content += data + '\n';
+  };
+  this.flush = function () {
+    this.content = '';
+  };
+  this.close = function () {
     // convert String to Array for the writeFile Blob
     var arr = [];
     arr.push(this.content);
@@ -955,7 +955,7 @@ p5.PrintWriter = function(filename, extension) {
   };
 };
 
-p5.prototype.saveBytes = function() {
+p5.prototype.saveBytes = function () {
   // TODO
   throw 'not yet implemented';
 
@@ -1028,7 +1028,7 @@ p5.prototype.saveBytes = function() {
  *                            output will be optimized for filesize,
  *                            rather than readability.
  */
-p5.prototype.save = function(object, _filename, _options) {
+p5.prototype.save = function (object, _filename, _options) {
   // parse the arguments and figure out which things we are saving
   var args = arguments;
   // =================================================
@@ -1050,35 +1050,31 @@ p5.prototype.save = function(object, _filename, _options) {
   }
 
   // if 1st param is String and only one arg, assume it is canvas filename
-  else if (args.length === 1 && typeof(args[0]) === 'string') {
+  else if (args.length === 1 && typeof (args[0]) === 'string') {
     p5.prototype.saveCanvas(cnv, args[0]);
   }
 
   // =================================================
   // OPTION 2: extension clarifies saveStrings vs. saveJSON
-
   else {
     var extension = _checkFileExtension(args[1], args[2])[1];
-    switch(extension){
+    switch (extension) {
     case 'json':
       p5.prototype.saveJSON(args[0], args[1], args[2]);
       return;
     case 'txt':
       p5.prototype.saveStrings(args[0], args[1], args[2]);
       return;
-    // =================================================
-    // OPTION 3: decide based on object...
+      // =================================================
+      // OPTION 3: decide based on object...
     default:
       if (args[0] instanceof Array) {
         p5.prototype.saveStrings(args[0], args[1], args[2]);
-      }
-      else if (args[0] instanceof p5.Table) {
+      } else if (args[0] instanceof p5.Table) {
         p5.prototype.saveTable(args[0], args[1], args[2], args[3]);
-      }
-      else if (args[0] instanceof p5.Image) {
+      } else if (args[0] instanceof p5.Image) {
         p5.prototype.saveCanvas(args[0].canvas, args[1]);
-      }
-      else if (args[0] instanceof p5.SoundFile) {
+      } else if (args[0] instanceof p5.SoundFile) {
         p5.prototype.saveSound(args[0], args[1], args[2], args[3]);
       }
     }
@@ -1121,12 +1117,12 @@ p5.prototype.save = function(object, _filename, _options) {
  *  // }
  *  </div></code>
  */
-p5.prototype.saveJSON = function(json, filename, opt) {
+p5.prototype.saveJSON = function (json, filename, opt) {
   var stringify;
-  if (opt){
-    stringify = JSON.stringify( json );
+  if (opt) {
+    stringify = JSON.stringify(json);
   } else {
-    stringify = JSON.stringify( json, undefined, 2);
+    stringify = JSON.stringify(json, undefined, 2);
   }
   console.log(stringify);
   this.saveStrings(stringify.split('\n'), filename, 'json');
@@ -1135,7 +1131,7 @@ p5.prototype.saveJSON = function(json, filename, opt) {
 p5.prototype.saveJSONObject = p5.prototype.saveJSON;
 p5.prototype.saveJSONArray = p5.prototype.saveJSON;
 
-p5.prototype.saveStream = function() {
+p5.prototype.saveStream = function () {
   // TODO
   throw 'not yet implemented';
 
@@ -1167,7 +1163,7 @@ p5.prototype.saveStream = function() {
  *  // dog
  *  </code></div>
  */
-p5.prototype.saveStrings = function(list, filename, extension) {
+p5.prototype.saveStrings = function (list, filename, extension) {
   var ext = extension || 'txt';
   var pWriter = this.createWriter(filename, ext);
   for (var i = 0; i < list.length; i++) {
@@ -1181,13 +1177,13 @@ p5.prototype.saveStrings = function(list, filename, extension) {
   pWriter.flush();
 };
 
-p5.prototype.saveXML = function() {
+p5.prototype.saveXML = function () {
   // TODO
   throw 'not yet implemented';
 
 };
 
-p5.prototype.selectOutput = function() {
+p5.prototype.selectOutput = function () {
   // TODO
   throw 'not yet implemented';
 
@@ -1242,7 +1238,7 @@ function escapeHelper(content) {
  *    // 0,Panthera leo,Lion
  *  </code></div>
  */
-p5.prototype.saveTable = function(table, filename, options) {
+p5.prototype.saveTable = function (table, filename, options) {
   var pWriter = this.createWriter(filename, options);
 
   var header = table.columns;
@@ -1254,8 +1250,8 @@ p5.prototype.saveTable = function(table, filename, options) {
   if (options !== 'html') {
     // make header if it has values
     if (header[0] !== '0') {
-      for (var h = 0; h < header.length; h++ ) {
-        if (h < header.length - 1){
+      for (var h = 0; h < header.length; h++) {
+        if (h < header.length - 1) {
           pWriter.print(header[h] + sep);
         } else {
           pWriter.println(header[h]);
@@ -1264,13 +1260,12 @@ p5.prototype.saveTable = function(table, filename, options) {
     }
 
     // make rows
-    for (var i = 0; i < table.rows.length; i++ ) {
+    for (var i = 0; i < table.rows.length; i++) {
       var j;
       for (j = 0; j < table.rows[i].arr.length; j++) {
         if (j < table.rows[i].arr.length - 1) {
           pWriter.print(table.rows[i].arr[j] + sep);
-        }
-        else if (i < table.rows.length - 1) {
+        } else if (i < table.rows.length - 1) {
           pWriter.println(table.rows[i].arr[j]);
         } else {
           pWriter.print(table.rows[i].arr[j]); // no line break
@@ -1294,9 +1289,9 @@ p5.prototype.saveTable = function(table, filename, options) {
     // make header if it has values
     if (header[0] !== '0') {
       pWriter.println('    <tr>');
-      for (var k = 0; k < header.length; k++ ) {
+      for (var k = 0; k < header.length; k++) {
         var e = escapeHelper(header[k]);
-        pWriter.println('      <td>' +e);
+        pWriter.println('      <td>' + e);
         pWriter.println('      </td>');
       }
       pWriter.println('    </tr>');
@@ -1308,7 +1303,7 @@ p5.prototype.saveTable = function(table, filename, options) {
       for (var col = 0; col < table.columns.length; col++) {
         var entry = table.rows[row].getString(col);
         var htmlEntry = escapeHelper(entry);
-        pWriter.println('      <td>' +htmlEntry);
+        pWriter.println('      <td>' + htmlEntry);
         pWriter.println('      </td>');
       }
       pWriter.println('    </tr>');
@@ -1333,12 +1328,14 @@ p5.prototype.saveTable = function(table, filename, options) {
  *  @param  {[String]} extension
  *  @private
  */
-p5.prototype.writeFile = function(dataToDownload, filename, extension) {
+p5.prototype.writeFile = function (dataToDownload, filename, extension) {
   var type = 'application\/octet-stream';
-  if (p5.prototype._isSafari() ) {
+  if (p5.prototype._isSafari()) {
     type = 'text\/plain';
   }
-  var blob = new Blob(dataToDownload, {'type': type});
+  var blob = new Blob(dataToDownload, {
+    'type': type
+  });
   var href = window.URL.createObjectURL(blob);
   p5.prototype.downloadFile(href, filename, extension);
 };
@@ -1353,7 +1350,7 @@ p5.prototype.writeFile = function(dataToDownload, filename, extension) {
  *  @param  {[String]} filename
  *  @param  {[String]} extension
  */
-p5.prototype.downloadFile = function(href, fName, extension) {
+p5.prototype.downloadFile = function (href, fName, extension) {
   var fx = _checkFileExtension(fName, extension);
   var filename = fx[0];
   var ext = fx[1];
@@ -1368,11 +1365,11 @@ p5.prototype.downloadFile = function(href, fName, extension) {
   document.body.appendChild(a);
 
   // Safari will open this file in the same page as a confusing Blob.
-  if (p5.prototype._isSafari() ) {
+  if (p5.prototype._isSafari()) {
     var aText = 'Hello, Safari user! To download this file...\n';
     aText += '1. Go to File --> Save As.\n';
     aText += '2. Choose "Page Source" as the Format.\n';
-    aText += '3. Name it with this extension: .\"' + ext+'\"';
+    aText += '3. Name it with this extension: .\"' + ext + '\"';
     alert(aText);
   }
   a.click();
@@ -1418,7 +1415,7 @@ p5.prototype._checkFileExtension = _checkFileExtension;
  *  @return  {Boolean} [description]
  *  @private
  */
-p5.prototype._isSafari = function() {
+p5.prototype._isSafari = function () {
   var x = Object.prototype.toString.call(window.HTMLElement);
   return x.indexOf('Constructor') > 0;
 };
