@@ -1,4 +1,9 @@
 var configHelpers = {};
+
+// For development, we want the links to parts of the p5 website to work,
+// so we make them absolute. However, we want links to the p5 libraries
+// to point to the generated files on our development server, so we'll
+// reference them accordingly.
 var config = {
   p5SiteRoot: 'http://p5js.org',
   p5Lib: '/lib/p5.js',
