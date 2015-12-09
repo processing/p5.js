@@ -50,7 +50,7 @@
  */
 
 function getYuidocOptions() {
-  const BASE_YUIDOC_OPTIONS = {
+  var BASE_YUIDOC_OPTIONS = {
     name: '<%= pkg.name %>',
     description: '<%= pkg.description %>',
     version: '<%= pkg.version %>',
