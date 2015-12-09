@@ -5,16 +5,21 @@
  *
  *  There are three main tasks:
  *
- *  grunt       - This is the default task, which builds the code, tests it
- *                using both jslint and mocha, and then minifies it.
+ *  grunt             - This is the default task, which builds the code, tests it
+ *                      using both jslint and mocha, and then minifies it.
  *
- *  grunt yui   - This will build the inline documentation for p5.js.
+ *  grunt yui         - This will build the inline documentation for p5.js.
  *
- *  grunt test  - This rebuilds the source and runs the automated tests on
- *                both the minified and unminified code. If you need to debug
- *                a test suite in a browser, `grunt test --keepalive` will
- *                start the connect server and leave it running; the tests
- *                can then be opened at localhost:9001/test/test.html
+ *  grunt yui_dev     - This will build the inline documentation but linking to
+ *                      remote JS/CSS and assets so pages look correct in local
+ *                      testing. "grunt yui" should be run to build docs ready
+ *                      for production.
+ *
+ *  grunt test        - This rebuilds the source and runs the automated tests on
+ *                     both the minified and unminified code. If you need to debug
+ *                     a test suite in a browser, `grunt test --keepalive` will
+ *                     start the connect server and leave it running; the tests
+ *                     can then be opened at localhost:9001/test/test.html
  *
  *  Note: `grunt test:nobuild` will skip the build step when running the tests,
  *  and only runs the test files themselves through the linter: this can save
@@ -218,7 +223,7 @@ module.exports = function(grunt) {
 
     // this builds the documentation for the codebase.
     yuidoc: {
-      compile: {
+      prod: {
         name: '<%= pkg.name %>',
         description: '<%= pkg.description %>',
         version: '<%= pkg.version %>',
@@ -231,7 +236,25 @@ module.exports = function(grunt) {
           // based on the value of the P5_SITE_ROOT environment variable.
           // Set it to '..' for production and leave it blank or
           // undefined for development.
-          helpers: ['docs/yuidoc-p5-theme/helpers/helpers.js'],
+          helpers: ['docs/yuidoc-p5-theme/helpers/helpers_prod.js'],
+
+          outdir: 'docs/reference/'
+        }
+      },
+      dev: {
+        name: '<%= pkg.name %>',
+        description: '<%= pkg.description %>',
+        version: '<%= pkg.version %>',
+        url: '<%= pkg.homepage %>',
+        options: {
+          paths: ['src/', 'lib/addons/'],
+          themedir: 'docs/yuidoc-p5-theme/',
+
+          // These helpers define URL paths to p5js.org resources
+          // based on the value of the P5_SITE_ROOT environment variable.
+          // Set it to '..' for production and leave it blank or
+          // undefined for development.
+          helpers: ['docs/yuidoc-p5-theme/helpers/helpers_dev.js'],
 
           outdir: 'docs/reference/'
         }
@@ -316,7 +339,8 @@ module.exports = function(grunt) {
   grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);
   grunt.registerTask('test', ['jshint', 'jscs', 'build', 'connect', 'mocha']);
   grunt.registerTask('test:nobuild', ['jshint:test', 'jscs:test', 'connect', 'mocha']);
-  grunt.registerTask('yui', ['yuidoc']);
+  grunt.registerTask('yui', ['yuidoc:prod']);
+  grunt.registerTask('yui:dev', ['yuidoc:dev']);
   grunt.registerTask('default', ['test']);
   grunt.registerTask('saucetest', ['connect', 'saucelabs-mocha']);
 };
