@@ -334,6 +334,8 @@ var p5 = function(sketch, node, sync) {
       }
 
       this._setProperty('frameCount', this.frameCount + 1);
+      this._updatePMouseCoords();
+      this._updatePTouchCoords();
       this.redraw();
       this._frameRate = 1000.0/(now - this._lastFrameTime);
       this._lastFrameTime = now;
