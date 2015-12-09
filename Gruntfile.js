@@ -10,7 +10,7 @@
  *
  *  grunt yui         - This will build the inline documentation for p5.js.
  *
- *  grunt yui_dev     - This will build the inline documentation but linking to
+ *  grunt yui:dev     - This will build the inline documentation but linking to
  *                      remote JS/CSS and assets so pages look correct in local
  *                      testing. "grunt yui" should be run to build docs ready
  *                      for production.
