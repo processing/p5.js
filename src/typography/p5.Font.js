@@ -285,8 +285,7 @@ p5.Font.prototype._getSVG = function(line, x, y, options) {
  */
 p5.Font.prototype._renderPath = function(line, x, y, options) {
 
-  // /console.log('_renderPath', typeof line);
-  var pdata, pg = this.parent._renderer,
+  var pdata, pg = (options && options.renderer) || this.parent._renderer,
     ctx = pg.drawingContext;
 
   if (typeof line === 'object' && line.commands) {
