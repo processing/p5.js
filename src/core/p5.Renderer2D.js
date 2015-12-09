@@ -237,6 +237,10 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
 
   this.loadPixels.call(ctx);
 
+  // round down to get integer numbers
+  x = Math.floor(x);
+  y = Math.floor(y);
+
   if (w === 1 && h === 1){
 
     return [
