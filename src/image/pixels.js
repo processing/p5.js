@@ -544,6 +544,11 @@ p5.prototype.set = function (x, y, imgOrCol) {
  * </div>
  */
 p5.prototype.updatePixels = function (x, y, w, h) {
+  // graceful fail - if loadPixels() or set() has not been called, pixel
+  // array will be empty, ignore call to updatePixels()
+  if (this.pixels.length === 0) {
+    return;
+  }
   this._renderer.updatePixels(x, y, w, h);
 };
 
