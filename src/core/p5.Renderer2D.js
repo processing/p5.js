@@ -1185,7 +1185,7 @@ p5.Renderer2D.prototype._renderText = function(p, line, x, y, maxY) {
   }
   else { // an opentype font, let it handle the rendering
 
-    this._textFont._renderPath(line, x, y);
+    this._textFont._renderPath(line, x, y, { renderer: this });
   }
 
   p.pop();
