@@ -9,11 +9,16 @@
  *                      using both jslint and mocha, and then minifies it.
  *
  *  grunt yui         - This will build the inline documentation for p5.js.
+ *                      The generated documentation is assumed to be
+ *                      served from the /reference/ folder of the p5js
+ *                      website (https://github.com/processing/p5.js-website).
  *
  *  grunt yui:dev     - This will build the inline documentation but linking to
  *                      remote JS/CSS and assets so pages look correct in local
- *                      testing. "grunt yui" should be run to build docs ready
- *                      for production.
+ *                      testing. The generated documentation is assumed
+ *                      to be served from a development web server running
+ *                      at the root of the repository. "grunt yui" should
+ *                      be run to build docs ready for production.
  *
  *  grunt test        - This rebuilds the source and runs the automated tests on
  *                     both the minified and unminified code. If you need to debug
@@ -43,6 +48,32 @@
  *  grunt update_json - This automates updating the bower file
  *                      to match the package.json
  */
+
+function getYuidocOptions() {
+  var BASE_YUIDOC_OPTIONS = {
+    name: '<%= pkg.name %>',
+    description: '<%= pkg.description %>',
+    version: '<%= pkg.version %>',
+    url: '<%= pkg.homepage %>',
+    options: {
+      paths: ['src/', 'lib/addons/'],
+      themedir: 'docs/yuidoc-p5-theme/',
+      helpers: [],
+      outdir: 'docs/reference/'
+    }
+  };
+
+  var o = {
+    prod: JSON.parse(JSON.stringify(BASE_YUIDOC_OPTIONS)),
+    dev: JSON.parse(JSON.stringify(BASE_YUIDOC_OPTIONS))
+  };
+
+  o.prod.options.helpers.push('docs/yuidoc-p5-theme/helpers/helpers_prod.js');
+  o.dev.options.helpers.push('docs/yuidoc-p5-theme/helpers/helpers_dev.js');
+
+  return o;
+}
+
 module.exports = function(grunt) {
 
   // Specify what reporter we'd like to use for Mocha
@@ -54,7 +85,6 @@ module.exports = function(grunt) {
   if (grunt.option('keepalive')) {
     keepalive = true;
   }
-
 
   grunt.initConfig({
 
@@ -222,44 +252,7 @@ module.exports = function(grunt) {
     },
 
     // this builds the documentation for the codebase.
-    yuidoc: {
-      prod: {
-        name: '<%= pkg.name %>',
-        description: '<%= pkg.description %>',
-        version: '<%= pkg.version %>',
-        url: '<%= pkg.homepage %>',
-        options: {
-          paths: ['src/', 'lib/addons/'],
-          themedir: 'docs/yuidoc-p5-theme/',
-
-          // These helpers define URL paths to p5js.org resources
-          // based on the value of the P5_SITE_ROOT environment variable.
-          // Set it to '..' for production and leave it blank or
-          // undefined for development.
-          helpers: ['docs/yuidoc-p5-theme/helpers/helpers_prod.js'],
-
-          outdir: 'docs/reference/'
-        }
-      },
-      dev: {
-        name: '<%= pkg.name %>',
-        description: '<%= pkg.description %>',
-        version: '<%= pkg.version %>',
-        url: '<%= pkg.homepage %>',
-        options: {
-          paths: ['src/', 'lib/addons/'],
-          themedir: 'docs/yuidoc-p5-theme/',
-
-          // These helpers define URL paths to p5js.org resources
-          // based on the value of the P5_SITE_ROOT environment variable.
-          // Set it to '..' for production and leave it blank or
-          // undefined for development.
-          helpers: ['docs/yuidoc-p5-theme/helpers/helpers_dev.js'],
-
-          outdir: 'docs/reference/'
-        }
-      }
-    },
+    yuidoc: getYuidocOptions(),
     'release-it': {
       options: {
         pkgFiles: ['package.json'],
