@@ -223,11 +223,12 @@ p5.prototype._onkeyup = function (e) {
  * key pressed will be stored in the key variable.
  * <br><br>
  * Because of how operating systems handle key repeats, holding down a key
- * will cause multiple calls to keyTyped(), the rate is set by the operating
- * system and how each computer is configured.<br><br>
- * Browsers may have different default
- * behaviors attached to various key events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * will cause multiple calls to keyTyped() (and keyReleased() as well). The
+ * rate of repeat is set by the operating system and how each computer is
+ * configured.<br><br>
+ * Browsers may have different default behaviors attached to various key
+ * events. To prevent any default behavior for this event, add "return false"
+ * to the end of the method.
  *
  * @method keyTyped
  * @example
@@ -271,7 +272,7 @@ p5.prototype._onblur = function (e) {
 };
 
 /**
- * The keyIsDown function checks if the key is currently down, i.e. pressed.
+ * The keyIsDown() function checks if the key is currently down, i.e. pressed.
  * It can be used if you have an object that moves, and you want several keys
  * to be able to affect its behaviour simultaneously, such as moving a
  * sprite diagonally. You can put in any number representing the keyCode of

@@ -21,10 +21,10 @@ require('../core/error_helpers');
  * with textSize(). Change the color of the text with the fill() function.
  * Change the outline of the text with the stroke() and strokeWeight()
  * functions.
- *
+ * <br><br>
  * The text displays in relation to the textAlign() function, which gives the
  * option to draw to the left, right, and center of the coordinates.
- *
+ * <br><br>
  * The x2 and y2 parameters define a rectangular area to display within and
  * may only be used with string data. When these parameters are specified,
  * they are interpreted based on the current rectMode() setting. Text that
