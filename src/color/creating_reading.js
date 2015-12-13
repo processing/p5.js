@@ -98,7 +98,7 @@ p5.prototype.brightness = function(c) {
  * current colorMode(). The default mode is RGB values from 0 to 255
  * and, therefore, the function call color(255, 204, 0) will return a
  * bright yellow color.
- *
+ * <br><br>
  * Note that if only one value is provided to color(), it will be interpreted
  * as a grayscale value. Add a second value, and it will be used for alpha
  * transparency. When three values are specified, they are interpreted as
@@ -320,7 +320,7 @@ p5.prototype.hue = function(c) {
  * above 1 will be capped at 1. This is different from the behavior of lerp(),
  * but necessary because otherwise numbers outside the range will produce
  * strange and unexpected colors.
- *
+ * <br><br>
  * The way that colours are interpolated depends on the current color mode.
  *
  * @method lerpColor

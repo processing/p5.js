@@ -22,14 +22,17 @@ var Filters = require('./filters');
 
 /**
  * Creates a new p5.Image. A p5.Image is a canvas backed representation of an
- * image. p5 can display .gif, .jpg and .png images. Images may be displayed
+ * image.
+ * <br><br>
+ * p5 can display .gif, .jpg and .png images. Images may be displayed
  * in 2D and 3D space. Before an image is used, it must be loaded with the
  * loadImage() function. The p5.Image class contains fields for the width and
  * height of the image, as well as an array called pixels[] that contains the
- * values for every pixel in the image. The methods described below allow
- * easy access to the image's pixels and alpha channel and simplify the
- * process of compositing.
- *
+ * values for every pixel in the image.
+ * <br><br>
+ * The methods described below allow easy access to the image's pixels and
+ * alpha channel and simplify the process of compositing.
+ * <br><br>
  * Before using the pixels[] array, be sure to use the loadPixels() method on
  * the image to make sure that the pixel data is properly loaded.
  *

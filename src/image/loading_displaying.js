@@ -231,12 +231,12 @@ p5.prototype.image =
 /**
  * Sets the fill value for displaying images. Images can be tinted to
  * specified colors or made transparent by including an alpha value.
- *
+ * <br><br>
  * To apply transparency to an image without affecting its color, use
  * white as the tint color and specify an alpha value. For instance,
  * tint(255, 128) will make an image 50% transparent (assuming the default
  * alpha range of 0-255, which can be changed with colorMode()).
- *
+ * <br><br>
  * The value for the gray parameter must be less than or equal to the current
  * maximum value as specified by colorMode(). The default maximum value is
  * 255.
@@ -365,10 +365,11 @@ p5.prototype._getTintedImageCanvas = function(img) {
  * third parameters of image() as the upper-left corner of the image. If
  * two additional parameters are specified, they are used to set the image's
  * width and height.
- *
+ * <br><br>
  * imageMode(CORNERS) interprets the second and third parameters of image()
  * as the location of one corner, and the fourth and fifth parameters as the
  * opposite corner.
+ * <br><br>
  * imageMode(CENTER) interprets the second and third parameters of image()
  * as the image's center point. If two additional parameters are specified,
  * they are used to set the image's width and height.

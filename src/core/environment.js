@@ -25,7 +25,7 @@ if (window.console && console.log) {
    * producing. This function creates a new line of text for each call to
    * the function. Individual elements can be
    * separated with quotes ("") and joined with the addition operator (+).
-   *
+   * <br><br>
    * While print() is similar to console.log(), it does not directly map to
    * it in order to simulate easier to understand behavior than
    * console.log(). Due to this, it is slower. For fastest results, use
@@ -37,7 +37,7 @@ if (window.console && console.log) {
    * @example
    * <div><code class='norender'>
    * var x = 10;
-   * print("The value of x is "+x);
+   * print("The value of x is " + x);
    * // prints "The value of x is 10"
    * </code></div>
    */
@@ -169,12 +169,13 @@ p5.prototype.cursor = function(type, x, y) {
  * frame rate will not be achieved. Setting the frame rate within setup() is
  * recommended. The default rate is 60 frames per second. This is the same as
  * setFrameRate(val).
- *
+ * <br><br>
  * Calling frameRate() with no arguments returns the current framerate. This
  * is the same as getFrameRate().
- *
+ * <br><br>
  * Calling frameRate() with arguments that are not of the type numbers
  * or are non positive also returns current framerate.
+ *
  * @method frameRate
  * @param  {Number} [fps] number of frames to be displayed every second
  * @return {Number}       current frameRate

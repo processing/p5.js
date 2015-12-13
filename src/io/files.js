@@ -281,12 +281,12 @@ p5.prototype.loadJSON = function () {
  * Reads the contents of a file and creates a String array of its individual
  * lines. If the name of the file is used as the parameter, as in the above
  * example, the file must be located in the sketch directory/folder.
- *
+ * <br><br>
  * Alternatively, the file maybe be loaded from anywhere on the local
  * computer using an absolute path (something that starts with / on Unix and
  * Linux, or a drive letter on Windows), or the filename parameter can be a
  * URL for a file found on a network.
- *
+ * <br><br>
  * This method is asynchronous, meaning it may not finish before the next
  * line in your sketch is executed.
  *
@@ -658,18 +658,18 @@ function makeObject(row, headers) {
  * Reads the contents of a file and creates an XML object with its values.
  * If the name of the file is used as the parameter, as in the above example,
  * the file must be located in the sketch directory/folder.
- *
+ * <br><br>
  * Alternatively, the file maybe be loaded from anywhere on the local
  * computer using an absolute path (something that starts with / on Unix and
  * Linux, or a drive letter on Windows), or the filename parameter can be a
  * URL for a file found on a network.
- *
+ * <br><br>
  * This method is asynchronous, meaning it may not finish before the next
  * line in your sketch is executed. Calling loadXML() inside preload()
  * guarantees to complete the operation before setup() and draw() are called.
- *
- * <p>Outside of preload(), you may supply a callback function to handle the
- * object:</p>
+ * <br><br>
+ * Outside of preload(), you may supply a callback function to handle the
+ * object:
  *
  * @method loadXML
  * @param  {String}   filename   name of the file or URL to load

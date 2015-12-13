@@ -351,7 +351,7 @@ p5.prototype._setMouseButton = function(e) {
  * button is not pressed.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add `return false` to the end of the method.
+ * behavior for this event, add "return false" to the end of the method.
  *
  * @method mouseMoved
  * @example
@@ -391,7 +391,7 @@ p5.prototype._setMouseButton = function(e) {
  * touchMoved() function will be called instead if it is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add `return false` to the end of the method.
+ * behavior for this event, add "return false" to the end of the method.
  *
  * @method mouseDragged
  * @example
@@ -460,7 +460,7 @@ p5.prototype._onmousemove = function(e){
  * called instead if it is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add `return false` to the end of the method.
+ * behavior for this event, add "return false" to the end of the method.
  *
  * @method mousePressed
  * @example
@@ -521,7 +521,7 @@ p5.prototype._onmousedown = function(e) {
  * function will be called instead if it is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add `return false` to the end of the method.
+ * behavior for this event, add "return false" to the end of the method.
  *
  *
  * @method mouseReleased
@@ -583,7 +583,7 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * pressed and then released.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add `return false` to the end of the method.
+ * behavior for this event, add "return false" to the end of the method.
  *
  * @method mouseClicked
  * @example
@@ -629,7 +629,7 @@ p5.prototype._onclick = function(e) {
 };
 
 /**
- * The function mouseWheel is executed every time a vertical mouse wheel
+ * The function mouseWheel() is executed every time a vertical mouse wheel
  * event is detected either triggered by an actual mouse wheel or by a
  * touchpad.<br><br>
  * The event.delta property returns the amount the mouse wheel
@@ -638,32 +638,32 @@ p5.prototype._onclick = function(e) {
  * are inverted).<br><br>
  * Browsers may have different default behaviors attached to various
  * mouse events. To prevent any default behavior for this event, add
- * `return false` to the end of the method.<br><br>
- * Due to the current support of the `wheel` event on Safari, the function
- * may only work as expected if `return false` is included while using Safari.
+ * "return false" to the end of the method.<br><br>
+ * Due to the current support of the "wheel" event on Safari, the function
+ * may only work as expected if "return false" is included while using Safari.
  *
  * @method mouseWheel
  *
-	* @example
-	* <div>
-	* <code>
-	* var pos = 25;
-	*
-	* function draw() {
-	*   background(237, 34, 93);
-	*   fill(0);
-	*   rect(25, pos, 50, 50);
-	* }
-	*
-	* function mouseWheel(event) {
-	*   print(event.delta);
-	*   //move the square according to the vertical scroll amount
-	*   pos += event.delta;
-	*   //uncomment to block page scrolling
-	*   //return false;
-	* }
-	* </code>
-	* </div>
+ * @example
+ * <div>
+ * <code>
+ * var pos = 25;
+ *
+ * function draw() {
+ *   background(237, 34, 93);
+ *   fill(0);
+ *   rect(25, pos, 50, 50);
+ * }
+ *
+ * function mouseWheel(event) {
+ *   print(event.delta);
+ *   //move the square according to the vertical scroll amount
+ *   pos += event.delta;
+ *   //uncomment to block page scrolling
+ *   //return false;
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype._onwheel = function(e) {
   var context = this._isGlobal ? window : this;

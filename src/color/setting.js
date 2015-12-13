@@ -132,6 +132,9 @@ p5.prototype.background = function() {
  * @example
  * <div>
  * <code>
+ * background()
+ * rect(20, 20, 60, 60);
+ * clear();
  * </code>
  * </div>
  */
@@ -147,7 +150,7 @@ p5.prototype.clear = function() {
  * setting colorMode(RGB, 255). Setting colorMode(HSB) lets you use the HSB
  * system instead. By default, this is colorMode(HSB, 360, 100, 100, 1). You
  * can also use HSL.
- *
+ * <br><br>
  * Note: existing color objects remember the mode that they were created in,
  * so you can change modes as you like without affecting their appearance.
  *
@@ -248,9 +251,11 @@ p5.prototype.colorMode = function() {
  * fill(204, 102, 0), all subsequent shapes will be filled with orange. This
  * color is either specified in terms of the RGB or HSB color depending on
  * the current colorMode(). (The default color space is RGB, with each value
- * in the range from 0 to 255.) If a single string argument is provided, RGB,
- * RGBA and Hex CSS color strings and all named color strings are supported.
- * A p5 Color object can also be provided to set the fill color.
+ * in the range from 0 to 255).
+ * <br><br>
+ * If a single string argument is provided, RGB, RGBA and Hex CSS color strings
+ * and all named color strings are supported. A p5 Color object can also be
+ * provided to set the fill color.
  *
  * @method fill
  * @param {Number|Array|String|p5.Color} v1   gray value, red or hue value
@@ -403,9 +408,11 @@ p5.prototype.noStroke = function() {
  * Sets the color used to draw lines and borders around shapes. This color
  * is either specified in terms of the RGB or HSB color depending on the
  * current colorMode() (the default color space is RGB, with each value in
- * the range from 0 to 255). If a single string argument is provided, RGB,
- * RGBA and Hex CSS color strings and all named color strings are supported.
- * A p5 Color object can also be provided to set the stroke color.
+ * the range from 0 to 255).
+ * <br><br>
+ * If a single string argument is provided, RGB, RGBA and Hex CSS color
+ * strings and all named color strings are supported. A p5 Color object
+ * can also be provided to set the stroke color.
  *
  * @method stroke
  * @param {Number|Array|String|p5.Color} v1   gray value, red or hue value
