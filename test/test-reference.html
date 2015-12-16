@@ -191,7 +191,7 @@
     var req = new XMLHttpRequest();
     req.open('GET', '../docs/reference/data.json');
     req.onload = function() {
-      if (req.responseText) {
+      try {
         var data = JSON.parse(req.responseText);
         var files = {};
 
@@ -218,7 +218,7 @@
           });
 
         mocha.run();
-      } else {
+      } catch (e) {
         console.log('Could not parse JSON string req.responseText.');
       }
     };
