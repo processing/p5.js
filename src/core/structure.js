@@ -289,11 +289,11 @@ p5.prototype.redraw = function () {
     this._registeredMethods.pre.forEach(function (f) {
       f.call(self);
     });
-    this.pop();
     userDraw();
     this._registeredMethods.post.forEach(function (f) {
       f.call(self);
     });
+    this.pop();
   }
 };
 
