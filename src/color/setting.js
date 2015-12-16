@@ -132,9 +132,18 @@ p5.prototype.background = function() {
  * @example
  * <div>
  * <code>
- * background()
- * rect(20, 20, 60, 60);
- * clear();
+ * // Clear the screen on mouse press.
+ * function setup() {
+ *   createCanvas(100, 100);
+ * }
+ *
+ * function draw() {
+ *   ellipse(mouseX, mouseY, 20, 20);
+ * }
+ *
+ * function mousePressed() {
+ *   clear();
+ * }
  * </code>
  * </div>
  */
