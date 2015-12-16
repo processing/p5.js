@@ -215,7 +215,8 @@ p5.prototype.shorten = function(list) {
  * </code></div>
  */
 p5.prototype.shuffle = function(arr, bool) {
-  arr = bool || ArrayBuffer.isView(arr)? arr : arr.slice();
+  var isView = ArrayBuffer && ArrayBuffer.isView && ArrayBuffer.isView(arr);
+  arr = bool || isView ? arr : arr.slice();
 
   var rnd, tmp, idx = arr.length;
   while (idx > 1) {

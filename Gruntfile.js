@@ -182,6 +182,17 @@ module.exports = function(grunt) {
 
     // Set up the mocha task, used for running the automated tests.
     mocha: {
+      yui: {
+        options: {
+          urls: [
+            'http://localhost:9001/test/test-reference.html'
+          ],
+          reporter: reporter,
+          run: false,
+          log: true,
+          logErrors: true
+        }
+      },
       test: {
         options: {
           urls: [
@@ -334,6 +345,8 @@ module.exports = function(grunt) {
   grunt.registerTask('test:nobuild', ['jshint:test', 'jscs:test', 'connect', 'mocha']);
   grunt.registerTask('yui', ['yuidoc:prod']);
   grunt.registerTask('yui:dev', ['yuidoc:dev']);
+  grunt.registerTask('yui', ['yuidoc:prod']);
+  grunt.registerTask('yui:test', ['yuidoc:dev', 'connect', 'mocha:yui']);
   grunt.registerTask('default', ['test']);
   grunt.registerTask('saucetest', ['connect', 'saucelabs-mocha']);
 };
