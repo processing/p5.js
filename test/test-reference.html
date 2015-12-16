@@ -191,32 +191,36 @@
     var req = new XMLHttpRequest();
     req.open('GET', '../docs/reference/data.json');
     req.onload = function() {
-      var data = JSON.parse(req.responseText);
-      var files = {};
+      if (req.responseText) {
+        var data = JSON.parse(req.responseText);
+        var files = {};
 
-      data.classitems
-        .concat(Object.keys(data.classes).map(function(name) {
-          return data.classes[name];
-        })).filter(function(info) {
-          return info.name && info.example && info.example.length;
-        }).forEach(function(info) {
-          if (!files[info.file])
-            files[info.file] = [];
-          files[info.file].push(info);
-        });
-
-      Object.keys(files)
-        .filter(function excludeIfNoBrowserSupportFor(filename) {
-          return !TEST_FILENAME_FILTERS.some(function(filter) {
-            return filter.regex.test(filename) && !filter.condition;
+        data.classitems
+          .concat(Object.keys(data.classes).map(function(name) {
+            return data.classes[name];
+          })).filter(function(info) {
+            return info.name && info.example && info.example.length;
+          }).forEach(function(info) {
+            if (!files[info.file])
+              files[info.file] = [];
+            files[info.file].push(info);
           });
-        }).forEach(function(filename) {
-          suite(filename, function() {
-            files[filename].forEach(defineTest);
-          });
-        });
 
-      mocha.run();
+        Object.keys(files)
+          .filter(function excludeIfNoBrowserSupportFor(filename) {
+            return !TEST_FILENAME_FILTERS.some(function(filter) {
+              return filter.regex.test(filename) && !filter.condition;
+            });
+          }).forEach(function(filename) {
+            suite(filename, function() {
+              files[filename].forEach(defineTest);
+            });
+          });
+
+        mocha.run();
+      } else {
+        console.log('Could not parse JSON string req.responseText.');
+      }
     };
     req.send(null);
   };
