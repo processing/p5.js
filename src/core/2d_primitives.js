@@ -412,11 +412,12 @@ p5.prototype.quad = function() {
 * every angle at ninety degrees. By default, the first two parameters set
 * the location of the upper-left corner, the third sets the width, and the
 * fourth sets the height. The way these parameters are interpreted, however,
-* may be changed with the rectMode() function. If provided, the fifth, sixth
-* seventh and eighth parameters, if specified, determine corner radius for
-* the top-right, top-left, lower-right and lower-left corners, respectively.
-* An omitted corner radius parameter is set to the value of the previously
-* specified radius value in the parameter list.
+* may be changed with the rectMode() function.
+* <br><br>
+* The fifth, sixth, seventh and eighth parameters, if specified,
+* determine corner radius for the top-right, top-left, lower-right and
+* lower-left corners, respectively. An omitted corner radius parameter is set
+* to the value of the previously specified radius value in the parameter list.
 *
 * @method rect
 * @param  {Number} x  x-coordinate of the rectangle.
@@ -431,7 +432,7 @@ p5.prototype.quad = function() {
 * @example
 * <div>
 * <code>
-* // Draw a rectangle at location (30, 25) with a width and height of 55.
+* // Draw a rectangle at location (30, 20) with a width and height of 55.
 * rect(30, 20, 55, 55);
 * </code>
 * </div>

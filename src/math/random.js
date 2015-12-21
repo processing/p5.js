@@ -139,14 +139,15 @@ p5.prototype.random = function (min, max) {
  *
  * Returns a random number fitting a Gaussian, or
  * normal, distribution. There is theoretically no minimum or maximum
- * value that <b>randomGaussian()</b> might return. Rather, there is
+ * value that randomGaussian() might return. Rather, there is
  * just a very low probability that values far from the mean will be
  * returned; and a higher probability that numbers near the mean will
  * be returned.
- * Takes either 0, 1 or 2 arguments.
- * If no args, returns a mean of 0 and standard deviation of 1
- * If one arg, that arg is the mean (standard deviation is 1)
- * If two args, first is mean, second is standard deviation
+ * <br><br>
+ * Takes either 0, 1 or 2 arguments.<br>
+ * If no args, returns a mean of 0 and standard deviation of 1.<br>
+ * If one arg, that arg is the mean (standard deviation is 1).<br>
+ * If two args, first is mean, second is standard deviation.
  *
  * @method randomGaussian
  * @param  {Number} mean  the mean

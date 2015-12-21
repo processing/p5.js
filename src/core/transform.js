@@ -70,14 +70,14 @@ p5.prototype.resetMatrix = function() {
  * Rotates a shape the amount specified by the angle parameter. This
  * function accounts for angleMode, so angles can be entered in either
  * RADIANS or DEGREES.
- *
+ * <br><br>
  * Objects are always rotated around their relative position to the
  * origin and positive numbers rotate objects in a clockwise direction.
  * Transformations apply to everything that happens after and subsequent
  * calls to the function accumulates the effect. For example, calling
  * rotate(HALF_PI) and then rotate(HALF_PI) is the same as rotate(PI).
  * All tranformations are reset when draw() begins again.
- *
+ * <br><br>
  * Technically, rotate() multiplies the current transformation matrix
  * by a rotation matrix. This function can be further controlled by
  * the push() and pop().
@@ -191,12 +191,12 @@ p5.prototype.rotateZ = function(rad) {
  * coordinate system. Scale values are specified as decimal percentages.
  * For example, the function call scale(2.0) increases the dimension of a
  * shape by 200%.
- *
+ * <br><br>
  * Transformations apply to everything that happens after and subsequent
  * calls to the function multiply the effect. For example, calling scale(2.0)
  * and then scale(1.5) is the same as scale(3.0). If scale() is called
  * within draw(), the transformation is reset when the loop begins again.
- *
+ * <br><br>
  * Using this fuction with the z parameter requires using P3D as a
  * parameter for size(), as shown in the third example above. This function
  * can be further controlled with push() and pop().
@@ -267,13 +267,13 @@ p5.prototype.scale = function() {
  * parameter. Angles should be specified in the current angleMode.
  * Objects are always sheared around their relative position to the origin
  * and positive numbers shear objects in a clockwise direction.
- *
+ * <br><br>
  * Transformations apply to everything that happens after and subsequent
  * calls to the function accumulates the effect. For example, calling
  * shearX(PI/2) and then shearX(PI/2) is the same as shearX(PI).
  * If shearX() is called within the draw(), the transformation is reset when
  * the loop begins again.
- *
+ * <br><br>
  * Technically, shearX() multiplies the current transformation matrix by a
  * rotation matrix. This function can be further controlled by the
  * push() and pop() functions.
@@ -304,13 +304,13 @@ p5.prototype.shearX = function(angle) {
  * parameter. Angles should be specified in the current angleMode. Objects
  * are always sheared around their relative position to the origin and
  * positive numbers shear objects in a clockwise direction.
- *
+ * <br><br>
  * Transformations apply to everything that happens after and subsequent
  * calls to the function accumulates the effect. For example, calling
  * shearY(PI/2) and then shearY(PI/2) is the same as shearY(PI). If
  * shearY() is called within the draw(), the transformation is reset when
  * the loop begins again.
- *
+ * <br><br>
  * Technically, shearY() multiplies the current transformation matrix by a
  * rotation matrix. This function can be further controlled by the
  * push() and pop() functions.
@@ -340,7 +340,7 @@ p5.prototype.shearY = function(angle) {
  * Specifies an amount to displace objects within the display window.
  * The x parameter specifies left/right translation, the y parameter
  * specifies up/down translation.
- *
+ * <br><br>
  * Transformations are cumulative and apply to everything that happens after
  * and subsequent calls to the function accumulates the effect. For example,
  * calling translate(50, 0) and then translate(20, 0) is the same as

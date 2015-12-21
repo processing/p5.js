@@ -16,7 +16,8 @@ var defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
  * in pixels. This method should be called only once at the start of setup.
  * Calling createCanvas more than once in a sketch will result in very
  * unpredicable behavior. If you want more than one drawing canvas
- * you could use createGraphics (hidden by default but it can be shown).<br>
+ * you could use createGraphics (hidden by default but it can be shown).
+ * <br><br>
  * The system variables width and height are set by the parameters passed
  * to this function. If createCanvas() is not used, the window will be
  * given a default size of 100x100 pixels.
@@ -108,10 +109,9 @@ p5.prototype.createCanvas = function(w, h, renderer) {
 };
 
 /**
- * Resizes the canvas to given width and height. Note that the
- * canvas will be cleared so anything drawn previously in setup
- * or draw will disappear on resize. Setup will not be called
- * again.
+ * Resizes the canvas to given width and height. The canvas will be cleared
+ * and draw will be called immediately, allowing the sketch to re-render itself
+ * in the resized canvas.
  * @method resizeCanvas
  * @example
  * <div class="norender"><code>
@@ -130,8 +130,20 @@ p5.prototype.createCanvas = function(w, h, renderer) {
  */
 p5.prototype.resizeCanvas = function (w, h, noRedraw) {
   if (this._renderer) {
+
+    // save canvas properties
+    var props = {};
+    for (var key in this.drawingContext) {
+      var val = this.drawingContext[key];
+      if (typeof val !== 'object' && typeof val !== 'function') {
+        props[key] = val;
+      }
+    }
     this._renderer.resize(w, h);
-    this._renderer._applyDefaults();
+    // reset canvas properties
+    for (var savedKey in props) {
+      this.drawingContext[savedKey] = props[savedKey];
+    }
     if (!noRedraw) {
       this.redraw();
     }

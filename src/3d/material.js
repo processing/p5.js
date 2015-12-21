@@ -44,7 +44,7 @@ p5.prototype.normalMaterial = function(){
  * var img;
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
- *   img = loadImage("assets/cat.jpg");
+ *   img = loadImage("assets/laDefense.jpg");
  * }
  *
  * function draw(){
@@ -214,7 +214,7 @@ p5.prototype.basicMaterial = function(v1, v2, v3, a){
  *  ambientLight(100);
  *  pointLight(250, 250, 250, 100, 100, 0);
  *  ambientMaterial(250);
- *  sphere(200, 128);
+ *  sphere(200);
  * }
  * </code>
  * </div>
@@ -265,7 +265,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  *  ambientLight(100);
  *  pointLight(250, 250, 250, 100, 100, 0);
  *  specularMaterial(250);
- *  sphere(200, 128);
+ *  sphere(200);
  * }
  * </code>
  * </div>
