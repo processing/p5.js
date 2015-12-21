@@ -108,11 +108,10 @@ p5.Renderer3D.prototype._update = function() {
 p5.Renderer3D.prototype.background = function() {
   var gl = this.GL;
   var _col = this._pInst.color.apply(this._pInst, arguments);
-  // gl.clearColor(0.0,0.0,0.0,1.0);
-  var _r = (_col.levels[0]) / 255;
-  var _g = (_col.levels[1]) / 255;
-  var _b = (_col.levels[2]) / 255;
-  var _a = (_col.levels[3]) / 255;
+  var _r = (_col.maxes.rgb[0]) / 255;
+  var _g = (_col.maxes.rgb[1]) / 255;
+  var _b = (_col.maxes.rgb[2]) / 255;
+  var _a = (_col.maxes.rgb[3]) / 255;
   gl.clearColor(_r, _g, _b, _a);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 };
@@ -333,19 +332,6 @@ p5.Renderer3D.prototype.resize = function(w,h) {
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 };
 
-/**
- * [background description]
- * @return {[type]} [description]
- */
-p5.Renderer3D.prototype.background = function() {
-  var _col = this._pInst.color.apply(this._pInst, arguments);
-  //webgl requires normalized r,g,b
-  var _r = (_col.rgba[0]) / 255;
-  var _g = (_col.rgba[1]) / 255;
-  var _b = (_col.rgba[2]) / 255;
-  var _a = (_col.rgba[3]) / 255;
-  this.clear(_r,_g,_b,_a);
-};
 /**
  * clears color and depth buffers
  * with r,g,b,a
