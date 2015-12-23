@@ -256,9 +256,11 @@ module.exports = function(grunt) {
         footer: 'p5.prototype._validateParameters = function() {};'+
         'p5.prototype._friendlyFileLoadError = function() {};'
       },
-      build: {
-        src: 'lib/p5.js',
-        dest: 'lib/p5.min.js'
+      dist: {
+        files: {
+          'lib/p5.min.js': 'lib/p5.js',
+          'lib/addons/p5.dom.min.js': 'lib/addons/p5.dom.js'
+        }
       }
     },
 
