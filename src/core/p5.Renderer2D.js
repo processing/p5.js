@@ -714,7 +714,7 @@ function (mode, vertices, isCurve, isBezier,
               b[2] = [
                 vertices[i + 1][0] +
                 (s * vertices[i][0]-s * vertices[i + 2][0]) / 6,
-            vertices[i + 1][1]+(s * vertices[i][1] - s*vertices[i + 2][1]) / 6
+          vertices[i + 1][1]+(s * vertices[i][1] - s*vertices[i + 2][1]) / 6
               ];
               b[3] = [
                 vertices[i + 1][0],
