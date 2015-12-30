@@ -27,7 +27,7 @@ var lcg = (function() {
     [4294967296, 69069, 1],
     [2147483647,  65539, 0]
   ];
-  var i=Math.floor((Math.random() * 10))%7;
+  var i=Math.floor((Math.random() * 10))%8;
   //document.write(i);
   var m = CongruentialValus[i][0],
     // a - 1 should be divisible by m's prime factors
