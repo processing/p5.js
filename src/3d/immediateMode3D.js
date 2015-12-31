@@ -87,29 +87,59 @@ p5.Renderer3D.prototype.vertex = function(x, y, z){
 
 p5.Renderer3D.prototype.endShape = function(){
   var gl = this.GL;
-  this._primitives2D(this.verticeStack);
-  this.verticeStack = [];
-
-  switch(this.shapeMode){
-    case 'POINTS':
-      gl.drawArrays(gl.POINTS, 0, 1);
-      break;
-    case 'LINES':
-      gl.drawArrays(gl.LINES, 0, 2);
-      break;
-    case 'TRIANGLES':
-      this._strokeCheck();
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
-      break;
-    case 'TRIANGLE_STRIP':
-      this._strokeCheck();
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
-      break;
-    default:
-      this._strokeCheck();
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
-      break;
+  var NewVerticeStack=[];
+  var x, y, i, j;
+  var verticeStackLength=this.verticeStack.length;
+  if(this.shapeMode!=='POINTS' && this.shapeMode!=='LINES' &&
+  this.shapeMode!=='TRIANGLES' && this.shapeMode!=='TRIANGLE_STRIP'){//#1071
+    for(i=0; i<verticeStackLength; i=i+3){//storing all possible combination of
+      //triangles from points in this.verticeStack to NewVerticeStack
+      x=i%verticeStackLength;
+      for(j=0; j<verticeStackLength; j=j+3){
+        y=j%verticeStackLength;
+        if(x!==y && x+3!==y){
+          NewVerticeStack.push(this.verticeStack[x],
+            this.verticeStack[x+1],
+            this.verticeStack[x+2]);
+          NewVerticeStack.push(this.verticeStack[x+3],
+            this.verticeStack[x+4],
+            this.verticeStack[x+5]);
+          NewVerticeStack.push(this.verticeStack[y],
+            this.verticeStack[y+1],
+            this.verticeStack[y+2]);
+        }
+      }
+    }
+    this._primitives2D(NewVerticeStack);
+    this._strokeCheck();
+    gl.drawArrays(gl.TRIANGLES, 0, (NewVerticeStack.length)/3);
   }
+  else{
+    verticeStackLength=verticeStackLength/3;
+    this._primitives2D(this.verticeStack);
+    switch(this.shapeMode){
+      case 'POINTS':
+        gl.drawArrays(gl.POINTS, 0, verticeStackLength);
+        break;
+      case 'LINES':
+        gl.drawArrays(gl.LINES, 0, verticeStackLength);
+        break;
+      case 'TRIANGLES':
+        this._strokeCheck();
+        gl.drawArrays(gl.TRIANGLES, 0, verticeStackLength);
+        break;
+      case 'TRIANGLE_STRIP':
+        this._strokeCheck();
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, verticeStackLength);
+        break;
+      default:
+        this._strokeCheck();
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, verticeStackLength);
+        break;
+    }
+  }
+
+  this.verticeStack = [];
   return this;
 };
 
