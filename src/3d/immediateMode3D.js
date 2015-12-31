@@ -92,22 +92,21 @@ p5.Renderer3D.prototype.endShape = function(){
   var verticeStackLength=this.verticeStack.length;
   if(this.shapeMode!=='POINTS' && this.shapeMode!=='LINES' &&
   this.shapeMode!=='TRIANGLES' && this.shapeMode!=='TRIANGLE_STRIP'){//#1071
-    for(i=0; i<verticeStackLength; i=i+3){
+    for(i=0; i<verticeStackLength; i=i+3){//storing all possible combination of
+      //triangles from points in this.verticeStack to NewVerticeStack
       x=i%verticeStackLength;
       for(j=0; j<verticeStackLength; j=j+3){
         y=j%verticeStackLength;
-        if((x%verticeStackLength)!==y && (x+3)%verticeStackLength!==y){
-          NewVerticeStack.push(this.verticeStack[x%verticeStackLength],
-            this.verticeStack[(x+1)%verticeStackLength],
-            this.verticeStack[(x+2)%verticeStackLength]);
-          NewVerticeStack.push(this.verticeStack[(x+3)%verticeStackLength],
-            this.verticeStack[(x+4)%verticeStackLength],
-            this.verticeStack[(x+5)%verticeStackLength]);
-          NewVerticeStack.push(this.verticeStack[y%verticeStackLength],
-            this.verticeStack[(y+1)%verticeStackLength],
-            this.verticeStack[(y+2)%verticeStackLength]);
-        }
-        else{
+        if(x!==y && x+3!==y){
+          NewVerticeStack.push(this.verticeStack[x],
+            this.verticeStack[x+1],
+            this.verticeStack[x+2]);
+          NewVerticeStack.push(this.verticeStack[x+3],
+            this.verticeStack[x+4],
+            this.verticeStack[x+5]);
+          NewVerticeStack.push(this.verticeStack[y],
+            this.verticeStack[y+1],
+            this.verticeStack[y+2]);
         }
       }
     }
