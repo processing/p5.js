@@ -46,10 +46,10 @@ require('./typography/attributes');
 require('./typography/loading_displaying');
 
 require('./3d/p5.Renderer3D');
-require('./3d/p5.Geometry3D');
-require('./3d/retainedMode3D');
-require('./3d/immediateMode3D');
-require('./3d/3d_primitives');
+require('./3d/p5.Geometry');
+require('./3d/p5.Renderer3D.Retained');
+require('./3d/p5.Renderer3D.Immediate');
+require('./3d/primitives');
 require('./3d/p5.Matrix');
 require('./3d/material');
 require('./3d/light');

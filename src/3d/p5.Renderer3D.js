@@ -7,7 +7,8 @@ require('./p5.Matrix');
 var uMVMatrixStack = [];
 var RESOLUTION = 1000;
 
-//@TODO should probably implement an override for these attributes
+//@TODO should implement public method
+//to override these attributes
 var attributes = {
   alpha: true,
   depth: true,
@@ -18,13 +19,52 @@ var attributes = {
 };
 
 /**
- * 3D graphics class.  Can also be used as an off-screen graphics buffer.
- * A p5.Renderer3D object can be constructed
+ * @class p5.Renderer3D
+ * @constructor
+ * @extends p5.Renderer
+ * 3D graphics class.
+ * @todo extend class to include public method for offscreen
+ * rendering (FBO).
  *
  */
 p5.Renderer3D = function(elt, pInst, isMainCanvas) {
   p5.Renderer.call(this, elt, pInst, isMainCanvas);
+  this._initContext();
 
+  this.isP3D = true; //lets us know we're in 3d mode
+  this.GL = this.drawingContext;
+  //lights
+  this.ambientLightCount = 0;
+  this.directionalLightCount = 0;
+  this.pointLightCount = 0;
+  //camera
+  this._isSetCamera = false;
+
+  /**
+   * model view, projection, & normal
+   * matrices
+   */
+  this.uMVMatrix = new p5.Matrix();
+  this.uPMatrix  = new p5.Matrix();
+  this.uNMatrix = new p5.Matrix();
+  //Geometry & Material hashes
+  this.gHash = {};
+  this.mHash = {};
+  //Imediate Mode
+  //default drawing is done in Retained Mode
+  this.isImmediateDrawing = false;
+  this.immediateMode = {};
+  this.pointSize = 5.0;//default point/stroke
+  return this;
+};
+
+p5.Renderer3D.prototype = Object.create(p5.Renderer.prototype);
+
+//////////////////////////////////////////////
+// Setting
+//////////////////////////////////////////////
+
+p5.Renderer3D.prototype._initContext = function() {
   try {
     this.drawingContext = this.canvas.getContext('webgl', attributes) ||
       this.canvas.getContext('experimental-webgl', attributes);
@@ -32,70 +72,33 @@ p5.Renderer3D = function(elt, pInst, isMainCanvas) {
       throw new Error('Error creating webgl context');
     } else {
       console.log('p5.Renderer3D: enabled webgl context');
+      var gl = this.drawingContext;
+      gl.enable(gl.DEPTH_TEST);
+      gl.depthFunc(gl.LEQUAL);
+      gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
     }
   } catch (er) {
     throw new Error(er);
   }
-
-  this.isP3D = true; //lets us know we're in 3d mode
-  this.GL = this.drawingContext;
-  var gl = this.GL;
-  gl.clearColor(1.0, 1.0, 1.0, 1.0); //background is initialized white
-  gl.clearDepth(1);
-  gl.enable(gl.DEPTH_TEST);
-  gl.depthFunc(gl.LEQUAL);
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-  gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-  this._init();
-  return this;
 };
-
-p5.Renderer3D.prototype = Object.create(p5.Renderer.prototype);
-
-p5.Renderer3D.prototype._applyDefaults = function() {
-  return this;
-};
-
-//////////////////////////////////////////////
-// Setting
-//////////////////////////////////////////////
-
-p5.Renderer3D.prototype._init = function(first_argument) {
-  var gl = this.GL;
-  //for our default matrices
-  this.initMatrix();
-  this.initHash();
-  //for immedidate mode
-  this.verticeStack = [];
-  this.verticeBuffer = gl.createBuffer();
-  this.colorBuffer = gl.createBuffer();
-  //for camera
-  this._setCamera = false;
-  //for counting lights
-  this.ambientLightCount = 0;
-  this.directionalLightCount = 0;
-  this.pointLightCount = 0;
+//detect if user didn't set the camera
+//then call this function below
+p5.Renderer3D.prototype._setDefaultCamera = function(){
+  if(!this._isSetCamera){
+    var _w = this.width;
+    var _h = this.height;
+    this.uPMatrix = p5.Matrix.identity();
+    this.uPMatrix.perspective(60 / 180 * Math.PI, _w / _h, 0.1, 100);
+    this._isSetCamera = true;
+  }
 };
 
 p5.Renderer3D.prototype._update = function() {
-  this.resetMatrix();
+  this.uMVMatrix = p5.Matrix.identity();
   this.translate(0, 0, -800);
   this.ambientLightCount = 0;
   this.directionalLightCount = 0;
   this.pointLightCount = 0;
-  this.verticeStack = [];
-};
-
-/**
- * [resize description]
- * @param  {[type]} w [description]
- * @param  {[tyoe]} h [description]
- * @return {[type]}   [description]
- */
-p5.Renderer3D.prototype.resize = function(w,h) {
-  var gl = this.GL;
-  p5.Renderer.prototype.resize.call(this, w, h);
-  gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 };
 
 /**
@@ -105,7 +108,6 @@ p5.Renderer3D.prototype.resize = function(w,h) {
 p5.Renderer3D.prototype.background = function() {
   var gl = this.GL;
   var _col = this._pInst.color.apply(this._pInst, arguments);
-  // gl.clearColor(0.0,0.0,0.0,1.0);
   var _r = (_col.levels[0]) / 255;
   var _g = (_col.levels[1]) / 255;
   var _b = (_col.levels[2]) / 255;
@@ -124,12 +126,13 @@ p5.Renderer3D.prototype.background = function() {
 //////////////////////////////////////////////
 
 /**
- * [initShaders description]
- * @param  {[type]} vertId [description]
- * @param  {[type]} fragId [description]
+ * [_initShaders description]
+ * @param  {string} vertId [description]
+ * @param  {string} fragId [description]
  * @return {[type]}        [description]
  */
-p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
+p5.Renderer3D.prototype._initShaders =
+function(vertId, fragId, isImmediateMode) {
   var gl = this.GL;
   //set up our default shaders by:
   // 1. create the shader,
@@ -166,22 +169,18 @@ p5.Renderer3D.prototype.initShaders = function(vertId, fragId, immediateMode) {
   }
   //END SHADERS SETUP
 
-  this._getLocation(shaderProgram, immediateMode);
+  this._getLocation(shaderProgram, isImmediateMode);
 
   return shaderProgram;
 };
 
-p5.Renderer3D.prototype._getLocation = function(shaderProgram, immediateMode) {
+p5.Renderer3D.prototype._getLocation =
+function(shaderProgram, isImmediateMode) {
   var gl = this.GL;
   gl.useProgram(shaderProgram);
   shaderProgram.uResolution =
     gl.getUniformLocation(shaderProgram, 'uResolution');
   gl.uniform1f(shaderProgram.uResolution, RESOLUTION);
-
-  //vertex position Attribute
-  shaderProgram.vertexPositionAttribute =
-    gl.getAttribLocation(shaderProgram, 'aPosition');
-  gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
   //projection Matrix uniform
   shaderProgram.uPMatrixUniform =
@@ -191,27 +190,36 @@ p5.Renderer3D.prototype._getLocation = function(shaderProgram, immediateMode) {
     gl.getUniformLocation(shaderProgram, 'uModelViewMatrix');
 
   //@TODO: figure out a better way instead of if statement
-  if(immediateMode === undefined){
-    //vertex normal Attribute
-    shaderProgram.vertexNormalAttribute =
-      gl.getAttribLocation(shaderProgram, 'aNormal');
-    gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
-
+  if(isImmediateMode === undefined){
     //normal Matrix uniform
     shaderProgram.uNMatrixUniform =
     gl.getUniformLocation(shaderProgram, 'uNormalMatrix');
-
-    //texture coordinate Attribute
-    shaderProgram.textureCoordAttribute =
-      gl.getAttribLocation(shaderProgram, 'aTexCoord');
-    gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
 
     shaderProgram.samplerUniform =
     gl.getUniformLocation(shaderProgram, 'uSampler');
   }
 };
 
-p5.Renderer3D.prototype.setMatrixUniforms = function(shaderKey) {
+/**
+ * Sets a shader uniform given a shaderProgram and uniform string
+ * @param {String} shaderKey key to material Hash.
+ * @param {String} uniform location in shader.
+ * @param { Number} data data to bind uniform.  Float data type.
+ * @todo currently this function sets uniform1f data.
+ * Should generalize function to accept any uniform
+ * data type.
+ */
+p5.Renderer3D.prototype._setUniform1f = function(shaderKey,uniform,data)
+{
+  var gl = this.GL;
+  var shaderProgram = this.mHash[shaderKey];
+  gl.useProgram(shaderProgram);
+  shaderProgram[uniform] = gl.getUniformLocation(shaderProgram, uniform);
+  gl.uniform1f(shaderProgram[uniform], data);
+  return this;
+};
+
+p5.Renderer3D.prototype._setMatrixUniforms = function(shaderKey) {
   var gl = this.GL;
   var shaderProgram = this.mHash[shaderKey];
 
@@ -236,11 +244,11 @@ p5.Renderer3D.prototype.setMatrixUniforms = function(shaderKey) {
 //////////////////////////////////////////////
 // GET CURRENT | for shader and color
 //////////////////////////////////////////////
-p5.Renderer3D.prototype._getShader = function(vertId, fragId, immediateMode) {
-  var mId = vertId+ '|' + fragId;
+p5.Renderer3D.prototype._getShader = function(vertId, fragId, isImmediateMode) {
+  var mId = vertId + '|' + fragId;
   //create it and put it into hashTable
   if(!this.materialInHash(mId)){
-    var shaderProgram = this.initShaders(vertId, fragId, immediateMode);
+    var shaderProgram = this._initShaders(vertId, fragId, isImmediateMode);
     this.mHash[mId] = shaderProgram;
   }
   this.curShaderId = mId;
@@ -249,11 +257,11 @@ p5.Renderer3D.prototype._getShader = function(vertId, fragId, immediateMode) {
 };
 
 p5.Renderer3D.prototype._getCurShaderId = function(){
-  //if it's not defined yet
+  //if the shader ID is not yet defined
   if(this.curShaderId === undefined){
     //default shader: normalMaterial()
     var mId = 'normalVert|normalFrag';
-    var shaderProgram = this.initShaders('normalVert', 'normalFrag');
+    var shaderProgram = this._initShaders('normalVert', 'normalFrag');
     this.mHash[mId] = shaderProgram;
     this.curShaderId = mId;
   }
@@ -261,22 +269,48 @@ p5.Renderer3D.prototype._getCurShaderId = function(){
   return this.curShaderId;
 };
 
-p5.Renderer3D.prototype._getCurColor = function() {
-  //default color: gray
-  if(this.curColor === undefined) {
-    this.curColor = [0.5, 0.5, 0.5, 1.0];
-  }
-  return this.curColor;
+//////////////////////////////////////////////
+// COLOR
+//////////////////////////////////////////////
+p5.Renderer3D.prototype.fill = function(r, g, b, a) {
+  var color = this._pInst.color.apply(this._pInst, arguments);
+  //@type {Array}, length 4 : vals range 0->1
+  var colorNormalized = color._normalize();
+  this.curColor = colorNormalized;
+  this.drawMode = 'fill';
+  return this;
+};
+p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
+  var color = this._pInst.color.apply(this._pInst, arguments);
+  var colorNormalized = color._normalize();
+  this.curColor = colorNormalized;
+  this.drawMode = 'stroke';
+  return this;
 };
 
+//@TODO
+p5.Renderer3D.prototype._strokeCheck = function(){
+  if(this.drawMode === 'stroke'){
+    throw new Error(
+      'stroke for shapes in 3D not yet implemented, use fill for now :('
+    );
+  }
+};
+
+/**
+ * [strokeWeight description]
+ * @param  {Number} pointSize stroke point size
+ * @return {[type]}           [description]
+ * @todo  strokeWeight currently works on points only.
+ * implement on all wireframes and strokes.
+ */
+p5.Renderer3D.prototype.strokeWeight = function(pointSize) {
+  this.pointSize = pointSize;
+  return this;
+};
 //////////////////////////////////////////////
 // HASH | for material and geometry
 //////////////////////////////////////////////
-
-p5.Renderer3D.prototype.initHash = function(){
-  this.gHash = {};
-  this.mHash = {};
-};
 
 p5.Renderer3D.prototype.geometryInHash = function(gId){
   return this.gHash[gId] !== undefined;
@@ -286,31 +320,33 @@ p5.Renderer3D.prototype.materialInHash = function(mId){
   return this.mHash[mId] !== undefined;
 };
 
-//////////////////////////////////////////////
-// MATRIX
-//////////////////////////////////////////////
-
-p5.Renderer3D.prototype.initMatrix = function(){
-  this.uMVMatrix = new p5.Matrix();
-  this.uPMatrix  = new p5.Matrix();
-  this.uNMatrix = new p5.Matrix();
+/**
+ * [resize description]
+ * @param  {[type]} w [description]
+ * @param  {[tyoe]} h [description]
+ * @return {[type]}   [description]
+ */
+p5.Renderer3D.prototype.resize = function(w,h) {
+  var gl = this.GL;
+  p5.Renderer.prototype.resize.call(this, w, h);
+  gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 };
 
-p5.Renderer3D.prototype.resetMatrix = function() {
-  this.uMVMatrix = p5.Matrix.identity();
-  //this.uPMatrix = p5.Matrix.identity();
-};
-
-//detect if user didn't set the camera
-//then call this function below
-p5.Renderer3D.prototype._setDefaultCamera = function(){
-  if(!this._setCamera){
-    var _w = this.width;
-    var _h = this.height;
-    this.uPMatrix = p5.Matrix.identity();
-    this.uPMatrix.perspective(60 / 180 * Math.PI, _w / _h, 0.1, 100);
-    this._setCamera = true;
-  }
+/**
+ * clears color and depth buffers
+ * with r,g,b,a
+ * @param {Number} r normalized red val.
+ * @param {Number} g normalized green val.
+ * @param {Number} b normalized blue val.
+ * @param {Number} a normalized alpha val.
+ */
+p5.Renderer3D.prototype.clear = function() {
+  var gl = this.GL;
+  gl.clearColor(arguments[0],
+    arguments[1],
+    arguments[2],
+    arguments[3]);
+  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 };
 
 /**

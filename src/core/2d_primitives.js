@@ -144,26 +144,46 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
  * </code>
  * </div>
  */
-p5.prototype.ellipse = function(x, y, w, h) {
+p5.prototype.ellipse = function() {
   var args = new Array(arguments.length);
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  this._validateParameters(
-    'ellipse',
-    args,
-    ['Number', 'Number', 'Number', 'Number']
-  );
-
+  if(this._renderer.isP3D){
+    this._validateParameters(
+      'ellipse',
+      args,
+      ['Number',
+      'Number',
+      'Number',
+      'Number',
+      'Number'
+      ]
+    );
+    // p5 supports negative width and heights for ellipses
+    args[3] = Math.abs(args[3]);
+    args[4] = Math.abs(args[4]);
+  } else {
+    this._validateParameters(
+      'ellipse',
+      args,
+      ['Number', 'Number', 'Number', 'Number']
+    );
+    // p5 supports negative width and heights for ellipses
+    args[2] = Math.abs(args[2]);
+    args[3] = Math.abs(args[3]);
+  }
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
-  // p5 supports negative width and heights for ellipses
-  w = Math.abs(w);
-  h = Math.abs(h);
-  //@TODO add catch block here if this._renderer
-  //doesn't have the method implemented yet
-  this._renderer.ellipse(x, y, w, h);
+  if (this._renderer.isP3D){
+    this._renderer.ellipse(args);
+  } else {
+    this._renderer.ellipse(args[0],//x
+      args[1],//y
+      args[2],//width
+      args[3]);//height
+  }
   return this;
 };
 /**

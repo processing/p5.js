@@ -274,15 +274,14 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   var gl = this._renderer.GL;
   var shaderProgram =
     this._renderer._getShader('lightVert', 'lightTextureFrag');
-  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
   gl.useProgram(shaderProgram);
+  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
 
   var color = this._renderer._pInst.color.apply(
     this._renderer._pInst, arguments);
   var colors = color._array;
-
   gl.uniform4f(shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);
 
