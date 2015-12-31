@@ -174,7 +174,6 @@ p5.Renderer3D.prototype.endShape = function(){
   this.verticeStack = [];
   return this;
 };
-
 */
 //@TODO: figure out how to actually do stroke on shapes in 3D
 p5.Renderer3D.prototype._strokeCheck = function(){
