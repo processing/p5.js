@@ -93,7 +93,7 @@ p5.prototype.box = function(width, height, depth){
 
   var detailX = typeof arguments[3] === Number ? arguments[3] : 1;
   var detailY = typeof arguments[4] === Number ? arguments[4] : 1;
-  console.log('details are ', detailX, detailY);
+  //console.log('details are ', detailX, detailY);
   var gId = 'box|'+width+'|'+height+'|'+depth+'|'+detailX+'|'+detailY;
 
   if(!this._renderer.geometryInHash(gId)){
@@ -103,42 +103,44 @@ p5.prototype.box = function(width, height, depth){
         var _width = width/2;
         var _height = height/2;
         var _depth = depth/2;
-        console.log('drawing right');
-        var x = _width;
-        var y = 2 * _height * u - _height;
-        var z = 2 * _depth * v - _depth;
+        var x = -_width;
+        var y = -2 * _height * u - _height;
+        var z = -2 * _depth * v - _depth;
+        console.log('drawing right vertex: ');
+        console.log(x,y,z);
         return new p5.Vector(x, y, z);
       },
       bottom: function(u, v){
-        console.log('drawing bottom');
         var x = 2 * width * ( 1 - u ) - width;
         var y = 2 * height * v - height;
         var z = -depth;
+        console.log('drawing bottom vertex: ');
+        console.log(x,y,z);
         return new p5.Vector(x, y, z);
       },
       left: function(u, v){
-        console.log('drawing left');
+        //console.log('drawing left');
         var x = 2 * width * ( 1 - u ) - width;
         var y = height;
         var z = 2 * depth * v - depth;
         return new p5.Vector(x, y, z);
       },
       top: function(u, v){
-        console.log('drawing top');
+        //console.log('drawing top');
         var x = 2 * width * u - width;
         var y = -height;
         var z = 2 * depth * v - depth;
         return new p5.Vector(x, y, z);
       },
       front: function(u, v){
-        console.log('drawing front');
+        //console.log('drawing front');
         var x = 2 * width * u - width;
         var y = 2 * height * v - height;
         var z = depth;
         return new p5.Vector(x, y, z);
       },
       back: function(u, v){
-        console.log('drawing back');
+        // console.log('drawing back');
         var x = -width;
         var y = 2 * height * ( 1 - u ) - height;
         var z = 2 * depth * v - depth;
@@ -150,11 +152,12 @@ p5.prototype.box = function(width, height, depth){
       detailX,
       detailY,
       function(){
-        this.computeFaces();
+        this.computeUVs();
         this.computeFaceNormals();
         this.computeVertexNormals();
       }
     );
+    console.log(boxGeom.faces);
     //initialize our geometry buffer with
     //the key val pair:
     //geometry Id, Geom object
@@ -385,6 +388,69 @@ p5.prototype.cone = function(radius, height, detail){
   return this;
 };
 
+/**
+ * Draw an ellipsoid with given raduis
+ * @method ellipsoid
+ * @param  {Number} radiusx           xradius of circle
+ * @param  {Number} radiusy           yradius of circle
+ * @param  {Number} radiusz           zradius of circle
+ * @param  {Number} [detail]          number of segments,
+ *                                    the more segments the smoother geometry
+ *                                    default is 24. Avoid detail number above
+ *                                    150. It may crash the browser.
+ * @return {p5}                       the p5 object
+ * @example
+ * <div>
+ * <code>
+ * // draw an ellipsoid with radius 200, 300 and 400 .
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw(){
+ *   background(200);
+ *   ellipsoid(200,300,400);
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.ellipsoid =
+function(radiusx, radiusy, radiusz, detail){
+
+  radiusx = radiusx || 50;
+  radiusy = radiusy || 50;
+  radiusz = radiusz || 50;
+
+  var detailX = detail || 24;
+  var detailY = detail || 24;
+
+  var gId = 'ellipsoid|'+radiusx+'|'+radiusy+
+  '|'+radiusz+'|'+detailX+'|'+detailY;
+
+
+  if(!this._renderer.geometryInHash(gId)){
+    var _ellipsoid = function(u, v){
+      var theta = 2 * Math.PI * u;
+      var phi = Math.PI * v - Math.PI / 2;
+      var x = radiusx * Math.cos(phi) * Math.sin(theta);
+      var y = radiusy * Math.sin(phi);
+      var z = radiusz * Math.cos(phi) * Math.cos(theta);
+      return new p5.Vector(x, y, z);
+    };
+    var ellipsoidGeom = new p5.Geometry(_ellipsoid, detailX, detailY,
+      function(){
+        this.computeFaces();
+        this.computeFaceNormals();
+        this.computeVertexNormals();
+      });
+    ellipsoidGeom.averageNormals().averagePoleNormals();
+    this._renderer.createBuffer(gId, ellipsoidGeom);
+  }
+
+  this._renderer.drawBuffer(gId);
+
+  return this;
+};
 
 /**
  * Draw a torus with given radius and tube radius
