@@ -88,28 +88,29 @@ p5.Renderer3D.prototype.vertex = function(x, y, z){
 p5.Renderer3D.prototype.endShape = function(){
   var gl = this.GL;
   this._primitives2D(this.verticeStack);
-  this.verticeStack = [];
-
+  var verticeStackLength=this.verticeStack.length;
+  verticeStackLength=verticeStackLength/3;
   switch(this.shapeMode){
     case 'POINTS':
-      gl.drawArrays(gl.POINTS, 0, 1);
+      gl.drawArrays(gl.POINTS, 0, verticeStackLength);
       break;
     case 'LINES':
-      gl.drawArrays(gl.LINES, 0, 2);
+      gl.drawArrays(gl.LINES, 0, verticeStackLength);
       break;
     case 'TRIANGLES':
       this._strokeCheck();
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      gl.drawArrays(gl.TRIANGLES, 0, verticeStackLength);
       break;
     case 'TRIANGLE_STRIP':
       this._strokeCheck();
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, verticeStackLength);
       break;
     default:
       this._strokeCheck();
-      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      gl.drawArrays(gl.TRIANGLES, 0, verticeStackLength);
       break;
   }
+  this.verticeStack = [];
   return this;
 };
 
