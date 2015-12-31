@@ -91,7 +91,7 @@ p5.Renderer3D.prototype.endShape = function(){
   var x, y, i, j;
   var verticeStackLength=this.verticeStack.length;
   if(this.shapeMode!=='POINTS' && this.shapeMode!=='LINES' &&
-  this.shapeMode!=='TRIANGLES' && this.shapeMode!=='TRIANGLE_STRIP'){
+  this.shapeMode!=='TRIANGLES' && this.shapeMode!=='TRIANGLE_STRIP'){//#1071
     for(i=0; i<verticeStackLength; i=i+3){
       x=i%verticeStackLength;
       for(j=0; j<verticeStackLength; j=j+3){
@@ -144,37 +144,6 @@ p5.Renderer3D.prototype.endShape = function(){
   return this;
 };
 
-
-/*
-p5.Renderer3D.prototype.endShape = function(){
-  var gl = this.GL;
-  this._primitives2D(this.verticeStack);
-  var verticeStackLength=this.verticeStack.length;
-  verticeStackLength=verticeStackLength/3;
-  switch(this.shapeMode){
-    case 'POINTS':
-      gl.drawArrays(gl.POINTS, 0, verticeStackLength);
-      break;
-    case 'LINES':
-      gl.drawArrays(gl.LINES, 0, verticeStackLength);
-      break;
-    case 'TRIANGLES':
-      this._strokeCheck();
-      gl.drawArrays(gl.TRIANGLES, 0, verticeStackLength);
-      break;
-    case 'TRIANGLE_STRIP':
-      this._strokeCheck();
-      gl.drawArrays(gl.TRIANGLE_STRIP, 0, verticeStackLength);
-      break;
-    default:
-      this._strokeCheck();
-      gl.drawArrays(gl.TRIANGLES, 0, verticeStackLength);
-      break;
-  }
-  this.verticeStack = [];
-  return this;
-};
-*/
 //@TODO: figure out how to actually do stroke on shapes in 3D
 p5.Renderer3D.prototype._strokeCheck = function(){
   if(this.drawMode === 'stroke'){
