@@ -87,6 +87,67 @@ p5.Renderer3D.prototype.vertex = function(x, y, z){
 
 p5.Renderer3D.prototype.endShape = function(){
   var gl = this.GL;
+  var NewVerticeStack=[];
+  var x, y, i, j;
+  var verticeStackLength=this.verticeStack.length;
+  if(this.shapeMode!=='POINTS' && this.shapeMode!=='LINES' &&
+  this.shapeMode!=='TRIANGLES' && this.shapeMode!=='TRIANGLE_STRIP'){
+    for(i=0; i<verticeStackLength; i=i+3){
+      x=i%verticeStackLength;
+      for(j=0; j<verticeStackLength; j=j+3){
+        y=j%verticeStackLength;
+        if((x%verticeStackLength)!==y && (x+3)%verticeStackLength!==y){
+          NewVerticeStack.push(this.verticeStack[x%verticeStackLength],
+            this.verticeStack[(x+1)%verticeStackLength],
+            this.verticeStack[(x+2)%verticeStackLength]);
+          NewVerticeStack.push(this.verticeStack[(x+3)%verticeStackLength],
+            this.verticeStack[(x+4)%verticeStackLength],
+            this.verticeStack[(x+5)%verticeStackLength]);
+          NewVerticeStack.push(this.verticeStack[y%verticeStackLength],
+            this.verticeStack[(y+1)%verticeStackLength],
+            this.verticeStack[(y+2)%verticeStackLength]);
+        }
+        else{
+        }
+      }
+    }
+    this._primitives2D(NewVerticeStack);
+    this._strokeCheck();
+    gl.drawArrays(gl.TRIANGLES, 0, (NewVerticeStack.length)/3);
+  }
+  else{
+    verticeStackLength=verticeStackLength/3;
+    this._primitives2D(this.verticeStack);
+    switch(this.shapeMode){
+      case 'POINTS':
+        gl.drawArrays(gl.POINTS, 0, verticeStackLength);
+        break;
+      case 'LINES':
+        gl.drawArrays(gl.LINES, 0, verticeStackLength);
+        break;
+      case 'TRIANGLES':
+        this._strokeCheck();
+        gl.drawArrays(gl.TRIANGLES, 0, verticeStackLength);
+        break;
+      case 'TRIANGLE_STRIP':
+        this._strokeCheck();
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, verticeStackLength);
+        break;
+      default:
+        this._strokeCheck();
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, verticeStackLength);
+        break;
+    }
+  }
+
+  this.verticeStack = [];
+  return this;
+};
+
+
+/*
+p5.Renderer3D.prototype.endShape = function(){
+  var gl = this.GL;
   this._primitives2D(this.verticeStack);
   var verticeStackLength=this.verticeStack.length;
   verticeStackLength=verticeStackLength/3;
@@ -114,6 +175,7 @@ p5.Renderer3D.prototype.endShape = function(){
   return this;
 };
 
+*/
 //@TODO: figure out how to actually do stroke on shapes in 3D
 p5.Renderer3D.prototype._strokeCheck = function(){
   if(this.drawMode === 'stroke'){
