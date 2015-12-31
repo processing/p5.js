@@ -4,6 +4,9 @@
  * @for p5
  * @requires core
  * @requires p5.Geometry
+ * @todo complex geometries currently fail test
+ * because of face index calculation.  This affects the following primitives:
+ * box, cone, cylinder
  */
 
 'use strict';
@@ -93,7 +96,6 @@ p5.prototype.box = function(width, height, depth){
 
   var detailX = typeof arguments[3] === Number ? arguments[3] : 1;
   var detailY = typeof arguments[4] === Number ? arguments[4] : 1;
-  //console.log('details are ', detailX, detailY);
   var gId = 'box|'+width+'|'+height+'|'+depth+'|'+detailX+'|'+detailY;
 
   if(!this._renderer.geometryInHash(gId)){
@@ -106,41 +108,33 @@ p5.prototype.box = function(width, height, depth){
         var x = -_width;
         var y = -2 * _height * u - _height;
         var z = -2 * _depth * v - _depth;
-        console.log('drawing right vertex: ');
-        console.log(x,y,z);
         return new p5.Vector(x, y, z);
       },
       bottom: function(u, v){
         var x = 2 * width * ( 1 - u ) - width;
         var y = 2 * height * v - height;
         var z = -depth;
-        console.log('drawing bottom vertex: ');
-        console.log(x,y,z);
         return new p5.Vector(x, y, z);
       },
       left: function(u, v){
-        //console.log('drawing left');
         var x = 2 * width * ( 1 - u ) - width;
         var y = height;
         var z = 2 * depth * v - depth;
         return new p5.Vector(x, y, z);
       },
       top: function(u, v){
-        //console.log('drawing top');
         var x = 2 * width * u - width;
         var y = -height;
         var z = 2 * depth * v - depth;
         return new p5.Vector(x, y, z);
       },
       front: function(u, v){
-        //console.log('drawing front');
         var x = 2 * width * u - width;
         var y = 2 * height * v - height;
         var z = depth;
         return new p5.Vector(x, y, z);
       },
       back: function(u, v){
-        // console.log('drawing back');
         var x = -width;
         var y = 2 * height * ( 1 - u ) - height;
         var z = 2 * depth * v - depth;
@@ -157,7 +151,6 @@ p5.prototype.box = function(width, height, depth){
         this.computeVertexNormals();
       }
     );
-    console.log(boxGeom.faces);
     //initialize our geometry buffer with
     //the key val pair:
     //geometry Id, Geom object

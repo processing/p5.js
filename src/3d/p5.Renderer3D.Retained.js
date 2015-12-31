@@ -135,9 +135,13 @@ p5.Renderer3D.prototype._initBufferDefaults = function(gId, arr) {
  * [[1, 2, 3],[4, 5, 6]] -> [1, 2, 3, 4, 5, 6]
  */
 function flatten(arr){
-  return arr.reduce(function(a, b){
-    return a.concat(b);
-  });
+  if (arr.length>0){
+    return arr.reduce(function(a, b){
+      return a.concat(b);
+    });
+  } else {
+    return [];
+  }
 }
 
 /**
