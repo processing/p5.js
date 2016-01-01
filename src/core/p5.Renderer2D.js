@@ -87,7 +87,7 @@ p5.Renderer2D.prototype.image =
   var cnv;
   try {
     if (this._tint) {
-      if (img instanceof p5.MediaElement) {
+      if (p5.MediaElement && img instanceof p5.MediaElement) {
         img.loadPixels();
       }
       if (img.canvas) {
