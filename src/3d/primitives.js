@@ -590,9 +590,11 @@ p5.Renderer3D.prototype.triangle = function
       p2: new p5.Vector(x2,y2,z2),
       p3: new p5.Vector(x3,y3,z3)
     };
-    var triGeom = new p5.Geometry(_triangle,
+    var triGeom =
+    new p5.Geometry(_triangle,1,1,
       function(){
-        this.computeUVs();
+        this.faces = [[0,1,2]];
+        this.computeNormals().computeUVs();
       }
     );
     this.createBuffers(gId, triGeom);
@@ -634,25 +636,56 @@ p5.Renderer3D.prototype.ellipse = function
   var gId = 'ellipse|'+args[0]+'|'+args[1]+'|'+args[2]+'|'+
   args[3]+'|'+args[4];
   if(!this.geometryInHash(gId)){
-    var _ellipse = function(u, v){
-      var theta = 2 * Math.PI * u;
-      var _x = args[0] + args[3] * Math.sin(theta);
-      var _y = args[1] + args[4] * Math.cos(theta);
-      var _z = args[2];
-      if(v === 0){
-        return new p5.Vector(args[0], args[1], args[2]);
-      }
-      else{
-        return new p5.Vector(_x, _y, _z);
+    var _ellipse = function(){
+      var u,v,p;
+      for (var i = 0; i <= this.detailY; i++){
+        v = i / this.detailY;
+        for (var j = 0; j <= this.detailX; j++){
+          u = j / this.detailX;
+          var theta = 2 * Math.PI * u;
+          if(v === 0){
+            p = new p5.Vector(args[0], args[1], args[2]);
+          }
+          else{
+            var x = args[0] + args[3] * Math.sin(theta);
+            var y = args[1] + args[4] * Math.cos(theta);
+            var z = args[2];
+            p = new p5.Vector(x, y, z);
+          }
+          this.vertices.push(p);
+        }
       }
     };
-    var ellipseGeom = new p5.Geometry(_ellipse, detailX, detailY);
+    var ellipseGeom =
+    new p5.Geometry(_ellipse,detailX,detailY,function(){
+      this.computeFaces().computeNormals().computeUVs();
+    });
     this.createBuffers(gId, ellipseGeom);
   }
   this.drawBuffers(gId);
   return this;
 };
+/**
+ * Draws a Rectangle.
+ * @type {p5.Renderer3D} the Renderer3D object
+ */
+p5.Renderer3D.prototype.rect = function
+(x, y, z, width,height){
+  var x2 = x;
+  var y2 = y + height;
+  var x3 = x + width;
+  var y3 = y + height;
+  var x4 = x + width;
+  var y4 = y;
+  this.quad(x,y,z,x2,y2,z,x3,y3,z,x4,y4,z);
+  return this;
+};
 
+/**
+ * [quad description]
+ * @type {[type]}
+ * @todo currently buggy, due to vertex winding
+ */
 p5.Renderer3D.prototype.quad = function
 (x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4){
   var gId = 'quad|'+x1+'|'+y1+'|'+z1+'|'+
@@ -667,7 +700,11 @@ p5.Renderer3D.prototype.quad = function
       p4: new p5.Vector(x4,y4,z4)
     };
     //starting point
-    var quadGeom = new p5.Geometry(_quad);
+    var quadGeom =
+    new p5.Geometry(_quad,1,1,function(){
+      this.faces = [[0,1,2],[2,3,1]];
+      this.computeNormals().computeUVs();
+    });
     this.createBuffers(gId, quadGeom);
   }
   this.drawBuffers(gId);
