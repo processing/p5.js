@@ -19,8 +19,8 @@ p5.Geometry = function
   //an array containing every vertex
   //@type [p5.Vector]
   this.vertices = [];
-  //an array containing each normals for each vertex
-  //each normal is a p5.Vector
+  //an array containing 1 normal per vertex
+  //@type [p5.Vector]
   //[p5.Vector, p5.Vector, p5.Vector,p5.Vector, p5.Vector, p5.Vector,...]
   this.vertexNormals = [];
   //an array containing each three vertex indices that form a face
@@ -119,7 +119,6 @@ p5.Geometry.prototype.computeUVs = function(){
  * compute faceNormals for a geometry
  */
 p5.Geometry.prototype.computeFaceNormals = function(){
-
   var cb = new p5.Vector();
   var ab = new p5.Vector();
 
@@ -152,7 +151,10 @@ p5.Geometry.prototype.computeVertexNormals = function (){
   for (v = 0; v < this.vertices.length; v++) {
     vertices[v] = new p5.Vector();
   }
-
+  if(this.faceNormals.length === 0){
+    console.log('face normals are 0 length');
+    this.computeFaceNormals();
+  }
   for (f = 0; f < this.faces.length; f++) {
     face = this.faces[f];
     faceNormal = this.faceNormals[f];
@@ -161,7 +163,6 @@ p5.Geometry.prototype.computeVertexNormals = function (){
     vertices[face[1]].add(faceNormal);
     vertices[face[2]].add(faceNormal);
   }
-
   for (v = 0; v < this.vertices.length; v++) {
     vertices[v].normalize();
   }
