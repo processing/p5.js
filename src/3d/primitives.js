@@ -45,17 +45,22 @@ p5.prototype.plane = function(width, height){
   var gId = 'plane|'+width+'|'+height+'|'+detailX+'|'+detailY;
 
   if(!this._renderer.geometryInHash(gId)){
-    var _plane = function(u, v){
-      var x = width * u - width/2;
-      var y = height * v - height/2;
-      var z = 0;
-      return new p5.Vector(x, y, z);
+    var _plane = function(){
+      var u,v,p;
+      for (var i = 0; i <= this.detailY; i++){
+        v = i / this.detailY;
+        for (var j = 0; j <= this.detailX; j++){
+          u = j / this.detailX;
+          p = new p5.Vector(width * u - width/2,
+            height * v - height/2,
+            0);
+          this.vertices.push(p);
+        }
+      }
     };
     var planeGeom =
     new p5.Geometry(_plane, detailX, detailY, function(){
-      this.computeFaces();
-      this.computeFaceNormals();
-      this.computeVertexNormals();
+      this.computeFaces().computeNormals().computeUVs();
     });
     this._renderer.createBuffers(gId, planeGeom);
   }
@@ -137,8 +142,7 @@ p5.prototype.box = function(width, height, depth){
       detailY,
       function(){
         this.faces = faces;
-        this.computeVertexNormals();
-        this.computeUVs();
+        this.computeNormals().computeUVs();
       }
     );
     //initialize our geometry buffer with
@@ -185,19 +189,24 @@ p5.prototype.sphere = function(radius, detail){
   var gId = 'sphere|'+radius+'|'+detailX+'|'+detailY;
 
   if(!this._renderer.geometryInHash(gId)){
-    var _sphere = function(u, v){
-      var theta = 2 * Math.PI * u;
-      var phi = Math.PI * v - Math.PI / 2;
-      var x = radius * Math.cos(phi) * Math.sin(theta);
-      var y = radius * Math.sin(phi);
-      var z = radius * Math.cos(phi) * Math.cos(theta);
-      return new p5.Vector(x, y, z);
+    var _sphere = function(){
+      var u,v,p;
+      for (var i = 0; i <= this.detailY; i++){
+        v = i / this.detailY;
+        for (var j = 0; j <= this.detailX; j++){
+          u = j / this.detailX;
+          var theta = 2 * Math.PI * u;
+          var phi = Math.PI * v - Math.PI / 2;
+          p = new p5.Vector(radius * Math.cos(phi) * Math.sin(theta),
+            radius * Math.sin(phi),
+            radius * Math.cos(phi) * Math.cos(theta));
+          this.vertices.push(p);
+        }
+      }
     };
     var sphereGeom = new p5.Geometry(_sphere, detailX, detailY,
       function(){
-        this.computeFaces();
-        this.computeFaceNormals();
-        this.computeVertexNormals();
+        this.computeFaces().computeNormals().computeUVs();
       }
     );
     //for spheres we need to average the normals
@@ -249,43 +258,63 @@ p5.prototype.cylinder = function(radius, height, detail){
 
   if(!this._renderer.geometryInHash(gId)){
     var _cylinder = {
-      side: function(u, v){
-        var theta = 2 * Math.PI * u;
-        var x = radius * Math.sin(theta);
-        var y = 2 * height * v - height;
-        var z = radius * Math.cos(theta);
-        return new p5.Vector(x, y, z);
-      },
-      top: function(u, v){
-        var theta = 2 * Math.PI * u;
-        var x = radius * Math.sin(-theta);
-        var y = height;
-        var z = radius * Math.cos(theta);
-        if(v === 0){
-          return new p5.Vector(0, height, 0);
-        }
-        else{
-          return new p5.Vector(x, y, z);
+      side: function(){
+        var u,v,p;
+        for (var i = 0; i <= this.detailY; i++){
+          v = i / this.detailY;
+          for (var j = 0; j <= this.detailX; j++){
+            u = j / this.detailX;
+            var theta = 2 * Math.PI * u;
+            var x = radius * Math.sin(theta);
+            var y = 2 * height * v - height;
+            var z = radius * Math.cos(theta);
+            p = new p5.Vector(x,y,z);
+            this.vertices.push(p);
+          }
         }
       },
-      bottom: function(u, v){
-        var theta = 2 * Math.PI * u;
-        var x = radius * Math.sin(theta);
-        var y = -height;
-        var z = radius * Math.cos(theta);
-        if(v === 0){
-          return new p5.Vector(0, -height, 0);
-        }else{
-          return new p5.Vector(x, y, z);
+      top: function(){
+        var u,v,p;
+        for (var i = 0; i <= this.detailY; i++){
+          v = i / this.detailY;
+          for (var j = 0; j <= this.detailX; j++){
+            u = j / this.detailX;
+            var theta = 2 * Math.PI * u;
+            if(v === 0){
+              p = new p5.Vector(0, height, 0);
+            }else{
+              var x = radius * Math.sin(-theta);
+              var y = height;
+              var z = radius * Math.cos(theta);
+              p = new p5.Vector(x,y,z);
+            }
+            this.vertices.push(p);
+          }
+        }
+      },
+      bottom: function(){
+        var u,v,p;
+        for (var i = 0; i <= this.detailY; i++){
+          v = i / this.detailY;
+          for (var j = 0; j <= this.detailX; j++){
+            u = j / this.detailX;
+            var theta = 2 * Math.PI * u;
+            if(v === 0){
+              p = new p5.Vector(0, -height, 0);
+            }else{
+              var x = radius * Math.sin(theta);
+              var y = -height;
+              var z = radius * Math.cos(theta);
+              p = new p5.Vector(x,y,z);
+            }
+            this.vertices.push(p);
+          }
         }
       }
     };
     var cylinderGeom = new p5.Geometry(_cylinder, detailX, detailY,
       function(){
-
-        this.computeFaces();
-        this.computeFaceNormals();
-        this.computeVertexNormals();
+        this.computeFaces().computeNormals().computeUVs();
       }
     );
     //for cylinders we need to average normals
@@ -337,27 +366,41 @@ p5.prototype.cone = function(radius, height, detail){
 
   if(!this._renderer.geometryInHash(gId)){
     var _cone = {
-      side: function(u,v){
-        var theta = 2 * Math.PI * u;
-        var x = radius * (1 - v) * Math.sin(theta);
-        var y = 2 * height * v - height;
-        var z = radius * (1 - v) * Math.cos(theta);
-        return new p5.Vector(x, y, z);
+      side: function(){
+        var u,v,p;
+        for (var i = 0; i <= this.detailY; i++){
+          v = i / this.detailY;
+          for (var j = 0; j <= this.detailX; j++){
+            u = j / this.detailX;
+            var theta = 2 * Math.PI * u;
+            var x = radius * (1 - v) * Math.sin(theta);
+            var y = 2 * height * v - height;
+            var z = radius * (1 - v) * Math.cos(theta);
+            p = new p5.Vector(x,y,z);
+            this.vertices.push(p);
+          }
+        }
       },
-      bottom: function(u, v){
-        var theta = 2 * Math.PI * u;
-        var x = radius * (1 - v) * Math.sin(-theta);
-        var y = -height;
-        var z = radius * (1 - v) * Math.cos(theta);
-        return new p5.Vector(x, y, z);
+      bottom: function(){
+        var u,v,p;
+        for (var i = 0; i <= this.detailY; i++){
+          v = i / this.detailY;
+          for (var j = 0; j <= this.detailX; j++){
+            u = j / this.detailX;
+            var theta = 2 * Math.PI * u;
+            var x = radius * (1 - v) * Math.sin(-theta);
+            var y = -height;
+            var z = radius * (1 - v) * Math.cos(theta);
+            p = new p5.Vector(x,y,z);
+            this.vertices.push(p);
+          }
+        }
       }
     };
     var coneGeom =
     new p5.Geometry(_cone, detailX, detailY,
       function(){
-        this.computeFaces();
-        this.computeFaceNormals();
-        this.computeVertexNormals();
+        this.computeFaces().computeNormals().computeUVs();
       }
     );
     //for cones we need to average Normals
@@ -411,19 +454,24 @@ function(radiusx, radiusy, radiusz, detail){
 
 
   if(!this._renderer.geometryInHash(gId)){
-    var _ellipsoid = function(u, v){
-      var theta = 2 * Math.PI * u;
-      var phi = Math.PI * v - Math.PI / 2;
-      var x = radiusx * Math.cos(phi) * Math.sin(theta);
-      var y = radiusy * Math.sin(phi);
-      var z = radiusz * Math.cos(phi) * Math.cos(theta);
-      return new p5.Vector(x, y, z);
+    var _ellipsoid = function(){
+      var u,v,p;
+      for (var i = 0; i <= this.detailY; i++){
+        v = i / this.detailY;
+        for (var j = 0; j <= this.detailX; j++){
+          u = j / this.detailX;
+          var theta = 2 * Math.PI * u;
+          var phi = Math.PI * v - Math.PI / 2;
+          p = new p5.Vector(radiusx * Math.cos(phi) * Math.sin(theta),
+            radiusy * Math.sin(phi),
+            radiusz * Math.cos(phi) * Math.cos(theta));
+          this.vertices.push(p);
+        }
+      }
     };
     var ellipsoidGeom = new p5.Geometry(_ellipsoid, detailX, detailY,
       function(){
-        this.computeFaces();
-        this.computeFaceNormals();
-        this.computeVertexNormals();
+        this.computeFaces().computeNormals().computeUVs();
       });
     ellipsoidGeom.averageNormals().averagePoleNormals();
     this._renderer.createBuffers(gId, ellipsoidGeom);
@@ -471,20 +519,26 @@ p5.prototype.torus = function(radius, tubeRadius, detail){
   var gId = 'torus|'+radius+'|'+tubeRadius+'|'+detailX+'|'+detailY;
 
   if(!this._renderer.geometryInHash(gId)){
-    var _torus = function(u, v){
-      var theta = 2 * Math.PI * u;
-      var phi = 2 * Math.PI * v;
-      var x = (radius + tubeRadius * Math.cos(phi)) * Math.cos(theta);
-      var y = (radius + tubeRadius * Math.cos(phi)) * Math.sin(theta);
-      var z = tubeRadius * Math.sin(phi);
-      return new p5.Vector(x, y, z);
+    var _torus = function(){
+      var u,v,p;
+      for (var i = 0; i <= this.detailY; i++){
+        v = i / this.detailY;
+        for (var j = 0; j <= this.detailX; j++){
+          u = j / this.detailX;
+          var theta = 2 * Math.PI * u;
+          var phi = 2 * Math.PI * v;
+          p = new p5.Vector(
+            (radius + tubeRadius * Math.cos(phi)) * Math.cos(theta),
+            (radius + tubeRadius * Math.cos(phi)) * Math.sin(theta),
+            tubeRadius * Math.sin(phi));
+          this.vertices.push(p);
+        }
+      }
     };
     var torusGeom =
     new p5.Geometry(_torus, detailX, detailY,
       function(){
-        this.computeFaces();
-        this.computeFaceNormals();
-        this.computeVertexNormals();
+        this.computeFaces().computeNormals().computeUVs();
       }
     );
     //for torus we need to average normals
