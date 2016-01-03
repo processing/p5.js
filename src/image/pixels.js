@@ -22,16 +22,18 @@ require('../color/p5.Color');
  * high denisty displays will have more pixels[] (by a factor of
  * pixelDensity^2).
  * For example, if the image is 100x100 pixels, there will be 40,000. On a
- * retina display, there will be 160,000. The first four values
- * (indices 0-3) in the array will be the R, G, B, A values of the pixel at
- * (0, 0). The second four values (indices 4-7) will contain the R, G, B, A
- * values of the pixel at (1, 0). More generally, to set values for a pixel
- * at (x, y):
- * <code><pre>var d = pixelDensity;
+ * retina display, there will be 160,000.
+ * <br><br>
+ * The first four values (indices 0-3) in the array will be the R, G, B, A
+ * values of the pixel at (0, 0). The second four values (indices 4-7) will
+ * contain the R, G, B, A values of the pixel at (1, 0). More generally, to
+ * set values for a pixel at (x, y):
+ * <code><pre>
+ * var d = pixelDensity;
  * for (var i = 0; i < d; i++) {
  *   for (var j = 0; j < d; j++) {
  *     // loop over
- *     idx = 4*((y * d + j) * width * d + (x * d + i));
+ *     idx = 4 * ((y * d + j) * width * d + (x * d + i));
  *     pixels[idx] = r;
  *     pixels[idx+1] = g;
  *     pixels[idx+2] = b;
@@ -39,7 +41,8 @@ require('../color/p5.Color');
  *   }
  * }
  * </pre></code>
- * While the above method is complex, it is flexible enough to work with
+ *
+ * <p>While the above method is complex, it is flexible enough to work with
  * any pixelDensity. Note that set() will automatically take care of
  * setting all the appropriate values in pixels[] for a given (x, y) at
  * any pixelDensity, but the performance may not be as fast when lots of
@@ -52,7 +55,7 @@ require('../color/p5.Color');
  * Note that this is not a standard javascript array.  This means that
  * standard javascript functions such as <code>slice()</code> or
  * <code>arrayCopy()</code> do not
- * work.
+ * work.</p>
  *
  * @property pixels[]
  * @example
@@ -353,18 +356,19 @@ p5.prototype.filter = function(operation, value) {
  * the display window by specifying additional w and h parameters. When
  * getting an image, the x and y parameters define the coordinates for the
  * upper-left corner of the image, regardless of the current imageMode().
- *
+ * <br><br>
  * If the pixel requested is outside of the image window, [0,0,0,255] is
  * returned. To get the numbers scaled according to the current color ranges
  * and taking into account colorMode, use getColor instead of get.
- *
+ * <br><br>
  * Getting the color of a single pixel with get(x, y) is easy, but not as fast
  * as grabbing the data directly from pixels[]. The equivalent statement to
  * get(x, y) using pixels[] with pixel density d is
- * [pixels[(y*width*d+x)*d],
+ * <code>[pixels[(y*width*d+x)*d],
  * pixels[(y*width*d+x)*d+1],
  * pixels[(y*width*d+x)*d+2],
- * pixels[(y*width*d+x)*d+3] ].
+ * pixels[(y*width*d+x)*d+3]]</code>.
+ * <br><br>
  * See the reference for pixels[] for more information.
  *
  * @method get
@@ -544,6 +548,11 @@ p5.prototype.set = function (x, y, imgOrCol) {
  * </div>
  */
 p5.prototype.updatePixels = function (x, y, w, h) {
+  // graceful fail - if loadPixels() or set() has not been called, pixel
+  // array will be empty, ignore call to updatePixels()
+  if (this.pixels.length === 0) {
+    return;
+  }
   this._renderer.updatePixels(x, y, w, h);
 };
 

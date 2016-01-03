@@ -67,13 +67,14 @@ p5.prototype.beginContour = function() {
  * complex forms. beginShape() begins recording vertices for a shape and
  * endShape() stops recording. The value of the kind parameter tells it which
  * types of shapes to create from the provided vertices. With no mode
- * specified, the shape can be any irregular polygon. The parameters
- * available for beginShape() are POINTS, LINES, TRIANGLES, TRIANGLE_FAN,
- * TRIANGLE_STRIP, QUADS, and QUAD_STRIP. After calling the beginShape()
- * function, a series of vertex() commands must follow. To stop drawing the
- * shape, call endShape(). Each shape will be outlined with the current
- * stroke color and filled with the fill color.
- *
+ * specified, the shape can be any irregular polygon.
+ * <br><br>
+ * The parameters available for beginShape() are POINTS, LINES, TRIANGLES,
+ * TRIANGLE_FAN, TRIANGLE_STRIP, QUADS, and QUAD_STRIP. After calling the
+ * beginShape() function, a series of vertex() commands must follow. To stop
+ * drawing the shape, call endShape(). Each shape will be outlined with the
+ * current stroke color and filled with the fill color.
+ * <br><br>
  * Transformations such as translate(), rotate(), and scale() do not work
  * within beginShape(). It is also not possible to use other shapes, such as
  * ellipse() or rect() within beginShape().
@@ -250,7 +251,9 @@ p5.prototype.beginShape = function(kind) {
  * Specifies vertex coordinates for Bezier curves. Each call to
  * bezierVertex() defines the position of two control points and
  * one anchor point of a Bezier curve, adding a new segment to a
- * line or shape. The first time bezierVertex() is used within a
+ * line or shape.
+ * <br><br>
+ * The first time bezierVertex() is used within a
  * beginShape() call, it must be prefaced with a call to vertex()
  * to set the first anchor point. This function must be used between
  * beginShape() and endShape() and only when there is no MODE
@@ -307,8 +310,9 @@ p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
 /**
  * Specifies vertex coordinates for curves. This function may only
  * be used between beginShape() and endShape() and only when there
- * is no MODE parameter specified to beginShape(). The first and
- * last points in a series of curveVertex() lines will be used to
+ * is no MODE parameter specified to beginShape().
+ * <br><br>
+ * The first and last points in a series of curveVertex() lines will be used to
  * guide the beginning and end of a the curve. A minimum of four
  * points is required to draw a tiny curve between the second and
  * third points. Adding a fifth point with curveVertex() will draw
@@ -423,7 +427,8 @@ p5.prototype.endContour = function() {
  */
 p5.prototype.endShape = function(mode) {
   if(this._renderer.isP3D){
-    this._renderer.endShape();
+    this._renderer.endShape(mode, isCurve, isBezier,
+      isQuadratic, isContour, shapeKind);
   }else{
     if (vertices.length === 0) { return this; }
     if (!this._renderer._doStroke && !this._renderer._doFill) { return this; }

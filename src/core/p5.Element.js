@@ -94,10 +94,14 @@ p5.Element.prototype.parent = function(p) {
  * @return {p5.Element}
  */
 p5.Element.prototype.id = function(id) {
-  this.elt.id = id;
-  this.width = this.elt.offsetWidth;
-  this.height = this.elt.offsetHeight;
-  return this;
+  if (arguments.length === 0) {
+    return this.elt.id;
+  } else {
+    this.elt.id = id;
+    this.width = this.elt.offsetWidth;
+    this.height = this.elt.offsetHeight;
+    return this;
+  }
 };
 
 /**
@@ -109,10 +113,14 @@ p5.Element.prototype.id = function(id) {
  * @return {p5.Element}
  */
 p5.Element.prototype.class = function(c) {
-  this.elt.className = c;
-  this.width = this.elt.offsetWidth;
-  this.height = this.elt.offsetHeight;
-  return this;
+  if (arguments.length === 0) {
+    return this.elt.className;
+  } else {
+    this.elt.className = c;
+    this.width = this.elt.offsetWidth;
+    this.height = this.elt.offsetHeight;
+    return this;
+  }
 };
 
 /**
@@ -175,7 +183,7 @@ p5.Element.prototype.mousePressed = function (fxn) {
  * @return {p5.Element}
  */
 p5.Element.prototype.mouseWheel = function (fxn) {
-  attachListener('mousewheel', fxn, this);
+  attachListener('wheel', fxn, this);
   return this;
 };
 

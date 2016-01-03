@@ -80,9 +80,10 @@ var p5 = function(sketch, node, sync) {
    * define initial environment properties such as screen size and background
    * color and to load media such as images and fonts as the program starts.
    * There can only be one setup() function for each program and it shouldn't
-   * be called again after its initial execution. Note: Variables declared
-   * within setup() are not accessible within other functions, including
-   * draw().
+   * be called again after its initial execution.
+   * <br><br>
+   * Note: Variables declared within setup() are not accessible within other
+   * functions, including draw().
    *
    * @method setup
    * @example
@@ -106,15 +107,15 @@ var p5 = function(sketch, node, sync) {
    * the lines of code contained inside its block until the program is stopped
    * or noLoop() is called. draw() is called automatically and should never be
    * called explicitly.
-   *
+   * <br><br>
    * It should always be controlled with noLoop(), redraw() and loop(). After
    * noLoop() stops the code in draw() from executing, redraw() causes the
    * code inside draw() to execute once, and loop() will cause the code
    * inside draw() to resume executing continuously.
-   *
+   * <br><br>
    * The number of times draw() executes in each second may be controlled with
    * the frameRate() function.
-   *
+   * <br><br>
    * There can only be one draw() function for each sketch, and draw() must
    * exist if you want the code to run continuously, or to process events such
    * as mousePressed(). Sometimes, you might have an empty call to draw() in
@@ -184,12 +185,7 @@ var p5 = function(sketch, node, sync) {
     this._events.devicemotion = null;
   }
 
-  //FF doesn't recognize mousewheel as of FF3.x
-  if (/Firefox/i.test(navigator.userAgent)) {
-    this._events.DOMMouseScroll = null;
-  } else {
-    this._events.mousewheel = null;
-  }
+  this._events.wheel = null;
 
 
   this._loadingScreenId = 'p5_loading';
@@ -330,17 +326,20 @@ var p5 = function(sketch, node, sync) {
     // if looping is off, so we bypass the time delay if that
     // is the case.
     var epsilon = 5;
-    if (!this.loop ||
+    if (!this._loop ||
         time_since_last >= target_time_between_frames - epsilon) {
+
+      //mandatory update values(matrixs and stack) for 3d
+      if(this._renderer.isP3D){
+        this._renderer._update();
+      }
+
       this._setProperty('frameCount', this.frameCount + 1);
+      this._updatePMouseCoords();
+      this._updatePTouchCoords();
       this.redraw();
       this._frameRate = 1000.0/(now - this._lastFrameTime);
       this._lastFrameTime = now;
-    }
-
-    //mandatory update values(matrixs and stack) for 3d
-    if(this._renderer.isP3D){
-      this._renderer._update();
     }
 
     // get notified the next time the browser gives us

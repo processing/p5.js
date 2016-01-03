@@ -12,8 +12,9 @@ function setup(){
 
 }
 function draw(){
+  background(255);
   //translate(-width/2, -height/2, 0);
-  rotate(sin(radians((frameCount*0.125) % 360))*TWO_PI, [1,1,1]);
+  //rotate(sin(radians((frameCount*0.125) % 360))*TWO_PI, [1,1,1]);
   
   ///////////
   /// 2D
@@ -86,6 +87,8 @@ function draw(){
   //   vertex(0,height/2,0);
   // endShape();
   //works
+  // directionalLight(255,255,255,0,0,1);
+  // specularMaterial(0,255,0,4);
   // beginShape(TRIANGLE_FAN);
   //   vertex(0,0,0);
   //   vertex(width/2,-height/6,0);
@@ -100,13 +103,15 @@ function draw(){
   ////////////
   //texture(img);
   //basicMaterial(100,0,0,100);
-  directionalLight(255,255,255,0,0,1);
-  specularMaterial(0,255,0,4);
-  sphere(100);//works!
+  directionalLight(0,255,255,0,0,1);
+  normalMaterial();
+  rotate(radians(frameCount%360), [0,1,0]);
+  //sphere(100);//works!
+  // ellipsoid(100,50,20);//works!
   //cone(100,100);//needs base
   //torus(400,100);//works!
   //cylinder(100);//needs top and bottom
-  //box(100,100,100,24,24);//error: attempt to access out of range vertices in attr 0
+  //box(100);//error: attempt to access out of range vertices in attr 0
   // basicMaterial(255,0,0);
-  // plane(400);//works!
+  //plane(400);//works!
 }

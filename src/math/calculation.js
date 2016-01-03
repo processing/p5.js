@@ -363,6 +363,7 @@ p5.prototype.mag = function(x, y) {
 
 /**
  * Re-maps a number from one range to another.
+ * <br><br>
  * In the first example above, the number 25 is converted from a value in the
  * range of 0 to 100 into a value that ranges from the left edge of the
  * window (0) to the right edge (width).
@@ -376,24 +377,22 @@ p5.prototype.mag = function(x, y) {
  * @return {Number}        remapped number
  * @example
  *   <div><code>
- *     createCanvas(200, 200);
  *     var value = 25;
  *     var m = map(value, 0, 100, 0, width);
- *     ellipse(m, 200, 10, 10);
+ *     ellipse(m, 50, 10, 10);
  *   </code></div>
  *
  *   <div><code>
  *     function setup() {
- *       createCanvs(200, 200);
  *       noStroke();
  *     }
  *
  *     function draw() {
  *       background(204);
- *       var x1 = map(mouseX, 0, width, 50, 150);
- *       ellipse(x1, 75, 50, 50);
- *       var x2 = map(mouseX, 0, width, 0, 200);
- *       ellipse(x2, 125, 50, 50);
+ *       var x1 = map(mouseX, 0, width, 25, 75);
+ *       ellipse(x1, 25, 25, 25);
+ *       var x2 = map(mouseX, 0, width, 0, 100);
+ *       ellipse(x2, 75, 25, 25);
  *     }
  *   </code></div>
  */
@@ -623,6 +622,7 @@ p5.prototype.round = Math.round;
  *   line(0, height/2, width, height/2);
  *
  *   // Draw text.
+ *   var spacing = 15;
  *   noStroke();
  *   fill(0);
  *   text("x = " + x1, 0, y1 + spacing);

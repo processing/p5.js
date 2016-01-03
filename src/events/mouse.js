@@ -304,12 +304,10 @@ p5.prototype._updateMouseCoords = function(e) {
   if(e.type === 'touchstart' ||
      e.type === 'touchmove' ||
      e.type === 'touchend') {
-    this._updatePTouchCoords();
     this._setProperty('mouseX', this.touchX);
     this._setProperty('mouseY', this.touchY);
   } else {
     if(this._curElement !== null) {
-      this._updatePMouseCoords();
       var mousePos = getMousePos(this._curElement.elt, e);
       this._setProperty('mouseX', mousePos.x);
       this._setProperty('mouseY', mousePos.y);
@@ -353,7 +351,7 @@ p5.prototype._setMouseButton = function(e) {
  * button is not pressed.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add `return false` to the end of the method.
+ * behavior for this event, add "return false" to the end of the method.
  *
  * @method mouseMoved
  * @example
@@ -393,7 +391,7 @@ p5.prototype._setMouseButton = function(e) {
  * touchMoved() function will be called instead if it is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add `return false` to the end of the method.
+ * behavior for this event, add "return false" to the end of the method.
  *
  * @method mouseDragged
  * @example
@@ -430,6 +428,7 @@ p5.prototype._onmousemove = function(e){
   var context = this._isGlobal ? window : this;
   var executeDefault;
   this._updateMouseCoords(e);
+  this._updateTouchCoords(e);
   if (!this.isMousePressed) {
     if (typeof context.mouseMoved === 'function') {
       executeDefault = context.mouseMoved(e);
@@ -449,7 +448,6 @@ p5.prototype._onmousemove = function(e){
       if(executeDefault === false) {
         e.preventDefault();
       }
-      this._updateTouchCoords(e);
     }
   }
 };
@@ -462,7 +460,7 @@ p5.prototype._onmousemove = function(e){
  * called instead if it is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add `return false` to the end of the method.
+ * behavior for this event, add "return false" to the end of the method.
  *
  * @method mousePressed
  * @example
@@ -503,6 +501,7 @@ p5.prototype._onmousedown = function(e) {
   this._setProperty('mouseIsPressed', true);
   this._setMouseButton(e);
   this._updateMouseCoords(e);
+  this._updateTouchCoords(e);
   if (typeof context.mousePressed === 'function') {
     executeDefault = context.mousePressed(e);
     if(executeDefault === false) {
@@ -513,7 +512,6 @@ p5.prototype._onmousedown = function(e) {
     if(executeDefault === false) {
       e.preventDefault();
     }
-    this._updateTouchCoords(e);
   }
 };
 
@@ -523,7 +521,7 @@ p5.prototype._onmousedown = function(e) {
  * function will be called instead if it is defined.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add `return false` to the end of the method.
+ * behavior for this event, add "return false" to the end of the method.
  *
  *
  * @method mouseReleased
@@ -574,7 +572,6 @@ p5.prototype._onmouseup = function(e) {
     if(executeDefault === false) {
       e.preventDefault();
     }
-    this._updateTouchCoords(e);
   }
 };
 
@@ -586,7 +583,7 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * pressed and then released.<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
- * behavior for this event, add `return false` to the end of the method.
+ * behavior for this event, add "return false" to the end of the method.
  *
  * @method mouseClicked
  * @example
@@ -632,51 +629,46 @@ p5.prototype._onclick = function(e) {
 };
 
 /**
- * The function mouseWheel is executed every time a scroll event is detected
- * either triggered by an actual mouse wheel or by a touchpad.<br>
- * The event.delta property returns -1 or +1 depending on the scroll
- * direction and the user's settings. (on OS X with "natural" scrolling
- * enabled, the values are inverted).<br><br>
+ * The function mouseWheel() is executed every time a vertical mouse wheel
+ * event is detected either triggered by an actual mouse wheel or by a
+ * touchpad.<br><br>
+ * The event.delta property returns the amount the mouse wheel
+ * have scrolled. The values can be positive or negative depending on the
+ * scroll direction (on OS X with "natural" scrolling enabled, the signs
+ * are inverted).<br><br>
  * Browsers may have different default behaviors attached to various
  * mouse events. To prevent any default behavior for this event, add
- * `return false` to the end of the method.
- *
- * The event.wheelDelta or event.detail properties can also be accessed but
- * their behavior may differ depending on the browser.
- * See <a href="http://www.javascriptkit.com/javatutors/onmousewheel.shtml">
- * mouse wheel event in JS</a>.
+ * "return false" to the end of the method.<br><br>
+ * Due to the current support of the "wheel" event on Safari, the function
+ * may only work as expected if "return false" is included while using Safari.
  *
  * @method mouseWheel
  *
-	* @example
-	* <div>
-	* <code>
-	* var pos = 25;
-	*
-	* function draw() {
-	*   background(237, 34, 93);
-	*   fill(0);
-	*   rect(25, pos, 50, 50);
-	* }
-	*
-	* function mouseWheel(event) {
-	*   //event.delta can be +1 or -1 depending
-	*   //on the wheel/scroll direction
-	*   print(event.delta);
-	*   //move the square one pixel up or down
-	*   pos += event.delta;
-	*   //uncomment to block page scrolling
-	*   //return false;
-	* }
-	* </code>
-	* </div>
+ * @example
+ * <div>
+ * <code>
+ * var pos = 25;
+ *
+ * function draw() {
+ *   background(237, 34, 93);
+ *   fill(0);
+ *   rect(25, pos, 50, 50);
+ * }
+ *
+ * function mouseWheel(event) {
+ *   print(event.delta);
+ *   //move the square according to the vertical scroll amount
+ *   pos += event.delta;
+ *   //uncomment to block page scrolling
+ *   //return false;
+ * }
+ * </code>
+ * </div>
  */
-p5.prototype._onmousewheel = p5.prototype._onDOMMouseScroll = function(e) {
+p5.prototype._onwheel = function(e) {
   var context = this._isGlobal ? window : this;
   if (typeof context.mouseWheel === 'function') {
-    //creating a delta property (either +1 or -1)
-    //for cross-browser compatibility
-    e.delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+    e.delta = e.deltaY;
     var executeDefault = context.mouseWheel(e);
     if(executeDefault === false) {
       e.preventDefault();

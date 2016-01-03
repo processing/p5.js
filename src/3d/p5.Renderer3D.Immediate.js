@@ -69,18 +69,44 @@ p5.Renderer3D.prototype.vertex = function(x, y, z){
  * End shape drawing and render vertices to screen.
  * @return {p5.Renderer3D} [description]
  */
-p5.Renderer3D.prototype.endShape = function(){
+p5.Renderer3D.prototype.endShape =
+function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
   var gl = this.GL;
   this._bindImmediateBuffers(
     this.immediateMode.vertexPositions,
     this.immediateMode.vertexColors);
+  if(mode){
+    if(this.drawMode === 'fill'){
+      switch(this.immediateMode.shapeMode){
+        case constants.LINE_STRIP:
+          this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
+          break;
+        case constants.LINES:
+          this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
+          break;
+        case constants.TRIANGLES:
+          this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
+          break;
+      }
+    } else {
+      switch(this.immediateMode.shapeMode){
+        case constants.LINE_STRIP:
+          this.immediateMode.shapeMode = constants.LINE_LOOP;
+          break;
+        case constants.LINES:
+          this.immediateMode.shapeMode = constants.LINE_LOOP;
+          break;
+      }
+    }
+  }
   //QUADS & QUAD_STRIP are not supported primitives modes
   //in webgl.
   if(this.immediateMode.shapeMode === constants.QUADS ||
     this.immediateMode.shapeMode === constants.QUAD_STRIP){
     throw new Error('sorry, ' + this.immediateMode.shapeMode+
       ' not yet implemented in webgl mode.');
-  } else {
+  }
+  else {
     gl.drawArrays(this.immediateMode.shapeMode, 0,
       this.immediateMode.vertexPositions.length / 3);
   }

@@ -5,27 +5,49 @@
 var p5 = require('../core/core');
 var hashCount = 0;
 /**
- * createBuffer description
+ * _initBufferDefaults
+ * @description initializes buffer defaults. runs each time a new geometry is
+ * registered
+ * @param  {String} gId  key of the geometry object
+ */
+p5.Renderer3D.prototype._initBufferDefaults = function(gId) {
+  //@TODO remove this limit on hashes in gHash
+  hashCount ++;
+  if(hashCount > 1000){
+    var key = Object.keys(this.gHash)[0];
+    delete this.gHash[key];
+    hashCount --;
+  }
+
+  var gl = this.GL;
+  //create a new entry in our gHash
+  this.gHash[gId] = {};
+  this.gHash[gId].vertexBuffer = gl.createBuffer();
+  this.gHash[gId].normalBuffer = gl.createBuffer();
+  this.gHash[gId].uvBuffer = gl.createBuffer();
+  this.gHash[gId].indexBuffer = gl.createBuffer();
+};
+/**
+ * createBuffers description
  * @param  {String} gId    key of the geometry object
  * @param  {p5.Geometry}  obj contains geometry data
  */
-p5.Renderer3D.prototype.createBuffer = function(gId, obj) {
+p5.Renderer3D.prototype.createBuffers = function(gId, obj) {
   var gl = this.GL;
   this._setDefaultCamera();
   //initialize the gl buffers for our geom groups
-  this._initBufferDefaults(gId, obj);
+  this._initBufferDefaults(gId);
   //return the current shaderProgram from our material hash
   var shaderProgram = this.mHash[this._getCurShaderId()];
-  //@todo rename this property
+  //@todo rename "numberOfItems" property to something more descriptive
   //we mult the num geom faces by 3
   this.gHash[gId].numberOfItems = obj.faces.length * 3;
-  //replace array with object loop since we're feeding a geom obj
   gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
   gl.bufferData(
     gl.ARRAY_BUFFER,
     new Float32Array( vToNArray(obj.vertices) ),
     gl.STATIC_DRAW);
-  //vertex position Attribute
+  //vertex position
   shaderProgram.vertexPositionAttribute =
     gl.getAttribLocation(shaderProgram, 'aPosition');
   gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
@@ -39,7 +61,7 @@ p5.Renderer3D.prototype.createBuffer = function(gId, obj) {
     gl.ARRAY_BUFFER,
     new Float32Array( vToNArray(obj.vertexNormals) ),
     gl.STATIC_DRAW);
-  //vertex normal Attribute
+  //vertex normal
   shaderProgram.vertexNormalAttribute =
     gl.getAttribLocation(shaderProgram, 'aNormal');
   gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
@@ -69,11 +91,11 @@ p5.Renderer3D.prototype.createBuffer = function(gId, obj) {
 };
 
 /**
- * Draws a buffer given a geometry key ID
+ * Draws buffers given a geometry key ID
  * @param  {String} gId     ID in our geom hash
  * @return {p5.Renderer3D} this
  */
-p5.Renderer3D.prototype.drawBuffer = function(gId) {
+p5.Renderer3D.prototype.drawBuffers = function(gId) {
   this._setDefaultCamera();
   var gl = this.GL;
   var shaderKey = this._getCurShaderId();
@@ -88,7 +110,7 @@ p5.Renderer3D.prototype.drawBuffer = function(gId) {
   gl.vertexAttribPointer(
     shaderProgram.vertexNormalAttribute,
     3, gl.FLOAT, false, 0, 0);
-  //uv buffer
+  // uv buffer
   gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
   gl.vertexAttribPointer(
     shaderProgram.textureCoordAttribute,
@@ -97,34 +119,10 @@ p5.Renderer3D.prototype.drawBuffer = function(gId) {
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
   this._setMatrixUniforms(shaderKey);
   gl.drawElements(
-    gl.TRIANGLE_STRIP, this.gHash[gId].numberOfItems,
+    gl.TRIANGLES, this.gHash[gId].numberOfItems,
     gl.UNSIGNED_SHORT, 0);
   return this;
 };
-
-/**
- * _createBuffer
- * @param  {String} gId  key of the geometry object
- * @param  {Array}  arr  array holding bject containing geometry information
- */
-p5.Renderer3D.prototype._initBufferDefaults = function(gId, arr) {
-  //@TODO remove this limit on hashes in gHash
-  hashCount ++;
-  if(hashCount > 1000){
-    var key = Object.keys(this.gHash)[0];
-    delete this.gHash[key];
-    hashCount --;
-  }
-
-  var gl = this.GL;
-  //create a new entry in our gHash
-  this.gHash[gId] = {};
-  this.gHash[gId].vertexBuffer = gl.createBuffer();
-  this.gHash[gId].normalBuffer = gl.createBuffer();
-  this.gHash[gId].uvBuffer = gl.createBuffer();
-  this.gHash[gId].indexBuffer = gl.createBuffer();
-};
-
 ///////////////////////////////
 //// UTILITY FUNCTIONS
 //////////////////////////////
@@ -135,9 +133,13 @@ p5.Renderer3D.prototype._initBufferDefaults = function(gId, arr) {
  * [[1, 2, 3],[4, 5, 6]] -> [1, 2, 3, 4, 5, 6]
  */
 function flatten(arr){
-  return arr.reduce(function(a, b){
-    return a.concat(b);
-  });
+  if (arr.length>0){
+    return arr.reduce(function(a, b){
+      return a.concat(b);
+    });
+  } else {
+    return [];
+  }
 }
 
 /**

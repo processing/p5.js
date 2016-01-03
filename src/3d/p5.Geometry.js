@@ -19,8 +19,8 @@ p5.Geometry = function
   //an array containing every vertex
   //@type [p5.Vector]
   this.vertices = [];
-  //an array containing each normals for each vertex
-  //each normal is a p5.Vector
+  //an array containing 1 normal per vertex
+  //@type [p5.Vector]
   //[p5.Vector, p5.Vector, p5.Vector,p5.Vector, p5.Vector, p5.Vector,...]
   this.vertexNormals = [];
   //an array containing each three vertex indices that form a face
@@ -48,7 +48,7 @@ p5.Geometry = function
 p5.Geometry.prototype._init = function
 (vertData){
   if(vertData instanceof Function){
-    this.computeVerticesAndUVs(vertData);
+    vertData.call(this);
   }
   //otherwise it's an Object
   else {
@@ -60,27 +60,15 @@ p5.Geometry.prototype._init = function
         if (vertData[item] instanceof p5.Vector){
           this.vertices.push(vertData[item]);
         }
-        //otherwise the item is a vertex func
+        else if(vertData[item] instanceof Function){
+          vertData[item].call(this);
+        }
         else {
-          this.computeVerticesAndUVs(vertData[item]);
+          throw new Error('was expecting either p5.Vectors or a Function');
         }
       }
     }
   }
-};
-
-p5.Geometry.prototype.computeVerticesAndUVs = function(vertFunc){
-  var u,v,p;
-  for (var i = 0; i <= this.detailY; i++){
-    v = i / this.detailY;
-    for (var j = 0; j <= this.detailX; j++){
-      u = j / this.detailX;
-      p = vertFunc(u, v);
-      this.vertices.push(p);
-      this.uvs.push([u,v]);
-    }
-  }
-  return this;
 };
 
 p5.Geometry.prototype.computeFaces = function(){
@@ -119,7 +107,6 @@ p5.Geometry.prototype.computeUVs = function(){
  * compute faceNormals for a geometry
  */
 p5.Geometry.prototype.computeFaceNormals = function(){
-
   var cb = new p5.Vector();
   var ab = new p5.Vector();
 
@@ -141,9 +128,9 @@ p5.Geometry.prototype.computeFaceNormals = function(){
 };
 
 /**
- * compute vertexNormals for a geometry
+ * compute normals (both faces and vertices) for a geometry
  */
-p5.Geometry.prototype.computeVertexNormals = function (){
+p5.Geometry.prototype.computeNormals = function (){
 
   var v, f, face, faceNormal, vertices;
   var vertexNormals = [];
@@ -152,16 +139,17 @@ p5.Geometry.prototype.computeVertexNormals = function (){
   for (v = 0; v < this.vertices.length; v++) {
     vertices[v] = new p5.Vector();
   }
-
+  //we need faceNormals before computing per vertex
+  if(this.faceNormals.length === 0){
+    this.computeFaceNormals();
+  }
   for (f = 0; f < this.faces.length; f++) {
     face = this.faces[f];
     faceNormal = this.faceNormals[f];
-
     vertices[face[0]].add(faceNormal);
     vertices[face[1]].add(faceNormal);
     vertices[face[2]].add(faceNormal);
   }
-
   for (v = 0; v < this.vertices.length; v++) {
     vertices[v].normalize();
   }

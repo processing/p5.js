@@ -7,34 +7,9 @@ var filters = require('../image/filters');
 require('./p5.Renderer');
 
 /**
- * 2D graphics renderer class.  Can also be used as an off-screen
- * graphics buffer. A p5.Renderer2D object can be constructed
- * with the <code>createRenderer2D()</code> function. The fields and methods
- * for this class are extensive, but mirror the normal drawing API for p5.
- *
- * @class p5.Renderer2D
- * @constructor
- * @extends p5.Renderer
- * @param {String} elt DOM node that is wrapped
- * @param {Object} [pInst] pointer to p5 instance
- * @example
- * <div>
- * <code>
- * var pg;
- * function setup() {
- *   createCanvas(100, 100);
- *   pg = createRenderer2D(40, 40);
- * }
- * function draw() {
- *   background(200);
- *   pg.background(100);
- *   pg.noStroke();
- *   pg.ellipse(pg.width/2, pg.height/2, 50, 50);
- *   image(pg, 9, 30);
- *   image(pg, 51, 30);
- * }
- * </code>
- * </div>
+ * p5.Renderer2D
+ * The 2D graphics canvas renderer class.
+ * extends p5.Renderer
  */
 var styleEmpty = 'rgba(0,0,0,0)';
 // var alphaThreshold = 0.00125; // minimum visible
@@ -237,6 +212,10 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
 
   this.loadPixels.call(ctx);
 
+  // round down to get integer numbers
+  x = Math.floor(x);
+  y = Math.floor(y);
+
   if (w === 1 && h === 1){
 
     return [
@@ -280,6 +259,9 @@ p5.Renderer2D.prototype.loadPixels = function () {
 };
 
 p5.Renderer2D.prototype.set = function (x, y, imgOrCol) {
+  // round down to get integer numbers
+  x = Math.floor(x);
+  y = Math.floor(y);
   if (imgOrCol instanceof p5.Image) {
     this.drawingContext.save();
     this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
@@ -1185,7 +1167,7 @@ p5.Renderer2D.prototype._renderText = function(p, line, x, y, maxY) {
   }
   else { // an opentype font, let it handle the rendering
 
-    this._textFont._renderPath(line, x, y);
+    this._textFont._renderPath(line, x, y, { renderer: this });
   }
 
   p.pop();

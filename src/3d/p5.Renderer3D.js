@@ -108,7 +108,6 @@ p5.Renderer3D.prototype._update = function() {
 p5.Renderer3D.prototype.background = function() {
   var gl = this.GL;
   var _col = this._pInst.color.apply(this._pInst, arguments);
-  // gl.clearColor(0.0,0.0,0.0,1.0);
   var _r = (_col.levels[0]) / 255;
   var _g = (_col.levels[1]) / 255;
   var _b = (_col.levels[2]) / 255;
@@ -276,14 +275,14 @@ p5.Renderer3D.prototype._getCurShaderId = function(){
 p5.Renderer3D.prototype.fill = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
   //@type {Array}, length 4 : vals range 0->1
-  var colorNormalized = color._normalize();
+  var colorNormalized = color._array;
   this.curColor = colorNormalized;
   this.drawMode = 'fill';
   return this;
 };
 p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
-  var colorNormalized = color._normalize();
+  var colorNormalized = color._array;
   this.curColor = colorNormalized;
   this.drawMode = 'stroke';
   return this;
@@ -333,19 +332,6 @@ p5.Renderer3D.prototype.resize = function(w,h) {
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 };
 
-/**
- * [background description]
- * @return {[type]} [description]
- */
-p5.Renderer3D.prototype.background = function() {
-  var _col = this._pInst.color.apply(this._pInst, arguments);
-  //webgl requires normalized r,g,b
-  var _r = (_col.rgba[0]) / 255;
-  var _g = (_col.rgba[1]) / 255;
-  var _b = (_col.rgba[2]) / 255;
-  var _a = (_col.rgba[3]) / 255;
-  this.clear(_r,_g,_b,_a);
-};
 /**
  * clears color and depth buffers
  * with r,g,b,a
