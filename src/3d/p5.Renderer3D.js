@@ -233,10 +233,6 @@ p5.Renderer3D.prototype._setMatrixUniforms = function(shaderKey) {
     shaderProgram.uMVMatrixUniform,
     false, this.uMVMatrix.mat4);
 
-  this.uNMatrix = new p5.Matrix();
-  this.uNMatrix.invert(this.uMVMatrix);
-  this.uNMatrix.transpose(this.uNMatrix);
-
   gl.uniformMatrix4fv(
     shaderProgram.uNMatrixUniform,
     false, this.uNMatrix.mat4);
