@@ -74,7 +74,6 @@ p5.Renderer3D.prototype.vertex = function(x, y, z){
  */
 p5.Renderer3D.prototype.endShape =
 function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
-  //document.write('ádfasdf');
   var gl = this.GL;
   this._bindImmediateBuffers(
     this.immediateMode.vertexPositions,
