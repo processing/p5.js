@@ -16,6 +16,9 @@
 var p5 = require('../core/core');
 var constants = require('../core/constants');
 
+var bezierDetail = 30;
+
+
 /**
  * Begin shape drawing.  This is a helpful way of generating
  * custom shapes quickly.  However in WEBGL mode, application
@@ -71,6 +74,7 @@ p5.Renderer3D.prototype.vertex = function(x, y, z){
  */
 p5.Renderer3D.prototype.endShape =
 function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
+  //document.write('ádfasdf');
   var gl = this.GL;
   this._bindImmediateBuffers(
     this.immediateMode.vertexPositions,
@@ -175,6 +179,52 @@ p5.Renderer3D.prototype._getColorVertexShader = function(){
     shaderProgram = this.mHash[mId];
   }
   return shaderProgram;
+};
+
+//////////////////////////////////////////////
+//Bezier
+//////////////////////////////////////////////
+
+/**
+ * adds a vertex to be drawn in a custom Shape.
+ * @method bezier
+ * @param  {Number} x1 x-coordinate for the first anchor point
+ * @param  {Number} y1 y-coordinate for the first anchor point
+ * @param  {Number} x2 x-coordinate for the first control point
+ * @param  {Number} y2 y-coordinate for the first control point
+ * @param  {Number} x3 x-coordinate for the second control point
+ * @param  {Number} y3 y-coordinate for the second control point
+ * @param  {Number} x4 x-coordinate for the second anchor point
+ * @param  {Number} y4 y-coordinate for the second anchor point
+ * @return {p5.Renderer3D}   [description]
+ * @TODO implement bezier in 3D
+ * @example
+ * <div>
+ * <code>
+ *background(0, 0, 0);
+ *noFill();
+ *stroke(255);
+ *bezier(250,250,0, 100, 100,0,100,0,0, 0,100,0);
+ * </code>
+ * </div>
+ */
+//this implementation of bezier curve is based on Bernstein polynomial
+p5.prototype.bezier = function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4) {
+  this.beginShape();
+  var coeff=[0,0,0,0];//  Bernstein polynomial coeffecients
+  var x=[0,0,0]; //(x,y,z) coordinates of points in bezier curve
+  for(var i=0; i<=bezierDetail; i++){
+    coeff[0]=Math.pow(1-(i/bezierDetail),3);
+    coeff[1]=(3*(i/bezierDetail)) * (Math.pow(1-(i/bezierDetail),2));
+    coeff[2]=(3*Math.pow(i/bezierDetail,2)) * (1-(i/bezierDetail));
+    coeff[3]=Math.pow(i/bezierDetail,3);
+    x[0]=x1*coeff[0] + x2*coeff[1] + x3*coeff[2] + x4*coeff[3];
+    x[1]=y1*coeff[0] + y2*coeff[1] + y3*coeff[2] + y4*coeff[3];
+    x[2]=z1*coeff[0] + z2*coeff[1] + z3*coeff[2] + z4*coeff[3];
+    this.vertex(x[0],x[1],x[2]);
+  }
+  this.endShape();
+  return this;
 };
 
 module.exports = p5.Renderer3D;
