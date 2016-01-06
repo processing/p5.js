@@ -229,7 +229,7 @@ p5.prototype.bezier = function
     coeff[1]=(3*(i/bezierDetail)) * (Math.pow(1-(i/bezierDetail),2));
     coeff[2]=(3*Math.pow(i/bezierDetail,2)) * (1-(i/bezierDetail));
     coeff[3]=Math.pow(i/bezierDetail,3);
-    var_vertex[0]=(x1*coeff[0]) + (x2*coeff[1]) + (x3*coeff[2]) + (x4*coeff[3]);
+    var_vertex[0]=x1*coeff[0] + x2*coeff[1] + x3*coeff[2] + x4*coeff[3];
     var_vertex[1]=y1*coeff[0] + y2*coeff[1] + y3*coeff[2] + y4*coeff[3];
     var_vertex[2]=z1*coeff[0] + z2*coeff[1] + z3*coeff[2] + z4*coeff[3];
     this.vertex(var_vertex[0],var_vertex[1],var_vertex[2]);
