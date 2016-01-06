@@ -128,6 +128,8 @@ function parseObj( model, lines ) {
               model.vertices.push(loadedVerts.v[vertParts[0]].copy());
               if (loadedVerts.vt[vertParts[1]]) {
                 model.uvs.push(loadedVerts.vt[vertParts[1]].slice());
+              } else {
+                model.uvs.push([0, 0]);
               }
               if (loadedVerts.vn[vertParts[2]]) {
                 model.vertexNormals.push(loadedVerts.vn[vertParts[2]].copy());
@@ -162,10 +164,10 @@ function parseObj( model, lines ) {
 p5.prototype.model = function ( model ) {
   if (model.vertices.length > 0) {
     if (!this._renderer.geometryInHash(model.gid)) {
-      this._renderer.createBuffer(model.gid, model);
+      this._renderer.createBuffers(model.gid, model);
     }
 
-    this._renderer.drawBuffer(model.gid);
+    this._renderer.drawBuffers(model.gid);
   }
 };
 
