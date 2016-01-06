@@ -17,7 +17,6 @@ var p5 = require('../core/core');
 var constants = require('../core/constants');
 var bezierDetail = 30;
 
-
 /**
  * Begin shape drawing.  This is a helpful way of generating
  * custom shapes quickly.  However in WEBGL mode, application
@@ -184,7 +183,16 @@ p5.Renderer3D.prototype._getColorVertexShader = function(){
 //////////////////////////////////////////////
 
 /**
- * adds a vertex to be drawn in a custom Shape.
+ * @method bezierDetail
+ * @param  {Number} value-accuracy to which bezier is drawn
+ * @return {p5.Renderer3D}   [description]
+*/
+
+p5.prototype.bezierDetail=function(value){
+  bezierDetail=value;
+};
+
+/**
  * @method bezier
  * @param  {Number} x1 x-coordinate for the first anchor point
  * @param  {Number} y1 y-coordinate for the first anchor point
@@ -211,8 +219,8 @@ p5.Renderer3D.prototype._getColorVertexShader = function(){
  * </div>
  */
 //this implementation of bezier curve is based on Bernstein polynomial
-p5.prototype.bezier =
-function(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4) {
+p5.prototype.bezier = function
+(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4){
   this.beginShape();
   var coeff=[0,0,0,0];//  Bernstein polynomial coeffecients
   var var_vertex=[0,0,0]; //(x,y,z) coordinates of points in bezier curve
