@@ -15,7 +15,7 @@
 
 var p5 = require('../core/core');
 var constants = require('../core/constants');
-var bezierDetail = 30;
+var bezierDetail = 20;
 
 /**
  * Begin shape drawing.  This is a helpful way of generating
@@ -183,12 +183,23 @@ p5.Renderer3D.prototype._getColorVertexShader = function(){
 //////////////////////////////////////////////
 
 /**
- * @method bezierDetail
- * @param  {Number} value-accuracy to which bezier is drawn
+ * Sets the resolution at which Beziers display.
+ *
+ * The default value is 20.
+ *
+ * @param {Number} detail resolution of the curves
  * @return {p5.Renderer3D}   [description]
-*/
+ * @example
+ * <div>
+ * <code>
+ * background(204);
+ * bezierDetail(50);
+ * bezier(250,250,0, 100,100,0, 100,0,0, 0,100,0);
+ * </code>
+ * </div>
+ */
 
-p5.prototype.bezierDetail=function(value){
+p5.Renderer3D.prototype.bezierDetail=function(value){
   bezierDetail=value;
 };
 
@@ -219,20 +230,22 @@ p5.prototype.bezierDetail=function(value){
  * </div>
  */
 //this implementation of bezier curve is based on Bernstein polynomial
-p5.prototype.bezier = function
-(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4){
+p5.Renderer3D.prototype.bezier = function(args){
   this.beginShape();
   var coeff=[0,0,0,0];//  Bernstein polynomial coeffecients
-  var var_vertex=[0,0,0]; //(x,y,z) coordinates of points in bezier curve
+  var vertex=[0,0,0]; //(x,y,z) coordinates of points in bezier curve
   for(var i=0; i<=bezierDetail; i++){
     coeff[0]=Math.pow(1-(i/bezierDetail),3);
     coeff[1]=(3*(i/bezierDetail)) * (Math.pow(1-(i/bezierDetail),2));
     coeff[2]=(3*Math.pow(i/bezierDetail,2)) * (1-(i/bezierDetail));
     coeff[3]=Math.pow(i/bezierDetail,3);
-    var_vertex[0]=x1*coeff[0] + x2*coeff[1] + x3*coeff[2] + x4*coeff[3];
-    var_vertex[1]=y1*coeff[0] + y2*coeff[1] + y3*coeff[2] + y4*coeff[3];
-    var_vertex[2]=z1*coeff[0] + z2*coeff[1] + z3*coeff[2] + z4*coeff[3];
-    this.vertex(var_vertex[0],var_vertex[1],var_vertex[2]);
+    vertex[0]=args[0]*coeff[0] + args[3]*coeff[1] +
+              args[6]*coeff[2] + args[9]*coeff[3];
+    vertex[1]=args[1]*coeff[0] + args[4]*coeff[1] +
+              args[7]*coeff[2] + args[10]*coeff[3];
+    vertex[2]=args[2]*coeff[0] + args[5]*coeff[1] +
+              args[8]*coeff[2] + args[11]*coeff[3];
+    this.vertex(vertex[0],vertex[1],vertex[2]);
   }
   this.endShape();
   return this;
