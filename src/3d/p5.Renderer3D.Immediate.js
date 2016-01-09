@@ -128,10 +128,9 @@ function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
 p5.Renderer3D.prototype._bindImmediateBuffers = function(vertices, colors){
   this._setDefaultCamera();
   var gl = this.GL;
-  var shaderKey = this._getCurShaderId();
-  var shaderProgram = this.mHash[shaderKey];
+  var shaderProgram = this._getColorVertexShader();
   //vertex position Attribute
-  //@todo refactor for elegance
+  //@todo this is messy.
   shaderProgram.vertexPositionAttribute =
     gl.getAttribLocation(shaderProgram, 'aPosition');
   gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
@@ -148,12 +147,12 @@ p5.Renderer3D.prototype._bindImmediateBuffers = function(vertices, colors){
   gl.vertexAttribPointer(shaderProgram.vertexColorAttribute,
     4, gl.FLOAT, false, 0, 0);
   //matrix
-  this._setMatrixUniforms(shaderKey);
-  //@todo implement in shader
+  var mId = 'immediateVert|vertexColorFrag';
+  this._setMatrixUniforms(mId);
   //set our default point size
-  // this._setUniform1f(mId,
-  //   'uPointSize',
-  //   this.pointSize);
+  this._setUniform1f(mId,
+    'uPointSize',
+    this.pointSize);
   return this;
 };
 
