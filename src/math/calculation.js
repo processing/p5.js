@@ -626,7 +626,7 @@ p5.prototype.round = Math.round;
  *   noStroke();
  *   fill(0);
  *   text("x = " + x1, 0, y1 + spacing);
- *   text("sqrt(x) = " + x2, 0, y2 + spacing);
+ *   text("sq(x) = " + x2, 0, y2 + spacing);
  * }
  * </code></div>
  */
