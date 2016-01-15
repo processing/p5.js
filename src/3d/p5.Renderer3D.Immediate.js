@@ -130,7 +130,6 @@ p5.Renderer3D.prototype._bindImmediateBuffers = function(vertices, colors){
   var shaderKey = this._getCurShaderId();
   var shaderProgram = this.mHash[shaderKey];
   //vertex position Attribute
-  //@todo refactor for elegance
   shaderProgram.vertexPositionAttribute =
     gl.getAttribLocation(shaderProgram, 'aPosition');
   gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
@@ -148,9 +147,9 @@ p5.Renderer3D.prototype._bindImmediateBuffers = function(vertices, colors){
     4, gl.FLOAT, false, 0, 0);
   //matrix
   this._setMatrixUniforms(shaderKey);
-  //@todo implement in shader
+  //@todo implement in all shaders (not just immediateVert)
   //set our default point size
-  // this._setUniform1f(mId,
+  // this._setUniform1f(shaderKey,
   //   'uPointSize',
   //   this.pointSize);
   return this;
