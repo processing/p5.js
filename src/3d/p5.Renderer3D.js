@@ -268,12 +268,61 @@ p5.Renderer3D.prototype._getCurShaderId = function(){
 //////////////////////////////////////////////
 // COLOR
 //////////////////////////////////////////////
-p5.Renderer3D.prototype.fill = function(r, g, b, a) {
+/**
+ * Basic fill material for geometry with a given color
+ * @method  fill
+ * @param  {Number|Array|String|p5.Color} v1  gray value,
+ * red or hue value (depending on the current color mode),
+ * or color Array, or CSS color string
+ * @param  {Number}            [v2] optional: green or saturation value
+ * @param  {Number}            [v3] optional: blue or brightness value
+ * @param  {Number}            [a]  optional: opacity
+ * @return {p5}                the p5 object
+ * @example
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw(){
+ *  background(0);
+ *  fill(250, 0, 0);
+ *  rotateX(frameCount * 0.01);
+ *  rotateY(frameCount * 0.01);
+ *  rotateZ(frameCount * 0.01);
+ *  box(200, 200, 200);
+ * }
+ * </code>
+ * </div>
+ */
+p5.Renderer3D.prototype.fill = function(v1, v2, v3, a) {
+  var gl = this.GL;
   var color = this._pInst.color.apply(this._pInst, arguments);
   //@type {Array}, length 4 : vals range 0->1
   var colorNormalized = color._array;
   this.curColor = colorNormalized;
   this.drawMode = 'fill';
+  var shaderProgram;
+  if(this.isImmediateDrawing){
+    shaderProgram =
+    this._getShader('immediateVert','vertexColorFrag');
+    gl.useProgram(shaderProgram);
+  } else {
+    shaderProgram =
+    this._getShader('normalVert', 'basicFrag');
+    gl.useProgram(shaderProgram);
+    //RetainedMode uses a webgl uniform to pass color vals
+    //in ImmediateMode, we want access to each vertex so therefore
+    //we cannot use a uniform.
+    shaderProgram.uMaterialColor = gl.getUniformLocation(
+      shaderProgram, 'uMaterialColor' );
+    gl.uniform4f( shaderProgram.uMaterialColor,
+      colorNormalized[0],
+      colorNormalized[1],
+      colorNormalized[2],
+      colorNormalized[3]);
+  }
   return this;
 };
 p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
