@@ -285,8 +285,16 @@ p5.Image.prototype.resize = function(width, height){
   // reference to the backing canvas of a p5.Image. But since we do not
   // enforce that at the moment, I am leaving in the slower, but safer
   // implementation.
-  width = width || this.canvas.width;
-  height = height || this.canvas.height;
+
+  // auto-resize
+  if (width === 0 && height === 0) {
+    width = this.canvas.width;
+    height = this.canvas.height;
+  } else if (width === 0) {
+    width = this.canvas.width * height / this.canvas.height;
+  } else if (height === 0) {
+    height = this.canvas.height * width / this.canvas.width;
+  }
 
   var tempCanvas = document.createElement('canvas');
   tempCanvas.width = width;
