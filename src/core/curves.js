@@ -47,7 +47,7 @@ var curveDetail = 20;
  * </code>
  * </div>
  */
- p5.prototype.bezier = function() {
+p5.prototype.bezier = function() {
    var args = new Array(arguments.length);
    for (var i = 0; i < args.length; ++i) {
      args[i] = arguments[i];
