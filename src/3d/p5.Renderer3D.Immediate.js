@@ -177,4 +177,56 @@ p5.Renderer3D.prototype._getColorVertexShader = function(){
   return shaderProgram;
 };
 
+//////////////////////////////////////////////
+//Bezier
+//////////////////////////////////////////////
+
+/**
+ * @method bezier
+ * @param  {Number} x1 x-coordinate for the first anchor point
+ * @param  {Number} y1 y-coordinate for the first anchor point
+ * @param  {Number} z1 z-coordinate for the first anchor point
+ * @param  {Number} x2 x-coordinate for the first control point
+ * @param  {Number} y2 y-coordinate for the first control point
+ * @param  {Number} z2 z-coordinate for the first control point
+ * @param  {Number} x3 x-coordinate for the first anchor point
+ * @param  {Number} y3 y-coordinate for the first anchor point
+ * @param  {Number} z3 z-coordinate for the first anchor point
+ * @param  {Number} x4 x-coordinate for the first control point
+ * @param  {Number} y4 y-coordinate for the first control point
+ * @param  {Number} z4 z-coordinate for the first control point
+ * @return {p5.Renderer3D}   [description]
+ * @example
+ * <div>
+ * <code>
+ *background(0, 0, 0);
+ *noFill();
+ *stroke(255);
+ *bezier(250,250,0, 100,100,0, 100,0,0, 0,100,0);
+ * </code>
+ * </div>
+ */
+//this implementation of bezier curve is based on Bernstein polynomial
+p5.Renderer3D.prototype.bezier = function(args){
+  var bezierDetail=args[12] || 20;//value of Bezier detail
+  this.beginShape();
+  var coeff=[0,0,0,0];//  Bernstein polynomial coeffecients
+  var vertex=[0,0,0]; //(x,y,z) coordinates of points in bezier curve
+  for(var i=0; i<=bezierDetail; i++){
+    coeff[0]=Math.pow(1-(i/bezierDetail),3);
+    coeff[1]=(3*(i/bezierDetail)) * (Math.pow(1-(i/bezierDetail),2));
+    coeff[2]=(3*Math.pow(i/bezierDetail,2)) * (1-(i/bezierDetail));
+    coeff[3]=Math.pow(i/bezierDetail,3);
+    vertex[0]=args[0]*coeff[0] + args[3]*coeff[1] +
+              args[6]*coeff[2] + args[9]*coeff[3];
+    vertex[1]=args[1]*coeff[0] + args[4]*coeff[1] +
+              args[7]*coeff[2] + args[10]*coeff[3];
+    vertex[2]=args[2]*coeff[0] + args[5]*coeff[1] +
+              args[8]*coeff[2] + args[11]*coeff[3];
+    this.vertex(vertex[0],vertex[1],vertex[2]);
+  }
+  this.endShape();
+  return this;
+};
+
 module.exports = p5.Renderer3D;
