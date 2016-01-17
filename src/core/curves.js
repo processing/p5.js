@@ -47,7 +47,7 @@ var curveDetail = 20;
  * </code>
  * </div>
  */
- p5.prototype.bezier = function() {
+p5.prototype.bezier = function() {
    var args = new Array(arguments.length);
    for (var i = 0; i < args.length; ++i) {
      args[i] = arguments[i];
@@ -266,24 +266,43 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * </code>
  * </div>
  */
-p5.prototype.curve = function(x1, y1, x2, y2, x3, y3, x4, y4) {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  this._validateParameters(
-    'curve',
-    args,
-    [ 'Number', 'Number', 'Number', 'Number',
-      'Number', 'Number', 'Number', 'Number' ]
-  );
-
-  if (!this._renderer._doStroke) {
-    return;
-  }
-  this._renderer.curve(x1, y1, x2, y2, x3, y3, x4, y4);
-  return this;
-};
+p5.prototype.curve = function() {
+     var args = new Array(arguments.length);
+     for (var i = 0; i < args.length; ++i) {
+       args[i] = arguments[i];
+     }
+     if(this._renderer.isP3D){
+       this._validateParameters(
+         'curve',
+         args,
+         ['Number', 'Number', 'Number',
+         'Number', 'Number', 'Number',
+         'Number', 'Number', 'Number',
+         'Number', 'Number', 'Number'
+         ]
+       );
+     } else{
+       this._validateParameters(
+         'curve',
+         args,
+         [ 'Number', 'Number', 'Number', 'Number',
+           'Number', 'Number', 'Number', 'Number' ]
+       );
+     }
+     if (!this._renderer._doStroke) {
+       return this;
+     }
+     if (this._renderer.isP3D){
+       args.push(curveDetail);
+       this._renderer.curve(args);
+     } else{
+       this._renderer.curve(args[0],args[1],
+         args[2],args[3],
+         args[4],args[5],
+         args[6],args[7]);
+     }
+     return this;
+   };
 
 /**
  * Sets the resolution at which curves display.
