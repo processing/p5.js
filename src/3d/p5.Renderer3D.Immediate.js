@@ -56,7 +56,7 @@ p5.Renderer3D.prototype.beginShape = function(mode){
  */
 p5.Renderer3D.prototype.vertex = function(x, y, z){
   this.immediateMode.vertexPositions.push(x, y, z);
-  var vertexColor = this.curColor || [0.5, 0.5, 0.5, 1.0];
+  var vertexColor = this.curFillColor || [0.5, 0.5, 0.5, 1.0];
   this.immediateMode.vertexColors.push(
     vertexColor[0],
     vertexColor[1],
@@ -133,16 +133,18 @@ p5.Renderer3D.prototype._bindImmediateBuffers = function(vertices, colors){
   shaderProgram.vertexPositionAttribute =
     gl.getAttribLocation(shaderProgram, 'aPosition');
   gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
-
   gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.vertexBuffer);
-
   gl.bufferData(
     gl.ARRAY_BUFFER, new Float32Array(vertices), gl.DYNAMIC_DRAW);
   gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute,
     3, gl.FLOAT, false, 0, 0);
 
+  shaderProgram.vertexColorAttribute =
+    gl.getAttribLocation(shaderProgram, 'aVertexColor');
+  gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
   gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.colorBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.DYNAMIC_DRAW);
+  gl.bufferData(gl.ARRAY_BUFFER,
+    new Float32Array(colors),gl.DYNAMIC_DRAW);
   gl.vertexAttribPointer(shaderProgram.vertexColorAttribute,
     4, gl.FLOAT, false, 0, 0);
   //matrix

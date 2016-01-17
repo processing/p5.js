@@ -143,7 +143,6 @@ function _isPowerOf2 (value){
 //     value = value | value >> i;
 //   }
 //   return value + 1;
-// }
 
 /**
  * Ambient material for geometry with a given color
