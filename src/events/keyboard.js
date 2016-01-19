@@ -204,6 +204,7 @@ p5.prototype._onkeyup = function (e) {
   var keyReleased = this.keyReleased || window.keyReleased;
   this._setProperty('isKeyPressed', false);
   this._setProperty('keyIsPressed', false);
+  this._setProperty('_lastKeyCodeTyped', null);
   downKeys[e.which] = false;
   //delete this._downKeys[e.which];
   var key = String.fromCharCode(e.which);
