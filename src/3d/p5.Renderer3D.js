@@ -305,12 +305,11 @@ p5.Renderer3D.prototype._getCurShaderId = function(){
  */
 p5.Renderer3D.prototype.fill = function(v1, v2, v3, a) {
   var gl = this.GL;
-  var color = this._pInst.color.apply(this._pInst, arguments);
-  //@type {Array}, length 4 : vals range 0->1
-  var colorNormalized = color._array;
-  this.curFillColor = colorNormalized;
-  this.drawMode = 'fill';
   var shaderProgram;
+  //see material.js for more info on color blending in webgl
+  var colors = this._applyColorBlend(v1,v2,v3,a);
+  this.curFillColor = colors;
+  this.drawMode = 'fill';
   if(this.isImmediateDrawing){
     shaderProgram =
     this._getShader('immediateVert','vertexColorFrag');
@@ -325,10 +324,10 @@ p5.Renderer3D.prototype.fill = function(v1, v2, v3, a) {
     shaderProgram.uMaterialColor = gl.getUniformLocation(
       shaderProgram, 'uMaterialColor' );
     gl.uniform4f( shaderProgram.uMaterialColor,
-      colorNormalized[0],
-      colorNormalized[1],
-      colorNormalized[2],
-      colorNormalized[3]);
+      colors[0],
+      colors[1],
+      colors[2],
+      colors[3]);
   }
   return this;
 };
