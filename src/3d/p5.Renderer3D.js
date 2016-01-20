@@ -54,6 +54,8 @@ p5.Renderer3D = function(elt, pInst, isMainCanvas) {
   //default drawing is done in Retained Mode
   this.isImmediateDrawing = false;
   this.immediateMode = {};
+  this.curFillColor = [0.5,0.5,0.5,1.0];
+  this.curStrokeColor = [0.5,0.5,0.5,1.0];
   this.pointSize = 5.0;//default point/stroke
   return this;
 };
@@ -233,10 +235,6 @@ p5.Renderer3D.prototype._setMatrixUniforms = function(shaderKey) {
     shaderProgram.uMVMatrixUniform,
     false, this.uMVMatrix.mat4);
 
-  this.uNMatrix = new p5.Matrix();
-  this.uNMatrix.invert(this.uMVMatrix);
-  this.uNMatrix.transpose(this.uNMatrix);
-
   gl.uniformMatrix4fv(
     shaderProgram.uNMatrixUniform,
     false, this.uNMatrix.mat4);
@@ -258,32 +256,86 @@ p5.Renderer3D.prototype._getShader = function(vertId, fragId, isImmediateMode) {
 
 p5.Renderer3D.prototype._getCurShaderId = function(){
   //if the shader ID is not yet defined
-  if(this.curShaderId === undefined){
+  var mId, shaderProgram;
+  if(this.drawMode !== 'fill' && this.curShaderId === undefined){
     //default shader: normalMaterial()
-    var mId = 'normalVert|normalFrag';
-    var shaderProgram = this._initShaders('normalVert', 'normalFrag');
+    mId = 'normalVert|normalFrag';
+    shaderProgram = this._initShaders('normalVert', 'normalFrag');
+    this.mHash[mId] = shaderProgram;
+    this.curShaderId = mId;
+  } else if(this.isImmediateDrawing && this.drawMode === 'fill'){
+    mId = 'immediateVert|vertexColorFrag';
+    shaderProgram = this._initShaders('immediateVert', 'vertexColorFrag');
     this.mHash[mId] = shaderProgram;
     this.curShaderId = mId;
   }
-
   return this.curShaderId;
 };
 
 //////////////////////////////////////////////
 // COLOR
 //////////////////////////////////////////////
-p5.Renderer3D.prototype.fill = function(r, g, b, a) {
+/**
+ * Basic fill material for geometry with a given color
+ * @method  fill
+ * @param  {Number|Array|String|p5.Color} v1  gray value,
+ * red or hue value (depending on the current color mode),
+ * or color Array, or CSS color string
+ * @param  {Number}            [v2] optional: green or saturation value
+ * @param  {Number}            [v3] optional: blue or brightness value
+ * @param  {Number}            [a]  optional: opacity
+ * @return {p5}                the p5 object
+ * @example
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw(){
+ *  background(0);
+ *  fill(250, 0, 0);
+ *  rotateX(frameCount * 0.01);
+ *  rotateY(frameCount * 0.01);
+ *  rotateZ(frameCount * 0.01);
+ *  box(200, 200, 200);
+ * }
+ * </code>
+ * </div>
+ */
+p5.Renderer3D.prototype.fill = function(v1, v2, v3, a) {
+  var gl = this.GL;
   var color = this._pInst.color.apply(this._pInst, arguments);
   //@type {Array}, length 4 : vals range 0->1
   var colorNormalized = color._array;
-  this.curColor = colorNormalized;
+  this.curFillColor = colorNormalized;
   this.drawMode = 'fill';
+  var shaderProgram;
+  if(this.isImmediateDrawing){
+    shaderProgram =
+    this._getShader('immediateVert','vertexColorFrag');
+    gl.useProgram(shaderProgram);
+  } else {
+    shaderProgram =
+    this._getShader('normalVert', 'basicFrag');
+    gl.useProgram(shaderProgram);
+    //RetainedMode uses a webgl uniform to pass color vals
+    //in ImmediateMode, we want access to each vertex so therefore
+    //we cannot use a uniform.
+    shaderProgram.uMaterialColor = gl.getUniformLocation(
+      shaderProgram, 'uMaterialColor' );
+    gl.uniform4f( shaderProgram.uMaterialColor,
+      colorNormalized[0],
+      colorNormalized[1],
+      colorNormalized[2],
+      colorNormalized[3]);
+  }
   return this;
 };
 p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
   var colorNormalized = color._array;
-  this.curColor = colorNormalized;
+  this.curStrokeColor = colorNormalized;
   this.drawMode = 'stroke';
   return this;
 };

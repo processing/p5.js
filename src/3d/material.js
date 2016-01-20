@@ -143,55 +143,6 @@ function _isPowerOf2 (value){
 //     value = value | value >> i;
 //   }
 //   return value + 1;
-// }
-
-/**
- * Basic material for geometry with a given color
- * @method  basicMaterial
- * @param  {Number|Array|String|p5.Color} v1  gray value,
- * red or hue value (depending on the current color mode),
- * or color Array, or CSS color string
- * @param  {Number}            [v2] optional: green or saturation value
- * @param  {Number}            [v3] optional: blue or brightness value
- * @param  {Number}            [a]  optional: opacity
- * @return {p5}                the p5 object
- * @example
- * <div>
- * <code>
- * function setup(){
- *   createCanvas(100, 100, WEBGL);
- * }
- *
- * function draw(){
- *  background(0);
- *  basicMaterial(250, 0, 0);
- *  rotateX(frameCount * 0.01);
- *  rotateY(frameCount * 0.01);
- *  rotateZ(frameCount * 0.01);
- *  box(200, 200, 200);
- * }
- * </code>
- * </div>
- */
-p5.prototype.basicMaterial = function(v1, v2, v3, a){
-  var gl = this._renderer.GL;
-
-  var shaderProgram = this._renderer._getShader('normalVert', 'basicFrag');
-
-  gl.useProgram(shaderProgram);
-  shaderProgram.uMaterialColor = gl.getUniformLocation(
-    shaderProgram, 'uMaterialColor' );
-
-  var color = this._renderer._pInst.color.apply(
-    this._renderer._pInst, arguments);
-  var colors = color._array;
-
-  gl.uniform4f( shaderProgram.uMaterialColor,
-    colors[0], colors[1], colors[2], colors[3]);
-
-  return this;
-
-};
 
 /**
  * Ambient material for geometry with a given color
