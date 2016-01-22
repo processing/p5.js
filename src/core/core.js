@@ -202,8 +202,8 @@ var p5 = function(sketch, node, sync) {
     // Later on if the user calls createCanvas, this default one
     // will be replaced
     this.createCanvas(
-      this._defaultCanvasSize.width,
-      this._defaultCanvasSize.height,
+      this._defaultCanvasSize._width,
+      this._defaultCanvasSize._height,
       'p2d',
       true
     );
