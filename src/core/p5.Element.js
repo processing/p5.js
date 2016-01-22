@@ -296,12 +296,12 @@ p5.Element.prototype.mouseOver = function (fxn) {
  * function draw() {
  *   background(200);
  *   ellipse(50, 50, 50, 50);
- * } 
+ * }
  *
  * function changeFill() {
- *   if (checkbox.checked()) { 
- *     fill(0); 
- *   } else { 
+ *   if (checkbox.checked()) {
+ *     fill(0);
+ *   } else {
  *     noFill();
  *   }
  * }
