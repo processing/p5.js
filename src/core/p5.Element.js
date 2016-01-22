@@ -260,6 +260,52 @@ p5.Element.prototype.mouseOver = function (fxn) {
  * @param  {Function} fxn function to be fired when the value of an
  * element changes.
  * @return {p5.Element}
+ * @example
+ * <div><code>
+ * var sel;
+ *
+ * function setup() {
+ *   textAlign(CENTER);
+ *   background(200);
+ *   sel = createSelect();
+ *   sel.position(10, 10);
+ *   sel.option('pear');
+ *   sel.option('kiwi');
+ *   sel.option('grape');
+ *   sel.changed(mySelectEvent);
+ * }
+ *
+ * function mySelectEvent() {
+ *   var item = sel.value();
+ *   background(200);
+ *   text("it's a "+item+"!", 50, 50);
+ * }
+ * </code></div>
+ * <div><code>
+ * var checkbox;
+ * var cnv;
+ *
+ * function setup() {
+ *   checkbox = createCheckbox(" fill");
+ *   checkbox.changed(changeFill);
+ *   cnv = createCanvas(100, 100);
+ *   cnv.position(0, 30);
+ *   noFill();
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   ellipse(50, 50, 50, 50);
+ * } 
+ *
+ * function changeFill() {
+ *   if (checkbox.checked()) { 
+ *     fill(0); 
+ *   } else { 
+ *     noFill();
+ *   }
+ * }
+ * </code></div>
  */
 p5.Element.prototype.changed = function (fxn) {
   attachListener('change', fxn, this);
