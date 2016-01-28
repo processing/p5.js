@@ -191,7 +191,7 @@ p5.Image.prototype._setProperty = function (prop, value) {
  * function draw() {
  *   image(myImage, 0, 0);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.Image.prototype.loadPixels = function(){
   p5.Renderer2D.prototype.loadPixels.call(this);
@@ -231,7 +231,7 @@ p5.Image.prototype.loadPixels = function(){
  * function draw() {
  *   image(myImage, 0, 0);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.Image.prototype.updatePixels = function(x, y, w, h){
   p5.Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
@@ -272,7 +272,7 @@ p5.Image.prototype.updatePixels = function(x, y, w, h){
  * }
  *
  * //get() returns color here
- * </div></code>
+ * </code></div>
  */
 p5.Image.prototype.get = function(x, y, w, h){
   return p5.Renderer2D.prototype.get.call(this, x, y, w, h);
