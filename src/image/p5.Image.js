@@ -170,6 +170,28 @@ p5.Image.prototype._setProperty = function (prop, value) {
  * Loads the pixels data for this image into the [pixels] attribute.
  *
  * @method loadPixels
+ * @example
+ * <div><code>
+ * var myImage;
+ * var halfImage;
+ *
+ * function preload() {
+ *   myImage = loadImage("assets/rockies.jpg");
+ * }
+ *
+ * function setup() {
+ *   myImage.loadPixels();
+ *   halfImage = 4 * width * height/2;
+ *   for(var i = 0; i < halfImage; i++){
+ *     myImage.pixels[i+halfImage] = myImage.pixels[i];
+ *   }
+ *   myImage.updatePixels();
+ * }
+ *
+ * function draw() {
+ *   image(myImage, 0, 0);
+ * }
+ * </code></div>
  */
 p5.Image.prototype.loadPixels = function(){
   p5.Renderer2D.prototype.loadPixels.call(this);
@@ -188,6 +210,28 @@ p5.Image.prototype.loadPixels = function(){
  *                              underlying canvas
  * @param {Integer|undefined} h height of the target update area for the
  *                              underlying canvas
+ * @example
+ * <div><code>
+ * var myImage;
+ * var halfImage;
+ *
+ * function preload() {
+ *   myImage = loadImage("assets/rockies.jpg");
+ * }
+ *
+ * function setup() {
+ *   myImage.loadPixels();
+ *   halfImage = 4 * width * height/2;
+ *   for(var i = 0; i < halfImage; i++){
+ *     myImage.pixels[i+halfImage] = myImage.pixels[i];
+ *   }
+ *   myImage.updatePixels();
+ * }
+ *
+ * function draw() {
+ *   image(myImage, 0, 0);
+ * }
+ * </code></div>
  */
 p5.Image.prototype.updatePixels = function(x, y, w, h){
   p5.Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
@@ -210,6 +254,25 @@ p5.Image.prototype.updatePixels = function(x, y, w, h){
  * @param  {Number}               [h] height
  * @return {Array/Color | p5.Image}     color of pixel at x,y in array format
  *                                    [R, G, B, A] or p5.Image
+ * @example
+ * <div><code>
+ * var myImage;
+ * var c;
+ *
+ * function preload() {
+ *   myImage = loadImage("assets/rockies.jpg");
+ * }
+ *
+ * function setup() {
+ *   background(myImage);
+ *   noStroke();
+ *   c = myImage.get(60, 90);
+ *   fill(c);
+ *   rect(25, 25, 50, 50);
+ * }
+ *
+ * //get() returns color here
+ * </code></div>
  */
 p5.Image.prototype.get = function(x, y, w, h){
   return p5.Renderer2D.prototype.get.call(this, x, y, w, h);
@@ -338,6 +401,25 @@ p5.Image.prototype.resize = function(width, height){
  * @param  {Integer} dy Y coordinate of the destination's upper left corner
  * @param  {Integer} dw destination image width
  * @param  {Integer} dh destination image height
+ * @example
+ * <div><code>
+ * var photo;
+ * var bricks;
+ * var x;
+ * var y;
+ *
+ * function preload() {
+ *   photo = loadImage("assets/rockies.jpg");
+ *   bricks = loadImage("assets/bricks.jpg");
+ * }
+ *
+ * function setup() {
+ *   x = bricks.width/2;
+ *   y = bricks.height/2;
+ *   photo.copy(bricks, 0, 0, x, y, 0, 0, x, y);
+ *   image(photo, 0, 0);
+ * }
+ * </code></div>
  */
 p5.Image.prototype.copy = function () {
   p5.prototype.copy.apply(this, arguments);
@@ -409,6 +491,22 @@ p5.Image.prototype.mask = function(p5Image) {
  *                           opaque see Filters.js for docs on each available
  *                           filter
  * @param {Number|undefined} value
+ * @example
+ * <div><code>
+ * var photo1;
+ * var photo2;
+ *
+ * function preload() {
+ *   photo1 = loadImage("assets/rockies.jpg");
+ *   photo2 = loadImage("assets/rockies.jpg");
+ * }
+ *
+ * function setup() {
+ *   photo2.filter("gray");
+ *   image(photo1, 0, 0);
+ *   image(photo2, width/2, 0);
+ * }
+ * </code></div>
  */
 p5.Image.prototype.filter = function(operation, value) {
   Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
@@ -451,6 +549,24 @@ p5.Image.prototype.blend = function() {
  * @method save
  * @param {String} filename give your file a name
  * @param  {String} extension 'png' or 'jpg'
+ * @example
+ * <div><code>
+ * var photo;
+ *
+ * function preload() {
+ *   photo = loadImage("assets/rockies.jpg");
+ * }
+ *
+ * function draw() {
+ *   image(photo, 0, 0);
+ * }
+ *
+ * function keyTyped() {
+ *   if (key == 's') {
+ *     photo.save("photo", "png");
+ *   }
+ * }
+ * </code></div>
  */
 p5.Image.prototype.save = function(filename, extension) {
   var mimeType;

@@ -196,8 +196,8 @@ p5.prototype.image =
     if (img.elt && img.elt.videoWidth && !img.canvas) { // video no canvas
       var actualW = img.elt.videoWidth;
       var actualH = img.elt.videoHeight;
-      dWidth = sWidth || img.width;
-      dHeight = sHeight || img.width*actualH/actualW;
+      dWidth = sWidth || img.elt.width;
+      dHeight = sHeight || img.elt.width*actualH/actualW;
       sWidth = actualW;
       sHeight = actualH;
     } else {
