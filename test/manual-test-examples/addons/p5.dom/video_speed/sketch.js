@@ -37,6 +37,3 @@ function normalSpeed() {
 function slowSpeed() {
   fingers.speed(0.5);
 }
-
-
-
