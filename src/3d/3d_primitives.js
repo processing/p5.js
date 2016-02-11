@@ -124,20 +124,21 @@ p5.prototype.sphere = function(radius, detail){
 };
 
 /**
- * Draw an ellipsoid with given raduis
+ * Draw an ellipsoid with given radius
  * @method ellipsoid
  * @param  {Number} radiusx           xradius of circle
  * @param  {Number} radiusy           yradius of circle
  * @param  {Number} radiusz           zradius of circle
- * @param  {Number} [detail]          number of segments,
- *                                    the more segments the smoother geometry
- *                                    default is 24. Avoid detail number above
- *                                    150. It may crash the browser.
+ * @param  {Number} [detail]          Number of segments.
+ *                                    The more segments, the smoother the
+ *                                    geometry (default is 24). Avoid detail
+ *                                    number above 150. It may crash the
+ *                                    browser.
  * @return {p5}                       the p5 object
  * @example
  * <div>
  * <code>
- * // draw an ellipsoid with radius 200, 300 and 400 .
+ * // draw an ellipsoid with radius 200, 300 and 400
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -200,7 +201,7 @@ p5.prototype.ellipsoid = function(radiusx, radiusy, radiusz, detail){
  * @example
  * <div>
  * <code>
- * //draw a spining sylinder with radius 200 and height 200
+ * //draw a spinning cylinder with radius 200 and height 200
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -296,7 +297,7 @@ p5.prototype.cylinder = function(radius, height, detail){
  * @example
  * <div>
  * <code>
- * //draw a spining cone with radius 200 and height 200
+ * //draw a spinning cone with radius 200 and height 200
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -369,7 +370,7 @@ p5.prototype.cone = function(radius, height, detail){
  * @example
  * <div>
  * <code>
- * //draw a spining torus with radius 200 and tube radius 60
+ * //draw a spinning torus with radius 200 and tube radius 60
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -428,7 +429,7 @@ p5.prototype.torus = function(radius, tubeRadius, detail){
  * @example
  * <div>
  * <code>
- * //draw a spining box with width, height and depth 200
+ * //draw a spinning box with width, height and depth 200
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  * }
