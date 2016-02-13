@@ -685,35 +685,36 @@ function makeObject(row, headers) {
  *                               in as first argument
  * @return {Object}              XML object containing data
  */
-p5.prototype.loadXML = function(path, callback, errorCallback) {
+p5.prototype.loadXML = function (path, callback, errorCallback) {
   var ret = document.implementation.createDocument(null, null);
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
-
+  var y;
   reqwest({
-    url: path,
-    type: 'xml',
-    crossOrigin: true,
-    error: function(resp){
-      // pass to error callback if defined
-      if (errorCallback) {
-        errorCallback(resp);
-      } else { // otherwise log error msg
-        console.log(resp.statusText);
+      url: path,
+      type: 'xml',
+      crossOrigin: true,
+      error: function (resp) {
+        // pass to error callback if defined
+        if (errorCallback) {
+          errorCallback(resp);
+        } else { // otherwise log error msg
+          console.log(resp.statusText);
+        }
+        //p5._friendlyFileLoadError(1,path);
       }
-      //p5._friendlyFileLoadError(1,path);
-    }
-  })
-  .then(function(resp){
-    var x = resp.documentElement;
-    ret.appendChild(x);
-    if (typeof callback !== 'undefined') {
-      callback(ret);
-    }
-    if (decrementPreload && (callback !== decrementPreload)) {
-      decrementPreload();
-    }
-  });
-  return ret;
+    })
+    .then(function (resp) {
+      var x = resp.documentElement;
+      ret = parseXML(x)
+      console.log(ret);
+      if (typeof callback !== 'undefined') {
+        callback(ret);
+      }
+      if (decrementPreload && (callback !== decrementPreload)) {
+        decrementPreload();
+      }
+    });
+      return ret;
 };
 
 // name clash with window.open
@@ -722,10 +723,26 @@ p5.prototype.loadXML = function(path, callback, errorCallback) {
 
 // };
 
-p5.prototype.parseXML = function() {
-  // TODO
-  throw 'not yet implemented';
 
+p5.prototype.parseXML = function (two) {
+    var one = new p5.XML(), node = new p5.XML(),i;
+    if(two.children.length){
+        for( i = 0; i < two.children.length; i++ ) {
+            node = parseXML(two.children[i]);
+            one.addChild(node);
+        }
+        one.setName(two.nodeName);
+        one.setCont(two.textContent);
+        one.setAttributes(two);
+        one.setParent();
+        return one;
+    }
+    else {
+        one.setName(two.nodeName);
+        one.setCont(two.textContent);
+        one.setAttributes(two);
+        return one;
+    }
 };
 
 p5.prototype.selectFolder = function() {

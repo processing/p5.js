@@ -12,6 +12,7 @@ require('./image/p5.Image');
 require('./math/p5.Vector');
 require('./io/p5.TableRow');
 require('./io/p5.Table');
+require('./io/p5.XML');
 
 require('./color/creating_reading');
 require('./color/setting');
