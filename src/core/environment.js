@@ -378,7 +378,7 @@ p5.prototype.height = 0;
  * be called on user input, for example, on mouse press like the example
  * below.
  *
- * @method fullScreen
+ * @method fullscreen
  * @param  {Boolean} [val] whether the sketch should be fullscreened or not
  * @return {Boolean} current fullscreen state
  * @example
@@ -390,14 +390,14 @@ p5.prototype.height = 0;
  * }
  * function mousePressed() {
  *   if (mouseX > 0 && mouseX < 100 && mouseY > 0 && mouseY < 100) {
- *     var fs = fullScreen();
- *     fullScreen(!fs);
+ *     var fs = fullscreen();
+ *     fullscreen(!fs);
  *   }
  * }
  * </code>
  * </div>
  */
-p5.prototype.fullScreen = function(val) {
+p5.prototype.fullscreen = function(val) {
   // no arguments, return fullscreen or not
   if (typeof val === 'undefined') {
     return document.fullscreenElement ||
