@@ -658,6 +658,27 @@ function makeObject(row, headers) {
   return ret;
 }
 
+p5.prototype.parseXML = function (two) {
+    var one = new p5.XML(), node = new p5.XML(),i;
+    if(two.children.length){
+        for( i = 0; i < two.children.length; i++ ) {
+            node = parseXML(two.children[i]);
+            one.addChild(node);
+        }
+        one.setName(two.nodeName);
+        one.setCont(two.textContent);
+        one.setAttributes(two);
+        one.setParent();
+        return one;
+    }
+    else {
+        one.setName(two.nodeName);
+        one.setCont(two.textContent);
+        one.setAttributes(two);
+        return one;
+    }
+};
+
 /**
  * Reads the contents of a file and creates an XML object with its values.
  * If the name of the file is used as the parameter, as in the above example,
@@ -688,7 +709,6 @@ function makeObject(row, headers) {
 p5.prototype.loadXML = function (path, callback, errorCallback) {
   var ret = document.implementation.createDocument(null, null);
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
-  var y;
   reqwest({
       url: path,
       type: 'xml',
@@ -705,7 +725,7 @@ p5.prototype.loadXML = function (path, callback, errorCallback) {
     })
     .then(function (resp) {
       var x = resp.documentElement;
-      ret = parseXML(x)
+      ret = parseXML(x);
       console.log(ret);
       if (typeof callback !== 'undefined') {
         callback(ret);
@@ -723,27 +743,6 @@ p5.prototype.loadXML = function (path, callback, errorCallback) {
 
 // };
 
-
-p5.prototype.parseXML = function (two) {
-    var one = new p5.XML(), node = new p5.XML(),i;
-    if(two.children.length){
-        for( i = 0; i < two.children.length; i++ ) {
-            node = parseXML(two.children[i]);
-            one.addChild(node);
-        }
-        one.setName(two.nodeName);
-        one.setCont(two.textContent);
-        one.setAttributes(two);
-        one.setParent();
-        return one;
-    }
-    else {
-        one.setName(two.nodeName);
-        one.setCont(two.textContent);
-        one.setAttributes(two);
-        return one;
-    }
-};
 
 p5.prototype.selectFolder = function() {
   // TODO
