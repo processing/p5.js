@@ -658,25 +658,26 @@ function makeObject(row, headers) {
   return ret;
 }
 
+/*global parseXML */
 p5.prototype.parseXML = function (two) {
-    var one = new p5.XML(), node = new p5.XML(),i;
-    if(two.children.length){
-        for( i = 0; i < two.children.length; i++ ) {
-            node = parseXML(two.children[i]);
-            one.addChild(node);
-        }
-        one.setName(two.nodeName);
-        one.setCont(two.textContent);
-        one.setAttributes(two);
-        one.setParent();
-        return one;
+  var one = new p5.XML(), node = new p5.XML(),i;
+  if(two.children.length){
+    for( i = 0; i < two.children.length; i++ ) {
+      node = parseXML(two.children[i]);
+      one.addChild(node);
     }
-    else {
-        one.setName(two.nodeName);
-        one.setCont(two.textContent);
-        one.setAttributes(two);
-        return one;
-    }
+    one.setName(two.nodeName);
+    one.setCont(two.textContent);
+    one.setAttributes(two);
+    one.setParent();
+    return one;
+  }
+  else {
+    one.setName(two.nodeName);
+    one.setCont(two.textContent);
+    one.setAttributes(two);
+    return one;
+  }
 };
 
 /**
@@ -734,7 +735,7 @@ p5.prototype.loadXML = function (path, callback, errorCallback) {
         decrementPreload();
       }
     });
-      return ret;
+  return ret;
 };
 
 // name clash with window.open
