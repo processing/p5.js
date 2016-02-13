@@ -379,7 +379,8 @@ p5.prototype.height = 0;
  * below.
  *
  * @method fullscreen
- * @param  {Boolean} [val] whether the sketch should be fullscreened or not
+ * @param  {Boolean} [val] whether the sketch should be in fullscreen mode
+ * or not
  * @return {Boolean} current fullscreen state
  * @example
  * <div>
