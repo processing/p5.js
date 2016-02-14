@@ -90,7 +90,7 @@ p5.prototype.rotationX = 0;
 
 /**
  * The system variable rotationY always contains the rotation of the
- * device along the y axis. Value is represented as 0 to +/-180 degrees.
+ * device along the y axis. Value is represented as 0 to +/-90 degrees.
  *
  * @property rotationY
  */
