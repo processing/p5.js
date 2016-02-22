@@ -220,12 +220,17 @@ p5.prototype.saveCanvas = function() {
  *  all of the images that have just been created.
  *
  *  @method saveFrames
- *  @param  {[type]}   filename  [description]
- *  @param  {[type]}   extension [description]
- *  @param  {[type]}   _duration [description]
- *  @param  {[type]}   _fps      [description]
- *  @param  {[Function]} callback  [description]
- *  @return {[type]}             [description]
+ *  @param  {String}   filename
+ *  @param  {String}   extension 'jpg' or 'png'
+ *  @param  {Number}   duration  Duration in seconds to save the frames for.
+ *  @param  {Number}   framerate  Framerate to save the frames in.
+ *  @param  {Function} [callback] A callback function that will be executed
+                                  to handle the image data. This function
+                                  should accept an array as argument. The
+                                  array will contain the spcecified number of
+                                  frames of objects. Each object have three
+                                  properties: imageData - an
+                                  image/octet-stream, filename and extension.
  */
 p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
   var duration = _duration || 3;
