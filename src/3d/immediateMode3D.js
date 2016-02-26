@@ -132,7 +132,7 @@ p5.Renderer3D.prototype.strokeWeight = function() {
 //////////////////////////////////////////////
 
 p5.Renderer3D.prototype.fill = function(r, g, b, a) {
-  var color = this._pInst.color.apply(this._pInst, arguments);
+  var color = this._pInst.color.apply(this, arguments);
   var colorNormalized = color._array;
   this.curColor = colorNormalized;
   this.drawMode = 'fill';
@@ -140,7 +140,7 @@ p5.Renderer3D.prototype.fill = function(r, g, b, a) {
 };
 
 p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
-  var color = this._pInst.color.apply(this._pInst, arguments);
+  var color = this._pInst.color.apply(this, arguments);
   var colorNormalized = color._array;
   this.curColor = colorNormalized;
   this.drawMode = 'stroke';
