@@ -317,12 +317,15 @@ p5.prototype._updateNextMouseCoords = function(e) {
      e.type === 'touchend') {
     this._setProperty('_nextMouseX', this._nextTouchX);
     this._setProperty('_nextMouseY', this._nextTouchY);
+  } else if (e.type === 'mousedown') {
+    this._setProperty('touchX', e.clientX);
+    this._setProperty('touchY', e.clientY);
   } else {
     if(this._curElement !== null) {
       var mousePos = getMousePos(this._curElement.elt, e);
       this._setProperty('_nextMouseX', mousePos.x);
       this._setProperty('_nextMouseY', mousePos.y);
-    }
+    } 
   }
   this._setProperty('winMouseX', e.pageX);
   this._setProperty('winMouseY', e.pageY);
