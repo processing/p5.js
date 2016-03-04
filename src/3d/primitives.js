@@ -397,14 +397,18 @@ p5.prototype.cone = function(radius, height, detail){
         }
       }
     };
+    var _createCone = function (){
+
+    };
     var coneGeom =
-    new p5.Geometry(_cone, detailX, detailY,
-      function(){
-        this.computeFaces().computeNormals().computeUVs();
-      }
+    new p5.Geometry(_createCone,
+      detailX, detailY//,
+      // function(){
+      //   this.computeFaces().computeNormals().computeUVs();
+      // }
     );
     //for cones we need to average Normals
-    coneGeom.averageNormals();
+    // coneGeom.averageNormals();
     this._renderer.createBuffers(gId, coneGeom);
   }
 
@@ -412,6 +416,108 @@ p5.prototype.cone = function(radius, height, detail){
 
   return this;
 };
+
+/**
+   * Creates vertices for a truncated cone, which is like a cylinder
+   * except that it has different top and bottom radii. A truncated cone
+   * can also be used to create cylinders and regular cones. The
+   * truncated cone will be created centered about the origin, with the
+   * y axis as its vertical axis. The created cone has position, normal
+   * and uv streams.
+   *
+   * @param {number} bottomRadius Bottom radius of truncated cone.
+   * @param {number} topRadius Top radius of truncated cone.
+   * @param {number} height Height of truncated cone.
+   * @param {number} radialSubdivisions The number of subdivisions around the
+   *     truncated cone.
+   * @param {number} verticalSubdivisions The number of subdivisions down the
+   *     truncated cone.
+   * @param {boolean} [opt_topCap] Create top cap. Default = true.
+   * @param {boolean} [opt_bottomCap] Create bottom cap. Default =
+   *        true.
+   * @return {Object.<string, TypedArray>} The
+   *         created plane vertices.
+   * @memberOf module:primitives
+   */
+  function createTruncatedConeVertices(
+      bottomRadius,
+      topRadius,
+      height,
+      radialSubdivisions,
+      verticalSubdivisions,
+      opt_topCap,
+      opt_bottomCap) {
+    if (radialSubdivisions < 3) {
+      throw Error('radialSubdivisions must be 3 or greater');
+    }
+
+    if (verticalSubdivisions < 1) {
+      throw Error('verticalSubdivisions must be 1 or greater');
+    }
+
+    var topCap = (opt_topCap === undefined) ? true : opt_topCap;
+    var bottomCap = (opt_bottomCap === undefined) ? true : opt_bottomCap;
+
+    var extra = (topCap ? 2 : 0) + (bottomCap ? 2 : 0);
+
+    var vertsAroundEdge = radialSubdivisions + 1;
+
+    // The slant of the cone is constant across its surface
+    var slant = Math.atan2(bottomRadius - topRadius, height);
+    var start = topCap ? -2 : 0;
+    var end = verticalSubdivisions + (bottomCap ? 2 : 0);
+    var yy, ii;//@TODO
+    for (yy = start; yy <= end; ++yy) {
+      var v = yy / verticalSubdivisions;
+      var y = height * v;
+      var ringRadius;
+      if (yy < 0) {
+        y = 0;
+        v = 1;
+        ringRadius = bottomRadius;
+      } else if (yy > verticalSubdivisions) {
+        y = height;
+        v = 1;
+        ringRadius = topRadius;
+      } else {
+        ringRadius = bottomRadius +
+          (topRadius - bottomRadius) * (yy / verticalSubdivisions);
+      }
+      if (yy === -2 || yy === verticalSubdivisions + 2) {
+        ringRadius = 0;
+        v = 0;
+      }
+      y -= height / 2;
+      for (ii = 0; ii < vertsAroundEdge; ++ii) {
+        this.vertices.push(
+          new p5.Vector(
+            Math.sin(ii * Math.PI * 2 / radialSubdivisions) * ringRadius,
+            y,
+            Math.cos(ii * Math.PI * 2 / radialSubdivisions) * ringRadius)
+          );
+        //VERTEX NORMALS
+        this.vertexNormals.push(
+          new p5.Vector(
+            (yy < 0 || yy > verticalSubdivisions) ? 0 :
+            (Math.sin(ii * Math.PI * 2 / radialSubdivisions) * Math.cos(slant)),
+            (yy < 0) ? -1 : (yy > verticalSubdivisions ? 1 : Math.sin(slant)),
+            (yy < 0 || yy > verticalSubdivisions) ? 0 :
+            (Math.cos(ii * Math.PI * 2 / radialSubdivisions) * Math.cos(slant)))
+          );
+        this.uvs.push([(ii / radialSubdivisions), 1 - v]);
+      }
+    }
+    for (yy = 0; yy < verticalSubdivisions + extra; ++yy) {
+      for (ii = 0; ii < radialSubdivisions; ++ii) {
+        this.faces.push([vertsAroundEdge * (yy + 0) + 0 + ii,
+          vertsAroundEdge * (yy + 0) + 1 + ii,
+          vertsAroundEdge * (yy + 1) + 1 + ii]);
+        this.faces.push([vertsAroundEdge * (yy + 0) + 0 + ii,
+          vertsAroundEdge * (yy + 1) + 1 + ii,
+          vertsAroundEdge * (yy + 1) + 0 + ii]);
+      }
+    }
+  }
 
 /**
  * Draw an ellipsoid with given raduis
