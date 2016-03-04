@@ -14,24 +14,24 @@ var constants = require('./constants');
 /**
  * Modifies the location from which ellipses are drawn by changing the way
  * in which parameters given to ellipse() are interpreted.
- *
+ * <br><br>
  * The default mode is ellipseMode(CENTER), which interprets the first two
  * parameters of ellipse() as the shape's center point, while the third and
  * fourth parameters are its width and height.
- *
+ * <br><br>
  * ellipseMode(RADIUS) also uses the first two parameters of ellipse() as
  * the shape's center point, but uses the third and fourth parameters to
  * specify half of the shapes's width and height.
- *
+ * <br><br>
  * ellipseMode(CORNER) interprets the first two parameters of ellipse() as
  * the upper-left corner of the shape, while the third and fourth parameters
  * are its width and height.
- *
+ * <br><br>
  * ellipseMode(CORNERS) interprets the first two parameters of ellipse() as
  * the location of one corner of the ellipse's bounding box, and the third
  * and fourth parameters as the location of the opposite corner.
- *
- * The parameter must be written in ALL CAPS because Processing is a
+ * <br><br>
+ * The parameter must be written in ALL CAPS because Javascript is a
  * case-sensitive language.
  *
  * @method ellipseMode
@@ -67,7 +67,7 @@ p5.prototype.ellipseMode = function(m) {
     m === constants.CORNERS ||
     m === constants.RADIUS ||
     m === constants.CENTER) {
-    this._graphics._ellipseMode = m;
+    this._renderer._ellipseMode = m;
   }
   return this;
 };
@@ -92,31 +92,31 @@ p5.prototype.ellipseMode = function(m) {
  * </div>
  */
 p5.prototype.noSmooth = function() {
-  this._graphics.noSmooth();
+  this._renderer.noSmooth();
   return this;
 };
 
 /**
  * Modifies the location from which rectangles are drawn by changing the way
  * in which parameters given to rect() are interpreted.
- *
+ * <br><br>
  * The default mode is rectMode(CORNER), which interprets the first two
  * parameters of rect() as the upper-left corner of the shape, while the
  * third and fourth parameters are its width and height.
- *
+ * <br><br>
  * rectMode(CORNERS) interprets the first two parameters of rect() as the
  * location of one corner, and the third and fourth parameters as the
  * location of the opposite corner.
- *
+ * <br><br>
  * rectMode(CENTER) interprets the first two parameters of rect() as the
  * shape's center point, while the third and fourth parameters are its
  * width and height.
- *
+ * <br><br>
  * rectMode(RADIUS) also uses the first two parameters of rect() as the
  * shape's center point, but uses the third and fourth parameters to specify
  * half of the shapes's width and height.
- *
- * The parameter must be written in ALL CAPS because Processing is a
+ * <br><br>
+ * The parameter must be written in ALL CAPS because Javascript is a
  * case-sensitive language.
  *
  * @method rectMode
@@ -152,7 +152,7 @@ p5.prototype.rectMode = function(m) {
     m === constants.CORNERS ||
     m === constants.RADIUS ||
     m === constants.CENTER) {
-    this._graphics._rectMode = m;
+    this._renderer._rectMode = m;
   }
   return this;
 };
@@ -178,7 +178,7 @@ p5.prototype.rectMode = function(m) {
  * </div>
  */
 p5.prototype.smooth = function() {
-  this._graphics.smooth();
+  this._renderer.smooth();
   return this;
 };
 
@@ -207,7 +207,7 @@ p5.prototype.strokeCap = function(cap) {
   if (cap === constants.ROUND ||
     cap === constants.SQUARE ||
     cap === constants.PROJECT) {
-    this._graphics.strokeCap(cap);
+    this._renderer.strokeCap(cap);
   }
   return this;
 };
@@ -265,7 +265,7 @@ p5.prototype.strokeJoin = function(join) {
   if (join === constants.ROUND ||
     join === constants.BEVEL ||
     join === constants.MITER) {
-    this._graphics.strokeJoin(join);
+    this._renderer.strokeJoin(join);
   }
   return this;
 };
@@ -290,7 +290,7 @@ p5.prototype.strokeJoin = function(join) {
  * </div>
  */
 p5.prototype.strokeWeight = function(w) {
-  this._graphics.strokeWeight(w);
+  this._renderer.strokeWeight(w);
   return this;
 };
 

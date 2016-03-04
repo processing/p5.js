@@ -18,21 +18,21 @@
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
     <!-- CSS (order matters): normalize across browsers -->
-    <link rel="stylesheet" href="../css/normalize.css">
+    <link rel="stylesheet" href="{{p5SiteRoot}}/css/normalize.css">
 
     <!-- CSS (order matters): Site styles -->
-    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="{{p5SiteRoot}}/css/main.css">
 
     <!-- CSS (order matters): code highlighting -->
-    <link rel="stylesheet" href="../css/prism.css">
+    <link rel="stylesheet" href="{{p5SiteRoot}}/css/prism.css">
 
     <!-- modernizer (not leveraged, yet) 
-    <script src="../js/vendor/modernizr-2.6.2.min.js"></script>-->
+    <script src="{{p5SiteRoot}}/js/vendor/modernizr-2.6.2.min.js"></script>-->
 
     <!-- jquery-->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>-->
-    <script>window.jQuery || document.write('../js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+    <script>window.jQuery || document.write('{{p5SiteRoot}}/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
 
   </head>
 
@@ -50,7 +50,7 @@
         <input id="search_button" type="submit" value=" " />
       </form>
       <p class="right">
-        <a href="http://foundation.processing.org">Processing Foundation</a>
+        <a href="https://processingfoundation.org/">Processing Foundation</a>
       </p>
     </div>    
   
@@ -58,8 +58,7 @@
     <div id="container">
     <!-- identity -->
     <div id="lockup">
-      <a href="../">
-        <img type="image/svg+xml" src="../img/p5js-beta.svg" id="logo_image" class="logo"  />
+        <img type="image/svg+xml" src="{{p5SiteRoot}}/img/p5js-beta.svg" id="logo_image" class="logo"  />
         <div id='p5_logo'></div>
       </a>
       <p>Processing intuition times JavaScript power</p>
@@ -69,17 +68,18 @@
     <!-- site navigation -->
     <div class="column-span">
     <ul id="menu">
-      <li><a href="../">Home</a></li>
+      <li><a href="{{p5SiteRoot}}/">Home</a></li>
 
-      <li><a href="../download/">Download</a></li> 
-      <li><a href="../gallery/">Gallery</a></li>
-      <li><a href="../get-started/">Get Started</a></li>
-      <li><a href="../reference/">Reference</a></li>
-      <li><a href="../libraries/">Libraries</a></li>
-      <li><a href="../tutorials/">Tutorials</a></li>
-      <li><a href="../examples/">Examples</a></li>
-      <li><a href="../community/">Community</a></li>
-      <li><a href="../contribute/">Contribute</a></li>
+      <li><a href="{{p5SiteRoot}}/download/">Download</a></li> 
+      <li><a href="{{p5SiteRoot}}/gallery/">Gallery</a></li>
+      <li><a href="{{p5SiteRoot}}/get-started/">Get Started</a></li>
+      <li><a href="{{p5SiteRoot}}/reference/">Reference</a></li>
+      <li><a href="{{p5SiteRoot}}/libraries/">Libraries</a></li>
+      <li><a href="{{p5SiteRoot}}/tutorials/">Tutorials</a></li>
+      <li><a href="{{p5SiteRoot}}/examples/">Examples</a></li>
+      <li><a href="{{p5SiteRoot}}/books/">Books</a></li>
+      <li><a href="{{p5SiteRoot}}/community/">Community</a></li>
+      <li><a href="{{p5SiteRoot}}/contribute/">Contribute</a></li>
       
       <li><a href="http://forum.processing.org/two/" target=_blank class="other-link">Forum</a></li>
       <li><a href="http://github.com/processing/p5.js" target=_blank class="other-link">Github</a></li>
@@ -109,10 +109,10 @@
 
 
       <footer>
-        <p>p5.js is developed by a community of collaborators, 
+        <p>p5.js was created by <a href='http://lauren-mccarthy.com' target="_blank">Lauren McCarthy</a> and is developed by a community of collaborators, 
         with support from the <a href="http://processing.org/foundation/" target="_blank">Processing Foundation</a> 
-        and <a href="http://itp.nyu.edu/itp/" target="_blank">NYU ITP</a>.<br>
-        <a href="http://p5js.org/copyright.php">&copy; Info.</p>
+        and <a href="http://itp.nyu.edu/itp/" target="_blank">NYU ITP</a>. 
+        <a href="http://p5js.org/copyright.php">&copy; Info.</a></p>
       </footer>
     </div><!-- end column-span -->
 
@@ -120,24 +120,24 @@
 
     <p class="clearfix"> &nbsp; </p>
 
-    <object type="image/svg+xml" data="../img/thick-asterisk-alone.svg" id="asterisk-design-element">
+    <object type="image/svg+xml" data="{{p5SiteRoot}}/img/thick-asterisk-alone.svg" id="asterisk-design-element">
          *<!-- to do: add fallback image in CSS -->
     </object>
 
 
-    <script src="../js/p5.min.js"></script>
-    <script src="../js/p5.sound.js"></script>
-    <script src="../js/p5.dom.js"></script>
-    <script src="../js/render.js"></script>
+    <script src="{{p5Lib}}"></script>
+    <script src="{{p5SoundLib}}"></script>
+    <script src="{{p5DomLib}}"></script>
+    <script src="{{p5SiteRoot}}/js/render.js"></script>
     <!-- prism for code highlighting -->
-    <script src="../js/vendor/prism.js"></script>
+    <script src="{{p5SiteRoot}}/js/vendor/prism.js"></script>
 
-    <script src="../js/main.js"></script>
-    <script src="../js/scroll.js"></script>
+    <script src="{{p5SiteRoot}}/js/main.js"></script>
+    <script src="{{p5SiteRoot}}/js/scroll.js"></script>
 
     <script src="{{projectAssets}}/js/require.min.js"></script>
     <script src="{{projectAssets}}/js/reference.js"></script>
-    <script src="../js/logo.js"></script>
+    <script src="{{p5SiteRoot}}/js/logo.js"></script>
 
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. 

@@ -17,7 +17,7 @@
     <a href="<%=item.hash%>" <% if (item.module !== module.name) { %>class="core"<% } %>><%=item.name%><% if (item.itemtype === 'method') { %>()<%}%></a><br>
     <% t++; %>
   <% }); %>
-  <% if (t >= totalItems/4) { col++; t = 0; %>
+  <% if (t >= Math.floor(totalItems/4)) { col++; t = 0; %>
     </div>
   <% } %>
 <% }); %>

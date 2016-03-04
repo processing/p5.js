@@ -33,7 +33,7 @@ var constants = require('./constants');
  * </div>
  */
 p5.prototype.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
-  this._graphics.applyMatrix(n00, n01, n02, n10, n11, n12);
+  this._renderer.applyMatrix(n00, n01, n02, n10, n11, n12);
   return this;
 };
 
@@ -62,7 +62,7 @@ p5.prototype.pushMatrix = function() {
  * </div>
  */
 p5.prototype.resetMatrix = function() {
-  this._graphics.resetMatrix();
+  this._renderer.resetMatrix();
   return this;
 };
 
@@ -70,14 +70,14 @@ p5.prototype.resetMatrix = function() {
  * Rotates a shape the amount specified by the angle parameter. This
  * function accounts for angleMode, so angles can be entered in either
  * RADIANS or DEGREES.
- *
+ * <br><br>
  * Objects are always rotated around their relative position to the
  * origin and positive numbers rotate objects in a clockwise direction.
  * Transformations apply to everything that happens after and subsequent
  * calls to the function accumulates the effect. For example, calling
  * rotate(HALF_PI) and then rotate(HALF_PI) is the same as rotate(PI).
  * All tranformations are reset when draw() begins again.
- *
+ * <br><br>
  * Technically, rotate() multiplies the current transformation matrix
  * by a rotation matrix. This function can be further controlled by
  * the push() and pop().
@@ -102,10 +102,10 @@ p5.prototype.rotate = function() {
   }
   //in webgl mode
   if(arguments.length > 1){
-    this._graphics.rotate(r, arguments[1]);
+    this._renderer.rotate(r, arguments[1]);
   }
   else {
-    this._graphics.rotate(r);
+    this._renderer.rotate(r);
   }
   return this;
 };
@@ -116,17 +116,21 @@ p5.prototype.rotate = function() {
  * @return {[type]}     [description]
  */
 p5.prototype.rotateX = function(rad) {
-  if (this._graphics.isP3D) {
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
+  if (this._renderer.isP3D) {
     this._validateParameters(
       'rotateX',
-      arguments,
+      args,
       [
         ['Number']
       ]
     );
-    this._graphics.rotateX(rad);
+    this._renderer.rotateX(rad);
   } else {
-    throw 'not yet implemented.';
+    throw 'not supported in p2d. Please use webgl mode';
   }
   return this;
 };
@@ -137,17 +141,21 @@ p5.prototype.rotateX = function(rad) {
  * @return {[type]}     [description]
  */
 p5.prototype.rotateY = function(rad) {
-  if (this._graphics.isP3D) {
+  if (this._renderer.isP3D) {
+    var args = new Array(arguments.length);
+    for (var i = 0; i < args.length; ++i) {
+      args[i] = arguments[i];
+    }
     this._validateParameters(
       'rotateY',
-      arguments,
+      args,
       [
         ['Number']
       ]
     );
-    this._graphics.rotateY(rad);
+    this._renderer.rotateY(rad);
   } else {
-    throw 'not yet implemented.';
+    throw 'not supported in p2d. Please use webgl mode';
   }
   return this;
 };
@@ -158,15 +166,19 @@ p5.prototype.rotateY = function(rad) {
  * @return {[type]}     [description]
  */
 p5.prototype.rotateZ = function(rad) {
-  if (this._graphics.isP3D) {
+  if (this._renderer.isP3D) {
+    var args = new Array(arguments.length);
+    for (var i = 0; i < args.length; ++i) {
+      args[i] = arguments[i];
+    }
     this._validateParameters(
       'rotateZ',
-      arguments,
+      args,
       [
         ['Number']
       ]
     );
-    this._graphics.rotateZ(rad);
+    this._renderer.rotateZ(rad);
   } else {
     throw 'not supported in p2d. Please use webgl mode';
   }
@@ -179,21 +191,23 @@ p5.prototype.rotateZ = function(rad) {
  * coordinate system. Scale values are specified as decimal percentages.
  * For example, the function call scale(2.0) increases the dimension of a
  * shape by 200%.
- *
+ * <br><br>
  * Transformations apply to everything that happens after and subsequent
  * calls to the function multiply the effect. For example, calling scale(2.0)
  * and then scale(1.5) is the same as scale(3.0). If scale() is called
  * within draw(), the transformation is reset when the loop begins again.
- *
+ * <br><br>
  * Using this fuction with the z parameter requires using P3D as a
  * parameter for size(), as shown in the third example above. This function
  * can be further controlled with push() and pop().
  *
  * @method scale
- * @param  {Number} s   percentage to scale the object, or percentage to
+ * @param  {Number | p5.Vector | Array} s
+ *                      percent to scale the object, or percentage to
  *                      scale the object in the x-axis if multiple arguments
  *                      are given
- * @param  {Number} [y] percentage to scale the object in the y-axis
+ * @param  {Number} [y] percent to scale the object in the y-axis
+ * @param  {Number} [z] percent to scale the object in the z-axis (webgl only)
  * @return {p5}         the p5 object
  * @example
  * <div>
@@ -213,26 +227,37 @@ p5.prototype.rotateZ = function(rad) {
  * </div>
  */
 p5.prototype.scale = function() {
-  if (this._graphics.isP3D) {
-    this._validateParameters(
-      'scale',
-      arguments,
-      [
-        //p3d
-        ['Number', 'Number', 'Number']
-      ]
-    );
-    this._graphics.scale(arguments[0], arguments[1], arguments[2]);
-  } else {
-    this._validateParameters(
-      'scale',
-      arguments,
-      [
-        //p2d
-        ['Number', 'Number']
-      ]
-    );
-    this._graphics.scale.apply(this._graphics, arguments);
+  var x,y,z;
+  var args = new Array(arguments.length);
+  for(var i = 0; i < args.length; i++) {
+    args[i] = arguments[i];
+  }
+  if(args[0] instanceof p5.Vector){
+    x = args[0].x;
+    y = args[0].y;
+    z = args[0].z;
+  }
+  else if(args[0] instanceof Array){
+    x = args[0][0];
+    y = args[0][1];
+    z = args[0][2] || 1;
+  }
+  else {
+    if(args.length === 1){
+      x = y = z = args[0];
+    }
+    else {
+      x = args[0];
+      y = args[1];
+      z = args[2] || 1;
+    }
+  }
+
+  if(this._renderer.isP3D){
+    this._renderer.scale.call(this._renderer, x,y,z);
+  }
+  else {
+    this._renderer.scale.call(this._renderer, x,y);
   }
   return this;
 };
@@ -242,13 +267,13 @@ p5.prototype.scale = function() {
  * parameter. Angles should be specified in the current angleMode.
  * Objects are always sheared around their relative position to the origin
  * and positive numbers shear objects in a clockwise direction.
- *
+ * <br><br>
  * Transformations apply to everything that happens after and subsequent
  * calls to the function accumulates the effect. For example, calling
  * shearX(PI/2) and then shearX(PI/2) is the same as shearX(PI).
  * If shearX() is called within the draw(), the transformation is reset when
  * the loop begins again.
- *
+ * <br><br>
  * Technically, shearX() multiplies the current transformation matrix by a
  * rotation matrix. This function can be further controlled by the
  * push() and pop() functions.
@@ -270,7 +295,7 @@ p5.prototype.shearX = function(angle) {
   if (this._angleMode === constants.DEGREES) {
     angle = this.radians(angle);
   }
-  this._graphics.shearX(angle);
+  this._renderer.shearX(angle);
   return this;
 };
 
@@ -279,13 +304,13 @@ p5.prototype.shearX = function(angle) {
  * parameter. Angles should be specified in the current angleMode. Objects
  * are always sheared around their relative position to the origin and
  * positive numbers shear objects in a clockwise direction.
- *
+ * <br><br>
  * Transformations apply to everything that happens after and subsequent
  * calls to the function accumulates the effect. For example, calling
  * shearY(PI/2) and then shearY(PI/2) is the same as shearY(PI). If
  * shearY() is called within the draw(), the transformation is reset when
  * the loop begins again.
- *
+ * <br><br>
  * Technically, shearY() multiplies the current transformation matrix by a
  * rotation matrix. This function can be further controlled by the
  * push() and pop() functions.
@@ -307,7 +332,7 @@ p5.prototype.shearY = function(angle) {
   if (this._angleMode === constants.DEGREES) {
     angle = this.radians(angle);
   }
-  this._graphics.shearY(angle);
+  this._renderer.shearY(angle);
   return this;
 };
 
@@ -315,7 +340,7 @@ p5.prototype.shearY = function(angle) {
  * Specifies an amount to displace objects within the display window.
  * The x parameter specifies left/right translation, the y parameter
  * specifies up/down translation.
- *
+ * <br><br>
  * Transformations are cumulative and apply to everything that happens after
  * and subsequent calls to the function accumulates the effect. For example,
  * calling translate(50, 0) and then translate(20, 0) is the same as
@@ -346,26 +371,31 @@ p5.prototype.shearY = function(angle) {
  * </div>
  */
 p5.prototype.translate = function(x, y, z) {
-  if (this._graphics.isP3D) {
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
+
+  if (this._renderer.isP3D) {
     this._validateParameters(
       'translate',
-      arguments,
+      args,
       [
         //p3d
         ['Number', 'Number', 'Number']
       ]
     );
-    this._graphics.translate(x, y, z);
+    this._renderer.translate(x, y, z);
   } else {
     this._validateParameters(
       'translate',
-      arguments,
+      args,
       [
         //p2d
         ['Number', 'Number']
       ]
     );
-    this._graphics.translate(x, y);
+    this._renderer.translate(x, y);
   }
   return this;
 };

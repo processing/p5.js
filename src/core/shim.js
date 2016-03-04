@@ -66,13 +66,16 @@ window.performance.now = (function(){
  * shim for Uint8ClampedArray.slice
  * (allows arrayCopy to work with pixels[])
  * with thanks to http://halfpapstudios.com/blog/tag/html5-canvas/
+ * Enumerable set to false to protect for...in from
+ * Uint8ClampedArray.prototype pollution.
  */
 (function () {
   'use strict';
-
-  if (typeof Uint8ClampedArray !== 'undefined') {
-    //Firefox and Chrome
-    Uint8ClampedArray.prototype.slice = Array.prototype.slice;
+  if (typeof Uint8ClampedArray !== 'undefined' &&
+      !Uint8ClampedArray.prototype.slice) {
+    Object.defineProperty(Uint8ClampedArray.prototype, 'slice', {
+      value: Array.prototype.slice,
+      writable: true, configurable: true, enumerable: false
+    });
   }
 }());
-

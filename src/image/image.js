@@ -25,7 +25,7 @@ var frames = [];
  * Creates a new p5.Image (the datatype for storing images). This provides a
  * fresh buffer of pixels to play with. Set the size of the buffer with the
  * width and height parameters.
- *
+ * <br><br>
  * .pixels gives access to an array containing the values for all the pixels
  * in the display window.
  * These values are numbers. This array is the size (including an appropriate
@@ -35,9 +35,8 @@ var frames = [];
  * more info. It may also be simpler to use set() or get().
  * <br><br>
  * Before accessing the pixels of an image, the data must loaded with the
- * loadPixels()
- * function. After the array data has been modified, the updatePixels()
- * function must be run to update the changes.
+ * loadPixels() function. After the array data has been modified, the
+ * updatePixels() function must be run to update the changes.
  *
  * @method createImage
  * @param  {Integer} width  width in pixels
@@ -96,7 +95,7 @@ p5.prototype.createImage = function(width, height) {
 };
 
 /**
- *  Save the current canvas as an image. In Safari, will open the
+ *  Save the current canvas as an image. In Safari, this will open the
  *  image in the window and the user must provide their own
  *  filename on save-as. Other browsers will either save the
  *  file immediately, or prompt the user with a dialogue window.
@@ -221,12 +220,17 @@ p5.prototype.saveCanvas = function() {
  *  all of the images that have just been created.
  *
  *  @method saveFrames
- *  @param  {[type]}   filename  [description]
- *  @param  {[type]}   extension [description]
- *  @param  {[type]}   _duration [description]
- *  @param  {[type]}   _fps      [description]
- *  @param  {[Function]} callback  [description]
- *  @return {[type]}             [description]
+ *  @param  {String}   filename
+ *  @param  {String}   extension 'jpg' or 'png'
+ *  @param  {Number}   duration  Duration in seconds to save the frames for.
+ *  @param  {Number}   framerate  Framerate to save the frames in.
+ *  @param  {Function} [callback] A callback function that will be executed
+                                  to handle the image data. This function
+                                  should accept an array as argument. The
+                                  array will contain the spcecified number of
+                                  frames of objects. Each object have three
+                                  properties: imageData - an
+                                  image/octet-stream, filename and extension.
  */
 p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
   var duration = _duration || 3;

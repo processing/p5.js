@@ -7,34 +7,9 @@ var filters = require('../image/filters');
 require('./p5.Renderer');
 
 /**
- * 2D graphics renderer class.  Can also be used as an off-screen
- * graphics buffer. A p5.Renderer2D object can be constructed
- * with the <code>createRenderer2D()</code> function. The fields and methods
- * for this class are extensive, but mirror the normal drawing API for p5.
- *
- * @class p5.Renderer2D
- * @constructor
- * @extends p5.Renderer
- * @param {String} elt DOM node that is wrapped
- * @param {Object} [pInst] pointer to p5 instance
- * @example
- * <div>
- * <code>
- * var pg;
- * function setup() {
- *   createCanvas(100, 100);
- *   pg = createRenderer2D(40, 40);
- * }
- * function draw() {
- *   background(200);
- *   pg.background(100);
- *   pg.noStroke();
- *   pg.ellipse(pg.width/2, pg.height/2, 50, 50);
- *   image(pg, 9, 30);
- *   image(pg, 51, 30);
- * }
- * </code>
- * </div>
+ * p5.Renderer2D
+ * The 2D graphics canvas renderer class.
+ * extends p5.Renderer
  */
 var styleEmpty = 'rgba(0,0,0,0)';
 // var alphaThreshold = 0.00125; // minimum visible
@@ -57,8 +32,8 @@ p5.Renderer2D.prototype._applyDefaults = function() {
 
 p5.Renderer2D.prototype.resize = function(w,h) {
   p5.Renderer.prototype.resize.call(this, w,h);
-  this.drawingContext.scale(this._pInst.pixelDensity,
-                            this._pInst.pixelDensity);
+  this.drawingContext.scale(this._pInst._pixelDensity,
+                            this._pInst._pixelDensity);
 };
 
 //////////////////////////////////////////////
@@ -68,15 +43,15 @@ p5.Renderer2D.prototype.resize = function(w,h) {
 p5.Renderer2D.prototype.background = function() {
   this.drawingContext.save();
   this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-  this.drawingContext.scale(this._pInst.pixelDensity,
-                            this._pInst.pixelDensity);
+  this.drawingContext.scale(this._pInst._pixelDensity,
+                            this._pInst._pixelDensity);
 
   if (arguments[0] instanceof p5.Image) {
     this._pInst.image(arguments[0], 0, 0, this.width, this.height);
   } else {
     var curFill = this.drawingContext.fillStyle;
     // create background rect
-    var color = this._pInst.color.apply(this._pInst, arguments);
+    var color = this._pInst.color.apply(this, arguments);
     var newFill = color.toString();
     this.drawingContext.fillStyle = newFill;
     this.drawingContext.fillRect(0, 0, this.width, this.height);
@@ -93,13 +68,13 @@ p5.Renderer2D.prototype.clear = function() {
 p5.Renderer2D.prototype.fill = function() {
 
   var ctx = this.drawingContext;
-  var color = this._pInst.color.apply(this._pInst, arguments);
+  var color = this._pInst.color.apply(this, arguments);
   ctx.fillStyle = color.toString();
 };
 
 p5.Renderer2D.prototype.stroke = function() {
   var ctx = this.drawingContext;
-  var color = this._pInst.color.apply(this._pInst, arguments);
+  var color = this._pInst.color.apply(this, arguments);
   ctx.strokeStyle = color.toString();
 };
 
@@ -107,15 +82,23 @@ p5.Renderer2D.prototype.stroke = function() {
 // IMAGE | Loading & Displaying
 //////////////////////////////////////////////
 
-p5.Renderer2D.prototype.image = function (img, x, y, w, h) {
-  var frame = img.canvas || img.elt;
+p5.Renderer2D.prototype.image =
+  function (img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight) {
+  var cnv;
   try {
-    if (this._tint && img.canvas) {
-      this.drawingContext.drawImage(this._getTintedImageCanvas(img),
-        x, y, w, h);
-    } else {
-      this.drawingContext.drawImage(frame, x, y, w, h);
+    if (this._tint) {
+      if (p5.MediaElement && img instanceof p5.MediaElement) {
+        img.loadPixels();
+      }
+      if (img.canvas) {
+        cnv = this._getTintedImageCanvas(img);
+      }
     }
+    if (!cnv) {
+      cnv = img.canvas || img.elt;
+    }
+    this.drawingContext.drawImage(cnv, sx, sy, sWidth, sHeight, dx, dy,
+      dWidth, dHeight);
   } catch (e) {
     if (e.name !== 'NS_ERROR_NOT_AVAILABLE') {
       throw e;
@@ -218,13 +201,20 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
     h = 1;
   }
 
-  if(x > this.width || y > this.height || x < 0 || y < 0){
+  // if the section does not overlap the canvas
+  if(x + w < 0 || y + h < 0 || x > this.width || y > this.height){
     return [0, 0, 0, 255];
   }
 
   var ctx = this._pInst || this;
 
-  var pd = ctx.pixelDensity || ctx._pInst.pixelDensity;
+  var pd = ctx._pixelDensity;
+
+  this.loadPixels.call(ctx);
+
+  // round down to get integer numbers
+  x = Math.floor(x);
+  y = Math.floor(y);
 
   if (w === 1 && h === 1){
 
@@ -245,7 +235,7 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
     var sh = dh * pd;
 
     var region = new p5.Image(dw, dh);
-    region.canvas.getContext('2d').drawImage(ctx.canvas, sx, sy, sw, sh,
+    region.canvas.getContext('2d').drawImage(this.canvas, sx, sy, sw, sh,
       0, 0, dw, dh);
 
     return region;
@@ -253,7 +243,7 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
 };
 
 p5.Renderer2D.prototype.loadPixels = function () {
-  var pd = this.pixelDensity || this._pInst.pixelDensity;
+  var pd = this._pixelDensity || this._pInst._pixelDensity;
   var w = this.width * pd;
   var h = this.height * pd;
   var imageData = this.drawingContext.getImageData(0, 0, w, h);
@@ -269,19 +259,22 @@ p5.Renderer2D.prototype.loadPixels = function () {
 };
 
 p5.Renderer2D.prototype.set = function (x, y, imgOrCol) {
+  // round down to get integer numbers
+  x = Math.floor(x);
+  y = Math.floor(y);
   if (imgOrCol instanceof p5.Image) {
     this.drawingContext.save();
     this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-    this.drawingContext.scale(this._pInst.pixelDensity,
-      this._pInst.pixelDensity);
+    this.drawingContext.scale(this._pInst._pixelDensity,
+      this._pInst._pixelDensity);
     this.drawingContext.drawImage(imgOrCol.canvas, x, y);
     this.loadPixels.call(this._pInst);
     this.drawingContext.restore();
   } else {
     var ctx = this._pInst || this;
     var r = 0, g = 0, b = 0, a = 0;
-    var idx = 4*((y * ctx.pixelDensity) *
-      (this.width * ctx.pixelDensity) + (x * ctx.pixelDensity));
+    var idx = 4*((y * ctx._pixelDensity) *
+      (this.width * ctx._pixelDensity) + (x * ctx._pixelDensity));
     if (!ctx.imageData) {
       ctx.loadPixels.call(ctx);
     }
@@ -307,19 +300,19 @@ p5.Renderer2D.prototype.set = function (x, y, imgOrCol) {
       }
     } else if (imgOrCol instanceof p5.Color) {
       if (idx < ctx.pixels.length) {
-        r = imgOrCol.rgba[0];
-        g = imgOrCol.rgba[1];
-        b = imgOrCol.rgba[2];
-        a = imgOrCol.rgba[3];
+        r = imgOrCol.levels[0];
+        g = imgOrCol.levels[1];
+        b = imgOrCol.levels[2];
+        a = imgOrCol.levels[3];
         //this.updatePixels.call(this);
       }
     }
     // loop over pixelDensity * pixelDensity
-    for (var i = 0; i < ctx.pixelDensity; i++) {
-      for (var j = 0; j < ctx.pixelDensity; j++) {
+    for (var i = 0; i < ctx._pixelDensity; i++) {
+      for (var j = 0; j < ctx._pixelDensity; j++) {
         // loop over
-        idx = 4*((y * ctx.pixelDensity + j) * this.width *
-          ctx.pixelDensity + (x * ctx.pixelDensity + i));
+        idx = 4*((y * ctx._pixelDensity + j) * this.width *
+          ctx._pixelDensity + (x * ctx._pixelDensity + i));
         ctx.pixels[idx] = r;
         ctx.pixels[idx+1] = g;
         ctx.pixels[idx+2] = b;
@@ -330,7 +323,7 @@ p5.Renderer2D.prototype.set = function (x, y, imgOrCol) {
 };
 
 p5.Renderer2D.prototype.updatePixels = function (x, y, w, h) {
-  var pd = this.pixelDensity || this._pInst.pixelDensity;
+  var pd = this._pixelDensity || this._pInst._pixelDensity;
   if (x === undefined &&
       y === undefined &&
       w === undefined &&
@@ -998,8 +991,8 @@ function(n00, n01, n02, n10, n11, n12) {
 
 p5.Renderer2D.prototype.resetMatrix = function() {
   this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-  this.drawingContext.scale(this._pInst.pixelDensity,
-                            this._pInst.pixelDensity);
+  this.drawingContext.scale(this._pInst._pixelDensity,
+                            this._pInst._pixelDensity);
   return this;
 };
 
@@ -1007,17 +1000,8 @@ p5.Renderer2D.prototype.rotate = function(r) {
   this.drawingContext.rotate(r);
 };
 
-p5.Renderer2D.prototype.scale = function() {
-  var x = 1.0,
-    y = 1.0;
-  if (arguments.length === 1) {
-    x = y = arguments[0];
-  } else {
-    x = arguments[0];
-    y = arguments[1];
-  }
+p5.Renderer2D.prototype.scale = function(x,y) {
   this.drawingContext.scale(x, y);
-
   return this;
 };
 
@@ -1050,12 +1034,12 @@ p5.Renderer2D.prototype.translate = function(x, y) {
 p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
 
   var p = this._pInst, cars, n, ii, jj, line, testLine,
-    testWidth, words, totalHeight, baselineHacked;
+    testWidth, words, totalHeight, baselineHacked,
+    finalMaxHeight = Number.MAX_VALUE;
 
   // baselineHacked: (HACK)
-  // This is an ugly temporary fix to conform to
-  // Processing's vertical alignment implementation
-  // for BASELINE vetical alignment in a boundings box
+  // A temporary fix to conform to Processing's implementation
+  // of BASELINE vertical alignment in a bounding box
 
   if (!(this._doFill || this._doStroke)) {
     return;
@@ -1086,7 +1070,7 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
       }
     }
 
-    if (this._rectMode === constants.CENTER ){
+    if (this._rectMode === constants.CENTER) {
 
       x -= maxWidth / 2;
       y -= maxHeight / 2;
@@ -1116,6 +1100,9 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
         this.drawingContext.textBaseline = constants.TOP;
         break;
       }
+
+      // remember the max-allowed y-position for any line (fix to #928)
+      finalMaxHeight = (y + maxHeight) - p.textAscent();
     }
 
     for (ii = 0; ii < cars.length; ii++) {
@@ -1126,7 +1113,7 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
         testLine = line + words[n] + ' ';
         testWidth = this.textWidth(testLine);
         if (testWidth > maxWidth && line.length > 0) {
-          this._renderText(p, line, x, y);
+          this._renderText(p, line, x, y, finalMaxHeight);
           line = words[n] + ' ';
           y += p.textLeading();
         } else {
@@ -1134,14 +1121,14 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
         }
       }
 
-      this._renderText(p, line, x, y);
+      this._renderText(p, line, x, y, finalMaxHeight);
       y += p.textLeading();
     }
   }
   else {
     for (jj = 0; jj < cars.length; jj++) {
 
-      this._renderText(p, cars[jj], x, y);
+      this._renderText(p, cars[jj], x, y, finalMaxHeight);
       y += p.textLeading();
     }
   }
@@ -1149,10 +1136,15 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
   if (baselineHacked) {
     this.drawingContext.textBaseline = constants.BASELINE;
   }
+
   return p;
 };
 
-p5.Renderer2D.prototype._renderText = function(p, line, x, y) {
+p5.Renderer2D.prototype._renderText = function(p, line, x, y, maxY) {
+
+  if (y >= maxY) {
+    return; // don't render lines beyond our maxY position
+  }
 
   p.push(); // fix to #803
 
@@ -1175,7 +1167,7 @@ p5.Renderer2D.prototype._renderText = function(p, line, x, y) {
   }
   else { // an opentype font, let it handle the rendering
 
-    this._textFont._renderPath(line, x, y);
+    this._textFont._renderPath(line, x, y, { renderer: this });
   }
 
   p.pop();

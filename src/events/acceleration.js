@@ -80,12 +80,236 @@ p5.prototype._updatePAccelerations = function(){
   this._setProperty('pAccelerationZ', this.accelerationZ);
 };
 
+/**
+ * The system variable rotationX always contains the rotation of the
+ * device along the x axis. Value is represented as 0 to +/-180 degrees.
+ * <br><br>
+ * Note: The order the rotations are called is important, ie. if used
+ * together, it must be called in the order Z-X-Y or there might be
+ * unexpected behaviour.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw(){
+ *   background(200);
+ *   //rotateZ(radians(rotationZ));
+ *   rotateX(radians(rotationX));
+ *   //rotateY(radians(rotationY));
+ *   box(200, 200, 200);
+ * }
+ * </code>
+ * </div>
+ *
+ * @property rotationX
+ */
+p5.prototype.rotationX = 0;
+
+/**
+ * The system variable rotationY always contains the rotation of the
+ * device along the y axis. Value is represented as 0 to +/-90 degrees.
+ * <br><br>
+ * Note: The order the rotations are called is important, ie. if used
+ * together, it must be called in the order Z-X-Y or there might be
+ * unexpected behaviour.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw(){
+ *   background(200);
+ *   //rotateZ(radians(rotationZ));
+ *   //rotateX(radians(rotationX));
+ *   rotateY(radians(rotationY));
+ *   box(200, 200, 200);
+ * }
+ * </code>
+ * </div>
+ *
+ * @property rotationY
+ */
+p5.prototype.rotationY = 0;
+
+/**
+ * The system variable rotationZ always contains the rotation of the
+ * device along the z axis. Value is represented as 0 to 359 degrees.
+ * <br><br>
+ * Unlike rotationX and rotationY, this variable is available for devices
+ * with a built-in compass only.
+ * <br><br>
+ * Note: The order the rotations are called is important, ie. if used
+ * together, it must be called in the order Z-X-Y or there might be
+ * unexpected behaviour.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw(){
+ *   background(200);
+ *   rotateZ(radians(rotationZ));
+ *   //rotateX(radians(rotationX));
+ *   //rotateY(radians(rotationY));
+ *   box(200, 200, 200);
+ * }
+ * </code>
+ * </div>
+ *
+ * @property rotationZ
+ */
+p5.prototype.rotationZ = 0;
+
+/**
+ * The system variable pRotationX always contains the rotation of the
+ * device along the x axis in the frame previous to the current frame. Value
+ * is represented as 0 to +/-180 degrees.
+ * <br><br>
+ * pRotationX can also be used with rotationX to determine the rotate
+ * direction of the device along the X-axis.
+ * @example
+ * <div class='norender'>
+ * <code>
+ * // A simple if statement looking at whether
+ * // rotationX - pRotationX < 0 is true or not will be
+ * // sufficient for determining the rotate direction
+ * // in most cases.
+ *
+ * // Some extra logic is needed to account for cases where
+ * // the angles wrap around.
+ * var rotateDirection = 'clockwise';
+ *
+ * // Simple range conversion to make things simpler.
+ * // This is not absolutely neccessary but the logic
+ * // will be different in that case.
+ *
+ * var rX = rotationX + 180;
+ * var pRX = pRotationX + 180;
+ *
+ * if ((rX - pRX > 0 && rX - pRX < 270)|| rX - pRX < -270){
+ *   rotateDirection = 'clockwise';
+ * } else if (rX - pRX < 0 || rX - pRX > 270){
+ *   rotateDirection = 'counter-clockwise';
+ * }
+ * </code>
+ * </div>
+ *
+ * @property pRotationX
+ */
+p5.prototype.pRotationX = 0;
+
+/**
+ * The system variable pRotationY always contains the rotation of the
+ * device along the y axis in the frame previous to the current frame. Value
+ * is represented as 0 to +/-90 degrees.
+ * <br><br>
+ * pRotationY can also be used with rotationY to determine the rotate
+ * direction of the device along the Y-axis.
+ * @example
+ * <div class='norender'>
+ * <code>
+ * // A simple if statement looking at whether
+ * // rotationY - pRotationY < 0 is true or not will be
+ * // sufficient for determining the rotate direction
+ * // in most cases.
+ *
+ * // Some extra logic is needed to account for cases where
+ * // the angles wrap around.
+ * var rotateDirection = 'clockwise';
+ *
+ * // Simple range conversion to make things simpler.
+ * // This is not absolutely neccessary but the logic
+ * // will be different in that case.
+ *
+ * var rY = rotationY + 180;
+ * var pRY = pRotationY + 180;
+ *
+ * if ((rY - pRY > 0 && rY - pRY < 270)|| rY - pRY < -270){
+ *   rotateDirection = 'clockwise';
+ * } else if (rY - pRY < 0 || rY - pRY > 270){
+ *   rotateDirection = 'counter-clockwise';
+ * }
+ * </code>
+ * </div>
+ *
+ * @property pRotationY
+ */
+p5.prototype.pRotationY = 0;
+
+/**
+ * The system variable pRotationZ always contains the rotation of the
+ * device along the z axis in the frame previous to the current frame. Value
+ * is represented as 0 to 359 degrees.
+ * <br><br>
+ * pRotationZ can also be used with rotationZ to determine the rotate
+ * direction of the device along the Z-axis.
+ * @example
+ * <div class='norender'>
+ * <code>
+ * // A simple if statement looking at whether
+ * // rotationZ - pRotationZ < 0 is true or not will be
+ * // sufficient for determining the rotate direction
+ * // in most cases.
+ *
+ * // Some extra logic is needed to account for cases where
+ * // the angles wrap around.
+ * var rotateDirection = 'clockwise';
+ *
+ * if ((rotationZ - pRotationZ > 0 &&
+ *   rotationZ - pRotationZ < 270)||
+ *   rotationZ - pRotationZ < -270){
+ *
+ *   rotateDirection = 'clockwise';
+ *
+ * } else if (rotationZ - pRotationZ < 0 ||
+ *   rotationZ - pRotationZ > 270){
+ *
+ *   rotateDirection = 'counter-clockwise';
+ *
+ * }
+ * </code>
+ * </div>
+ *
+ * @property pRotationZ
+ */
+p5.prototype.pRotationZ = 0;
+
+var startAngleX = 0;
+var startAngleY = 0;
+var startAngleZ = 0;
+
+var rotateDirectionX = 'clockwise';
+var rotateDirectionY = 'clockwise';
+var rotateDirectionZ = 'clockwise';
+
+var pRotateDirectionX;
+var pRotateDirectionY;
+var pRotateDirectionZ;
+
+p5.prototype._updatePRotations = function(){
+  this._setProperty('pRotationX', this.rotationX);
+  this._setProperty('pRotationY', this.rotationY);
+  this._setProperty('pRotationZ', this.rotationZ);
+};
+
+p5.prototype.turnAxis = undefined;
+
 var move_threshold = 0.5;
 var shake_threshold = 30;
 
 /**
  * The setMoveThreshold() function is used to set the movement threshold for
- * the deviceMoved() function.
+ * the deviceMoved() function. The default threshold is set to 0.5.
  *
  * @method setMoveThreshold
  * @param {number} value The threshold value
@@ -109,12 +333,10 @@ p5.prototype.setShakeThreshold = function(val){
   }
 };
 
-var old_max_axis = '';
-var new_max_axis = '';
-
 /**
- * The deviceMoved() function is called when the devices orientation changes
- * by more than the threshold value.
+ * The deviceMoved() function is called when the device is moved by more than
+ * the threshold value along X, Y or Z axis. The default threshold is set to
+ * 0.5.
  * @method deviceMoved
  * @example
  * <div>
@@ -140,7 +362,12 @@ var new_max_axis = '';
 
 /**
  * The deviceTurned() function is called when the device rotates by
- * more than 90 degrees.
+ * more than 90 degrees continuously.
+ * <br><br>
+ * The axis that triggers the deviceTurned() method is stored in the turnAxis
+ * variable. The deviceTurned() method can be locked to trigger on any axis:
+ * X, Y or Z by comparing the turnAxis variable to 'X', 'Y' or 'Z'.
+ *
  * @method deviceTurned
  * @example
  * <div>
@@ -155,9 +382,32 @@ var new_max_axis = '';
  *   rect(25, 25, 50, 50);
  * }
  * function deviceTurned() {
- *   value = value + 5;
- *   if (value > 255) {
+ *   if (value == 0){
+ *     value = 255
+ *   } else if (value == 255) {
  *     value = 0;
+ *   }
+ * }
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * // Run this example on a mobile device
+ * // Rotate the device by 90 degrees in the
+ * // X-axis to change the value.
+ *
+ * var value = 0;
+ * function draw() {
+ *   fill(value);
+ *   rect(25, 25, 50, 50);
+ * }
+ * function deviceTurned() {
+ *   if (turnAxis == 'X'){
+ *     if (value == 0){
+ *       value = 255
+ *     } else if (value == 255) {
+ *       value = 0;
+ *     }
  *   }
  * }
  * </code>
@@ -191,21 +441,17 @@ var new_max_axis = '';
  */
 
 p5.prototype._ondeviceorientation = function (e) {
-  this._setProperty('accelerationX', e.beta);
-  this._setProperty('accelerationY', e.gamma);
-  this._setProperty('accelerationZ', e.alpha);
+  this._updatePRotations();
+  this._setProperty('rotationX', e.beta);
+  this._setProperty('rotationY', e.gamma);
+  this._setProperty('rotationZ', e.alpha);
   this._handleMotion();
 };
 p5.prototype._ondevicemotion = function (e) {
+  this._updatePAccelerations();
   this._setProperty('accelerationX', e.acceleration.x * 2);
   this._setProperty('accelerationY', e.acceleration.y * 2);
   this._setProperty('accelerationZ', e.acceleration.z * 2);
-  this._handleMotion();
-};
-p5.prototype._onMozOrientation = function (e) {
-  this._setProperty('accelerationX', e.x);
-  this._setProperty('accelerationY', e.y);
-  this._setProperty('accelerationZ', e.z);
   this._handleMotion();
 };
 p5.prototype._handleMotion = function() {
@@ -226,23 +472,70 @@ p5.prototype._handleMotion = function() {
   }
   var deviceTurned = this.deviceTurned || window.deviceTurned;
   if (typeof deviceTurned === 'function') {
-    var max_val = 0;
-    if (Math.abs(this.accelerationX) > max_val) {
-      max_val = this.accelerationX;
-      new_max_axis = 'x';
+    // The angles given by rotationX etc is from range -180 to 180.
+    // The following will convert them to 0 to 360 for ease of calculation
+    // of cases when the angles wrapped around.
+    // _startAngleX will be converted back at the end and updated.
+    var wRX = this.rotationX + 180;
+    var wPRX = this.pRotationX + 180;
+    var wSAX = startAngleX + 180;
+    if ((wRX - wPRX > 0 && wRX - wPRX < 270)|| wRX - wPRX < -270){
+      rotateDirectionX = 'clockwise';
+    } else if (wRX - wPRX < 0 || wRX - wPRX > 270){
+      rotateDirectionX = 'counter-clockwise';
     }
-    if (Math.abs(this.accelerationY) > max_val) {
-      max_val = this.accelerationY;
-      new_max_axis = 'y';
+    if (rotateDirectionX !== pRotateDirectionX){
+      wSAX = wRX;
     }
-    if (Math.abs(this.accelerationZ) > max_val) {
-      new_max_axis = 'z';
+    if (Math.abs(wRX - wSAX) > 90 && Math.abs(wRX - wSAX) < 270){
+      wSAX = wRX;
+      this._setProperty('turnAxis', 'X');
+      deviceTurned();
     }
-    if (old_max_axis !== '' && old_max_axis !== new_max_axis) {
-      deviceTurned(new_max_axis);
+    pRotateDirectionX = rotateDirectionX;
+    startAngleX = wSAX - 180;
 
+    // Y-axis is identical to X-axis except for changing some names.
+    var wRY = this.rotationY + 180;
+    var wPRY = this.pRotationY + 180;
+    var wSAY = startAngleY + 180;
+    if ((wRY - wPRY > 0 && wRY - wPRY < 270)|| wRY - wPRY < -270){
+      rotateDirectionY = 'clockwise';
+    } else if (wRY - wPRY < 0 || wRY - this.pRotationY > 270){
+      rotateDirectionY = 'counter-clockwise';
     }
-    old_max_axis = new_max_axis;
+    if (rotateDirectionY !== pRotateDirectionY){
+      wSAY = wRY;
+    }
+    if (Math.abs(wRY - wSAY) > 90 && Math.abs(wRY - wSAY) < 270){
+      wSAY = wRY;
+      this._setProperty('turnAxis', 'Y');
+      deviceTurned();
+    }
+    pRotateDirectionY = rotateDirectionY;
+    startAngleY = wSAY - 180;
+
+    // Z-axis is already in the range 0 to 360
+    // so no conversion is needed.
+    if ((this.rotationZ - this.pRotationZ > 0 &&
+      this.rotationZ - this.pRotationZ < 270)||
+      this.rotationZ - this.pRotationZ < -270){
+      rotateDirectionZ = 'clockwise';
+    } else if (this.rotationZ - this.pRotationZ < 0 ||
+      this.rotationZ - this.pRotationZ > 270){
+      rotateDirectionZ = 'counter-clockwise';
+    }
+    if (rotateDirectionZ !== pRotateDirectionZ){
+      startAngleZ = this.rotationZ;
+    }
+    if (Math.abs(this.rotationZ - startAngleZ) > 90 &&
+      Math.abs(this.rotationZ - startAngleZ) < 270){
+      startAngleZ = this.rotationZ;
+      this._setProperty('turnAxis', 'Z');
+      deviceTurned();
+    }
+    pRotateDirectionZ = rotateDirectionZ;
+    this._setProperty('turnAxis', undefined);
   }
   var deviceShaken = this.deviceShaken || window.deviceShaken;
   if (typeof deviceShaken === 'function') {

@@ -9,13 +9,15 @@ var constants = require('./constants');
 require('./p5.Graphics');
 require('./p5.Renderer2D');
 require('../3d/p5.Renderer3D');
+var defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
 
 /**
  * Creates a canvas element in the document, and sets the dimensions of it
  * in pixels. This method should be called only once at the start of setup.
  * Calling createCanvas more than once in a sketch will result in very
  * unpredicable behavior. If you want more than one drawing canvas
- * you could use createGraphics (hidden by default but it can be shown).<br>
+ * you could use createGraphics (hidden by default but it can be shown).
+ * <br><br>
  * The system variables width and height are set by the parameters passed
  * to this function. If createCanvas() is not used, the window will be
  * given a default size of 100x100 pixels.
@@ -23,7 +25,7 @@ require('../3d/p5.Renderer3D');
  * @method createCanvas
  * @param  {Number} w width of the canvas
  * @param  {Number} h height of the canvas
- * @param  optional:{String} renderer 'p2d' | 'webgl'
+ * @param  {String} [renderer] 'p2d' | 'webgl'
  * @return {Object} canvas generated
  * @example
  * <div>
@@ -50,17 +52,22 @@ p5.prototype.createCanvas = function(w, h, renderer) {
   }
 
   if(r === constants.WEBGL){
-    c = document.getElementById('defaultCanvas');
+    c = document.getElementById(defaultId);
     if(c){ //if defaultCanvas already exists
       c.parentNode.removeChild(c); //replace the existing defaultCanvas
     }
     c = document.createElement('canvas');
-    c.id = 'defaultCanvas';
+    c.id = defaultId;
   }
   else {
     if (isDefault) {
       c = document.createElement('canvas');
-      c.id = 'defaultCanvas';
+      var i = 0;
+      while (document.getElementById('defaultCanvas'+i)) {
+        i++;
+      }
+      defaultId = 'defaultCanvas'+i;
+      c.id = defaultId;
     } else { // resize the default canvas if new one is created
       c = this.canvas;
     }
@@ -83,29 +90,28 @@ p5.prototype.createCanvas = function(w, h, renderer) {
   // Init our graphics renderer
   //webgl mode
   if (r === constants.WEBGL) {
-    this._setProperty('_graphics', new p5.Renderer3D(c, this, true));
+    this._setProperty('_renderer', new p5.Renderer3D(c, this, true));
     this._isdefaultGraphics = true;
   }
   //P2D mode
   else {
     if (!this._isdefaultGraphics) {
-      this._setProperty('_graphics', new p5.Renderer2D(c, this, true));
+      this._setProperty('_renderer', new p5.Renderer2D(c, this, true));
       this._isdefaultGraphics = true;
     }
   }
-  this._graphics.resize(w, h);
-  this._graphics._applyDefaults();
+  this._renderer.resize(w, h);
+  this._renderer._applyDefaults();
   if (isDefault) { // only push once
-    this._elements.push(this._graphics);
+    this._elements.push(this._renderer);
   }
-  return this._graphics;
+  return this._renderer;
 };
 
 /**
- * Resizes the canvas to given width and height. Note that the
- * canvas will be cleared so anything drawn previously in setup
- * or draw will disappear on resize. Setup will not be called
- * again.
+ * Resizes the canvas to given width and height. The canvas will be cleared
+ * and draw will be called immediately, allowing the sketch to re-render itself
+ * in the resized canvas.
  * @method resizeCanvas
  * @example
  * <div class="norender"><code>
@@ -123,9 +129,21 @@ p5.prototype.createCanvas = function(w, h, renderer) {
  * </code></div>
  */
 p5.prototype.resizeCanvas = function (w, h, noRedraw) {
-  if (this._graphics) {
-    this._graphics.resize(w, h);
-    this._graphics._applyDefaults();
+  if (this._renderer) {
+
+    // save canvas properties
+    var props = {};
+    for (var key in this.drawingContext) {
+      var val = this.drawingContext[key];
+      if (typeof val !== 'object' && typeof val !== 'function') {
+        props[key] = val;
+      }
+    }
+    this._renderer.resize(w, h);
+    // reset canvas properties
+    for (var savedKey in props) {
+      this.drawingContext[savedKey] = props[savedKey];
+    }
     if (!noRedraw) {
       this.redraw();
     }
@@ -253,7 +271,7 @@ p5.prototype.blendMode = function(mode) {
     mode === constants.SOFT_LIGHT || mode === constants.DODGE ||
     mode === constants.BURN || mode === constants.ADD ||
     mode === constants.NORMAL) {
-    this._graphics.blendMode(mode);
+    this._renderer.blendMode(mode);
   } else {
     throw new Error('Mode '+mode+' not recognized.');
   }

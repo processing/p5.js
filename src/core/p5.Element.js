@@ -37,7 +37,7 @@ p5.Element = function(elt, pInst) {
  *
  * Attaches the element to the parent specified. A way of setting
  * the container for the element. Accepts either a string ID, DOM
- * node, or p5.Element.
+ * node, or p5.Element. If no arguments given, parent node is returned.
  *
  * @method parent
  * @param  {String|Object} parent the ID, DOM node, or p5.Element
@@ -69,13 +69,20 @@ p5.Element = function(elt, pInst) {
  * </code></div>
  */
 p5.Element.prototype.parent = function(p) {
-  if (typeof p === 'string') {
-    p = document.getElementById(p);
-  } else if (p instanceof p5.Element) {
-    p = p.elt;
+  if (arguments.length === 0){
+    return this.elt.parentNode;
+  } else {
+    if (typeof p === 'string') {
+      if (p[0] === '#') {
+        p = p.substring(1);
+      }
+      p = document.getElementById(p);
+    } else if (p instanceof p5.Element) {
+      p = p.elt;
+    }
+    p.appendChild(this.elt);
+    return this;
   }
-  p.appendChild(this.elt);
-  return this;
 };
 
 /**
@@ -87,8 +94,14 @@ p5.Element.prototype.parent = function(p) {
  * @return {p5.Element}
  */
 p5.Element.prototype.id = function(id) {
-  this.elt.id = id;
-  return this;
+  if (arguments.length === 0) {
+    return this.elt.id;
+  } else {
+    this.elt.id = id;
+    this.width = this.elt.offsetWidth;
+    this.height = this.elt.offsetHeight;
+    return this;
+  }
 };
 
 /**
@@ -100,8 +113,14 @@ p5.Element.prototype.id = function(id) {
  * @return {p5.Element}
  */
 p5.Element.prototype.class = function(c) {
-  this.elt.className += ' '+c;
-  return this;
+  if (arguments.length === 0) {
+    return this.elt.className;
+  } else {
+    this.elt.className = c;
+    this.width = this.elt.offsetWidth;
+    this.height = this.elt.offsetHeight;
+    return this;
+  }
 };
 
 /**
@@ -162,9 +181,44 @@ p5.Element.prototype.mousePressed = function (fxn) {
  * @param  {Function} fxn function to be fired when mouse wheel is
  *                    scrolled over the element.
  * @return {p5.Element}
+ * @example
+ * <div class='norender'><code>
+ * var cnv;
+ * var d;
+ * var g;
+ * function setup() {
+ *   cnv = createCanvas(100, 100);
+ *   cnv.mouseWheel(changeSize); // attach listener for
+ *                               // activity on canvas only
+ *   d = 10;
+ *   g = 100;
+ * }
+ *
+ * function draw() {
+ *   background(g);
+ *   ellipse(width/2, height/2, d, d);
+ * }
+ *
+ * // this function fires with mousewheel movement
+ * // anywhere on screen
+ * function mouseWheel() {
+ *   g = g + 10;
+ * }
+ *
+ * // this function fires with mousewheel movement
+ * // over canvas only
+ * function changeSize() {
+ *   if (event.wheelDelta > 0) {
+ *     d = d + 10;
+ *   } else {
+ *     d = d - 10;
+ *   }
+ * }
+ * </code></div>
+ *
  */
 p5.Element.prototype.mouseWheel = function (fxn) {
-  attachListener('mousewheel', fxn, this);
+  attachListener('wheel', fxn, this);
   return this;
 };
 
@@ -177,6 +231,37 @@ p5.Element.prototype.mouseWheel = function (fxn) {
  * @param  {Function} fxn function to be fired when mouse is
  *                    released over the element.
  * @return {p5.Element}
+ * @example
+ * <div class='norender'><code>
+ * var cnv;
+ * var d;
+ * var g;
+ * function setup() {
+ *   cnv = createCanvas(100, 100);
+ *   cnv.mouseReleased(changeGray); // attach listener for
+ *                                  // activity on canvas only
+ *   d = 10;
+ *   g = 100;
+ * }
+ *
+ * function draw() {
+ *   background(g);
+ *   ellipse(width/2, height/2, d, d);
+ * }
+ *
+ * // this function fires after the mouse has been
+ * // released
+ * function mouseReleased() {
+ *   d = d + 10;
+ * }
+ *
+ * // this function fires after the mouse has been
+ * // released while on canvas
+ * function changeGray() {
+ *   g = random(0, 255);
+ * }
+ * </code></div>
+ *
  */
 p5.Element.prototype.mouseReleased = function (fxn) {
   attachListener('mouseup', fxn, this);
@@ -194,6 +279,36 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  * @param  {Function} fxn function to be fired when mouse is
  *                    clicked over the element.
  * @return {p5.Element}
+ * @example
+ * var cnv;
+ * var d;
+ * var g;
+ * function setup() {
+ *   cnv = createCanvas(100, 100);
+ *   cnv.mouseClicked(changeGray); // attach listener for
+ *                                 // activity on canvas only
+ *   d = 10;
+ *   g = 100;
+ * }
+ *
+ * function draw() {
+ *   background(g);
+ *   ellipse(width/2, height/2, d, d);
+ * }
+ *
+ * // this function fires after the mouse has been
+ * // clicked anywhere
+ * function mouseClicked() {
+ *   d = d + 10;
+ * }
+ *
+ * // this function fires after the mouse has been
+ * // clicked on canvas
+ * function changeGray() {
+ *   g = random(0, 255);
+ * }
+ * </code></div>
+ *
  */
 p5.Element.prototype.mouseClicked = function (fxn) {
   attachListener('click', fxn, this);
@@ -209,6 +324,43 @@ p5.Element.prototype.mouseClicked = function (fxn) {
  * @param  {Function} fxn function to be fired when mouse is
  *                    moved over the element.
  * @return {p5.Element}
+ * @example
+ * <div class='norender'><code>
+ * var cnv;
+ * var d = 30;
+ * var g;
+ * function setup() {
+ *   cnv = createCanvas(100, 100);
+ *   cnv.mouseMoved(changeSize); // attach listener for
+ *                               // activity on canvas only
+ *   d = 10;
+ *   g = 100;
+ * }
+ *
+ * function draw() {
+ *   background(g);
+ *   fill(200);
+ *   ellipse(width/2, height/2, d, d);
+ * }
+ *
+ * // this function fires when mouse moves anywhere on
+ * // page
+ * function mouseMoved() {
+ *   g = g + 5;
+ *   if (g > 255) {
+ *     g = 0;
+ *   }
+ * }
+ *
+ * // this function fires when mouse moves over canvas
+ * function changeSize() {
+ *   d = d + 2;
+ *   if (d > 100) {
+ *     d = 0;
+ *   }
+ * }
+ * </code></div>
+ *
  */
 p5.Element.prototype.mouseMoved = function (fxn) {
   attachListener('mousemove', fxn, this);
@@ -225,6 +377,29 @@ p5.Element.prototype.mouseMoved = function (fxn) {
  * @param  {Function} fxn function to be fired when mouse is
  *                    moved over the element.
  * @return {p5.Element}
+ * @example
+ * <div class='norender'><code>
+ * var cnv;
+ * var d;
+ * var g;
+ * function setup() {
+ *   cnv = createCanvas(100, 100);
+ *   cnv.mouseOver(changeGray);
+ *   d = 10;
+ * }
+ *
+ * function draw() {
+ *   ellipse(width/2, height/2, d, d);
+ * }
+ *
+ * function changeGray() {
+ *   d = d + 10;
+ *   if (d > 100) {
+ *     d = 0;
+ *   }
+ * }
+ * </code></div>
+ *
  */
 p5.Element.prototype.mouseOver = function (fxn) {
   attachListener('mouseover', fxn, this);
@@ -233,16 +408,92 @@ p5.Element.prototype.mouseOver = function (fxn) {
 
 
 /**
- * The .changed() function is called when the value of an element is changed.
+ * The .changed() function is called when the value of an
+ * element is changed.
  * This can be used to attach an element specific event listener.
  *
  * @method changed
- * @param  {Function} fxn function to be fired when mouse is
- *                    moved over the element.
+ * @param  {Function} fxn function to be fired when the value of an
+ * element changes.
  * @return {p5.Element}
+ * @example
+ * <div><code>
+ * var sel;
+ *
+ * function setup() {
+ *   textAlign(CENTER);
+ *   background(200);
+ *   sel = createSelect();
+ *   sel.position(10, 10);
+ *   sel.option('pear');
+ *   sel.option('kiwi');
+ *   sel.option('grape');
+ *   sel.changed(mySelectEvent);
+ * }
+ *
+ * function mySelectEvent() {
+ *   var item = sel.value();
+ *   background(200);
+ *   text("it's a "+item+"!", 50, 50);
+ * }
+ * </code></div>
+ * <div><code>
+ * var checkbox;
+ * var cnv;
+ *
+ * function setup() {
+ *   checkbox = createCheckbox(" fill");
+ *   checkbox.changed(changeFill);
+ *   cnv = createCanvas(100, 100);
+ *   cnv.position(0, 30);
+ *   noFill();
+ * }
+ *
+ * function draw() {
+ *   background(200);
+ *   ellipse(50, 50, 50, 50);
+ * }
+ *
+ * function changeFill() {
+ *   if (checkbox.checked()) {
+ *     fill(0);
+ *   } else {
+ *     noFill();
+ *   }
+ * }
+ * </code></div>
  */
 p5.Element.prototype.changed = function (fxn) {
   attachListener('change', fxn, this);
+  return this;
+};
+
+/**
+ * The .input() function is called when any user input is
+ * detected with an element. The input event is often used
+ * to detect keystrokes in a input element, or changes on a
+ * slider element. This can be used to attach an element specific
+ * event listener.
+ *
+ * @method input
+ * @param  {Function} fxn function to be fired on user input.
+ * @return {p5.Element}
+ * @example
+ * <div class='norender'><code>
+ * // Open your console to see the output
+ * function setup() {
+ *   var inp = createInput('');
+ *   inp.input(myInputEvent);
+ * }
+ *
+ * function myInputEvent() {
+ *   console.log('you are typing: ', this.value());
+ * }
+ * </code></div>
+ *
+ */
+p5.Element.prototype.input = function (fxn) {
+  attachListener('input', fxn, this);
   return this;
 };
 
@@ -255,6 +506,29 @@ p5.Element.prototype.changed = function (fxn) {
  * @param  {Function} fxn function to be fired when mouse is
  *                    moved off the element.
  * @return {p5.Element}
+ * @example
+ * <div class='norender'><code>
+ * var cnv;
+ * var d;
+ * var g;
+ * function setup() {
+ *   cnv = createCanvas(100, 100);
+ *   cnv.mouseOut(changeGray);
+ *   d = 10;
+ * }
+ *
+ * function draw() {
+ *   ellipse(width/2, height/2, d, d);
+ * }
+ *
+ * function changeGray() {
+ *   d = d + 10;
+ *   if (d > 100) {
+ *     d = 0;
+ *   }
+ * }
+ * </code></div>
+ *
  */
 p5.Element.prototype.mouseOut = function (fxn) {
   attachListener('mouseout', fxn, this);
@@ -477,9 +751,9 @@ p5.Element.prototype.drop = function (callback, fxn) {
         reader.onload = makeLoader(f);
 
 
-        // Text of data?
+        // Text or data?
         // This should likely be improved
-        if (f.type === 'text') {
+        if (f.type.indexOf('text') > -1) {
           reader.readAsText(f);
         } else {
           reader.readAsDataURL(f);

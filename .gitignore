@@ -4,6 +4,9 @@ node_modules/*
 experiments/*
 lib_old/*
 lib/p5.*
+lib/addons/p5.dom.min.js
 docs/reference/*
 docs/yuidoc-p5-theme/assets/js/reference.js*
 !*.gitkeep
+examples/3d/tutorial
+.idea

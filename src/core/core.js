@@ -80,9 +80,10 @@ var p5 = function(sketch, node, sync) {
    * define initial environment properties such as screen size and background
    * color and to load media such as images and fonts as the program starts.
    * There can only be one setup() function for each program and it shouldn't
-   * be called again after its initial execution. Note: Variables declared
-   * within setup() are not accessible within other functions, including
-   * draw().
+   * be called again after its initial execution.
+   * <br><br>
+   * Note: Variables declared within setup() are not accessible within other
+   * functions, including draw().
    *
    * @method setup
    * @example
@@ -106,15 +107,15 @@ var p5 = function(sketch, node, sync) {
    * the lines of code contained inside its block until the program is stopped
    * or noLoop() is called. draw() is called automatically and should never be
    * called explicitly.
-   *
+   * <br><br>
    * It should always be controlled with noLoop(), redraw() and loop(). After
    * noLoop() stops the code in draw() from executing, redraw() causes the
    * code inside draw() to execute once, and loop() will cause the code
    * inside draw() to resume executing continuously.
-   *
+   * <br><br>
    * The number of times draw() executes in each second may be controlled with
    * the frameRate() function.
-   *
+   * <br><br>
    * There can only be one draw() function for each sketch, and draw() must
    * exist if you want the code to run continuously, or to process events such
    * as mousePressed(). Sometimes, you might have an empty call to draw() in
@@ -144,7 +145,8 @@ var p5 = function(sketch, node, sync) {
   //////////////////////////////////////////////
 
   this._setupDone = false;
-  this.pixelDensity = window.devicePixelRatio || 1; // for handling hidpi
+  // for handling hidpi
+  this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
   this._userNode = node;
   this._curElement = null;
   this._elements = [];
@@ -161,6 +163,8 @@ var p5 = function(sketch, node, sync) {
     'mousemove': null,
     'mousedown': null,
     'mouseup': null,
+    'dragend': null,
+    'dragover': null,
     'click': null,
     'mouseover': null,
     'mouseout': null,
@@ -176,18 +180,12 @@ var p5 = function(sketch, node, sync) {
 
   if (window.DeviceOrientationEvent) {
     this._events.deviceorientation = null;
-  } else if (window.DeviceMotionEvent) {
+  }
+  if (window.DeviceMotionEvent && !window._isNodeWebkit) {
     this._events.devicemotion = null;
-  } else {
-    this._events.MozOrientation = null;
   }
 
-  //FF doesn't recognize mousewheel as of FF3.x
-  if (/Firefox/i.test(navigator.userAgent)) {
-    this._events.DOMMouseScroll = null;
-  } else {
-    this._events.mousewheel = null;
-  }
+  this._events.wheel = null;
 
 
   this._loadingScreenId = 'p5_loading';
@@ -239,6 +237,7 @@ var p5 = function(sketch, node, sync) {
       }
 
       userPreload();
+      this._runIfPreloadsAreDone();
     } else {
       this._setup();
       this._runFrames();
@@ -246,9 +245,8 @@ var p5 = function(sketch, node, sync) {
     }
   }.bind(this);
 
-  this._decrementPreload = function(){
+  this._runIfPreloadsAreDone = function(){
     var context = this._isGlobal ? window : this;
-    context._setProperty('_preloadCount', context._preloadCount - 1);
     if (context._preloadCount === 0) {
       var loadingScreen = document.getElementById(context._loadingScreenId);
       if (loadingScreen) {
@@ -258,6 +256,12 @@ var p5 = function(sketch, node, sync) {
       context._runFrames();
       context._draw();
     }
+  };
+
+  this._decrementPreload = function(){
+    var context = this._isGlobal ? window : this;
+    context._setProperty('_preloadCount', context._preloadCount - 1);
+    context._runIfPreloadsAreDone();
   };
 
   this._wrapPreload = function(obj, fnName){
@@ -283,6 +287,9 @@ var p5 = function(sketch, node, sync) {
     if (typeof context.preload === 'function') {
       for (var f in this._preloadMethods) {
         context[f] = this._preloadMethods[f][f];
+        if (context[f] && this) {
+          context[f] = context[f].bind(this);
+        }
       }
     }
 
@@ -322,20 +329,20 @@ var p5 = function(sketch, node, sync) {
     // if looping is off, so we bypass the time delay if that
     // is the case.
     var epsilon = 5;
-    if (!this.loop ||
+    if (!this._loop ||
         time_since_last >= target_time_between_frames - epsilon) {
+
+      //mandatory update values(matrixs and stack) for 3d
+      if(this._renderer.isP3D){
+        this._renderer._update();
+      }
+
       this._setProperty('frameCount', this.frameCount + 1);
+      this._updateMouseCoords();
+      this._updateTouchCoords();
       this.redraw();
-      this._updatePAccelerations();
-      this._updatePMouseCoords();
-      this._updatePTouchCoords();
       this._frameRate = 1000.0/(now - this._lastFrameTime);
       this._lastFrameTime = now;
-    }
-
-    //mandatory update values(matrixs and stack) for 3d
-    if(this._graphics.isP3D){
-      this._graphics._update();
     }
 
     // get notified the next time the browser gives us
@@ -477,13 +484,17 @@ var p5 = function(sketch, node, sync) {
     }
   }
 
-  var self = this;
-  window.addEventListener('focus', function() {
-    self._setProperty('focused', true);
-  });
-
-  window.addEventListener('blur', function() {
-    self._setProperty('focused', false);
+  var focusHandler = function() {
+    this._setProperty('focused', true);
+  }.bind(this);
+  var blurHandler = function() {
+    this._setProperty('focused', false);
+  }.bind(this);
+  window.addEventListener('focus', focusHandler);
+  window.addEventListener('blur', blurHandler);
+  this.registerMethod('remove', function() {
+    window.removeEventListener('focus', focusHandler);
+    window.removeEventListener('blur', blurHandler);
   });
 
   // TODO: ???

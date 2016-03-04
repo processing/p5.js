@@ -13,21 +13,20 @@ p5.prototype.exit = function() {
   throw 'exit() not implemented, see remove()';
 };
 /**
- * <p>Stops p5.js from continuously executing the code within draw().
+ * Stops p5.js from continuously executing the code within draw().
  * If loop() is called, the code in draw() begins to run continuously again.
  * If using noLoop() in setup(), it should be the last line inside the block.
- * </p>
- *
- * <p>When noLoop() is used, it's not possible to manipulate or access the
+ * <br><br>
+ * When noLoop() is used, it's not possible to manipulate or access the
  * screen inside event handling functions such as mousePressed() or
  * keyPressed(). Instead, use those functions to call redraw() or loop(),
  * which will run draw(), which can update the screen properly. This means
  * that when noLoop() has been called, no drawing can happen, and functions
- * like saveFrame() or loadPixels() may not be used.</p>
- *
- * <p>Note that if the sketch is resized, redraw() will be called to update
+ * like saveFrame() or loadPixels() may not be used.
+ * <br><br>
+ * Note that if the sketch is resized, redraw() will be called to update
  * the sketch, even after noLoop() has been specified. Otherwise, the sketch
- * would enter an odd state until loop() was called.</p>
+ * would enter an odd state until loop() was called.
  *
  * @method noLoop
  * @example
@@ -160,19 +159,19 @@ p5.prototype.loop = function() {
  * </div>
  */
 p5.prototype.push = function () {
-  this._graphics.push();
+  this._renderer.push();
   this._styles.push({
-    doStroke: this._graphics._doStroke,
-    doFill: this._graphics._doFill,
-    tint: this._graphics._tint,
-    imageMode: this._graphics._imageMode,
-    rectMode: this._graphics._rectMode,
-    ellipseMode: this._graphics._ellipseMode,
-    colorMode: this._graphics._colorMode,
-    textFont: this._graphics._textFont,
-    textLeading: this._graphics._textLeading,
-    textSize: this._graphics._textSize,
-    textStyle: this._graphics._textStyle
+    _doStroke: this._renderer._doStroke,
+    _doFill: this._renderer._doFill,
+    _tint: this._renderer._tint,
+    _imageMode: this._renderer._imageMode,
+    _rectMode: this._renderer._rectMode,
+    _ellipseMode: this._renderer._ellipseMode,
+    _colorMode: this._renderer._colorMode,
+    _textFont: this._renderer._textFont,
+    _textLeading: this._renderer._textLeading,
+    _textSize: this._renderer._textSize,
+    _textStyle: this._renderer._textStyle
   });
 };
 
@@ -228,19 +227,11 @@ p5.prototype.push = function () {
  * </div>
  */
 p5.prototype.pop = function () {
-  this._graphics.pop();
+  this._renderer.pop();
   var lastS = this._styles.pop();
-  this._graphics._doStroke = lastS.doStroke;
-  this._graphics._doFill = lastS.doFill;
-  this._graphics._tint = lastS.tint;
-  this._graphics._imageMode = lastS.imageMode;
-  this._graphics._rectMode = lastS.rectMode;
-  this._graphics._ellipseMode = lastS.ellipseMode;
-  this._graphics._colorMode = lastS.colorMode;
-  this._graphics._textFont = lastS.textFont;
-  this._graphics._textLeading = lastS.textLeading;
-  this._graphics._textSize = lastS.textSize;
-  this._graphics._textStyle = lastS.textStyle;
+  for(var prop in lastS){
+    this._renderer[prop] = lastS[prop];
+  }
 };
 
 p5.prototype.pushStyle = function() {
@@ -256,12 +247,12 @@ p5.prototype.popStyle = function() {
  * Executes the code within draw() one time. This functions allows the
  * program to update the display window only when necessary, for example
  * when an event registered by mousePressed() or keyPressed() occurs.
- *
+ * <br><br>
  * In structuring a program, it only makes sense to call redraw() within
  * events such as mousePressed(). This is because redraw() does not run
  * draw() immediately (it only sets a flag that indicates an update is
  * needed).
- *
+ * <br><br>
  * The redraw() function does not work properly when called inside draw().
  * To enable/disable animations, use loop() and noLoop().
  *
@@ -292,7 +283,7 @@ p5.prototype.redraw = function () {
   if (typeof userDraw === 'function') {
     this.push();
     if (typeof userSetup === 'undefined') {
-      this.scale(this.pixelDensity, this.pixelDensity);
+      this.scale(this._pixelDensity, this._pixelDensity);
     }
     var self = this;
     this._registeredMethods.pre.forEach(function (f) {

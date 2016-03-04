@@ -11,68 +11,74 @@ var p5 = require('../core/core');
 //require('./p5.Texture');
 
 /**
- * normal material for geometry
+ * Normal material for geometry
  * @method normalMaterial
- * @return {p5}
+ * @return {p5}                the p5 object
  * @example
  * <div>
  * <code>
- * //please call this function before doing any transformation
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
+ *
  * function draw(){
- *  background(255);
+ *  background(0);
  *  normalMaterial();
- *  sphere(100);
+ *  sphere(200);
  * }
  * </code>
  * </div>
  */
 p5.prototype.normalMaterial = function(){
-  this._graphics._getShader('normalVert', 'normalFrag');
+  this._renderer._getShader('normalVert', 'normalFrag');
   return this;
 };
 
 /**
- * texture for geometry
+ * Texture for geometry
  * @method texture
- * @return {p5}
+ * @return {p5}                the p5 object
  * @example
  * <div>
  * <code>
  * var img;
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
- *   img = loadImage("assets/cat.jpg");
+ *   createCanvas(100, 100, WEBGL);
+ *   img = loadImage("assets/laDefense.jpg");
  * }
+ *
  * function draw(){
- *   background(255);
- *   rotateZ(frameCount * 0.02);
- *   rotateX(frameCount * 0.02);
- *   rotateY(frameCount * 0.02);
- *   // pass image as texture
+ *   background(0);
+ *   rotateZ(frameCount * 0.01);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   //pass image as texture
  *   texture(img);
- *   box(60);
+ *   box(200, 200, 200);
  * }
  * </code>
  * </div>
  */
 p5.prototype.texture = function(image){
-  var gl = this._graphics.GL;
-  var shaderProgram = this._graphics._getShader('normalVert',
-    'textureFrag');
+  var gl = this._renderer.GL;
+  var shaderProgram = this._renderer._getShader('lightVert',
+    'lightTextureFrag');
   gl.useProgram(shaderProgram);
-  var tex = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, tex);
-  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-
-  // Currently buggy, likely bc of p5 object types
-  // if(!this._isPowerOf2(image.width) || !this._isPowerOf2(image.height)){
-  //   image.width = _nextHighestPOT(image.width);
-  //   image.height = _nextHighestPOT(image.height);
-  // }
   if (image instanceof p5.Image) {
+    //check if image is already used as texture
+    if(!image.isTexture){
+      //createTexture and set isTexture to true
+      var tex = gl.createTexture();
+      image.createTexture(tex);
+      gl.bindTexture(gl.TEXTURE_2D, tex);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
+      image._setProperty('isTexture', true);
+    }
+    //otherwise we're good to bind texture without creating
+    //a new one on the gl
+    else {
+      //TODO
+    }
     image.loadPixels();
     var data = new Uint8Array(image.pixels);
     gl.texImage2D(gl.TEXTURE_2D, 0,
@@ -92,22 +98,26 @@ p5.prototype.texture = function(image){
   if (_isPowerOf2(image.width) && _isPowerOf2(image.height)) {
     gl.generateMipmap(gl.TEXTURE_2D);
   } else {
-    image.width = _nextHighestPOT(image.width);
-    image.height = _nextHighestPOT(image.height);
-    gl.texParameteri(gl.TETXURE_2D,
-      gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TETXURE_2D,
-      gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TETXURE_2D,
-      gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    //@TODO this is problematic
+    //image.width = _nextHighestPOT(image.width);
+    //image.height = _nextHighestPOT(image.height);
+    gl.texParameteri(gl.TEXTURE_2D,
+    gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,
+    gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D,
+    gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D,
+    gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
   }
   //this is where we'd activate multi textures
   //eg. gl.activeTexture(gl.TEXTURE0 + (unit || 0));
   //but for now we just have a single texture.
   //@TODO need to extend this functionality
-  gl.activeTexture(gl.TEXTURE0 + 0);
-  gl.bindTexture(gl.TEXTURE_2D, tex);
+  //gl.activeTexture(gl.TEXTURE0 + 0);
+  //gl.bindTexture(gl.TEXTURE_2D, tex);
   gl.uniform1i(gl.getUniformLocation(shaderProgram, 'uSampler'), 0);
+  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), true);
   return this;
 };
 
@@ -127,16 +137,16 @@ function _isPowerOf2 (value){
  * @param  {Number} value [description]
  * @return {Number}       [description]
  */
-function _nextHighestPOT (value){
-  --value;
-  for (var i = 1; i < 32; i <<= 1) {
-    value = value | value >> i;
-  }
-  return value + 1;
-}
+// function _nextHighestPOT (value){
+//   --value;
+//   for (var i = 1; i < 32; i <<= 1) {
+//     value = value | value >> i;
+//   }
+//   return value + 1;
+// }
 
 /**
- * basic material for geometry with a given color
+ * Basic material for geometry with a given color
  * @method  basicMaterial
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
@@ -144,35 +154,37 @@ function _nextHighestPOT (value){
  * @param  {Number}            [v2] optional: green or saturation value
  * @param  {Number}            [v3] optional: blue or brightness value
  * @param  {Number}            [a]  optional: opacity
- * @return {p5}
+ * @return {p5}                the p5 object
  * @example
  * <div>
  * <code>
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
+ *
  * function draw(){
  *  background(0);
- *  rotateX(frameCount * 0.02);
- *  rotateZ(frameCount * 0.02);
  *  basicMaterial(250, 0, 0);
- *  box(100);
+ *  rotateX(frameCount * 0.01);
+ *  rotateY(frameCount * 0.01);
+ *  rotateZ(frameCount * 0.01);
+ *  box(200, 200, 200);
  * }
  * </code>
  * </div>
  */
 p5.prototype.basicMaterial = function(v1, v2, v3, a){
-  var gl = this._graphics.GL;
+  var gl = this._renderer.GL;
 
-  var shaderProgram = this._graphics._getShader('normalVert', 'basicFrag');
+  var shaderProgram = this._renderer._getShader('normalVert', 'basicFrag');
 
   gl.useProgram(shaderProgram);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
 
-  var color = this._graphics._pInst.color.apply(
-    this._graphics._pInst, arguments);
-  var colors = color._normalize();
+  var color = this._renderer._pInst.color.apply(
+    this._renderer._pInst, arguments);
+  var colors = color._array;
 
   gl.uniform4f( shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);
@@ -182,7 +194,7 @@ p5.prototype.basicMaterial = function(v1, v2, v3, a){
 };
 
 /**
- * ambient material for geometry with a given color
+ * Ambient material for geometry with a given color
  * @method  ambientMaterial
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
@@ -190,33 +202,35 @@ p5.prototype.basicMaterial = function(v1, v2, v3, a){
  * @param  {Number}            [v2] optional: green or saturation value
  * @param  {Number}            [v3] optional: blue or brightness value
  * @param  {Number}            [a]  optional: opacity
- * @return {p5}
+* @return {p5}                 the p5 object
  * @example
  * <div>
  * <code>
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
  * function draw(){
  *  background(0);
+ *  ambientLight(100);
  *  pointLight(250, 250, 250, 100, 100, 0);
  *  ambientMaterial(250);
- *  sphere(100, 128);
+ *  sphere(200);
  * }
  * </code>
  * </div>
  */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
-  var gl = this._graphics.GL;
-  var shaderProgram = this._graphics._getShader('lightVert', 'lightFrag');
+  var gl = this._renderer.GL;
+  var shaderProgram =
+    this._renderer._getShader('lightVert', 'lightTextureFrag');
 
   gl.useProgram(shaderProgram);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
 
-  var color = this._graphics._pInst.color.apply(
-    this._graphics._pInst, arguments);
-  var colors = color._normalize();
+  var color = this._renderer._pInst.color.apply(
+    this._renderer._pInst, arguments);
+  var colors = color._array;
 
   gl.uniform4f(shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);
@@ -225,11 +239,13 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
     shaderProgram, 'uSpecular' );
   gl.uniform1i(shaderProgram.uSpecular, false);
 
+  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
+
   return this;
 };
 
 /**
- * specular material for geometry with a given color
+ * Specular material for geometry with a given color
  * @method specularMaterial
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
@@ -237,33 +253,35 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * @param  {Number}            [v2] optional: green or saturation value
  * @param  {Number}            [v3] optional: blue or brightness value
  * @param  {Number}            [a]  optional: opacity
- * @return {p5}
+ * @return {p5}                the p5 object
  * @example
  * <div>
  * <code>
  * function setup(){
- *   createCanvas(windowWidth, windowHeight, 'webgl');
+ *   createCanvas(100, 100, WEBGL);
  * }
  * function draw(){
  *  background(0);
+ *  ambientLight(100);
  *  pointLight(250, 250, 250, 100, 100, 0);
  *  specularMaterial(250);
- *  sphere(100, 128);
+ *  sphere(200);
  * }
  * </code>
  * </div>
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
-  var gl = this._graphics.GL;
-  var shaderProgram = this._graphics._getShader('lightVert', 'lightFrag');
-
+  var gl = this._renderer.GL;
+  var shaderProgram =
+    this._renderer._getShader('lightVert', 'lightTextureFrag');
+  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
   gl.useProgram(shaderProgram);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
 
-  var color = this._graphics._pInst.color.apply(
-    this._graphics._pInst, arguments);
-  var colors = color._normalize();
+  var color = this._renderer._pInst.color.apply(
+    this._renderer._pInst, arguments);
+  var colors = color._array;
 
   gl.uniform4f(shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);

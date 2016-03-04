@@ -22,14 +22,17 @@ var Filters = require('./filters');
 
 /**
  * Creates a new p5.Image. A p5.Image is a canvas backed representation of an
- * image. p5 can display .gif, .jpg and .png images. Images may be displayed
+ * image.
+ * <br><br>
+ * p5 can display .gif, .jpg and .png images. Images may be displayed
  * in 2D and 3D space. Before an image is used, it must be loaded with the
  * loadImage() function. The p5.Image class contains fields for the width and
  * height of the image, as well as an array called pixels[] that contains the
- * values for every pixel in the image. The methods described below allow
- * easy access to the image's pixels and alpha channel and simplify the
- * process of compositing.
- *
+ * values for every pixel in the image.
+ * <br><br>
+ * The methods described below allow easy access to the image's pixels and
+ * alpha channel and simplify the process of compositing.
+ * <br><br>
  * Before using the pixels[] array, be sure to use the loadPixels() method on
  * the image to make sure that the pixel data is properly loaded.
  *
@@ -43,18 +46,54 @@ p5.Image = function(width, height){
   /**
    * Image width.
    * @property width
+   * @example
+   * <div><code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/rockies.jpg");
+   * }
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   image(img, 0, 0);
+   *   for (var i=0; i < img.width; i++) {
+   *     var c = img.get(i, img.height/2);
+   *     stroke(c);
+   *     line(i, height/2, i, height);
+   *   }
+   * }
+   * </code></div>
    */
   this.width = width;
   /**
    * Image height.
    * @property height
+   * @example
+   * <div><code>
+   * var img;
+   * function preload() {
+   *   img = loadImage("assets/rockies.jpg");
+   * }
+   *
+   * function setup() {
+   *   createCanvas(100, 100);
+   *   image(img, 0, 0);
+   *   for (var i=0; i < img.height; i++) {
+   *     var c = img.get(img.width/2, i);
+   *     stroke(c);
+   *     line(0, i, width/2, i);
+   *   }
+   * }
+   * </code></div>
    */
   this.height = height;
   this.canvas = document.createElement('canvas');
   this.canvas.width = this.width;
   this.canvas.height = this.height;
   this.drawingContext = this.canvas.getContext('2d');
-  this.pixelDensity = 1;
+  this._pixelDensity = 1;
+  //used for webgl texturing only
+  this.isTexture = false;
   /**
    * Array containing the values for all the pixels in the display window.
    * These values are numbers. This array is the size (include an appropriate
@@ -80,6 +119,7 @@ p5.Image = function(width, height){
    *     pixels[idx+3] = a;
    *   }
    * }
+   * </pre></code>
    * <br><br>
    * Before accessing this array, the data must loaded with the loadPixels()
    * function. After the array data has been modified, the updatePixels()
@@ -130,6 +170,28 @@ p5.Image.prototype._setProperty = function (prop, value) {
  * Loads the pixels data for this image into the [pixels] attribute.
  *
  * @method loadPixels
+ * @example
+ * <div><code>
+ * var myImage;
+ * var halfImage;
+ *
+ * function preload() {
+ *   myImage = loadImage("assets/rockies.jpg");
+ * }
+ *
+ * function setup() {
+ *   myImage.loadPixels();
+ *   halfImage = 4 * width * height/2;
+ *   for(var i = 0; i < halfImage; i++){
+ *     myImage.pixels[i+halfImage] = myImage.pixels[i];
+ *   }
+ *   myImage.updatePixels();
+ * }
+ *
+ * function draw() {
+ *   image(myImage, 0, 0);
+ * }
+ * </code></div>
  */
 p5.Image.prototype.loadPixels = function(){
   p5.Renderer2D.prototype.loadPixels.call(this);
@@ -148,6 +210,28 @@ p5.Image.prototype.loadPixels = function(){
  *                              underlying canvas
  * @param {Integer|undefined} h height of the target update area for the
  *                              underlying canvas
+ * @example
+ * <div><code>
+ * var myImage;
+ * var halfImage;
+ *
+ * function preload() {
+ *   myImage = loadImage("assets/rockies.jpg");
+ * }
+ *
+ * function setup() {
+ *   myImage.loadPixels();
+ *   halfImage = 4 * width * height/2;
+ *   for(var i = 0; i < halfImage; i++){
+ *     myImage.pixels[i+halfImage] = myImage.pixels[i];
+ *   }
+ *   myImage.updatePixels();
+ * }
+ *
+ * function draw() {
+ *   image(myImage, 0, 0);
+ * }
+ * </code></div>
  */
 p5.Image.prototype.updatePixels = function(x, y, w, h){
   p5.Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
@@ -170,6 +254,25 @@ p5.Image.prototype.updatePixels = function(x, y, w, h){
  * @param  {Number}               [h] height
  * @return {Array/Color | p5.Image}     color of pixel at x,y in array format
  *                                    [R, G, B, A] or p5.Image
+ * @example
+ * <div><code>
+ * var myImage;
+ * var c;
+ *
+ * function preload() {
+ *   myImage = loadImage("assets/rockies.jpg");
+ * }
+ *
+ * function setup() {
+ *   background(myImage);
+ *   noStroke();
+ *   c = myImage.get(60, 90);
+ *   fill(c);
+ *   rect(25, 25, 50, 50);
+ * }
+ *
+ * //get() returns color here
+ * </code></div>
  */
 p5.Image.prototype.get = function(x, y, w, h){
   return p5.Renderer2D.prototype.get.call(this, x, y, w, h);
@@ -245,8 +348,16 @@ p5.Image.prototype.resize = function(width, height){
   // reference to the backing canvas of a p5.Image. But since we do not
   // enforce that at the moment, I am leaving in the slower, but safer
   // implementation.
-  width = width || this.canvas.width;
-  height = height || this.canvas.height;
+
+  // auto-resize
+  if (width === 0 && height === 0) {
+    width = this.canvas.width;
+    height = this.canvas.height;
+  } else if (width === 0) {
+    width = this.canvas.width * height / this.canvas.height;
+  } else if (height === 0) {
+    height = this.canvas.height * width / this.canvas.width;
+  }
 
   var tempCanvas = document.createElement('canvas');
   tempCanvas.width = width;
@@ -290,6 +401,25 @@ p5.Image.prototype.resize = function(width, height){
  * @param  {Integer} dy Y coordinate of the destination's upper left corner
  * @param  {Integer} dw destination image width
  * @param  {Integer} dh destination image height
+ * @example
+ * <div><code>
+ * var photo;
+ * var bricks;
+ * var x;
+ * var y;
+ *
+ * function preload() {
+ *   photo = loadImage("assets/rockies.jpg");
+ *   bricks = loadImage("assets/bricks.jpg");
+ * }
+ *
+ * function setup() {
+ *   x = bricks.width/2;
+ *   y = bricks.height/2;
+ *   photo.copy(bricks, 0, 0, x, y, 0, 0, x, y);
+ *   image(photo, 0, 0);
+ * }
+ * </code></div>
  */
 p5.Image.prototype.copy = function () {
   p5.prototype.copy.apply(this, arguments);
@@ -297,21 +427,34 @@ p5.Image.prototype.copy = function () {
 
 /**
  * Masks part of an image from displaying by loading another
- * image and using it's alpha channel as an alpha channel for
+ * image and using it's blue channel as an alpha channel for
  * this image.
  *
  * @method mask
- * @param {p5.Image|undefined} srcImage source image
+ * @param {p5.Image} srcImage source image
+ * @example
+ * <div><code>
+ * var photo, maskImage;
+ * function preload() {
+ *   photo = loadImage("assets/rockies.jpg");
+ *   maskImage = loadImage("assets/mask2.png");
+ * }
  *
- * TODO: - Accept an array of alpha values.
- *       - Use other channels of an image. p5 uses the
- *       blue channel (which feels kind of arbitrary). Note: at the
- *       moment this method does not match native processings original
- *       functionality exactly.
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   photo.mask(maskImage);
+ *   image(photo, 0, 0);
+ * }
+ * </code></div>
  *
  * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
  *
  */
+// TODO: - Accept an array of alpha values.
+//       - Use other channels of an image. p5 uses the
+//       blue channel (which feels kind of arbitrary). Note: at the
+//       moment this method does not match native processings original
+//       functionality exactly.
 p5.Image.prototype.mask = function(p5Image) {
   if(p5Image === undefined){
     p5Image = this;
@@ -320,7 +463,7 @@ p5.Image.prototype.mask = function(p5Image) {
 
   var scaleFactor = 1;
   if (p5Image instanceof p5.Renderer) {
-    scaleFactor = p5Image._pInst.pixelDensity;
+    scaleFactor = p5Image._pInst._pixelDensity;
   }
 
   var copyArgs = [
@@ -348,6 +491,22 @@ p5.Image.prototype.mask = function(p5Image) {
  *                           opaque see Filters.js for docs on each available
  *                           filter
  * @param {Number|undefined} value
+ * @example
+ * <div><code>
+ * var photo1;
+ * var photo2;
+ *
+ * function preload() {
+ *   photo1 = loadImage("assets/rockies.jpg");
+ *   photo2 = loadImage("assets/rockies.jpg");
+ * }
+ *
+ * function setup() {
+ *   photo2.filter("gray");
+ *   image(photo1, 0, 0);
+ *   image(photo2, width/2, 0);
+ * }
+ * </code></div>
  */
 p5.Image.prototype.filter = function(operation, value) {
   Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
@@ -390,6 +549,24 @@ p5.Image.prototype.blend = function() {
  * @method save
  * @param {String} filename give your file a name
  * @param  {String} extension 'png' or 'jpg'
+ * @example
+ * <div><code>
+ * var photo;
+ *
+ * function preload() {
+ *   photo = loadImage("assets/rockies.jpg");
+ * }
+ *
+ * function draw() {
+ *   image(photo, 0, 0);
+ * }
+ *
+ * function keyTyped() {
+ *   if (key == 's') {
+ *     photo.save("photo", "png");
+ *   }
+ * }
+ * </code></div>
  */
 p5.Image.prototype.save = function(filename, extension) {
   var mimeType;
@@ -420,6 +597,17 @@ p5.Image.prototype.save = function(filename, extension) {
 
   //Make the browser download the file
   p5.prototype.downloadFile(imageData, filename, extension);
+};
+
+/**
+ * creates a gl texture
+ * used in WEBGL mode only
+ * @param  {[type]} tex [description]
+ * @return {[type]}     [description]
+ */
+p5.Image.prototype.createTexture = function(tex){
+  //this.texture = tex;
+  return this;
 };
 
 module.exports = p5.Image;

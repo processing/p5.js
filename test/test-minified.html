@@ -22,6 +22,7 @@
   <script src="js/bind.js" type="text/javascript" ></script>
   <script src="js/sinon.js" type="text/javascript" ></script>
   <script src="js/testRender.js" type="text/javascript" ></script>
+  <script src="js/modernizr.js" type="text/javascript" ></script>
   <script type="text/javascript" >
     // Setup chai
     var expect = chai.expect;
@@ -43,7 +44,7 @@
   <script src="unit/math/p5.Vector.js" type="text/javascript" ></script>
 
   <script src="unit/color/p5.Color.js" type="text/javascript" ></script>
-  <script src="unit/color/color_utils.js" type="text/javascript" ></script>
+  <script src="unit/color/color_conversion.js" type="text/javascript" ></script>
   <script src="unit/color/setting.js" type="text/javascript" ></script>
   <script src="unit/color/creating_reading.js" type="text/javascript" ></script>
 
@@ -54,13 +55,16 @@
   <script src="unit/io/files_input.js" type="text/javascript" ></script>
 
   <script src="unit/image/loading.js" type="text/javascript" ></script>
+  <script src="unit/3d/p5.Renderer3D.js" type="text/javascript" ></script>
 
   <!-- run mocha -->
   <script type="text/javascript" >
     // If tests run in a real browser
     // Can alternatively do a check on window.PHANTOMJS
     if (navigator.userAgent.indexOf('PhantomJS') < 0) {
+      window.addEventListener('load', function() {
         mocha.run();
+      }, false);
     }
   </script>
 </body>

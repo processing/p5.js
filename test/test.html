@@ -22,6 +22,7 @@
   <script src="js/bind.js" type="text/javascript" ></script>
   <script src="js/sinon.js" type="text/javascript" ></script>
   <script src="js/testRender.js" type="text/javascript" ></script>
+  <script src="js/modernizr.js" type="text/javascript" ></script>
   <script type="text/javascript" >
     // Setup chai
     var expect = chai.expect;
@@ -30,11 +31,14 @@
 
   <!-- Include anything you want to test -->
   <script src="../lib/p5.js" type="text/javascript" ></script>
+  <script src="../lib/addons/p5.dom.js" type="text/javascript" ></script>
 
   <!-- Spec files -->
+  <script src="unit/addons/p5.dom.js" type="text/javascript" ></script>
   <script src="unit/core/core.js" type="text/javascript" ></script>
   <!--<script src="unit/core/2d_primitives.js" type="text/javascript" ></script>-->
   <script src="unit/core/curves.js" type="text/javascript" ></script>
+  <script src="unit/core/error_helpers.js" type="text/javascript" ></script>
   <script src="unit/core/renderer.js" type="text/javascript" ></script>
 
   <script src="unit/math/calculation.js" type="text/javascript" ></script>
@@ -44,7 +48,7 @@
   <script src="unit/math/p5.Vector.js" type="text/javascript" ></script>
 
   <script src="unit/color/p5.Color.js" type="text/javascript" ></script>
-  <script src="unit/color/color_utils.js" type="text/javascript" ></script>
+  <script src="unit/color/color_conversion.js" type="text/javascript" ></script>
   <script src="unit/color/setting.js" type="text/javascript" ></script>
   <script src="unit/color/creating_reading.js" type="text/javascript" ></script>
 
@@ -57,13 +61,46 @@
   <script src="unit/image/loading.js" type="text/javascript" ></script>
 
   <script src="unit/typography/font_loading.js" type="text/javascript" ></script>
+  <script src="unit/3d/p5.Renderer3D.js" type="text/javascript" ></script>
 
   <!-- run mocha -->
   <script type="text/javascript" >
     // If tests run in a real browser
     // Can alternatively do a check on window.PHANTOMJS
     if (navigator.userAgent.indexOf('PhantomJS') < 0) {
-        mocha.run();
+      window.addEventListener('load', function() {
+        var runner = mocha.run();
+
+        // This exposes our test results to Sauce Labs. For more
+        // details, see: https://github.com/axemclion/grunt-saucelabs.
+
+        var failedTests = [];
+        runner.on('end', function(){
+          window.mochaResults = runner.stats;
+          window.mochaResults.reports = failedTests;
+        });
+
+        runner.on('fail', logFailure);
+
+        function logFailure(test, err) {
+          var flattenTitles = function(test){
+            var titles = [];
+            while (test.parent.title){
+              titles.push(test.parent.title);
+              test = test.parent;
+            }
+            return titles.reverse();
+          };
+
+          failedTests.push({
+            name: test.title,
+            result: false,
+            message: err.message,
+            stack: err.stack,
+            titles: flattenTitles(test)
+          });
+        }
+      }, false);
     }
   </script>
 </body>

@@ -25,7 +25,7 @@ var p5 = require('../core/core');
  *   print(x); // -3
  *   print(y); // 3
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.abs = Math.abs;
 
@@ -61,7 +61,7 @@ p5.prototype.abs = Math.abs;
  *   text(nfc(ax, 2,2), ax, ay - 5);
  *   text(nfc(bx,1,1), bx, by - 5);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.ceil = Math.ceil;
 
@@ -99,7 +99,7 @@ p5.prototype.ceil = Math.ceil;
  *   fill(0);
  *   ellipse(xc, 66, 9,9); // Constrained
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.constrain = function(n, low, high) {
   return Math.max(Math.min(n, high), low);
@@ -111,8 +111,10 @@ p5.prototype.constrain = function(n, low, high) {
  * @method dist
  * @param  {Number} x1 x-coordinate of the first point
  * @param  {Number} y1 y-coordinate of the first point
+ * @param  {Number} [z1] z-coordinate of the first point
  * @param  {Number} x2 x-coordinate of the second point
  * @param  {Number} y2 y-coordinate of the second point
+ * @param  {Number} [z2] z-coordinate of the second point
  * @return {Number}    distance between the two points
  * @example
  * <div><code>
@@ -143,10 +145,15 @@ p5.prototype.constrain = function(n, low, high) {
  *   pop();
  *   // Fancy!
  * }
- * </div></code>
+ * </code></div>
  */
-p5.prototype.dist = function(x1, y1, x2, y2) {
-  return Math.sqrt( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) );
+p5.prototype.dist = function(x1, y1, z1, x2, y2, z2) {
+  if (arguments.length === 4) {
+    // In the case of 2d: z1 means x2 and x2 means y2
+    return Math.sqrt( (z1-x1)*(z1-x1) + (x2-y1)*(x2-y1) );
+  } else if (arguments.length === 6) {
+    return Math.sqrt( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) );
+  }
 };
 
 /**
@@ -191,7 +198,7 @@ p5.prototype.dist = function(x1, y1, x2, y2) {
  *   line(0, 0, 0, height);
  *   line(0, height-1, width, height-1);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.exp = Math.exp;
 
@@ -226,7 +233,7 @@ p5.prototype.exp = Math.exp;
  *   text(nfc(ax, 2,2), ax, ay - 5);
  *   text(nfc(bx,1,1), bx, by - 5);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.floor = Math.floor;
 
@@ -264,7 +271,7 @@ p5.prototype.floor = Math.floor;
  *   point(d, y);
  *   point(e, y);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.lerp = function(start, stop, amt) {
   return amt*(stop-start)+start;
@@ -306,7 +313,7 @@ p5.prototype.lerp = function(start, stop, amt) {
  *   noFill();
  *   stroke(0);
  *   beginShape();
- *   for(var x=0; x<width; x++) {
+ *   for(var x=0; x < width; x++) {
  *     xValue = map(x, 0, width, 0, maxX);
  *     yValue = log(xValue);
  *     y = map(yValue, -maxY, maxY, height, 0);
@@ -316,7 +323,7 @@ p5.prototype.lerp = function(start, stop, amt) {
  *   line(0,0,0,height);
  *   line(0,height/2,width, height/2);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.log = Math.log;
 
@@ -348,7 +355,7 @@ p5.prototype.log = Math.log;
  *   line(0, 0, x2, y2);
  *   print(mag(x2, y2));  // Prints "106.30146"
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.mag = function(x, y) {
   return Math.sqrt(x*x+y*y);
@@ -356,6 +363,7 @@ p5.prototype.mag = function(x, y) {
 
 /**
  * Re-maps a number from one range to another.
+ * <br><br>
  * In the first example above, the number 25 is converted from a value in the
  * range of 0 to 100 into a value that ranges from the left edge of the
  * window (0) to the right edge (width).
@@ -369,26 +377,24 @@ p5.prototype.mag = function(x, y) {
  * @return {Number}        remapped number
  * @example
  *   <div><code>
- *     createCanvas(200, 200);
  *     var value = 25;
  *     var m = map(value, 0, 100, 0, width);
- *     ellipse(m, 200, 10, 10);
+ *     ellipse(m, 50, 10, 10);
  *   </code></div>
  *
  *   <div><code>
  *     function setup() {
- *       createCanvs(200, 200);
  *       noStroke();
  *     }
  *
  *     function draw() {
  *       background(204);
- *       var x1 = map(mouseX, 0, width, 50, 150);
- *       ellipse(x1, 75, 50, 50);
- *       var x2 = map(mouseX, 0, width, 0, 200);
- *       ellipse(x2, 125, 50, 50);
+ *       var x1 = map(mouseX, 0, width, 25, 75);
+ *       ellipse(x1, 25, 25, 25);
+ *       var x2 = map(mouseX, 0, width, 0, 100);
+ *       ellipse(x2, 75, 25, 25);
  *     }
- *   </div></code>
+ *   </code></div>
  */
 p5.prototype.map = function(n, start1, stop1, start2, stop2) {
   return ((n-start1)/(stop1-start1))*(stop2-start2)+start2;
@@ -423,7 +429,7 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2) {
  *   textSize(32);
  *   text(max(numArray), maxX, maxY);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.max = function() {
   if (arguments[0] instanceof Array) {
@@ -462,7 +468,7 @@ p5.prototype.max = function() {
  *   textSize(32);
  *   text(min(numArray), maxX, maxY);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.min = function() {
   if (arguments[0] instanceof Array) {
@@ -514,7 +520,7 @@ p5.prototype.min = function() {
  *   normalX = 20;
  *   text(normalized, normalX, normalY);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.norm = function(n, start, stop) {
   return this.map(n, start, stop, 0, 1);
@@ -546,7 +552,7 @@ p5.prototype.norm = function(n, start, stop) {
  *
  *   ellipse(eLoc*8, eLoc*8, pow(eSize, 4), pow(eSize, 4));
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.pow = Math.pow;
 
@@ -581,7 +587,7 @@ p5.prototype.pow = Math.pow;
  *   text(nfc(ax, 2,2), ax, ay - 5);
  *   text(nfc(bx,1,1), bx, by - 5);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.round = Math.round;
 
@@ -616,12 +622,13 @@ p5.prototype.round = Math.round;
  *   line(0, height/2, width, height/2);
  *
  *   // Draw text.
+ *   var spacing = 15;
  *   noStroke();
  *   fill(0);
  *   text("x = " + x1, 0, y1 + spacing);
- *   text("sqrt(x) = " + x2, 0, y2 + spacing);
+ *   text("sq(x) = " + x2, 0, y2 + spacing);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.sq = function(n) { return n*n; };
 
@@ -663,7 +670,7 @@ p5.prototype.sq = function(n) { return n*n; };
  *   text("x = " + x1, 0, y1 + spacing);
  *   text("sqrt(x) = " + x2, 0, y2 + spacing);
  * }
- * </div></code>
+ * </code></div>
  */
 p5.prototype.sqrt = Math.sqrt;
 

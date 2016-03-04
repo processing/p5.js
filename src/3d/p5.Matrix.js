@@ -1,6 +1,10 @@
 /**
 * @requires constants
 * @todo see methods below needing further implementation.
+* future consideration: implement SIMD optimizations
+* when browser compatibility becomes available
+* https://developer.mozilla.org/en-US/docs/Web/JavaScript/
+*   Reference/Global_Objects/SIMD
 */
 
 'use strict';
@@ -15,7 +19,7 @@ var GLMAT_ARRAY_TYPE = (
 /**
  * A class to describe a 4x4 matrix
  * for model and view matrix manipulation in the p5js webgl renderer.
- * @class p5.Matrix
+ * class p5.Matrix
  * @constructor
  * @param {Array} [mat4] array literal of our 4x4 matrix
  */
@@ -330,52 +334,46 @@ p5.Matrix.prototype.mult = function(multMatrix){
 
 /**
  * scales a p5.Matrix by scalars or a vector
- * @param  {p5.Vector | Array | Numbers}
+ * @param  {p5.Vector | Array }
  *                      vector to scale by
  * @return {p5.Matrix}  this
  */
 p5.Matrix.prototype.scale = function() {
   var x,y,z;
+  var args = new Array(arguments.length);
+  for(var i = 0; i < args.length; i++) {
+    args[i] = arguments[i];
+  }
   //if our 1st arg is a type p5.Vector
-  if (arguments[0] instanceof p5.Vector){
-    x = arguments[0].x;
-    y = arguments[0].y;
-    z = arguments[0].z;
+  if (args[0] instanceof p5.Vector){
+    x = args[0].x;
+    y = args[0].y;
+    z = args[0].z;
   }
   //otherwise if it's an array
-  else if (arguments[0] instanceof Array){
-    x = arguments[0][0];
-    y = arguments[0][1];
-    z = arguments[0][2];
+  else if (args[0] instanceof Array){
+    x = args[0][0];
+    y = args[0][1];
+    z = args[0][2];
   }
-  //otherwise it's probably some numbers
-  else {
-    //short circuit eval to make sure we maintain
-    //component size
-    x = arguments[0] || 1;
-    y = arguments[1] || 1;
-    z = arguments[2] || 1;
-  }
-
   var _dest = new GLMAT_ARRAY_TYPE(16);
+  _dest[0] = this.mat4[0] * x;
+  _dest[1] = this.mat4[1] * x;
+  _dest[2] = this.mat4[2] * x;
+  _dest[3] = this.mat4[3] * x;
+  _dest[4] = this.mat4[4] * y;
+  _dest[5] = this.mat4[5] * y;
+  _dest[6] = this.mat4[6] * y;
+  _dest[7] = this.mat4[7] * y;
+  _dest[8] = this.mat4[8] * z;
+  _dest[9] = this.mat4[9] * z;
+  _dest[10] = this.mat4[10] * z;
+  _dest[11] = this.mat4[11] * z;
+  _dest[12] = this.mat4[12];
+  _dest[13] = this.mat4[13];
+  _dest[14] = this.mat4[14];
+  _dest[15] = this.mat4[15];
 
-  for (var i = 0; i < this.mat4.length; i++) {
-    var row = i % 4;
-    switch(row){
-    case 0:
-      _dest[i] = this.mat4[i]*x;
-      break;
-    case 1:
-      _dest[i] = this.mat4[i]*y;
-      break;
-    case 2:
-      _dest[i] = this.mat4[i]*z;
-      break;
-    case 3:
-      _dest[i] = this.mat4[i];
-      break;
-    }
-  }
   this.mat4 = _dest;
   return this;
 };
@@ -468,7 +466,7 @@ p5.Matrix.prototype.rotate = function(a, axis){
 p5.Matrix.prototype.translate = function(v){
   var x = v[0],
     y = v[1],
-    z = v[2];
+    z = v[2] || 0;
   this.mat4[12] =
     this.mat4[0] * x +this.mat4[4] * y +this.mat4[8] * z +this.mat4[12];
   this.mat4[13] =
