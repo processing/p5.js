@@ -51,7 +51,7 @@ p5.Renderer2D.prototype.background = function() {
   } else {
     var curFill = this.drawingContext.fillStyle;
     // create background rect
-    var color = this._pInst.color.apply(this._pInst, arguments);
+    var color = this._pInst.color.apply(this, arguments);
     var newFill = color.toString();
     this.drawingContext.fillStyle = newFill;
     this.drawingContext.fillRect(0, 0, this.width, this.height);
@@ -68,13 +68,13 @@ p5.Renderer2D.prototype.clear = function() {
 p5.Renderer2D.prototype.fill = function() {
 
   var ctx = this.drawingContext;
-  var color = this._pInst.color.apply(this._pInst, arguments);
+  var color = this._pInst.color.apply(this, arguments);
   ctx.fillStyle = color.toString();
 };
 
 p5.Renderer2D.prototype.stroke = function() {
   var ctx = this.drawingContext;
-  var color = this._pInst.color.apply(this._pInst, arguments);
+  var color = this._pInst.color.apply(this, arguments);
   ctx.strokeStyle = color.toString();
 };
 
@@ -87,7 +87,7 @@ p5.Renderer2D.prototype.image =
   var cnv;
   try {
     if (this._tint) {
-      if (img instanceof p5.MediaElement) {
+      if (p5.MediaElement && img instanceof p5.MediaElement) {
         img.loadPixels();
       }
       if (img.canvas) {

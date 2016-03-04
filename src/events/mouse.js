@@ -12,6 +12,17 @@
 var p5 = require('../core/core');
 var constants = require('../core/constants');
 
+/*
+ * These are helper vars that store the mouseX and mouseY vals
+ * between the time that a mouse event happens and the next frame
+ * of draw. This is done to deal with the asynchronicity of event
+ * calls interacting with the draw loop. When a mouse event occurs
+ * the _nextMouseX/Y vars are updated, then on each call of draw, mouseX/Y
+ * and pmouseX/Y are updated using the _nextMouseX/Y vals.
+ */
+p5.prototype._nextMouseX = 0;
+p5.prototype._nextMouseY = 0;
+
 /**
  * The system variable mouseX always contains the current horizontal
  * position of the mouse, relative to (0, 0) of the canvas.
@@ -300,26 +311,28 @@ p5.prototype.mouseButton = 0;
 p5.prototype.mouseIsPressed = false;
 p5.prototype.isMousePressed = false; // both are supported
 
-p5.prototype._updateMouseCoords = function(e) {
+p5.prototype._updateNextMouseCoords = function(e) {
   if(e.type === 'touchstart' ||
      e.type === 'touchmove' ||
      e.type === 'touchend') {
-    this._setProperty('mouseX', this.touchX);
-    this._setProperty('mouseY', this.touchY);
+    this._setProperty('_nextMouseX', this._nextTouchX);
+    this._setProperty('_nextMouseY', this._nextTouchY);
   } else {
     if(this._curElement !== null) {
       var mousePos = getMousePos(this._curElement.elt, e);
-      this._setProperty('mouseX', mousePos.x);
-      this._setProperty('mouseY', mousePos.y);
+      this._setProperty('_nextMouseX', mousePos.x);
+      this._setProperty('_nextMouseY', mousePos.y);
     }
   }
   this._setProperty('winMouseX', e.pageX);
   this._setProperty('winMouseY', e.pageY);
 };
 
-p5.prototype._updatePMouseCoords = function() {
+p5.prototype._updateMouseCoords = function() {
   this._setProperty('pmouseX', this.mouseX);
   this._setProperty('pmouseY', this.mouseY);
+  this._setProperty('mouseX', this._nextMouseX);
+  this._setProperty('mouseY', this._nextMouseY);
   this._setProperty('pwinMouseX', this.winMouseX);
   this._setProperty('pwinMouseY', this.winMouseY);
 };
@@ -339,10 +352,6 @@ p5.prototype._setMouseButton = function(e) {
     this._setProperty('mouseButton', constants.RIGHT);
   } else {
     this._setProperty('mouseButton', constants.LEFT);
-    if(e.type === 'touchstart' || e.type === 'touchmove') {
-      this._setProperty('mouseX', this.touchX);
-      this._setProperty('mouseY', this.touchY);
-    }
   }
 };
 
@@ -427,8 +436,8 @@ p5.prototype._setMouseButton = function(e) {
 p5.prototype._onmousemove = function(e){
   var context = this._isGlobal ? window : this;
   var executeDefault;
-  this._updateMouseCoords(e);
-  this._updateTouchCoords(e);
+  this._updateNextMouseCoords(e);
+  this._updateNextTouchCoords(e);
   if (!this.isMousePressed) {
     if (typeof context.mouseMoved === 'function') {
       executeDefault = context.mouseMoved(e);
@@ -500,8 +509,8 @@ p5.prototype._onmousedown = function(e) {
   this._setProperty('isMousePressed', true);
   this._setProperty('mouseIsPressed', true);
   this._setMouseButton(e);
-  this._updateMouseCoords(e);
-  this._updateTouchCoords(e);
+  this._updateNextMouseCoords(e);
+  this._updateNextTouchCoords(e);
   if (typeof context.mousePressed === 'function') {
     executeDefault = context.mousePressed(e);
     if(executeDefault === false) {

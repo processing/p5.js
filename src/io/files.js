@@ -601,8 +601,8 @@ p5.prototype.loadTable = function (path) {
       if (header) {
         t.columns = records.shift();
       } else {
-        for (i = 0; i < records.length; i++) {
-          t.columns[i] = i.toString();
+        for (i = 0; i < records[0].length; i++) {
+          t.columns[i] = 'null';
         }
       }
       var row;

@@ -28,11 +28,11 @@ var color_conversion = require('./color_conversion');
  * @class p5.Color
  * @constructor
  */
-p5.Color = function(pInst, vals) {
+p5.Color = function(renderer, vals) {
 
   // Record color mode and maxes at time of construction.
-  this.mode = pInst._renderer._colorMode;
-  this.maxes = pInst._renderer._colorMaxes;
+  this.mode = renderer._colorMode;
+  this.maxes = renderer._colorMaxes;
 
   // Calculate normalized RGBA values.
   if (this.mode !== constants.RGB &&
@@ -40,7 +40,7 @@ p5.Color = function(pInst, vals) {
       this.mode !== constants.HSB) {
     throw new Error(this.mode + ' is an invalid colorMode.');
   } else {
-    this._array = p5.Color._parseInputs.apply(pInst, vals);
+    this._array = p5.Color._parseInputs.apply(renderer, vals);
   }
 
   // Expose closest screen color.
@@ -425,8 +425,8 @@ var colorPatterns = {
  */
 p5.Color._parseInputs = function() {
   var numArgs = arguments.length;
-  var mode = this._renderer._colorMode;
-  var maxes = this._renderer._colorMaxes;
+  var mode = this._colorMode;
+  var maxes = this._colorMaxes;
   var results = [];
 
   if (numArgs >= 3) {  // Argument is a list of component values.

@@ -14,12 +14,23 @@
 <div class="description">
   <h4>Description</h4>
   <p><%= item.description %></p>
+
+  <% if (item.module === 'p5.dom') { %>
+    <p>This function requires you include the p5.dom library.  Add the following into the head of your index.html file:
+      <pre><code class="language-javascript">&lt;script language="javascript" type="text/javascript" src="path/to/p5.dom.js"&gt;&lt;/script&gt;</code></pre>
+    </p>
+  <% } %>
+  <% if (item.module === 'p5.sound') { %>
+    <p>This function requires you include the p5.sound library.  Add the following into the head of your index.html file:
+      <pre><code class="language-javascript">&lt;script language="javascript" type="text/javascript" src="path/to/p5.sound.js"&gt;&lt;/script&gt;</code></pre>
+    </p>
+  <% } %>
 </div>
 
 
 <div>
   <h4>Syntax</h4>
-<p><pre><code class="language-javascript"><%= syntax %></code></pre></p>
+  <p><pre><code class="language-javascript"><%= syntax %></code></pre></p>
 </div>
 
 

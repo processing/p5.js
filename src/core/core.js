@@ -287,6 +287,9 @@ var p5 = function(sketch, node, sync) {
     if (typeof context.preload === 'function') {
       for (var f in this._preloadMethods) {
         context[f] = this._preloadMethods[f][f];
+        if (context[f] && this) {
+          context[f] = context[f].bind(this);
+        }
       }
     }
 
@@ -335,8 +338,8 @@ var p5 = function(sketch, node, sync) {
       }
 
       this._setProperty('frameCount', this.frameCount + 1);
-      this._updatePMouseCoords();
-      this._updatePTouchCoords();
+      this._updateMouseCoords();
+      this._updateTouchCoords();
       this.redraw();
       this._frameRate = 1000.0/(now - this._lastFrameTime);
       this._lastFrameTime = now;
