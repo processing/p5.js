@@ -9,14 +9,14 @@
 'use strict';
 
 var p5 = require('../core/core');
-require('./p5.Geometry3D');
+require('./p5.Geometry');
 
 /**
  * Load a 3d model from an OBJ file.
  *
  * @method loadModel
  * @param  {String} path Path of the model to be loaded
- * @return {p5.Geometry3D} the p5.Geometry3D object
+ * @return {p5.Geometry} the p5.Geometry3D object
  * @example
  * <div>
  * <code>
@@ -39,12 +39,11 @@ require('./p5.Geometry3D');
  * </div>
  */
 p5.prototype.loadModel = function ( path ) {
-  var model = new p5.Geometry3D();
+  var model = new p5.Geometry();
 
-  // TODO: This shouldn't just be thrown on to the geometry object now
   model.gid = path;
 
-  //Check for a duplicate loaded object ??
+  //Check for a duplicate loaded object
   if (!this._renderer.geometryInHash(model.gid)) {
     this.loadStrings(path, function(strings) {
       parseObj(model, strings);
@@ -131,6 +130,7 @@ function parseObj( model, lines ) {
               } else {
                 model.uvs.push([0, 0]);
               }
+
               if (loadedVerts.vn[vertParts[2]]) {
                 model.vertexNormals.push(loadedVerts.vn[vertParts[2]].copy());
               }
@@ -145,6 +145,11 @@ function parseObj( model, lines ) {
     }
   }
 
+  // If the model doesn't have normals, compute the normals
+  if(model.vertexNormals.length === 0) {
+    model.computeNormals();
+  }
+
   return model;
 }
 
@@ -152,8 +157,7 @@ function parseObj( model, lines ) {
  * Render a 3d model to the screen.
  *
  * @method model
- * @param  {p5.Geometry3D} path Path of the model to be loaded
- * @return {p5.Geometry3D} the p5.Geometry3D object
+ * @param  {p5.Geometry} model Loaded 3d model to be rendered
  * @example
  * <div>
  * <code>
