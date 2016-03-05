@@ -43,7 +43,7 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  * setting will be used in all subsequent calls to the text() function.
  *
  * @method textLeading
- * @param {Number} leading the size in pixels for spacing between lines
+ * @param {Number} [leading] the size in pixels for spacing between lines
  * @return {Object|Number}
  * @example
  * <div>
