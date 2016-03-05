@@ -202,7 +202,7 @@ p5.prototype.rotateZ = function(rad) {
  * can be further controlled with push() and pop().
  *
  * @method scale
- * @param  {Number | p5.Vector | Array} s
+ * @param  {Number|p5.Vector|Array} s
  *                      percent to scale the object, or percentage to
  *                      scale the object in the x-axis if multiple arguments
  *                      are given
