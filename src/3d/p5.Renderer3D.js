@@ -4,7 +4,7 @@ var p5 = require('../core/core');
 var shader = require('./shader');
 require('../core/p5.Renderer');
 require('./p5.Matrix');
-var uMVMatrixStack = [];
+var uMMatrixStack = [];
 var RESOLUTION = 1000;
 
 //@TODO should probably implement an override for these attributes
@@ -186,9 +186,12 @@ p5.Renderer3D.prototype._getLocation = function(shaderProgram, immediateMode) {
   //projection Matrix uniform
   shaderProgram.uPMatrixUniform =
     gl.getUniformLocation(shaderProgram, 'uProjectionMatrix');
+  //view Matrix uniform
+  shaderProgram.uVMatrixUniform =
+    gl.getUniformLocation(shaderProgram, 'uViewMatrix');
   //model view Matrix uniform
-  shaderProgram.uMVMatrixUniform =
-    gl.getUniformLocation(shaderProgram, 'uModelViewMatrix');
+  shaderProgram.uMMatrixUniform =
+    gl.getUniformLocation(shaderProgram, 'uModelMatrix');
 
   //@TODO: figure out a better way instead of if statement
   if(immediateMode === undefined){
@@ -222,8 +225,12 @@ p5.Renderer3D.prototype.setMatrixUniforms = function(shaderKey) {
     false, this.uPMatrix.mat4);
 
   gl.uniformMatrix4fv(
-    shaderProgram.uMVMatrixUniform,
-    false, this.uMVMatrix.mat4);
+    shaderProgram.uVMatrixUniform,
+    false, this.uVMatrix.mat4);
+
+  gl.uniformMatrix4fv(
+    shaderProgram.uMMatrixUniform,
+    false, this.uMMatrix.mat4);
 
   this.uNMatrix = new p5.Matrix();
   this.uNMatrix.invert(this.uMVMatrix);
@@ -291,13 +298,15 @@ p5.Renderer3D.prototype.materialInHash = function(mId){
 //////////////////////////////////////////////
 
 p5.Renderer3D.prototype.initMatrix = function(){
-  this.uMVMatrix = new p5.Matrix();
+  this.uMMatrix = new p5.Matrix();
+  this.uVMatrix = new p5.Matrix();
   this.uPMatrix  = new p5.Matrix();
   this.uNMatrix = new p5.Matrix();
 };
 
 p5.Renderer3D.prototype.resetMatrix = function() {
-  this.uMVMatrix = p5.Matrix.identity();
+  this.uMMatrix = p5.Matrix.identity();
+  //this.uVMatrix = p5.Matrix.identity();
   //this.uPMatrix = p5.Matrix.identity();
 };
 
@@ -326,7 +335,7 @@ p5.Renderer3D.prototype.translate = function(x, y, z) {
   x = x / RESOLUTION;
   y = -y / RESOLUTION;
   z = z / RESOLUTION;
-  this.uMVMatrix.translate([x,y,z]);
+  this.uMMatrix.translate([x,y,z]);
   return this;
 };
 
@@ -338,7 +347,7 @@ p5.Renderer3D.prototype.translate = function(x, y, z) {
  * @return {this}   [description]
  */
 p5.Renderer3D.prototype.scale = function(x,y,z) {
-  this.uMVMatrix.scale([x,y,z]);
+  this.uMMatrix.scale([x,y,z]);
   return this;
 };
 
@@ -349,7 +358,7 @@ p5.Renderer3D.prototype.scale = function(x,y,z) {
  * @return {p5.Renderer3D}      [description]
  */
 p5.Renderer3D.prototype.rotate = function(rad, axis){
-  this.uMVMatrix.rotate(rad, axis);
+  this.uMMatrix.rotate(rad, axis);
   return this;
 };
 
@@ -359,7 +368,7 @@ p5.Renderer3D.prototype.rotate = function(rad, axis){
  * @return {[type]}     [description]
  */
 p5.Renderer3D.prototype.rotateX = function(rad) {
-  this.uMVMatrix.rotateX(rad);
+  this.uMMatrix.rotateX(rad);
   return this;
 };
 
@@ -369,7 +378,7 @@ p5.Renderer3D.prototype.rotateX = function(rad) {
  * @return {[type]}     [description]
  */
 p5.Renderer3D.prototype.rotateY = function(rad) {
-  this.uMVMatrix.rotateY(rad);
+  this.uMMatrix.rotateY(rad);
   return this;
 };
 
@@ -379,7 +388,7 @@ p5.Renderer3D.prototype.rotateY = function(rad) {
  * @return {[type]}     [description]
  */
 p5.Renderer3D.prototype.rotateZ = function(rad) {
-  this.uMVMatrix.rotateZ(rad);
+  this.uMMatrix.rotateZ(rad);
   return this;
 };
 
@@ -390,7 +399,7 @@ p5.Renderer3D.prototype.rotateZ = function(rad) {
  * @return {[type]} [description]
  */
 p5.Renderer3D.prototype.push = function() {
-  uMVMatrixStack.push(this.uMVMatrix.copy());
+  uMMatrixStack.push(this.uMMatrix.copy());
 };
 
 /**
@@ -398,10 +407,10 @@ p5.Renderer3D.prototype.push = function() {
  * @return {[type]} [description]
  */
 p5.Renderer3D.prototype.pop = function() {
-  if (uMVMatrixStack.length === 0) {
+  if (uMMatrixStack.length === 0) {
     throw new Error('Invalid popMatrix!');
   }
-  this.uMVMatrix = uMVMatrixStack.pop();
+  this.uMMatrix = uMMatrixStack.pop();
 };
 
 module.exports = p5.Renderer3D;
