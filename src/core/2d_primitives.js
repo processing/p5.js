@@ -471,7 +471,11 @@ p5.prototype.rect = function (x, y, w, h, tl, tr, br, bl) {
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return;
   }
-  this._renderer.rect(x, y, w, h, tl, tr, br, bl);
+  if (this._renderer.isP3D){
+    this._renderer.rect(args);
+  } else {
+    this._renderer.rect(x, y, w, h, tl, tr, br, bl);
+  }
   return this;
 };
 
@@ -513,17 +517,7 @@ p5.prototype.triangle = function() {
          'Number', 'Number', 'Number']
       ]
     );
-    this._renderer.triangle(
-      args[0],
-      args[1],
-      args[2],
-      args[3],
-      args[4],
-      args[5],
-      args[6],
-      args[7],
-      args[8]
-      );
+    this._renderer.triangle(args);
   } else {
     this._validateParameters(
       'triangle',
@@ -533,12 +527,12 @@ p5.prototype.triangle = function() {
       ]
     );
     this._renderer.triangle(
-     args[0],
-     args[1],
-     args[2],
-     args[3],
-     args[4],
-     args[5]
+      args[0],
+      args[1],
+      args[2],
+      args[3],
+      args[4],
+      args[5]
     );
   }
   return this;

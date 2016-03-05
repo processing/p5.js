@@ -1,18 +1,19 @@
 var slider;
-//var img;
+var img;
 
-// function preload(){
-//   //img = loadImage('../material/texture/assets/cat.jpg');
-// }
+function preload(){
+  img = loadImage('./cat.jpg');
+}
 
 function setup(){
   createCanvas(windowWidth,windowHeight,WEBGL);
-  slider = createSlider(0,255,0);
+  slider = createSlider(0,255,75);
   slider.position(width-200,10);
 
 }
 function draw(){
   background(255);
+  rotate(radians(frameCount%360), [0,1,0]);
   //translate(-width/2, -height/2, 0);
   //rotate(sin(radians((frameCount*0.125) % 360))*TWO_PI, [1,1,1]);
   
@@ -23,14 +24,15 @@ function draw(){
   //   0,width,-200,
   //   width,height,-200,
   //   0,height,-200);
-
-  //triangle(0,0,-200,width,height,-200);
+  fill(0,255,0);
+  triangle(0,0,0,width,height,0,width/2,height,0);
   
   //line(0,0,-400,width,height,-400);
 
   //point(0,0,0);
-  // ellipse(slider.value(),0,0,slider.value(),100);//works!
-
+  fill(255,0,0);
+  ellipse(0,0,0,slider.value(),slider.value(),30,30);//works!
+  //rect(0,0,0,slider.value(),slider.value(),30,30);//works!
   //Immediate
   // fill(255,0,0);
   // strokeWeight(slider.value());
@@ -104,14 +106,14 @@ function draw(){
   //texture(img);
   //basicMaterial(100,0,0,100);
   directionalLight(0,255,255,0,0,1);
-  normalMaterial();
-  rotate(radians(frameCount%360), [0,1,0]);
-  //sphere(100);//works!
+  //normalMaterial();
+
+  //sphere(200);//works!
   //ellipsoid(100,250,50);//works!
-  cone(100,100);//needs base
+  //cone(100,100);//needs base
   //torus(400,100);//works!
   //cylinder(100);//needs top and bottom
-  //box(100);//error: attempt to access out of range vertices in attr 0
+  //box(400);//error: attempt to access out of range vertices in attr 0
   // basicMaterial(255,0,0);
   //plane(400);//works!
 }

@@ -59,7 +59,10 @@ p5.prototype.plane = function(width, height){
     };
     var planeGeom =
     new p5.Geometry(detailX, detailY, _plane);
-    planeGeom.computeFaces().computeNormals().computeUVs();
+    planeGeom
+      .computeFaces()
+      .computeNormals()
+      .computeUVs();
     this._renderer.createBuffers(gId, planeGeom);
   }
 
@@ -102,8 +105,7 @@ p5.prototype.box = function(width, height, depth){
   var gId = 'box|'+width+'|'+height+'|'+depth+'|'+detailX+'|'+detailY;
 
   if(!this._renderer.geometryInHash(gId)){
-    var boxGeom = new p5.Geometry(detailX,detailY);
-    var _box = function(_width,_height,_depth){
+    var _box = function(){
       var cubeIndices = [
         [0, 4, 2, 6],// -1, 0, 0],// -x
         [1, 3, 5, 7],// +1, 0, 0],// +x
@@ -122,9 +124,9 @@ p5.prototype.box = function(width, height, depth){
           //https://github.com/evanw/lightgl.js
           //octants:https://en.wikipedia.org/wiki/Octant_(solid_geometry)
           var octant = new p5.Vector(
-            ((d & 1) * 2 - 1)*_width/2,
-            ((d & 2) - 1) *_height/2,
-            ((d & 4) / 2 - 1) * _depth/2);
+            ((d & 1) * 2 - 1)*width/2,
+            ((d & 2) - 1) *height/2,
+            ((d & 4) / 2 - 1) * depth/2);
           this.vertices.push( octant );
           //if (mesh.coords) mesh.coords.push([j & 1, (j & 2) / 2]);
           //if (mesh.normals) mesh.normals.push(data.slice(4, 7));
@@ -134,9 +136,10 @@ p5.prototype.box = function(width, height, depth){
         this.faces.push([v + 2, v + 1, v + 3]);
       }
     };
-    _box.call(boxGeom, width,height,depth);
-    //boxGeom.faces = faces;
-    boxGeom.computeNormals().computeUVs();
+    var boxGeom = new p5.Geometry(detailX,detailY, _box);
+    boxGeom
+      .computeNormals()
+      .computeUVs();
     //initialize our geometry buffer with
     //the key val pair:
     //geometry Id, Geom object
@@ -149,12 +152,15 @@ p5.prototype.box = function(width, height, depth){
 };
 
 /**
- * Draw a sphere with given raduis
+ * Draw a sphere with given radius
  * @method sphere
  * @param  {Number} radius            radius of circle
- * @param  {Number} [detail]          optional: number of segments,
+ * @param  {Number} [detailX]          optional: number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
+ * @param  {Number} [detailY]          optional: number of segments,
+ *                                    the more segments the smoother geometry
+ *                                    default is 16
  * @return {p5}                       the p5 object
  * @example
  * <div>
@@ -171,12 +177,11 @@ p5.prototype.box = function(width, height, depth){
  * </code>
  * </div>
  */
-p5.prototype.sphere = function(radius, detail){
+p5.prototype.sphere = function(radius){
 
   radius = radius || 50;
-
-  var detailX = detail || 24;
-  var detailY = detail || 16;
+  var detailX = typeof arguments[1] === Number ? arguments[1] : 24;
+  var detailY = typeof arguments[2] === Number ? arguments[2] : 16;
 
   var gId = 'sphere|'+radius+'|'+detailX+'|'+detailY;
 
@@ -197,10 +202,10 @@ p5.prototype.sphere = function(radius, detail){
       }
     };
     var sphereGeom = new p5.Geometry(detailX, detailY, _sphere);
-    sphereGeom.computeFaces().computeNormals().computeUVs();
-    //for spheres we need to average the normals
-    //and poles
-    sphereGeom.averageNormals().averagePoleNormals();
+    sphereGeom
+      .computeFaces()
+      .computeNormals(true,true)
+      .computeUVs();
     this._renderer.createBuffers(gId, sphereGeom);
   }
   this._renderer.drawBuffers(gId);
@@ -224,58 +229,50 @@ p5.prototype.sphere = function(radius, detail){
  *     truncated cone.
  * @param {number} verticalSubdivisions The number of subdivisions down the
  *     truncated cone.
- * @param {boolean} [opt_topCap] Create top cap. Default = true.
- * @param {boolean} [opt_bottomCap] Create bottom cap. Default =
+ * @param {boolean} [topCap] Create top cap. Default = true.
+ * @param {boolean} [bottomCap] Create bottom cap. Default =
  *        true.
  * @return {Object.<string, TypedArray>} The
  *         created plane vertices.
  * @memberOf module:primitives
 */
 var _truncatedCone = function(
-    bottomRadius,
-    topRadius,
-    height,
-    radialSubdivisions,
-    verticalSubdivisions,
-    opt_topCap,
-    opt_bottomCap) {
-  if (radialSubdivisions < 3) {
-    throw Error('radialSubdivisions must be 3 or greater');
-  }
-
-  if (verticalSubdivisions < 1) {
-    throw Error('verticalSubdivisions must be 1 or greater');
-  }
-
-  var topCap = (opt_topCap === undefined) ? true : opt_topCap;
-  var bottomCap = (opt_bottomCap === undefined) ? true : opt_bottomCap;
-
+  bottomRadius,
+  topRadius,
+  height,
+  radialSub,
+  verticalSub,
+  topCap,
+  bottomCap) {
+  radialSub = (radialSub < 3) ? 3 : radialSub;
+  verticalSub = (verticalSub < 1) ? 1 : verticalSub;
+  topCap = (topCap === undefined) ? true : topCap;
+  bottomCap = (bottomCap === undefined) ? true : bottomCap;
   var extra = (topCap ? 2 : 0) + (bottomCap ? 2 : 0);
-
-  var vertsAroundEdge = radialSubdivisions + 1;
+  var vertsAroundEdge = radialSub + 1;
 
   // The slant of the cone is constant across its surface
   var slant = Math.atan2(bottomRadius - topRadius, height);
   var start = topCap ? -2 : 0;
-  var end = verticalSubdivisions + (bottomCap ? 2 : 0);
+  var end = verticalSub + (bottomCap ? 2 : 0);
   var yy, ii;//@TODO
   for (yy = start; yy <= end; ++yy) {
-    var v = yy / verticalSubdivisions;
+    var v = yy / verticalSub;
     var y = height * v;
     var ringRadius;
     if (yy < 0) {
       y = 0;
       v = 1;
       ringRadius = bottomRadius;
-    } else if (yy > verticalSubdivisions) {
+    } else if (yy > verticalSub) {
       y = height;
       v = 1;
       ringRadius = topRadius;
     } else {
       ringRadius = bottomRadius +
-        (topRadius - bottomRadius) * (yy / verticalSubdivisions);
+        (topRadius - bottomRadius) * (yy / verticalSub);
     }
-    if (yy === -2 || yy === verticalSubdivisions + 2) {
+    if (yy === -2 || yy === verticalSub + 2) {
       ringRadius = 0;
       v = 0;
     }
@@ -283,24 +280,24 @@ var _truncatedCone = function(
     for (ii = 0; ii < vertsAroundEdge; ++ii) {
       this.vertices.push(
         new p5.Vector(
-          Math.sin(ii * Math.PI * 2 / radialSubdivisions) * ringRadius,
+          Math.sin(ii*Math.PI * 2 /radialSub) * ringRadius,
           y,
-          Math.cos(ii * Math.PI * 2 / radialSubdivisions) * ringRadius)
+          Math.cos(ii*Math.PI * 2 /radialSub) * ringRadius)
         );
       //VERTEX NORMALS
       this.vertexNormals.push(
         new p5.Vector(
-          (yy < 0 || yy > verticalSubdivisions) ? 0 :
-          (Math.sin(ii * Math.PI * 2 / radialSubdivisions) * Math.cos(slant)),
-          (yy < 0) ? -1 : (yy > verticalSubdivisions ? 1 : Math.sin(slant)),
-          (yy < 0 || yy > verticalSubdivisions) ? 0 :
-          (Math.cos(ii * Math.PI * 2 / radialSubdivisions) * Math.cos(slant)))
+          (yy < 0 || yy > verticalSub) ? 0 :
+          (Math.sin(ii * Math.PI * 2 / radialSub) * Math.cos(slant)),
+          (yy < 0) ? -1 : (yy > verticalSub ? 1 : Math.sin(slant)),
+          (yy < 0 || yy > verticalSub) ? 0 :
+          (Math.cos(ii * Math.PI * 2 / radialSub) * Math.cos(slant)))
         );
-      this.uvs.push([(ii / radialSubdivisions), 1 - v]);
+      this.uvs.push([(ii / radialSub), 1 - v]);
     }
   }
-  for (yy = 0; yy < verticalSubdivisions + extra; ++yy) {
-    for (ii = 0; ii < radialSubdivisions; ++ii) {
+  for (yy = 0; yy < verticalSub + extra; ++yy) {
+    for (ii = 0; ii < radialSub; ++ii) {
       this.faces.push([vertsAroundEdge * (yy + 0) + 0 + ii,
         vertsAroundEdge * (yy + 0) + 1 + ii,
         vertsAroundEdge * (yy + 1) + 1 + ii]);
@@ -337,27 +334,25 @@ var _truncatedCone = function(
  * </code>
  * </div>
  */
-p5.prototype.cylinder = function(radius, height, detail){
+p5.prototype.cylinder = function(radius, height){
 
   radius = radius || 50;
   height = height || 50;
-
-  var detailX = detail || 24;
-  var detailY = detail || 16;
-
+  var detailX = typeof arguments[2] === Number ? arguments[2] : 24;
+  var detailY = typeof arguments[3] === Number ? arguments[3] : 16;
   var gId = 'cylinder|'+radius+'|'+height+'|'+detailX+'|'+detailY;
   if(!this._renderer.geometryInHash(gId)){
     var cylinderGeom = new p5.Geometry(detailX, detailY);
-    _truncatedCone.call(cylinderGeom,
+    _truncatedCone.call(
+      cylinderGeom,
       radius,
       radius,
       height,
       detailX,
       detailY,
       true,true);
-    cylinderGeom.computeNormals();
-    //for cylinders we need to average normals
-    cylinderGeom.averageNormals();
+    cylinderGeom
+      .computeNormals(true);
     this._renderer.createBuffers(gId, cylinderGeom);
   }
 
@@ -410,8 +405,8 @@ p5.prototype.cone = function(radius, height, detail){
       true,
       true);
     //for cones we need to average Normals
-    coneGeom.computeNormals();
-    coneGeom.averageNormals();
+    coneGeom
+      .computeNormals(true);
     this._renderer.createBuffers(gId, coneGeom);
   }
 
@@ -477,8 +472,10 @@ function(radiusx, radiusy, radiusz, detail){
       }
     };
     var ellipsoidGeom = new p5.Geometry(detailX, detailY,_ellipsoid);
-    ellipsoidGeom.computeFaces().computeNormals().computeUVs();
-    ellipsoidGeom.averageNormals().averagePoleNormals();
+    ellipsoidGeom
+      .computeFaces()
+      .computeNormals(true, true)
+      .computeUVs();
     this._renderer.createBuffers(gId, ellipsoidGeom);
   }
 
@@ -540,11 +537,11 @@ p5.prototype.torus = function(radius, tubeRadius, detail){
         }
       }
     };
-    var torusGeom = new p5.Geometry(detailX, detailY);
-    _torus.call(torusGeom);
-    torusGeom.computeFaces().computeNormals().computeUVs();
-    //for torus we need to average normals
-    torusGeom.averageNormals();
+    var torusGeom = new p5.Geometry(detailX, detailY, _torus);
+    torusGeom
+      .computeFaces()
+      .computeNormals(true)
+      .computeUVs();
     this._renderer.createBuffers(gId, torusGeom);
   }
 
@@ -558,47 +555,49 @@ p5.prototype.torus = function(radius, tubeRadius, detail){
 /// @TODO turn this from immediate mode
 /// to retained mode
 /////////////////////////
-p5.Renderer3D.prototype.point = function(x, y, z){
-  var gl = this.GL;
-  this._primitives2D([x, y, z]);
-  gl.drawArrays(gl.POINTS, 0, 1);
-  return this;
-};
+// p5.Renderer3D.prototype.point = function(x, y, z){
+//   var gl = this.GL;
+//   this._primitives2D([x, y, z]);
+//   gl.drawArrays(gl.POINTS, 0, 1);
+//   return this;
+// };
 
-p5.Renderer3D.prototype.line = function(x1, y1, z1, x2, y2, z2){
-  var gId = 'line|'+x1+'|'+y1+'|'+z1+'|'+x2+'|'+y2+'|'+z2;
-  if(!this.geometryInHash(gId)){
-    var _line = {
-      start: new p5.Vector(x1,y1,z1),
-      end: new p5.Vector(x2,y2,z2)
-    };
-    //starting point
-    var lineGeom = new p5.Geometry(_line);
-    this.createBuffers(gId, lineGeom);
-  }
+// p5.Renderer3D.prototype.line = function(x1, y1, z1, x2, y2, z2){
+//   var gId = 'line|'+x1+'|'+y1+'|'+z1+'|'+x2+'|'+y2+'|'+z2;
+//   if(!this.geometryInHash(gId)){
+//     var _line = {
+//       start: new p5.Vector(x1,y1,z1),
+//       end: new p5.Vector(x2,y2,z2)
+//     };
+//     //starting point
+//     var lineGeom = new p5.Geometry(_line);
+//     this.createBuffers(gId, lineGeom);
+//   }
 
-  this.drawBuffers(gId);
-  return this;
-};
+//   this.drawBuffers(gId);
+//   return this;
+// };
 
 p5.Renderer3D.prototype.triangle = function
-(x1, y1, z1, x2, y2, z2, x3, y3, z3){
+(args){
+  var x1=args[0], y1=args[1], z1=args[2];
+  var x2=args[3], y2=args[4], z2=args[5];
+  var x3=args[6], y3=args[7], z3=args[8];
   var gId = 'tri|'+x1+'|'+y1+'|'+z1+'|'+
   x2+'|'+y2+'|'+z2+
   x3+'|'+y3+'|'+z3;
   if(!this.geometryInHash(gId)){
-    var _triangle = {
-      p1: new p5.Vector(x1,y1,z1),
-      p2: new p5.Vector(x2,y2,z2),
-      p3: new p5.Vector(x3,y3,z3)
+    var _triangle = function(){
+      var vertices = [];
+      vertices.push(new p5.Vector(x1,y1,z1));
+      vertices.push(new p5.Vector(x2,y2,z2));
+      vertices.push(new p5.Vector(x3,y3,z3));
+      this.vertices = vertices;
+      this.faces = [[0,1,2]];
+      this.uvs = [[0,0],[0,1],[1,1]];
     };
-    var triGeom =
-    new p5.Geometry(_triangle,1,1,
-      function(){
-        this.faces = [[0,1,2]];
-        this.computeNormals().computeUVs();
-      }
-    );
+    var triGeom = new p5.Geometry(1,1,_triangle);
+    triGeom.computeNormals();
     this.createBuffers(gId, triGeom);
   }
 
@@ -628,9 +627,15 @@ p5.Renderer3D.prototype.triangle = function
  * ellipse(56, 46, -100, 55, 55);
  * </code>
  * </div>
+ * @todo handle other ellipseModes
  */
 p5.Renderer3D.prototype.ellipse = function
 (args){
+  var x = args[0];
+  var y = args[1];
+  var z = args[2];
+  var width = args[3];
+  var height = args[4];
   //detailX and Y are optional 6th & 7th
   //arguments
   var detailX = args[5] || 24;
@@ -646,22 +651,23 @@ p5.Renderer3D.prototype.ellipse = function
           u = j / this.detailX;
           var theta = 2 * Math.PI * u;
           if(v === 0){
-            p = new p5.Vector(args[0], args[1], args[2]);
-          }
-          else{
-            var x = args[0] + args[3] * Math.sin(theta);
-            var y = args[1] + args[4] * Math.cos(theta);
-            var z = args[2];
             p = new p5.Vector(x, y, z);
           }
+          else{
+            var _x = x + width * Math.sin(theta);
+            var _y = y + height * Math.cos(theta);
+            var _z = z;
+            p = new p5.Vector(_x, _y, _z);
+          }
           this.vertices.push(p);
+          this.uvs.push([u,v]);
         }
       }
     };
-    var ellipseGeom =
-    new p5.Geometry(_ellipse,detailX,detailY,function(){
-      this.computeFaces().computeNormals().computeUVs();
-    });
+    var ellipseGeom = new p5.Geometry(detailX,detailY,_ellipse);
+    ellipseGeom
+      .computeFaces()
+      .computeNormals();
     this.createBuffers(gId, ellipseGeom);
   }
   this.drawBuffers(gId);
@@ -670,16 +676,48 @@ p5.Renderer3D.prototype.ellipse = function
 /**
  * Draws a Rectangle.
  * @type {p5.Renderer3D} the Renderer3D object
+ * @todo check and handle for rectMode(CENTER)
  */
 p5.Renderer3D.prototype.rect = function
-(x, y, z, width,height){
-  var x2 = x;
-  var y2 = y + height;
-  var x3 = x + width;
-  var y3 = y + height;
-  var x4 = x + width;
-  var y4 = y;
-  this.quad(x,y,z,x2,y2,z,x3,y3,z,x4,y4,z);
+(args){
+  // var x3 = x + width;
+  // var y3 = y + height;
+  // var x4 = x + width;
+  // var y4 = y;
+  var gId = 'rect|'+args[0]+'|'+args[1]+'|'+args[2]+'|'+
+  args[3]+'|'+args[4];
+  var x = args[0];
+  var y = args[1];
+  var width = args[3];
+  var height = args[4];
+  //detailX and Y are optional 6th & 7th
+  //arguments
+  var detailX = args[5] || 24;
+  var detailY = args[6] || 16;
+  if(!this.geometryInHash(gId)){
+    var _rect = function(){
+      var u,v,p;
+      for (var i = 0; i <= this.detailY; i++){
+        v = i / this.detailY;
+        for (var j = 0; j <= this.detailX; j++){
+          u = j / this.detailX;
+          p = new p5.Vector(
+            (x + width) * u,
+            (y + height) * v,
+            0
+          );
+          this.vertices.push(p);
+          this.uvs.push([u,v]);
+        }
+      }
+    };
+    var rectGeom = new p5.Geometry(detailX,detailY,_rect);
+    rectGeom
+      .computeFaces()
+      .computeNormals();
+    this.createBuffers(gId, rectGeom);
+  }
+  this.drawBuffers(gId);
   return this;
 };
 
@@ -688,29 +726,32 @@ p5.Renderer3D.prototype.rect = function
  * @type {[type]}
  * @todo currently buggy, due to vertex winding
  */
-p5.Renderer3D.prototype.quad = function
-(x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4){
-  var gId = 'quad|'+x1+'|'+y1+'|'+z1+'|'+
-  x2+'|'+y2+'|'+z2+
-  x3+'|'+y3+'|'+z3+
-  x4+'|'+y4+'|'+z4;
-  if(!this.geometryInHash(gId)){
-    var _quad = {
-      p1: new p5.Vector(x1,y1,z1),
-      p2: new p5.Vector(x2,y2,z2),
-      p3: new p5.Vector(x3,y3,z3),
-      p4: new p5.Vector(x4,y4,z4)
-    };
-    //starting point
-    var quadGeom =
-    new p5.Geometry(_quad,1,1,function(){
-      this.faces = [[0,1,2],[2,3,1]];
-      this.computeNormals().computeUVs();
-    });
-    this.createBuffers(gId, quadGeom);
-  }
-  this.drawBuffers(gId);
-  return this;
-};
+// p5.Renderer3D.prototype.quad = function
+// (x1, y1, z1, x2, y2, z2, x3, y3, z3, x4, y4, z4){
+//   var gId = 'quad|'+x1+'|'+y1+'|'+z1+'|'+
+//   x2+'|'+y2+'|'+z2+
+//   x3+'|'+y3+'|'+z3+
+//   x4+'|'+y4+'|'+z4;
+//   if(!this.geometryInHash(gId)){
+//     var _quad = function(){
+//       this.vertices.push(new p5.Vector(x1,y1,z1));
+//       p2: new p5.Vector(x2,y2,z2),
+//       p3: new p5.Vector(x3,y3,z3),
+//       p4: new p5.Vector(x4,y4,z4)
+//     };
+//     //starting point
+//     var quadGeom = new p5.Geometry(2,2,_quad);
+//     quadGeom
+//       .computeNormals()
+//       .computeUVs();
+//     function(){
+//       this.faces = [[0,1,2],[2,3,1]];
+//       this.computeNormals().computeUVs();
+//     });
+//     this.createBuffers(gId, quadGeom);
+//   }
+//   this.drawBuffers(gId);
+//   return this;
+// };
 
 module.exports = p5;

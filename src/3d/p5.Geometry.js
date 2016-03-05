@@ -129,7 +129,7 @@ p5.Geometry.prototype.computeFaceNormals = function(){
 /**
  * compute normals (both faces and vertices) for a geometry
  */
-p5.Geometry.prototype.computeNormals = function (){
+p5.Geometry.prototype.computeNormals = function (aveNormals,avePoles){
 
   var v, f, face, faceNormal, vertices;
   var vertexNormals = [];
@@ -167,6 +167,12 @@ p5.Geometry.prototype.computeNormals = function (){
     this.vertexNormals[face[0]] = vertexNormals[f][0];
     this.vertexNormals[face[1]] = vertexNormals[f][1];
     this.vertexNormals[face[2]] = vertexNormals[f][2];
+  }
+  if (aveNormals){
+    this.averageNormals();
+  }
+  if (avePoles){
+    this.averagePoleNormals();
   }
   return this;
 };
