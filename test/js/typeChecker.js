@@ -53,6 +53,19 @@ var typeChecker = (function() {
     // These are defined at construction time or something else dynamic.
     'p5.remove',
   ];
+  var customValidators = {
+    // Internally, p5 passes p5.Color and Array instances to p5.color(),
+    // which may intentionally be undocumented to avoid confusion for
+    // beginners. So rather than changing the documentation, we'll add a
+    // custom validator.
+    'p5.color': function(target, thisArg, argumentsList, defaultValidator) {
+      var v1 = argumentsList[0];
+      if (v1 instanceof p5.Color || Array.isArray(v1)) {
+        return;
+      }
+      defaultValidator();
+    }
+  };
   var typeValidators = {
     'Number': function(value) {
       return typeof(value) === 'number';
@@ -86,10 +99,13 @@ var typeChecker = (function() {
       // the names of constants out of it.
       return typeof(value) === 'string';
     },
+    // TODO: Not sure if this should actually be defined in yuidocs as
+    // Number|Constant. At first I thought 'Number/Constant' meant
+    // 'constant that is a number', but this is not actually the case.
     'Number/Constant': function(value) {
       // TODO: Consider actually parsing the docs description to extract
       // the names of constants out of it.
-      return typeof(value) === 'number';
+      return typeof(value) === 'number' || typeof(value) === 'string';
     },
     'p5.Table': function(value) {
       return value instanceof p5.Table;
@@ -115,9 +131,6 @@ var typeChecker = (function() {
     }
   };
 
-  function log(msg) {
-  }
-
   function buildTypeValidator(type, classitem) {
     var fullName = classitem.class + '.' + classitem.name;
     var validators = type.split('|').map(function(type) {
@@ -142,24 +155,40 @@ var typeChecker = (function() {
     return function(value) {
       if (!isValidType(value)) {
         if (!param.optional) {
-          log("Invalid value for arg #" + (argIndex + 1) + " (" +
-              param.name + ") of " + classitem.name + "()");
+          throw new Error(
+            "Invalid value for arg #" + (argIndex + 1) + " (" +
+            param.name + ") of " + classitem.name + "() according to " +
+            "documentation in " + classitem.file + ":" + classitem.line
+          );
         }
       }
     };
   }
 
   function buildValidator(classitem) {
-    var name = classitem.name;
+    var fullName = classitem.class + "." + classitem.name;
     var paramValidators = (classitem.params || [])
       .map(buildParamValidator.bind(null, classitem));
+    var defaultValidator = function(target, thisArg, argumentsList) {
+      paramValidators.forEach(function(paramValidator, i) {
+        paramValidator(argumentsList[i], i);
+      });
+    };
+    var customValidator = customValidators[fullName];
+    var validate;
+
+    if (typeof(customValidator) === 'function') {
+      validate = function(target, thisArg, argumentsList) {
+        customValidator(target, thisArg, argumentsList,
+                        defaultValidator.bind(null, target, thisArg,
+                                              argumentsList));
+      };
+    } else {
+      validate = defaultValidator;
+    }
 
     return {
-      validate: function(target, thisArg, argumentsList) {
-        paramValidators.forEach(function(paramValidator, i) {
-          paramValidator(argumentsList[i], i);
-        });
-      }
+      validate: validate
     };
   };
 
