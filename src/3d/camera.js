@@ -30,7 +30,7 @@ var p5 = require('../core/core');
  * </code>
  * </div>
  */
-p5.prototype.camera = function(x, y, z){
+p5.prototype.cameraTranslate = function(x, y, z){
   var args = new Array(arguments.length);
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
@@ -41,9 +41,22 @@ p5.prototype.camera = function(x, y, z){
     ['Number', 'Number', 'Number']
   );
   //what it manipulates is the model view matrix
-  this._renderer.translate(-x, -y, -z);
+  this._renderer.cameraTranslate(-x, -y, -z);
 };
 
+// p5.prototype.cameraRotateX = function(x, y, z){
+//   var args = new Array(arguments.length);
+//   for (var i = 0; i < args.length; ++i) {
+//     args[i] = arguments[i];
+//   }
+//   this._validateParameters(
+//     'camera',
+//     args,
+//     ['Number', 'Number', 'Number']
+//   );
+//   //what it manipulates is the model view matrix
+//   this._renderer.translate(-x, -y, -z);
+// };
 /**
  * Sets perspective camera
  * @method  perspective

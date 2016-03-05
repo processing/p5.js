@@ -306,7 +306,7 @@ p5.Renderer3D.prototype.initMatrix = function(){
 
 p5.Renderer3D.prototype.resetMatrix = function() {
   this.uMMatrix = p5.Matrix.identity();
-  //this.uVMatrix = p5.Matrix.identity();
+  this.uVMatrix = p5.Matrix.identity();
   //this.uPMatrix = p5.Matrix.identity();
 };
 
@@ -339,6 +339,15 @@ p5.Renderer3D.prototype.translate = function(x, y, z) {
   return this;
 };
 
+p5.Renderer3D.prototype.cameraTranslate = function(x, y, z){
+  //@TODO: figure out how to fit the resolution
+  x = x / RESOLUTION;
+  y = -y / RESOLUTION;
+  z = z / RESOLUTION;
+  this.uVMatrix.translate([x,y,z]);
+  return this;
+};
+
 /**
  * Scales the Model View Matrix by a vector
  * @param  {Number | p5.Vector | Array} x [description]
@@ -362,6 +371,11 @@ p5.Renderer3D.prototype.rotate = function(rad, axis){
   return this;
 };
 
+p5.Renderer3D.prototype.cameraRotate = function(rad, axis){
+  this.uVMatrix.rotate(rad, axis);
+  return this;
+};
+
 /**
  * [rotateX description]
  * @param  {Number} rad radians to rotate
@@ -369,6 +383,11 @@ p5.Renderer3D.prototype.rotate = function(rad, axis){
  */
 p5.Renderer3D.prototype.rotateX = function(rad) {
   this.uMMatrix.rotateX(rad);
+  return this;
+};
+
+p5.Renderer3D.prototype.cameraRotateX = function(rad){
+  this.uVMatrix.rotateX(rad);
   return this;
 };
 
@@ -382,6 +401,11 @@ p5.Renderer3D.prototype.rotateY = function(rad) {
   return this;
 };
 
+p5.Renderer3D.prototype.cameraRotateY = function(rad) {
+  this.uVMatrix.rotateY(rad);
+  return this;
+};
+
 /**
  * [rotateZ description]
  * @param  {Number} rad rad radians to rotate
@@ -389,6 +413,11 @@ p5.Renderer3D.prototype.rotateY = function(rad) {
  */
 p5.Renderer3D.prototype.rotateZ = function(rad) {
   this.uMMatrix.rotateZ(rad);
+  return this;
+};
+
+p5.Renderer3D.prototype.cameraRotateZ = function(rad) {
+  this.uVMatrix.rotateZ(rad);
   return this;
 };
 
