@@ -13,7 +13,6 @@
 
 var p5 = require('../core/core');
 require('./p5.Geometry');
-
 /**
  * Draw a plane with given a width and height
  * @method plane
@@ -59,9 +58,8 @@ p5.prototype.plane = function(width, height){
       }
     };
     var planeGeom =
-    new p5.Geometry(_plane, detailX, detailY, function(){
-      this.computeFaces().computeNormals().computeUVs();
-    });
+    new p5.Geometry(detailX, detailY, _plane);
+    planeGeom.computeFaces().computeNormals().computeUVs();
     this._renderer.createBuffers(gId, planeGeom);
   }
 
@@ -104,47 +102,41 @@ p5.prototype.box = function(width, height, depth){
   var gId = 'box|'+width+'|'+height+'|'+depth+'|'+detailX+'|'+detailY;
 
   if(!this._renderer.geometryInHash(gId)){
-    var _box = {};
-    var faces = [];
-    var cubeData = [
-      [0, 4, 2, 6],// -1, 0, 0],// -x
-      [1, 3, 5, 7],// +1, 0, 0],// +x
-      [0, 1, 4, 5],// 0, -1, 0],// -y
-      [2, 6, 3, 7],// 0, +1, 0],// +y
-      [0, 2, 1, 3],// 0, 0, -1],// -z
-      [4, 5, 6, 7]// 0, 0, +1] // +z
-    ];
-    //inspired by lightgl:
-    //https://github.com/evanw/lightgl.js
-    //octants:https://en.wikipedia.org/wiki/Octant_(solid_geometry)
-    var pickOctant = function(i) {
-      return new p5.Vector(((i & 1) * 2 - 1)*width/2,
-        ((i & 2) - 1) *height/2,
-        ((i & 4) / 2 - 1) * depth/2);
+    var boxGeom = new p5.Geometry(detailX,detailY);
+    var _box = function(_width,_height,_depth){
+      var cubeIndices = [
+        [0, 4, 2, 6],// -1, 0, 0],// -x
+        [1, 3, 5, 7],// +1, 0, 0],// +x
+        [0, 1, 4, 5],// 0, -1, 0],// -y
+        [2, 6, 3, 7],// 0, +1, 0],// +y
+        [0, 2, 1, 3],// 0, 0, -1],// -z
+        [4, 5, 6, 7]// 0, 0, +1] // +z
+      ];
+      var id=0;
+      for (var i = 0; i < cubeIndices.length; i++) {
+        var cubeIndex = cubeIndices[i];
+        var v = i * 4;
+        for (var j = 0; j < 4; j++) {
+          var d = cubeIndex[j];
+          //inspired by lightgl:
+          //https://github.com/evanw/lightgl.js
+          //octants:https://en.wikipedia.org/wiki/Octant_(solid_geometry)
+          var octant = new p5.Vector(
+            ((d & 1) * 2 - 1)*_width/2,
+            ((d & 2) - 1) *_height/2,
+            ((d & 4) / 2 - 1) * _depth/2);
+          this.vertices.push( octant );
+          //if (mesh.coords) mesh.coords.push([j & 1, (j & 2) / 2]);
+          //if (mesh.normals) mesh.normals.push(data.slice(4, 7));
+          id++;
+        }
+        this.faces.push([v, v + 1, v + 2]);
+        this.faces.push([v + 2, v + 1, v + 3]);
+      }
     };
-    var id=0;
-    for (var i = 0; i < cubeData.length; i++) {
-      var data = cubeData[i];
-      var v = i * 4;
-      for (var j = 0; j < 4; j++) {
-        var d = data[j];
-        _box[id] = pickOctant(d);
-        //if (mesh.coords) mesh.coords.push([j & 1, (j & 2) / 2]);
-        //if (mesh.normals) mesh.normals.push(data.slice(4, 7));
-        id++;
-      }
-      faces.push([v, v + 1, v + 2]);
-      faces.push([v + 2, v + 1, v + 3]);
-    }
-    var boxGeom = new p5.Geometry(
-      _box,
-      detailX,
-      detailY,
-      function(){
-        this.faces = faces;
-        this.computeNormals().computeUVs();
-      }
-    );
+    _box.call(boxGeom, width,height,depth);
+    //boxGeom.faces = faces;
+    boxGeom.computeNormals().computeUVs();
     //initialize our geometry buffer with
     //the key val pair:
     //geometry Id, Geom object
@@ -204,20 +196,119 @@ p5.prototype.sphere = function(radius, detail){
         }
       }
     };
-    var sphereGeom = new p5.Geometry(_sphere, detailX, detailY,
-      function(){
-        this.computeFaces().computeNormals().computeUVs();
-      }
-    );
+    var sphereGeom = new p5.Geometry(detailX, detailY, _sphere);
+    sphereGeom.computeFaces().computeNormals().computeUVs();
     //for spheres we need to average the normals
     //and poles
     sphereGeom.averageNormals().averagePoleNormals();
     this._renderer.createBuffers(gId, sphereGeom);
   }
-
   this._renderer.drawBuffers(gId);
 
   return this;
+};
+
+
+/**
+ * Creates vertices for a truncated cone, which is like a cylinder
+ * except that it has different top and bottom radii. A truncated cone
+ * can also be used to create cylinders and regular cones. The
+ * truncated cone will be created centered about the origin, with the
+ * y axis as its vertical axis. The created cone has position, normal
+ * and uv streams.
+ *
+ * @param {number} bottomRadius Bottom radius of truncated cone.
+ * @param {number} topRadius Top radius of truncated cone.
+ * @param {number} height Height of truncated cone.
+ * @param {number} radialSubdivisions The number of subdivisions around the
+ *     truncated cone.
+ * @param {number} verticalSubdivisions The number of subdivisions down the
+ *     truncated cone.
+ * @param {boolean} [opt_topCap] Create top cap. Default = true.
+ * @param {boolean} [opt_bottomCap] Create bottom cap. Default =
+ *        true.
+ * @return {Object.<string, TypedArray>} The
+ *         created plane vertices.
+ * @memberOf module:primitives
+*/
+var _truncatedCone = function(
+    bottomRadius,
+    topRadius,
+    height,
+    radialSubdivisions,
+    verticalSubdivisions,
+    opt_topCap,
+    opt_bottomCap) {
+  if (radialSubdivisions < 3) {
+    throw Error('radialSubdivisions must be 3 or greater');
+  }
+
+  if (verticalSubdivisions < 1) {
+    throw Error('verticalSubdivisions must be 1 or greater');
+  }
+
+  var topCap = (opt_topCap === undefined) ? true : opt_topCap;
+  var bottomCap = (opt_bottomCap === undefined) ? true : opt_bottomCap;
+
+  var extra = (topCap ? 2 : 0) + (bottomCap ? 2 : 0);
+
+  var vertsAroundEdge = radialSubdivisions + 1;
+
+  // The slant of the cone is constant across its surface
+  var slant = Math.atan2(bottomRadius - topRadius, height);
+  var start = topCap ? -2 : 0;
+  var end = verticalSubdivisions + (bottomCap ? 2 : 0);
+  var yy, ii;//@TODO
+  for (yy = start; yy <= end; ++yy) {
+    var v = yy / verticalSubdivisions;
+    var y = height * v;
+    var ringRadius;
+    if (yy < 0) {
+      y = 0;
+      v = 1;
+      ringRadius = bottomRadius;
+    } else if (yy > verticalSubdivisions) {
+      y = height;
+      v = 1;
+      ringRadius = topRadius;
+    } else {
+      ringRadius = bottomRadius +
+        (topRadius - bottomRadius) * (yy / verticalSubdivisions);
+    }
+    if (yy === -2 || yy === verticalSubdivisions + 2) {
+      ringRadius = 0;
+      v = 0;
+    }
+    y -= height / 2;
+    for (ii = 0; ii < vertsAroundEdge; ++ii) {
+      this.vertices.push(
+        new p5.Vector(
+          Math.sin(ii * Math.PI * 2 / radialSubdivisions) * ringRadius,
+          y,
+          Math.cos(ii * Math.PI * 2 / radialSubdivisions) * ringRadius)
+        );
+      //VERTEX NORMALS
+      this.vertexNormals.push(
+        new p5.Vector(
+          (yy < 0 || yy > verticalSubdivisions) ? 0 :
+          (Math.sin(ii * Math.PI * 2 / radialSubdivisions) * Math.cos(slant)),
+          (yy < 0) ? -1 : (yy > verticalSubdivisions ? 1 : Math.sin(slant)),
+          (yy < 0 || yy > verticalSubdivisions) ? 0 :
+          (Math.cos(ii * Math.PI * 2 / radialSubdivisions) * Math.cos(slant)))
+        );
+      this.uvs.push([(ii / radialSubdivisions), 1 - v]);
+    }
+  }
+  for (yy = 0; yy < verticalSubdivisions + extra; ++yy) {
+    for (ii = 0; ii < radialSubdivisions; ++ii) {
+      this.faces.push([vertsAroundEdge * (yy + 0) + 0 + ii,
+        vertsAroundEdge * (yy + 0) + 1 + ii,
+        vertsAroundEdge * (yy + 1) + 1 + ii]);
+      this.faces.push([vertsAroundEdge * (yy + 0) + 0 + ii,
+        vertsAroundEdge * (yy + 1) + 1 + ii,
+        vertsAroundEdge * (yy + 1) + 0 + ii]);
+    }
+  }
 };
 
 /**
@@ -255,68 +346,16 @@ p5.prototype.cylinder = function(radius, height, detail){
   var detailY = detail || 16;
 
   var gId = 'cylinder|'+radius+'|'+height+'|'+detailX+'|'+detailY;
-
   if(!this._renderer.geometryInHash(gId)){
-    var _cylinder = {
-      side: function(){
-        var u,v,p;
-        for (var i = 0; i <= this.detailY; i++){
-          v = i / this.detailY;
-          for (var j = 0; j <= this.detailX; j++){
-            u = j / this.detailX;
-            var theta = 2 * Math.PI * u;
-            var x = radius * Math.sin(theta);
-            var y = 2 * height * v - height;
-            var z = radius * Math.cos(theta);
-            p = new p5.Vector(x,y,z);
-            this.vertices.push(p);
-          }
-        }
-      },
-      top: function(){
-        var u,v,p;
-        for (var i = 0; i <= this.detailY; i++){
-          v = i / this.detailY;
-          for (var j = 0; j <= this.detailX; j++){
-            u = j / this.detailX;
-            var theta = 2 * Math.PI * u;
-            if(v === 0){
-              p = new p5.Vector(0, height, 0);
-            }else{
-              var x = radius * Math.sin(-theta);
-              var y = height;
-              var z = radius * Math.cos(theta);
-              p = new p5.Vector(x,y,z);
-            }
-            this.vertices.push(p);
-          }
-        }
-      },
-      bottom: function(){
-        var u,v,p;
-        for (var i = 0; i <= this.detailY; i++){
-          v = i / this.detailY;
-          for (var j = 0; j <= this.detailX; j++){
-            u = j / this.detailX;
-            var theta = 2 * Math.PI * u;
-            if(v === 0){
-              p = new p5.Vector(0, -height, 0);
-            }else{
-              var x = radius * Math.sin(theta);
-              var y = -height;
-              var z = radius * Math.cos(theta);
-              p = new p5.Vector(x,y,z);
-            }
-            this.vertices.push(p);
-          }
-        }
-      }
-    };
-    var cylinderGeom = new p5.Geometry(_cylinder, detailX, detailY,
-      function(){
-        this.computeFaces().computeNormals().computeUVs();
-      }
-    );
+    var cylinderGeom = new p5.Geometry(detailX, detailY);
+    _truncatedCone.call(cylinderGeom,
+      radius,
+      radius,
+      height,
+      detailX,
+      detailY,
+      true,true);
+    cylinderGeom.computeNormals();
     //for cylinders we need to average normals
     cylinderGeom.averageNormals();
     this._renderer.createBuffers(gId, cylinderGeom);
@@ -355,60 +394,24 @@ p5.prototype.cylinder = function(radius, height, detail){
  * </div>
  */
 p5.prototype.cone = function(radius, height, detail){
-
   radius = radius || 50;
   height = height || 50;
-
   var detailX = detail || 24;
   var detailY = detail || 16;
-
   var gId = 'cone|'+radius+'|'+height+'|'+detailX+'|'+detailY;
-
   if(!this._renderer.geometryInHash(gId)){
-    var _cone = {
-      side: function(){
-        var u,v,p;
-        for (var i = 0; i <= this.detailY; i++){
-          v = i / this.detailY;
-          for (var j = 0; j <= this.detailX; j++){
-            u = j / this.detailX;
-            var theta = 2 * Math.PI * u;
-            var x = radius * (1 - v) * Math.sin(theta);
-            var y = 2 * height * v - height;
-            var z = radius * (1 - v) * Math.cos(theta);
-            p = new p5.Vector(x,y,z);
-            this.vertices.push(p);
-          }
-        }
-      },
-      bottom: function(){
-        var u,v,p;
-        for (var i = 0; i <= this.detailY; i++){
-          v = i / this.detailY;
-          for (var j = 0; j <= this.detailX; j++){
-            u = j / this.detailX;
-            var theta = 2 * Math.PI * u;
-            var x = radius * (1 - v) * Math.sin(-theta);
-            var y = -height;
-            var z = radius * (1 - v) * Math.cos(theta);
-            p = new p5.Vector(x,y,z);
-            this.vertices.push(p);
-          }
-        }
-      }
-    };
-    var _createCone = function (){
-
-    };
-    var coneGeom =
-    new p5.Geometry(_createCone,
-      detailX, detailY//,
-      // function(){
-      //   this.computeFaces().computeNormals().computeUVs();
-      // }
-    );
+    var coneGeom = new p5.Geometry(detailX, detailY);
+    _truncatedCone.call(coneGeom,
+      radius,
+      0,
+      height,
+      detailX,
+      detailY,
+      true,
+      true);
     //for cones we need to average Normals
-    // coneGeom.averageNormals();
+    coneGeom.computeNormals();
+    coneGeom.averageNormals();
     this._renderer.createBuffers(gId, coneGeom);
   }
 
@@ -416,108 +419,6 @@ p5.prototype.cone = function(radius, height, detail){
 
   return this;
 };
-
-/**
-   * Creates vertices for a truncated cone, which is like a cylinder
-   * except that it has different top and bottom radii. A truncated cone
-   * can also be used to create cylinders and regular cones. The
-   * truncated cone will be created centered about the origin, with the
-   * y axis as its vertical axis. The created cone has position, normal
-   * and uv streams.
-   *
-   * @param {number} bottomRadius Bottom radius of truncated cone.
-   * @param {number} topRadius Top radius of truncated cone.
-   * @param {number} height Height of truncated cone.
-   * @param {number} radialSubdivisions The number of subdivisions around the
-   *     truncated cone.
-   * @param {number} verticalSubdivisions The number of subdivisions down the
-   *     truncated cone.
-   * @param {boolean} [opt_topCap] Create top cap. Default = true.
-   * @param {boolean} [opt_bottomCap] Create bottom cap. Default =
-   *        true.
-   * @return {Object.<string, TypedArray>} The
-   *         created plane vertices.
-   * @memberOf module:primitives
-   */
-  function createTruncatedConeVertices(
-      bottomRadius,
-      topRadius,
-      height,
-      radialSubdivisions,
-      verticalSubdivisions,
-      opt_topCap,
-      opt_bottomCap) {
-    if (radialSubdivisions < 3) {
-      throw Error('radialSubdivisions must be 3 or greater');
-    }
-
-    if (verticalSubdivisions < 1) {
-      throw Error('verticalSubdivisions must be 1 or greater');
-    }
-
-    var topCap = (opt_topCap === undefined) ? true : opt_topCap;
-    var bottomCap = (opt_bottomCap === undefined) ? true : opt_bottomCap;
-
-    var extra = (topCap ? 2 : 0) + (bottomCap ? 2 : 0);
-
-    var vertsAroundEdge = radialSubdivisions + 1;
-
-    // The slant of the cone is constant across its surface
-    var slant = Math.atan2(bottomRadius - topRadius, height);
-    var start = topCap ? -2 : 0;
-    var end = verticalSubdivisions + (bottomCap ? 2 : 0);
-    var yy, ii;//@TODO
-    for (yy = start; yy <= end; ++yy) {
-      var v = yy / verticalSubdivisions;
-      var y = height * v;
-      var ringRadius;
-      if (yy < 0) {
-        y = 0;
-        v = 1;
-        ringRadius = bottomRadius;
-      } else if (yy > verticalSubdivisions) {
-        y = height;
-        v = 1;
-        ringRadius = topRadius;
-      } else {
-        ringRadius = bottomRadius +
-          (topRadius - bottomRadius) * (yy / verticalSubdivisions);
-      }
-      if (yy === -2 || yy === verticalSubdivisions + 2) {
-        ringRadius = 0;
-        v = 0;
-      }
-      y -= height / 2;
-      for (ii = 0; ii < vertsAroundEdge; ++ii) {
-        this.vertices.push(
-          new p5.Vector(
-            Math.sin(ii * Math.PI * 2 / radialSubdivisions) * ringRadius,
-            y,
-            Math.cos(ii * Math.PI * 2 / radialSubdivisions) * ringRadius)
-          );
-        //VERTEX NORMALS
-        this.vertexNormals.push(
-          new p5.Vector(
-            (yy < 0 || yy > verticalSubdivisions) ? 0 :
-            (Math.sin(ii * Math.PI * 2 / radialSubdivisions) * Math.cos(slant)),
-            (yy < 0) ? -1 : (yy > verticalSubdivisions ? 1 : Math.sin(slant)),
-            (yy < 0 || yy > verticalSubdivisions) ? 0 :
-            (Math.cos(ii * Math.PI * 2 / radialSubdivisions) * Math.cos(slant)))
-          );
-        this.uvs.push([(ii / radialSubdivisions), 1 - v]);
-      }
-    }
-    for (yy = 0; yy < verticalSubdivisions + extra; ++yy) {
-      for (ii = 0; ii < radialSubdivisions; ++ii) {
-        this.faces.push([vertsAroundEdge * (yy + 0) + 0 + ii,
-          vertsAroundEdge * (yy + 0) + 1 + ii,
-          vertsAroundEdge * (yy + 1) + 1 + ii]);
-        this.faces.push([vertsAroundEdge * (yy + 0) + 0 + ii,
-          vertsAroundEdge * (yy + 1) + 1 + ii,
-          vertsAroundEdge * (yy + 1) + 0 + ii]);
-      }
-    }
-  }
 
 /**
  * Draw an ellipsoid with given raduis
@@ -575,10 +476,8 @@ function(radiusx, radiusy, radiusz, detail){
         }
       }
     };
-    var ellipsoidGeom = new p5.Geometry(_ellipsoid, detailX, detailY,
-      function(){
-        this.computeFaces().computeNormals().computeUVs();
-      });
+    var ellipsoidGeom = new p5.Geometry(detailX, detailY,_ellipsoid);
+    ellipsoidGeom.computeFaces().computeNormals().computeUVs();
     ellipsoidGeom.averageNormals().averagePoleNormals();
     this._renderer.createBuffers(gId, ellipsoidGeom);
   }
@@ -641,12 +540,9 @@ p5.prototype.torus = function(radius, tubeRadius, detail){
         }
       }
     };
-    var torusGeom =
-    new p5.Geometry(_torus, detailX, detailY,
-      function(){
-        this.computeFaces().computeNormals().computeUVs();
-      }
-    );
+    var torusGeom = new p5.Geometry(detailX, detailY);
+    _torus.call(torusGeom);
+    torusGeom.computeFaces().computeNormals().computeUVs();
     //for torus we need to average normals
     torusGeom.averageNormals();
     this._renderer.createBuffers(gId, torusGeom);

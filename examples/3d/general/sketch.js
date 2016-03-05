@@ -107,8 +107,8 @@ function draw(){
   normalMaterial();
   rotate(radians(frameCount%360), [0,1,0]);
   //sphere(100);//works!
-  // ellipsoid(100,50,20);//works!
-  //cone(100,100);//needs base
+  //ellipsoid(100,250,50);//works!
+  cone(100,100);//needs base
   //torus(400,100);//works!
   //cylinder(100);//needs top and bottom
   //box(100);//error: attempt to access out of range vertices in attr 0
