@@ -601,8 +601,8 @@ p5.prototype.loadTable = function (path) {
       if (header) {
         t.columns = records.shift();
       } else {
-        for (i = 0; i < records.length; i++) {
-          t.columns[i] = i.toString();
+        for (i = 0; i < records[0].length; i++) {
+          t.columns[i] = 'null';
         }
       }
       var row;
@@ -1212,7 +1212,7 @@ function escapeHelper(content) {
  *  @method saveTable
  *  @param  {p5.Table} Table  the Table object to save to a file
  *  @param  {String} filename the filename to which the Table should be saved
- *  @param  {[String]} options  can be one of "tsv", "csv", or "html"
+ *  @param  {String} [options]  can be one of "tsv", "csv", or "html"
  *  @example
  *  <div><code>
  *  var table;

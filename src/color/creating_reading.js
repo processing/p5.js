@@ -246,9 +246,17 @@ p5.prototype.color = function() {
   if (arguments[0] instanceof p5.Color) {
     return arguments[0];  // Do nothing if argument is already a color object.
   } else if (arguments[0] instanceof Array) {
-    return new p5.Color(this, arguments[0]);
+    if (this instanceof p5.Renderer) {
+      return new p5.Color(this, arguments[0]);
+    } else {
+      return new p5.Color(this._renderer, arguments[0]);
+    }
   } else {
-    return new p5.Color(this, arguments);
+    if (this instanceof p5.Renderer) {
+      return new p5.Color(this, arguments);
+    } else {
+      return new p5.Color(this._renderer, arguments);
+    }
   }
 };
 

@@ -15,7 +15,7 @@ var p5 = require('../core/core');
  *
  */
 p5.Geometry = function
-(vertData, detailX, detailY, callback){
+(detailX, detailY, callback){
   //an array containing every vertex
   //@type [p5.Vector]
   this.vertices = [];
@@ -35,7 +35,6 @@ p5.Geometry = function
   this.uvs = [];
   this.detailX = (detailX !== undefined) ? detailX: 1;
   this.detailY = (detailY !== undefined) ? detailY: 1;
-  this._init(vertData);
   if(callback instanceof Function){
     callback.call(this);
   }
@@ -45,31 +44,31 @@ p5.Geometry = function
 /**
  * Initialize geometry with vertex data and parameters
  */
-p5.Geometry.prototype._init = function
-(vertData){
-  if(vertData instanceof Function){
-    vertData.call(this);
-  }
-  //otherwise it's an Object
-  else {
-    //traverse the vertData Object
-    //either directly pushing vertices,
-    //or calculating them by passing func
-    for(var item in vertData){
-      if(vertData.hasOwnProperty(item)){
-        if (vertData[item] instanceof p5.Vector){
-          this.vertices.push(vertData[item]);
-        }
-        else if(vertData[item] instanceof Function){
-          vertData[item].call(this);
-        }
-        else {
-          throw new Error('was expecting either p5.Vectors or a Function');
-        }
-      }
-    }
-  }
-};
+// p5.Geometry.prototype._init = function
+// (vertData){
+//   if(vertData instanceof Function){
+//     vertData.call(this);
+//   }
+//   //otherwise it's an Object
+//   else {
+//     //traverse the vertData Object
+//     //either directly pushing vertices,
+//     //or calculating them by passing func
+//     for(var item in vertData){
+//       if(vertData.hasOwnProperty(item)){
+//         if (vertData[item] instanceof p5.Vector){
+//           this.vertices.push(vertData[item]);
+//         }
+//         else if(vertData[item] instanceof Function){
+//           vertData[item].call(this);
+//         }
+//         else {
+//           throw new Error('was expecting either p5.Vectors or a Function');
+//         }
+//       }
+//     }
+//   }
+// };
 
 p5.Geometry.prototype.computeFaces = function(){
   var sliceCount = this.detailX + 1;
@@ -130,7 +129,7 @@ p5.Geometry.prototype.computeFaceNormals = function(){
 /**
  * compute normals (both faces and vertices) for a geometry
  */
-p5.Geometry.prototype.computeNormals = function (){
+p5.Geometry.prototype.computeNormals = function (aveNormals,avePoles){
 
   var v, f, face, faceNormal, vertices;
   var vertexNormals = [];
@@ -168,6 +167,12 @@ p5.Geometry.prototype.computeNormals = function (){
     this.vertexNormals[face[0]] = vertexNormals[f][0];
     this.vertexNormals[face[1]] = vertexNormals[f][1];
     this.vertexNormals[face[2]] = vertexNormals[f][2];
+  }
+  if (aveNormals){
+    this.averageNormals();
+  }
+  if (avePoles){
+    this.averagePoleNormals();
   }
   return this;
 };

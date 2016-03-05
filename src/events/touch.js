@@ -9,6 +9,17 @@
 
 var p5 = require('../core/core');
 
+/*
+ * These are helper vars that store the touchX and touchY vals
+ * between the time that a mouse event happens and the next frame
+ * of draw. This is done to deal with the asynchronicity of event
+ * calls interacting with the draw loop. When a touch event occurs
+ * the _nextTouchX/Y vars are updated, then on each call of draw, touchX/Y
+ * and ptouchX/Y are updated using the _nextMouseX/Y vals.
+ */
+p5.prototype._nextTouchX = 0;
+p5.prototype._nextTouchY = 0;
+
 /**
  * The system variable touchX always contains the horizontal position of
  * one finger, relative to (0, 0) of the canvas. This is best used for
@@ -65,17 +76,17 @@ p5.prototype.touches = [];
  */
 p5.prototype.touchIsDown = false;
 
-p5.prototype._updateTouchCoords = function(e) {
+p5.prototype._updateNextTouchCoords = function(e) {
   if(e.type === 'mousedown' ||
      e.type === 'mousemove' ||
      e.type === 'mouseup'){
-    this._setProperty('touchX', this.mouseX);
-    this._setProperty('touchY', this.mouseY);
+    this._setProperty('_nextTouchX', this._nextMouseX);
+    this._setProperty('_nextTouchY', this._nextMouseY);
   } else {
     if(this._curElement !== null) {
       var touchInfo = getTouchInfo(this._curElement.elt, e, 0);
-      this._setProperty('touchX', touchInfo.x);
-      this._setProperty('touchY', touchInfo.y);
+      this._setProperty('_nextTouchX', touchInfo.x);
+      this._setProperty('_nextTouchY', touchInfo.y);
 
       var touches = [];
       for(var i = 0; i < e.touches.length; i++){
@@ -86,9 +97,11 @@ p5.prototype._updateTouchCoords = function(e) {
   }
 };
 
-p5.prototype._updatePTouchCoords = function() {
+p5.prototype._updateTouchCoords = function() {
   this._setProperty('ptouchX', this.touchX);
   this._setProperty('ptouchY', this.touchY);
+  this._setProperty('touchX', this._nextTouchX);
+  this._setProperty('touchY', this._nextTouchY);
 };
 
 function getTouchInfo(canvas, e, i) {
@@ -145,8 +158,8 @@ function getTouchInfo(canvas, e, i) {
 p5.prototype._ontouchstart = function(e) {
   var context = this._isGlobal ? window : this;
   var executeDefault;
-  this._updateTouchCoords(e);
-  this._updateMouseCoords(e);
+  this._updateNextTouchCoords(e);
+  this._updateNextMouseCoords(e);
   this._setProperty('touchIsDown', true);
   if(typeof context.touchStarted === 'function') {
     executeDefault = context.touchStarted(e);
@@ -204,8 +217,8 @@ p5.prototype._ontouchstart = function(e) {
 p5.prototype._ontouchmove = function(e) {
   var context = this._isGlobal ? window : this;
   var executeDefault;
-  this._updateTouchCoords(e);
-  this._updateMouseCoords(e);
+  this._updateNextTouchCoords(e);
+  this._updateNextMouseCoords(e);
   if (typeof context.touchMoved === 'function') {
     executeDefault = context.touchMoved(e);
     if(executeDefault === false) {
@@ -260,8 +273,8 @@ p5.prototype._ontouchmove = function(e) {
  * </div>
  */
 p5.prototype._ontouchend = function(e) {
-  this._updateTouchCoords(e);
-  this._updateMouseCoords(e);
+  this._updateNextTouchCoords(e);
+  this._updateNextMouseCoords(e);
   if (this.touches.length === 0) {
     this._setProperty('touchIsDown', false);
   }

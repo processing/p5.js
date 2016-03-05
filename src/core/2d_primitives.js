@@ -335,14 +335,14 @@ p5.prototype.point = function() {
  * clockwise or counter-clockwise around the defined shape.
  *
  * @method quad
- * @param {type} x1 the x-coordinate of the first point
- * @param {type} y1 the y-coordinate of the first point
- * @param {type} x2 the x-coordinate of the second point
- * @param {type} y2 the y-coordinate of the second point
- * @param {type} x3 the x-coordinate of the third point
- * @param {type} y3 the y-coordinate of the third point
- * @param {type} x4 the x-coordinate of the fourth point
- * @param {type} y4 the y-coordinate of the fourth point
+ * @param {Number} x1 the x-coordinate of the first point
+ * @param {Number} y1 the y-coordinate of the first point
+ * @param {Number} x2 the x-coordinate of the second point
+ * @param {Number} y2 the y-coordinate of the second point
+ * @param {Number} x3 the x-coordinate of the third point
+ * @param {Number} y3 the y-coordinate of the third point
+ * @param {Number} x4 the x-coordinate of the fourth point
+ * @param {Number} y4 the y-coordinate of the fourth point
  * @return {p5}     the p5 object
  * @example
  * <div>
@@ -471,7 +471,11 @@ p5.prototype.rect = function (x, y, w, h, tl, tr, br, bl) {
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return;
   }
-  this._renderer.rect(x, y, w, h, tl, tr, br, bl);
+  if (this._renderer.isP3D){
+    this._renderer.rect(args);
+  } else {
+    this._renderer.rect(x, y, w, h, tl, tr, br, bl);
+  }
   return this;
 };
 
@@ -513,17 +517,7 @@ p5.prototype.triangle = function() {
          'Number', 'Number', 'Number']
       ]
     );
-    this._renderer.triangle(
-      args[0],
-      args[1],
-      args[2],
-      args[3],
-      args[4],
-      args[5],
-      args[6],
-      args[7],
-      args[8]
-      );
+    this._renderer.triangle(args);
   } else {
     this._validateParameters(
       'triangle',
@@ -533,12 +527,12 @@ p5.prototype.triangle = function() {
       ]
     );
     this._renderer.triangle(
-     args[0],
-     args[1],
-     args[2],
-     args[3],
-     args[4],
-     args[5]
+      args[0],
+      args[1],
+      args[2],
+      args[3],
+      args[4],
+      args[5]
     );
   }
   return this;

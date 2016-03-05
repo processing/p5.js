@@ -107,6 +107,7 @@ function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
       ' not yet implemented in webgl mode.');
   }
   else {
+    gl.enable(gl.BLEND);
     gl.drawArrays(this.immediateMode.shapeMode, 0,
       this.immediateMode.vertexPositions.length / 3);
   }

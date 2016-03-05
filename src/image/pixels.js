@@ -63,7 +63,7 @@ require('../color/p5.Color');
  * <code>
  * var pink = color(255, 102, 204);
  * loadPixels();
- * var d = pixelDensity;
+ * var d = pixelDensity();
  * var halfImage = 4 * (width * d) * (height/2 * d);
  * for (var i = 0; i < halfImage; i+=4) {
  *   pixels[i] = red(pink);
@@ -428,7 +428,7 @@ p5.prototype.get = function(x, y, w, h){
  *
  * function setup() {
  *   image(img, 0, 0);
- *   var d = pixelDensity;
+ *   var d = pixelDensity();
  *   var halfImage = 4 * (img.width * d) *
        (img.height/2 * d);
  *   loadPixels();
@@ -536,8 +536,8 @@ p5.prototype.set = function (x, y, imgOrCol) {
  *
  * function setup() {
  *   image(img, 0, 0);
- *   var halfImage = 4 * (img.width * pixelDensity) *
- *     (img.height * pixelDensity/2);
+ *   var halfImage = 4 * (img.width * pixelDensity()) *
+ *     (img.height * pixelDensity()/2);
  *   loadPixels();
  *   for (var i = 0; i < halfImage; i++) {
  *     pixels[i+halfImage] = pixels[i];
