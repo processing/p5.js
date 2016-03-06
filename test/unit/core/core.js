@@ -95,4 +95,33 @@ suite('Core', function(){
     });*/
   });
 
+  suite('p5.prototype.registerMethod', function() {
+    test('should register and call "init" methods', function() {
+      var originalInit = p5.prototype._registeredMethods.init;
+      var myp5, myInitCalled;
+
+      p5.prototype._registeredMethods.init = [];
+
+      try {
+        p5.prototype.registerMethod('init', function myInit() {
+          assert(!myInitCalled,
+                 'myInit should only be called once during test suite');
+          myInitCalled = true;
+
+          this.myInitCalled = true;
+        });
+
+        myp5 = new p5(function(sketch) {
+          assert(sketch.hasOwnProperty('myInitCalled'));
+          assert(sketch.myInitCalled);
+
+          sketch.sketchFunctionCalled = true;
+        });
+
+        assert(myp5.sketchFunctionCalled);
+      } finally {
+        p5.prototype._registeredMethods.init = originalInit;
+      }
+    });
+  });
 });
