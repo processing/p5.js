@@ -34,6 +34,10 @@ require([
     App.modules = [];
     App.project = data.project;
 
+    // Keep track of all our methods by their fully-qualified name, e.g.
+    // 'p5.color'. This makes it easier for us to keep track of overloaded
+    // methods.
+    var methodsByFullName = {};
 
     var modules = data.modules;
 
@@ -62,11 +66,22 @@ require([
 
     // Get class items (methods, properties, events)
     _.each(items, function(el, idx, array) {
+      var fullName;
 
       if (el.itemtype) {
         if (el.itemtype === "method") {
-          App.methods.push(el);
-          App.allItems.push(el);
+          fullName = el.class + '.' + el.name;
+          if (fullName in methodsByFullName) {
+            // It's an overloaded version of a method that we've already
+            // indexed. We need to make sure that we don't list it multiple
+            // times in our index pages and such.
+            methodsByFullName[fullName].overloads.push(el);
+          } else {
+            methodsByFullName[fullName] = el;
+            methodsByFullName[fullName].overloads = [el];
+            App.methods.push(el);
+            App.allItems.push(el);
+          }
         } else if (el.itemtype === "property") {
           App.properties.push(el);
           App.allItems.push(el);
