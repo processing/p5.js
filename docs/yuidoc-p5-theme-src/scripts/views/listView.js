@@ -5,6 +5,11 @@ define([
   // Templates
   'text!tpl/list.html'
 ], function (_, Backbone, App, listTpl) {
+  var striptags = function(html) {
+    var div = document.createElement('div');
+    div.innerHTML = html;
+    return div.textContent;
+  };
 
   var listView = Backbone.View.extend({
     el: '#list',
@@ -79,6 +84,7 @@ define([
 
         // Put the <li> items html into the list <ul>
         var listHtml = self.listTpl({
+          'striptags': striptags,
           'title': self.capitalizeFirst(listCollection),
           'groups': self.groups,
           'listCollection': listCollection

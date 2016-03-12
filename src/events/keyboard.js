@@ -249,7 +249,8 @@ p5.prototype._onkeyup = function (e) {
  *   } else if (key === 'b') {
  *     value = 0;
  *   }
- *   return false; // prevent any default behavior
+ *   // uncomment to prevent any default behavior
+ *   // return false;
  * }
  * </code>
  * </div>
