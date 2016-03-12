@@ -339,6 +339,13 @@ p5.Renderer3D.prototype.translate = function(x, y, z) {
   return this;
 };
 
+/**
+ * [cameraTranslate description]
+ * @param  {[type]} x [description]
+ * @param  {[type]} y [description]
+ * @param  {[type]} z [description]
+ * @return {[type]}   [description]
+ */
 p5.Renderer3D.prototype.cameraTranslate = function(x, y, z){
   //@TODO: figure out how to fit the resolution
   x = x / RESOLUTION;
@@ -371,11 +378,6 @@ p5.Renderer3D.prototype.rotate = function(rad, axis){
   return this;
 };
 
-p5.Renderer3D.prototype.cameraRotate = function(rad, axis){
-  this.uVMatrix.rotate(rad, axis);
-  return this;
-};
-
 /**
  * [rotateX description]
  * @param  {Number} rad radians to rotate
@@ -383,11 +385,6 @@ p5.Renderer3D.prototype.cameraRotate = function(rad, axis){
  */
 p5.Renderer3D.prototype.rotateX = function(rad) {
   this.uMMatrix.rotateX(rad);
-  return this;
-};
-
-p5.Renderer3D.prototype.cameraRotateX = function(rad){
-  this.uVMatrix.rotateX(rad);
   return this;
 };
 
@@ -401,11 +398,6 @@ p5.Renderer3D.prototype.rotateY = function(rad) {
   return this;
 };
 
-p5.Renderer3D.prototype.cameraRotateY = function(rad) {
-  this.uVMatrix.rotateY(rad);
-  return this;
-};
-
 /**
  * [rotateZ description]
  * @param  {Number} rad rad radians to rotate
@@ -413,11 +405,6 @@ p5.Renderer3D.prototype.cameraRotateY = function(rad) {
  */
 p5.Renderer3D.prototype.rotateZ = function(rad) {
   this.uMMatrix.rotateZ(rad);
-  return this;
-};
-
-p5.Renderer3D.prototype.cameraRotateZ = function(rad) {
-  this.uVMatrix.rotateZ(rad);
   return this;
 };
 
