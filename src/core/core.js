@@ -445,6 +445,13 @@ var p5 = function(sketch, node, sync) {
     p5.prototype[k] = constants[k];
   }
 
+  // call any registered init functions
+  this._registeredMethods.init.forEach(function (f) {
+    if (typeof(f) !== 'undefined') {
+      f.call(this);
+    }
+  }, this);
+
   // If the user has created a global setup or draw function,
   // assume "global" mode and make everything global (i.e. on the window)
   if (!sketch) {
@@ -523,7 +530,7 @@ p5.prototype._preloadMethods = {
   loadFont: p5.prototype
 };
 
-p5.prototype._registeredMethods = { pre: [], post: [], remove: [] };
+p5.prototype._registeredMethods = { init: [], pre: [], post: [], remove: [] };
 
 p5.prototype._registeredPreloadMethods = {};
 
