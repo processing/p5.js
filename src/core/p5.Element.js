@@ -117,8 +117,6 @@ p5.Element.prototype.class = function(c) {
     return this.elt.className;
   } else {
     this.elt.className = c;
-    this.width = this.elt.offsetWidth;
-    this.height = this.elt.offsetHeight;
     return this;
   }
 };

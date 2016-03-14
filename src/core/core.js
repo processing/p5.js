@@ -299,17 +299,14 @@ var p5 = function(sketch, node, sync) {
       context.setup();
     }
 
-    // // unhide hidden canvas that was created
-    // this.canvas.style.visibility = '';
-    // this.canvas.className = this.canvas.className.replace('p5_hidden', '');
-
     // unhide any hidden canvases that were created
-    var reg = new RegExp(/(^|\s)p5_hidden(?!\S)/g);
-    var canvases = document.getElementsByClassName('p5_hidden');
+    var canvases = document.getElementsByTagName('canvas');
     for (var i = 0; i < canvases.length; i++) {
       var k = canvases[i];
-      k.style.visibility = '';
-      k.className = k.className.replace(reg, '');
+      if (k.dataset.hidden === 'true') {
+        k.style.visibility = '';
+        delete(k.dataset.hidden);
+      }
     }
     this._setupDone = true;
 
