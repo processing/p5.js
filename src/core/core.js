@@ -105,8 +105,9 @@ var p5 = function(sketch, node, sync) {
   /**
    * Called directly after setup(), the draw() function continuously executes
    * the lines of code contained inside its block until the program is stopped
-   * or noLoop() is called. draw() is called automatically and should never be
-   * called explicitly.
+   * or noLoop() is called. Note if noLoop() is called in setup(), draw() will
+   * still be executed once before stopping. draw() is called automatically and
+   * should never be called explicitly.
    * <br><br>
    * It should always be controlled with noLoop(), redraw() and loop(). After
    * noLoop() stops the code in draw() from executing, redraw() causes the
