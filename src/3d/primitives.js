@@ -4,9 +4,6 @@
  * @for p5
  * @requires core
  * @requires p5.Geometry
- * @todo complex geometries currently fail test
- * because of face index calculation.  This affects the following primitives:
- * box, cone, cylinder
  */
 
 'use strict';
@@ -35,11 +32,14 @@ require('./p5.Geometry');
  * </div>
  */
 p5.prototype.plane = function(width, height){
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   width = width || 50;
   height = height || width;
-
-  var detailX = typeof arguments[2] === Number ? arguments[2] : 1;
-  var detailY = typeof arguments[3] === Number ? arguments[3] : 1;
+  var detailX = typeof args[2] === 'number' ? args[2] : 1;
+  var detailY = typeof args[3] === 'number' ? args[3] : 1;
 
   var gId = 'plane|'+width+'|'+height+'|'+detailX+'|'+detailY;
 
@@ -54,6 +54,7 @@ p5.prototype.plane = function(width, height){
             height * v - height/2,
             0);
           this.vertices.push(p);
+          this.uvs.push([u,v]);
         }
       }
     };
@@ -61,8 +62,7 @@ p5.prototype.plane = function(width, height){
     new p5.Geometry(detailX, detailY, _plane);
     planeGeom
       .computeFaces()
-      .computeNormals()
-      .computeUVs();
+      .computeNormals();
     this._renderer.createBuffers(gId, planeGeom);
   }
 
@@ -95,13 +95,16 @@ p5.prototype.plane = function(width, height){
  * </div>
  */
 p5.prototype.box = function(width, height, depth){
-
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   width = width || 50;
   height = height || width;
   depth = depth || width;
 
-  var detailX = typeof arguments[3] === Number ? arguments[3] : 4;
-  var detailY = typeof arguments[4] === Number ? arguments[4] : 4;
+  var detailX = typeof args[3] === 'number' ? args[3] : 4;
+  var detailY = typeof args[4] === 'number' ? args[4] : 4;
   var gId = 'box|'+width+'|'+height+'|'+depth+'|'+detailX+'|'+detailY;
 
   if(!this._renderer.geometryInHash(gId)){
@@ -128,8 +131,8 @@ p5.prototype.box = function(width, height, depth){
             ((d & 2) - 1) *height/2,
             ((d & 4) / 2 - 1) * depth/2);
           this.vertices.push( octant );
-          //if (mesh.coords) mesh.coords.push([j & 1, (j & 2) / 2]);
-          //if (mesh.normals) mesh.normals.push(data.slice(4, 7));
+          console.log([j & 1, (j & 2) / 2]);
+          this.uvs.push([j & 1, (j & 2) / 2]);
           id++;
         }
         this.faces.push([v, v + 1, v + 2]);
@@ -137,9 +140,7 @@ p5.prototype.box = function(width, height, depth){
       }
     };
     var boxGeom = new p5.Geometry(detailX,detailY, _box);
-    boxGeom
-      .computeNormals()
-      .computeUVs();
+    boxGeom.computeNormals();
     //initialize our geometry buffer with
     //the key val pair:
     //geometry Id, Geom object
@@ -178,13 +179,16 @@ p5.prototype.box = function(width, height, depth){
  * </div>
  */
 p5.prototype.sphere = function(radius){
-
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
+  //@todo validate params here
+  //
   radius = radius || 50;
-  var detailX = typeof arguments[1] === Number ? arguments[1] : 24;
-  var detailY = typeof arguments[2] === Number ? arguments[2] : 16;
-
+  var detailX = typeof args[1] === 'number' ? args[1] : 24;
+  var detailY = typeof args[2] === 'number' ? args[2] : 16;
   var gId = 'sphere|'+radius+'|'+detailX+'|'+detailY;
-
   if(!this._renderer.geometryInHash(gId)){
     var _sphere = function(){
       var u,v,p;
@@ -198,14 +202,14 @@ p5.prototype.sphere = function(radius){
             radius * Math.sin(phi),
             radius * Math.cos(phi) * Math.cos(theta));
           this.vertices.push(p);
+          this.uvs.push([u,v]);
         }
       }
     };
     var sphereGeom = new p5.Geometry(detailX, detailY, _sphere);
     sphereGeom
       .computeFaces()
-      .computeNormals(true,true)
-      .computeUVs();
+      .computeNormals(true,true);
     this._renderer.createBuffers(gId, sphereGeom);
   }
   this._renderer.drawBuffers(gId);
@@ -225,9 +229,9 @@ p5.prototype.sphere = function(radius){
  * @param {number} bottomRadius Bottom radius of truncated cone.
  * @param {number} topRadius Top radius of truncated cone.
  * @param {number} height Height of truncated cone.
- * @param {number} radialSubdivisions The number of subdivisions around the
+ * @param {number} detailXdivisions The number of subdivisions around the
  *     truncated cone.
- * @param {number} verticalSubdivisions The number of subdivisions down the
+ * @param {number} detailYdivisions The number of subdivisions down the
  *     truncated cone.
  * @param {boolean} [topCap] Create top cap. Default = true.
  * @param {boolean} [bottomCap] Create bottom cap. Default =
@@ -240,64 +244,66 @@ var _truncatedCone = function(
   bottomRadius,
   topRadius,
   height,
-  radialSub,
-  verticalSub,
+  detailX,
+  detailY,
   topCap,
   bottomCap) {
-  radialSub = (radialSub < 3) ? 3 : radialSub;
-  verticalSub = (verticalSub < 1) ? 1 : verticalSub;
+  detailX = (detailX < 3) ? 3 : detailX;
+  detailY = (detailY < 1) ? 1 : detailY;
   topCap = (topCap === undefined) ? true : topCap;
   bottomCap = (bottomCap === undefined) ? true : bottomCap;
   var extra = (topCap ? 2 : 0) + (bottomCap ? 2 : 0);
-  var vertsAroundEdge = radialSub + 1;
+  var vertsAroundEdge = detailX + 1;
 
   // The slant of the cone is constant across its surface
   var slant = Math.atan2(bottomRadius - topRadius, height);
   var start = topCap ? -2 : 0;
-  var end = verticalSub + (bottomCap ? 2 : 0);
+  var end = detailY + (bottomCap ? 2 : 0);
   var yy, ii;//@TODO
   for (yy = start; yy <= end; ++yy) {
-    var v = yy / verticalSub;
+    var v = yy / detailY;
     var y = height * v;
     var ringRadius;
     if (yy < 0) {
       y = 0;
       v = 1;
       ringRadius = bottomRadius;
-    } else if (yy > verticalSub) {
+    } else if (yy > detailY) {
       y = height;
       v = 1;
       ringRadius = topRadius;
     } else {
       ringRadius = bottomRadius +
-        (topRadius - bottomRadius) * (yy / verticalSub);
+        (topRadius - bottomRadius) * (yy / detailY);
     }
-    if (yy === -2 || yy === verticalSub + 2) {
+    if (yy === -2 || yy === detailY + 2) {
       ringRadius = 0;
       v = 0;
     }
     y -= height / 2;
     for (ii = 0; ii < vertsAroundEdge; ++ii) {
+      //VERTICES
       this.vertices.push(
         new p5.Vector(
-          Math.sin(ii*Math.PI * 2 /radialSub) * ringRadius,
+          Math.sin(ii*Math.PI * 2 /detailX) * ringRadius,
           y,
-          Math.cos(ii*Math.PI * 2 /radialSub) * ringRadius)
+          Math.cos(ii*Math.PI * 2 /detailX) * ringRadius)
         );
       //VERTEX NORMALS
       this.vertexNormals.push(
         new p5.Vector(
-          (yy < 0 || yy > verticalSub) ? 0 :
-          (Math.sin(ii * Math.PI * 2 / radialSub) * Math.cos(slant)),
-          (yy < 0) ? -1 : (yy > verticalSub ? 1 : Math.sin(slant)),
-          (yy < 0 || yy > verticalSub) ? 0 :
-          (Math.cos(ii * Math.PI * 2 / radialSub) * Math.cos(slant)))
+          (yy < 0 || yy > detailY) ? 0 :
+          (Math.sin(ii * Math.PI * 2 / detailX) * Math.cos(slant)),
+          (yy < 0) ? -1 : (yy > detailY ? 1 : Math.sin(slant)),
+          (yy < 0 || yy > detailY) ? 0 :
+          (Math.cos(ii * Math.PI * 2 / detailX) * Math.cos(slant)))
         );
-      this.uvs.push([(ii / radialSub), 1 - v]);
+      //UVs
+      this.uvs.push([(ii / detailX), v]);
     }
   }
-  for (yy = 0; yy < verticalSub + extra; ++yy) {
-    for (ii = 0; ii < radialSub; ++ii) {
+  for (yy = 0; yy < detailY + extra; ++yy) {
+    for (ii = 0; ii < detailX; ++ii) {
       this.faces.push([vertsAroundEdge * (yy + 0) + 0 + ii,
         vertsAroundEdge * (yy + 0) + 1 + ii,
         vertsAroundEdge * (yy + 1) + 1 + ii]);
@@ -335,11 +341,14 @@ var _truncatedCone = function(
  * </div>
  */
 p5.prototype.cylinder = function(radius, height){
-
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   radius = radius || 50;
   height = height || 50;
-  var detailX = typeof arguments[2] === Number ? arguments[2] : 24;
-  var detailY = typeof arguments[3] === Number ? arguments[3] : 16;
+  var detailX = typeof args[2] === 'number' ? args[2] : 24;
+  var detailY = typeof args[3] === 'number' ? args[3] : 16;
   var gId = 'cylinder|'+radius+'|'+height+'|'+detailX+'|'+detailY;
   if(!this._renderer.geometryInHash(gId)){
     var cylinderGeom = new p5.Geometry(detailX, detailY);
@@ -367,9 +376,12 @@ p5.prototype.cylinder = function(radius, height){
  * @method cone
  * @param  {Number} radius            radius of the bottom surface
  * @param  {Number} height            height of the cone
- * @param  {Number} [detail]          optional: number of segments,
+ * @param  {Number} [detailX]          optional: number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
+ * @param  {Number} [detailY]          optional: number of segments,
+ *                                    the more segments the smoother geometry
+ *                                    default is 16
  * @return {p5}                       the p5 object
  * @example
  * <div>
@@ -388,11 +400,17 @@ p5.prototype.cylinder = function(radius, height){
  * </code>
  * </div>
  */
-p5.prototype.cone = function(radius, height, detail){
+p5.prototype.cone = function(radius, height){
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   radius = radius || 50;
   height = height || 50;
-  var detailX = detail || 24;
-  var detailY = detail || 16;
+  var detailX = typeof args[2] === 'number' ? args[2] : 24;
+  var detailY = typeof args[3] === 'number' ? args[3] : 16;
+  radius = radius || 50;
+  height = height || 50;
   var gId = 'cone|'+radius+'|'+height+'|'+detailX+'|'+detailY;
   if(!this._renderer.geometryInHash(gId)){
     var coneGeom = new p5.Geometry(detailX, detailY);
@@ -442,14 +460,16 @@ p5.prototype.cone = function(radius, height, detail){
  * </div>
  */
 p5.prototype.ellipsoid =
-function(radiusx, radiusy, radiusz, detail){
-
+function(radiusx, radiusy, radiusz){
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
+  var detailX = typeof args[2] === 'number' ? args[2] : 24;
+  var detailY = typeof args[3] === 'number' ? args[3] : 24;
   radiusx = radiusx || 50;
   radiusy = radiusy || 50;
   radiusz = radiusz || 50;
-
-  var detailX = detail || 24;
-  var detailY = detail || 24;
 
   var gId = 'ellipsoid|'+radiusx+'|'+radiusy+
   '|'+radiusz+'|'+detailX+'|'+detailY;
@@ -468,14 +488,14 @@ function(radiusx, radiusy, radiusz, detail){
             radiusy * Math.sin(phi),
             radiusz * Math.cos(phi) * Math.cos(theta));
           this.vertices.push(p);
+          this.uvs.push([u,v]);
         }
       }
     };
     var ellipsoidGeom = new p5.Geometry(detailX, detailY,_ellipsoid);
     ellipsoidGeom
       .computeFaces()
-      .computeNormals(true, true)
-      .computeUVs();
+      .computeNormals(true, true);
     this._renderer.createBuffers(gId, ellipsoidGeom);
   }
 
@@ -510,13 +530,16 @@ function(radiusx, radiusy, radiusz, detail){
  * </code>
  * </div>
  */
-p5.prototype.torus = function(radius, tubeRadius, detail){
+p5.prototype.torus = function(radius, tubeRadius){
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
+  var detailX = typeof args[2] === 'number' ? args[2] : 24;
+  var detailY = typeof args[3] === 'number' ? args[3] : 16;
 
   radius = radius || 50;
   tubeRadius = tubeRadius || 10;
-
-  var detailX = detail || 24;
-  var detailY = detail || 16;
 
   var gId = 'torus|'+radius+'|'+tubeRadius+'|'+detailX+'|'+detailY;
 
@@ -534,14 +557,14 @@ p5.prototype.torus = function(radius, tubeRadius, detail){
             (radius + tubeRadius * Math.cos(phi)) * Math.sin(theta),
             tubeRadius * Math.sin(phi));
           this.vertices.push(p);
+          this.uvs.push([u,v]);
         }
       }
     };
     var torusGeom = new p5.Geometry(detailX, detailY, _torus);
     torusGeom
       .computeFaces()
-      .computeNormals(true)
-      .computeUVs();
+      .computeNormals(true);
     this._renderer.createBuffers(gId, torusGeom);
   }
 
@@ -555,13 +578,17 @@ p5.prototype.torus = function(radius, tubeRadius, detail){
 /// @TODO turn this from immediate mode
 /// to retained mode
 /////////////////////////
-// p5.Renderer3D.prototype.point = function(x, y, z){
-//   var gl = this.GL;
-//   this._primitives2D([x, y, z]);
-//   gl.drawArrays(gl.POINTS, 0, 1);
-//   return this;
-// };
+p5.Renderer3D.prototype.point = function(x, y, z){
+  var gl = this.GL;
+  this._primitives2D([x, y, z]);
+  gl.drawArrays(gl.POINTS, 0, 1);
+  return this;
+};
 
+/**
+ * @todo need to rework line geometry to accommodate line weights
+ * and stroke vals
+ */
 // p5.Renderer3D.prototype.line = function(x1, y1, z1, x2, y2, z2){
 //   var gId = 'line|'+x1+'|'+y1+'|'+z1+'|'+x2+'|'+y2+'|'+z2;
 //   if(!this.geometryInHash(gId)){
