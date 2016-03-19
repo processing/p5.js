@@ -131,7 +131,6 @@ p5.prototype.box = function(width, height, depth){
             ((d & 2) - 1) *height/2,
             ((d & 4) / 2 - 1) * depth/2);
           this.vertices.push( octant );
-          console.log([j & 1, (j & 2) / 2]);
           this.uvs.push([j & 1, (j & 2) / 2]);
           id++;
         }
@@ -209,7 +208,7 @@ p5.prototype.sphere = function(radius){
     var sphereGeom = new p5.Geometry(detailX, detailY, _sphere);
     sphereGeom
       .computeFaces()
-      .computeNormals(true,true);
+      .computeNormals();
     this._renderer.createBuffers(gId, sphereGeom);
   }
   this._renderer.drawBuffers(gId);
@@ -361,7 +360,7 @@ p5.prototype.cylinder = function(radius, height){
       detailY,
       true,true);
     cylinderGeom
-      .computeNormals(true);
+      .computeNormals();
     this._renderer.createBuffers(gId, cylinderGeom);
   }
 
@@ -424,7 +423,7 @@ p5.prototype.cone = function(radius, height){
       true);
     //for cones we need to average Normals
     coneGeom
-      .computeNormals(true);
+      .computeNormals();
     this._renderer.createBuffers(gId, coneGeom);
   }
 
@@ -495,7 +494,7 @@ function(radiusx, radiusy, radiusz){
     var ellipsoidGeom = new p5.Geometry(detailX, detailY,_ellipsoid);
     ellipsoidGeom
       .computeFaces()
-      .computeNormals(true, true);
+      .computeNormals();
     this._renderer.createBuffers(gId, ellipsoidGeom);
   }
 
@@ -564,7 +563,7 @@ p5.prototype.torus = function(radius, tubeRadius){
     var torusGeom = new p5.Geometry(detailX, detailY, _torus);
     torusGeom
       .computeFaces()
-      .computeNormals(true);
+      .computeNormals();
     this._renderer.createBuffers(gId, torusGeom);
   }
 

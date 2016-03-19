@@ -26,10 +26,6 @@ p5.Geometry = function
   //an array containing each three vertex indices that form a face
   //[[0, 1, 2], [2, 1, 3], ...]
   this.faces = [];
-  //an array containing every normal for each face
-  //each faceNormal is a p5.Vector
-  //[[p5.Vector, p5.Vector, p5.Vector],[p5.Vector, p5.Vector, p5.Vector],...]
-  this.faceNormals = [];
   //a 2D array containing uvs for every vertex
   //[[0.0,0.0],[1.0,0.0], ...]
   this.uvs = [];
@@ -40,35 +36,6 @@ p5.Geometry = function
   }
   return this;
 };
-
-/**
- * Initialize geometry with vertex data and parameters
- */
-// p5.Geometry.prototype._init = function
-// (vertData){
-//   if(vertData instanceof Function){
-//     vertData.call(this);
-//   }
-//   //otherwise it's an Object
-//   else {
-//     //traverse the vertData Object
-//     //either directly pushing vertices,
-//     //or calculating them by passing func
-//     for(var item in vertData){
-//       if(vertData.hasOwnProperty(item)){
-//         if (vertData[item] instanceof p5.Vector){
-//           this.vertices.push(vertData[item]);
-//         }
-//         else if(vertData[item] instanceof Function){
-//           vertData[item].call(this);
-//         }
-//         else {
-//           throw new Error('was expecting either p5.Vectors or a Function');
-//         }
-//       }
-//     }
-//   }
-// };
 
 p5.Geometry.prototype.computeFaces = function(){
   var sliceCount = this.detailX + 1;
@@ -86,95 +53,42 @@ p5.Geometry.prototype.computeFaces = function(){
   return this;
 };
 
+p5.Geometry.prototype._getFaceNormal = function(faceId,vertId){
+  //This assumes that vA->vB->vC is a counter-clockwise ordering
+  var face = this.faces[faceId];
+  var vA = this.vertices[face[vertId%3]];
+  var vB = this.vertices[face[(vertId+1)%3]];
+  var vC = this.vertices[face[(vertId+2)%3]];
+  var n = p5.Vector.cross(
+    p5.Vector.sub(vB,vA),
+    p5.Vector.sub(vC,vA));
+  var sinAlpha = p5.Vector.mag(n) /
+  (p5.Vector.mag(p5.Vector.sub(vB,vA))*
+    p5.Vector.mag(p5.Vector.sub(vC,vA)));
+  n = n.normalize();
+  return n.mult(Math.asin(sinAlpha));
+};
 /**
- * compute UVs per vertex
+ * computes smooth normals per vertex as an average of each
+ * face.
  */
-//@todo this function is flawed if geom has mult faces
-p5.Geometry.prototype.computeUVs = function(){
-  var u,v;
-  for (var i = 0; i <= this.detailY; i++){
-    v = i / this.detailY;
-    for (var j = 0; j <= this.detailX; j++){
-      u = j / this.detailX;
-      this.uvs.push([u,v]);
+p5.Geometry.prototype.computeNormals = function (){
+  for(var v=0; v < this.vertices.length; v++){
+    var normal = new p5.Vector();
+    for(var i=0; i < this.faces.length; i++){
+      //if our face contains a given vertex
+      //calculate an average of the normals
+      //of the triangles adjacent to that vertex
+      if(this.faces[i][0] === v ||
+        this.faces[i][1] === v ||
+        this.faces[i][2] === v)
+      {
+        normal = normal.add(this._getFaceNormal(i, v));
+      }
     }
+    normal = normal.normalize();
+    this.vertexNormals.push(normal);
   }
-  return this;
-};
-
-/**
- * compute faceNormals for a geometry
- */
-p5.Geometry.prototype.computeFaceNormals = function(){
-  var cb = new p5.Vector();
-  var ab = new p5.Vector();
-
-  for (var f = 0; f < this.faces.length; f++){
-    var face = this.faces[f];
-    var vA = this.vertices[face[0]];
-    var vB = this.vertices[face[1]];
-    var vC = this.vertices[face[2]];
-
-    p5.Vector.sub(vC, vB, cb);
-    p5.Vector.sub(vA, vB, ab);
-
-    var normal = p5.Vector.cross(ab, cb);
-    normal.normalize();
-    normal.mult(-1);
-    this.faceNormals[f] = normal;
-  }
-  return this;
-};
-
-/**
- * compute normals (both faces and vertices) for a geometry
- */
-p5.Geometry.prototype.computeNormals = function (aveNormals,avePoles){
-
-  var v, f, face, faceNormal, vertices;
-  var vertexNormals = [];
-
-  vertices = new Array(this.vertices.length);
-  for (v = 0; v < this.vertices.length; v++) {
-    vertices[v] = new p5.Vector();
-  }
-  //we need faceNormals before computing per vertex
-  if(this.faceNormals.length === 0){
-    this.computeFaceNormals();
-  }
-  for (f = 0; f < this.faces.length; f++) {
-    face = this.faces[f];
-    faceNormal = this.faceNormals[f];
-    vertices[face[0]].add(faceNormal);
-    vertices[face[1]].add(faceNormal);
-    vertices[face[2]].add(faceNormal);
-  }
-  for (v = 0; v < this.vertices.length; v++) {
-    vertices[v].normalize();
-  }
-
-  for (f = 0; f < this.faces.length; f++) {
-    face = this.faces[f];
-    vertexNormals[f] = [];
-    vertexNormals[f][0]= vertices[face[0]].copy();
-    vertexNormals[f][1]= vertices[face[1]].copy();
-    vertexNormals[f][2]= vertices[face[2]].copy();
-  }
-
-  for (f = 0; f < this.faces.length; f++){
-    face = this.faces[f];
-    faceNormal = this.faceNormals[f];
-    this.vertexNormals[face[0]] = vertexNormals[f][0];
-    this.vertexNormals[face[1]] = vertexNormals[f][1];
-    this.vertexNormals[face[2]] = vertexNormals[f][2];
-  }
-  if (aveNormals){
-    this.averageNormals();
-  }
-  if (avePoles){
-    this.averagePoleNormals();
-  }
-  return this;
 };
 
 /**

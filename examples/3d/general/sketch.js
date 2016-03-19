@@ -90,8 +90,9 @@ function draw(){
   //   vertex(0,height/2,0);
   // endShape();
   //works
-  // directionalLight(255,255,255,0,0,1);
-  // specularMaterial(0,255,0,4);
+
+  //directionalLight(255,255,255,0,0,1);
+  //specularMaterial(0,255,0);  
   // beginShape(TRIANGLE_FAN);
   //   vertex(0,0,0);
   //   vertex(width/2,-height/6,0);
@@ -105,16 +106,17 @@ function draw(){
   //// 3D
   ////////////
   texture(img);
-  //basicMaterial(100,0,0,100);
+  
   //directionalLight(0,255,255,0,0,1);
+  //fill(100,0,0,100);
   //normalMaterial();
 
-  // sphere(400);//works!
-  // ellipsoid(100,250,50);//works!
-  // cone(100,400);//needs base
+  sphere(400);//works!
+  //ellipsoid(100,250,50);//works!
+  //cone(100,400);//needs base
   //torus(400,100);//works!
-  // cylinder(100,400);//needs top and bottom
+  //cylinder(100,400);//needs top and bottom
   //box(400);//error: attempt to access out of range vertices in attr 0
   // basicMaterial(255,0,0);
-  plane(400);//works!
+  //plane(400);//works!
 }
