@@ -97,6 +97,11 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
   start %= constants.TWO_PI;
   stop %= constants.TWO_PI;
 
+  // account for full circle
+  if (stop === start) {
+    stop += constants.TWO_PI;
+  }
+
   // Adjust angles to counter linear scaling.
   if (start <= constants.HALF_PI) {
     start = Math.atan(w / h * Math.tan(start));

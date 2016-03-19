@@ -105,8 +105,9 @@ var p5 = function(sketch, node, sync) {
   /**
    * Called directly after setup(), the draw() function continuously executes
    * the lines of code contained inside its block until the program is stopped
-   * or noLoop() is called. draw() is called automatically and should never be
-   * called explicitly.
+   * or noLoop() is called. Note if noLoop() is called in setup(), draw() will
+   * still be executed once before stopping. draw() is called automatically and
+   * should never be called explicitly.
    * <br><br>
    * It should always be controlled with noLoop(), redraw() and loop(). After
    * noLoop() stops the code in draw() from executing, redraw() causes the
@@ -299,17 +300,14 @@ var p5 = function(sketch, node, sync) {
       context.setup();
     }
 
-    // // unhide hidden canvas that was created
-    // this.canvas.style.visibility = '';
-    // this.canvas.className = this.canvas.className.replace('p5_hidden', '');
-
     // unhide any hidden canvases that were created
-    var reg = new RegExp(/(^|\s)p5_hidden(?!\S)/g);
-    var canvases = document.getElementsByClassName('p5_hidden');
+    var canvases = document.getElementsByTagName('canvas');
     for (var i = 0; i < canvases.length; i++) {
       var k = canvases[i];
-      k.style.visibility = '';
-      k.className = k.className.replace(reg, '');
+      if (k.dataset.hidden === 'true') {
+        k.style.visibility = '';
+        delete(k.dataset.hidden);
+      }
     }
     this._setupDone = true;
 
@@ -445,6 +443,13 @@ var p5 = function(sketch, node, sync) {
     p5.prototype[k] = constants[k];
   }
 
+  // call any registered init functions
+  this._registeredMethods.init.forEach(function (f) {
+    if (typeof(f) !== 'undefined') {
+      f.call(this);
+    }
+  }, this);
+
   // If the user has created a global setup or draw function,
   // assume "global" mode and make everything global (i.e. on the window)
   if (!sketch) {
@@ -523,7 +528,7 @@ p5.prototype._preloadMethods = {
   loadFont: p5.prototype
 };
 
-p5.prototype._registeredMethods = { pre: [], post: [], remove: [] };
+p5.prototype._registeredMethods = { init: [], pre: [], post: [], remove: [] };
 
 p5.prototype._registeredPreloadMethods = {};
 
