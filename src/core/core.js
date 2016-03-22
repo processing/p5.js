@@ -179,17 +179,15 @@ var p5 = function(sketch, node, sync) {
     'blur': null
   };
 
+  this._events.wheel = null;
+  this._loadingScreenId = 'p5_loading';
+
   if (window.DeviceOrientationEvent) {
     this._events.deviceorientation = null;
   }
   if (window.DeviceMotionEvent && !window._isNodeWebkit) {
     this._events.devicemotion = null;
   }
-
-  this._events.wheel = null;
-
-
-  this._loadingScreenId = 'p5_loading';
 
   this._start = function () {
     // Find node if id given
@@ -437,12 +435,6 @@ var p5 = function(sketch, node, sync) {
     // window.p5 = undefined;
   }.bind(this);
 
-
-  // attach constants to p5 instance
-  for (var k in constants) {
-    p5.prototype[k] = constants[k];
-  }
-
   // call any registered init functions
   this._registeredMethods.init.forEach(function (f) {
     if (typeof(f) !== 'undefined') {
@@ -502,8 +494,6 @@ var p5 = function(sketch, node, sync) {
     window.removeEventListener('blur', blurHandler);
   });
 
-  // TODO: ???
-
   if (sync) {
     this._start();
   } else {
@@ -515,6 +505,10 @@ var p5 = function(sketch, node, sync) {
   }
 };
 
+// attach constants to p5 prototype
+for (var k in constants) {
+  p5.prototype[k] = constants[k];
+}
 
 // functions that cause preload to wait
 // more can be added by using registerPreloadMethod(func)
