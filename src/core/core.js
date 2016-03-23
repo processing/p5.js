@@ -442,6 +442,56 @@ var p5 = function(sketch, node, sync) {
     }
   }, this);
 
+  var friendlyBindGlobal = function(prop, value) {
+    if (typeof(value) === 'function') {
+      try {
+        // Because p5 has so many common function names, it's likely
+        // that users may accidentally overwrite global p5 functions with
+        // their own variables. Let's allow this but log a warning to
+        // help users who may be doing this unintentionally.
+        //
+        // For more information, see:
+        //
+        //   https://github.com/processing/p5.js/issues/1317
+        Object.defineProperty(window, prop, {
+          configurable: true,
+          enumerable: true,
+          get: function() {
+            return value;
+          },
+          set: function(newValue) {
+            Object.defineProperty(window, prop, {
+              configurable: true,
+              enumerable: true,
+              value: newValue,
+              writable: true
+            });
+            console.log(
+              'You just changed the value of "' + prop + '", which was ' +
+              'a p5 function. This could cause problems later if you\'re ' +
+              'not careful.'
+            );
+          }
+        });
+      } catch (e) {
+        // It's likely that this is a TypeError due to us trying to
+        // redefine a non-configurable property, which can happen if
+        // the user already declared the property name as a global
+        // variable. Let's log a warning and fall back to our legacy
+        // behavior.
+        console.log(
+          'p5 had problems creating the global function "' + prop + '", ' +
+          'possibly because your code is already using that name as ' +
+          'a variable. You may want to rename your variable to something ' +
+          'else.'
+        );
+        window[prop] = value;
+      }
+    } else {
+      window[prop] = value;
+    }
+  };
+
   // If the user has created a global setup or draw function,
   // assume "global" mode and make everything global (i.e. on the window)
   if (!sketch) {
@@ -451,16 +501,16 @@ var p5 = function(sketch, node, sync) {
       if(typeof p5.prototype[p] === 'function') {
         var ev = p.substring(2);
         if (!this._events.hasOwnProperty(ev)) {
-          window[p] = p5.prototype[p].bind(this);
+          friendlyBindGlobal(p, p5.prototype[p].bind(this));
         }
       } else {
-        window[p] = p5.prototype[p];
+        friendlyBindGlobal(p, p5.prototype[p]);
       }
     }
     // Attach its properties to the window
     for (var p2 in this) {
       if (this.hasOwnProperty(p2)) {
-        window[p2] = this[p2];
+        friendlyBindGlobal(p2, this[p2]);
       }
     }
 
