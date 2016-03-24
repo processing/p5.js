@@ -162,7 +162,9 @@ p5.prototype.push = function () {
   this._renderer.push();
   this._styles.push({
     _doStroke: this._renderer._doStroke,
+    _strokeSet: this._renderer._strokeSet,
     _doFill: this._renderer._doFill,
+    _fillSet: this._renderer._fillSet,
     _tint: this._renderer._tint,
     _imageMode: this._renderer._imageMode,
     _rectMode: this._renderer._rectMode,
