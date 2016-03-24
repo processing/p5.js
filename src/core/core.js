@@ -442,55 +442,7 @@ var p5 = function(sketch, node, sync) {
     }
   }, this);
 
-  var friendlyBindGlobal = function(prop, value) {
-    if (typeof(value) === 'function') {
-      try {
-        // Because p5 has so many common function names, it's likely
-        // that users may accidentally overwrite global p5 functions with
-        // their own variables. Let's allow this but log a warning to
-        // help users who may be doing this unintentionally.
-        //
-        // For more information, see:
-        //
-        //   https://github.com/processing/p5.js/issues/1317
-        Object.defineProperty(window, prop, {
-          configurable: true,
-          enumerable: true,
-          get: function() {
-            return value;
-          },
-          set: function(newValue) {
-            Object.defineProperty(window, prop, {
-              configurable: true,
-              enumerable: true,
-              value: newValue,
-              writable: true
-            });
-            console.log(
-              'You just changed the value of "' + prop + '", which was ' +
-              'a p5 function. This could cause problems later if you\'re ' +
-              'not careful.'
-            );
-          }
-        });
-      } catch (e) {
-        // It's likely that this is a TypeError due to us trying to
-        // redefine a non-configurable property, which can happen if
-        // the user already declared the property name as a global
-        // variable. Let's log a warning and fall back to our legacy
-        // behavior.
-        console.log(
-          'p5 had problems creating the global function "' + prop + '", ' +
-          'possibly because your code is already using that name as ' +
-          'a variable. You may want to rename your variable to something ' +
-          'else.'
-        );
-        window[prop] = value;
-      }
-    } else {
-      window[prop] = value;
-    }
-  };
+  var friendlyBindGlobal = this._createFriendlyGlobalFunctionBinder();
 
   // If the user has created a global setup or draw function,
   // assume "global" mode and make everything global (i.e. on the window)
@@ -588,6 +540,75 @@ p5.prototype.registerMethod = function(name, m) {
     p5.prototype._registeredMethods[name] = [];
   }
   p5.prototype._registeredMethods[name].push(m);
+};
+
+p5.prototype._createFriendlyGlobalFunctionBinder = function(options) {
+  options = options || {};
+
+  var globalObject = options.globalObject || window;
+  var log = options.log || console.log.bind(console);
+  var propsToForciblyOverwrite = {
+    // p5.print actually always overwrites an existing global function,
+    // albeit one that is very unlikely to be used:
+    //
+    //   https://developer.mozilla.org/en-US/docs/Web/API/Window/print
+    'print': true
+  };
+
+  return function(prop, value) {
+    if (typeof(value) === 'function') {
+      try {
+        // Because p5 has so many common function names, it's likely
+        // that users may accidentally overwrite global p5 functions with
+        // their own variables. Let's allow this but log a warning to
+        // help users who may be doing this unintentionally.
+        //
+        // For more information, see:
+        //
+        //   https://github.com/processing/p5.js/issues/1317
+
+        if (prop in globalObject && !(prop in propsToForciblyOverwrite)) {
+          throw new Error('global "' + prop + '" already exists');
+        }
+
+        Object.defineProperty(globalObject, prop, {
+          configurable: true,
+          enumerable: true,
+          get: function() {
+            return value;
+          },
+          set: function(newValue) {
+            Object.defineProperty(globalObject, prop, {
+              configurable: true,
+              enumerable: true,
+              value: newValue,
+              writable: true
+            });
+            log(
+              'You just changed the value of "' + prop + '", which was ' +
+              'a p5 function. This could cause problems later if you\'re ' +
+              'not careful.'
+            );
+          }
+        });
+      } catch (e) {
+        // It's likely that this is a TypeError due to us trying to
+        // redefine a non-configurable property, which can happen if
+        // the user already declared the property name as a global
+        // variable. Let's log a warning and fall back to our legacy
+        // behavior.
+        log(
+          'p5 had problems creating the global function "' + prop + '", ' +
+          'possibly because your code is already using that name as ' +
+          'a variable. You may want to rename your variable to something ' +
+          'else.'
+        );
+        globalObject[prop] = value;
+      }
+    } else {
+      globalObject[prop] = value;
+    }
+  };
 };
 
 module.exports = p5;
