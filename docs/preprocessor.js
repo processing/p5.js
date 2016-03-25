@@ -84,3 +84,5 @@ function mergeOverloadedMethods(data) {
 module.exports = function(data, options) {
   mergeOverloadedMethods(data);
 };
+
+module.exports.mergeOverloadedMethods = mergeOverloadedMethods;
