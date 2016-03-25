@@ -1,3 +1,13 @@
+var DocumentedMethod = require('./yuidoc-p5-theme-src/scripts/documented-method');
+
+function smokeTestMethods(data) {
+  data.classitems.forEach(function(classitem) {
+    if (classitem.itemtype === 'method') {
+      new DocumentedMethod(classitem);
+    }
+  });
+}
+
 function mergeOverloadedMethods(data) {
   var methodsByFullName = {};
   var paramsForOverloadedMethods = {};
@@ -83,6 +93,7 @@ function mergeOverloadedMethods(data) {
 
 module.exports = function(data, options) {
   mergeOverloadedMethods(data);
+  smokeTestMethods(data);
 };
 
 module.exports.mergeOverloadedMethods = mergeOverloadedMethods;

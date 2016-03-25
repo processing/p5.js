@@ -16,7 +16,8 @@ define('App', function() {
 require([
   'underscore',
   'backbone',
-  'App'], function(_, Backbone, App) {
+  'App',
+  './documented-method'], function(_, Backbone, App, DocumentedMethod) {
   
   // Set collections
   App.collections = ['allItems', 'classes', 'events', 'methods', 'properties', 'p5.sound', 'p5.dom'];
@@ -64,13 +65,7 @@ require([
     _.each(items, function(el, idx, array) {
       if (el.itemtype) {
         if (el.itemtype === "method") {
-          if (el.overloads) {
-            // Make each overload inherit properties from their parent
-            // classitem.
-            el.overloads = el.overloads.map(function(overload) {
-              return _.extend(Object.create(el), overload);
-            });
-          }
+          el = new DocumentedMethod(el);
           App.methods.push(el);
           App.allItems.push(el);
         } else if (el.itemtype === "property") {

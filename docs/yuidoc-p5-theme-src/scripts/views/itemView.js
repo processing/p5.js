@@ -60,27 +60,6 @@ define([
       var overloads = cleanItem.overloads || [cleanItem];
       return overloads.map(this.getSyntax.bind(this, isMethod));
     },
-    // Merge parameters across all overloaded versions of this item.
-    getParams: function(cleanItem) {
-      var overloads = cleanItem.overloads || [cleanItem];
-      var paramNames = {};
-      var params = [];
-
-      overloads.forEach(function(overload) {
-        if (!overload.params) {
-          return;
-        }
-        overload.params.forEach(function(param) {
-          if (param.name in paramNames) {
-            return;
-          }
-          paramNames[param.name] = param;
-          params.push(param);
-        });
-      });
-
-      return params;
-    },
     render: function (item) {
       if (item) {
         var itemHtml = '',
@@ -91,7 +70,6 @@ define([
         cleanItem.isMethod = collectionName === 'Method';
 
         var syntaxes = this.getSyntaxes(cleanItem.isMethod, cleanItem);
-        var params = this.getParams(cleanItem);
 
         // Set the item header (title)
 
@@ -100,8 +78,7 @@ define([
           if (isConstructor) {
             var constructor = this.tpl({
               item: cleanItem,
-              syntaxes: syntaxes,
-              params: params
+              syntaxes: syntaxes
             });
             cleanItem.constructor = constructor;
           }
@@ -114,8 +91,7 @@ define([
         } else {
           itemHtml = this.tpl({
             item: cleanItem,
-            syntaxes: syntaxes,
-            params: params
+            syntaxes: syntaxes
           });
         }
 
