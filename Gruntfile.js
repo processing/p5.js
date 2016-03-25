@@ -59,6 +59,7 @@ function getYuidocOptions() {
       paths: ['src/', 'lib/addons/'],
       themedir: 'docs/yuidoc-p5-theme/',
       helpers: [],
+      preprocessor: './docs/preprocessor.js',
       outdir: 'docs/reference/'
     }
   };
