@@ -25,6 +25,41 @@ define([
 
       return this;
     },
+    getSyntax: function(isMethod, cleanItem) {
+      var isConstructor = cleanItem.is_constructor;
+      var syntax = '';
+      if (isConstructor) syntax += 'new ';
+      syntax += cleanItem.name;
+
+      if (isMethod || isConstructor) {
+        syntax += '(';
+        if (cleanItem.params) {
+          for (var i=0; i<cleanItem.params.length; i++) { 
+            var p = cleanItem.params[i];
+            if (p.optional) syntax += '[';
+            syntax += p.name;
+            if (p.optdefault) syntax += '='+p.optdefault;
+            if (p.optional) syntax += ']';
+            if (i !== cleanItem.params.length-1) {
+              syntax += ',';
+            }
+          }
+        }
+        syntax += ')';
+      }
+
+      return syntax;
+    },
+    // Return a list of valid syntaxes across all overloaded versions of
+    // this item.
+    //
+    // For reference, we ultimately want to replicate something like this:
+    //
+    // https://processing.org/reference/color_.html
+    getSyntaxes: function(isMethod, cleanItem) {
+      var overloads = cleanItem.overloads || [cleanItem];
+      return overloads.map(this.getSyntax.bind(this, isMethod));
+    },
     render: function (item) {
       if (item) {
         var itemHtml = '',
@@ -34,29 +69,7 @@ define([
             isConstructor = cleanItem.is_constructor;
         cleanItem.isMethod = collectionName === 'Method';
 
-
-        // create syntax string
-        var syntax = '';
-        if (isConstructor) syntax += 'new ';
-        syntax += cleanItem.name;
-
-        if (cleanItem.isMethod || isConstructor) {
-          syntax += '(';
-          if (cleanItem.params) {
-            for (var i=0; i<cleanItem.params.length; i++) { 
-              var p = cleanItem.params[i];
-              if (p.optional) syntax += '[';
-              syntax += p.name;
-              if (p.optdefault) syntax += '='+p.optdefault;
-              if (p.optional) syntax += ']';
-              if (i !== cleanItem.params.length-1) {
-                syntax += ',';
-              }
-            }
-          }
-          syntax += ')';
-        }
-
+        var syntaxes = this.getSyntaxes(cleanItem.isMethod, cleanItem);
 
         // Set the item header (title)
 
@@ -65,7 +78,7 @@ define([
           if (isConstructor) {
             var constructor = this.tpl({
               item: cleanItem,
-              syntax: syntax
+              syntaxes: syntaxes
             });
             cleanItem.constructor = constructor;
           }
@@ -78,7 +91,7 @@ define([
         } else {
           itemHtml = this.tpl({
             item: cleanItem,
-            syntax: syntax
+            syntaxes: syntaxes
           });
         }
 

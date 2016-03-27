@@ -59,6 +59,7 @@ function getYuidocOptions() {
       paths: ['src/', 'lib/addons/'],
       themedir: 'docs/yuidoc-p5-theme/',
       helpers: [],
+      preprocessor: './docs/preprocessor.js',
       outdir: 'docs/reference/'
     }
   };
@@ -177,6 +178,13 @@ module.exports = function(grunt) {
       yui:{
         files:['src/**/*.js', 'lib/addons/*.js'],
         task:['yuidoc']
+      }
+    },
+
+    // Set up node-side (non-browser) mocha tests.
+    mochaTest: {
+      test: {
+        src: ['test/node/**/*.js']
       }
     },
 
@@ -339,11 +347,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-newer');
   grunt.loadNpmTasks('grunt-release-it');
   grunt.loadNpmTasks('grunt-saucelabs');
+  grunt.loadNpmTasks('grunt-mocha-test');
 
   // Create the multitasks.
   // TODO: "requirejs" is in here to run the "yuidoc_themes" subtask. Is this needed?
   grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);
-  grunt.registerTask('test', ['jshint', 'jscs', 'build', 'yuidoc:dev', 'connect', 'mocha']);
+  grunt.registerTask('test', ['jshint', 'jscs', 'build', 'yuidoc:dev', 'connect', 'mocha', 'mochaTest']);
   grunt.registerTask('test:nobuild', ['jshint:test', 'jscs:test', 'connect', 'mocha']);
   grunt.registerTask('yui', ['yuidoc:prod']);
   grunt.registerTask('yui:dev', ['yuidoc:dev']);

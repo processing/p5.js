@@ -16,7 +16,8 @@ define('App', function() {
 require([
   'underscore',
   'backbone',
-  'App'], function(_, Backbone, App) {
+  'App',
+  './documented-method'], function(_, Backbone, App, DocumentedMethod) {
   
   // Set collections
   App.collections = ['allItems', 'classes', 'events', 'methods', 'properties', 'p5.sound', 'p5.dom'];
@@ -62,9 +63,9 @@ require([
 
     // Get class items (methods, properties, events)
     _.each(items, function(el, idx, array) {
-
       if (el.itemtype) {
         if (el.itemtype === "method") {
+          el = new DocumentedMethod(el);
           App.methods.push(el);
           App.allItems.push(el);
         } else if (el.itemtype === "property") {
