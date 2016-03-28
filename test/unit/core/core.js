@@ -146,21 +146,39 @@ suite('Core', function(){
       });
     });
 
-    test('should warn when globals already exist', function() {
-      globalObject.text = 'hi';
-      bind('text', noop);
-      assert.match(logMsg, /p5 had problems creating .+ "text"/);
-      assert.equal(globalObject.text, noop);
-    });
+    if (!window.IS_TESTING_MINIFIED_VERSION) {
+      test('should warn when globals already exist', function() {
+        globalObject.text = 'hi';
+        bind('text', noop);
+        assert.match(logMsg, /p5 had problems creating .+ "text"/);
+        assert.equal(globalObject.text, noop);
+      });
 
-    test('should warn when globals are overwritten', function() {
-      bind('text', noop);
-      globalObject.text = 'boop';
+      test('should warn when globals are overwritten', function() {
+        bind('text', noop);
+        globalObject.text = 'boop';
 
-      assert.match(logMsg, /You just changed the value of "text"/);
-      assert.equal(globalObject.text, 'boop');
-      assert.deepEqual(Object.keys(globalObject), ['text']);
-    });
+        assert.match(logMsg, /You just changed the value of "text"/);
+        assert.equal(globalObject.text, 'boop');
+        assert.deepEqual(Object.keys(globalObject), ['text']);
+      });
+    } else {
+      test('should NOT warn when globals already exist', function() {
+        globalObject.text = 'hi';
+        bind('text', noop);
+        assert.isUndefined(logMsg);
+        assert.equal(globalObject.text, noop);
+      });
+
+      test('should NOT warn when globals are overwritten', function() {
+        bind('text', noop);
+        globalObject.text = 'boop';
+
+        assert.isUndefined(logMsg);
+        assert.equal(globalObject.text, 'boop');
+        assert.deepEqual(Object.keys(globalObject), ['text']);
+      });
+    }
 
     test('should allow overwritten globals to be overwritten', function() {
       bind('text', noop);

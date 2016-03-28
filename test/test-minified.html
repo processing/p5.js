@@ -32,6 +32,12 @@
   <!-- Include anything you want to test -->
   <script src="../lib/p5.min.js" type="text/javascript" ></script>
 
+  <script type="text/javascript">
+    // Let unit tests know we're testing the minified version.
+
+    window.IS_TESTING_MINIFIED_VERSION = true;
+  </script>
+
   <!-- Spec files -->
   <script src="unit/core/core.js" type="text/javascript" ></script>
   <!--<script src="unit/core/2d_primitives.js" type="text/javascript" ></script>-->

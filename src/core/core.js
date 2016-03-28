@@ -556,7 +556,7 @@ p5.prototype._createFriendlyGlobalFunctionBinder = function(options) {
   };
 
   return function(prop, value) {
-    if (typeof(value) === 'function') {
+    if (typeof(IS_MINIFIED) === 'undefined' && typeof(value) === 'function') {
       try {
         // Because p5 has so many common function names, it's likely
         // that users may accidentally overwrite global p5 functions with
