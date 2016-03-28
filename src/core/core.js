@@ -571,6 +571,11 @@ p5.prototype._createFriendlyGlobalFunctionBinder = function(options) {
           throw new Error('global "' + prop + '" already exists');
         }
 
+        // It's possible that this might throw an error because there
+        // are a lot of edge-cases in which `Object.defineProperty` might
+        // not succeed; since this functionality is only intended to
+        // help beginners anyways, we'll just catch such an exception
+        // if it occurs, and fall back to legacy behavior.
         Object.defineProperty(globalObject, prop, {
           configurable: true,
           enumerable: true,
@@ -592,11 +597,6 @@ p5.prototype._createFriendlyGlobalFunctionBinder = function(options) {
           }
         });
       } catch (e) {
-        // It's likely that this is a TypeError due to us trying to
-        // redefine a non-configurable property, which can happen if
-        // the user already declared the property name as a global
-        // variable. Let's log a warning and fall back to our legacy
-        // behavior.
         log(
           'p5 had problems creating the global function "' + prop + '", ' +
           'possibly because your code is already using that name as ' +
