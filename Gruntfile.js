@@ -210,7 +210,8 @@ module.exports = function(grunt) {
           reporter: reporter,
           run: true,
           log: true,
-          logErrors: true
+          logErrors: true,
+          timeout: 5000
         }
       },
     },
@@ -265,9 +266,7 @@ module.exports = function(grunt) {
             'IS_MINIFIED': true
           }
         },
-        banner: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */ ',
-        footer: 'p5.prototype._validateParameters = function() {};'+
-        'p5.prototype._friendlyFileLoadError = function() {};'
+        banner: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */ '
       },
       dist: {
         files: {
