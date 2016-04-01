@@ -1,0 +1,23 @@
+/**
+ * Note: most of the styling for the reference documentation is actually
+ * contained in the p5.js-website repository:
+ *
+ * https://github.com/processing/p5.js-website/blob/master/css/main.css
+ *
+ * However, some of it is located here so we can easily iterate on it
+ * in the same repository.
+ */
+
+#reference .params table p {
+  /* Recently-added support for Markdown means that every parameter
+   * description is wrapped in a paragraph element. (Previously, they weren't
+   * wrapped in any kind of element.)
+   *
+   * We may eventually want to display paragraphs as blocks, so that we
+   * can have lengthy descriptions for parameters, but for now we'll
+   * keep our pre-existing behavior and essentially make paragraphs
+   * "invisible" by rendering them inline. */
+  display: inline;
+
+  font-size: inherit;
+}
