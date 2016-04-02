@@ -151,7 +151,7 @@ p5.Vector.prototype.set = function (x, y, z) {
  * <div class="norender">
  * <code>
  * var v1 = createVector(1, 2, 3);
- * var v2 = v.copy();
+ * var v2 = v1.copy();
  * print(v1.x == v2.x && v1.y == v2.y && v1.z == v2.z);
  * // Prints "true"
  * </code>
