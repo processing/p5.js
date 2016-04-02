@@ -206,6 +206,15 @@ suite('Core', function(){
       assert.isUndefined(logMsg);
     });
 
+    // This is a regression test for
+    // https://github.com/processing/p5.js/issues/1350.
+    test('should not warn about overwriting preload methods', function() {
+      globalObject.loadJSON = function() { throw new Error(); };
+      bind('loadJSON', noop);
+      assert.equal(globalObject.loadJSON, noop);
+      assert.isUndefined(logMsg);
+    });
+
     test('should not warn about overwriting non-functions', function() {
       bind('mouseX', 5);
       globalObject.mouseX = 50;
