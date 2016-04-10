@@ -700,6 +700,22 @@ p5.Element.prototype.dragLeave = function (fxn) {
  * @param  {Function} callback triggered when files are dropped.
  * @param  {Function} callback to receive loaded file.
  * @return {p5.Element}
+ * @example
+ * <div><code>
+ * function setup() {
+ *   var c = createCanvas(100, 100);
+ *   background(200);
+ *   textAlign(CENTER);
+ *   text('drop image', width/2, height/2);
+ *   c.drop(gotFile);
+ * }
+ *
+ * function gotFile(file) {
+ *   var img = createImg(file.data).hide();
+ *   // Draw the image onto the canvas
+ *   image(img, 0, 0, width, height);
+ * }
+ * </code></div>
  */
 p5.Element.prototype.drop = function (callback, fxn) {
   // Make a file loader callback and trigger user's callback
