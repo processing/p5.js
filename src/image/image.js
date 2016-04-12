@@ -245,6 +245,7 @@ p5.prototype.saveCanvas = function() {
  *      print(data);
  *    });
  *  }
+ *  </code></div>
  */
 p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
   var duration = _duration || 3;
