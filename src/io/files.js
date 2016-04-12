@@ -654,22 +654,44 @@ function makeObject(row, headers) {
   return ret;
 }
 
+/*global parseXML */
+p5.prototype.parseXML = function (two) {
+  var one = new p5.XML(), node = new p5.XML(),i;
+  if(two.children.length){
+    for( i = 0; i < two.children.length; i++ ) {
+      node = parseXML(two.children[i]);
+      one.addChild(node);
+    }
+    one.setName(two.nodeName);
+    one.setCont(two.textContent);
+    one.setAttributes(two);
+    one.setParent();
+    return one;
+  }
+  else {
+    one.setName(two.nodeName);
+    one.setCont(two.textContent);
+    one.setAttributes(two);
+    return one;
+  }
+};
+
 /**
  * Reads the contents of a file and creates an XML object with its values.
  * If the name of the file is used as the parameter, as in the above example,
  * the file must be located in the sketch directory/folder.
- * <br><br>
+ *
  * Alternatively, the file maybe be loaded from anywhere on the local
  * computer using an absolute path (something that starts with / on Unix and
  * Linux, or a drive letter on Windows), or the filename parameter can be a
  * URL for a file found on a network.
- * <br><br>
+ *
  * This method is asynchronous, meaning it may not finish before the next
  * line in your sketch is executed. Calling loadXML() inside preload()
  * guarantees to complete the operation before setup() and draw() are called.
- * <br><br>
- * Outside of preload(), you may supply a callback function to handle the
- * object:
+ *
+ * <p>Outside of preload(), you may supply a callback function to handle the
+ * object:</p>
  *
  * @method loadXML
  * @param  {String}   filename   name of the file or URL to load
@@ -684,7 +706,6 @@ function makeObject(row, headers) {
 p5.prototype.loadXML = function (path, callback, errorCallback) {
   var ret = document.implementation.createDocument(null, null);
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
-
   reqwest({
       url: path,
       type: 'xml',
@@ -701,7 +722,8 @@ p5.prototype.loadXML = function (path, callback, errorCallback) {
     })
     .then(function (resp) {
       var x = resp.documentElement;
-      ret.appendChild(x);
+      ret = parseXML(x);
+      console.log(ret);
       if (typeof callback !== 'undefined') {
         callback(ret);
       }
