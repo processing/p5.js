@@ -245,7 +245,7 @@ p5.XML.prototype.listChildren = function() {
  */
 p5.XML.prototype.getChildren = function(param) {
   if (param) {
-    return this.children.filter(function(c) { return this.c.name === param; });
+    return this.children.filter(function(c) { return c.name === param; });
   }
   else {
     return this.children;
@@ -255,7 +255,7 @@ p5.XML.prototype.getChildren = function(param) {
 /**
  * Returns the first of the element's children that matches the name parameter.
  * The name or path is a series of elements and sub-elements, separated by
- * slashes.
+ * slashes. It returns undefined if no matching child is found.
  *
  * @method getChild
  * @param {String} name element name or path/to/element
@@ -314,14 +314,20 @@ p5.XML.prototype.getChild = function(param) {
 };
 
 /**
- * Method used to add a new child to an XML node. The node on being
- * passed gets pushed to the children array of the parent node.
+ * Appends a new child to the element. The child can be specified with
+ * either a String, which will be used as the new tag's name, or as a
+ * reference to an existing p5.XML object.
+ * A reference to the newly created child is returned as an p5.XML object.
  *
  * @method addChild
  * @param {Object} a p5.XML Object which will be the child to be added
  */
 p5.XML.prototype.addChild = function(node) {
-  this.children.push(node);
+  if (node instanceof p5.XML) {
+    this.children.push(node);
+  } else {
+    // PEND
+  }
 };
 
 /**
@@ -330,12 +336,20 @@ p5.XML.prototype.addChild = function(node) {
  * @method removeChild
  * @param {Object} the child (p5.XML Object) to be removed
  */
-p5.XML.prototype.removeChild = function(node) {
-  var i;
-  for( i = 0 ; i < this.children.length; i++ ) {
-    if( this.children[i] === node ) {
-      delete this.children[i];
+p5.XML.prototype.removeChild = function(param) {
+  var ind = -1;
+  if(typeof param === 'string') {
+    for (var i=0; i<this.children.length; i++) {
+      if (this.children[i].name === param) {
+        ind = i;
+        break;
+      }
     }
+  } else {
+    ind = param;
+  }
+  if (ind !== -1) {
+    this.children.splice(ind, 1);
   }
 };
 
