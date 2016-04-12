@@ -68,8 +68,8 @@ p5._getDecrementPreload = function () {
  * }
  * </code></div>
  *
- * <p>Outside of preload(), you may supply a callback function to handle the
- * object:</p>
+ * Outside of preload(), you may supply a callback function to handle the
+ * object:
  *
  * <div><code>
  * function setup() {
@@ -656,16 +656,19 @@ function makeObject(row, headers) {
 
 /*global parseXML */
 p5.prototype.parseXML = function (two) {
-  var one = new p5.XML(), node = new p5.XML(),i;
-  if(two.children.length){
-    for( i = 0; i < two.children.length; i++ ) {
-      node = parseXML(two.children[i]);
+  var one = new p5.XML();
+  var i;
+  if (two.children.length) {
+    for ( i = 0; i < two.children.length; i++ ) {
+      var node = parseXML(two.children[i]);
       one.addChild(node);
     }
     one.setName(two.nodeName);
     one.setCont(two.textContent);
     one.setAttributes(two);
-    one.setParent();
+    for (var j = 0; j < one.children.length; j++) {
+      one.children[j].parent = one;
+    }
     return one;
   }
   else {
@@ -704,7 +707,7 @@ p5.prototype.parseXML = function (two) {
  * @return {Object}              XML object containing data
  */
 p5.prototype.loadXML = function (path, callback, errorCallback) {
-  var ret = document.implementation.createDocument(null, null);
+  var ret = {};
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
   reqwest({
       url: path,
@@ -721,9 +724,10 @@ p5.prototype.loadXML = function (path, callback, errorCallback) {
       }
     })
     .then(function (resp) {
-      var x = resp.documentElement;
-      ret = parseXML(x);
-      console.log(ret);
+      var xml = parseXML(resp.documentElement);
+      for(var key in xml) {
+        ret[key] = xml[key];
+      }
       if (typeof callback !== 'undefined') {
         callback(ret);
       }
@@ -739,12 +743,6 @@ p5.prototype.loadXML = function (path, callback, errorCallback) {
 //   // TODO
 
 // };
-
-p5.prototype.parseXML = function () {
-  // TODO
-  throw 'not yet implemented';
-
-};
 
 p5.prototype.selectFolder = function () {
   // TODO

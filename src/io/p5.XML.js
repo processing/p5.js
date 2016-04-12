@@ -17,145 +17,235 @@ p5.XML = function () {
   this.content = []; //done
 };
 
-/**
- *  Method called when the name of an XML Node needs to be changed
- *
- *  @method setName
- *  @param {String} the new name of the node
- */
-p5.XML.prototype.setName = function(name) {
-  this.name = name;
-};
 
 /**
- *  Method used to set the parent of a node. Used mainly during the
- *  parsing of XML when loadXML() is called. The XML node (the p5.XML
- *  Object) is passed and the children of that node are set to have
- *  their parent as the node which was passed
+ * Gets a copy of the element's parent. Returns the parent as another
+ * p5.XML object.
  *
- *  @method setParent
- */
-p5.XML.prototype.setParent = function() {
-  var i;
-  for( i = 0; i < this.children.length; i++ ){
-    this.children[i].parent = this;
-  }
-};
-
-/**
- *  Method used to add a new child to an XML node. The node on being
- *  passed gets pushed to the children array of the parent node.
+ * @method getParent
+ * @return {Object}   element parent
+ * @example
+ * <div class='norender'><code>
+ * // The following short XML file called "mammals.xml" is parsed
+ * // in the code below.
+ * //
+ * // <?xml version="1.0"?>
+ * // &lt;mammals&gt;
+ * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+ * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+ * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+ * // &lt;/mammals&gt;
  *
- *  @method addChild
- *  @param {Object} a p5.XML Object which will be the child to be added
- */
-p5.XML.prototype.addChild = function(node) {
-  this.children.push(node);
-};
-
-/**
- *  This method is called while the parsing of XML (when loadXML() is
- *  called). The difference between this method and the setContent()
- *  method defined later is that this one is used to set the content
- *  when the node in question has more nodes under it and so on and
- *  not directly text content. While in the other one is used when
- *  the node in question directly has text inside it.
+ * var xml;
  *
- *  @method setCont
- *  @param {String} the content (might be large if more nodes inside)
- */
-p5.XML.prototype.setCont = function(content) {
-  var str;
-  str = content;
-  str = str.replace(/\s\s+/g, ',');
-  str = str.split(',');
-  this.content = str;
-};
-
-/**
- *  This method is called while the parsing of XML (when loadXML() is
- *  called). The XML node is passed and its attributes are stored in the
- *  p5.XML's attribute Object.
+ * function preload() {
+ *   xml = loadXML("assets/mammals.xml");
+ * }
  *
- *  @method setAttributes
- *  @param XML Node
- */
-p5.XML.prototype.setAttributes = function(node) {
-  var  i, att = {};
-  for( i = 0; i < node.attributes.length; i++) {
-    att[node.attributes[i].nodeName] = node.attributes[i].nodeValue;
-  }
-  this.attributes = att;
-};
-
-/**
- *  getParent() when called returns the parent (a p5.XML Object)
- *  of the node.
+ * function setup() {
+ *   var children = xml.getChildren("animal");
+ *   var parent = children[1].getParent();
+ *   print(parent.getName());
+ * }
  *
- *  @method getParent
- *  @return {Object} a p5.XML Object which is the parent
+ * // Sketch prints:
+ * // mammals
+ * </code></div>
  */
 p5.XML.prototype.getParent = function() {
   return this.parent;
 };
 
 /**
- *  getName() when called returns the name of the node.
+ *  Gets the element's full name, which is returned as a String.
  *
- *  @method getName
- *  @return {String} the name of the node
+ * @method getName
+ * @return {String} the name of the node
+ * @example&lt;animal
+ * <div class='norender'><code>
+ * // The following short XML file called "mammals.xml" is parsed
+ * // in the code below.
+ * //
+ * // <?xml version="1.0"?>
+ * // &lt;mammals&gt;
+ * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+ * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+ * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+ * // &lt;/mammals&gt;
+ *
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML("assets/mammals.xml");
+ * }
+ *
+ * function setup() {
+ *   println(xml.getName());
+ * }
+ *
+ * // Sketch prints:
+ * // mammals
+ * </code></div>
  */
 p5.XML.prototype.getName = function() {
   return this.name;
 };
 
 /**
- *  hasChildren() to check whether the node has any children.
+ * Sets the element's name, which is specified as a String.
  *
- *  @method hasChildren
- *  @return {boolean} true if yes otherwise false
+ * @method setName
+ * @param {String} the new name of the node
+ * @example&lt;animal
+ * <div class='norender'><code>
+ * // The following short XML file called "mammals.xml" is parsed
+ * // in the code below.
+ * //
+ * // <?xml version="1.0"?>
+ * // &lt;mammals&gt;
+ * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+ * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+ * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+ * // &lt;/mammals&gt;
+ *
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML("assets/mammals.xml");
+ * }
+ *
+ * function setup() {
+ *   print(xml.getName());
+ *   xml.setName("fish");
+ *   print(xml.getName());
+ * }
+ *
+ * // Sketch prints:
+ * // mammals
+ * // fish
+ * </code></div>
+ */
+p5.XML.prototype.setName = function(name) {
+  this.name = name;
+};
+
+/**
+ * Checks whether or not the element has any children, and returns the result
+ * as a boolean.
+ *
+ * @method hasChildren
+ * @return {boolean}
+ * @example&lt;animal
+ * <div class='norender'><code>
+ * // The following short XML file called "mammals.xml" is parsed
+ * // in the code below.
+ * //
+ * // <?xml version="1.0"?>
+ * // &lt;mammals&gt;
+ * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+ * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+ * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+ * // &lt;/mammals&gt;
+ *
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML("assets/mammals.xml");
+ * }
+ *
+ * function setup() {
+ *   print(xml.hasChildren());
+ * }
+ *
+ * // Sketch prints:
+ * // true
+ * </code></div>
  */
 p5.XML.prototype.hasChildren = function() {
-  if(this.children) {
-    return true;
-  }
-  else {
-    return false;
-  }
+  return this.children.length > 0;
 };
 
 /**
- *  hasChildren() when called returns all the children of the node
- *  in an array of String
+ * Get the names of all of the element's children, and returns the names as an
+ * array of Strings. This is the same as looping through and calling getName()
+ * on each child element individually.
  *
- *  @method listChildren
- *  @return {Array} an array of Strings storing all the names of children
+ * @method listChildren
+ * @return {Array} names of the children of the element
+ * @example&lt;animal
+ * <div class='norender'><code>
+ * // The following short XML file called "mammals.xml" is parsed
+ * // in the code below.
+ * //
+ * // <?xml version="1.0"?>
+ * // &lt;mammals&gt;
+ * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+ * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+ * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+ * // &lt;/mammals&gt;
+ *
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML("assets/mammals.xml");
+ * }
+ *
+ * function setup() {
+ *   print(xml.listChildren());
+ * }
+ *
+ * // Sketch prints:
+ * // ["animal", "animal", "animal"]
+ * </code></div>
  */
 p5.XML.prototype.listChildren = function() {
-  var i, arr = [];
-  for( i = 0; i < this.children.length; i++ ) {
-    arr.push(this.children[i].name);
-  }
-  return arr;
+  return this.children.map(function(c) { return c.name; });
 };
 
 /**
- *  getChildren() when called returns all the children (p5.XML Objects)
- *  of the node
+ * Returns all of the element's children as an array of p5.XML objects. When
+ * the name parameter is specified, then it will return all children that match
+ * that name or path. The path is a series of elements and sub-elements,
+ * separated by slashes.
  *
- *  @method getChildren
- *  @param {String} if passed will only return those children matching param.
- *  @return {Array} an array containing all the children (p5.XML Objects)
+ * @method getChildren
+ * @param {String} [name] element name or path/to/element
+ * @return {Array} children of the element
+ * @example&lt;animal
+ * <div class='norender'><code>
+ * // The following short XML file called "mammals.xml" is parsed
+ * // in the code below.
+ * //
+ * // <?xml version="1.0"?>
+ * // &lt;mammals&gt;
+ * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+ * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+ * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+ * // &lt;/mammals&gt;
+ *
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML("assets/mammals.xml");
+ * }
+ *
+ * function setup() {
+ *   var animals = xml.getChildren("animal");
+ *
+ *   for (var i = 0; i < animals.length; i++) {
+ *     print(animals[i].getContent());
+ *   }
+ * }
+ *
+ * // Sketch prints:
+ * // "Goat"
+ * // "Leopard"
+ * // "Zebra"
+ * </code></div>
  */
 p5.XML.prototype.getChildren = function(param) {
   if (param) {
-    var i, arr = [];
-    for( i = 0; i < this.children.length; i++ ) {
-      if (this.children[i].name === param) {
-        arr.push(this.children[i]);
-      }
-    }
-    return arr;
+    return this.children.filter(function(c) { return this.c.name === param; });
   }
   else {
     return this.children;
@@ -163,32 +253,82 @@ p5.XML.prototype.getChildren = function(param) {
 };
 
 /**
- *  getChild() when called returns the child element with the specified index
- *  value or name (the first node with that name)
+ * Returns the first of the element's children that matches the name parameter.
+ * The name or path is a series of elements and sub-elements, separated by
+ * slashes.
  *
- *  @method getChild
- *  @param {String|number}
- *  @return {Object} a p5.XML Object
+ * @method getChild
+ * @param {String} name element name or path/to/element
+ * @return {p5.XML}
+ * @example&lt;animal
+ * <div class='norender'><code>
+ * // The following short XML file called "mammals.xml" is parsed
+ * // in the code below.
+ * //
+ * // <?xml version="1.0"?>
+ * // &lt;mammals&gt;
+ * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+ * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+ * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+ * // &lt;/mammals&gt;
+ *
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML("assets/mammals.xml");
+ * }
+ *
+ * function setup() {
+ *   var firstChild = xml.getChild("animal");
+ *   print(firstChild.getContent());
+ * }
+ *
+ * // Sketch prints:
+ * // "Goat"
+ * </code></div>&lt;animal
+ * <div class='norender'><code>
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML("assets/mammals.xml");
+ * }
+ *
+ * function setup() {
+ *   var secondChild = xml.getChild(1);
+ *   print(secondChild.getContent());
+ * }
+ *
+ * // Sketch prints:
+ * // "Leopard"
+ * </code></div>
  */
 p5.XML.prototype.getChild = function(param) {
   if(typeof param === 'string') {
-    return this.children[0];
+    return this.children.find(function(c) {
+      return c.name === param;
+    });
   }
   else {
-    var i;
-    for( i = 0; i < this.children.length; i++ ) {
-      if(i === param) {
-        return this.children[i];
-      }
-    }
+    return this.children[param];
   }
 };
 
 /**
- *  removeChild() removes the child (p5.XML Object) which is passed
+ * Method used to add a new child to an XML node. The node on being
+ * passed gets pushed to the children array of the parent node.
  *
- *  @method getParent
- *  @param {Object} the child (p5.XML Object) to be removed
+ * @method addChild
+ * @param {Object} a p5.XML Object which will be the child to be added
+ */
+p5.XML.prototype.addChild = function(node) {
+  this.children.push(node);
+};
+
+/**
+ * removeChild() removes the child (p5.XML Object) which is passed
+ *
+ * @method removeChild
+ * @param {Object} the child (p5.XML Object) to be removed
  */
 p5.XML.prototype.removeChild = function(node) {
   var i;
@@ -200,31 +340,67 @@ p5.XML.prototype.removeChild = function(node) {
 };
 
 /**
- *  getAttributeCount() returns the number of attributes an XML node has
+ * This method is called while the parsing of XML (when loadXML() is
+ * called). The difference between this method and the setContent()
+ * method defined later is that this one is used to set the content
+ * when the node in question has more nodes under it and so on and
+ * not directly text content. While in the other one is used when
+ * the node in question directly has text inside it.
  *
- *  @method getAttributeCount
- *  @return {Number}
+ * @method setCont
+ * @param {String} the content (might be large if more nodes inside)
+ */
+p5.XML.prototype.setCont = function(content) {
+  var str;
+  str = content;
+  str = str.replace(/\s\s+/g, ',');
+  str = str.split(',');
+  this.content = str;
+};
+
+/**
+ * This method is called while the parsing of XML (when loadXML() is
+ * called). The XML node is passed and its attributes are stored in the
+ * p5.XML's attribute Object.
+ *
+ * @method setAttributes
+ * @param XML Node
+ */
+p5.XML.prototype.setAttributes = function(node) {
+  var  i, att = {};
+  for( i = 0; i < node.attributes.length; i++) {
+    att[node.attributes[i].nodeName] = node.attributes[i].nodeValue;
+  }
+  this.attributes = att;
+};
+
+
+/**
+ * getAttributeCount() returns the number of attributes an XML node has
+ *
+ * @method getAttributeCount
+ * @return {Number}
  */
 p5.XML.prototype.getAttributeCount = function() {
   return Object.keys(this.attributes).length;
 };
 
 /**
- *  listAttributes() returns a list of all the attributes of the XML node.
+ * listAttributes() returns a list of all the attributes of the XML node.
  *
- *  @method listAttributes
- *  @return {Array} an array of strings containing the names of attributes
+ * @method listAttributes
+ * @return {Array} an array of strings containing the names of attributes
  */
 p5.XML.prototype.listAttributes = function() {
   return Object.keys(this.attributes);
 };
 
 /**
- *  hasAttribute() checks whether the node in question has the passed attribute.
+ * hasAttribute() checks whether the node in question has the passed attribute.
  *
- *  @method hasAttribute
- *  @param {String} the attribute to be checked
- *  @return {boolean} true if attribute found else false
+ * @method hasAttribute
+ * @param {String} the attribute to be checked
+ * @return {boolean} true if attribute found else false
  */
 p5.XML.prototype.hasAttribute = function(name) {
   var i;
@@ -238,20 +414,20 @@ p5.XML.prototype.hasAttribute = function(name) {
 };
 
 /**
- *  getContent() returns the content inside an XML node.
+ * getContent() returns the content inside an XML node.
  *
- *  @method getContent
- *  @return {String}
+ * @method getContent
+ * @return {String}
  */
 p5.XML.prototype.getContent = function() {
   return this.content;
 };
 
 /**
- *  setContent() sets the content of the XML node.
+ * setContent() sets the content of the XML node.
  *
- *  @method setContent
- *  @param {String} the new content
+ * @method setContent
+ * @param {String} the new content
  */
 p5.XML.prototype.setContent = function( content ) {
   if(!this.children.length) {
