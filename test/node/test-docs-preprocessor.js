@@ -68,4 +68,34 @@ describe('docs preprocessor', function() {
       });
     });
   });
+
+  describe('renderDescriptionsAsMarkdown', function() {
+    var render = preprocessor.renderDescriptionsAsMarkdown;
+
+    it('should work', function() {
+      var data = {
+        modules: {},
+        classes: {},
+        classitems: [{
+          description: 'hi `there`',
+          params: [{
+            description: 'what is *up*'
+          }]
+        }]
+      };
+
+      render(data);
+
+      expect(data).to.eql({
+        modules: {},
+        classes: {},
+        classitems: [{
+          description: '<p>hi <code>there</code></p>\n',
+          params: [{
+            description: '<p>what is <em>up</em></p>\n'
+          }]
+        }]
+      });
+    });
+  });
 });

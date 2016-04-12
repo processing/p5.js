@@ -1,3 +1,5 @@
+var marked = require('marked');
+
 var DocumentedMethod = require('./yuidoc-p5-theme-src/scripts/documented-method');
 
 function smokeTestMethods(data) {
@@ -91,9 +93,32 @@ function mergeOverloadedMethods(data) {
   });
 }
 
+function renderItemDescriptionsAsMarkdown(item) {
+  if (item.description) {
+    item.description = marked(item.description);
+  }
+  if (item.params) {
+    item.params.forEach(renderItemDescriptionsAsMarkdown);
+  }
+}
+
+function renderDescriptionsAsMarkdown(data) {
+  Object.keys(data.modules).forEach(function(moduleName) {
+    renderItemDescriptionsAsMarkdown(data.modules[moduleName]);
+  });
+  Object.keys(data.classes).forEach(function(className) {
+    renderItemDescriptionsAsMarkdown(data.classes[className]);
+  });
+  data.classitems.forEach(function(classitem) {
+    renderItemDescriptionsAsMarkdown(classitem);
+  });
+}
+
 module.exports = function(data, options) {
+  renderDescriptionsAsMarkdown(data);
   mergeOverloadedMethods(data);
   smokeTestMethods(data);
 };
 
 module.exports.mergeOverloadedMethods = mergeOverloadedMethods;
+module.exports.renderDescriptionsAsMarkdown = renderDescriptionsAsMarkdown;
