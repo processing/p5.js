@@ -664,8 +664,8 @@ p5.prototype.parseXML = function (two) {
       one.addChild(node);
     }
     one.setName(two.nodeName);
-    one.setCont(two.textContent);
-    one.setAttributes(two);
+    one._setCont(two.textContent);
+    one._setAttributes(two);
     for (var j = 0; j < one.children.length; j++) {
       one.children[j].parent = one;
     }
@@ -673,8 +673,8 @@ p5.prototype.parseXML = function (two) {
   }
   else {
     one.setName(two.nodeName);
-    one.setCont(two.textContent);
-    one.setAttributes(two);
+    one._setCont(two.textContent);
+    one._setAttributes(two);
     return one;
   }
 };

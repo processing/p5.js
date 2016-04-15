@@ -14,7 +14,7 @@ p5.XML = function () {
   this.attributes = {}; //done
   this.children = [];
   this.parent = null;
-  this.content = []; //done
+  this.content = null; //done
 };
 
 
@@ -401,6 +401,324 @@ p5.XML.prototype.removeChild = function(param) {
   }
 };
 
+
+/**
+ * Counts the specified element's number of attributes, returned as an Number.
+ *
+ * @method getAttributeCount
+ * @return {Number}
+ * @example
+ * <div class='norender'><code>
+ * // The following short XML file called "mammals.xml" is parsed
+ * // in the code below.
+ * //
+ * // <?xml version="1.0"?>
+ * // &lt;mammals&gt;
+ * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+ * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+ * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+ * // &lt;/mammals&gt;
+ *
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML("assets/mammals.xml");
+ * }
+ *
+ * function setup() {
+ *   var firstChild = xml.getChild("animal");
+ *   print(firstChild.getAttributeCount());
+ * }
+ *
+ * // Sketch prints:
+ * // 2
+ * </code></div>
+ */
+p5.XML.prototype.getAttributeCount = function() {
+  return Object.keys(this.attributes).length;
+};
+
+/**
+ * Gets all of the specified element's attributes, and returns them as an
+ * array of Strings.
+ *
+ * @method listAttributes
+ * @return {Array} an array of strings containing the names of attributes
+ * @example
+ * <div class='norender'><code>
+ * // The following short XML file called "mammals.xml" is parsed
+ * // in the code below.
+ * //
+ * // <?xml version="1.0"?>
+ * // &lt;mammals&gt;
+ * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+ * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+ * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+ * // &lt;/mammals&gt;
+ *
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML("assets/mammals.xml");
+ * }
+ *
+ * function setup() {
+ *   var firstChild = xml.getChild("animal");
+ *   print(firstChild.listAttributes());
+ * }
+ *
+ * // Sketch prints:
+ * // ["id", "species"]
+ * </code></div>
+ */
+p5.XML.prototype.listAttributes = function() {
+  return Object.keys(this.attributes);
+};
+
+/**
+ *  Checks whether or not an element has the specified attribute.
+ *
+ * @method hasAttribute
+ * @param {String} the attribute to be checked
+ * @return {boolean} true if attribute found else false
+ * @example
+ * <div class='norender'><code>
+ * // The following short XML file called "mammals.xml" is parsed
+ * // in the code below.
+ * //
+ * // <?xml version="1.0"?>
+ * // &lt;mammals&gt;
+ * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+ * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+ * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+ * // &lt;/mammals&gt;
+ *
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML("assets/mammals.xml");
+ * }
+ *
+ * function setup() {
+ *   var firstChild = xml.getChild("animal");
+ *   print(firstChild.hasAttribute("species"));
+ *   print(firstChild.hasAttribute("color"));
+ * }
+ *
+ * // Sketch prints:
+ * // true
+ * // false
+ * </code></div>
+ */
+p5.XML.prototype.hasAttribute = function(name) {
+  return this.attributes[name] ? true : false;
+};
+
+/**
+ * Returns an attribute value of the element as an Number. If the defaultValue
+ * parameter is specified and the attribute doesn't exist, then defaultValue
+ * is returned. If no defaultValue is specified and the attribute doesn't
+ * exist, the value 0 is returned.
+ *
+ * @method getNumber
+ * @param {String} name            the non-null full name of the attribute
+ * @param {Number} [defaultValue]  the default value of the attribute
+ * @return {Number}
+ * @example
+ * <div class='norender'><code>
+ * // The following short XML file called "mammals.xml" is parsed
+ * // in the code below.
+ * //
+ * // <?xml version="1.0"?>
+ * // &lt;mammals&gt;
+ * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+ * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+ * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+ * // &lt;/mammals&gt;
+ *
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML("assets/mammals.xml");
+ * }
+ *
+ * function setup() {
+ *   var firstChild = xml.getChild("animal");
+ *   print(firstChild.getNumber("id"));
+ * }
+ *
+ * // Sketch prints:
+ * // 0
+ * </code></div>
+ */
+p5.XML.prototype.getNumber = function(name, defaultValue) {
+  return Number(this.attributes[name]) || defaultValue || 0;
+};
+
+/**
+ * Returns an attribute value of the element as an String. If the defaultValue
+ * parameter is specified and the attribute doesn't exist, then defaultValue
+ * is returned. If no defaultValue is specified and the attribute doesn't
+ * exist, null is returned.
+ *
+ * @method getString
+ * @param {String} name            the non-null full name of the attribute
+ * @param {Number} [defaultValue]  the default value of the attribute
+ * @return {Number}
+ * @example
+ * <div class='norender'><code>
+ * // The following short XML file called "mammals.xml" is parsed
+ * // in the code below.
+ * //
+ * // <?xml version="1.0"?>
+ * // &lt;mammals&gt;
+ * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+ * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+ * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+ * // &lt;/mammals&gt;
+ *
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML("assets/mammals.xml");
+ * }
+ *
+ * function setup() {
+ *   var firstChild = xml.getChild("animal");
+ *   print(firstChild.getString("species"));
+ * }
+ *
+ * // Sketch prints:
+ * // "Capra hircus"
+ * </code></div>
+ */
+p5.XML.prototype.getString = function(name, defaultValue) {
+  return String(this.attributes[name]) || defaultValue || null;
+};
+
+/**
+ * Sets the content of an element's attribute. The first parameter specifies
+ * the attribute name, while the second specifies the new content.
+ *
+ * @method setAttribute
+ * @param {String} name            the full name of the attribute
+ * @param {Number} value           the value of the attribute
+ * @example
+ * <div class='norender'><code>
+ * // The following short XML file called "mammals.xml" is parsed
+ * // in the code below.
+ * //
+ * // <?xml version="1.0"?>
+ * // &lt;mammals&gt;
+ * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+ * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+ * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+ * // &lt;/mammals&gt;
+ *
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML("assets/mammals.xml");
+ * }
+ *
+ * function setup() {
+ *   var firstChild = xml.getChild("animal");
+ *   print(firstChild.getString("species"));
+ *   firstChild.setAttribute("species", "Jamides zebra");
+ *   print(firstChild.getString("species"));
+ * }
+ *
+ * // Sketch prints:
+ * // "Capra hircus"
+ * // "Jamides zebra"
+ * </code></div>
+ */
+p5.XML.prototype.setAttribute = function(name, value) {
+  if (this.attributes[name]) {
+    this.attributes[name] = value;
+  }
+};
+
+/**
+ * Returns the content of an element. If there is no such content,
+ * defaultValue is returned if specified, otherwise null is returned.
+ *
+ * @method getContent
+ * @param {String} [defaultValue] value returned if no content is found
+ * @return {String}
+ * @example
+ * <div class='norender'><code>
+ * // The following short XML file called "mammals.xml" is parsed
+ * // in the code below.
+ * //
+ * // <?xml version="1.0"?>
+ * // &lt;mammals&gt;
+ * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+ * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+ * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+ * // &lt;/mammals&gt;
+ *
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML("assets/mammals.xml");
+ * }
+ *
+ * function setup() {
+ *   var firstChild = xml.getChild("animal");
+ *   print(firstChild.getContent());
+ * }
+ *
+ * // Sketch prints:
+ * // "Goat"
+ * </code></div>
+ */
+p5.XML.prototype.getContent = function(defaultValue) {
+  return this.content || defaultValue || null;
+};
+
+/**
+ * Sets the element's content.
+ *
+ * @method setContent
+ * @param {String} text the new content
+ * @example
+ * <div class='norender'><code>
+ * // The following short XML file called "mammals.xml" is parsed
+ * // in the code below.
+ * //
+ * // <?xml version="1.0"?>
+ * // &lt;mammals&gt;
+ * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+ * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+ * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+ * // &lt;/mammals&gt;
+ *
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML("assets/mammals.xml");
+ * }
+ *
+ * function setup() {
+ *   var firstChild = xml.getChild("animal");
+ *   print(firstChild.getContent());
+ *   firstChild.setContent("Mountain Goat");
+ *   print(firstChild.getContent());
+ * }
+ *
+ * // Sketch prints:
+ * // "Goat"
+ * // "Mountain Goat"
+ * </code></div>
+ */
+p5.XML.prototype.setContent = function( content ) {
+  if(!this.children.length) {
+    this.content = content;
+  }
+};
+
+/* HELPERS */
 /**
  * This method is called while the parsing of XML (when loadXML() is
  * called). The difference between this method and the setContent()
@@ -409,14 +727,12 @@ p5.XML.prototype.removeChild = function(param) {
  * not directly text content. While in the other one is used when
  * the node in question directly has text inside it.
  *
- * @method setCont
- * @param {String} the content (might be large if more nodes inside)
  */
-p5.XML.prototype.setCont = function(content) {
+p5.XML.prototype._setCont = function(content) {
   var str;
   str = content;
   str = str.replace(/\s\s+/g, ',');
-  str = str.split(',');
+  //str = str.split(',');
   this.content = str;
 };
 
@@ -425,10 +741,8 @@ p5.XML.prototype.setCont = function(content) {
  * called). The XML node is passed and its attributes are stored in the
  * p5.XML's attribute Object.
  *
- * @method setAttributes
- * @param XML Node
  */
-p5.XML.prototype.setAttributes = function(node) {
+p5.XML.prototype._setAttributes = function(node) {
   var  i, att = {};
   for( i = 0; i < node.attributes.length; i++) {
     att[node.attributes[i].nodeName] = node.attributes[i].nodeValue;
@@ -436,63 +750,3 @@ p5.XML.prototype.setAttributes = function(node) {
   this.attributes = att;
 };
 
-
-/**
- * getAttributeCount() returns the number of attributes an XML node has
- *
- * @method getAttributeCount
- * @return {Number}
- */
-p5.XML.prototype.getAttributeCount = function() {
-  return Object.keys(this.attributes).length;
-};
-
-/**
- * listAttributes() returns a list of all the attributes of the XML node.
- *
- * @method listAttributes
- * @return {Array} an array of strings containing the names of attributes
- */
-p5.XML.prototype.listAttributes = function() {
-  return Object.keys(this.attributes);
-};
-
-/**
- * hasAttribute() checks whether the node in question has the passed attribute.
- *
- * @method hasAttribute
- * @param {String} the attribute to be checked
- * @return {boolean} true if attribute found else false
- */
-p5.XML.prototype.hasAttribute = function(name) {
-  var i;
-  var names = Object.keys(this.attributes);
-  for( i = 0 ; i < names.length ; i++ ) {
-    if(name === names[i]) {
-      return true;
-    }
-  }
-  return false;
-};
-
-/**
- * getContent() returns the content inside an XML node.
- *
- * @method getContent
- * @return {String}
- */
-p5.XML.prototype.getContent = function() {
-  return this.content;
-};
-
-/**
- * setContent() sets the content of the XML node.
- *
- * @method setContent
- * @param {String} the new content
- */
-p5.XML.prototype.setContent = function( content ) {
-  if(!this.children.length) {
-    this.content = content;
-  }
-};
