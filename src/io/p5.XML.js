@@ -205,11 +205,10 @@ p5.XML.prototype.listChildren = function() {
 /**
  * Returns all of the element's children as an array of p5.XML objects. When
  * the name parameter is specified, then it will return all children that match
- * that name or path. The path is a series of elements and sub-elements,
- * separated by slashes.
+ * that name.
  *
  * @method getChildren
- * @param {String} [name] element name or path/to/element
+ * @param {String} [name] element name
  * @return {Array} children of the element
  * @example&lt;animal
  * <div class='norender'><code>
@@ -253,12 +252,12 @@ p5.XML.prototype.getChildren = function(param) {
 };
 
 /**
- * Returns the first of the element's children that matches the name parameter.
- * The name or path is a series of elements and sub-elements, separated by
- * slashes. It returns undefined if no matching child is found.
+ * Returns the first of the element's children that matches the name parameter
+ * or the child of the given index.It returns undefined if no matching
+ * child is found.
  *
  * @method getChild
- * @param {String} name element name or path/to/element
+ * @param {String|Number} name element name or index
  * @return {p5.XML}
  * @example&lt;animal
  * <div class='norender'><code>
@@ -285,7 +284,7 @@ p5.XML.prototype.getChildren = function(param) {
  *
  * // Sketch prints:
  * // "Goat"
- * </code></div>&lt;animal
+ * </code></div>
  * <div class='norender'><code>
  * var xml;
  *
@@ -331,10 +330,59 @@ p5.XML.prototype.addChild = function(node) {
 };
 
 /**
- * removeChild() removes the child (p5.XML Object) which is passed
+ * Removes the element specified by name or index.
  *
  * @method removeChild
- * @param {Object} the child (p5.XML Object) to be removed
+ * @param {String|Number} name element name or index
+ * @example
+ * <div class='norender'><code>
+ * // The following short XML file called "mammals.xml" is parsed
+ * // in the code below.
+ * //
+ * // <?xml version="1.0"?>
+ * // &lt;mammals&gt;
+ * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+ * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+ * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+ * // &lt;/mammals&gt;
+ *
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML("assets/mammals.xml");
+ * }
+ *
+ * function setup() {
+ *   xml.removeChild("animal");
+ *   var children = xml.getChildren();
+ *   for (var i=0; i<children.length; i++) {
+ *     print(children[i].getContent());
+ *   }
+ * }
+ *
+ * // Sketch prints:
+ * // "Leopard"
+ * // "Zebra"
+ * </code></div>
+ * <div class='norender'><code>
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML("assets/mammals.xml");
+ * }
+ *
+ * function setup() {
+ *   xml.removeChild(1);
+ *   var children = xml.getChildren();
+ *   for (var i=0; i<children.length; i++) {
+ *     print(children[i].getContent());
+ *   }
+ * }
+ *
+ * // Sketch prints:
+ * // "Goat"
+ * // "Zebra"
+ * </code></div>
  */
 p5.XML.prototype.removeChild = function(param) {
   var ind = -1;
