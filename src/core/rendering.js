@@ -75,7 +75,7 @@ p5.prototype.createCanvas = function(w, h, renderer) {
 
   // set to invisible if still in setup (to prevent flashing with manipulate)
   if (!this._setupDone) {
-    c.className += ' p5_hidden'; // tag to show later
+    c.dataset.hidden = true; // tag to show later
     c.style.visibility='hidden';
   }
 

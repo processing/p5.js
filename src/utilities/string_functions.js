@@ -480,7 +480,7 @@ p5.prototype.splitTokens = function() {
  * and tab, this function also removes the Unicode "nbsp" character.
  *
  * @method trim
- * @param  {String|Array} [str] a String or Array of Strings to be trimmed
+ * @param  {String|Array} str a String or Array of Strings to be trimmed
  * @return {String|Array}       a trimmed String or Array of Strings
  * @example
  * <div>

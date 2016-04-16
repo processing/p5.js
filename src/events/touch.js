@@ -79,7 +79,7 @@ p5.prototype.touchIsDown = false;
 p5.prototype._updateNextTouchCoords = function(e) {
   if(e.type === 'mousedown' ||
      e.type === 'mousemove' ||
-     e.type === 'mouseup'){
+     e.type === 'mouseup' || !e.touches) {
     this._setProperty('_nextTouchX', this._nextMouseX);
     this._setProperty('_nextTouchY', this._nextMouseY);
   } else {

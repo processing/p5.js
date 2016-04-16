@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<mammals>
+  <animal id="0" species="Capra hircus">Goat</animal>
+  <animal id="1" species="Panthera pardus">Leopard</animal>
+  <animal id="2" species="Equus zebra">Zebra</animal>
+</mammals>

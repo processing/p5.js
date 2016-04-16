@@ -162,7 +162,9 @@ p5.prototype.push = function () {
   this._renderer.push();
   this._styles.push({
     _doStroke: this._renderer._doStroke,
+    _strokeSet: this._renderer._strokeSet,
     _doFill: this._renderer._doFill,
+    _fillSet: this._renderer._fillSet,
     _tint: this._renderer._tint,
     _imageMode: this._renderer._imageMode,
     _rectMode: this._renderer._rectMode,
@@ -281,7 +283,7 @@ p5.prototype.redraw = function () {
   var userSetup = this.setup || window.setup;
   var userDraw = this.draw || window.draw;
   if (typeof userDraw === 'function') {
-    this.push();
+    this.resetMatrix.bind(this);
     if (typeof userSetup === 'undefined') {
       this.scale(this._pixelDensity, this._pixelDensity);
     }
@@ -293,7 +295,6 @@ p5.prototype.redraw = function () {
     this._registeredMethods.post.forEach(function (f) {
       f.call(self);
     });
-    this.pop();
   }
 };
 

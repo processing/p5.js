@@ -20,17 +20,8 @@ require('./p5.Color');
  * the first frame of animation or if the background need only be set once.
  *
  * @method background
- * @param {Number|String|p5.Color|p5.Image} v1   gray value, red or hue value
- *                                               (depending on the current
- *                                               color mode), color string,
- *                                               p5.Color, or p5.Image
- * @param {Number}                          [v2] green or saturation value
- *                                               (depending on the current
- *                                               color mode)
- * @param {Number}                          [v3] blue or brightness value
- *                                               (depending on the current
- *                                               color mode)
- * @param {Number}                          [a]  opacity of the background
+ * @param {p5.Color} color     any value created by the color() function
+ * @param {Number} [a]         opacity of the background
  *
  * @example
  * <div>
@@ -110,6 +101,39 @@ require('./p5.Color');
  * background(color(0, 0, 255));
  * </code>
  * </div>
+ */
+
+/**
+ * @method background
+ * @param {String} colorstring color string, possible formats include: integer
+ *                         rgb() or rgba(), percentage rgb() or rgba(),
+ *                         3-digit hex, 6-digit hex
+ * @param {Number} [a]
+ */
+
+/**
+ * @method background
+ * @param {Number} gray   specifies a value between white and black
+ * @param {Number} [a]
+ */
+
+/**
+ * @method background
+ * @param {Number} v1     red or hue value (depending on the current color
+ *                        mode)
+ * @param {Number} v2     green or saturation value (depending on the current
+ *                        color mode)
+ * @param {Number} v3     blue or brightness value (depending on the current
+ *                        color mode)
+ * @param {Number} [a]
+ */
+
+/**
+ * @method background
+ * @param {p5.Image} image     image created with loadImage() or createImage(),
+ *                             to set as background
+ *                             (must be same size as the sketch window)
+ * @param {Number} [a]
  */
 p5.prototype.background = function() {
   if (arguments[0] instanceof p5.Image) {

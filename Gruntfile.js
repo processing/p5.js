@@ -59,6 +59,7 @@ function getYuidocOptions() {
       paths: ['src/', 'lib/addons/'],
       themedir: 'docs/yuidoc-p5-theme/',
       helpers: [],
+      preprocessor: './docs/preprocessor.js',
       outdir: 'docs/reference/'
     }
   };
@@ -180,6 +181,13 @@ module.exports = function(grunt) {
       }
     },
 
+    // Set up node-side (non-browser) mocha tests.
+    mochaTest: {
+      test: {
+        src: ['test/node/**/*.js']
+      }
+    },
+
     // Set up the mocha task, used for running the automated tests.
     mocha: {
       yui: {
@@ -202,7 +210,8 @@ module.exports = function(grunt) {
           reporter: reporter,
           run: true,
           log: true,
-          logErrors: true
+          logErrors: true,
+          timeout: 5000
         }
       },
     },
@@ -252,9 +261,12 @@ module.exports = function(grunt) {
     // front of the file.
     uglify: {
       options: {
-        banner: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */ ',
-        footer: 'p5.prototype._validateParameters = function() {};'+
-        'p5.prototype._friendlyFileLoadError = function() {};'
+        compress: {
+          global_defs: {
+            'IS_MINIFIED': true
+          }
+        },
+        banner: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */ '
       },
       dist: {
         files: {
@@ -339,11 +351,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-newer');
   grunt.loadNpmTasks('grunt-release-it');
   grunt.loadNpmTasks('grunt-saucelabs');
+  grunt.loadNpmTasks('grunt-mocha-test');
 
   // Create the multitasks.
   // TODO: "requirejs" is in here to run the "yuidoc_themes" subtask. Is this needed?
   grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);
-  grunt.registerTask('test', ['jshint', 'jscs', 'build', 'yuidoc:dev', 'connect', 'mocha']);
+  grunt.registerTask('test', ['jshint', 'jscs', 'build', 'yuidoc:dev', 'connect', 'mocha', 'mochaTest']);
   grunt.registerTask('test:nobuild', ['jshint:test', 'jscs:test', 'connect', 'mocha']);
   grunt.registerTask('yui', ['yuidoc:prod']);
   grunt.registerTask('yui:dev', ['yuidoc:dev']);

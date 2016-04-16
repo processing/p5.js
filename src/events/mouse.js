@@ -314,7 +314,7 @@ p5.prototype.isMousePressed = false; // both are supported
 p5.prototype._updateNextMouseCoords = function(e) {
   if(e.type === 'touchstart' ||
      e.type === 'touchmove' ||
-     e.type === 'touchend') {
+     e.type === 'touchend' || e.touches) {
     this._setProperty('_nextMouseX', this._nextTouchX);
     this._setProperty('_nextMouseY', this._nextTouchY);
   } else {
