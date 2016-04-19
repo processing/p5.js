@@ -40,15 +40,10 @@ require('./p5.Geometry');
  */
 p5.prototype.loadModel = function ( path ) {
   var model = new p5.Geometry();
-
   model.gid = path;
-
-  //Check for a duplicate loaded object
-  if (!this._renderer.geometryInHash(model.gid)) {
-    this.loadStrings(path, function(strings) {
-      parseObj(model, strings);
-    }.bind(this));
-  }
+  this.loadStrings(path, function(strings) {
+    parseObj(model, strings);
+  }.bind(this));
 
   return model;
 };
