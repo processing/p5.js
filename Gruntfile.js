@@ -145,7 +145,7 @@ module.exports = function(grunt) {
     // documentation.
     watch: {
       quick: {
-        files: ['src/**/*.js'],
+        files: ['src/**/*.js','src/**/*.frag','src/**/*.vert'],
         tasks: ['browserify'],
         options: {
           livereload: true

@@ -46,7 +46,7 @@ p5.Renderer3D = function(elt, pInst, isMainCanvas) {
    */
   this.uMVMatrix = new p5.Matrix();
   this.uPMatrix  = new p5.Matrix();
-  this.uNMatrix = new p5.Matrix();
+  this.uNMatrix = new p5.Matrix('mat3');
   //Geometry & Material hashes
   this.gHash = {};
   this.mHash = {};
@@ -235,9 +235,9 @@ p5.Renderer3D.prototype._setMatrixUniforms = function(shaderKey) {
     shaderProgram.uMVMatrixUniform,
     false, this.uMVMatrix.mat4);
 
-  gl.uniformMatrix4fv(
+  gl.uniformMatrix3fv(
     shaderProgram.uNMatrixUniform,
-    false, this.uNMatrix.mat4);
+    false, this.uNMatrix.mat3);
 };
 //////////////////////////////////////////////
 // GET CURRENT | for shader and color
@@ -437,6 +437,7 @@ p5.Renderer3D.prototype.scale = function(x,y,z) {
  */
 p5.Renderer3D.prototype.rotate = function(rad, axis){
   this.uMVMatrix.rotate(rad, axis);
+  this.uNMatrix.inverseTranspose(this.uMVMatrix);
   return this;
 };
 
@@ -446,7 +447,7 @@ p5.Renderer3D.prototype.rotate = function(rad, axis){
  * @return {[type]}     [description]
  */
 p5.Renderer3D.prototype.rotateX = function(rad) {
-  this.uMVMatrix.rotateX(rad);
+  this.rotate(rad, [1,0,0]);
   return this;
 };
 
@@ -456,7 +457,7 @@ p5.Renderer3D.prototype.rotateX = function(rad) {
  * @return {[type]}     [description]
  */
 p5.Renderer3D.prototype.rotateY = function(rad) {
-  this.uMVMatrix.rotateY(rad);
+  this.rotate(rad, [0,1,0]);
   return this;
 };
 
@@ -466,7 +467,7 @@ p5.Renderer3D.prototype.rotateY = function(rad) {
  * @return {[type]}     [description]
  */
 p5.Renderer3D.prototype.rotateZ = function(rad) {
-  this.uMVMatrix.rotateZ(rad);
+  this.rotate(rad, [0,0,1]);
   return this;
 };
 
@@ -491,4 +492,10 @@ p5.Renderer3D.prototype.pop = function() {
   this.uMVMatrix = uMVMatrixStack.pop();
 };
 
+// Text/Typography
+// @TODO:
+p5.Renderer3D.prototype._applyTextProperties = function() {
+  //@TODO finish implementation
+  console.error('text commands not yet implemented in webgl');
+};
 module.exports = p5.Renderer3D;
