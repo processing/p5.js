@@ -1126,9 +1126,12 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
     }
   }
   else {
+    //offset to account for centering multiple lines of text
+    var offset = ((cars.length)*0.5-0.5)*p.textLeading();
+
     for (jj = 0; jj < cars.length; jj++) {
 
-      this._renderText(p, cars[jj], x, y, finalMaxHeight);
+      this._renderText(p, cars[jj], x, y-offset, finalMaxHeight);
       y += p.textLeading();
     }
   }
