@@ -67,7 +67,7 @@ p5.prototype.plane = function(width, height){
 };
 
 /**
- * Draw a sphere with given raduis
+ * Draw a sphere with given radius
  * @method sphere
  * @param  {Number} radius            radius of circle
  * @param  {Number} [detail]          number of segments,

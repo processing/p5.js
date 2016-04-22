@@ -12,7 +12,7 @@
     <meta name="viewport" content="width=device-width">
 
     <!-- when hosted
-    <script type="text/javascript" src="http://fast.fonts.net/jsapi/173b6bc2-616e-4a13-8c9a-6fcf9ae1c69a.js"></script>
+    <script type="text/javascript" src="https://fast.fonts.net/jsapi/173b6bc2-616e-4a13-8c9a-6fcf9ae1c69a.js"></script>
     -->
 
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
@@ -26,8 +26,12 @@
     <!-- CSS (order matters): code highlighting -->
     <link rel="stylesheet" href="{{p5SiteRoot}}/css/prism.css">
 
+    <link rel="stylesheet" href="{{projectAssets}}/reference.css">
+
     <!-- modernizer (not leveraged, yet) 
     <script src="{{p5SiteRoot}}/js/vendor/modernizr-2.6.2.min.js"></script>-->
+
+    <script src="{{p5SiteRoot}}/js/vendor/throbber.min.js"></script>
 
     <!-- jquery-->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
@@ -138,6 +142,12 @@
     <script src="{{projectAssets}}/js/require.min.js"></script>
     <script src="{{projectAssets}}/js/reference.js"></script>
     <script src="{{p5SiteRoot}}/js/logo.js"></script>
+    <script type='text/javascript'>
+    var throb = Throbber({color: '#2D7BB6', strokewidth: 2 });
+    throb.appendTo(document.getElementById('list'));
+    throb.elem.style.margin = '1em 0 2em 0';
+    throb.start();
+    </script>
 
 
     <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. 

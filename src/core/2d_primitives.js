@@ -97,6 +97,11 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
   start %= constants.TWO_PI;
   stop %= constants.TWO_PI;
 
+  // account for full circle
+  if (stop === start) {
+    stop += constants.TWO_PI;
+  }
+
   // Adjust angles to counter linear scaling.
   if (start <= constants.HALF_PI) {
     start = Math.atan(w / h * Math.tan(start));
@@ -448,7 +453,7 @@ p5.prototype.quad = function() {
 * <code>
 * // Draw a rectangle with rounded corners having the following radii:
 * // top-left = 20, top-right = 15, bottom-right = 10, bottom-left = 5.
-* rect(30, 20, 55, 55, 20, 15, 10, 5)
+* rect(30, 20, 55, 55, 20, 15, 10, 5);
 * </code>
 * </div>
 */

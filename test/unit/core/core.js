@@ -95,4 +95,131 @@ suite('Core', function(){
     });*/
   });
 
+  suite('p5.prototype.registerMethod', function() {
+    test('should register and call "init" methods', function() {
+      var originalInit = p5.prototype._registeredMethods.init;
+      var myp5, myInitCalled;
+
+      p5.prototype._registeredMethods.init = [];
+
+      try {
+        p5.prototype.registerMethod('init', function myInit() {
+          assert(!myInitCalled,
+                 'myInit should only be called once during test suite');
+          myInitCalled = true;
+
+          this.myInitCalled = true;
+        });
+
+        myp5 = new p5(function(sketch) {
+          assert(sketch.hasOwnProperty('myInitCalled'));
+          assert(sketch.myInitCalled);
+
+          sketch.sketchFunctionCalled = true;
+        });
+
+        assert(myp5.sketchFunctionCalled);
+      } finally {
+        p5.prototype._registeredMethods.init = originalInit;
+      }
+    });
+  });
+
+  suite('p5.prototype._createFriendlyGlobalFunctionBinder', function() {
+    var noop = function() {};
+    var createBinder = p5.prototype._createFriendlyGlobalFunctionBinder;
+    var logMsg, globalObject, bind;
+
+    beforeEach(function() {
+      globalObject = {};
+      logMsg = undefined;
+      bind = createBinder({
+        globalObject: globalObject,
+        log: function(msg) {
+          if (logMsg !== undefined) {
+            // For simplicity, we'll write each test so it's expected to
+            // log a message at most once.
+            throw new Error('log() was called more than once');
+          }
+          logMsg = msg;
+        }
+      });
+    });
+
+    if (!window.IS_TESTING_MINIFIED_VERSION) {
+      test('should warn when globals already exist', function() {
+        globalObject.text = 'hi';
+        bind('text', noop);
+        assert.match(logMsg, /p5 had problems creating .+ "text"/);
+        assert.equal(globalObject.text, noop);
+      });
+
+      test('should warn when globals are overwritten', function() {
+        bind('text', noop);
+        globalObject.text = 'boop';
+
+        assert.match(logMsg, /You just changed the value of "text"/);
+        assert.equal(globalObject.text, 'boop');
+        assert.deepEqual(Object.keys(globalObject), ['text']);
+      });
+    } else {
+      test('should NOT warn when globals already exist', function() {
+        globalObject.text = 'hi';
+        bind('text', noop);
+        assert.isUndefined(logMsg);
+        assert.equal(globalObject.text, noop);
+      });
+
+      test('should NOT warn when globals are overwritten', function() {
+        bind('text', noop);
+        globalObject.text = 'boop';
+
+        assert.isUndefined(logMsg);
+        assert.equal(globalObject.text, 'boop');
+        assert.deepEqual(Object.keys(globalObject), ['text']);
+      });
+    }
+
+    test('should allow overwritten globals to be overwritten', function() {
+      bind('text', noop);
+      globalObject.text = 'boop';
+      globalObject.text += 'blap';
+      assert.equal(globalObject.text, 'boopblap');
+    });
+
+    test('should allow globals to be deleted', function() {
+      bind('text', noop);
+      delete globalObject.text;
+      assert.isUndefined(globalObject.text);
+      assert.isUndefined(logMsg);
+    });
+
+    test('should create enumerable globals', function() {
+      bind('text', noop);
+      assert.deepEqual(Object.keys(globalObject), ['text']);
+    });
+
+    test('should not warn about overwriting print()', function() {
+      globalObject.print = window.print;
+      bind('print', noop);
+      assert.equal(globalObject.print, noop);
+      assert.isUndefined(logMsg);
+    });
+
+    // This is a regression test for
+    // https://github.com/processing/p5.js/issues/1350.
+    test('should not warn about overwriting preload methods', function() {
+      globalObject.loadJSON = function() { throw new Error(); };
+      bind('loadJSON', noop);
+      assert.equal(globalObject.loadJSON, noop);
+      assert.isUndefined(logMsg);
+    });
+
+    test('should not warn about overwriting non-functions', function() {
+      bind('mouseX', 5);
+      globalObject.mouseX = 50;
+      assert.equal(globalObject.mouseX, 50);
+      assert.isUndefined(logMsg);
+    });
+  });
 });

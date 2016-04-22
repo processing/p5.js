@@ -69,17 +69,22 @@ p5.prototype.randomSeed = function(seed) {
 };
 
 /**
- * Return a random number.
+ * Return a random floating-point number.
  *
  * Takes either 0, 1 or 2 arguments.
- * If no argument is given, returns a random number between 0 and 1.
- * If one argument is given, returns a random number between 0 and the number.
- * If two arguments are given, returns a random number between them,
- * inclusive.
+ *
+ * If no argument is given, returns a random number from 0
+ * up to (but not including) 1.
+ *
+ * If one argument is given, returns a random number from 0 up to
+ * (but not including) the number.
+ *
+ * If two arguments are given, returns a random number from the
+ * first argument up to (but not including) the second argument.
  *
  * @method random
- * @param  {Number} min   the lower bound
- * @param  {Number} max   the upper bound
+ * @param  {Number} [min]   the lower bound (inclusive)
+ * @param  {Number} [max]   the upper bound (exclusive)
  * @return {Number} the random number
  * @example
  * <div>
