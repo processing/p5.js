@@ -46,7 +46,7 @@ p5.Renderer3D = function(elt, pInst, isMainCanvas) {
    */
   this.uMVMatrix = new p5.Matrix();
   this.uPMatrix  = new p5.Matrix();
-  this.uNMatrix = new p5.Matrix();
+  this.uNMatrix = new p5.Matrix('mat3');
   //Geometry & Material hashes
   this.gHash = {};
   this.mHash = {};
@@ -54,6 +54,9 @@ p5.Renderer3D = function(elt, pInst, isMainCanvas) {
   //default drawing is done in Retained Mode
   this.isImmediateDrawing = false;
   this.immediateMode = {};
+  this.curFillColor = [0.5,0.5,0.5,1.0];
+  this.curStrokeColor = [0.5,0.5,0.5,1.0];
+  this.pointSize = 5.0;//default point/stroke
   return this;
 };
 
@@ -101,18 +104,6 @@ p5.Renderer3D.prototype._update = function() {
 };
 
 /**
- * [resize description]
- * @param  {[type]} w [description]
- * @param  {[tyoe]} h [description]
- * @return {[type]}   [description]
- */
-p5.Renderer3D.prototype.resize = function(w,h) {
-  var gl = this.GL;
-  p5.Renderer.prototype.resize.call(this, w, h);
-  gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
-};
-
-/**
  * [background description]
  * @return {[type]} [description]
  */
@@ -126,6 +117,11 @@ p5.Renderer3D.prototype.background = function() {
   gl.clearColor(_r, _g, _b, _a);
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 };
+
+//@TODO implement this
+// p5.Renderer3D.prototype.clear = function() {
+//@TODO
+// };
 
 //////////////////////////////////////////////
 // SHADER
@@ -188,11 +184,6 @@ function(shaderProgram, isImmediateMode) {
     gl.getUniformLocation(shaderProgram, 'uResolution');
   gl.uniform1f(shaderProgram.uResolution, RESOLUTION);
 
-  //vertex position Attribute
-  shaderProgram.vertexPositionAttribute =
-    gl.getAttribLocation(shaderProgram, 'aPosition');
-  gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
-
   //projection Matrix uniform
   shaderProgram.uPMatrixUniform =
     gl.getUniformLocation(shaderProgram, 'uProjectionMatrix');
@@ -202,23 +193,32 @@ function(shaderProgram, isImmediateMode) {
 
   //@TODO: figure out a better way instead of if statement
   if(isImmediateMode === undefined){
-    //vertex normal Attribute
-    shaderProgram.vertexNormalAttribute =
-      gl.getAttribLocation(shaderProgram, 'aNormal');
-    gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
-
     //normal Matrix uniform
     shaderProgram.uNMatrixUniform =
     gl.getUniformLocation(shaderProgram, 'uNormalMatrix');
 
-    //texture coordinate Attribute
-    shaderProgram.textureCoordAttribute =
-      gl.getAttribLocation(shaderProgram, 'aTexCoord');
-    gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
-
     shaderProgram.samplerUniform =
     gl.getUniformLocation(shaderProgram, 'uSampler');
   }
+};
+
+/**
+ * Sets a shader uniform given a shaderProgram and uniform string
+ * @param {String} shaderKey key to material Hash.
+ * @param {String} uniform location in shader.
+ * @param { Number} data data to bind uniform.  Float data type.
+ * @todo currently this function sets uniform1f data.
+ * Should generalize function to accept any uniform
+ * data type.
+ */
+p5.Renderer3D.prototype._setUniform1f = function(shaderKey,uniform,data)
+{
+  var gl = this.GL;
+  var shaderProgram = this.mHash[shaderKey];
+  gl.useProgram(shaderProgram);
+  shaderProgram[uniform] = gl.getUniformLocation(shaderProgram, uniform);
+  gl.uniform1f(shaderProgram[uniform], data);
+  return this;
 };
 
 p5.Renderer3D.prototype._setMatrixUniforms = function(shaderKey) {
@@ -235,13 +235,9 @@ p5.Renderer3D.prototype._setMatrixUniforms = function(shaderKey) {
     shaderProgram.uMVMatrixUniform,
     false, this.uMVMatrix.mat4);
 
-  this.uNMatrix = new p5.Matrix();
-  this.uNMatrix.invert(this.uMVMatrix);
-  this.uNMatrix.transpose(this.uNMatrix);
-
-  gl.uniformMatrix4fv(
+  gl.uniformMatrix3fv(
     shaderProgram.uNMatrixUniform,
-    false, this.uNMatrix.mat4);
+    false, this.uNMatrix.mat3);
 };
 //////////////////////////////////////////////
 // GET CURRENT | for shader and color
@@ -260,35 +256,89 @@ p5.Renderer3D.prototype._getShader = function(vertId, fragId, isImmediateMode) {
 
 p5.Renderer3D.prototype._getCurShaderId = function(){
   //if the shader ID is not yet defined
-  if(this.curShaderId === undefined){
+  var mId, shaderProgram;
+  if(this.drawMode !== 'fill' && this.curShaderId === undefined){
     //default shader: normalMaterial()
-    var mId = 'normalVert|normalFrag';
-    var shaderProgram = this._initShaders('normalVert', 'normalFrag');
+    mId = 'normalVert|normalFrag';
+    shaderProgram = this._initShaders('normalVert', 'normalFrag');
+    this.mHash[mId] = shaderProgram;
+    this.curShaderId = mId;
+  } else if(this.isImmediateDrawing && this.drawMode === 'fill'){
+    mId = 'immediateVert|vertexColorFrag';
+    shaderProgram = this._initShaders('immediateVert', 'vertexColorFrag');
     this.mHash[mId] = shaderProgram;
     this.curShaderId = mId;
   }
-
   return this.curShaderId;
 };
 
 //////////////////////////////////////////////
 // COLOR
 //////////////////////////////////////////////
-p5.Renderer3D.prototype.fill = function(r, g, b, a) {
-  var color = this._pInst.color.apply(this._pInst, arguments);
-  //@type {Array}, length 4 : vals range 0->1
-  var colorNormalized = color._normalize();
-  this.curColor = colorNormalized;
+/**
+ * Basic fill material for geometry with a given color
+ * @method  fill
+ * @param  {Number|Array|String|p5.Color} v1  gray value,
+ * red or hue value (depending on the current color mode),
+ * or color Array, or CSS color string
+ * @param  {Number}            [v2] optional: green or saturation value
+ * @param  {Number}            [v3] optional: blue or brightness value
+ * @param  {Number}            [a]  optional: opacity
+ * @return {p5}                the p5 object
+ * @example
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw(){
+ *  background(0);
+ *  fill(250, 0, 0);
+ *  rotateX(frameCount * 0.01);
+ *  rotateY(frameCount * 0.01);
+ *  rotateZ(frameCount * 0.01);
+ *  box(200, 200, 200);
+ * }
+ * </code>
+ * </div>
+ */
+p5.Renderer3D.prototype.fill = function(v1, v2, v3, a) {
+  var gl = this.GL;
+  var shaderProgram;
+  //see material.js for more info on color blending in webgl
+  var colors = this._applyColorBlend(v1,v2,v3,a);
+  this.curFillColor = colors;
   this.drawMode = 'fill';
+  if(this.isImmediateDrawing){
+    shaderProgram =
+    this._getShader('immediateVert','vertexColorFrag');
+    gl.useProgram(shaderProgram);
+  } else {
+    shaderProgram =
+    this._getShader('normalVert', 'basicFrag');
+    gl.useProgram(shaderProgram);
+    //RetainedMode uses a webgl uniform to pass color vals
+    //in ImmediateMode, we want access to each vertex so therefore
+    //we cannot use a uniform.
+    shaderProgram.uMaterialColor = gl.getUniformLocation(
+      shaderProgram, 'uMaterialColor' );
+    gl.uniform4f( shaderProgram.uMaterialColor,
+      colors[0],
+      colors[1],
+      colors[2],
+      colors[3]);
+  }
   return this;
 };
 p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
-  var colorNormalized = color._normalize();
-  this.curColor = colorNormalized;
+  var colorNormalized = color._array;
+  this.curStrokeColor = colorNormalized;
   this.drawMode = 'stroke';
   return this;
 };
+
 //@TODO
 p5.Renderer3D.prototype._strokeCheck = function(){
   if(this.drawMode === 'stroke'){
@@ -297,9 +347,17 @@ p5.Renderer3D.prototype._strokeCheck = function(){
     );
   }
 };
-//@TODO
-p5.Renderer3D.prototype.strokeWeight = function() {
-  throw new Error('strokeWeight for 3d not yet implemented');
+
+/**
+ * [strokeWeight description]
+ * @param  {Number} pointSize stroke point size
+ * @return {[type]}           [description]
+ * @todo  strokeWeight currently works on points only.
+ * implement on all wireframes and strokes.
+ */
+p5.Renderer3D.prototype.strokeWeight = function(pointSize) {
+  this.pointSize = pointSize;
+  return this;
 };
 //////////////////////////////////////////////
 // HASH | for material and geometry
@@ -325,19 +383,6 @@ p5.Renderer3D.prototype.resize = function(w,h) {
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
 };
 
-/**
- * [background description]
- * @return {[type]} [description]
- */
-p5.Renderer3D.prototype.background = function() {
-  var _col = this._pInst.color.apply(this._pInst, arguments);
-  //webgl requires normalized r,g,b
-  var _r = (_col.rgba[0]) / 255;
-  var _g = (_col.rgba[1]) / 255;
-  var _b = (_col.rgba[2]) / 255;
-  var _a = (_col.rgba[3]) / 255;
-  this.clear(_r,_g,_b,_a);
-};
 /**
  * clears color and depth buffers
  * with r,g,b,a
@@ -392,6 +437,7 @@ p5.Renderer3D.prototype.scale = function(x,y,z) {
  */
 p5.Renderer3D.prototype.rotate = function(rad, axis){
   this.uMVMatrix.rotate(rad, axis);
+  this.uNMatrix.inverseTranspose(this.uMVMatrix);
   return this;
 };
 
@@ -401,7 +447,7 @@ p5.Renderer3D.prototype.rotate = function(rad, axis){
  * @return {[type]}     [description]
  */
 p5.Renderer3D.prototype.rotateX = function(rad) {
-  this.uMVMatrix.rotateX(rad);
+  this.rotate(rad, [1,0,0]);
   return this;
 };
 
@@ -411,7 +457,7 @@ p5.Renderer3D.prototype.rotateX = function(rad) {
  * @return {[type]}     [description]
  */
 p5.Renderer3D.prototype.rotateY = function(rad) {
-  this.uMVMatrix.rotateY(rad);
+  this.rotate(rad, [0,1,0]);
   return this;
 };
 
@@ -421,7 +467,7 @@ p5.Renderer3D.prototype.rotateY = function(rad) {
  * @return {[type]}     [description]
  */
 p5.Renderer3D.prototype.rotateZ = function(rad) {
-  this.uMVMatrix.rotateZ(rad);
+  this.rotate(rad, [0,0,1]);
   return this;
 };
 
@@ -446,4 +492,10 @@ p5.Renderer3D.prototype.pop = function() {
   this.uMVMatrix = uMVMatrixStack.pop();
 };
 
+// Text/Typography
+// @TODO:
+p5.Renderer3D.prototype._applyTextProperties = function() {
+  //@TODO finish implementation
+  console.error('text commands not yet implemented in webgl');
+};
 module.exports = p5.Renderer3D;

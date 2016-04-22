@@ -51,6 +51,7 @@ require('./3d/p5.Geometry');
 require('./3d/p5.Renderer3D.Retained');
 require('./3d/p5.Renderer3D.Immediate');
 require('./3d/primitives');
+require('./3d/loading');
 require('./3d/p5.Matrix');
 require('./3d/material');
 require('./3d/light');
