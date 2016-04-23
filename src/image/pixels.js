@@ -364,10 +364,10 @@ p5.prototype.filter = function(operation, value) {
  * Getting the color of a single pixel with get(x, y) is easy, but not as fast
  * as grabbing the data directly from pixels[]. The equivalent statement to
  * get(x, y) using pixels[] with pixel density d is
- * <code>[pixels[(y*width*d+x)*d],
- * pixels[(y*width*d+x)*d+1],
- * pixels[(y*width*d+x)*d+2],
- * pixels[(y*width*d+x)*d+3]]</code>.
+ * <code>[pixels[(y*width*d+x*4)*d],
+ * pixels[(y*width*d+x*4)*d+1],
+ * pixels[(y*width*d+x*4)*d+2],
+ * pixels[(y*width*d+x*4)*d+3]]</code>.
  * <br><br>
  * See the reference for pixels[] for more information.
  *
