@@ -11,9 +11,19 @@
 var p5 = require('../core/core');
 
 /**
- * Sets the current alignment for drawing text. The parameters LEFT, CENTER,
- * and RIGHT set the alignment of text in relation to the values for
- * the x and y parameters of the text() function.
+ * Sets the current alignment for drawing text. Accepts two
+ * arguments: horizAlign (LEFT, CENTER, or RIGHT) and
+ * vertAlign (TOP, BOTTOM, CENTER, or BASELINE).
+ *
+ * The horizAlign parameter is in reference to the x value
+ * of the text() function, while the vertAlign parameter is
+ * in reference to the y value.
+ *
+ * So if you write textAlign(LEFT), you are aligning the left
+ * edge of your text to the x value you give in text(). If you
+ * write textAlign(RIGHT, TOP), you are aligning the right edge
+ * of your text to the x value and the top of edge of the text
+ * to the y value.
  *
  * @method textAlign
  * @param {Number/Constant} horizAlign horizontal alignment, either LEFT,
