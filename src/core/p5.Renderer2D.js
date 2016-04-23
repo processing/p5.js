@@ -645,7 +645,7 @@ p5.Renderer2D.prototype.triangle = function(x1, y1, x2, y2, x3, y3) {
 
 p5.Renderer2D.prototype.endShape =
 function (mode, vertices, isCurve, isBezier,
-    isQuadratic, isContour, shapeKind) {
+    isQuadratic, isContour, shapeKind, ar) {
   if (vertices.length === 0) {
     return this;
   }
@@ -657,13 +657,13 @@ function (mode, vertices, isCurve, isBezier,
   if (closeShape && !isContour) {
     vertices.push(vertices[0]);
   }
-  var i, j;
+  var i, j, k;
   var numVerts = vertices.length;
+  var numar=ar.length;
   if (isCurve && (shapeKind === constants.POLYGON || shapeKind === null)) {
-    if (numVerts > 3) {
-      var b = [], s = 1 - this._curveTightness;
+    var b = [], s = 1 - this._curveTightness;
+    if (numVerts > 3 && (numVerts===numar)) {
       this.drawingContext.beginPath();
-      this.drawingContext.moveTo(vertices[1][0], vertices[1][1]);
       for (i = 1; i + 2 < numVerts; i++) {
         v = vertices[i];
         b[0] = [
@@ -690,6 +690,68 @@ function (mode, vertices, isCurve, isBezier,
         this.drawingContext.lineTo(vertices[i + 1][0], vertices[i + 1][1]);
       }
       this._doFillStrokeClose();
+    }
+    else if(numVerts > 3 && (numVerts!==numar)){// issue #906
+      //var b = [], s = 1 - this._curveTightness;
+      j=0;
+      for(k=0;k+1<numVerts;k++){
+        if(k===ar[j]){
+          this.drawingContext.beginPath();
+          this.drawingContext.moveTo(vertices[k][0], vertices[k][1]);
+          for(j;(ar[j]+1)===(ar[j+1]) && (ar[j]+2<numVerts) ;j++){
+            k=k+1;
+            if(ar[j]+3===ar[j+3]){
+              i=ar[j+1];
+              v = vertices[i];
+              b[0] = [
+                v[0],
+                v[1]
+              ];
+              b[1] = [
+                v[0] + (s * vertices[i + 1][0] - s * vertices[i - 1][0]) / 6,
+                v[1] + (s * vertices[i + 1][1] - s * vertices[i - 1][1]) / 6
+              ];
+              b[2] = [
+                vertices[i + 1][0] +
+                (s * vertices[i][0]-s * vertices[i + 2][0]) / 6,
+          vertices[i + 1][1]+(s * vertices[i][1] - s*vertices[i + 2][1]) / 6
+              ];
+              b[3] = [
+                vertices[i + 1][0],
+                vertices[i + 1][1]
+              ];
+              this.drawingContext.bezierCurveTo(b[1][0],b[1][1],
+                b[2][0],b[2][1],b[3][0],b[3][1]);
+            }
+            else{
+
+            }
+          }
+          this._doFillStrokeClose();
+          if((ar[j]+1)!==(ar[j+1]) && (ar[j]<numVerts) ){
+            this.drawingContext.beginPath();
+            this.drawingContext.moveTo(vertices[k-1][0], vertices[k-1][1]);
+            v = vertices[k];
+            this.drawingContext.lineTo(v[0], v[1]);
+            this._doFillStrokeClose();
+          }
+          j=j+1;
+        }
+        if(ar[j]+3!==ar[j+3]){
+          this.drawingContext.beginPath();
+          this.drawingContext.moveTo(vertices[k][0], vertices[k][1]);
+          v = vertices[k+1];
+          this.drawingContext.lineTo(v[0], v[1]);
+          this._doFillStrokeClose();
+        }
+        else{
+          this.drawingContext.beginPath();
+          this.drawingContext.moveTo(vertices[k][0], vertices[k][1]);
+          v = vertices[k+1];
+          this.drawingContext.lineTo(v[0], v[1]);
+          this._doFillStrokeClose();
+        }
+      }
     }
   } else if (isBezier&&(shapeKind===constants.POLYGON ||shapeKind === null)) {
     this.drawingContext.beginPath();

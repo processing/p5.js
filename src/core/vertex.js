@@ -17,6 +17,9 @@ var isBezier = false;
 var isCurve = false;
 var isQuadratic = false;
 var isContour = false;
+var curveVertices=[];
+var curveVerticesIndex=0;
+var VerticesIndex=0;
 
 /**
  * Use the beginContour() and endContour() functions to create negative
@@ -339,11 +342,24 @@ p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
  * </code>
  * </div>
  */
-p5.prototype.curveVertex = function(x,y) {
+
+/*
+p5.prototype.curveVertex = function(x,y) {// issue 906
   isCurve = true;
   this.vertex(x, y);
   return this;
 };
+*/
+
+
+p5.prototype.curveVertex = function(x,y) {
+  isCurve = true;
+  curveVertices[curveVerticesIndex]=VerticesIndex;
+  curveVerticesIndex=curveVerticesIndex+1;
+  this.vertex(x, y);
+  return this;
+};
+
 
 /**
  * Use the beginContour() and endContour() functions to create negative
@@ -440,7 +456,7 @@ p5.prototype.endShape = function(mode) {
     }
 
     this._renderer.endShape(mode, vertices, isCurve, isBezier,
-      isQuadratic, isContour, shapeKind);
+      isQuadratic, isContour, shapeKind, curveVertices);
 
     // Reset some settings
     isCurve = false;
@@ -553,6 +569,7 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  * </div>
  */
 p5.prototype.vertex = function(x, y, moveTo) {
+  VerticesIndex=VerticesIndex+1;
   var args = new Array(arguments.length);
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
