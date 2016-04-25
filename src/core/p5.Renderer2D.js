@@ -1011,7 +1011,8 @@ p5.Renderer2D.prototype.scale = function(x,y) {
 
 p5.Renderer2D.prototype.shearX = function(angle) {
   if (this._pInst._angleMode === constants.DEGREES) {
-    angle = this._pInst.radians(angle);
+    // undoing here, because it gets redone in tan()
+    angle = this._pInst.degrees(angle);
   }
   this.drawingContext.transform(1, 0, this._pInst.tan(angle), 1, 0, 0);
   return this;
@@ -1019,7 +1020,8 @@ p5.Renderer2D.prototype.shearX = function(angle) {
 
 p5.Renderer2D.prototype.shearY = function(angle) {
   if (this._pInst._angleMode === constants.DEGREES) {
-    angle = this._pInst.radians(angle);
+    // undoing here, because it gets redone in tan()
+    angle = this._pInst.degrees(angle);
   }
   this.drawingContext.transform(1, this._pInst.tan(angle), 0, 1, 0, 0);
   return this;
