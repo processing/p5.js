@@ -145,7 +145,11 @@ p5.prototype.pixels = [];
  * </code></div>
  */
 p5.prototype.blend = function() {
-  this._renderer.blend.apply(this._renderer, arguments);
+  if (this._renderer) {
+    this._renderer.blend.apply(this._renderer, arguments);
+  } else {
+    p5.Renderer2D.prototype.blend.apply(this, arguments);
+  }
 };
 
 /**

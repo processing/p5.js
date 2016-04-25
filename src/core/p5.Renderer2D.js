@@ -150,7 +150,11 @@ p5.Renderer2D.prototype.blend = function() {
   );
 
   this.drawingContext.globalCompositeOperation = blendMode;
-  this._pInst.copy.apply(this._pInst, copyArgs);
+  if (this._pInst) {
+    this._pInst.copy.apply(this._pInst, copyArgs);
+  } else {
+    this.copy.apply(this, copyArgs);
+  }
   this.drawingContext.globalCompositeOperation = currBlend;
 };
 
