@@ -47,6 +47,31 @@ var curveDetail = 20;
  * </code>
  * </div>
  */
+/**
+ * @method bezier
+ * @param  {Number} x1 x-coordinate for the first anchor point
+ * @param  {Number} y1 y-coordinate for the first anchor point
+ * @param  {Number} z1 z-coordinate for the first anchor point
+ * @param  {Number} x2 x-coordinate for the first control point
+ * @param  {Number} y2 y-coordinate for the first control point
+ * @param  {Number} z2 z-coordinate for the first control point
+ * @param  {Number} x3 x-coordinate for the first anchor point
+ * @param  {Number} y3 y-coordinate for the first anchor point
+ * @param  {Number} z3 z-coordinate for the first anchor point
+ * @param  {Number} x4 x-coordinate for the first control point
+ * @param  {Number} y4 y-coordinate for the first control point
+ * @param  {Number} z4 z-coordinate for the first control point
+ * @return {p5.Renderer3D}   [description]
+ * @example
+ * <div>
+ * <code>
+ *background(0, 0, 0);
+ *noFill();
+ *stroke(255);
+ *bezier(250,250,0, 100,100,0, 100,0,0, 0,100,0);
+ * </code>
+ * </div>
+*/
 p5.prototype.bezier = function() {
    var args = new Array(arguments.length);
    for (var i = 0; i < args.length; ++i) {
@@ -263,6 +288,34 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * curve(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y)
  * stroke(255, 102, 0);
  * curve(p2.x, p2.y, p3.x, p3.y, p4.x, p4.y, p4.x, p4.y)
+ * </code>
+ * </div>
+ */
+/**
+ * @method curve
+ * @param  {Number} x1 x-coordinate for the beginning control point
+ * @param  {Number} y1 y-coordinate for the beginning control point
+ * @param  {Number} z1 z-coordinate for the beginning control point
+ * @param  {Number} x2 x-coordinate for the first point
+ * @param  {Number} y2 y-coordinate for the first point
+ * @param  {Number} z2 z-coordinate for the first point
+ * @param  {Number} x3 x-coordinate for the second point
+ * @param  {Number} y3 y-coordinate for the second point
+ * @param  {Number} z3 z-coordinate for the second point
+ * @param  {Number} x4 x-coordinate for the ending control point
+ * @param  {Number} y4 y-coordinate for the ending control point
+ * @param  {Number} z4 z-coordinate for the ending control point
+ * @return {Object}    the p5 object
+ * @example
+ * <div>
+ * <code>
+ * noFill();
+ * stroke(255, 102, 0);
+ * curve(5,26,0, 5,26,0, 73,24,0, 73,61,0);
+ * stroke(0);
+ * curve(5,26,0, 73,24,0, 73,61,0, 15,65,0);
+ * stroke(255, 102, 0);
+ * curve(73,24,0, 73,61,0, 15,65,0, 15,65,0);
  * </code>
  * </div>
  */
