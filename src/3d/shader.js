@@ -1,6 +1,8 @@
 var fs = require('fs');
 
 module.exports = {
+  immediateVert:
+    fs.readFileSync(__dirname + '/shaders/immediate.vert', 'utf-8'),
   vertexColorVert:
     fs.readFileSync(__dirname + '/shaders/vertexColor.vert', 'utf-8'),
   vertexColorFrag:

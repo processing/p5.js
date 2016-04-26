@@ -4,7 +4,7 @@ attribute vec2 aTexCoord;
 
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
-uniform mat4 uNormalMatrix;
+uniform mat3 uNormalMatrix;
 uniform float uResolution;
 uniform int uAmbientLightCount;
 uniform int uDirectionalLightCount;
@@ -31,7 +31,7 @@ void main(void){
   vec4 positionVec4 = vec4(aPosition / uResolution, 1.0);
   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
 
-  vec3 vertexNormal = vec3( uNormalMatrix * vec4( aNormal, 1.0 ) );
+  vec3 vertexNormal = vec3( uNormalMatrix * aNormal );
   vVertexNormal = vertexNormal;
   vVertTexCoord = aTexCoord;
 
