@@ -390,7 +390,7 @@ p5.prototype.endContour = function() {
   vert.moveTo = false;
   contourVertices.push(vert);
 
-  // prevent stay lines with multiple contours
+  // prevent stray lines with multiple contours
   if (isFirstContour) {
     vertices.push(vertices[0]);
     isFirstContour = false;
