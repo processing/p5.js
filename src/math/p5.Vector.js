@@ -1036,21 +1036,7 @@ p5.Vector.angleBetween = function (v1, v2) {
 };
 
 /**
- * Calculates the magnitude (length) of the vector and returns the result as
- * a float (this is simply the equation sqrt(x*x + y*y + z*z).)
- *
- * @method mag
  * @static
- * @param {p5.Vector} [vecT] Vector of arbitrary length
- * @return {Number} magnitude of the vector
- * @example
- * <div class="norender">
- * <code>
- * var v = createVector(20.0, 30.0, 40.0);
- * var m = p5.Vector.mag(v);
- * print(m); // Prints "53.85164807134504"
- * </code>
- * </div>
  */
 p5.Vector.mag = function (vecT){
   var x = vecT.x,

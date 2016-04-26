@@ -175,8 +175,8 @@ p5.prototype.ellipse = function() {
       ]
     );
     // p5 supports negative width and heights for ellipses
-    if (args[3] < 0) args[3] = Math.abs(args[3]);
-    if (args[4] < 0) args[4] = Math.abs(args[4]);
+    if (args[3] < 0){args[3] = Math.abs(args[3]);}
+    if (args[4] < 0){args[4] = Math.abs(args[4]);}
   } else {
     this._validateParameters(
       'ellipse',
@@ -184,8 +184,8 @@ p5.prototype.ellipse = function() {
       ['Number', 'Number', 'Number', 'Number']
     );
     // p5 supports negative width and heights for rects
-    if (args[2] < 0) args[2] = Math.abs(args[2]);
-    if (args[3] < 0) args[3] = Math.abs(args[3]);
+    if (args[2] < 0){args[2] = Math.abs(args[2]);}
+    if (args[3] < 0){args[3] = Math.abs(args[3]);}
   }
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
@@ -367,17 +367,9 @@ p5.prototype.point = function() {
  */
 /**
  * @method quad
- * @param {Number} x1 the x-coordinate of the first point
- * @param {Number} y1 the y-coordinate of the first point
  * @param {Number} z1 the z-coordinate of the first point
- * @param {Number} x2 the x-coordinate of the second point
- * @param {Number} y2 the y-coordinate of the second point
  * @param {Number} z2 the z-coordinate of the second point
- * @param {Number} x3 the x-coordinate of the third point
- * @param {Number} y3 the y-coordinate of the third point
  * @param {Number} z3 the z-coordinate of the third point
- * @param {Number} x4 the x-coordinate of the fourth point
- * @param {Number} y4 the y-coordinate of the fourth point
  * @param {Number} z4 the z-coordinate of the fourth point
  * @return {p5} the p5 object
  */
@@ -484,15 +476,7 @@ p5.prototype.quad = function() {
 */
 /**
 * @method rect
-* @param  {Number} x  x-coordinate of the rectangle.
-* @param  {Number} y  y-coordinate of the rectangle.
 * @param  {Number} z  z-coordinate of the rectangle.
-* @param  {Number} w  width of the rectangle.
-* @param  {Number} h  height of the rectangle.
-* @param  {Number} [tl] optional radius of top-left corner.
-* @param  {Number} [tr] optional radius of top-right corner.
-* @param  {Number} [br] optional radius of bottom-right corner.
-* @param  {Number} [bl] optional radius of bottom-left corner.
 * @return {p5}          the p5 object.
 */
 p5.prototype.rect = function () {
@@ -512,8 +496,8 @@ p5.prototype.rect = function () {
       ]
     );
     // p5 supports negative width and heights for rects
-    if (args[3] < 0) args[3] = Math.abs(args[3]);
-    if (args[4] < 0) args[4] = Math.abs(args[4]);
+    if (args[3] < 0){args[3] = Math.abs(args[3]);}
+    if (args[4] < 0){args[4] = Math.abs(args[4]);}
   } else {
     this._validateParameters(
       'rect',
@@ -526,17 +510,13 @@ p5.prototype.rect = function () {
       ]
     );
     // p5 supports negative width and heights for rects
-    if (args[2] < 0) args[2] = Math.abs(args[2]);
-    if (args[3] < 0) args[3] = Math.abs(args[3]);
+    if (args[2] < 0){args[2] = Math.abs(args[2]);}
+    if (args[3] < 0){args[3] = Math.abs(args[3]);}
   }
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return;
   }
-  if (this._renderer.isP3D){
-    this._renderer.rect(args);
-  } else {
-    this._renderer.rect(x, y, w, h, tl, tr, br, bl);
-  }
+  this._renderer.rect(args);
   return this;
 };
 

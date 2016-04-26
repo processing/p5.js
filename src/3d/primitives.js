@@ -15,9 +15,9 @@ require('./p5.Geometry');
  * @method plane
  * @param  {Number} width      width of the plane
  * @param  {Number} height     height of the plane
- * @param  {Number} [detailX]  Optional number of triangle 
+ * @param  {Number} [detailX]  Optional number of triangle
  *                             subdivisions in x-dimension
- * @param {Number} [detailY]   Optional number of triangle 
+ * @param {Number} [detailY]   Optional number of triangle
  *                             subdivisions in y-dimension
  * @return {p5}                the p5 object
  * @example
@@ -80,9 +80,9 @@ p5.prototype.plane = function(){
  * @param  {Number} width     width of the box
  * @param  {Number} Height    height of the box
  * @param  {Number} depth     depth of the box
- * @param {Number} [detailX]  Optional number of triangle 
+ * @param {Number} [detailX]  Optional number of triangle
  *                            subdivisions in x-dimension
- * @param {Number} [detailY]  Optional number of triangle 
+ * @param {Number} [detailY]  Optional number of triangle
  *                            subdivisions in y-dimension
  * @return {p5}               the p5 object
  * @example
@@ -306,15 +306,15 @@ var _truncatedCone = function(
 /**
  * Draw a cylinder with given radius and height
  * @method  cylinder
- * @param  {Number} radius            radius of the surface
- * @param  {Number} height            height of the cylinder
- * @param  {Number} [detailX]          optional: number of segments,
- *                                    the more segments the smoother geometry
- *                                    default is 24
- * @param {Number} [detailY]          optional: number of segments in y-dimension,
- *                                    the more segments the smoother geometry
- *                                    default is 16
- * @return {p5}                       the p5 object
+ * @param  {Number} radius     radius of the surface
+ * @param  {Number} height     height of the cylinder
+ * @param  {Number} [detailX]  optional: number of segments,
+ *                             the more segments the smoother geometry
+ *                             default is 24
+ * @param {Number} [detailY]   optional: number of segments in y-dimension,
+ *                             the more segments the smoother geometry
+ *                             default is 16
+ * @return {p5}                the p5 object
  * @example
  * <div>
  * <code>

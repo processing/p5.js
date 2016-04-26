@@ -49,17 +49,9 @@ var curveDetail = 20;
  */
 /**
  * @method bezier
- * @param  {Number} x1 x-coordinate for the first anchor point
- * @param  {Number} y1 y-coordinate for the first anchor point
  * @param  {Number} z1 z-coordinate for the first anchor point
- * @param  {Number} x2 x-coordinate for the first control point
- * @param  {Number} y2 y-coordinate for the first control point
  * @param  {Number} z2 z-coordinate for the first control point
- * @param  {Number} x3 x-coordinate for the first anchor point
- * @param  {Number} y3 y-coordinate for the first anchor point
  * @param  {Number} z3 z-coordinate for the first anchor point
- * @param  {Number} x4 x-coordinate for the first control point
- * @param  {Number} y4 y-coordinate for the first control point
  * @param  {Number} z4 z-coordinate for the first control point
  * @return {p5.Renderer3D}   [description]
  * @example
@@ -293,17 +285,9 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  */
 /**
  * @method curve
- * @param  {Number} x1 x-coordinate for the beginning control point
- * @param  {Number} y1 y-coordinate for the beginning control point
  * @param  {Number} z1 z-coordinate for the beginning control point
- * @param  {Number} x2 x-coordinate for the first point
- * @param  {Number} y2 y-coordinate for the first point
  * @param  {Number} z2 z-coordinate for the first point
- * @param  {Number} x3 x-coordinate for the second point
- * @param  {Number} y3 y-coordinate for the second point
  * @param  {Number} z3 z-coordinate for the second point
- * @param  {Number} x4 x-coordinate for the ending control point
- * @param  {Number} y4 y-coordinate for the ending control point
  * @param  {Number} z4 z-coordinate for the ending control point
  * @return {Object}    the p5 object
  * @example
