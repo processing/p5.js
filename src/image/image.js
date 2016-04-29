@@ -216,8 +216,11 @@ p5.prototype.saveCanvas = function() {
  *  Capture a sequence of frames that can be used to create a movie.
  *  Accepts a callback. For example, you may wish to send the frames
  *  to a server where they can be stored or converted into a movie.
- *  If no callback is provided, the browser will attempt to download
- *  all of the images that have just been created.
+ *  If no callback is provided, the browser will pop up save dialogues in an
+ *  attempt to download all of the images that have just been created. With the
+ *  callback provided the image data isn't saved by default but instead passed
+ *  as an argument to the callback function as an array of objects, with the
+ *  size of array equal to the total number of frames.
  *
  *  @method saveFrames
  *  @param  {String}   filename
@@ -228,9 +231,21 @@ p5.prototype.saveCanvas = function() {
                                   to handle the image data. This function
                                   should accept an array as argument. The
                                   array will contain the spcecified number of
-                                  frames of objects. Each object have three
+                                  frames of objects. Each object has three
                                   properties: imageData - an
                                   image/octet-stream, filename and extension.
+ *  @example
+ *  <div><code>
+ *  function draw() {
+ *    background(mouseX);
+ *  }
+ *
+ *  function mousePressed() {
+ *    saveFrames("out", "png", 1, 25, function(data){
+ *      print(data);
+ *    });
+ *  }
+ *  </code></div>
  */
 p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
   var duration = _duration || 3;

@@ -38,6 +38,9 @@ p5.Element = function(elt, pInst) {
  * Attaches the element to the parent specified. A way of setting
  * the container for the element. Accepts either a string ID, DOM
  * node, or p5.Element. If no arguments given, parent node is returned.
+ * For more ways to position the canvas, see the
+ * <a href='https://github.com/processing/p5.js/wiki/Positioning-your-canvas'>
+ * positioning the canvas</a> wiki page.
  *
  * @method parent
  * @param  {String|Object} parent the ID, DOM node, or p5.Element
@@ -117,8 +120,6 @@ p5.Element.prototype.class = function(c) {
     return this.elt.className;
   } else {
     this.elt.className = c;
-    this.width = this.elt.offsetWidth;
-    this.height = this.elt.offsetHeight;
     return this;
   }
 };
@@ -702,6 +703,22 @@ p5.Element.prototype.dragLeave = function (fxn) {
  * @param  {Function} callback triggered when files are dropped.
  * @param  {Function} callback to receive loaded file.
  * @return {p5.Element}
+ * @example
+ * <div><code>
+ * function setup() {
+ *   var c = createCanvas(100, 100);
+ *   background(200);
+ *   textAlign(CENTER);
+ *   text('drop image', width/2, height/2);
+ *   c.drop(gotFile);
+ * }
+ *
+ * function gotFile(file) {
+ *   var img = createImg(file.data).hide();
+ *   // Draw the image onto the canvas
+ *   image(img, 0, 0, width, height);
+ * }
+ * </code></div>
  */
 p5.Element.prototype.drop = function (callback, fxn) {
   // Make a file loader callback and trigger user's callback

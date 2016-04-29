@@ -54,7 +54,7 @@ p5.prototype.append = function(array, value) {
  * @param {Number} [srcPosition] starting position in the source Array
  * @param {Array}  dst           the destination Array
  * @param {Number} [dstPosition] starting position in the destination Array
- * @param {Nimber} [length]      number of Array elements to be copied
+ * @param {Number} [length]      number of Array elements to be copied
  *
  * @example
  *  <div class="norender"><code>
@@ -248,7 +248,7 @@ p5.prototype.shuffle = function(arr, bool) {
  *   print(words); // ["banana", "apple", "pear", "lime"]
  *   var count = 4; // length of array
  *
- *   sort(words, count);
+ *   words = sort(words, count);
  *   print(words); // ["apple", "banana", "lime", "pear"]
  * }
  * </div></code>
@@ -258,7 +258,7 @@ p5.prototype.shuffle = function(arr, bool) {
  *   print(numbers); // [2,6,1,5,14,9,8,12]
  *   var count = 5; // Less than the length of the array
  *
- *   sort(numbers, count);
+ *   numbers = sort(numbers, count);
  *   print(numbers); // [1,2,5,6,14,9,8,12]
  * }
  * </div></code>

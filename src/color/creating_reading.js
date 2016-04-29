@@ -109,13 +109,8 @@ p5.prototype.brightness = function(c) {
  * Colors are stored as Numbers or Arrays.
  *
  * @method color
- * @param  {Number|String} v1      gray value or red or hue value relative to
- *                                 the current color range, or a color string
- * @param  {Number}        [v2]    gray value or green or saturation value
- *                                 relative to the current color range (or
- *                                 alpha value if first param is gray value)
- * @param  {Number}        [v3]    gray value or blue or brightness value
- *                                 relative to the current color range
+ * @param  {Number|String} gray    number specifying value between white
+ *                                 and black.
  * @param  {Number}        [alpha] alpha value relative to current color range
  * @return {Array}                 resulting color
  *
@@ -242,6 +237,18 @@ p5.prototype.brightness = function(c) {
  * </code>
  * </div>
  */
+
+/**
+ * @method color
+ * @param  {Number|String} v1      red or hue value relative to
+ *                                 the current color range, or a color string
+ * @param  {Number}        v2      green or saturation value
+ *                                 relative to the current color range
+ * @param  {Number}        v3      blue or brightness value
+ *                                 relative to the current color range
+ * @param  {Number}        [alpha]
+ */
+
 p5.prototype.color = function() {
   if (arguments[0] instanceof p5.Color) {
     return arguments[0];  // Do nothing if argument is already a color object.

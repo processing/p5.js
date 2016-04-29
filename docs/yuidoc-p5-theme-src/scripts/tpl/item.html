@@ -30,7 +30,11 @@
 
 <div>
   <h4>Syntax</h4>
-  <p><pre><code class="language-javascript"><%= syntax %></code></pre></p>
+  <p>
+    <% syntaxes.forEach(function(syntax) { %>
+    <pre><code class="language-javascript"><%= syntax %></code></pre>
+    <% }) %>
+  </p>
 </div>
 
 

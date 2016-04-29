@@ -24,25 +24,49 @@ var GLMAT_ARRAY_TYPE = (
  * @param {Array} [mat4] array literal of our 4x4 matrix
  */
 p5.Matrix = function() {
-  // This is how it comes in with createMatrix()
-  if(arguments[0] instanceof p5) {
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
+  // This is default behavior when object
+  // instantiated using createMatrix()
+  // @todo implement createMatrix() in core/math.js
+  if(args[0] instanceof p5) {
     // save reference to p5 if passed in
-    this.p5 = arguments[0];
-    this.mat4  = arguments[1] || new GLMAT_ARRAY_TYPE([
-      1, 0, 0, 0,
-      0, 1, 0, 0,
-      0, 0, 1, 0,
-      0, 0, 0, 1
-    ]);
-  // This is what we'll get with new p5.Matrix()
-  // a mat4 identity matrix
+    this.p5 = args[0];
+    if(args[1] === 'mat3'){
+      this.mat3 = args[2] || new GLMAT_ARRAY_TYPE([
+        1, 0, 0,
+        0, 1, 0,
+        0, 0, 1
+      ]);
+    }
+    else {
+      this.mat4  = args[1] || new GLMAT_ARRAY_TYPE([
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+      ]);
+    }
+  // default behavior when object
+  // instantiated using new p5.Matrix()
   } else {
-    this.mat4 = arguments[0] || new GLMAT_ARRAY_TYPE([
-      1, 0, 0, 0,
-      0, 1, 0, 0,
-      0, 0, 1, 0,
-      0, 0, 0, 1
-    ]);
+    if(args[0] === 'mat3'){
+      this.mat3 = args[1] || new GLMAT_ARRAY_TYPE([
+        1, 0, 0,
+        0, 1, 0,
+        0, 0, 1
+      ]);
+    }
+    else {
+      this.mat4 = args[0] || new GLMAT_ARRAY_TYPE([
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1
+      ]);
+    }
   }
   return this;
 };
@@ -250,6 +274,86 @@ p5.Matrix.prototype.invert = function(a){
   this.mat4[14] = (a31 * b01 - a30 * b03 - a32 * b00) * det;
   this.mat4[15] = (a20 * b03 - a21 * b01 + a22 * b00) * det;
 
+  return this;
+};
+
+/**
+ * Inverts a 3x3 matrix
+ * @return {[type]} [description]
+ */
+p5.Matrix.prototype.invert3x3 = function (){
+  var a00 = this.mat3[0],
+  a01 = this.mat3[1],
+  a02 = this.mat3[2],
+  a10 = this.mat3[3],
+  a11 = this.mat3[4],
+  a12 = this.mat3[5],
+  a20 = this.mat3[6],
+  a21 = this.mat3[7],
+  a22 = this.mat3[8],
+  b01 = a22 * a11 - a12 * a21,
+  b11 = -a22 * a10 + a12 * a20,
+  b21 = a21 * a10 - a11 * a20,
+
+  // Calculate the determinant
+  det = a00 * b01 + a01 * b11 + a02 * b21;
+  if (!det) {
+    return null;
+  }
+  det = 1.0 / det;
+  this.mat3[0] = b01 * det;
+  this.mat3[1] = (-a22 * a01 + a02 * a21) * det;
+  this.mat3[2] = (a12 * a01 - a02 * a11) * det;
+  this.mat3[3] = b11 * det;
+  this.mat3[4] = (a22 * a00 - a02 * a20) * det;
+  this.mat3[5] = (-a12 * a00 + a02 * a10) * det;
+  this.mat3[6] = b21 * det;
+  this.mat3[7] = (-a21 * a00 + a01 * a20) * det;
+  this.mat3[8] = (a11 * a00 - a01 * a10) * det;
+  return this;
+};
+
+/**
+ * transposes a 3x3 p5.Matrix by a mat3
+ * @param  {[Number]} mat3 1-dimensional array
+ * @return {p5.Matrix} this
+ */
+p5.Matrix.prototype.transpose3x3 = function (mat3){
+  var a01 = mat3[1], a02 = mat3[2], a12 = mat3[5];
+  this.mat3[1] = mat3[3];
+  this.mat3[2] = mat3[6];
+  this.mat3[3] = a01;
+  this.mat3[5] = mat3[7];
+  this.mat3[6] = a02;
+  this.mat3[7] = a12;
+  return this;
+};
+
+/**
+ * converts a 4x4 matrix to its 3x3 inverse tranform
+ * commonly used in MVMatrix to NMatrix conversions.
+ * @param  {p5.Matrix} mat4 the matrix to be based on to invert
+ * @return {p5.Matrix} this with mat3
+ * @todo  finish implementation
+ */
+p5.Matrix.prototype.inverseTranspose = function (matrix){
+  if(this.mat3 === undefined){
+    console.error('sorry, this function only works with mat3');
+  }
+  else {
+    //convert mat4 -> mat3
+    this.mat3[0] = matrix.mat4[0];
+    this.mat3[1] = matrix.mat4[1];
+    this.mat3[2] = matrix.mat4[2];
+    this.mat3[3] = matrix.mat4[4];
+    this.mat3[4] = matrix.mat4[5];
+    this.mat3[5] = matrix.mat4[6];
+    this.mat3[6] = matrix.mat4[8];
+    this.mat3[7] = matrix.mat4[9];
+    this.mat3[8] = matrix.mat4[10];
+  }
+
+  this.invert3x3().transpose3x3(this.mat3);
   return this;
 };
 

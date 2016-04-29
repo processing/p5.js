@@ -82,7 +82,7 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  *
  * @method textFont
  * @param {Object|String} f a font loaded via loadFont(), or a String
- *  representing a browser-based dfault font.
+ *  representing a browser-based default font.
  * @return {Object} this
  * @example
  * <div>
