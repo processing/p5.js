@@ -141,12 +141,12 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
  */
 /**
  * @method ellipse
- * @param {Number} x x-coordinate of the ellipse.
- * @param {Number} y y-coordinate of the ellipse.
- * @param {Number} z z-coordinate of the ellipse.
- * @param {Number} w width of the ellipse.
- * @param {Number} h height of the ellipse.
- * @return {p5}       the p5 object
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} z z-coordinate of the ellipse
+ * @param {Number} w
+ * @param {Number} h
+ * @return {p5}
  */
 p5.prototype.ellipse = function() {
   var args = new Array(arguments.length);
