@@ -1035,4 +1035,15 @@ p5.Vector.angleBetween = function (v1, v2) {
   return angle;
 };
 
+/**
+ * @static
+ */
+p5.Vector.mag = function (vecT){
+  var x = vecT.x,
+    y = vecT.y,
+    z = vecT.z;
+  var magSq = x * x + y * y + z * z;
+  return Math.sqrt(magSq);
+};
+
 module.exports = p5.Vector;

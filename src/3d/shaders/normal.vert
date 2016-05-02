@@ -5,7 +5,7 @@ attribute vec2 aTexCoord;
 uniform mat4 uViewMatrix;
 uniform mat4 uModelMatrix;
 uniform mat4 uProjectionMatrix;
-uniform mat4 uNormalMatrix;
+uniform mat3 uNormalMatrix;
 uniform float uResolution;
 
 varying vec3 vVertexNormal;
