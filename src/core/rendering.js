@@ -8,7 +8,7 @@ var p5 = require('./core');
 var constants = require('./constants');
 require('./p5.Graphics');
 require('./p5.Renderer2D');
-require('../3d/p5.Renderer3D');
+require('../webgl/p5.RendererGL');
 var defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
 
 /**
@@ -90,7 +90,7 @@ p5.prototype.createCanvas = function(w, h, renderer) {
   // Init our graphics renderer
   //webgl mode
   if (r === constants.WEBGL) {
-    this._setProperty('_renderer', new p5.Renderer3D(c, this, true));
+    this._setProperty('_renderer', new p5.RendererGL(c, this, true));
     this._isdefaultGraphics = true;
   }
   //P2D mode
