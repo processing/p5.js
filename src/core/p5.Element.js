@@ -38,6 +38,9 @@ p5.Element = function(elt, pInst) {
  * Attaches the element to the parent specified. A way of setting
  * the container for the element. Accepts either a string ID, DOM
  * node, or p5.Element. If no arguments given, parent node is returned.
+ * For more ways to position the canvas, see the
+ * <a href='https://github.com/processing/p5.js/wiki/Positioning-your-canvas'>
+ * positioning the canvas</a> wiki page.
  *
  * @method parent
  * @param  {String|Object} parent the ID, DOM node, or p5.Element

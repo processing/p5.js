@@ -17,6 +17,7 @@ var isBezier = false;
 var isCurve = false;
 var isQuadratic = false;
 var isContour = false;
+var isFirstContour = true;
 
 /**
  * Use the beginContour() and endContour() functions to create negative
@@ -389,7 +390,12 @@ p5.prototype.endContour = function() {
   vert.moveTo = false;
   contourVertices.push(vert);
 
-  vertices.push(vertices[0]);
+  // prevent stray lines with multiple contours
+  if (isFirstContour) {
+    vertices.push(vertices[0]);
+    isFirstContour = false;
+  }
+
   for (var i = 0; i < contourVertices.length; i++) {
     vertices.push(contourVertices[i]);
   }
@@ -448,6 +454,7 @@ p5.prototype.endShape = function(mode) {
     isBezier = false;
     isQuadratic = false;
     isContour = false;
+    isFirstContour = true;
 
     // If the shape is closed, the first element was added as last element.
     // We must remove it again to prevent the list of vertices from growing

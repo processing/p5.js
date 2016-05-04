@@ -145,7 +145,11 @@ p5.prototype.pixels = [];
  * </code></div>
  */
 p5.prototype.blend = function() {
-  this._renderer.blend.apply(this._renderer, arguments);
+  if (this._renderer) {
+    this._renderer.blend.apply(this._renderer, arguments);
+  } else {
+    p5.Renderer2D.prototype.blend.apply(this, arguments);
+  }
 };
 
 /**
@@ -364,10 +368,12 @@ p5.prototype.filter = function(operation, value) {
  * Getting the color of a single pixel with get(x, y) is easy, but not as fast
  * as grabbing the data directly from pixels[]. The equivalent statement to
  * get(x, y) using pixels[] with pixel density d is
- * <code>[pixels[(y*width*d+x)*d],
- * pixels[(y*width*d+x)*d+1],
- * pixels[(y*width*d+x)*d+2],
- * pixels[(y*width*d+x)*d+3]]</code>.
+ * <code>
+ * var off = (y * width + x) * d * 4;
+ * [pixels[off],
+ * pixels[off+1],
+ * pixels[off+2],
+ * pixels[off+3]]</code>
  * <br><br>
  * See the reference for pixels[] for more information.
  *

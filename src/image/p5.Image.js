@@ -535,7 +535,52 @@ p5.Image.prototype.filter = function(operation, value) {
  *
  *
  * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
+ * @example
+ * <div><code>
+ * var mountains;
+ * var bricks;
  *
+ * function preload() {
+ *   mountains = loadImage("assets/rockies.jpg");
+ *   bricks = loadImage("assets/bricks_third.jpg");
+ * }
+ *
+ * function setup() {
+ *   mountains.blend(bricks, 0, 0, 33, 100, 67, 0, 33, 100, ADD);
+ *   image(mountains, 0, 0);
+ *   image(bricks, 0, 0);
+ * }
+ * </code></div>
+ * <div><code>
+ * var mountains;
+ * var bricks;
+ *
+ * function preload() {
+ *   mountains = loadImage("assets/rockies.jpg");
+ *   bricks = loadImage("assets/bricks_third.jpg");
+ * }
+ *
+ * function setup() {
+ *   mountains.blend(bricks, 0, 0, 33, 100, 67, 0, 33, 100, DARKEST);
+ *   image(mountains, 0, 0);
+ *   image(bricks, 0, 0);
+ * }
+ * </code></div>
+ * <div><code>
+ * var mountains;
+ * var bricks;
+ *
+ * function preload() {
+ *   mountains = loadImage("assets/rockies.jpg");
+ *   bricks = loadImage("assets/bricks_third.jpg");
+ * }
+ *
+ * function setup() {
+ *   mountains.blend(bricks, 0, 0, 33, 100, 67, 0, 33, 100, LIGHTEST);
+ *   image(mountains, 0, 0);
+ *   image(bricks, 0, 0);
+ * }
+ * </code></div>
  */
 p5.Image.prototype.blend = function() {
   p5.prototype.blend.apply(this, arguments);

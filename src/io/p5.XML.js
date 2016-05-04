@@ -8,7 +8,48 @@
 
 var p5 = require('../core/core');
 
-
+/**
+ * XML is a representation of an XML object, able to parse XML code. Use
+ * loadXML() to load external XML files and create XML objects.
+ *
+ * @class p5.XML
+ * @constructor
+ * @return {p5.XML}    p5.XML object generated
+ * @example
+ * <div class='norender'><code>
+ * // The following short XML file called "mammals.xml" is parsed
+ * // in the code below.
+ * //
+ * // <?xml version="1.0"?>
+ * // &lt;mammals&gt;
+ * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+ * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+ * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+ * // &lt;/mammals&gt;
+ *
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML("assets/mammals.xml");
+ * }
+ *
+ * function setup() {
+ *   var children = xml.getChildren("animal");
+ *
+ *   for (var i = 0; i < children.length; i++) {
+ *     var id = children[i].getNumber("id");
+ *     var coloring = children[i].getString("species");
+ *     var name = children[i].getContent();
+ *     print(id + ", " + coloring + ", " + name);
+ *   }
+ * }
+ *
+ * // Sketch prints:
+ * // 0, Capra hircus, Goat
+ * // 1, Panthera pardus, Leopard
+ * // 2, Equus zebra, Zebra
+ * </code></div>
+ */
 p5.XML = function () {
   this.name = null; //done
   this.attributes = {}; //done
@@ -750,3 +791,4 @@ p5.XML.prototype._setAttributes = function(node) {
   this.attributes = att;
 };
 
+module.exports = p5.XML;
