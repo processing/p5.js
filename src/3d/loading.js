@@ -26,7 +26,7 @@ require('./p5.Geometry');
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  *
- *   teapot = loadModel('teapot.obj');
+ *   teapot = loadModel('assets/teapot.obj');
  * }
  *
  * function draw(){
@@ -162,7 +162,7 @@ function parseObj( model, lines ) {
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  *
- *   teapot = loadModel('teapot.obj');
+ *   teapot = loadModel('assets/teapot.obj');
  * }
  *
  * function draw(){
