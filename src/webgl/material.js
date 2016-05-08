@@ -246,7 +246,7 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
  * @param  {Number} a  [description]
  * @return {[Number]}  Normalized numbers array
  */
-p5.Renderer3D.prototype._applyColorBlend = function(v1,v2,v3,a){
+p5.RendererGL.prototype._applyColorBlend = function(v1,v2,v3,a){
   var gl = this.GL;
   var color = this._pInst.color.apply(
     this._pInst, arguments);
