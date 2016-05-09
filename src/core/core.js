@@ -80,9 +80,10 @@ var p5 = function(sketch, node, sync) {
    * define initial environment properties such as screen size and background
    * color and to load media such as images and fonts as the program starts.
    * There can only be one setup() function for each program and it shouldn't
-   * be called again after its initial execution. Note: Variables declared
-   * within setup() are not accessible within other functions, including
-   * draw().
+   * be called again after its initial execution.
+   * <br><br>
+   * Note: Variables declared within setup() are not accessible within other
+   * functions, including draw().
    *
    * @method setup
    * @example
@@ -104,21 +105,29 @@ var p5 = function(sketch, node, sync) {
   /**
    * Called directly after setup(), the draw() function continuously executes
    * the lines of code contained inside its block until the program is stopped
-   * or noLoop() is called. draw() is called automatically and should never be
-   * called explicitly.
-   *
+   * or noLoop() is called. Note if noLoop() is called in setup(), draw() will
+   * still be executed once before stopping. draw() is called automatically and
+   * should never be called explicitly.
+   * <br><br>
    * It should always be controlled with noLoop(), redraw() and loop(). After
    * noLoop() stops the code in draw() from executing, redraw() causes the
    * code inside draw() to execute once, and loop() will cause the code
    * inside draw() to resume executing continuously.
-   *
+   * <br><br>
    * The number of times draw() executes in each second may be controlled with
    * the frameRate() function.
-   *
+   * <br><br>
    * There can only be one draw() function for each sketch, and draw() must
    * exist if you want the code to run continuously, or to process events such
    * as mousePressed(). Sometimes, you might have an empty call to draw() in
    * your program, as shown in the above example.
+   * <br><br>
+   * It is important to note that the drawing coordinate system will be reset
+   * at the beginning of each draw() call. If any transformations are performed
+   * within draw() (ex: scale, rotate, translate, their effects will be
+   * undone at the beginning of draw(), so transformations will not accumulate
+   * over time. On the other hand, styling applied (ex: fill, stroke, etc) will
+   * remain in effect.
    *
    * @method draw
    * @example
@@ -144,7 +153,8 @@ var p5 = function(sketch, node, sync) {
   //////////////////////////////////////////////
 
   this._setupDone = false;
-  this.pixelDensity = window.devicePixelRatio || 1; // for handling hidpi
+  // for handling hidpi
+  this._pixelDensity = Math.ceil(window.devicePixelRatio) || 1;
   this._userNode = node;
   this._curElement = null;
   this._elements = [];
@@ -161,6 +171,8 @@ var p5 = function(sketch, node, sync) {
     'mousemove': null,
     'mousedown': null,
     'mouseup': null,
+    'dragend': null,
+    'dragover': null,
     'click': null,
     'mouseover': null,
     'mouseout': null,
@@ -174,22 +186,15 @@ var p5 = function(sketch, node, sync) {
     'blur': null
   };
 
+  this._events.wheel = null;
+  this._loadingScreenId = 'p5_loading';
+
   if (window.DeviceOrientationEvent) {
     this._events.deviceorientation = null;
   }
   if (window.DeviceMotionEvent && !window._isNodeWebkit) {
     this._events.devicemotion = null;
   }
-
-  //FF doesn't recognize mousewheel as of FF3.x
-  if (/Firefox/i.test(navigator.userAgent)) {
-    this._events.DOMMouseScroll = null;
-  } else {
-    this._events.mousewheel = null;
-  }
-
-
-  this._loadingScreenId = 'p5_loading';
 
   this._start = function () {
     // Find node if id given
@@ -288,6 +293,9 @@ var p5 = function(sketch, node, sync) {
     if (typeof context.preload === 'function') {
       for (var f in this._preloadMethods) {
         context[f] = this._preloadMethods[f][f];
+        if (context[f] && this) {
+          context[f] = context[f].bind(this);
+        }
       }
     }
 
@@ -297,17 +305,14 @@ var p5 = function(sketch, node, sync) {
       context.setup();
     }
 
-    // // unhide hidden canvas that was created
-    // this.canvas.style.visibility = '';
-    // this.canvas.className = this.canvas.className.replace('p5_hidden', '');
-
     // unhide any hidden canvases that were created
-    var reg = new RegExp(/(^|\s)p5_hidden(?!\S)/g);
-    var canvases = document.getElementsByClassName('p5_hidden');
+    var canvases = document.getElementsByTagName('canvas');
     for (var i = 0; i < canvases.length; i++) {
       var k = canvases[i];
-      k.style.visibility = '';
-      k.className = k.className.replace(reg, '');
+      if (k.dataset.hidden === 'true') {
+        k.style.visibility = '';
+        delete(k.dataset.hidden);
+      }
     }
     this._setupDone = true;
 
@@ -327,21 +332,20 @@ var p5 = function(sketch, node, sync) {
     // if looping is off, so we bypass the time delay if that
     // is the case.
     var epsilon = 5;
-    if (!this.loop ||
+    if (!this._loop ||
         time_since_last >= target_time_between_frames - epsilon) {
+
+      //mandatory update values(matrixs and stack) for 3d
+      if(this._renderer.isP3D){
+        this._renderer._update();
+      }
+
       this._setProperty('frameCount', this.frameCount + 1);
+      this._updateMouseCoords();
+      this._updateTouchCoords();
       this.redraw();
-      this._updatePAccelerations();
-      this._updatePRotations();
-      this._updatePMouseCoords();
-      this._updatePTouchCoords();
       this._frameRate = 1000.0/(now - this._lastFrameTime);
       this._lastFrameTime = now;
-    }
-
-    //mandatory update values(matrixs and stack) for 3d
-    if(this._renderer.isP3D){
-      this._renderer._update();
     }
 
     // get notified the next time the browser gives us
@@ -438,11 +442,14 @@ var p5 = function(sketch, node, sync) {
     // window.p5 = undefined;
   }.bind(this);
 
+  // call any registered init functions
+  this._registeredMethods.init.forEach(function (f) {
+    if (typeof(f) !== 'undefined') {
+      f.call(this);
+    }
+  }, this);
 
-  // attach constants to p5 instance
-  for (var k in constants) {
-    p5.prototype[k] = constants[k];
-  }
+  var friendlyBindGlobal = this._createFriendlyGlobalFunctionBinder();
 
   // If the user has created a global setup or draw function,
   // assume "global" mode and make everything global (i.e. on the window)
@@ -453,16 +460,16 @@ var p5 = function(sketch, node, sync) {
       if(typeof p5.prototype[p] === 'function') {
         var ev = p.substring(2);
         if (!this._events.hasOwnProperty(ev)) {
-          window[p] = p5.prototype[p].bind(this);
+          friendlyBindGlobal(p, p5.prototype[p].bind(this));
         }
       } else {
-        window[p] = p5.prototype[p];
+        friendlyBindGlobal(p, p5.prototype[p]);
       }
     }
     // Attach its properties to the window
     for (var p2 in this) {
       if (this.hasOwnProperty(p2)) {
-        window[p2] = this[p2];
+        friendlyBindGlobal(p2, this[p2]);
       }
     }
 
@@ -492,11 +499,9 @@ var p5 = function(sketch, node, sync) {
   window.addEventListener('focus', focusHandler);
   window.addEventListener('blur', blurHandler);
   this.registerMethod('remove', function() {
-    window.removeEventListener(focusHandler);
-    window.removeEventListener(blurHandler);
+    window.removeEventListener('focus', focusHandler);
+    window.removeEventListener('blur', blurHandler);
   });
-
-  // TODO: ???
 
   if (sync) {
     this._start();
@@ -509,6 +514,10 @@ var p5 = function(sketch, node, sync) {
   }
 };
 
+// attach constants to p5 prototype
+for (var k in constants) {
+  p5.prototype[k] = constants[k];
+}
 
 // functions that cause preload to wait
 // more can be added by using registerPreloadMethod(func)
@@ -522,7 +531,7 @@ p5.prototype._preloadMethods = {
   loadFont: p5.prototype
 };
 
-p5.prototype._registeredMethods = { pre: [], post: [], remove: [] };
+p5.prototype._registeredMethods = { init: [], pre: [], post: [], remove: [] };
 
 p5.prototype._registeredPreloadMethods = {};
 
@@ -538,6 +547,77 @@ p5.prototype.registerMethod = function(name, m) {
     p5.prototype._registeredMethods[name] = [];
   }
   p5.prototype._registeredMethods[name].push(m);
+};
+
+p5.prototype._createFriendlyGlobalFunctionBinder = function(options) {
+  options = options || {};
+
+  var globalObject = options.globalObject || window;
+  var log = options.log || console.log.bind(console);
+  var propsToForciblyOverwrite = {
+    // p5.print actually always overwrites an existing global function,
+    // albeit one that is very unlikely to be used:
+    //
+    //   https://developer.mozilla.org/en-US/docs/Web/API/Window/print
+    'print': true
+  };
+
+  return function(prop, value) {
+    if (typeof(IS_MINIFIED) === 'undefined' &&
+        typeof(value) === 'function' &&
+        !(prop in p5.prototype._preloadMethods)) {
+      try {
+        // Because p5 has so many common function names, it's likely
+        // that users may accidentally overwrite global p5 functions with
+        // their own variables. Let's allow this but log a warning to
+        // help users who may be doing this unintentionally.
+        //
+        // For more information, see:
+        //
+        //   https://github.com/processing/p5.js/issues/1317
+
+        if (prop in globalObject && !(prop in propsToForciblyOverwrite)) {
+          throw new Error('global "' + prop + '" already exists');
+        }
+
+        // It's possible that this might throw an error because there
+        // are a lot of edge-cases in which `Object.defineProperty` might
+        // not succeed; since this functionality is only intended to
+        // help beginners anyways, we'll just catch such an exception
+        // if it occurs, and fall back to legacy behavior.
+        Object.defineProperty(globalObject, prop, {
+          configurable: true,
+          enumerable: true,
+          get: function() {
+            return value;
+          },
+          set: function(newValue) {
+            Object.defineProperty(globalObject, prop, {
+              configurable: true,
+              enumerable: true,
+              value: newValue,
+              writable: true
+            });
+            log(
+              'You just changed the value of "' + prop + '", which was ' +
+              'a p5 function. This could cause problems later if you\'re ' +
+              'not careful.'
+            );
+          }
+        });
+      } catch (e) {
+        log(
+          'p5 had problems creating the global function "' + prop + '", ' +
+          'possibly because your code is already using that name as ' +
+          'a variable. You may want to rename your variable to something ' +
+          'else.'
+        );
+        globalObject[prop] = value;
+      }
+    } else {
+      globalObject[prop] = value;
+    }
+  };
 };
 
 module.exports = p5;

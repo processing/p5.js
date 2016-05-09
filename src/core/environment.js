@@ -25,7 +25,7 @@ if (window.console && console.log) {
    * producing. This function creates a new line of text for each call to
    * the function. Individual elements can be
    * separated with quotes ("") and joined with the addition operator (+).
-   *
+   * <br><br>
    * While print() is similar to console.log(), it does not directly map to
    * it in order to simulate easier to understand behavior than
    * console.log(). Due to this, it is slower. For fastest results, use
@@ -37,7 +37,7 @@ if (window.console && console.log) {
    * @example
    * <div><code class='norender'>
    * var x = 10;
-   * print("The value of x is "+x);
+   * print("The value of x is " + x);
    * // prints "The value of x is 10"
    * </code></div>
    */
@@ -169,9 +169,12 @@ p5.prototype.cursor = function(type, x, y) {
  * frame rate will not be achieved. Setting the frame rate within setup() is
  * recommended. The default rate is 60 frames per second. This is the same as
  * setFrameRate(val).
- *
+ * <br><br>
  * Calling frameRate() with no arguments returns the current framerate. This
  * is the same as getFrameRate().
+ * <br><br>
+ * Calling frameRate() with arguments that are not of the type numbers
+ * or are non positive also returns current framerate.
  *
  * @method frameRate
  * @param  {Number} [fps] number of frames to be displayed every second
@@ -181,11 +184,12 @@ p5.prototype.cursor = function(type, x, y) {
  * <div><code>
  * var rectX = 0;
  * var fr = 30; //starting FPS
- * var clr = color(255,0,0);
+ * var clr;
  *
  * function setup() {
  *   background(200);
  *   frameRate(fr); // Attempt to refresh at starting FPS
+ *   clr = color(255,0,0);
  * }
  *
  * function draw() {
@@ -211,7 +215,7 @@ p5.prototype.cursor = function(type, x, y) {
  *
  */
 p5.prototype.frameRate = function(fps) {
-  if (typeof fps === 'undefined') {
+  if (typeof fps !== 'number' || fps <= 0) {
     return this._frameRate;
   } else {
     this._setProperty('_targetFrameRate', fps);
@@ -374,8 +378,9 @@ p5.prototype.height = 0;
  * be called on user input, for example, on mouse press like the example
  * below.
  *
- * @method fullScreen
- * @param  {Boolean} [val] whether the sketch should be fullscreened or not
+ * @method fullscreen
+ * @param  {Boolean} [val] whether the sketch should be in fullscreen mode
+ * or not
  * @return {Boolean} current fullscreen state
  * @example
  * <div>
@@ -386,14 +391,14 @@ p5.prototype.height = 0;
  * }
  * function mousePressed() {
  *   if (mouseX > 0 && mouseX < 100 && mouseY > 0 && mouseY < 100) {
- *     var fs = fullScreen();
- *     fullScreen(!fs);
+ *     var fs = fullscreen();
+ *     fullscreen(!fs);
  *   }
  * }
  * </code>
  * </div>
  */
-p5.prototype.fullScreen = function(val) {
+p5.prototype.fullscreen = function(val) {
   // no arguments, return fullscreen or not
   if (typeof val === 'undefined') {
     return document.fullscreenElement ||
@@ -410,18 +415,20 @@ p5.prototype.fullScreen = function(val) {
 };
 
 /**
- * Toggles pixel scaling for high pixel density displays. By default
- * pixel scaling is on, call devicePixelScaling(false) to turn it off.
- * This devicePixelScaling() function must be the first line of code
- * inside setup().
+ * Sets the pixel scaling for high pixel density displays. By default
+ * pixel density is set to match display density, call pixelDensity(1)
+ * to turn this off. Calling pixelDensity() with no arguments returns
+ * the current pixel density of the sketch.
  *
- * @method devicePixelScaling
- * @param  {Boolean|Number} [val] whether or how much the sketch should scale
+ *
+ * @method pixelDensity
+ * @param  {Number} [val] whether or how much the sketch should scale
+ * @returns {Number} current pixel density of the sketch
  * @example
  * <div>
  * <code>
  * function setup() {
- *   devicePixelScaling(false);
+ *   pixelDensity(1);
  *   createCanvas(100, 100);
  *   background(200);
  *   ellipse(width/2, height/2, 50, 50);
@@ -431,7 +438,7 @@ p5.prototype.fullScreen = function(val) {
  * <div>
  * <code>
  * function setup() {
- *   devicePixelScaling(3.0);
+ *   pixelDensity(3.0);
  *   createCanvas(100, 100);
  *   background(200);
  *   ellipse(width/2, height/2, 50, 50);
@@ -439,18 +446,35 @@ p5.prototype.fullScreen = function(val) {
  * </code>
  * </div>
  */
-p5.prototype.devicePixelScaling = function(val) {
-  if (val) {
-    if (typeof val === 'number') {
-      this.pixelDensity = val;
-    }
-    else {
-      this.pixelDensity = window.devicePixelRatio || 1;
-    }
+p5.prototype.pixelDensity = function(val) {
+  if (typeof val === 'number') {
+    this._pixelDensity = val;
   } else {
-    this.pixelDensity = 1;
+    return this._pixelDensity;
   }
   this.resizeCanvas(this.width, this.height, true);
+};
+
+/**
+ * Returns the pixel density of the current display the sketch is running on.
+ *
+ * @method displayDensity
+ * @returns {Number} current pixel density of the display
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   var density = displayDensity();
+ *   pixelDensity(density);
+ *   createCanvas(100, 100);
+ *   background(200);
+ *   ellipse(width/2, height/2, 50, 50);
+ * }
+ * </code>
+ * </div>
+ */
+p5.prototype.displayDensity = function() {
+  return window.devicePixelRatio;
 };
 
 function launchFullscreen(element) {

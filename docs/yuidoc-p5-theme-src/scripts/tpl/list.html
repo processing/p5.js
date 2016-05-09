@@ -1,9 +1,3 @@
-<!-- <div class="page-header">
-  <h1>
-    <%=title%>
-  </h1>
-</div> -->
-
 <% _.each(groups, function(group){ %>
   <h4 class="group-name" id="group-<%=group.name%>"><%=group.name%></h4>
   <div class="reference-group clearfix main-ref-page">  
@@ -13,14 +7,9 @@
         <dt class="subgroup-<%=subgroup.name%>"><%=subgroup.name%></dt>
     <% } %>
     <% _.each(subgroup.items, function(item) { %>
-      <dd><a href="<%=item.hash%>"><%=item.name%><% if (item.itemtype === 'method') { %>()<%}%></a></dd>
+    <dd><a href="<%=item.hash%>" title="<%- striptags(item.description) %>"><%=item.name%><% if (item.itemtype === 'method') { %>()<%}%></a></dd>
     <% }); %>
     </dl>
   <% }); %>
   </div>
 <% }); %>
-
-
-
-                
-                  

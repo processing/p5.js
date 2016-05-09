@@ -14,18 +14,20 @@ var constants = require('../core/constants');
  * A class to describe a two or three dimensional vector, specifically
  * a Euclidean (also known as geometric) vector. A vector is an entity
  * that has both magnitude and direction. The datatype, however, stores
- * the components of the vector (x,y for 2D, and x,y,z for 3D). The magnitude
- * and direction can be accessed via the methods mag() and heading(). In many
- * of the p5.js examples, you will see p5.Vector used to describe a position,
- * velocity, or acceleration. For example, if you consider a rectangle moving
- * across the screen, at any given instant it has a position (a vector that
- * points from the origin to its location), a velocity (the rate at which the
- * object's position changes per time unit, expressed as a vector), and
+ * the components of the vector (x, y for 2D, and x, y, z for 3D). The magnitude
+ * and direction can be accessed via the methods mag() and heading().
+ * <br><br>
+ * In many of the p5.js examples, you will see p5.Vector used to describe a
+ * position, velocity, or acceleration. For example, if you consider a rectangle
+ * moving across the screen, at any given instant it has a position (a vector
+ * that points from the origin to its location), a velocity (the rate at which
+ * the object's position changes per time unit, expressed as a vector), and
  * acceleration (the rate at which the object's velocity changes per time
- * unit, expressed as a vector). Since vectors represent groupings of values,
- * we cannot simply use traditional addition/multiplication/etc. Instead,
- * we'll need to do some "vector" math, which is made easy by the methods
- * inside the p5.Vector class.
+ * unit, expressed as a vector).
+ * <br><br>
+ * Since vectors represent groupings of values, we cannot simply use
+ * traditional addition/multiplication/etc. Instead, we'll need to do some
+ * "vector" math, which is made easy by the methods inside the p5.Vector class.
  *
  * @class p5.Vector
  * @constructor
@@ -149,7 +151,7 @@ p5.Vector.prototype.set = function (x, y, z) {
  * <div class="norender">
  * <code>
  * var v1 = createVector(1, 2, 3);
- * var v2 = v.copy();
+ * var v2 = v1.copy();
  * print(v1.x == v2.x && v1.y == v2.y && v1.z == v2.z);
  * // Prints "true"
  * </code>
@@ -1031,6 +1033,17 @@ p5.Vector.angleBetween = function (v1, v2) {
     }
   }
   return angle;
+};
+
+/**
+ * @static
+ */
+p5.Vector.mag = function (vecT){
+  var x = vecT.x,
+    y = vecT.y,
+    z = vecT.z;
+  var magSq = x * x + y * y + z * z;
+  return Math.sqrt(magSq);
 };
 
 module.exports = p5.Vector;

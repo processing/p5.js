@@ -83,6 +83,27 @@ p5.prototype._updatePAccelerations = function(){
 /**
  * The system variable rotationX always contains the rotation of the
  * device along the x axis. Value is represented as 0 to +/-180 degrees.
+ * <br><br>
+ * Note: The order the rotations are called is important, ie. if used
+ * together, it must be called in the order Z-X-Y or there might be
+ * unexpected behaviour.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw(){
+ *   background(200);
+ *   //rotateZ(radians(rotationZ));
+ *   rotateX(radians(rotationX));
+ *   //rotateY(radians(rotationY));
+ *   box(200, 200, 200);
+ * }
+ * </code>
+ * </div>
  *
  * @property rotationX
  */
@@ -90,7 +111,28 @@ p5.prototype.rotationX = 0;
 
 /**
  * The system variable rotationY always contains the rotation of the
- * device along the y axis. Value is represented as 0 to +/-180 degrees.
+ * device along the y axis. Value is represented as 0 to +/-90 degrees.
+ * <br><br>
+ * Note: The order the rotations are called is important, ie. if used
+ * together, it must be called in the order Z-X-Y or there might be
+ * unexpected behaviour.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw(){
+ *   background(200);
+ *   //rotateZ(radians(rotationZ));
+ *   //rotateX(radians(rotationX));
+ *   rotateY(radians(rotationY));
+ *   box(200, 200, 200);
+ * }
+ * </code>
+ * </div>
  *
  * @property rotationY
  */
@@ -102,6 +144,27 @@ p5.prototype.rotationY = 0;
  * <br><br>
  * Unlike rotationX and rotationY, this variable is available for devices
  * with a built-in compass only.
+ * <br><br>
+ * Note: The order the rotations are called is important, ie. if used
+ * together, it must be called in the order Z-X-Y or there might be
+ * unexpected behaviour.
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw(){
+ *   background(200);
+ *   rotateZ(radians(rotationZ));
+ *   //rotateX(radians(rotationX));
+ *   //rotateY(radians(rotationY));
+ *   box(200, 200, 200);
+ * }
+ * </code>
+ * </div>
  *
  * @property rotationZ
  */
@@ -148,7 +211,7 @@ p5.prototype.pRotationX = 0;
 /**
  * The system variable pRotationY always contains the rotation of the
  * device along the y axis in the frame previous to the current frame. Value
- * is represented as 0 to +/-180 degrees.
+ * is represented as 0 to +/-90 degrees.
  * <br><br>
  * pRotationY can also be used with rotationY to determine the rotate
  * direction of the device along the Y-axis.
@@ -378,12 +441,14 @@ p5.prototype.setShakeThreshold = function(val){
  */
 
 p5.prototype._ondeviceorientation = function (e) {
+  this._updatePRotations();
   this._setProperty('rotationX', e.beta);
   this._setProperty('rotationY', e.gamma);
   this._setProperty('rotationZ', e.alpha);
   this._handleMotion();
 };
 p5.prototype._ondevicemotion = function (e) {
+  this._updatePAccelerations();
   this._setProperty('accelerationX', e.acceleration.x * 2);
   this._setProperty('accelerationY', e.acceleration.y * 2);
   this._setProperty('accelerationZ', e.acceleration.z * 2);

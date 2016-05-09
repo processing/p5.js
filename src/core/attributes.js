@@ -14,24 +14,24 @@ var constants = require('./constants');
 /**
  * Modifies the location from which ellipses are drawn by changing the way
  * in which parameters given to ellipse() are interpreted.
- *
+ * <br><br>
  * The default mode is ellipseMode(CENTER), which interprets the first two
  * parameters of ellipse() as the shape's center point, while the third and
  * fourth parameters are its width and height.
- *
+ * <br><br>
  * ellipseMode(RADIUS) also uses the first two parameters of ellipse() as
  * the shape's center point, but uses the third and fourth parameters to
  * specify half of the shapes's width and height.
- *
+ * <br><br>
  * ellipseMode(CORNER) interprets the first two parameters of ellipse() as
  * the upper-left corner of the shape, while the third and fourth parameters
  * are its width and height.
- *
+ * <br><br>
  * ellipseMode(CORNERS) interprets the first two parameters of ellipse() as
  * the location of one corner of the ellipse's bounding box, and the third
  * and fourth parameters as the location of the opposite corner.
- *
- * The parameter must be written in ALL CAPS because Processing is a
+ * <br><br>
+ * The parameter must be written in ALL CAPS because Javascript is a
  * case-sensitive language.
  *
  * @method ellipseMode
@@ -99,24 +99,24 @@ p5.prototype.noSmooth = function() {
 /**
  * Modifies the location from which rectangles are drawn by changing the way
  * in which parameters given to rect() are interpreted.
- *
+ * <br><br>
  * The default mode is rectMode(CORNER), which interprets the first two
  * parameters of rect() as the upper-left corner of the shape, while the
  * third and fourth parameters are its width and height.
- *
+ * <br><br>
  * rectMode(CORNERS) interprets the first two parameters of rect() as the
  * location of one corner, and the third and fourth parameters as the
  * location of the opposite corner.
- *
+ * <br><br>
  * rectMode(CENTER) interprets the first two parameters of rect() as the
  * shape's center point, while the third and fourth parameters are its
  * width and height.
- *
+ * <br><br>
  * rectMode(RADIUS) also uses the first two parameters of rect() as the
  * shape's center point, but uses the third and fourth parameters to specify
  * half of the shapes's width and height.
- *
- * The parameter must be written in ALL CAPS because Processing is a
+ * <br><br>
+ * The parameter must be written in ALL CAPS because Javascript is a
  * case-sensitive language.
  *
  * @method rectMode

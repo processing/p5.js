@@ -69,17 +69,22 @@ p5.prototype.randomSeed = function(seed) {
 };
 
 /**
- * Return a random number.
+ * Return a random floating-point number.
  *
  * Takes either 0, 1 or 2 arguments.
- * If no argument is given, returns a random number between 0 and 1.
- * If one argument is given, returns a random number between 0 and the number.
- * If two arguments are given, returns a random number between them,
- * inclusive.
+ *
+ * If no argument is given, returns a random number from 0
+ * up to (but not including) 1.
+ *
+ * If one argument is given, returns a random number from 0 up to
+ * (but not including) the number.
+ *
+ * If two arguments are given, returns a random number from the
+ * first argument up to (but not including) the second argument.
  *
  * @method random
- * @param  {Number} min   the lower bound
- * @param  {Number} max   the upper bound
+ * @param  {Number} [min]   the lower bound (inclusive)
+ * @param  {Number} [max]   the upper bound (exclusive)
  * @return {Number} the random number
  * @example
  * <div>
@@ -139,14 +144,15 @@ p5.prototype.random = function (min, max) {
  *
  * Returns a random number fitting a Gaussian, or
  * normal, distribution. There is theoretically no minimum or maximum
- * value that <b>randomGaussian()</b> might return. Rather, there is
+ * value that randomGaussian() might return. Rather, there is
  * just a very low probability that values far from the mean will be
  * returned; and a higher probability that numbers near the mean will
  * be returned.
- * Takes either 0, 1 or 2 arguments.
- * If no args, returns a mean of 0 and standard deviation of 1
- * If one arg, that arg is the mean (standard deviation is 1)
- * If two args, first is mean, second is standard deviation
+ * <br><br>
+ * Takes either 0, 1 or 2 arguments.<br>
+ * If no args, returns a mean of 0 and standard deviation of 1.<br>
+ * If one arg, that arg is the mean (standard deviation is 1).<br>
+ * If two args, first is mean, second is standard deviation.
  *
  * @method randomGaussian
  * @param  {Number} mean  the mean

@@ -33,12 +33,12 @@ p5.Graphics = function(w, h, renderer, pInst) {
   this._styles = [];
   this.width = w;
   this.height = h;
-  this.pixelDensity = pInst.pixelDensity;
+  this._pixelDensity = pInst._pixelDensity;
 
   if (r === constants.WEBGL) {
-    this._renderer = new p5.Renderer3D(c, pInst, false);
+    this._renderer = new p5.Renderer3D(c, this, false);
   } else {
-    this._renderer = new p5.Renderer2D(c, pInst, false);
+    this._renderer = new p5.Renderer2D(c, this, false);
   }
 
   this._renderer.resize(w, h);

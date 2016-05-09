@@ -9,6 +9,17 @@
 
 var p5 = require('../core/core');
 
+/*
+ * These are helper vars that store the touchX and touchY vals
+ * between the time that a mouse event happens and the next frame
+ * of draw. This is done to deal with the asynchronicity of event
+ * calls interacting with the draw loop. When a touch event occurs
+ * the _nextTouchX/Y vars are updated, then on each call of draw, touchX/Y
+ * and ptouchX/Y are updated using the _nextMouseX/Y vals.
+ */
+p5.prototype._nextTouchX = 0;
+p5.prototype._nextTouchY = 0;
+
 /**
  * The system variable touchX always contains the horizontal position of
  * one finger, relative to (0, 0) of the canvas. This is best used for
@@ -49,8 +60,9 @@ p5.prototype.ptouchY = 0;
 
 /**
  * The system variable touches[] contains an array of the positions of all
- * current touch points, relative to (0, 0) of the canvas. Each element in
- * the array is an object with x and y properties.
+ * current touch points, relative to (0, 0) of the canvas, and IDs identifying a
+ * unique touch as it moves. Each element in the array is an object with x, y,
+ * and id properties.
  *
  * @property touches[]
  */
@@ -64,48 +76,52 @@ p5.prototype.touches = [];
  */
 p5.prototype.touchIsDown = false;
 
-p5.prototype._updateTouchCoords = function(e) {
+p5.prototype._updateNextTouchCoords = function(e) {
   if(e.type === 'mousedown' ||
      e.type === 'mousemove' ||
-     e.type === 'mouseup'){
-    this._setProperty('touchX', this.mouseX);
-    this._setProperty('touchY', this.mouseY);
+     e.type === 'mouseup' || !e.touches) {
+    this._setProperty('_nextTouchX', this._nextMouseX);
+    this._setProperty('_nextTouchY', this._nextMouseY);
   } else {
-    var touchPos = getTouchPos(this._curElement.elt, e, 0);
-    this._setProperty('touchX', touchPos.x);
-    this._setProperty('touchY', touchPos.y);
+    if(this._curElement !== null) {
+      var touchInfo = getTouchInfo(this._curElement.elt, e, 0);
+      this._setProperty('_nextTouchX', touchInfo.x);
+      this._setProperty('_nextTouchY', touchInfo.y);
 
-    var touches = [];
-    for(var i = 0; i < e.touches.length; i++){
-      var pos = getTouchPos(this._curElement.elt, e, i);
-      touches[i] = {x: pos.x, y: pos.y};
+      var touches = [];
+      for(var i = 0; i < e.touches.length; i++){
+        touches[i] = getTouchInfo(this._curElement.elt, e, i);
+      }
+      this._setProperty('touches', touches);
     }
-    this._setProperty('touches', touches);
   }
 };
 
-p5.prototype._updatePTouchCoords = function() {
+p5.prototype._updateTouchCoords = function() {
   this._setProperty('ptouchX', this.touchX);
   this._setProperty('ptouchY', this.touchY);
+  this._setProperty('touchX', this._nextTouchX);
+  this._setProperty('touchY', this._nextTouchY);
 };
 
-function getTouchPos(canvas, e, i) {
+function getTouchInfo(canvas, e, i) {
   i = i || 0;
   var rect = canvas.getBoundingClientRect();
   var touch = e.touches[i] || e.changedTouches[i];
-  return  {
+  return {
     x: touch.clientX - rect.left,
-    y: touch.clientY - rect.top
+    y: touch.clientY - rect.top,
+    id: touch.identifier
   };
 }
 
 /**
  * The touchStarted() function is called once after every time a touch is
  * registered. If no touchStarted() function is defined, the mousePressed()
- * function will be called instead if it is defined. Browsers may have
- * different default
- * behaviors attached to various touch events. To prevent any default
- * behavior for this event, add `return false` to the end of the method.
+ * function will be called instead if it is defined.<br><br>
+ * Browsers may have different default behaviors attached to various touch
+ * events. To prevent any default behavior for this event, add "return false"
+ * to the end of the method.
  *
  * @method touchStarted
  * @example
@@ -142,7 +158,8 @@ function getTouchPos(canvas, e, i) {
 p5.prototype._ontouchstart = function(e) {
   var context = this._isGlobal ? window : this;
   var executeDefault;
-  this._updateTouchCoords(e);
+  this._updateNextTouchCoords(e);
+  this._updateNextMouseCoords(e);
   this._setProperty('touchIsDown', true);
   if(typeof context.touchStarted === 'function') {
     executeDefault = context.touchStarted(e);
@@ -160,10 +177,11 @@ p5.prototype._ontouchstart = function(e) {
 
 /**
  * The touchMoved() function is called every time a touch move is registered.
- * If no touchStarted() function is defined, the mouseDragged() function will
- * be called instead if it is defined. Browsers may have different default
- * behaviors attached to various touch events. To prevent any default
- * behavior for this event, add `return false` to the end of the method.
+ * If no touchMoved() function is defined, the mouseDragged() function will
+ * be called instead if it is defined.<br><br>
+ * Browsers may have different default behaviors attached to various touch
+ * events. To prevent any default behavior for this event, add "return false"
+ * to the end of the method.
  *
  * @method touchMoved
  * @example
@@ -199,7 +217,8 @@ p5.prototype._ontouchstart = function(e) {
 p5.prototype._ontouchmove = function(e) {
   var context = this._isGlobal ? window : this;
   var executeDefault;
-  this._updateTouchCoords(e);
+  this._updateNextTouchCoords(e);
+  this._updateNextMouseCoords(e);
   if (typeof context.touchMoved === 'function') {
     executeDefault = context.touchMoved(e);
     if(executeDefault === false) {
@@ -210,16 +229,16 @@ p5.prototype._ontouchmove = function(e) {
     if(executeDefault === false) {
       e.preventDefault();
     }
-    this._updateMouseCoords(e);
   }
 };
 
 /**
  * The touchEnded() function is called every time a touch ends. If no
- * touchStarted() function is defined, the mouseReleased() function will be
- * called instead if it is defined. Browsers may have different default
- * behaviors attached to various touch events. To prevent any default
- * behavior for this event, add `return false` to the end of the method.
+ * touchEnded() function is defined, the mouseReleased() function will be
+ * called instead if it is defined.<br><br>
+ * Browsers may have different default behaviors attached to various touch
+ * events. To prevent any default behavior for this event, add "return false"
+ * to the end of the method.
  *
  * @method touchEnded
  * @example
@@ -254,7 +273,8 @@ p5.prototype._ontouchmove = function(e) {
  * </div>
  */
 p5.prototype._ontouchend = function(e) {
-  this._updateTouchCoords(e);
+  this._updateNextTouchCoords(e);
+  this._updateNextMouseCoords(e);
   if (this.touches.length === 0) {
     this._setProperty('touchIsDown', false);
   }
@@ -270,7 +290,6 @@ p5.prototype._ontouchend = function(e) {
     if(executeDefault === false) {
       e.preventDefault();
     }
-    this._updateMouseCoords(e);
   }
 };
 

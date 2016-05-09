@@ -153,6 +153,9 @@ p5.prototype.keyCode = 0;
  * </div>
  */
 p5.prototype._onkeydown = function (e) {
+  if (downKeys[e.which]) { // prevent multiple firings
+    return;
+  }
   this._setProperty('isKeyPressed', true);
   this._setProperty('keyIsPressed', true);
   this._setProperty('keyCode', e.which);
@@ -201,6 +204,7 @@ p5.prototype._onkeyup = function (e) {
   var keyReleased = this.keyReleased || window.keyReleased;
   this._setProperty('isKeyPressed', false);
   this._setProperty('keyIsPressed', false);
+  this._setProperty('_lastKeyCodeTyped', null);
   downKeys[e.which] = false;
   //delete this._downKeys[e.which];
   var key = String.fromCharCode(e.which);
@@ -223,11 +227,12 @@ p5.prototype._onkeyup = function (e) {
  * key pressed will be stored in the key variable.
  * <br><br>
  * Because of how operating systems handle key repeats, holding down a key
- * will cause multiple calls to keyTyped(), the rate is set by the operating
- * system and how each computer is configured.<br><br>
- * Browsers may have different default
- * behaviors attached to various key events. To prevent any default
- * behavior for this event, add "return false" to the end of the method.
+ * will cause multiple calls to keyTyped() (and keyReleased() as well). The
+ * rate of repeat is set by the operating system and how each computer is
+ * configured.<br><br>
+ * Browsers may have different default behaviors attached to various key
+ * events. To prevent any default behavior for this event, add "return false"
+ * to the end of the method.
  *
  * @method keyTyped
  * @example
@@ -244,13 +249,18 @@ p5.prototype._onkeyup = function (e) {
  *   } else if (key === 'b') {
  *     value = 0;
  *   }
- *   return false; // prevent any default behavior
+ *   // uncomment to prevent any default behavior
+ *   // return false;
  * }
  * </code>
  * </div>
  */
 p5.prototype._onkeypress = function (e) {
+  if (e.which === this._lastKeyCodeTyped) { // prevent multiple firings
+    return;
+  }
   this._setProperty('keyCode', e.which);
+  this._setProperty('_lastKeyCodeTyped', e.which); // track last keyCode
   this._setProperty('key', String.fromCharCode(e.which));
   var keyTyped = this.keyTyped || window.keyTyped;
   if (typeof keyTyped === 'function') {
@@ -262,7 +272,7 @@ p5.prototype._onkeypress = function (e) {
 };
 /**
  * The onblur function is called when the user is no longer focused
- * on the p5 element. Because the keyup events will no fire if the user is
+ * on the p5 element. Because the keyup events will not fire if the user is
  * not focused on the element we must assume all keys currently down have
  * been released.
  */
@@ -271,7 +281,7 @@ p5.prototype._onblur = function (e) {
 };
 
 /**
- * The keyIsDown function checks if the key is currently down, i.e. pressed.
+ * The keyIsDown() function checks if the key is currently down, i.e. pressed.
  * It can be used if you have an object that moves, and you want several keys
  * to be able to affect its behaviour simultaneously, such as moving a
  * sprite diagonally. You can put in any number representing the keyCode of

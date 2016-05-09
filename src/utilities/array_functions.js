@@ -41,11 +41,11 @@ p5.prototype.append = function(array, value) {
  * elements to copy is determined by length. Note that copying values
  * overwrites existing values in the destination array. To append values
  * instead of overwriting them, use concat().
- *
- * The simplified version with only two arguments — arrayCopy(src, dst) —
+ * <br><br>
+ * The simplified version with only two arguments, arrayCopy(src, dst),
  * copies an entire array to another of the same size. It is equivalent to
  * arrayCopy(src, 0, dst, 0, src.length).
- *
+ * <br><br>
  * Using this function is far more efficient for copying array data than
  * iterating through a for() loop and copying each element individually.
  *
@@ -54,7 +54,7 @@ p5.prototype.append = function(array, value) {
  * @param {Number} [srcPosition] starting position in the source Array
  * @param {Array}  dst           the destination Array
  * @param {Number} [dstPosition] starting position in the destination Array
- * @param {Nimber} [length]      number of Array elements to be copied
+ * @param {Number} [length]      number of Array elements to be copied
  *
  * @example
  *  <div class="norender"><code>
@@ -191,10 +191,9 @@ p5.prototype.shorten = function(list) {
 };
 
 /**
- * Randomizes the order of the elements of an array.
- * Implements Fisher-Yates Shuffle Algorithm
- * http://Bost.Ocks.org/mike/shuffle/
- * http://en.Wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
+ * Randomizes the order of the elements of an array. Implements
+ * <a href="http://Bost.Ocks.org/mike/shuffle/" target=_blank>
+ * Fisher-Yates Shuffle Algorithm</a>.
  *
  * @method shuffle
  * @param  {Array}   array  Array to shuffle
@@ -216,7 +215,8 @@ p5.prototype.shorten = function(list) {
  * </code></div>
  */
 p5.prototype.shuffle = function(arr, bool) {
-  arr = bool || ArrayBuffer.isView(arr)? arr : arr.slice();
+  var isView = ArrayBuffer && ArrayBuffer.isView && ArrayBuffer.isView(arr);
+  arr = bool || isView ? arr : arr.slice();
 
   var rnd, tmp, idx = arr.length;
   while (idx > 1) {
@@ -248,7 +248,7 @@ p5.prototype.shuffle = function(arr, bool) {
  *   print(words); // ["banana", "apple", "pear", "lime"]
  *   var count = 4; // length of array
  *
- *   sort(words, count);
+ *   words = sort(words, count);
  *   print(words); // ["apple", "banana", "lime", "pear"]
  * }
  * </div></code>
@@ -258,7 +258,7 @@ p5.prototype.shuffle = function(arr, bool) {
  *   print(numbers); // [2,6,1,5,14,9,8,12]
  *   var count = 5; // Less than the length of the array
  *
- *   sort(numbers, count);
+ *   numbers = sort(numbers, count);
  *   print(numbers); // [1,2,5,6,14,9,8,12]
  * }
  * </div></code>

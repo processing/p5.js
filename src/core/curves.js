@@ -47,24 +47,61 @@ var curveDetail = 20;
  * </code>
  * </div>
  */
-p5.prototype.bezier = function(x1, y1, x2, y2, x3, y3, x4, y4) {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  this._validateParameters(
-    'bezier',
-    args,
-    [ 'Number', 'Number', 'Number', 'Number',
-      'Number', 'Number', 'Number', 'Number' ]
-  );
+/**
+ * @method bezier
+ * @param  {Number} z1 z-coordinate for the first anchor point
+ * @param  {Number} z2 z-coordinate for the first control point
+ * @param  {Number} z3 z-coordinate for the first anchor point
+ * @param  {Number} z4 z-coordinate for the first control point
+ * @return {p5.Renderer3D}   [description]
+ * @example
+ * <div>
+ * <code>
+ *background(0, 0, 0);
+ *noFill();
+ *stroke(255);
+ *bezier(250,250,0, 100,100,0, 100,0,0, 0,100,0);
+ * </code>
+ * </div>
+*/
+p5.prototype.bezier = function() {
+   var args = new Array(arguments.length);
+   for (var i = 0; i < args.length; ++i) {
+     args[i] = arguments[i];
+   }
+   if(this._renderer.isP3D){
+     this._validateParameters(
+       'bezier',
+       args,
+       ['Number', 'Number', 'Number',
+       'Number', 'Number', 'Number',
+       'Number', 'Number', 'Number',
+       'Number', 'Number', 'Number'
+       ]
+     );
+   } else{
+     this._validateParameters(
+         'bezier',
+         args,
+         [ 'Number', 'Number', 'Number', 'Number',
+           'Number', 'Number', 'Number', 'Number' ]
+       );
+   }
+   if (!this._renderer._doStroke) {
+     return this;
+   }
+   if (this._renderer.isP3D){
+     args.push(bezierDetail);//adding value of bezier detail to the args array
+     this._renderer.bezier(args);
+   } else{
+     this._renderer.bezier(args[0],args[1],
+       args[2],args[3],
+       args[4],args[5],
+       args[6],args[7]);
+   }
 
-  if (!this._renderer._doStroke) {
-    return this;
-  }
-  this._renderer.bezier(x1, y1, x2, y2, x3, y3, x4, y4);
-  return this;
-};
+   return this;
+ };
 
 /**
  * Sets the resolution at which Beziers display.
@@ -246,24 +283,63 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * </code>
  * </div>
  */
-p5.prototype.curve = function(x1, y1, x2, y2, x3, y3, x4, y4) {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  this._validateParameters(
-    'curve',
-    args,
-    [ 'Number', 'Number', 'Number', 'Number',
-      'Number', 'Number', 'Number', 'Number' ]
-  );
-
-  if (!this._renderer._doStroke) {
-    return;
-  }
-  this._renderer.curve(x1, y1, x2, y2, x3, y3, x4, y4);
-  return this;
-};
+/**
+ * @method curve
+ * @param  {Number} z1 z-coordinate for the beginning control point
+ * @param  {Number} z2 z-coordinate for the first point
+ * @param  {Number} z3 z-coordinate for the second point
+ * @param  {Number} z4 z-coordinate for the ending control point
+ * @return {Object}    the p5 object
+ * @example
+ * <div>
+ * <code>
+ * noFill();
+ * stroke(255, 102, 0);
+ * curve(5,26,0, 5,26,0, 73,24,0, 73,61,0);
+ * stroke(0);
+ * curve(5,26,0, 73,24,0, 73,61,0, 15,65,0);
+ * stroke(255, 102, 0);
+ * curve(73,24,0, 73,61,0, 15,65,0, 15,65,0);
+ * </code>
+ * </div>
+ */
+p5.prototype.curve = function() {
+     var args = new Array(arguments.length);
+     for (var i = 0; i < args.length; ++i) {
+       args[i] = arguments[i];
+     }
+     if(this._renderer.isP3D){
+       this._validateParameters(
+         'curve',
+         args,
+         ['Number', 'Number', 'Number',
+         'Number', 'Number', 'Number',
+         'Number', 'Number', 'Number',
+         'Number', 'Number', 'Number'
+         ]
+       );
+     } else{
+       this._validateParameters(
+         'curve',
+         args,
+         [ 'Number', 'Number', 'Number', 'Number',
+           'Number', 'Number', 'Number', 'Number' ]
+       );
+     }
+     if (!this._renderer._doStroke) {
+       return this;
+     }
+     if (this._renderer.isP3D){
+       args.push(curveDetail);
+       this._renderer.curve(args);
+     } else{
+       this._renderer.curve(args[0],args[1],
+         args[2],args[3],
+         args[4],args[5],
+         args[6],args[7]);
+     }
+     return this;
+   };
 
 /**
  * Sets the resolution at which curves display.
@@ -376,7 +452,7 @@ p5.prototype.curvePoint = function(a, b, c, d, t) {
 /**
  * Evaluates the tangent to the curve at position t for points a, b, c, d.
  * The parameter t varies between 0 and 1, a and d are points on the curve,
- * and b and c are the control points
+ * and b and c are the control points.
  *
  * @method curveTangent
  * @param {Number} a coordinate of first point on the curve

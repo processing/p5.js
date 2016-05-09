@@ -15,7 +15,7 @@ require('./error_helpers');
 
 /**
  * Draw an arc to the screen. If called with only a, b, c, d, start, and
- * stop, the arc will pe drawn as an open pie. If mode is provided, the arc
+ * stop, the arc will be drawn as an open pie. If mode is provided, the arc
  * will be drawn either open, as a chord, or as a pie as specified. The
  * origin may be changed with the ellipseMode() function.<br><br>
  * Note that drawing a full circle (ex: 0 to TWO_PI) will appear blank
@@ -68,16 +68,6 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  this._validateParameters(
-    'arc',
-    args,
-    [
-      ['Number', 'Number', 'Number', 'Number', 'Number', 'Number'],
-      [ 'Number', 'Number', 'Number', 'Number',
-        'Number', 'Number', 'String' ]
-    ]
-  );
-
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
@@ -96,6 +86,11 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
   // ...and confine them to the interval [0,TWO_PI).
   start %= constants.TWO_PI;
   stop %= constants.TWO_PI;
+
+  // account for full circle
+  if (stop === start) {
+    stop += constants.TWO_PI;
+  }
 
   // Adjust angles to counter linear scaling.
   if (start <= constants.HALF_PI) {
@@ -132,10 +127,10 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
  * origin may be changed with the ellipseMode() function.
  *
  * @method ellipse
- * @param  {Number} a x-coordinate of the ellipse.
- * @param  {Number} b y-coordinate of the ellipse.
- * @param  {Number} c width of the ellipse.
- * @param  {Number} d height of the ellipse.
+ * @param  {Number} x x-coordinate of the ellipse.
+ * @param  {Number} y y-coordinate of the ellipse.
+ * @param  {Number} w width of the ellipse.
+ * @param  {Number} h height of the ellipse.
  * @return {p5}       the p5 object
  * @example
  * <div>
@@ -144,26 +139,40 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
  * </code>
  * </div>
  */
-p5.prototype.ellipse = function(x, y, w, h) {
+/**
+ * @method ellipse
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} z z-coordinate of the ellipse
+ * @param {Number} w
+ * @param {Number} h
+ * @return {p5}
+ */
+p5.prototype.ellipse = function() {
   var args = new Array(arguments.length);
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  this._validateParameters(
-    'ellipse',
-    args,
-    ['Number', 'Number', 'Number', 'Number']
-  );
-
+  if(this._renderer.isP3D){
+    // p5 supports negative width and heights for ellipses
+    if (args[3] < 0){args[3] = Math.abs(args[3]);}
+    if (args[4] < 0){args[4] = Math.abs(args[4]);}
+  } else {
+    // p5 supports negative width and heights for rects
+    if (args[2] < 0){args[2] = Math.abs(args[2]);}
+    if (args[3] < 0){args[3] = Math.abs(args[3]);}
+  }
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
-  // p5 supports negative width and heights for ellipses
-  w = Math.abs(w);
-  h = Math.abs(h);
-  //@TODO add catch block here if this._renderer
-  //doesn't have the method implemented yet
-  this._renderer.ellipse(x, y, w, h);
+  if (this._renderer.isP3D){
+    this._renderer.ellipse(args);
+  } else {
+    this._renderer.ellipse(args[0],//x
+      args[1],//y
+      args[2],//width
+      args[3]);//height
+  }
   return this;
 };
 /**
@@ -217,13 +226,6 @@ p5.prototype.line = function() {
   }
   //check whether we should draw a 3d line or 2d
   if(this._renderer.isP3D){
-    this._validateParameters(
-      'line',
-      args,
-      [
-        ['Number', 'Number', 'Number', 'Number', 'Number', 'Number']
-      ]
-    );
     this._renderer.line(
       args[0],
       args[1],
@@ -232,13 +234,6 @@ p5.prototype.line = function() {
       args[4],
       args[5]);
   } else {
-    this._validateParameters(
-      'line',
-      args,
-      [
-        ['Number', 'Number', 'Number', 'Number'],
-      ]
-    );
     this._renderer.line(
       args[0],
       args[1],
@@ -278,26 +273,12 @@ p5.prototype.point = function() {
   }
   //check whether we should draw a 3d line or 2d
   if(this._renderer.isP3D){
-    this._validateParameters(
-      'point',
-      args,
-      [
-        ['Number', 'Number', 'Number']
-      ]
-    );
     this._renderer.point(
       args[0],
       args[1],
       args[2]
       );
   } else {
-    this._validateParameters(
-      'point',
-      args,
-      [
-        ['Number', 'Number']
-      ]
-    );
     this._renderer.point(
       args[0],
       args[1]
@@ -315,14 +296,14 @@ p5.prototype.point = function() {
  * clockwise or counter-clockwise around the defined shape.
  *
  * @method quad
- * @param {type} x1 the x-coordinate of the first point
- * @param {type} y1 the y-coordinate of the first point
- * @param {type} x2 the x-coordinate of the second point
- * @param {type} y2 the y-coordinate of the second point
- * @param {type} x3 the x-coordinate of the third point
- * @param {type} y3 the y-coordinate of the third point
- * @param {type} x4 the x-coordinate of the fourth point
- * @param {type} y4 the y-coordinate of the fourth point
+ * @param {Number} x1 the x-coordinate of the first point
+ * @param {Number} y1 the y-coordinate of the first point
+ * @param {Number} x2 the x-coordinate of the second point
+ * @param {Number} y2 the y-coordinate of the second point
+ * @param {Number} x3 the x-coordinate of the third point
+ * @param {Number} y3 the y-coordinate of the third point
+ * @param {Number} x4 the x-coordinate of the fourth point
+ * @param {Number} y4 the y-coordinate of the fourth point
  * @return {p5}     the p5 object
  * @example
  * <div>
@@ -330,6 +311,14 @@ p5.prototype.point = function() {
  * quad(38, 31, 86, 20, 69, 63, 30, 76);
  * </code>
  * </div>
+ */
+/**
+ * @method quad
+ * @param {Number} z1 the z-coordinate of the first point
+ * @param {Number} z2 the z-coordinate of the second point
+ * @param {Number} z3 the z-coordinate of the third point
+ * @param {Number} z4 the z-coordinate of the fourth point
+ * @return {p5} the p5 object
  */
 p5.prototype.quad = function() {
   if (!this._renderer._doStroke && !this._renderer._doFill) {
@@ -340,16 +329,6 @@ p5.prototype.quad = function() {
     args[i] = arguments[i];
   }
   if(this._renderer.isP3D){
-    this._validateParameters(
-      'quad',
-      args,
-      [
-        [ 'Number', 'Number', 'Number',
-          'Number', 'Number', 'Number',
-          'Number', 'Number', 'Number',
-          'Number', 'Number', 'Number']
-      ]
-    );
     this._renderer.quad(
       args[0],
       args[1],
@@ -365,14 +344,6 @@ p5.prototype.quad = function() {
       args[11]
       );
   } else {
-    this._validateParameters(
-      'quad',
-      args,
-      [
-        [ 'Number', 'Number', 'Number', 'Number',
-          'Number', 'Number', 'Number', 'Number' ]
-      ]
-    );
     this._renderer.quad(
      args[0],
      args[1],
@@ -392,11 +363,12 @@ p5.prototype.quad = function() {
 * every angle at ninety degrees. By default, the first two parameters set
 * the location of the upper-left corner, the third sets the width, and the
 * fourth sets the height. The way these parameters are interpreted, however,
-* may be changed with the rectMode() function. If provided, the fifth, sixth
-* seventh and eighth parameters, if specified, determine corner radius for
-* the top-right, top-left, lower-right and lower-left corners, respectively.
-* An omitted corner radius parameter is set to the value of the previously
-* specified radius value in the parameter list.
+* may be changed with the rectMode() function.
+* <br><br>
+* The fifth, sixth, seventh and eighth parameters, if specified,
+* determine corner radius for the top-right, top-left, lower-right and
+* lower-left corners, respectively. An omitted corner radius parameter is set
+* to the value of the previously specified radius value in the parameter list.
 *
 * @method rect
 * @param  {Number} x  x-coordinate of the rectangle.
@@ -411,7 +383,7 @@ p5.prototype.quad = function() {
 * @example
 * <div>
 * <code>
-* // Draw a rectangle at location (30, 25) with a width and height of 55.
+* // Draw a rectangle at location (30, 20) with a width and height of 55.
 * rect(30, 20, 55, 55);
 * </code>
 * </div>
@@ -427,30 +399,33 @@ p5.prototype.quad = function() {
 * <code>
 * // Draw a rectangle with rounded corners having the following radii:
 * // top-left = 20, top-right = 15, bottom-right = 10, bottom-left = 5.
-* rect(30, 20, 55, 55, 20, 15, 10, 5)
+* rect(30, 20, 55, 55, 20, 15, 10, 5);
 * </code>
 * </div>
 */
-p5.prototype.rect = function (x, y, w, h, tl, tr, br, bl) {
+/**
+* @method rect
+* @param  {Number} z  z-coordinate of the rectangle.
+* @return {p5}          the p5 object.
+*/
+p5.prototype.rect = function () {
   var args = new Array(arguments.length);
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  this._validateParameters(
-    'rect',
-    args,
-    [
-      ['Number', 'Number', 'Number', 'Number'],
-      ['Number', 'Number', 'Number', 'Number', 'Number'],
-      ['Number', 'Number', 'Number', 'Number',
-       'Number', 'Number', 'Number', 'Number']
-    ]
-  );
-
+  if(this._renderer.isP3D){
+    // p5 supports negative width and heights for rects
+    if (args[3] < 0){args[3] = Math.abs(args[3]);}
+    if (args[4] < 0){args[4] = Math.abs(args[4]);}
+  } else {
+    // p5 supports negative width and heights for rects
+    if (args[2] < 0){args[2] = Math.abs(args[2]);}
+    if (args[3] < 0){args[3] = Math.abs(args[3]);}
+  }
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return;
   }
-  this._renderer.rect(x, y, w, h, tl, tr, br, bl);
+  this._renderer.rect(args);
   return this;
 };
 
@@ -484,40 +459,15 @@ p5.prototype.triangle = function() {
     args[i] = arguments[i];
   }
   if(this._renderer.isP3D){
-    this._validateParameters(
-      'triangle',
-      args,
-      [
-        ['Number', 'Number', 'Number', 'Number', 'Number', 'Number',
-         'Number', 'Number', 'Number']
-      ]
-    );
+    this._renderer.triangle(args);
+  } else {
     this._renderer.triangle(
       args[0],
       args[1],
       args[2],
       args[3],
       args[4],
-      args[5],
-      args[6],
-      args[7],
-      args[8]
-      );
-  } else {
-    this._validateParameters(
-      'triangle',
-      args,
-      [
-        ['Number', 'Number', 'Number', 'Number', 'Number', 'Number']
-      ]
-    );
-    this._renderer.triangle(
-     args[0],
-     args[1],
-     args[2],
-     args[3],
-     args[4],
-     args[5]
+      args[5]
     );
   }
   return this;

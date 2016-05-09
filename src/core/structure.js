@@ -13,21 +13,20 @@ p5.prototype.exit = function() {
   throw 'exit() not implemented, see remove()';
 };
 /**
- * <p>Stops p5.js from continuously executing the code within draw().
+ * Stops p5.js from continuously executing the code within draw().
  * If loop() is called, the code in draw() begins to run continuously again.
  * If using noLoop() in setup(), it should be the last line inside the block.
- * </p>
- *
- * <p>When noLoop() is used, it's not possible to manipulate or access the
+ * <br><br>
+ * When noLoop() is used, it's not possible to manipulate or access the
  * screen inside event handling functions such as mousePressed() or
  * keyPressed(). Instead, use those functions to call redraw() or loop(),
  * which will run draw(), which can update the screen properly. This means
  * that when noLoop() has been called, no drawing can happen, and functions
- * like saveFrame() or loadPixels() may not be used.</p>
- *
- * <p>Note that if the sketch is resized, redraw() will be called to update
+ * like saveFrame() or loadPixels() may not be used.
+ * <br><br>
+ * Note that if the sketch is resized, redraw() will be called to update
  * the sketch, even after noLoop() has been specified. Otherwise, the sketch
- * would enter an odd state until loop() was called.</p>
+ * would enter an odd state until loop() was called.
  *
  * @method noLoop
  * @example
@@ -163,7 +162,9 @@ p5.prototype.push = function () {
   this._renderer.push();
   this._styles.push({
     _doStroke: this._renderer._doStroke,
+    _strokeSet: this._renderer._strokeSet,
     _doFill: this._renderer._doFill,
+    _fillSet: this._renderer._fillSet,
     _tint: this._renderer._tint,
     _imageMode: this._renderer._imageMode,
     _rectMode: this._renderer._rectMode,
@@ -248,12 +249,12 @@ p5.prototype.popStyle = function() {
  * Executes the code within draw() one time. This functions allows the
  * program to update the display window only when necessary, for example
  * when an event registered by mousePressed() or keyPressed() occurs.
- *
+ * <br><br>
  * In structuring a program, it only makes sense to call redraw() within
  * events such as mousePressed(). This is because redraw() does not run
  * draw() immediately (it only sets a flag that indicates an update is
  * needed).
- *
+ * <br><br>
  * The redraw() function does not work properly when called inside draw().
  * To enable/disable animations, use loop() and noLoop().
  *
@@ -282,9 +283,9 @@ p5.prototype.redraw = function () {
   var userSetup = this.setup || window.setup;
   var userDraw = this.draw || window.draw;
   if (typeof userDraw === 'function') {
-    this.push();
+    this.resetMatrix.bind(this);
     if (typeof userSetup === 'undefined') {
-      this.scale(this.pixelDensity, this.pixelDensity);
+      this.scale(this._pixelDensity, this._pixelDensity);
     }
     var self = this;
     this._registeredMethods.pre.forEach(function (f) {
@@ -294,7 +295,6 @@ p5.prototype.redraw = function () {
     this._registeredMethods.post.forEach(function (f) {
       f.call(self);
     });
-    this.pop();
   }
 };
 
