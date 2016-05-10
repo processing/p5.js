@@ -719,7 +719,6 @@ p5.Renderer3D.prototype.quad = function(){
     var quadGeom = new p5.Geometry(2,2,_quad);
     quadGeom.computeNormals();
     quadGeom.faces = [[0,1,2],[2,3,0]];
-    console.log(quadGeom);
     this.createBuffers(gId, quadGeom);
   }
   this.drawBuffers(gId);
