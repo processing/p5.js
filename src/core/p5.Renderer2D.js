@@ -213,20 +213,19 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
   var ctx = this._pInst || this;
 
   var pd = ctx._pixelDensity;
-
-  this.loadPixels.call(ctx);
+  ctx.loadPixels();
 
   // round down to get integer numbers
   x = Math.floor(x);
   y = Math.floor(y);
 
   if (w === 1 && h === 1){
-
+    var startPoint = pd*pd*4*(y*this.width+x);
     return [
-      ctx.pixels[pd*4*(y*this.width+x)],
-      ctx.pixels[pd*(4*(y*this.width+x)+1)],
-      ctx.pixels[pd*(4*(y*this.width+x)+2)],
-      ctx.pixels[pd*(4*(y*this.width+x)+3)]
+      ctx.pixels[startPoint],
+      ctx.pixels[startPoint+1],
+      ctx.pixels[startPoint+2],
+      ctx.pixels[startPoint+3]
     ];
   } else {
     var sx = x * pd;
