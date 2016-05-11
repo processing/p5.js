@@ -407,17 +407,50 @@ p5.Table.prototype.matchRow = function(regexp, column) {
 };
 
 /**
- *  Finds the first row in the Table that matches the regular
- *  expression provided, and returns a reference to that row.
- *  Even if multiple rows are possible matches, only the first
- *  matching row is returned. The column to search may be specified
- *  by either its ID or title.
+ *  Finds the rows in the Table that match the regular expression provided,
+ *  and returns references to those rows. Returns an array, so for must be
+ *  used to iterate through all the rows, as shown in the example. The
+ *  column to search may be specified by either its ID or title.
  *
  *  @method  matchRows
  *  @param  {String} regexp The regular expression to match
  *  @param  {String|Number} [column] The column ID (number) or
  *                                   title (string)
  *  @return {Array}        An Array of TableRow objects
+ *  @example
+ *  var table;
+ *
+ *  function setup() {
+ *
+ *    table = new p5.Table();
+ *
+ *    table.addColumn('name');
+ *    table.addColumn('type');
+ *
+ *    var newRow = table.addRow();
+ *    newRow.setString('name', 'Lion');
+ *    newRow.setString('type', 'Mammal');
+ *
+ *    newRow = table.addRow();
+ *    newRow.setString('name', 'Snake');
+ *    newRow.setString('type', 'Reptile');
+ *
+ *    newRow = table.addRow();
+ *    newRow.setString('name', 'Mosquito');
+ *    newRow.setString('type', 'Insect');
+ *
+ *    newRow = table.addRow();
+ *    newRow.setString('name', 'Lizard');
+ *    newRow.setString('type', 'Reptile');
+ *
+ *    var rows = table.matchRows('R.*', 'type');
+ *    for (var i = 0; i < rows.length; i++) {
+ *      println(rows[i].getString('name') + ': ' + rows[i].getString('type'));
+ *    }
+ *  }
+ *  // Sketch prints:
+ *  // Snake: Reptile
+ *  // Lizard: Reptile
  */
 p5.Table.prototype.matchRows = function(regexp, column) {
   var ret = [];
