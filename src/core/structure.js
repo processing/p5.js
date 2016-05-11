@@ -283,7 +283,6 @@ p5.prototype.redraw = function () {
   var userSetup = this.setup || window.setup;
   var userDraw = this.draw || window.draw;
   if (typeof userDraw === 'function') {
-    this.resetMatrix.bind(this);
     if (typeof userSetup === 'undefined') {
       this.scale(this._pixelDensity, this._pixelDensity);
     }

@@ -492,6 +492,12 @@ p5.Renderer3D.prototype.pop = function() {
   this.uMVMatrix = uMVMatrixStack.pop();
 };
 
+p5.Renderer3D.prototype.resetMatrix = function() {
+  this.uMVMatrix = p5.Matrix.identity();
+  this.translate(0, 0, -800);
+  return this;
+};
+
 // Text/Typography
 // @TODO:
 p5.Renderer3D.prototype._applyTextProperties = function() {
