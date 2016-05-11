@@ -685,8 +685,13 @@ p5.Renderer3D.prototype.rect = function
   return this;
 };
 
-p5.Renderer3D.prototype.quad = function
-(args){
+p5.Renderer3D.prototype.quad = function(){
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
+  //@todo validate params here
+  //
   var x1 = args[0],
     y1 = args[1],
     z1 = args[2],
@@ -709,12 +714,11 @@ p5.Renderer3D.prototype.quad = function
       this.vertices.push(new p5.Vector(x2,y2,z2));
       this.vertices.push(new p5.Vector(x3,y3,z3));
       this.vertices.push(new p5.Vector(x4,y4,z4));
+      this.uvs.push([0, 0], [1, 0], [1, 1], [0, 1]);
     };
     var quadGeom = new p5.Geometry(2,2,_quad);
-    quadGeom
-      .computeNormals()
-      .computeUVs();
-    quadGeom.faces = [[0,1,2],[2,3,1]];
+    quadGeom.computeNormals();
+    quadGeom.faces = [[0,1,2],[2,3,0]];
     this.createBuffers(gId, quadGeom);
   }
   this.drawBuffers(gId);
