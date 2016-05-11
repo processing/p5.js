@@ -46,18 +46,18 @@ require('./core/transform');
 require('./typography/attributes');
 require('./typography/loading_displaying');
 
-require('./3d/p5.Renderer3D');
-require('./3d/p5.Geometry');
-require('./3d/p5.Renderer3D.Retained');
-require('./3d/p5.Renderer3D.Immediate');
-require('./3d/primitives');
-require('./3d/loading');
-require('./3d/p5.Matrix');
-require('./3d/material');
-require('./3d/light');
-require('./3d/shader');
-require('./3d/camera');
-require('./3d/interaction');
+require('./webgl/p5.RendererGL');
+require('./webgl/p5.Geometry');
+require('./webgl/p5.RendererGL.Retained');
+require('./webgl/p5.RendererGL.Immediate');
+require('./webgl/primitives');
+require('./webgl/loading');
+require('./webgl/p5.Matrix');
+require('./webgl/material');
+require('./webgl/light');
+require('./webgl/shader');
+require('./webgl/camera');
+require('./webgl/interaction');
 
 /**
  * _globalInit

@@ -10,7 +10,7 @@ var hashCount = 0;
  * registered
  * @param  {String} gId  key of the geometry object
  */
-p5.Renderer3D.prototype._initBufferDefaults = function(gId) {
+p5.RendererGL.prototype._initBufferDefaults = function(gId) {
   //@TODO remove this limit on hashes in gHash
   hashCount ++;
   if(hashCount > 1000){
@@ -32,7 +32,7 @@ p5.Renderer3D.prototype._initBufferDefaults = function(gId) {
  * @param  {String} gId    key of the geometry object
  * @param  {p5.Geometry}  obj contains geometry data
  */
-p5.Renderer3D.prototype.createBuffers = function(gId, obj) {
+p5.RendererGL.prototype.createBuffers = function(gId, obj) {
   var gl = this.GL;
   this._setDefaultCamera();
   //initialize the gl buffers for our geom groups
@@ -93,9 +93,9 @@ p5.Renderer3D.prototype.createBuffers = function(gId, obj) {
 /**
  * Draws buffers given a geometry key ID
  * @param  {String} gId     ID in our geom hash
- * @return {p5.Renderer3D} this
+ * @return {p5.RendererGL} this
  */
-p5.Renderer3D.prototype.drawBuffers = function(gId) {
+p5.RendererGL.prototype.drawBuffers = function(gId) {
   this._setDefaultCamera();
   var gl = this.GL;
   var shaderKey = this._getCurShaderId();
@@ -154,4 +154,4 @@ function vToNArray(arr){
     return [item.x, item.y, item.z];
   }));
 }
-module.exports = p5.Renderer3D;
+module.exports = p5.RendererGL;
