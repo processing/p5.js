@@ -1,5 +1,5 @@
 /**
- * @module Input
+ * @module IO
  * @submodule Time & Date
  * @for p5
  * @requires core
