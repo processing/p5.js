@@ -1105,7 +1105,7 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
       case constants.BOTTOM:
         y += (maxHeight - totalHeight);
         break;
-      case constants._CTX_MIDDLE:
+      case constants._CTX_MIDDLE: // CENTER?
         y += (maxHeight - totalHeight) / 2;
         break;
       case constants.BASELINE:
@@ -1139,8 +1139,8 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
     }
   }
   else {
-    //offset to account for centering multiple lines of text
-    var offset = ((cars.length)*0.5-0.5)*p.textLeading();
+    // offset to account for vertically centering multiple lines of text
+    var offset = ((cars.length * 0.5) - 0.5) * p.textLeading(); // see #1410
 
     for (jj = 0; jj < cars.length; jj++) {
 
