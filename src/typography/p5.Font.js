@@ -225,7 +225,8 @@ p5.Font.prototype._getGlyphs = function(str) {
  */
 p5.Font.prototype._getPath = function(line, x, y, options) {
 
-  var p = (options && options.renderer && options.renderer._pInst) || this.parent,
+  var p = (options && options.renderer && options.renderer._pInst) ||
+    this.parent,
     ctx = p._renderer.drawingContext,
     pos = this._handleAlignment(p, ctx, line, x, y);
 
