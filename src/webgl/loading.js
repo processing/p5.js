@@ -13,9 +13,18 @@ require('./p5.Geometry');
 
 /**
  * Load a 3d model from an OBJ file.
+ * <br><br>
+ * One of the limitations of the OBJ format is that it doesn't have a built-in
+ * sense of scale. This means that models exported from different programs might
+ * be very different sizes. If your model isn't displaying, try calling
+ * loadModel() with the normalized parameter set to true. This will resize the
+ * model to a scale appropriate for p5. You can also make additional changes to
+ * the final size of your model with the scale() function.
  *
  * @method loadModel
  * @param  {String} path Path of the model to be loaded
+ * @param  {Boolean} [normalized] If true, scale the model to a
+ *                                standardized size when loading
  * @return {p5.Geometry} the p5.Geometry3D object
  * @example
  * <div>
@@ -38,11 +47,15 @@ require('./p5.Geometry');
  * </code>
  * </div>
  */
-p5.prototype.loadModel = function ( path ) {
+p5.prototype.loadModel = function ( path, normalized ) {
   var model = new p5.Geometry();
-  model.gid = path;
+  model.gid = path + '|' + normalized;
   this.loadStrings(path, function(strings) {
     parseObj(model, strings);
+
+    if (normalized) {
+      model.normalize();
+    }
   }.bind(this));
 
   return model;
