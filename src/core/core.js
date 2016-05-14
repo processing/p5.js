@@ -335,7 +335,8 @@ var p5 = function(sketch, node, sync) {
     if (!this._loop ||
         time_since_last >= target_time_between_frames - epsilon) {
 
-      //mandatory update values(matrixs and stack) for 3d
+      //mandatory update values(matrixs and stack)
+      this.resetMatrix();
       if(this._renderer.isP3D){
         this._renderer._update();
       }

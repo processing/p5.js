@@ -28,7 +28,7 @@ var constants = require('../core/constants');
  *                       TRIANGLE_STRIP,and TRIANGLE_FAN.
  * @return {[type]}      [description]
  */
-p5.Renderer3D.prototype.beginShape = function(mode){
+p5.RendererGL.prototype.beginShape = function(mode){
   //default shape mode is line_strip
   this.immediateMode.shapeMode = (mode !== undefined ) ?
     mode : constants.LINE_STRIP;
@@ -51,10 +51,10 @@ p5.Renderer3D.prototype.beginShape = function(mode){
  * @param  {Number} x x-coordinate of vertex
  * @param  {Number} y y-coordinate of vertex
  * @param  {Number} z z-coordinate of vertex
- * @return {p5.Renderer3D}   [description]
+ * @return {p5.RendererGL}   [description]
  * @TODO implement handling of p5.Vector args
  */
-p5.Renderer3D.prototype.vertex = function(x, y, z){
+p5.RendererGL.prototype.vertex = function(x, y, z){
   this.immediateMode.vertexPositions.push(x, y, z);
   var vertexColor = this.curFillColor || [0.5, 0.5, 0.5, 1.0];
   this.immediateMode.vertexColors.push(
@@ -67,9 +67,9 @@ p5.Renderer3D.prototype.vertex = function(x, y, z){
 
 /**
  * End shape drawing and render vertices to screen.
- * @return {p5.Renderer3D} [description]
+ * @return {p5.RendererGL} [description]
  */
-p5.Renderer3D.prototype.endShape =
+p5.RendererGL.prototype.endShape =
 function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
   var gl = this.GL;
   this._bindImmediateBuffers(
@@ -123,9 +123,9 @@ function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
  * then draw gl arrays
  * @param  {Array} vertices Numbers array representing
  *                          vertex positions
- * @return {p5.Renderer3D}
+ * @return {p5.RendererGL}
  */
-p5.Renderer3D.prototype._bindImmediateBuffers = function(vertices, colors){
+p5.RendererGL.prototype._bindImmediateBuffers = function(vertices, colors){
   this._setDefaultCamera();
   var gl = this.GL;
   var shaderKey = this._getCurShaderId();
@@ -162,7 +162,7 @@ p5.Renderer3D.prototype._bindImmediateBuffers = function(vertices, colors){
 // COLOR
 //////////////////////////////////////////////
 
-p5.Renderer3D.prototype._getColorVertexShader = function(){
+p5.RendererGL.prototype._getColorVertexShader = function(){
   var gl = this.GL;
   var mId = 'immediateVert|vertexColorFrag';
   var shaderProgram;
@@ -180,4 +180,4 @@ p5.Renderer3D.prototype._getColorVertexShader = function(){
   return shaderProgram;
 };
 
-module.exports = p5.Renderer3D;
+module.exports = p5.RendererGL;

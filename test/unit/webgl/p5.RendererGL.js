@@ -1,4 +1,4 @@
-suite('p5.Renderer3D', function() {
+suite('p5.RendererGL', function() {
   var myp5;
 
   if (!window.Modernizr.webgl) {
@@ -18,8 +18,8 @@ suite('p5.Renderer3D', function() {
   });
 
   suite('createCanvas(w, h, WEBGL)', function() {
-    test('creates a p5.Renderer3D renderer', function() {
-      assert.instanceOf(myp5._renderer, p5.Renderer3D);
+    test('creates a p5.RendererGL renderer', function() {
+      assert.instanceOf(myp5._renderer, p5.RendererGL);
     });
   });
 });

@@ -19,7 +19,7 @@ var attributes = {
 };
 
 /**
- * @class p5.Renderer3D
+ * @class p5.RendererGL
  * @constructor
  * @extends p5.Renderer
  * 3D graphics class.
@@ -27,7 +27,7 @@ var attributes = {
  * rendering (FBO).
  *
  */
-p5.Renderer3D = function(elt, pInst, isMainCanvas) {
+p5.RendererGL = function(elt, pInst, isMainCanvas) {
   p5.Renderer.call(this, elt, pInst, isMainCanvas);
   this._initContext();
 
@@ -60,20 +60,20 @@ p5.Renderer3D = function(elt, pInst, isMainCanvas) {
   return this;
 };
 
-p5.Renderer3D.prototype = Object.create(p5.Renderer.prototype);
+p5.RendererGL.prototype = Object.create(p5.Renderer.prototype);
 
 //////////////////////////////////////////////
 // Setting
 //////////////////////////////////////////////
 
-p5.Renderer3D.prototype._initContext = function() {
+p5.RendererGL.prototype._initContext = function() {
   try {
     this.drawingContext = this.canvas.getContext('webgl', attributes) ||
       this.canvas.getContext('experimental-webgl', attributes);
     if (this.drawingContext === null) {
       throw new Error('Error creating webgl context');
     } else {
-      console.log('p5.Renderer3D: enabled webgl context');
+      console.log('p5.RendererGL: enabled webgl context');
       var gl = this.drawingContext;
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
@@ -85,7 +85,7 @@ p5.Renderer3D.prototype._initContext = function() {
 };
 //detect if user didn't set the camera
 //then call this function below
-p5.Renderer3D.prototype._setDefaultCamera = function(){
+p5.RendererGL.prototype._setDefaultCamera = function(){
   if(!this._isSetCamera){
     var _w = this.width;
     var _h = this.height;
@@ -95,7 +95,7 @@ p5.Renderer3D.prototype._setDefaultCamera = function(){
   }
 };
 
-p5.Renderer3D.prototype._update = function() {
+p5.RendererGL.prototype._update = function() {
   this.uMVMatrix = p5.Matrix.identity();
   this.translate(0, 0, -800);
   this.ambientLightCount = 0;
@@ -107,7 +107,7 @@ p5.Renderer3D.prototype._update = function() {
  * [background description]
  * @return {[type]} [description]
  */
-p5.Renderer3D.prototype.background = function() {
+p5.RendererGL.prototype.background = function() {
   var gl = this.GL;
   var _col = this._pInst.color.apply(this._pInst, arguments);
   var _r = (_col.levels[0]) / 255;
@@ -119,7 +119,7 @@ p5.Renderer3D.prototype.background = function() {
 };
 
 //@TODO implement this
-// p5.Renderer3D.prototype.clear = function() {
+// p5.RendererGL.prototype.clear = function() {
 //@TODO
 // };
 
@@ -133,7 +133,7 @@ p5.Renderer3D.prototype.background = function() {
  * @param  {string} fragId [description]
  * @return {[type]}        [description]
  */
-p5.Renderer3D.prototype._initShaders =
+p5.RendererGL.prototype._initShaders =
 function(vertId, fragId, isImmediateMode) {
   var gl = this.GL;
   //set up our default shaders by:
@@ -176,7 +176,7 @@ function(vertId, fragId, isImmediateMode) {
   return shaderProgram;
 };
 
-p5.Renderer3D.prototype._getLocation =
+p5.RendererGL.prototype._getLocation =
 function(shaderProgram, isImmediateMode) {
   var gl = this.GL;
   gl.useProgram(shaderProgram);
@@ -211,7 +211,7 @@ function(shaderProgram, isImmediateMode) {
  * Should generalize function to accept any uniform
  * data type.
  */
-p5.Renderer3D.prototype._setUniform1f = function(shaderKey,uniform,data)
+p5.RendererGL.prototype._setUniform1f = function(shaderKey,uniform,data)
 {
   var gl = this.GL;
   var shaderProgram = this.mHash[shaderKey];
@@ -221,7 +221,7 @@ p5.Renderer3D.prototype._setUniform1f = function(shaderKey,uniform,data)
   return this;
 };
 
-p5.Renderer3D.prototype._setMatrixUniforms = function(shaderKey) {
+p5.RendererGL.prototype._setMatrixUniforms = function(shaderKey) {
   var gl = this.GL;
   var shaderProgram = this.mHash[shaderKey];
 
@@ -242,7 +242,7 @@ p5.Renderer3D.prototype._setMatrixUniforms = function(shaderKey) {
 //////////////////////////////////////////////
 // GET CURRENT | for shader and color
 //////////////////////////////////////////////
-p5.Renderer3D.prototype._getShader = function(vertId, fragId, isImmediateMode) {
+p5.RendererGL.prototype._getShader = function(vertId, fragId, isImmediateMode) {
   var mId = vertId + '|' + fragId;
   //create it and put it into hashTable
   if(!this.materialInHash(mId)){
@@ -254,7 +254,7 @@ p5.Renderer3D.prototype._getShader = function(vertId, fragId, isImmediateMode) {
   return this.mHash[this.curShaderId];
 };
 
-p5.Renderer3D.prototype._getCurShaderId = function(){
+p5.RendererGL.prototype._getCurShaderId = function(){
   //if the shader ID is not yet defined
   var mId, shaderProgram;
   if(this.drawMode !== 'fill' && this.curShaderId === undefined){
@@ -303,7 +303,7 @@ p5.Renderer3D.prototype._getCurShaderId = function(){
  * </code>
  * </div>
  */
-p5.Renderer3D.prototype.fill = function(v1, v2, v3, a) {
+p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   var gl = this.GL;
   var shaderProgram;
   //see material.js for more info on color blending in webgl
@@ -331,7 +331,7 @@ p5.Renderer3D.prototype.fill = function(v1, v2, v3, a) {
   }
   return this;
 };
-p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
+p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
   var colorNormalized = color._array;
   this.curStrokeColor = colorNormalized;
@@ -340,7 +340,7 @@ p5.Renderer3D.prototype.stroke = function(r, g, b, a) {
 };
 
 //@TODO
-p5.Renderer3D.prototype._strokeCheck = function(){
+p5.RendererGL.prototype._strokeCheck = function(){
   if(this.drawMode === 'stroke'){
     throw new Error(
       'stroke for shapes in 3D not yet implemented, use fill for now :('
@@ -355,7 +355,7 @@ p5.Renderer3D.prototype._strokeCheck = function(){
  * @todo  strokeWeight currently works on points only.
  * implement on all wireframes and strokes.
  */
-p5.Renderer3D.prototype.strokeWeight = function(pointSize) {
+p5.RendererGL.prototype.strokeWeight = function(pointSize) {
   this.pointSize = pointSize;
   return this;
 };
@@ -363,11 +363,11 @@ p5.Renderer3D.prototype.strokeWeight = function(pointSize) {
 // HASH | for material and geometry
 //////////////////////////////////////////////
 
-p5.Renderer3D.prototype.geometryInHash = function(gId){
+p5.RendererGL.prototype.geometryInHash = function(gId){
   return this.gHash[gId] !== undefined;
 };
 
-p5.Renderer3D.prototype.materialInHash = function(mId){
+p5.RendererGL.prototype.materialInHash = function(mId){
   return this.mHash[mId] !== undefined;
 };
 
@@ -377,7 +377,7 @@ p5.Renderer3D.prototype.materialInHash = function(mId){
  * @param  {[tyoe]} h [description]
  * @return {[type]}   [description]
  */
-p5.Renderer3D.prototype.resize = function(w,h) {
+p5.RendererGL.prototype.resize = function(w,h) {
   var gl = this.GL;
   p5.Renderer.prototype.resize.call(this, w, h);
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
@@ -391,7 +391,7 @@ p5.Renderer3D.prototype.resize = function(w,h) {
  * @param {Number} b normalized blue val.
  * @param {Number} a normalized alpha val.
  */
-p5.Renderer3D.prototype.clear = function() {
+p5.RendererGL.prototype.clear = function() {
   var gl = this.GL;
   gl.clearColor(arguments[0],
     arguments[1],
@@ -408,7 +408,7 @@ p5.Renderer3D.prototype.clear = function() {
  * @return {[type]}   [description]
  * @todo implement handle for components or vector as args
  */
-p5.Renderer3D.prototype.translate = function(x, y, z) {
+p5.RendererGL.prototype.translate = function(x, y, z) {
   //@TODO: figure out how to fit the resolution
   x = x / RESOLUTION;
   y = -y / RESOLUTION;
@@ -424,7 +424,7 @@ p5.Renderer3D.prototype.translate = function(x, y, z) {
  * @param  {Number} [z] z-axis scalar
  * @return {this}   [description]
  */
-p5.Renderer3D.prototype.scale = function(x,y,z) {
+p5.RendererGL.prototype.scale = function(x,y,z) {
   this.uMVMatrix.scale([x,y,z]);
   return this;
 };
@@ -433,9 +433,9 @@ p5.Renderer3D.prototype.scale = function(x,y,z) {
  * [rotate description]
  * @param  {Number} rad  angle in radians
  * @param  {p5.Vector | Array} axis axis to rotate around
- * @return {p5.Renderer3D}      [description]
+ * @return {p5.RendererGL}      [description]
  */
-p5.Renderer3D.prototype.rotate = function(rad, axis){
+p5.RendererGL.prototype.rotate = function(rad, axis){
   this.uMVMatrix.rotate(rad, axis);
   this.uNMatrix.inverseTranspose(this.uMVMatrix);
   return this;
@@ -446,7 +446,7 @@ p5.Renderer3D.prototype.rotate = function(rad, axis){
  * @param  {Number} rad radians to rotate
  * @return {[type]}     [description]
  */
-p5.Renderer3D.prototype.rotateX = function(rad) {
+p5.RendererGL.prototype.rotateX = function(rad) {
   this.rotate(rad, [1,0,0]);
   return this;
 };
@@ -456,7 +456,7 @@ p5.Renderer3D.prototype.rotateX = function(rad) {
  * @param  {Number} rad rad radians to rotate
  * @return {[type]}     [description]
  */
-p5.Renderer3D.prototype.rotateY = function(rad) {
+p5.RendererGL.prototype.rotateY = function(rad) {
   this.rotate(rad, [0,1,0]);
   return this;
 };
@@ -466,7 +466,7 @@ p5.Renderer3D.prototype.rotateY = function(rad) {
  * @param  {Number} rad rad radians to rotate
  * @return {[type]}     [description]
  */
-p5.Renderer3D.prototype.rotateZ = function(rad) {
+p5.RendererGL.prototype.rotateZ = function(rad) {
   this.rotate(rad, [0,0,1]);
   return this;
 };
@@ -477,7 +477,7 @@ p5.Renderer3D.prototype.rotateZ = function(rad) {
  * NOTE to self: could probably make this more readable
  * @return {[type]} [description]
  */
-p5.Renderer3D.prototype.push = function() {
+p5.RendererGL.prototype.push = function() {
   uMVMatrixStack.push(this.uMVMatrix.copy());
 };
 
@@ -485,17 +485,23 @@ p5.Renderer3D.prototype.push = function() {
  * [pop description]
  * @return {[type]} [description]
  */
-p5.Renderer3D.prototype.pop = function() {
+p5.RendererGL.prototype.pop = function() {
   if (uMVMatrixStack.length === 0) {
     throw new Error('Invalid popMatrix!');
   }
   this.uMVMatrix = uMVMatrixStack.pop();
 };
 
+p5.RendererGL.prototype.resetMatrix = function() {
+  this.uMVMatrix = p5.Matrix.identity();
+  this.translate(0, 0, -800);
+  return this;
+};
+
 // Text/Typography
 // @TODO:
-p5.Renderer3D.prototype._applyTextProperties = function() {
+p5.RendererGL.prototype._applyTextProperties = function() {
   //@TODO finish implementation
   console.error('text commands not yet implemented in webgl');
 };
-module.exports = p5.Renderer3D;
+module.exports = p5.RendererGL;

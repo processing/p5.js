@@ -347,7 +347,7 @@ p5.Vector.prototype.div = function (n) {
  * <div class="norender">
  * <code>
  * var v = createVector(20.0, 30.0, 40.0);
- * var m = v.mag(10);
+ * var m = v.mag();
  * print(m); // Prints "53.85164807134504"
  * </code>
  * </div>

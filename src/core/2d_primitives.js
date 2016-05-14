@@ -123,14 +123,15 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
 /**
  * Draws an ellipse (oval) to the screen. An ellipse with equal width and
  * height is a circle. By default, the first two parameters set the location,
- * and the third and fourth parameters set the shape's width and height. The
- * origin may be changed with the ellipseMode() function.
+ * and the third and fourth parameters set the shape's width and height. If
+ * no height is specified, the value of width is used for both the width and
+ * height. The origin may be changed with the ellipseMode() function.
  *
  * @method ellipse
  * @param  {Number} x x-coordinate of the ellipse.
  * @param  {Number} y y-coordinate of the ellipse.
  * @param  {Number} w width of the ellipse.
- * @param  {Number} h height of the ellipse.
+ * @param  {Number} [h] height of the ellipse.
  * @return {p5}       the p5 object
  * @example
  * <div>
@@ -145,13 +146,17 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
  * @param {Number} y
  * @param {Number} z z-coordinate of the ellipse
  * @param {Number} w
- * @param {Number} h
+ * @param {Number} [h]
  * @return {p5}
  */
 p5.prototype.ellipse = function() {
   var args = new Array(arguments.length);
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
+  }
+  // Duplicate 3rd argument if onl 3 given.
+  if (args.length === 3) {
+    args.push(args[2]);
   }
   if(this._renderer.isP3D){
     // p5 supports negative width and heights for ellipses
@@ -314,9 +319,17 @@ p5.prototype.point = function() {
  */
 /**
  * @method quad
+ * @param {Number} x1
+ * @param {Number} y1
  * @param {Number} z1 the z-coordinate of the first point
+ * @param {Number} x2
+ * @param {Number} y2
  * @param {Number} z2 the z-coordinate of the second point
+ * @param {Number} x3
+ * @param {Number} y3
  * @param {Number} z3 the z-coordinate of the third point
+ * @param {Number} x4
+ * @param {Number} y4
  * @param {Number} z4 the z-coordinate of the fourth point
  * @return {p5} the p5 object
  */
@@ -405,7 +418,15 @@ p5.prototype.quad = function() {
 */
 /**
 * @method rect
+* @param  {Number} x
+* @param  {Number} y
 * @param  {Number} z  z-coordinate of the rectangle.
+* @param  {Number} w
+* @param  {Number} h
+* @param  {Number} [tl]
+* @param  {Number} [tr]
+* @param  {Number} [br]
+* @param  {Number} [bl]
 * @return {p5}          the p5 object.
 */
 p5.prototype.rect = function () {

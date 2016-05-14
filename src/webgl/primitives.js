@@ -570,12 +570,12 @@ p5.prototype.torus = function(){
 /////////////////////////
 
 //@TODO
-p5.Renderer3D.prototype.point = function(x, y, z){
+p5.RendererGL.prototype.point = function(x, y, z){
   console.log('point not yet implemented in webgl');
   return this;
 };
 
-p5.Renderer3D.prototype.triangle = function
+p5.RendererGL.prototype.triangle = function
 (args){
   var x1=args[0], y1=args[1], z1=args[2];
   var x2=args[3], y2=args[4], z2=args[5];
@@ -602,7 +602,7 @@ p5.Renderer3D.prototype.triangle = function
   return this;
 };
 
-p5.Renderer3D.prototype.ellipse = function
+p5.RendererGL.prototype.ellipse = function
 (args){
   var x = args[0];
   var y = args[1];
@@ -647,7 +647,7 @@ p5.Renderer3D.prototype.ellipse = function
   return this;
 };
 
-p5.Renderer3D.prototype.rect = function
+p5.RendererGL.prototype.rect = function
 (args){
   var gId = 'rect|'+args[0]+'|'+args[1]+'|'+args[2]+'|'+
   args[3]+'|'+args[4];
@@ -685,8 +685,13 @@ p5.Renderer3D.prototype.rect = function
   return this;
 };
 
-p5.Renderer3D.prototype.quad = function
-(args){
+p5.RendererGL.prototype.quad = function(){
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
+  //@todo validate params here
+  //
   var x1 = args[0],
     y1 = args[1],
     z1 = args[2],
@@ -709,12 +714,11 @@ p5.Renderer3D.prototype.quad = function
       this.vertices.push(new p5.Vector(x2,y2,z2));
       this.vertices.push(new p5.Vector(x3,y3,z3));
       this.vertices.push(new p5.Vector(x4,y4,z4));
+      this.uvs.push([0, 0], [1, 0], [1, 1], [0, 1]);
     };
     var quadGeom = new p5.Geometry(2,2,_quad);
-    quadGeom
-      .computeNormals()
-      .computeUVs();
-    quadGeom.faces = [[0,1,2],[2,3,1]];
+    quadGeom.computeNormals();
+    quadGeom.faces = [[0,1,2],[2,3,0]];
     this.createBuffers(gId, quadGeom);
   }
   this.drawBuffers(gId);
@@ -723,7 +727,7 @@ p5.Renderer3D.prototype.quad = function
 
 //this implementation of bezier curve
 //is based on Bernstein polynomial
-p5.Renderer3D.prototype.bezier = function
+p5.RendererGL.prototype.bezier = function
 (args){
   var bezierDetail=args[12] || 20;//value of Bezier detail
   this.beginShape();
@@ -746,7 +750,7 @@ p5.Renderer3D.prototype.bezier = function
   return this;
 };
 
-p5.Renderer3D.prototype.curve=function
+p5.RendererGL.prototype.curve=function
 (args){
   var curveDetail=args[12];
   this.beginShape();
