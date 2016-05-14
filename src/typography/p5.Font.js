@@ -411,10 +411,10 @@ p5.Font.prototype._scale = function(fontSize) {
 };
 
 p5.Font.prototype._handleAlignment = function(p, ctx, line, x, y) {
-
-  var textWidth = this._textWidth(line),
-    textAscent = this._textAscent(),
-    textDescent = this._textDescent(),
+  var fontSize = p._renderer._textSize;
+  var textWidth = this._textWidth(line, fontSize),
+    textAscent = this._textAscent(fontSize),
+    textDescent = this._textDescent(fontSize),
     textHeight = textAscent + textDescent;
 
   if (ctx.textAlign === constants.CENTER) {
