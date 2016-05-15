@@ -150,7 +150,11 @@ p5.Renderer2D.prototype.blend = function() {
   );
 
   this.drawingContext.globalCompositeOperation = blendMode;
-  this._pInst.copy.apply(this._pInst, copyArgs);
+  if (this._pInst) {
+    this._pInst.copy.apply(this._pInst, copyArgs);
+  } else {
+    this.copy.apply(this, copyArgs);
+  }
   this.drawingContext.globalCompositeOperation = currBlend;
 };
 
@@ -209,20 +213,19 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
   var ctx = this._pInst || this;
 
   var pd = ctx._pixelDensity;
-
-  this.loadPixels.call(ctx);
+  ctx.loadPixels();
 
   // round down to get integer numbers
   x = Math.floor(x);
   y = Math.floor(y);
 
   if (w === 1 && h === 1){
-
+    var startPoint = pd*pd*4*(y*this.width+x);
     return [
-      ctx.pixels[pd*4*(y*this.width+x)],
-      ctx.pixels[pd*(4*(y*this.width+x)+1)],
-      ctx.pixels[pd*(4*(y*this.width+x)+2)],
-      ctx.pixels[pd*(4*(y*this.width+x)+3)]
+      ctx.pixels[startPoint],
+      ctx.pixels[startPoint+1],
+      ctx.pixels[startPoint+2],
+      ctx.pixels[startPoint+3]
     ];
   } else {
     var sx = x * pd;
@@ -550,7 +553,15 @@ p5.Renderer2D.prototype.quad =
   return this;
 };
 
-p5.Renderer2D.prototype.rect = function(x, y, w, h, tl, tr, br, bl) {
+p5.Renderer2D.prototype.rect = function(args) {
+  var x = args[0],
+    y = args[1],
+    w = args[2],
+    h = args[3],
+    tl = args[4],
+    tr = args[5],
+    br = args[6],
+    bl = args[7];
   var ctx = this.drawingContext;
   var doFill = this._doFill, doStroke = this._doStroke;
   if (doFill && !doStroke) {
@@ -1007,7 +1018,8 @@ p5.Renderer2D.prototype.scale = function(x,y) {
 
 p5.Renderer2D.prototype.shearX = function(angle) {
   if (this._pInst._angleMode === constants.DEGREES) {
-    angle = this._pInst.radians(angle);
+    // undoing here, because it gets redone in tan()
+    angle = this._pInst.degrees(angle);
   }
   this.drawingContext.transform(1, 0, this._pInst.tan(angle), 1, 0, 0);
   return this;
@@ -1015,7 +1027,8 @@ p5.Renderer2D.prototype.shearX = function(angle) {
 
 p5.Renderer2D.prototype.shearY = function(angle) {
   if (this._pInst._angleMode === constants.DEGREES) {
-    angle = this._pInst.radians(angle);
+    // undoing here, because it gets redone in tan()
+    angle = this._pInst.degrees(angle);
   }
   this.drawingContext.transform(1, this._pInst.tan(angle), 0, 1, 0, 0);
   return this;
@@ -1092,7 +1105,7 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
       case constants.BOTTOM:
         y += (maxHeight - totalHeight);
         break;
-      case constants._CTX_MIDDLE:
+      case constants._CTX_MIDDLE: // CENTER?
         y += (maxHeight - totalHeight) / 2;
         break;
       case constants.BASELINE:
@@ -1126,9 +1139,12 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
     }
   }
   else {
+    // offset to account for vertically centering multiple lines of text
+    var offset = ((cars.length * 0.5) - 0.5) * p.textLeading(); // see #1410
+
     for (jj = 0; jj < cars.length; jj++) {
 
-      this._renderText(p, cars[jj], x, y, finalMaxHeight);
+      this._renderText(p, cars[jj], x, y-offset, finalMaxHeight);
       y += p.textLeading();
     }
   }

@@ -125,10 +125,15 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
         }
       });
 
-    minX = Math.max(0, Math.min.apply(null, xCoords));
+    // fix to #1409 (not sure why these max() functions were here)
+    /*minX = Math.max(0, Math.min.apply(null, xCoords));
     minY = Math.max(0, Math.min.apply(null, yCoords));
     maxX = Math.max(0, Math.max.apply(null, xCoords));
-    maxY = Math.max(0, Math.max.apply(null, yCoords));
+    maxY = Math.max(0, Math.max.apply(null, yCoords));*/
+    minX = Math.min.apply(null, xCoords);
+    minY = Math.min.apply(null, yCoords);
+    maxX = Math.max.apply(null, xCoords);
+    maxY = Math.max.apply(null, yCoords);
 
     result = {
       x: minX,

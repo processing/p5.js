@@ -8,7 +8,7 @@ var p5 = require('./core');
 var constants = require('./constants');
 require('./p5.Graphics');
 require('./p5.Renderer2D');
-require('../3d/p5.Renderer3D');
+require('../webgl/p5.RendererGL');
 var defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
 
 /**
@@ -21,6 +21,10 @@ var defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
  * The system variables width and height are set by the parameters passed
  * to this function. If createCanvas() is not used, the window will be
  * given a default size of 100x100 pixels.
+ * <br><br>
+ * For more ways to position the canvas, see the
+ * <a href='https://github.com/processing/p5.js/wiki/Positioning-your-canvas'>
+ * positioning the canvas</a> wiki page.
  *
  * @method createCanvas
  * @param  {Number} w width of the canvas
@@ -90,7 +94,7 @@ p5.prototype.createCanvas = function(w, h, renderer) {
   // Init our graphics renderer
   //webgl mode
   if (r === constants.WEBGL) {
-    this._setProperty('_renderer', new p5.Renderer3D(c, this, true));
+    this._setProperty('_renderer', new p5.RendererGL(c, this, true));
     this._isdefaultGraphics = true;
   }
   //P2D mode
