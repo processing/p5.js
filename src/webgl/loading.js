@@ -23,8 +23,13 @@ require('./p5.Geometry');
  *
  * @method loadModel
  * @param  {String} path Path of the model to be loaded
- * @param  {Boolean} [normalized] If true, scale the model to a
+ * @param  {Boolean} [normalize] If true, scale the model to a
  *                                standardized size when loading
+ * @param  {Function(p5.Geometry3D)} [successCallback] Function to be called
+ *                                   once the model is loaded. Will be passed
+ *                                   the 3D model object.
+ * @param  {Function(Event)}    [failureCallback] called with event error if
+ *                                the image fails to load.
  * @return {p5.Geometry} the p5.Geometry3D object
  * @example
  * <div>
@@ -47,16 +52,34 @@ require('./p5.Geometry');
  * </code>
  * </div>
  */
-p5.prototype.loadModel = function ( path, normalized ) {
+p5.prototype.loadModel = function () {
+  var path = arguments[0];
+  var normalize;
+  var successCallback;
+  var failureCallback;
+  if(typeof arguments[1] === 'boolean') {
+    normalize = arguments[1];
+    successCallback = arguments[2];
+    failureCallback = arguments[3];
+  } else {
+    normalize = false;
+    successCallback = arguments[1];
+    failureCallback = arguments[2];
+  }
+
   var model = new p5.Geometry();
-  model.gid = path + '|' + normalized;
+  model.gid = path + '|' + normalize;
   this.loadStrings(path, function(strings) {
     parseObj(model, strings);
 
-    if (normalized) {
+    if (normalize) {
       model.normalize();
     }
-  }.bind(this));
+
+    if (typeof successCallback === 'function') {
+      successCallback(model);
+    }
+  }.bind(this), failureCallback);
 
   return model;
 };
