@@ -413,8 +413,7 @@ p5.Font.prototype._handleAlignment = function(p, ctx, line, x, y) {
 
   var textWidth = this._textWidth(line),
     textAscent = this._textAscent(),
-    textDescent = this._textDescent(),
-    textHeight = textAscent + textDescent;
+    textDescent = this._textDescent();
 
   if (ctx.textAlign === constants.CENTER) {
     x -= textWidth / 2;
