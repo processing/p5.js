@@ -273,7 +273,6 @@ var textAlignSketch = function(p) {
   };
 };
 
-
 var textLeadingSketch = function(p) {
   var font;
   p.preload = function() {
@@ -415,7 +414,7 @@ var textAlignmentSketch = function(p) {
        p.textAlign(hAligns[h], vAligns[v]);
      
        // Draw the text
-       p.fill("#00a8ea");
+       p.fill(255, 0, 0);
        p.noStroke();
        p.text(textString, x, y);
 
@@ -428,7 +427,9 @@ var textAlignmentSketch = function(p) {
   };
   p.setup = function() {
     var renderer = p.createCanvas(400, 800);
-    renderer.elt.style.display = "inline-block";
+    renderer.elt.style.position = "absolute";
+    renderer.elt.style.top = "0";
+    renderer.elt.style.left = "0";
     drawFontAlignments(font1, 0, 0);
     drawFontAlignments(font2, 0, 200);
     drawFontAlignments(font3, 0, 400);
