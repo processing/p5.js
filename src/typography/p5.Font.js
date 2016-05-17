@@ -412,22 +412,12 @@ p5.Font.prototype._textWidth = function(str, fontSize) {
 
 p5.Font.prototype._textAscent = function(fontSize) {
 
-  var tables = this.font.tables; // Header tables from opentype font
-  // Check for OS/2 typographic ascender metric which better fits processing's
-  // ascender metric
-  var ascender = (tables && tables.os2 && tables.os2.sTypoAscender) ||
-    this.font.ascender;
-  return ascender * this._scale(fontSize);
+  return this.font.ascender * this._scale(fontSize);
 };
 
 p5.Font.prototype._textDescent = function(fontSize) {
 
-  var tables = this.font.tables; // Header tables from opentype font
-  // Check for OS/2 typographic descender metric which better fits processing's
-  // descender metric
-  var descender = (tables && tables.os2 && tables.os2.sTypoDescender) ||
-    this.font.descender;
-  return -descender * this._scale(fontSize);
+  return -this.font.descender * this._scale(fontSize);
 };
 
 p5.Font.prototype._scale = function(fontSize) {
