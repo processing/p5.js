@@ -244,6 +244,8 @@ p5.RendererGL.prototype._setMatrixUniforms = function(shaderKey) {
     shaderProgram.uMMatrixUniform,
     false, this.uMMatrix.mat4);
 
+  this.uNMatrix.inverseTranspose(this.uMMatrix);
+
   gl.uniformMatrix3fv(
     shaderProgram.uNMatrixUniform,
     false, this.uNMatrix.mat3);
@@ -446,7 +448,6 @@ p5.RendererGL.prototype.scale = function(x,y,z) {
  */
 p5.RendererGL.prototype.rotate = function(rad, axis){
   this.uMMatrix.rotate(rad, axis);
-  this.uNMatrix.inverseTranspose(this.uMMatrix);
   return this;
 };
 
