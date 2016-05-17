@@ -262,6 +262,55 @@ var textAlignSketch = function(p) {
   };
 };
 
+var textAllAlignmentsSketch = function(p) {
+  var systemFonts = ["Arial", "Times New Roman", "Consolas"];
+  var font1, font2, font3;
+  var hAligns = [ p.LEFT, p.CENTER, p.RIGHT ];
+  var vAligns = [ p.TOP, p.CENTER, p.BASELINE, p.BOTTOM ];
+  var padding = 10;
+  var drawFontAlignments = function(font, textString, xOff, yOff) {
+    p.textFont(font);
+    p.textSize(20);
+    for (var h = 0; h < hAligns.length; h += 1) {
+     for (var v = 0; v < vAligns.length; v += 1) {
+       // Distribute words across the screen
+       var x = xOff + p.map(h, 0, hAligns.length - 1, padding, 400 - padding);
+       var y = yOff + p.map(v, 0, vAligns.length - 1, padding, 200 - padding);
+        
+       p.stroke(200);
+       p.line(0, y, p.width, y);
+       p.line(x, 0, x, p.height);
+       
+       // Align the text & calculate the bounds
+       p.textAlign(hAligns[h], vAligns[v]);
+      
+       // Draw the text
+       p.fill(255, 0, 0);
+       p.noStroke();
+       p.text(textString, x, y);
+
+       // Draw the (x, y) coordinates
+       p.stroke(0);
+       p.fill("#FF8132");
+       p.ellipse(x, y, 3, 3);
+     }
+   }
+  };
+  p.setup = function() {
+    var renderer = p.createCanvas(400, 600);
+    renderer.elt.style.position = "absolute";
+    renderer.elt.style.top = "0";
+    renderer.elt.style.left = "0";
+    drawFontAlignments(systemFonts[0], "Arial", 0, 0);
+    drawFontAlignments(systemFonts[1], "Times", 0, 200);
+    drawFontAlignments(systemFonts[2], "Consolas", 0, 400); 
+    // These proprietary fonts aren't included in the repo!
+    // p.loadFont("../arial.ttf", function(font) {drawFontAlignments(font, "Arial", 0, 0)});
+    // p.loadFont("../times.ttf", function(font) {drawFontAlignments(font, "Times", 0, 200)});
+    // p.loadFont("../consola.ttf", function(font) {drawFontAlignments(font, "Consolas", 0, 400)});
+  };
+};
+
 var textLeadingSketch = function(p) {
   p.setup = function() {
     p.createCanvas(240, 160);
@@ -506,6 +555,7 @@ new p5(textLineSketch, 'textLineSketch');
 new p5(textWrapSketch, 'textWrapSketch');
 new p5(textFontSketch, 'textFontSketch');
 new p5(textAlignSketch, 'textAlignSketch');
+new p5(textAllAlignmentsSketch, 'textAllAlignmentsSketch');
 new p5(textLeadingSketch, 'textLeadingSketch');
 new p5(textSizeSketch, 'textSizeSketch');
 new p5(textStyleSketch, 'textStyleSketch');
