@@ -509,6 +509,15 @@ p5.RendererGL.prototype.resetMatrix = function() {
   return this;
 };
 
+p5.RendererGL.prototype.cameraTranslate = function(x, y, z) {
+  //@TODO: figure out how to fit the resolution
+  x = x / RESOLUTION;
+  y = -y / RESOLUTION;
+  z = z / RESOLUTION;
+  this.uVMatrix.translate([x,y,z]);
+  return this;
+};
+
 // Text/Typography
 // @TODO:
 p5.RendererGL.prototype._applyTextProperties = function() {
