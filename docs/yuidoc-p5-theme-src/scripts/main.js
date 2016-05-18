@@ -8,16 +8,12 @@ define('App', function() {
 
 /**
  * Load json API data and start the router.
- * @param {module} _
- * @param {module} Backbone
  * @param {module} App
  * @param {module} router
  */
 require([
-  'underscore',
-  'backbone',
   'App',
-  './documented-method'], function(_, Backbone, App, DocumentedMethod) {
+  './documented-method'], function(App, DocumentedMethod) {
 
   // Set collections
   App.collections = ['allItems', 'classes', 'events', 'methods', 'properties', 'p5.sound', 'p5.dom'];
