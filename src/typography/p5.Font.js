@@ -427,10 +427,9 @@ p5.Font.prototype._scale = function(fontSize) {
 };
 
 p5.Font.prototype._handleAlignment = function(p, ctx, line, x, y, textWidth) {
-  var fontSize = p._renderer._textSize;
-  var textAscent = this._textAscent(fontSize),
-    textDescent = this._textDescent(fontSize),
-    textHeight = textAscent + textDescent;
+  var fontSize = p._renderer._textSize,
+    textAscent = this._textAscent(fontSize),
+    textDescent = this._textDescent(fontSize);
 
   textWidth = textWidth !== undefined ? textWidth :
     this._textWidth(line, fontSize);
@@ -442,9 +441,9 @@ p5.Font.prototype._handleAlignment = function(p, ctx, line, x, y, textWidth) {
   }
 
   if (ctx.textBaseline === constants.TOP) {
-    y += textHeight;
+    y += textAscent;
   } else if (ctx.textBaseline === constants._CTX_MIDDLE) {
-    y += textHeight / 2 - textDescent;
+    y += textAscent / 2;
   } else if (ctx.textBaseline === constants.BOTTOM) {
     y -= textDescent;
   }
