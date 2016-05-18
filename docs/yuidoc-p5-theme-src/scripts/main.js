@@ -18,12 +18,12 @@ require([
   'backbone',
   'App',
   './documented-method'], function(_, Backbone, App, DocumentedMethod) {
-  
+
   // Set collections
   App.collections = ['allItems', 'classes', 'events', 'methods', 'properties', 'p5.sound', 'p5.dom'];
 
   // Get json API data
-  $.getJSON("data.json", function(data) {
+  $.getJSON('data.min.json', function(data) {
     App.data = data;
     App.classes = [];
     App.methods = [];
@@ -74,7 +74,7 @@ require([
         } else if (el.itemtype === "event") {
           App.events.push(el);
           App.allItems.push(el);
-        } 
+        }
 
         // libraries
         if (el.module === "p5.sound") {
@@ -88,7 +88,7 @@ require([
         }
       }
     });
-    
+
     _.each(App.classes, function(c, idx) {
       c.items = _.filter(App.allItems, function(it){ return it.class === c.name; });
     });

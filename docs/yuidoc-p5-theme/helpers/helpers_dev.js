@@ -6,9 +6,9 @@ var configHelpers = {};
 // reference them accordingly.
 var config = {
   p5SiteRoot: 'http://p5js.org',
-  p5Lib: '/lib/p5.js',
-  p5SoundLib: '/lib/addons/p5.sound.js',
-  p5DomLib: '/lib/addons/p5.dom.js'
+  p5Lib: '/lib/p5.min.js',
+  p5SoundLib: '/lib/addons/p5.sound.min.js',
+  p5DomLib: '/lib/addons/p5.dom.min.js'
 };
 
 Object.keys(config).forEach(function(key) {
