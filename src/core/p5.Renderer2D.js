@@ -1195,7 +1195,7 @@ p5.Renderer2D.prototype.textWidth = function(s) {
 
   if (this._isOpenType()) {
 
-    return this._textFont._textWidth(s);
+    return this._textFont._textWidth(s, this._textSize);
   }
 
   return this.drawingContext.measureText(s).width;

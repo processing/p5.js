@@ -242,7 +242,8 @@ p5.Font.prototype._getGlyphs = function(str) {
  */
 p5.Font.prototype._getPath = function(line, x, y, options) {
 
-  var p = this.parent,
+  var p = (options && options.renderer && options.renderer._pInst) ||
+    this.parent,
     ctx = p._renderer.drawingContext,
     pos = this._handleAlignment(p, ctx, line, x, y);
 
@@ -363,7 +364,7 @@ p5.Font.prototype._renderPath = function(line, x, y, options) {
   } else {
 
     //pos = handleAlignment(p, ctx, line, x, y);
-    pdata = this._getPath(line, x, y, pg._textSize, options).commands;
+    pdata = this._getPath(line, x, y, options).commands;
   }
 
   ctx.beginPath();
