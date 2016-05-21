@@ -216,7 +216,9 @@ p5.prototype.sphere = function(){
     var sphereGeom = new p5.Geometry(detailX, detailY, _sphere);
     sphereGeom
       .computeFaces()
-      .computeNormals();
+      .computeNormals()
+      .averageNormals()
+      .averagePoleNormals();
     this._renderer.createBuffers(gId, sphereGeom);
   }
   this._renderer.drawBuffers(gId);
