@@ -558,7 +558,8 @@ p5.prototype.torus = function(){
     var torusGeom = new p5.Geometry(detailX, detailY, _torus);
     torusGeom
       .computeFaces()
-      .computeNormals();
+      .computeNormals()
+      .averageNormals();
     this._renderer.createBuffers(gId, torusGeom);
   }
 
