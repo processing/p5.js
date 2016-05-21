@@ -242,7 +242,8 @@ p5.Font.prototype._getGlyphs = function(str) {
  */
 p5.Font.prototype._getPath = function(line, x, y, options) {
 
-  var p = this.parent,
+  var p = (options && options.renderer && options.renderer._pInst) ||
+    this.parent,
     ctx = p._renderer.drawingContext,
     pos = this._handleAlignment(p, ctx, line, x, y);
 
@@ -363,7 +364,7 @@ p5.Font.prototype._renderPath = function(line, x, y, options) {
   } else {
 
     //pos = handleAlignment(p, ctx, line, x, y);
-    pdata = this._getPath(line, x, y, pg._textSize, options).commands;
+    pdata = this._getPath(line, x, y, options).commands;
   }
 
   ctx.beginPath();
@@ -427,10 +428,9 @@ p5.Font.prototype._scale = function(fontSize) {
 };
 
 p5.Font.prototype._handleAlignment = function(p, ctx, line, x, y, textWidth) {
-  var fontSize = p._renderer._textSize;
-  var textAscent = this._textAscent(fontSize),
-    textDescent = this._textDescent(fontSize),
-    textHeight = textAscent + textDescent;
+  var fontSize = p._renderer._textSize,
+    textAscent = this._textAscent(fontSize),
+    textDescent = this._textDescent(fontSize);
 
   textWidth = textWidth !== undefined ? textWidth :
     this._textWidth(line, fontSize);
@@ -442,9 +442,9 @@ p5.Font.prototype._handleAlignment = function(p, ctx, line, x, y, textWidth) {
   }
 
   if (ctx.textBaseline === constants.TOP) {
-    y += textHeight;
+    y += textAscent;
   } else if (ctx.textBaseline === constants._CTX_MIDDLE) {
-    y += textHeight / 2 - textDescent;
+    y += textAscent / 2;
   } else if (ctx.textBaseline === constants.BOTTOM) {
     y -= textDescent;
   }

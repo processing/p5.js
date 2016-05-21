@@ -273,7 +273,6 @@ var textAlignSketch = function(p) {
   };
 };
 
-
 var textLeadingSketch = function(p) {
   var font;
   p.preload = function() {
@@ -386,6 +385,106 @@ var textLeadingSketch4 = function(p) {
   };
 };
 
+var textAlignmentSketch = function(p) {
+  var font1, font2, font3, font4;
+  var hAligns = [ p.LEFT, p.CENTER, p.RIGHT ];
+  var vAligns = [ p.TOP, p.CENTER, p.BASELINE, p.BOTTOM ];
+  var textString = "Hello p5";
+  var padding = 10;
+  p.preload = function() {
+    font1 = p.loadFont("../SourceSansPro-Regular.otf");
+    font2 = p.loadFont("../FiraSans-Book.otf");
+    font3 = p.loadFont("../Inconsolata-Bold.ttf");
+    font4 = p.loadFont("../PlayfairDisplay-Regular.ttf");
+  };
+  var drawFontAlignments = function(font, xOff, yOff) {
+    p.textFont(font);
+    p.textSize(20);
+    for (var h = 0; h < hAligns.length; h += 1) {
+     for (var v = 0; v < vAligns.length; v += 1) {
+       // Distribute words across the screen
+       var x = xOff + p.map(h, 0, hAligns.length - 1, padding, 400 - padding);
+       var y = yOff + p.map(v, 0, vAligns.length - 1, padding, 200 - padding);
+        
+       p.stroke(200);
+       p.line(0, y, p.width, y);
+       p.line(x, 0, x, p.height);
+       
+       // Align the text & calculate the bounds
+       p.textAlign(hAligns[h], vAligns[v]);
+     
+       // Draw the text
+       p.fill(255, 0, 0);
+       p.noStroke();
+       p.text(textString, x, y);
+
+       // Draw the (x, y) coordinates
+       p.stroke(0);
+       p.fill("#FF8132");
+       p.ellipse(x, y, 3, 3);
+     }
+   }
+  };
+  p.setup = function() {
+    var renderer = p.createCanvas(400, 800);
+    renderer.elt.style.position = "absolute";
+    renderer.elt.style.top = "0";
+    renderer.elt.style.left = "0";
+    drawFontAlignments(font1, 0, 0);
+    drawFontAlignments(font2, 0, 200);
+    drawFontAlignments(font3, 0, 400);
+    drawFontAlignments(font4, 0, 600);    
+  };
+};
+
+var textVertAlignmentSketch = function(p) {
+  var fontNames = [ "acmesa.ttf", "FiraSans-Book.otf", "Lato-Black.ttf", 
+    "Inconsolata-Bold.ttf", "Merriweather-LightItalic.ttf", 
+    "Montserrat-Regular.ttf", "OpenSans-Regular.ttf", 
+    "SourceSansPro-Regular.otf" ];
+  var fonts = [];
+  var vAligns = [ p.TOP, p.CENTER, p.BASELINE, p.BOTTOM ];
+  p.preload = function() {
+    for (var i = 0; i < fontNames.length; i += 1) {
+      fonts.push(p.loadFont("../" + fontNames[i]));
+    }
+  };
+  var drawFontAlignments = function(font, xOff, yOff) {
+    p.textFont(font);
+    p.textSize(20);
+    for (var v = 0; v < vAligns.length; v += 1) {
+      // Distribute words across the screen
+      var x = xOff;
+      var y = yOff + p.map(v, 0, vAligns.length - 1, 10, p.height - 10);
+
+      p.stroke(200);
+      p.line(0, y, p.width, y);
+
+      // Align the text & calculate the bounds
+      p.textAlign(p.CENTER, vAligns[v]);
+
+      // Draw the text
+      p.fill(255, 0, 0);
+      p.noStroke();
+      p.text("Hello p5", x, y);
+
+      // Draw the (x, y) coordinates
+      p.stroke(0);
+      p.fill("#FF8132");
+      p.ellipse(x, y, 3, 3);
+    }
+  };
+  p.setup = function() {
+    var renderer = p.createCanvas(1000, 200);
+    renderer.elt.style.position = "absolute";
+    renderer.elt.style.top = "0";
+    renderer.elt.style.left = "0";
+    for (var i = 0; i < fonts.length; i += 1) {   
+      var x = p.map(i, 0, fonts.length - 1, 100, p.width - 100);  
+      drawFontAlignments(fonts[i], x, 0);
+    } 
+  };
+};
 
 var textSizeSketch = function(p) {
   var font;
@@ -697,6 +796,8 @@ new p5(textLeadingSketch, 'textLeadingSketch');
 new p5(textLeadingSketch2, 'textLeadingSketch2');
 new p5(textLeadingSketch3, 'textLeadingSketch3');
 new p5(textLeadingSketch4, 'textLeadingSketch4');
+new p5(textAlignmentSketch, 'textAlignmentSketch');
+new p5(textVertAlignmentSketch, 'textVertAlignmentSketch');
 new p5(textSizeSketch, 'textSizeSketch');
 new p5(textBoundsSketch, 'textBoundsSketch');
 new p5(textStyleSketch, 'textStyleSketch');
