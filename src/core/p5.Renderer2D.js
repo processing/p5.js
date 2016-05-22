@@ -1143,9 +1143,9 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
     // need to adjust anything for vertical align top or baseline
     var offset = 0,
       vAlign = p.textAlign().vertical;
-    if (vAlign === 'center') {
+    if (vAlign === constants.CENTER) {
       offset = ((cars.length - 1) * p.textLeading()) / 2;
-    } else if (vAlign === 'bottom') {
+    } else if (vAlign === constants.BOTTOM) {
       offset = (cars.length - 1) * p.textLeading();
     }
 
