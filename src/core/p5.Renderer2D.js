@@ -948,11 +948,11 @@ p5.Renderer2D.prototype.strokeWeight = function(w) {
   return this;
 };
 
-p5.Renderer2D.prototype._getFill = function(){
+p5.Renderer2D.prototype.getFill = function(){
   return this.drawingContext.fillStyle;
 };
 
-p5.Renderer2D.prototype._getStroke = function(){
+p5.Renderer2D.prototype.getStroke = function(){
   return this.drawingContext.strokeStyle;
 };
 

@@ -33,35 +33,14 @@ p5.RendererGL.prototype.beginShape = function(mode){
   this.immediateMode.shapeMode = (mode !== undefined ) ?
     mode : constants.LINE_STRIP;
   //if we haven't yet initialized our
-  //immediateMode vertices & buffers, create them now!
-  if(this.immediateMode.vertexPositions === undefined){
-    this.immediateMode.vertexPositions = [];
-    this.immediateMode.vertexColors = [];
+  //immediateMode buffers, create them now!
+  if(this.immediateMode.vertexBuffer === undefined){
     this.immediateMode.vertexBuffer = this.GL.createBuffer();
-    this.immediateMode.colorBuffer = this.GL.createBuffer();
-  } else {
-    this.immediateMode.vertexPositions.length = 0;
-    this.immediateMode.vertexColors.length = 0;
+    this.immediateMode.strokeColorBuffer = this.GL.createBuffer();
+    this.immediateMode.fillColorBuffer = this.GL.createBuffer();
+
   }
   this.isImmediateDrawing = true;
-  return this;
-};
-/**
- * adds a vertex to be drawn in a custom Shape.
- * @param  {Number} x x-coordinate of vertex
- * @param  {Number} y y-coordinate of vertex
- * @param  {Number} z z-coordinate of vertex
- * @return {p5.RendererGL}   [description]
- * @TODO implement handling of p5.Vector args
- */
-p5.RendererGL.prototype.vertex = function(x, y, z){
-  this.immediateMode.vertexPositions.push(x, y, z);
-  var vertexColor = this.curFillColor || [0.5, 0.5, 0.5, 1.0];
-  this.immediateMode.vertexColors.push(
-    vertexColor[0],
-    vertexColor[1],
-    vertexColor[2],
-    vertexColor[3]);
   return this;
 };
 
@@ -69,13 +48,44 @@ p5.RendererGL.prototype.vertex = function(x, y, z){
  * End shape drawing and render vertices to screen.
  * @return {p5.RendererGL} [description]
  */
-p5.RendererGL.prototype.endShape =
-function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
+p5.RendererGL.prototype.endShape = function
+  (mode,
+  vertices,
+  isCurve,
+  isBezier,
+  isQuadratic,
+  sContour,
+  shapeKind){
   var gl = this.GL;
+  var vertPositions = [];
+  var vertStrokeCols = [];
+  var vertFillCols = [];
+  for (var i = 0; i < vertices.length; i++) {
+    //splice x,y,z components into vertPositions arr
+    vertPositions.push(
+      vertices[i][0],
+      vertices[i][1],
+      vertices[i][2]);
+    vertStrokeCols.push(
+      vertices[i][vertices.length-1][0],
+      vertices[i][vertices.length-1][1],
+      vertices[i][vertices.length-1][2],
+      vertices[i][vertices.length-1][3]
+      );
+    vertFillCols.push(
+      vertices[i][vertices.length-2][0],
+      vertices[i][vertices.length-2][1],
+      vertices[i][vertices.length-2][2],
+      vertices[i][vertices.length-2][3]
+      );
+  }
   this._bindImmediateBuffers(
-    this.immediateMode.vertexPositions,
-    this.immediateMode.vertexColors);
+    vertPositions,
+    vertStrokeCols,
+    vertFillCols);
   if(mode){
+    //@todo this is error prone because calls to stroke
+    //will result in this.drawMode === 'stroke'.
     if(this.drawMode === 'fill'){
       switch(this.immediateMode.shapeMode){
         case constants.LINE_STRIP:
@@ -109,12 +119,8 @@ function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
   else {
     gl.enable(gl.BLEND);
     gl.drawArrays(this.immediateMode.shapeMode, 0,
-      this.immediateMode.vertexPositions.length / 3);
+      vertPositions.length / 3);
   }
-  //clear out our vertexPositions & colors arrays
-  //after rendering
-  this.immediateMode.vertexPositions.length = 0;
-  this.immediateMode.vertexColors.length = 0;
   this.isImmediateDrawing = false;
   return this;
 };
@@ -125,7 +131,8 @@ function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
  *                          vertex positions
  * @return {p5.RendererGL}
  */
-p5.RendererGL.prototype._bindImmediateBuffers = function(vertices, colors){
+p5.RendererGL.prototype._bindImmediateBuffers =
+function(vertices, strokeColors, fillColors){
   this._setDefaultCamera();
   var gl = this.GL;
   var shaderKey = this._getCurShaderId();
@@ -140,13 +147,22 @@ p5.RendererGL.prototype._bindImmediateBuffers = function(vertices, colors){
   gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute,
     3, gl.FLOAT, false, 0, 0);
 
-  shaderProgram.vertexColorAttribute =
-    gl.getAttribLocation(shaderProgram, 'aVertexColor');
-  gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.colorBuffer);
+  shaderProgram.vertexStrokeColorAttribute =
+    gl.getAttribLocation(shaderProgram, 'aVertexStrokeColor');
+  gl.enableVertexAttribArray(shaderProgram.vertexStrokeColorAttribute);
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.strokeColorBuffer);
   gl.bufferData(gl.ARRAY_BUFFER,
-    new Float32Array(colors),gl.DYNAMIC_DRAW);
-  gl.vertexAttribPointer(shaderProgram.vertexColorAttribute,
+    new Float32Array(strokeColors),gl.DYNAMIC_DRAW);
+  gl.vertexAttribPointer(shaderProgram.vertexStrokeColorAttribute,
+    4, gl.FLOAT, false, 0, 0);
+
+  shaderProgram.vertexFillColorAttribute =
+    gl.getAttribLocation(shaderProgram, 'aVertexFillColor');
+  gl.enableVertexAttribArray(shaderProgram.vertexFillColorAttribute);
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.fillColorBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER,
+    new Float32Array(fillColors),gl.DYNAMIC_DRAW);
+  gl.vertexAttribPointer(shaderProgram.vertexFillColorAttribute,
     4, gl.FLOAT, false, 0, 0);
   //matrix
   this._setMatrixUniforms(shaderKey);

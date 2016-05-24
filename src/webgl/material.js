@@ -37,6 +37,8 @@ p5.prototype.normalMaterial = function(){
 /**
  * Texture for geometry
  * @method texture
+ * @param {p5.Image | p5.MediaElement | p5.Graphics} tex 2-dimensional graphics
+ *                    to render as texture
  * @return {p5}                the p5 object
  * @example
  * <div>
@@ -58,79 +60,127 @@ p5.prototype.normalMaterial = function(){
  * }
  * </code>
  * </div>
+ *
+ * <div>
+ * <code>
+ * var pg;
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ *   pg = createGraphics(256,256);
+ * }
+ *
+ * function draw(){
+ *   background(0);
+ *   pg.background(255);
+ *   pg.text('hello world!');
+ *   //pass image as texture
+ *   texture(pg);
+ *   plane(200);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * var vid;
+ * function preload(){
+ *   vid = createVideo([myVideo.mp4]);
+ * }
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw(){
+ *   background(0);
+ *   //pass video frame as texture
+ *   texture(vid);
+ *   plane(200);
+ * }
+ * </code>
+ * </div>
  */
-p5.prototype.texture = function(image){
+p5.prototype.texture = function(){
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   var gl = this._renderer.GL;
   var shaderProgram = this._renderer._getShader('lightVert',
     'lightTextureFrag');
   gl.useProgram(shaderProgram);
-  if (image instanceof p5.Image) {
-    //check if image is already used as texture
-    if(!image.isTexture){
-      //createTexture and set isTexture to true
-      var tex = gl.createTexture();
-      image.createTexture(tex);
-      gl.bindTexture(gl.TEXTURE_2D, tex);
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-      image._setProperty('isTexture', true);
+  var textureData;
+  //if argument is not already a texture
+  //create a new one
+  if(!args[0].isTexture){
+    if (args[0] instanceof p5.Image) {
+      textureData = args[0].canvas;
     }
-    //otherwise we're good to bind texture without creating
-    //a new one on the gl
-    else {
-      //TODO
+    //if param is a video
+    else if (args[0] instanceof p5.MediaElement){
+      if(!args[0].loadedmetadata) {return;}
+      textureData = args[0].elt;
     }
-    image.loadPixels();
-    var data = new Uint8Array(image.pixels);
-    gl.texImage2D(gl.TEXTURE_2D, 0,
-      gl.RGBA, image.width, image.height,
-      0, gl.RGBA, gl.UNSIGNED_BYTE, data);
-  }
-  //if param is a video
-  else if (image instanceof p5.MediaElement){
-    if(!image.loadedmetadata) {return;}
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,
-    gl.UNSIGNED_BYTE, image.elt);
+    //used with offscreen 2d graphics renderer
+    else if(args[0] instanceof p5.Graphics){
+      textureData = args[0].elt;
+    }
+    var tex = gl.createTexture();
+    args[0]._setProperty('tex', tex);
+    args[0]._setProperty('isTexture', true);
+    this._renderer._bind.call(this, tex, textureData);
   }
   else {
-    //@TODO handle following cases:
-    //- 2D canvas (p5 inst)
-  }
-  if (_isPowerOf2(image.width) && _isPowerOf2(image.height)) {
-    gl.generateMipmap(gl.TEXTURE_2D);
-  } else {
-    //@TODO this is problematic
-    //image.width = _nextHighestPOT(image.width);
-    //image.height = _nextHighestPOT(image.height);
-    gl.texParameteri(gl.TEXTURE_2D,
-    gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D,
-    gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    gl.texParameteri(gl.TEXTURE_2D,
-    gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D,
-    gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    if(args[0] instanceof p5.Graphics ||
+      args[0] instanceof p5.MediaElement){
+      textureData = args[0].elt;
+    }
+    else if(args[0] instanceof p5.Image){
+      textureData = args[0].canvas;
+    }
+    this._renderer._bind.call(this, args[0].tex, textureData);
   }
   //this is where we'd activate multi textures
   //eg. gl.activeTexture(gl.TEXTURE0 + (unit || 0));
   //but for now we just have a single texture.
   //@TODO need to extend this functionality
-  //gl.activeTexture(gl.TEXTURE0 + 0);
-  //gl.bindTexture(gl.TEXTURE_2D, tex);
-  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'uSampler'), 0);
+  gl.activeTexture(gl.TEXTURE0);
+  gl.bindTexture(gl.TEXTURE_2D, args[0].tex);
   gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), true);
+  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'uSampler'), 0);
   return this;
 };
 
 /**
- * Helper functions; Checks whether val is a pot
+ * Texture Util functions
+ */
+p5.RendererGL.prototype._bind = function(tex, data){
+  var gl = this._renderer.GL;
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+  gl.texImage2D(gl.TEXTURE_2D, 0,
+    gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, data);
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+  gl.texParameteri(gl.TEXTURE_2D,
+  gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D,
+  gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D,
+  gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.texParameteri(gl.TEXTURE_2D,
+  gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.bindTexture(gl.TEXTURE_2D, null);
+};
+
+/**
+ * Checks whether val is a pot
  * more info on power of 2 here:
  * https://www.opengl.org/wiki/NPOT_Texture
  * @param  {Number}  value
  * @return {Boolean}
  */
-function _isPowerOf2 (value){
-  return (value & (value - 1)) === 0;
-}
+// function _isPowerOf2 (value){
+//   return (value & (value - 1)) === 0;
+// }
 
 /**
  * returns the next highest power of 2 value
