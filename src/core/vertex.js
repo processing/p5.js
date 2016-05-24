@@ -239,10 +239,11 @@ p5.prototype.beginShape = function(kind) {
   } else {
     shapeKind = null;
   }
-  vertices = [];
-  contourVertices = [];
   if(this._renderer.isP3D){
     this._renderer.beginShape(kind);
+  } else {
+    vertices = [];
+    contourVertices = [];
   }
   return this;
 };
@@ -323,7 +324,6 @@ p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
  * @method curveVertex
  * @param {Number} x x-coordinate of the vertex
  * @param {Number} y y-coordinate of the vertex
- * @param {Number} [z] z-coordinate of the vertex (webgl mode)
  * @return {Object} the p5 object
  * @example
  * <div>
@@ -340,13 +340,9 @@ p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
  * </code>
  * </div>
  */
-p5.prototype.curveVertex = function() {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
+p5.prototype.curveVertex = function(x,y) {
   isCurve = true;
-  this.vertex(args);
+  this.vertex(x, y);
   return this;
 };
 
@@ -436,31 +432,36 @@ p5.prototype.endContour = function() {
  * </div>
  */
 p5.prototype.endShape = function(mode) {
-  if (vertices.length === 0) { return this; }
-  if (!this._renderer._doStroke && !this._renderer._doFill) { return this; }
+  if(this._renderer.isP3D){
+    this._renderer.endShape(mode, isCurve, isBezier,
+      isQuadratic, isContour, shapeKind);
+  }else{
+    if (vertices.length === 0) { return this; }
+    if (!this._renderer._doStroke && !this._renderer._doFill) { return this; }
 
-  var closeShape = mode === constants.CLOSE;
+    var closeShape = mode === constants.CLOSE;
 
-  // if the shape is closed, the first element is also the last element
-  if (closeShape && !isContour) {
-    vertices.push(vertices[0]);
-  }
+    // if the shape is closed, the first element is also the last element
+    if (closeShape && !isContour) {
+      vertices.push(vertices[0]);
+    }
 
-  this._renderer.endShape(mode, vertices, isCurve, isBezier,
-    isQuadratic, isContour, shapeKind);
+    this._renderer.endShape(mode, vertices, isCurve, isBezier,
+      isQuadratic, isContour, shapeKind);
 
-  // Reset some settings
-  isCurve = false;
-  isBezier = false;
-  isQuadratic = false;
-  isContour = false;
-  isFirstContour = true;
+    // Reset some settings
+    isCurve = false;
+    isBezier = false;
+    isQuadratic = false;
+    isContour = false;
+    isFirstContour = true;
 
-  // If the shape is closed, the first element was added as last element.
-  // We must remove it again to prevent the list of vertices from growing
-  // over successive calls to endShape(CLOSE)
-  if (closeShape) {
-    vertices.pop();
+    // If the shape is closed, the first element was added as last element.
+    // We must remove it again to prevent the list of vertices from growing
+    // over successive calls to endShape(CLOSE)
+    if (closeShape) {
+      vertices.pop();
+    }
   }
   return this;
 };
@@ -525,6 +526,7 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
     for (var i = 0; i < arguments.length; i++) {
       vert[i] = arguments[i];
     }
+    vert.isVert = false;
     if (isContour) {
       contourVertices.push(vert);
     } else {
@@ -558,24 +560,51 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  * </code>
  * </div>
  */
-p5.prototype.vertex = function() {
-  var vert = [];
+p5.prototype.vertex = function(x, y, moveTo) {
   var args = new Array(arguments.length);
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  vert[0] = args[0][0] || args[0];//x
-  vert[1] = args[0][1] || args[1];//y
-  vert[2] = args[0][2] || args[2] || 0;//z
-  vert[3] = 0;
-  vert[4] = 0;
-  vert[5] = 0;
-  vert[6] = this._renderer.getFill();
-  vert[7] = this._renderer.getStroke();
-  if (isContour) {
-    contourVertices.push(vert);
-  } else {
-    vertices.push(vert);
+  if(this._renderer.isP3D){
+    this._validateParameters(
+      'vertex',
+      args,
+      [
+        ['Number', 'Number', 'Number']
+      ]
+    );
+    this._renderer.vertex
+    (arguments[0], arguments[1], arguments[2]);
+  }else{
+    this._validateParameters(
+      'vertex',
+      args,
+      [
+        ['Number', 'Number'],
+        ['Number', 'Number', 'Number']
+      ]
+    );
+    var vert = [];
+    vert.isVert = true;
+    vert[0] = x;
+    vert[1] = y;
+    vert[2] = 0;
+    vert[3] = 0;
+    vert[4] = 0;
+    vert[5] = this._renderer._getFill();
+    vert[6] = this._renderer._getStroke();
+
+    if (moveTo) {
+      vert.moveTo = moveTo;
+    }
+    if (isContour) {
+      if (contourVertices.length === 0) {
+        vert.moveTo = true;
+      }
+      contourVertices.push(vert);
+    } else {
+      vertices.push(vert);
+    }
   }
   return this;
 };
