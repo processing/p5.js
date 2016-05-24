@@ -37,6 +37,8 @@ p5.prototype.normalMaterial = function(){
 /**
  * Texture for geometry
  * @method texture
+ * @param {p5.Image | p5.MediaElement | p5.Graphics} tex 2-dimensional graphics
+ *                    to render as texture
  * @return {p5}                the p5 object
  * @example
  * <div>
@@ -59,48 +61,36 @@ p5.prototype.normalMaterial = function(){
  * </code>
  * </div>
  */
-p5.prototype.texture = function(image){
+p5.prototype.texture = function(){
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   var gl = this._renderer.GL;
   var shaderProgram = this._renderer._getShader('lightVert',
     'lightTextureFrag');
   gl.useProgram(shaderProgram);
-  if (image instanceof p5.Image) {
-    //check if image is already used as texture
-    if(!image.isTexture){
-      //createTexture and set isTexture to true
-      var tex = gl.createTexture();
-      image.createTexture(tex);
-      gl.bindTexture(gl.TEXTURE_2D, tex);
-      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
-      image._setProperty('isTexture', true);
+  //check if image is already used as texture
+  if(!args[0].isTexture){
+    var textureData;
+    if (args[0] instanceof p5.Image) {
+      args[0].loadPixels();
+      textureData = new Uint8Array(args[0].pixels);
     }
-    //otherwise we're good to bind texture without creating
-    //a new one on the gl
-    else {
-      //TODO
+    //if param is a video
+    else if (args[0] instanceof p5.MediaElement){
+      if(!args[0].loadedmetadata) {return;}
+      textureData = args[0].elt;
     }
-    image.loadPixels();
-    var data = new Uint8Array(image.pixels);
-    gl.texImage2D(gl.TEXTURE_2D, 0,
-      gl.RGBA, image.width, image.height,
-      0, gl.RGBA, gl.UNSIGNED_BYTE, data);
-  }
-  //if param is a video
-  else if (image instanceof p5.MediaElement){
-    if(!image.loadedmetadata) {return;}
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,
-    gl.UNSIGNED_BYTE, image.elt);
-  }
-  else {
-    //@TODO handle following cases:
-    //- 2D canvas (p5 inst)
-  }
-  if (_isPowerOf2(image.width) && _isPowerOf2(image.height)) {
-    gl.generateMipmap(gl.TEXTURE_2D);
-  } else {
-    //@TODO this is problematic
-    //image.width = _nextHighestPOT(image.width);
-    //image.height = _nextHighestPOT(image.height);
+    else if(args[0] instanceof p5.Graphics){
+      //@TODO handle following cases:
+      //- textured text fonts
+    }
+    var tex = gl.createTexture();
+    args[0]._setProperty('tex', tex);
+    args[0]._setProperty('isTexture', true);
+    gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, 1);
     gl.texParameteri(gl.TEXTURE_2D,
     gl.TEXTURE_MAG_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D,
@@ -109,15 +99,20 @@ p5.prototype.texture = function(image){
     gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D,
     gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+    gl.texImage2D(gl.TEXTURE_2D, 0,
+      gl.RGBA, args[0].width, args[0].height,
+      0, gl.RGBA, gl.UNSIGNED_BYTE, textureData);
   }
+
   //this is where we'd activate multi textures
   //eg. gl.activeTexture(gl.TEXTURE0 + (unit || 0));
   //but for now we just have a single texture.
   //@TODO need to extend this functionality
-  //gl.activeTexture(gl.TEXTURE0 + 0);
-  //gl.bindTexture(gl.TEXTURE_2D, tex);
-  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'uSampler'), 0);
+  gl.activeTexture(gl.TEXTURE0);
+  gl.bindTexture(gl.TEXTURE_2D, args[0].tex);
   gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), true);
+  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'uSampler'), 0);
   return this;
 };
 
@@ -128,9 +123,9 @@ p5.prototype.texture = function(image){
  * @param  {Number}  value
  * @return {Boolean}
  */
-function _isPowerOf2 (value){
-  return (value & (value - 1)) === 0;
-}
+// function _isPowerOf2 (value){
+//   return (value & (value - 1)) === 0;
+// }
 
 /**
  * returns the next highest power of 2 value
