@@ -60,6 +60,44 @@ p5.prototype.normalMaterial = function(){
  * }
  * </code>
  * </div>
+ *
+ * <div>
+ * <code>
+ * var pg;
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ *   pg = createGraphics(256,256);
+ * }
+ *
+ * function draw(){
+ *   background(0);
+ *   pg.background(255);
+ *   pg.text('hello world!');
+ *   //pass image as texture
+ *   texture(pg);
+ *   plane(200);
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * var vid;
+ * function preload(){
+ *   vid = createVideo([myVideo.mp4]);
+ * }
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw(){
+ *   background(0);
+ *   //pass video frame as texture
+ *   texture(vid);
+ *   plane(200);
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.texture = function(){
   var args = new Array(arguments.length);
@@ -70,12 +108,11 @@ p5.prototype.texture = function(){
   var shaderProgram = this._renderer._getShader('lightVert',
     'lightTextureFrag');
   gl.useProgram(shaderProgram);
-  //check if image is already used as texture
   var textureData;
+  //if argument is not already a texture
+  //create a new one
   if(!args[0].isTexture){
     if (args[0] instanceof p5.Image) {
-      // args[0].loadPixels();
-      // textureData = new Uint8Array(args[0].pixels);
       textureData = args[0].canvas;
     }
     //if param is a video
