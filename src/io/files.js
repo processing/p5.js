@@ -1126,7 +1126,7 @@ p5.prototype.save = function (object, _filename, _options) {
  *    json.name = 'Lion';
  *
  *  // To save, un-comment the line below, then click 'run'
- *  // saveJSONObject(json, 'lion.json');
+ *  // saveJSON(json, 'lion.json');
  *  }
  *
  *  // Saves the following to a file called "lion.json":
