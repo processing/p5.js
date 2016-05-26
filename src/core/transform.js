@@ -197,9 +197,8 @@ p5.prototype.rotateZ = function(rad) {
  * and then scale(1.5) is the same as scale(3.0). If scale() is called
  * within draw(), the transformation is reset when the loop begins again.
  * <br><br>
- * Using this fuction with the z parameter requires using P3D as a
- * parameter for size(), as shown in the third example above. This function
- * can be further controlled with push() and pop().
+ * Using this function with the z parameter is only available in WEBGL mode.
+ * This function can be further controlled with push() and pop().
  *
  * @method scale
  * @param  {Number | p5.Vector | Array} s
