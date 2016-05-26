@@ -150,17 +150,17 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
 
   var _x, _y, _z;
 
-  var argus = Array.prototype.slice.call(arguments);
-  if(typeof argus[argus.length-1] === 'number'){
-    _x = argus[argus.length-3];
-    _y = argus[argus.length-2];
-    _z = argus[argus.length-1];
+  var args = Array.prototype.slice.call(arguments);
+  if(typeof args[args.length-1] === 'number'){
+    _x = args[args.length-3];
+    _y = args[args.length-2];
+    _z = args[args.length-1];
 
   }else{
     try{
-      _x = argus[argus.length-1].x;
-      _y = argus[argus.length-1].y;
-      _z = argus[argus.length-1].z;
+      _x = args[args.length-1].x;
+      _y = args[args.length-1].y;
+      _z = args[args.length-1].z;
     }
     catch(error){
       throw error;
@@ -278,17 +278,17 @@ p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
 
   var _x, _y, _z;
 
-  var argus = Array.prototype.slice.call(arguments);
-  if(typeof argus[argus.length-1] === 'number'){
-    _x = argus[argus.length-3];
-    _y = argus[argus.length-2];
-    _z = argus[argus.length-1];
+  var args = Array.prototype.slice.call(arguments);
+  if(typeof args[args.length-1] === 'number'){
+    _x = args[args.length-3];
+    _y = args[args.length-2];
+    _z = args[args.length-1];
 
   }else{
     try{
-      _x = argus[argus.length-1].x;
-      _y = argus[argus.length-1].y;
-      _z = argus[argus.length-1].z;
+      _x = args[args.length-1].x;
+      _y = args[args.length-1].y;
+      _z = args[args.length-1].z;
     }
     catch(error){
       throw error;

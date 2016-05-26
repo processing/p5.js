@@ -24,10 +24,7 @@ var GLMAT_ARRAY_TYPE = (
  * @param {Array} [mat4] array literal of our 4x4 matrix
  */
 p5.Matrix = function() {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
+  var args = Array.prototype.slice.call(arguments);
   // This is default behavior when object
   // instantiated using createMatrix()
   // @todo implement createMatrix() in core/math.js
@@ -444,10 +441,7 @@ p5.Matrix.prototype.mult = function(multMatrix){
  */
 p5.Matrix.prototype.scale = function() {
   var x,y,z;
-  var args = new Array(arguments.length);
-  for(var i = 0; i < args.length; i++) {
-    args[i] = arguments[i];
-  }
+  var args = Array.prototype.slice.call(arguments);
   //if our 1st arg is a type p5.Vector
   if (args[0] instanceof p5.Vector){
     x = args[0].x;
