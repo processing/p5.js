@@ -428,10 +428,12 @@ p5.prototype.cone = function(){
  * @param  {Number} radiusx           xradius of circle
  * @param  {Number} radiusy           yradius of circle
  * @param  {Number} radiusz           zradius of circle
- * @param  {Number} [detail]          number of segments,
+ * @param  {Number} [detailX]         optional: number of segments,
  *                                    the more segments the smoother geometry
- *                                    default is 24. Avoid detail number above
- *                                    150. It may crash the browser.
+ *                                    default is 24
+ * @param  {Number} [detailY]         optional: number of segments,
+ *                                    the more segments the smoother geometry
+ *                                    default is 16
  * @return {p5}                       the p5 object
  * @example
  * <div>
