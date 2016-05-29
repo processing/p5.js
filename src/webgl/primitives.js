@@ -448,14 +448,13 @@ p5.prototype.cone = function(){
  * </code>
  * </div>
  */
-p5.prototype.ellipsoid =
-function(){
+p5.prototype.ellipsoid = function(){
   var args = new Array(arguments.length);
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  var detailX = typeof args[2] === 'number' ? args[2] : 24;
-  var detailY = typeof args[3] === 'number' ? args[3] : 24;
+  var detailX = typeof args[3] === 'number' ? args[3] : 24;
+  var detailY = typeof args[4] === 'number' ? args[4] : 24;
   var radiusX = args[0] || 50;
   var radiusY = args[1] || radiusX;
   var radiusZ = args[2] || radiusX;
