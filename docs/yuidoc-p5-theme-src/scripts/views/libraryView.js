@@ -1,10 +1,8 @@
 define([
-  'underscore',
-  'backbone',
   'App',
   // Templates
   'text!tpl/library.html'
-], function (_, Backbone, App, libraryTpl) {
+], function (App, libraryTpl) {
 
   var libraryView = Backbone.View.extend({
     el: '#list',
