@@ -93,7 +93,7 @@ p5.prototype.frameCount = 0;
  * // To demonstrate, put two windows side by side.
  * // Click on the window that the p5 sketch isn't in!
  * function draw() {
- *   background(200);   
+ *   background(200);
  *   noStroke();
  *   fill(0, 200, 0);
  *   ellipse(25, 25, 50, 50);
