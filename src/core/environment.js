@@ -302,7 +302,7 @@ p5.prototype.displayHeight = screen.height;
  * createCanvas(windowWidth, windowHeight);
  * </code></div>
  */
-p5.prototype.windowWidth = window.innerWidth;
+p5.prototype.windowWidth = document.documentElement.clientWidth;
 /**
  * System variable that stores the height of the inner window, it maps to
  * window.innerHeight.
@@ -313,7 +313,7 @@ p5.prototype.windowWidth = window.innerWidth;
  * createCanvas(windowWidth, windowHeight);
  * </code></div>
  */
-p5.prototype.windowHeight = window.innerHeight;
+p5.prototype.windowHeight = document.documentElement.clientHeight;
 
 /**
  * The windowResized() function is called once every time the browser window
