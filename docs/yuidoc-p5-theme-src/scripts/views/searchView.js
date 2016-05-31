@@ -1,13 +1,11 @@
 define([
-  'underscore',
-  'backbone',
   'App',
   // Templates
   'text!tpl/search.html',
   'text!tpl/search_suggestion.html',
   // Tools
   'typeahead'
-], function(_, Backbone, App, searchTpl, suggestionTpl) {
+], function(App, searchTpl, suggestionTpl) {
 
   var searchView = Backbone.View.extend({
     el: '#search',
@@ -32,7 +30,7 @@ define([
     render: function() {
       // Append the view to the dom
       this.$el.append(this.searchHtml);
-      
+
       // Render Typeahead
       var $searchInput = this.$el.find('input[type=text]');
       this.typeaheadRender($searchInput);
@@ -71,7 +69,7 @@ define([
           var txt = $input.val();
           var f = _.find(self.items, function(it) { return it.name == txt; });
           if (f) {
-            select(f); 
+            select(f);
           }
         } else if (e.which === 27) {
           $input.blur();
