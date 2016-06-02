@@ -1,9 +1,7 @@
 define([
-  'underscore',
-  'backbone',
   'App',
   'text!tpl/menu.html'
-], function(_, Backbone, App, menuTpl) {
+], function(App, menuTpl) {
 
   var menuView = Backbone.View.extend({
     el: '#collection-list-nav',
@@ -20,7 +18,7 @@ define([
      * @returns {object} This view.
      */
     render: function() {
-    
+
       var groups = [];
       _.each(App.modules, function (item, i) {
         if (!item.is_submodule) {

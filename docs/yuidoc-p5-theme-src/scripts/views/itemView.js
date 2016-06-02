@@ -1,6 +1,4 @@
 define([
-  'underscore',
-  'backbone',
   'App',
   // Templates
   'text!tpl/item.html',
@@ -8,7 +6,7 @@ define([
   'text!tpl/itemEnd.html',
   // Tools
   'prettify'
-], function (_, Backbone, App, itemTpl, classTpl, endTpl) {
+], function (App, itemTpl, classTpl, endTpl) {
 
   'use strict';
 
@@ -34,7 +32,7 @@ define([
       if (isMethod || isConstructor) {
         syntax += '(';
         if (cleanItem.params) {
-          for (var i=0; i<cleanItem.params.length; i++) { 
+          for (var i=0; i<cleanItem.params.length; i++) {
             var p = cleanItem.params[i];
             if (p.optional) syntax += '[';
             syntax += p.name;
