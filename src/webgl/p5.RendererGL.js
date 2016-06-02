@@ -4,7 +4,7 @@ var p5 = require('../core/core');
 var shader = require('./shader');
 require('../core/p5.Renderer');
 require('./p5.Matrix');
-var uMMatrixStack = [];
+var uMVMatrixStack = [];
 var RESOLUTION = 1000;
 
 //@TODO should implement public method
@@ -44,8 +44,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas) {
    * model view, projection, & normal
    * matrices
    */
-  this.uVMatrix = new p5.Matrix();
-  this.uMMatrix = new p5.Matrix();
+  this.uMVMatrix = new p5.Matrix();
   this.uPMatrix  = new p5.Matrix();
   this.uNMatrix = new p5.Matrix('mat3');
   //Geometry & Material hashes
@@ -97,8 +96,7 @@ p5.RendererGL.prototype._setDefaultCamera = function(){
 };
 
 p5.RendererGL.prototype._update = function() {
-  this.uMMatrix = p5.Matrix.identity();
-  this.uVMatrix = p5.Matrix.identity();
+  this.uMVMatrix = p5.Matrix.identity();
   this.translate(0, 0, -800);
   this.ambientLightCount = 0;
   this.directionalLightCount = 0;
@@ -189,12 +187,9 @@ function(shaderProgram, isImmediateMode) {
   //projection Matrix uniform
   shaderProgram.uPMatrixUniform =
     gl.getUniformLocation(shaderProgram, 'uProjectionMatrix');
-  // view Matrix uniform
-  shaderProgram.uVMatrixUniform =
-    gl.getUniformLocation(shaderProgram, 'uViewMatrix');
-  //model Matrix uniform
-  shaderProgram.uMMatrixUniform =
-    gl.getUniformLocation(shaderProgram, 'uModelMatrix');
+  //model view Matrix uniform
+  shaderProgram.uMVMatrixUniform =
+    gl.getUniformLocation(shaderProgram, 'uModelViewMatrix');
 
   //@TODO: figure out a better way instead of if statement
   if(isImmediateMode === undefined){
@@ -237,14 +232,10 @@ p5.RendererGL.prototype._setMatrixUniforms = function(shaderKey) {
     false, this.uPMatrix.mat4);
 
   gl.uniformMatrix4fv(
-    shaderProgram.uVMatrixUniform,
-    false, this.uVMatrix.mat4);
+    shaderProgram.uMVMatrixUniform,
+    false, this.uMVMatrix.mat4);
 
-  gl.uniformMatrix4fv(
-    shaderProgram.uMMatrixUniform,
-    false, this.uMMatrix.mat4);
-
-  this.uNMatrix.inverseTranspose(this.uMMatrix);
+  this.uNMatrix.inverseTranspose(this.uMVMatrix);
 
   gl.uniformMatrix3fv(
     shaderProgram.uNMatrixUniform,
@@ -424,7 +415,7 @@ p5.RendererGL.prototype.translate = function(x, y, z) {
   x = x / RESOLUTION;
   y = -y / RESOLUTION;
   z = z / RESOLUTION;
-  this.uMMatrix.translate([x,y,z]);
+  this.uMVMatrix.translate([x,y,z]);
   return this;
 };
 
@@ -436,7 +427,7 @@ p5.RendererGL.prototype.translate = function(x, y, z) {
  * @return {this}   [description]
  */
 p5.RendererGL.prototype.scale = function(x,y,z) {
-  this.uMMatrix.scale([x,y,z]);
+  this.uMVMatrix.scale([x,y,z]);
   return this;
 };
 
@@ -447,7 +438,7 @@ p5.RendererGL.prototype.scale = function(x,y,z) {
  * @return {p5.RendererGL}      [description]
  */
 p5.RendererGL.prototype.rotate = function(rad, axis){
-  this.uMMatrix.rotate(rad, axis);
+  this.uMVMatrix.rotate(rad, axis);
   return this;
 };
 
@@ -488,7 +479,7 @@ p5.RendererGL.prototype.rotateZ = function(rad) {
  * @return {[type]} [description]
  */
 p5.RendererGL.prototype.push = function() {
-  uMMatrixStack.push(this.uMMatrix.copy());
+  uMVMatrixStack.push(this.uMVMatrix.copy());
 };
 
 /**
@@ -496,25 +487,15 @@ p5.RendererGL.prototype.push = function() {
  * @return {[type]} [description]
  */
 p5.RendererGL.prototype.pop = function() {
-  if (uMMatrixStack.length === 0) {
+  if (uMVMatrixStack.length === 0) {
     throw new Error('Invalid popMatrix!');
   }
-  this.uMMatrix = uMMatrixStack.pop();
+  this.uMVMatrix = uMVMatrixStack.pop();
 };
 
 p5.RendererGL.prototype.resetMatrix = function() {
-  this.uMMatrix = p5.Matrix.identity();
-  this.uVMatrix = p5.Matrix.identity();
+  this.uMVMatrix = p5.Matrix.identity();
   this.translate(0, 0, -800);
-  return this;
-};
-
-p5.RendererGL.prototype.cameraTranslate = function(x, y, z) {
-  //@TODO: figure out how to fit the resolution
-  x = x / RESOLUTION;
-  y = -y / RESOLUTION;
-  z = z / RESOLUTION;
-  this.uVMatrix.translate([x,y,z]);
   return this;
 };
 

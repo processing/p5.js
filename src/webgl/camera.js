@@ -38,7 +38,7 @@ p5.prototype.camera = function(x, y, z){
     ['Number', 'Number', 'Number']
   );
   //what it manipulates is the model view matrix
-  this._renderer.cameraTranslate(-x, -y, -z);
+  this._renderer.translate(-x, -y, -z);
 };
 
 /**
