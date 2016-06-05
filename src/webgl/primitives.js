@@ -36,7 +36,10 @@ require('./p5.Geometry');
  * </div>
  */
 p5.prototype.plane = function(){
-  var args = Array.prototype.slice.call(arguments);
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   var width = args[0] || 50;
   var height = args[1] || width;
   var detailX = typeof args[2] === 'number' ? args[2] : 1;
@@ -100,7 +103,10 @@ p5.prototype.plane = function(){
  * </div>
  */
 p5.prototype.box = function(){
-  var args = Array.prototype.slice.call(arguments);
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   var width = args[0] || 50;
   var height = args[1] || width;
   var depth = args[2] || width;
@@ -180,7 +186,10 @@ p5.prototype.box = function(){
  * </div>
  */
 p5.prototype.sphere = function(){
-  var args = Array.prototype.slice.call(arguments);
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   //@todo validate params here
   //
   var radius = args[0] || 50;
@@ -326,7 +335,10 @@ var _truncatedCone = function(
  * </div>
  */
 p5.prototype.cylinder = function(){
-  var args = Array.prototype.slice.call(arguments);
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   var radius = args[0] || 50;
   var height = args[1] || radius;
   var detailX = typeof args[2] === 'number' ? args[2] : 24;
@@ -382,7 +394,10 @@ p5.prototype.cylinder = function(){
  * </div>
  */
 p5.prototype.cone = function(){
-  var args = Array.prototype.slice.call(arguments);
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   var baseRadius = args[0] || 50;
   var height = args[1] || baseRadius;
   var detailX = typeof args[2] === 'number' ? args[2] : 24;
@@ -440,7 +455,10 @@ p5.prototype.cone = function(){
  * </div>
  */
 p5.prototype.ellipsoid = function(){
-  var args = Array.prototype.slice.call(arguments);
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   var detailX = typeof args[3] === 'number' ? args[3] : 24;
   var detailY = typeof args[4] === 'number' ? args[4] : 24;
   var radiusX = args[0] || 50;
@@ -510,7 +528,10 @@ p5.prototype.ellipsoid = function(){
  * </div>
  */
 p5.prototype.torus = function(){
-  var args = Array.prototype.slice.call(arguments);
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   var detailX = typeof args[2] === 'number' ? args[2] : 24;
   var detailY = typeof args[3] === 'number' ? args[3] : 16;
 
@@ -671,7 +692,10 @@ p5.RendererGL.prototype.rect = function
 };
 
 p5.RendererGL.prototype.quad = function(){
-  var args = Array.prototype.slice.call(arguments);
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   //@todo validate params here
   //
   var x1 = args[0],

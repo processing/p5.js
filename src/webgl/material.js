@@ -100,7 +100,10 @@ p5.prototype.normalMaterial = function(){
  * </div>
  */
 p5.prototype.texture = function(){
-  var args = Array.prototype.slice.call(arguments);
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   var gl = this._renderer.GL;
   var shaderProgram = this._renderer._getShader('lightVert',
     'lightTextureFrag');

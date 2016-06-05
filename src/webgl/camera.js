@@ -31,7 +31,10 @@ var p5 = require('../core/core');
  * </div>
  */
 p5.prototype.camera = function(x, y, z){
-  var args = Array.prototype.slice.call(arguments);
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   this._validateParameters(
     'camera',
     args,
@@ -75,7 +78,10 @@ p5.prototype.camera = function(x, y, z){
  * </div>
  */
 p5.prototype.perspective = function(fovy,aspect,near,far) {
-  var args = Array.prototype.slice.call(arguments);
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   this._validateParameters(
     'perspective',
     args,
@@ -121,7 +127,10 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
  * </div>
  */
 p5.prototype.ortho = function(left,right,bottom,top,near,far) {
-  var args = Array.prototype.slice.call(arguments);
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   this._validateParameters(
     'ortho',
     args,

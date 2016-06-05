@@ -150,7 +150,10 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
 
   var _x, _y, _z;
 
-  var args = Array.prototype.slice.call(arguments);
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   if(typeof args[args.length-1] === 'number'){
     _x = args[args.length-3];
     _y = args[args.length-2];
@@ -278,7 +281,10 @@ p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
 
   var _x, _y, _z;
 
-  var args = Array.prototype.slice.call(arguments);
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   if(typeof args[args.length-1] === 'number'){
     _x = args[args.length-3];
     _y = args[args.length-2];
