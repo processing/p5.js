@@ -1,10 +1,8 @@
 define([
-  'underscore',
-  'backbone',
   'App',
   // Templates
   'text!tpl/list.html'
-], function (_, Backbone, App, listTpl) {
+], function (App, listTpl) {
   var striptags = function(html) {
     var div = document.createElement('div');
     div.innerHTML = html;

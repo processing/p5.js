@@ -1,15 +1,13 @@
 define([
-  'underscore',
-  'backbone',
   'App',
-  
+
   // Views
   'searchView',
   'listView',
   'itemView',
   'menuView',
   'libraryView'
-], function(_, Backbone, App, searchView, listView, itemView, menuView, libraryView) {
+], function(App, searchView, listView, itemView, menuView, libraryView) {
 
   var pageView = Backbone.View.extend({
     el: 'body',
@@ -26,13 +24,13 @@ define([
      * Render.
      */
     render: function() {
-      
+
       // Menu view
       if (!App.menuView) {
         App.menuView = new menuView();
         App.menuView.init().render();
       }
-      
+
       // Item view
       if (!App.itemView) {
         App.itemView = new itemView();
@@ -40,7 +38,7 @@ define([
         // Add the item view to the views array
         App.contentViews.push(App.itemView);
       }
-      
+
       // List view
       if (!App.listView) {
         App.listView = new listView();
@@ -48,7 +46,7 @@ define([
         // Add the list view to the views array
         App.contentViews.push(App.listView);
       }
-      
+
       // Libary view
       if (!App.libraryView) {
         App.libraryView = new libraryView();
@@ -56,7 +54,7 @@ define([
         // Add the list view to the views array
         App.contentViews.push(App.libraryView);
       }
-      
+
       // Search
       if (!App.searchView) {
         App.searchView = new searchView();
@@ -72,7 +70,7 @@ define([
       _.each(App.contentViews, function(view, i) {
         view.$el.hide();
       });
-      
+
       return this;
     }
   });
