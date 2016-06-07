@@ -149,7 +149,7 @@ p5.prototype.rotateX = function(rad) {
 /**
  * Rotates around Y axis.
  * @method rotateY
- * @param  {[type]} rad angles in radians
+ * @param  {Number} rad angles in radians
  * @return {[type]}     [description]
  */
 p5.prototype.rotateY = function(rad) {
@@ -175,7 +175,7 @@ p5.prototype.rotateY = function(rad) {
 /**
  * Rotates around Z axis.  Webgl mode only.
  * @method rotateZ
- * @param  {[type]} rad angles in radians
+ * @param  {Number} rad angles in radians
  * @return {[type]}     [description]
  */
 p5.prototype.rotateZ = function(rad) {
