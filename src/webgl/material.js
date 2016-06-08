@@ -313,4 +313,9 @@ p5.RendererGL.prototype._applyColorBlend = function(v1,v2,v3,a){
   return colors;
 };
 
+p5.prototype.shader = function(shader) {
+  shader._useShader();
+  return this;
+};
+
 module.exports = p5;
