@@ -76,8 +76,11 @@ p5.prototype.randomSeed = function(seed) {
  * If no argument is given, returns a random number from 0
  * up to (but not including) 1.
  *
- * If one argument is given, returns a random number from 0 up to
- * (but not including) the number.
+ * If one argument is given and it is a number, returns a random number from 0
+ * up to (but not including) the number.
+ *
+ * If one argument is given and it is an array, returns a random element from
+ * that array.
  *
  * If two arguments are given, returns a random number from the
  * first argument up to (but not including) the second argument.
@@ -85,7 +88,7 @@ p5.prototype.randomSeed = function(seed) {
  * @method random
  * @param  {Number} [min]   the lower bound (inclusive)
  * @param  {Number} [max]   the upper bound (exclusive)
- * @return {Number} the random number
+ * @return {Number|Object} the random number or a random element in choices
  * @example
  * <div>
  * <code>
@@ -112,6 +115,20 @@ p5.prototype.randomSeed = function(seed) {
  * text(words[index],10,50);  // Displays one of the four words
  * </code>
  * </div>
+ * <div>
+ * <code>
+ * // Get a random element from an array
+ * var words = [ "apple", "bear", "cat", "dog" ];
+ * var word = random(words);  // select random word
+ * text(word,10,50);  // Displays one of the four words
+ * </code>
+ * </div>
+ */
+/**
+ * @method random
+ * @param  {Array} choices   the array to choose from
+ * @return {Object} the random element from the array
+ * @example
  */
 p5.prototype.random = function (min, max) {
 
@@ -127,7 +144,11 @@ p5.prototype.random = function (min, max) {
     return rand;
   } else
   if (arguments.length === 1) {
-    return rand * min;
+    if (arguments[0] instanceof Array) {
+      return arguments[0][Math.floor(rand * arguments[0].length)];
+    } else {
+      return rand * min;
+    }
   } else {
     if (min > max) {
       var tmp = min;
