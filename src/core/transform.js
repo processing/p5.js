@@ -363,6 +363,7 @@ p5.prototype.shearY = function(angle) {
  * @method translate
  * @param  {Number} x left/right translation
  * @param  {Number} y up/down translation
+ * @param  {Number} [z] forward/backward translation (webgl only)
  * @return {p5}       the p5 object
  * @example
  * <div>
