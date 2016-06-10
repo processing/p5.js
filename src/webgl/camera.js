@@ -12,9 +12,9 @@ var p5 = require('../core/core');
 /**
  * Sets camera position
  * @method camera
- * @param  {Number} x  camera postion value on x axis
- * @param  {Number} y  camera postion value on y axis
- * @param  {Number} z  camera postion value on z axis
+ * @param  {Number} x  camera position value on x axis
+ * @param  {Number} y  camera position value on y axis
+ * @param  {Number} z  camera position value on z axis
  * @return {p5}        the p5 object
  * @example
  * <div>
