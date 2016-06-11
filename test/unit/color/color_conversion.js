@@ -1,7 +1,9 @@
 suite('p5.ColorConversion', function() {
   var rgba = [1, 0, 0.4, 0.8];
   var hsla = [336/360, 1, 0.5, 0.8];
+  var hslaWithMaxHue = [1, 1, 0.5, 0.6];
   var hsba = [336/360, 1, 1, 0.8];
+  var hsbaWithMaxHue = [1, 1, 1, 0.6];
   var result;
 
   suite('rgbaToHSBA', function() {
@@ -26,6 +28,16 @@ suite('p5.ColorConversion', function() {
         Math.round(result[3] * 255)
       ], [255, 0, 102, 204]);
     });
+
+    test('handles maximum hue value', function() {
+      result = p5.ColorConversion._hsbaToRGBA(hsbaWithMaxHue);
+      assert.deepEqual([
+        Math.round(result[0] * 255),
+        Math.round(result[1] * 255),
+        Math.round(result[2] * 255),
+        Math.round(result[3] * 255)
+      ], [255, 0, 0, 153]);
+    });
   });
 
   suite('hslaToRGBA', function() {
@@ -37,6 +49,16 @@ suite('p5.ColorConversion', function() {
         Math.round(result[2] * 255),
         Math.round(result[3] * 255)
       ], [255, 0, 102, 204]);
+    });
+
+    test('handles maximum hue value', function() {
+      result = p5.ColorConversion._hslaToRGBA(hslaWithMaxHue);
+      assert.deepEqual([
+        Math.round(result[0] * 255),
+        Math.round(result[1] * 255),
+        Math.round(result[2] * 255),
+        Math.round(result[3] * 255)
+      ], [255, 0, 0, 153]);
     });
   });
 
