@@ -53,8 +53,8 @@ p5.Color = function(renderer, vals) {
 
 p5.Color.prototype.toString = function() {
   var a = this.levels;
-  a[3] = this._array[3];  // String representation uses normalized alpha.
-  return 'rgba('+a[0]+','+a[1]+','+a[2]+','+ a[3] +')';
+  var alpha = this._array[3];  // String representation uses normalized alpha.
+  return 'rgba('+a[0]+','+a[1]+','+a[2]+','+ alpha +')';
 };
 
 p5.Color.prototype._getAlpha = function() {
