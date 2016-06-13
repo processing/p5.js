@@ -88,7 +88,7 @@ p5.prototype.randomSeed = function(seed) {
  * @method random
  * @param  {Number} [min]   the lower bound (inclusive)
  * @param  {Number} [max]   the upper bound (exclusive)
- * @return {Number|Object} the random number or a random element in choices
+ * @return {Number|mixed} the random number or a random element in choices
  * @example
  * <div>
  * <code>
@@ -109,25 +109,17 @@ p5.prototype.randomSeed = function(seed) {
  * </div>
  * <div>
  * <code>
- * // Get a random element from an array
- * var words = [ "apple", "bear", "cat", "dog" ];
- * var index = floor(random(words.length));  // Convert to integer
- * text(words[index],10,50);  // Displays one of the four words
- * </code>
- * </div>
- * <div>
- * <code>
- * // Get a random element from an array
+ * // Get a random element from an array using the random(Array) syntax
  * var words = [ "apple", "bear", "cat", "dog" ];
  * var word = random(words);  // select random word
- * text(word,10,50);  // Displays one of the four words
+ * text(word,10,50);  // draw the word
  * </code>
  * </div>
  */
 /**
  * @method random
  * @param  {Array} choices   the array to choose from
- * @return {Object} the random element from the array
+ * @return {mixed} the random element from the array
  * @example
  */
 p5.prototype.random = function (min, max) {
