@@ -84,7 +84,9 @@ p5.prototype.normalMaterial = function(){
  * <code>
  * var vid;
  * function preload(){
- *   vid = createVideo([myVideo.mp4]);
+ *   vid = createVideo("assets/fingers.mov");
+ *   vid.hide();
+ *   vid.loop();
  * }
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
