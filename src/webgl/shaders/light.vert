@@ -70,7 +70,7 @@ void main(void){
     pointLightFactor2 += uPointLightColor[k] * (specularFactor * specularLightWeighting
       +  directionalLightWeighting * diffuseFactor);
   }
-  
+
   if(!uSpecular){
     vLightWeighting =  ambientLightFactor + directionalLightFactor + pointLightFactor;
   }else{

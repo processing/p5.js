@@ -230,7 +230,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   gl.useProgram(shaderProgram);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
-  var colors = this._renderer._applyColorBlend(v1,v2,v3,a);
+  var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
 
   gl.uniform4f(shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);
@@ -278,7 +278,7 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
-  var colors = this._renderer._applyColorBlend(v1,v2,v3,a);
+  var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
   gl.uniform4f(shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);
   shaderProgram.uSpecular = gl.getUniformLocation(
