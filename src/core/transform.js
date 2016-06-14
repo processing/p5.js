@@ -109,6 +109,8 @@ p5.prototype.rotate = function() {
   }
   if (this._angleMode === constants.DEGREES) {
     r = this.radians(args[0]);
+  } else if (this._angleMode === constants.RADIANS){
+    r = args[0];
   }
   //in webgl mode
   if(args.length > 1){
