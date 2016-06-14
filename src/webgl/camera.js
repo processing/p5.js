@@ -82,6 +82,11 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
+  this._validateParameters(
+    'perspective',
+    args,
+    ['Number', 'Number', 'Number', 'Number']
+  );
   this._renderer.uPMatrix = p5.Matrix.identity();
   this._renderer.uPMatrix.perspective(fovy,aspect,near,far);
   this._renderer._isSetCamera = true;
@@ -137,7 +142,7 @@ p5.prototype.ortho = function(left,right,bottom,top,near,far) {
   bottom /= this.height;
   this._renderer.uPMatrix = p5.Matrix.identity();
   this._renderer.uPMatrix.ortho(left,right,bottom,top,near,far);
-  this._renderer._setCamera = true;
+  this._renderer._isSetCamera = true;
 };
 
 module.exports = p5;

@@ -235,6 +235,8 @@ p5.RendererGL.prototype._setMatrixUniforms = function(shaderKey) {
     shaderProgram.uMVMatrixUniform,
     false, this.uMVMatrix.mat4);
 
+  this.uNMatrix.inverseTranspose(this.uMVMatrix);
+
   gl.uniformMatrix3fv(
     shaderProgram.uNMatrixUniform,
     false, this.uNMatrix.mat3);
@@ -307,7 +309,7 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   var gl = this.GL;
   var shaderProgram;
   //see material.js for more info on color blending in webgl
-  var colors = this._applyColorBlend(v1,v2,v3,a);
+  var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
   this.curFillColor = colors;
   this.drawMode = 'fill';
   if(this.isImmediateDrawing){
@@ -431,7 +433,6 @@ p5.RendererGL.prototype.scale = function(x,y,z) {
 
 p5.RendererGL.prototype.rotate = function(rad, axis){
   this.uMVMatrix.rotate(rad, axis);
-  this.uNMatrix.inverseTranspose(this.uMVMatrix);
   return this;
 };
 
