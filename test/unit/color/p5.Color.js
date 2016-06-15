@@ -801,7 +801,7 @@ suite('p5.Color', function() {
     });
 
     test('should not mutate color levels', function() {
-      assert.equal(c.levels, [128, 0, 128, 128]);
+      assert.deepEqual(c.levels, [128, 0, 128, 128]);
     });
   });
 });
