@@ -118,7 +118,8 @@ p5.prototype.texture = function(){
       textureData = args[0].canvas;
     }
     //if param is a video
-    else if (args[0] instanceof p5.MediaElement){
+    else if (typeof p5.MediaElement !== 'undefined' &&
+            args[0] instanceof p5.MediaElement){
       if(!args[0].loadedmetadata) {return;}
       textureData = args[0].elt;
     }
@@ -133,7 +134,8 @@ p5.prototype.texture = function(){
   }
   else {
     if(args[0] instanceof p5.Graphics ||
-      args[0] instanceof p5.MediaElement){
+      (typeof p5.MediaElement !== 'undefined' &&
+      args[0] instanceof p5.MediaElement)){
       textureData = args[0].elt;
     }
     else if(args[0] instanceof p5.Image){
