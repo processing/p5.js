@@ -1139,8 +1139,15 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
     }
   }
   else {
-    // offset to account for vertically centering multiple lines of text
-    var offset = ((cars.length * 0.5) - 0.5) * p.textLeading(); // see #1410
+    // Offset to account for vertically centering multiple lines of text - no
+    // need to adjust anything for vertical align top or baseline
+    var offset = 0,
+      vAlign = p.textAlign().vertical;
+    if (vAlign === constants.CENTER) {
+      offset = ((cars.length - 1) * p.textLeading()) / 2;
+    } else if (vAlign === constants.BOTTOM) {
+      offset = (cars.length - 1) * p.textLeading();
+    }
 
     for (jj = 0; jj < cars.length; jj++) {
 
@@ -1195,7 +1202,7 @@ p5.Renderer2D.prototype.textWidth = function(s) {
 
   if (this._isOpenType()) {
 
-    return this._textFont._textWidth(s);
+    return this._textFont._textWidth(s, this._textSize);
   }
 
   return this.drawingContext.measureText(s).width;

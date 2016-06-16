@@ -644,15 +644,4 @@ p5.Image.prototype.save = function(filename, extension) {
   p5.prototype.downloadFile(imageData, filename, extension);
 };
 
-/**
- * creates a gl texture
- * used in WEBGL mode only
- * @param  {[type]} tex [description]
- * @return {[type]}     [description]
- */
-p5.Image.prototype.createTexture = function(tex){
-  //this.texture = tex;
-  return this;
-};
-
 module.exports = p5.Image;

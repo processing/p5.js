@@ -216,7 +216,9 @@ p5.prototype.sphere = function(){
     var sphereGeom = new p5.Geometry(detailX, detailY, _sphere);
     sphereGeom
       .computeFaces()
-      .computeNormals();
+      .computeNormals()
+      .averageNormals()
+      .averagePoleNormals();
     this._renderer.createBuffers(gId, sphereGeom);
   }
   this._renderer.drawBuffers(gId);
@@ -428,10 +430,14 @@ p5.prototype.cone = function(){
  * @param  {Number} radiusx           xradius of circle
  * @param  {Number} radiusy           yradius of circle
  * @param  {Number} radiusz           zradius of circle
- * @param  {Number} [detail]          number of segments,
+ * @param  {Number} [detailX]         optional: number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24. Avoid detail number above
- *                                    150. It may crash the browser.
+ *                                    150, it may crash the browser.
+ * @param  {Number} [detailY]         optional: number of segments,
+ *                                    the more segments the smoother geometry
+ *                                    default is 16. Avoid detail number above
+ *                                    150, it may crash the browser.
  * @return {p5}                       the p5 object
  * @example
  * <div>
@@ -448,14 +454,13 @@ p5.prototype.cone = function(){
  * </code>
  * </div>
  */
-p5.prototype.ellipsoid =
-function(){
+p5.prototype.ellipsoid = function(){
   var args = new Array(arguments.length);
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  var detailX = typeof args[2] === 'number' ? args[2] : 24;
-  var detailY = typeof args[3] === 'number' ? args[3] : 24;
+  var detailX = typeof args[3] === 'number' ? args[3] : 24;
+  var detailY = typeof args[4] === 'number' ? args[4] : 24;
   var radiusX = args[0] || 50;
   var radiusY = args[1] || radiusX;
   var radiusZ = args[2] || radiusX;
@@ -556,7 +561,8 @@ p5.prototype.torus = function(){
     var torusGeom = new p5.Geometry(detailX, detailY, _torus);
     torusGeom
       .computeFaces()
-      .computeNormals();
+      .computeNormals()
+      .averageNormals();
     this._renderer.createBuffers(gId, torusGeom);
   }
 

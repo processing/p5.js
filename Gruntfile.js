@@ -332,6 +332,13 @@ module.exports = function(grunt) {
           tags: ['master']
         }
       }
+    },
+    minjson: {
+      compile: {
+        files: {
+          './docs/reference/data.min.json': './docs/reference/data.json'
+        }
+      }
     }
   });
 
@@ -352,15 +359,15 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-release-it');
   grunt.loadNpmTasks('grunt-saucelabs');
   grunt.loadNpmTasks('grunt-mocha-test');
+  grunt.loadNpmTasks('grunt-minjson');
 
   // Create the multitasks.
   // TODO: "requirejs" is in here to run the "yuidoc_themes" subtask. Is this needed?
   grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);
   grunt.registerTask('test', ['jshint', 'jscs', 'build', 'yuidoc:dev', 'connect', 'mocha', 'mochaTest']);
   grunt.registerTask('test:nobuild', ['jshint:test', 'jscs:test', 'connect', 'mocha']);
-  grunt.registerTask('yui', ['yuidoc:prod']);
-  grunt.registerTask('yui:dev', ['yuidoc:dev']);
-  grunt.registerTask('yui', ['yuidoc:prod']);
+  grunt.registerTask('yui', ['yuidoc:prod', 'minjson']);
+  grunt.registerTask('yui:dev', ['yuidoc:dev', 'minjson']);
   grunt.registerTask('yui:test', ['yuidoc:dev', 'connect', 'mocha:yui']);
   grunt.registerTask('default', ['test']);
   grunt.registerTask('saucetest', ['connect', 'saucelabs-mocha']);

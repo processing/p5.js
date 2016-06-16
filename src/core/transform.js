@@ -95,14 +95,26 @@ p5.prototype.resetMatrix = function() {
  * </code>
  * </div>
  */
+/**
+ * @method rotate
+ * @param  {Number} rad  angle in radians
+ * @param  {p5.Vector | Array} axis axis to rotate around
+ * @return {p5.RendererGL}      [description]
+ */
 p5.prototype.rotate = function() {
-  var r = arguments[0];
+  var args = new Array(arguments.length);
+  var r;
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   if (this._angleMode === constants.DEGREES) {
-    r = this.radians(r);
+    r = this.radians(args[0]);
+  } else if (this._angleMode === constants.RADIANS){
+    r = args[0];
   }
   //in webgl mode
-  if(arguments.length > 1){
-    this._renderer.rotate(r, arguments[1]);
+  if(args.length > 1){
+    this._renderer.rotate(r, args[1]);
   }
   else {
     this._renderer.rotate(r);
@@ -111,8 +123,9 @@ p5.prototype.rotate = function() {
 };
 
 /**
- * [rotateX description]
- * @param  {[type]} rad [description]
+ * Rotates around X axis.
+ * @method  rotateX
+ * @param  {Number} rad angles in radians
  * @return {[type]}     [description]
  */
 p5.prototype.rotateX = function(rad) {
@@ -136,8 +149,9 @@ p5.prototype.rotateX = function(rad) {
 };
 
 /**
- * [rotateY description]
- * @param  {[type]} rad [description]
+ * Rotates around Y axis.
+ * @method rotateY
+ * @param  {Number} rad angles in radians
  * @return {[type]}     [description]
  */
 p5.prototype.rotateY = function(rad) {
@@ -161,8 +175,9 @@ p5.prototype.rotateY = function(rad) {
 };
 
 /**
- * [rotateZ description]
- * @param  {[type]} rad [description]
+ * Rotates around Z axis.  Webgl mode only.
+ * @method rotateZ
+ * @param  {Number} rad angles in radians
  * @return {[type]}     [description]
  */
 p5.prototype.rotateZ = function(rad) {
@@ -197,9 +212,8 @@ p5.prototype.rotateZ = function(rad) {
  * and then scale(1.5) is the same as scale(3.0). If scale() is called
  * within draw(), the transformation is reset when the loop begins again.
  * <br><br>
- * Using this fuction with the z parameter requires using P3D as a
- * parameter for size(), as shown in the third example above. This function
- * can be further controlled with push() and pop().
+ * Using this function with the z parameter is only available in WEBGL mode.
+ * This function can be further controlled with push() and pop().
  *
  * @method scale
  * @param  {Number | p5.Vector | Array} s
@@ -351,6 +365,7 @@ p5.prototype.shearY = function(angle) {
  * @method translate
  * @param  {Number} x left/right translation
  * @param  {Number} y up/down translation
+ * @param  {Number} [z] forward/backward translation (webgl only)
  * @return {p5}       the p5 object
  * @example
  * <div>

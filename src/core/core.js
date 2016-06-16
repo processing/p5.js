@@ -275,7 +275,10 @@ var p5 = function(sketch, node, sync) {
       //increment counter
       this._incrementPreload();
       //call original function
-      var args = Array.prototype.slice.call(arguments);
+      var args = new Array(arguments.length);
+      for (var i = 0; i < args.length; ++i) {
+        args[i] = arguments[i];
+      }
       args.push(this._decrementPreload.bind(this));
       return this._registeredPreloadMethods[fnName].apply(obj, args);
     }.bind(this);
@@ -529,7 +532,8 @@ p5.prototype._preloadMethods = {
   loadXML: p5.prototype,
   loadShape: p5.prototype,
   loadTable: p5.prototype,
-  loadFont: p5.prototype
+  loadFont: p5.prototype,
+  loadModel: p5.prototype
 };
 
 p5.prototype._registeredMethods = { init: [], pre: [], post: [], remove: [] };

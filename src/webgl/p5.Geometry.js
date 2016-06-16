@@ -89,6 +89,7 @@ p5.Geometry.prototype.computeNormals = function (){
     normal = normal.normalize();
     this.vertexNormals.push(normal);
   }
+  return this;
 };
 
 /**
@@ -138,6 +139,38 @@ p5.Geometry.prototype.averagePoleNormals = function() {
   for(i = this.vertices.length - 1;
     i > this.vertices.length - 1 - this.detailX; i--){
     this.vertexNormals[i] = sum;
+  }
+  return this;
+};
+
+/**
+ * Modifies all vertices to be centered within the range -100 to 100.
+ * @return {p5.Geometry}
+ */
+p5.Geometry.prototype.normalize = function() {
+  if(this.vertices.length > 0) {
+    // Find the corners of our bounding box
+    var maxPosition = this.vertices[0].copy();
+    var minPosition = this.vertices[0].copy();
+
+    for(var i = 0; i < this.vertices.length; i++) {
+      maxPosition.x = Math.max(maxPosition.x, this.vertices[i].x);
+      minPosition.x = Math.min(minPosition.x, this.vertices[i].x);
+      maxPosition.y = Math.max(maxPosition.y, this.vertices[i].y);
+      minPosition.y = Math.min(minPosition.y, this.vertices[i].y);
+      maxPosition.z = Math.max(maxPosition.z, this.vertices[i].z);
+      minPosition.z = Math.min(minPosition.z, this.vertices[i].z);
+    }
+
+    var center = p5.Vector.lerp(maxPosition, minPosition, 0.5);
+    var dist = p5.Vector.sub(maxPosition, minPosition);
+    var longestDist = Math.max(Math.max(dist.x, dist.y), dist.z);
+    var scale = 200 / longestDist;
+
+    for(i = 0; i < this.vertices.length; i++) {
+      this.vertices[i].sub(center);
+      this.vertices[i].mult(scale);
+    }
   }
   return this;
 };

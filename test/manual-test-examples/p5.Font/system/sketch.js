@@ -262,19 +262,148 @@ var textAlignSketch = function(p) {
   };
 };
 
+var textAllAlignmentsSketch = function(p) {
+  var systemFonts = ["Arial", "Times New Roman", "Consolas"];
+  var font1, font2, font3;
+  var hAligns = [ p.LEFT, p.CENTER, p.RIGHT ];
+  var vAligns = [ p.TOP, p.CENTER, p.BASELINE, p.BOTTOM ];
+  var padding = 10;
+  var drawFontAlignments = function(font, textString, xOff, yOff) {
+    p.textFont(font);
+    p.textSize(20);
+    for (var h = 0; h < hAligns.length; h += 1) {
+     for (var v = 0; v < vAligns.length; v += 1) {
+       // Distribute words across the screen
+       var x = xOff + p.map(h, 0, hAligns.length - 1, padding, 400 - padding);
+       var y = yOff + p.map(v, 0, vAligns.length - 1, padding, 200 - padding);
+        
+       p.stroke(200);
+       p.line(0, y, p.width, y);
+       p.line(x, 0, x, p.height);
+       
+       // Align the text & calculate the bounds
+       p.textAlign(hAligns[h], vAligns[v]);
+      
+       // Draw the text
+       p.fill(255, 0, 0);
+       p.noStroke();
+       p.text(textString, x, y);
+
+       // Draw the (x, y) coordinates
+       p.stroke(0);
+       p.fill("#FF8132");
+       p.ellipse(x, y, 3, 3);
+     }
+   }
+  };
+  p.setup = function() {
+    var renderer = p.createCanvas(400, 600);
+    renderer.elt.style.position = "absolute";
+    renderer.elt.style.top = "0";
+    renderer.elt.style.left = "0";
+    drawFontAlignments(systemFonts[0], "Arial", 0, 0);
+    drawFontAlignments(systemFonts[1], "Times", 0, 200);
+    drawFontAlignments(systemFonts[2], "Consolas", 0, 400); 
+    // These proprietary fonts aren't included in the repo!
+    // p.loadFont("../arial.ttf", function(font) {drawFontAlignments(font, "Arial", 0, 0)});
+    // p.loadFont("../times.ttf", function(font) {drawFontAlignments(font, "Times", 0, 200)});
+    // p.loadFont("../consola.ttf", function(font) {drawFontAlignments(font, "Consolas", 0, 400)});
+  };
+};
+
 var textLeadingSketch = function(p) {
   p.setup = function() {
-    p.createCanvas(240, 160);
+    p.createCanvas(400, 200);
+    p.textFont("Arial");
     p.fill(0);
-    p.strokeWeight(0);
     p.textSize(12);
-    //leadig
+
+    p.line(0,100,p.width,100);
+    p.textAlign(p.LEFT, p.TOP);
+    p.strokeWeight(0);
+
+    var s10 = 'LEFT/TOP@10px',
+      s20 = s10.replace('1','2'),
+      s30 = s10.replace('1','3');
+
     p.textLeading(10);  // Set leading to 10
-    p.text("Leading10px\nLeading10px\nLeading10px", 10, 30);
+    p.text(s10+'\n'+s10+'\n'+s10, 10, 100);
     p.textLeading(20);  // Set leading to 20
-    p.text("Leading20px\nLeading20px\nLeading20px", 90, 30);
+    p.text(s20+'\n'+s20+'\n'+s20, 140, 100);
     p.textLeading(30);  // Set leading to 30
-    p.text("Leading30px\nLeading30px\nLeading30px", 170, 30);
+    p.text(s30+'\n'+s30+'\n'+s30, 270, 100);
+  };
+};
+
+var textLeadingSketch2 = function(p) {
+  p.setup = function() {
+    p.createCanvas(400, 200);
+    p.textFont("Arial");
+    p.fill(0);
+    p.textSize(12);
+
+    p.line(0,100,p.width,100);
+    p.textAlign(p.LEFT, p.CENTER);
+    p.strokeWeight(0);
+
+    var s10 = 'LEFT/CENTER@10px',
+      s20 = s10.replace('1','2'),
+      s30 = s10.replace('1','3');
+
+    p.textLeading(10);  // Set leading to 10
+    p.text(s10+'\n'+s10+'\n'+s10, 10, 100);
+    p.textLeading(20);  // Set leading to 20
+    p.text(s20+'\n'+s20+'\n'+s20, 140, 100);
+    p.textLeading(30);  // Set leading to 30
+    p.text(s30+'\n'+s30+'\n'+s30, 270, 100);
+  };
+};
+
+var textLeadingSketch3 = function(p) {
+  p.setup = function() {
+    p.createCanvas(400, 200);
+    p.textFont("Arial");
+    p.fill(0);
+    p.textSize(12);
+
+    p.line(0,100,p.width,100);
+    p.textAlign(p.LEFT, p.BASELINE);
+    p.strokeWeight(0);
+
+    var s10 = 'LEFT/BASELINE@10px',
+      s20 = s10.replace('1','2'),
+      s30 = s10.replace('1','3');
+
+    p.textLeading(10);  // Set leading to 10
+    p.text(s10+'\n'+s10+'\n'+s10, 10, 100);
+    p.textLeading(20);  // Set leading to 20
+    p.text(s20+'\n'+s20+'\n'+s20, 140, 100);
+    p.textLeading(30);  // Set leading to 30
+    p.text(s30+'\n'+s30+'\n'+s30, 270, 100);
+  };
+};
+
+var textLeadingSketch4 = function(p) {
+  p.setup = function() {
+    p.createCanvas(400, 200);
+    p.textFont("Arial");
+    p.fill(0);
+    p.textSize(12);
+
+    p.line(0,100,p.width,100);
+    p.textAlign(p.LEFT, p.BOTTOM);
+    p.strokeWeight(0);
+
+    var s10 = 'LEFT/BOTTOM@10px',
+      s20 = s10.replace('1','2'),
+      s30 = s10.replace('1','3');
+
+    p.textLeading(10);  // Set leading to 10
+    p.text(s10+'\n'+s10+'\n'+s10, 10, 100);
+    p.textLeading(20);  // Set leading to 20
+    p.text(s20+'\n'+s20+'\n'+s20, 140, 100);
+    p.textLeading(30);  // Set leading to 30
+    p.text(s30+'\n'+s30+'\n'+s30, 270, 100);
   };
 };
 
@@ -506,7 +635,11 @@ new p5(textLineSketch, 'textLineSketch');
 new p5(textWrapSketch, 'textWrapSketch');
 new p5(textFontSketch, 'textFontSketch');
 new p5(textAlignSketch, 'textAlignSketch');
+new p5(textAllAlignmentsSketch, 'textAllAlignmentsSketch');
 new p5(textLeadingSketch, 'textLeadingSketch');
+new p5(textLeadingSketch2, 'textLeadingSketch2');
+new p5(textLeadingSketch3, 'textLeadingSketch3');
+new p5(textLeadingSketch4, 'textLeadingSketch4');
 new p5(textSizeSketch, 'textSizeSketch');
 new p5(textStyleSketch, 'textStyleSketch');
 new p5(textWidthSketch, 'textWidthSketch');

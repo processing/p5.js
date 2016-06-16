@@ -13,9 +13,23 @@ require('./p5.Geometry');
 
 /**
  * Load a 3d model from an OBJ file.
+ * <br><br>
+ * One of the limitations of the OBJ format is that it doesn't have a built-in
+ * sense of scale. This means that models exported from different programs might
+ * be very different sizes. If your model isn't displaying, try calling
+ * loadModel() with the normalized parameter set to true. This will resize the
+ * model to a scale appropriate for p5. You can also make additional changes to
+ * the final size of your model with the scale() function.
  *
  * @method loadModel
  * @param  {String} path Path of the model to be loaded
+ * @param  {Boolean} [normalize] If true, scale the model to a
+ *                                standardized size when loading
+ * @param  {Function(p5.Geometry3D)} [successCallback] Function to be called
+ *                                   once the model is loaded. Will be passed
+ *                                   the 3D model object.
+ * @param  {Function(Event)}    [failureCallback] called with event error if
+ *                                the image fails to load.
  * @return {p5.Geometry} the p5.Geometry3D object
  * @example
  * <div>
@@ -38,12 +52,34 @@ require('./p5.Geometry');
  * </code>
  * </div>
  */
-p5.prototype.loadModel = function ( path ) {
+p5.prototype.loadModel = function () {
+  var path = arguments[0];
+  var normalize;
+  var successCallback;
+  var failureCallback;
+  if(typeof arguments[1] === 'boolean') {
+    normalize = arguments[1];
+    successCallback = arguments[2];
+    failureCallback = arguments[3];
+  } else {
+    normalize = false;
+    successCallback = arguments[1];
+    failureCallback = arguments[2];
+  }
+
   var model = new p5.Geometry();
-  model.gid = path;
+  model.gid = path + '|' + normalize;
   this.loadStrings(path, function(strings) {
     parseObj(model, strings);
-  }.bind(this));
+
+    if (normalize) {
+      model.normalize();
+    }
+
+    if (typeof successCallback === 'function') {
+      successCallback(model);
+    }
+  }.bind(this), failureCallback);
 
   return model;
 };
