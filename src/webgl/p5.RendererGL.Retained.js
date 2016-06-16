@@ -117,7 +117,10 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     2, gl.FLOAT, false, 0, 0);
   //vertex index buffer
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
-  this._setMatrixUniforms(shaderKey);
+  this._applyUniforms(shaderKey);
+  if(this.customShader) {
+    this._applyUniforms(shaderKey, this.customShader.uniforms);
+  }
   gl.drawElements(
     gl.TRIANGLES, this.gHash[gId].numberOfItems,
     gl.UNSIGNED_SHORT, 0);

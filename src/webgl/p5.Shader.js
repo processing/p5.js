@@ -68,12 +68,16 @@ p5.Shader = function(fragShader, vertShader){
   }.bind(this));
 };
 
-p5.Shader.prototype.set = function(name, x, y, z){
-  if(this.shaderProgram) {
-    var gl = window._renderer.GL;
-    var location = gl.getUniformLocation(this.shaderProgram, name);
-    gl.uniform3f(location, x, y, z);
-  }
+p5.Shader.prototype.getUniform = function() {
+  var args = Array.prototype.slice.call(arguments);
+  args.unshift(this.uniforms);
+  window._renderer._getUniform.apply(window._renderer, args);
+};
+
+p5.Shader.prototype.setUniform = function() {
+  var args = Array.prototype.slice.call(arguments);
+  args.unshift(this.uniforms);
+  window._renderer._setUniform.apply(window._renderer, args);
 };
 
 p5.Shader.prototype._useShader = function(){
@@ -82,6 +86,7 @@ p5.Shader.prototype._useShader = function(){
     gl.useProgram(this.shaderProgram);
 
     window._renderer.curShaderId = this.shaderKey;
+    window._renderer.customShader = this;
   }
   return this;
 };

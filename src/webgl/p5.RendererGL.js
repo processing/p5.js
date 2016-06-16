@@ -41,12 +41,16 @@ p5.RendererGL = function(elt, pInst, isMainCanvas) {
   this._isSetCamera = false;
 
   /**
-   * model view, projection, & normal
-   * matrices
+   * Uniforms object. This is a key-value pair for storing data associated with
+   * various uniforms. Use _getUniform and _setUniform to manipulate this.
    */
-  this.uMVMatrix = new p5.Matrix();
-  this.uPMatrix  = new p5.Matrix();
-  this.uNMatrix = new p5.Matrix('mat3');
+  this._uniforms = Object.create(null);
+  this._setUniform('uResolution', RESOLUTION);
+  this._setUniform('uModelViewMatrix', new p5.Matrix());
+  this._setUniform('uProjectionMatrix', new p5.Matrix());
+  this._setUniform('uNormalMatrix', new p5.Matrix('mat3'));
+  //TODO: Possibly Normal Matrix doesn't work in immediate mode? Investigate.
+
   //Geometry & Material hashes
   this.gHash = {};
   this.mHash = {};
@@ -89,14 +93,15 @@ p5.RendererGL.prototype._setDefaultCamera = function(){
   if(!this._isSetCamera){
     var _w = this.width;
     var _h = this.height;
-    this.uPMatrix = p5.Matrix.identity();
-    this.uPMatrix.perspective(60 / 180 * Math.PI, _w / _h, 0.1, 100);
+    this._setUniform('uProjectionMatrix', p5.Matrix.identity());
+    this._getUniform('uProjectionMatrix').perspective(60 / 180 * Math.PI,
+                                                      _w / _h, 0.1, 100);
     this._isSetCamera = true;
   }
 };
 
 p5.RendererGL.prototype._update = function() {
-  this.uMVMatrix = p5.Matrix.identity();
+  this._setUniform('uModelViewMatrix', p5.Matrix.identity());
   this.translate(0, 0, -800);
   this.ambientLightCount = 0;
   this.directionalLightCount = 0;
@@ -180,64 +185,109 @@ p5.RendererGL.prototype._getLocation =
 function(shaderProgram, isImmediateMode) {
   var gl = this.GL;
   gl.useProgram(shaderProgram);
-  shaderProgram.uResolution =
-    gl.getUniformLocation(shaderProgram, 'uResolution');
-  gl.uniform1f(shaderProgram.uResolution, RESOLUTION);
-
-  //projection Matrix uniform
-  shaderProgram.uPMatrixUniform =
-    gl.getUniformLocation(shaderProgram, 'uProjectionMatrix');
-  //model view Matrix uniform
-  shaderProgram.uMVMatrixUniform =
-    gl.getUniformLocation(shaderProgram, 'uModelViewMatrix');
 
   //@TODO: figure out a better way instead of if statement
   if(isImmediateMode === undefined){
-    //normal Matrix uniform
-    shaderProgram.uNMatrixUniform =
-    gl.getUniformLocation(shaderProgram, 'uNormalMatrix');
-
     shaderProgram.samplerUniform =
     gl.getUniformLocation(shaderProgram, 'uSampler');
   }
 };
 
 /**
- * Sets a shader uniform given a shaderProgram and uniform string
- * @param {String} shaderKey key to material Hash.
- * @param {String} uniform location in shader.
- * @param { Number} data data to bind uniform.  Float data type.
- * @todo currently this function sets uniform1f data.
- * Should generalize function to accept any uniform
- * data type.
+ * @param {Object} [uniformsObj] An optional object where the uniform data is
+ *                               saved. Default is the RendererGL global
+ *                               uniforms object.
+ * @param {String} name The name of the uniform.
  */
-p5.RendererGL.prototype._setUniform1f = function(shaderKey,uniform,data)
+p5.RendererGL.prototype._getUniform = function()
+{
+  var uObj;
+  var uName;
+  if(typeof arguments[0] === 'object') {
+    uObj = arguments[0];
+    uName = arguments[1];
+  } else {
+    uObj = this._uniforms;
+    uName = arguments[0];
+  }
+  return uObj[uName].data;
+};
+
+/**
+ * @param {Object} [uniformsObj] An optional object where the uniform data will
+ *                               be saved. Default is the RendererGL global
+ *                               uniforms object.
+ * @param {String} name The name of the uniform.
+ * @param {any} data The data to set in the uniform. This can take many
+ *                   different forms. See p5.Shader.setUniform for full
+ *                   documentation.
+ */
+p5.RendererGL.prototype._setUniform = function()
+{
+  var args = Array.prototype.slice.call(arguments);
+  var uObj;
+
+  if(typeof args[0] === 'object') {
+    uObj = args.shift();
+  } else {
+    uObj = this._uniforms;
+  }
+
+  var uName = args.shift();
+  var uData = args.length === 1 ? args[0] : args;
+  var uType;
+
+  if(typeof uData === 'number') { // If this is a floating point number
+    uType = '1f';
+  } else if(Array.isArray(uData) && uData.length <= 4) {
+    uType = uData.length + 'fv';
+  } else if(uData instanceof p5.Matrix) {
+    if('mat3' in uData) {
+      uType = 'Matrix3fv';
+    } else {
+      uType = 'Matrix4fv';
+    }
+  } else {
+    console.error('Didn\'t recognize the type of this uniform.');
+  }
+
+  if(!(uName in uObj)) {
+    uObj[uName] = {};
+    uObj[uName].type = uType;
+    uObj[uName].data = uData;
+  } else {
+    uObj[uName].data = uData;
+  }
+};
+
+/**
+ * Apply saved uniforms to specified shader.
+ */
+p5.RendererGL.prototype._applyUniforms = function(shaderKey, uniformsObj)
 {
   var gl = this.GL;
   var shaderProgram = this.mHash[shaderKey];
-  gl.useProgram(shaderProgram);
-  shaderProgram[uniform] = gl.getUniformLocation(shaderProgram, uniform);
-  gl.uniform1f(shaderProgram[uniform], data);
-  return this;
-};
+  var uObj = uniformsObj !== undefined ? uniformsObj : this._uniforms;
 
-p5.RendererGL.prototype._setMatrixUniforms = function(shaderKey) {
-  var gl = this.GL;
-  var shaderProgram = this.mHash[shaderKey];
+  for(var uName in uObj) {
+    //TODO: eventually, we should probably cache this
+    var location = gl.getUniformLocation(shaderProgram, uName);
+    var data;
 
-  gl.useProgram(shaderProgram);
-
-  gl.uniformMatrix4fv(
-    shaderProgram.uPMatrixUniform,
-    false, this.uPMatrix.mat4);
-
-  gl.uniformMatrix4fv(
-    shaderProgram.uMVMatrixUniform,
-    false, this.uMVMatrix.mat4);
-
-  gl.uniformMatrix3fv(
-    shaderProgram.uNMatrixUniform,
-    false, this.uNMatrix.mat3);
+    var type = uObj[uName].type;
+    var functionName = 'uniform' + type;
+    if(type.substring(0, 6) === 'Matrix') {
+      if(type === 'Matrix3fv') {
+        data = uObj[uName].data.mat3;
+      } else {
+        data = uObj[uName].data.mat4;
+      }
+      gl[functionName](location, false, data);
+    } else {
+      data = uObj[uName].data;
+      gl[functionName](location, data);
+    }
+  }
 };
 //////////////////////////////////////////////
 // GET CURRENT | for shader and color
@@ -413,7 +463,7 @@ p5.RendererGL.prototype.translate = function(x, y, z) {
   x = x / RESOLUTION;
   y = -y / RESOLUTION;
   z = z / RESOLUTION;
-  this.uMVMatrix.translate([x,y,z]);
+  this._getUniform('uModelViewMatrix').translate([x,y,z]);
   return this;
 };
 
@@ -425,7 +475,7 @@ p5.RendererGL.prototype.translate = function(x, y, z) {
  * @return {this}   [description]
  */
 p5.RendererGL.prototype.scale = function(x,y,z) {
-  this.uMVMatrix.scale([x,y,z]);
+  this._getUniform('uModelViewMatrix').scale([x,y,z]);
   return this;
 };
 
@@ -436,8 +486,9 @@ p5.RendererGL.prototype.scale = function(x,y,z) {
  * @return {p5.RendererGL}      [description]
  */
 p5.RendererGL.prototype.rotate = function(rad, axis){
-  this.uMVMatrix.rotate(rad, axis);
-  this.uNMatrix.inverseTranspose(this.uMVMatrix);
+  this._getUniform('uModelViewMatrix').rotate(rad, axis);
+  this._getUniform('uNormalMatrix').inverseTranspose(
+                                      this._getUniform('uModelViewMatrix'));
   return this;
 };
 
@@ -478,7 +529,7 @@ p5.RendererGL.prototype.rotateZ = function(rad) {
  * @return {[type]} [description]
  */
 p5.RendererGL.prototype.push = function() {
-  uMVMatrixStack.push(this.uMVMatrix.copy());
+  uMVMatrixStack.push(this._getUniform('uModelViewMatrix').copy());
 };
 
 /**
@@ -489,11 +540,11 @@ p5.RendererGL.prototype.pop = function() {
   if (uMVMatrixStack.length === 0) {
     throw new Error('Invalid popMatrix!');
   }
-  this.uMVMatrix = uMVMatrixStack.pop();
+  this._setUniform('uModelViewMatrix', uMVMatrixStack.pop());
 };
 
 p5.RendererGL.prototype.resetMatrix = function() {
-  this.uMVMatrix = p5.Matrix.identity();
+  this._setUniform('uModelViewMatrix', p5.Matrix.identity());
   this.translate(0, 0, -800);
   return this;
 };
