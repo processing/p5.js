@@ -18,6 +18,7 @@ p5.Shader = function(fragShader, vertShader){
 
   //TODO: Come up with a better system for loading external files
   //TODO: Make sure this works in instance mode
+  //TODO: Actually, re-write all of this so that the code is unified in renderer
   window.loadStrings(fragShader, function(result) {
     fragSource = result.join('\n');
 

@@ -234,11 +234,14 @@ p5.RendererGL.prototype._setUniform = function()
   }
 
   var uName = args.shift();
-  var uData = args.length === 1 ? args[0] : args;
   var uType;
+  if(typeof args[args.length - 1] === 'string') {
+    uType = args.pop();
+  }
+  var uData = args.length === 1 ? args[0] : args;
 
   if(typeof uData === 'number') { // If this is a floating point number
-    uType = '1f';
+    uType = uType || '1f';
   } else if(Array.isArray(uData) && uData.length <= 4) {
     uType = uData.length + 'fv';
   } else if(uData instanceof p5.Matrix) {
