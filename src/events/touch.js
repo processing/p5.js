@@ -10,15 +10,12 @@
 var p5 = require('../core/core');
 
 /*
- * These are helper vars that store the touchX and touchY vals
- * between the time that a mouse event happens and the next frame
- * of draw. This is done to deal with the asynchronicity of event
- * calls interacting with the draw loop. When a touch event occurs
- * the _nextTouchX/Y vars are updated, then on each call of draw, touchX/Y
- * and ptouchX/Y are updated using the _nextMouseX/Y vals.
+ * This is a flag which is false until the first time
+ * we receive a touch event. The ptouchX and ptouchY
+ * values will match the touchX and touchY values until
+ * this interaction takes place.
  */
-p5.prototype._nextTouchX = 0;
-p5.prototype._nextTouchY = 0;
+p5.prototype._hasTouchInteracted = false;
 
 /**
  * The system variable touchX always contains the horizontal position of
@@ -77,16 +74,18 @@ p5.prototype.touches = [];
 p5.prototype.touchIsDown = false;
 
 p5.prototype._updateNextTouchCoords = function(e) {
+  var x = this.touchX;
+  var y = this.touchY;
   if(e.type === 'mousedown' ||
      e.type === 'mousemove' ||
      e.type === 'mouseup' || !e.touches) {
-    this._setProperty('_nextTouchX', this._nextMouseX);
-    this._setProperty('_nextTouchY', this._nextMouseY);
+    x = this.mouseX;
+    y = this.mouseY;
   } else {
     if(this._curElement !== null) {
       var touchInfo = getTouchInfo(this._curElement.elt, e, 0);
-      this._setProperty('_nextTouchX', touchInfo.x);
-      this._setProperty('_nextTouchY', touchInfo.y);
+      x = touchInfo.x;
+      y = touchInfo.y;
 
       var touches = [];
       for(var i = 0; i < e.touches.length; i++){
@@ -95,13 +94,18 @@ p5.prototype._updateNextTouchCoords = function(e) {
       this._setProperty('touches', touches);
     }
   }
+  this._setProperty('touchX', x);
+  this._setProperty('touchY', y);
+  if (!this._hasTouchInteracted) {
+    // For first draw, make previous and next equal
+    this._updateTouchCoords();
+    this._setProperty('_hasTouchInteracted', true);
+  }
 };
 
 p5.prototype._updateTouchCoords = function() {
   this._setProperty('ptouchX', this.touchX);
   this._setProperty('ptouchY', this.touchY);
-  this._setProperty('touchX', this._nextTouchX);
-  this._setProperty('touchY', this._nextTouchY);
 };
 
 function getTouchInfo(canvas, e, i) {
