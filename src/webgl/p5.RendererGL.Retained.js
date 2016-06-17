@@ -119,7 +119,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
   this._applyUniforms(shaderKey);
   if(this.customShader) {
-    this._applyUniforms(shaderKey, this.customShader.uniforms);
+    this._applyUniforms(shaderKey, this.customShader._uniforms);
   }
   gl.drawElements(
     gl.TRIANGLES, this.gHash[gId].numberOfItems,

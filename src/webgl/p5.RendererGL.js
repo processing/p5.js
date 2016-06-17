@@ -258,6 +258,7 @@ p5.RendererGL.prototype._setUniform = function()
     uObj[uName] = {};
     uObj[uName].type = uType;
     uObj[uName].data = uData;
+    uObj[uName].location = [];
   } else {
     uObj[uName].data = uData;
   }
@@ -270,11 +271,15 @@ p5.RendererGL.prototype._applyUniforms = function(shaderKey, uniformsObj)
 {
   var gl = this.GL;
   var shaderProgram = this.mHash[shaderKey];
-  var uObj = uniformsObj !== undefined ? uniformsObj : this._uniforms;
+  var uObj = uniformsObj || this._uniforms;
 
   for(var uName in uObj) {
-    //TODO: eventually, we should probably cache this
-    var location = gl.getUniformLocation(shaderProgram, uName);
+    //TODO: This caching might break if one shader is used w/ multiple instances
+    if(!(shaderKey in uObj[uName].location)) {
+      uObj[uName].location[shaderKey] =
+          gl.getUniformLocation(shaderProgram, uName);
+    }
+    var location = uObj[uName].location[shaderKey];
     var data;
 
     var type = uObj[uName].type;

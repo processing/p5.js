@@ -1,12 +1,13 @@
 'use strict';
 
 var p5 = require('../core/core');
+var renderer = require('./p5.RendererGL');
 
 /**
  * p5 Shader class
  * @constructor
- * @param  {String} fragShader Location of a fragment shader file
- * @param  {String} vertShader Location of a vertex shader file
+ * @param  {String} fragShader Source code of a fragment shader as
+ * @param  {String} vertShader Source code of a vertex shader as a string
  *
  */
 p5.Shader = function(fragShader, vertShader){
@@ -14,7 +15,7 @@ p5.Shader = function(fragShader, vertShader){
   var vertSource;
 
   this.shaderKey = fragShader + '|' + vertShader;
-  this.uniforms = {};
+  this._uniforms = {};
 
   //TODO: Come up with a better system for loading external files
   //TODO: Make sure this works in instance mode
@@ -70,15 +71,11 @@ p5.Shader = function(fragShader, vertShader){
 };
 
 p5.Shader.prototype.getUniform = function() {
-  var args = Array.prototype.slice.call(arguments);
-  args.unshift(this.uniforms);
-  window._renderer._getUniform.apply(window._renderer, args);
+  renderer.prototype._getUniform.apply(this, arguments);
 };
 
 p5.Shader.prototype.setUniform = function() {
-  var args = Array.prototype.slice.call(arguments);
-  args.unshift(this.uniforms);
-  window._renderer._setUniform.apply(window._renderer, args);
+  renderer.prototype._setUniform.apply(this, arguments);
 };
 
 p5.Shader.prototype._useShader = function(){
