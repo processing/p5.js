@@ -181,6 +181,39 @@ function(vertId, fragId, isImmediateMode) {
   return shaderProgram;
 };
 
+/**
+ * [_compileShaders description]
+ * @param  {string} vertId [description]
+ * @param  {string} fragId [description]
+ * @return {[type]}        [description]
+ */
+p5.RendererGL.prototype._compileShaders = function(vertSource, fragSource) {
+  var gl = this.GL;
+
+  var shaders = [vertSource, fragSource];
+  var shaderTypes = [gl.VERTEX_SHADER, gl.FRAGMENT_SHADER];
+  var shaderProgram = gl.createProgram();
+
+  for(var i = 0; i < 2; ++i) {
+    var shader = gl.createShader(shaderTypes[i]);
+    gl.shaderSource(shader, shaders[i]);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      alert('Yikes! An error occurred compiling the shaders:' +
+        gl.getShaderInfoLog(shader));
+      return null;
+    }
+    gl.attachShader(shaderProgram, shader);
+  }
+
+  gl.linkProgram(shaderProgram);
+  if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+    alert('Snap! Error linking shader program');
+  }
+
+  return shaderProgram;
+};
+
 p5.RendererGL.prototype._getLocation =
 function(shaderProgram, isImmediateMode) {
   var gl = this.GL;
@@ -267,7 +300,7 @@ p5.RendererGL.prototype._setUniform = function()
 /**
  * Apply saved uniforms to specified shader.
  */
-p5.RendererGL.prototype._applyUniforms = function(shaderKey, uniformsObj)
+p5.RendererGL.prototype._applyUniforms = function(shaderKey, uniformsObj, shaderProg)
 {
   var gl = this.GL;
   var shaderProgram = this.mHash[shaderKey];
@@ -280,6 +313,7 @@ p5.RendererGL.prototype._applyUniforms = function(shaderKey, uniformsObj)
           gl.getUniformLocation(shaderProgram, uName);
     }
     var location = uObj[uName].location[shaderKey];
+    //var location = gl.getUniformLocation(shaderProgram, uName);
     var data;
 
     var type = uObj[uName].type;

@@ -100,26 +100,42 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   var gl = this.GL;
   var shaderKey = this._getCurShaderId();
   var shaderProgram = this.mHash[shaderKey];
-  //vertex position buffer
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
-  gl.vertexAttribPointer(
-    shaderProgram.vertexPositionAttribute,
-    3, gl.FLOAT, false, 0, 0);
-  //normal buffer
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
-  gl.vertexAttribPointer(
-    shaderProgram.vertexNormalAttribute,
-    3, gl.FLOAT, false, 0, 0);
-  // uv buffer
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
-  gl.vertexAttribPointer(
-    shaderProgram.textureCoordAttribute,
-    2, gl.FLOAT, false, 0, 0);
-  //vertex index buffer
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
-  this._applyUniforms(shaderKey);
   if(this.customShader) {
-    this._applyUniforms(shaderKey, this.customShader._uniforms);
+    if(this.customShader.shaderKey in this.mHash) {
+      shaderKey = this.customShader.shaderKey;
+      shaderProgram = this.mHash[shaderKey];
+    } else if(this.customShader.vertSource == undefined ||
+       this.customShader.fragSource == undefined) {
+         // The shader isn't loaded, so don't render anything this pass
+         return;
+    } else {
+      shaderProgram = this._compileShaders(this.customShader.vertSource,
+                                           this.customShader.fragSource);
+      shaderKey = this.customShader.shaderKey;
+      this.mHash[shaderKey] = shaderProgram;
+    }
+  }
+  gl.useProgram(shaderProgram);
+  // //vertex position buffer
+  // gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
+  // gl.vertexAttribPointer(
+  //   shaderProgram.vertexPositionAttribute,
+  //   3, gl.FLOAT, false, 0, 0);
+  // //normal buffer
+  // gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
+  // gl.vertexAttribPointer(
+  //   shaderProgram.vertexNormalAttribute,
+  //   3, gl.FLOAT, false, 0, 0);
+  // // uv buffer
+  // gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
+  // gl.vertexAttribPointer(
+  //   shaderProgram.textureCoordAttribute,
+  //   2, gl.FLOAT, false, 0, 0);
+  // //vertex index buffer
+  // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
+  this._applyUniforms(shaderKey, undefined, shaderProgram);
+  if(this.customShader) {
+    this._applyUniforms(shaderKey, this.customShader._uniforms, shaderProgram);
   }
   gl.drawElements(
     gl.TRIANGLES, this.gHash[gId].numberOfItems,

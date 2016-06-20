@@ -31,6 +31,7 @@ var p5 = require('../core/core');
  */
 p5.prototype.normalMaterial = function(){
   this._renderer._getShader('normalVert', 'normalFrag');
+  this._renderer.customShader = undefined;
   return this;
 };
 
@@ -314,7 +315,8 @@ p5.RendererGL.prototype._applyColorBlend = function(v1,v2,v3,a){
 };
 
 p5.prototype.shader = function(shader) {
-  shader._useShader();
+  this._renderer.customShader = shader;
+  //this._renderer.curShaderId = shader.shaderKey;
   return this;
 };
 
