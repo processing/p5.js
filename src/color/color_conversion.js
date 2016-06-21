@@ -61,11 +61,7 @@ p5.ColorConversion._hsbaToRGBA = function(hsba) {
     var tint2 = val * (1 - sat * (hue - sector));
     var tint3 = val * (1 - sat * (1 + sector - hue));
     var red, green, blue;
-    if (sector === 0) {  // Red to yellow.
-      red = val;
-      green = tint3;
-      blue = tint1;
-    } else if (sector === 1) {  // Yellow to green.
+    if (sector === 1) {  // Yellow to green.
       red = tint2;
       green = val;
       blue = tint1;
@@ -81,10 +77,14 @@ p5.ColorConversion._hsbaToRGBA = function(hsba) {
       red = tint3;
       green = tint1;
       blue = val;
-    } else {  // Magenta to red.
+    } else if (sector === 5) {  // Magenta to red.
       red = val;
       green = tint1;
       blue = tint2;
+    } else {  // Red to yellow (sector could be 0 or 6).
+      red = val;
+      green = tint3;
+      blue = tint1;
     }
     RGBA = [red, green, blue, hsba[3]];
   }

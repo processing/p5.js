@@ -235,6 +235,8 @@ p5.RendererGL.prototype._setMatrixUniforms = function(shaderKey) {
     shaderProgram.uMVMatrixUniform,
     false, this.uMVMatrix.mat4);
 
+  this.uNMatrix.inverseTranspose(this.uMVMatrix);
+
   gl.uniformMatrix3fv(
     shaderProgram.uNMatrixUniform,
     false, this.uNMatrix.mat3);
@@ -307,7 +309,7 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   var gl = this.GL;
   var shaderProgram;
   //see material.js for more info on color blending in webgl
-  var colors = this._applyColorBlend(v1,v2,v3,a);
+  var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
   this.curFillColor = colors;
   this.drawMode = 'fill';
   if(this.isImmediateDrawing){
@@ -429,43 +431,21 @@ p5.RendererGL.prototype.scale = function(x,y,z) {
   return this;
 };
 
-/**
- * [rotate description]
- * @param  {Number} rad  angle in radians
- * @param  {p5.Vector | Array} axis axis to rotate around
- * @return {p5.RendererGL}      [description]
- */
 p5.RendererGL.prototype.rotate = function(rad, axis){
   this.uMVMatrix.rotate(rad, axis);
-  this.uNMatrix.inverseTranspose(this.uMVMatrix);
   return this;
 };
 
-/**
- * [rotateX description]
- * @param  {Number} rad radians to rotate
- * @return {[type]}     [description]
- */
 p5.RendererGL.prototype.rotateX = function(rad) {
   this.rotate(rad, [1,0,0]);
   return this;
 };
 
-/**
- * [rotateY description]
- * @param  {Number} rad rad radians to rotate
- * @return {[type]}     [description]
- */
 p5.RendererGL.prototype.rotateY = function(rad) {
   this.rotate(rad, [0,1,0]);
   return this;
 };
 
-/**
- * [rotateZ description]
- * @param  {Number} rad rad radians to rotate
- * @return {[type]}     [description]
- */
 p5.RendererGL.prototype.rotateZ = function(rad) {
   this.rotate(rad, [0,0,1]);
   return this;
@@ -474,8 +454,6 @@ p5.RendererGL.prototype.rotateZ = function(rad) {
 /**
  * pushes a copy of the model view matrix onto the
  * MV Matrix stack.
- * NOTE to self: could probably make this more readable
- * @return {[type]} [description]
  */
 p5.RendererGL.prototype.push = function() {
   uMVMatrixStack.push(this.uMVMatrix.copy());

@@ -84,7 +84,9 @@ p5.prototype.normalMaterial = function(){
  * <code>
  * var vid;
  * function preload(){
- *   vid = createVideo([myVideo.mp4]);
+ *   vid = createVideo("assets/fingers.mov");
+ *   vid.hide();
+ *   vid.loop();
  * }
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
@@ -228,7 +230,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   gl.useProgram(shaderProgram);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
-  var colors = this._renderer._applyColorBlend(v1,v2,v3,a);
+  var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
 
   gl.uniform4f(shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);
@@ -276,7 +278,7 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
-  var colors = this._renderer._applyColorBlend(v1,v2,v3,a);
+  var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
   gl.uniform4f(shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);
   shaderProgram.uSpecular = gl.getUniformLocation(

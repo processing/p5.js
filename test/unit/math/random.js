@@ -56,6 +56,13 @@ suite('Random', function() {
         assert.isTrue(result < 10);
       });
     });
+    suite('random(["apple", "pear", "orange", "grape"])', function() {
+      test('should return a fruit', function() {
+        var fruits = ['apple', 'pear', 'orange', 'grape'];
+        result = random(fruits);
+        assert.include(fruits, result);
+      });
+    });
   });
 
 });
