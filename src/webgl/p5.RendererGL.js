@@ -283,6 +283,11 @@ p5.RendererGL.prototype._setUniform = function()
     } else {
       uType = 'Matrix4fv';
     }
+  } else if(uData instanceof p5.Graphics ||
+            uData instanceof p5.Image ||
+            (typeof p5.MediaElement !== 'undefined' &&
+             uData instanceof p5.MediaElement)) {
+    uType = 'texture';
   } else {
     console.error('Didn\'t recognize the type of this uniform.');
   }
@@ -313,12 +318,14 @@ p5.RendererGL.prototype._applyUniforms = function(shaderKey, uniformsObj, shader
           gl.getUniformLocation(shaderProgram, uName);
     }
     var location = uObj[uName].location[shaderKey];
-    //var location = gl.getUniformLocation(shaderProgram, uName);
     var data;
 
     var type = uObj[uName].type;
     var functionName = 'uniform' + type;
-    if(type.substring(0, 6) === 'Matrix') {
+    if(type === 'texture') {
+      this._applyTexUniform(uObj[uName].data, 0);
+      gl.uniform1f(location, 0);
+    } else if(type.substring(0, 6) === 'Matrix') {
       if(type === 'Matrix3fv') {
         data = uObj[uName].data.mat3;
       } else {

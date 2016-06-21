@@ -100,62 +100,53 @@ p5.prototype.normalMaterial = function(){
  * </code>
  * </div>
  */
-p5.prototype.texture = function(){
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  var gl = this._renderer.GL;
-  var shaderProgram = this._renderer._getShader('lightVert',
-    'lightTextureFrag');
-  gl.useProgram(shaderProgram);
-  var textureData;
-  //if argument is not already a texture
-  //create a new one
-  if(!args[0].isTexture){
-    if (args[0] instanceof p5.Image) {
-      textureData = args[0].canvas;
-    }
-    //if param is a video
-    else if (args[0] instanceof p5.MediaElement){
-      if(!args[0].loadedmetadata) {return;}
-      textureData = args[0].elt;
-    }
-    //used with offscreen 2d graphics renderer
-    else if(args[0] instanceof p5.Graphics){
-      textureData = args[0].elt;
-    }
-    var tex = gl.createTexture();
-    args[0]._setProperty('tex', tex);
-    args[0]._setProperty('isTexture', true);
-    this._renderer._bind.call(this, tex, textureData);
-  }
-  else {
-    if(args[0] instanceof p5.Graphics ||
-      args[0] instanceof p5.MediaElement){
-      textureData = args[0].elt;
-    }
-    else if(args[0] instanceof p5.Image){
-      textureData = args[0].canvas;
-    }
-    this._renderer._bind.call(this, args[0].tex, textureData);
-  }
-  //this is where we'd activate multi textures
-  //eg. gl.activeTexture(gl.TEXTURE0 + (unit || 0));
-  //but for now we just have a single texture.
-  //@TODO need to extend this functionality
-  gl.activeTexture(gl.TEXTURE0);
-  gl.bindTexture(gl.TEXTURE_2D, args[0].tex);
-  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), true);
-  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'uSampler'), 0);
-  return this;
+p5.prototype.texture = function(tex){
+  this._renderer._setUniform('uSampler', tex);
 };
 
 /**
  * Texture Util functions
  */
+p5.RendererGL.prototype._applyTexUniform = function(textureObj, slot, shader){
+  var gl = this.GL;
+  var textureData;
+  //if argument is not already a texture
+  //create a new one
+  if(!textureObj.isTexture){
+    if (textureObj instanceof p5.Image) {
+      textureData = textureObj.canvas;
+    }
+    //if param is a video
+    else if (textureObj instanceof p5.MediaElement){
+      if(!textureObj.loadedmetadata) {return;}
+      textureData = textureObj.elt;
+    }
+    //used with offscreen 2d graphics renderer
+    else if(textureObj instanceof p5.Graphics){
+      textureData = textureObj.elt;
+    }
+    var tex = gl.createTexture();
+    textureObj._setProperty('tex', tex);
+    textureObj._setProperty('isTexture', true);
+    this._bind(tex, textureData);
+  }
+  else {
+    if(textureObj instanceof p5.Graphics ||
+      textureObj instanceof p5.MediaElement){
+      textureData = textureObj.elt;
+    }
+    else if(textureObj instanceof p5.Image){
+      textureData = textureObj.canvas;
+    }
+    this._bind(textureObj.tex, textureData);
+  }
+
+  gl.activeTexture(gl.TEXTURE0 + slot);
+  gl.bindTexture(gl.TEXTURE_2D, textureObj.tex);
+};
+
 p5.RendererGL.prototype._bind = function(tex, data){
-  var gl = this._renderer.GL;
+  var gl = this.GL;
   gl.bindTexture(gl.TEXTURE_2D, tex);
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
   gl.texImage2D(gl.TEXTURE_2D, 0,
