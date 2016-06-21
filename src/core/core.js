@@ -275,7 +275,10 @@ var p5 = function(sketch, node, sync) {
       //increment counter
       this._incrementPreload();
       //call original function
-      var args = Array.prototype.slice.call(arguments);
+      var args = new Array(arguments.length);
+      for (var i = 0; i < args.length; ++i) {
+        args[i] = arguments[i];
+      }
       args.push(this._decrementPreload.bind(this));
       return this._registeredPreloadMethods[fnName].apply(obj, args);
     }.bind(this);
@@ -342,9 +345,9 @@ var p5 = function(sketch, node, sync) {
       }
 
       this._setProperty('frameCount', this.frameCount + 1);
+      this.redraw();
       this._updateMouseCoords();
       this._updateTouchCoords();
-      this.redraw();
       this._frameRate = 1000.0/(now - this._lastFrameTime);
       this._lastFrameTime = now;
     }

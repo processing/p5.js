@@ -67,13 +67,14 @@ p5.prototype.normalMaterial = function(){
  * var pg;
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
- *   pg = createGraphics(256,256);
+ *   pg = createGraphics(200, 200);
+ *   pg.textSize(100);
  * }
  *
  * function draw(){
  *   background(0);
  *   pg.background(255);
- *   pg.text('hello world!');
+ *   pg.text('hello!', 0, 100);
  *   //pass image as texture
  *   texture(pg);
  *   plane(200);
@@ -85,7 +86,9 @@ p5.prototype.normalMaterial = function(){
  * <code>
  * var vid;
  * function preload(){
- *   vid = createVideo([myVideo.mp4]);
+ *   vid = createVideo("assets/fingers.mov");
+ *   vid.hide();
+ *   vid.loop();
  * }
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
@@ -117,7 +120,8 @@ p5.RendererGL.prototype._applyTexUniform = function(textureObj, slot, shader){
       textureData = textureObj.canvas;
     }
     //if param is a video
-    else if (textureObj instanceof p5.MediaElement){
+    else if (typeof p5.MediaElement !== 'undefined' &&
+             textureObj instanceof p5.MediaElement){
       if(!textureObj.loadedmetadata) {return;}
       textureData = textureObj.elt;
     }
@@ -132,7 +136,8 @@ p5.RendererGL.prototype._applyTexUniform = function(textureObj, slot, shader){
   }
   else {
     if(textureObj instanceof p5.Graphics ||
-      textureObj instanceof p5.MediaElement){
+      (typeof p5.MediaElement !== 'undefined' &&
+      textureObj instanceof p5.MediaElement)){
       textureData = textureObj.elt;
     }
     else if(textureObj instanceof p5.Image){
@@ -220,7 +225,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   gl.useProgram(shaderProgram);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
-  var colors = this._renderer._applyColorBlend(v1,v2,v3,a);
+  var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
 
   gl.uniform4f(shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);
@@ -268,7 +273,7 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
-  var colors = this._renderer._applyColorBlend(v1,v2,v3,a);
+  var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
   gl.uniform4f(shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);
   shaderProgram.uSpecular = gl.getUniformLocation(

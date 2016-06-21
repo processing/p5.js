@@ -89,6 +89,7 @@ p5.Geometry.prototype.computeNormals = function (){
     normal = normal.normalize();
     this.vertexNormals.push(normal);
   }
+  return this;
 };
 
 /**
