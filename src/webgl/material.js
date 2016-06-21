@@ -66,13 +66,14 @@ p5.prototype.normalMaterial = function(){
  * var pg;
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
- *   pg = createGraphics(256,256);
+ *   pg = createGraphics(200, 200);
+ *   pg.textSize(100);
  * }
  *
  * function draw(){
  *   background(0);
  *   pg.background(255);
- *   pg.text('hello world!');
+ *   pg.text('hello!', 0, 100);
  *   //pass image as texture
  *   texture(pg);
  *   plane(200);
