@@ -54,6 +54,9 @@ p5.RendererGL = function(elt, pInst, isMainCanvas) {
   //Geometry & Material hashes
   this.gHash = {};
   this.mHash = {};
+
+  //Counter for keeping track of which texture slots are currently occupied
+  this.texCount = 0;
   //Imediate Mode
   //default drawing is done in Retained Mode
   this.isImmediateDrawing = false;
@@ -277,6 +280,8 @@ p5.RendererGL.prototype._setUniform = function()
     uType = uType || '1f';
   } else if(Array.isArray(uData) && uData.length <= 4) {
     uType = uData.length + 'fv';
+  } else if(uData instanceof p5.Vector) {
+    uType = '3fv';
   } else if(uData instanceof p5.Matrix) {
     if('mat3' in uData) {
       uType = 'Matrix3fv';
@@ -305,7 +310,7 @@ p5.RendererGL.prototype._setUniform = function()
 /**
  * Apply saved uniforms to specified shader.
  */
-p5.RendererGL.prototype._applyUniforms = function(shaderKey, uniformsObj, shaderProg)
+p5.RendererGL.prototype._applyUniforms = function(shaderKey, uniformsObj)
 {
   var gl = this.GL;
   var shaderProgram = this.mHash[shaderKey];
@@ -323,8 +328,9 @@ p5.RendererGL.prototype._applyUniforms = function(shaderKey, uniformsObj, shader
     var type = uObj[uName].type;
     var functionName = 'uniform' + type;
     if(type === 'texture') {
-      this._applyTexUniform(uObj[uName].data, 0);
-      gl.uniform1f(location, 0);
+      this._applyTexUniform(uObj[uName].data, this.texCount);
+      gl.uniform1i(location, this.texCount);
+      this.texCount++;
     } else if(type.substring(0, 6) === 'Matrix') {
       if(type === 'Matrix3fv') {
         data = uObj[uName].data.mat3;
@@ -334,6 +340,11 @@ p5.RendererGL.prototype._applyUniforms = function(shaderKey, uniformsObj, shader
       gl[functionName](location, false, data);
     } else {
       data = uObj[uName].data;
+
+      if(data instanceof p5.Vector) {
+        data = data.array();
+      }
+
       gl[functionName](location, data);
     }
   }

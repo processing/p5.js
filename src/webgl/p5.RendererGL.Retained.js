@@ -104,10 +104,10 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     if(this.customShader.shaderKey in this.mHash) {
       shaderKey = this.customShader.shaderKey;
       shaderProgram = this.mHash[shaderKey];
-    } else if(this.customShader.vertSource == undefined ||
-       this.customShader.fragSource == undefined) {
-         // The shader isn't loaded, so don't render anything this pass
-         return;
+    } else if(this.customShader.vertSource === undefined ||
+              this.customShader.fragSource === undefined) {
+      // The shader isn't loaded, so don't render anything this pass
+      return;
     } else {
       shaderProgram = this._compileShaders(this.customShader.vertSource,
                                            this.customShader.fragSource);
@@ -133,6 +133,9 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   //   2, gl.FLOAT, false, 0, 0);
   // //vertex index buffer
   // gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
+  //TODO: This re-binds the textures each render call, which could be more
+  //efficient
+  this.texCount = 0;
   this._applyUniforms(shaderKey, undefined, shaderProgram);
   if(this.customShader) {
     this._applyUniforms(shaderKey, this.customShader._uniforms, shaderProgram);

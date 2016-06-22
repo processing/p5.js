@@ -110,9 +110,11 @@ p5.prototype.texture = function(tex){
 /**
  * Texture Util functions
  */
-p5.RendererGL.prototype._applyTexUniform = function(textureObj, slot, shader){
+p5.RendererGL.prototype._applyTexUniform = function(textureObj, slot){
   var gl = this.GL;
   var textureData;
+
+  gl.activeTexture(gl.TEXTURE0 + slot);
   //if argument is not already a texture
   //create a new one
   if(!textureObj.isTexture){
@@ -146,7 +148,6 @@ p5.RendererGL.prototype._applyTexUniform = function(textureObj, slot, shader){
     this._bind(textureObj.tex, textureData);
   }
 
-  gl.activeTexture(gl.TEXTURE0 + slot);
   gl.bindTexture(gl.TEXTURE_2D, textureObj.tex);
 };
 
