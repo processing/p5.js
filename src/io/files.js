@@ -438,16 +438,16 @@ p5.prototype.loadStrings = function (path, callback, errorCallback) {
  *
  * function setup() {
  *   //count the columns
- *   print(table.getRowCount() + " total rows in table");
- *   print(table.getColumnCount() + " total columns in table");
+ *   println(table.getRowCount() + " total rows in table");
+ *   println(table.getColumnCount() + " total columns in table");
  *
- *   print(table.getColumn("name"));
+ *   println(table.getColumn("name"));
  *   //["Goat", "Leopard", "Zebra"]
  *
  *   //cycle through the table
  *   for (var r = 0; r < table.getRowCount(); r++)
  *     for (var c = 0; c < table.getColumnCount(); c++) {
- *       print(table.getString(r, c));
+ *       println(table.getString(r, c));
  *     }
  * }
  * </code>
