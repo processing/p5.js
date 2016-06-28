@@ -188,6 +188,9 @@ p5.Renderer2D.prototype.copy = function () {
 
 p5.Renderer2D._copyHelper =
 function (srcImage, sx, sy, sw, sh, dx, dy, dw, dh) {
+  if (!srcImage.canvas) {
+    srcImage.loadPixels();
+  }
   var s = srcImage.canvas.width / srcImage.width;
   this.drawingContext.drawImage(srcImage.canvas,
     s * sx, s * sy, s * sw, s * sh, dx, dy, dw, dh);
