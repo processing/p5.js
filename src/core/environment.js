@@ -305,7 +305,7 @@ p5.prototype.displayHeight = screen.height;
  * createCanvas(windowWidth, windowHeight);
  * </code></div>
  */
-p5.prototype.windowWidth = document.documentElement.clientWidth;
+p5.prototype.windowWidth = getWindowWidth();
 /**
  * System variable that stores the height of the inner window, it maps to
  * window.innerHeight.
@@ -316,7 +316,7 @@ p5.prototype.windowWidth = document.documentElement.clientWidth;
  * createCanvas(windowWidth, windowHeight);
  * </code></div>
  */
-p5.prototype.windowHeight = document.documentElement.clientHeight;
+p5.prototype.windowHeight = getWindowHeight();
 
 /**
  * The windowResized() function is called once every time the browser window
@@ -340,8 +340,8 @@ p5.prototype.windowHeight = document.documentElement.clientHeight;
  * </code></div>
  */
 p5.prototype._onresize = function(e){
-  this._setProperty('windowWidth', window.innerWidth);
-  this._setProperty('windowHeight', window.innerHeight);
+  this._setProperty('windowWidth', getWindowWidth());
+  this._setProperty('windowHeight', getWindowHeight());
   var context = this._isGlobal ? window : this;
   var executeDefault;
   if (typeof context.windowResized === 'function') {
@@ -351,6 +351,13 @@ p5.prototype._onresize = function(e){
     }
   }
 };
+
+function getWindowWidth() {
+  return Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+}
+function getWindowHeight() {
+  return Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+}
 
 /**
  * System variable that stores the width of the drawing canvas. This value
