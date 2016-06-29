@@ -353,10 +353,14 @@ p5.prototype._onresize = function(e){
 };
 
 function getWindowWidth() {
-  return Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+  return Math.max(
+    document.documentElement.clientWidth,
+    window.innerWidth || 0);
 }
 function getWindowHeight() {
-  return Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+  return Math.max(
+    document.documentElement.clientHeight,
+    window.innerHeight || 0);
 }
 
 /**
