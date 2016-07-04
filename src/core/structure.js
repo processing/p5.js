@@ -257,8 +257,12 @@ p5.prototype.popStyle = function() {
  * <br><br>
  * The redraw() function does not work properly when called inside draw().
  * To enable/disable animations, use loop() and noLoop().
+ * <br><br>
+ * In addition you can set the number of redraws per method call. Just
+ * add an integer as single parameter for the number of redraws.
  *
  * @method redraw
+ * @param  {Integer} [n] Redraw for n-times. The default value is 1.
  * @example
  * <div><code>
  * var x = 0;
