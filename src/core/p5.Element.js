@@ -90,11 +90,12 @@ p5.Element.prototype.parent = function(p) {
 
 /**
  *
- * Sets the ID of the element
+ * Sets the ID of the element. If no ID argument is passed in, it instead
+ * returns the current ID of the element.
  *
  * @method id
- * @param  {String} id ID of the element
- * @return {p5.Element}
+ * @param  {String} [id] ID of the element
+ * @return {p5.Element|String}
  */
 p5.Element.prototype.id = function(id) {
   if (arguments.length === 0) {
@@ -109,11 +110,12 @@ p5.Element.prototype.id = function(id) {
 
 /**
  *
- * Adds given class to the element
+ * Adds given class to the element. If no class argument is passed in, it
+ * instead returns a string containing the current class(es) of the element.
  *
  * @method class
- * @param  {String} class class to add
- * @return {p5.Element}
+ * @param  {String} [class] class to add
+ * @return {p5.Element|String}
  */
 p5.Element.prototype.class = function(c) {
   if (arguments.length === 0) {
