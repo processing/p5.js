@@ -29,10 +29,10 @@ require('../core/error_helpers');
  *
  * @method loadImage
  * @param  {String} path Path of the image to be loaded
- * @param  {Function(p5.Image)} [successCallback] Function to be called once
+ * @param  {Function} [successCallback] Function to be called once
  *                                the image is loaded. Will be passed the
  *                                p5.Image.
- * @param  {Function(Event)}    [failureCallback] called with event error if
+ * @param  {Function}    [failureCallback] called with error event if
  *                                the image fails to load.
  * @return {p5.Image}             the p5.Image object
  * @example
