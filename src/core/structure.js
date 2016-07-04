@@ -264,19 +264,37 @@ p5.prototype.popStyle = function() {
  * var x = 0;
  *
  * function setup() {
- * createCanvas(100, 100);
+ *   createCanvas(100, 100);
  *   noLoop();
  * }
  *
  * function draw() {
  *   background(204);
  *   line(x, 0, x, height);
- *   x += 1;
  * }
  *
  * function mousePressed() {
+ *   x += 1;
  *   redraw();
- *   // redraw(5);
+ * }
+ * </code></div>
+ *
+ * <div><code>
+ * var x = 0;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   noLoop();
+ * }
+ *
+ * function draw() {
+ *   background(204);
+ *   x += 1;
+ *   line(x, 0, x, height);
+ * }
+ *
+ * function mousePressed() {
+ *   redraw(5);
  * }
  * </code></div>
  */
