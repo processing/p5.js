@@ -189,16 +189,16 @@ p5.prototype.clear = function() {
  * so you can change modes as you like without affecting their appearance.
  *
  * @method colorMode
- * @param {Number|Constant} mode   either RGB or HSB, corresponding to
- *                                 Red/Green/Blue and Hue/Saturation/Brightness
- *                                 (or Lightness)
- * @param {Number|Constant} [max1] range for the red or hue depending on the
- *                                 current color mode, or range for all values
- * @param {Number|Constant} [max2] range for the green or saturation depending
- *                                 on the current color mode
- * @param {Number|Constant} [max3] range for the blue or brightness/lighntess
- *                                 depending on the current color mode
- * @param {Number|Constant} [maxA] range for the alpha
+ * @param {Constant} mode   either RGB or HSB, corresponding to
+ *                          Red/Green/Blue and Hue/Saturation/Brightness
+ *                          (or Lightness)
+ * @param {Number} [max1] range for the red or hue depending on the
+ *                              current color mode, or range for all values
+ * @param {Number} [max2] range for the green or saturation depending
+ *                              on the current color mode
+ * @param {Number} [max3] range for the blue or brightness/lighntess
+ *                              depending on the current color mode
+ * @param {Number} [maxA] range for the alpha
  * @example
  * <div>
  * <code>

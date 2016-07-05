@@ -120,7 +120,7 @@ p5.prototype.noSmooth = function() {
  * case-sensitive language.
  *
  * @method rectMode
- * @param  {Number/Constant} mode either CORNER, CORNERS, CENTER, or RADIUS
+ * @param  {Constant} mode either CORNER, CORNERS, CENTER, or RADIUS
  * @return {p5}                   the p5 object
  * @example
  * <div>
