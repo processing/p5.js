@@ -309,7 +309,7 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   var gl = this.GL;
   var shaderProgram;
   //see material.js for more info on color blending in webgl
-  var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
+  var colors = this._applyColorBlend.apply(this, arguments);
   this.curFillColor = colors;
   this.drawMode = 'fill';
   if(this.isImmediateDrawing){
