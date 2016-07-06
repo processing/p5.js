@@ -239,7 +239,7 @@ p5.prototype.copy = function () {
  * Increases the light areas. No parameter is used.
  *
  * @method filter
- * @param  {String} filterType
+ * @param  {Constant} filterType
  * @param  {Number} filterParam an optional parameter unique
  *  to each filter, see above
  *
