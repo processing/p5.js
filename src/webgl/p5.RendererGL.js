@@ -135,51 +135,28 @@ p5.RendererGL.prototype.background = function() {
 // SHADER
 //////////////////////////////////////////////
 
-/**
- * [_initShaders description]
- * @param  {string} vertId [description]
- * @param  {string} fragId [description]
- * @return {[type]}        [description]
- */
-p5.RendererGL.prototype._initShaders =
-function(vertId, fragId, isImmediateMode) {
-  var gl = this.GL;
-  //set up our default shaders by:
-  // 1. create the shader,
-  // 2. load the shader source,
-  // 3. compile the shader
-  var _vertShader = gl.createShader(gl.VERTEX_SHADER);
-  //load in our default vertex shader
-  gl.shaderSource(_vertShader, shader[vertId]);
-  gl.compileShader(_vertShader);
-  // if our vertex shader failed compilation?
-  if (!gl.getShaderParameter(_vertShader, gl.COMPILE_STATUS)) {
-    alert('Yikes! An error occurred compiling the shaders:' +
-      gl.getShaderInfoLog(_vertShader));
-    return null;
+p5.RendererGL.prototype._setCurrentShader = function() {
+  var mId, vertSource, fragSource;
+  if(arguments.length === 1) {
+    mId = arguments[0].shaderKey;
+    vertSource = arguments[0].vertSource;
+    fragSource = arguments[0].fragSource;
+  } else if(arguments.length === 2) {
+    var vertId = arguments[0];
+    var fragId = arguments[1];
+    mId = vertId + '|' + fragId;
+    vertSource = shader[vertId];
+    fragSource = shader[fragId];
   }
 
-  var _fragShader = gl.createShader(gl.FRAGMENT_SHADER);
-  //load in our material frag shader
-  gl.shaderSource(_fragShader, shader[fragId]);
-  gl.compileShader(_fragShader);
-  // if our frag shader failed compilation?
-  if (!gl.getShaderParameter(_fragShader, gl.COMPILE_STATUS)) {
-    alert('Darn! An error occurred compiling the shaders:' +
-      gl.getShaderInfoLog(_fragShader));
-    return null;
+  //create it and put it into hashTable
+  if(!this.materialInHash(mId)){
+    var shaderProgram = this._compileShader(vertSource, fragSource);
+    this.mHash[mId] = shaderProgram;
   }
+  this.curShaderId = mId;
 
-  var shaderProgram = gl.createProgram();
-  gl.attachShader(shaderProgram, _vertShader);
-  gl.attachShader(shaderProgram, _fragShader);
-  gl.linkProgram(shaderProgram);
-  if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-    alert('Snap! Error linking shader program');
-  }
-  //END SHADERS SETUP
-
-  return shaderProgram;
+  return this.mHash[this.curShaderId];
 };
 
 /**
@@ -189,7 +166,7 @@ function(vertId, fragId, isImmediateMode) {
  * @param  {array}  [flags] Array of strings
  * @return {[type]}         [description]
  */
-p5.RendererGL.prototype._compileShaders = function(vertSource,
+p5.RendererGL.prototype._compileShader = function(vertSource,
                                                    fragSource, flags) {
   var gl = this.GL;
 
@@ -223,6 +200,10 @@ p5.RendererGL.prototype._compileShaders = function(vertSource,
 
   return shaderProgram;
 };
+
+//////////////////////////////////////////////
+// UNIFORMS
+//////////////////////////////////////////////
 
 /**
  * @param {Object} [uniformsObj] An optional object where the uniform data is
@@ -343,38 +324,6 @@ p5.RendererGL.prototype._applyUniforms = function(shaderKey, uniformsObj)
       gl[functionName](location, data);
     }
   }
-};
-//////////////////////////////////////////////
-// GET CURRENT | for shader and color
-//////////////////////////////////////////////
-p5.RendererGL.prototype._getShader = function(vertId, fragId, isImmediateMode) {
-  var mId = vertId + '|' + fragId;
-  //create it and put it into hashTable
-  if(!this.materialInHash(mId)){
-    var shaderProgram = this._initShaders(vertId, fragId, isImmediateMode);
-    this.mHash[mId] = shaderProgram;
-  }
-  this.curShaderId = mId;
-
-  return this.mHash[this.curShaderId];
-};
-
-p5.RendererGL.prototype._getCurShaderId = function(){
-  //if the shader ID is not yet defined
-  var mId, shaderProgram;
-  if(this.drawMode !== 'fill' && this.curShaderId === undefined){
-    //default shader: normalMaterial()
-    mId = 'normalVert|normalFrag';
-    shaderProgram = this._initShaders('normalVert', 'normalFrag');
-    this.mHash[mId] = shaderProgram;
-    this.curShaderId = mId;
-  } else if(this.isImmediateDrawing && this.drawMode === 'fill'){
-    mId = 'immediateVert|vertexColorFrag';
-    shaderProgram = this._initShaders('immediateVert', 'vertexColorFrag');
-    this.mHash[mId] = shaderProgram;
-    this.curShaderId = mId;
-  }
-  return this.curShaderId;
 };
 
 //////////////////////////////////////////////

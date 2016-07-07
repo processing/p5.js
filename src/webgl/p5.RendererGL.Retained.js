@@ -81,22 +81,19 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
 p5.RendererGL.prototype.drawBuffers = function(gId) {
   this._setDefaultCamera();
   var gl = this.GL;
-  var shaderKey = this._getCurShaderId();
-  var shaderProgram = this.mHash[shaderKey];
+  var shaderProgram, shaderKey;
   if(this.customShader) {
-    if(this.customShader.shaderKey in this.mHash) {
-      shaderKey = this.customShader.shaderKey;
-      shaderProgram = this.mHash[shaderKey];
-    } else if(this.customShader.vertSource === undefined ||
-              this.customShader.fragSource === undefined) {
+    if(this.customShader.vertSource === undefined ||
+       this.customShader.fragSource === undefined) {
       // The shader isn't loaded, so don't render anything this pass
       return;
     } else {
-      shaderProgram = this._compileShaders(this.customShader.vertSource,
-                                           this.customShader.fragSource);
-      shaderKey = this.customShader.shaderKey;
-      this.mHash[shaderKey] = shaderProgram;
+      shaderProgram = this._setCurrentShader(this.customShader);
+      shaderKey = this.curShaderId;
     }
+  } else {
+    shaderProgram = this._setCurrentShader('normalVert', 'normalFrag');
+    shaderKey = this.curShaderId;
   }
   gl.useProgram(shaderProgram);
 
