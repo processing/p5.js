@@ -8,6 +8,7 @@
 'use strict';
 
 var p5 = require('../core/core');
+var shader = require('./shader');
 //require('./p5.Texture');
 
 /**
@@ -310,6 +311,26 @@ p5.RendererGL.prototype._applyColorBlend = function(v1,v2,v3,a){
   }
   return colors;
 };
+
+
+p5.prototype.loadShader = function(fragShader, vertShader) {
+  var loadedShader = new p5.Shader();
+  loadedShader.shaderKey = fragShader + '|' + vertShader;
+
+  this.loadStrings(fragShader, function(result) {
+    loadedShader.fragSource = result.join('\n');
+  });
+
+  if(vertShader !== undefined) {
+    this.loadStrings(vertShader, function(result) {
+      loadedShader.vertSource = result.join('\n');
+    });
+  } else {
+    loadedShader.vertSource = shader.lightVert;
+  }
+
+  return loadedShader;
+}
 
 p5.prototype.shader = function(shader) {
   this._renderer.customShader = shader;

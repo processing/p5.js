@@ -10,27 +10,16 @@ var renderer = require('./p5.RendererGL');
  * @param  {String} vertShader Source code of a vertex shader as a string
  *
  */
-p5.Shader = function(fragShader, vertShader){
-  this.shaderKey = fragShader + '|' + vertShader;
+p5.Shader = function(fragSource, vertSource){
+  //TODO: this key should be the hash of the optional fragSource and vertSource
+  this.shaderKey = 'customShader';
   this._uniforms = {};
-
-  //TODO: Come up with a better system for loading external files
-  //TODO: Make sure this works in instance mode
-  //TODO: Actually, re-write all of this so that the code is unified in renderer
-  window.loadStrings(fragShader, function(result) {
-    this.fragSource = result.join('\n');
-  }.bind(this));
-
-  window.loadStrings(vertShader, function(result) {
-    this.vertSource = result.join('\n');
-  }.bind(this));
+  
+  this.fragSource = fragSource;
+  this.vertSource = vertSource;
 };
 
-p5.Shader.prototype.getUniform = function() {
-  renderer.prototype._getUniform.apply(this, arguments);
-};
-
-p5.Shader.prototype.setUniform = function() {
+p5.Shader.prototype.set = function() {
   renderer.prototype._setUniform.apply(this, arguments);
 };
 

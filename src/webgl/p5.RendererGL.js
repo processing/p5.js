@@ -179,30 +179,37 @@ function(vertId, fragId, isImmediateMode) {
   }
   //END SHADERS SETUP
 
-  this._getLocation(shaderProgram, isImmediateMode);
-
   return shaderProgram;
 };
 
 /**
  * [_compileShaders description]
- * @param  {string} vertId [description]
- * @param  {string} fragId [description]
- * @return {[type]}        [description]
+ * @param  {string} vertId  [description]
+ * @param  {string} fragId  [description]
+ * @param  {array}  [flags] Array of strings
+ * @return {[type]}         [description]
  */
-p5.RendererGL.prototype._compileShaders = function(vertSource, fragSource) {
+p5.RendererGL.prototype._compileShaders = function(vertSource,
+                                                   fragSource, flags) {
   var gl = this.GL;
 
   var shaders = [vertSource, fragSource];
   var shaderTypes = [gl.VERTEX_SHADER, gl.FRAGMENT_SHADER];
   var shaderProgram = gl.createProgram();
 
+  var flagPrefix = '';
+  if(flags !== undefined) {
+    for(var j = 0; j < flags.length; ++j) {
+      flagPrefix = '#define ' + flags[j] + '\n';
+    }
+  }
+
   for(var i = 0; i < 2; ++i) {
     var shader = gl.createShader(shaderTypes[i]);
     gl.shaderSource(shader, shaders[i]);
     gl.compileShader(shader);
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      alert('Yikes! An error occurred compiling the shaders:' +
+      console.log('Yikes! An error occurred compiling the shaders:' +
         gl.getShaderInfoLog(shader));
       return null;
     }
@@ -211,22 +218,10 @@ p5.RendererGL.prototype._compileShaders = function(vertSource, fragSource) {
 
   gl.linkProgram(shaderProgram);
   if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-    alert('Snap! Error linking shader program');
+    console.log('Snap! Error linking shader program');
   }
 
   return shaderProgram;
-};
-
-p5.RendererGL.prototype._getLocation =
-function(shaderProgram, isImmediateMode) {
-  var gl = this.GL;
-  gl.useProgram(shaderProgram);
-
-  //@TODO: figure out a better way instead of if statement
-  if(isImmediateMode === undefined){
-    shaderProgram.samplerUniform =
-    gl.getUniformLocation(shaderProgram, 'uSampler');
-  }
 };
 
 /**
