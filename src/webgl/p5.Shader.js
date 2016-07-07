@@ -14,7 +14,7 @@ p5.Shader = function(fragSource, vertSource){
   //TODO: this key should be the hash of the optional fragSource and vertSource
   this.shaderKey = 'customShader';
   this._uniforms = {};
-  
+
   this.fragSource = fragSource;
   this.vertSource = vertSource;
 };

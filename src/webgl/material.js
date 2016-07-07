@@ -330,7 +330,7 @@ p5.prototype.loadShader = function(fragShader, vertShader) {
   }
 
   return loadedShader;
-}
+};
 
 p5.prototype.shader = function(shader) {
   this._renderer.customShader = shader;

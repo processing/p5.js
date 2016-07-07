@@ -49,7 +49,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
     gl.ARRAY_BUFFER,
     new Float32Array( vToNArray(obj.vertices) ),
     gl.STATIC_DRAW);
-  
+
   this.gHash[gId].normalBuffer.size = 3;
   this.gHash[gId].normalBuffer.type = gl.FLOAT;
   gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer.buffer);
@@ -57,7 +57,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
     gl.ARRAY_BUFFER,
     new Float32Array( vToNArray(obj.vertexNormals) ),
     gl.STATIC_DRAW);
-  
+
   this.gHash[gId].uvBuffer.size = 2;
   this.gHash[gId].uvBuffer.type = gl.FLOAT;
   gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer.buffer);
@@ -99,36 +99,36 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     }
   }
   gl.useProgram(shaderProgram);
-  
+
   gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer.buffer);
   shaderProgram.vertexPositionAttribute =
       gl.getAttribLocation(shaderProgram, 'aPosition');
   gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
   gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute,
                          3, gl.FLOAT, false, 0, 0);
-  
+
   gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer.buffer);
   shaderProgram.vertexNormalAttribute =
       gl.getAttribLocation(shaderProgram, 'aNormal');
   gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
   gl.vertexAttribPointer(shaderProgram.vertexNormalAttribute,
                          3, gl.FLOAT, false, 0, 0);
-  
+
   gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer.buffer);
   shaderProgram.textureCoordAttribute =
       gl.getAttribLocation(shaderProgram, 'aTexCoord');
   gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
   gl.vertexAttribPointer(shaderProgram.textureCoordAttribute,
                          2, gl.FLOAT, false, 0, 0);
-  
+
   //gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer.buffer);
-  
+
   //TODO: This re-binds the textures each render call, which could be more
   //efficient
   this.texCount = 0;
-  this._applyUniforms(shaderKey, undefined, shaderProgram);
+  this._applyUniforms(shaderKey, undefined);
   if(this.customShader) {
-    this._applyUniforms(shaderKey, this.customShader._uniforms, shaderProgram);
+    this._applyUniforms(shaderKey, this.customShader._uniforms);
   }
   gl.drawElements(
     gl.TRIANGLES, this.gHash[gId].numberOfItems,
