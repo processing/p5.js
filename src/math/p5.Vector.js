@@ -508,7 +508,7 @@ p5.Vector.prototype.dist = function (v) {
  *
  */
 p5.Vector.prototype.normalize = function () {
-  return this.div(this.mag());
+  return this.mag() === 0 ? this : this.div(this.mag());
 };
 
 /**
