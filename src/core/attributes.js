@@ -35,7 +35,7 @@ var constants = require('./constants');
  * case-sensitive language.
  *
  * @method ellipseMode
- * @param  {Number/Constant} mode either CENTER, RADIUS, CORNER, or CORNERS
+ * @param  {Constant} mode either CENTER, RADIUS, CORNER, or CORNERS
  * @return {p5}                   the p5 object
  * @example
  * <div>
