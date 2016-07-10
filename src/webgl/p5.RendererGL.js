@@ -55,6 +55,11 @@ p5.RendererGL = function(elt, pInst, isMainCanvas) {
   this.gHash = {};
   this.mHash = {};
 
+  //Built-in shaders
+  this.shaders = {'default': new p5.Shader(shader['light.vert'],
+                                           shader['light_texture.frag'])};
+  this.currentShader = this.shaders.default;
+
   //Counter for keeping track of which texture slots are currently occupied
   this.texCount = 0;
   //Imediate Mode
@@ -206,29 +211,14 @@ p5.RendererGL.prototype._compileShader = function(vertSource,
 //////////////////////////////////////////////
 
 /**
- * @param {Object} [uniformsObj] An optional object where the uniform data is
- *                               saved. Default is the RendererGL global
- *                               uniforms object.
  * @param {String} name The name of the uniform.
  */
-p5.RendererGL.prototype._getUniform = function()
+p5.RendererGL.prototype._getUniform = function(uName)
 {
-  var uObj;
-  var uName;
-  if(typeof arguments[0] === 'object') {
-    uObj = arguments[0];
-    uName = arguments[1];
-  } else {
-    uObj = this._uniforms;
-    uName = arguments[0];
-  }
-  return uObj[uName].data;
+  return this._uniforms[uName].data;
 };
 
 /**
- * @param {Object} [uniformsObj] An optional object where the uniform data will
- *                               be saved. Default is the RendererGL global
- *                               uniforms object.
  * @param {String} name The name of the uniform.
  * @param {any} data The data to set in the uniform. This can take many
  *                   different forms. See p5.Shader.setUniform for full
@@ -237,15 +227,9 @@ p5.RendererGL.prototype._getUniform = function()
 p5.RendererGL.prototype._setUniform = function()
 {
   var args = Array.prototype.slice.call(arguments);
-  var uObj;
-
-  if(typeof args[0] === 'object') {
-    uObj = args.shift();
-  } else {
-    uObj = this._uniforms;
-  }
-
+  var uObj = this._uniforms;
   var uName = args.shift();
+
   var uType;
   if(typeof args[args.length - 1] === 'string') {
     uType = args.pop();
