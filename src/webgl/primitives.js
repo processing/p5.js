@@ -9,6 +9,7 @@
 'use strict';
 
 var p5 = require('../core/core');
+var constants = require('../core/constants');
 require('./p5.Geometry');
 /**
  * Draw a plane with given a width and height
@@ -654,13 +655,16 @@ p5.RendererGL.prototype.rect = function
 (args){
   var gId = 'rect|'+args[0]+'|'+args[1]+'|'+args[2]+'|'+
   args[3]+'|'+args[4];
-  var x = args[0];
-  var y = args[1];
-  var z = args[2];
+  var x,y,z;
   var width = args[3];
   var height = args[4];
   var detailX = args[5] || 24;
   var detailY = args[6] || 16;
+  if(this._rectMode === constants.CENTER){
+    x = args[0] - width / 2;
+    y = args[1] - height / 2;
+    z = args[2];
+  }
   if(!this.geometryInHash(gId)){
     var _rect = function(){
       var u,v,p;

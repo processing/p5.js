@@ -11,7 +11,7 @@ varying vec3 vVertexNormal;
 varying highp vec2 vVertTexCoord;
 
 void main(void) {
-  vec4 positionVec4 = vec4(aPosition / uResolution, 1.0);
+  vec4 positionVec4 = vec4(aPosition / uResolution * vec3(1.0, -1.0, 1.0), 1.0);
   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
   vVertexNormal = vec3( uNormalMatrix * aNormal );
   vVertTexCoord = aTexCoord;
