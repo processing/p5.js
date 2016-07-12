@@ -9,7 +9,6 @@
 'use strict';
 
 var p5 = require('../core/core');
-var constants = require('../core/constants');
 require('./p5.Geometry');
 /**
  * Draw a plane with given a width and height
@@ -581,18 +580,18 @@ p5.RendererGL.prototype.point = function(x, y, z){
 
 p5.RendererGL.prototype.triangle = function
 (args){
-  var x1=args[0], y1=args[1], z1=args[2];
-  var x2=args[3], y2=args[4], z2=args[5];
-  var x3=args[6], y3=args[7], z3=args[8];
-  var gId = 'tri|'+x1+'|'+y1+'|'+z1+'|'+
-  x2+'|'+y2+'|'+z2+
-  x3+'|'+y3+'|'+z3;
+  var x1=args[0], y1=args[1];
+  var x2=args[2], y2=args[3];
+  var x3=args[4], y3=args[5];
+  var gId = 'tri|'+x1+'|'+y1+'|'+
+  x2+'|'+y2+'|'+
+  x3+'|'+y3;
   if(!this.geometryInHash(gId)){
     var _triangle = function(){
       var vertices = [];
-      vertices.push(new p5.Vector(x1,y1,z1));
-      vertices.push(new p5.Vector(x2,y2,z2));
-      vertices.push(new p5.Vector(x3,y3,z3));
+      vertices.push(new p5.Vector(x1,y1,0));
+      vertices.push(new p5.Vector(x2,y2,0));
+      vertices.push(new p5.Vector(x3,y3,0));
       this.vertices = vertices;
       this.faces = [[0,1,2]];
       this.uvs = [[0,0],[0,1],[1,1]];
@@ -621,17 +620,19 @@ p5.RendererGL.prototype.ellipse = function
   if(!this.geometryInHash(gId)){
     var _ellipse = function(){
       var u,v,p;
+      var centerX = x+width*0.5;
+      var centerY = y+height*0.5;
       for (var i = 0; i <= this.detailY; i++){
         v = i / this.detailY;
         for (var j = 0; j <= this.detailX; j++){
           u = j / this.detailX;
           var theta = 2 * Math.PI * u;
           if(v === 0){
-            p = new p5.Vector(x, y, 0);
+            p = new p5.Vector(centerX, centerY, 0);
           }
           else{
-            var _x = x + width * Math.sin(theta);
-            var _y = y + height * Math.cos(theta);
+            var _x = centerX + width*0.5 * Math.cos(theta);
+            var _y = centerY + height*0.5 * Math.sin(theta);
             p = new p5.Vector(_x, _y, 0);
           }
           this.vertices.push(p);
@@ -653,15 +654,12 @@ p5.RendererGL.prototype.rect = function
 (args){
   var gId = 'rect|'+args[0]+'|'+args[1]+'|'+args[2]+'|'+
   args[3];
-  var x,y;
+  var x = args[0];
+  var y = args[1];
   var width = args[2];
   var height = args[3];
   var detailX = args[4] || 24;
   var detailY = args[5] || 16;
-  if(this._rectMode === constants.CENTER){
-    x = args[0] - width / 2;
-    y = args[1] - height / 2;
-  }
   if(!this.geometryInHash(gId)){
     var _rect = function(){
       var u,v,p;
@@ -669,9 +667,11 @@ p5.RendererGL.prototype.rect = function
         v = i / this.detailY;
         for (var j = 0; j <= this.detailX; j++){
           u = j / this.detailX;
+          // var _x = x-width/2;
+          // var _y = y-height/2;
           p = new p5.Vector(
-            (x + width) * u,
-            (y + height) * v,
+            x + (width*u),
+            y + (height*v),
             0
           );
           this.vertices.push(p);
