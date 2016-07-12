@@ -257,29 +257,62 @@ p5.prototype.popStyle = function() {
  * <br><br>
  * The redraw() function does not work properly when called inside draw().
  * To enable/disable animations, use loop() and noLoop().
+ * <br><br>
+ * In addition you can set the number of redraws per method call. Just
+ * add an integer as single parameter for the number of redraws.
  *
  * @method redraw
+ * @param  {Integer} [n] Redraw for n-times. The default value is 1.
  * @example
- *   <div><code>
- *     var x = 0;
+ * <div><code>
+ * var x = 0;
  *
- *     function setup() {
- *       createCanvas(100, 100);
- *       noLoop();
- *     }
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   noLoop();
+ * }
  *
- *     function draw() {
- *       background(204);
- *       line(x, 0, x, height);
- *     }
+ * function draw() {
+ *   background(204);
+ *   line(x, 0, x, height);
+ * }
  *
- *     function mousePressed() {
- *       x += 1;
- *       redraw();
- *     }
- *   </code></div>
+ * function mousePressed() {
+ *   x += 1;
+ *   redraw();
+ * }
+ * </code></div>
+ *
+ * <div><code>
+ * var x = 0;
+ *
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   noLoop();
+ * }
+ *
+ * function draw() {
+ *   background(204);
+ *   x += 1;
+ *   line(x, 0, x, height);
+ * }
+ *
+ * function mousePressed() {
+ *   redraw(5);
+ * }
+ * </code></div>
  */
 p5.prototype.redraw = function () {
+  var numberOfRedraws = 1;
+  if (arguments.length === 1) {
+    try {
+      if (parseInt(arguments[0]) > 1) {
+        numberOfRedraws = parseInt(arguments[0]);
+      }
+    } catch (error) {
+      // Do nothing, because the default value didn't be changed.
+    }
+  }
   var userSetup = this.setup || window.setup;
   var userDraw = this.draw || window.draw;
   if (typeof userDraw === 'function') {
@@ -287,13 +320,14 @@ p5.prototype.redraw = function () {
       this.scale(this._pixelDensity, this._pixelDensity);
     }
     var self = this;
-    this._registeredMethods.pre.forEach(function (f) {
+    var callMethod = function (f) {
       f.call(self);
-    });
-    userDraw();
-    this._registeredMethods.post.forEach(function (f) {
-      f.call(self);
-    });
+    };
+    for (var idxRedraw = 0; idxRedraw < numberOfRedraws; idxRedraw++) {
+      this._registeredMethods.pre.forEach(callMethod);
+      userDraw();
+      this._registeredMethods.post.forEach(callMethod);
+    }
   }
 };
 

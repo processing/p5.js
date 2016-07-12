@@ -230,7 +230,7 @@ p5.prototype.saveCanvas = function() {
  *  @param  {Function} [callback] A callback function that will be executed
                                   to handle the image data. This function
                                   should accept an array as argument. The
-                                  array will contain the spcecified number of
+                                  array will contain the specified number of
                                   frames of objects. Each object has three
                                   properties: imageData - an
                                   image/octet-stream, filename and extension.
@@ -242,7 +242,7 @@ p5.prototype.saveCanvas = function() {
  *
  *  function mousePressed() {
  *    saveFrames("out", "png", 1, 25, function(data){
- *      print(data);
+ *      println(data);
  *    });
  *  }
  *  </code></div>

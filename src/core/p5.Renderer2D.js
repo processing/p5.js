@@ -188,6 +188,9 @@ p5.Renderer2D.prototype.copy = function () {
 
 p5.Renderer2D._copyHelper =
 function (srcImage, sx, sy, sw, sh, dx, dy, dw, dh) {
+  if (!srcImage.canvas) {
+    srcImage.loadPixels();
+  }
   var s = srcImage.canvas.width / srcImage.width;
   this.drawingContext.drawImage(srcImage.canvas,
     s * sx, s * sy, s * sw, s * sh, dx, dy, dw, dh);
@@ -213,23 +216,23 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
   var ctx = this._pInst || this;
 
   var pd = ctx._pixelDensity;
-  ctx.loadPixels();
 
   // round down to get integer numbers
   x = Math.floor(x);
   y = Math.floor(y);
 
+  var sx = x * pd;
+  var sy = y * pd;
   if (w === 1 && h === 1){
-    var startPoint = pd*pd*4*(y*this.width+x);
+    var imageData = this.drawingContext.getImageData(sx, sy, 1, 1).data;
+    //imageData = [0,0,0,0];
     return [
-      ctx.pixels[startPoint],
-      ctx.pixels[startPoint+1],
-      ctx.pixels[startPoint+2],
-      ctx.pixels[startPoint+3]
+      imageData[0],
+      imageData[1],
+      imageData[2],
+      imageData[3]
     ];
   } else {
-    var sx = x * pd;
-    var sy = y * pd;
     //auto constrain the width and height to
     //dimensions of the source image
     var dw = Math.min(w, ctx.width);

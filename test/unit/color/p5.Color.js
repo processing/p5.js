@@ -780,4 +780,28 @@ suite('p5.Color', function() {
       assert.deepEqual(c.levels, [100, 100, 100, 70]);
     });
   });
+
+  suite.only('p5.Color.prototype.toString', function() {
+    var colorStr;
+
+    setup(function() {
+      myp5.colorMode(myp5.RGB, 255, 255, 255, 255);
+      c = myp5.color(128, 0, 128, 128);
+      colorStr = c.toString();
+    });
+
+    test('should generate (r,g,b,a) color string with 0-1 normalized alpha', function() {
+      // Will not exactly equal 0.5 due to math: test "0.5" substr of
+      // 'rgba(128,0,128,0.5...' instead of checking the entire string
+      assert.equal(colorStr.substr(15, 3), '0.5');
+    });
+
+    test('should consistently generate the same output', function() {
+      assert.equal(colorStr, '' + c);
+    });
+
+    test('should not mutate color levels', function() {
+      assert.deepEqual(c.levels, [128, 0, 128, 128]);
+    });
+  });
 });

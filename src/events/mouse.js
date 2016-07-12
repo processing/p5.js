@@ -13,15 +13,12 @@ var p5 = require('../core/core');
 var constants = require('../core/constants');
 
 /*
- * These are helper vars that store the mouseX and mouseY vals
- * between the time that a mouse event happens and the next frame
- * of draw. This is done to deal with the asynchronicity of event
- * calls interacting with the draw loop. When a mouse event occurs
- * the _nextMouseX/Y vars are updated, then on each call of draw, mouseX/Y
- * and pmouseX/Y are updated using the _nextMouseX/Y vals.
+ * This is a flag which is false until the first time
+ * we receive a mouse event. The pmouseX and pmouseY
+ * values will match the mouseX and mouseY values until
+ * this interaction takes place.
  */
-p5.prototype._nextMouseX = 0;
-p5.prototype._nextMouseY = 0;
+p5.prototype._hasMouseInteracted = false;
 
 /**
  * The system variable mouseX always contains the current horizontal
@@ -80,7 +77,7 @@ p5.prototype.mouseY = 0;
  * function draw() {
  *   background(244, 248, 252);
  *   line(mouseX, mouseY, pmouseX, pmouseY);
- *   print(pmouseX + " -> " + mouseX);
+ *   println(pmouseX + " -> " + mouseX);
  * }
  *
  * </code>
@@ -105,7 +102,7 @@ p5.prototype.pmouseX = 0;
  *   if(mouseY == pmouseY && mouseX == pmouseX)
  *     rect(20,20,60,60);
  *
- *   print(pmouseY + " -> " + mouseY);
+ *   println(pmouseY + " -> " + mouseY);
  * }
  *
  * </code>
@@ -278,7 +275,7 @@ p5.prototype.pwinMouseY = 0;
 	*       triangle(23, 75, 50, 20, 78, 75);
 	*   }
 	*
-	*   print(mouseButton);
+	*   println(mouseButton);
 	* }
 	* </code>
  * </div>
@@ -303,7 +300,7 @@ p5.prototype.mouseButton = 0;
 	*   else
 	*     rect(25, 25, 50, 50);
 	*
-	*   print(mouseIsPressed);
+	*   println(mouseIsPressed);
 	* }
 	* </code>
 	* </div>
@@ -312,27 +309,32 @@ p5.prototype.mouseIsPressed = false;
 p5.prototype.isMousePressed = false; // both are supported
 
 p5.prototype._updateNextMouseCoords = function(e) {
+  var x = this.mouseX;
+  var y = this.mouseY;
   if(e.type === 'touchstart' ||
      e.type === 'touchmove' ||
      e.type === 'touchend' || e.touches) {
-    this._setProperty('_nextMouseX', this._nextTouchX);
-    this._setProperty('_nextMouseY', this._nextTouchY);
-  } else {
-    if(this._curElement !== null) {
-      var mousePos = getMousePos(this._curElement.elt, e);
-      this._setProperty('_nextMouseX', mousePos.x);
-      this._setProperty('_nextMouseY', mousePos.y);
-    }
+    x = this.touchX;
+    y = this.touchY;
+  } else if(this._curElement !== null) {
+    var mousePos = getMousePos(this._curElement.elt, e);
+    x = mousePos.x;
+    y = mousePos.y;
   }
+  this._setProperty('mouseX', x);
+  this._setProperty('mouseY', y);
   this._setProperty('winMouseX', e.pageX);
   this._setProperty('winMouseY', e.pageY);
+  if (!this._hasMouseInteracted) {
+    // For first draw, make previous and next equal
+    this._updateMouseCoords();
+    this._setProperty('_hasMouseInteracted', true);
+  }
 };
 
 p5.prototype._updateMouseCoords = function() {
   this._setProperty('pmouseX', this.mouseX);
   this._setProperty('pmouseY', this.mouseY);
-  this._setProperty('mouseX', this._nextMouseX);
-  this._setProperty('mouseY', this._nextMouseY);
   this._setProperty('pwinMouseX', this.winMouseX);
   this._setProperty('pwinMouseY', this.winMouseY);
 };
@@ -665,7 +667,7 @@ p5.prototype._onclick = function(e) {
  * }
  *
  * function mouseWheel(event) {
- *   print(event.delta);
+ *   println(event.delta);
  *   //move the square according to the vertical scroll amount
  *   pos += event.delta;
  *   //uncomment to block page scrolling

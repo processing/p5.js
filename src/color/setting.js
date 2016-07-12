@@ -21,7 +21,8 @@ require('./p5.Color');
  *
  * @method background
  * @param {p5.Color} color     any value created by the color() function
- * @param {Number} [a]         opacity of the background
+ * @param {Number} [a]         opacity of the background relative to current
+ *                             color range (default is 0-100)
  *
  * @example
  * <div>
@@ -125,7 +126,7 @@ require('./p5.Color');
  *                        color mode)
  * @param {Number} v3     blue or brightness value (depending on the current
  *                        color mode)
- * @param {Number} [a]
+ * @param  {Number} [a]
  */
 
 /**
@@ -133,7 +134,7 @@ require('./p5.Color');
  * @param {p5.Image} image     image created with loadImage() or createImage(),
  *                             to set as background
  *                             (must be same size as the sketch window)
- * @param {Number} [a]
+ * @param  {Number}  [a]
  */
 p5.prototype.background = function() {
   if (arguments[0] instanceof p5.Image) {
@@ -188,16 +189,16 @@ p5.prototype.clear = function() {
  * so you can change modes as you like without affecting their appearance.
  *
  * @method colorMode
- * @param {Number|Constant} mode   either RGB or HSB, corresponding to
- *                                 Red/Green/Blue and Hue/Saturation/Brightness
- *                                 (or Lightness)
- * @param {Number|Constant} [max1] range for the red or hue depending on the
- *                                 current color mode, or range for all values
- * @param {Number|Constant} [max2] range for the green or saturation depending
- *                                 on the current color mode
- * @param {Number|Constant} [max3] range for the blue or brightness/lighntess
- *                                 depending on the current color mode
- * @param {Number|Constant} [maxA] range for the alpha
+ * @param {Constant} mode   either RGB or HSB, corresponding to
+ *                          Red/Green/Blue and Hue/Saturation/Brightness
+ *                          (or Lightness)
+ * @param {Number} [max1] range for the red or hue depending on the
+ *                              current color mode, or range for all values
+ * @param {Number} [max2] range for the green or saturation depending
+ *                              on the current color mode
+ * @param {Number} [max3] range for the blue or brightness/lighntess
+ *                              depending on the current color mode
+ * @param {Number} [maxA] range for the alpha
  * @example
  * <div>
  * <code>

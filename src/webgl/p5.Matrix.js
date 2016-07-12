@@ -445,7 +445,7 @@ p5.Matrix.prototype.mult = function(multMatrix){
 p5.Matrix.prototype.scale = function() {
   var x,y,z;
   var args = new Array(arguments.length);
-  for(var i = 0; i < args.length; i++) {
+  for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
   //if our 1st arg is a type p5.Vector

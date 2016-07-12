@@ -11,7 +11,9 @@ var p5 = require('../core/core');
 //require('./p5.Texture');
 
 /**
- * Normal material for geometry
+ * Normal material for geometry. You can view all
+ * possible materials in this
+ * <a href="https://p5js.org/examples/examples/3D_Materials.php">example</a>.
  * @method normalMaterial
  * @return {p5}                the p5 object
  * @example
@@ -35,7 +37,8 @@ p5.prototype.normalMaterial = function(){
 };
 
 /**
- * Texture for geometry
+ * Texture for geometry.  You can view other possible materials in this
+ * <a href="https://p5js.org/examples/examples/3D_Materials.php">example</a>.
  * @method texture
  * @param {p5.Image | p5.MediaElement | p5.Graphics} tex 2-dimensional graphics
  *                    to render as texture
@@ -66,13 +69,14 @@ p5.prototype.normalMaterial = function(){
  * var pg;
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
- *   pg = createGraphics(256,256);
+ *   pg = createGraphics(200, 200);
+ *   pg.textSize(100);
  * }
  *
  * function draw(){
  *   background(0);
  *   pg.background(255);
- *   pg.text('hello world!');
+ *   pg.text('hello!', 0, 100);
  *   //pass image as texture
  *   texture(pg);
  *   plane(200);
@@ -84,7 +88,9 @@ p5.prototype.normalMaterial = function(){
  * <code>
  * var vid;
  * function preload(){
- *   vid = createVideo([myVideo.mp4]);
+ *   vid = createVideo("assets/fingers.mov");
+ *   vid.hide();
+ *   vid.loop();
  * }
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
@@ -116,7 +122,8 @@ p5.prototype.texture = function(){
       textureData = args[0].canvas;
     }
     //if param is a video
-    else if (args[0] instanceof p5.MediaElement){
+    else if (typeof p5.MediaElement !== 'undefined' &&
+            args[0] instanceof p5.MediaElement){
       if(!args[0].loadedmetadata) {return;}
       textureData = args[0].elt;
     }
@@ -131,7 +138,8 @@ p5.prototype.texture = function(){
   }
   else {
     if(args[0] instanceof p5.Graphics ||
-      args[0] instanceof p5.MediaElement){
+      (typeof p5.MediaElement !== 'undefined' &&
+      args[0] instanceof p5.MediaElement)){
       textureData = args[0].elt;
     }
     else if(args[0] instanceof p5.Image){
@@ -195,7 +203,9 @@ p5.RendererGL.prototype._bind = function(tex, data){
 //   return value + 1;
 
 /**
- * Ambient material for geometry with a given color
+ * Ambient material for geometry with a given color. You can view all
+ * possible materials in this
+ * <a href="https://p5js.org/examples/examples/3D_Materials.php">example</a>.
  * @method  ambientMaterial
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
@@ -228,7 +238,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   gl.useProgram(shaderProgram);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
-  var colors = this._renderer._applyColorBlend(v1,v2,v3,a);
+  var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
 
   gl.uniform4f(shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);
@@ -243,7 +253,9 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
 };
 
 /**
- * Specular material for geometry with a given color
+ * Specular material for geometry with a given color. You can view all
+ * possible materials in this
+ * <a href="https://p5js.org/examples/examples/3D_Materials.php">example</a>.
  * @method specularMaterial
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
@@ -276,7 +288,7 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
-  var colors = this._renderer._applyColorBlend(v1,v2,v3,a);
+  var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
   gl.uniform4f(shaderProgram.uMaterialColor,
     colors[0], colors[1], colors[2], colors[3]);
   shaderProgram.uSpecular = gl.getUniformLocation(

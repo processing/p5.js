@@ -88,7 +88,7 @@ p5.prototype.plane = function(){
  * @example
  * <div>
  * <code>
- * //draw a spining box with width, height and depth 200
+ * //draw a spinning box with width, height and depth 200
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -216,7 +216,9 @@ p5.prototype.sphere = function(){
     var sphereGeom = new p5.Geometry(detailX, detailY, _sphere);
     sphereGeom
       .computeFaces()
-      .computeNormals();
+      .computeNormals()
+      .averageNormals()
+      .averagePoleNormals();
     this._renderer.createBuffers(gId, sphereGeom);
   }
   this._renderer.drawBuffers(gId);
@@ -318,7 +320,7 @@ var _truncatedCone = function(
  * @example
  * <div>
  * <code>
- * //draw a spining sylinder with radius 200 and height 200
+ * //draw a spinning cylinder with radius 200 and height 200
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -377,7 +379,7 @@ p5.prototype.cylinder = function(){
  * @example
  * <div>
  * <code>
- * //draw a spining cone with radius 200 and height 200
+ * //draw a spinning cone with radius 200 and height 200
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -511,7 +513,7 @@ p5.prototype.ellipsoid = function(){
  * @example
  * <div>
  * <code>
- * //draw a spining torus with radius 200 and tube radius 60
+ * //draw a spinning torus with radius 200 and tube radius 60
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -559,7 +561,8 @@ p5.prototype.torus = function(){
     var torusGeom = new p5.Geometry(detailX, detailY, _torus);
     torusGeom
       .computeFaces()
-      .computeNormals();
+      .computeNormals()
+      .averageNormals();
     this._renderer.createBuffers(gId, torusGeom);
   }
 

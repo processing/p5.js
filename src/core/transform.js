@@ -109,6 +109,8 @@ p5.prototype.rotate = function() {
   }
   if (this._angleMode === constants.DEGREES) {
     r = this.radians(args[0]);
+  } else if (this._angleMode === constants.RADIANS){
+    r = args[0];
   }
   //in webgl mode
   if(args.length > 1){
@@ -363,6 +365,7 @@ p5.prototype.shearY = function(angle) {
  * @method translate
  * @param  {Number} x left/right translation
  * @param  {Number} y up/down translation
+ * @param  {Number} [z] forward/backward translation (webgl only)
  * @return {p5}       the p5 object
  * @example
  * <div>

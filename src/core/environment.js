@@ -20,24 +20,24 @@ p5.prototype._targetFrameRate = 60;
 
 if (window.console && console.log) {
   /**
-   * The print() function writes to the console area of your browser.
+   * The println() function writes to the console area of your browser.
    * This function is often helpful for looking at the data a program is
    * producing. This function creates a new line of text for each call to
    * the function. Individual elements can be
    * separated with quotes ("") and joined with the addition operator (+).
    * <br><br>
-   * While print() is similar to console.log(), it does not directly map to
+   * While println() is similar to console.log(), it does not directly map to
    * it in order to simulate easier to understand behavior than
    * console.log(). Due to this, it is slower. For fastest results, use
    * console.log().
    *
-   * @method print
+   * @method println
    * @param {Any} contents any combination of Number, String, Object, Boolean,
    *                       Array to print
    * @example
    * <div><code class='norender'>
    * var x = 10;
-   * print("The value of x is " + x);
+   * println("The value of x is " + x);
    * // prints "The value of x is 10"
    * </code></div>
    */
@@ -45,19 +45,22 @@ if (window.console && console.log) {
   // simulate synchronous behavior. This is a hack and is gross.
   // Since this will not work on all objects, particularly circular
   // structures, simply console.log() on error.
-  p5.prototype.print = function(args) {
+  p5.prototype.println = function(args) {
     try {
-      var newArgs = JSON.parse(JSON.stringify(args));
-      console.log(newArgs);
+      if (arguments.length > 1) {
+        console.log.apply(console, arguments);
+      } else {
+        var newArgs = JSON.parse(JSON.stringify(args));
+        console.log(newArgs);
+      }
     } catch(err) {
       console.log(args);
     }
   };
 } else {
-  p5.prototype.print = function() {};
+  p5.prototype.println = function() {};
 }
 
-p5.prototype.println = p5.prototype.print;
 
 /**
  * The system variable frameCount contains the number of frames that have
@@ -302,7 +305,7 @@ p5.prototype.displayHeight = screen.height;
  * createCanvas(windowWidth, windowHeight);
  * </code></div>
  */
-p5.prototype.windowWidth = document.documentElement.clientWidth;
+p5.prototype.windowWidth = getWindowWidth();
 /**
  * System variable that stores the height of the inner window, it maps to
  * window.innerHeight.
@@ -313,7 +316,7 @@ p5.prototype.windowWidth = document.documentElement.clientWidth;
  * createCanvas(windowWidth, windowHeight);
  * </code></div>
  */
-p5.prototype.windowHeight = document.documentElement.clientHeight;
+p5.prototype.windowHeight = getWindowHeight();
 
 /**
  * The windowResized() function is called once every time the browser window
@@ -337,8 +340,8 @@ p5.prototype.windowHeight = document.documentElement.clientHeight;
  * </code></div>
  */
 p5.prototype._onresize = function(e){
-  this._setProperty('windowWidth', window.innerWidth);
-  this._setProperty('windowHeight', window.innerHeight);
+  this._setProperty('windowWidth', getWindowWidth());
+  this._setProperty('windowHeight', getWindowHeight());
   var context = this._isGlobal ? window : this;
   var executeDefault;
   if (typeof context.windowResized === 'function') {
@@ -348,6 +351,17 @@ p5.prototype._onresize = function(e){
     }
   }
 };
+
+function getWindowWidth() {
+  return Math.max(
+    document.documentElement.clientWidth,
+    window.innerWidth || 0);
+}
+function getWindowHeight() {
+  return Math.max(
+    document.documentElement.clientHeight,
+    window.innerHeight || 0);
+}
 
 /**
  * System variable that stores the width of the drawing canvas. This value

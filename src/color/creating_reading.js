@@ -112,6 +112,7 @@ p5.prototype.brightness = function(c) {
  * @param  {Number|String} gray    number specifying value between white
  *                                 and black.
  * @param  {Number}        [alpha] alpha value relative to current color range
+ *                                 (default is 0-100)
  * @return {Array}                 resulting color
  *
  * @example
@@ -462,7 +463,7 @@ p5.prototype.lightness = function(c) {
  * var c = color(127, 255, 0);
  * colorMode(RGB, 1);
  * var myColor = red(c);
- * print(myColor);
+ * println(myColor);
  * </code>
  * </div>
  */

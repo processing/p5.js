@@ -443,7 +443,7 @@ p5.prototype.split = function(str, delim) {
  *   var myStr = "Mango, Banana, Lime";
  *   var myStrArr = splitTokens(myStr, ",");
  *
- *   print(myStrArr); // prints : ["Mango"," Banana"," Lime"]
+ *   println(myStrArr); // prints : ["Mango"," Banana"," Lime"]
  * }
  * </code>
  * </div>
