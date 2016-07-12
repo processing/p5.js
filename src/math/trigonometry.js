@@ -278,6 +278,8 @@ p5.prototype.tan = function(angle) {
 p5.prototype.degrees = function(angle) {
   return polarGeometry.radiansToDegrees(angle);
 };
+// Avoid `.bind`ing this method in global mode
+p5.prototype.degrees._context = false;
 
 /**
  * Converts a degree measurement to its corresponding value in radians.
@@ -302,6 +304,8 @@ p5.prototype.degrees = function(angle) {
 p5.prototype.radians = function(angle) {
   return polarGeometry.degreesToRadians(angle);
 };
+// Avoid `.bind`ing this method in global mode
+p5.prototype.radians._context = false;
 
 /**
  * Sets the current mode of p5 to given mode. Default mode is RADIANS.
