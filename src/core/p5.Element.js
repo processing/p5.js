@@ -96,6 +96,15 @@ p5.Element.prototype.parent = function(p) {
  * @method id
  * @param  {String} [id] ID of the element
  * @return {p5.Element|String}
+ * @example
+ * <div><code class='norender'>
+ * function setup() {
+ *   var cnv = createCanvas(100, 100);
+ *   // Assigns a CSS selector ID to
+ *   // the canvas element.
+ *   cnv.id("mycanvas");
+ * }
+ * </code></div>
  */
 p5.Element.prototype.id = function(id) {
   if (arguments.length === 0) {
