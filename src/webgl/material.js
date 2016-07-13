@@ -31,8 +31,11 @@ var shader = require('./shader');
  * </div>
  */
 p5.prototype.normalMaterial = function(){
-  this._renderer._getShader('normalVert', 'normalFrag');
-  this._renderer.customShader = undefined;
+  if(!('normal' in this._renderer.shaders)) {
+    this._renderer.shaders.normal = new p5.Shader(shader.normalFrag,
+                                                  shader.normalVert);
+  }
+  this._renderer.currentShader = this._renderer.shaders.normal;
   return this;
 };
 
@@ -106,6 +109,7 @@ p5.prototype.normalMaterial = function(){
  */
 p5.prototype.texture = function(tex){
   this._renderer._setUniform('uSampler', tex);
+  //TODO: #define USE_TEXTURE
 };
 
 /**
@@ -220,23 +224,12 @@ p5.RendererGL.prototype._bind = function(tex, data){
  * </div>
  */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
-  var gl = this._renderer.GL;
-  var shaderProgram =
-    this._renderer._getShader('lightVert', 'lightTextureFrag');
+  this._renderer.currentShader = this._renderer.shaders.default;
 
-  gl.useProgram(shaderProgram);
-  shaderProgram.uMaterialColor = gl.getUniformLocation(
-    shaderProgram, 'uMaterialColor' );
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
-
-  gl.uniform4f(shaderProgram.uMaterialColor,
-    colors[0], colors[1], colors[2], colors[3]);
-
-  shaderProgram.uSpecular = gl.getUniformLocation(
-    shaderProgram, 'uSpecular' );
-  gl.uniform1i(shaderProgram.uSpecular, false);
-
-  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
+  this._renderer._setUniform('uMaterialColor', colors);
+  this._renderer._setUniform('uSpecular', 0, '1i');
+  this._renderer._setUniform('isTexture', 0, '1i');
 
   return this;
 };
@@ -268,19 +261,12 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * </div>
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
-  var gl = this._renderer.GL;
-  var shaderProgram =
-    this._renderer._getShader('lightVert', 'lightTextureFrag');
-  gl.useProgram(shaderProgram);
-  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
-  shaderProgram.uMaterialColor = gl.getUniformLocation(
-    shaderProgram, 'uMaterialColor' );
+  this._renderer.currentShader = this._renderer.shaders.default;
+
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
-  gl.uniform4f(shaderProgram.uMaterialColor,
-    colors[0], colors[1], colors[2], colors[3]);
-  shaderProgram.uSpecular = gl.getUniformLocation(
-    shaderProgram, 'uSpecular' );
-  gl.uniform1i(shaderProgram.uSpecular, true);
+  this._renderer._setUniform('uMaterialColor', colors);
+  this._renderer._setUniform('uSpecular', 1, '1i');
+  this._renderer._setUniform('isTexture', 0, '1i');
 
   return this;
 };
@@ -333,12 +319,12 @@ p5.prototype.loadShader = function(fragShader, vertShader) {
 };
 
 p5.prototype.shader = function(shader) {
-  this._renderer.customShader = shader;
+  this._renderer.currentShader = shader;
   return this;
 };
 
 p5.prototype.resetShader = function() {
-  this._renderer.customShader = undefined;
+  this._renderer.currentShader = this._renderer.shaders.default;
   return this;
 };
 

@@ -56,8 +56,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas) {
   this.mHash = {};
 
   //Built-in shaders
-  this.shaders = {'default': new p5.Shader(shader['light.vert'],
-                                           shader['light_texture.frag'])};
+  this.shaders = {'default': new p5.Shader(shader.lightTextureFrag,
+                                           shader.lightVert)};
   this.currentShader = this.shaders.default;
 
   //Counter for keeping track of which texture slots are currently occupied
@@ -143,7 +143,7 @@ p5.RendererGL.prototype.background = function() {
 p5.RendererGL.prototype._setCurrentShader = function() {
   var mId, vertSource, fragSource;
   if(arguments.length === 1) {
-    mId = arguments[0].shaderKey;
+    mId = arguments[0].vertSource + '|' + arguments[0].fragSource;
     vertSource = arguments[0].vertSource;
     fragSource = arguments[0].fragSource;
   } else if(arguments.length === 2) {
@@ -345,7 +345,7 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   var gl = this.GL;
   var shaderProgram;
   //see material.js for more info on color blending in webgl
-  var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
+  var colors = this._applyColorBlend.apply(this._renderer, arguments);
   this.curFillColor = colors;
   this.drawMode = 'fill';
   if(this.isImmediateDrawing){

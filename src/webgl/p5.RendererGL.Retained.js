@@ -69,7 +69,8 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
     new Float32Array( flatten(obj.uvs) ),
     gl.STATIC_DRAW);
 
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].attributes.index.buffer);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,
+                this.gHash[gId].attributes.index.buffer);
   gl.bufferData(
     gl.ELEMENT_ARRAY_BUFFER,
     new Uint16Array( flatten(obj.faces) ),
@@ -85,13 +86,13 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   this._setDefaultCamera();
   var gl = this.GL;
   var shaderProgram, shaderKey;
-  if(this.customShader) {
-    if(this.customShader.vertSource === undefined ||
-       this.customShader.fragSource === undefined) {
+  if(this.currentShader) {
+    if(this.currentShader.vertSource === undefined ||
+       this.currentShader.fragSource === undefined) {
       // The shader isn't loaded, so don't render anything this pass
       return;
     } else {
-      shaderProgram = this._setCurrentShader(this.customShader);
+      shaderProgram = this._setCurrentShader(this.currentShader);
       shaderKey = this.curShaderId;
     }
   } else {
@@ -117,8 +118,8 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   //efficient
   this.texCount = 0;
   this._applyUniforms(shaderKey, undefined);
-  if(this.customShader) {
-    this._applyUniforms(shaderKey, this.customShader._uniforms);
+  if(this.currentShader) {
+    this._applyUniforms(shaderKey, this.currentShader._uniforms);
   }
   gl.drawElements(
     gl.TRIANGLES, this.gHash[gId].numberOfItems,

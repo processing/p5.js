@@ -35,22 +35,12 @@ var p5 = require('../core/core');
  * </div>
  */
 p5.prototype.ambientLight = function(v1, v2, v3, a){
-  var gl = this._renderer.GL;
-  var shaderProgram = this._renderer._getShader(
-    'lightVert', 'lightTextureFrag');
-
-  gl.useProgram(shaderProgram);
   var color = this._renderer._pInst.color.apply(
     this._renderer._pInst, arguments);
   var colors = color._array.slice(0, 3);
 
   this._renderer._setUniform('uAmbientColor[' +
                               this._renderer.ambientLightCount + ']', colors);
-
-  //in case there's no material color for the geometry
-  shaderProgram.uMaterialColor = gl.getUniformLocation(
-    shaderProgram, 'uMaterialColor' );
-  gl.uniform4f( shaderProgram.uMaterialColor, 1, 1, 1, 1);
 
   this._renderer.ambientLightCount ++;
   this._renderer._setUniform('uAmbientLightCount',
@@ -125,12 +115,6 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
   //   ]
   // );
 
-  var gl = this._renderer.GL;
-  var shaderProgram = this._renderer._getShader(
-    'lightVert', 'lightTextureFrag');
-
-  gl.useProgram(shaderProgram);
-
   //@TODO: check parameters number
   var color = this._renderer._pInst.color.apply(
     this._renderer._pInst, [v1, v2, v3]);
@@ -164,11 +148,6 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
   this._renderer._setUniform('uLightingDirection[' +
                             this._renderer.directionalLightCount + ']',
                             _x, _y, _z);
-
-  //in case there's no material color for the geometry
-  shaderProgram.uMaterialColor = gl.getUniformLocation(
-    shaderProgram, 'uMaterialColor' );
-  gl.uniform4f( shaderProgram.uMaterialColor, 1, 1, 1, 1);
 
   this._renderer.directionalLightCount ++;
   this._renderer._setUniform('uDirectionalLightCount',
@@ -250,12 +229,6 @@ p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
   //   ]
   // );
 
-  var gl = this._renderer.GL;
-  var shaderProgram = this._renderer._getShader(
-    'lightVert', 'lightTextureFrag');
-
-  gl.useProgram(shaderProgram);
-
   //@TODO: check parameters number
   var color = this._renderer._pInst.color.apply(
     this._renderer._pInst, [v1, v2, v3]);
@@ -288,11 +261,6 @@ p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
 
   this._renderer._setUniform('uPointLightLocation[' +
                               this._renderer.pointLightCount + ']', _x, _y, _z);
-
-  //in case there's no material color for the geometry
-  shaderProgram.uMaterialColor = gl.getUniformLocation(
-    shaderProgram, 'uMaterialColor' );
-  gl.uniform4f( shaderProgram.uMaterialColor, 1, 1, 1, 1);
 
   this._renderer.pointLightCount ++;
   this._renderer._setUniform('uPointLightCount',
