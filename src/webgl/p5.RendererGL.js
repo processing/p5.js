@@ -55,6 +55,9 @@ p5.RendererGL = function(elt, pInst, isMainCanvas) {
   this.gHash = {};
   this.mHash = {};
 
+  //Optional shader flags that will be passed in as #define commands
+  this.shaderDefines = {};
+
   //Built-in shaders
   this.shaders = {'default': new p5.Shader(shader.lightTextureFrag,
                                            shader.lightVert)};
@@ -141,24 +144,18 @@ p5.RendererGL.prototype.background = function() {
 //////////////////////////////////////////////
 
 p5.RendererGL.prototype._setCurrentShader = function() {
-  var mId, vertSource, fragSource;
+  var vertSource, fragSource;
   if(arguments.length === 1) {
-    mId = arguments[0].vertSource + '|' + arguments[0].fragSource;
     vertSource = arguments[0].vertSource;
     fragSource = arguments[0].fragSource;
   } else if(arguments.length === 2) {
     var vertId = arguments[0];
     var fragId = arguments[1];
-    mId = vertId + '|' + fragId;
     vertSource = shader[vertId];
     fragSource = shader[fragId];
   }
 
-  //create it and put it into hashTable
-  if(!this.materialInHash(mId)){
-    var shaderProgram = this._compileShader(vertSource, fragSource);
-    this.mHash[mId] = shaderProgram;
-  }
+  var mId = this._compileShader(vertSource, fragSource);
   this.curShaderId = mId;
 
   return this.mHash[this.curShaderId];
@@ -171,39 +168,45 @@ p5.RendererGL.prototype._setCurrentShader = function() {
  * @param  {array}  [flags] Array of strings
  * @return {[type]}         [description]
  */
-p5.RendererGL.prototype._compileShader = function(vertSource,
-                                                   fragSource, flags) {
+p5.RendererGL.prototype._compileShader = function(vertSource, fragSource) {
   var gl = this.GL;
 
-  var shaders = [vertSource, fragSource];
-  var shaderTypes = [gl.VERTEX_SHADER, gl.FRAGMENT_SHADER];
-  var shaderProgram = gl.createProgram();
-
+  //Figure out any flags that need to be appended to the shader
   var flagPrefix = '';
-  if(flags !== undefined) {
-    for(var j = 0; j < flags.length; ++j) {
-      flagPrefix = '#define ' + flags[j] + '\n';
+  for(var flag in this.shaderDefines) {
+    if(this.shaderDefines[flag]) {
+      flagPrefix += '#define ' + flag + '\n';
     }
   }
 
-  for(var i = 0; i < 2; ++i) {
-    var shader = gl.createShader(shaderTypes[i]);
-    gl.shaderSource(shader, shaders[i]);
-    gl.compileShader(shader);
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      console.log('Yikes! An error occurred compiling the shaders:' +
-        gl.getShaderInfoLog(shader));
-      return null;
+  var shaders = [flagPrefix + vertSource, flagPrefix + fragSource];
+  var mId = shaders.toString();
+
+  if(!this.materialInHash(mId)) {
+    var shaderTypes = [gl.VERTEX_SHADER, gl.FRAGMENT_SHADER];
+    var shaderProgram = gl.createProgram();
+
+    for(var i = 0; i < 2; ++i) {
+      var shader = gl.createShader(shaderTypes[i]);
+      gl.shaderSource(shader, flagPrefix + shaders[i]);
+      gl.compileShader(shader);
+      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        console.log('Yikes! An error occurred compiling the shaders:' +
+          gl.getShaderInfoLog(shader));
+        return null;
+      }
+      gl.attachShader(shaderProgram, shader);
     }
-    gl.attachShader(shaderProgram, shader);
+
+    gl.linkProgram(shaderProgram);
+    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+      console.log('Snap! Error linking shader program');
+    }
+
+    this.mHash[mId] = shaderProgram;
   }
 
-  gl.linkProgram(shaderProgram);
-  if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-    console.log('Snap! Error linking shader program');
-  }
-
-  return shaderProgram;
+  return mId;
 };
 
 //////////////////////////////////////////////
@@ -342,31 +345,15 @@ p5.RendererGL.prototype._applyUniforms = function(shaderKey, uniformsObj)
  * </div>
  */
 p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
-  var gl = this.GL;
-  var shaderProgram;
+  // var gl = this.GL;
+  // var shaderProgram;
   //see material.js for more info on color blending in webgl
   var colors = this._applyColorBlend.apply(this, arguments);
   this.curFillColor = colors;
   this.drawMode = 'fill';
-  if(this.isImmediateDrawing){
-    shaderProgram =
-    this._getShader('immediateVert','vertexColorFrag');
-    gl.useProgram(shaderProgram);
-  } else {
-    shaderProgram =
-    this._getShader('normalVert', 'basicFrag');
-    gl.useProgram(shaderProgram);
-    //RetainedMode uses a webgl uniform to pass color vals
-    //in ImmediateMode, we want access to each vertex so therefore
-    //we cannot use a uniform.
-    shaderProgram.uMaterialColor = gl.getUniformLocation(
-      shaderProgram, 'uMaterialColor' );
-    gl.uniform4f( shaderProgram.uMaterialColor,
-      colors[0],
-      colors[1],
-      colors[2],
-      colors[3]);
-  }
+
+  this.shaderDefines.USE_LIGHTS = false;
+  this._setUniform('uMaterialColor', colors);
   return this;
 };
 p5.RendererGL.prototype.stroke = function(r, g, b, a) {

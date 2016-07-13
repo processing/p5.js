@@ -112,7 +112,7 @@ p5.prototype.normalMaterial = function(){
  */
 p5.prototype.texture = function(tex){
   this._renderer._setUniform('uSampler', tex);
-  //TODO: #define USE_TEXTURE
+  this._renderer.shaderDefines.USE_TEXTURE = true;
 };
 
 /**
@@ -234,7 +234,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
   this._renderer._setUniform('uMaterialColor', colors);
   this._renderer._setUniform('uSpecular', 0, '1i');
-  this._renderer._setUniform('isTexture', 0, '1i');
+  this._renderer.shaderDefines.USE_LIGHTS = true;
 
   return this;
 };
@@ -273,7 +273,7 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
   this._renderer._setUniform('uMaterialColor', colors);
   this._renderer._setUniform('uSpecular', 1, '1i');
-  this._renderer._setUniform('isTexture', 0, '1i');
+  this._renderer.shaderDefines.USE_LIGHTS = true;
 
   return this;
 };
