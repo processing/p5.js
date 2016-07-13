@@ -270,7 +270,7 @@ p5.prototype.tan = function(angle) {
  * var rad = PI/4;
  * var deg = degrees(rad);
  * println(rad + " radians is " + deg + " degrees");
- * // Prints: 45 degrees is 0.7853981633974483 radians
+ * // Prints: 0.7853981633974483 radians is 45 degrees
  * </code>
  * </div>
  *
@@ -307,7 +307,7 @@ p5.prototype.radians = function(angle) {
  * Sets the current mode of p5 to given mode. Default mode is RADIANS.
  *
  * @method angleMode
- * @param {Number/Constant} mode either RADIANS or DEGREES
+ * @param {Constant} mode either RADIANS or DEGREES
  *
  * @example
  * <div>

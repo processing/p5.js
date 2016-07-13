@@ -29,8 +29,8 @@ var constants = require('./constants');
  * @param  {Function}    sketch a closure that can set optional preload(),
  *                              setup(), and/or draw() properties on the
  *                              given p5 instance
- * @param  {HTMLElement|boolean} node element to attach canvas to, if a
- *                                    boolean is passed in use it as sync
+ * @param  {HTMLElement|boolean} [node] element to attach canvas to, if a
+ *                                      boolean is passed in use it as sync
  * @param  {boolean}     [sync] start synchronously (optional)
  * @return {p5}                 a p5 instance
  */

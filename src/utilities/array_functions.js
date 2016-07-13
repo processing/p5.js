@@ -21,10 +21,10 @@ var p5 = require('../core/core');
  * function setup() {
  *
  * var myArray = new Array("Mango", "Apple", "Papaya")
- * print(myArray) // ["Mango", "Apple", "Papaya"]
+ * println(myArray) // ["Mango", "Apple", "Papaya"]
  *
  * append(myArray, "Peach")
- * print(myArray) // ["Mango", "Apple", "Papaya", "Peach"]
+ * println(myArray) // ["Mango", "Apple", "Papaya", "Peach"]
  *
  * }
  * </div></code>
@@ -66,11 +66,11 @@ p5.prototype.append = function(array, value) {
  *    var dstPosition = 0;
  *    var length = 2;
  *
- *    print(src); // ["A", "B", "C"]
- *    print(dst); // [ 1 ,  2 ,  3 ]
+ *    println(src); // ["A", "B", "C"]
+ *    println(dst); // [ 1 ,  2 ,  3 ]
  *
  *    arrayCopy(src, srcPosition, dst, dstPosition, length);
- *    print(dst); // ["B", "C", 3]
+ *    println(dst); // ["B", "C", 3]
  *
  *    }
  *  </div></code>
@@ -130,14 +130,14 @@ p5.prototype.arrayCopy = function(
  *   var arr1 = new Array("A", "B", "C");
  *   var arr2 = new Array( 1 ,  2 ,  3 );
  *
- *   print(arr1); // ["A","B","C"]
- *   print(arr2); // [1,2,3]
+ *   println(arr1); // ["A","B","C"]
+ *   println(arr2); // [1,2,3]
  *
  *   var arr3 = concat(arr1, arr2);
  *
- *   print(arr1); // ["A","B","C"]
- *   print(arr2); // [1,2,3]
- *   print(arr3); // ["A","B","C",1,2,3]
+ *   println(arr1); // ["A","B","C"]
+ *   println(arr2); // [1,2,3]
+ *   println(arr3); // ["A","B","C",1,2,3]
  *
  * }
  * </div></code>
@@ -155,10 +155,10 @@ p5.prototype.concat = function(list0, list1) {
  * <div class="norender"><code>
  * function setup() {
  *   var myArray = new Array("A", "B", "C");
- *   print(myArray); // ["A","B","C"]
+ *   println(myArray); // ["A","B","C"]
  *
  *   reverse(myArray);
- *   print(myArray); // ["C","B","A"]
+ *   println(myArray); // ["C","B","A"]
  * }
  * </div></code>
  */
@@ -177,11 +177,11 @@ p5.prototype.reverse = function(list) {
  * <div class = "norender"><code>
  * function setup() {
  *   var myArray = new Array("A", "B", "C");
- *   print(myArray); // ["A","B","C"]
+ *   println(myArray); // ["A","B","C"]
  *
  *   var newArray = shorten(myArray);
- *   print(myArray); // ["A","B","C"]
- *   print(newArray); // ["A","B"]
+ *   println(myArray); // ["A","B","C"]
+ *   println(newArray); // ["A","B"]
  * }
  * </div></code>
  */
@@ -203,14 +203,14 @@ p5.prototype.shorten = function(list) {
  * <div><code>
  * function setup() {
  *   var regularArr = ['ABC', 'def', createVector(), TAU, Math.E];
- *   print(regularArr);
+ *   println(regularArr);
  *   shuffle(regularArr, true); // force modifications to passed array
- *   print(regularArr);
+ *   println(regularArr);
  *
  *   // By default shuffle() returns a shuffled cloned array:
  *   var newArr = shuffle(regularArr);
- *   print(regularArr);
- *   print(newArr);
+ *   println(regularArr);
+ *   println(newArr);
  * }
  * </code></div>
  */
@@ -245,21 +245,21 @@ p5.prototype.shuffle = function(arr, bool) {
  * <div class = "norender"><code>
  * function setup() {
  *   var words = new Array("banana", "apple", "pear","lime");
- *   print(words); // ["banana", "apple", "pear", "lime"]
+ *   println(words); // ["banana", "apple", "pear", "lime"]
  *   var count = 4; // length of array
  *
  *   words = sort(words, count);
- *   print(words); // ["apple", "banana", "lime", "pear"]
+ *   println(words); // ["apple", "banana", "lime", "pear"]
  * }
  * </div></code>
  * <div class = "norender"><code>
  * function setup() {
  *   var numbers = new Array(2,6,1,5,14,9,8,12);
- *   print(numbers); // [2,6,1,5,14,9,8,12]
+ *   println(numbers); // [2,6,1,5,14,9,8,12]
  *   var count = 5; // Less than the length of the array
  *
  *   numbers = sort(numbers, count);
- *   print(numbers); // [1,2,5,6,14,9,8,12]
+ *   println(numbers); // [1,2,5,6,14,9,8,12]
  * }
  * </div></code>
  */
@@ -292,11 +292,11 @@ p5.prototype.sort = function(list, count) {
  * function setup() {
  *   var myArray = new Array(0,1,2,3,4);
  *   var insArray = new Array("A","B","C");
- *   print(myArray); // [0,1,2,3,4]
- *   print(insArray); // ["A","B","C"]
+ *   println(myArray); // [0,1,2,3,4]
+ *   println(insArray); // ["A","B","C"]
  *
  *   splice(myArray, insArray, 3);
- *   print(myArray); // [0,1,2,"A","B","C",3,4]
+ *   println(myArray); // [0,1,2,"A","B","C",3,4]
  * }
  * </div></code>
  */
@@ -326,12 +326,12 @@ p5.prototype.splice = function(list, value, index) {
  * <div class = "norender"><code>
  * function setup() {
  *   var myArray = new Array(1,2,3,4,5);
- *   print(myArray); // [1,2,3,4,5]
+ *   println(myArray); // [1,2,3,4,5]
  *
  *   var sub1 = subset(myArray, 0, 3);
  *   var sub2 = subset(myArray, 2, 2);
- *   print(sub1); // [1,2,3]
- *   print(sub2); // [3,4]
+ *   println(sub1); // [1,2,3]
+ *   println(sub2); // [3,4]
  * }
  * </div></code>
  */

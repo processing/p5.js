@@ -10,7 +10,7 @@
 
 var p5 = require('./core');
 var constants = require('./constants');
-
+var canvas = require('./canvas');
 require('./error_helpers');
 
 /**
@@ -31,7 +31,7 @@ require('./error_helpers');
  * @param  {Number} d      height of the arc's ellipse by default
  * @param  {Number} start  angle to start the arc, specified in radians
  * @param  {Number} stop   angle to stop the arc, specified in radians
- * @param  {String} [mode] optional parameter to determine the way of drawing
+ * @param  {Constant} [mode] optional parameter to determine the way of drawing
  *                         the arc
  * @return {Object}        the p5 object
  * @example
@@ -144,7 +144,6 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
  * @method ellipse
  * @param {Number} x
  * @param {Number} y
- * @param {Number} z z-coordinate of the ellipse
  * @param {Number} w
  * @param {Number} [h]
  * @return {p5}
@@ -154,30 +153,27 @@ p5.prototype.ellipse = function() {
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  // Duplicate 3rd argument if onl 3 given.
+  // Duplicate 3rd argument if only 3 given.
   if (args.length === 3) {
     args.push(args[2]);
   }
-  if(this._renderer.isP3D){
-    // p5 supports negative width and heights for ellipses
-    if (args[3] < 0){args[3] = Math.abs(args[3]);}
-    if (args[4] < 0){args[4] = Math.abs(args[4]);}
-  } else {
-    // p5 supports negative width and heights for rects
-    if (args[2] < 0){args[2] = Math.abs(args[2]);}
-    if (args[3] < 0){args[3] = Math.abs(args[3]);}
-  }
+  // p5 supports negative width and heights for rects
+  if (args[2] < 0){args[2] = Math.abs(args[2]);}
+  if (args[3] < 0){args[3] = Math.abs(args[3]);}
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
-  if (this._renderer.isP3D){
-    this._renderer.ellipse(args);
-  } else {
-    this._renderer.ellipse(args[0],//x
-      args[1],//y
-      args[2],//width
-      args[3]);//height
-  }
+  var vals = canvas.modeAdjust(
+    args[0],
+    args[1],
+    args[2],
+    args[3],
+    this._renderer._ellipseMode);
+  args[0] = vals.x;
+  args[1] = vals.y;
+  args[2] = vals.w;
+  args[3] = vals.h;
+  this._renderer.ellipse(args);
   return this;
 };
 /**
@@ -321,16 +317,12 @@ p5.prototype.point = function() {
  * @method quad
  * @param {Number} x1
  * @param {Number} y1
- * @param {Number} z1 the z-coordinate of the first point
  * @param {Number} x2
  * @param {Number} y2
- * @param {Number} z2 the z-coordinate of the second point
  * @param {Number} x3
  * @param {Number} y3
- * @param {Number} z3 the z-coordinate of the third point
  * @param {Number} x4
  * @param {Number} y4
- * @param {Number} z4 the z-coordinate of the fourth point
  * @return {p5} the p5 object
  */
 p5.prototype.quad = function() {
@@ -420,13 +412,10 @@ p5.prototype.quad = function() {
 * @method rect
 * @param  {Number} x
 * @param  {Number} y
-* @param  {Number} z  z-coordinate of the rectangle.
 * @param  {Number} w
 * @param  {Number} h
-* @param  {Number} [tl]
-* @param  {Number} [tr]
-* @param  {Number} [br]
-* @param  {Number} [bl]
+* @param  {Number} [detailX]
+* @param  {Number} [detailY]
 * @return {p5}          the p5 object.
 */
 p5.prototype.rect = function () {
@@ -434,11 +423,7 @@ p5.prototype.rect = function () {
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  if(this._renderer.isP3D){
-    // p5 supports negative width and heights for rects
-    if (args[3] < 0){args[3] = Math.abs(args[3]);}
-    if (args[4] < 0){args[4] = Math.abs(args[4]);}
-  } else if (this._renderer._rectMode !== constants.CORNERS) {
+  if (this._renderer._rectMode !== constants.CORNERS) {
     // p5 supports negative width and heights for rects
     if (args[2] < 0){args[2] = Math.abs(args[2]);}
     if (args[3] < 0){args[3] = Math.abs(args[3]);}
@@ -446,6 +431,16 @@ p5.prototype.rect = function () {
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return;
   }
+  var vals = canvas.modeAdjust(
+    args[0],
+    args[1],
+    args[2],
+    args[3],
+    this._renderer._rectMode);
+  args[0] = vals.x;
+  args[1] = vals.y;
+  args[2] = vals.w;
+  args[3] = vals.h;
   this._renderer.rect(args);
   return this;
 };
@@ -479,18 +474,7 @@ p5.prototype.triangle = function() {
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  if(this._renderer.isP3D){
-    this._renderer.triangle(args);
-  } else {
-    this._renderer.triangle(
-      args[0],
-      args[1],
-      args[2],
-      args[3],
-      args[4],
-      args[5]
-    );
-  }
+  this._renderer.triangle(args);
   return this;
 };
 

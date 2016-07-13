@@ -12,7 +12,9 @@ var shader = require('./shader');
 //require('./p5.Texture');
 
 /**
- * Normal material for geometry
+ * Normal material for geometry. You can view all
+ * possible materials in this
+ * <a href="https://p5js.org/examples/examples/3D_Materials.php">example</a>.
  * @method normalMaterial
  * @return {p5}                the p5 object
  * @example
@@ -40,7 +42,8 @@ p5.prototype.normalMaterial = function(){
 };
 
 /**
- * Texture for geometry
+ * Texture for geometry.  You can view other possible materials in this
+ * <a href="https://p5js.org/examples/examples/3D_Materials.php">example</a>.
  * @method texture
  * @param {p5.Image | p5.MediaElement | p5.Graphics} tex 2-dimensional graphics
  *                    to render as texture
@@ -198,7 +201,9 @@ p5.RendererGL.prototype._bind = function(tex, data){
 //   return value + 1;
 
 /**
- * Ambient material for geometry with a given color
+ * Ambient material for geometry with a given color. You can view all
+ * possible materials in this
+ * <a href="https://p5js.org/examples/examples/3D_Materials.php">example</a>.
  * @method  ambientMaterial
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
@@ -235,7 +240,9 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
 };
 
 /**
- * Specular material for geometry with a given color
+ * Specular material for geometry with a given color. You can view all
+ * possible materials in this
+ * <a href="https://p5js.org/examples/examples/3D_Materials.php">example</a>.
  * @method specularMaterial
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),

@@ -463,7 +463,7 @@ p5.prototype.lightness = function(c) {
  * var c = color(127, 255, 0);
  * colorMode(RGB, 1);
  * var myColor = red(c);
- * print(myColor);
+ * println(myColor);
  * </code>
  * </div>
  */

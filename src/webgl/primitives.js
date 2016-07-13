@@ -88,7 +88,7 @@ p5.prototype.plane = function(){
  * @example
  * <div>
  * <code>
- * //draw a spining box with width, height and depth 200
+ * //draw a spinning box with width, height and depth 200
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -320,7 +320,7 @@ var _truncatedCone = function(
  * @example
  * <div>
  * <code>
- * //draw a spining sylinder with radius 200 and height 200
+ * //draw a spinning cylinder with radius 200 and height 200
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -379,7 +379,7 @@ p5.prototype.cylinder = function(){
  * @example
  * <div>
  * <code>
- * //draw a spining cone with radius 200 and height 200
+ * //draw a spinning cone with radius 200 and height 200
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -513,7 +513,7 @@ p5.prototype.ellipsoid = function(){
  * @example
  * <div>
  * <code>
- * //draw a spining torus with radius 200 and tube radius 60
+ * //draw a spinning torus with radius 200 and tube radius 60
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -583,18 +583,18 @@ p5.RendererGL.prototype.point = function(x, y, z){
 
 p5.RendererGL.prototype.triangle = function
 (args){
-  var x1=args[0], y1=args[1], z1=args[2];
-  var x2=args[3], y2=args[4], z2=args[5];
-  var x3=args[6], y3=args[7], z3=args[8];
-  var gId = 'tri|'+x1+'|'+y1+'|'+z1+'|'+
-  x2+'|'+y2+'|'+z2+
-  x3+'|'+y3+'|'+z3;
+  var x1=args[0], y1=args[1];
+  var x2=args[2], y2=args[3];
+  var x3=args[4], y3=args[5];
+  var gId = 'tri|'+x1+'|'+y1+'|'+
+  x2+'|'+y2+'|'+
+  x3+'|'+y3;
   if(!this.geometryInHash(gId)){
     var _triangle = function(){
       var vertices = [];
-      vertices.push(new p5.Vector(x1,y1,z1));
-      vertices.push(new p5.Vector(x2,y2,z2));
-      vertices.push(new p5.Vector(x3,y3,z3));
+      vertices.push(new p5.Vector(x1,y1,0));
+      vertices.push(new p5.Vector(x2,y2,0));
+      vertices.push(new p5.Vector(x3,y3,0));
       this.vertices = vertices;
       this.faces = [[0,1,2]];
       this.uvs = [[0,0],[0,1],[1,1]];
@@ -612,31 +612,31 @@ p5.RendererGL.prototype.ellipse = function
 (args){
   var x = args[0];
   var y = args[1];
-  var z = args[2];
-  var width = args[3];
-  var height = args[4];
+  var width = args[2];
+  var height = args[3];
   //detailX and Y are optional 6th & 7th
   //arguments
-  var detailX = args[5] || 24;
-  var detailY = args[6] || 16;
+  var detailX = args[4] || 24;
+  var detailY = args[5] || 16;
   var gId = 'ellipse|'+args[0]+'|'+args[1]+'|'+args[2]+'|'+
-  args[3]+'|'+args[4];
+  args[3];
   if(!this.geometryInHash(gId)){
     var _ellipse = function(){
       var u,v,p;
+      var centerX = x+width*0.5;
+      var centerY = y+height*0.5;
       for (var i = 0; i <= this.detailY; i++){
         v = i / this.detailY;
         for (var j = 0; j <= this.detailX; j++){
           u = j / this.detailX;
           var theta = 2 * Math.PI * u;
           if(v === 0){
-            p = new p5.Vector(x, y, z);
+            p = new p5.Vector(centerX, centerY, 0);
           }
           else{
-            var _x = x + width * Math.sin(theta);
-            var _y = y + height * Math.cos(theta);
-            var _z = z;
-            p = new p5.Vector(_x, _y, _z);
+            var _x = centerX + width*0.5 * Math.cos(theta);
+            var _y = centerY + height*0.5 * Math.sin(theta);
+            p = new p5.Vector(_x, _y, 0);
           }
           this.vertices.push(p);
           this.uvs.push([u,v]);
@@ -656,14 +656,13 @@ p5.RendererGL.prototype.ellipse = function
 p5.RendererGL.prototype.rect = function
 (args){
   var gId = 'rect|'+args[0]+'|'+args[1]+'|'+args[2]+'|'+
-  args[3]+'|'+args[4];
+  args[3];
   var x = args[0];
   var y = args[1];
-  var z = args[2];
-  var width = args[3];
-  var height = args[4];
-  var detailX = args[5] || 24;
-  var detailY = args[6] || 16;
+  var width = args[2];
+  var height = args[3];
+  var detailX = args[4] || 24;
+  var detailY = args[5] || 16;
   if(!this.geometryInHash(gId)){
     var _rect = function(){
       var u,v,p;
@@ -671,10 +670,12 @@ p5.RendererGL.prototype.rect = function
         v = i / this.detailY;
         for (var j = 0; j <= this.detailX; j++){
           u = j / this.detailX;
+          // var _x = x-width/2;
+          // var _y = y-height/2;
           p = new p5.Vector(
-            (x + width) * u,
-            (y + height) * v,
-            z
+            x + (width*u),
+            y + (height*v),
+            0
           );
           this.vertices.push(p);
           this.uvs.push([u,v]);
@@ -700,26 +701,22 @@ p5.RendererGL.prototype.quad = function(){
   //
   var x1 = args[0],
     y1 = args[1],
-    z1 = args[2],
-    x2 = args[3],
-    y2 = args[4],
-    z2 = args[5],
-    x3 = args[6],
-    y3 = args[7],
-    z3 = args[8],
-    x4 = args[9],
-    y4 = args[10],
-    z4 = args[11];
-  var gId = 'quad|'+x1+'|'+y1+'|'+z1+'|'+
-  x2+'|'+y2+'|'+z2+
-  x3+'|'+y3+'|'+z3+
-  x4+'|'+y4+'|'+z4;
+    x2 = args[2],
+    y2 = args[3],
+    x3 = args[4],
+    y3 = args[5],
+    x4 = args[6],
+    y4 = args[7];
+  var gId = 'quad|'+x1+'|'+y1+'|'+
+  x2+'|'+y2+'|'+
+  x3+'|'+y3+'|'+
+  x4+'|'+y4;
   if(!this.geometryInHash(gId)){
     var _quad = function(){
-      this.vertices.push(new p5.Vector(x1,y1,z1));
-      this.vertices.push(new p5.Vector(x2,y2,z2));
-      this.vertices.push(new p5.Vector(x3,y3,z3));
-      this.vertices.push(new p5.Vector(x4,y4,z4));
+      this.vertices.push(new p5.Vector(x1,y1,0));
+      this.vertices.push(new p5.Vector(x2,y2,0));
+      this.vertices.push(new p5.Vector(x3,y3,0));
+      this.vertices.push(new p5.Vector(x4,y4,0));
       this.uvs.push([0, 0], [1, 0], [1, 1], [0, 1]);
     };
     var quadGeom = new p5.Geometry(2,2,_quad);

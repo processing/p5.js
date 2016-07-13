@@ -77,7 +77,7 @@ p5.prototype.mouseY = 0;
  * function draw() {
  *   background(244, 248, 252);
  *   line(mouseX, mouseY, pmouseX, pmouseY);
- *   print(pmouseX + " -> " + mouseX);
+ *   println(pmouseX + " -> " + mouseX);
  * }
  *
  * </code>
@@ -102,7 +102,7 @@ p5.prototype.pmouseX = 0;
  *   if(mouseY == pmouseY && mouseX == pmouseX)
  *     rect(20,20,60,60);
  *
- *   print(pmouseY + " -> " + mouseY);
+ *   println(pmouseY + " -> " + mouseY);
  * }
  *
  * </code>
@@ -275,7 +275,7 @@ p5.prototype.pwinMouseY = 0;
 	*       triangle(23, 75, 50, 20, 78, 75);
 	*   }
 	*
-	*   print(mouseButton);
+	*   println(mouseButton);
 	* }
 	* </code>
  * </div>
@@ -300,7 +300,7 @@ p5.prototype.mouseButton = 0;
 	*   else
 	*     rect(25, 25, 50, 50);
 	*
-	*   print(mouseIsPressed);
+	*   println(mouseIsPressed);
 	* }
 	* </code>
 	* </div>
@@ -667,7 +667,7 @@ p5.prototype._onclick = function(e) {
  * }
  *
  * function mouseWheel(event) {
- *   print(event.delta);
+ *   println(event.delta);
  *   //move the square according to the vertical scroll amount
  *   pos += event.delta;
  *   //uncomment to block page scrolling
