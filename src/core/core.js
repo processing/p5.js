@@ -464,7 +464,13 @@ var p5 = function(sketch, node, sync) {
       if(typeof p5.prototype[p] === 'function') {
         var ev = p.substring(2);
         if (!this._events.hasOwnProperty(ev)) {
-          friendlyBindGlobal(p, p5.prototype[p].bind(this));
+          if (Math.hasOwnProperty(p) && (Math[p] === p5.prototype[p])) {
+            // Multiple p5 methods are just native Math functions. These can be
+            // called without any binding.
+            friendlyBindGlobal(p, p5.prototype[p]);   
+          } else {
+            friendlyBindGlobal(p, p5.prototype[p].bind(this));
+          }
         }
       } else {
         friendlyBindGlobal(p, p5.prototype[p]);
