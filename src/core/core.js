@@ -29,8 +29,8 @@ var constants = require('./constants');
  * @param  {Function}    sketch a closure that can set optional preload(),
  *                              setup(), and/or draw() properties on the
  *                              given p5 instance
- * @param  {HTMLElement|boolean} node element to attach canvas to, if a
- *                                    boolean is passed in use it as sync
+ * @param  {HTMLElement|boolean} [node] element to attach canvas to, if a
+ *                                      boolean is passed in use it as sync
  * @param  {boolean}     [sync] start synchronously (optional)
  * @return {p5}                 a p5 instance
  */
@@ -518,6 +518,10 @@ var p5 = function(sketch, node, sync) {
   }
 };
 
+// Allows for the friendly error system to be turned off when creating a sketch,
+// which can give a significant boost to performance when needed.
+p5.disableFriendlyErrors = false;
+
 // attach constants to p5 prototype
 for (var k in constants) {
   p5.prototype[k] = constants[k];
@@ -568,7 +572,8 @@ p5.prototype._createFriendlyGlobalFunctionBinder = function(options) {
   };
 
   return function(prop, value) {
-    if (typeof(IS_MINIFIED) === 'undefined' &&
+    if (!p5.disableFriendlyErrors &&
+        typeof(IS_MINIFIED) === 'undefined' &&
         typeof(value) === 'function' &&
         !(prop in p5.prototype._preloadMethods)) {
       try {

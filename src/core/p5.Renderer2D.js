@@ -188,6 +188,9 @@ p5.Renderer2D.prototype.copy = function () {
 
 p5.Renderer2D._copyHelper =
 function (srcImage, sx, sy, sw, sh, dx, dy, dw, dh) {
+  if (!srcImage.canvas) {
+    srcImage.loadPixels();
+  }
   var s = srcImage.canvas.width / srcImage.width;
   this.drawingContext.drawImage(srcImage.canvas,
     s * sx, s * sy, s * sw, s * sh, dx, dy, dw, dh);
@@ -213,23 +216,23 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
   var ctx = this._pInst || this;
 
   var pd = ctx._pixelDensity;
-  ctx.loadPixels();
 
   // round down to get integer numbers
   x = Math.floor(x);
   y = Math.floor(y);
 
+  var sx = x * pd;
+  var sy = y * pd;
   if (w === 1 && h === 1){
-    var startPoint = pd*pd*4*(y*this.width+x);
+    var imageData = this.drawingContext.getImageData(sx, sy, 1, 1).data;
+    //imageData = [0,0,0,0];
     return [
-      ctx.pixels[startPoint],
-      ctx.pixels[startPoint+1],
-      ctx.pixels[startPoint+2],
-      ctx.pixels[startPoint+3]
+      imageData[0],
+      imageData[1],
+      imageData[2],
+      imageData[3]
     ];
   } else {
-    var sx = x * pd;
-    var sy = y * pd;
     //auto constrain the width and height to
     //dimensions of the source image
     var dw = Math.min(w, ctx.width);
@@ -440,9 +443,13 @@ p5.Renderer2D.prototype.arc =
   return this;
 };
 
-p5.Renderer2D.prototype.ellipse = function(x, y, w, h) {
+p5.Renderer2D.prototype.ellipse = function(args) {
   var ctx = this.drawingContext;
   var doFill = this._doFill, doStroke = this._doStroke;
+  var x = args[0],
+    y = args[1],
+    w = args[2],
+    h = args[3];
   if (doFill && !doStroke) {
     if(ctx.fillStyle === styleEmpty) {
       return this;
@@ -452,20 +459,19 @@ p5.Renderer2D.prototype.ellipse = function(x, y, w, h) {
       return this;
     }
   }
-  var vals = canvas.modeAdjust(x, y, w, h, this._ellipseMode);
   var kappa = 0.5522847498,
-    ox = (vals.w / 2) * kappa, // control point offset horizontal
-    oy = (vals.h / 2) * kappa, // control point offset vertical
-    xe = vals.x + vals.w,      // x-end
-    ye = vals.y + vals.h,      // y-end
-    xm = vals.x + vals.w / 2,  // x-middle
-    ym = vals.y + vals.h / 2;  // y-middle
+    ox = (w / 2) * kappa, // control point offset horizontal
+    oy = (h / 2) * kappa, // control point offset vertical
+    xe = x + w,      // x-end
+    ye = y + h,      // y-end
+    xm = x + w / 2,  // x-middle
+    ym = y + h / 2;  // y-middle
   ctx.beginPath();
-  ctx.moveTo(vals.x, ym);
-  ctx.bezierCurveTo(vals.x, ym - oy, xm - ox, vals.y, xm, vals.y);
-  ctx.bezierCurveTo(xm + ox, vals.y, xe, ym - oy, xe, ym);
+  ctx.moveTo(x, ym);
+  ctx.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
+  ctx.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
   ctx.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-  ctx.bezierCurveTo(xm - ox, ye, vals.x, ym + oy, vals.x, ym);
+  ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
   ctx.closePath();
   if (doFill) {
     ctx.fill();
@@ -573,7 +579,6 @@ p5.Renderer2D.prototype.rect = function(args) {
       return this;
     }
   }
-  var vals = canvas.modeAdjust(x, y, w, h, this._rectMode);
   // Translate the line by (0.5, 0.5) to draw a crisp rectangle border
   if (this._doStroke && ctx.lineWidth % 2 === 1) {
     ctx.translate(0.5, 0.5);
@@ -582,7 +587,7 @@ p5.Renderer2D.prototype.rect = function(args) {
 
   if (typeof tl === 'undefined') {
     // No rounded corners
-    ctx.rect(vals.x, vals.y, vals.w, vals.h);
+    ctx.rect(x, y, w, h);
   } else {
     // At least one rounded corner
     // Set defaults when not specified
@@ -590,31 +595,26 @@ p5.Renderer2D.prototype.rect = function(args) {
     if (typeof br === 'undefined') { br = tr; }
     if (typeof bl === 'undefined') { bl = br; }
 
-    // Cache and compute several values
-    var _x = vals.x;
-    var _y = vals.y;
-    var _w = vals.w;
-    var _h = vals.h;
-    var hw = _w / 2;
-    var hh = _h / 2;
+    var hw = w / 2;
+    var hh = h / 2;
 
     // Clip radii
-    if (_w < 2 * tl) { tl = hw; }
-    if (_h < 2 * tl) { tl = hh; }
-    if (_w < 2 * tr) { tr = hw; }
-    if (_h < 2 * tr) { tr = hh; }
-    if (_w < 2 * br) { br = hw; }
-    if (_h < 2 * br) { br = hh; }
-    if (_w < 2 * bl) { bl = hw; }
-    if (_h < 2 * bl) { bl = hh; }
+    if (w < 2 * tl) { tl = hw; }
+    if (h < 2 * tl) { tl = hh; }
+    if (w < 2 * tr) { tr = hw; }
+    if (h < 2 * tr) { tr = hh; }
+    if (w < 2 * br) { br = hw; }
+    if (h < 2 * br) { br = hh; }
+    if (w < 2 * bl) { bl = hw; }
+    if (h < 2 * bl) { bl = hh; }
 
     // Draw shape
     ctx.beginPath();
-    ctx.moveTo(_x + tl, _y);
-    ctx.arcTo(_x + _w, _y, _x + _w, _y + _h, tr);
-    ctx.arcTo(_x + _w, _y + _h, _x, _y + _h, br);
-    ctx.arcTo(_x, _y + _h, _x, _y, bl);
-    ctx.arcTo(_x, _y, _x + _w, _y, tl);
+    ctx.moveTo(x + tl, y);
+    ctx.arcTo(x + w, y, x + w, y + h, tr);
+    ctx.arcTo(x + w, y + h, x, y + h, br);
+    ctx.arcTo(x, y + h, x, y, bl);
+    ctx.arcTo(x, y, x + w, y, tl);
     ctx.closePath();
   }
   if (this._doFill) {
@@ -629,9 +629,12 @@ p5.Renderer2D.prototype.rect = function(args) {
   return this;
 };
 
-p5.Renderer2D.prototype.triangle = function(x1, y1, x2, y2, x3, y3) {
+p5.Renderer2D.prototype.triangle = function(args) {
   var ctx = this.drawingContext;
   var doFill = this._doFill, doStroke = this._doStroke;
+  var x1=args[0], y1=args[1];
+  var x2=args[2], y2=args[3];
+  var x3=args[4], y3=args[5];
   if (doFill && !doStroke) {
     if(ctx.fillStyle === styleEmpty) {
       return this;

@@ -26,9 +26,9 @@ var p5 = require('../core/core');
  * to the y value.
  *
  * @method textAlign
- * @param {Number/Constant} horizAlign horizontal alignment, either LEFT,
+ * @param {Constant} horizAlign horizontal alignment, either LEFT,
  *                            CENTER, or RIGHT
- * @param {Number/Constant} vertAlign vertical alignment, either TOP,
+ * @param {Constant} vertAlign vertical alignment, either TOP,
  *                            BOTTOM, CENTER, or BASELINE
  * @return {Number}
  * @example

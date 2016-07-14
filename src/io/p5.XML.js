@@ -40,7 +40,7 @@ var p5 = require('../core/core');
  *     var id = children[i].getNumber("id");
  *     var coloring = children[i].getString("species");
  *     var name = children[i].getContent();
- *     print(id + ", " + coloring + ", " + name);
+ *     println(id + ", " + coloring + ", " + name);
  *   }
  * }
  *
@@ -86,7 +86,7 @@ p5.XML = function () {
  * function setup() {
  *   var children = xml.getChildren("animal");
  *   var parent = children[1].getParent();
- *   print(parent.getName());
+ *   println(parent.getName());
  * }
  *
  * // Sketch prints:
@@ -156,9 +156,9 @@ p5.XML.prototype.getName = function() {
  * }
  *
  * function setup() {
- *   print(xml.getName());
+ *   println(xml.getName());
  *   xml.setName("fish");
- *   print(xml.getName());
+ *   println(xml.getName());
  * }
  *
  * // Sketch prints:
@@ -195,7 +195,7 @@ p5.XML.prototype.setName = function(name) {
  * }
  *
  * function setup() {
- *   print(xml.hasChildren());
+ *   println(xml.hasChildren());
  * }
  *
  * // Sketch prints:
@@ -232,7 +232,7 @@ p5.XML.prototype.hasChildren = function() {
  * }
  *
  * function setup() {
- *   print(xml.listChildren());
+ *   println(xml.listChildren());
  * }
  *
  * // Sketch prints:
@@ -273,7 +273,7 @@ p5.XML.prototype.listChildren = function() {
  *   var animals = xml.getChildren("animal");
  *
  *   for (var i = 0; i < animals.length; i++) {
- *     print(animals[i].getContent());
+ *     println(animals[i].getContent());
  *   }
  * }
  *
@@ -320,7 +320,7 @@ p5.XML.prototype.getChildren = function(param) {
  *
  * function setup() {
  *   var firstChild = xml.getChild("animal");
- *   print(firstChild.getContent());
+ *   println(firstChild.getContent());
  * }
  *
  * // Sketch prints:
@@ -335,7 +335,7 @@ p5.XML.prototype.getChildren = function(param) {
  *
  * function setup() {
  *   var secondChild = xml.getChild(1);
- *   print(secondChild.getContent());
+ *   println(secondChild.getContent());
  * }
  *
  * // Sketch prints:
@@ -397,7 +397,7 @@ p5.XML.prototype.addChild = function(node) {
  *   xml.removeChild("animal");
  *   var children = xml.getChildren();
  *   for (var i=0; i<children.length; i++) {
- *     print(children[i].getContent());
+ *     println(children[i].getContent());
  *   }
  * }
  *
@@ -416,7 +416,7 @@ p5.XML.prototype.addChild = function(node) {
  *   xml.removeChild(1);
  *   var children = xml.getChildren();
  *   for (var i=0; i<children.length; i++) {
- *     print(children[i].getContent());
+ *     println(children[i].getContent());
  *   }
  * }
  *
@@ -468,7 +468,7 @@ p5.XML.prototype.removeChild = function(param) {
  *
  * function setup() {
  *   var firstChild = xml.getChild("animal");
- *   print(firstChild.getAttributeCount());
+ *   println(firstChild.getAttributeCount());
  * }
  *
  * // Sketch prints:
@@ -505,7 +505,7 @@ p5.XML.prototype.getAttributeCount = function() {
  *
  * function setup() {
  *   var firstChild = xml.getChild("animal");
- *   print(firstChild.listAttributes());
+ *   println(firstChild.listAttributes());
  * }
  *
  * // Sketch prints:
@@ -542,8 +542,8 @@ p5.XML.prototype.listAttributes = function() {
  *
  * function setup() {
  *   var firstChild = xml.getChild("animal");
- *   print(firstChild.hasAttribute("species"));
- *   print(firstChild.hasAttribute("color"));
+ *   println(firstChild.hasAttribute("species"));
+ *   println(firstChild.hasAttribute("color"));
  * }
  *
  * // Sketch prints:
@@ -585,7 +585,7 @@ p5.XML.prototype.hasAttribute = function(name) {
  *
  * function setup() {
  *   var firstChild = xml.getChild("animal");
- *   print(firstChild.getNumber("id"));
+ *   println(firstChild.getNumber("id"));
  * }
  *
  * // Sketch prints:
@@ -626,7 +626,7 @@ p5.XML.prototype.getNumber = function(name, defaultValue) {
  *
  * function setup() {
  *   var firstChild = xml.getChild("animal");
- *   print(firstChild.getString("species"));
+ *   println(firstChild.getString("species"));
  * }
  *
  * // Sketch prints:
@@ -664,9 +664,9 @@ p5.XML.prototype.getString = function(name, defaultValue) {
  *
  * function setup() {
  *   var firstChild = xml.getChild("animal");
- *   print(firstChild.getString("species"));
+ *   println(firstChild.getString("species"));
  *   firstChild.setAttribute("species", "Jamides zebra");
- *   print(firstChild.getString("species"));
+ *   println(firstChild.getString("species"));
  * }
  *
  * // Sketch prints:
@@ -707,7 +707,7 @@ p5.XML.prototype.setAttribute = function(name, value) {
  *
  * function setup() {
  *   var firstChild = xml.getChild("animal");
- *   print(firstChild.getContent());
+ *   println(firstChild.getContent());
  * }
  *
  * // Sketch prints:
@@ -743,9 +743,9 @@ p5.XML.prototype.getContent = function(defaultValue) {
  *
  * function setup() {
  *   var firstChild = xml.getChild("animal");
- *   print(firstChild.getContent());
+ *   println(firstChild.getContent());
  *   firstChild.setContent("Mountain Goat");
- *   print(firstChild.getContent());
+ *   println(firstChild.getContent());
  * }
  *
  * // Sketch prints:

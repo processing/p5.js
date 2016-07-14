@@ -81,9 +81,8 @@ p5.prototype.beginContour = function() {
  * ellipse() or rect() within beginShape().
  *
  * @method beginShape
- * @param  {Number/Constant} kind either POINTS, LINES, TRIANGLES,
- *                                TRIANGLE_FAN, TRIANGLE_STRIP, QUADS,
- *                                or QUAD_STRIP
+ * @param  {Constant} kind either POINTS, LINES, TRIANGLES, TRIANGLE_FAN
+ *                                TRIANGLE_STRIP, QUADS, or QUAD_STRIP
  * @return {Object}               the p5 object
  * @example
  * <div>
@@ -410,7 +409,7 @@ p5.prototype.endContour = function() {
  * the shape (to connect the beginning and the end).
  *
  * @method endShape
- * @param  {Number/Constant} mode use CLOSE to close the shape
+ * @param  {Constant} mode use CLOSE to close the shape
  * @return {Object}               the p5 object
  * @example
  * <div>
