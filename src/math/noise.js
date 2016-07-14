@@ -160,7 +160,8 @@ p5.prototype.noise = function(x,y,z) {
   }
   return r;
 };
-
+// Avoid `.bind`ing this method in global mode
+p5.prototype.noise._context = false;
 
 /**
  *
@@ -219,6 +220,8 @@ p5.prototype.noiseDetail = function(lod, falloff) {
   if (lod>0)     { perlin_octaves=lod; }
   if (falloff>0) { perlin_amp_falloff=falloff; }
 };
+// Avoid `.bind`ing this method in global mode
+p5.prototype.noiseDetail._context = false;
 
 /**
  * Sets the seed value for <b>noise()</b>. By default, <b>noise()</b>
@@ -283,5 +286,7 @@ p5.prototype.noiseSeed = function(seed) {
     perlin[i] = lcg.rand();
   }
 };
+// Avoid `.bind`ing this method in global mode
+p5.prototype.noiseSeed._context = false;
 
 module.exports = p5;

@@ -67,6 +67,8 @@ p5.prototype.randomSeed = function(seed) {
   lcg.setSeed(seed);
   seeded = true;
 };
+// Avoid `.bind`ing this method in global mode
+p5.prototype.randomSeed._context = false;
 
 /**
  * Return a random floating-point number.
@@ -122,7 +124,7 @@ p5.prototype.randomSeed = function(seed) {
  * @return {mixed} the random element from the array
  * @example
  */
-p5.prototype.random = function (min, max) {
+function random(min, max) {
 
   var rand;
 
@@ -150,7 +152,10 @@ p5.prototype.random = function (min, max) {
 
     return rand * (max-min) + min;
   }
-};
+}
+p5.prototype.random = random;
+// Avoid `.bind`ing this method in global mode
+p5.prototype.random._context = false;
 
 
 /**
@@ -214,8 +219,8 @@ p5.prototype.randomGaussian = function(mean, sd)  {
     previous = false;
   } else {
     do {
-      x1 = this.random(2) - 1;
-      x2 = this.random(2) - 1;
+      x1 = random(2) - 1;
+      x2 = random(2) - 1;
       w = x1 * x1 + x2 * x2;
     } while (w >= 1);
     w = Math.sqrt((-2 * Math.log(w))/w);
@@ -228,5 +233,7 @@ p5.prototype.randomGaussian = function(mean, sd)  {
   var s = sd || 1;
   return y1*s + m;
 };
+// Avoid `.bind`ing this method in global mode
+p5.prototype.random._context = false;
 
 module.exports = p5;

@@ -464,7 +464,11 @@ var p5 = function(sketch, node, sync) {
       if(typeof p5.prototype[p] === 'function') {
         var ev = p.substring(2);
         if (!this._events.hasOwnProperty(ev)) {
-          friendlyBindGlobal(p, p5.prototype[p].bind(this));
+          if (p5.prototype[p]._context !== false) {
+            friendlyBindGlobal(p, p5.prototype[p].bind(this));
+          } else {
+            friendlyBindGlobal(p, p5.prototype[p]);
+          }
         }
       } else {
         friendlyBindGlobal(p, p5.prototype[p]);

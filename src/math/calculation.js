@@ -28,6 +28,8 @@ var p5 = require('../core/core');
  * </code></div>
  */
 p5.prototype.abs = Math.abs;
+// Avoid `.bind`ing this method in global mode
+p5.prototype.abs._context = false;
 
 /**
  * Calculates the closest int value that is greater than or equal to the
@@ -64,6 +66,8 @@ p5.prototype.abs = Math.abs;
  * </code></div>
  */
 p5.prototype.ceil = Math.ceil;
+// Avoid `.bind`ing this method in global mode
+p5.prototype.ceil._context = false;
 
 /**
  * Constrains a value between a minimum and maximum value.
@@ -104,6 +108,8 @@ p5.prototype.ceil = Math.ceil;
 p5.prototype.constrain = function(n, low, high) {
   return Math.max(Math.min(n, high), low);
 };
+// Avoid `.bind`ing this method in global mode
+p5.prototype.constrain._context = false;
 
 /**
  * Calculates the distance between two points.
@@ -155,6 +161,8 @@ p5.prototype.dist = function(x1, y1, z1, x2, y2, z2) {
     return Math.sqrt( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) );
   }
 };
+// Avoid `.bind`ing this method in global mode
+p5.prototype.dist._context = false;
 
 /**
  * Returns Euler's number e (2.71828...) raised to the power of the n
@@ -201,6 +209,8 @@ p5.prototype.dist = function(x1, y1, z1, x2, y2, z2) {
  * </code></div>
  */
 p5.prototype.exp = Math.exp;
+// Avoid `.bind`ing this method in global mode
+p5.prototype.exp._context = false;
 
 /**
  * Calculates the closest int value that is less than or equal to the
@@ -236,6 +246,8 @@ p5.prototype.exp = Math.exp;
  * </code></div>
  */
 p5.prototype.floor = Math.floor;
+// Avoid `.bind`ing this method in global mode
+p5.prototype.floor._context = false;
 
 /**
  * Calculates a number between two numbers at a specific increment. The amt
@@ -276,6 +288,8 @@ p5.prototype.floor = Math.floor;
 p5.prototype.lerp = function(start, stop, amt) {
   return amt*(stop-start)+start;
 };
+// Avoid `.bind`ing this method in global mode
+p5.prototype.lerp._context = false;
 
 /**
  * Calculates the natural logarithm (the base-e logarithm) of a number. This
@@ -326,6 +340,8 @@ p5.prototype.lerp = function(start, stop, amt) {
  * </code></div>
  */
 p5.prototype.log = Math.log;
+// Avoid `.bind`ing this method in global mode
+p5.prototype.log._context = false;
 
 /**
  * Calculates the magnitude (or length) of a vector. A vector is a direction
@@ -360,6 +376,8 @@ p5.prototype.log = Math.log;
 p5.prototype.mag = function(x, y) {
   return Math.sqrt(x*x+y*y);
 };
+// Avoid `.bind`ing this method in global mode
+p5.prototype.mag._context = false;
 
 /**
  * Re-maps a number from one range to another.
@@ -399,6 +417,8 @@ p5.prototype.mag = function(x, y) {
 p5.prototype.map = function(n, start1, stop1, start2, stop2) {
   return ((n-start1)/(stop1-start1))*(stop2-start2)+start2;
 };
+// Avoid `.bind`ing this method in global mode
+p5.prototype.map._context = false;
 
 /**
  * Determines the largest value in a sequence of numbers, and then returns
@@ -438,6 +458,8 @@ p5.prototype.max = function() {
     return Math.max.apply(null,arguments);
   }
 };
+// Avoid `.bind`ing this method in global mode
+p5.prototype.max._context = false;
 
 /**
  * Determines the smallest value in a sequence of numbers, and then returns
@@ -477,6 +499,8 @@ p5.prototype.min = function() {
     return Math.min.apply(null,arguments);
   }
 };
+// Avoid `.bind`ing this method in global mode
+p5.prototype.min._context = false;
 
 /**
  * Normalizes a number from another range into a value between 0 and 1.
@@ -555,6 +579,8 @@ p5.prototype.norm = function(n, start, stop) {
  * </code></div>
  */
 p5.prototype.pow = Math.pow;
+// Avoid `.bind`ing this method in global mode
+p5.prototype.pow._context = false;
 
 /**
  * Calculates the integer closest to the n parameter. For example,
@@ -590,6 +616,8 @@ p5.prototype.pow = Math.pow;
  * </code></div>
  */
 p5.prototype.round = Math.round;
+// Avoid `.bind`ing this method in global mode
+p5.prototype.round._context = false;
 
 /**
  * Squares a number (multiplies a number by itself). The result is always a
@@ -631,6 +659,8 @@ p5.prototype.round = Math.round;
  * </code></div>
  */
 p5.prototype.sq = function(n) { return n*n; };
+// Avoid `.bind`ing this method in global mode
+p5.prototype.sq._context = false;
 
 /**
  * Calculates the square root of a number. The square root of a number is
@@ -673,5 +703,7 @@ p5.prototype.sq = function(n) { return n*n; };
  * </code></div>
  */
 p5.prototype.sqrt = Math.sqrt;
+// Avoid `.bind`ing this method in global mode
+p5.prototype.sqrt._context = false;
 
 module.exports = p5;
