@@ -89,7 +89,7 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
   );
   this._renderer.uPMatrix = p5.Matrix.identity();
   this._renderer.uPMatrix.perspective(fovy,aspect,near,far);
-  this._renderer._setCamera = 'custom';
+  this._renderer._curCamera = 'custom';
 };
 
 /**
@@ -142,7 +142,7 @@ p5.prototype.ortho = function(left,right,bottom,top,near,far) {
   bottom /= this.height;
   this._renderer.uPMatrix = p5.Matrix.identity();
   this._renderer.uPMatrix.ortho(left,right,bottom,top,near,far);
-  this._renderer._setCamera = 'custom';
+  this._renderer._curCamera = 'custom';
 };
 
 module.exports = p5;

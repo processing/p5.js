@@ -38,7 +38,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas) {
   this.directionalLightCount = 0;
   this.pointLightCount = 0;
   //camera
-  this._setCamera = undefined;
+  this._curCamera = null;
 
   /**
    * model view, projection, & normal
@@ -86,12 +86,12 @@ p5.RendererGL.prototype._initContext = function() {
 //detect if user didn't set the camera
 //then call this function below
 p5.RendererGL.prototype._setDefaultCamera = function(){
-  if(this._setCamera === undefined){
+  if(this._curCamera === null){
     var _w = this.width;
     var _h = this.height;
     this.uPMatrix = p5.Matrix.identity();
     this.uPMatrix.perspective(60 / 180 * Math.PI, _w / _h, 0.1, 100);
-    this._setCamera = 'default';
+    this._curCamera = 'default';
   }
 };
 
@@ -384,8 +384,8 @@ p5.RendererGL.prototype.resize = function(w,h) {
   p5.Renderer.prototype.resize.call(this, w, h);
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
   // If we're using the default camera, update the aspect ratio
-  if(this._setCamera === 'default') {
-    this._setCamera = undefined;
+  if(this._curCamera === 'default') {
+    this._curCamera = null;
     this._setDefaultCamera();
   }
 };
