@@ -30,13 +30,14 @@ p5.prototype._hasTouchInteracted = false;
  * <code>
  * // Touch and move  the finger in horizontally  across the canvas
  * function setup() {
- * createCanvas(100, 100);
+ *   createCanvas(100, 100);
  * }
+ *
  * function draw() {
- * background(51);
- * stroke(255, 204, 0);
- * strokeWeight(4);
- * rect(touchX,50,10, 10);
+ *   background(51);
+ *   stroke(255, 204, 0);
+ *   strokeWeight(4);
+ *   rect(touchX, 50, 10, 10);
  * }
  * </code>
  * </div>
@@ -56,13 +57,14 @@ p5.prototype.touchX = 0;
  * <code>
  * // Touch and move the finger vertically across the canvas
  * function setup() {
- * createCanvas(100, 100);
+ *   createCanvas(100, 100);
  * }
+ *
  * function draw() {
- * background(51);
- * stroke(255, 204, 0);
- * strokeWeight(4);
- * rect(50,touchY,10, 10);
+ *   background(51);
+ *   stroke(255, 204, 0);
+ *   strokeWeight(4);
+ *   rect(50, touchY, 10, 10);
  * }
  * </code>
  * </div>
