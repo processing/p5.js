@@ -131,13 +131,12 @@ p5.prototype.random = function (min, max) {
   } else {
     rand = Math.random();
   }
-
-  if (arguments.length === 0) {
+  if (typeof min === 'undefined') {
     return rand;
   } else
-  if (arguments.length === 1) {
-    if (arguments[0] instanceof Array) {
-      return arguments[0][Math.floor(rand * arguments[0].length)];
+  if (typeof max === 'undefined') {
+    if (min instanceof Array) {
+      return min[Math.floor(rand * min.length)];
     } else {
       return rand * min;
     }
