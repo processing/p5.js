@@ -24,6 +24,23 @@ p5.prototype._hasTouchInteracted = false;
  * touches[] array.
  *
  * @property touchX
+ * @method touchX
+ * @example
+ * <div>
+ * <code>
+ * // Touch and move  the finger in horizontally  across the canvas
+ * function setup() {
+ *   createCanvas(100, 100);
+ * }
+ *
+ * function draw() {
+ *   background(51);
+ *   stroke(255, 204, 0);
+ *   strokeWeight(4);
+ *   rect(touchX, 50, 10, 10);
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.touchX = 0;
 
@@ -34,6 +51,23 @@ p5.prototype.touchX = 0;
  * touches[] array.
  *
  * @property touchY
+ * @method touchY
+ * @example
+ * <div>
+ * <code>
+ * // Touch and move the finger vertically across the canvas
+ * function setup() {
+ *   createCanvas(100, 100);
+ * }
+ *
+ * function draw() {
+ *   background(51);
+ *   stroke(255, 204, 0);
+ *   strokeWeight(4);
+ *   rect(50, touchY, 10, 10);
+ * }
+ * </code>
+ * </div>
  */
 p5.prototype.touchY = 0;
 
