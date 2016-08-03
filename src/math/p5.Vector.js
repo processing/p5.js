@@ -529,11 +529,11 @@ p5.Vector.prototype.normalize = function () {
  * </code>
  * </div>
  */
-p5.Vector.prototype.limit = function (l) {
+p5.Vector.prototype.limit = function (max) {
   var mSq = this.magSq();
-  if(mSq > l*l) {
+  if(mSq > max*max) {
     this.div(Math.sqrt(mSq)); //normalize it
-    this.mult(l);
+    this.mult(max);
   }
   return this;
 };
