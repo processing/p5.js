@@ -115,6 +115,10 @@ p5.prototype.brightness = function(c) {
  *                                 (default is 0-100)
  * @return {Array}                 resulting color
  *
+ * @alt 
+ * This is alt text for example 1.
+ * This is alt text for example 2.
+ * This is alt text for example 3.
  * @example
  * <div>
  * <code>

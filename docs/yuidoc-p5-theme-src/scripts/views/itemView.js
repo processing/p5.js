@@ -99,6 +99,21 @@ define([
         this.$el.html(itemHtml);
 
         renderCode();
+
+        // Hook up alt-text for examples
+        setTimeout(function() {
+          var alts = $('.example-content')[0];
+          if (alts) {
+            alts = $(alts).data('alt').split('\n');
+
+            var examples = $('.example_container canvas');
+            for (var i=0; i<alts.length; i++) {
+              if (i < examples.length) {
+                $(examples[i]).attr('alt', alts[i]);
+              }
+            }
+          }
+        }, 1000);
         Prism.highlightAll();
       }
 
