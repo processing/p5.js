@@ -303,6 +303,11 @@ p5.prototype.popStyle = function() {
  * </code></div>
  */
 p5.prototype.redraw = function () {
+  this.resetMatrix();
+  if(this._renderer.isP3D){
+    this._renderer._update();
+  }
+
   var numberOfRedraws = 1;
   if (arguments.length === 1) {
     try {

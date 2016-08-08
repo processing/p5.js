@@ -339,10 +339,6 @@ var p5 = function(sketch, node, sync) {
         time_since_last >= target_time_between_frames - epsilon) {
 
       //mandatory update values(matrixs and stack)
-      this.resetMatrix();
-      if(this._renderer.isP3D){
-        this._renderer._update();
-      }
 
       this._setProperty('frameCount', this.frameCount + 1);
       this.redraw();
