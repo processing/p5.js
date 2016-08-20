@@ -56,6 +56,28 @@ var isFirstContour = true;
  * endShape(CLOSE);
  * </code>
  * </div>
+ *
+ *@alt
+ * white rect and smaller grey rect with red outlines in center of canvas.
+ * white square-shape with black outline in middle-right of canvas. 
+ * 4 black points in a square shape in middle-right of canvas.
+ * 2 horizontal black lines. In the top-right and bottom-right of canvas.
+ * 3 line shape with horizontal on top, vertical in middle and horizontal bottom.
+ * square line shape in middle-right of canvas.
+ * 2 white triangle shapes mid-right canvas. left one pointing up and right down.
+ * 5 horizontal interlocking and alternating white triangles in mid-right canvas.
+ * 4 interlocking white triangles in 45 degree rotated square-shape.
+ * 2 white rectangle shapes in mid-right canvas. Both 20x55.
+ * 3 side-by-side white rectangles center rect is smaller in mid-right canvas.
+ * Thick white l-shape with black outline mid-top-left of canvas.
+ * crescent-shaped line in middle of canvas. Points facing left.
+ * white crescent shape in middle of canvas. Points facing left.
+ * Upside-down u-shape line, mid canvas. left point extends beyond canvas view.
+ * white rect and smaller grey rect with red outlines in center of canvas.
+ * Triangle line shape with smallest interior angle on bottom and upside-down L.
+ * arched-shaped black line with 4 pixel thick stroke weight.
+ * backwards s-shaped black line with 4 pixel thick stroke weight.
+ * 4 black points in a square shape in middle-right of canvas.
  */
 p5.prototype.beginContour = function() {
   contourVertices = [];

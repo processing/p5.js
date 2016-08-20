@@ -62,6 +62,21 @@ require('./error_helpers');
  * arc(50, 50, 80, 80, 0, PI+QUARTER_PI, PIE);
  * </code>
  * </div>
+ *
+ *@alt
+ *shattered outline of an ellipse with a quarter of a white circle bottom-right.
+ *white ellipse with black outline with top right missing.
+ *white ellipse with top right missing with black outline around shape.
+ *white ellipse with top right quarter missing with black outline around the shape.
+ *white ellipse with black outline in middle-right of canvas that is 55x55.
+ *line 78 pixels long running from mid-top to bottom-right of canvas.
+ *3 lines of various stroke sizes. Form top, bottom and right sides of a square.
+ *4 points centered in the middle-right of the canvas.
+ *irregular white quadrilateral shape with black outline mid-right of canvas.
+ *55x55 white rect with black outline in mid-right of canvas. 
+ *55x55 white rect with black outline and rounded edges in mid-right of canvas.
+ *55x55 white rect with black outline and rounded edges of different radii in mid-right of canvas.
+ * white triangle with black outline in mid-right of canvas.
  */
 p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
   var args = new Array(arguments.length);

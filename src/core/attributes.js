@@ -61,6 +61,18 @@ var constants = require('./constants');
  * ellipse(25, 25, 50, 50);  // Draw gray ellipse using CORNERS mode
  * </code>
  * </div>
+ * @alt
+ * 60x60 white ellipse and 30x30 grey ellipse with black outlines at center.
+ * 60x60 white ellipse @center and 30x30 grey ellipse top-right, black outlines.
+ * 2 pixelated 36x36 white ellipses to the left and right of center on black background.
+ * 50x50 white rect at center and 25x25 grey rect in the top left corner of the other.
+ * 50x50 white rect at center and 25x25 grey rect in the center of the other.
+ * 2 pixelated 36x36 white ellipses one left one right of center. On black.
+ * 3 lines. Top line: rounded ends, mid: squared, bottom:longer squared ends.
+ * Right-facing arrowhead shape with pointed tip in center of canvas.
+ * Right-facing arrowhead shape with flat tip in center of canvas.
+ * Right-facing arrowhead shape with rounded tip in center of canvas.
+ * 3 horizontal black lines. Top line: thin, mid: medium, bottom:thick.
  */
 p5.prototype.ellipseMode = function(m) {
   if (m === constants.CORNER ||

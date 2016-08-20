@@ -35,6 +35,12 @@ module.exports = {
    * arc(50, 50, 80, 80, 0, HALF_PI);
    * </code></div>
    *
+   *@alt
+   * 80x80 white quarter-circle with curve toward bottom right of canvas.
+   * white half-circle with curve toward bottom of canvas.
+   * white eighth-circle rotated about 40 degrees with curve bottom right canvas.
+   * 80x80 white ellipse shape in center of canvas.
+   * 80x80 white ellipse shape in center of canvas.
    */
   HALF_PI: PI / 2,
   /**

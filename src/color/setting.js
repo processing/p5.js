@@ -102,6 +102,48 @@ require('./p5.Color');
  * background(color(0, 0, 255));
  * </code>
  * </div>
+ *
+ ** @alt
+ * canvas with darkest charcoal grey background.
+ * canvas with yellow background.
+ * canvas with royal blue background.
+ * canvas with red background.
+ * canvas with pink background.
+ * canvas with black background.
+ * canvas with bright green background.
+ * canvas with soft green background.
+ * canvas with red background.
+ * canvas with light purple background.
+ * canvas with blue background.
+ * 20x20 white ellipses are continually drawn at mouse x and y coordinates.
+ *Green to red gradient from bottom L to top R. shading originates from top left.
+ *Rainbow gradient from left to right. Brightness increasing to white at top.
+ *unknown image.
+ *50x50 ellipse at middle L & 40x40 ellipse at center. Transluscent pink outlines.
+ * 60x60 dark charcoal grey rect with black outline in center of canvas. 
+ * 60x60 yellow rect with black outline in center of canvas.
+ * 60x60 royal blue rect with black outline in center of canvas. 
+ * 60x60 red rect with black outline in center of canvas. 
+ * 60x60 pink rect with black outline in center of canvas. 
+ * 60x60 black rect with black outline in center of canvas. 
+ * 60x60 light green rect with black outline in center of canvas. 
+ * 60x60 soft green rect with black outline in center of canvas.
+ * 60x60 red rect with black outline in center of canvas.  
+ * 60x60 dark fushcia rect with black outline in center of canvas.
+ * 60x60 blue rect with black outline in center of canvas.  
+ *white rect top middle and noFill rect center. Both 60x60 with black outlines. 
+ *60x60 white rect at center. no outline.
+ *60x60 white rect at center. Dark charcoal grey outline.  
+ *60x60 white rect at center. Yellow outline.  
+ *60x60 white rect at center. Royal blue outline.  
+ *60x60 white rect at center. Red outline.  
+ *60x60 white rect at center. Pink outline.  
+ *60x60 white rect at center. Black outline.  
+ *60x60 white rect at center. Bright green outline.  
+ *60x60 white rect at center. Soft green outline.  
+ *60x60 white rect at center. Red outline.  
+ *60x60 white rect at center. Dark fushcia outline.  
+ *60x60 white rect at center. Blue outline.
  */
 
 /**
@@ -172,6 +214,7 @@ p5.prototype.background = function() {
  * </code>
  * </div>
  */
+
 p5.prototype.clear = function() {
   this._renderer.clear();
   return this;
@@ -394,6 +437,7 @@ p5.prototype.colorMode = function() {
  * </code>
  * </div>
  */
+
 p5.prototype.fill = function() {
   this._renderer._setProperty('_fillSet', true);
   this._renderer._setProperty('_doFill', true);
@@ -413,7 +457,7 @@ p5.prototype.fill = function() {
  * noFill();
  * rect(20, 20, 60, 60);
  * </code>
- * </div>
+ * </div>    
  */
 p5.prototype.noFill = function() {
   this._renderer._setProperty('_doFill', false);
@@ -433,6 +477,7 @@ p5.prototype.noFill = function() {
  * </code>
  * </div>
  */
+
 p5.prototype.noStroke = function() {
   this._renderer._setProperty('_doStroke', false);
   return this;
@@ -560,8 +605,9 @@ p5.prototype.noStroke = function() {
  * strokeWeight(4);
  * rect(20, 20, 60, 60);
  * </code>
- * </div>
+ * </div> 
  */
+
 p5.prototype.stroke = function() {
   this._renderer._setProperty('_strokeSet', true);
   this._renderer._setProperty('_doStroke', true);
