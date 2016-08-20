@@ -106,10 +106,10 @@ define([
           if (alts) {
             alts = $(alts).data('alt').split('\n');
 
-            var examples = $('.example_container canvas');
+            var examples = $('.cnv_div');
             for (var i=0; i<alts.length; i++) {
               if (i < examples.length) {
-                $(examples[i]).attr('alt', alts[i]);
+                $(examples[i]).append('<span class="ref_ex_fallback">'+alts[i]+'</span>');
               }
             }
           }
