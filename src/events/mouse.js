@@ -311,20 +311,26 @@ p5.prototype.isMousePressed = false; // both are supported
 p5.prototype._updateNextMouseCoords = function(e) {
   var x = this.mouseX;
   var y = this.mouseY;
+  var winX = this.winMouseX;
+  var winY = this.winMouseY;
   if(e.type === 'touchstart' ||
      e.type === 'touchmove' ||
      e.type === 'touchend' || e.touches) {
     x = this.touchX;
     y = this.touchY;
+    winX = this.winTouchX;
+    winY = this.winTouchY;
   } else if(this._curElement !== null) {
     var mousePos = getMousePos(this._curElement.elt, e);
     x = mousePos.x;
     y = mousePos.y;
+    winX = mousePos.winX;
+    winY = mousePos.winY;
   }
   this._setProperty('mouseX', x);
   this._setProperty('mouseY', y);
-  this._setProperty('winMouseX', e.pageX);
-  this._setProperty('winMouseY', e.pageY);
+  this._setProperty('winMouseX', winX);
+  this._setProperty('winMouseY', winY);
   if (!this._hasMouseInteracted) {
     // For first draw, make previous and next equal
     this._updateMouseCoords();
@@ -343,7 +349,9 @@ function getMousePos(canvas, evt) {
   var rect = canvas.getBoundingClientRect();
   return {
     x: evt.clientX - rect.left,
-    y: evt.clientY - rect.top
+    y: evt.clientY - rect.top,
+    winX: evt.clientX,
+    winY: evt.clientY
   };
 }
 
