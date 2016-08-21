@@ -44,11 +44,6 @@ var defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
  *
  *@alt 
  * Black line extending from top-left of canvas to bottom right. 
- * No image displayed.
- * No image displayed.
- * 4 grey squares alternating light and dark grey. White quarter circle mid-left.
- * translucent image thick red & blue diagonal rounded lines intersecting center
- * Thick red & blue diagonal rounded lines intersecting center. dark at overlap
  * 
  */
 
@@ -140,6 +135,10 @@ p5.prototype.createCanvas = function(w, h, renderer) {
  *   resizeCanvas(windowWidth, windowHeight);
  * }
  * </code></div>
+ *
+ *@alt
+ * No image displayed.
+ *
  */
 p5.prototype.resizeCanvas = function (w, h, noRedraw) {
   if (this._renderer) {
@@ -176,6 +175,10 @@ p5.prototype.resizeCanvas = function (w, h, noRedraw) {
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * no image displayed
+ *
  */
 p5.prototype.noCanvas = function() {
   if (this.canvas) {
@@ -212,6 +215,10 @@ p5.prototype.noCanvas = function() {
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * 4 grey squares alternating light and dark grey. White quarter circle mid-left.
+ *
  */
 p5.prototype.createGraphics = function(w, h, renderer){
   return new p5.Graphics(w, h, renderer, this);
@@ -274,6 +281,10 @@ p5.prototype.createGraphics = function(w, h, renderer){
  * line(75, 25, 25, 75);
  * </code>
  * </div>
+ *@alt
+ * translucent image thick red & blue diagonal rounded lines intersecting center
+ * Thick red & blue diagonal rounded lines intersecting center. dark at overlap
+ *
  */
 p5.prototype.blendMode = function(mode) {
   if (mode === constants.BLEND || mode === constants.DARKEST ||

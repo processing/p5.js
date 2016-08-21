@@ -42,25 +42,6 @@ if (window.console && console.log) {
    * </code></div>
    *@alt
    * default grey canvas
-   * numbers rapidly counting upward with frame count set to 30.
-   * green 50x50 ellipse at top left. Red X covers canvas when page focus changes
-   * horizontal line divides canvas. cursor on left is a cross, right is hand.
-   * blue rect moves left to right, followed by red rect moving faster. Loops.
-   * cursor becomes 10x 10 white ellipse the moves with mouse x and y.
-   * no display.
-   * no display.
-   * no display.
-   * no display.
-   * no display.
-   * no display.
-   * no display.
-   * grey canvas.
-   * fuzzy 50x50 white ellipse with black outline in center of canvas.
-   * sharp 50x50 white ellipse with black outline in center of canvas.
-   * 50x50 white ellipse with black outline in center of canvas.
-   * current url (http://p5js.org/reference/#/p5/getURL) moves right to left.
-   * no display.
-   * no display.
    * 
    */
   // Converts passed args into a string and then parses that string to
@@ -104,6 +85,10 @@ if (window.console && console.log) {
  *       text(frameCount, width/2, height/2);
  *     }
  *   </code></div>
+ *
+ *@alt
+ * numbers rapidly counting upward with frame count set to 30.
+ *
  */
 p5.prototype.frameCount = 0;
 
@@ -130,6 +115,10 @@ p5.prototype.frameCount = 0;
  *   }
  * }
  * </code></div>
+ *
+ *@alt
+ * green 50x50 ellipse at top left. Red X covers canvas when page focus changes
+ *
  */
 p5.prototype.focused = (document.hasFocus());
 
@@ -159,6 +148,10 @@ p5.prototype.focused = (document.hasFocus());
  *   }
  * }
  * </code></div>
+ *
+ *@alt
+ * horizontal line divides canvas. cursor on left is a cross, right is hand.
+ *
  */
 p5.prototype.cursor = function(type, x, y) {
   var cursor = 'auto';
@@ -238,6 +231,9 @@ p5.prototype.cursor = function(type, x, y) {
  * }
  * </div></code>
  *
+ *@alt
+ * blue rect moves left to right, followed by red rect moving faster. Loops.
+ *
  */
 p5.prototype.frameRate = function(fps) {
   if (typeof fps !== 'number' || fps <= 0) {
@@ -287,6 +283,11 @@ p5.prototype.setFrameRate = function(fps) {
  *   ellipse(mouseX, mouseY, 10, 10);
  * }
  * </code></div>
+ *
+ *
+ *@alt
+ * cursor becomes 10x 10 white ellipse the moves with mouse x and y.
+ *
  */
 p5.prototype.noCursor = function() {
   this._curElement.elt.style.cursor = 'none';
@@ -302,6 +303,10 @@ p5.prototype.noCursor = function() {
  * <div class="norender"><code>
  * createCanvas(displayWidth, displayHeight);
  * </code></div>
+ *
+ *@alt
+ * cursor becomes 10x 10 white ellipse the moves with mouse x and y.
+ *
  */
 p5.prototype.displayWidth = screen.width;
 
@@ -314,6 +319,10 @@ p5.prototype.displayWidth = screen.width;
  * <div class="norender"><code>
  * createCanvas(displayWidth, displayHeight);
  * </code></div>
+ *
+ *@alt
+ * no display.
+ *
  */
 p5.prototype.displayHeight = screen.height;
 
@@ -326,6 +335,10 @@ p5.prototype.displayHeight = screen.height;
  * <div class="norender"><code>
  * createCanvas(windowWidth, windowHeight);
  * </code></div>
+ *
+ *@alt
+ * no display.
+ *
  */
 p5.prototype.windowWidth = getWindowWidth();
 /**
@@ -337,7 +350,10 @@ p5.prototype.windowWidth = getWindowWidth();
  * <div class="norender"><code>
  * createCanvas(windowWidth, windowHeight);
  * </code></div>
- */
+*@alt
+ * no display.
+ *
+*/
 p5.prototype.windowHeight = getWindowHeight();
 
 /**
@@ -359,6 +375,9 @@ p5.prototype.windowHeight = getWindowHeight();
  * function windowResized() {
  *   resizeCanvas(windowWidth, windowHeight);
  * }
+ *@alt
+ * no display.
+ *
  * </code></div>
  */
 p5.prototype._onresize = function(e){
@@ -433,6 +452,10 @@ p5.prototype.height = 0;
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * no display.
+ *
  */
 p5.prototype.fullscreen = function(val) {
   // no arguments, return fullscreen or not
@@ -481,6 +504,10 @@ p5.prototype.fullscreen = function(val) {
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * fuzzy 50x50 white ellipse with black outline in center of canvas.
+ * sharp 50x50 white ellipse with black outline in center of canvas.
  */
 p5.prototype.pixelDensity = function(val) {
   if (typeof val === 'number') {
@@ -508,6 +535,9 @@ p5.prototype.pixelDensity = function(val) {
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * 50x50 white ellipse with black outline in center of canvas.
  */
 p5.prototype.displayDensity = function() {
   return window.devicePixelRatio;
@@ -568,6 +598,10 @@ function exitFullscreen() {
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * current url (http://p5js.org/reference/#/p5/getURL) moves right to left.
+ *
  */
 p5.prototype.getURL = function() {
   return location.href;
@@ -585,6 +619,10 @@ p5.prototype.getURL = function() {
  *   }
  * }
  * </code></div>
+ *
+ *@alt
+ *no display
+ *
  */
 p5.prototype.getURLPath = function() {
   return location.pathname.split('/').filter(function(v){return v!=='';});
@@ -606,6 +644,10 @@ p5.prototype.getURLPath = function() {
  * }
  * </code>
  * </div>
+ * 
+ *@alt
+ * no display.
+ *
  */
 p5.prototype.getURLParams = function() {
   var re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;

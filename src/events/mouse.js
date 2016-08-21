@@ -36,6 +36,10 @@ p5.prototype._hasMouseInteracted = false;
  * }
  * </code>
  * </div>
+ *
+ *@alt 
+ * horizontal black line moves left and right with mouse x-position
+ * 
  */
 p5.prototype.mouseX = 0;
 
@@ -55,6 +59,10 @@ p5.prototype.mouseX = 0;
  *}
  * </code>
  * </div>
+ *
+ *@alt 
+ * vertical black line moves up and down with mouse y-position
+ * 
  */
 p5.prototype.mouseY = 0;
 
@@ -82,6 +90,10 @@ p5.prototype.mouseY = 0;
  *
  * </code>
  * </div>
+ *
+ *@alt 
+ * line trail is created from cursor movements. faster movement make longer line.
+ * 
  */
 p5.prototype.pmouseX = 0;
 
@@ -107,6 +119,10 @@ p5.prototype.pmouseX = 0;
  *
  * </code>
  * </div>
+ *
+ *@alt 
+ * 60x60 black rect center, fuschia background. rect flickers on mouse movement
+ *
  */
 p5.prototype.pmouseY = 0;
 
@@ -140,6 +156,10 @@ p5.prototype.pmouseY = 0;
  *
  * </code>
  * </div>
+ *
+ *@alt 
+ * 60x60 black rect y moves with mouse y and fuschia canvas moves with mouse x
+ *
  */
 p5.prototype.winMouseX = 0;
 
@@ -173,6 +193,10 @@ p5.prototype.winMouseX = 0;
  *
  * </code>
  * </div>
+ *
+ *@alt
+ * 60x60 black rect x moves with mouse x and fuschia canvas y moves with mouse y
+ *
  */
 p5.prototype.winMouseY = 0;
 
@@ -210,6 +234,10 @@ p5.prototype.winMouseY = 0;
  *
  * </code>
  * </div>
+ *
+ *@alt
+ * fuschia ellipse moves with mouse x and y. Grows and shrinks with mouse speed
+ *
  */
 p5.prototype.pwinMouseX = 0;
 
@@ -248,6 +276,10 @@ p5.prototype.pwinMouseX = 0;
  *
  * </code>
  * </div>
+ *
+ *@alt
+ * fuschia ellipse moves with mouse x and y. Grows and shrinks with mouse speed
+ *
  */
 p5.prototype.pwinMouseY = 0;
 
@@ -279,6 +311,10 @@ p5.prototype.pwinMouseY = 0;
 	* }
 	* </code>
  * </div>
+ *
+ *@alt
+ * 50x50 black ellipse appears on center of fuschia canvas on mouse click/press.
+ *
  */
 p5.prototype.mouseButton = 0;
 
@@ -304,6 +340,10 @@ p5.prototype.mouseButton = 0;
 	* }
 	* </code>
 	* </div>
+  *
+ *@alt
+ * black 50x50 rect becomes ellipse with mouse click/press. fuschia background.
+ *
  */
 p5.prototype.mouseIsPressed = false;
 p5.prototype.isMousePressed = false; // both are supported
@@ -394,6 +434,11 @@ p5.prototype._setMouseButton = function(e) {
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * black 50x50 rect becomes lighter with mouse movements until white then resets
+ * no image displayed
+ *
  */
 
 /**
@@ -434,6 +479,11 @@ p5.prototype._setMouseButton = function(e) {
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * black 50x50 rect turns lighter with mouse click and drag until white, resets
+ * no image displayed
+ *
  */
 p5.prototype._onmousemove = function(e){
   var context = this._isGlobal ? window : this;
@@ -504,6 +554,11 @@ p5.prototype._onmousemove = function(e){
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * black 50x50 rect turns white with mouse click/press.
+ * no image displayed
+ *
  */
 p5.prototype._onmousedown = function(e) {
   var context = this._isGlobal ? window : this;
@@ -567,6 +622,11 @@ p5.prototype._onmousedown = function(e) {
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * black 50x50 rect turns white with mouse click/press.
+ * no image displayed
+ *
  */
 p5.prototype._onmouseup = function(e) {
   var context = this._isGlobal ? window : this;
@@ -628,6 +688,11 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * black 50x50 rect turns white with mouse click/press.
+ * no image displayed
+ *
  */
 p5.prototype._onclick = function(e) {
   var context = this._isGlobal ? window : this;
@@ -675,6 +740,10 @@ p5.prototype._onclick = function(e) {
  * }
  * </code>
  * </div>
+ *
+ *@alt 
+ * black 50x50 rect moves up and down with vertical scroll. fuschia background
+ * 
  */
 p5.prototype._onwheel = function(e) {
   var context = this._isGlobal ? window : this;

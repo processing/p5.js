@@ -61,18 +61,11 @@ var constants = require('./constants');
  * ellipse(25, 25, 50, 50);  // Draw gray ellipse using CORNERS mode
  * </code>
  * </div>
+ *
  * @alt
  * 60x60 white ellipse and 30x30 grey ellipse with black outlines at center.
  * 60x60 white ellipse @center and 30x30 grey ellipse top-right, black outlines.
- * 2 pixelated 36x36 white ellipses to the left and right of center on black background.
- * 50x50 white rect at center and 25x25 grey rect in the top left corner of the other.
- * 50x50 white rect at center and 25x25 grey rect in the center of the other.
- * 2 pixelated 36x36 white ellipses one left one right of center. On black.
- * 3 lines. Top line: rounded ends, mid: squared, bottom:longer squared ends.
- * Right-facing arrowhead shape with pointed tip in center of canvas.
- * Right-facing arrowhead shape with flat tip in center of canvas.
- * Right-facing arrowhead shape with rounded tip in center of canvas.
- * 3 horizontal black lines. Top line: thin, mid: medium, bottom:thick.
+ *
  */
 p5.prototype.ellipseMode = function(m) {
   if (m === constants.CORNER ||
@@ -102,6 +95,10 @@ p5.prototype.ellipseMode = function(m) {
  * ellipse(70, 48, 36, 36);
  * </code>
  * </div>
+ *
+ *@alt
+ * 2 pixelated 36x36 white ellipses to the left and right of center on black background.
+ *
  */
 p5.prototype.noSmooth = function() {
   this._renderer.noSmooth();
@@ -158,6 +155,11 @@ p5.prototype.noSmooth = function() {
  * rect(50, 50, 30, 30);  // Draw gray rect using CENTER mode
  * </code>
  * </div>
+ *
+ *@alt
+ * 50x50 white rect at center and 25x25 grey rect in the top left corner of the other.
+ * 50x50 white rect at center and 25x25 grey rect in the center of the other.
+ *
  */
 p5.prototype.rectMode = function(m) {
   if (m === constants.CORNER ||
@@ -188,6 +190,10 @@ p5.prototype.rectMode = function(m) {
  * ellipse(70, 48, 36, 36);
  * </code>
  * </div>
+ *
+ *@alt
+ * 2 pixelated 36x36 white ellipses one left one right of center. On black.
+ *
  */
 p5.prototype.smooth = function() {
   this._renderer.smooth();
@@ -214,6 +220,10 @@ p5.prototype.smooth = function() {
  * line(20, 70, 80, 70);
  * </code>
  * </div>
+ *
+ *@alt
+ * 3 lines. Top line: rounded ends, mid: squared, bottom:longer squared ends.
+ *
  */
 p5.prototype.strokeCap = function(cap) {
   if (cap === constants.ROUND ||
@@ -272,6 +282,12 @@ p5.prototype.strokeCap = function(cap) {
  * endShape();
  * </code>
  * </div>
+ *
+ *@alt
+ * Right-facing arrowhead shape with pointed tip in center of canvas.
+ * Right-facing arrowhead shape with flat tip in center of canvas.
+ * Right-facing arrowhead shape with rounded tip in center of canvas.
+ *
  */
 p5.prototype.strokeJoin = function(join) {
   if (join === constants.ROUND ||
@@ -300,6 +316,10 @@ p5.prototype.strokeJoin = function(join) {
  * line(20, 70, 80, 70);
  * </code>
  * </div>
+ *
+ *@alt
+ * 3 horizontal black lines. Top line: thin, mid: medium, bottom:thick.
+ *
  */
 p5.prototype.strokeWeight = function(w) {
   this._renderer.strokeWeight(w);

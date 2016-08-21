@@ -325,6 +325,10 @@ p5.prototype.color = function() {
  * rect(50, 20, 35, 60);  // Draw right rectangle
  * </code>
  * </div>
+ *
+ *@alt
+ * blue rect on left and green on right, both with black outlines & 35x60.
+ *
  */
 
 p5.prototype.green = function(c) {
@@ -359,6 +363,10 @@ p5.prototype.green = function(c) {
  * rect(50, 20, 35, 60);
  * </code>
  * </div>
+ *
+ *@alt
+ * salmon pink rect on left and black on right, both 35x60.
+ *
  */
  
 p5.prototype.hue = function(c) {
@@ -406,6 +414,10 @@ p5.prototype.hue = function(c) {
  * rect(70, 20, 20, 60);
  * </code>
  * </div>
+ *
+ * @alt
+ * 4 rects one tan, brown, brownish purple and purple. Each with white outlines & 20x60.
+ *
  */
 
 p5.prototype.lerpColor = function(c1, c2, amt) {
@@ -471,6 +483,10 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  * rect(50, 20, 35, 60);
  * </code>
  * </div>
+ *
+ *@alt
+ * light pastel green rect on left and dark grey rect on right, both 35x60.
+ *
  */
 p5.prototype.lightness = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
@@ -508,6 +524,11 @@ p5.prototype.lightness = function(c) {
  * println(myColor);
  * </code>
  * </div>
+ *
+ *@alt
+ * yellow rect on left and red rect on right, both with black outlines and 35x60.
+ * grey canvas
+ * 
  */
 p5.prototype.red = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
@@ -540,6 +561,10 @@ p5.prototype.red = function(c) {
  * rect(50, 20, 35, 60);
  * </code>
  * </div>
+ *
+ *@alt
+ *deep pink rect on left and grey rect on right, both 35x60.
+ *
  */
 
 p5.prototype.saturation = function(c) {
