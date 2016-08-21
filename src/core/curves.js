@@ -46,6 +46,16 @@ var curveDetail = 20;
  * bezier(85, 20, 10, 10, 90, 90, 15, 80);
  * </code>
  * </div>
+ * @alt
+ * stretched black s-shape in center with orange lines extending from end points.
+ * stretched black s-shape with 10 5x5 white ellipses along the shape.
+ * stretched black s-shape with 7 5x5 ellipses and orange lines along the shape.
+ * stretched black s-shape with 17 small orange lines extending from under shape.
+ * horseshoe shape with orange ends facing left and black curved center.
+ * horseshoe shape with orange ends facing left and black curved center.
+ * Line shaped like right-facing arrow,points move with mouse-x and warp shape.
+ * horizontal line that hooks downward on the right and 13 5x5 ellipses along it.
+ * right curving line mid-right of canvas with 7 short lines radiating from it.
  */
 /**
  * @method bezier
@@ -63,16 +73,6 @@ var curveDetail = 20;
  *bezier(250,250,0, 100,100,0, 100,0,0, 0,100,0);
  * </code>
  * </div>
- *@alt
- * stretched black s-shape in center with orange lines extending from end points.
- * stretched black s-shape with 10 5x5 white ellipses along the shape.
- * stretched black s-shape with 7 5x5 ellipses and orange lines along the shape.
- * stretched black s-shape with 17 small orange lines extending from under shape.
- * horseshoe shape with orange ends facing left and black curved center.
- * horseshoe shape with orange ends facing left and black curved center.
- * Line shaped like right-facing arrow,points move with mouse-x and warp shape.
- * horizontal line that hooks downward on the right and 13 5x5 ellipses along it.
- * right curving line mid-right of canvas with 7 short lines radiating from it.
 */
 p5.prototype.bezier = function() {
    var args = new Array(arguments.length);
