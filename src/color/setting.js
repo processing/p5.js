@@ -103,7 +103,7 @@ require('./p5.Color');
  * </code>
  * </div>
  *
- ** @alt
+ * @alt
  * canvas with darkest charcoal grey background.
  * canvas with yellow background.
  * canvas with royal blue background.
