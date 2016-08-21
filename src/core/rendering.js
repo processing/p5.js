@@ -41,6 +41,15 @@ var defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
  * }
  * </code>
  * </div>
+ *
+ *@alt 
+ * Black line extending from top-left of canvas to bottom right. 
+ * No image displayed.
+ * No image displayed.
+ * 4 grey squares alternating light and dark grey. White quarter circle mid-left.
+ * translucent image thick red & blue diagonal rounded lines intersecting center
+ * Thick red & blue diagonal rounded lines intersecting center. dark at overlap
+ * 
  */
 
 p5.prototype.createCanvas = function(w, h, renderer) {

@@ -68,9 +68,14 @@ p5.prototype.exit = function() {
  *
  *@alt
  * 113 pixel long line extending from top-left to bottom right of canvas. 
- * horizontal line moves slowly from left. Loops but stops on mouse press.
- * horizontal line moves slowly from left. Loops but stops on mouse press.
- * http://localhost:8000/docs/reference/#/p5/push & pop
+ * horizontal line moves slowly from left. Loops but stops on mouse press. //no loop
+ * horizontal line moves slowly from left. Loops but stops on mouse press. //loop
+ * Gold ellipse + thick black outline @center 2 white ellipses on left and right.
+ * 2 Gold ellipses left black right blue stroke. 2 white ellipses on left+right.
+ * Gold ellipse + thick black outline @center 2 white ellipses on left and right.
+ * 2 Gold ellipses left black right blue stroke. 2 white ellipses on left+right.
+ * black line on far left of canvas //redraw
+ * black line on far left of canvas //redraw
  */
 p5.prototype.noLoop = function() {
   this._loop = false;

@@ -40,6 +40,28 @@ if (window.console && console.log) {
    * println("The value of x is " + x);
    * // prints "The value of x is 10"
    * </code></div>
+   *@alt
+   * default grey canvas
+   * numbers rapidly counting upward with frame count set to 30.
+   * green 50x50 ellipse at top left. Red X covers canvas when page focus changes
+   * horizontal line divides canvas. cursor on left is a cross, right is hand.
+   * blue rect moves left to right, followed by red rect moving faster. Loops.
+   * cursor becomes 10x 10 white ellipse the moves with mouse x and y.
+   * no display.
+   * no display.
+   * no display.
+   * no display.
+   * no display.
+   * no display.
+   * no display.
+   * grey canvas.
+   * fuzzy 50x50 white ellipse with black outline in center of canvas.
+   * sharp 50x50 white ellipse with black outline in center of canvas.
+   * 50x50 white ellipse with black outline in center of canvas.
+   * current url (http://p5js.org/reference/#/p5/getURL) moves right to left.
+   * no display.
+   * no display.
+   * 
    */
   // Converts passed args into a string and then parses that string to
   // simulate synchronous behavior. This is a hack and is gross.

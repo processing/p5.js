@@ -71,6 +71,27 @@ p5.Element = function(elt, pInst) {
  * var div1 = createDiv('this is the child');
  * div1.parent(elt); // use element from page
  * </code></div>
+ *
+ *@alt
+ * no display.
+ * no display.
+ * no display.
+ * no display.
+ * no display.
+ * no display.
+ * no display.
+ * no display.
+ * no display.
+ * dropdown: pear, kiwi, grape. When selected text "its a" + selection shown.
+ * no display.
+ * no display.
+ * no display.
+ * no display.
+ * no display.
+ * no display.
+ * no display.
+ * Canvas turns into whatever image is dragged onto it. 
+ * 
  */
 p5.Element.prototype.parent = function(p) {
   if (arguments.length === 0){
