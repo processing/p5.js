@@ -76,6 +76,10 @@ p5.prototype.alpha = function(c) {
  * rect(50, 20, 35, 60);  // Draw right rectangle
  * </code>
  * </div>
+ *
+ *@alt
+ * Left half of canvas light purple and right half a royal blue.
+ *
  */
 p5.prototype.blue = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
@@ -103,6 +107,10 @@ p5.prototype.blue = function(c) {
  * rect(50, 20, 35, 60);
  * </code>
  * </div>
+ *
+ *@alt
+ * Left half of canvas salmon pink and the right half white.
+ *
  */
 p5.prototype.brightness = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
@@ -257,6 +265,17 @@ p5.prototype.brightness = function(c) {
  * rect(55, 10, 45, 80);  // Draw right rect
  * </code>
  * </div>
+ *
+ *@alt
+ * Yellow rect in middle right of canvas, with 55 pixel width and height.
+ * Yellow ellipse in top left of canvas, black ellipse in bottom right,both 80x80.
+ * Bright fuschia rect in middle of canvas, 60 pixel width and height.
+ * Two bright green rects on opposite sides of the canvas, both 45x80.
+ * Four blue rects in each corner of the canvas, each are 35x35.
+ * Bright sea green rect on left and darker rect on right of canvas, both 45x80.
+ * Dark green rect on left and lighter green rect on right of canvas, both 45x80.
+ * Dark blue rect on left and light teal rect on right of canvas, both 45x80.
+ *
  */
 
 /**

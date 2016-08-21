@@ -106,6 +106,11 @@ p5.prototype._updatePAccelerations = function(){
  * </div>
  *
  * @property rotationX
+ *
+ *@alt
+ * red horizontal line right, green vertical line bottom. black background.
+ * red horizontal line right, green vertical line bottom. black background.
+ * red horizontal line right, green vertical line bottom. black background.
  */
 p5.prototype.rotationX = 0;
 
@@ -135,6 +140,9 @@ p5.prototype.rotationX = 0;
  * </div>
  *
  * @property rotationY
+ *
+ *@alt
+ * red horizontal line right, green vertical line bottom. black background.
  */
 p5.prototype.rotationY = 0;
 
@@ -167,6 +175,9 @@ p5.prototype.rotationY = 0;
  * </div>
  *
  * @property rotationZ
+ *
+ *@alt
+ * red horizontal line right, green vertical line bottom. black background.
  */
 p5.prototype.rotationZ = 0;
 

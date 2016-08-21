@@ -31,6 +31,21 @@ var constants = require('./constants');
  * // Example in the works.
  * </code>
  * </div>
+ *
+ *@alt 
+ * no image diplayed
+ * no image diplayed
+ * white 52x52 rect with black outline at center rotated counter 45 degrees
+ * no image diplayed
+ * no image diplayed
+ * no image diplayed
+ * white 52x52 rect with black outline at center rotated counter 45 degrees
+ * 2 white rects with black outline- 1 50x50 at center. other 25x65 bottom left
+ * white irregular quadrilateral with black outline at top middle.
+ * white irregular quadrilateral with black outline at middle bottom.
+ * white 55x55 rect with black outline at center right.
+ * 3 white 55x55 rects with black outlines at top-l, center-r and bottom-r.
+ * 
  */
 p5.prototype.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
   this._renderer.applyMatrix(n00, n01, n02, n10, n11, n12);
