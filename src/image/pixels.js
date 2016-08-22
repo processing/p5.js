@@ -365,6 +365,18 @@ p5.prototype.copy = function () {
  * }
  * </code>
  * </div>
+ *
+ *@alt 
+ * black and white image of a brick wall.
+ * greyscale image of a brickwall
+ * image of a brickwall
+ * jade colored image of a brickwall
+ * red and pink image of a brickwall
+ * image of a brickwall
+ * blurry image of a brickwall
+ * image of a brickwall
+ * image of a brickwall with less detail
+ *
  */
 p5.prototype.filter = function(operation, value) {
   Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
@@ -431,6 +443,11 @@ p5.prototype.filter = function(operation, value) {
  * }
  * </code>
  * </div>
+ *
+ *@alt 
+ * 2 images of the rocky mountains, side-by-side
+ * Image of the rocky mountains with 50x50 green rect in center of canvas
+ *
  */
 p5.prototype.get = function(x, y, w, h){
   return this._renderer.get(x, y, w, h);
@@ -462,6 +479,10 @@ p5.prototype.get = function(x, y, w, h){
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * two images of the rocky mountains. one on top, one on bottom of canvas. 
+ *
  */
 p5.prototype.loadPixels = function() {
   this._renderer.loadPixels();
@@ -531,6 +552,13 @@ p5.prototype.loadPixels = function() {
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * 4 black points in the shape of a square middle-right of canvas.
+ * square with orangey-brown gradient lightening at bottom right.
+ * image of the rocky mountains. with lines like an 'x' through the center. 
+  
+ *
  */
 p5.prototype.set = function (x, y, imgOrCol) {
   this._renderer.set(x, y, imgOrCol);
@@ -568,6 +596,10 @@ p5.prototype.set = function (x, y, imgOrCol) {
  *   updatePixels();
  * }
  * </code>
+ *
+ *@alt
+ * two images of the rocky mountains. one on top, one on bottom of canvas. 
+ *
  * </div>
  */
 p5.prototype.updatePixels = function (x, y, w, h) {
