@@ -99,6 +99,11 @@ p5._getDecrementPreload = function () {
  *   myDiv.style('font-family', 'Avenir');
  * }
  * </code></div>
+ *
+ *@alt
+ * p5*js in p5's theme dark pink
+ * p5*js in p5's theme dark pink
+ *
  */
 p5.prototype.loadFont = function (path, onSuccess, onError) {
 
@@ -226,6 +231,10 @@ p5.prototype.loadBytes = function () {
  * }
  * </code></div>
  *
+ *@alt
+ * 50x50 ellipse that changes from black to white depending on the current humidity
+ * 50x50 ellipse that changes from black to white depending on the current humidity
+ *
  */
 p5.prototype.loadJSON = function () {
   var path = arguments[0];
@@ -331,6 +340,11 @@ p5.prototype.loadJSON = function () {
  *   text(result[ind], 10, 10, 80, 80);
  * }
  * </code></div>
+ *
+ *@alt
+ * randomly generated text from a file, for example "i smell like butter"
+ * randomly generated text from a file, for example "i have three feet"
+ *
  */
 p5.prototype.loadStrings = function (path, callback, errorCallback) {
   var ret = [];
@@ -454,6 +468,11 @@ p5.prototype.loadStrings = function (path, callback, errorCallback) {
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * randomly generated text from a file, for example "i smell like butter"
+ * randomly generated text from a file, for example "i have three feet"
+ *
  */
 p5.prototype.loadTable = function (path) {
   var callback = null;
@@ -1144,6 +1163,10 @@ p5.prototype.save = function (object, _filename, _options) {
  *  //   "name": "Lion"
  *  // }
  *  </div></code>
+ *
+ *@alt
+ * no image displayed
+ *
  */
 p5.prototype.saveJSON = function (json, filename, opt) {
   var stringify;
@@ -1190,6 +1213,10 @@ p5.prototype.saveStream = function () {
  *  // cat
  *  // dog
  *  </code></div>
+ *
+ *@alt
+ * no image displayed
+ *
  */
 p5.prototype.saveStrings = function (list, filename, extension) {
   var ext = extension || 'txt';
@@ -1265,6 +1292,10 @@ function escapeHelper(content) {
  *    // id,species,name
  *    // 0,Panthera leo,Lion
  *  </code></div>
+ *
+ *@alt
+ * no image displayed
+ *
  */
 p5.prototype.saveTable = function (table, filename, options) {
   var pWriter = this.createWriter(filename, options);
