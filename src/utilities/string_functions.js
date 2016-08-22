@@ -30,6 +30,10 @@ var p5 = require('../core/core');
  * text(message, 5, 50);
  * </code>
  * </div>
+ *
+ *@alt
+ * "hello world!" displayed middle left of canvas.
+ *
  */
 p5.prototype.join = function(list, separator) {
   return list.join(separator);
@@ -66,6 +70,10 @@ p5.prototype.join = function(list, separator) {
  * text(match, 5, 50);
  * </code>
  * </div>
+ *
+ *@alt
+ * "p5js*" displayed middle left of canvas.
+ *
  */
 p5.prototype.match =  function(str, reg) {
   return str.match(reg);
@@ -155,6 +163,10 @@ p5.prototype.matchAll = function(str, reg) {
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * "0011253" top left, "0112.531" mid left, "112.531061" bottom left canvas
+ *
  */
 p5.prototype.nf = function () {
   if (arguments[0] instanceof Array) {
@@ -252,6 +264,10 @@ function doNf() {
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * "11,253,106.115" top middle and "1.00,1.00,2.00" displayed bottom mid
+ *
  */
 p5.prototype.nfc = function () {
   if (arguments[0] instanceof Array) {
@@ -323,6 +339,10 @@ function doNfc() {
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * "+11253106.11" top middle and "-11253106.11" displayed bottom middle
+ *
  */
 p5.prototype.nfp = function() {
   var nfRes = this.nf.apply(this, arguments);
@@ -376,6 +396,10 @@ function addNfp() {
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * "11253106.11" top middle and "-11253106.11" displayed bottom middle
+ *
  */
 p5.prototype.nfs = function() {
   var nfRes = this.nf.apply(this, arguments);
@@ -417,6 +441,10 @@ function addNfs() {
  * text(splitString[2], 5, 70);
  * </code>
  * </div>
+ *
+ *@alt
+ * "pat" top left, "Xio" mid left and "Alex" displayed bottom left
+ *
  */
 p5.prototype.split = function(str, delim) {
   return str.split(delim);
@@ -489,6 +517,10 @@ p5.prototype.splitTokens = function() {
  * text(string +" here", 2, 50);
  * </code>
  * </div>
+ *
+ *@alt
+ * "No new lines here" displayed center canvas
+ *
  */
 p5.prototype.trim = function(str) {
   if (str instanceof Array) {
