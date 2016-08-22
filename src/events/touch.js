@@ -41,6 +41,10 @@ p5.prototype._hasTouchInteracted = false;
  * }
  * </code>
  * </div>
+ *
+ *@alt 
+ * 10x10 white rect with thick gold outline moves left and right with touch x.
+ * 
  */
 p5.prototype.touchX = 0;
 
@@ -68,6 +72,10 @@ p5.prototype.touchX = 0;
  * }
  * </code>
  * </div>
+ *
+ *@alt 
+ * 10x10 white rect with thick gold outline moves up and down with touch y.
+ *
  */
 p5.prototype.touchY = 0;
 
@@ -192,6 +200,10 @@ function getTouchInfo(canvas, e, i) {
  * }
  * </code>
  * </div>
+ *
+ *@alt 
+ * 50x50 black rect turns white with touch event.
+ * no image displayed
  */
 p5.prototype._ontouchstart = function(e) {
   var context = this._isGlobal ? window : this;
@@ -251,6 +263,11 @@ p5.prototype._ontouchstart = function(e) {
  * }
  * </code>
  * </div>
+ *
+ *@alt 
+ * 50x50 black rect turns lighter with touch until white. resets
+ * no image displayed
+ *
  */
 p5.prototype._ontouchmove = function(e) {
   var context = this._isGlobal ? window : this;
@@ -309,6 +326,11 @@ p5.prototype._ontouchmove = function(e) {
  * }
  * </code>
  * </div>
+ *
+ *@alt 
+ * 50x50 black rect turns white with touch. 
+ * no image displayed
+ *
  */
 p5.prototype._ontouchend = function(e) {
   this._updateNextTouchCoords(e);

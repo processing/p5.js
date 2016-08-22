@@ -74,6 +74,10 @@ require('../color/p5.Color');
  * updatePixels();
  * </code>
  * </div>
+ *
+ *@alt 
+ * top half of canvas pink, bottom grey
+ *
  */
 p5.prototype.pixels = [];
 
@@ -143,6 +147,13 @@ p5.prototype.pixels = [];
  *   blend(img1, 0, 0, 33, 100, 67, 0, 33, 100, ADD);
  * }
  * </code></div>
+ *
+ *@alt 
+ * image of rocky mountains. Brick images on left and right. Right overexposed
+ * image of rockies. Brickwall images on left and right. Right mortar transparent
+ * image of rockies. Brickwall images on left and right. Right translucent
+ *
+ *
  */
 p5.prototype.blend = function() {
   if (this._renderer) {
@@ -188,6 +199,12 @@ p5.prototype.blend = function() {
  *   rect(7, 22, 10, 10);
  * }
  * </code></div>
+ *
+ *@alt 
+ * image of rocky mountains. Brick images on left and right. Right overexposed
+ * image of rockies. Brickwall images on left and right. Right mortar transparent
+ * image of rockies. Brickwall images on left and right. Right translucent
+ *
  */
 p5.prototype.copy = function () {
   p5.Renderer2D._copyHelper.apply(this, arguments);
