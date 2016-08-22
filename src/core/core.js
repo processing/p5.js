@@ -73,6 +73,10 @@ var p5 = function(sketch, node, sync) {
    *   image(img, 25, 25, 50, 50);
    * }
    * </code></div>
+   *
+   *@alt
+   * nothing displayed
+   *
    */
 
   /**
@@ -100,6 +104,10 @@ var p5 = function(sketch, node, sync) {
    *   rect(a++%width, 10, 2, 80);
    * }
    * </code></div>
+   *
+   *@alt
+   * nothing displayed
+   *
    */
 
   /**
@@ -145,6 +153,10 @@ var p5 = function(sketch, node, sync) {
    *   line(0, yPos, width, yPos);
    * }
    * </code></div>
+   *
+   *@alt
+   * nothing displayed
+   *
    */
 
 
@@ -385,6 +397,10 @@ var p5 = function(sketch, node, sync) {
    *   remove(); // remove whole sketch on mouse press
    * }
    * </code></div>
+   *
+   *@alt
+   * nothing displayed
+   *
    */
   this.remove = function() {
     if (this._curElement) {

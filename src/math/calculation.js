@@ -26,6 +26,10 @@ var p5 = require('../core/core');
  *   println(y); // 3
  * }
  * </code></div>
+ *
+ *@alt
+ * no image displayed
+ *
  */
 p5.prototype.abs = Math.abs;
 
@@ -62,6 +66,10 @@ p5.prototype.abs = Math.abs;
  *   text(nfc(bx,1,1), bx, by - 5);
  * }
  * </code></div>
+  *
+ *@alt
+ * 2 horizontal lines & number sets. increase with mouse x. bottom to 2 decimals
+ *
  */
 p5.prototype.ceil = Math.ceil;
 
@@ -100,6 +108,10 @@ p5.prototype.ceil = Math.ceil;
  *   ellipse(xc, 66, 9,9); // Constrained
  * }
  * </code></div>
+ *
+ *@alt
+ * 2 vertical lines. 2 ellipses move with mouse X 1 does not move passed lines
+ *
  */
 p5.prototype.constrain = function(n, low, high) {
   return Math.max(Math.min(n, high), low);
@@ -146,6 +158,10 @@ p5.prototype.constrain = function(n, low, high) {
  *   // Fancy!
  * }
  * </code></div>
+ *
+ *@alt
+ * 2 ellipses joined by line. 1 ellipse moves with mouse X&Y. Distance displayed.
+ *
  */
 p5.prototype.dist = function(x1, y1, z1, x2, y2, z2) {
   if (arguments.length === 4) {
@@ -199,6 +215,10 @@ p5.prototype.dist = function(x1, y1, z1, x2, y2, z2) {
  *   line(0, height-1, width, height-1);
  * }
  * </code></div>
+ *
+ *@alt
+ * ellipse moves along a curve with mouse x. e^n displayed.
+ *
  */
 p5.prototype.exp = Math.exp;
 
@@ -234,6 +254,10 @@ p5.prototype.exp = Math.exp;
  *   text(nfc(bx,1,1), bx, by - 5);
  * }
  * </code></div>
+ *
+ *@alt
+ * 2 horizontal lines & number sets. increase with mouse x. bottom to 2 decimals
+ *
  */
 p5.prototype.floor = Math.floor;
 
@@ -272,6 +296,10 @@ p5.prototype.floor = Math.floor;
  *   point(e, y);
  * }
  * </code></div>
+ *
+ *@alt
+ * 5 points horizontally staggered mid-canvas. mid 3 are grey, outer black
+ *
  */
 p5.prototype.lerp = function(start, stop, amt) {
   return amt*(stop-start)+start;
@@ -324,6 +352,10 @@ p5.prototype.lerp = function(start, stop, amt) {
  *   line(0,height/2,width, height/2);
  * }
  * </code></div>
+ *
+ *@alt
+ * ellipse moves along a curve with mouse x. natural logarithm of n displayed.
+ *
  */
 p5.prototype.log = Math.log;
 
@@ -356,6 +388,10 @@ p5.prototype.log = Math.log;
  *   println(mag(x2, y2));  // Prints "106.30146"
  * }
  * </code></div>
+ *
+ *@alt
+ * 4 lines of different length radiate from top left of canvas.
+ *
  */
 p5.prototype.mag = function(x, y) {
   return Math.sqrt(x*x+y*y);
@@ -395,6 +431,11 @@ p5.prototype.mag = function(x, y) {
  *       ellipse(x2, 75, 25, 25);
  *     }
  *   </code></div>
+ *
+ *@alt
+ * 10 by 10 white ellipse with in mid left canvas
+ * 2 25 by 25 white ellipses move with mouse x. Bottom has more range from X
+ *
  */
 p5.prototype.map = function(n, start1, stop1, start2, stop2) {
   return ((n-start1)/(stop1-start1))*(stop2-start2)+start2;
@@ -430,6 +471,10 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2) {
  *   text(max(numArray), maxX, maxY);
  * }
  * </code></div>
+ *
+ *@alt
+ * Small text at top reads: Array Elements 2 1 5 4 8 9. Large text at center: 9
+ *
  */
 p5.prototype.max = function() {
   if (arguments[0] instanceof Array) {
@@ -469,6 +514,10 @@ p5.prototype.max = function() {
  *   text(min(numArray), maxX, maxY);
  * }
  * </code></div>
+ *
+ *@alt
+ * Small text at top reads: Array Elements 2 1 5 4 8 9. Large text at center: 1
+ *
  */
 p5.prototype.min = function() {
   if (arguments[0] instanceof Array) {
@@ -521,6 +570,10 @@ p5.prototype.min = function() {
  *   text(normalized, normalX, normalY);
  * }
  * </code></div>
+ *
+ *@alt
+ * ellipse moves with mouse. 0 shown left & 100 right and updating values center
+ *
  */
 p5.prototype.norm = function(n, start, stop) {
   return this.map(n, start, stop, 0, 1);
@@ -553,6 +606,10 @@ p5.prototype.norm = function(n, start, stop) {
  *   ellipse(eLoc*8, eLoc*8, pow(eSize, 4), pow(eSize, 4));
  * }
  * </code></div>
+ *
+ *@alt
+ * small to large ellipses radiating from top left of canvas
+ *
  */
 p5.prototype.pow = Math.pow;
 
@@ -588,6 +645,10 @@ p5.prototype.pow = Math.pow;
  *   text(nfc(bx,1,1), bx, by - 5);
  * }
  * </code></div>
+ *
+ *@alt
+ * horizontal center line squared values displayed on top and regular on bottom.
+ *
  */
 p5.prototype.round = Math.round;
 
@@ -629,6 +690,10 @@ p5.prototype.round = Math.round;
  *   text("sq(x) = " + x2, 0, y2 + spacing);
  * }
  * </code></div>
+ *
+ *@alt
+ * horizontal center line squared values displayed on top and regular on bottom.
+ *
  */
 p5.prototype.sq = function(n) { return n*n; };
 
@@ -671,6 +736,10 @@ p5.prototype.sq = function(n) { return n*n; };
  *   text("sqrt(x) = " + x2, 0, y2 + spacing);
  * }
  * </code></div>
+ *
+ *@alt
+ * horizontal center line squareroot values displayed on top and regular on bottom.
+ *
  */
 p5.prototype.sqrt = Math.sqrt;
 

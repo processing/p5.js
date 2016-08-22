@@ -34,17 +34,6 @@ var constants = require('./constants');
  *
  *@alt 
  * no image diplayed
- * no image diplayed
- * white 52x52 rect with black outline at center rotated counter 45 degrees
- * no image diplayed
- * no image diplayed
- * no image diplayed
- * white 52x52 rect with black outline at center rotated counter 45 degrees
- * 2 white rects with black outline- 1 50x50 at center. other 25x65 bottom left
- * white irregular quadrilateral with black outline at top middle.
- * white irregular quadrilateral with black outline at middle bottom.
- * white 55x55 rect with black outline at center right.
- * 3 white 55x55 rects with black outlines at top-l, center-r and bottom-r.
  * 
  */
 p5.prototype.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
@@ -75,6 +64,10 @@ p5.prototype.pushMatrix = function() {
  * // Example in the works.
  * </code>
  * </div>
+ *
+ *@alt 
+ * no image diplayed
+ * 
  */
 p5.prototype.resetMatrix = function() {
   this._renderer.resetMatrix();
@@ -109,6 +102,10 @@ p5.prototype.resetMatrix = function() {
  * rect(-26, -26, 52, 52);
  * </code>
  * </div>
+ *
+ *@alt 
+ * white 52x52 rect with black outline at center rotated counter 45 degrees
+ * 
  */
 /**
  * @method rotate
@@ -254,6 +251,11 @@ p5.prototype.rotateZ = function(rad) {
  * rect(30, 20, 50, 50);
  * </code>
  * </div>
+ *
+ *@alt 
+ * white 52x52 rect with black outline at center rotated counter 45 degrees
+ * 2 white rects with black outline- 1 50x50 at center. other 25x65 bottom left
+ * 
  */
 p5.prototype.scale = function() {
   var x,y,z;
@@ -319,6 +321,10 @@ p5.prototype.scale = function() {
  * rect(0, 0, 30, 30);
  * </code>
  * </div>
+ *
+ *@alt 
+  * white irregular quadrilateral with black outline at top middle.
+ * 
  */
 p5.prototype.shearX = function(angle) {
   if (this._angleMode === constants.DEGREES) {
@@ -356,6 +362,10 @@ p5.prototype.shearX = function(angle) {
  * rect(0, 0, 30, 30);
  * </code>
  * </div>
+ *
+ *@alt 
+ * white irregular quadrilateral with black outline at middle bottom.
+ * 
  */
 p5.prototype.shearY = function(angle) {
   if (this._angleMode === constants.DEGREES) {
@@ -399,6 +409,11 @@ p5.prototype.shearY = function(angle) {
  * rect(0, 0, 55, 55);  // Draw rect at new 0,0
  * </code>
  * </div>
+ *
+ *@alt 
+ * white 55x55 rect with black outline at center right.
+ * 3 white 55x55 rects with black outlines at top-l, center-r and bottom-r.
+ * 
  */
 p5.prototype.translate = function(x, y, z) {
   var args = new Array(arguments.length);

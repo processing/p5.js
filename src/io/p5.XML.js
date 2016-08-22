@@ -49,6 +49,10 @@ var p5 = require('../core/core');
  * // 1, Panthera pardus, Leopard
  * // 2, Equus zebra, Zebra
  * </code></div>
+  *
+  *@alt
+  * no image displayed
+  *
  */
 p5.XML = function () {
   this.name = null; //done
