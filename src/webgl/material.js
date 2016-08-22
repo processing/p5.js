@@ -24,9 +24,9 @@ var p5 = require('../core/core');
  * }
  *
  * function draw(){
- *  background(0);
+ *  background(200);
  *  normalMaterial();
- *  sphere(200);
+ *  sphere(50);
  * }
  * </code>
  * </div>
@@ -235,7 +235,7 @@ p5.RendererGL.prototype._bind = function(tex, data){
  *  ambientLight(100);
  *  pointLight(250, 250, 250, 100, 100, 0);
  *  ambientMaterial(250);
- *  sphere(200);
+ *  sphere(50);
  * }
  * </code>
  * </div>
@@ -289,7 +289,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  *  ambientLight(100);
  *  pointLight(250, 250, 250, 100, 100, 0);
  *  specularMaterial(250);
- *  sphere(200);
+ *  sphere(50);
  * }
  * </code>
  * </div>

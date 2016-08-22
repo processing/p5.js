@@ -189,7 +189,7 @@ p5.prototype.box = function(){
  *
  * function draw(){
  *   background(200);
- *   sphere(200);
+ *   sphere(50);
  * }
  * </code>
  * </div>
@@ -451,14 +451,14 @@ p5.prototype.cone = function(){
  * @example
  * <div>
  * <code>
- * // draw an ellipsoid with radius 200, 300 and 400 .
+ * // draw an ellipsoid with radius 20, 30 and 40.
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  * }
  *
  * function draw(){
  *   background(200);
- *   ellipsoid(200,300,400);
+ *   ellipsoid(20, 30, 40);
  * }
  * </code>
  * </div>

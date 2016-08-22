@@ -302,7 +302,7 @@ p5.prototype.popStyle = function() {
  * }
  * </code></div>
  *
- * <div><code>
+ * <div class='norender'><code>
  * var x = 0;
  *
  * function setup() {
