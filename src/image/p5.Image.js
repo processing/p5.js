@@ -520,7 +520,7 @@ p5.Image.prototype.mask = function(p5Image) {
   ];
 
   this.drawingContext.globalCompositeOperation = 'destination-in';
-  this.copy.apply(this, copyArgs);
+  p5.Image.prototype.copy.apply(this, copyArgs);
   this.drawingContext.globalCompositeOperation = currBlend;
 };
 
