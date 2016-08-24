@@ -106,10 +106,16 @@ define([
           if (alts) {
             alts = $(alts).data('alt').split('\n');
 
-            var examples = $('.cnv_div');
+            var examples = $('.example_container');
+
+            for (var i=0; i<examples.length; i++) {
+              $(examples[i]).prepend('<span class="ref_accessible">'+cleanItem.name+' example '+(i+1)+'</span>');
+            }
+
+            var canvases = $('.cnv_div');
             for (var i=0; i<alts.length; i++) {
-              if (i < examples.length) {
-                $(examples[i]).append('<span class="ref_ex_fallback">'+alts[i]+'</span>');
+              if (i < canvases.length) {
+                $(canvases[i]).append('<span class="ref_accessible">'+alts[i]+'</span>');
               }
             }
           }
