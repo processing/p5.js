@@ -245,6 +245,8 @@ p5.RendererGL.prototype._setUniform = function()
     uType = uData.length + 'fv';
   } else if(uData instanceof p5.Vector) {
     uType = '3fv';
+  } else if(uData instanceof p5.Color) {
+    uType = '4fv';
   } else if(uData instanceof p5.Matrix) {
     if('mat3' in uData) {
       uType = 'Matrix3fv';
@@ -306,6 +308,8 @@ p5.RendererGL.prototype._applyUniforms = function(shaderKey, uniformsObj)
 
       if(data instanceof p5.Vector) {
         data = data.array();
+      } else if(data instanceof p5.Color) {
+        data = data._array;
       }
 
       gl[functionName](location, data);
@@ -406,6 +410,7 @@ p5.RendererGL.prototype.resize = function(w,h) {
   var gl = this.GL;
   p5.Renderer.prototype.resize.call(this, w, h);
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+  this._setUniform('resolution', this.width, this.height);
 };
 
 /**

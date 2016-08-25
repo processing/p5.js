@@ -86,17 +86,12 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   this._setDefaultCamera();
   var gl = this.GL;
   var shaderProgram, shaderKey;
-  if(this.currentShader) {
-    if(this.currentShader.vertSource === undefined ||
-       this.currentShader.fragSource === undefined) {
-      // The shader isn't loaded, so don't render anything this pass
-      return;
-    } else {
-      shaderProgram = this._setCurrentShader(this.currentShader);
-      shaderKey = this.curShaderId;
-    }
+  if(this.currentShader.vertSource === undefined ||
+     this.currentShader.fragSource === undefined) {
+    // The shader isn't loaded, so don't render anything this pass
+    return;
   } else {
-    shaderProgram = this._setCurrentShader('normalVert', 'normalFrag');
+    shaderProgram = this._setCurrentShader(this.currentShader);
     shaderKey = this.curShaderId;
   }
   gl.useProgram(shaderProgram);
