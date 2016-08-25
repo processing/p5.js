@@ -51,6 +51,10 @@ require('./p5.Geometry');
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * Vertically rotating 3-d teapot with red, green and blue gradient.
+ * 
  */
 p5.prototype.loadModel = function () {
   var path = arguments[0];
@@ -209,6 +213,10 @@ function parseObj( model, lines ) {
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * Vertically rotating 3-d teapot with red, green and blue gradient.
+ * 
  */
 p5.prototype.model = function ( model ) {
   if (model.vertices.length > 0) {

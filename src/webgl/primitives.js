@@ -34,6 +34,15 @@ require('./p5.Geometry');
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * Nothing displayed on canvas
+ * Rotating interior view of a box with sides that change color.
+ * 3d red and green gradient. 
+ * Rotating interior view of a cylinder with sides that change color.
+ * Rotating view of a cylinder with sides that change color.
+ * 3d red and green gradient. 
+ * rotating view of a multi-colored cylinder with concave sides.
  */
 p5.prototype.plane = function(){
   var args = new Array(arguments.length);
@@ -180,7 +189,7 @@ p5.prototype.box = function(){
  *
  * function draw(){
  *   background(200);
- *   sphere(200);
+ *   sphere(50);
  * }
  * </code>
  * </div>
@@ -442,14 +451,14 @@ p5.prototype.cone = function(){
  * @example
  * <div>
  * <code>
- * // draw an ellipsoid with radius 200, 300 and 400 .
+ * // draw an ellipsoid with radius 20, 30 and 40.
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  * }
  *
  * function draw(){
  *   background(200);
- *   ellipsoid(200,300,400);
+ *   ellipsoid(20, 30, 40);
  * }
  * </code>
  * </div>

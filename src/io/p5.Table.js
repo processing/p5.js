@@ -102,6 +102,10 @@ p5.Table = function (rows) {
 	* }
 	* </code>
 	* </div>
+	*
+ *@alt
+ * no image displayed
+ *
  */
 p5.Table.prototype.addRow = function(row) {
   // make sure it is a valid TableRow
@@ -152,6 +156,10 @@ p5.Table.prototype.addRow = function(row) {
 	* }
 	* </code>
 	* </div>
+	*
+    *@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.removeRow = function(id) {
   this.rows[id].table = null; // remove reference to table
@@ -197,6 +205,10 @@ p5.Table.prototype.removeRow = function(id) {
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.getRow = function(r) {
   return this.rows[r];
@@ -241,6 +253,10 @@ p5.Table.prototype.getRow = function(r) {
 	* }
 	* </code>
 	* </div>
+	*
+    *@alt
+    * no image displayed
+    *
  */
 p5.Table.prototype.getRows = function() {
   return this.rows;
@@ -286,6 +302,10 @@ p5.Table.prototype.getRows = function() {
 	* }
 	* </code>
 	* </div>
+	*
+ *@alt
+ * no image displayed
+ *
  */
 p5.Table.prototype.findRow = function(value, column) {
   // try the Object
@@ -353,6 +373,10 @@ p5.Table.prototype.findRow = function(value, column) {
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.findRows = function(value, column) {
   var ret = [];
@@ -507,6 +531,10 @@ p5.Table.prototype.matchRows = function(regexp, column) {
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.getColumn = function(value) {
   var ret = [];
@@ -554,6 +582,10 @@ p5.Table.prototype.getColumn = function(value) {
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.clearRows = function() {
   delete this.rows;
@@ -601,6 +633,10 @@ p5.Table.prototype.clearRows = function() {
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.addColumn = function(title) {
   var t = title || null;
@@ -755,6 +791,10 @@ p5.Table.prototype.trim = function(column) {
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.removeColumn = function(c) {
   var cString;
@@ -825,6 +865,10 @@ p5.Table.prototype.removeColumn = function(c) {
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.set = function(row, column, value) {
   this.rows[row].set(column, value);
@@ -868,6 +912,9 @@ p5.Table.prototype.set = function(row, column, value) {
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
  */
 p5.Table.prototype.setNum = function(row, column, value){
   this.rows[row].setNum(column, value);
@@ -927,6 +974,10 @@ p5.Table.prototype.setString = function(row, column, value){
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.get = function(row, column) {
   return this.rows[row].get(column);
@@ -968,6 +1019,10 @@ p5.Table.prototype.get = function(row, column) {
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.getNum = function(row, column) {
   return this.rows[row].getNum(column);
@@ -1012,6 +1067,10 @@ p5.Table.prototype.getNum = function(row, column) {
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.getString = function(row, column) {
   return this.rows[row].getString(column);
@@ -1054,7 +1113,10 @@ p5.Table.prototype.getString = function(row, column) {
 	* }
 	* </code>
 	* </div>
-
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.getObject = function (headerColumn) {
   var tableObject = {};

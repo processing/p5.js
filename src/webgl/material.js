@@ -25,12 +25,16 @@ var shader = require('./shader');
  * }
  *
  * function draw(){
- *  background(0);
+ *  background(200);
  *  normalMaterial();
- *  sphere(200);
+ *  sphere(50);
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * Red, green and blue gradient.
+ * 
  */
 p5.prototype.normalMaterial = function(){
   if(!('normal' in this._renderer.shaders)) {
@@ -109,6 +113,12 @@ p5.prototype.normalMaterial = function(){
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * Rotating view of many images umbrella and grid roof on a 3d plane
+ * black canvas
+ * black canvas
+ * 
  */
 p5.prototype.texture = function(tex){
   this._renderer._setUniform('uSampler', tex);
@@ -223,10 +233,14 @@ p5.RendererGL.prototype._bind = function(tex, data){
  *  ambientLight(100);
  *  pointLight(250, 250, 250, 100, 100, 0);
  *  ambientMaterial(250);
- *  sphere(200);
+ *  sphere(50);
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * radiating light source from top right of canvas
+ * 
  */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   this._renderer.currentShader = this._renderer.shaders.default;
@@ -262,10 +276,14 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  *  ambientLight(100);
  *  pointLight(250, 250, 250, 100, 100, 0);
  *  specularMaterial(250);
- *  sphere(200);
+ *  sphere(50);
  * }
  * </code>
  * </div>
+ *
+ *@alt
+ * diffused radiating light source from top right of canvas
+ * 
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   this._renderer.currentShader = this._renderer.shaders.default;

@@ -65,6 +65,11 @@ p5.prototype.exit = function() {
  *   loop();
  * }
  * </code></div>
+ *
+ *@alt
+ * 113 pixel long line extending from top-left to bottom right of canvas. 
+ * horizontal line moves slowly from left. Loops but stops on mouse press. //no loop
+ *
  */
 p5.prototype.noLoop = function() {
   this._loop = false;
@@ -100,6 +105,10 @@ p5.prototype.noLoop = function() {
  *   noLoop();
  * }
  * </code></div>
+ *
+ *@alt
+ * horizontal line moves slowly from left. Loops but stops on mouse press.
+ *
  */
 
 p5.prototype.loop = function() {
@@ -157,6 +166,11 @@ p5.prototype.loop = function() {
  * ellipse(100, 50, 33, 33);  // Right circle
  * </code>
  * </div>
+ *
+ *@alt
+ * Gold ellipse + thick black outline @center 2 white ellipses on left and right.
+ * 2 Gold ellipses left black right blue stroke. 2 white ellipses on left+right.
+ *
  */
 p5.prototype.push = function () {
   this._renderer.push();
@@ -227,6 +241,11 @@ p5.prototype.push = function () {
  * ellipse(100, 50, 33, 33);  // Right circle
  * </code>
  * </div>
+ *
+ *@alt
+ * Gold ellipse + thick black outline @center 2 white ellipses on left and right.
+ * 2 Gold ellipses left black right blue stroke. 2 white ellipses on left+right.
+ *
  */
 p5.prototype.pop = function () {
   this._renderer.pop();
@@ -283,7 +302,7 @@ p5.prototype.popStyle = function() {
  * }
  * </code></div>
  *
- * <div><code>
+ * <div class='norender'><code>
  * var x = 0;
  *
  * function setup() {
@@ -301,8 +320,18 @@ p5.prototype.popStyle = function() {
  *   redraw(5);
  * }
  * </code></div>
+ *
+ *@alt
+ * black line on far left of canvas 
+ * black line on far left of canvas
+ *
  */
 p5.prototype.redraw = function () {
+  this.resetMatrix();
+  if(this._renderer.isP3D){
+    this._renderer._update();
+  }
+
   var numberOfRedraws = 1;
   if (arguments.length === 1) {
     try {

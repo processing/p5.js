@@ -24,6 +24,10 @@ var p5 = require('../core/core');
  * var diameter = float(str);
  * ellipse(width/2, height/2, diameter, diameter);
  * </code></div>
+ *
+ *@alt
+ * 20 by 20 white ellipse in the center of the canvas
+ *
  */
 p5.prototype.float = function(str) {
   return parseFloat(str);

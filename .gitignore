@@ -10,3 +10,4 @@ docs/yuidoc-p5-theme/assets/js/reference.js*
 !*.gitkeep
 examples/3d/
 .idea
+.vscode

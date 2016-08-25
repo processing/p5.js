@@ -62,6 +62,13 @@ require('./error_helpers');
  * arc(50, 50, 80, 80, 0, PI+QUARTER_PI, PIE);
  * </code>
  * </div>
+ *
+ *@alt
+ *shattered outline of an ellipse with a quarter of a white circle bottom-right.
+ *white ellipse with black outline with top right missing.
+ *white ellipse with top right missing with black outline around shape.
+ *white ellipse with top right quarter missing with black outline around the shape.
+ *
  */
 p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
   var args = new Array(arguments.length);
@@ -139,6 +146,10 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
  * ellipse(56, 46, 55, 55);
  * </code>
  * </div>
+ *
+ *@alt
+ *white ellipse with black outline in middle-right of canvas that is 55x55.
+ *
  */
 /**
  * @method ellipse
@@ -206,6 +217,11 @@ p5.prototype.ellipse = function() {
  * line(85, 75, 30, 75);
  * </code>
  * </div>
+ *
+ *@alt
+ *line 78 pixels long running from mid-top to bottom-right of canvas.
+ *3 lines of various stroke sizes. Form top, bottom and right sides of a square.
+ *
  */
 ////commented out original
 // p5.prototype.line = function(x1, y1, x2, y2) {
@@ -263,6 +279,10 @@ p5.prototype.line = function() {
  * point(30, 75);
  * </code>
  * </div>
+ *
+ *@alt
+ *4 points centered in the middle-right of the canvas.
+ *
  */
 p5.prototype.point = function() {
   if (!this._renderer._doStroke) {
@@ -312,6 +332,10 @@ p5.prototype.point = function() {
  * quad(38, 31, 86, 20, 69, 63, 30, 76);
  * </code>
  * </div>
+ *
+ *@alt
+ *irregular white quadrilateral shape with black outline mid-right of canvas.
+ *
  */
 /**
  * @method quad
@@ -407,6 +431,12 @@ p5.prototype.quad = function() {
 * rect(30, 20, 55, 55, 20, 15, 10, 5);
 * </code>
 * </div>
+*
+*@alt
+* 55x55 white rect with black outline in mid-right of canvas. 
+* 55x55 white rect with black outline and rounded edges in mid-right of canvas.
+* 55x55 white rect with black outline and rounded edges of different radii in mid-right of canvas.
+*
 */
 /**
 * @method rect
@@ -464,6 +494,10 @@ p5.prototype.rect = function () {
 * triangle(30, 75, 58, 20, 86, 75);
 * </code>
 * </div>
+*
+*@alt
+* white triangle with black outline in mid-right of canvas.
+*
 */
 p5.prototype.triangle = function() {
 

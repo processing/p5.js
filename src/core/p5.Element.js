@@ -10,7 +10,8 @@ var p5 = require('./core');
  * Base class for all elements added to a sketch, including canvas,
  * graphics buffers, and other HTML elements. Methods in blue are
  * included in the core functionality, methods in brown are added
- * with the <a href="http://p5js.org/libraries/">p5.dom library</a>.
+ * with the <a href="http://p5js.org/reference/#/libraries/p5.dom">p5.dom
+ * library</a>.
  * It is not called directly, but p5.Element
  * objects are created by calling createCanvas, createGraphics,
  * or in the p5.dom library, createDiv, createImg, createInput, etc.
@@ -70,6 +71,10 @@ p5.Element = function(elt, pInst) {
  * var div1 = createDiv('this is the child');
  * div1.parent(elt); // use element from page
  * </code></div>
+ *
+ *@alt
+ * no display.
+ * 
  */
 p5.Element.prototype.parent = function(p) {
   if (arguments.length === 0){
@@ -105,6 +110,10 @@ p5.Element.prototype.parent = function(p) {
  *   cnv.id("mycanvas");
  * }
  * </code></div>
+ *
+ *@alt
+ * no display.
+ * 
  */
 p5.Element.prototype.id = function(id) {
   if (arguments.length === 0) {
@@ -173,6 +182,9 @@ p5.Element.prototype.class = function(c) {
  * }
  * </code></div>
  *
+ *@alt
+ * no display.
+ *
  */
 p5.Element.prototype.mousePressed = function (fxn) {
   attachListener('mousedown', fxn, this);
@@ -228,6 +240,10 @@ p5.Element.prototype.mousePressed = function (fxn) {
  * }
  * </code></div>
  *
+ *
+ *@alt
+ * no display.
+ * 
  */
 p5.Element.prototype.mouseWheel = function (fxn) {
   attachListener('wheel', fxn, this);
@@ -274,6 +290,10 @@ p5.Element.prototype.mouseWheel = function (fxn) {
  * }
  * </code></div>
  *
+ *
+ *@alt
+ * no display.
+ * 
  */
 p5.Element.prototype.mouseReleased = function (fxn) {
   attachListener('mouseup', fxn, this);
@@ -321,6 +341,10 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  * }
  * </code></div>
  *
+ *
+ *@alt
+ * no display.
+ * 
  */
 p5.Element.prototype.mouseClicked = function (fxn) {
   attachListener('click', fxn, this);
@@ -373,6 +397,10 @@ p5.Element.prototype.mouseClicked = function (fxn) {
  * }
  * </code></div>
  *
+ *
+ *@alt
+ * no display.
+ * 
  */
 p5.Element.prototype.mouseMoved = function (fxn) {
   attachListener('mousemove', fxn, this);
@@ -412,6 +440,10 @@ p5.Element.prototype.mouseMoved = function (fxn) {
  * }
  * </code></div>
  *
+ *
+ *@alt
+ * no display.
+ * 
  */
 p5.Element.prototype.mouseOver = function (fxn) {
   attachListener('mouseover', fxn, this);
@@ -474,6 +506,10 @@ p5.Element.prototype.mouseOver = function (fxn) {
  *   }
  * }
  * </code></div>
+ *
+ *@alt
+ * dropdown: pear, kiwi, grape. When selected text "its a" + selection shown.
+ * 
  */
 p5.Element.prototype.changed = function (fxn) {
   attachListener('change', fxn, this);
@@ -502,6 +538,9 @@ p5.Element.prototype.changed = function (fxn) {
  *   console.log('you are typing: ', this.value());
  * }
  * </code></div>
+ *
+ *@alt
+ * no display.
  *
  */
 p5.Element.prototype.input = function (fxn) {
@@ -540,6 +579,9 @@ p5.Element.prototype.input = function (fxn) {
  *   }
  * }
  * </code></div>
+ *
+ *@alt
+ * no display.
  *
  */
 p5.Element.prototype.mouseOut = function (fxn) {
@@ -584,6 +626,9 @@ p5.Element.prototype.mouseOut = function (fxn) {
  * }
  * </code></div>
  *
+ *@alt
+ * no display.
+ *
  */
 p5.Element.prototype.touchStarted = function (fxn) {
   attachListener('touchstart', fxn, this);
@@ -619,6 +664,9 @@ p5.Element.prototype.touchStarted = function (fxn) {
  *   g = random(0, 255);
  * }
  * </code></div>
+ *
+ *@alt
+ * no display.
  *
  */
 p5.Element.prototype.touchMoved = function (fxn) {
@@ -663,6 +711,10 @@ p5.Element.prototype.touchMoved = function (fxn) {
  *   g = random(0, 255);
  * }
  * </code></div>
+ *
+ *
+ *@alt
+ * no display.
  *
  */
 p5.Element.prototype.touchEnded = function (fxn) {
@@ -730,6 +782,10 @@ p5.Element.prototype.dragLeave = function (fxn) {
  *   image(img, 0, 0, width, height);
  * }
  * </code></div>
+ *
+ *@alt
+ * Canvas turns into whatever image is dragged/dropped onto it. 
+ *
  */
 p5.Element.prototype.drop = function (callback, fxn) {
   // Make a file loader callback and trigger user's callback
