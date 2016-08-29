@@ -230,7 +230,10 @@ p5.RendererGL.prototype._getUniform = function(uName)
  */
 p5.RendererGL.prototype._setUniform = function()
 {
-  var args = Array.prototype.slice.call(arguments);
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
   var uObj = this._uniforms;
   var uName = args.shift();
 
@@ -351,7 +354,7 @@ p5.RendererGL.prototype._applyUniforms = function(shaderKey, uniformsObj)
  *
  *@alt
  * red canvas
- * 
+ *
  */
 p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   // var gl = this.GL;
