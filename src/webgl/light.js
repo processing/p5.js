@@ -49,6 +49,7 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
   this._renderer.ambientLightCount ++;
   this._renderer._setUniform('uAmbientLightCount',
                             this._renderer.ambientLightCount, '1i');
+  this._renderer.shaderDefines.USE_LIGHTS = true;
 
   return this;
 };
@@ -160,6 +161,7 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
   this._renderer.directionalLightCount ++;
   this._renderer._setUniform('uDirectionalLightCount',
                             this._renderer.directionalLightCount, '1i');
+  this._renderer.shaderDefines.USE_LIGHTS = true;
 
   return this;
 };
@@ -277,6 +279,7 @@ p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
   this._renderer.pointLightCount ++;
   this._renderer._setUniform('uPointLightCount',
                             this._renderer.pointLightCount, '1i');
+  this._renderer.shaderDefines.USE_LIGHTS = true;
 
   return this;
 };
