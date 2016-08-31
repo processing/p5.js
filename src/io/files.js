@@ -100,7 +100,7 @@ p5._getDecrementPreload = function () {
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * p5*js in p5's theme dark pink
  * p5*js in p5's theme dark pink
  *
@@ -231,7 +231,7 @@ p5.prototype.loadBytes = function () {
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * 50x50 ellipse that changes from black to white depending on the current humidity
  * 50x50 ellipse that changes from black to white depending on the current humidity
  *
@@ -341,7 +341,7 @@ p5.prototype.loadJSON = function () {
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * randomly generated text from a file, for example "i smell like butter"
  * randomly generated text from a file, for example "i have three feet"
  *
@@ -469,7 +469,7 @@ p5.prototype.loadStrings = function (path, callback, errorCallback) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * randomly generated text from a file, for example "i smell like butter"
  * randomly generated text from a file, for example "i have three feet"
  *
@@ -1106,24 +1106,24 @@ p5.prototype.save = function (object, _filename, _options) {
   else {
     var extension = _checkFileExtension(args[1], args[2])[1];
     switch (extension) {
-    case 'json':
-      p5.prototype.saveJSON(args[0], args[1], args[2]);
-      return;
-    case 'txt':
-      p5.prototype.saveStrings(args[0], args[1], args[2]);
-      return;
-      // =================================================
-      // OPTION 3: decide based on object...
-    default:
-      if (args[0] instanceof Array) {
+      case 'json':
+        p5.prototype.saveJSON(args[0], args[1], args[2]);
+        return;
+      case 'txt':
         p5.prototype.saveStrings(args[0], args[1], args[2]);
-      } else if (args[0] instanceof p5.Table) {
-        p5.prototype.saveTable(args[0], args[1], args[2], args[3]);
-      } else if (args[0] instanceof p5.Image) {
-        p5.prototype.saveCanvas(args[0].canvas, args[1]);
-      } else if (args[0] instanceof p5.SoundFile) {
-        p5.prototype.saveSound(args[0], args[1], args[2], args[3]);
-      }
+        return;
+        // =================================================
+        // OPTION 3: decide based on object...
+      default:
+        if (args[0] instanceof Array) {
+          p5.prototype.saveStrings(args[0], args[1], args[2]);
+        } else if (args[0] instanceof p5.Table) {
+          p5.prototype.saveTable(args[0], args[1], args[2], args[3]);
+        } else if (args[0] instanceof p5.Image) {
+          p5.prototype.saveCanvas(args[0].canvas, args[1]);
+        } else if (args[0] instanceof p5.SoundFile) {
+          p5.prototype.saveSound(args[0], args[1], args[2], args[3]);
+        }
     }
   }
 };
@@ -1164,7 +1164,7 @@ p5.prototype.save = function (object, _filename, _options) {
  *  // }
  *  </div></code>
  *
- *@alt
+ * @alt
  * no image displayed
  *
  */
@@ -1214,7 +1214,7 @@ p5.prototype.saveStream = function () {
  *  // dog
  *  </code></div>
  *
- *@alt
+ * @alt
  * no image displayed
  *
  */
@@ -1293,7 +1293,7 @@ function escapeHelper(content) {
  *    // 0,Panthera leo,Lion
  *  </code></div>
  *
- *@alt
+ * @alt
  * no image displayed
  *
  */

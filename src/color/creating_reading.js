@@ -77,7 +77,7 @@ p5.prototype.alpha = function(c) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * Left half of canvas light purple and right half a royal blue.
  *
  */
@@ -108,7 +108,7 @@ p5.prototype.blue = function(c) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * Left half of canvas salmon pink and the right half white.
  *
  */
@@ -266,7 +266,7 @@ p5.prototype.brightness = function(c) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * Yellow rect in middle right of canvas, with 55 pixel width and height.
  * Yellow ellipse in top left of canvas, black ellipse in bottom right,both 80x80.
  * Bright fuschia rect in middle of canvas, 60 pixel width and height.
@@ -326,7 +326,7 @@ p5.prototype.color = function() {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * blue rect on left and green on right, both with black outlines & 35x60.
  *
  */
@@ -364,11 +364,11 @@ p5.prototype.green = function(c) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * salmon pink rect on left and black on right, both 35x60.
  *
  */
- 
+
 p5.prototype.hue = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
     return this.color(c)._getHue();
@@ -416,7 +416,7 @@ p5.prototype.hue = function(c) {
  * </div>
  *
  * @alt
- * 4 rects one tan, brown, brownish purple and purple. Each with white outlines & 20x60.
+ * 4 rects one tan, brown, brownish purple, purple, with white outlines & 20x60
  *
  */
 
@@ -484,7 +484,7 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * light pastel green rect on left and dark grey rect on right, both 35x60.
  *
  */
@@ -525,10 +525,9 @@ p5.prototype.lightness = function(c) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * yellow rect on left and red rect on right, both with black outlines and 35x60.
  * grey canvas
- * 
  */
 p5.prototype.red = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
@@ -562,7 +561,7 @@ p5.prototype.red = function(c) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  *deep pink rect on left and grey rect on right, both 35x60.
  *
  */

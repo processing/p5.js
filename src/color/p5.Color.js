@@ -423,7 +423,7 @@ var colorPatterns = {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * //todo
  *
  */

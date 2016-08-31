@@ -44,7 +44,7 @@ var p5 = require('../core/core');
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  *Letters ABCD displayed at top right, EFGH at center and IJKL at bottom left.
  *
  */
@@ -77,7 +77,7 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  *set L1 L2 & L3 displayed vertically 3 times. spacing increases for each set
  *
  */
@@ -104,7 +104,7 @@ p5.prototype.textLeading = function(theLeading) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  *Font Size 12 displayed small, Font Size 14 medium & Font Size 16 large
  *
  */
@@ -135,7 +135,7 @@ p5.prototype.textSize = function(theSize) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  *words Font Style Normal displayed normally, Italic in italic and bold in bold
  *
  */
@@ -166,7 +166,7 @@ p5.prototype.textStyle = function(theStyle) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  *Letter P and p5.js are displayed with vertical lines at end. P is wide
  *
  */

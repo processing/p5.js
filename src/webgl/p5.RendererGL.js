@@ -305,9 +305,9 @@ p5.RendererGL.prototype._getCurShaderId = function(){
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * red canvas
- * 
+ *
  */
 p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   var gl = this.GL;

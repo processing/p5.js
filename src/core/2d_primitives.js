@@ -63,7 +63,7 @@ require('./error_helpers');
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  *shattered outline of an ellipse with a quarter of a white circle bottom-right.
  *white ellipse with black outline with top right missing.
  *white ellipse with top right missing with black outline around shape.
@@ -147,7 +147,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  *white ellipse with black outline in middle-right of canvas that is 55x55.
  *
  */
@@ -218,7 +218,7 @@ p5.prototype.ellipse = function() {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  *line 78 pixels long running from mid-top to bottom-right of canvas.
  *3 lines of various stroke sizes. Form top, bottom and right sides of a square.
  *
@@ -280,7 +280,7 @@ p5.prototype.line = function() {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  *4 points centered in the middle-right of the canvas.
  *
  */
@@ -333,7 +333,7 @@ p5.prototype.point = function() {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  *irregular white quadrilateral shape with black outline mid-right of canvas.
  *
  */
@@ -432,11 +432,10 @@ p5.prototype.quad = function() {
 * </code>
 * </div>
 *
-*@alt
-* 55x55 white rect with black outline in mid-right of canvas. 
+* @alt
+* 55x55 white rect with black outline in mid-right of canvas.
 * 55x55 white rect with black outline and rounded edges in mid-right of canvas.
-* 55x55 white rect with black outline and rounded edges of different radii in mid-right of canvas.
-*
+* 55x55 white rect with black outline and rounded edges of different radii.
 */
 /**
 * @method rect

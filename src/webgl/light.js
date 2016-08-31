@@ -34,7 +34,7 @@ var p5 = require('../core/core');
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * nothing displayed
  *
  */
@@ -100,7 +100,7 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * light source on canvas changeable with mouse position
  *
  */
@@ -235,8 +235,8 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
  * </code>
  * </div>
  *
- *@alt
- * spot light on canvas changes position with mouse 
+ * @alt
+ * spot light on canvas changes position with mouse
  *
  */
 p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {

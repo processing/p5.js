@@ -72,9 +72,9 @@ p5.Element = function(elt, pInst) {
  * div1.parent(elt); // use element from page
  * </code></div>
  *
- *@alt
+ * @alt
  * no display.
- * 
+ *
  */
 p5.Element.prototype.parent = function(p) {
   if (arguments.length === 0){
@@ -111,9 +111,9 @@ p5.Element.prototype.parent = function(p) {
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * no display.
- * 
+ *
  */
 p5.Element.prototype.id = function(id) {
   if (arguments.length === 0) {
@@ -182,7 +182,7 @@ p5.Element.prototype.class = function(c) {
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * no display.
  *
  */
@@ -241,9 +241,9 @@ p5.Element.prototype.mousePressed = function (fxn) {
  * </code></div>
  *
  *
- *@alt
+ * @alt
  * no display.
- * 
+ *
  */
 p5.Element.prototype.mouseWheel = function (fxn) {
   attachListener('wheel', fxn, this);
@@ -291,9 +291,9 @@ p5.Element.prototype.mouseWheel = function (fxn) {
  * </code></div>
  *
  *
- *@alt
+ * @alt
  * no display.
- * 
+ *
  */
 p5.Element.prototype.mouseReleased = function (fxn) {
   attachListener('mouseup', fxn, this);
@@ -342,9 +342,9 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  * </code></div>
  *
  *
- *@alt
+ * @alt
  * no display.
- * 
+ *
  */
 p5.Element.prototype.mouseClicked = function (fxn) {
   attachListener('click', fxn, this);
@@ -398,9 +398,9 @@ p5.Element.prototype.mouseClicked = function (fxn) {
  * </code></div>
  *
  *
- *@alt
+ * @alt
  * no display.
- * 
+ *
  */
 p5.Element.prototype.mouseMoved = function (fxn) {
   attachListener('mousemove', fxn, this);
@@ -441,9 +441,9 @@ p5.Element.prototype.mouseMoved = function (fxn) {
  * </code></div>
  *
  *
- *@alt
+ * @alt
  * no display.
- * 
+ *
  */
 p5.Element.prototype.mouseOver = function (fxn) {
   attachListener('mouseover', fxn, this);
@@ -507,9 +507,9 @@ p5.Element.prototype.mouseOver = function (fxn) {
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * dropdown: pear, kiwi, grape. When selected text "its a" + selection shown.
- * 
+ *
  */
 p5.Element.prototype.changed = function (fxn) {
   attachListener('change', fxn, this);
@@ -539,7 +539,7 @@ p5.Element.prototype.changed = function (fxn) {
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * no display.
  *
  */
@@ -580,7 +580,7 @@ p5.Element.prototype.input = function (fxn) {
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * no display.
  *
  */
@@ -626,7 +626,7 @@ p5.Element.prototype.mouseOut = function (fxn) {
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * no display.
  *
  */
@@ -665,7 +665,7 @@ p5.Element.prototype.touchStarted = function (fxn) {
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * no display.
  *
  */
@@ -713,7 +713,7 @@ p5.Element.prototype.touchMoved = function (fxn) {
  * </code></div>
  *
  *
- *@alt
+ * @alt
  * no display.
  *
  */
@@ -783,8 +783,8 @@ p5.Element.prototype.dragLeave = function (fxn) {
  * }
  * </code></div>
  *
- *@alt
- * Canvas turns into whatever image is dragged/dropped onto it. 
+ * @alt
+ * Canvas turns into whatever image is dragged/dropped onto it.
  *
  */
 p5.Element.prototype.drop = function (callback, fxn) {

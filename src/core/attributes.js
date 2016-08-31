@@ -96,8 +96,8 @@ p5.prototype.ellipseMode = function(m) {
  * </code>
  * </div>
  *
- *@alt
- * 2 pixelated 36x36 white ellipses to the left and right of center on black background.
+ * @alt
+ * 2 pixelated 36x36 white ellipses to left & right of center, black background
  *
  */
 p5.prototype.noSmooth = function() {
@@ -156,8 +156,8 @@ p5.prototype.noSmooth = function() {
  * </code>
  * </div>
  *
- *@alt
- * 50x50 white rect at center and 25x25 grey rect in the top left corner of the other.
+ * @alt
+ * 50x50 white rect at center and 25x25 grey rect in the top left of the other.
  * 50x50 white rect at center and 25x25 grey rect in the center of the other.
  *
  */
@@ -191,7 +191,7 @@ p5.prototype.rectMode = function(m) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * 2 pixelated 36x36 white ellipses one left one right of center. On black.
  *
  */
@@ -221,7 +221,7 @@ p5.prototype.smooth = function() {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * 3 lines. Top line: rounded ends, mid: squared, bottom:longer squared ends.
  *
  */
@@ -283,7 +283,7 @@ p5.prototype.strokeCap = function(cap) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * Right-facing arrowhead shape with pointed tip in center of canvas.
  * Right-facing arrowhead shape with flat tip in center of canvas.
  * Right-facing arrowhead shape with rounded tip in center of canvas.
@@ -317,7 +317,7 @@ p5.prototype.strokeJoin = function(join) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * 3 horizontal black lines. Top line: thin, mid: medium, bottom:thick.
  *
  */

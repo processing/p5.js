@@ -31,9 +31,9 @@ var p5 = require('../core/core');
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * Red, green and blue gradient.
- * 
+ *
  */
 p5.prototype.normalMaterial = function(){
   this._renderer._getShader('normalVert', 'normalFrag');
@@ -109,11 +109,11 @@ p5.prototype.normalMaterial = function(){
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * Rotating view of many images umbrella and grid roof on a 3d plane
  * black canvas
  * black canvas
- * 
+ *
  */
 p5.prototype.texture = function(){
   var args = new Array(arguments.length);
@@ -240,9 +240,9 @@ p5.RendererGL.prototype._bind = function(tex, data){
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * radiating light source from top right of canvas
- * 
+ *
  */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   var gl = this._renderer.GL;
@@ -294,9 +294,9 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * diffused radiating light source from top right of canvas
- * 
+ *
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   var gl = this._renderer.GL;

@@ -27,7 +27,7 @@ var p5 = require('../core/core');
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * no image displayed
  *
  */
@@ -67,7 +67,7 @@ p5.prototype.abs = Math.abs;
  * }
  * </code></div>
   *
- *@alt
+ * @alt
  * 2 horizontal lines & number sets. increase with mouse x. bottom to 2 decimals
  *
  */
@@ -109,7 +109,7 @@ p5.prototype.ceil = Math.ceil;
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * 2 vertical lines. 2 ellipses move with mouse X 1 does not move passed lines
  *
  */
@@ -159,7 +159,7 @@ p5.prototype.constrain = function(n, low, high) {
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * 2 ellipses joined by line. 1 ellipse moves with mouse X&Y. Distance displayed.
  *
  */
@@ -216,7 +216,7 @@ p5.prototype.dist = function(x1, y1, z1, x2, y2, z2) {
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * ellipse moves along a curve with mouse x. e^n displayed.
  *
  */
@@ -255,7 +255,7 @@ p5.prototype.exp = Math.exp;
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * 2 horizontal lines & number sets. increase with mouse x. bottom to 2 decimals
  *
  */
@@ -297,7 +297,7 @@ p5.prototype.floor = Math.floor;
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * 5 points horizontally staggered mid-canvas. mid 3 are grey, outer black
  *
  */
@@ -353,7 +353,7 @@ p5.prototype.lerp = function(start, stop, amt) {
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * ellipse moves along a curve with mouse x. natural logarithm of n displayed.
  *
  */
@@ -389,7 +389,7 @@ p5.prototype.log = Math.log;
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * 4 lines of different length radiate from top left of canvas.
  *
  */
@@ -432,7 +432,7 @@ p5.prototype.mag = function(x, y) {
  *     }
  *   </code></div>
  *
- *@alt
+ * @alt
  * 10 by 10 white ellipse with in mid left canvas
  * 2 25 by 25 white ellipses move with mouse x. Bottom has more range from X
  *
@@ -472,7 +472,7 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2) {
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * Small text at top reads: Array Elements 2 1 5 4 8 9. Large text at center: 9
  *
  */
@@ -515,7 +515,7 @@ p5.prototype.max = function() {
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * Small text at top reads: Array Elements 2 1 5 4 8 9. Large text at center: 1
  *
  */
@@ -571,7 +571,7 @@ p5.prototype.min = function() {
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * ellipse moves with mouse. 0 shown left & 100 right and updating values center
  *
  */
@@ -607,7 +607,7 @@ p5.prototype.norm = function(n, start, stop) {
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * small to large ellipses radiating from top left of canvas
  *
  */
@@ -646,7 +646,7 @@ p5.prototype.pow = Math.pow;
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * horizontal center line squared values displayed on top and regular on bottom.
  *
  */
@@ -691,7 +691,7 @@ p5.prototype.round = Math.round;
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * horizontal center line squared values displayed on top and regular on bottom.
  *
  */
@@ -737,7 +737,7 @@ p5.prototype.sq = function(n) { return n*n; };
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * horizontal center line squareroot values displayed on top and regular on bottom.
  *
  */

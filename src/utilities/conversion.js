@@ -25,7 +25,7 @@ var p5 = require('../core/core');
  * ellipse(width/2, height/2, diameter, diameter);
  * </code></div>
  *
- *@alt
+ * @alt
  * 20 by 20 white ellipse in the center of the canvas
  *
  */

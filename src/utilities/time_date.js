@@ -23,7 +23,7 @@ var p5 = require('../core/core');
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * Current day is displayed
  *
  */
@@ -45,7 +45,7 @@ p5.prototype.day = function() {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * Current hour is displayed
  *
  */
@@ -67,7 +67,7 @@ p5.prototype.hour = function() {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * Current minute is displayed
  *
  */
@@ -90,7 +90,7 @@ p5.prototype.minute = function() {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * number of milliseconds since program has started displayed
  *
  */
@@ -112,7 +112,7 @@ p5.prototype.millis = function() {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * Current month is displayed
  *
  */
@@ -134,7 +134,7 @@ p5.prototype.month = function() {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * Current second is displayed
  *
  */
@@ -156,7 +156,7 @@ p5.prototype.second = function() {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * Current year is displayed
  *
  */

@@ -98,7 +98,7 @@ var perlin; // will be initialized lazily by noise() or noiseSeed()
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * vertical line moves left to right with updating noise values.
  * horizontal wave pattern effected by mouse x-position & updating noise values.
  *
@@ -221,7 +221,7 @@ p5.prototype.noise = function(x,y,z) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * 2 vertical grey smokey patterns affected my mouse x-position and noise.
  *
  */
@@ -255,7 +255,7 @@ p5.prototype.noiseDetail = function(lod, falloff) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * vertical grey lines drawing in pattern affected by noise.
  *
  */

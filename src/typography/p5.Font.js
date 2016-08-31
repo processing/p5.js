@@ -92,7 +92,7 @@ p5.Font.prototype.list = function() {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  *words Lorem ipsum dol go off canvas and contained by white bounding box
  *
  */

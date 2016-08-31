@@ -35,8 +35,8 @@ var downKeys = {};
  * </code>
  * </div>
  *
- *@alt 
- * 50x50 white rect that turns black on keypress. 
+ * @alt
+ * 50x50 white rect that turns black on keypress.
  *
  */
 p5.prototype.isKeyPressed = false;
@@ -64,7 +64,7 @@ p5.prototype.keyIsPressed = false; // khan
  * }
  * </div></code>
  *
- *@alt 
+ * @alt
  * canvas displays any key value that is pressed in pink font.
  *
  */
@@ -94,7 +94,7 @@ p5.prototype.key = '';
  * }
  * </code></div>
  *
- *@alt 
+ * @alt
  * Grey rect center. turns white when up arrow pressed and black when down
  *
  */
@@ -163,7 +163,7 @@ p5.prototype.keyCode = 0;
  * }
  * </code>
  *
- *@alt 
+ * @alt
  * black rect center. turns white when key pressed and black when released
  * black rect center. turns white when left arrow pressed and black when right.
  *
@@ -217,7 +217,7 @@ p5.prototype._onkeydown = function (e) {
  * </code>
  * </div>
  *
- *@alt 
+ * @alt
  * black rect center. turns white when key pressed and black when pressed again
  *
  */
@@ -276,7 +276,7 @@ p5.prototype._onkeyup = function (e) {
  * </code>
  * </div>
  *
- *@alt 
+ * @alt
  * black rect center. turns white when 'a' key typed and black when 'b' pressed
  *
  */
@@ -344,9 +344,9 @@ p5.prototype._onblur = function (e) {
  * }
  * </code></div>
  *
- *@alt 
+ * @alt
  * 50x50 red ellipse moves left, right, up and down with arrow presses.
- * 
+ *
  */
 p5.prototype.keyIsDown = function(code) {
   return downKeys[code];

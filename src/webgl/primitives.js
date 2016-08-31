@@ -35,13 +35,13 @@ require('./p5.Geometry');
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * Nothing displayed on canvas
  * Rotating interior view of a box with sides that change color.
- * 3d red and green gradient. 
+ * 3d red and green gradient.
  * Rotating interior view of a cylinder with sides that change color.
  * Rotating view of a cylinder with sides that change color.
- * 3d red and green gradient. 
+ * 3d red and green gradient.
  * rotating view of a multi-colored cylinder with concave sides.
  */
 p5.prototype.plane = function(){

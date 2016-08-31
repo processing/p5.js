@@ -35,7 +35,7 @@ module.exports = {
    * arc(50, 50, 80, 80, 0, HALF_PI);
    * </code></div>
    *
-   *@alt
+   * @alt
    * 80x80 white quarter-circle with curve toward bottom right of canvas.
    *
    */
@@ -53,7 +53,7 @@ module.exports = {
    * arc(50, 50, 80, 80, 0, PI);
    * </code></div>
    *
-   *@alt
+   * @alt
    * white half-circle with curve toward bottom of canvas.
    *
    */
@@ -71,7 +71,7 @@ module.exports = {
    * arc(50, 50, 80, 80, 0, QUARTER_PI);
    * </code></div>
    *
-   *@alt
+   * @alt
    * white eighth-circle rotated about 40 degrees with curve bottom right canvas.
    *
    */
@@ -89,7 +89,7 @@ module.exports = {
    * arc(50, 50, 80, 80, 0, TAU);
    * </code></div>
    *
-   *@alt
+   * @alt
    * 80x80 white ellipse shape in center of canvas.
    *
    */
@@ -107,7 +107,7 @@ module.exports = {
    * arc(50, 50, 80, 80, 0, TWO_PI);
    * </code></div>
    *
-   *@alt
+   * @alt
    * 80x80 white ellipse shape in center of canvas.
    *
    */

@@ -50,7 +50,7 @@ var p5 = require('../core/core');
  * // 2, Equus zebra, Zebra
  * </code></div>
   *
-  *@alt
+  * @alt
   * no image displayed
   *
  */
