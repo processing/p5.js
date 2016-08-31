@@ -375,10 +375,10 @@ p5.prototype.windowHeight = getWindowHeight();
  * function windowResized() {
  *   resizeCanvas(windowWidth, windowHeight);
  * }
- *@alt
- * no display.
- *
  * </code></div>
+ * 
+ * @alt
+ * no display.
  */
 p5.prototype._onresize = function(e){
   this._setProperty('windowWidth', getWindowWidth());
