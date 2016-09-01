@@ -171,6 +171,9 @@ p5.prototype.textStyle = function(theStyle) {
  *
  */
 p5.prototype.textWidth = function(theText) {
+  if (theText.length === 0) {
+    return 0;
+  }
   return this._renderer.textWidth.apply(this._renderer, arguments);
 };
 
