@@ -452,11 +452,6 @@ p5.prototype.rect = function () {
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  if (this._renderer._rectMode !== constants.CORNERS) {
-    // p5 supports negative width and heights for rects
-    if (args[2] < 0){args[2] = Math.abs(args[2]);}
-    if (args[3] < 0){args[3] = Math.abs(args[3]);}
-  }
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return;
   }
