@@ -55,7 +55,7 @@ if (window.console && console.log) {
         var newArgs = JSON.parse(JSON.stringify(args));
         console.log(newArgs);
       }
-    } catch(err) {
+    } catch (err) {
       console.log(args);
     }
   };
@@ -378,7 +378,7 @@ p5.prototype.windowHeight = getWindowHeight();
  * @alt
  * no display.
  */
-p5.prototype._onresize = function(e){
+p5.prototype._onresize = function(e) {
   this._setProperty('windowWidth', getWindowWidth());
   this._setProperty('windowHeight', getWindowHeight());
   var context = this._isGlobal ? window : this;
@@ -392,14 +392,12 @@ p5.prototype._onresize = function(e){
 };
 
 function getWindowWidth() {
-  return Math.max(
-    document.documentElement.clientWidth,
-    window.innerWidth || 0);
+  return window.innerWidth || document.documentElement.clientWidth ||
+      document.body.clientWidth;
 }
 function getWindowHeight() {
-  return Math.max(
-    document.documentElement.clientHeight,
-    window.innerHeight || 0);
+  return window.innerHeight || document.documentElement.clientHeight ||
+      document.body.clientHeight;
 }
 
 /**
@@ -458,11 +456,9 @@ p5.prototype.height = 0;
 p5.prototype.fullscreen = function(val) {
   // no arguments, return fullscreen or not
   if (typeof val === 'undefined') {
-    return document.fullscreenElement ||
-           document.webkitFullscreenElement ||
-           document.mozFullScreenElement ||
-           document.msFullscreenElement;
-  } else { // otherwise set to fullscreen or not
+    return document.fullscreenElement || document.webkitFullscreenElement ||
+        document.mozFullScreenElement || document.msFullscreenElement;
+  } else {  // otherwise set to fullscreen or not
     if (val) {
       launchFullscreen(document.documentElement);
     } else {
@@ -543,29 +539,28 @@ p5.prototype.displayDensity = function() {
 
 function launchFullscreen(element) {
   var enabled = document.fullscreenEnabled ||
-                document.webkitFullscreenEnabled ||
-                document.mozFullScreenEnabled ||
-                document.msFullscreenEnabled;
+      document.webkitFullscreenEnabled || document.mozFullScreenEnabled ||
+      document.msFullscreenEnabled;
   if (!enabled) {
     throw new Error('Fullscreen not enabled in this browser.');
   }
-  if(element.requestFullscreen) {
+  if (element.requestFullscreen) {
     element.requestFullscreen();
-  } else if(element.mozRequestFullScreen) {
+  } else if (element.mozRequestFullScreen) {
     element.mozRequestFullScreen();
-  } else if(element.webkitRequestFullscreen) {
+  } else if (element.webkitRequestFullscreen) {
     element.webkitRequestFullscreen();
-  } else if(element.msRequestFullscreen) {
+  } else if (element.msRequestFullscreen) {
     element.msRequestFullscreen();
   }
 }
 
 function exitFullscreen() {
-  if(document.exitFullscreen) {
+  if (document.exitFullscreen) {
     document.exitFullscreen();
-  } else if(document.mozCancelFullScreen) {
+  } else if (document.mozCancelFullScreen) {
     document.mozCancelFullScreen();
-  } else if(document.webkitExitFullscreen) {
+  } else if (document.webkitExitFullscreen) {
     document.webkitExitFullscreen();
   } else if (document.msExitFullscreen) {
     document.msExitFullscreen();
@@ -623,7 +618,7 @@ p5.prototype.getURL = function() {
  *
  */
 p5.prototype.getURLPath = function() {
-  return location.pathname.split('/').filter(function(v){return v!=='';});
+  return location.pathname.split('/').filter(function(v) { return v !== ''; });
 };
 /**
  * Gets the current URL params as an Object.
@@ -649,12 +644,12 @@ p5.prototype.getURLPath = function() {
 p5.prototype.getURLParams = function() {
   var re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
   var m;
-  var v={};
+  var v = {};
   while ((m = re.exec(location.search)) != null) {
     if (m.index === re.lastIndex) {
       re.lastIndex++;
     }
-    v[m[1]]=m[2];
+    v[m[1]] = m[2];
   }
   return v;
 };
