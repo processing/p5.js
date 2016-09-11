@@ -37,11 +37,7 @@ var shader = require('./shader');
  *
  */
 p5.prototype.normalMaterial = function(){
-  if(!('normal' in this._renderer.shaders)) {
-    this._renderer.shaders.normal = new p5.Shader(shader.normalFrag,
-                                                  shader.normalVert);
-  }
-  this._renderer.currentShader = this._renderer.shaders.normal;
+  this._renderer.currentShader = shader.normal;
   return this;
 };
 
@@ -243,7 +239,7 @@ p5.RendererGL.prototype._bind = function(tex, data){
  *
  */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
-  this._renderer.currentShader = this._renderer.shaders.default;
+  this._renderer.currentShader = shader.default;
 
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
   this._renderer._setUniform('uMaterialColor', colors);
@@ -286,7 +282,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  *
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
-  this._renderer.currentShader = this._renderer.shaders.default;
+  this._renderer.currentShader = shader.default;
 
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
   this._renderer._setUniform('uMaterialColor', colors);
@@ -349,7 +345,7 @@ p5.prototype.shader = function(shader) {
 };
 
 p5.prototype.resetShader = function() {
-  this._renderer.currentShader = this._renderer.shaders.default;
+  this._renderer.currentShader = shader.default;
   return this;
 };
 

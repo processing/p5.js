@@ -59,9 +59,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas) {
   this.shaderDefines = {};
 
   //Built-in shaders
-  this.shaders = {'default': new p5.Shader(shader.lightTextureFrag,
-                                           shader.lightVert)};
-  this.currentShader = this.shaders.default;
+  this.currentShader = shader.default;
 
   //Counter for keeping track of which texture slots are currently occupied
   this.texCount = 0;
