@@ -1094,27 +1094,27 @@ p5.Renderer2D.prototype.text = function (str, x, y, maxWidth, maxHeight) {
 
     switch (this.drawingContext.textAlign) {
 
-    case constants.CENTER:
-      x += maxWidth / 2;
-      break;
-    case constants.RIGHT:
-      x += maxWidth;
-      break;
+      case constants.CENTER:
+        x += maxWidth / 2;
+        break;
+      case constants.RIGHT:
+        x += maxWidth;
+        break;
     }
 
     if (typeof maxHeight !== 'undefined') {
 
       switch (this.drawingContext.textBaseline) {
-      case constants.BOTTOM:
-        y += (maxHeight - totalHeight);
-        break;
-      case constants._CTX_MIDDLE: // CENTER?
-        y += (maxHeight - totalHeight) / 2;
-        break;
-      case constants.BASELINE:
-        baselineHacked = true;
-        this.drawingContext.textBaseline = constants.TOP;
-        break;
+        case constants.BOTTOM:
+          y += (maxHeight - totalHeight);
+          break;
+        case constants._CTX_MIDDLE: // CENTER?
+          y += (maxHeight - totalHeight) / 2;
+          break;
+        case constants.BASELINE:
+          baselineHacked = true;
+          this.drawingContext.textBaseline = constants.TOP;
+          break;
       }
 
       // remember the max-allowed y-position for any line (fix to #928)

@@ -352,7 +352,7 @@ p5.RendererGL.prototype._applyUniforms = function(shaderKey, uniformsObj)
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * red canvas
  *
  */

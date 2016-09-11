@@ -66,9 +66,9 @@ p5.prototype.exit = function() {
  * }
  * </code></div>
  *
- *@alt
- * 113 pixel long line extending from top-left to bottom right of canvas. 
- * horizontal line moves slowly from left. Loops but stops on mouse press. //no loop
+ * @alt
+ * 113 pixel long line extending from top-left to bottom right of canvas.
+ * horizontal line moves slowly from left. Loops but stops on mouse press.
  *
  */
 p5.prototype.noLoop = function() {
@@ -106,7 +106,7 @@ p5.prototype.noLoop = function() {
  * }
  * </code></div>
  *
- *@alt
+ * @alt
  * horizontal line moves slowly from left. Loops but stops on mouse press.
  *
  */
@@ -167,7 +167,7 @@ p5.prototype.loop = function() {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * Gold ellipse + thick black outline @center 2 white ellipses on left and right.
  * 2 Gold ellipses left black right blue stroke. 2 white ellipses on left+right.
  *
@@ -242,7 +242,7 @@ p5.prototype.push = function () {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * Gold ellipse + thick black outline @center 2 white ellipses on left and right.
  * 2 Gold ellipses left black right blue stroke. 2 white ellipses on left+right.
  *
@@ -321,8 +321,8 @@ p5.prototype.popStyle = function() {
  * }
  * </code></div>
  *
- *@alt
- * black line on far left of canvas 
+ * @alt
+ * black line on far left of canvas
  * black line on far left of canvas
  *
  */

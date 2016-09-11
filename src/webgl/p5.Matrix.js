@@ -49,8 +49,8 @@ p5.Matrix = function() {
         0, 0, 0, 1
       ]);
     }
-  // default behavior when object
-  // instantiated using new p5.Matrix()
+    // default behavior when object
+    // instantiated using new p5.Matrix()
   } else {
     if(args[0] === 'mat3'){
       this.mat3 = args[1] || new GLMAT_ARRAY_TYPE([

@@ -47,9 +47,9 @@ var constants = require('../core/constants');
  * </code>
  * </div>
  *
- *@alt 
+ * @alt
  * 2 white ellipses. One center-left the other bottom right and off canvas
- * 
+ *
  */
 p5.Vector = function() {
   var x,y,z;

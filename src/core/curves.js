@@ -75,43 +75,43 @@ var curveDetail = 20;
  * </div>
 */
 p5.prototype.bezier = function() {
-   var args = new Array(arguments.length);
-   for (var i = 0; i < args.length; ++i) {
-     args[i] = arguments[i];
-   }
-   if(this._renderer.isP3D){
-     this._validateParameters(
-       'bezier',
-       args,
-       ['Number', 'Number', 'Number',
-       'Number', 'Number', 'Number',
-       'Number', 'Number', 'Number',
-       'Number', 'Number', 'Number'
-       ]
-     );
-   } else{
-     this._validateParameters(
-         'bezier',
-         args,
-         [ 'Number', 'Number', 'Number', 'Number',
-           'Number', 'Number', 'Number', 'Number' ]
-       );
-   }
-   if (!this._renderer._doStroke) {
-     return this;
-   }
-   if (this._renderer.isP3D){
-     args.push(bezierDetail);//adding value of bezier detail to the args array
-     this._renderer.bezier(args);
-   } else{
-     this._renderer.bezier(args[0],args[1],
-       args[2],args[3],
-       args[4],args[5],
-       args[6],args[7]);
-   }
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
+  if(this._renderer.isP3D){
+    this._validateParameters(
+      'bezier',
+      args,
+      ['Number', 'Number', 'Number',
+      'Number', 'Number', 'Number',
+      'Number', 'Number', 'Number',
+      'Number', 'Number', 'Number'
+      ]
+    );
+  } else{
+    this._validateParameters(
+      'bezier',
+      args,
+      [ 'Number', 'Number', 'Number', 'Number',
+        'Number', 'Number', 'Number', 'Number' ]
+    );
+  }
+  if (!this._renderer._doStroke) {
+    return this;
+  }
+  if (this._renderer.isP3D){
+    args.push(bezierDetail);//adding value of bezier detail to the args array
+    this._renderer.bezier(args);
+  } else{
+    this._renderer.bezier(args[0],args[1],
+      args[2],args[3],
+      args[4],args[5],
+      args[6],args[7]);
+  }
 
-   return this;
- };
+  return this;
+};
 
 /**
  * Sets the resolution at which Beziers display.
@@ -129,7 +129,7 @@ p5.prototype.bezier = function() {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * stretched black s-shape with 7 5x5 ellipses and orange lines along the shape.
  *
  */
@@ -171,7 +171,7 @@ p5.prototype.bezierDetail = function(d) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * stretched black s-shape with 17 small orange lines extending from under shape.
  *
  */
@@ -244,7 +244,7 @@ p5.prototype.bezierPoint = function(a, b, c, d, t) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * s-shaped line with 17 short orange lines extending from underside of shape
  *
  */
@@ -305,7 +305,7 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * horseshoe shape with orange ends facing left and black curved center.
  * horseshoe shape with orange ends facing left and black curved center.
  *
@@ -330,46 +330,46 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * curving black and orange lines.
  */
 p5.prototype.curve = function() {
-     var args = new Array(arguments.length);
-     for (var i = 0; i < args.length; ++i) {
-       args[i] = arguments[i];
-     }
-     if(this._renderer.isP3D){
-       this._validateParameters(
-         'curve',
-         args,
-         ['Number', 'Number', 'Number',
-         'Number', 'Number', 'Number',
-         'Number', 'Number', 'Number',
-         'Number', 'Number', 'Number'
-         ]
-       );
-     } else{
-       this._validateParameters(
-         'curve',
-         args,
-         [ 'Number', 'Number', 'Number', 'Number',
-           'Number', 'Number', 'Number', 'Number' ]
-       );
-     }
-     if (!this._renderer._doStroke) {
-       return this;
-     }
-     if (this._renderer.isP3D){
-       args.push(curveDetail);
-       this._renderer.curve(args);
-     } else{
-       this._renderer.curve(args[0],args[1],
-         args[2],args[3],
-         args[4],args[5],
-         args[6],args[7]);
-     }
-     return this;
-   };
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
+  if(this._renderer.isP3D){
+    this._validateParameters(
+      'curve',
+      args,
+      ['Number', 'Number', 'Number',
+      'Number', 'Number', 'Number',
+      'Number', 'Number', 'Number',
+      'Number', 'Number', 'Number'
+      ]
+    );
+  } else{
+    this._validateParameters(
+      'curve',
+      args,
+      [ 'Number', 'Number', 'Number', 'Number',
+        'Number', 'Number', 'Number', 'Number' ]
+    );
+  }
+  if (!this._renderer._doStroke) {
+    return this;
+  }
+  if (this._renderer.isP3D){
+    args.push(curveDetail);
+    this._renderer.curve(args);
+  } else{
+    this._renderer.curve(args[0],args[1],
+      args[2],args[3],
+      args[4],args[5],
+      args[6],args[7]);
+  }
+  return this;
+};
 
 /**
  * Sets the resolution at which curves display.
@@ -387,7 +387,7 @@ p5.prototype.curve = function() {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * white arch shape in top-mid canvas.
  *
  */
@@ -434,7 +434,7 @@ p5.prototype.curveDetail = function(d) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * Line shaped like right-facing arrow,points move with mouse-x and warp shape.
  */
 p5.prototype.curveTightness = function (t) {
@@ -520,7 +520,7 @@ p5.prototype.curvePoint = function(a, b, c, d, t) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  *right curving line mid-right of canvas with 7 short lines radiating from it.
  */
 p5.prototype.curveTangent = function(a, b,c, d, t) {

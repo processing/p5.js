@@ -74,7 +74,7 @@ var p5 = function(sketch, node, sync) {
    * }
    * </code></div>
    *
-   *@alt
+   * @alt
    * nothing displayed
    *
    */
@@ -105,7 +105,7 @@ var p5 = function(sketch, node, sync) {
    * }
    * </code></div>
    *
-   *@alt
+   * @alt
    * nothing displayed
    *
    */
@@ -154,7 +154,7 @@ var p5 = function(sketch, node, sync) {
    * }
    * </code></div>
    *
-   *@alt
+   * @alt
    * nothing displayed
    *
    */
@@ -398,7 +398,7 @@ var p5 = function(sketch, node, sync) {
    * }
    * </code></div>
    *
-   *@alt
+   * @alt
    * nothing displayed
    *
    */

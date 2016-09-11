@@ -103,7 +103,7 @@ p5.Table = function (rows) {
 	* </code>
 	* </div>
 	*
- *@alt
+ * @alt
  * no image displayed
  *
  */
@@ -157,7 +157,7 @@ p5.Table.prototype.addRow = function(row) {
 	* </code>
 	* </div>
 	*
-    *@alt
+    * @alt
  	* no image displayed
  	*
  */
@@ -254,7 +254,7 @@ p5.Table.prototype.getRow = function(r) {
 	* </code>
 	* </div>
 	*
-    *@alt
+    * @alt
     * no image displayed
     *
  */
@@ -303,7 +303,7 @@ p5.Table.prototype.getRows = function() {
 	* </code>
 	* </div>
 	*
- *@alt
+ * @alt
  * no image displayed
  *
  */

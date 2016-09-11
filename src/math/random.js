@@ -63,9 +63,9 @@ var lcg = (function() {
  * </code>
  * </div>
  *
- *@alt 
+ * @alt
  * many vertical lines drawn in white, black or grey.
- * 
+ *
  */
 p5.prototype.randomSeed = function(seed) {
   lcg.setSeed(seed);
@@ -120,8 +120,8 @@ p5.prototype.randomSeed = function(seed) {
  * </code>
  * </div>
  *
- *@alt 
- * 100 horizontal lines from center canvas to right. size+fill change each time 
+ * @alt
+ * 100 horizontal lines from center canvas to right. size+fill change each time
  * 100 horizontal lines from center of canvas. height & side change each render
  * word displayed at random. Either apple, bear, cat, or dog
  *
@@ -213,11 +213,9 @@ p5.prototype.random = function (min, max) {
  *}
  * </code>
  * </div>
- *
- *@alt  
+ * @alt
  * 100 horizontal lines from center of canvas. height & side change each render
  * black lines radiate from center of canvas. size determined each render
- *
  */
 var y2;
 var previous = false;

@@ -59,7 +59,7 @@ require('../core/error_helpers');
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  *'word' displayed 3 times going from black, blue to translucent blue
  * The quick brown fox jumped over the lazy dog.
  *
@@ -121,7 +121,7 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  *words Font Style Normal displayed normally, Italic in italic and bold in bold
  *
  */

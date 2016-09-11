@@ -31,7 +31,7 @@ var p5 = require('../core/core');
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * "hello world!" displayed middle left of canvas.
  *
  */
@@ -71,7 +71,7 @@ p5.prototype.join = function(list, separator) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * "p5js*" displayed middle left of canvas.
  *
  */
@@ -164,7 +164,7 @@ p5.prototype.matchAll = function(str, reg) {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * "0011253" top left, "0112.531" mid left, "112.531061" bottom left canvas
  *
  */
@@ -265,7 +265,7 @@ function doNf() {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * "11,253,106.115" top middle and "1.00,1.00,2.00" displayed bottom mid
  *
  */
@@ -340,7 +340,7 @@ function doNfc() {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * "+11253106.11" top middle and "-11253106.11" displayed bottom middle
  *
  */
@@ -397,7 +397,7 @@ function addNfp() {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * "11253106.11" top middle and "-11253106.11" displayed bottom middle
  *
  */
@@ -442,7 +442,7 @@ function addNfs() {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * "pat" top left, "Xio" mid left and "Alex" displayed bottom left
  *
  */
@@ -518,7 +518,7 @@ p5.prototype.splitTokens = function() {
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * "No new lines here" displayed center canvas
  *
  */

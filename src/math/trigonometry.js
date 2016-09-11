@@ -159,8 +159,8 @@ p5.prototype.atan = function(ratio) {
  * </code>
  * </div>
  *
- *@alt 
- * 60 by 10 rect at center of canvas rotates with mouse movements 
+ * @alt
+ * 60 by 10 rect at center of canvas rotates with mouse movements
  *
  */
 p5.prototype.atan2 = function (y, x) {
@@ -191,7 +191,7 @@ p5.prototype.atan2 = function (y, x) {
  * </code>
  * </div>
  *
- *@alt 
+ * @alt
  * vertical black lines form wave patterns, extend-down on left and right side
  *
  */
@@ -223,7 +223,7 @@ p5.prototype.cos = function(angle) {
  * </code>
  * </div>
  *
- *@alt 
+ * @alt
  * vertical black lines extend down and up from center to form wave pattern
  *
  */
@@ -255,7 +255,7 @@ p5.prototype.sin = function(angle) {
  * </code>
  *
  *
- *@alt 
+ * @alt
  * vertical black lines end down and up from center to form spike pattern
  *
  */
@@ -342,7 +342,7 @@ p5.prototype.radians = function(angle) {
  * </code>
  * </div>
  *
- *@alt 
+ * @alt
  * 40 by 10 rect in center rotates with mouse moves. 20 by 10 rect moves faster.
  *
  *

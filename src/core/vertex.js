@@ -57,7 +57,7 @@ var isFirstContour = true;
  * </code>
  * </div>
  *
- *@alt
+ * @alt
  * white rect and smaller grey rect with red outlines in center of canvas.
  *
  */
@@ -229,8 +229,8 @@ p5.prototype.beginContour = function() {
  * endShape(CLOSE);
  * </code>
  * </div>
-  *@alt 
- * white square-shape with black outline in middle-right of canvas. 
+  * @alt
+ * white square-shape with black outline in middle-right of canvas.
  * 4 black points in a square shape in middle-right of canvas.
  * 2 horizontal black lines. In the top-right and bottom-right of canvas.
  * 3 line shape with horizontal on top, vertical in middle and horizontal bottom.
@@ -241,7 +241,7 @@ p5.prototype.beginContour = function() {
  * 2 white rectangle shapes in mid-right canvas. Both 20x55.
  * 3 side-by-side white rectangles center rect is smaller in mid-right canvas.
  * Thick white l-shape with black outline mid-top-left of canvas.
- * 
+ *
  */
 p5.prototype.beginShape = function(kind) {
   if (kind === constants.POINTS ||
@@ -305,10 +305,10 @@ p5.prototype.beginShape = function(kind) {
  * </code>
  * </div>
  *
- *@alt 
+ * @alt
  * crescent-shaped line in middle of canvas. Points facing left.
  * white crescent shape in middle of canvas. Points facing left.
- * 
+ *
  */
 p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
   if (vertices.length === 0) {
@@ -361,9 +361,9 @@ p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
  * </code>
  * </div>
  *
- *@alt 
+ * @alt
  * Upside-down u-shape line, mid canvas. left point extends beyond canvas view.
- * 
+ *
  */
 p5.prototype.curveVertex = function(x,y) {
   isCurve = true;
@@ -409,9 +409,9 @@ p5.prototype.curveVertex = function(x,y) {
  * </code>
  * </div>
  *
- *@alt 
+ * @alt
  * white rect and smaller grey rect with red outlines in center of canvas.
- * 
+ *
  */
 p5.prototype.endContour = function() {
   var vert = contourVertices[0].slice(); // copy all data
@@ -460,9 +460,9 @@ p5.prototype.endContour = function() {
  * </code>
  * </div>
  *
- *@alt 
+ * @alt
  * Triangle line shape with smallest interior angle on bottom and upside-down L.
- * 
+ *
  */
 p5.prototype.endShape = function(mode) {
   if(this._renderer.isP3D){
@@ -539,10 +539,10 @@ p5.prototype.endShape = function(mode) {
  * </code>
  * </div>
  *
- *@alt 
+ * @alt
  * arched-shaped black line with 4 pixel thick stroke weight.
  * backwards s-shaped black line with 4 pixel thick stroke weight.
- * 
+ *
  */
 p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
   //if we're drawing a contour, put the points into an
@@ -598,7 +598,7 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  * </code>
  * </div>
  *
- *@alt 
+ * @alt
  * 4 black points in a square shape in middle-right of canvas.
  *
  */
