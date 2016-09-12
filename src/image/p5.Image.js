@@ -63,6 +63,10 @@ p5.Image = function(width, height){
    *   }
    * }
    * </code></div>
+   *
+   * @alt
+   * rocky mountains in top and horizontal lines in corresponding colors in bottom.
+   *
    */
   this.width = width;
   /**
@@ -85,6 +89,10 @@ p5.Image = function(width, height){
    *   }
    * }
    * </code></div>
+   *
+   * @alt
+   * rocky mountains on right and vertical lines in corresponding colors on left.
+   *
    */
   this.height = height;
   this.canvas = document.createElement('canvas');
@@ -154,6 +162,11 @@ p5.Image = function(width, height){
    * image(img, 17, 17);
    * </code>
    * </div>
+   *
+   * @alt
+   * 66x66 turquoise rect in center of canvas
+   * 66x66 pink rect in center of canvas
+   *
    */
   this.pixels = [];
 };
@@ -192,6 +205,10 @@ p5.Image.prototype._setProperty = function (prop, value) {
  *   image(myImage, 0, 0);
  * }
  * </code></div>
+ *
+   * @alt
+   * 2 images of rocky mountains vertically stacked
+   *
  */
 p5.Image.prototype.loadPixels = function(){
   p5.Renderer2D.prototype.loadPixels.call(this);
@@ -232,6 +249,10 @@ p5.Image.prototype.loadPixels = function(){
  *   image(myImage, 0, 0);
  * }
  * </code></div>
+ *
+ * @alt
+ * 2 images of rocky mountains vertically stacked
+ *
  */
 p5.Image.prototype.updatePixels = function(x, y, w, h){
   p5.Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
@@ -273,6 +294,10 @@ p5.Image.prototype.updatePixels = function(x, y, w, h){
  *
  * //get() returns color here
  * </code></div>
+ *
+ * @alt
+ * image of rocky mountains with 50x50 green rect in front
+ *
  */
 p5.Image.prototype.get = function(x, y, w, h){
   return p5.Renderer2D.prototype.get.call(this, x, y, w, h);
@@ -306,6 +331,10 @@ p5.Image.prototype.get = function(x, y, w, h){
  * image(img, 34, 34);
  * </code>
  * </div>
+ *
+ * @alt
+ * 2 gradated dark turquoise rects fade left. 1 center 1 bottom right of canvas
+ *
  */
 p5.Image.prototype.set = function(x, y, imgOrCol){
   p5.Renderer2D.prototype.set.call(this, x, y, imgOrCol);
@@ -336,6 +365,10 @@ p5.Image.prototype.set = function(x, y, imgOrCol){
  *   img.resize(50, 100);
  * }
  * </code></div>
+ *
+ * @alt
+ * image of rocky mountains. zoomed in
+ *
  */
 p5.Image.prototype.resize = function(width, height){
 
@@ -420,6 +453,10 @@ p5.Image.prototype.resize = function(width, height){
  *   image(photo, 0, 0);
  * }
  * </code></div>
+ *
+ * @alt
+ * image of rocky mountains and smaller image on top of bricks at top left
+ *
  */
 p5.Image.prototype.copy = function () {
   p5.prototype.copy.apply(this, arguments);
@@ -446,6 +483,10 @@ p5.Image.prototype.copy = function () {
  *   image(photo, 0, 0);
  * }
  * </code></div>
+ *
+ * @alt
+ * image of rocky mountains with white at right
+ *
  *
  * http://blogs.adobe.com/webplatform/2013/01/28/blending-features-in-canvas/
  *
@@ -479,7 +520,7 @@ p5.Image.prototype.mask = function(p5Image) {
   ];
 
   this.drawingContext.globalCompositeOperation = 'destination-in';
-  this.copy.apply(this, copyArgs);
+  p5.Image.prototype.copy.apply(this, copyArgs);
   this.drawingContext.globalCompositeOperation = currBlend;
 };
 
@@ -507,6 +548,10 @@ p5.Image.prototype.mask = function(p5Image) {
  *   image(photo2, width/2, 0);
  * }
  * </code></div>
+ *
+ * @alt
+ * 2 images of rocky mountains left one in color, right in black and white
+ *
  */
 p5.Image.prototype.filter = function(operation, value) {
   Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
@@ -581,6 +626,12 @@ p5.Image.prototype.filter = function(operation, value) {
  *   image(bricks, 0, 0);
  * }
  * </code></div>
+ *
+ * @alt
+ * image of rocky mountains. Brick images on left and right. Right overexposed
+ * image of rockies. Brickwall images on left and right. Right mortar transparent
+ * image of rockies. Brickwall images on left and right. Right translucent
+ *
  */
 p5.Image.prototype.blend = function() {
   p5.prototype.blend.apply(this, arguments);
@@ -612,6 +663,10 @@ p5.Image.prototype.blend = function() {
  *   }
  * }
  * </code></div>
+ *
+ * @alt
+ * image of rocky mountains.
+ *
  */
 p5.Image.prototype.save = function(filename, extension) {
   var mimeType;
@@ -622,18 +677,18 @@ p5.Image.prototype.save = function(filename, extension) {
   else {
     // en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support
     switch(extension.toLowerCase()){
-    case 'png':
-      mimeType = 'image/png';
-      break;
-    case 'jpeg':
-      mimeType = 'image/jpeg';
-      break;
-    case 'jpg':
-      mimeType = 'image/jpeg';
-      break;
-    default:
-      mimeType = 'image/png';
-      break;
+      case 'png':
+        mimeType = 'image/png';
+        break;
+      case 'jpeg':
+        mimeType = 'image/jpeg';
+        break;
+      case 'jpg':
+        mimeType = 'image/jpeg';
+        break;
+      default:
+        mimeType = 'image/png';
+        break;
     }
   }
   var downloadMime = 'image/octet-stream';

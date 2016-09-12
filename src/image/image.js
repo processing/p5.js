@@ -89,6 +89,12 @@ var frames = [];
  * image(img, 17, 17);
  * </code>
  * </div>
+ *
+ * @alt
+ * 66x66 dark turquoise rect in center of canvas.
+ * 2 gradated dark turquoise rects fade left. 1 center 1 bottom right of canvas
+ * no image displayed
+ *
  */
 p5.prototype.createImage = function(width, height) {
   return new p5.Image(width, height);
@@ -131,6 +137,12 @@ p5.prototype.createImage = function(width, height) {
  *  saveCanvas('myCanvas');
  *  saveCanvas();
  *  </code></div>
+ *
+ * @alt
+ * no image displayed
+ * no image displayed
+ * no image displayed
+ *
  */
 p5.prototype.saveCanvas = function() {
 
@@ -190,18 +202,18 @@ p5.prototype.saveCanvas = function() {
     }
     else {
       switch(extension){
-      case 'png':
-        mimeType = 'image/png';
-        break;
-      case 'jpeg':
-        mimeType = 'image/jpeg';
-        break;
-      case 'jpg':
-        mimeType = 'image/jpeg';
-        break;
-      default:
-        mimeType = 'image/png';
-        break;
+        case 'png':
+          mimeType = 'image/png';
+          break;
+        case 'jpeg':
+          mimeType = 'image/jpeg';
+          break;
+        case 'jpg':
+          mimeType = 'image/jpeg';
+          break;
+        default:
+          mimeType = 'image/png';
+          break;
       }
     }
     var downloadMime = 'image/octet-stream';
@@ -242,10 +254,14 @@ p5.prototype.saveCanvas = function() {
  *
  *  function mousePressed() {
  *    saveFrames("out", "png", 1, 25, function(data){
- *      print(data);
+ *      println(data);
  *    });
  *  }
  *  </code></div>
+ *
+ * @alt
+ * canvas background goes from light to dark with mouse x.
+ *
  */
 p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
   var duration = _duration || 3;
@@ -291,18 +307,18 @@ p5.prototype._makeFrame = function(filename, extension, _cnv) {
   }
   else {
     switch(extension.toLowerCase()){
-    case 'png':
-      mimeType = 'image/png';
-      break;
-    case 'jpeg':
-      mimeType = 'image/jpeg';
-      break;
-    case 'jpg':
-      mimeType = 'image/jpeg';
-      break;
-    default:
-      mimeType = 'image/png';
-      break;
+      case 'png':
+        mimeType = 'image/png';
+        break;
+      case 'jpeg':
+        mimeType = 'image/jpeg';
+        break;
+      case 'jpg':
+        mimeType = 'image/jpeg';
+        break;
+      default:
+        mimeType = 'image/png';
+        break;
     }
   }
   var downloadMime = 'image/octet-stream';

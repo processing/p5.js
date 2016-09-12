@@ -15,7 +15,7 @@ void main(void) {
     if(vLightWeighting == vec3(0., 0., 0.)){
       gl_FragColor = textureColor;
     }else{
-      gl_FragColor = vec4(vec3(textureColor.rgb * vLightWeighting), textureColor.a); 
+      gl_FragColor = vec4(vec3(textureColor.rgb * vLightWeighting), textureColor.a);
     }
   }
 }

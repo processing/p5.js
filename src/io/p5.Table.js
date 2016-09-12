@@ -98,10 +98,14 @@ p5.Table = function (rows) {
 	*   //print the results
 	*   for (var r = 0; r < table.getRowCount(); r++)
 	*     for (var c = 0; c < table.getColumnCount(); c++)
-	*       print(table.getString(r, c));
+	*       println(table.getString(r, c));
 	* }
 	* </code>
 	* </div>
+	*
+ * @alt
+ * no image displayed
+ *
  */
 p5.Table.prototype.addRow = function(row) {
   // make sure it is a valid TableRow
@@ -148,10 +152,14 @@ p5.Table.prototype.addRow = function(row) {
 	*   //print the results
 	*   for (var r = 0; r < table.getRowCount(); r++)
 	*     for (var c = 0; c < table.getColumnCount(); c++)
-	*       print(table.getString(r, c));
+	*       println(table.getString(r, c));
 	* }
 	* </code>
 	* </div>
+	*
+    * @alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.removeRow = function(id) {
   this.rows[id].table = null; // remove reference to table
@@ -193,10 +201,14 @@ p5.Table.prototype.removeRow = function(id) {
 	*   //print it column by column
 	*   //note: a row is an object, not an array
 	*   for (var c = 0; c < table.getColumnCount(); c++)
-	*     print(row.getString(c));
+	*     println(row.getString(c));
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.getRow = function(r) {
   return this.rows[r];
@@ -237,10 +249,14 @@ p5.Table.prototype.getRow = function(r) {
 	*   //print the results
 	*   for (var r = 0; r < table.getRowCount(); r++)
 	*     for (var c = 0; c < table.getColumnCount(); c++)
-	*       print(table.getString(r, c));
+	*       println(table.getString(r, c));
 	* }
 	* </code>
 	* </div>
+	*
+    * @alt
+    * no image displayed
+    *
  */
 p5.Table.prototype.getRows = function() {
   return this.rows;
@@ -282,10 +298,14 @@ p5.Table.prototype.getRows = function() {
 	*   //find the animal named zebra
 	*   var row = table.findRow("Zebra", "name");
 	*   //find the corresponding species
-	*   print(row.getString("species"));
+	*   println(row.getString("species"));
 	* }
 	* </code>
 	* </div>
+	*
+ * @alt
+ * no image displayed
+ *
  */
 p5.Table.prototype.findRow = function(value, column) {
   // try the Object
@@ -349,10 +369,14 @@ p5.Table.prototype.findRow = function(value, column) {
 	*
 	*   //find the rows containing animals named Goat
 	*   var rows = table.findRows("Goat", "name");
-	*   print(rows.length + " Goats found");
+	*   println(rows.length + " Goats found");
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.findRows = function(value, column) {
   var ret = [];
@@ -502,11 +526,15 @@ p5.Table.prototype.matchRows = function(regexp, column) {
 	*
 	* function setup() {
 	*   //getColumn returns an array that can be printed directly
-	*   print(table.getColumn("species"));
+	*   println(table.getColumn("species"));
 	*   //outputs ["Capra hircus", "Panthera pardus", "Equus zebra"]
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.getColumn = function(value) {
   var ret = [];
@@ -549,11 +577,15 @@ p5.Table.prototype.getColumn = function(value) {
 	*
 	* function setup() {
 	*   table.clearRows();
-	*   print(table.getRowCount() + " total rows in table");
-	*   print(table.getColumnCount() + " total columns in table");
+	*   println(table.getRowCount() + " total rows in table");
+	*   println(table.getColumnCount() + " total columns in table");
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.clearRows = function() {
   delete this.rows;
@@ -597,10 +629,14 @@ p5.Table.prototype.clearRows = function() {
 	*   //print the results
 	*   for (var r = 0; r < table.getRowCount(); r++)
 	*     for (var c = 0; c < table.getColumnCount(); c++)
-	*       print(table.getString(r, c));
+	*       println(table.getString(r, c));
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.addColumn = function(title) {
   var t = title || null;
@@ -751,10 +787,14 @@ p5.Table.prototype.trim = function(column) {
 	*
 	* function setup() {
 	*   table.removeColumn("id");
-	*   print(table.getColumnCount());
+	*   println(table.getColumnCount());
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.removeColumn = function(c) {
   var cString;
@@ -821,10 +861,14 @@ p5.Table.prototype.removeColumn = function(c) {
 	*   //print the results
 	*   for (var r = 0; r < table.getRowCount(); r++)
 	*     for (var c = 0; c < table.getColumnCount(); c++)
-	*       print(table.getString(r, c));
+	*       println(table.getString(r, c));
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.set = function(row, column, value) {
   this.rows[row].set(column, value);
@@ -863,11 +907,14 @@ p5.Table.prototype.set = function(row, column, value) {
 	* function setup() {
 	*   table.setNum(1, "id", 1);
 	*
-	*   print(table.getColumn(0));
+	*   println(table.getColumn(0));
 	*   //["0", 1, "2"]
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
  */
 p5.Table.prototype.setNum = function(row, column, value){
   this.rows[row].setNum(column, value);
@@ -920,13 +967,17 @@ p5.Table.prototype.setString = function(row, column, value){
 	* }
 	*
 	* function setup() {
-	*   print(table.get(0, 1));
+	*   println(table.get(0, 1));
 	*   //Capra hircus
-	*   print(table.get(0, "species"));
+	*   println(table.get(0, "species"));
 	*   //Capra hircus
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.get = function(row, column) {
   return this.rows[row].get(column);
@@ -963,11 +1014,15 @@ p5.Table.prototype.get = function(row, column) {
 	* }
 	*
 	* function setup() {
-	*   print(table.getNum(1, 0) + 100);
+	*   println(table.getNum(1, 0) + 100);
 	*   //id 1 + 100 = 101
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.getNum = function(row, column) {
   return this.rows[row].getNum(column);
@@ -1008,10 +1063,14 @@ p5.Table.prototype.getNum = function(row, column) {
 	*
 	*   //output each row as array
 	*   for (var i = 0; i < tableArray.length; i++)
-	*     print(tableArray[i]);
+	*     println(tableArray[i]);
 	* }
 	* </code>
 	* </div>
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.getString = function(row, column) {
   return this.rows[row].getString(column);
@@ -1049,12 +1108,15 @@ p5.Table.prototype.getString = function(row, column) {
 	* function setup() {
 	*   var tableObject = table.getObject();
 	*
-	*   print(tableObject);
+	*   println(tableObject);
 	*   //outputs an object
 	* }
 	* </code>
 	* </div>
-
+	*
+ 	*@alt
+ 	* no image displayed
+ 	*
  */
 p5.Table.prototype.getObject = function (headerColumn) {
   var tableObject = {};

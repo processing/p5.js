@@ -46,6 +46,10 @@ var constants = require('../core/constants');
  * ellipse(v1.x, v1.y, 50, 50);
  * </code>
  * </div>
+ *
+ * @alt
+ * 2 white ellipses. One center-left the other bottom right and off canvas
+ *
  */
 p5.Vector = function() {
   var x,y,z;
@@ -91,7 +95,7 @@ p5.Vector = function() {
  * <div class = "norender"><code>
  * function setup() {
  *   var v = createVector(20,30);
- *   print(String(v)); // prints "p5.Vector Object : [20, 30, 0]"
+ *   println(String(v)); // prints "p5.Vector Object : [20, 30, 0]"
  * }
  * </div></code>
  *
@@ -152,7 +156,7 @@ p5.Vector.prototype.set = function (x, y, z) {
  * <code>
  * var v1 = createVector(1, 2, 3);
  * var v2 = v1.copy();
- * print(v1.x == v2.x && v1.y == v2.y && v1.z == v2.z);
+ * println(v1.x == v2.x && v1.y == v2.y && v1.z == v2.z);
  * // Prints "true"
  * </code>
  * </div>
@@ -348,7 +352,7 @@ p5.Vector.prototype.div = function (n) {
  * <code>
  * var v = createVector(20.0, 30.0, 40.0);
  * var m = v.mag();
- * print(m); // Prints "53.85164807134504"
+ * println(m); // Prints "53.85164807134504"
  * </code>
  * </div>
  */
@@ -369,7 +373,7 @@ p5.Vector.prototype.mag = function () {
  * <code>
  * // Static method
  * var v1 = createVector(6, 4, 2);
- * print(v1.magSq()); // Prints "56"
+ * println(v1.magSq()); // Prints "56"
  * </code>
  * </div>
  */
@@ -396,7 +400,7 @@ p5.Vector.prototype.magSq = function () {
  * var v1 = createVector(1, 2, 3);
  * var v2 = createVector(2, 3, 4);
  *
- * print(v1.dot(v2)); // Prints "20"
+ * println(v1.dot(v2)); // Prints "20"
  * </code>
  * </div>
  *
@@ -508,7 +512,7 @@ p5.Vector.prototype.dist = function (v) {
  *
  */
 p5.Vector.prototype.normalize = function () {
-  return this.div(this.mag());
+  return this.mag() === 0 ? this : this.div(this.mag());
 };
 
 /**
@@ -529,11 +533,11 @@ p5.Vector.prototype.normalize = function () {
  * </code>
  * </div>
  */
-p5.Vector.prototype.limit = function (l) {
+p5.Vector.prototype.limit = function (max) {
   var mSq = this.magSq();
-  if(mSq > l*l) {
+  if(mSq > max*max) {
     this.div(Math.sqrt(mSq)); //normalize it
-    this.mult(l);
+    this.mult(max);
   }
   return this;
 };
@@ -568,13 +572,13 @@ p5.Vector.prototype.setMag = function (n) {
  * <div class = "norender"><code>
  * function setup() {
  *   var v1 = createVector(30,50);
- *   print(v1.heading()); // 1.0303768265243125
+ *   println(v1.heading()); // 1.0303768265243125
  *
  *   var v1 = createVector(40,50);
- *   print(v1.heading()); // 0.8960553845713439
+ *   println(v1.heading()); // 0.8960553845713439
  *
  *   var v1 = createVector(30,70);
- *   print(v1.heading()); // 1.1659045405098132
+ *   println(v1.heading()); // 1.1659045405098132
  * }
  * </div></code>
  */
@@ -673,16 +677,16 @@ p5.Vector.prototype.lerp = function (x, y, z, amt) {
  * <div class = "norender"><code>
  * function setup() {
  *   var v = createVector(20,30);
- *   print(v.array()); // Prints : Array [20, 30, 0]
+ *   println(v.array()); // Prints : Array [20, 30, 0]
  * }
  * </div></code>
  * <div class="norender">
  * <code>
  * var v = createVector(10.0, 20.0, 30.0);
  * var f = v.array();
- * print(f[0]); // Prints "10.0"
- * print(f[1]); // Prints "20.0"
- * print(f[2]); // Prints "30.0"
+ * println(f[0]); // Prints "10.0"
+ * println(f[1]); // Prints "20.0"
+ * println(f[2]); // Prints "30.0"
  * </code>
  * </div>
  */
@@ -705,8 +709,8 @@ p5.Vector.prototype.array = function () {
  * v2 = createVector(5,10,20);
  * v3 = createVector(13,10,19);
  *
- * print(v1.equals(v2.x,v2.y,v2.z)); // true
- * print(v1.equals(v3.x,v3.y,v3.z)); // false
+ * println(v1.equals(v2.x,v2.y,v2.z)); // true
+ * println(v1.equals(v3.x,v3.y,v3.z)); // false
  * </div></code>
  * <div class="norender">
  * <code>

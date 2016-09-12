@@ -422,6 +422,10 @@ var colorPatterns = {
  * // todo
  * </code>
  * </div>
+ *
+ * @alt
+ * //todo
+ *
  */
 p5.Color._parseInputs = function() {
   var numArgs = arguments.length;

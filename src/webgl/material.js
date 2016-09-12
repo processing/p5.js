@@ -11,7 +11,9 @@ var p5 = require('../core/core');
 //require('./p5.Texture');
 
 /**
- * Normal material for geometry
+ * Normal material for geometry. You can view all
+ * possible materials in this
+ * <a href="https://p5js.org/examples/examples/3D_Materials.php">example</a>.
  * @method normalMaterial
  * @return {p5}                the p5 object
  * @example
@@ -22,12 +24,16 @@ var p5 = require('../core/core');
  * }
  *
  * function draw(){
- *  background(0);
+ *  background(200);
  *  normalMaterial();
- *  sphere(200);
+ *  sphere(50);
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * Red, green and blue gradient.
+ *
  */
 p5.prototype.normalMaterial = function(){
   this._renderer._getShader('normalVert', 'normalFrag');
@@ -35,7 +41,8 @@ p5.prototype.normalMaterial = function(){
 };
 
 /**
- * Texture for geometry
+ * Texture for geometry.  You can view other possible materials in this
+ * <a href="https://p5js.org/examples/examples/3D_Materials.php">example</a>.
  * @method texture
  * @param {p5.Image | p5.MediaElement | p5.Graphics} tex 2-dimensional graphics
  *                    to render as texture
@@ -101,6 +108,12 @@ p5.prototype.normalMaterial = function(){
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * Rotating view of many images umbrella and grid roof on a 3d plane
+ * black canvas
+ * black canvas
+ *
  */
 p5.prototype.texture = function(){
   var args = new Array(arguments.length);
@@ -200,7 +213,9 @@ p5.RendererGL.prototype._bind = function(tex, data){
 //   return value + 1;
 
 /**
- * Ambient material for geometry with a given color
+ * Ambient material for geometry with a given color. You can view all
+ * possible materials in this
+ * <a href="https://p5js.org/examples/examples/3D_Materials.php">example</a>.
  * @method  ambientMaterial
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
@@ -220,10 +235,14 @@ p5.RendererGL.prototype._bind = function(tex, data){
  *  ambientLight(100);
  *  pointLight(250, 250, 250, 100, 100, 0);
  *  ambientMaterial(250);
- *  sphere(200);
+ *  sphere(50);
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * radiating light source from top right of canvas
+ *
  */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   var gl = this._renderer.GL;
@@ -248,7 +267,9 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
 };
 
 /**
- * Specular material for geometry with a given color
+ * Specular material for geometry with a given color. You can view all
+ * possible materials in this
+ * <a href="https://p5js.org/examples/examples/3D_Materials.php">example</a>.
  * @method specularMaterial
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
@@ -268,10 +289,14 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  *  ambientLight(100);
  *  pointLight(250, 250, 250, 100, 100, 0);
  *  specularMaterial(250);
- *  sphere(200);
+ *  sphere(50);
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * diffused radiating light source from top right of canvas
+ *
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   var gl = this._renderer.GL;

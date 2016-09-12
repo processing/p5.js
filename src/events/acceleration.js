@@ -106,6 +106,10 @@ p5.prototype._updatePAccelerations = function(){
  * </div>
  *
  * @property rotationX
+ *
+ * @alt
+ * red horizontal line right, green vertical line bottom. black background.
+ *
  */
 p5.prototype.rotationX = 0;
 
@@ -135,6 +139,9 @@ p5.prototype.rotationX = 0;
  * </div>
  *
  * @property rotationY
+ *
+ * @alt
+ * red horizontal line right, green vertical line bottom. black background.
  */
 p5.prototype.rotationY = 0;
 
@@ -167,6 +174,9 @@ p5.prototype.rotationY = 0;
  * </div>
  *
  * @property rotationZ
+ *
+ * @alt
+ * red horizontal line right, green vertical line bottom. black background.
  */
 p5.prototype.rotationZ = 0;
 
@@ -203,6 +213,10 @@ p5.prototype.rotationZ = 0;
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * no image to display.
+ *
  *
  * @property pRotationX
  */
@@ -242,6 +256,10 @@ p5.prototype.pRotationX = 0;
  * </code>
  * </div>
  *
+ * @alt
+ * no image to display.
+ *
+ *
  * @property pRotationY
  */
 p5.prototype.pRotationY = 0;
@@ -279,6 +297,10 @@ p5.prototype.pRotationY = 0;
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * no image to display.
+ *
  *
  * @property pRotationZ
  */
@@ -358,6 +380,10 @@ p5.prototype.setShakeThreshold = function(val){
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * 50x50 black rect in center of canvas. turns white on mobile when device moves
+ *
  */
 
 /**
@@ -412,6 +438,11 @@ p5.prototype.setShakeThreshold = function(val){
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * 50x50 black rect in center of canvas. turns white on mobile when device turns
+ * 50x50 black rect in center of canvas. turns white on mobile when x-axis turns
+ *
  */
 
 /**
@@ -438,6 +469,10 @@ p5.prototype.setShakeThreshold = function(val){
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * 50x50 black rect in center of canvas. turns white on mobile when device shakes
+ *
  */
 
 p5.prototype._ondeviceorientation = function (e) {

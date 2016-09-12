@@ -58,6 +58,11 @@ require('../core/error_helpers');
  * text(s, 10, 10, 70, 80); // Text wraps within text box
  * </code>
  * </div>
+ *
+ * @alt
+ *'word' displayed 3 times going from black, blue to translucent blue
+ * The quick brown fox jumped over the lazy dog.
+ *
  */
 p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
   var args = new Array(arguments.length);
@@ -115,6 +120,10 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ *words Font Style Normal displayed normally, Italic in italic and bold in bold
+ *
  */
 p5.prototype.textFont = function(theFont, theSize) {
 

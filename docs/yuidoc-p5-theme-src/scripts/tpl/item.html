@@ -3,8 +3,9 @@
 <% if (item.example) { %>
 <div class="example">
   <h4>Example</h4>
+  <span class="ref_accessible">Examples for <%=item.name%></span>
 
-	<div class="example-content">
+	<div class="example-content" data-alt="<%= item.alt %>">
     <%= item.example %>
   </div>
 </div> 
@@ -13,6 +14,7 @@
 
 <div class="description">
   <h4>Description</h4>
+
   <p><%= item.description %></p>
 
   <% if (item.module === 'p5.dom') { %>

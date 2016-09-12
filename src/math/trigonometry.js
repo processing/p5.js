@@ -158,6 +158,10 @@ p5.prototype.atan = function(ratio) {
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * 60 by 10 rect at center of canvas rotates with mouse movements
+ *
  */
 p5.prototype.atan2 = function (y, x) {
   if (this._angleMode === constants.RADIANS) {
@@ -187,6 +191,9 @@ p5.prototype.atan2 = function (y, x) {
  * </code>
  * </div>
  *
+ * @alt
+ * vertical black lines form wave patterns, extend-down on left and right side
+ *
  */
 p5.prototype.cos = function(angle) {
   if (this._angleMode === constants.RADIANS) {
@@ -215,6 +222,10 @@ p5.prototype.cos = function(angle) {
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * vertical black lines extend down and up from center to form wave pattern
+ *
  */
 p5.prototype.sin = function(angle) {
   if (this._angleMode === constants.RADIANS) {
@@ -242,7 +253,10 @@ p5.prototype.sin = function(angle) {
  *     a = a + inc;
  *   }
  * </code>
- * </div>
+ *
+ *
+ * @alt
+ * vertical black lines end down and up from center to form spike pattern
  *
  */
 p5.prototype.tan = function(angle) {
@@ -270,7 +284,7 @@ p5.prototype.tan = function(angle) {
  * var rad = PI/4;
  * var deg = degrees(rad);
  * println(rad + " radians is " + deg + " degrees");
- * // Prints: 45 degrees is 0.7853981633974483 radians
+ * // Prints: 0.7853981633974483 radians is 45 degrees
  * </code>
  * </div>
  *
@@ -307,7 +321,7 @@ p5.prototype.radians = function(angle) {
  * Sets the current mode of p5 to given mode. Default mode is RADIANS.
  *
  * @method angleMode
- * @param {Number/Constant} mode either RADIANS or DEGREES
+ * @param {Constant} mode either RADIANS or DEGREES
  *
  * @example
  * <div>
@@ -327,6 +341,10 @@ p5.prototype.radians = function(angle) {
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * 40 by 10 rect in center rotates with mouse moves. 20 by 10 rect moves faster.
+ *
  *
  */
 p5.prototype.angleMode = function(mode) {

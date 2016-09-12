@@ -51,6 +51,10 @@ require('./p5.Geometry');
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * Vertically rotating 3-d teapot with red, green and blue gradient.
+ *
  */
 p5.prototype.loadModel = function () {
   var path = arguments[0];
@@ -106,9 +110,9 @@ function parseObj( model, lines ) {
   // "3/4/3"), to the actual index of the newly created vertex in the final
   // object.
   var loadedVerts = {'v' : [],
-                     'vt' : [],
-                     'vn' : []},
-      indexedVerts = {};
+                    'vt' : [],
+                    'vn' : []};
+  var indexedVerts = {};
 
   for (var line = 0; line < lines.length; ++line) {
     // Each line is a separate object (vertex, face, vertex normal, etc)
@@ -209,6 +213,10 @@ function parseObj( model, lines ) {
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * Vertically rotating 3-d teapot with red, green and blue gradient.
+ *
  */
 p5.prototype.model = function ( model ) {
   if (model.vertices.length > 0) {

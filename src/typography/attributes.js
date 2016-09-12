@@ -26,9 +26,9 @@ var p5 = require('../core/core');
  * to the y value.
  *
  * @method textAlign
- * @param {Number/Constant} horizAlign horizontal alignment, either LEFT,
+ * @param {Constant} horizAlign horizontal alignment, either LEFT,
  *                            CENTER, or RIGHT
- * @param {Number/Constant} vertAlign vertical alignment, either TOP,
+ * @param {Constant} vertAlign vertical alignment, either TOP,
  *                            BOTTOM, CENTER, or BASELINE
  * @return {Number}
  * @example
@@ -43,6 +43,10 @@ var p5 = require('../core/core');
  * text("IJKL", 50, 70);
  * </code>
  * </div>
+ *
+ * @alt
+ *Letters ABCD displayed at top right, EFGH at center and IJKL at bottom left.
+ *
  */
 p5.prototype.textAlign = function(horizAlign, vertAlign) {
   return this._renderer.textAlign.apply(this._renderer, arguments);
@@ -72,6 +76,10 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  * text(lines, 70, 25);
  * </code>
  * </div>
+ *
+ * @alt
+ *set L1 L2 & L3 displayed vertically 3 times. spacing increases for each set
+ *
  */
 p5.prototype.textLeading = function(theLeading) {
   return this._renderer.textLeading.apply(this._renderer, arguments);
@@ -95,6 +103,10 @@ p5.prototype.textLeading = function(theLeading) {
  * text("Font Size 16", 10, 90);
  * </code>
  * </div>
+ *
+ * @alt
+ *Font Size 12 displayed small, Font Size 14 medium & Font Size 16 large
+ *
  */
 p5.prototype.textSize = function(theSize) {
   return this._renderer.textSize.apply(this._renderer, arguments);
@@ -122,6 +134,10 @@ p5.prototype.textSize = function(theSize) {
  * text("Font Style Bold", 10, 90);
  * </code>
  * </div>
+ *
+ * @alt
+ *words Font Style Normal displayed normally, Italic in italic and bold in bold
+ *
  */
 p5.prototype.textStyle = function(theStyle) {
   return this._renderer.textStyle.apply(this._renderer, arguments);
@@ -149,8 +165,15 @@ p5.prototype.textStyle = function(theStyle) {
  * line(sWidth, 50, sWidth, 100);
  * </code>
  * </div>
+ *
+ * @alt
+ *Letter P and p5.js are displayed with vertical lines at end. P is wide
+ *
  */
 p5.prototype.textWidth = function(theText) {
+  if (theText.length === 0) {
+    return 0;
+  }
   return this._renderer.textWidth.apply(this._renderer, arguments);
 };
 

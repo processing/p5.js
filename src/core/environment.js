@@ -20,44 +20,49 @@ p5.prototype._targetFrameRate = 60;
 
 if (window.console && console.log) {
   /**
-   * The print() function writes to the console area of your browser.
+   * The println() function writes to the console area of your browser.
    * This function is often helpful for looking at the data a program is
    * producing. This function creates a new line of text for each call to
    * the function. Individual elements can be
    * separated with quotes ("") and joined with the addition operator (+).
    * <br><br>
-   * While print() is similar to console.log(), it does not directly map to
+   * While println() is similar to console.log(), it does not directly map to
    * it in order to simulate easier to understand behavior than
    * console.log(). Due to this, it is slower. For fastest results, use
    * console.log().
    *
-   * @method print
+   * @method println
    * @param {Any} contents any combination of Number, String, Object, Boolean,
    *                       Array to print
    * @example
    * <div><code class='norender'>
    * var x = 10;
-   * print("The value of x is " + x);
+   * println("The value of x is " + x);
    * // prints "The value of x is 10"
    * </code></div>
+   * @alt
+   * default grey canvas
    */
   // Converts passed args into a string and then parses that string to
   // simulate synchronous behavior. This is a hack and is gross.
   // Since this will not work on all objects, particularly circular
   // structures, simply console.log() on error.
-  p5.prototype.print = function(args) {
+  p5.prototype.println = function(args) {
     try {
-      var newArgs = JSON.parse(JSON.stringify(args));
-      console.log(newArgs);
+      if (arguments.length > 1) {
+        console.log.apply(console, arguments);
+      } else {
+        var newArgs = JSON.parse(JSON.stringify(args));
+        console.log(newArgs);
+      }
     } catch(err) {
       console.log(args);
     }
   };
 } else {
-  p5.prototype.print = function() {};
+  p5.prototype.println = function() {};
 }
 
-p5.prototype.println = p5.prototype.print;
 
 /**
  * The system variable frameCount contains the number of frames that have
@@ -79,6 +84,10 @@ p5.prototype.println = p5.prototype.print;
  *       text(frameCount, width/2, height/2);
  *     }
  *   </code></div>
+ *
+ * @alt
+ * numbers rapidly counting upward with frame count set to 30.
+ *
  */
 p5.prototype.frameCount = 0;
 
@@ -105,6 +114,10 @@ p5.prototype.frameCount = 0;
  *   }
  * }
  * </code></div>
+ *
+ * @alt
+ * green 50x50 ellipse at top left. Red X covers canvas when page focus changes
+ *
  */
 p5.prototype.focused = (document.hasFocus());
 
@@ -134,6 +147,10 @@ p5.prototype.focused = (document.hasFocus());
  *   }
  * }
  * </code></div>
+ *
+ * @alt
+ * horizontal line divides canvas. cursor on left is a cross, right is hand.
+ *
  */
 p5.prototype.cursor = function(type, x, y) {
   var cursor = 'auto';
@@ -213,6 +230,9 @@ p5.prototype.cursor = function(type, x, y) {
  * }
  * </div></code>
  *
+ * @alt
+ * blue rect moves left to right, followed by red rect moving faster. Loops.
+ *
  */
 p5.prototype.frameRate = function(fps) {
   if (typeof fps !== 'number' || fps <= 0) {
@@ -262,6 +282,11 @@ p5.prototype.setFrameRate = function(fps) {
  *   ellipse(mouseX, mouseY, 10, 10);
  * }
  * </code></div>
+ *
+ *
+ * @alt
+ * cursor becomes 10x 10 white ellipse the moves with mouse x and y.
+ *
  */
 p5.prototype.noCursor = function() {
   this._curElement.elt.style.cursor = 'none';
@@ -277,6 +302,10 @@ p5.prototype.noCursor = function() {
  * <div class="norender"><code>
  * createCanvas(displayWidth, displayHeight);
  * </code></div>
+ *
+ * @alt
+ * cursor becomes 10x 10 white ellipse the moves with mouse x and y.
+ *
  */
 p5.prototype.displayWidth = screen.width;
 
@@ -289,6 +318,10 @@ p5.prototype.displayWidth = screen.width;
  * <div class="norender"><code>
  * createCanvas(displayWidth, displayHeight);
  * </code></div>
+ *
+ * @alt
+ * no display.
+ *
  */
 p5.prototype.displayHeight = screen.height;
 
@@ -301,8 +334,12 @@ p5.prototype.displayHeight = screen.height;
  * <div class="norender"><code>
  * createCanvas(windowWidth, windowHeight);
  * </code></div>
+ *
+ * @alt
+ * no display.
+ *
  */
-p5.prototype.windowWidth = document.documentElement.clientWidth;
+p5.prototype.windowWidth = getWindowWidth();
 /**
  * System variable that stores the height of the inner window, it maps to
  * window.innerHeight.
@@ -312,8 +349,11 @@ p5.prototype.windowWidth = document.documentElement.clientWidth;
  * <div class="norender"><code>
  * createCanvas(windowWidth, windowHeight);
  * </code></div>
- */
-p5.prototype.windowHeight = document.documentElement.clientHeight;
+*@alt
+ * no display.
+ *
+*/
+p5.prototype.windowHeight = getWindowHeight();
 
 /**
  * The windowResized() function is called once every time the browser window
@@ -335,10 +375,12 @@ p5.prototype.windowHeight = document.documentElement.clientHeight;
  *   resizeCanvas(windowWidth, windowHeight);
  * }
  * </code></div>
+ * @alt
+ * no display.
  */
 p5.prototype._onresize = function(e){
-  this._setProperty('windowWidth', window.innerWidth);
-  this._setProperty('windowHeight', window.innerHeight);
+  this._setProperty('windowWidth', getWindowWidth());
+  this._setProperty('windowHeight', getWindowHeight());
   var context = this._isGlobal ? window : this;
   var executeDefault;
   if (typeof context.windowResized === 'function') {
@@ -348,6 +390,17 @@ p5.prototype._onresize = function(e){
     }
   }
 };
+
+function getWindowWidth() {
+  return Math.max(
+    document.documentElement.clientWidth,
+    window.innerWidth || 0);
+}
+function getWindowHeight() {
+  return Math.max(
+    document.documentElement.clientHeight,
+    window.innerHeight || 0);
+}
 
 /**
  * System variable that stores the width of the drawing canvas. This value
@@ -397,6 +450,10 @@ p5.prototype.height = 0;
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * no display.
+ *
  */
 p5.prototype.fullscreen = function(val) {
   // no arguments, return fullscreen or not
@@ -445,6 +502,10 @@ p5.prototype.fullscreen = function(val) {
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * fuzzy 50x50 white ellipse with black outline in center of canvas.
+ * sharp 50x50 white ellipse with black outline in center of canvas.
  */
 p5.prototype.pixelDensity = function(val) {
   if (typeof val === 'number') {
@@ -472,6 +533,9 @@ p5.prototype.pixelDensity = function(val) {
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * 50x50 white ellipse with black outline in center of canvas.
  */
 p5.prototype.displayDensity = function() {
   return window.devicePixelRatio;
@@ -532,6 +596,10 @@ function exitFullscreen() {
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * current url (http://p5js.org/reference/#/p5/getURL) moves right to left.
+ *
  */
 p5.prototype.getURL = function() {
   return location.href;
@@ -549,6 +617,10 @@ p5.prototype.getURL = function() {
  *   }
  * }
  * </code></div>
+ *
+ * @alt
+ *no display
+ *
  */
 p5.prototype.getURLPath = function() {
   return location.pathname.split('/').filter(function(v){return v!=='';});
@@ -570,6 +642,9 @@ p5.prototype.getURLPath = function() {
  * }
  * </code>
  * </div>
+ * @alt
+ * no display.
+ *
  */
 p5.prototype.getURLParams = function() {
   var re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;

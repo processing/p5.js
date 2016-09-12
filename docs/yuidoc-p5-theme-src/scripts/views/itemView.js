@@ -99,6 +99,27 @@ define([
         this.$el.html(itemHtml);
 
         renderCode();
+
+        // Hook up alt-text for examples
+        setTimeout(function() {
+          var alts = $('.example-content')[0];
+          if (alts) {
+            alts = $(alts).data('alt').split('\n');
+
+            var examples = $('.example_container');
+
+            for (var i=0; i<examples.length; i++) {
+              $(examples[i]).prepend('<span class="ref_accessible">'+cleanItem.name+' example '+(i+1)+'</span>');
+            }
+
+            var canvases = $('.cnv_div');
+            for (var i=0; i<alts.length; i++) {
+              if (i < canvases.length) {
+                $(canvases[i]).append('<span class="ref_accessible">'+alts[i]+'</span>');
+              }
+            }
+          }
+        }, 1000);
         Prism.highlightAll();
       }
 

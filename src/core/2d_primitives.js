@@ -10,7 +10,7 @@
 
 var p5 = require('./core');
 var constants = require('./constants');
-
+var canvas = require('./canvas');
 require('./error_helpers');
 
 /**
@@ -31,7 +31,7 @@ require('./error_helpers');
  * @param  {Number} d      height of the arc's ellipse by default
  * @param  {Number} start  angle to start the arc, specified in radians
  * @param  {Number} stop   angle to stop the arc, specified in radians
- * @param  {String} [mode] optional parameter to determine the way of drawing
+ * @param  {Constant} [mode] optional parameter to determine the way of drawing
  *                         the arc
  * @return {Object}        the p5 object
  * @example
@@ -62,6 +62,13 @@ require('./error_helpers');
  * arc(50, 50, 80, 80, 0, PI+QUARTER_PI, PIE);
  * </code>
  * </div>
+ *
+ * @alt
+ *shattered outline of an ellipse with a quarter of a white circle bottom-right.
+ *white ellipse with black outline with top right missing.
+ *white ellipse with top right missing with black outline around shape.
+ *white ellipse with top right quarter missing with black outline around the shape.
+ *
  */
 p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
   var args = new Array(arguments.length);
@@ -139,12 +146,15 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
  * ellipse(56, 46, 55, 55);
  * </code>
  * </div>
+ *
+ * @alt
+ *white ellipse with black outline in middle-right of canvas that is 55x55.
+ *
  */
 /**
  * @method ellipse
  * @param {Number} x
  * @param {Number} y
- * @param {Number} z z-coordinate of the ellipse
  * @param {Number} w
  * @param {Number} [h]
  * @return {p5}
@@ -154,30 +164,27 @@ p5.prototype.ellipse = function() {
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  // Duplicate 3rd argument if onl 3 given.
+  // Duplicate 3rd argument if only 3 given.
   if (args.length === 3) {
     args.push(args[2]);
   }
-  if(this._renderer.isP3D){
-    // p5 supports negative width and heights for ellipses
-    if (args[3] < 0){args[3] = Math.abs(args[3]);}
-    if (args[4] < 0){args[4] = Math.abs(args[4]);}
-  } else {
-    // p5 supports negative width and heights for rects
-    if (args[2] < 0){args[2] = Math.abs(args[2]);}
-    if (args[3] < 0){args[3] = Math.abs(args[3]);}
-  }
+  // p5 supports negative width and heights for rects
+  if (args[2] < 0){args[2] = Math.abs(args[2]);}
+  if (args[3] < 0){args[3] = Math.abs(args[3]);}
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
-  if (this._renderer.isP3D){
-    this._renderer.ellipse(args);
-  } else {
-    this._renderer.ellipse(args[0],//x
-      args[1],//y
-      args[2],//width
-      args[3]);//height
-  }
+  var vals = canvas.modeAdjust(
+    args[0],
+    args[1],
+    args[2],
+    args[3],
+    this._renderer._ellipseMode);
+  args[0] = vals.x;
+  args[1] = vals.y;
+  args[2] = vals.w;
+  args[3] = vals.h;
+  this._renderer.ellipse(args);
   return this;
 };
 /**
@@ -210,6 +217,11 @@ p5.prototype.ellipse = function() {
  * line(85, 75, 30, 75);
  * </code>
  * </div>
+ *
+ * @alt
+ *line 78 pixels long running from mid-top to bottom-right of canvas.
+ *3 lines of various stroke sizes. Form top, bottom and right sides of a square.
+ *
  */
 ////commented out original
 // p5.prototype.line = function(x1, y1, x2, y2) {
@@ -267,6 +279,10 @@ p5.prototype.line = function() {
  * point(30, 75);
  * </code>
  * </div>
+ *
+ * @alt
+ *4 points centered in the middle-right of the canvas.
+ *
  */
 p5.prototype.point = function() {
   if (!this._renderer._doStroke) {
@@ -316,21 +332,21 @@ p5.prototype.point = function() {
  * quad(38, 31, 86, 20, 69, 63, 30, 76);
  * </code>
  * </div>
+ *
+ * @alt
+ *irregular white quadrilateral shape with black outline mid-right of canvas.
+ *
  */
 /**
  * @method quad
  * @param {Number} x1
  * @param {Number} y1
- * @param {Number} z1 the z-coordinate of the first point
  * @param {Number} x2
  * @param {Number} y2
- * @param {Number} z2 the z-coordinate of the second point
  * @param {Number} x3
  * @param {Number} y3
- * @param {Number} z3 the z-coordinate of the third point
  * @param {Number} x4
  * @param {Number} y4
- * @param {Number} z4 the z-coordinate of the fourth point
  * @return {p5} the p5 object
  */
 p5.prototype.quad = function() {
@@ -415,18 +431,20 @@ p5.prototype.quad = function() {
 * rect(30, 20, 55, 55, 20, 15, 10, 5);
 * </code>
 * </div>
+*
+* @alt
+* 55x55 white rect with black outline in mid-right of canvas.
+* 55x55 white rect with black outline and rounded edges in mid-right of canvas.
+* 55x55 white rect with black outline and rounded edges of different radii.
 */
 /**
 * @method rect
 * @param  {Number} x
 * @param  {Number} y
-* @param  {Number} z  z-coordinate of the rectangle.
 * @param  {Number} w
 * @param  {Number} h
-* @param  {Number} [tl]
-* @param  {Number} [tr]
-* @param  {Number} [br]
-* @param  {Number} [bl]
+* @param  {Number} [detailX]
+* @param  {Number} [detailY]
 * @return {p5}          the p5 object.
 */
 p5.prototype.rect = function () {
@@ -434,18 +452,19 @@ p5.prototype.rect = function () {
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  if(this._renderer.isP3D){
-    // p5 supports negative width and heights for rects
-    if (args[3] < 0){args[3] = Math.abs(args[3]);}
-    if (args[4] < 0){args[4] = Math.abs(args[4]);}
-  } else if (this._renderer._rectMode !== constants.CORNERS) {
-    // p5 supports negative width and heights for rects
-    if (args[2] < 0){args[2] = Math.abs(args[2]);}
-    if (args[3] < 0){args[3] = Math.abs(args[3]);}
-  }
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return;
   }
+  var vals = canvas.modeAdjust(
+    args[0],
+    args[1],
+    args[2],
+    args[3],
+    this._renderer._rectMode);
+  args[0] = vals.x;
+  args[1] = vals.y;
+  args[2] = vals.w;
+  args[3] = vals.h;
   this._renderer.rect(args);
   return this;
 };
@@ -469,6 +488,10 @@ p5.prototype.rect = function () {
 * triangle(30, 75, 58, 20, 86, 75);
 * </code>
 * </div>
+*
+*@alt
+* white triangle with black outline in mid-right of canvas.
+*
 */
 p5.prototype.triangle = function() {
 
@@ -479,18 +502,7 @@ p5.prototype.triangle = function() {
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  if(this._renderer.isP3D){
-    this._renderer.triangle(args);
-  } else {
-    this._renderer.triangle(
-      args[0],
-      args[1],
-      args[2],
-      args[3],
-      args[4],
-      args[5]
-    );
-  }
+  this._renderer.triangle(args);
   return this;
 };
 

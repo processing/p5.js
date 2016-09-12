@@ -57,6 +57,11 @@ require('../core/error_helpers');
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * image of the underside of a white umbrella and grided ceililng above
+ * image of the underside of a white umbrella and grided ceililng above
+ *
  */
 p5.prototype.loadImage = function(path, successCallback, failureCallback) {
   var img = new Image();
@@ -170,6 +175,11 @@ function _sAssign(sVal, iVal) {
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * image of the underside of a white umbrella and grided ceiling above
+ * image of the underside of a white umbrella and grided ceiling above
+ *
  */
 p5.prototype.image =
   function(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight) {
@@ -291,6 +301,12 @@ p5.prototype.image =
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * 2 side by side images of umbrella and ceiling, one image with blue tint
+ * Images of umbrella and ceiling, one half of image with blue tint
+ * 2 side by side images of umbrella and ceiling, one image translucent
+ *
  */
 p5.prototype.tint = function () {
   var c = this.color.apply(this, arguments);
@@ -317,6 +333,10 @@ p5.prototype.tint = function () {
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * 2 side by side images of bricks, left image with blue tint
+ *
  */
 p5.prototype.noTint = function() {
   this._renderer._tint = null;
@@ -375,7 +395,7 @@ p5.prototype._getTintedImageCanvas = function(img) {
  * they are used to set the image's width and height.
  *
  * @method imageMode
- * @param {String} m The mode: either CORNER, CORNERS, or CENTER.
+ * @param {Constant} mode either CORNER, CORNERS, or CENTER
  * @example
  *
  * <div>
@@ -416,6 +436,12 @@ p5.prototype._getTintedImageCanvas = function(img) {
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * small square image of bricks
+ * horizontal rectangle image of bricks
+ * large square image of bricks
+ *
  */
 p5.prototype.imageMode = function(m) {
   if (m === constants.CORNER ||

@@ -22,6 +22,10 @@ var p5 = require('../core/core');
  * text("Current day: \n" + d, 5, 50);
  * </code>
  * </div>
+ *
+ * @alt
+ * Current day is displayed
+ *
  */
 p5.prototype.day = function() {
   return new Date().getDate();
@@ -40,6 +44,10 @@ p5.prototype.day = function() {
  * text("Current hour:\n" + h, 5, 50);
  * </code>
  * </div>
+ *
+ * @alt
+ * Current hour is displayed
+ *
  */
 p5.prototype.hour = function() {
   return new Date().getHours();
@@ -58,6 +66,10 @@ p5.prototype.hour = function() {
  * text("Current minute: \n" + m, 5, 50);
  * </code>
  * </div>
+ *
+ * @alt
+ * Current minute is displayed
+ *
  */
 p5.prototype.minute = function() {
   return new Date().getMinutes();
@@ -77,6 +89,10 @@ p5.prototype.minute = function() {
  * text("Milliseconds \nrunning: \n" + millisecond, 5, 40);
  * </code>
  * </div>
+ *
+ * @alt
+ * number of milliseconds since program has started displayed
+ *
  */
 p5.prototype.millis = function() {
   return window.performance.now();
@@ -95,6 +111,10 @@ p5.prototype.millis = function() {
  * text("Current month: \n" + m, 5, 50);
  * </code>
  * </div>
+ *
+ * @alt
+ * Current month is displayed
+ *
  */
 p5.prototype.month = function() {
   return new Date().getMonth() + 1; //January is 0!
@@ -113,6 +133,10 @@ p5.prototype.month = function() {
  * text("Current second: \n" + s, 5, 50);
  * </code>
  * </div>
+ *
+ * @alt
+ * Current second is displayed
+ *
  */
 p5.prototype.second = function() {
   return new Date().getSeconds();
@@ -131,6 +155,10 @@ p5.prototype.second = function() {
  * text("Current year: \n" + y, 5, 50);
  * </code>
  * </div>
+ *
+ * @alt
+ * Current year is displayed
+ *
  */
 p5.prototype.year = function() {
   return new Date().getFullYear();

@@ -76,7 +76,7 @@ var _globalInit = function() {
     // then instantiate p5 in "global" mode
     if((window.setup && typeof window.setup === 'function') ||
       (window.draw && typeof window.draw === 'function')) {
-      new p5();
+      p5.instance = new p5();
     }
   }
 };

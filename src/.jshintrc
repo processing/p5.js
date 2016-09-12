@@ -12,7 +12,7 @@
   "quotmark": "single",
   "undef": true,
   "unused": "vars",
-  "maxlen": 80,
+  "maxlen": 83,
 
   "browserify": true,
   "browser": true,

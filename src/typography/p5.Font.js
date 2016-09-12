@@ -91,6 +91,10 @@ p5.Font.prototype.list = function() {
  * };
  * </code>
  * </div>
+ *
+ * @alt
+ *words Lorem ipsum dol go off canvas and contained by white bounding box
+ *
  */
 p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
 

@@ -29,10 +29,14 @@ var p5 = require('../core/core');
  *   background(0);
  *   ambientLight(150);
  *   ambientMaterial(250);
- *   sphere(200);
+ *   sphere(50);
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * nothing displayed
+ *
  */
 p5.prototype.ambientLight = function(v1, v2, v3, a){
   var gl = this._renderer.GL;
@@ -91,10 +95,14 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
  *   var dirY = (mouseY / height - 0.5) *(-2);
  *   directionalLight(250, 250, 250, dirX, dirY, 0.25);
  *   ambientMaterial(250);
- *   sphere(200);
+ *   sphere(50);
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * light source on canvas changeable with mouse position
+ *
  */
 p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
   // TODO(jgessner): Find an example using this and profile it.
@@ -222,10 +230,14 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
  *   // -1,-1---------1,-1
  *   pointLight(250, 250, 250, locX, locY, 0);
  *   ambientMaterial(250);
- *   sphere(200);
+ *   sphere(50);
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * spot light on canvas changes position with mouse
+ *
  */
 p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
   // TODO(jgessner): Find an example using this and profile it.

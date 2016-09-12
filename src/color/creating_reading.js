@@ -29,6 +29,26 @@ require('./p5.Color');
  * rect(50, 15, 35, 70);
  * </code>
  * </div>
+ *
+ * @alt
+ * Left half of canvas light blue and right half light charcoal grey.
+ * Left half of canvas light purple and right half a royal blue.
+ * Left half of canvas salmon pink and the right half white.
+ * Yellow rect in middle right of canvas, with 55 pixel width and height.
+ * Yellow ellipse in top left canvas, black ellipse in bottom right,both 80x80.
+ * Bright fuschia rect in middle of canvas, 60 pixel width and height.
+ * Two bright green rects on opposite sides of the canvas, both 45x80.
+ * Four blue rects in each corner of the canvas, each are 35x35.
+ * Bright sea green rect on left and darker rect on right of canvas, both 45x80.
+ * Dark green rect on left and light green rect on right of canvas, both 45x80.
+ * Dark blue rect on left and light teal rect on right of canvas, both 45x80.
+ * blue rect on left and green on right, both with black outlines & 35x60.
+ * salmon pink rect on left and black on right, both 35x60.
+ * 4 rects, tan, brown, brownish purple and purple, with white outlines & 20x60.
+ * light pastel green rect on left and dark grey rect on right, both 35x60.
+ * yellow rect on left and red rect on right, both with black outlines & 35x60.
+ * grey canvas
+ * deep pink rect on left and grey rect on right, both 35x60.
  */
 p5.prototype.alpha = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
@@ -56,6 +76,10 @@ p5.prototype.alpha = function(c) {
  * rect(50, 20, 35, 60);  // Draw right rectangle
  * </code>
  * </div>
+ *
+ * @alt
+ * Left half of canvas light purple and right half a royal blue.
+ *
  */
 p5.prototype.blue = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
@@ -83,6 +107,10 @@ p5.prototype.blue = function(c) {
  * rect(50, 20, 35, 60);
  * </code>
  * </div>
+ *
+ * @alt
+ * Left half of canvas salmon pink and the right half white.
+ *
  */
 p5.prototype.brightness = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
@@ -237,6 +265,17 @@ p5.prototype.brightness = function(c) {
  * rect(55, 10, 45, 80);  // Draw right rect
  * </code>
  * </div>
+ *
+ * @alt
+ * Yellow rect in middle right of canvas, with 55 pixel width and height.
+ * Yellow ellipse in top left of canvas, black ellipse in bottom right,both 80x80.
+ * Bright fuschia rect in middle of canvas, 60 pixel width and height.
+ * Two bright green rects on opposite sides of the canvas, both 45x80.
+ * Four blue rects in each corner of the canvas, each are 35x35.
+ * Bright sea green rect on left and darker rect on right of canvas, both 45x80.
+ * Dark green rect on left and lighter green rect on right of canvas, both 45x80.
+ * Dark blue rect on left and light teal rect on right of canvas, both 45x80.
+ *
  */
 
 /**
@@ -286,7 +325,12 @@ p5.prototype.color = function() {
  * rect(50, 20, 35, 60);  // Draw right rectangle
  * </code>
  * </div>
+ *
+ * @alt
+ * blue rect on left and green on right, both with black outlines & 35x60.
+ *
  */
+
 p5.prototype.green = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
     return this.color(c)._getGreen();
@@ -319,7 +363,12 @@ p5.prototype.green = function(c) {
  * rect(50, 20, 35, 60);
  * </code>
  * </div>
+ *
+ * @alt
+ * salmon pink rect on left and black on right, both 35x60.
+ *
  */
+
 p5.prototype.hue = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
     return this.color(c)._getHue();
@@ -365,7 +414,12 @@ p5.prototype.hue = function(c) {
  * rect(70, 20, 20, 60);
  * </code>
  * </div>
+ *
+ * @alt
+ * 4 rects one tan, brown, brownish purple, purple, with white outlines & 20x60
+ *
  */
+
 p5.prototype.lerpColor = function(c1, c2, amt) {
   var mode = this._renderer._colorMode;
   var maxes = this._renderer._colorMaxes;
@@ -429,6 +483,10 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  * rect(50, 20, 35, 60);
  * </code>
  * </div>
+ *
+ * @alt
+ * light pastel green rect on left and dark grey rect on right, both 35x60.
+ *
  */
 p5.prototype.lightness = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
@@ -463,9 +521,13 @@ p5.prototype.lightness = function(c) {
  * var c = color(127, 255, 0);
  * colorMode(RGB, 1);
  * var myColor = red(c);
- * print(myColor);
+ * println(myColor);
  * </code>
  * </div>
+ *
+ * @alt
+ * yellow rect on left and red rect on right, both with black outlines and 35x60.
+ * grey canvas
  */
 p5.prototype.red = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
@@ -498,7 +560,12 @@ p5.prototype.red = function(c) {
  * rect(50, 20, 35, 60);
  * </code>
  * </div>
+ *
+ * @alt
+ *deep pink rect on left and grey rect on right, both 35x60.
+ *
  */
+
 p5.prototype.saturation = function(c) {
   if (c instanceof p5.Color || c instanceof Array) {
     return this.color(c)._getSaturation();

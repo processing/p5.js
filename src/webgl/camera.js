@@ -29,6 +29,10 @@ var p5 = require('../core/core');
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * blue square shrinks in size grows to fill canvas. disappears then loops.
+ *
  */
 p5.prototype.camera = function(x, y, z){
   var args = new Array(arguments.length);
@@ -76,6 +80,10 @@ p5.prototype.camera = function(x, y, z){
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * colored 3d boxes toggleable with mouse position
+ *
  */
 p5.prototype.perspective = function(fovy,aspect,near,far) {
   var args = new Array(arguments.length);
@@ -89,7 +97,7 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
   );
   this._renderer.uPMatrix = p5.Matrix.identity();
   this._renderer.uPMatrix.perspective(fovy,aspect,near,far);
-  this._renderer._isSetCamera = true;
+  this._renderer._curCamera = 'custom';
 };
 
 /**
@@ -125,6 +133,10 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
  * }
  * </code>
  * </div>
+ *
+ * @alt
+ * 3 3d boxes, reveal several more boxes on 3d plane when mouse used to toggle
+ *
  */
 p5.prototype.ortho = function(left,right,bottom,top,near,far) {
   var args = new Array(arguments.length);
@@ -142,7 +154,7 @@ p5.prototype.ortho = function(left,right,bottom,top,near,far) {
   bottom /= this.height;
   this._renderer.uPMatrix = p5.Matrix.identity();
   this._renderer.uPMatrix.ortho(left,right,bottom,top,near,far);
-  this._renderer._isSetCamera = true;
+  this._renderer._curCamera = 'custom';
 };
 
 module.exports = p5;
