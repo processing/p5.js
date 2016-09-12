@@ -141,34 +141,17 @@ p5.RendererGL.prototype.background = function() {
 //////////////////////////////////////////////
 // SHADER
 //////////////////////////////////////////////
-
-p5.RendererGL.prototype._setCurrentShader = function() {
-  var vertSource, fragSource;
-  if(arguments.length === 1) {
-    vertSource = arguments[0].vertSource;
-    fragSource = arguments[0].fragSource;
-  } else if(arguments.length === 2) {
-    var vertId = arguments[0];
-    var fragId = arguments[1];
-    vertSource = shader[vertId];
-    fragSource = shader[fragId];
-  }
-
-  var mId = this._compileShader(vertSource, fragSource);
-  this.curShaderId = mId;
-
-  return this.mHash[this.curShaderId];
-};
-
 /**
- * [_compileShaders description]
+ * [_compileShader description]
  * @param  {string} vertId  [description]
  * @param  {string} fragId  [description]
  * @param  {array}  [flags] Array of strings
  * @return {[type]}         [description]
  */
-p5.RendererGL.prototype._compileShader = function(vertSource, fragSource) {
+p5.RendererGL.prototype._compileShader = function(shader) {
   var gl = this.GL;
+  var vertSource = shader.vertSource;
+  var fragSource = shader.fragSource;
 
   //Figure out any flags that need to be appended to the shader
   var flagPrefix = '';
@@ -204,8 +187,9 @@ p5.RendererGL.prototype._compileShader = function(vertSource, fragSource) {
 
     this.mHash[mId] = shaderProgram;
   }
-
-  return mId;
+  
+  this.curShaderId = mId;
+  return this.mHash[this.curShaderId];
 };
 
 //////////////////////////////////////////////

@@ -91,7 +91,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     // The shader isn't loaded, so don't render anything this pass
     return;
   } else {
-    shaderProgram = this._setCurrentShader(this.currentShader);
+    shaderProgram = this._compileShader(this.currentShader);
     shaderKey = this.curShaderId;
   }
   gl.useProgram(shaderProgram);
