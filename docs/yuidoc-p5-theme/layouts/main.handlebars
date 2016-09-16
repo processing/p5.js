@@ -54,10 +54,10 @@
         <a href="http://py.processing.org/">Processing.py</a>
         <a href="http://android.processing.org/">Processing for Android</a>
       </p>
-      <form style='pointer-events:all;' name="search" method="get" action="https://www.google.com/search">
+      <form id="search_form" style='pointer-events:all;' name="search" method="get" action="https://www.google.com/search">
         <input type="hidden" name="as_sitesearch" value="p5js.org" />
-        <input id="search_field" type="text" title="Search" name="as_q" value="" size="20" class="text" aria-label="search text field"  aria-haspopup="false"/>
-        <input id="search_button" type="submit" value=" " aria-label="Search" name="submit search" alt="Search"/>
+        <input type="text" name="fn" id="fn" size="20" />
+        <label for="fn"><input id="search_button" type="submit" value=" " name="Go" alt="submit search"/></label>
       </form>
       <p class="right">
         <a href="https://processingfoundation.org/">Processing Foundation</a>

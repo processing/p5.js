@@ -242,7 +242,7 @@ p5.prototype.loadJSON = function () {
   var errorCallback;
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
-  var ret = []; // array needed for preload
+  var ret = {}; // object needed for preload
   // assume jsonp for URLs
   var t = 'json'; //= path.indexOf('http') === -1 ? 'json' : 'jsonp';
 
