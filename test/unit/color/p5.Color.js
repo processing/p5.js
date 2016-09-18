@@ -781,7 +781,7 @@ suite('p5.Color', function() {
     });
   });
 
-  suite.only('p5.Color.prototype.toString', function() {
+  suite('p5.Color.prototype.toString', function() {
     var colorStr;
 
     setup(function() {
