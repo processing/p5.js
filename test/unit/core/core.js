@@ -125,6 +125,83 @@ suite('Core', function(){
     });
   });
 
+  suite('new p5() / global mode', function() {
+    var BIND_TAG = '<script src="js/bind.js"></script>';
+    var P5_SCRIPT_URL = '../lib/p5.js';
+    var P5_SCRIPT_TAG = '<script src="' + P5_SCRIPT_URL + '"></script>';
+    var iframe;
+
+    function createP5Iframe(html) {
+      html = html || BIND_TAG + P5_SCRIPT_TAG;
+
+      iframe = document.createElement('iframe');
+
+      document.body.appendChild(iframe);
+      iframe.setAttribute('style', 'visibility: hidden');
+
+      iframe.contentDocument.open();
+      iframe.contentDocument.write(html);
+      iframe.contentDocument.close();
+    }
+
+    afterEach(function() {
+      if (iframe) {
+        iframe.parentNode.removeChild(iframe);
+        iframe = null;
+      }
+    });
+
+    test('is triggered when "setup" is in window', function(done) {
+      createP5Iframe();
+      iframe.contentWindow.setup = function() {
+        done();
+      };
+    });
+
+    test('is triggered when "draw" is in window', function(done) {
+      createP5Iframe();
+      iframe.contentWindow.draw = function() {
+        done();
+      };
+    });
+
+    test('works when p5.js is loaded asynchronously', function(done) {
+      createP5Iframe(BIND_TAG);
+
+      iframe.contentWindow.addEventListener('load', function() {
+        var win = iframe.contentWindow;
+
+        win.setup = done;
+
+        var script = win.document.createElement('script');
+        script.setAttribute('src', P5_SCRIPT_URL);
+
+        win.document.body.appendChild(script);
+      }, false);
+    });
+
+    test('works on-demand', function(done) {
+      createP5Iframe([
+        BIND_TAG,
+        P5_SCRIPT_TAG,
+        '<script>',
+        'new p5();',
+        'originalP5Instance = p5.instance',
+        'myRandom = random();',
+        'function setup() { setupCalled = true; }',
+        'window.addEventListener("load", onDoneLoading, false);',
+        '</script>'
+      ].join('\n'));
+      iframe.contentWindow.onDoneLoading = function() {
+        var win = iframe.contentWindow;
+        assert.equal(typeof(win.myRandom), 'number');
+        assert.strictEqual(win.setupCalled, true);
+        assert.strictEqual(win.originalP5Instance, win.p5.instance);
+        done();
+      };
+    });
+  });
+
   suite('p5.prototype._createFriendlyGlobalFunctionBinder', function() {
     var noop = function() {};
     var createBinder = p5.prototype._createFriendlyGlobalFunctionBinder;
