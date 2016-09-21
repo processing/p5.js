@@ -121,13 +121,10 @@
     var timeout;
 
     function updateLanguage() {
-      console.log('update lang')
-      console.log(translations)
       if (translations) {
         var routes = window.location.hash.split('/');
         var obj = routes[1];
         var name = routes[2];
-        console.log(routes)
         if (translations[obj] && translations[obj][name]) {
           var entry = translations[obj][name];
           $('.description-text').html('<p>'+entry.description+'</p>');
