@@ -111,17 +111,23 @@
     </div>
 
     <script src="{{projectAssets}}/js/require.min.js"></script>
+    <script src="/assets/js/vendor/prism.js"></script>
+    <script src="/assets/js/render.js"></script>
     <script src="{{projectAssets}}/js/reference.js"></script>
     <script src="/assets/js/init.js"></script>
     <script type='text/javascript'>
 
     var translations;
+    var timeout;
 
     function updateLanguage() {
+      console.log('update lang')
+      console.log(translations)
       if (translations) {
         var routes = window.location.hash.split('/');
         var obj = routes[1];
         var name = routes[2];
+        console.log(routes)
         if (translations[obj] && translations[obj][name]) {
           var entry = translations[obj][name];
           $('.description-text').html('<p>'+entry.description+'</p>');
@@ -133,7 +139,9 @@
           });
         }
       }
+      clearTimeout(timeout);
     }
+
 
     $(document).ready(function() {
       var routes = window.location.pathname.split('/');
@@ -141,13 +149,15 @@
       if (lang.length === 2) {
         $.getJSON('/assets/reference/'+lang+'.json', function(data) {
           translations = data;
-          setTimeout(updateLanguage, 200);
+          if (timeout) clearTimeout(timeout);
+          timeout = setTimeout(updateLanguage, 500);
         });
       }
     });
 
-    $('body').change(function() {
-      setTimeout(updateLanguage, 200);
+    $(window).bind('hashchange', function() {
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(updateLanguage, 500);
     });
     </script>
 
