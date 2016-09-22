@@ -71,7 +71,7 @@ p5.prototype.alpha = function(c) {
  * rect(15, 20, 35, 60);  // Draw left rectangle
  *
  * blueValue = blue(c);  // Get blue in 'c'
- * println(blueValue);  // Prints "220.0"
+ * print(blueValue);  // Prints "220.0"
  * fill(0, 0, blueValue);  // Use 'blueValue' in new fill
  * rect(50, 20, 35, 60);  // Draw right rectangle
  * </code>
@@ -320,7 +320,7 @@ p5.prototype.color = function() {
  * rect(15, 20, 35, 60);  // Draw left rectangle
  *
  * greenValue = green(c);  // Get green in 'c'
- * println(greenValue);  // Print "75.0"
+ * print(greenValue);  // Print "75.0"
  * fill(0, greenValue, 0);  // Use 'greenValue' in new fill
  * rect(50, 20, 35, 60);  // Draw right rectangle
  * </code>
@@ -509,7 +509,7 @@ p5.prototype.lightness = function(c) {
  * rect(15, 20, 35, 60);  // Draw left rectangle
  *
  * redValue = red(c);  // Get red in 'c'
- * println(redValue);  // Print "255.0"
+ * print(redValue);  // Print "255.0"
  * fill(redValue, 0, 0);  // Use 'redValue' in new fill
  * rect(50, 20, 35, 60);  // Draw right rectangle
  * </code>
@@ -521,7 +521,7 @@ p5.prototype.lightness = function(c) {
  * var c = color(127, 255, 0);
  * colorMode(RGB, 1);
  * var myColor = red(c);
- * println(myColor);
+ * print(myColor);
  * </code>
  * </div>
  *
