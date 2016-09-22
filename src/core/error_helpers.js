@@ -210,7 +210,12 @@ var errorCases = {
   '3': {
     fileType: 'text file',
     method: 'loadStrings'
-  }
+  },
+  '4': {
+    fileType: 'font',
+    method: 'loadFont',
+    message: ' hosting the font online,'
+  },
 };
 p5._friendlyFileLoadError = function (errorType, filePath) {
   var errorInfo = errorCases[ errorType ];

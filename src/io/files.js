@@ -117,7 +117,9 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
       if ((typeof onError !== 'undefined') && (onError !== decrementPreload)) {
         return onError(err);
       }
-      throw err;
+      p5._friendlyFileLoadError(4, path);
+      console.error(err, path);
+      return;
     }
 
     p5Font.font = font;
