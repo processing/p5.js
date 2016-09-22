@@ -392,14 +392,17 @@ p5.prototype._onresize = function(e){
 };
 
 function getWindowWidth() {
-  return Math.max(
-    document.documentElement.clientWidth,
-    window.innerWidth || 0);
+  return window.innerWidth ||
+         document.documentElement && document.documentElement.clientWidth ||
+         document.body && document.body.clientWidth ||
+         0;
 }
+
 function getWindowHeight() {
-  return Math.max(
-    document.documentElement.clientHeight,
-    window.innerHeight || 0);
+  return window.innerHeight ||
+         document.documentElement && document.documentElement.clientHeight ||
+         document.body && document.body.clientHeight ||
+         0;
 }
 
 /**
