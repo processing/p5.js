@@ -17,27 +17,29 @@ p5.prototype._frameRate = 0;
 p5.prototype._lastFrameTime = window.performance.now();
 p5.prototype._targetFrameRate = 60;
 
+var _windowPrint = window.print;
+
 
 if (window.console && console.log) {
   /**
-   * The println() function writes to the console area of your browser.
+   * The print() function writes to the console area of your browser.
    * This function is often helpful for looking at the data a program is
    * producing. This function creates a new line of text for each call to
    * the function. Individual elements can be
    * separated with quotes ("") and joined with the addition operator (+).
    * <br><br>
-   * While println() is similar to console.log(), it does not directly map to
+   * While print() is similar to console.log(), it does not directly map to
    * it in order to simulate easier to understand behavior than
    * console.log(). Due to this, it is slower. For fastest results, use
    * console.log().
    *
-   * @method println
+   * @method print
    * @param {Any} contents any combination of Number, String, Object, Boolean,
    *                       Array to print
    * @example
    * <div><code class='norender'>
    * var x = 10;
-   * println("The value of x is " + x);
+   * print("The value of x is " + x);
    * // prints "The value of x is 10"
    * </code></div>
    * @alt
@@ -47,9 +49,12 @@ if (window.console && console.log) {
   // simulate synchronous behavior. This is a hack and is gross.
   // Since this will not work on all objects, particularly circular
   // structures, simply console.log() on error.
-  p5.prototype.println = function(args) {
+  p5.prototype.print = function(args) {
     try {
-      if (arguments.length > 1) {
+      if (arguments.length === 0) {
+        _windowPrint();
+      }
+      else if (arguments.length > 1) {
         console.log.apply(console, arguments);
       } else {
         var newArgs = JSON.parse(JSON.stringify(args));
@@ -60,7 +65,7 @@ if (window.console && console.log) {
     }
   };
 } else {
-  p5.prototype.println = function() {};
+  p5.prototype.print = function() {};
 }
 
 
@@ -392,14 +397,17 @@ p5.prototype._onresize = function(e){
 };
 
 function getWindowWidth() {
-  return Math.max(
-    document.documentElement.clientWidth,
-    window.innerWidth || 0);
+  return window.innerWidth ||
+         document.documentElement && document.documentElement.clientWidth ||
+         document.body && document.body.clientWidth ||
+         0;
 }
+
 function getWindowHeight() {
-  return Math.max(
-    document.documentElement.clientHeight,
-    window.innerHeight || 0);
+  return window.innerHeight ||
+         document.documentElement && document.documentElement.clientHeight ||
+         document.body && document.body.clientHeight ||
+         0;
 }
 
 /**

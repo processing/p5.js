@@ -43,12 +43,12 @@ p5.prototype.float = function(str) {
  * @return {Number}                     integer representation of value
  * @example
  * <div class='norender'><code>
- * println(int("10")); // 10
- * println(int(10.31)); // 10
- * println(int(-10)); // -10
- * println(int(true)); // 1
- * println(int(false)); // 0
- * println(int([false, true, "10.3", 9.8])); // [0, 1, 10, 9]
+ * print(int("10")); // 10
+ * print(int(10.31)); // 10
+ * print(int(-10)); // -10
+ * print(int(true)); // 1
+ * print(int(false)); // 0
+ * print(int([false, true, "10.3", 9.8])); // [0, 1, 10, 9]
  * </code></div>
  */
 p5.prototype.int = function(n, radix) {
@@ -74,12 +74,12 @@ p5.prototype.int = function(n, radix) {
  * @return {String}                     string representation of value
  * @example
  * <div class='norender'><code>
- * println(str("10"));  // "10"
- * println(str(10.31)); // "10.31"
- * println(str(-10));   // "-10"
- * println(str(true));  // "true"
- * println(str(false)); // "false"
- * println(str([true, "10.3", 9.8])); // [ "true", "10.3", "9.8" ]
+ * print(str("10"));  // "10"
+ * print(str(10.31)); // "10.31"
+ * print(str(-10));   // "-10"
+ * print(str(true));  // "true"
+ * print(str(false)); // "false"
+ * print(str([true, "10.3", 9.8])); // [ "true", "10.3", "9.8" ]
  * </code></div>
  */
 p5.prototype.str = function(n) {
@@ -103,11 +103,11 @@ p5.prototype.str = function(n) {
  * @return {Boolean}                    boolean representation of value
  * @example
  * <div class='norender'><code>
- * println(boolean(0));               // false
- * println(boolean(1));               // true
- * println(boolean("true"));          // true
- * println(boolean("abcd"));          // false
- * println(boolean([0, 12, "true"])); // [false, true, false]
+ * print(boolean(0));               // false
+ * print(boolean(1));               // true
+ * print(boolean("true"));          // true
+ * print(boolean("abcd"));          // false
+ * print(boolean([0, 12, "true"])); // [false, true, false]
  * </code></div>
  */
 p5.prototype.boolean = function(n) {
@@ -134,12 +134,12 @@ p5.prototype.boolean = function(n) {
  * @return {Number}                     byte representation of value
  * @example
  * <div class='norender'><code>
- * println(byte(127));               // 127
- * println(byte(128));               // -128
- * println(byte(23.4));              // 23
- * println(byte("23.4"));            // 23
- * println(byte(true));              // 1
- * println(byte([0, 255, "100"]));   // [0, -1, 100]
+ * print(byte(127));               // 127
+ * print(byte(128));               // -128
+ * print(byte(23.4));              // 23
+ * print(byte("23.4"));            // 23
+ * print(byte(true));              // 1
+ * print(byte([0, 255, "100"]));   // [0, -1, 100]
  * </code></div>
  */
 p5.prototype.byte = function(n) {
@@ -163,10 +163,10 @@ p5.prototype.byte = function(n) {
  * @return {String}             string representation of value
  * @example
  * <div class='norender'><code>
- * println(char(65));                     // "A"
- * println(char("65"));                   // "A"
- * println(char([65, 66, 67]));           // [ "A", "B", "C" ]
- * println(join(char([65, 66, 67]), '')); // "ABC"
+ * print(char(65));                     // "A"
+ * print(char("65"));                   // "A"
+ * print(char([65, 66, 67]));           // [ "A", "B", "C" ]
+ * print(join(char([65, 66, 67]), '')); // "ABC"
  * </code></div>
  */
 p5.prototype.char = function(n) {
@@ -189,9 +189,9 @@ p5.prototype.char = function(n) {
  * @return {Number}      integer representation of value
  * @example
  * <div class='norender'><code>
- * println(unchar("A"));               // 65
- * println(unchar(["A", "B", "C"]));   // [ 65, 66, 67 ]
- * println(unchar(split("ABC", "")));  // [ 65, 66, 67 ]
+ * print(unchar("A"));               // 65
+ * print(unchar(["A", "B", "C"]));   // [ 65, 66, 67 ]
+ * print(unchar(split("ABC", "")));  // [ 65, 66, 67 ]
  * </code></div>
  */
 p5.prototype.unchar = function(n) {
@@ -213,9 +213,9 @@ p5.prototype.unchar = function(n) {
  * @return {String}      hexadecimal string representation of value
  * @example
  * <div class='norender'><code>
- * println(hex(255));               // "000000FF"
- * println(hex(255, 6));            // "0000FF"
- * println(hex([0, 127, 255], 6));  // [ "000000", "00007F", "0000FF" ]
+ * print(hex(255));               // "000000FF"
+ * print(hex(255, 6));            // "0000FF"
+ * print(hex([0, 127, 255], 6));  // [ "000000", "00007F", "0000FF" ]
  * </code></div>
  */
 p5.prototype.hex = function(n, digits) {
@@ -247,9 +247,9 @@ p5.prototype.hex = function(n, digits) {
  * @return {Number}      integer representation of hexadecimal value
  * @example
  * <div class='norender'><code>
- * println(unhex("A"));                // 10
- * println(unhex("FF"));               // 255
- * println(unhex(["FF", "AA", "00"])); // [ 255, 170, 0 ]
+ * print(unhex("A"));                // 10
+ * print(unhex("FF"));               // 255
+ * print(unhex(["FF", "AA", "00"])); // [ 255, 170, 0 ]
  * </code></div>
  */
 p5.prototype.unhex = function(n) {

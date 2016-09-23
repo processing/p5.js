@@ -210,7 +210,12 @@ var errorCases = {
   '3': {
     fileType: 'text file',
     method: 'loadStrings'
-  }
+  },
+  '4': {
+    fileType: 'font',
+    method: 'loadFont',
+    message: ' hosting the font online,'
+  },
 };
 p5._friendlyFileLoadError = function (errorType, filePath) {
   var errorInfo = errorCases[ errorType ];
@@ -247,22 +252,22 @@ function friendlyWelcome() {
  */
 /* function testColors() {
   var str = 'A box of biscuits, a box of mixed biscuits and a biscuit mixer';
-  report(str, 'println', '#ED225D'); // p5.js magenta
-  report(str, 'println', '#2D7BB6'); // p5.js blue
-  report(str, 'println', '#EE9900'); // p5.js orange
-  report(str, 'println', '#A67F59'); // p5.js light brown
-  report(str, 'println', '#704F21'); // p5.js gold
-  report(str, 'println', '#1CC581'); // auto cyan
-  report(str, 'println', '#FF6625'); // auto orange
-  report(str, 'println', '#79EB22'); // auto green
-  report(str, 'println', '#B40033'); // p5.js darkened magenta
-  report(str, 'println', '#084B7F'); // p5.js darkened blue
-  report(str, 'println', '#945F00'); // p5.js darkened orange
-  report(str, 'println', '#6B441D'); // p5.js darkened brown
-  report(str, 'println', '#2E1B00'); // p5.js darkened gold
-  report(str, 'println', '#008851'); // auto dark cyan
-  report(str, 'println', '#C83C00'); // auto dark orange
-  report(str, 'println', '#4DB200'); // auto dark green
+  report(str, 'print', '#ED225D'); // p5.js magenta
+  report(str, 'print', '#2D7BB6'); // p5.js blue
+  report(str, 'print', '#EE9900'); // p5.js orange
+  report(str, 'print', '#A67F59'); // p5.js light brown
+  report(str, 'print', '#704F21'); // p5.js gold
+  report(str, 'print', '#1CC581'); // auto cyan
+  report(str, 'print', '#FF6625'); // auto orange
+  report(str, 'print', '#79EB22'); // auto green
+  report(str, 'print', '#B40033'); // p5.js darkened magenta
+  report(str, 'print', '#084B7F'); // p5.js darkened blue
+  report(str, 'print', '#945F00'); // p5.js darkened orange
+  report(str, 'print', '#6B441D'); // p5.js darkened brown
+  report(str, 'print', '#2E1B00'); // p5.js darkened gold
+  report(str, 'print', '#008851'); // auto dark cyan
+  report(str, 'print', '#C83C00'); // auto dark orange
+  report(str, 'print', '#4DB200'); // auto dark green
 } */
 
 // This is a lazily-defined list of p5 symbols that may be
