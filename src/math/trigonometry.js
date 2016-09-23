@@ -31,7 +31,7 @@ p5.prototype._angleMode = constants.RADIANS;
  * var c = cos(a);
  * var ac = acos(c);
  * // Prints: "3.1415927 : -1.0 : 3.1415927"
- * println(a + " : " + c + " : " +  ac);
+ * print(a + " : " + c + " : " +  ac);
  * </code>
  * </div>
  *
@@ -41,7 +41,7 @@ p5.prototype._angleMode = constants.RADIANS;
  * var c = cos(a);
  * var ac = acos(c);
  * // Prints: "3.926991 : -0.70710665 : 2.3561943"
- * println(a + " : " + c + " : " +  ac);
+ * print(a + " : " + c + " : " +  ac);
  * </code>
  * </div>
  */
@@ -69,7 +69,7 @@ p5.prototype.acos = function(ratio) {
  * var s = sin(a);
  * var as = asin(s);
  * // Prints: "1.0471976 : 0.86602545 : 1.0471976"
- * println(a + " : " + s + " : " +  as);
+ * print(a + " : " + s + " : " +  as);
  * </code>
  * </div>
  *
@@ -79,7 +79,7 @@ p5.prototype.acos = function(ratio) {
  * var s = sin(a);
  * var as = asin(s);
  * // Prints: "4.1887903 : -0.86602545 : -1.0471976"
- * println(a + " : " + s + " : " +  as);
+ * print(a + " : " + s + " : " +  as);
  * </code>
  * </div>
  *
@@ -108,7 +108,7 @@ p5.prototype.asin = function(ratio) {
  * var t = tan(a);
  * var at = atan(t);
  * // Prints: "1.0471976 : 1.7320509 : 1.0471976"
- * println(a + " : " + t + " : " +  at);
+ * print(a + " : " + t + " : " +  at);
  * </code>
  * </div>
  *
@@ -118,7 +118,7 @@ p5.prototype.asin = function(ratio) {
  * var t = tan(a);
  * var at = atan(t);
  * // Prints: "4.1887903 : 1.7320513 : 1.0471977"
- * println(a + " : " + t + " : " +  at);
+ * print(a + " : " + t + " : " +  at);
  * </code>
  * </div>
  *
@@ -283,7 +283,7 @@ p5.prototype.tan = function(angle) {
  * <code>
  * var rad = PI/4;
  * var deg = degrees(rad);
- * println(rad + " radians is " + deg + " degrees");
+ * print(rad + " radians is " + deg + " degrees");
  * // Prints: 0.7853981633974483 radians is 45 degrees
  * </code>
  * </div>
@@ -308,7 +308,7 @@ p5.prototype.degrees = function(angle) {
  * <code>
  * var deg = 45.0;
  * var rad = radians(deg);
- * println(deg + " degrees is " + rad + " radians");
+ * print(deg + " degrees is " + rad + " radians");
  * // Prints: 45 degrees is 0.7853981633974483 radians
  * </code>
  * </div>

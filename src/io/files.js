@@ -117,7 +117,9 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
       if ((typeof onError !== 'undefined') && (onError !== decrementPreload)) {
         return onError(err);
       }
-      throw err;
+      p5._friendlyFileLoadError(4, path);
+      console.error(err, path);
+      return;
     }
 
     p5Font.font = font;
@@ -242,7 +244,7 @@ p5.prototype.loadJSON = function () {
   var errorCallback;
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
-  var ret = []; // array needed for preload
+  var ret = {}; // object needed for preload
   // assume jsonp for URLs
   var t = 'json'; //= path.indexOf('http') === -1 ? 'json' : 'jsonp';
 
@@ -454,16 +456,16 @@ p5.prototype.loadStrings = function (path, callback, errorCallback) {
  *
  * function setup() {
  *   //count the columns
- *   println(table.getRowCount() + " total rows in table");
- *   println(table.getColumnCount() + " total columns in table");
+ *   print(table.getRowCount() + " total rows in table");
+ *   print(table.getColumnCount() + " total columns in table");
  *
- *   println(table.getColumn("name"));
+ *   print(table.getColumn("name"));
  *   //["Goat", "Leopard", "Zebra"]
  *
  *   //cycle through the table
  *   for (var r = 0; r < table.getRowCount(); r++)
  *     for (var c = 0; c < table.getColumnCount(); c++) {
- *       println(table.getString(r, c));
+ *       print(table.getString(r, c));
  *     }
  * }
  * </code>
@@ -979,7 +981,7 @@ p5.PrintWriter = function (filename, extension) {
   this.print = function (data) {
     this.content += data;
   };
-  this.println = function (data) {
+  this.print = function (data) {
     this.content += data + '\n';
   };
   this.flush = function () {
@@ -1223,7 +1225,7 @@ p5.prototype.saveStrings = function (list, filename, extension) {
   var pWriter = this.createWriter(filename, ext);
   for (var i = 0; i < list.length; i++) {
     if (i < list.length - 1) {
-      pWriter.println(list[i]);
+      pWriter.print(list[i]);
     } else {
       pWriter.print(list[i]);
     }
@@ -1313,7 +1315,7 @@ p5.prototype.saveTable = function (table, filename, options) {
         if (h < header.length - 1) {
           pWriter.print(header[h] + sep);
         } else {
-          pWriter.println(header[h]);
+          pWriter.print(header[h]);
         }
       }
     }
@@ -1325,7 +1327,7 @@ p5.prototype.saveTable = function (table, filename, options) {
         if (j < table.rows[i].arr.length - 1) {
           pWriter.print(table.rows[i].arr[j] + sep);
         } else if (i < table.rows.length - 1) {
-          pWriter.println(table.rows[i].arr[j]);
+          pWriter.print(table.rows[i].arr[j]);
         } else {
           pWriter.print(table.rows[i].arr[j]); // no line break
         }
@@ -1335,40 +1337,40 @@ p5.prototype.saveTable = function (table, filename, options) {
 
   // otherwise, make HTML
   else {
-    pWriter.println('<html>');
-    pWriter.println('<head>');
+    pWriter.print('<html>');
+    pWriter.print('<head>');
     var str = '  <meta http-equiv=\"content-type\" content';
     str += '=\"text/html;charset=utf-8\" />';
-    pWriter.println(str);
-    pWriter.println('</head>');
+    pWriter.print(str);
+    pWriter.print('</head>');
 
-    pWriter.println('<body>');
-    pWriter.println('  <table>');
+    pWriter.print('<body>');
+    pWriter.print('  <table>');
 
     // make header if it has values
     if (header[0] !== '0') {
-      pWriter.println('    <tr>');
+      pWriter.print('    <tr>');
       for (var k = 0; k < header.length; k++) {
         var e = escapeHelper(header[k]);
-        pWriter.println('      <td>' + e);
-        pWriter.println('      </td>');
+        pWriter.print('      <td>' + e);
+        pWriter.print('      </td>');
       }
-      pWriter.println('    </tr>');
+      pWriter.print('    </tr>');
     }
 
     // make rows
     for (var row = 0; row < table.rows.length; row++) {
-      pWriter.println('    <tr>');
+      pWriter.print('    <tr>');
       for (var col = 0; col < table.columns.length; col++) {
         var entry = table.rows[row].getString(col);
         var htmlEntry = escapeHelper(entry);
-        pWriter.println('      <td>' + htmlEntry);
-        pWriter.println('      </td>');
+        pWriter.print('      <td>' + htmlEntry);
+        pWriter.print('      </td>');
       }
-      pWriter.println('    </tr>');
+      pWriter.print('    </tr>');
     }
-    pWriter.println('  </table>');
-    pWriter.println('</body>');
+    pWriter.print('  </table>');
+    pWriter.print('</body>');
     pWriter.print('</html>');
   }
   // close and flush the pWriter

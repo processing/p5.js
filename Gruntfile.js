@@ -61,6 +61,7 @@ function getYuidocOptions() {
       helpers: [],
       preprocessor: './docs/preprocessor.js',
       outdir: 'docs/reference/'
+      //, quiet: false
     }
   };
 

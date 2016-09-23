@@ -392,6 +392,9 @@ p5.Image.prototype.resize = function(width, height){
     height = this.canvas.height * width / this.canvas.width;
   }
 
+  width = Math.floor(width);
+  height = Math.floor(height);
+
   var tempCanvas = document.createElement('canvas');
   tempCanvas.width = width;
   tempCanvas.height = height;

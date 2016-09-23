@@ -122,3 +122,18 @@ module.exports = function(data, options) {
 
 module.exports.mergeOverloadedMethods = mergeOverloadedMethods;
 module.exports.renderDescriptionsAsMarkdown = renderDescriptionsAsMarkdown;
+
+
+
+module.exports.register = function(Handlebars, options) {
+
+  Handlebars.registerHelper('root', function(context, options) {
+    // if (this.language === 'en') {
+    //   return '';
+    // } else {
+    //   return '/'+this.language;
+    // }
+    return window.location.pathname+' hi'
+  });
+};
+

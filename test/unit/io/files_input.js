@@ -21,11 +21,11 @@ suite('Files', function() {
       assert.typeOf(loadJSON, 'function');
     });
 
-    test('should return an Array', function() {
-      result = loadJSON('../assets/array.json');
+    test('should return an Object', function() {
+      result = loadJSON('unit/assets/array.json');
       assert.ok(result);
-      // assert.isObject(result, 'result is an object');
-      assert.typeOf(result, 'Array');
+      assert.isObject(result, 'result is an object');
+      // assert.typeOf(result, 'Array');
       // assert.lengthOf(result, 2);
     });
   });

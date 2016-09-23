@@ -174,9 +174,14 @@ define([
        if (!item.hash) {
 
          // FIX TO INVISIBLE OBJECTS: DH (see also listView.js)
-         var clsFunc = '#/' + item.class + '.' + item.name;
-         var idx = clsFunc.lastIndexOf('.');
-         item.hash = clsFunc.substring(0,idx) + '/' + clsFunc.substring(idx+1);
+
+         if (item.class) {
+           var clsFunc = '#/' + item.class + '.' + item.name;
+           var idx = clsFunc.lastIndexOf('.');
+           item.hash = clsFunc.substring(0,idx) + '/' + clsFunc.substring(idx+1);
+         } else {
+          item.hash = '#/' + item.name;
+         }
        }
 
        return item.hash;
