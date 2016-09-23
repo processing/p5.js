@@ -319,7 +319,19 @@ p5.RendererGL.prototype._applyColorBlend = function(v1,v2,v3,a){
   return colors;
 };
 
-
+/**
+ * Load a shader from external files
+ * @method resetShader
+ * @return {p5.Shader} 
+ * @example
+ * <div>
+ * <code>
+ * [TODO: Add example]
+ *
+ * @alt
+ * [TODO: Add alt text]
+ *
+ */
 p5.prototype.loadShader = function(fragShader, vertShader) {
   var loadedShader = new p5.Shader();
   loadedShader.shaderKey = fragShader + '|' + vertShader;
@@ -339,11 +351,40 @@ p5.prototype.loadShader = function(fragShader, vertShader) {
   return loadedShader;
 };
 
+/**
+ * Use the specified shader for rendering shapes. Shaders are only compatible
+ * with the WebGL renderer, not the default renderer.
+ * @method resetShader
+ * @param  {p5.Shader} shader Shader object that you've previously loaded
+ * @return {p5}                the p5 object
+ * @example
+ * <div>
+ * <code>
+ * [TODO: Add example]
+ *
+ * @alt
+ * [TODO: Add alt text]
+ *
+ */
 p5.prototype.shader = function(shader) {
   this._renderer.currentShader = shader;
   return this;
 };
 
+/**
+ * Restores the default shader. Code that runs after resetShader() will not
+ * be affected by previously defined shaders.
+ * @method resetShader
+ * @return {p5}                the p5 object
+ * @example
+ * <div>
+ * <code>
+ * [TODO: Add example]
+ *
+ * @alt
+ * [TODO: Add alt text]
+ *
+ */
 p5.prototype.resetShader = function() {
   this._renderer.currentShader = shader.default;
   return this;
