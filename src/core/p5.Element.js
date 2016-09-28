@@ -195,11 +195,17 @@ p5.Element.prototype.mousePressed = function (fxn) {
 /**
  * The .mouseWheel() function is called once after every time a
  * mouse wheel is scrolled over the element. This can be used to
- * attach element specific event listeners.<br><br>
- * The event.wheelDelta or event.detail property returns negative values if
- * the mouse wheel if rotated up or away from the user and positive in the
- * other direction. On OS X with "natural" scrolling enabled, the values are
- * opposite.
+ * attach element specific event listeners.
+ * <br><br>
+ * The function accepts a callback function as argument which will be executed
+ * when the `wheel` event is triggered on the element, the callabck function is
+ * passed one argument `event`. The `event.deltaY` property returns negative
+ * values if the mouse wheel is rotated up or away from the user and positive
+ * in the other direction. The `event.deltaX` does the same as `event.deltaY`
+ * except it reads the horizontal wheel scroll of the mouse wheel.
+ * <br><br>
+ * On OS X with "natural" scrolling enabled, the `event.deltaY` values are
+ * reversed.
  *
  * @method mouseWheel
  * @param  {Function} fxn function to be fired when mouse wheel is
@@ -231,8 +237,8 @@ p5.Element.prototype.mousePressed = function (fxn) {
  *
  * // this function fires with mousewheel movement
  * // over canvas only
- * function changeSize() {
- *   if (event.wheelDelta > 0) {
+ * function changeSize(event) {
+ *   if (event.deltaY > 0) {
  *     d = d + 10;
  *   } else {
  *     d = d - 10;
