@@ -321,8 +321,8 @@ p5.RendererGL.prototype._applyColorBlend = function(v1,v2,v3,a){
 
 /**
  * Load a shader from external files
- * @method resetShader
- * @return {p5.Shader} 
+ * @method loadShader
+ * @return {p5.Shader}
  * @example
  * <div>
  * <code>
@@ -354,7 +354,7 @@ p5.prototype.loadShader = function(fragShader, vertShader) {
 /**
  * Use the specified shader for rendering shapes. Shaders are only compatible
  * with the WebGL renderer, not the default renderer.
- * @method resetShader
+ * @method shader
  * @param  {p5.Shader} shader Shader object that you've previously loaded
  * @return {p5}                the p5 object
  * @example
