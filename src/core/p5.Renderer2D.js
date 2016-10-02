@@ -214,6 +214,7 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
   }
 
   var ctx = this._pInst || this;
+  ctx.loadPixels();
 
   var pd = ctx._pixelDensity;
 
