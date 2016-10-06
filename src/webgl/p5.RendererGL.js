@@ -89,7 +89,8 @@ p5.RendererGL.prototype._setDefaultCamera = function(){
     var _w = this.width;
     var _h = this.height;
     this.uPMatrix = p5.Matrix.identity();
-    this.uPMatrix.perspective(60 / 180 * Math.PI, _w / _h, 0.0001, 100);
+    var cameraZ = (this.height / 2) / Math.tan(Math.PI * 30 / 180);
+    this.uPMatrix.perspective(60 / 180 * Math.PI, _w / _h, cameraZ * 0.1, cameraZ * 10);
     this._curCamera = 'default';
   }
 };

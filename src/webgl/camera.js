@@ -148,10 +148,6 @@ p5.prototype.ortho = function(left,right,bottom,top,near,far) {
     args,
       ['Number', 'Number', 'Number', 'Number', 'Number', 'Number']
   );
-  left /= this.width;
-  right /= this.width;
-  top /= this.height;
-  bottom /= this.height;
   this._renderer.uPMatrix = p5.Matrix.identity();
   this._renderer.uPMatrix.ortho(left,right,bottom,top,near,far);
   this._renderer._curCamera = 'custom';
