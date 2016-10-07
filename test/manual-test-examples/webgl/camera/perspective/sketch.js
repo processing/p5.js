@@ -1,6 +1,8 @@
 function setup(){
   createCanvas(windowWidth, windowHeight, WEBGL);
-  perspective(60 / 180 * PI, width/height, 0.1, 100);
+  var fov = PI/3.0;
+  var cameraZ = (height/2.0) / tan(fov/2.0);
+  perspective(fov, width/height, cameraZ * 0.1, cameraZ * 10);
 }
 
 function draw(){

@@ -1,6 +1,6 @@
 function setup(){
   createCanvas(windowWidth, windowHeight, WEBGL);
-  ortho(-width/2, width/2, height/2, -height/2, 0.1, 100);
+  ortho(-width/2, width/2, height/2, -height/2, -500, 10000);
 }
 
 function draw(){
