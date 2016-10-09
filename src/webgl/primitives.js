@@ -434,7 +434,7 @@ p5.prototype.cone = function(){
 };
 
 /**
- * Draw an ellipsoid with given raduis
+ * Draw an ellipsoid with given radius
  * @method ellipsoid
  * @param  {Number} radiusx           xradius of circle
  * @param  {Number} radiusy           yradius of circle
