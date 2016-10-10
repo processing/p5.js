@@ -146,6 +146,11 @@ p5.prototype.resizeCanvas = function (w, h, noRedraw) {
     // save canvas properties
     var props = {};
     for (var key in this.drawingContext) {
+      if (key === 'webkitImageSmoothingEnabled') {
+        if ('imageSmoothingEnabled' in this.drawingContext) {
+          continue;
+        }
+      }
       var val = this.drawingContext[key];
       if (typeof val !== 'object' && typeof val !== 'function') {
         props[key] = val;
