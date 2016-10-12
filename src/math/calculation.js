@@ -166,9 +166,9 @@ p5.prototype.constrain = function(n, low, high) {
 p5.prototype.dist = function(x1, y1, z1, x2, y2, z2) {
   if (arguments.length === 4) {
     // In the case of 2d: z1 means x2 and x2 means y2
-    return Math.sqrt( (z1-x1)*(z1-x1) + (x2-y1)*(x2-y1) );
+    return hypot(z1-x1, x2-y1);
   } else if (arguments.length === 6) {
-    return Math.sqrt( (x2-x1)*(x2-x1) + (y2-y1)*(y2-y1) + (z2-z1)*(z2-z1) );
+    return hypot(x2-x1, y2-y1, z2-z1);
   }
 };
 
@@ -379,13 +379,13 @@ p5.prototype.log = Math.log;
  *   var y2 = 70;
  *
  *   line(0, 0, x1, y1);
- *   print(mag(x1, y1));  // Prints "36.05551"
+ *   print(mag(x1, y1));  // Prints "36.05551275463989"
  *   line(0, 0, x2, y1);
- *   print(mag(x2, y1));  // Prints "85.44004"
+ *   print(mag(x2, y1));  // Prints "85.44003745317531"
  *   line(0, 0, x1, y2);
- *   print(mag(x1, y2));  // Prints "72.8011"
+ *   print(mag(x1, y2));  // Prints "72.80109889280519"
  *   line(0, 0, x2, y2);
- *   print(mag(x2, y2));  // Prints "106.30146"
+ *   print(mag(x2, y2));  // Prints "106.3014581273465"
  * }
  * </code></div>
  *
@@ -394,7 +394,7 @@ p5.prototype.log = Math.log;
  *
  */
 p5.prototype.mag = function(x, y) {
-  return Math.sqrt(x*x+y*y);
+  return hypot(x, y);
 };
 
 /**
@@ -742,5 +742,47 @@ p5.prototype.sq = function(n) { return n*n; };
  *
  */
 p5.prototype.sqrt = Math.sqrt;
+
+// Calculate the length of the hypotenuse of a right triangle
+// This won't under- or overflow in intermediate steps
+// https://en.wikipedia.org/wiki/Hypot
+function hypot(x, y, z) {
+  // Use the native implementation if it's available
+  if (typeof Math.hypot === 'function') {
+    return Math.hypot.apply(null, arguments);
+  }
+
+  // Otherwise use the V8 implementation
+  // https://github.com/v8/v8/blob/8cd3cf297287e581a49e487067f5cbd991b27123/src/js/math.js#L217
+  var length = arguments.length;
+  var args = [];
+  var max = 0;
+  for (var i = 0; i < length; i++) {
+    var n = arguments[i];
+    n = +n;
+    if (n === Infinity || n === -Infinity) {
+      return Infinity;
+    }
+    n = Math.abs(n);
+    if (n > max) {
+      max = n;
+    }
+    args[i] = n;
+  }
+
+  if (max === 0) {
+    max = 1;
+  }
+  var sum = 0;
+  var compensation = 0;
+  for (var j = 0; j < length; j++) {
+    var m = args[j] / max;
+    var summand = m * m - compensation;
+    var preliminary = sum + summand;
+    compensation = (preliminary - sum) - summand;
+    sum = preliminary;
+  }
+  return Math.sqrt(sum) * max;
+}
 
 module.exports = p5;
