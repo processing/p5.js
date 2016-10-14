@@ -5,7 +5,6 @@ var shader = require('./shader');
 require('../core/p5.Renderer');
 require('./p5.Matrix');
 var uMVMatrixStack = [];
-var RESOLUTION = 1000;
 
 //@TODO should implement public method
 //to override these attributes
@@ -90,7 +89,9 @@ p5.RendererGL.prototype._setDefaultCamera = function(){
     var _w = this.width;
     var _h = this.height;
     this.uPMatrix = p5.Matrix.identity();
-    this.uPMatrix.perspective(60 / 180 * Math.PI, _w / _h, 0.0001, 100);
+    var cameraZ = (this.height / 2) / Math.tan(Math.PI * 30 / 180);
+    this.uPMatrix.perspective(60 / 180 * Math.PI, _w / _h,
+                              cameraZ * 0.1, cameraZ * 10);
     this._curCamera = 'default';
   }
 };
@@ -180,9 +181,6 @@ p5.RendererGL.prototype._getLocation =
 function(shaderProgram, isImmediateMode) {
   var gl = this.GL;
   gl.useProgram(shaderProgram);
-  shaderProgram.uResolution =
-    gl.getUniformLocation(shaderProgram, 'uResolution');
-  gl.uniform1f(shaderProgram.uResolution, RESOLUTION);
 
   //projection Matrix uniform
   shaderProgram.uPMatrixUniform =
@@ -420,11 +418,7 @@ p5.RendererGL.prototype.clear = function() {
  * @todo implement handle for components or vector as args
  */
 p5.RendererGL.prototype.translate = function(x, y, z) {
-  //@TODO: figure out how to fit the resolution
-  x = x / RESOLUTION;
-  y = -y / RESOLUTION;
-  z = z / RESOLUTION;
-  this.uMVMatrix.translate([x,y,z]);
+  this.uMVMatrix.translate([x,-y,z]);
   return this;
 };
 
