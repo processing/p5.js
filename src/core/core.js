@@ -471,6 +471,7 @@ var p5 = function(sketch, node, sync) {
   // assume "global" mode and make everything global (i.e. on the window)
   if (!sketch) {
     this._isGlobal = true;
+    p5.instance = this;
     // Loop through methods on the prototype and attach them to the window
     for (var p in p5.prototype) {
       if(typeof p5.prototype[p] === 'function') {
@@ -535,6 +536,10 @@ var p5 = function(sketch, node, sync) {
     }
   }
 };
+
+// This is a pointer to our global mode p5 instance, if we're in
+// global mode.
+p5.instance = null;
 
 // Allows for the friendly error system to be turned off when creating a sketch,
 // which can give a significant boost to performance when needed.

@@ -3,7 +3,7 @@
 <% if (item.example) { %>
 <div class="example">
   <h4>Example</h4>
-  <span class="ref_accessible">Examples for <%=item.name%></span>
+  <span class="visuallyhidden">Examples for <%=item.name%></span>
 
 	<div class="example-content" data-alt="<%= item.alt %>">
     <%= item.example %>
@@ -15,7 +15,7 @@
 <div class="description">
   <h4>Description</h4>
 
-  <p><%= item.description %></p>
+  <span class='description-text'><%= item.description %></span>
 
   <% if (item.module === 'p5.dom') { %>
     <p>This function requires you include the p5.dom library.  Add the following into the head of your index.html file:
@@ -140,7 +140,7 @@
 <div>
   <h4>Returns</h4>
     <% if (item.return.type) { %>
-      <p><span class="param-type label label-info"><%=item.return.type%></span>: <%= item.return.description %></p>
+      <p class='returns'><span class="param-type label label-info"><%=item.return.type%></span>: <%= item.return.description %></p>
     <% } %>
 </div>
 <% } %>

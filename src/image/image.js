@@ -254,7 +254,7 @@ p5.prototype.saveCanvas = function() {
  *
  *  function mousePressed() {
  *    saveFrames("out", "png", 1, 25, function(data){
- *      println(data);
+ *      print(data);
  *    });
  *  }
  *  </code></div>

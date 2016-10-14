@@ -85,7 +85,7 @@ p5.prototype.mouseY = 0;
  * function draw() {
  *   background(244, 248, 252);
  *   line(mouseX, mouseY, pmouseX, pmouseY);
- *   println(pmouseX + " -> " + mouseX);
+ *   print(pmouseX + " -> " + mouseX);
  * }
  *
  * </code>
@@ -114,7 +114,7 @@ p5.prototype.pmouseX = 0;
  *   if(mouseY == pmouseY && mouseX == pmouseX)
  *     rect(20,20,60,60);
  *
- *   println(pmouseY + " -> " + mouseY);
+ *   print(pmouseY + " -> " + mouseY);
  * }
  *
  * </code>
@@ -307,7 +307,7 @@ p5.prototype.pwinMouseY = 0;
 	*       triangle(23, 75, 50, 20, 78, 75);
 	*   }
 	*
-	*   println(mouseButton);
+	*   print(mouseButton);
 	* }
 	* </code>
  * </div>
@@ -336,7 +336,7 @@ p5.prototype.mouseButton = 0;
 	*   else
 	*     rect(25, 25, 50, 50);
 	*
-	*   println(mouseIsPressed);
+	*   print(mouseIsPressed);
 	* }
 	* </code>
 	* </div>
@@ -351,20 +351,26 @@ p5.prototype.isMousePressed = false; // both are supported
 p5.prototype._updateNextMouseCoords = function(e) {
   var x = this.mouseX;
   var y = this.mouseY;
+  var winX = this.winMouseX;
+  var winY = this.winMouseY;
   if(e.type === 'touchstart' ||
      e.type === 'touchmove' ||
      e.type === 'touchend' || e.touches) {
     x = this.touchX;
     y = this.touchY;
+    winX = this.winTouchX;
+    winY = this.winTouchY;
   } else if(this._curElement !== null) {
     var mousePos = getMousePos(this._curElement.elt, e);
     x = mousePos.x;
     y = mousePos.y;
+    winX = mousePos.winX;
+    winY = mousePos.winY;
   }
   this._setProperty('mouseX', x);
   this._setProperty('mouseY', y);
-  this._setProperty('winMouseX', e.pageX);
-  this._setProperty('winMouseY', e.pageY);
+  this._setProperty('winMouseX', winX);
+  this._setProperty('winMouseY', winY);
   if (!this._hasMouseInteracted) {
     // For first draw, make previous and next equal
     this._updateMouseCoords();
@@ -383,7 +389,9 @@ function getMousePos(canvas, evt) {
   var rect = canvas.getBoundingClientRect();
   return {
     x: evt.clientX - rect.left,
-    y: evt.clientY - rect.top
+    y: evt.clientY - rect.top,
+    winX: evt.clientX,
+    winY: evt.clientY
   };
 }
 
@@ -732,7 +740,7 @@ p5.prototype._onclick = function(e) {
  * }
  *
  * function mouseWheel(event) {
- *   println(event.delta);
+ *   print(event.delta);
  *   //move the square according to the vertical scroll amount
  *   pos += event.delta;
  *   //uncomment to block page scrolling
