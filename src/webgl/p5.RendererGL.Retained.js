@@ -112,8 +112,8 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   //TODO: This re-binds the textures each render call, which could be more
   //efficient
   this.texCount = 0;
-  this._applyUniforms();
-  this._applyUniforms(this.currentShader._uniforms);
+  this._copyRenderUniformsToShader(this.currentShader);
+  this._applyUniforms(this.currentShader);
 
   gl.drawElements(
     gl.TRIANGLES, this.gHash[gId].numberOfItems,

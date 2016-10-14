@@ -49,7 +49,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas) {
 
   //Matrices
   this.renderUniforms.uModelViewMatrix = new p5.Matrix();
-  this.renderUniforms.uProjectionMatrix = new new p5.Matrix();
+  this.renderUniforms.uProjectionMatrix = new p5.Matrix();
   this.renderUniforms.uNormalMatrix = new p5.Matrix('mat3');
   //TODO: Possibly Normal Matrix doesn't work in immediate mode? Investigate.
   
@@ -198,13 +198,23 @@ p5.RendererGL.prototype._compileShader = function(shader) {
 // UNIFORMS
 //////////////////////////////////////////////
 /**
+ * Copy data from renderUniforms to specific shader uniforms.
+ */
+p5.RendererGL.prototype._copyRenderUniformsToShader = function(shader)
+{
+  for(var uniformName in this.renderUniforms) {
+    shader.set(uniformName, this.renderUniforms[uniformName]);
+  }
+}
+
+/**
  * Apply saved uniforms to specified shader.
  */
-p5.RendererGL.prototype._applyUniforms = function(uniformsObj)
+p5.RendererGL.prototype._applyUniforms = function(shader)
 {
   var gl = this.GL;
   var shaderProgram = this.mHash[this.curShaderId];
-  var uObj = uniformsObj || p5.Shader._uniforms;
+  var uObj = shader._uniforms;
 
   for(var uName in uObj) {
     //TODO: This caching might break if one shader is used w/ multiple instances
