@@ -118,7 +118,7 @@ p5.prototype.normalMaterial = function(){
  *
  */
 p5.prototype.texture = function(tex){
-  p5.Shader._setGlobal('uSampler', tex);
+  this._renderer.shaderUniforms.uSampler = tex;
   this._renderer.shaderDefines.USE_TEXTURE = true;
 };
 
@@ -243,8 +243,8 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   this._renderer.currentShader = shader.default;
 
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
-  p5.Shader._setGlobal('uMaterialColor', colors);
-  p5.Shader._setGlobal('uSpecular', 0, '1i');
+  this._renderer.shaderUniforms.uMaterialColor = colors;
+  this._renderer.shaderUniforms.uSpecular = 0;
   this._renderer.shaderDefines.USE_LIGHTS = true;
 
   return this;
@@ -286,8 +286,8 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   this._renderer.currentShader = shader.default;
 
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
-  p5.Shader._setGlobal('uMaterialColor', colors);
-  p5.Shader._setGlobal('uSpecular', 1, '1i');
+  this._renderer.shaderUniforms.uMaterialColor = colors;
+  this._renderer.shaderUniforms.uSpecular = 1;
   this._renderer.shaderDefines.USE_LIGHTS = true;
 
   return this;

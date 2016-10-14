@@ -63,15 +63,4 @@ p5.Shader.prototype.set = function() {
   }
 };
 
-/* Shader Globals */
-p5.Shader._uniforms = {};
-
-p5.Shader._getGlobal = function(uName) {
-  return p5.Shader._uniforms[uName].data;
-};
-
-p5.Shader._setGlobal = function() {
-  p5.Shader.prototype.set.apply(p5.Shader, arguments);
-};
-
 module.exports = p5.Shader;

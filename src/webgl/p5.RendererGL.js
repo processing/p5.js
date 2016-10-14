@@ -33,24 +33,30 @@ p5.RendererGL = function(elt, pInst, isMainCanvas) {
 
   this.isP3D = true; //lets us know we're in 3d mode
   this.GL = this.drawingContext;
-  //lights
-  this.ambientLightCount = 0;
-  this.directionalLightCount = 0;
-  this.pointLightCount = 0;
   //camera
   this._curCamera = null;
-
-  p5.Shader._setGlobal('uModelViewMatrix', new p5.Matrix());
-  p5.Shader._setGlobal('uProjectionMatrix', new p5.Matrix());
-  p5.Shader._setGlobal('uNormalMatrix', new p5.Matrix('mat3'));
-  //TODO: Possibly Normal Matrix doesn't work in immediate mode? Investigate.
 
   //Geometry & Material hashes
   this.gHash = {};
   this.mHash = {};
 
   //Optional shader flags that will be passed in as #define commands
-  this.shaderDefines = {};
+  this.renderDefines = {};
+  
+  //This object stores all the variables that describe the render state. These
+  //variables are converted to shader uniforms when objects are rendered.
+  this.renderUniforms = {};
+
+  //Matrices
+  this.renderUniforms.uModelViewMatrix = new p5.Matrix();
+  this.renderUniforms.uProjectionMatrix = new new p5.Matrix();
+  this.renderUniforms.uNormalMatrix = new p5.Matrix('mat3');
+  //TODO: Possibly Normal Matrix doesn't work in immediate mode? Investigate.
+  
+  //Lights
+  this.renderUniforms.ambientLightCount = 0;
+  this.renderUniforms.directionalLightCount = 0;
+  this.renderUniforms.pointLightCount = 0;
 
   //Built-in shaders
   this.currentShader = builtInShaders.default;
@@ -97,16 +103,16 @@ p5.RendererGL.prototype._setDefaultCamera = function(){
   if(this._curCamera === null){
     var _w = this.width;
     var _h = this.height;
-    p5.Shader._setGlobal('uProjectionMatrix', p5.Matrix.identity());
+    this.renderUniforms.uProjectionMatrix = p5.Matrix.identity();
     var cameraZ = (this.height / 2) / Math.tan(Math.PI * 30 / 180);
-    p5.Shader._getGlobal('uProjectionMatrix').perspective(60 / 180 * Math.PI, _w / _h,
+    this.renderUniforms.uProjectionMatrix.perspective(60 / 180 * Math.PI, _w / _h,
                               cameraZ * 0.1, cameraZ * 10);
     this._curCamera = 'default';
   }
 };
 
 p5.RendererGL.prototype._update = function() {
-  p5.Shader._setGlobal('uModelViewMatrix', p5.Matrix.identity());
+  this.renderUniforms.uModelViewMatrix = p5.Matrix.identity();
   this.translate(0, 0, -(this.height / 2) / Math.tan(Math.PI * 30 / 180));
   //TODO: Check how Processing lighting updates on each loop
   this.ambientLightCount = 0;
@@ -151,8 +157,8 @@ p5.RendererGL.prototype._compileShader = function(shader) {
 
   //Figure out any flags that need to be appended to the shader
   var flagPrefix = '';
-  for(var flag in this.shaderDefines) {
-    if(this.shaderDefines[flag]) {
+  for(var flag in this.renderDefines) {
+    if(this.renderDefines[flag]) {
       flagPrefix += '#define ' + flag + '\n';
     }
   }
@@ -280,8 +286,8 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   this.curFillColor = colors;
   this.drawMode = 'fill';
 
-  this.shaderDefines.USE_LIGHTS = false;
-  p5.Shader._setGlobal('uMaterialColor', colors);
+  this.renderDefines.USE_LIGHTS = false;
+  this.renderUniforms.uMaterialColor = colors;
   return this;
 };
 p5.RendererGL.prototype.stroke = function(r, g, b, a) {
@@ -340,7 +346,7 @@ p5.RendererGL.prototype.resize = function(w,h) {
     this._curCamera = null;
     this._setDefaultCamera();
   }
-  p5.Shader._setGlobal('resolution', this.width, this.height);
+  this.renderUniforms.resolution = new p5.Vector(this.width, this.height);
 };
 
 /**
@@ -369,7 +375,7 @@ p5.RendererGL.prototype.clear = function() {
  * @todo implement handle for components or vector as args
  */
 p5.RendererGL.prototype.translate = function(x, y, z) {
-  p5.Shader._getGlobal('uModelViewMatrix').translate([x,-y,z]);
+  this.renderUniforms.uModelViewMatrix.translate([x,-y,z]);
   return this;
 };
 
@@ -381,14 +387,14 @@ p5.RendererGL.prototype.translate = function(x, y, z) {
  * @return {this}   [description]
  */
 p5.RendererGL.prototype.scale = function(x,y,z) {
-  p5.Shader._getGlobal('uModelViewMatrix').scale([x,y,z]);
+  this.renderUniforms.uModelViewMatrix.scale([x,y,z]);
   return this;
 };
 
 p5.RendererGL.prototype.rotate = function(rad, axis){
-  p5.Shader._getGlobal('uModelViewMatrix').rotate(rad, axis);
-  p5.Shader._getGlobal('uNormalMatrix').inverseTranspose(
-                                      p5.Shader._getGlobal('uModelViewMatrix'));
+  this.renderUniforms.uModelViewMatrix.rotate(rad, axis);
+  this.renderUniforms.uNormalMatrix.inverseTranspose(
+                                      this.renderUniforms.uModelViewMatrix);
   return this;
 };
 
@@ -412,7 +418,7 @@ p5.RendererGL.prototype.rotateZ = function(rad) {
  * MV Matrix stack.
  */
 p5.RendererGL.prototype.push = function() {
-  uMVMatrixStack.push(p5.Shader._getGlobal('uModelViewMatrix').copy());
+  uMVMatrixStack.push(this.renderUniforms.uModelViewMatrix.copy());
 };
 
 /**
@@ -423,11 +429,11 @@ p5.RendererGL.prototype.pop = function() {
   if (uMVMatrixStack.length === 0) {
     throw new Error('Invalid popMatrix!');
   }
-  p5.Shader._setGlobal('uModelViewMatrix', uMVMatrixStack.pop());
+  this.renderUniforms.uModelViewMatrix = uMVMatrixStack.pop();
 };
 
 p5.RendererGL.prototype.resetMatrix = function() {
-  p5.Shader._setGlobal('uModelViewMatrix', p5.Matrix.identity());
+  this.renderUniforms.uModelViewMatrix = p5.Matrix.identity();
   this.translate(0, 0, -800);
   return this;
 };
