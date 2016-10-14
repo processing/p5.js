@@ -199,7 +199,7 @@ p5.RendererGL.prototype._applyUniforms = function(shaderKey, uniformsObj)
 {
   var gl = this.GL;
   var shaderProgram = this.mHash[shaderKey];
-  var uObj = uniformsObj || this._uniforms;
+  var uObj = uniformsObj || p5.Shader._uniforms;
 
   for(var uName in uObj) {
     //TODO: This caching might break if one shader is used w/ multiple instances
@@ -373,7 +373,7 @@ p5.RendererGL.prototype.translate = function(x, y, z) {
   x = x / RESOLUTION;
   y = -y / RESOLUTION;
   z = z / RESOLUTION;
-  this._getUniform('uModelViewMatrix').translate([x,y,z]);
+  p5.Shader._getGlobal('uModelViewMatrix').translate([x,y,z]);
   return this;
 };
 

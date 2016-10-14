@@ -8,6 +8,7 @@
 'use strict';
 
 var p5 = require('../core/core');
+require('./p5.Shader');
 
 /**
  * Creates an ambient light with a color
@@ -43,11 +44,11 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
     this._renderer._pInst, arguments);
   var rgb = color._array.slice(0, 3);
 
-  this._renderer._setUniform('uAmbientColor[' +
+  p5.Shader._setGlobal('uAmbientColor[' +
                               this._renderer.ambientLightCount + ']', rgb);
 
   this._renderer.ambientLightCount ++;
-  this._renderer._setUniform('uAmbientLightCount',
+  p5.Shader._setGlobal('uAmbientLightCount',
                             this._renderer.ambientLightCount, '1i');
   this._renderer.shaderDefines.USE_LIGHTS = true;
 
@@ -129,7 +130,7 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
     this._renderer._pInst, [v1, v2, v3]);
   var rgb = color._array.slice(0, 3);
 
-  this._renderer._setUniform('uDirectionalColor[' +
+  p5.Shader._setGlobal('uDirectionalColor[' +
                             this._renderer.directionalLightCount + ']', rgb);
 
   var _x, _y, _z;
@@ -154,12 +155,12 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
     }
   }
 
-  this._renderer._setUniform('uLightingDirection[' +
+  p5.Shader._setGlobal('uLightingDirection[' +
                             this._renderer.directionalLightCount + ']',
                             _x, _y, _z);
 
   this._renderer.directionalLightCount ++;
-  this._renderer._setUniform('uDirectionalLightCount',
+  p5.Shader._setGlobal('uDirectionalLightCount',
                             this._renderer.directionalLightCount, '1i');
   this._renderer.shaderDefines.USE_LIGHTS = true;
 
@@ -248,7 +249,7 @@ p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
     this._renderer._pInst, [v1, v2, v3]);
   var rgb = color._array.slice(0, 3);
 
-  this._renderer._setUniform('uPointLightColor[' +
+  p5.Shader._setGlobal('uPointLightColor[' +
                              this._renderer.pointLightCount + ']', rgb);
 
   var _x, _y, _z;
@@ -273,11 +274,11 @@ p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
     }
   }
 
-  this._renderer._setUniform('uPointLightLocation[' +
+  p5.Shader._setGlobal('uPointLightLocation[' +
                               this._renderer.pointLightCount + ']', _x, _y, _z);
 
   this._renderer.pointLightCount ++;
-  this._renderer._setUniform('uPointLightCount',
+  p5.Shader._setGlobal('uPointLightCount',
                             this._renderer.pointLightCount, '1i');
   this._renderer.shaderDefines.USE_LIGHTS = true;
 

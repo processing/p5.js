@@ -113,9 +113,8 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   //efficient
   this.texCount = 0;
   this._applyUniforms(shaderKey, undefined);
-  if(this.currentShader) {
-    this._applyUniforms(shaderKey, this.currentShader._uniforms);
-  }
+  this._applyUniforms(shaderKey, this.currentShader._uniforms);
+
   gl.drawElements(
     gl.TRIANGLES, this.gHash[gId].numberOfItems,
     gl.UNSIGNED_SHORT, 0);

@@ -8,6 +8,7 @@
 'use strict';
 
 var p5 = require('../core/core');
+require('./p5.Shader');
 var shader = require('./shader');
 //require('./p5.Texture');
 
@@ -117,7 +118,7 @@ p5.prototype.normalMaterial = function(){
  *
  */
 p5.prototype.texture = function(tex){
-  this._renderer._setUniform('uSampler', tex);
+  p5.Shader._setGlobal('uSampler', tex);
   this._renderer.shaderDefines.USE_TEXTURE = true;
 };
 
@@ -242,8 +243,8 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   this._renderer.currentShader = shader.default;
 
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
-  this._renderer._setUniform('uMaterialColor', colors);
-  this._renderer._setUniform('uSpecular', 0, '1i');
+  p5.Shader._setGlobal('uMaterialColor', colors);
+  p5.Shader._setGlobal('uSpecular', 0, '1i');
   this._renderer.shaderDefines.USE_LIGHTS = true;
 
   return this;
@@ -285,8 +286,8 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   this._renderer.currentShader = shader.default;
 
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
-  this._renderer._setUniform('uMaterialColor', colors);
-  this._renderer._setUniform('uSpecular', 1, '1i');
+  p5.Shader._setGlobal('uMaterialColor', colors);
+  p5.Shader._setGlobal('uSpecular', 1, '1i');
   this._renderer.shaderDefines.USE_LIGHTS = true;
 
   return this;
@@ -334,7 +335,6 @@ p5.RendererGL.prototype._applyColorBlend = function(v1,v2,v3,a){
  */
 p5.prototype.loadShader = function(fragShader, vertShader) {
   var loadedShader = new p5.Shader();
-  loadedShader.shaderKey = fragShader + '|' + vertShader;
 
   this.loadStrings(fragShader, function(result) {
     loadedShader.fragSource = result.join('\n');
@@ -345,7 +345,7 @@ p5.prototype.loadShader = function(fragShader, vertShader) {
       loadedShader.vertSource = result.join('\n');
     });
   } else {
-    loadedShader.vertSource = shader.lightVert;
+    loadedShader.vertSource = shader.default.vertSource;
   }
 
   return loadedShader;
