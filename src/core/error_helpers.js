@@ -360,7 +360,7 @@ function helpForMisusedAtTopLevelCode(e, log) {
     //   * ReferenceError: PI is undefined             (Firefox)
     //   * Uncaught ReferenceError: PI is not defined  (Chrome)
 
-    if (e.message && e.message.indexOf(symbol.name) !== -1) {
+    if (e.message && e.message.match('\\W?'+symbol.name+'\\W') !== null) {
       log('%cDid you just try to use p5.js\'s ' + symbol.name +
           (symbol.type === 'function' ? '() ' : ' ') + symbol.type +
           '? If so, you may want to ' +

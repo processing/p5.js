@@ -31,14 +31,14 @@ Check out [p5js.org](http://p5js.org) for lots more! Here are some quicklinks:
 * [Get Started](http://p5js.org/get-started) — Create and run your first sketch!
 * [p5.js overview](https://github.com/processing/p5.js/wiki/p5.js-overview) — An overview of the main features and functionality of p5.js.
 * [Reference](http://p5js.org/reference) — The functionality supported by p5.js.
-* [Learn](http://p5js.org/learn) — Tutorials and short, prototypical examples exploring the basics of p5.js.
+* [Learn](http://p5js.org/tutorials) — Tutorials and short, prototypical examples exploring the basics of p5.js.
 * [Forum](http://forum.processing.org/two/categories/p5-js) — Ask and answers questions about how to make things with p5.js here.
 * [Libraries](http://p5js.org/libraries) — Extend p5 functionality to interact with HTML, manipulate sound, and more!
 * [FAQ](https://github.com/processing/p5.js/wiki/Frequently-Asked-Questions)
 
 ##Get Involved
 
-p5.js is a collaborative project created by many individuals, and you are invited to help. All types of involvement are welcome. See the [contribute section](http://p5js.org/contribute) to get started!
+p5.js is a collaborative project created by many individuals, and you are invited to help. All types of involvement are welcome. See the [community section](http://p5js.org/community) to get started!
 
 Developers, check out the [development](https://github.com/processing/p5.js/wiki/Development) wiki page for more in-depth details about contributing code, bug fixes, and documentation.
 

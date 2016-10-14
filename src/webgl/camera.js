@@ -64,7 +64,9 @@ p5.prototype.camera = function(x, y, z){
  * //you will see there's a vanish point
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
- *   perspective(60 / 180 * PI, width/height, 0.1, 100);
+ *   var fov = 60 / 180 * PI;
+ *   var cameraZ = (height/2.0) / tan(fov/2.0);
+ *   perspective(60 / 180 * PI, width/height, cameraZ * 0.1, cameraZ * 10);
  * }
  * function draw(){
  *  background(200);
@@ -117,7 +119,7 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
  * //there's no vanish point
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
- *   ortho(-width/2, width/2, height/2, -height/2, 0.1, 100);
+ *   ortho(-width/2, width/2, height/2, -height/2, 0, 500);
  * }
  * function draw(){
  *  background(200);
@@ -148,10 +150,6 @@ p5.prototype.ortho = function(left,right,bottom,top,near,far) {
     args,
       ['Number', 'Number', 'Number', 'Number', 'Number', 'Number']
   );
-  left /= this.width;
-  right /= this.width;
-  top /= this.height;
-  bottom /= this.height;
   this._renderer.uPMatrix = p5.Matrix.identity();
   this._renderer.uPMatrix.ortho(left,right,bottom,top,near,far);
   this._renderer._curCamera = 'custom';

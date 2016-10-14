@@ -57,19 +57,35 @@ suite('Calculation', function() {
       });
       test('should return correct distance', function() {
         result = dist(0, 0, 2, 3);
-        assert.equal(result, Math.sqrt(13));
+        assert.equal(result, 3.6055512754639896); // Math.hypot(2, 3)
       });
       test('should return positive  distance', function() {
         result = dist(0, 0, -2, -3);
-        assert.equal(result, Math.sqrt(13));
+        assert.equal(result, 3.6055512754639896); // Math.hypot(2, 3)
       });
       test('should return correct distance', function() {
         result = dist(0, 0, 0, 2, 3, 5);
-        assert.equal(result, Math.sqrt(38));
+        assert.equal(result, 6.164414002968977); // Math.hypot(2, 3, 5)
       });
       test('should return positive  distance', function() {
         result = dist(0, 0, 0, -2, -3, 5);
-        assert.equal(result, Math.sqrt(38));
+        assert.equal(result, 6.164414002968977); // Math.hypot(2, 3, 5)
+      });
+      test('should not underflow', function() {
+        result = dist(0, 0, 1e-200, 2e-200);
+        assert.notEqual(result, 0);
+      });
+      test('should not overflow', function() {
+        result = dist(0, 0, 1e200, 2e200);
+        assert.notEqual(result, Infinity);
+      });
+      test('should return 0 for identical 2D points', function() {
+        result = dist(2, 3, 2, 3);
+        assert.equal(result, 0);
+      });
+      test('should return 0 for identical 3D points', function() {
+        result = dist(2, 3, 5, 2, 3, 5);
+        assert.equal(result, 0);
       });
     });
   });
@@ -180,11 +196,11 @@ suite('Calculation', function() {
       });
       test('should return correct magitude', function() {
         result = mag(2, 3);
-        assert.equal(result, Math.sqrt(13));
+        assert.equal(result, 3.6055512754639896); // Math.hypot(2, 3)
       });
       test('should return positive magnitude given negative inputs', function() {
         result = mag(-2, -3);
-        assert.equal(result, Math.sqrt(13));
+        assert.equal(result, 3.6055512754639896); // Math.hypot(2, 3)
       });
     });
   });
