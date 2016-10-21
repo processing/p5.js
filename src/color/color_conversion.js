@@ -229,7 +229,7 @@ p5.ColorConversion._rgbaToHSLA = function(rgba) {
     if (li < 1) {
       sat = chroma / li;
     } else {
-      sat = chroma / (2 - chroma);
+      sat = chroma / (2 - li);
     }
     if (red === val) {  // Magenta to yellow.
       hue = (green - blue) / chroma;
