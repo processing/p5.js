@@ -862,7 +862,7 @@ p5.prototype.httpDo = function () {
     for (var i = 1; i < arguments.length; i++) {
       var a = arguments[i];
       if (typeof a === 'string') {
-        if (a === 'GET' || a === 'POST' || a === 'PUT') {
+        if (a === 'GET' || a === 'POST' || a === 'PUT' || a === 'DELETE') {
           method = a;
         } else {
           type = a;
