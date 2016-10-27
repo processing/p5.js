@@ -129,28 +129,12 @@ function _sAssign(sVal, iVal) {
  *
  * @method image
  * @param  {p5.Image} img    the image to display
- * @param  {Number}   [sx=0]   The X coordinate of the top left corner of the
- *                             sub-rectangle of the source image to draw into
- *                             the destination canvas.
- * @param  {Number}   [sy=0]   The Y coordinate of the top left corner of the
- *                             sub-rectangle of the source image to draw into
- *                             the destination canvas.
- * @param {Number} [sWidth=img.width] The width of the sub-rectangle of the
- *                                    source image to draw into the destination
- *                                    canvas.
- * @param {Number} [sHeight=img.height] The height of the sub-rectangle of the
- *                                      source image to draw into the
- *                                      destination context.
- * @param  {Number}   [dx=0]    The X coordinate in the destination canvas at
- *                              which to place the top-left corner of the
- *                              source image.
- * @param  {Number}   [dy=0]    The Y coordinate in the destination canvas at
- *                              which to place the top-left corner of the
- *                              source image.
- * @param  {Number}   [dWidth]  The width to draw the image in the destination
- *                              canvas. This allows scaling of the drawn image.
- * @param  {Number}   [dHeight] The height to draw the image in the destination
- *                              canvas. This allows scaling of the drawn image.
+ * @param  {Number}   x      the x-coordinate at which to place the top-left
+ *                           corner of the source image
+ * @param  {Number}   y      the y-coordinate at which to place the top-left
+ *                           corner of the source image
+ * @param  {Number}   width  the width to draw the image
+ * @param  {Number}   height the height to draw the image
  * @example
  * <div>
  * <code>
@@ -181,22 +165,33 @@ function _sAssign(sVal, iVal) {
  * image of the underside of a white umbrella and grided ceiling above
  *
  */
+ /**
+ * @method image
+ * @param  {p5.Image} img
+ * @param  {Number}   dx     the -xcoordinate in the destination canvas at
+ *                           which to place the top-left corner of the
+ *                           source image
+ * @param  {Number}   dy     the y-coordinate in the destination canvas at
+ *                           which to place the top-left corner of the
+ *                           source image
+ * @param  {Number}   dWidth the width to draw the image in the destination
+ *                           canvas
+ * @param  {Number}   dHeight the height to draw the image in the destination
+ *                            canvas
+ * @param  {Number}   sx     the x-coordinate of the top left corner of the
+ *                           sub-rectangle of the source image to draw into
+ *                           the destination canvas
+ * @param  {Number}   sy     the y-coordinate of the top left corner of the
+ *                           sub-rectangle of the source image to draw into
+ *                           the destination canvas
+ * @param {Number}    [sWidth] the width of the sub-rectangle of the
+ *                           source image to draw into the destination
+ *                           canvas
+ * @param {Number}    [sHeight] the height of the sub-rectangle of the
+ *                            source image to draw into the destination context
+ */
 p5.prototype.image =
-  function(img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight) {
-  // Temporarily disabling until options for p5.Graphics are added.
-  // var args = new Array(arguments.length);
-  // for (var i = 0; i < args.length; ++i) {
-  //   args[i] = arguments[i];
-  // }
-  // this._validateParameters(
-  //   'image',
-  //   args,
-  //   [
-  //     ['p5.Image', 'Number', 'Number'],
-  //     ['p5.Image', 'Number', 'Number', 'Number', 'Number']
-  //   ]
-  // );
-
+  function(img, dx, dy, dWidth, dHeight, sx, sy, sWidth, sHeight) {
   // set defaults per spec: https://goo.gl/3ykfOq
   if (arguments.length <= 5) {
     dx = sx || 0;
@@ -234,8 +229,8 @@ p5.prototype.image =
     this._renderer._imageMode);
 
   // tint the image if there is a tint
-  this._renderer.image(img, sx, sy, sWidth, sHeight, vals.x, vals.y, vals.w,
-    vals.h);
+  this._renderer.image(img, vals.x, vals.y, vals.w,
+    vals.h, sx, sy, sWidth, sHeight);
 };
 
 /**

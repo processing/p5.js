@@ -83,7 +83,7 @@ p5.Renderer2D.prototype.stroke = function() {
 //////////////////////////////////////////////
 
 p5.Renderer2D.prototype.image =
-  function (img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight) {
+  function (img, dx, dy, dWidth, dHeight, sx, sy, sWidth, sHeight) {
   var cnv;
   try {
     if (this._tint) {
