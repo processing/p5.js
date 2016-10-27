@@ -15,6 +15,9 @@ var p5 = require('../core/core');
  * For example, float("1234.56") evaluates to 1234.56, but float("giraffe")
  * will return NaN.
  *
+ * When an array of values is passed in, then an array of floats of the same
+ * length is returned.
+ *
  * @method float
  * @param {String}  str float string to parse
  * @return {Number}     floating point representation of string
@@ -30,6 +33,9 @@ var p5 = require('../core/core');
  *
  */
 p5.prototype.float = function(str) {
+  if (str instanceof Array) {
+    return str.map(parseFloat);
+  }
   return parseFloat(str);
 };
 
@@ -52,8 +58,8 @@ p5.prototype.float = function(str) {
  * </code></div>
  */
 p5.prototype.int = function(n, radix) {
+  radix = radix || 10;
   if (typeof n === 'string') {
-    radix = radix || 10;
     return parseInt(n, radix);
   } else if (typeof n === 'number') {
     return n | 0;
