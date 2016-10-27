@@ -1,5 +1,6 @@
 suite('p5.ColorConversion', function() {
   var rgba = [1, 0, 0.4, 0.8];
+  var rgbaWithHighLightness = [0.969, 0.753, 0.122, 0.8];
   var hsla = [336/360, 1, 0.5, 0.8];
   var hslaWithMaxHue = [1, 1, 0.5, 0.6];
   var hsba = [336/360, 1, 1, 0.8];
@@ -63,7 +64,7 @@ suite('p5.ColorConversion', function() {
   });
 
   suite('rgbaToHSLA', function() {
-    test('rgba converts to hsla', function() {
+    test('rgba converts to hsla (low lightness)', function() {
       result = p5.ColorConversion._rgbaToHSLA(rgba);
       assert.deepEqual([
         Math.round(result[0] * 360),
@@ -71,6 +72,16 @@ suite('p5.ColorConversion', function() {
         Math.round(result[2] * 100),
         result[3]
       ], [336, 100, 50, 0.8]);
+    });
+
+    test('rgba converts to hsla (high lightness)', function() {
+      result = p5.ColorConversion._rgbaToHSLA(rgbaWithHighLightness);
+      assert.deepEqual([
+        Math.round(result[0] * 360),
+        Math.round(result[1] * 100),
+        Math.round(result[2] * 100),
+        result[3]
+      ], [45, 93, 55, 0.8]);
     });
   });
 

@@ -5,7 +5,6 @@ attribute vec2 aTexCoord;
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 uniform mat3 uNormalMatrix;
-uniform float uResolution;
 uniform int uAmbientLightCount;
 uniform int uDirectionalLightCount;
 uniform int uPointLightCount;
@@ -28,14 +27,14 @@ vec3 pointLightFactor2 = vec3(0.0, 0.0, 0.0);
 
 void main(void){
 
-  vec4 positionVec4 = vec4(aPosition / uResolution, 1.0);
+  vec4 positionVec4 = vec4(aPosition, 1.0);
   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
 
   vec3 vertexNormal = vec3( uNormalMatrix * aNormal );
   vVertexNormal = vertexNormal;
   vVertTexCoord = aTexCoord;
 
-  vec4 mvPosition = uModelViewMatrix * vec4(aPosition / uResolution, 1.0);
+  vec4 mvPosition = uModelViewMatrix * vec4(aPosition, 1.0);
   vec3 eyeDirection = normalize(-mvPosition.xyz);
 
   float shininess = 32.0;
@@ -57,7 +56,6 @@ void main(void){
   for(int k = 0; k < 8; k++){
     if(uPointLightCount == k) break;
     vec3 loc = uPointLightLocation[k];
-    //loc = loc / uResolution;
     vec3 lightDirection = normalize(loc - mvPosition.xyz);
 
     float directionalLightWeighting = max(dot(vertexNormal, lightDirection), 0.0);
