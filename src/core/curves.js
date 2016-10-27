@@ -97,7 +97,7 @@ p5.prototype.bezier = function() {
         'Number', 'Number', 'Number', 'Number' ]
     );
   }
-  if (!this._renderer._doStroke) {
+  if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
   if (this._renderer.isP3D){
