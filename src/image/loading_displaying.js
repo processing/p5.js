@@ -165,7 +165,7 @@ function _sAssign(sVal, iVal) {
  * image of the underside of a white umbrella and grided ceiling above
  *
  */
- /**
+/**
  * @method image
  * @param  {p5.Image} img
  * @param  {Number}   dx     the -xcoordinate in the destination canvas at

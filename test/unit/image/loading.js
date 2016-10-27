@@ -92,7 +92,7 @@ suite('loading images', function () {
   test('should draw cropped image', function(done) {
     myp5.loadImage(
       'unit/assets/target.gif', function(img) {
-        myp5.image(img, 5, 5, 6, 6, 0, 0, 6, 6);
+        myp5.image(img, 0, 0, 6, 6, 5, 5, 6, 6);
 
         testImageRender('unit/assets/target_small.gif', myp5, function(res) {
           assert.isTrue(res);
