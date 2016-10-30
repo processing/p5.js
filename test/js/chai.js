@@ -2625,7 +2625,7 @@
               return result === undefined ? this : result;
             };
 
-            // Re-enumerate every time to better accomodate plugins.
+            // Re-enumerate every time to better accommodate plugins.
             var asserterNames = Object.getOwnPropertyNames(ctx);
             asserterNames.forEach(function (asserterName) {
               var pd = Object.getOwnPropertyDescriptor(ctx, asserterName)
