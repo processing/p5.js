@@ -219,6 +219,8 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
   // round down to get integer numbers
   x = Math.floor(x);
   y = Math.floor(y);
+  w = Math.floor(w);
+  h = Math.floor(h);
 
   var sx = x * pd;
   var sy = y * pd;
