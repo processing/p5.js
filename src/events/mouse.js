@@ -22,7 +22,9 @@ p5.prototype._hasMouseInteracted = false;
 
 /**
  * The system variable mouseX always contains the current horizontal
- * position of the mouse, relative to (0, 0) of the canvas.
+ * position of the mouse, relative to (0, 0) of the canvas. If touch is
+ * used instead of mouse input, mouseX will hold the x value of the most
+ * recent touch point.
  *
  * @property mouseX
  *
@@ -45,7 +47,9 @@ p5.prototype.mouseX = 0;
 
 /**
  * The system variable mouseY always contains the current vertical position
- * of the mouse, relative to (0, 0) of the canvas.
+ * of the mouse, relative to (0, 0) of the canvas. If touch is
+ * used instead of mouse input, mouseY will hold the y value of the most
+ * recent touch point.
  *
  * @property mouseY
  *
@@ -68,8 +72,8 @@ p5.prototype.mouseY = 0;
 
 /**
  * The system variable pmouseX always contains the horizontal position of
- * the mouse in the frame previous to the current frame, relative to (0, 0)
- * of the canvas.
+ * the mouse or finger in the frame previous to the current frame, relative to
+ * (0, 0) of the canvas.
  *
  * @property pmouseX
  *
@@ -99,8 +103,8 @@ p5.prototype.pmouseX = 0;
 
 /**
  * The system variable pmouseY always contains the vertical position of the
- * mouse in the frame previous to the current frame, relative to (0, 0) of
- * the canvas.
+ * mouse or finger in the frame previous to the current frame, relative to
+ * (0, 0) of the canvas.
  *
  * @property pmouseY
  *
@@ -349,28 +353,13 @@ p5.prototype.mouseIsPressed = false;
 p5.prototype.isMousePressed = false; // both are supported
 
 p5.prototype._updateNextMouseCoords = function(e) {
-  var x = this.mouseX;
-  var y = this.mouseY;
-  var winX = this.winMouseX;
-  var winY = this.winMouseY;
-  if(e.type === 'touchstart' ||
-     e.type === 'touchmove' ||
-     e.type === 'touchend' || e.touches) {
-    x = this.touchX;
-    y = this.touchY;
-    winX = this.winTouchX;
-    winY = this.winTouchY;
-  } else if(this._curElement !== null) {
+  if(this._curElement !== null) {
     var mousePos = getMousePos(this._curElement.elt, e);
-    x = mousePos.x;
-    y = mousePos.y;
-    winX = mousePos.winX;
-    winY = mousePos.winY;
+    this._setProperty('mouseX', mousePos.x);
+    this._setProperty('mouseY', mousePos.y);
+    this._setProperty('winMouseX', mousePos.winX);
+    this._setProperty('winMouseY', mousePos.winY);
   }
-  this._setProperty('mouseX', x);
-  this._setProperty('mouseY', y);
-  this._setProperty('winMouseX', winX);
-  this._setProperty('winMouseY', winY);
   if (!this._hasMouseInteracted) {
     // For first draw, make previous and next equal
     this._updateMouseCoords();
@@ -497,7 +486,6 @@ p5.prototype._onmousemove = function(e){
   var context = this._isGlobal ? window : this;
   var executeDefault;
   this._updateNextMouseCoords(e);
-  this._updateNextTouchCoords(e);
   if (!this.isMousePressed) {
     if (typeof context.mouseMoved === 'function') {
       executeDefault = context.mouseMoved(e);
@@ -575,7 +563,6 @@ p5.prototype._onmousedown = function(e) {
   this._setProperty('mouseIsPressed', true);
   this._setMouseButton(e);
   this._updateNextMouseCoords(e);
-  this._updateNextTouchCoords(e);
   if (typeof context.mousePressed === 'function') {
     executeDefault = context.mousePressed(e);
     if(executeDefault === false) {
