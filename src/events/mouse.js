@@ -354,7 +354,7 @@ p5.prototype.isMousePressed = false; // both are supported
 
 p5.prototype._updateNextMouseCoords = function(e) {
   if(this._curElement !== null) {
-    var mousePos = getMousePos(this._curElement.elt, e);
+    var mousePos = getMousePos(this._curElement.elt, this.width, this.height, e);
     this._setProperty('mouseX', mousePos.x);
     this._setProperty('mouseY', mousePos.y);
     this._setProperty('winMouseX', mousePos.winX);
@@ -374,11 +374,13 @@ p5.prototype._updateMouseCoords = function() {
   this._setProperty('pwinMouseY', this.winMouseY);
 };
 
-function getMousePos(canvas, evt) {
+function getMousePos(canvas, w, h, evt) {
   var rect = canvas.getBoundingClientRect();
+  var sx = canvas.scrollWidth / w;
+  var sy = canvas.scrollHeight / h;
   return {
-    x: evt.clientX - rect.left,
-    y: evt.clientY - rect.top,
+    x: (evt.clientX - rect.left) / sx,
+    y: (evt.clientY - rect.top) / sy,
     winX: evt.clientX,
     winY: evt.clientY
   };
