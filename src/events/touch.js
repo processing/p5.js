@@ -23,20 +23,23 @@ p5.prototype._updateTouchCoords = function(e) {
   if (this._curElement !== null) {
     var touches = [];
     for(var i = 0; i < e.touches.length; i++){
-      touches[i] = getTouchInfo(this._curElement.elt, e, i);
+      touches[i] = getTouchInfo(this._curElement.elt,
+        this.width, this.height, e, i);
     }
     this._setProperty('touches', touches);
   }
 };
 
 
-function getTouchInfo(canvas, e, i) {
+function getTouchInfo(canvas, w, h, e, i) {
   i = i || 0;
   var rect = canvas.getBoundingClientRect();
+  var sx = canvas.scrollWidth / w;
+  var sy = canvas.scrollHeight / h;
   var touch = e.touches[i] || e.changedTouches[i];
   return {
-    x: touch.clientX - rect.left,
-    y: touch.clientY - rect.top,
+    x: (touch.clientX - rect.left) / sx,
+    y: (touch.clientY - rect.top) / sy,
     winX: touch.clientX,
     winY: touch.clientY,
     id: touch.identifier
