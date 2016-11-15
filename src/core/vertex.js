@@ -611,7 +611,7 @@ p5.prototype.vertex = function(x, y, moveTo) {
     this._validateParameters(
       'vertex',
       args,
-      [
+     [
         ['Number', 'Number', 'Number']
       ]
     );
@@ -650,5 +650,9 @@ p5.prototype.vertex = function(x, y, moveTo) {
   }
   return this;
 };
+
+p5.prototype.vertex(vector) {
+  var args = vector.array();
+}
 
 module.exports = p5;
