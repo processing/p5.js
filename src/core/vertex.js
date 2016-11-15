@@ -653,6 +653,48 @@ p5.prototype.vertex = function(x, y, moveTo) {
 
 p5.prototype.vertex(vector) {
   var args = vector.array();
-}
+  if(this._renderer.isP3D){
+    this._validateParameters(
+      'vertex',
+      args,
+     [
+        ['Number', 'Number', 'Number']
+      ]
+    );
+    this._renderer.vertex
+    (arguments[0], arguments[1], arguments[2]);
+  }else{
+    this._validateParameters(
+      'vertex',
+      args,
+      [
+        ['Number', 'Number'],
+        ['Number', 'Number', 'Number']
+      ]
+    );
+    var vert = [];
+    vert.isVert = true;
+    vert[0] = x;
+    vert[1] = y;
+    vert[2] = 0;
+    vert[3] = 0;
+    vert[4] = 0;
+    vert[5] = this._renderer._getFill();
+    vert[6] = this._renderer._getStroke();
+
+    if (moveTo) {
+      vert.moveTo = moveTo;
+    }
+    if (isContour) {
+      if (contourVertices.length === 0) {
+        vert.moveTo = true;
+      }
+      contourVertices.push(vert);
+    } else {
+      vertices.push(vert);
+    }
+  }
+  return this;
+};
 
 module.exports = p5;
