@@ -193,44 +193,35 @@ function _sAssign(sVal, iVal) {
 p5.prototype.image =
   function(img, dx, dy, dWidth, dHeight, sx, sy, sWidth, sHeight) {
   // set defaults per spec: https://goo.gl/3ykfOq
-  if (arguments.length <= 5) {
-    dx = sx || 0;
-    dy = sy || 0;
-    sx = 0;
-    sy = 0;
-    if (img.elt && img.elt.videoWidth && !img.canvas) { // video no canvas
-      var actualW = img.elt.videoWidth;
-      var actualH = img.elt.videoHeight;
-      dWidth = sWidth || img.elt.width;
-      dHeight = sHeight || img.elt.width*actualH/actualW;
-      sWidth = actualW;
-      sHeight = actualH;
-    } else {
-      dWidth = sWidth || img.width;
-      dHeight = sHeight || img.height;
-      sWidth = img.width;
-      sHeight = img.height;
-    }
-  } else if (arguments.length === 9) {
-    sx = sx || 0;
-    sy = sy || 0;
-    sWidth = _sAssign(sWidth, img.width);
-    sHeight = _sAssign(sHeight, img.height);
 
-    dx = dx || 0;
-    dy = dy || 0;
-    dWidth = dWidth || img.width;
-    dHeight = dHeight || img.height;
-  } else {
-    throw 'Wrong number of arguments to image()';
+  var defW = img.width;
+  var defH = img.height;
+
+  if (img.elt && img.elt.videoWidth && !img.canvas) { // video no canvas
+    var actualW = img.elt.videoWidth;
+    var actualH = img.elt.videoHeight;
+    defW = img.elt.videoWidth;
+    defH = img.elt.width*actualH/actualW;
   }
 
-  var vals = canvas.modeAdjust(dx, dy, dWidth, dHeight,
+  var _dx = dx;
+  var _dy = dy;
+  var _dw = dWidth || defW;
+  var _dh = dHeight || defH;
+  var _sx = sx || 0;
+  var _sy = sy || 0;
+  var _sw = sWidth || defW;
+  var _sh = sHeight || defH;
+
+  _sw = _sAssign(_sw, defW);
+  _sh = _sAssign(_sh, defH);
+
+  var vals = canvas.modeAdjust(_dx, _dy, _dw, _dh,
     this._renderer._imageMode);
 
   // tint the image if there is a tint
-  this._renderer.image(img, vals.x, vals.y, vals.w,
-    vals.h, sx, sy, sWidth, sHeight);
+  this._renderer.image(img, _sx, _sy, _sw, _sh, vals.x, vals.y, vals.w,
+    vals.h);
 };
 
 /**
