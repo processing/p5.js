@@ -216,6 +216,16 @@ p5.prototype.image =
   _sw = _sAssign(_sw, defW);
   _sh = _sAssign(_sh, defH);
 
+  var pd = 1;
+  if (img.elt && img.elt.width) {
+    pd = img.elt.width / parseInt(img.elt.style.width, 10);
+  }
+
+  _sx *= pd;
+  _sy *= pd;
+  _sh *= pd;
+  _sw *= pd;
+
   var vals = canvas.modeAdjust(_dx, _dy, _dw, _dh,
     this._renderer._imageMode);
 
@@ -223,6 +233,7 @@ p5.prototype.image =
   this._renderer.image(img, _sx, _sy, _sw, _sh, vals.x, vals.y, vals.w,
     vals.h);
 };
+
 
 /**
  * Sets the fill value for displaying images. Images can be tinted to
