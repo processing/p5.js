@@ -132,7 +132,8 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
  * height is a circle. By default, the first two parameters set the location,
  * and the third and fourth parameters set the shape's width and height. If
  * no height is specified, the value of width is used for both the width and
- * height. The origin may be changed with the ellipseMode() function.
+ * height. If a negative height or width is specified, the absolute value is taken.
+ * The origin may be changed with the ellipseMode() function.
  *
  * @method ellipse
  * @param  {Number} x x-coordinate of the ellipse.
