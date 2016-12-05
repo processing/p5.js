@@ -65,19 +65,6 @@ require('../core/error_helpers');
  *
  */
 p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  this._validateParameters(
-    'text',
-    args,
-    [
-      ['*', 'Number', 'Number'],
-      ['*', 'Number', 'Number', 'Number', 'Number']
-    ]
-  );
-
   return (!(this._renderer._doFill || this._renderer._doStroke)) ? this :
     this._renderer.text.apply(this._renderer, arguments);
 };

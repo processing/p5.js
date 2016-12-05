@@ -79,24 +79,6 @@ p5.prototype.bezier = function() {
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  if(this._renderer.isP3D){
-    this._validateParameters(
-      'bezier',
-      args,
-      ['Number', 'Number', 'Number',
-      'Number', 'Number', 'Number',
-      'Number', 'Number', 'Number',
-      'Number', 'Number', 'Number'
-      ]
-    );
-  } else{
-    this._validateParameters(
-      'bezier',
-      args,
-      [ 'Number', 'Number', 'Number', 'Number',
-        'Number', 'Number', 'Number', 'Number' ]
-    );
-  }
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
@@ -337,24 +319,6 @@ p5.prototype.curve = function() {
   var args = new Array(arguments.length);
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
-  }
-  if(this._renderer.isP3D){
-    this._validateParameters(
-      'curve',
-      args,
-      ['Number', 'Number', 'Number',
-      'Number', 'Number', 'Number',
-      'Number', 'Number', 'Number',
-      'Number', 'Number', 'Number'
-      ]
-    );
-  } else{
-    this._validateParameters(
-      'curve',
-      args,
-      [ 'Number', 'Number', 'Number', 'Number',
-        'Number', 'Number', 'Number', 'Number' ]
-    );
   }
   if (!this._renderer._doStroke) {
     return this;

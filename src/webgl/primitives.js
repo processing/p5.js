@@ -199,8 +199,6 @@ p5.prototype.sphere = function(){
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  //@todo validate params here
-  //
   var radius = args[0] || 50;
   var detailX = typeof args[1] === 'number' ? args[1] : 24;
   var detailY = typeof args[2] === 'number' ? args[2] : 16;
@@ -706,8 +704,6 @@ p5.RendererGL.prototype.quad = function(){
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  //@todo validate params here
-  //
   var x1 = args[0],
     y1 = args[1],
     x2 = args[2],

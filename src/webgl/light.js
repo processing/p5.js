@@ -105,40 +105,6 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
  *
  */
 p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
-  // TODO(jgessner): Find an example using this and profile it.
-  // var args = new Array(arguments.length);
-  // for (var i = 0; i < args.length; ++i) {
-  //   args[i] = arguments[i];
-  // }
-  // this._validateParameters(
-  //   'directionalLight',
-  //   args,
-  //   [
-  //     //rgbaxyz
-  //     ['Number', 'Number', 'Number', 'Number', 'Number', 'Number', 'Number'],
-  //     //rgbxyz
-  //     ['Number', 'Number', 'Number', 'Number', 'Number', 'Number'],
-  //     //caxyz
-  //     ['Number', 'Number', 'Number', 'Number', 'Number'],
-  //     //cxyz
-  //     ['Number', 'Number', 'Number', 'Number'],
-  //     ['String', 'Number', 'Number', 'Number'],
-  //     ['Array', 'Number', 'Number', 'Number'],
-  //     ['Object', 'Number', 'Number', 'Number'],
-  //     //rgbavector
-  //     ['Number', 'Number', 'Number', 'Number', 'Object'],
-  //     //rgbvector
-  //     ['Number', 'Number', 'Number', 'Object'],
-  //     //cavector
-  //     ['Number', 'Number', 'Object'],
-  //     //cvector
-  //     ['Number', 'Object'],
-  //     ['String', 'Object'],
-  //     ['Array', 'Object'],
-  //     ['Object', 'Object']
-  //   ]
-  // );
-
   var gl = this._renderer.GL;
   var shaderProgram = this._renderer._getShader(
     'lightVert', 'lightTextureFrag');
@@ -240,40 +206,6 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
  *
  */
 p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
-  // TODO(jgessner): Find an example using this and profile it.
-  // var args = new Array(arguments.length);
-  // for (var i = 0; i < args.length; ++i) {
-  //   args[i] = arguments[i];
-  // }
-  // this._validateParameters(
-  //   'pointLight',
-  //   arguments,
-  //   [
-  //     //rgbaxyz
-  //     ['Number', 'Number', 'Number', 'Number', 'Number', 'Number', 'Number'],
-  //     //rgbxyz
-  //     ['Number', 'Number', 'Number', 'Number', 'Number', 'Number'],
-  //     //caxyz
-  //     ['Number', 'Number', 'Number', 'Number', 'Number'],
-  //     //cxyz
-  //     ['Number', 'Number', 'Number', 'Number'],
-  //     ['String', 'Number', 'Number', 'Number'],
-  //     ['Array', 'Number', 'Number', 'Number'],
-  //     ['Object', 'Number', 'Number', 'Number'],
-  //     //rgbavector
-  //     ['Number', 'Number', 'Number', 'Number', 'Object'],
-  //     //rgbvector
-  //     ['Number', 'Number', 'Number', 'Object'],
-  //     //cavector
-  //     ['Number', 'Number', 'Object'],
-  //     //cvector
-  //     ['Number', 'Object'],
-  //     ['String', 'Object'],
-  //     ['Array', 'Object'],
-  //     ['Object', 'Object']
-  //   ]
-  // );
-
   var gl = this._renderer.GL;
   var shaderProgram = this._renderer._getShader(
     'lightVert', 'lightTextureFrag');

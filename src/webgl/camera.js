@@ -35,15 +35,6 @@ var p5 = require('../core/core');
  *
  */
 p5.prototype.camera = function(x, y, z){
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  this._validateParameters(
-    'camera',
-    args,
-    ['Number', 'Number', 'Number']
-  );
   //what it manipulates is the model view matrix
   this._renderer.translate(-x, -y, -z);
 };
@@ -88,15 +79,6 @@ p5.prototype.camera = function(x, y, z){
  *
  */
 p5.prototype.perspective = function(fovy,aspect,near,far) {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  this._validateParameters(
-    'perspective',
-    args,
-    ['Number', 'Number', 'Number', 'Number']
-  );
   this._renderer.uPMatrix = p5.Matrix.identity();
   this._renderer.uPMatrix.perspective(fovy,aspect,near,far);
   this._renderer._curCamera = 'custom';
@@ -141,15 +123,6 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
  *
  */
 p5.prototype.ortho = function(left,right,bottom,top,near,far) {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  this._validateParameters(
-    'ortho',
-    args,
-      ['Number', 'Number', 'Number', 'Number', 'Number', 'Number']
-  );
   this._renderer.uPMatrix = p5.Matrix.identity();
   this._renderer.uPMatrix.ortho(left,right,bottom,top,near,far);
   this._renderer._curCamera = 'custom';

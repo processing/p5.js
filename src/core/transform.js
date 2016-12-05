@@ -141,18 +141,7 @@ p5.prototype.rotate = function() {
  * @return {[type]}     [description]
  */
 p5.prototype.rotateX = function(rad) {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
   if (this._renderer.isP3D) {
-    this._validateParameters(
-      'rotateX',
-      args,
-      [
-        ['Number']
-      ]
-    );
     this._renderer.rotateX(rad);
   } else {
     throw 'not supported in p2d. Please use webgl mode';
@@ -168,17 +157,6 @@ p5.prototype.rotateX = function(rad) {
  */
 p5.prototype.rotateY = function(rad) {
   if (this._renderer.isP3D) {
-    var args = new Array(arguments.length);
-    for (var i = 0; i < args.length; ++i) {
-      args[i] = arguments[i];
-    }
-    this._validateParameters(
-      'rotateY',
-      args,
-      [
-        ['Number']
-      ]
-    );
     this._renderer.rotateY(rad);
   } else {
     throw 'not supported in p2d. Please use webgl mode';
@@ -194,17 +172,6 @@ p5.prototype.rotateY = function(rad) {
  */
 p5.prototype.rotateZ = function(rad) {
   if (this._renderer.isP3D) {
-    var args = new Array(arguments.length);
-    for (var i = 0; i < args.length; ++i) {
-      args[i] = arguments[i];
-    }
-    this._validateParameters(
-      'rotateZ',
-      args,
-      [
-        ['Number']
-      ]
-    );
     this._renderer.rotateZ(rad);
   } else {
     throw 'not supported in p2d. Please use webgl mode';
@@ -416,30 +383,9 @@ p5.prototype.shearY = function(angle) {
  *
  */
 p5.prototype.translate = function(x, y, z) {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-
   if (this._renderer.isP3D) {
-    this._validateParameters(
-      'translate',
-      args,
-      [
-        //p3d
-        ['Number', 'Number', 'Number']
-      ]
-    );
     this._renderer.translate(x, y, z);
   } else {
-    this._validateParameters(
-      'translate',
-      args,
-      [
-        //p2d
-        ['Number', 'Number']
-      ]
-    );
     this._renderer.translate(x, y);
   }
   return this;
