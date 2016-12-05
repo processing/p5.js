@@ -149,7 +149,7 @@ p5.RendererGL.prototype._bindImmediateBuffers = function(vertices, colors){
   gl.vertexAttribPointer(shaderProgram.vertexColorAttribute,
     4, gl.FLOAT, false, 0, 0);
   //matrix
-  this._setMatrixUniforms(shaderKey);
+  this._applyUniforms(shaderKey);
   //@todo implement in all shaders (not just immediateVert)
   //set our default point size
   // this._setUniform1f(shaderKey,

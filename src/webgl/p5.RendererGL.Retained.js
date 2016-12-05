@@ -21,11 +21,11 @@ p5.RendererGL.prototype._initBufferDefaults = function(gId) {
 
   var gl = this.GL;
   //create a new entry in our gHash
-  this.gHash[gId] = {};
-  this.gHash[gId].vertexBuffer = gl.createBuffer();
-  this.gHash[gId].normalBuffer = gl.createBuffer();
-  this.gHash[gId].uvBuffer = gl.createBuffer();
-  this.gHash[gId].indexBuffer = gl.createBuffer();
+  this.gHash[gId] = {'attributes': {}};
+  this.gHash[gId].attributes.vertex = {'buffer': gl.createBuffer()};
+  this.gHash[gId].attributes.normal = {'buffer': gl.createBuffer()};
+  this.gHash[gId].attributes.uv = {'buffer': gl.createBuffer()};
+  this.gHash[gId].attributes.index = {'buffer': gl.createBuffer()};
 };
 /**
  * createBuffers description
@@ -37,53 +37,40 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
   this._setDefaultCamera();
   //initialize the gl buffers for our geom groups
   this._initBufferDefaults(gId);
-  //return the current shaderProgram from our material hash
-  var shaderProgram = this.mHash[this._getCurShaderId()];
+
   //@todo rename "numberOfItems" property to something more descriptive
   //we mult the num geom faces by 3
   this.gHash[gId].numberOfItems = obj.faces.length * 3;
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
+
+  this.gHash[gId].attributes.vertex.size = 3;
+  this.gHash[gId].attributes.vertex.type = gl.FLOAT;
+  this.gHash[gId].attributes.vertex.name = 'aPosition';
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].attributes.vertex.buffer);
   gl.bufferData(
     gl.ARRAY_BUFFER,
     new Float32Array( vToNArray(obj.vertices) ),
     gl.STATIC_DRAW);
-  //vertex position
-  shaderProgram.vertexPositionAttribute =
-    gl.getAttribLocation(shaderProgram, 'aPosition');
-  gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
-  gl.vertexAttribPointer(
-    shaderProgram.vertexPositionAttribute,
-    3, gl.FLOAT, false, 0, 0);
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
+  this.gHash[gId].attributes.normal.size = 3;
+  this.gHash[gId].attributes.normal.type = gl.FLOAT;
+  this.gHash[gId].attributes.normal.name = 'aNormal';
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].attributes.normal.buffer);
   gl.bufferData(
     gl.ARRAY_BUFFER,
     new Float32Array( vToNArray(obj.vertexNormals) ),
     gl.STATIC_DRAW);
-  //vertex normal
-  shaderProgram.vertexNormalAttribute =
-    gl.getAttribLocation(shaderProgram, 'aNormal');
-  gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
 
-  gl.vertexAttribPointer(
-    shaderProgram.vertexNormalAttribute,
-    3, gl.FLOAT, false, 0, 0);
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
+  this.gHash[gId].attributes.uv.size = 2;
+  this.gHash[gId].attributes.uv.type = gl.FLOAT;
+  this.gHash[gId].attributes.uv.name = 'aTexCoord';
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].attributes.uv.buffer);
   gl.bufferData(
     gl.ARRAY_BUFFER,
     new Float32Array( flatten(obj.uvs) ),
     gl.STATIC_DRAW);
-  //texture coordinate Attribute
-  shaderProgram.textureCoordAttribute =
-    gl.getAttribLocation(shaderProgram, 'aTexCoord');
-  gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
-  gl.vertexAttribPointer(
-    shaderProgram.textureCoordAttribute,
-    2, gl.FLOAT, false, 0, 0);
 
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER,
+                this.gHash[gId].attributes.index.buffer);
   gl.bufferData(
     gl.ELEMENT_ARRAY_BUFFER,
     new Uint16Array( flatten(obj.faces) ),
@@ -98,26 +85,36 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
 p5.RendererGL.prototype.drawBuffers = function(gId) {
   this._setDefaultCamera();
   var gl = this.GL;
-  var shaderKey = this._getCurShaderId();
-  var shaderProgram = this.mHash[shaderKey];
-  //vertex position buffer
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
-  gl.vertexAttribPointer(
-    shaderProgram.vertexPositionAttribute,
-    3, gl.FLOAT, false, 0, 0);
-  //normal buffer
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
-  gl.vertexAttribPointer(
-    shaderProgram.vertexNormalAttribute,
-    3, gl.FLOAT, false, 0, 0);
-  // uv buffer
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
-  gl.vertexAttribPointer(
-    shaderProgram.textureCoordAttribute,
-    2, gl.FLOAT, false, 0, 0);
-  //vertex index buffer
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
-  this._setMatrixUniforms(shaderKey);
+  var shaderProgram, shaderKey;
+  if(this.currentShader.vertSource === undefined ||
+     this.currentShader.fragSource === undefined) {
+    // The shader isn't loaded, so don't render anything this pass
+    return;
+  } else {
+    shaderProgram = this._compileShader(this.currentShader);
+    shaderKey = this.curShaderId;
+  }
+  gl.useProgram(shaderProgram);
+
+  for(var attribName in this.gHash[gId].attributes) {
+    if(attribName !== 'index') {
+      var attribute = this.gHash[gId].attributes[attribName];
+      gl.bindBuffer(gl.ARRAY_BUFFER, attribute.buffer);
+      var attribLocation = gl.getAttribLocation(shaderProgram, attribute.name);
+      if(attribLocation !== -1) {
+        gl.enableVertexAttribArray(attribLocation);
+        gl.vertexAttribPointer(attribLocation,
+                               attribute.size, attribute.type, false, 0, 0);
+      }
+    }
+  }
+
+  //TODO: This re-binds the textures each render call, which could be more
+  //efficient
+  this.texCount = 0;
+  this._copyRenderUniformsToShader(this.currentShader);
+  this._applyUniforms(this.currentShader);
+
   gl.drawElements(
     gl.TRIANGLES, this.gHash[gId].numberOfItems,
     gl.UNSIGNED_SHORT, 0);

@@ -8,6 +8,8 @@
 'use strict';
 
 var p5 = require('../core/core');
+require('./p5.Shader');
+var shader = require('./shader');
 //require('./p5.Texture');
 
 /**
@@ -36,7 +38,7 @@ var p5 = require('../core/core');
  *
  */
 p5.prototype.normalMaterial = function(){
-  this._renderer._getShader('normalVert', 'normalFrag');
+  this._renderer.currentShader = shader.normal;
   return this;
 };
 
@@ -115,64 +117,57 @@ p5.prototype.normalMaterial = function(){
  * black canvas
  *
  */
-p5.prototype.texture = function(){
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  var gl = this._renderer.GL;
-  var shaderProgram = this._renderer._getShader('lightVert',
-    'lightTextureFrag');
-  gl.useProgram(shaderProgram);
-  var textureData;
-  //if argument is not already a texture
-  //create a new one
-  if(!args[0].isTexture){
-    if (args[0] instanceof p5.Image) {
-      textureData = args[0].canvas;
-    }
-    //if param is a video
-    else if (typeof p5.MediaElement !== 'undefined' &&
-            args[0] instanceof p5.MediaElement){
-      if(!args[0].loadedmetadata) {return;}
-      textureData = args[0].elt;
-    }
-    //used with offscreen 2d graphics renderer
-    else if(args[0] instanceof p5.Graphics){
-      textureData = args[0].elt;
-    }
-    var tex = gl.createTexture();
-    args[0]._setProperty('tex', tex);
-    args[0]._setProperty('isTexture', true);
-    this._renderer._bind.call(this, tex, textureData);
-  }
-  else {
-    if(args[0] instanceof p5.Graphics ||
-      (typeof p5.MediaElement !== 'undefined' &&
-      args[0] instanceof p5.MediaElement)){
-      textureData = args[0].elt;
-    }
-    else if(args[0] instanceof p5.Image){
-      textureData = args[0].canvas;
-    }
-    this._renderer._bind.call(this, args[0].tex, textureData);
-  }
-  //this is where we'd activate multi textures
-  //eg. gl.activeTexture(gl.TEXTURE0 + (unit || 0));
-  //but for now we just have a single texture.
-  //@TODO need to extend this functionality
-  gl.activeTexture(gl.TEXTURE0);
-  gl.bindTexture(gl.TEXTURE_2D, args[0].tex);
-  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), true);
-  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'uSampler'), 0);
-  return this;
+p5.prototype.texture = function(tex){
+  this._renderer.shaderUniforms.uSampler = tex;
+  this._renderer.shaderDefines.USE_TEXTURE = true;
 };
 
 /**
  * Texture Util functions
  */
+p5.RendererGL.prototype._applyTexUniform = function(textureObj, slot){
+  var gl = this.GL;
+  var textureData;
+
+  gl.activeTexture(gl.TEXTURE0 + slot);
+  //if argument is not already a texture
+  //create a new one
+  if(!textureObj.isTexture){
+    if (textureObj instanceof p5.Image) {
+      textureData = textureObj.canvas;
+    }
+    //if param is a video
+    else if (typeof p5.MediaElement !== 'undefined' &&
+             textureObj instanceof p5.MediaElement){
+      if(!textureObj.loadedmetadata) {return;}
+      textureData = textureObj.elt;
+    }
+    //used with offscreen 2d graphics renderer
+    else if(textureObj instanceof p5.Graphics){
+      textureData = textureObj.elt;
+    }
+    var tex = gl.createTexture();
+    textureObj._setProperty('tex', tex);
+    textureObj._setProperty('isTexture', true);
+    this._bind(tex, textureData);
+  }
+  else {
+    if(textureObj instanceof p5.Graphics ||
+      (typeof p5.MediaElement !== 'undefined' &&
+      textureObj instanceof p5.MediaElement)){
+      textureData = textureObj.elt;
+    }
+    else if(textureObj instanceof p5.Image){
+      textureData = textureObj.canvas;
+    }
+    this._bind(textureObj.tex, textureData);
+  }
+
+  gl.bindTexture(gl.TEXTURE_2D, textureObj.tex);
+};
+
 p5.RendererGL.prototype._bind = function(tex, data){
-  var gl = this._renderer.GL;
+  var gl = this.GL;
   gl.bindTexture(gl.TEXTURE_2D, tex);
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
   gl.texImage2D(gl.TEXTURE_2D, 0,
@@ -245,23 +240,12 @@ p5.RendererGL.prototype._bind = function(tex, data){
  *
  */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
-  var gl = this._renderer.GL;
-  var shaderProgram =
-    this._renderer._getShader('lightVert', 'lightTextureFrag');
+  this._renderer.currentShader = shader.default;
 
-  gl.useProgram(shaderProgram);
-  shaderProgram.uMaterialColor = gl.getUniformLocation(
-    shaderProgram, 'uMaterialColor' );
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
-
-  gl.uniform4f(shaderProgram.uMaterialColor,
-    colors[0], colors[1], colors[2], colors[3]);
-
-  shaderProgram.uSpecular = gl.getUniformLocation(
-    shaderProgram, 'uSpecular' );
-  gl.uniform1i(shaderProgram.uSpecular, false);
-
-  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
+  this._renderer.shaderUniforms.uMaterialColor = colors;
+  this._renderer.shaderUniforms.uSpecular = 0;
+  this._renderer.shaderDefines.USE_LIGHTS = true;
 
   return this;
 };
@@ -299,19 +283,12 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  *
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
-  var gl = this._renderer.GL;
-  var shaderProgram =
-    this._renderer._getShader('lightVert', 'lightTextureFrag');
-  gl.useProgram(shaderProgram);
-  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
-  shaderProgram.uMaterialColor = gl.getUniformLocation(
-    shaderProgram, 'uMaterialColor' );
+  this._renderer.currentShader = shader.default;
+
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
-  gl.uniform4f(shaderProgram.uMaterialColor,
-    colors[0], colors[1], colors[2], colors[3]);
-  shaderProgram.uSpecular = gl.getUniformLocation(
-    shaderProgram, 'uSpecular' );
-  gl.uniform1i(shaderProgram.uSpecular, true);
+  this._renderer.shaderUniforms.uMaterialColor = colors;
+  this._renderer.shaderUniforms.uSpecular = 1;
+  this._renderer.shaderDefines.USE_LIGHTS = true;
 
   return this;
 };
@@ -341,6 +318,76 @@ p5.RendererGL.prototype._applyColorBlend = function(v1,v2,v3,a){
     gl.disable(gl.BLEND);
   }
   return colors;
+};
+
+/**
+ * Load a shader from external files
+ * @method loadShader
+ * @return {p5.Shader}
+ * @example
+ * <div>
+ * <code>
+ * [TODO: Add example]
+ *
+ * @alt
+ * [TODO: Add alt text]
+ *
+ */
+p5.prototype.loadShader = function(fragShader, vertShader) {
+  var loadedShader = new p5.Shader();
+
+  this.loadStrings(fragShader, function(result) {
+    loadedShader.fragSource = result.join('\n');
+  });
+
+  if(vertShader !== undefined) {
+    this.loadStrings(vertShader, function(result) {
+      loadedShader.vertSource = result.join('\n');
+    });
+  } else {
+    loadedShader.vertSource = shader.default.vertSource;
+  }
+
+  return loadedShader;
+};
+
+/**
+ * Use the specified shader for rendering shapes. Shaders are only compatible
+ * with the WebGL renderer, not the default renderer.
+ * @method shader
+ * @param  {p5.Shader} shader Shader object that you've previously loaded
+ * @return {p5}                the p5 object
+ * @example
+ * <div>
+ * <code>
+ * [TODO: Add example]
+ *
+ * @alt
+ * [TODO: Add alt text]
+ *
+ */
+p5.prototype.shader = function(shader) {
+  this._renderer.currentShader = shader;
+  return this;
+};
+
+/**
+ * Restores the default shader. Code that runs after resetShader() will not
+ * be affected by previously defined shaders.
+ * @method resetShader
+ * @return {p5}                the p5 object
+ * @example
+ * <div>
+ * <code>
+ * [TODO: Add example]
+ *
+ * @alt
+ * [TODO: Add alt text]
+ *
+ */
+p5.prototype.resetShader = function() {
+  this._renderer.currentShader = shader.default;
+  return this;
 };
 
 module.exports = p5;

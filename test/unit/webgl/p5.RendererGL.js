@@ -23,3 +23,34 @@ suite('p5.RendererGL', function() {
     });
   });
 });
+
+suite('p5.RendererGL.prototype._setUniform', function() {
+  var setUniform = p5.RendererGL.prototype._setUniform;
+  var uniforms = {};
+
+  suite('_setUniform()', function() {
+    test('parses floats', function() {
+      uniforms = {};
+      setUniform(uniforms, 'test', 1);
+      assert.equal(uniforms.test.type, '1f');
+    });
+
+    test('parses ints (when explicitly specified)', function() {
+      uniforms = {};
+      setUniform(uniforms, 'test', 1, '1i');
+      assert.equal(uniforms.test.type, '1i');
+    });
+
+    test('parses 3d vectors', function() {
+      uniforms = {};
+      setUniform(uniforms, 'test1', 0, 1, 2);
+      setUniform(uniforms, 'test2', [0, 1, 2]);
+      setUniform(uniforms, 'test3', new p5.Vector(0, 1, 2));
+      assert.equal(uniforms.test1.type, '3fv');
+      assert.equal(uniforms.test2.type, '3fv');
+      assert.equal(uniforms.test3.type, '3fv');
+    });
+
+    //TODO: test out the full list of supported uniform types
+  });
+});

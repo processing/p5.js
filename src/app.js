@@ -50,6 +50,7 @@ require('./webgl/p5.RendererGL');
 require('./webgl/p5.Geometry');
 require('./webgl/p5.RendererGL.Retained');
 require('./webgl/p5.RendererGL.Immediate');
+require('./webgl/p5.Shader');
 require('./webgl/primitives');
 require('./webgl/loading');
 require('./webgl/p5.Matrix');
