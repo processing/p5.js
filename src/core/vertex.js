@@ -583,7 +583,8 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  * endShape() functions.
  *
  * @method vertex
- * @param  {Number} x x-coordinate of the vertex
+ * @param  {Number|p5.Vector} x x-coordinate of the vertex, or a p5.Vector
+ * object containing values for both the x- and y-coordinate
  * @param  {Number} y y-coordinate of the vertex
  * @return {Object}   the p5 object
  * @example
@@ -596,6 +597,19 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  * vertex(30, 75);
  * endShape();
  * </code>
+ * <code>
+ * var vectorArray = [
+ *  new p5.Vector(30, 20),
+ *  new p5.Vector(85, 20),
+ *  new p5.Vector(85, 75),
+ *  new p5.Vector(30, 75)
+ * ]
+ * beginShape(POINTS);
+ * for (var i = 0; i < vectorArray.length; i++) {
+ *  vertex(vectorArray[i]);
+ * }
+ * endShape();
+ * </code>
  * </div>
  *
  * @alt
@@ -603,33 +617,45 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  *
  */
 p5.prototype.vertex = function(x, y, moveTo) {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  if(this._renderer.isP3D){
-    this._validateParameters(
-      'vertex',
-      args,
-      [
-        ['Number', 'Number', 'Number']
-      ]
-    );
-    this._renderer.vertex
-    (arguments[0], arguments[1], arguments[2]);
-  }else{
-    this._validateParameters(
-      'vertex',
-      args,
-      [
-        ['Number', 'Number'],
-        ['Number', 'Number', 'Number']
-      ]
-    );
+  if (this._renderer.isP3D) {
+    if (arguments[0] instanceof p5.Vector) {
+      this._renderer.vertex(
+        arguments[0].x,
+        arguments[0].y,
+        arguments[0].z
+      );
+    } else {
+      this._validateParameters(
+        'vertex',
+        arguments,
+        [
+          ['Number', 'Number', 'Number']
+        ]
+      );
+      this._renderer.vertex(
+        arguments[0],
+        arguments[1],
+        arguments[2]
+      );
+    }
+  } else {
     var vert = [];
     vert.isVert = true;
-    vert[0] = x;
-    vert[1] = y;
+    if (arguments[0] instanceof p5.Vector) {
+      vert[0] = arguments[0].x;
+      vert[1] = arguments[0].y;
+    } else {
+      this._validateParameters(
+        'vertex',
+        arguments,
+        [
+          ['Number', 'Number'],
+          ['Number', 'Number', 'Number']
+        ]
+      );
+      vert[0] = x;
+      vert[1] = y;
+    }
     vert[2] = 0;
     vert[3] = 0;
     vert[4] = 0;
