@@ -604,7 +604,7 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  */
 p5.prototype.vertex = function(x, y, moveTo) {
   if(this._renderer.isP3D){
-    this._renderer.vertex.call(arguments);
+    this._renderer.vertex(x, y, moveTo);
   }else{
     var vert = [];
     vert.isVert = true;
