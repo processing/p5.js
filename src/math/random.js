@@ -70,6 +70,7 @@ var lcg = (function() {
 p5.prototype.randomSeed = function(seed) {
   lcg.setSeed(seed);
   seeded = true;
+  previous = false;
 };
 
 /**
