@@ -10,6 +10,8 @@
 var p5 = require('../core/core');
 
 var seeded = false;
+var previous = false;
+var y2 = 0;
 
 // Linear Congruential Generator
 // Variant of a Lehman Generator
@@ -218,8 +220,6 @@ p5.prototype.random = function (min, max) {
  * 100 horizontal lines from center of canvas. height & side change each render
  * black lines radiate from center of canvas. size determined each render
  */
-var y2;
-var previous = false;
 p5.prototype.randomGaussian = function(mean, sd)  {
   var y1,x1,x2,w;
   if (previous) {
