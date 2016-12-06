@@ -379,10 +379,12 @@ p5.prototype.copy = function () {
  *
  */
 p5.prototype.filter = function(operation, value) {
-  if(this.canvas !== undefined)
+  if(this.canvas !== undefined) {
     Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
-  else
+  }
+  else {
     Filters.apply(this.elt, Filters[operation.toLowerCase()], value);
+  }
 };
 
 /**
