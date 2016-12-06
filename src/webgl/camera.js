@@ -123,6 +123,12 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
  *
  */
 p5.prototype.ortho = function(left,right,bottom,top,near,far) {
+  left = left || (-this.width/2);
+  right = right || (this.width/2);
+  bottom = bottom || (-this.height/2);
+  top = top || (this.height/2);
+  near = near || 0;
+  far = far || Math.max(this.width, this.height);
   this._renderer.uPMatrix = p5.Matrix.identity();
   this._renderer.uPMatrix.ortho(left,right,bottom,top,near,far);
   this._renderer._curCamera = 'custom';
