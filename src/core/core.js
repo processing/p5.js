@@ -216,16 +216,6 @@ var p5 = function(sketch, node, sync) {
       }
     }
 
-    // Always create a default canvas.
-    // Later on if the user calls createCanvas, this default one
-    // will be replaced
-    this.createCanvas(
-      this._defaultCanvasSize.width,
-      this._defaultCanvasSize.height,
-      'p2d',
-      true
-    );
-
     var userPreload = this.preload || window.preload; // look for "preload"
     if (userPreload) {
 
@@ -302,6 +292,16 @@ var p5 = function(sketch, node, sync) {
   };
 
   this._setup = function() {
+
+    // Always create a default canvas.
+    // Later on if the user calls createCanvas, this default one
+    // will be replaced
+    this.createCanvas(
+      this._defaultCanvasSize.width,
+      this._defaultCanvasSize.height,
+      'p2d',
+      true
+    );
 
     // return preload functions to their normal vals if switched by preload
     var context = this._isGlobal ? window : this;
