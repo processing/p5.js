@@ -28,7 +28,7 @@ require('../color/p5.Color');
  * values of the pixel at (0, 0). The second four values (indices 4-7) will
  * contain the R, G, B, A values of the pixel at (1, 0). More generally, to
  * set values for a pixel at (x, y):
- * <code><pre>
+ * ```javascript
  * var d = pixelDensity;
  * for (var i = 0; i < d; i++) {
  *   for (var j = 0; j < d; j++) {
@@ -40,8 +40,7 @@ require('../color/p5.Color');
  *     pixels[idx+3] = a;
  *   }
  * }
- * </pre></code>
- *
+ * ```
  * <p>While the above method is complex, it is flexible enough to work with
  * any pixelDensity. Note that set() will automatically take care of
  * setting all the appropriate values in pixels[] for a given (x, y) at

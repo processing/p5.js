@@ -116,18 +116,19 @@ p5.Image = function(width, height){
    * (0, 0). The second four values (indices 4-7) will contain the R, G, B, A
    * values of the pixel at (1, 0). More generally, to set values for a pixel
    * at (x, y):
-   * <code><pre>var d = pixelDensity;
+   * ```javascript
+   * var d = pixelDensity;
    * for (var i = 0; i < d; i++) {
    *   for (var j = 0; j < d; j++) {
    *     // loop over
-   *     idx = 4*((y * d + j) * width * d + (x * d + i));
+   *     idx = 4 * ((y * d + j) * width * d + (x * d + i));
    *     pixels[idx] = r;
    *     pixels[idx+1] = g;
    *     pixels[idx+2] = b;
    *     pixels[idx+3] = a;
    *   }
    * }
-   * </pre></code>
+   * ```
    * <br><br>
    * Before accessing this array, the data must loaded with the loadPixels()
    * function. After the array data has been modified, the updatePixels()
