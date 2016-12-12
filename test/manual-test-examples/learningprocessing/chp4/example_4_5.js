@@ -22,5 +22,5 @@ function draw(){
 }
 
 function keyPressed() {
-  println(key);
+  print(key);
 }

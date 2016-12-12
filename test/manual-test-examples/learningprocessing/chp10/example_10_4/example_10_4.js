@@ -20,7 +20,7 @@ function draw(){
   var passedTime = millis() - savedTime;
   // Has five seconds passed?
   if (passedTime > totalTime) {
-    println( " 5 seconds have passed! " );
+    print( " 5 seconds have passed! " );
     background(random(255)); // Color a new background
     savedTime = millis(); // Save the current time to restart the timer!
   }

@@ -19,8 +19,8 @@ function setup() {
   newRow.setString("name", "Mosquito");
   newRow.setString("type", "Insect");
   
-  println("Without a header column:", table.getObject());
-  println("With a header column:", table.getObject("name"));
+  print("Without a header column:", table.getObject());
+  print("With a header column:", table.getObject("name"));
 }
 
 // Sketch prints:
