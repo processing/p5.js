@@ -26,5 +26,5 @@ function draw(){
 
 function mousePressed() {
   // x is not available! It is local to the draw( ) block of code.
-  println( " The mouse was pressed! " );
+  print( " The mouse was pressed! " );
 }

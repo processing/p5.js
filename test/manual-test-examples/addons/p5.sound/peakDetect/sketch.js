@@ -31,7 +31,7 @@ function setup() {
 
   src_length = source_file.duration();
   source_file.playMode('restart'); 
-  println("source duration: " +src_length);
+  print("source duration: " +src_length);
 
   // draw the waveform to an off-screen graphic
   var peaks = source_file.getPeaks(); // get an array of peaks

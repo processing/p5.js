@@ -25,7 +25,7 @@ function setup() {
   
   var rows = table.matchRows("R.*", "type");
   for (var i = 0; i < rows.length; i++) {
-    println(rows[i].getString("name") + ": " + rows[i].getString("type"));
+    print(rows[i].getString("name") + ": " + rows[i].getString("type"));
   }
 }
 

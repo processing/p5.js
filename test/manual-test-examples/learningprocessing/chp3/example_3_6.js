@@ -45,5 +45,5 @@ function draw(){
 }
 
 function mousePressed() {
-  println("Take me to your leader!");
+  print("Take me to your leader!");
 }

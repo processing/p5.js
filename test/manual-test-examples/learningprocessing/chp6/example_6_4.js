@@ -11,7 +11,7 @@ var x = 0;
 function setup(){
 
 	while (x < 10) {
-	  println(x);
+	  print(x);
 	  // Decrementing x results in an infinite loop here because the value of x will never be 10 or greater. 
 	  // Be careful!
 	  x = x - 1; 

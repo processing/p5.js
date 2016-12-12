@@ -19,7 +19,7 @@ function setup() {
   newRow.setString("name", "Mosquito");
   newRow.setString("type", "Insect");
   
-  println(table.getColumn("name"));
+  print(table.getColumn("name"));
 }
 
 // Sketch prints:
