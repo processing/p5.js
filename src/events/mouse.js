@@ -375,6 +375,9 @@ p5.prototype._updateMouseCoords = function() {
 };
 
 function getMousePos(canvas, w, h, evt) {
+  if (!evt.clientX) { // use touches if touch and not mouse
+    evt = evt.touches[0] || evt.changedTouches[0];
+  }
   var rect = canvas.getBoundingClientRect();
   var sx = canvas.scrollWidth / w;
   var sy = canvas.scrollHeight / h;
@@ -382,7 +385,8 @@ function getMousePos(canvas, w, h, evt) {
     x: (evt.clientX - rect.left) / sx,
     y: (evt.clientY - rect.top) / sy,
     winX: evt.clientX,
-    winY: evt.clientY
+    winY: evt.clientY,
+    id: evt.identifier
   };
 }
 
