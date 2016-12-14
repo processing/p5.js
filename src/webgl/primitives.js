@@ -30,7 +30,7 @@ require('./p5.Geometry');
  *
  * function draw(){
  *   background(200);
- *   plane(200, 200);
+ *   plane(50, 50);
  * }
  * </code>
  * </div>
