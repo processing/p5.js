@@ -361,7 +361,7 @@ p5.prototype.setShakeThreshold = function(val){
  * 0.5.
  * @method deviceMoved
  * @example
- * <div>
+ * <div class="norender">
  * <code>
  * // Run this example on a mobile device
  * // Move the device around
@@ -396,7 +396,7 @@ p5.prototype.setShakeThreshold = function(val){
  *
  * @method deviceTurned
  * @example
- * <div>
+ * <div class="norender">
  * <code>
  * // Run this example on a mobile device
  * // Rotate the device by 90 degrees
@@ -451,7 +451,7 @@ p5.prototype.setShakeThreshold = function(val){
  * the threshold value. The default threshold is set to 30.
  * @method deviceShaken
  * @example
- * <div>
+ * <div class="norender">
  * <code>
  * // Run this example on a mobile device
  * // Shake the device to change the value.
