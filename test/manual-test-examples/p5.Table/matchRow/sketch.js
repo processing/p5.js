@@ -20,6 +20,6 @@ function setup() {
   newRow.setString("type", "Insect");
 
   var result = table.matchRow("R.*", "type");
-  println(result.getString("name"));  // Prints "Snake"
+  print(result.getString("name"));  // Prints "Snake"
 
 }

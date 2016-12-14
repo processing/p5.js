@@ -19,11 +19,11 @@ function setup() {
   newRow.setString("name", "  $Mosquito , ");
   newRow.setString("type", ",,,Insect");
   
-  println(table.getColumn("name"));
-  println(table.getColumn("type"));
+  print(table.getColumn("name"));
+  print(table.getColumn("type"));
   
   table.removeTokens(",$ ");
   
-  println(table.getColumn("name"));
-  println(table.getColumn("type"));
+  print(table.getColumn("name"));
+  print(table.getColumn("type"));
 }

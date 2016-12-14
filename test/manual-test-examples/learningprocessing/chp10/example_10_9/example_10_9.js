@@ -29,7 +29,7 @@ function draw(){
   // From Part 3. The Timer!
   // Check the timer
   if (timer.isFinished()) {
-    println( " 2 seconds have passed! " );
+    print( " 2 seconds have passed! " );
     timer.start();
   }
 
