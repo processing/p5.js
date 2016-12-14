@@ -375,7 +375,7 @@ p5.prototype._updateMouseCoords = function() {
 };
 
 function getMousePos(canvas, w, h, evt) {
-  if (!evt.clientX) { // use touches if touch and not mouse
+  if (evt && !evt.clientX) { // use touches if touch and not mouse
     evt = evt.touches[0] || evt.changedTouches[0];
   }
   var rect = canvas.getBoundingClientRect();
