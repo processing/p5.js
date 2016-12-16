@@ -19,7 +19,6 @@ To use p5.js, you can [download the p5.js library here](http://p5js.org/download
 ##Issues
 
 * You can post bugs found in the p5.js library itself here: [https://github.com/processing/p5.js/issues](https://github.com/processing/p5.js/issues)
-* You can post bugs found in the p5.js editor here: [https://github.com/processing/p5.js-editor/issues](https://github.com/processing/p5.js-editor/issues)
 * You can post bugs found on the p5js.org website here: [https://github.com/processing/p5.js-website/issues](https://github.com/processing/p5.js-website/issues)
 * You can post bugs found in the p5.Sound addon library here: [https://github.com/processing/p5.js-sound/issues](https://github.com/processing/p5.js-sound/issues)
 
