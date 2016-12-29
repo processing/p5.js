@@ -419,7 +419,7 @@ p5.Renderer2D.prototype.arc =
       ctx.lineTo(vals.x, vals.y);
     }
     ctx.closePath();
-    ctx.fill();
+    ctx.fill(this._fillRule);
   }
 
   // Stroke curves
@@ -475,7 +475,7 @@ p5.Renderer2D.prototype.ellipse = function(args) {
   ctx.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
   ctx.closePath();
   if (doFill) {
-    ctx.fill();
+    ctx.fill(this._fillRule);
   }
   if (doStroke) {
     ctx.stroke();
@@ -525,7 +525,7 @@ p5.Renderer2D.prototype.point = function(x, y) {
       constants.TWO_PI,
       false
     );
-    ctx.fill();
+    ctx.fill(this._fillRule);
   } else {
     ctx.fillRect(x, y, 1, 1);
   }
@@ -552,7 +552,7 @@ p5.Renderer2D.prototype.quad =
   ctx.lineTo(x4, y4);
   ctx.closePath();
   if (doFill) {
-    ctx.fill();
+    ctx.fill(this._fillRule);
   }
   if (doStroke) {
     ctx.stroke();
@@ -619,7 +619,7 @@ p5.Renderer2D.prototype.rect = function(args) {
     ctx.closePath();
   }
   if (this._doFill) {
-    ctx.fill();
+    ctx.fill(this._fillRule);
   }
   if (this._doStroke) {
     ctx.stroke();
@@ -651,7 +651,7 @@ p5.Renderer2D.prototype.triangle = function(args) {
   ctx.lineTo(x3, y3);
   ctx.closePath();
   if (doFill) {
-    ctx.fill();
+    ctx.fill(this._fillRule);
   }
   if (doStroke) {
     ctx.stroke();
@@ -764,7 +764,7 @@ function (mode, vertices, isCurve, isBezier,
         this.drawingContext.lineTo(v[0], v[1]);
         if (this._doFill) {
           this._pInst.fill(vertices[i + 2][5]);
-          this.drawingContext.fill();
+          this.drawingContext.fill(this._fillRule);
         }
         if (this._doStroke) {
           this._pInst.stroke(vertices[i + 2][6]);
@@ -952,6 +952,14 @@ p5.Renderer2D.prototype.strokeWeight = function(w) {
   return this;
 };
 
+p5.Renderer2D.prototype.fillRule = function(fillRule) {
+  if (fillRule === constants.NONZERO ||
+    fillRule === constants.EVENODD) {
+    this._fillRule = fillRule;
+  }
+  return this;
+};
+
 p5.Renderer2D.prototype._getFill = function(){
   return this.drawingContext.fillStyle;
 };
@@ -987,7 +995,7 @@ p5.Renderer2D.prototype.curve = function (x1, y1, x2, y2, x3, y3, x4, y4) {
 
 p5.Renderer2D.prototype._doFillStrokeClose = function () {
   if (this._doFill) {
-    this.drawingContext.fill();
+    this.drawingContext.fill(this._fillRule);
   }
   if (this._doStroke) {
     this.drawingContext.stroke();
