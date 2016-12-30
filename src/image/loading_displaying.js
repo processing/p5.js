@@ -217,7 +217,7 @@ p5.prototype.image =
   _sh = _sAssign(_sh, defH);
 
   var pd = 1;
-  if (img.elt && img.elt.width) {
+  if (img.elt && img.elt.width && img.elt.style.width) {
     pd = img.elt.width / parseInt(img.elt.style.width, 10);
   }
 
