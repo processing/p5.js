@@ -166,11 +166,11 @@ p5.prototype.constrain = function(n, low, high) {
  *
  */
 p5.prototype.dist = function() { //Takes an even infinte number of arguments
-  var total = 0 
+  var total = 0;
   for(var i=0; i < arguments.length/2; i++){
-    total += Math.pow(arguments[i]-arguments[i+arguments.length/2], 2)
+    total += Math.pow(arguments[i]-arguments[i+arguments.length/2], 2);
   }
-  return Math.sqrt(total) //Returns Euclidean distance not rounded
+  return Math.sqrt(total); //Returns Euclidean distance not rounded
 };
 
 /**
