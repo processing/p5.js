@@ -118,16 +118,18 @@ p5.prototype.constrain = function(n, low, high) {
 };
 
 /**
- * Calculates the distance between two points.
+ * Calculates the euclidean distance between two points.
  *
  * @method dist
  * @param  {Number} x1 x-coordinate of the first point
- * @param  {Number} y1 y-coordinate of the first point
+ * @param  {Number} [y1] y-coordinate of the first point
  * @param  {Number} [z1] z-coordinate of the first point
+ * @param  {Number} [...] any spacial corordiante of the first point
  * @param  {Number} x2 x-coordinate of the second point
- * @param  {Number} y2 y-coordinate of the second point
+ * @param  {Number} [y2] y-coordinate of the second point
  * @param  {Number} [z2] z-coordinate of the second point
- * @return {Number}    distance between the two points
+ * @param  {Number} [...] any spacial corordiante of the first point
+ * @return {Number} Euclidean distance between the two points
  * @example
  * <div><code>
  * // Move your mouse inside the canvas to see the
@@ -163,13 +165,12 @@ p5.prototype.constrain = function(n, low, high) {
  * 2 ellipses joined by line. 1 ellipse moves with mouse X&Y. Distance displayed.
  *
  */
-p5.prototype.dist = function(x1, y1, z1, x2, y2, z2) {
-  if (arguments.length === 4) {
-    // In the case of 2d: z1 means x2 and x2 means y2
-    return hypot(z1-x1, x2-y1);
-  } else if (arguments.length === 6) {
-    return hypot(x2-x1, y2-y1, z2-z1);
+p5.prototype.dist = function() { //Takes an even infinte number of arguments
+  total = 0 
+  for(var i=0; i < arguments.length/2; i++){
+    total += Math.pow(arguments[i]-arguments[i+arguments.length/2], 2)
   }
+  return Math.sqrt(total) //Returns Euclidean distance not rounded
 };
 
 /**
