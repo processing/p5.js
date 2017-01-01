@@ -128,7 +128,7 @@ p5.prototype.constrain = function(n, low, high) {
  * @param  {Number} x2 x-coordinate of the second point
  * @param  {Number} [y2] y-coordinate of the second point
  * @param  {Number} [z2] z-coordinate of the second point
- * @param  {Number} [...] any spacial corordiante of the first point
+ * @param  {Number} [...] any spacial corordiante of the second point
  * @return {Number} Euclidean distance between the two points
  * @example
  * <div><code>
