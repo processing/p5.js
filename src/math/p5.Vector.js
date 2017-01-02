@@ -189,7 +189,7 @@ p5.Vector.prototype.copy = function () {
  * <code>
  * var v = createVector(1, 2, 3);
  * v.add(4,5,6);
- * // v's compnents are set to [5, 7, 9]
+ * // v's components are set to [5, 7, 9]
  * </code>
  * </div>
  * <div class="norender">
@@ -240,7 +240,7 @@ p5.Vector.prototype.add = function (x, y, z) {
  * <code>
  * var v = createVector(4, 5, 6);
  * v.sub(1, 1, 1);
- * // v's compnents are set to [3, 4, 5]
+ * // v's components are set to [3, 4, 5]
  * </code>
  * </div>
  *
@@ -251,7 +251,7 @@ p5.Vector.prototype.add = function (x, y, z) {
  * var v2 = createVector(1, 2, 3);
  *
  * var v3 = p5.Vector.sub(v1, v2);
- * // v3 has compnents [1, 1, 1]
+ * // v3 has components [1, 1, 1]
  * </code>
  * </div>
  */
@@ -288,7 +288,7 @@ p5.Vector.prototype.sub = function (x, y, z) {
  * <code>
  * var v = createVector(1, 2, 3);
  * v.mult(2);
- * // v's compnents are set to [2, 4, 6]
+ * // v's components are set to [2, 4, 6]
  * </code>
  * </div>
  *
@@ -297,7 +297,7 @@ p5.Vector.prototype.sub = function (x, y, z) {
  * // Static method
  * var v1 = createVector(1, 2, 3);
  * var v2 = p5.Vector.mult(v1, 2);
- * // v2 has compnents [2, 4, 6]
+ * // v2 has components [2, 4, 6]
  * </code>
  * </div>
  */
@@ -321,7 +321,7 @@ p5.Vector.prototype.mult = function (n) {
  * <div class="norender">
  * <code>
  * var v = createVector(6, 4, 2);
- * v.div(2); //v's compnents are set to [3, 2, 1]
+ * v.div(2); //v's components are set to [3, 2, 1]
  * </code>
  * </div>
  *
@@ -330,7 +330,7 @@ p5.Vector.prototype.mult = function (n) {
  * // Static method
  * var v1  = createVector(6, 4, 2);
  * var v2 = p5.Vector.div(v, 2);
- * // v2 has compnents [3, 2, 1]
+ * // v2 has components [3, 2, 1]
  * </code>
  * </div>
  */
@@ -503,9 +503,9 @@ p5.Vector.prototype.dist = function (v) {
  * <div class="norender">
  * <code>
  * var v = createVector(10, 20, 2);
- * // v has compnents [10.0, 20.0, 2.0]
+ * // v has components [10.0, 20.0, 2.0]
  * v.normalize();
- * // v's compnents are set to
+ * // v's components are set to
  * // [0.4454354, 0.8908708, 0.089087084]
  * </code>
  * </div>
@@ -526,9 +526,9 @@ p5.Vector.prototype.normalize = function () {
  * <div class="norender">
  * <code>
  * var v = createVector(10, 20, 2);
- * // v has compnents [10.0, 20.0, 2.0]
+ * // v has components [10.0, 20.0, 2.0]
  * v.limit(5);
- * // v's compnents are set to
+ * // v's components are set to
  * // [2.2271771, 4.4543543, 0.4454354]
  * </code>
  * </div>
@@ -552,10 +552,10 @@ p5.Vector.prototype.limit = function (max) {
  * @example
  * <div class="norender">
  * <code>
- * var v1 = createVector(10, 20, 2);
- * // v has compnents [10.0, 20.0, 2.0]
- * v1.setMag(10);
- * // v's compnents are set to [6.0, 8.0, 0.0]
+ * var v = createVector(10, 20, 2);
+ * // v has components [10.0, 20.0, 2.0]
+ * v.setMag(10);
+ * // v's components are set to [6.0, 8.0, 0.0]
  * </code>
  * </div>
  */
@@ -606,9 +606,9 @@ p5.Vector.prototype.heading = function () {
  * <div class="norender">
  * <code>
  * var v = createVector(10.0, 20.0);
- * // v has compnents [10.0, 20.0, 0.0]
+ * // v has components [10.0, 20.0, 0.0]
  * v.rotate(HALF_PI);
- * // v's compnents are set to [-20.0, 9.999999, 0.0]
+ * // v's components are set to [-20.0, 9.999999, 0.0]
  * </code>
  * </div>
  */
