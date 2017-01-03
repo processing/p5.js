@@ -216,8 +216,16 @@ p5.prototype.image =
   _sw = _sAssign(_sw, defW);
   _sh = _sAssign(_sh, defH);
 
+
+  // This part needs cleanup and unit tests
+  // see issues https://github.com/processing/p5.js/issues/1741
+  // and https://github.com/processing/p5.js/issues/1673
   var pd = 1;
-  if (img.elt && img.elt.width && img.elt.style.width) {
+
+  if (img.elt && img.elt.videoWidth && img.elt.style.width && !img.canvas) {
+    pd = img.elt.videoWidth / parseInt(img.elt.style.width, 10);
+  }
+  else if (img.elt && img.elt.width && img.elt.style.width) {
     pd = img.elt.width / parseInt(img.elt.style.width, 10);
   }
 
