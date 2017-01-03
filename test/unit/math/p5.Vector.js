@@ -1,5 +1,7 @@
 
 suite('p5.Vector', function() {
+  var RADIANS = 'radians';
+  var DEGREES = 'degrees';
 
   var myp5 = new p5(function( p ) {
     p.setup = function() {};
@@ -84,8 +86,35 @@ suite('p5.Vector', function() {
       assert.equal(v.z, 0);
     });
   });
-});
 
+  suite('p5.prototype.rotate() RADIANS', function() {
+    setup(function() {
+      myp5.angleMode(RADIANS);
+      v = myp5.createVector(0, 1);
+    });
+
+    test('should have x, y, z rotated to 0, -1, 0 (RADIANS)', function() {
+      v.rotate(Math.PI);
+      assert.closeTo(v.x, 0, 0.001);
+      assert.closeTo(v.y, -1, 0.001);
+      assert.closeTo(v.z, 0, 0.001);
+    });
+  });
+
+  suite('p5.prototype.rotate() DEGREES', function() {
+    setup(function() {
+      myp5.angleMode(DEGREES);
+      v = myp5.createVector(0, 1);
+    });
+
+    test('should have x, y, z rotated to 0, -1, 0 (DEGREES)', function() {
+      v.rotate(180);
+      assert.closeTo(v.x, 0, 0.001);
+      assert.closeTo(v.y, -1, 0.001);
+      assert.closeTo(v.z, 0, 0.001);
+    });
+  });
+});
 
 //  describe('set()', function() {
 //     describe('with p5.Vector', function() {

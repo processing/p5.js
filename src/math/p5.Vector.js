@@ -613,12 +613,12 @@ p5.Vector.prototype.heading = function () {
  * </div>
  */
 p5.Vector.prototype.rotate = function (a) {
+  var newHeading = this.heading() + a;
   if (this.p5) {
     if (this.p5._angleMode === constants.DEGREES) {
-      a = polarGeometry.degreesToRadians(a);
+      newHeading = polarGeometry.degreesToRadians(newHeading);
     }
   }
-  var newHeading = this.heading() + a;
   var mag = this.mag();
   this.x = Math.cos(newHeading) * mag;
   this.y = Math.sin(newHeading) * mag;
