@@ -79,6 +79,10 @@ p5.prototype.camera = function(x, y, z){
  *
  */
 p5.prototype.perspective = function(fovy,aspect,near,far) {
+  fovy = fovy || (60 / 180 * this.PI);
+  aspect = aspect || (this.width/this.height);
+  near = near || ((this.height/2.0) / this.tan(fovy/2.0) * 0.1);
+  far = far || ((this.height/2.0) / this.tan(fovy/2.0) * 10);
   this._renderer.uPMatrix = p5.Matrix.identity();
   this._renderer.uPMatrix.perspective(fovy,aspect,near,far);
   this._renderer._curCamera = 'custom';
