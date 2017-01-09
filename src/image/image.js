@@ -77,7 +77,7 @@ var frames = [];
  * var pink = color(255, 102, 204);
  * img = createImage(66, 66);
  * img.loadPixels();
- * var d = pixelDensity;
+ * var d = pixelDensity();
  * var halfImage = 4 * (width * d) * (height/2 * d);
  * for (var i = 0; i < halfImage; i+=4) {
  *   img.pixels[i] = red(pink);
