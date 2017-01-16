@@ -168,7 +168,7 @@ function _sAssign(sVal, iVal) {
 /**
  * @method image
  * @param  {p5.Image} img
- * @param  {Number}   dx     the -xcoordinate in the destination canvas at
+ * @param  {Number}   dx     the x-coordinate in the destination canvas at
  *                           which to place the top-left corner of the
  *                           source image
  * @param  {Number}   dy     the y-coordinate in the destination canvas at
