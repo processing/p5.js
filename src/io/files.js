@@ -1421,7 +1421,11 @@ p5.prototype.downloadFile = function (href, fName, extension) {
   a.download = filename;
 
   // Firefox requires the link to be added to the DOM before click()
-  a.onclick = destroyClickedElement;
+  a.onclick = function(e) {
+    destroyClickedElement(e);
+    e.stopPropagation();
+  };
+
   a.style.display = 'none';
   document.body.appendChild(a);
 
