@@ -168,16 +168,6 @@ function _sAssign(sVal, iVal) {
 /**
  * @method image
  * @param  {p5.Image} img
- * @param  {Number}   dx     the x-coordinate in the destination canvas at
- *                           which to place the top-left corner of the
- *                           source image
- * @param  {Number}   dy     the y-coordinate in the destination canvas at
- *                           which to place the top-left corner of the
- *                           source image
- * @param  {Number}   dWidth the width to draw the image in the destination
- *                           canvas
- * @param  {Number}   dHeight the height to draw the image in the destination
- *                            canvas
  * @param  {Number}   sx     the x-coordinate of the top left corner of the
  *                           sub-rectangle of the source image to draw into
  *                           the destination canvas
@@ -189,6 +179,16 @@ function _sAssign(sVal, iVal) {
  *                           canvas
  * @param {Number}    [sHeight] the height of the sub-rectangle of the
  *                            source image to draw into the destination context
+ * @param  {Number}   dx     the x-coordinate in the destination canvas at
+ *                           which to place the top-left corner of the
+ *                           source image
+ * @param  {Number}   dy     the y-coordinate in the destination canvas at
+ *                           which to place the top-left corner of the
+ *                           source image
+ * @param  {Number}   dWidth the width to draw the image in the destination
+ *                           canvas
+ * @param  {Number}   dHeight the height to draw the image in the destination
+ *                            canvas
  */
 p5.prototype.image =
   function(img, dx, dy, dWidth, dHeight, sx, sy, sWidth, sHeight) {
