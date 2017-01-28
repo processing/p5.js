@@ -229,7 +229,7 @@ p5.prototype._onkeyup = function (e) {
   //delete this._downKeys[e.which];
   var key = String.fromCharCode(e.which);
 
-  if(!this.areDownKeys()) {
+  if(areDownKeys()) {
     this._setProperty('isKeyPressed', false);
     this._setProperty('keyIsPressed', false);
   }
@@ -365,15 +365,15 @@ p5.prototype.keyIsDown = function(code) {
  * Helps avoid instances where a multiple keys are pressed simultaneously and
  * releasing a single key will then switch the
  * keyIsPressed property to true.
- *
+ * @private
 **/
-p5.prototype.areDownKeys = function() {
+function areDownKeys() {
   for (var key in downKeys) {
     if (downKeys[key] === true ) {
       return true;
     }
   }
   return false;
-};
+}
 
 module.exports = p5;
