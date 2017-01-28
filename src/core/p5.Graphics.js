@@ -63,12 +63,10 @@ p5.Graphics = function(w, h, renderer, pInst) {
 p5.Graphics.prototype = Object.create(p5.Element.prototype);
 
 p5.Graphics.prototype.remove = function() {
-  console.log(this)
   if (this.elt.parentNode) {
     this.elt.parentNode.removeChild(this.elt);
   }
   for (var elt_ev in this._events) {
-    console.log(elt_ev)
     this.elt.removeEventListener(elt_ev, this._events[elt_ev]);
   }
 };
