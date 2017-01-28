@@ -353,7 +353,7 @@ p5.prototype.mouseIsPressed = false;
 p5.prototype.isMousePressed = false; // both are supported
 
 p5.prototype._updateNextMouseCoords = function(e) {
-  if(this._curElement !== null) {
+  if(this._curElement !== null && (!e.touches || e.touches.length>0)) {
     var mousePos = getMousePos(this._curElement.elt, this.width, this.height, e);
     this._setProperty('mouseX', mousePos.x);
     this._setProperty('mouseY', mousePos.y);
