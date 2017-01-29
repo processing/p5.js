@@ -468,7 +468,7 @@ p5.Image.prototype.copy = function () {
 
 /**
  * Masks part of an image from displaying by loading another
- * image and using it's blue channel as an alpha channel for
+ * image and using it's alpha channel as an alpha channel for
  * this image.
  *
  * @method mask
