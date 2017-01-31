@@ -169,8 +169,8 @@ p5.prototype.cursor = function(type, x, y) {
       // Note that x and y values must be unit-less positive integers < 32
       // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
       coords = x + ' ' + y;
-    }
-    if (type.substring(0, 6) !== 'http://') {
+    }        
+    if ((type.substring(0, 7) === 'http://') || (type.substring(0, 8) === 'https://')) {
       // Image (absolute url)
       cursor = 'url(' + type + ') ' + coords + ', auto';
     } else if (/\.(cur|jpg|jpeg|gif|png|CUR|JPG|JPEG|GIF|PNG)$/.test(type)) {
