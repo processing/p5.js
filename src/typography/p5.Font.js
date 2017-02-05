@@ -126,7 +126,7 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
 
         var gm = glyph.getMetrics();
 
-        if (glyph.name !== 'space' && glyph.unicode !== 32) {
+        if (glyph.name !== 'space') {
 
           xCoords.push(gX + (gm.xMax * scale));
           yCoords.push(gY + (-gm.yMin * scale));
