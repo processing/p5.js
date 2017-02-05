@@ -1189,6 +1189,10 @@ p5.Renderer2D.prototype._renderText = function(p, line, x, y, maxY) {
       this.drawingContext.fillStyle =  this._fillSet ?
         this.drawingContext.fillStyle : constants._DEFAULT_TEXT_FILL;
 
+      if(p._textStyle == 'Regular'){
+        p._textStyle = 'Normal'
+      }
+      this.drawingContext.font = p._textStyle + ' '+ p._textSize +'px '+ p._textFont;
       this.drawingContext.fillText(line, x, y);
     }
   }
