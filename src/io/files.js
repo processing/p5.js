@@ -260,19 +260,18 @@ p5.prototype.loadJSON = function () {
     }
   }
 
-  reqwest({
-    url: path,
-    type: t,
-    crossOrigin: true,
-    error: function (resp) {
-      // pass to error callback if defined
-      if (errorCallback) {
-        errorCallback(resp);
-      } else { // otherwise log error msg
-        console.log(resp.statusText);
+  fetch(path)
+    .then(function(res){
+      if(res.ok){
+        return res.json();
       }
-    },
-    success: function (resp) {
+      if (errorCallback) {
+        errorCallback(res);
+      } else { // otherwise log error msg
+        throw new Error(res.statusText);
+      }
+    })
+    .then(function(resp){
       for (var k in resp) {
         ret[k] = resp[k];
       }
@@ -282,8 +281,32 @@ p5.prototype.loadJSON = function () {
       if (decrementPreload && (callback !== decrementPreload)) {
         decrementPreload();
       }
-    }
-  });
+    });
+
+  // reqwest({
+  //   url: path,
+  //   type: t,
+  //   crossOrigin: true,
+  //   error: function (resp) {
+  //     // pass to error callback if defined
+  //     if (errorCallback) {
+  //       errorCallback(resp);
+  //     } else { // otherwise log error msg
+  //       console.log(resp.statusText);
+  //     }
+  //   },
+  //   success: function (resp) {
+  //     for (var k in resp) {
+  //       ret[k] = resp[k];
+  //     }
+  //     if (typeof callback !== 'undefined') {
+  //       callback(resp);
+  //     }
+  //     if (decrementPreload && (callback !== decrementPreload)) {
+  //       decrementPreload();
+  //     }
+  //   }
+  // });
 
   return ret;
 };
@@ -512,14 +535,19 @@ p5.prototype.loadTable = function (path) {
   }
 
   var t = new p5.Table();
-  reqwest({
-      url: path,
-      crossOrigin: true,
-      type: 'csv'
+
+  fetch(path)
+    .then(function(res){
+      if(res.ok){
+        return res.text();
+      }
+      // if (errorCallback) {
+      //   errorCallback(res);
+      // } else { // otherwise log error msg
+      //   throw new Error(res.statusText);
+      // }
     })
     .then(function (resp) {
-      resp = resp.responseText;
-
       var state = {};
 
       // define constants
@@ -537,6 +565,16 @@ p5.prototype.loadTable = function (path) {
       var currentRecord = null;
       var currentChar;
 
+      var tokenBegin = function () {
+        state.currentState = PRE_TOKEN;
+        state.token = '';
+      };
+
+      var tokenEnd = function () {
+        currentRecord.push(state.token);
+        tokenBegin();
+      };
+
       var recordBegin = function () {
         state.escaped = false;
         currentRecord = [];
@@ -547,16 +585,6 @@ p5.prototype.loadTable = function (path) {
         state.currentState = POST_RECORD;
         records.push(currentRecord);
         currentRecord = null;
-      };
-
-      var tokenBegin = function () {
-        state.currentState = PRE_TOKEN;
-        state.token = '';
-      };
-
-      var tokenEnd = function () {
-        currentRecord.push(state.token);
-        tokenBegin();
       };
 
       while (true) {
@@ -647,15 +675,152 @@ p5.prototype.loadTable = function (path) {
       if (decrementPreload && (callback !== decrementPreload)) {
         decrementPreload();
       }
-    })
-    .fail(function (err, msg) {
-      p5._friendlyFileLoadError(2, path);
-      // don't get error callback mixed up with decrementPreload
-      if ((typeof callback === 'function') &&
-        (callback !== decrementPreload)) {
-        callback(false);
-      }
     });
+
+  // reqwest({
+  //     url: path,
+  //     crossOrigin: true,
+  //     type: 'csv'
+  //   })
+  //   .then(function (resp) {
+  //     resp = resp.responseText;
+
+  //     var state = {};
+
+  //     // define constants
+  //     var PRE_TOKEN = 0,
+  //       MID_TOKEN = 1,
+  //       POST_TOKEN = 2,
+  //       POST_RECORD = 4;
+
+  //     var QUOTE = '\"',
+  //       CR = '\r',
+  //       LF = '\n';
+
+  //     var records = [];
+  //     var offset = 0;
+  //     var currentRecord = null;
+  //     var currentChar;
+
+  //     var recordBegin = function () {
+  //       state.escaped = false;
+  //       currentRecord = [];
+  //       tokenBegin();
+  //     };
+
+  //     var recordEnd = function () {
+  //       state.currentState = POST_RECORD;
+  //       records.push(currentRecord);
+  //       currentRecord = null;
+  //     };
+
+  //     var tokenBegin = function () {
+  //       state.currentState = PRE_TOKEN;
+  //       state.token = '';
+  //     };
+
+  //     var tokenEnd = function () {
+  //       currentRecord.push(state.token);
+  //       tokenBegin();
+  //     };
+
+  //     while (true) {
+  //       currentChar = resp[offset++];
+
+  //       // EOF
+  //       if (currentChar == null) {
+  //         if (state.escaped) {
+  //           throw new Error('Unclosed quote in file.');
+  //         }
+  //         if (currentRecord) {
+  //           tokenEnd();
+  //           recordEnd();
+  //           break;
+  //         }
+  //       }
+  //       if (currentRecord === null) {
+  //         recordBegin();
+  //       }
+
+  //       // Handle opening quote
+  //       if (state.currentState === PRE_TOKEN) {
+  //         if (currentChar === QUOTE) {
+  //           state.escaped = true;
+  //           state.currentState = MID_TOKEN;
+  //           continue;
+  //         }
+  //         state.currentState = MID_TOKEN;
+  //       }
+
+  //       // mid-token and escaped, look for sequences and end quote
+  //       if (state.currentState === MID_TOKEN && state.escaped) {
+  //         if (currentChar === QUOTE) {
+  //           if (resp[offset] === QUOTE) {
+  //             state.token += QUOTE;
+  //             offset++;
+  //           } else {
+  //             state.escaped = false;
+  //             state.currentState = POST_TOKEN;
+  //           }
+  //         } else {
+  //           state.token += currentChar;
+  //         }
+  //         continue;
+  //       }
+
+  //       // fall-through: mid-token or post-token, not escaped
+  //       if (currentChar === CR) {
+  //         if (resp[offset] === LF) {
+  //           offset++;
+  //         }
+  //         tokenEnd();
+  //         recordEnd();
+  //       } else if (currentChar === LF) {
+  //         tokenEnd();
+  //         recordEnd();
+  //       } else if (currentChar === sep) {
+  //         tokenEnd();
+  //       } else if (state.currentState === MID_TOKEN) {
+  //         state.token += currentChar;
+  //       }
+  //     }
+
+  //     set up column names
+  //     if (header) {
+  //       t.columns = records.shift();
+  //     } else {
+  //       for (i = 0; i < records[0].length; i++) {
+  //         t.columns[i] = 'null';
+  //       }
+  //     }
+  //     var row;
+  //     for (i = 0; i < records.length; i++) {
+  //       //Handles row of 'undefined' at end of some CSVs
+  //       if (i === records.length - 1 && records[i].length === 1) {
+  //         if (records[i][0] === 'undefined') {
+  //           break;
+  //         }
+  //       }
+  //       row = new p5.TableRow();
+  //       row.arr = records[i];
+  //       row.obj = makeObject(records[i], t.columns);
+  //       t.addRow(row);
+  //     }
+  //     if (callback !== null) {
+  //       callback(t);
+  //     }
+  //     if (decrementPreload && (callback !== decrementPreload)) {
+  //       decrementPreload();
+  //     }
+  //   })
+  //   .fail(function (err, msg) {
+  //     p5._friendlyFileLoadError(2, path);
+  //     // don't get error callback mixed up with decrementPreload
+  //     if ((typeof callback === 'function') &&
+  //       (callback !== decrementPreload)) {
+  //       callback(false);
+  //     }
+  //   });
 
   return t;
 };
@@ -732,22 +897,23 @@ p5.prototype.parseXML = function (two) {
 p5.prototype.loadXML = function (path, callback, errorCallback) {
   var ret = {};
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
-  reqwest({
-      url: path,
-      type: 'xml',
-      crossOrigin: true,
-      error: function (resp) {
-        // pass to error callback if defined
-        if (errorCallback) {
-          errorCallback(resp);
-        } else { // otherwise log error msg
-          console.log(resp.statusText);
-        }
-        //p5._friendlyFileLoadError(1,path);
+
+  fetch(path)
+    .then(function(res){
+      if(res.ok){
+        return res.text();
+      }
+      if (errorCallback) {
+        errorCallback(res);
+      } else { // otherwise log error msg
+        throw new Error(res.statusText);
       }
     })
-    .then(function (resp) {
-      var xml = parseXML(resp.documentElement);
+    .then(function(resp){
+      var parser = new DOMParser();
+      var intermediate = parser.parseFromString(resp, 'text/xml');
+      var xml = parseXML(intermediate.documentElement);
+
       for(var key in xml) {
         ret[key] = xml[key];
       }
@@ -758,6 +924,34 @@ p5.prototype.loadXML = function (path, callback, errorCallback) {
         decrementPreload();
       }
     });
+
+  // reqwest({
+  //     url: path,
+  //     type: 'xml',
+  //     crossOrigin: true,
+  //     error: function (resp) {
+  //       // pass to error callback if defined
+  //       if (errorCallback) {
+  //         errorCallback(resp);
+  //       } else { // otherwise log error msg
+  //         console.log(resp.statusText);
+  //       }
+  //       //p5._friendlyFileLoadError(1,path);
+  //     }
+  //   })
+  //   .then(function (resp) {
+  //     var xml = parseXML(resp.documentElement);
+  //     console.log(xml);
+  //     for(var key in xml) {
+  //       ret[key] = xml[key];
+  //     }
+  //     if (typeof callback !== 'undefined') {
+  //       callback(ret);
+  //     }
+  //     if (decrementPreload && (callback !== decrementPreload)) {
+  //       decrementPreload();
+  //     }
+  //   });
   return ret;
 };
 
@@ -849,70 +1043,87 @@ p5.prototype.httpPost = function () {
  *                                    in as first argument
  */
 p5.prototype.httpDo = function () {
-  if (typeof arguments[0] === 'object') {
-    reqwest(arguments[0]);
-  } else {
-    var method = 'GET';
-    var path = arguments[0];
-    var data = {};
-    var type = '';
-    var callback;
-    var errorCallback;
+  var path = arguments[0];
+  var method = arguments[1] || 'GET';
+  var data = {};
+  var type = '';
+  var callback;
+  var errorCallback;
 
-    for (var i = 1; i < arguments.length; i++) {
-      var a = arguments[i];
-      if (typeof a === 'string') {
-        if (a === 'GET' || a === 'POST' || a === 'PUT' || a === 'DELETE') {
-          method = a;
-        } else {
-          type = a;
-        }
-      } else if (typeof a === 'object') {
-        data = a;
-      } else if (typeof a === 'function') {
-        if (!callback) {
-          callback = a;
-        } else {
-          errorCallback = a;
-        }
-      }
-    }
-
-    // do some sort of smart type checking
-    if (type === '') {
-      if (path.indexOf('json') !== -1) {
-        type = 'json';
-      } else if (path.indexOf('xml') !== -1) {
-        type = 'xml';
+  for (var i = 1; i < arguments.length; i++) {
+    var a = arguments[i];
+    if (typeof a === 'string') {
+      if (a === 'GET' || a === 'POST' || a === 'PUT' || a === 'DELETE') {
+        method = a;
       } else {
-        type = 'text';
+        type = a;
+      }
+    } else if (typeof a === 'object') {
+      data = a;
+    } else if (typeof a === 'function') {
+      if (!callback) {
+        callback = a;
+      } else {
+        errorCallback = a;
       }
     }
-
-    reqwest({
-      url: path,
-      method: method,
-      data: data,
-      type: type,
-      crossOrigin: true,
-      success: function (resp) {
-        if (typeof callback !== 'undefined') {
-          if (type === 'text') {
-            callback(resp.response);
-          } else {
-            callback(resp);
-          }
-        }
-      },
-      error: function (resp) {
-        if (errorCallback) {
-          errorCallback(resp);
-        } else {
-          console.log(resp.statusText);
-        }
-      }
-    });
   }
+
+  // do some sort of smart type checking
+  if (type === '') {
+    if (path.indexOf('json') !== -1) {
+      type = 'json';
+    } else if (path.indexOf('xml') !== -1) {
+      type = 'xml';
+    } else {
+      type = 'text';
+    }
+  }
+
+  var request = new Request(path, {
+    method: method,
+    mode: 'cors',
+    body: data
+  });
+
+  fetch(request)
+    .then(function(res){
+      if(res.ok){
+        return res.text();
+      }
+      if (errorCallback) {
+        errorCallback(res);
+      } else { // otherwise log error msg
+        throw new Error(res.statusText);
+      }
+    })
+    .then(function(resp){
+      callback(resp);
+    });
+
+  // reqwest({
+  //   url: path,
+  //   method: method,
+  //   data: data,
+  //   type: type,
+  //   crossOrigin: true,
+  //   success: function (resp) {
+  //     if (typeof callback !== 'undefined') {
+  //       if (type === 'text') {
+  //         callback(resp.response);
+  //       } else {
+  //         callback(resp);
+  //       }
+  //     }
+  //   },
+  //   error: function (resp) {
+  //     if (errorCallback) {
+  //       errorCallback(resp);
+  //     } else {
+  //       console.log(resp.statusText);
+  //     }
+  //   }
+  // });
 };
 
 /**
