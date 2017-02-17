@@ -521,11 +521,11 @@ p5.prototype.loadTable = function (path) {
       if(res.ok){
         return res.text();
       }
-      if (errorCallback) {
-        errorCallback(res);
-      } else { // otherwise log error msg
-        throw new Error(res.statusText);
-      }
+      // if (errorCallback) {
+      //   errorCallback(res);
+      // } else { // otherwise log error msg
+      //   throw new Error(res.statusText);
+      // }
     })
     .then(function (resp) {
       var state = {};
@@ -1022,54 +1022,86 @@ p5.prototype.httpPost = function () {
  *                                    there is an error, response is passed
  *                                    in as first argument
  */
+
+/**
+ * @method httpDo
+ * @param {Object}         options   Request object options as documented in the
+ *                                    "fetch" API
+ * <a href="https://developer.mozilla.org/en/docs/Web/API/Fetch_API">reference</a>
+ * @param  {Function}      [callback]
+ * @param  {Function}      [errorCallback]
+ */
 p5.prototype.httpDo = function () {
-  var path = arguments[0];
-  var method = arguments[1] || 'GET';
-  var data = {};
-  var type = '';
   var callback;
   var errorCallback;
-
-  for (var i = 1; i < arguments.length; i++) {
-    var a = arguments[i];
-    if (typeof a === 'string') {
-      if (a === 'GET' || a === 'POST' || a === 'PUT' || a === 'DELETE') {
-        method = a;
-      } else {
-        type = a;
-      }
-    } else if (typeof a === 'object') {
-      data = a;
-    } else if (typeof a === 'function') {
-      if (!callback) {
-        callback = a;
-      } else {
-        errorCallback = a;
-      }
+  var request;
+  var cbCount = 0;
+  // Trim the callbacks off the end to get an idea of how many arguments are passed
+  for (var i = arguments.length-1; i > 0; i--){
+    if(typeof arguments[i] === 'function'){
+      cbCount++;
+    }else{
+      break;
     }
   }
+  // The number of arguments minus callbacks
+  var argsCount = arguments.length - cbCount;
+  if(argsCount === 1 && typeof arguments[0] === 'object'){
+    // Intended for more advanced use, pass in Request object directly
+    request = arguments[0];
+    callback = arguments[1];
+    errorCallback = arguments[2];
+  }else{
+    // Provided with arguments
+    var path = arguments[0];
+    var method = 'GET';
+    var data = {};
+    var type = '';
 
-  // do some sort of smart type checking
-  if (type === '') {
-    if (path.indexOf('json') !== -1) {
-      type = 'json';
-    } else if (path.indexOf('xml') !== -1) {
-      type = 'xml';
-    } else {
-      type = 'text';
+    for (var i = 1; i < arguments.length; i++) {
+      var a = arguments[i];
+      if (typeof a === 'string') {
+        if (a === 'GET' || a === 'POST' || a === 'PUT' || a === 'DELETE') {
+          method = a;
+        } else {
+          type = a;
+        }
+      } else if (typeof a === 'object') {
+        data = a;
+      } else if (typeof a === 'function') {
+        if (!callback) {
+          callback = a;
+        } else {
+          errorCallback = a;
+        }
+      }
     }
-  }
+    // do some sort of smart type checking
+    if (type === '') {
+      if (path.indexOf('json') !== -1) {
+        type = 'json';
+      } else if (path.indexOf('xml') !== -1) {
+        type = 'xml';
+      } else {
+        type = 'text';
+      }
+    }
 
-  var request = new Request(path, {
-    // method: method,
-    mode: 'cors',
-    body: data
-  });
+    request = new Request(path, {
+      method: method,
+      mode: 'cors',
+      body: data
+    });
+  }
 
   fetch(request)
     .then(function(res){
       if(res.ok){
-        return res.text();
+        if(type === 'json'){
+          return res.json();
+        }else{
+          return res.text();
+        }
       }
       if (errorCallback) {
         errorCallback(res);
@@ -1078,32 +1110,13 @@ p5.prototype.httpDo = function () {
       }
     })
     .then(function(resp){
+      if (type === 'xml'){
+        var parser = new DOMParser();
+        resp = parser.parseFromString(resp, 'text/xml');
+        resp = parseXML(resp.documentElement);
+      }
       callback(resp);
     });
-
-  // reqwest({
-  //   url: path,
-  //   method: method,
-  //   data: data,
-  //   type: type,
-  //   crossOrigin: true,
-  //   success: function (resp) {
-  //     if (typeof callback !== 'undefined') {
-  //       if (type === 'text') {
-  //         callback(resp.response);
-  //       } else {
-  //         callback(resp);
-  //       }
-  //     }
-  //   },
-  //   error: function (resp) {
-  //     if (errorCallback) {
-  //       errorCallback(resp);
-  //     } else {
-  //       console.log(resp.statusText);
-  //     }
-  //   }
-  // });
 };
 
 /**
