@@ -245,8 +245,7 @@ p5.prototype.loadJSON = function () {
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
   var ret = {}; // object needed for preload
-  // assume jsonp for URLs
-  var t = 'json'; //= path.indexOf('http') === -1 ? 'json' : 'jsonp';
+  var t = 'json';
 
   // check for explicit data type argument
   for (var i = 2; i < arguments.length; i++) {
@@ -260,11 +259,17 @@ p5.prototype.loadJSON = function () {
     }
   }
 
+  if(t === 'jsonp'){
+    console.log('JSONP polyfill required');
+    return ret;
+  }
+
   fetch(path)
     .then(function(res){
       if(res.ok){
         return res.json();
       }
+
       if (errorCallback) {
         errorCallback(res);
       } else { // otherwise log error msg
@@ -282,31 +287,6 @@ p5.prototype.loadJSON = function () {
         decrementPreload();
       }
     });
-
-  // reqwest({
-  //   url: path,
-  //   type: t,
-  //   crossOrigin: true,
-  //   error: function (resp) {
-  //     // pass to error callback if defined
-  //     if (errorCallback) {
-  //       errorCallback(resp);
-  //     } else { // otherwise log error msg
-  //       console.log(resp.statusText);
-  //     }
-  //   },
-  //   success: function (resp) {
-  //     for (var k in resp) {
-  //       ret[k] = resp[k];
-  //     }
-  //     if (typeof callback !== 'undefined') {
-  //       callback(resp);
-  //     }
-  //     if (decrementPreload && (callback !== decrementPreload)) {
-  //       decrementPreload();
-  //     }
-  //   }
-  // });
 
   return ret;
 };
@@ -541,11 +521,11 @@ p5.prototype.loadTable = function (path) {
       if(res.ok){
         return res.text();
       }
-      // if (errorCallback) {
-      //   errorCallback(res);
-      // } else { // otherwise log error msg
-      //   throw new Error(res.statusText);
-      // }
+      if (errorCallback) {
+        errorCallback(res);
+      } else { // otherwise log error msg
+        throw new Error(res.statusText);
+      }
     })
     .then(function (resp) {
       var state = {};
@@ -1081,7 +1061,7 @@ p5.prototype.httpDo = function () {
   }
 
   var request = new Request(path, {
-    method: method,
+    // method: method,
     mode: 'cors',
     body: data
   });
