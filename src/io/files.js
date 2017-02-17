@@ -3,13 +3,11 @@
  * @submodule Input
  * @for p5
  * @requires core
- * @requires reqwest
  */
 
 'use strict';
 
 var p5 = require('../core/core');
-var reqwest = require('reqwest');
 var opentype = require('opentype.js');
 require('../core/error_helpers');
 
@@ -264,29 +262,41 @@ p5.prototype.loadJSON = function () {
     return ret;
   }
 
-  fetch(path)
-    .then(function(res){
-      if(res.ok){
-        return res.json();
-      }
+  this.httpDo(path, 'GET', 'json', function(resp){
+    for (var k in resp) {
+      ret[k] = resp[k];
+    }
+    if (typeof callback !== 'undefined') {
+      callback(resp);
+    }
+    if (decrementPreload && (callback !== decrementPreload)) {
+      decrementPreload();
+    }
+  }, errorCallback);
 
-      if (errorCallback) {
-        errorCallback(res);
-      } else { // otherwise log error msg
-        throw new Error(res.statusText);
-      }
-    })
-    .then(function(resp){
-      for (var k in resp) {
-        ret[k] = resp[k];
-      }
-      if (typeof callback !== 'undefined') {
-        callback(resp);
-      }
-      if (decrementPreload && (callback !== decrementPreload)) {
-        decrementPreload();
-      }
-    });
+  // fetch(path)
+  //   .then(function(res){
+  //     if(res.ok){
+  //       return res.json();
+  //     }
+
+  //     if (errorCallback) {
+  //       errorCallback(res);
+  //     } else { // otherwise log error msg
+  //       throw new Error(res.statusText);
+  //     }
+  //   })
+  //   .then(function(resp){
+  //     for (var k in resp) {
+  //       ret[k] = resp[k];
+  //     }
+  //     if (typeof callback !== 'undefined') {
+  //       callback(resp);
+  //     }
+  //     if (decrementPreload && (callback !== decrementPreload)) {
+  //       decrementPreload();
+  //     }
+  //   });
 
   return ret;
 };
@@ -520,12 +530,9 @@ p5.prototype.loadTable = function (path) {
     .then(function(res){
       if(res.ok){
         return res.text();
+      }else{
+        throw new Error(res.statusText);
       }
-      // if (errorCallback) {
-      //   errorCallback(res);
-      // } else { // otherwise log error msg
-      //   throw new Error(res.statusText);
-      // }
     })
     .then(function (resp) {
       var state = {};
@@ -655,152 +662,11 @@ p5.prototype.loadTable = function (path) {
       if (decrementPreload && (callback !== decrementPreload)) {
         decrementPreload();
       }
+    })
+    .catch(function(err){
+      p5._friendlyFileLoadError(2, path);
+      console.log(err);
     });
-
-  // reqwest({
-  //     url: path,
-  //     crossOrigin: true,
-  //     type: 'csv'
-  //   })
-  //   .then(function (resp) {
-  //     resp = resp.responseText;
-
-  //     var state = {};
-
-  //     // define constants
-  //     var PRE_TOKEN = 0,
-  //       MID_TOKEN = 1,
-  //       POST_TOKEN = 2,
-  //       POST_RECORD = 4;
-
-  //     var QUOTE = '\"',
-  //       CR = '\r',
-  //       LF = '\n';
-
-  //     var records = [];
-  //     var offset = 0;
-  //     var currentRecord = null;
-  //     var currentChar;
-
-  //     var recordBegin = function () {
-  //       state.escaped = false;
-  //       currentRecord = [];
-  //       tokenBegin();
-  //     };
-
-  //     var recordEnd = function () {
-  //       state.currentState = POST_RECORD;
-  //       records.push(currentRecord);
-  //       currentRecord = null;
-  //     };
-
-  //     var tokenBegin = function () {
-  //       state.currentState = PRE_TOKEN;
-  //       state.token = '';
-  //     };
-
-  //     var tokenEnd = function () {
-  //       currentRecord.push(state.token);
-  //       tokenBegin();
-  //     };
-
-  //     while (true) {
-  //       currentChar = resp[offset++];
-
-  //       // EOF
-  //       if (currentChar == null) {
-  //         if (state.escaped) {
-  //           throw new Error('Unclosed quote in file.');
-  //         }
-  //         if (currentRecord) {
-  //           tokenEnd();
-  //           recordEnd();
-  //           break;
-  //         }
-  //       }
-  //       if (currentRecord === null) {
-  //         recordBegin();
-  //       }
-
-  //       // Handle opening quote
-  //       if (state.currentState === PRE_TOKEN) {
-  //         if (currentChar === QUOTE) {
-  //           state.escaped = true;
-  //           state.currentState = MID_TOKEN;
-  //           continue;
-  //         }
-  //         state.currentState = MID_TOKEN;
-  //       }
-
-  //       // mid-token and escaped, look for sequences and end quote
-  //       if (state.currentState === MID_TOKEN && state.escaped) {
-  //         if (currentChar === QUOTE) {
-  //           if (resp[offset] === QUOTE) {
-  //             state.token += QUOTE;
-  //             offset++;
-  //           } else {
-  //             state.escaped = false;
-  //             state.currentState = POST_TOKEN;
-  //           }
-  //         } else {
-  //           state.token += currentChar;
-  //         }
-  //         continue;
-  //       }
-
-  //       // fall-through: mid-token or post-token, not escaped
-  //       if (currentChar === CR) {
-  //         if (resp[offset] === LF) {
-  //           offset++;
-  //         }
-  //         tokenEnd();
-  //         recordEnd();
-  //       } else if (currentChar === LF) {
-  //         tokenEnd();
-  //         recordEnd();
-  //       } else if (currentChar === sep) {
-  //         tokenEnd();
-  //       } else if (state.currentState === MID_TOKEN) {
-  //         state.token += currentChar;
-  //       }
-  //     }
-
-  //     set up column names
-  //     if (header) {
-  //       t.columns = records.shift();
-  //     } else {
-  //       for (i = 0; i < records[0].length; i++) {
-  //         t.columns[i] = 'null';
-  //       }
-  //     }
-  //     var row;
-  //     for (i = 0; i < records.length; i++) {
-  //       //Handles row of 'undefined' at end of some CSVs
-  //       if (i === records.length - 1 && records[i].length === 1) {
-  //         if (records[i][0] === 'undefined') {
-  //           break;
-  //         }
-  //       }
-  //       row = new p5.TableRow();
-  //       row.arr = records[i];
-  //       row.obj = makeObject(records[i], t.columns);
-  //       t.addRow(row);
-  //     }
-  //     if (callback !== null) {
-  //       callback(t);
-  //     }
-  //     if (decrementPreload && (callback !== decrementPreload)) {
-  //       decrementPreload();
-  //     }
-  //   })
-  //   .fail(function (err, msg) {
-  //     p5._friendlyFileLoadError(2, path);
-  //     // don't get error callback mixed up with decrementPreload
-  //     if ((typeof callback === 'function') &&
-  //       (callback !== decrementPreload)) {
-  //       callback(false);
-  //     }
-  //   });
 
   return t;
 };
@@ -878,50 +744,34 @@ p5.prototype.loadXML = function (path, callback, errorCallback) {
   var ret = {};
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
-  fetch(path)
-    .then(function(res){
-      if(res.ok){
-        return res.text();
-      }
-      if (errorCallback) {
-        errorCallback(res);
-      } else { // otherwise log error msg
-        throw new Error(res.statusText);
-      }
-    })
-    .then(function(resp){
-      var parser = new DOMParser();
-      var intermediate = parser.parseFromString(resp, 'text/xml');
-      var xml = parseXML(intermediate.documentElement);
+  this.httpDo(path, 'GET', 'xml', function(xml){
+    for(var key in xml) {
+      ret[key] = xml[key];
+    }
+    if (typeof callback !== 'undefined') {
+      callback(ret);
+    }
+    if (decrementPreload && (callback !== decrementPreload)) {
+      decrementPreload();
+    }
+  }, errorCallback);
 
-      for(var key in xml) {
-        ret[key] = xml[key];
-      }
-      if (typeof callback !== 'undefined') {
-        callback(ret);
-      }
-      if (decrementPreload && (callback !== decrementPreload)) {
-        decrementPreload();
-      }
-    });
-
-  // reqwest({
-  //     url: path,
-  //     type: 'xml',
-  //     crossOrigin: true,
-  //     error: function (resp) {
-  //       // pass to error callback if defined
-  //       if (errorCallback) {
-  //         errorCallback(resp);
-  //       } else { // otherwise log error msg
-  //         console.log(resp.statusText);
-  //       }
-  //       //p5._friendlyFileLoadError(1,path);
+  // fetch(path)
+  //   .then(function(res){
+  //     if(res.ok){
+  //       return res.text();
+  //     }
+  //     if (errorCallback) {
+  //       errorCallback(res);
+  //     } else { // otherwise log error msg
+  //       throw new Error(res.statusText);
   //     }
   //   })
-  //   .then(function (resp) {
-  //     var xml = parseXML(resp.documentElement);
-  //     console.log(xml);
+  //   .then(function(resp){
+  //     var parser = new DOMParser();
+  //     var intermediate = parser.parseFromString(resp, 'text/xml');
+  //     var xml = parseXML(intermediate.documentElement);
+
   //     for(var key in xml) {
   //       ret[key] = xml[key];
   //     }
@@ -932,6 +782,7 @@ p5.prototype.loadXML = function (path, callback, errorCallback) {
   //       decrementPreload();
   //     }
   //   });
+
   return ret;
 };
 
@@ -1004,10 +855,9 @@ p5.prototype.httpPost = function () {
 /**
  * Method for executing an HTTP request. If data type is not specified,
  * p5 will try to guess based on the URL, defaulting to text.<br><br>
- * You may also pass a single object specifying all parameters for the
- * request following the examples inside the reqwest() calls here:
- * <a href='https://github.com/ded/reqwest#api'>
- * https://github.com/ded/reqwest#api</a>
+ * For more advanced use, you may also pass in a <a href="https://devel
+ * oper.mozilla.org/en-US/docs/Web/API/Request">Request</a> object as specified
+ * in the Fetch API specification.
  *
  * @method httpDo
  * @param  {String}        path       name of the file or url to load
@@ -1032,6 +882,7 @@ p5.prototype.httpPost = function () {
  * @param  {Function}      [errorCallback]
  */
 p5.prototype.httpDo = function () {
+  var type = '';
   var callback;
   var errorCallback;
   var request;
@@ -1051,12 +902,22 @@ p5.prototype.httpDo = function () {
     request = arguments[0];
     callback = arguments[1];
     errorCallback = arguments[2];
+
+    // do some sort of smart type checking
+    if (type === '') {
+      if (request.url.indexOf('json') !== -1) {
+        type = 'json';
+      } else if (request.url.indexOf('xml') !== -1) {
+        type = 'xml';
+      } else {
+        type = 'text';
+      }
+    }
   }else{
     // Provided with arguments
     var path = arguments[0];
     var method = 'GET';
     var data = {};
-    var type = '';
 
     for (var i = 1; i < arguments.length; i++) {
       var a = arguments[i];
