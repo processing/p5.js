@@ -925,7 +925,7 @@ p5.prototype.httpDo = function () {
     var method = 'GET';
     var data = {};
 
-    for (var i = 1; i < arguments.length; i++) {
+    for (var j = 1; j < arguments.length; j++) {
       var a = arguments[i];
       if (typeof a === 'string') {
         if (a === 'GET' || a === 'POST' || a === 'PUT' || a === 'DELETE') {
