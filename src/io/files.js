@@ -9,7 +9,13 @@
 
 var p5 = require('../core/core');
 var opentype = require('opentype.js');
+var fetchPolyfill = require('whatwg-fetch');
 require('../core/error_helpers');
+
+// Use polyfill if fetch API not available
+if(!window.fetch){
+  window.fetch = fetchPolyfill;
+}
 
 /**
  * Checks if we are in preload and returns the last arg which will be the

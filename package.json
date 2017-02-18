@@ -44,7 +44,7 @@
   "dependencies": {
     "brfs": "^1.4.0",
     "opentype.js": "^0.4.9",
-    "reqwest": "^1.1.5"
+    "whatwg-fetch": "^2.0.2"
   },
   "main": "./lib/p5.js",
   "files": [
