@@ -864,8 +864,8 @@ p5.prototype.httpPost = function () {
  * @param  {String}        path       name of the file or url to load
  * @param  {String}        [method]   either "GET", "POST", or "PUT",
  *                                    defaults to "GET"
- * @param  {Object}        [data]     param data passed sent with request
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
+ * @param  {Object}        [data]     param data passed sent with request
  * @param  {Function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
  *                                    as first argument
@@ -876,7 +876,8 @@ p5.prototype.httpPost = function () {
 
 /**
  * @method httpDo
- * @param {Object}         options   Request object options as documented in the
+ * @param  {String}        path
+ * @param  {Object}        options   Request object options as documented in the
  *                                    "fetch" API
  * <a href="https://developer.mozilla.org/en/docs/Web/API/Fetch_API">reference</a>
  * @param  {Function}      [callback]
@@ -898,11 +899,13 @@ p5.prototype.httpDo = function () {
   }
   // The number of arguments minus callbacks
   var argsCount = arguments.length - cbCount;
-  if(argsCount === 1 && typeof arguments[0] === 'object'){
-    // Intended for more advanced use, pass in Request object directly
-    request = arguments[0];
-    callback = arguments[1];
-    errorCallback = arguments[2];
+  if(argsCount === 2 &&
+     typeof arguments[0] === 'string' &&
+     typeof arguments[1] === 'object'){
+    // Intended for more advanced use, pass in Request parameters directly
+    request = new Request(arguments[0], arguments[1]);
+    callback = arguments[2];
+    errorCallback = arguments[3];
 
     // do some sort of smart type checking
     if (type === '') {
@@ -918,10 +921,10 @@ p5.prototype.httpDo = function () {
     // Provided with arguments
     var path = arguments[0];
     var method = 'GET';
-    var data = {};
+    var data;
 
     for (var j = 1; j < arguments.length; j++) {
-      var a = arguments[i];
+      var a = arguments[j];
       if (typeof a === 'string') {
         if (a === 'GET' || a === 'POST' || a === 'PUT' || a === 'DELETE') {
           method = a;
