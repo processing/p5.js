@@ -811,8 +811,8 @@ p5.prototype.selectInput = function () {
  *
  * @method httpGet
  * @param  {String}        path       name of the file or url to load
- * @param  {Object}        [data]     param data passed sent with request
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
+ * @param  {Object}        [data]     param data passed sent with request
  * @param  {Function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
  *                                    as first argument
@@ -822,10 +822,11 @@ p5.prototype.selectInput = function () {
  */
 p5.prototype.httpGet = function () {
   var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
+  args[0] = arguments[0];
+  args[1] = 'GET';
+  for (var i = 2; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  args.push('GET');
   p5.prototype.httpDo.apply(this, args);
 };
 
@@ -835,8 +836,8 @@ p5.prototype.httpGet = function () {
  *
  * @method httpPost
  * @param  {String}        path       name of the file or url to load
- * @param  {Object}        [data]     param data passed sent with request
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
+ * @param  {Object}        [data]     param data passed sent with request
  * @param  {Function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
  *                                    as first argument
@@ -846,10 +847,11 @@ p5.prototype.httpGet = function () {
  */
 p5.prototype.httpPost = function () {
   var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
+  args[0] = arguments[0];
+  args[1] = 'POST';
+  for (var i = 2; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  args.push('POST');
   p5.prototype.httpDo.apply(this, args);
 };
 
