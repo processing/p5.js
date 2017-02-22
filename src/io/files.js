@@ -340,42 +340,22 @@ p5.prototype.loadJSON = function () {
  */
 p5.prototype.loadStrings = function (path, callback, errorCallback) {
   var ret = [];
-  var req = new XMLHttpRequest();
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
-  req.addEventListener('error', function (resp) {
-    if (errorCallback) {
-      errorCallback(resp);
-    } else {
-      console.log(resp.responseText);
+  this.httpDo(path, 'GET', 'text', function(data){
+    var arr = data.match(/[^\r\n]+/g);
+    for (var k in arr) {
+      ret[k] = arr[k];
     }
-  });
 
-  req.open('GET', path, true);
-  req.onreadystatechange = function () {
-    if (req.readyState === 4) {
-      if (req.status === 200) {
-        var arr = req.responseText.match(/[^\r\n]+/g);
-        for (var k in arr) {
-          ret[k] = arr[k];
-        }
-        if (typeof callback !== 'undefined') {
-          callback(ret);
-        }
-        if (decrementPreload && (callback !== decrementPreload)) {
-          decrementPreload();
-        }
-      } else {
-        if (errorCallback) {
-          errorCallback(req);
-        } else {
-          console.log(req.statusText);
-        }
-        //p5._friendlyFileLoadError(3, path);
-      }
+    if (typeof callback !== 'undefined') {
+      callback(ret);
     }
-  };
-  req.send(null);
+    if (decrementPreload && (callback !== decrementPreload)) {
+      decrementPreload();
+    }
+  }, errorCallback);
+
   return ret;
 };
 
