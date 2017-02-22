@@ -275,30 +275,6 @@ p5.prototype.loadJSON = function () {
     }
   }, errorCallback);
 
-  // fetch(path)
-  //   .then(function(res){
-  //     if(res.ok){
-  //       return res.json();
-  //     }
-
-  //     if (errorCallback) {
-  //       errorCallback(res);
-  //     } else { // otherwise log error msg
-  //       throw new Error(res.statusText);
-  //     }
-  //   })
-  //   .then(function(resp){
-  //     for (var k in resp) {
-  //       ret[k] = resp[k];
-  //     }
-  //     if (typeof callback !== 'undefined') {
-  //       callback(resp);
-  //     }
-  //     if (decrementPreload && (callback !== decrementPreload)) {
-  //       decrementPreload();
-  //     }
-  //   });
-
   return ret;
 };
 
@@ -757,33 +733,6 @@ p5.prototype.loadXML = function (path, callback, errorCallback) {
     }
   }, errorCallback);
 
-  // fetch(path)
-  //   .then(function(res){
-  //     if(res.ok){
-  //       return res.text();
-  //     }
-  //     if (errorCallback) {
-  //       errorCallback(res);
-  //     } else { // otherwise log error msg
-  //       throw new Error(res.statusText);
-  //     }
-  //   })
-  //   .then(function(resp){
-  //     var parser = new DOMParser();
-  //     var intermediate = parser.parseFromString(resp, 'text/xml');
-  //     var xml = parseXML(intermediate.documentElement);
-
-  //     for(var key in xml) {
-  //       ret[key] = xml[key];
-  //     }
-  //     if (typeof callback !== 'undefined') {
-  //       callback(ret);
-  //     }
-  //     if (decrementPreload && (callback !== decrementPreload)) {
-  //       decrementPreload();
-  //     }
-  //   });
-
   return ret;
 };
 
@@ -930,11 +879,13 @@ p5.prototype.httpDo = function () {
       if (typeof a === 'string') {
         if (a === 'GET' || a === 'POST' || a === 'PUT' || a === 'DELETE') {
           method = a;
-        } else {
+        } else if(a === 'json' || a === 'jsonp' || a === 'xml' || a === 'text') {
           type = a;
+        } else {
+          data = a;
         }
       } else if (typeof a === 'object') {
-        data = a;
+        data = JSON.stringify(a);
       } else if (typeof a === 'function') {
         if (!callback) {
           callback = a;
