@@ -510,7 +510,7 @@ var p5 = function(sketch, node, sync) {
     var f = this['_on'+e];
     if (f) {
       var m = f.bind(this);
-      window.addEventListener(e, m);
+      window.addEventListener(e, m, {passive: true});
       this._events[e] = m;
     }
   }
