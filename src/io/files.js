@@ -400,6 +400,9 @@ p5.prototype.loadStrings = function (path, callback, errorCallback) {
  *                                     Table object is passed in as the
  *                                     first argument; otherwise, false
  *                                     is passed in.
+ * @param  {Function}  [errorCallback] function to be executed if
+ *                                     there is an error, response is passed
+ *                                     in as first argument
  * @return {Object}                    Table object containing data
  *
  * @example
@@ -448,6 +451,7 @@ p5.prototype.loadStrings = function (path, callback, errorCallback) {
  */
 p5.prototype.loadTable = function (path) {
   var callback = null;
+  var errorCallback = null;
   var options = [];
   var header = false;
   var sep = ',';
@@ -457,7 +461,11 @@ p5.prototype.loadTable = function (path) {
   for (var i = 1; i < arguments.length; i++) {
     if ((typeof (arguments[i]) === 'function') &&
       (arguments[i] !== decrementPreload)) {
-      callback = arguments[i];
+      if(!callback){
+        callback = arguments[i];
+      }else{
+        errorCallback = arguments[i];
+      }
     } else if (typeof (arguments[i]) === 'string') {
       options.push(arguments[i]);
       if (arguments[i] === 'header') {
@@ -483,147 +491,145 @@ p5.prototype.loadTable = function (path) {
 
   var t = new p5.Table();
 
-  fetch(path)
-    .then(function(res){
-      if(res.ok){
-        return res.text();
-      }else{
-        throw new Error(res.statusText);
+  this.httpDo(path, 'GET', 'text', function(resp){
+    var state = {};
+
+    // define constants
+    var PRE_TOKEN = 0,
+      MID_TOKEN = 1,
+      POST_TOKEN = 2,
+      POST_RECORD = 4;
+
+    var QUOTE = '\"',
+      CR = '\r',
+      LF = '\n';
+
+    var records = [];
+    var offset = 0;
+    var currentRecord = null;
+    var currentChar;
+
+    var tokenBegin = function () {
+      state.currentState = PRE_TOKEN;
+      state.token = '';
+    };
+
+    var tokenEnd = function () {
+      currentRecord.push(state.token);
+      tokenBegin();
+    };
+
+    var recordBegin = function () {
+      state.escaped = false;
+      currentRecord = [];
+      tokenBegin();
+    };
+
+    var recordEnd = function () {
+      state.currentState = POST_RECORD;
+      records.push(currentRecord);
+      currentRecord = null;
+    };
+
+    while (true) {
+      currentChar = resp[offset++];
+
+      // EOF
+      if (currentChar == null) {
+        if (state.escaped) {
+          throw new Error('Unclosed quote in file.');
+        }
+        if (currentRecord) {
+          tokenEnd();
+          recordEnd();
+          break;
+        }
       }
-    })
-    .then(function (resp) {
-      var state = {};
+      if (currentRecord === null) {
+        recordBegin();
+      }
 
-      // define constants
-      var PRE_TOKEN = 0,
-        MID_TOKEN = 1,
-        POST_TOKEN = 2,
-        POST_RECORD = 4;
-
-      var QUOTE = '\"',
-        CR = '\r',
-        LF = '\n';
-
-      var records = [];
-      var offset = 0;
-      var currentRecord = null;
-      var currentChar;
-
-      var tokenBegin = function () {
-        state.currentState = PRE_TOKEN;
-        state.token = '';
-      };
-
-      var tokenEnd = function () {
-        currentRecord.push(state.token);
-        tokenBegin();
-      };
-
-      var recordBegin = function () {
-        state.escaped = false;
-        currentRecord = [];
-        tokenBegin();
-      };
-
-      var recordEnd = function () {
-        state.currentState = POST_RECORD;
-        records.push(currentRecord);
-        currentRecord = null;
-      };
-
-      while (true) {
-        currentChar = resp[offset++];
-
-        // EOF
-        if (currentChar == null) {
-          if (state.escaped) {
-            throw new Error('Unclosed quote in file.');
-          }
-          if (currentRecord) {
-            tokenEnd();
-            recordEnd();
-            break;
-          }
-        }
-        if (currentRecord === null) {
-          recordBegin();
-        }
-
-        // Handle opening quote
-        if (state.currentState === PRE_TOKEN) {
-          if (currentChar === QUOTE) {
-            state.escaped = true;
-            state.currentState = MID_TOKEN;
-            continue;
-          }
+      // Handle opening quote
+      if (state.currentState === PRE_TOKEN) {
+        if (currentChar === QUOTE) {
+          state.escaped = true;
           state.currentState = MID_TOKEN;
-        }
-
-        // mid-token and escaped, look for sequences and end quote
-        if (state.currentState === MID_TOKEN && state.escaped) {
-          if (currentChar === QUOTE) {
-            if (resp[offset] === QUOTE) {
-              state.token += QUOTE;
-              offset++;
-            } else {
-              state.escaped = false;
-              state.currentState = POST_TOKEN;
-            }
-          } else {
-            state.token += currentChar;
-          }
           continue;
         }
+        state.currentState = MID_TOKEN;
+      }
 
-        // fall-through: mid-token or post-token, not escaped
-        if (currentChar === CR) {
-          if (resp[offset] === LF) {
+      // mid-token and escaped, look for sequences and end quote
+      if (state.currentState === MID_TOKEN && state.escaped) {
+        if (currentChar === QUOTE) {
+          if (resp[offset] === QUOTE) {
+            state.token += QUOTE;
             offset++;
+          } else {
+            state.escaped = false;
+            state.currentState = POST_TOKEN;
           }
-          tokenEnd();
-          recordEnd();
-        } else if (currentChar === LF) {
-          tokenEnd();
-          recordEnd();
-        } else if (currentChar === sep) {
-          tokenEnd();
-        } else if (state.currentState === MID_TOKEN) {
+        } else {
           state.token += currentChar;
         }
+        continue;
       }
 
-      // set up column names
-      if (header) {
-        t.columns = records.shift();
-      } else {
-        for (i = 0; i < records[0].length; i++) {
-          t.columns[i] = 'null';
+      // fall-through: mid-token or post-token, not escaped
+      if (currentChar === CR) {
+        if (resp[offset] === LF) {
+          offset++;
+        }
+        tokenEnd();
+        recordEnd();
+      } else if (currentChar === LF) {
+        tokenEnd();
+        recordEnd();
+      } else if (currentChar === sep) {
+        tokenEnd();
+      } else if (state.currentState === MID_TOKEN) {
+        state.token += currentChar;
+      }
+    }
+
+    // set up column names
+    if (header) {
+      t.columns = records.shift();
+    } else {
+      for (i = 0; i < records[0].length; i++) {
+        t.columns[i] = 'null';
+      }
+    }
+    var row;
+    for (i = 0; i < records.length; i++) {
+      //Handles row of 'undefined' at end of some CSVs
+      if (i === records.length - 1 && records[i].length === 1) {
+        if (records[i][0] === 'undefined') {
+          break;
         }
       }
-      var row;
-      for (i = 0; i < records.length; i++) {
-        //Handles row of 'undefined' at end of some CSVs
-        if (i === records.length - 1 && records[i].length === 1) {
-          if (records[i][0] === 'undefined') {
-            break;
-          }
-        }
-        row = new p5.TableRow();
-        row.arr = records[i];
-        row.obj = makeObject(records[i], t.columns);
-        t.addRow(row);
-      }
-      if (callback !== null) {
-        callback(t);
-      }
-      if (decrementPreload && (callback !== decrementPreload)) {
-        decrementPreload();
-      }
-    })
-    .catch(function(err){
-      p5._friendlyFileLoadError(2, path);
-      console.log(err);
-    });
+      row = new p5.TableRow();
+      row.arr = records[i];
+      row.obj = makeObject(records[i], t.columns);
+      t.addRow(row);
+    }
+    if (callback !== null) {
+      callback(t);
+    }
+    if (decrementPreload && (callback !== decrementPreload)) {
+      decrementPreload();
+    }
+
+  }, function(err){
+    // Error handling
+    p5._friendlyFileLoadError(2, path);
+
+    if(errorCallback){
+      errorCallback(err.status + ' ' + err.statusText);
+    }else{
+      console.log(err.status + ' ' + err.statusText);
+    }
+  });
 
   return t;
 };
