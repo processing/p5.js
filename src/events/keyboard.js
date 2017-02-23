@@ -225,12 +225,16 @@ p5.prototype._onkeydown = function (e) {
  */
 p5.prototype._onkeyup = function (e) {
   var keyReleased = this.keyReleased || window.keyReleased;
-  this._setProperty('isKeyPressed', false);
-  this._setProperty('keyIsPressed', false);
-  this._setProperty('_lastKeyCodeTyped', null);
   downKeys[e.which] = false;
   //delete this._downKeys[e.which];
   var key = String.fromCharCode(e.which);
+
+  if(areDownKeys()) {
+    this._setProperty('isKeyPressed', false);
+    this._setProperty('keyIsPressed', false);
+  }
+
+  this._setProperty('_lastKeyCodeTyped', null);
   if (!key) {
     key = e.which;
   }
@@ -353,5 +357,23 @@ p5.prototype._onblur = function (e) {
 p5.prototype.keyIsDown = function(code) {
   return downKeys[code];
 };
+
+/**
+ * The checkDownKeys function returns a boolean true if any keys pressed
+ * and a false if no keys are currently pressed.
+
+ * Helps avoid instances where a multiple keys are pressed simultaneously and
+ * releasing a single key will then switch the
+ * keyIsPressed property to true.
+ * @private
+**/
+function areDownKeys() {
+  for (var key in downKeys) {
+    if (downKeys[key] === true ) {
+      return true;
+    }
+  }
+  return false;
+}
 
 module.exports = p5;
