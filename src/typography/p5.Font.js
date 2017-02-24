@@ -199,16 +199,19 @@ p5.Font.prototype.textToPoints = function(txt, x, y, fontSize, options) {
 
   for (var i = 0; i < glyphs.length; i++) {
 
-    var gpath = glyphs[i].getPath(x, y, fontSize),
-      paths = splitPaths(gpath.commands);
+    if (glyphs[i].name !== 'space') { // fix to #1817
 
-    for (var j = 0; j < paths.length; j++) {
+      var gpath = glyphs[i].getPath(x, y, fontSize),
+        paths = splitPaths(gpath.commands);
 
-      var pts = pathToPoints(paths[j], options);
+      for (var j = 0; j < paths.length; j++) {
 
-      for (var k = 0; k < pts.length; k++) {
-        pts[k].x += xoff;
-        result.push(pts[k]);
+        var pts = pathToPoints(paths[j], options);
+
+        for (var k = 0; k < pts.length; k++) {
+          pts[k].x += xoff;
+          result.push(pts[k]);
+        }
       }
     }
 
