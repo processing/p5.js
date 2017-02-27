@@ -270,7 +270,7 @@ p5.prototype.loadJSON = function () {
     }
   }
 
-  this.httpDo(path, 'GET', options, t, function(resp){
+  p5.prototype.httpDo(path, 'GET', options, t, function(resp){
     for (var k in resp) {
       ret[k] = resp[k];
     }
@@ -349,7 +349,7 @@ p5.prototype.loadStrings = function (path, callback, errorCallback) {
   var ret = [];
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
-  this.httpDo(path, 'GET', 'text', function(data){
+  p5.prototype.httpDo(path, 'GET', 'text', function(data){
     var arr = data.match(/[^\r\n]+/g);
     for (var k in arr) {
       ret[k] = arr[k];
@@ -497,7 +497,7 @@ p5.prototype.loadTable = function (path) {
 
   var t = new p5.Table();
 
-  this.httpDo(path, 'GET', 'text', function(resp){
+  p5.prototype.httpDo(path, 'GET', 'text', function(resp){
     var state = {};
 
     // define constants
@@ -713,7 +713,7 @@ p5.prototype.loadXML = function (path, callback, errorCallback) {
   var ret = {};
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
-  this.httpDo(path, 'GET', 'xml', function(xml){
+  p5.prototype.httpDo(path, 'GET', 'xml', function(xml){
     for(var key in xml) {
       ret[key] = xml[key];
     }
