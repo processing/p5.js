@@ -5,11 +5,15 @@
  * @requires core
  */
 
+/* globals Request: false */
+
 'use strict';
 
 var p5 = require('../core/core');
 var opentype = require('opentype.js');
 require('whatwg-fetch');
+require('es6-promise').polyfill();
+var fetchJsonp = require('fetch-jsonp');
 require('../core/error_helpers');
 
 /**
@@ -239,31 +243,34 @@ p5.prototype.loadBytes = function () {
  */
 p5.prototype.loadJSON = function () {
   var path = arguments[0];
-  var callback = arguments[1];
+  var callback;
   var errorCallback;
+  var options;
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
   var ret = {}; // object needed for preload
   var t = 'json';
 
   // check for explicit data type argument
-  for (var i = 2; i < arguments.length; i++) {
+  for (var i = 1; i < arguments.length; i++) {
     var arg = arguments[i];
     if (typeof arg === 'string') {
       if (arg === 'jsonp' || arg === 'json') {
         t = arg;
       }
     } else if (typeof arg === 'function') {
-      errorCallback = arg;
+      if(!callback){
+        callback = arg;
+      }else{
+        errorCallback = arg;
+      }
+    } else if (typeof arg === 'object' && arg.hasOwnProperty('jsonpCallback')){
+      t = 'jsonp';
+      options = arg;
     }
   }
 
-  if(t === 'jsonp'){
-    console.log('JSONP polyfill required');
-    return ret;
-  }
-
-  this.httpDo(path, 'GET', 'json', function(resp){
+  this.httpDo(path, 'GET', options, t, function(resp){
     for (var k in resp) {
       ret[k] = resp[k];
     }
@@ -398,8 +405,7 @@ p5.prototype.loadStrings = function (path, callback, errorCallback) {
  * @param  {Function}       [callback] function to be executed after
  *                                     loadTable() completes. On success, the
  *                                     Table object is passed in as the
- *                                     first argument; otherwise, false
- *                                     is passed in.
+ *                                     first argument.
  * @param  {Function}  [errorCallback] function to be executed if
  *                                     there is an error, response is passed
  *                                     in as first argument
@@ -825,6 +831,7 @@ p5.prototype.httpDo = function () {
   var callback;
   var errorCallback;
   var request;
+  var jsonpOptions = {};
   var cbCount = 0;
   // Trim the callbacks off the end to get an idea of how many arguments are passed
   for (var i = arguments.length-1; i > 0; i--){
@@ -871,7 +878,13 @@ p5.prototype.httpDo = function () {
           data = a;
         }
       } else if (typeof a === 'object') {
-        data = JSON.stringify(a);
+        if(a.hasOwnProperty('jsonpCallback')){
+          for (var attr in a) {
+            jsonpOptions[attr] = a[attr];
+          }
+        }else{
+          data = JSON.stringify(a);
+        }
       } else if (typeof a === 'function') {
         if (!callback) {
           callback = a;
@@ -898,29 +911,45 @@ p5.prototype.httpDo = function () {
     });
   }
 
-  fetch(request)
-    .then(function(res){
-      if(res.ok){
-        if(type === 'json'){
+  if(type === 'jsonp'){
+    fetchJsonp(arguments[0], jsonpOptions)
+      .then(function(res){
+        if(res.ok){
           return res.json();
-        }else{
-          return res.text();
         }
-      }
-      if (errorCallback) {
-        errorCallback(res);
-      } else { // otherwise log error msg
-        throw new Error(res.statusText);
-      }
-    })
-    .then(function(resp){
-      if (type === 'xml'){
-        var parser = new DOMParser();
-        resp = parser.parseFromString(resp, 'text/xml');
-        resp = parseXML(resp.documentElement);
-      }
-      callback(resp);
-    });
+        if (errorCallback) {
+          errorCallback(res);
+        } else { // otherwise log error msg
+          throw new Error(res.statusText);
+        }
+      }).then(function(resp){
+        callback(resp);
+      });
+  }else{
+    fetch(request)
+      .then(function(res){
+        if(res.ok){
+          if(type === 'json'){
+            return res.json();
+          }else{
+            return res.text();
+          }
+        }
+        if (errorCallback) {
+          errorCallback(res);
+        } else { // otherwise log error msg
+          throw new Error(res.statusText);
+        }
+      })
+      .then(function(resp){
+        if (type === 'xml'){
+          var parser = new DOMParser();
+          resp = parser.parseFromString(resp, 'text/xml');
+          resp = parseXML(resp.documentElement);
+        }
+        callback(resp);
+      });
+  }
 };
 
 /**
