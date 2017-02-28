@@ -175,17 +175,21 @@ p5.prototype.loadBytes = function () {
 /**
  * Loads a JSON file from a file or a URL, and returns an Object or Array.
  * This method is asynchronous, meaning it may not finish before the next
- * line in your sketch is executed.
+ * line in your sketch is executed. JSONP is supported via a polyfill and you
+ * can pass in as the second argument an object with definitions of the json
+ * callback following the syntax specified <a href="https://github.com/camsong/
+ * fetch-jsonp">here</a>.
  *
  * @method loadJSON
  * @param  {String}        path       name of the file or url to load
+ * @param  {Object}        [jsonpOptions] options object for jsonp related settings
+ * @param  {String}        [datatype] "json" or "jsonp"
  * @param  {Function}      [callback] function to be executed after
  *                                    loadJSON() completes, data is passed
  *                                    in as first argument
  * @param  {Function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
- * @param  {String}        [datatype] "json" or "jsonp"
  * @return {Object|Array}             JSON data
  * @example
  *
@@ -748,7 +752,8 @@ p5.prototype.selectInput = function () {
 
 /**
  * Method for executing an HTTP GET request. If data type is not specified,
- * p5 will try to guess based on the URL, defaulting to text.
+ * p5 will try to guess based on the URL, defaulting to text. This is equivalent to
+ * calling <code>httpDo(path, 'GET')</code>.
  *
  * @method httpGet
  * @param  {String}        path       name of the file or url to load
@@ -773,7 +778,8 @@ p5.prototype.httpGet = function () {
 
 /**
  * Method for executing an HTTP POST request. If data type is not specified,
- * p5 will try to guess based on the URL, defaulting to text.
+ * p5 will try to guess based on the URL, defaulting to text. This is equivalent to
+ * calling <code>httpDo(path, 'POST')</code>.
  *
  * @method httpPost
  * @param  {String}        path       name of the file or url to load
@@ -799,8 +805,8 @@ p5.prototype.httpPost = function () {
 /**
  * Method for executing an HTTP request. If data type is not specified,
  * p5 will try to guess based on the URL, defaulting to text.<br><br>
- * For more advanced use, you may also pass in a <a href="https://devel
- * oper.mozilla.org/en-US/docs/Web/API/Request">Request</a> object as specified
+ * For more advanced use, you may also pass in the path as the first argument
+ * and a object as the second argument, the signature follows the one specified
  * in the Fetch API specification.
  *
  * @method httpDo
