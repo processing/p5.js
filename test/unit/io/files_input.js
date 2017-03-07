@@ -1,7 +1,7 @@
 suite('Files', function() {
 
   var loadJSON = p5.prototype.loadJSON;
-  // var loadStrings = p5.prototype.loadStrings;
+  var loadStrings = p5.prototype.loadStrings;
 
   //variable for preload
   var preload = p5.prototype.preload;
@@ -25,29 +25,21 @@ suite('Files', function() {
       result = loadJSON('unit/assets/array.json');
       assert.ok(result);
       assert.isObject(result, 'result is an object');
-      // assert.typeOf(result, 'Array');
-      // assert.lengthOf(result, 2);
     });
   });
 
-  //   test('should be a function', function( {
-  //     assert.ok(loadJSON);
-  //     assert.typeOf(loadJSON, 'function');
-  //   });
-  //   test('in preload, should return an object', function() {
-  //     result = loadJSON("../assets/array.json");
-  //     assert.typeOf(result, 'Object');
-  //   });
-  //   test('should return an error', function() {
-  //     result = loadJSON("../assets/arr.json");
-  //     assert.typeOf(result, 'nothing');
-  //   });
-  // });
+  suite('loadStrings() in Preload', function(){
+    test('should be a function', function() {
+      assert.ok(loadStrings);
+      assert.typeOf(loadStrings, 'function');
+    });
 
-  // test('loadStrings in preload without callback', function(
-  // result = loadStrings('../assets/sentences.txt');
-  // assert.ok(result);
-  // )};
+    test('should return an array', function(){
+      result = loadStrings('unit/assets/sentences.txt');
+      assert.ok(result);
+      assert.isArray(result, 'result is and array');
+    });
+  });
 
   //tests while preload is false with callbacks
   preload = false;
@@ -57,6 +49,37 @@ suite('Files', function() {
       assert.ok(loadJSON);
       assert.typeOf(loadJSON, 'function');
     });
+
+    test('should call callback function if provided', function(done){
+      result = loadJSON('unit/assets/array.json', function(data){
+        done();
+      });
+    });
+
+    test('should pass an Array to callback function', function(){
+      result = loadJSON('unit/assets/array.json', function(data){
+        assert.isArray(data, 'Array passed to callback function');
+        assert.lengthOf(data, 3, 'length of data is 3');
+      });
+    });
+
+    test('should call error callback function if provided', function(done){
+      result = loadJSON('unit/assets/arr.json', function(data){}, function(){
+        done();
+      });
+    });
+
+    test('should pass error object to error callback function', function() {
+      result = loadJSON('unit/assets/arr.json', function(data){
+        // should really be an empty object or never called
+        assert.isUndefined(data, 'data is undefined');
+      }, function(err){
+        assert.isObject(err, 'err is an object');
+        assert.isFalse(err.ok, 'err.ok is false');
+        assert.equal(err.status, 404, 'Error status is 404');
+      });
+    });
+
     /*test('should allow json to override jsonp in 3rd param',
       function(done){
 
@@ -69,7 +92,43 @@ suite('Files', function() {
         };
         result = loadJSON(url,myCallback,datatype);
     });*/
+  });
 
+  suite('p5.prototype.loadStrings', function() {
+    test('should be a function', function() {
+      assert.ok(loadStrings);
+      assert.typeOf(loadStrings, 'function');
+    });
+
+    test('should call callback function if provided', function(done){
+      result = loadStrings('unit/assets/sentences.txt', function(data){
+        done();
+      });
+    });
+
+    test('should pass an Array to callback function', function(){
+      result = loadStrings('unit/assets/sentences.txt', function(data){
+        assert.isArray(data, 'Array passed to callback function');
+        assert.lengthOf(data, 68, 'length of data is 68');
+      });
+    });
+
+    test('should call error callback function if provided', function(done){
+      result = loadStrings('unit/assets/sen.txt', function(data){}, function(){
+        done();
+      });
+    });
+
+    test('should pass error object to error callback function', function() {
+      result = loadStrings('unit/assets/sen.txt', function(data){
+        // should really be an empty object or never called
+        assert.isUndefined(data, 'data is undefined');
+      }, function(err){
+        assert.isObject(err, 'err is an object');
+        assert.isFalse(err.ok, 'err.ok is false');
+        assert.equal(err.status, 404, 'Error status is 404');
+      });
+    });
   });
   /*
   var loadTable = p5.prototype.loadTable;
