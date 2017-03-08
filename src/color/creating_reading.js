@@ -389,10 +389,10 @@ p5.prototype.hue = function(c) {
  * The way that colours are interpolated depends on the current color mode.
  *
  * @method lerpColor
- * @param  {Array/Number} c1  interpolate from this color
- * @param  {Array/Number} c2  interpolate to this color
+ * @param  {Array|Number} c1  interpolate from this color
+ * @param  {Array|Number} c2  interpolate to this color
  * @param  {Number}       amt number between 0 and 1
- * @return {Array/Number}     interpolated color
+ * @return {Array|Number}     interpolated color
  * @example
  * <div>
  * <code>

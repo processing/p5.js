@@ -206,7 +206,7 @@ p5.prototype.smooth = function() {
  * parameters: SQUARE, PROJECT, and ROUND. The default cap is ROUND.
  *
  * @method strokeCap
- * @param  {Number/Constant} cap either SQUARE, PROJECT, or ROUND
+ * @param  {Number|Constant} cap either SQUARE, PROJECT, or ROUND
  * @return {p5}                  the p5 object
  * @example
  * <div>
@@ -241,7 +241,7 @@ p5.prototype.strokeCap = function(cap) {
  * MITER.
  *
  * @method strokeJoin
- * @param  {Number/Constant} join either MITER, BEVEL, ROUND
+ * @param  {Number|Constant} join either MITER, BEVEL, ROUND
  * @return {p5}                   the p5 object
  * @example
  * <div>
