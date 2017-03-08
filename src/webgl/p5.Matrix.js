@@ -382,7 +382,7 @@ p5.Matrix.prototype.determinant = function(){
 
 /**
  * multiply two mat4s
- * @param {p5.Matrix | Array}  multMatrix The matrix we want to multiply by
+ * @param {p5.Matrix|Array}  multMatrix The matrix we want to multiply by
  * @return {p5.Matrix}         this
  */
 p5.Matrix.prototype.mult = function(multMatrix){
@@ -438,8 +438,7 @@ p5.Matrix.prototype.mult = function(multMatrix){
 
 /**
  * scales a p5.Matrix by scalars or a vector
- * @param  {p5.Vector | Array }
- *                      vector to scale by
+ * @param  {p5.Vector|Array} s vector to scale by
  * @return {p5.Matrix}  this
  */
 p5.Matrix.prototype.scale = function() {
@@ -485,7 +484,7 @@ p5.Matrix.prototype.scale = function() {
 /**
  * rotate our Matrix around an axis by the given angle.
  * @param  {Number} a The angle of rotation in radians
- * @param  {p5.Vector | Array} axis  the axis(es) to rotate around
+ * @param  {p5.Vector|Array} axis  the axis(es) to rotate around
  * @return {p5.Matrix}                    this
  * inspired by Toji's gl-matrix lib, mat4 rotation
  */

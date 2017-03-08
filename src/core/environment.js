@@ -135,7 +135,7 @@ p5.prototype.focused = (document.hasFocus());
  * be less than the dimensions of the image.
  *
  * @method cursor
- * @param {Number/Constant} type either ARROW, CROSS, HAND, MOVE, TEXT, or
+ * @param {Number|Constant} type either ARROW, CROSS, HAND, MOVE, TEXT, or
  *                               WAIT, or path for image
  * @param {Number}          [x]  the horizontal active spot of the cursor
  * @param {Number}          [y]  the vertical active spot of the cursor
