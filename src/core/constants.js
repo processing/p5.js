@@ -169,7 +169,7 @@ module.exports = {
   UP_ARROW: 38,
 
   // RENDERING
-  BLEND: 'normal',
+  BLEND: 'source-over',
   ADD: 'lighter',
   //ADD: 'add', //
   //SUBTRACT: 'subtract', //
@@ -179,7 +179,7 @@ module.exports = {
   EXCLUSION: 'exclusion',
   MULTIPLY: 'multiply',
   SCREEN: 'screen',
-  REPLACE: 'source-over',
+  REPLACE: 'copy',
   OVERLAY: 'overlay',
   HARD_LIGHT: 'hard-light',
   SOFT_LIGHT: 'soft-light',
