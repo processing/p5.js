@@ -923,13 +923,15 @@ p5.prototype.httpDo = function () {
         if(res.ok){
           return res.json();
         }
-        if (errorCallback) {
-          errorCallback(res);
-        } else { // otherwise log error msg
-          throw new Error(res.statusText);
-        }
+        throw res;
       }).then(function(resp){
         callback(resp);
+      }).catch(function(err){
+        if (errorCallback) {
+          errorCallback(err);
+        } else {
+          console.log(err.status + ' ' + err.statusText);
+        }
       });
   }else{
     fetch(request)
@@ -941,11 +943,8 @@ p5.prototype.httpDo = function () {
             return res.text();
           }
         }
-        if (errorCallback) {
-          errorCallback(res);
-        } else { // otherwise log error msg
-          throw new Error(res.statusText);
-        }
+
+        throw res;
       })
       .then(function(resp){
         if (type === 'xml'){
@@ -954,6 +953,12 @@ p5.prototype.httpDo = function () {
           resp = parseXML(resp.documentElement);
         }
         callback(resp);
+      }).catch(function(err, msg){
+        if (errorCallback) {
+          errorCallback(err);
+        } else {
+          console.log(err.status + ' ' + err.statusText);
+        }
       });
   }
 };
