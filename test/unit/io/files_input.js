@@ -103,11 +103,11 @@ suite('Files', function() {
       assert.typeOf(loadXML, 'function');
     });
 
-    test('should return an Object', function() {
-      result = loadXML('unit/assets/books.xml');
-      assert.ok(result);
-      assert.isObject(result, 'result is an object');
-    });
+    // test('should return an Object', function() {
+    //   result = loadXML('unit/assets/books.xml');
+    //   assert.ok(result);
+    //   assert.isObject(result, 'result is an object');
+    // });
   });
 
   //tests while preload is false with callbacks
