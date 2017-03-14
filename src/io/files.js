@@ -424,7 +424,7 @@ p5.prototype.loadStrings = function (path, callback, errorCallback) {
  *
  * @method loadTable
  * @param  {String}         filename   name of the file or URL to load
- * @param  {String|Strings} [options]  "header" "csv" "tsv"
+ * @param  {String} [options]  "header" "csv" "tsv"
  * @param  {Function}       [callback] function to be executed after
  *                                     loadTable() completes. On success, the
  *                                     Table object is passed in as the
@@ -1058,7 +1058,7 @@ p5.prototype.saveBytes = function () {
  *  </code></pre>
  *
  *  @method save
- *  @param  {[Object|String]} objectOrFilename  If filename is provided, will
+ *  @param  {Object|String} [objectOrFilename]  If filename is provided, will
  *                                             save canvas as an image with
  *                                             either png or jpg extension
  *                                             depending on the filename.
@@ -1066,12 +1066,12 @@ p5.prototype.saveBytes = function () {
  *                                             save depending on the object
  *                                             and filename (see examples
  *                                             above).
- *  @param  {[String]} filename If an object is provided as the first
+ *  @param  {String} [filename] If an object is provided as the first
  *                               parameter, then the second parameter
  *                               indicates the filename,
  *                               and should include an appropriate
  *                               file extension (see examples above).
- *  @param  {[Boolean/String]} options  Additional options depend on
+ *  @param  {Boolean|String} [options]  Additional options depend on
  *                            filetype. For example, when saving JSON,
  *                            <code>true</code> indicates that the
  *                            output will be optimized for filesize,

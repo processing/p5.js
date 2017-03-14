@@ -18,10 +18,10 @@ var attributes = {
 };
 
 /**
+ * 3D graphics class
  * @class p5.RendererGL
  * @constructor
  * @extends p5.Renderer
- * 3D graphics class.
  * @todo extend class to include public method for offscreen
  * rendering (FBO).
  *

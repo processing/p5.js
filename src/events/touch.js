@@ -15,7 +15,7 @@ var p5 = require('../core/core');
  * unique touch as it moves. Each element in the array is an object with x, y,
  * and id properties.
  *
- * @property touches[]
+ * @property {Object[]} touches
  */
 p5.prototype.touches = [];
 
