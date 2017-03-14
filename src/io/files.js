@@ -3,14 +3,17 @@
  * @submodule Input
  * @for p5
  * @requires core
- * @requires reqwest
  */
+
+/* globals Request: false */
 
 'use strict';
 
 var p5 = require('../core/core');
-var reqwest = require('reqwest');
 var opentype = require('opentype.js');
+require('whatwg-fetch');
+require('es6-promise').polyfill();
+var fetchJsonp = require('fetch-jsonp');
 require('../core/error_helpers');
 
 /**
@@ -172,17 +175,21 @@ p5.prototype.loadBytes = function () {
 /**
  * Loads a JSON file from a file or a URL, and returns an Object or Array.
  * This method is asynchronous, meaning it may not finish before the next
- * line in your sketch is executed.
+ * line in your sketch is executed. JSONP is supported via a polyfill and you
+ * can pass in as the second argument an object with definitions of the json
+ * callback following the syntax specified <a href="https://github.com/camsong/
+ * fetch-jsonp">here</a>.
  *
  * @method loadJSON
  * @param  {String}        path       name of the file or url to load
+ * @param  {Object}        [jsonpOptions] options object for jsonp related settings
+ * @param  {String}        [datatype] "json" or "jsonp"
  * @param  {Function}      [callback] function to be executed after
  *                                    loadJSON() completes, data is passed
  *                                    in as first argument
  * @param  {Function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
- * @param  {String}        [datatype] "json" or "jsonp"
  * @return {Object|Array}             JSON data
  * @example
  *
@@ -240,50 +247,44 @@ p5.prototype.loadBytes = function () {
  */
 p5.prototype.loadJSON = function () {
   var path = arguments[0];
-  var callback = arguments[1];
+  var callback;
   var errorCallback;
+  var options;
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
   var ret = {}; // object needed for preload
-  // assume jsonp for URLs
-  var t = 'json'; //= path.indexOf('http') === -1 ? 'json' : 'jsonp';
+  var t = 'json';
 
   // check for explicit data type argument
-  for (var i = 2; i < arguments.length; i++) {
+  for (var i = 1; i < arguments.length; i++) {
     var arg = arguments[i];
     if (typeof arg === 'string') {
       if (arg === 'jsonp' || arg === 'json') {
         t = arg;
       }
     } else if (typeof arg === 'function') {
-      errorCallback = arg;
+      if(!callback){
+        callback = arg;
+      }else{
+        errorCallback = arg;
+      }
+    } else if (typeof arg === 'object' && arg.hasOwnProperty('jsonpCallback')){
+      t = 'jsonp';
+      options = arg;
     }
   }
 
-  reqwest({
-    url: path,
-    type: t,
-    crossOrigin: true,
-    error: function (resp) {
-      // pass to error callback if defined
-      if (errorCallback) {
-        errorCallback(resp);
-      } else { // otherwise log error msg
-        console.log(resp.statusText);
-      }
-    },
-    success: function (resp) {
-      for (var k in resp) {
-        ret[k] = resp[k];
-      }
-      if (typeof callback !== 'undefined') {
-        callback(resp);
-      }
-      if (decrementPreload && (callback !== decrementPreload)) {
-        decrementPreload();
-      }
+  p5.prototype.httpDo(path, 'GET', options, t, function(resp){
+    for (var k in resp) {
+      ret[k] = resp[k];
     }
-  });
+    if (typeof callback !== 'undefined') {
+      callback(resp);
+    }
+    if (decrementPreload && (callback !== decrementPreload)) {
+      decrementPreload();
+    }
+  }, errorCallback);
 
   return ret;
 };
@@ -350,42 +351,22 @@ p5.prototype.loadJSON = function () {
  */
 p5.prototype.loadStrings = function (path, callback, errorCallback) {
   var ret = [];
-  var req = new XMLHttpRequest();
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
-  req.addEventListener('error', function (resp) {
-    if (errorCallback) {
-      errorCallback(resp);
-    } else {
-      console.log(resp.responseText);
+  p5.prototype.httpDo(path, 'GET', 'text', function(data){
+    var arr = data.match(/[^\r\n]+/g);
+    for (var k in arr) {
+      ret[k] = arr[k];
     }
-  });
 
-  req.open('GET', path, true);
-  req.onreadystatechange = function () {
-    if (req.readyState === 4) {
-      if (req.status === 200) {
-        var arr = req.responseText.match(/[^\r\n]+/g);
-        for (var k in arr) {
-          ret[k] = arr[k];
-        }
-        if (typeof callback !== 'undefined') {
-          callback(ret);
-        }
-        if (decrementPreload && (callback !== decrementPreload)) {
-          decrementPreload();
-        }
-      } else {
-        if (errorCallback) {
-          errorCallback(req);
-        } else {
-          console.log(req.statusText);
-        }
-        //p5._friendlyFileLoadError(3, path);
-      }
+    if (typeof callback !== 'undefined') {
+      callback(ret);
     }
-  };
-  req.send(null);
+    if (decrementPreload && (callback !== decrementPreload)) {
+      decrementPreload();
+    }
+  }, errorCallback);
+
   return ret;
 };
 
@@ -428,8 +409,10 @@ p5.prototype.loadStrings = function (path, callback, errorCallback) {
  * @param  {Function}       [callback] function to be executed after
  *                                     loadTable() completes. On success, the
  *                                     Table object is passed in as the
- *                                     first argument; otherwise, false
- *                                     is passed in.
+ *                                     first argument.
+ * @param  {Function}  [errorCallback] function to be executed if
+ *                                     there is an error, response is passed
+ *                                     in as first argument
  * @return {Object}                    Table object containing data
  *
  * @example
@@ -478,6 +461,7 @@ p5.prototype.loadStrings = function (path, callback, errorCallback) {
  */
 p5.prototype.loadTable = function (path) {
   var callback = null;
+  var errorCallback = null;
   var options = [];
   var header = false;
   var sep = ',';
@@ -487,7 +471,11 @@ p5.prototype.loadTable = function (path) {
   for (var i = 1; i < arguments.length; i++) {
     if ((typeof (arguments[i]) === 'function') &&
       (arguments[i] !== decrementPreload)) {
-      callback = arguments[i];
+      if(!callback){
+        callback = arguments[i];
+      }else{
+        errorCallback = arguments[i];
+      }
     } else if (typeof (arguments[i]) === 'string') {
       options.push(arguments[i]);
       if (arguments[i] === 'header') {
@@ -512,150 +500,146 @@ p5.prototype.loadTable = function (path) {
   }
 
   var t = new p5.Table();
-  reqwest({
-      url: path,
-      crossOrigin: true,
-      type: 'csv'
-    })
-    .then(function (resp) {
-      resp = resp.responseText;
 
-      var state = {};
+  p5.prototype.httpDo(path, 'GET', 'text', function(resp){
+    var state = {};
 
-      // define constants
-      var PRE_TOKEN = 0,
-        MID_TOKEN = 1,
-        POST_TOKEN = 2,
-        POST_RECORD = 4;
+    // define constants
+    var PRE_TOKEN = 0,
+      MID_TOKEN = 1,
+      POST_TOKEN = 2,
+      POST_RECORD = 4;
 
-      var QUOTE = '\"',
-        CR = '\r',
-        LF = '\n';
+    var QUOTE = '\"',
+      CR = '\r',
+      LF = '\n';
 
-      var records = [];
-      var offset = 0;
-      var currentRecord = null;
-      var currentChar;
+    var records = [];
+    var offset = 0;
+    var currentRecord = null;
+    var currentChar;
 
-      var recordBegin = function () {
-        state.escaped = false;
-        currentRecord = [];
-        tokenBegin();
-      };
+    var tokenBegin = function () {
+      state.currentState = PRE_TOKEN;
+      state.token = '';
+    };
 
-      var recordEnd = function () {
-        state.currentState = POST_RECORD;
-        records.push(currentRecord);
-        currentRecord = null;
-      };
+    var tokenEnd = function () {
+      currentRecord.push(state.token);
+      tokenBegin();
+    };
 
-      var tokenBegin = function () {
-        state.currentState = PRE_TOKEN;
-        state.token = '';
-      };
+    var recordBegin = function () {
+      state.escaped = false;
+      currentRecord = [];
+      tokenBegin();
+    };
 
-      var tokenEnd = function () {
-        currentRecord.push(state.token);
-        tokenBegin();
-      };
+    var recordEnd = function () {
+      state.currentState = POST_RECORD;
+      records.push(currentRecord);
+      currentRecord = null;
+    };
 
-      while (true) {
-        currentChar = resp[offset++];
+    while (true) {
+      currentChar = resp[offset++];
 
-        // EOF
-        if (currentChar == null) {
-          if (state.escaped) {
-            throw new Error('Unclosed quote in file.');
-          }
-          if (currentRecord) {
-            tokenEnd();
-            recordEnd();
-            break;
-          }
+      // EOF
+      if (currentChar == null) {
+        if (state.escaped) {
+          throw new Error('Unclosed quote in file.');
         }
-        if (currentRecord === null) {
-          recordBegin();
+        if (currentRecord) {
+          tokenEnd();
+          recordEnd();
+          break;
         }
+      }
+      if (currentRecord === null) {
+        recordBegin();
+      }
 
-        // Handle opening quote
-        if (state.currentState === PRE_TOKEN) {
-          if (currentChar === QUOTE) {
-            state.escaped = true;
-            state.currentState = MID_TOKEN;
-            continue;
-          }
+      // Handle opening quote
+      if (state.currentState === PRE_TOKEN) {
+        if (currentChar === QUOTE) {
+          state.escaped = true;
           state.currentState = MID_TOKEN;
-        }
-
-        // mid-token and escaped, look for sequences and end quote
-        if (state.currentState === MID_TOKEN && state.escaped) {
-          if (currentChar === QUOTE) {
-            if (resp[offset] === QUOTE) {
-              state.token += QUOTE;
-              offset++;
-            } else {
-              state.escaped = false;
-              state.currentState = POST_TOKEN;
-            }
-          } else {
-            state.token += currentChar;
-          }
           continue;
         }
+        state.currentState = MID_TOKEN;
+      }
 
-        // fall-through: mid-token or post-token, not escaped
-        if (currentChar === CR) {
-          if (resp[offset] === LF) {
+      // mid-token and escaped, look for sequences and end quote
+      if (state.currentState === MID_TOKEN && state.escaped) {
+        if (currentChar === QUOTE) {
+          if (resp[offset] === QUOTE) {
+            state.token += QUOTE;
             offset++;
+          } else {
+            state.escaped = false;
+            state.currentState = POST_TOKEN;
           }
-          tokenEnd();
-          recordEnd();
-        } else if (currentChar === LF) {
-          tokenEnd();
-          recordEnd();
-        } else if (currentChar === sep) {
-          tokenEnd();
-        } else if (state.currentState === MID_TOKEN) {
+        } else {
           state.token += currentChar;
         }
+        continue;
       }
 
-      // set up column names
-      if (header) {
-        t.columns = records.shift();
-      } else {
-        for (i = 0; i < records[0].length; i++) {
-          t.columns[i] = 'null';
+      // fall-through: mid-token or post-token, not escaped
+      if (currentChar === CR) {
+        if (resp[offset] === LF) {
+          offset++;
+        }
+        tokenEnd();
+        recordEnd();
+      } else if (currentChar === LF) {
+        tokenEnd();
+        recordEnd();
+      } else if (currentChar === sep) {
+        tokenEnd();
+      } else if (state.currentState === MID_TOKEN) {
+        state.token += currentChar;
+      }
+    }
+
+    // set up column names
+    if (header) {
+      t.columns = records.shift();
+    } else {
+      for (i = 0; i < records[0].length; i++) {
+        t.columns[i] = 'null';
+      }
+    }
+    var row;
+    for (i = 0; i < records.length; i++) {
+      //Handles row of 'undefined' at end of some CSVs
+      if (i === records.length - 1 && records[i].length === 1) {
+        if (records[i][0] === 'undefined') {
+          break;
         }
       }
-      var row;
-      for (i = 0; i < records.length; i++) {
-        //Handles row of 'undefined' at end of some CSVs
-        if (i === records.length - 1 && records[i].length === 1) {
-          if (records[i][0] === 'undefined') {
-            break;
-          }
-        }
-        row = new p5.TableRow();
-        row.arr = records[i];
-        row.obj = makeObject(records[i], t.columns);
-        t.addRow(row);
-      }
-      if (callback !== null) {
-        callback(t);
-      }
-      if (decrementPreload && (callback !== decrementPreload)) {
-        decrementPreload();
-      }
-    })
-    .fail(function (err, msg) {
-      p5._friendlyFileLoadError(2, path);
-      // don't get error callback mixed up with decrementPreload
-      if ((typeof callback === 'function') &&
-        (callback !== decrementPreload)) {
-        callback(false);
-      }
-    });
+      row = new p5.TableRow();
+      row.arr = records[i];
+      row.obj = makeObject(records[i], t.columns);
+      t.addRow(row);
+    }
+    if (callback !== null) {
+      callback(t);
+    }
+    if (decrementPreload && (callback !== decrementPreload)) {
+      decrementPreload();
+    }
+
+  }, function(err){
+    // Error handling
+    p5._friendlyFileLoadError(2, path);
+
+    if(errorCallback){
+      errorCallback(err.status + ' ' + err.statusText);
+    }else{
+      console.log(err.status + ' ' + err.statusText);
+    }
+  });
 
   return t;
 };
@@ -732,32 +716,19 @@ p5.prototype.parseXML = function (two) {
 p5.prototype.loadXML = function (path, callback, errorCallback) {
   var ret = {};
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
-  reqwest({
-      url: path,
-      type: 'xml',
-      crossOrigin: true,
-      error: function (resp) {
-        // pass to error callback if defined
-        if (errorCallback) {
-          errorCallback(resp);
-        } else { // otherwise log error msg
-          console.log(resp.statusText);
-        }
-        //p5._friendlyFileLoadError(1,path);
-      }
-    })
-    .then(function (resp) {
-      var xml = parseXML(resp.documentElement);
-      for(var key in xml) {
-        ret[key] = xml[key];
-      }
-      if (typeof callback !== 'undefined') {
-        callback(ret);
-      }
-      if (decrementPreload && (callback !== decrementPreload)) {
-        decrementPreload();
-      }
-    });
+
+  p5.prototype.httpDo(path, 'GET', 'xml', function(xml){
+    for(var key in xml) {
+      ret[key] = xml[key];
+    }
+    if (typeof callback !== 'undefined') {
+      callback(ret);
+    }
+    if (decrementPreload && (callback !== decrementPreload)) {
+      decrementPreload();
+    }
+  }, errorCallback);
+
   return ret;
 };
 
@@ -781,12 +752,13 @@ p5.prototype.selectInput = function () {
 
 /**
  * Method for executing an HTTP GET request. If data type is not specified,
- * p5 will try to guess based on the URL, defaulting to text.
+ * p5 will try to guess based on the URL, defaulting to text. This is equivalent to
+ * calling <code>httpDo(path, 'GET')</code>.
  *
  * @method httpGet
  * @param  {String}        path       name of the file or url to load
- * @param  {Object}        [data]     param data passed sent with request
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
+ * @param  {Object}        [data]     param data passed sent with request
  * @param  {Function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
  *                                    as first argument
@@ -796,21 +768,23 @@ p5.prototype.selectInput = function () {
  */
 p5.prototype.httpGet = function () {
   var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
+  args[0] = arguments[0];
+  args[1] = 'GET';
+  for (var i = 2; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  args.push('GET');
   p5.prototype.httpDo.apply(this, args);
 };
 
 /**
  * Method for executing an HTTP POST request. If data type is not specified,
- * p5 will try to guess based on the URL, defaulting to text.
+ * p5 will try to guess based on the URL, defaulting to text. This is equivalent to
+ * calling <code>httpDo(path, 'POST')</code>.
  *
  * @method httpPost
  * @param  {String}        path       name of the file or url to load
- * @param  {Object}        [data]     param data passed sent with request
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
+ * @param  {Object}        [data]     param data passed sent with request
  * @param  {Function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
  *                                    as first argument
@@ -820,27 +794,27 @@ p5.prototype.httpGet = function () {
  */
 p5.prototype.httpPost = function () {
   var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
+  args[0] = arguments[0];
+  args[1] = 'POST';
+  for (var i = 2; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  args.push('POST');
   p5.prototype.httpDo.apply(this, args);
 };
 
 /**
  * Method for executing an HTTP request. If data type is not specified,
  * p5 will try to guess based on the URL, defaulting to text.<br><br>
- * You may also pass a single object specifying all parameters for the
- * request following the examples inside the reqwest() calls here:
- * <a href='https://github.com/ded/reqwest#api'>
- * https://github.com/ded/reqwest#api</a>
+ * For more advanced use, you may also pass in the path as the first argument
+ * and a object as the second argument, the signature follows the one specified
+ * in the Fetch API specification.
  *
  * @method httpDo
  * @param  {String}        path       name of the file or url to load
  * @param  {String}        [method]   either "GET", "POST", or "PUT",
  *                                    defaults to "GET"
- * @param  {Object}        [data]     param data passed sent with request
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
+ * @param  {Object}        [data]     param data passed sent with request
  * @param  {Function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
  *                                    as first argument
@@ -848,27 +822,75 @@ p5.prototype.httpPost = function () {
  *                                    there is an error, response is passed
  *                                    in as first argument
  */
-p5.prototype.httpDo = function () {
-  if (typeof arguments[0] === 'object') {
-    reqwest(arguments[0]);
-  } else {
-    var method = 'GET';
-    var path = arguments[0];
-    var data = {};
-    var type = '';
-    var callback;
-    var errorCallback;
 
-    for (var i = 1; i < arguments.length; i++) {
-      var a = arguments[i];
+/**
+ * @method httpDo
+ * @param  {String}        path
+ * @param  {Object}        options   Request object options as documented in the
+ *                                    "fetch" API
+ * <a href="https://developer.mozilla.org/en/docs/Web/API/Fetch_API">reference</a>
+ * @param  {Function}      [callback]
+ * @param  {Function}      [errorCallback]
+ */
+p5.prototype.httpDo = function () {
+  var type = '';
+  var callback;
+  var errorCallback;
+  var request;
+  var jsonpOptions = {};
+  var cbCount = 0;
+  // Trim the callbacks off the end to get an idea of how many arguments are passed
+  for (var i = arguments.length-1; i > 0; i--){
+    if(typeof arguments[i] === 'function'){
+      cbCount++;
+    }else{
+      break;
+    }
+  }
+  // The number of arguments minus callbacks
+  var argsCount = arguments.length - cbCount;
+  if(argsCount === 2 &&
+     typeof arguments[0] === 'string' &&
+     typeof arguments[1] === 'object'){
+    // Intended for more advanced use, pass in Request parameters directly
+    request = new Request(arguments[0], arguments[1]);
+    callback = arguments[2];
+    errorCallback = arguments[3];
+
+    // do some sort of smart type checking
+    if (type === '') {
+      if (request.url.indexOf('json') !== -1) {
+        type = 'json';
+      } else if (request.url.indexOf('xml') !== -1) {
+        type = 'xml';
+      } else {
+        type = 'text';
+      }
+    }
+  }else{
+    // Provided with arguments
+    var path = arguments[0];
+    var method = 'GET';
+    var data;
+
+    for (var j = 1; j < arguments.length; j++) {
+      var a = arguments[j];
       if (typeof a === 'string') {
         if (a === 'GET' || a === 'POST' || a === 'PUT' || a === 'DELETE') {
           method = a;
-        } else {
+        } else if(a === 'json' || a === 'jsonp' || a === 'xml' || a === 'text') {
           type = a;
+        } else {
+          data = a;
         }
       } else if (typeof a === 'object') {
-        data = a;
+        if(a.hasOwnProperty('jsonpCallback')){
+          for (var attr in a) {
+            jsonpOptions[attr] = a[attr];
+          }
+        }else{
+          data = JSON.stringify(a);
+        }
       } else if (typeof a === 'function') {
         if (!callback) {
           callback = a;
@@ -877,7 +899,6 @@ p5.prototype.httpDo = function () {
         }
       }
     }
-
     // do some sort of smart type checking
     if (type === '') {
       if (path.indexOf('json') !== -1) {
@@ -889,29 +910,56 @@ p5.prototype.httpDo = function () {
       }
     }
 
-    reqwest({
-      url: path,
+    request = new Request(path, {
       method: method,
-      data: data,
-      type: type,
-      crossOrigin: true,
-      success: function (resp) {
-        if (typeof callback !== 'undefined') {
-          if (type === 'text') {
-            callback(resp.response);
-          } else {
-            callback(resp);
+      mode: 'cors',
+      body: data
+    });
+  }
+
+  if(type === 'jsonp'){
+    fetchJsonp(arguments[0], jsonpOptions)
+      .then(function(res){
+        if(res.ok){
+          return res.json();
+        }
+        throw res;
+      }).then(function(resp){
+        callback(resp);
+      }).catch(function(err){
+        if (errorCallback) {
+          errorCallback(err);
+        } else {
+          console.log(err.status + ' ' + err.statusText);
+        }
+      });
+  }else{
+    fetch(request)
+      .then(function(res){
+        if(res.ok){
+          if(type === 'json'){
+            return res.json();
+          }else{
+            return res.text();
           }
         }
-      },
-      error: function (resp) {
-        if (errorCallback) {
-          errorCallback(resp);
-        } else {
-          console.log(resp.statusText);
+
+        throw res;
+      })
+      .then(function(resp){
+        if (type === 'xml'){
+          var parser = new DOMParser();
+          resp = parser.parseFromString(resp, 'text/xml');
+          resp = parseXML(resp.documentElement);
         }
-      }
-    });
+        callback(resp);
+      }).catch(function(err, msg){
+        if (errorCallback) {
+          errorCallback(err);
+        } else {
+          console.log(err.status + ' ' + err.statusText);
+        }
+      });
   }
 };
 
