@@ -1060,6 +1060,38 @@ p5.Vector.mag = function (vecT){
  */
 
 p5.Vector.average = function () {
+  var array = null;
+  if ( arguments.length === 0 ) {
+    return new p5.Vector( 0, 0, 0 );
+  } else if ( arguments.length === 1 && arguments[0] instanceof Array &&
+              arguments[0].length > 0) {
+    array = arguments[0];
+  }
+  else if ( arguments.length > 1 ) {
+    array = [].slice.call(arguments);
+  }
+  else {
+    return new p5.Vector(0, 0, 0);
+  }
+
+  if ( array ) {
+    return new p5.Vector(
+      array.reduce( function(sum, vector) {
+        return sum + vector.x;
+      }, 0 ) / array.length,
+      array.reduce( function(sum, vector) {
+        return sum + vector.y;
+      }) / array.length,
+      array.reduce( function(sum, vector) {
+        if ( vector.z ) {
+          return sum + vector.z;
+        }
+        return sum;
+      }) / array.length
+    );
+  }
+
+  return new p5.Vector(0, 0, 0);
 };
 
 
