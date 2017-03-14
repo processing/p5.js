@@ -234,6 +234,9 @@ p5.prototype._ontouchend = function(e) {
     if(executeDefault === false) {
       e.preventDefault();
     }
+  } else {
+    e.preventDefault();
+    return false;
   }
 };
 
