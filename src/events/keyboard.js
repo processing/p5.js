@@ -226,15 +226,15 @@ p5.prototype._onkeydown = function (e) {
 p5.prototype._onkeyup = function (e) {
   var keyReleased = this.keyReleased || window.keyReleased;
   downKeys[e.which] = false;
-  //delete this._downKeys[e.which];
-  var key = String.fromCharCode(e.which);
 
-  if(areDownKeys()) {
+  if(!areDownKeys()) {
     this._setProperty('isKeyPressed', false);
     this._setProperty('keyIsPressed', false);
   }
 
   this._setProperty('_lastKeyCodeTyped', null);
+
+  var key = String.fromCharCode(e.which);
   if (!key) {
     key = e.which;
   }
@@ -369,7 +369,7 @@ p5.prototype.keyIsDown = function(code) {
 **/
 function areDownKeys() {
   for (var key in downKeys) {
-    if (downKeys[key] === true ) {
+    if (downKeys.hasOwnProperty(key) && downKeys[key] === true) {
       return true;
     }
   }

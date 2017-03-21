@@ -56,7 +56,7 @@ require('../color/p5.Color');
  * <code>arrayCopy()</code> do not
  * work.</p>
  *
- * @property pixels[]
+ * @property {Number[]} pixels
  * @example
  * <div>
  * <code>
@@ -502,8 +502,9 @@ p5.prototype.loadPixels = function() {
  * the upper-left corner of the image, regardless of the current imageMode().
  * </p>
  * <p>
- * After using set(), you must call updatePixels() for your changes to
- * appear.  This should be called once all pixels have been set.
+ * After using set(), you must call updatePixels() for your changes to appear.
+ * This should be called once all pixels have been set, and must be called before
+ * calling .get() or drawing the image.
  * </p>
  * <p>Setting the color of a single pixel with set(x, y) is easy, but not as
  * fast as putting the data directly into pixels[]. Setting the pixels[]
@@ -578,7 +579,7 @@ p5.prototype.set = function (x, y, imgOrCol) {
  * @param  {Number} [y]    y-coordinate of the upper-left corner of region
  *                         to update
  * @param  {Number} [w]    width of region to update
- * @param  {Number} [w]    height of region to update
+ * @param  {Number} [h]    height of region to update
  * @example
  * <div>
  * <code>

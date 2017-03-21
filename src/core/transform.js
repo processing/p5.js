@@ -109,9 +109,9 @@ p5.prototype.resetMatrix = function() {
  */
 /**
  * @method rotate
- * @param  {Number} rad  angle in radians
- * @param  {p5.Vector | Array} axis axis to rotate around
- * @return {p5.RendererGL}      [description]
+ * @param  {Number} rad angle in radians
+ * @param  {p5.Vector|Array} axis axis to rotate around
+ * @return {p5} the p5 object
  */
 p5.prototype.rotate = function() {
   var args = new Array(arguments.length);
@@ -138,7 +138,7 @@ p5.prototype.rotate = function() {
  * Rotates around X axis.
  * @method  rotateX
  * @param  {Number} rad angles in radians
- * @return {[type]}     [description]
+ * @return {p5} the p5 object
  */
 p5.prototype.rotateX = function(rad) {
   if (this._renderer.isP3D) {
@@ -153,7 +153,7 @@ p5.prototype.rotateX = function(rad) {
  * Rotates around Y axis.
  * @method rotateY
  * @param  {Number} rad angles in radians
- * @return {[type]}     [description]
+ * @return {p5} the p5 object
  */
 p5.prototype.rotateY = function(rad) {
   if (this._renderer.isP3D) {
@@ -165,10 +165,10 @@ p5.prototype.rotateY = function(rad) {
 };
 
 /**
- * Rotates around Z axis.  Webgl mode only.
+ * Rotates around Z axis. Webgl mode only.
  * @method rotateZ
  * @param  {Number} rad angles in radians
- * @return {[type]}     [description]
+ * @return {p5} the p5 object
  */
 p5.prototype.rotateZ = function(rad) {
   if (this._renderer.isP3D) {
@@ -195,7 +195,7 @@ p5.prototype.rotateZ = function(rad) {
  * This function can be further controlled with push() and pop().
  *
  * @method scale
- * @param  {Number | p5.Vector | Array} s
+ * @param  {Number|p5.Vector|Array} s
  *                      percent to scale the object, or percentage to
  *                      scale the object in the x-axis if multiple arguments
  *                      are given

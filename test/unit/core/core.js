@@ -144,7 +144,7 @@ suite('Core', function(){
       iframe.contentDocument.close();
     }
 
-    afterEach(function() {
+    teardown(function() {
       if (iframe) {
         iframe.parentNode.removeChild(iframe);
         iframe = null;
@@ -207,7 +207,7 @@ suite('Core', function(){
     var createBinder = p5.prototype._createFriendlyGlobalFunctionBinder;
     var logMsg, globalObject, bind;
 
-    beforeEach(function() {
+    setup(function() {
       globalObject = {};
       logMsg = undefined;
       bind = createBinder({

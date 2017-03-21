@@ -29,7 +29,7 @@
     "grunt-jscs": "^3.0.1",
     "grunt-lib-phantomjs": "~0.4.0",
     "grunt-minjson": "^0.4.0",
-    "grunt-mocha": "~0.4.6",
+    "grunt-mocha": "^1.0.4",
     "grunt-mocha-test": "^0.12.7",
     "grunt-newer": "^1.1.0",
     "grunt-release-it": "^0.2.1",
@@ -37,14 +37,16 @@
     "grunt-update-json": "^0.2.1",
     "jscs-stylish": "^0.3.1",
     "marked": "^0.3.5",
-    "mocha": "^2.4.5",
-    "phantomjs": "~1.9.2-4"
+    "mocha": "^3.2.0",
+    "phantomjs": "^2.1.7"
   },
   "license": "LGPL-2.1",
   "dependencies": {
     "brfs": "^1.4.0",
+    "es6-promise": "^4.0.5",
+    "fetch-jsonp": "^1.0.6",
     "opentype.js": "^0.4.9",
-    "reqwest": "^1.1.5"
+    "whatwg-fetch": "^2.0.2"
   },
   "main": "./lib/p5.js",
   "files": [

@@ -118,7 +118,7 @@ p5.prototype.textSize = function(theSize) {
  * (opentype, truetype, etc.) please load styled fonts instead.
  *
  * @method textStyle
- * @param {Number/Constant} theStyle styling for text, either NORMAL,
+ * @param {Number|Constant} theStyle styling for text, either NORMAL,
  *                            ITALIC, or BOLD
  * @return {Object|String}
  * @example

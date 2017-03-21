@@ -239,7 +239,7 @@ Filters.opaque = function (canvas) {
 
 /**
  * Sets each pixel to its inverse value. No parameter is used.
- * @param {Invert}
+ * @param  {Canvas} canvas
  */
 Filters.invert = function (canvas) {
   var pixels = Filters._toPixels(canvas);

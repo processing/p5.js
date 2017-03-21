@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/processing/p5.js.svg?branch=master)](https://travis-ci.org/processing/p5.js) [![npm version](https://badge.fury.io/js/p5.svg)](https://www.npmjs.com/package/p5)
 
-#[p5.js](http://p5js.org)
+# [p5.js](http://p5js.org)
 
 [Hello!](http://hello.p5js.org/) p5.js is a JavaScript library that starts with the original goal of Processing, to make coding accessible for artists, designers, educators, and beginners, and reinterprets this for today's web.
 
@@ -12,18 +12,18 @@ If you already know the basics of JS or Processing, the [p5.js overview](https:/
 
 If you have found a bug in the p5.js library, you can file it here under the [“issues” tab](https://github.com/processing/p5.js/issues).
 
-##p5.js library
+## p5.js library
 
 To use p5.js, you can [download the p5.js library here](http://p5js.org/download).  If you are interested in the most recent, less stable version, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [development](https://github.com/processing/p5.js/wiki/Development) wiki for more information about our build process.
 
-##Issues
+## Issues
 
 * You can post bugs found in the p5.js library itself here: [https://github.com/processing/p5.js/issues](https://github.com/processing/p5.js/issues)
 * You can post bugs found on the p5js.org website here: [https://github.com/processing/p5.js-website/issues](https://github.com/processing/p5.js-website/issues)
 * You can post bugs found in the p5.Sound addon library here: [https://github.com/processing/p5.js-sound/issues](https://github.com/processing/p5.js-sound/issues)
 
 
-##Learning
+## Learning
 
 Check out [p5js.org](http://p5js.org) for lots more! Here are some quicklinks:
 
@@ -35,7 +35,7 @@ Check out [p5js.org](http://p5js.org) for lots more! Here are some quicklinks:
 * [Libraries](http://p5js.org/libraries) — Extend p5 functionality to interact with HTML, manipulate sound, and more!
 * [FAQ](https://github.com/processing/p5.js/wiki/Frequently-Asked-Questions)
 
-##Get Involved
+## Get Involved
 
 p5.js is a collaborative project created by many individuals, and you are invited to help. All types of involvement are welcome. See the [community section](http://p5js.org/community) to get started!
 
