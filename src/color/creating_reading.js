@@ -137,7 +137,7 @@ p5.prototype.brightness = function(c) {
  * Colors are stored as Numbers or Arrays.
  *
  * @method color
- * @param  {Number|String} gray    number specifying value between white
+ * @param  {Number}        gray    number specifying value between white
  *                                 and black.
  * @param  {Number}        [alpha] alpha value relative to current color range
  *                                 (default is 0-255)
