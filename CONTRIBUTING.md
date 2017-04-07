@@ -1,4 +1,8 @@
-# p5.js Code of Conduct
+### The github issues are for bugs and feature requests for the p5.js library itself. If you have a general question or bug programming with p5.js please post it in the [p5.js forum](https://forum.processing.org/two/).
+
+### Please make sure you are posting to the right repository. See this [section](https://github.com/processing/p5.js/blob/master/README.md#issues) for a list of all p5.js repositories.
+
+## p5.js Code of Conduct
 
 * **Be mindful of your language.** Any of the following behavior is unacceptable: 
   * Offensive comments related to gender identity and expression, sexual orientation, race, ethnicity, language, neuro-type, size, ability, class, religion, culture, subculture, political opinion, age, skill level, occupation, or background

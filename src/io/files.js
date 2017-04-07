@@ -262,7 +262,7 @@ p5.prototype.loadJSON = function () {
       if (arg === 'jsonp' || arg === 'json') {
         t = arg;
       }
-    } else if (typeof arg === 'function') {
+    } else if (typeof arg === 'function' && arg !== decrementPreload) {
       if(!callback){
         callback = arg;
       }else{
@@ -349,11 +349,23 @@ p5.prototype.loadJSON = function () {
  * randomly generated text from a file, for example "i have three feet"
  *
  */
-p5.prototype.loadStrings = function (path, callback, errorCallback) {
+p5.prototype.loadStrings = function () {
   var ret = [];
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
+  var callback, errorCallback;
 
-  p5.prototype.httpDo(path, 'GET', 'text', function(data){
+  for(var i=1; i<arguments.length; i++){
+    var arg = arguments[i];
+    if(typeof arg === 'function' && arg !== decrementPreload){
+      if(typeof callback === 'undefined'){
+        callback = arg;
+      }else{
+        errorCallback = arg;
+      }
+    }
+  }
+
+  p5.prototype.httpDo(arguments[0], 'GET', 'text', function(data){
     var arr = data.match(/[^\r\n]+/g);
     for (var k in arr) {
       ret[k] = arr[k];
@@ -635,9 +647,9 @@ p5.prototype.loadTable = function (path) {
     p5._friendlyFileLoadError(2, path);
 
     if(errorCallback){
-      errorCallback(err.status + ' ' + err.statusText);
+      errorCallback(err);
     }else{
-      console.log(err.status + ' ' + err.statusText);
+      throw err;
     }
   });
 
@@ -713,11 +725,23 @@ p5.prototype.parseXML = function (two) {
  *                               in as first argument
  * @return {Object}              XML object containing data
  */
-p5.prototype.loadXML = function (path, callback, errorCallback) {
+p5.prototype.loadXML = function() {
   var ret = {};
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
+  var callback, errorCallback;
 
-  p5.prototype.httpDo(path, 'GET', 'xml', function(xml){
+  for(var i=1; i<arguments.length; i++){
+    var arg = arguments[i];
+    if(typeof arg === 'function' && arg !== decrementPreload){
+      if(typeof callback === 'undefined'){
+        callback = arg;
+      }else{
+        errorCallback = arg;
+      }
+    }
+  }
+
+  p5.prototype.httpDo(arguments[0], 'GET', 'xml', function(xml){
     for(var key in xml) {
       ret[key] = xml[key];
     }
@@ -770,8 +794,8 @@ p5.prototype.httpGet = function () {
   var args = new Array(arguments.length);
   args[0] = arguments[0];
   args[1] = 'GET';
-  for (var i = 2; i < args.length; ++i) {
-    args[i] = arguments[i];
+  for (var i = 1; i < arguments.length; ++i) {
+    args[i+1] = arguments[i];
   }
   p5.prototype.httpDo.apply(this, args);
 };
@@ -796,8 +820,8 @@ p5.prototype.httpPost = function () {
   var args = new Array(arguments.length);
   args[0] = arguments[0];
   args[1] = 'POST';
-  for (var i = 2; i < args.length; ++i) {
-    args[i] = arguments[i];
+  for (var i = 1; i < arguments.length; ++i) {
+    args[i+1] = arguments[i];
   }
   p5.prototype.httpDo.apply(this, args);
 };
@@ -930,7 +954,7 @@ p5.prototype.httpDo = function () {
         if (errorCallback) {
           errorCallback(err);
         } else {
-          console.log(err.status + ' ' + err.statusText);
+          throw err;
         }
       });
   }else{
@@ -957,7 +981,7 @@ p5.prototype.httpDo = function () {
         if (errorCallback) {
           errorCallback(err);
         } else {
-          console.log(err.status + ' ' + err.statusText);
+          throw err;
         }
       });
   }
