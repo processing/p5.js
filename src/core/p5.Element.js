@@ -188,7 +188,9 @@ p5.Element.prototype.class = function(c) {
  */
 p5.Element.prototype.mousePressed = function (fxn) {
   attachListener('mousedown', fxn, this);
-  attachListener('touchstart', fxn, this);
+  if (!window.PointerEvent) {
+    attachListener('touchstart', fxn, this);
+  }
   return this;
 };
 
@@ -303,7 +305,9 @@ p5.Element.prototype.mouseWheel = function (fxn) {
  */
 p5.Element.prototype.mouseReleased = function (fxn) {
   attachListener('mouseup', fxn, this);
-  attachListener('touchend', fxn, this);
+  if (!window.PointerEvent) {
+    attachListener('touchend', fxn, this);
+  }
   return this;
 };
 
@@ -410,7 +414,9 @@ p5.Element.prototype.mouseClicked = function (fxn) {
  */
 p5.Element.prototype.mouseMoved = function (fxn) {
   attachListener('mousemove', fxn, this);
-  attachListener('touchmove', fxn, this);
+  if (!window.PointerEvent) {
+    attachListener('touchmove', fxn, this);
+  }
   return this;
 };
 
@@ -638,7 +644,9 @@ p5.Element.prototype.mouseOut = function (fxn) {
  */
 p5.Element.prototype.touchStarted = function (fxn) {
   attachListener('touchstart', fxn, this);
-  attachListener('mousedown', fxn, this);
+  if (!window.PointerEvent) {
+    attachListener('mousedown', fxn, this);
+  }
   return this;
 };
 
@@ -677,7 +685,9 @@ p5.Element.prototype.touchStarted = function (fxn) {
  */
 p5.Element.prototype.touchMoved = function (fxn) {
   attachListener('touchmove', fxn, this);
-  attachListener('mousemove', fxn, this);
+  if (!window.PointerEvent) {
+    attachListener('mousemove', fxn, this);
+  }
   return this;
 };
 
@@ -725,7 +735,9 @@ p5.Element.prototype.touchMoved = function (fxn) {
  */
 p5.Element.prototype.touchEnded = function (fxn) {
   attachListener('touchend', fxn, this);
-  attachListener('mouseup', fxn, this);
+  if (!window.PointerEvent) {
+    attachListener('mouseup', fxn, this);
+  }
   return this;
 };
 
