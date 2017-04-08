@@ -19,7 +19,7 @@ require('../color/p5.Color');
  * factor for pixelDensity) of the display window x4,
  * representing the R, G, B, A values in order for each pixel, moving from
  * left to right across each row, then down each column. Retina and other
- * high denisty displays will have more pixels[] (by a factor of
+ * high density displays will have more pixels[] (by a factor of
  * pixelDensity^2).
  * For example, if the image is 100x100 pixels, there will be 40,000. On a
  * retina display, there will be 160,000.
