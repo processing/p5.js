@@ -510,7 +510,7 @@ p5.prototype._onmousemove = function(e){
       if(executeDefault === false) {
         e.preventDefault();
       }
-    } else if (typeof context.touchMoved === 'function') {
+    } else if (!window.PointerEvent && typeof context.touchMoved === 'function') {
       executeDefault = context.touchMoved(e);
       if(executeDefault === false) {
         e.preventDefault();
@@ -578,7 +578,7 @@ p5.prototype._onmousedown = function(e) {
     if(executeDefault === false) {
       e.preventDefault();
     }
-  } else if (typeof context.touchStarted === 'function') {
+  } else if (!window.PointerEvent && typeof context.touchStarted === 'function') {
     executeDefault = context.touchStarted(e);
     if(executeDefault === false) {
       e.preventDefault();
@@ -643,7 +643,7 @@ p5.prototype._onmouseup = function(e) {
     if(executeDefault === false) {
       e.preventDefault();
     }
-  } else if (typeof context.touchEnded === 'function') {
+  } else if (!window.PointerEvent && typeof context.touchEnded === 'function') {
     executeDefault = context.touchEnded(e);
     if(executeDefault === false) {
       e.preventDefault();
