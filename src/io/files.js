@@ -1249,7 +1249,6 @@ p5.prototype.saveJSON = function (json, filename, opt) {
   } else {
     stringify = JSON.stringify(json, undefined, 2);
   }
-  console.log(stringify);
   this.saveStrings(stringify.split('\n'), filename, 'json');
 };
 
