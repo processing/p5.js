@@ -142,7 +142,7 @@ p5.TableRow.prototype.getNum = function(column) {
   }
 
   if (ret.toString() === 'NaN') {
-    throw 'Error: ' + this.obj[column]+ ' is NaN (Not a Number)';
+    console.error('Error: ' + this.obj[column]+ ' is NaN (Not a Number)');
   }
   return ret;
 };
