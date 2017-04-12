@@ -563,6 +563,11 @@ p5.Color._parseInputs = function() {
         return parseInt(color, 10) / 100;
       });
     }
+
+    results = results.map(function(value) {
+      return Math.max(Math.min(value, 1), 0);
+    });
+
     if (results.length) {
       return color_conversion._hsbaToRGBA(results);
     }
