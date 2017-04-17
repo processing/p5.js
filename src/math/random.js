@@ -19,11 +19,23 @@ var lcg = (function() {
   // Set to values from http://en.wikipedia.org/wiki/Numerical_Recipes
   // m is basically chosen to be large (as it is the max period)
   // and for its relationships to a and c
-  var m = 4294967296,
+  var CongruentialValus=[
+    [4294967296, 1664525, 1013904223],
+    [4294967296, 22695477, 1],
+    [2147483648, 1103515245, 12345],
+    [2147483647, 16807, 0],
+    [2147483647, 48271, 0],
+    [4294967296, 134775813, 1],
+    [4294967296, 69069, 1],
+    [2147483647,  65539, 0]
+  ];
+  var i=Math.floor((Math.random() * 10))%8;
+  //document.write(i);
+  var m = CongruentialValus[i][0],
     // a - 1 should be divisible by m's prime factors
-    a = 1664525,
+    a = CongruentialValus[i][1],
     // c and m should be co-prime
-    c = 1013904223,
+    c = CongruentialValus[i][2],
     seed, z;
   return {
     setSeed : function(val) {
