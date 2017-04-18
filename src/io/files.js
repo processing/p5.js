@@ -6,6 +6,7 @@
  */
 
 /* globals Request: false */
+/* globals Headers: false */
 
 'use strict';
 
@@ -863,6 +864,7 @@ p5.prototype.httpDo = function () {
   var request;
   var jsonpOptions = {};
   var cbCount = 0;
+  var contentType = 'text/plain';
   // Trim the callbacks off the end to get an idea of how many arguments are passed
   for (var i = arguments.length-1; i > 0; i--){
     if(typeof arguments[i] === 'function'){
@@ -914,6 +916,7 @@ p5.prototype.httpDo = function () {
           }
         }else{
           data = JSON.stringify(a);
+          contentType = 'application/json';
         }
       } else if (typeof a === 'function') {
         if (!callback) {
@@ -937,7 +940,10 @@ p5.prototype.httpDo = function () {
     request = new Request(path, {
       method: method,
       mode: 'cors',
-      body: data
+      body: data,
+      headers: new Headers({
+        'Content-Type': contentType
+      })
     });
   }
 
