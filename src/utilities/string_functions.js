@@ -197,11 +197,11 @@ p5.prototype.nf = function () {
 
 function doNf() {
   var num = arguments[0];
+  num = handleExponents(num);
   var neg = num < 0;
-  var n = neg ? num.toString().substring(1) : num.toString();
-  var decimalInd = n.indexOf('.');
-  var intPart = decimalInd !== -1 ? n.substring(0, decimalInd) : n;
-  var decPart = decimalInd !== -1 ? n.substring(decimalInd + 1) : '';
+  var decimalInd = num.indexOf('.');
+  var intPart = decimalInd !== -1 ? num.substring(0, decimalInd) : num;
+  var decPart = decimalInd !== -1 ? num.substring(decimalInd + 1) : '';
   var str = neg ? '-' : '';
   if (arguments.length === 3) {
     var decimal = '';
@@ -226,8 +226,36 @@ function doNf() {
     for (var k = 0; k < Math.max(arguments[1] - intPart.length, 0); k++) {
       str += '0';
     }
-    str += n;
+    str += num;
     return str;
+  }
+}
+
+function handleExponents(num){
+  num = String(num).split(/[eE]/);
+  if(num.length === 1){
+    return num[0];
+  }
+  var  z = '';
+  var sign = num < 0 ? '-':'',
+  str = num[0].replace('.', ''),
+  m = Number(num[1])+ 1;
+  if(m < 0){
+    z = sign + '0.';
+    while(m++){
+      z += '0';
+    }
+    return z + str.replace(/^\-/,'');
+  }
+  m -= str.length;
+  while(m--){
+    z += '0';
+  }
+  if(z.indexOf('.')){
+    return str + z + '.';
+  }
+  else{
+    return str + z;
   }
 }
 
