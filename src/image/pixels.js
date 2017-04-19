@@ -460,6 +460,8 @@ p5.prototype.get = function(x, y, w, h){
 /**
  * Loads the pixel data for the display window into the pixels[] array. This
  * function must always be called before reading from or writing to pixels[].
+ * Note that only changes made with set() or direct manipulation of pixels[]
+ * will occur
  *
  * @method loadPixels
  * @example
@@ -571,7 +573,8 @@ p5.prototype.set = function (x, y, imgOrCol) {
  * Use in conjunction with loadPixels(). If you're only reading pixels from
  * the array, there's no need to call updatePixels() — updating is only
  * necessary to apply changes. updatePixels() should be called anytime the
- * pixels array is manipulated or set() is called.
+ * pixels array is manipulated or set() is called, and only changes made with
+ * set() or direct modification of the pixels array will occur.
  *
  * @method updatePixels
  * @param  {Number} [x]    x-coordinate of the upper-left corner of region
