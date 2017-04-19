@@ -19,7 +19,7 @@ require('../color/p5.Color');
  * factor for pixelDensity) of the display window x4,
  * representing the R, G, B, A values in order for each pixel, moving from
  * left to right across each row, then down each column. Retina and other
- * high denisty displays will have more pixels[] (by a factor of
+ * high density displays will have more pixels[] (by a factor of
  * pixelDensity^2).
  * For example, if the image is 100x100 pixels, there will be 40,000. On a
  * retina display, there will be 160,000.
@@ -56,7 +56,7 @@ require('../color/p5.Color');
  * <code>arrayCopy()</code> do not
  * work.</p>
  *
- * @property pixels[]
+ * @property {Number[]} pixels
  * @example
  * <div>
  * <code>
@@ -460,6 +460,8 @@ p5.prototype.get = function(x, y, w, h){
 /**
  * Loads the pixel data for the display window into the pixels[] array. This
  * function must always be called before reading from or writing to pixels[].
+ * Note that only changes made with set() or direct manipulation of pixels[]
+ * will occur.
  *
  * @method loadPixels
  * @example
@@ -502,8 +504,9 @@ p5.prototype.loadPixels = function() {
  * the upper-left corner of the image, regardless of the current imageMode().
  * </p>
  * <p>
- * After using set(), you must call updatePixels() for your changes to
- * appear.  This should be called once all pixels have been set.
+ * After using set(), you must call updatePixels() for your changes to appear.
+ * This should be called once all pixels have been set, and must be called before
+ * calling .get() or drawing the image.
  * </p>
  * <p>Setting the color of a single pixel with set(x, y) is easy, but not as
  * fast as putting the data directly into pixels[]. Setting the pixels[]
@@ -570,7 +573,8 @@ p5.prototype.set = function (x, y, imgOrCol) {
  * Use in conjunction with loadPixels(). If you're only reading pixels from
  * the array, there's no need to call updatePixels() — updating is only
  * necessary to apply changes. updatePixels() should be called anytime the
- * pixels array is manipulated or set() is called.
+ * pixels array is manipulated or set() is called, and only changes made with
+ * set() or direct changes to pixels[] will occur.
  *
  * @method updatePixels
  * @param  {Number} [x]    x-coordinate of the upper-left corner of region
@@ -578,7 +582,7 @@ p5.prototype.set = function (x, y, imgOrCol) {
  * @param  {Number} [y]    y-coordinate of the upper-left corner of region
  *                         to update
  * @param  {Number} [w]    width of region to update
- * @param  {Number} [w]    height of region to update
+ * @param  {Number} [h]    height of region to update
  * @example
  * <div>
  * <code>

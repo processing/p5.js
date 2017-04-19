@@ -137,7 +137,7 @@ p5.prototype.brightness = function(c) {
  * Colors are stored as Numbers or Arrays.
  *
  * @method color
- * @param  {Number|String} gray    number specifying value between white
+ * @param  {Number}        gray    number specifying value between white
  *                                 and black.
  * @param  {Number}        [alpha] alpha value relative to current color range
  *                                 (default is 0-255)
@@ -389,10 +389,10 @@ p5.prototype.hue = function(c) {
  * The way that colours are interpolated depends on the current color mode.
  *
  * @method lerpColor
- * @param  {Array/Number} c1  interpolate from this color
- * @param  {Array/Number} c2  interpolate to this color
+ * @param  {Array|Number} c1  interpolate from this color
+ * @param  {Array|Number} c2  interpolate to this color
  * @param  {Number}       amt number between 0 and 1
- * @return {Array/Number}     interpolated color
+ * @return {Array|Number}     interpolated color
  * @example
  * <div>
  * <code>

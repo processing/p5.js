@@ -95,7 +95,7 @@ p5.prototype.randomSeed = function(seed) {
  * @method random
  * @param  {Number} [min]   the lower bound (inclusive)
  * @param  {Number} [max]   the upper bound (exclusive)
- * @return {Number|mixed} the random number or a random element in choices
+ * @return {Number} the random number
  * @example
  * <div>
  * <code>
@@ -132,7 +132,7 @@ p5.prototype.randomSeed = function(seed) {
 /**
  * @method random
  * @param  {Array} choices   the array to choose from
- * @return {mixed} the random element from the array
+ * @return {*} the random element from the array
  * @example
  */
 p5.prototype.random = function (min, max) {

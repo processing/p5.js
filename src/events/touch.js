@@ -18,7 +18,7 @@ var p5 = require('../core/core');
  * The touches[] array is not supported on Safari and IE on touch-based 
  * desktops (laptops).
  *
- * @property touches[]
+ * @property {Object[]} touches
  */
 p5.prototype.touches = [];
 
@@ -103,12 +103,11 @@ p5.prototype._ontouchstart = function(e) {
     if(executeDefault === false) {
       e.preventDefault();
     }
-  } else if (typeof context.mousePressed === 'function') {
+  } else if (!window.PointerEvent && typeof context.mousePressed === 'function') {
     executeDefault = context.mousePressed(e);
     if(executeDefault === false) {
       e.preventDefault();
     }
-    //this._setMouseButton(e);
   }
 };
 
@@ -166,7 +165,7 @@ p5.prototype._ontouchmove = function(e) {
     if(executeDefault === false) {
       e.preventDefault();
     }
-  } else if (typeof context.mouseDragged === 'function') {
+  } else if (!window.PointerEvent && typeof context.mouseDragged === 'function') {
     executeDefault = context.mouseDragged(e);
     if(executeDefault === false) {
       e.preventDefault();
@@ -232,7 +231,7 @@ p5.prototype._ontouchend = function(e) {
     if(executeDefault === false) {
       e.preventDefault();
     }
-  } else if (typeof context.mouseReleased === 'function') {
+  } else if (!window.PointerEvent && typeof context.mouseReleased === 'function') {
     executeDefault = context.mouseReleased(e);
     if(executeDefault === false) {
       e.preventDefault();

@@ -37,7 +37,7 @@ var p5 = require('../core/core');
  *   var children = xml.getChildren("animal");
  *
  *   for (var i = 0; i < children.length; i++) {
- *     var id = children[i].getNumber("id");
+ *     var id = children[i].getNum("id");
  *     var coloring = children[i].getString("species");
  *     var name = children[i].getContent();
  *     print(id + ", " + coloring + ", " + name);
@@ -565,7 +565,7 @@ p5.XML.prototype.hasAttribute = function(name) {
  * is returned. If no defaultValue is specified and the attribute doesn't
  * exist, the value 0 is returned.
  *
- * @method getNumber
+ * @method getNum
  * @param {String} name            the non-null full name of the attribute
  * @param {Number} [defaultValue]  the default value of the attribute
  * @return {Number}
@@ -589,14 +589,14 @@ p5.XML.prototype.hasAttribute = function(name) {
  *
  * function setup() {
  *   var firstChild = xml.getChild("animal");
- *   print(firstChild.getNumber("id"));
+ *   print(firstChild.getNum("id"));
  * }
  *
  * // Sketch prints:
  * // 0
  * </code></div>
  */
-p5.XML.prototype.getNumber = function(name, defaultValue) {
+p5.XML.prototype.getNum = function(name, defaultValue) {
   return Number(this.attributes[name]) || defaultValue || 0;
 };
 
