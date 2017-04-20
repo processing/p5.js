@@ -118,6 +118,34 @@ p5.prototype.constrain = function(n, low, high) {
 };
 
 /**
+ * Check if the point is inside the circle
+ *
+ * @method isPointInCircle
+ * @param {Number} x1 x-coordinate of the circle center
+ * @param {Number} y1 y-coordinate of the circle center
+ * @param {Number} r radius of the circle
+ * @param {Number} x2 x-coordinate of the point
+ * @param {Number} y2 y-coordinate of the point
+ * @return {Boolean} point is inside the circle
+ * @example
+ *	// Draws green or red circle depending on the result of isPointInCircle method
+ * 	function draw() {
+ *  	if(isPointInCircle(1, 2, 5, 3, 4)) {
+ *			fill(0, 255, 0);
+ *		}else {
+ *			fill(255, 0, 0);
+ *		}
+ *	
+ *		ellipse(50, 50, 100, 100);
+ *	}
+*/
+p5.prototype.isPointInCircle = function(x1, y1, r, x2, y2) {
+	var distance = dist(x1, y1, x2, y2); 
+
+	return distance < r;
+};
+
+/**
  * Calculates the distance between two points.
  *
  * @method dist
