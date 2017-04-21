@@ -532,9 +532,9 @@ p5.Image.prototype.mask = function(p5Image) {
  * Applies an image filter to a p5.Image
  *
  * @method filter
- * @param {String} operation one of threshold, gray, invert, posterize and
- *                           opaque see Filters.js for docs on each available
- *                           filter
+ * @param {String} operation one of threshold, gray, invert, posterize, opaque
+ *                           erode, dilate and blur. See Filters.js for docs on
+ *                           each available filter
  * @param {Number|undefined} value
  * @example
  * <div><code>
