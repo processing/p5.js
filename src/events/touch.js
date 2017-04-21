@@ -15,7 +15,7 @@ var p5 = require('../core/core');
  * unique touch as it moves. Each element in the array is an object with x, y,
  * and id properties.
  *
- * The touches[] array is not supported on Safari and IE on touch-based 
+ * The touches[] array is not supported on Safari and IE on touch-based
  * desktops (laptops).
  *
  * @property {Object[]} touches
