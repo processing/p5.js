@@ -198,10 +198,8 @@ p5.prototype.image =
   var defH = img.height;
 
   if (img.elt && img.elt.videoWidth && !img.canvas) { // video no canvas
-    var actualW = img.elt.videoWidth;
-    var actualH = img.elt.videoHeight;
     defW = img.elt.videoWidth;
-    defH = img.elt.width*actualH/actualW;
+    defH = img.elt.videoHeight;
   }
 
   var _dx = dx;
@@ -223,7 +221,14 @@ p5.prototype.image =
   var pd = 1;
 
   if (img.elt && img.elt.videoWidth && img.elt.style.width && !img.canvas) {
-    pd = img.elt.videoWidth / parseInt(img.elt.style.width, 10);
+    //if img.elt.size() has been used and no width passed to image()
+    if(img.elt.style.width && !dWidth){
+      pd = img.elt.videoWidth / parseInt(img.elt.style.width, 10);
+    }
+    //when img.elt.size() has been used and a width argument passed to image()
+    else{
+      pd = img.elt.width / parseInt(img.elt.style.width, 10);
+    }
   }
   else if (img.elt && img.elt.width && img.elt.style.width) {
     pd = img.elt.width / parseInt(img.elt.style.width, 10);
