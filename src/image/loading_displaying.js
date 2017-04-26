@@ -220,18 +220,17 @@ p5.prototype.image =
   // and https://github.com/processing/p5.js/issues/1673
   var pd = 1;
 
-  if (img.elt && img.elt.videoWidth && img.elt.style.width && !img.canvas) {
-    //if img.elt.size() has been used and no width passed to image()
-    if(img.elt.style.width && !dWidth){
-      pd = img.elt.videoWidth / parseInt(img.elt.style.width, 10);
+  if (img.elt && !img.canvas && img.elt.style.width) {
+    //if img is video and img.elt.size() has been used and
+    //no width passed to image()
+    if(img.elt.videoWidth && !dWidth){
+      pd = img.elt.videoWidth;
     }
-    //when img.elt.size() has been used and a width argument passed to image()
-    else{
-      pd = img.elt.width / parseInt(img.elt.style.width, 10);
+    //all other cases
+    else {
+      pd = img.elt.width;
     }
-  }
-  else if (img.elt && img.elt.width && img.elt.style.width) {
-    pd = img.elt.width / parseInt(img.elt.style.width, 10);
+    pd /= parseInt(img.elt.style.width, 10);
   }
 
   _sx *= pd;
