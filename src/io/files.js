@@ -792,12 +792,8 @@ p5.prototype.selectInput = function () {
  *                                    in as first argument
  */
 p5.prototype.httpGet = function () {
-  var args = new Array(arguments.length);
-  args[0] = arguments[0];
-  args[1] = 'GET';
-  for (var i = 1; i < arguments.length; ++i) {
-    args[i+1] = arguments[i];
-  }
+  var args = Array.prototype.slice.call(arguments);
+  args.splice(1, 0, 'GET');
   p5.prototype.httpDo.apply(this, args);
 };
 
@@ -818,12 +814,8 @@ p5.prototype.httpGet = function () {
  *                                    in as first argument
  */
 p5.prototype.httpPost = function () {
-  var args = new Array(arguments.length);
-  args[0] = arguments[0];
-  args[1] = 'POST';
-  for (var i = 1; i < arguments.length; ++i) {
-    args[i+1] = arguments[i];
-  }
+  var args = Array.prototype.slice.call(arguments);
+  args.splice(1, 0, 'POST');
   p5.prototype.httpDo.apply(this, args);
 };
 
