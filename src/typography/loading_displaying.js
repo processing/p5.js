@@ -76,7 +76,7 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  * @param {Object|String} f a font loaded via loadFont(), or a String
  * representing a <a href="https://mzl.la/2dOw8WD">web safe font</a> (a font
  * that is generally available across all systems).
- * @return {Object} this
+ * @return {Object|String} the current font 
  * @example
  * <div>
  * <code>
@@ -134,7 +134,7 @@ p5.prototype.textFont = function(theFont, theSize) {
     return this._renderer._applyTextProperties();
   }
 
-  return this;
+  return this._renderer._textFont;
 };
 
 module.exports = p5;
