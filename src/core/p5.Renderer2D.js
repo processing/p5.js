@@ -1270,7 +1270,7 @@ p5.Renderer2D.prototype._applyTextProperties = function() {
   }
 
   this.drawingContext.font = this._textStyle + ' ' +
-  this._textSize + 'px ' + font;
+    this._textSize + 'px ' + font;
 
   return p;
 };
