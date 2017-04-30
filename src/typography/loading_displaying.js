@@ -75,8 +75,8 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  * @method textFont
  * @param {Object|String} f a font loaded via loadFont(), or a String
  * representing a <a href="https://mzl.la/2dOw8WD">web safe font</a> (a font
- * that is generally available across all systems).
- * @return {Object|String} the current font 
+ * that is generally available across all systems)
+ * @return {Object|String} the current font
  * @example
  * <div>
  * <code>
