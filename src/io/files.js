@@ -1050,7 +1050,8 @@ p5.PrintWriter = function (filename, extension) {
   var self = this;
   this.name = filename;
   this.content = '';
-  this.print = function (data) {
+  //Changed to write because it was being overloaded by function below.
+  this.write = function (data) {
     this.content += data;
   };
   this.print = function (data) {
@@ -1384,11 +1385,12 @@ p5.prototype.saveTable = function (table, filename, options) {
     if (header[0] !== '0') {
       for (var h = 0; h < header.length; h++) {
         if (h < header.length - 1) {
-          pWriter.print(header[h] + sep);
+          pWriter.write(header[h] + sep);
         } else {
-          pWriter.print(header[h]);
+          pWriter.write(header[h]);
         }
       }
+      pWriter.write("\n");
     }
 
     // make rows
@@ -1396,13 +1398,14 @@ p5.prototype.saveTable = function (table, filename, options) {
       var j;
       for (j = 0; j < table.rows[i].arr.length; j++) {
         if (j < table.rows[i].arr.length - 1) {
-          pWriter.print(table.rows[i].arr[j] + sep);
+          pWriter.write(table.rows[i].arr[j] + sep);
         } else if (i < table.rows.length - 1) {
-          pWriter.print(table.rows[i].arr[j]);
+          pWriter.write(table.rows[i].arr[j]);
         } else {
-          pWriter.print(table.rows[i].arr[j]); // no line break
+          pWriter.write(table.rows[i].arr[j]);
         }
       }
+      pWriter.write("\n");
     }
   }
 
