@@ -1083,7 +1083,8 @@ p5.prototype.saveBytes = function () {
 
 };
 
-// object, filename, options --> saveJSON, saveStrings, saveTable
+// object, filename, options --> saveJSON, saveStrings, 
+
 // filename, [extension] [canvas] --> saveImage
 
 /**
@@ -1372,15 +1373,21 @@ function escapeHelper(content) {
  *
  */
 p5.prototype.saveTable = function (table, filename, options) {
-  var pWriter = this.createWriter(filename, options);
+  var ext;
+  if(options === undefined){
+    ext = filename.substring(filename.lastIndexOf(".")+1,filename.length);
+  }else{
+    ext = options; 
+  }
+  var pWriter = this.createWriter(filename, ext);
 
   var header = table.columns;
 
   var sep = ','; // default to CSV
-  if (options === 'tsv') {
+  if (ext === 'tsv') {
     sep = '\t';
   }
-  if (options !== 'html') {
+  if (ext !== 'html') {
     // make header if it has values
     if (header[0] !== '0') {
       for (var h = 0; h < header.length; h++) {
