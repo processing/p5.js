@@ -156,21 +156,6 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
   return p5Font;
 };
 
-//BufferedReader
-p5.prototype.createInput = function () {
-  // TODO
-  throw 'not yet implemented';
-};
-
-p5.prototype.createReader = function () {
-  // TODO
-  throw 'not yet implemented';
-};
-
-p5.prototype.loadBytes = function () {
-  // TODO
-  throw 'not yet implemented';
-};
 
 /**
  * Loads a JSON file from a file or a URL, and returns an Object or Array.
@@ -756,23 +741,6 @@ p5.prototype.loadXML = function() {
   return ret;
 };
 
-// name clash with window.open
-// p5.prototype.open = function() {
-//   // TODO
-
-// };
-
-p5.prototype.selectFolder = function () {
-  // TODO
-  throw 'not yet implemented';
-
-};
-
-p5.prototype.selectInput = function () {
-  // TODO
-  throw 'not yet implemented';
-
-};
 
 /**
  * Method for executing an HTTP GET request. If data type is not specified,
@@ -998,23 +966,6 @@ window.URL = window.URL || window.webkitURL;
 // private array of p5.PrintWriter objects
 p5.prototype._pWriters = [];
 
-p5.prototype.beginRaw = function () {
-  // TODO
-  throw 'not yet implemented';
-
-};
-
-p5.prototype.beginRecord = function () {
-  // TODO
-  throw 'not yet implemented';
-
-};
-
-p5.prototype.createOutput = function () {
-  // TODO
-
-  throw 'not yet implemented';
-};
 
 p5.prototype.createWriter = function (name, extension) {
   var newPW;
@@ -1034,17 +985,6 @@ p5.prototype.createWriter = function (name, extension) {
   return newPW;
 };
 
-p5.prototype.endRaw = function () {
-  // TODO
-
-  throw 'not yet implemented';
-};
-
-p5.prototype.endRecord = function () {
-  // TODO
-  throw 'not yet implemented';
-
-};
 
 p5.PrintWriter = function (filename, extension) {
   var self = this;
@@ -1075,12 +1015,6 @@ p5.PrintWriter = function (filename, extension) {
     self.flush();
     self = {};
   };
-};
-
-p5.prototype.saveBytes = function () {
-  // TODO
-  throw 'not yet implemented';
-
 };
 
 // object, filename, options --> saveJSON, saveStrings,
@@ -1256,11 +1190,6 @@ p5.prototype.saveJSON = function (json, filename, opt) {
 p5.prototype.saveJSONObject = p5.prototype.saveJSON;
 p5.prototype.saveJSONArray = p5.prototype.saveJSON;
 
-p5.prototype.saveStream = function () {
-  // TODO
-  throw 'not yet implemented';
-
-};
 
 /**
  *  Writes an array of Strings to a text file, one line per String.
@@ -1306,17 +1235,6 @@ p5.prototype.saveStrings = function (list, filename, extension) {
   pWriter.flush();
 };
 
-p5.prototype.saveXML = function () {
-  // TODO
-  throw 'not yet implemented';
-
-};
-
-p5.prototype.selectOutput = function () {
-  // TODO
-  throw 'not yet implemented';
-
-};
 
 // =======
 // HELPERS
