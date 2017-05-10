@@ -6,6 +6,7 @@
  */
 
 /* globals Request: false */
+/* globals Headers: false */
 
 'use strict';
 
@@ -759,12 +760,8 @@ p5.prototype.loadXML = function() {
  *                                    in as first argument
  */
 p5.prototype.httpGet = function () {
-  var args = new Array(arguments.length);
-  args[0] = arguments[0];
-  args[1] = 'GET';
-  for (var i = 1; i < arguments.length; ++i) {
-    args[i+1] = arguments[i];
-  }
+  var args = Array.prototype.slice.call(arguments);
+  args.splice(1, 0, 'GET');
   p5.prototype.httpDo.apply(this, args);
 };
 
@@ -785,12 +782,8 @@ p5.prototype.httpGet = function () {
  *                                    in as first argument
  */
 p5.prototype.httpPost = function () {
-  var args = new Array(arguments.length);
-  args[0] = arguments[0];
-  args[1] = 'POST';
-  for (var i = 1; i < arguments.length; ++i) {
-    args[i+1] = arguments[i];
-  }
+  var args = Array.prototype.slice.call(arguments);
+  args.splice(1, 0, 'POST');
   p5.prototype.httpDo.apply(this, args);
 };
 
@@ -831,6 +824,7 @@ p5.prototype.httpDo = function () {
   var request;
   var jsonpOptions = {};
   var cbCount = 0;
+  var contentType = 'text/plain';
   // Trim the callbacks off the end to get an idea of how many arguments are passed
   for (var i = arguments.length-1; i > 0; i--){
     if(typeof arguments[i] === 'function'){
@@ -882,6 +876,7 @@ p5.prototype.httpDo = function () {
           }
         }else{
           data = JSON.stringify(a);
+          contentType = 'application/json';
         }
       } else if (typeof a === 'function') {
         if (!callback) {
@@ -905,7 +900,10 @@ p5.prototype.httpDo = function () {
     request = new Request(path, {
       method: method,
       mode: 'cors',
-      body: data
+      body: data,
+      headers: new Headers({
+        'Content-Type': contentType
+      })
     });
   }
 
