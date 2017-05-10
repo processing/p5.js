@@ -625,9 +625,9 @@ p5.prototype.loadTable = function (path) {
     var row;
     for (i = 0; i < records.length; i++) {
       //Handles row of 'undefined' at end of some CSVs
-      if (i === records.length - 1 && records[i].length === 1) {
-        if (records[i][0] === 'undefined') {
-          break;
+      if (records[i].length === 1) {
+        if (records[i][0] === 'undefined' || records[i][0] === '') {
+          continue;
         }
       }
       row = new p5.TableRow();
