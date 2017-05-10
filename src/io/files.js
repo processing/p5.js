@@ -1083,8 +1083,7 @@ p5.prototype.saveBytes = function () {
 
 };
 
-// object, filename, options --> saveJSON, saveStrings, 
-
+// object, filename, options --> saveJSON, saveStrings,
 // filename, [extension] [canvas] --> saveImage
 
 /**
@@ -1375,9 +1374,9 @@ function escapeHelper(content) {
 p5.prototype.saveTable = function (table, filename, options) {
   var ext;
   if(options === undefined){
-    ext = filename.substring(filename.lastIndexOf(".")+1,filename.length);
+    ext = filename.substring(filename.lastIndexOf('.')+1,filename.length);
   }else{
-    ext = options; 
+    ext = options;
   }
   var pWriter = this.createWriter(filename, ext);
 
@@ -1397,7 +1396,7 @@ p5.prototype.saveTable = function (table, filename, options) {
           pWriter.write(header[h]);
         }
       }
-      pWriter.write("\n");
+      pWriter.write('\n');
     }
 
     // make rows
@@ -1412,7 +1411,7 @@ p5.prototype.saveTable = function (table, filename, options) {
           pWriter.write(table.rows[i].arr[j]);
         }
       }
-      pWriter.write("\n");
+      pWriter.write('\n');
     }
   }
 
