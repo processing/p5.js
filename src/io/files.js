@@ -466,9 +466,12 @@ p5.prototype.loadTable = function (path) {
   var sep = ',';
   var separatorSet = false;
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
-  
-  if(ext === 'tsv'){ //Only need to check if extension is tsv because csv is default
-    sep = '\t'; 
+
+  if(ext === 'tsv'){
+    /*Only need to check if extension is
+     *tsv because csv is default
+     */
+    sep = '\t';
   }
 
   for (var i = 1; i < arguments.length; i++) {
@@ -777,7 +780,9 @@ p5.prototype.httpGet = function () {
  *
  * @method httpPost
  * @param  {String}        path       name of the file or url to load
- * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
+ * @param  {String}        [datatype] "json", "jsonp", "xml",
+ * "text", "array", or "integer"
+ *
  * @param  {Object}        [data]     param data passed sent with request
  * @param  {Function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
@@ -803,7 +808,9 @@ p5.prototype.httpPost = function () {
  * @param  {String}        path       name of the file or url to load
  * @param  {String}        [method]   either "GET", "POST", or "PUT",
  *                                    defaults to "GET"
- * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
+ * @param  {String}        [datatype] "json", "jsonp", "xml",  "text",
+ *"array", or "integer"
+ *
  * @param  {Object}        [data]     param data passed sent with request
  * @param  {Function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
@@ -834,7 +841,7 @@ p5.prototype.httpDo = function () {
   for (var i = arguments.length-1; i > 0; i--){
     if(typeof arguments[i] === 'function'){
       cbCount++;
-    }else{
+    } else{
       break;
     }
   }
@@ -854,11 +861,15 @@ p5.prototype.httpDo = function () {
         type = 'json';
       } else if (request.url.indexOf('xml') !== -1) {
         type = 'xml';
-      } else {
+      } else if (request.url.indexOf('text') !== -1) {
         type = 'text';
+      } else if (request.url.indexOf('array') !== -1) {
+        type = 'array';
+      } else if (request.url.indexOf('integer') !== -1) {
+        type = 'integer';
       }
     }
-  }else{
+  } else {
     // Provided with arguments
     var path = arguments[0];
     var method = 'GET';
@@ -869,7 +880,17 @@ p5.prototype.httpDo = function () {
       if (typeof a === 'string') {
         if (a === 'GET' || a === 'POST' || a === 'PUT' || a === 'DELETE') {
           method = a;
-        } else if(a === 'json' || a === 'jsonp' || a === 'xml' || a === 'text') {
+        } else if(a === 'json') {
+          type = a;
+        } else if(a === 'jsonp') {
+          type = a;
+        } else if(a === 'xml') {
+          type = a;
+        } else if(a === 'text') {
+          type = a;
+        } else if(a === 'array') {
+          type = a;
+        } else if(a === 'integer') {
           type = a;
         } else {
           data = a;
@@ -879,7 +900,7 @@ p5.prototype.httpDo = function () {
           for (var attr in a) {
             jsonpOptions[attr] = a[attr];
           }
-        }else{
+        } else {
           data = JSON.stringify(a);
           contentType = 'application/json';
         }
@@ -897,8 +918,12 @@ p5.prototype.httpDo = function () {
         type = 'json';
       } else if (path.indexOf('xml') !== -1) {
         type = 'xml';
-      } else {
+      } else if (path.indexOf('text') !== -1) {
         type = 'text';
+      } else if (path.indexOf('array') !== -1){
+        type = 'array';
+      } else if (path.indexOf('integer') !== -1) {
+        type = 'integer';
       }
     }
 
