@@ -462,9 +462,14 @@ p5.prototype.loadTable = function (path) {
   var errorCallback = null;
   var options = [];
   var header = false;
+  var ext = path.substring(path.lastIndexOf('.')+1,path.length);
   var sep = ',';
   var separatorSet = false;
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
+  
+  if(ext === 'tsv'){ //Only need to check if extension is tsv because csv is default
+    sep = '\t'; 
+  }
 
   for (var i = 1; i < arguments.length; i++) {
     if ((typeof (arguments[i]) === 'function') &&
