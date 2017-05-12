@@ -467,7 +467,8 @@ p5.prototype.loadTable = function (path) {
   var separatorSet = false;
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
-  if(ext === 'tsv'){ //Only need to check if extension is tsv because csv is default
+  if(ext === 'tsv'){
+    //Only need to check if extension is tsv because csv is default
     sep = '\t';
   }
 
@@ -777,7 +778,9 @@ p5.prototype.httpGet = function () {
  *
  * @method httpPost
  * @param  {String}        path       name of the file or url to load
- * @param  {String}        [datatype] "json", "jsonp", "xml", "array", "integer", or "text"
+ * @param  {String}        [datatype] "json", "jsonp", "xml",
+ *"array", "integer", or "text"
+ *
  * @param  {Object}        [data]     param data passed sent with request
  * @param  {Function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
@@ -803,7 +806,8 @@ p5.prototype.httpPost = function () {
  * @param  {String}        path       name of the file or url to load
  * @param  {String}        [method]   either "GET", "POST", or "PUT",
  *                                    defaults to "GET"
- * @param  {String}        [datatype] "json", "jsonp", "xml",  "array", "integer", or "text"
+ * @param  {String}        [datatype] "json", "jsonp", "xml",
+ * "array", "integer", or "text"
  * @param  {Object}        [data]     param data passed sent with request
  * @param  {Function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
@@ -835,7 +839,7 @@ p5.prototype.httpDo = function () {
     if(typeof arguments[i] === 'function'){
       cbCount++;
     } else{
-        break;
+      break;
     }
   }
   // The number of arguments minus callbacks
@@ -885,8 +889,6 @@ p5.prototype.httpDo = function () {
           type = a;
         } else if(a === 'text') {
           type = a;
-        }
-
         } else {
           data = a;
         }
@@ -896,8 +898,8 @@ p5.prototype.httpDo = function () {
             jsonpOptions[attr] = a[attr];
           }
         } else {
-            data = JSON.stringify(a);
-            contentType = 'application/json';
+          data = JSON.stringify(a);
+          contentType = 'application/json';
         }
       } else if (typeof a === 'function') {
         if (!callback) {
