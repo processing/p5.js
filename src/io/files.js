@@ -177,6 +177,8 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
  *                                    there is an error, response is passed
  *                                    in as first argument
  * @return {Object|Array}             JSON data
+ * @return {array}                    Array
+ * @return {integer}                   Integer
  * @example
  *
  * <p>Calling loadJSON() inside preload() guarantees to complete the
@@ -249,14 +251,17 @@ p5.prototype.loadJSON = function () {
         t = arg;
       }
     } else if (typeof arg === 'function' && arg !== decrementPreload) {
-      if(!callback){
+      if(!callback) {
         callback = arg;
-      }else{
+        return callback;
+      } else {
         errorCallback = arg;
+        return errorCallback;
       }
-    } else if (typeof arg === 'object' && arg.hasOwnProperty('jsonpCallback')){
+    } else if (typeof arg === 'object' && arg.hasOwnProperty('jsonpCallback')) {
       t = 'jsonp';
       options = arg;
+      return options;
     }
   }
 
@@ -839,7 +844,7 @@ p5.prototype.httpDo = function () {
   for (var i = arguments.length-1; i > 0; i--) {
     if(typeof arguments[i] === 'function') {
       cbCount++;
-    } else{
+    } else {
       break;
     }
   }
@@ -908,7 +913,7 @@ p5.prototype.httpDo = function () {
         type = 'json';
       } else if (path.indexOf('xml') !== -1) {
         type = 'xml';
-      }  else if (path.indexOf('array') !== -1) {
+      } else if (path.indexOf('array') !== -1) {
         type = 'array';
       } else if (path.indexOf('integer') !== -1) {
         type = 'integer';
@@ -927,49 +932,55 @@ p5.prototype.httpDo = function () {
     });
   }
 
-  if(type === 'jsonp'){
+  if(type === 'jsonp') {
     fetchJsonp(arguments[0], jsonpOptions)
-      .then(function(res){
-        if(res.ok){
+      .then(function(res) {
+        if(res.ok) {
           return res.json();
         }
         throw res;
-      }).then(function(resp){
+      })
+      .then(function(resp) {
         callback(resp);
-      }).catch(function(err){
-        if (errorCallback) {
-          errorCallback(err);
-        } else {
-          throw err;
-        }
       });
-  }else{
+  } else {
     fetch(request)
-      .then(function(res){
-        if(res.ok){
-          if(type === 'json'){
+      .then(function(res) {
+        if(res.ok) {
+          if(type === 'json') {
             return res.json();
-          }else{
+          } else {
             return res.text();
           }
-        }
+        } throw res;
 
-        throw res;
-      })
-      .then(function(resp){
-        if (type === 'xml'){
+      }).then(function(resp) {
+        if (type === 'xml') {
           var parser = new DOMParser();
           resp = parser.parseFromString(resp, 'text/xml');
           resp = parseXML(resp.documentElement);
-        }
-        callback(resp);
-      }).catch(function(err, msg){
+        } callback(resp);
+
+      }).then(function(resp) {
+        if (type === 'array') {
+          var parser = new DOMParser();
+          resp = parser.parseFromString(resp, 'text/array');
+        } callback(resp);
+
+      }).then(function(resp) {
+        if (type === 'integer') {
+          var parser = new DOMParser();
+          resp = parser.parseFromString(resp, 'text/integer');
+        } callback(resp);
+
+      }).catch(function(err, msg) {
         if (errorCallback) {
           errorCallback(err);
         } else {
           throw err;
         }
       });
+
   }
 };
 
