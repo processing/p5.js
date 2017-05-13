@@ -177,8 +177,6 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
  *                                    there is an error, response is passed
  *                                    in as first argument
  * @return {Object|Array}             JSON data
- * @return {array}                    Array
- * @return {integer}                   Integer
  * @example
  *
  * <p>Calling loadJSON() inside preload() guarantees to complete the
@@ -251,17 +249,14 @@ p5.prototype.loadJSON = function () {
         t = arg;
       }
     } else if (typeof arg === 'function' && arg !== decrementPreload) {
-      if(!callback) {
+      if(!callback){
         callback = arg;
-        return callback;
-      } else {
+      }else{
         errorCallback = arg;
-        return errorCallback;
       }
-    } else if (typeof arg === 'object' && arg.hasOwnProperty('jsonpCallback')) {
+    } else if (typeof arg === 'object' && arg.hasOwnProperty('jsonpCallback')){
       t = 'jsonp';
       options = arg;
-      return options;
     }
   }
 
@@ -312,7 +307,6 @@ p5.prototype.loadJSON = function () {
  * function preload() {
  *   result = loadStrings('assets/test.txt');
  * }
-
  * function setup() {
  *   background(200);
  *   var ind = floor(random(result.length));
@@ -472,8 +466,7 @@ p5.prototype.loadTable = function (path) {
   var separatorSet = false;
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
-  if(ext === 'tsv'){
-    //Only need to check if extension is tsv because csv is default
+  if(ext === 'tsv'){//Only need to check if extension is tsv because csv is default
     sep = '\t';
   }
 
@@ -738,7 +731,7 @@ p5.prototype.loadXML = function() {
     }
   }
 
-  p5.prototype.httpDo(arguments[0], 'GET', 'xml', function(xml) {
+  p5.prototype.httpDo(arguments[0], 'GET', 'xml', function(xml){
     for(var key in xml) {
       ret[key] = xml[key];
     }
@@ -761,8 +754,7 @@ p5.prototype.loadXML = function() {
  *
  * @method httpGet
  * @param  {String}        path       name of the file or url to load
- * @param  {String}        [datatype] "json", "jsonp", "xml", "array",
- *                                    "integer" or "text"
+ * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
  * @param  {Object}        [data]     param data passed sent with request
  * @param  {Function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
@@ -784,9 +776,7 @@ p5.prototype.httpGet = function () {
  *
  * @method httpPost
  * @param  {String}        path       name of the file or url to load
- * @param  {String}        [datatype] "json", "jsonp", "xml",
- *                                    "array", "integer", or "text"
- *
+ * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
  * @param  {Object}        [data]     param data passed sent with request
  * @param  {Function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
@@ -812,8 +802,7 @@ p5.prototype.httpPost = function () {
  * @param  {String}        path       name of the file or url to load
  * @param  {String}        [method]   either "GET", "POST", or "PUT",
  *                                    defaults to "GET"
- * @param  {String}        [datatype] "json", "jsonp", "xml",
- * "array", "integer", or "text"
+ * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
  * @param  {Object}        [data]     param data passed sent with request
  * @param  {Function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
@@ -841,10 +830,10 @@ p5.prototype.httpDo = function () {
   var cbCount = 0;
   var contentType = 'text/plain';
   // Trim the callbacks off the end to get an idea of how many arguments are passed
-  for (var i = arguments.length-1; i > 0; i--) {
-    if(typeof arguments[i] === 'function') {
+  for (var i = arguments.length-1; i > 0; i--){
+    if(typeof arguments[i] === 'function'){
       cbCount++;
-    } else {
+    }else{
       break;
     }
   }
@@ -852,7 +841,7 @@ p5.prototype.httpDo = function () {
   var argsCount = arguments.length - cbCount;
   if(argsCount === 2 &&
      typeof arguments[0] === 'string' &&
-     typeof arguments[1] === 'object') {
+     typeof arguments[1] === 'object'){
     // Intended for more advanced use, pass in Request parameters directly
     request = new Request(arguments[0], arguments[1]);
     callback = arguments[2];
@@ -864,15 +853,11 @@ p5.prototype.httpDo = function () {
         type = 'json';
       } else if (request.url.indexOf('xml') !== -1) {
         type = 'xml';
-      } else if (request.url.indexOf('array') !== -1) {
-        type = 'array';
-      } else if (request.url.indexOf('integer') !== -1) {
-        type = 'integer';
-      } else if (request.url.indexOf('text') !== -1) {
+      } else {
         type = 'text';
       }
     }
-  } else {
+  }else{
     // Provided with arguments
     var path = arguments[0];
     var method = 'GET';
@@ -883,11 +868,9 @@ p5.prototype.httpDo = function () {
       if (typeof a === 'string') {
         if (a === 'GET' || a === 'POST' || a === 'PUT' || a === 'DELETE') {
           method = a;
-        } else if(a === 'json' || a === 'jsonp' || a === 'xml') {
+        } else if(a === 'json' || a === 'jsonp' || a === 'xml' || a === 'text') {
           type = a;
-        } else if(a === 'array'|| a === 'integer' || a === 'text') {
-          type = a;
-        } else {
+        } else if(typeof a === Array.isArray(a) ||typeof a === 'number') {
           data = a;
         }
       } else if (typeof a === 'object') {
@@ -913,11 +896,7 @@ p5.prototype.httpDo = function () {
         type = 'json';
       } else if (path.indexOf('xml') !== -1) {
         type = 'xml';
-      } else if (path.indexOf('array') !== -1) {
-        type = 'array';
-      } else if (path.indexOf('integer') !== -1) {
-        type = 'integer';
-      } else if (path.indexOf('text') !== -1) {
+      } else {
         type = 'text';
       }
     }
@@ -932,55 +911,49 @@ p5.prototype.httpDo = function () {
     });
   }
 
-  if(type === 'jsonp') {
+  if(type === 'jsonp'){
     fetchJsonp(arguments[0], jsonpOptions)
-      .then(function(res) {
-        if(res.ok) {
+      .then(function(res){
+        if(res.ok){
           return res.json();
         }
         throw res;
-      })
-      .then(function(resp) {
+      }).then(function(resp){
         callback(resp);
-      });
-  } else {
-    fetch(request)
-      .then(function(res) {
-        if(res.ok) {
-          if(type === 'json') {
-            return res.json();
-          } else {
-            return res.text();
-          }
-        } throw res;
-
-      }).then(function(resp) {
-        if (type === 'xml') {
-          var parser = new DOMParser();
-          resp = parser.parseFromString(resp, 'text/xml');
-          resp = parseXML(resp.documentElement);
-        } callback(resp);
-
-      }).then(function(resp) {
-        if (type === 'array') {
-          var parser = new DOMParser();
-          resp = parser.parseFromString(resp, 'text/array');
-        } callback(resp);
-
-      }).then(function(resp) {
-        if (type === 'integer') {
-          var parser = new DOMParser();
-          resp = parser.parseFromString(resp, 'text/integer');
-        } callback(resp);
-
-      }).catch(function(err, msg) {
+      }).catch(function(err){
         if (errorCallback) {
           errorCallback(err);
         } else {
           throw err;
         }
       });
+  }else{
+    fetch(request)
+      .then(function(res){
+        if(res.ok){
+          if(type === 'json'){
+            return res.json();
+          }else{
+            return res.text();
+          }
+        }
 
+        throw res;
+      })
+      .then(function(resp){
+        if (type === 'xml'){
+          var parser = new DOMParser();
+          resp = parser.parseFromString(resp, 'text/xml');
+          resp = parseXML(resp.documentElement);
+        }
+        callback(resp);
+      }).catch(function(err, msg){
+        if (errorCallback) {
+          errorCallback(err);
+        } else {
+          throw err;
+        }
+      });
   }
 };
 
