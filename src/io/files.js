@@ -857,7 +857,7 @@ p5.prototype.httpDo = function () {
         type = 'text';
       }
     }
-  }else{
+  } else {
     // Provided with arguments
     var path = arguments[0];
     var method = 'GET';
@@ -870,8 +870,8 @@ p5.prototype.httpDo = function () {
           method = a;
         } else if(a === 'json' || a === 'jsonp' || a === 'xml' || a === 'text') {
           type = a;
-        } else if(typeof a === Array.isArray(a) ||typeof a === 'number') {
-          data = a;
+        } else if(typeof a === 'number') {
+          data = a.toString();
         }
       } else if (typeof a === 'object') {
         if(a.hasOwnProperty('jsonpCallback')) {
