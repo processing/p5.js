@@ -6,6 +6,7 @@
  */
 
 /* globals Request: false */
+/* globals Headers: false */
 
 'use strict';
 
@@ -156,21 +157,6 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
   return p5Font;
 };
 
-//BufferedReader
-p5.prototype.createInput = function () {
-  // TODO
-  throw 'not yet implemented';
-};
-
-p5.prototype.createReader = function () {
-  // TODO
-  throw 'not yet implemented';
-};
-
-p5.prototype.loadBytes = function () {
-  // TODO
-  throw 'not yet implemented';
-};
 
 /**
  * Loads a JSON file from a file or a URL, and returns an Object or Array.
@@ -476,9 +462,14 @@ p5.prototype.loadTable = function (path) {
   var errorCallback = null;
   var options = [];
   var header = false;
+  var ext = path.substring(path.lastIndexOf('.')+1,path.length);
   var sep = ',';
   var separatorSet = false;
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
+  
+  if(ext === 'tsv'){ //Only need to check if extension is tsv because csv is default
+    sep = '\t'; 
+  }
 
   for (var i = 1; i < arguments.length; i++) {
     if ((typeof (arguments[i]) === 'function') &&
@@ -625,9 +616,9 @@ p5.prototype.loadTable = function (path) {
     var row;
     for (i = 0; i < records.length; i++) {
       //Handles row of 'undefined' at end of some CSVs
-      if (i === records.length - 1 && records[i].length === 1) {
-        if (records[i][0] === 'undefined') {
-          break;
+      if (records[i].length === 1) {
+        if (records[i][0] === 'undefined' || records[i][0] === '') {
+          continue;
         }
       }
       row = new p5.TableRow();
@@ -756,23 +747,6 @@ p5.prototype.loadXML = function() {
   return ret;
 };
 
-// name clash with window.open
-// p5.prototype.open = function() {
-//   // TODO
-
-// };
-
-p5.prototype.selectFolder = function () {
-  // TODO
-  throw 'not yet implemented';
-
-};
-
-p5.prototype.selectInput = function () {
-  // TODO
-  throw 'not yet implemented';
-
-};
 
 /**
  * Method for executing an HTTP GET request. If data type is not specified,
@@ -791,12 +765,8 @@ p5.prototype.selectInput = function () {
  *                                    in as first argument
  */
 p5.prototype.httpGet = function () {
-  var args = new Array(arguments.length);
-  args[0] = arguments[0];
-  args[1] = 'GET';
-  for (var i = 1; i < arguments.length; ++i) {
-    args[i+1] = arguments[i];
-  }
+  var args = Array.prototype.slice.call(arguments);
+  args.splice(1, 0, 'GET');
   p5.prototype.httpDo.apply(this, args);
 };
 
@@ -817,12 +787,8 @@ p5.prototype.httpGet = function () {
  *                                    in as first argument
  */
 p5.prototype.httpPost = function () {
-  var args = new Array(arguments.length);
-  args[0] = arguments[0];
-  args[1] = 'POST';
-  for (var i = 1; i < arguments.length; ++i) {
-    args[i+1] = arguments[i];
-  }
+  var args = Array.prototype.slice.call(arguments);
+  args.splice(1, 0, 'POST');
   p5.prototype.httpDo.apply(this, args);
 };
 
@@ -863,6 +829,7 @@ p5.prototype.httpDo = function () {
   var request;
   var jsonpOptions = {};
   var cbCount = 0;
+  var contentType = 'text/plain';
   // Trim the callbacks off the end to get an idea of how many arguments are passed
   for (var i = arguments.length-1; i > 0; i--){
     if(typeof arguments[i] === 'function'){
@@ -914,6 +881,7 @@ p5.prototype.httpDo = function () {
           }
         }else{
           data = JSON.stringify(a);
+          contentType = 'application/json';
         }
       } else if (typeof a === 'function') {
         if (!callback) {
@@ -937,7 +905,10 @@ p5.prototype.httpDo = function () {
     request = new Request(path, {
       method: method,
       mode: 'cors',
-      body: data
+      body: data,
+      headers: new Headers({
+        'Content-Type': contentType
+      })
     });
   }
 
@@ -998,23 +969,6 @@ window.URL = window.URL || window.webkitURL;
 // private array of p5.PrintWriter objects
 p5.prototype._pWriters = [];
 
-p5.prototype.beginRaw = function () {
-  // TODO
-  throw 'not yet implemented';
-
-};
-
-p5.prototype.beginRecord = function () {
-  // TODO
-  throw 'not yet implemented';
-
-};
-
-p5.prototype.createOutput = function () {
-  // TODO
-
-  throw 'not yet implemented';
-};
 
 p5.prototype.createWriter = function (name, extension) {
   var newPW;
@@ -1034,23 +988,13 @@ p5.prototype.createWriter = function (name, extension) {
   return newPW;
 };
 
-p5.prototype.endRaw = function () {
-  // TODO
-
-  throw 'not yet implemented';
-};
-
-p5.prototype.endRecord = function () {
-  // TODO
-  throw 'not yet implemented';
-
-};
 
 p5.PrintWriter = function (filename, extension) {
   var self = this;
   this.name = filename;
   this.content = '';
-  this.print = function (data) {
+  //Changed to write because it was being overloaded by function below.
+  this.write = function (data) {
     this.content += data;
   };
   this.print = function (data) {
@@ -1076,13 +1020,7 @@ p5.PrintWriter = function (filename, extension) {
   };
 };
 
-p5.prototype.saveBytes = function () {
-  // TODO
-  throw 'not yet implemented';
-
-};
-
-// object, filename, options --> saveJSON, saveStrings, saveTable
+// object, filename, options --> saveJSON, saveStrings,
 // filename, [extension] [canvas] --> saveImage
 
 /**
@@ -1255,11 +1193,6 @@ p5.prototype.saveJSON = function (json, filename, opt) {
 p5.prototype.saveJSONObject = p5.prototype.saveJSON;
 p5.prototype.saveJSONArray = p5.prototype.saveJSON;
 
-p5.prototype.saveStream = function () {
-  // TODO
-  throw 'not yet implemented';
-
-};
 
 /**
  *  Writes an array of Strings to a text file, one line per String.
@@ -1305,17 +1238,6 @@ p5.prototype.saveStrings = function (list, filename, extension) {
   pWriter.flush();
 };
 
-p5.prototype.saveXML = function () {
-  // TODO
-  throw 'not yet implemented';
-
-};
-
-p5.prototype.selectOutput = function () {
-  // TODO
-  throw 'not yet implemented';
-
-};
 
 // =======
 // HELPERS
@@ -1371,24 +1293,31 @@ function escapeHelper(content) {
  *
  */
 p5.prototype.saveTable = function (table, filename, options) {
-  var pWriter = this.createWriter(filename, options);
+  var ext;
+  if(options === undefined){
+    ext = filename.substring(filename.lastIndexOf('.')+1,filename.length);
+  }else{
+    ext = options;
+  }
+  var pWriter = this.createWriter(filename, ext);
 
   var header = table.columns;
 
   var sep = ','; // default to CSV
-  if (options === 'tsv') {
+  if (ext === 'tsv') {
     sep = '\t';
   }
-  if (options !== 'html') {
+  if (ext !== 'html') {
     // make header if it has values
     if (header[0] !== '0') {
       for (var h = 0; h < header.length; h++) {
         if (h < header.length - 1) {
-          pWriter.print(header[h] + sep);
+          pWriter.write(header[h] + sep);
         } else {
-          pWriter.print(header[h]);
+          pWriter.write(header[h]);
         }
       }
+      pWriter.write('\n');
     }
 
     // make rows
@@ -1396,13 +1325,14 @@ p5.prototype.saveTable = function (table, filename, options) {
       var j;
       for (j = 0; j < table.rows[i].arr.length; j++) {
         if (j < table.rows[i].arr.length - 1) {
-          pWriter.print(table.rows[i].arr[j] + sep);
+          pWriter.write(table.rows[i].arr[j] + sep);
         } else if (i < table.rows.length - 1) {
-          pWriter.print(table.rows[i].arr[j]);
+          pWriter.write(table.rows[i].arr[j]);
         } else {
-          pWriter.print(table.rows[i].arr[j]); // no line break
+          pWriter.write(table.rows[i].arr[j]);
         }
       }
+      pWriter.write('\n');
     }
   }
 

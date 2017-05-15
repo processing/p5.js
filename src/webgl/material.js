@@ -121,6 +121,7 @@ p5.prototype.texture = function(){
     args[i] = arguments[i];
   }
   var gl = this._renderer.GL;
+  this._renderer.drawMode = 'texture';
   var shaderProgram = this._renderer._getShader('lightVert',
     'lightTextureFrag');
   gl.useProgram(shaderProgram);
