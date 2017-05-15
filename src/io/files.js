@@ -307,7 +307,6 @@ p5.prototype.loadJSON = function () {
  * function preload() {
  *   result = loadStrings('assets/test.txt');
  * }
-
  * function setup() {
  *   background(200);
  *   var ind = floor(random(result.length));
@@ -466,9 +465,9 @@ p5.prototype.loadTable = function (path) {
   var sep = ',';
   var separatorSet = false;
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
-  
-  if(ext === 'tsv'){ //Only need to check if extension is tsv because csv is default
-    sep = '\t'; 
+
+  if(ext === 'tsv'){//Only need to check if extension is tsv because csv is default
+    sep = '\t';
   }
 
   for (var i = 1; i < arguments.length; i++) {
@@ -858,7 +857,7 @@ p5.prototype.httpDo = function () {
         type = 'text';
       }
     }
-  }else{
+  } else {
     // Provided with arguments
     var path = arguments[0];
     var method = 'GET';
@@ -871,15 +870,15 @@ p5.prototype.httpDo = function () {
           method = a;
         } else if(a === 'json' || a === 'jsonp' || a === 'xml' || a === 'text') {
           type = a;
-        } else {
-          data = a;
+        } else if(typeof a === 'number') {
+          data = a.toString();
         }
       } else if (typeof a === 'object') {
-        if(a.hasOwnProperty('jsonpCallback')){
+        if(a.hasOwnProperty('jsonpCallback')) {
           for (var attr in a) {
             jsonpOptions[attr] = a[attr];
           }
-        }else{
+        } else {
           data = JSON.stringify(a);
           contentType = 'application/json';
         }
