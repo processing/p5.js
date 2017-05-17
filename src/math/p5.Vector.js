@@ -1063,15 +1063,15 @@ p5.Vector.angleBetween3D = function(v1, v2) {
   var rotX = atan2(v2.z - v1.z, v2.y - v1.y);
   var rotY = atan2(v2.x - v1.x, v2.z - v1.z);
   var rotZ = atan2(v2.y - v1.y, v2.x - v1.x);
-  var angle = createVector(rotX,rotY,rotZ);
   if (this.p5) {
     if (this.p5._angleMode === constants.DEGREES) {
-      angle.x = polarGeometry.radiansToDegrees(angle.x);
-      angle.y = polarGeometry.radiansToDegrees(angle.y);
-      angle.z = polarGeometry.radiansToDegrees(angle.z);
+      rotX = polarGeometry.radiansToDegrees(angle.x);
+      rotY = polarGeometry.radiansToDegrees(angle.y);
+      rotZ = polarGeometry.radiansToDegrees(angle.z);
     }
+    return new p5.Vector(this.p5,[rotX, rotY, rotZ]);
   }
-  return angle;
+  return new p5.Vector(this.p5,[rotX, rotY, rotZ]);
 }
 
 /**
