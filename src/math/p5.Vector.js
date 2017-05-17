@@ -1040,6 +1040,41 @@ p5.Vector.angleBetween = function (v1, v2) {
 };
 
 /**
+ * Calculates and returns the 3D angle (as a vector of radians)
+ * between two vectors.
+ * @method angleBetween3D
+ * @static
+ * @param  {p5.Vector} v1 the x, y, and z components of a p5.Vector
+ * @param  {p5.Vector} v2 the x, y, and z components of a p5.Vector
+ * @return {p5.Vector}       the x, y, and z angle between (in radians)
+ * @example
+ * <div class="norender">
+ * <code>
+ * var v1 = createVector(1, 0, 0);
+ * var v2 = createVector(0, 1, 0);
+ *
+ * var angle = p5.Vector.angleBetween3D(v1, v2);
+ * // angle is PI/2
+ * </code>
+ * </div>
+ */
+
+p5.Vector.angleBetween3D = function(v1, v2) {
+  var rotX = atan2(v2.z - v1.z, v2.y - v1.y);
+  var rotY = atan2(v2.x - v1.x, v2.z - v1.z);
+  var rotZ = atan2(v2.y - v1.y, v2.x - v1.x);
+  var angle = createVector(rotX,rotY,rotZ);
+  if (this.p5) {
+    if (this.p5._angleMode === constants.DEGREES) {
+      angle.x = polarGeometry.radiansToDegrees(angle.x);
+      angle.y = polarGeometry.radiansToDegrees(angle.y);
+      angle.z = polarGeometry.radiansToDegrees(angle.z);
+    }
+  }
+  return angle;
+}
+
+/**
  * @static
  */
 p5.Vector.mag = function (vecT){
