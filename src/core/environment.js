@@ -58,7 +58,11 @@ if (window.console && console.log) {
         console.log.apply(console, arguments);
       } else {
         var newArgs = JSON.parse(JSON.stringify(args));
-        console.log(newArgs);
+        if (JSON.stringify(newArgs)=="{}"){
+          console.log(args);
+        } else {
+          console.log(newArgs);
+        }
       }
     } catch(err) {
       console.log(args);
