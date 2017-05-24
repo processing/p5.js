@@ -350,7 +350,6 @@ p5.prototype.mouseButton = 0;
  *
  */
 p5.prototype.mouseIsPressed = false;
-p5.prototype.isMousePressed = false; // both are supported
 
 p5.prototype._updateNextMouseCoords = function(e) {
   if(this._curElement !== null && (!e.touches || e.touches.length>0)) {
@@ -496,7 +495,7 @@ p5.prototype._onmousemove = function(e){
   var context = this._isGlobal ? window : this;
   var executeDefault;
   this._updateNextMouseCoords(e);
-  if (!this.isMousePressed) {
+  if (!this.mouseIsPressed) {
     if (typeof context.mouseMoved === 'function') {
       executeDefault = context.mouseMoved(e);
       if(executeDefault === false) {
@@ -510,7 +509,7 @@ p5.prototype._onmousemove = function(e){
       if(executeDefault === false) {
         e.preventDefault();
       }
-    } else if (!window.PointerEvent && typeof context.touchMoved === 'function') {
+    } else if (typeof context.touchMoved === 'function') {
       executeDefault = context.touchMoved(e);
       if(executeDefault === false) {
         e.preventDefault();
@@ -577,7 +576,7 @@ p5.prototype._onmousedown = function(e) {
     if(executeDefault === false) {
       e.preventDefault();
     }
-  } else if (!window.PointerEvent && typeof context.touchStarted === 'function') {
+  } else if (typeof context.touchStarted === 'function') {
     executeDefault = context.touchStarted(e);
     if(executeDefault === false) {
       e.preventDefault();
@@ -641,7 +640,7 @@ p5.prototype._onmouseup = function(e) {
     if(executeDefault === false) {
       e.preventDefault();
     }
-  } else if (!window.PointerEvent && typeof context.touchEnded === 'function') {
+  } else if (typeof context.touchEnded === 'function') {
     executeDefault = context.touchEnded(e);
     if(executeDefault === false) {
       e.preventDefault();

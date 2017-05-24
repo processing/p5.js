@@ -104,7 +104,7 @@ p5.prototype._ontouchstart = function(e) {
     if(executeDefault === false) {
       e.preventDefault();
     }
-  } else if (!window.PointerEvent && typeof context.mousePressed === 'function') {
+  } else if (typeof context.mousePressed === 'function') {
     executeDefault = context.mousePressed(e);
     if(executeDefault === false) {
       e.preventDefault();
@@ -166,7 +166,7 @@ p5.prototype._ontouchmove = function(e) {
     if(executeDefault === false) {
       e.preventDefault();
     }
-  } else if (!window.PointerEvent && typeof context.mouseDragged === 'function') {
+  } else if (typeof context.mouseDragged === 'function') {
     executeDefault = context.mouseDragged(e);
     if(executeDefault === false) {
       e.preventDefault();
@@ -230,7 +230,7 @@ p5.prototype._ontouchend = function(e) {
     if(executeDefault === false) {
       e.preventDefault();
     }
-  } else if (!window.PointerEvent && typeof context.mouseReleased === 'function') {
+  } else if (typeof context.mouseReleased === 'function') {
     executeDefault = context.mouseReleased(e);
     if(executeDefault === false) {
       e.preventDefault();
