@@ -26,7 +26,7 @@ p5.StringDict = function(keys, values) {
   if(arguments.length === 1) {
     if(keys instanceof Object) {
       this.data = keys;
-      this.count = Object.keys(keys).lengths;
+      this.count = Object.keys(keys).length;
     }
   } /*else if(arguments.length > 1) {
     this.count = keys.length;
@@ -46,9 +46,9 @@ p5.StringDict.prototype.size = function(){
   return this.count;
 };
 
-p5.StringDict.prototype.getValue = function(key) {
-  if(key in this.data){
-    return this.data[key];
+p5.StringDict.prototype.get = function(key) {
+  if(this.data.hasOwnProperty(key)){
+    return this.data.key;
   }else{
     throw key + ' does not exist in this Dictionary';
   }
@@ -58,11 +58,14 @@ p5.StringDict.prototype.add = function(key, value) {
   if(arguments.length === 1) {
     if(key instanceof Object) {
       this.data.push(key);
+      this.count += Object.keys(key).length;
     }
   } else if (arguments.length === 2) {
+    //another type check here probably
     this.data.push({
       key: value
     });
+    count++;
   }
 };
 
@@ -72,9 +75,8 @@ p5.StringDict.prototype.clear = function(){
 };
 
 p5.StringDict.prototype.remove = function(key) {
-  var index = this.data.indexOf(key);
-  if(index > -1) {
-    this.data.splice(index, 1);
+  if(this.data.hasOwnProperty(key)) {
+    delete this.data.key;
     this.count--;
   } else {
     throw key + ' does not exist in this Dictionary';
@@ -83,7 +85,7 @@ p5.StringDict.prototype.remove = function(key) {
 
 p5.StringDict.prototype.print = function() {
   for(var i=0; i<this.count; i++) {
-    console.log(this.data[i] + '\n');
+    console.log(Object.keys(this.data[i] + \n));
   }
 };
 
