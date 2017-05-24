@@ -496,7 +496,7 @@ p5.prototype._onmousemove = function(e){
   var context = this._isGlobal ? window : this;
   var executeDefault;
   this._updateNextMouseCoords(e);
-  if (!this.isMousePressed) {
+  if (!this.mouseIsPressed) {
     if (typeof context.mouseMoved === 'function') {
       executeDefault = context.mouseMoved(e);
       if(executeDefault === false) {
@@ -569,7 +569,6 @@ p5.prototype._onmousemove = function(e){
 p5.prototype._onmousedown = function(e) {
   var context = this._isGlobal ? window : this;
   var executeDefault;
-  this._setProperty('isMousePressed', true);
   this._setProperty('mouseIsPressed', true);
   this._setMouseButton(e);
   this._updateNextMouseCoords(e);
@@ -636,7 +635,6 @@ p5.prototype._onmousedown = function(e) {
 p5.prototype._onmouseup = function(e) {
   var context = this._isGlobal ? window : this;
   var executeDefault;
-  this._setProperty('isMousePressed', false);
   this._setProperty('mouseIsPressed', false);
   if (typeof context.mouseReleased === 'function') {
     executeDefault = context.mouseReleased(e);

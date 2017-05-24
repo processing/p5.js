@@ -626,6 +626,32 @@ p5.Vector.prototype.rotate = function (a) {
 };
 
 /**
+ * Calculates and returns the angle (in radians) between two vectors.
+ * @method angleBetween
+ * @param  {p5.Vector}    the x, y, and z components of a p5.Vector
+ * @return {Number}       the angle between (in radians)
+ * @example
+ * <div class="norender">
+ * <code>
+ * var v1 = createVector(1, 0, 0);
+ * var v2 = createVector(0, 1, 0);
+ *
+ * var angle = v1.angleBetween(v2);
+ * // angle is PI/2
+ * </code>
+ * </div>
+ */
+p5.Vector.prototype.angleBetween = function (v) {
+  var angle = Math.acos(this.dot(v) / (this.mag() * v.mag()));
+  if (this.p5) {
+    if (this.p5._angleMode === constants.DEGREES) {
+      angle = polarGeometry.radiansToDegrees(angle);
+    }
+  }
+  return angle;
+};
+
+/**
  * Linear interpolate the vector to another vector
  *
  * @method lerp
@@ -1009,34 +1035,6 @@ p5.Vector.lerp = function (v1, v2, amt, target) {
   }
   target.lerp(v2, amt);
   return target;
-};
-
-/**
- * Calculates and returns the angle (in radians) between two vectors.
- * @method angleBetween
- * @static
- * @param  {p5.Vector} v1 the x, y, and z components of a p5.Vector
- * @param  {p5.Vector} v2 the x, y, and z components of a p5.Vector
- * @return {Number}       the angle between (in radians)
- * @example
- * <div class="norender">
- * <code>
- * var v1 = createVector(1, 0, 0);
- * var v2 = createVector(0, 1, 0);
- *
- * var angle = p5.Vector.angleBetween(v1, v2);
- * // angle is PI/2
- * </code>
- * </div>
- */
-p5.Vector.angleBetween = function (v1, v2) {
-  var angle = Math.acos(v1.dot(v2) / (v1.mag() * v2.mag()));
-  if (this.p5) {
-    if (this.p5._angleMode === constants.DEGREES) {
-      angle = polarGeometry.radiansToDegrees(angle);
-    }
-  }
-  return angle;
 };
 
 /**
