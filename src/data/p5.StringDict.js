@@ -26,7 +26,7 @@ p5.StringDict = function(keys, values) {
   if(arguments.length === 1) {
     if(keys instanceof Object) {
       this.data = keys;
-      this.count = keys.length;
+      this.count = Object.keys(keys).lengths;
     }
   } /*else if(arguments.length > 1) {
     this.count = keys.length;
