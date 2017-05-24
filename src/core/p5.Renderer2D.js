@@ -17,6 +17,7 @@ var styleEmpty = 'rgba(0,0,0,0)';
 p5.Renderer2D = function(elt, pInst, isMainCanvas){
   p5.Renderer.call(this, elt, pInst, isMainCanvas);
   this.drawingContext = this.canvas.getContext('2d');
+  this.cachedGetImage = null;
   this._pInst._setProperty('drawingContext', this.drawingContext);
   return this;
 };
@@ -241,7 +242,12 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
     var sw = dw * pd;
     var sh = dh * pd;
 
-    var region = new p5.Image(dw, dh);
+    var region;
+    if(this.cachedGetImage === null) {
+      region = new p5.Image(dw, dh);
+    } else {
+      region = this.cachedGetImage;
+    }
     region.canvas.getContext('2d').drawImage(this.canvas, sx, sy, sw, sh,
       0, 0, dw, dh);
 
