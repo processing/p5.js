@@ -242,11 +242,10 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
     var sw = dw * pd;
     var sh = dh * pd;
 
-    var region;
     if(this.cachedGetImage === null) {
       this.cachedGetImage = new p5.Image(dw, dh);
     }
-    region = this.cachedGetImage;
+    var region = this.cachedGetImage;
     region.canvas.getContext('2d').drawImage(this.canvas, sx, sy, sw, sh,
       0, 0, dw, dh);
 
