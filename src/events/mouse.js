@@ -671,6 +671,7 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  *   fill(value);
  *   rect(25, 25, 50, 50);
  * }
+ *
  * function mouseClicked() {
  *   if (value == 0) {
  *     value = 255;

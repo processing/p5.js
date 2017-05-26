@@ -318,9 +318,12 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  *                    clicked over the element.
  * @return {p5.Element}
  * @example
+ * <div>
+ * <code class="norender">
  * var cnv;
  * var d;
  * var g;
+ *
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseClicked(changeGray); // attach listener for
@@ -345,8 +348,8 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  * function changeGray() {
  *   g = random(0, 255);
  * }
- * </code></div>
- *
+ * </code>
+ * </div>
  *
  * @alt
  * no display.
