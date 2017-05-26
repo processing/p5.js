@@ -4,10 +4,95 @@
  * @for p5
  */
 var p5 = require('./core');
-//var constants = require('./constants');
+
+//TESTED
+p5.prototype.createStringDict = function(key, value) {
+  return new p5.StringDict(key, value);
+}
+
+p5.TypedDict = function() {
+};
+
+//TESTED
+p5.TypedDict.prototype.size = function(){
+  return this.count;
+};
+
+//TESTED
+p5.TypedDict.prototype.get = function(key) {
+  if(this.data.hasOwnProperty(key)){
+    return this.data[key];
+  }else{
+    console.log(key + ' does not exist in this Dictionary');
+  }
+};
+
+//TESTED
+p5.TypedDict.prototype.set = function(key, value) {
+   if (arguments.length === 2) {
+    if(!this.data.hasOwnProperty(key)){
+      this.create(key, value);
+    } else {
+      this.data[key] = value;
+    }
+  }
+};
+
+//TESTED
+p5.TypedDict.prototype._add = function(obj) {
+ for (var key in obj) {
+   if(this._validate(obj[key])) {
+     this.data[key] = obj[key];
+     this.count++;
+   }
+  }
+}
+
+
+//TESTED
+p5.TypedDict.prototype.create = function(key, value) {
+  if(arguments.length === 1) {
+    if(key instanceof Object) {
+      this._add(key);
+    }
+  }
+  this.data[key] = value;
+  this.count++;
+};
+
+//TESTED
+p5.TypedDict.prototype.clear = function(){
+  for(var key in this.data) {
+    delete this.data[key];
+  }
+  this.count = 0;
+};
+
+//TESTED
+p5.TypedDict.prototype.remove = function(key) {
+  if(this.data.hasOwnProperty(key)) {
+    delete this.data[key];
+    this.count--;
+  } else {
+    throw key + ' does not exist in this Dictionary';
+  }
+};
+
+
+//TESTED
+p5.TypedDict.prototype.print = function() {
+  for (var item in this.data) {
+    console.log('key:' + item + ' value:' + this.data[item]);
+  }
+};
+
+p5.TypedDict.prototype._validate = function(key, value) {
+  return true;
+};
+
 /**
  *
- * A simple table class to use a String as a lookup for another String value.
+ * A simple Dictionary class for Strings.
  *
  *
  * @class p5.StringDict
@@ -18,8 +103,7 @@ var p5 = require('./core');
  * @param {Boolean} whether we're using it as main canvas
  */
 
-p5.StringDict = function(keys, values) {
-
+p5.StringDict = function(key, value) {
   this.data = {};
   this.count = 0;
 
@@ -28,66 +112,30 @@ p5.StringDict = function(keys, values) {
       this.data = keys;
       this.count = Object.keys(keys).length;
     }
-  } /*else if(arguments.length > 1) {
-    this.count = keys.length;
-    if(count >= 1) {
-      for(var i=0; i<count; i++) {
-        this.data.push({
-          keys[i]: values[i];
-        });
-      }
-    }
-  }*/
-
+  } else {
+    this.data[key] = value;
+    this.count++;
+  }
   return this;
 };
 
-p5.StringDict.prototype.size = function(){
-  return this.count;
-};
 
-p5.StringDict.prototype.get = function(key) {
-  if(this.data.hasOwnProperty(key)){
-    return this.data.key;
-  }else{
-    throw key + ' does not exist in this Dictionary';
-  }
-};
+p5.StringDict.prototype = Object.create(p5.TypedDict.prototype);
 
-p5.StringDict.prototype.add = function(key, value) {
-  if(arguments.length === 1) {
-    if(key instanceof Object) {
-      this.data.push(key);
-      this.count += Object.keys(key).length;
-    }
-  } else if (arguments.length === 2) {
-    //another type check here probably
-    this.data.push({
-      key: value
-    });
-    count++;
-  }
-};
+//TESTED
+p5.StringDict.prototype._validate = function(key, value) {
+  console.log('stringdict wuz here');
+  return true;
+  
+}
 
-p5.StringDict.prototype.clear = function(){
-  this.data = {};
-  this.count = 0;
-};
 
-p5.StringDict.prototype.remove = function(key) {
-  if(this.data.hasOwnProperty(key)) {
-    delete this.data.key;
-    this.count--;
-  } else {
-    throw key + ' does not exist in this Dictionary';
-  }
-};
+p5.NumberDict.prototype = Object.create(p5.TypedDict.prototype);
 
-p5.StringDict.prototype.print = function() {
-  for(var i=0; i<this.count; i++) {
-    console.log(Object.keys(this.data[i] + \n));
-  }
-};
+p5.NumberDict.prototype._validate = function(key, value) {
+  console.log('numberdict wuz here');
+  return true;
+}
 
 
 module.exports = p5.StringDict;
