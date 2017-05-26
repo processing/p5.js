@@ -21,3 +21,7 @@
 
   font-size: inherit;
 }
+
+#reference .param-optional {
+  color: #AFAFAF;
+}
