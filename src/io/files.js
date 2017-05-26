@@ -183,7 +183,7 @@ p5.prototype.loadBytes = function () {
  * operation before setup() and draw() are called.</p>
  *
  * <div><code>
- * // Examples uses USGS Earthquake API:
+ * // Examples use USGS Earthquake API:
  * //   https://earthquake.usgs.gov/fdsnws/event/1/#methods
  * var earthquakes;
  * function preload() {
