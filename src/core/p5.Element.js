@@ -102,7 +102,7 @@ p5.Element.prototype.parent = function(p) {
  * @param  {String} [id] ID of the element
  * @return {p5.Element|String}
  * @example
- * <div><code class='norender'>
+ * <div class='norender'><code>
  * function setup() {
  *   var cnv = createCanvas(100, 100);
  *   // Assigns a CSS selector ID to
@@ -188,9 +188,7 @@ p5.Element.prototype.class = function(c) {
  */
 p5.Element.prototype.mousePressed = function (fxn) {
   attachListener('mousedown', fxn, this);
-  if (!window.PointerEvent) {
-    attachListener('touchstart', fxn, this);
-  }
+  attachListener('touchstart', fxn, this);
   return this;
 };
 
@@ -305,9 +303,7 @@ p5.Element.prototype.mouseWheel = function (fxn) {
  */
 p5.Element.prototype.mouseReleased = function (fxn) {
   attachListener('mouseup', fxn, this);
-  if (!window.PointerEvent) {
-    attachListener('touchend', fxn, this);
-  }
+  attachListener('touchend', fxn, this);
   return this;
 };
 
@@ -322,9 +318,12 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  *                    clicked over the element.
  * @return {p5.Element}
  * @example
+ * <div class="norender">
+ * <code>
  * var cnv;
  * var d;
  * var g;
+ *
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseClicked(changeGray); // attach listener for
@@ -349,8 +348,8 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  * function changeGray() {
  *   g = random(0, 255);
  * }
- * </code></div>
- *
+ * </code>
+ * </div>
  *
  * @alt
  * no display.
@@ -414,9 +413,7 @@ p5.Element.prototype.mouseClicked = function (fxn) {
  */
 p5.Element.prototype.mouseMoved = function (fxn) {
   attachListener('mousemove', fxn, this);
-  if (!window.PointerEvent) {
-    attachListener('touchmove', fxn, this);
-  }
+  attachListener('touchmove', fxn, this);
   return this;
 };
 
@@ -644,9 +641,7 @@ p5.Element.prototype.mouseOut = function (fxn) {
  */
 p5.Element.prototype.touchStarted = function (fxn) {
   attachListener('touchstart', fxn, this);
-  if (!window.PointerEvent) {
-    attachListener('mousedown', fxn, this);
-  }
+  attachListener('mousedown', fxn, this);
   return this;
 };
 
@@ -685,9 +680,7 @@ p5.Element.prototype.touchStarted = function (fxn) {
  */
 p5.Element.prototype.touchMoved = function (fxn) {
   attachListener('touchmove', fxn, this);
-  if (!window.PointerEvent) {
-    attachListener('mousemove', fxn, this);
-  }
+  attachListener('mousemove', fxn, this);
   return this;
 };
 
@@ -735,9 +728,7 @@ p5.Element.prototype.touchMoved = function (fxn) {
  */
 p5.Element.prototype.touchEnded = function (fxn) {
   attachListener('touchend', fxn, this);
-  if (!window.PointerEvent) {
-    attachListener('mouseup', fxn, this);
-  }
+  attachListener('mouseup', fxn, this);
   return this;
 };
 
