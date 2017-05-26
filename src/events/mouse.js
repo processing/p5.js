@@ -654,6 +654,9 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
 /**
  * The mouseClicked() function is called once after a mouse button has been
  * pressed and then released.<br><br>
+ * Browsers handle clicks differently, so this function is only guaranteed to be
+ * run when the left mouse button is clicked. To handle other mouse buttons
+ * being pressed or released, see mousePressed() or mouseReleased().<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
  * behavior for this event, add "return false" to the end of the method.
