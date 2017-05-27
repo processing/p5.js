@@ -121,13 +121,11 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
     this.font.forEachGlyph(str, x, y, fontSize, options,
       function(glyph, gX, gY, gFontSize) {
 
-        xCoords.push(gX);
-        yCoords.push(gY);
-
         var gm = glyph.getMetrics();
 
         if (glyph.name !== 'space' && glyph.unicode !== 32) {
 
+          xCoords.push(gX + (gm.xMin * scale));
           xCoords.push(gX + (gm.xMax * scale));
           yCoords.push(gY + (-gm.yMin * scale));
           yCoords.push(gY + (-gm.yMax * scale));
