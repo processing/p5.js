@@ -102,7 +102,7 @@ p5.Element.prototype.parent = function(p) {
  * @param  {String} [id] ID of the element
  * @return {p5.Element|String}
  * @example
- * <div><code class='norender'>
+ * <div class='norender'><code>
  * function setup() {
  *   var cnv = createCanvas(100, 100);
  *   // Assigns a CSS selector ID to
@@ -318,9 +318,12 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  *                    clicked over the element.
  * @return {p5.Element}
  * @example
+ * <div class="norender">
+ * <code>
  * var cnv;
  * var d;
  * var g;
+ *
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseClicked(changeGray); // attach listener for
@@ -345,8 +348,8 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  * function changeGray() {
  *   g = random(0, 255);
  * }
- * </code></div>
- *
+ * </code>
+ * </div>
  *
  * @alt
  * no display.
