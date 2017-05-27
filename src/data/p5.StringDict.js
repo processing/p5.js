@@ -56,8 +56,12 @@ p5.TypedDict.prototype.create = function(key, value) {
       this._add(key);
     }
   }
-  this.data[key] = value;
-  this.count++;
+  else if(this._validate(value)) {
+    this.data[key] = value;
+    this.count++;
+  } else {
+    console.log('those values dont work for this dictionary type');
+  }
 };
 
 //TESTED
@@ -123,18 +127,15 @@ p5.StringDict = function(key, value) {
 p5.StringDict.prototype = Object.create(p5.TypedDict.prototype);
 
 //TESTED
-p5.StringDict.prototype._validate = function(key, value) {
-  console.log('stringdict wuz here');
-  return true;
-  
+p5.StringDict.prototype._validate = function(value) {
+  return (typeof value === 'string');  
 }
 
 
 p5.NumberDict.prototype = Object.create(p5.TypedDict.prototype);
 
 p5.NumberDict.prototype._validate = function(key, value) {
-  console.log('numberdict wuz here');
-  return true;
+  return (typeof value === 'number');
 }
 
 
