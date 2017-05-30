@@ -2,8 +2,10 @@
  * @module Data 
  * @submodule Dictionary
  * @for p5
+ *@requires core
  */
-var p5 = require('./core');
+
+var p5 = require('../core/core');
 
 //TESTED
 p5.prototype.createStringDict = function(key, value) {
@@ -102,9 +104,7 @@ p5.TypedDict.prototype._validate = function(key, value) {
  * @class p5.StringDict
  * @constructor
  * @extends p5.Element
- * @param {String} elt DOM node that is wrapped
- * @param {Object} [pInst] pointer to p5 instance
- * @param {Boolean} whether we're using it as main canvas
+ * @param {String} 
  */
 
 p5.StringDict = function(key, value) {
@@ -129,14 +129,55 @@ p5.StringDict.prototype = Object.create(p5.TypedDict.prototype);
 //TESTED
 p5.StringDict.prototype._validate = function(value) {
   return (typeof value === 'string');  
-}
+};
+
+/**
+ *
+ * A simple Dictionary class for Strings.
+ *
+ *
+ * @class p5.NumberDict
+ * @constructor
+ * @extends p5.TypedDict
+ * @param
+ */
 
 
 p5.NumberDict.prototype = Object.create(p5.TypedDict.prototype);
 
 p5.NumberDict.prototype._validate = function(key, value) {
   return (typeof value === 'number');
-}
+};
+
+p5.NumberDict.prototype.add = function(key, amount) {
+  if(this.data.hasOwnProperty(key)){
+    this.data[key] += amount;
+  } else {
+    console.log('The key - ' + key + ' does not exist in this dictionary.');
+  }
+};
+
+//After Dan Shiffman's design
+p5.NumberDict.prototype.sub = function(key, amount) {
+  this.add(key, -amount);
+};
+
+p5.NumberDict.prototype.mult = function(key, amount) {
+  if(this.data.hasOwnProperty(key)){
+    this.data[key] *= amount;
+  } else {
+    console.log('The key - ' + key + ' does not exist in this dictionary.');
+  }
+};
+
+p5.NumberDict.prototype.div = function(key, amount) {
+  if(this.data.hasOwnProperty(key)){
+    this.data[key] /= amount;
+  } else {
+    console.log('The key - ' + key + ' does not exist in this dictionary.');
+  }
+};
 
 
-module.exports = p5.StringDict;
+
+module.exports = p5.TypedDict;
