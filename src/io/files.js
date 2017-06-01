@@ -183,11 +183,14 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
  * operation before setup() and draw() are called.</p>
  *
  * <div><code>
- * var weather;
+ * // Examples use USGS Earthquake API:
+ * //   https://earthquake.usgs.gov/fdsnws/event/1/#methods
+ * var earthquakes;
  * function preload() {
- *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=London,UK'+
- *    '&APPID=7bbbb47522848e8b9c26ba35c226c734';
- *   weather = loadJSON(url);
+ *   // Get the most recent earthquake in the database
+ *   var url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?' +
+ *     'format=geojson&limit=1&orderby=time';
+ *   earthquakes = loadJSON(url);
  * }
  *
  * function setup() {
@@ -196,10 +199,12 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
  *
  * function draw() {
  *   background(200);
- *   // get the humidity value out of the loaded JSON
- *   var humidity = weather.main.humidity;
- *   fill(0, humidity); // use the humidity value to set the alpha
- *   ellipse(width/2, height/2, 50, 50);
+ *   // Get the magnitude and name of the earthquake out of the loaded JSON
+ *   var earthquakeMag = earthquakes.features[0].properties.mag;
+ *   var earthquakeName = earthquakes.features[0].properties.place;
+ *   ellipse(width/2, height/2, earthquakeMag * 10, earthquakeMag * 10);
+ *   textAlign(CENTER);
+ *   text(earthquakeName, 0, height - 30, width, 30);
  * }
  * </code></div>
  *
@@ -209,20 +214,22 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
  * <div><code>
  * function setup() {
  *   noLoop();
- *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=NewYork'+
- *    '&APPID=7bbbb47522848e8b9c26ba35c226c734';
- *   loadJSON(url, drawWeather);
+ *   var url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?' +
+ *     'format=geojson&limit=1&orderby=time';
+ *   loadJSON(url, drawEarthquake);
  * }
  *
  * function draw() {
  *   background(200);
  * }
  *
- * function drawWeather(weather) {
- *   // get the humidity value out of the loaded JSON
- *   var humidity = weather.main.humidity;
- *   fill(0, humidity); // use the humidity value to set the alpha
- *   ellipse(width/2, height/2, 50, 50);
+ * function drawEarthquake(earthquakes) {
+ *   // Get the magnitude and name of the earthquake out of the loaded JSON
+ *   var earthquakeMag = earthquakes.features[0].properties.mag;
+ *   var earthquakeName = earthquakes.features[0].properties.place;
+ *   ellipse(width/2, height/2, earthquakeMag * 10, earthquakeMag * 10);
+ *   textAlign(CENTER);
+ *   text(earthquakeName, 0, height - 30, width, 30);
  * }
  * </code></div>
  *
