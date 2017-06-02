@@ -25,20 +25,20 @@ p5.Graphics = function(w, h, renderer, pInst) {
 
   var r = renderer || constants.P2D;
 
-  var c = document.createElement('canvas');
+  this.canvas = document.createElement('canvas');
   var node = this._userNode || document.body;
-  node.appendChild(c);
+  node.appendChild(this.canvas);
 
-  p5.Element.call(this, c, pInst, false);
+  p5.Element.call(this, this.canvas, pInst, false);
   this._styles = [];
   this.width = w;
   this.height = h;
   this._pixelDensity = pInst._pixelDensity;
 
   if (r === constants.WEBGL) {
-    this._renderer = new p5.RendererGL(c, this, false);
+    this._renderer = new p5.RendererGL(this.canvas, this, false);
   } else {
-    this._renderer = new p5.Renderer2D(c, this, false);
+    this._renderer = new p5.Renderer2D(this.canvas, this, false);
   }
 
   this._renderer.resize(w, h);

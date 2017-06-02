@@ -96,6 +96,7 @@ function getTouchInfo(canvas, w, h, e, i) {
 p5.prototype._ontouchstart = function(e) {
   var context = this._isGlobal ? window : this;
   var executeDefault;
+  this._setProperty('mouseIsPressed', true);
   this._updateTouchCoords(e);
   this._updateNextMouseCoords(e);
   if(typeof context.touchStarted === 'function') {
@@ -103,7 +104,7 @@ p5.prototype._ontouchstart = function(e) {
     if(executeDefault === false) {
       e.preventDefault();
     }
-  } else if (!window.PointerEvent && typeof context.mousePressed === 'function') {
+  } else if (typeof context.mousePressed === 'function') {
     executeDefault = context.mousePressed(e);
     if(executeDefault === false) {
       e.preventDefault();
@@ -165,7 +166,7 @@ p5.prototype._ontouchmove = function(e) {
     if(executeDefault === false) {
       e.preventDefault();
     }
-  } else if (!window.PointerEvent && typeof context.mouseDragged === 'function') {
+  } else if (typeof context.mouseDragged === 'function') {
     executeDefault = context.mouseDragged(e);
     if(executeDefault === false) {
       e.preventDefault();
@@ -219,11 +220,9 @@ p5.prototype._ontouchmove = function(e) {
  *
  */
 p5.prototype._ontouchend = function(e) {
+  this._setProperty('mouseIsPressed', false);
   this._updateTouchCoords(e);
   this._updateNextMouseCoords(e);
-  if (this.touches.length === 0) {
-    this._setProperty('touchIsDown', false);
-  }
   var context = this._isGlobal ? window : this;
   var executeDefault;
   if (typeof context.touchEnded === 'function') {
@@ -231,7 +230,7 @@ p5.prototype._ontouchend = function(e) {
     if(executeDefault === false) {
       e.preventDefault();
     }
-  } else if (!window.PointerEvent && typeof context.mouseReleased === 'function') {
+  } else if (typeof context.mouseReleased === 'function') {
     executeDefault = context.mouseReleased(e);
     if(executeDefault === false) {
       e.preventDefault();
