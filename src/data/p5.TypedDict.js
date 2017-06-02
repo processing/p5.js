@@ -1,9 +1,11 @@
 /**
- * @module Data 
+ * @module Data
  * @submodule Dictionary
  * @for p5
- *@requires core
+ * @requires core
  */
+
+'use strict';
 
 var p5 = require('../core/core');
 
@@ -13,46 +15,34 @@ var p5 = require('../core/core');
  * with key, value pairs
  */
 
-/** 
+/**
  * Creates a new p5.StringDict using the key-value pair that you pass in
- * 
- * @method createStringDict()
- * @param {}
- * @param {}
- * @return {p5.StringDict}
- * @example
- * <div>
- * <code>
- * EXAMPLE GOES HERE EVENTUALLY
- * </code>
- * </div>
+ *
+ *
  *
  * @alt
  * ALT TEXT HERE EVENTUALLY
  */
-
 p5.prototype.createStringDict = function() {
   return new p5.StringDict(arguments[0], arguments[1]);
 };
 
-/** 
- * Creates a new p5.NumberDict using the key-value pair that you pass in
- * 
- * @method createNumberDict()
- * @param {}
- * @param {}
- * @return {p5.NumberDict}
- * @example
- * <div>
- * <code>
- * EXAMPLE GOES HERE EVENTUALLY
- * </code>
- * </div>
- *
- * @alt
- * ALT TEXT HERE EVENTUALLY
- */
-
+// /**
+//  * Creates a new p5.NumberDict using the key-value pair that you pass in
+//  *
+//  * @method createNumberDict()
+//  * @param {}
+//  * @param {}
+//  * @return {p5.NumberDict}
+//  * @example
+//  * <div>
+//  * <code>
+//  * </code>
+//  * </div>
+//  *
+//  * @alt
+//  * ALT TEXT HERE EVENTUALLY
+//  */
 p5.prototype.createNumberDict = function() {
   return new p5.StringDict(arguments[0], arguments[1]);
 };
@@ -62,20 +52,18 @@ p5.TypedDict = function() {
 
 /**
  * Returns the number of key-value pairs currently in Dictionary object
- * 
+ *
  *
  */
-
 p5.TypedDict.prototype.size = function(){
   return this.count;
 };
 
 /**
  * Returns the key-value pair located at key
- * 
+ *
  *
  */
-
 p5.TypedDict.prototype.get = function(key) {
   if(this.data.hasOwnProperty(key)){
     return this.data[key];
@@ -86,12 +74,11 @@ p5.TypedDict.prototype.get = function(key) {
 
 /**
  * Changes the value of key if in Dictionary otherwise makes new one
- * 
+ *
  *
  */
-
 p5.TypedDict.prototype.set = function(key, value) {
-   if (arguments.length === 2) {
+  if (arguments.length === 2) {
     if(!this.data.hasOwnProperty(key)){
       this.create(key, value);
     } else {
@@ -102,21 +89,20 @@ p5.TypedDict.prototype.set = function(key, value) {
 
 
 p5.TypedDict.prototype._add = function(obj) {
- for (var key in obj) {
-   if(this._validate(obj[key])) {
-     this.data[key] = obj[key];
-     this.count++;
-   }
+  for (var key in obj) {
+    if(this._validate(obj[key])) {
+      this.data[key] = obj[key];
+      this.count++;
+    }
   }
-}
+};
 
 
 /**
  * Creates a new key-value pair in Dictionary object
- * 
+ *
  *
  */
-
 p5.TypedDict.prototype.create = function() {
   if(arguments.length === 1) {
     if(arguments[0] instanceof Object) {
@@ -140,10 +126,9 @@ p5.TypedDict.prototype.create = function() {
 
 /**
  * Empties out Dictionary object
- * 
+ *
  *
  */
-
 p5.TypedDict.prototype.clear = function(){
   for(var key in this.data) {
     delete this.data[key];
@@ -152,11 +137,10 @@ p5.TypedDict.prototype.clear = function(){
 };
 
 /**
- * Removes a key-value pair in the Dictionary 
- * 
+ * Removes a key-value pair in the Dictionary
+ *
  *
  */
-
 p5.TypedDict.prototype.remove = function(key) {
   if(this.data.hasOwnProperty(key)) {
     delete this.data[key];
@@ -169,7 +153,7 @@ p5.TypedDict.prototype.remove = function(key) {
 
 /**
  * Logs the list of items currently in the Dictionary
- * 
+ *
  *
  */
 p5.TypedDict.prototype.print = function() {
@@ -182,17 +166,16 @@ p5.TypedDict.prototype._validate = function(key, value) {
   return true;
 };
 
-/**
- *
- * A simple Dictionary class for Strings.
- *
- *
- * @class p5.StringDict
- * @constructor
- * @extends p5.Element
- * @param {String} 
- */
-
+// /**
+//  *
+//  * A simple Dictionary class for Strings.
+//  *
+//  *
+//  * @class p5.StringDict
+//  * @constructor
+//  * @extends p5.Element
+//  * @param {String}
+//  */
 p5.StringDict = function(key, value) {
   this.data = {};
   this.count = 0;
@@ -200,7 +183,7 @@ p5.StringDict = function(key, value) {
   if(arguments.length === 1) {
     if(key instanceof Object) {
       this.data = key;
-      this.count = Object.keys(keys).length;
+      this.count = Object.keys(key).length;
     }
   } else {
     this.data[key] = value;
@@ -214,20 +197,34 @@ p5.StringDict.prototype = Object.create(p5.TypedDict.prototype);
 
 
 p5.StringDict.prototype._validate = function(value) {
-  return (typeof value === 'string');  
+  return (typeof value === 'string');
 };
 
-/**
- *
- * A simple Dictionary class for Strings.
- *
- *
- * @class p5.NumberDict
- * @constructor
- * @extends p5.TypedDict
- * @param
- */
+// /**
+//  *
+//  * A simple Dictionary class for Numbers.
+//  *
+//  *
+//  * @class p5.NumberDict
+//  * @constructor
+//  * @extends p5.TypedDict
+//  * @param
+//  */
+p5.NumberDict = function(key, value) {
+  this.data = {};
+  this.count = 0;
 
+  if(arguments.length === 1) {
+    if(key instanceof Object) {
+      this.data = key;
+      this.count = Object.keys(key).length;
+    }
+  } else {
+    this.data[key] = value;
+    this.count++;
+  }
+  return this;
+};
 
 p5.NumberDict.prototype = Object.create(p5.TypedDict.prototype);
 
@@ -237,10 +234,9 @@ p5.NumberDict.prototype._validate = function(key, value) {
 
 /**
  * Add an amount to the current value in the Dictionary
- * 
+ *
  *
  */
-
 p5.NumberDict.prototype.add = function(key, amount) {
   if(this.data.hasOwnProperty(key)){
     this.data[key] += amount;
@@ -251,20 +247,18 @@ p5.NumberDict.prototype.add = function(key, amount) {
 
 /**
  * Subtract an amount from a current value in the Dictionary
- * 
+ *
  *
  */
-
 p5.NumberDict.prototype.sub = function(key, amount) {
   this.add(key, -amount);
 };
 
 /**
  * Multiply a current value in the Dictionary
- * 
+ *
  *
  */
-
 p5.NumberDict.prototype.mult = function(key, amount) {
   if(this.data.hasOwnProperty(key)){
     this.data[key] *= amount;
@@ -275,10 +269,9 @@ p5.NumberDict.prototype.mult = function(key, amount) {
 
 /**
  * Divide a current value in the Dictionary
- * 
+ *
  *
  */
-
 p5.NumberDict.prototype.div = function(key, amount) {
   if(this.data.hasOwnProperty(key)){
     this.data[key] /= amount;
