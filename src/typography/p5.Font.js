@@ -381,8 +381,7 @@ p5.Font.prototype._renderPath = function(line, x, y, options) {
 
 p5.Font.prototype._textWidth = function(str, fontSize) {
 
-  var bounds = this.textBounds(str, 0, 0, fontSize);
-  return bounds.w + bounds.advance;
+  return this.font.getAdvanceWidth(str, fontSize);
 };
 
 p5.Font.prototype._textAscent = function(fontSize) {
