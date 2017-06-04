@@ -14,19 +14,8 @@ var constants = require('../core/constants');
 
 /*
  * TODO:
- *
- * API:
- * -- textBounds()
- * -- getPath()
- * -- getPoints()
- *
- * ===========================================
- * -- PFont functions:
- *    PFont.list()
- *
  * -- kerning
  * -- alignment: justified?
- * -- integrate p5.dom? (later)
  */
 
 /**
@@ -106,44 +95,27 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
   // settings. Default alignment should match opentype's origin: left-aligned &
   // alphabetic baseline.
   var p = (options && options.renderer && options.renderer._pInst) ||
-    this.parent,
-    ctx = p._renderer.drawingContext,
+    this.parent, ctx = p._renderer.drawingContext,
     alignment = ctx.textAlign || constants.LEFT,
-    baseline = ctx.textBaseline || constants.BASELINE;
-  var result = this.cache[cacheKey('textBounds', str, x, y, fontSize, alignment,
-    baseline)];
+    baseline = ctx.textBaseline || constants.BASELINE,
+    key = cacheKey('textBounds', str, x, y, fontSize, alignment, baseline),
+    result = this.cache[key];
 
   if (!result) {
 
-    var xCoords = [], yCoords = [], self = this,
-      scale = this._scale(fontSize), minX, minY, maxX, maxY;
+    var minX, minY, maxX, maxY, pos, xCoords = [], yCoords = [],
+      scale = this._scale(fontSize);
 
     this.font.forEachGlyph(str, x, y, fontSize, options,
       function(glyph, gX, gY, gFontSize) {
 
-        xCoords.push(gX);
-        yCoords.push(gY);
-
         var gm = glyph.getMetrics();
-
-        if (glyph.name !== 'space' && glyph.unicode !== 32) {
-
-          xCoords.push(gX + (gm.xMax * scale));
-          yCoords.push(gY + (-gm.yMin * scale));
-          yCoords.push(gY + (-gm.yMax * scale));
-
-        } else { // NOTE: deals with broken metrics for spaces in opentype.js
-
-          xCoords.push(gX + self.font.charToGlyph(' ').advanceWidth *
-            self._scale(fontSize));
-        }
+        xCoords.push(gX + (gm.xMin * scale));
+        xCoords.push(gX + (gm.xMax * scale));
+        yCoords.push(gY + (-gm.yMin * scale));
+        yCoords.push(gY + (-gm.yMax * scale));
       });
 
-    // fix to #1409 (not sure why these max() functions were here)
-    /*minX = Math.max(0, Math.min.apply(null, xCoords));
-    minY = Math.max(0, Math.min.apply(null, yCoords));
-    maxX = Math.max(0, Math.max.apply(null, xCoords));
-    maxY = Math.max(0, Math.max.apply(null, yCoords));*/
     minX = Math.min.apply(null, xCoords);
     minY = Math.min.apply(null, yCoords);
     maxX = Math.max.apply(null, xCoords);
@@ -158,15 +130,15 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
     };
 
     // Bounds are now calculated, so shift the x & y to match alignment settings
-    var textWidth = result.w + result.advance;
-    var pos = this._handleAlignment(p, ctx, str, result.x, result.y, textWidth);
+    pos = this._handleAlignment(p, ctx, str, result.x, result.y,
+      result.w + result.advance);
+
     result.x = pos.x;
     result.y = pos.y;
 
     this.cache[cacheKey('textBounds', str, x, y, fontSize, alignment,
       baseline)] = result;
   }
-  //else console.log('cache-hit');
 
   return result;
 };
@@ -409,13 +381,7 @@ p5.Font.prototype._renderPath = function(line, x, y, options) {
 
 p5.Font.prototype._textWidth = function(str, fontSize) {
 
-  if (str === ' ') { // special case for now
-
-    return this.font.charToGlyph(' ').advanceWidth * this._scale(fontSize);
-  }
-
-  var bounds = this.textBounds(str, 0, 0, fontSize);
-  return bounds.w + bounds.advance;
+  return this.font.getAdvanceWidth(str, fontSize);
 };
 
 p5.Font.prototype._textAscent = function(fontSize) {
