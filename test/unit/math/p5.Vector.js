@@ -114,6 +114,38 @@ suite('p5.Vector', function() {
       assert.closeTo(v.z, 0, 0.001);
     });
   });
+  suite('p5.Vector.average', function() {
+    var v1, v2, v3;
+    setup(function() {
+      v1 = new p5.Vector(1, 0);
+      v2 = new p5.Vector(0, 1);
+      v3 = new p5.Vector(1, -1);
+    });
+    test('should return zero vector if no arguments passed', function() {
+      var avg = p5.Vector.average();
+      assert.equal(avg.x, 0);
+      assert.equal(avg.y, 0);
+      assert.equal(avg.z, 0);
+    });
+    test('should return zero vector if empty array is passed', function() {
+      var avg = p5.Vector.average([]);
+      assert.equal(avg.x, 0);
+      assert.equal(avg.y, 0);
+      assert.equal(avg.z, 0);
+    });
+    test('should take array as argument and get their average', function() {
+      var avg = p5.Vector.average([v1, v2, v3]);
+      assert.equal(avg.x, 2/3);
+      assert.equal(avg.y, 0);
+      assert.equal(avg.z, 0);
+    });
+    test('should take more than one arguments and get their average', function() {
+      var avg = p5.Vector.average(v1, v2, v3);
+      assert.closeTo(avg.x, 2/3, 0.001);
+      assert.equal(avg.y, 0);
+      assert.equal(avg.z, 0);
+    });
+  });
 });
 
 //  describe('set()', function() {

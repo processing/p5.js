@@ -1048,4 +1048,49 @@ p5.Vector.mag = function (vecT){
   return Math.sqrt(magSq);
 };
 
+
+/**
+ * Takes the average of the vectors passed as array or as individual argument.
+ * Returns back the new vector.
+ * @static
+ * @param  {p5.Vector|p5.Vector[]} v1 a p5.Vectors to take average from
+ * @return {p5.Vector} the resulting p5.Vector
+ */
+
+p5.Vector.average = function () {
+  var array = null;
+  if ( arguments.length === 0 ) {
+    return new p5.Vector( 0, 0, 0 );
+  } else if ( arguments.length === 1 && arguments[0] instanceof Array &&
+              arguments[0].length > 0) {
+    array = arguments[0];
+  }
+  else if ( arguments.length > 1 ) {
+    array = [].slice.call(arguments);
+  }
+  else {
+    return new p5.Vector(0, 0, 0);
+  }
+
+  if ( array ) {
+    return new p5.Vector(
+      array.reduce( function(sum, vector) {
+        return sum + vector.x;
+      }, 0 ) / array.length,
+      array.reduce( function(sum, vector) {
+        return sum + vector.y;
+      }) / array.length,
+      array.reduce( function(sum, vector) {
+        if ( vector.z ) {
+          return sum + vector.z;
+        }
+        return sum;
+      }) / array.length
+    );
+  }
+
+  return new p5.Vector(0, 0, 0);
+};
+
+
 module.exports = p5.Vector;
