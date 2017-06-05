@@ -45,7 +45,7 @@
     "brfs": "^1.4.0",
     "es6-promise": "^4.0.5",
     "fetch-jsonp": "^1.0.6",
-    "opentype.js": "^0.6.9",
+    "opentype.js": "^0.7.1",
     "whatwg-fetch": "^2.0.2"
   },
   "main": "./lib/p5.js",
