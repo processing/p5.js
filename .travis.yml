@@ -3,5 +3,5 @@ node_js:
   - "4.2"
   - "5.1"
 install: npm install
-script: npm run grunt
+script: npm run grunt --force 
 sudo: false
