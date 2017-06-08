@@ -113,6 +113,11 @@ p5.prototype.createCanvas = function(w, h, renderer) {
   if (isDefault) { // only push once
     this._elements.push(this._renderer);
   }
+
+  if (typeof p5.onCreateCanvas === 'function') {
+    p5.onCreateCanvas.call(this, w, h, r);
+  }
+
   return this._renderer;
 };
 
@@ -159,6 +164,10 @@ p5.prototype.resizeCanvas = function (w, h, noRedraw) {
     if (!noRedraw) {
       this.redraw();
     }
+
+    if (typeof p5.onResizeCanvas === 'function') {
+      p5.onResizeCanvas.call(this, w, h, noRedraw);
+    }
   }
 };
 
@@ -183,6 +192,9 @@ p5.prototype.resizeCanvas = function (w, h, noRedraw) {
 p5.prototype.noCanvas = function() {
   if (this.canvas) {
     this.canvas.parentNode.removeChild(this.canvas);
+  }
+  if (typeof p5.onNoCanvas === 'function') {
+    p5.onNoCanvas.call(this);
   }
 };
 
