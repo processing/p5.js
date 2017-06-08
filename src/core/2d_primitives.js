@@ -13,6 +13,10 @@ var constants = require('./constants');
 var canvas = require('./canvas');
 require('./error_helpers');
 
+// Make mode adjust functions available for testing.
+p5.prototype._modeAdjust = canvas.modeAdjust;
+p5.prototype._arcModeAdjust = canvas.arcModeAdjust;
+
 /**
  * Draw an arc to the screen. If called with only a, b, c, d, start, and
  * stop, the arc will be drawn as an open pie. If mode is provided, the arc
