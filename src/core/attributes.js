@@ -326,4 +326,21 @@ p5.prototype.strokeWeight = function(w) {
   return this;
 };
 
+/**
+ * Sets the fill rule used when filling paths, either NONZERO or EVENODD.
+ * The default fill rule is NONZERO.
+ *
+ * @method fillRule
+ * @param  {Number/Constant} fillRule either NONZERO, EVENODD
+ * @return {p5}                   the p5 object
+ *
+ */
+p5.prototype.fillRule = function(fillRule) {
+  if (fillRule === constants.NONZERO ||
+    fillRule === constants.EVENODD) {
+    this._renderer.fillRule(fillRule);
+  }
+  return this;
+};
+
 module.exports = p5;

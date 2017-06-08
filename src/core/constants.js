@@ -143,6 +143,8 @@ module.exports = {
   ROUND: 'round',
   BEVEL: 'bevel',
   MITER: 'miter',
+  NONZERO: 'nonzero',
+  EVENODD: 'evenodd',
 
   // COLOR
   RGB: 'rgb',
