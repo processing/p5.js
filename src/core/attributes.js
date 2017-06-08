@@ -326,4 +326,53 @@ p5.prototype.strokeWeight = function(w) {
   return this;
 };
 
+/**
+ * Sets the fill rule used when filling paths, either NONZERO or EVENODD.
+ * The default fill rule is NONZERO.
+ *
+ * @method fillRule
+ * @param  {Number/Constant} fillRule either NONZERO, EVENODD
+ * @return {p5}                       the p5 object
+ * @example
+ * <div>
+ * <code>
+ * noStroke();
+ * fillRule(NONZERO);
+ * beginShape();
+ * vertex(20, 80);
+ * vertex(50, 20);
+ * vertex(80, 80);
+ * vertex(20, 40);
+ * vertex(80, 40);
+ * endShape();
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * noStroke();
+ * fillRule(EVENODD);
+ * beginShape();
+ * vertex(20, 80);
+ * vertex(50, 20);
+ * vertex(80, 80);
+ * vertex(20, 40);
+ * vertex(80, 40);
+ * endShape();
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Self-overlapping star shape with NONZERO fill rule.
+ * Self-overlapping star shape with EVENODD fill rule.
+ *
+ */
+p5.prototype.fillRule = function(fillRule) {
+  if (fillRule === constants.NONZERO ||
+    fillRule === constants.EVENODD) {
+    this._renderer.fillRule(fillRule);
+  }
+  return this;
+};
+
 module.exports = p5;
