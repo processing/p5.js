@@ -1,3 +1,8 @@
+<!--
+Please use the below format to report the issue in a better way.
+To check any option, replace the space between the "[" and "]" with a "x".
+-->
+
 #### Nature of Issue ?
 
 - [ ] Found a Bug
