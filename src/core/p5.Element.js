@@ -198,7 +198,7 @@ p5.Element.prototype.mousePressed = function (fxn) {
  * attach element specific event listeners.
  * <br><br>
  * The function accepts a callback function as argument which will be executed
- * when the `wheel` event is triggered on the element, the callabck function is
+ * when the `wheel` event is triggered on the element, the callback function is
  * passed one argument `event`. The `event.deltaY` property returns negative
  * values if the mouse wheel is rotated up or away from the user and positive
  * in the other direction. The `event.deltaX` does the same as `event.deltaY`
