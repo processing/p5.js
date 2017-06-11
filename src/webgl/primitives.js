@@ -797,7 +797,7 @@ p5.RendererGL.prototype.curve=function
  * @param {Number} z1 z-coordinate of second vertex
  * @return {p5}     The P5 object
  * @example
-  * <div>
+ * <div>
  * <code>
  * //draw a line
  * function setup(){
@@ -809,18 +809,23 @@ p5.RendererGL.prototype.curve=function
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
  *   // Use fill instead of stroke to change the color of shape.
- *   fill(255,0,0);
- *   line(10,10,0,60, 60,20);
+ *   fill(255, 0, 0);
+ *   line(10, 10, 0, 60, 60, 20);
  * }
  * </code>
  * </div>
  */
-p5.RendererGL.prototype.line = function() {
-  var args = arguments;
-  if (args.length === 6){
+p5.RendererGL.prototype.line = function(x0,y0,z0,x1,y1,z1) {
+  if (typeof x0 !== 'undefined' ||
+      typeof y0 !== 'undefined' ||
+      typeof z0 !== 'undefined' ||
+      typeof x1 !== 'undefined' ||
+      typeof y1 !== 'undefined' ||
+      typeof z1 !== 'undefined')
+  {
     this.beginShape();
-    this.vertex(args[0], args[1], args[2]);
-    this.vertex(args[3], args[4], args[5]);
+    this.vertex(x0, y0, z0);
+    this.vertex(x1, y1, z1);
     this.endShape();
   }
   return this;
