@@ -360,6 +360,19 @@ p5.prototype.lerp = function(start, stop, amt) {
 p5.prototype.log = Math.log;
 
 /**
+ * Calculates the logarithm of a number [x] with base [base]. This is the equivalent
+ * to calling [log(x) / log(b)].
+ *
+ * @method logBase
+ * @param  {Number} base The base of the log
+ * @param  {Number} x    n > 0
+ * @return {Number}      The log of [x] using [base]
+ */
+p5.prototype.logBase = function(b,x) {
+  return log(x) / log(b);
+}
+
+/**
  * Calculates the magnitude (or length) of a vector. A vector is a direction
  * in space commonly used in computer graphics and linear algebra. Because it
  * has no "start" position, the magnitude of a vector can be thought of as
