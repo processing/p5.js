@@ -369,7 +369,7 @@ p5.prototype.log = Math.log;
  * @return {Number}      The log of [x] using [base]
  */
 p5.prototype.logBase = function(b,x) {
-  return log(x) / log(b);
+  return Math.log(x) / Math.log(b);
 }
 
 /**
