@@ -710,8 +710,8 @@ p5.prototype.parseXML = function (two) {
  * line in your sketch is executed. Calling loadXML() inside preload()
  * guarantees to complete the operation before setup() and draw() are called.
  *
- * <p>Outside of preload(), you may supply a callback function to handle the
- * object:</p>
+ * Outside of preload(), you may supply a callback function to handle the
+ * object.
  *
  * @method loadXML
  * @param  {String}   filename   name of the file or URL to load
