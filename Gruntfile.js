@@ -92,6 +92,13 @@ module.exports = function(grunt) {
 
     // read in the package, used for knowing the current version, et al.
     pkg: grunt.file.readJSON('package.json'),
+
+    // Modules of p5
+    modularise : {
+      'Color': '/src/color/p5.Color.js',
+      'Typography': '/src/typography/p5.Font.js'
+    },
+
     // Configure style consistency checking for this file, the source, and the tests.
     jscs: {
       options: {
@@ -221,11 +228,13 @@ module.exports = function(grunt) {
     // file to match the values in package.json.   It is (likely) used as part
     // of the manual release strategy.
     update_json: {
+
       // set some task-level options
       options: {
         src: 'package.json',
         indent: '\t'
       },
+
       // update bower.json with data from package.json
       bower: {
         src: 'package.json', // where to read from
@@ -235,12 +244,9 @@ module.exports = function(grunt) {
       }
     },
 
-    // The actual compile step:  This should collect all the dependencies
-    // and compile them into a single file.
-    requirejs: {
-
-      // This generates the theme for the documentation from the theme source
-      // files.
+    // This generates the theme for the documentation from the theme source
+    // files.
+    requirejs: {      
       yuidoc_theme: {
         options: {
           baseUrl: './docs/yuidoc-p5-theme-src/scripts/',
@@ -297,6 +303,7 @@ module.exports = function(grunt) {
         }
       }
     },
+
     // This is a static server which is used when testing connectivity for the
     // p5 library. This avoids needing an internet connection to run the tests.
     // It serves all the files in the test directory at http://localhost:9001/
@@ -343,7 +350,7 @@ module.exports = function(grunt) {
     }
   });
 
-  // Load task definitions
+  // Load build tasks
   grunt.loadTasks('build/tasks');
 
   // Load the external libraries used.
@@ -363,7 +370,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-minjson');
 
   // Create the multitasks.
-  // TODO: "requirejs" is in here to run the "yuidoc_themes" subtask. Is this needed?
+  grunt.registerTask('modu', ['modularise']);
   grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);
   grunt.registerTask('test', ['jshint', 'jscs', 'build', 'yuidoc:dev', 'connect', 'mocha', 'mochaTest']);
   grunt.registerTask('test:nobuild', ['jshint:test', 'jscs:test', 'connect', 'mocha']);

@@ -10,18 +10,23 @@ module.exports = function(grunt) {
     // Reading and writing files is asynchronous
     var done = this.async();
 
-    // Render the banner for the top of the file
-    var bannerTemplate = '/*! p5.<%= this.target %>.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */';
+    // Module specific task details
+    var module_name = this.target;
+    var module_src = this.data;
+
+    // Render the banner for the top of the file. Includes the Module name.
+    var bannerTemplate = '/*! p5.' + module_name + '.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */';
     var banner = grunt.template.process(bannerTemplate);
 
-    // src file path
-    var srcFilePath = require.resolve('../../' + this.data);
+    // Source file path
+    var srcFilePath = require.resolve('../../' + module_src);
     
-    var libFilePath = path.resolve('lib/' + this.target);
+    // Target file path
+    var libFilePath = path.resolve('lib/p5.' + module_name + '.js');
 
     // Invoke Browserify programatically to bundle the code
-    var bundle = browserify(, {
-        standalone: 'p5'
+    var bundle = browserify(srcFilePath, {
+        standalone: module_name
       })
       .transform('brfs')
       .bundle();
@@ -33,12 +38,6 @@ module.exports = function(grunt) {
     bundle.on('data', function(data) {
       code += data;
     }).on('end', function() {
-
-      // "code" is complete: create the distributable UMD build by running
-      // the bundle through derequire, then write the bundle to disk.
-      // (Derequire changes the bundle's internal "require" function to
-      // something that will not interfere with this module being used
-      // within a separate browserify bundle.)
       grunt.file.write(libFilePath, derequire(code));
 
       // Print a success message
