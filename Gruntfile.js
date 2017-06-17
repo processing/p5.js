@@ -95,8 +95,7 @@ module.exports = function(grunt) {
 
     // Modules of p5
     modularise : {
-      'Color': '/src/color/p5.Color.js',
-      'Typography': '/src/typography/p5.Font.js'
+      'Color': ['/src/color/p5.Color.js', '/src/color/creating_reading.js']
     },
 
     // Configure style consistency checking for this file, the source, and the tests.
@@ -213,6 +212,7 @@ module.exports = function(grunt) {
         options: {
           urls: [
             'http://localhost:9001/test/test.html',
+            'http://localhost:9001/test/test-modules.html',
             'http://localhost:9001/test/test-minified.html'
           ],
           reporter: reporter,
@@ -246,7 +246,7 @@ module.exports = function(grunt) {
 
     // This generates the theme for the documentation from the theme source
     // files.
-    requirejs: {      
+    requirejs: {
       yuidoc_theme: {
         options: {
           baseUrl: './docs/yuidoc-p5-theme-src/scripts/',
@@ -370,9 +370,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-minjson');
 
   // Create the multitasks.
-  grunt.registerTask('modu', ['modularise']);
-  grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);
+  grunt.registerTask('build', ['browserify', 'modularise', 'uglify', 'requirejs']);
   grunt.registerTask('test', ['jshint', 'jscs', 'build', 'yuidoc:dev', 'connect', 'mocha', 'mochaTest']);
+  // grunt.registerTask('testM', ['connect', 'mocha:test']);
   grunt.registerTask('test:nobuild', ['jshint:test', 'jscs:test', 'connect', 'mocha']);
   grunt.registerTask('yui', ['yuidoc:prod', 'minjson']);
   grunt.registerTask('yui:dev', ['yuidoc:dev', 'minjson']);

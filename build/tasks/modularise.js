@@ -19,8 +19,10 @@ module.exports = function(grunt) {
     var banner = grunt.template.process(bannerTemplate);
 
     // Source file path
-    var srcFilePath = require.resolve('../../' + module_src);
-    
+    var srcFilePath = module_src.map(function(r) {
+      return path.resolve('./' + r);
+    });
+
     // Target file path
     var libFilePath = path.resolve('lib/p5.' + module_name + '.js');
 
