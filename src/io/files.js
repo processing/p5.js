@@ -113,12 +113,17 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
 
   var p5Font = new p5.Font(this);
   var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
+  // decrementPreload should never be confused with callbacks
+  if(decrementPreload === onSuccess ||
+     decrementPreload === onError){
+    decrementPreload = null;
+  }
 
   opentype.load(path, function (err, font) {
 
     if (err) {
 
-      if ((typeof onError !== 'undefined') && (onError !== decrementPreload)) {
+      if (typeof onError !== 'undefined') {
         return onError(err);
       }
       p5._friendlyFileLoadError(4, path);
@@ -132,7 +137,7 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
       onSuccess(p5Font);
     }
 
-    if (decrementPreload && (onSuccess !== decrementPreload)) {
+    if (decrementPreload) {
       decrementPreload();
     }
 
@@ -255,7 +260,7 @@ p5.prototype.loadJSON = function () {
       if (arg === 'jsonp' || arg === 'json') {
         t = arg;
       }
-    } else if (typeof arg === 'function' && arg !== decrementPreload) {
+    } else if (typeof arg === 'function') {
       if(!callback){
         callback = arg;
       }else{
@@ -267,6 +272,12 @@ p5.prototype.loadJSON = function () {
     }
   }
 
+  // decrementPreload should never be confused with callbacks
+  if(decrementPreload === callback ||
+     decrementPreload === errorCallback){
+    decrementPreload = null;
+  }
+
   p5.prototype.httpDo(path, 'GET', options, t, function(resp){
     for (var k in resp) {
       ret[k] = resp[k];
@@ -274,7 +285,7 @@ p5.prototype.loadJSON = function () {
     if (typeof callback !== 'undefined') {
       callback(resp);
     }
-    if (decrementPreload && (callback !== decrementPreload)) {
+    if (decrementPreload) {
       decrementPreload();
     }
   }, errorCallback);
@@ -349,13 +360,18 @@ p5.prototype.loadStrings = function () {
 
   for(var i=1; i<arguments.length; i++){
     var arg = arguments[i];
-    if(typeof arg === 'function' && arg !== decrementPreload){
+    if(typeof arg === 'function'){
       if(typeof callback === 'undefined'){
         callback = arg;
-      }else{
+      }else if(typeof errorCallback === 'undefined'){
         errorCallback = arg;
       }
     }
+  }
+
+  if(decrementPreload === callback ||
+     decrementPreload === errorCallback){
+    decrementPreload = null;
   }
 
   p5.prototype.httpDo(arguments[0], 'GET', 'text', function(data){
@@ -367,7 +383,7 @@ p5.prototype.loadStrings = function () {
     if (typeof callback !== 'undefined') {
       callback(ret);
     }
-    if (decrementPreload && (callback !== decrementPreload)) {
+    if (decrementPreload) {
       decrementPreload();
     }
   }, errorCallback);
@@ -465,8 +481,8 @@ p5.prototype.loadStrings = function () {
  *
  */
 p5.prototype.loadTable = function (path) {
-  var callback = null;
-  var errorCallback = null;
+  var callback;
+  var errorCallback;
   var options = [];
   var header = false;
   var ext = path.substring(path.lastIndexOf('.')+1,path.length);
@@ -479,11 +495,10 @@ p5.prototype.loadTable = function (path) {
   }
 
   for (var i = 1; i < arguments.length; i++) {
-    if ((typeof (arguments[i]) === 'function') &&
-      (arguments[i] !== decrementPreload)) {
-      if(!callback){
+    if (typeof (arguments[i]) === 'function') {
+      if(typeof callback === 'undefined'){
         callback = arguments[i];
-      } else {
+      } else if (typeof errorCallback === 'undefined') {
         errorCallback = arguments[i];
       }
     } else if (typeof (arguments[i]) === 'string') {
@@ -507,6 +522,11 @@ p5.prototype.loadTable = function (path) {
         }
       }
     }
+  }
+
+  if(decrementPreload === callback ||
+     decrementPreload === errorCallback){
+    decrementPreload = null;
   }
 
   var t = new p5.Table();
@@ -768,13 +788,18 @@ p5.prototype.loadXML = function() {
 
   for(var i=1; i<arguments.length; i++){
     var arg = arguments[i];
-    if(typeof arg === 'function' && arg !== decrementPreload){
+    if(typeof arg === 'function'){
       if(typeof callback === 'undefined'){
         callback = arg;
-      }else{
+      }else if(typeof errorCallback === 'undefined'){
         errorCallback = arg;
       }
     }
+  }
+
+  if(decrementPreload === callback ||
+     decrementPreload === errorCallback){
+    decrementPreload = null;
   }
 
   p5.prototype.httpDo(arguments[0], 'GET', 'xml', function(xml){
