@@ -279,7 +279,7 @@ p5.prototype.randomGaussian = function(mean, sd)  {
  */
 p5.prototype.randomPoisson = function (mean, elements) {
   if ('number' !== typeof mean) {
-    throw 'randomPoisson(mean, [elements]) needs at least one numeric' +
+    throw 'randomPoisson(mean, [elements]) needs at least one numeric ' +
       'argument, the mean';
   }
   elements = 'number' === typeof elements ? elements : 1;
