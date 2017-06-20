@@ -48,6 +48,13 @@ p5.prototype.createNumberDict = function() {
 };
 
 p5.TypedDict = function() {
+  this.data = {};
+  if(arguments[0][0] instanceof Object) {
+    this.data = arguments[0][0];
+  } else {
+    this.data[arguments[0][0]] = arguments[0][1];
+  }
+  return this;
 };
 
 /**
@@ -56,7 +63,7 @@ p5.TypedDict = function() {
  *
  */
 p5.TypedDict.prototype.size = function(){
-  return this.count;
+  return Object.keys(this.data).length;
 };
 
 /**
@@ -101,7 +108,8 @@ p5.TypedDict.prototype._addObj = function(obj) {
   for (var key in obj) {
     if(this._validate(obj[key])) {
       this.data[key] = obj[key];
-      this.count++;
+    } else {
+      console.log('Those values dont work for this dictionary type.');
     }
   }
 };
@@ -113,20 +121,13 @@ p5.TypedDict.prototype._addObj = function(obj) {
  *
  */
 p5.TypedDict.prototype.create = function() {
-  if(arguments.length === 1) {
-    if(arguments[0] instanceof Object) {
-      this._addObj(arguments[0]);
-    }
+  if(arguments.length === 1 && arguments[0] instanceof Object) {
+    this._addObj(arguments[0]);
   }
   else if(arguments.length === 2) {
-    var key = arguments[0];
-    var value = arguments[1];
-    if (this._validate(value)) {
-      this.data[key] = value;
-      this.count++;
-    } else {
-      console.log('those values dont work for this dictionary type');
-    }
+    var obj = {};
+    obj[arguments[0]] = arguments[1];
+    this._addObj(obj);
   } else {
     console.log('In order to create a new Dictionary entry you must pass ' +
       'an object or a key, value pair');
@@ -142,7 +143,6 @@ p5.TypedDict.prototype.clear = function(){
   for(var key in this.data) {
     delete this.data[key];
   }
-  this.count = 0;
 };
 
 /**
@@ -153,7 +153,6 @@ p5.TypedDict.prototype.clear = function(){
 p5.TypedDict.prototype.remove = function(key) {
   if(this.data.hasOwnProperty(key)) {
     delete this.data[key];
-    this.count--;
   } else {
     throw key + ' does not exist in this Dictionary';
   }
@@ -185,31 +184,19 @@ p5.TypedDict.prototype._validate = function(key, value) {
 //  * @extends p5.Element
 //  * @param {String}
 //  */
-p5.StringDict = function(key, value) {
-  this.data = {};
-  this.count = 0;
 
-  if(arguments.length === 1) {
-    if(key instanceof Object) {
-      this.data = key;
-      this.count = Object.keys(key).length;
-    }
-  } else {
-    this.data[key] = value;
-    this.count++;
-  }
-  return this;
+
+p5.StringDict = function() {
+  p5.TypedDict.call(this, arguments);
 };
 
-
 p5.StringDict.prototype = Object.create(p5.TypedDict.prototype);
-
 
 p5.StringDict.prototype._validate = function(value) {
   return (typeof value === 'string');
 };
 
-p5.StringDict.prototype.constructor = p5.StringDict;
+
 
 // /**
 //  *
@@ -221,20 +208,8 @@ p5.StringDict.prototype.constructor = p5.StringDict;
 //  * @extends p5.TypedDict
 //  * @param
 //  */
-p5.NumberDict = function(key, value) {
-  this.data = {};
-  this.count = 0;
-
-  if(arguments.length === 1) {
-    if(key instanceof Object) {
-      this.data = key;
-      this.count = Object.keys(key).length;
-    }
-  } else {
-    this.data[key] = value;
-    this.count++;
-  }
-  return this;
+p5.NumberDict = function() {
+  p5.TypedDict.call(this, arguments);
 };
 
 p5.NumberDict.prototype = Object.create(p5.TypedDict.prototype);
@@ -291,20 +266,15 @@ p5.NumberDict.prototype.div = function(key, amount) {
   }
 };
 
-/**
- * Return the lowest key
- *
- *
- */
-p5.NumberDict.prototype.minValue = function() {
-  if(this.data.count === 0) {
-    throw 'Unable to use minValue on an empty NumberDict';
-  } else if(this.data.count === 1) {
+p5.NumberDict.prototype._valueTest = function(flip) {
+  if(Object.keys(this.data).length === 0) {
+    throw 'Unable to search for a minimum or maximum value on an empty NumberDict';
+  } else if(Object.keys(this.data).length === 1) {
     return this.data[Object.keys(this.data)[0]];
   } else {
     var result = this.data[Object.keys(this.data)[0]];
     for(var key in this.data) {
-      if(this.data[key] < result) {
+      if(this.data[key] * flip < result * flip) {
         result = this.data[key];
       }
     }
@@ -317,55 +287,44 @@ p5.NumberDict.prototype.minValue = function() {
  *
  *
  */
-p5.NumberDict.prototype.minKey = function() {
-  if(this.data.count === 0) {
-    throw'Unable to use minValue on an empty NumberDict';
-  } else if(this.data.count === 1) {
-    return Object.keys(this.data)[0];
-  } else {
-    var result = Object.keys(this.data)[0];
-    for(var i=1; i<this.data.count; i++) {
-      if(Object.keys(this.data)[i] < result) {
-        result = Object.keys(this.data)[i];
-      }
-    }
-    return result;
-  }
-};
-
-p5.NumberDict.prototype.maxKey = function() {
-  if(this.data.count === 0) {
-    throw 'Unable to use minValue on an empty NumberDict';
-  } else if(this.data.count === 1) {
-    return Object.keys(this.data)[0];
-  } else {
-    var result = Object.keys(this.data)[0];
-    for(var i=1; i>this.data.count; i++) {
-      if(Object.keys(this.data)[i] < result) {
-        result = Object.keys(this.data)[i];
-      }
-    }
-    return result;
-  }
+p5.NumberDict.prototype.minValue = function() {
+  return this._valueTest(1);
 };
 
 p5.NumberDict.prototype.maxValue = function() {
-  if(this.data.count === 0) {
+  return this._valueTest(-1);
+};
+
+p5.NumberDict.prototype._keyTest = function(flip) {
+  if(Object.keys(this.data).length === 0) {
     throw 'Unable to use minValue on an empty NumberDict';
-  } else if(this.data.count === 1) {
-    return this.data[Object.keys(this.data)[0]];
+  } else if(Object.keys(this.data).length === 1) {
+    return Object.keys(this.data)[0];
   } else {
-    var result = this.data[Object.keys(this.data)[0]];
-    for(var key in this.data) {
-      if(this.data[key] > result) {
-        result = this.data[key];
+    var result = Object.keys(this.data)[0];
+    for(var i=1; i<Object.keys(this.data).length; i++) {
+      if(Object.keys(this.data)[i] * flip < result * flip) {
+        result = Object.keys(this.data)[i];
       }
     }
     return result;
   }
 };
 
-p5.NumberDict.prototype.constructor = p5.NumberDict;
+/**
+ * Return the lowest key
+ *
+ *
+ */
+p5.NumberDict.prototype.minKey = function() {
+  return this._keyTest(1);
+};
+
+p5.NumberDict.prototype.maxKey = function() {
+  return this._keyTest(-1);
+};
+
+
 
 
 module.exports = p5.TypedDict;

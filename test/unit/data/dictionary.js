@@ -21,12 +21,12 @@ suite('Dictionary Objects', function() {
 
   test('check on the structure of stringDict', function() {
     assert.deepEqual(JSON.stringify(stringDict),
-     JSON.stringify({data:{'happy':'coding'}, count:1}));
+     JSON.stringify({data:{'happy':'coding'}}));
   });
 
   test('check on the structure of numberDict', function() {
     assert.deepEqual(JSON.stringify(numberDict),
-     JSON.stringify({data:{1:2}, count:1}));
+     JSON.stringify({data:{1:2}}));
   });
 
   test('stringDict should have correct count', function() {
@@ -66,7 +66,7 @@ suite('Dictionary Objects', function() {
 
   test('should clear stringDict', function() {
     stringDict.clear();
-    assert.deepEqual(stringDict, {data:{}, count:0});
+    assert.deepEqual(stringDict, {data:{}});
   });
 
   test('should add values together', function() {
@@ -99,6 +99,6 @@ suite('Dictionary Objects', function() {
 
   test('should clear numberDict', function() {
     numberDict.clear();
-    assert.deepEqual(numberDict, {data:{}, count:0});
+    assert.deepEqual(numberDict, {data:{}});
   });
 });
