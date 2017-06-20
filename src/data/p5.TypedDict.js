@@ -170,31 +170,22 @@ p5.TypedDict.prototype.print = function() {
   }
 };
 
-p5.TypedDict.prototype.save = function() {
-  var output = '',
-      contentType,
-      extension;
+p5.TypedDict.prototype.saveTable = function() {
+  var output = '';
 
-  if(arguments[0] === 'CSV' || arguments[0] === 'csv') {
-    for (var key in this.data) {
-      output += key + ',' + this.data[key] + '\n';
-    }
-    contentType = 'text/csv';
-    extension = 'csv';
-  } else if (arguments[0] === 'JSON' || arguments[0] === 'json') {
-    output = JSON.stringify(this.data);
-    contentType = 'application/json';
-    extension = 'json';
-  } else {
-    throw 'To use save(), you must pass an argument of either ' +
-      'csv or json';
+  for (var key in this.data) {
+    output += key + ',' + this.data[key] + '\n';
   }
 
-  var fileName = arguments[1] || 'my' + extension;
-  var file = new Blob([output], {type: contentType});
+  var filename = arguments[0] || 'mycsv';
+  var file = new Blob([output], {type: 'text/csv'});
   var href = window.URL.createObjectURL(file);
 
-  p5.prototype.downloadFile(href, fileName, extension);
+  p5.prototype.downloadFile(href, filename, 'csv');
+};
+
+p5.TypedDict.prototype.saveJSON = function(filename, opt) {
+  p5.prototype.saveJSON(this.data, filename, opt);
 };
 
 
