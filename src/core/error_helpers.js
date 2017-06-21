@@ -106,10 +106,26 @@ p5._friendlyFileLoadError = function (errorType, filePath) {
 };
 function validateNumParameters(func, input, length) {
   /**
-   * Numberic Type checking
+   * Validates Number type parameters
+   * param  {String}               message the words to be said
+   * param  {String}               func    the name of the function to link
+   * param  {Integer/Color String} color   CSS color string or error type
    *
-   * Example: "It looks like ellipse received an empty variable in spot #2."
-   * Example: "ellipse was expecting a number for parameter #1,
+   * return  {boolean}             message the words to be said
+   * return  {String}              err     the type of error
+   * return  {Integer}             index   the location of error
+   * return  {String}              message friendly err console log
+   *
+   * example:
+   *  var a;
+   *  ellipse(10,10,a,5);
+   * console ouput:
+   *  "It looks like ellipse received an empty variable in spot #2."
+   *
+   * example:
+   *  ellipse(10,"foo",5,5);
+   * console output:
+   *  "ellipse was expecting a number for parameter #1,
    *           received "foo" instead."
    */
   var message;
@@ -130,10 +146,6 @@ function validateNumParameters(func, input, length) {
         ' (zero-based index). If not intentional, this is often a problem' +
         ' with scope: [link to scope].';
       return [false, 'EMPTY_VAR', p, message];
-      //  report('It looks like ' + func +
-      //    ' received an empty variable in spot #' + (p+1) +
-      //    '. If not intentional, this is often a problem with scope: ' +
-      //    '[link to scope].', func, EMPTY_VAR);
     } else if (argType !== 'number') {
       message = 'FES: ' + func + ' was expecting a number' +
         ' for parameter #' + p + ' (zero-based index), received ';
@@ -141,12 +153,6 @@ function validateNumParameters(func, input, length) {
       message += 'string' === argType ? '"' + args[p] + '"' : args[p];
       message += ' instead.';
       return [false, 'WRONG_TYPE', p, message];
-      //  message = func + ' was expecting a number'+
-      //    ' for parameter #' + (p+1) + ', received ';
-      //  // Wrap strings in quotes
-      //  message += 'string' === argType ? '"' + args[p] + '"' : args[p];
-      //  message += ' instead.';
-      //  report(message, func, WRONG_TYPE);
     }
   }
   return [true];

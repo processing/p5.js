@@ -9,16 +9,6 @@ suite('2D Primitives', function() {
     return;
   }
 
-  // var myp5webgl;
-  //
-  // setup(function() {
-  //   myp5webgl = new p5(function(p) {
-  //     p.setup = function() {
-  //       p.createCanvas(100, 100, p.WEBGL);
-  //     };
-  //   });
-  // });
-
   teardown(function() {
     myp5.clear();
   });
