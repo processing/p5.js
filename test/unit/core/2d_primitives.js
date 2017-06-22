@@ -55,16 +55,16 @@ suite('2D Primitives', function() {
         assert.ok(ellipse);
         assert.typeOf(ellipse, 'function');
       });
-      // test('should draw', function(done) {
-      //   myp5.background(155);
-      //   myp5.fill(0);
-      //   myp5.ellipse(0, 0, 100, 100);
-      //
-      //   testRender('unit/assets/renders/ellipse.png', myp5, function(res) {
-      //     assert.isTrue(res);
-      //     done();
-      //   });
-      // });
+      test('should draw', function(done) {
+        myp5.background(155);
+        myp5.fill(0);
+        myp5.ellipse(0, 0, 100, 100);
+
+        testRender('unit/assets/renders/ellipse.png', myp5, function(res) {
+          assert.isTrue(res);
+          done();
+        });
+      });
       test('parameter check and no err', function() {
         assert.doesNotThrow(
           function() {
@@ -98,40 +98,28 @@ suite('2D Primitives', function() {
         assert.ok(line);
         assert.typeOf(line, 'function');
       });
-      // test('should draw', function(done) {
-      //   myp5.background(155);
-      //   myp5.fill(0);
-      //   myp5.line(0, 0, 100, 100);
-      //
-      //   testRender('unit/assets/renders/line.png', myp5, function(res) {
-      //     assert.isTrue(res);
-      //     done();
-      //   });
-      // });
+      test('should draw', function(done) {
+        myp5.background(155);
+        myp5.fill(0);
+        myp5.line(0, 0, 100, 100);
+
+        testRender('unit/assets/renders/line.png', myp5, function(res) {
+          assert.isTrue(res);
+          done();
+        });
+      });
       test('parameter check and no err 2D', function() {
         assert.doesNotThrow(function() {
             myp5.line(0, 0.5, 10, 10.5);
           },
           Error, 'got unwanted exception');
       });
-      // test('parameter check and no err 3D', function() {
-      //   assert.doesNotThrow(function() {
-      //       myp5webgl.line(0, 0.5, 10, 10.5, 20, 20.5);
-      //     },
-      //     Error, 'got unwanted exception');
-      // });
       test('parameter check and throws err (empty variable)', function() {
         assert.throws(function() {
             myp5.line(0, 0.5, 10);
           },
           /EMPTY_VAR/, 'did not throw with expected message!');
       });
-      // test('parameter check and throws err (empty variable)', function() {
-      //   assert.throws(function() {
-      //       myp5.line(0, 0.5, 10, 10.5, 20);
-      //     },
-      //     /EMPTY_VAR/, 'did not throw with expected message!');
-      // });
       test('parameter check and throws err (wrong type)', function() {
         assert.throws(function() {
           myp5.line(0, 10, '30', 30.5);
