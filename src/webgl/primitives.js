@@ -787,4 +787,48 @@ p5.RendererGL.prototype.curve=function
   return this;
 };
 
+/**
+ * Draw a line given two points
+ * @param {Number} x0 x-coordinate of first vertex
+ * @param {Number} y0 y-coordinate of first vertex
+ * @param {Number} z0 z-coordinate of first vertex
+ * @param {Number} x1 x-coordinate of second vertex
+ * @param {Number} y1 y-coordinate of second vertex
+ * @param {Number} z1 z-coordinate of second vertex
+ * @return {p5}     The P5 object
+ * @example
+ * <div>
+ * <code>
+ * //draw a line
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw(){
+ *   background(200);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   // Use fill instead of stroke to change the color of shape.
+ *   fill(255, 0, 0);
+ *   line(10, 10, 0, 60, 60, 20);
+ * }
+ * </code>
+ * </div>
+ */
+p5.RendererGL.prototype.line = function(x0,y0,z0,x1,y1,z1) {
+  if (typeof x0 !== 'undefined' ||
+      typeof y0 !== 'undefined' ||
+      typeof z0 !== 'undefined' ||
+      typeof x1 !== 'undefined' ||
+      typeof y1 !== 'undefined' ||
+      typeof z1 !== 'undefined')
+  {
+    this.beginShape();
+    this.vertex(x0, y0, z0);
+    this.vertex(x1, y1, z1);
+    this.endShape();
+  }
+  return this;
+};
+
 module.exports = p5;
