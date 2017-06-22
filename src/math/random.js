@@ -242,4 +242,80 @@ p5.prototype.randomGaussian = function(mean, sd)  {
   return y1*s + m;
 };
 
+/**
+ * Returns a random number (or an array of numbers) fitting a Poisson
+ * distribution using Donald Knuth algorithm adapted by Junhao.
+ * <br><br>
+ * Takes 1 or 2 arguments, the mean and the number of elments to return.<br>
+ * @method randomPoisson
+ * @param  {Number} mean of distribution
+ * @param  {Number} elements to return
+ * @return {Number} the random number or an array of random numbers
+ * @example
+ * <div>
+ * <code>
+ *var distribution = new Array(360);
+ *
+ *function setup() {
+ *  createCanvas(100, 100);
+ *  distribution = randomPoisson(40,360);
+ *}
+ *
+ *function draw() {
+ *  background(204);
+ *
+ *  translate(width/2, width/2);
+ *
+ *  for (var i = 0; i < distribution.length; i++) {
+ *    rotate(TWO_PI/distribution.length);
+ *    stroke(0);
+ *    var dist = abs(distribution[i]);
+ *    line(0, 0, dist, 0);
+ *  }
+ *}
+ * </code>
+ * </div>
+ */
+p5.prototype.randomPoisson = function (mean, elements) {
+  if ('number' !== typeof mean) {
+    throw 'randomPoisson(mean, [elements]) needs at least one numeric ' +
+      'argument, the mean';
+  }
+  elements = 'number' === typeof elements ? elements : 1;
+  var out = new Array(elements);
+
+  for (var i = out.length - 1; i >= 0; i--) {
+    out[i] = this._randomPoissonJunhaoKnuth(mean);
+  }
+
+  return 1 === elements ? out[0] : out;
+};
+/**
+ * Auxiliary function to calculate poisson numbers by the Junhao Knuth method
+ * @param  {Number} mu mean of distribution
+ * @return {Number}    the Random Number
+ */
+p5.prototype._randomPoissonJunhaoKnuth = function(mu){
+  var lLeft = mu;
+  var k = 0;
+  var p = 1;
+  var e = Math.exp(1);
+  var STEP = 500;
+  var eSTEP = Math.exp(STEP);
+  do {
+    k++;
+    p *= Math.random();
+    if (p<e && lLeft>0){
+      if (lLeft>STEP){
+        p*= eSTEP;
+        lLeft -= STEP;
+      } else {
+        p*=Math.exp(lLeft);
+        lLeft = -1;
+      }
+    }
+  } while (p>1);
+  return k - 1;
+};
+
 module.exports = p5;
