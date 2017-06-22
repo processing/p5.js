@@ -1,13 +1,9 @@
 suite('2D Primitives', function() {
 
-  var myp5 = new p5(function(p) {
+  var myp5 = new p5(function( p ) {
     p.setup = function() {};
     p.draw = function() {};
   });
-
-  if (!window.Modernizr.webgl) {
-    return;
-  }
 
   teardown(function() {
     myp5.clear();
@@ -48,6 +44,7 @@ suite('2D Primitives', function() {
       });
     });
   });
+
   suite('p5.prototype.ellipse', function() {
     var ellipse = p5.prototype.ellipse;
     suite('ellipse()', function() {
@@ -183,4 +180,5 @@ suite('2D Primitives', function() {
       });
     });
   });
+
 });

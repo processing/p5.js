@@ -4,7 +4,8 @@ suite('Error Helpers', function() {
     sketch.draw = function() {};
   });
   var c;
-  // add unit test for validateNumParameters inputs
+
+  // unit tests for validateNumParameters
   suite('validateNumParameters', function(){
     test('catch if some inputs are missing',function(){
       var result = p5.prototype._validateNumParameters('func',[1,1,1,1]);
@@ -55,6 +56,7 @@ suite('Error Helpers', function() {
       assert.equal(result[2],1);
     });
   });
+
   suite('helpForMisusedAtTopLevelCode', function() {
     var help = function(msg) {
       var log = [];

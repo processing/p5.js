@@ -81,7 +81,6 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
     console.log(validatePar[3]);
     throw new Error(validatePar[1]);
   }
-
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
@@ -109,14 +108,14 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
   // Adjust angles to counter linear scaling.
   if (start <= constants.HALF_PI) {
     start = Math.atan(w / h * Math.tan(start));
-  } else if (start > constants.HALF_PI && start <= 3 * constants.HALF_PI) {
+  } else  if (start > constants.HALF_PI && start <= 3 * constants.HALF_PI) {
     start = Math.atan(w / h * Math.tan(start)) + constants.PI;
   } else {
     start = Math.atan(w / h * Math.tan(start)) + constants.TWO_PI;
   }
   if (stop <= constants.HALF_PI) {
     stop = Math.atan(w / h * Math.tan(stop));
-  } else if (stop > constants.HALF_PI && stop <= 3 * constants.HALF_PI) {
+  } else  if (stop > constants.HALF_PI && stop <= 3 * constants.HALF_PI) {
     stop = Math.atan(w / h * Math.tan(stop)) + constants.PI;
   } else {
     stop = Math.atan(w / h * Math.tan(stop)) + constants.TWO_PI;
@@ -183,12 +182,8 @@ p5.prototype.ellipse = function() {
     throw new Error(validatePar[1]);
   }
   // p5 supports negative width and heights for rects
-  if (args[2] < 0) {
-    args[2] = Math.abs(args[2]);
-  }
-  if (args[3] < 0) {
-    args[3] = Math.abs(args[3]);
-  }
+  if (args[2] < 0) {args[2] = Math.abs(args[2]);}
+  if (args[3] < 0) {args[3] = Math.abs(args[3]);}
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
@@ -439,65 +434,65 @@ p5.prototype.quad = function() {
 };
 
 /**
- * Draws a rectangle to the screen. A rectangle is a four-sided shape with
- * every angle at ninety degrees. By default, the first two parameters set
- * the location of the upper-left corner, the third sets the width, and the
- * fourth sets the height. The way these parameters are interpreted, however,
- * may be changed with the rectMode() function.
- * <br><br>
- * The fifth, sixth, seventh and eighth parameters, if specified,
- * determine corner radius for the top-right, top-left, lower-right and
- * lower-left corners, respectively. An omitted corner radius parameter is set
- * to the value of the previously specified radius value in the parameter list.
- *
- * @method rect
- * @param  {Number} x  x-coordinate of the rectangle.
- * @param  {Number} y  y-coordinate of the rectangle.
- * @param  {Number} w  width of the rectangle.
- * @param  {Number} h  height of the rectangle.
- * @param  {Number} [tl] optional radius of top-left corner.
- * @param  {Number} [tr] optional radius of top-right corner.
- * @param  {Number} [br] optional radius of bottom-right corner.
- * @param  {Number} [bl] optional radius of bottom-left corner.
- * @return {p5}          the p5 object.
- * @example
- * <div>
- * <code>
- * // Draw a rectangle at location (30, 20) with a width and height of 55.
- * rect(30, 20, 55, 55);
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * // Draw a rectangle with rounded corners, each having a radius of 20.
- * rect(30, 20, 55, 55, 20);
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * // Draw a rectangle with rounded corners having the following radii:
- * // top-left = 20, top-right = 15, bottom-right = 10, bottom-left = 5.
- * rect(30, 20, 55, 55, 20, 15, 10, 5);
- * </code>
- * </div>
- *
- * @alt
- * 55x55 white rect with black outline in mid-right of canvas.
- * 55x55 white rect with black outline and rounded edges in mid-right of canvas.
- * 55x55 white rect with black outline and rounded edges of different radii.
- */
+* Draws a rectangle to the screen. A rectangle is a four-sided shape with
+* every angle at ninety degrees. By default, the first two parameters set
+* the location of the upper-left corner, the third sets the width, and the
+* fourth sets the height. The way these parameters are interpreted, however,
+* may be changed with the rectMode() function.
+* <br><br>
+* The fifth, sixth, seventh and eighth parameters, if specified,
+* determine corner radius for the top-right, top-left, lower-right and
+* lower-left corners, respectively. An omitted corner radius parameter is set
+* to the value of the previously specified radius value in the parameter list.
+*
+* @method rect
+* @param  {Number} x  x-coordinate of the rectangle.
+* @param  {Number} y  y-coordinate of the rectangle.
+* @param  {Number} w  width of the rectangle.
+* @param  {Number} h  height of the rectangle.
+* @param  {Number} [tl] optional radius of top-left corner.
+* @param  {Number} [tr] optional radius of top-right corner.
+* @param  {Number} [br] optional radius of bottom-right corner.
+* @param  {Number} [bl] optional radius of bottom-left corner.
+* @return {p5}          the p5 object.
+* @example
+* <div>
+* <code>
+* // Draw a rectangle at location (30, 20) with a width and height of 55.
+* rect(30, 20, 55, 55);
+* </code>
+* </div>
+*
+* <div>
+* <code>
+* // Draw a rectangle with rounded corners, each having a radius of 20.
+* rect(30, 20, 55, 55, 20);
+* </code>
+* </div>
+*
+* <div>
+* <code>
+* // Draw a rectangle with rounded corners having the following radii:
+* // top-left = 20, top-right = 15, bottom-right = 10, bottom-left = 5.
+* rect(30, 20, 55, 55, 20, 15, 10, 5);
+* </code>
+* </div>
+*
+* @alt
+* 55x55 white rect with black outline in mid-right of canvas.
+* 55x55 white rect with black outline and rounded edges in mid-right of canvas.
+* 55x55 white rect with black outline and rounded edges of different radii.
+*/
 /**
- * @method rect
- * @param  {Number} x
- * @param  {Number} y
- * @param  {Number} w
- * @param  {Number} h
- * @param  {Number} [detailX]
- * @param  {Number} [detailY]
- * @return {p5}          the p5 object.
- */
+* @method rect
+* @param  {Number} x
+* @param  {Number} y
+* @param  {Number} w
+* @param  {Number} h
+* @param  {Number} [detailX]
+* @param  {Number} [detailY]
+* @return {p5}          the p5 object.
+*/
 p5.prototype.rect = function() {
   var args = new Array(arguments.length);
   for (var i = 0; i < args.length; ++i) {
@@ -526,29 +521,29 @@ p5.prototype.rect = function() {
 };
 
 /**
- * A triangle is a plane created by connecting three points. The first two
- * arguments specify the first point, the middle two arguments specify the
- * second point, and the last two arguments specify the third point.
- *
- * @method triangle
- * @param  {Number} x1 x-coordinate of the first point
- * @param  {Number} y1 y-coordinate of the first point
- * @param  {Number} x2 x-coordinate of the second point
- * @param  {Number} y2 y-coordinate of the second point
- * @param  {Number} x3 x-coordinate of the third point
- * @param  {Number} y3 y-coordinate of the third point
- * @return {p5}        the p5 object
- * @example
- * <div>
- * <code>
- * triangle(30, 75, 58, 20, 86, 75);
- * </code>
- * </div>
- *
- *@alt
- * white triangle with black outline in mid-right of canvas.
- *
- */
+* A triangle is a plane created by connecting three points. The first two
+* arguments specify the first point, the middle two arguments specify the
+* second point, and the last two arguments specify the third point.
+*
+* @method triangle
+* @param  {Number} x1 x-coordinate of the first point
+* @param  {Number} y1 y-coordinate of the first point
+* @param  {Number} x2 x-coordinate of the second point
+* @param  {Number} y2 y-coordinate of the second point
+* @param  {Number} x3 x-coordinate of the third point
+* @param  {Number} y3 y-coordinate of the third point
+* @return {p5}        the p5 object
+* @example
+* <div>
+* <code>
+* triangle(30, 75, 58, 20, 86, 75);
+* </code>
+* </div>
+*
+*@alt
+* white triangle with black outline in mid-right of canvas.
+*
+*/
 p5.prototype.triangle = function() {
 
   if (!this._renderer._doStroke && !this._renderer._doFill) {
