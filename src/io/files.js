@@ -18,25 +18,6 @@ var fetchJsonp = require('fetch-jsonp');
 require('../core/error_helpers');
 
 /**
- * Checks if we are in preload and returns the last arg which will be the
- * _decrementPreload function if called from a loadX() function.  Should
- * only be used in loadX() functions.
- * @private
- */
-p5._getDecrementPreload = function () {
-  var decrementPreload = arguments[arguments.length - 1];
-
-  // when in preload decrementPreload will always be the last arg as it is set
-  // with args.push() before invocation in _wrapPreload
-  if ((window.preload || (this && this.preload)) &&
-    typeof decrementPreload === 'function') {
-    return decrementPreload;
-  } else {
-    return null;
-  }
-};
-
-/**
  * Loads an opentype font file (.otf, .ttf) from a file or a URL,
  * and returns a PFont Object. This method is asynchronous,
  * meaning it may not finish before the next line in your sketch
@@ -112,13 +93,8 @@ p5._getDecrementPreload = function () {
 p5.prototype.loadFont = function (path, onSuccess, onError) {
 
   var p5Font = new p5.Font(this);
-  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
-  // decrementPreload should never be confused with callbacks
-  if(decrementPreload === onSuccess ||
-     decrementPreload === onError){
-    decrementPreload = null;
-  }
 
+  var self = this;
   opentype.load(path, function (err, font) {
 
     if (err) {
@@ -137,9 +113,7 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
       onSuccess(p5Font);
     }
 
-    if (decrementPreload) {
-      decrementPreload();
-    }
+    self._decrementPreload();
 
     // check that we have an acceptable font type
     var validFontTypes = [ 'ttf', 'otf', 'woff', 'woff2' ],
@@ -248,7 +222,6 @@ p5.prototype.loadJSON = function () {
   var callback;
   var errorCallback;
   var options;
-  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
   var ret = {}; // object needed for preload
   var t = 'json';
@@ -272,12 +245,7 @@ p5.prototype.loadJSON = function () {
     }
   }
 
-  // decrementPreload should never be confused with callbacks
-  if(decrementPreload === callback ||
-     decrementPreload === errorCallback){
-    decrementPreload = null;
-  }
-
+  var self = this;
   p5.prototype.httpDo(path, 'GET', options, t, function(resp){
     for (var k in resp) {
       ret[k] = resp[k];
@@ -285,9 +253,8 @@ p5.prototype.loadJSON = function () {
     if (typeof callback !== 'undefined') {
       callback(resp);
     }
-    if (decrementPreload) {
-      decrementPreload();
-    }
+
+    self._decrementPreload();
   }, errorCallback);
 
   return ret;
@@ -355,7 +322,6 @@ p5.prototype.loadJSON = function () {
  */
 p5.prototype.loadStrings = function () {
   var ret = [];
-  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
   var callback, errorCallback;
 
   for(var i=1; i<arguments.length; i++){
@@ -369,12 +335,8 @@ p5.prototype.loadStrings = function () {
     }
   }
 
-  if(decrementPreload === callback ||
-     decrementPreload === errorCallback){
-    decrementPreload = null;
-  }
-
-  p5.prototype.httpDo(arguments[0], 'GET', 'text', function(data){
+  var self = this;
+  p5.prototype.httpDo.call(this, arguments[0], 'GET', 'text', function(data){
     var arr = data.match(/[^\r\n]+/g);
     for (var k in arr) {
       ret[k] = arr[k];
@@ -383,9 +345,8 @@ p5.prototype.loadStrings = function () {
     if (typeof callback !== 'undefined') {
       callback(ret);
     }
-    if (decrementPreload) {
-      decrementPreload();
-    }
+
+    self._decrementPreload();
   }, errorCallback);
 
   return ret;
@@ -488,7 +449,6 @@ p5.prototype.loadTable = function (path) {
   var ext = path.substring(path.lastIndexOf('.')+1,path.length);
   var sep = ',';
   var separatorSet = false;
-  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
   if(ext === 'tsv'){ //Only need to check extension is tsv because csv is default
     sep = '\t';
@@ -524,13 +484,9 @@ p5.prototype.loadTable = function (path) {
     }
   }
 
-  if(decrementPreload === callback ||
-     decrementPreload === errorCallback){
-    decrementPreload = null;
-  }
-
   var t = new p5.Table();
 
+  var self = this;
   p5.prototype.httpDo(path, 'GET', 'text', function(resp){
     var state = {};
 
@@ -653,12 +609,11 @@ p5.prototype.loadTable = function (path) {
       row.obj = makeObject(records[i], t.columns);
       t.addRow(row);
     }
-    if (callback !== null) {
+    if (typeof callback === 'function') {
       callback(t);
     }
-    if (decrementPreload && (callback !== decrementPreload)) {
-      decrementPreload();
-    }
+
+    self._decrementPreload();
 
   }, function(err){
     // Error handling
@@ -783,7 +738,6 @@ p5.prototype.parseXML = function (two) {
  */
 p5.prototype.loadXML = function() {
   var ret = {};
-  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
   var callback, errorCallback;
 
   for(var i=1; i<arguments.length; i++){
@@ -797,11 +751,7 @@ p5.prototype.loadXML = function() {
     }
   }
 
-  if(decrementPreload === callback ||
-     decrementPreload === errorCallback){
-    decrementPreload = null;
-  }
-
+  var self = this;
   p5.prototype.httpDo(arguments[0], 'GET', 'xml', function(xml){
     for(var key in xml) {
       ret[key] = xml[key];
@@ -809,9 +759,8 @@ p5.prototype.loadXML = function() {
     if (typeof callback !== 'undefined') {
       callback(ret);
     }
-    if (decrementPreload && (callback !== decrementPreload)) {
-      decrementPreload();
-    }
+
+    self._decrementPreload();
   }, errorCallback);
 
   return ret;
