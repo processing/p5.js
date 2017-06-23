@@ -24,8 +24,8 @@ p5.Renderer2D = function(elt, pInst, isMainCanvas){
 p5.Renderer2D.prototype = Object.create(p5.Renderer.prototype);
 
 p5.Renderer2D.prototype._applyDefaults = function() {
-  this.drawingContext.fillStyle = constants._DEFAULT_FILL;
-  this.drawingContext.strokeStyle = constants._DEFAULT_STROKE;
+  this._setFill(constants._DEFAULT_FILL);
+  this._setStroke(constants._DEFAULT_STROKE);
   this.drawingContext.lineCap = constants.ROUND;
   this.drawingContext.font = 'normal 12px sans-serif';
 };
@@ -49,14 +49,14 @@ p5.Renderer2D.prototype.background = function() {
   if (arguments[0] instanceof p5.Image) {
     this._pInst.image(arguments[0], 0, 0, this.width, this.height);
   } else {
-    var curFill = this.drawingContext.fillStyle;
+    var curFill = this._getFill();
     // create background rect
     var color = this._pInst.color.apply(this, arguments);
     var newFill = color.toString();
-    this.drawingContext.fillStyle = newFill;
+    this._setFill(newFill);
     this.drawingContext.fillRect(0, 0, this.width, this.height);
     // reset fill
-    this.drawingContext.fillStyle = curFill;
+    this._setFill(curFill);
   }
   this.drawingContext.restore();
 };
@@ -66,16 +66,13 @@ p5.Renderer2D.prototype.clear = function() {
 };
 
 p5.Renderer2D.prototype.fill = function() {
-
-  var ctx = this.drawingContext;
   var color = this._pInst.color.apply(this, arguments);
-  ctx.fillStyle = color.toString();
+  this._setFill(color.toString());
 };
 
 p5.Renderer2D.prototype.stroke = function() {
-  var ctx = this.drawingContext;
   var color = this._pInst.color.apply(this, arguments);
-  ctx.strokeStyle = color.toString();
+  this._setStroke(color.toString());
 };
 
 //////////////////////////////////////////////
@@ -452,11 +449,11 @@ p5.Renderer2D.prototype.ellipse = function(args) {
     w = args[2],
     h = args[3];
   if (doFill && !doStroke) {
-    if(ctx.fillStyle === styleEmpty) {
+    if(this._getFill() === styleEmpty) {
       return this;
     }
   } else if (!doFill && doStroke) {
-    if(ctx.strokeStyle === styleEmpty) {
+    if(this._getStroke() === styleEmpty) {
       return this;
     }
   }
@@ -486,7 +483,7 @@ p5.Renderer2D.prototype.line = function(x1, y1, x2, y2) {
   var ctx = this.drawingContext;
   if (!this._doStroke) {
     return this;
-  } else if(ctx.strokeStyle === styleEmpty){
+  } else if(this._getStroke() === styleEmpty){
     return this;
   }
   // Translate the line by (0.5, 0.5) to draw it crisp
@@ -505,16 +502,13 @@ p5.Renderer2D.prototype.line = function(x1, y1, x2, y2) {
 
 p5.Renderer2D.prototype.point = function(x, y) {
   var ctx = this.drawingContext;
-  var s = ctx.strokeStyle;
-  var f = ctx.fillStyle;
   if (!this._doStroke) {
     return this;
-  } else if(ctx.strokeStyle === styleEmpty){
+  } else if(this._getStroke() === styleEmpty){
     return this;
   }
   x = Math.round(x);
   y = Math.round(y);
-  ctx.fillStyle = s;
   if (ctx.lineWidth > 1) {
     ctx.beginPath();
     ctx.arc(
@@ -529,7 +523,6 @@ p5.Renderer2D.prototype.point = function(x, y) {
   } else {
     ctx.fillRect(x, y, 1, 1);
   }
-  ctx.fillStyle = f;
 };
 
 p5.Renderer2D.prototype.quad =
@@ -537,11 +530,11 @@ p5.Renderer2D.prototype.quad =
   var ctx = this.drawingContext;
   var doFill = this._doFill, doStroke = this._doStroke;
   if (doFill && !doStroke) {
-    if(ctx.fillStyle === styleEmpty) {
+    if(this._getFill() === styleEmpty) {
       return this;
     }
   } else if (!doFill && doStroke) {
-    if(ctx.strokeStyle === styleEmpty) {
+    if(this._getStroke() === styleEmpty) {
       return this;
     }
   }
@@ -572,11 +565,11 @@ p5.Renderer2D.prototype.rect = function(args) {
   var ctx = this.drawingContext;
   var doFill = this._doFill, doStroke = this._doStroke;
   if (doFill && !doStroke) {
-    if(ctx.fillStyle === styleEmpty) {
+    if(this._getFill() === styleEmpty) {
       return this;
     }
   } else if (!doFill && doStroke) {
-    if(ctx.strokeStyle === styleEmpty) {
+    if(this._getStroke() === styleEmpty) {
       return this;
     }
   }
@@ -637,11 +630,11 @@ p5.Renderer2D.prototype.triangle = function(args) {
   var x2=args[2], y2=args[3];
   var x3=args[4], y3=args[5];
   if (doFill && !doStroke) {
-    if(ctx.fillStyle === styleEmpty) {
+    if(this._getFill() === styleEmpty) {
       return this;
     }
   } else if (!doFill && doStroke) {
-    if(ctx.strokeStyle === styleEmpty) {
+    if(this._getStroke() === styleEmpty) {
       return this;
     }
   }
@@ -953,12 +946,28 @@ p5.Renderer2D.prototype.strokeWeight = function(w) {
 };
 
 p5.Renderer2D.prototype._getFill = function(){
-  return this.drawingContext.fillStyle;
+  return this.cachedFillStyle;
+};
+
+p5.Renderer2D.prototype._setFill = function(fillStyle){
+  if (fillStyle !== this.cachedFillStyle) {
+    this.drawingContext.fillStyle = fillStyle;
+    this.cachedFillStyle = this.drawingContext.fillStyle;
+  }
 };
 
 p5.Renderer2D.prototype._getStroke = function(){
-  return this.drawingContext.strokeStyle;
+  return this.cachedStrokeStyle;
 };
+
+p5.Renderer2D.prototype._setStroke = function(strokeStyle){
+  if (strokeStyle !== this.cachedStrokeStyle) {
+    this.drawingContext.strokeStyle = strokeStyle;
+    this.cachedStrokeStyle = this.drawingContext.strokeStyle;
+  }
+};
+
+
 
 //////////////////////////////////////////////
 // SHAPE | Curves
@@ -1186,8 +1195,9 @@ p5.Renderer2D.prototype._renderText = function(p, line, x, y, maxY) {
     if (this._doFill) {
 
       // if fill hasn't been set by user, use default text fill
-      this.drawingContext.fillStyle =  this._fillSet ?
-        this.drawingContext.fillStyle : constants._DEFAULT_TEXT_FILL;
+      if (! this._fillSet) {
+        this._setFill(constants._DEFAULT_TEXT_FILL);
+      }
 
       this.drawingContext.fillText(line, x, y);
     }
@@ -1286,6 +1296,9 @@ p5.Renderer2D.prototype.push = function() {
 
 p5.Renderer2D.prototype.pop = function() {
   this.drawingContext.restore();
+  // Re-cache the fill / stroke state
+  this.cachedFillStyle = this.drawingContext.fillStyle;
+  this.cachedStrokeStyle = this.drawingContext.strokeStyle;
 };
 
 module.exports = p5.Renderer2D;
