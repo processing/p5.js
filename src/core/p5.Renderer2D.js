@@ -790,31 +790,35 @@ function (mode, vertices, isCurve, isBezier,
       }
     } else if (shapeKind === constants.TRIANGLE_FAN) {
       if (numVerts > 2) {
+        // For performance reasons, try to batch as many of the
+        // fill and stroke calls as possible.
         this.drawingContext.beginPath();
-        this.drawingContext.moveTo(vertices[0][0], vertices[0][1]);
-        this.drawingContext.lineTo(vertices[1][0], vertices[1][1]);
-        this.drawingContext.lineTo(vertices[2][0], vertices[2][1]);
-        if (this._doFill) {
-          this._pInst.fill(vertices[2][5]);
-        }
-        if (this._doStroke) {
-          this._pInst.stroke(vertices[2][6]);
-        }
-        this._doFillStrokeClose();
-        for (i = 3; i < numVerts; i++) {
+        for (i = 2; i < numVerts; i++) {
           v = vertices[i];
-          this.drawingContext.beginPath();
           this.drawingContext.moveTo(vertices[0][0], vertices[0][1]);
           this.drawingContext.lineTo(vertices[i - 1][0], vertices[i - 1][1]);
           this.drawingContext.lineTo(v[0], v[1]);
-          if (this._doFill) {
-            this._pInst.fill(v[5]);
+          this.drawingContext.lineTo(vertices[0][0], vertices[0][1]);
+          // If the next colour is going to be different, stroke / fill now
+          if (i < numVerts - 1) {
+            if ( (this._doFill && v[5] !== vertices[i + 1][5]) ||
+                 (this._doStroke && v[6] !== vertices[i + 1][6])) {
+              if (this._doFill) {
+                this._pInst.fill(v[5]);
+                this.drawingContext.fill();
+                this._pInst.fill(vertices[i + 1][5]);
+              }
+              if (this._doStroke) {
+                this._pInst.stroke(v[6]);
+                this.drawingContext.stroke();
+                this._pInst.stroke(vertices[i + 1][6]);
+              }
+              this.drawingContext.closePath();
+              this.drawingContext.beginPath(); // Begin the next one
+            }
           }
-          if (this._doStroke) {
-            this._pInst.stroke(v[6]);
-          }
-          this._doFillStrokeClose();
         }
+        this._doFillStrokeClose();
       }
     } else if (shapeKind === constants.QUADS) {
       for (i = 0; i + 3 < numVerts; i += 4) {
@@ -946,24 +950,24 @@ p5.Renderer2D.prototype.strokeWeight = function(w) {
 };
 
 p5.Renderer2D.prototype._getFill = function(){
-  return this.cachedFillStyle;
+  return this._cachedFillStyle;
 };
 
 p5.Renderer2D.prototype._setFill = function(fillStyle){
-  if (fillStyle !== this.cachedFillStyle) {
+  if (fillStyle !== this._cachedFillStyle) {
     this.drawingContext.fillStyle = fillStyle;
-    this.cachedFillStyle = this.drawingContext.fillStyle;
+    this._cachedFillStyle = this.drawingContext.fillStyle;
   }
 };
 
 p5.Renderer2D.prototype._getStroke = function(){
-  return this.cachedStrokeStyle;
+  return this._cachedStrokeStyle;
 };
 
 p5.Renderer2D.prototype._setStroke = function(strokeStyle){
-  if (strokeStyle !== this.cachedStrokeStyle) {
+  if (strokeStyle !== this._cachedStrokeStyle) {
     this.drawingContext.strokeStyle = strokeStyle;
-    this.cachedStrokeStyle = this.drawingContext.strokeStyle;
+    this._cachedStrokeStyle = this.drawingContext.strokeStyle;
   }
 };
 
