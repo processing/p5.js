@@ -1,5 +1,6 @@
 'use strict';
 
+var fs = require('fs');
 var path = require('path');
 var browserify = require('browserify');
 var derequire = require('derequire');
@@ -19,16 +20,22 @@ module.exports = function(grunt) {
     var banner = grunt.template.process(bannerTemplate);
 
     // Source file path
-    var srcFilePath = module_src.map(function(r) {
-      return path.resolve('./' + r);
-    });
-
+    var srcFilePath = [];
+    for (var i = module_src.length - 1; i >= 0; i--) {
+      var srcDirPath = './src/' + module_src[i];
+      var files = fs.readdirSync(srcDirPath);
+      srcFilePath = srcFilePath.concat(files.map(function(r){
+        return path.resolve(srcDirPath, r);
+      }));
+    }
+    console.log(srcFilePath);
     // Target file path
-    var libFilePath = path.resolve('lib/p5.' + module_name + '.js');
+    var libFilePath = path.resolve('lib/modules/' + module_name + '.js');
 
     // Invoke Browserify programatically to bundle the code
     var bundle = browserify(srcFilePath, {
-        standalone: module_name
+        standalone: module_name,
+        debug: true
       })
       .transform('brfs')
       .bundle();

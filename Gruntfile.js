@@ -95,7 +95,7 @@ module.exports = function(grunt) {
 
     // Modules of p5
     modularise : {
-      'Color': ['/src/color/p5.Color.js', '/src/color/creating_reading.js']
+      'p5': ['core', 'events']
     },
 
     // Configure style consistency checking for this file, the source, and the tests.
@@ -212,7 +212,6 @@ module.exports = function(grunt) {
         options: {
           urls: [
             'http://localhost:9001/test/test.html',
-            'http://localhost:9001/test/test-modules.html',
             'http://localhost:9001/test/test-minified.html'
           ],
           reporter: reporter,
@@ -222,6 +221,18 @@ module.exports = function(grunt) {
           timeout: 5000
         }
       },
+      modules: {
+        options: {
+          urls: [
+            'http://localhost:9001/test/test-modules.html',
+          ],
+          reporter: reporter,
+          run: true,
+          log: true,
+          logErrors: true,
+          timeout: 5000
+        }
+      }
     },
 
     // This is a standalone task, used to automatically update the bower.json
@@ -372,7 +383,7 @@ module.exports = function(grunt) {
   // Create the multitasks.
   grunt.registerTask('build', ['browserify', 'modularise', 'uglify', 'requirejs']);
   grunt.registerTask('test', ['jshint', 'jscs', 'build', 'yuidoc:dev', 'connect', 'mocha', 'mochaTest']);
-  // grunt.registerTask('testM', ['connect', 'mocha:test']);
+  grunt.registerTask('test:build', ['build', 'connect', 'mocha:modules']);
   grunt.registerTask('test:nobuild', ['jshint:test', 'jscs:test', 'connect', 'mocha']);
   grunt.registerTask('yui', ['yuidoc:prod', 'minjson']);
   grunt.registerTask('yui:dev', ['yuidoc:dev', 'minjson']);

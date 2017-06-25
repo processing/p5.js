@@ -20,15 +20,15 @@ suite('Error Helpers', function() {
 
     test('help for functions is shown', function() {
       assert.match(
-        help('\'random\' is undefined'),
-        /Did you just try to use p5\.js\'s random\(\) function\?/
+        help('\'smooth\' is undefined'),
+        /Did you just try to use p5\.js\'s smooth\(\) function\?/
       );
     });
 
     test('help for variables is shown', function() {
       assert.match(
-        help('\'mouseX\' is undefined'),
-        /Did you just try to use p5\.js\'s mouseX variable\?/
+        help('\'focused\' is undefined'),
+        /Did you just try to use p5\.js\'s focused variable\?/
       );
     });
   });
