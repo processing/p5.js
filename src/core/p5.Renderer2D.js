@@ -956,7 +956,7 @@ p5.Renderer2D.prototype._getFill = function(){
 p5.Renderer2D.prototype._setFill = function(fillStyle){
   if (fillStyle !== this._cachedFillStyle) {
     this.drawingContext.fillStyle = fillStyle;
-    this._cachedFillStyle = this.drawingContext.fillStyle;
+    this._cachedFillStyle = fillStyle;
   }
 };
 
@@ -967,7 +967,7 @@ p5.Renderer2D.prototype._getStroke = function(){
 p5.Renderer2D.prototype._setStroke = function(strokeStyle){
   if (strokeStyle !== this._cachedStrokeStyle) {
     this.drawingContext.strokeStyle = strokeStyle;
-    this._cachedStrokeStyle = this.drawingContext.strokeStyle;
+    this._cachedStrokeStyle = strokeStyle;
   }
 };
 
@@ -1301,8 +1301,8 @@ p5.Renderer2D.prototype.push = function() {
 p5.Renderer2D.prototype.pop = function() {
   this.drawingContext.restore();
   // Re-cache the fill / stroke state
-  this.cachedFillStyle = this.drawingContext.fillStyle;
-  this.cachedStrokeStyle = this.drawingContext.strokeStyle;
+  this._cachedFillStyle = this.drawingContext.fillStyle;
+  this._cachedStrokeStyle = this.drawingContext.strokeStyle;
 };
 
 module.exports = p5.Renderer2D;

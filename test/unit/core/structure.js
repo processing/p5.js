@@ -14,7 +14,7 @@ suite('Structure', function() {
       var state = {};
       for (var key in myp5._renderer) {
         var value = myp5._renderer[key];
-        if (typeof value !== 'function') {
+        if (typeof value !== 'function' && key !== '_cachedFillStyle' && key !== '_cachedStrokeStyle' ) {
           state[key] = value;
         }
       }
