@@ -19,16 +19,23 @@ suite('Renderer', function() {
       assert.equal(myp5.canvas.height, 20 * myp5.pixelDensity());
     });
 
+
     test('should restore fill color', function() {
-      myp5.strokeWeight(323);
+      myp5.fill('#f0f0f0');
       myp5.resizeCanvas(10, 10);
-      assert.equal(myp5.drawingContext.lineWidth, 323);
+      assert.equal(myp5.drawingContext.fillStyle, '#f0f0f0');
     });
 
     test('should restore stroke color', function() {
       myp5.stroke('#f0f0f0');
       myp5.resizeCanvas(10, 10);
       assert.equal(myp5.drawingContext.strokeStyle, '#f0f0f0');
+    });
+
+    test('should restore stroke weight', function() {
+      myp5.strokeWeight(323);
+      myp5.resizeCanvas(10, 10);
+      assert.equal(myp5.drawingContext.lineWidth, 323);
     });
 
     test('should restore stroke cap', function() {
