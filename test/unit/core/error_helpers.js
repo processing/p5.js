@@ -5,6 +5,38 @@ suite('Error Helpers', function() {
   });
   var c;
 
+  // unit tests for validateParameters
+  suite('validateParameters', function(){
+    test('documentation look up - arc()', function() {
+      assert.doesNotThrow(function() {
+          p5.prototype._validateParameters('arc',
+            [1, 1, 10.5, 10, 0, Math.PI, 'pie']);
+        },
+        Error, 'got unwanted exception');
+    });
+    test('documentation look up - arc()', function() {
+      assert.doesNotThrow(function() {
+          p5.prototype._validateParameters('arc',
+            [1, 1, 10.5, 10]);
+        },
+        Error, 'got unwanted exception');
+    });
+    test('documentation look up - arc()', function() {
+      assert.doesNotThrow(function() {
+          p5.prototype._validateParameters('arc',
+            ['1', 1, 10.5, 10, 0, Math.PI, 'pie']);
+        },
+        Error, 'got unwanted exception');
+    });
+    test('documentation look up - ambientLight()', function() {
+      assert.doesNotThrow(function() {
+          var c = myp5.color(255, 204, 0);
+          p5.prototype._validateParameters('ambientLight', [c]);
+        },
+        Error, 'got unwanted exception');
+    });
+  });
+
   // unit tests for validateNumParameters
   suite('validateNumParameters', function(){
     test('catch if some inputs are missing',function(){
