@@ -107,11 +107,11 @@ p5._friendlyFileLoadError = function (errorType, filePath) {
 
 /**
 * Validates Number type parameters
-* param  {String}               message the words to be said
-* param  {String}               func    the name of the function to link
-* param  {Integer/Color String} color   CSS color string or error type
+* param  {String}               func    the name of the function
+* param  {String}               input   the input of the function
+* param  {Integer}              length  number of parameters to check
 *
-* return  {boolean}             message the words to be said
+* return  {boolean}             message returns true if validated
 * return  {String}              err     the type of error
 * return  {Integer}             index   the location of error
 * return  {String}              message friendly err console log
@@ -134,7 +134,6 @@ function validateNumParameters(func, input, length) {
     message = 'Missing input values for validating numeric parameters';
     return [false, 'INIT_VALNUMPAR_FAIL', 0, message];
   }
-  var args = new Array(length);
   for (var i = 0; i < input.length; ++i) {
     args[i] = input[i];
   }
@@ -157,6 +156,12 @@ function validateNumParameters(func, input, length) {
     }
   }
   return [true];
+}
+function validateParameters(func){
+  var message;
+  var queryResult = jsonArray.
+    filter(function (x) { return x.name == func && x.itemtype == "method"; });
+  console.log(queryResult);
 }
 function friendlyWelcome() {
   // p5.js brand - magenta: #ED225D
