@@ -43,12 +43,6 @@ suite('Renderer', function() {
       myp5.resizeCanvas(10, 10);
       assert.equal(myp5.drawingContext.lineCap, myp5.PROJECT);
     });
-
-    test('should restore text style', function() {
-      myp5.textSize(200);
-      myp5.resizeCanvas(10, 10);
-      assert.match(myp5.drawingContext.font, /200px/);
-    });
   });
 
   suite('p5.prototype.blendMode', function() {
