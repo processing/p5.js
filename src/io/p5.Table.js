@@ -55,6 +55,7 @@ p5.Table = function (rows) {
    *  @type {Array}
    */
   this.rows = [];
+  this.name = 'p5.Table';   // for friendly debugger system
 };
 
 /**

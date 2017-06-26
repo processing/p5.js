@@ -16,6 +16,7 @@ var styleEmpty = 'rgba(0,0,0,0)';
 
 p5.Renderer2D = function(elt, pInst, isMainCanvas){
   p5.Renderer.call(this, elt, pInst, isMainCanvas);
+  this.name = 'p5.Renderer2D';   // for friendly debugger system
   this.drawingContext = this.canvas.getContext('2d');
   this._pInst._setProperty('drawingContext', this.drawingContext);
   return this;
