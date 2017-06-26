@@ -6,7 +6,7 @@ suite('Structure', function() {
   });
 
   teardown(function(){
-    myp5.clear();
+    myp5.remove();
   });
 
   suite('p5.prototype.push and p5.prototype.pop', function() {
