@@ -111,15 +111,9 @@ p5._friendlyFileLoadError = function (errorType, filePath) {
 };
 
 /**
-* Validates Number type parameters
+* Validates parameters
 * param  {String}               func    the name of the function
-* param  {String}               input   the input of the function
-* param  {Integer}              length  number of parameters to check
-*
-* return  {boolean}             message returns true if validated
-* return  {String}              err     the type of error
-* return  {Integer}             index   the location of error
-* return  {String}              message friendly err console log
+* param  {Array}                args    user input arguments
 *
 * example:
 *  var a;
@@ -160,7 +154,7 @@ function validateNumParameters(func, args, length) {
   return [true];
 }
 function validateParameters(func, args) {
-  var arrDoc = lookupDoc(func);
+  var arrDoc = lookupParamDoc(func);
   var message;
   for (var p = 0; p < arrDoc.length; p++) {
     var argType = typeof(args[p]);
@@ -173,44 +167,66 @@ function validateParameters(func, args) {
         report(message, func, ERR_PARAMS);
       }
     } else {
-      var count = 0;
-      var types = arrDoc[p].type.split('|'); // for multi-type parameters
-      for (var i = 0; i < types.length; i++) {
-        //console.log(i + ' : ' + argType + ' : ' + types[i]);
-        if (argType === types[i].toLowerCase()) {
-          count = count + 1;    // type match, pass
-        } else if (argType === 'object'){
-          if (args[p].name === types[i]){
-            count = count + 1;  // class match, pass
-          } else if (args[p].name === 'undefined'){
-            message = 'FES: ' + func + ' was expecting ' + arrDoc[p].type +
-              ' for parameter #' + p + ' (zero-based index), received ';
-            // Wrap strings in quotes
-            message += 'an object with undefined name instead.';
-            report(message, func, ERR_PARAMS);
-          }
-        } else if (types[i] === 'Constant'){
-          count = count + 1;    // if not undefined, pass
+      var types = arrDoc[p].type.split('|'); // case accepting multi-types
+      var pass;
+      if (argType === 'object'){             // if obejct, test for class
+        pass = testParamClass(args[p], types);
+        if (!pass) {  // if fails to pass
+          message = 'FES: ' + func + ' was expecting ' + arrDoc[p].type +
+            ' for parameter #' + p + ' (zero-based index), received ';
+          // Wrap strings in quotes
+          message += 'an object with name '+ args[p].name +' instead.';
+          report(message, func, ERR_PARAMS);
         }
-      }
-      if (count < 1) {          // for any cases with at least one pass
-        message = 'FES: ' + func + ' was expecting ' + arrDoc[p].type +
-          ' for parameter #' + p + ' (zero-based index), received ';
-        // Wrap strings in quotes
-        message += 'string' === argType ? '"' + args[p] + '"' : args[p];
-        message += ' instead.';
-        report(message, func, ERR_PARAMS);
+      }else{                                 // not object, test for type
+        pass = testParamType(args[p], types);
+        if (!pass) {  // if fails to pass
+          message = 'FES: ' + func + ' was expecting ' + arrDoc[p].type +
+            ' for parameter #' + p + ' (zero-based index), received ';
+          // Wrap strings in quotes
+          message += 'string' === argType ? '"' + args[p] + '"' : args[p];
+          message += ' instead.';
+          report(message, func, ERR_PARAMS);
+        }
       }
     }
   }
 }
-function lookupDoc(func){
+// validateParameters() helper functions:
+// lookupParamDoc() for querying data.json
+function lookupParamDoc(func){
   var queryResult = arrDoc.classitems.
     filter(function (x) { return x.name === func; });
   if (queryResult.length !== 1){
     console.log('>>>> ERROR: wrong number of query results');
   }
   return queryResult[0].params;
+}
+// testClass() for object type parameter validation
+// Returns true if PASS, false if FAIL
+function testParamClass(param, types){
+  var result = false;
+  for (var i = 0; i < types.length; i++) {
+    if (param.name === types[i]) {
+      result = true;    // class name match, pass
+    } else if (types[i] === 'Constant'){
+      result = true;    // accepts any constant, pass
+    }
+  }
+  return result;
+}
+// testType() for non-object type parameter validation
+// Returns true if PASS, false if FAIL
+function testParamType(param, types){
+  var result = false;
+  for (var i = 0; i < types.length; i++) {
+    if (typeof(param) === types[i].toLowerCase()) {
+      result = true;    // type match, pass
+    } else if (types[i] === 'Constant'){
+      result = true;    // accepts any constant, pass
+    }
+  }
+  return result;
 }
 function friendlyWelcome() {
   // p5.js brand - magenta: #ED225D

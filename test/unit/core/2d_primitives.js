@@ -16,32 +16,6 @@ suite('2D Primitives', function() {
         assert.ok(arc);
         assert.typeOf(arc, 'function');
       });
-      test('parameter check and no err (with MODE value)', function() {
-        assert.doesNotThrow(function() {
-            myp5.arc(1, 1, 10.5, 10, 0, Math.PI, 'pie');
-          },
-          Error, 'got unwanted exception');
-      });
-      test('parameter check and no err (without MODE value)', function() {
-        assert.doesNotThrow(
-          function() {
-            myp5.arc(1, 1, 10.5, 10, 0, Math.PI);
-          },
-          Error, 'got unwanted exception');
-      });
-      test('parameter check and throws err (empty variable)', function() {
-        assert.throws(function() {
-            myp5.arc(1, 1, 10.5, 10);
-          },
-          /EMPTY_VAR/,
-          'did not throw with expected message!');
-      });
-      test('parameter check and throws err (wrong type)', function() {
-        assert.throws(function() {
-            myp5.arc('1', 1, 10.5, 10, 0, Math.PI, 'pie');
-          },
-          /WRONG_TYPE/, 'did not throw with expected message!');
-      });
     });
   });
 
@@ -61,29 +35,6 @@ suite('2D Primitives', function() {
           assert.isTrue(res);
           done();
         });
-      });
-      test('parameter check and no err', function() {
-        assert.doesNotThrow(
-          function() {
-            myp5.ellipse(0, 10.5, 30);
-          },
-          Error, 'got unwanted exception');
-      });
-      test('parameter check and throws err (empty variable)', function() {
-        assert.throws(function() {
-            myp5.ellipse(0, 10.5);
-          },
-          /EMPTY_VAR/, 'did not throw with expected message!');
-      });
-      test('parameter check and throws err (wrong type I)', function() {
-        assert.throws(function() {
-          myp5.ellipse('0', 10.5, 30);
-        }, /WRONG_TYPE/, 'did not throw with expected message!');
-      });
-      test('parameter check and throws err (wrong type II)', function() {
-        assert.throws(function() {
-          myp5.ellipse(0, 10.5, '30');
-        }, /WRONG_TYPE/, 'did not throw with expected message!');
       });
     });
   });
@@ -105,23 +56,6 @@ suite('2D Primitives', function() {
           done();
         });
       });
-      test('parameter check and no err 2D', function() {
-        assert.doesNotThrow(function() {
-            myp5.line(0, 0.5, 10, 10.5);
-          },
-          Error, 'got unwanted exception');
-      });
-      test('parameter check and throws err (empty variable)', function() {
-        assert.throws(function() {
-            myp5.line(0, 0.5, 10);
-          },
-          /EMPTY_VAR/, 'did not throw with expected message!');
-      });
-      test('parameter check and throws err (wrong type)', function() {
-        assert.throws(function() {
-          myp5.line(0, 10, '30', 30.5);
-        }, /WRONG_TYPE/, 'did not throw with expected message!');
-      });
     });
   });
 
@@ -132,24 +66,6 @@ suite('2D Primitives', function() {
         assert.ok(rect);
         assert.typeOf(rect, 'function');
       });
-      test('parameter check and no err', function() {
-        assert.doesNotThrow(
-          function() {
-            myp5.rect(0, 10.5, 30, -20);
-          },
-          Error, 'got unwanted exception');
-      });
-      test('parameter check and throws err (empty variable)', function() {
-        assert.throws(function() {
-            myp5.rect(0, 10.5, 30);
-          },
-          /EMPTY_VAR/, 'did not throw with expected message!');
-      });
-      test('parameter check and throws err (wrong type)', function() {
-        assert.throws(function() {
-          myp5.rect(0, 10.5, '30', -20);
-        }, /WRONG_TYPE/, 'did not throw with expected message!');
-      });
     });
   });
 
@@ -159,24 +75,6 @@ suite('2D Primitives', function() {
       test('should be a function', function() {
         assert.ok(triangle);
         assert.typeOf(triangle, 'function');
-      });
-      test('parameter check and no err', function() {
-        assert.doesNotThrow(
-          function() {
-            myp5.triangle(0, 10.5, 30, -20, 10, 10);
-          },
-          Error, 'got unwanted exception');
-      });
-      test('parameter check and throws err (empty variable)', function() {
-        assert.throws(function() {
-            myp5.triangle(0, 10.5, 30, -20, 10);
-          },
-          /EMPTY_VAR/, 'did not throw with expected message!');
-      });
-      test('parameter check and throws err (wrong type)', function() {
-        assert.throws(function() {
-          myp5.triangle(0, 10.5, '30', -20, 10, 10);
-        }, /WRONG_TYPE/, 'did not throw with expected message!');
       });
     });
   });
