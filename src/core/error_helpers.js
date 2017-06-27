@@ -189,7 +189,7 @@ function validateParameters(func, args) {
             message += 'an object with undefined name instead.';
             report(message, func, ERR_PARAMS);
           }
-        } else if (types[i] === 'Constants'){
+        } else if (types[i] === 'Constant'){
           count = count + 1;    // if not undefined, pass
         }
       }
@@ -205,10 +205,8 @@ function validateParameters(func, args) {
   }
 }
 function lookupDoc(func){
-  console.log('>> checking documentation for '+func+'()');
   var queryResult = arrDoc.classitems.
     filter(function (x) { return x.name === func; });
-  console.log(queryResult);
   if (queryResult.length !== 1){
     console.log('>>>> ERROR: wrong number of query results');
   }
