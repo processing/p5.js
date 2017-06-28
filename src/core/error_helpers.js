@@ -127,67 +127,40 @@ p5._friendlyFileLoadError = function (errorType, filePath) {
 *  "ellipse was expecting a number for parameter #1,
 *           received "foo" instead."
 */
-function validateNumParameters(func, args, length) {
-  var message;
-  if (arguments.length < 3) {
-    message = 'Missing input values for validating numeric parameters';
-    return [false, 'INIT_VALNUMPAR_FAIL', 0, message];
-  }
-  for (var p = 0; p < length; p++) {
-    var argType = typeof(args[p]);
-    message = '';
-    if ('undefined' === argType || null === argType) {
-      message = 'FES: It looks like ' + func +
-        ' received an empty variable in spot #' + p +
-        ' (zero-based index). If not intentional, this is often a problem' +
-        ' with scope: [link to scope].';
-      return [false, 'EMPTY_VAR', p, message];
-    } else if (argType !== 'number') {
-      message = 'FES: ' + func + ' was expecting a number' +
-        ' for parameter #' + p + ' (zero-based index), received ';
-      // Wrap strings in quotes
-      message += 'string' === argType ? '"' + args[p] + '"' : args[p];
-      message += ' instead.';
-      return [false, 'WRONG_TYPE', p, message];
-    }
-  }
-  return [true];
-}
 function validateParameters(func, args) {
   var arrDoc = lookupParamDoc(func);
-  var message;
-  for (var p = 0; p < arrDoc.length; p++) {
-    var argType = typeof(args[p]);
-    if ('undefined' === argType || null === argType) {
-      if (arrDoc[p].optional !== true) {
-        message = 'FES: It looks like ' + func +
-          ' received an empty variable in spot #' + p +
-          ' (zero-based index). If not intentional, this is often a problem' +
-          ' with scope: [link to scope].';
-        report(message, func, ERR_PARAMS);
+  if (arrDoc.length > 1){   // multiple format?
+    var errorListArray = [];
+    for (var i = 0; i < arrDoc.length; i++) {
+      errorListArray.push(testParamFormat(args, arrDoc[i]));
+    }
+    // compare errors from all formats
+    var minErrInd = -1;
+    var minErrCount = 0;
+    for (var j = 0; j < errorListArray.length; j++) {
+      var numErr = errorListArray[j].length;
+      if (numErr > 0){
+        if(minErrInd > -1){ // non-first cases w errors
+          if(minErrCount > numErr){
+            minErrInd = j;
+          }
+        }else{              // the first case w errors
+          minErrCount = numErr;
+          minErrInd = j;
+        }
       }
-    } else {
-      var types = arrDoc[p].type.split('|'); // case accepting multi-types
-      var pass;
-      if (argType === 'object'){             // if obejct, test for class
-        pass = testParamClass(args[p], types);
-        if (!pass) {  // if fails to pass
-          message = 'FES: ' + func + ' was expecting ' + arrDoc[p].type +
-            ' for parameter #' + p + ' (zero-based index), received ';
-          // Wrap strings in quotes
-          message += 'an object with name '+ args[p].name +' instead.';
-          report(message, func, ERR_PARAMS);
-        }
-      }else{                                 // not object, test for type
-        pass = testParamType(args[p], types);
-        if (!pass) {  // if fails to pass
-          message = 'FES: ' + func + ' was expecting ' + arrDoc[p].type +
-            ' for parameter #' + p + ' (zero-based index), received ';
-          // Wrap strings in quotes
-          message += 'string' === argType ? '"' + args[p] + '"' : args[p];
-          message += ' instead.';
-          report(message, func, ERR_PARAMS);
-        }
+    }
+    if (minErrInd > -1){
+      // generate error msg with a smaller number of errors
+      for(var n = 0; n < errorListArray[minErrInd].length; n++) {
+        p5._friendlyParamError(errorListArray[minErrInd][n], func);
+      }
+    }
+  } else {
+    var errorArray = testParamFormat(args, arrDoc[0]);
+    if (errorArray.length > 0){
+      for(var m = 0; m < errorArray.length; m++) {
+        p5._friendlyParamError(errorArray[m], func);
       }
     }
   }
@@ -197,10 +170,47 @@ function validateParameters(func, args) {
 function lookupParamDoc(func){
   var queryResult = arrDoc.classitems.
     filter(function (x) { return x.name === func; });
-  if (queryResult.length !== 1){
-    console.log('>>>> ERROR: wrong number of query results');
+  if (queryResult[0].hasOwnProperty('overloads')){
+    var res = [];
+    for(var i = 0; i < queryResult[0].overloads.length; i++) {
+      res.push(queryResult[0].overloads[i].params);
+    }
+    return res;
+  } else {
+    return [queryResult[0].params];
   }
-  return queryResult[0].params;
+}
+function testParamFormat(args, format){
+  var errorArray = [];
+  var error;
+  for (var p = 0; p < format.length; p++) {
+    var argType = typeof(args[p]);
+    if ('undefined' === argType || null === argType) {
+      if (format[p].optional !== true) {
+        error = {type:'EMPTY_VAR', position: p};
+        errorArray.push(error);
+      }
+    } else {
+      var types = format[p].type.split('|'); // case accepting multi-types
+      var pass;
+      if (argType === 'object'){             // if obejct, test for class
+        pass = testParamClass(args[p], types);
+        if (!pass) {  // if fails to pass
+          error = {type:'WRONG_CLASS', position: p,
+            correctClass: types[p], wrongClass: args[p].name};
+          errorArray.push(error);
+        }
+      }else{                                 // not object, test for type
+        pass = testParamType(args[p], types);
+        if (!pass) {  // if fails to pass
+          error = {type:'WRONG_TYPE', position: p,
+            correctType: types[p], wrongType: argType};
+          errorArray.push(error);
+        }
+      }
+    }
+  }
+  return errorArray;
 }
 // testClass() for object type parameter validation
 // Returns true if PASS, false if FAIL
@@ -228,6 +238,31 @@ function testParamType(param, types){
   }
   return result;
 }
+p5._friendlyParamError = function (errorObj, func) {
+  var message;
+  switch (errorObj.type){
+    case 'EMPTY_VAR':
+      message = 'FES: It looks like ' + func +
+        ' received an empty variable in spot #' + errorObj.position +
+        ' (zero-based index). If not intentional, this is often a problem' +
+        ' with scope: [link to scope].';
+      report(message, func, ERR_PARAMS);
+      break;
+    case 'WRONG_CLASS':
+      message = 'FES: ' + func + ' was expecting ' + errorObj.correctClass +
+        ' for parameter #' + errorObj.position + ' (zero-based index), received ';
+      // Wrap strings in quotes
+      message += 'an object with name '+ errorObj.wrongClass +' instead.';
+      report(message, func, ERR_PARAMS);
+      break;
+    case 'WRONG_TYPE':
+      message = 'FES: ' + func + ' was expecting ' + errorObj.correctType +
+        ' for parameter #' + errorObj.position + ' (zero-based index), received ';
+      // Wrap strings in quotes
+      message += errorObj.wrongType + ' instead.';
+      report(message, func, ERR_PARAMS);
+  }
+};
 function friendlyWelcome() {
   // p5.js brand - magenta: #ED225D
   var astrixBgColor = 'transparent';
@@ -376,7 +411,6 @@ function helpForMisusedAtTopLevelCode(e, log) {
 
 // Exposing this primarily for unit testing.
 p5.prototype._helpForMisusedAtTopLevelCode = helpForMisusedAtTopLevelCode;
-p5.prototype._validateNumParameters = validateNumParameters;
 p5.prototype._validateParameters = validateParameters;
 
 if (document.readyState !== 'complete') {

@@ -29,6 +29,30 @@ suite('Error Helpers', function() {
     });
   });
 
+  suite('validateParameters: Numbers + optional Constant', function(){
+    test('rect(): no friendly-err-msg', function() {
+      assert.doesNotThrow(function() {
+          p5.prototype._validateParameters('rect',
+            [1, 1, 10.5, 10]);
+        },
+        Error, 'got unwanted exception');
+    });
+    test('rect(): missing param #3', function() {
+      assert.doesNotThrow(function() {
+          p5.prototype._validateParameters('rect',
+            [1, 1, 10.5]);
+        },
+        Error, 'got unwanted exception');
+    });
+    test('rect(): wrong param type at #0,#5', function() {
+      assert.doesNotThrow(function() {
+          p5.prototype._validateParameters('rect',
+            ['1', 1, 10.5, 10, 0, Math.PI, 'pie']);
+        },
+        Error, 'got unwanted exception');
+    });
+  });
+
   suite('validateParameters: p5.Color|String + optional Numbers', function(){
     test('ambientLight(): no friendly-err-msg', function() {
       assert.doesNotThrow(function() {
