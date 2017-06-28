@@ -139,14 +139,14 @@ function validateParameters(func, args) {
     var minErrCount = 0;
     for (var j = 0; j < errorListArray.length; j++) {
       var numErr = errorListArray[j].length;
-      if (numErr > 0){
-        if(minErrInd > -1){ // non-first cases w errors
+      if (numErr >= arrDoc.length){   // exclude clean cases
+        if(j===0){  // the first case
+          minErrCount = numErr;
+          minErrInd = j;
+        }else{
           if(minErrCount > numErr){
             minErrInd = j;
           }
-        }else{              // the first case w errors
-          minErrCount = numErr;
-          minErrInd = j;
         }
       }
     }
