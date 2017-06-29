@@ -84,6 +84,7 @@ p5.Vector = function() {
    * @type {Number}
    */
   this.z = z;
+  this.name = 'p5.Vector';   // for friendly debugger system
 };
 
 /**

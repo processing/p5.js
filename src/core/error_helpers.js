@@ -7,6 +7,10 @@
 
 var p5 = require('./core');
 var doFriendlyWelcome = false; // TEMP until we get it all working LM
+// for parameter validation
+var dataDoc = require('../../docs/reference/data.json');
+var strDoc = JSON.stringify(dataDoc);
+var arrDoc = JSON.parse(strDoc);
 
 // -- Borrowed from jQuery 1.11.3 --
 var class2type = {};
@@ -39,6 +43,7 @@ var getType = function( obj ) {
  */
 // Wrong number of params, undefined param, wrong type
 var FILE_LOAD = 3;
+var ERR_PARAMS = 3;
 // p5.js blue, p5.js orange, auto dark green; fallback p5.js darkened magenta
 // See testColors below for all the color codes and names
 var typeColors = ['#2D7BB6', '#EE9900', '#4DB200', '#C83C00'];
@@ -53,23 +58,23 @@ function report(message, func, color) {
     color = typeColors[color];
   }
   // LM TEMP commenting this out until we get the whole system working
-  // if (func.substring(0,4) === 'load'){
-  //   console.log(
-  //     '%c> p5.js says: '+message+'%c'+
-  //     '[https://github.com/processing/p5.js/wiki/Local-server]',
-  //     'background-color:' + color + ';color:#FFF;',
-  //     'background-color:transparent;color:' + color +';',
-  //     'background-color:' + color + ';color:#FFF;',
-  //     'background-color:transparent;color:' + color +';'
-  //   );
-  // }
-  // else{
-  //   console.log(
-  //     '%c> p5.js says: '+message+'%c [http://p5js.org/reference/#p5/'+func+
-  //     ']', 'background-color:' + color + ';color:#FFF;',
-  //     'background-color:transparent;color:' + color +';'
-  //   );
-  // }
+  if (func.substring(0,4) === 'load'){
+    console.log(
+      '%c> p5.js says: '+message+'%c'+
+      '[https://github.com/processing/p5.js/wiki/Local-server]',
+      'background-color:' + color + ';color:#FFF;',
+      'background-color:transparent;color:' + color +';',
+      'background-color:' + color + ';color:#FFF;',
+      'background-color:transparent;color:' + color +';'
+    );
+  }
+  else{
+    console.log(
+      '%c> p5.js says: '+message+'%c [http://p5js.org/reference/#p5/'+func+
+      ']', 'background-color:' + color + ';color:#FFF;',
+      'background-color:transparent;color:' + color +';'
+    );
+  }
 }
 
 var errorCases = {
@@ -105,6 +110,108 @@ p5._friendlyFileLoadError = function (errorType, filePath) {
   report(message, errorInfo.method, FILE_LOAD);
 };
 
+/**
+* Validates Number type parameters
+* param  {String}               func    the name of the function
+* param  {String}               input   the input of the function
+* param  {Integer}              length  number of parameters to check
+*
+* return  {boolean}             message returns true if validated
+* return  {String}              err     the type of error
+* return  {Integer}             index   the location of error
+* return  {String}              message friendly err console log
+*
+* example:
+*  var a;
+*  ellipse(10,10,a,5);
+* console ouput:
+*  "It looks like ellipse received an empty variable in spot #2."
+*
+* example:
+*  ellipse(10,"foo",5,5);
+* console output:
+*  "ellipse was expecting a number for parameter #1,
+*           received "foo" instead."
+*/
+function validateNumParameters(func, args, length) {
+  var message;
+  if (arguments.length < 3) {
+    message = 'Missing input values for validating numeric parameters';
+    return [false, 'INIT_VALNUMPAR_FAIL', 0, message];
+  }
+  for (var p = 0; p < length; p++) {
+    var argType = typeof(args[p]);
+    message = '';
+    if ('undefined' === argType || null === argType) {
+      message = 'FES: It looks like ' + func +
+        ' received an empty variable in spot #' + p +
+        ' (zero-based index). If not intentional, this is often a problem' +
+        ' with scope: [link to scope].';
+      return [false, 'EMPTY_VAR', p, message];
+    } else if (argType !== 'number') {
+      message = 'FES: ' + func + ' was expecting a number' +
+        ' for parameter #' + p + ' (zero-based index), received ';
+      // Wrap strings in quotes
+      message += 'string' === argType ? '"' + args[p] + '"' : args[p];
+      message += ' instead.';
+      return [false, 'WRONG_TYPE', p, message];
+    }
+  }
+  return [true];
+}
+function validateParameters(func, args) {
+  var arrDoc = lookupDoc(func);
+  var message;
+  for (var p = 0; p < arrDoc.length; p++) {
+    var argType = typeof(args[p]);
+    if ('undefined' === argType || null === argType) {
+      if (arrDoc[p].optional !== true) {
+        message = 'FES: It looks like ' + func +
+          ' received an empty variable in spot #' + p +
+          ' (zero-based index). If not intentional, this is often a problem' +
+          ' with scope: [link to scope].';
+        report(message, func, ERR_PARAMS);
+      }
+    } else {
+      var count = 0;
+      var types = arrDoc[p].type.split('|'); // for multi-type parameters
+      for (var i = 0; i < types.length; i++) {
+        //console.log(i + ' : ' + argType + ' : ' + types[i]);
+        if (argType === types[i].toLowerCase()) {
+          count = count + 1;    // type match, pass
+        } else if (argType === 'object'){
+          if (args[p].name === types[i]){
+            count = count + 1;  // class match, pass
+          } else if (args[p].name === 'undefined'){
+            message = 'FES: ' + func + ' was expecting ' + arrDoc[p].type +
+              ' for parameter #' + p + ' (zero-based index), received ';
+            // Wrap strings in quotes
+            message += 'an object with undefined name instead.';
+            report(message, func, ERR_PARAMS);
+          }
+        } else if (types[i] === 'Constant'){
+          count = count + 1;    // if not undefined, pass
+        }
+      }
+      if (count < 1) {          // for any cases with at least one pass
+        message = 'FES: ' + func + ' was expecting ' + arrDoc[p].type +
+          ' for parameter #' + p + ' (zero-based index), received ';
+        // Wrap strings in quotes
+        message += 'string' === argType ? '"' + args[p] + '"' : args[p];
+        message += ' instead.';
+        report(message, func, ERR_PARAMS);
+      }
+    }
+  }
+}
+function lookupDoc(func){
+  var queryResult = arrDoc.classitems.
+    filter(function (x) { return x.name === func; });
+  if (queryResult.length !== 1){
+    console.log('>>>> ERROR: wrong number of query results');
+  }
+  return queryResult[0].params;
+}
 function friendlyWelcome() {
   // p5.js brand - magenta: #ED225D
   var astrixBgColor = 'transparent';
@@ -253,6 +360,8 @@ function helpForMisusedAtTopLevelCode(e, log) {
 
 // Exposing this primarily for unit testing.
 p5.prototype._helpForMisusedAtTopLevelCode = helpForMisusedAtTopLevelCode;
+p5.prototype._validateNumParameters = validateNumParameters;
+p5.prototype._validateParameters = validateParameters;
 
 if (document.readyState !== 'complete') {
   window.addEventListener('error', helpForMisusedAtTopLevelCode, false);

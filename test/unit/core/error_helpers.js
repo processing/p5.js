@@ -1,4 +1,94 @@
 suite('Error Helpers', function() {
+  var myp5 = new p5(function( sketch ) {
+    sketch.setup = function() {};
+    sketch.draw = function() {};
+  });
+  var c;
+
+  // unit tests for validateParameters
+  suite('validateParameters', function(){
+    test('documentation look up - arc()', function() {
+      assert.doesNotThrow(function() {
+          p5.prototype._validateParameters('arc',
+            [1, 1, 10.5, 10, 0, Math.PI, 'pie']);
+        },
+        Error, 'got unwanted exception');
+    });
+    test('documentation look up - arc()', function() {
+      assert.doesNotThrow(function() {
+          p5.prototype._validateParameters('arc',
+            [1, 1, 10.5, 10]);
+        },
+        Error, 'got unwanted exception');
+    });
+    test('documentation look up - arc()', function() {
+      assert.doesNotThrow(function() {
+          p5.prototype._validateParameters('arc',
+            ['1', 1, 10.5, 10, 0, Math.PI, 'pie']);
+        },
+        Error, 'got unwanted exception');
+    });
+    test('documentation look up - ambientLight()', function() {
+      assert.doesNotThrow(function() {
+          var c = myp5.color(255, 204, 0);
+          p5.prototype._validateParameters('ambientLight', [c]);
+        },
+        Error, 'got unwanted exception');
+    });
+  });
+
+  // unit tests for validateNumParameters
+  suite('validateNumParameters', function(){
+    test('catch if some inputs are missing',function(){
+      var result = p5.prototype._validateNumParameters('func',[1,1,1,1]);
+      assert.isFalse(result[0]);
+      assert.equal(result[1],'INIT_VALNUMPAR_FAIL');
+    });
+  });
+  suite('validate numeric parameters (all Number type)', function() {
+    test('four number inputs', function() {
+      var result = p5.prototype._validateNumParameters('func',[1,1,1,1],4);
+      assert.isTrue(result[0]);
+    });
+    test('undefined parameter', function() {
+      var num;
+      var result = p5.prototype._validateNumParameters('func',[1,num,1,1],4);
+      assert.isFalse(result[0]);
+      assert.equal(result[1],'EMPTY_VAR');
+      assert.equal(result[2],1);
+    });
+    test('string parameter', function() {
+      var num = 'string';
+      var result = p5.prototype._validateNumParameters('func',[1,num,1,1],4);
+      assert.isFalse(result[0]);
+      assert.equal(result[1],'WRONG_TYPE');
+      assert.equal(result[2],1);
+    });
+    test('array parameter', function() {
+      var num = ['value', 'value', 'value'];
+      var result = p5.prototype._validateNumParameters('func',[1,num,1,1],4);
+      assert.isFalse(result[0]);
+      assert.equal(result[1],'WRONG_TYPE');
+      assert.equal(result[2],1);
+    });
+    test('boolean parameter', function() {
+      var num = false;
+      var result = p5.prototype._validateNumParameters('func',[1,num,1,1],4);
+      assert.isFalse(result[0]);
+      assert.equal(result[1],'WRONG_TYPE');
+      assert.equal(result[2],1);
+    });
+    setup(function() {
+      c = myp5.color(255, 0, 102);
+    });
+    test('p5 defined object', function() {
+      var result = p5.prototype._validateNumParameters('func',[1,c,1,1],4);
+      assert.isFalse(result[0]);
+      assert.equal(result[1],'WRONG_TYPE');
+      assert.equal(result[2],1);
+    });
+  });
+
   suite('helpForMisusedAtTopLevelCode', function() {
     var help = function(msg) {
       var log = [];
