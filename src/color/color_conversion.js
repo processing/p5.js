@@ -1,6 +1,6 @@
 /**
- * module Conversion
- * submodule Color Conversion
+ * @module Conversion
+ * @submodule Color Conversion
  * @for p5
  * @requires core
  */

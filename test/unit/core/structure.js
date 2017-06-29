@@ -6,7 +6,26 @@ suite('Structure', function() {
   });
 
   teardown(function(){
-    myp5.clear();
+    myp5.remove();
+  });
+
+  suite('p5.prototype.loop and p5.prototype.noLoop', function() {
+    test('noLoop should stop', function() {
+      //myp5.noLoop();
+      var c0 = myp5.frameCount;
+      myp5.noLoop();
+      var c1 = myp5.frameCount;
+      assert.equal(c0, c1);
+    });
+
+    test('loop should restart', function() {
+      myp5.noLoop();
+      var c0 = myp5.frameCount;
+      myp5.loop();
+      var c1 = myp5.frameCount;
+      assert.notEqual(c0, c1);
+    });
+
   });
 
   suite('p5.prototype.push and p5.prototype.pop', function() {
@@ -14,7 +33,7 @@ suite('Structure', function() {
       var state = {};
       for (var key in myp5._renderer) {
         var value = myp5._renderer[key];
-        if (typeof value !== 'function') {
+        if (typeof value !== 'function' && key !== '_cachedFillStyle' && key !== '_cachedStrokeStyle' ) {
           state[key] = value;
         }
       }
