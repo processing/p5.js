@@ -9,8 +9,7 @@ var p5 = require('./core');
 var doFriendlyWelcome = false; // TEMP until we get it all working LM
 // for parameter validation
 var dataDoc = require('../../docs/reference/data.json');
-var strDoc = JSON.stringify(dataDoc);
-var arrDoc = JSON.parse(strDoc);
+var arrDoc = JSON.parse(JSON.stringify(dataDoc));
 
 // -- Borrowed from jQuery 1.11.3 --
 var class2type = {};
@@ -136,17 +135,13 @@ function validateParameters(func, args) {
     }
     // compare errors from all formats
     var minErrInd = -1;
-    var minErrCount = 0;
+    var minErrCount = 999999;
     for (var j = 0; j < errorListArray.length; j++) {
       var numErr = errorListArray[j].length;
       if (numErr >= arrDoc.length){   // exclude clean cases
-        if(j===0){  // the first case
-          minErrCount = numErr;
+        if(minErrCount > numErr){
           minErrInd = j;
-        }else{
-          if(minErrCount > numErr){
-            minErrInd = j;
-          }
+          minErrCount = numErr;
         }
       }
     }
@@ -158,10 +153,8 @@ function validateParameters(func, args) {
     }
   } else {
     var errorArray = testParamFormat(args, arrDoc[0]);
-    if (errorArray.length > 0){
-      for(var m = 0; m < errorArray.length; m++) {
-        p5._friendlyParamError(errorArray[m], func);
-      }
+    for(var m = 0; m < errorArray.length; m++) {
+      p5._friendlyParamError(errorArray[m], func);
     }
   }
 }
@@ -194,15 +187,13 @@ function testParamFormat(args, format){
       var types = format[p].type.split('|'); // case accepting multi-types
       var pass;
       if (argType === 'object'){             // if obejct, test for class
-        pass = testParamClass(args[p], types);
-        if (!pass) {  // if fails to pass
+        if (!testParamClass(args[p], types)) {  // if fails to pass
           error = {type:'WRONG_CLASS', position: p,
             correctClass: types[p], wrongClass: args[p].name};
           errorArray.push(error);
         }
       }else{                                 // not object, test for type
-        pass = testParamType(args[p], types);
-        if (!pass) {  // if fails to pass
+        if (!testParamType(args[p], types)) {  // if fails to pass
           error = {type:'WRONG_TYPE', position: p,
             correctType: types[p], wrongType: argType};
           errorArray.push(error);
@@ -215,28 +206,26 @@ function testParamFormat(args, format){
 // testClass() for object type parameter validation
 // Returns true if PASS, false if FAIL
 function testParamClass(param, types){
-  var result = false;
   for (var i = 0; i < types.length; i++) {
     if (param.name === types[i]) {
-      result = true;    // class name match, pass
+      return true;      // class name match, pass
     } else if (types[i] === 'Constant'){
-      result = true;    // accepts any constant, pass
+      return true;      // accepts any constant, pass
     }
   }
-  return result;
+  return false;
 }
 // testType() for non-object type parameter validation
 // Returns true if PASS, false if FAIL
 function testParamType(param, types){
-  var result = false;
   for (var i = 0; i < types.length; i++) {
     if (typeof(param) === types[i].toLowerCase()) {
-      result = true;    // type match, pass
+      return true;      // type match, pass
     } else if (types[i] === 'Constant'){
-      result = true;    // accepts any constant, pass
+      return true;      // accepts any constant, pass
     }
   }
-  return result;
+  return false;
 }
 p5._friendlyParamError = function (errorObj, func) {
   var message;
