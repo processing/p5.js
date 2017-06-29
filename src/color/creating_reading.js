@@ -450,11 +450,16 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
   // Prevent extrapolation.
   amt = Math.max(Math.min(amt, 1), 0);
 
+  // Define lerp here itself
+  this._lerp = function (start, stop, amt) {
+    return amt*(stop-start)+start;
+  }
+
   // Perform interpolation.
-  l0 = this.lerp(fromArray[0], toArray[0], amt);
-  l1 = this.lerp(fromArray[1], toArray[1], amt);
-  l2 = this.lerp(fromArray[2], toArray[2], amt);
-  l3 = this.lerp(fromArray[3], toArray[3], amt);
+  l0 = this._lerp(fromArray[0], toArray[0], amt);
+  l1 = this._lerp(fromArray[1], toArray[1], amt);
+  l2 = this._lerp(fromArray[2], toArray[2], amt);
+  l3 = this._lerp(fromArray[3], toArray[3], amt);
 
   // Scale components.
   l0 *= maxes[mode][0];

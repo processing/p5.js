@@ -7,7 +7,7 @@ var testImageRender = function(file, sketch, callback) {
   var p = sketch.pixels;
   var ctx = sketch;
 
-  sketch.clear();
+  sketch.drawingContext.clearRect(0,0,this.width, this.height);
 
   sketch.loadImage(file, function(img) {
     ctx.image(img, 0, 0);

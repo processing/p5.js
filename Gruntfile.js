@@ -95,7 +95,10 @@ module.exports = function(grunt) {
 
     // Modules of p5
     modularise : {
-      'p5': ['core', 'events']
+      'p5': ['core', 'events'], //broad tests
+      'p5.Color': ['core', 'events', 'color'], // sufficient
+      'p5.Image': ['core', 'events', 'image'] // sufficient
+      // 'p5.Typography': ['core', 'events', 'typography']
     },
 
     // Configure style consistency checking for this file, the source, and the tests.

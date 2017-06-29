@@ -28,13 +28,13 @@ module.exports = function(grunt) {
         return path.resolve(srcDirPath, r);
       }));
     }
-    console.log(srcFilePath);
+    // console.log(srcFilePath);
     // Target file path
     var libFilePath = path.resolve('lib/modules/' + module_name + '.js');
 
     // Invoke Browserify programatically to bundle the code
     var bundle = browserify(srcFilePath, {
-        standalone: module_name,
+        standalone: 'p5',
         debug: true
       })
       .transform('brfs')
