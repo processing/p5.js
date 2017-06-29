@@ -56,7 +56,7 @@ p5.Graphics = function(w, h, renderer, pInst) {
       }
     }
   }
-
+  this.name = 'p5.Graphics';   // for friendly debugger system
   return this;
 };
 

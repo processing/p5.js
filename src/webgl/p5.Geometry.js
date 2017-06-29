@@ -34,6 +34,7 @@ p5.Geometry = function
   if(callback instanceof Function){
     callback.call(this);
   }
+  this.name = 'p5.Geometry';   // for friendly debugger system
   return this;
 };
 

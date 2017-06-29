@@ -5,8 +5,18 @@ suite('2D Primitives', function() {
     p.draw = function() {};
   });
 
-  teardown(function(){
+  teardown(function() {
     myp5.clear();
+  });
+
+  suite('p5.prototype.arc', function() {
+    var arc = p5.prototype.arc;
+    suite('arc()', function() {
+      test('should be a function', function() {
+        assert.ok(arc);
+        assert.typeOf(arc, 'function');
+      });
+    });
   });
 
   suite('p5.prototype.ellipse', function() {
@@ -45,6 +55,26 @@ suite('2D Primitives', function() {
           assert.isTrue(res);
           done();
         });
+      });
+    });
+  });
+
+  suite('p5.prototype.rect', function() {
+    var rect = p5.prototype.rect;
+    suite('rect()', function() {
+      test('should be a function', function() {
+        assert.ok(rect);
+        assert.typeOf(rect, 'function');
+      });
+    });
+  });
+
+  suite('p5.prototype.triangle', function() {
+    var triangle = p5.prototype.triangle;
+    suite('triangle()', function() {
+      test('should be a function', function() {
+        assert.ok(triangle);
+        assert.typeOf(triangle, 'function');
       });
     });
   });
