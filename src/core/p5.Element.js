@@ -753,21 +753,13 @@ p5.Element.prototype.touchEnded = function (fxn) {
  *   textAlign(CENTER);
  *   text('Drag file', width/2, height/2);
  *   c.dragOver(dragOverCallback);
- *   c.dragLeave(dragLeaveCallback);
  * }
- * 
+ *
  * // This function will be called whenever
  * // a file is dragged over the canvas
  * function dragOverCallback() {
  *   background(240);
  *   text('Dragged over', width/2, height/2);
- * }
- * 
- * // This function will be called whenever
- * // a file is dragged out of the canvas 
- * function dragLeaveCallback() {
- *   background(200);
- *   text('Dragged off', width/2, height/2);
  * }
  * </code></div>
  * @alt
@@ -789,28 +781,20 @@ p5.Element.prototype.dragOver = function (fxn) {
  * @return {p5.Element}
  * @example
  * <div><code>
- * // To test this sketch, simply drag a
- * // file over the canvas
+ * // To test this sketch, simply drag a file
+ * // over and then out of the canvas area
  * function setup() {
  *   var c = createCanvas(100, 100);
  *   background(200);
  *   textAlign(CENTER);
  *   text('Drag file', width/2, height/2);
- *   c.dragOver(dragOverCallback);
  *   c.dragLeave(dragLeaveCallback);
  * }
- * 
+ *
  * // This function will be called whenever
- * // a file is dragged over the canvas
- * function dragOverCallback() {
- *   background(240);
- *   text('Dragged over', width/2, height/2);
- * }
- * 
- * // This function will be called whenever
- * // a file is dragged out of the canvas 
+ * // a file is dragged out of the canvas
  * function dragLeaveCallback() {
- *   background(200);
+ *   background(240);
  *   text('Dragged off', width/2, height/2);
  * }
  * </code></div>
