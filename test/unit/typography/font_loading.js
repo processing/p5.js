@@ -46,6 +46,7 @@ mySketch = function (this_p5) {
 new p5(mySketch, null, true);
 
 suite('Fonts outside preload()', function () {
+  var p5Inst = new p5(function () {}, true);
 
   var loadFont = p5.prototype.loadFont;
 
@@ -58,7 +59,7 @@ suite('Fonts outside preload()', function () {
 
     test('should call success-callback with object when font loads',
       function (done) {
-        loadFont('manual-test-examples/p5.Font/acmesa.ttf',
+        p5Inst.loadFont('manual-test-examples/p5.Font/acmesa.ttf',
           function (p5Font) {
             assert.isObject(p5Font);
             assert.isTrue(p5Font instanceof p5.Font);
@@ -73,7 +74,7 @@ suite('Fonts outside preload()', function () {
     );
 
     test('should call error-callback when font fails to load', function (done) {
-      loadFont('invalid-path',
+      p5Inst.loadFont('invalid-path',
         function () {
           assert.ok(false);
           done();

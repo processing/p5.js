@@ -24,8 +24,8 @@ p5.Renderer2D = function(elt, pInst, isMainCanvas){
 p5.Renderer2D.prototype = Object.create(p5.Renderer.prototype);
 
 p5.Renderer2D.prototype._applyDefaults = function() {
-  this.drawingContext.fillStyle = constants._DEFAULT_FILL;
-  this.drawingContext.strokeStyle = constants._DEFAULT_STROKE;
+  this._setFill(constants._DEFAULT_FILL);
+  this._setStroke(constants._DEFAULT_STROKE);
   this.drawingContext.lineCap = constants.ROUND;
   this.drawingContext.font = 'normal 12px sans-serif';
 };
@@ -49,14 +49,14 @@ p5.Renderer2D.prototype.background = function() {
   if (arguments[0] instanceof p5.Image) {
     this._pInst.image(arguments[0], 0, 0, this.width, this.height);
   } else {
-    var curFill = this.drawingContext.fillStyle;
+    var curFill = this._getFill();
     // create background rect
     var color = this._pInst.color.apply(this, arguments);
     var newFill = color.toString();
-    this.drawingContext.fillStyle = newFill;
+    this._setFill(newFill);
     this.drawingContext.fillRect(0, 0, this.width, this.height);
     // reset fill
-    this.drawingContext.fillStyle = curFill;
+    this._setFill(curFill);
   }
   this.drawingContext.restore();
 };
@@ -66,16 +66,13 @@ p5.Renderer2D.prototype.clear = function() {
 };
 
 p5.Renderer2D.prototype.fill = function() {
-
-  var ctx = this.drawingContext;
   var color = this._pInst.color.apply(this, arguments);
-  ctx.fillStyle = color.toString();
+  this._setFill(color.toString());
 };
 
 p5.Renderer2D.prototype.stroke = function() {
-  var ctx = this.drawingContext;
   var color = this._pInst.color.apply(this, arguments);
-  ctx.strokeStyle = color.toString();
+  this._setStroke(color.toString());
 };
 
 //////////////////////////////////////////////
@@ -452,11 +449,11 @@ p5.Renderer2D.prototype.ellipse = function(args) {
     w = args[2],
     h = args[3];
   if (doFill && !doStroke) {
-    if(ctx.fillStyle === styleEmpty) {
+    if(this._getFill() === styleEmpty) {
       return this;
     }
   } else if (!doFill && doStroke) {
-    if(ctx.strokeStyle === styleEmpty) {
+    if(this._getStroke() === styleEmpty) {
       return this;
     }
   }
@@ -486,7 +483,7 @@ p5.Renderer2D.prototype.line = function(x1, y1, x2, y2) {
   var ctx = this.drawingContext;
   if (!this._doStroke) {
     return this;
-  } else if(ctx.strokeStyle === styleEmpty){
+  } else if(this._getStroke() === styleEmpty){
     return this;
   }
   // Translate the line by (0.5, 0.5) to draw it crisp
@@ -505,16 +502,13 @@ p5.Renderer2D.prototype.line = function(x1, y1, x2, y2) {
 
 p5.Renderer2D.prototype.point = function(x, y) {
   var ctx = this.drawingContext;
-  var s = ctx.strokeStyle;
-  var f = ctx.fillStyle;
   if (!this._doStroke) {
     return this;
-  } else if(ctx.strokeStyle === styleEmpty){
+  } else if(this._getStroke() === styleEmpty){
     return this;
   }
   x = Math.round(x);
   y = Math.round(y);
-  ctx.fillStyle = s;
   if (ctx.lineWidth > 1) {
     ctx.beginPath();
     ctx.arc(
@@ -529,7 +523,6 @@ p5.Renderer2D.prototype.point = function(x, y) {
   } else {
     ctx.fillRect(x, y, 1, 1);
   }
-  ctx.fillStyle = f;
 };
 
 p5.Renderer2D.prototype.quad =
@@ -537,11 +530,11 @@ p5.Renderer2D.prototype.quad =
   var ctx = this.drawingContext;
   var doFill = this._doFill, doStroke = this._doStroke;
   if (doFill && !doStroke) {
-    if(ctx.fillStyle === styleEmpty) {
+    if(this._getFill() === styleEmpty) {
       return this;
     }
   } else if (!doFill && doStroke) {
-    if(ctx.strokeStyle === styleEmpty) {
+    if(this._getStroke() === styleEmpty) {
       return this;
     }
   }
@@ -572,11 +565,11 @@ p5.Renderer2D.prototype.rect = function(args) {
   var ctx = this.drawingContext;
   var doFill = this._doFill, doStroke = this._doStroke;
   if (doFill && !doStroke) {
-    if(ctx.fillStyle === styleEmpty) {
+    if(this._getFill() === styleEmpty) {
       return this;
     }
   } else if (!doFill && doStroke) {
-    if(ctx.strokeStyle === styleEmpty) {
+    if(this._getStroke() === styleEmpty) {
       return this;
     }
   }
@@ -637,11 +630,11 @@ p5.Renderer2D.prototype.triangle = function(args) {
   var x2=args[2], y2=args[3];
   var x3=args[4], y3=args[5];
   if (doFill && !doStroke) {
-    if(ctx.fillStyle === styleEmpty) {
+    if(this._getFill() === styleEmpty) {
       return this;
     }
   } else if (!doFill && doStroke) {
-    if(ctx.strokeStyle === styleEmpty) {
+    if(this._getStroke() === styleEmpty) {
       return this;
     }
   }
@@ -797,31 +790,35 @@ function (mode, vertices, isCurve, isBezier,
       }
     } else if (shapeKind === constants.TRIANGLE_FAN) {
       if (numVerts > 2) {
+        // For performance reasons, try to batch as many of the
+        // fill and stroke calls as possible.
         this.drawingContext.beginPath();
-        this.drawingContext.moveTo(vertices[0][0], vertices[0][1]);
-        this.drawingContext.lineTo(vertices[1][0], vertices[1][1]);
-        this.drawingContext.lineTo(vertices[2][0], vertices[2][1]);
-        if (this._doFill) {
-          this._pInst.fill(vertices[2][5]);
-        }
-        if (this._doStroke) {
-          this._pInst.stroke(vertices[2][6]);
-        }
-        this._doFillStrokeClose();
-        for (i = 3; i < numVerts; i++) {
+        for (i = 2; i < numVerts; i++) {
           v = vertices[i];
-          this.drawingContext.beginPath();
           this.drawingContext.moveTo(vertices[0][0], vertices[0][1]);
           this.drawingContext.lineTo(vertices[i - 1][0], vertices[i - 1][1]);
           this.drawingContext.lineTo(v[0], v[1]);
-          if (this._doFill) {
-            this._pInst.fill(v[5]);
+          this.drawingContext.lineTo(vertices[0][0], vertices[0][1]);
+          // If the next colour is going to be different, stroke / fill now
+          if (i < numVerts - 1) {
+            if ( (this._doFill && v[5] !== vertices[i + 1][5]) ||
+                 (this._doStroke && v[6] !== vertices[i + 1][6])) {
+              if (this._doFill) {
+                this._pInst.fill(v[5]);
+                this.drawingContext.fill();
+                this._pInst.fill(vertices[i + 1][5]);
+              }
+              if (this._doStroke) {
+                this._pInst.stroke(v[6]);
+                this.drawingContext.stroke();
+                this._pInst.stroke(vertices[i + 1][6]);
+              }
+              this.drawingContext.closePath();
+              this.drawingContext.beginPath(); // Begin the next one
+            }
           }
-          if (this._doStroke) {
-            this._pInst.stroke(v[6]);
-          }
-          this._doFillStrokeClose();
         }
+        this._doFillStrokeClose();
       }
     } else if (shapeKind === constants.QUADS) {
       for (i = 0; i + 3 < numVerts; i += 4) {
@@ -953,12 +950,28 @@ p5.Renderer2D.prototype.strokeWeight = function(w) {
 };
 
 p5.Renderer2D.prototype._getFill = function(){
-  return this.drawingContext.fillStyle;
+  return this._cachedFillStyle;
+};
+
+p5.Renderer2D.prototype._setFill = function(fillStyle){
+  if (fillStyle !== this._cachedFillStyle) {
+    this.drawingContext.fillStyle = fillStyle;
+    this._cachedFillStyle = fillStyle;
+  }
 };
 
 p5.Renderer2D.prototype._getStroke = function(){
-  return this.drawingContext.strokeStyle;
+  return this._cachedStrokeStyle;
 };
+
+p5.Renderer2D.prototype._setStroke = function(strokeStyle){
+  if (strokeStyle !== this._cachedStrokeStyle) {
+    this.drawingContext.strokeStyle = strokeStyle;
+    this._cachedStrokeStyle = strokeStyle;
+  }
+};
+
+
 
 //////////////////////////////////////////////
 // SHAPE | Curves
@@ -1186,8 +1199,9 @@ p5.Renderer2D.prototype._renderText = function(p, line, x, y, maxY) {
     if (this._doFill) {
 
       // if fill hasn't been set by user, use default text fill
-      this.drawingContext.fillStyle =  this._fillSet ?
-        this.drawingContext.fillStyle : constants._DEFAULT_TEXT_FILL;
+      if (! this._fillSet) {
+        this._setFill(constants._DEFAULT_TEXT_FILL);
+      }
 
       this.drawingContext.fillText(line, x, y);
     }
@@ -1286,6 +1300,9 @@ p5.Renderer2D.prototype.push = function() {
 
 p5.Renderer2D.prototype.pop = function() {
   this.drawingContext.restore();
+  // Re-cache the fill / stroke state
+  this._cachedFillStyle = this.drawingContext.fillStyle;
+  this._cachedStrokeStyle = this.drawingContext.strokeStyle;
 };
 
 module.exports = p5.Renderer2D;
