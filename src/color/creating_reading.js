@@ -450,6 +450,14 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
   // Prevent extrapolation.
   amt = Math.max(Math.min(amt, 1), 0);
 
+  // Define lerp here itself if user isn't using math module.
+  // Maintains the definition as found in math/calculation.js
+  if(typeof this.lerp === 'undefined') {
+    this.lerp = function (start, stop, amt) {
+      return amt*(stop-start)+start;
+    }
+  }
+
   // Perform interpolation.
   l0 = this.lerp(fromArray[0], toArray[0], amt);
   l1 = this.lerp(fromArray[1], toArray[1], amt);
