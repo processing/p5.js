@@ -24,18 +24,19 @@ module.exports = function(grunt) {
     for (var i = module_src.length - 1; i >= 0; i--) {
       var srcDirPath = './src/' + module_src[i];
       var files = fs.readdirSync(srcDirPath);
-      srcFilePath = srcFilePath.concat(files.map(function(r){
-        return path.resolve(srcDirPath, r);
-      }));
+      files.map(function(r){
+        if(r.substr(r.length-3,3) === '.js')
+          srcFilePath.push(path.resolve(srcDirPath, r));
+      });
     }
-    // console.log(srcFilePath);
+    console.log(srcFilePath);
     // Target file path
     var libFilePath = path.resolve('lib/modules/' + module_name + '.js');
 
     // Invoke Browserify programatically to bundle the code
     var bundle = browserify(srcFilePath, {
-        standalone: 'p5',
-        debug: true
+        standalone: 'p5'
+        // debug: true
       })
       .transform('brfs')
       .bundle();
