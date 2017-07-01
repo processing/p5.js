@@ -26,6 +26,7 @@ p5.RendererGL.prototype._initBufferDefaults = function(gId) {
   this.gHash[gId].normalBuffer = gl.createBuffer();
   this.gHash[gId].uvBuffer = gl.createBuffer();
   this.gHash[gId].indexBuffer = gl.createBuffer();
+  this.gHash[gId].barycentricBuffer = gl.createBuffer();
 };
 /**
  * createBuffers description
@@ -88,6 +89,20 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
     gl.ELEMENT_ARRAY_BUFFER,
     new Uint16Array( flatten(obj.faces) ),
     gl.STATIC_DRAW);
+
+  //barycentric cooordinate Attribute
+  shaderProgram.barycentricCoordAttribute =
+    gl.getAttribLocation(shaderProgram, 'aBarycentric');
+  gl.enableVertexAttribArray(shaderProgram.barycentricCoordAttribute);
+  gl.vertexAttribPointer(
+    shaderProgram.barycentricCoordAttribute,
+    3, gl.FLOAT, false, 0, 0);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].barycentricBuffer);
+  gl.bufferData(
+    gl.ARRAY_BUFFER,
+    new Float32Array( vToNArray(obj.barycentric) ),
+    gl.STATIC_DRAW);
 };
 
 /**
@@ -118,6 +133,11 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   //vertex index buffer
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
   this._setMatrixUniforms(shaderKey);
+  //barycentric buffer
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].barycentricBuffer);
+  gl.vertexAttribPointer(
+    shaderProgram.barycentricCoordAttribute,
+    3, gl.FLOAT, false, 0, 0);
   gl.drawElements(
     gl.TRIANGLES, this.gHash[gId].numberOfItems,
     gl.UNSIGNED_SHORT, 0);
