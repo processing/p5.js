@@ -455,7 +455,7 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
   if(typeof this.lerp === 'undefined') {
     this.lerp = function (start, stop, amt) {
       return amt*(stop-start)+start;
-    }
+    };
   }
 
   // Perform interpolation.
