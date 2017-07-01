@@ -102,7 +102,7 @@ p5.Element.prototype.parent = function(p) {
  * @param  {String} [id] ID of the element
  * @return {p5.Element|String}
  * @example
- * <div><code class='norender'>
+ * <div class='norender'><code>
  * function setup() {
  *   var cnv = createCanvas(100, 100);
  *   // Assigns a CSS selector ID to
@@ -188,9 +188,7 @@ p5.Element.prototype.class = function(c) {
  */
 p5.Element.prototype.mousePressed = function (fxn) {
   attachListener('mousedown', fxn, this);
-  if (!window.PointerEvent) {
-    attachListener('touchstart', fxn, this);
-  }
+  attachListener('touchstart', fxn, this);
   return this;
 };
 
@@ -200,7 +198,7 @@ p5.Element.prototype.mousePressed = function (fxn) {
  * attach element specific event listeners.
  * <br><br>
  * The function accepts a callback function as argument which will be executed
- * when the `wheel` event is triggered on the element, the callabck function is
+ * when the `wheel` event is triggered on the element, the callback function is
  * passed one argument `event`. The `event.deltaY` property returns negative
  * values if the mouse wheel is rotated up or away from the user and positive
  * in the other direction. The `event.deltaX` does the same as `event.deltaY`
@@ -305,9 +303,7 @@ p5.Element.prototype.mouseWheel = function (fxn) {
  */
 p5.Element.prototype.mouseReleased = function (fxn) {
   attachListener('mouseup', fxn, this);
-  if (!window.PointerEvent) {
-    attachListener('touchend', fxn, this);
-  }
+  attachListener('touchend', fxn, this);
   return this;
 };
 
@@ -322,9 +318,12 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  *                    clicked over the element.
  * @return {p5.Element}
  * @example
+ * <div class="norender">
+ * <code>
  * var cnv;
  * var d;
  * var g;
+ *
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseClicked(changeGray); // attach listener for
@@ -349,8 +348,8 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  * function changeGray() {
  *   g = random(0, 255);
  * }
- * </code></div>
- *
+ * </code>
+ * </div>
  *
  * @alt
  * no display.
@@ -414,9 +413,7 @@ p5.Element.prototype.mouseClicked = function (fxn) {
  */
 p5.Element.prototype.mouseMoved = function (fxn) {
   attachListener('mousemove', fxn, this);
-  if (!window.PointerEvent) {
-    attachListener('touchmove', fxn, this);
-  }
+  attachListener('touchmove', fxn, this);
   return this;
 };
 
@@ -644,9 +641,7 @@ p5.Element.prototype.mouseOut = function (fxn) {
  */
 p5.Element.prototype.touchStarted = function (fxn) {
   attachListener('touchstart', fxn, this);
-  if (!window.PointerEvent) {
-    attachListener('mousedown', fxn, this);
-  }
+  attachListener('mousedown', fxn, this);
   return this;
 };
 
@@ -685,9 +680,7 @@ p5.Element.prototype.touchStarted = function (fxn) {
  */
 p5.Element.prototype.touchMoved = function (fxn) {
   attachListener('touchmove', fxn, this);
-  if (!window.PointerEvent) {
-    attachListener('mousemove', fxn, this);
-  }
+  attachListener('mousemove', fxn, this);
   return this;
 };
 
@@ -735,9 +728,7 @@ p5.Element.prototype.touchMoved = function (fxn) {
  */
 p5.Element.prototype.touchEnded = function (fxn) {
   attachListener('touchend', fxn, this);
-  if (!window.PointerEvent) {
-    attachListener('mouseup', fxn, this);
-  }
+  attachListener('mouseup', fxn, this);
   return this;
 };
 
@@ -752,6 +743,27 @@ p5.Element.prototype.touchEnded = function (fxn) {
  * @param  {Function} fxn function to be fired when mouse is
  *                    dragged over the element.
  * @return {p5.Element}
+ * @example
+ * <div><code>
+ * // To test this sketch, simply drag a
+ * // file over the canvas
+ * function setup() {
+ *   var c = createCanvas(100, 100);
+ *   background(200);
+ *   textAlign(CENTER);
+ *   text('Drag file', width/2, height/2);
+ *   c.dragOver(dragOverCallback);
+ * }
+ *
+ * // This function will be called whenever
+ * // a file is dragged over the canvas
+ * function dragOverCallback() {
+ *   background(240);
+ *   text('Dragged over', width/2, height/2);
+ * }
+ * </code></div>
+ * @alt
+ * nothing displayed
  */
 p5.Element.prototype.dragOver = function (fxn) {
   attachListener('dragover', fxn, this);
@@ -767,6 +779,27 @@ p5.Element.prototype.dragOver = function (fxn) {
  * @param  {Function} fxn function to be fired when mouse is
  *                    dragged over the element.
  * @return {p5.Element}
+ * @example
+ * <div><code>
+ * // To test this sketch, simply drag a file
+ * // over and then out of the canvas area
+ * function setup() {
+ *   var c = createCanvas(100, 100);
+ *   background(200);
+ *   textAlign(CENTER);
+ *   text('Drag file', width/2, height/2);
+ *   c.dragLeave(dragLeaveCallback);
+ * }
+ *
+ * // This function will be called whenever
+ * // a file is dragged out of the canvas
+ * function dragLeaveCallback() {
+ *   background(240);
+ *   text('Dragged off', width/2, height/2);
+ * }
+ * </code></div>
+ * @alt
+ * nothing displayed
  */
 p5.Element.prototype.dragLeave = function (fxn) {
   attachListener('dragleave', fxn, this);

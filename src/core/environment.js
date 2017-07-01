@@ -58,7 +58,11 @@ if (window.console && console.log) {
         console.log.apply(console, arguments);
       } else {
         var newArgs = JSON.parse(JSON.stringify(args));
-        console.log(newArgs);
+        if (JSON.stringify(newArgs)==='{}'){
+          console.log(args);
+        } else {
+          console.log(newArgs);
+        }
       }
     } catch(err) {
       console.log(args);
@@ -242,7 +246,7 @@ p5.prototype.cursor = function(type, x, y) {
  *
  */
 p5.prototype.frameRate = function(fps) {
-  if (typeof fps !== 'number' || fps <= 0) {
+  if (typeof fps !== 'number' || fps < 0) {
     return this._frameRate;
   } else {
     this._setProperty('_targetFrameRate', fps);

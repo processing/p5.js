@@ -350,7 +350,6 @@ p5.prototype.mouseButton = 0;
  *
  */
 p5.prototype.mouseIsPressed = false;
-p5.prototype.isMousePressed = false; // both are supported
 
 p5.prototype._updateNextMouseCoords = function(e) {
   if(this._curElement !== null && (!e.touches || e.touches.length>0)) {
@@ -510,7 +509,7 @@ p5.prototype._onmousemove = function(e){
       if(executeDefault === false) {
         e.preventDefault();
       }
-    } else if (!window.PointerEvent && typeof context.touchMoved === 'function') {
+    } else if (typeof context.touchMoved === 'function') {
       executeDefault = context.touchMoved(e);
       if(executeDefault === false) {
         e.preventDefault();
@@ -577,7 +576,7 @@ p5.prototype._onmousedown = function(e) {
     if(executeDefault === false) {
       e.preventDefault();
     }
-  } else if (!window.PointerEvent && typeof context.touchStarted === 'function') {
+  } else if (typeof context.touchStarted === 'function') {
     executeDefault = context.touchStarted(e);
     if(executeDefault === false) {
       e.preventDefault();
@@ -641,7 +640,7 @@ p5.prototype._onmouseup = function(e) {
     if(executeDefault === false) {
       e.preventDefault();
     }
-  } else if (!window.PointerEvent && typeof context.touchEnded === 'function') {
+  } else if (typeof context.touchEnded === 'function') {
     executeDefault = context.touchEnded(e);
     if(executeDefault === false) {
       e.preventDefault();
@@ -655,6 +654,9 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
 /**
  * The mouseClicked() function is called once after a mouse button has been
  * pressed and then released.<br><br>
+ * Browsers handle clicks differently, so this function is only guaranteed to be
+ * run when the left mouse button is clicked. To handle other mouse buttons
+ * being pressed or released, see mousePressed() or mouseReleased().<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
  * behavior for this event, add "return false" to the end of the method.
@@ -672,6 +674,7 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  *   fill(value);
  *   rect(25, 25, 50, 50);
  * }
+ *
  * function mouseClicked() {
  *   if (value == 0) {
  *     value = 255;
