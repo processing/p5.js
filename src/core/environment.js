@@ -246,7 +246,7 @@ p5.prototype.cursor = function(type, x, y) {
  *
  */
 p5.prototype.frameRate = function(fps) {
-  if (typeof fps !== 'number' || fps <= 0) {
+  if (typeof fps !== 'number' || fps < 0) {
     return this._frameRate;
   } else {
     this._setProperty('_targetFrameRate', fps);

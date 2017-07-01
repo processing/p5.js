@@ -271,8 +271,10 @@ var p5 = function(sketch, node, sync) {
 
   this._decrementPreload = function(){
     var context = this._isGlobal ? window : this;
-    context._setProperty('_preloadCount', context._preloadCount - 1);
-    context._runIfPreloadsAreDone();
+    if(typeof context.preload === 'function'){
+      context._setProperty('_preloadCount', context._preloadCount - 1);
+      context._runIfPreloadsAreDone();
+    }
   };
 
   this._wrapPreload = function(obj, fnName){
@@ -284,7 +286,7 @@ var p5 = function(sketch, node, sync) {
       for (var i = 0; i < args.length; ++i) {
         args[i] = arguments[i];
       }
-      args.push(this._decrementPreload.bind(this));
+      // args.push(this._decrementPreload.bind(this));
       return this._registeredPreloadMethods[fnName].apply(obj, args);
     }.bind(this);
   };
@@ -357,9 +359,16 @@ var p5 = function(sketch, node, sync) {
 
       this._setProperty('frameCount', this.frameCount + 1);
       this.redraw();
-      this._updateMouseCoords();
       this._frameRate = 1000.0/(now - this._lastFrameTime);
       this._lastFrameTime = now;
+
+      // If the user is actually using mouse module, then update
+      // coordinates, otherwise skip. We can test this by simply
+      // checking if any of the mouse functions are available or not.
+      // NOTE : This reflects only in complete build or modular build.
+      if(typeof this._updateMouseCoords !== 'undefined') {
+        this._updateMouseCoords();
+      }
     }
 
     // get notified the next time the browser gives us

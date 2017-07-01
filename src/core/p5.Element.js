@@ -743,6 +743,27 @@ p5.Element.prototype.touchEnded = function (fxn) {
  * @param  {Function} fxn function to be fired when mouse is
  *                    dragged over the element.
  * @return {p5.Element}
+ * @example
+ * <div><code>
+ * // To test this sketch, simply drag a
+ * // file over the canvas
+ * function setup() {
+ *   var c = createCanvas(100, 100);
+ *   background(200);
+ *   textAlign(CENTER);
+ *   text('Drag file', width/2, height/2);
+ *   c.dragOver(dragOverCallback);
+ * }
+ *
+ * // This function will be called whenever
+ * // a file is dragged over the canvas
+ * function dragOverCallback() {
+ *   background(240);
+ *   text('Dragged over', width/2, height/2);
+ * }
+ * </code></div>
+ * @alt
+ * nothing displayed
  */
 p5.Element.prototype.dragOver = function (fxn) {
   attachListener('dragover', fxn, this);
@@ -758,6 +779,27 @@ p5.Element.prototype.dragOver = function (fxn) {
  * @param  {Function} fxn function to be fired when mouse is
  *                    dragged over the element.
  * @return {p5.Element}
+ * @example
+ * <div><code>
+ * // To test this sketch, simply drag a file
+ * // over and then out of the canvas area
+ * function setup() {
+ *   var c = createCanvas(100, 100);
+ *   background(200);
+ *   textAlign(CENTER);
+ *   text('Drag file', width/2, height/2);
+ *   c.dragLeave(dragLeaveCallback);
+ * }
+ *
+ * // This function will be called whenever
+ * // a file is dragged out of the canvas
+ * function dragLeaveCallback() {
+ *   background(240);
+ *   text('Dragged off', width/2, height/2);
+ * }
+ * </code></div>
+ * @alt
+ * nothing displayed
  */
 p5.Element.prototype.dragLeave = function (fxn) {
   attachListener('dragleave', fxn, this);
