@@ -11,7 +11,7 @@ var p5 = require('../core/core');
 
 /**
  * Creates an ambient light with a color
- * 
+ *
  * @method ambientLight
  * @param  {Number}        v1      red or hue value relative to
  *                                 the current color range

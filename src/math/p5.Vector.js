@@ -665,7 +665,7 @@ p5.Vector.prototype.angleBetween = function (v) {
  * @param  {p5.Vector} v   the p5.Vector to lerp to
  * @param  {Number}    amt
  * @return {p5.Vector}     the modified p5.Vector
- * 
+ *
  * @example
  * <div class="norender">
  * <code>

@@ -257,7 +257,7 @@ p5.prototype.image =
  * maximum value as specified by colorMode(). The default maximum value is
  * 255.
  *
- * 
+ *
  * @method tint
  * @param  {Number}        v1      red or hue value relative to
  *                                 the current color range

@@ -206,7 +206,7 @@ p5.prototype.clear = function() {
  * Note: existing color objects remember the mode that they were created in,
  * so you can change modes as you like without affecting their appearance.
  *
- * 	
+ *
  * @method colorMode
  * @param {Constant} mode   either RGB or HSB, corresponding to
  *                          Red/Green/Blue and Hue/Saturation/Brightness
@@ -214,7 +214,7 @@ p5.prototype.clear = function() {
  * @param {Number}  [max]  range for all values
  * @return {p5} the p5 Object
  */
-/** 
+/**
  * @method colorMode
  * @param {Constant} mode
  * @param {Number} max1     range for the red or hue depending on the
@@ -225,7 +225,7 @@ p5.prototype.clear = function() {
  *                              depending on the current color mode
  * @param {Number} [maxA]   range for the alpha
  * @return {p5} the p5 Object
- * 
+ *
  * @example
  * <div>
  * <code>
@@ -324,7 +324,7 @@ p5.prototype.colorMode = function() {
  * If a single string argument is provided, RGB, RGBA and Hex CSS color strings
  * and all named color strings are supported. A p5 Color object can also be
  * provided to set the fill color.
- * 
+ *
  * @method fill
  * @param  {Number}        v1      red or hue value relative to
  *                                 the current color range
@@ -356,7 +356,7 @@ p5.prototype.colorMode = function() {
  * @param  {Number}        [alpha]
  * @return {p5}
  *
- * 
+ *
  * @example
  * <div>
  * <code>
@@ -522,7 +522,7 @@ p5.prototype.noStroke = function() {
  * strings and all named color strings are supported. A p5 Color object
  * can also be provided to set the stroke color.
  *
- * 
+ *
  * @method stroke
  * @param  {Number}        v1      red or hue value relative to
  *                                 the current color range
