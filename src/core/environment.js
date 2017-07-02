@@ -355,7 +355,7 @@ p5.prototype.windowWidth = getWindowWidth();
  * System variable that stores the height of the inner window, it maps to
  * window.innerHeight.
  *
- *  {Number} windowHeight
+ * @property {Number} windowHeight
  * @example
  * <div class="norender"><code>
  * createCanvas(windowWidth, windowHeight);
