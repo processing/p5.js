@@ -17,7 +17,7 @@ suite('Files', function() {
     });
 
     test('should work when provided with just a path', function(done){
-      httpDo('unit/assets/sentences.txt', function(data){
+      httpDo('../unit/assets/sentences.txt', function(data){
         assert.ok(data);
         assert.isString(data);
         done();
@@ -25,7 +25,7 @@ suite('Files', function() {
     });
 
     test('should accept method parameter', function(done){
-      httpDo('unit/assets/sentences.txt', 'GET', function(data){
+      httpDo('../unit/assets/sentences.txt', 'GET', function(data){
         assert.ok(data);
         assert.isString(data);
         done();
@@ -33,7 +33,7 @@ suite('Files', function() {
     });
 
     test('should accept type parameter', function(done){
-      httpDo('unit/assets/array.json', 'text', function(data){
+      httpDo('../unit/assets/array.json', 'text', function(data){
         assert.ok(data);
         assert.isString(data);
         done();
@@ -41,7 +41,7 @@ suite('Files', function() {
     });
 
     test('should accept method and type parameter together', function(done){
-      httpDo('unit/assets/array.json', 'GET', 'text', function(data){
+      httpDo('../unit/assets/array.json', 'GET', 'text', function(data){
         assert.ok(data);
         assert.isString(data);
         done();
@@ -49,7 +49,7 @@ suite('Files', function() {
     });
 
     test('should pass error object to error callback function', function(done){
-      httpDo('unit/assets/sen.txt', function(data){
+      httpDo('../unit/assets/sen.txt', function(data){
         // should not be called
       }, function(err){
         assert.isObject(err, 'err is an object');
@@ -76,7 +76,7 @@ suite('Files', function() {
     });
 
     test('should return an Object', function() {
-      result = loadJSON('unit/assets/array.json');
+      result = loadJSON('../unit/assets/array.json');
       assert.ok(result);
       assert.isObject(result, 'result is an object');
     });
@@ -90,7 +90,7 @@ suite('Files', function() {
     });
 
     test('should return an array', function(){
-      result = loadStrings('unit/assets/sentences.txt');
+      result = loadStrings('../unit/assets/sentences.txt');
       assert.ok(result);
       assert.isArray(result, 'result is and array');
     });
@@ -104,7 +104,7 @@ suite('Files', function() {
     });
 
     // test('should return an Object', function() {
-    //   result = loadXML('unit/assets/books.xml');
+    //   result = loadXML('../unit/assets/books.xml');
     //   assert.ok(result);
     //   assert.isObject(result, 'result is an object');
     // });
@@ -121,13 +121,13 @@ suite('Files', function() {
     });
 
     test('should call callback function if provided', function(done){
-      result = loadJSON('unit/assets/array.json', function(data){
+      result = loadJSON('../unit/assets/array.json', function(data){
         done();
       });
     });
 
     test('should pass an Array to callback function', function(done){
-      result = loadJSON('unit/assets/array.json', function(data){
+      result = loadJSON('../unit/assets/array.json', function(data){
         assert.isArray(data, 'Array passed to callback function');
         assert.lengthOf(data, 3, 'length of data is 3');
         done();
@@ -135,13 +135,13 @@ suite('Files', function() {
     });
 
     test('should call error callback function if provided', function(done){
-      result = loadJSON('unit/assets/arr.json', function(data){}, function(){
+      result = loadJSON('../unit/assets/arr.json', function(data){}, function(){
         done();
       });
     });
 
     test('should pass error object to error callback function', function(done) {
-      result = loadJSON('unit/assets/arr.json', function(data){
+      result = loadJSON('../unit/assets/arr.json', function(data){
         // should not be called
       }, function(err){
         assert.isObject(err, 'err is an object');
@@ -154,7 +154,7 @@ suite('Files', function() {
     /*test('should allow json to override jsonp in 3rd param',
       function(done){
 
-        var url = 'http://localhost:9001/unit/assets/array.json';
+        var url = 'http://localhost:9001/../unit/assets/array.json';
         var datatype = 'json';
         var myCallback = function(resp){
           assert.ok(resp);
@@ -173,26 +173,26 @@ suite('Files', function() {
     });
 
     test('should call callback function if provided', function(done){
-      result = loadStrings('unit/assets/sentences.txt', function(data){
+      result = loadStrings('../unit/assets/sentences.txt', function(data){
         done();
       });
     });
 
     test('should pass an Array to callback function', function(){
-      result = loadStrings('unit/assets/sentences.txt', function(data){
+      result = loadStrings('../unit/assets/sentences.txt', function(data){
         assert.isArray(data, 'Array passed to callback function');
         assert.lengthOf(data, 68, 'length of data is 68');
       });
     });
 
     test('should call error callback function if provided', function(done){
-      result = loadStrings('unit/assets/sen.txt', function(data){}, function(){
+      result = loadStrings('../unit/assets/sen.txt', function(data){}, function(){
         done();
       });
     });
 
     test('should pass error object to error callback function', function(done) {
-      result = loadStrings('unit/assets/sen.txt', function(data){
+      result = loadStrings('../unit/assets/sen.txt', function(data){
         // should not be called
       }, function(err){
         assert.isObject(err, 'err is an object');
@@ -212,13 +212,13 @@ suite('Files', function() {
 
     // Missing reference to parseXML, might need some test suite rethink
     // test('should call callback function if provided', function(done){
-    //   result = loadXML('unit/assets/books.xml', function(data){
+    //   result = loadXML('../unit/assets/books.xml', function(data){
     //     done();
     //   });
     // });
 
     // test('should pass an Object to callback function', function(){
-    //   result = loadXML('unit/assets/books.xml', function(data){
+    //   result = loadXML('../unit/assets/books.xml', function(data){
     //     console.log(data);
     //     assert.isObject(data);
     //   });
@@ -229,7 +229,7 @@ suite('Files', function() {
   var loadTable = p5.prototype.loadTable;
 
   suite('p5.prototype.loadTable',function(){
-    var url = 'unit/assets/csv.csv';
+    var url = '../unit/assets/csv.csv';
 
     test('should be a function', function(){
       assert.isFunction(loadTable);

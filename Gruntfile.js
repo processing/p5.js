@@ -95,14 +95,14 @@ module.exports = function(grunt) {
 
     // Modules of p5
     modularise : {
-      // 'p5.Core': ['core'], //out of scope tests coverage; color passes
-      // 'p5.Color': ['core', 'color'], // sufficient
-      // 'p5.Image': ['core', 'image'] // sufficient
-      // 'p5.Typography': ['core', 'typography'] // MAJOR FAIL
-      // 'p5.Util': ['utilities'] // sufficient
-      // 'p5.Math': ['core', 'math'] // sufficient
-      // 'p5.WebGL': ['core', 'webgl'] //breaking
-      // 'p5.Events': ['events'] //no tests available
+      'p5.Core': ['core'], //out of scope tests coverage; color passes
+      'p5.Color': ['core', 'color'], // sufficient
+      // 'p5.Image': ['core', 'image'], // sufficient
+      // 'p5.Typography': ['core', 'typography'], // MAJOR FAIL
+      // 'p5.Util': ['utilities'], // sufficient
+      // 'p5.Math': ['core', 'math'], // sufficient
+      // 'p5.WebGL': ['core', 'webgl'], //breaking
+      // 'p5.Events': ['events'], //no tests available
       // 'p5.IO': ['io'] // MAJOR FAIL
     },
 
@@ -208,7 +208,7 @@ module.exports = function(grunt) {
       yui: {
         options: {
           urls: [
-            'http://localhost:9001/test/test-reference.html'
+            'http://localhost:9001/test/complete-build-tests/test-reference.html'
           ],
           reporter: reporter,
           run: false,
@@ -219,8 +219,8 @@ module.exports = function(grunt) {
       test: {
         options: {
           urls: [
-            'http://localhost:9001/test/test.html',
-            'http://localhost:9001/test/test-minified.html'
+            'http://localhost:9001/test/complete-build-tests/test.html',
+            'http://localhost:9001/test/complete-build-tests/test-minified.html'
           ],
           reporter: reporter,
           run: true,
@@ -232,7 +232,11 @@ module.exports = function(grunt) {
       modules: {
         options: {
           urls: [
-            'http://localhost:9001/test/test-modules.html',
+            'http://localhost:9001/test/modules-tests/test-core.html',
+            'http://localhost:9001/test/modules-tests/test-color.html'
+            // 'http://localhost:9001/test/modules-tests/test-color.html',
+            // 'http://localhost:9001/test/modules-tests/test-color.html',
+            // 'http://localhost:9001/test/modules-tests/test-color.html'
           ],
           reporter: reporter,
           run: true,
@@ -244,7 +248,7 @@ module.exports = function(grunt) {
     },
 
     // This is a standalone task, used to automatically update the bower.json
-    // file to match the values in package.json.   It is (likely) used as part
+    // file to match the values in package.json. It is (likely) used as part
     // of the manual release strategy.
     update_json: {
 
@@ -346,7 +350,7 @@ module.exports = function(grunt) {
     'saucelabs-mocha': {
       all: {
         options: {
-          urls: ['http://127.0.0.1:9001/test/test.html'],
+          urls: ['http://127.0.0.1:9001/test/complete-build-tests/test.html'],
           tunnelTimeout: 5,
           build: process.env.TRAVIS_JOB_ID,
           concurrency: 3,

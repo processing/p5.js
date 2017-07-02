@@ -24,10 +24,17 @@ module.exports = function(grunt) {
     for (var i = module_src.length - 1; i >= 0; i--) {
       var srcDirPath = './src/' + module_src[i];
       var files = fs.readdirSync(srcDirPath);
+      srcFilePath = srcFilePath.concat(getFullPath(files));
+    }
+
+    function getFullPath(files) {
+      var result = [];
       files.map(function(r){
-        if(r.substr(r.length-3,3) === '.js')
-          srcFilePath.push(path.resolve(srcDirPath, r));
+        if(r.substr(r.length-3,3) === '.js') {
+          result.push(path.resolve(srcDirPath, r));
+        }
       });
+      return result;
     }
     console.log(srcFilePath);
     // Target file path
