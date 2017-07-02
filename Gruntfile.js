@@ -61,7 +61,6 @@ function getYuidocOptions() {
       helpers: [],
       preprocessor: './docs/preprocessor.js',
       outdir: 'docs/reference/'
-      //, quiet: false
     }
   };
 
@@ -95,12 +94,12 @@ module.exports = function(grunt) {
 
     // Modules of p5
     modularise : {
-      'p5.Core': ['core'], //out of scope tests coverage; color passes
-      'p5.Color': ['core', 'color'], // sufficient
-      // 'p5.Image': ['core', 'image'], // sufficient
+      'p5.Core': ['core'],
+      'p5.Color': ['core', 'color'],
+      'p5.Image': ['core', 'image'],
+      'p5.Util': ['utilities'],
+      'p5.Math': ['core', 'math']
       // 'p5.Typography': ['core', 'typography'], // MAJOR FAIL
-      // 'p5.Util': ['utilities'], // sufficient
-      // 'p5.Math': ['core', 'math'], // sufficient
       // 'p5.WebGL': ['core', 'webgl'], //breaking
       // 'p5.Events': ['events'], //no tests available
       // 'p5.IO': ['io'] // MAJOR FAIL
@@ -233,10 +232,10 @@ module.exports = function(grunt) {
         options: {
           urls: [
             'http://localhost:9001/test/modules-tests/test-core.html',
-            'http://localhost:9001/test/modules-tests/test-color.html'
-            // 'http://localhost:9001/test/modules-tests/test-color.html',
-            // 'http://localhost:9001/test/modules-tests/test-color.html',
-            // 'http://localhost:9001/test/modules-tests/test-color.html'
+            'http://localhost:9001/test/modules-tests/test-color.html',
+            'http://localhost:9001/test/modules-tests/test-image.html',
+            'http://localhost:9001/test/modules-tests/test-math.html',
+            'http://localhost:9001/test/modules-tests/test-util.html'
           ],
           reporter: reporter,
           run: true,

@@ -19,14 +19,19 @@ module.exports = function(grunt) {
     var bannerTemplate = '/*! p5.' + module_name + '.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */';
     var banner = grunt.template.process(bannerTemplate);
 
-    // Source file path
+    // Populate the source file path array with concerned files' path
     var srcFilePath = [];
     for (var i = module_src.length - 1; i >= 0; i--) {
+      // the base directory of path
       var srcDirPath = './src/' + module_src[i];
+
+      // this returns only the filenames, and not the path, synchronously.
       var files = fs.readdirSync(srcDirPath);
+
       srcFilePath = srcFilePath.concat(getFullPath(files));
     }
 
+    // Function to return an array of absolute paths of files
     function getFullPath(files) {
       var result = [];
       files.map(function(r){
@@ -36,14 +41,14 @@ module.exports = function(grunt) {
       });
       return result;
     }
-    console.log(srcFilePath);
+
+    // console.log(srcFilePath);
     // Target file path
     var libFilePath = path.resolve('lib/modules/' + module_name + '.js');
 
     // Invoke Browserify programatically to bundle the code
     var bundle = browserify(srcFilePath, {
         standalone: 'p5'
-        // debug: true
       })
       .transform('brfs')
       .bundle();
@@ -58,7 +63,7 @@ module.exports = function(grunt) {
       grunt.file.write(libFilePath, derequire(code));
 
       // Print a success message
-      grunt.log.writeln('>>'.green + ' Module ' + libFilePath.cyan + ' created.');
+      grunt.log.writeln('>>'.green + ' Module ' + libFilePath.blue + ' created.');
 
       // Complete the task
       done();

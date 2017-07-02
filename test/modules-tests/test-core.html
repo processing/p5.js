@@ -31,6 +31,11 @@
   <!-- Include anything you want to test -->
   <script src="../../lib/modules/p5.Core.js" type="text/javascript" ></script>
   
+  <!-- To declate that this is a test suite for "core" module -->
+  <script type="text/javascript">  
+    window.IS_CORE_MODULE = true;
+  </script>
+
   <!-- Spec files -->
   <script src="../unit/core/core.js" type="text/javascript" ></script>
   <script src="../unit/core/curves.js" type="text/javascript" ></script>
