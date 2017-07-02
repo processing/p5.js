@@ -256,19 +256,22 @@ p5.RendererGL.prototype._getShader = function(vertId, fragId, isImmediateMode) {
 
 p5.RendererGL.prototype._getCurShaderId = function(){
   //if the shader ID is not yet defined
-  var mId, shaderProgram;
   if(this.drawMode !== 'fill' && this.curShaderId === undefined){
     //default shader: normalMaterial()
-    mId = 'normalVert|normalFrag';
-    shaderProgram = this._initShaders('normalVert', 'normalFrag');
+    var mId = 'normalVert|normalFrag';
+    var shaderProgram = this._initShaders('normalVert', 'normalFrag');
     this.mHash[mId] = shaderProgram;
     this.curShaderId = mId;
   } else if(this.isImmediateDrawing && this.drawMode === 'fill'){
-    mId = 'immediateVert|vertexColorFrag';
-    shaderProgram = this._initShaders('immediateVert', 'vertexColorFrag');
-    this.mHash[mId] = shaderProgram;
-    this.curShaderId = mId;
+    // note that this._getShader will check if the shader already exists
+    // by looking up the shader id (composed of vertexShaderId|fragmentShaderId)
+    // in the material hash. If the material isn't found in the hash, it
+    // creates a new one using this._initShaders--however, we'd like
+    // use the cached version as often as possible, so we defer to this._getShader
+    // here instead of calling this._initShaders directly.
+    this._getShader('immediateVert', 'vertexColorFrag', true);
   }
+
   return this.curShaderId;
 };
 
