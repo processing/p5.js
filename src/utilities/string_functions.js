@@ -138,7 +138,7 @@ p5.prototype.matchAll = function(str, reg) {
  *                                decimal point
  * @param {Number}       [right]  number of digits to the right of the
  *                                decimal point
- * @return {String|Array}         formatted String
+ * @return {String|String[]}         formatted String
  * @example
  * <div>
  * <code>

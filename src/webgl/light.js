@@ -11,14 +11,38 @@ var p5 = require('../core/core');
 
 /**
  * Creates an ambient light with a color
- * @method  ambientLight
- * @param  {Number|Array|String|p5.Color} v1  gray value,
- * red or hue value (depending on the current color mode),
- * or color Array, or CSS color string
- * @param  {Number}            [v2] optional: green or saturation value
- * @param  {Number}            [v3] optional: blue or brightness value
- * @param  {Number}            [a]  optional: opacity
- * @return {p5}                the p5 object
+ * 
+ * @method ambientLight
+ * @param  {Number}        v1      red or hue value relative to
+ *                                 the current color range
+ * @param  {Number}        v2      green or saturation value
+ *                                 relative to the current color range
+ * @param  {Number}        v3      blue or brightness value
+ *                                 relative to the current color range
+ * @param  {Number}        [alpha]
+ * @return {p5}                    the p5 object
+ */
+
+/**
+ * @method ambientLight
+ * @param  {String}        value   a color string
+ * @param  {Number}        [alpha]
+ * @return {p5}                    the p5 object
+ */
+
+/**
+ * @method ambientLight
+ * @param  {Number[]}      values  an array containing the red,green,blue &
+ *                                 and alpha components of the color
+ * @return {p5}                    the p5 object
+ */
+
+/**
+ * @method ambientLight
+ * @param  {p5.Color}      color   the fill color
+ * @param  {Number}        [alpha]
+ * @return {p5}                    the p5 object
+ *
  * @example
  * <div>
  * <code>

@@ -28,7 +28,7 @@ module.exports = {
    * circumference of a circle to its diameter. It is useful in
    * combination with the trigonometric functions sin() and cos().
    *
-   * @property HALF_PI
+   * @property {Number} HALF_PI
    *
    * @example
    * <div><code>
@@ -46,7 +46,7 @@ module.exports = {
    * of a circle to its diameter. It is useful in combination with
    * the trigonometric functions sin() and cos().
    *
-   * @property PI
+   * @property {Number} PI
    *
    * @example
    * <div><code>
@@ -64,7 +64,7 @@ module.exports = {
    * its diameter. It is useful in combination with the trigonometric
    * functions sin() and cos().
    *
-   * @property QUARTER_PI
+   * @property {Number} QUARTER_PI
    *
    * @example
    * <div><code>
@@ -82,7 +82,7 @@ module.exports = {
    * circumference of a circle to its diameter. It is useful in
    * combination with the trigonometric functions sin() and cos().
    *
-   * @property TAU
+   * @property {Number} TAU
    *
    * @example
    * <div><code>
@@ -100,7 +100,7 @@ module.exports = {
    * circumference of a circle to its diameter. It is useful in
    * combination with the trigonometric functions sin() and cos().
    *
-   * @property TWO_PI
+   * @property {Number} TWO_PI
    *
    * @example
    * <div><code>

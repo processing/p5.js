@@ -68,20 +68,17 @@ p5.Vector = function() {
   }
   /**
    * The x component of the vector
-   * @property x
-   * @type {Number}
+   * @property x {Number}
    */
   this.x = x;
   /**
    * The y component of the vector
-   * @property y
-   * @type {Number}
+   * @property y {Number}
    */
   this.y = y;
   /**
    * The z component of the vector
-   * @property z
-   * @type {Number}
+   * @property z {Number}
    */
   this.z = z;
 };
@@ -655,13 +652,20 @@ p5.Vector.prototype.angleBetween = function (v) {
  * Linear interpolate the vector to another vector
  *
  * @method lerp
- * @param  {p5.Vector} x   the x component or the p5.Vector to lerp to
- * @param  {p5.Vector} [y] y the y component
- * @param  {p5.Vector} [z] z the z component
+ * @param  {p5.Vector} x   the x component
+ * @param  {p5.Vector} y   the y component
+ * @param  {p5.Vector} z   the z component
  * @param  {Number}    amt the amount of interpolation; some value between 0.0
  *                         (old vector) and 1.0 (new vector). 0.1 is very near
  *                         the new vector. 0.5 is halfway in between.
  * @return {p5.Vector}     the modified p5.Vector
+ */
+/**
+ * @method lerp
+ * @param  {p5.Vector} v   the p5.Vector to lerp to
+ * @param  {Number}    amt
+ * @return {p5.Vector}     the modified p5.Vector
+ * 
  * @example
  * <div class="norender">
  * <code>

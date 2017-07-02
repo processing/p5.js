@@ -52,7 +52,7 @@ p5._getDecrementPreload = function () {
  * @param  {Function}      [callback] function to be executed after
  *                                    loadFont()
  *                                    completes
- * @return {Object}                   p5.Font object
+ * @return {p5.Font}                  p5.Font object
  * @example
  *
  * <p>Calling loadFont() inside preload() guarantees that the load

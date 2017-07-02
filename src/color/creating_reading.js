@@ -16,7 +16,7 @@ require('./p5.Color');
  * Extracts the alpha value from a color or pixel array.
  *
  * @method alpha
- * @param {Object} obj p5.Color object or pixel array
+ * @param {p5.Color|Number[]} obj p5.Color object or pixel array
  * @example
  * <div>
  * <code>
@@ -62,7 +62,7 @@ p5.prototype.alpha = function(c) {
  * Extracts the blue value from a color or pixel array.
  *
  * @method blue
- * @param {Object} obj p5.Color object or pixel array
+ * @param {p5.Color|Number[]} obj p5.Color object or pixel array
  * @example
  * <div>
  * <code>
@@ -93,7 +93,7 @@ p5.prototype.blue = function(c) {
  * Extracts the HSB brightness value from a color or pixel array.
  *
  * @method brightness
- * @param {Object} color p5.Color object or pixel array
+ * @param {p5.Color|Number[]} color p5.Color object or pixel array
  * @example
  * <div>
  * <code>
@@ -141,7 +141,7 @@ p5.prototype.brightness = function(c) {
  *                                 and black.
  * @param  {Number}        [alpha] alpha value relative to current color range
  *                                 (default is 0-255)
- * @return {Array}                 resulting color
+ * @return {p5.Color}              resulting color
  *
  * @example
  * <div>
@@ -280,13 +280,28 @@ p5.prototype.brightness = function(c) {
 
 /**
  * @method color
- * @param  {Number|String} v1      red or hue value relative to
- *                                 the current color range, or a color string
+ * @param  {Number}        v1      red or hue value relative to
+ *                                 the current color range
  * @param  {Number}        v2      green or saturation value
  *                                 relative to the current color range
  * @param  {Number}        v3      blue or brightness value
  *                                 relative to the current color range
  * @param  {Number}        [alpha]
+ * @return {p5.Color}
+ */
+
+/**
+ * @method color
+ * @param  {String}        value   a color string
+ * @param  {Number}        [alpha]
+ * @return {p5.Color}
+ */
+
+/**
+ * @method color
+ * @param  {Number[]}      values  an array containing the red,green,blue &
+ *                                 and alpha components of the color
+ * @return {p5.Color}
  */
 
 p5.prototype.color = function() {
@@ -311,7 +326,7 @@ p5.prototype.color = function() {
  * Extracts the green value from a color or pixel array.
  *
  * @method green
- * @param {Object} color p5.Color object or pixel array
+ * @param {p5.Color|Number[]} color p5.Color object or pixel array
  * @example
  * <div>
  * <code>
@@ -349,7 +364,7 @@ p5.prototype.green = function(c) {
  * maximum hue setting for each system is different.)
  *
  * @method hue
- * @param {Object} color p5.Color object or pixel array
+ * @param {p5.Color|Number[]} color p5.Color object or pixel array
  * @example
  * <div>
  * <code>
@@ -389,10 +404,10 @@ p5.prototype.hue = function(c) {
  * The way that colours are interpolated depends on the current color mode.
  *
  * @method lerpColor
- * @param  {Array|Number} c1  interpolate from this color
- * @param  {Array|Number} c2  interpolate to this color
+ * @param  {p5.Color} c1  interpolate from this color
+ * @param  {p5.Color} c2  interpolate to this color
  * @param  {Number}       amt number between 0 and 1
- * @return {Array|Number}     interpolated color
+ * @return {p5.Color}     interpolated color
  * @example
  * <div>
  * <code>
@@ -469,7 +484,7 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  * Extracts the HSL lightness value from a color or pixel array.
  *
  * @method lightness
- * @param {Object} color p5.Color object or pixel array
+ * @param {p5.Color|Number[]} color p5.Color object or pixel array
  * @example
  * <div>
  * <code>
@@ -500,7 +515,7 @@ p5.prototype.lightness = function(c) {
  * Extracts the red value from a color or pixel array.
  *
  * @method red
- * @param {Object} obj p5.Color object or pixel array
+ * @param {p5.Color|Number[]} obj p5.Color object or pixel array
  * @example
  * <div>
  * <code>
@@ -546,7 +561,7 @@ p5.prototype.red = function(c) {
  * HSL saturation otherwise.
  *
  * @method saturation
- * @param {Object} color p5.Color object or pixel array
+ * @param {p5.Color|Number[]} color p5.Color object or pixel array
  * @example
  * <div>
  * <code>

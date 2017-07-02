@@ -34,7 +34,7 @@ var curveDetail = 20;
  * @param  {Number} y3 y-coordinate for the second control point
  * @param  {Number} x4 x-coordinate for the second anchor point
  * @param  {Number} y4 y-coordinate for the second anchor point
- * @return {Object}    the p5 object
+ * @return {p5}        the p5 object
  * @example
  * <div>
  * <code>
@@ -101,7 +101,7 @@ p5.prototype.bezier = function() {
  * The default value is 20.
  *
  * @param {Number} detail resolution of the curves
- * @return {Object} the p5 object
+ * @return {p5} the p5 Object
  * @example
  * <div>
  * <code>
@@ -259,7 +259,7 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * @param  {Number} y3 y-coordinate for the second point
  * @param  {Number} x4 x-coordinate for the ending control point
  * @param  {Number} y4 y-coordinate for the ending control point
- * @return {Object}    the p5 object
+ * @return {p5}        the p5 object
  * @example
  * <div>
  * <code>
@@ -298,7 +298,7 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * @param  {Number} z2 z-coordinate for the first point
  * @param  {Number} z3 z-coordinate for the second point
  * @param  {Number} z4 z-coordinate for the ending control point
- * @return {Object}    the p5 object
+ * @return {p5}        the p5 object
  * @example
  * <div>
  * <code>
@@ -341,7 +341,7 @@ p5.prototype.curve = function() {
  * The default value is 20.
  *
  * @param {Number} resolution of the curves
- * @return {Object} the p5 object
+ * @return {p5} the p5 Object
  * @example
  * <div>
  * <code>
@@ -371,7 +371,7 @@ p5.prototype.curveDetail = function(d) {
  *
  * @method curveTightness
  * @param {Number} amount of deformation from the original vertices
- * @return {Object} the p5 object
+ * @return {p5} the p5 Object
  * @example
  * <div>
  * <code>

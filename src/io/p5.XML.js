@@ -364,7 +364,7 @@ p5.XML.prototype.getChild = function(param) {
  * A reference to the newly created child is returned as an p5.XML object.
  *
  * @method addChild
- * @param {Object} a p5.XML Object which will be the child to be added
+ * @param {p5.XML} a p5.XML Object which will be the child to be added
  */
 p5.XML.prototype.addChild = function(node) {
   if (node instanceof p5.XML) {

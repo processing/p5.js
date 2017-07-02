@@ -107,10 +107,16 @@ p5.prototype.createImage = function(width, height) {
  *  file immediately, or prompt the user with a dialogue window.
  *
  *  @method saveCanvas
- *  @param  {Canvas} [selectedCanvas] a variable representing a
- *                             specific html5 canvas (optional)
+ *  @param  {p5.Element|HTMLCanvasElement} selectedCanvas   a variable representing a
+ *                                       specific html5 canvas (optional)
  *  @param  {String} [filename]
- *  @param  {String} [extension] 'jpg' or 'png'
+ *  @param  {String} [extension]      'jpg' or 'png'
+*/
+/**
+ *  @method saveCanvas
+ *  @param  {String} [filename]
+ *  @param  {String} [extension]
+ * 
  *  @example
  *  <div class='norender'><code>
  *  function setup() {
