@@ -39,7 +39,7 @@ var p5 = require('../core/core');
 
 /**
  * @method ambientLight
- * @param  {p5.Color}      color   the fill color
+ * @param  {p5.Color}      color   the ambient light color
  * @param  {Number}        [alpha]
  * @return {p5}                    the p5 object
  *

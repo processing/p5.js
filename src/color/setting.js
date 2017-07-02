@@ -550,7 +550,7 @@ p5.prototype.noStroke = function() {
 
 /**
  * @method stroke
- * @param  {p5.Color}      color   the fill color
+ * @param  {p5.Color}      color   the stroke color
  * @param  {Number}        [alpha]
  * @return {p5}
  *

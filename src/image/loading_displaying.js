@@ -282,7 +282,7 @@ p5.prototype.image =
 
 /**
  * @method tint
- * @param  {p5.Color}      color   the fill color
+ * @param  {p5.Color}      color   the tint color
  * @param  {Number}        [alpha]
  *
  * @example
