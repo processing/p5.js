@@ -59,34 +59,7 @@ require('./webgl/shader');
 require('./webgl/camera');
 require('./webgl/interaction');
 
-/**
- * _globalInit
- *
- * TODO: ???
- * if sketch is on window
- * assume "global" mode
- * and instantiate p5 automatically
- * otherwise do nothing
- *
- * @return {Undefined}
- */
-var _globalInit = function() {
-  if (!window.PHANTOMJS && !window.mocha) {
-    // If there is a setup or draw function on the window
-    // then instantiate p5 in "global" mode
-    if(((window.setup && typeof window.setup === 'function') ||
-       (window.draw && typeof window.draw === 'function')) &&
-       !p5.instance) {
-      new p5();
-    }
-  }
-};
+require('./core/init.js');
 
-// TODO: ???
-if (document.readyState === 'complete') {
-  _globalInit();
-} else {
-  window.addEventListener('load', _globalInit , false);
-}
 
 module.exports = p5;
