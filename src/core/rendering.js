@@ -30,7 +30,7 @@ var defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
  * @param  {Number} w width of the canvas
  * @param  {Number} h height of the canvas
  * @param  {Constant} [renderer] P2D or WEBGL
- * @return {Object} canvas generated
+ * @return {HTMLCanvasElement} canvas generated
  * @example
  * <div>
  * <code>
@@ -199,7 +199,7 @@ p5.prototype.noCanvas = function() {
  * @param  {Number} h height of the offscreen graphics buffer
  * @param  {Constant} [renderer] P2D or WEBGL
  * undefined defaults to p2d
- * @return {Object} offscreen graphics buffer
+ * @return {p5.Graphics} offscreen graphics buffer
  * @example
  * <div>
  * <code>

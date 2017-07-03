@@ -206,17 +206,26 @@ p5.prototype.clear = function() {
  * Note: existing color objects remember the mode that they were created in,
  * so you can change modes as you like without affecting their appearance.
  *
+ *
  * @method colorMode
  * @param {Constant} mode   either RGB or HSB, corresponding to
  *                          Red/Green/Blue and Hue/Saturation/Brightness
  *                          (or Lightness)
- * @param {Number} [max1] range for the red or hue depending on the
- *                              current color mode, or range for all values
- * @param {Number} [max2] range for the green or saturation depending
+ * @param {Number}  [max]  range for all values
+ * @return {p5} the p5 Object
+ */
+/**
+ * @method colorMode
+ * @param {Constant} mode
+ * @param {Number} max1     range for the red or hue depending on the
+ *                              current color mode
+ * @param {Number} max2     range for the green or saturation depending
  *                              on the current color mode
- * @param {Number} [max3] range for the blue or brightness/lighntess
+ * @param {Number} max3     range for the blue or brightness/lighntess
  *                              depending on the current color mode
- * @param {Number} [maxA] range for the alpha
+ * @param {Number} [maxA]   range for the alpha
+ * @return {p5} the p5 Object
+ *
  * @example
  * <div>
  * <code>
@@ -317,17 +326,36 @@ p5.prototype.colorMode = function() {
  * provided to set the fill color.
  *
  * @method fill
- * @param {Number|Array|String|p5.Color} v1   gray value, red or hue value
- *                                            (depending on the current color
- *                                            mode), or color Array, or CSS
- *                                            color string
- * @param {Number}                       [v2] green or saturation value
- *                                            (depending on the current
- *                                            color mode)
- * @param {Number}                       [v3] blue or brightness value
- *                                            (depending on the current
- *                                            color mode)
- * @param {Number}                       [a]  opacity of the background
+ * @param  {Number}        v1      red or hue value relative to
+ *                                 the current color range
+ * @param  {Number}        v2      green or saturation value
+ *                                 relative to the current color range
+ * @param  {Number}        v3      blue or brightness value
+ *                                 relative to the current color range
+ * @param  {Number}        [alpha]
+ * @return {p5}
+ */
+
+/**
+ * @method fill
+ * @param  {String}        value   a color string
+ * @param  {Number}        [alpha]
+ * @return {p5}
+ */
+
+/**
+ * @method fill
+ * @param  {Number[]}      values  an array containing the red,green,blue &
+ *                                 and alpha components of the color
+ * @return {p5}
+ */
+
+/**
+ * @method fill
+ * @param  {p5.Color}      color   the fill color
+ * @param  {Number}        [alpha]
+ * @return {p5}
+ *
  *
  * @example
  * <div>
@@ -494,18 +522,37 @@ p5.prototype.noStroke = function() {
  * strings and all named color strings are supported. A p5 Color object
  * can also be provided to set the stroke color.
  *
+ *
  * @method stroke
- * @param {Number|Array|String|p5.Color} v1   gray value, red or hue value
- *                                            (depending on the current color
- *                                            mode), or color Array, or CSS
- *                                            color string
- * @param {Number}                       [v2] green or saturation value
- *                                            (depending on the current
- *                                            color mode)
- * @param {Number}                       [v3] blue or brightness value
- *                                            (depending on the current
- *                                            color mode)
- * @param {Number}                       [a]  opacity of the background
+ * @param  {Number}        v1      red or hue value relative to
+ *                                 the current color range
+ * @param  {Number}        v2      green or saturation value
+ *                                 relative to the current color range
+ * @param  {Number}        v3      blue or brightness value
+ *                                 relative to the current color range
+ * @param  {Number}        [alpha]
+ * @return {p5}
+ */
+
+/**
+ * @method stroke
+ * @param  {String}        value   a color string
+ * @param  {Number}        [alpha]
+ * @return {p5}
+ */
+
+/**
+ * @method stroke
+ * @param  {Number[]}      values  an array containing the red,green,blue &
+ *                                 and alpha components of the color
+ * @return {p5}
+ */
+
+/**
+ * @method stroke
+ * @param  {p5.Color}      color   the stroke color
+ * @param  {Number}        [alpha]
+ * @return {p5}
  *
  * @example
  * <div>
