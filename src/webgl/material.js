@@ -269,10 +269,10 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   return this;
 };
 
-p5.prototype.noFillGL = function() {
-  var gl = this._renderer.GL;
+p5.RendererGL.prototype.noFill = function() {
+  var gl = this.GL;
   var shaderProgram =
-    this._renderer._getShader('wireframeVert', 'wireframeFrag');
+    this._getShader('wireframeVert', 'wireframeFrag');
 
   gl.useProgram(shaderProgram);
 
