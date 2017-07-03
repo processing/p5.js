@@ -46,6 +46,8 @@ require('./core/transform');
 require('./typography/attributes');
 require('./typography/loading_displaying');
 
+require('./data/p5.TypedDict');
+
 require('./webgl/p5.RendererGL');
 require('./webgl/p5.Geometry');
 require('./webgl/p5.RendererGL.Retained');
