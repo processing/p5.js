@@ -39,7 +39,7 @@ require('../core/error_helpers');
  *                     see rectMode() for more info
  * @param {Number} y2  by default, the height of the text box,
  *                     see rectMode() for more info
- * @return {Object} this
+ * @return {p5} this
  * @example
  * <div>
  * <code>

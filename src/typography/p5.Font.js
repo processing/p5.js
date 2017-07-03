@@ -22,7 +22,7 @@ var constants = require('../core/constants');
  * Base class for font handling
  * @class p5.Font
  * @constructor
- * @param {Object} [pInst] pointer to p5 instance
+ * @param {p5} [pInst] pointer to p5 instance
  */
 p5.Font = function(p) {
 
@@ -330,7 +330,7 @@ p5.Font.prototype._getSVG = function(line, x, y, options) {
  * @param  {Number} y        y-position
  * @param  {Object} options opentype options (optional)
  *
- * @return {Object}     this p5.Font object
+ * @return {p5.Font}     this p5.Font object
  */
 p5.Font.prototype._renderPath = function(line, x, y, options) {
 
