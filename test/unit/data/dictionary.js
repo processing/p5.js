@@ -40,8 +40,8 @@ suite('Dictionary Objects', function() {
   });
 
   test('stringDict should add new key-value pairs and search', function() {
-    stringDict.create('fun', 'sun');
-    assert.deepEqual(stringDict.get('fun'), 'sun');
+    stringDict.create('fun', 'coding');
+    assert.deepEqual(stringDict.get('fun'), 'coding');
   });
 
   test('stringDict should add objects', function() {

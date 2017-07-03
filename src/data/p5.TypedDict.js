@@ -47,7 +47,8 @@ p5.prototype.createNumberDict = function() {
 
 /**
  *
- * Base class for all Dictionary types
+ * Base class for all p5.Dictionary types. More specifically
+ * typed Dictionary objects inherit from this
  *
  */
 
@@ -183,7 +184,6 @@ p5.TypedDict.prototype._addObj = function(obj) {
   }
 };
 
-
 /**
  * Removes a key-value pair in the Dictionary
  *
@@ -262,7 +262,6 @@ p5.TypedDict.prototype.remove = function(key) {
     throw key + ' does not exist in this Dictionary';
   }
 };
-
 
 /**
  * Logs the list of items currently in the Dictionary to the console
@@ -588,8 +587,5 @@ p5.NumberDict.prototype.minKey = function() {
 p5.NumberDict.prototype.maxKey = function() {
   return this._keyTest(-1);
 };
-
-
-
 
 module.exports = p5.TypedDict;
