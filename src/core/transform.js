@@ -11,6 +11,7 @@
 
 var p5 = require('./core');
 var constants = require('./constants');
+require('../math/p5.Vector');
 
 /**
  * Multiplies the current matrix by the one specified through the parameters.
