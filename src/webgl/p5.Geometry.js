@@ -6,6 +6,7 @@ var p5 = require('../core/core');
 
 /**
  * p5 Geometry class
+ * @class p5.Geometry
  * @constructor
  * @param  {Function | Object} vertData callback function or Object
  *                     containing routine(s) for vertex data generation

@@ -51,10 +51,16 @@ p5.prototype.append = function(array, value) {
  *
  * @method arrayCopy
  * @param {Array}  src           the source Array
- * @param {Number} [srcPosition] starting position in the source Array
+ * @param {Number} srcPosition   starting position in the source Array
  * @param {Array}  dst           the destination Array
- * @param {Number} [dstPosition] starting position in the destination Array
- * @param {Number} [length]      number of Array elements to be copied
+ * @param {Number} dstPosition   starting position in the destination Array
+ * @param {Number} length        number of Array elements to be copied
+ */
+/**
+ * @method arrayCopy
+ * @param {Array}  src
+ * @param {Array}  dst
+ * @param {Number} [length]
  *
  * @example
  *  <div class="norender"><code>

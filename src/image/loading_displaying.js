@@ -257,14 +257,34 @@ p5.prototype.image =
  * maximum value as specified by colorMode(). The default maximum value is
  * 255.
  *
+ *
  * @method tint
- * @param {Number|Array} v1   gray value, red or hue value (depending on the
- *                            current color mode), or color Array
- * @param {Number|Array} [v2] green or saturation value (depending on the
- *                            current color mode)
- * @param {Number|Array} [v3] blue or brightness value (depending on the
- *                            current color mode)
- * @param {Number|Array} [a]  opacity of the background
+ * @param  {Number}        v1      red or hue value relative to
+ *                                 the current color range
+ * @param  {Number}        v2      green or saturation value
+ *                                 relative to the current color range
+ * @param  {Number}        v3      blue or brightness value
+ *                                 relative to the current color range
+ * @param  {Number}        [alpha]
+ */
+
+/**
+ * @method tint
+ * @param  {String}        value   a color string
+ * @param  {Number}        [alpha]
+ */
+
+/**
+ * @method tint
+ * @param  {Number[]}      values  an array containing the red,green,blue &
+ *                                 and alpha components of the color
+ */
+
+/**
+ * @method tint
+ * @param  {p5.Color}      color   the tint color
+ * @param  {Number}        [alpha]
+ *
  * @example
  * <div>
  * <code>

@@ -3,7 +3,7 @@
  * @submodule 3D Models
  * @for p5
  * @requires core
- * @requires p5.Geometry3D
+ * @requires p5.Geometry
  */
 
 'use strict';
@@ -22,15 +22,22 @@ require('./p5.Geometry');
  * the final size of your model with the scale() function.
  *
  * @method loadModel
- * @param  {String} path Path of the model to be loaded
- * @param  {Boolean} [normalize] If true, scale the model to a
- *                                standardized size when loading
- * @param  {Function(p5.Geometry3D)} [successCallback] Function to be called
- *                                   once the model is loaded. Will be passed
- *                                   the 3D model object.
- * @param  {Function(Event)}    [failureCallback] called with event error if
- *                                the image fails to load.
- * @return {p5.Geometry} the p5.Geometry3D object
+ * @param  {String} path              Path of the model to be loaded
+ * @param  {Boolean} normalize        If true, scale the model to a
+ *                                      standardized size when loading
+ * @param  {Function(p5.Geometry)} [successCallback] Function to be called
+ *                                     once the model is loaded. Will be passed
+ *                                     the 3D model object.
+ * @param  {Function(Event)} [failureCallback] called with event error if
+ *                                         the image fails to load.
+ * @return {p5.Geometry} the p5.Geometry object
+ */
+/**
+ * @method loadModel
+ * @param  {String} path
+ * @param  {Function(p5.Geometry)} [successCallback]
+ * @param  {Function(Event)} [failureCallback]
+ * @return {p5.Geometry} the p5.Geometry object
  * @example
  * <div>
  * <code>
