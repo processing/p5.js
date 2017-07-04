@@ -10,6 +10,7 @@ function draw() {
   background(100);
 
   push();
+  stroke(0,200,0);
   noFill();
   translate(-150, -100, 0);
   rotateZ(frameCount * 0.01);

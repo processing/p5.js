@@ -178,4 +178,32 @@ p5.Geometry.prototype.normalize = function() {
   return this;
 };
 
+p5.Geometry.prototype._createBaryCoords = function() {
+  var baryGen = {
+    state: 0,
+    next: function() {
+      switch (this.state) {
+        case 0:
+          this.state++;
+          return [1,0,0];
+        case 1:
+          this.state++;
+          return [0,1,0];
+        case 2:
+          this.state = 0;
+          return [0,0,1];
+        default:
+          break;
+      }
+    }
+  };
+  this.barycentric = this.vertices.map(
+    function(){
+      return baryGen.next();
+    }
+  );
+
+  return this;
+};
+
 module.exports = p5.Geometry;

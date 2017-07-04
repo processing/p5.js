@@ -157,6 +157,7 @@ p5.prototype.box = function(){
     };
     var boxGeom = new p5.Geometry(detailX,detailY, _box);
     boxGeom.computeNormals();
+    boxGeom._createBaryCoords();
     //initialize our geometry buffer with
     //the key val pair:
     //geometry Id, Geom object

@@ -101,7 +101,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
   gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].barycentricBuffer);
   gl.bufferData(
     gl.ARRAY_BUFFER,
-    new Float32Array( vToNArray(obj.barycentric) ),
+    new Float32Array( flatten(obj.barycentric) ),
     gl.STATIC_DRAW);
 };
 

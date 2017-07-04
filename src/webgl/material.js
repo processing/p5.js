@@ -269,15 +269,6 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   return this;
 };
 
-p5.RendererGL.prototype.noFill = function() {
-  var gl = this.GL;
-  var shaderProgram =
-    this._getShader('wireframeVert', 'wireframeFrag');
-
-  gl.useProgram(shaderProgram);
-
-  return this;
-};
 
 /**
  * Specular material for geometry with a given color. You can view all
