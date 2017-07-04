@@ -14,7 +14,7 @@ function draw(){
 
   for(var i = -2; i < 3; i++){
     for(var j = -2; j < 3; j++){
-      basicMaterial( (i+2) * 40, (j+2) * 40, 0);
+      normalMaterial( (i+2) * 40, (j+2) * 40, 0);
       push();
       translate(i*gap, j*gap,0);
       plane();

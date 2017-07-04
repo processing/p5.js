@@ -39,7 +39,8 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
   //initialize the gl buffers for our geom groups
   this._initBufferDefaults(gId);
   //return the current shaderProgram from our material hash
-  var shaderProgram = this.mHash[this._getCurShaderId()];
+  var mId = this._getCurShaderId();
+  var shaderProgram = this.mHash[mId];
   //@todo rename "numberOfItems" property to something more descriptive
   //we mult the num geom faces by 3
   this.gHash[gId].numberOfItems = obj.faces.length * 3;
@@ -57,52 +58,60 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
     shaderProgram.vertexPositionAttribute,
     3, gl.FLOAT, false, 0, 0);
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
-  gl.bufferData(
-    gl.ARRAY_BUFFER,
-    new Float32Array( vToNArray(obj.vertexNormals) ),
-    gl.STATIC_DRAW);
-  //vertex normal
-  shaderProgram.vertexNormalAttribute =
-    gl.getAttribLocation(shaderProgram, 'aNormal');
-  gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
-
-  gl.vertexAttribPointer(
-    shaderProgram.vertexNormalAttribute,
-    3, gl.FLOAT, false, 0, 0);
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
-  gl.bufferData(
-    gl.ARRAY_BUFFER,
-    new Float32Array( flatten(obj.uvs) ),
-    gl.STATIC_DRAW);
-  //texture coordinate Attribute
-  shaderProgram.textureCoordAttribute =
-    gl.getAttribLocation(shaderProgram, 'aTexCoord');
-  gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
-  gl.vertexAttribPointer(
-    shaderProgram.textureCoordAttribute,
-    2, gl.FLOAT, false, 0, 0);
-
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
   gl.bufferData(
     gl.ELEMENT_ARRAY_BUFFER,
     new Uint16Array( flatten(obj.faces) ),
     gl.STATIC_DRAW);
 
-  //barycentric cooordinate Attribute
-  shaderProgram.barycentricCoordAttribute =
-    gl.getAttribLocation(shaderProgram, 'aBarycentric');
-  gl.enableVertexAttribArray(shaderProgram.barycentricCoordAttribute);
-  gl.vertexAttribPointer(
-    shaderProgram.barycentricCoordAttribute,
-    3, gl.FLOAT, false, 0, 0);
+  switch (mId) {
+    case 'normalVert|normalFrag':
+    case 'lightVert|lightTextureFrag':
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array( vToNArray(obj.vertexNormals) ),
+        gl.STATIC_DRAW);
+      //vertex normal
+      shaderProgram.vertexNormalAttribute =
+        gl.getAttribLocation(shaderProgram, 'aNormal');
+      gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].barycentricBuffer);
-  gl.bufferData(
-    gl.ARRAY_BUFFER,
-    new Float32Array( flatten(obj.barycentric) ),
-    gl.STATIC_DRAW);
+      gl.vertexAttribPointer(
+        shaderProgram.vertexNormalAttribute,
+        3, gl.FLOAT, false, 0, 0);
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array( flatten(obj.uvs) ),
+        gl.STATIC_DRAW);
+      //texture coordinate Attribute
+      shaderProgram.textureCoordAttribute =
+        gl.getAttribLocation(shaderProgram, 'aTexCoord');
+      gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
+      gl.vertexAttribPointer(
+        shaderProgram.textureCoordAttribute,
+        2, gl.FLOAT, false, 0, 0);
+      break;
+    case 'wireframeVert|wireframeFrag':
+      //barycentric cooordinate Attribute
+      shaderProgram.barycentricCoordAttribute =
+        gl.getAttribLocation(shaderProgram, 'aBarycentric');
+      gl.enableVertexAttribArray(shaderProgram.barycentricCoordAttribute);
+      gl.vertexAttribPointer(
+        shaderProgram.barycentricCoordAttribute,
+        3, gl.FLOAT, false, 0, 0);
+
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].barycentricBuffer);
+      gl.bufferData(
+        gl.ARRAY_BUFFER,
+        new Float32Array( flatten(obj.barycentric) ),
+        gl.STATIC_DRAW);
+      break;
+    default:
+      break;
+  }
 };
 
 /**
@@ -113,31 +122,40 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
 p5.RendererGL.prototype.drawBuffers = function(gId) {
   this._setDefaultCamera();
   var gl = this.GL;
-  var shaderKey = this._getCurShaderId();
-  var shaderProgram = this.mHash[shaderKey];
+  var mId = this._getCurShaderId();
+  var shaderProgram = this.mHash[mId];
   //vertex position buffer
   gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
   gl.vertexAttribPointer(
     shaderProgram.vertexPositionAttribute,
     3, gl.FLOAT, false, 0, 0);
-  //normal buffer
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
-  gl.vertexAttribPointer(
-    shaderProgram.vertexNormalAttribute,
-    3, gl.FLOAT, false, 0, 0);
-  // uv buffer
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
-  gl.vertexAttribPointer(
-    shaderProgram.textureCoordAttribute,
-    2, gl.FLOAT, false, 0, 0);
   //vertex index buffer
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
-  this._setMatrixUniforms(shaderKey);
-  //barycentric buffer
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].barycentricBuffer);
-  gl.vertexAttribPointer(
-    shaderProgram.barycentricCoordAttribute,
-    3, gl.FLOAT, false, 0, 0);
+  this._setMatrixUniforms(mId);
+  switch (mId) {
+    case 'normalVert|normalFrag':
+    case 'lightVert|lightTextureFrag':
+      //normal buffer
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
+      gl.vertexAttribPointer(
+        shaderProgram.vertexNormalAttribute,
+        3, gl.FLOAT, false, 0, 0);
+      // uv buffer
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
+      gl.vertexAttribPointer(
+        shaderProgram.textureCoordAttribute,
+        2, gl.FLOAT, false, 0, 0);
+      break;
+    case 'wireframeVert|wireframeFrag':
+      //barycentric buffer
+      gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].barycentricBuffer);
+      gl.vertexAttribPointer(
+        shaderProgram.barycentricCoordAttribute,
+        3, gl.FLOAT, false, 0, 0);
+      break;
+    default:
+      break;
+  }
   gl.drawElements(
     gl.TRIANGLES, this.gHash[gId].numberOfItems,
     gl.UNSIGNED_SHORT, 0);
