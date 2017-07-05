@@ -101,6 +101,44 @@ suite('p5.Color', function() {
     });
   });
 
+  suite('p5.prototype.color("#rrggbb", alpha)', function() {
+    setup(function() {
+      c = myp5.color('#0102ff', 200);
+    });
+
+    test('should create instance of p5.Color', function() {
+      assert.instanceOf(c, p5.Color);
+    });
+
+    test('should correctly set RGBA property', function() {
+      assert.deepEqual(c.levels, [1, 2, 255, 200]);
+    });
+
+    suite('spot check', function() {
+      test('numeric hex values', function() {
+        c = myp5.color('#123456', 200);
+        assert.deepEqual(c.levels, [18, 52, 86, 200]);
+      });
+
+      test('alphabetic hex values', function() {
+        c = myp5.color('#abcdef', 200);
+        assert.deepEqual(c.levels, [171, 205, 239, 200]);
+      });
+
+      test('alphanumeric hex values', function() {
+        c = myp5.color('#a1a1a1', 200);
+        assert.deepEqual(c.levels, [161, 161, 161, 200]);
+        c = myp5.color('#14ffa8', 200);
+        assert.deepEqual(c.levels, [20, 255, 168, 200]);
+      });
+    });
+
+    test('invalid hex values resolve to white', function() {
+      c = myp5.color('#zzztop', 200);
+      assert.deepEqual(c.levels, [255, 255, 255, 255]);
+    });
+  });
+
   suite('p5.prototype.color("rgb(r,g,b)")', function() {
     setup(function() {
       c = myp5.color('rgb(255,0,102)');
