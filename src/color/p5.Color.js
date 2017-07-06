@@ -299,8 +299,14 @@ var colorPatterns = {
   // Match colors in format #XXX, e.g. #416.
   HEX3: /^#([a-f0-9])([a-f0-9])([a-f0-9])$/i,
 
+  // Match colors in format #XXXX, e.g. #5123.
+  HEX4: /^#([a-f0-9])([a-f0-9])([a-f0-9])([a-f0-9])$/i,
+
   // Match colors in format #XXXXXX, e.g. #b4d455.
   HEX6: /^#([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})$/i,
+
+  // Match colors in format #XXXXXXXX, e.g. #b4d45535.
+  HEX8: /^#([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})([a-f0-9]{2})$/i,
 
   // Match colors in format rgb(R, G, B), e.g. rgb(255, 0, 128).
   RGB: new RegExp([
@@ -481,6 +487,16 @@ p5.Color._parseInputs = function() {
         return parseInt(color, 16) / 255;
       });
       results[3] = 1;
+      return results;
+    } else if (colorPatterns.HEX4.test(str)) {  // #rgba
+      results = colorPatterns.HEX4.exec(str).slice(1).map(function(color) {
+        return parseInt(color + color, 16) / 255;
+      });
+      return results;
+    } else if (colorPatterns.HEX8.test(str)) {  // #rrggbbaa
+      results = colorPatterns.HEX8.exec(str).slice(1).map(function(color) {
+        return parseInt(color, 16) / 255;
+      });
       return results;
     } else if (colorPatterns.RGB.test(str)) {  // rgb(R,G,B)
       results = colorPatterns.RGB.exec(str).slice(1).map(function(color) {
