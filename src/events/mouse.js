@@ -26,7 +26,7 @@ p5.prototype._hasMouseInteracted = false;
  * used instead of mouse input, mouseX will hold the x value of the most
  * recent touch point.
  *
- * @property mouseX
+ * @property {Number} mouseX
  *
  * @example
  * <div>
@@ -51,7 +51,7 @@ p5.prototype.mouseX = 0;
  * used instead of mouse input, mouseY will hold the y value of the most
  * recent touch point.
  *
- * @property mouseY
+ * @property {Number} mouseY
  *
  * @example
  * <div>
@@ -75,7 +75,7 @@ p5.prototype.mouseY = 0;
  * the mouse or finger in the frame previous to the current frame, relative to
  * (0, 0) of the canvas.
  *
- * @property pmouseX
+ * @property {Number} pmouseX
  *
  * @example
  * <div>
@@ -106,7 +106,7 @@ p5.prototype.pmouseX = 0;
  * mouse or finger in the frame previous to the current frame, relative to
  * (0, 0) of the canvas.
  *
- * @property pmouseY
+ * @property {Number} pmouseY
  *
  * @example
  * <div>
@@ -134,7 +134,7 @@ p5.prototype.pmouseY = 0;
  * The system variable winMouseX always contains the current horizontal
  * position of the mouse, relative to (0, 0) of the window.
  *
- * @property winMouseX
+ * @property {Number} winMouseX
  *
  * @example
  * <div>
@@ -171,7 +171,7 @@ p5.prototype.winMouseX = 0;
  * The system variable winMouseY always contains the current vertical
  * position of the mouse, relative to (0, 0) of the window.
  *
- * @property winMouseY
+ * @property {Number} winMouseY
  *
  * @example
  * <div>
@@ -209,7 +209,7 @@ p5.prototype.winMouseY = 0;
  * of the mouse in the frame previous to the current frame, relative to
  * (0, 0) of the window.
  *
- * @property pwinMouseX
+ * @property {Number} pwinMouseX
  *
  * @example
  * <div>
@@ -250,7 +250,7 @@ p5.prototype.pwinMouseX = 0;
  * the mouse in the frame previous to the current frame, relative to (0, 0)
  * of the window.
  *
- * @property pwinMouseY
+ * @property {Number} pwinMouseY
  *
  *
  * @example
@@ -293,7 +293,7 @@ p5.prototype.pwinMouseY = 0;
  * LEFT, RIGHT, or CENTER depending on which button was pressed last.
  * Warning: different browsers may track mouseButton differently.
  *
- * @property mouseButton
+ * @property {Constant} mouseButton
  *
  * @example
 	* <div>
@@ -326,7 +326,7 @@ p5.prototype.mouseButton = 0;
  * The boolean system variable mouseIsPressed is true if the mouse is pressed
  * and false if not.
  *
- * @property mouseIsPressed
+ * @property {Boolean} mouseIsPressed
  *
  * @example
 	* <div>

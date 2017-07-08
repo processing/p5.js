@@ -40,12 +40,11 @@ var Filters = require('./filters');
  * @constructor
  * @param {Number} width
  * @param {Number} height
- * @param {Object} pInst An instance of a p5 sketch.
  */
 p5.Image = function(width, height){
   /**
    * Image width.
-   * @property width
+   * @property {Number} width
    * @example
    * <div><code>
    * var img;
@@ -71,7 +70,7 @@ p5.Image = function(width, height){
   this.width = width;
   /**
    * Image height.
-   * @property height
+   * @property {Number} height
    * @example
    * <div><code>
    * var img;

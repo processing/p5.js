@@ -45,14 +45,12 @@ var p5 = require('../core/core');
  */
 p5.Table = function (rows) {
   /**
-   *  @property columns
-   *  @type {Array}
+   *  @property columns {Array}
    */
   this.columns = [];
 
   /**
-   *  @property rows
-   *  @type {Array}
+   *  @property rows {Array}
    */
   this.rows = [];
 };

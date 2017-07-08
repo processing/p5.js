@@ -33,7 +33,7 @@ require('./error_helpers');
  * @param  {Number} stop   angle to stop the arc, specified in radians
  * @param  {Constant} [mode] optional parameter to determine the way of drawing
  *                         the arc
- * @return {Object}        the p5 object
+ * @return {p5}            the p5 object
  * @example
  * <div>
  * <code>
@@ -151,14 +151,6 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
  * @alt
  *white ellipse with black outline in middle-right of canvas that is 55x55.
  *
- */
-/**
- * @method ellipse
- * @param {Number} x
- * @param {Number} y
- * @param {Number} w
- * @param {Number} [h]
- * @return {p5}
  */
 p5.prototype.ellipse = function() {
   var args = new Array(arguments.length);

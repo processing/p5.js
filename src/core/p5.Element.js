@@ -19,7 +19,7 @@ var p5 = require('./core');
  * @class p5.Element
  * @constructor
  * @param {String} elt DOM node that is wrapped
- * @param {Object} [pInst] pointer to p5 instance
+ * @param {p5} [pInst] pointer to p5 instance
  */
 p5.Element = function(elt, pInst) {
   /**
