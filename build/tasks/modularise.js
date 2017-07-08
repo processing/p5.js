@@ -19,27 +19,29 @@ module.exports = function(grunt) {
     var bannerTemplate = '/*! p5.' + module_name + '.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */';
     var banner = grunt.template.process(bannerTemplate);
 
-    // Populate the source file path array with concerned files' path
-    var srcFilePath = [];
-    for (var i = module_src.length - 1; i >= 0; i--) {
-      // the base directory of path
-      var srcDirPath = './src/' + module_src[i];
-
-      // this returns only the filenames, and not the path, synchronously.
-      var files = fs.readdirSync(srcDirPath);
-
-      srcFilePath = srcFilePath.concat(getFullPath(files));
+    // Make a list of sources from app.js in that sequence only
+    var sources = [];
+    var dump = fs.readFileSync('./src/app.js', 'utf8');
+    var regexp = /\(\'.+\'/g;
+    var match;
+    while( (match = regexp.exec(dump)) != null) {
+      var text = match[0];
+      text = text.substring(text.indexOf('./')+2, text.length-1);
+      sources.push(text);
     }
 
-    // Function to return an array of absolute paths of files
-    function getFullPath(files) {
-      var result = [];
-      files.map(function(r){
-        if(r.substr(r.length-3,3) === '.js') {
-          result.push(path.resolve(srcDirPath, r));
-        }
-      });
-      return result;
+    // Populate the source file path array with concerned files' path
+    var srcDirPath = './src';
+    var srcFilePath = [];
+    for (var i = 0; i < sources.length; i++) {
+      var source = sources[i];
+      var base = source.substring(0,source.lastIndexOf('/'));
+      if(base === 'core' || base === module_src) {
+        // Push the resolved paths directly
+        var filePath = (source.search('.js') !== -1) ? source : source + '.js';
+        var fullPath = path.resolve(srcDirPath, filePath);
+        srcFilePath.push(fullPath);
+      }
     }
 
     // console.log(srcFilePath);
