@@ -123,8 +123,7 @@ p5.prototype.box = function(){
   var detailX = typeof args[3] === 'number' ? args[3] : 4;
   var detailY = typeof args[4] === 'number' ? args[4] : 4;
   var gId = 'box|'+width+'|'+height+'|'+depth+'|'+detailX+'|'+detailY;
-
-  if(!this._renderer.geometryInHash(gId)){
+  if(!this._renderer.geometryInHash(gId) || this._renderer.newShader){
     var _box = function(){
       var cubeIndices = [
         [0, 4, 2, 6],// -1, 0, 0],// -x
@@ -162,6 +161,7 @@ p5.prototype.box = function(){
     //the key val pair:
     //geometry Id, Geom object
     this._renderer.createBuffers(gId, boxGeom);
+    this._renderer.newShader = false;
   }
   this._renderer.drawBuffers(gId);
 

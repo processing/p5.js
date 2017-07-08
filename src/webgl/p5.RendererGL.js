@@ -248,6 +248,7 @@ p5.RendererGL.prototype._getShader = function(vertId, fragId, isImmediateMode) {
   if(!this.materialInHash(mId)){
     var shaderProgram = this._initShaders(vertId, fragId, isImmediateMode);
     this.mHash[mId] = shaderProgram;
+    this.newShader = true;
   }
   this.curShaderId = mId;
 
