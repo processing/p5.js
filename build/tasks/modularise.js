@@ -36,7 +36,7 @@ module.exports = function(grunt) {
     for (var i = 0; i < sources.length; i++) {
       var source = sources[i];
       var base = source.substring(0,source.lastIndexOf('/'));
-      if(base === 'core' || base === module_src) {
+      if(base === 'core' || module_src.search(base) !== -1) {
         // Push the resolved paths directly
         var filePath = (source.search('.js') !== -1) ? source : source + '.js';
         var fullPath = path.resolve(srcDirPath, filePath);

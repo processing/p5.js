@@ -99,9 +99,9 @@ module.exports = function(grunt) {
       'p5.Image': 'image',
       'p5.Util': 'utilities',
       'p5.Math': 'math',
-      'p5.Typography': 'typography', // MAJOR FAIL
+      'p5.Typography': 'typography, io', // MAJOR FAIL
       'p5.WebGL': 'webgl', //breaking
-      'p5.Events': 'events', //no tests available
+      'p5.Events': 'events',
       'p5.IO': 'io' // MAJOR FAIL
     },
 
