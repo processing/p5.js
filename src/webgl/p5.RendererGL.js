@@ -369,20 +369,11 @@ p5.RendererGL.prototype._setNoFillStroke = function() {
   var shaderProgram = this.mHash[this.curShaderId];
   shaderProgram.uMaterialColor = gl.getUniformLocation(
       shaderProgram, 'uMaterialColor' );
-    gl.uniform4f( shaderProgram.uMaterialColor,
-      this.curStrokeColor[0],
-      this.curStrokeColor[1],
-      this.curStrokeColor[2],
-      this.curStrokeColor[3]);
-};
-
-//@TODO
-p5.RendererGL.prototype._strokeCheck = function(){
-  if(this.drawMode === 'stroke'){
-    throw new Error(
-      'stroke for shapes in 3D not yet implemented, use fill for now :('
-    );
-  }
+  gl.uniform4f( shaderProgram.uMaterialColor,
+    this.curStrokeColor[0],
+    this.curStrokeColor[1],
+    this.curStrokeColor[2],
+    this.curStrokeColor[3]);
 };
 
 /**
