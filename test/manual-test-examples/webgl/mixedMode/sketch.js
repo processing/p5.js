@@ -15,7 +15,7 @@ function draw(){
 
   push();
   translate(0, 0, i);
-  basicMaterial(i * 0.1, 100, 100);
+  normalMaterial(i * 0.1, 100, 100);
 
   push();
   translate(0, cos( i + frameCount * 0.1) * 10, 0);

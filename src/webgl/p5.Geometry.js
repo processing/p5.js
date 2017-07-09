@@ -30,6 +30,8 @@ p5.Geometry = function
   //a 2D array containing uvs for every vertex
   //[[0.0,0.0],[1.0,0.0], ...]
   this.uvs = [];
+  //an array containing barycentric coords for every vertex
+  this.barycentric = [];
   this.detailX = (detailX !== undefined) ? detailX: 1;
   this.detailY = (detailY !== undefined) ? detailY: 1;
   if(callback instanceof Function){
@@ -173,6 +175,34 @@ p5.Geometry.prototype.normalize = function() {
       this.vertices[i].mult(scale);
     }
   }
+  return this;
+};
+
+p5.Geometry.prototype._createBaryCoords = function() {
+  var baryGen = {
+    state: 0,
+    next: function() {
+      switch (this.state) {
+        case 0:
+          this.state++;
+          return [1,0,0];
+        case 1:
+          this.state++;
+          return [0,1,0];
+        case 2:
+          this.state = 0;
+          return [0,0,1];
+        default:
+          break;
+      }
+    }
+  };
+  this.barycentric = this.vertices.map(
+    function(){
+      return baryGen.next();
+    }
+  );
+
   return this;
 };
 

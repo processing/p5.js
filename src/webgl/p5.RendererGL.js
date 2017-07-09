@@ -248,6 +248,7 @@ p5.RendererGL.prototype._getShader = function(vertId, fragId, isImmediateMode) {
   if(!this.materialInHash(mId)){
     var shaderProgram = this._initShaders(vertId, fragId, isImmediateMode);
     this.mHash[mId] = shaderProgram;
+    this.newShader = true;
   }
   this.curShaderId = mId;
 
@@ -338,6 +339,29 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   }
   return this;
 };
+
+p5.RendererGL.prototype.noFill = function() {
+  var gl = this.GL;
+  var shaderProgram =
+    this._getShader('wireframeVert', 'wireframeFrag');
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  gl.useProgram(shaderProgram);
+
+  if(this.curStrokeColor) {
+    shaderProgram.uMaterialColor = gl.getUniformLocation(
+      shaderProgram, 'uMaterialColor' );
+    gl.uniform4f( shaderProgram.uMaterialColor,
+      this.curStrokeColor[0],
+      this.curStrokeColor[1],
+      this.curStrokeColor[2],
+      this.curStrokeColor[3]);
+  }
+
+
+  return this;
+};
+
 p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
   var colorNormalized = color._array;
