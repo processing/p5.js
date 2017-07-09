@@ -56,7 +56,7 @@ p5.prototype.plane = function(){
 
   var gId = 'plane|'+width+'|'+height+'|'+detailX+'|'+detailY;
 
-  if(!this._renderer.geometryInHash(gId)){
+  if(!this._renderer.geometryInHash(gId) || this._renderer.newShader){
     var _plane = function(){
       var u,v,p;
       for (var i = 0; i <= this.detailY; i++){
@@ -75,8 +75,10 @@ p5.prototype.plane = function(){
     new p5.Geometry(detailX, detailY, _plane);
     planeGeom
       .computeFaces()
-      .computeNormals();
+      .computeNormals()
+      ._createBaryCoords();
     this._renderer.createBuffers(gId, planeGeom);
+    this._renderer.newShader = false;
   }
 
   this._renderer.drawBuffers(gId);
@@ -155,8 +157,9 @@ p5.prototype.box = function(){
       }
     };
     var boxGeom = new p5.Geometry(detailX,detailY, _box);
-    boxGeom.computeNormals();
-    boxGeom._createBaryCoords();
+    boxGeom
+      .computeNormals()
+      ._createBaryCoords();
     //initialize our geometry buffer with
     //the key val pair:
     //geometry Id, Geom object
@@ -204,7 +207,7 @@ p5.prototype.sphere = function(){
   var detailX = typeof args[1] === 'number' ? args[1] : 24;
   var detailY = typeof args[2] === 'number' ? args[2] : 16;
   var gId = 'sphere|'+radius+'|'+detailX+'|'+detailY;
-  if(!this._renderer.geometryInHash(gId)){
+  if(!this._renderer.geometryInHash(gId) || this._renderer.newShader){
     var _sphere = function(){
       var u,v,p;
       for (var i = 0; i <= this.detailY; i++){
@@ -226,8 +229,10 @@ p5.prototype.sphere = function(){
       .computeFaces()
       .computeNormals()
       .averageNormals()
-      .averagePoleNormals();
+      .averagePoleNormals()
+      ._createBaryCoords();
     this._renderer.createBuffers(gId, sphereGeom);
+    this._renderer.newShader = false;
   }
   this._renderer.drawBuffers(gId);
 
@@ -352,7 +357,7 @@ p5.prototype.cylinder = function(){
   var detailX = typeof args[2] === 'number' ? args[2] : 24;
   var detailY = typeof args[3] === 'number' ? args[3] : 16;
   var gId = 'cylinder|'+radius+'|'+height+'|'+detailX+'|'+detailY;
-  if(!this._renderer.geometryInHash(gId)){
+  if(!this._renderer.geometryInHash(gId) || this._renderer.newShader){
     var cylinderGeom = new p5.Geometry(detailX, detailY);
     _truncatedCone.call(
       cylinderGeom,
@@ -362,8 +367,11 @@ p5.prototype.cylinder = function(){
       detailX,
       detailY,
       true,true);
-    cylinderGeom.computeNormals();
+    cylinderGeom
+      .computeNormals()
+      ._createBaryCoords();
     this._renderer.createBuffers(gId, cylinderGeom);
+    this._renderer.newShader = false;
   }
 
   this._renderer.drawBuffers(gId);
@@ -411,7 +419,7 @@ p5.prototype.cone = function(){
   var detailX = typeof args[2] === 'number' ? args[2] : 24;
   var detailY = typeof args[3] === 'number' ? args[3] : 16;
   var gId = 'cone|'+baseRadius+'|'+height+'|'+detailX+'|'+detailY;
-  if(!this._renderer.geometryInHash(gId)){
+  if(!this._renderer.geometryInHash(gId) || this._renderer.newShader){
     var coneGeom = new p5.Geometry(detailX, detailY);
     _truncatedCone.call(coneGeom,
       baseRadius,
@@ -423,8 +431,10 @@ p5.prototype.cone = function(){
       true);
     //for cones we need to average Normals
     coneGeom
-      .computeNormals();
+      .computeNormals()
+      ._createBaryCoords();
     this._renderer.createBuffers(gId, coneGeom);
+    this._renderer.newShader = false;
   }
 
   this._renderer.drawBuffers(gId);
@@ -477,7 +487,7 @@ p5.prototype.ellipsoid = function(){
   '|'+radiusZ+'|'+detailX+'|'+detailY;
 
 
-  if(!this._renderer.geometryInHash(gId)){
+  if(!this._renderer.geometryInHash(gId) || this._renderer.newShader){
     var _ellipsoid = function(){
       var u,v,p;
       for (var i = 0; i <= this.detailY; i++){
@@ -497,8 +507,10 @@ p5.prototype.ellipsoid = function(){
     var ellipsoidGeom = new p5.Geometry(detailX, detailY,_ellipsoid);
     ellipsoidGeom
       .computeFaces()
-      .computeNormals();
+      .computeNormals()
+      ._createBaryCoords();
     this._renderer.createBuffers(gId, ellipsoidGeom);
+    this._renderer.newShader = false;
   }
 
   this._renderer.drawBuffers(gId);
@@ -548,7 +560,7 @@ p5.prototype.torus = function(){
 
   var gId = 'torus|'+radius+'|'+tubeRadius+'|'+detailX+'|'+detailY;
 
-  if(!this._renderer.geometryInHash(gId)){
+  if(!this._renderer.geometryInHash(gId) || this._renderer.newShader){
     var _torus = function(){
       var u,v,p;
       for (var i = 0; i <= this.detailY; i++){
@@ -570,8 +582,10 @@ p5.prototype.torus = function(){
     torusGeom
       .computeFaces()
       .computeNormals()
-      .averageNormals();
+      .averageNormals()
+      ._createBaryCoords();
     this._renderer.createBuffers(gId, torusGeom);
+    this._renderer.newShader = false;
   }
 
   this._renderer.drawBuffers(gId);
@@ -597,7 +611,7 @@ p5.RendererGL.prototype.triangle = function
   var gId = 'tri|'+x1+'|'+y1+'|'+
   x2+'|'+y2+'|'+
   x3+'|'+y3;
-  if(!this.geometryInHash(gId)){
+  if(!this.geometryInHash(gId) || this.newShader){
     var _triangle = function(){
       var vertices = [];
       vertices.push(new p5.Vector(x1,y1,0));
@@ -608,8 +622,11 @@ p5.RendererGL.prototype.triangle = function
       this.uvs = [[0,0],[0,1],[1,1]];
     };
     var triGeom = new p5.Geometry(1,1,_triangle);
-    triGeom.computeNormals();
+    triGeom
+      .computeNormals()
+      ._createBaryCoords();
     this.createBuffers(gId, triGeom);
+    this.newShader = false;
   }
 
   this.drawBuffers(gId);
@@ -628,7 +645,7 @@ p5.RendererGL.prototype.ellipse = function
   var detailY = args[5] || 16;
   var gId = 'ellipse|'+args[0]+'|'+args[1]+'|'+args[2]+'|'+
   args[3];
-  if(!this.geometryInHash(gId)){
+  if(!this.geometryInHash(gId) || this.newShader){
     var _ellipse = function(){
       var u,v,p;
       var centerX = x+width*0.5;
@@ -654,8 +671,10 @@ p5.RendererGL.prototype.ellipse = function
     var ellipseGeom = new p5.Geometry(detailX,detailY,_ellipse);
     ellipseGeom
       .computeFaces()
-      .computeNormals();
+      .computeNormals()
+      ._createBaryCoords();
     this.createBuffers(gId, ellipseGeom);
+    this.newShader = false;
   }
   this.drawBuffers(gId);
   return this;
@@ -671,7 +690,7 @@ p5.RendererGL.prototype.rect = function
   var height = args[3];
   var detailX = args[4] || 24;
   var detailY = args[5] || 16;
-  if(!this.geometryInHash(gId)){
+  if(!this.geometryInHash(gId) || this.newShader){
     var _rect = function(){
       var u,v,p;
       for (var i = 0; i <= this.detailY; i++){
@@ -693,8 +712,10 @@ p5.RendererGL.prototype.rect = function
     var rectGeom = new p5.Geometry(detailX,detailY,_rect);
     rectGeom
       .computeFaces()
-      .computeNormals();
+      .computeNormals()
+      ._createBaryCoords();
     this.createBuffers(gId, rectGeom);
+    this.newShader = false;
   }
   this.drawBuffers(gId);
   return this;
@@ -717,7 +738,7 @@ p5.RendererGL.prototype.quad = function(){
   x2+'|'+y2+'|'+
   x3+'|'+y3+'|'+
   x4+'|'+y4;
-  if(!this.geometryInHash(gId)){
+  if(!this.geometryInHash(gId) || this.newShader){
     var _quad = function(){
       this.vertices.push(new p5.Vector(x1,y1,0));
       this.vertices.push(new p5.Vector(x2,y2,0));
@@ -726,9 +747,12 @@ p5.RendererGL.prototype.quad = function(){
       this.uvs.push([0, 0], [1, 0], [1, 1], [0, 1]);
     };
     var quadGeom = new p5.Geometry(2,2,_quad);
-    quadGeom.computeNormals();
+    quadGeom
+      .computeNormals()
+      ._createBaryCoords();
     quadGeom.faces = [[0,1,2],[2,3,0]];
     this.createBuffers(gId, quadGeom);
+    this.newShader = false;
   }
   this.drawBuffers(gId);
   return this;

@@ -47,17 +47,13 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
   //vertex position
   shaderProgram.vertexPositionAttribute =
     gl.getAttribLocation(shaderProgram, 'aPosition');
-  gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
+  this._enableAttrib(shaderProgram.vertexPositionAttribute, 3);
 
   gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
   gl.bufferData(
     gl.ARRAY_BUFFER,
     new Float32Array( vToNArray(obj.vertices) ),
     gl.STATIC_DRAW);
-
-  gl.vertexAttribPointer(
-    shaderProgram.vertexPositionAttribute,
-    3, gl.FLOAT, false, 0, 0);
 
   //index buffer
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
@@ -66,52 +62,38 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
     new Uint16Array( flatten(obj.faces) ),
     gl.STATIC_DRAW);
 
-      //vertex normal
-      shaderProgram.vertexNormalAttribute =
-        gl.getAttribLocation(shaderProgram, 'aNormal');
-      if(shaderProgram.vertexNormalAttribute !== -1)
-      {
-        gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
-        gl.vertexAttribPointer(
-          shaderProgram.vertexNormalAttribute,
-          3, gl.FLOAT, false, 0, 0);
-      }
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
-      gl.bufferData(
-        gl.ARRAY_BUFFER,
-        new Float32Array( vToNArray(obj.vertexNormals) ),
-        gl.STATIC_DRAW);
+  //vertex normal
+  shaderProgram.vertexNormalAttribute =
+    gl.getAttribLocation(shaderProgram, 'aNormal');
+  this._enableAttrib(shaderProgram.vertexNormalAttribute, 3);
 
-      //texture coordinate Attribute
-      shaderProgram.textureCoordAttribute =
-        gl.getAttribLocation(shaderProgram, 'aTexCoord');
-      if(shaderProgram.textureCoordAttribute !== -1) {
-        gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
-        gl.vertexAttribPointer(
-          shaderProgram.textureCoordAttribute,
-          2, gl.FLOAT, false, 0, 0);
-      }
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
-      gl.bufferData(
-        gl.ARRAY_BUFFER,
-        new Float32Array( flatten(obj.uvs) ),
-        gl.STATIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
+  gl.bufferData(
+    gl.ARRAY_BUFFER,
+    new Float32Array( vToNArray(obj.vertexNormals) ),
+    gl.STATIC_DRAW);
 
-      //barycentric cooordinate Attribute
-      shaderProgram.barycentricCoordAttribute =
-        gl.getAttribLocation(shaderProgram, 'aBarycentric');
-      if(shaderProgram.barycentricCoordAttribute !== -1) {
-        gl.enableVertexAttribArray(shaderProgram.barycentricCoordAttribute);
-        gl.vertexAttribPointer(
-          shaderProgram.barycentricCoordAttribute,
-          3, gl.FLOAT, false, 0, 0);
-      }
+  //texture coordinate Attribute
+  shaderProgram.textureCoordAttribute =
+    gl.getAttribLocation(shaderProgram, 'aTexCoord');
+  this._enableAttrib(shaderProgram.textureCoordAttribute, 2);
 
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].barycentricBuffer);
-      gl.bufferData(
-        gl.ARRAY_BUFFER,
-        new Float32Array( flatten(obj.barycentric) ),
-        gl.STATIC_DRAW);
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
+  gl.bufferData(
+    gl.ARRAY_BUFFER,
+    new Float32Array( flatten(obj.uvs) ),
+    gl.STATIC_DRAW);
+
+  //barycentric cooordinate Attribute
+  shaderProgram.barycentricCoordAttribute =
+    gl.getAttribLocation(shaderProgram, 'aBarycentric');
+  this._enableAttrib(shaderProgram.barycentricCoordAttribute, 3);
+
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].barycentricBuffer);
+  gl.bufferData(
+    gl.ARRAY_BUFFER,
+    new Float32Array( flatten(obj.barycentric) ),
+    gl.STATIC_DRAW);
 };
 
 /**
@@ -161,6 +143,18 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     gl.UNSIGNED_SHORT, 0);
   return this;
 };
+
+
+//Checks to see if the current shader has the attribute and if so enables it
+p5.RendererGL.prototype._enableAttrib = function(loc, size) {
+  var gl = this.GL;
+  if(loc !== -1) {
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(
+      loc,
+      size, gl.FLOAT, false, 0, 0);
+  }
+}
 ///////////////////////////////
 //// UTILITY FUNCTIONS
 //////////////////////////////

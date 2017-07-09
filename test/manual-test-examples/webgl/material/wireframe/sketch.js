@@ -16,7 +16,7 @@ function draw() {
     rotateZ(frameCount * 0.02);
     rotateX(frameCount * 0.02);
     rotateY(frameCount * 0.02);
-    box(40, 40, 40);
+    box(40);
     pop();
 
     push();
@@ -26,7 +26,7 @@ function draw() {
     rotateZ(frameCount * 0.02);
     rotateX(frameCount * 0.02);
     rotateY(frameCount * 0.02);
-    box(40, 40, 40);
+    box(40);
     pop();
 
     push();
@@ -35,7 +35,7 @@ function draw() {
     rotateZ(frameCount * 0.02);
     rotateX(frameCount * 0.02);
     rotateY(frameCount * 0.02);
-    box(40, 40, 40);
+    box(40);
     pop();
 
     push();
@@ -44,7 +44,7 @@ function draw() {
     rotateZ(frameCount * 0.02);
     rotateX(frameCount * 0.02);
     rotateY(frameCount * 0.02);
-    box(40, 40, 40);
+    box(40);
     pop();
   }
 }
