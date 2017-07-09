@@ -155,7 +155,7 @@ p5.RendererGL.prototype._enableAttrib = function(loc, size) {
       loc,
       size, gl.FLOAT, false, 0, 0);
   }
-}
+};
 ///////////////////////////////
 //// UTILITY FUNCTIONS
 //////////////////////////////
