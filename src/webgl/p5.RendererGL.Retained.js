@@ -116,6 +116,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   this._setMatrixUniforms(mId);
   switch (mId) {
     case 'normalVert|basicFrag':
+    case 'normalVert|normalFrag':
     case 'lightVert|lightTextureFrag':
       //normal buffer
       gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
