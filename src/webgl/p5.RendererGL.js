@@ -343,22 +343,14 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
 p5.RendererGL.prototype.noFill = function() {
   var gl = this.GL;
   var shaderProgram =
-    this._getShader('wireframeVert', 'wireframeFrag');
+    this._getShader('normalVert', 'basicFrag');
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   gl.useProgram(shaderProgram);
-
+  this.drawMode = 'wireframe';
   if(this.curStrokeColor) {
-    shaderProgram.uMaterialColor = gl.getUniformLocation(
-      shaderProgram, 'uMaterialColor' );
-    gl.uniform4f( shaderProgram.uMaterialColor,
-      this.curStrokeColor[0],
-      this.curStrokeColor[1],
-      this.curStrokeColor[2],
-      this.curStrokeColor[3]);
+    this._setNoFillStroke();
   }
-
-
   return this;
 };
 
@@ -366,8 +358,22 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
   var colorNormalized = color._array;
   this.curStrokeColor = colorNormalized;
-  this.drawMode = 'stroke';
+  if(this.drawMode === 'wireframe') {
+    this._setNoFillStroke();
+  }
   return this;
+};
+
+p5.RendererGL.prototype._setNoFillStroke = function() {
+  var gl = this.GL;
+  var shaderProgram = this.mHash[this.curShaderId];
+  shaderProgram.uMaterialColor = gl.getUniformLocation(
+      shaderProgram, 'uMaterialColor' );
+    gl.uniform4f( shaderProgram.uMaterialColor,
+      this.curStrokeColor[0],
+      this.curStrokeColor[1],
+      this.curStrokeColor[2],
+      this.curStrokeColor[3]);
 };
 
 //@TODO

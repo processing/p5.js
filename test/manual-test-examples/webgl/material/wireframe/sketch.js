@@ -2,12 +2,26 @@
  * webgl wireframe example
  *
  */
+
+var teapot;
+
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
+  teapot = loadModel('assets/teapot.obj', true);
 }
+
 
 function draw() {
   background(0);
+  push();
+  stroke(100,0,100);
+  noFill();
+  scale(2,2,2);
+  rotateX(frameCount * 0.01);
+  rotateY(frameCount * 0.01);
+  model(teapot);
+  pop();
+
   for(var i = -10; i < 10; i++){
     push();
     stroke(0,200,0);
@@ -16,11 +30,11 @@ function draw() {
     rotateZ(frameCount * 0.02);
     rotateX(frameCount * 0.02);
     rotateY(frameCount * 0.02);
-    box(40);
+    torus(40);
     pop();
 
     push();
-    stroke(0,200,0);
+    stroke(0,200,100);
     noFill();
     translate(i*140, -100, 100);
     rotateZ(frameCount * 0.02);

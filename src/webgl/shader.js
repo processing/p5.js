@@ -16,9 +16,5 @@ module.exports = {
   lightVert:
     fs.readFileSync(__dirname + '/shaders/light.vert', 'utf-8'),
   lightTextureFrag:
-    fs.readFileSync(__dirname + '/shaders/light_texture.frag', 'utf-8'),
-  wireframeVert:
-    fs.readFileSync(__dirname + '/shaders/wireframe.vert', 'utf-8'),
-  wireframeFrag:
-    fs.readFileSync(__dirname + '/shaders/wireframe.frag', 'utf-8')
+    fs.readFileSync(__dirname + '/shaders/light_texture.frag', 'utf-8')
 };

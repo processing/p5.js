@@ -25,7 +25,6 @@ p5.RendererGL.prototype._initBufferDefaults = function(gId) {
   this.gHash[gId].normalBuffer = gl.createBuffer();
   this.gHash[gId].uvBuffer = gl.createBuffer();
   this.gHash[gId].indexBuffer = gl.createBuffer();
-  this.gHash[gId].barycentricBuffer = gl.createBuffer();
 };
 /**
  * createBuffers description
@@ -84,16 +83,6 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
     new Float32Array( flatten(obj.uvs) ),
     gl.STATIC_DRAW);
 
-  //barycentric cooordinate Attribute
-  shaderProgram.barycentricCoordAttribute =
-    gl.getAttribLocation(shaderProgram, 'aBarycentric');
-  this._enableAttrib(shaderProgram.barycentricCoordAttribute, 3);
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].barycentricBuffer);
-  gl.bufferData(
-    gl.ARRAY_BUFFER,
-    new Float32Array( flatten(obj.barycentric) ),
-    gl.STATIC_DRAW);
 };
 
 /**
@@ -129,18 +118,21 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
         shaderProgram.textureCoordAttribute,
         2, gl.FLOAT, false, 0, 0);
       break;
-    case 'wireframeVert|wireframeFrag':
-      //barycentric buffer
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].barycentricBuffer);
-      gl.vertexAttribPointer(
-        shaderProgram.barycentricCoordAttribute,
-        3, gl.FLOAT, false, 0, 0);
-      break;
     default:
       break;
   }
+  if(this.drawMode === 'wireframe') {
+    this._drawElements(gl.LINES, gId);
+  } else {
+    this._drawElements(gl.TRIANGLES, gId);
+  }
+  return this;
+};
+
+p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
+  var gl = this.GL;
   gl.drawElements(
-    gl.TRIANGLES, this.gHash[gId].numberOfItems,
+    drawMode, this.gHash[gId].numberOfItems,
     gl.UNSIGNED_SHORT, 0);
   return this;
 };

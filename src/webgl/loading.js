@@ -186,7 +186,6 @@ function parseObj( model, lines ) {
       }
     }
   }
-  model._createBaryCoords();
   // If the model doesn't have normals, compute the normals
   if(model.vertexNormals.length === 0) {
     model.computeNormals();
