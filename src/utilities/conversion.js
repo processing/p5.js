@@ -45,8 +45,14 @@ p5.prototype.float = function(str) {
  * is returned.
  *
  * @method int
- * @param {String|Boolean|Number|Array} n value to parse
+ * @param {String|Boolean|Number}       n value to parse
  * @return {Number}                     integer representation of value
+ */
+/**
+ * @method int
+ * @param {Array} ns                    values to parse
+ * @return {Number[]}                   integer representation of values
+ * 
  * @example
  * <div class='norender'><code>
  * print(int("10")); // 10
@@ -136,8 +142,13 @@ p5.prototype.boolean = function(n) {
  * passed in, then an array of bytes the same length is returned.
  *
  * @method byte
- * @param {String|Boolean|Number|Array} n value to parse
+ * @param {String|Boolean|Number}       n value to parse
  * @return {Number}                     byte representation of value
+ */
+/**
+ * @method byte
+ * @param {Array} ns                   values to parse
+ * @return {Array}                     array of byte representation of values
  * @example
  * <div class='norender'><code>
  * print(byte(127));               // 127
@@ -165,8 +176,13 @@ p5.prototype.byte = function(n) {
  * single-character strings of the same length is returned.
  *
  * @method char
- * @param {String|Number|Array} n value to parse
+ * @param {String|Number}       n value to parse
  * @return {String}             string representation of value
+ */
+/**
+ * @method char
+ * @param {Array} ns              values to parse
+ * @return {String[]}             array of string representation of values
  * @example
  * <div class='norender'><code>
  * print(char(65));                     // "A"
@@ -191,8 +207,13 @@ p5.prototype.char = function(n) {
  * in, then an array of integers of the same length is returned.
  *
  * @method unchar
- * @param {String|Array} n value to parse
+ * @param {String} n     value to parse
  * @return {Number}      integer representation of value
+ */
+/**
+ * @method unchar
+ * @param {Array} ns       values to parse
+ * @return {Number[]}      integer representation of values
  * @example
  * <div class='norender'><code>
  * print(unchar("A"));               // 65
@@ -215,8 +236,15 @@ p5.prototype.unchar = function(n) {
  * array of strings in hexadecimal notation of the same length is returned.
  *
  * @method hex
- * @param {Number|Array} n value to parse
+ * @param {Number} n     value to parse
+ * @param {Number} [digits]
  * @return {String}      hexadecimal string representation of value
+ */
+/**
+ * @method hex
+ * @param {Number[]} ns    array of values to parse
+ * @param {Number} [digits]
+ * @return {String[]}      hexadecimal string representation of values
  * @example
  * <div class='norender'><code>
  * print(hex(255));               // "000000FF"
@@ -250,7 +278,7 @@ p5.prototype.hex = function(n, digits) {
  *
  * @method unhex
  * @param {String|Array} n value to parse
- * @return {Number}      integer representation of hexadecimal value
+ * @return {Number|Number[]}      integer representation of hexadecimal value
  * @example
  * <div class='norender'><code>
  * print(unhex("A"));                // 10

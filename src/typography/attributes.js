@@ -28,7 +28,7 @@ var p5 = require('../core/core');
  * @method textAlign
  * @param {Constant} horizAlign horizontal alignment, either LEFT,
  *                            CENTER, or RIGHT
- * @param {Constant} vertAlign vertical alignment, either TOP,
+ * @param {Constant} [vertAlign] vertical alignment, either TOP,
  *                            BOTTOM, CENTER, or BASELINE
  * @return {Number}
  * @example

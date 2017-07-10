@@ -415,7 +415,7 @@ p5.prototype.filter = function(operation, value) {
  * @param  {Number}         [y] y-coordinate of the pixel
  * @param  {Number}         [w] width
  * @param  {Number}         [h] height
- * @return {Array|p5.Image}     values of pixel at x,y in array format
+ * @return {Number[]|p5.Image}  values of pixel at x,y in array format
  *                              [R, G, B, A] or p5.Image
  * @example
  * <div>

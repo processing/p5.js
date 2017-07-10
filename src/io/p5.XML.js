@@ -216,7 +216,7 @@ p5.XML.prototype.hasChildren = function() {
  * on each child element individually.
  *
  * @method listChildren
- * @return {Array} names of the children of the element
+ * @return {String[]} names of the children of the element
  * @example&lt;animal
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed
@@ -254,7 +254,7 @@ p5.XML.prototype.listChildren = function() {
  *
  * @method getChildren
  * @param {String} [name] element name
- * @return {Array} children of the element
+ * @return {p5.XML[]} children of the element
  * @example&lt;animal
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed
@@ -488,7 +488,7 @@ p5.XML.prototype.getAttributeCount = function() {
  * array of Strings.
  *
  * @method listAttributes
- * @return {Array} an array of strings containing the names of attributes
+ * @return {String[]} an array of strings containing the names of attributes
  * @example
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed

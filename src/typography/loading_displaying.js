@@ -35,9 +35,9 @@ require('../core/error_helpers');
  * @param {String} str the alphanumeric symbols to be displayed
  * @param {Number} x   x-coordinate of text
  * @param {Number} y   y-coordinate of text
- * @param {Number} x2  by default, the width of the text box,
+ * @param {Number} [x2]  by default, the width of the text box,
  *                     see rectMode() for more info
- * @param {Number} y2  by default, the height of the text box,
+ * @param {Number} [y2]  by default, the height of the text box,
  *                     see rectMode() for more info
  * @return {p5} this
  * @example

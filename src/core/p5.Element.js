@@ -44,9 +44,14 @@ p5.Element = function(elt, pInst) {
  * positioning the canvas</a> wiki page.
  *
  * @method parent
- * @param  {String|Object} parent the ID, DOM node, or p5.Element
+ * @param  {String|p5.Element|Object} parent the ID, DOM node, or p5.Element
  *                         of desired parent element
+ * @chainable
+ */
+/**
+ * @method parent
  * @return {p5.Element}
+ * 
  * @example
  * <div class="norender"><code>
  * // in the html file:
@@ -99,8 +104,13 @@ p5.Element.prototype.parent = function(p) {
  * returns the current ID of the element.
  *
  * @method id
- * @param  {String} [id] ID of the element
- * @return {p5.Element|String}
+ * @param  {String} id ID of the element
+ * @chainable
+ */
+/**
+ * @method id
+ * @return {String} the id of the element
+ * 
  * @example
  * <div class='norender'><code>
  * function setup() {
@@ -132,8 +142,12 @@ p5.Element.prototype.id = function(id) {
  * instead returns a string containing the current class(es) of the element.
  *
  * @method class
- * @param  {String} [class] class to add
- * @return {p5.Element|String}
+ * @param  {String} class class to add
+ * @chainable
+ */
+/**
+ * @method class
+ * @return {String} the class of the element
  */
 p5.Element.prototype.class = function(c) {
   if (arguments.length === 0) {
@@ -150,9 +164,9 @@ p5.Element.prototype.class = function(c) {
  * attach element specific event listeners.
  *
  * @method mousePressed
- * @param  {Function} fxn function to be fired when mouse is
+ * @param  {function} fxn function to be fired when mouse is
  *                    pressed over the element.
- * @return {p5.Element}
+ * @chainable
  * @example
  * <div class='norender'><code>
  * var cnv;
@@ -208,9 +222,9 @@ p5.Element.prototype.mousePressed = function (fxn) {
  * reversed.
  *
  * @method mouseWheel
- * @param  {Function} fxn function to be fired when mouse wheel is
+ * @param  {function} fxn function to be fired when mouse wheel is
  *                    scrolled over the element.
- * @return {p5.Element}
+ * @chainable
  * @example
  * <div class='norender'><code>
  * var cnv;
@@ -262,9 +276,9 @@ p5.Element.prototype.mouseWheel = function (fxn) {
  * attach element specific event listeners.
  *
  * @method mouseReleased
- * @param  {Function} fxn function to be fired when mouse is
+ * @param  {function} fxn function to be fired when mouse is
  *                    released over the element.
- * @return {p5.Element}
+ * @chainable
  * @example
  * <div class='norender'><code>
  * var cnv;
@@ -314,9 +328,9 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  * attach element specific event listeners.
  *
  * @method mouseClicked
- * @param  {Function} fxn function to be fired when mouse is
+ * @param  {function} fxn function to be fired when mouse is
  *                    clicked over the element.
- * @return {p5.Element}
+ * @chainable
  * @example
  * <div class="norender">
  * <code>
@@ -366,9 +380,9 @@ p5.Element.prototype.mouseClicked = function (fxn) {
  * element specific event listener.
  *
  * @method mouseMoved
- * @param  {Function} fxn function to be fired when mouse is
+ * @param  {function} fxn function to be fired when mouse is
  *                    moved over the element.
- * @return {p5.Element}
+ * @chainable
  * @example
  * <div class='norender'><code>
  * var cnv;
@@ -423,9 +437,9 @@ p5.Element.prototype.mouseMoved = function (fxn) {
  * element specific event listener.
  *
  * @method mouseOver
- * @param  {Function} fxn function to be fired when mouse is
+ * @param  {function} fxn function to be fired when mouse is
  *                    moved over the element.
- * @return {p5.Element}
+ * @chainable
  * @example
  * <div class='norender'><code>
  * var cnv;
@@ -466,9 +480,9 @@ p5.Element.prototype.mouseOver = function (fxn) {
  * This can be used to attach an element specific event listener.
  *
  * @method changed
- * @param  {Function} fxn function to be fired when the value of an
+ * @param  {function} fxn function to be fired when the value of an
  * element changes.
- * @return {p5.Element}
+ * @chainable
  * @example
  * <div><code>
  * var sel;
@@ -533,8 +547,8 @@ p5.Element.prototype.changed = function (fxn) {
  * event listener.
  *
  * @method input
- * @param  {Function} fxn function to be fired on user input.
- * @return {p5.Element}
+ * @param  {function} fxn function to be fired on user input.
+ * @chainable
  * @example
  * <div class='norender'><code>
  * // Open your console to see the output
@@ -563,9 +577,9 @@ p5.Element.prototype.input = function (fxn) {
  * element specific event listener.
  *
  * @method mouseOut
- * @param  {Function} fxn function to be fired when mouse is
+ * @param  {function} fxn function to be fired when mouse is
  *                    moved off the element.
- * @return {p5.Element}
+ * @chainable
  * @example
  * <div class='norender'><code>
  * var cnv;
@@ -603,9 +617,9 @@ p5.Element.prototype.mouseOut = function (fxn) {
  * registered. This can be used to attach element specific event listeners.
  *
  * @method touchStarted
- * @param  {Function} fxn function to be fired when touch is
+ * @param  {function} fxn function to be fired when touch is
  *                    started over the element.
- * @return {p5.Element}
+ * @chainable
  * @example
  * <div class='norender'><code>
  * var cnv;
@@ -650,9 +664,9 @@ p5.Element.prototype.touchStarted = function (fxn) {
  * registered. This can be used to attach element specific event listeners.
  *
  * @method touchMoved
- * @param  {Function} fxn function to be fired when touch is moved
+ * @param  {function} fxn function to be fired when touch is moved
  *                    over the element.
- * @return {p5.Element}
+ * @chainable
  * @example
  * <div class='norender'><code>
  * var cnv;
@@ -689,9 +703,9 @@ p5.Element.prototype.touchMoved = function (fxn) {
  * registered. This can be used to attach element specific event listeners.
  *
  * @method touchEnded
- * @param  {Function} fxn function to be fired when touch is
+ * @param  {function} fxn function to be fired when touch is
  *                    ended over the element.
- * @return {p5.Element}
+ * @chainable
  * @example
  * <div class='norender'><code>
  * var cnv;
@@ -740,9 +754,9 @@ p5.Element.prototype.touchEnded = function (fxn) {
  * element specific event listener.
  *
  * @method dragOver
- * @param  {Function} fxn function to be fired when mouse is
+ * @param  {function} fxn function to be fired when mouse is
  *                    dragged over the element.
- * @return {p5.Element}
+ * @chainable
  * @example
  * <div><code>
  * // To test this sketch, simply drag a
@@ -776,9 +790,9 @@ p5.Element.prototype.dragOver = function (fxn) {
  * element specific event listener.
  *
  * @method dragLeave
- * @param  {Function} fxn function to be fired when mouse is
+ * @param  {function} fxn function to be fired when mouse is
  *                    dragged over the element.
- * @return {p5.Element}
+ * @chainable
  * @example
  * <div><code>
  * // To test this sketch, simply drag a file
@@ -814,9 +828,9 @@ p5.Element.prototype.dragLeave = function (fxn) {
  * is triggered just once when a file (or files) are dropped.
  *
  * @method drop
- * @param  {Function} callback  callback triggered when files are dropped.
- * @param  {Function} fxn       callback to receive loaded file.
- * @return {p5.Element}
+ * @param  {function} callback  callback triggered when files are dropped.
+ * @param  {function} fxn       callback to receive loaded file.
+ * @chainable
  * @example
  * <div><code>
  * function setup() {

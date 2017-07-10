@@ -63,7 +63,7 @@ var curveDetail = 20;
  * @param  {Number} z2 z-coordinate for the first control point
  * @param  {Number} z3 z-coordinate for the first anchor point
  * @param  {Number} z4 z-coordinate for the first control point
- * @return {p5.Renderer3D}   [description]
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -101,7 +101,7 @@ p5.prototype.bezier = function() {
  * The default value is 20.
  *
  * @param {Number} detail resolution of the curves
- * @return {p5} the p5 Object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -298,7 +298,7 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * @param  {Number} z2 z-coordinate for the first point
  * @param  {Number} z3 z-coordinate for the second point
  * @param  {Number} z4 z-coordinate for the ending control point
- * @return {p5}        the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -341,7 +341,7 @@ p5.prototype.curve = function() {
  * The default value is 20.
  *
  * @param {Number} resolution of the curves
- * @return {p5} the p5 Object
+ * @chainable
  * @example
  * <div>
  * <code>

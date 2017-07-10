@@ -205,7 +205,11 @@ p5.prototype.cursor = function(type, x, y) {
  * or are non positive also returns current framerate.
  *
  * @method frameRate
- * @param  {Number} [fps] number of frames to be displayed every second
+ * @param  {Number} fps number of frames to be displayed every second
+ * @chainable
+ */
+/**
+ * @method frameRate
  * @return {Number}       current frameRate
  * @example
  *

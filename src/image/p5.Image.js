@@ -273,7 +273,7 @@ p5.Image.prototype.updatePixels = function(x, y, w, h){
  * @param  {Number}               [y] y-coordinate of the pixel
  * @param  {Number}               [w] width
  * @param  {Number}               [h] height
- * @return {Array|Color|p5.Image}     color of pixel at x,y in array format
+ * @return {Number[]|Color|p5.Image}  color of pixel at x,y in array format
  *                                    [R, G, B, A] or p5.Image
  * @example
  * <div><code>

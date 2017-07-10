@@ -49,6 +49,9 @@ p5.prototype.createNumberDict = function() {
  *
  * Base class for all p5.Dictionary types. More specifically
  * typed Dictionary objects inherit from this
+ * 
+ * @class p5.TypedDict
+ * @constructor
  *
  */
 
@@ -142,8 +145,8 @@ p5.TypedDict.prototype.get = function(key) {
  * in the Dictionary otherwise makes a new key-value pair
  *
  * @method set
- * @param {Number|String}
- * @param {Number|String}
+ * @param {Number|String} key
+ * @param {Number|String} value
  *
  * @example
  * <div><code>
@@ -188,8 +191,12 @@ p5.TypedDict.prototype._addObj = function(obj) {
  * Removes a key-value pair in the Dictionary
  *
  * @method create
- * @param {Number|String|Object}
- * @param {Number|String}
+ * @param {Number|String} key
+ * @param {Number|String} value
+ */
+/**
+ * @method create
+ * @param {Object} obj key/value pair
  *
  * @example
  * <div><code>

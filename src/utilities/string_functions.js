@@ -60,7 +60,7 @@ p5.prototype.join = function(list, separator) {
  * @method match
  * @param  {String} str    the String to be searched
  * @param  {String} regexp the regexp to be used for matching
- * @return {Array}         Array of Strings found
+ * @return {String[]}      Array of Strings found
  * @example
  * <div>
  * <code>
@@ -430,7 +430,7 @@ function addNfs() {
  * @method split
  * @param  {String} value the String to be split
  * @param  {String} delim the String used to separate the data
- * @return {Array}  Array of Strings
+ * @return {String[]}  Array of Strings
  * @example
  * <div>
  * <code>
@@ -463,7 +463,7 @@ p5.prototype.split = function(str, delim) {
  * @param  {String} value   the String to be split
  * @param  {String} [delim] list of individual Strings that will be used as
  *                          separators
- * @return {Array}          Array of Strings
+ * @return {String[]}          Array of Strings
  * @example
  * <div class = "norender">
  * <code>
