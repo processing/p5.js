@@ -6,17 +6,6 @@ require('../core/p5.Renderer');
 require('./p5.Matrix');
 var uMVMatrixStack = [];
 
-//@TODO should implement public method
-//to override these attributes
-var attributes = {
-  alpha: true,
-  depth: true,
-  stencil: true,
-  antialias: false,
-  premultipliedAlpha: false,
-  preserveDrawingBuffer: false
-};
-
 /**
  * 3D graphics class
  * @class p5.RendererGL
@@ -26,10 +15,18 @@ var attributes = {
  * rendering (FBO).
  *
  */
-p5.RendererGL = function(elt, pInst, isMainCanvas) {
+p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   p5.Renderer.call(this, elt, pInst, isMainCanvas);
-  this._initContext();
+  this.attributes = {};
+  attr = attr || {};
+  this.attributes.alpha = attr.alpha || true;
+  this.attributes.depth = attr.depth || true;
+  this.attributes.stencil = attr.stencil || true;
+  this.attributes.antialias = attr.antialias || false;
+  this.attributes.premultipliedAlpha = attr.premultipliedAlpha || false;
+  this.attributes.preserveDrawingBuffer = attr.preserveDrawingBuffer || false;
 
+  this._initContext();
   this.isP3D = true; //lets us know we're in 3d mode
   this.GL = this.drawingContext;
   //lights
@@ -38,7 +35,6 @@ p5.RendererGL = function(elt, pInst, isMainCanvas) {
   this.pointLightCount = 0;
   //camera
   this._curCamera = null;
-
   /**
    * model view, projection, & normal
    * matrices
@@ -67,8 +63,8 @@ p5.RendererGL.prototype = Object.create(p5.Renderer.prototype);
 
 p5.RendererGL.prototype._initContext = function() {
   try {
-    this.drawingContext = this.canvas.getContext('webgl', attributes) ||
-      this.canvas.getContext('experimental-webgl', attributes);
+    this.drawingContext = this.canvas.getContext('webgl', this.attributes) ||
+      this.canvas.getContext('experimental-webgl', this.attributes);
     if (this.drawingContext === null) {
       throw new Error('Error creating webgl context');
     } else {
@@ -82,6 +78,37 @@ p5.RendererGL.prototype._initContext = function() {
     throw new Error(er);
   }
 };
+
+p5.RendererGL.prototype._resetContext = function(options, callback) {
+  var w = this.width;
+  var h = this.height;
+  var defaultId = 'defaultCanvas0';
+  var c = document.getElementById(defaultId);
+  if(c){
+    c.parentNode.removeChild(c);
+  }
+  c = document.createElement('canvas');
+  c.id = defaultId;
+  if (this._pInst._userNode) {
+    this._pInst._userNode.appendChild(c);
+  } else {
+    document.body.appendChild(c);
+  }
+  this._pInst.canvas = c;
+  this._pInst._setProperty('_renderer', new p5.RendererGL(this._pInst.canvas,
+    this._pInst, true, this.attributes));
+  this._pInst._isdefaultGraphics = true;
+  this._pInst._renderer.resize(w, h);
+  this._pInst._renderer._applyDefaults();
+  this._pInst._elements.push(this._renderer);
+  if(typeof callback === 'function') {
+    setTimeout(function() {
+      callback.apply(window._renderer, [options[0], options[1],
+        options[2], options[3]]);
+    }, 1);
+  }
+};
+
 //detect if user didn't set the camera
 //then call this function below
 p5.RendererGL.prototype._setDefaultCamera = function(){
@@ -353,6 +380,33 @@ p5.RendererGL.prototype._strokeCheck = function(){
       'stroke for shapes in 3D not yet implemented, use fill for now :('
     );
   }
+};
+
+p5.RendererGL.prototype.loadPixels = function() {
+  var x = arguments[0] || 0;
+  var y = arguments[1] || 0;
+  var w = arguments[2] || this.width;
+  var h = arguments[3] || this.height;
+  var gl = this.GL;
+  var attribs = gl.getContextAttributes();
+  if(attribs.preserveDrawingBuffer === false) {
+    this.attributes.preserveDrawingBuffer = true;
+    this._resetContext([x, y, w, h], this._readPixels);
+  } else {
+    this._readPixels(x, y, w, h);
+  }
+};
+
+p5.RendererGL.prototype._readPixels = function() {
+  var x = arguments[0] || 0;
+  var y = arguments[1] || 0;
+  var w = arguments[2] || this.width;
+  var h = arguments[3] || this.height;
+  var gl = this.GL;
+  var pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+  gl.finish();
+  gl.readPixels(x, y, w, h, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+  console.log(pixels);
 };
 
 /**
