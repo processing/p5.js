@@ -53,8 +53,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas) {
   //default drawing is done in Retained Mode
   this.isImmediateDrawing = false;
   this.immediateMode = {};
-  this.curFillColor = [0.5,0.5,0.5,1.0];
-  this.curStrokeColor = [0.5,0.5,0.5,1.0];
+  this.fill(255, 255, 255, 255);
+  this.stroke(0, 0, 0, 255);
   this.pointSize = 5.0;//default point/stroke
 
   this.emptyTexture = null;
@@ -138,8 +138,7 @@ p5.RendererGL.prototype.background = function() {
  * @param  {string} fragId [description]
  * @return {[type]}        [description]
  */
-p5.RendererGL.prototype._initShaders =
-function(vertId, fragId, isImmediateMode) {
+p5.RendererGL.prototype._initShaders = function(vertId, fragId, isImmediateMode) {
   var gl = this.GL;
   //set up our default shaders by:
   // 1. create the shader,
@@ -233,8 +232,7 @@ function(vertId, fragId, isImmediateMode) {
  * Wrapper around gl.useProgram to make sure
  * we only switch shaders when neccessary
  */
-p5.RendererGL.prototype._useShader =
-function(shaderProgram){
+p5.RendererGL.prototype._useShader = function(shaderProgram){
   var gl = this.GL;
   if(shaderProgram === this.curShader) {
     return;
@@ -244,8 +242,7 @@ function(shaderProgram){
   return shaderProgram;
 };
 
-p5.RendererGL.prototype._setMatrixUniforms =
-function(shaderKey) {
+p5.RendererGL.prototype._setMatrixUniforms = function(shaderKey) {
   var shaderProgram = this.mHash[shaderKey];
 
   this._useShader(shaderProgram);
@@ -365,17 +362,24 @@ p5.RendererGL.prototype._getShader = function(vertId, fragId, isImmediateMode) {
 
 p5.RendererGL.prototype._getCurShaderId = function(){
   //if the shader ID is not yet defined
-  if(this.drawMode !== 'fill' && this.curShaderId === undefined){
+  if (this.drawMode !== 'fill' && this.curShaderId === undefined){
     //default shader: normalMaterial()
     this._getShader('normalVert', 'normalFrag');
-  } else if(this.isImmediateDrawing && this.drawMode === 'fill'){
+  } else if (this.drawMode === 'fill'){
     // note that this._getShader will check if the shader already exists
     // by looking up the shader id (composed of vertexShaderId|fragmentShaderId)
     // in the material hash. If the material isn't found in the hash, it
     // creates a new one using this._initShaders--however, we'd like
     // use the cached version as often as possible, so we defer to this._getShader
     // here instead of calling this._initShaders directly.
-    this._getShader('immediateVert', 'vertexColorFrag', true);
+    var shaderProgram;
+    if (this.isImmediateDrawing) {
+      shaderProgram = this._getShader('immediateVert', 'vertexColorFrag', true);
+    } else {
+      shaderProgram = this._getShader('normalVert', 'basicFrag', false);
+    }
+    // this should be safe, but...
+    this._useShader(shaderProgram);
   }
 
   return this.curShaderId;
@@ -422,13 +426,11 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   var colors = this._applyColorBlend.apply(this, arguments);
   this.curFillColor = colors;
   this.drawMode = 'fill';
-  if(this.isImmediateDrawing){
-    shaderProgram =
-    this._getShader('immediateVert','vertexColorFrag');
+  if (this.isImmediateDrawing){
+    shaderProgram = this._getShader('immediateVert','vertexColorFrag');
     this._useShader(shaderProgram);
   } else {
-    shaderProgram =
-    this._getShader('normalVert', 'basicFrag');
+    shaderProgram = this._getShader('normalVert', 'basicFrag');
     this._useShader(shaderProgram);
     //RetainedMode uses a webgl uniform to pass color vals
     //in ImmediateMode, we want access to each vertex so therefore
@@ -440,8 +442,7 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
 
 p5.RendererGL.prototype.noFill = function() {
   var gl = this.GL;
-  var shaderProgram =
-    this._getShader('normalVert', 'basicFrag');
+  var shaderProgram = this._getShader('normalVert', 'basicFrag');
   this._useShader(shaderProgram);
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
