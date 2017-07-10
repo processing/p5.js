@@ -53,8 +53,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas) {
   //default drawing is done in Retained Mode
   this.isImmediateDrawing = false;
   this.immediateMode = {};
-  this.curFillColor = [0.5,0.5,0.5,1.0];
-  this.curStrokeColor = [0.5,0.5,0.5,1.0];
+  this.fill(255, 255, 255, 255);
+  this.stroke(0, 0, 0, 255);
   this.pointSize = 5.0;//default point/stroke
   return this;
 };
