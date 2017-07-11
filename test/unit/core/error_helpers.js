@@ -44,10 +44,10 @@ suite('Error Helpers', function() {
         },
         Error, 'got unwanted exception');
     });
-    test('rect(): wrong param type at #0,#6', function() {
+    test('rect(): wrong param type at #0', function() {
       assert.doesNotThrow(function() {
           p5.prototype._validateParameters('rect',
-            ['1', 1, 10.5, 10, 0, Math.PI, 'pie']);
+            ['1', 1, 10.5, 10, 0, Math.PI]);
         },
         Error, 'got unwanted exception');
     });
