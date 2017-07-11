@@ -114,6 +114,8 @@ module.exports = {
   TWO_PI: PI * 2,
   DEGREES: 'degrees',
   RADIANS: 'radians',
+  DEG_TO_RAD: PI / 180.0,
+  RAD_TO_DEG: 180.0 / PI,
 
   // SHAPE
   CORNER: 'corner',
