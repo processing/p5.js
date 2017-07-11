@@ -330,6 +330,7 @@ p5.TypedDict.prototype._validate = function(key, value) {
  *
  * @class p5.StringDict
  * @constructor
+ * @extends p5.TypedDict
  *
  */
 
