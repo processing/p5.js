@@ -248,6 +248,7 @@ p5.RendererGL.prototype._getShader = function(vertId, fragId, isImmediateMode) {
   if(!this.materialInHash(mId)){
     var shaderProgram = this._initShaders(vertId, fragId, isImmediateMode);
     this.mHash[mId] = shaderProgram;
+    this.newShader = true;
   }
   this.curShaderId = mId;
 
@@ -338,21 +339,41 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   }
   return this;
 };
+
+p5.RendererGL.prototype.noFill = function() {
+  var gl = this.GL;
+  var shaderProgram =
+    this._getShader('normalVert', 'basicFrag');
+  gl.enable(gl.BLEND);
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  gl.useProgram(shaderProgram);
+  this.drawMode = 'wireframe';
+  if(this.curStrokeColor) {
+    this._setNoFillStroke();
+  }
+  return this;
+};
+
 p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
   var colorNormalized = color._array;
   this.curStrokeColor = colorNormalized;
-  this.drawMode = 'stroke';
+  if(this.drawMode === 'wireframe') {
+    this._setNoFillStroke();
+  }
   return this;
 };
 
-//@TODO
-p5.RendererGL.prototype._strokeCheck = function(){
-  if(this.drawMode === 'stroke'){
-    throw new Error(
-      'stroke for shapes in 3D not yet implemented, use fill for now :('
-    );
-  }
+p5.RendererGL.prototype._setNoFillStroke = function() {
+  var gl = this.GL;
+  var shaderProgram = this.mHash[this.curShaderId];
+  shaderProgram.uMaterialColor = gl.getUniformLocation(
+      shaderProgram, 'uMaterialColor' );
+  gl.uniform4f( shaderProgram.uMaterialColor,
+    this.curStrokeColor[0],
+    this.curStrokeColor[1],
+    this.curStrokeColor[2],
+    this.curStrokeColor[3]);
 };
 
 /**

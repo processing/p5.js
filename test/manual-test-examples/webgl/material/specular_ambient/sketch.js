@@ -10,7 +10,7 @@ function draw(){
 
   ambientLight(100, 80, 80);
   pointLight(200, 200, 200, locX, locY, 0);
-  
+
   translate(-200, 0, 0);
   push();
   rotateZ(frameCount * 0.02);
