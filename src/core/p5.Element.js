@@ -51,7 +51,7 @@ p5.Element = function(elt, pInst) {
 /**
  * @method parent
  * @return {p5.Element}
- * 
+ *
  * @example
  * <div class="norender"><code>
  * // in the html file:
@@ -110,7 +110,7 @@ p5.Element.prototype.parent = function(p) {
 /**
  * @method id
  * @return {String} the id of the element
- * 
+ *
  * @example
  * <div class='norender'><code>
  * function setup() {

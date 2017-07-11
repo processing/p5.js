@@ -52,7 +52,7 @@ p5.prototype.float = function(str) {
  * @method int
  * @param {Array} ns                    values to parse
  * @return {Number[]}                   integer representation of values
- * 
+ *
  * @example
  * <div class='norender'><code>
  * print(int("10")); // 10

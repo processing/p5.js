@@ -383,7 +383,8 @@ p5.Matrix.prototype.determinant = function(){
 
 /**
  * multiply two mat4s
- * @param {p5.Matrix|Float32Array|Array}  multMatrix The matrix we want to multiply by
+ * @param {p5.Matrix|Float32Array|Array} multMatrix The matrix
+ *                                                we want to multiply by
  * @chainable
  */
 p5.Matrix.prototype.mult = function(multMatrix){

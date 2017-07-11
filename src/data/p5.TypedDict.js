@@ -49,7 +49,7 @@ p5.prototype.createNumberDict = function() {
  *
  * Base class for all p5.Dictionary types. More specifically
  * typed Dictionary objects inherit from this
- * 
+ *
  * @class p5.TypedDict
  * @constructor
  *
