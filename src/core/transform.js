@@ -93,6 +93,7 @@ p5.prototype.resetMatrix = function() {
  * @method rotate
  * @param  {Number} angle the angle of rotation, specified in radians
  *                        or degrees, depending on current angleMode
+ * @param  {p5.Vector|Array} [axis] (in 3d) the axis to rotate around
  * @chainable
  * @example
  * <div>
@@ -107,13 +108,7 @@ p5.prototype.resetMatrix = function() {
  * white 52x52 rect with black outline at center rotated counter 45 degrees
  *
  */
-/**
- * @method rotate
- * @param  {Number} rad angle in radians
- * @param  {p5.Vector|Array} axis axis to rotate around
- * @chainable
- */
-p5.prototype.rotate = function() {
+p5.prototype.rotate = function(angle, axis) {
   var args = new Array(arguments.length);
   var r;
   for (var i = 0; i < args.length; ++i) {

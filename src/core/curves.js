@@ -371,7 +371,7 @@ p5.prototype.curveDetail = function(d) {
  *
  * @method curveTightness
  * @param {Number} amount of deformation from the original vertices
- * @return {p5} the p5 Object
+ * @chainable
  * @example
  * <div>
  * <code>

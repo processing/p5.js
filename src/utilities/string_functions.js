@@ -101,7 +101,7 @@ p5.prototype.match =  function(str, reg) {
  * @method matchAll
  * @param  {String} str    the String to be searched
  * @param  {String} regexp the regexp to be used for matching
- * @return {Array}         2d Array of Strings found
+ * @return {String[]}         2d Array of Strings found
  * @example
  * <div class="norender">
  * <code>
@@ -133,12 +133,19 @@ p5.prototype.matchAll = function(str, reg) {
  * be positive integers.
  *
  * @method nf
- * @param {Number|Array} num      the Number to format
+ * @param {Number} num            the Number to format
  * @param {Number}       [left]   number of digits to the left of the
  *                                decimal point
  * @param {Number}       [right]  number of digits to the right of the
  *                                decimal point
- * @return {String|String[]}         formatted String
+ * @return {String}               formatted String
+ */
+/**
+ * @method nf
+ * @param {Number[]} nums         the Numbers to format
+ * @param {Number}       [left]
+ * @param {Number}       [right]
+ * @return {String[]}             formatted Strings
  * @example
  * <div>
  * <code>
@@ -238,10 +245,16 @@ function doNf() {
  * for the right parameter should always be a positive integer.
  *
  * @method nfc
- * @param  {Number|Array}   num     the Number to format
+ * @param  {Number}   num     the Number to format
  * @param  {Number}         [right] number of digits to the right of the
  *                                  decimal point
- * @return {String|Array}           formatted String
+ * @return {String}           formatted String
+ */
+/**
+ * @method nfc
+ * @param  {Number[]}   nums     the Numbers to format
+ * @param  {Number}         [right]
+ * @return {String[]}           formatted Strings
  * @example
  * <div>
  * <code>
@@ -311,12 +324,19 @@ function doNfc() {
  * should always be positive integers.
  *
  * @method nfp
- * @param {Number|Array} num      the Number to format
+ * @param {Number} num      the Number to format
  * @param {Number}       [left]   number of digits to the left of the decimal
  *                                point
  * @param {Number}       [right]  number of digits to the right of the
  *                                decimal point
- * @return {String|Array}         formatted String
+ * @return {String}         formatted String
+ */
+/**
+ * @method nfp
+ * @param {Number[]} nums      the Numbers to format
+ * @param {Number}       [left]
+ * @param {Number}       [right]
+ * @return {String[]}         formatted Strings
  * @example
  * <div>
  * <code>
@@ -368,12 +388,19 @@ function addNfp() {
  * parameters should always be positive integers.
  *
  * @method nfs
- * @param {Number|Array} num      the Number to format
+ * @param {Number} num      the Number to format
  * @param {Number}       [left]   number of digits to the left of the decimal
  *                                point
  * @param {Number}       [right]  number of digits to the right of the
  *                                decimal point
- * @return {String|Array}         formatted String
+ * @return {String}         formatted String
+ */
+/**
+ * @method nfs
+ * @param {Number[]} nums     the Numbers to format
+ * @param {Number}       [left]
+ * @param {Number}       [right]
+ * @return {String[]}         formatted Strings
  * @example
  * <div>
  * <code>
@@ -508,8 +535,13 @@ p5.prototype.splitTokens = function() {
  * and tab, this function also removes the Unicode "nbsp" character.
  *
  * @method trim
- * @param  {String|Array} str a String or Array of Strings to be trimmed
- * @return {String|Array}       a trimmed String or Array of Strings
+ * @param  {String} str a String to be trimmed
+ * @return {String}       a trimmed String
+ */
+/**
+ * @method trim
+ * @param  {String[]} strs an Array of Strings to be trimmed
+ * @return {String[]}       an Array of trimmed Strings
  * @example
  * <div>
  * <code>

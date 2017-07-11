@@ -58,7 +58,11 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  *
  * @method textLeading
  * @param {Number} leading the size in pixels for spacing between lines
- * @return {Object|Number}
+ * @chainable
+ */
+/**
+ * @method textLeading
+ * @return {Number}
  * @example
  * <div>
  * <code>
@@ -91,7 +95,11 @@ p5.prototype.textLeading = function(theLeading) {
  *
  * @method textSize
  * @param {Number} theSize the size of the letters in units of pixels
- * @return {Object|Number}
+ * @chainable
+ */
+/**
+ * @method textSize
+ * @return {Number}
  * @example
  * <div>
  * <code>
@@ -120,7 +128,11 @@ p5.prototype.textSize = function(theSize) {
  * @method textStyle
  * @param {Constant} theStyle styling for text, either NORMAL,
  *                            ITALIC, or BOLD
- * @return {Object|String}
+ * @chainable
+ */
+/**
+ * @method textStyle
+ * @return {String}
  * @example
  * <div>
  * <code>
@@ -181,7 +193,7 @@ p5.prototype.textWidth = function(theText) {
  * Returns the ascent of the current font at its current size. The ascent
  * represents the distance, in pixels, of the tallest character above
  * the baseline.
- *
+ * @method textAscent
  * @return {Number}
  * @example
  * <div>
@@ -209,7 +221,7 @@ p5.prototype.textAscent = function() {
  * Returns the descent of the current font at its current size. The descent
  * represents the distance, in pixels, of the character with the longest
  * descender below the baseline.
- *
+ * @method textDescent
  * @return {Number}
  * @example
  * <div>

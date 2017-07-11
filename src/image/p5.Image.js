@@ -219,14 +219,17 @@ p5.Image.prototype.loadPixels = function(){
  * the [pixels] array.
  *
  * @method updatePixels
- * @param {Integer|undefined} x x-offset of the target update area for the
+ * @param {Integer} x x-offset of the target update area for the
  *                              underlying canvas
- * @param {Integer|undefined} y y-offset of the target update area for the
+ * @param {Integer} y y-offset of the target update area for the
  *                              underlying canvas
- * @param {Integer|undefined} w height of the target update area for the
+ * @param {Integer} w height of the target update area for the
  *                              underlying canvas
- * @param {Integer|undefined} h height of the target update area for the
+ * @param {Integer} h height of the target update area for the
  *                              underlying canvas
+ */
+/**
+ * @method updatePixels
  * @example
  * <div><code>
  * var myImage;

@@ -68,7 +68,7 @@ p5.XML = function () {
  * p5.XML object.
  *
  * @method getParent
- * @return {Object}   element parent
+ * @return {p5.XML}   element parent
  * @example
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed

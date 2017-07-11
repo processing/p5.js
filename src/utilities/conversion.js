@@ -148,7 +148,7 @@ p5.prototype.boolean = function(n) {
 /**
  * @method byte
  * @param {Array} ns                   values to parse
- * @return {Array}                     array of byte representation of values
+ * @return {Number[]}                  array of byte representation of values
  * @example
  * <div class='norender'><code>
  * print(byte(127));               // 127
@@ -277,8 +277,13 @@ p5.prototype.hex = function(n, digits) {
  * in, an array of integers of the same length is returned.
  *
  * @method unhex
- * @param {String|Array} n value to parse
- * @return {Number|Number[]}      integer representation of hexadecimal value
+ * @param {String} n value to parse
+ * @return {Number}      integer representation of hexadecimal value
+ */
+/**
+ * @method unhex
+ * @param {Array} ns values to parse
+ * @return {Number[]}      integer representations of hexadecimal value
  * @example
  * <div class='norender'><code>
  * print(unhex("A"));                // 10
