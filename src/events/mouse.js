@@ -713,10 +713,10 @@ p5.prototype._onclick = function(e) {
 /**
  * The doubleClicked() function is executed every time a event
  * listener has detected a dblclick event which is a part of the
- * DOM L3 specification. The doublecClicked event is fired when a
+ * DOM L3 specification. The doubleClicked event is fired when a
  * pointing device button (usually a mouse's primary button)
  * is clicked twice on a single element. For more info on the
- * dbleclick event refer to mozilla's documentation here:
+ * dblclick event refer to mozilla's documentation here:
  * https://developer.mozilla.org/en-US/docs/Web/Events/dblclick
  *
  * @method doubleClicked
@@ -725,7 +725,7 @@ p5.prototype._onclick = function(e) {
  * <code>
  * // Click within the image to change
  * // the value of the rectangle
- * // after the mouse has been clicked
+ * // after the mouse has been double clicked
  *
  * var value = 0;
  * function draw() {
@@ -754,7 +754,7 @@ p5.prototype._onclick = function(e) {
  * </div>
  *
  * @alt
- * black 50x50 rect turns white with mouse doubelClick/press.
+ * black 50x50 rect turns white with mouse doubleClick/press.
  * no image displayed
  */
 
