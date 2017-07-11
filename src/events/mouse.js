@@ -711,6 +711,64 @@ p5.prototype._onclick = function(e) {
 };
 
 /**
+ * The doubleClicked() function is executed every time a event
+ * listener has detected a dblclick event which is a part of the
+ * DOM L3 specification. The doublecClicked event is fired when a
+ * pointing device button (usually a mouse's primary button)
+ * is clicked twice on a single element. For more info on the
+ * dbleclick event refer to mozilla's documentation here:
+ * https://developer.mozilla.org/en-US/docs/Web/Events/dblclick
+ *
+ * @method doubleClicked
+ * @example
+ * <div>
+ * <code>
+ * // Click within the image to change
+ * // the value of the rectangle
+ * // after the mouse has been clicked
+ *
+ * var value = 0;
+ * function draw() {
+ *   fill(value);
+ *   rect(25, 25, 50, 50);
+ * }
+ *
+ * function doubleClicked() {
+ *   if (value == 0) {
+ *     value = 255;
+ *   } else {
+ *     value = 0;
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * function doubleClicked() {
+ *   ellipse(mouseX, mouseY, 5, 5);
+ *   // prevent default
+ *   return false;
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * black 50x50 rect turns white with mouse doubelClick/press.
+ * no image displayed
+ */
+
+p5.prototype._doubleClicked = function(e) {
+  var context = this._isGlobal ? window : this;
+  if (typeof context.doubleClicked === 'function') {
+    var executeDefault = context.ondblclick(e);
+    if(executeDefault === false) {
+      e.preventDefault();
+    }
+  }
+};
+
+/**
  * The function mouseWheel() is executed every time a vertical mouse wheel
  * event is detected either triggered by an actual mouse wheel or by a
  * touchpad.<br><br>
