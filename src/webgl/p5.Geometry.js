@@ -35,7 +35,7 @@ p5.Geometry = function
   if(callback instanceof Function){
     callback.call(this);
   }
-  return this;
+  return this; // TODO: is this a constructor?
 };
 
 p5.Geometry.prototype.computeFaces = function(){

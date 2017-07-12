@@ -14,7 +14,6 @@ var p5 = require('../core/core');
  *
  * @class p5.XML
  * @constructor
- * @return {p5.XML}    p5.XML object generated
  * @example
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed

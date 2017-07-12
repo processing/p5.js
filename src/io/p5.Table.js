@@ -41,7 +41,6 @@ var p5 = require('../core/core');
  *  @class p5.Table
  *  @constructor
  *  @param  {p5.TableRow[]}     [rows] An array of p5.TableRow objects
- *  @return {p5.Table}         p5.Table generated
  */
 p5.Table = function (rows) {
   /**
