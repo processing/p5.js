@@ -16,6 +16,24 @@ suite('2D Primitives', function() {
         assert.ok(arc);
         assert.typeOf(arc, 'function');
       });
+      test('arc(): no friendly-err-msg', function() {
+        assert.doesNotThrow(function() {
+            myp5.arc(1, 1, 10.5, 10, 0, Math.PI, 'pie');
+          },
+          Error, 'got unwanted exception');
+      });
+      test('arc(): missing param #4, #5', function() {
+        assert.doesNotThrow(function() {
+            myp5.arc(1, 1, 10.5, 10);
+          },
+          Error, 'got unwanted exception');
+      });
+      test('arc(): wrong param type at #0', function() {
+        assert.doesNotThrow(function() {
+            myp5.arc('1', 1, 10.5, 10, 0, Math.PI, 'pie');
+          },
+          Error, 'got unwanted exception');
+      });
     });
   });
 
@@ -35,6 +53,31 @@ suite('2D Primitives', function() {
           assert.isTrue(res);
           done();
         });
+      });
+      test('ellipse(): no friendly-err-msg', function() {
+        assert.doesNotThrow(function() {
+            myp5.ellipse(0, 0, 100);
+          },
+          Error, 'got unwanted exception');
+      });
+      test('ellipse(): missing param #2', function() {
+        assert.doesNotThrow(function() {
+            myp5.ellipse(0, 0);
+          },
+          Error, 'got unwanted exception');
+      });
+      test('ellipse(): missing param #2', function() {
+        assert.doesNotThrow(function() {
+            var size;
+            myp5.ellipse(0, 0, size);
+          },
+          Error, 'got unwanted exception');
+      });
+      test('ellipse(): wrong param type at #0', function() {
+        assert.doesNotThrow(function() {
+            myp5.ellipse('0', 0, 100, 100);
+          },
+          Error, 'got unwanted exception');
       });
     });
   });

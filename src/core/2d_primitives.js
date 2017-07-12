@@ -246,7 +246,8 @@ p5.prototype.line = function() {
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  // check with FES:validateParameters - not implemented yet
+  // check with FES:validateParameters
+  this._validateParameters('line', args);
   //check whether we should draw a 3d line or 2d
   if (this._renderer.isP3D) {
     this._renderer.line(
