@@ -191,6 +191,37 @@ suite('2D Primitives', function() {
         assert.ok(rect);
         assert.typeOf(rect, 'function');
       });
+      test('rect(): no friendly-err-msg, format I', function() {
+        assert.doesNotThrow(function() {
+            myp5.rect(0, 0, 100, 100);
+          },
+          Error, 'got unwanted exception');
+      });
+      test('rect(): no friendly-err-msg, format II', function() {
+        assert.doesNotThrow(function() {
+            myp5.rect(0, 0, 100, 100, 1, Math.PI, 1, Math.PI);
+          },
+          Error, 'got unwanted exception');
+      });
+      test('rect(): missing param #3', function() {
+        assert.doesNotThrow(function() {
+            myp5.rect(0, 0, Math.PI);
+          },
+          Error, 'got unwanted exception');
+      });
+      test('rect(): missing param #4', function() { // this err case escapes
+        assert.doesNotThrow(function() {
+            var r1;
+            myp5.rect(0, 0, 100, 100, r1, Math.PI, 1, Math.PI);
+          },
+          Error, 'got unwanted exception');
+      });
+      test('rect(): wrong param type at #1', function() {
+        assert.doesNotThrow(function() {
+            myp5.rect(0, '0', 100, 100);
+          },
+          Error, 'got unwanted exception');
+      });
     });
   });
 

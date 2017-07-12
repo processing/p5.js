@@ -228,20 +228,20 @@ p5._friendlyParamError = function (errorObj, func) {
   switch (errorObj.type){
     case 'EMPTY_VAR':
       message = 'FES: It looks like ' + func +
-        ' received an empty variable in spot #' + errorObj.position +
+        '() received an empty variable in spot #' + errorObj.position +
         ' (zero-based index). If not intentional, this is often a problem' +
         ' with scope: [link to scope].';
       report(message, func, ERR_PARAMS);
       break;
     case 'WRONG_CLASS':
-      message = 'FES: ' + func + ' was expecting ' + errorObj.correctClass +
+      message = 'FES: ' + func + '() was expecting ' + errorObj.correctClass +
         ' for parameter #' + errorObj.position + ' (zero-based index), received ';
       // Wrap strings in quotes
       message += 'an object with name '+ errorObj.wrongClass +' instead.';
       report(message, func, ERR_PARAMS);
       break;
     case 'WRONG_TYPE':
-      message = 'FES: ' + func + ' was expecting ' + errorObj.correctType +
+      message = 'FES: ' + func + '() was expecting ' + errorObj.correctType +
         ' for parameter #' + errorObj.position + ' (zero-based index), received ';
       // Wrap strings in quotes
       message += errorObj.wrongType + ' instead.';
