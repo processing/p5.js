@@ -212,6 +212,10 @@ module.exports = {
   BEZIER: 'bezier',
   CURVE: 'curve',
 
+  // DEVICE-ORIENTATION
+  LANDSCAPE: 'landscape',
+  PORTRAIT: 'portrait',
+
   // DEFAULTS
   _DEFAULT_STROKE: '#000000',
   _DEFAULT_FILL: '#FFFFFF'
