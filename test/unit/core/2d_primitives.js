@@ -99,6 +99,88 @@ suite('2D Primitives', function() {
           done();
         });
       });
+      test('line(): no friendly-err-msg, 2D', function() {
+        assert.doesNotThrow(function() {
+            myp5.line(0, 0, 100, 100);
+          },
+          Error, 'got unwanted exception');
+      });
+      test('line(): no friendly-err-msg, 3D', function() {
+        assert.doesNotThrow(function() {
+            myp5.line(0, 0, 100, 100, 20, Math.PI);
+          },
+          Error, 'got unwanted exception');
+      });
+      test('line(): missing param #3', function() {
+        assert.doesNotThrow(function() {
+            myp5.line(0, 0, Math.PI);
+          },
+          Error, 'got unwanted exception');
+      });
+      test('line(): missing param #4', function() { // this err case escapes
+        assert.doesNotThrow(function() {
+            var x3;
+            myp5.line(0, 0, 100, 100, x3, Math.PI);
+          },
+          Error, 'got unwanted exception');
+      });
+      test('line(): wrong param type at #1', function() {
+        assert.doesNotThrow(function() {
+            myp5.line(0, '0', 100, 100);
+          },
+          Error, 'got unwanted exception');
+      });
+    });
+  });
+
+  suite('p5.prototype.point', function() {
+    var point = p5.prototype.point;
+    suite('point()', function() {
+      test('should be a function', function() {
+        assert.ok(point);
+        assert.typeOf(point, 'function');
+      });
+      test('point(): no friendly-err-msg, 2D', function() {
+        assert.doesNotThrow(function() {
+            myp5.point(Math.PI, 0);
+          },
+          Error, 'got unwanted exception');
+      });
+      test('point(): no friendly-err-msg, 3D', function() {
+        assert.doesNotThrow(function() {
+            myp5.point(Math.PI, 0, 100);
+          },
+          Error, 'got unwanted exception');
+      });
+      test('point(): missing param #1', function() {
+        assert.doesNotThrow(function() {
+            myp5.point(0);
+          },
+          Error, 'got unwanted exception');
+      });
+      test('point(): missing param #3', function() { // this err case escapes
+        assert.doesNotThrow(function() {
+            var z;
+            myp5.point(0, Math.PI, z);
+          },
+          Error, 'got unwanted exception');
+      });
+      test('point(): wrong param type at #1', function() {
+        assert.doesNotThrow(function() {
+            myp5.point(Math.PI, '0');
+          },
+          Error, 'got unwanted exception');
+      });
+    });
+  });
+
+  suite('p5.prototype.quad', function() {
+    var quad = p5.prototype.quad;
+    suite('quad()', function() {
+      test('should be a function', function() {
+        assert.ok(quad);
+        assert.typeOf(quad, 'function');
+      });
     });
   });
 
