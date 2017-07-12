@@ -259,10 +259,7 @@ p5.RendererGL.prototype._getCurShaderId = function(){
   //if the shader ID is not yet defined
   if(this.drawMode !== 'fill' && this.curShaderId === undefined){
     //default shader: normalMaterial()
-    var mId = 'normalVert|normalFrag';
-    var shaderProgram = this._initShaders('normalVert', 'normalFrag');
-    this.mHash[mId] = shaderProgram;
-    this.curShaderId = mId;
+    this._getShader('normalVert', 'normalFrag');
   } else if(this.isImmediateDrawing && this.drawMode === 'fill'){
     // note that this._getShader will check if the shader already exists
     // by looking up the shader id (composed of vertexShaderId|fragmentShaderId)
