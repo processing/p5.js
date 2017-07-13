@@ -181,6 +181,24 @@ suite('2D Primitives', function() {
         assert.ok(quad);
         assert.typeOf(quad, 'function');
       });
+      test('quad(): no friendly-err-msg, 2D', function() {
+        assert.doesNotThrow(function() {
+            myp5.quad(Math.PI, 0, Math.PI, 5.1, 10, 5.1, 10, 0);
+          },
+          Error, 'got unwanted exception');
+      });
+      test('quad(): missing param #7', function() {
+        assert.doesNotThrow(function() {
+            myp5.quad(Math.PI, 0, Math.PI, 5.1, 10, 5.1, 10);
+          },
+          Error, 'got unwanted exception');
+      });
+      test('quad(): wrong param type at #1', function() {
+        assert.doesNotThrow(function() {
+            myp5.quad(Math.PI, '0', Math.PI, 5.1, 10, 5.1, 10, 0);
+          },
+          Error, 'got unwanted exception');
+      });
     });
   });
 
@@ -231,6 +249,24 @@ suite('2D Primitives', function() {
       test('should be a function', function() {
         assert.ok(triangle);
         assert.typeOf(triangle, 'function');
+      });
+      test('triangle(): no friendly-err-msg', function() {
+        assert.doesNotThrow(function() {
+            myp5.triangle(Math.PI, 0, Math.PI, 5.1, 10, 5.1);
+          },
+          Error, 'got unwanted exception');
+      });
+      test('triangle(): missing param #5', function() {
+        assert.doesNotThrow(function() {
+            myp5.triangle(Math.PI, 0, Math.PI, 5.1, 10);
+          },
+          Error, 'got unwanted exception');
+      });
+      test('triangle(): wrong param type at #1', function() {
+        assert.doesNotThrow(function() {
+            myp5.triangle(Math.PI, '0', Math.PI, 5.1, 10, 5.1);
+          },
+          Error, 'got unwanted exception');
       });
     });
   });
