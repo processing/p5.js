@@ -45,6 +45,7 @@ p5.Image = function(width, height){
   /**
    * Image width.
    * @property {Number} width
+   * @readOnly
    * @example
    * <div><code>
    * var img;
@@ -71,6 +72,7 @@ p5.Image = function(width, height){
   /**
    * Image height.
    * @property {Number} height
+   * @readOnly
    * @example
    * <div><code>
    * var img;

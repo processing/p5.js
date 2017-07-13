@@ -26,6 +26,7 @@ p5.Element = function(elt, pInst) {
    * Underlying HTML element. All normal HTML methods can be called on this.
    *
    * @property elt
+   * @readOnly
    */
   this.elt = elt;
   this._pInst = pInst;
