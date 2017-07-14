@@ -106,8 +106,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
     //setTimeout with 0 forces the task to the back of the queue, this ensures that
     //we finish switching out the renderer
     setTimeout(function() {
-      callback.apply(window._renderer, [options[0], options[1],
-        options[2], options[3]]);
+      callback.apply(window._renderer, options);
     }, 0);
   }
 };
@@ -125,12 +124,13 @@ p5.prototype.setAttributes = function() {
     this._renderer.attributes.stencil = arguments[0] ===
       'stencil' ? arguments[1] : true;
     this._renderer.attributes.antialias = arguments[0] ===
-      'antialias' ? arguments[1] : true;
+      'antialias' ? arguments[1] : false;
     this._renderer.attributes.premultipliedAlpha = arguments[0] ===
-      'premultipliedAlpha' ? arguments[1] : true;
+      'premultipliedAlpha' ? arguments[1] : false;
     this._renderer.attributes.preserveDrawingBuffer = arguments[0] ===
-      'preserveDrawingBuffer' ? arguments[1] : true;
-  } else if(arguments.length === 1) {
+      'preserveDrawingBuffer' ? arguments[1] : false;
+  }
+  else if(arguments.length === 1) {
     for(var key in arguments[0]) {
       if(this._renderer.attributes.hasOwnProperty(key)) {
         this._renderer.attributes[key] = arguments[0][key];
@@ -425,28 +425,33 @@ p5.RendererGL.prototype.loadPixels = function() {
   var h = arguments[3] || this.height;
   w *= pd;
   h *= pd;
-  var gl = this.GL;
-  var attribs = gl.getContextAttributes();
-  //the first time we loadPixels if the user didn't already change the attribute
-  //preserveDrawingBuffer to true, we need to reset the context with
-  //preserveDrawingBuffer set to true
-  if(attribs.preserveDrawingBuffer === false) {
-    this.attributes.preserveDrawingBuffer = true;
-    this._resetContext([x, y, w, h], this._readPixels);
-  } else {
-    this._readPixels(x, y, w, h);
-  }
+  this._readPixels(x, y, w, h);
 };
 
 p5.RendererGL.prototype._readPixels = function() {
+  var pd = this._pixelDensity || this._pInst._pixelDensity;
   var x = arguments[0] || 0;
   var y = arguments[1] || 0;
   var w = arguments[2] || this.width;
   var h = arguments[3] || this.height;
+  w *= pd;
+  h *= pd;
   var gl = this.GL;
   var pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
   gl.readPixels(x, y, w, h, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
   this._pInst._setProperty('pixels', pixels);
+};
+
+p5.RendererGL.prototype.get = function(x, y, w, h) {
+  return p5.Renderer2D.prototype.get.call(x, y, w, h);
+};
+
+p5.RendererGL.prototype.set = function(x, y, imgOrCol) {
+  p5.Renderer2D.prototype.set.apply(this, arguments);
+};
+
+p5.RendererGL.prototype.updatePixels = function(x, y, w, h) {
+  p5.Renderer2D.prototype.updatePixels.apply(this, arguments);
 };
 
 /**
