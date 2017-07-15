@@ -146,7 +146,7 @@ p5.prototype.texture = function(){
     }
     var tex = gl.createTexture();
     args[0]._setProperty('tex', tex);
-    args[0]._setProperty('isTexture', true);
+    //args[0]._setProperty('isTexture', true);
     this._renderer._bind.call(this, tex, textureData);
   }
   else {
@@ -168,6 +168,7 @@ p5.prototype.texture = function(){
   gl.bindTexture(gl.TEXTURE_2D, args[0].tex);
   gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), true);
   gl.uniform1i(gl.getUniformLocation(shaderProgram, 'uSampler'), 0);
+  this.emptyTexture = null;
   return this;
 };
 
@@ -264,11 +265,19 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
     shaderProgram, 'uSpecular' );
   gl.uniform1i(shaderProgram.uSpecular, false);
 
-  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
-
+  this._renderer._createEmptyTexture(colors[0], colors[1], colors[2], colors[3]);
   return this;
 };
 
+p5.RendererGL.prototype._createEmptyTexture = function(r, g, b, a) {
+  var gl = this.GL;
+  var data = new Uint8Array([255,255,255,255]);
+  if(this.emptyTexture === null) {
+    this.emptyTexture = gl.createTexture();
+  }
+  gl.bindTexture(gl.TEXTURE_2D, this.emptyTexture);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+};
 
 /**
  * Specular material for geometry with a given color. You can view all
@@ -307,7 +316,7 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   var shaderProgram =
     this._renderer._getShader('lightVert', 'lightTextureFrag');
   gl.useProgram(shaderProgram);
-  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
+  //gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
@@ -316,7 +325,7 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   shaderProgram.uSpecular = gl.getUniformLocation(
     shaderProgram, 'uSpecular' );
   gl.uniform1i(shaderProgram.uSpecular, true);
-
+  this._renderer._createEmptyTexture(colors[0], colors[1], colors[2], colors[3]);
   return this;
 };
 
