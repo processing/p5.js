@@ -23,7 +23,7 @@ require('../core/error_helpers');
  * You may also supply a callback function to handle the image when it's ready.
  * <br><br>
  * The path to the image should be relative to the HTML file
- * that links in your sketch. Loading an from a URL or other
+ * that links in your sketch. Loading an image from a URL or other
  * remote location may be blocked due to your browser's built-in
  * security.
  *
