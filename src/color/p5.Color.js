@@ -460,7 +460,7 @@ p5.Color._parseInputs = function() {
       return results;
     }
 
-  } else if (numArgs === 1 && typeof arguments[0] === 'string') {
+  } else if (typeof arguments[0] === 'string') {
 
     var str = arguments[0].trim().toLowerCase();
 
@@ -474,26 +474,43 @@ p5.Color._parseInputs = function() {
       results = colorPatterns.HEX3.exec(str).slice(1).map(function(color) {
         return parseInt(color + color, 16) / 255;
       });
-      results[3] = 1;
+      if (typeof arguments[1] === 'number') {
+        results[3] = arguments[1] / maxes[mode][3];
+      } else {
+        results[3] = 1;
+      }
       return results;
     } else if (colorPatterns.HEX6.test(str)) {  // #rrggbb
       results = colorPatterns.HEX6.exec(str).slice(1).map(function(color) {
         return parseInt(color, 16) / 255;
       });
-      results[3] = 1;
+      // Alpha may be undefined, so default it to 100%.
+      if (typeof arguments[1] === 'number') {
+        results[3] = arguments[1] / maxes[mode][3];
+      } else {
+        results[3] = 1;
+      }
       return results;
     } else if (colorPatterns.RGB.test(str)) {  // rgb(R,G,B)
       results = colorPatterns.RGB.exec(str).slice(1).map(function(color) {
         return color / 255;
       });
-      results[3] = 1;
+      if (typeof arguments[1] === 'number') {
+        results[3] = arguments[1] / maxes[mode][3];
+      } else {
+        results[3] = 1;
+      }
       return results;
     } else if (colorPatterns.RGB_PERCENT.test(str)) {  // rgb(R%,G%,B%)
       results = colorPatterns.RGB_PERCENT.exec(str).slice(1)
         .map(function(color) {
           return parseFloat(color) / 100;
         });
-      results[3] = 1;
+      if (typeof arguments[1] === 'number') {
+        results[3] = arguments[1] / maxes[mode][3];
+      } else {
+        results[3] = 1;
+      }
       return results;
     } else if (colorPatterns.RGBA.test(str)) {  // rgba(R,G,B,A)
       results = colorPatterns.RGBA.exec(str).slice(1)
@@ -524,7 +541,11 @@ p5.Color._parseInputs = function() {
         }
         return parseInt(color, 10) / 100;
       });
-      results[3] = 1;
+      if (typeof arguments[1] === 'number') {
+        results[3] = arguments[1] / maxes[mode][3];
+      } else {
+        results[3] = 1;
+      }
     } else if (colorPatterns.HSLA.test(str)) {  // hsla(H,S,L,A)
       results = colorPatterns.HSLA.exec(str).slice(1)
         .map(function(color, idx) {
@@ -553,7 +574,11 @@ p5.Color._parseInputs = function() {
         }
         return parseInt(color, 10) / 100;
       });
-      results[3] = 1;
+      if (typeof arguments[1] === 'number') {
+        results[3] = arguments[1] / maxes[mode][3];
+      } else {
+        results[3] = 1;
+      }
     } else if (colorPatterns.HSBA.test(str)) {  // hsba(H,S,B,A)
       results = colorPatterns.HSBA.exec(str).slice(1)
         .map(function(color, idx) {
