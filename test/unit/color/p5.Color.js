@@ -63,6 +63,43 @@ suite('p5.Color', function() {
     });
   });
 
+  suite('p5.prototype.color("#rgba")', function() {
+    setup(function() {
+      c = myp5.color('#f016');
+    });
+    test('should create instance of p5.Color', function() {
+      assert.instanceOf(c, p5.Color);
+    });
+
+    test('should correctly set RGBA property', function() {
+      assert.deepEqual(c.levels, [255, 0, 17, 102]);
+    });
+
+    suite('spot check', function() {
+      test('numeric hex values', function() {
+        c = myp5.color('#0000');
+        assert.deepEqual(c.levels, [0, 0, 0, 0]);
+      });
+
+      test('alphabetic hex values', function() {
+        c = myp5.color('#ffff');
+        assert.deepEqual(c.levels, [255, 255, 255, 255]);
+      });
+
+      test('alphanumeric hex values', function() {
+        c = myp5.color('#f007');
+        assert.deepEqual(c.levels, [255, 0, 0, 119]);
+        c = myp5.color('#f0e5');
+        assert.deepEqual(c.levels, [255, 0, 238, 85]);
+      });
+    });
+
+    test('invalid hex values resolve to white', function() {
+      c = myp5.color('#fire');
+      assert.deepEqual(c.levels, [255, 255, 255, 255]);
+    });
+  });
+
   suite('p5.prototype.color("#rrggbb")', function() {
     setup(function() {
       c = myp5.color('#ff0066');
@@ -97,6 +134,44 @@ suite('p5.Color', function() {
 
     test('invalid hex values resolve to white', function() {
       c = myp5.color('#zzztop');
+      assert.deepEqual(c.levels, [255, 255, 255, 255]);
+    });
+  });
+
+  suite('p5.prototype.color("#rrggbbaa")', function() {
+    setup(function() {
+      c = myp5.color('#f01dab1e');
+    });
+
+    test('should create instance of p5.Color', function() {
+      assert.instanceOf(c, p5.Color);
+    });
+
+    test('should correctly set RGBA property', function() {
+      assert.deepEqual(c.levels, [240, 29, 171, 30]);
+    });
+
+    suite('spot check', function() {
+      test('numeric hex values', function() {
+        c = myp5.color('#12345678');
+        assert.deepEqual(c.levels, [18, 52, 86, 120]);
+      });
+
+      test('alphabetic hex values', function() {
+        c = myp5.color('#abcdeffe');
+        assert.deepEqual(c.levels, [171, 205, 239, 254]);
+      });
+
+      test('alphanumeric hex values', function() {
+        c = myp5.color('#a1a1a1a1');
+        assert.deepEqual(c.levels, [161, 161, 161, 161]);
+        c = myp5.color('#14ffaca6');
+        assert.deepEqual(c.levels, [20, 255, 172, 166]);
+      });
+    });
+
+    test('invalid hex values resolve to white', function() {
+      c = myp5.color('#c0vfefed');
       assert.deepEqual(c.levels, [255, 255, 255, 255]);
     });
   });
