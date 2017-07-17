@@ -446,14 +446,6 @@ p5.RendererGL.prototype.get = function(x, y, w, h) {
   return p5.Renderer2D.prototype.get.call(x, y, w, h);
 };
 
-p5.RendererGL.prototype.set = function(x, y, imgOrCol) {
-  p5.Renderer2D.prototype.set.apply(this, arguments);
-};
-
-p5.RendererGL.prototype.updatePixels = function(x, y, w, h) {
-  p5.Renderer2D.prototype.updatePixels.apply(this, arguments);
-};
-
 /**
  * [strokeWeight description]
  * @param  {Number} pointSize stroke point size
