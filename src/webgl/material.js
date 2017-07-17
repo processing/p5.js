@@ -128,6 +128,9 @@ p5.prototype.texture = function(){
     'lightTextureFrag');
   gl.useProgram(shaderProgram);
   var textureData;
+  shaderProgram.uSpecular = gl.getUniformLocation(
+    shaderProgram, 'uSpecular' );
+  gl.uniform1i(shaderProgram.uSpecular, false);
   //if argument is not already a texture
   //create a new one
   if(!args[0].isTexture){
@@ -146,7 +149,7 @@ p5.prototype.texture = function(){
     }
     var tex = gl.createTexture();
     args[0]._setProperty('tex', tex);
-    //args[0]._setProperty('isTexture', true);
+    args[0]._setProperty('isTexture', true);
     this._renderer._bind.call(this, tex, textureData);
   }
   else {
@@ -168,7 +171,6 @@ p5.prototype.texture = function(){
   gl.bindTexture(gl.TEXTURE_2D, args[0].tex);
   gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), true);
   gl.uniform1i(gl.getUniformLocation(shaderProgram, 'uSampler'), 0);
-  this.emptyTexture = null;
   return this;
 };
 
@@ -265,18 +267,20 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
     shaderProgram, 'uSpecular' );
   gl.uniform1i(shaderProgram.uSpecular, false);
 
-  this._renderer._createEmptyTexture(colors[0], colors[1], colors[2], colors[3]);
+  this._renderer._createEmptyTexture();
+  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
   return this;
 };
 
-p5.RendererGL.prototype._createEmptyTexture = function(r, g, b, a) {
-  var gl = this.GL;
-  var data = new Uint8Array([255,255,255,255]);
+p5.RendererGL.prototype._createEmptyTexture = function() {
   if(this.emptyTexture === null) {
+    var gl = this.GL;
+    var data = new Uint8Array([1,1,1,1]);
     this.emptyTexture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, this.emptyTexture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0,
+      gl.RGBA, gl.UNSIGNED_BYTE, data);
   }
-  gl.bindTexture(gl.TEXTURE_2D, this.emptyTexture);
-  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
 };
 
 /**
@@ -325,7 +329,8 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   shaderProgram.uSpecular = gl.getUniformLocation(
     shaderProgram, 'uSpecular' );
   gl.uniform1i(shaderProgram.uSpecular, true);
-  this._renderer._createEmptyTexture(colors[0], colors[1], colors[2], colors[3]);
+  this._renderer._createEmptyTexture();
+  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
   return this;
 };
 
