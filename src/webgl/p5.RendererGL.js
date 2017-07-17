@@ -110,7 +110,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
     }, 0);
   }
 };
-
+//For changing attributes of the Renderer
 p5.prototype.setAttributes = function() {
   if(!this._renderer.isP3D) {
     console.log('setAttributes() only works in WebGL');
@@ -417,6 +417,7 @@ p5.RendererGL.prototype._strokeCheck = function(){
   }
 };
 
+//read pixels on screen;
 p5.RendererGL.prototype.loadPixels = function() {
   var pd = this._pInst._pixelDensity;
   var x = arguments[0] || 0;
@@ -428,23 +429,14 @@ p5.RendererGL.prototype.loadPixels = function() {
   this._readPixels(x, y, w, h);
 };
 
-p5.RendererGL.prototype._readPixels = function() {
-  var pd = this._pixelDensity || this._pInst._pixelDensity;
-  var x = arguments[0] || 0;
-  var y = arguments[1] || 0;
-  var w = arguments[2] || this.width;
-  var h = arguments[3] || this.height;
-  w *= pd;
-  h *= pd;
+//helper function for loadPixels()
+p5.RendererGL.prototype._readPixels = function(x, y, w, h) {
   var gl = this.GL;
   var pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
   gl.readPixels(x, y, w, h, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
   this._pInst._setProperty('pixels', pixels);
 };
 
-p5.RendererGL.prototype.get = function(x, y, w, h) {
-  return p5.Renderer2D.prototype.get.call(x, y, w, h);
-};
 
 /**
  * [strokeWeight description]

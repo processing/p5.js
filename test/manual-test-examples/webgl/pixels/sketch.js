@@ -2,8 +2,11 @@
  * webgl loadPixels() example
  */
 
+var tex;
+
 function setup() {
   createCanvas(500,500,WEBGL);
+  setAttributes('preserveDrawingBuffer', true);
 }
 
 function draw() {
@@ -21,4 +24,5 @@ translate(150, 100, 0);
 
 function mousePressed() {
   loadPixels();
+  console.log(pixels);
 }
