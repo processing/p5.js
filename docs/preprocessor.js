@@ -73,17 +73,27 @@ function mergeOverloadedMethods(data) {
         assertEqual(classitem.description || '', '',
                     'additional overloads should have no description');
 
-        if (!method.overloads) {
-          method.overloads = [{
+        function makeOverload(method) {
+          var overload = {
             line: method.line,
-            params: processOverloadedParams(method.params)
-          }];
+            params: processOverloadedParams(method.params || [])
+          };
+          // TODO: the doc renderer assumes (incorrectly) that
+          //   these are the same for all overrides
+          if (method.static)
+            overload.static = method.static;
+          if (method.chainable)
+            overload.chainable = method.chainable;
+          if (method.return)
+            overload.return = method.return;
+          return overload;
+        }
+
+        if (!method.overloads) {
+          method.overloads = [makeOverload(method)];
           delete method.params;
         }
-        method.overloads.push({
-          line: classitem.line,
-          params: processOverloadedParams(classitem.params)
-        });
+        method.overloads.push(makeOverload(classitem));
         return false;
       } else {
         methodsByFullName[fullName] = classitem;

@@ -8,11 +8,11 @@ var p5 = require('../core/core');
  * p5 Geometry class
  * @class p5.Geometry
  * @constructor
- * @param  {Function | Object} vertData callback function or Object
+ * @param  {function | Object} vertData callback function or Object
  *                     containing routine(s) for vertex data generation
  * @param  {Number} [detailX] number of vertices on horizontal surface
  * @param  {Number} [detailY] number of vertices on horizontal surface
- * @param {Function} [callback] function to call upon object instantiation.
+ * @param {function} [callback] function to call upon object instantiation.
  *
  */
 p5.Geometry = function
@@ -35,7 +35,7 @@ p5.Geometry = function
   if(callback instanceof Function){
     callback.call(this);
   }
-  return this;
+  return this; // TODO: is this a constructor?
 };
 
 p5.Geometry.prototype.computeFaces = function(){
@@ -72,6 +72,7 @@ p5.Geometry.prototype._getFaceNormal = function(faceId,vertId){
 /**
  * computes smooth normals per vertex as an average of each
  * face.
+ * @chainable
  */
 p5.Geometry.prototype.computeNormals = function (){
   for(var v=0; v < this.vertices.length; v++){
@@ -96,7 +97,7 @@ p5.Geometry.prototype.computeNormals = function (){
 /**
  * Averages the vertex normals. Used in curved
  * surfaces
- * @return {p5.Geometry}
+ * @chainable
  */
 p5.Geometry.prototype.averageNormals = function() {
 
@@ -114,7 +115,7 @@ p5.Geometry.prototype.averageNormals = function() {
 
 /**
  * Averages pole normals.  Used in spherical primitives
- * @return {p5.Geometry}
+ * @chainable
  */
 p5.Geometry.prototype.averagePoleNormals = function() {
 
@@ -146,7 +147,7 @@ p5.Geometry.prototype.averagePoleNormals = function() {
 
 /**
  * Modifies all vertices to be centered within the range -100 to 100.
- * @return {p5.Geometry}
+ * @chainable
  */
 p5.Geometry.prototype.normalize = function() {
   if(this.vertices.length > 0) {

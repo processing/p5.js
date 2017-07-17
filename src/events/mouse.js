@@ -27,6 +27,7 @@ p5.prototype._hasMouseInteracted = false;
  * recent touch point.
  *
  * @property {Number} mouseX
+ * @readOnly
  *
  * @example
  * <div>
@@ -52,6 +53,7 @@ p5.prototype.mouseX = 0;
  * recent touch point.
  *
  * @property {Number} mouseY
+ * @readOnly
  *
  * @example
  * <div>
@@ -76,6 +78,7 @@ p5.prototype.mouseY = 0;
  * (0, 0) of the canvas.
  *
  * @property {Number} pmouseX
+ * @readOnly
  *
  * @example
  * <div>
@@ -107,6 +110,7 @@ p5.prototype.pmouseX = 0;
  * (0, 0) of the canvas.
  *
  * @property {Number} pmouseY
+ * @readOnly
  *
  * @example
  * <div>
@@ -135,6 +139,7 @@ p5.prototype.pmouseY = 0;
  * position of the mouse, relative to (0, 0) of the window.
  *
  * @property {Number} winMouseX
+ * @readOnly
  *
  * @example
  * <div>
@@ -172,6 +177,7 @@ p5.prototype.winMouseX = 0;
  * position of the mouse, relative to (0, 0) of the window.
  *
  * @property {Number} winMouseY
+ * @readOnly
  *
  * @example
  * <div>
@@ -210,6 +216,7 @@ p5.prototype.winMouseY = 0;
  * (0, 0) of the window.
  *
  * @property {Number} pwinMouseX
+ * @readOnly
  *
  * @example
  * <div>
@@ -251,6 +258,7 @@ p5.prototype.pwinMouseX = 0;
  * of the window.
  *
  * @property {Number} pwinMouseY
+ * @readOnly
  *
  *
  * @example
@@ -294,6 +302,7 @@ p5.prototype.pwinMouseY = 0;
  * Warning: different browsers may track mouseButton differently.
  *
  * @property {Constant} mouseButton
+ * @readOnly
  *
  * @example
 	* <div>
@@ -327,6 +336,7 @@ p5.prototype.mouseButton = 0;
  * and false if not.
  *
  * @property {Boolean} mouseIsPressed
+ * @readOnly
  *
  * @example
 	* <div>
