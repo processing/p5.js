@@ -18,6 +18,18 @@ require('./p5.Color');
  * typically used within draw() to clear the display window at the beginning
  * of each frame, but it can be used inside setup() to set the background on
  * the first frame of animation or if the background need only be set once.
+ * <br><br>
+ * The color is either specified in terms of the RGB, HSB, or HSL color
+ * depending on the current colorMode. (The default color space is RGB, with
+ * each value in the range from 0 to 255).
+ * <br><br>
+ * If a single string argument is provided, RGB, RGBA and Hex CSS color strings
+ * and all named color strings are supported. In this case, an alpha number
+ * value as a second argument is not supported, the RGBA form should be used.
+ * <br><br>
+ * A p5.Color object can also be provided to set the background color.
+ * <br><br>
+ * A p5.Image can also be provided to set the background iamge.
  *
  * @method background
  * @param {p5.Color} color     any value created by the color() function
@@ -328,8 +340,10 @@ p5.prototype.colorMode = function() {
  * in the range from 0 to 255).
  * <br><br>
  * If a single string argument is provided, RGB, RGBA and Hex CSS color strings
- * and all named color strings are supported. A p5 Color object can also be
- * provided to set the fill color.
+ * and all named color strings are supported. In this case, an alpha number
+ * value as a second argument is not supported, the RGBA form should be used.
+ * <br><br>
+ * A p5 Color object can also be provided to set the fill color.
  *
  * @method fill
  * @param  {Number}        v1      red or hue value relative to
@@ -526,8 +540,11 @@ p5.prototype.noStroke = function() {
  * the range from 0 to 255).
  * <br><br>
  * If a single string argument is provided, RGB, RGBA and Hex CSS color
- * strings and all named color strings are supported. A p5 Color object
- * can also be provided to set the stroke color.
+ * strings and all named color strings are supported. In this case, an alpha
+ * number value as a second argument is not supported, the RGBA form should be
+ * used.
+ * <br><br>
+ * A p5 Color object can also be provided to set the stroke color.
  *
  *
  * @method stroke

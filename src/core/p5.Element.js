@@ -208,6 +208,54 @@ p5.Element.prototype.mousePressed = function (fxn) {
 };
 
 /**
+ * The .doubleClicked() function is called once after every time a
+ * mouse button is pressed twice over the element. This can be used to
+ * attach element and action specific event listeners.
+ *
+ * @method doubleClicked
+ * @param  {Function} fxn function to be fired when mouse is
+ *                    pressed over the element.
+ * @return {p5.Element}
+ * @example
+ * <div class='norender'><code>
+ * var cnv;
+ * var d;
+ * var g;
+ * function setup() {
+ *   cnv = createCanvas(100, 100);
+ *   cnv.doubleClicked(changeGray); // attach listener for
+ *                                 // canvas click only
+ *   d = 10;
+ *   g = 100;
+ * }
+ *
+ * function draw() {
+ *   background(g);
+ *   ellipse(width/2, height/2, d, d);
+ * }
+ *
+ * // this function fires with any double click anywhere
+ * function doubleClicked() {
+ *   d = d + 10;
+ * }
+ *
+ * // this function fires only when cnv is clicked
+ * function changeGray() {
+ *   g = random(0, 255);
+ * }
+ * </code></div>
+ *
+ * @alt
+ * no display.
+ *
+ */
+p5.Element.prototype.doubleClicked = function (fxn) {
+  attachListener('doubleClicked', fxn, this);
+  return this;
+};
+
+
+/**
  * The .mouseWheel() function is called once after every time a
  * mouse wheel is scrolled over the element. This can be used to
  * attach element specific event listeners.

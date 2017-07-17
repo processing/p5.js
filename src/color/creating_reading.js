@@ -134,10 +134,12 @@ p5.prototype.brightness = function(c) {
  * as a grayscale value. Add a second value, and it will be used for alpha
  * transparency. When three values are specified, they are interpreted as
  * either RGB or HSB values. Adding a fourth value applies alpha
- * transparency. If a single string parameter is provided it will be
- * interpreted as a CSS-compatible color string.
- *
- * Colors are stored as Numbers or Arrays.
+ * transparency.
+ * <br><br>
+ * If a single string argument is provided, RGB, RGBA and Hex CSS color
+ * strings and all named color strings are supported. In this case, an alpha
+ * number value as a second argument is not supported, the RGBA form should be
+ * used.
  *
  * @method color
  * @param  {Number}        gray    number specifying value between white
