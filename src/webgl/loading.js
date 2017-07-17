@@ -25,18 +25,18 @@ require('./p5.Geometry');
  * @param  {String} path              Path of the model to be loaded
  * @param  {Boolean} normalize        If true, scale the model to a
  *                                      standardized size when loading
- * @param  {Function(p5.Geometry)} [successCallback] Function to be called
+ * @param  {function(p5.Geometry)} [successCallback] Function to be called
  *                                     once the model is loaded. Will be passed
  *                                     the 3D model object.
- * @param  {Function(Event)} [failureCallback] called with event error if
+ * @param  {function(Event)} [failureCallback] called with event error if
  *                                         the image fails to load.
  * @return {p5.Geometry} the p5.Geometry object
  */
 /**
  * @method loadModel
  * @param  {String} path
- * @param  {Function(p5.Geometry)} [successCallback]
- * @param  {Function(Event)} [failureCallback]
+ * @param  {function(p5.Geometry)} [successCallback]
+ * @param  {function(Event)} [failureCallback]
  * @return {p5.Geometry} the p5.Geometry object
  * @example
  * <div>

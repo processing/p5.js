@@ -20,6 +20,7 @@ var downKeys = {};
  * and false if no keys are pressed.
  *
  * @property {Boolean} keyIsPressed
+ * @readOnly
  * @example
  * <div>
  * <code>
@@ -49,6 +50,7 @@ p5.prototype.keyIsPressed = false; // khan
  * variable.
  *
  * @property {String} key
+ * @readOnly
  * @example
  * <div><code>
  * // Click any key to display it!
@@ -78,6 +80,7 @@ p5.prototype.key = '';
  * on a site like this: <a href="http://keycode.info/">keycode.info</a>.
  *
  * @property {Number} keyCode
+ * @readOnly
  * @example
  * <div><code>
  * var fillVal = 126;

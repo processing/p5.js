@@ -79,6 +79,7 @@ if (window.console && console.log) {
  * after the first iteration of draw it is 1, etc.
  *
  * @property {Number} frameCount
+ * @readOnly
  * @example
  *   <div><code>
  *     function setup() {
@@ -106,6 +107,7 @@ p5.prototype.frameCount = 0;
  * "true" if the window is focused and "false" if not.
  *
  * @property {Boolean} focused
+ * @readOnly
  * @example
  * <div><code>
  * // To demonstrate, put two windows side by side.
@@ -205,7 +207,11 @@ p5.prototype.cursor = function(type, x, y) {
  * or are non positive also returns current framerate.
  *
  * @method frameRate
- * @param  {Number} [fps] number of frames to be displayed every second
+ * @param  {Number} fps number of frames to be displayed every second
+ * @chainable
+ */
+/**
+ * @method frameRate
  * @return {Number}       current frameRate
  * @example
  *
@@ -309,6 +315,7 @@ p5.prototype.noCursor = function() {
  * is used to run a full-screen program on any display size.
  *
  * @property {Number} displayWidth
+ * @readOnly
  * @example
  * <div class="norender"><code>
  * createCanvas(displayWidth, displayHeight);
@@ -325,6 +332,7 @@ p5.prototype.displayWidth = screen.width;
  * is used to run a full-screen program on any display size.
  *
  * @property {Number} displayHeight
+ * @readOnly
  * @example
  * <div class="norender"><code>
  * createCanvas(displayWidth, displayHeight);
@@ -341,6 +349,7 @@ p5.prototype.displayHeight = screen.height;
  * window.innerWidth.
  *
  * @property {Number} windowWidth
+ * @readOnly
  * @example
  * <div class="norender"><code>
  * createCanvas(windowWidth, windowHeight);
@@ -356,6 +365,7 @@ p5.prototype.windowWidth = getWindowWidth();
  * window.innerHeight.
  *
  * @property {Number} windowHeight
+ * @readOnly
  * @example
  * <div class="norender"><code>
  * createCanvas(windowWidth, windowHeight);
@@ -424,6 +434,7 @@ function getWindowHeight() {
  * createCanvas() is not used in a program.
  *
  * @property {Number} width
+ * @readOnly
  */
 p5.prototype.width = 0;
 
@@ -435,6 +446,7 @@ p5.prototype.width = 0;
  * createCanvas() is not used in a program.
  *
  * @property {Number} height
+ * @readOnly
  */
 p5.prototype.height = 0;
 

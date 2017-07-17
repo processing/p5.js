@@ -27,6 +27,7 @@ define([
       var isConstructor = cleanItem.is_constructor;
       var syntax = '';
       if (isConstructor) syntax += 'new ';
+      else if (cleanItem.static && cleanItem.class) syntax += cleanItem.class + '.';
       syntax += cleanItem.name;
 
       if (isMethod || isConstructor) {

@@ -35,9 +35,9 @@ require('../core/error_helpers');
  * @param {String} str the alphanumeric symbols to be displayed
  * @param {Number} x   x-coordinate of text
  * @param {Number} y   y-coordinate of text
- * @param {Number} x2  by default, the width of the text box,
+ * @param {Number} [x2]  by default, the width of the text box,
  *                     see rectMode() for more info
- * @param {Number} y2  by default, the height of the text box,
+ * @param {Number} [y2]  by default, the height of the text box,
  *                     see rectMode() for more info
  * @return {p5} this
  * @example
@@ -73,10 +73,15 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  * Sets the current font that will be drawn with the text() function.
  *
  * @method textFont
- * @param {Object|String} f a font loaded via loadFont(), or a String
+ * @return {Object} the current font
+ */
+/**
+ * @method textFont
+ * @param {Object|String} font a font loaded via loadFont(), or a String
  * representing a <a href="https://mzl.la/2dOw8WD">web safe font</a> (a font
  * that is generally available across all systems)
- * @return {Object|String} the current font
+ * @param {Number} [size] the font size to use
+ * @chainable
  * @example
  * <div>
  * <code>

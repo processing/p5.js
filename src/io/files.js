@@ -30,7 +30,7 @@ require('../core/error_helpers');
  *
  * @method loadFont
  * @param  {String}        path       name of the file or url to load
- * @param  {Function}      [callback] function to be executed after
+ * @param  {function}      [callback] function to be executed after
  *                                    loadFont()
  *                                    completes
  * @return {p5.Font}                  p5.Font object
@@ -149,10 +149,10 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
  * @param  {String}        path       name of the file or url to load
  * @param  {Object}        [jsonpOptions] options object for jsonp related settings
  * @param  {String}        [datatype] "json" or "jsonp"
- * @param  {Function}      [callback] function to be executed after
+ * @param  {function}      [callback] function to be executed after
  *                                    loadJSON() completes, data is passed
  *                                    in as first argument
- * @param  {Function}      [errorCallback] function to be executed if
+ * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
  * @return {Object|Array}             JSON data
@@ -275,13 +275,13 @@ p5.prototype.loadJSON = function () {
  *
  * @method loadStrings
  * @param  {String}   filename   name of the file or url to load
- * @param  {Function} [callback] function to be executed after loadStrings()
+ * @param  {function} [callback] function to be executed after loadStrings()
  *                               completes, Array is passed in as first
  *                               argument
- * @param  {Function} [errorCallback] function to be executed if
+ * @param  {function} [errorCallback] function to be executed if
  *                               there is an error, response is passed
  *                               in as first argument
- * @return {Array}               Array of Strings
+ * @return {String[]}            Array of Strings
  * @example
  *
  * <p>Calling loadStrings() inside preload() guarantees to complete the
@@ -388,11 +388,11 @@ p5.prototype.loadStrings = function () {
  * @method loadTable
  * @param  {String}         filename   name of the file or URL to load
  * @param  {String} [options]  "header" "csv" "tsv"
- * @param  {Function}       [callback] function to be executed after
+ * @param  {function}       [callback] function to be executed after
  *                                     loadTable() completes. On success, the
  *                                     Table object is passed in as the
  *                                     first argument.
- * @param  {Function}  [errorCallback] function to be executed if
+ * @param  {function}  [errorCallback] function to be executed if
  *                                     there is an error, response is passed
  *                                     in as first argument
  * @return {Object}                    Table object containing data
@@ -690,10 +690,10 @@ p5.prototype.parseXML = function (two) {
  *
  * @method loadXML
  * @param  {String}   filename   name of the file or URL to load
- * @param  {Function} [callback] function to be executed after loadXML()
+ * @param  {function} [callback] function to be executed after loadXML()
  *                               completes, XML object is passed in as
  *                               first argument
- * @param  {Function} [errorCallback] function to be executed if
+ * @param  {function} [errorCallback] function to be executed if
  *                               there is an error, response is passed
  *                               in as first argument
  * @return {Object}              XML object containing data
@@ -776,10 +776,10 @@ p5.prototype.loadXML = function() {
  * @param  {String}        path       name of the file or url to load
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
  * @param  {Object}        [data]     param data passed sent with request
- * @param  {Function}      [callback] function to be executed after
+ * @param  {function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
  *                                    as first argument
- * @param  {Function}      [errorCallback] function to be executed if
+ * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
  * @example
@@ -829,10 +829,10 @@ p5.prototype.httpGet = function () {
  * @param  {String}        path       name of the file or url to load
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
  * @param  {Object}        [data]     param data passed sent with request
- * @param  {Function}      [callback] function to be executed after
+ * @param  {function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
  *                                    as first argument
- * @param  {Function}      [errorCallback] function to be executed if
+ * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
  */
@@ -855,10 +855,10 @@ p5.prototype.httpPost = function () {
  *                                    defaults to "GET"
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
  * @param  {Object}        [data]     param data passed sent with request
- * @param  {Function}      [callback] function to be executed after
+ * @param  {function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
  *                                    as first argument
- * @param  {Function}      [errorCallback] function to be executed if
+ * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
  */
@@ -869,8 +869,8 @@ p5.prototype.httpPost = function () {
  * @param  {Object}        options   Request object options as documented in the
  *                                    "fetch" API
  * <a href="https://developer.mozilla.org/en/docs/Web/API/Fetch_API">reference</a>
- * @param  {Function}      [callback]
- * @param  {Function}      [errorCallback]
+ * @param  {function}      [callback]
+ * @param  {function}      [errorCallback]
  */
 p5.prototype.httpDo = function () {
   var type = '';
@@ -1499,7 +1499,7 @@ p5.prototype.downloadFile = function (href, fName, extension) {
  *  if the provided parameter has no extension.
  *
  *  @param   {String} filename
- *  @return  {Array} [fileName, fileExtension]
+ *  @return  {String[]} [fileName, fileExtension]
  *
  *  @private
  */
