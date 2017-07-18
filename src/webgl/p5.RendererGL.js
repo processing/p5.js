@@ -174,22 +174,45 @@ function(vertId, fragId, isImmediateMode) {
     alert('Snap! Error linking shader program');
   }
 
+  shaderProgram.attributes = {};
+
+  var numAttributes = gl.getProgramParameter(shaderProgram,
+    gl.ACTIVE_ATTRIBUTES);
+  for(var i = 0; i < numAttributes; ++i){
+    var attributeInfo = gl.getActiveAttrib(shaderProgram, i);
+    var name = attributeInfo.name;
+    var location = gl.getAttribLocation(shaderProgram, name);
+    var attribute = {};
+    attribute.name = name;
+    attribute.location = location;
+    attribute.type = attributeInfo.type;
+    attribute.size = attributeInfo.size;
+    shaderProgram.attributes[name] = attribute;
+  }
+
   // Inspect shader and cache uniform info
-  // @todo do same for attributes
 
   shaderProgram.uniforms = {};
 
-  var numUniforms = gl.getProgramParameter(shaderProgram, gl.ACTIVE_UNIFORMS);
+  var numUniforms = gl.getProgramParameter(shaderProgram,
+    gl.ACTIVE_UNIFORMS);
 
-  for(var i = 0; i < numUniforms; ++i){
+  var samplerIndex = 0;
+  for(i = 0; i < numUniforms; ++i){
     var uniformInfo = gl.getActiveUniform(shaderProgram, i);
     var uniform = {};
     uniform.location = gl.getUniformLocation(shaderProgram, uniformInfo.name);
     uniform.name = uniformInfo.name;
     uniform.type = uniformInfo.type;
+    if(uniform.type === gl.SAMPLER_2D)
+    {
+      uniform.samplerIndex = samplerIndex;
+      samplerIndex++;
+    }
     uniform.size = uniformInfo.size;
     shaderProgram.uniforms[uniformInfo.name] = uniform;
   }
+
   //END SHADERS SETUP
 
   //This happens automatically in the above step
@@ -264,7 +287,12 @@ p5.RendererGL.prototype._setUniform = function(uniformName, data)
       break;
     }
     case gl.FLOAT:{
-      gl.uniform1f(location, data);
+      if(uniform.size > 1){
+        gl.uniform1fv(location, data);
+      }
+      else{
+        gl.uniform1f(location, data);
+      }
       break;
     }
     case gl.FLOAT_MAT3:{
@@ -276,21 +304,36 @@ p5.RendererGL.prototype._setUniform = function(uniformName, data)
       break;
     }
     case gl.FLOAT_VEC2:{
-      gl.uniform3f(location, data[0], data[1]);
+      if(uniform.size > 1){
+        gl.uniform2fv(location, data);
+      }
+      else{
+        gl.uniform2f(location, data[0], data[1]);
+      }
       break;
     }
     case gl.FLOAT_VEC3:{
-      gl.uniform3f(location, data[0], data[1], data[2]);
+      if(uniform.size > 1){
+        gl.uniform3fv(location, data);
+      }
+      else{
+        gl.uniform3f(location, data[0], data[1], data[2]);
+      }
       break;
     }
     case gl.FLOAT_VEC4:{
-      gl.uniform4f(location, data[0], data[1], data[2], data[3]);
+      if(uniform.size > 1){
+        gl.uniform4fv(location, data);
+      }
+      else{
+        gl.uniform4f(location, data[0], data[1], data[2], data[3]);
+      }
       break;
     }
     case gl.SAMPLER_2D:{
-      gl.activeTexture(gl.TEXTURE0 + 0); //@todo more than one slot
+      gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
       gl.bindTexture(gl.TEXTURE_2D, data);
-      gl.uniform1i(location, 0);
+      gl.uniform1i(location, uniform.samplerIndex);
       break;
     }
     //@todo complete all types
