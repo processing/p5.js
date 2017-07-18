@@ -9,7 +9,15 @@ var PI = Math.PI;
 module.exports = {
 
   // GRAPHICS RENDERER
+  /**
+   * @property {String} P2D
+   * @final
+   */
   P2D: 'p2d',
+  /**
+   * @property {String} WEBGL
+   * @final
+   */
   WEBGL: 'webgl',
 
   // ENVIRONMENT
@@ -29,6 +37,7 @@ module.exports = {
    * combination with the trigonometric functions sin() and cos().
    *
    * @property {Number} HALF_PI
+   * @final
    *
    * @example
    * <div><code>
@@ -47,6 +56,7 @@ module.exports = {
    * the trigonometric functions sin() and cos().
    *
    * @property {Number} PI
+   * @final
    *
    * @example
    * <div><code>
@@ -65,6 +75,7 @@ module.exports = {
    * functions sin() and cos().
    *
    * @property {Number} QUARTER_PI
+   * @final
    *
    * @example
    * <div><code>
@@ -83,6 +94,7 @@ module.exports = {
    * combination with the trigonometric functions sin() and cos().
    *
    * @property {Number} TAU
+   * @final
    *
    * @example
    * <div><code>
@@ -101,6 +113,7 @@ module.exports = {
    * combination with the trigonometric functions sin() and cos().
    *
    * @property {Number} TWO_PI
+   * @final
    *
    * @example
    * <div><code>
@@ -112,43 +125,182 @@ module.exports = {
    *
    */
   TWO_PI: PI * 2,
+  /**
+   * @property {String} DEGREES
+   * @final
+   */
   DEGREES: 'degrees',
+  /**
+   * @property {String} RADIANS
+   * @final
+   */
   RADIANS: 'radians',
   DEG_TO_RAD: PI / 180.0,
   RAD_TO_DEG: 180.0 / PI,
 
   // SHAPE
+  /**
+   * @property {String} CORNER
+   * @final
+   */
   CORNER: 'corner',
+  /**
+   * @property {String} CORNERS
+   * @final
+   */
   CORNERS: 'corners',
+  /**
+   * @property {String} RADIUS
+   * @final
+   */
   RADIUS: 'radius',
+  /**
+   * @property {String} RIGHT
+   * @final
+   */
   RIGHT: 'right',
+  /**
+   * @property {String} LEFT
+   * @final
+   */
   LEFT: 'left',
+  /**
+   * @property {String} CENTER
+   * @final
+   */
   CENTER: 'center',
+  /**
+   * @property {String} TOP
+   * @final
+   */
   TOP: 'top',
+  /**
+   * @property {String} BOTTOM
+   * @final
+   */
   BOTTOM: 'bottom',
+  /**
+   * @property {String} BASELINE
+   * @final
+   * @default alphabetic
+   */
   BASELINE: 'alphabetic',
+  /**
+   * @property {Number} POINTS
+   * @final
+   * @default 0x0000
+   */
   POINTS: 0x0000,
+  /**
+   * @property {Number} LINES
+   * @final
+   * @default 0x0001
+   */
   LINES: 0x0001,
+  /**
+   * @property {Number} LINE_STRIP
+   * @final
+   * @default 0x0003
+   */
   LINE_STRIP: 0x0003,
+  /**
+   * @property {Number} LINE_LOOP
+   * @final
+   * @default 0x0002
+   */
   LINE_LOOP: 0x0002,
+  /**
+   * @property {Number} TRIANGLES
+   * @final
+   * @default 0x0004
+   */
   TRIANGLES: 0x0004,
+  /**
+   * @property {Number} TRIANGLE_FAN
+   * @final
+   * @default 0x0006
+   */
   TRIANGLE_FAN: 0x0006,
+  /**
+   * @property {Number} TRIANGLE_STRIP
+   * @final
+   * @default 0x0005
+   */
   TRIANGLE_STRIP: 0x0005,
+  /**
+   * @property {String} QUADS
+   * @final
+   */
   QUADS: 'quads',
+  /**
+   * @property {String} QUAD_STRIP
+   * @final
+   * @default quad_strip
+   */
   QUAD_STRIP: 'quad_strip',
+  /**
+   * @property {String} CLOSE
+   * @final
+   */
   CLOSE: 'close',
+  /**
+   * @property {String} OPEN
+   * @final
+   */
   OPEN: 'open',
+  /**
+   * @property {String} CHORD
+   * @final
+   */
   CHORD: 'chord',
+  /**
+   * @property {String} PIE
+   * @final
+   */
   PIE: 'pie',
+  /**
+   * @property {String} PROJECT
+   * @final
+   * @default square
+   */
   PROJECT: 'square', // PEND: careful this is counterintuitive
+  /**
+   * @property {String} SQUARE
+   * @final
+   * @default butt
+   */
   SQUARE: 'butt',
+  /**
+   * @property {String} ROUND
+   * @final
+   */
   ROUND: 'round',
+  /**
+   * @property {String} BEVEL
+   * @final
+   */
   BEVEL: 'bevel',
+  /**
+   * @property {String} MITER
+   * @final
+   */
   MITER: 'miter',
 
   // COLOR
+  /**
+   * @property {String} RGB
+   * @final
+   */
   RGB: 'rgb',
+  /**
+   * @property {String} HSB
+   * @final
+   */
   HSB: 'hsb',
+  /**
+   * @property {String} HSL
+   * @final
+   */
   HSL: 'hsl',
 
   // DOM EXTENSION
@@ -171,36 +323,142 @@ module.exports = {
   UP_ARROW: 38,
 
   // RENDERING
+  /**
+   * @property {String} BLEND
+   * @final
+   * @default source-over
+   */
   BLEND: 'source-over',
+  /**
+   * @property {String} ADD
+   * @final
+   * @default lighter
+   */
   ADD: 'lighter',
   //ADD: 'add', //
   //SUBTRACT: 'subtract', //
+  /**
+   * @property {String} DARKEST
+   * @final
+   */
   DARKEST: 'darken',
+  /**
+   * @property {String} LIGHTEST
+   * @final
+   * @default lighten
+   */
   LIGHTEST: 'lighten',
+  /**
+   * @property {String} DIFFERENCE
+   * @final
+   */
   DIFFERENCE: 'difference',
+  /**
+   * @property {String} EXCLUSION
+   * @final
+   */
   EXCLUSION: 'exclusion',
+  /**
+   * @property {String} MULTIPLY
+   * @final
+   */
   MULTIPLY: 'multiply',
+  /**
+   * @property {String} SCREEN
+   * @final
+   */
   SCREEN: 'screen',
+  /**
+   * @property {String} REPLACE
+   * @final
+   * @default copy
+   */
   REPLACE: 'copy',
+  /**
+   * @property {String} OVERLAY
+   * @final
+   */
   OVERLAY: 'overlay',
+  /**
+   * @property {String} HARD_LIGHT
+   * @final
+   */
   HARD_LIGHT: 'hard-light',
+  /**
+   * @property {String} SOFT_LIGHT
+   * @final
+   */
   SOFT_LIGHT: 'soft-light',
+  /**
+   * @property {String} DODGE
+   * @final
+   * @default color-dodge
+   */
   DODGE: 'color-dodge',
+  /**
+   * @property {String} BURN
+   * @final
+   * @default color-burn
+   */
   BURN: 'color-burn',
 
   // FILTERS
+  /**
+   * @property {String} THRESHOLD
+   * @final
+   */
   THRESHOLD: 'threshold',
+  /**
+   * @property {String} GRAY
+   * @final
+   */
   GRAY: 'gray',
+  /**
+   * @property {String} OPAQUE
+   * @final
+   */
   OPAQUE: 'opaque',
+  /**
+   * @property {String} INVERT
+   * @final
+   */
   INVERT: 'invert',
+  /**
+   * @property {String} POSTERIZE
+   * @final
+   */
   POSTERIZE: 'posterize',
+  /**
+   * @property {String} DILATE
+   * @final
+   */
   DILATE: 'dilate',
+  /**
+   * @property {String} ERODE
+   * @final
+   */
   ERODE: 'erode',
+  /**
+   * @property {String} BLUR
+   * @final
+   */
   BLUR: 'blur',
 
   // TYPOGRAPHY
+  /**
+   * @property {String} NORMAL
+   * @final
+   */
   NORMAL: 'normal',
+  /**
+   * @property {String} ITALIC
+   * @final
+   */
   ITALIC: 'italic',
+  /**
+   * @property {String} BOLD
+   * @final
+   */
   BOLD: 'bold',
 
   // TYPOGRAPHY-INTERNAL
@@ -213,6 +471,18 @@ module.exports = {
   QUADRATIC: 'quadratic',
   BEZIER: 'bezier',
   CURVE: 'curve',
+
+  // DEVICE-ORIENTATION
+  /**
+   * @property {String} LANDSCAPE
+   * @final
+   */
+  LANDSCAPE: 'landscape',
+  /**
+   * @property {String} PORTRAIT
+   * @final
+   */
+  PORTRAIT: 'portrait',
 
   // DEFAULTS
   _DEFAULT_STROKE: '#000000',

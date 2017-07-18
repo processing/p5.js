@@ -93,7 +93,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
 /**
  * Draws buffers given a geometry key ID
  * @param  {String} gId     ID in our geom hash
- * @return {p5.RendererGL} this
+ * @chainable
  */
 p5.RendererGL.prototype.drawBuffers = function(gId) {
   this._setDefaultCamera();
@@ -144,8 +144,8 @@ function flatten(arr){
 
 /**
  * turn a p5.Vector Array into a one dimensional number array
- * @param  {Array} arr  an array of p5.Vector
- * @return {Array]}     a one dimensional array of numbers
+ * @param  {p5.Vector[]} arr  an array of p5.Vector
+ * @return {Number[]}         a one dimensional array of numbers
  * [p5.Vector(1, 2, 3), p5.Vector(4, 5, 6)] ->
  * [1, 2, 3, 4, 5, 6]
  */

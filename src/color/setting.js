@@ -35,6 +35,7 @@ require('./p5.Color');
  * @param {p5.Color} color     any value created by the color() function
  * @param {Number} [a]         opacity of the background relative to current
  *                             color range (default is 0-100)
+ * @chainable
  *
  * @example
  * <div>
@@ -135,12 +136,14 @@ require('./p5.Color');
  *                         rgb() or rgba(), percentage rgb() or rgba(),
  *                         3-digit hex, 6-digit hex
  * @param {Number} [a]
+ * @chainable
  */
 
 /**
  * @method background
  * @param {Number} gray   specifies a value between white and black
  * @param {Number} [a]
+ * @chainable
  */
 
 /**
@@ -152,6 +155,7 @@ require('./p5.Color');
  * @param {Number} v3     blue or brightness value (depending on the current
  *                        color mode)
  * @param  {Number} [a]
+ * @chainable
  */
 
 /**
@@ -160,6 +164,7 @@ require('./p5.Color');
  *                             to set as background
  *                             (must be same size as the sketch window)
  * @param  {Number}  [a]
+ * @chainable
  */
 p5.prototype.background = function() {
   if (arguments[0] instanceof p5.Image) {
@@ -179,6 +184,7 @@ p5.prototype.background = function() {
  * the pixels 100% transparent.
  *
  * @method clear
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -220,11 +226,11 @@ p5.prototype.clear = function() {
  *
  *
  * @method colorMode
- * @param {Constant} mode   either RGB or HSB, corresponding to
+ * @param {Constant} mode   either RGB, HSB or HSL, corresponding to
  *                          Red/Green/Blue and Hue/Saturation/Brightness
  *                          (or Lightness)
  * @param {Number}  [max]  range for all values
- * @return {p5} the p5 Object
+ * @chainable
  */
 /**
  * @method colorMode
@@ -236,7 +242,7 @@ p5.prototype.clear = function() {
  * @param {Number} max3     range for the blue or brightness/lighntess
  *                              depending on the current color mode
  * @param {Number} [maxA]   range for the alpha
- * @return {p5} the p5 Object
+ * @chainable
  *
  * @example
  * <div>
@@ -347,29 +353,28 @@ p5.prototype.colorMode = function() {
  * @param  {Number}        v3      blue or brightness value
  *                                 relative to the current color range
  * @param  {Number}        [alpha]
- * @return {p5}
+ * @chainable
  */
 
 /**
  * @method fill
  * @param  {String}        value   a color string
  * @param  {Number}        [alpha]
- * @return {p5}
+ * @chainable
  */
 
 /**
  * @method fill
  * @param  {Number[]}      values  an array containing the red,green,blue &
  *                                 and alpha components of the color
- * @return {p5}
+ * @chainable
  */
 
 /**
  * @method fill
  * @param  {p5.Color}      color   the fill color
  * @param  {Number}        [alpha]
- * @return {p5}
- *
+ * @chainable
  *
  * @example
  * <div>
@@ -486,6 +491,7 @@ p5.prototype.fill = function() {
  * nothing will be drawn to the screen.
  *
  * @method noFill
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -507,6 +513,7 @@ p5.prototype.noFill = function() {
  * are called, nothing will be drawn to the screen.
  *
  * @method noStroke
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -548,28 +555,28 @@ p5.prototype.noStroke = function() {
  * @param  {Number}        v3      blue or brightness value
  *                                 relative to the current color range
  * @param  {Number}        [alpha]
- * @return {p5}
+ * @chainable
  */
 
 /**
  * @method stroke
  * @param  {String}        value   a color string
  * @param  {Number}        [alpha]
- * @return {p5}
+ * @chainable
  */
 
 /**
  * @method stroke
  * @param  {Number[]}      values  an array containing the red,green,blue &
  *                                 and alpha components of the color
- * @return {p5}
+ * @chainable
  */
 
 /**
  * @method stroke
  * @param  {p5.Color}      color   the stroke color
  * @param  {Number}        [alpha]
- * @return {p5}
+ * @chainable
  *
  * @example
  * <div>

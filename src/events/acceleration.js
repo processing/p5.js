@@ -13,8 +13,10 @@ var p5 = require('../core/core');
  * The system variable deviceOrientation always contains the orientation of
  * the device. The value of this variable will either be set 'landscape'
  * or 'portrait'. If no data is available it will be set to 'undefined'.
+ * either LANDSCAPE or PORTRAIT.
  *
  * @property {Constant} deviceOrientation
+ * @readOnly
  */
 p5.prototype.deviceOrientation = undefined;
 
@@ -23,6 +25,7 @@ p5.prototype.deviceOrientation = undefined;
  * device along the x axis. Value is represented as meters per second squared.
  *
  * @property {Number} accelerationX
+ * @readOnly
  */
 p5.prototype.accelerationX = 0;
 
@@ -31,6 +34,7 @@ p5.prototype.accelerationX = 0;
  * device along the y axis. Value is represented as meters per second squared.
  *
  * @property {Number} accelerationY
+ * @readOnly
  */
 p5.prototype.accelerationY = 0;
 
@@ -39,6 +43,7 @@ p5.prototype.accelerationY = 0;
  * device along the z axis. Value is represented as meters per second squared.
  *
  * @property {Number} accelerationZ
+ * @readOnly
  */
 p5.prototype.accelerationZ = 0;
 
@@ -48,6 +53,7 @@ p5.prototype.accelerationZ = 0;
  * is represented as meters per second squared.
  *
  * @property {Number} pAccelerationX
+ * @readOnly
  */
 p5.prototype.pAccelerationX = 0;
 
@@ -57,6 +63,7 @@ p5.prototype.pAccelerationX = 0;
  * is represented as meters per second squared.
  *
  * @property {Number} pAccelerationY
+ * @readOnly
  */
 p5.prototype.pAccelerationY = 0;
 
@@ -66,6 +73,7 @@ p5.prototype.pAccelerationY = 0;
  * is represented as meters per second squared.
  *
  * @property {Number} pAccelerationZ
+ * @readOnly
  */
 p5.prototype.pAccelerationZ = 0;
 
@@ -106,6 +114,7 @@ p5.prototype._updatePAccelerations = function(){
  * </div>
  *
  * @property {Number} rotationX
+ * @readOnly
  *
  * @alt
  * red horizontal line right, green vertical line bottom. black background.
@@ -139,6 +148,7 @@ p5.prototype.rotationX = 0;
  * </div>
  *
  * @property {Number} rotationY
+ * @readOnly
  *
  * @alt
  * red horizontal line right, green vertical line bottom. black background.
@@ -174,6 +184,7 @@ p5.prototype.rotationY = 0;
  * </div>
  *
  * @property {Number} rotationZ
+ * @readOnly
  *
  * @alt
  * red horizontal line right, green vertical line bottom. black background.
@@ -219,6 +230,7 @@ p5.prototype.rotationZ = 0;
  *
  *
  * @property {Number} pRotationX
+ * @readOnly
  */
 p5.prototype.pRotationX = 0;
 
@@ -261,6 +273,7 @@ p5.prototype.pRotationX = 0;
  *
  *
  * @property {Number} pRotationY
+ * @readOnly
  */
 p5.prototype.pRotationY = 0;
 
@@ -303,6 +316,7 @@ p5.prototype.pRotationY = 0;
  *
  *
  * @property {Number} pRotationZ
+ * @readOnly
  */
 p5.prototype.pRotationZ = 0;
 

@@ -140,10 +140,9 @@ Filters._createImageData = function (width, height) {
  * use case of creating a filter chain that executes without actually updating
  * the canvas in between everystep.
  *
- * @param  {[type]} func   [description]
- * @param  {[type]} canvas [description]
- * @param  {[type]} level  [description]
- * @return {[type]}        [description]
+ * @param  {HTMLCanvasElement} canvas [description]
+ * @param  {function(ImageData,Object)} func   [description]
+ * @param  {Object} filterParam  [description]
  */
 Filters.apply = function (canvas, func, filterParam) {
   var ctx = canvas.getContext('2d');

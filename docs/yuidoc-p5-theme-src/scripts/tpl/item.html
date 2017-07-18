@@ -135,12 +135,13 @@
 </div>
 <% } %>
 
-<% if (item.return) { %>
+<% if (item.constructor || item.return) { %>
 <div>
-  <h4>Returns</h4>
-    <% if (item.return.type) { %>
+	<h4>Returns</h4>
+	  <% if (item.constructor) { %>
+      <p class='returns'><span class="param-type label label-info"><%=item.name%></span>: a new object</p>
+    <% } else if (item.return.type) { %>
       <p class='returns'><span class="param-type label label-info"><%=item.return.type%></span>: <%= item.return.description %></p>
     <% } %>
 </div>
 <% } %>
-

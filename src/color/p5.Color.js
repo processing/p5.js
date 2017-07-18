@@ -409,9 +409,9 @@ var colorPatterns = {
  * For a number of different inputs, returns a color formatted as [r, g, b, a]
  * arrays, with each component normalized between 0 and 1.
  *
- * @param {Array-like} args An 'array-like' object that represents a list of
+ * @param {Array} [...args] An 'array-like' object that represents a list of
  *                          arguments
- * @return {Array}          a color formatted as [r, g, b, a]
+ * @return {Number[]}       a color formatted as [r, g, b, a]
  *                          Example:
  *                          input        ==> output
  *                          g            ==> [g, g, g, 255]

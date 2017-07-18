@@ -255,7 +255,8 @@ p5.prototype.copy = function () {
  * Increases the light areas. No parameter is used.
  *
  * @method filter
- * @param  {Constant} filterType
+ * @param  {Constant} filterType either THRESHOLD, GRAY, OPAQUE, INVERT,
+ *                                POSTERIZE, BLUR, ERODE or DILATE
  * @param  {Number} filterParam an optional parameter unique
  *  to each filter, see above
  *
@@ -415,7 +416,7 @@ p5.prototype.filter = function(operation, value) {
  * @param  {Number}         [y] y-coordinate of the pixel
  * @param  {Number}         [w] width
  * @param  {Number}         [h] height
- * @return {Array|p5.Image}     values of pixel at x,y in array format
+ * @return {Number[]|p5.Image}  values of pixel at x,y in array format
  *                              [R, G, B, A] or p5.Image
  * @example
  * <div>
