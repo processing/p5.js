@@ -89,7 +89,9 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
     gl.getUniformLocation(shaderProgram, 'uAmbientLightCount');
   gl.uniform1i(shaderProgram.uAmbientLightCount,
     this._renderer.ambientLightCount);
-
+  shaderProgram.uUseLighting =
+    gl.getUniformLocation(shaderProgram, 'uUseLighting');
+  gl.uniform1i(shaderProgram.uUseLighting, true);
   return this;
 };
 
@@ -183,7 +185,9 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
     gl.getUniformLocation(shaderProgram, 'uDirectionalLightCount');
   gl.uniform1i(shaderProgram.uDirectionalLightCount,
     this._renderer.directionalLightCount);
-
+  shaderProgram.uUseLighting =
+    gl.getUniformLocation(shaderProgram, 'uUseLighting');
+  gl.uniform1i(shaderProgram.uUseLighting, true);
   return this;
 };
 
@@ -284,7 +288,9 @@ p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
     gl.getUniformLocation(shaderProgram, 'uPointLightCount');
   gl.uniform1i(shaderProgram.uPointLightCount,
     this._renderer.pointLightCount);
-
+  shaderProgram.uUseLighting =
+    gl.getUniformLocation(shaderProgram, 'uUseLighting');
+  gl.uniform1i(shaderProgram.uUseLighting, true);
   return this;
 };
 
