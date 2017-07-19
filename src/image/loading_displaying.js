@@ -23,16 +23,16 @@ require('../core/error_helpers');
  * You may also supply a callback function to handle the image when it's ready.
  * <br><br>
  * The path to the image should be relative to the HTML file
- * that links in your sketch. Loading an from a URL or other
+ * that links in your sketch. Loading an image from a URL or other
  * remote location may be blocked due to your browser's built-in
  * security.
  *
  * @method loadImage
  * @param  {String} path Path of the image to be loaded
- * @param  {Function(p5.Image)} [successCallback] Function to be called once
+ * @param  {function(p5.Image)} [successCallback] Function to be called once
  *                                the image is loaded. Will be passed the
  *                                p5.Image.
- * @param  {Function(Event)}    [failureCallback] called with event error if
+ * @param  {function(Event)}    [failureCallback] called with event error if
  *                                the image fails to load.
  * @return {p5.Image}             the p5.Image object
  * @example
@@ -130,8 +130,8 @@ function _sAssign(sVal, iVal) {
  *                           corner of the source image
  * @param  {Number}   y      the y-coordinate at which to place the top-left
  *                           corner of the source image
- * @param  {Number}   width  the width to draw the image
- * @param  {Number}   height the height to draw the image
+ * @param  {Number}   [width]  the width to draw the image
+ * @param  {Number}   [height] the height to draw the image
  * @example
  * <div>
  * <code>
@@ -165,16 +165,10 @@ function _sAssign(sVal, iVal) {
 /**
  * @method image
  * @param  {p5.Image} img
- * @param  {Number}   dx     the x-coordinate in the destination canvas at
- *                           which to place the top-left corner of the
- *                           source image
- * @param  {Number}   dy     the y-coordinate in the destination canvas at
- *                           which to place the top-left corner of the
- *                           source image
- * @param  {Number}   dWidth the width to draw the image in the destination
- *                           canvas
- * @param  {Number}   dHeight the height to draw the image in the destination
- *                            canvas
+ * @param  {Number}   x
+ * @param  {Number}   y
+ * @param  {Number}   width
+ * @param  {Number}   height
  * @param  {Number}   sx     the x-coordinate of the top left corner of the
  *                           sub-rectangle of the source image to draw into
  *                           the destination canvas

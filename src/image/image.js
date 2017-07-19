@@ -245,7 +245,7 @@ p5.prototype.saveCanvas = function() {
  *  @param  {String}   extension 'jpg' or 'png'
  *  @param  {Number}   duration  Duration in seconds to save the frames for.
  *  @param  {Number}   framerate  Framerate to save the frames in.
- *  @param  {Function} [callback] A callback function that will be executed
+ *  @param  {function(Array)} [callback] A callback function that will be executed
                                   to handle the image data. This function
                                   should accept an array as argument. The
                                   array will contain the specified number of
