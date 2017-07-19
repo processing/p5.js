@@ -121,6 +121,7 @@ p5.prototype.texture = function(){
     args[i] = arguments[i];
   }
   var gl = this._renderer.GL;
+  gl.depthMask(true);
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   this._renderer.drawMode = 'texture';
