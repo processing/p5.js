@@ -172,7 +172,7 @@ function(vertId, fragId, isImmediateMode) {
     alert('Snap! Error linking shader program');
   }
   //END SHADERS SETUP
-
+  this._createEmptyTexture();
   this._getLocation(shaderProgram, isImmediateMode);
 
   return shaderProgram;

@@ -266,8 +266,6 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   shaderProgram.uSpecular = gl.getUniformLocation(
     shaderProgram, 'uSpecular' );
   gl.uniform1i(shaderProgram.uSpecular, false);
-
-  this._renderer._createEmptyTexture();
   gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
   return this;
 };
@@ -329,7 +327,6 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   shaderProgram.uSpecular = gl.getUniformLocation(
     shaderProgram, 'uSpecular' );
   gl.uniform1i(shaderProgram.uSpecular, true);
-  this._renderer._createEmptyTexture();
   gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
   return this;
 };
