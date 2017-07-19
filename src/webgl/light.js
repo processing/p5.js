@@ -77,7 +77,7 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
   //a preallocated Float32Array(24) that we copy into
   //would be better
   var colors = new Float32Array(color._array.slice(0,3));
-  renderer._setUniform('uAmbientColor[0]', colors);
+  renderer._setUniform('uAmbientColor', colors);
 
   //in case there's no material color for the geometry
   renderer._setUniform('uMaterialColor', [1,1,1,1]);
@@ -136,7 +136,7 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
     renderer._pInst, [v1, v2, v3]);
 
   var colors = new Float32Array(color._array.slice(0,3));
-  renderer._setUniform('uDirectionalColor[0]', colors);
+  renderer._setUniform('uDirectionalColor', colors);
 
   var _x, _y, _z;
 
@@ -162,7 +162,7 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
 
   //in case there's no material color for the geometry
   renderer._setUniform('uMaterialColor', [1,1,1,1]);
-  renderer._setUniform('uLightingDirection[0]', [_x, _y, _z]);
+  renderer._setUniform('uLightingDirection', [_x, _y, _z]);
   renderer.directionalLightCount ++;
   renderer._setUniform('uDirectionalLightCount',
     renderer.directionalLightCount);
@@ -224,7 +224,7 @@ p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
     this._renderer._pInst, [v1, v2, v3]);
 
   var colors = new Float32Array(color._array.slice(0,3));
-  renderer._setUniform('uPointLightColor[0]', colors);
+  renderer._setUniform('uPointLightColor', colors);
 
   var _x, _y, _z;
 
@@ -250,7 +250,7 @@ p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
 
   //in case there's no material color for the geometry
   renderer._setUniform('uMaterialColor', [1,1,1,1]);
-  renderer._setUniform('uPointLightLocation[0]', [_x, _y, _z]);
+  renderer._setUniform('uPointLightLocation', [_x, _y, _z]);
   this._renderer.pointLightCount++;
   renderer._setUniform('uPointLightCount',
     renderer.pointLightCount);

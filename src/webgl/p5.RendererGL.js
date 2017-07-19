@@ -202,15 +202,24 @@ function(vertId, fragId, isImmediateMode) {
     var uniformInfo = gl.getActiveUniform(shaderProgram, i);
     var uniform = {};
     uniform.location = gl.getUniformLocation(shaderProgram, uniformInfo.name);
-    uniform.name = uniformInfo.name;
+    uniform.size = uniformInfo.size;
+    var uniformName = uniformInfo.name;
+    //uniforms thats are arrays have their name returned as
+    //someUniform[0] which is a bit silly so we trim it
+    //off here. The size property tells us that its an array
+    //so we dont lose any information by doing this
+    if(uniformInfo.size > 1) {
+      uniformName = uniformName.substring(0,
+        uniformName.indexOf('[0]'));
+    }
+    uniform.name = uniformName;
     uniform.type = uniformInfo.type;
     if(uniform.type === gl.SAMPLER_2D)
     {
       uniform.samplerIndex = samplerIndex;
       samplerIndex++;
     }
-    uniform.size = uniformInfo.size;
-    shaderProgram.uniforms[uniformInfo.name] = uniform;
+    shaderProgram.uniforms[uniformName] = uniform;
   }
 
   //END SHADERS SETUP

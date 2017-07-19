@@ -123,12 +123,13 @@ p5.prototype.texture = function(){
     args[i] = arguments[i];
   }
   var gl = this._renderer.GL;
+  var renderer = this._renderer;
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-  this._renderer.drawMode = 'texture';
-  var shaderProgram = this._renderer._getShader('lightVert',
+  renderer.drawMode = 'texture';
+  var shaderProgram = renderer._getShader('lightVert',
     'lightTextureFrag');
-  this._useShader(shaderProgram);
+  renderer._useShader(shaderProgram);
   var textureData;
   //if argument is not already a texture
   //create a new one
@@ -149,7 +150,7 @@ p5.prototype.texture = function(){
     var tex = gl.createTexture();
     args[0]._setProperty('tex', tex);
     args[0]._setProperty('isTexture', true);
-    this._renderer._bind.call(this, tex, textureData);
+    renderer._bind.call(this, tex, textureData);
   }
   else {
     if(args[0] instanceof p5.Graphics ||
@@ -160,13 +161,13 @@ p5.prototype.texture = function(){
     else if(args[0] instanceof p5.Image){
       textureData = args[0].canvas;
     }
-    this._renderer._bind.call(this, args[0].tex, textureData);
+    renderer._bind.call(this, args[0].tex, textureData);
   }
 
   //this is where we'd activate multi textures
   //@todo multi textures can be done in the _setUniform function
-  this._renderer._setUniform('isTexture', true);
-  this._renderer._setUniform('uSampler', args[0].tex);
+  renderer._setUniform('isTexture', true);
+  renderer._setUniform('uSampler', args[0].tex);
 
   return this;
 };
