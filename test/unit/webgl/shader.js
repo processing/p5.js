@@ -27,7 +27,7 @@ suite('Shader', function() {
       assert.exists(myp5._renderer.curShader,
         'Shader is in use');
       */
-      assert(myp5._renderer.curShader !== null && 
+      assert(myp5._renderer.curShader !== null &&
         myp5._renderer.curShader !== undefined,
         'Shader is not in use or has not been cached');
     });
