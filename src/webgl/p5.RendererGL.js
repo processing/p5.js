@@ -24,7 +24,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.attributes.stencil = attr.stencil || true;
   this.attributes.antialias = attr.antialias || false;
   this.attributes.premultipliedAlpha = attr.premultipliedAlpha || false;
-  this.attributes.preserveDrawingBuffer = attr.preserveDrawingBuffer || false;
+  this.attributes.preserveDrawingBuffer = attr.preserveDrawingBuffer || true;
 
   this._initContext();
   this.isP3D = true; //lets us know we're in 3d mode
@@ -80,7 +80,9 @@ p5.RendererGL.prototype._initContext = function() {
   }
 };
 
-//The context needs to be reset anytime we want to change the attributes
+//This is helper function to reset the context anytime the attributes
+//are changed with setAttributes()
+
 p5.RendererGL.prototype._resetContext = function(options, callback) {
   var w = this.width;
   var h = this.height;
@@ -111,7 +113,39 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
     }, 0);
   }
 };
-//For changing attributes of the Renderer
+
+
+/**
+ *
+ * Set attributes for the WebGL Drawing context.
+ * The available attributes are
+ * alpha - indicates if the canvas contains an alpha buffer
+ * default is true
+ *
+ * depth - indicates whether the drawing buffer has a depth buffer
+ * of at least 16 bits - default is true
+ *
+ * stencil - indicates whether the drawing buffer has a stencil buffer
+ * of at least 8 bits
+ *
+ * antialias - indicates whether or not to perform anti-aliasing
+ * default is false
+ *
+ * premultipliedAlpha - indicates that the page compositor will assume
+ * the drawing buffer contains colors with pre-multiplied alpha
+ * default is false
+ *
+ * preserveDrawingBuffer - if true the buffers will not be cleared and
+ * and will preserve their values until cleared or overwritten by author
+ * (note that p5 clears automatically on draw loop)
+ * default is true
+ *
+ * @method setAttributes
+ * @param  {String|Object}  String name of attribute or object with key-value pairs
+ * @param  {Boolean}        New value of named attribute
+ *
+ */
+
 p5.prototype.setAttributes = function() {
   if(!this._renderer.isP3D) {
     console.log('setAttributes() only works in WebGL');
@@ -129,7 +163,7 @@ p5.prototype.setAttributes = function() {
     this._renderer.attributes.premultipliedAlpha = arguments[0] ===
       'premultipliedAlpha' ? arguments[1] : false;
     this._renderer.attributes.preserveDrawingBuffer = arguments[0] ===
-      'preserveDrawingBuffer' ? arguments[1] : false;
+      'preserveDrawingBuffer' ? arguments[1] : true;
   }
   else if(arguments.length === 1) {
     for(var key in arguments[0]) {
@@ -436,7 +470,42 @@ p5.RendererGL.prototype._setNoFillStroke = function() {
     this.curStrokeColor[3]);
 };
 
-//read pixels on screen;
+/**
+ * Get a region of pixels from an image.
+ *
+ * If no params are passed, those whole image is returned,
+ * if x and y are the only params passed a single pixel is extracted
+ * if all params are passed a rectangle region is extracted and a p5.Image
+ * is returned.
+ *
+ * Returns undefined if the region is outside the bounds of the image
+ *
+ * @method get
+ * @param  {Number}               [x] x-coordinate of the pixel
+ * @param  {Number}               [y] y-coordinate of the pixel
+ * @param  {Number}               [w] width
+ * @param  {Number}               [h] height
+ * @return {Array|Color|p5.Image}     color of pixel at x,y in array format
+ *                                    [R, G, B, A] or p5.Image
+ */
+
+p5.RendererGL.prototype.get = function(x, y, w, h) {
+  return p5.Renderer2D.prototype.get.apply(this, [x, y, w, h]);
+};
+
+/**
+ * Loads the pixels data for this canvas into the pixels[] attribute.
+ * Note that updatePixels() and set() do not work.
+ * Any pixel manipulation must be done directly to the pixels[] array.
+ *
+ * @method loadPixels
+ * @param {Number} starting pixel x position, defaults to 0
+ * @param {Number} starting pixel y position, defaults to 0
+ * @param {Number} width of pixels to load, defaults to sketch width
+ * @param {Number} height of pixels to load, defaults to sketch height
+ *
+ */
+
 p5.RendererGL.prototype.loadPixels = function() {
   var pd = this._pInst._pixelDensity;
   var x = arguments[0] || 0;
@@ -445,16 +514,12 @@ p5.RendererGL.prototype.loadPixels = function() {
   var h = arguments[3] || this.height;
   w *= pd;
   h *= pd;
-  this._readPixels(x, y, w, h);
-};
-
-//helper function for loadPixels()
-p5.RendererGL.prototype._readPixels = function(x, y, w, h) {
   var gl = this.GL;
   var pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
   gl.readPixels(x, y, w, h, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
   this._pInst._setProperty('pixels', pixels);
 };
+
 
 
 /**
