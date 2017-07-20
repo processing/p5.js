@@ -56,7 +56,10 @@ p5.RendererGL = function(elt, pInst, isMainCanvas) {
   this.curFillColor = [0.5,0.5,0.5,1.0];
   this.curStrokeColor = [0.5,0.5,0.5,1.0];
   this.pointSize = 5.0;//default point/stroke
+
   this.emptyTexture = null;
+  this.curShader = null;
+
   return this;
 };
 
@@ -171,75 +174,179 @@ function(vertId, fragId, isImmediateMode) {
   if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
     alert('Snap! Error linking shader program');
   }
-  //END SHADERS SETUP
+
+  shaderProgram.attributes = {};
+
+  var numAttributes = gl.getProgramParameter(shaderProgram,
+    gl.ACTIVE_ATTRIBUTES);
+  for(var i = 0; i < numAttributes; ++i){
+    var attributeInfo = gl.getActiveAttrib(shaderProgram, i);
+    var name = attributeInfo.name;
+    var location = gl.getAttribLocation(shaderProgram, name);
+    var attribute = {};
+    attribute.name = name;
+    attribute.location = location;
+    attribute.type = attributeInfo.type;
+    attribute.size = attributeInfo.size;
+    shaderProgram.attributes[name] = attribute;
+  }
+
+  // Inspect shader and cache uniform info
+
+  shaderProgram.uniforms = {};
+
+  var numUniforms = gl.getProgramParameter(shaderProgram,
+    gl.ACTIVE_UNIFORMS);
+
+  var samplerIndex = 0;
+  for(i = 0; i < numUniforms; ++i){
+    var uniformInfo = gl.getActiveUniform(shaderProgram, i);
+    var uniform = {};
+    uniform.location = gl.getUniformLocation(shaderProgram, uniformInfo.name);
+    uniform.size = uniformInfo.size;
+    var uniformName = uniformInfo.name;
+    //uniforms thats are arrays have their name returned as
+    //someUniform[0] which is a bit silly so we trim it
+    //off here. The size property tells us that its an array
+    //so we dont lose any information by doing this
+    if(uniformInfo.size > 1) {
+      uniformName = uniformName.substring(0,
+        uniformName.indexOf('[0]'));
+    }
+    uniform.name = uniformName;
+    uniform.type = uniformInfo.type;
+    if(uniform.type === gl.SAMPLER_2D)
+    {
+      uniform.samplerIndex = samplerIndex;
+      samplerIndex++;
+    }
+    shaderProgram.uniforms[uniformName] = uniform;
+  }
+
   this._createEmptyTexture();
-  this._getLocation(shaderProgram, isImmediateMode);
 
   return shaderProgram;
 };
 
-p5.RendererGL.prototype._getLocation =
-function(shaderProgram, isImmediateMode) {
+
+/**
+ * Wrapper around gl.useProgram to make sure
+ * we only switch shaders when neccessary
+ */
+p5.RendererGL.prototype._useShader =
+function(shaderProgram){
   var gl = this.GL;
-  gl.useProgram(shaderProgram);
-
-  //projection Matrix uniform
-  shaderProgram.uPMatrixUniform =
-    gl.getUniformLocation(shaderProgram, 'uProjectionMatrix');
-  //model view Matrix uniform
-  shaderProgram.uMVMatrixUniform =
-    gl.getUniformLocation(shaderProgram, 'uModelViewMatrix');
-
-  //@TODO: figure out a better way instead of if statement
-  if(isImmediateMode === undefined){
-    //normal Matrix uniform
-    shaderProgram.uNMatrixUniform =
-    gl.getUniformLocation(shaderProgram, 'uNormalMatrix');
-
-    shaderProgram.samplerUniform =
-    gl.getUniformLocation(shaderProgram, 'uSampler');
+  if(shaderProgram === this.curShader) {
+    return;
   }
+  gl.useProgram(shaderProgram);
+  this.curShader = shaderProgram;
+  return shaderProgram;
+};
+
+p5.RendererGL.prototype._setMatrixUniforms =
+function(shaderKey) {
+  var shaderProgram = this.mHash[shaderKey];
+
+  this._useShader(shaderProgram);
+  this._setUniform('uProjectionMatrix', this.uPMatrix.mat4);
+  this._setUniform('uModelViewMatrix', this.uMVMatrix.mat4);
+
+  this.uNMatrix.inverseTranspose(this.uMVMatrix);
+  this._setUniform('uNormalMatrix', this.uNMatrix.mat3);
 };
 
 /**
- * Sets a shader uniform given a shaderProgram and uniform string
- * @param {String} shaderKey key to material Hash.
- * @param {String} uniform location in shader.
- * @param { Number} data data to bind uniform.  Float data type.
- * @todo currently this function sets uniform1f data.
- * Should generalize function to accept any uniform
- * data type.
+ * Wrapper around gl.uniform functions.
+ * As we store uniform info in the shader we can use that
+ * to do type checking on the supplied data and call
+ * the appropriate function.
  */
-p5.RendererGL.prototype._setUniform1f = function(shaderKey,uniform,data)
+p5.RendererGL.prototype._setUniform = function(uniformName, data)
 {
+  //@todo update all current gl.uniformXX calls
+
   var gl = this.GL;
-  var shaderProgram = this.mHash[shaderKey];
-  gl.useProgram(shaderProgram);
-  shaderProgram[uniform] = gl.getUniformLocation(shaderProgram, uniform);
-  gl.uniform1f(shaderProgram[uniform], data);
-  return this;
+  var shaderProgram = this.curShader;
+  if(!this.curShader) {
+    //@todo warning?
+    return;
+  }
+  var uniform = shaderProgram.uniforms[uniformName];
+  if(!uniform) {
+    //@todo warning?
+    return;
+  }
+  var location = uniform.location;
+
+  switch(uniform.type){
+    case gl.BOOL:{
+      if(data === true) {
+        gl.uniform1i(location, 1);
+      }
+      else {
+        gl.uniform1i(location, 0);
+      }
+      return;
+    }
+    case gl.INT:{
+      gl.uniform1i(location, data);
+      break;
+    }
+    case gl.FLOAT:{
+      if(uniform.size > 1){
+        gl.uniform1fv(location, data);
+      }
+      else{
+        gl.uniform1f(location, data);
+      }
+      break;
+    }
+    case gl.FLOAT_MAT3:{
+      gl.uniformMatrix3fv(location, false, data);
+      break;
+    }
+    case gl.FLOAT_MAT4:{
+      gl.uniformMatrix4fv(location, false, data);
+      break;
+    }
+    case gl.FLOAT_VEC2:{
+      if(uniform.size > 1){
+        gl.uniform2fv(location, data);
+      }
+      else{
+        gl.uniform2f(location, data[0], data[1]);
+      }
+      break;
+    }
+    case gl.FLOAT_VEC3:{
+      if(uniform.size > 1){
+        gl.uniform3fv(location, data);
+      }
+      else{
+        gl.uniform3f(location, data[0], data[1], data[2]);
+      }
+      break;
+    }
+    case gl.FLOAT_VEC4:{
+      if(uniform.size > 1){
+        gl.uniform4fv(location, data);
+      }
+      else{
+        gl.uniform4f(location, data[0], data[1], data[2], data[3]);
+      }
+      break;
+    }
+    case gl.SAMPLER_2D:{
+      gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
+      gl.bindTexture(gl.TEXTURE_2D, data);
+      gl.uniform1i(location, uniform.samplerIndex);
+      break;
+    }
+    //@todo complete all types
+  }
 };
 
-p5.RendererGL.prototype._setMatrixUniforms = function(shaderKey) {
-  var gl = this.GL;
-  var shaderProgram = this.mHash[shaderKey];
-
-  gl.useProgram(shaderProgram);
-
-  gl.uniformMatrix4fv(
-    shaderProgram.uPMatrixUniform,
-    false, this.uPMatrix.mat4);
-
-  gl.uniformMatrix4fv(
-    shaderProgram.uMVMatrixUniform,
-    false, this.uMVMatrix.mat4);
-
-  this.uNMatrix.inverseTranspose(this.uMVMatrix);
-
-  gl.uniformMatrix3fv(
-    shaderProgram.uNMatrixUniform,
-    false, this.uNMatrix.mat3);
-};
 //////////////////////////////////////////////
 // GET CURRENT | for shader and color
 //////////////////////////////////////////////
@@ -310,7 +417,6 @@ p5.RendererGL.prototype._getCurShaderId = function(){
  *
  */
 p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
-  var gl = this.GL;
   var shaderProgram;
   //see material.js for more info on color blending in webgl
   var colors = this._applyColorBlend.apply(this, arguments);
@@ -319,21 +425,15 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   if(this.isImmediateDrawing){
     shaderProgram =
     this._getShader('immediateVert','vertexColorFrag');
-    gl.useProgram(shaderProgram);
+    this._useShader(shaderProgram);
   } else {
     shaderProgram =
     this._getShader('normalVert', 'basicFrag');
-    gl.useProgram(shaderProgram);
+    this._useShader(shaderProgram);
     //RetainedMode uses a webgl uniform to pass color vals
     //in ImmediateMode, we want access to each vertex so therefore
     //we cannot use a uniform.
-    shaderProgram.uMaterialColor = gl.getUniformLocation(
-      shaderProgram, 'uMaterialColor' );
-    gl.uniform4f( shaderProgram.uMaterialColor,
-      colors[0],
-      colors[1],
-      colors[2],
-      colors[3]);
+    this._setUniform('uMaterialColor', colors);
   }
   return this;
 };
@@ -342,9 +442,9 @@ p5.RendererGL.prototype.noFill = function() {
   var gl = this.GL;
   var shaderProgram =
     this._getShader('normalVert', 'basicFrag');
+  this._useShader(shaderProgram);
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-  gl.useProgram(shaderProgram);
   this.drawMode = 'wireframe';
   if(this.curStrokeColor) {
     this._setNoFillStroke();
@@ -363,15 +463,9 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
 };
 
 p5.RendererGL.prototype._setNoFillStroke = function() {
-  var gl = this.GL;
   var shaderProgram = this.mHash[this.curShaderId];
-  shaderProgram.uMaterialColor = gl.getUniformLocation(
-      shaderProgram, 'uMaterialColor' );
-  gl.uniform4f( shaderProgram.uMaterialColor,
-    this.curStrokeColor[0],
-    this.curStrokeColor[1],
-    this.curStrokeColor[2],
-    this.curStrokeColor[3]);
+  this._useShader(shaderProgram);
+  this._setUniform('uMaterialColor', this.curStrokeColor);
 };
 
 /**
