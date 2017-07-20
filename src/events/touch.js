@@ -19,6 +19,7 @@ var p5 = require('../core/core');
  * desktops (laptops).
  *
  * @property {Object[]} touches
+ * @readOnly
  */
 p5.prototype.touches = [];
 

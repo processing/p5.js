@@ -29,7 +29,7 @@ var defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
  * @method createCanvas
  * @param  {Number} w width of the canvas
  * @param  {Number} h height of the canvas
- * @param  {Constant} [renderer] P2D or WEBGL
+ * @param  {Constant} [renderer] either P2D or WEBGL
  * @return {HTMLCanvasElement} canvas generated
  * @example
  * <div>
@@ -197,7 +197,7 @@ p5.prototype.noCanvas = function() {
  * @method createGraphics
  * @param  {Number} w width of the offscreen graphics buffer
  * @param  {Number} h height of the offscreen graphics buffer
- * @param  {Constant} [renderer] P2D or WEBGL
+ * @param  {Constant} [renderer] either P2D or WEBGL
  * undefined defaults to p2d
  * @return {p5.Graphics} offscreen graphics buffer
  * @example
@@ -262,7 +262,10 @@ p5.prototype.createGraphics = function(w, h, renderer){
  * </ul>
  *
  * @method blendMode
- * @param  {Constant} mode blend mode to set for canvas
+ * @param  {Constant} mode blend mode to set for canvas.
+ *                either BLEND, DARKEST, LIGHTEST, DIFFERENCE, MULTIPLY,
+ *                EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
+ *                SOFT_LIGHT, DODGE, BURN, ADD or NORMAL
  * @example
  * <div>
  * <code>

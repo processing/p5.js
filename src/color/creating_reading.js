@@ -17,6 +17,7 @@ require('./p5.Color');
  *
  * @method alpha
  * @param {p5.Color|Number[]} obj p5.Color object or pixel array
+ * @return {Number} the alpha value
  * @example
  * <div>
  * <code>
@@ -63,6 +64,7 @@ p5.prototype.alpha = function(c) {
  *
  * @method blue
  * @param {p5.Color|Number[]} obj p5.Color object or pixel array
+ * @return {Number} the blue value
  * @example
  * <div>
  * <code>
@@ -94,6 +96,7 @@ p5.prototype.blue = function(c) {
  *
  * @method brightness
  * @param {p5.Color|Number[]} color p5.Color object or pixel array
+ * @return {Number} the brightness value
  * @example
  * <div>
  * <code>
@@ -131,10 +134,12 @@ p5.prototype.brightness = function(c) {
  * as a grayscale value. Add a second value, and it will be used for alpha
  * transparency. When three values are specified, they are interpreted as
  * either RGB or HSB values. Adding a fourth value applies alpha
- * transparency. If a single string parameter is provided it will be
- * interpreted as a CSS-compatible color string.
- *
- * Colors are stored as Numbers or Arrays.
+ * transparency.
+ * <br><br>
+ * If a single string argument is provided, RGB, RGBA and Hex CSS color
+ * strings and all named color strings are supported. In this case, an alpha
+ * number value as a second argument is not supported, the RGBA form should be
+ * used.
  *
  * @method color
  * @param  {Number}        gray    number specifying value between white
@@ -327,6 +332,7 @@ p5.prototype.color = function() {
  *
  * @method green
  * @param {p5.Color|Number[]} color p5.Color object or pixel array
+ * @return {Number} the green value
  * @example
  * <div>
  * <code>
@@ -365,6 +371,7 @@ p5.prototype.green = function(c) {
  *
  * @method hue
  * @param {p5.Color|Number[]} color p5.Color object or pixel array
+ * @return {Number} the hue
  * @example
  * <div>
  * <code>
@@ -493,6 +500,7 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  *
  * @method lightness
  * @param {p5.Color|Number[]} color p5.Color object or pixel array
+ * @return {Number} the lightness
  * @example
  * <div>
  * <code>
@@ -524,6 +532,7 @@ p5.prototype.lightness = function(c) {
  *
  * @method red
  * @param {p5.Color|Number[]} obj p5.Color object or pixel array
+ * @return {Number} the red value
  * @example
  * <div>
  * <code>
@@ -570,6 +579,7 @@ p5.prototype.red = function(c) {
  *
  * @method saturation
  * @param {p5.Color|Number[]} color p5.Color object or pixel array
+ * @return {Number} the saturation
  * @example
  * <div>
  * <code>

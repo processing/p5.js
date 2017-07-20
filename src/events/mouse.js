@@ -27,6 +27,7 @@ p5.prototype._hasMouseInteracted = false;
  * recent touch point.
  *
  * @property {Number} mouseX
+ * @readOnly
  *
  * @example
  * <div>
@@ -52,6 +53,7 @@ p5.prototype.mouseX = 0;
  * recent touch point.
  *
  * @property {Number} mouseY
+ * @readOnly
  *
  * @example
  * <div>
@@ -76,6 +78,7 @@ p5.prototype.mouseY = 0;
  * (0, 0) of the canvas.
  *
  * @property {Number} pmouseX
+ * @readOnly
  *
  * @example
  * <div>
@@ -107,6 +110,7 @@ p5.prototype.pmouseX = 0;
  * (0, 0) of the canvas.
  *
  * @property {Number} pmouseY
+ * @readOnly
  *
  * @example
  * <div>
@@ -135,6 +139,7 @@ p5.prototype.pmouseY = 0;
  * position of the mouse, relative to (0, 0) of the window.
  *
  * @property {Number} winMouseX
+ * @readOnly
  *
  * @example
  * <div>
@@ -172,6 +177,7 @@ p5.prototype.winMouseX = 0;
  * position of the mouse, relative to (0, 0) of the window.
  *
  * @property {Number} winMouseY
+ * @readOnly
  *
  * @example
  * <div>
@@ -210,6 +216,7 @@ p5.prototype.winMouseY = 0;
  * (0, 0) of the window.
  *
  * @property {Number} pwinMouseX
+ * @readOnly
  *
  * @example
  * <div>
@@ -251,6 +258,7 @@ p5.prototype.pwinMouseX = 0;
  * of the window.
  *
  * @property {Number} pwinMouseY
+ * @readOnly
  *
  *
  * @example
@@ -294,6 +302,7 @@ p5.prototype.pwinMouseY = 0;
  * Warning: different browsers may track mouseButton differently.
  *
  * @property {Constant} mouseButton
+ * @readOnly
  *
  * @example
 	* <div>
@@ -327,6 +336,7 @@ p5.prototype.mouseButton = 0;
  * and false if not.
  *
  * @property {Boolean} mouseIsPressed
+ * @readOnly
  *
  * @example
 	* <div>
@@ -704,6 +714,64 @@ p5.prototype._onclick = function(e) {
   var context = this._isGlobal ? window : this;
   if (typeof context.mouseClicked === 'function') {
     var executeDefault = context.mouseClicked(e);
+    if(executeDefault === false) {
+      e.preventDefault();
+    }
+  }
+};
+
+/**
+ * The doubleClicked() function is executed every time a event
+ * listener has detected a dblclick event which is a part of the
+ * DOM L3 specification. The doubleClicked event is fired when a
+ * pointing device button (usually a mouse's primary button)
+ * is clicked twice on a single element. For more info on the
+ * dblclick event refer to mozilla's documentation here:
+ * https://developer.mozilla.org/en-US/docs/Web/Events/dblclick
+ *
+ * @method doubleClicked
+ * @example
+ * <div>
+ * <code>
+ * // Click within the image to change
+ * // the value of the rectangle
+ * // after the mouse has been double clicked
+ *
+ * var value = 0;
+ * function draw() {
+ *   fill(value);
+ *   rect(25, 25, 50, 50);
+ * }
+ *
+ * function doubleClicked() {
+ *   if (value == 0) {
+ *     value = 255;
+ *   } else {
+ *     value = 0;
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * function doubleClicked() {
+ *   ellipse(mouseX, mouseY, 5, 5);
+ *   // prevent default
+ *   return false;
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * black 50x50 rect turns white with mouse doubleClick/press.
+ * no image displayed
+ */
+
+p5.prototype._doubleClicked = function(e) {
+  var context = this._isGlobal ? window : this;
+  if (typeof context.doubleClicked === 'function') {
+    var executeDefault = context.ondblclick(e);
     if(executeDefault === false) {
       e.preventDefault();
     }

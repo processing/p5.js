@@ -50,6 +50,9 @@ p5.prototype.createNumberDict = function() {
  * Base class for all p5.Dictionary types. More specifically
  * typed Dictionary objects inherit from this
  *
+ * @class p5.TypedDict
+ * @constructor
+ *
  */
 
 p5.TypedDict = function() {
@@ -69,7 +72,8 @@ p5.TypedDict = function() {
  * @return {Number} the number of key-value pairs in Dictionary object
  *
  * @example
- * <div><code>
+ * <div class="norender">
+ * <code>
  *
  * function setup() {
  *   var myDictionary = createNumberDict(1, 10);
@@ -94,7 +98,8 @@ p5.TypedDict.prototype.size = function(){
  * @return {Boolean} whether that key exists in Dictionary
  *
  * @example
- * <div><code>
+ * <div class="norender">
+ * <code>
  *
  * function setup() {
  *   var myDictionary = createStringDict('p5', 'js');
@@ -117,7 +122,8 @@ p5.TypedDict.prototype.hasKey = function(key) {
  * @return {Number|String} the value stored at that key
  *
  * @example
- * <div><code>
+ * <div class="norender">
+ * <code>
  *
  * function setup() {
  *   var myDictionary = createStringDict('p5', 'js');
@@ -142,11 +148,12 @@ p5.TypedDict.prototype.get = function(key) {
  * in the Dictionary otherwise makes a new key-value pair
  *
  * @method set
- * @param {Number|String}
- * @param {Number|String}
+ * @param {Number|String} key
+ * @param {Number|String} value
  *
  * @example
- * <div><code>
+ * <div class="norender">
+ * <code>
  *
  * function setup() {
  *   var myDictionary = createStringDict('p5', 'js');
@@ -188,11 +195,16 @@ p5.TypedDict.prototype._addObj = function(obj) {
  * Removes a key-value pair in the Dictionary
  *
  * @method create
- * @param {Number|String|Object}
- * @param {Number|String}
+ * @param {Number|String} key
+ * @param {Number|String} value
+ */
+/**
+ * @method create
+ * @param {Object} obj key/value pair
  *
  * @example
- * <div><code>
+ * <div class="norender">
+ * <code>
  *
  * function setup() {
  *   var myDictionary = createStringDict('p5', 'js');
@@ -227,9 +239,7 @@ p5.TypedDict.prototype.create = function() {
  */
 
 p5.TypedDict.prototype.clear = function(){
-  for(var key in this.data) {
-    delete this.data[key];
-  }
+  this.data = {};
 };
 
 /**
@@ -239,7 +249,8 @@ p5.TypedDict.prototype.clear = function(){
  * @param {Number|String} key for the pair to remove
  *
  * @example
- * <div><code>
+ * <div class="norender">
+ * <code>
  *
  * function setup() {
  *   var myDictionary = createStringDict('p5', 'js');
@@ -323,6 +334,7 @@ p5.TypedDict.prototype._validate = function(key, value) {
  *
  * @class p5.StringDict
  * @constructor
+ * @extends p5.TypedDict
  *
  */
 
@@ -370,7 +382,8 @@ p5.NumberDict.prototype._validate = function(value) {
  * @param {Number} Key for value you wish to add to
  * @param {Number} Amount to add to the value
  * @example
- * <div class='norender'><code>
+ * <div class='norender'>
+ * <code>
  * function setup() {
  *   var myDictionary = createNumberDict(2, 5);
  *   myDictionary.add(2, 2);
@@ -397,7 +410,8 @@ p5.NumberDict.prototype.add = function(key, amount) {
  * @param {Number} Key for value you wish to subtract from
  * @param {Number} Amount to subtract from the value
  * @example
- * <div class='norender'><code>
+ * <div class='norender'>
+ * <code>
  * function setup() {
  *   var myDictionary = createNumberDict(2, 5);
  *   myDictionary.sub(2, 2);
@@ -420,7 +434,8 @@ p5.NumberDict.prototype.sub = function(key, amount) {
  * @param {Number} Key for value you wish to multiply
  * @param {Number} Amount to multiply the value by
  * @example
- * <div class='norender'><code>
+ * <div class='norender'>
+ * <code>
  * function setup() {
  *   var myDictionary = createNumberDict(2, 4);
  *   myDictionary.mult(2, 2);
@@ -447,7 +462,8 @@ p5.NumberDict.prototype.mult = function(key, amount) {
  * @param {Number} Key for value you wish to divide
  * @param {Number} Amount to divide the value by
  * @example
- * <div class='norender'><code>
+ * <div class='norender'>
+ * <code>
  * function setup() {
  *   var myDictionary = createNumberDict(2, 8);
  *   myDictionary.div(2, 2);
@@ -495,7 +511,8 @@ p5.NumberDict.prototype._valueTest = function(flip) {
  * @method minValue
  * @return {Number}
  * @example
- * <div class='norender'><code>
+ * <div class='norender'>
+ * <code>
  * function setup() {
  *   var myDictionary = createNumberDict({2 : -10, 4 : 0.65, 1.2 : 3});
  *   var lowestValue = myDictionary.minValue(); // value is -10
@@ -514,7 +531,8 @@ p5.NumberDict.prototype.minValue = function() {
  * @method maxValue
  * @return {Number}
  * @example
- * <div class='norender'><code>
+ * <div class='norender'>
+ * <code>
  * function setup() {
  *   var myDictionary = createNumberDict({2 : -10, 4 : 0.65, 1.2 : 3});
  *   var highestValue = myDictionary.maxValue(); // value is 3
@@ -556,7 +574,8 @@ p5.NumberDict.prototype._keyTest = function(flip) {
  * @method minKey
  * @return {Number}
  * @example
- * <div class='norender'><code>
+ * <div class='norender'>
+ * <code>
  * function setup() {
  *   var myDictionary = createNumberDict({2 : 4, 4 : 6, 1.2 : 3});
  *   var lowestKey = myDictionary.minKey(); // value is 1.2
@@ -575,7 +594,8 @@ p5.NumberDict.prototype.minKey = function() {
  * @method maxKey
  * @return {Number}
  * @example
- * <div class='norender'><code>
+ * <div class='norender'>
+ * <code>
  * function setup() {
  *   var myDictionary = createNumberDict({ 2 : 4, 4 : 6, 1.2 : 3});
  *   var highestKey = myDictionary.maxKey(); // value is 4

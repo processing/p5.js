@@ -203,7 +203,7 @@ p5.Font.prototype.textToPoints = function(txt, x, y, fontSize, options) {
  *  than the length of the given string.
  *
  * @param  {String} str the string to be converted
- * @return {array}     the opentype glyphs
+ * @return {Array}     the opentype glyphs
  */
 p5.Font.prototype._getGlyphs = function(str) {
 

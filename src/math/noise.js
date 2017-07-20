@@ -68,8 +68,8 @@ var perlin; // will be initialized lazily by noise() or noiseSeed()
  *
  * @method noise
  * @param  {Number} x   x-coordinate in noise space
- * @param  {Number} y   y-coordinate in noise space
- * @param  {Number} z   z-coordinate in noise space
+ * @param  {Number} [y] y-coordinate in noise space
+ * @param  {Number} [z] z-coordinate in noise space
  * @return {Number}     Perlin noise value (between 0 and 1) at specified
  *                      coordinates
  * @example
