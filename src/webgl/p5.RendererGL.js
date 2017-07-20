@@ -19,13 +19,15 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   p5.Renderer.call(this, elt, pInst, isMainCanvas);
   this.attributes = {};
   attr = attr || {};
-  this.attributes.alpha = attr.alpha || true;
-  this.attributes.depth = attr.depth || true;
-  this.attributes.stencil = attr.stencil || true;
-  this.attributes.antialias = attr.antialias || false;
-  this.attributes.premultipliedAlpha = attr.premultipliedAlpha || false;
-  this.attributes.preserveDrawingBuffer = attr.preserveDrawingBuffer || true;
-
+  this.attributes.alpha = attr.alpha === undefined ? true : attr.alpha;
+  this.attributes.depth = attr.depth === undefined ? true : attr.depth;
+  this.attributes.stencil = attr.stencil === undefined ? true : attr.stencil;
+  this.attributes.antialias = attr.antialias ===
+    undefined ? false : attr.antialias;
+  this.attributes.premultipliedAlpha = attr.premultipliedAlpha ===
+    undefined ? false : attr.premultipliedAlpha;
+  this.attributes.preserveDrawingBuffer = attr.preserveDrawingBuffer ===
+    undefined ? true : attr.preserveDrawingBuffer;
   this._initContext();
   this.isP3D = true; //lets us know we're in 3d mode
   this.GL = this.drawingContext;
@@ -83,7 +85,7 @@ p5.RendererGL.prototype._initContext = function() {
 //This is helper function to reset the context anytime the attributes
 //are changed with setAttributes()
 
-p5.RendererGL.prototype._resetContext = function(options, callback) {
+p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
   var w = this.width;
   var h = this.height;
   var defaultId = 'defaultCanvas0';
@@ -100,7 +102,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
   }
   this._pInst.canvas = c;
   this._pInst._setProperty('_renderer', new p5.RendererGL(this._pInst.canvas,
-    this._pInst, true, this.attributes));
+    this._pInst, true, attr));
   this._pInst._isdefaultGraphics = true;
   this._pInst._renderer.resize(w, h);
   this._pInst._renderer._applyDefaults();
@@ -118,6 +120,7 @@ p5.RendererGL.prototype._resetContext = function(options, callback) {
 /**
  *
  * Set attributes for the WebGL Drawing context.
+ * This should be put in setup()
  * The available attributes are
  * alpha - indicates if the canvas contains an alpha buffer
  * default is true
@@ -151,32 +154,18 @@ p5.prototype.setAttributes = function() {
     console.log('setAttributes() only works in WebGL');
     return;
   }
+  var attr = {};
   if(arguments.length === 2) {
-    this._renderer.attributes.alpha = arguments[0] ===
-      'alpha' ? arguments[1] : true;
-    this._renderer.attributes.depth = arguments[0] ===
-      'depth' ? arguments[1] : true;
-    this._renderer.attributes.stencil = arguments[0] ===
-      'stencil' ? arguments[1] : true;
-    this._renderer.attributes.antialias = arguments[0] ===
-      'antialias' ? arguments[1] : false;
-    this._renderer.attributes.premultipliedAlpha = arguments[0] ===
-      'premultipliedAlpha' ? arguments[1] : false;
-    this._renderer.attributes.preserveDrawingBuffer = arguments[0] ===
-      'preserveDrawingBuffer' ? arguments[1] : true;
+    attr[arguments[0]] = arguments[1];
   }
-  else if(arguments.length === 1) {
-    for(var key in arguments[0]) {
-      if(this._renderer.attributes.hasOwnProperty(key)) {
-        this._renderer.attributes[key] = arguments[0][key];
-      }
-    }
+  else if (arguments.length === 1) {
+    attr = arguments[0];
   } else {
     console.log('setAttributes() only accepts an object or a key-value pair' +
       'as an argument');
     return;
   }
-  this._renderer._resetContext();
+  this._renderer._resetContext(attr);
 };
 
 //detect if user didn't set the camera
@@ -507,6 +496,11 @@ p5.RendererGL.prototype.get = function(x, y, w, h) {
  */
 
 p5.RendererGL.prototype.loadPixels = function() {
+  if(this.attributes.preserveDrawingBuffer !== true) {
+    console.log('loadPixels only works in WebGL when preserveDrawingBuffer ' +
+      'is true.');
+    return;
+  }
   var pd = this._pInst._pixelDensity;
   var x = arguments[0] || 0;
   var y = arguments[1] || 0;
