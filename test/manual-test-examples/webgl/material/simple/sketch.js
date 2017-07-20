@@ -10,7 +10,7 @@ function draw(){
   ambientLight(50);
   pointLight(250, 250, 250, -70, 70, 0);
 
-  basicMaterial(250);
+  normalMaterial(250);
   sphere();
 
   translate(250, 0, 0);

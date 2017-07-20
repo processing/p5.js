@@ -30,6 +30,8 @@ p5.Geometry = function
   //a 2D array containing uvs for every vertex
   //[[0.0,0.0],[1.0,0.0], ...]
   this.uvs = [];
+  //an array containing barycentric coords for every vertex
+  this.barycentric = [];
   this.detailX = (detailX !== undefined) ? detailX: 1;
   this.detailY = (detailY !== undefined) ? detailY: 1;
   if(callback instanceof Function){

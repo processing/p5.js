@@ -128,6 +128,9 @@ p5.prototype.texture = function(){
     'lightTextureFrag');
   gl.useProgram(shaderProgram);
   var textureData;
+  shaderProgram.uSpecular = gl.getUniformLocation(
+    shaderProgram, 'uSpecular' );
+  gl.uniform1i(shaderProgram.uSpecular, false);
   //if argument is not already a texture
   //create a new one
   if(!args[0].isTexture){
@@ -263,10 +266,19 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   shaderProgram.uSpecular = gl.getUniformLocation(
     shaderProgram, 'uSpecular' );
   gl.uniform1i(shaderProgram.uSpecular, false);
-
   gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
-
   return this;
+};
+
+p5.RendererGL.prototype._createEmptyTexture = function() {
+  if(this.emptyTexture === null) {
+    var gl = this.GL;
+    var data = new Uint8Array([1,1,1,1]);
+    this.emptyTexture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, this.emptyTexture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0,
+      gl.RGBA, gl.UNSIGNED_BYTE, data);
+  }
 };
 
 /**
@@ -306,7 +318,7 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   var shaderProgram =
     this._renderer._getShader('lightVert', 'lightTextureFrag');
   gl.useProgram(shaderProgram);
-  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
+  //gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
   shaderProgram.uMaterialColor = gl.getUniformLocation(
     shaderProgram, 'uMaterialColor' );
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
@@ -315,7 +327,7 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   shaderProgram.uSpecular = gl.getUniformLocation(
     shaderProgram, 'uSpecular' );
   gl.uniform1i(shaderProgram.uSpecular, true);
-
+  gl.uniform1i(gl.getUniformLocation(shaderProgram, 'isTexture'), false);
   return this;
 };
 
