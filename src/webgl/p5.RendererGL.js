@@ -1,7 +1,7 @@
 'use strict';
 
 var p5 = require('../core/core');
-var shader = require('./shader');
+require('./shader');
 require('../core/p5.Renderer');
 require('./p5.Matrix');
 var uMVMatrixStack = [];
@@ -139,90 +139,12 @@ p5.RendererGL.prototype.background = function() {
  * @return {[type]}        [description]
  */
 p5.RendererGL.prototype._initShaders = function(vertId, fragId, isImmediateMode) {
-  var gl = this.GL;
-  //set up our default shaders by:
-  // 1. create the shader,
-  // 2. load the shader source,
-  // 3. compile the shader
-  var _vertShader = gl.createShader(gl.VERTEX_SHADER);
-  //load in our default vertex shader
-  gl.shaderSource(_vertShader, shader[vertId]);
-  gl.compileShader(_vertShader);
-  // if our vertex shader failed compilation?
-  if (!gl.getShaderParameter(_vertShader, gl.COMPILE_STATUS)) {
-    alert('Yikes! An error occurred compiling the shaders:' +
-      gl.getShaderInfoLog(_vertShader));
-    return null;
-  }
+  var shaderProgram = new p5.Shader(this, vertId, fragId);
+  shaderProgram.init(); // make ready to use
 
-  var _fragShader = gl.createShader(gl.FRAGMENT_SHADER);
-  //load in our material frag shader
-  gl.shaderSource(_fragShader, shader[fragId]);
-  gl.compileShader(_fragShader);
-  // if our frag shader failed compilation?
-  if (!gl.getShaderParameter(_fragShader, gl.COMPILE_STATUS)) {
-    alert('Darn! An error occurred compiling the shaders:' +
-      gl.getShaderInfoLog(_fragShader));
-    return null;
-  }
-
-  var shaderProgram = gl.createProgram();
-  gl.attachShader(shaderProgram, _vertShader);
-  gl.attachShader(shaderProgram, _fragShader);
-  gl.linkProgram(shaderProgram);
-  if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-    alert('Snap! Error linking shader program');
-  }
-
-  shaderProgram.attributes = {};
-
-  var numAttributes = gl.getProgramParameter(shaderProgram,
-    gl.ACTIVE_ATTRIBUTES);
-  for(var i = 0; i < numAttributes; ++i){
-    var attributeInfo = gl.getActiveAttrib(shaderProgram, i);
-    var name = attributeInfo.name;
-    var location = gl.getAttribLocation(shaderProgram, name);
-    var attribute = {};
-    attribute.name = name;
-    attribute.location = location;
-    attribute.type = attributeInfo.type;
-    attribute.size = attributeInfo.size;
-    shaderProgram.attributes[name] = attribute;
-  }
-
-  // Inspect shader and cache uniform info
-
-  shaderProgram.uniforms = {};
-
-  var numUniforms = gl.getProgramParameter(shaderProgram,
-    gl.ACTIVE_UNIFORMS);
-
-  var samplerIndex = 0;
-  for(i = 0; i < numUniforms; ++i){
-    var uniformInfo = gl.getActiveUniform(shaderProgram, i);
-    var uniform = {};
-    uniform.location = gl.getUniformLocation(shaderProgram, uniformInfo.name);
-    uniform.size = uniformInfo.size;
-    var uniformName = uniformInfo.name;
-    //uniforms thats are arrays have their name returned as
-    //someUniform[0] which is a bit silly so we trim it
-    //off here. The size property tells us that its an array
-    //so we dont lose any information by doing this
-    if(uniformInfo.size > 1) {
-      uniformName = uniformName.substring(0,
-        uniformName.indexOf('[0]'));
-    }
-    uniform.name = uniformName;
-    uniform.type = uniformInfo.type;
-    if(uniform.type === gl.SAMPLER_2D)
-    {
-      uniform.samplerIndex = samplerIndex;
-      samplerIndex++;
-    }
-    shaderProgram.uniforms[uniformName] = uniform;
-  }
-
-  this._createEmptyTexture();
+  // cache for future use
+  var mId = vertId + '|' + fragId;
+  this.mHash[mId] = shaderProgram;
 
   return shaderProgram;
 };
@@ -233,126 +155,24 @@ p5.RendererGL.prototype._initShaders = function(vertId, fragId, isImmediateMode)
  * we only switch shaders when neccessary
  */
 p5.RendererGL.prototype._useShader = function(shaderProgram){
-  var gl = this.GL;
-  if(shaderProgram === this.curShader) {
+  if (shaderProgram === this.curShader) {
     return;
   }
-  gl.useProgram(shaderProgram);
+  //shaderProgram.bind(); // TODO ? is this right?
   this.curShader = shaderProgram;
+  this.curShader.useProgram();
   return shaderProgram;
 };
 
-p5.RendererGL.prototype._setMatrixUniforms = function(shaderKey) {
-  var shaderProgram = this.mHash[shaderKey];
-
-  this._useShader(shaderProgram);
-  this._setUniform('uProjectionMatrix', this.uPMatrix.mat4);
-  this._setUniform('uModelViewMatrix', this.uMVMatrix.mat4);
-
-  this.uNMatrix.inverseTranspose(this.uMVMatrix);
-  this._setUniform('uNormalMatrix', this.uNMatrix.mat3);
-};
-
-/**
- * Wrapper around gl.uniform functions.
- * As we store uniform info in the shader we can use that
- * to do type checking on the supplied data and call
- * the appropriate function.
- */
-p5.RendererGL.prototype._setUniform = function(uniformName, data)
-{
-  //@todo update all current gl.uniformXX calls
-
-  var gl = this.GL;
-  var shaderProgram = this.curShader;
-  if(!this.curShader) {
-    //@todo warning?
-    return;
-  }
-  var uniform = shaderProgram.uniforms[uniformName];
-  if(!uniform) {
-    //@todo warning?
-    return;
-  }
-  var location = uniform.location;
-
-  switch(uniform.type){
-    case gl.BOOL:{
-      if(data === true) {
-        gl.uniform1i(location, 1);
-      }
-      else {
-        gl.uniform1i(location, 0);
-      }
-      return;
-    }
-    case gl.INT:{
-      gl.uniform1i(location, data);
-      break;
-    }
-    case gl.FLOAT:{
-      if(uniform.size > 1){
-        gl.uniform1fv(location, data);
-      }
-      else{
-        gl.uniform1f(location, data);
-      }
-      break;
-    }
-    case gl.FLOAT_MAT3:{
-      gl.uniformMatrix3fv(location, false, data);
-      break;
-    }
-    case gl.FLOAT_MAT4:{
-      gl.uniformMatrix4fv(location, false, data);
-      break;
-    }
-    case gl.FLOAT_VEC2:{
-      if(uniform.size > 1){
-        gl.uniform2fv(location, data);
-      }
-      else{
-        gl.uniform2f(location, data[0], data[1]);
-      }
-      break;
-    }
-    case gl.FLOAT_VEC3:{
-      if(uniform.size > 1){
-        gl.uniform3fv(location, data);
-      }
-      else{
-        gl.uniform3f(location, data[0], data[1], data[2]);
-      }
-      break;
-    }
-    case gl.FLOAT_VEC4:{
-      if(uniform.size > 1){
-        gl.uniform4fv(location, data);
-      }
-      else{
-        gl.uniform4f(location, data[0], data[1], data[2], data[3]);
-      }
-      break;
-    }
-    case gl.SAMPLER_2D:{
-      gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
-      gl.bindTexture(gl.TEXTURE_2D, data);
-      gl.uniform1i(location, uniform.samplerIndex);
-      break;
-    }
-    //@todo complete all types
-  }
-};
 
 //////////////////////////////////////////////
 // GET CURRENT | for shader and color
 //////////////////////////////////////////////
 p5.RendererGL.prototype._getShader = function(vertId, fragId, isImmediateMode) {
   var mId = vertId + '|' + fragId;
-  //create it and put it into hashTable
+
   if(!this.materialInHash(mId)){
-    var shaderProgram = this._initShaders(vertId, fragId, isImmediateMode);
-    this.mHash[mId] = shaderProgram;
+    this._initShaders(vertId, fragId, isImmediateMode);
     this.newShader = true;
   }
   this.curShaderId = mId;
@@ -372,17 +192,20 @@ p5.RendererGL.prototype._getCurShaderId = function(){
     // creates a new one using this._initShaders--however, we'd like
     // use the cached version as often as possible, so we defer to this._getShader
     // here instead of calling this._initShaders directly.
-    var shaderProgram;
+    var newShader = this.curShader;
     if (this.isImmediateDrawing) {
-      shaderProgram = this._getShader('immediateVert', 'vertexColorFrag', true);
-    } else if (this.curShaderId === 'immediateVert|vertexColorFrag') {
+      newShader = this._getShader('immediateVert', 'vertexColorFrag', true);
+    } else {
       // we're not in immediate mode drawing,
       // but our shader is in the immediate mode fill.
       // need to change it to basic shading.
-      shaderProgram = this._getShader('normalVert', 'basicFrag', false);
+      if (this.curShaderId === 'immediateVert|vertexColorFrag' ||
+        this.curShaderId === undefined) {
+        newShader = this._getShader('normalVert', 'basicFrag', false);
+      }
     }
     // this should be safe, but...
-    this._useShader(shaderProgram);
+    this._useShader(newShader);
   }
 
   return this.curShaderId;
@@ -438,7 +261,7 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
     //RetainedMode uses a webgl uniform to pass color vals
     //in ImmediateMode, we want access to each vertex so therefore
     //we cannot use a uniform.
-    this._setUniform('uMaterialColor', colors);
+    shaderProgram.setUniform('uMaterialColor', colors);
   }
   return this;
 };
@@ -469,7 +292,7 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
 p5.RendererGL.prototype._setNoFillStroke = function() {
   var shaderProgram = this.mHash[this.curShaderId];
   this._useShader(shaderProgram);
-  this._setUniform('uMaterialColor', this.curStrokeColor);
+  this.curShader.setUniform('uMaterialColor', this.curStrokeColor);
 };
 
 /**
