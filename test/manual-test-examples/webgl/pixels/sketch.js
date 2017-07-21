@@ -3,14 +3,14 @@
  */
 
 var c;
+var currentBackground = [255,0,100];
 
 function setup() {
   createCanvas(500,500,WEBGL);
 }
 
 function draw() {
-  pointLight(200,200,200,0,0,0);
-  background(255, 0, 100);
+  background(currentBackground);
   translate(150, 100, 0);
   push();
   rotateZ(frameCount * 0.02);
@@ -27,4 +27,5 @@ function draw() {
 
 function mousePressed() {
   c = get();
+  currentBackground = [random(0,255), random(0,255), random(0,255)];
 }
