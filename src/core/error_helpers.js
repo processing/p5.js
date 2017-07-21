@@ -128,31 +128,26 @@ p5._friendlyFileLoadError = function (errorType, filePath) {
 */
 function validateParameters(func, args) {
   var arrDoc = lookupParamDoc(func);
-  if (arrDoc.length > 1){   // multiple format?
-    var errorListArray = [];
+  var errorArray = [];
+  var minErrCount = 999999;
+  if (arrDoc.length > 1){   // func has multiple formats
     for (var i = 0; i < arrDoc.length; i++) {
-      errorListArray.push(testParamFormat(args, arrDoc[i]));
-    }
-    // compare errors from all formats
-    var minErrInd = -1;
-    var minErrCount = 999999;
-    for (var j = 0; j < errorListArray.length; j++) {
-      var numErr = errorListArray[j].length;
-      if (numErr >= arrDoc.length){   // exclude clean cases
-        if(minErrCount > numErr){
-          minErrInd = j;
-          minErrCount = numErr;
-        }
+      var arrError = testParamFormat(args, arrDoc[i]);
+      if( arrError.length === 0) {
+        return; // no error
+      }
+      // see if this is the format with min number of err
+      if( minErrCount > arrError.length) {
+        minErrCount = arrError.length;
+        errorArray = arrError;
       }
     }
-    if (minErrInd > -1){
-      // generate error msg with a smaller number of errors
-      for(var n = 0; n < errorListArray[minErrInd].length; n++) {
-        p5._friendlyParamError(errorListArray[minErrInd][n], func);
-      }
+    // generate err msg
+    for (var n = 0; n < errorArray.length; n++) {
+      p5._friendlyParamError(errorArray[n], func);
     }
-  } else {
-    var errorArray = testParamFormat(args, arrDoc[0]);
+  } else {                 // func has a single format
+    errorArray = testParamFormat(args, arrDoc[0]);
     for(var m = 0; m < errorArray.length; m++) {
       p5._friendlyParamError(errorArray[m], func);
     }
@@ -163,6 +158,7 @@ function validateParameters(func, args) {
 function lookupParamDoc(func){
   var queryResult = arrDoc.classitems.
     filter(function (x) { return x.name === func; });
+  // different JSON structure for funct with multi-format
   if (queryResult[0].hasOwnProperty('overloads')){
     var res = [];
     for(var i = 0; i < queryResult[0].overloads.length; i++) {
@@ -185,8 +181,7 @@ function testParamFormat(args, format){
       }
     } else {
       var types = format[p].type.split('|'); // case accepting multi-types
-      var pass;
-      if (argType === 'object'){             // if obejct, test for class
+      if (argType === 'object'){             // if object, test for class
         if (!testParamClass(args[p], types)) {  // if fails to pass
           error = {type:'WRONG_CLASS', position: p,
             correctClass: types[p], wrongClass: args[p].name};
@@ -227,25 +222,26 @@ function testParamType(param, types){
   }
   return false;
 }
+// function for generating console.log() msg
 p5._friendlyParamError = function (errorObj, func) {
   var message;
   switch (errorObj.type){
     case 'EMPTY_VAR':
       message = 'FES: It looks like ' + func +
-        ' received an empty variable in spot #' + errorObj.position +
+        '() received an empty variable in spot #' + errorObj.position +
         ' (zero-based index). If not intentional, this is often a problem' +
         ' with scope: [link to scope].';
       report(message, func, ERR_PARAMS);
       break;
     case 'WRONG_CLASS':
-      message = 'FES: ' + func + ' was expecting ' + errorObj.correctClass +
+      message = 'FES: ' + func + '() was expecting ' + errorObj.correctClass +
         ' for parameter #' + errorObj.position + ' (zero-based index), received ';
       // Wrap strings in quotes
       message += 'an object with name '+ errorObj.wrongClass +' instead.';
       report(message, func, ERR_PARAMS);
       break;
     case 'WRONG_TYPE':
-      message = 'FES: ' + func + ' was expecting ' + errorObj.correctType +
+      message = 'FES: ' + func + '() was expecting ' + errorObj.correctType +
         ' for parameter #' + errorObj.position + ' (zero-based index), received ';
       // Wrap strings in quotes
       message += errorObj.wrongType + ' instead.';
