@@ -28,7 +28,7 @@ Please post bugs in the proper repository:
 
 ## Learning
 
-Check out [p5js.org](http://p5js.org) for lots more! Here are some quicklinks:
+Check out [p5js.org](http://p5js.org) for lots more! Here are some quick-links:
 
 * [Get Started](http://p5js.org/get-started) — Create and run your first sketch!
 * [p5.js overview](https://github.com/processing/p5.js/wiki/p5.js-overview) — An overview of the main features and functionality of p5.js.
@@ -43,7 +43,3 @@ Check out [p5js.org](http://p5js.org) for lots more! Here are some quicklinks:
 p5.js is a collaborative project created by many individuals, and you are invited to help. All types of involvement are welcome. See the [community section](http://p5js.org/community) to get started!
 
 Developers, check out the [development](https://github.com/processing/p5.js/wiki/Development) wiki page for more in-depth details about contributing code, bug fixes, and documentation.
-
-
-
-
