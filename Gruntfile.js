@@ -99,10 +99,9 @@ module.exports = function(grunt) {
       'p5.Image': 'image',
       'p5.Util': 'utilities',
       'p5.Math': 'math',
-      'p5.Typography': 'typography, io', // MAJOR FAIL
-      'p5.WebGL': 'webgl', //breaking
+      'p5.Typography': 'typography',
       'p5.Events': 'events',
-      'p5.IO': 'io' // MAJOR FAIL
+      'p5.IO': 'io'
     },
 
     // Configure style consistency checking for this file, the source, and the tests.
@@ -237,8 +236,7 @@ module.exports = function(grunt) {
             'http://localhost:9001/test/modules-tests/test-math.html',
             'http://localhost:9001/test/modules-tests/test-util.html',
             'http://localhost:9001/test/modules-tests/test-typography.html',
-            'http://localhost:9001/test/modules-tests/test-io.html',
-            'http://localhost:9001/test/modules-tests/test-webgl.html'
+            'http://localhost:9001/test/modules-tests/test-io.html'
           ],
           reporter: reporter,
           run: true,

@@ -1037,4 +1037,4 @@ function cacheKey() {
   return hash;
 }
 
-module.exports = p5.Font;
+module.exports = p5;

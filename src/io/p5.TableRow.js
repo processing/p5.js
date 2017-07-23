@@ -165,4 +165,4 @@ p5.TableRow.prototype.getString = function(column) {
   }
 };
 
-module.exports = p5.TableRow;
+module.exports = p5;
