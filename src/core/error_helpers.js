@@ -206,10 +206,16 @@ function testParamFormat(args, format){
 // Returns true if PASS, false if FAIL
 function testParamClass(param, types){
   for (var i = 0; i < types.length; i++) {
-    if (param.name === types[i]) {
-      return true;      // class name match, pass
-    } else if (types[i] === 'Constant'){
-      return true;      // accepts any constant, pass
+    if (types[i] === 'Array'){
+      if(param instanceof Array){
+        return true;
+      }
+    }else{
+      if (param.name === types[i]) {
+        return true;      // class name match, pass
+      } else if (types[i] === 'Constant'){
+        return true;      // accepts any constant, pass
+      }
     }
   }
   return false;

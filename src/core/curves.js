@@ -76,6 +76,8 @@ var curveDetail = 20;
 */
 p5.prototype.bezier = function() {
   var args = new Array(arguments.length);
+  // check with FES:validateParameters
+  this._validateParameters('bezier', args);
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
@@ -317,6 +319,8 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  */
 p5.prototype.curve = function() {
   var args = new Array(arguments.length);
+  // check with FES:validateParameters
+  this._validateParameters('curve', args);
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
