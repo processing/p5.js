@@ -1,18 +1,19 @@
+/**
+ * This module defines the p5.Shader class
+ * @module Lights, Camera
+ * @submodule Shaders
+ * @for p5
+ * @requires core
+ */
+
 var p5 = require('../core/core');
 
 /**
- * @module Lights, Camera
- * @submodule Shaders
- * @requires core
- */
-module.exports = p5.Shader;
-
-/*
  * Shader class for WEBGL Mode
  * @class p5.Shader
  * @constructor
- * @param {renderer} an instance of p5.RendererGL that will be the
- * gl context for this new p5.Shader
+ * @param {renderer} [p5.Renderer.GL] an instance of p5.RendererGL that
+ * will provide the GL context for this new p5.Shader
  * @param {vertSrc} [String] source code for the vertex shader (as a string)
  * @param {fragSrc} [String] source code for the fragment shader (as a string)
  */
@@ -35,7 +36,7 @@ p5.Shader = function(renderer, vertSrc, fragSrc) {
   return this;
 };
 
-/*
+/**
  * Creates, compiles, and links the shader based on its
  * sources for the vertex and fragment shaders (provided
  * to the constructor). Populates known attributes and
@@ -89,7 +90,7 @@ p5.Shader.prototype.init = function() {
   return this;
 };
 
-/*
+/**
  * Queries the active attributes for this shader and loads
  * their names and locations into the attributes array.
  * @method loadAttributes
@@ -120,7 +121,7 @@ p5.Shader.prototype.loadAttributes = function() {
   this.loadedAttributes = true;
 };
 
-/*
+/**
  * Queries the active uniforms for this shader and loads
  * their names and locations into the uniforms array.
  * @method loadUniforms
@@ -167,7 +168,7 @@ p5.Shader.prototype.compile = function() {
 };
 
 
-/*
+/**
  * initializes (if needed) and binds the shader program.
  * @method bindShader
  */
@@ -186,7 +187,7 @@ p5.Shader.prototype.bindShader = function () {
   }
 };
 
-/*
+/**
  * @method unbindShader
  */
 p5.Shader.prototype.unbindShader = function () {
@@ -326,3 +327,4 @@ p5.Shader.prototype.enableAttrib = function(loc, size,
   }
 };
 
+module.exports = p5.Shader;

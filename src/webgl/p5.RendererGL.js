@@ -1,7 +1,7 @@
 'use strict';
 
 var p5 = require('../core/core');
-require('./shader');
+require('./p5.Shader');
 require('../core/p5.Renderer');
 require('./p5.Matrix');
 var fs = require('fs');
