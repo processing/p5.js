@@ -100,10 +100,16 @@ p5.RendererGL.prototype.endShape =
 function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
 
   var gl = this.GL;
-  // TODO: REFACTOR _getCurShaderId to more directly call function name
-  var mId = this._getCurShaderId();
-  var shader = this.mHash[mId];
-  this.curShader.bind();
+  var shader = this.curShader;
+  if (shader === this._getColorShader()) {
+    // this is the fill/stroke shader for retain mode.
+    // must switch to immediate mode shader before drawing!
+    shader = this.setShader(this._getImmediateModeShader());
+
+    // note that if we're using the texture shader...
+    // this shouldn't change. :)
+  }
+  shader.bindShader();
 
   //vertex position Attribute
   var data = new Float32Array(this.immediateMode.vertexPositions);
@@ -173,7 +179,7 @@ function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
   this.isImmediateDrawing = false;
 
   // todo / optimizations? leave bound until another shader is set?
-  this.curShader.unbind();
+  shader.unbindShader();
   return this;
 };
 

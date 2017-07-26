@@ -1,34 +1,28 @@
-var fs = require('fs');
 var p5 = require('../core/core');
 
+/**
+ * @module Lights, Camera
+ * @submodule Shaders
+ * @requires core
+ */
 module.exports = p5.Shader;
 
-var shaders = {
-  immediateVert:
-    fs.readFileSync(__dirname + '/shaders/immediate.vert', 'utf-8'),
-  vertexColorVert:
-    fs.readFileSync(__dirname + '/shaders/vertexColor.vert', 'utf-8'),
-  vertexColorFrag:
-    fs.readFileSync(__dirname + '/shaders/vertexColor.frag', 'utf-8'),
-  normalVert:
-    fs.readFileSync(__dirname + '/shaders/normal.vert', 'utf-8'),
-  normalFrag:
-    fs.readFileSync(__dirname + '/shaders/normal.frag', 'utf-8'),
-  basicFrag:
-    fs.readFileSync(__dirname + '/shaders/basic.frag', 'utf-8'),
-  lightVert:
-    fs.readFileSync(__dirname + '/shaders/light.vert', 'utf-8'),
-  lightTextureFrag:
-    fs.readFileSync(__dirname + '/shaders/light_texture.frag', 'utf-8'),
-};
-
-p5.Shader = function(renderer, vertId, fragId) {
+/*
+ * Shader class for WEBGL Mode
+ * @class p5.Shader
+ * @constructor
+ * @param {renderer} an instance of p5.RendererGL that will be the
+ * gl context for this new p5.Shader
+ * @param {vertSrc} [String] source code for the vertex shader (as a string)
+ * @param {fragSrc} [String] source code for the fragment shader (as a string)
+ */
+p5.Shader = function(renderer, vertSrc, fragSrc) {
   // TODO: adapt this to not take ids, but rather,
   // to take the source for a vertex and fragment shader
   // to enable custom shaders at some later date
   this._renderer = renderer;
-  this._vertId = vertId;
-  this._fragId = fragId;
+  this._vertSrc = vertSrc;
+  this._fragSrc = fragSrc;
   this._vertShader = -1;
   this._fragShader = -1;
   this.glProgram = 0;
@@ -41,17 +35,24 @@ p5.Shader = function(renderer, vertId, fragId) {
   return this;
 };
 
+/*
+ * Creates, compiles, and links the shader based on its
+ * sources for the vertex and fragment shaders (provided
+ * to the constructor). Populates known attributes and
+ * uniforms from the shader.
+ * @method init
+ */
 p5.Shader.prototype.init = function() {
   if (this.glProgram === 0 /* or context is stale? */) {
     var gl = this._renderer.GL;
 
-    //set up our default shaders by:
-    // 1. create the shader,
-    // 2. load the shader source,
-    // 3. compile the shader
+    //set up the shader by
+    // 1. creating and getting a gl id for the shader program,
+    // 2. compliling its vertex & fragment sources,
+    // 3. linking the vertex and fragment shaders
     this._vertShader = gl.createShader(gl.VERTEX_SHADER);
     //load in our default vertex shader
-    gl.shaderSource(this._vertShader, shaders[this._vertId]);
+    gl.shaderSource(this._vertShader, this._vertSrc);
     gl.compileShader(this._vertShader);
     // if our vertex shader failed compilation?
     if (!gl.getShaderParameter(this._vertShader, gl.COMPILE_STATUS)) {
@@ -62,7 +63,7 @@ p5.Shader.prototype.init = function() {
 
     this._fragShader = gl.createShader(gl.FRAGMENT_SHADER);
     //load in our material frag shader
-    gl.shaderSource(this._fragShader, shaders[this._fragId]);
+    gl.shaderSource(this._fragShader, this._fragSrc);
     gl.compileShader(this._fragShader);
     // if our frag shader failed compilation?
     if (!gl.getShaderParameter(this._fragShader, gl.COMPILE_STATUS)) {
@@ -88,6 +89,11 @@ p5.Shader.prototype.init = function() {
   return this;
 };
 
+/*
+ * Queries the active attributes for this shader and loads
+ * their names and locations into the attributes array.
+ * @method loadAttributes
+ */
 p5.Shader.prototype.loadAttributes = function() {
   if (this.loadedAttributes) {
     return;
@@ -114,6 +120,11 @@ p5.Shader.prototype.loadAttributes = function() {
   this.loadedAttributes = true;
 };
 
+/*
+ * Queries the active uniforms for this shader and loads
+ * their names and locations into the uniforms array.
+ * @method loadUniforms
+ */
 p5.Shader.prototype.loadUniforms = function() {
   if (this.loadedUniforms) {
     return;
@@ -155,11 +166,15 @@ p5.Shader.prototype.compile = function() {
   // TODO
 };
 
-// TODO: check context
-p5.Shader.prototype.bind = function () {
+
+/*
+ * initializes (if needed) and binds the shader program.
+ * @method bindShader
+ */
+p5.Shader.prototype.bindShader = function () {
   this.init();
   if (!this.bound) {
-    this.useProgram();
+    this._useProgram();
     this.bound = true;
     this.bindTextures();
 
@@ -171,7 +186,10 @@ p5.Shader.prototype.bind = function () {
   }
 };
 
-p5.Shader.prototype.unbind = function () {
+/*
+ * @method unbindShader
+ */
+p5.Shader.prototype.unbindShader = function () {
   if (this.bound) {
     this.unbindTextures();
     //this._renderer.GL.useProgram(0); ??
@@ -197,7 +215,7 @@ p5.Shader.prototype._setMatrixUniforms = function() {
   this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
 };
 
-p5.Shader.prototype.useProgram = function () {
+p5.Shader.prototype._useProgram = function () {
   var gl = this._renderer.GL;
   gl.useProgram(this.glProgram);
 };
@@ -207,6 +225,12 @@ p5.Shader.prototype.useProgram = function () {
  * As we store uniform info in the shader we can use that
  * to do type checking on the supplied data and call
  * the appropriate function.
+ * @method setUniform
+ * @param {uniformName} [String] the name of the uniform in the
+ * shader program
+ * @param {data} [] the data to be associated with that uniform; type
+ * varies (could be a single numerical value, array, matrix, or
+ * texture / sampler reference)
  */
 p5.Shader.prototype.setUniform = function(uniformName, data)
 {
@@ -215,7 +239,7 @@ p5.Shader.prototype.setUniform = function(uniformName, data)
   var gl = this._renderer.GL;
   // todo: is this safe to do here?
   // todo: store the values another way?
-  this.useProgram();
+  this._useProgram();
 
   // TODO BIND?
   var uniform = this.uniforms[uniformName];

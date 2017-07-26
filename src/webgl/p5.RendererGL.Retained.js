@@ -42,8 +42,13 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
   //we mult the num geom faces by 3
   this.gHash[gId].numberOfItems = obj.faces.length * 3;
 
-  var mId = this._getCurShaderId();
-  var shader = this.mHash[mId];
+  var shader = this.curShader;
+  if (shader === this._getImmediateModeShader()) {
+    // there are different immediate mode and retain mode color shaders.
+    // if we're using the immediate mode one, we need to switch to
+    // one that works for retain mode.
+    shader = this.setShader(this._getColorShader());
+  }
 
   // allocate space for vertex positions
   var data = new Float32Array(vToNArray(obj.vertices));
@@ -81,9 +86,15 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
 p5.RendererGL.prototype.drawBuffers = function(gId) {
   this._setDefaultCamera();
   var gl = this.GL;
-  var mId = this._getCurShaderId();
-  var shader = this.mHash[mId];
-  shader.bind();
+  if (this.curShader === this._getImmediateModeShader()) {
+    // looking at the code within the glsl files, I'm not really
+    // sure why these are two different shaders. but, they are,
+    // and if we're drawing in retain mode but the shader is the
+    // immediate mode one, we need to switch.
+    this.setShader(this._getColorShader());
+  }
+  var shader = this.curShader;
+  shader.bindShader();
 
   //vertex position buffer
   gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
@@ -92,29 +103,20 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   //vertex index buffer
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
 
-  switch (mId) {
-    case 'normalVert|basicFrag':
-    case 'normalVert|normalFrag':
-    case 'lightVert|lightTextureFrag':
-      //normal buffer
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
-      shader.enableAttrib(shader.attributes.aNormal.location,
-        3, gl.FLOAT, false, 0, 0);
-      // uv buffer
-      gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
-      shader.enableAttrib(
-        shader.attributes.aTexCoord.location, 2, gl.FLOAT, false, 0, 0);
-      break;
-    default:
-      break;
-  }
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
+  shader.enableAttrib(shader.attributes.aNormal.location,
+    3, gl.FLOAT, false, 0, 0);
+  // uv buffer
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
+  shader.enableAttrib(
+    shader.attributes.aTexCoord.location, 2, gl.FLOAT, false, 0, 0);
 
   if(this.drawMode === 'wireframe') {
     this._drawElements(gl.LINES, gId);
   } else {
     this._drawElements(gl.TRIANGLES, gId);
   }
-  shader.unbind();
+  shader.unbindShader();
   return this;
 };
 
