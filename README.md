@@ -14,7 +14,7 @@ If you have found a bug in the p5.js library, you can file it here under the [â€
 
 ## p5.js library
 
-To use p5.js, you can [download the p5.js library here](http://p5js.org/download).  If you are interested in the most recent, less stable version, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [development](https://github.com/processing/p5.js/wiki/Development) wiki for more information about our build process.
+To use p5.js, you can [download the p5.js library here](http://p5js.org/download). If you are interested in the most recent, less stable version, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [development](https://github.com/processing/p5.js/wiki/Development) wiki for more information about our build process.
 
 ## Issues
 
@@ -23,7 +23,7 @@ Please post bugs in the proper repository:
 * p5.js general and p5.dom: [https://github.com/processing/p5.js/issues](https://github.com/processing/p5.js/issues)
 * p5.sound: [https://github.com/processing/p5.js-sound/issues](https://github.com/processing/p5.js-sound/issues)
 * p5.js website: [https://github.com/processing/p5.js-website/issues](https://github.com/processing/p5.js-website/issues)
-* p5.js web editor: [https://github.com/processing/p5.js-website/issues](https://github.com/processing/p5.js-web-editor/issues)
+* p5.js web editor: [https://github.com/processing/p5.js-web-editor/issues](https://github.com/processing/p5.js-web-editor/issues)
 
 
 ## Learning
