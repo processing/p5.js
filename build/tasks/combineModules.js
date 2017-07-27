@@ -16,10 +16,10 @@ module.exports = function(grunt) {
     for (var i in arguments) {
       temp.push(arguments[i]);
     }
-    module_src = temp.join(" ");
+    module_src = temp.join(", ");
  
    // Render the banner for the top of the file. Includes the Module name.
-    var bannerTemplate = '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */';
+    var bannerTemplate = '/*! Custom p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> \nContains the following modules : ' + module_src + '*/';
     var banner = grunt.template.process(bannerTemplate);
  
     // Make a list of sources from app.js in that sequence only
@@ -49,7 +49,7 @@ module.exports = function(grunt) {
  
     console.log(srcFilePath);
     // Target file path
-    var libFilePath = path.resolve('lib/modules/p5Cusotm.js');
+    var libFilePath = path.resolve('lib/modules/p5Custom.js');
  
     // Invoke Browserify programatically to bundle the code
     var bundle = browserify(srcFilePath, {

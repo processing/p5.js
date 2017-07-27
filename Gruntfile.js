@@ -92,18 +92,6 @@ module.exports = function(grunt) {
     // read in the package, used for knowing the current version, et al.
     pkg: grunt.file.readJSON('package.json'),
 
-    // Modules of p5
-    modularise : {
-      'p5.Core': '',
-      'p5.Color': 'color',
-      'p5.Image': 'image',
-      'p5.Util': 'utilities',
-      'p5.Math': 'math',
-      'p5.Typography': 'typography',
-      'p5.Events': 'events',
-      'p5.IO': 'io'
-    },
-
     // Configure style consistency checking for this file, the source, and the tests.
     jscs: {
       options: {
@@ -219,24 +207,6 @@ module.exports = function(grunt) {
           urls: [
             'http://localhost:9001/test/complete-build-tests/test.html',
             'http://localhost:9001/test/complete-build-tests/test-minified.html'
-          ],
-          reporter: reporter,
-          run: true,
-          log: true,
-          logErrors: true,
-          timeout: 5000
-        }
-      },
-      modules: {
-        options: {
-          urls: [
-            'http://localhost:9001/test/modules-tests/test-core.html',
-            'http://localhost:9001/test/modules-tests/test-color.html',
-            'http://localhost:9001/test/modules-tests/test-image.html',
-            'http://localhost:9001/test/modules-tests/test-math.html',
-            'http://localhost:9001/test/modules-tests/test-util.html',
-            'http://localhost:9001/test/modules-tests/test-typography.html',
-            'http://localhost:9001/test/modules-tests/test-io.html'
           ],
           reporter: reporter,
           run: true,
@@ -373,7 +343,13 @@ module.exports = function(grunt) {
     }
   });
 
-  // Load build tasks
+  // Load build tasks.
+  // This contains the complete build task ("browserify") 
+  // and the task to generate user select modules of p5
+  // ("combineModules") which can be invoked directly by
+  // `grunt combineModules:module_1:module_2` where core
+  // is included by default in all combinations always.
+  // NOTE: "module_x" is the name of it's folder in /src.
   grunt.loadTasks('build/tasks');
 
   // Load the external libraries used.
@@ -393,9 +369,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-minjson');
 
   // Create the multitasks.
-  grunt.registerTask('build', ['browserify', 'modularise', 'uglify', 'requirejs']);
+  grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);
   grunt.registerTask('test', ['jshint', 'jscs', 'build', 'yuidoc:dev', 'connect', 'mocha', 'mochaTest']);
-  grunt.registerTask('test:build', ['build', 'connect', 'mocha:modules']);
   grunt.registerTask('test:nobuild', ['jshint:test', 'jscs:test', 'connect', 'mocha']);
   grunt.registerTask('yui', ['yuidoc:prod', 'minjson']);
   grunt.registerTask('yui:dev', ['yuidoc:dev', 'minjson']);
