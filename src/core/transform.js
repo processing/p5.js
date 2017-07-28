@@ -226,12 +226,10 @@ p5.prototype.scale = function() {
     args[i] = arguments[i];
   }
   // Only check for Vector argument type if Vector is available
-  if (typeof p5.Vector !== 'undefined') {
-    if(args[0] instanceof p5.Vector){
-      x = args[0].x;
-      y = args[0].y;
-      z = args[0].z;
-    }
+  if (typeof p5.Vector !== 'undefined' && args[0] instanceof p5.Vector) {
+    x = args[0].x;
+    y = args[0].y;
+    z = args[0].z;
   }
   else if(args[0] instanceof Array){
     x = args[0][0];
