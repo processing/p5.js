@@ -17,6 +17,10 @@
 
   <span class='description-text'><%= item.description %></span>
 
+  <% if (item.extends) { %>
+    <p>Extends <a href="/reference/#/<%=item.extends%>" title="<%=item.extends%> reference"><%=item.extends%></a></p>
+  <% } %>
+
   <% if (item.module === 'p5.dom') { %>
     <p>This function requires you include the p5.dom library.  Add the following into the head of your index.html file:
       <pre><code class="language-javascript">&lt;script language="javascript" type="text/javascript" src="path/to/p5.dom.js"&gt;&lt;/script&gt;</code></pre>

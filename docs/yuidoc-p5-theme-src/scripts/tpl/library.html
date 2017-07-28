@@ -13,7 +13,7 @@
   <% if (group.name !== module.name && group.name !== 'p5') { %>
     <a href="<%=group.hash%>" <% if (group.module !== module.name) { %>class="core"<% } %>><h4 class="group-name <% if (t == 0) { %> first<%}%>"><%=group.name%></h4></a>
   <% } %>
-  <% _.each(group.items, function(item) { %>
+  <% _.each(group.items.filter(function(item) {return item.access !== 'private'}), function(item) { %>
     <a href="<%=item.hash%>" <% if (item.module !== module.name) { %>class="core"<% } %>><%=item.name%><% if (item.itemtype === 'method') { %>()<%}%></a><br>
     <% t++; %>
   <% }); %>
