@@ -81,8 +81,8 @@ p5.Shader.prototype.init = function() {
       alert('Snap! Error linking shader program');
     }
 
-    this.loadAttributes();
-    this.loadUniforms();
+    this._loadAttributes();
+    this._loadUniforms();
 
     // TODO move elsewhere?
     this._renderer._createEmptyTexture();
@@ -95,7 +95,7 @@ p5.Shader.prototype.init = function() {
  * their names and locations into the attributes array.
  * @method loadAttributes
  */
-p5.Shader.prototype.loadAttributes = function() {
+p5.Shader.prototype._loadAttributes = function() {
   if (this.loadedAttributes) {
     return;
   }
@@ -126,7 +126,7 @@ p5.Shader.prototype.loadAttributes = function() {
  * their names and locations into the uniforms array.
  * @method loadUniforms
  */
-p5.Shader.prototype.loadUniforms = function() {
+p5.Shader.prototype._loadUniforms = function() {
   if (this.loadedUniforms) {
     return;
   }
@@ -175,12 +175,12 @@ p5.Shader.prototype.compile = function() {
 p5.Shader.prototype.bindShader = function () {
   this.init();
   if (!this.bound) {
-    this._useProgram();
+    this.useProgram();
     this.bound = true;
     this.bindTextures();
 
-    this.loadAttributes();
-    this.loadUniforms();
+    this._loadAttributes();
+    this._loadUniforms();
 
     this._renderer._setDefaultCamera();
     this._setMatrixUniforms();
@@ -216,7 +216,7 @@ p5.Shader.prototype._setMatrixUniforms = function() {
   this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
 };
 
-p5.Shader.prototype._useProgram = function () {
+p5.Shader.prototype.useProgram = function () {
   var gl = this._renderer.GL;
   gl.useProgram(this.glProgram);
 };
@@ -240,7 +240,7 @@ p5.Shader.prototype.setUniform = function(uniformName, data)
   var gl = this._renderer.GL;
   // todo: is this safe to do here?
   // todo: store the values another way?
-  this._useProgram();
+  this.useProgram();
 
   // TODO BIND?
   var uniform = this.uniforms[uniformName];

@@ -395,7 +395,7 @@ p5.RendererGL.prototype.setShader = function (s) {
     // safe to do this multiple times;
     // init() will bail early if has already been run.
     this.curShader.init();
-    this.curShader._useProgram();
+    this.curShader.useProgram();
   }
 
   // always return this.curShader, even if no change was made.
