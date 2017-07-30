@@ -194,7 +194,7 @@ module.exports = function(grunt) {
       yui: {
         options: {
           urls: [
-            'http://localhost:9001/test/complete-build-tests/test-reference.html'
+            'http://localhost:9001/test/test-reference.html'
           ],
           reporter: reporter,
           run: false,
@@ -205,8 +205,8 @@ module.exports = function(grunt) {
       test: {
         options: {
           urls: [
-            'http://localhost:9001/test/complete-build-tests/test.html',
-            'http://localhost:9001/test/complete-build-tests/test-minified.html'
+            'http://localhost:9001/test/test.html',
+            'http://localhost:9001/test/test-minified.html'
           ],
           reporter: reporter,
           run: true,
@@ -320,7 +320,7 @@ module.exports = function(grunt) {
     'saucelabs-mocha': {
       all: {
         options: {
-          urls: ['http://127.0.0.1:9001/test/complete-build-tests/test.html'],
+          urls: ['http://127.0.0.1:9001/test/test.html'],
           tunnelTimeout: 5,
           build: process.env.TRAVIS_JOB_ID,
           concurrency: 3,
@@ -344,7 +344,7 @@ module.exports = function(grunt) {
   });
 
   // Load build tasks.
-  // This contains the complete build task ("browserify") 
+  // This contains the complete build task ("browserify")
   // and the task to generate user select modules of p5
   // ("combineModules") which can be invoked directly by
   // `grunt combineModules:module_1:module_2` where core

@@ -26,7 +26,7 @@ var testImageRender = function(file, sketch, callback) {
 suite('loading images', function () {
   var myp5 = new p5(function () {
   }, true);
-  var imagePath = '../unit/assets/nyan_cat.gif';
+  var imagePath = 'unit/assets/nyan_cat.gif';
 
   setup(function disableFileLoadError() {
     sinon.stub(p5, '_friendlyFileLoadError');
@@ -78,10 +78,10 @@ suite('loading images', function () {
 
   test('should draw image with defaults', function(done) {
     myp5.loadImage(
-      '../unit/assets/target_small.gif', function(img) {
+      'unit/assets/target_small.gif', function(img) {
         myp5.image(img, 0, 0);
 
-        testImageRender('../unit/assets/target_small.gif', myp5, function(res) {
+        testImageRender('unit/assets/target_small.gif', myp5, function(res) {
           assert.isTrue(res);
           done();
         });
@@ -91,10 +91,10 @@ suite('loading images', function () {
 
   test('should draw cropped image', function(done) {
     myp5.loadImage(
-      '../unit/assets/target.gif', function(img) {
+      'unit/assets/target.gif', function(img) {
         myp5.image(img, 0, 0, 6, 6, 5, 5, 6, 6);
 
-        testImageRender('../unit/assets/target_small.gif', myp5, function(res) {
+        testImageRender('unit/assets/target_small.gif', myp5, function(res) {
           assert.isTrue(res);
           done();
         });
@@ -109,7 +109,7 @@ var mySketch = function (this_p5) {
   this_p5.preload = function () {
     suite('Test in preload() with success callback', function () {
       test('Load asynchronously and use success callback', function (done) {
-        myImage = this_p5.loadImage('../unit/assets/nyan_cat.gif', function () {
+        myImage = this_p5.loadImage('unit/assets/nyan_cat.gif', function () {
           assert.ok(myImage);
           done();
         });
@@ -133,7 +133,7 @@ new p5(mySketch, null, false);
 mySketch = function (this_p5) {
   var myImage;
   this_p5.preload = function () {
-    myImage = this_p5.loadImage('../unit/assets/nyan_cat.gif');
+    myImage = this_p5.loadImage('unit/assets/nyan_cat.gif');
   };
 
   this_p5.setup = function () {
