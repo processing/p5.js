@@ -1151,4 +1151,4 @@ p5.Table.prototype.getArray = function () {
   return tableArray;
 };
 
-module.exports = p5.Table;
+module.exports = p5;

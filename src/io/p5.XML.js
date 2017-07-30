@@ -794,4 +794,4 @@ p5.XML.prototype._setAttributes = function(node) {
   this.attributes = att;
 };
 
-module.exports = p5.XML;
+module.exports = p5;
