@@ -927,31 +927,8 @@ p5.prototype.broadcastMouseEvent = function(context, event) {
   if (typeof context._registeredMethods[method] !== 'undefined') {
 
       // call any registered subscriber
-      context._registeredMethods[method].forEach(function (obj) {
-
-          // call method 
-          switch (event.type) {
-              case 'mousedown':
-                // call mouse pressed
-                obj['mousePressed'](event);
-                break;
-              case 'mouseup':
-                // call mouse released
-                obj['mouseReleased'](event);
-                break;
-              case 'click':
-                // call mouse clicked
-                obj['mouseClicked'](event);
-                break;  
-              case 'wheel':
-                // call mouse wheel
-                obj['mouseWheel'](event);
-                break;
-              case 'mousemove': 
-                // call mouse moved
-                obj['mouseMoved'](event);
-                break;          
-          }
+      context._registeredMethods[method].forEach(function (obj) {          
+          obj[method](event);              
       }, context);
   }
 }
