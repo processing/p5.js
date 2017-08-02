@@ -26,12 +26,12 @@ p5.Shader = function(renderer, vertSrc, fragSrc) {
   this._fragSrc = fragSrc;
   this._vertShader = -1;
   this._fragShader = -1;
-  this.glProgram = 0;
-  this.loadedAttributes = false;
+  this._glProgram = 0;
+  this._loadedAttributes = false;
   this.attributes = {};
-  this.loadedUniforms = false;
+  this._loadedUniforms = false;
   this.uniforms = {};
-  this.bound = false;
+  this._bound = false;
 
   return this;
 };
@@ -42,10 +42,16 @@ p5.Shader = function(renderer, vertSrc, fragSrc) {
  * to the constructor). Populates known attributes and
  * uniforms from the shader.
  * @method init
+ * @chainable
+ * @nowebref
  */
 p5.Shader.prototype.init = function() {
-  if (this.glProgram === 0 /* or context is stale? */) {
+  if (this._glProgram === 0 /* or context is stale? */) {
     var gl = this._renderer.GL;
+
+    // @todo: once customer shading is allowed,
+    // friendly error messages should be used here to share
+    // compiler and linker errors.
 
     //set up the shader by
     // 1. creating and getting a gl id for the shader program,
@@ -57,7 +63,7 @@ p5.Shader.prototype.init = function() {
     gl.compileShader(this._vertShader);
     // if our vertex shader failed compilation?
     if (!gl.getShaderParameter(this._vertShader, gl.COMPILE_STATUS)) {
-      alert('Yikes! An error occurred compiling the vertex shader:' +
+      console.error('Yikes! An error occurred compiling the vertex shader:' +
         gl.getShaderInfoLog(this._vertShader));
       return null;
     }
@@ -68,23 +74,27 @@ p5.Shader.prototype.init = function() {
     gl.compileShader(this._fragShader);
     // if our frag shader failed compilation?
     if (!gl.getShaderParameter(this._fragShader, gl.COMPILE_STATUS)) {
-      alert('Darn! An error occurred compiling the fragment shader:' +
+      console.error('Darn! An error occurred compiling the fragment shader:' +
         gl.getShaderInfoLog(this._fragShader));
       return null;
     }
 
-    this.glProgram = gl.createProgram();
-    gl.attachShader(this.glProgram, this._vertShader);
-    gl.attachShader(this.glProgram, this._fragShader);
-    gl.linkProgram(this.glProgram);
-    if (!gl.getProgramParameter(this.glProgram, gl.LINK_STATUS)) {
-      alert('Snap! Error linking shader program');
+    this._glProgram = gl.createProgram();
+    gl.attachShader(this._glProgram, this._vertShader);
+    gl.attachShader(this._glProgram, this._fragShader);
+    gl.linkProgram(this._glProgram);
+    if (!gl.getProgramParameter(this._glProgram, gl.LINK_STATUS)) {
+      console.error('Snap! Error linking shader program');
     }
 
     this._loadAttributes();
     this._loadUniforms();
 
-    // TODO move elsewhere?
+    // TODO move elsewhere
+    // this needs to be here to create an inital empty texture to be
+    // used by shaders. it needs to happen when the first shader is
+    // created, which is why it is here. soon we'll find a good spot
+    // for it in the renderer.
     this._renderer._createEmptyTexture();
   }
   return this;
@@ -93,10 +103,11 @@ p5.Shader.prototype.init = function() {
 /**
  * Queries the active attributes for this shader and loads
  * their names and locations into the attributes array.
- * @method loadAttributes
+ * @method _loadAttributes
+ * @nowebref
  */
 p5.Shader.prototype._loadAttributes = function() {
-  if (this.loadedAttributes) {
+  if (this._loadedAttributes) {
     return;
   }
 
@@ -104,12 +115,12 @@ p5.Shader.prototype._loadAttributes = function() {
 
   var gl = this._renderer.GL;
 
-  var numAttributes = gl.getProgramParameter(this.glProgram,
+  var numAttributes = gl.getProgramParameter(this._glProgram,
     gl.ACTIVE_ATTRIBUTES);
   for(var i = 0; i < numAttributes; ++i){
-    var attributeInfo = gl.getActiveAttrib(this.glProgram, i);
+    var attributeInfo = gl.getActiveAttrib(this._glProgram, i);
     var name = attributeInfo.name;
-    var location = gl.getAttribLocation(this.glProgram, name);
+    var location = gl.getAttribLocation(this._glProgram, name);
     var attribute = {};
     attribute.name = name;
     attribute.location = location;
@@ -118,30 +129,31 @@ p5.Shader.prototype._loadAttributes = function() {
     this.attributes[name] = attribute;
   }
 
-  this.loadedAttributes = true;
+  this._loadedAttributes = true;
 };
 
 /**
  * Queries the active uniforms for this shader and loads
  * their names and locations into the uniforms array.
- * @method loadUniforms
+ * @method _loadUniforms
+ * @nowebref
  */
 p5.Shader.prototype._loadUniforms = function() {
-  if (this.loadedUniforms) {
+  if (this._loadedUniforms) {
     return;
   }
 
   var gl = this._renderer.GL;
 
   // Inspect shader and cache uniform info
-  var numUniforms = gl.getProgramParameter(this.glProgram,
+  var numUniforms = gl.getProgramParameter(this._glProgram,
     gl.ACTIVE_UNIFORMS);
 
   var samplerIndex = 0;
   for(var i = 0; i < numUniforms; ++i){
-    var uniformInfo = gl.getActiveUniform(this.glProgram, i);
+    var uniformInfo = gl.getActiveUniform(this._glProgram, i);
     var uniform = {};
-    uniform.location = gl.getUniformLocation(this.glProgram, uniformInfo.name);
+    uniform.location = gl.getUniformLocation(this._glProgram, uniformInfo.name);
     uniform.size = uniformInfo.size;
     var uniformName = uniformInfo.name;
     //uniforms thats are arrays have their name returned as
@@ -160,7 +172,7 @@ p5.Shader.prototype._loadUniforms = function() {
     }
     this.uniforms[uniformName] = uniform;
   }
-  this.loadedUniforms = true;
+  this._loadedUniforms = true;
 };
 
 p5.Shader.prototype.compile = function() {
@@ -171,12 +183,13 @@ p5.Shader.prototype.compile = function() {
 /**
  * initializes (if needed) and binds the shader program.
  * @method bindShader
+ * @nowebref
  */
 p5.Shader.prototype.bindShader = function () {
   this.init();
-  if (!this.bound) {
+  if (!this._bound) {
     this.useProgram();
-    this.bound = true;
+    this._bound = true;
     this.bindTextures();
 
     this._loadAttributes();
@@ -189,13 +202,16 @@ p5.Shader.prototype.bindShader = function () {
 
 /**
  * @method unbindShader
+ * @chainable
+ * @nowebref
  */
 p5.Shader.prototype.unbindShader = function () {
-  if (this.bound) {
+  if (this._bound) {
     this.unbindTextures();
     //this._renderer.GL.useProgram(0); ??
-    this.bound = false;
+    this._bound = false;
   }
+  return this;
 };
 
 p5.Shader.prototype.bindTextures = function () {
@@ -216,9 +232,15 @@ p5.Shader.prototype._setMatrixUniforms = function() {
   this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
 };
 
+/**
+ * @method useProgram
+ * @chainable
+ * @nowebref
+ */
 p5.Shader.prototype.useProgram = function () {
   var gl = this._renderer.GL;
-  gl.useProgram(this.glProgram);
+  gl.useProgram(this._glProgram);
+  return this;
 };
 
 /**
@@ -227,6 +249,7 @@ p5.Shader.prototype.useProgram = function () {
  * to do type checking on the supplied data and call
  * the appropriate function.
  * @method setUniform
+ * @chainable
  * @param {uniformName} [String] the name of the uniform in the
  * shader program
  * @param {data} [] the data to be associated with that uniform; type
@@ -251,20 +274,18 @@ p5.Shader.prototype.setUniform = function(uniformName, data)
   var location = uniform.location;
 
   switch(uniform.type){
-    case gl.BOOL:{
+    case gl.BOOL:
       if(data === true) {
         gl.uniform1i(location, 1);
       }
       else {
         gl.uniform1i(location, 0);
       }
-      return;
-    }
-    case gl.INT:{
+      break;
+    case gl.INT:
       gl.uniform1i(location, data);
       break;
-    }
-    case gl.FLOAT:{
+    case gl.FLOAT:
       if(uniform.size > 1){
         gl.uniform1fv(location, data);
       }
@@ -272,16 +293,13 @@ p5.Shader.prototype.setUniform = function(uniformName, data)
         gl.uniform1f(location, data);
       }
       break;
-    }
-    case gl.FLOAT_MAT3:{
+    case gl.FLOAT_MAT3:
       gl.uniformMatrix3fv(location, false, data);
       break;
-    }
-    case gl.FLOAT_MAT4:{
+    case gl.FLOAT_MAT4:
       gl.uniformMatrix4fv(location, false, data);
       break;
-    }
-    case gl.FLOAT_VEC2:{
+    case gl.FLOAT_VEC2:
       if(uniform.size > 1){
         gl.uniform2fv(location, data);
       }
@@ -289,8 +307,7 @@ p5.Shader.prototype.setUniform = function(uniformName, data)
         gl.uniform2f(location, data[0], data[1]);
       }
       break;
-    }
-    case gl.FLOAT_VEC3:{
+    case gl.FLOAT_VEC3:
       if(uniform.size > 1){
         gl.uniform3fv(location, data);
       }
@@ -298,8 +315,7 @@ p5.Shader.prototype.setUniform = function(uniformName, data)
         gl.uniform3f(location, data[0], data[1], data[2]);
       }
       break;
-    }
-    case gl.FLOAT_VEC4:{
+    case gl.FLOAT_VEC4:
       if(uniform.size > 1){
         gl.uniform4fv(location, data);
       }
@@ -307,17 +323,22 @@ p5.Shader.prototype.setUniform = function(uniformName, data)
         gl.uniform4f(location, data[0], data[1], data[2], data[3]);
       }
       break;
-    }
-    case gl.SAMPLER_2D:{
+    case gl.SAMPLER_2D:
       gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
       gl.bindTexture(gl.TEXTURE_2D, data);
       gl.uniform1i(location, uniform.samplerIndex);
       break;
-    }
     //@todo complete all types
   }
+  return this;
 };
 
+
+/**
+ * @method enableAttrib
+ * @chainable
+ * @nowebref
+ */
 p5.Shader.prototype.enableAttrib = function(loc, size,
   type, normalized, stride, offset) {
   var gl = this._renderer.GL;
@@ -325,6 +346,7 @@ p5.Shader.prototype.enableAttrib = function(loc, size,
     gl.enableVertexAttribArray(loc);
     gl.vertexAttribPointer(loc, size, type, normalized, stride, offset);
   }
+  return this;
 };
 
 module.exports = p5.Shader;
