@@ -320,6 +320,7 @@ p5.prototype.color = function() {
  *
  * @method green
  * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @return {Number} the green value
  * @example
  * <div>
  * <code>
@@ -340,11 +341,6 @@ p5.prototype.color = function() {
  */
 
 p5.prototype.green = function(c) {
-  // if (c instanceof p5.Color || c instanceof Array) {
-  //   return this.color(c)._getGreen();
-  // } else {
-  //   throw new Error('Needs p5.Color or pixel array as argument.');
-  // }
   this._validateParameters('green', arguments);
   return this.color(c)._getGreen();
 };
@@ -360,6 +356,7 @@ p5.prototype.green = function(c) {
  *
  * @method hue
  * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @return {Number} the hue
  * @example
  * <div>
  * <code>
@@ -380,11 +377,6 @@ p5.prototype.green = function(c) {
  */
 
 p5.prototype.hue = function(c) {
-  // if (c instanceof p5.Color || c instanceof Array) {
-  //   return this.color(c)._getHue();
-  // } else {
-  //   throw new Error('Needs p5.Color or pixel array as argument.');
-  // }
   this._validateParameters('hue', arguments);
   return this.color(c)._getHue();
 };
@@ -401,10 +393,10 @@ p5.prototype.hue = function(c) {
  * The way that colours are interpolated depends on the current color mode.
  *
  * @method lerpColor
- * @param {p5.Color|Array} c1  interpolate from this color
- * @param {p5.Color|Array} c2  interpolate to this color
+ * @param {p5.Color} c1  interpolate from this color
+ * @param {p5.Color} c2  interpolate to this color
  * @param  {Number}       amt number between 0 and 1
- * @return {Array|Number}     interpolated color
+ * @return {p5.Color}     interpolated color
  * @example
  * <div>
  * <code>
@@ -483,6 +475,7 @@ p5.prototype.lerpColor = function() {
  *
  * @method lightness
  * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @return {Number} the lightness
  * @example
  * <div>
  * <code>
@@ -502,11 +495,6 @@ p5.prototype.lerpColor = function() {
  *
  */
 p5.prototype.lightness = function(c) {
-  // if (c instanceof p5.Color || c instanceof Array) {
-  //   return this.color(c)._getLightness();
-  // } else {
-  //   throw new Error('Needs p5.Color or pixel array as argument.');
-  // }
   this._validateParameters('lightness', arguments);
   return this.color(c)._getLightness();
 };
@@ -516,6 +504,7 @@ p5.prototype.lightness = function(c) {
  *
  * @method red
  * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @return {Number} the red value
  * @example
  * <div>
  * <code>
@@ -545,11 +534,6 @@ p5.prototype.lightness = function(c) {
  * grey canvas
  */
 p5.prototype.red = function(c) {
-  // if (c instanceof p5.Color || c instanceof Array) {
-  //   return this.color(c)._getRed();
-  // } else {
-  //   throw new Error('Needs p5.Color or pixel array as argument.');
-  // }
   this._validateParameters('red', arguments);
   return this.color(c)._getRed();
 };
@@ -564,6 +548,7 @@ p5.prototype.red = function(c) {
  *
  * @method saturation
  * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @return {Number} the saturation value
  * @example
  * <div>
  * <code>
@@ -584,11 +569,6 @@ p5.prototype.red = function(c) {
  */
 
 p5.prototype.saturation = function(c) {
-  // if (c instanceof p5.Color || c instanceof Array) {
-  //   return this.color(c)._getSaturation();
-  // } else {
-  //   throw new Error('Needs p5.Color or pixel array as argument.');
-  // }
   this._validateParameters('saturation', arguments);
   return this.color(c)._getSaturation();
 };
