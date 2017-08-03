@@ -64,10 +64,7 @@ var p5 = require('../core/core');
  */
 p5.prototype.ambientLight = function(v1, v2, v3, a){
   var renderer = this._renderer;
-  var shaderProgram = renderer._getShader(
-    'lightVert', 'lightTextureFrag');
-
-  renderer._useShader(shaderProgram);
+  var shader = renderer.setShader(renderer._getLightShader());
 
   var color = this._renderer._pInst.color.apply(
     this._renderer._pInst, arguments);
@@ -77,13 +74,13 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
   //a preallocated Float32Array(24) that we copy into
   //would be better
   var colors = new Float32Array(color._array.slice(0,3));
-  renderer._setUniform('uAmbientColor', colors);
+  shader.setUniform('uAmbientColor', colors);
 
   //in case there's no material color for the geometry
-  renderer._setUniform('uMaterialColor', [1,1,1,1]);
+  shader.setUniform('uMaterialColor', [1,1,1,1]);
 
   renderer.ambientLightCount++;
-  renderer._setUniform('uAmbientLightCount', renderer.ambientLightCount);
+  shader.setUniform('uAmbientLightCount', renderer.ambientLightCount);
 
   return this;
 };
@@ -125,18 +122,14 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
  */
 p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
   var renderer = this._renderer;
-
-  var shaderProgram = renderer._getShader(
-    'lightVert', 'lightTextureFrag');
-
-  renderer._useShader(shaderProgram);
+  var shader = renderer.setShader(renderer._getLightShader());
 
   //@TODO: check parameters number
   var color = renderer._pInst.color.apply(
     renderer._pInst, [v1, v2, v3]);
 
   var colors = new Float32Array(color._array.slice(0,3));
-  renderer._setUniform('uDirectionalColor', colors);
+  renderer.curShader.setUniform('uDirectionalColor', colors);
 
   var _x, _y, _z;
 
@@ -161,10 +154,10 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
   }
 
   //in case there's no material color for the geometry
-  renderer._setUniform('uMaterialColor', [1,1,1,1]);
-  renderer._setUniform('uLightingDirection', [_x, _y, _z]);
+  shader.setUniform('uMaterialColor', [1,1,1,1]);
+  shader.setUniform('uLightingDirection', [_x, _y, _z]);
   renderer.directionalLightCount ++;
-  renderer._setUniform('uDirectionalLightCount',
+  shader.setUniform('uDirectionalLightCount',
     renderer.directionalLightCount);
 
   return this;
@@ -214,17 +207,14 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
  */
 p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
   var renderer = this._renderer;
-  var shaderProgram = this._renderer._getShader(
-    'lightVert', 'lightTextureFrag');
-
-  renderer._useShader(shaderProgram);
+  var shader = renderer.setShader(renderer._getLightShader());
 
   //@TODO: check parameters number
   var color = this._renderer._pInst.color.apply(
     this._renderer._pInst, [v1, v2, v3]);
 
   var colors = new Float32Array(color._array.slice(0,3));
-  renderer._setUniform('uPointLightColor', colors);
+  shader.setUniform('uPointLightColor', colors);
 
   var _x, _y, _z;
 
@@ -249,11 +239,10 @@ p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
   }
 
   //in case there's no material color for the geometry
-  renderer._setUniform('uMaterialColor', [1,1,1,1]);
-  renderer._setUniform('uPointLightLocation', [_x, _y, _z]);
+  shader.setUniform('uMaterialColor', [1,1,1,1]);
+  shader.setUniform('uPointLightLocation', [_x, _y, _z]);
   this._renderer.pointLightCount++;
-  renderer._setUniform('uPointLightCount',
-    renderer.pointLightCount);
+  shader.setUniform('uPointLightCount', renderer.pointLightCount);
 
   return this;
 };
