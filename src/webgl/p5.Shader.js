@@ -43,7 +43,7 @@ p5.Shader = function(renderer, vertSrc, fragSrc) {
  * uniforms from the shader.
  * @method init
  * @chainable
- * @nowebref
+ * @private
  */
 p5.Shader.prototype.init = function() {
   if (this._glProgram === 0 /* or context is stale? */) {
@@ -104,7 +104,7 @@ p5.Shader.prototype.init = function() {
  * Queries the active attributes for this shader and loads
  * their names and locations into the attributes array.
  * @method _loadAttributes
- * @nowebref
+ * @private
  */
 p5.Shader.prototype._loadAttributes = function() {
   if (this._loadedAttributes) {
@@ -136,7 +136,7 @@ p5.Shader.prototype._loadAttributes = function() {
  * Queries the active uniforms for this shader and loads
  * their names and locations into the uniforms array.
  * @method _loadUniforms
- * @nowebref
+ * @private
  */
 p5.Shader.prototype._loadUniforms = function() {
   if (this._loadedUniforms) {
@@ -183,7 +183,7 @@ p5.Shader.prototype.compile = function() {
 /**
  * initializes (if needed) and binds the shader program.
  * @method bindShader
- * @nowebref
+ * @private
  */
 p5.Shader.prototype.bindShader = function () {
   this.init();
@@ -203,7 +203,7 @@ p5.Shader.prototype.bindShader = function () {
 /**
  * @method unbindShader
  * @chainable
- * @nowebref
+ * @private
  */
 p5.Shader.prototype.unbindShader = function () {
   if (this._bound) {
@@ -235,7 +235,7 @@ p5.Shader.prototype._setMatrixUniforms = function() {
 /**
  * @method useProgram
  * @chainable
- * @nowebref
+ * @private
  */
 p5.Shader.prototype.useProgram = function () {
   var gl = this._renderer.GL;
@@ -337,7 +337,7 @@ p5.Shader.prototype.setUniform = function(uniformName, data)
 /**
  * @method enableAttrib
  * @chainable
- * @nowebref
+ * @private
  */
 p5.Shader.prototype.enableAttrib = function(loc, size,
   type, normalized, stride, offset) {
