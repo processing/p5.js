@@ -11,6 +11,7 @@
 var p5 = require('../core/core');
 var constants = require('../core/constants');
 require('./p5.Color');
+require('../core/error_helpers');
 
 /**
  * Extracts the alpha value from a color or pixel array.
@@ -296,6 +297,7 @@ p5.prototype.brightness = function(c) {
  */
 
 p5.prototype.color = function() {
+  //p5.prototype._validateParameters('color', arguments);
   if (arguments[0] instanceof p5.Color) {
     return arguments[0];  // Do nothing if argument is already a color object.
   } else if (arguments[0] instanceof Array) {
@@ -399,8 +401,8 @@ p5.prototype.hue = function(c) {
  * The way that colours are interpolated depends on the current color mode.
  *
  * @method lerpColor
- * @param  {Array|Number} c1  interpolate from this color
- * @param  {Array|Number} c2  interpolate to this color
+ * @param {p5.Color|Array} c1  interpolate from this color
+ * @param {p5.Color|Array} c2  interpolate to this color
  * @param  {Number}       amt number between 0 and 1
  * @return {Array|Number}     interpolated color
  * @example
@@ -430,35 +432,36 @@ p5.prototype.hue = function(c) {
  *
  */
 
-p5.prototype.lerpColor = function(c1, c2, amt) {
+p5.prototype.lerpColor = function() {
+  this._validateParameters('lerpColor', arguments);
   var mode = this._renderer._colorMode;
   var maxes = this._renderer._colorMaxes;
   var l0, l1, l2, l3;
   var fromArray, toArray;
 
   if (mode === constants.RGB) {
-    fromArray = c1.levels.map(function(level) {
+    fromArray = arguments[0].levels.map(function(level) {
       return level / 255;
     });
-    toArray = c2.levels.map(function(level) {
+    toArray = arguments[1].levels.map(function(level) {
       return level / 255;
     });
   } else if (mode === constants.HSB) {
-    c1._getBrightness();  // Cache hsba so it definitely exists.
-    c2._getBrightness();
-    fromArray = c1.hsba;
-    toArray = c2.hsba;
+    arguments[0]._getBrightness();  // Cache hsba so it definitely exists.
+    arguments[1]._getBrightness();
+    fromArray = arguments[0].hsba;
+    toArray = arguments[1].hsba;
   } else if (mode === constants.HSL) {
-    c1._getLightness();  // Cache hsla so it definitely exists.
-    c2._getLightness();
-    fromArray = c1.hsla;
-    toArray = c2.hsla;
+    arguments[0]._getLightness();  // Cache hsla so it definitely exists.
+    arguments[1]._getLightness();
+    fromArray = arguments[0].hsla;
+    toArray = arguments[1].hsla;
   } else {
     throw new Error (mode + 'cannot be used for interpolation.');
   }
 
   // Prevent extrapolation.
-  amt = Math.max(Math.min(amt, 1), 0);
+  var amt = Math.max(Math.min(arguments[2], 1), 0);
 
   // Perform interpolation.
   l0 = this.lerp(fromArray[0], toArray[0], amt);
