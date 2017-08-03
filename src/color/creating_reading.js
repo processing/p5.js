@@ -18,6 +18,7 @@ require('../core/error_helpers');
  *
  * @method alpha
  * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @return {Number} the alpha value
  * @example
  * <div>
  * <code>
@@ -52,11 +53,6 @@ require('../core/error_helpers');
  * deep pink rect on left and grey rect on right, both 35x60.
  */
 p5.prototype.alpha = function(c) {
-  // if (c instanceof p5.Color || c instanceof Array) {
-  //   return this.color(c)._getAlpha();
-  // } else {
-  //   throw new Error('Needs p5.Color or pixel array as argument.');
-  // }
   this._validateParameters('alpha', arguments);
   return this.color(c)._getAlpha();
 };
@@ -66,6 +62,7 @@ p5.prototype.alpha = function(c) {
  *
  * @method blue
  * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @return {Number} the blue value
  * @example
  * <div>
  * <code>
@@ -85,11 +82,6 @@ p5.prototype.alpha = function(c) {
  *
  */
 p5.prototype.blue = function(c) {
-  // if (c instanceof p5.Color || c instanceof Array) {
-  //   return this.color(c)._getBlue();
-  // } else {
-  //   throw new Error('Needs p5.Color or pixel array as argument.');
-  // }
   this._validateParameters('blue', arguments);
   return this.color(c)._getBlue();
 };
@@ -99,6 +91,7 @@ p5.prototype.blue = function(c) {
  *
  * @method brightness
  * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @return {Number} the brightness value
  * @example
  * <div>
  * <code>
@@ -118,11 +111,6 @@ p5.prototype.blue = function(c) {
  *
  */
 p5.prototype.brightness = function(c) {
-  // if (c instanceof p5.Color || c instanceof Array) {
-  //   return this.color(c)._getBrightness();
-  // } else {
-  //   throw new Error('Needs p5.Color or pixel array as argument.');
-  // }
   this._validateParameters('brightness', arguments);
   return this.color(c)._getBrightness();
 };
@@ -148,7 +136,7 @@ p5.prototype.brightness = function(c) {
  *                                 and black.
  * @param  {Number}        [alpha] alpha value relative to current color range
  *                                 (default is 0-255)
- * @return {Array}                 resulting color
+ * @return {p5.Color}              resulting color
  *
  * @example
  * <div>
@@ -284,16 +272,28 @@ p5.prototype.brightness = function(c) {
  * Dark blue rect on left and light teal rect on right of canvas, both 45x80.
  *
  */
-
 /**
  * @method color
- * @param  {Number|String} v1      red or hue value relative to
- *                                 the current color range, or a color string
+ * @param  {Number}        v1      red or hue value relative to
+ *                                 the current color range
  * @param  {Number}        v2      green or saturation value
  *                                 relative to the current color range
  * @param  {Number}        v3      blue or brightness value
  *                                 relative to the current color range
  * @param  {Number}        [alpha]
+ * @return {p5.Color}
+ */
+/**
+ * @method color
+ * @param  {String}        value   a color string
+ * @param  {Number}        [alpha]
+ * @return {p5.Color}
+ */
+/**
+ * @method color
+ * @param  {Array}      values  an array containing the red,green,blue &
+ *                                 and alpha components of the color
+ * @return {p5.Color}
  */
 
 p5.prototype.color = function() {
