@@ -126,8 +126,8 @@ suite('Core', function(){
   });
 
   suite('new p5() / global mode', function() {
-    var BIND_TAG = '<script src="js/bind.js"></script>';
-    var P5_SCRIPT_URL = '../lib/p5.js';
+    var BIND_TAG = '<script src="../js/bind.js"></script>';
+    var P5_SCRIPT_URL = (!window.IS_MODULE) ? '../../lib/p5.js' : '../../lib/modules/p5.Core.js';
     var P5_SCRIPT_TAG = '<script src="' + P5_SCRIPT_URL + '"></script>';
     var iframe;
 
@@ -187,14 +187,14 @@ suite('Core', function(){
         '<script>',
         'new p5();',
         'originalP5Instance = p5.instance',
-        'myRandom = random();',
+        'myURL = p5.prototype.getURL();',
         'function setup() { setupCalled = true; }',
         'window.addEventListener("load", onDoneLoading, false);',
         '</script>'
       ].join('\n'));
       iframe.contentWindow.onDoneLoading = function() {
         var win = iframe.contentWindow;
-        assert.equal(typeof(win.myRandom), 'number');
+        assert.equal(typeof(win.myURL), 'string');
         assert.strictEqual(win.setupCalled, true);
         assert.strictEqual(win.originalP5Instance, win.p5.instance);
         done();

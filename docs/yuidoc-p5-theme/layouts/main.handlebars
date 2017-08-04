@@ -130,6 +130,10 @@
 
     function updateLanguage() {
       if (translations) {
+        $('h1').html(translations['h1']);
+        $('.group-name, .subgroup-name').each(function() {
+          $(this).text(translations[$(this).text()]);
+        });
         var routes = window.location.hash.split('/');
         var obj = routes[1];
         var name = routes[2];
