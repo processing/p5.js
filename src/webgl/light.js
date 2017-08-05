@@ -75,13 +75,10 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
   //would be better
   var colors = new Float32Array(color._array.slice(0,3));
   shader.setUniform('uAmbientColor', colors);
-
+  shader.setUniform('uUseLighting', true);
   //in case there's no material color for the geometry
   shader.setUniform('uMaterialColor', [1,1,1,1]);
-
-  renderer.ambientLightCount++;
   shader.setUniform('uAmbientLightCount', renderer.ambientLightCount);
-
   return this;
 };
 
@@ -152,14 +149,13 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
       throw error;
     }
   }
-
+  shader.setUniform('uUseLighting', true);
   //in case there's no material color for the geometry
   shader.setUniform('uMaterialColor', [1,1,1,1]);
   shader.setUniform('uLightingDirection', [_x, _y, _z]);
   renderer.directionalLightCount ++;
   shader.setUniform('uDirectionalLightCount',
     renderer.directionalLightCount);
-
   return this;
 };
 
@@ -237,13 +233,12 @@ p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
       throw error;
     }
   }
-
+  shader.setUniform('uUseLighting', true);
   //in case there's no material color for the geometry
   shader.setUniform('uMaterialColor', [1,1,1,1]);
   shader.setUniform('uPointLightLocation', [_x, _y, _z]);
   this._renderer.pointLightCount++;
   shader.setUniform('uPointLightCount', renderer.pointLightCount);
-
   return this;
 };
 
