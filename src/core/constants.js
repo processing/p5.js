@@ -214,6 +214,12 @@ module.exports = {
 
   // DEFAULTS
   _DEFAULT_STROKE: '#000000',
-  _DEFAULT_FILL: '#FFFFFF'
+  _DEFAULT_FILL: '#FFFFFF',
 
+  // WEBGL TEXTURE FILTERS
+  SPRITE: 'sprite',
+  SMOOTH: 'smooth',
+  SHARP: 'sharp',
+  CLAMP: 'clamp',
+  REPEAT: 'repeat'
 };

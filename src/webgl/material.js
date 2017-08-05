@@ -129,7 +129,23 @@ p5.prototype.texture = function(){
   var shader = renderer.setShader(renderer._getLightShader());
   shader.setUniform('uSpecular', false);
 
+  var sampler = renderer._samplers.default;
+  if(args.length > 1)
+  {
+    if(args[1] instanceof p5.Sampler){
+      sampler = args[1];
+    }
+    else if(args[1] === 'sprite'){
+      sampler = renderer._samplers.sprite;
+    }
+    else if(args[1] === 'repeat'){
+      sampler = renderer._samplers.repeat;
+    }
+  }
+
+  var texture;
   var textureData;
+
   //if argument is not already a texture
   //create a new one
   if(!args[0].isTexture){
@@ -146,10 +162,9 @@ p5.prototype.texture = function(){
     else if(args[0] instanceof p5.Graphics){
       textureData = args[0].elt;
     }
-    var tex = gl.createTexture();
-    args[0]._setProperty('tex', tex);
+    texture = gl.createTexture();
+    args[0]._setProperty('tex', texture);
     args[0]._setProperty('isTexture', true);
-    renderer._bind.call(this, tex, textureData);
   }
   else {
     if(args[0] instanceof p5.Graphics ||
@@ -160,13 +175,16 @@ p5.prototype.texture = function(){
     else if(args[0] instanceof p5.Image){
       textureData = args[0].canvas;
     }
-    renderer._bind.call(this, args[0].tex, textureData);
+    texture = args[0].tex;
   }
+
+  renderer._bind.call(this, texture, textureData, sampler);
+
 
   //this is where we'd activate multi textures
   //@todo multi textures can be done in the setUniform function
   shader.setUniform('isTexture', true);
-  shader.setUniform('uSampler', args[0].tex);
+  shader.setUniform('uSampler', texture);
 
   return this;
 };
@@ -174,21 +192,43 @@ p5.prototype.texture = function(){
 /**
  * Texture Util functions
  */
-p5.RendererGL.prototype._bind = function(tex, data){
-  var gl = this._renderer.GL;
+p5.RendererGL.prototype._convertFilter = function(gl, filter){
+  if(filter === 'sharp'){
+    return gl.NEAREST;
+  }
+  return gl.LINEAR;
+};
+
+p5.RendererGL.prototype._convertWrapMode = function(gl, mode){
+  if(mode === 'repeat'){
+    return gl.REPEAT;
+  }
+  return gl.CLAMP_TO_EDGE;
+};
+
+p5.RendererGL.prototype._bind = function(tex, data, sampler){
+  var renderer = this._renderer;
+  var gl = renderer.GL;
   gl.bindTexture(gl.TEXTURE_2D, tex);
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
   gl.texImage2D(gl.TEXTURE_2D, 0,
     gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, data);
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+
+  var magFilter = renderer._convertFilter(gl, sampler.upScale);
+  var minFilter = renderer._convertFilter(gl, sampler.downScale);
+  var wrapS = renderer._convertWrapMode(gl, sampler.wrapX);
+  var wrapT = renderer._convertWrapMode(gl, sampler.wrapY);
+
   gl.texParameteri(gl.TEXTURE_2D,
-  gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.TEXTURE_MAG_FILTER, magFilter);
   gl.texParameteri(gl.TEXTURE_2D,
-  gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+  gl.TEXTURE_MIN_FILTER, minFilter);
   gl.texParameteri(gl.TEXTURE_2D,
-  gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+  gl.TEXTURE_WRAP_S, wrapS);
   gl.texParameteri(gl.TEXTURE_2D,
-  gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  gl.TEXTURE_WRAP_T, wrapT);
+
   gl.bindTexture(gl.TEXTURE_2D, null);
 };
 
