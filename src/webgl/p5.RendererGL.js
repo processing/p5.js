@@ -8,17 +8,6 @@ var fs = require('fs');
 
 var uMVMatrixStack = [];
 
-//@TODO should implement public method
-//to override these attributes
-var attributes = {
-  alpha: true,
-  depth: true,
-  stencil: true,
-  antialias: false,
-  premultipliedAlpha: false,
-  preserveDrawingBuffer: false
-};
-
 var defaultShaders = {
   immediateVert:
     fs.readFileSync(__dirname + '/shaders/immediate.vert', 'utf-8'),
@@ -47,10 +36,23 @@ var defaultShaders = {
  * rendering (FBO).
  *
  */
-p5.RendererGL = function(elt, pInst, isMainCanvas) {
+p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   p5.Renderer.call(this, elt, pInst, isMainCanvas);
+  this.attributes = {};
+  attr = attr || {};
+  this.attributes.alpha = attr.alpha ===
+    undefined ? true : attr.alpha;
+  this.attributes.depth = attr.depth ===
+    undefined ? true : attr.depth;
+  this.attributes.stencil = attr.stencil ===
+    undefined ? true : attr.stencil;
+  this.attributes.antialias = attr.antialias ===
+    undefined ? false : attr.antialias;
+  this.attributes.premultipliedAlpha = attr.premultipliedAlpha ===
+    undefined ? false : attr.premultipliedAlpha;
+  this.attributes.preserveDrawingBuffer = attr.preserveDrawingBuffer ===
+    undefined ? true : attr.preserveDrawingBuffer;
   this._initContext();
-
   this.isP3D = true; //lets us know we're in 3d mode
   this.GL = this.drawingContext;
   //lights
@@ -59,7 +61,6 @@ p5.RendererGL = function(elt, pInst, isMainCanvas) {
   this.pointLightCount = 0;
   //camera
   this._curCamera = null;
-
   /**
    * model view, projection, & normal
    * matrices
@@ -101,8 +102,8 @@ p5.RendererGL.prototype = Object.create(p5.Renderer.prototype);
 
 p5.RendererGL.prototype._initContext = function() {
   try {
-    this.drawingContext = this.canvas.getContext('webgl', attributes) ||
-      this.canvas.getContext('experimental-webgl', attributes);
+    this.drawingContext = this.canvas.getContext('webgl', this.attributes) ||
+      this.canvas.getContext('experimental-webgl', this.attributes);
     if (this.drawingContext === null) {
       throw new Error('Error creating webgl context');
     } else {
@@ -116,6 +117,131 @@ p5.RendererGL.prototype._initContext = function() {
     throw new Error(er);
   }
 };
+
+//This is helper function to reset the context anytime the attributes
+//are changed with setAttributes()
+
+p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
+  var w = this.width;
+  var h = this.height;
+  var defaultId = this.canvas.id;
+  var c = this.canvas;
+  if(c){
+    c.parentNode.removeChild(c);
+  }
+  c = document.createElement('canvas');
+  c.id = defaultId;
+  if (this._pInst._userNode) {
+    this._pInst._userNode.appendChild(c);
+  } else {
+    document.body.appendChild(c);
+  }
+  this._pInst.canvas = c;
+  this._pInst._setProperty('_renderer', new p5.RendererGL(this._pInst.canvas,
+    this._pInst, true, attr));
+  this._pInst._isdefaultGraphics = true;
+  this._pInst._renderer.resize(w, h);
+  this._pInst._renderer._applyDefaults();
+  this._pInst._elements.push(this._renderer);
+  if(typeof callback === 'function') {
+    //setTimeout with 0 forces the task to the back of the queue, this ensures that
+    //we finish switching out the renderer
+    setTimeout(function() {
+      callback.apply(window._renderer, options);
+    }, 0);
+  }
+};
+
+
+/**
+ *
+ * Set attributes for the WebGL Drawing context.
+ * This is a way of adjusting ways that the WebGL
+ * renderer works to fine-tune the display and performance.
+ * This should be put in setup().
+ * The available attributes are:
+ * <br>
+ * alpha - indicates if the canvas contains an alpha buffer
+ * default is true
+ * <br><br>
+ * depth - indicates whether the drawing buffer has a depth buffer
+ * of at least 16 bits - default is true
+ * <br><br>
+ * stencil - indicates whether the drawing buffer has a stencil buffer
+ * of at least 8 bits
+ * <br><br>
+ * antialias - indicates whether or not to perform anti-aliasing
+ * default is false
+ * <br><br>
+ * premultipliedAlpha - indicates that the page compositor will assume
+ * the drawing buffer contains colors with pre-multiplied alpha
+ * default is false
+ * <br><br>
+ * preserveDrawingBuffer - if true the buffers will not be cleared and
+ * and will preserve their values until cleared or overwritten by author
+ * (note that p5 clears automatically on draw loop)
+ * default is true
+ * <br><br>
+ *
+ * <div>
+ * <code>
+ *  function setup() {
+ *   createCanvas(150,150,WEBGL);
+ *  }
+ *
+ *  function draw() {
+ *   background(255);
+ *   push();
+ *   rotateZ(frameCount * 0.02);
+ *   rotateX(frameCount * 0.02);
+ *   rotateY(frameCount * 0.02);
+ *   fill(0,0,0);
+ *   box(50);
+ *   pop();
+ *  }
+ * </code>
+ * </div>
+ * <br>
+ * Now with the antialias attribute set to true.
+ * <br>
+ * <div>
+ * <code>
+ *  function setup() {
+ *   createCanvas(150,150,WEBGL);
+ *   setAttributes('antialias', true);
+ *  }
+ *
+ *  function draw() {
+ *   background(255);
+ *   push();
+ *   rotateZ(frameCount * 0.02);
+ *   rotateX(frameCount * 0.02);
+ *   rotateY(frameCount * 0.02);
+ *   fill(0,0,0);
+ *   box(50);
+ *   pop();
+ *  }
+ * </code>
+ * </div>
+ *
+ * @method setAttributes
+ * @param  {String|Object}  String name of attribute or object with key-value pairs
+ * @param  {Boolean}        New value of named attribute
+ *
+ */
+
+p5.prototype.setAttributes = function() {
+  //@todo_FES
+  var attr = {};
+  if(arguments.length === 2) {
+    attr[arguments[0]] = arguments[1];
+  }
+  else if (arguments.length === 1) {
+    attr = arguments[0];
+  }
+  this._renderer._resetContext(attr);
+};
+
 //detect if user didn't set the camera
 //then call this function below
 p5.RendererGL.prototype._setDefaultCamera = function(){
@@ -234,6 +360,71 @@ p5.RendererGL.prototype._setNoFillStroke = function() {
   // to shader() internally....
   this.curShader.setUniform('uMaterialColor', this.curStrokeColor);
 };
+
+/**
+/**
+ * Returns an array of [R,G,B,A] values for any pixel or grabs a section of
+ * an image. If no parameters are specified, the entire image is returned.
+ * Use the x and y parameters to get the value of one pixel. Get a section of
+ * the display window by specifying additional w and h parameters. When
+ * getting an image, the x and y parameters define the coordinates for the
+ * upper-left corner of the image, regardless of the current imageMode().
+ * <br><br>
+ * If the pixel requested is outside of the image window, [0,0,0,255] is
+ * returned.
+ * <br><br>
+ * Getting the color of a single pixel with get(x, y) is easy, but not as fast
+ * as grabbing the data directly from pixels[]. The equivalent statement to
+ * get(x, y) is using pixels[] with pixel density d
+ *
+ *
+ * @method get
+ * @param  {Number}               [x] x-coordinate of the pixel
+ * @param  {Number}               [y] y-coordinate of the pixel
+ * @param  {Number}               [w] width
+ * @param  {Number}               [h] height
+ * @return {Array|Color|p5.Image}     color of pixel at x,y in array format
+ *                                    [R, G, B, A] or p5.Image
+ */
+
+p5.RendererGL.prototype.get = function(x, y, w, h) {
+  return p5.Renderer2D.prototype.get.apply(this, [x, y, w, h]);
+};
+
+/**
+ * Loads the pixels data for this canvas into the pixels[] attribute.
+ * Note that updatePixels() and set() do not work.
+ * Any pixel manipulation must be done directly to the pixels[] array.
+ *
+ * @method loadPixels
+ * @param {Number} starting pixel x position, defaults to 0
+ * @param {Number} starting pixel y position, defaults to 0
+ * @param {Number} width of pixels to load, defaults to sketch width
+ * @param {Number} height of pixels to load, defaults to sketch height
+ *
+ */
+
+p5.RendererGL.prototype.loadPixels = function() {
+  //@todo_FES
+  if(this.attributes.preserveDrawingBuffer !== true) {
+    console.log('loadPixels only works in WebGL when preserveDrawingBuffer ' +
+      'is true.');
+    return;
+  }
+  var pd = this._pInst._pixelDensity;
+  var x = arguments[0] || 0;
+  var y = arguments[1] || 0;
+  var w = arguments[2] || this.width;
+  var h = arguments[3] || this.height;
+  w *= pd;
+  h *= pd;
+  var gl = this.GL;
+  var pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
+  gl.readPixels(x, y, w, h, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+  this._pInst._setProperty('pixels', pixels);
+};
+
+
 
 /**
  * [strokeWeight description]
