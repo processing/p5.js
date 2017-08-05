@@ -4,6 +4,7 @@ var p5 = require('../core/core');
 require('./p5.Shader');
 require('../core/p5.Renderer');
 require('./p5.Matrix');
+require('./sampler');
 var fs = require('fs');
 
 var uMVMatrixStack = [];
@@ -24,8 +25,9 @@ var defaultShaders = {
   lightVert:
     fs.readFileSync(__dirname + '/shaders/light.vert', 'utf-8'),
   lightTextureFrag:
-    fs.readFileSync(__dirname + '/shaders/light_texture.frag', 'utf-8'),
+    fs.readFileSync(__dirname + '/shaders/light_texture.frag', 'utf-8')
 };
+
 
 /**
  * 3D graphics class
@@ -90,6 +92,12 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.fill(255, 255, 255, 255);
   this.stroke(0, 0, 0, 255);
   this.pointSize = 5.0;//default point/stroke
+
+  this._samplers = {
+    default: new p5.Sampler('smooth', 'smooth', 'clamp', 'clamp'),
+    sprite: new p5.Sampler('sharp', 'sharp', 'clamp', 'clamp'),
+    repeat: new p5.Sampler('smooth', 'smooth', 'repeat', 'repeat')
+  };
 
   return this;
 };
