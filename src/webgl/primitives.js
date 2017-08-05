@@ -671,8 +671,7 @@ p5.RendererGL.prototype.ellipse = function
   return this;
 };
 
-p5.RendererGL.prototype.rect = function
-(args){
+p5.RendererGL.prototype.rect = function(args) {
   var gId = 'rect|'+args[0]+'|'+args[1]+'|'+args[2]+'|'+
   args[3];
   var x = args[0];
