@@ -623,6 +623,10 @@ function pointAtLength(path, length, istotal) {
 function pathToAbsolute(pathArray) {
 
   var res = [], x = 0, y = 0, mx = 0, my = 0, start = 0;
+  if (!pathArray) {
+    // console.warn("Unexpected state: undefined pathArray"); // shouldn't happen
+    return res;
+  }
   if (pathArray[0][0] === 'M') {
     x = +pathArray[0][1];
     y = +pathArray[0][2];
