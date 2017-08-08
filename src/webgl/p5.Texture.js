@@ -96,6 +96,15 @@ p5.Texture.prototype.set = function(data) {
     this.height = textureData.height;
     gl.texImage2D(gl.TEXTURE_2D, 0,
         this.glFormat, this.glFormat, gl.UNSIGNED_BYTE, textureData);
+    if (data instanceof p5.Image) {
+      data.modified = false;
+    }
+  } else if (data instanceof p5.Image) {
+    if (data.isModified()) {
+      data.setModified(false);
+      gl.texSubImage2D(gl.TEXTURE_2D, 0,
+        0, 0, this.glFormat, gl.UNSIGNED_BYTE, textureData);
+    }
   } else {
     gl.texSubImage2D(gl.TEXTURE_2D, 0,
         0, 0, this.glFormat, gl.UNSIGNED_BYTE, textureData);
@@ -117,7 +126,7 @@ p5.Texture.prototype.bindTexture = function () {
 
 p5.Texture.prototype.unbindTexture = function () {
   // unbind per above, disable texturing on glTarget
-  if (! this._bound) {
+  if (this._bound) {
     var gl = this._renderer.GL;
     gl.bindTexture(gl.TEXTURE_2D, null);
     this._bound = false;

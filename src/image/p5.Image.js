@@ -100,7 +100,7 @@ p5.Image = function(width, height){
   this.drawingContext = this.canvas.getContext('2d');
   this._pixelDensity = 1;
   //used for webgl texturing only
-  this.isTexture = false;
+  this.modified = false;
   /**
    * Array containing the values for all the pixels in the display window.
    * These values are numbers. This array is the size (include an appropriate
@@ -177,6 +177,7 @@ p5.Image = function(width, height){
  */
 p5.Image.prototype._setProperty = function (prop, value) {
   this[prop] = value;
+  this.modified = true;
 };
 
 /**
@@ -212,6 +213,7 @@ p5.Image.prototype._setProperty = function (prop, value) {
  */
 p5.Image.prototype.loadPixels = function(){
   p5.Renderer2D.prototype.loadPixels.call(this);
+  this.modified = true;
 };
 
 /**
@@ -256,6 +258,7 @@ p5.Image.prototype.loadPixels = function(){
  */
 p5.Image.prototype.updatePixels = function(x, y, w, h){
   p5.Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
+  this.modified = true;
 };
 
 /**
@@ -338,6 +341,7 @@ p5.Image.prototype.get = function(x, y, w, h){
  */
 p5.Image.prototype.set = function(x, y, imgOrCol){
   p5.Renderer2D.prototype.set.call(this, x, y, imgOrCol);
+  this.modified = true;
 };
 
 /**
@@ -418,6 +422,8 @@ p5.Image.prototype.resize = function(width, height){
   if(this.pixels.length > 0){
     this.loadPixels();
   }
+
+  this.modified = true;
 };
 
 /**
@@ -525,6 +531,7 @@ p5.Image.prototype.mask = function(p5Image) {
   this.drawingContext.globalCompositeOperation = 'destination-in';
   p5.Image.prototype.copy.apply(this, copyArgs);
   this.drawingContext.globalCompositeOperation = currBlend;
+  this.modified = true;
 };
 
 /**
@@ -558,6 +565,7 @@ p5.Image.prototype.mask = function(p5Image) {
  */
 p5.Image.prototype.filter = function(operation, value) {
   Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
+  this.modified = true;
 };
 
 /**
@@ -638,6 +646,15 @@ p5.Image.prototype.filter = function(operation, value) {
  */
 p5.Image.prototype.blend = function() {
   p5.prototype.blend.apply(this, arguments);
+  this.modified = true;
+};
+
+p5.Image.prototype.setModified = function (val) {
+  this.modified = val; //enforce boolean?
+};
+
+p5.Image.prototype.isModified = function () {
+  return this.modified;
 };
 
 /**

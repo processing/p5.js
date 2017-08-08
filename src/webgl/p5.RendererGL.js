@@ -93,7 +93,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
 
   // a map of objects (p5.Image, etc.) to p5.Texture
   // objects in this renderer context.
-  this.textures = [];
+  this.textures = {};
 
   return this;
 };
@@ -636,15 +636,10 @@ p5.RendererGL.prototype._getColorShader = function () {
 };
 
 p5.RendererGL.prototype.getTexture = function (img) {
-  // efficiency?
-  var f = function(element) {
-    return element.src === img;
-  };
-
-  var tex = this.textures.find(f);
+  var tex = this.textures[img];
   if (tex === undefined) {
     tex = new p5.Texture(this, img);
-    this.textures.push(tex);
+    this.textures[img] = tex;
   }
 
   tex.set(img);
