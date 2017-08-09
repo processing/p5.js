@@ -25,17 +25,17 @@ p5.Texture = function(renderer, obj) {
 
   var textureData;
   if (obj instanceof p5.Image) {
+    // param is a p5.Image
     textureData = obj.canvas;
-  }
-
-  //if param is a video
-  else if (typeof p5.MediaElement !== 'undefined' &&
+  } else if (typeof p5.MediaElement !== 'undefined' &&
           obj instanceof p5.MediaElement){
-    /* if(!obj.loadedmetadata) {return;} */
+    // if param is a video HTML element
     textureData = obj.elt;
-  }
-  //used with offscreen 2d graphics renderer
-  else if(obj instanceof p5.Graphics){
+  } else if (obj instanceof p5.Graphics){
+    //used with offscreen 2d graphics renderer
+    textureData = obj.elt;
+  } else if (typeof p5.Element !== 'undefined' && obj instanceof p5.Element) {
+    // maybe an animated gif?? created with createImg
     textureData = obj.elt;
   }
 
@@ -50,7 +50,12 @@ p5.Texture = function(renderer, obj) {
   this.glMagFilter = gl.LINEAR;
   this.glWrapS = gl.CLAMP_TO_EDGE;
   this.glWrapT = gl.CLAMP_TO_EDGE;
-  this._prevTime = 0;
+
+  // used to determine if this texture might need constant updating
+  // because it is a video or gif.
+  this.isSrcMediaElement = typeof p5.MediaElement !== 'undefined' &&
+    obj instanceof p5.MediaElement;
+  this._videoPrevTime = 0;
 
   // TODO: understand more of this pattern from processing
   //this.colorBuffer = false;
@@ -73,11 +78,14 @@ p5.Texture.prototype.init = function(data) {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, this.glWrapS);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, this.glWrapT);
 
-  if ((typeof p5.MediaElement !== 'undefined' &&
-          this.src instanceof p5.MediaElement) && !this.src.loadedmetadata) {
+  if (this.width === 0 || this.height === 0 ||
+    (typeof p5.MediaElement !== 'undefined' &&
+    this.src instanceof p5.MediaElement) && !this.src.loadedmetadata) {
+
     // we've reservered our texture, but can't actually load it
     // until there's data...
     return;
+
   }
 
   gl.texImage2D(gl.TEXTURE_2D, 0,
@@ -85,16 +93,22 @@ p5.Texture.prototype.init = function(data) {
 };
 
 p5.Texture.prototype.set = function(data) {
+  if (data.width === 0 || data.height === 0) {
+    return; // nothing to do!
+  }
+
   this.bindTexture();
 
   var textureData;
   if(data instanceof p5.Graphics ||
     (typeof p5.MediaElement !== 'undefined' &&
-    data instanceof p5.MediaElement)) {
+      data instanceof p5.MediaElement) ||
+     (typeof p5.Element !== 'undefined' && data instanceof p5.Element)) {
     textureData = data.elt;
-  }
-  else if(data instanceof p5.Image) {
+  } else if (data instanceof p5.Image) {
     textureData = data.canvas;
+  } else {
+    textureData = data;
   }
 
   var gl = this._renderer.GL;
@@ -135,8 +149,8 @@ p5.Texture.prototype.set = function(data) {
         this.glFormat, this.glFormat, gl.UNSIGNED_BYTE, textureData);
     }
   } else /* data instanceof p5.Graphics, probably */ {
-    gl.texSubImage2D(this.glTarget, 0,
-        0, 0, this.glFormat, gl.UNSIGNED_BYTE, textureData);
+    gl.texImage2D(this.glTarget, 0,
+          this.glFormat, this.glFormat, gl.UNSIGNED_BYTE, textureData);
   }
 };
 

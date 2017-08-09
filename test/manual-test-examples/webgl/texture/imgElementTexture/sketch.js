@@ -1,22 +1,19 @@
-var img;
-var playing = false;
-var fingers, button;
+var im;
 
 function setup(){
   createCanvas(windowWidth, windowHeight, WEBGL);
-  fingers = createVideo('../../../addons/p5.dom/fingers.mov');
-  fingers.hide();
+  im = createImg('../../UV_Grid_Sm.jpg');
 }
 
 function draw(){
   background(255);
 
-  var halfw = fingers.width / 2 * .5;
-  var halfh = fingers.height / 2 * .5;
+  var halfw = im.width / 2 * .5;
+  var halfh = im.height / 2 * .5;
 
+  texture(im);
   for (var x = -width/2 + halfw;  x <= width/2 - halfw; x+= halfw * 2) {
     for (var y = -height/2 + halfh;  y <= height/2 - halfh; y+= halfh * 2) {
-      texture(fingers);
       push();
       translate(x, y);
       rotateZ(frameCount * 0.01);
@@ -31,13 +28,4 @@ function draw(){
       pop();
     }
   }
-}
-
-function keyPressed() {
-  if (playing) {
-    fingers.pause();
-  } else {
-    fingers.loop();
-  }
-  playing = !playing;
 }
