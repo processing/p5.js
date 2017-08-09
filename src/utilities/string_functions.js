@@ -37,7 +37,7 @@ require('../core/error_helpers');
  *
  */
 p5.prototype.join = function(list, separator) {
-  this._validateParameters('join', arguments);
+  p5.prototype._validateParameters('join', arguments);
   return list.join(separator);
 };
 
@@ -78,7 +78,7 @@ p5.prototype.join = function(list, separator) {
  *
  */
 p5.prototype.match =  function(str, reg) {
-  this._validateParameters('match', arguments);
+  p5.prototype._validateParameters('match', arguments);
   return str.match(reg);
 };
 
@@ -113,10 +113,9 @@ p5.prototype.match =  function(str, reg) {
  * matchAll(string, regexp);
  * </code>
  * </div>
-
  */
 p5.prototype.matchAll = function(str, reg) {
-  this._validateParameters('matchAll', arguments);
+  p5.prototype._validateParameters('matchAll', arguments);
   var re = new RegExp(reg, 'g');
   var match = re.exec(str);
   var matches = [];
@@ -137,12 +136,19 @@ p5.prototype.matchAll = function(str, reg) {
  * be positive integers.
  *
  * @method nf
- * @param {Number|Array} num      the Number to format
+ * @param {Number}       num      the Number to format
  * @param {Number}       [left]   number of digits to the left of the
  *                                decimal point
  * @param {Number}       [right]  number of digits to the right of the
  *                                decimal point
- * @return {String|Array}         formatted String
+ * @return {String}               formatted String
+ */
+/**
+ * @method nf
+ * @param {Array}        nums     the Numbers to format
+ * @param {Number}       [left]
+ * @param {Number}       [right]
+ * @return {Array}                formatted Strings
  * @example
  * <div>
  * <code>
@@ -173,7 +179,7 @@ p5.prototype.matchAll = function(str, reg) {
  *
  */
 p5.prototype.nf = function () {
-  this._validateParameters('nf', arguments);
+  p5.prototype._validateParameters('nf', arguments);
   if (arguments[0] instanceof Array) {
     var a = arguments[1];
     var b = arguments[2];
@@ -243,10 +249,16 @@ function doNf() {
  * for the right parameter should always be a positive integer.
  *
  * @method nfc
- * @param  {Number|Array}   num     the Number to format
- * @param  {Number}         [right] number of digits to the right of the
+ * @param  {Number}   num     the Number to format
+ * @param  {Number}   [right] number of digits to the right of the
  *                                  decimal point
- * @return {String|Array}           formatted String
+ * @return {String}           formatted String
+ */
+/**
+ * @method nfc
+ * @param  {Array}    nums     the Numbers to format
+ * @param  {Number}   [right]
+ * @return {Array}           formatted Strings
  * @example
  * <div>
  * <code>
@@ -275,7 +287,7 @@ function doNf() {
  *
  */
 p5.prototype.nfc = function () {
-  this._validateParameters('nfc', arguments);
+  p5.prototype._validateParameters('nfc', arguments);
   if (arguments[0] instanceof Array) {
     var a = arguments[1];
     return arguments[0].map(function (x) {
@@ -317,12 +329,19 @@ function doNfc() {
  * should always be positive integers.
  *
  * @method nfp
- * @param {Number|Array} num      the Number to format
+ * @param {Number} num      the Number to format
  * @param {Number}       [left]   number of digits to the left of the decimal
  *                                point
  * @param {Number}       [right]  number of digits to the right of the
  *                                decimal point
- * @return {String|Array}         formatted String
+ * @return {String}         formatted String
+ */
+/**
+ * @method nfp
+ * @param {Number[]} nums      the Numbers to format
+ * @param {Number}       [left]
+ * @param {Number}       [right]
+ * @return {String[]}         formatted Strings
  * @example
  * <div>
  * <code>
@@ -351,8 +370,8 @@ function doNfc() {
  *
  */
 p5.prototype.nfp = function() {
-  this._validateParameters('nfp', arguments);
-  var nfRes = this.nf.apply(this, arguments);
+  p5.prototype._validateParameters('nfp', arguments);
+  var nfRes = p5.prototype.nf.apply(this, arguments);
   if (nfRes instanceof Array) {
     return nfRes.map(addNfp);
   } else {
@@ -375,12 +394,19 @@ function addNfp() {
  * parameters should always be positive integers.
  *
  * @method nfs
- * @param {Number|Array} num      the Number to format
+ * @param {Number}       num      the Number to format
  * @param {Number}       [left]   number of digits to the left of the decimal
  *                                point
  * @param {Number}       [right]  number of digits to the right of the
  *                                decimal point
- * @return {String|Array}         formatted String
+ * @return {String}         formatted String
+ */
+/**
+ * @method nfs
+ * @param {Array}        nums     the Numbers to format
+ * @param {Number}       [left]
+ * @param {Number}       [right]
+ * @return {Array}         formatted Strings
  * @example
  * <div>
  * <code>
@@ -409,8 +435,8 @@ function addNfp() {
  *
  */
 p5.prototype.nfs = function() {
-  this._validateParameters('nfs', arguments);
-  var nfRes = this.nf.apply(this, arguments);
+  p5.prototype._validateParameters('nfs', arguments);
+  var nfRes = p5.prototype.nf.apply(this, arguments);
   if (nfRes instanceof Array) {
     return nfRes.map(addNfs);
   } else {
@@ -455,7 +481,7 @@ function addNfs() {
  *
  */
 p5.prototype.split = function(str, delim) {
-  this._validateParameters('split', arguments);
+  p5.prototype._validateParameters('split', arguments);
   return str.split(delim);
 };
 
@@ -486,7 +512,7 @@ p5.prototype.split = function(str, delim) {
  * </div>
  */
 p5.prototype.splitTokens = function() {
-  this._validateParameters('splitTokens', arguments);
+  p5.prototype._validateParameters('splitTokens', arguments);
   var d,sqo,sqc,str;
   str = arguments[1];
   if (arguments.length > 1) {
@@ -518,8 +544,13 @@ p5.prototype.splitTokens = function() {
  * and tab, this function also removes the Unicode "nbsp" character.
  *
  * @method trim
- * @param  {String|Array} str a String or Array of Strings to be trimmed
- * @return {String|Array}       a trimmed String or Array of Strings
+ * @param  {String} str a String to be trimmed
+ * @return {String}       a trimmed String
+ */
+/**
+ * @method trim
+ * @param  {Array} strs an Array of Strings to be trimmed
+ * @return {Array}       an Array of trimmed Strings
  * @example
  * <div>
  * <code>
@@ -533,7 +564,7 @@ p5.prototype.splitTokens = function() {
  *
  */
 p5.prototype.trim = function(str) {
-  this._validateParameters('trim', arguments);
+  p5.prototype._validateParameters('trim', arguments);
   if (str instanceof Array) {
     return str.map(this.trim);
   } else {
