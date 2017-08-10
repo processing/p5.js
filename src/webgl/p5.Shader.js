@@ -90,13 +90,6 @@ p5.Shader.prototype.init = function() {
 
     this._loadAttributes();
     this._loadUniforms();
-
-    // TODO move elsewhere
-    // this needs to be here to create an initial empty texture to be
-    // used by shaders. it needs to happen when the first shader is
-    // created, which is why it is here. soon we'll find a good spot
-    // for it in the renderer.
-    this._renderer._createEmptyTexture();
   }
   return this;
 };
@@ -223,6 +216,7 @@ p5.Shader.prototype.bindTextures = function () {
     if (uniform.texture !== undefined) {
       gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
       uniform.texture.bindTexture();
+      uniform.texture.update();
       gl.uniform1i(uniform.location, uniform.samplerIndex);
     }
   }

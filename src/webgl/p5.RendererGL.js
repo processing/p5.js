@@ -71,7 +71,6 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   //Geometry & Material hashes
   this.gHash = {};
 
-  this.emptyTexture = null;
   this.curShader = null;
 
   this._defaultLightShader = undefined;
@@ -91,9 +90,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.stroke(0, 0, 0, 255);
   this.pointSize = 5.0;//default point/stroke
 
-  // a map of objects (p5.Image, etc.) to p5.Texture
-  // objects in this renderer context.
-  this.textures = {};
+  // array of textures created in this gl context via this.getTexture(src)
+  this.textures = [];
 
   return this;
 };
@@ -636,13 +634,15 @@ p5.RendererGL.prototype._getColorShader = function () {
 };
 
 p5.RendererGL.prototype.getTexture = function (img) {
-  var tex = this.textures[img];
+  var checkSource = function(element) {
+    return element.src === img;
+  };
+
+  var tex = this.textures.find(checkSource);
   if (tex === undefined) {
     tex = new p5.Texture(this, img);
-    this.textures[img] = tex;
+    this.textures.push(tex);
   }
-
-  tex.set(img);
 
   return tex;
 };

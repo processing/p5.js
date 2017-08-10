@@ -178,17 +178,6 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   return this;
 };
 
-p5.RendererGL.prototype._createEmptyTexture = function() {
-  if(this.emptyTexture === null) {
-    var gl = this.GL;
-    var data = new Uint8Array([1,1,1,1]);
-    this.emptyTexture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, this.emptyTexture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0,
-      gl.RGBA, gl.UNSIGNED_BYTE, data);
-  }
-};
-
 /**
  * Specular material for geometry with a given color. You can view all
  * possible materials in this
