@@ -649,10 +649,28 @@ p5.Image.prototype.blend = function() {
   this.modified = true;
 };
 
+/**
+ * helper method for web GL mode to indicate that an image has been
+ * changed or unchanged since last upload. gl texture upload will
+ * set this value to false after uploading the texture.
+ * @method setModified
+ * @param {boolean} val sets whether or not the image has been
+ * modified.
+ * @private
+ */
 p5.Image.prototype.setModified = function (val) {
   this.modified = val; //enforce boolean?
 };
 
+/**
+ * helper method for web GL mode to figure out if the image
+ * has been modified and might need to be re-uploaded to texture
+ * memory between frames.
+ * @method isModified
+ * @private
+ * @return {boolean} a boolean indicating whether or not the
+ * image has been updated or modified since last texture upload.
+ */
 p5.Image.prototype.isModified = function () {
   return this.modified;
 };
