@@ -165,13 +165,19 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
  */
 p5.Font.prototype.textToPoints = function(txt, x, y, fontSize, options) {
 
+  function isSpace(i) {
+    return ((glyphs[i].name && glyphs[i].name === 'space') ||
+      (txt.length === glyphs.length && txt[i] === ' ') ||
+      (glyphs[i].index && glyphs[i].index === 3));
+  }
+
   var xoff = 0, result = [], glyphs = this._getGlyphs(txt);
 
   fontSize = fontSize || this.parent._renderer._textSize;
 
   for (var i = 0; i < glyphs.length; i++) {
 
-    if (glyphs[i].name !== 'space') { // fix to #1817
+    if (!isSpace(i)) { // fix to #1817, #2069
 
       var gpath = glyphs[i].getPath(x, y, fontSize),
         paths = splitPaths(gpath.commands);
@@ -617,6 +623,10 @@ function pointAtLength(path, length, istotal) {
 function pathToAbsolute(pathArray) {
 
   var res = [], x = 0, y = 0, mx = 0, my = 0, start = 0;
+  if (!pathArray) {
+    // console.warn("Unexpected state: undefined pathArray"); // shouldn't happen
+    return res;
+  }
   if (pathArray[0][0] === 'M') {
     x = +pathArray[0][1];
     y = +pathArray[0][2];
