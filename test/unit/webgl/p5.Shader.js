@@ -45,14 +45,14 @@ suite('p5.Shader', function() {
   var testShader = function (shaderName, shader, expectedAttributes,
     expectedUniforms) {
 
-    var s = myp5._renderer.setShader(shader);
+    var s = myp5._renderer.shader(shader);
 
     assert(s !== null  &&  s === shader,
-      shaderName + ' was returned from p5.RendererGL.setShader');
+      shaderName + ' was returned from p5.RendererGL.shader');
 
     assert(myp5._renderer.curShader !== null &&
       myp5._renderer.curShader === shader,
-      shaderName + ' was not set as renderer\'s curShader in setShader');
+      shaderName + ' was not set as renderer\'s curShader in shader()');
 
     testAttributes(shaderName, s.attributes, expectedAttributes);
     testUniforms(shaderName, s.uniforms, expectedUniforms);

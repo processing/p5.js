@@ -79,7 +79,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._defaultNormalShader = undefined;
   this._defaultColorShader = undefined;
 
-  this.setShader(this._getColorShader());
+  this.shader(this._getColorShader());
 
   //Imediate Mode
   //default drawing is done in Retained Mode
@@ -328,17 +328,17 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   this.curFillColor = colors;
   this.drawMode = constants.FILL;
   if (this.isImmediateDrawing){
-    this.setShader(this._getImmediateModeShader());
+    this.shader(this._getImmediateModeShader());
   } else {
-    var shader = this.setShader(this._getColorShader());
-    shader.setUniform('uMaterialColor', colors);
+    this.shader(this._getColorShader());
+    this.curShader.setUniform('uMaterialColor', colors);
   }
   return this;
 };
 
 p5.RendererGL.prototype.noFill = function() {
   var gl = this.GL;
-  this.setShader(this._getColorShader());
+  this.shader(this._getColorShader());
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   this.drawMode = constants.STROKE;
@@ -582,11 +582,11 @@ p5.RendererGL.prototype._applyTextProperties = function() {
  * so it is safe to call this method with the same shader multiple
  * times without a signficant performance hit).
  *
- * @method setShader
- * @param {p5.Shader} s a p5.Shader object
+ * @method shader
+ * @param {p5.Shader} [s] a p5.Shader object
  * @return {p5.Shader} the current, updated shader
  */
-p5.RendererGL.prototype.setShader = function (s) {
+p5.RendererGL.prototype.shader = function (s) {
   if (this.curShader !== s) {
     // only do setup etc. if shader is actually new.
     this.curShader = s;
@@ -605,6 +605,8 @@ p5.RendererGL.prototype.setShader = function (s) {
  * shaders are created and cached on a per-renderer basis,
  * on the grounds that each renderer will have its own gl context
  * and the shader must be valid in that context.
+ *
+ *
  */
 
 p5.RendererGL.prototype._getLightShader = function () {

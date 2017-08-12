@@ -100,26 +100,27 @@ p5.RendererGL.prototype.endShape =
 function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
 
   var gl = this.GL;
-  var shader = this.curShader;
-  if (shader === this._getColorShader()) {
+  if (this.curShader === this._getColorShader()) {
     // this is the fill/stroke shader for retain mode.
     // must switch to immediate mode shader before drawing!
-    shader = this.setShader(this._getImmediateModeShader());
+    this.shader(this._getImmediateModeShader());
 
     // note that if we're using the texture shader...
     // this shouldn't change. :)
   }
-  shader.bindShader();
+
+  this.curShader.bindShader();
   //vertex position Attribute
   this._bindBuffer(this.immediateMode.vertexBuffer, gl.ARRAY_BUFFER,
     this.immediateMode.vertexPositions, Float32Array, gl.DYNAMIC_DRAW);
-  shader.enableAttrib(shader.attributes.aPosition.location,
+  this.curShader.enableAttrib(this.curShader.attributes.aPosition.location,
     3, gl.FLOAT, false, 0, 0);
 
   if (this.drawMode === constants.FILL) {
     this._bindBuffer(this.immediateMode.colorBuffer, gl.ARRAY_BUFFER,
       this.immediateMode.vertexColors, Float32Array, gl.DYNAMIC_DRAW);
-    shader.enableAttrib(shader.attributes.aVertexColor.location,
+    this.curShader.enableAttrib(
+      this.curShader.attributes.aVertexColor.location,
       4, gl.FLOAT, false, 0, 0);
   }
 
@@ -127,7 +128,7 @@ function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
     //texture coordinate Attribute
     this._bindBuffer(this.immediateMode.uvBuffer, gl.ARRAY_BUFFER,
       this.immediateMode.uvCoords, Float32Array, gl.DYNAMIC_DRAW);
-    shader.enableAttrib(shader.attributes.aTexCoord.location,
+    this.curShader.enableAttrib(this.curShader.attributes.aTexCoord.location,
       2, gl.FLOAT, false, 0, 0);
   }
 
@@ -175,7 +176,7 @@ function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
   this.isImmediateDrawing = false;
 
   // todo / optimizations? leave bound until another shader is set?
-  shader.unbindShader();
+  this.curShader.unbindShader();
   return this;
 };
 

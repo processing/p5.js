@@ -571,7 +571,8 @@ p5.prototype._preloadMethods = {
   loadShape: p5.prototype,
   loadTable: p5.prototype,
   loadFont: p5.prototype,
-  loadModel: p5.prototype
+  loadModel: p5.prototype,
+  loadShader: p5.prototype
 };
 
 p5.prototype._registeredMethods = { init: [], pre: [], post: [], remove: [] };
