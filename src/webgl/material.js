@@ -8,7 +8,7 @@
 'use strict';
 
 var p5 = require('../core/core');
-//require('./p5.Texture');
+require('./p5.Texture');
 
 /**
  * Normal material for geometry. You can view all
@@ -125,95 +125,16 @@ p5.prototype.texture = function(){
   gl.depthMask(true);
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
   renderer.drawMode = 'texture';
   var shader = renderer.setShader(renderer._getLightShader());
   shader.setUniform('uSpecular', false);
-
-  var textureData;
-  //if argument is not already a texture
-  //create a new one
-  if(!args[0].isTexture){
-    if (args[0] instanceof p5.Image) {
-      textureData = args[0].canvas;
-    }
-    //if param is a video
-    else if (typeof p5.MediaElement !== 'undefined' &&
-            args[0] instanceof p5.MediaElement){
-      if(!args[0].loadedmetadata) {return;}
-      textureData = args[0].elt;
-    }
-    //used with offscreen 2d graphics renderer
-    else if(args[0] instanceof p5.Graphics){
-      textureData = args[0].elt;
-    }
-    var tex = gl.createTexture();
-    args[0]._setProperty('tex', tex);
-    args[0]._setProperty('isTexture', true);
-    renderer._bind.call(this, tex, textureData);
-  }
-  else {
-    if(args[0] instanceof p5.Graphics ||
-      (typeof p5.MediaElement !== 'undefined' &&
-      args[0] instanceof p5.MediaElement)){
-      textureData = args[0].elt;
-    }
-    else if(args[0] instanceof p5.Image){
-      textureData = args[0].canvas;
-    }
-    renderer._bind.call(this, args[0].tex, textureData);
-  }
-
-  //this is where we'd activate multi textures
-  //@todo multi textures can be done in the setUniform function
   shader.setUniform('isTexture', true);
-  shader.setUniform('uSampler', args[0].tex);
+  shader.setUniform('uSampler', args[0]);
 
   return this;
 };
 
-/**
- * Texture Util functions
- */
-p5.RendererGL.prototype._bind = function(tex, data){
-  var gl = this._renderer.GL;
-  gl.bindTexture(gl.TEXTURE_2D, tex);
-  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-  gl.texImage2D(gl.TEXTURE_2D, 0,
-    gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, data);
-  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-  gl.texParameteri(gl.TEXTURE_2D,
-  gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D,
-  gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-  gl.texParameteri(gl.TEXTURE_2D,
-  gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-  gl.texParameteri(gl.TEXTURE_2D,
-  gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-  gl.bindTexture(gl.TEXTURE_2D, null);
-};
-
-/**
- * Checks whether val is a pot
- * more info on power of 2 here:
- * https://www.opengl.org/wiki/NPOT_Texture
- * @param  {Number}  value
- * @return {Boolean}
- */
-// function _isPowerOf2 (value){
-//   return (value & (value - 1)) === 0;
-// }
-
-/**
- * returns the next highest power of 2 value
- * @param  {Number} value [description]
- * @return {Number}       [description]
- */
-// function _nextHighestPOT (value){
-//   --value;
-//   for (var i = 1; i < 32; i <<= 1) {
-//     value = value | value >> i;
-//   }
-//   return value + 1;
 
 /**
  * Ambient material for geometry with a given color. You can view all
@@ -255,17 +176,6 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   shader.setUniform('uSpecular', false);
   shader.setUniform('isTexture', false);
   return this;
-};
-
-p5.RendererGL.prototype._createEmptyTexture = function() {
-  if(this.emptyTexture === null) {
-    var gl = this.GL;
-    var data = new Uint8Array([1,1,1,1]);
-    this.emptyTexture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, this.emptyTexture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0,
-      gl.RGBA, gl.UNSIGNED_BYTE, data);
-  }
 };
 
 /**

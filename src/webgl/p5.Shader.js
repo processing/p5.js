@@ -32,6 +32,7 @@ p5.Shader = function(renderer, vertSrc, fragSrc) {
   this._loadedUniforms = false;
   this.uniforms = {};
   this._bound = false;
+  this.samplers = [];
 
   return this;
 };
@@ -89,13 +90,6 @@ p5.Shader.prototype.init = function() {
 
     this._loadAttributes();
     this._loadUniforms();
-
-    // TODO move elsewhere
-    // this needs to be here to create an inital empty texture to be
-    // used by shaders. it needs to happen when the first shader is
-    // created, which is why it is here. soon we'll find a good spot
-    // for it in the renderer.
-    this._renderer._createEmptyTexture();
   }
   return this;
 };
@@ -169,6 +163,7 @@ p5.Shader.prototype._loadUniforms = function() {
     if(uniform.type === gl.SAMPLER_2D) {
       uniform.samplerIndex = samplerIndex;
       samplerIndex++;
+      this.samplers.push(uniform);
     }
     this.uniforms[uniformName] = uniform;
   }
@@ -215,8 +210,16 @@ p5.Shader.prototype.unbindShader = function () {
 };
 
 p5.Shader.prototype.bindTextures = function () {
-  // TODO: migrate stuff from material.js here
-  // - OR - have material.js define this function
+  var gl = this._renderer.GL;
+  for (var i = 0;  i < this.samplers.length; i++) {
+    var uniform = this.samplers[i];
+    if (uniform.texture !== undefined) {
+      gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
+      uniform.texture.bindTexture();
+      uniform.texture.update();
+      gl.uniform1i(uniform.location, uniform.samplerIndex);
+    }
+  }
 };
 
 p5.Shader.prototype.unbindTextures = function () {
@@ -325,8 +328,8 @@ p5.Shader.prototype.setUniform = function(uniformName, data)
       break;
     case gl.SAMPLER_2D:
       gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
-      gl.bindTexture(gl.TEXTURE_2D, data);
-      gl.uniform1i(location, uniform.samplerIndex);
+      uniform.texture = this._renderer.getTexture(data);
+      gl.uniform1i(uniform.location, uniform.samplerIndex);
       break;
     //@todo complete all types
   }
