@@ -20,6 +20,10 @@ p5.Geometry = function
   //an array containing every vertex
   //@type [p5.Vector]
   this.vertices = [];
+
+  /****AN ARRAY FOR STORING THE VERTICES OF LINES ***/
+  this.lineVertices = [];
+
   //an array containing 1 normal per vertex
   //@type [p5.Vector]
   //[p5.Vector, p5.Vector, p5.Vector,p5.Vector, p5.Vector, p5.Vector,...]
@@ -30,8 +34,8 @@ p5.Geometry = function
   //a 2D array containing uvs for every vertex
   //[[0.0,0.0],[1.0,0.0], ...]
   this.uvs = [];
-  //an array containing barycentric coords for every vertex
-  this.barycentric = [];
+  /*** A 2D ARRAY CONTAINING EDGE CONNECTIVITY INFORMATION ***/
+  this.edges = []
   this.detailX = (detailX !== undefined) ? detailX: 1;
   this.detailY = (detailY !== undefined) ? detailY: 1;
   if(callback instanceof Function){
@@ -145,6 +149,80 @@ p5.Geometry.prototype.averagePoleNormals = function() {
   }
   return this;
 };
+
+p5.Geometry.prototype._makeTriangleEdges = function() {
+      for(var i = 0; i <= this.vertices.length/3; i++) {
+        var i0 = 3 * i;
+        var i1 = 3 * i + 1;
+        var i2 = 3 * i + 2;
+        if(this.vertices.length > i1)
+          this._addEdge(i0, i1, true, false);
+        if(this.vertices.length > i2)
+        {
+          this._addEdge(i1, i2, false, false);
+          this._addEdge(i2, i0, false, false);
+        }
+      }
+  return this;
+};
+
+p5.Geometry.prototype._addEdge = function(i, j, start, end) {
+  var edge = [i, j];
+  edge.push(start ? 1 : 0) + 2 * (end ? 1 : 0);
+  this.edges.push(edge);
+};
+
+p5.Geometry.prototype._edgesToVertices = function() {
+  for(var i = 0; i < this.edges.length; i++)
+  {
+    this.lineVertices[i] = [];
+    this.lineVertices[i][0] = this.vertices[this.edges[i][0]].array();
+    this.lineVertices[i][0][0] *= 1.1; /**THESE LINES ARE FAKING WIDTH WITH EARLY TESTING**/
+    this.lineVertices[i][1] = this.vertices[this.edges[i][0]].array();
+    this.lineVertices[i][1][0] *= 0.9;
+    this.lineVertices[i][2] = this.vertices[this.edges[i][1]].array();
+    this.lineVertices[i][2][0] *= 1.1;
+    this.lineVertices[i][3] = this.vertices[this.edges[i][1]].array();
+    this.lineVertices[i][3][0] *= 0.9;
+  }
+  var amt = flatten(this.lineVertices).length - 1;
+  for(var j = 0; j < amt; j+=3)
+  {
+    /**THESE CHECKS ARE TO ENSURE WE DON'T GO OVER IF NOT EVENLY**/
+    /**DIVISIBLE BY THREE**/
+    if(amt > j+3)
+    {
+      /**EACH LINEVERT IS 4 VECTOR3'S WHICH MAKE UP 2 TRIANGLES**/
+      /**THIS IS HOW IT WAS DONE IN THE BOX PRIMITIVE BEFORE**/
+      /**ALSO HOW IT IS DONE IN PROCESSING AS FAR AS I CAN TELL**/
+      /** https://github.com/processing/processing/blob/master/core/src/processing/opengl/PGraphicsOpenGL.java#L11768 **/
+      this.faces.push([j,j+1,j+2]);
+      this.faces.push([j+2,j+1,j+3]);
+
+      /*SAMPLE OF OTHER PATTERNS TRIED**/
+      // this.faces.push([j,j+1,j+2]);
+      // this.faces.push([j,j+2,j+3]);
+
+      /**HOW IT IS DONE IN _computeFaces**/
+      // this.faces.push([j,j+1,j+3]);
+      // this.faces.push([j+3,j+1,j+2]);
+    }
+  }
+  return this;
+};
+
+/**TEMPORARILY PUT THIS HELPER FUNCTION IN HERE**/
+function flatten(arr){
+  if (arr.length>0){
+    return arr.reduce(function(a, b){
+      return a.concat(b);
+    });
+  } else {
+    return [];
+  }
+};
+
+/**PAST VERSION OF ABOVE CODE**/
 
 /**
  * Modifies all vertices to be centered within the range -100 to 100.

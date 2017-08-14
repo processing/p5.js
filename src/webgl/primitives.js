@@ -151,13 +151,18 @@ p5.prototype.box = function(){
           this.uvs.push([j & 1, (j & 2) / 2]);
           id++;
         }
-        this.faces.push([v, v + 1, v + 2]);
-        this.faces.push([v + 2, v + 1, v + 3]);
+        /**THIS IS HOW FACES WERE ORIGINALLY CALCULATED FOR BOX***/
+        /**TEMPORARILY DOING FACE CALCULATION IN _edgesToVertices**/
+        // this.faces.push([v, v + 1, v + 2]);
+        // this.faces.push([v + 2, v + 1, v + 3]);
       }
     };
     var boxGeom = new p5.Geometry(detailX,detailY, _box);
     boxGeom
-      .computeNormals();
+      //.computeNormals(); NOT NECESSARY CURRENTLY
+      ._makeTriangleEdges()
+      ._edgesToVertices();
+
     //initialize our geometry buffer with
     //the key val pair:
     //geometry Id, Geom object
