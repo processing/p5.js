@@ -367,6 +367,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-saucelabs');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-minjson');
+  grunt.loadNpmTasks('grunt-http');
+  grunt.loadNpmTasks('grunt-git-deploy');
 
   // Create the multitasks.
   grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);
@@ -377,4 +379,5 @@ module.exports = function(grunt) {
   grunt.registerTask('yui:test', ['yuidoc:dev', 'connect', 'mocha:yui']);
   grunt.registerTask('default', ['test']);
   grunt.registerTask('saucetest', ['connect', 'saucelabs-mocha']);
+  grunt.registerTask('release', ['test', '', '', '', '']);
 };

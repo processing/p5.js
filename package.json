@@ -45,6 +45,8 @@
     "brfs": "^1.4.0",
     "es6-promise": "^4.0.5",
     "fetch-jsonp": "^1.0.6",
+    "grunt-git-deploy": "^0.3.1",
+    "grunt-http": "^2.2.0",
     "opentype.js": "^0.7.1",
     "whatwg-fetch": "^2.0.2"
   },
