@@ -150,6 +150,25 @@ p5.Geometry.prototype.averagePoleNormals = function() {
   return this;
 };
 
+/**ANOTHER EXAMPLE OF HOW THIS WAS BEING DONE BEFORE**/
+// p5.Geometry.prototype._makeTriangleEdges = function() {
+//     for(var i = 0; i <= this.vertices.length; i+=3) {
+//       var i0 = i;
+//       var i1 = i+1;
+//       var i2 = i+2;
+
+//       //connections then boolean for whether it closes the triangle
+//       //also checks to see that we don't go over
+//       if(i1 <= this.vertices.length-1)
+//         this.edges[i] = [i0, i1, false];
+//       if(i2 <= this.vertices.length-1) {
+//         this.edges[i+1] = [i1, i2, false];
+//         this.edges[i+2] = [i2, i0, true];
+//       }
+//     }
+//   return this;
+// };
+
 p5.Geometry.prototype._makeTriangleEdges = function() {
       for(var i = 0; i <= this.vertices.length/3; i++) {
         var i0 = 3 * i;
