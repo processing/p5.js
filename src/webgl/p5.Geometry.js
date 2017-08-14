@@ -169,6 +169,7 @@ p5.Geometry.prototype.averagePoleNormals = function() {
 //   return this;
 // };
 
+/**THIS ACHIEVES IDENTICAL RESULTS TO ABOVE BUT RESEMBLES PROCESSING MORE**/
 p5.Geometry.prototype._makeTriangleEdges = function() {
       for(var i = 0; i <= this.vertices.length/3; i++) {
         var i0 = 3 * i;
@@ -240,8 +241,6 @@ function flatten(arr){
     return [];
   }
 };
-
-/**PAST VERSION OF ABOVE CODE**/
 
 /**
  * Modifies all vertices to be centered within the range -100 to 100.
