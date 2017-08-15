@@ -76,6 +76,7 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
   var colors = new Float32Array(color._array.slice(0,3));
   shader.setUniform('uAmbientColor', colors);
   shader.setUniform('uUseLighting', true);
+  renderer.ambientLightCount++;
   //in case there's no material color for the geometry
   shader.setUniform('uMaterialColor', [1,1,1,1]);
   shader.setUniform('uAmbientLightCount', renderer.ambientLightCount);
