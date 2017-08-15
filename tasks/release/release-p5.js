@@ -5,7 +5,7 @@ module.exports = function(grunt) {
   // Options for this custom task
   var opts = {
     'releaseIt': {
-      options: {
+      'options': {
         'non-interactive': true,
         'verbose': true,
         'pkgFiles': ['package.json'],
@@ -16,12 +16,10 @@ module.exports = function(grunt) {
           'commitMessage': 'Release v%s',
           'tagName': '%s',
           'tagAnnotation': 'Release v%s',
-          'pushRepo': 'origin easing-up-the-release-process'
+          'pushRepo': 'origin easing-up-the-release-process' //change this to master before PR
         },
         'dist': {
-        	'repo': false,
-        	'stageDir': '.',
-        	'baseDir': '.'
+        	'repo': false
         },
         'npm': {
           'publish': false,
