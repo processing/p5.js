@@ -633,6 +633,16 @@ p5.RendererGL.prototype._getColorShader = function () {
   return this._defaultColorShader;
 };
 
+p5.RendererGL.prototype._getEmptyTexture = function () {
+  if (this._emptyTexture === undefined) {
+    // a plain white texture RGBA, full alpha, single pixel.
+    var im = new p5.Image(1, 1);
+    im.set(0, 0, 255);
+    this._emptyTexture = new p5.Texture(this, im);
+  }
+  return this._emptyTexture;
+};
+
 p5.RendererGL.prototype.getTexture = function (img) {
   var checkSource = function(element) {
     return element.src === img;
