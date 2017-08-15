@@ -350,7 +350,10 @@ module.exports = function(grunt) {
   // `grunt combineModules:module_1:module_2` where core
   // is included by default in all combinations always.
   // NOTE: "module_x" is the name of it's folder in /src.
-  grunt.loadTasks('build/tasks');
+  grunt.loadTasks('tasks/build');
+
+  // Load release task
+  grunt.loadTasks('tasks/release');
 
   // Load the external libraries used.
   grunt.loadNpmTasks('grunt-jscs');
@@ -379,5 +382,4 @@ module.exports = function(grunt) {
   grunt.registerTask('yui:test', ['yuidoc:dev', 'connect', 'mocha:yui']);
   grunt.registerTask('default', ['test']);
   grunt.registerTask('saucetest', ['connect', 'saucelabs-mocha']);
-  grunt.registerTask('release', ['test', '', '', '', '']);
 };
