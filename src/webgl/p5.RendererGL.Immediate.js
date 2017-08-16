@@ -37,11 +37,14 @@ p5.RendererGL.prototype.beginShape = function(mode){
   if(this.immediateMode.vertexPositions === undefined){
     this.immediateMode.vertexPositions = [];
     this.immediateMode.vertexColors = [];
+    this.immediateMode.uvCoords = [];
     this.immediateMode.vertexBuffer = this.GL.createBuffer();
     this.immediateMode.colorBuffer = this.GL.createBuffer();
+    this.immediateMode.uvBuffer = this.GL.createBuffer();
   } else {
     this.immediateMode.vertexPositions.length = 0;
     this.immediateMode.vertexColors.length = 0;
+    this.immediateMode.uvCoords.length = 0;
   }
   this.isImmediateDrawing = true;
   return this;
@@ -54,7 +57,28 @@ p5.RendererGL.prototype.beginShape = function(mode){
  * @chainable
  * @TODO implement handling of p5.Vector args
  */
-p5.RendererGL.prototype.vertex = function(x, y, z){
+p5.RendererGL.prototype.vertex = function(){
+  var x, y, z, u, v;
+
+  // default to (x, y) mode: all other arugments assumed to be 0.
+  x = arguments[0];
+  y = arguments[1];
+  z = u = v = 0;
+
+  if (arguments.length === 3) {
+    // (x, y, z) mode: (u, v) assumed to be 0.
+    z = arguments[2];
+  } else if (arguments.length === 4) {
+    // (x, y, u, v) mode: z assumed to be 0.
+    u = arguments[2];
+    v = arguments[3];
+  } else if (arguments.length === 5) {
+    // (x, y, z, u, v) mode
+    z = arguments[2];
+    u = arguments[3];
+    v = arguments[4];
+  }
+
   this.immediateMode.vertexPositions.push(x, y, z);
   var vertexColor = this.curFillColor || [0.5, 0.5, 0.5, 1.0];
   this.immediateMode.vertexColors.push(
@@ -62,6 +86,9 @@ p5.RendererGL.prototype.vertex = function(x, y, z){
     vertexColor[1],
     vertexColor[2],
     vertexColor[3]);
+
+  this.immediateMode.uvCoords.push(u, v);
+
   return this;
 };
 
@@ -71,10 +98,43 @@ p5.RendererGL.prototype.vertex = function(x, y, z){
  */
 p5.RendererGL.prototype.endShape =
 function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
+
   var gl = this.GL;
-  this._bindImmediateBuffers(
-    this.immediateMode.vertexPositions,
-    this.immediateMode.vertexColors);
+  var shader = this.curShader;
+  if (shader === this._getColorShader()) {
+    // this is the fill/stroke shader for retain mode.
+    // must switch to immediate mode shader before drawing!
+    shader = this.setShader(this._getImmediateModeShader());
+
+    // note that if we're using the texture shader...
+    // this shouldn't change. :)
+  }
+  shader.bindShader();
+
+  //vertex position Attribute
+  var data = new Float32Array(this.immediateMode.vertexPositions);
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.vertexBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+  shader.enableAttrib(shader.attributes.aPosition.location,
+    3, gl.FLOAT, false, 0, 0);
+
+  if (this.drawMode === 'fill') {
+    data = new Float32Array(this.immediateMode.vertexColors);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.colorBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+    shader.enableAttrib(shader.attributes.aVertexColor.location,
+      4, gl.FLOAT, false, 0, 0);
+  }
+
+  if (this.drawMode === 'texture'){
+    //texture coordinate Attribute
+    data = new Float32Array(this.immediateMode.uvCoords);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.uvBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+    shader.enableAttrib(shader.attributes.aTexCoord.location,
+      2, gl.FLOAT, false, 0, 0);
+  }
+
   if(mode){
     if(this.drawMode === 'fill' || this.drawMode ==='texture'){
       switch(this.immediateMode.shapeMode){
@@ -115,9 +175,11 @@ function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
   //after rendering
   this.immediateMode.vertexPositions.length = 0;
   this.immediateMode.vertexColors.length = 0;
+  this.immediateMode.uvCoords.length = 0;
   this.isImmediateDrawing = false;
   return this;
 };
+
 /**
  * Bind immediateMode buffers to data,
  * then draw gl arrays
@@ -140,44 +202,11 @@ p5.RendererGL.prototype._bindImmediateBuffers = function(vertices, colors){
   gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute,
     3, gl.FLOAT, false, 0, 0);
 
-  shaderProgram.vertexColorAttribute =
-    gl.getAttribLocation(shaderProgram, 'aVertexColor');
-  gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.colorBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER,
-    new Float32Array(colors),gl.DYNAMIC_DRAW);
-  gl.vertexAttribPointer(shaderProgram.vertexColorAttribute,
-    4, gl.FLOAT, false, 0, 0);
-  //matrix
-  this._setMatrixUniforms(shaderKey);
-  //@todo implement in all shaders (not just immediateVert)
-  //set our default point size
-  // this._setUniform1f(shaderKey,
-  //   'uPointSize',
-  //   this.pointSize);
+
+  // todo / optimizations? leave bound until another shader is set?
+  shader.unbindShader();
   return this;
 };
 
-//////////////////////////////////////////////
-// COLOR
-//////////////////////////////////////////////
-
-p5.RendererGL.prototype._getColorVertexShader = function(){
-  var gl = this.GL;
-  var mId = 'immediateVert|vertexColorFrag';
-  var shaderProgram;
-
-  if(!this.materialInHash(mId)){
-    shaderProgram =
-      this._initShaders('immediateVert', 'vertexColorFrag', true);
-    this.mHash[mId] = shaderProgram;
-    shaderProgram.vertexColorAttribute =
-    gl.getAttribLocation(shaderProgram, 'aVertexColor');
-    gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
-  }else{
-    shaderProgram = this.mHash[mId];
-  }
-  return shaderProgram;
-};
 
 module.exports = p5.RendererGL;

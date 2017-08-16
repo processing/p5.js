@@ -20,6 +20,10 @@ p5.Geometry = function
   //an array containing every vertex
   //@type [p5.Vector]
   this.vertices = [];
+
+  /****AN ARRAY FOR STORING THE VERTICES OF LINES ***/
+  this.lineVertices = [];
+
   //an array containing 1 normal per vertex
   //@type [p5.Vector]
   //[p5.Vector, p5.Vector, p5.Vector,p5.Vector, p5.Vector, p5.Vector,...]
@@ -30,6 +34,8 @@ p5.Geometry = function
   //a 2D array containing uvs for every vertex
   //[[0.0,0.0],[1.0,0.0], ...]
   this.uvs = [];
+  /*** A 2D ARRAY CONTAINING EDGE CONNECTIVITY INFORMATION ***/
+  this.edges = []
   this.detailX = (detailX !== undefined) ? detailX: 1;
   this.detailY = (detailY !== undefined) ? detailY: 1;
   if(callback instanceof Function){
@@ -143,6 +149,159 @@ p5.Geometry.prototype.averagePoleNormals = function() {
     this.vertexNormals[i] = sum;
   }
   return this;
+};
+
+/**ANOTHER EXAMPLE OF HOW THIS WAS BEING DONE BEFORE**/
+// p5.Geometry.prototype._makeTriangleEdges = function() {
+//     for(var i = 0; i <= this.vertices.length; i+=3) {
+//       var i0 = i;
+//       var i1 = i+1;
+//       var i2 = i+2;
+
+//       //connections then boolean for whether it closes the triangle
+//       //also checks to see that we don't go over
+//       if(i1 <= this.vertices.length-1)
+//         this.edges[i] = [i0, i1, false];
+//       if(i2 <= this.vertices.length-1) {
+//         this.edges[i+1] = [i1, i2, false];
+//         this.edges[i+2] = [i2, i0, true];
+//       }
+//     }
+//   return this;
+// };
+
+/**THIS ACHIEVES IDENTICAL RESULTS TO ABOVE BUT RESEMBLES PROCESSING MORE**/
+p5.Geometry.prototype._makeTriangleEdges = function() {
+
+          this.edges = [
+            0,  1,  2,      0,  2,  3,    // front
+            4,  5,  6,      4,  6,  7,    // back
+            8,  9,  10,     8,  10, 11,   // top
+            12, 13, 14,     12, 14, 15,   // bottom
+            16, 17, 18,     16, 18, 19,   // right
+            20, 21, 22,     20, 22, 23    // left
+          ];
+
+
+          // this._addEdge(0, 1, true, false);
+          // this._addEdge(1, 2, false, false);
+          // //this._addEdge(2, 0, false, false);
+
+          // this._addEdge(0, 2, false, false);
+          // this._addEdge(2, 3, false, false);
+          // //this._addEdge(3, 0, false, false);
+
+          // this._addEdge(4, 5, false, false);
+          // this._addEdge(5, 6, false, false);
+          // //this._addEdge(6, 4, false, false);
+
+          // this._addEdge(4, 6, false, false);
+          // this._addEdge(6, 7, false, false);
+          // //this._addEdge(7, 4, false, false);
+
+          // this._addEdge(8, 9, false, false);
+          // this._addEdge(9, 10, false, false);
+          // //this._addEdge(10, 8, false, false);
+
+          // this._addEdge(8, 10, false, false);
+          // this._addEdge(10, 11, false, false);
+          // //this._addEdge(11, 8, false, false);
+
+          // this._addEdge(12, 13, false, false);
+          // this._addEdge(13, 14, false, false);
+          // //this._addEdge(14, 12, false, false);
+
+          // this._addEdge(12, 14, false, false);
+          // this._addEdge(14, 15, false, false);
+          // //this._addEdge(15, 12, false, false);
+
+          // this._addEdge(16, 17, false, false);
+          // this._addEdge(17, 18, false, false);
+          // //this._addEdge(18, 16, false, false);
+
+          // this._addEdge(16, 18, false, false);
+          // this._addEdge(18, 19, false, false);
+          // this._addEdge(19, 16, false, false);
+
+          // this._addEdge(20, 21, false, false);
+          // this._addEdge(21, 22, false, false);
+          // this._addEdge(22, 20, false, false);
+
+          // this._addEdge(20, 22, false, false);
+          // this._addEdge(22, 23, false, false);
+          // this._addEdge(23, 20, false, false);
+
+
+      // for(var i = 0; i <= this.vertices.length/3; i++) {
+      //   var i0 = 3 * i;
+      //   var i1 = 3 * i + 1;
+      //   var i2 = 3 * i + 2;
+      //   if(this.vertices.length > i1)
+      //     this._addEdge(i0, i1, true, false);
+      //   if(this.vertices.length > i2)
+      //   {
+      //     this._addEdge(i1, i2, false, false);
+      //     this._addEdge(i2, i0, false, true);
+
+      //   }
+      // }
+  return this;
+};
+
+p5.Geometry.prototype._addEdge = function(i, j, start, end) {
+  var edge = [i, j];
+  edge.push(start ? 1 : 0) + 2 * (end ? 1 : 0);
+  this.edges.push(edge);
+};
+
+p5.Geometry.prototype._edgesToVertices = function() {
+  for(var i = 0; i < this.edges.length; i+=2)
+  {
+    this.lineVertices[i] = [];
+    this.lineVertices[i][0] = this.vertices[this.edges[i]].slice();
+    this.lineVertices[i][0][0] *= 0.9; /**THESE LINES ARE FAKING WIDTH WITH EARLY TESTING**/
+    this.lineVertices[i][1] = this.vertices[this.edges[i]].slice();
+    this.lineVertices[i][1][0]  *= 1.1;
+    this.lineVertices[i][2] = this.vertices[this.edges[i+1]].slice();
+    this.lineVertices[i][2][0] *= 1.1;
+    this.lineVertices[i][3] = this.vertices[this.edges[i+1]].slice();
+    this.lineVertices[i][3][0] *= 0.9;
+  }
+  var amt = flatten(this.lineVertices).length;
+  for(var j = 0; j < amt; j+=3)
+  {
+    /**THESE CHECKS ARE TO ENSURE WE DON'T GO OVER IF NOT EVENLY**/
+    /**DIVISIBLE BY THREE**/
+    if(amt > j+3)
+    {
+      /**EACH LINEVERT IS 4 VECTOR3'S WHICH MAKE UP 2 TRIANGLES**/
+      /**THIS IS HOW IT WAS DONE IN THE BOX PRIMITIVE BEFORE**/
+      /**ALSO HOW IT IS DONE IN PROCESSING AS FAR AS I CAN TELL**/
+      /** https://github.com/processing/processing/blob/master/core/src/processing/opengl/PGraphicsOpenGL.java#L11768 **/
+      this.faces.push([j,j+1,j+2]);
+      this.faces.push([j, j+2,j+3]);
+
+      /*SAMPLE OF OTHER PATTERNS TRIED**/
+      // this.faces.push([j,j+1,j+2]);
+      // this.faces.push([j,j+2,j+3]);
+
+      /**HOW IT IS DONE IN _computeFaces**/
+      // this.faces.push([j,j+1,j+3]);
+      // this.faces.push([j+3,j+1,j+2]);
+    }
+  }
+  return this;
+};
+
+/**TEMPORARILY PUT THIS HELPER FUNCTION IN HERE**/
+function flatten(arr){
+  if (arr.length>0){
+    return arr.reduce(function(a, b){
+      return a.concat(b);
+    });
+  } else {
+    return [];
+  }
 };
 
 /**

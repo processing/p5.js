@@ -18,7 +18,6 @@ p5.RendererGL.prototype._initBufferDefaults = function(gId) {
     delete this.gHash[key];
     hashCount --;
   }
-
   var gl = this.GL;
   //create a new entry in our gHash
   this.gHash[gId] = {};
@@ -26,7 +25,9 @@ p5.RendererGL.prototype._initBufferDefaults = function(gId) {
   this.gHash[gId].normalBuffer = gl.createBuffer();
   this.gHash[gId].uvBuffer = gl.createBuffer();
   this.gHash[gId].indexBuffer = gl.createBuffer();
+  this.gHash[gId].lineVertexBuffer = gl.createBuffer();
 };
+
 /**
  * createBuffers description
  * @param  {String} gId    key of the geometry object
@@ -37,57 +38,72 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
   this._setDefaultCamera();
   //initialize the gl buffers for our geom groups
   this._initBufferDefaults(gId);
-  //return the current shaderProgram from our material hash
-  var shaderProgram = this.mHash[this._getCurShaderId()];
+
   //@todo rename "numberOfItems" property to something more descriptive
   //we mult the num geom faces by 3
   this.gHash[gId].numberOfItems = obj.faces.length * 3;
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
-  gl.bufferData(
-    gl.ARRAY_BUFFER,
-    new Float32Array( vToNArray(obj.vertices) ),
-    gl.STATIC_DRAW);
-  //vertex position
-  shaderProgram.vertexPositionAttribute =
-    gl.getAttribLocation(shaderProgram, 'aPosition');
-  gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
-  gl.vertexAttribPointer(
-    shaderProgram.vertexPositionAttribute,
+  /*****LOGGING THE NUMBER OF ELEMENTS DRAWN*****/
+  console.log('Number of Elements Drawn: ' + this.gHash[gId].numberOfItems);
+
+  /**LOGGING THE ORIGINAL VERTICES**/
+  console.log('Original Vertices: ');
+  console.log(obj.vertices);
+
+  /**LOGGING THE INDICES OR FACES**/
+  console.log('Indices/Faces: ');
+  console.log(obj.faces);
+
+  console.log('EDGE CONNECTION PATTERN: ');
+  console.log(obj.edges);
+
+  /**LOGGING THE LINE VERTICES**/
+  console.log('Line Vertices: ');
+  console.log(obj.lineVertices);
+
+  var shader = this.curShader;
+  if (shader === this._getImmediateModeShader()) {
+    // there are different immediate mode and retain mode color shaders.
+    // if we're using the immediate mode one, we need to switch to
+    // one that works for retain mode.
+    shader = this.setShader(this._getColorShader());
+  }
+
+  /****THIS IS HOW VERTICES WERE DRAWN BEFORE****/
+
+  // // allocate space for vertex positions
+  // var data = new Float32Array(vToNArray(obj.vertices));
+  // shader.enableAttrib(shader.attributes.aPosition.location,
+  //   3, gl.FLOAT, false, 0, 0);
+  // gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
+  // gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+
+  var data = new Float32Array(flatten(flatten(obj.lineVertices)));
+  shader.enableAttrib(shader.attributes.aPosition.location,
     3, gl.FLOAT, false, 0, 0);
+  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].lineVertexBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
-  gl.bufferData(
-    gl.ARRAY_BUFFER,
-    new Float32Array( vToNArray(obj.vertexNormals) ),
-    gl.STATIC_DRAW);
-  //vertex normal
-  shaderProgram.vertexNormalAttribute =
-    gl.getAttribLocation(shaderProgram, 'aNormal');
-  gl.enableVertexAttribArray(shaderProgram.vertexNormalAttribute);
-
-  gl.vertexAttribPointer(
-    shaderProgram.vertexNormalAttribute,
-    3, gl.FLOAT, false, 0, 0);
-
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
-  gl.bufferData(
-    gl.ARRAY_BUFFER,
-    new Float32Array( flatten(obj.uvs) ),
-    gl.STATIC_DRAW);
-  //texture coordinate Attribute
-  shaderProgram.textureCoordAttribute =
-    gl.getAttribLocation(shaderProgram, 'aTexCoord');
-  gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
-  gl.vertexAttribPointer(
-    shaderProgram.textureCoordAttribute,
-    2, gl.FLOAT, false, 0, 0);
-
+  // allocate space for faces
+  data = new Uint16Array(flatten(obj.faces));
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
-  gl.bufferData(
-    gl.ELEMENT_ARRAY_BUFFER,
-    new Uint16Array( flatten(obj.faces) ),
-    gl.STATIC_DRAW);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, data, gl.STATIC_DRAW);
+
+  /**TURNING OFF NORMALS AND UVS FOR TESTING AT THIS POINT**/
+  /**SHOULD NOT BE DIFFICULT TO REIMPLEMENT LATER BUT A BIT UNCLEAR**/
+  // // allocate space for normals
+  // data = new Float32Array(vToNArray(obj.vertexNormals));
+  // shader.enableAttrib(shader.attributes.aNormal.location,
+  //   3, gl.FLOAT, false, 0, 0);
+  // gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
+  // gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+
+  // // tex coords
+  // data = new Float32Array(flatten(obj.uvs));
+  // shader.enableAttrib(shader.attributes.aTexCoord.location,
+  //   2, gl.FLOAT, false, 0, 0);
+  // gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
+  // gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 };
 
 /**
@@ -98,31 +114,57 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
 p5.RendererGL.prototype.drawBuffers = function(gId) {
   this._setDefaultCamera();
   var gl = this.GL;
-  var shaderKey = this._getCurShaderId();
-  var shaderProgram = this.mHash[shaderKey];
-  //vertex position buffer
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
-  gl.vertexAttribPointer(
-    shaderProgram.vertexPositionAttribute,
+  if (this.curShader === this._getImmediateModeShader()) {
+    // looking at the code within the glsl files, I'm not really
+    // sure why these are two different shaders. but, they are,
+    // and if we're drawing in retain mode but the shader is the
+    // immediate mode one, we need to switch.
+    this.setShader(this._getColorShader());
+  }
+  var shader = this.curShader;
+  shader.bindShader();
+
+  /**BINDING ORIGINAL VERTICES**/
+  // //vertex position buffer
+  // gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
+  // shader.enableAttrib(shader.attributes.aPosition.location,
+  //   3, gl.FLOAT, false, 0, 0);
+
+  /**BINDING LINE VERTICES**/
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].lineVertexBuffer);
+  shader.enableAttrib(shader.attributes.aPosition.location,
     3, gl.FLOAT, false, 0, 0);
-  //normal buffer
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
-  gl.vertexAttribPointer(
-    shaderProgram.vertexNormalAttribute,
-    3, gl.FLOAT, false, 0, 0);
-  // uv buffer
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
-  gl.vertexAttribPointer(
-    shaderProgram.textureCoordAttribute,
-    2, gl.FLOAT, false, 0, 0);
+
   //vertex index buffer
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
-  this._setMatrixUniforms(shaderKey);
+
+  /**TURNING OFF NORMALS AND UVS FOR TESTING AT THIS POINT**/
+  /**SHOULD NOT BE DIFFICULT TO REIMPLEMENT LATER BUT A BIT UNCLEAR**/
+  // gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
+  // shader.enableAttrib(shader.attributes.aNormal.location,
+  //   3, gl.FLOAT, false, 0, 0);
+  // // uv buffer
+  // gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
+  // shader.enableAttrib(
+  //   shader.attributes.aTexCoord.location, 2, gl.FLOAT, false, 0, 0);
+
+  if(this.drawMode === 'wireframe') {
+    this._drawElements(gl.LINES, gId);
+  } else {
+    this._drawElements(gl.LINES, gId);
+  }
+  shader.unbindShader();
+  return this;
+};
+
+p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
+  var gl = this.GL;
   gl.drawElements(
-    gl.TRIANGLES, this.gHash[gId].numberOfItems,
+    drawMode, this.gHash[gId].numberOfItems,
     gl.UNSIGNED_SHORT, 0);
   return this;
 };
+
 ///////////////////////////////
 //// UTILITY FUNCTIONS
 //////////////////////////////

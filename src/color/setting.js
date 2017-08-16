@@ -504,6 +504,9 @@ p5.prototype.fill = function() {
  * white rect top middle and noFill rect center. Both 60x60 with black outlines.
  */
 p5.prototype.noFill = function() {
+  if(this._renderer.isP3D) {
+    this._renderer.noFill();
+  }
   this._renderer._setProperty('_doFill', false);
   return this;
 };
