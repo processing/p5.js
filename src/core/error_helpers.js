@@ -407,6 +407,7 @@ function helpForMisusedAtTopLevelCode(e, log) {
 // Exposing this primarily for unit testing.
 p5.prototype._helpForMisusedAtTopLevelCode = helpForMisusedAtTopLevelCode;
 p5.prototype._validateParameters = validateParameters;
+p5._validateParameters = validateParameters;
 
 if (document.readyState !== 'complete') {
   window.addEventListener('error', helpForMisusedAtTopLevelCode, false);

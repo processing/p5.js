@@ -212,7 +212,7 @@ module.exports = function(grunt) {
           run: true,
           log: true,
           logErrors: true,
-          timeout: 50000
+          timeout: 1000000
         }
       },
     },

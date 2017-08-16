@@ -302,7 +302,6 @@ p5.prototype.brightness = function(c) {
  */
 
 p5.prototype.color = function() {
-  //this._validateParameters('color', arguments);
   if (arguments[0] instanceof p5.Color) {
     return arguments[0];  // Do nothing if argument is already a color object.
   } else if (arguments[0] instanceof Array) {
@@ -312,6 +311,7 @@ p5.prototype.color = function() {
       return new p5.Color(this._renderer, arguments[0]);
     }
   } else {
+    p5._validateParameters('color', arguments);
     if (this instanceof p5.Renderer) {
       return new p5.Color(this, arguments);
     } else {
