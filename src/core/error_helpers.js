@@ -56,7 +56,6 @@ function report(message, func, color) {
   } else if (getType(color) === 'number') { // Type to color
     color = typeColors[color];
   }
-  // LM TEMP commenting this out until we get the whole system working
   if (func.substring(0,4) === 'load'){
     console.log(
       '%c> p5.js says: '+message+'%c'+
@@ -126,7 +125,7 @@ p5._friendlyFileLoadError = function (errorType, filePath) {
 *  "ellipse was expecting a number for parameter #1,
 *           received "foo" instead."
 */
-function validateParameters(func, args) {
+p5._validateParameters = function validateParameters(func, args) {
   if (p5.disableFriendlyErrors ||
     typeof(IS_MINIFIED) !== 'undefined') {
     return; // skip FES
@@ -156,7 +155,7 @@ function validateParameters(func, args) {
       p5._friendlyParamError(errorArray[m], func);
     }
   }
-}
+};
 // validateParameters() helper functions:
 // lookupParamDoc() for querying data.json
 function lookupParamDoc(func){
@@ -406,8 +405,7 @@ function helpForMisusedAtTopLevelCode(e, log) {
 
 // Exposing this primarily for unit testing.
 p5.prototype._helpForMisusedAtTopLevelCode = helpForMisusedAtTopLevelCode;
-p5.prototype._validateParameters = validateParameters;
-p5._validateParameters = validateParameters;
+p5.prototype._validateParameters = p5.validateParameters;
 
 if (document.readyState !== 'complete') {
   window.addEventListener('error', helpForMisusedAtTopLevelCode, false);
