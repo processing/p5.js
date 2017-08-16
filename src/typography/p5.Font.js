@@ -373,7 +373,9 @@ p5.Font.prototype._renderPath = function(line, x, y, options) {
   if (pg._doFill) {
 
     // if fill hasn't been set by user, use default-text-fill
-    ctx.fillStyle = pg._fillSet ? ctx.fillStyle : constants._DEFAULT_TEXT_FILL;
+    if (!pg._fillSet) {
+      pg._setFill(constants._DEFAULT_TEXT_FILL);
+    }
     ctx.fill();
   }
 

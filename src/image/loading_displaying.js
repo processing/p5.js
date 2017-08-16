@@ -66,8 +66,8 @@ require('../core/error_helpers');
 p5.prototype.loadImage = function(path, successCallback, failureCallback) {
   var img = new Image();
   var pImg = new p5.Image(1, 1, this);
-  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
+  var self = this;
   img.onload = function() {
     pImg.width = pImg.canvas.width = img.width;
     pImg.height = pImg.canvas.height = img.height;
@@ -78,15 +78,12 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     if (typeof successCallback === 'function') {
       successCallback(pImg);
     }
-    if (decrementPreload && (successCallback !== decrementPreload)) {
-      decrementPreload();
-    }
+
+    self._decrementPreload();
   };
   img.onerror = function(e) {
     p5._friendlyFileLoadError(0,img.src);
-    // don't get failure callback mixed up with decrementPreload
-    if ((typeof failureCallback === 'function') &&
-      (failureCallback !== decrementPreload)) {
+    if (typeof failureCallback === 'function') {
       failureCallback(e);
     }
   };
