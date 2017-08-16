@@ -1,4 +1,8 @@
 suite('String functions', function() {
+  var myp5 = new p5(function( p ) {
+    p.setup = function() {};
+    p.draw = function() {};
+  });
 
   var result;
 
@@ -11,7 +15,7 @@ suite('String functions', function() {
       test('should return joined string', function() {
         var arr = ['foo', 'bar'];
         var sep = '-';
-        result = join(arr, sep);
+        result = myp5.join(arr, sep);
         assert.equal(result, 'foo-bar');
       });
     });
@@ -26,7 +30,7 @@ suite('String functions', function() {
       test('should return correct index of match strings', function() {
         var str = 'Where is the duckling in this ducky duck string?';
         var regexp = 'duck';
-        result = match(str, regexp);
+        result = myp5.match(str, regexp);
         assert.equal(result.index, 13);
       });
     });
@@ -41,7 +45,7 @@ suite('String functions', function() {
       test('should return correct array of strings', function() {
         var str = 'Where is the duckling in this ducky duck string?';
         var regexp = 'duck';
-        result = matchAll(str, regexp);
+        result = myp5.matchAll(str, regexp);
         assert.equal(result.length, 3);
       });
     });
@@ -55,13 +59,13 @@ suite('String functions', function() {
       });
       test('should return correct string', function() {
         var num = 3.141516;
-        result = nf(num, 2);
+        result = myp5.nf(num, 2);
         assert.equal(result, '03.141516');
       });
-      test('FES: false positive case (#1)', function() {
+      test('should return correct string', function() {
         var num = 3.141516;
-        result = nf(num, '2'); // automatic conversion?
-        assert.equal(result, '03.141516');
+        result = myp5.nf(num, '2', '2'); // automatic conversion?
+        assert.equal(result, '03.14');
       });
     });
   });
@@ -74,12 +78,12 @@ suite('String functions', function() {
       });
       test('should return correct string', function() {
         var num = 32000;
-        result = nfc(num, 3);
+        result = myp5.nfc(num, 3);
         assert.equal(result, '32,000.000');
       });
-      test('FES: false positive case (#1)', function() {
+      test('should return correct string', function() {
         var num = 32000;
-        result = nfc(num, '3'); // automatic conversion?
+        result = myp5.nfc(num, '3'); // automatic conversion?
         assert.equal(result, '32,000.000');
       });
     });
@@ -93,12 +97,12 @@ suite('String functions', function() {
       });
       test('should return correct string', function() {
         var num = -32000;
-        result = nfp(num, 3);
+        result = myp5.nfp(num, 3);
         assert.equal(result, '-32000');
       });
       test('should return correct string', function() {
         var num = 32000;
-        result = nfp(num, 3); // automatic conversion?
+        result = myp5.nfp(num, 3); // automatic conversion?
         assert.equal(result, '+32000');
       });
     });
@@ -112,12 +116,12 @@ suite('String functions', function() {
       });
       test('should return correct string', function() {
         var num = -32000;
-        result = nfs(num, 3);
+        result = myp5.nfs(num, 3);
         assert.equal(result, '-32000');
       });
       test('should return correct string', function() {
         var num = 32000;
-        result = nfs(num, 3); // automatic conversion?
+        result = myp5.nfs(num, 3); // automatic conversion?
         assert.equal(result, ' 32000');
       });
     });
@@ -132,7 +136,7 @@ suite('String functions', function() {
       test('should return correct index of match strings', function() {
         var str = 'parsely, sage, rosemary, thyme';
         var regexp = ',';
-        result = split(str, regexp);
+        result = myp5.split(str, regexp);
         assert.equal(result.length, 4);
       });
     });
@@ -147,7 +151,7 @@ suite('String functions', function() {
       test('should return correct index of match strings', function() {
         var str = 'parsely, sage, rosemary, thyme';
         var regexp = ',';
-        result = splitTokens(str, regexp);
+        result = myp5.splitTokens(str, regexp);
         assert.equal(result.length, 4);
       });
     });
@@ -161,7 +165,7 @@ suite('String functions', function() {
       });
       test('should return correct strings', function() {
         var str = '     oh so roomy     ';
-        result = trim(str);
+        result = myp5.trim(str);
         assert.equal(result, 'oh so roomy');
       });
     });

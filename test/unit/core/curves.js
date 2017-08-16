@@ -40,12 +40,12 @@ suite('Curves', function() {
         assert.ok(bezierPoint);
         assert.typeOf(bezierPoint, 'function');
       });
-      test('should return a number', function() {
-        result = bezierPoint();
+      test('should return a number: missing param #0~4', function() {
+        result = myp5.bezierPoint();
         assert.typeOf(result, 'number');
       });
       test('should return the correct point on a Bezier Curve', function() {
-        result = bezierPoint(85, 10, 90, 15, 0.5);
+        result = myp5.bezierPoint(85, 10, 90, 15, 0.5);
         assert.equal(result, 50);
         assert.notEqual(result, -1);
       });
@@ -55,17 +55,17 @@ suite('Curves', function() {
   suite('p5.prototype.bezierTangent', function() {
     var bezierTangent = p5.prototype.bezierTangent;
     var result;
-    suite('curveTangent()', function() {
+    suite('bezierTangent()', function() {
       test('should be a function', function() {
         assert.ok(bezierTangent);
         assert.typeOf(bezierTangent, 'function');
       });
-      test('should return a number', function() {
-        result = bezierTangent();
+      test('should return a number: missing param #0~4', function() {
+        result = myp5.bezierTangent();
         assert.typeOf(result, 'number');
       });
       test('should return the correct point on a Bezier Curve', function() {
-        result = bezierTangent(95, 73, 73, 15, 0.5);
+        result = myp5.bezierTangent(95, 73, 73, 15, 0.5);
         assert.equal(result, -60);
       });
     });
@@ -107,12 +107,12 @@ suite('Curves', function() {
         assert.ok(curvePoint);
         assert.typeOf(curvePoint, 'function');
       });
-      test('should return a number', function() {
-        result = curvePoint();
+      test('should return a number: missing param #0~4', function() {
+        result = myp5.curvePoint();
         assert.typeOf(result, 'number');
       });
       test('should return the correct point on a Catmull-Rom Curve', function() {
-        result = curvePoint(5, 5, 73, 73, 0.5);
+        result = myp5.curvePoint(5, 5, 73, 73, 0.5);
         assert.equal(result, 39);
         assert.notEqual(result, -1);
       });
@@ -127,12 +127,12 @@ suite('Curves', function() {
         assert.ok(curveTangent);
         assert.typeOf(curveTangent, 'function');
       });
-      test('should return a number', function() {
-        result = curveTangent();
+      test('should return a number: missing param #0~4', function() {
+        result = myp5.curveTangent();
         assert.typeOf(result, 'number');
       });
       test('should return the correct point on a Catmull-Rom Curve', function() {
-        result = curveTangent(95, 73, 73, 15, 0.5);
+        result = myp5.curveTangent(95, 73, 73, 15, 0.5);
         assert.equal(result, 10);
         assert.notEqual(result, -1);
       });

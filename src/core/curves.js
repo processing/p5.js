@@ -164,7 +164,7 @@ p5.prototype.bezierPoint = function(a, b, c, d, t) {
     args[i] = arguments[i];
   }
   // check with FES:validateParameters
-  p5.prototype._validateParameters('bezierPoint', args);
+  this._validateParameters('bezierPoint', args);
   var adjustedT = 1-args[4];
   return Math.pow(adjustedT,3)*args[0] +
    3*(Math.pow(adjustedT,2))*args[4]*args[1] +
@@ -243,7 +243,7 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
     args[i] = arguments[i];
   }
   // check with FES:validateParameters
-  p5.prototype._validateParameters('bezierTangent', args);
+  this._validateParameters('bezierTangent', args);
   var adjustedT = 1-args[4];
   return 3*args[3]*Math.pow(args[4],2) -
    3*args[2]*Math.pow(args[4],2) +
@@ -463,7 +463,7 @@ p5.prototype.curvePoint = function(a, b, c, d, t) {
     args[i] = arguments[i];
   }
   // check with FES:validateParameters
-  p5.prototype._validateParameters('curvePoint', args);
+  this._validateParameters('curvePoint', args);
   var t3 = args[4]*args[4]*args[4],
     t2 = args[4]*args[4],
     f1 = -0.5 * t3 + t2 - 0.5 * args[4],
@@ -514,7 +514,7 @@ p5.prototype.curveTangent = function(a, b, c, d, t) {
     args[i] = arguments[i];
   }
   // check with FES:validateParameters
-  p5.prototype._validateParameters('curveTangent', args);
+  this._validateParameters('curveTangent', args);
   var t2 = args[4]*args[4],
     f1 = (-3*t2)/2 + 2*args[4] - 0.5,
     f2 = (9*t2)/2 - 5*args[4],

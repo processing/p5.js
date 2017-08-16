@@ -15,7 +15,8 @@ suite('CreatingReading', function() {
     });
     test('alpha(): no friendly-err-msg I', function() {
       assert.doesNotThrow(function() {
-        c = myp5.color('magenta');
+        var string = 'magenta';
+        c = myp5.color(string);
         val = myp5.alpha(c);
         assert.equal(val, 255);
       },
@@ -29,7 +30,7 @@ suite('CreatingReading', function() {
       },
         Error, 'got unwanted exception');
     });
-    test('alpha(): wrong param type at #1', function() {
+    test('alpha(): wrong param type at #0', function() {
       assert.doesNotThrow(function() {
         c = 20;
         val = myp5.alpha(c);

@@ -295,9 +295,14 @@ p5.prototype.brightness = function(c) {
  *                                 and alpha components of the color
  * @return {p5.Color}
  */
+/**
+ * @method color
+ * @param  {p5.Color}     color
+ * @return {p5.Color}
+ */
 
 p5.prototype.color = function() {
-  //p5.prototype._validateParameters('color', arguments);
+  //this._validateParameters('color', arguments);
   if (arguments[0] instanceof p5.Color) {
     return arguments[0];  // Do nothing if argument is already a color object.
   } else if (arguments[0] instanceof Array) {
@@ -424,7 +429,7 @@ p5.prototype.hue = function(c) {
  *
  */
 
-p5.prototype.lerpColor = function() {
+p5.prototype.lerpColor = function(c1, c2, amt) {
   this._validateParameters('lerpColor', arguments);
   var mode = this._renderer._colorMode;
   var maxes = this._renderer._colorMaxes;
@@ -453,7 +458,7 @@ p5.prototype.lerpColor = function() {
   }
 
   // Prevent extrapolation.
-  var amt = Math.max(Math.min(arguments[2], 1), 0);
+  amt = Math.max(Math.min(arguments[2], 1), 0);
 
   // Perform interpolation.
   l0 = this.lerp(fromArray[0], toArray[0], amt);
