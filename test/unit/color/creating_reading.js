@@ -1,4 +1,4 @@
-suite('CreatingReading', function() {
+suite('color/CreatingReading', function() {
   var myp5 = new p5(function( sketch ) {
     sketch.setup = function() {};
     sketch.draw = function() {};

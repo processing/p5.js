@@ -24,6 +24,12 @@ suite('p5.Color', function() {
     test('shouldn\'t set HSLA property before hsb access func is called', function() {
       assert.equal(c.hsla, undefined);
     });
+
+    test('color(): missing param #0 + throws error', function() {
+      expect(function() {
+        c = myp5.color();
+      }).to.throw();
+    });
   });
 
   suite('p5.prototype.color("#rgb")', function() {
