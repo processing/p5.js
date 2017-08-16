@@ -44,16 +44,6 @@ suite('2D Primitives', function() {
         assert.ok(ellipse);
         assert.typeOf(ellipse, 'function');
       });
-      test('should draw', function(done) {
-        myp5.background(155);
-        myp5.fill(0);
-        myp5.ellipse(0, 0, 100, 100);
-
-        testRender('unit/assets/renders/ellipse.png', myp5, function(res) {
-          assert.isTrue(res);
-          done();
-        });
-      });
       test('ellipse(): no friendly-err-msg', function() {
         assert.doesNotThrow(function() {
             myp5.ellipse(0, 0, 100);
@@ -89,16 +79,6 @@ suite('2D Primitives', function() {
         assert.ok(line);
         assert.typeOf(line, 'function');
       });
-      test('should draw', function(done) {
-        myp5.background(155);
-        myp5.fill(0);
-        myp5.line(0, 0, 100, 100);
-
-        testRender('unit/assets/renders/line.png', myp5, function(res) {
-          assert.isTrue(res);
-          done();
-        });
-      });
       test('line(): no friendly-err-msg, 2D', function() {
         assert.doesNotThrow(function() {
             myp5.line(0, 0, 100, 100);
@@ -117,7 +97,7 @@ suite('2D Primitives', function() {
           },
           Error, 'got unwanted exception');
       });
-      test('line(): missing param #4', function() { // this err case escapes
+      test('line(): missing param #4 ', function() { // this err case escapes
         assert.doesNotThrow(function() {
             var x3;
             myp5.line(0, 0, 100, 100, x3, Math.PI);

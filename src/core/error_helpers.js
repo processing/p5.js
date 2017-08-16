@@ -127,6 +127,10 @@ p5._friendlyFileLoadError = function (errorType, filePath) {
 *           received "foo" instead."
 */
 function validateParameters(func, args) {
+  if (p5.disableFriendlyErrors ||
+    typeof(IS_MINIFIED) !== 'undefined') {
+    return; // skip FES
+  }
   var arrDoc = lookupParamDoc(func);
   var errorArray = [];
   var minErrCount = 999999;
@@ -202,10 +206,16 @@ function testParamFormat(args, format){
 // Returns true if PASS, false if FAIL
 function testParamClass(param, types){
   for (var i = 0; i < types.length; i++) {
-    if (param.name === types[i]) {
-      return true;      // class name match, pass
-    } else if (types[i] === 'Constant'){
-      return true;      // accepts any constant, pass
+    if (types[i] === 'Array') {
+      if(param instanceof Array) {
+        return true;
+      }
+    } else {
+      if (param.name === types[i]) {
+        return true;      // class name match, pass
+      } else if (types[i] === 'Constant') {
+        return true;      // accepts any constant, pass
+      }
     }
   }
   return false;
@@ -216,7 +226,7 @@ function testParamType(param, types){
   for (var i = 0; i < types.length; i++) {
     if (typeof(param) === types[i].toLowerCase()) {
       return true;      // type match, pass
-    } else if (types[i] === 'Constant'){
+    } else if (types[i] === 'Constant') {
       return true;      // accepts any constant, pass
     }
   }
@@ -227,21 +237,21 @@ p5._friendlyParamError = function (errorObj, func) {
   var message;
   switch (errorObj.type){
     case 'EMPTY_VAR':
-      message = 'FES: It looks like ' + func +
+      message = 'It looks like ' + func +
         '() received an empty variable in spot #' + errorObj.position +
         ' (zero-based index). If not intentional, this is often a problem' +
         ' with scope: [link to scope].';
       report(message, func, ERR_PARAMS);
       break;
     case 'WRONG_CLASS':
-      message = 'FES: ' + func + '() was expecting ' + errorObj.correctClass +
+      message = func + '() was expecting ' + errorObj.correctClass +
         ' for parameter #' + errorObj.position + ' (zero-based index), received ';
       // Wrap strings in quotes
       message += 'an object with name '+ errorObj.wrongClass +' instead.';
       report(message, func, ERR_PARAMS);
       break;
     case 'WRONG_TYPE':
-      message = 'FES: ' + func + '() was expecting ' + errorObj.correctType +
+      message = func + '() was expecting ' + errorObj.correctType +
         ' for parameter #' + errorObj.position + ' (zero-based index), received ';
       // Wrap strings in quotes
       message += errorObj.wrongType + ' instead.';
@@ -397,6 +407,7 @@ function helpForMisusedAtTopLevelCode(e, log) {
 // Exposing this primarily for unit testing.
 p5.prototype._helpForMisusedAtTopLevelCode = helpForMisusedAtTopLevelCode;
 p5.prototype._validateParameters = validateParameters;
+p5._validateParameters = validateParameters;
 
 if (document.readyState !== 'complete') {
   window.addEventListener('error', helpForMisusedAtTopLevelCode, false);

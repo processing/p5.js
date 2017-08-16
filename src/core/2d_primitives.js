@@ -75,8 +75,8 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  // check with FES:validateParameters
-  this._validateParameters('arc', args);
+
+  p5._validateParameters('arc', args);
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
@@ -171,8 +171,8 @@ p5.prototype.ellipse = function() {
   if (args.length === 3) {
     args.push(args[2]);
   }
-  // check with FES:validateParameters
-  this._validateParameters('ellipse', args);
+
+  p5._validateParameters('ellipse', args);
   // p5 supports negative width and heights for rects
   if (args[2] < 0){args[2] = Math.abs(args[2]);}
   if (args[3] < 0){args[3] = Math.abs(args[3]);}
@@ -246,8 +246,8 @@ p5.prototype.line = function() {
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  // check with FES:validateParameters
-  this._validateParameters('line', args);
+
+  p5._validateParameters('line', args);
   //check whether we should draw a 3d line or 2d
   if (this._renderer.isP3D) {
     this._renderer.line(
@@ -299,8 +299,8 @@ p5.prototype.point = function() {
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  // check with FES:validateParameters
-  this._validateParameters('point', args);
+
+  p5._validateParameters('point', args);
   //check whether we should draw a 3d line or 2d
   if (this._renderer.isP3D) {
     this._renderer.point(
@@ -366,8 +366,8 @@ p5.prototype.quad = function() {
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  // check with FES:validateParameters
-  this._validateParameters('quad', args);
+
+  p5._validateParameters('quad', args);
   if (this._renderer.isP3D) {
     this._renderer.quad(
       args[0],
@@ -466,8 +466,8 @@ p5.prototype.rect = function() {
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return;
   }
-  // check with FES:validateParameters
-  this._validateParameters('rect', args);
+
+  p5._validateParameters('rect', args);
   var vals = canvas.modeAdjust(
     args[0],
     args[1],
@@ -515,8 +515,8 @@ p5.prototype.triangle = function() {
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  // check with FES:validateParameters
-  this._validateParameters('triangle', args);
+
+  p5._validateParameters('triangle', args);
   this._renderer.triangle(args);
   return this;
 };
