@@ -97,7 +97,7 @@ suite('2D Primitives', function() {
           },
           Error, 'got unwanted exception');
       });
-      test('line(): missing param #4', function() { // this err case escapes
+      test('line(): missing param #4 ', function() { // this err case escapes
         assert.doesNotThrow(function() {
             var x3;
             myp5.line(0, 0, 100, 100, x3, Math.PI);
