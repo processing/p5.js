@@ -507,8 +507,11 @@ p5.Renderer2D.prototype.point = function(x, y) {
   } else if(this._getStroke() === styleEmpty){
     return this;
   }
+  var s = this._getStroke();
+  var f = this._getFill();
   x = Math.round(x);
   y = Math.round(y);
+  this._setFill(s);
   if (ctx.lineWidth > 1) {
     ctx.beginPath();
     ctx.arc(
@@ -523,6 +526,7 @@ p5.Renderer2D.prototype.point = function(x, y) {
   } else {
     ctx.fillRect(x, y, 1, 1);
   }
+  this._setFill(f);
 };
 
 p5.Renderer2D.prototype.quad =
