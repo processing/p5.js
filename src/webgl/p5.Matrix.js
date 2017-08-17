@@ -68,6 +68,7 @@ p5.Matrix = function() {
       ]);
     }
   }
+  this.name = 'p5.Matrix';   // for friendly debugger system
   return this;
 };
 
