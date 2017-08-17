@@ -495,6 +495,11 @@ p5.RendererGL.prototype.clear = function() {
  * @todo implement handle for components or vector as args
  */
 p5.RendererGL.prototype.translate = function(x, y, z) {
+  if(x instanceof p5.Vector) {
+    z = x.z;
+    y = x.y;
+    x = x.x;
+  }
   this.uMVMatrix.translate([x,-y,z]);
   return this;
 };
