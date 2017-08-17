@@ -511,6 +511,7 @@ p5.Renderer2D.prototype.point = function(x, y) {
   var f = this._getFill();
   x = Math.round(x);
   y = Math.round(y);
+  // swapping fill color to stroke and back after for correct point rendering
   this._setFill(s);
   if (ctx.lineWidth > 1) {
     ctx.beginPath();
