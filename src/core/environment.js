@@ -78,7 +78,8 @@ if (window.console && console.log) {
  * been displayed since the program started. Inside setup() the value is 0,
  * after the first iteration of draw it is 1, etc.
  *
- * @property frameCount
+ * @property {Number} frameCount
+ * @readOnly
  * @example
  *   <div><code>
  *     function setup() {
@@ -105,7 +106,8 @@ p5.prototype.frameCount = 0;
  * the sketch will accept mouse or keyboard input. This variable is
  * "true" if the window is focused and "false" if not.
  *
- * @property focused
+ * @property {Boolean} focused
+ * @readOnly
  * @example
  * <div><code>
  * // To demonstrate, put two windows side by side.
@@ -139,7 +141,7 @@ p5.prototype.focused = (document.hasFocus());
  * be less than the dimensions of the image.
  *
  * @method cursor
- * @param {Number|Constant} type either ARROW, CROSS, HAND, MOVE, TEXT, or
+ * @param {String|Constant} type either ARROW, CROSS, HAND, MOVE, TEXT, or
  *                               WAIT, or path for image
  * @param {Number}          [x]  the horizontal active spot of the cursor
  * @param {Number}          [y]  the vertical active spot of the cursor
@@ -205,7 +207,11 @@ p5.prototype.cursor = function(type, x, y) {
  * or are non positive also returns current framerate.
  *
  * @method frameRate
- * @param  {Number} [fps] number of frames to be displayed every second
+ * @param  {Number} fps number of frames to be displayed every second
+ * @chainable
+ */
+/**
+ * @method frameRate
  * @return {Number}       current frameRate
  * @example
  *
@@ -308,7 +314,8 @@ p5.prototype.noCursor = function() {
  * System variable that stores the width of the entire screen display. This
  * is used to run a full-screen program on any display size.
  *
- * @property displayWidth
+ * @property {Number} displayWidth
+ * @readOnly
  * @example
  * <div class="norender"><code>
  * createCanvas(displayWidth, displayHeight);
@@ -324,7 +331,8 @@ p5.prototype.displayWidth = screen.width;
  * System variable that stores the height of the entire screen display. This
  * is used to run a full-screen program on any display size.
  *
- * @property displayHeight
+ * @property {Number} displayHeight
+ * @readOnly
  * @example
  * <div class="norender"><code>
  * createCanvas(displayWidth, displayHeight);
@@ -340,7 +348,8 @@ p5.prototype.displayHeight = screen.height;
  * System variable that stores the width of the inner window, it maps to
  * window.innerWidth.
  *
- * @property windowWidth
+ * @property {Number} windowWidth
+ * @readOnly
  * @example
  * <div class="norender"><code>
  * createCanvas(windowWidth, windowHeight);
@@ -355,7 +364,8 @@ p5.prototype.windowWidth = getWindowWidth();
  * System variable that stores the height of the inner window, it maps to
  * window.innerHeight.
  *
- * @property windowHeight
+ * @property {Number} windowHeight
+ * @readOnly
  * @example
  * <div class="norender"><code>
  * createCanvas(windowWidth, windowHeight);
@@ -423,7 +433,8 @@ function getWindowHeight() {
  * variable to the value 320. The value of width defaults to 100 if
  * createCanvas() is not used in a program.
  *
- * @property width
+ * @property {Number} width
+ * @readOnly
  */
 p5.prototype.width = 0;
 
@@ -434,7 +445,8 @@ p5.prototype.width = 0;
  * variable to the value 240. The value of height defaults to 100 if
  * createCanvas() is not used in a program.
  *
- * @property height
+ * @property {Number} height
+ * @readOnly
  */
 p5.prototype.height = 0;
 
@@ -621,7 +633,7 @@ p5.prototype.getURL = function() {
 /**
  * Gets the current URL path as an array.
  * @method getURLPath
- * @return {Array} path components
+ * @return {String[]} path components
  * @example
  * <div class='norender'><code>
  * function setup() {

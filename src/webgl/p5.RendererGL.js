@@ -107,7 +107,6 @@ p5.RendererGL.prototype._update = function() {
 
 /**
  * [background description]
- * @return {[type]} [description]
  */
 p5.RendererGL.prototype.background = function() {
   var gl = this.GL;
@@ -133,7 +132,7 @@ p5.RendererGL.prototype.background = function() {
  * [_initShaders description]
  * @param  {string} vertId [description]
  * @param  {string} fragId [description]
- * @return {[type]}        [description]
+ * @return {Object} the shader program
  */
 p5.RendererGL.prototype._initShaders =
 function(vertId, fragId, isImmediateMode) {
@@ -205,7 +204,8 @@ function(shaderProgram, isImmediateMode) {
  * Sets a shader uniform given a shaderProgram and uniform string
  * @param {String} shaderKey key to material Hash.
  * @param {String} uniform location in shader.
- * @param { Number} data data to bind uniform.  Float data type.
+ * @param {Number} data data to bind uniform.  Float data type.
+ * @chainable
  * @todo currently this function sets uniform1f data.
  * Should generalize function to accept any uniform
  * data type.
@@ -288,7 +288,7 @@ p5.RendererGL.prototype._getCurShaderId = function(){
  * @param  {Number}            [v2] optional: green or saturation value
  * @param  {Number}            [v3] optional: blue or brightness value
  * @param  {Number}            [a]  optional: opacity
- * @return {p5}                the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -359,7 +359,7 @@ p5.RendererGL.prototype._strokeCheck = function(){
 /**
  * [strokeWeight description]
  * @param  {Number} pointSize stroke point size
- * @return {[type]}           [description]
+ * @chainable
  * @todo  strokeWeight currently works on points only.
  * implement on all wireframes and strokes.
  */
@@ -381,9 +381,8 @@ p5.RendererGL.prototype.materialInHash = function(mId){
 
 /**
  * [resize description]
- * @param  {[type]} w [description]
- * @param  {[tyoe]} h [description]
- * @return {[type]}   [description]
+ * @param  {Number} w [description]
+ * @param  {Number} h [description]
  */
 p5.RendererGL.prototype.resize = function(w,h) {
   var gl = this.GL;
@@ -415,10 +414,10 @@ p5.RendererGL.prototype.clear = function() {
 
 /**
  * [translate description]
- * @param  {[type]} x [description]
- * @param  {[type]} y [description]
- * @param  {[type]} z [description]
- * @return {[type]}   [description]
+ * @param  {Number} x [description]
+ * @param  {Number} y [description]
+ * @param  {Number} z [description]
+ * @chainable
  * @todo implement handle for components or vector as args
  */
 p5.RendererGL.prototype.translate = function(x, y, z) {
@@ -431,7 +430,7 @@ p5.RendererGL.prototype.translate = function(x, y, z) {
  * @param  {Number | p5.Vector | Array} x [description]
  * @param  {Number} [y] y-axis scalar
  * @param  {Number} [z] z-axis scalar
- * @return {this}   [description]
+ * @chainable
  */
 p5.RendererGL.prototype.scale = function(x,y,z) {
   this.uMVMatrix.scale([x,y,z]);
@@ -468,7 +467,6 @@ p5.RendererGL.prototype.push = function() {
 
 /**
  * [pop description]
- * @return {[type]} [description]
  */
 p5.RendererGL.prototype.pop = function() {
   if (uMVMatrixStack.length === 0) {

@@ -68,20 +68,17 @@ p5.Vector = function() {
   }
   /**
    * The x component of the vector
-   * @property x
-   * @type {Number}
+   * @property x {Number}
    */
   this.x = x;
   /**
    * The y component of the vector
-   * @property y
-   * @type {Number}
+   * @property y {Number}
    */
   this.y = y;
   /**
    * The z component of the vector
-   * @property z
-   * @type {Number}
+   * @property z {Number}
    */
   this.z = z;
   this.name = 'p5.Vector';   // for friendly debugger system
@@ -109,11 +106,11 @@ p5.Vector.prototype.toString = function p5VectorToString() {
  * Sets the x, y, and z component of the vector using two or three separate
  * variables, the data from a p5.Vector, or the values from a float array.
  * @method set
- *
  * @param {Number|p5.Vector|Array} [x] the x component of the vector or a
  *                                     p5.Vector or an Array
  * @param {Number}                 [y] the y component of the vector
  * @param {Number}                 [z] the z component of the vector
+ * @chainable
  * @example
  * <div class="norender">
  * <code>
@@ -177,14 +174,13 @@ p5.Vector.prototype.copy = function () {
  * acts directly on the vector. See the examples for more context.
  *
  * @method add
- * @chainable
  * @param  {Number|p5.Vector|Array} x   the x component of the vector to be
  *                                      added or a p5.Vector or an Array
  * @param  {Number}                 [y] the y component of the vector to be
  *                                      added
  * @param  {Number}                 [z] the z component of the vector to be
  *                                      added
- * @return {p5.Vector}                  the p5.Vector object.
+ * @chainable
  * @example
  * <div class="norender">
  * <code>
@@ -230,12 +226,11 @@ p5.Vector.prototype.add = function (x, y, z) {
  * other acts directly on the vector. See the examples for more context.
  *
  * @method sub
- * @chainable
  * @param  {Number|p5.Vector|Array} x   the x component of the vector or a
  *                                      p5.Vector or an Array
  * @param  {Number}                 [y] the y component of the vector
  * @param  {Number}                 [z] the z component of the vector
- * @return {p5.Vector}                  p5.Vector object.
+ * @chainable
  * @example
  * <div class="norender">
  * <code>
@@ -281,9 +276,8 @@ p5.Vector.prototype.sub = function (x, y, z) {
  * directly. See the examples for more context.
  *
  * @method mult
- * @chainable
  * @param  {Number}    n the number to multiply with the vector
- * @return {p5.Vector} a reference to the p5.Vector object (allow chaining)
+ * @chainable
  * @example
  * <div class="norender">
  * <code>
@@ -315,9 +309,8 @@ p5.Vector.prototype.mult = function (n) {
  * See the examples for more context.
  *
  * @method div
- * @chainable
  * @param  {number}    n the number to divide the vector by
- * @return {p5.Vector} a reference to the p5.Vector object (allow chaining)
+ * @chainable
  * @example
  * <div class="norender">
  * <code>
@@ -522,7 +515,7 @@ p5.Vector.prototype.normalize = function () {
  *
  * @method limit
  * @param  {Number}    max the maximum magnitude for the vector
- * @return {p5.Vector}     the modified p5.Vector
+ * @chainable
  * @example
  * <div class="norender">
  * <code>
@@ -549,7 +542,7 @@ p5.Vector.prototype.limit = function (max) {
  *
  * @method setMag
  * @param  {number}    len the new length for this vector
- * @return {p5.Vector}     the modified p5.Vector
+ * @chainable
  * @example
  * <div class="norender">
  * <code>
@@ -602,7 +595,7 @@ p5.Vector.prototype.heading = function () {
  *
  * @method rotate
  * @param  {number}    angle the angle of rotation
- * @return {p5.Vector} the modified p5.Vector
+ * @chainable
  * @example
  * <div class="norender">
  * <code>
@@ -656,13 +649,20 @@ p5.Vector.prototype.angleBetween = function (v) {
  * Linear interpolate the vector to another vector
  *
  * @method lerp
- * @param  {p5.Vector} x   the x component or the p5.Vector to lerp to
- * @param  {p5.Vector} [y] y the y component
- * @param  {p5.Vector} [z] z the z component
+ * @param  {p5.Vector} x   the x component
+ * @param  {p5.Vector} y   the y component
+ * @param  {p5.Vector} z   the z component
  * @param  {Number}    amt the amount of interpolation; some value between 0.0
  *                         (old vector) and 1.0 (new vector). 0.1 is very near
  *                         the new vector. 0.5 is halfway in between.
- * @return {p5.Vector}     the modified p5.Vector
+ * @chainable
+ */
+/**
+ * @method lerp
+ * @param  {p5.Vector} v   the p5.Vector to lerp to
+ * @param  {Number}    amt
+ * @chainable
+ *
  * @example
  * <div class="norender">
  * <code>
@@ -699,7 +699,7 @@ p5.Vector.prototype.lerp = function (x, y, z, amt) {
  * array.
  *
  * @method array
- * @return {Array} an Array with the 3 values
+ * @return {Number[]} an Array with the 3 values
  * @example
  * <div class = "norender"><code>
  * function setup() {
@@ -897,14 +897,19 @@ p5.Vector.random3D = function () {
   }
 };
 
-
+// Adds two vectors together and returns a new one.
 /**
- * Adds two vectors together and returns a new one.
- *
+ * @method add
  * @static
  * @param  {p5.Vector} v1 a p5.Vector to add
  * @param  {p5.Vector} v2 a p5.Vector to add
- * @param  {p5.Vector} target if undefined a new vector will be created
+ * @param  {p5.Vector} target the vector to receive the result
+ */
+/**
+ * @method add
+ * @static
+ * @param  {p5.Vector} v1
+ * @param  {p5.Vector} v2
  * @return {p5.Vector} the resulting p5.Vector
  *
  */
@@ -919,14 +924,22 @@ p5.Vector.add = function (v1, v2, target) {
   return target;
 };
 
-/**
+/*
  * Subtracts one p5.Vector from another and returns a new one.  The second
  * vector (v2) is subtracted from the first (v1), resulting in v1-v2.
- *
+ */
+/**
+ * @method sub
  * @static
  * @param  {p5.Vector} v1 a p5.Vector to subtract from
  * @param  {p5.Vector} v2 a p5.Vector to subtract
  * @param  {p5.Vector} target if undefined a new vector will be created
+ */
+/**
+ * @method sub
+ * @static
+ * @param  {p5.Vector} v1
+ * @param  {p5.Vector} v2
  * @return {p5.Vector} the resulting p5.Vector
  */
 
@@ -943,11 +956,19 @@ p5.Vector.sub = function (v1, v2, target) {
 
 /**
  * Multiplies a vector by a scalar and returns a new vector.
- *
+ */
+/**
+ * @method mult
  * @static
- * @param  {p5.Vector} v the p5.Vector to multiply
- * @param  {Number}  n the scalar
+ * @param  {p5.Vector} v the vector to multiply
+ * @param  {Number}  n
  * @param  {p5.Vector} target if undefined a new vector will be created
+ */
+/**
+ * @method mult
+ * @static
+ * @param  {p5.Vector} v
+ * @param  {Number}  n
  * @return {p5.Vector}  the resulting new p5.Vector
  */
 p5.Vector.mult = function (v, n, target) {
@@ -962,11 +983,19 @@ p5.Vector.mult = function (v, n, target) {
 
 /**
  * Divides a vector by a scalar and returns a new vector.
- *
+ */
+/**
+ * @method div
  * @static
- * @param  {p5.Vector} v the p5.Vector to divide
- * @param  {Number}  n the scalar
+ * @param  {p5.Vector} v the vector to divide
+ * @param  {Number}  n
  * @param  {p5.Vector} target if undefined a new vector will be created
+ */
+/**
+ * @method div
+ * @static
+ * @param  {p5.Vector} v
+ * @param  {Number}  n
  * @return {p5.Vector} the resulting new p5.Vector
  */
 p5.Vector.div = function (v, n, target) {
@@ -982,7 +1011,9 @@ p5.Vector.div = function (v, n, target) {
 
 /**
  * Calculates the dot product of two vectors.
- *
+ */
+/**
+ * @method dot
  * @static
  * @param  {p5.Vector} v1 the first p5.Vector
  * @param  {p5.Vector} v2 the second p5.Vector
@@ -994,7 +1025,9 @@ p5.Vector.dot = function (v1, v2) {
 
 /**
  * Calculates the cross product of two vectors.
- *
+ */
+/**
+ * @method cross
  * @static
  * @param  {p5.Vector} v1 the first p5.Vector
  * @param  {p5.Vector} v2 the second p5.Vector
@@ -1007,7 +1040,9 @@ p5.Vector.cross = function (v1, v2) {
 /**
  * Calculates the Euclidean distance between two points (considering a
  * point as a vector object).
- *
+ */
+/**
+ * @method dist
  * @static
  * @param  {p5.Vector} v1 the first p5.Vector
  * @param  {p5.Vector} v2 the second p5.Vector
@@ -1020,13 +1055,22 @@ p5.Vector.dist = function (v1,v2) {
 /**
  * Linear interpolate a vector to another vector and return the result as a
  * new vector.
- *
+ */
+/**
+ * @method lerp
  * @static
- * @param {p5.Vector} v1 a starting p5.Vector
- * @param {p5.Vector} v2 the p5.Vector to lerp to
- * @param {Number}       the amount of interpolation; some value between 0.0
- *                       (old vector) and 1.0 (new vector). 0.1 is very near
- *                       the new vector. 0.5 is halfway in between.
+ * @param {p5.Vector} v1
+ * @param {p5.Vector} v2
+ * @param {Number} amt
+ * @param {p5.Vector} target if undefined a new vector will be created
+ */
+/**
+ * @method lerp
+ * @static
+ * @param {p5.Vector} v1
+ * @param {p5.Vector} v2
+ * @param {Number} amt
+ * @return {Number}      the lerped value
  */
 p5.Vector.lerp = function (v1, v2, amt, target) {
   if (!target) {
@@ -1039,6 +1083,9 @@ p5.Vector.lerp = function (v1, v2, amt, target) {
 };
 
 /**
+ * @method mag
+ * @param {p5.Vector} vecT the vector to return the magnitude of
+ * @return {Number}        the magnitude of vecT
  * @static
  */
 p5.Vector.mag = function (vecT){

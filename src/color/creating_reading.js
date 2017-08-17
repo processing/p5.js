@@ -126,10 +126,12 @@ p5.prototype.brightness = function(c) {
  * as a grayscale value. Add a second value, and it will be used for alpha
  * transparency. When three values are specified, they are interpreted as
  * either RGB or HSB values. Adding a fourth value applies alpha
- * transparency. If a single string parameter is provided it will be
- * interpreted as a CSS-compatible color string.
- *
- * Colors are stored as Numbers or Arrays.
+ * transparency.
+ * <br><br>
+ * If a single string argument is provided, RGB, RGBA and Hex CSS color
+ * strings and all named color strings are supported. In this case, an alpha
+ * number value as a second argument is not supported, the RGBA form should be
+ * used.
  *
  * @method color
  * @param  {Number}        gray    number specifying value between white
@@ -283,6 +285,7 @@ p5.prototype.brightness = function(c) {
  * @param  {Number}        [alpha]
  * @return {p5.Color}
  */
+
 /**
  * @method color
  * @param  {String}        value   a color string
@@ -398,8 +401,8 @@ p5.prototype.hue = function(c) {
  * The way that colours are interpolated depends on the current color mode.
  *
  * @method lerpColor
- * @param {p5.Color} c1  interpolate from this color
- * @param {p5.Color} c2  interpolate to this color
+ * @param  {p5.Color} c1  interpolate from this color
+ * @param  {p5.Color} c2  interpolate to this color
  * @param  {Number}       amt number between 0 and 1
  * @return {p5.Color}     interpolated color
  * @example
@@ -459,6 +462,14 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
 
   // Prevent extrapolation.
   amt = Math.max(Math.min(arguments[2], 1), 0);
+
+  // Define lerp here itself if user isn't using math module.
+  // Maintains the definition as found in math/calculation.js
+  if(typeof this.lerp === 'undefined') {
+    this.lerp = function (start, stop, amt) {
+      return amt*(stop-start)+start;
+    };
+  }
 
   // Perform interpolation.
   l0 = this.lerp(fromArray[0], toArray[0], amt);

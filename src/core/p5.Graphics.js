@@ -17,9 +17,10 @@ var constants = require('./constants');
  * @class p5.Graphics
  * @constructor
  * @extends p5.Element
- * @param {String} elt DOM node that is wrapped
- * @param {Object} [pInst] pointer to p5 instance
- * @param {Boolean} whether we're using it as main canvas
+ * @param {Number} w            width
+ * @param {Number} h            height
+ * @param {Constant} renderer   the renderer to use, either P2D or WEBGL
+ * @param {p5} [pInst]          pointer to p5 instance
  */
 p5.Graphics = function(w, h, renderer, pInst) {
 

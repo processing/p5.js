@@ -107,10 +107,16 @@ p5.prototype.createImage = function(width, height) {
  *  file immediately, or prompt the user with a dialogue window.
  *
  *  @method saveCanvas
- *  @param  {Canvas} [selectedCanvas] a variable representing a
- *                             specific html5 canvas (optional)
+ *  @param  {p5.Element|HTMLCanvasElement} selectedCanvas   a variable
+ *                                  representing a specific html5 canvas (optional)
  *  @param  {String} [filename]
- *  @param  {String} [extension] 'jpg' or 'png'
+ *  @param  {String} [extension]      'jpg' or 'png'
+*/
+/**
+ *  @method saveCanvas
+ *  @param  {String} [filename]
+ *  @param  {String} [extension]
+ *
  *  @example
  *  <div class='norender'><code>
  *  function setup() {
@@ -239,7 +245,7 @@ p5.prototype.saveCanvas = function() {
  *  @param  {String}   extension 'jpg' or 'png'
  *  @param  {Number}   duration  Duration in seconds to save the frames for.
  *  @param  {Number}   framerate  Framerate to save the frames in.
- *  @param  {Function} [callback] A callback function that will be executed
+ *  @param  {function(Array)} [callback] A callback function that will be executed
                                   to handle the image data. This function
                                   should accept an array as argument. The
                                   array will contain the specified number of

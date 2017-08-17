@@ -13,8 +13,10 @@ var p5 = require('../core/core');
  * The system variable deviceOrientation always contains the orientation of
  * the device. The value of this variable will either be set 'landscape'
  * or 'portrait'. If no data is available it will be set to 'undefined'.
+ * either LANDSCAPE or PORTRAIT.
  *
- * @property deviceOrientation
+ * @property {Constant} deviceOrientation
+ * @readOnly
  */
 p5.prototype.deviceOrientation = undefined;
 
@@ -22,7 +24,8 @@ p5.prototype.deviceOrientation = undefined;
  * The system variable accelerationX always contains the acceleration of the
  * device along the x axis. Value is represented as meters per second squared.
  *
- * @property accelerationX
+ * @property {Number} accelerationX
+ * @readOnly
  */
 p5.prototype.accelerationX = 0;
 
@@ -30,7 +33,8 @@ p5.prototype.accelerationX = 0;
  * The system variable accelerationY always contains the acceleration of the
  * device along the y axis. Value is represented as meters per second squared.
  *
- * @property accelerationY
+ * @property {Number} accelerationY
+ * @readOnly
  */
 p5.prototype.accelerationY = 0;
 
@@ -38,7 +42,8 @@ p5.prototype.accelerationY = 0;
  * The system variable accelerationZ always contains the acceleration of the
  * device along the z axis. Value is represented as meters per second squared.
  *
- * @property accelerationZ
+ * @property {Number} accelerationZ
+ * @readOnly
  */
 p5.prototype.accelerationZ = 0;
 
@@ -47,7 +52,8 @@ p5.prototype.accelerationZ = 0;
  * device along the x axis in the frame previous to the current frame. Value
  * is represented as meters per second squared.
  *
- * @property pAccelerationX
+ * @property {Number} pAccelerationX
+ * @readOnly
  */
 p5.prototype.pAccelerationX = 0;
 
@@ -56,7 +62,8 @@ p5.prototype.pAccelerationX = 0;
  * device along the y axis in the frame previous to the current frame. Value
  * is represented as meters per second squared.
  *
- * @property pAccelerationY
+ * @property {Number} pAccelerationY
+ * @readOnly
  */
 p5.prototype.pAccelerationY = 0;
 
@@ -65,7 +72,8 @@ p5.prototype.pAccelerationY = 0;
  * device along the z axis in the frame previous to the current frame. Value
  * is represented as meters per second squared.
  *
- * @property pAccelerationZ
+ * @property {Number} pAccelerationZ
+ * @readOnly
  */
 p5.prototype.pAccelerationZ = 0;
 
@@ -105,7 +113,8 @@ p5.prototype._updatePAccelerations = function(){
  * </code>
  * </div>
  *
- * @property rotationX
+ * @property {Number} rotationX
+ * @readOnly
  *
  * @alt
  * red horizontal line right, green vertical line bottom. black background.
@@ -138,7 +147,8 @@ p5.prototype.rotationX = 0;
  * </code>
  * </div>
  *
- * @property rotationY
+ * @property {Number} rotationY
+ * @readOnly
  *
  * @alt
  * red horizontal line right, green vertical line bottom. black background.
@@ -173,7 +183,8 @@ p5.prototype.rotationY = 0;
  * </code>
  * </div>
  *
- * @property rotationZ
+ * @property {Number} rotationZ
+ * @readOnly
  *
  * @alt
  * red horizontal line right, green vertical line bottom. black background.
@@ -218,7 +229,8 @@ p5.prototype.rotationZ = 0;
  * no image to display.
  *
  *
- * @property pRotationX
+ * @property {Number} pRotationX
+ * @readOnly
  */
 p5.prototype.pRotationX = 0;
 
@@ -260,7 +272,8 @@ p5.prototype.pRotationX = 0;
  * no image to display.
  *
  *
- * @property pRotationY
+ * @property {Number} pRotationY
+ * @readOnly
  */
 p5.prototype.pRotationY = 0;
 
@@ -302,7 +315,8 @@ p5.prototype.pRotationY = 0;
  * no image to display.
  *
  *
- * @property pRotationZ
+ * @property {Number} pRotationZ
+ * @readOnly
  */
 p5.prototype.pRotationZ = 0;
 

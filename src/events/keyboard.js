@@ -19,7 +19,8 @@ var downKeys = {};
  * The boolean system variable keyIsPressed is true if any key is pressed
  * and false if no keys are pressed.
  *
- * @property keyIsPressed
+ * @property {Boolean} keyIsPressed
+ * @readOnly
  * @example
  * <div>
  * <code>
@@ -48,7 +49,8 @@ p5.prototype.keyIsPressed = false; // khan
  * is best to use it within keyTyped(). For non-ASCII keys, use the keyCode
  * variable.
  *
- * @property key
+ * @property {String} key
+ * @readOnly
  * @example
  * <div><code>
  * // Click any key to display it!
@@ -77,7 +79,8 @@ p5.prototype.key = '';
  * You can also check for custom keys by looking up the keyCode of any key
  * on a site like this: <a href="http://keycode.info/">keycode.info</a>.
  *
- * @property keyCode
+ * @property {Number} keyCode
+ * @readOnly
  * @example
  * <div><code>
  * var fillVal = 126;
