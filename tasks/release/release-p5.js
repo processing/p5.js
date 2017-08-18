@@ -7,7 +7,7 @@ module.exports = function(grunt) {
     'releaseIt': {
       'options': {
         'non-interactive': true,
-        'verbose': true,
+        // 'dry-run': true,
         'pkgFiles': ['package.json'],
         'increment': '',
         'buildCommand': 'grunt yui && grunt build',
@@ -19,11 +19,11 @@ module.exports = function(grunt) {
           'pushRepo': 'origin easing-up-the-release-process' //change this to master before PR
         },
         'dist': {
-        	'repo': false
+        	'repo': false,
+          'baseDir': false
         },
         'npm': {
-          'publish': false,
-          'publishPath': 'lib/'
+          'publish': true
         }
       }
     },
