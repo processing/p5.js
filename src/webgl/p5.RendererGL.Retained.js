@@ -160,7 +160,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
 
 p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
   var gl = this.GL;
-  gl.drawArrays(gl.LINES, 0, this.gHash[gId].lineVertexCount);
+  gl.drawArrays(drawMode, 0, this.gHash[gId].lineVertexCount);
   /*
   gl.drawElements(
     drawMode, this.gHash[gId].numberOfItems,

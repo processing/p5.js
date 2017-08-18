@@ -171,24 +171,48 @@ p5.Geometry.prototype.averagePoleNormals = function() {
 
 /**THIS ACHIEVES IDENTICAL RESULTS TO ABOVE BUT RESEMBLES PROCESSING MORE**/
 p5.Geometry.prototype._makeTriangleEdges = function() {
-      for(var i = 0; i <= this.vertices.length/3; i++) {
+  if (Array.isArray(this.strokeIndices)) {
+    for (var index of this.strokeIndices) {
+      this.edges.push(index);
+    }
+  }
+  else {
+    for (var face of this.faces) {
+      this._addEdge(face[0], face[1]);
+      this._addEdge(face[1], face[2]);
+      this._addEdge(face[2], face[0]);
+    }
+  }
+
+
+  /*
+      for(var i = 0; i < this.vertices.length/3; i++) {
         var i0 = 3 * i;
         var i1 = 3 * i + 1;
         var i2 = 3 * i + 2;
         if(this.vertices.length > i1)
           this._addEdge(i0, i1, true, false);
+        // else
+        //   this._addEdge(3, 0);
         if(this.vertices.length > i2)
         {
           this._addEdge(i1, i2, false, false);
-          this._addEdge(i2, i0, false, false);
+          this._addEdge(i2, i0, false, true);
         }
+        // else
+        // {
+        //   this._addEdge(0,2);
+        //   this._addEdge(2,3);
+        // }
+        // console.log('HEREER');
       }
+      */
   return this;
 };
 
 p5.Geometry.prototype._addEdge = function(i, j, start, end) {
   var edge = [i, j];
-  edge.push(start ? 1 : 0) + 2 * (end ? 1 : 0);
+  // edge.push((start ? 1 : 0) + 2 * (end ? 1 : 0));
   this.edges.push(edge);
 };
 
@@ -212,7 +236,7 @@ p5.Geometry.prototype._edgesToVertices = function() {
     // Go ahead and spread vertices out based on their orientation.
     // Something like:
     var a, b, c, d;
-    var halfWidth = 10.0; // @todo parametrize line width
+    var halfWidth = 1.0; // @todo parametrize line width
     var begin = this.vertices[this.edges[i][0]];
     var end = this.vertices[this.edges[i][1]];
     var dir = end.copy().sub(begin).normalize();
@@ -226,8 +250,9 @@ p5.Geometry.prototype._edgesToVertices = function() {
     c = end.copy().add(offset.x, offset.y, offset.z);
     d = end.copy().sub(offset.x, offset.y, offset.z);
     // store([a, b, c]); // put vertices into array in order
-    store([a, b, b, c, c, a]);
-    store([c, b, b, d, d, c]);
+    store([a, b, c, c, b, d]);
+    // store([a, b, b, c, c, a]);
+    // store([c, b, b, d, d, c]);
 
     // this.lineVertices[i] = [];
     // this.lineVertices[i][0] = this.vertices[this.edges[i][0]].array();

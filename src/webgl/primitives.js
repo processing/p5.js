@@ -74,8 +74,10 @@ p5.prototype.plane = function(){
     var planeGeom =
     new p5.Geometry(detailX, detailY, _plane);
     planeGeom
-      .computeFaces()
-      .computeNormals();
+       .computeFaces()
+       .computeNormals()
+      ._makeTriangleEdges()
+      ._edgesToVertices();
     this._renderer.createBuffers(gId, planeGeom);
     this._renderer.newShader = false;
   }
@@ -134,6 +136,11 @@ p5.prototype.box = function(){
         [0, 2, 1, 3],// 0, 0, -1],// -z
         [4, 5, 6, 7]// 0, 0, +1] // +z
       ];
+      var strokeIndices = [
+        [0, 4],
+        [2, 6],
+      ];
+      this.strokeIndices = strokeIndices;
       var id=0;
       for (var i = 0; i < cubeIndices.length; i++) {
         var cubeIndex = cubeIndices[i];
@@ -153,8 +160,8 @@ p5.prototype.box = function(){
         }
         /**THIS IS HOW FACES WERE ORIGINALLY CALCULATED FOR BOX***/
         /**TEMPORARILY DOING FACE CALCULATION IN _edgesToVertices**/
-        // this.faces.push([v, v + 1, v + 2]);
-        // this.faces.push([v + 2, v + 1, v + 3]);
+        this.faces.push([v, v + 1, v + 2]);
+        this.faces.push([v + 2, v + 1, v + 3]);
       }
     };
     var boxGeom = new p5.Geometry(detailX,detailY, _box);
@@ -229,8 +236,8 @@ p5.prototype.sphere = function(){
     };
     var sphereGeom = new p5.Geometry(detailX, detailY, _sphere);
     sphereGeom
-      // .computeFaces()
-      // .computeNormals()
+       .computeFaces()
+       .computeNormals()
       ._makeTriangleEdges()
       ._edgesToVertices();
       // .averageNormals()
