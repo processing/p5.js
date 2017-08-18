@@ -193,41 +193,56 @@ p5.Geometry.prototype._addEdge = function(i, j, start, end) {
 };
 
 p5.Geometry.prototype._edgesToVertices = function() {
-  for(var i = 0; i < this.edges.length; i++)
-  {
-    this.lineVertices[i] = [];
-    this.lineVertices[i][0] = this.vertices[this.edges[i][0]].array();
-    this.lineVertices[i][0][0] *= 1.1; /**THESE LINES ARE FAKING WIDTH WITH EARLY TESTING**/
-    this.lineVertices[i][1] = this.vertices[this.edges[i][0]].array();
-    this.lineVertices[i][1][0] *= 0.9;
-    this.lineVertices[i][2] = this.vertices[this.edges[i][1]].array();
-    this.lineVertices[i][2][0] *= 1.1;
-    this.lineVertices[i][3] = this.vertices[this.edges[i][1]].array();
-    this.lineVertices[i][3][0] *= 0.9;
-  }
-  var amt = flatten(this.lineVertices).length - 1;
-  for(var j = 0; j < amt; j+=3)
-  {
-    /**THESE CHECKS ARE TO ENSURE WE DON'T GO OVER IF NOT EVENLY**/
-    /**DIVISIBLE BY THREE**/
-    if(amt > j+3)
-    {
-      /**EACH LINEVERT IS 4 VECTOR3'S WHICH MAKE UP 2 TRIANGLES**/
-      /**THIS IS HOW IT WAS DONE IN THE BOX PRIMITIVE BEFORE**/
-      /**ALSO HOW IT IS DONE IN PROCESSING AS FAR AS I CAN TELL**/
-      /** https://github.com/processing/processing/blob/master/core/src/processing/opengl/PGraphicsOpenGL.java#L11768 **/
-      this.faces.push([j,j+1,j+2]);
-      this.faces.push([j+2,j+1,j+3]);
+  // This is where we want to start to make sure our lines are nice rectangles.
+  // Assign a color to each rectangle (lerp hue based on start index). -- check where color is in shaders.
 
-      /*SAMPLE OF OTHER PATTERNS TRIED**/
-      // this.faces.push([j,j+1,j+2]);
-      // this.faces.push([j,j+2,j+3]);
+  this.lineVertices = [];
+  var vertices = this.lineVertices;
 
-      /**HOW IT IS DONE IN _computeFaces**/
-      // this.faces.push([j,j+1,j+3]);
-      // this.faces.push([j+3,j+1,j+2]);
+  function store(verts) {
+    console.log("Line verts: ", verts);
+    for (var i = 0; i < verts.length; i += 1) {
+      vertices.push(verts[i].array());
     }
   }
+
+  console.log("Edge count:", this.edges.length);
+  for(var i = 0; i < this.edges.length; i++)
+  {
+    // Go ahead and spread vertices out based on their orientation.
+    // Something like:
+    var a, b, c, d;
+    var halfWidth = 10.0; // @todo parametrize line width
+    var begin = this.vertices[this.edges[i][0]];
+    var end = this.vertices[this.edges[i][1]];
+    var dir = end.copy().sub(begin).normalize();
+    // arbitrary; want up to be different from dir
+    // in future, would like to use screen vector toward viewer as other component of basis.
+    var up = new p5.Vector(0, 0, 1);
+    var normal = p5.Vector.cross(dir, up);
+    var offset = normal.mult(halfWidth); // beware: normal has changed after this call.
+    a = begin.copy().add(offset.x, offset.y, offset.z);
+    b = begin.copy().sub(offset.x, offset.y, offset.z);
+    c = end.copy().add(offset.x, offset.y, offset.z);
+    d = end.copy().sub(offset.x, offset.y, offset.z);
+    // store([a, b, c]); // put vertices into array in order
+    store([a, b, b, c, c, a]);
+    store([c, b, b, d, d, c]);
+
+    // this.lineVertices[i] = [];
+    // this.lineVertices[i][0] = this.vertices[this.edges[i][0]].array();
+    // this.lineVertices[i][0][0] *= 1.1; /**THESE LINES ARE FAKING WIDTH WITH EARLY TESTING**/
+    // this.lineVertices[i][1] = this.vertices[this.edges[i][0]].array();
+    // this.lineVertices[i][1][0] *= 0.9;
+    // this.lineVertices[i][2] = this.vertices[this.edges[i][1]].array();
+    // this.lineVertices[i][2][0] *= 1.1;
+    // this.lineVertices[i][3] = this.vertices[this.edges[i][1]].array();
+    // this.lineVertices[i][3][0] *= 0.9;
+  }
+  // Let's not draw lines as indexed geometry;
+  // There is no memory benefit on the GPU.
+  // 6 * 3 = 18 for
+  // 4 * 3 + 6 = 18
   return this;
 };
 

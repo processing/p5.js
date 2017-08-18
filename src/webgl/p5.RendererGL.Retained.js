@@ -42,6 +42,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
   //@todo rename "numberOfItems" property to something more descriptive
   //we mult the num geom faces by 3
   this.gHash[gId].numberOfItems = obj.faces.length * 3;
+  this.gHash[gId].lineVertexCount = (flatten(obj.lineVertices)).length / 3; // we use the flattened array elsewhere, could reuse
 
   /*****LOGGING THE NUMBER OF ELEMENTS DRAWN*****/
   console.log('Number of Elements Drawn: ' + this.gHash[gId].numberOfItems);
@@ -78,7 +79,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
   // gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
   // gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 
-  var data = new Float32Array(flatten(flatten(obj.lineVertices)));
+  var data = new Float32Array((flatten(obj.lineVertices)));
   shader.enableAttrib(shader.attributes.aPosition.location,
     3, gl.FLOAT, false, 0, 0);
   gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].lineVertexBuffer);
@@ -159,9 +160,12 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
 
 p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
   var gl = this.GL;
+  gl.drawArrays(gl.LINES, 0, this.gHash[gId].lineVertexCount);
+  /*
   gl.drawElements(
     drawMode, this.gHash[gId].numberOfItems,
     gl.UNSIGNED_SHORT, 0);
+    */
   return this;
 };
 

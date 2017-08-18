@@ -229,10 +229,12 @@ p5.prototype.sphere = function(){
     };
     var sphereGeom = new p5.Geometry(detailX, detailY, _sphere);
     sphereGeom
-      .computeFaces()
-      .computeNormals()
-      .averageNormals()
-      .averagePoleNormals();
+      // .computeFaces()
+      // .computeNormals()
+      ._makeTriangleEdges()
+      ._edgesToVertices();
+      // .averageNormals()
+      // .averagePoleNormals();
     this._renderer.createBuffers(gId, sphereGeom);
     this._renderer.newShader = false;
   }

@@ -8,8 +8,8 @@ function draw(){
 
   // triangle with immediate mode
   beginShape(TRIANGLES);
-  vertex(0, 25, 0);
-  vertex(-25, -25, 0);
+  vertex(0, 25, 100);
+  vertex(-25, -25, -100);
   vertex(25, -25, 0);
   endShape();
 
@@ -22,6 +22,6 @@ function draw(){
   // // regular drawing command
   push();
   translate(width / 3, 0);
-  rect(0, 0, 70, 70);
+  // rect(0, 0, 70, 70);
   pop();
 }
