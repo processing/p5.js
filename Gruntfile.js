@@ -370,7 +370,7 @@ module.exports = function(grunt) {
 
   // Create the multitasks.
   grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);
-  grunt.registerTask('test', ['jshint', 'jscs', 'build', 'yuidoc:dev', 'connect', 'mocha', 'mochaTest']);
+  grunt.registerTask('test', ['jshint', 'jscs', 'yuidoc:dev', 'build', 'connect', 'mocha', 'mochaTest']);
   grunt.registerTask('test:nobuild', ['jshint:test', 'jscs:test', 'connect', 'mocha']);
   grunt.registerTask('yui', ['yuidoc:prod', 'minjson']);
   grunt.registerTask('yui:dev', ['yuidoc:dev', 'minjson']);
