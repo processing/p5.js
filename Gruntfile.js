@@ -322,6 +322,15 @@ module.exports = function(grunt) {
           './docs/reference/data.min.json': './docs/reference/data.json'
         }
       }
+    },
+    copy: {
+      main: {
+        files: [
+          {expand: true, src: ['lib/addons/*'], dest: 'dist/', filter: 'isFile', flatten: true},
+          {expand: true, src: ['lib/*.js'], dest: 'dist/', filter: 'isFile', flatten: true},
+          {expand: true, src: ['lib/empty-example/*'], dest: 'dist/empty-example', flatten: true}
+        ]
+      }
     }
   });
 
@@ -338,20 +347,20 @@ module.exports = function(grunt) {
   grunt.loadTasks('tasks/release');
 
   // Load the external libraries used.
+  grunt.loadNpmTasks('grunt-contrib-compress');
+  grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-git-deploy');
   grunt.loadNpmTasks('grunt-http');
   grunt.loadNpmTasks('grunt-jscs');
   grunt.loadNpmTasks('grunt-minjson');
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-newer');
-  grunt.loadNpmTasks('grunt-processhtml');
   grunt.loadNpmTasks('grunt-release-it');
   grunt.loadNpmTasks('grunt-saucelabs');
   grunt.loadNpmTasks('grunt-update-json');

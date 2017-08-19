@@ -1,7 +1,5 @@
 /* Grunt Task to create and publish a p5.js release */
 
-const spawn = require('child_process').execSync;
-
 module.exports = function(grunt) {
 
   // Options for this custom task
@@ -29,9 +27,14 @@ module.exports = function(grunt) {
         }
       }
     },
-    tagData: {
-      data: {
-        tagName: ''
+    'compress': {
+      'main': {
+        'options': {
+          'archive': 'p5.zip'
+        },
+        'files': [
+          { cwd: 'dist/', src: ['**/*'], expand: true }
+        ]
       }
     }
   };
@@ -39,27 +42,35 @@ module.exports = function(grunt) {
   // Register the Release Task
   grunt.registerTask('release-p5', 'Drafts and Publishes a fresh release of p5.js', function(args) {
 
-    // var done = this.async();
-    // 1. Test Suite
-    // grunt.task.run('test');
-
-    // 2. Version Bump, Build Library, Docs, Create Commit and Tag, and push those to p5.js repo. Release the same on NPM
+    // 0. Setup Config
     opts.releaseIt.options.increment = args;
     grunt.config.set('release-it', opts.releaseIt);
-    // grunt.task.run('release-it');
+    grunt.config.set('compress', opts.compress);
 
-    // 3. Create and zip the lib
-    // Get the tag name
-    var latestTag = spawn('git describe --abbrev=0 --tags', { encoding: 'utf8' });
-    latestTag = latestTag.substr(0, latestTag.length-1);
-    opts.tagData.data.tagName = latestTag;
+    // 1. Test Suite
+    grunt.task.run('test');
 
-    // Make the HTML with correct tag
-    var rawHTML = grunt.file.read('lib/empty-example/index.html');
-    var html = grunt.template.process(rawHTML, opts.tagData);
-    grunt.file.write('lib/empty-example/index.html', html);
+    // 2. Version Bump, Build Library, Docs, Create Commit and Tag, Push to p5.js repo, release on NPM.
+    grunt.task.run('release-it');
 
-    // Ready to Zip
+    // 3. Copy the library files and example to a new folder 'dist'
+    grunt.task.run('copy');
+
+    // 4. Update the example HTML with correct tag
+    grunt.task.run('updateHTML');
+
+    // 5. Zip the 'dist' folder
+    /* p5.zip File List
+    p5.js
+    p5.min.js
+    p5.dom.js
+    p5.dom.min.js
+    p5.sound.js
+    p5.sound.min.js
+    empty-example/index.html
+    empty-example/sketch.js
+    */
+    grunt.task.run('compress');
 
   });
 };
