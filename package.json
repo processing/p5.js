@@ -34,6 +34,7 @@
     "grunt-mocha": "^1.0.4",
     "grunt-mocha-test": "^0.12.7",
     "grunt-newer": "^1.1.0",
+    "grunt-processhtml": "^0.4.1",
     "grunt-release-it": "^1.0.1",
     "grunt-saucelabs": "8.6.1",
     "grunt-update-json": "^0.2.1",
