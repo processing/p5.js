@@ -143,7 +143,7 @@ module.exports.register = function(Handlebars, options) {
     // } else {
     //   return '/'+this.language;
     // }
-    return window.location.pathname+' hi'
+    return window.location.pathname
   });
 };
 
