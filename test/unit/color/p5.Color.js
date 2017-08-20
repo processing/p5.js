@@ -5,17 +5,28 @@ suite('p5.Color', function() {
   });
   var c;
 
-  suite('p5.prototype.color(r,g,b)', function() {
-    setup(function() {
-      c = myp5.color(255, 0, 102);
-    });
+  // shared tests for p5.Color
+  // assign something to `this.c` for this to work in a suite
+  function isAP5Color() {
     test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
+      assert.instanceOf(this.c, p5.Color);
     });
+  }
+  function behavesLikeABasicColor() {
+
+    isAP5Color();
 
     test('should correctly set RGBA property', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 255]);
+      assert.deepEqual(this.c.levels, [255, 0, 102, 255]);
     });
+  }
+
+  suite('p5.prototype.color(r,g,b)', function() {
+    setup(function() {
+      this.c = c = myp5.color(255, 0, 102);
+    });
+
+    behavesLikeABasicColor();
 
     test('shouldn\'t set HSBA property before hsb access func is called', function() {
       assert.equal(c.hsba, undefined);
@@ -34,15 +45,10 @@ suite('p5.Color', function() {
 
   suite('p5.prototype.color("#rgb")', function() {
     setup(function() {
-      c = myp5.color('#f06');
-    });
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
+      this.c = c = myp5.color('#f06');
     });
 
-    test('should correctly set RGBA property', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 255]);
-    });
+    behavesLikeABasicColor();
 
     suite('spot check', function() {
       test('numeric hex values', function() {
@@ -71,11 +77,9 @@ suite('p5.Color', function() {
 
   suite('p5.prototype.color("#rgba")', function() {
     setup(function() {
-      c = myp5.color('#f016');
+      this.c = c = myp5.color('#f016');
     });
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
+    isAP5Color();
 
     test('should correctly set RGBA property', function() {
       assert.deepEqual(c.levels, [255, 0, 17, 102]);
@@ -108,16 +112,10 @@ suite('p5.Color', function() {
 
   suite('p5.prototype.color("#rrggbb")', function() {
     setup(function() {
-      c = myp5.color('#ff0066');
+      this.c = c = myp5.color('#ff0066');
     });
 
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
-
-    test('should correctly set RGBA property', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 255]);
-    });
+    behavesLikeABasicColor();
 
     suite('spot check', function() {
       test('numeric hex values', function() {
@@ -146,12 +144,10 @@ suite('p5.Color', function() {
 
   suite('p5.prototype.color("#rrggbbaa")', function() {
     setup(function() {
-      c = myp5.color('#f01dab1e');
+      this.c = c = myp5.color('#f01dab1e');
     });
 
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
+    isAP5Color();
 
     test('should correctly set RGBA property', function() {
       assert.deepEqual(c.levels, [240, 29, 171, 30]);
@@ -184,15 +180,10 @@ suite('p5.Color', function() {
 
   suite('p5.prototype.color("rgb(r,g,b)")', function() {
     setup(function() {
-      c = myp5.color('rgb(255,0,102)');
-    });
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
+      this.c = c = myp5.color('rgb(255,0,102)');
     });
 
-    test('should correctly set RGBA property', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 255]);
-    });
+    behavesLikeABasicColor();
 
     test('spot check variant spacing', function() {
       // Exhaustive testing of spacing variations within RGB format is
@@ -231,15 +222,10 @@ suite('p5.Color', function() {
 
   suite('p5.prototype.color("rgb(r%,g%,b%)")', function() {
     setup(function() {
-      c = myp5.color('rgb(100%, 0%, 40%)');
-    });
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
+      this.c = c = myp5.color('rgb(100%, 0%, 40%)');
     });
 
-    test('should correctly set RGBA property', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 255]);
-    });
+    behavesLikeABasicColor();
 
     test('spot check variant spacing', function() {
       // Exhaustive testing of spacing variations within RGB format is
@@ -280,12 +266,10 @@ suite('p5.Color', function() {
 
   suite('p5.prototype.color("rgba(r,g,b,a)")', function() {
     setup(function() {
-      c = myp5.color('rgba(255,0,102,0.8)');
+      this.c = c = myp5.color('rgba(255,0,102,0.8)');
     });
 
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
+    isAP5Color();
 
     test('should correctly set RGBA property', function() {
       assert.deepEqual(c.levels, [255, 0, 102, 204]);
@@ -328,12 +312,10 @@ suite('p5.Color', function() {
 
   suite('p5.prototype.color("rgba(r%,g%,b%,a)")', function() {
     setup(function() {
-      c = myp5.color('rgba(100.0%,0.0%,40%,0.8)');
+      this.c = c = myp5.color('rgba(100.0%,0.0%,40%,0.8)');
     });
 
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
+    isAP5Color();
 
     test('should correctly set RGBA property', function() {
       assert.deepEqual(c.levels, [255, 0, 102, 204]);
@@ -387,23 +369,18 @@ suite('p5.Color', function() {
 
   suite('p5.prototype.color("hsl(h, s%, l%)")', function() {
     setup(function() {
-      c = myp5.color('hsl(336, 100%, 50%)');
+      this.c = myp5.color('hsl(336, 100%, 50%)');
     });
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
-    test('should correctly set RGBA property', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 255]);
-    });
+    behavesLikeABasicColor();
   });
 
   suite('p5.prototype.color("hsla(h, s%, l%, a)")', function() {
     setup(function() {
-      c = myp5.color('hsla(336, 100%, 50%, 0.8)');
+      this.c = c = myp5.color('hsla(336, 100%, 50%, 0.8)');
     });
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
+
+    isAP5Color();
+    
     test('should correctly set RGBA property', function() {
       assert.deepEqual(c.levels, [255, 0, 102, 204]);
     });
@@ -411,23 +388,18 @@ suite('p5.Color', function() {
 
   suite('p5.prototype.color("hsb(h, s%, b%)")', function() {
     setup(function() {
-      c = myp5.color('hsb(336, 100%, 100%)');
+      this.c = myp5.color('hsb(336, 100%, 100%)');
     });
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
-    test('should correctly set RGBA property', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 255]);
-    });
+    behavesLikeABasicColor();
   });
 
   suite('p5.prototype.color("hsba(h, s%, b%, a)")', function() {
     setup(function() {
-      c = myp5.color('hsba(336, 100%, 100%, 0.8)');
+      this.c = c = myp5.color('hsba(336, 100%, 100%, 0.8)');
     });
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
+
+    isAP5Color();
+
     test('should correctly set RGBA property', function() {
       assert.deepEqual(c.levels, [255, 0, 102, 204]);
     });
@@ -435,12 +407,10 @@ suite('p5.Color', function() {
 
   suite('p5.prototype.color("svgnamedcolor")', function() {
     setup(function() {
-      c = myp5.color('papayawhip');
+      this.c = c = myp5.color('papayawhip');
     });
 
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
+    isAP5Color();
 
     test('should correctly set RGBA property', function() {
       assert.deepEqual(c.levels, [255, 239, 213, 255]);
@@ -458,23 +428,17 @@ suite('p5.Color', function() {
 
   suite('p5.prototype.color([])', function() {
     setup(function() {
-      c = myp5.color([255, 0, 102]);
+      this.c = myp5.color([255, 0, 102]);
     });
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
-    test('should correctly set RGBA property', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 255]);
-    });
+    behavesLikeABasicColor();
   });
 
   suite('p5.prototype.color(r,g,b,a)', function() {
     setup(function() {
-      c = myp5.color(255, 0, 102, 204);
+      this.c = c = myp5.color(255, 0, 102, 204);
     });
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
+
+    isAP5Color();
 
     test('should correctly set RGBA property', function() {
       assert.deepEqual(c.levels, [255, 0, 102, 204]);
@@ -533,24 +497,19 @@ suite('p5.Color', function() {
   suite('p5.Color in HSL mode', function() {
     setup(function() {
       myp5.colorMode(myp5.HSL);
-      c = myp5.color(336, 100, 50);
+      this.c = myp5.color(336, 100, 50);
     });
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
-    test('should correctly set RGBA property', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 255]);
-    });
+    behavesLikeABasicColor();
   });
 
   suite('p5.Color in HSL mode with Alpha', function() {
     setup(function() {
       myp5.colorMode(myp5.HSL);
-      c = myp5.color(336, 100, 50, 0.8);
+      this.c = c = myp5.color(336, 100, 50, 0.8);
     });
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
+
+    isAP5Color();
+
     test('should correctly set RGBA property', function() {
       assert.deepEqual(c.levels, [255, 0, 102, 204]);
     });
@@ -654,24 +613,19 @@ suite('p5.Color', function() {
   suite('p5.Color in HSB mode', function() {
     setup(function() {
       myp5.colorMode(myp5.HSB);
-      c = myp5.color(336, 100, 100);
+      this.c = myp5.color(336, 100, 100);
     });
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
-    test('should correctly set RGBA property', function() {
-      assert.deepEqual(c.levels, [255, 0, 102, 255]);
-    });
+    behavesLikeABasicColor();
   });
 
   suite('p5.Color in HSB mode with Alpha', function() {
     setup(function() {
       myp5.colorMode(myp5.HSB);
-      c = myp5.color(336, 100, 100, 0.8);
+      this.c = c = myp5.color(336, 100, 100, 0.8);
     });
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
+
+    isAP5Color();
+
     test('should correctly set RGBA property', function() {
       assert.deepEqual(c.levels, [255, 0, 102, 204]);
     });
@@ -775,12 +729,10 @@ suite('p5.Color', function() {
   suite('p5.Color in RGB mode with grayscale value', function() {
     setup(function() {
       myp5.colorMode(myp5.RGB);
-      c = myp5.color(100);
+      this.c = c = myp5.color(100);
     });
 
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
+    isAP5Color();
 
     test('should correctly set RGB levels', function() {
       assert.deepEqual(c.levels, [100, 100, 100, 255]);
@@ -790,12 +742,10 @@ suite('p5.Color', function() {
   suite('p5.Color in RGB mode with grayscale value and alpha', function() {
     setup(function() {
       myp5.colorMode(myp5.RGB);
-      c = myp5.color(100, 70);
+      this.c = c = myp5.color(100, 70);
     });
 
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
+    isAP5Color();
 
     test('should correctly set RGB levels', function() {
       assert.deepEqual(c.levels, [100, 100, 100, 70]);
@@ -805,12 +755,10 @@ suite('p5.Color', function() {
   suite('p5.Color in HSB mode with grayscale value', function() {
     setup(function() {
       myp5.colorMode(myp5.HSB);
-      c = myp5.color(39.3);
+      this.c = c = myp5.color(39.3);
     });
 
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
+    isAP5Color();
 
     test('should correctly set RGB levels', function() {
       assert.deepEqual(c.levels, [100, 100, 100, 255]);
@@ -820,12 +768,10 @@ suite('p5.Color', function() {
   suite('p5.Color in HSB mode with grayscale value and alpha', function() {
     setup(function() {
       myp5.colorMode(myp5.HSB);
-      c = myp5.color(39.3, 0.275);
+      this.c = c = myp5.color(39.3, 0.275);
     });
 
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
+    isAP5Color();
 
     test('should correctly set RGB levels', function() {
       assert.deepEqual(c.levels, [100, 100, 100, 70]);
@@ -835,12 +781,10 @@ suite('p5.Color', function() {
   suite('p5.Color in HSL mode with grayscale value', function() {
     setup(function() {
       myp5.colorMode(myp5.HSL);
-      c = myp5.color(39.3);
+      this.c = c = myp5.color(39.3);
     });
 
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
+    isAP5Color();
 
     test('should correctly set RGB levels', function() {
       assert.deepEqual(c.levels, [100, 100, 100, 255]);
@@ -850,12 +794,10 @@ suite('p5.Color', function() {
   suite('p5.Color in HSL mode with grayscale value and alpha', function() {
     setup(function() {
       myp5.colorMode(myp5.HSL);
-      c = myp5.color(39.3, 0.275);
+      this.c = c = myp5.color(39.3, 0.275);
     });
 
-    test('should create instance of p5.Color', function() {
-      assert.instanceOf(c, p5.Color);
-    });
+    isAP5Color();
 
     test('should correctly set RGB levels', function() {
       assert.deepEqual(c.levels, [100, 100, 100, 70]);
