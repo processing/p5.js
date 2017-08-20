@@ -7,7 +7,7 @@ module.exports = function(grunt) {
     'releaseIt': {
       'options': {
         'non-interactive': true,
-        'dry-run': true,
+        'dry-run': true,// set to false later
         'pkgFiles': ['package.json'],
         'increment': '',
         'buildCommand': 'grunt yui && grunt build',
@@ -43,6 +43,7 @@ module.exports = function(grunt) {
   grunt.registerTask('release-p5', 'Drafts and Publishes a fresh release of p5.js', function(args) {
 
     // 0. Setup Config
+    // Default increment is minor (x.y.z+1)
     opts.releaseIt.options.increment = args;
     grunt.config.set('release-it', opts.releaseIt);
     grunt.config.set('compress', opts.compress);
@@ -55,9 +56,6 @@ module.exports = function(grunt) {
 
     // 3. Copy the library files and example to a new folder 'dist'
     grunt.task.run('copy');
-
-    // 4. Update the example HTML with correct tag
-    grunt.task.run('updateHTML');
 
     // 5. Zip the 'dist' folder
     /* p5.zip File List
