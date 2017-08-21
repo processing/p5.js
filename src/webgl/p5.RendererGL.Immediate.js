@@ -127,8 +127,6 @@ function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
   // var data = new Float32Array(this.immediateMode.data.vertexPositions.values);
   // gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.data.vertexPositions.buffer);
   // gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
-  this._bindBuffer(this.immediateMode.vertexPositions, this.immediateMode.vertexBuffer, Float32Array,
-    gl.ARRAY_BUFFER, gl.DYNAMIC_DRAW);
   shader.enableAttrib(shader.attributes.aPosition.location,
     3, gl.FLOAT, false, 0, 0);
 
@@ -136,8 +134,6 @@ function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
     // data = new Float32Array(this.immediateMode.data.vertexColors.values);
     // gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.data.vertexColors.buffer);
     // gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
-    this._bindBuffer(this.immediateMode.vertexColors, this.immediateMode.colorBuffer, Float32Array,
-      gl.ARRAY_BUFFER, gl.DYNAMIC_DRAW);
     shader.enableAttrib(shader.attributes.aVertexColor.location,
       4, gl.FLOAT, false, 0, 0);
   }
@@ -147,8 +143,6 @@ function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
     // data = new Float32Array(this.immediateMode.data.uvCoords.values);
     // gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.data.uvCoords.buffer);
     // gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
-    this._bindBuffer(this.immediateMode.uvCoords, this.immediateMode.uvBuffer, Float32Array,
-      gl.ARRAY_BUFFER, gl.DYNAMIC_DRAW);
     shader.enableAttrib(shader.attributes.aTexCoord.location,
       2, gl.FLOAT, false, 0, 0);
   }

@@ -663,11 +663,16 @@ p5.RendererGL.prototype.getTexture = function (img) {
   return tex;
 };
 
-
-p5.RendererGL.prototype._bindBuffer = function(values, buffer, type, target, usage) {
-  var data = new type(values);
+//Binds a buffer to the drawing context
+//when passed more than two arguments it also updates or initializes
+//the data associated with the buffer
+p5.RendererGL.prototype._bindBuffer = function( buffer, target,
+  values, type, usage) {
   this.GL.bindBuffer(target, buffer);
-  this.GL.bufferData(target, data, usage);
+  if(values !== undefined) {
+    var data = new type(values);
+    this.GL.bufferData(target, data, usage);
+  }
 };
 
 
