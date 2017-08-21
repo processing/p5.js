@@ -80,6 +80,7 @@ p5.prototype.plane = function(){
       ._edgesToVertices();
     this._renderer.createBuffers(gId, planeGeom);
     this._renderer.newShader = false;
+    console.log(planeGeom.vertexNormals);
   }
 
   this._renderer.drawBuffers(gId);
@@ -137,8 +138,15 @@ p5.prototype.box = function(){
         [4, 5, 6, 7]// 0, 0, +1] // +z
       ];
       var strokeIndices = [
+      [5,7],
         [0, 4],
-        [2, 6],
+        [0,2],
+        [3,7],
+        [4,5],
+        [5,2],
+        [1,6],
+        [6,7],
+        [1,3]
       ];
       this.strokeIndices = strokeIndices;
       var id=0;
@@ -166,7 +174,7 @@ p5.prototype.box = function(){
     };
     var boxGeom = new p5.Geometry(detailX,detailY, _box);
     boxGeom
-      //.computeNormals(); NOT NECESSARY CURRENTLY
+      .computeNormals()
       ._makeTriangleEdges()
       ._edgesToVertices();
 
@@ -239,9 +247,9 @@ p5.prototype.sphere = function(){
        .computeFaces()
        .computeNormals()
       ._makeTriangleEdges()
-      ._edgesToVertices();
-      // .averageNormals()
-      // .averagePoleNormals();
+      ._edgesToVertices()
+      .averageNormals()
+      .averagePoleNormals();
     this._renderer.createBuffers(gId, sphereGeom);
     this._renderer.newShader = false;
   }
@@ -379,7 +387,9 @@ p5.prototype.cylinder = function(){
       detailY,
       true,true);
     cylinderGeom
-      .computeNormals();
+      .computeNormals()
+      ._makeTriangleEdges()
+      ._edgesToVertices();
     this._renderer.createBuffers(gId, cylinderGeom);
     this._renderer.newShader = false;
   }
@@ -441,7 +451,9 @@ p5.prototype.cone = function(){
       true);
     //for cones we need to average Normals
     coneGeom
-      .computeNormals();
+      .computeNormals()
+      ._makeTriangleEdges()
+      ._edgesToVertices();
     this._renderer.createBuffers(gId, coneGeom);
     this._renderer.newShader = false;
   }
@@ -516,7 +528,9 @@ p5.prototype.ellipsoid = function(){
     var ellipsoidGeom = new p5.Geometry(detailX, detailY,_ellipsoid);
     ellipsoidGeom
       .computeFaces()
-      .computeNormals();
+      .computeNormals()
+      ._makeTriangleEdges()
+      ._edgesToVertices();
     this._renderer.createBuffers(gId, ellipsoidGeom);
     this._renderer.newShader = false;
   }
@@ -590,7 +604,9 @@ p5.prototype.torus = function(){
     torusGeom
       .computeFaces()
       .computeNormals()
-      .averageNormals();
+      .averageNormals()
+      ._makeTriangleEdges()
+      ._edgesToVertices();
     this._renderer.createBuffers(gId, torusGeom);
     this._renderer.newShader = false;
   }
@@ -624,13 +640,16 @@ p5.RendererGL.prototype.triangle = function
       vertices.push(new p5.Vector(x1,y1,0));
       vertices.push(new p5.Vector(x2,y2,0));
       vertices.push(new p5.Vector(x3,y3,0));
+      this.strokeIndices = [[0,1], [1,2], [2,0]];
       this.vertices = vertices;
       this.faces = [[0,1,2]];
       this.uvs = [[0,0],[0,1],[1,1]];
     };
     var triGeom = new p5.Geometry(1,1,_triangle);
     triGeom
-      .computeNormals();
+      .computeNormals()
+      ._makeTriangleEdges()
+      ._edgesToVertices();
     this.createBuffers(gId, triGeom);
     this.newShader = false;
   }
@@ -677,7 +696,9 @@ p5.RendererGL.prototype.ellipse = function
     var ellipseGeom = new p5.Geometry(detailX,detailY,_ellipse);
     ellipseGeom
       .computeFaces()
-      .computeNormals();
+      .computeNormals()
+      ._makeTriangleEdges()
+      ._edgesToVertices();
     this.createBuffers(gId, ellipseGeom);
     this.newShader = false;
   }
@@ -716,7 +737,9 @@ p5.RendererGL.prototype.rect = function(args) {
     var rectGeom = new p5.Geometry(detailX,detailY,_rect);
     rectGeom
       .computeFaces()
-      .computeNormals();
+      .computeNormals()
+      ._makeTriangleEdges()
+      ._edgesToVertices();
     this.createBuffers(gId, rectGeom);
     this.newShader = false;
   }
@@ -748,10 +771,13 @@ p5.RendererGL.prototype.quad = function(){
       this.vertices.push(new p5.Vector(x3,y3,0));
       this.vertices.push(new p5.Vector(x4,y4,0));
       this.uvs.push([0, 0], [1, 0], [1, 1], [0, 1]);
+      this.strokeIndices = [[0,1], [1,2], [2,3], [3,0]];
     };
     var quadGeom = new p5.Geometry(2,2,_quad);
     quadGeom
-      .computeNormals();
+      .computeNormals()
+      ._makeTriangleEdges()
+      ._edgesToVertices();
     quadGeom.faces = [[0,1,2],[2,3,0]];
     this.createBuffers(gId, quadGeom);
     this.newShader = false;

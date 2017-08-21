@@ -121,6 +121,7 @@ p5.Shader.prototype._loadAttributes = function() {
     attribute.type = attributeInfo.type;
     attribute.size = attributeInfo.size;
     this.attributes[name] = attribute;
+    console.log(attribute);
   }
 
   this._loadedAttributes = true;
@@ -234,6 +235,10 @@ p5.Shader.prototype._setMatrixUniforms = function() {
   this._renderer.uNMatrix.inverseTranspose(this._renderer.uMVMatrix);
   this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
 };
+
+p5.Shader.prototype._setViewportUniform = function() {
+  this.setUniform('viewport', this._renderer.GL.getParameter(this._renderer.GL.VIEWPORT));
+}
 
 /**
  * @method useProgram

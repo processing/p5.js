@@ -224,19 +224,18 @@ p5.Geometry.prototype._edgesToVertices = function() {
   var vertices = this.lineVertices;
 
   function store(verts) {
-    console.log("Line verts: ", verts);
+    //console.log("Line verts: ", verts);
     for (var i = 0; i < verts.length; i += 1) {
       vertices.push(verts[i].array());
     }
   }
 
-  console.log("Edge count:", this.edges.length);
   for(var i = 0; i < this.edges.length; i++)
   {
     // Go ahead and spread vertices out based on their orientation.
     // Something like:
     var a, b, c, d;
-    var halfWidth = 1.0; // @todo parametrize line width
+    var halfWidth = 3.0; // @todo parametrize line width
     var begin = this.vertices[this.edges[i][0]];
     var end = this.vertices[this.edges[i][1]];
     var dir = end.copy().sub(begin).normalize();
@@ -249,20 +248,23 @@ p5.Geometry.prototype._edgesToVertices = function() {
     b = begin.copy().sub(offset.x, offset.y, offset.z);
     c = end.copy().add(offset.x, offset.y, offset.z);
     d = end.copy().sub(offset.x, offset.y, offset.z);
+    //related to passing offset to shader
+    // a.xyzw
+     // a = begin.array();
+     // a.push(1);
+     // b = begin.array();
+     // b.push(-1);
+     // c = begin.array();
+     // c.push(1);
+     // d = begin.array();
+     // d.push(-1);
+    // b = [x, y, z, -1];
+    // vert.xyz = vert.xyz + offset * vert.w;
     // store([a, b, c]); // put vertices into array in order
     store([a, b, c, c, b, d]);
     // store([a, b, b, c, c, a]);
     // store([c, b, b, d, d, c]);
 
-    // this.lineVertices[i] = [];
-    // this.lineVertices[i][0] = this.vertices[this.edges[i][0]].array();
-    // this.lineVertices[i][0][0] *= 1.1; /**THESE LINES ARE FAKING WIDTH WITH EARLY TESTING**/
-    // this.lineVertices[i][1] = this.vertices[this.edges[i][0]].array();
-    // this.lineVertices[i][1][0] *= 0.9;
-    // this.lineVertices[i][2] = this.vertices[this.edges[i][1]].array();
-    // this.lineVertices[i][2][0] *= 1.1;
-    // this.lineVertices[i][3] = this.vertices[this.edges[i][1]].array();
-    // this.lineVertices[i][3][0] *= 0.9;
   }
   // Let's not draw lines as indexed geometry;
   // There is no memory benefit on the GPU.

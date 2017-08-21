@@ -45,18 +45,18 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
   this.gHash[gId].lineVertexCount = (flatten(obj.lineVertices)).length / 3; // we use the flattened array elsewhere, could reuse
 
   /*****LOGGING THE NUMBER OF ELEMENTS DRAWN*****/
-  console.log('Number of Elements Drawn: ' + this.gHash[gId].numberOfItems);
+  // console.log('Number of Elements Drawn: ' + this.gHash[gId].numberOfItems);
 
-  /**LOGGING THE ORIGINAL VERTICES**/
-  console.log('Original Vertices: ');
-  console.log(obj.vertices);
+  // /**LOGGING THE ORIGINAL VERTICES**/
+  // console.log('Original Vertices: ');
+  // console.log(obj.vertices);
 
-  /**LOGGING THE INDICES OR FACES**/
-  console.log('Indices/Faces: ');
-  console.log(obj.faces);
+  // /**LOGGING THE INDICES OR FACES**/
+  // console.log('Indices/Faces: ');
+  // console.log(obj.faces);
 
-  console.log('EDGE CONNECTION PATTERN: ');
-  console.log(obj.edges);
+  // console.log('EDGE CONNECTION PATTERN: ');
+  // console.log(obj.edges);
 
   /**LOGGING THE LINE VERTICES**/
   console.log('Line Vertices: ');
@@ -72,23 +72,26 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
 
   /****THIS IS HOW VERTICES WERE DRAWN BEFORE****/
 
-  // // allocate space for vertex positions
-  // var data = new Float32Array(vToNArray(obj.vertices));
-  // shader.enableAttrib(shader.attributes.aPosition.location,
-  //   3, gl.FLOAT, false, 0, 0);
-  // gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
-  // gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 
-  var data = new Float32Array((flatten(obj.lineVertices)));
-  shader.enableAttrib(shader.attributes.aPosition.location,
-    3, gl.FLOAT, false, 0, 0);
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].lineVertexBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+  if(this.drawMode === 'wireframe') {
+    var data = new Float32Array((flatten(obj.lineVertices)));
+    shader.enableAttrib(shader.attributes.aPosition.location,
+      3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].lineVertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+  } else {
+      // allocate space for vertex positions
+    var data = new Float32Array(vToNArray(obj.vertices));
+    shader.enableAttrib(shader.attributes.aPosition.location,
+      3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 
-  // allocate space for faces
-  data = new Uint16Array(flatten(obj.faces));
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, data, gl.STATIC_DRAW);
+      // allocate space for faces
+    data = new Uint16Array(flatten(obj.faces));
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, data, gl.STATIC_DRAW);
+  }
 
   /**TURNING OFF NORMALS AND UVS FOR TESTING AT THIS POINT**/
   /**SHOULD NOT BE DIFFICULT TO REIMPLEMENT LATER BUT A BIT UNCLEAR**/
@@ -126,18 +129,22 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   shader.bindShader();
 
   /**BINDING ORIGINAL VERTICES**/
-  // //vertex position buffer
-  // gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
-  // shader.enableAttrib(shader.attributes.aPosition.location,
-  //   3, gl.FLOAT, false, 0, 0);
+
 
   /**BINDING LINE VERTICES**/
+  if(this.drawMode === 'wireframe') {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].lineVertexBuffer);
-  shader.enableAttrib(shader.attributes.aPosition.location,
+      shader.enableAttrib(shader.attributes.aPosition.location,
     3, gl.FLOAT, false, 0, 0);
+  } else {
+    //vertex position buffer
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
+    shader.enableAttrib(shader.attributes.aPosition.location,
+      3, gl.FLOAT, false, 0, 0);
 
-  //vertex index buffer
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
+    //vertex index buffer
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
+  }
 
   /**TURNING OFF NORMALS AND UVS FOR TESTING AT THIS POINT**/
   /**SHOULD NOT BE DIFFICULT TO REIMPLEMENT LATER BUT A BIT UNCLEAR**/
@@ -150,7 +157,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   //   shader.attributes.aTexCoord.location, 2, gl.FLOAT, false, 0, 0);
 
   if(this.drawMode === 'wireframe') {
-    this._drawElements(gl.LINES, gId);
+    this._drawArrays(gl.TRIANGLES, gId);
   } else {
     this._drawElements(gl.TRIANGLES, gId);
   }
@@ -158,16 +165,16 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   return this;
 };
 
-p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
-  var gl = this.GL;
-  gl.drawArrays(drawMode, 0, this.gHash[gId].lineVertexCount);
-  /*
-  gl.drawElements(
-    drawMode, this.gHash[gId].numberOfItems,
-    gl.UNSIGNED_SHORT, 0);
-    */
+p5.RendererGL.prototype._drawArrays = function(drawMode, gId) {
+  this.GL.drawArrays(drawMode, 0, this.gHash[gId].lineVertexCount);
   return this;
 };
+
+p5.RendererGL.prototype._drawElements = function (drawMode, gId) {
+  this.GL.drawElements(
+    drawMode, this.gHash[gId].numberOfItems,
+    this.GL.UNSIGNED_SHORT, 0);
+}
 
 ///////////////////////////////
 //// UTILITY FUNCTIONS

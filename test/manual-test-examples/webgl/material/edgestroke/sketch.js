@@ -5,17 +5,30 @@
 
 function setup() {
   createCanvas(640, 640, WEBGL);
+  setAttributes('antialias', true);
 }
 
 
 function draw() {
-   background(255);
-  fill(0);
-  rotateX(frameCount * 0.005);
-  rotateY(frameCount * 0.005);
-  sphere(150);
-  translate(200, 0);
-  box(100);
+   background(100,100,240);
+
+  //  stroke(0);
+  //fill(0);
+  stroke(0);
+  //rotateX(frameCount * 0.005);
+  rotateY(frameCount * 0.015);
+  fill(255);
+  plane(175);
+  //sphere(150);
+  stroke(0);
+  translate(0, 0, 0.1);
+  noFill(0);
+  plane(174);
+
+  translate(0, 0, -0.2);
+  noFill(0);
+  plane(174);
+
   // translate(150, 10);
 }
 

@@ -25,6 +25,10 @@ var defaultShaders = {
     fs.readFileSync(__dirname + '/shaders/light.vert', 'utf-8'),
   lightTextureFrag:
     fs.readFileSync(__dirname + '/shaders/light_texture.frag', 'utf-8'),
+  lineVert:
+    fs.readFileSync(__dirname + '/shaders/line.vert', 'utf-8'),
+  lineFrag:
+    fs.readFileSync(__dirname + '/shaders/line.frag', 'utf-8')
 };
 
 /**
@@ -336,11 +340,13 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
 };
 
 p5.RendererGL.prototype.noFill = function() {
-  var gl = this.GL;
-  this.setShader(this._getColorShader());
-  gl.enable(gl.BLEND);
-  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   this.drawMode = 'wireframe';
+  var gl = this.GL;
+  var shader = this.setShader(this._getLineShader());
+  shader.setUniform('uMaterialColor', this.curStrokeColor);
+  //shader._setViewportUniform();
+ // gl.enable(gl.BLEND);
+  //gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   if(this.curStrokeColor) {
     this._setNoFillStroke();
   }
@@ -631,6 +637,14 @@ p5.RendererGL.prototype._getColorShader = function () {
       defaultShaders.normalVert, defaultShaders.basicFrag);
   }
   return this._defaultColorShader;
+};
+
+p5.RendererGL.prototype._getLineShader = function () {
+  if (this._defaultLineShader === undefined) {
+    this._defaultLineShader = new p5.Shader(this,
+      defaultShaders.lineVert, defaultShaders.lineFrag);
+  }
+  return this._defaultLineShader;
 };
 
 p5.RendererGL.prototype.getTexture = function (img) {
