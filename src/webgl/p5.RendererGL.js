@@ -1,6 +1,7 @@
 'use strict';
 
 var p5 = require('../core/core');
+var constants = require('../core/constants');
 require('./p5.Shader');
 require('../core/p5.Renderer');
 require('./p5.Matrix');
@@ -325,7 +326,7 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   //see material.js for more info on color blending in webgl
   var colors = this._applyColorBlend.apply(this, arguments);
   this.curFillColor = colors;
-  this.drawMode = 'fill';
+  this.drawMode = constants.FILL;
   if (this.isImmediateDrawing){
     this.setShader(this._getImmediateModeShader());
   } else {
@@ -340,7 +341,7 @@ p5.RendererGL.prototype.noFill = function() {
   this.setShader(this._getColorShader());
   gl.enable(gl.BLEND);
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-  this.drawMode = 'wireframe';
+  this.drawMode = constants.STROKE;
   if(this.curStrokeColor) {
     this._setNoFillStroke();
   }
@@ -351,7 +352,7 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
   var colorNormalized = color._array;
   this.curStrokeColor = colorNormalized;
-  if(this.drawMode === 'wireframe') {
+  if(this.drawMode === constants.STROKE) {
     this._setNoFillStroke();
   }
   return this;
@@ -660,6 +661,13 @@ p5.RendererGL.prototype.getTexture = function (img) {
   }
 
   return tex;
+};
+
+
+p5.RendererGL.prototype._bindBuffer = function(values, buffer, type, target, usage) {
+  var data = new type(values);
+  this.GL.bindBuffer(target, buffer);
+  this.GL.bufferData(target, data, usage);
 };
 
 

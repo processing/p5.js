@@ -212,6 +212,12 @@ module.exports = {
   BEZIER: 'bezier',
   CURVE: 'curve',
 
+  // WEBGL DRAWMODES
+  STROKE: 'stroke',
+  FILL: 'fill',
+  TEXTURE: 'texture',
+  IMMEDIATE: 'immediate',
+
   // DEFAULTS
   _DEFAULT_STROKE: '#000000',
   _DEFAULT_FILL: '#FFFFFF'

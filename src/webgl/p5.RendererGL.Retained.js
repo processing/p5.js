@@ -3,6 +3,8 @@
 'use strict';
 
 var p5 = require('../core/core');
+var constants = require('../core/constants');
+
 var hashCount = 0;
 /**
  * _initBufferDefaults
@@ -51,31 +53,27 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
   }
 
   // allocate space for vertex positions
-  var data = new Float32Array(vToNArray(obj.vertices));
+  this._bindBuffer(vToNArray(obj.vertices), this.gHash[gId].vertexBuffer, Float32Array,
+    gl.ARRAY_BUFFER, gl.STATIC_DRAW);
   shader.enableAttrib(shader.attributes.aPosition.location,
     3, gl.FLOAT, false, 0, 0);
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 
   // allocate space for faces
-  data = new Uint16Array(flatten(obj.faces));
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, data, gl.STATIC_DRAW);
-
+  //this._bindBuffers(vToNArray(obj.vertices), this.gHash[gId].vertexBuffer, Float32Array);
+  this._bindBuffer(flatten(obj.faces), this.gHash[gId].indexBuffer, Uint16Array,
+    gl.ELEMENT_ARRAY_BUFFER, gl.STATIC_DRAW);
 
   // allocate space for normals
-  data = new Float32Array(vToNArray(obj.vertexNormals));
+  this._bindBuffer(vToNArray(obj.vertexNormals), this.gHash[gId].normalBuffer, Float32Array,
+    gl.ARRAY_BUFFER, gl.STATIC_DRAW);
   shader.enableAttrib(shader.attributes.aNormal.location,
     3, gl.FLOAT, false, 0, 0);
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 
   // tex coords
-  data = new Float32Array(flatten(obj.uvs));
+  this._bindBuffer(flatten(obj.uvs), this.gHash[gId].uvBuffer, Float32Array,
+    gl.ARRAY_BUFFER, gl.STATIC_DRAW);
   shader.enableAttrib(shader.attributes.aTexCoord.location,
     2, gl.FLOAT, false, 0, 0);
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 };
 
 /**
@@ -111,7 +109,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   shader.enableAttrib(
     shader.attributes.aTexCoord.location, 2, gl.FLOAT, false, 0, 0);
 
-  if(this.drawMode === 'wireframe') {
+  if(this.drawMode === constants.STROKE) {
     this._drawElements(gl.LINES, gId);
   } else {
     this._drawElements(gl.TRIANGLES, gId);

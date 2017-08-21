@@ -16,6 +16,18 @@
 var p5 = require('../core/core');
 var constants = require('../core/constants');
 
+
+// p5.RendererGL.prototype._bindAll = function(obj, shader) {
+//   for (var property in obj) {
+//     if (obj.hasOwnProperty(property)) {
+//         var data = new Float32Array(obj[property].values);
+//         this.GL.bindBuffer(this.GL.ARRAY_BUFFER, obj[property].buffer);
+//         this.GL.bufferData(this.GL.ARRAY_BUFFER, data, this.GL.DYNAMIC_DRAW);
+//     }
+//   }
+// }
+
+
 /**
  * Begin shape drawing.  This is a helpful way of generating
  * custom shapes quickly.  However in WEBGL mode, application
@@ -110,33 +122,39 @@ function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
     // this shouldn't change. :)
   }
   shader.bindShader();
-
   //vertex position Attribute
-  var data = new Float32Array(this.immediateMode.vertexPositions);
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.vertexBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+  //this._bindAll(this.immediateMode.data, shader);
+  // var data = new Float32Array(this.immediateMode.data.vertexPositions.values);
+  // gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.data.vertexPositions.buffer);
+  // gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+  this._bindBuffer(this.immediateMode.vertexPositions, this.immediateMode.vertexBuffer, Float32Array,
+    gl.ARRAY_BUFFER, gl.DYNAMIC_DRAW);
   shader.enableAttrib(shader.attributes.aPosition.location,
     3, gl.FLOAT, false, 0, 0);
 
-  if (this.drawMode === 'fill') {
-    data = new Float32Array(this.immediateMode.vertexColors);
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+  if (this.drawMode === constants.FILL) {
+    // data = new Float32Array(this.immediateMode.data.vertexColors.values);
+    // gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.data.vertexColors.buffer);
+    // gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+    this._bindBuffer(this.immediateMode.vertexColors, this.immediateMode.colorBuffer, Float32Array,
+      gl.ARRAY_BUFFER, gl.DYNAMIC_DRAW);
     shader.enableAttrib(shader.attributes.aVertexColor.location,
       4, gl.FLOAT, false, 0, 0);
   }
 
-  if (this.drawMode === 'texture'){
+  if (this.drawMode === constants.TEXTURE){
     //texture coordinate Attribute
-    data = new Float32Array(this.immediateMode.uvCoords);
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.uvBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+    // data = new Float32Array(this.immediateMode.data.uvCoords.values);
+    // gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.data.uvCoords.buffer);
+    // gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+    this._bindBuffer(this.immediateMode.uvCoords, this.immediateMode.uvBuffer, Float32Array,
+      gl.ARRAY_BUFFER, gl.DYNAMIC_DRAW);
     shader.enableAttrib(shader.attributes.aTexCoord.location,
       2, gl.FLOAT, false, 0, 0);
   }
 
   if(mode){
-    if(this.drawMode === 'fill' || this.drawMode ==='texture'){
+    if(this.drawMode === constants.FILL || this.drawMode === constants.TEXTURE){
       switch(this.immediateMode.shapeMode){
         case constants.LINE_STRIP:
           this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
