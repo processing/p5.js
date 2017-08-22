@@ -25,9 +25,9 @@ function draw() {
   noFill(0);
   plane(174);
 
-  translate(0, 0, -0.2);
-  noFill(0);
-  plane(174);
+  // translate(0, 0, -0.2);
+  // noFill(0);
+  // plane(174);
 
   // translate(150, 10);
 }

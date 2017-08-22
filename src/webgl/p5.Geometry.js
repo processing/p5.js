@@ -229,7 +229,7 @@ p5.Geometry.prototype._edgesToVertices = function() {
       vertices.push(verts[i].array());
     }
   }
-
+  this.vertexNormals.length = 0;
   for(var i = 0; i < this.edges.length; i++)
   {
     // Go ahead and spread vertices out based on their orientation.
@@ -244,23 +244,37 @@ p5.Geometry.prototype._edgesToVertices = function() {
     var up = new p5.Vector(0, 0, 1);
     var normal = p5.Vector.cross(dir, up);
     var offset = normal.mult(halfWidth); // beware: normal has changed after this call.
-    a = begin.copy().add(offset.x, offset.y, offset.z);
-    b = begin.copy().sub(offset.x, offset.y, offset.z);
-    c = end.copy().add(offset.x, offset.y, offset.z);
-    d = end.copy().sub(offset.x, offset.y, offset.z);
+    a = begin;//.copy().add(offset.x, offset.y, offset.z);
+    b = begin;//.copy().sub(offset.x, offset.y, offset.z);
+    c = end;//.copy().add(offset.x, offset.y, offset.z);
+    d = end;//.copy().sub(offset.x, offset.y, offset.z);
+    var dirAdd = dir.array();//.push(1);
+    dirAdd.push(1);
+    var dirSub = dir.array();//.push(-1);
+    dirSub.push(-1);
     //related to passing offset to shader
     // a.xyzw
      // a = begin.array();
-     // a.push(1);
+     // //a.push(1);
+     // //a.w = 1;
+     // //a.xyz = a.xyz + offset * 1;
      // b = begin.array();
-     // b.push(-1);
-     // c = begin.array();
-     // c.push(1);
-     // d = begin.array();
-     // d.push(-1);
+     // //b.w = -1;
+     // //b.xyz = b.xyz + offset * -1;
+     // //b.push(-1);
+     // c = end.array();
+     // //c.w = 1;
+     // //c.xyz = c.xyz + offset * 1;
+     // //c.push(1);
+     // d = end.array();
+     //d.w = -1
+     //d.xyz = d.xyz + offset * -1;
+     //d.push(-1);
     // b = [x, y, z, -1];
     // vert.xyz = vert.xyz + offset * vert.w;
     // store([a, b, c]); // put vertices into array in order
+    //this.vertexNormals.push(dir, dir, dir, dir, dir, dir);
+    this.vertexNormals.push(dirAdd,dirSub,dirAdd,dirAdd,dirSub,dirAdd);
     store([a, b, c, c, b, d]);
     // store([a, b, b, c, c, a]);
     // store([c, b, b, d, d, c]);

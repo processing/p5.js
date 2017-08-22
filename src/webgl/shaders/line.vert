@@ -24,14 +24,13 @@ vec4 windowToClipVector(vec2 window, vec4 viewport, float clip_w) {
 
 void main() {
   vec4 posp = uModelViewMatrix * aPosition;
-
   // Moving vertices slightly toward the camera
   // to avoid depth-fighting with the fill triangles.
   // Discussed here:
   // http://www.opengl.org/discussion_boards/ubbthreads.php?ubb=showflat&Number=252848
   posp.xyz = posp.xyz * vec3(1,1,1);
   vec4 clipp = uProjectionMatrix * posp;
-  float thickness = 0.10;
+  float thickness = direction.w;
 
   if (thickness != 0.0) {
     vec4 posq = posp + uModelViewMatrix * vec4(direction.xyz, 0);

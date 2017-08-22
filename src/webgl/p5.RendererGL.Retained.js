@@ -79,6 +79,12 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
       3, gl.FLOAT, false, 0, 0);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].lineVertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    console.log('VERTEXNORMALS', obj.vertexNormals);
+    data = new Float32Array(flatten(obj.vertexNormals));
+    shader.enableAttrib(shader.attributes.direction.location,
+      4, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
+    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
   } else {
       // allocate space for vertex positions
     var data = new Float32Array(vToNArray(obj.vertices));
@@ -136,6 +142,9 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].lineVertexBuffer);
       shader.enableAttrib(shader.attributes.aPosition.location,
     3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
+      shader.enableAttrib(shader.attributes.direction.location,
+        4, gl.FLOAT, false, 0, 0);
   } else {
     //vertex position buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
