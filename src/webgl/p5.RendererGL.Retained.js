@@ -42,7 +42,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
   //@todo rename "numberOfItems" property to something more descriptive
   //we mult the num geom faces by 3
   this.gHash[gId].numberOfItems = obj.faces.length * 3;
-  this.gHash[gId].lineVertexCount = (flatten(obj.lineVertices)).length / 3; // we use the flattened array elsewhere, could reuse
+  this.gHash[gId].lineVertexCount = (flatten(obj.lineVertices)).length / 4; // we use the flattened array elsewhere, could reuse
 
   /*****LOGGING THE NUMBER OF ELEMENTS DRAWN*****/
   // console.log('Number of Elements Drawn: ' + this.gHash[gId].numberOfItems);
@@ -76,7 +76,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
   if(this.drawMode === 'wireframe') {
     var data = new Float32Array((flatten(obj.lineVertices)));
     shader.enableAttrib(shader.attributes.aPosition.location,
-      3, gl.FLOAT, false, 0, 0);
+      4, gl.FLOAT, false, 0, 0);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].lineVertexBuffer);
     gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
     console.log('VERTEXNORMALS', obj.vertexNormals);
@@ -141,7 +141,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   if(this.drawMode === 'wireframe') {
     gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].lineVertexBuffer);
       shader.enableAttrib(shader.attributes.aPosition.location,
-    3, gl.FLOAT, false, 0, 0);
+    4, gl.FLOAT, false, 0, 0);
     gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
       shader.enableAttrib(shader.attributes.direction.location,
         4, gl.FLOAT, false, 0, 0);

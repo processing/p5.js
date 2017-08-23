@@ -226,7 +226,9 @@ p5.Geometry.prototype._edgesToVertices = function() {
   function store(verts) {
     //console.log("Line verts: ", verts);
     for (var i = 0; i < verts.length; i += 1) {
-      vertices.push(verts[i].array());
+      verts[i] = verts[i].array();
+      verts[i].push(1);
+      vertices.push(verts[i]);
     }
   }
   this.vertexNormals.length = 0;
@@ -244,10 +246,10 @@ p5.Geometry.prototype._edgesToVertices = function() {
     var up = new p5.Vector(0, 0, 1);
     var normal = p5.Vector.cross(dir, up);
     var offset = normal.mult(halfWidth); // beware: normal has changed after this call.
-    a = begin;//.copy().add(offset.x, offset.y, offset.z);
-    b = begin;//.copy().sub(offset.x, offset.y, offset.z);
-    c = end;//.copy().add(offset.x, offset.y, offset.z);
-    d = end;//.copy().sub(offset.x, offset.y, offset.z);
+    a = begin.copy();//.add(offset.x, offset.y, offset.z);
+    b = begin.copy();//.sub(offset.x, offset.y, offset.z);
+    c = end.copy();//.add(offset.x, offset.y, offset.z);
+    d = end.copy();//.sub(offset.x, offset.y, offset.z);
     var dirAdd = dir.array();//.push(1);
     dirAdd.push(1);
     var dirSub = dir.array();//.push(-1);

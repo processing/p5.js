@@ -15,7 +15,7 @@ function draw() {
   //  stroke(0);
   //fill(0);
   stroke(0);
-  //rotateX(frameCount * 0.005);
+  rotateX(frameCount * 0.005);
   rotateY(frameCount * 0.015);
   fill(255);
   plane(175);
