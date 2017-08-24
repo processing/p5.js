@@ -243,7 +243,7 @@ p5.Geometry.prototype._edgesToVertices = function() {
     var dir = end.copy().sub(begin).normalize();
     // arbitrary; want up to be different from dir
     // in future, would like to use screen vector toward viewer as other component of basis.
-    var up = new p5.Vector(0, 0, 1);
+    var up = new p5.Vector(0, 1, 1);
     var normal = p5.Vector.cross(dir, up);
     var offset = normal.mult(halfWidth); // beware: normal has changed after this call.
     a = begin.copy();//.add(offset.x, offset.y, offset.z);
@@ -276,7 +276,7 @@ p5.Geometry.prototype._edgesToVertices = function() {
     // vert.xyz = vert.xyz + offset * vert.w;
     // store([a, b, c]); // put vertices into array in order
     //this.vertexNormals.push(dir, dir, dir, dir, dir, dir);
-    this.vertexNormals.push(dirAdd,dirSub,dirAdd,dirAdd,dirSub,dirAdd);
+    this.vertexNormals.push(dirAdd,dirSub,dirAdd,dirAdd,dirSub,dirSub);
     store([a, b, c, c, b, d]);
     // store([a, b, b, c, c, a]);
     // store([c, b, b, d, d, c]);

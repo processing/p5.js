@@ -247,9 +247,9 @@ p5.prototype.sphere = function(){
        .computeFaces()
        .computeNormals()
       ._makeTriangleEdges()
-      ._edgesToVertices()
-      .averageNormals()
-      .averagePoleNormals();
+      ._edgesToVertices();
+      //.averageNormals()
+      //.averagePoleNormals();
     this._renderer.createBuffers(gId, sphereGeom);
     this._renderer.newShader = false;
   }
