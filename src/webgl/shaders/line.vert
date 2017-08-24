@@ -26,21 +26,23 @@ vec4 windowToClipVector(vec2 window, vec4 viewport, float clip_w) {
 
 void main() {
   vec4 posMV = uModelViewMatrix * aPosition;
-  posMV.xyz = posMV.xyz * vec3(.9,.9,.9); //was multiplied by scale -- using 1,1,1 for testing
+  posMV.xyz = posMV.xyz * vec3(0.9,0.9,0.9); //was multiplied by scale -- using 1,1,1 for testing
   vec4 clipp = uProjectionMatrix * posMV;
   float thickness = direction.w;
 
   vec4 posq = uModelViewMatrix * vec4(direction.xyz, 0);
-  posq.xyz = posq.xyz * vec3(1,1,1);//was multiplied by scale -- using 1,1,1 for testing
+  posq.xyz = posq.xyz * vec3(0.9,0.9,0.9);//was multiplied by scale -- using 1,1,1 for testing
   vec4 clipq = uProjectionMatrix * posq;
 
   vec3 window_p = clipToWindow(clipp, viewport);
   vec3 window_q = clipToWindow(clipq, viewport);
   vec3 tangent = window_q - window_p;
   vec2 perp = normalize(vec2(-tangent.y, tangent.x));
-  vec2 offset = vec2(5,5) * thickness * perp;
+  vec2 offset = vec2(2,2) * thickness * perp;
   gl_Position.xy = clipp.xy + offset.xy;
   gl_Position.zw = clipp.zw;
+   // vec4 corner = vec4(direction.xyz, 0) * direction.w * 5.0;
+   // gl_Position = gl_Position + corner;
 }
 
 

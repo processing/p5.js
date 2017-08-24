@@ -345,7 +345,9 @@ p5.RendererGL.prototype.noFill = function() {
   var shader = this.setShader(this._getLineShader());
   shader.setUniform('uMaterialColor', this.curStrokeColor);
   shader._setViewportUniform();
- // gl.enable(gl.BLEND);
+  //gl.depthFunc(gl.GEQUAL);
+  gl.enable(gl.DEPTH_TEST);
+  //gl.enable(gl.BLEND);
   //gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   if(this.curStrokeColor) {
     this._setNoFillStroke();

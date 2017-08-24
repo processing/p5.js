@@ -121,7 +121,6 @@ p5.Shader.prototype._loadAttributes = function() {
     attribute.type = attributeInfo.type;
     attribute.size = attributeInfo.size;
     this.attributes[name] = attribute;
-    console.log(attribute);
   }
 
   this._loadedAttributes = true;

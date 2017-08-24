@@ -227,7 +227,7 @@ p5.Geometry.prototype._edgesToVertices = function() {
     //console.log("Line verts: ", verts);
     for (var i = 0; i < verts.length; i += 1) {
       verts[i] = verts[i].array();
-      verts[i].push(1);
+      //verts[i].push(1);
       vertices.push(verts[i]);
     }
   }
@@ -254,6 +254,10 @@ p5.Geometry.prototype._edgesToVertices = function() {
     dirAdd.push(1);
     var dirSub = dir.array();//.push(-1);
     dirSub.push(-1);
+    a.y = a.y * -1;
+    b.y = b.y * -1;
+    c.y = c.y * -1;
+    d.y = d.y * -1;
     //related to passing offset to shader
     // a.xyzw
      // a = begin.array();
