@@ -54,6 +54,9 @@ module.exports = function(grunt) {
     // 2. Version Bump, Build Library, Docs, Create Commit and Tag, Push to p5.js repo, release on NPM.
     grunt.task.run('release-it');
 
+    // 3. Push the new lib files to the dist repo (to be referred as bower-repo here)
+    grunt.task.run('release-bower');
+
     // 3. Copy the library files and example to a new folder 'dist'
     grunt.task.run('copy');
 
