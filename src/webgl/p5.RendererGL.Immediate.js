@@ -110,33 +110,29 @@ function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
     // this shouldn't change. :)
   }
   shader.bindShader();
-
   //vertex position Attribute
-  var data = new Float32Array(this.immediateMode.vertexPositions);
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.vertexBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+  this._bindBuffer(this.immediateMode.vertexBuffer, gl.ARRAY_BUFFER,
+    this.immediateMode.vertexPositions, Float32Array, gl.DYNAMIC_DRAW);
   shader.enableAttrib(shader.attributes.aPosition.location,
     3, gl.FLOAT, false, 0, 0);
 
-  if (this.drawMode === 'fill') {
-    data = new Float32Array(this.immediateMode.vertexColors);
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.colorBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+  if (this.drawMode === constants.FILL) {
+    this._bindBuffer(this.immediateMode.colorBuffer, gl.ARRAY_BUFFER,
+      this.immediateMode.vertexColors, Float32Array, gl.DYNAMIC_DRAW);
     shader.enableAttrib(shader.attributes.aVertexColor.location,
       4, gl.FLOAT, false, 0, 0);
   }
 
-  if (this.drawMode === 'texture'){
+  if (this.drawMode === constants.TEXTURE){
     //texture coordinate Attribute
-    data = new Float32Array(this.immediateMode.uvCoords);
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.immediateMode.uvBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, data, gl.DYNAMIC_DRAW);
+    this._bindBuffer(this.immediateMode.uvBuffer, gl.ARRAY_BUFFER,
+      this.immediateMode.uvCoords, Float32Array, gl.DYNAMIC_DRAW);
     shader.enableAttrib(shader.attributes.aTexCoord.location,
       2, gl.FLOAT, false, 0, 0);
   }
 
   if(mode){
-    if(this.drawMode === 'fill' || this.drawMode ==='texture'){
+    if(this.drawMode === constants.FILL || this.drawMode === constants.TEXTURE){
       switch(this.immediateMode.shapeMode){
         case constants.LINE_STRIP:
           this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
