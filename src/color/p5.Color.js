@@ -47,7 +47,7 @@ p5.Color = function(renderer, vals) {
   this.levels = this._array.map(function(level) {
     return Math.round(level * 255);
   });
-
+  this.name = 'p5.Color';   // for friendly debugger system
   return this;
 };
 

@@ -1,4 +1,89 @@
 suite('Error Helpers', function() {
+  var myp5 = new p5(function( sketch ) {
+    sketch.setup = function() {};
+    sketch.draw = function() {};
+  });
+
+  // unit tests for validateParameters
+  suite('validateParameters: Numbers + optional Constant', function(){
+    test('arc(): no friendly-err-msg', function() {
+      assert.doesNotThrow(function() {
+          p5._validateParameters('arc',
+            [1, 1, 10.5, 10, 0, Math.PI, 'pie']);
+        },
+        Error, 'got unwanted exception');
+    });
+    test('arc(): missing param #4, #5', function() {
+      assert.doesNotThrow(function() {
+          p5._validateParameters('arc',
+            [1, 1, 10.5, 10]);
+        },
+        Error, 'got unwanted exception');
+    });
+    test('arc(): wrong param type at #0', function() {
+      assert.doesNotThrow(function() {
+          p5._validateParameters('arc',
+            ['1', 1, 10.5, 10, 0, Math.PI, 'pie']);
+        },
+        Error, 'got unwanted exception');
+    });
+  });
+
+  suite('validateParameters: Numbers + optional Constant', function(){
+    test('rect(): no friendly-err-msg', function() {
+      assert.doesNotThrow(function() {
+          p5._validateParameters('rect',
+            [1, 1, 10.5, 10]);
+        },
+        Error, 'got unwanted exception');
+    });
+    test('rect(): missing param #3', function() {
+      assert.doesNotThrow(function() {
+          p5._validateParameters('rect',
+            [1, 1, 10.5]);
+        },
+        Error, 'got unwanted exception');
+    });
+    test('rect(): wrong param type at #0', function() {
+      assert.doesNotThrow(function() {
+          p5._validateParameters('rect',
+            ['1', 1, 10.5, 10, 0, Math.PI]);
+        },
+        Error, 'got unwanted exception');
+    });
+  });
+
+  suite('validateParameters: class, multi-types + optional Numbers', function(){
+    test('ambientLight(): no friendly-err-msg', function() {
+      assert.doesNotThrow(function() {
+          var c = myp5.color(255, 204, 0);
+          p5._validateParameters('ambientLight', [c]);
+        },
+        Error, 'got unwanted exception');
+    });
+  });
+
+  suite('validateParameters: multi-format', function(){
+    test('color(): no friendly-err-msg', function() {
+      assert.doesNotThrow(function() {
+          p5._validateParameters('color', [65]);
+        },
+        Error, 'got unwanted exception');
+    });
+    test('color(): no friendly-err-msg', function() {
+      assert.doesNotThrow(function() {
+          p5._validateParameters('color', [65, 0.5]);
+        },
+        Error, 'got unwanted exception');
+    });
+    test('color(): no friendly-err-msg', function() {
+      assert.doesNotThrow(function() {
+          p5._validateParameters('color', [255, 204, 0]);
+        },
+        Error, 'got unwanted exception');
+    });
+  });
+
   suite('helpForMisusedAtTopLevelCode', function() {
     var help = function(msg) {
       var log = [];
