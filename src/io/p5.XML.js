@@ -59,6 +59,7 @@ p5.XML = function () {
   this.children = [];
   this.parent = null;
   this.content = null; //done
+  this.name = 'p5.XML';   // for friendly debugger system
 };
 
 

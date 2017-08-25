@@ -16,6 +16,7 @@ var styleEmpty = 'rgba(0,0,0,0)';
 
 p5.Renderer2D = function(elt, pInst, isMainCanvas){
   p5.Renderer.call(this, elt, pInst, isMainCanvas);
+  this.name = 'p5.Renderer2D';   // for friendly debugger system
   this.drawingContext = this.canvas.getContext('2d');
   this._pInst._setProperty('drawingContext', this.drawingContext);
   return this;
@@ -507,8 +508,12 @@ p5.Renderer2D.prototype.point = function(x, y) {
   } else if(this._getStroke() === styleEmpty){
     return this;
   }
+  var s = this._getStroke();
+  var f = this._getFill();
   x = Math.round(x);
   y = Math.round(y);
+  // swapping fill color to stroke and back after for correct point rendering
+  this._setFill(s);
   if (ctx.lineWidth > 1) {
     ctx.beginPath();
     ctx.arc(
@@ -523,6 +528,7 @@ p5.Renderer2D.prototype.point = function(x, y) {
   } else {
     ctx.fillRect(x, y, 1, 1);
   }
+  this._setFill(f);
 };
 
 p5.Renderer2D.prototype.quad =

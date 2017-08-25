@@ -52,6 +52,7 @@ p5.Table = function (rows) {
    *  @property rows {p5.TableRow[]}
    */
   this.rows = [];
+  this.name = 'p5.Table';   // for friendly debugger system
 };
 
 /**
