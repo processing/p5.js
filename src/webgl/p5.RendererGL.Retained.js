@@ -3,6 +3,8 @@
 'use strict';
 
 var p5 = require('../core/core');
+var constants = require('../core/constants');
+
 var hashCount = 0;
 /**
  * _initBufferDefaults
@@ -70,50 +72,39 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
     shader = this.setShader(this._getColorShader());
   }
 
-  /****THIS IS HOW VERTICES WERE DRAWN BEFORE****/
-
-
-  if(this.drawMode === 'wireframe') {
-    var data = new Float32Array((flatten(obj.lineVertices)));
+  if(this.drawMode === constants.STROKE) {
+    this.bindBuffer(this.gHash[gId].lineVertexBuffer, gl.ARRAY_BUFFER
+      flatten(obj.lineVertices), Float32Array, gl.STATIC_DRAW);
     shader.enableAttrib(shader.attributes.aPosition.location,
       3, gl.FLOAT, false, 0, 0);
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].lineVertexBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-    //console.log('VERTEXNORMALS', obj.vertexNormals);
-    data = new Float32Array(flatten(obj.vertexNormals));
+
+    this.bindBuffer(this.gHash[gId].normalBuffer, gl.ARRAY_BUFFER
+      flatten(obj.vertexNormals), Float32Array, gl.STATIC_DRAW);
     shader.enableAttrib(shader.attributes.direction.location,
       4, gl.FLOAT, false, 0, 0);
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
   } else {
-      // allocate space for vertex positions
-    var data = new Float32Array(vToNArray(obj.vertices));
+    // allocate space for vertex positions
+    this.bindBuffer(this.gHash[gId].vertexBuffer, gl.ARRAY_BUFFER
+      vToNArray(obj.vertices), Float32Array, gl.STATIC_DRAW);
     shader.enableAttrib(shader.attributes.aPosition.location,
       3, gl.FLOAT, false, 0, 0);
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
-    gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 
       // allocate space for faces
-    data = new Uint16Array(flatten(obj.faces));
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
-    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, data, gl.STATIC_DRAW);
+    this._bindBuffer( this.gHash[gId].indexBuffer, gl.ELEMENT_ARRAY_BUFFER,
+      flatten(obj.faces), Uint16Array, gl.STATIC_DRAW);
+
+      // allocate space for normals
+    this._bindBuffer(this.gHash[gId].normalBuffer, gl.ARRAY_BUFFER,
+      vToNArray(obj.vertexNormals), Float32Array, gl.STATIC_DRAW);
+    shader.enableAttrib(shader.attributes.aNormal.location,
+      3, gl.FLOAT, false, 0, 0);
+
+    // tex coords
+    this._bindBuffer(this.gHash[gId].uvBuffer, gl.ARRAY_BUFFER,
+      flatten(obj.uvs), Float32Array, gl.STATIC_DRAW);
+    shader.enableAttrib(shader.attributes.aTexCoord.location,
+    2, gl.FLOAT, false, 0, 0);
   }
-
-  /**TURNING OFF NORMALS AND UVS FOR TESTING AT THIS POINT**/
-  /**SHOULD NOT BE DIFFICULT TO REIMPLEMENT LATER BUT A BIT UNCLEAR**/
-  // // allocate space for normals
-  // data = new Float32Array(vToNArray(obj.vertexNormals));
-  // shader.enableAttrib(shader.attributes.aNormal.location,
-  //   3, gl.FLOAT, false, 0, 0);
-  // gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
-  // gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
-
-  // // tex coords
-  // data = new Float32Array(flatten(obj.uvs));
-  // shader.enableAttrib(shader.attributes.aTexCoord.location,
-  //   2, gl.FLOAT, false, 0, 0);
-  // gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
-  // gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
 };
 
 /**
@@ -134,38 +125,32 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   var shader = this.curShader;
   shader.bindShader();
 
-  /**BINDING ORIGINAL VERTICES**/
-
-
   /**BINDING LINE VERTICES**/
-  if(this.drawMode === 'wireframe') {
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].lineVertexBuffer);
+  if(this.drawMode === constants.STROKE) {
+    this._bindBuffer(this.gHash[gId].lineVertexBuffer, gl.ARRAY_BUFFER);
       shader.enableAttrib(shader.attributes.aPosition.location,
     3, gl.FLOAT, false, 0, 0);
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
-      shader.enableAttrib(shader.attributes.direction.location,
-        4, gl.FLOAT, false, 0, 0);
+    this._bindBuffer(this.gHash[gId].normalBuffer, gl.ARRAY_BUFFER);
+    shader.enableAttrib(shader.attributes.direction.location,
+      4, gl.FLOAT, false, 0, 0);
   } else {
+    /**BINDING ORIGINAL VERTICES**/
     //vertex position buffer
-    gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].vertexBuffer);
+    this._bindBuffer(this.gHash[gId].vertexBuffer, gl.ARRAY_BUFFER);
     shader.enableAttrib(shader.attributes.aPosition.location,
       3, gl.FLOAT, false, 0, 0);
-
     //vertex index buffer
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.gHash[gId].indexBuffer);
+    this._bindBuffer(this.gHash[gId].indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
+
+    this._bindBuffer(this.gHash[gId].normalBuffer, gl.ARRAY_BUFFER);
+    shader.enableAttrib(shader.attributes.aNormal.location,
+      3, gl.FLOAT, false, 0, 0);
+    // uv buffer
+    this._bindBuffer(this.gHash[gId].uvBuffer, gl.ARRAY_BUFFER);
+    shader.enableAttrib(
+      shader.attributes.aTexCoord.location, 2, gl.FLOAT, false, 0, 0);
   }
-
-  /**TURNING OFF NORMALS AND UVS FOR TESTING AT THIS POINT**/
-  /**SHOULD NOT BE DIFFICULT TO REIMPLEMENT LATER BUT A BIT UNCLEAR**/
-  // gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].normalBuffer);
-  // shader.enableAttrib(shader.attributes.aNormal.location,
-  //   3, gl.FLOAT, false, 0, 0);
-  // // uv buffer
-  // gl.bindBuffer(gl.ARRAY_BUFFER, this.gHash[gId].uvBuffer);
-  // shader.enableAttrib(
-  //   shader.attributes.aTexCoord.location, 2, gl.FLOAT, false, 0, 0);
-
-  if(this.drawMode === 'wireframe') {
+  if(this.drawMode === constants.STROKE) {
     this._drawArrays(gl.TRIANGLES, gId);
   } else {
     this._drawElements(gl.TRIANGLES, gId);

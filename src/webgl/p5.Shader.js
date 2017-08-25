@@ -213,12 +213,17 @@ p5.Shader.prototype.bindTextures = function () {
   var gl = this._renderer.GL;
   for (var i = 0;  i < this.samplers.length; i++) {
     var uniform = this.samplers[i];
-    if (uniform.texture !== undefined) {
-      gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
-      uniform.texture.bindTexture();
-      uniform.texture.update();
-      gl.uniform1i(uniform.location, uniform.samplerIndex);
+    var tex = uniform.texture;
+    if (tex === undefined) {
+      // user hasn't yet supplied a texture for this slot.
+      // (or there may not be one--maybe just lighting),
+      // so we supply a default texture instead.
+      tex = this._renderer._getEmptyTexture();
     }
+    gl.activeTexture(gl.TEXTURE0 + uniform.samplerIndex);
+    tex.bindTexture();
+    tex.update();
+    gl.uniform1i(uniform.location, uniform.samplerIndex);
   }
 };
 

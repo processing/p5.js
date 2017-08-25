@@ -1,6 +1,7 @@
 'use strict';
 
 var p5 = require('../core/core');
+var constants = require('../core/constants');
 require('./p5.Shader');
 require('../core/p5.Renderer');
 require('./p5.Matrix');
@@ -329,7 +330,7 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   //see material.js for more info on color blending in webgl
   var colors = this._applyColorBlend.apply(this, arguments);
   this.curFillColor = colors;
-  this.drawMode = 'fill';
+  this.drawMode = constants.FILL;
   if (this.isImmediateDrawing){
     this.setShader(this._getImmediateModeShader());
   } else {
@@ -340,7 +341,7 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
 };
 
 p5.RendererGL.prototype.noFill = function() {
-  this.drawMode = 'wireframe';
+  this.drawMode = constants.STROKE;
   var gl = this.GL;
   var shader = this.setShader(this._getLineShader());
   shader.setUniform('uMaterialColor', this.curStrokeColor);
@@ -359,7 +360,7 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   var color = this._pInst.color.apply(this._pInst, arguments);
   var colorNormalized = color._array;
   this.curStrokeColor = colorNormalized;
-  if(this.drawMode === 'wireframe') {
+  if(this.drawMode === constants.STROKE) {
     this._setNoFillStroke();
   }
   return this;
@@ -503,6 +504,11 @@ p5.RendererGL.prototype.clear = function() {
  * @todo implement handle for components or vector as args
  */
 p5.RendererGL.prototype.translate = function(x, y, z) {
+  if(x instanceof p5.Vector) {
+    z = x.z;
+    y = x.y;
+    x = x.x;
+  }
   this.uMVMatrix.translate([x,-y,z]);
   return this;
 };
@@ -649,6 +655,16 @@ p5.RendererGL.prototype._getLineShader = function () {
   return this._defaultLineShader;
 };
 
+p5.RendererGL.prototype._getEmptyTexture = function () {
+  if (this._emptyTexture === undefined) {
+    // a plain white texture RGBA, full alpha, single pixel.
+    var im = new p5.Image(1, 1);
+    im.set(0, 0, 255);
+    this._emptyTexture = new p5.Texture(this, im);
+  }
+  return this._emptyTexture;
+};
+
 p5.RendererGL.prototype.getTexture = function (img) {
   var checkSource = function(element) {
     return element.src === img;
@@ -661,6 +677,18 @@ p5.RendererGL.prototype.getTexture = function (img) {
   }
 
   return tex;
+};
+
+//Binds a buffer to the drawing context
+//when passed more than two arguments it also updates or initializes
+//the data associated with the buffer
+p5.RendererGL.prototype._bindBuffer = function( buffer, target,
+  values, type, usage) {
+  this.GL.bindBuffer(target, buffer);
+  if(values !== undefined) {
+    var data = new type(values);
+    this.GL.bufferData(target, data, usage);
+  }
 };
 
 
