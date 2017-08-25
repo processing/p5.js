@@ -9,6 +9,7 @@
 'use strict';
 
 var p5 = require('../core/core');
+var constants = require('../core/constants');
 require('./p5.Geometry');
 /**
  * Draw a plane with given a width and height
@@ -174,9 +175,13 @@ p5.prototype.box = function(){
     };
     var boxGeom = new p5.Geometry(detailX,detailY, _box);
     boxGeom
-      .computeNormals()
-      ._makeTriangleEdges()
-      ._edgesToVertices();
+      .computeNormals();
+    if(this._renderer.drawMode === constants.STROKE)
+    {
+      boxGeom
+        ._makeTriangleEdges()
+        ._edgesToVertices();
+    }
 
     //initialize our geometry buffer with
     //the key val pair:
@@ -246,10 +251,14 @@ p5.prototype.sphere = function(){
     sphereGeom
        .computeFaces()
        .computeNormals()
-      ._makeTriangleEdges()
-      ._edgesToVertices();
-      //.averageNormals()
-      //.averagePoleNormals();
+      .averageNormals()
+      .averagePoleNormals();
+    if(this._renderer.drawMode === constants.STROKE)
+    {
+      sphereGeom
+        ._makeTriangleEdges()
+        ._edgesToVertices();
+    }
     this._renderer.createBuffers(gId, sphereGeom);
     this._renderer.newShader = false;
   }
@@ -601,12 +610,17 @@ p5.prototype.torus = function(){
       }
     };
     var torusGeom = new p5.Geometry(detailX, detailY, _torus);
-    torusGeom
-      .computeFaces()
-      .computeNormals()
-      .averageNormals()
-      ._makeTriangleEdges()
-      ._edgesToVertices();
+    torusGeom.computeFaces();
+    if(this._renderer.drawMode === constants.STROKE)
+    {
+      torusGeom
+        ._makeTriangleEdges()
+        ._edgesToVertices();
+    } else {
+      torusGeom
+        .computeNormals()
+        .averageNormals();
+    }
     this._renderer.createBuffers(gId, torusGeom);
     this._renderer.newShader = false;
   }

@@ -44,8 +44,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
   //@todo rename "numberOfItems" property to something more descriptive
   //we mult the num geom faces by 3
   this.gHash[gId].numberOfItems = obj.faces.length * 3;
-  this.gHash[gId].lineVertexCount = (flatten(obj.lineVertices)).length / 3; // we use the flattened array elsewhere, could reuse
-
+  this.gHash[gId].lineVertexCount = obj.lineVertices.length; // we use the flattened array elsewhere, could reuse
   /*****LOGGING THE NUMBER OF ELEMENTS DRAWN*****/
   // console.log('Number of Elements Drawn: ' + this.gHash[gId].numberOfItems);
 
@@ -73,18 +72,17 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
   }
 
   if(this.drawMode === constants.STROKE) {
-    this.bindBuffer(this.gHash[gId].lineVertexBuffer, gl.ARRAY_BUFFER
+    this._bindBuffer(this.gHash[gId].lineVertexBuffer, gl.ARRAY_BUFFER,
       flatten(obj.lineVertices), Float32Array, gl.STATIC_DRAW);
     shader.enableAttrib(shader.attributes.aPosition.location,
       3, gl.FLOAT, false, 0, 0);
-
-    this.bindBuffer(this.gHash[gId].normalBuffer, gl.ARRAY_BUFFER
+    this._bindBuffer(this.gHash[gId].normalBuffer, gl.ARRAY_BUFFER,
       flatten(obj.vertexNormals), Float32Array, gl.STATIC_DRAW);
     shader.enableAttrib(shader.attributes.direction.location,
       4, gl.FLOAT, false, 0, 0);
   } else {
     // allocate space for vertex positions
-    this.bindBuffer(this.gHash[gId].vertexBuffer, gl.ARRAY_BUFFER
+    this._bindBuffer(this.gHash[gId].vertexBuffer, gl.ARRAY_BUFFER,
       vToNArray(obj.vertices), Float32Array, gl.STATIC_DRAW);
     shader.enableAttrib(shader.attributes.aPosition.location,
       3, gl.FLOAT, false, 0, 0);
@@ -128,8 +126,8 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   /**BINDING LINE VERTICES**/
   if(this.drawMode === constants.STROKE) {
     this._bindBuffer(this.gHash[gId].lineVertexBuffer, gl.ARRAY_BUFFER);
-      shader.enableAttrib(shader.attributes.aPosition.location,
-    3, gl.FLOAT, false, 0, 0);
+    shader.enableAttrib(shader.attributes.aPosition.location,
+      3, gl.FLOAT, false, 0, 0);
     this._bindBuffer(this.gHash[gId].normalBuffer, gl.ARRAY_BUFFER);
     shader.enableAttrib(shader.attributes.direction.location,
       4, gl.FLOAT, false, 0, 0);
@@ -184,6 +182,7 @@ function flatten(arr){
     return arr.reduce(function(a, b){
       return a.concat(b);
     });
+    //return ([].concat.apply([], arr));
   } else {
     return [];
   }

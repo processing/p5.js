@@ -3,6 +3,7 @@
 'use strict';
 
 var p5 = require('../core/core');
+var constants = require('../core/constants');
 
 /**
  * p5 Geometry class
@@ -254,10 +255,10 @@ p5.Geometry.prototype._edgesToVertices = function() {
     dirAdd.push(1);
     var dirSub = dir.array();//.push(-1);
     dirSub.push(-1);
-    a.y = a.y * -1;
-    b.y = b.y * -1;
-    c.y = c.y * -1;
-    d.y = d.y * -1;
+    // a.y = a.y * -1;
+    // b.y = b.y * -1;
+    // c.y = c.y * -1;
+    // d.y = d.y * -1;
     //related to passing offset to shader
     // a.xyzw
      // a = begin.array();

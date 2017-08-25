@@ -330,7 +330,6 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   //see material.js for more info on color blending in webgl
   var colors = this._applyColorBlend.apply(this, arguments);
   this.curFillColor = colors;
-  this.drawMode = constants.FILL;
   if (this.isImmediateDrawing){
     this.setShader(this._getImmediateModeShader());
   } else {
@@ -341,7 +340,6 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
 };
 
 p5.RendererGL.prototype.noFill = function() {
-  this.drawMode = constants.STROKE;
   var gl = this.GL;
   var shader = this.setShader(this._getLineShader());
   shader.setUniform('uMaterialColor', this.curStrokeColor);
@@ -620,6 +618,7 @@ p5.RendererGL.prototype._getLightShader = function () {
     this._defaultLightShader = new p5.Shader(this,
       defaultShaders.lightVert, defaultShaders.lightTextureFrag);
   }
+  this.drawMode = constants.FILL;
   return this._defaultLightShader;
 };
 
@@ -636,6 +635,7 @@ p5.RendererGL.prototype._getNormalShader = function () {
     this._defaultNormalShader = new p5.Shader(this,
       defaultShaders.normalVert, defaultShaders.normalFrag);
   }
+  this.drawMode = constants.FILL;
   return this._defaultNormalShader;
 };
 
@@ -644,6 +644,7 @@ p5.RendererGL.prototype._getColorShader = function () {
     this._defaultColorShader = new p5.Shader(this,
       defaultShaders.normalVert, defaultShaders.basicFrag);
   }
+  this.drawMode = constants.FILL;
   return this._defaultColorShader;
 };
 
@@ -652,6 +653,7 @@ p5.RendererGL.prototype._getLineShader = function () {
     this._defaultLineShader = new p5.Shader(this,
       defaultShaders.lineVert, defaultShaders.lineFrag);
   }
+  this.drawMode = constants.STROKE;
   return this._defaultLineShader;
 };
 
@@ -669,7 +671,7 @@ p5.RendererGL.prototype.getTexture = function (img) {
   var checkSource = function(element) {
     return element.src === img;
   };
-
+  this.drawMode = constants.TEXTURE;
   var tex = this.textures.find(checkSource);
   if (tex === undefined) {
     tex = new p5.Texture(this, img);
