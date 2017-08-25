@@ -322,15 +322,6 @@ module.exports = function(grunt) {
           './docs/reference/data.min.json': './docs/reference/data.json'
         }
       }
-    },
-    copy: {
-      main: {
-        files: [
-          {expand: true, src: ['lib/addons/*'], dest: 'dist/', filter: 'isFile', flatten: true},
-          {expand: true, src: ['lib/*.js'], dest: 'dist/', filter: 'isFile', flatten: true},
-          {expand: true, src: ['lib/empty-example/*'], dest: 'dist/empty-example', flatten: true}
-        ]
-      }
     }
   });
 

@@ -7,7 +7,7 @@ module.exports = function(grunt) {
     'releaseIt': {
       'options': {
         'non-interactive': true,
-        'dry-run': true,// set to false later
+        'dry-run': false,
         'pkgFiles': ['package.json'],
         'increment': '',
         'buildCommand': 'grunt yui && grunt build',
@@ -16,7 +16,7 @@ module.exports = function(grunt) {
           'commitMessage': 'Release v%s',
           'tagName': '%s',
           'tagAnnotation': 'Release v%s',
-          'pushRepo': 'origin easing-up-the-release-process' //change this to master before PR
+          'pushRepo': 'origin master'
         },
         'dist': {
           'repo': false,
@@ -36,6 +36,15 @@ module.exports = function(grunt) {
           { cwd: 'dist/', src: ['**/*'], expand: true }
         ]
       }
+    },
+    'copy': {
+      'main': {
+        'files': [
+          {expand: true, src: ['lib/addons/*'], dest: 'dist/', filter: 'isFile', flatten: true},
+          {expand: true, src: ['lib/*.js'], dest: 'dist/', filter: 'isFile', flatten: true},
+          {expand: true, src: ['lib/empty-example/*'], dest: 'dist/empty-example', flatten: true}
+        ]
+      }
     }
   };
 
@@ -47,6 +56,7 @@ module.exports = function(grunt) {
     opts.releaseIt.options.increment = args;
     grunt.config.set('release-it', opts.releaseIt);
     grunt.config.set('compress', opts.compress);
+    grunt.config.set('copy', opts.copy);
 
     // 1. Test Suite
     grunt.task.run('test');
@@ -57,20 +67,20 @@ module.exports = function(grunt) {
     // 3. Push the new lib files to the dist repo (to be referred as bower-repo here)
     grunt.task.run('release-bower');
 
-    // 3. Copy the library files and example to a new folder 'dist'
-    grunt.task.run('copy');
+    // 4. [TODO]Push the docs out to the website
+    grunt.task.run('release-docs');
 
-    // 5. Zip the 'dist' folder
-    /* p5.zip File List
-    p5.js
-    p5.min.js
-    p5.dom.js
-    p5.dom.min.js
-    p5.sound.js
-    p5.sound.min.js
-    empty-example/index.html
-    empty-example/sketch.js
-    */
+    // 5. Copy the library files and example to a new folder 'dist' and zip the folder
+    // p5.zip File List:
+    // - p5.js
+    // - p5.min.js
+    // - p5.dom.js
+    // - p5.dom.min.js
+    // - p5.sound.js
+    // - p5.sound.min.js
+    // - empty-example/index.html
+    // - empty-example/sketch.js
+    grunt.task.run('copy');
     grunt.task.run('compress');
 
   });
