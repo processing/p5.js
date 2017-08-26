@@ -6,7 +6,7 @@ suite('p5.Color', function() {
   var c;
 
   // color level setters
-  suite('p5.Color in default mode', function() {
+  suite('in default mode', function() {
     setup(function() {
       c = myp5.color(255, 0, 102, 204);
     });
