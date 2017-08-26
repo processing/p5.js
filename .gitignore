@@ -14,4 +14,5 @@ examples/3d/
 .vscode
 dist/
 p5.zip
-bower-repo
+bower-repo/
+p5-website/
