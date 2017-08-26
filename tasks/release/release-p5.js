@@ -67,7 +67,7 @@ module.exports = function(grunt) {
     // 3. Push the new lib files to the dist repo (to be referred as bower-repo here)
     grunt.task.run('release-bower');
 
-    // 4. [TODO]Push the docs out to the website
+    // 4. Push the docs out to the website
     grunt.task.run('release-docs');
 
     // 5. Copy the library files and example to a new folder 'dist' and zip the folder

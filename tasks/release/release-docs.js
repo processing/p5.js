@@ -1,4 +1,4 @@
-/* Grunt Task to Release the Library files on dist repo for Bower */
+/* Grunt Task to Release the DOcs on website repo */
 
 // Using native exec instead of Grunt spawn so as to utilise Promises
 const exec = require('child_process').exec;
@@ -14,8 +14,8 @@ module.exports = function(grunt) {
     // Avoiding Callback Hell and using Promises
     new Promise(function(resolve, reject) {
       // Clone the website locally
-      console.log("Cloning");
-      exec('rm -rf p5-website/ && git clone -q https://github.com/sakshamsaxena/p5.js-website.git p5-website', function(err, stdout, stderr) {
+      console.log("Cloning the website ...");
+      exec('rm -rf p5-website/ && git clone -q https://github.com/sakshamsaxena/p5.js-website.git p5-website',function(err, stdout, stderr) {
         if (err)
           reject(err);
         if (stderr)
@@ -24,7 +24,7 @@ module.exports = function(grunt) {
       })
     }).then(function() {
       // Copy the new docs over
-      console.log("Copying");
+      console.log("Copying new docs ...");
       return new Promise(function(resolve, reject) {
         exec('cp -r docs/reference p5-website/dist/', function(err, stdout, stderr) {
           if (err)
@@ -36,9 +36,9 @@ module.exports = function(grunt) {
       })
     }).then(function() {
       // Add, Commit, Push
-      console.log("Last step");
+      console.log("Pushing to GitHub ...");
       return new Promise(function(resolve, reject) {
-        exec('git add --all && git commit -am "Updated Reference for version ' + version + '" && git push', { cwd: './p5-website' }, function(err, stdout, stderr) {
+        exec('git add --all && git commit -am "Updated Reference for version ' + version + '" && git push', {cwd: './p5-website' }, function(err, stdout, stderr) {
           if (err)
             reject(err);
           if (stderr)
