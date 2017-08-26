@@ -20,6 +20,7 @@ var p5 = require('../core/core');
  * @param {Number} [x] x component of the vector
  * @param {Number} [y] y component of the vector
  * @param {Number} [z] z component of the vector
+ * @return {p5.Vector}
  */
 p5.prototype.createVector = function (x, y, z) {
   if (this instanceof p5) {

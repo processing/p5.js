@@ -14,7 +14,7 @@ If you have found a bug in the p5.js library, you can file it here under the [�
 
 ## p5.js library
 
-To use p5.js, you can [download the p5.js library here](http://p5js.org/download).  If you are interested in the most recent, less stable version, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [development](https://github.com/processing/p5.js/wiki/Development) wiki for more information about our build process.
+To use p5.js, you can [download the p5.js library here](http://p5js.org/download). If you are interested in the most recent, less stable version, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [development](https://github.com/processing/p5.js/wiki/Development) wiki for more information about our build process.
 
 ## Issues
 
@@ -23,12 +23,12 @@ Please post bugs in the proper repository:
 * p5.js general and p5.dom: [https://github.com/processing/p5.js/issues](https://github.com/processing/p5.js/issues)
 * p5.sound: [https://github.com/processing/p5.js-sound/issues](https://github.com/processing/p5.js-sound/issues)
 * p5.js website: [https://github.com/processing/p5.js-website/issues](https://github.com/processing/p5.js-website/issues)
-* p5.js web editor: [https://github.com/processing/p5.js-website/issues](https://github.com/processing/p5.js-web-editor/issues)
+* p5.js web editor: [https://github.com/processing/p5.js-web-editor/issues](https://github.com/processing/p5.js-web-editor/issues)
 
 
 ## Learning
 
-Check out [p5js.org](http://p5js.org) for lots more! Here are some quicklinks:
+Check out [p5js.org](http://p5js.org) for lots more! Here are some quick-links:
 
 * [Get Started](http://p5js.org/get-started) — Create and run your first sketch!
 * [p5.js overview](https://github.com/processing/p5.js/wiki/p5.js-overview) — An overview of the main features and functionality of p5.js.
@@ -43,7 +43,3 @@ Check out [p5js.org](http://p5js.org) for lots more! Here are some quicklinks:
 p5.js is a collaborative project created by many individuals, and you are invited to help. All types of involvement are welcome. See the [community section](http://p5js.org/community) to get started!
 
 Developers, check out the [development](https://github.com/processing/p5.js/wiki/Development) wiki page for more in-depth details about contributing code, bug fixes, and documentation.
-
-
-
-

@@ -61,7 +61,6 @@ function getYuidocOptions() {
       helpers: [],
       preprocessor: './docs/preprocessor.js',
       outdir: 'docs/reference/'
-      //, quiet: false
     }
   };
 
@@ -92,6 +91,7 @@ module.exports = function(grunt) {
 
     // read in the package, used for knowing the current version, et al.
     pkg: grunt.file.readJSON('package.json'),
+
     // Configure style consistency checking for this file, the source, and the tests.
     jscs: {
       options: {
@@ -214,18 +214,20 @@ module.exports = function(grunt) {
           logErrors: true,
           timeout: 100000
         }
-      },
+      }
     },
 
     // This is a standalone task, used to automatically update the bower.json
-    // file to match the values in package.json.   It is (likely) used as part
+    // file to match the values in package.json. It is (likely) used as part
     // of the manual release strategy.
     update_json: {
+
       // set some task-level options
       options: {
         src: 'package.json',
         indent: '\t'
       },
+
       // update bower.json with data from package.json
       bower: {
         src: 'package.json', // where to read from
@@ -235,12 +237,9 @@ module.exports = function(grunt) {
       }
     },
 
-    // The actual compile step:  This should collect all the dependencies
-    // and compile them into a single file.
+    // This generates the theme for the documentation from the theme source
+    // files.
     requirejs: {
-
-      // This generates the theme for the documentation from the theme source
-      // files.
       yuidoc_theme: {
         options: {
           baseUrl: './docs/yuidoc-p5-theme-src/scripts/',
@@ -297,6 +296,7 @@ module.exports = function(grunt) {
         }
       }
     },
+
     // This is a static server which is used when testing connectivity for the
     // p5 library. This avoids needing an internet connection to run the tests.
     // It serves all the files in the test directory at http://localhost:9001/
@@ -343,7 +343,13 @@ module.exports = function(grunt) {
     }
   });
 
-  // Load task definitions
+  // Load build tasks.
+  // This contains the complete build task ("browserify")
+  // and the task to generate user select modules of p5
+  // ("combineModules") which can be invoked directly by
+  // `grunt combineModules:module_1:module_2` where core
+  // is included by default in all combinations always.
+  // NOTE: "module_x" is the name of it's folder in /src.
   grunt.loadTasks('build/tasks');
 
   // Load the external libraries used.
@@ -363,7 +369,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-minjson');
 
   // Create the multitasks.
-  // TODO: "requirejs" is in here to run the "yuidoc_themes" subtask. Is this needed?
   grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);
   grunt.registerTask('test', ['jshint', 'jscs', 'build', 'yuidoc:dev', 'connect', 'mocha', 'mochaTest']);
   grunt.registerTask('test:nobuild', ['jshint:test', 'jscs:test', 'connect', 'mocha']);

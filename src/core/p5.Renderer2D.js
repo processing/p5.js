@@ -1284,8 +1284,8 @@ p5.Renderer2D.prototype._applyTextProperties = function() {
     this._setProperty('_textStyle', this._textFont.font.styleName);
   }
 
-  this.drawingContext.font = this._textStyle + ' ' +
-    this._textSize + 'px ' + font;
+  this.drawingContext.font = (this._textStyle || 'normal') +
+    ' ' + (this._textSize || 12) + 'px ' + (font || 'sans-serif');
 
   return p;
 };

@@ -18,11 +18,24 @@ require('./p5.Color');
  * typically used within draw() to clear the display window at the beginning
  * of each frame, but it can be used inside setup() to set the background on
  * the first frame of animation or if the background need only be set once.
+ * <br><br>
+ * The color is either specified in terms of the RGB, HSB, or HSL color
+ * depending on the current colorMode. (The default color space is RGB, with
+ * each value in the range from 0 to 255).
+ * <br><br>
+ * If a single string argument is provided, RGB, RGBA and Hex CSS color strings
+ * and all named color strings are supported. In this case, an alpha number
+ * value as a second argument is not supported, the RGBA form should be used.
+ * <br><br>
+ * A p5.Color object can also be provided to set the background color.
+ * <br><br>
+ * A p5.Image can also be provided to set the background iamge.
  *
  * @method background
  * @param {p5.Color} color     any value created by the color() function
  * @param {Number} [a]         opacity of the background relative to current
  *                             color range (default is 0-100)
+ * @chainable
  *
  * @example
  * <div>
@@ -123,12 +136,14 @@ require('./p5.Color');
  *                         rgb() or rgba(), percentage rgb() or rgba(),
  *                         3-digit hex, 6-digit hex
  * @param {Number} [a]
+ * @chainable
  */
 
 /**
  * @method background
  * @param {Number} gray   specifies a value between white and black
  * @param {Number} [a]
+ * @chainable
  */
 
 /**
@@ -140,6 +155,7 @@ require('./p5.Color');
  * @param {Number} v3     blue or brightness value (depending on the current
  *                        color mode)
  * @param  {Number} [a]
+ * @chainable
  */
 
 /**
@@ -148,6 +164,7 @@ require('./p5.Color');
  *                             to set as background
  *                             (must be same size as the sketch window)
  * @param  {Number}  [a]
+ * @chainable
  */
 p5.prototype.background = function() {
   if (arguments[0] instanceof p5.Image) {
@@ -167,6 +184,7 @@ p5.prototype.background = function() {
  * the pixels 100% transparent.
  *
  * @method clear
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -206,17 +224,26 @@ p5.prototype.clear = function() {
  * Note: existing color objects remember the mode that they were created in,
  * so you can change modes as you like without affecting their appearance.
  *
+ *
  * @method colorMode
- * @param {Constant} mode   either RGB or HSB, corresponding to
+ * @param {Constant} mode   either RGB, HSB or HSL, corresponding to
  *                          Red/Green/Blue and Hue/Saturation/Brightness
  *                          (or Lightness)
- * @param {Number} [max1] range for the red or hue depending on the
- *                              current color mode, or range for all values
- * @param {Number} [max2] range for the green or saturation depending
+ * @param {Number}  [max]  range for all values
+ * @chainable
+ */
+/**
+ * @method colorMode
+ * @param {Constant} mode
+ * @param {Number} max1     range for the red or hue depending on the
+ *                              current color mode
+ * @param {Number} max2     range for the green or saturation depending
  *                              on the current color mode
- * @param {Number} [max3] range for the blue or brightness/lighntess
+ * @param {Number} max3     range for the blue or brightness/lighntess
  *                              depending on the current color mode
- * @param {Number} [maxA] range for the alpha
+ * @param {Number} [maxA]   range for the alpha
+ * @chainable
+ *
  * @example
  * <div>
  * <code>
@@ -313,21 +340,41 @@ p5.prototype.colorMode = function() {
  * in the range from 0 to 255).
  * <br><br>
  * If a single string argument is provided, RGB, RGBA and Hex CSS color strings
- * and all named color strings are supported. A p5 Color object can also be
- * provided to set the fill color.
+ * and all named color strings are supported. In this case, an alpha number
+ * value as a second argument is not supported, the RGBA form should be used.
+ * <br><br>
+ * A p5 Color object can also be provided to set the fill color.
  *
  * @method fill
- * @param {Number|Array|String|p5.Color} v1   gray value, red or hue value
- *                                            (depending on the current color
- *                                            mode), or color Array, or CSS
- *                                            color string
- * @param {Number}                       [v2] green or saturation value
- *                                            (depending on the current
- *                                            color mode)
- * @param {Number}                       [v3] blue or brightness value
- *                                            (depending on the current
- *                                            color mode)
- * @param {Number}                       [a]  opacity of the background
+ * @param  {Number}        v1      red or hue value relative to
+ *                                 the current color range
+ * @param  {Number}        v2      green or saturation value
+ *                                 relative to the current color range
+ * @param  {Number}        v3      blue or brightness value
+ *                                 relative to the current color range
+ * @param  {Number}        [alpha]
+ * @chainable
+ */
+
+/**
+ * @method fill
+ * @param  {String}        value   a color string
+ * @param  {Number}        [alpha]
+ * @chainable
+ */
+
+/**
+ * @method fill
+ * @param  {Number[]}      values  an array containing the red,green,blue &
+ *                                 and alpha components of the color
+ * @chainable
+ */
+
+/**
+ * @method fill
+ * @param  {p5.Color}      color   the fill color
+ * @param  {Number}        [alpha]
+ * @chainable
  *
  * @example
  * <div>
@@ -444,6 +491,7 @@ p5.prototype.fill = function() {
  * nothing will be drawn to the screen.
  *
  * @method noFill
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -465,6 +513,7 @@ p5.prototype.noFill = function() {
  * are called, nothing will be drawn to the screen.
  *
  * @method noStroke
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -491,21 +540,43 @@ p5.prototype.noStroke = function() {
  * the range from 0 to 255).
  * <br><br>
  * If a single string argument is provided, RGB, RGBA and Hex CSS color
- * strings and all named color strings are supported. A p5 Color object
- * can also be provided to set the stroke color.
+ * strings and all named color strings are supported. In this case, an alpha
+ * number value as a second argument is not supported, the RGBA form should be
+ * used.
+ * <br><br>
+ * A p5 Color object can also be provided to set the stroke color.
+ *
  *
  * @method stroke
- * @param {Number|Array|String|p5.Color} v1   gray value, red or hue value
- *                                            (depending on the current color
- *                                            mode), or color Array, or CSS
- *                                            color string
- * @param {Number}                       [v2] green or saturation value
- *                                            (depending on the current
- *                                            color mode)
- * @param {Number}                       [v3] blue or brightness value
- *                                            (depending on the current
- *                                            color mode)
- * @param {Number}                       [a]  opacity of the background
+ * @param  {Number}        v1      red or hue value relative to
+ *                                 the current color range
+ * @param  {Number}        v2      green or saturation value
+ *                                 relative to the current color range
+ * @param  {Number}        v3      blue or brightness value
+ *                                 relative to the current color range
+ * @param  {Number}        [alpha]
+ * @chainable
+ */
+
+/**
+ * @method stroke
+ * @param  {String}        value   a color string
+ * @param  {Number}        [alpha]
+ * @chainable
+ */
+
+/**
+ * @method stroke
+ * @param  {Number[]}      values  an array containing the red,green,blue &
+ *                                 and alpha components of the color
+ * @chainable
+ */
+
+/**
+ * @method stroke
+ * @param  {p5.Color}      color   the stroke color
+ * @param  {Number}        [alpha]
+ * @chainable
  *
  * @example
  * <div>

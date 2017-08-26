@@ -87,7 +87,7 @@ p5.TableRow.prototype.set = function(column, value) {
  *                                as a Float
  */
 p5.TableRow.prototype.setNum = function(column, value){
-  var floatVal = parseFloat(value, 10);
+  var floatVal = parseFloat(value);
   this.set(column, floatVal);
 };
 
@@ -137,9 +137,9 @@ p5.TableRow.prototype.get = function(column) {
 p5.TableRow.prototype.getNum = function(column) {
   var ret;
   if (typeof(column) === 'string'){
-    ret = parseFloat(this.obj[column], 10);
+    ret = parseFloat(this.obj[column]);
   } else {
-    ret = parseFloat(this.arr[column], 10);
+    ret = parseFloat(this.arr[column]);
   }
 
   if (ret.toString() === 'NaN') {
@@ -166,4 +166,4 @@ p5.TableRow.prototype.getString = function(column) {
   }
 };
 
-module.exports = p5.TableRow;
+module.exports = p5;

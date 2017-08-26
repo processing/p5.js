@@ -16,8 +16,8 @@ var constants = require('../core/constants');
  * @constructor
  * @extends p5.Element
  * @param {String} elt DOM node that is wrapped
- * @param {Object} [pInst] pointer to p5 instance
- * @param {Boolean} whether we're using it as main canvas
+ * @param {p5} [pInst] pointer to p5 instance
+ * @param {Boolean} [isMainCanvas] whether we're using it as main canvas
  */
 p5.Renderer = function(elt, pInst, isMainCanvas) {
   p5.Element.call(this, elt, pInst);

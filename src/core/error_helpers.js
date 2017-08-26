@@ -36,7 +36,7 @@ var getType = function( obj ) {
  *
  * @param  {String}               message the words to be said
  * @param  {String}               func    the name of the function to link
- * @param  {Integer/Color String} color   CSS color string or error type
+ * @param  {Number|String} color   CSS color string or error type
  *
  * @return console logs
  */

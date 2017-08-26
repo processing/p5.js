@@ -36,7 +36,7 @@ var constants = require('./constants');
  *
  * @method ellipseMode
  * @param  {Constant} mode either CENTER, RADIUS, CORNER, or CORNERS
- * @return {p5}                   the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -83,7 +83,7 @@ p5.prototype.ellipseMode = function(m) {
  * smoothing of geometry, images, and fonts.
  *
  * @method noSmooth
- * @return {p5} the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -130,7 +130,7 @@ p5.prototype.noSmooth = function() {
  *
  * @method rectMode
  * @param  {Constant} mode either CORNER, CORNERS, CENTER, or RADIUS
- * @return {p5}                   the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -178,7 +178,7 @@ p5.prototype.rectMode = function(m) {
  * images, and fonts.
  *
  * @method smooth
- * @return {p5} the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -206,8 +206,8 @@ p5.prototype.smooth = function() {
  * parameters: SQUARE, PROJECT, and ROUND. The default cap is ROUND.
  *
  * @method strokeCap
- * @param  {Number|Constant} cap either SQUARE, PROJECT, or ROUND
- * @return {p5}                  the p5 object
+ * @param  {Constant} cap either SQUARE, PROJECT, or ROUND
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -241,8 +241,8 @@ p5.prototype.strokeCap = function(cap) {
  * MITER.
  *
  * @method strokeJoin
- * @param  {Number|Constant} join either MITER, BEVEL, ROUND
- * @return {p5}                   the p5 object
+ * @param  {Constant} join either MITER, BEVEL, ROUND
+ * @chainable
  * @example
  * <div>
  * <code>

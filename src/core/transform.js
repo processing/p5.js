@@ -24,7 +24,7 @@ var constants = require('./constants');
  * @param  {Number} n10 numbers which define the 3x2 matrix to be multiplied
  * @param  {Number} n11 numbers which define the 3x2 matrix to be multiplied
  * @param  {Number} n12 numbers which define the 3x2 matrix to be multiplied
- * @return {p5}         the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -57,7 +57,7 @@ p5.prototype.pushMatrix = function() {
  * Replaces the current matrix with the identity matrix.
  *
  * @method resetMatrix
- * @return {p5} the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -93,7 +93,8 @@ p5.prototype.resetMatrix = function() {
  * @method rotate
  * @param  {Number} angle the angle of rotation, specified in radians
  *                        or degrees, depending on current angleMode
- * @return {p5}           the p5 object
+ * @param  {p5.Vector|Array} [axis] (in 3d) the axis to rotate around
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -107,13 +108,7 @@ p5.prototype.resetMatrix = function() {
  * white 52x52 rect with black outline at center rotated counter 45 degrees
  *
  */
-/**
- * @method rotate
- * @param  {Number} rad angle in radians
- * @param  {p5.Vector|Array} axis axis to rotate around
- * @return {p5} the p5 object
- */
-p5.prototype.rotate = function() {
+p5.prototype.rotate = function(angle, axis) {
   var args = new Array(arguments.length);
   var r;
   for (var i = 0; i < args.length; ++i) {
@@ -138,7 +133,7 @@ p5.prototype.rotate = function() {
  * Rotates around X axis.
  * @method  rotateX
  * @param  {Number} rad angles in radians
- * @return {p5} the p5 object
+ * @chainable
  */
 p5.prototype.rotateX = function(rad) {
   if (this._renderer.isP3D) {
@@ -153,7 +148,7 @@ p5.prototype.rotateX = function(rad) {
  * Rotates around Y axis.
  * @method rotateY
  * @param  {Number} rad angles in radians
- * @return {p5} the p5 object
+ * @chainable
  */
 p5.prototype.rotateY = function(rad) {
   if (this._renderer.isP3D) {
@@ -168,7 +163,7 @@ p5.prototype.rotateY = function(rad) {
  * Rotates around Z axis. Webgl mode only.
  * @method rotateZ
  * @param  {Number} rad angles in radians
- * @return {p5} the p5 object
+ * @chainable
  */
 p5.prototype.rotateZ = function(rad) {
   if (this._renderer.isP3D) {
@@ -201,7 +196,7 @@ p5.prototype.rotateZ = function(rad) {
  *                      are given
  * @param  {Number} [y] percent to scale the object in the y-axis
  * @param  {Number} [z] percent to scale the object in the z-axis (webgl only)
- * @return {p5}         the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -230,7 +225,8 @@ p5.prototype.scale = function() {
   for(var i = 0; i < args.length; i++) {
     args[i] = arguments[i];
   }
-  if(args[0] instanceof p5.Vector){
+  // Only check for Vector argument type if Vector is available
+  if (typeof p5.Vector !== 'undefined' && args[0] instanceof p5.Vector) {
     x = args[0].x;
     y = args[0].y;
     z = args[0].z;
@@ -279,7 +275,7 @@ p5.prototype.scale = function() {
  * @method shearX
  * @param  {Number} angle angle of shear specified in radians or degrees,
  *                        depending on current angleMode
- * @return {p5}           the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -320,7 +316,7 @@ p5.prototype.shearX = function(angle) {
  * @method shearY
  * @param  {Number} angle angle of shear specified in radians or degrees,
  *                        depending on current angleMode
- * @return {p5}           the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -358,7 +354,7 @@ p5.prototype.shearY = function(angle) {
  * @param  {Number} x left/right translation
  * @param  {Number} y up/down translation
  * @param  {Number} [z] forward/backward translation (webgl only)
- * @return {p5}       the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>

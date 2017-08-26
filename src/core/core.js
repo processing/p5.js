@@ -26,7 +26,7 @@ var constants = require('./constants');
  * "global"   - all properties and methods are attached to the window
  * "instance" - all properties and methods are bound to this p5 object
  *
- * @param  {Function}    sketch a closure that can set optional preload(),
+ * @param  {function}    sketch a closure that can set optional preload(),
  *                              setup(), and/or draw() properties on the
  *                              given p5 instance
  * @param  {HTMLElement|boolean} [node] element to attach canvas to, if a
@@ -359,9 +359,16 @@ var p5 = function(sketch, node, sync) {
 
       this._setProperty('frameCount', this.frameCount + 1);
       this.redraw();
-      this._updateMouseCoords();
       this._frameRate = 1000.0/(now - this._lastFrameTime);
       this._lastFrameTime = now;
+
+      // If the user is actually using mouse module, then update
+      // coordinates, otherwise skip. We can test this by simply
+      // checking if any of the mouse functions are available or not.
+      // NOTE : This reflects only in complete build or modular build.
+      if(typeof this._updateMouseCoords !== 'undefined') {
+        this._updateMouseCoords();
+      }
     }
 
     // get notified the next time the browser gives us
@@ -656,5 +663,6 @@ p5.prototype._createFriendlyGlobalFunctionBinder = function(options) {
     }
   };
 };
+
 
 module.exports = p5;

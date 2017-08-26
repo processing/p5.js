@@ -32,8 +32,8 @@ require('./error_helpers');
  * @param  {Number} start  angle to start the arc, specified in radians
  * @param  {Number} stop   angle to stop the arc, specified in radians
  * @param  {Constant} [mode] optional parameter to determine the way of drawing
- *                         the arc
- * @return {Object}        the p5 object
+ *                         the arc. either CHORD or PIE
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -142,7 +142,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
  * @param  {Number} y y-coordinate of the ellipse.
  * @param  {Number} w width of the ellipse.
  * @param  {Number} [h] height of the ellipse.
- * @return {p5}       the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -153,14 +153,6 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
  * @alt
  *white ellipse with black outline in middle-right of canvas that is 55x55.
  *
- */
-/**
- * @method ellipse
- * @param {Number} x
- * @param {Number} y
- * @param {Number} w
- * @param {Number} [h]
- * @return {p5}
  */
 p5.prototype.ellipse = function() {
   var args = new Array(arguments.length);
@@ -205,7 +197,7 @@ p5.prototype.ellipse = function() {
  * @param  {Number} y1 the y-coordinate of the first point
  * @param  {Number} x2 the x-coordinate of the second point
  * @param  {Number} y2 the y-coordinate of the second point
- * @return {p5}        the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -276,7 +268,7 @@ p5.prototype.line = function() {
  * @method point
  * @param  {Number} x the x-coordinate
  * @param  {Number} y the y-coordinate
- * @return {p5}       the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -334,7 +326,7 @@ p5.prototype.point = function() {
  * @param {Number} y3 the y-coordinate of the third point
  * @param {Number} x4 the x-coordinate of the fourth point
  * @param {Number} y4 the y-coordinate of the fourth point
- * @return {p5}     the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -356,7 +348,7 @@ p5.prototype.point = function() {
  * @param {Number} y3
  * @param {Number} x4
  * @param {Number} y4
- * @return {p5} the p5 object
+ * @chainable
  */
 p5.prototype.quad = function() {
   if (!this._renderer._doStroke && !this._renderer._doFill) {
@@ -456,7 +448,7 @@ p5.prototype.quad = function() {
 * @param  {Number} h
 * @param  {Number} [detailX]
 * @param  {Number} [detailY]
-* @return {p5}          the p5 object.
+* @chainable
 */
 p5.prototype.rect = function() {
   var args = new Array(arguments.length);
@@ -464,7 +456,7 @@ p5.prototype.rect = function() {
     args[i] = arguments[i];
   }
   if (!this._renderer._doStroke && !this._renderer._doFill) {
-    return;
+    return this;
   }
 
   p5._validateParameters('rect', args);
@@ -494,7 +486,7 @@ p5.prototype.rect = function() {
 * @param  {Number} y2 y-coordinate of the second point
 * @param  {Number} x3 x-coordinate of the third point
 * @param  {Number} y3 y-coordinate of the third point
-* @return {p5}        the p5 object
+* @chainable
 * @example
 * <div>
 * <code>
