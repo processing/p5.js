@@ -61,6 +61,16 @@ p5.Color.prototype._getAlpha = function() {
   return this._array[3] * this.maxes[this.mode][3];
 };
 
+p5.Color.prototype.alpha = function(new_alpha) {
+  console.log(new_alpha);
+  this._array = p5.Color._parseInputs(
+    this.levels[0],
+    this.levels[1],
+    this.levels[2],
+    new_alpha
+  );
+};
+
 p5.Color.prototype._getBlue = function() {
   return this._array[2] * this.maxes[constants.RGB][2];
 };

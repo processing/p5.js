@@ -5,6 +5,19 @@ suite('p5.Color', function() {
   });
   var c;
 
+  // color level setters
+  suite('p5.Color in default mode', function() {
+    setup(function() {
+      c = myp5.color(255, 0, 102, 204);
+    });
+
+    test('can be modified with alpha setter', function() {
+      assert.deepEqual(c.levels, [255, 0, 102, 204]);
+      c.alpha(98);
+      assert.deepEqual(c.levels, [255, 0, 102, 98]);
+    });
+  });
+
   suite('p5.prototype.color(r,g,b)', function() {
     setup(function() {
       c = myp5.color(255, 0, 102);
