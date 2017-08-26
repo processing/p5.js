@@ -58,19 +58,14 @@ function report(message, func, color) {
   }
   if (func.substring(0,4) === 'load'){
     console.log(
-      '%c> p5.js says: '+message+'%c'+
-      '[https://github.com/processing/p5.js/wiki/Local-server]',
-      'background-color:' + color + ';color:#FFF;',
-      'background-color:transparent;color:' + color +';',
-      'background-color:' + color + ';color:#FFF;',
-      'background-color:transparent;color:' + color +';'
+      '> p5.js says: '+message+
+      '[https://github.com/processing/p5.js/wiki/Local-server]'
     );
   }
   else{
     console.log(
-      '%c> p5.js says: '+message+'%c [http://p5js.org/reference/#p5/'+func+
-      ']', 'background-color:' + color + ';color:#FFF;',
-      'background-color:transparent;color:' + color +';'
+      '> p5.js says: '+message+' [http://p5js.org/reference/#p5/'+func+
+      ']'
     );
   }
 }
@@ -103,7 +98,7 @@ p5._friendlyFileLoadError = function (errorType, filePath) {
   var errorInfo = errorCases[ errorType ];
   var message = 'It looks like there was a problem' +
   ' loading your ' + errorInfo.fileType + '.' +
-  ' Try checking if the file path%c [' + filePath + '] %cis correct,' +
+  ' Try checking if the file path [' + filePath + '] is correct,' +
   (errorInfo.message || '') + ' or running a local server.';
   report(message, errorInfo.method, FILE_LOAD);
 };
@@ -239,7 +234,7 @@ p5._friendlyParamError = function (errorObj, func) {
       message = 'It looks like ' + func +
         '() received an empty variable in spot #' + errorObj.position +
         ' (zero-based index). If not intentional, this is often a problem' +
-        ' with scope: [link to scope].';
+        ' with scope: [https://p5js.org/examples/data-variable-scope.html].';
       report(message, func, ERR_PARAMS);
       break;
     case 'WRONG_CLASS':
@@ -259,21 +254,19 @@ p5._friendlyParamError = function (errorObj, func) {
 };
 function friendlyWelcome() {
   // p5.js brand - magenta: #ED225D
-  var astrixBgColor = 'transparent';
-  var astrixTxtColor = '#ED225D';
-  var welcomeBgColor = '#ED225D';
-  var welcomeTextColor = 'white';
+  //var astrixBgColor = 'transparent';
+  //var astrixTxtColor = '#ED225D';
+  //var welcomeBgColor = '#ED225D';
+  //var welcomeTextColor = 'white';
   console.log(
-  '%c    _ \n'+
+  '    _ \n'+
   ' /\\| |/\\ \n'+
   ' \\ ` \' /  \n'+
   ' / , . \\  \n'+
   ' \\/|_|\\/ '+
-  '\n\n%c> p5.js says: Welcome! '+
+  '\n\n> p5.js says: Welcome! '+
   'This is your friendly debugger. ' +
-  'To turn me off switch to using “p5.min.js”.',
-  'background-color:'+astrixBgColor+';color:' + astrixTxtColor +';',
-  'background-color:'+welcomeBgColor+';color:' + welcomeTextColor +';'
+  'To turn me off switch to using “p5.min.js”.'
   );
 }
 
@@ -392,12 +385,11 @@ function helpForMisusedAtTopLevelCode(e, log) {
     //   * Uncaught ReferenceError: PI is not defined  (Chrome)
 
     if (e.message && e.message.match('\\W?'+symbol.name+'\\W') !== null) {
-      log('%cDid you just try to use p5.js\'s ' + symbol.name +
+      log('Did you just try to use p5.js\'s ' + symbol.name +
           (symbol.type === 'function' ? '() ' : ' ') + symbol.type +
           '? If so, you may want to ' +
           'move it into your sketch\'s setup() function.\n\n' +
-          'For more details, see: ' + FAQ_URL,
-          'color: #B40033' /* Dark magenta */);
+          'For more details, see: ' + FAQ_URL);
       return true;
     }
   });
