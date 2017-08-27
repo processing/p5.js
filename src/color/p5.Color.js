@@ -459,8 +459,8 @@ var colorPatterns = {
  */
 p5.Color._parseInputs = function() {
   var numArgs = arguments.length;
-  var mode = this._getMode();
-  var maxes = this._getMaxes();
+  var mode = this.mode;
+  var maxes = this.maxes;
   var results = [];
 
   if (numArgs >= 3) {  // Argument is a list of component values.
