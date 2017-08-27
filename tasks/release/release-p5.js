@@ -33,16 +33,7 @@ module.exports = function(grunt) {
           'archive': 'p5.zip'
         },
         'files': [
-          { cwd: 'dist/', src: ['**/*'], expand: true }
-        ]
-      }
-    },
-    'copy': {
-      'main': {
-        'files': [
-          {expand: true, src: ['lib/addons/*'], dest: 'dist/', filter: 'isFile', flatten: true},
-          {expand: true, src: ['lib/*.js'], dest: 'dist/', filter: 'isFile', flatten: true},
-          {expand: true, src: ['lib/empty-example/*'], dest: 'dist/empty-example', flatten: true}
+          { cwd: 'lib/', src: ['**/*'], expand: true }
         ]
       }
     }
@@ -52,11 +43,10 @@ module.exports = function(grunt) {
   grunt.registerTask('release-p5', 'Drafts and Publishes a fresh release of p5.js', function(args) {
 
     // 0. Setup Config
-    // Default increment is minor (x.y.z+1)
+    // Default increment is patch (x.y.z+1)
     opts.releaseIt.options.increment = args;
     grunt.config.set('release-it', opts.releaseIt);
     grunt.config.set('compress', opts.compress);
-    grunt.config.set('copy', opts.copy);
 
     // 1. Test Suite
     grunt.task.run('test');
@@ -70,18 +60,10 @@ module.exports = function(grunt) {
     // 4. Push the docs out to the website
     grunt.task.run('release-docs');
 
-    // 5. Copy the library files and example to a new folder 'dist' and zip the folder
-    // p5.zip File List:
-    // - p5.js
-    // - p5.min.js
-    // - p5.dom.js
-    // - p5.dom.min.js
-    // - p5.sound.js
-    // - p5.sound.min.js
-    // - empty-example/index.html
-    // - empty-example/sketch.js
-    grunt.task.run('copy');
+    // 5. Zip the lib folder
     grunt.task.run('compress');
 
+    // 6. Draft a Release for GitHub
+    grunt.task.run('release-github');
   });
 };
