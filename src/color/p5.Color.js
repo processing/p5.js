@@ -69,12 +69,15 @@ p5.Color.prototype.alpha = function(new_alpha) {
   this._calculateLevels();
 };
 
+// calculates and stores the closest screen levels
 p5.Color.prototype._calculateLevels = function() {
   this.levels = this._array.map(function(level) {
     return Math.round(level * 255);
   });
 };
 
+// stores the color mode and maxes in this instance of Color
+// for later use (by _parseInputs())
 p5.Color.prototype._storeModeAndMaxes = function(new_mode, new_maxes) {
   this.mode = new_mode;
   this.maxes = new_maxes;
