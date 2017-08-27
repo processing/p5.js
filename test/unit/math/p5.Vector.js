@@ -114,6 +114,35 @@ suite('p5.Vector', function() {
       assert.closeTo(v.z, 0, 0.001);
     });
   });
+
+  suite('p5.prototype.angleBetween()', function() {
+    test('should not trip on rounding issues in 2D space', function() {
+      var v1 = myp5.createVector(-11, -20);
+      var v2 = myp5.createVector(-5.5, -10);
+      expect(v1.angleBetween(v2)).to.be.closeTo(0, 0.00001);
+
+      var v3 = myp5.createVector(-11, -20);
+      var v4 = myp5.createVector(5.5, 10);
+      expect(v3.angleBetween(v4)).to.be.closeTo(180, 0.00001);
+    });
+
+    test('should not trip on rounding issues in 3D space', function() {
+      var v1 = myp5.createVector(1, 1.1, 1.2);
+      var v2 = myp5.createVector(2, 2.2, 2.4);
+
+      var angle = v1.angleBetween(v2);
+      expect(angle).to.be.closeTo(0, 0.00001);
+    });
+
+    test('should return NaN for zero vector', function() {
+      var v1 = myp5.createVector(0, 0, 0);
+      var v2 = myp5.createVector(2, 3, 4);
+
+      expect(v1.angleBetween(v2)).to.be.NaN; // jshint ignore:line
+      expect(v2.angleBetween(v1)).to.be.NaN; // jshint ignore:line
+    });
+
+  });
 });
 
 //  describe('set()', function() {
