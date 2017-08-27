@@ -8,6 +8,7 @@ require('./p5.Matrix');
 var fs = require('fs');
 
 var uMVMatrixStack = [];
+var cameraMatrixStack = [];
 
 var defaultShaders = {
   immediateVert:
@@ -60,12 +61,11 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._initContext();
   this.isP3D = true; //lets us know we're in 3d mode
   this.GL = this.drawingContext;
-  //lights
+  // lights
   this.ambientLightCount = 0;
   this.directionalLightCount = 0;
   this.pointLightCount = 0;
-  //camera
-  this._curCamera = null;
+
   /**
    * model view, projection, & normal
    * matrices
@@ -73,6 +73,21 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.uMVMatrix = new p5.Matrix();
   this.uPMatrix  = new p5.Matrix();
   this.uNMatrix = new p5.Matrix('mat3');
+
+  // Camera
+  this._curCamera = null;
+  // default camera settings, then use those to populate camera fields.
+  this._computeCameraDefaultSettings();
+  this.cameraFOV = this.defaultCameraFOV;
+  this.cameraAspect = this.defaultAspect;
+  this.cameraX = this.defaultCameraX;
+  this.cameraY = this.defaultCameraY;
+  this.cameraZ = this.defaultCameraZ;
+  this.cameraNear = this.defaultCameraNear;
+  this.cameraFar = this.defaultCameraFar;
+  this.cameraMatrix = new p5.Matrix();
+  this.camera(); // set default camera matrices
+
   //Geometry & Material hashes
   this.gHash = {};
 
@@ -249,23 +264,59 @@ p5.prototype.setAttributes = function() {
   this._renderer._resetContext(attr);
 };
 
+p5.RendererGL.prototype._computeCameraDefaultSettings = function () {
+  this.defaultCameraFOV = 60 / 180 * Math.PI;
+  this.defaultCameraAspect = this.width / this.height;
+  this.defaultCameraX = 0;
+  this.defaultCameraY = 0;
+  this.defaultCameraZ =
+    (this.height / 2.0) / Math.tan(this.defaultCameraFOV / 2.0);
+  this.defaultCameraNear = this.defaultCameraZ * 0.1;
+  this.defaultCameraFar = this.defaultCameraZ * 10;
+};
+
 //detect if user didn't set the camera
 //then call this function below
 p5.RendererGL.prototype._setDefaultCamera = function(){
   if(this._curCamera === null){
-    var _w = this.width;
-    var _h = this.height;
-    this.uPMatrix = p5.Matrix.identity();
-    var cameraZ = (this.height / 2) / Math.tan(Math.PI * 30 / 180);
-    this.uPMatrix.perspective(60 / 180 * Math.PI, _w / _h,
-                              cameraZ * 0.1, cameraZ * 10);
+
+    this._computeCameraDefaultSettings();
+    this.cameraFOV = this.defaultCameraFOV;
+    this.cameraAspect = this.defaultAspect;
+    this.cameraX = this.defaultCameraX;
+    this.cameraY = this.defaultCameraY;
+    this.cameraZ = this.defaultCameraZ;
+    this.cameraNear = this.defaultCameraNear;
+    this.cameraFar = this.defaultCameraFar;
+
+    this.perspective();
+    this.camera();
     this._curCamera = 'default';
   }
 };
 
 p5.RendererGL.prototype._update = function() {
-  this.uMVMatrix = p5.Matrix.identity();
-  this.translate(0, 0, -(this.height / 2) / Math.tan(Math.PI * 30 / 180));
+  // reset model view and apply initial camera transform
+  // (containing only look at info; no projection).
+  this.uMVMatrix.set(this.cameraMatrix.mat4[0],
+                     this.cameraMatrix.mat4[1],
+                     this.cameraMatrix.mat4[2],
+                     this.cameraMatrix.mat4[3],
+                     this.cameraMatrix.mat4[4],
+                     this.cameraMatrix.mat4[5],
+                     this.cameraMatrix.mat4[6],
+                     this.cameraMatrix.mat4[7],
+                     this.cameraMatrix.mat4[8],
+                     this.cameraMatrix.mat4[9],
+                     this.cameraMatrix.mat4[10],
+                     this.cameraMatrix.mat4[11],
+                     this.cameraMatrix.mat4[12],
+                     this.cameraMatrix.mat4[13],
+                     this.cameraMatrix.mat4[14],
+                     this.cameraMatrix.mat4[15]
+                     );
+
+  // reset light counters for new frame.
   this.ambientLightCount = 0;
   this.directionalLightCount = 0;
   this.pointLightCount = 0;
@@ -470,8 +521,10 @@ p5.RendererGL.prototype.resize = function(w,h) {
   p5.Renderer.prototype.resize.call(this, w, h);
   gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
   // If we're using the default camera, update the aspect ratio
-  if(this._curCamera === 'default') {
+  if(this._curCamera === null || this._curCamera === 'default') {
     this._curCamera = null;
+    // camera defaults are dependent on the width & height of the screen,
+    // so we'll want to update them if the size of the screen changes.
     this._setDefaultCamera();
   }
 };
@@ -507,7 +560,7 @@ p5.RendererGL.prototype.translate = function(x, y, z) {
     y = x.y;
     x = x.x;
   }
-  this.uMVMatrix.translate([x,-y,z]);
+  this.uMVMatrix.translate([x,y,z]);
   return this;
 };
 
@@ -549,6 +602,7 @@ p5.RendererGL.prototype.rotateZ = function(rad) {
  */
 p5.RendererGL.prototype.push = function() {
   uMVMatrixStack.push(this.uMVMatrix.copy());
+  cameraMatrixStack.push(this.cameraMatrix.copy());
 };
 
 /**
@@ -560,11 +614,14 @@ p5.RendererGL.prototype.pop = function() {
     throw new Error('Invalid popMatrix!');
   }
   this.uMVMatrix = uMVMatrixStack.pop();
+    if (cameraMatrixStack.length === 0) {
+    throw new Error('Invalid popMatrix!');
+  }
+  this.cameraMatrix = cameraMatrixStack.pop();
 };
 
 p5.RendererGL.prototype.resetMatrix = function() {
   this.uMVMatrix = p5.Matrix.identity();
-  this.translate(0, 0, -800);
   return this;
 };
 

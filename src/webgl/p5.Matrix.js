@@ -82,10 +82,26 @@ p5.Matrix.prototype.set = function (inMatrix) {
   if (inMatrix instanceof p5.Matrix) {
     this.mat4 = inMatrix.mat4;
     return this;
-  }
-  else if (inMatrix instanceof GLMAT_ARRAY_TYPE) {
+  } else if (inMatrix instanceof GLMAT_ARRAY_TYPE) {
     this.mat4 = inMatrix;
     return this;
+  } else if (arguments.length === 16) {
+    this.mat4[0] = arguments[0];
+    this.mat4[1] = arguments[1];
+    this.mat4[2] = arguments[2];
+    this.mat4[3] = arguments[3];
+    this.mat4[4] = arguments[4];
+    this.mat4[5] = arguments[5];
+    this.mat4[6] = arguments[6];
+    this.mat4[7] = arguments[7];
+    this.mat4[8] = arguments[8];
+    this.mat4[9] = arguments[9];
+    this.mat4[10] = arguments[10];
+    this.mat4[11] = arguments[11];
+    this.mat4[12] = arguments[12];
+    this.mat4[13] = arguments[13];
+    this.mat4[14] = arguments[14];
+    this.mat4[15] = arguments[15];
   }
   return this;
 };
@@ -570,14 +586,14 @@ p5.Matrix.prototype.translate = function(v){
   var x = v[0],
     y = v[1],
     z = v[2] || 0;
-  this.mat4[12] =
-    this.mat4[0] * x +this.mat4[4] * y +this.mat4[8] * z +this.mat4[12];
-  this.mat4[13] =
-    this.mat4[1] * x +this.mat4[5] * y +this.mat4[9] * z +this.mat4[13];
-  this.mat4[14] =
-    this.mat4[2] * x +this.mat4[6] * y +this.mat4[10] * z +this.mat4[14];
-  this.mat4[15] =
-    this.mat4[3] * x +this.mat4[7] * y +this.mat4[11] * z +this.mat4[15];
+  this.mat4[12] +=
+    this.mat4[0] * x +this.mat4[4] * y +this.mat4[8] * z;
+  this.mat4[13] +=
+    this.mat4[1] * x +this.mat4[5] * y +this.mat4[9] * z;
+  this.mat4[14] +=
+    this.mat4[2] * x +this.mat4[6] * y +this.mat4[10] * z;
+  this.mat4[15] +=
+    this.mat4[3] * x +this.mat4[7] * y +this.mat4[11] * z;
 };
 
 p5.Matrix.prototype.rotateX = function(a){

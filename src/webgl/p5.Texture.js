@@ -75,7 +75,7 @@ p5.Texture.prototype.init = function(data) {
   this.glTex = gl.createTexture();
   this.bindTexture();
 
-  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+  //gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, this.glMagFilter);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, this.glMinFilter);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, this.glWrapS);

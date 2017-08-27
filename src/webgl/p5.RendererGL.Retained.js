@@ -70,7 +70,9 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
     // one that works for retain mode.
     shader = this.setShader(this._getColorShader());
   }
-
+  console.log(shader.attributes);
+  console.log(obj.lineVertices);
+  console.log(obj.vertexNormals);
   if(this.drawMode === constants.STROKE) {
     this._bindBuffer(this.gHash[gId].lineVertexBuffer, gl.ARRAY_BUFFER,
       flatten(obj.lineVertices), Float32Array, gl.STATIC_DRAW);

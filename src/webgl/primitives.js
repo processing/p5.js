@@ -660,10 +660,13 @@ p5.RendererGL.prototype.triangle = function
       this.uvs = [[0,0],[0,1],[1,1]];
     };
     var triGeom = new p5.Geometry(1,1,_triangle);
-    triGeom
-      .computeNormals()
-      ._makeTriangleEdges()
-      ._edgesToVertices();
+    if(this.drawMode === constants.STROKE) {
+      triGeom
+        ._makeTriangleEdges()
+        ._edgesToVertices();
+    } else {
+      triGeom.computeNormals();
+    }
     this.createBuffers(gId, triGeom);
     this.newShader = false;
   }
