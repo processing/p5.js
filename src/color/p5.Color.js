@@ -31,8 +31,7 @@ var color_conversion = require('./color_conversion');
 p5.Color = function(renderer, vals) {
 
   // Record color mode and maxes at time of construction.
-  this.mode = renderer._colorMode;
-  this.maxes = renderer._colorMaxes;
+  this._storeModeAndMaxes(renderer._colorMode, renderer._colorMaxes);
 
   // Calculate normalized RGBA values.
   if (this.mode !== constants.RGB &&
@@ -40,7 +39,7 @@ p5.Color = function(renderer, vals) {
       this.mode !== constants.HSB) {
     throw new Error(this.mode + ' is an invalid colorMode.');
   } else {
-    this._array = p5.Color._parseInputs.apply(renderer, vals);
+    this._array = p5.Color._parseInputs.apply(this, vals);
   }
 
   // Expose closest screen color.
@@ -61,7 +60,7 @@ p5.Color.prototype._getAlpha = function() {
 
 p5.Color.prototype.alpha = function(new_alpha) {
   this._array = p5.Color._parseInputs.apply(
-    {_colorMode: this.mode, _colorMaxes: this.maxes},
+    this,
     [this.levels[0],
     this.levels[1],
     this.levels[2],
@@ -74,6 +73,19 @@ p5.Color.prototype._calculateLevels = function() {
   this.levels = this._array.map(function(level) {
     return Math.round(level * 255);
   });
+};
+
+p5.Color.prototype._storeModeAndMaxes = function(new_mode, new_maxes) {
+  this.mode = new_mode;
+  this.maxes = new_maxes;
+};
+
+p5.Color.prototype._getMode = function() {
+  return this.mode;
+};
+
+p5.Color.prototype._getMaxes = function() {
+  return this.maxes;
 };
 
 p5.Color.prototype._getBlue = function() {
@@ -450,8 +462,8 @@ var colorPatterns = {
  */
 p5.Color._parseInputs = function() {
   var numArgs = arguments.length;
-  var mode = this._colorMode;
-  var maxes = this._colorMaxes;
+  var mode = this._getMode();
+  var maxes = this._getMaxes();
   var results = [];
 
   if (numArgs >= 3) {  // Argument is a list of component values.
