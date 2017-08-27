@@ -676,6 +676,7 @@ p5.RendererGL.prototype._getLightShader = function () {
       defaultShaders.lightVert, defaultShaders.lightTextureFrag);
   }
   this.drawMode = constants.FILL;
+  this._defaultLightShader.name = 'lightShader';
   return this._defaultLightShader;
 };
 
@@ -693,6 +694,7 @@ p5.RendererGL.prototype._getNormalShader = function () {
       defaultShaders.normalVert, defaultShaders.normalFrag);
   }
   this.drawMode = constants.FILL;
+  this._defaultNormalShader.name = 'normalShader';
   return this._defaultNormalShader;
 };
 
@@ -702,6 +704,7 @@ p5.RendererGL.prototype._getColorShader = function () {
       defaultShaders.normalVert, defaultShaders.basicFrag);
   }
   this.drawMode = constants.FILL;
+  this._defaultColorShader.name = 'colorShader';
   return this._defaultColorShader;
 };
 
@@ -711,6 +714,7 @@ p5.RendererGL.prototype._getLineShader = function () {
       defaultShaders.lineVert, defaultShaders.lineFrag);
   }
   this.drawMode = constants.STROKE;
+  this._defaultLineShader.name = 'lineShader';
   return this._defaultLineShader;
 };
 

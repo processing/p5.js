@@ -25,6 +25,7 @@ p5.RendererGL.prototype._initBufferDefaults = function(gId) {
   this.gHash[gId] = {};
   this.gHash[gId].vertexBuffer = gl.createBuffer();
   this.gHash[gId].normalBuffer = gl.createBuffer();
+  this.gHash[gId].lineNormalBuffer = gl.createBuffer();
   this.gHash[gId].uvBuffer = gl.createBuffer();
   this.gHash[gId].indexBuffer = gl.createBuffer();
   this.gHash[gId].lineVertexBuffer = gl.createBuffer();
@@ -70,16 +71,16 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
     // one that works for retain mode.
     shader = this.setShader(this._getColorShader());
   }
-  console.log(shader.attributes);
-  console.log(obj.lineVertices);
-  console.log(obj.vertexNormals);
+  // console.log(shader.attributes);
+  // //console.log(obj.lineVertices);
+  // console.log(obj.lineNormals);
   if(this.drawMode === constants.STROKE) {
     this._bindBuffer(this.gHash[gId].lineVertexBuffer, gl.ARRAY_BUFFER,
       flatten(obj.lineVertices), Float32Array, gl.STATIC_DRAW);
     shader.enableAttrib(shader.attributes.aPosition.location,
       3, gl.FLOAT, false, 0, 0);
-    this._bindBuffer(this.gHash[gId].normalBuffer, gl.ARRAY_BUFFER,
-      flatten(obj.vertexNormals), Float32Array, gl.STATIC_DRAW);
+    this._bindBuffer(this.gHash[gId].lineNormalBuffer, gl.ARRAY_BUFFER,
+      flatten(obj.lineNormals), Float32Array, gl.STATIC_DRAW);
     shader.enableAttrib(shader.attributes.direction.location,
       4, gl.FLOAT, false, 0, 0);
   } else {
@@ -130,7 +131,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     this._bindBuffer(this.gHash[gId].lineVertexBuffer, gl.ARRAY_BUFFER);
     shader.enableAttrib(shader.attributes.aPosition.location,
       3, gl.FLOAT, false, 0, 0);
-    this._bindBuffer(this.gHash[gId].normalBuffer, gl.ARRAY_BUFFER);
+    this._bindBuffer(this.gHash[gId].lineNormalBuffer, gl.ARRAY_BUFFER);
     shader.enableAttrib(shader.attributes.direction.location,
       4, gl.FLOAT, false, 0, 0);
   } else {

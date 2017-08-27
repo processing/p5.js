@@ -25,6 +25,8 @@ p5.Geometry = function
   /****AN ARRAY FOR STORING THE VERTICES OF LINES ***/
   this.lineVertices = [];
 
+  this.lineNormals = [];
+
   //an array containing 1 normal per vertex
   //@type [p5.Vector]
   //[p5.Vector, p5.Vector, p5.Vector,p5.Vector, p5.Vector, p5.Vector,...]
@@ -232,7 +234,7 @@ p5.Geometry.prototype._edgesToVertices = function() {
       vertices.push(verts[i]);
     }
   }
-  this.vertexNormals.length = 0;
+  //this.vertexNormals.length = 0;
   for(var i = 0; i < this.edges.length; i++)
   {
     // Go ahead and spread vertices out based on their orientation.
@@ -281,7 +283,7 @@ p5.Geometry.prototype._edgesToVertices = function() {
     // vert.xyz = vert.xyz + offset * vert.w;
     // store([a, b, c]); // put vertices into array in order
     //this.vertexNormals.push(dir, dir, dir, dir, dir, dir);
-    this.vertexNormals.push(dirAdd,dirSub,dirAdd,dirAdd,dirSub,dirSub);
+    this.lineNormals.push(dirAdd,dirSub,dirAdd,dirAdd,dirSub,dirSub);
     store([a, b, c, c, b, d]);
     // store([a, b, b, c, c, a]);
     // store([c, b, b, d, d, c]);
