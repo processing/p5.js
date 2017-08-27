@@ -115,7 +115,6 @@ function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
     this.immediateMode.vertexPositions, Float32Array, gl.DYNAMIC_DRAW);
   shader.enableAttrib(shader.attributes.aPosition.location,
     3, gl.FLOAT, false, 0, 0);
-
   if (this.drawMode === constants.FILL) {
     this._bindBuffer(this.immediateMode.colorBuffer, gl.ARRAY_BUFFER,
       this.immediateMode.vertexColors, Float32Array, gl.DYNAMIC_DRAW);

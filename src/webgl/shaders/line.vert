@@ -1,7 +1,7 @@
 uniform mat4 uModelViewMatrix;
 uniform mat4 uProjectionMatrix;
 
-uniform vec4 viewport;
+uniform vec4 uViewport;
 
 //perspective not currently used but isn't necessary for anything except judging distance for 
 //faking perspective
@@ -9,8 +9,10 @@ uniform int perspective;
 
 uniform vec3 scale;
 
+uniform float uStrokeWeight;
+
 attribute vec4 aPosition;
-attribute vec4 direction;
+attribute vec4 aDirection;
 
 
 vec3 clipToWindow(vec4 clip, vec4 viewport) {
@@ -28,17 +30,18 @@ void main() {
   vec4 posMV = uModelViewMatrix * aPosition;
   posMV.xyz = posMV.xyz * vec3(0.9,0.9,0.9); //was multiplied by scale -- using 1,1,1 for testing
   vec4 clipp = uProjectionMatrix * posMV;
-  float thickness = direction.w;
+  float thickness = aDirection.w;
 
-  vec4 posq = uModelViewMatrix * vec4(direction.xyz, 0);
+  vec4 posq = uModelViewMatrix * vec4(aDirection.xyz, 0);
   posq.xyz = posq.xyz * vec3(0.9,0.9,0.9);//was multiplied by scale -- using 1,1,1 for testing
   vec4 clipq = uProjectionMatrix * posq;
 
-  vec3 window_p = clipToWindow(clipp, viewport);
-  vec3 window_q = clipToWindow(clipq, viewport);
+  vec3 window_p = clipToWindow(clipp, uViewport);
+  vec3 window_q = clipToWindow(clipq, uViewport);
   vec3 tangent = window_q - window_p;
   vec2 perp = normalize(vec2(-tangent.y, tangent.x));
-  vec2 offset = vec2(2,2) * thickness * perp;
+  float halfStroke = uStrokeWeight/2.0;
+  vec2 offset = vec2(halfStroke,halfStroke) * thickness * perp;
   gl_Position.xy = clipp.xy + offset.xy;
   gl_Position.zw = clipp.zw;
    // vec4 corner = vec4(direction.xyz, 0) * direction.w * 5.0;

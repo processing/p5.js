@@ -241,7 +241,7 @@ p5.Shader.prototype._setMatrixUniforms = function() {
 };
 
 p5.Shader.prototype._setViewportUniform = function() {
-  this.setUniform('viewport', this._renderer.GL.getParameter(this._renderer.GL.VIEWPORT));
+  this.setUniform('uViewport', this._renderer.GL.getParameter(this._renderer.GL.VIEWPORT));
 }
 
 /**

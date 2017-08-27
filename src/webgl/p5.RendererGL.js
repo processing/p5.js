@@ -108,7 +108,9 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   // default shader has been set.
   this.fill(255, 255, 255, 255);
   this.stroke(0, 0, 0, 255);
-  this.pointSize = 5.0;//default point/stroke
+  this.pointSize = 5.0;//default point size
+  this.curStrokeWeight = 2; //default stroke weight
+  this.curStrokeColor = [0,0,0,1];
 
   // array of textures created in this gl context via this.getTexture(src)
   this.textures = [];
@@ -393,29 +395,25 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
 p5.RendererGL.prototype.noFill = function() {
   var gl = this.GL;
   var shader = this.setShader(this._getLineShader());
-  shader.setUniform('uMaterialColor', this.curStrokeColor);
   shader._setViewportUniform();
-  //gl.depthFunc(gl.GEQUAL);
-  gl.enable(gl.DEPTH_TEST);
-  //gl.enable(gl.BLEND);
-  //gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-  if(this.curStrokeColor) {
-    this._setNoFillStroke();
-  }
+  this.curShader.setUniform('uStrokeWeight', this.curStrokeWeight);
+  this._setStrokeColor();
   return this;
 };
 
 p5.RendererGL.prototype.stroke = function(r, g, b, a) {
-  var color = this._pInst.color.apply(this._pInst, arguments);
-  var colorNormalized = color._array;
-  this.curStrokeColor = colorNormalized;
-  if(this.drawMode === constants.STROKE) {
-    this._setNoFillStroke();
+  //@todo allow transparency in stroking
+  var colors = this._applyColorBlend.apply(this, [r, g, b]);
+  if(this.curStrokeColor !== colors) {
+    this.curStrokeColor = colors;
+    if(this.drawMode === constants.STROKE) {
+      this._setStrokeColor();
+    }
   }
   return this;
 };
 
-p5.RendererGL.prototype._setNoFillStroke = function() {
+p5.RendererGL.prototype._setStrokeColor = function() {
   // this should only be called after an appropriate call
   // to shader() internally....
   this.curShader.setUniform('uMaterialColor', this.curStrokeColor);
@@ -490,11 +488,15 @@ p5.RendererGL.prototype.loadPixels = function() {
  * [strokeWeight description]
  * @param  {Number} pointSize stroke point size
  * @return {[type]}           [description]
- * @todo  strokeWeight currently works on points only.
- * implement on all wireframes and strokes.
  */
-p5.RendererGL.prototype.strokeWeight = function(pointSize) {
-  this.pointSize = pointSize;
+p5.RendererGL.prototype.strokeWeight = function(w) {
+  if(this.curStrokeWeight !== w) {
+    this.pointSize = w;
+    this.curStrokeWeight = w;
+    if(this.drawMode === constants.STROKE) {
+      this.curShader.setUniform('uStrokeWeight', w);
+    }
+  }
   return this;
 };
 

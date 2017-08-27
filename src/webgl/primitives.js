@@ -81,7 +81,6 @@ p5.prototype.plane = function(){
       ._edgesToVertices();
     this._renderer.createBuffers(gId, planeGeom);
     this._renderer.newShader = false;
-    console.log(planeGeom.vertexNormals);
   }
 
   this._renderer.drawBuffers(gId);
@@ -175,13 +174,9 @@ p5.prototype.box = function(){
     };
     var boxGeom = new p5.Geometry(detailX,detailY, _box);
     boxGeom
-      .computeNormals();
-    if(this._renderer.drawMode === constants.STROKE)
-    {
-      boxGeom
-        ._makeTriangleEdges()
-        ._edgesToVertices();
-    }
+      .computeNormals()
+      ._makeTriangleEdges()
+      ._edgesToVertices();
 
     //initialize our geometry buffer with
     //the key val pair:
@@ -250,12 +245,12 @@ p5.prototype.sphere = function(){
     };
     var sphereGeom = new p5.Geometry(detailX, detailY, _sphere);
     sphereGeom
-       .computeFaces()
-       .computeNormals()
+      .computeFaces()
+      .computeNormals()
       .averageNormals()
       .averagePoleNormals()
-        ._makeTriangleEdges()
-        ._edgesToVertices();
+      ._makeTriangleEdges()
+      ._edgesToVertices();
     this._renderer.createBuffers(gId, sphereGeom);
   }
   this._renderer.drawBuffers(gId);
@@ -603,20 +598,14 @@ p5.prototype.torus = function(){
       }
     };
     var torusGeom = new p5.Geometry(detailX, detailY, _torus);
-    torusGeom.computeFaces();
-    if(this._renderer.drawMode === constants.STROKE)
-    {
-      torusGeom
-        ._makeTriangleEdges()
-        ._edgesToVertices();
-    } else {
-      torusGeom
-        .computeNormals()
-        .averageNormals();
+    torusGeom
+      .computeFaces()
+      ._makeTriangleEdges()
+      ._edgesToVertices()
+      .computeNormals()
+      .averageNormals();
     }
-    this._renderer.createBuffers(gId, torusGeom);
-  }
-
+  this._renderer.createBuffers(gId, torusGeom);
   this._renderer.drawBuffers(gId);
 
   return this;
@@ -652,13 +641,10 @@ p5.RendererGL.prototype.triangle = function
       this.uvs = [[0,0],[0,1],[1,1]];
     };
     var triGeom = new p5.Geometry(1,1,_triangle);
-    if(this.drawMode === constants.STROKE) {
-      triGeom
-        ._makeTriangleEdges()
-        ._edgesToVertices();
-    } else {
-      triGeom.computeNormals();
-    }
+    triGeom
+      ._makeTriangleEdges()
+      ._edgesToVertices()
+      .computeNormals();
     this.createBuffers(gId, triGeom);
   }
 

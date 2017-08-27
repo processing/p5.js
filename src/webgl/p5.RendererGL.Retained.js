@@ -81,7 +81,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
       3, gl.FLOAT, false, 0, 0);
     this._bindBuffer(this.gHash[gId].lineNormalBuffer, gl.ARRAY_BUFFER,
       flatten(obj.lineNormals), Float32Array, gl.STATIC_DRAW);
-    shader.enableAttrib(shader.attributes.direction.location,
+    shader.enableAttrib(shader.attributes.aDirection.location,
       4, gl.FLOAT, false, 0, 0);
   } else {
     // allocate space for vertex positions
@@ -132,7 +132,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     shader.enableAttrib(shader.attributes.aPosition.location,
       3, gl.FLOAT, false, 0, 0);
     this._bindBuffer(this.gHash[gId].lineNormalBuffer, gl.ARRAY_BUFFER);
-    shader.enableAttrib(shader.attributes.direction.location,
+    shader.enableAttrib(shader.attributes.aDirection.location,
       4, gl.FLOAT, false, 0, 0);
   } else {
     /**BINDING ORIGINAL VERTICES**/
