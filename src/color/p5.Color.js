@@ -58,7 +58,7 @@ p5.Color.prototype._getAlpha = function() {
   return this._array[3] * this.maxes[this.mode][3];
 };
 
-p5.Color.prototype.alpha = function(new_alpha) {
+p5.Color.prototype.setAlpha = function(new_alpha) {
   this._array = p5.Color._parseInputs.apply(
     this,
     [this.levels[0],

@@ -13,7 +13,7 @@ suite('p5.Color', function() {
 
     test('can be modified with alpha setter', function() {
       assert.deepEqual(c.levels, [255, 0, 102, 204]);
-      c.alpha(98);
+      c.setAlpha(98);
       assert.deepEqual(c.levels, [255, 0, 102, 98]);
     });
   });
