@@ -44,9 +44,7 @@ p5.Color = function(renderer, vals) {
   }
 
   // Expose closest screen color.
-  this.levels = this._array.map(function(level) {
-    return Math.round(level * 255);
-  });
+  this._calculateLevels();
   this.name = 'p5.Color';   // for friendly debugger system
   return this;
 };
@@ -69,6 +67,10 @@ p5.Color.prototype.alpha = function(new_alpha) {
     this.levels[2],
     new_alpha]
   );
+  this._calculateLevels();
+};
+
+p5.Color.prototype._calculateLevels = function() {
   this.levels = this._array.map(function(level) {
     return Math.round(level * 255);
   });
