@@ -875,6 +875,19 @@ suite('p5.Color', function() {
     });
   });
 
+  suite('in HSL mode', function() {
+    setup(function() {
+      myp5.colorMode(myp5.HSL, 360, 100, 100, 1);
+      c = myp5.color(336, 100, 50, 0.8);
+    });
+
+    test('can be modified with alpha setter', function() {
+      assert.deepEqual(c.levels, [255, 0, 102, 204]);
+      c.setAlpha(0.98);
+      assert.deepEqual(c.levels, [255, 0, 102, 250]);
+    });
+  });
+
   suite('p5.Color.prototype.toString', function() {
     var colorStr;
 
