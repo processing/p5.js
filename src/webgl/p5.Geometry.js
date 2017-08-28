@@ -22,9 +22,13 @@ p5.Geometry = function
   //@type [p5.Vector]
   this.vertices = [];
 
-  /****AN ARRAY FOR STORING THE VERTICES OF LINES ***/
+  //an array containing every vertex for stroke drawing
   this.lineVertices = [];
 
+  //an array 1 normal per lineVertex with
+  //final position representing which direction to
+  //displace for strokeWeight
+  //[[0,0,-1,1], [0,1,0,-1] ...];
   this.lineNormals = [];
 
   //an array containing 1 normal per vertex
@@ -37,7 +41,8 @@ p5.Geometry = function
   //a 2D array containing uvs for every vertex
   //[[0.0,0.0],[1.0,0.0], ...]
   this.uvs = [];
-  /*** A 2D ARRAY CONTAINING EDGE CONNECTIVITY INFORMATION ***/
+  // a 2D array containing edge connectivity pattern for create line vertices
+  //based on faces for most objects;
   this.edges = []
   this.detailX = (detailX !== undefined) ? detailX: 1;
   this.detailY = (detailY !== undefined) ? detailY: 1;
@@ -126,7 +131,6 @@ p5.Geometry.prototype.averageNormals = function() {
  * @return {p5.Geometry}
  */
 p5.Geometry.prototype.averagePoleNormals = function() {
-
   //average the north pole
   var sum = new p5.Vector(0, 0, 0);
   for(var i = 0; i < this.detailX; i++){
@@ -153,6 +157,10 @@ p5.Geometry.prototype.averagePoleNormals = function() {
   return this;
 };
 
+/**
+ * Create a 2D array for establishing stroke connections
+ * @return {p5.Geometry}
+ */
 p5.Geometry.prototype._makeTriangleEdges = function() {
   if (Array.isArray(this.strokeIndices)) {
     for (var index of this.strokeIndices) {
@@ -174,30 +182,42 @@ p5.Geometry.prototype._addEdge = function(i, j, start, end) {
   this.edges.push(edge);
 };
 
+/**
+ * Create 4 vertices for each stroke line, two at the beginning position
+ * and two at the end position. These vertices are displaced relative to
+ * that line's normal on the GPU
+ * @return {p5.Geometry}
+ */
 p5.Geometry.prototype._edgesToVertices = function() {
   this.lineVertices = [];
   var vertices = this.lineVertices;
 
+  for(var i = 0, max = this.edges.length; i < max; i++)
+  {
+    var begin = this.vertices[this.edges[i][0]];
+    var end = this.vertices[this.edges[i][1]];
+    var dir = end.copy().sub(begin).normalize();
+    var a = begin,
+        b = begin,
+        c = end,
+        d = end;
+    var dirAdd = dir.array();
+    var dirSub = dir.array();
+    // is used to displace the pair ofvertices at beginning and end
+    // in opposite directions
+    dirAdd.push(1);
+    dirSub.push(-1);
+    this.lineNormals.push(dirAdd,dirSub,dirAdd,dirAdd,dirSub,dirSub);
+    _store([a, b, c, c, b, d]);
+  }
+
+  function _store(verts) {
+    for (var i = 0, max = verts.length; i < max; i += 1) {
       verts[i] = verts[i].array();
       vertices.push(verts[i]);
     }
   }
-  for(var i = 0; i < this.edges.length; i++)
-  {
-    // Go ahead and spread vertices out based on their orientation.
-    // Something like:
-    var a, b, c, d;
-    var begin = this.vertices[this.edges[i][0]];
-    var end = this.vertices[this.edges[i][1]];
-    var dir = end.copy().sub(begin).normalize();
-    dirAdd.push(1);
-    dirSub.push(-1);
-    this.lineNormals.push(dirAdd,dirSub,dirAdd,dirAdd,dirSub,dirSub);
-  }
   return this;
-};
-
-  }
 };
 
 /**
