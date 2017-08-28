@@ -96,7 +96,7 @@ module.exports = function(grunt) {
       build: {
         src: [
           'Gruntfile.js',
-          'build/**/*.js'
+          'tasks/**/*.js'
         ]
       },
       source: {
@@ -118,7 +118,7 @@ module.exports = function(grunt) {
         },
         src: [
           'Gruntfile.js',
-          'build/**/*.js'
+          'tasks/**/*.js'
         ]
       },
       source: {
@@ -273,24 +273,6 @@ module.exports = function(grunt) {
 
     // this builds the documentation for the codebase.
     yuidoc: getYuidocOptions(),
-    'release-it': {
-      options: {
-        pkgFiles: ['package.json'],
-        commitMessage: 'release v%s',
-        tagName: '%s',
-        tagAnnotation: 'release v%s',
-        buildCommand: 'grunt',
-        changelogCommand: 'git log --pretty=format:"* %s (%h)" [REV_RANGE]',
-        distRepo: 'git@github.com:lmccart/p5.js-release.git',
-        distStageDir: '.stage',
-        distFiles: ['lib/*.js', 'lib/addons/*.js'],
-        distBase: 'lib/',
-        npm: {
-          publish: false,
-          publishPath: 'lib/'
-        }
-      }
-    },
 
     // This is a static server which is used when testing connectivity for the
     // p5 library. This avoids needing an internet connection to run the tests.
@@ -345,23 +327,29 @@ module.exports = function(grunt) {
   // `grunt combineModules:module_1:module_2` where core
   // is included by default in all combinations always.
   // NOTE: "module_x" is the name of it's folder in /src.
-  grunt.loadTasks('build/tasks');
+  grunt.loadTasks('tasks/build');
+
+  // Load release task
+  grunt.loadTasks('tasks/release');
 
   // Load the external libraries used.
-  grunt.loadNpmTasks('grunt-jscs');
+  grunt.loadNpmTasks('grunt-contrib-compress');
+  grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
-  grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
-  grunt.loadNpmTasks('grunt-update-json');
   grunt.loadNpmTasks('grunt-contrib-uglify');
-  grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-http');
+  grunt.loadNpmTasks('grunt-jscs');
+  grunt.loadNpmTasks('grunt-minjson');
+  grunt.loadNpmTasks('grunt-mocha');
+  grunt.loadNpmTasks('grunt-mocha-test');
   grunt.loadNpmTasks('grunt-newer');
   grunt.loadNpmTasks('grunt-release-it');
   grunt.loadNpmTasks('grunt-saucelabs');
-  grunt.loadNpmTasks('grunt-mocha-test');
-  grunt.loadNpmTasks('grunt-minjson');
+  grunt.loadNpmTasks('grunt-update-json');
 
   // Create the multitasks.
   grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);

@@ -11,6 +11,7 @@
   "trailing": true,
   "undef": true,
   "unused": "vars",
-
+  "esnext": true,
+  "predef": ["Promise"],
   "node": true
 }
