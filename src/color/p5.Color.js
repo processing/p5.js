@@ -54,6 +54,21 @@ p5.Color.prototype.toString = function() {
   return 'rgba('+a[0]+','+a[1]+','+a[2]+','+ alpha +')';
 };
 
+p5.Color.prototype.setRed = function(new_red) {
+  this._array[0] = new_red / this.maxes[constants.RGB][0];
+  this._calculateLevels();
+};
+
+p5.Color.prototype.setGreen = function(new_green) {
+  this._array[1] = new_green / this.maxes[constants.RGB][1];
+  this._calculateLevels();
+};
+
+p5.Color.prototype.setBlue = function(new_blue) {
+  this._array[2] = new_blue / this.maxes[constants.RGB][2];
+  this._calculateLevels();
+};
+
 p5.Color.prototype.setAlpha = function(new_alpha) {
   this._array[3] = new_alpha / this.maxes[this.mode][3];
   this._calculateLevels();
