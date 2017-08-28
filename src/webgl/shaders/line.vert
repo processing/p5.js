@@ -25,12 +25,12 @@ vec4 windowToClipVector(vec2 window, vec4 viewport, float clip_w) {
 
 void main() {
   vec4 posMV = uModelViewMatrix * aPosition;
-  posMV.xyz = posMV.xyz * vec3(0.9,0.9,0.9); //was multiplied by scale
+  posMV.xyz = posMV.xyz * vec3(0.999,0.999,0.999); //was multiplied by scale
   vec4 clipp = uProjectionMatrix * posMV;
   float thickness = aDirection.w;
 
   vec4 posq = uModelViewMatrix * vec4(aDirection.xyz, 0);
-  posq.xyz = posq.xyz * vec3(0.9,0.9,0.9);//was multiplied by scale
+  posq.xyz = posq.xyz * vec3(1.0,1.0,1.0);//was multiplied by scale
   vec4 clipq = uProjectionMatrix * posq;
 
   vec3 window_p = clipToWindow(clipp, uViewport);

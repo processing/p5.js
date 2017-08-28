@@ -182,10 +182,10 @@ p5.RendererGL.prototype._drawElements = function (drawMode, gId) {
  */
 function flatten(arr){
   if (arr.length>0){
-    return arr.reduce(function(a, b){
-      return a.concat(b);
-    });
-    //return ([].concat.apply([], arr));
+    // return arr.reduce(function(a, b){
+    //   return a.concat(b);
+    // });
+    return ([].concat.apply([], arr));
   } else {
     return [];
   }
