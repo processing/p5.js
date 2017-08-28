@@ -141,16 +141,21 @@ p5.prototype.box = function(){
         [0, 2, 1, 3],// 0, 0, -1],// -z
         [4, 5, 6, 7]// 0, 0, +1] // +z
       ];
+      //using strokeIndices instead of faces for strokes
+      //to avoid diagonal stroke lines across face of box
       var strokeIndices = [
-      [5,7],
-        [0, 4],
-        [0,2],
-        [3,7],
-        [4,5],
-        [5,2],
-        [1,6],
+        [0,1],
+        [1,3],
+        [3,2],
         [6,7],
-        [1,3]
+        [8,9],
+        [9,11],
+        [14,15],
+        [16,17],
+        [17,19],
+        [18,19],
+        [20,21],
+        [22,23]
       ];
       this.strokeIndices = strokeIndices;
       var id=0;
@@ -170,8 +175,6 @@ p5.prototype.box = function(){
           this.uvs.push([j & 1, (j & 2) / 2]);
           id++;
         }
-        /**THIS IS HOW FACES WERE ORIGINALLY CALCULATED FOR BOX***/
-        /**TEMPORARILY DOING FACE CALCULATION IN _edgesToVertices**/
         this.faces.push([v, v + 1, v + 2]);
         this.faces.push([v + 2, v + 1, v + 3]);
       }
