@@ -13,45 +13,51 @@ module.exports = function(grunt) {
     var version = require('../../package.json').version;
     // Avoiding Callback Hell and using Promises
     new Promise(function(resolve, reject) {
-      // Clone the repo. NEEDS TO BE QUIET. Took 3 hours to realise this. 
+      // Clone the repo. NEEDS TO BE QUIET. Took 3 hours to realise this.
       // Otherwise the stdout screws up
-      console.log("Cloning the Release repo ...");
+      console.log('Cloning the Release repo ...');
       exec('rm -rf bower-repo/ && git clone -q https://github.com/lmccart/p5.js-release.git bower-repo',function(err, stdout, stderr) {
-        if (err)
+        if (err) {
           reject(err);
-        if (stderr)
+        }
+        if (stderr) {
           reject(stderr);
+        }
         resolve();
-      })
+      });
     }).then(function(resolve, reject) {
-      // Copy the lib to bower-repo. 
-      // NOTE : Uses "cp" of UNIX. Make sure it is unaliased in your .bashrc,
+      // Copy the lib to bower-repo.
+      // NOTE : Uses 'cp' of UNIX. Make sure it is unaliased in your .bashrc,
       // otherwise it may prompt always for overwrite (not desirable)
-      console.log("Copying new files ...");
+      console.log('Copying new files ...');
       return new Promise(function(resolve, reject) {
         exec('cp lib/*.js lib/addons bower-repo/lib -r', function(err, stdout, stderr) {
-          if (err)
+          if (err) {
             reject(err);
-          if (stderr)
+          }
+          if (stderr) {
             reject(stderr);
+          }
           resolve();
-        })
-      })
+        });
+      });
     }).then(function(resolve, reject) {
       // Git add, commit, push
-      console.log("Pushing out changes ...");
+      console.log('Pushing out changes ...');
       return new Promise(function(resolve, reject) {
         exec('git add --all && git commit -am "' + version + '" && git push -q', { cwd: './bower-repo' },function(err, stdout, stderr) {
-          if (err)
+          if (err) {
             reject(err);
-          if (stderr)
+          }
+          if (stderr) {
             reject(stderr);
+          }
           resolve();
-          done()
-        })
-      })
+          done();
+        });
+      });
     }).catch(function(err) {
       throw new Error(err);
-    })
-  })
-}
+    });
+  });
+};
