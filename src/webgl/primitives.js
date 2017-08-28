@@ -55,9 +55,9 @@ p5.prototype.plane = function(){
   var detailX = typeof args[2] === 'number' ? args[2] : 1;
   var detailY = typeof args[3] === 'number' ? args[3] : 1;
 
-  var gId = 'plane|'+width+'|'+height+'|'+detailX+'|'+detailY+'|'+this._renderer.curShader.name;
+  var gId = 'plane|'+width+'|'+height+'|'+detailX+'|'+detailY;
 
-  if(!this._renderer.geometryInHash(gId) || this._renderer.newShader){
+  if(!this._renderer.geometryInHash(gId)){
     var _plane = function(){
       var u,v,p;
       for (var i = 0; i <= this.detailY; i++){
@@ -76,11 +76,15 @@ p5.prototype.plane = function(){
     new p5.Geometry(detailX, detailY, _plane);
     planeGeom
        .computeFaces()
-       .computeNormals()
-      ._makeTriangleEdges()
-      ._edgesToVertices();
+       .computeNormals();
+    if(detailX <= 1 && detailY <= 1) {
+      planeGeom
+        ._makeTriangleEdges()
+        ._edgesToVertices();
+    } else {
+      console.log('Cannot draw stroke on plane objects with more than 1 detailX or 1 detailY');
+    }
     this._renderer.createBuffers(gId, planeGeom);
-    this._renderer.newShader = false;
   }
 
   this._renderer.drawBuffers(gId);
@@ -126,8 +130,8 @@ p5.prototype.box = function(){
 
   var detailX = typeof args[3] === 'number' ? args[3] : 4;
   var detailY = typeof args[4] === 'number' ? args[4] : 4;
-  var gId = 'box|'+width+'|'+height+'|'+depth+'|'+detailX+'|'+detailY+'|'+this._renderer.curShader.name;
-  if(!this._renderer.geometryInHash(gId) || this._renderer.newShader){
+  var gId = 'box|'+width+'|'+height+'|'+depth+'|'+detailX+'|'+detailY;
+  if(!this._renderer.geometryInHash(gId)){
     var _box = function(){
       var cubeIndices = [
         [0, 4, 2, 6],// -1, 0, 0],// -x
@@ -173,16 +177,18 @@ p5.prototype.box = function(){
       }
     };
     var boxGeom = new p5.Geometry(detailX,detailY, _box);
-    boxGeom
-      .computeNormals()
-      ._makeTriangleEdges()
-      ._edgesToVertices();
-
+    boxGeom.computeNormals();
+    if(detailX <= 4 && detailY <= 4) {
+      boxGeom
+        ._makeTriangleEdges()
+        ._edgesToVertices();
+    } else {
+      console.log('Cannot draw stroke on box objects with more than 4 detailX or 4 detailY');
+    }
     //initialize our geometry buffer with
     //the key val pair:
     //geometry Id, Geom object
     this._renderer.createBuffers(gId, boxGeom);
-    this._renderer.newShader = false;
   }
   this._renderer.drawBuffers(gId);
 
@@ -225,7 +231,7 @@ p5.prototype.sphere = function(){
   var detailX = typeof args[1] === 'number' ? args[1] : 24;
   var detailY = typeof args[2] === 'number' ? args[2] : 16;
 
-  var gId = 'sphere|'+radius+'|'+detailX+'|'+detailY+'|'+this._renderer.curShader.name;
+  var gId = 'sphere|'+radius+'|'+detailX+'|'+detailY;
   if(!this._renderer.geometryInHash(gId)){
     var _sphere = function(){
       var u,v,p;
@@ -248,9 +254,15 @@ p5.prototype.sphere = function(){
       .computeFaces()
       .computeNormals()
       .averageNormals()
-      .averagePoleNormals()
-      ._makeTriangleEdges()
-      ._edgesToVertices();
+      .averagePoleNormals();
+    if(detailX <= 24 && detailY <= 16) {
+      sphereGeom
+        ._makeTriangleEdges()
+        ._edgesToVertices();
+    } else {
+      console.log('Cannot draw stroke on sphere objects with more than 24 detailX or 16 detailY');
+    }
+
     this._renderer.createBuffers(gId, sphereGeom);
   }
   this._renderer.drawBuffers(gId);
@@ -375,7 +387,7 @@ p5.prototype.cylinder = function(){
   var height = args[1] || radius;
   var detailX = typeof args[2] === 'number' ? args[2] : 24;
   var detailY = typeof args[3] === 'number' ? args[3] : 16;
-  var gId = 'cylinder|'+radius+'|'+height+'|'+detailX+'|'+detailY+'|'+this._renderer.curShader.name;
+  var gId = 'cylinder|'+radius+'|'+height+'|'+detailX+'|'+detailY;
   if(!this._renderer.geometryInHash(gId)){
     var cylinderGeom = new p5.Geometry(detailX, detailY);
     _truncatedCone.call(
@@ -386,10 +398,14 @@ p5.prototype.cylinder = function(){
       detailX,
       detailY,
       true,true);
-    cylinderGeom
-      .computeNormals()
-      ._makeTriangleEdges()
-      ._edgesToVertices();
+    cylinderGeom.computeNormals();
+    if(detailX <= 24 && detailY <= 16) {
+      cylinderGeom
+        ._makeTriangleEdges()
+        ._edgesToVertices();
+    } else {
+      console.log('Cannot draw stroke on cylinder objects with more than 24 detailX or 16 detailY');
+    }
     this._renderer.createBuffers(gId, cylinderGeom);
   }
 
@@ -437,7 +453,7 @@ p5.prototype.cone = function(){
   var height = args[1] || baseRadius;
   var detailX = typeof args[2] === 'number' ? args[2] : 24;
   var detailY = typeof args[3] === 'number' ? args[3] : 16;
-  var gId = 'cone|'+baseRadius+'|'+height+'|'+detailX+'|'+detailY+'|'+this._renderer.curShader.name;
+  var gId = 'cone|'+baseRadius+'|'+height+'|'+detailX+'|'+detailY;
   if(!this._renderer.geometryInHash(gId)){
     var coneGeom = new p5.Geometry(detailX, detailY);
     _truncatedCone.call(coneGeom,
@@ -449,10 +465,14 @@ p5.prototype.cone = function(){
       true,
       true);
     //for cones we need to average Normals
-    coneGeom
-      .computeNormals()
-      ._makeTriangleEdges()
-      ._edgesToVertices();
+    coneGeom.computeNormals();
+    if(detailX <= 24 && detailY <= 16) {
+      coneGeom
+        ._makeTriangleEdges()
+        ._edgesToVertices();
+    } else {
+      console.log('Cannot draw stroke on cone objects with more than 24 detailX or 16 detailY');
+    }
     this._renderer.createBuffers(gId, coneGeom);
   }
 
@@ -503,7 +523,7 @@ p5.prototype.ellipsoid = function(){
   var radiusZ = args[2] || radiusX;
 
   var gId = 'ellipsoid|'+radiusX+'|'+radiusY+
-  '|'+radiusZ+'|'+detailX+'|'+detailY+'|'+this._renderer.curShader.name;
+  '|'+radiusZ+'|'+detailX+'|'+detailY;
 
 
   if(!this._renderer.geometryInHash(gId)){
@@ -526,9 +546,14 @@ p5.prototype.ellipsoid = function(){
     var ellipsoidGeom = new p5.Geometry(detailX, detailY,_ellipsoid);
     ellipsoidGeom
       .computeFaces()
-      .computeNormals()
-      ._makeTriangleEdges()
-      ._edgesToVertices();
+      .computeNormals();
+    if(detailX <= 24 && detailY <= 24) {
+      ellipsoidGeom
+        ._makeTriangleEdges()
+        ._edgesToVertices();
+    } else {
+      console.log('Cannot draw stroke on ellipsoids with more than 24 detailX or 24 detailY');
+    }
     this._renderer.createBuffers(gId, ellipsoidGeom);
   }
 
@@ -577,7 +602,7 @@ p5.prototype.torus = function(){
   var radius = args[0] || 50;
   var tubeRadius = args[1] || 10;
 
-  var gId = 'torus|'+radius+'|'+tubeRadius+'|'+detailX+'|'+detailY+'|'+this._renderer.curShader.name;
+  var gId = 'torus|'+radius+'|'+tubeRadius+'|'+detailX+'|'+detailY;
 
   if(!this._renderer.geometryInHash(gId)){
     var _torus = function(){
@@ -600,12 +625,17 @@ p5.prototype.torus = function(){
     var torusGeom = new p5.Geometry(detailX, detailY, _torus);
     torusGeom
       .computeFaces()
-      ._makeTriangleEdges()
-      ._edgesToVertices()
       .computeNormals()
       .averageNormals();
+    if(detailX <= 24 && detailY <= 16) {
+      torusGeom
+        ._makeTriangleEdges()
+        ._edgesToVertices();
+    } else {
+      console.log('Cannot draw strokes on torus object with more than 24 detailX or 16 detailY');
     }
-  this._renderer.createBuffers(gId, torusGeom);
+      this._renderer.createBuffers(gId, torusGeom);
+    }
   this._renderer.drawBuffers(gId);
 
   return this;
@@ -628,7 +658,7 @@ p5.RendererGL.prototype.triangle = function
   var x3=args[4], y3=args[5];
   var gId = 'tri|'+x1+'|'+y1+'|'+
   x2+'|'+y2+'|'+
-  x3+'|'+y3+'|'+this._renderer.curShader.name;
+  x3+'|'+y3;
   if(!this.geometryInHash(gId)){
     var _triangle = function(){
       var vertices = [];
@@ -663,7 +693,7 @@ p5.RendererGL.prototype.ellipse = function
   var detailX = args[4] || 24;
   var detailY = args[5] || 16;
   var gId = 'ellipse|'+args[0]+'|'+args[1]+'|'+args[2]+'|'+
-  args[3]+'|'+this._renderer.curShader.name;
+  args[3];
   if(!this.geometryInHash(gId)){
     var _ellipse = function(){
       var u,v,p;
@@ -690,9 +720,15 @@ p5.RendererGL.prototype.ellipse = function
     var ellipseGeom = new p5.Geometry(detailX,detailY,_ellipse);
     ellipseGeom
       .computeFaces()
-      .computeNormals()
-      ._makeTriangleEdges()
-      ._edgesToVertices();
+      .computeNormals();
+      if(detailX <= 24 && detailY <= 16) {
+        ellipseGeom
+          ._makeTriangleEdges()
+          ._edgesToVertices();
+      } else {
+        console.log('Cannot stroke ellipse with more than 24 detailX or 16 detailY');
+      }
+
     this.createBuffers(gId, ellipseGeom);
   }
   this.drawBuffers(gId);
@@ -701,7 +737,7 @@ p5.RendererGL.prototype.ellipse = function
 
 p5.RendererGL.prototype.rect = function(args) {
   var gId = 'rect|'+args[0]+'|'+args[1]+'|'+args[2]+'|'+
-  args[3]+'|'+this._renderer.curShader.name;
+  args[3];
   var x = args[0];
   var y = args[1];
   var width = args[2];
@@ -755,7 +791,7 @@ p5.RendererGL.prototype.quad = function(){
   var gId = 'quad|'+x1+'|'+y1+'|'+
   x2+'|'+y2+'|'+
   x3+'|'+y3+'|'+
-  x4+'|'+y4+'|'+this._renderer.curShader.name;
+  x4+'|'+y4;
   if(!this.geometryInHash(gId)){
     var _quad = function(){
       this.vertices.push(new p5.Vector(x1,y1,0));

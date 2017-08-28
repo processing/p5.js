@@ -64,30 +64,29 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
   // console.log('Line Vertices: ');
   // console.log(obj.lineVertices);
 
-  var shader = this.curShader;
-  if (shader === this._getImmediateModeShader()) {
+  var fillShader = this.curFillShader;
+  if (fillShader === this._getImmediateModeShader()) {
     // there are different immediate mode and retain mode color shaders.
     // if we're using the immediate mode one, we need to switch to
     // one that works for retain mode.
-    shader = this.setShader(this._getColorShader());
+    fillShader = this.setFillShader(this._getColorShader());
   }
-  // console.log(shader.attributes);
-  // //console.log(obj.lineVertices);
-  // console.log(obj.lineNormals);
-  if(this.drawMode === constants.STROKE) {
+  var strokeShader = this.curStrokeShader;
+  //if(strokeShader !== null) {
     this._bindBuffer(this.gHash[gId].lineVertexBuffer, gl.ARRAY_BUFFER,
       flatten(obj.lineVertices), Float32Array, gl.STATIC_DRAW);
-    shader.enableAttrib(shader.attributes.aPosition.location,
+    strokeShader.enableAttrib(strokeShader.attributes.aPosition.location,
       3, gl.FLOAT, false, 0, 0);
     this._bindBuffer(this.gHash[gId].lineNormalBuffer, gl.ARRAY_BUFFER,
       flatten(obj.lineNormals), Float32Array, gl.STATIC_DRAW);
-    shader.enableAttrib(shader.attributes.aDirection.location,
+    strokeShader.enableAttrib(strokeShader.attributes.aDirection.location,
       4, gl.FLOAT, false, 0, 0);
-  } else {
+  //}
+  //if(fillShader !== null) {
     // allocate space for vertex positions
     this._bindBuffer(this.gHash[gId].vertexBuffer, gl.ARRAY_BUFFER,
       vToNArray(obj.vertices), Float32Array, gl.STATIC_DRAW);
-    shader.enableAttrib(shader.attributes.aPosition.location,
+    fillShader.enableAttrib(fillShader.attributes.aPosition.location,
       3, gl.FLOAT, false, 0, 0);
 
       // allocate space for faces
@@ -97,15 +96,15 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
       // allocate space for normals
     this._bindBuffer(this.gHash[gId].normalBuffer, gl.ARRAY_BUFFER,
       vToNArray(obj.vertexNormals), Float32Array, gl.STATIC_DRAW);
-    shader.enableAttrib(shader.attributes.aNormal.location,
+    fillShader.enableAttrib(fillShader.attributes.aNormal.location,
       3, gl.FLOAT, false, 0, 0);
 
     // tex coords
     this._bindBuffer(this.gHash[gId].uvBuffer, gl.ARRAY_BUFFER,
       flatten(obj.uvs), Float32Array, gl.STATIC_DRAW);
-    shader.enableAttrib(shader.attributes.aTexCoord.location,
+    fillShader.enableAttrib(fillShader.attributes.aTexCoord.location,
     2, gl.FLOAT, false, 0, 0);
-  }
+  //}
 };
 
 /**
@@ -116,47 +115,48 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
 p5.RendererGL.prototype.drawBuffers = function(gId) {
   this._setDefaultCamera();
   var gl = this.GL;
-  if (this.curShader === this._getImmediateModeShader()) {
+  if (this.curFillShader === this._getImmediateModeShader()) {
     // looking at the code within the glsl files, I'm not really
     // sure why these are two different shaders. but, they are,
     // and if we're drawing in retain mode but the shader is the
     // immediate mode one, we need to switch.
-    this.setShader(this._getColorShader());
+    this.setFillShader(this._getColorShader());
   }
-  var shader = this.curShader;
-  shader.bindShader();
+  var fillShader = this.curFillShader;
+  var strokeShader = this.curStrokeShader
 
   /**BINDING LINE VERTICES**/
-  if(this.drawMode === constants.STROKE) {
+  if(strokeShader.active !== false) {
+    strokeShader.bindShader();
     this._bindBuffer(this.gHash[gId].lineVertexBuffer, gl.ARRAY_BUFFER);
-    shader.enableAttrib(shader.attributes.aPosition.location,
+    strokeShader.enableAttrib(strokeShader.attributes.aPosition.location,
       3, gl.FLOAT, false, 0, 0);
     this._bindBuffer(this.gHash[gId].lineNormalBuffer, gl.ARRAY_BUFFER);
-    shader.enableAttrib(shader.attributes.aDirection.location,
+    strokeShader.enableAttrib(strokeShader.attributes.aDirection.location,
       4, gl.FLOAT, false, 0, 0);
-  } else {
+    this._drawArrays(gl.TRIANGLES, gId);
+    strokeShader.unbindShader();
+  }
+  if(fillShader.active !== false) {
+    fillShader.bindShader();
     /**BINDING ORIGINAL VERTICES**/
     //vertex position buffer
     this._bindBuffer(this.gHash[gId].vertexBuffer, gl.ARRAY_BUFFER);
-    shader.enableAttrib(shader.attributes.aPosition.location,
+    fillShader.enableAttrib(fillShader.attributes.aPosition.location,
       3, gl.FLOAT, false, 0, 0);
     //vertex index buffer
     this._bindBuffer(this.gHash[gId].indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
 
     this._bindBuffer(this.gHash[gId].normalBuffer, gl.ARRAY_BUFFER);
-    shader.enableAttrib(shader.attributes.aNormal.location,
+    fillShader.enableAttrib(fillShader.attributes.aNormal.location,
       3, gl.FLOAT, false, 0, 0);
     // uv buffer
     this._bindBuffer(this.gHash[gId].uvBuffer, gl.ARRAY_BUFFER);
-    shader.enableAttrib(
-      shader.attributes.aTexCoord.location, 2, gl.FLOAT, false, 0, 0);
-  }
-  if(this.drawMode === constants.STROKE) {
-    this._drawArrays(gl.TRIANGLES, gId);
-  } else {
+    fillShader.enableAttrib(
+      fillShader.attributes.aTexCoord.location, 2, gl.FLOAT, false, 0, 0);
     this._drawElements(gl.TRIANGLES, gId);
+    fillShader.unbindShader();
   }
-  shader.unbindShader();
   return this;
 };
 

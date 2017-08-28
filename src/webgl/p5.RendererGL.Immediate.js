@@ -100,33 +100,30 @@ p5.RendererGL.prototype.endShape =
 function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
 
   var gl = this.GL;
-  var shader = this.curShader;
-  if (shader === this._getColorShader()) {
-    // this is the fill/stroke shader for retain mode.
+  if(this.drawMode !== constants.TEXTURE) {
     // must switch to immediate mode shader before drawing!
-    shader = this.setShader(this._getImmediateModeShader());
-
+    this.setFillShader(this._getImmediateModeShader());
     // note that if we're using the texture shader...
     // this shouldn't change. :)
   }
-  shader.bindShader();
+  var fillShader = this.curFillShader;
+  fillShader.bindShader();
   //vertex position Attribute
   this._bindBuffer(this.immediateMode.vertexBuffer, gl.ARRAY_BUFFER,
     this.immediateMode.vertexPositions, Float32Array, gl.DYNAMIC_DRAW);
-  shader.enableAttrib(shader.attributes.aPosition.location,
+  fillShader.enableAttrib(fillShader.attributes.aPosition.location,
     3, gl.FLOAT, false, 0, 0);
   if (this.drawMode === constants.FILL) {
     this._bindBuffer(this.immediateMode.colorBuffer, gl.ARRAY_BUFFER,
       this.immediateMode.vertexColors, Float32Array, gl.DYNAMIC_DRAW);
-    shader.enableAttrib(shader.attributes.aVertexColor.location,
+    fillShader.enableAttrib(fillShader.attributes.aVertexColor.location,
       4, gl.FLOAT, false, 0, 0);
   }
-
   if (this.drawMode === constants.TEXTURE){
     //texture coordinate Attribute
     this._bindBuffer(this.immediateMode.uvBuffer, gl.ARRAY_BUFFER,
       this.immediateMode.uvCoords, Float32Array, gl.DYNAMIC_DRAW);
-    shader.enableAttrib(shader.attributes.aTexCoord.location,
+    fillShader.enableAttrib(fillShader.attributes.aTexCoord.location,
       2, gl.FLOAT, false, 0, 0);
   }
 
@@ -174,7 +171,7 @@ function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
   this.isImmediateDrawing = false;
 
   // todo / optimizations? leave bound until another shader is set?
-  shader.unbindShader();
+  fillShader.unbindShader();
   return this;
 };
 

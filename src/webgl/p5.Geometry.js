@@ -153,26 +153,6 @@ p5.Geometry.prototype.averagePoleNormals = function() {
   return this;
 };
 
-/**ANOTHER EXAMPLE OF HOW THIS WAS BEING DONE BEFORE**/
-// p5.Geometry.prototype._makeTriangleEdges = function() {
-//     for(var i = 0; i <= this.vertices.length; i+=3) {
-//       var i0 = i;
-//       var i1 = i+1;
-//       var i2 = i+2;
-
-//       //connections then boolean for whether it closes the triangle
-//       //also checks to see that we don't go over
-//       if(i1 <= this.vertices.length-1)
-//         this.edges[i] = [i0, i1, false];
-//       if(i2 <= this.vertices.length-1) {
-//         this.edges[i+1] = [i1, i2, false];
-//         this.edges[i+2] = [i2, i0, true];
-//       }
-//     }
-//   return this;
-// };
-
-/**THIS ACHIEVES IDENTICAL RESULTS TO ABOVE BUT RESEMBLES PROCESSING MORE**/
 p5.Geometry.prototype._makeTriangleEdges = function() {
   if (Array.isArray(this.strokeIndices)) {
     for (var index of this.strokeIndices) {
@@ -186,124 +166,37 @@ p5.Geometry.prototype._makeTriangleEdges = function() {
       this._addEdge(face[2], face[0]);
     }
   }
-
-
-  /*
-      for(var i = 0; i < this.vertices.length/3; i++) {
-        var i0 = 3 * i;
-        var i1 = 3 * i + 1;
-        var i2 = 3 * i + 2;
-        if(this.vertices.length > i1)
-          this._addEdge(i0, i1, true, false);
-        // else
-        //   this._addEdge(3, 0);
-        if(this.vertices.length > i2)
-        {
-          this._addEdge(i1, i2, false, false);
-          this._addEdge(i2, i0, false, true);
-        }
-        // else
-        // {
-        //   this._addEdge(0,2);
-        //   this._addEdge(2,3);
-        // }
-        // console.log('HEREER');
-      }
-      */
   return this;
 };
 
 p5.Geometry.prototype._addEdge = function(i, j, start, end) {
   var edge = [i, j];
-  // edge.push((start ? 1 : 0) + 2 * (end ? 1 : 0));
   this.edges.push(edge);
 };
 
 p5.Geometry.prototype._edgesToVertices = function() {
-  // This is where we want to start to make sure our lines are nice rectangles.
-  // Assign a color to each rectangle (lerp hue based on start index). -- check where color is in shaders.
-
   this.lineVertices = [];
   var vertices = this.lineVertices;
 
-  function store(verts) {
-    //console.log("Line verts: ", verts);
-    for (var i = 0; i < verts.length; i += 1) {
       verts[i] = verts[i].array();
-      //verts[i].push(1);
       vertices.push(verts[i]);
     }
   }
-  //this.vertexNormals.length = 0;
   for(var i = 0; i < this.edges.length; i++)
   {
     // Go ahead and spread vertices out based on their orientation.
     // Something like:
     var a, b, c, d;
-    var halfWidth = 3.0; // @todo parametrize line width
     var begin = this.vertices[this.edges[i][0]];
     var end = this.vertices[this.edges[i][1]];
     var dir = end.copy().sub(begin).normalize();
-    // arbitrary; want up to be different from dir
-    // in future, would like to use screen vector toward viewer as other component of basis.
-    var up = new p5.Vector(0, 1, 1);
-    var normal = p5.Vector.cross(dir, up);
-    var offset = normal.mult(halfWidth); // beware: normal has changed after this call.
-    a = begin.copy();//.add(offset.x, offset.y, offset.z);
-    b = begin.copy();//.sub(offset.x, offset.y, offset.z);
-    c = end.copy();//.add(offset.x, offset.y, offset.z);
-    d = end.copy();//.sub(offset.x, offset.y, offset.z);
-    var dirAdd = dir.array();//.push(1);
     dirAdd.push(1);
-    var dirSub = dir.array();//.push(-1);
     dirSub.push(-1);
-    // a.y = a.y * -1;
-    // b.y = b.y * -1;
-    // c.y = c.y * -1;
-    // d.y = d.y * -1;
-    //related to passing offset to shader
-    // a.xyzw
-     // a = begin.array();
-     // //a.push(1);
-     // //a.w = 1;
-     // //a.xyz = a.xyz + offset * 1;
-     // b = begin.array();
-     // //b.w = -1;
-     // //b.xyz = b.xyz + offset * -1;
-     // //b.push(-1);
-     // c = end.array();
-     // //c.w = 1;
-     // //c.xyz = c.xyz + offset * 1;
-     // //c.push(1);
-     // d = end.array();
-     //d.w = -1
-     //d.xyz = d.xyz + offset * -1;
-     //d.push(-1);
-    // b = [x, y, z, -1];
-    // vert.xyz = vert.xyz + offset * vert.w;
-    // store([a, b, c]); // put vertices into array in order
-    //this.vertexNormals.push(dir, dir, dir, dir, dir, dir);
     this.lineNormals.push(dirAdd,dirSub,dirAdd,dirAdd,dirSub,dirSub);
-    store([a, b, c, c, b, d]);
-    // store([a, b, b, c, c, a]);
-    // store([c, b, b, d, d, c]);
-
   }
-  // Let's not draw lines as indexed geometry;
-  // There is no memory benefit on the GPU.
-  // 6 * 3 = 18 for
-  // 4 * 3 + 6 = 18
   return this;
 };
 
-/**TEMPORARILY PUT THIS HELPER FUNCTION IN HERE**/
-function flatten(arr){
-  if (arr.length>0){
-    return arr.reduce(function(a, b){
-      return a.concat(b);
-    });
-  } else {
-    return [];
   }
 };
 

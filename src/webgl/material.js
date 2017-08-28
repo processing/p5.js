@@ -38,7 +38,8 @@ require('./p5.Texture');
  */
 p5.prototype.normalMaterial = function(){
   this._renderer.drawMode = constants.FILL;
-  this._renderer.setShader(this._renderer._getNormalShader());
+  this._renderer.setFillShader(this._renderer._getNormalShader());
+  this._renderer.noStroke();
   return this;
 };
 
@@ -129,11 +130,11 @@ p5.prototype.texture = function(){
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
   renderer.drawMode = constants.TEXTURE;
-  var shader = renderer.setShader(renderer._getLightShader());
+  var shader = renderer.setFillShader(renderer._getLightShader());
   shader.setUniform('uSpecular', false);
   shader.setUniform('isTexture', true);
   shader.setUniform('uSampler', args[0]);
-
+  this._renderer.noStroke();
   return this;
 };
 
@@ -171,12 +172,13 @@ p5.prototype.texture = function(){
  *
  */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
-  var shader = this._renderer.setShader(this._renderer._getLightShader());
+  var shader = this._renderer.setFillShader(this._renderer._getLightShader());
   this._renderer.drawMode = constants.FILL;
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
   shader.setUniform('uMaterialColor', colors);
   shader.setUniform('uSpecular', false);
   shader.setUniform('isTexture', false);
+  this._renderer.noStroke();
   return this;
 };
 
@@ -213,12 +215,13 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  *
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
-  var shader = this._renderer.setShader(this._renderer._getLightShader());
+  var shader = this._renderer.setFillShader(this._renderer._getLightShader());
   this._renderer.drawMode = constants.FILL;
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
   shader.setUniform('uMaterialColor', colors);
   shader.setUniform('uSpecular', true);
   shader.setUniform('isTexture', false);
+  this._renderer.noStroke();
   return this;
 };
 

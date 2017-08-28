@@ -5,7 +5,7 @@ function setup(){
 function draw(){
 
   background(255);
-
+  noStroke();
   translate(-width/2, -height/2, 0);
 
   rotateY(frameCount * 0.01);

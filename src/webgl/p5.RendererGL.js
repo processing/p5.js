@@ -91,14 +91,13 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   //Geometry & Material hashes
   this.gHash = {};
 
-  this.curShader = null;
-
   this._defaultLightShader = undefined;
   this._defaultImmediateModeShader = undefined;
   this._defaultNormalShader = undefined;
   this._defaultColorShader = undefined;
 
-  this.setShader(this._getColorShader());
+  this.setFillShader(this._getColorShader());
+  this.setStrokeShader(this._getLineShader());
 
   //Imediate Mode
   //default drawing is done in Retained Mode
@@ -107,11 +106,11 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   // note: must call fill() and stroke () AFTER
   // default shader has been set.
   this.fill(255, 255, 255, 255);
-  this.stroke(0, 0, 0, 255);
+  //this.stroke(0, 0, 0, 255);
   this.pointSize = 5.0;//default point size
   this.curStrokeWeight = 2; //default stroke weight
   this.curStrokeColor = [0,0,0,1];
-
+  this._initStroke();
   // array of textures created in this gl context via this.getTexture(src)
   this.textures = [];
 
@@ -383,40 +382,70 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   //see material.js for more info on color blending in webgl
   var colors = this._applyColorBlend.apply(this, arguments);
   this.curFillColor = colors;
-  if (this.isImmediateDrawing){
-    this.setShader(this._getImmediateModeShader());
-  } else {
-    var shader = this.setShader(this._getColorShader());
-    shader.setUniform('uMaterialColor', colors);
+  if(this.curFillShader.active === false) {
+    if (this.isImmediateDrawing){
+      this.setFillShader(this._getImmediateModeShader());
+    } else {
+      this.setFillShader(this._getColorShader());
+    }
+    this.curFillShader.active = true;
   }
-  return this;
+  this.curFillShader.setUniform('uMaterialColor', colors);
 };
 
 p5.RendererGL.prototype.noFill = function() {
-  var gl = this.GL;
-  var shader = this.setShader(this._getLineShader());
-  shader._setViewportUniform();
-  this.curShader.setUniform('uStrokeWeight', this.curStrokeWeight);
-  this._setStrokeColor();
-  return this;
+  this.curFillShader.active = false;;
 };
 
+p5.RendererGL.prototype.noStroke = function() {
+  this.curStrokeShader.active = false;
+};
+
+//For setting up the stroke shader when default shaders initialized
+p5.RendererGL.prototype._initStroke = function() {
+  this.curStrokeShader._setViewportUniform();
+  this.curStrokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
+  this._setStrokeColor();
+}
+
 p5.RendererGL.prototype.stroke = function(r, g, b, a) {
-  //@todo allow transparency in stroking
-  var colors = this._applyColorBlend.apply(this, [r, g, b]);
-  if(this.curStrokeColor !== colors) {
-    this.curStrokeColor = colors;
-    if(this.drawMode === constants.STROKE) {
+  if(this.curStrokeShader.active === false) {
+      //this.setStrokeShader(this._getLineShader());
+      this.curStrokeShader.active = true;
+    }
+    //@todo allow transparency in stroking currently doesn't have
+    //any impact and causes problems with specularMaterial
+    arguments[3] = 255;
+    var colors = this._applyColorBlend.apply(this, arguments);
+    if(this.curStrokeColor !== colors) {
+      this.curStrokeColor = colors;
       this._setStrokeColor();
     }
-  }
-  return this;
 };
+
+/**
+ * [strokeWeight description]
+ * @param  {Number} pointSize stroke point size
+ * @return {[type]}           [description]
+ */
+p5.RendererGL.prototype.strokeWeight = function(w) {
+  if(this.curStrokeShader.active === false) {
+    //this.setStrokeShader(this._getLineShader());
+    this.curStrokeShader.active = true;
+  }
+  if(this.curStrokeWeight !== w) {
+    this.pointSize = w;
+    this.curStrokeWeight = w;
+    this.curStrokeShader.setUniform('uStrokeWeight', w);
+  }
+};
+
+
 
 p5.RendererGL.prototype._setStrokeColor = function() {
   // this should only be called after an appropriate call
   // to shader() internally....
-  this.curShader.setUniform('uMaterialColor', this.curStrokeColor);
+  this.curStrokeShader.setUniform('uMaterialColor', this.curStrokeColor);
 };
 
 /**
@@ -480,24 +509,6 @@ p5.RendererGL.prototype.loadPixels = function() {
   var pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
   gl.readPixels(x, y, w, h, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
   this._pInst._setProperty('pixels', pixels);
-};
-
-
-
-/**
- * [strokeWeight description]
- * @param  {Number} pointSize stroke point size
- * @return {[type]}           [description]
- */
-p5.RendererGL.prototype.strokeWeight = function(w) {
-  if(this.curStrokeWeight !== w) {
-    this.pointSize = w;
-    this.curStrokeWeight = w;
-    if(this.drawMode === constants.STROKE) {
-      this.curShader.setUniform('uStrokeWeight', w);
-    }
-  }
-  return this;
 };
 
 
@@ -651,19 +662,36 @@ p5.RendererGL.prototype._applyTextProperties = function() {
  * @param {p5.Shader} s a p5.Shader object
  * @return {p5.Shader} the current, updated shader
  */
-p5.RendererGL.prototype.setShader = function (s) {
-  if (this.curShader !== s) {
+p5.RendererGL.prototype.setFillShader = function (s) {
+  if (this.curFillShader !== s) {
     // only do setup etc. if shader is actually new.
-    this.curShader = s;
+    this.curFillShader = s;
 
     // safe to do this multiple times;
     // init() will bail early if has already been run.
-    this.curShader.init();
-    this.curShader.useProgram();
+    this.curFillShader.init();
+    this.curFillShader.useProgram();
+    this.curFillShader.active = true;
   }
 
-  // always return this.curShader, even if no change was made.
-  return this.curShader;
+  // always return this.curFillShader, even if no change was made.
+  return this.curFillShader;
+};
+
+p5.RendererGL.prototype.setStrokeShader = function (s) {
+  if (this.curStrokeShader !== s) {
+    // only do setup etc. if shader is actually new.
+    this.curStrokeShader = s;
+
+    // safe to do this multiple times;
+    // init() will bail early if has already been run.
+    this.curStrokeShader.init();
+    this.curStrokeShader.useProgram();
+    this.curStrokeShader.active = true;
+  }
+
+  // always return this.curLineShader, even if no change was made.
+  return this.curStrokeShader;
 };
 
 /*
@@ -678,7 +706,6 @@ p5.RendererGL.prototype._getLightShader = function () {
       defaultShaders.lightVert, defaultShaders.lightTextureFrag);
   }
   this.drawMode = constants.FILL;
-  this._defaultLightShader.name = 'lightShader';
   return this._defaultLightShader;
 };
 
@@ -687,6 +714,7 @@ p5.RendererGL.prototype._getImmediateModeShader = function () {
     this._defaultImmediateModeShader = new p5.Shader(this,
       defaultShaders.immediateVert, defaultShaders.vertexColorFrag);
   }
+  this.drawMode = constants.FILL;
   return this._defaultImmediateModeShader;
 };
 
@@ -696,7 +724,6 @@ p5.RendererGL.prototype._getNormalShader = function () {
       defaultShaders.normalVert, defaultShaders.normalFrag);
   }
   this.drawMode = constants.FILL;
-  this._defaultNormalShader.name = 'normalShader';
   return this._defaultNormalShader;
 };
 
@@ -706,7 +733,6 @@ p5.RendererGL.prototype._getColorShader = function () {
       defaultShaders.normalVert, defaultShaders.basicFrag);
   }
   this.drawMode = constants.FILL;
-  this._defaultColorShader.name = 'colorShader';
   return this._defaultColorShader;
 };
 
@@ -716,7 +742,6 @@ p5.RendererGL.prototype._getLineShader = function () {
       defaultShaders.lineVert, defaultShaders.lineFrag);
   }
   this.drawMode = constants.STROKE;
-  this._defaultLineShader.name = 'lineShader';
   return this._defaultLineShader;
 };
 
