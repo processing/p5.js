@@ -501,10 +501,6 @@ suite('p5.Color', function() {
 
   // color level setters
   suite('in default mode', function() {
-    setup(function() {
-      c = myp5.color(255, 0, 102, 204);
-    });
-
     test('can be modified with alpha setter', function() {
       var cc = myp5.color(255, 0, 102, 204);
       assert.deepEqual(cc.levels, [255, 0, 102, 204]);
