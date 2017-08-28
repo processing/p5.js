@@ -110,7 +110,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.pointSize = 5.0;//default point size
   this.curStrokeWeight = 2; //default stroke weight
   this.curStrokeColor = [0,0,0,1];
-  this._initStroke();
+  this._setStrokeWeight();
+  this._setStrokeColor();
   // array of textures created in this gl context via this.getTexture(src)
   this.textures = [];
 
@@ -316,7 +317,6 @@ p5.RendererGL.prototype._update = function() {
                      this.cameraMatrix.mat4[14],
                      this.cameraMatrix.mat4[15]
                      );
-
   // reset light counters for new frame.
   this.ambientLightCount = 0;
   this.directionalLightCount = 0;
@@ -394,33 +394,26 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
 };
 
 p5.RendererGL.prototype.noFill = function() {
-  this.curFillShader.active = false;;
+  this.curFillShader.active = false;
 };
 
 p5.RendererGL.prototype.noStroke = function() {
   this.curStrokeShader.active = false;
 };
 
-//For setting up the stroke shader when default shaders initialized
-p5.RendererGL.prototype._initStroke = function() {
-  this.curStrokeShader._setViewportUniform();
-  this.curStrokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
-  this._setStrokeColor();
-}
 
 p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   if(this.curStrokeShader.active === false) {
-      //this.setStrokeShader(this._getLineShader());
-      this.curStrokeShader.active = true;
-    }
-    //@todo allow transparency in stroking currently doesn't have
-    //any impact and causes problems with specularMaterial
-    arguments[3] = 255;
-    var colors = this._applyColorBlend.apply(this, arguments);
-    if(this.curStrokeColor !== colors) {
-      this.curStrokeColor = colors;
-      this._setStrokeColor();
-    }
+    this.curStrokeShader.active = true;
+  }
+  //@todo allow transparency in stroking currently doesn't have
+  //any impact and causes problems with specularMaterial
+  arguments[3] = 255;
+  var colors = this._applyColorBlend.apply(this, arguments);
+  if(this.curStrokeColor !== colors) {
+    this.curStrokeColor = colors;
+    this._setStrokeColor();
+  }
 };
 
 /**
@@ -430,7 +423,6 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
  */
 p5.RendererGL.prototype.strokeWeight = function(w) {
   if(this.curStrokeShader.active === false) {
-    //this.setStrokeShader(this._getLineShader());
     this.curStrokeShader.active = true;
   }
   if(this.curStrokeWeight !== w) {
@@ -440,7 +432,11 @@ p5.RendererGL.prototype.strokeWeight = function(w) {
   }
 };
 
-
+p5.RendererGL.prototype._setStrokeWeight = function() {
+  // this should only be called after an appropriate call
+  // to shader() internally....
+  this.curStrokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
+};
 
 p5.RendererGL.prototype._setStrokeColor = function() {
   // this should only be called after an appropriate call
@@ -627,7 +623,7 @@ p5.RendererGL.prototype.pop = function() {
     throw new Error('Invalid popMatrix!');
   }
   this.uMVMatrix = uMVMatrixStack.pop();
-    if (cameraMatrixStack.length === 0) {
+  if (cameraMatrixStack.length === 0) {
     throw new Error('Invalid popMatrix!');
   }
   this.cameraMatrix = cameraMatrixStack.pop();
@@ -682,7 +678,6 @@ p5.RendererGL.prototype.setStrokeShader = function (s) {
   if (this.curStrokeShader !== s) {
     // only do setup etc. if shader is actually new.
     this.curStrokeShader = s;
-
     // safe to do this multiple times;
     // init() will bail early if has already been run.
     this.curStrokeShader.init();

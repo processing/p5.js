@@ -1,12 +1,13 @@
 
 function setup(){
   createCanvas(windowWidth, windowHeight, WEBGL);
+
 }
 
 function draw(){
   background(220);
-  fill(255);
   // triangle with immediate mode
+  fill(255);
   beginShape(TRIANGLES);
   vertex(0, 25, 100);
   vertex(-25, -25, -100);

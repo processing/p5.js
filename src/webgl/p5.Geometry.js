@@ -3,8 +3,6 @@
 'use strict';
 
 var p5 = require('../core/core');
-var constants = require('../core/constants');
-
 /**
  * p5 Geometry class
  * @class p5.Geometry
@@ -43,7 +41,7 @@ p5.Geometry = function
   this.uvs = [];
   // a 2D array containing edge connectivity pattern for create line vertices
   //based on faces for most objects;
-  this.edges = []
+  this.edges = [];
   this.detailX = (detailX !== undefined) ? detailX: 1;
   this.detailY = (detailY !== undefined) ? detailY: 1;
   if(callback instanceof Function){
@@ -163,15 +161,15 @@ p5.Geometry.prototype.averagePoleNormals = function() {
  */
 p5.Geometry.prototype._makeTriangleEdges = function() {
   if (Array.isArray(this.strokeIndices)) {
-    for (var index of this.strokeIndices) {
-      this.edges.push(index);
+    for (var i=0, max=this.strokeIndices.length; i<max; i++) {
+      this.edges.push(this.strokeIndices[i]);
     }
   }
   else {
-    for (var face of this.faces) {
-      this._addEdge(face[0], face[1]);
-      this._addEdge(face[1], face[2]);
-      this._addEdge(face[2], face[0]);
+    for (var j=0, amt=this.faces.length; j<amt; j++) {
+      this._addEdge(this.faces[j][0], this.faces[j][1]);
+      this._addEdge(this.faces[j][1], this.faces[j][2]);
+      this._addEdge(this.faces[j][2], this.faces[j][0]);
     }
   }
   return this;
@@ -203,7 +201,7 @@ p5.Geometry.prototype._edgesToVertices = function() {
         d = end;
     var dirAdd = dir.array();
     var dirSub = dir.array();
-    // is used to displace the pair ofvertices at beginning and end
+    // below is used to displace the pair of vertices at beginning and end
     // in opposite directions
     dirAdd.push(1);
     dirSub.push(-1);

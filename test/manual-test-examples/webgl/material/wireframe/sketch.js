@@ -14,7 +14,7 @@ function setup() {
 function draw() {
   background(0);
   push();
-  stroke(100,0,100);
+  stroke(100,100,200);
   noFill();
   scale(2,2,2);
   rotateX(frameCount * 0.01);
@@ -35,7 +35,6 @@ function draw() {
 
     push();
     stroke(0,200,100);
-    noFill();
     translate(i*140, -100, 100);
     rotateZ(frameCount * 0.02);
     rotateX(frameCount * 0.02);
@@ -53,8 +52,8 @@ function draw() {
     pop();
 
     push();
-    fill(0,0,200);
     translate(i*140, 100, 100);
+    fill(100,200,100);
     rotateZ(frameCount * 0.02);
     rotateX(frameCount * 0.02);
     rotateY(frameCount * 0.02);

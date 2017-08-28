@@ -192,6 +192,9 @@ p5.Shader.prototype.bindShader = function () {
 
     this._renderer._setDefaultCamera();
     this._setMatrixUniforms();
+    if(this === this._renderer.curStrokeShader) {
+      this._setViewportUniform();
+    }
   }
 };
 
@@ -235,14 +238,16 @@ p5.Shader.prototype.unbindTextures = function () {
 p5.Shader.prototype._setMatrixUniforms = function() {
   this.setUniform('uProjectionMatrix', this._renderer.uPMatrix.mat4);
   this.setUniform('uModelViewMatrix', this._renderer.uMVMatrix.mat4);
-
-  this._renderer.uNMatrix.inverseTranspose(this._renderer.uMVMatrix);
-  this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
+  if(this === this._renderer.curFillShader) {
+    this._renderer.uNMatrix.inverseTranspose(this._renderer.uMVMatrix);
+    this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
+  }
 };
 
 p5.Shader.prototype._setViewportUniform = function() {
-  this.setUniform('uViewport', this._renderer.GL.getParameter(this._renderer.GL.VIEWPORT));
-}
+  this.setUniform('uViewport',
+    this._renderer.GL.getParameter(this._renderer.GL.VIEWPORT));
+};
 
 /**
  * @method useProgram

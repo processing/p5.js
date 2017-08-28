@@ -9,7 +9,6 @@
 'use strict';
 
 var p5 = require('../core/core');
-var constants = require('../core/constants');
 require('./p5.Geometry');
 /**
  * Draw a plane with given a width and height
@@ -82,7 +81,8 @@ p5.prototype.plane = function(){
         ._makeTriangleEdges()
         ._edgesToVertices();
     } else {
-      console.log('Cannot draw stroke on plane objects with more than 1 detailX or 1 detailY');
+      console.log('Cannot draw stroke on plane objects with more'+
+        'than 1 detailX or 1 detailY');
     }
     this._renderer.createBuffers(gId, planeGeom);
   }
@@ -186,7 +186,8 @@ p5.prototype.box = function(){
         ._makeTriangleEdges()
         ._edgesToVertices();
     } else {
-      console.log('Cannot draw stroke on box objects with more than 4 detailX or 4 detailY');
+      console.log('Cannot draw stroke on box objects with more'+
+      ' than 4 detailX or 4 detailY');
     }
     //initialize our geometry buffer with
     //the key val pair:
@@ -263,7 +264,8 @@ p5.prototype.sphere = function(){
         ._makeTriangleEdges()
         ._edgesToVertices();
     } else {
-      console.log('Cannot draw stroke on sphere objects with more than 24 detailX or 16 detailY');
+      console.log('Cannot draw stroke on sphere objects with more'+
+        ' than 24 detailX or 16 detailY');
     }
 
     this._renderer.createBuffers(gId, sphereGeom);
@@ -407,7 +409,8 @@ p5.prototype.cylinder = function(){
         ._makeTriangleEdges()
         ._edgesToVertices();
     } else {
-      console.log('Cannot draw stroke on cylinder objects with more than 24 detailX or 16 detailY');
+      console.log('Cannot draw stroke on cylinder objects with more'+
+      ' than 24 detailX or 16 detailY');
     }
     this._renderer.createBuffers(gId, cylinderGeom);
   }
@@ -474,7 +477,8 @@ p5.prototype.cone = function(){
         ._makeTriangleEdges()
         ._edgesToVertices();
     } else {
-      console.log('Cannot draw stroke on cone objects with more than 24 detailX or 16 detailY');
+      console.log('Cannot draw stroke on cone objects with more'+
+      ' than 24 detailX or 16 detailY');
     }
     this._renderer.createBuffers(gId, coneGeom);
   }
@@ -555,7 +559,8 @@ p5.prototype.ellipsoid = function(){
         ._makeTriangleEdges()
         ._edgesToVertices();
     } else {
-      console.log('Cannot draw stroke on ellipsoids with more than 24 detailX or 24 detailY');
+      console.log('Cannot draw stroke on ellipsoids with more'+
+      ' than 24 detailX or 24 detailY');
     }
     this._renderer.createBuffers(gId, ellipsoidGeom);
   }
@@ -635,10 +640,11 @@ p5.prototype.torus = function(){
         ._makeTriangleEdges()
         ._edgesToVertices();
     } else {
-      console.log('Cannot draw strokes on torus object with more than 24 detailX or 16 detailY');
+      console.log('Cannot draw strokes on torus object with more'+
+      ' than 24 detailX or 16 detailY');
     }
-      this._renderer.createBuffers(gId, torusGeom);
-    }
+    this._renderer.createBuffers(gId, torusGeom);
+  }
   this._renderer.drawBuffers(gId);
 
   return this;
@@ -724,13 +730,14 @@ p5.RendererGL.prototype.ellipse = function
     ellipseGeom
       .computeFaces()
       .computeNormals();
-      if(detailX <= 24 && detailY <= 16) {
-        ellipseGeom
-          ._makeTriangleEdges()
-          ._edgesToVertices();
-      } else {
-        console.log('Cannot stroke ellipse with more than 24 detailX or 16 detailY');
-      }
+    if(detailX <= 24 && detailY <= 16) {
+      ellipseGeom
+        ._makeTriangleEdges()
+        ._edgesToVertices();
+    } else {
+      console.log('Cannot stroke ellipse with more'+
+        ' than 24 detailX or 16 detailY');
+    }
 
     this.createBuffers(gId, ellipseGeom);
   }

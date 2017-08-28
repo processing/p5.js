@@ -3,7 +3,6 @@
 'use strict';
 
 var p5 = require('../core/core');
-var constants = require('../core/constants');
 
 var hashCount = 0;
 /**
@@ -42,27 +41,8 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
   //initialize the gl buffers for our geom groups
   this._initBufferDefaults(gId);
 
-  //@todo rename "numberOfItems" property to something more descriptive
-  //we mult the num geom faces by 3
   this.gHash[gId].numberOfItems = obj.faces.length * 3;
-  this.gHash[gId].lineVertexCount = obj.lineVertices.length; // we use the flattened array elsewhere, could reuse
-  /*****LOGGING THE NUMBER OF ELEMENTS DRAWN*****/
-  // console.log('Number of Elements Drawn: ' + this.gHash[gId].numberOfItems);
-
-  // /**LOGGING THE ORIGINAL VERTICES**/
-  // console.log('Original Vertices: ');
-  // console.log(obj.vertices);
-
-  // /**LOGGING THE INDICES OR FACES**/
-  // console.log('Indices/Faces: ');
-  // console.log(obj.faces);
-
-  // console.log('EDGE CONNECTION PATTERN: ');
-  // console.log(obj.edges);
-
-  /**LOGGING THE LINE VERTICES**/
-  // console.log('Line Vertices: ');
-  // console.log(obj.lineVertices);
+  this.gHash[gId].lineVertexCount = obj.lineVertices.length;
 
   var fillShader = this.curFillShader;
   if (fillShader === this._getImmediateModeShader()) {
@@ -72,38 +52,35 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
     fillShader = this.setFillShader(this._getColorShader());
   }
   var strokeShader = this.curStrokeShader;
-  //if(strokeShader !== null) {
-    this._bindBuffer(this.gHash[gId].lineVertexBuffer, gl.ARRAY_BUFFER,
-      flatten(obj.lineVertices), Float32Array, gl.STATIC_DRAW);
-    strokeShader.enableAttrib(strokeShader.attributes.aPosition.location,
-      3, gl.FLOAT, false, 0, 0);
-    this._bindBuffer(this.gHash[gId].lineNormalBuffer, gl.ARRAY_BUFFER,
-      flatten(obj.lineNormals), Float32Array, gl.STATIC_DRAW);
-    strokeShader.enableAttrib(strokeShader.attributes.aDirection.location,
-      4, gl.FLOAT, false, 0, 0);
-  //}
-  //if(fillShader !== null) {
-    // allocate space for vertex positions
-    this._bindBuffer(this.gHash[gId].vertexBuffer, gl.ARRAY_BUFFER,
-      vToNArray(obj.vertices), Float32Array, gl.STATIC_DRAW);
-    fillShader.enableAttrib(fillShader.attributes.aPosition.location,
-      3, gl.FLOAT, false, 0, 0);
+  this._bindBuffer(this.gHash[gId].lineVertexBuffer, gl.ARRAY_BUFFER,
+    flatten(obj.lineVertices), Float32Array, gl.STATIC_DRAW);
+  strokeShader.enableAttrib(strokeShader.attributes.aPosition.location,
+    3, gl.FLOAT, false, 0, 0);
+  this._bindBuffer(this.gHash[gId].lineNormalBuffer, gl.ARRAY_BUFFER,
+    flatten(obj.lineNormals), Float32Array, gl.STATIC_DRAW);
+  strokeShader.enableAttrib(strokeShader.attributes.aDirection.location,
+    4, gl.FLOAT, false, 0, 0);
+  // allocate space for vertex positions
+  this._bindBuffer(this.gHash[gId].vertexBuffer, gl.ARRAY_BUFFER,
+    vToNArray(obj.vertices), Float32Array, gl.STATIC_DRAW);
+  fillShader.enableAttrib(fillShader.attributes.aPosition.location,
+    3, gl.FLOAT, false, 0, 0);
 
-      // allocate space for faces
-    this._bindBuffer( this.gHash[gId].indexBuffer, gl.ELEMENT_ARRAY_BUFFER,
-      flatten(obj.faces), Uint16Array, gl.STATIC_DRAW);
+  // allocate space for faces
+  this._bindBuffer( this.gHash[gId].indexBuffer, gl.ELEMENT_ARRAY_BUFFER,
+    flatten(obj.faces), Uint16Array, gl.STATIC_DRAW);
 
-      // allocate space for normals
-    this._bindBuffer(this.gHash[gId].normalBuffer, gl.ARRAY_BUFFER,
-      vToNArray(obj.vertexNormals), Float32Array, gl.STATIC_DRAW);
-    fillShader.enableAttrib(fillShader.attributes.aNormal.location,
-      3, gl.FLOAT, false, 0, 0);
+  // allocate space for normals
+  this._bindBuffer(this.gHash[gId].normalBuffer, gl.ARRAY_BUFFER,
+    vToNArray(obj.vertexNormals), Float32Array, gl.STATIC_DRAW);
+  fillShader.enableAttrib(fillShader.attributes.aNormal.location,
+    3, gl.FLOAT, false, 0, 0);
 
-    // tex coords
-    this._bindBuffer(this.gHash[gId].uvBuffer, gl.ARRAY_BUFFER,
-      flatten(obj.uvs), Float32Array, gl.STATIC_DRAW);
-    fillShader.enableAttrib(fillShader.attributes.aTexCoord.location,
-    2, gl.FLOAT, false, 0, 0);
+  // tex coords
+  this._bindBuffer(this.gHash[gId].uvBuffer, gl.ARRAY_BUFFER,
+    flatten(obj.uvs), Float32Array, gl.STATIC_DRAW);
+  fillShader.enableAttrib(fillShader.attributes.aTexCoord.location,
+  2, gl.FLOAT, false, 0, 0);
   //}
 };
 
@@ -123,9 +100,8 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     this.setFillShader(this._getColorShader());
   }
   var fillShader = this.curFillShader;
-  var strokeShader = this.curStrokeShader
+  var strokeShader = this.curStrokeShader;
 
-  /**BINDING LINE VERTICES**/
   if(strokeShader.active !== false) {
     strokeShader.bindShader();
     this._bindBuffer(this.gHash[gId].lineVertexBuffer, gl.ARRAY_BUFFER);
@@ -139,7 +115,6 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   }
   if(fillShader.active !== false) {
     fillShader.bindShader();
-    /**BINDING ORIGINAL VERTICES**/
     //vertex position buffer
     this._bindBuffer(this.gHash[gId].vertexBuffer, gl.ARRAY_BUFFER);
     fillShader.enableAttrib(fillShader.attributes.aPosition.location,
@@ -169,7 +144,7 @@ p5.RendererGL.prototype._drawElements = function (drawMode, gId) {
   this.GL.drawElements(
     drawMode, this.gHash[gId].numberOfItems,
     this.GL.UNSIGNED_SHORT, 0);
-}
+};
 
 ///////////////////////////////
 //// UTILITY FUNCTIONS
@@ -182,6 +157,11 @@ p5.RendererGL.prototype._drawElements = function (drawMode, gId) {
  */
 function flatten(arr){
   if (arr.length>0){
+    // below is original flatten function which
+    // was too slow for our needs
+    // lower is performant but has potential
+    // to hit browser call stack limit
+    // if a large model is loaded
     // return arr.reduce(function(a, b){
     //   return a.concat(b);
     // });
