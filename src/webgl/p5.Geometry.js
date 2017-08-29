@@ -175,7 +175,7 @@ p5.Geometry.prototype._makeTriangleEdges = function() {
   return this;
 };
 
-p5.Geometry.prototype._addEdge = function(i, j, start, end) {
+p5.Geometry.prototype._addEdge = function(i, j) {
   var edge = [i, j];
   this.edges.push(edge);
 };
