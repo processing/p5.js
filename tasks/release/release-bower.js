@@ -31,7 +31,7 @@ module.exports = function(grunt) {
       // otherwise it may prompt always for overwrite (not desirable)
       console.log('Copying new files ...');
       return new Promise(function(resolve, reject) {
-        exec('cp lib/*.js lib/addons bower-repo/lib -r', function(err, stdout, stderr) {
+        exec('cp -R lib/*.js lib/addons bower-repo/lib', function(err, stdout, stderr) {
           if (err) {
             reject(err);
           }
