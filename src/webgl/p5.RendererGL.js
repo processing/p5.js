@@ -383,12 +383,12 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   var colors = this._applyColorBlend.apply(this, arguments);
   this.curFillColor = colors;
   if(this.curFillShader.active === false) {
-    if (this.isImmediateDrawing){
-      this.setFillShader(this._getImmediateModeShader());
-    } else {
-      this.setFillShader(this._getColorShader());
-    }
     this.curFillShader.active = true;
+  }
+  if (this.isImmediateDrawing){
+    this.setFillShader(this._getImmediateModeShader());
+  } else {
+    this.setFillShader(this._getColorShader());
   }
   this.curFillShader.setUniform('uMaterialColor', colors);
 };

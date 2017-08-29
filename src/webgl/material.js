@@ -131,6 +131,9 @@ p5.prototype.texture = function(){
 
   renderer.drawMode = constants.TEXTURE;
   var shader = renderer.setFillShader(renderer._getLightShader());
+  if(this._renderer.curFillShader.active === false) {
+    this._renderer.curFillShader.active = true;
+  }
   shader.setUniform('uSpecular', false);
   shader.setUniform('isTexture', true);
   shader.setUniform('uSampler', args[0]);
