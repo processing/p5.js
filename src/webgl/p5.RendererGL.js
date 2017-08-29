@@ -360,22 +360,22 @@ p5.RendererGL.prototype.background = function() {
  * <div>
  * <code>
  * function setup(){
- *   createCanvas(100, 100, WEBGL);
+ *   createCanvas(200, 200, WEBGL);
  * }
  *
  * function draw(){
  *  background(0);
- *  fill(250, 0, 0);
+ *  noStroke();
+ *  fill(100, 100, 240);
  *  rotateX(frameCount * 0.01);
  *  rotateY(frameCount * 0.01);
- *  rotateZ(frameCount * 0.01);
- *  box(200, 200, 200);
+ *  box(75, 75, 75);
  * }
  * </code>
  * </div>
  *
  * @alt
- * red canvas
+ * black canvas with purple cube spinning
  *
  */
 p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
@@ -393,14 +393,98 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   this.curFillShader.setUniform('uMaterialColor', colors);
 };
 
+/**
+ * Does not render fill material
+ * @method  noFill
+ * @example
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(200, 200, WEBGL);
+ * }
+ *
+ * function draw(){
+ *  background(0);
+ *  noFill();
+ *  stroke(100, 100, 240);
+ *  rotateX(frameCount * 0.01);
+ *  rotateY(frameCount * 0.01);
+ *  box(75, 75, 75);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * black canvas with purple cube wireframe spinning
+ *
+ */
+
+
 p5.RendererGL.prototype.noFill = function() {
   this.curFillShader.active = false;
 };
+
+/**
+ * Does not render stroke
+ * @method  noStroke
+ * @example
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(200, 200, WEBGL);
+ * }
+ *
+ * function draw(){
+ *  background(0);
+ *  noStroke();
+ *  fill(240, 150, 150);
+ *  rotateX(frameCount * 0.01);
+ *  rotateY(frameCount * 0.01);
+ *  box(75, 75, 75);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * black canvas with pink cube spinning
+ *
+ */
 
 p5.RendererGL.prototype.noStroke = function() {
   this.curStrokeShader.active = false;
 };
 
+/**
+ * Basic stroke material for geometry with a given color
+ * @method  stroke
+ * @param  {Number|Array|String|p5.Color} v1  gray value,
+ * red or hue value (depending on the current color mode),
+ * or color Array, or CSS color string
+ * @param  {Number}            [v2] optional: green or saturation value
+ * @param  {Number}            [v3] optional: blue or brightness value
+ * @return {p5}                the p5 object
+ * @example
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(200, 200, WEBGL);
+ * }
+ *
+ * function draw(){
+ *  background(0);
+ *  stroke(240, 150, 150);
+ *  fill(100, 100, 240);
+ *  rotateX(frameCount * 0.01);
+ *  rotateY(frameCount * 0.01);
+ *  box(75, 75, 75);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * black canvas with purple cube with pink outline spinning
+ *
+ */
 
 p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   if(this.curStrokeShader.active === false) {
@@ -417,9 +501,45 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
 };
 
 /**
- * [strokeWeight description]
- * @param  {Number} pointSize stroke point size
- * @return {[type]}           [description]
+ * Change weight of stroke
+ * @method  strokeWeight
+ * @param  {Number} stroke weight to be used for drawing
+ * @example
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(200, 400, WEBGL);
+ *   setAttributes('antialias', true);
+ * }
+ *
+ * function draw(){
+ *   background(0);
+ *   noStroke();
+ *   translate(0,-100,0);
+ *   stroke(240,150,150);
+ *   fill(100,100,240);
+ *   push();
+ *   strokeWeight(8);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   sphere(75);
+ *   pop();
+ *   push();
+ *   translate(0,200,0);
+ *   strokeWeight(1);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   sphere(75);
+ *   pop();
+ * }
+ *
+ * </code>
+ * </div>
+ *
+ * @alt
+ * black canvas with two purple rotating spheres with pink
+ * outlines the sphere on top has much heavier outlines,
+ *
  */
 p5.RendererGL.prototype.strokeWeight = function(w) {
   if(this.curStrokeShader.active === false) {
