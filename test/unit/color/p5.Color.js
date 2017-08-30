@@ -499,6 +499,26 @@ suite('p5.Color', function() {
     });
   });
 
+  // color level setters
+  suite('in default mode', function() {
+    test('can be modified with alpha setter', function() {
+      var cc = myp5.color(255, 0, 102, 204);
+      assert.deepEqual(cc.levels, [255, 0, 102, 204]);
+      cc.setAlpha(98);
+      assert.deepEqual(cc.levels, [255, 0, 102, 98]);
+    });
+    test('can be modified with rgb setters', function() {
+      var cc = myp5.color(255, 0, 102, 204);
+      assert.deepEqual(cc.levels, [255, 0, 102, 204]);
+      cc.setRed(98);
+      assert.deepEqual(cc.levels, [98, 0, 102, 204]);
+      cc.setGreen(44);
+      assert.deepEqual(cc.levels, [98, 44, 102, 204]);
+      cc.setBlue(244);
+      assert.deepEqual(cc.levels, [98, 44, 244, 204]);
+    });
+  });
+
   // Color Mode
   suite('p5.Color in RGB mode with custom range', function() {
     setup(function() {
@@ -541,6 +561,21 @@ suite('p5.Color', function() {
     test('should correctly set RGBA property', function() {
       assert.deepEqual(c.levels, [255, 0, 102, 255]);
     });
+    test('can be modified with alpha setter', function() {
+      var cc = myp5.color(336, 100, 50);
+      cc.setAlpha(0.73);
+      assert.deepEqual(cc.levels, [255, 0, 102, 186]);
+    });
+    test('can be modified with rgb setters', function() {
+      var cc = myp5.color(336, 100, 50);
+      assert.deepEqual(cc.levels, [255, 0, 102, 255]);
+      cc.setRed(98);
+      assert.deepEqual(cc.levels, [98, 0, 102, 255]);
+      cc.setGreen(44);
+      assert.deepEqual(cc.levels, [98, 44, 102, 255]);
+      cc.setBlue(244);
+      assert.deepEqual(cc.levels, [98, 44, 244, 255]);
+    });
   });
 
   suite('p5.Color in HSL mode with Alpha', function() {
@@ -582,6 +617,22 @@ suite('p5.Color', function() {
 
     test('should correctly render color string', function() {
       assert.equal(c.toString(), 'rgba(255,0,102,0.8)');
+    });
+
+    test('can be modified with alpha setter', function() {
+      var cc = myp5.color(93.33, 200, 150, 8);
+      cc.setAlpha(7.3);
+      assert.deepEqual(cc.levels, [255, 0, 102, 186]);
+    });
+    test('can be modified with rgb setters', function() {
+      var cc = myp5.color(93.33, 200, 150, 8);
+      assert.deepEqual(cc.levels, [255, 0, 102, 204]);
+      cc.setRed(98);
+      assert.deepEqual(cc.levels, [98, 0, 102, 204]);
+      cc.setGreen(44);
+      assert.deepEqual(cc.levels, [98, 44, 102, 204]);
+      cc.setBlue(244);
+      assert.deepEqual(cc.levels, [98, 44, 244, 204]);
     });
   });
 
@@ -661,6 +712,21 @@ suite('p5.Color', function() {
     });
     test('should correctly set RGBA property', function() {
       assert.deepEqual(c.levels, [255, 0, 102, 255]);
+    });
+    test('can be modified with alpha setter', function() {
+      var cc = myp5.color(336, 100, 100);
+      cc.setAlpha(0.73);
+      assert.deepEqual(cc.levels, [255, 0, 102, 186]);
+    });
+    test('can be modified with rgb setters', function() {
+      var cc = myp5.color(336, 100, 100);
+      assert.deepEqual(cc.levels, [255, 0, 102, 255]);
+      cc.setRed(98);
+      assert.deepEqual(cc.levels, [98, 0, 102, 255]);
+      cc.setGreen(44);
+      assert.deepEqual(cc.levels, [98, 44, 102, 255]);
+      cc.setBlue(244);
+      assert.deepEqual(cc.levels, [98, 44, 244, 255]);
     });
   });
 
