@@ -29,7 +29,7 @@ require('../color/p5.Color');
  * contain the R, G, B, A values of the pixel at (1, 0). More generally, to
  * set values for a pixel at (x, y):
  * ```javascript
- * var d = pixelDensity;
+ * var d = pixelDensity();
  * for (var i = 0; i < d; i++) {
  *   for (var j = 0; j < d; j++) {
  *     // loop over
