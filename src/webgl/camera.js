@@ -10,12 +10,24 @@
 var p5 = require('../core/core');
 
 /**
- * Sets camera position
+ * Sets camera position for a 3D sketch. The function behaves similarly
+ * gluLookAt, except that it replaces the existing modelview matrix instead
+ * of applying any transformations calculated here on top of the existing
+ * model view.
+ * When called with no arguments, this function
+ * sets a default camera equivalent to calling
+ * camera(0, 0, (height/2.0) / tan(PI*30.0 / 180.0), 0, 0, 0, 0, 1, 0);
  * @method camera
- * @param  {Number} x  camera position value on x axis
- * @param  {Number} y  camera position value on y axis
- * @param  {Number} z  camera position value on z axis
- * @return {p5}        the p5 object
+ * @param  {Number} [x]        camera position value on x axis
+ * @param  {Number} [y]        camera position value on y axis
+ * @param  {Number} [z]        camera position value on z axis
+ * @param  {Number} [centerX]  x coordinate representing center of the sketch
+ * @param  {Number} [centerY]  y coordinate representing center of the sketch
+ * @param  {Number} [centerZ]  z coordinate representing center of the sketch
+ * @param  {Number} [upX]      x component of direction 'up' from camera
+ * @param  {Number} [upY]      y component of direction 'up' from camera
+ * @param  {Number} [upZ]      z component of direction 'up' from camera
+ * @return {p5}                the p5 object
  * @example
  * <div>
  * <code>
@@ -24,7 +36,7 @@ var p5 = require('../core/core');
  * }
  * function draw(){
  *  //move the camera away from the plane by a sin wave
- *  camera(0, 0, sin(frameCount * 0.01) * 100);
+ *  camera(0, 0, sin(frameCount * 0.01) * 100, 0, 0, 0, 0, 1, 0);
  *  plane(120, 120);
  * }
  * </code>
@@ -36,6 +48,7 @@ var p5 = require('../core/core');
  */
 p5.prototype.camera = function(){
   this._renderer.camera.apply(this._renderer, arguments);
+  return this;
 };
 
 p5.RendererGL.prototype.camera = function () {
@@ -141,17 +154,21 @@ p5.RendererGL.prototype.camera = function () {
                      this.cameraMatrix.mat4[14],
                      this.cameraMatrix.mat4[15]
                      );
+  return this;
 };
 
 /**
- * Sets perspective camera
+ * Sets perspective camera. When called with no arguments, the defaults
+ * provided are equivalent to
+ * perspective(PI/3.0, width/height, cameraZ/10.0, cameraZ*10.0)
+ * where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
  * @method  perspective
- * @param  {Number} fovy   camera frustum vertical field of view,
- *                         from bottom to top of view, in degrees
- * @param  {Number} aspect camera frustum aspect ratio
- * @param  {Number} near   frustum near plane length
- * @param  {Number} far    frustum far plane length
- * @return {p5}            the p5 object
+ * @param  {Number} [fovy]   camera frustum vertical field of view,
+ *                           from bottom to top of view, in degrees
+ * @param  {Number} [aspect] camera frustum aspect ratio
+ * @param  {Number} [near]   frustum near plane length
+ * @param  {Number} [far]    frustum far plane length
+ * @return {p5}              the p5 object
  * @example
  * <div>
  * <code>
@@ -184,6 +201,7 @@ p5.RendererGL.prototype.camera = function () {
  */
 p5.prototype.perspective = function() {
   this._renderer.perspective.apply(this._renderer, arguments);
+  return this;
 };
 
 p5.RendererGL.prototype.perspective = function() {
