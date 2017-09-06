@@ -25,8 +25,8 @@ p5.Renderer2D = function(elt, pInst, isMainCanvas){
 p5.Renderer2D.prototype = Object.create(p5.Renderer.prototype);
 
 p5.Renderer2D.prototype._applyDefaults = function() {
-  this._setFill(constants._DEFAULT_FILL);
-  this._setStroke(constants._DEFAULT_STROKE);
+  this._setFill(constants._DEFAULT_FILL, true);
+  this._setStroke(constants._DEFAULT_STROKE, true);
   this.drawingContext.lineCap = constants.ROUND;
   this.drawingContext.font = 'normal 12px sans-serif';
 };
@@ -959,10 +959,10 @@ p5.Renderer2D.prototype._getFill = function(){
   return this._cachedFillStyle;
 };
 
-p5.Renderer2D.prototype._setFill = function(fillStyle){
+p5.Renderer2D.prototype._setFill = function(fillStyle, nocache){
   if (fillStyle !== this._cachedFillStyle) {
     this.drawingContext.fillStyle = fillStyle;
-    this._cachedFillStyle = fillStyle;
+    this._cachedFillStyle = nocache || fillStyle;
   }
 };
 
@@ -970,10 +970,10 @@ p5.Renderer2D.prototype._getStroke = function(){
   return this._cachedStrokeStyle;
 };
 
-p5.Renderer2D.prototype._setStroke = function(strokeStyle){
+p5.Renderer2D.prototype._setStroke = function(strokeStyle, nocache){
   if (strokeStyle !== this._cachedStrokeStyle) {
     this.drawingContext.strokeStyle = strokeStyle;
-    this._cachedStrokeStyle = strokeStyle;
+    this._cachedStrokeStyle = nocache || strokeStyle;
   }
 };
 
