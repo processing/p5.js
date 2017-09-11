@@ -77,6 +77,8 @@ p5.Matrix = function() {
  *
  * @param {p5.Matrix|Array} [inMatrix] the input p5.Matrix or
  *                                     an Array of length 16
+ * @param {Number}          [n00..n33] 16 numbers passed by value to avoid
+ *                                     array copying.
  */
 p5.Matrix.prototype.set = function (inMatrix) {
   if (inMatrix instanceof p5.Matrix) {

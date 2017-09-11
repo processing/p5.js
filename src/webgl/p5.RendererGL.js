@@ -96,6 +96,9 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._defaultNormalShader = undefined;
   this._defaultColorShader = undefined;
 
+  this.curFillShader = {};
+  this.curStrokeShader = {};
+
   this.setFillShader(this._getColorShader());
   this.setStrokeShader(this._getLineShader());
 
@@ -317,6 +320,7 @@ p5.RendererGL.prototype._update = function() {
                      this.cameraMatrix.mat4[14],
                      this.cameraMatrix.mat4[15]
                      );
+
   // reset light counters for new frame.
   this.ambientLightCount = 0;
   this.directionalLightCount = 0;
