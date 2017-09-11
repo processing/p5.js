@@ -125,7 +125,7 @@ function _sAssign(sVal, iVal) {
  * Draw an image to the main canvas of the p5js sketch
  *
  * @method image
- * @param  {p5.Image} img    the image to display
+ * @param  {p5.Image|p5.Graphics} img    the image to display
  * @param  {Number}   x      the x-coordinate at which to place the top-left
  *                           corner of the source image
  * @param  {Number}   y      the y-coordinate at which to place the top-left
@@ -164,7 +164,7 @@ function _sAssign(sVal, iVal) {
  */
 /**
  * @method image
- * @param  {p5.Image} img
+ * @param  {p5.Image|p5.Graphics} img
  * @param  {Number}   x
  * @param  {Number}   y
  * @param  {Number}   width

@@ -434,7 +434,7 @@ p5.Image.prototype.resize = function(width, height){
  * target region.
  *
  * @method copy
- * @param  {p5.Image|undefined} srcImage source image
+ * @param  {p5.Image|p5.Graphics|undefined} srcImage source image
  * @param  {Integer} sx X coordinate of the source's upper left corner
  * @param  {Integer} sy Y coordinate of the source's upper left corner
  * @param  {Integer} sw source image width
