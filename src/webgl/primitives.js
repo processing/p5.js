@@ -142,21 +142,10 @@ p5.prototype.box = function(){
       ];
       //using strokeIndices instead of faces for strokes
       //to avoid diagonal stroke lines across face of box
-      var strokeIndices = [
-        [0,1],
-        [1,3],
-        [3,2],
-        [6,7],
-        [8,9],
-        [9,11],
-        [14,15],
-        [16,17],
-        [17,19],
-        [18,19],
-        [20,21],
-        [22,23]
+      this.strokeIndices = [
+        [0,1],[1,3],[3,2],[6,7],[8,9],[9,11],[14,15],
+        [16,17],[17,19],[18,19],[20,21],[22,23]
       ];
-      this.strokeIndices = strokeIndices;
       var id=0;
       for (var i = 0; i < cubeIndices.length; i++) {
         var cubeIndex = cubeIndices[i];
