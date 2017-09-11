@@ -328,14 +328,13 @@ p5.RendererGL.prototype._update = function() {
  * @return {[type]} [description]
  */
 p5.RendererGL.prototype.background = function() {
-  var gl = this.GL;
   var _col = this._pInst.color.apply(this._pInst, arguments);
   var _r = (_col.levels[0]) / 255;
   var _g = (_col.levels[1]) / 255;
   var _b = (_col.levels[2]) / 255;
   var _a = (_col.levels[3]) / 255;
-  gl.clearColor(_r, _g, _b, _a);
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  this.GL.clearColor(_r, _g, _b, _a);
+  this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
 
 //@TODO implement this
@@ -390,6 +389,7 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   } else {
     this.setFillShader(this._getColorShader());
   }
+  this.drawMode = constants.FILL;
   this.curFillShader.setUniform('uMaterialColor', colors);
 };
 
@@ -621,9 +621,9 @@ p5.RendererGL.prototype.loadPixels = function() {
   var h = arguments[3] || this.height;
   w *= pd;
   h *= pd;
-  var gl = this.GL;
-  var pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
-  gl.readPixels(x, y, w, h, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+  var pixels = new Uint8Array(this.GL.drawingBufferWidth *
+    this.GL.drawingBufferHeight * 4);
+  this.GL.readPixels(x, y, w, h, this.GL.RGBA, this.GL.UNSIGNED_BYTE, pixels);
   this._pInst._setProperty('pixels', pixels);
 };
 
@@ -646,9 +646,8 @@ p5.RendererGL.prototype.geometryInHash = function(gId){
  * @return {[type]}   [description]
  */
 p5.RendererGL.prototype.resize = function(w,h) {
-  var gl = this.GL;
   p5.Renderer.prototype.resize.call(this, w, h);
-  gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+  this.GL.viewport(0, 0, this.GL.drawingBufferWidth, this.GL.drawingBufferHeight);
   // If we're using the default camera, update the aspect ratio
   if(this._curCamera === null || this._curCamera === 'default') {
     this._curCamera = null;
@@ -667,12 +666,11 @@ p5.RendererGL.prototype.resize = function(w,h) {
  * @param {Number} a normalized alpha val.
  */
 p5.RendererGL.prototype.clear = function() {
-  var gl = this.GL;
-  gl.clearColor(arguments[0],
+  this.GL.clearColor(arguments[0],
     arguments[1],
     arguments[2],
     arguments[3]);
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
 
 /**
@@ -774,9 +772,9 @@ p5.RendererGL.prototype._applyTextProperties = function() {
  * so it is safe to call this method with the same shader multiple
  * times without a signficant performance hit).
  *
- * @method setShader
- * @param {p5.Shader} s a p5.Shader object
- * @return {p5.Shader} the current, updated shader
+ * @method setFillShader
+ * @param {p5.Shader} [s] a p5.Shader object
+ * @return {p5.Shader} the current, updated fill shader
  */
 p5.RendererGL.prototype.setFillShader = function (s) {
   if (this.curFillShader !== s) {
@@ -789,11 +787,16 @@ p5.RendererGL.prototype.setFillShader = function (s) {
     this.curFillShader.useProgram();
     this.curFillShader.active = true;
   }
-
   // always return this.curFillShader, even if no change was made.
   return this.curFillShader;
 };
 
+
+/*
+ * @method setStrokeShader
+ * @param {p5.Shader} [s] a p5.Shader object
+ * @return {p5.Shader} the current, updated stroke shader
+ */
 p5.RendererGL.prototype.setStrokeShader = function (s) {
   if (this.curStrokeShader !== s) {
     // only do setup etc. if shader is actually new.
@@ -804,7 +807,6 @@ p5.RendererGL.prototype.setStrokeShader = function (s) {
     this.curStrokeShader.useProgram();
     this.curStrokeShader.active = true;
   }
-
   // always return this.curLineShader, even if no change was made.
   return this.curStrokeShader;
 };
@@ -813,6 +815,8 @@ p5.RendererGL.prototype.setStrokeShader = function (s) {
  * shaders are created and cached on a per-renderer basis,
  * on the grounds that each renderer will have its own gl context
  * and the shader must be valid in that context.
+ *
+ *
  */
 
 p5.RendererGL.prototype._getLightShader = function () {
@@ -820,7 +824,7 @@ p5.RendererGL.prototype._getLightShader = function () {
     this._defaultLightShader = new p5.Shader(this,
       defaultShaders.lightVert, defaultShaders.lightTextureFrag);
   }
-  this.drawMode = constants.FILL;
+  //this.drawMode = constants.FILL;
   return this._defaultLightShader;
 };
 
@@ -829,7 +833,7 @@ p5.RendererGL.prototype._getImmediateModeShader = function () {
     this._defaultImmediateModeShader = new p5.Shader(this,
       defaultShaders.immediateVert, defaultShaders.vertexColorFrag);
   }
-  this.drawMode = constants.FILL;
+  //this.drawMode = constants.FILL;
   return this._defaultImmediateModeShader;
 };
 
@@ -838,7 +842,7 @@ p5.RendererGL.prototype._getNormalShader = function () {
     this._defaultNormalShader = new p5.Shader(this,
       defaultShaders.normalVert, defaultShaders.normalFrag);
   }
-  this.drawMode = constants.FILL;
+  //this.drawMode = constants.FILL;
   return this._defaultNormalShader;
 };
 
@@ -847,7 +851,7 @@ p5.RendererGL.prototype._getColorShader = function () {
     this._defaultColorShader = new p5.Shader(this,
       defaultShaders.normalVert, defaultShaders.basicFrag);
   }
-  this.drawMode = constants.FILL;
+  //this.drawMode = constants.FILL;
   return this._defaultColorShader;
 };
 
@@ -856,7 +860,7 @@ p5.RendererGL.prototype._getLineShader = function () {
     this._defaultLineShader = new p5.Shader(this,
       defaultShaders.lineVert, defaultShaders.lineFrag);
   }
-  this.drawMode = constants.STROKE;
+  //this.drawMode = constants.STROKE;
   return this._defaultLineShader;
 };
 
@@ -874,7 +878,7 @@ p5.RendererGL.prototype.getTexture = function (img) {
   var checkSource = function(element) {
     return element.src === img;
   };
-  this.drawMode = constants.TEXTURE;
+  //this.drawMode = constants.TEXTURE;
   var tex = this.textures.find(checkSource);
   if (tex === undefined) {
     tex = new p5.Texture(this, img);

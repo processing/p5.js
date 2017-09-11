@@ -11,6 +11,73 @@ var p5 = require('../core/core');
 var constants = require('../core/constants');
 require('./p5.Texture');
 
+
+/**
+ * Loads a custom shader from the provided vertex and fragment
+ * shader paths. The shader files are loaded asynchronously in the
+ * background, so this method should be used in preload().
+ *
+ * For now, there are three main types of shaders. p5 will automatically
+ * supply appropriate vertices, normals, colors, and lighting attributes
+ * if the parameters defined in the shader match the names.
+ *
+ * @method loadShader
+ * @param {String} [vertFilename] path to file containing vertex shader
+ * source code
+ * @param {String} [fragFilename] path to file containing fragment shader
+ * source code
+ * @return {p5.Shader} a shader object created from the provided
+ * vertex and fragment shader files.
+ */
+p5.prototype.loadShader = function (vertFilename, fragFilename) {
+  var loadedShader = new p5.Shader();
+
+  var self = this;
+  var loadedFrag = false;
+  var loadedVert = false;
+
+  this.loadStrings(fragFilename, function(result) {
+    loadedShader._fragSrc = result.join('\n');
+    loadedFrag = true;
+    if (!loadedVert) {
+      self._incrementPreload();
+    }
+  });
+  this.loadStrings(vertFilename, function(result) {
+    loadedShader._vertSrc = result.join('\n');
+    loadedVert = true;
+    if (!loadedFrag) {
+      self._incrementPreload();
+    }
+  });
+
+  return loadedShader;
+};
+
+
+/**
+ * The shader() function lets the user provide a custom shader
+ * to fill in shapes in WEBGL mode. Users can create their
+ * own shaders by loading vertex and fragment shaders with
+ * loadShader().
+ *
+ * @method shader
+ * @chainable
+ * @param {p5.Shader} [s] the desired p5.Shader to use for rendering
+ * shapes.
+ */
+p5.prototype.shader = function (s) {
+  if (s._renderer === undefined) {
+    s._renderer = this._renderer;
+  }
+  if(s.isStrokeShader()) {
+    this._renderer.setStrokeShader(s);
+  } else {
+    this._renderer.setFillShader(s);
+  }
+  return this;
+};
+
 /**
  * Normal material for geometry. You can view all
  * possible materials in this
@@ -123,20 +190,18 @@ p5.prototype.texture = function(){
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
-  var gl = this._renderer.GL;
-  var renderer = this._renderer;
-  gl.depthMask(true);
-  gl.enable(gl.BLEND);
-  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  this._renderer.GL.depthMask(true);
+  this._renderer.GL.enable(this._renderer.GL.BLEND);
+  this._renderer.GL.blendFunc(this._renderer.GL.SRC_ALPHA,
+    this._renderer.GL.ONE_MINUS_SRC_ALPHA);
 
-  renderer.drawMode = constants.TEXTURE;
-  var shader = renderer.setFillShader(renderer._getLightShader());
-  if(this._renderer.curFillShader.active === false) {
-    this._renderer.curFillShader.active = true;
+  this._renderer.drawMode = constants.TEXTURE;
+  if (! this._renderer.curFillShader.isTextureShader()) {
+    this._renderer.setFillShader(this._renderer._getLightShader());
   }
-  shader.setUniform('uSpecular', false);
-  shader.setUniform('isTexture', true);
-  shader.setUniform('uSampler', args[0]);
+  this._renderer.curFillShader.setUniform('uSpecular', false);
+  this._renderer.curFillShader.setUniform('isTexture', true);
+  this._renderer.curFillShader.setUniform('uSampler', args[0]);
   this._renderer.noStroke();
   return this;
 };
@@ -175,13 +240,13 @@ p5.prototype.texture = function(){
  *
  */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
-  var shader = this._renderer.setFillShader(this._renderer._getLightShader());
-  this._renderer.drawMode = constants.FILL;
+  if (! this._renderer.curFillShader.isLightShader()) {
+    this._renderer.setFillShader(this._renderer._getLightShader());
+  }
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
-  shader.setUniform('uMaterialColor', colors);
-  shader.setUniform('uSpecular', false);
-  shader.setUniform('isTexture', false);
-  this._renderer.noStroke();
+  this._renderer.curFillShader.setUniform('uMaterialColor', colors);
+  this._renderer.curFillShader.setUniform('uSpecular', false);
+  this._renderer.curFillShader.setUniform('isTexture', false);
   return this;
 };
 
@@ -218,13 +283,14 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  *
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
-  var shader = this._renderer.setFillShader(this._renderer._getLightShader());
-  this._renderer.drawMode = constants.FILL;
+  if (! this._renderer.curFillShader.isLightShader()) {
+    this._renderer.setFillShader(this._renderer._getLightShader());
+  }
+
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
-  shader.setUniform('uMaterialColor', colors);
-  shader.setUniform('uSpecular', true);
-  shader.setUniform('isTexture', false);
-  this._renderer.noStroke();
+  this._renderer.curFillShader.setUniform('uMaterialColor', colors);
+  this._renderer.curFillShader.setUniform('uSpecular', true);
+  this._renderer.curFillShader.setUniform('isTexture', false);
   return this;
 };
 
