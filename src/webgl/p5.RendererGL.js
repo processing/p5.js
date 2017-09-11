@@ -904,5 +904,34 @@ p5.RendererGL.prototype._bindBuffer = function( buffer, target,
   }
 };
 
+///////////////////////////////
+//// UTILITY FUNCTIONS
+//////////////////////////////
+/**
+ * turn a two dimensional array into one dimensional array
+ * @param  {Array} arr 2-dimensional array
+ * @return {Array}     1-dimensional array
+ * [[1, 2, 3],[4, 5, 6]] -> [1, 2, 3, 4, 5, 6]
+ */
+p5.RendererGL.prototype._flatten = function(arr){
+  if (arr.length>0){
+    return ([].concat.apply([], arr));
+  } else {
+    return [];
+  }
+};
+
+/**
+ * turn a p5.Vector Array into a one dimensional number array
+ * @param  {Array} arr  an array of p5.Vector
+ * @return {Array]}     a one dimensional array of numbers
+ * [p5.Vector(1, 2, 3), p5.Vector(4, 5, 6)] ->
+ * [1, 2, 3, 4, 5, 6]
+ */
+p5.RendererGL.prototype._vToNArray = function(arr){
+  return this._flatten(arr.map(function(item){
+    return [item.x, item.y, item.z];
+  }));
+};
 
 module.exports = p5.RendererGL;

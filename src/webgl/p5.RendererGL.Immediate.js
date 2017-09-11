@@ -34,8 +34,8 @@ p5.RendererGL.prototype.beginShape = function(mode){
     mode : constants.LINE_STRIP;
   //if we haven't yet initialized our
   //immediateMode vertices & buffers, create them now!
-  if(this.immediateMode.vertexPositions === undefined){
-    this.immediateMode.vertexPositions = [];
+  if(this.immediateMode.vertices === undefined){
+    this.immediateMode.vertices = [];
     this.immediateMode.edges = [];
     this.immediateMode.lineVertices = [];
     this.immediateMode.vertexColors = [];
@@ -47,7 +47,7 @@ p5.RendererGL.prototype.beginShape = function(mode){
     this.immediateMode.lineVertexBuffer = this.GL.createBuffer();
     this.immediateMode.lineNormalBuffer = this.GL.createBuffer();
   } else {
-    this.immediateMode.vertexPositions.length = 0;
+    this.immediateMode.vertices.length = 0;
     this.immediateMode.edges.length = 0;
     this.immediateMode.lineVertices.length = 0;
     this.immediateMode.lineNormals.length = 0;
@@ -87,7 +87,7 @@ p5.RendererGL.prototype.vertex = function(){
     v = arguments[4];
   }
   var vert = new p5.Vector(x, y, z);
-  this.immediateMode.vertexPositions.push(vert);
+  this.immediateMode.vertices.push(vert);
   var vertexColor = this.curFillColor || [0.5, 0.5, 0.5, 1.0];
   this.immediateMode.vertexColors.push(
     vertexColor[0],
@@ -114,14 +114,14 @@ function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
     // this shouldn't change. :)
   }
   if(this.curStrokeShader.active === true) {
-    for(var i=0; i<this.immediateMode.vertexPositions.length; i++) {
-      if(i+1 < this.immediateMode.vertexPositions.length) {
+    for(var i=0; i<this.immediateMode.vertices.length; i++) {
+      if(i+1 < this.immediateMode.vertices.length) {
         this.immediateMode.edges.push([i, i+1]);
       } else {
         this.immediateMode.edges.push([i, 0]);
       }
     }
-    this._edgesToVerticesImmediateMode();
+    this._edgesToVertices(this.immediateMode);
     this._drawStrokeImmediateMode();
   }
   if(this.curFillShader.active === true) {
@@ -130,47 +130,11 @@ function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
   }
   //clear out our vertexPositions & colors arrays
   //after rendering
-  this.immediateMode.vertexPositions.length = 0;
+  this.immediateMode.vertices.length = 0;
   this.immediateMode.vertexColors.length = 0;
   this.immediateMode.uvCoords.length = 0;
   this.isImmediateDrawing = false;
 
-  return this;
-};
-
-/**
- * Create 4 vertices for each stroke line, two at the beginning position
- * and two at the end position. These vertices are displaced relative to
- * that line's normal on the GPU
- * @return {p5.Geometry}
- */
-p5.RendererGL.prototype._edgesToVerticesImmediateMode = function() {
-  var vertices = this.immediateMode.lineVertices;
-  for(var i = 0, max = this.immediateMode.edges.length; i < max; i++)
-  {
-    var begin = this.immediateMode.vertexPositions[this.immediateMode.edges[i][0]];
-    var end = this.immediateMode.vertexPositions[this.immediateMode.edges[i][1]];
-    var dir = end.copy().sub(begin).normalize();
-    var a = begin,
-        b = begin,
-        c = end,
-        d = end;
-    var dirAdd = dir.array();
-    var dirSub = dir.array();
-    // below is used to displace the pair of vertices at beginning and end
-    // in opposite directions
-    dirAdd.push(1);
-    dirSub.push(-1);
-    this.immediateMode.lineNormals.push(dirAdd,dirSub,dirAdd,dirAdd,dirSub,dirSub);
-    _store([a, b, c, c, b, d]);
-  }
-
-  function _store(verts) {
-    for (var i = 0, max = verts.length; i < max; i += 1) {
-      verts[i] = verts[i].array();
-      vertices.push(verts[i]);
-    }
-  }
   return this;
 };
 
@@ -180,7 +144,7 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(mode, isCurve, isBezie
   this.curFillShader.bindShader();
   //vertex position Attribute
   this._bindBuffer(this.immediateMode.vertexBuffer, gl.ARRAY_BUFFER,
-    vToNArray(this.immediateMode.vertexPositions), Float32Array, gl.DYNAMIC_DRAW);
+    this._vToNArray(this.immediateMode.vertices), Float32Array, gl.DYNAMIC_DRAW);
   this.curFillShader.enableAttrib(this.curFillShader.attributes.aPosition.location,
     3, gl.FLOAT, false, 0, 0);
   if (this.drawMode === constants.FILL) {
@@ -233,7 +197,7 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(mode, isCurve, isBezie
   else {
     gl.enable(gl.BLEND);
     gl.drawArrays(this.immediateMode.shapeMode, 0,
-      this.immediateMode.vertexPositions.length);
+      this.immediateMode.vertices.length);
   }
   // todo / optimizations? leave bound until another shader is set?
   this.curFillShader.unbindShader();
@@ -243,12 +207,12 @@ p5.RendererGL.prototype._drawStrokeImmediateMode = function() {
   var gl = this.GL;
   this.curStrokeShader.bindShader();
   this._bindBuffer(this.immediateMode.lineVertexBuffer, gl.ARRAY_BUFFER,
-    flatten(this.immediateMode.lineVertices), Float32Array, gl.STATIC_DRAW);
+    this._flatten(this.immediateMode.lineVertices), Float32Array, gl.STATIC_DRAW);
   this.curStrokeShader.enableAttrib(
     this.curStrokeShader.attributes.aPosition.location,
     3, gl.FLOAT, false, 0, 0);
   this._bindBuffer(this.immediateMode.lineNormalBuffer, gl.ARRAY_BUFFER,
-    flatten(this.immediateMode.lineNormals), Float32Array, gl.STATIC_DRAW);
+    this._flatten(this.immediateMode.lineNormals), Float32Array, gl.STATIC_DRAW);
   this.curStrokeShader.enableAttrib(
     this.curStrokeShader.attributes.aDirection.location,
     4, gl.FLOAT, false, 0, 0);
@@ -257,20 +221,5 @@ p5.RendererGL.prototype._drawStrokeImmediateMode = function() {
   // todo / optimizations? leave bound until another shader is set?
   this.curStrokeShader.unbindShader();
 };
-
-function flatten(arr){
-  if (arr.length>0){
-    return ([].concat.apply([], arr));
-  } else {
-    return [];
-  }
-}
-
-function vToNArray(arr){
-  return flatten(arr.map(function(item){
-    return [item.x, item.y, item.z];
-  }));
-}
-
 
 module.exports = p5.RendererGL;

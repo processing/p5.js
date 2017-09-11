@@ -166,19 +166,15 @@ p5.Geometry.prototype._makeTriangleEdges = function() {
     }
   }
   else {
-    for (var j=0, amt=this.faces.length; j<amt; j++) {
-      this._addEdge(this.faces[j][0], this.faces[j][1]);
-      this._addEdge(this.faces[j][1], this.faces[j][2]);
-      this._addEdge(this.faces[j][2], this.faces[j][0]);
+    for (var j=0; j<this.faces.length; j++) {
+      this.edges.push([this.faces[j][0], this.faces[j][1]]);
+      this.edges.push([this.faces[j][1], this.faces[j][2]]);
+      this.edges.push([this.faces[j][2], this.faces[j][0]]);
     }
   }
   return this;
 };
 
-p5.Geometry.prototype._addEdge = function(i, j) {
-  var edge = [i, j];
-  this.edges.push(edge);
-};
 
 /**
  * Create 4 vertices for each stroke line, two at the beginning position
@@ -186,36 +182,25 @@ p5.Geometry.prototype._addEdge = function(i, j) {
  * that line's normal on the GPU
  * @return {p5.Geometry}
  */
-p5.Geometry.prototype._edgesToVertices = function() {
-  this.lineVertices = [];
-  var vertices = this.lineVertices;
-
-  for(var i = 0, max = this.edges.length; i < max; i++)
-  {
-    var begin = this.vertices[this.edges[i][0]];
-    var end = this.vertices[this.edges[i][1]];
+p5.RendererGL.prototype._edgesToVertices = function(geom) {
+  geom.lineVertices = [];
+  for(var i = 0; i < geom.edges.length; i++) {
+    var begin = geom.vertices[geom.edges[i][0]];
+    var end = geom.vertices[geom.edges[i][1]];
     var dir = end.copy().sub(begin).normalize();
-    var a = begin,
-        b = begin,
-        c = end,
-        d = end;
+    var a = begin.array(),
+        b = begin.array(),
+        c = end.array(),
+        d = end.array();
     var dirAdd = dir.array();
     var dirSub = dir.array();
     // below is used to displace the pair of vertices at beginning and end
     // in opposite directions
     dirAdd.push(1);
     dirSub.push(-1);
-    this.lineNormals.push(dirAdd,dirSub,dirAdd,dirAdd,dirSub,dirSub);
-    _store([a, b, c, c, b, d]);
+    geom.lineNormals.push(dirAdd,dirSub,dirAdd,dirAdd,dirSub,dirSub);
+    geom.lineVertices.push(a, b, c, c, b, d);
   }
-
-  function _store(verts) {
-    for (var i = 0, max = verts.length; i < max; i += 1) {
-      verts[i] = verts[i].array();
-      vertices.push(verts[i]);
-    }
-  }
-  return this;
 };
 
 /**
