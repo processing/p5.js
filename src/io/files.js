@@ -714,6 +714,88 @@ p5.prototype.httpGet = function () {
  * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
+ *
+ * @example
+ * <div><code>
+ * // Examples use jsonplaceholder.typicode.com for a Mock Data API
+ *
+ * var url = 'https://jsonplaceholder.typicode.com/posts';
+ * var post = { userId: 1, title: 'p5 Clicked!', body: 'p5.js is way cool.' };
+ *
+ * function setup() {
+ *   createCanvas(800, 800);
+ * }
+ *
+ * function mousePressed() {
+ *
+ *  // Pick new random color values
+ *  var r = random(255);
+ *  var g = random(255);
+ *  var b = random(255);
+ *
+ *  httpPost(url, 'json',
+ *      post,
+ *      function (result) {
+ *        strokeWeight(2);
+ *        stroke(r, g, b);
+ *        fill(r, g, b, 127);
+ *        ellipse(mouseX, mouseY, 200, 200);
+ *        text(result.body, mouseX, mouseY);
+ *      },
+ *      function (error) {
+ *        console.error(error);
+ *      });
+ *
+ *  // you can also omit the datatype and httpPost will guess
+ *  httpPost(url,
+ *      post,
+ *      function (result) {
+ *        strokeWeight(2);
+ *        stroke(r, g, b);
+ *        fill(r, g, b, 127);
+ *        ellipse(mouseX, mouseY, 200, 200);
+ *        text(result.body, mouseX, mouseY);
+ *      },
+ *      function (error) {
+ *        console.error(error);
+ *      });
+ *      }
+ *
+ * </code></div>
+ *
+ * @example
+ * <div><code>
+ *
+ *  var url = 'https://invalidURL'; // A bad URL that will cause errors
+ *  var post = { title: 'p5 Clicked!', body: 'p5.js is way cool.' };
+ *
+ *  function setup() {
+ *     createCanvas(800, 800);
+ *  }
+ *
+ *  function mousePressed() {
+ *
+ *       // Pick new random color values
+ *       var r = random(255);
+ *       var g = random(255);
+ *       var b = random(255);
+ *
+ *       httpPost(url, 'json',
+ *           post,
+ *           function (result) {
+ *             // ... won't be called
+ *           },
+ *           function (error) {
+ *             console.error(error);
+ *
+ *             strokeWeight(2);
+ *             stroke(r, g, b);
+ *             fill(r, g, b, 127);
+ *             text(error.toString(), mouseX, mouseY);
+ *           });
+ *     }
+ * </code></div>
+ *
  */
 p5.prototype.httpPost = function () {
   var args = Array.prototype.slice.call(arguments);
