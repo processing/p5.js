@@ -721,47 +721,40 @@ p5.prototype.httpGet = function () {
  * // Examples use jsonplaceholder.typicode.com for a Mock Data API
  *
  * var url = 'https://jsonplaceholder.typicode.com/posts';
- * var post = { userId: 1, title: 'p5 Clicked!', body: 'p5.js is way cool.' };
+ * var postData = { userId: 1, title: 'p5 Clicked!', body: 'p5.js is way cool.' };
  *
  * function setup() {
  *   createCanvas(800, 800);
  * }
  *
  * function mousePressed() {
- *
  *  // Pick new random color values
  *  var r = random(255);
  *  var g = random(255);
  *  var b = random(255);
  *
  *  httpPost(url, 'json',
- *      post,
+ *      postData,
  *      function (result) {
  *        strokeWeight(2);
  *        stroke(r, g, b);
  *        fill(r, g, b, 127);
  *        ellipse(mouseX, mouseY, 200, 200);
  *        text(result.body, mouseX, mouseY);
- *      },
- *      function (error) {
- *        console.error(error);
  *      });
  *
  *  // you can also omit the datatype and httpPost will guess
  *  httpPost(url,
- *      post,
+ *      postData,
  *      function (result) {
  *        strokeWeight(2);
  *        stroke(r, g, b);
  *        fill(r, g, b, 127);
  *        ellipse(mouseX, mouseY, 200, 200);
  *        text(result.body, mouseX, mouseY);
- *      },
- *      function (error) {
- *        console.error(error);
  *      });
- *      }
  *
+ * }
  * </code>
  * </div>
  *
@@ -769,27 +762,24 @@ p5.prototype.httpGet = function () {
  * <div><code>
  *
  *  var url = 'https://invalidURL'; // A bad URL that will cause errors
- *  var post = { title: 'p5 Clicked!', body: 'p5.js is way cool.' };
+ *  var postData = { title: 'p5 Clicked!', body: 'p5.js is way cool.' };
  *
  *  function setup() {
  *     createCanvas(800, 800);
  *  }
  *
  *  function mousePressed() {
- *
  *    // Pick new random color values
  *    var r = random(255);
  *    var g = random(255);
  *    var b = random(255);
  *
  *    httpPost(url, 'json',
- *      post,
+ *      postData,
  *      function (result) {
  *        // ... won't be called
  *      },
  *      function (error) {
- *        console.error(error);
- *
  *        strokeWeight(2);
  *        stroke(r, g, b);
  *        fill(r, g, b, 127);
