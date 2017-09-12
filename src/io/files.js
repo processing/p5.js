@@ -716,7 +716,8 @@ p5.prototype.httpGet = function () {
  *                                    in as first argument
  *
  * @example
- * <div><code>
+ * <div>
+ * <code>
  * // Examples use jsonplaceholder.typicode.com for a Mock Data API
  *
  * var url = 'https://jsonplaceholder.typicode.com/posts';
@@ -761,9 +762,10 @@ p5.prototype.httpGet = function () {
  *      });
  *      }
  *
- * </code></div>
+ * </code>
+ * </div>
  *
- * @example
+ *
  * <div><code>
  *
  *  var url = 'https://invalidURL'; // A bad URL that will cause errors
@@ -775,26 +777,28 @@ p5.prototype.httpGet = function () {
  *
  *  function mousePressed() {
  *
- *       // Pick new random color values
- *       var r = random(255);
- *       var g = random(255);
- *       var b = random(255);
+ *    // Pick new random color values
+ *    var r = random(255);
+ *    var g = random(255);
+ *    var b = random(255);
  *
- *       httpPost(url, 'json',
- *           post,
- *           function (result) {
- *             // ... won't be called
- *           },
- *           function (error) {
- *             console.error(error);
+ *    httpPost(url, 'json',
+ *      post,
+ *      function (result) {
+ *        // ... won't be called
+ *      },
+ *      function (error) {
+ *        console.error(error);
  *
- *             strokeWeight(2);
- *             stroke(r, g, b);
- *             fill(r, g, b, 127);
- *             text(error.toString(), mouseX, mouseY);
- *           });
- *     }
- * </code></div>
+ *        strokeWeight(2);
+ *        stroke(r, g, b);
+ *        fill(r, g, b, 127);
+ *        text(error.toString(), mouseX, mouseY);
+ *    });
+ *  }
+ *
+ * </code>
+ * </div>
  *
  */
 p5.prototype.httpPost = function () {
