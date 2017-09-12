@@ -6,7 +6,7 @@ function draw(){
   background(250);
 
   randomSeed(1);
-
+  noStroke();
   for (var i = 0  ;  i < 1000 ;  i++) {
     push();
     translate(random(-width/2, width/2), random(-height/2, height/2));

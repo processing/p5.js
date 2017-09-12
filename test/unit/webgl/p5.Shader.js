@@ -45,14 +45,15 @@ suite('p5.Shader', function() {
   var testShader = function (shaderName, shader, expectedAttributes,
     expectedUniforms) {
 
+
     var s = myp5._renderer.shader(shader);
 
     assert(s !== null  &&  s === shader,
       shaderName + ' was returned from p5.RendererGL.shader');
 
-    assert(myp5._renderer.curShader !== null &&
-      myp5._renderer.curShader === shader,
-      shaderName + ' was not set as renderer\'s curShader in shader()');
+    assert(myp5._renderer.curFillShader !== null &&
+      myp5._renderer.curFillShader === shader,
+      shaderName + ' was not set as renderer\'s curFillShader in shader()');
 
     testAttributes(shaderName, s.attributes, expectedAttributes);
     testUniforms(shaderName, s.uniforms, expectedUniforms);
@@ -67,16 +68,16 @@ suite('p5.Shader', function() {
     {
       /*
       //exists doesn't seem to work?
-      assert.exists(myp5._renderer.curShader,
+      assert.exists(myp5._renderer.curFillShader,
         'Shader is in use');
       */
-      assert(myp5._renderer.curShader !== null &&
-        myp5._renderer.curShader !== undefined,
+      assert(myp5._renderer.curFillShader !== null &&
+        myp5._renderer.curFillShader !== undefined,
         'Shader is not in use or has not been cached');
     });
     test('Uniform Cache', function() {
 
-      var uniforms = myp5._renderer.curShader.uniforms;
+      var uniforms = myp5._renderer.curFillShader.uniforms;
       assert(uniforms !== null &&
         uniforms !== undefined,
         'Shader uniforms have not been cached');
@@ -159,21 +160,21 @@ suite('p5.Shader', function() {
     test('Normal Shader is set after normalMaterial()', function() {
       myp5.normalMaterial();
       var normalShader = myp5._renderer._getNormalShader();
-      assert(normalShader === myp5._renderer.curShader,
-        '_renderer\'s curShader was not normal shader');
+      assert(normalShader === myp5._renderer.curFillShader,
+        '_renderer\'s curFillShader was not normal shader');
     });
     test('Color Shader is set after fill()', function() {
       myp5.fill(0);
       var colorShader = myp5._renderer._getColorShader();
-      assert(colorShader === myp5._renderer.curShader,
-        '_renderer\'s curShader was not color shader after fill');
+      assert(colorShader === myp5._renderer.curFillShader,
+        '_renderer\'s curFillShader was not color shader after fill');
     });
     test('Shader switch between retain and immedate mode', function() {
       myp5.fill(0);
       myp5.box(70, 70, 70);
       var retainShader = myp5._renderer._getColorShader();
-      assert(retainShader === myp5._renderer.curShader,
-        '_renderer\'s curShader was not color shader after fill() and box()');
+      assert(retainShader === myp5._renderer.curFillShader,
+        '_renderer\'s curFillShader was not color shader after fill() and box()');
 
       myp5.beginShape(myp5.TRIANGLES);
       myp5.vertex(0, 25, 0);
@@ -181,29 +182,29 @@ suite('p5.Shader', function() {
       myp5.vertex(25, -25, 0);
       myp5.endShape();
       var immediateShader = myp5._renderer._getImmediateModeShader();
-      assert(immediateShader === myp5._renderer.curShader,
-        '_renderer\'s curShader was not immediate mode shader ' +
+      assert(immediateShader === myp5._renderer.curFillShader,
+        '_renderer\'s curFillShader was not immediate mode shader ' +
         'after begin/endShape()');
 
       myp5.box(70, 70, 70);
-      assert(retainShader === myp5._renderer.curShader,
-        '_renderer\'s curShader did not switch back to retain shader ' +
+      assert(retainShader === myp5._renderer.curFillShader,
+        '_renderer\'s curFillShader did not switch back to retain shader ' +
         ' to draw box() after immediate mode');
     });
     test('Light shader set after ambientMaterial()', function() {
       var lightShader = myp5._renderer._getLightShader();
 
       myp5.ambientMaterial(128);
-      assert(lightShader === myp5._renderer.curShader,
-        '_renderer\'s curShader did not get set to light shader ' +
+      assert(lightShader === myp5._renderer.curFillShader,
+        '_renderer\'s curFillShader did not get set to light shader ' +
         'after call to ambientMaterial()');
     });
     test('Light shader set after specularMaterial()', function() {
       var lightShader = myp5._renderer._getLightShader();
 
       myp5.specularMaterial(128);
-      assert(lightShader === myp5._renderer.curShader,
-        '_renderer\'s curShader did not get set to light shader ' +
+      assert(lightShader === myp5._renderer.curFillShader,
+        '_renderer\'s curFillShader did not get set to light shader ' +
         'after call to specularMaterial()');
     });
   });

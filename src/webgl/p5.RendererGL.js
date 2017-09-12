@@ -8,6 +8,7 @@ require('./p5.Matrix');
 var fs = require('fs');
 
 var uMVMatrixStack = [];
+var cameraMatrixStack = [];
 
 var defaultShaders = {
   immediateVert:
@@ -26,6 +27,10 @@ var defaultShaders = {
     fs.readFileSync(__dirname + '/shaders/light.vert', 'utf-8'),
   lightTextureFrag:
     fs.readFileSync(__dirname + '/shaders/light_texture.frag', 'utf-8'),
+  lineVert:
+    fs.readFileSync(__dirname + '/shaders/line.vert', 'utf-8'),
+  lineFrag:
+    fs.readFileSync(__dirname + '/shaders/line.frag', 'utf-8')
 };
 
 /**
@@ -56,12 +61,11 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._initContext();
   this.isP3D = true; //lets us know we're in 3d mode
   this.GL = this.drawingContext;
-  //lights
+  // lights
   this.ambientLightCount = 0;
   this.directionalLightCount = 0;
   this.pointLightCount = 0;
-  //camera
-  this._curCamera = null;
+
   /**
    * model view, projection, & normal
    * matrices
@@ -69,17 +73,34 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.uMVMatrix = new p5.Matrix();
   this.uPMatrix  = new p5.Matrix();
   this.uNMatrix = new p5.Matrix('mat3');
+
+  // Camera
+  this._curCamera = null;
+  // default camera settings, then use those to populate camera fields.
+  this._computeCameraDefaultSettings();
+  this.cameraFOV = this.defaultCameraFOV;
+  this.cameraAspect = this.defaultAspect;
+  this.cameraX = this.defaultCameraX;
+  this.cameraY = this.defaultCameraY;
+  this.cameraZ = this.defaultCameraZ;
+  this.cameraNear = this.defaultCameraNear;
+  this.cameraFar = this.defaultCameraFar;
+  this.cameraMatrix = new p5.Matrix();
+  this.camera(); // set default camera matrices
+
   //Geometry & Material hashes
   this.gHash = {};
-
-  this.curShader = null;
 
   this._defaultLightShader = undefined;
   this._defaultImmediateModeShader = undefined;
   this._defaultNormalShader = undefined;
   this._defaultColorShader = undefined;
 
-  this.shader(this._getColorShader());
+  this.curFillShader = {};
+  this.curStrokeShader = {};
+
+  this.setFillShader(this._getColorShader());
+  this.setStrokeShader(this._getLineShader());
 
   //Imediate Mode
   //default drawing is done in Retained Mode
@@ -88,9 +109,12 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   // note: must call fill() and stroke () AFTER
   // default shader has been set.
   this.fill(255, 255, 255, 255);
-  this.stroke(0, 0, 0, 255);
-  this.pointSize = 5.0;//default point/stroke
-
+  //this.stroke(0, 0, 0, 255);
+  this.pointSize = 5.0;//default point size
+  this.curStrokeWeight = 2; //default stroke weight
+  this.curStrokeColor = [0,0,0,1];
+  this._setStrokeWeight();
+  this._setStrokeColor();
   // array of textures created in this gl context via this.getTexture(src)
   this.textures = [];
 
@@ -245,23 +269,59 @@ p5.prototype.setAttributes = function() {
   this._renderer._resetContext(attr);
 };
 
+p5.RendererGL.prototype._computeCameraDefaultSettings = function () {
+  this.defaultCameraFOV = 60 / 180 * Math.PI;
+  this.defaultCameraAspect = this.width / this.height;
+  this.defaultCameraX = 0;
+  this.defaultCameraY = 0;
+  this.defaultCameraZ =
+    (this.height / 2.0) / Math.tan(this.defaultCameraFOV / 2.0);
+  this.defaultCameraNear = this.defaultCameraZ * 0.1;
+  this.defaultCameraFar = this.defaultCameraZ * 10;
+};
+
 //detect if user didn't set the camera
 //then call this function below
 p5.RendererGL.prototype._setDefaultCamera = function(){
   if(this._curCamera === null){
-    var _w = this.width;
-    var _h = this.height;
-    this.uPMatrix = p5.Matrix.identity();
-    var cameraZ = (this.height / 2) / Math.tan(Math.PI * 30 / 180);
-    this.uPMatrix.perspective(60 / 180 * Math.PI, _w / _h,
-                              cameraZ * 0.1, cameraZ * 10);
+
+    this._computeCameraDefaultSettings();
+    this.cameraFOV = this.defaultCameraFOV;
+    this.cameraAspect = this.defaultAspect;
+    this.cameraX = this.defaultCameraX;
+    this.cameraY = this.defaultCameraY;
+    this.cameraZ = this.defaultCameraZ;
+    this.cameraNear = this.defaultCameraNear;
+    this.cameraFar = this.defaultCameraFar;
+
+    this.perspective();
+    this.camera();
     this._curCamera = 'default';
   }
 };
 
 p5.RendererGL.prototype._update = function() {
-  this.uMVMatrix = p5.Matrix.identity();
-  this.translate(0, 0, -(this.height / 2) / Math.tan(Math.PI * 30 / 180));
+  // reset model view and apply initial camera transform
+  // (containing only look at info; no projection).
+  this.uMVMatrix.set(this.cameraMatrix.mat4[0],
+                     this.cameraMatrix.mat4[1],
+                     this.cameraMatrix.mat4[2],
+                     this.cameraMatrix.mat4[3],
+                     this.cameraMatrix.mat4[4],
+                     this.cameraMatrix.mat4[5],
+                     this.cameraMatrix.mat4[6],
+                     this.cameraMatrix.mat4[7],
+                     this.cameraMatrix.mat4[8],
+                     this.cameraMatrix.mat4[9],
+                     this.cameraMatrix.mat4[10],
+                     this.cameraMatrix.mat4[11],
+                     this.cameraMatrix.mat4[12],
+                     this.cameraMatrix.mat4[13],
+                     this.cameraMatrix.mat4[14],
+                     this.cameraMatrix.mat4[15]
+                     );
+
+  // reset light counters for new frame.
   this.ambientLightCount = 0;
   this.directionalLightCount = 0;
   this.pointLightCount = 0;
@@ -272,14 +332,13 @@ p5.RendererGL.prototype._update = function() {
  * @return {[type]} [description]
  */
 p5.RendererGL.prototype.background = function() {
-  var gl = this.GL;
   var _col = this._pInst.color.apply(this._pInst, arguments);
   var _r = (_col.levels[0]) / 255;
   var _g = (_col.levels[1]) / 255;
   var _b = (_col.levels[2]) / 255;
   var _a = (_col.levels[3]) / 255;
-  gl.clearColor(_r, _g, _b, _a);
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  this.GL.clearColor(_r, _g, _b, _a);
+  this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
 
 //@TODO implement this
@@ -304,64 +363,209 @@ p5.RendererGL.prototype.background = function() {
  * <div>
  * <code>
  * function setup(){
- *   createCanvas(100, 100, WEBGL);
+ *   createCanvas(200, 200, WEBGL);
  * }
  *
  * function draw(){
  *  background(0);
- *  fill(250, 0, 0);
+ *  noStroke();
+ *  fill(100, 100, 240);
  *  rotateX(frameCount * 0.01);
  *  rotateY(frameCount * 0.01);
- *  rotateZ(frameCount * 0.01);
- *  box(200, 200, 200);
+ *  box(75, 75, 75);
  * }
  * </code>
  * </div>
  *
  * @alt
- * red canvas
+ * black canvas with purple cube spinning
  *
  */
 p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   //see material.js for more info on color blending in webgl
   var colors = this._applyColorBlend.apply(this, arguments);
   this.curFillColor = colors;
-  this.drawMode = constants.FILL;
-  if (this.isImmediateDrawing){
-    this.shader(this._getImmediateModeShader());
-  } else {
-    this.shader(this._getColorShader());
-    this.curShader.setUniform('uMaterialColor', colors);
+  if(this.curFillShader.active === false) {
+    this.curFillShader.active = true;
   }
-  return this;
+  if (this.isImmediateDrawing){
+    this.setFillShader(this._getImmediateModeShader());
+  } else {
+    this.setFillShader(this._getColorShader());
+  }
+  this.drawMode = constants.FILL;
+  this.curFillShader.setUniform('uMaterialColor', colors);
 };
+
+/**
+ * Does not render fill material
+ * @method  noFill
+ * @example
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(200, 200, WEBGL);
+ * }
+ *
+ * function draw(){
+ *  background(0);
+ *  noFill();
+ *  stroke(100, 100, 240);
+ *  rotateX(frameCount * 0.01);
+ *  rotateY(frameCount * 0.01);
+ *  box(75, 75, 75);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * black canvas with purple cube wireframe spinning
+ *
+ */
+
 
 p5.RendererGL.prototype.noFill = function() {
-  var gl = this.GL;
-  this.shader(this._getColorShader());
-  gl.enable(gl.BLEND);
-  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-  this.drawMode = constants.STROKE;
-  if(this.curStrokeColor) {
-    this._setNoFillStroke();
-  }
-  return this;
+  this.curFillShader.active = false;
 };
+
+/**
+ * Does not render stroke
+ * @method  noStroke
+ * @example
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(200, 200, WEBGL);
+ * }
+ *
+ * function draw(){
+ *  background(0);
+ *  noStroke();
+ *  fill(240, 150, 150);
+ *  rotateX(frameCount * 0.01);
+ *  rotateY(frameCount * 0.01);
+ *  box(75, 75, 75);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * black canvas with pink cube spinning
+ *
+ */
+
+p5.RendererGL.prototype.noStroke = function() {
+  this.curStrokeShader.active = false;
+};
+
+/**
+ * Basic stroke material for geometry with a given color
+ * @method  stroke
+ * @param  {Number|Array|String|p5.Color} v1  gray value,
+ * red or hue value (depending on the current color mode),
+ * or color Array, or CSS color string
+ * @param  {Number}            [v2] optional: green or saturation value
+ * @param  {Number}            [v3] optional: blue or brightness value
+ * @return {p5}                the p5 object
+ * @example
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(200, 200, WEBGL);
+ * }
+ *
+ * function draw(){
+ *  background(0);
+ *  stroke(240, 150, 150);
+ *  fill(100, 100, 240);
+ *  rotateX(frameCount * 0.01);
+ *  rotateY(frameCount * 0.01);
+ *  box(75, 75, 75);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * black canvas with purple cube with pink outline spinning
+ *
+ */
 
 p5.RendererGL.prototype.stroke = function(r, g, b, a) {
-  var color = this._pInst.color.apply(this._pInst, arguments);
-  var colorNormalized = color._array;
-  this.curStrokeColor = colorNormalized;
-  if(this.drawMode === constants.STROKE) {
-    this._setNoFillStroke();
+  if(this.curStrokeShader.active === false) {
+    this.curStrokeShader.active = true;
   }
-  return this;
+  //@todo allow transparency in stroking currently doesn't have
+  //any impact and causes problems with specularMaterial
+  arguments[3] = 255;
+  var colors = this._applyColorBlend.apply(this, arguments);
+  if(this.curStrokeColor !== colors) {
+    this.curStrokeColor = colors;
+    this._setStrokeColor();
+  }
 };
 
-p5.RendererGL.prototype._setNoFillStroke = function() {
+/**
+ * Change weight of stroke
+ * @method  strokeWeight
+ * @param  {Number} stroke weight to be used for drawing
+ * @example
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(200, 400, WEBGL);
+ *   setAttributes('antialias', true);
+ * }
+ *
+ * function draw(){
+ *   background(0);
+ *   noStroke();
+ *   translate(0,-100,0);
+ *   stroke(240,150,150);
+ *   fill(100,100,240);
+ *   push();
+ *   strokeWeight(8);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   sphere(75);
+ *   pop();
+ *   push();
+ *   translate(0,200,0);
+ *   strokeWeight(1);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   sphere(75);
+ *   pop();
+ * }
+ *
+ * </code>
+ * </div>
+ *
+ * @alt
+ * black canvas with two purple rotating spheres with pink
+ * outlines the sphere on top has much heavier outlines,
+ *
+ */
+p5.RendererGL.prototype.strokeWeight = function(w) {
+  if(this.curStrokeShader.active === false) {
+    this.curStrokeShader.active = true;
+  }
+  if(this.curStrokeWeight !== w) {
+    this.pointSize = w;
+    this.curStrokeWeight = w;
+    this.curStrokeShader.setUniform('uStrokeWeight', w);
+  }
+};
+
+p5.RendererGL.prototype._setStrokeWeight = function() {
   // this should only be called after an appropriate call
   // to shader() internally....
-  this.curShader.setUniform('uMaterialColor', this.curStrokeColor);
+  this.curStrokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
+};
+
+p5.RendererGL.prototype._setStrokeColor = function() {
+  // this should only be called after an appropriate call
+  // to shader() internally....
+  this.curStrokeShader.setUniform('uMaterialColor', this.curStrokeColor);
 };
 
 /**
@@ -421,24 +625,10 @@ p5.RendererGL.prototype.loadPixels = function() {
   var h = arguments[3] || this.height;
   w *= pd;
   h *= pd;
-  var gl = this.GL;
-  var pixels = new Uint8Array(gl.drawingBufferWidth * gl.drawingBufferHeight * 4);
-  gl.readPixels(x, y, w, h, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+  var pixels = new Uint8Array(this.GL.drawingBufferWidth *
+    this.GL.drawingBufferHeight * 4);
+  this.GL.readPixels(x, y, w, h, this.GL.RGBA, this.GL.UNSIGNED_BYTE, pixels);
   this._pInst._setProperty('pixels', pixels);
-};
-
-
-
-/**
- * [strokeWeight description]
- * @param  {Number} pointSize stroke point size
- * @return {[type]}           [description]
- * @todo  strokeWeight currently works on points only.
- * implement on all wireframes and strokes.
- */
-p5.RendererGL.prototype.strokeWeight = function(pointSize) {
-  this.pointSize = pointSize;
-  return this;
 };
 
 
@@ -460,12 +650,13 @@ p5.RendererGL.prototype.geometryInHash = function(gId){
  * @return {[type]}   [description]
  */
 p5.RendererGL.prototype.resize = function(w,h) {
-  var gl = this.GL;
   p5.Renderer.prototype.resize.call(this, w, h);
-  gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+  this.GL.viewport(0, 0, this.GL.drawingBufferWidth, this.GL.drawingBufferHeight);
   // If we're using the default camera, update the aspect ratio
-  if(this._curCamera === 'default') {
+  if(this._curCamera === null || this._curCamera === 'default') {
     this._curCamera = null;
+    // camera defaults are dependent on the width & height of the screen,
+    // so we'll want to update them if the size of the screen changes.
     this._setDefaultCamera();
   }
 };
@@ -479,12 +670,11 @@ p5.RendererGL.prototype.resize = function(w,h) {
  * @param {Number} a normalized alpha val.
  */
 p5.RendererGL.prototype.clear = function() {
-  var gl = this.GL;
-  gl.clearColor(arguments[0],
+  this.GL.clearColor(arguments[0],
     arguments[1],
     arguments[2],
     arguments[3]);
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+  this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
 
 /**
@@ -501,7 +691,7 @@ p5.RendererGL.prototype.translate = function(x, y, z) {
     y = x.y;
     x = x.x;
   }
-  this.uMVMatrix.translate([x,-y,z]);
+  this.uMVMatrix.translate([x,y,z]);
   return this;
 };
 
@@ -543,6 +733,7 @@ p5.RendererGL.prototype.rotateZ = function(rad) {
  */
 p5.RendererGL.prototype.push = function() {
   uMVMatrixStack.push(this.uMVMatrix.copy());
+  cameraMatrixStack.push(this.cameraMatrix.copy());
 };
 
 /**
@@ -554,11 +745,14 @@ p5.RendererGL.prototype.pop = function() {
     throw new Error('Invalid popMatrix!');
   }
   this.uMVMatrix = uMVMatrixStack.pop();
+  if (cameraMatrixStack.length === 0) {
+    throw new Error('Invalid popMatrix!');
+  }
+  this.cameraMatrix = cameraMatrixStack.pop();
 };
 
 p5.RendererGL.prototype.resetMatrix = function() {
   this.uMVMatrix = p5.Matrix.identity();
-  this.translate(0, 0, -800);
   return this;
 };
 
@@ -582,23 +776,43 @@ p5.RendererGL.prototype._applyTextProperties = function() {
  * so it is safe to call this method with the same shader multiple
  * times without a signficant performance hit).
  *
- * @method shader
+ * @method setFillShader
  * @param {p5.Shader} [s] a p5.Shader object
- * @return {p5.Shader} the current, updated shader
+ * @return {p5.Shader} the current, updated fill shader
  */
-p5.RendererGL.prototype.shader = function (s) {
-  if (this.curShader !== s) {
+p5.RendererGL.prototype.setFillShader = function (s) {
+  if (this.curFillShader !== s) {
     // only do setup etc. if shader is actually new.
-    this.curShader = s;
+    this.curFillShader = s;
 
     // safe to do this multiple times;
     // init() will bail early if has already been run.
-    this.curShader.init();
-    this.curShader.useProgram();
+    this.curFillShader.init();
+    this.curFillShader.useProgram();
+    this.curFillShader.active = true;
   }
+  // always return this.curFillShader, even if no change was made.
+  return this.curFillShader;
+};
 
-  // always return this.curShader, even if no change was made.
-  return this.curShader;
+
+/*
+ * @method setStrokeShader
+ * @param {p5.Shader} [s] a p5.Shader object
+ * @return {p5.Shader} the current, updated stroke shader
+ */
+p5.RendererGL.prototype.setStrokeShader = function (s) {
+  if (this.curStrokeShader !== s) {
+    // only do setup etc. if shader is actually new.
+    this.curStrokeShader = s;
+    // safe to do this multiple times;
+    // init() will bail early if has already been run.
+    this.curStrokeShader.init();
+    this.curStrokeShader.useProgram();
+    this.curStrokeShader.active = true;
+  }
+  // always return this.curLineShader, even if no change was made.
+  return this.curStrokeShader;
 };
 
 /*
@@ -614,6 +828,7 @@ p5.RendererGL.prototype._getLightShader = function () {
     this._defaultLightShader = new p5.Shader(this,
       defaultShaders.lightVert, defaultShaders.lightTextureFrag);
   }
+  //this.drawMode = constants.FILL;
   return this._defaultLightShader;
 };
 
@@ -622,6 +837,7 @@ p5.RendererGL.prototype._getImmediateModeShader = function () {
     this._defaultImmediateModeShader = new p5.Shader(this,
       defaultShaders.immediateVert, defaultShaders.vertexColorFrag);
   }
+  //this.drawMode = constants.FILL;
   return this._defaultImmediateModeShader;
 };
 
@@ -630,6 +846,7 @@ p5.RendererGL.prototype._getNormalShader = function () {
     this._defaultNormalShader = new p5.Shader(this,
       defaultShaders.normalVert, defaultShaders.normalFrag);
   }
+  //this.drawMode = constants.FILL;
   return this._defaultNormalShader;
 };
 
@@ -638,7 +855,17 @@ p5.RendererGL.prototype._getColorShader = function () {
     this._defaultColorShader = new p5.Shader(this,
       defaultShaders.normalVert, defaultShaders.basicFrag);
   }
+  //this.drawMode = constants.FILL;
   return this._defaultColorShader;
+};
+
+p5.RendererGL.prototype._getLineShader = function () {
+  if (this._defaultLineShader === undefined) {
+    this._defaultLineShader = new p5.Shader(this,
+      defaultShaders.lineVert, defaultShaders.lineFrag);
+  }
+  //this.drawMode = constants.STROKE;
+  return this._defaultLineShader;
 };
 
 p5.RendererGL.prototype._getEmptyTexture = function () {
@@ -655,7 +882,7 @@ p5.RendererGL.prototype.getTexture = function (img) {
   var checkSource = function(element) {
     return element.src === img;
   };
-
+  //this.drawMode = constants.TEXTURE;
   var tex = this.textures.find(checkSource);
   if (tex === undefined) {
     tex = new p5.Texture(this, img);
@@ -677,5 +904,34 @@ p5.RendererGL.prototype._bindBuffer = function( buffer, target,
   }
 };
 
+///////////////////////////////
+//// UTILITY FUNCTIONS
+//////////////////////////////
+/**
+ * turn a two dimensional array into one dimensional array
+ * @param  {Array} arr 2-dimensional array
+ * @return {Array}     1-dimensional array
+ * [[1, 2, 3],[4, 5, 6]] -> [1, 2, 3, 4, 5, 6]
+ */
+p5.RendererGL.prototype._flatten = function(arr){
+  if (arr.length>0){
+    return ([].concat.apply([], arr));
+  } else {
+    return [];
+  }
+};
+
+/**
+ * turn a p5.Vector Array into a one dimensional number array
+ * @param  {Array} arr  an array of p5.Vector
+ * @return {Array]}     a one dimensional array of numbers
+ * [p5.Vector(1, 2, 3), p5.Vector(4, 5, 6)] ->
+ * [1, 2, 3, 4, 5, 6]
+ */
+p5.RendererGL.prototype._vToNArray = function(arr){
+  return this._flatten(arr.map(function(item){
+    return [item.x, item.y, item.z];
+  }));
+};
 
 module.exports = p5.RendererGL;

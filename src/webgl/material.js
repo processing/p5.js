@@ -8,6 +8,7 @@
 'use strict';
 
 var p5 = require('../core/core');
+var constants = require('../core/constants');
 require('./p5.Texture');
 
 
@@ -69,7 +70,11 @@ p5.prototype.shader = function (s) {
   if (s._renderer === undefined) {
     s._renderer = this._renderer;
   }
-  this._renderer.shader(s);
+  if(s.isStrokeShader()) {
+    this._renderer.setStrokeShader(s);
+  } else {
+    this._renderer.setFillShader(s);
+  }
   return this;
 };
 
@@ -99,7 +104,9 @@ p5.prototype.shader = function (s) {
  *
  */
 p5.prototype.normalMaterial = function(){
-  this._renderer.shader(this._renderer._getNormalShader());
+  this._renderer.drawMode = constants.FILL;
+  this._renderer.setFillShader(this._renderer._getNormalShader());
+  this._renderer.noStroke();
   return this;
 };
 
@@ -188,15 +195,14 @@ p5.prototype.texture = function(){
   this._renderer.GL.blendFunc(this._renderer.GL.SRC_ALPHA,
     this._renderer.GL.ONE_MINUS_SRC_ALPHA);
 
-  this._renderer.drawMode = 'texture';
-  if (! this._renderer.curShader.isTextureShader()) {
-    this._renderer.curShader =
-      this._renderer.shader(this._renderer._getLightShader());
+  this._renderer.drawMode = constants.TEXTURE;
+  if (! this._renderer.curFillShader.isTextureShader()) {
+    this._renderer.setFillShader(this._renderer._getLightShader());
   }
-  this._renderer.curShader.setUniform('uSpecular', false);
-  this._renderer.curShader.setUniform('isTexture', true);
-  this._renderer.curShader.setUniform('uSampler', args[0]);
-
+  this._renderer.curFillShader.setUniform('uSpecular', false);
+  this._renderer.curFillShader.setUniform('isTexture', true);
+  this._renderer.curFillShader.setUniform('uSampler', args[0]);
+  this._renderer.noStroke();
   return this;
 };
 
@@ -234,15 +240,13 @@ p5.prototype.texture = function(){
  *
  */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
-  if (! this._renderer.curShader.isLightShader()) {
-    this._renderer.curShader =
-      this._renderer.shader(this._renderer._getLightShader());
+  if (! this._renderer.curFillShader.isLightShader()) {
+    this._renderer.setFillShader(this._renderer._getLightShader());
   }
-
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
-  this._renderer.curShader.setUniform('uMaterialColor', colors);
-  this._renderer.curShader.setUniform('uSpecular', false);
-  this._renderer.curShader.setUniform('isTexture', false);
+  this._renderer.curFillShader.setUniform('uMaterialColor', colors);
+  this._renderer.curFillShader.setUniform('uSpecular', false);
+  this._renderer.curFillShader.setUniform('isTexture', false);
   return this;
 };
 
@@ -279,15 +283,14 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  *
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
-  if (! this._renderer.curShader.isLightShader()) {
-    this._renderer.curShader =
-      this._renderer.shader(this._renderer._getLightShader());
+  if (! this._renderer.curFillShader.isLightShader()) {
+    this._renderer.setFillShader(this._renderer._getLightShader());
   }
 
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
-  this._renderer.curShader.setUniform('uMaterialColor', colors);
-  this._renderer.curShader.setUniform('uSpecular', true);
-  this._renderer.curShader.setUniform('isTexture', false);
+  this._renderer.curFillShader.setUniform('uMaterialColor', colors);
+  this._renderer.curFillShader.setUniform('uSpecular', true);
+  this._renderer.curFillShader.setUniform('isTexture', false);
   return this;
 };
 

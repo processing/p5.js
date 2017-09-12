@@ -3,7 +3,7 @@ function setup(){
 }
 
 function draw(){
-  background(0);
+  background(255);
 
   translate(-width/4, 0, 0);
 

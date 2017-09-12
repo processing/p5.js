@@ -34,15 +34,23 @@ p5.RendererGL.prototype.beginShape = function(mode){
     mode : constants.LINE_STRIP;
   //if we haven't yet initialized our
   //immediateMode vertices & buffers, create them now!
-  if(this.immediateMode.vertexPositions === undefined){
-    this.immediateMode.vertexPositions = [];
+  if(this.immediateMode.vertices === undefined){
+    this.immediateMode.vertices = [];
+    this.immediateMode.edges = [];
+    this.immediateMode.lineVertices = [];
     this.immediateMode.vertexColors = [];
+    this.immediateMode.lineNormals = [];
     this.immediateMode.uvCoords = [];
     this.immediateMode.vertexBuffer = this.GL.createBuffer();
     this.immediateMode.colorBuffer = this.GL.createBuffer();
     this.immediateMode.uvBuffer = this.GL.createBuffer();
+    this.immediateMode.lineVertexBuffer = this.GL.createBuffer();
+    this.immediateMode.lineNormalBuffer = this.GL.createBuffer();
   } else {
-    this.immediateMode.vertexPositions.length = 0;
+    this.immediateMode.vertices.length = 0;
+    this.immediateMode.edges.length = 0;
+    this.immediateMode.lineVertices.length = 0;
+    this.immediateMode.lineNormals.length = 0;
     this.immediateMode.vertexColors.length = 0;
     this.immediateMode.uvCoords.length = 0;
   }
@@ -78,8 +86,8 @@ p5.RendererGL.prototype.vertex = function(){
     u = arguments[3];
     v = arguments[4];
   }
-
-  this.immediateMode.vertexPositions.push(x, y, z);
+  var vert = new p5.Vector(x, y, z);
+  this.immediateMode.vertices.push(vert);
   var vertexColor = this.curFillColor || [0.5, 0.5, 0.5, 1.0];
   this.immediateMode.vertexColors.push(
     vertexColor[0],
@@ -98,37 +106,60 @@ p5.RendererGL.prototype.vertex = function(){
  */
 p5.RendererGL.prototype.endShape =
 function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
-
-  var gl = this.GL;
-  if (this.curShader === this._getColorShader()) {
+  if (this.curFillShader === this._getColorShader()) {
     // this is the fill/stroke shader for retain mode.
     // must switch to immediate mode shader before drawing!
-    this.shader(this._getImmediateModeShader());
-
+    this.setFillShader(this._getImmediateModeShader());
     // note that if we're using the texture shader...
     // this shouldn't change. :)
   }
+  if(this.curStrokeShader.active === true) {
+    for(var i=0; i<this.immediateMode.vertices.length; i++) {
+      if(i+1 < this.immediateMode.vertices.length) {
+        this.immediateMode.edges.push([i, i+1]);
+      } else {
+        this.immediateMode.edges.push([i, 0]);
+      }
+    }
+    this._edgesToVertices(this.immediateMode);
+    this._drawStrokeImmediateMode();
+  }
+  if(this.curFillShader.active === true) {
+    this._drawFillImmediateMode(mode, isCurve, isBezier,isQuadratic,
+      isContour, shapeKind);
+  }
+  //clear out our vertexPositions & colors arrays
+  //after rendering
+  this.immediateMode.vertices.length = 0;
+  this.immediateMode.vertexColors.length = 0;
+  this.immediateMode.uvCoords.length = 0;
+  this.isImmediateDrawing = false;
 
-  this.curShader.bindShader();
+  return this;
+};
+
+p5.RendererGL.prototype._drawFillImmediateMode = function(mode, isCurve, isBezier,
+  isQuadratic, isContour, shapeKind) {
+  var gl = this.GL;
+  this.curFillShader.bindShader();
   //vertex position Attribute
   this._bindBuffer(this.immediateMode.vertexBuffer, gl.ARRAY_BUFFER,
-    this.immediateMode.vertexPositions, Float32Array, gl.DYNAMIC_DRAW);
-  this.curShader.enableAttrib(this.curShader.attributes.aPosition.location,
+    this._vToNArray(this.immediateMode.vertices), Float32Array, gl.DYNAMIC_DRAW);
+  this.curFillShader.enableAttrib(this.curFillShader.attributes.aPosition.location,
     3, gl.FLOAT, false, 0, 0);
-
   if (this.drawMode === constants.FILL) {
     this._bindBuffer(this.immediateMode.colorBuffer, gl.ARRAY_BUFFER,
       this.immediateMode.vertexColors, Float32Array, gl.DYNAMIC_DRAW);
-    this.curShader.enableAttrib(
-      this.curShader.attributes.aVertexColor.location,
+    this.curFillShader.enableAttrib(
+      this.curFillShader.attributes.aVertexColor.location,
       4, gl.FLOAT, false, 0, 0);
   }
-
   if (this.drawMode === constants.TEXTURE){
     //texture coordinate Attribute
     this._bindBuffer(this.immediateMode.uvBuffer, gl.ARRAY_BUFFER,
       this.immediateMode.uvCoords, Float32Array, gl.DYNAMIC_DRAW);
-    this.curShader.enableAttrib(this.curShader.attributes.aTexCoord.location,
+    this.curFillShader.enableAttrib(
+      this.curFillShader.attributes.aTexCoord.location,
       2, gl.FLOAT, false, 0, 0);
   }
 
@@ -166,19 +197,29 @@ function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){
   else {
     gl.enable(gl.BLEND);
     gl.drawArrays(this.immediateMode.shapeMode, 0,
-      this.immediateMode.vertexPositions.length / 3);
+      this.immediateMode.vertices.length);
   }
-  //clear out our vertexPositions & colors arrays
-  //after rendering
-  this.immediateMode.vertexPositions.length = 0;
-  this.immediateMode.vertexColors.length = 0;
-  this.immediateMode.uvCoords.length = 0;
-  this.isImmediateDrawing = false;
-
   // todo / optimizations? leave bound until another shader is set?
-  this.curShader.unbindShader();
-  return this;
+  this.curFillShader.unbindShader();
 };
 
+p5.RendererGL.prototype._drawStrokeImmediateMode = function() {
+  var gl = this.GL;
+  this.curStrokeShader.bindShader();
+  this._bindBuffer(this.immediateMode.lineVertexBuffer, gl.ARRAY_BUFFER,
+    this._flatten(this.immediateMode.lineVertices), Float32Array, gl.STATIC_DRAW);
+  this.curStrokeShader.enableAttrib(
+    this.curStrokeShader.attributes.aPosition.location,
+    3, gl.FLOAT, false, 0, 0);
+  this._bindBuffer(this.immediateMode.lineNormalBuffer, gl.ARRAY_BUFFER,
+    this._flatten(this.immediateMode.lineNormals), Float32Array, gl.STATIC_DRAW);
+  this.curStrokeShader.enableAttrib(
+    this.curStrokeShader.attributes.aDirection.location,
+    4, gl.FLOAT, false, 0, 0);
+  gl.drawArrays(gl.TRIANGLES, 0,
+      this.immediateMode.lineVertices.length);
+  // todo / optimizations? leave bound until another shader is set?
+  this.curStrokeShader.unbindShader();
+};
 
 module.exports = p5.RendererGL;

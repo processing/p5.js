@@ -63,8 +63,8 @@ var p5 = require('../core/core');
  *
  */
 p5.prototype.ambientLight = function(v1, v2, v3, a){
-  if (! this._renderer.curShader.isLightShader()) {
-    this._renderer.shader(this._renderer._getLightShader());
+  if (! this._renderer.curFillShader.isLightShader()) {
+    this._renderer.setFillShader(this._renderer._getLightShader());
   }
 
   var color = this._renderer._pInst.color.apply(
@@ -75,13 +75,13 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
   //a preallocated Float32Array(24) that we copy into
   //would be better
   var colors = new Float32Array(color._array.slice(0,3));
-  this._renderer.curShader.setUniform('uAmbientColor', colors);
-  this._renderer.curShader.setUniform('uUseLighting', true);
+  this._renderer.curFillShader.setUniform('uAmbientColor', colors);
+  this._renderer.curFillShader.setUniform('uUseLighting', true);
   this._renderer.ambientLightCount++;
   //in case there's no material color for the geometry
-  this._renderer.curShader.setUniform('uMaterialColor',
+  this._renderer.curFillShader.setUniform('uMaterialColor',
     this._renderer.curFillColor);
-  this._renderer.curShader.setUniform('uAmbientLightCount',
+  this._renderer.curFillShader.setUniform('uAmbientLightCount',
     this._renderer.ambientLightCount);
   return this;
 };
@@ -122,8 +122,8 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
  *
  */
 p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
-  if (! this._renderer.curShader.isLightShader()) {
-    this._renderer.shader(this._renderer._getLightShader());
+  if (! this._renderer.curFillShader.isLightShader()) {
+    this._renderer.setFillShader(this._renderer._getLightShader());
   }
 
   //@TODO: check parameters number
@@ -131,7 +131,7 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
     this._renderer._pInst, [v1, v2, v3]);
 
   var colors = new Float32Array(color._array.slice(0,3));
-  this._renderer.curShader.setUniform('uDirectionalColor', colors);
+  this._renderer.curFillShader.setUniform('uDirectionalColor', colors);
 
   var _x, _y, _z;
 
@@ -154,13 +154,13 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
       throw error;
     }
   }
-  this._renderer.curShader.setUniform('uUseLighting', true);
+  this._renderer.curFillShader.setUniform('uUseLighting', true);
   //in case there's no material color for the geometry
-  this._renderer.curShader.setUniform('uMaterialColor',
+  this._renderer.curFillShader.setUniform('uMaterialColor',
     this._renderer.curFillColor);
-  this._renderer.curShader.setUniform('uLightingDirection', [_x, _y, _z]);
+  this._renderer.curFillShader.setUniform('uLightingDirection', [_x, _y, _z]);
   this._renderer.directionalLightCount ++;
-  this._renderer.curShader.setUniform('uDirectionalLightCount',
+  this._renderer.curFillShader.setUniform('uDirectionalLightCount',
     this._renderer.directionalLightCount);
   return this;
 };
@@ -208,16 +208,15 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
  *
  */
 p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
-  if (! this._renderer.curShader.isLightShader()) {
-    this._renderer.shader(this._renderer._getLightShader());
+  if (! this._renderer.curFillShader.isLightShader()) {
+    this._renderer.setFillShader(this._renderer._getLightShader());
   }
-
   //@TODO: check parameters number
   var color = this._renderer._pInst.color.apply(
     this._renderer._pInst, [v1, v2, v3]);
 
   var colors = new Float32Array(color._array.slice(0,3));
-  this._renderer.curShader.setUniform('uPointLightColor', colors);
+  this._renderer.curFillShader.setUniform('uPointLightColor', colors);
 
   var _x, _y, _z;
 
@@ -240,13 +239,13 @@ p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
       throw error;
     }
   }
-  this._renderer.curShader.setUniform('uUseLighting', true);
+  this._renderer.curFillShader.setUniform('uUseLighting', true);
   //in case there's no material color for the geometry
-  this._renderer.curShader.setUniform('uMaterialColor',
+  this._renderer.curFillShader.setUniform('uMaterialColor',
     this._renderer.curFillColor);
-  this._renderer.curShader.setUniform('uPointLightLocation', [_x, _y, _z]);
+  this._renderer.curFillShader.setUniform('uPointLightLocation', [_x, _y, _z]);
   this._renderer.pointLightCount++;
-  this._renderer.curShader.setUniform('uPointLightCount',
+  this._renderer.curFillShader.setUniform('uPointLightCount',
     this._renderer.pointLightCount);
   return this;
 };

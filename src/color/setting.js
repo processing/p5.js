@@ -511,6 +511,9 @@ p5.prototype.noFill = function() {
  */
 
 p5.prototype.noStroke = function() {
+  if(this._renderer.isP3D) {
+    this._renderer.noStroke();
+  }
   this._renderer._setProperty('_doStroke', false);
   return this;
 };
