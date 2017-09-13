@@ -709,7 +709,7 @@ p5.prototype.httpGet = function () {
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
  * @param  {Object}        [data]     param data passed sent with request
  * @param  {function}      [callback] function to be executed after
- *                                    httpGet() completes, data is passed in
+ *                                    httpPost() completes, data is passed in
  *                                    as first argument
  * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
