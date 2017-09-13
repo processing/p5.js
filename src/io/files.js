@@ -767,7 +767,7 @@ p5.prototype.httpPost = function () {
  *
  * function draw() {
  *    // wait until the data is loaded
- *    if (!earthquakes) {
+ *    if (!earthquakes || !earthquakes.features[eqFeatureIndex]) {
  *      return;
  *    }
  *    clear();
