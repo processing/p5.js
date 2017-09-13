@@ -757,7 +757,8 @@ p5.prototype.httpPost = function () {
  *    httpDo(url,
  *      {
  *        method: 'GET',  // http method - "GET", "PUT", "POST", etc.
- *        headers: { authorization: 'Bearer secretKey' } // Other Request options, like special headers for apis
+ *          // Other Request options, like special headers for apis
+ *        headers: { authorization: 'Bearer secretKey' }
  *      },
  *      function(res) {
  *        earthquakes = res;
