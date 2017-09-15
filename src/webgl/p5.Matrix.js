@@ -68,6 +68,7 @@ p5.Matrix = function() {
       ]);
     }
   }
+  this.name = 'p5.Matrix';   // for friendly debugger system
   return this;
 };
 
@@ -75,10 +76,11 @@ p5.Matrix = function() {
  * Sets the x, y, and z component of the vector using two or three separate
  * variables, the data from a p5.Matrix, or the values from a float array.
  *
- * @param {p5.Matrix|Array} [inMatrix] the input p5.Matrix or
+ * @param {p5.Matrix|Float32Array|Array} [inMatrix] the input p5.Matrix or
  *                                     an Array of length 16
  * @param {Number}          [n00..n33] 16 numbers passed by value to avoid
  *                                     array copying.
+ * @chainable
  */
 p5.Matrix.prototype.set = function (inMatrix) {
   if (inMatrix instanceof p5.Matrix) {
@@ -152,8 +154,8 @@ p5.Matrix.identity = function(){
 
 /**
  * transpose according to a given matrix
- * @param  {p5.Matrix | Typed Array} a  the matrix to be based on to transpose
- * @return {p5.Matrix}                  this
+ * @param  {p5.Matrix|Float32Array|Array} a  the matrix to be based on to transpose
+ * @chainable
  */
 p5.Matrix.prototype.transpose = function(a){
   var a01, a02, a03, a12, a13, a23;
@@ -212,8 +214,8 @@ p5.Matrix.prototype.transpose = function(a){
 
 /**
  * invert  matrix according to a give matrix
- * @param  {p5.Matrix or Typed Array} a   the matrix to be based on to invert
- * @return {p5.Matrix}                    this
+ * @param  {p5.Matrix|Float32Array|Array} a   the matrix to be based on to invert
+ * @chainable
  */
 p5.Matrix.prototype.invert = function(a){
   var a00, a01, a02, a03, a10, a11, a12, a13,
@@ -297,7 +299,7 @@ p5.Matrix.prototype.invert = function(a){
 
 /**
  * Inverts a 3x3 matrix
- * @return {[type]} [description]
+ * @chainable
  */
 p5.Matrix.prototype.invert3x3 = function (){
   var a00 = this.mat3[0],
@@ -334,7 +336,7 @@ p5.Matrix.prototype.invert3x3 = function (){
 /**
  * transposes a 3x3 p5.Matrix by a mat3
  * @param  {[Number]} mat3 1-dimensional array
- * @return {p5.Matrix} this
+ * @chainable
  */
 p5.Matrix.prototype.transpose3x3 = function (mat3){
   var a01 = mat3[1], a02 = mat3[2], a12 = mat3[5];
@@ -351,7 +353,7 @@ p5.Matrix.prototype.transpose3x3 = function (mat3){
  * converts a 4x4 matrix to its 3x3 inverse tranform
  * commonly used in MVMatrix to NMatrix conversions.
  * @param  {p5.Matrix} mat4 the matrix to be based on to invert
- * @return {p5.Matrix} this with mat3
+ * @chainable
  * @todo  finish implementation
  */
 p5.Matrix.prototype.inverseTranspose = function (matrix){
@@ -400,8 +402,9 @@ p5.Matrix.prototype.determinant = function(){
 
 /**
  * multiply two mat4s
- * @param {p5.Matrix|Array}  multMatrix The matrix we want to multiply by
- * @return {p5.Matrix}         this
+ * @param {p5.Matrix|Float32Array|Array} multMatrix The matrix
+ *                                                we want to multiply by
+ * @chainable
  */
 p5.Matrix.prototype.mult = function(multMatrix){
   var _dest = new GLMAT_ARRAY_TYPE(16);
@@ -456,8 +459,8 @@ p5.Matrix.prototype.mult = function(multMatrix){
 
 /**
  * scales a p5.Matrix by scalars or a vector
- * @param  {p5.Vector|Array} s vector to scale by
- * @return {p5.Matrix}  this
+ * @param  {p5.Vector|Float32Array|Array} s vector to scale by
+ * @chainable
  */
 p5.Matrix.prototype.scale = function() {
   var x,y,z;
@@ -503,7 +506,7 @@ p5.Matrix.prototype.scale = function() {
  * rotate our Matrix around an axis by the given angle.
  * @param  {Number} a The angle of rotation in radians
  * @param  {p5.Vector|Array} axis  the axis(es) to rotate around
- * @return {p5.Matrix}                    this
+ * @chainable
  * inspired by Toji's gl-matrix lib, mat4 rotation
  */
 p5.Matrix.prototype.rotate = function(a, axis){
@@ -581,8 +584,8 @@ p5.Matrix.prototype.rotate = function(a, axis){
 /**
  * @todo  finish implementing this method!
  * translates
- * @param  {Array} v vector to translate by
- * @return {p5.Matrix}                    this
+ * @param  {Number[]} v vector to translate by
+ * @chainable
  */
 p5.Matrix.prototype.translate = function(v){
   var x = v[0],
@@ -614,7 +617,7 @@ p5.Matrix.prototype.rotateZ = function(a){
  * @param  {Number} aspect [description]
  * @param  {Number} near   near clipping plane
  * @param  {Number} far    far clipping plane
- * @return {void}
+ * @chainable
  */
 p5.Matrix.prototype.perspective = function(fovy,aspect,near,far){
 
@@ -650,7 +653,7 @@ p5.Matrix.prototype.perspective = function(fovy,aspect,near,far){
  * @param  {Number} top    [description]
  * @param  {Number} near   near clipping plane
  * @param  {Number} far    far clipping plane
- * @return {void}
+ * @chainable
  */
 p5.Matrix.prototype.ortho = function(left,right,bottom,top,near,far){
 

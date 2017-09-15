@@ -16,6 +16,7 @@ var styleEmpty = 'rgba(0,0,0,0)';
 
 p5.Renderer2D = function(elt, pInst, isMainCanvas){
   p5.Renderer.call(this, elt, pInst, isMainCanvas);
+  this.name = 'p5.Renderer2D';   // for friendly debugger system
   this.drawingContext = this.canvas.getContext('2d');
   this._pInst._setProperty('drawingContext', this.drawingContext);
   return this;
@@ -24,8 +25,8 @@ p5.Renderer2D = function(elt, pInst, isMainCanvas){
 p5.Renderer2D.prototype = Object.create(p5.Renderer.prototype);
 
 p5.Renderer2D.prototype._applyDefaults = function() {
-  this._setFill(constants._DEFAULT_FILL);
-  this._setStroke(constants._DEFAULT_STROKE);
+  this._setFill(constants._DEFAULT_FILL, true);
+  this._setStroke(constants._DEFAULT_STROKE, true);
   this.drawingContext.lineCap = constants.ROUND;
   this.drawingContext.font = 'normal 12px sans-serif';
 };
@@ -507,8 +508,12 @@ p5.Renderer2D.prototype.point = function(x, y) {
   } else if(this._getStroke() === styleEmpty){
     return this;
   }
+  var s = this._getStroke();
+  var f = this._getFill();
   x = Math.round(x);
   y = Math.round(y);
+  // swapping fill color to stroke and back after for correct point rendering
+  this._setFill(s);
   if (ctx.lineWidth > 1) {
     ctx.beginPath();
     ctx.arc(
@@ -523,6 +528,7 @@ p5.Renderer2D.prototype.point = function(x, y) {
   } else {
     ctx.fillRect(x, y, 1, 1);
   }
+  this._setFill(f);
 };
 
 p5.Renderer2D.prototype.quad =
@@ -953,10 +959,10 @@ p5.Renderer2D.prototype._getFill = function(){
   return this._cachedFillStyle;
 };
 
-p5.Renderer2D.prototype._setFill = function(fillStyle){
+p5.Renderer2D.prototype._setFill = function(fillStyle, nocache){
   if (fillStyle !== this._cachedFillStyle) {
     this.drawingContext.fillStyle = fillStyle;
-    this._cachedFillStyle = fillStyle;
+    this._cachedFillStyle = nocache || fillStyle;
   }
 };
 
@@ -964,10 +970,10 @@ p5.Renderer2D.prototype._getStroke = function(){
   return this._cachedStrokeStyle;
 };
 
-p5.Renderer2D.prototype._setStroke = function(strokeStyle){
+p5.Renderer2D.prototype._setStroke = function(strokeStyle, nocache){
   if (strokeStyle !== this._cachedStrokeStyle) {
     this.drawingContext.strokeStyle = strokeStyle;
-    this._cachedStrokeStyle = strokeStyle;
+    this._cachedStrokeStyle = nocache || strokeStyle;
   }
 };
 
@@ -1283,8 +1289,8 @@ p5.Renderer2D.prototype._applyTextProperties = function() {
     this._setProperty('_textStyle', this._textFont.font.styleName);
   }
 
-  this.drawingContext.font = this._textStyle + ' ' +
-    this._textSize + 'px ' + font;
+  this.drawingContext.font = (this._textStyle || 'normal') +
+    ' ' + (this._textSize || 12) + 'px ' + (font || 'sans-serif');
 
   return p;
 };

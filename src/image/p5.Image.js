@@ -45,6 +45,7 @@ p5.Image = function(width, height){
   /**
    * Image width.
    * @property {Number} width
+   * @readOnly
    * @example
    * <div><code>
    * var img;
@@ -71,6 +72,7 @@ p5.Image = function(width, height){
   /**
    * Image height.
    * @property {Number} height
+   * @readOnly
    * @example
    * <div><code>
    * var img;
@@ -169,6 +171,7 @@ p5.Image = function(width, height){
    *
    */
   this.pixels = [];
+  this.name = 'p5.Image';   // for friendly debugger system
 };
 
 /**
@@ -221,14 +224,17 @@ p5.Image.prototype.loadPixels = function(){
  * the [pixels] array.
  *
  * @method updatePixels
- * @param {Integer|undefined} x x-offset of the target update area for the
+ * @param {Integer} x x-offset of the target update area for the
  *                              underlying canvas
- * @param {Integer|undefined} y y-offset of the target update area for the
+ * @param {Integer} y y-offset of the target update area for the
  *                              underlying canvas
- * @param {Integer|undefined} w height of the target update area for the
+ * @param {Integer} w height of the target update area for the
  *                              underlying canvas
- * @param {Integer|undefined} h height of the target update area for the
+ * @param {Integer} h height of the target update area for the
  *                              underlying canvas
+ */
+/**
+ * @method updatePixels
  * @example
  * <div><code>
  * var myImage;
@@ -276,7 +282,7 @@ p5.Image.prototype.updatePixels = function(x, y, w, h){
  * @param  {Number}               [y] y-coordinate of the pixel
  * @param  {Number}               [w] width
  * @param  {Number}               [h] height
- * @return {Array|Color|p5.Image}     color of pixel at x,y in array format
+ * @return {Number[]|Color|p5.Image}  color of pixel at x,y in array format
  *                                    [R, G, B, A] or p5.Image
  * @example
  * <div><code>

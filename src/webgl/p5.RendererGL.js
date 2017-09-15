@@ -106,6 +106,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   //default drawing is done in Retained Mode
   this.isImmediateDrawing = false;
   this.immediateMode = {};
+
   // note: must call fill() and stroke () AFTER
   // default shader has been set.
   this.fill(255, 255, 255, 255);
@@ -117,6 +118,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._setStrokeColor();
   // array of textures created in this gl context via this.getTexture(src)
   this.textures = [];
+  this.name = 'p5.RendererGL';   // for friendly debugger system
 
   return this;
 };
@@ -329,7 +331,6 @@ p5.RendererGL.prototype._update = function() {
 
 /**
  * [background description]
- * @return {[type]} [description]
  */
 p5.RendererGL.prototype.background = function() {
   var _col = this._pInst.color.apply(this._pInst, arguments);
@@ -453,7 +454,6 @@ p5.RendererGL.prototype.noFill = function() {
  * black canvas with pink cube spinning
  *
  */
-
 p5.RendererGL.prototype.noStroke = function() {
   this.curStrokeShader.active = false;
 };
@@ -466,7 +466,7 @@ p5.RendererGL.prototype.noStroke = function() {
  * or color Array, or CSS color string
  * @param  {Number}            [v2] optional: green or saturation value
  * @param  {Number}            [v3] optional: blue or brightness value
- * @return {p5}                the p5 object
+ * @param  {Number}            [a]  optional: opacity
  * @example
  * <div>
  * <code>
@@ -489,7 +489,6 @@ p5.RendererGL.prototype.noStroke = function() {
  * black canvas with purple cube with pink outline spinning
  *
  */
-
 p5.RendererGL.prototype.stroke = function(r, g, b, a) {
   if(this.curStrokeShader.active === false) {
     this.curStrokeShader.active = true;
@@ -569,7 +568,6 @@ p5.RendererGL.prototype._setStrokeColor = function() {
 };
 
 /**
-/**
  * Returns an array of [R,G,B,A] values for any pixel or grabs a section of
  * an image. If no parameters are specified, the entire image is returned.
  * Use the x and y parameters to get the value of one pixel. Get a section of
@@ -593,7 +591,6 @@ p5.RendererGL.prototype._setStrokeColor = function() {
  * @return {Array|Color|p5.Image}     color of pixel at x,y in array format
  *                                    [R, G, B, A] or p5.Image
  */
-
 p5.RendererGL.prototype.get = function(x, y, w, h) {
   return p5.Renderer2D.prototype.get.apply(this, [x, y, w, h]);
 };
@@ -645,9 +642,8 @@ p5.RendererGL.prototype.geometryInHash = function(gId){
 
 /**
  * [resize description]
- * @param  {[type]} w [description]
- * @param  {[tyoe]} h [description]
- * @return {[type]}   [description]
+ * @param  {Number} w [description]
+ * @param  {Number} h [description]
  */
 p5.RendererGL.prototype.resize = function(w,h) {
   p5.Renderer.prototype.resize.call(this, w, h);
@@ -679,10 +675,10 @@ p5.RendererGL.prototype.clear = function() {
 
 /**
  * [translate description]
- * @param  {[type]} x [description]
- * @param  {[type]} y [description]
- * @param  {[type]} z [description]
- * @return {[type]}   [description]
+ * @param  {Number} x [description]
+ * @param  {Number} y [description]
+ * @param  {Number} z [description]
+ * @chainable
  * @todo implement handle for components or vector as args
  */
 p5.RendererGL.prototype.translate = function(x, y, z) {
@@ -700,7 +696,7 @@ p5.RendererGL.prototype.translate = function(x, y, z) {
  * @param  {Number | p5.Vector | Array} x [description]
  * @param  {Number} [y] y-axis scalar
  * @param  {Number} [z] z-axis scalar
- * @return {this}   [description]
+ * @chainable
  */
 p5.RendererGL.prototype.scale = function(x,y,z) {
   this.uMVMatrix.scale([x,y,z]);
@@ -738,7 +734,6 @@ p5.RendererGL.prototype.push = function() {
 
 /**
  * [pop description]
- * @return {[type]} [description]
  */
 p5.RendererGL.prototype.pop = function() {
   if (uMVMatrixStack.length === 0) {

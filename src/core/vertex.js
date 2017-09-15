@@ -34,7 +34,7 @@ var isFirstContour = true;
  * other shapes, such as ellipse() or rect() within.
  *
  * @method beginContour
- * @return {p5} the p5 Object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -85,9 +85,9 @@ p5.prototype.beginContour = function() {
  * ellipse() or rect() within beginShape().
  *
  * @method beginShape
- * @param  {Constant} kind either POINTS, LINES, TRIANGLES, TRIANGLE_FAN
+ * @param  {Constant} [kind] either POINTS, LINES, TRIANGLES, TRIANGLE_FAN
  *                                TRIANGLE_STRIP, QUADS, or QUAD_STRIP
- * @return {p5}               the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -283,7 +283,7 @@ p5.prototype.beginShape = function(kind) {
  * @param  {Number} y3 y-coordinate for the second control point
  * @param  {Number} x4 x-coordinate for the anchor point
  * @param  {Number} y4 y-coordinate for the anchor point
- * @return {p5}        the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -345,7 +345,7 @@ p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
  * @method curveVertex
  * @param {Number} x x-coordinate of the vertex
  * @param {Number} y y-coordinate of the vertex
- * @return {p5} the p5 Object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -386,7 +386,7 @@ p5.prototype.curveVertex = function(x,y) {
  * other shapes, such as ellipse() or rect() within.
  *
  * @method endContour
- * @return {p5} the p5 Object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -439,8 +439,8 @@ p5.prototype.endContour = function() {
  * the shape (to connect the beginning and the end).
  *
  * @method endShape
- * @param  {Constant} mode use CLOSE to close the shape
- * @return {p5}               the p5 object
+ * @param  {Constant} [mode] use CLOSE to close the shape
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -513,7 +513,7 @@ p5.prototype.endShape = function(mode) {
  * @param  {Number} cy y-coordinate for the control point
  * @param  {Number} x3 x-coordinate for the anchor point
  * @param  {Number} y3 y-coordinate for the anchor point
- * @return {p5}        the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -585,7 +585,8 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  * @method vertex
  * @param  {Number} x x-coordinate of the vertex
  * @param  {Number} y y-coordinate of the vertex
- * @return {p5}   the p5 object
+ * @param  {Number|Boolean} [z] z-coordinate of the vertex
+ * @chainable
  * @example
  * <div>
  * <code>

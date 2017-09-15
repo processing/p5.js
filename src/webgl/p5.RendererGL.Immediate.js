@@ -26,7 +26,7 @@ var constants = require('../core/constants');
  *                       following modes:
  *                       POINTS,LINES,LINE_STRIP,LINE_LOOP,TRIANGLES,
  *                       TRIANGLE_STRIP,and TRIANGLE_FAN.
- * @return {[type]}      [description]
+ * @chainable
  */
 p5.RendererGL.prototype.beginShape = function(mode){
   //default shape mode is line_strip
@@ -62,7 +62,7 @@ p5.RendererGL.prototype.beginShape = function(mode){
  * @param  {Number} x x-coordinate of vertex
  * @param  {Number} y y-coordinate of vertex
  * @param  {Number} z z-coordinate of vertex
- * @return {p5.RendererGL}   [description]
+ * @chainable
  * @TODO implement handling of p5.Vector args
  */
 p5.RendererGL.prototype.vertex = function(){
@@ -102,7 +102,7 @@ p5.RendererGL.prototype.vertex = function(){
 
 /**
  * End shape drawing and render vertices to screen.
- * @return {p5.RendererGL} [description]
+ * @chainable
  */
 p5.RendererGL.prototype.endShape =
 function(mode, isCurve, isBezier,isQuadratic, isContour, shapeKind){

@@ -84,7 +84,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
 /**
  * Draws buffers given a geometry key ID
  * @param  {String} gId     ID in our geom hash
- * @return {p5.RendererGL} this
+ * @chainable
  */
 p5.RendererGL.prototype.drawBuffers = function(gId) {
   this._setDefaultCamera();

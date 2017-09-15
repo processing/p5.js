@@ -83,7 +83,7 @@ p5.prototype.shader = function (s) {
  * possible materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
  * @method normalMaterial
- * @return {p5}                the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -116,7 +116,7 @@ p5.prototype.normalMaterial = function(){
  * @method texture
  * @param {p5.Image | p5.MediaElement | p5.Graphics} tex 2-dimensional graphics
  *                    to render as texture
- * @return {p5}                the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -218,7 +218,7 @@ p5.prototype.texture = function(){
  * @param  {Number}            [v2] optional: green or saturation value
  * @param  {Number}            [v3] optional: blue or brightness value
  * @param  {Number}            [a]  optional: opacity
-* @return {p5}                 the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -261,7 +261,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * @param  {Number}            [v2] optional: green or saturation value
  * @param  {Number}            [v3] optional: blue or brightness value
  * @param  {Number}            [a]  optional: opacity
- * @return {p5}                the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>

@@ -1,4 +1,4 @@
-suite('p5.ColorConversion', function() {
+suite('color/p5.ColorConversion', function() {
   var rgba = [1, 0, 0.4, 0.8];
   var rgbaWithHighLightness = [0.969, 0.753, 0.122, 0.8];
   var hsla = [336/360, 1, 0.5, 0.8];

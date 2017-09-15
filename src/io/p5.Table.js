@@ -40,19 +40,19 @@ var p5 = require('../core/core');
  *
  *  @class p5.Table
  *  @constructor
- *  @param  {Array}     [rows] An array of p5.TableRow objects
- *  @return {p5.Table}         p5.Table generated
+ *  @param  {p5.TableRow[]}     [rows] An array of p5.TableRow objects
  */
 p5.Table = function (rows) {
   /**
-   *  @property columns {Array}
+   *  @property columns {String[]}
    */
   this.columns = [];
 
   /**
-   *  @property rows {Array}
+   *  @property rows {p5.TableRow[]}
    */
   this.rows = [];
+  this.name = 'p5.Table';   // for friendly debugger system
 };
 
 /**
@@ -173,7 +173,7 @@ p5.Table.prototype.removeRow = function(id) {
  *
  * @method  getRow
  * @param  {Number}   rowID ID number of the row to get
- * @return {TableRow} p5.TableRow object
+ * @return {p5.TableRow} p5.TableRow object
  *
  * @example
 	* <div class="norender">
@@ -216,7 +216,7 @@ p5.Table.prototype.getRow = function(r) {
  *  Gets all rows from the table. Returns an array of p5.TableRows.
  *
  *  @method  getRows
- *  @return {Array}   Array of p5.TableRows
+ *  @return {p5.TableRow[]}   Array of p5.TableRows
  *
  * @example
 	* <div class="norender">
@@ -271,7 +271,7 @@ p5.Table.prototype.getRows = function() {
  *  @param  {String} value  The value to match
  *  @param  {Number|String} column ID number or title of the
  *                                 column to search
- *  @return {TableRow}
+ *  @return {p5.TableRow}
  *
  * @example
 	* <div class="norender">
@@ -337,7 +337,7 @@ p5.Table.prototype.findRow = function(value, column) {
  *  @param  {String} value  The value to match
  *  @param  {Number|String} column ID number or title of the
  *                                 column to search
- *  @return {Array}        An Array of TableRow objects
+ *  @return {p5.TableRow[]}        An Array of TableRow objects
  *
  * @example
 	* <div class="norender">
@@ -407,7 +407,7 @@ p5.Table.prototype.findRows = function(value, column) {
  *  @param  {String} regexp The regular expression to match
  *  @param  {String|Number} column The column ID (number) or
  *                                   title (string)
- *  @return {TableRow}        TableRow object
+ *  @return {p5.TableRow}        TableRow object
  */
 p5.Table.prototype.matchRow = function(regexp, column) {
   if (typeof(column) === 'number') {
@@ -438,7 +438,7 @@ p5.Table.prototype.matchRow = function(regexp, column) {
  *  @param  {String} regexp The regular expression to match
  *  @param  {String|Number} [column] The column ID (number) or
  *                                   title (string)
- *  @return {Array}        An Array of TableRow objects
+ *  @return {p5.TableRow[]}          An Array of TableRow objects
  *  @example
  *  var table;
  *
@@ -1152,4 +1152,4 @@ p5.Table.prototype.getArray = function () {
   return tableArray;
 };
 
-module.exports = p5.Table;
+module.exports = p5;

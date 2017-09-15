@@ -11,131 +11,10 @@
 'use strict';
 
 var p5 = require('../core/core');
-var opentype = require('opentype.js');
 require('whatwg-fetch');
 require('es6-promise').polyfill();
 var fetchJsonp = require('fetch-jsonp');
 require('../core/error_helpers');
-
-/**
- * Loads an opentype font file (.otf, .ttf) from a file or a URL,
- * and returns a PFont Object. This method is asynchronous,
- * meaning it may not finish before the next line in your sketch
- * is executed.
- * <br><br>
- * The path to the font should be relative to the HTML file
- * that links in your sketch. Loading an from a URL or other
- * remote location may be blocked due to your browser's built-in
- * security.
- *
- * @method loadFont
- * @param  {String}        path       name of the file or url to load
- * @param  {Function}      [callback] function to be executed after
- *                                    loadFont()
- *                                    completes
- * @return {p5.Font}                  p5.Font object
- * @example
- *
- * <p>Calling loadFont() inside preload() guarantees that the load
- * operation will have completed before setup() and draw() are called.</p>
- *
- * <div><code>
- * var myFont;
- * function preload() {
- *   myFont = loadFont('assets/AvenirNextLTPro-Demi.otf');
- * }
- *
- * function setup() {
- *   fill('#ED225D');
- *   textFont(myFont);
- *   textSize(36);
- *   text('p5*js', 10, 50);
- * }
- * </code></div>
- *
- * Outside of preload(), you may supply a callback function to handle the
- * object:
- *
- * <div><code>
- * function setup() {
- *   loadFont('assets/AvenirNextLTPro-Demi.otf', drawText);
- * }
- *
- * function drawText(font) {
- *   fill('#ED225D');
- *   textFont(font, 36);
- *   text('p5*js', 10, 50);
- * }
- *
- * </code></div>
- *
- * <p>You can also use the string name of the font to style other HTML
- * elements.</p>
- *
- * <div><code>
- * var myFont;
- *
- * function preload() {
- *   myFont = loadFont('assets/Avenir.otf');
- * }
- *
- * function setup() {
- *   var myDiv = createDiv('hello there');
- *   myDiv.style('font-family', 'Avenir');
- * }
- * </code></div>
- *
- * @alt
- * p5*js in p5's theme dark pink
- * p5*js in p5's theme dark pink
- *
- */
-p5.prototype.loadFont = function (path, onSuccess, onError) {
-
-  var p5Font = new p5.Font(this);
-
-  var self = this;
-  opentype.load(path, function (err, font) {
-
-    if (err) {
-
-      if (typeof onError !== 'undefined') {
-        return onError(err);
-      }
-      p5._friendlyFileLoadError(4, path);
-      console.error(err, path);
-      return;
-    }
-
-    p5Font.font = font;
-
-    if (typeof onSuccess !== 'undefined') {
-      onSuccess(p5Font);
-    }
-
-    self._decrementPreload();
-
-    // check that we have an acceptable font type
-    var validFontTypes = [ 'ttf', 'otf', 'woff', 'woff2' ],
-      fileNoPath = path.split('\\').pop().split('/').pop(),
-      lastDotIdx = fileNoPath.lastIndexOf('.'), fontFamily, newStyle,
-      fileExt = lastDotIdx < 1 ? null : fileNoPath.substr(lastDotIdx + 1);
-
-    // if so, add it to the DOM (name-only) for use with p5.dom
-    if (validFontTypes.indexOf(fileExt) > -1) {
-
-      fontFamily = fileNoPath.substr(0, lastDotIdx);
-      newStyle = document.createElement('style');
-      newStyle.appendChild(document.createTextNode('\n@font-face {' +
-        '\nfont-family: ' + fontFamily + ';\nsrc: url(' + path + ');\n}\n'));
-      document.head.appendChild(newStyle);
-    }
-
-  });
-
-  return p5Font;
-};
-
 
 /**
  * Loads a JSON file from a file or a URL, and returns an Object or Array.
@@ -149,10 +28,10 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
  * @param  {String}        path       name of the file or url to load
  * @param  {Object}        [jsonpOptions] options object for jsonp related settings
  * @param  {String}        [datatype] "json" or "jsonp"
- * @param  {Function}      [callback] function to be executed after
+ * @param  {function}      [callback] function to be executed after
  *                                    loadJSON() completes, data is passed
  *                                    in as first argument
- * @param  {Function}      [errorCallback] function to be executed if
+ * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
  * @return {Object|Array}             JSON data
@@ -275,13 +154,13 @@ p5.prototype.loadJSON = function () {
  *
  * @method loadStrings
  * @param  {String}   filename   name of the file or url to load
- * @param  {Function} [callback] function to be executed after loadStrings()
+ * @param  {function} [callback] function to be executed after loadStrings()
  *                               completes, Array is passed in as first
  *                               argument
- * @param  {Function} [errorCallback] function to be executed if
+ * @param  {function} [errorCallback] function to be executed if
  *                               there is an error, response is passed
  *                               in as first argument
- * @return {Array}               Array of Strings
+ * @return {String[]}            Array of Strings
  * @example
  *
  * <p>Calling loadStrings() inside preload() guarantees to complete the
@@ -388,11 +267,11 @@ p5.prototype.loadStrings = function () {
  * @method loadTable
  * @param  {String}         filename   name of the file or URL to load
  * @param  {String} [options]  "header" "csv" "tsv"
- * @param  {Function}       [callback] function to be executed after
+ * @param  {function}       [callback] function to be executed after
  *                                     loadTable() completes. On success, the
  *                                     Table object is passed in as the
  *                                     first argument.
- * @param  {Function}  [errorCallback] function to be executed if
+ * @param  {function}  [errorCallback] function to be executed if
  *                                     there is an error, response is passed
  *                                     in as first argument
  * @return {Object}                    Table object containing data
@@ -690,10 +569,10 @@ p5.prototype.parseXML = function (two) {
  *
  * @method loadXML
  * @param  {String}   filename   name of the file or URL to load
- * @param  {Function} [callback] function to be executed after loadXML()
+ * @param  {function} [callback] function to be executed after loadXML()
  *                               completes, XML object is passed in as
  *                               first argument
- * @param  {Function} [errorCallback] function to be executed if
+ * @param  {function} [errorCallback] function to be executed if
  *                               there is an error, response is passed
  *                               in as first argument
  * @return {Object}              XML object containing data
@@ -776,10 +655,10 @@ p5.prototype.loadXML = function() {
  * @param  {String}        path       name of the file or url to load
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
  * @param  {Object}        [data]     param data passed sent with request
- * @param  {Function}      [callback] function to be executed after
+ * @param  {function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
  *                                    as first argument
- * @param  {Function}      [errorCallback] function to be executed if
+ * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
  * @example
@@ -829,10 +708,10 @@ p5.prototype.httpGet = function () {
  * @param  {String}        path       name of the file or url to load
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
  * @param  {Object}        [data]     param data passed sent with request
- * @param  {Function}      [callback] function to be executed after
+ * @param  {function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
  *                                    as first argument
- * @param  {Function}      [errorCallback] function to be executed if
+ * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
  */
@@ -855,10 +734,10 @@ p5.prototype.httpPost = function () {
  *                                    defaults to "GET"
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
  * @param  {Object}        [data]     param data passed sent with request
- * @param  {Function}      [callback] function to be executed after
+ * @param  {function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
  *                                    as first argument
- * @param  {Function}      [errorCallback] function to be executed if
+ * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
  */
@@ -869,8 +748,8 @@ p5.prototype.httpPost = function () {
  * @param  {Object}        options   Request object options as documented in the
  *                                    "fetch" API
  * <a href="https://developer.mozilla.org/en/docs/Web/API/Fetch_API">reference</a>
- * @param  {Function}      [callback]
- * @param  {Function}      [errorCallback]
+ * @param  {function}      [callback]
+ * @param  {function}      [errorCallback]
  */
 p5.prototype.httpDo = function () {
   var type = '';
@@ -1499,7 +1378,7 @@ p5.prototype.downloadFile = function (href, fName, extension) {
  *  if the provided parameter has no extension.
  *
  *  @param   {String} filename
- *  @return  {Array} [fileName, fileExtension]
+ *  @return  {String[]} [fileName, fileExtension]
  *
  *  @private
  */

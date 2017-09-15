@@ -42,17 +42,18 @@ suite('p5.Shader', function() {
     }
   };
 
-  var testShader = function (shaderName, shader, expectedAttributes,
+  var testShader = function (shaderName, shaderObj, expectedAttributes,
     expectedUniforms) {
 
 
-    var s = myp5._renderer.shader(shader);
+    myp5.shader(shaderObj);
+    var s = myp5._renderer.curFillShader;
 
-    assert(s !== null  &&  s === shader,
+    assert(s !== null  &&  s === shaderObj,
       shaderName + ' was returned from p5.RendererGL.shader');
 
     assert(myp5._renderer.curFillShader !== null &&
-      myp5._renderer.curFillShader === shader,
+      myp5._renderer.curFillShader === shaderObj,
       shaderName + ' was not set as renderer\'s curFillShader in shader()');
 
     testAttributes(shaderName, s.attributes, expectedAttributes);

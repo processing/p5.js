@@ -94,13 +94,13 @@ p5.prototype.plane = function(){
  * Draw a box with given width, height and depth
  * @method  box
  * @param  {Number} width     width of the box
- * @param  {Number} Height    height of the box
- * @param  {Number} depth     depth of the box
+ * @param  {Number} [Height]    height of the box
+ * @param  {Number} [depth]     depth of the box
  * @param {Number} [detailX]  Optional number of triangle
  *                            subdivisions in x-dimension
  * @param {Number} [detailY]  Optional number of triangle
  *                            subdivisions in y-dimension
- * @return {p5}               the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -197,7 +197,7 @@ p5.prototype.box = function(){
  * @param  {Number} [detailY]         optional: number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 16
- * @return {p5}                       the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -351,7 +351,7 @@ var _truncatedCone = function(
  * @param {Number} [detailY]   optional: number of segments in y-dimension,
  *                             the more segments the smoother geometry
  *                             default is 16
- * @return {p5}                the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -417,7 +417,7 @@ p5.prototype.cylinder = function(){
  * @param  {Number} [detailY]         optional: number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 16
- * @return {p5}                       the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -486,7 +486,7 @@ p5.prototype.cone = function(){
  *                                    the more segments the smoother geometry
  *                                    default is 16. Avoid detail number above
  *                                    150, it may crash the browser.
- * @return {p5}                       the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -564,7 +564,7 @@ p5.prototype.ellipsoid = function(){
  * @param  {Number} [detailY]     optional: number of segments in y-dimension,
  *                                the more segments the smoother geometry
  *                                default is 16
- * @return {p5}                   the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -865,7 +865,7 @@ p5.RendererGL.prototype.curve=function
  * @param {Number} x1 x-coordinate of second vertex
  * @param {Number} y1 y-coordinate of second vertex
  * @param {Number} z1 z-coordinate of second vertex
- * @return {p5}     The P5 object
+ * @chainable
  * @example
  * <div>
  * <code>

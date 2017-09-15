@@ -20,28 +20,28 @@ var p5 = require('../core/core');
  * @param  {Number}        v3      blue or brightness value
  *                                 relative to the current color range
  * @param  {Number}        [alpha]
- * @return {p5}                    the p5 object
+ * @chainable
  */
 
 /**
  * @method ambientLight
  * @param  {String}        value   a color string
  * @param  {Number}        [alpha]
- * @return {p5}                    the p5 object
+ * @chainable
  */
 
 /**
  * @method ambientLight
  * @param  {Number[]}      values  an array containing the red,green,blue &
  *                                 and alpha components of the color
- * @return {p5}                    the p5 object
+ * @chainable
  */
 
 /**
  * @method ambientLight
  * @param  {p5.Color}      color   the ambient light color
  * @param  {Number}        [alpha]
- * @return {p5}                    the p5 object
+ * @chainable
  *
  * @example
  * <div>
@@ -98,7 +98,7 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
  * @param  {Number|p5.Vector} x   x axis direction or a p5.Vector
  * @param  {Number}          [y]  optional: y axis direction
  * @param  {Number}          [z]  optional: z axis direction
- * @return {p5}              the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -177,7 +177,7 @@ p5.prototype.directionalLight = function(v1, v2, v3, a, x, y, z) {
  * @param  {Number|p5.Vector} x   x axis position or a p5.Vector
  * @param  {Number}          [y]  optional: y axis position
  * @param  {Number}          [z]  optional: z axis position
- * @return {p5}              the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>

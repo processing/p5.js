@@ -4,6 +4,7 @@ node_modules/*
 experiments/*
 lib_old/*
 lib/p5.*
+lib/modules
 lib/addons/p5.dom.min.js
 docs/reference/*
 docs/yuidoc-p5-theme/assets/js/reference.js*
@@ -11,3 +12,7 @@ docs/yuidoc-p5-theme/assets/js/reference.js*
 examples/3d/
 .idea
 .vscode
+dist/
+p5.zip
+bower-repo/
+p5-website/

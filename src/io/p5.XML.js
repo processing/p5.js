@@ -14,7 +14,6 @@ var p5 = require('../core/core');
  *
  * @class p5.XML
  * @constructor
- * @return {p5.XML}    p5.XML object generated
  * @example
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed
@@ -60,6 +59,7 @@ p5.XML = function () {
   this.children = [];
   this.parent = null;
   this.content = null; //done
+  this.name = 'p5.XML';   // for friendly debugger system
 };
 
 
@@ -68,7 +68,7 @@ p5.XML = function () {
  * p5.XML object.
  *
  * @method getParent
- * @return {Object}   element parent
+ * @return {p5.XML}   element parent
  * @example
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed
@@ -216,7 +216,7 @@ p5.XML.prototype.hasChildren = function() {
  * on each child element individually.
  *
  * @method listChildren
- * @return {Array} names of the children of the element
+ * @return {String[]} names of the children of the element
  * @example&lt;animal
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed
@@ -254,7 +254,7 @@ p5.XML.prototype.listChildren = function() {
  *
  * @method getChildren
  * @param {String} [name] element name
- * @return {Array} children of the element
+ * @return {p5.XML[]} children of the element
  * @example&lt;animal
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed
@@ -488,7 +488,7 @@ p5.XML.prototype.getAttributeCount = function() {
  * array of Strings.
  *
  * @method listAttributes
- * @return {Array} an array of strings containing the names of attributes
+ * @return {String[]} an array of strings containing the names of attributes
  * @example
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed
@@ -795,4 +795,4 @@ p5.XML.prototype._setAttributes = function(node) {
   this.attributes = att;
 };
 
-module.exports = p5.XML;
+module.exports = p5;

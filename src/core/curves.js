@@ -8,7 +8,6 @@
 'use strict';
 
 var p5 = require('./core');
-
 require('./error_helpers');
 
 var bezierDetail = 20;
@@ -63,7 +62,7 @@ var curveDetail = 20;
  * @param  {Number} z2 z-coordinate for the first control point
  * @param  {Number} z3 z-coordinate for the first anchor point
  * @param  {Number} z4 z-coordinate for the first control point
- * @return {p5.Renderer3D}   [description]
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -79,6 +78,8 @@ p5.prototype.bezier = function() {
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
+
+  p5._validateParameters('bezier', args);
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
@@ -101,7 +102,7 @@ p5.prototype.bezier = function() {
  * The default value is 20.
  *
  * @param {Number} detail resolution of the curves
- * @return {p5} the p5 Object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -158,11 +159,17 @@ p5.prototype.bezierDetail = function(d) {
  *
  */
 p5.prototype.bezierPoint = function(a, b, c, d, t) {
-  var adjustedT = 1-t;
-  return Math.pow(adjustedT,3)*a +
-   3*(Math.pow(adjustedT,2))*t*b +
-   3*adjustedT*Math.pow(t,2)*c +
-   Math.pow(t,3)*d;
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
+
+  p5._validateParameters('bezierPoint', args);
+  var adjustedT = 1-args[4];
+  return Math.pow(adjustedT,3)*args[0] +
+   3*(Math.pow(adjustedT,2))*args[4]*args[1] +
+   3*adjustedT*Math.pow(args[4],2)*args[2] +
+   Math.pow(args[4],3)*args[3];
 };
 
 /**
@@ -231,13 +238,19 @@ p5.prototype.bezierPoint = function(a, b, c, d, t) {
  *
  */
 p5.prototype.bezierTangent = function(a, b, c, d, t) {
-  var adjustedT = 1-t;
-  return 3*d*Math.pow(t,2) -
-   3*c*Math.pow(t,2) +
-   6*c*adjustedT*t -
-   6*b*adjustedT*t +
-   3*b*Math.pow(adjustedT,2) -
-   3*a*Math.pow(adjustedT,2);
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
+
+  p5._validateParameters('bezierTangent', args);
+  var adjustedT = 1-args[4];
+  return 3*args[3]*Math.pow(args[4],2) -
+   3*args[2]*Math.pow(args[4],2) +
+   6*args[2]*adjustedT*args[4] -
+   6*args[1]*adjustedT*args[4] +
+   3*args[1]*Math.pow(adjustedT,2) -
+   3*args[0]*Math.pow(adjustedT,2);
 };
 
 /**
@@ -298,7 +311,7 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * @param  {Number} z2 z-coordinate for the first point
  * @param  {Number} z3 z-coordinate for the second point
  * @param  {Number} z4 z-coordinate for the ending control point
- * @return {p5}        the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -320,6 +333,8 @@ p5.prototype.curve = function() {
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
+
+  p5._validateParameters('curve', args);
   if (!this._renderer._doStroke) {
     return this;
   }
@@ -341,7 +356,7 @@ p5.prototype.curve = function() {
  * The default value is 20.
  *
  * @param {Number} resolution of the curves
- * @return {p5} the p5 Object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -371,7 +386,7 @@ p5.prototype.curveDetail = function(d) {
  *
  * @method curveTightness
  * @param {Number} amount of deformation from the original vertices
- * @return {p5} the p5 Object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -443,13 +458,19 @@ p5.prototype.curveTightness = function (t) {
  *line hooking down to right-bottom with 13 5x5 white ellipse points
  */
 p5.prototype.curvePoint = function(a, b, c, d, t) {
-  var t3 = t*t*t,
-    t2 = t*t,
-    f1 = -0.5 * t3 + t2 - 0.5 * t,
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
+
+  p5._validateParameters('curvePoint', args);
+  var t3 = args[4]*args[4]*args[4],
+    t2 = args[4]*args[4],
+    f1 = -0.5 * t3 + t2 - 0.5 * args[4],
     f2 = 1.5 * t3 - 2.5 * t2 + 1.0,
-    f3 = -1.5 * t3 + 2.0 * t2 + 0.5 * t,
+    f3 = -1.5 * t3 + 2.0 * t2 + 0.5 * args[4],
     f4 = 0.5 * t3 - 0.5 * t2;
-  return a*f1 + b*f2 + c*f3 + d*f4;
+  return args[0]*f1 + args[1]*f2 + args[2]*f3 + args[3]*f4;
 };
 
 /**
@@ -487,13 +508,19 @@ p5.prototype.curvePoint = function(a, b, c, d, t) {
  * @alt
  *right curving line mid-right of canvas with 7 short lines radiating from it.
  */
-p5.prototype.curveTangent = function(a, b,c, d, t) {
-  var t2 = t*t,
-    f1 = (-3*t2)/2 + 2*t - 0.5,
-    f2 = (9*t2)/2 - 5*t,
-    f3 = (-9*t2)/2 + 4*t + 0.5,
-    f4 = (3*t2)/2 - t;
-  return a*f1 + b*f2 + c*f3 + d*f4;
+p5.prototype.curveTangent = function(a, b, c, d, t) {
+  var args = new Array(arguments.length);
+  for (var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
+
+  p5._validateParameters('curveTangent', args);
+  var t2 = args[4]*args[4],
+    f1 = (-3*t2)/2 + 2*args[4] - 0.5,
+    f2 = (9*t2)/2 - 5*args[4],
+    f3 = (-9*t2)/2 + 4*args[4] + 0.5,
+    f4 = (3*t2)/2 - args[4];
+  return args[0]*f1 + args[1]*f2 + args[2]*f3 + args[3]*f4;
 };
 
 module.exports = p5;

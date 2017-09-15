@@ -35,6 +35,7 @@ p5.Font = function(p) {
    * @property font
    */
   this.font = undefined;
+  this.name = 'p5.Font';   // for friendly debugger system
 };
 
 p5.Font.prototype.list = function() {
@@ -165,13 +166,19 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
  */
 p5.Font.prototype.textToPoints = function(txt, x, y, fontSize, options) {
 
+  function isSpace(i) {
+    return ((glyphs[i].name && glyphs[i].name === 'space') ||
+      (txt.length === glyphs.length && txt[i] === ' ') ||
+      (glyphs[i].index && glyphs[i].index === 3));
+  }
+
   var xoff = 0, result = [], glyphs = this._getGlyphs(txt);
 
   fontSize = fontSize || this.parent._renderer._textSize;
 
   for (var i = 0; i < glyphs.length; i++) {
 
-    if (glyphs[i].name !== 'space') { // fix to #1817
+    if (!isSpace(i)) { // fix to #1817, #2069
 
       var gpath = glyphs[i].getPath(x, y, fontSize),
         paths = splitPaths(gpath.commands);
@@ -203,7 +210,7 @@ p5.Font.prototype.textToPoints = function(txt, x, y, fontSize, options) {
  *  than the length of the given string.
  *
  * @param  {String} str the string to be converted
- * @return {array}     the opentype glyphs
+ * @return {Array}     the opentype glyphs
  */
 p5.Font.prototype._getGlyphs = function(str) {
 
@@ -617,6 +624,10 @@ function pointAtLength(path, length, istotal) {
 function pathToAbsolute(pathArray) {
 
   var res = [], x = 0, y = 0, mx = 0, my = 0, start = 0;
+  if (!pathArray) {
+    // console.warn("Unexpected state: undefined pathArray"); // shouldn't happen
+    return res;
+  }
   if (pathArray[0][0] === 'M') {
     x = +pathArray[0][1];
     y = +pathArray[0][2];
@@ -1037,4 +1048,4 @@ function cacheKey() {
   return hash;
 }
 
-module.exports = p5.Font;
+module.exports = p5;
