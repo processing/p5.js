@@ -706,7 +706,8 @@ p5.prototype.httpGet = function () {
  *
  * @method httpPost
  * @param  {String}        path       name of the file or url to load
- * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
+ * @param  {String}        [datatype] "json", "jsonp", "xml", or "text".
+ *                                    If omitted, httpPost() will guess.
  * @param  {Object}        [data]     param data passed sent with request
  * @param  {function}      [callback] function to be executed after
  *                                    httpPost() completes, data is passed in
@@ -742,18 +743,6 @@ p5.prototype.httpGet = function () {
  *        ellipse(mouseX, mouseY, 200, 200);
  *        text(result.body, mouseX, mouseY);
  *      });
- *
- *  // you can also omit the datatype and httpPost will guess
- *  httpPost(url,
- *      postData,
- *      function (result) {
- *        strokeWeight(2);
- *        stroke(r, g, b);
- *        fill(r, g, b, 127);
- *        ellipse(mouseX, mouseY, 200, 200);
- *        text(result.body, mouseX, mouseY);
- *      });
- *
  * }
  * </code>
  * </div>
