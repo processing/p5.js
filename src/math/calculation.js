@@ -171,12 +171,14 @@ p5.prototype.constrain = function(n, low, high) {
  * 2 ellipses joined by line. 1 ellipse moves with mouse X&Y. Distance displayed.
  *
  */
-p5.prototype.dist = function(x1, y1, z1, x2, y2, z2) {
+p5.prototype.dist = function(x1, y1, x2, y2, z1, z2) {
   if (arguments.length === 4) {
-    // In the case of 2d: z1 means x2 and x2 means y2
-    return hypot(z1-x1, x2-y1);
+    //2D
+    return hypot(x2-x1, y2-y1);
   } else if (arguments.length === 6) {
-    return hypot(x2-x1, y2-y1, z2-z1);
+    //3D user input: (x1, y1, z1, x2, y2, z2) 
+    // but here x1=x1, y1=y1, x2=z1, y2=x2,z1=y2,z2=z2
+    return hypot(y2-x1, z1-y1, z2-x2);
   }
 };
 
