@@ -420,7 +420,12 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  *
  */
 p5.Element.prototype.mouseClicked = function (fxn) {
-  attachListener('click', fxn, this);
+  if (fxn === false) {
+    detachListener('click', this);
+  }
+  else {
+    attachListener('click', fxn, this);
+  }
   return this;
 };
 
@@ -976,6 +981,12 @@ function attachListener(ev, fxn, ctx) {
   var f = fxn.bind(ctx);
   ctx.elt.addEventListener(ev, f, false);
   ctx._events[ev] = f;
+}
+
+function detachListener(ev, ctx) {
+  var f = ctx._events[ev];
+  ctx.elt.removeEventListener(ev, f, false);
+  ctx._events[ev] = null;
 }
 
 /**
