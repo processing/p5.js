@@ -66,7 +66,7 @@ suite('Dictionary Objects', function() {
 
   test('should clear stringDict', function() {
     stringDict.clear();
-    assert.deepEqual(stringDict, {data:{}});
+    assert.deepEqual(stringDict.data, {});
   });
 
   test('should add values together', function() {
@@ -99,6 +99,6 @@ suite('Dictionary Objects', function() {
 
   test('should clear numberDict', function() {
     numberDict.clear();
-    assert.deepEqual(numberDict, {data:{}});
+    assert.deepEqual(numberDict.data, {});
   });
 });
