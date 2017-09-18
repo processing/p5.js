@@ -756,8 +756,8 @@ p5.prototype.httpPost = function () {
  *    var url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson';
  *    httpDo(url,
  *      {
- *        method: 'GET',  // http method - "GET", "PUT", "POST", etc.
- *          // Other Request options, like special headers for apis
+ *        method: 'GET',
+ *        // Other Request options, like special headers for apis
  *        headers: { authorization: 'Bearer secretKey' }
  *      },
  *      function(res) {
