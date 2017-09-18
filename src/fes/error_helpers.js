@@ -1,11 +1,12 @@
 /**
  * @for p5
+ * @submodule FES
  * @requires core
  */
 
 'use strict';
 
-var p5 = require('./core');
+var p5 = require('../core/core');
 var doFriendlyWelcome = false; // TEMP until we get it all working LM
 // for parameter validation
 var dataDoc = require('../../docs/reference/data.json');
@@ -341,7 +342,7 @@ function defineMisusedAtTopLevelCode() {
     // At present, p5 only adds its constants to p5.prototype during
     // construction, which may not have happened at the time a
     // ReferenceError is thrown, so we'll manually add them to our list.
-    getSymbols(require('./constants'))
+    getSymbols(require('../core/constants'))
   );
 
   // This will ultimately ensure that we report the most specific error
