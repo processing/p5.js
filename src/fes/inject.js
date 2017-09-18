@@ -1,0 +1,37 @@
+/**
+ * @for p5
+ * @submodule FES
+ * @requires core
+ */
+
+'use strict';
+
+var p5 = require('../core/core');
+
+var dataDoc = require('../../docs/reference/data.json');
+var arrDoc = JSON.parse(JSON.stringify(dataDoc));
+
+function inject(docItem) {
+  if (docItem.class !== 'p5') {
+    return;
+  }
+  if (!docItem.itemtype || docItem.itemtype !== 'method') {
+    return;
+  }
+  var original = p5.prototype[docItem.name];
+
+  if(original) {
+    p5.prototype[docItem.name] = function() {
+      p5._validateParameters(docItem.name, arguments);
+      return original.apply(this, arguments);
+    };
+  }
+}
+
+if (!p5.disableFriendlyErrors && typeof(IS_MINIFIED) === 'undefined') {
+  var items = arrDoc.classitems;
+  for(var i = 0; i < items.length; i++) {
+    var item = items[i];
+    inject(item);
+  }
+}

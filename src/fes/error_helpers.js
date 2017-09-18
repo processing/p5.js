@@ -170,6 +170,9 @@ function lookupParamDoc(func){
 }
 function testParamFormat(args, format){
   var errorArray = [];
+  if (!format) {
+    format = [];
+  }
   var error;
   for (var p = 0; p < format.length; p++) {
     var argType = typeof(args[p]);
