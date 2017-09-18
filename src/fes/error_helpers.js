@@ -198,6 +198,13 @@ function testParamFormat(args, format){
       }
     }
   }
+  if(args.length > format.length) {
+    error = {
+      type: 'WRONG_ARGUMENT_COUNT',
+      counts: [args.length, format.length]
+    };
+    errorArray.push(error);
+  }
   return errorArray;
 }
 // testClass() for object type parameter validation
@@ -254,6 +261,12 @@ p5._friendlyParamError = function (errorObj, func) {
       // Wrap strings in quotes
       message += errorObj.wrongType + ' instead.';
       report(message, func, ERR_PARAMS);
+      break;
+    case 'WRONG_ARGUMENT_COUNT':
+      message = func + '() was expecting ' + errorObj.counts[1] +
+        ' arguments, but received ' + errorObj.counts[0];
+      report(message, func, ERR_PARAMS);
+      break;
   }
 };
 function friendlyWelcome() {
