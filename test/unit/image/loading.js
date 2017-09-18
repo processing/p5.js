@@ -40,25 +40,12 @@ suite('loading images', function () {
     myp5.loadImage(
       imagePath,
       function (pImg) {
-        assert.ok('nyan_cat.gif loaded');
-        done();
-      },
-      function (event) {
-        assert.fail();
-        done();
-      });
-  });
-
-  test('should call successCallback when image loads', function (done) {
-    myp5.loadImage(
-      imagePath,
-      function (pImg) {
+        assert.ok(pImg, 'nyan_cat.gif loaded');
         assert.isTrue(pImg instanceof p5.Image);
         done();
       },
       function (event) {
-        assert.fail();
-        done();
+        done(event);
       });
   });
 
@@ -66,8 +53,7 @@ suite('loading images', function () {
     myp5.loadImage(
       'invalid path',
       function (pImg) {
-        assert.fail();
-        done();
+        done('Entered success callback.');
       },
       function (event) {
         assert.equal(event.type, 'error');

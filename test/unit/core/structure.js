@@ -11,6 +11,7 @@ suite('Structure', function() {
 
   suite('p5.prototype.loop and p5.prototype.noLoop', function() {
     test('noLoop should stop', function() {
+      // @TODO this does not test this.
       //myp5.noLoop();
       var c0 = myp5.frameCount;
       myp5.noLoop();
