@@ -8,13 +8,13 @@ Using the original metaphor of a software sketchbook, p5.js has a full set of dr
 
 p5.js is a new interpretation, not an emulation or port, and it is in active development. An official editing environment is coming soon, as well as many more features!
 
-If you already know the basics of JS or Processing, the [p5.js overview](https://github.com/processing/p5.js/wiki/p5.js-overview) wiki page is a good place to start. The [frequently asked questions](https://github.com/processing/p5.js/wiki/Frequently-Asked-Questions) might also be helpful.
+If you already know the basics of JavaScript or Processing, the [p5.js overview](https://github.com/processing/p5.js/wiki/p5.js-overview) wiki page is a good place to start. The [frequently asked questions](https://github.com/processing/p5.js/wiki/Frequently-Asked-Questions) might also be helpful.
 
-If you have found a bug in the p5.js library, you can file it here under the [“issues” tab](https://github.com/processing/p5.js/issues).
+If you have found a bug in the p5.js library, you can file it here under the [“issues” tab](https://github.com/processing/p5.js/issues). An indicative template for reporting an issue is provided to assist you (and us!) better.
 
 ## p5.js library
 
-To use p5.js, you can [download the p5.js library here](http://p5js.org/download). If you are interested in the most recent, less stable version, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [development](https://github.com/processing/p5.js/wiki/Development) wiki for more information about our build process.
+To use the complete p5.js library, you can [download it here](http://p5js.org/download). If you are interested in the most recent, less stable version, or even simply in (**new!**) certain components of p5.js, you can clone this repository and run `grunt` from the command line to generate the library from source. See the [development](https://github.com/processing/p5.js/wiki/Development#Setup) wiki for more information about our build process to generate the complete as well as selective library.	
 
 ## Issues
 
@@ -33,7 +33,7 @@ Check out [p5js.org](http://p5js.org) for lots more! Here are some quick-links:
 * [Get Started](http://p5js.org/get-started) — Create and run your first sketch!
 * [p5.js overview](https://github.com/processing/p5.js/wiki/p5.js-overview) — An overview of the main features and functionality of p5.js.
 * [Reference](http://p5js.org/reference) — The functionality supported by p5.js.
-* [Learn](http://p5js.org/tutorials) — Tutorials and short, prototypical examples exploring the basics of p5.js.
+* [Learn](//p5js.org/learn) — Tutorials and short, prototypical examples exploring the basics of p5.js.
 * [Forum](http://forum.processing.org/two/categories/p5-js) — Ask and answers questions about how to make things with p5.js here.
 * [Libraries](http://p5js.org/libraries) — Extend p5 functionality to interact with HTML, manipulate sound, and more!
 * [FAQ](https://github.com/processing/p5.js/wiki/Frequently-Asked-Questions)

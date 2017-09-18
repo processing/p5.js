@@ -1,4 +1,4 @@
-suite('Color', function() {
+suite('color/Setting', function() {
 
   // p5 instance
   var myp5 = new p5(function( p ) {

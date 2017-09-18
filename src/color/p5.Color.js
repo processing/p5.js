@@ -12,10 +12,10 @@ var constants = require('../core/constants');
 var color_conversion = require('./color_conversion');
 
 /**
- * We define colors to be immutable objects. Each color stores the color mode
- * and level maxes that applied at the time of its construction. These are
- * used to interpret the input arguments and to format the output e.g. when
- * saturation() is requested.
+ * Each color stores the color mode and level maxes that applied at the
+ * time of its construction. These are used to interpret the input arguments
+ * (at construction and later for that instance of color) and to format the
+ * output e.g. when saturation() is requested.
  *
  * Internally we store an array representing the ideal RGBA values in floating
  * point form, normalized from 0 to 1. From this we calculate the closest
@@ -31,8 +31,7 @@ var color_conversion = require('./color_conversion');
 p5.Color = function(renderer, vals) {
 
   // Record color mode and maxes at time of construction.
-  this.mode = renderer._colorMode;
-  this.maxes = renderer._colorMaxes;
+  this._storeModeAndMaxes(renderer._colorMode, renderer._colorMaxes);
 
   // Calculate normalized RGBA values.
   if (this.mode !== constants.RGB &&
@@ -40,14 +39,12 @@ p5.Color = function(renderer, vals) {
       this.mode !== constants.HSB) {
     throw new Error(this.mode + ' is an invalid colorMode.');
   } else {
-    this._array = p5.Color._parseInputs.apply(renderer, vals);
+    this._array = p5.Color._parseInputs.apply(this, vals);
   }
 
   // Expose closest screen color.
-  this.levels = this._array.map(function(level) {
-    return Math.round(level * 255);
-  });
-
+  this._calculateLevels();
+  this.name = 'p5.Color';   // for friendly debugger system
   return this;
 };
 
@@ -57,8 +54,50 @@ p5.Color.prototype.toString = function() {
   return 'rgba('+a[0]+','+a[1]+','+a[2]+','+ alpha +')';
 };
 
+p5.Color.prototype.setRed = function(new_red) {
+  this._array[0] = new_red / this.maxes[constants.RGB][0];
+  this._calculateLevels();
+};
+
+p5.Color.prototype.setGreen = function(new_green) {
+  this._array[1] = new_green / this.maxes[constants.RGB][1];
+  this._calculateLevels();
+};
+
+p5.Color.prototype.setBlue = function(new_blue) {
+  this._array[2] = new_blue / this.maxes[constants.RGB][2];
+  this._calculateLevels();
+};
+
+p5.Color.prototype.setAlpha = function(new_alpha) {
+  this._array[3] = new_alpha / this.maxes[this.mode][3];
+  this._calculateLevels();
+};
+
+// calculates and stores the closest screen levels
+p5.Color.prototype._calculateLevels = function() {
+  this.levels = this._array.map(function(level) {
+    return Math.round(level * 255);
+  });
+};
+
 p5.Color.prototype._getAlpha = function() {
   return this._array[3] * this.maxes[this.mode][3];
+};
+
+// stores the color mode and maxes in this instance of Color
+// for later use (by _parseInputs())
+p5.Color.prototype._storeModeAndMaxes = function(new_mode, new_maxes) {
+  this.mode = new_mode;
+  this.maxes = new_maxes;
+};
+
+p5.Color.prototype._getMode = function() {
+  return this.mode;
+};
+
+p5.Color.prototype._getMaxes = function() {
+  return this.maxes;
 };
 
 p5.Color.prototype._getBlue = function() {
@@ -435,8 +474,8 @@ var colorPatterns = {
  */
 p5.Color._parseInputs = function() {
   var numArgs = arguments.length;
-  var mode = this._colorMode;
-  var maxes = this._colorMaxes;
+  var mode = this.mode;
+  var maxes = this.maxes;
   var results = [];
 
   if (numArgs >= 3) {  // Argument is a list of component values.

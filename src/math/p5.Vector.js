@@ -81,6 +81,7 @@ p5.Vector = function() {
    * @property z {Number}
    */
   this.z = z;
+  this.name = 'p5.Vector';   // for friendly debugger system
 };
 
 /**
@@ -635,7 +636,13 @@ p5.Vector.prototype.rotate = function (a) {
  * </div>
  */
 p5.Vector.prototype.angleBetween = function (v) {
-  var angle = Math.acos(this.dot(v) / (this.mag() * v.mag()));
+  var dotmagmag = this.dot(v) / (this.mag() * v.mag());
+  // Mathematically speaking: the dotmagmag variable will be between -1 and 1
+  // inclusive. Practically though it could be slightly outside this range due
+  // to floating-point rounding issues. This can make Math.acos return NaN.
+  //
+  // Solution: we'll clamp the value to the -1,1 range
+  var angle = Math.acos(Math.min(1, Math.max(-1, dotmagmag)));
   if (this.p5) {
     if (this.p5._angleMode === constants.DEGREES) {
       angle = polarGeometry.radiansToDegrees(angle);
