@@ -1,4 +1,5 @@
 suite('Font Loading', function() {
+  // @TODO: Need to rewrite these.
   // Test loading font in preload() with success callback
   var mySketch = function (this_p5) {
     var myFont;

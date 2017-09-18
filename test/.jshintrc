@@ -1,6 +1,7 @@
 {
   "boss": true,
   "curly": true,
+  "esnext": true,
   "eqeqeq": true,
   "eqnull": true,
   "evil": true,
@@ -29,6 +30,8 @@
     "console": false,
     "PElement": false,
     "p5": false,
-    "PVector": false
+    "PVector": false,
+
+    "Response": false
   }
 }
