@@ -1026,8 +1026,8 @@ p5.Renderer2D.prototype._doFillStrokeClose = function () {
 //////////////////////////////////////////////
 
 p5.Renderer2D.prototype.applyMatrix =
-function(n00, n01, n02, n10, n11, n12) {
-  this.drawingContext.transform(n00, n01, n02, n10, n11, n12);
+function(a, b, c, d, e, f) {
+  this.drawingContext.transform(a, b, c, d, e, f);
 };
 
 p5.Renderer2D.prototype.resetMatrix = function() {
