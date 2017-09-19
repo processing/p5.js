@@ -85,16 +85,19 @@ suite('Dictionary Objects', function() {
 
 
     test('should add values together', function() {
+      numberDict.set(1, 5);
       numberDict.add(1, 4);
       assert.deepEqual(numberDict.get(1), 9);
     });
 
     test('should subtract from value', function() {
+      numberDict.set(1, 9);
       numberDict.sub(1, 3);
       assert.deepEqual(numberDict.get(1), 6);
     });
 
     test('should divide from value', function() {
+      numberDict.set(1, 6);
       numberDict.div(1, 3);
       assert.deepEqual(numberDict.get(1), 2);
     });
@@ -105,11 +108,18 @@ suite('Dictionary Objects', function() {
     });
 
     test('should find minimum value', function() {
+      numberDict.clear();
+      [10, 4, 6, 92, 100].forEach(function(x, i) {
+        numberDict.set(i, x);
+      });
       assert.deepEqual(numberDict.minValue(), 4);
     });
 
     test('should find maximum value', function() {
-      assert.deepEqual(numberDict.maxValue(), 6);
+      [10, 4, 6, 92, 100].forEach(function(x, i) {
+        numberDict.set(i, x);
+      });
+      assert.deepEqual(numberDict.maxValue(), 100);
     });
 
     test('should clear', function() {
