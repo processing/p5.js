@@ -5,9 +5,8 @@ suite('p5.Element', function() {
   });
 
   suite('with no events', function() {
-
-
     test('attaches and gets events', function() {
+      // setup
       var myElt = myp5.createDiv('hello');
       var myFnCounter = 0;
       var myFn = function() {
@@ -15,11 +14,31 @@ suite('p5.Element', function() {
       };
 
       myElt.mouseClicked(myFn);
-      assert.isFunction(myElt._events.click, myFn);
+      assert.isFunction(myElt._events.click);
       myElt.elt.dispatchEvent(new Event('click'));
       assert.equal(myFnCounter, 1);
     });
-    test('detaches events', function() {
+    test('attaches mutiple handlers and gets events', function() {
+      // setup
+      var myElt = myp5.createDiv('hello');
+      var myFnCounter = 0;
+      var myFn = function() {
+        myFnCounter++;
+      };
+      var myFnCounterOther = 0;
+      var myFnOther = function() {
+        myFnCounterOther++;
+      };
+
+      myElt.mouseClicked(myFn);
+      myElt.mouseClicked(myFnOther);
+      assert.isFunction(myElt._events.click);
+      myElt.elt.dispatchEvent(new Event('click'));
+      assert.equal(myFnCounter, 0);
+      assert.equal(myFnCounterOther, 1);
+    });
+    test('detaches and doesnt get events', function() {
+      // setup
       var myElt = myp5.createDiv('hello');
       var myFnCounter = 0;
       var myFn = function() {
