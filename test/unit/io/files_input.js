@@ -10,52 +10,57 @@ suite('Files', function() {
   var result;
 
   // httpDo
-  suite('httpDo()', function(){
-    test('should be a function', function(){
+  suite('httpDo()', function() {
+    test('should be a function', function() {
       assert.ok(httpDo);
       assert.isFunction(httpDo);
     });
 
-    test('should work when provided with just a path', function(done){
-      httpDo('unit/assets/sentences.txt', function(data){
+    test('should work when provided with just a path', function() {
+      return new Promise(function(resolve, reject) {
+        httpDo('unit/assets/sentences.txt', resolve, reject);
+      }).then(function(data){
         assert.ok(data);
         assert.isString(data);
-        done();
       });
     });
 
-    test('should accept method parameter', function(done){
-      httpDo('unit/assets/sentences.txt', 'GET', function(data){
+    test('should accept method parameter', function() {
+      return new Promise(function(resolve, reject) {
+        httpDo('unit/assets/sentences.txt', 'GET', resolve, reject);
+      }).then(function(data){
         assert.ok(data);
         assert.isString(data);
-        done();
       });
     });
 
-    test('should accept type parameter', function(done){
-      httpDo('unit/assets/array.json', 'text', function(data){
+    test('should accept type parameter', function() {
+      return new Promise(function(resolve, reject) {
+        httpDo('unit/assets/array.json', 'text', resolve, reject);
+      }).then(function(data){
         assert.ok(data);
         assert.isString(data);
-        done();
       });
     });
 
-    test('should accept method and type parameter together', function(done){
-      httpDo('unit/assets/array.json', 'GET', 'text', function(data){
+    test('should accept method and type parameter together', function() {
+      return new Promise(function(resolve, reject) {
+        httpDo('unit/assets/array.json', 'GET', 'text', resolve, reject);
+      }).then(function(data){
         assert.ok(data);
         assert.isString(data);
-        done();
       });
     });
 
-    test('should pass error object to error callback function', function(done){
-      httpDo('unit/assets/sen.txt', function(data){
-        // should not be called
-      }, function(err){
-        assert.isObject(err, 'err is an object');
+    test('should pass error object to error callback function', function() {
+      return new Promise(function(resolve, reject) {
+        httpDo('unit/assets/sen.txt', function(data){
+          reject('Incorrectly succeeded.');
+        }, resolve);
+      }).then(function(err){
+        assert.instanceOf(err, Response, 'err is a Response');
         assert.isFalse(err.ok, 'err.ok is false');
         assert.equal(err.status, 404, 'Error status is 404');
-        done();
       });
     });
   });
@@ -103,11 +108,11 @@ suite('Files', function() {
       assert.typeOf(loadXML, 'function');
     });
 
-    // test('should return an Object', function() {
-    //   result = loadXML('unit/assets/books.xml');
-    //   assert.ok(result);
-    //   assert.isObject(result, 'result is an object');
-    // });
+    test('should return an Object', function() {
+      result = loadXML('unit/assets/books.xml');
+      assert.ok(result);
+      assert.isObject(result, 'result is an object');
+    });
   });
 
   //tests while preload is false with callbacks
@@ -120,49 +125,49 @@ suite('Files', function() {
       assert.typeOf(loadJSON, 'function');
     });
 
-    test('should call callback function if provided', function(done){
-      result = loadJSON('unit/assets/array.json', function(data){
-        done();
+    test('should call callback function if provided', function() {
+      return new Promise(function(resolve, reject) {
+        loadJSON('unit/assets/array.json', resolve, reject);
       });
     });
 
-    test('should pass an Array to callback function', function(done){
-      result = loadJSON('unit/assets/array.json', function(data){
+    test('should pass an Array to callback function', function() {
+      return new Promise(function(resolve, reject) {
+        loadJSON('unit/assets/array.json', resolve, reject);
+      }).then(function(data) {
         assert.isArray(data, 'Array passed to callback function');
         assert.lengthOf(data, 3, 'length of data is 3');
-        done();
       });
     });
 
-    test('should call error callback function if provided', function(done){
-      result = loadJSON('unit/assets/arr.json', function(data){}, function(){
-        done();
+    test('should call error callback function if provided', function() {
+      return new Promise(function(resolve, reject) {
+        loadJSON('unit/assets/arr.json', function(data) {
+          reject('Success callback executed');
+        }, resolve);
       });
     });
 
-    test('should pass error object to error callback function', function(done) {
-      result = loadJSON('unit/assets/arr.json', function(data){
-        // should not be called
-      }, function(err){
-        assert.isObject(err, 'err is an object');
+    test('should pass error object to error callback function', function() {
+      return new Promise(function(resolve, reject) {
+        loadJSON('unit/assets/arr.json', function(data) {
+          reject('Success callback executed');
+        }, resolve);
+      }).then(function(err) {
+        assert.instanceOf(err, Response, 'err is a Response.');
         assert.isFalse(err.ok, 'err.ok is false');
         assert.equal(err.status, 404, 'Error status is 404');
-        done();
       });
     });
 
-    /*test('should allow json to override jsonp in 3rd param',
-      function(done){
-
-        var url = 'http://localhost:9001/unit/assets/array.json';
-        var datatype = 'json';
-        var myCallback = function(resp){
-          assert.ok(resp);
-          //assert.typeOf(resp,'Object');
-          done();
-        };
-        result = loadJSON(url,myCallback,datatype);
-    });*/
+    // @TODO Need to check this does what it should
+    test('should allow json to override jsonp in 3rd param', function() {
+      return new Promise(function(resolve, reject) {
+        result = loadJSON('unit/assets/array.json', resolve, reject, 'json');
+      }).then(function(resp) {
+        assert.ok(resp);
+      });
+    });
   });
 
   // loadStrings()
@@ -172,33 +177,38 @@ suite('Files', function() {
       assert.typeOf(loadStrings, 'function');
     });
 
-    test('should call callback function if provided', function(done){
-      result = loadStrings('unit/assets/sentences.txt', function(data){
-        done();
+    test('should call callback function if provided', function() {
+      return new Promise(function(resolve, reject) {
+        loadStrings('unit/assets/sentences.txt', resolve, reject);
       });
     });
 
-    test('should pass an Array to callback function', function(){
-      result = loadStrings('unit/assets/sentences.txt', function(data){
+    test('should pass an Array to callback function', function() {
+      return new Promise(function(resolve, reject) {
+        loadStrings('unit/assets/sentences.txt', resolve, reject);
+      }).then(function(data) {
         assert.isArray(data, 'Array passed to callback function');
         assert.lengthOf(data, 68, 'length of data is 68');
       });
     });
 
-    test('should call error callback function if provided', function(done){
-      result = loadStrings('unit/assets/sen.txt', function(data){}, function(){
-        done();
+    test('should call error callback function if provided', function() {
+      return new Promise(function(resolve, reject) {
+        loadStrings('unit/assets/sen.txt', function(data) {
+          reject('Success callback executed');
+        }, resolve);
       });
     });
 
-    test('should pass error object to error callback function', function(done) {
-      result = loadStrings('unit/assets/sen.txt', function(data){
-        // should not be called
-      }, function(err){
-        assert.isObject(err, 'err is an object');
+    test('should pass error object to error callback function', function() {
+      return new Promise(function(resolve, reject) {
+        loadStrings('unit/assets/sen.txt', function(data) {
+          reject('Success callback executed');
+        }, resolve);
+      }).then(function(err) {
+        assert.instanceOf(err, Response, 'err is an object');
         assert.isFalse(err.ok, 'err.ok is false');
         assert.equal(err.status, 404, 'Error status is 404');
-        done();
       });
     });
   });

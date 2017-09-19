@@ -12,6 +12,22 @@ suite('Renderer', function() {
     myp5.remove();
   });
 
+  suite('p5.prototype.createCanvas', function() {
+    test('should have correct initial colors', function() {
+      var white = myp5.color(255, 255, 255).levels;
+      var black = myp5.color(0, 0, 0).levels;
+      assert.deepEqual(myp5.color(myp5._renderer._getFill()).levels, white);
+      assert.deepEqual(myp5.color(myp5._renderer._getStroke()).levels, black);
+      assert.deepEqual(myp5.color(myp5.drawingContext.fillStyle).levels, white);
+      assert.deepEqual(myp5.color(myp5.drawingContext.strokeStyle).levels, black);
+      myp5.createCanvas(100, 100);
+      assert.deepEqual(myp5.color(myp5._renderer._getFill()).levels, white);
+      assert.deepEqual(myp5.color(myp5._renderer._getStroke()).levels, black);
+      assert.deepEqual(myp5.color(myp5.drawingContext.fillStyle).levels, white);
+      assert.deepEqual(myp5.color(myp5.drawingContext.strokeStyle).levels, black);
+    });
+  });
+
   suite('p5.prototype.resizeCanvas' , function() {
     test('should resize canvas', function() {
       myp5.resizeCanvas(10, 20);
@@ -54,20 +70,17 @@ suite('Renderer', function() {
       myp5.stroke(255, 50, 50);
       myp5.line(75, 25, 25, 75);
     };
-    suite('blendMode()', function() {
-      test('should be a function', function() {
-        assert.ok(blendMode);
-        assert.typeOf(blendMode, 'function');
-      });
-      test('should be able to ADD', function() {
-        myp5.blendMode(myp5.ADD);
-        drawX();
-      });
-      test('should be able to MULTIPLY', function() {
-        myp5.blendMode(myp5.MULTIPLY);
-        drawX();
-      });
-
+    test('should be a function', function() {
+      assert.ok(blendMode);
+      assert.typeOf(blendMode, 'function');
+    });
+    test('should be able to ADD', function() {
+      myp5.blendMode(myp5.ADD);
+      drawX();
+    });
+    test('should be able to MULTIPLY', function() {
+      myp5.blendMode(myp5.MULTIPLY);
+      drawX();
     });
   });
 

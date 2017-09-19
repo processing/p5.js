@@ -19,7 +19,15 @@ suite('Random', function() {
         }
       });
       test('should return a number', function() {
-        assert.typeOf(results[0], 'number');
+        for(var i = 0; i < 10; i++) {
+          assert.typeOf(results[i], 'number');
+        }
+      });
+      test('should return a number 0 <= n < 1', function() {
+        for(var i = 0; i < 10; i++) {
+          assert.isTrue(results[i] >= 0);
+          assert.isTrue(results[i] < 1);
+        }
       });
       test('should return same sequence of numbers', function() {
         for (var i = 0; i < 5; i++) {
@@ -28,20 +36,6 @@ suite('Random', function() {
       });
     });
 
-
-
-    suite('random()', function() {
-      setup(function() {
-        result = random();
-      });
-      test('should return a number', function() {
-        assert.typeOf(result, 'number');
-      });
-      test('should return a number 0 <= n < 1', function() {
-        assert.isTrue(result >= 0);
-        assert.isTrue(result < 1);
-      });
-    });
     suite('random(5)', function() {
       test('should return a number 0 <= n < 5', function() {
         result = random(5);
@@ -49,6 +43,7 @@ suite('Random', function() {
         assert.isTrue(result < 5);
       });
     });
+
     suite('random(1, 10)', function() {
       test('should return a number 1 <= n < 10', function() {
         result = random(1, 10);
@@ -56,6 +51,7 @@ suite('Random', function() {
         assert.isTrue(result < 10);
       });
     });
+
     suite('random(["apple", "pear", "orange", "grape"])', function() {
       test('should return a fruit', function() {
         var fruits = ['apple', 'pear', 'orange', 'grape'];
@@ -64,5 +60,4 @@ suite('Random', function() {
       });
     });
   });
-
 });

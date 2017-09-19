@@ -11,23 +11,42 @@ suite('Structure', function() {
 
   suite('p5.prototype.loop and p5.prototype.noLoop', function() {
     test('noLoop should stop', function() {
-      //myp5.noLoop();
-      var c0 = myp5.frameCount;
-      myp5.noLoop();
-      myp5.ellipse(0, 0, 10, 10);
-      var c1 = myp5.frameCount;
-      assert.equal(c0, c1);
+      return new Promise(function(resolve, reject) {
+        var c0 = myp5.frameCount;
+        myp5.noLoop();
+        myp5.draw = function() {
+          var c1 = myp5.frameCount;
+          // Allow one final draw to run
+          if(c1 > c0 + 1) {
+            reject('Entered draw');
+          }
+        };
+        setTimeout(resolve, 100);
+      });
     });
 
-    // This one is failing randomly sometimes. @TODO figure out why
-    // test('loop should restart', function() {
-    //   myp5.noLoop();
-    //   var c0 = myp5.frameCount;
-    //   myp5.loop();
-    //   myp5.ellipse(0, 0, 10, 10);
-    //   var c1 = myp5.frameCount;
-    //   assert.notEqual(c0, c1);
-    // });
+    test('loop should restart', function() {
+      return new Promise(function(resolve, reject) {
+        var c0 = myp5.frameCount;
+        myp5.noLoop();
+        myp5.draw = function() {
+          var c1 = myp5.frameCount;
+          // Allow one final draw to run
+          if(c1 > c0 + 1) {
+            reject('Entered draw');
+          }
+        };
+        setTimeout(resolve, 100);
+      }).then(function() {
+        return new Promise(function(resolve, reject) {
+          myp5.draw = resolve;
+          myp5.loop();
+          setTimeout(function() {
+            reject('Failed to restart draw.');
+          }, 100);
+        });
+      });
+    });
 
   });
 
