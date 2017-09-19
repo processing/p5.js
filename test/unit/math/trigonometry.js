@@ -7,10 +7,19 @@ suite('Trigonometry', function() {
   var ratio = 0.5;
   var RADIANS = 'radians';
   var DEGREES = 'degrees';
+  var myp5;
 
-  var myp5 = new p5(function( p ) {
-    p.setup = function() {};
-    p.draw = function() {};
+  setup(function(done) {
+    new p5(function(p){
+      p.setup = function() {
+        myp5 = p;
+        done();
+      };
+    });
+  });
+
+  teardown(function() {
+    myp5.remove();
   });
 
   var handleDegreesAndRadians = function(func) {

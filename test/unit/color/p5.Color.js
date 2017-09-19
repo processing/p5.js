@@ -1,8 +1,19 @@
 suite('p5.Color', function() {
-  var myp5 = new p5(function( sketch ) {
-    sketch.setup = function() {};
-    sketch.draw = function() {};
+  var myp5;
+
+  setup(function(done) {
+    new p5(function(p){
+      p.setup = function() {
+        myp5 = p;
+        done();
+      };
+    });
   });
+
+  teardown(function() {
+    myp5.remove();
+  });
+
   var c;
 
   suite('p5.prototype.color(r,g,b)', function() {

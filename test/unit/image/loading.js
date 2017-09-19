@@ -26,8 +26,21 @@ var testImageRender = function(file, sketch) {
 };
 
 suite('loading images', function () {
-  var myp5 = new p5(function () {
-  }, true);
+  var myp5;
+
+  setup(function(done) {
+    new p5(function(p){
+      p.setup = function() {
+        myp5 = p;
+        done();
+      };
+    });
+  });
+
+  teardown(function() {
+    myp5.remove();
+  });
+
   var imagePath = 'unit/assets/nyan_cat.gif';
 
   setup(function disableFileLoadError() {

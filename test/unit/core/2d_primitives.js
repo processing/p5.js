@@ -1,19 +1,24 @@
 suite('2D Primitives', function() {
+  var myp5;
 
-  var myp5 = new p5(function( p ) {
-    p.setup = function() {};
-    p.draw = function() {};
+  setup(function(done) {
+    new p5(function(p){
+      p.setup = function() {
+        myp5 = p;
+        done();
+      };
+    });
   });
 
   teardown(function() {
-    myp5.clear();
+    myp5.remove();
   });
 
+
   suite('p5.prototype.arc', function() {
-    var arc = p5.prototype.arc;
     test('should be a function', function() {
-      assert.ok(arc);
-      assert.typeOf(arc, 'function');
+      assert.ok(myp5.arc);
+      assert.typeOf(myp5.arc, 'function');
     });
     test('no friendly-err-msg', function() {
       assert.doesNotThrow(function() {
@@ -36,10 +41,9 @@ suite('2D Primitives', function() {
   });
 
   suite('p5.prototype.ellipse', function() {
-    var ellipse = p5.prototype.ellipse;
     test('should be a function', function() {
-      assert.ok(ellipse);
-      assert.typeOf(ellipse, 'function');
+      assert.ok(myp5.ellipse);
+      assert.typeOf(myp5.ellipse, 'function');
     });
     test('no friendly-err-msg', function() {
       assert.doesNotThrow(function() {
@@ -69,10 +73,9 @@ suite('2D Primitives', function() {
   });
 
   suite('p5.prototype.line', function() {
-    var line = p5.prototype.line;
     test('should be a function', function() {
-      assert.ok(line);
-      assert.typeOf(line, 'function');
+      assert.ok(myp5.line);
+      assert.typeOf(myp5.line, 'function');
     });
     test('no friendly-err-msg, 2D', function() {
       assert.doesNotThrow(function() {
@@ -108,10 +111,9 @@ suite('2D Primitives', function() {
   });
 
   suite('p5.prototype.point', function() {
-    var point = p5.prototype.point;
     test('should be a function', function() {
-      assert.ok(point);
-      assert.typeOf(point, 'function');
+      assert.ok(myp5.point);
+      assert.typeOf(myp5.point, 'function');
     });
     test('no friendly-err-msg, 2D', function() {
       assert.doesNotThrow(function() {
@@ -147,10 +149,9 @@ suite('2D Primitives', function() {
   });
 
   suite('p5.prototype.quad', function() {
-    var quad = p5.prototype.quad;
     test('should be a function', function() {
-      assert.ok(quad);
-      assert.typeOf(quad, 'function');
+      assert.ok(myp5.quad);
+      assert.typeOf(myp5.quad, 'function');
     });
     test('no friendly-err-msg, 2D', function() {
       assert.doesNotThrow(function() {
@@ -173,10 +174,9 @@ suite('2D Primitives', function() {
   });
 
   suite('p5.prototype.rect', function() {
-    var rect = p5.prototype.rect;
     test('should be a function', function() {
-      assert.ok(rect);
-      assert.typeOf(rect, 'function');
+      assert.ok(myp5.rect);
+      assert.typeOf(myp5.rect, 'function');
     });
     test('no friendly-err-msg, format I', function() {
       assert.doesNotThrow(function() {
@@ -212,10 +212,9 @@ suite('2D Primitives', function() {
   });
 
   suite('p5.prototype.triangle', function() {
-    var triangle = p5.prototype.triangle;
     test('should be a function', function() {
-      assert.ok(triangle);
-      assert.typeOf(triangle, 'function');
+      assert.ok(myp5.triangle);
+      assert.typeOf(myp5.triangle, 'function');
     });
     test('no friendly-err-msg', function() {
       assert.doesNotThrow(function() {

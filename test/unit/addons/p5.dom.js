@@ -1,6 +1,20 @@
 suite('DOM', function(){
   suite('p5.prototype.select', function() {
-    var select = p5.prototype.select;
+    var myp5;
+
+    setup(function(done) {
+      new p5(function(p){
+        p.setup = function() {
+          myp5 = p;
+          done();
+        };
+      });
+    });
+
+    teardown(function() {
+      myp5.remove();
+    });
+
     var elt;
 
     teardown(function() {
@@ -15,11 +29,11 @@ suite('DOM', function(){
       elt.setAttribute('id', 'blarg');
       document.body.appendChild(elt);
 
-      assert.strictEqual(select('#blarg').elt, elt);
+      assert.strictEqual(myp5.select('#blarg').elt, elt);
     });
 
     test('should return null when elements by ID are not found', function() {
-      assert.isNull(select('#blarg'));
+      assert.isNull(myp5.select('#blarg'));
     });
 
     test('should find elements by class', function() {
@@ -27,22 +41,22 @@ suite('DOM', function(){
       elt.setAttribute('class', 'blarg');
       document.body.appendChild(elt);
 
-      assert.strictEqual(select('.blarg').elt, elt);
+      assert.strictEqual(myp5.select('.blarg').elt, elt);
     });
 
     test('should return null when elements by class are not found', function() {
-      assert.isNull(select('.blarg'));
+      assert.isNull(myp5.select('.blarg'));
     });
 
     test('should find elements by tag name', function() {
       elt = document.createElement('aside');
       document.body.appendChild(elt);
 
-      assert.strictEqual(select('aside').elt, elt);
+      assert.strictEqual(myp5.select('aside').elt, elt);
     });
 
     test('should return null when elements by tag name are not found', function() {
-      assert.isNull(select('aside'));
+      assert.isNull(myp5.select('aside'));
     });
   });
 });

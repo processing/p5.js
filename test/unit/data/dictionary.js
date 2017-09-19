@@ -1,15 +1,23 @@
 suite('Dictionary Objects', function() {
-  var myp5 = new p5(function( p ) {
-    p.setup = function() {};
-    p.draw = function() {};
+  var myp5;
+  var stringDict;
+  var numberDict;
+
+  setup(function(done) {
+    new p5(function(p) {
+      p.setup = function() {
+        myp5 = p;
+        stringDict = myp5.createStringDict('happy', 'coding');
+        numberDict = myp5.createNumberDict(1, 2);
+        done();
+      };
+    });
   });
 
-  teardown(function(){
-    myp5.clear();
+  teardown(function() {
+    myp5.remove();
   });
 
-  var stringDict = myp5.createStringDict('happy', 'coding');
-  var numberDict = myp5.createNumberDict(1, 2);
 
   suite('p5.prototype.stringDict', function() {
     test('should be created', function() {

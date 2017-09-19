@@ -1,18 +1,29 @@
 suite('Noise', function() {
+  var myp5;
+
+  setup(function(done) {
+    new p5(function(p){
+      p.setup = function() {
+        myp5 = p;
+        done();
+      };
+    });
+  });
+
+  teardown(function() {
+    myp5.remove();
+  });
 
   // This could use some better  testing!
   // Just checking that we get an actual number now
   // 1D noise only
   // ALso need test for noiseSeed and noiseDetail
-  var noise = p5.prototype.noise;
-  var noiseSeed = p5.prototype.noiseSeed;
   var result;
   var results = [];
 
   suite('p5.prototype.noise', function() {
-    var noise = p5.prototype.noise;
     setup(function() {
-      result = noise(0);
+      result = myp5.noise(0);
     });
     test('should return a number', function() {
       assert.typeOf(result, 'number');
@@ -26,16 +37,16 @@ suite('Noise', function() {
   // Test for noiseSeed
   suite('p5.prototype.noiseSeed', function() {
     setup(function() {
-      noiseSeed(99);
+      myp5.noiseSeed(99);
       var t = 0;
       for (var i = 0; i < 5; i++) {
-        results[i] = noise(t);
+        results[i] = myp5.noise(t);
         t += 0.01;
       }
-      noiseSeed(99);
+      myp5.noiseSeed(99);
       t = 0;
       for (i = 5; i < 10; i++) {
-        results[i] = noise(t);
+        results[i] = myp5.noise(t);
         t += 0.01;
       }
     });
