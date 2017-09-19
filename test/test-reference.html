@@ -137,32 +137,50 @@
       examples.forEach(function(el, i) {
         var exampleCode = el.textContent
           .replace(/assets\//g, '../docs/reference/assets/');
+        var startTime = null;
 
-        var testFunc = function(done) {
-          var startTime = Date.now();
+        var testFunc = function() {
+          var test_context = this;
+          return new Promise(function(resolve, reject) {
+            startTime = Date.now();
 
-          this.timeout(MS_TIMEOUT);
-          myp5Div = document.createElement('div');
-          document.body.appendChild(myp5Div);
+            test_context.timeout(MS_TIMEOUT);
+            myp5Div = document.createElement('div');
+            document.body.appendChild(myp5Div);
 
-          myp5 = new p5(createExampleSketch(exampleCode, function(p) {
-            var drawCalled = false;
-            var oldDraw = p.draw || function() {};
+            myp5 = new p5(createExampleSketch(exampleCode, function(p) {
+              var drawCalled = false;
+              var oldSetup = p.setup || function() {};
+              var oldDraw = p.draw || function() {};
 
-            p.draw = function() {
-              oldDraw.call(p);
-              if (drawCalled) return;
-              drawCalled = true;
-
-              if (Date.now() - startTime > MS_TIMEOUT) {
-                // This can happen if the page contained processor-intensive
-                // code that blocked the UI for too long.
-                return done(new Error("code took too long to execute"));
+              p.setup = function() {
+                try {
+                  oldSetup();
+                } catch(err) {
+                  reject(err);
+                }
               }
 
-              done();
-            };
-          }), myp5Div);
+              p.draw = function() {
+                try {
+                  oldDraw.call(p);
+                  if (drawCalled) return;
+                  drawCalled = true;
+
+                  if (Date.now() - startTime > MS_TIMEOUT) {
+                    // This can happen if the page contained processor-intensive
+                    // code that blocked the UI for too long.
+                    reject(new Error("code took too long to execute"));
+                    return;
+                  }
+
+                  resolve();
+                } catch(err) {
+                  reject(err);
+                }
+              };
+            }, myp5Div));
+          });
         };
 
         testFunc.toString = function() {
