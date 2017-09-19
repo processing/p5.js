@@ -22,7 +22,15 @@ function inject(docItem) {
 
   if(original) {
     p5.prototype[docItem.name] = function() {
-      p5._validateParameters(docItem.name, arguments);
+      if(!this || !(this instanceof p5)) {
+        // Maybe this should be warned about?
+        // throw new Error(
+        //   'This value is not p5 in ' + docItem.name + ', params: ' +
+        //   arguments + '. This value: ' + this
+        // );
+      } else {
+        this._validateParameters(docItem.name, arguments);
+      }
       return original.apply(this, arguments);
     };
   }

@@ -121,7 +121,7 @@ p5._friendlyFileLoadError = function (errorType, filePath) {
 *  "ellipse was expecting a number for parameter #1,
 *           received "foo" instead."
 */
-p5._validateParameters = function validateParameters(func, args) {
+p5.prototype._validateParameters = function validateParameters(func, args) {
   if (p5.disableFriendlyErrors ||
     typeof(IS_MINIFIED) !== 'undefined') {
     return; // skip FES
@@ -143,12 +143,12 @@ p5._validateParameters = function validateParameters(func, args) {
     }
     // generate err msg
     for (var n = 0; n < errorArray.length; n++) {
-      p5._friendlyParamError(errorArray[n], func);
+      this._friendlyParamError(errorArray[n], func);
     }
   } else {                 // func has a single format
     errorArray = testParamFormat(args, arrDoc[0]);
     for(var m = 0; m < errorArray.length; m++) {
-      p5._friendlyParamError(errorArray[m], func);
+      this._friendlyParamError(errorArray[m], func);
     }
   }
 };
@@ -238,7 +238,7 @@ function testParamType(param, types){
   return false;
 }
 // function for generating console.log() msg
-p5._friendlyParamError = function (errorObj, func) {
+p5.prototype._friendlyParamError = function (errorObj, func) {
   var message;
   switch (errorObj.type){
     case 'EMPTY_VAR':
@@ -414,7 +414,7 @@ function helpForMisusedAtTopLevelCode(e, log) {
 
 // Exposing this primarily for unit testing.
 p5.prototype._helpForMisusedAtTopLevelCode = helpForMisusedAtTopLevelCode;
-p5.prototype._validateParameters = p5.validateParameters;
+// p5.prototype._validateParameters = p5.validateParameters;
 
 if (document.readyState !== 'complete') {
   window.addEventListener('error', helpForMisusedAtTopLevelCode, false);
