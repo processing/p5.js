@@ -11,17 +11,15 @@ suite('Noise', function() {
 
   suite('p5.prototype.noise', function() {
     var noise = p5.prototype.noise;
-    suite('noise()', function() {
-      setup(function() {
-        result = noise(0);
-      });
-      test('should return a number', function() {
-        assert.typeOf(result, 'number');
-      });
-      test('should return a number 0 < n < 1', function() {
-        assert.isTrue(result > 0);
-        assert.isTrue(result < 1);
-      });
+    setup(function() {
+      result = noise(0);
+    });
+    test('should return a number', function() {
+      assert.typeOf(result, 'number');
+    });
+    test('should return a number 0 < n < 1', function() {
+      assert.isTrue(result > 0);
+      assert.isTrue(result < 1);
     });
   });
 
@@ -54,6 +52,4 @@ suite('Noise', function() {
       }
     });
   });
-
-
 });

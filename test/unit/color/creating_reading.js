@@ -13,24 +13,24 @@ suite('color/CreatingReading', function() {
     setup(function() {
       myp5.colorMode(myp5.RGB);
     });
-    test('alpha(): no friendly-err-msg I', function() {
+    test('no friendly-err-msg I', function() {
       assert.doesNotThrow(function() {
         var string = 'magenta';
         c = myp5.color(string);
         val = myp5.alpha(c);
-        assert.equal(val, 255);
+        assert.approximately(val, 255, 0.01);
       },
         Error, 'got unwanted exception');
     });
-    test('alpha(): no friendly-err-msg II', function() {
+    test('no friendly-err-msg II', function() {
       assert.doesNotThrow(function() {
         c = myp5.color('hsba(160, 100%, 50%, 0.5)');
         val = myp5.alpha(c);
-        assert.equal(val, 127.5);
+        assert.approximately(val, 127.5, 0.01);
       },
         Error, 'got unwanted exception');
     });
-    test('alpha(): wrong param type at #0', function() {
+    test('wrong param type at #0', function() {
       assert.doesNotThrow(function() {
         c = 20;
         val = myp5.alpha(c);
@@ -47,7 +47,7 @@ suite('color/CreatingReading', function() {
       assert.doesNotThrow(function() {
         c = myp5.color('hsl(126, 100%, 60%)');
         val = myp5.red(c);
-        expect(Math.abs(val-51)).to.be.at.most(2); // max approx err 2
+        assert.approximately(val, 51, 0.5);
       },
         Error, 'got unwanted exception');
     });
@@ -55,7 +55,7 @@ suite('color/CreatingReading', function() {
       assert.doesNotThrow(function() {
         c = myp5.color('hsl(126, 100%, 60%)');
         val = myp5.green(c);
-        assert.equal(val, 255);
+        assert.approximately(val, 255, 0.5);
       },
         Error, 'got unwanted exception');
     });
@@ -63,7 +63,7 @@ suite('color/CreatingReading', function() {
       assert.doesNotThrow(function() {
         c = myp5.color('hsl(126, 100%, 60%)');
         val = myp5.blue(c);
-        expect(Math.abs(val-70)).to.be.at.most(2); // max approx err 2
+        assert.approximately(val, 71, 0.5);
       },
         Error, 'got unwanted exception');
     });
@@ -77,7 +77,7 @@ suite('color/CreatingReading', function() {
       assert.doesNotThrow(function() {
         c = myp5.color('#7fffd4');
         val = myp5.hue(c);
-        expect(Math.abs(val-160)).to.be.at.most(2); // max approx err 2
+        assert.approximately(val, 160, 0.5);
       },
         Error, 'got unwanted exception');
     });
@@ -85,7 +85,7 @@ suite('color/CreatingReading', function() {
       assert.doesNotThrow(function() {
         c = myp5.color('#7fffd4');
         val = myp5.brightness(c);
-        assert.equal(val, 100);
+        assert.approximately(val, 100, 0.5);
       },
         Error, 'got unwanted exception');
     });
@@ -93,7 +93,7 @@ suite('color/CreatingReading', function() {
       assert.doesNotThrow(function() {
         c = myp5.color('#7fffd4');
         val = myp5.lightness(c);
-        expect(Math.abs(val-75)).to.be.at.most(2); // max approx err 2
+        assert.approximately(val, 75, 0.5);
       },
         Error, 'got unwanted exception');
     });
@@ -101,7 +101,7 @@ suite('color/CreatingReading', function() {
       assert.doesNotThrow(function() {
         c = myp5.color('#7fffd4');
         val = myp5.saturation(c);
-        assert.equal(val, 100);
+        assert.approximately(val, 100, 0.5);
       },
         Error, 'got unwanted exception');
     });
@@ -139,7 +139,7 @@ suite('color/CreatingReading', function() {
       assert.deepEqual(interA.levels, [218, 165, 32, 255]);
       assert.deepEqual(interB.levels, [72, 61, 139, 255]);
     });
-    test('lerpColor(): missing param #2', function() {
+    test('missing param #2', function() {
       assert.doesNotThrow(function() {
         myp5.lerpColor(fromColor, toColor);
       },
