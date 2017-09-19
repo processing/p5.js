@@ -211,7 +211,9 @@ function testParamFormat(args, format){
 // Returns true if PASS, false if FAIL
 function testParamClass(param, types){
   for (var i = 0; i < types.length; i++) {
-    if (types[i] === 'Array') {
+    if (types[i] === 'Any') {
+      return true;
+    } else if(types[i] === 'Array') {
       if(param instanceof Array) {
         return true;
       }
@@ -229,7 +231,9 @@ function testParamClass(param, types){
 // Returns true if PASS, false if FAIL
 function testParamType(param, types){
   for (var i = 0; i < types.length; i++) {
-    if (typeof(param) === types[i].toLowerCase()) {
+    if (types[i] === 'Any') {
+      return true;
+    } else if (typeof(param) === types[i].toLowerCase()) {
       return true;      // type match, pass
     } else if (types[i] === 'Constant') {
       return true;      // accepts any constant, pass

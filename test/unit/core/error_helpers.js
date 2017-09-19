@@ -19,21 +19,21 @@ suite('Error Helpers', function() {
   suite('validateParameters: Numbers + optional Constant', function(){
     test('arc(): no friendly-err-msg', function() {
       assert.doesNotThrow(function() {
-          p5._validateParameters('arc',
+          myp5._validateParameters('arc',
             [1, 1, 10.5, 10, 0, Math.PI, 'pie']);
         },
         Error, 'got unwanted exception');
     });
     test('arc(): missing param #4, #5', function() {
       assert.doesNotThrow(function() {
-          p5._validateParameters('arc',
+          myp5._validateParameters('arc',
             [1, 1, 10.5, 10]);
         },
         Error, 'got unwanted exception');
     });
     test('arc(): wrong param type at #0', function() {
       assert.doesNotThrow(function() {
-          p5._validateParameters('arc',
+          myp5._validateParameters('arc',
             ['1', 1, 10.5, 10, 0, Math.PI, 'pie']);
         },
         Error, 'got unwanted exception');
@@ -43,21 +43,21 @@ suite('Error Helpers', function() {
   suite('validateParameters: Numbers + optional Constant', function(){
     test('rect(): no friendly-err-msg', function() {
       assert.doesNotThrow(function() {
-          p5._validateParameters('rect',
+          myp5._validateParameters('rect',
             [1, 1, 10.5, 10]);
         },
         Error, 'got unwanted exception');
     });
     test('rect(): missing param #3', function() {
       assert.doesNotThrow(function() {
-          p5._validateParameters('rect',
+          myp5._validateParameters('rect',
             [1, 1, 10.5]);
         },
         Error, 'got unwanted exception');
     });
     test('rect(): wrong param type at #0', function() {
       assert.doesNotThrow(function() {
-          p5._validateParameters('rect',
+          myp5._validateParameters('rect',
             ['1', 1, 10.5, 10, 0, Math.PI]);
         },
         Error, 'got unwanted exception');
@@ -68,7 +68,7 @@ suite('Error Helpers', function() {
     test('ambientLight(): no friendly-err-msg', function() {
       assert.doesNotThrow(function() {
           var c = myp5.color(255, 204, 0);
-          p5._validateParameters('ambientLight', [c]);
+          myp5._validateParameters('ambientLight', [c]);
         },
         Error, 'got unwanted exception');
     });
@@ -77,19 +77,19 @@ suite('Error Helpers', function() {
   suite('validateParameters: multi-format', function(){
     test('color(): no friendly-err-msg', function() {
       assert.doesNotThrow(function() {
-          p5._validateParameters('color', [65]);
+          myp5._validateParameters('color', [65]);
         },
         Error, 'got unwanted exception');
     });
     test('color(): no friendly-err-msg', function() {
       assert.doesNotThrow(function() {
-          p5._validateParameters('color', [65, 0.5]);
+          myp5._validateParameters('color', [65, 0.5]);
         },
         Error, 'got unwanted exception');
     });
     test('color(): no friendly-err-msg', function() {
       assert.doesNotThrow(function() {
-          p5._validateParameters('color', [255, 204, 0]);
+          myp5._validateParameters('color', [255, 204, 0]);
         },
         Error, 'got unwanted exception');
     });
@@ -102,7 +102,7 @@ suite('Error Helpers', function() {
         log.push(msg);
       };
 
-      p5.prototype._helpForMisusedAtTopLevelCode({message: msg}, logger);
+      myp5._helpForMisusedAtTopLevelCode({message: msg}, logger);
       assert.equal(log.length, 1);
       return log[0];
     };
