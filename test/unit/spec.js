@@ -43,7 +43,11 @@ var spec = {
   ],
   'webgl': [
     'matrix',
-    'p5.RendererGL'
+    'p5.RendererGL',
+    'p5.Shader',
+    'p5.Texture',
+    'pixels',
+    'stroke'
   ]
 };
 Object.keys(spec).map(function(folder) {

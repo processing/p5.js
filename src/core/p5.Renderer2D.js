@@ -223,7 +223,7 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
 
   var sx = x * pd;
   var sy = y * pd;
-  if (w === 1 && h === 1){
+  if (w === 1 && h === 1 && !(this instanceof p5.RendererGL)){
     var imageData = this.drawingContext.getImageData(sx, sy, 1, 1).data;
     //imageData = [0,0,0,0];
     return [
