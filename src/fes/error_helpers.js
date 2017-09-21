@@ -9,8 +9,6 @@
 var p5 = require('../core/core');
 var doFriendlyWelcome = false; // TEMP until we get it all working LM
 // for parameter validation
-var dataDoc = require('../../docs/reference/data.json');
-var arrDoc = JSON.parse(JSON.stringify(dataDoc));
 
 // -- Borrowed from jQuery 1.11.3 --
 var class2type = {};
@@ -121,12 +119,12 @@ p5._friendlyFileLoadError = function (errorType, filePath) {
 *  "ellipse was expecting a number for parameter #1,
 *           received "foo" instead."
 */
-p5.prototype._validateParameters = function validateParameters(func, args) {
+p5.prototype._validateParameters = function validateParameters(doc, args) {
   if (p5.disableFriendlyErrors ||
     typeof(IS_MINIFIED) !== 'undefined') {
     return; // skip FES
   }
-  var arrDoc = lookupParamDoc(func);
+  var arrDoc = lookupParamDoc(doc);
   var errorArray = [];
   var minErrCount = 999999;
   if (arrDoc.length > 1){   // func has multiple formats
@@ -143,29 +141,27 @@ p5.prototype._validateParameters = function validateParameters(func, args) {
     }
     // generate err msg
     for (var n = 0; n < errorArray.length; n++) {
-      this._friendlyParamError(errorArray[n], func);
+      this._friendlyParamError(errorArray[n], doc.name);
     }
   } else {                 // func has a single format
     errorArray = testParamFormat(args, arrDoc[0]);
     for(var m = 0; m < errorArray.length; m++) {
-      this._friendlyParamError(errorArray[m], func);
+      this._friendlyParamError(errorArray[m], doc.name);
     }
   }
 };
 // validateParameters() helper functions:
 // lookupParamDoc() for querying data.json
-function lookupParamDoc(func){
-  var queryResult = arrDoc.classitems.
-    filter(function (x) { return x.name === func; });
+function lookupParamDoc(doc){
   // different JSON structure for funct with multi-format
-  if (queryResult[0].hasOwnProperty('overloads')){
+  if (doc.hasOwnProperty('overloads')){
     var res = [];
-    for(var i = 0; i < queryResult[0].overloads.length; i++) {
-      res.push(queryResult[0].overloads[i].params);
+    for(var i = 0; i < doc.overloads.length; i++) {
+      res.push(doc.overloads[i].params);
     }
     return res;
   } else {
-    return [queryResult[0].params];
+    return [doc.params];
   }
 }
 function testParamFormat(args, format){

@@ -29,7 +29,7 @@ function inject(docItem) {
         //   arguments + '. This value: ' + this
         // );
       } else {
-        this._validateParameters(docItem.name, arguments);
+        this._validateParameters(docItem, arguments);
       }
       return original.apply(this, arguments);
     };
