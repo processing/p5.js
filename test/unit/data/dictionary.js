@@ -1,15 +1,23 @@
 suite('Dictionary Objects', function() {
-  var myp5 = new p5(function( p ) {
-    p.setup = function() {};
-    p.draw = function() {};
+  var myp5;
+  var stringDict;
+  var numberDict;
+
+  setup(function(done) {
+    new p5(function(p) {
+      p.setup = function() {
+        myp5 = p;
+        stringDict = myp5.createStringDict('happy', 'coding');
+        numberDict = myp5.createNumberDict(1, 2);
+        done();
+      };
+    });
   });
 
-  teardown(function(){
-    myp5.clear();
+  teardown(function() {
+    myp5.remove();
   });
 
-  var stringDict = myp5.createStringDict('happy', 'coding');
-  var numberDict = myp5.createNumberDict(1, 2);
 
   suite('p5.prototype.stringDict', function() {
     test('should be created', function() {
@@ -77,16 +85,19 @@ suite('Dictionary Objects', function() {
 
 
     test('should add values together', function() {
+      numberDict.set(1, 5);
       numberDict.add(1, 4);
       assert.deepEqual(numberDict.get(1), 9);
     });
 
     test('should subtract from value', function() {
+      numberDict.set(1, 9);
       numberDict.sub(1, 3);
       assert.deepEqual(numberDict.get(1), 6);
     });
 
     test('should divide from value', function() {
+      numberDict.set(1, 6);
       numberDict.div(1, 3);
       assert.deepEqual(numberDict.get(1), 2);
     });
@@ -97,11 +108,18 @@ suite('Dictionary Objects', function() {
     });
 
     test('should find minimum value', function() {
+      numberDict.clear();
+      [10, 4, 6, 92, 100].forEach(function(x, i) {
+        numberDict.set(i, x);
+      });
       assert.deepEqual(numberDict.minValue(), 4);
     });
 
     test('should find maximum value', function() {
-      assert.deepEqual(numberDict.maxValue(), 6);
+      [10, 4, 6, 92, 100].forEach(function(x, i) {
+        numberDict.set(i, x);
+      });
+      assert.deepEqual(numberDict.maxValue(), 100);
     });
 
     test('should clear', function() {

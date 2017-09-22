@@ -125,7 +125,7 @@ p5.prototype.loadJSON = function () {
   }
 
   var self = this;
-  p5.prototype.httpDo(path, 'GET', options, t, function(resp){
+  this.httpDo(path, 'GET', options, t, function(resp){
     for (var k in resp) {
       ret[k] = resp[k];
     }
@@ -366,7 +366,7 @@ p5.prototype.loadTable = function (path) {
   var t = new p5.Table();
 
   var self = this;
-  p5.prototype.httpDo(path, 'GET', 'text', function(resp){
+  this.httpDo(path, 'GET', 'text', function(resp){
     var state = {};
 
     // define constants
@@ -631,7 +631,7 @@ p5.prototype.loadXML = function() {
   }
 
   var self = this;
-  p5.prototype.httpDo(arguments[0], 'GET', 'xml', function(xml){
+  this.httpDo(arguments[0], 'GET', 'xml', function(xml){
     for(var key in xml) {
       ret[key] = xml[key];
     }

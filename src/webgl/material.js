@@ -114,7 +114,7 @@ p5.prototype.normalMaterial = function(){
  * Texture for geometry.  You can view other possible materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
  * @method texture
- * @param {p5.Image | p5.MediaElement | p5.Graphics} tex 2-dimensional graphics
+ * @param {p5.Image|p5.MediaElement|p5.Graphics} tex 2-dimensional graphics
  *                    to render as texture
  * @chainable
  * @example
