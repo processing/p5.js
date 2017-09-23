@@ -357,7 +357,6 @@ var p5 = function(sketch, node, sync) {
 
       //mandatory update values(matrixs and stack)
 
-      this._setProperty('frameCount', this.frameCount + 1);
       this.redraw();
       this._frameRate = 1000.0/(now - this._lastFrameTime);
       this._lastFrameTime = now;
