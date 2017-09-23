@@ -418,6 +418,7 @@ p5.prototype.mag = function(x, y) {
  * @param  {Number} stop1  upper bound of the value's current range
  * @param  {Number} start2 lower bound of the value's target range
  * @param  {Number} stop2  upper bound of the value's target range
+ * @param  {Boolean} withinBounds constrain the value to the newly mapped range
  * @return {Number}        remapped number
  * @example
  *   <div><code>
@@ -435,7 +436,9 @@ p5.prototype.mag = function(x, y) {
  *       background(204);
  *       var x1 = map(mouseX, 0, width, 25, 75);
  *       ellipse(x1, 25, 25, 25);
- *       var x2 = map(mouseX, 0, width, 0, 100);
+ *       //This ellipse is constrained to the 0-100 range
+ *       //after setting withinBounds to true
+ *       var x2 = map(mouseX, 0, width, 0, 100, true);
  *       ellipse(x2, 75, 25, 25);
  *     }
  *   </code></div>
