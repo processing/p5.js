@@ -209,6 +209,18 @@ suite('Calculation', function() {
       result = myp5.map(1, 0, 10, 0, 20);
       assert.equal(result, 2);
     });
+    test('should extrapolate by default', function() {
+      assert.approximately(myp5.map(10, 0, 1, 10, 11), 20, 0.01);
+      assert.approximately(myp5.map(-1, 0, 1, 10, 11), 9, 0.01);
+      assert.approximately(myp5.map(2, 0, 1, 20, 10), 0, 0.01);
+    });
+    test('shaould clamp correctly', function() {
+      assert.approximately(myp5.map(1, 0, 10, 0, 20, true), 2, 0.01);
+
+      assert.approximately(myp5.map(10, 0, 1, 10, 11, true), 11, 0.01);
+      assert.approximately(myp5.map(-1, 0, 1, 10, 11, true), 10, 0.01);
+      assert.approximately(myp5.map(2, 0, 1, 20, 10, true), 10, 0.01);
+    });
   });
 
   suite('p5.prototype.max', function() {

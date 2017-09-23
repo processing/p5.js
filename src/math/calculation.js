@@ -454,7 +454,11 @@ p5.prototype.map = function (n, start1, stop1, start2, stop2, withinBounds) {
   if (!withinBounds) {
     return newval;
   }
-  return this.constrain(newval, start2, stop2);
+  if (start2 < stop2) {
+    return this.constrain(newval, start2, stop2);
+  } else {
+    return this.constrain(newval, stop2, start2);
+  }
 };
 
 /**
