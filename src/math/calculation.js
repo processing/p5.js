@@ -418,7 +418,7 @@ p5.prototype.mag = function(x, y) {
  * @param  {Number} stop1  upper bound of the value's current range
  * @param  {Number} start2 lower bound of the value's target range
  * @param  {Number} stop2  upper bound of the value's target range
- * @param  {Boolean} withinBounds constrain the value to the newly mapped range
+ * @param  {Boolean} [withinBounds] constrain the value to the newly mapped range
  * @return {Number}        remapped number
  * @example
  *   <div><code>
