@@ -18,7 +18,7 @@ suite('p5.Element', function() {
       myElt.elt.dispatchEvent(new Event('click'));
       assert.equal(myFnCounter, 1);
     });
-    test('attaches mutiple handlers and gets events', function() {
+    test('attaches mutiple handlers and only latest gets events', function() {
       // setup
       var myElt = myp5.createDiv('hello');
       var myFnCounter = 0;

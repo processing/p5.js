@@ -203,8 +203,8 @@ p5.Element.prototype.class = function(c) {
  *
  */
 p5.Element.prototype.mousePressed = function (fxn) {
-  attachListener('mousedown', fxn, this);
-  attachListener('touchstart', fxn, this);
+  adjustListener('mousedown', fxn, this);
+  adjustListener('touchstart', fxn, this);
   return this;
 };
 
@@ -251,7 +251,7 @@ p5.Element.prototype.mousePressed = function (fxn) {
  *
  */
 p5.Element.prototype.doubleClicked = function (fxn) {
-  attachListener('doubleClicked', fxn, this);
+  adjustListener('doubleClicked', fxn, this);
   return this;
 };
 
@@ -316,7 +316,7 @@ p5.Element.prototype.doubleClicked = function (fxn) {
  *
  */
 p5.Element.prototype.mouseWheel = function (fxn) {
-  attachListener('wheel', fxn, this);
+  adjustListener('wheel', fxn, this);
   return this;
 };
 
@@ -366,8 +366,8 @@ p5.Element.prototype.mouseWheel = function (fxn) {
  *
  */
 p5.Element.prototype.mouseReleased = function (fxn) {
-  attachListener('mouseup', fxn, this);
-  attachListener('touchend', fxn, this);
+  adjustListener('mouseup', fxn, this);
+  adjustListener('touchend', fxn, this);
   return this;
 };
 
@@ -420,12 +420,7 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  *
  */
 p5.Element.prototype.mouseClicked = function (fxn) {
-  if (fxn === false) {
-    detachListener('click', this);
-  }
-  else {
-    attachListener('click', fxn, this);
-  }
+  adjustListener('click', this);
   return this;
 };
 
@@ -481,8 +476,8 @@ p5.Element.prototype.mouseClicked = function (fxn) {
  *
  */
 p5.Element.prototype.mouseMoved = function (fxn) {
-  attachListener('mousemove', fxn, this);
-  attachListener('touchmove', fxn, this);
+  adjustListener('mousemove', fxn, this);
+  adjustListener('touchmove', fxn, this);
   return this;
 };
 
@@ -524,7 +519,7 @@ p5.Element.prototype.mouseMoved = function (fxn) {
  *
  */
 p5.Element.prototype.mouseOver = function (fxn) {
-  attachListener('mouseover', fxn, this);
+  adjustListener('mouseover', fxn, this);
   return this;
 };
 
@@ -590,7 +585,7 @@ p5.Element.prototype.mouseOver = function (fxn) {
  *
  */
 p5.Element.prototype.changed = function (fxn) {
-  attachListener('change', fxn, this);
+  adjustListener('change', fxn, this);
   return this;
 };
 
@@ -622,7 +617,7 @@ p5.Element.prototype.changed = function (fxn) {
  *
  */
 p5.Element.prototype.input = function (fxn) {
-  attachListener('input', fxn, this);
+  adjustListener('input', fxn, this);
   return this;
 };
 
@@ -663,7 +658,7 @@ p5.Element.prototype.input = function (fxn) {
  *
  */
 p5.Element.prototype.mouseOut = function (fxn) {
-  attachListener('mouseout', fxn, this);
+  adjustListener('mouseout', fxn, this);
   return this;
 };
 
@@ -709,8 +704,8 @@ p5.Element.prototype.mouseOut = function (fxn) {
  *
  */
 p5.Element.prototype.touchStarted = function (fxn) {
-  attachListener('touchstart', fxn, this);
-  attachListener('mousedown', fxn, this);
+  adjustListener('touchstart', fxn, this);
+  adjustListener('mousedown', fxn, this);
   return this;
 };
 
@@ -748,8 +743,8 @@ p5.Element.prototype.touchStarted = function (fxn) {
  *
  */
 p5.Element.prototype.touchMoved = function (fxn) {
-  attachListener('touchmove', fxn, this);
-  attachListener('mousemove', fxn, this);
+  adjustListener('touchmove', fxn, this);
+  adjustListener('mousemove', fxn, this);
   return this;
 };
 
@@ -796,8 +791,8 @@ p5.Element.prototype.touchMoved = function (fxn) {
  *
  */
 p5.Element.prototype.touchEnded = function (fxn) {
-  attachListener('touchend', fxn, this);
-  attachListener('mouseup', fxn, this);
+  adjustListener('touchend', fxn, this);
+  adjustListener('mouseup', fxn, this);
   return this;
 };
 
@@ -835,7 +830,7 @@ p5.Element.prototype.touchEnded = function (fxn) {
  * nothing displayed
  */
 p5.Element.prototype.dragOver = function (fxn) {
-  attachListener('dragover', fxn, this);
+  adjustListener('dragover', fxn, this);
   return this;
 };
 
@@ -871,7 +866,7 @@ p5.Element.prototype.dragOver = function (fxn) {
  * nothing displayed
  */
 p5.Element.prototype.dragLeave = function (fxn) {
-  attachListener('dragleave', fxn, this);
+  adjustListener('dragleave', fxn, this);
   return this;
 };
 
@@ -971,8 +966,16 @@ p5.Element.prototype.drop = function (callback, fxn) {
   return this;
 };
 
-
-
+// General handler for event attaching and detaching
+function adjustListener(ev, fxn, ctx) {
+  if (fxn === false) {
+    detachListener(ev, ctx);
+  }
+  else {
+    attachListener(ev, fxn, ctx);
+  }
+  return this;
+}
 
 function attachListener(ev, fxn, ctx) {
   // LM removing, not sure why we had this?
