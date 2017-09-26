@@ -1,16 +1,29 @@
 suite('time and date', function() {
+  var myp5;
+
+  setup(function(done) {
+    new p5(function(p){
+      p.setup = function() {
+        myp5 = p;
+        done();
+      };
+    });
+  });
+
+  teardown(function() {
+    myp5.remove();
+  });
 
   var result;
 
   suite('p5.prototype.year', function() {
-    var year = p5.prototype.year;
     test('should be a function', function() {
-      assert.ok(year);
-      assert.typeOf(year, 'function');
+      assert.ok(myp5.year);
+      assert.typeOf(myp5.year, 'function');
     });
 
     test('should return this year', function() {
-      result = year();
+      result = myp5.year();
       var jsYear = new Date().getFullYear();
       assert.equal(result, jsYear);
     });
@@ -18,71 +31,66 @@ suite('time and date', function() {
 
 
   suite('p5.prototype.day', function() {
-    var day = p5.prototype.day;
     test('should be a function', function() {
-      assert.ok(day);
-      assert.typeOf(day, 'function');
+      assert.ok(myp5.day);
+      assert.typeOf(myp5.day, 'function');
     });
 
     test('should return todays day', function() {
       var jsDay = new Date().getDate();
-      result = day();
+      result = myp5.day();
       assert.equal(result, jsDay);
     });
   });
 
   suite('p5.prototype.month', function() {
-    var month = p5.prototype.month;
     test('should be a function', function() {
-      assert.ok(month);
-      assert.typeOf(month, 'function');
+      assert.ok(myp5.month);
+      assert.typeOf(myp5.month, 'function');
     });
 
     test('should return today\'s month', function() {
-      result = month();
+      result = myp5.month();
       var jsMonth = new Date().getMonth() + 1;
       assert.equal(result, jsMonth);
     });
   });
 
   suite('p5.prototype.hour', function() {
-    var hour = p5.prototype.hour;
     test('should be a function', function() {
-      assert.ok(hour);
-      assert.typeOf(hour, 'function');
+      assert.ok(myp5.hour);
+      assert.typeOf(myp5.hour, 'function');
     });
 
     test('should return this hour', function() {
       var jsHour = new Date().getHours();
-      result = hour();
+      result = myp5.hour();
       assert.equal(result, jsHour);
     });
   });
 
   suite('p5.prototype.second', function() {
-    var second = p5.prototype.second;
     test('should be a function', function() {
-      assert.ok(second);
-      assert.typeOf(second, 'function');
+      assert.ok(myp5.second);
+      assert.typeOf(myp5.second, 'function');
     });
 
     test('should return this second', function() {
       var jsSecond = new Date().getSeconds();
-      result = second();
+      result = myp5.second();
       assert.equal(result, jsSecond); //(Math.abs(jsSecond - result), '==', 0, 'everything is ok'); // in my testing, found this might be off by 1 second
     });
   });
 
   suite('p5.prototype.minute', function() {
-    var minute = p5.prototype.minute;
     test('should be a function', function() {
-      assert.ok(minute);
-      assert.typeOf(minute, 'function');
+      assert.ok(myp5.minute);
+      assert.typeOf(myp5.minute, 'function');
     });
 
     test('should return a number that is this minute', function() {
       var jsMinute = new Date().getMinutes();
-      result = minute();
+      result = myp5.minute();
       assert.isNumber(result);
       assert.isNumber(jsMinute);
       assert.equal(result, jsMinute);
@@ -91,33 +99,31 @@ suite('time and date', function() {
 
 
   suite('p5.prototype.millis', function() {
-    var runningTime = 50;
-    var millis = p5.prototype.millis;
-    var p5mock = {_startTime: 0};
-    var init_date = Date.now ();
-    // wait :\
-    while (Date.now() - init_date < runningTime) { }
-    var result = millis.call(p5mock);
     test('should be a function', function() {
-      assert.ok(millis);
-      assert.typeOf(millis, 'function');
+      assert.ok(myp5.millis);
+      assert.typeOf(myp5.millis, 'function');
     });
 
     test('result should be a number', function() {
-      assert.isNumber(result);
+      assert.isNumber(myp5.millis());
     });
 
-    test('result should be ' + runningTime, function() {
-      assert.operator(result, '>', runningTime, 'everything is ok');
+    test('result should be greater than running time', function() {
+      var runningTime = 50;
+      var init_date = Date.now ();
+      // wait :\
+      while (Date.now() - init_date < runningTime) { }
+      assert.operator(myp5.millis(), '>', runningTime, 'everything is ok');
     });
 
     test('result should be > newResult', function() {
-      var newResult = millis.call(p5mock);
+      var runningTime = 50;
+      var init_date = Date.now ();
+      var result = myp5.millis();
+      // wait :\
+      while (Date.now() - init_date < runningTime) { }
+      var newResult = myp5.millis();
       assert.operator(newResult, '>', result, 'everything is ok');
     });
   });
-
-
-
-
 });

@@ -1,14 +1,23 @@
 suite('Curves', function() {
-  var myp5 = new p5(function( p ) {
-    p.setup = function() {};
-    p.draw = function() {};
+  var myp5;
+
+  setup(function(done) {
+    new p5(function(p){
+      p.setup = function() {
+        myp5 = p;
+        done();
+      };
+    });
+  });
+
+  teardown(function() {
+    myp5.remove();
   });
 
   suite('p5.prototype.bezier', function() {
-    var bezier = p5.prototype.bezier;
     test('should be a function', function() {
-      assert.ok(bezier);
-      assert.typeOf(bezier, 'function');
+      assert.ok(myp5.bezier);
+      assert.typeOf(myp5.bezier, 'function');
     });
     test('no friendly-err-msg', function() {
       assert.doesNotThrow(function() {
@@ -31,11 +40,10 @@ suite('Curves', function() {
   });
 
   suite('p5.prototype.bezierPoint', function() {
-    var bezierPoint = p5.prototype.bezierPoint;
     var result;
     test('should be a function', function() {
-      assert.ok(bezierPoint);
-      assert.typeOf(bezierPoint, 'function');
+      assert.ok(myp5.bezierPoint);
+      assert.typeOf(myp5.bezierPoint, 'function');
     });
     test('should return a number: missing param #0~4', function() {
       result = myp5.bezierPoint();
@@ -49,11 +57,10 @@ suite('Curves', function() {
   });
 
   suite('p5.prototype.bezierTangent', function() {
-    var bezierTangent = p5.prototype.bezierTangent;
     var result;
     test('should be a function', function() {
-      assert.ok(bezierTangent);
-      assert.typeOf(bezierTangent, 'function');
+      assert.ok(myp5.bezierTangent);
+      assert.typeOf(myp5.bezierTangent, 'function');
     });
     test('should return a number: missing param #0~4', function() {
       result = myp5.bezierTangent();
@@ -66,10 +73,9 @@ suite('Curves', function() {
   });
 
   suite('p5.prototype.curve', function() {
-    var curve = p5.prototype.curve;
     test('should be a function', function() {
-      assert.ok(curve);
-      assert.typeOf(curve, 'function');
+      assert.ok(myp5.curve);
+      assert.typeOf(myp5.curve, 'function');
     });
     test('no friendly-err-msg', function() {
       assert.doesNotThrow(function() {
@@ -92,11 +98,10 @@ suite('Curves', function() {
   });
 
   suite('p5.prototype.curvePoint', function() {
-    var curvePoint = p5.prototype.curvePoint;
     var result;
     test('should be a function', function() {
-      assert.ok(curvePoint);
-      assert.typeOf(curvePoint, 'function');
+      assert.ok(myp5.curvePoint);
+      assert.typeOf(myp5.curvePoint, 'function');
     });
     test('should return a number: missing param #0~4', function() {
       result = myp5.curvePoint();
@@ -110,11 +115,10 @@ suite('Curves', function() {
   });
 
   suite('p5.prototype.curveTangent', function() {
-    var curveTangent = p5.prototype.curveTangent;
     var result;
     test('should be a function', function() {
-      assert.ok(curveTangent);
-      assert.typeOf(curveTangent, 'function');
+      assert.ok(myp5.curveTangent);
+      assert.typeOf(myp5.curveTangent, 'function');
     });
     test('should return a number: missing param #0~4', function() {
       result = myp5.curveTangent();

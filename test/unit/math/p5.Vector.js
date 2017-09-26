@@ -3,9 +3,19 @@ suite('p5.Vector', function() {
   var RADIANS = 'radians';
   var DEGREES = 'degrees';
 
-  var myp5 = new p5(function( p ) {
-    p.setup = function() {};
-    p.draw = function() {};
+  var myp5;
+
+  setup(function(done) {
+    new p5(function(p){
+      p.setup = function() {
+        myp5 = p;
+        done();
+      };
+    });
+  });
+
+  teardown(function() {
+    myp5.remove();
   });
   var v;
 
@@ -116,6 +126,10 @@ suite('p5.Vector', function() {
   });
 
   suite('p5.prototype.angleBetween()', function() {
+    setup(function() {
+      myp5.angleMode(DEGREES);
+    });
+
     test('should not trip on rounding issues in 2D space', function() {
       var v1 = myp5.createVector(-11, -20);
       var v2 = myp5.createVector(-5.5, -10);

@@ -123,7 +123,7 @@ p5.prototype.createCanvas = function(w, h, renderer) {
  * @method resizeCanvas
  * @param  {Number} w width of the canvas
  * @param  {Number} h height of the canvas
- * @param  {Boolean} noRedraw don't redraw the canvas immediately
+ * @param  {Boolean} [noRedraw] don't redraw the canvas immediately
  * @example
  * <div class="norender"><code>
  * function setup() {

@@ -1,15 +1,24 @@
 suite('color/Setting', function() {
 
   // p5 instance
-  var myp5 = new p5(function( p ) {
-    p.setup = function() {};
-    p.draw = function() {};
+  var myp5;
+
+  setup(function(done) {
+    new p5(function(p){
+      p.setup = function() {
+        myp5 = p;
+        done();
+      };
+    });
+  });
+
+  teardown(function() {
+    myp5.remove();
   });
 
   suite('p5.prototype.colorMode', function() {
-    var colorMode = myp5.colorMode;
     test('should be a function', function() {
-      assert.ok(colorMode);
+      assert.ok(myp5.colorMode);
     });
 
     test('should set mode to RGB', function() {
