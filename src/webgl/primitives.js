@@ -903,7 +903,7 @@ p5.RendererGL.prototype.line = function(x0,y0,z0,x1,y1,z1) {
 };
 
 p5.RendererGL.prototype.image = function(image, sx, sy, sw, sh,
-    dx, dy, w, h, p5Instance) {
+    dx, dy, w, h) {
   if (typeof image !== 'undefined' &&
       typeof sx !== 'undefined' &&
       typeof sy !== 'undefined' &&
@@ -913,9 +913,9 @@ p5.RendererGL.prototype.image = function(image, sx, sy, sw, sh,
       typeof dy !== 'undefined' &&
       typeof w !== 'undefined' &&
       typeof h !== 'undefined' &&
-      typeof p5Instance.texture !== 'undefined')
+      typeof this._pInst.texture !== 'undefined')
   {
-    p5Instance.texture(image);
+    this._pInst.texture(image);
 
     var iWidth = image.width;
     var iHeight = image.height;
