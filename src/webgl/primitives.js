@@ -9,6 +9,7 @@
 'use strict';
 
 var p5 = require('../core/core');
+var constants = require('../core/constants');
 require('./p5.Geometry');
 /**
  * Draw a plane with given a width and height
@@ -901,7 +902,8 @@ p5.RendererGL.prototype.line = function(x0,y0,z0,x1,y1,z1) {
   return this;
 };
 
-p5.RendererGL.prototype.image = function(image, sx, sy, sw, sh, dx, dy, w, h, p5Instance) {
+p5.RendererGL.prototype.image = function(image, sx, sy, sw, sh,
+    dx, dy, w, h, p5Instance) {
   if (typeof image !== 'undefined' &&
       typeof sx !== 'undefined' &&
       typeof sy !== 'undefined' &&
@@ -918,7 +920,7 @@ p5.RendererGL.prototype.image = function(image, sx, sy, sw, sh, dx, dy, w, h, p5
     var iWidth = image.width;
     var iHeight = image.height;
 
-    var u0 = 0; 
+    var u0 = 0;
     if(sx <= iWidth) {
       u0 = sx / iWidth;
     }
@@ -942,10 +944,10 @@ p5.RendererGL.prototype.image = function(image, sx, sy, sw, sh, dx, dy, w, h, p5
     this.vertex(dx, dy, 0, u0, v0);
     this.vertex(dx + w, dy, 0, u1, v0);
     this.vertex(dx + w, dy + h,0, u1, v1);
-    this.vertex(dx, dy + h,0, u0, v1); 
-    this.endShape(CLOSE);
+    this.vertex(dx, dy + h,0, u0, v1);
+    this.endShape(constants.CLOSE);
   }
   return this;
-}
+};
 
 module.exports = p5;
