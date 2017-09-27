@@ -913,7 +913,6 @@ p5.RendererGL.prototype.image = function(image, sx, sy, sw, sh, dx, dy, w, h, p5
       typeof h !== 'undefined' &&
       typeof p5Instance.texture !== 'undefined')
   {
-
     p5Instance.texture(image);
 
     var iWidth = image.width;
@@ -938,7 +937,6 @@ p5.RendererGL.prototype.image = function(image, sx, sy, sw, sh, dx, dy, w, h, p5
     if((sy + sh) <= iHeight) {
       v1 = (sy + sh) / iHeight;
     }
-
 
     this.beginShape();
     this.vertex(dx, dy, 0, u0, v0);
