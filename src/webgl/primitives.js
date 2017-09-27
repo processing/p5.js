@@ -901,4 +901,53 @@ p5.RendererGL.prototype.line = function(x0,y0,z0,x1,y1,z1) {
   return this;
 };
 
+p5.RendererGL.prototype.image = function(image, sx, sy, sw, sh, dx, dy, w, h, p5Instance) {
+  if (typeof image !== 'undefined' &&
+      typeof sx !== 'undefined' &&
+      typeof sy !== 'undefined' &&
+      typeof sw !== 'undefined' &&
+      typeof sh !== 'undefined' &&
+      typeof dx !== 'undefined' &&
+      typeof dy !== 'undefined' &&
+      typeof w !== 'undefined' &&
+      typeof h !== 'undefined' &&
+      typeof p5Instance.texture !== 'undefined')
+  {
+
+    p5Instance.texture(image);
+
+    var iWidth = image.width;
+    var iHeight = image.height;
+
+    var u0 = 0; 
+    if(sx <= iWidth) {
+      u0 = sx / iWidth;
+    }
+
+    var v0 = 0;
+    if(sy <= iHeight) {
+      v0 = sy / iHeight;
+    }
+
+    var u1 = 1;
+    if((sx + sw) <= iWidth) {
+      u1 = (sx + sw) / iWidth;
+    }
+
+    var v1 = 1;
+    if((sy + sh) <= iHeight) {
+      v1 = (sy + sh) / iHeight;
+    }
+
+
+    this.beginShape();
+    this.vertex(dx, dy, 0, u0, v0);
+    this.vertex(dx + w, dy, 0, u1, v0);
+    this.vertex(dx + w, dy + h,0, u1, v1);
+    this.vertex(dx, dy + h,0, u0, v1); 
+    this.endShape(CLOSE);
+  }
+  return this;
+}
+
 module.exports = p5;
