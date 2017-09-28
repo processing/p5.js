@@ -886,11 +886,11 @@ p5.RendererGL.prototype.curve=function
  * </div>
  */
 p5.RendererGL.prototype.line = function(x0,y0,z0,x1,y1,z1) {
-  if (typeof x0 !== 'undefined' ||
-      typeof y0 !== 'undefined' ||
-      typeof z0 !== 'undefined' ||
-      typeof x1 !== 'undefined' ||
-      typeof y1 !== 'undefined' ||
+  if (typeof x0 !== 'undefined' &&
+      typeof y0 !== 'undefined' &&
+      typeof z0 !== 'undefined' &&
+      typeof x1 !== 'undefined' &&
+      typeof y1 !== 'undefined' &&
       typeof z1 !== 'undefined')
   {
     this.beginShape();
