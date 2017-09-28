@@ -85,7 +85,7 @@ p5.prototype.plane = function(){
     }
     this._renderer.createBuffers(gId, planeGeom);
   }
-
+  console.log(planeGeom)
   this._renderer.drawBuffers(gId);
 
 };
@@ -549,7 +549,7 @@ p5.prototype.ellipsoid = function(){
   }
 
   this._renderer.drawBuffers(gId);
-
+  console.log(ellipsoidGeom)
   return this;
 };
 
@@ -672,58 +672,142 @@ p5.RendererGL.prototype.triangle = function
   return this;
 };
 
-p5.RendererGL.prototype.ellipse = function
-(args){
+p5.RendererGL.prototype.ellipse = function(args){
+  // console.log(args)
   var x = args[0];
   var y = args[1];
   var width = args[2];
   var height = args[3];
   //detailX and Y are optional 6th & 7th
   //arguments
-  var detailX = args[4] || 24;
-  var detailY = args[5] || 16;
-  var gId = 'ellipse|'+args[0]+'|'+args[1]+'|'+args[2]+'|'+
-  args[3];
+  var detailX = args[7] || 24;
+  var detailY = 1; //args[5] || 16;
+  var gId = 'ellipse|'+args[0]+'|'+args[1]+'|'+args[2]+'|'+ args[3];
+ 
   if(!this.geometryInHash(gId)){
     var _ellipse = function(){
-      var u,v,p;
+      var p;
       var centerX = x+width*0.5;
       var centerY = y+height*0.5;
-      for (var i = 0; i <= this.detailY; i++){
-        v = i / this.detailY;
-        for (var j = 0; j <= this.detailX; j++){
-          u = j / this.detailX;
-          var theta = 2 * Math.PI * u;
-          if(v === 0){
-            p = new p5.Vector(centerX, centerY, 0);
-          }
-          else{
-            var _x = centerX + width*0.5 * Math.cos(theta);
-            var _y = centerY + height*0.5 * Math.sin(theta);
-            p = new p5.Vector(_x, _y, 0);
-          }
-          this.vertices.push(p);
-          this.uvs.push([u,v]);
-        }
+
+      for (var i = 0; i <= detailX; i++) {
+        this.vertices.push(new p5.Vector(centerX, centerY, 0));
+        this.uvs.push([0.5,0.5]);
+      }
+
+      for (var i = 0; i <= detailX; i++) {
+        var a = i / detailX;
+        var theta = 2 * Math.PI * a;
+        var _x = centerX + width  * 0.5 * Math.cos(theta);
+        var _y = centerY + height * 0.5 * Math.sin(theta);
+        var _u = 0.5 + 0.5 * Math.cos(theta);
+        var _v = 0.5 + 0.5 * Math.sin(theta);
+        
+        this.vertices.push(new p5.Vector(_x, _y, 0));
+        this.uvs.push([_u,_v]);
       }
     };
+
     var ellipseGeom = new p5.Geometry(detailX,detailY,_ellipse);
     ellipseGeom
       .computeFaces()
       .computeNormals();
-    if(detailX <= 24 && detailY <= 16) {
+    if(detailX <= 24) {
       ellipseGeom._makeTriangleEdges();
       this._edgesToVertices(ellipseGeom);
     } else {
       console.log('Cannot stroke ellipse with more'+
-        ' than 24 detailX or 16 detailY');
+        ' than 24 detailX');
     }
-
     this.createBuffers(gId, ellipseGeom);
   }
   this.drawBuffers(gId);
   return this;
 };
+
+
+
+
+p5.RendererGL.prototype.arc = function
+(args){
+  // console.log(arguments)
+  var x = arguments[0];
+  var y = arguments[1];
+  var width = arguments[2];
+  var height = arguments[3];
+  var mode = 'a';
+  //detailX and Y are optional 6th & 7th
+  //arguments
+  var detailX = 24; //why can't i pass this argument? documentation issue?
+  var detailY = 1; 
+  var gId = 'arc|'+arguments[0]+'|'+arguments[1]+'|'+arguments[2]+'|'+ arguments[3];
+  if(!this.geometryInHash(gId)){
+    var _arc = function(){
+      var p;
+      var centerX = x+width*0.5;
+      var centerY = y+height*0.5;
+ 
+      for (var i = 0; i <= detailX; i++) {
+        this.vertices.push(new p5.Vector(centerX, centerY, 0));
+        this.uvs.push([0.5,0.5]);
+      }
+
+
+      for (var i = 0; i <= detailX; i++) {
+        var a = i / detailX;
+        var theta = 2 * Math.PI * a;
+        var _x = centerX + width  * 0.5 * Math.cos(theta);
+        var _y = centerY + height * 0.5 * Math.sin(theta);
+        var _u = 0.5 + 0.5 * Math.cos(theta);
+        var _v = 0.5 + 0.5 * Math.sin(theta);
+
+        
+        p = new p5.Vector(_x, _y, 0);
+        
+        this.vertices.push(p);
+        this.uvs.push([_u,_v]);
+      }
+      console.log('Final vertices', this.vertices)
+      console.log('Final uvs', this.uvs)
+    }
+
+    var arcGeom = new p5.Geometry(detailX,detailY,_arc);
+    arcGeom
+      .computeFaces()
+      .computeNormals();
+    if(detailX <= 24 && detailY <= 16) {
+      arcGeom._makeTriangleEdges();
+      this._edgesToVertices(arcGeom);
+    } else {
+      console.log('Cannot stroke arc with more'+
+        ' than 24 detailX or 16 detailY');
+    }
+
+    this.createBuffers(gId, arcGeom);
+  }
+  this.drawBuffers(gId);
+  console.log(arcGeom)
+  //console.log(this)
+  return this;
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 p5.RendererGL.prototype.rect = function(args) {
   var gId = 'rect|'+args[0]+'|'+args[1]+'|'+args[2]+'|'+
