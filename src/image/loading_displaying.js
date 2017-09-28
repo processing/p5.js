@@ -123,17 +123,67 @@ function _sAssign(sVal, iVal) {
 }
 
 /**
- * Draw an image to the main canvas of the p5js sketch
+ * Draw an image to the main canvas of the p5.js sketch.
+ *
+ * This method has up to nine parameters. To describe how the
+ * parameters affect the image you draw, p5.js follows the HTML
+ * specification in using the language of "destination canvas" and
+ * "source image." Note that "destination canvas" in this context is
+ * different from the main sketch canvas you create with
+ * createCanvas(). Here's a diagram to explain further:
+ * https://goo.gl/3ykfOq
+ *
+ * The first two to four Number parameters always refer to the
+ * "destination canvas."
+ *
+ * When there are eight Number parameters, the first four parameters
+ * refer to the "destination canvas" and the last four parameters
+ * refer to the "source image."
  *
  * @method image
  * @param  {p5.Image} img    the image to display
- * @param  {Number}   x      the x-coordinate at which to place the top-left
+ * @param  {Number}   x      the x-coordinate of the destination
+ *                           canvas at which to place the top-left
  *                           corner of the source image
- * @param  {Number}   y      the y-coordinate at which to place the top-left
+ * @param  {Number}   y      the y-coordinate of the destination
+ *                           canvas at which to place the top-left
  *                           corner of the source image
- * @param  {Number}   [width]  the width to draw the image
- * @param  {Number}   [height] the height to draw the image
+ * @param  {Number}   [width]  the width of the destination canvas
+ * @param  {Number}   [height] the height of the destination canvas
  * @example
+ * <div>
+ * <code>
+ * var img;
+ * function preload() {
+ *  img = loadImage("assets/gradient.png");
+ * }
+ * function setup() {
+ *  createCanvas(100, 100);
+ *  background(50);
+ *
+ *  // 1. Background image
+ *  // Destination canvas start position is (0, 0) relative to the main canvas
+ *  // Because there are only two Number parameters, destination canvas area
+ *  //    defaults to the dimensions of the source image, in this case 100 x 100
+ *  image(img, 0, 0);
+ *
+ *  // 2. Top left image
+ *  // Destination canvas start position is (0, 0) relative to the main canvas
+ *  // Destination canvas area is 50 x 50
+ *  // Because there are no source image parameters, the source image
+ *  //    defaults to fit the destination canvas
+ *  image(img, 0, 0, 50, 50);
+ *
+ *  // 3. Top right image
+ *  // Destination start position is (50, 0) relative to the main canvas
+ *  // Destination canvas area is 40 x 20
+ *  // The next parameters are relative to the source image:
+ *  // - starting at position (50, 50) on the source image, capture a 50 x 50 chunk
+ *  // - draw this chunk to fill the dimensions of the destination canvas area
+ *  image(img, 50, 0, 40, 20, 50, 50, 50, 50);
+ * }
+ * </code>
+ * </div>
  * <div>
  * <code>
  * var img;
