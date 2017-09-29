@@ -125,62 +125,42 @@ function _sAssign(sVal, iVal) {
 /**
  * Draw an image to the main canvas of the p5.js sketch.
  *
- * This method has up to nine parameters. To describe how the
- * parameters affect the image you draw, p5.js follows the HTML
- * specification in using the language of "destination canvas" and
- * "source image." Note that "destination canvas" in this context is
- * different from the main sketch canvas you create with
- * createCanvas(). Here's a diagram to explain further:
- * https://goo.gl/3ykfOq
+ * This function can be used with different numbers of parameters. The
+ * simplest use requires only three parameters: img, x, and y. The last two
+ * parameters in this case—x and y—are the coordinates of the top-left corner
+ * of the first parameter, img. Two more parameters can optionally be added in
+ * order to specify the width and height of img.
  *
- * The first two to four Number parameters always refer to the
- * "destination canvas."
- *
- * When there are eight Number parameters, the first four parameters
- * refer to the "destination canvas" and the last four parameters
- * refer to the "source image."
+ * For even more specificity, this function can be used with all eight Number
+ * parameters. To differentiate between all these parameters, p5.js follows
+ * the HTML specification in using the language of "destination canvas" (which
+ * corresponds to "dx", "dy", etc.) and "source image" (which corresponds to
+ * "sx", "sy", etc.) below. When there are eight Number parameters, the first
+ * four Number parameters always refer to the "destination canvas" and the
+ * last four parameters refer to the "source image." Note that "destination
+ * canvas" in this context is different from the main sketch canvas you create
+ * with createCanvas(). Here's a diagram to explain further: https://
+ * goo.gl/3ykfOq
  *
  * @method image
  * @param  {p5.Image} img    the image to display
- * @param  {Number}   x      the x-coordinate of the destination
- *                           canvas at which to place the top-left
- *                           corner of the source image
- * @param  {Number}   y      the y-coordinate of the destination
- *                           canvas at which to place the top-left
- *                           corner of the source image
- * @param  {Number}   [width]  the width of the destination canvas
- * @param  {Number}   [height] the height of the destination canvas
+ * @param  {Number}   x     the x-coordinate of the top-left corner of the
+ * source image
+ * @param  {Number}   y     the y-coordinate of the top-left corner of the
+ * source image
+ * @param  {Number}   [width] the width to draw the image
+ * @param  {Number}   [height]  the height to draw the image
  * @example
  * <div>
  * <code>
  * var img;
  * function preload() {
- *  img = loadImage("assets/gradient.png");
+ *   img = loadImage("assets/laDefense.jpg");
  * }
  * function setup() {
- *  createCanvas(100, 100);
- *  background(50);
- *
- *  // 1. Background image
- *  // Destination canvas start position is (0, 0) relative to the main canvas
- *  // Because there are only two Number parameters, destination canvas area
- *  //    defaults to the dimensions of the source image, in this case 100 x 100
- *  image(img, 0, 0);
- *
- *  // 2. Top left image
- *  // Destination canvas start position is (0, 0) relative to the main canvas
- *  // Destination canvas area is 50 x 50
- *  // Because there are no source image parameters, the source image
- *  //    defaults to fit the destination canvas
- *  image(img, 0, 0, 50, 50);
- *
- *  // 3. Top right image
- *  // Destination start position is (50, 0) relative to the main canvas
- *  // Destination canvas area is 40 x 20
- *  // The next parameters are relative to the source image:
- *  // - starting at position (50, 50) on the source image, capture a 50 x 50 chunk
- *  // - draw this chunk to fill the dimensions of the destination canvas area
- *  image(img, 50, 0, 40, 20, 50, 50, 50, 50);
+ *   // Top-left corner of the img is at (0, 0)
+ *   // Width and height are the img's original width and height
+ *   image(img, 0, 0);
  * }
  * </code>
  * </div>
@@ -191,35 +171,60 @@ function _sAssign(sVal, iVal) {
  *   img = loadImage("assets/laDefense.jpg");
  * }
  * function setup() {
- *   image(img, 0, 0);
- *   image(img, 0, 0, 100, 100);
- *   image(img, 0, 0, 100, 100, 0, 0, 100, 100);
+ *   background(50);
+ *   // Top-left corner of the img is at (10, 10)
+ *   // Width and height are 50 x 50
+ *   image(img, 10, 10, 50, 50);
  * }
  * </code>
  * </div>
  * <div>
  * <code>
  * function setup() {
- *   // here we use a callback to display the image after loading
+ *   // Here, we use a callback to display the image after loading
  *   loadImage("assets/laDefense.jpg", function(img) {
  *     image(img, 0, 0);
  *   });
  * }
  * </code>
  * </div>
- *
+ * <div>
+ * <code>
+ * var img;
+ * function preload() {
+ *  img = loadImage("assets/gradient.png");
+ * }
+ * function setup() {
+ *  // 1. Background image
+ *  // Top-left corner of the img is at (0, 0)
+ *  // Width and height are the img's original width and height, 100 x 100
+ *  image(img, 0, 0);
+ *  // 2. Top right image
+ *  // Top-left corner of destination canvas is (50, 0) relative to the main canvas
+ *  // Destination canvas width and height are 40 x 20
+ *  // The next parameters are relative to the source image:
+ *  // - Starting at position (50, 50) on the source image, capture a 50 x 50 chunk
+ *  // - Draw this chunk to fill the dimensions of the destination canvas area
+ *  image(img, 50, 0, 40, 20, 50, 50, 50, 50);
+ * }
+ * </code>
+ * </div>
  * @alt
- * image of the underside of a white umbrella and grided ceiling above
- * image of the underside of a white umbrella and grided ceiling above
+ * image of the underside of a white umbrella and gridded ceiling above
+ * image of the underside of a white umbrella and gridded ceiling above
  *
  */
 /**
  * @method image
  * @param  {p5.Image} img
- * @param  {Number}   x
- * @param  {Number}   y
- * @param  {Number}   width
- * @param  {Number}   height
+ * @param  {Number}   dx     the x-coordinate of the destination
+ *                           canvas at which to place the top-left
+ *                           corner of the source image
+ * @param  {Number}   dy     the y-coordinate of the destination
+ *                           canvas at which to place the top-left
+ *                           corner of the source image
+ * @param  {Number}   dWidth  the width of the destination canvas
+ * @param  {Number}   dHeight the height of the destination canvas
  * @param  {Number}   sx     the x-coordinate of the top left corner of the
  *                           sub-rectangle of the source image to draw into
  *                           the destination canvas
