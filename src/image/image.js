@@ -240,6 +240,10 @@ p5.prototype.saveCanvas = function() {
  *  as an argument to the callback function as an array of objects, with the
  *  size of array equal to the total number of frames.
  *
+ *  Note that saveFrames() will only save the first 15 frames of an animation.
+ *  To export longer animations, you might look into a library like
+ *  <a href="https://github.com/spite/ccapture.js/">ccapture.js</a>.
+ *
  *  @method saveFrames
  *  @param  {String}   filename
  *  @param  {String}   extension 'jpg' or 'png'
