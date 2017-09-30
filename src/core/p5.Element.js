@@ -166,8 +166,10 @@ p5.Element.prototype.class = function(c) {
  * attach element specific event listeners.
  *
  * @method mousePressed
- * @param  {function} fxn function to be fired when mouse is
- *                    pressed over the element.
+ * @param  {Function|Boolean} fxn function to be fired when mouse is
+ *                                pressed over the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class='norender'><code>
@@ -214,8 +216,10 @@ p5.Element.prototype.mousePressed = function (fxn) {
  * attach element and action specific event listeners.
  *
  * @method doubleClicked
- * @param  {Function} fxn function to be fired when mouse is
- *                    pressed over the element.
+ * @param  {Function|Boolean} fxn function to be fired when mouse is
+ *                                double clicked over the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @return {p5.Element}
  * @example
  * <div class='norender'><code>
@@ -272,8 +276,10 @@ p5.Element.prototype.doubleClicked = function (fxn) {
  * reversed.
  *
  * @method mouseWheel
- * @param  {function} fxn function to be fired when mouse wheel is
- *                    scrolled over the element.
+ * @param  {Function|Boolean} fxn function to be fired when mouse is
+ *                                scrolled over the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class='norender'><code>
@@ -326,8 +332,10 @@ p5.Element.prototype.mouseWheel = function (fxn) {
  * attach element specific event listeners.
  *
  * @method mouseReleased
- * @param  {function} fxn function to be fired when mouse is
- *                    released over the element.
+ * @param  {Function|Boolean} fxn function to be fired when mouse is
+ *                                released over the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class='norender'><code>
@@ -378,8 +386,10 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  * attach element specific event listeners.
  *
  * @method mouseClicked
- * @param  {function} fxn function to be fired when mouse is
- *                    clicked over the element.
+ * @param  {Function|Boolean} fxn function to be fired when mouse is
+ *                                clicked over the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class="norender">
@@ -430,8 +440,10 @@ p5.Element.prototype.mouseClicked = function (fxn) {
  * element specific event listener.
  *
  * @method mouseMoved
- * @param  {function} fxn function to be fired when mouse is
- *                    moved over the element.
+ * @param  {Function|Boolean} fxn function to be fired when a mouse moves
+ *                                over the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class='norender'><code>
@@ -487,8 +499,10 @@ p5.Element.prototype.mouseMoved = function (fxn) {
  * element specific event listener.
  *
  * @method mouseOver
- * @param  {function} fxn function to be fired when mouse is
- *                    moved over the element.
+ * @param  {Function|Boolean} fxn function to be fired when a mouse moves
+ *                                onto the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class='norender'><code>
@@ -526,12 +540,14 @@ p5.Element.prototype.mouseOver = function (fxn) {
 
 /**
  * The .changed() function is called when the value of an
- * element is changed.
+ * element changes.
  * This can be used to attach an element specific event listener.
  *
  * @method changed
- * @param  {function} fxn function to be fired when the value of an
- * element changes.
+ * @param  {Function|Boolean} fxn function to be fired when the value of
+ *                                an element changes.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div><code>
@@ -597,7 +613,10 @@ p5.Element.prototype.changed = function (fxn) {
  * event listener.
  *
  * @method input
- * @param  {function} fxn function to be fired on user input.
+ * @param  {Function|Boolean} fxn function to be fired when any user input is
+ *                                detected within the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class='norender'><code>
@@ -627,8 +646,10 @@ p5.Element.prototype.input = function (fxn) {
  * element specific event listener.
  *
  * @method mouseOut
- * @param  {function} fxn function to be fired when mouse is
- *                    moved off the element.
+ * @param  {Function|Boolean} fxn function to be fired when a mouse
+ *                                moves off of an element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class='norender'><code>
@@ -667,8 +688,10 @@ p5.Element.prototype.mouseOut = function (fxn) {
  * registered. This can be used to attach element specific event listeners.
  *
  * @method touchStarted
- * @param  {function} fxn function to be fired when touch is
- *                    started over the element.
+ * @param  {Function|Boolean} fxn function to be fired when a touch
+ *                                starts over the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class='norender'><code>
@@ -714,8 +737,10 @@ p5.Element.prototype.touchStarted = function (fxn) {
  * registered. This can be used to attach element specific event listeners.
  *
  * @method touchMoved
- * @param  {function} fxn function to be fired when touch is moved
- *                    over the element.
+ * @param  {Function|Boolean} fxn function to be fired when a touch moves over
+ *                                the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class='norender'><code>
@@ -753,8 +778,10 @@ p5.Element.prototype.touchMoved = function (fxn) {
  * registered. This can be used to attach element specific event listeners.
  *
  * @method touchEnded
- * @param  {function} fxn function to be fired when touch is
- *                    ended over the element.
+ * @param  {Function|Boolean} fxn function to be fired when a touch ends
+ *                                over the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class='norender'><code>
@@ -804,8 +831,10 @@ p5.Element.prototype.touchEnded = function (fxn) {
  * element specific event listener.
  *
  * @method dragOver
- * @param  {function} fxn function to be fired when mouse is
- *                    dragged over the element.
+ * @param  {Function|Boolean} fxn function to be fired when a file is
+ *                                dragged over the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div><code>
@@ -840,8 +869,10 @@ p5.Element.prototype.dragOver = function (fxn) {
  * element specific event listener.
  *
  * @method dragLeave
- * @param  {function} fxn function to be fired when mouse is
- *                    dragged over the element.
+ * @param  {Function|Boolean} fxn function to be fired when a file is
+ *                                dragged off the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div><code>
@@ -878,8 +909,8 @@ p5.Element.prototype.dragLeave = function (fxn) {
  * is triggered just once when a file (or files) are dropped.
  *
  * @method drop
- * @param  {function} callback  callback triggered when files are dropped.
- * @param  {function} fxn       callback to receive loaded file.
+ * @param  {Function|Boolean} callback  callback triggered when files are dropped.
+ * @param  {Function|Boolean} fxn       callback to receive loaded file.
  * @chainable
  * @example
  * <div><code>
