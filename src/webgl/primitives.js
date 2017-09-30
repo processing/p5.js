@@ -413,7 +413,7 @@ p5.prototype.cylinder = function(){
  * @param  {Number} height            height of the cone
  * @param  {Number} [detailX]         optional: number of segments,
  *                                    the more segments the smoother geometry
- *                                    default is 24
+ *                                    default is 24.
  * @param  {Number} [detailY]         optional: number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 16
@@ -421,7 +421,7 @@ p5.prototype.cylinder = function(){
  * @example
  * <div>
  * <code>
- * //draw a spinning cone with radius 200 and height 200
+ * //draw a spinning asdfasdf cone with radius 200 and height 200
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  * }
@@ -549,7 +549,7 @@ p5.prototype.ellipsoid = function(){
   }
 
   this._renderer.drawBuffers(gId);
-  console.log(ellipsoidGeom)
+  
   return this;
 };
 
@@ -680,13 +680,12 @@ p5.RendererGL.prototype.ellipse = function(args){
   var height = args[3];
   //detailX and Y are optional 6th & 7th
   //arguments
-  var detailX = args[7] || 24;
+  var detailX = 5//args[4] || 24;
   var detailY = 1; //args[5] || 16;
   var gId = 'ellipse|'+args[0]+'|'+args[1]+'|'+args[2]+'|'+ args[3];
  
   if(!this.geometryInHash(gId)){
     var _ellipse = function(){
-      var p;
       var centerX = x+width*0.5;
       var centerY = y+height*0.5;
 
@@ -707,6 +706,8 @@ p5.RendererGL.prototype.ellipse = function(args){
         this.uvs.push([_u,_v]);
       }
     };
+    
+ 
 
     var ellipseGeom = new p5.Geometry(detailX,detailY,_ellipse);
     ellipseGeom
@@ -728,59 +729,84 @@ p5.RendererGL.prototype.ellipse = function(args){
 
 
 
-p5.RendererGL.prototype.arc = function
-(args){
-  // console.log(arguments)
-  var x = arguments[0];
-  var y = arguments[1];
-  var width = arguments[2];
-  var height = arguments[3];
-  var mode = 'a';
-  //detailX and Y are optional 6th & 7th
-  //arguments
-  var detailX = 24; //why can't i pass this argument? documentation issue?
+p5.RendererGL.prototype.arc = function(){
+  //console.log(arguments)
+  var x       = arguments[0];
+  var y       = arguments[1];
+  var width   = arguments[2];
+  var height  = arguments[3];
+  var start   = arguments[4];
+  var stop    = arguments[5];
+  var mode    = arguments[6];
+  var detailX = arguments[7] || 24; 
   var detailY = 1; 
-  var gId = 'arc|'+arguments[0]+'|'+arguments[1]+'|'+arguments[2]+'|'+ arguments[3];
+
+ 
+  var gId = 'arc|'+x+'|'+y+'|'+width+'|'+ height +'|'+start+'|'+stop+'|'+ mode;
   if(!this.geometryInHash(gId)){
     var _arc = function(){
-      var p;
       var centerX = x+width*0.5;
       var centerY = y+height*0.5;
- 
-      for (var i = 0; i <= detailX; i++) {
-        this.vertices.push(new p5.Vector(centerX, centerY, 0));
-        this.uvs.push([0.5,0.5]);
-      }
+  
+      var xDetAdj = mode === 'pie' || mode === 'fan' ? 1 : 0;
 
-
-      for (var i = 0; i <= detailX; i++) {
-        var a = i / detailX;
-        var theta = 2 * Math.PI * a;
+      for (var i = 0; i < detailX - xDetAdj; i++) {
+        var a = i / (24 - 1 - 1);
+        var theta = (stop - start) * a + start;
+        //console.log(a, stop, theta);
         var _x = centerX + width  * 0.5 * Math.cos(theta);
         var _y = centerY + height * 0.5 * Math.sin(theta);
-        var _u = 0.5 + 0.5 * Math.cos(theta);
-        var _v = 0.5 + 0.5 * Math.sin(theta);
-
+        if(mode === 'fan'){
+          
+          var _u = 0.5 + 0.5 * Math.cos( Math.PI * 2 * a);
+          var _v = 0.5 + 0.5 * Math.sin( Math.PI * 2 * a);  
+        } else {
+          var _u = 0.5 + 0.5 * Math.cos(theta);
+          var _v = 0.5 + 0.5 * Math.sin(theta);
+        }
         
-        p = new p5.Vector(_x, _y, 0);
-        
-        this.vertices.push(p);
+        this.vertices.push(new p5.Vector(_x, _y, 0));
         this.uvs.push([_u,_v]);
+        //this.strokeIndices = [[0,1], [1,2], [2,0]];
       }
-      console.log('Final vertices', this.vertices)
-      console.log('Final uvs', this.uvs)
-    }
+ 
+      if(mode === 'pie' || mode === 'fan'){
+        this.vertices.push(new p5.Vector(centerX, centerY, 0));
+        this.uvs.push([0.5,0.5]);
+      } else {
+        var startVert = this.vertices[0];
+        var endVert   = this.vertices[this.vertices.length -1];
+      }
 
+      //Close arc perimiter with initial verticies
+      this.vertices.push(this.vertices[0]);
+      this.uvs.push(this.uvs[0]);
+ 
+      for (var i = 0; i <= detailX; i++) {
+        if(mode === 'pie' || mode === 'fan' || Math.abs(stop - start) >= Math.PI){
+          this.vertices.unshift(new p5.Vector(centerX, centerY, 0));
+          this.uvs.unshift([0.5,0.5]);  
+        } else {
+          var adjCenterX = (startVert.x + endVert.x) / 2;
+          var adjCenterY = (startVert.y + endVert.y) / 2;
+     
+          this.vertices.unshift(new p5.Vector(adjCenterX, adjCenterY, 0));
+          this.uvs.unshift([(adjCenterX - x) / width,
+                            (adjCenterY - y) / height]);          
+        }
+      }
+    }
+  
     var arcGeom = new p5.Geometry(detailX,detailY,_arc);
     arcGeom
       .computeFaces()
       .computeNormals();
-    if(detailX <= 24 && detailY <= 16) {
+    if(detailX <= 24) {
       arcGeom._makeTriangleEdges();
       this._edgesToVertices(arcGeom);
     } else {
       console.log('Cannot stroke arc with more'+
-        ' than 24 detailX or 16 detailY');
+        ' than 24 detailX');
     }
 
     this.createBuffers(gId, arcGeom);

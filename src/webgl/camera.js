@@ -13,7 +13,7 @@ var p5 = require('../core/core');
  * Sets camera position for a 3D sketch. The function behaves similarly
  * gluLookAt, except that it replaces the existing modelview matrix instead
  * of applying any transformations calculated here on top of the existing
- * model view.
+ * model view. MMMM
  * When called with no arguments, this function
  * sets a default camera equivalent to calling
  * camera(0, 0, (height/2.0) / tan(PI*30.0 / 180.0), 0, 0, 0, 0, 1, 0);

@@ -33,6 +33,7 @@ require('./error_helpers');
  * @param  {Number} stop   angle to stop the arc, specified in radians
  * @param  {Constant} [mode] optional parameter to determine the way of drawing
  *                         the arc. either CHORD or PIE
+ * @param  {Number} detailX number of verticies on the shape (WebGL Only)
  * @chainable
  * @example
  * <div>
@@ -47,12 +48,16 @@ require('./error_helpers');
  *
  * <div>
  * <code>
+ * strokeWeight(4);
+ * stroke(255, 100,0);
  * arc(50, 50, 80, 80, 0, PI+QUARTER_PI, OPEN);
  * </code>
  * </div>
  *
  * <div>
  * <code>
+ * strokeWeight(4);
+ * stroke(255, 100,0);
  * arc(50, 50, 80, 80, 0, PI+QUARTER_PI, CHORD);
  * </code>
  * </div>
@@ -70,7 +75,7 @@ require('./error_helpers');
  *white ellipse with top right quarter missing with black outline around the shape.
  *
  */
-p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
+p5.prototype.arc = function(x, y, w, h, start, stop, mode, xDetail) {
   var args = new Array(arguments.length);
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
@@ -125,7 +130,7 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
   // p5 supports negative width and heights for ellipses
   w = Math.abs(w);
   h = Math.abs(h);
-  this._renderer.arc(x, y, w, h, start, stop, mode);
+  this._renderer.arc(x, y, w, h, start, stop, mode, xDetail);
   return this;
 };
 

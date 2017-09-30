@@ -259,6 +259,11 @@ module.exports = {
    */
   PIE: 'pie',
   /**
+   * @property {String} FAN
+   * @final
+   */
+  FAN: 'fan',
+  /**
    * @property {String} PROJECT
    * @final
    * @default square
