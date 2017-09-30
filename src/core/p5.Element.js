@@ -420,7 +420,7 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  *
  */
 p5.Element.prototype.mouseClicked = function (fxn) {
-  adjustListener('click', this);
+  adjustListener('click', fxn, this);
   return this;
 };
 
