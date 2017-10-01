@@ -389,7 +389,7 @@ p5.Renderer2D.prototype._acuteArcToBezier =
 p5.Renderer2D.prototype.arc =
   function(x, y, w, h, start, stop, mode) {
   var ctx = this.drawingContext;
-  var vals = canvas.arcModeAdjust(x, y, w, h, this._ellipseMode);
+  var vals = {x, y, w, h};
   var rx = vals.w / 2.0;
   var ry = vals.h / 2.0;
   var epsilon = 0.00001;  // Smallest visible angle on displays up to 4K.

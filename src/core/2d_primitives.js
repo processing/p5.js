@@ -76,9 +76,10 @@ require('./error_helpers');
  *
  */
 p5.prototype.arc = function(x, y, w, h, start, stop, mode, xDetail) {
+
   var args = new Array(arguments.length);
   for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+    args[i] = arguments[i]; 
   }
 
   p5._validateParameters('arc', args);
@@ -130,7 +131,11 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, xDetail) {
   // p5 supports negative width and heights for ellipses
   w = Math.abs(w);
   h = Math.abs(h);
-  this._renderer.arc(x, y, w, h, start, stop, mode, xDetail);
+
+  // adjust for ellipseMode
+  var vals = canvas.arcModeAdjust(x, y, w, h, this._renderer._ellipseMode);
+
+  this._renderer.arc(vals.x, vals.y, vals.w, vals.h, start, stop, mode, xDetail);
   return this;
 };
 
