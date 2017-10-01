@@ -1,6 +1,6 @@
 
 var p5 = require('./core');
-//var canvas = require('./canvas');
+var canvas = require('./canvas');
 var constants = require('./constants');
 var filters = require('../image/filters');
 

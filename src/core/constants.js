@@ -259,8 +259,9 @@ module.exports = {
    */
   PIE: 'pie',
   /**
-   * @property {String} FAN
+   * @property {String} PROJECT
    * @final
+   * @default square
    */
   PROJECT: 'square', // PEND: careful this is counterintuitive
   /**

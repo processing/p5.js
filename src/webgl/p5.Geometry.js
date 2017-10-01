@@ -49,13 +49,7 @@ p5.Geometry = function
   }
   this.name = 'p5.Geometry';   // for friendly debugger system
 
-  this.validate();
-
   return this; // TODO: is this a constructor?
-};
-
-p5.Geometry.prototype.validate = function(){
-  //if(detailX !== undefined && detailY !== undefined){  }
 };
 
 p5.Geometry.prototype.computeFaces = function(){
