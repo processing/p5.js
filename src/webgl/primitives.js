@@ -420,7 +420,7 @@ p5.prototype.cylinder = function(){
  * @example
  * <div>
  * <code>
- * //draw a spinning asdfasdf cone with radius 200 and height 200
+ * //draw a spinning cone with radius 200 and height 200
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  * }
