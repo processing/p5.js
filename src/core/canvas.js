@@ -7,7 +7,6 @@ var constants = require('./constants');
 module.exports = {
 
   modeAdjust: function(a, b, c, d, mode) {
-
     if (mode === constants.CORNER) {
       return { x: a, y: b, w: c, h: d };
     } else if (mode === constants.CORNERS) {

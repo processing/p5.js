@@ -764,6 +764,8 @@ p5.RendererGL.prototype.triangle = function
 };
 
 p5.RendererGL.prototype.ellipse = function(args){
+  //Note, the x and y adjustments here are because ellipses and 
+  //arc get different treatment in core/canvas.js
   this.arc(args[0]+args[2]*0.5, args[1]+args[3]*0.5 ,args[2], args[3],
            0, Math.PI * 2, 'ellipse', args[4]);
   return this;
