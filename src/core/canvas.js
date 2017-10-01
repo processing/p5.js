@@ -28,8 +28,8 @@ module.exports = {
       return { x: a, y: b, w: 2*c, h: 2*d };
     } else if (mode === constants.CENTER) {
       return { x: a, y: b, w: c, h: d };
-    } else {console.log(mode)}
+    }
   }
-  
+
 };
 

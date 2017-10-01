@@ -262,12 +262,6 @@ module.exports = {
    * @property {String} FAN
    * @final
    */
-  FAN: 'fan',
-  /**
-   * @property {String} PROJECT
-   * @final
-   * @default square
-   */
   PROJECT: 'square', // PEND: careful this is counterintuitive
   /**
    * @property {String} SQUARE

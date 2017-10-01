@@ -20,9 +20,21 @@ suite('2D Primitives', function() {
       assert.ok(myp5.arc);
       assert.typeOf(myp5.arc, 'function');
     });
-    test('no friendly-err-msg', function() {
+    test('no friendly-err-msg, 2D', function() {
       assert.doesNotThrow(function() {
           myp5.arc(1, 1, 10.5, 10, 0, Math.PI, 'pie');
+        },
+        Error, 'got unwanted exception');
+    });
+    test('no friendly-err-msg, 3D', function() {
+      assert.doesNotThrow(function() {
+          myp5.arc(1, 1, 10.5, 10, 0, Math.PI, 'pie', 20);
+        },
+        Error, 'got unwanted exception');
+    });
+    test('missing optional param #6, #7', function() {
+      assert.doesNotThrow(function() {
+          myp5.arc(1, 1, 10.5, 10, 0, Math.PI);
         },
         Error, 'got unwanted exception');
     });
@@ -38,6 +50,12 @@ suite('2D Primitives', function() {
         },
         Error, 'got unwanted exception');
     });
+    test('wrong param type at #7', function() {
+      assert.doesNotThrow(function() {
+          myp5.arc(1, 1, 10.5, 10, 0, Math.PI, 'pie', 'string');
+        },
+        Error, 'got unwanted exception');
+    });
   });
 
   suite('p5.prototype.ellipse', function() {
@@ -45,9 +63,15 @@ suite('2D Primitives', function() {
       assert.ok(myp5.ellipse);
       assert.typeOf(myp5.ellipse, 'function');
     });
-    test('no friendly-err-msg', function() {
+    test('no friendly-err-msg, 2D', function() {
       assert.doesNotThrow(function() {
-          myp5.ellipse(0, 0, 100);
+          myp5.ellipse(0, 0, 100, 100);
+        },
+        Error, 'got unwanted exception');
+    });
+    test('no friendly-err-msg, 3D', function() {
+      assert.doesNotThrow(function() {
+          myp5.ellipse(0, 0, 100, 100, 24);
         },
         Error, 'got unwanted exception');
     });

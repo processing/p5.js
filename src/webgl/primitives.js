@@ -85,7 +85,6 @@ p5.prototype.plane = function(){
     }
     this._renderer.createBuffers(gId, planeGeom);
   }
-  console.log(planeGeom)
   this._renderer.drawBuffers(gId);
 
 };
@@ -549,7 +548,6 @@ p5.prototype.ellipsoid = function(){
   }
 
   this._renderer.drawBuffers(gId);
-  
   return this;
 };
 
@@ -632,14 +630,17 @@ p5.prototype.torus = function(){
   return this;
 };
 
-///////////////////////
-/// 2D primitives
+/////////////////////////
+// 2D primitives
+//
+// Inline documentation is in the corresponding primitive
+// in the core/2d_primitives file. Arguments used here may
+// be validated or altered in the 2d_primitives file before
+// they are passed here.
 /////////////////////////
 
 
 p5.RendererGL.prototype.arc = function(){
-  //console.log(arguments)
-  
   var x       = arguments[0];
   var y       = arguments[1];
   var width   = arguments[2];
@@ -647,15 +648,14 @@ p5.RendererGL.prototype.arc = function(){
   var start   = arguments[4];
   var stop    = arguments[5];
   var mode    = arguments[6];
-  var detailX = arguments[7] || 24; 
-  var detailY = 1; 
+  var detailX = arguments[7] || 24;
+  var detailY = 1;
   var epsilon = 0.00001; // Smallest visible angle on displays up to 4K.
 
 
   var shape =    Math.abs(start%(Math.PI*2) - stop%(Math.PI*2)) < epsilon ||
                  mode === 'ellipse' ? 'ellipse' : 'arc';
 
-  
   var gId = shape+'|'+x+'|'+y+'|'+width+'|'+ height +'|'+start+'|'+
             stop+'|'+ mode+'|'+ detailX;
   if(!this.geometryInHash(gId)){
@@ -669,9 +669,9 @@ p5.RendererGL.prototype.arc = function(){
         var theta = (stop - start) * a + start;
         var _x = x + width  * 0.5 * Math.cos(theta);
         var _y = y + height * 0.5 * Math.sin(theta);
-        var _u = mode === 'fan' ? 0.5 + 0.5 * Math.cos( Math.PI * 2 * a) : 0.5 + 0.5 * Math.cos(theta);
-        var _v = mode === 'fan' ? 0.5 + 0.5 * Math.sin( Math.PI * 2 * a) : 0.5 + 0.5 * Math.sin(theta);
-            
+        var _u = 0.5 + 0.5 * Math.cos(theta);
+        var _v = 0.5 + 0.5 * Math.sin(theta);
+
         this.vertices.push(new p5.Vector(_x, _y, 0));
         this.uvs.push([_u,_v]);
       }
@@ -679,37 +679,37 @@ p5.RendererGL.prototype.arc = function(){
       //Define the center point (Done after the ark because of the else branch)
       if(mode === 'pie' || mode === 'fan' || Math.abs(stop - start) >= Math.PI){
         this.vertices.unshift(new p5.Vector(x, y, 0));
-        this.uvs.unshift([0.5,0.5]);  
+        this.uvs.unshift([0.5,0.5]);
       } else {
         var startVert  = this.vertices[0];
         var endVert    = this.vertices[this.vertices.length -1];
         var adjCenterX = (startVert.x + endVert.x) / 2;
         var adjCenterY = (startVert.y + endVert.y) / 2;
-   
+
         this.vertices.unshift(new p5.Vector(adjCenterX, adjCenterY, 0));
         this.uvs.unshift([0.5 + (adjCenterX - x) / width,
-                          0.5 + (adjCenterY - y) / height]);          
+                          0.5 + (adjCenterY - y) / height]);
       }
 
       //Create the faces and stroke along the edges
-      for (var i = 0; i < this.vertices.length -2; i++) {
-        this.faces.push([0, i+1, i+2]);
-        this.strokeIndices.push([i+1, i+2]);
-      };
+      for (var j = 0; j < this.vertices.length -2; j++) {
+        this.faces.push([0, j+1, j+2]);
+        this.strokeIndices.push([j+1, j+2]);
+      }
 
       //Finalize curve shape
       if(shape === 'ellipse'){
         this.faces.push([0, this.vertices.length - 1, 1]);
-        this.strokeIndices.push([this.vertices.length - 1, 1]);              
+        this.strokeIndices.push([this.vertices.length - 1, 1]);
       } else if (mode === 'open'){
         this.faces.push([0, this.vertices.length - 1, 1]);
       } else if (mode === 'chord'){
         this.faces.push([0, this.vertices.length - 1, 1]);
         this.strokeIndices.push([this.vertices.length - 1, 1]);
-      } else if (mode === 'pie' || mode === 'fan'){
+      } else if (mode === 'pie'){
         this.strokeIndices.push([this.vertices.length - 1, 0]);
-        this.strokeIndices.push([0, 1]); 
-      } else {console.log('Error, unknown mode')}
+        this.strokeIndices.push([0, 1]);
+      } else {console.log('Error, unknown mode');}
     };
 
     //Create the arc and set it up
@@ -721,9 +721,9 @@ p5.RendererGL.prototype.arc = function(){
     } else {
       console.log('Cannot stroke '+shape+' with more'+
         ' than 24 detailX');
-    };
+    }
     this.createBuffers(gId, arcGeom);
-  };
+  }
   this.drawBuffers(gId);
   return this;
 };
@@ -759,14 +759,13 @@ p5.RendererGL.prototype.triangle = function
     triGeom.computeNormals();
     this.createBuffers(gId, triGeom);
   }
-  console.log(triGeom);
   this.drawBuffers(gId);
   return this;
 };
 
 p5.RendererGL.prototype.ellipse = function(args){
-  this.arc(args[0]+args[2]*0.5, args[1]+args[3]*0.5 ,args[2], args[3]
-          , 0, Math.PI * 2, 'ellipse', args[4]);
+  this.arc(args[0]+args[2]*0.5, args[1]+args[3]*0.5 ,args[2], args[3],
+           0, Math.PI * 2, 'ellipse', args[4]);
   return this;
 };
 
