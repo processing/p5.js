@@ -444,6 +444,8 @@ p5.prototype.loadTable = function (path) {
             state.escaped = false;
             state.currentState = POST_TOKEN;
           }
+        } else if(currentChar === CR) {
+          continue;
         } else {
           state.token += currentChar;
         }
