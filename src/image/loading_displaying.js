@@ -123,16 +123,28 @@ function _sAssign(sVal, iVal) {
 }
 
 /**
- * Draw an image to the main canvas of the p5js sketch
+ * Draw an image to the p5.js canvas.
+ *
+ * This function can be used with different numbers of parameters. The
+ * simplest use requires only three parameters: img, x, and y—where (x, y) is
+ * the position of the image. Two more parameters can optionally be added to
+ * specify the width and height of the image.
+ *
+ * This function can also be used with all eight Number parameters. To
+ * differentiate between all these parameters, p5.js uses the language of
+ * "destination rectangle" (which corresponds to "dx", "dy", etc.) and "source
+ * image" (which corresponds to "sx", "sy", etc.) below. Specifying the
+ * "source image" dimensions can be useful when you want to display a
+ * subsection of the source image instead of the whole thing. Here's a diagram
+ * to explain further:
+ * <img src="assets/drawImage.png"></img>
  *
  * @method image
  * @param  {p5.Image} img    the image to display
- * @param  {Number}   x      the x-coordinate at which to place the top-left
- *                           corner of the source image
- * @param  {Number}   y      the y-coordinate at which to place the top-left
- *                           corner of the source image
- * @param  {Number}   [width]  the width to draw the image
- * @param  {Number}   [height] the height to draw the image
+ * @param  {Number}   x     the x-coordinate of the top-left corner of the image
+ * @param  {Number}   y     the y-coordinate of the top-left corner of the image
+ * @param  {Number}   [width] the width to draw the image
+ * @param  {Number}   [height]  the height to draw the image
  * @example
  * <div>
  * <code>
@@ -141,46 +153,81 @@ function _sAssign(sVal, iVal) {
  *   img = loadImage("assets/laDefense.jpg");
  * }
  * function setup() {
+ *   // Top-left corner of the img is at (0, 0)
+ *   // Width and height are the img's original width and height
  *   image(img, 0, 0);
- *   image(img, 0, 0, 100, 100);
- *   image(img, 0, 0, 100, 100, 0, 0, 100, 100);
+ * }
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * var img;
+ * function preload() {
+ *   img = loadImage("assets/laDefense.jpg");
+ * }
+ * function setup() {
+ *   background(50);
+ *   // Top-left corner of the img is at (10, 10)
+ *   // Width and height are 50 x 50
+ *   image(img, 10, 10, 50, 50);
  * }
  * </code>
  * </div>
  * <div>
  * <code>
  * function setup() {
- *   // here we use a callback to display the image after loading
+ *   // Here, we use a callback to display the image after loading
  *   loadImage("assets/laDefense.jpg", function(img) {
  *     image(img, 0, 0);
  *   });
  * }
  * </code>
  * </div>
- *
+ * <div>
+ * <code>
+ * var img;
+ * function preload() {
+ *  img = loadImage("assets/gradient.png");
+ * }
+ * function setup() {
+ *  // 1. Background image
+ *  // Top-left corner of the img is at (0, 0)
+ *  // Width and height are the img's original width and height, 100 x 100
+ *  image(img, 0, 0);
+ *  // 2. Top right image
+ *  // Top-left corner of destination rectangle is at (50, 0)
+ *  // Destination rectangle width and height are 40 x 20
+ *  // The next parameters are relative to the source image:
+ *  // - Starting at position (50, 50) on the source image, capture a 50 x 50
+ *  // subsection
+ *  // - Draw this subsection to fill the dimensions of the destination rectangle
+ *  image(img, 50, 0, 40, 20, 50, 50, 50, 50);
+ * }
+ * </code>
+ * </div>
  * @alt
- * image of the underside of a white umbrella and grided ceiling above
- * image of the underside of a white umbrella and grided ceiling above
+ * image of the underside of a white umbrella and gridded ceiling above
+ * image of the underside of a white umbrella and gridded ceiling above
  *
  */
 /**
  * @method image
  * @param  {p5.Image} img
- * @param  {Number}   x
- * @param  {Number}   y
- * @param  {Number}   width
- * @param  {Number}   height
- * @param  {Number}   sx     the x-coordinate of the top left corner of the
- *                           sub-rectangle of the source image to draw into
- *                           the destination canvas
- * @param  {Number}   sy     the y-coordinate of the top left corner of the
- *                           sub-rectangle of the source image to draw into
- *                           the destination canvas
- * @param {Number}    [sWidth] the width of the sub-rectangle of the
+ * @param  {Number}   dx     the x-coordinate of the destination
+ *                           rectangle in which to draw the source image
+ * @param  {Number}   dy     the y-coordinate of the destination
+ *                           rectangle in which to draw the source image
+ * @param  {Number}   dWidth  the width of the destination rectangle
+ * @param  {Number}   dHeight the height of the destination rectangle
+ * @param  {Number}   sx     the x-coordinate of the subsection of the source
+ * image to draw into the destination rectangle
+ * @param  {Number}   sy     the y-coordinate of the subsection of the source
+ * image to draw into the destination rectangle
+ * @param {Number}    [sWidth] the width of the subsection of the
  *                           source image to draw into the destination
- *                           canvas
- * @param {Number}    [sHeight] the height of the sub-rectangle of the
- *                            source image to draw into the destination context
+ *                           rectangle
+ * @param {Number}    [sHeight] the height of the subsection of the
+ *                            source image to draw into the destination rectangle
  */
 p5.prototype.image =
   function(img, dx, dy, dWidth, dHeight, sx, sy, sWidth, sHeight) {
