@@ -921,14 +921,14 @@ p5.RendererGL.prototype.line = function(x0,y0,z0,x1,y1,z1) {
  * @param  {Number}   dy     the y-coordinate at which to place the top-left
  *                            corner of the source image on the
  *                            destination canvas
- * @param  {Number}   w      the width to draw the source image on the
+ * @param  {Number}   dw      the width to draw the source image on the
  *                            destination canvas
- * @param  {Number}   h      the height to draw the source image on the
+ * @param  {Number}   dh      the height to draw the source image on the
  *                            destination canvas
  */
 
 p5.RendererGL.prototype.image = function(image, sx, sy, sw, sh,
-    dx, dy, w, h) {
+    dx, dy, dw, dh) {
   if (typeof image !== 'undefined' &&
       typeof sx !== 'undefined' &&
       typeof sy !== 'undefined' &&
@@ -936,8 +936,8 @@ p5.RendererGL.prototype.image = function(image, sx, sy, sw, sh,
       typeof sh !== 'undefined' &&
       typeof dx !== 'undefined' &&
       typeof dy !== 'undefined' &&
-      typeof w !== 'undefined' &&
-      typeof h !== 'undefined' &&
+      typeof dw !== 'undefined' &&
+      typeof dh !== 'undefined' &&
       typeof this._pInst.texture !== 'undefined')
   {
     this._pInst.texture(image);
@@ -967,9 +967,9 @@ p5.RendererGL.prototype.image = function(image, sx, sy, sw, sh,
 
     this.beginShape();
     this.vertex(dx, dy, 0, u0, v0);
-    this.vertex(dx + w, dy, 0, u1, v0);
-    this.vertex(dx + w, dy + h,0, u1, v1);
-    this.vertex(dx, dy + h,0, u0, v1);
+    this.vertex(dx + dw, dy, 0, u1, v0);
+    this.vertex(dx + dw, dy + dh,0, u1, v1);
+    this.vertex(dx, dy + dh,0, u0, v1);
     this.endShape(constants.CLOSE);
   }
   return this;
