@@ -19,7 +19,7 @@ function draw(){
         i * gap, j * gap,
         i * gap, j * gap + h,
         i * gap + w, j * gap + h,
-        i * gap + w, j * gap,
+        i * gap + w, j * gap
         );
     }
   }
