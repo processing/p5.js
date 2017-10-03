@@ -902,31 +902,6 @@ p5.RendererGL.prototype.line = function(x0,y0,z0,x1,y1,z1) {
   return this;
 };
 
-/**
- * @param  {p5.Image} image  the source image
- * @param  {Number}   sx     the x-coordinate of the top left corner of the
- *                            sub-rectangle of the source image to draw into
- *                            the destination canvas
- * @param  {Number}   sy     the y-coordinate of the top left corner of the
- *                            sub-rectangle of the source image to draw into
- *                            the destination canvas
- * @param {Number}    sw     the width of the sub-rectangle of the
- *                            source image to draw into the destination
- *                            canvas
- * @param {Number}    sh     the height of the sub-rectangle of the
- *                            source image to draw into the destination context
- * @param  {Number}   dx     the x-coordinate at which to place the top-left
- *                            corner of the source image on the
- *                            destination canvas
- * @param  {Number}   dy     the y-coordinate at which to place the top-left
- *                            corner of the source image on the
- *                            destination canvas
- * @param  {Number}   dw      the width to draw the source image on the
- *                            destination canvas
- * @param  {Number}   dh      the height to draw the source image on the
- *                            destination canvas
- */
-
 p5.RendererGL.prototype.image = function(image, sx, sy, sw, sh,
     dx, dy, dw, dh) {
   if (typeof image !== 'undefined' &&
