@@ -105,6 +105,33 @@ module.exports = function(grunt) {
     keepalive = true;
   }
 
+  var mochaConfig = {
+    yui: {
+      options: {
+        urls: ['http://localhost:9001/test/test-reference.html'],
+        reporter: reporter,
+        run: false,
+        log: true,
+        logErrors: true,
+        growlOnSuccess: false
+      }
+    },
+    test: {
+      options: {
+        urls: [
+          'http://localhost:9001/test/test.html',
+          'http://localhost:9001/test/test-minified.html'
+        ],
+        reporter: reporter,
+        run: true,
+        log: true,
+        logErrors: true,
+        timeout: 100000,
+        growlOnSuccess: false
+      }
+    }
+  };
+
   let gruntConfig = {
     // read in the package, used for knowing the current version, et al.
     pkg: grunt.file.readJSON('package.json'),
@@ -243,32 +270,9 @@ module.exports = function(grunt) {
     },
 
     // Set up the mocha task, used for running the automated tests.
-    mocha: {
-      yui: {
-        options: {
-          urls: ['http://localhost:9001/test/test-reference.html'],
-          reporter: reporter,
-          run: false,
-          log: true,
-          logErrors: true,
-          growlOnSuccess: false
-        }
-      },
-      test: {
-        options: {
-          urls: [
-            'http://localhost:9001/test/test.html',
-            'http://localhost:9001/test/test-minified.html'
-          ],
-          reporter: reporter,
-          run: true,
-          log: true,
-          logErrors: true,
-          timeout: 100000,
-          growlOnSuccess: false
-        }
-      }
-    },
+    mocha: mochaConfig,
+
+    mochaChrome: mochaConfig,
 
     // This is a standalone task, used to automatically update the bower.json
     // file to match the values in package.json. It is (likely) used as part
@@ -452,6 +456,7 @@ module.exports = function(grunt) {
     'build',
     'connect',
     'mocha',
+    'mochaChrome',
     'mochaTest'
   ]);
   grunt.registerTask('test:nobuild', ['eslint:test', 'connect', 'mocha']);

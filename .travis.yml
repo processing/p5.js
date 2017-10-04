@@ -1,6 +1,8 @@
 language: node_js
 node_js:
   - "8.9"
+addons:
+  chrome: stable
 install: npm install
 script: npm run grunt
 sudo: false

@@ -95,7 +95,10 @@
     "prettier": "^1.7.4",
     "request": "^2.81.0",
     "whatwg-fetch": "^2.0.3",
-    "word-wrap": "^1.2.3"
+    "word-wrap": "^1.2.3",
+    "mocha": "^3.2.0",
+    "mocha-chrome": "^0.2.1",
+    "phantomjs": "^2.1.7"
   },
   "license": "LGPL-2.1",
   "main": "./lib/p5.js",
