@@ -4,5 +4,8 @@ node_js:
 addons:
   chrome: stable
 install: npm install
+before_script:
+  - sed -i 's/'"'"'--disable-gpu'"'"',//g' node_modules/mocha-chrome/lib/instance.js
+  - sed -i 's/options.logLevel/"verbose"/g' node_modules/mocha-chrome/lib/instance.js
 script: npm run grunt
 sudo: false
