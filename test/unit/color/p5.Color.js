@@ -1,8 +1,19 @@
 suite('p5.Color', function() {
-  var myp5 = new p5(function( sketch ) {
-    sketch.setup = function() {};
-    sketch.draw = function() {};
+  var myp5;
+
+  setup(function(done) {
+    new p5(function(p){
+      p.setup = function() {
+        myp5 = p;
+        done();
+      };
+    });
   });
+
+  teardown(function() {
+    myp5.remove();
+  });
+
   var c;
 
   suite('p5.prototype.color(r,g,b)', function() {
@@ -481,17 +492,17 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get hue/saturation/brightness/lightness', function() {
-      assert.equal(Math.round(c._getHue()), 336);
-      assert.equal(Math.round(c._getSaturation()), 100);
-      assert.equal(Math.round(c._getBrightness()), 100);
-      assert.equal(Math.round(c._getLightness()), 50);
+      assert.approximately(c._getHue(), 336, 0.5);
+      assert.approximately(c._getSaturation(), 100, 0.5);
+      assert.approximately(c._getBrightness(), 100, 0.5);
+      assert.approximately(c._getLightness(), 50, 0.5);
     });
 
     test('should correctly get RGBA values', function() {
-      assert.equal(Math.round(c._getRed()), 255);
-      assert.equal(Math.round(c._getGreen()), 0);
-      assert.equal(Math.round(c._getBlue()), 102);
-      assert.equal(Math.round(c._getAlpha()), 204);
+      assert.approximately(c._getRed(), 255, 0.5);
+      assert.approximately(c._getGreen(), 0, 0.5);
+      assert.approximately(c._getBlue(), 102, 0.5);
+      assert.approximately(c._getAlpha(), 204, 0.5);
     });
 
     test('should correctly render color string', function() {
@@ -534,7 +545,7 @@ suite('p5.Color', function() {
       assert.equal(c._getRed(), 1);
       assert.equal(c._getGreen(), 0);
       assert.equal(c._getBlue(), 0.4);
-      assert.equal(c._getAlpha(), 0.8);
+      assert.approximately(c._getAlpha(), 0.8, 0.05);
     });
 
     test('should correctly render color string', function() {
@@ -591,10 +602,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get hue/saturation/lightness/alpha', function() {
-      assert.equal(Math.round(c._getHue()), 336);
-      assert.equal(Math.round(c._getSaturation()), 100);
-      assert.equal(Math.round(c._getLightness()), 50);
-      assert.equal(c._getAlpha(), 0.8);
+      assert.approximately(c._getHue(), 336, 0.5);
+      assert.approximately(c._getSaturation(), 100, 0.5);
+      assert.approximately(c._getLightness(), 50, 0.5);
+      assert.approximately(c._getAlpha(), 0.8, 0.05);
     });
   });
 
@@ -605,10 +616,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get HSLA property', function() {
-      assert.equal(Math.round(c._getHue()), 93);
-      assert.equal(Math.round(c._getSaturation()), 200);
-      assert.equal(Math.round(c._getLightness()), 150);
-      assert.equal(Math.round(c._getAlpha()), 8);
+      assert.approximately(c._getHue(), 93, 0.5);
+      assert.approximately(c._getSaturation(), 200, 0.5);
+      assert.approximately(c._getLightness(), 150, 0.5);
+      assert.approximately(c._getAlpha(), 8, 0.5);
     });
 
     test('should correctly convert to RGBA', function() {
@@ -643,10 +654,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get HSLA property', function() {
-      assert.equal(Math.round(c._getHue()), 336);
-      assert.equal(Math.round(c._getSaturation()), 100);
-      assert.equal(Math.round(c._getLightness()), 50);
-      assert.equal(c._getAlpha(), 0.8);
+      assert.approximately(c._getHue(), 336, 0.5);
+      assert.approximately(c._getSaturation(), 100, 0.5);
+      assert.approximately(c._getLightness(), 50, 0.5);
+      assert.approximately(c._getAlpha(), 0.8, 0.05);
     });
 
     test('should correctly convert to RGBA', function() {
@@ -665,10 +676,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get HSLA property', function() {
-      assert.equal(Math.round(c._getHue()), 336);
-      assert.equal(Math.round(c._getSaturation()), 100);
-      assert.equal(Math.round(c._getLightness()), 50);
-      assert.equal(c._getAlpha(), 0.8);
+      assert.approximately(c._getHue(), 336, 0.5);
+      assert.approximately(c._getSaturation(), 100, 0.5);
+      assert.approximately(c._getLightness(), 50, 0.5);
+      assert.approximately(c._getAlpha(), 0.8, 0.05);
     });
 
     test('should correctly convert to RGBA', function() {
@@ -687,10 +698,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get HSLA property', function() {
-      assert.equal(Math.round(c._getHue()), 336);
-      assert.equal(Math.round(c._getSaturation()), 100);
-      assert.equal(Math.round(c._getLightness()), 50);
-      assert.equal(c._getAlpha(), 0.8);
+      assert.approximately(c._getHue(), 336, 0.5);
+      assert.approximately(c._getSaturation(), 100, 0.5);
+      assert.approximately(c._getLightness(), 50, 0.5);
+      assert.approximately(c._getAlpha(), 0.8, 0.05);
     });
 
     test('should correctly convert to RGBA', function() {
@@ -743,10 +754,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get hue/saturation/brightness/alpha', function() {
-      assert.equal(Math.round(c._getHue()), 336);
-      assert.equal(Math.round(c._getSaturation()), 100);
-      assert.equal(Math.round(c._getBrightness()), 100);
-      assert.equal(c._getAlpha(), 0.8);
+      assert.approximately(c._getHue(), 336, 0.5);
+      assert.approximately(c._getSaturation(), 100, 0.5);
+      assert.approximately(c._getBrightness(), 100, 0.5);
+      assert.approximately(c._getAlpha(), 0.8, 0.05);
     });
   });
 
@@ -757,10 +768,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get HSBA property', function() {
-      assert.equal(Math.round(c._getHue()), 93);
-      assert.equal(Math.round(c._getSaturation()), 200);
-      assert.equal(Math.round(c._getBrightness()), 300);
-      assert.equal(Math.round(c._getAlpha()), 8);
+      assert.approximately(c._getHue(), 93, 0.5);
+      assert.approximately(c._getSaturation(), 200, 0.5);
+      assert.approximately(c._getBrightness(), 300, 0.5);
+      assert.approximately(c._getAlpha(), 8, 0.5);
     });
 
     test('should correctly convert to RGBA', function() {
@@ -779,10 +790,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get HSBA property', function() {
-      assert.equal(Math.round(c._getHue()), 336);
-      assert.equal(Math.round(c._getSaturation()), 100);
-      assert.equal(Math.round(c._getBrightness()), 100);
-      assert.equal(c._getAlpha(), 0.8);
+      assert.approximately(c._getHue(), 336, 0.5);
+      assert.approximately(c._getSaturation(), 100, 0.5);
+      assert.approximately(c._getBrightness(), 100, 0.5);
+      assert.approximately(c._getAlpha(), 0.8, 0.05);
     });
 
     test('should correctly convert to RGBA', function() {
@@ -801,10 +812,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get HSBA property', function() {
-      assert.equal(Math.round(c._getHue()), 336);
-      assert.equal(Math.round(c._getSaturation()), 100);
-      assert.equal(Math.round(c._getBrightness()), 100);
-      assert.equal(c._getAlpha(), 0.8);
+      assert.approximately(c._getHue(), 336, 0.5);
+      assert.approximately(c._getSaturation(), 100, 0.5);
+      assert.approximately(c._getBrightness(), 100, 0.5);
+      assert.approximately(c._getAlpha(), 0.8, 0.05);
     });
 
     test('should correctly convert to RGBA', function() {
@@ -823,10 +834,10 @@ suite('p5.Color', function() {
     });
 
     test('should correctly get HSBA property', function() {
-      assert.equal(Math.round(c._getHue()), 336);
-      assert.equal(Math.round(c._getSaturation()), 100);
-      assert.equal(Math.round(c._getBrightness()), 100);
-      assert.equal(c._getAlpha(), 0.8);
+      assert.approximately(c._getHue(), 336, 0.5);
+      assert.approximately(c._getSaturation(), 100, 0.5);
+      assert.approximately(c._getBrightness(), 100, 0.5);
+      assert.approximately(c._getAlpha(), 0.8, 0.05);
     });
 
     test('should correctly convert to RGBA', function() {

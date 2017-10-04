@@ -125,7 +125,7 @@ p5.prototype.loadJSON = function () {
   }
 
   var self = this;
-  p5.prototype.httpDo(path, 'GET', options, t, function(resp){
+  this.httpDo(path, 'GET', options, t, function(resp){
     for (var k in resp) {
       ret[k] = resp[k];
     }
@@ -366,7 +366,7 @@ p5.prototype.loadTable = function (path) {
   var t = new p5.Table();
 
   var self = this;
-  p5.prototype.httpDo(path, 'GET', 'text', function(resp){
+  this.httpDo(path, 'GET', 'text', function(resp){
     var state = {};
 
     // define constants
@@ -444,6 +444,8 @@ p5.prototype.loadTable = function (path) {
             state.escaped = false;
             state.currentState = POST_TOKEN;
           }
+        } else if(currentChar === CR) {
+          continue;
         } else {
           state.token += currentChar;
         }
@@ -631,7 +633,7 @@ p5.prototype.loadXML = function() {
   }
 
   var self = this;
-  p5.prototype.httpDo(arguments[0], 'GET', 'xml', function(xml){
+  this.httpDo(arguments[0], 'GET', 'xml', function(xml){
     for(var key in xml) {
       ret[key] = xml[key];
     }
@@ -706,14 +708,79 @@ p5.prototype.httpGet = function () {
  *
  * @method httpPost
  * @param  {String}        path       name of the file or url to load
- * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
+ * @param  {String}        [datatype] "json", "jsonp", "xml", or "text".
+ *                                    If omitted, httpPost() will guess.
  * @param  {Object}        [data]     param data passed sent with request
  * @param  {function}      [callback] function to be executed after
- *                                    httpGet() completes, data is passed in
+ *                                    httpPost() completes, data is passed in
  *                                    as first argument
  * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Examples use jsonplaceholder.typicode.com for a Mock Data API
+ *
+ * var url = 'https://jsonplaceholder.typicode.com/posts';
+ * var postData = { userId: 1, title: 'p5 Clicked!', body: 'p5.js is way cool.' };
+ *
+ * function setup() {
+ *   createCanvas(800, 800);
+ * }
+ *
+ * function mousePressed() {
+ *  // Pick new random color values
+ *  var r = random(255);
+ *  var g = random(255);
+ *  var b = random(255);
+ *
+ *  httpPost(url, 'json',
+ *      postData,
+ *      function (result) {
+ *        strokeWeight(2);
+ *        stroke(r, g, b);
+ *        fill(r, g, b, 127);
+ *        ellipse(mouseX, mouseY, 200, 200);
+ *        text(result.body, mouseX, mouseY);
+ *      });
+ * }
+ * </code>
+ * </div>
+ *
+ *
+ * <div><code>
+ *
+ *  var url = 'https://invalidURL'; // A bad URL that will cause errors
+ *  var postData = { title: 'p5 Clicked!', body: 'p5.js is way cool.' };
+ *
+ *  function setup() {
+ *     createCanvas(800, 800);
+ *  }
+ *
+ *  function mousePressed() {
+ *    // Pick new random color values
+ *    var r = random(255);
+ *    var g = random(255);
+ *    var b = random(255);
+ *
+ *    httpPost(url, 'json',
+ *      postData,
+ *      function (result) {
+ *        // ... won't be called
+ *      },
+ *      function (error) {
+ *        strokeWeight(2);
+ *        stroke(r, g, b);
+ *        fill(r, g, b, 127);
+ *        text(error.toString(), mouseX, mouseY);
+ *    });
+ *  }
+ *
+ * </code>
+ * </div>
+ *
  */
 p5.prototype.httpPost = function () {
   var args = Array.prototype.slice.call(arguments);
@@ -740,6 +807,56 @@ p5.prototype.httpPost = function () {
  * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
+ *
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Examples use USGS Earthquake API:
+ * // https://earthquake.usgs.gov/fdsnws/event/1/#methods
+ *
+ * // displays an animation of all USGS earthquakes
+ * var earthquakes;
+ * var eqFeatureIndex = 0;
+ *
+ * function preload() {
+ *    var url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson';
+ *    httpDo(url,
+ *      {
+ *        method: 'GET',
+ *        // Other Request options, like special headers for apis
+ *        headers: { authorization: 'Bearer secretKey' }
+ *      },
+ *      function(res) {
+ *        earthquakes = res;
+ *      });
+ * }
+ *
+ * function draw() {
+ *    // wait until the data is loaded
+ *    if (!earthquakes || !earthquakes.features[eqFeatureIndex]) {
+ *      return;
+ *    }
+ *    clear();
+ *
+ *    var feature = earthquakes.features[eqFeatureIndex];
+ *    var mag = feature.properties.mag;
+ *    var rad = mag / 11 * ((width + height) / 2);
+ *    fill(255, 0, 0, 100);
+ *    ellipse(
+ *      width / 2 + random(-2, 2),
+ *      height / 2 + random(-2, 2),
+ *      rad, rad
+ *    );
+ *
+ *    if (eqFeatureIndex >= earthquakes.features.length) {
+ *      eqFeatureIndex = 0;
+ *    } else {
+ *      eqFeatureIndex += 1;
+ *    }
+ * }
+ * </code>
+ * </div>
  */
 
 /**

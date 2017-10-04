@@ -74,6 +74,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
 
     // Draw the image into the backing canvas of the p5.Image
     pImg.drawingContext.drawImage(img, 0, 0);
+    pImg.modified = true;
 
     if (typeof successCallback === 'function') {
       successCallback(pImg);

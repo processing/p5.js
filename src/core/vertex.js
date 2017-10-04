@@ -603,9 +603,9 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  * 4 black points in a square shape in middle-right of canvas.
  *
  */
-p5.prototype.vertex = function(x, y, moveTo) {
+p5.prototype.vertex = function(x, y, moveTo, u, v) {
   if(this._renderer.isP3D){
-    this._renderer.vertex(x, y, moveTo);
+    this._renderer.vertex.apply(this._renderer, arguments);
   }else{
     var vert = [];
     vert.isVert = true;

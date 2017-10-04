@@ -25,8 +25,9 @@ p5.Renderer2D = function(elt, pInst, isMainCanvas){
 p5.Renderer2D.prototype = Object.create(p5.Renderer.prototype);
 
 p5.Renderer2D.prototype._applyDefaults = function() {
-  this._setFill(constants._DEFAULT_FILL, true);
-  this._setStroke(constants._DEFAULT_STROKE, true);
+  this._cachedFillStyle = this._cachedStrokeStyle = undefined;
+  this._setFill(constants._DEFAULT_FILL);
+  this._setStroke(constants._DEFAULT_STROKE);
   this.drawingContext.lineCap = constants.ROUND;
   this.drawingContext.font = 'normal 12px sans-serif';
 };
@@ -222,7 +223,7 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
 
   var sx = x * pd;
   var sy = y * pd;
-  if (w === 1 && h === 1){
+  if (w === 1 && h === 1 && !(this instanceof p5.RendererGL)){
     var imageData = this.drawingContext.getImageData(sx, sy, 1, 1).data;
     //imageData = [0,0,0,0];
     return [
@@ -899,30 +900,12 @@ p5.Renderer2D.prototype.noSmooth = function() {
   if ('imageSmoothingEnabled' in this.drawingContext) {
     this.drawingContext.imageSmoothingEnabled = false;
   }
-  else if ('mozImageSmoothingEnabled' in this.drawingContext) {
-    this.drawingContext.mozImageSmoothingEnabled = false;
-  }
-  else if ('webkitImageSmoothingEnabled' in this.drawingContext) {
-    this.drawingContext.webkitImageSmoothingEnabled = false;
-  }
-  else if ('msImageSmoothingEnabled' in this.drawingContext) {
-    this.drawingContext.msImageSmoothingEnabled = false;
-  }
   return this;
 };
 
 p5.Renderer2D.prototype.smooth = function() {
   if ('imageSmoothingEnabled' in this.drawingContext) {
     this.drawingContext.imageSmoothingEnabled = true;
-  }
-  else if ('mozImageSmoothingEnabled' in this.drawingContext) {
-    this.drawingContext.mozImageSmoothingEnabled = true;
-  }
-  else if ('webkitImageSmoothingEnabled' in this.drawingContext) {
-    this.drawingContext.webkitImageSmoothingEnabled = true;
-  }
-  else if ('msImageSmoothingEnabled' in this.drawingContext) {
-    this.drawingContext.msImageSmoothingEnabled = true;
   }
   return this;
 };
@@ -956,24 +939,30 @@ p5.Renderer2D.prototype.strokeWeight = function(w) {
 };
 
 p5.Renderer2D.prototype._getFill = function(){
+  if (!this._cachedFillStyle) {
+    this._cachedFillStyle = this.drawingContext.fillStyle;
+  }
   return this._cachedFillStyle;
 };
 
-p5.Renderer2D.prototype._setFill = function(fillStyle, nocache){
+p5.Renderer2D.prototype._setFill = function(fillStyle){
   if (fillStyle !== this._cachedFillStyle) {
     this.drawingContext.fillStyle = fillStyle;
-    this._cachedFillStyle = nocache || fillStyle;
+    this._cachedFillStyle = fillStyle;
   }
 };
 
 p5.Renderer2D.prototype._getStroke = function(){
+  if (!this._cachedStrokeStyle) {
+    this._cachedStrokeStyle = this.drawingContext.strokeStyle;
+  }
   return this._cachedStrokeStyle;
 };
 
-p5.Renderer2D.prototype._setStroke = function(strokeStyle, nocache){
+p5.Renderer2D.prototype._setStroke = function(strokeStyle){
   if (strokeStyle !== this._cachedStrokeStyle) {
     this.drawingContext.strokeStyle = strokeStyle;
-    this._cachedStrokeStyle = nocache || strokeStyle;
+    this._cachedStrokeStyle = strokeStyle;
   }
 };
 
@@ -1019,8 +1008,8 @@ p5.Renderer2D.prototype._doFillStrokeClose = function () {
 //////////////////////////////////////////////
 
 p5.Renderer2D.prototype.applyMatrix =
-function(n00, n01, n02, n10, n11, n12) {
-  this.drawingContext.transform(n00, n01, n02, n10, n11, n12);
+function(a, b, c, d, e, f) {
+  this.drawingContext.transform(a, b, c, d, e, f);
 };
 
 p5.Renderer2D.prototype.resetMatrix = function() {
