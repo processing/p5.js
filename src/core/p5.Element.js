@@ -166,8 +166,10 @@ p5.Element.prototype.class = function(c) {
  * attach element specific event listeners.
  *
  * @method mousePressed
- * @param  {function} fxn function to be fired when mouse is
- *                    pressed over the element.
+ * @param  {Function|Boolean} fxn function to be fired when mouse is
+ *                                pressed over the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class='norender'><code>
@@ -203,8 +205,8 @@ p5.Element.prototype.class = function(c) {
  *
  */
 p5.Element.prototype.mousePressed = function (fxn) {
-  attachListener('mousedown', fxn, this);
-  attachListener('touchstart', fxn, this);
+  adjustListener('mousedown', fxn, this);
+  adjustListener('touchstart', fxn, this);
   return this;
 };
 
@@ -214,8 +216,10 @@ p5.Element.prototype.mousePressed = function (fxn) {
  * attach element and action specific event listeners.
  *
  * @method doubleClicked
- * @param  {Function} fxn function to be fired when mouse is
- *                    pressed over the element.
+ * @param  {Function|Boolean} fxn function to be fired when mouse is
+ *                                double clicked over the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @return {p5.Element}
  * @example
  * <div class='norender'><code>
@@ -251,7 +255,7 @@ p5.Element.prototype.mousePressed = function (fxn) {
  *
  */
 p5.Element.prototype.doubleClicked = function (fxn) {
-  attachListener('doubleClicked', fxn, this);
+  adjustListener('doubleClicked', fxn, this);
   return this;
 };
 
@@ -272,8 +276,10 @@ p5.Element.prototype.doubleClicked = function (fxn) {
  * reversed.
  *
  * @method mouseWheel
- * @param  {function} fxn function to be fired when mouse wheel is
- *                    scrolled over the element.
+ * @param  {Function|Boolean} fxn function to be fired when mouse is
+ *                                scrolled over the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class='norender'><code>
@@ -316,7 +322,7 @@ p5.Element.prototype.doubleClicked = function (fxn) {
  *
  */
 p5.Element.prototype.mouseWheel = function (fxn) {
-  attachListener('wheel', fxn, this);
+  adjustListener('wheel', fxn, this);
   return this;
 };
 
@@ -326,8 +332,10 @@ p5.Element.prototype.mouseWheel = function (fxn) {
  * attach element specific event listeners.
  *
  * @method mouseReleased
- * @param  {function} fxn function to be fired when mouse is
- *                    released over the element.
+ * @param  {Function|Boolean} fxn function to be fired when mouse is
+ *                                released over the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class='norender'><code>
@@ -366,8 +374,8 @@ p5.Element.prototype.mouseWheel = function (fxn) {
  *
  */
 p5.Element.prototype.mouseReleased = function (fxn) {
-  attachListener('mouseup', fxn, this);
-  attachListener('touchend', fxn, this);
+  adjustListener('mouseup', fxn, this);
+  adjustListener('touchend', fxn, this);
   return this;
 };
 
@@ -378,8 +386,10 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  * attach element specific event listeners.
  *
  * @method mouseClicked
- * @param  {function} fxn function to be fired when mouse is
- *                    clicked over the element.
+ * @param  {Function|Boolean} fxn function to be fired when mouse is
+ *                                clicked over the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class="norender">
@@ -420,7 +430,7 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  *
  */
 p5.Element.prototype.mouseClicked = function (fxn) {
-  attachListener('click', fxn, this);
+  adjustListener('click', fxn, this);
   return this;
 };
 
@@ -430,8 +440,10 @@ p5.Element.prototype.mouseClicked = function (fxn) {
  * element specific event listener.
  *
  * @method mouseMoved
- * @param  {function} fxn function to be fired when mouse is
- *                    moved over the element.
+ * @param  {Function|Boolean} fxn function to be fired when a mouse moves
+ *                                over the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class='norender'><code>
@@ -476,8 +488,8 @@ p5.Element.prototype.mouseClicked = function (fxn) {
  *
  */
 p5.Element.prototype.mouseMoved = function (fxn) {
-  attachListener('mousemove', fxn, this);
-  attachListener('touchmove', fxn, this);
+  adjustListener('mousemove', fxn, this);
+  adjustListener('touchmove', fxn, this);
   return this;
 };
 
@@ -487,8 +499,10 @@ p5.Element.prototype.mouseMoved = function (fxn) {
  * element specific event listener.
  *
  * @method mouseOver
- * @param  {function} fxn function to be fired when mouse is
- *                    moved over the element.
+ * @param  {Function|Boolean} fxn function to be fired when a mouse moves
+ *                                onto the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class='norender'><code>
@@ -519,19 +533,21 @@ p5.Element.prototype.mouseMoved = function (fxn) {
  *
  */
 p5.Element.prototype.mouseOver = function (fxn) {
-  attachListener('mouseover', fxn, this);
+  adjustListener('mouseover', fxn, this);
   return this;
 };
 
 
 /**
  * The .changed() function is called when the value of an
- * element is changed.
+ * element changes.
  * This can be used to attach an element specific event listener.
  *
  * @method changed
- * @param  {function} fxn function to be fired when the value of an
- * element changes.
+ * @param  {Function|Boolean} fxn function to be fired when the value of
+ *                                an element changes.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div><code>
@@ -585,7 +601,7 @@ p5.Element.prototype.mouseOver = function (fxn) {
  *
  */
 p5.Element.prototype.changed = function (fxn) {
-  attachListener('change', fxn, this);
+  adjustListener('change', fxn, this);
   return this;
 };
 
@@ -597,7 +613,10 @@ p5.Element.prototype.changed = function (fxn) {
  * event listener.
  *
  * @method input
- * @param  {function} fxn function to be fired on user input.
+ * @param  {Function|Boolean} fxn function to be fired when any user input is
+ *                                detected within the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class='norender'><code>
@@ -617,7 +636,7 @@ p5.Element.prototype.changed = function (fxn) {
  *
  */
 p5.Element.prototype.input = function (fxn) {
-  attachListener('input', fxn, this);
+  adjustListener('input', fxn, this);
   return this;
 };
 
@@ -627,8 +646,10 @@ p5.Element.prototype.input = function (fxn) {
  * element specific event listener.
  *
  * @method mouseOut
- * @param  {function} fxn function to be fired when mouse is
- *                    moved off the element.
+ * @param  {Function|Boolean} fxn function to be fired when a mouse
+ *                                moves off of an element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class='norender'><code>
@@ -658,7 +679,7 @@ p5.Element.prototype.input = function (fxn) {
  *
  */
 p5.Element.prototype.mouseOut = function (fxn) {
-  attachListener('mouseout', fxn, this);
+  adjustListener('mouseout', fxn, this);
   return this;
 };
 
@@ -667,8 +688,10 @@ p5.Element.prototype.mouseOut = function (fxn) {
  * registered. This can be used to attach element specific event listeners.
  *
  * @method touchStarted
- * @param  {function} fxn function to be fired when touch is
- *                    started over the element.
+ * @param  {Function|Boolean} fxn function to be fired when a touch
+ *                                starts over the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class='norender'><code>
@@ -704,8 +727,8 @@ p5.Element.prototype.mouseOut = function (fxn) {
  *
  */
 p5.Element.prototype.touchStarted = function (fxn) {
-  attachListener('touchstart', fxn, this);
-  attachListener('mousedown', fxn, this);
+  adjustListener('touchstart', fxn, this);
+  adjustListener('mousedown', fxn, this);
   return this;
 };
 
@@ -714,8 +737,10 @@ p5.Element.prototype.touchStarted = function (fxn) {
  * registered. This can be used to attach element specific event listeners.
  *
  * @method touchMoved
- * @param  {function} fxn function to be fired when touch is moved
- *                    over the element.
+ * @param  {Function|Boolean} fxn function to be fired when a touch moves over
+ *                                the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class='norender'><code>
@@ -743,8 +768,8 @@ p5.Element.prototype.touchStarted = function (fxn) {
  *
  */
 p5.Element.prototype.touchMoved = function (fxn) {
-  attachListener('touchmove', fxn, this);
-  attachListener('mousemove', fxn, this);
+  adjustListener('touchmove', fxn, this);
+  adjustListener('mousemove', fxn, this);
   return this;
 };
 
@@ -753,8 +778,10 @@ p5.Element.prototype.touchMoved = function (fxn) {
  * registered. This can be used to attach element specific event listeners.
  *
  * @method touchEnded
- * @param  {function} fxn function to be fired when touch is
- *                    ended over the element.
+ * @param  {Function|Boolean} fxn function to be fired when a touch ends
+ *                                over the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div class='norender'><code>
@@ -791,8 +818,8 @@ p5.Element.prototype.touchMoved = function (fxn) {
  *
  */
 p5.Element.prototype.touchEnded = function (fxn) {
-  attachListener('touchend', fxn, this);
-  attachListener('mouseup', fxn, this);
+  adjustListener('touchend', fxn, this);
+  adjustListener('mouseup', fxn, this);
   return this;
 };
 
@@ -804,8 +831,10 @@ p5.Element.prototype.touchEnded = function (fxn) {
  * element specific event listener.
  *
  * @method dragOver
- * @param  {function} fxn function to be fired when mouse is
- *                    dragged over the element.
+ * @param  {Function|Boolean} fxn function to be fired when a file is
+ *                                dragged over the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div><code>
@@ -830,7 +859,7 @@ p5.Element.prototype.touchEnded = function (fxn) {
  * nothing displayed
  */
 p5.Element.prototype.dragOver = function (fxn) {
-  attachListener('dragover', fxn, this);
+  adjustListener('dragover', fxn, this);
   return this;
 };
 
@@ -840,8 +869,10 @@ p5.Element.prototype.dragOver = function (fxn) {
  * element specific event listener.
  *
  * @method dragLeave
- * @param  {function} fxn function to be fired when mouse is
- *                    dragged over the element.
+ * @param  {Function|Boolean} fxn function to be fired when a file is
+ *                                dragged off the element.
+ *                                if `false` is passed instead, the previously
+ *                                firing function will no longer fire.
  * @chainable
  * @example
  * <div><code>
@@ -866,7 +897,7 @@ p5.Element.prototype.dragOver = function (fxn) {
  * nothing displayed
  */
 p5.Element.prototype.dragLeave = function (fxn) {
-  attachListener('dragleave', fxn, this);
+  adjustListener('dragleave', fxn, this);
   return this;
 };
 
@@ -878,8 +909,8 @@ p5.Element.prototype.dragLeave = function (fxn) {
  * is triggered just once when a file (or files) are dropped.
  *
  * @method drop
- * @param  {function} callback  callback triggered when files are dropped.
- * @param  {function} fxn       callback to receive loaded file.
+ * @param  {Function|Boolean} callback  callback triggered when files are dropped.
+ * @param  {Function|Boolean} fxn       callback to receive loaded file.
  * @chainable
  * @example
  * <div><code>
@@ -966,16 +997,35 @@ p5.Element.prototype.drop = function (callback, fxn) {
   return this;
 };
 
-
-
+// General handler for event attaching and detaching
+function adjustListener(ev, fxn, ctx) {
+  if (fxn === false) {
+    detachListener(ev, ctx);
+  }
+  else {
+    attachListener(ev, fxn, ctx);
+  }
+  return this;
+}
 
 function attachListener(ev, fxn, ctx) {
   // LM removing, not sure why we had this?
   // var _this = ctx;
   // var f = function (e) { fxn(e, _this); };
+
+  // detach the old listener if there was one
+  if (ctx._events[ev]) {
+    detachListener(ev, ctx);
+  }
   var f = fxn.bind(ctx);
   ctx.elt.addEventListener(ev, f, false);
   ctx._events[ev] = f;
+}
+
+function detachListener(ev, ctx) {
+  var f = ctx._events[ev];
+  ctx.elt.removeEventListener(ev, f, false);
+  ctx._events[ev] = null;
 }
 
 /**
