@@ -75,25 +75,6 @@ require('./error_helpers');
  * arc(55, 50, 70, 35, PI + HALF_PI, HALF_PI, CHORD);
  * </code>
  * </div>
- *
- * <div>
- * <code>
- * //In WebGL mode, detailX can change be
- * //useful to alter the geometry to resemble
- * //other shapes, like the hexagon below.
- * function setup(){
- *   createCanvas(100, 100, WEBGL);
- * }
- *
- * function draw(){
- * //Two arcs, one drawn with default detail (24)
- * //and one with low detail (6)
- * rotateY(frameCount * 0.01)
- * arc(-5 , 0, 40, 40, PI/2, PI + HALF_PI, CHORD);
- * arc( 5 , 0, 40, 40, PI + HALF_PI, PI/2, CHORD);
- * }
- * </code>
- * </div>
  * @alt
  * shattered outline of an ellipse with a quarter of a white circle bottom-right.
  * white ellipse with black outline with top right missing.
@@ -174,6 +155,10 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, xDetail) {
  * height. If a negative height or width is specified, the absolute value is taken.
  * The origin may be changed with the ellipseMode() function.
  *
+ * In WebGL mode, detailX can be used to cause the ellipse to resemble another
+ * shape. A value of 6 will produce a hexagon.
+ *
+ *
  * @method ellipse
  * @param  {Number} x x-coordinate of the ellipse.
  * @param  {Number} y y-coordinate of the ellipse.
@@ -195,25 +180,6 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode, xDetail) {
  * <code>
  * //An ellipse does not need to be circular
  * ellipse(50, 50, 55, 25);
- * </code>
- * </div>
- *
- * <div>
- * <code>
- * //In WebGL mode, detailX can change be
- * //useful to alter the geometry to resemble
- * //other shapes, like the hexagon shown here.
- * function setup(){
- *   createCanvas(100, 100, WEBGL);
- * }
- *
- * function draw(){
- * //Two ellipses, one drawn with default detail (24)
- * //and one with low detail (6)
- * rotateY(frameCount * 0.01)
- * ellipse(16 , -16, 40, 40);
- * ellipse(-16,  16, 40, 40, 6);
- * }
  * </code>
  * </div>
  * @alt
