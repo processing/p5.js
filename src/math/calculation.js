@@ -171,12 +171,13 @@ p5.prototype.constrain = function(n, low, high) {
  * 2 ellipses joined by line. 1 ellipse moves with mouse X&Y. Distance displayed.
  *
  */
-p5.prototype.dist = function(x1, y1, z1, x2, y2, z2) {
-  if (arguments.length === 4) {
-    // In the case of 2d: z1 means x2 and x2 means y2
-    return hypot(z1-x1, x2-y1);
-  } else if (arguments.length === 6) {
-    return hypot(x2-x1, y2-y1, z2-z1);
+p5.prototype.dist = function() {
+  if (arguments.length === 4) { //2D
+    return hypot(arguments[2]-arguments[0], arguments[3]-arguments[1]);
+  } else if (arguments.length === 6) { //3D
+    return hypot(arguments[3]-arguments[0],
+      arguments[4]-arguments[1],
+      arguments[5]-arguments[2]);
   }
 };
 
@@ -418,6 +419,7 @@ p5.prototype.mag = function(x, y) {
  * @param  {Number} stop1  upper bound of the value's current range
  * @param  {Number} start2 lower bound of the value's target range
  * @param  {Number} stop2  upper bound of the value's target range
+ * @param  {Boolean} [withinBounds] constrain the value to the newly mapped range
  * @return {Number}        remapped number
  * @example
  *   <div><code>
@@ -435,7 +437,9 @@ p5.prototype.mag = function(x, y) {
  *       background(204);
  *       var x1 = map(mouseX, 0, width, 25, 75);
  *       ellipse(x1, 25, 25, 25);
- *       var x2 = map(mouseX, 0, width, 0, 100);
+ *       //This ellipse is constrained to the 0-100 range
+ *       //after setting withinBounds to true
+ *       var x2 = map(mouseX, 0, width, 0, 100, true);
  *       ellipse(x2, 75, 25, 25);
  *     }
  *   </code></div>
@@ -445,8 +449,16 @@ p5.prototype.mag = function(x, y) {
  * 2 25 by 25 white ellipses move with mouse x. Bottom has more range from X
  *
  */
-p5.prototype.map = function(n, start1, stop1, start2, stop2) {
-  return ((n-start1)/(stop1-start1))*(stop2-start2)+start2;
+p5.prototype.map = function (n, start1, stop1, start2, stop2, withinBounds) {
+  var newval = ((n - start1)/(stop1 - start1)) * (stop2 - start2) + start2;
+  if (!withinBounds) {
+    return newval;
+  }
+  if (start2 < stop2) {
+    return this.constrain(newval, start2, stop2);
+  } else {
+    return this.constrain(newval, stop2, start2);
+  }
 };
 
 /**
