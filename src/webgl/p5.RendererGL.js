@@ -601,10 +601,10 @@ p5.RendererGL.prototype.get = function(x, y, w, h) {
  * Any pixel manipulation must be done directly to the pixels[] array.
  *
  * @method loadPixels
- * @param {Number} starting pixel x position, defaults to 0
- * @param {Number} starting pixel y position, defaults to 0
- * @param {Number} width of pixels to load, defaults to sketch width
- * @param {Number} height of pixels to load, defaults to sketch height
+ * @param {Number} [x] starting pixel x position, defaults to 0
+ * @param {Number} [y] starting pixel y position, defaults to 0
+ * @param {Number} [w] width of pixels to load, defaults to sketch width
+ * @param {Number} [h] height of pixels to load, defaults to sketch height
  *
  */
 

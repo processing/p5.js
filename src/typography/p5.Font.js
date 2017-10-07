@@ -148,6 +148,7 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
 /**
  * Computes an array of points following the path for specified text
  *
+ * @method textToPoints
  * @param  {String} txt     a line of text
  * @param  {Number} x        x-position
  * @param  {Number} y        y-position
