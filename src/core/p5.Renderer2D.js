@@ -596,22 +596,27 @@ p5.Renderer2D.prototype.rect = function(args) {
     if (typeof br === 'undefined') { br = tr; }
     if (typeof bl === 'undefined') { bl = br; }
 
-    var hw = w / 2;
-    var hh = h / 2;
+    // Ensure half length is positive
+    var hw = Math.abs(w / 2);
+    var hh = Math.abs(h / 2);
 
-    // Clip radii
-    if (w < 2 * tl) { tl = hw; }
-    if (h < 2 * tl) { tl = hh; }
-    if (w < 2 * tr) { tr = hw; }
-    if (h < 2 * tr) { tr = hh; }
-    if (w < 2 * br) { br = hw; }
-    if (h < 2 * br) { br = hh; }
-    if (w < 2 * bl) { bl = hw; }
-    if (h < 2 * bl) { bl = hh; }
+    // Clip radii it is longer than half the length
+    if (hw < tl) { tl = hw; }
+    if (hh < tl) { tl = hh; }
+    if (hw < tr) { tr = hw; }
+    if (hh < tr) { tr = hh; }
+    if (hw < br) { br = hw; }
+    if (hh < br) { br = hh; }
+    if (hw < bl) { bl = hw; }
+    if (hh < bl) { bl = hh; }
 
     // Draw shape
     ctx.beginPath();
-    ctx.moveTo(x + tl, y);
+    if(w > 0){
+      ctx.moveTo(x + tl, y);
+    } else {
+      ctx.moveTo(x - tl, y);
+    }
     ctx.arcTo(x + w, y, x + w, y + h, tr);
     ctx.arcTo(x + w, y + h, x, y + h, br);
     ctx.arcTo(x, y + h, x, y, bl);
