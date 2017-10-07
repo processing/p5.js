@@ -12,6 +12,7 @@ var spec = {
     '2d_primitives',
     'core',
     'curves',
+    'element',
     'error_helpers',
     'renderer',
     'structure'
