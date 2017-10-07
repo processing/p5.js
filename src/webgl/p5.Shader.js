@@ -12,10 +12,10 @@ var p5 = require('../core/core');
  * Shader class for WEBGL Mode
  * @class p5.Shader
  * @constructor
- * @param {renderer} [p5.Renderer.GL] an instance of p5.RendererGL that
+ * @param {p5.RendererGL} renderer an instance of p5.RendererGL that
  * will provide the GL context for this new p5.Shader
- * @param {vertSrc} [String] source code for the vertex shader (as a string)
- * @param {fragSrc} [String] source code for the fragment shader (as a string)
+ * @param {String} vertSrc source code for the vertex shader (as a string)
+ * @param {String} fragSrc source code for the fragment shader (as a string)
  */
 p5.Shader = function(renderer, vertSrc, fragSrc) {
   // TODO: adapt this to not take ids, but rather,
@@ -268,9 +268,9 @@ p5.Shader.prototype.useProgram = function () {
  * the appropriate function.
  * @method setUniform
  * @chainable
- * @param {uniformName} [String] the name of the uniform in the
+ * @param {String} uniformName the name of the uniform in the
  * shader program
- * @param {data} [] the data to be associated with that uniform; type
+ * @param {Object} data the data to be associated with that uniform; type
  * varies (could be a single numerical value, array, matrix, or
  * texture / sampler reference)
  */
