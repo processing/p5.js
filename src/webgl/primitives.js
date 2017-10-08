@@ -886,19 +886,19 @@ p5.RendererGL.prototype.curve=function
  * </div>
  */
 p5.RendererGL.prototype.line = function() {
-  if(arguments.length == 6) {
+  if(arguments.length === 6) {
     this.beginShape();
     this.vertex(arguments[0], arguments[1], arguments[2]);
     this.vertex(arguments[3], arguments[4], arguments[5]);
     this.endShape();
-  } else if(arguments.length == 4) {
+  } else if(arguments.length === 4) {
     this.beginShape();
     this.vertex(arguments[0], arguments[1], 0);
     this.vertex(arguments[2], arguments[3], 0);
     this.endShape();
   } else {
-        console.log("You have called line() with " + arguments.length +
-            " arguments, when either 4 or 6 are required in WEBGL mode.");
+        console.log('You have called line() with ' + arguments.length +
+            ' arguments, when either 4 or 6 are required in WEBGL mode.');
   }
   return this;
 };
