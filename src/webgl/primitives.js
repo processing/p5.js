@@ -897,8 +897,8 @@ p5.RendererGL.prototype.line = function() {
     this.vertex(arguments[2], arguments[3], 0);
     this.endShape();
   } else {
-        console.log('You have called line() with ' + arguments.length +
-            ' arguments, when either 4 or 6 are required in WEBGL mode.');
+    console.log('You have called line() with ' + arguments.length +
+        ' arguments, when either 4 or 6 are required in WEBGL mode.');
   }
   return this;
 };
