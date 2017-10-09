@@ -15,14 +15,9 @@ require('./error_helpers');
 
 /**
  * Draw an arc to the screen. If called with only a, b, c, d, start, and
- * stop, the arc will be drawn as an open pie. If mode is provided, the arc
- * will be drawn either open, as a chord, or as a pie as specified. The
+ * stop, the arc will be drawn with OPEN mode. If mode is provided, the arc
+ * will be drawn either OPEN, as a CHORD, or as a PIE as specified. The
  * origin may be changed with the ellipseMode() function.<br><br>
- * Note that drawing a full circle (ex: 0 to TWO_PI) will appear blank
- * because 0 and TWO_PI are the same position on the unit circle. The
- * best way to handle this is by using the ellipse() function instead
- * to create a closed ellipse, and to use the arc() function
- * only to draw parts of an ellipse.
  *
  * @method arc
  * @param  {Number} a      x-coordinate of the arc's ellipse
@@ -32,7 +27,10 @@ require('./error_helpers');
  * @param  {Number} start  angle to start the arc, specified in radians
  * @param  {Number} stop   angle to stop the arc, specified in radians
  * @param  {Constant} [mode] optional parameter to determine the way of drawing
- *                         the arc. either CHORD or PIE
+ *                         the arc. Specify OPEN (default), CHORD or PIE
+ * @param  {Number} [detailX]  (WebGL Only) optional parameter to
+ *                         determine the number of verticies on
+ *                         the perimiter of the arc. Default is 24.
  * @chainable
  * @example
  * <div>
@@ -47,30 +45,46 @@ require('./error_helpers');
  *
  * <div>
  * <code>
- * arc(50, 50, 80, 80, 0, PI+QUARTER_PI, OPEN);
+ * //Two corresponding arcs drawn in OPEN mode
+ * arc(50, 45, 70, 70, PI+QUARTER_PI, 0, OPEN);
+ * arc(45, 55, 70, 70, 0, PI+QUARTER_PI, OPEN);
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * arc(50, 50, 80, 80, 0, PI+QUARTER_PI, CHORD);
+ * //Two corresponding arcs drawn in CHORD mode
+ * arc(50, 45, 70, 70, PI+QUARTER_PI, 0, CHORD);
+ * arc(45, 55, 70, 70, 0, PI+QUARTER_PI, CHORD);
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * arc(50, 50, 80, 80, 0, PI+QUARTER_PI, PIE);
+ * //Two corresponding arcs drawn in PIE mode
+ * arc(50, 45, 70, 70, PI+QUARTER_PI, 0, PIE);
+ * arc(45, 55, 70, 70, 0, PI+QUARTER_PI, PIE);
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * //Arcs do not need to be drawn on a circle
+ * //Two corresponding arcs with different heights.
+ * arc(45, 50, 70, 70, HALF_PI, PI + HALF_PI, CHORD);
+ * arc(55, 50, 70, 35, PI + HALF_PI, HALF_PI, CHORD);
+ * </code>
+ * </div>
  * @alt
- *shattered outline of an ellipse with a quarter of a white circle bottom-right.
- *white ellipse with black outline with top right missing.
- *white ellipse with top right missing with black outline around shape.
- *white ellipse with top right quarter missing with black outline around the shape.
+ * shattered outline of an ellipse with a quarter of a white circle bottom-right.
+ * white ellipse with black outline with top right missing.
+ * white ellipse with top right missing with black outline around shape.
+ * white ellipse with top right quarter missing with black outline around.
+ * the shape.
  *
  */
-p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
+p5.prototype.arc = function(x, y, w, h, start, stop, mode, xDetail) {
+
   var args = new Array(arguments.length);
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
@@ -125,7 +139,11 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
   // p5 supports negative width and heights for ellipses
   w = Math.abs(w);
   h = Math.abs(h);
-  this._renderer.arc(x, y, w, h, start, stop, mode);
+
+  // adjust for ellipseMode
+  var vals = canvas.arcModeAdjust(x, y, w, h, this._renderer._ellipseMode);
+
+  this._renderer.arc(vals.x, vals.y, vals.w, vals.h, start, stop, mode, xDetail);
   return this;
 };
 
@@ -137,19 +155,33 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
  * height. If a negative height or width is specified, the absolute value is taken.
  * The origin may be changed with the ellipseMode() function.
  *
+ * In WebGL mode, detailX can be used to cause the ellipse to resemble another
+ * shape. A value of 6 will produce a hexagon.
+ *
+ *
  * @method ellipse
  * @param  {Number} x x-coordinate of the ellipse.
  * @param  {Number} y y-coordinate of the ellipse.
  * @param  {Number} w width of the ellipse.
- * @param  {Number} [h] height of the ellipse.
+ * @param  {Number} [h] height of the ellipse (default is equal to w)
+ * @param  {Number} [detailX]  (WebGL Only) optional parameter to
+ *                         determine the number of verticies on
+ *                         the perimiter of the ellipse. Default is 24.
  * @chainable
  * @example
  * <div>
  * <code>
- * ellipse(56, 46, 55, 55);
+ * //A circular ellipse
+ * ellipse(50, 50, 55, 55);
  * </code>
  * </div>
  *
+ * <div>
+ * <code>
+ * //An ellipse does not need to be circular
+ * ellipse(50, 50, 55, 25);
+ * </code>
+ * </div>
  * @alt
  *white ellipse with black outline in middle-right of canvas that is 55x55.
  *

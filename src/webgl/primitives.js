@@ -85,7 +85,6 @@ p5.prototype.plane = function(){
     }
     this._renderer.createBuffers(gId, planeGeom);
   }
-
   this._renderer.drawBuffers(gId);
 
 };
@@ -413,7 +412,7 @@ p5.prototype.cylinder = function(){
  * @param  {Number} height            height of the cone
  * @param  {Number} [detailX]         optional: number of segments,
  *                                    the more segments the smoother geometry
- *                                    default is 24
+ *                                    default is 24.
  * @param  {Number} [detailY]         optional: number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 16
@@ -549,7 +548,6 @@ p5.prototype.ellipsoid = function(){
   }
 
   this._renderer.drawBuffers(gId);
-
   return this;
 };
 
@@ -632,9 +630,103 @@ p5.prototype.torus = function(){
   return this;
 };
 
-///////////////////////
-/// 2D primitives
 /////////////////////////
+// 2D primitives
+//
+// Inline documentation is in the corresponding primitive
+// in the core/2d_primitives file. Arguments used here may
+// be validated or altered in the 2d_primitives file before
+// they are passed here.
+/////////////////////////
+
+
+p5.RendererGL.prototype.arc = function(){
+  var x       = arguments[0];
+  var y       = arguments[1];
+  var width   = arguments[2];
+  var height  = arguments[3];
+  var start   = arguments[4];
+  var stop    = arguments[5];
+  var mode    = arguments[6];
+  var detailX = arguments[7] || 24;
+  var detailY = 1;
+  var epsilon = 0.00001; // Smallest visible angle on displays up to 4K.
+
+
+  var shape =    Math.abs(start%(Math.PI*2) - stop%(Math.PI*2)) < epsilon ||
+                 mode === 'ellipse' ? 'ellipse' : 'arc';
+
+  var gId = shape+'|'+x+'|'+y+'|'+width+'|'+ height +'|'+start+'|'+
+            stop+'|'+ mode+'|'+ detailX;
+  if(!this.geometryInHash(gId)){
+    var _arc = function(){
+      this.strokeIndices = [];
+      var aAdj = shape === 'ellipse' ? 1 : 0;
+
+      //Define the arc
+      for (var i = 0; i < detailX; i++) {
+        var a = i / (detailX -1 + aAdj);
+        var theta = (stop - start) * a + start;
+        var _x = x + width  * 0.5 * Math.cos(theta);
+        var _y = y + height * 0.5 * Math.sin(theta);
+        var _u = 0.5 + 0.5 * Math.cos(theta);
+        var _v = 0.5 + 0.5 * Math.sin(theta);
+
+        this.vertices.push(new p5.Vector(_x, _y, 0));
+        this.uvs.push([_u,_v]);
+      }
+
+      //Define the center point (Done after the ark because of the else branch)
+      if(mode === 'pie' || mode === 'fan' || Math.abs(stop - start) >= Math.PI){
+        this.vertices.unshift(new p5.Vector(x, y, 0));
+        this.uvs.unshift([0.5,0.5]);
+      } else {
+        var startVert  = this.vertices[0];
+        var endVert    = this.vertices[this.vertices.length -1];
+        var adjCenterX = (startVert.x + endVert.x) / 2;
+        var adjCenterY = (startVert.y + endVert.y) / 2;
+
+        this.vertices.unshift(new p5.Vector(adjCenterX, adjCenterY, 0));
+        this.uvs.unshift([0.5 + (adjCenterX - x) / width,
+                          0.5 + (adjCenterY - y) / height]);
+      }
+
+      //Create the faces and stroke along the edges
+      for (var j = 0; j < this.vertices.length -2; j++) {
+        this.faces.push([0, j+1, j+2]);
+        this.strokeIndices.push([j+1, j+2]);
+      }
+
+      //Finalize curve shape
+      if(shape === 'ellipse'){
+        this.faces.push([0, this.vertices.length - 1, 1]);
+        this.strokeIndices.push([this.vertices.length - 1, 1]);
+      } else if (mode === 'open'){
+        this.faces.push([0, this.vertices.length - 1, 1]);
+      } else if (mode === 'chord'){
+        this.faces.push([0, this.vertices.length - 1, 1]);
+        this.strokeIndices.push([this.vertices.length - 1, 1]);
+      } else if (mode === 'pie'){
+        this.strokeIndices.push([this.vertices.length - 1, 0]);
+        this.strokeIndices.push([0, 1]);
+      } else {console.log('Error, unknown mode');}
+    };
+
+    //Create the arc and set it up
+    var arcGeom = new p5.Geometry(detailX,detailY,_arc);
+    arcGeom.computeNormals();
+    if(detailX <= 24) {
+      arcGeom._makeTriangleEdges();
+      this._edgesToVertices(arcGeom);
+    } else {
+      console.log('Cannot stroke '+shape+' with more'+
+        ' than 24 detailX');
+    }
+    this.createBuffers(gId, arcGeom);
+  }
+  this.drawBuffers(gId);
+  return this;
+};
 
 //@TODO
 p5.RendererGL.prototype.point = function(x, y, z){
@@ -667,63 +759,20 @@ p5.RendererGL.prototype.triangle = function
     triGeom.computeNormals();
     this.createBuffers(gId, triGeom);
   }
-
   this.drawBuffers(gId);
   return this;
 };
 
-p5.RendererGL.prototype.ellipse = function
-(args){
-  var x = args[0];
-  var y = args[1];
-  var width = args[2];
-  var height = args[3];
-  //detailX and Y are optional 6th & 7th
-  //arguments
-  var detailX = args[4] || 24;
-  var detailY = args[5] || 16;
-  var gId = 'ellipse|'+args[0]+'|'+args[1]+'|'+args[2]+'|'+
-  args[3];
-  if(!this.geometryInHash(gId)){
-    var _ellipse = function(){
-      var u,v,p;
-      var centerX = x+width*0.5;
-      var centerY = y+height*0.5;
-      for (var i = 0; i <= this.detailY; i++){
-        v = i / this.detailY;
-        for (var j = 0; j <= this.detailX; j++){
-          u = j / this.detailX;
-          var theta = 2 * Math.PI * u;
-          if(v === 0){
-            p = new p5.Vector(centerX, centerY, 0);
-          }
-          else{
-            var _x = centerX + width*0.5 * Math.cos(theta);
-            var _y = centerY + height*0.5 * Math.sin(theta);
-            p = new p5.Vector(_x, _y, 0);
-          }
-          this.vertices.push(p);
-          this.uvs.push([u,v]);
-        }
-      }
-    };
-    var ellipseGeom = new p5.Geometry(detailX,detailY,_ellipse);
-    ellipseGeom
-      .computeFaces()
-      .computeNormals();
-    if(detailX <= 24 && detailY <= 16) {
-      ellipseGeom._makeTriangleEdges();
-      this._edgesToVertices(ellipseGeom);
-    } else {
-      console.log('Cannot stroke ellipse with more'+
-        ' than 24 detailX or 16 detailY');
-    }
-
-    this.createBuffers(gId, ellipseGeom);
-  }
-  this.drawBuffers(gId);
+p5.RendererGL.prototype.ellipse = function(args){
+  //Note, the x and y adjustments here are because ellipses and
+  //arc get different treatment in core/canvas.js
+  this.arc(args[0]+args[2]*0.5, args[1]+args[3]*0.5 ,args[2], args[3],
+           0, Math.PI * 2, 'ellipse', args[4]);
   return this;
 };
+
+
+
 
 p5.RendererGL.prototype.rect = function(args) {
   var gId = 'rect|'+args[0]+'|'+args[1]+'|'+args[2]+'|'+
