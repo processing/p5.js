@@ -215,9 +215,9 @@ p5.prototype.texture = function(){
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
- * @param  {Number}            [v2] optional: green or saturation value
- * @param  {Number}            [v3] optional: blue or brightness value
- * @param  {Number}            [a]  optional: opacity
+ * @param  {Number}            [v2] green or saturation value
+ * @param  {Number}            [v3] blue or brightness value
+ * @param  {Number}            [a]  opacity
  * @chainable
  * @example
  * <div>
@@ -258,9 +258,9 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
- * @param  {Number}            [v2] optional: green or saturation value
- * @param  {Number}            [v3] optional: blue or brightness value
- * @param  {Number}            [a]  optional: opacity
+ * @param  {Number}            [v2] green or saturation value
+ * @param  {Number}            [v3] blue or brightness value
+ * @param  {Number}            [a]  opacity
  * @chainable
  * @example
  * <div>
