@@ -17,7 +17,6 @@ var constants = require('./constants');
  * @class p5.Graphics
  * @constructor
  * @extends p5.Element
- * @uses p5
  * @param {Number} w            width
  * @param {Number} h            height
  * @param {Constant} renderer   the renderer to use, either P2D or WEBGL
