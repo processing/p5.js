@@ -168,7 +168,6 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
   this._pInst.canvas = c;
   this._pInst._setProperty('_renderer', new p5.RendererGL(this._pInst.canvas,
     this._pInst, true, attr));
-  this._pInst._isdefaultGraphics = true;
   this._pInst._renderer.resize(w, h);
   this._pInst._renderer._applyDefaults();
   this._pInst._elements.push(this._renderer);
@@ -356,9 +355,9 @@ p5.RendererGL.prototype.background = function() {
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
- * @param  {Number}            [v2] optional: green or saturation value
- * @param  {Number}            [v3] optional: blue or brightness value
- * @param  {Number}            [a]  optional: opacity
+ * @param  {Number}            [v2] green or saturation value
+ * @param  {Number}            [v3] blue or brightness value
+ * @param  {Number}            [a]  opacity
  * @return {p5}                the p5 object
  * @example
  * <div>
@@ -464,9 +463,9 @@ p5.RendererGL.prototype.noStroke = function() {
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
- * @param  {Number}            [v2] optional: green or saturation value
- * @param  {Number}            [v3] optional: blue or brightness value
- * @param  {Number}            [a]  optional: opacity
+ * @param  {Number}            [v2] green or saturation value
+ * @param  {Number}            [v3] blue or brightness value
+ * @param  {Number}            [a]  opacity
  * @example
  * <div>
  * <code>
