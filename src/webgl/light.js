@@ -90,7 +90,8 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
 /**
  * Creates a directional light with a color and a direction
  * @method directionalLight
- * @param  {Number}    r        red or hue value (depending on the current color mode),
+ * @param  {Number}    r        red or hue value (depending on the current
+ * color mode),
  * @param  {Number}    g        green or saturation value
  * @param  {Number}    b        blue or brightness value
  * @param  {p5.Vector} position the direction of the light
@@ -99,14 +100,15 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
 
 /**
  * @method directionalLight
- * @param  {Number[]|String|p5.Color} color   color Array, CSS color string, or p5.Color value
+ * @param  {Number[]|String|p5.Color} color   color Array, CSS color string,
+ * or p5.Color value
  * @param  {Number}                   x       x axis direction
  * @param  {Number}                   y       y axis direction
  * @param  {Number}                   z       z axis direction
  * @chainable
  */
 
- /**
+/**
  * @method directionalLight
  * @param  {Number[]|String|p5.Color} color
  * @param  {p5.Vector}                position
@@ -194,7 +196,8 @@ p5.prototype.directionalLight = function(r, g, b, x, y, z) {
 /**
  * Creates a point light with a color and a light position
  * @method pointLight
- * @param  {Number}    r        red or hue value (depending on the current color mode),
+ * @param  {Number}    r        red or hue value (depending on the current
+ * color mode),
  * @param  {Number}    g        green or saturation value
  * @param  {Number}    b        blue or brightness value
  * @param  {Number}    x        x axis position
@@ -242,14 +245,15 @@ p5.prototype.directionalLight = function(r, g, b, x, y, z) {
 
 /**
  * @method pointLight
- * @param  {Number[]|String|p5.Color} color   color Array, CSS color string, or p5.Color value
+ * @param  {Number[]|String|p5.Color} color   color Array, CSS color string,
+ * or p5.Color value
  * @param  {Number}                   x
  * @param  {Number}                   y
  * @param  {Number}                   z
  * @chainable
  */
 
- /**
+/**
  * @method pointLight
  * @param  {Number[]|String|p5.Color} color
  * @param  {p5.Vector}                position
