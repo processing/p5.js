@@ -89,6 +89,7 @@ p5.Vector = function() {
  * or v.toString(). This method is useful for logging vectors in the
  * console.
  * @method  toString
+ * @return {String}
  * @example
  * <div class = "norender"><code>
  * function setup() {
