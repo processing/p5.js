@@ -338,6 +338,10 @@ p5.prototype._updatePRotations = function(){
   this._setProperty('pRotationZ', this.rotationZ);
 };
 
+/**
+ * @property {String} turnAxis
+ * @readOnly
+ */
 p5.prototype.turnAxis = undefined;
 
 var move_threshold = 0.5;

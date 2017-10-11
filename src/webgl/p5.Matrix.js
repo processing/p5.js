@@ -19,7 +19,8 @@ var GLMAT_ARRAY_TYPE = (
 /**
  * A class to describe a 4x4 matrix
  * for model and view matrix manipulation in the p5js webgl renderer.
- * class p5.Matrix
+ * @class p5.Matrix
+ * @private
  * @constructor
  * @param {Array} [mat4] array literal of our 4x4 matrix
  */
@@ -76,9 +77,14 @@ p5.Matrix = function() {
  * Sets the x, y, and z component of the vector using two or three separate
  * variables, the data from a p5.Matrix, or the values from a float array.
  *
+ * @method set
  * @param {p5.Matrix|Float32Array|Array} [inMatrix] the input p5.Matrix or
  *                                     an Array of length 16
- * @param {Number}          [n00..n33] 16 numbers passed by value to avoid
+ * @chainable
+ */
+/**
+ * @method set
+ * @param {Number[]} elements 16 numbers passed by value to avoid
  *                                     array copying.
  * @chainable
  */
@@ -113,6 +119,7 @@ p5.Matrix.prototype.set = function (inMatrix) {
 /**
  * Gets a copy of the vector, returns a p5.Matrix object.
  *
+ * @method get
  * @return {p5.Matrix} the copy of the p5.Matrix object
  */
 p5.Matrix.prototype.get = function () {
@@ -121,6 +128,7 @@ p5.Matrix.prototype.get = function () {
 
 /**
  * return a copy of a matrix
+ * @method copy
  * @return {p5.Matrix}   the result matrix
  */
 p5.Matrix.prototype.copy = function(){
@@ -146,6 +154,7 @@ p5.Matrix.prototype.copy = function(){
 
 /**
  * return an identity matrix
+ * @method identity
  * @return {p5.Matrix}   the result matrix
  */
 p5.Matrix.identity = function(){
@@ -154,6 +163,7 @@ p5.Matrix.identity = function(){
 
 /**
  * transpose according to a given matrix
+ * @method transpose
  * @param  {p5.Matrix|Float32Array|Array} a  the matrix to be based on to transpose
  * @chainable
  */
@@ -214,6 +224,7 @@ p5.Matrix.prototype.transpose = function(a){
 
 /**
  * invert  matrix according to a give matrix
+ * @method invert
  * @param  {p5.Matrix|Float32Array|Array} a   the matrix to be based on to invert
  * @chainable
  */
@@ -299,6 +310,7 @@ p5.Matrix.prototype.invert = function(a){
 
 /**
  * Inverts a 3x3 matrix
+ * @method invert3x3
  * @chainable
  */
 p5.Matrix.prototype.invert3x3 = function (){
@@ -335,7 +347,8 @@ p5.Matrix.prototype.invert3x3 = function (){
 
 /**
  * transposes a 3x3 p5.Matrix by a mat3
- * @param  {[Number]} mat3 1-dimensional array
+ * @method transpose3x3
+ * @param  {Number[]} mat3 1-dimensional array
  * @chainable
  */
 p5.Matrix.prototype.transpose3x3 = function (mat3){
@@ -352,6 +365,7 @@ p5.Matrix.prototype.transpose3x3 = function (mat3){
 /**
  * converts a 4x4 matrix to its 3x3 inverse tranform
  * commonly used in MVMatrix to NMatrix conversions.
+ * @method invertTranspose
  * @param  {p5.Matrix} mat4 the matrix to be based on to invert
  * @chainable
  * @todo  finish implementation
@@ -379,6 +393,7 @@ p5.Matrix.prototype.inverseTranspose = function (matrix){
 
 /**
  * inspired by Toji's mat4 determinant
+ * @method determinant
  * @return {Number} Determinant of our 4x4 matrix
  */
 p5.Matrix.prototype.determinant = function(){
@@ -402,6 +417,7 @@ p5.Matrix.prototype.determinant = function(){
 
 /**
  * multiply two mat4s
+ * @method mult
  * @param {p5.Matrix|Float32Array|Array} multMatrix The matrix
  *                                                we want to multiply by
  * @chainable
@@ -459,6 +475,7 @@ p5.Matrix.prototype.mult = function(multMatrix){
 
 /**
  * scales a p5.Matrix by scalars or a vector
+ * @method scale
  * @param  {p5.Vector|Float32Array|Array} s vector to scale by
  * @chainable
  */
@@ -504,6 +521,7 @@ p5.Matrix.prototype.scale = function() {
 
 /**
  * rotate our Matrix around an axis by the given angle.
+ * @method rotate
  * @param  {Number} a The angle of rotation in radians
  * @param  {p5.Vector|Array} axis  the axis(es) to rotate around
  * @chainable
@@ -584,6 +602,7 @@ p5.Matrix.prototype.rotate = function(a, axis){
 /**
  * @todo  finish implementing this method!
  * translates
+ * @method translate
  * @param  {Number[]} v vector to translate by
  * @chainable
  */
@@ -613,6 +632,7 @@ p5.Matrix.prototype.rotateZ = function(a){
 
 /**
  * sets the perspective matrix
+ * @method perspective
  * @param  {Number} fovy   [description]
  * @param  {Number} aspect [description]
  * @param  {Number} near   near clipping plane
@@ -647,6 +667,7 @@ p5.Matrix.prototype.perspective = function(fovy,aspect,near,far){
 
 /**
  * sets the ortho matrix
+ * @method ortho
  * @param  {Number} left   [description]
  * @param  {Number} right  [description]
  * @param  {Number} bottom [description]

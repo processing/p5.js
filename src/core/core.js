@@ -26,6 +26,7 @@ var constants = require('./constants');
  * "global"   - all properties and methods are attached to the window
  * "instance" - all properties and methods are bound to this p5 object
  *
+ * @private
  * @param  {function}    sketch a closure that can set optional preload(),
  *                              setup(), and/or draw() properties on the
  *                              given p5 instance

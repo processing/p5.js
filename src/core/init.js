@@ -11,6 +11,7 @@ var p5 = require('../core/core');
  * and instantiate p5 automatically
  * otherwise do nothing
  *
+ * @private
  * @return {Undefined}
  */
 var _globalInit = function() {

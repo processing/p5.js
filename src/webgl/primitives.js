@@ -859,6 +859,7 @@ p5.RendererGL.prototype.curve=function
 
 /**
  * Draw a line given two points
+ * @private
  * @param {Number} x0 x-coordinate of first vertex
  * @param {Number} y0 y-coordinate of first vertex
  * @param {Number} z0 z-coordinate of first vertex
