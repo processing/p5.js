@@ -7,6 +7,7 @@ var p5 = require('../core/core');
 var hashCount = 0;
 /**
  * _initBufferDefaults
+ * @private
  * @description initializes buffer defaults. runs each time a new geometry is
  * registered
  * @param  {String} gId  key of the geometry object
@@ -32,6 +33,7 @@ p5.RendererGL.prototype._initBufferDefaults = function(gId) {
 
 /**
  * createBuffers description
+ * @private
  * @param  {String} gId    key of the geometry object
  * @param  {p5.Geometry}  obj contains geometry data
  */
@@ -83,6 +85,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
 
 /**
  * Draws buffers given a geometry key ID
+ * @private
  * @param  {String} gId     ID in our geom hash
  * @chainable
  */

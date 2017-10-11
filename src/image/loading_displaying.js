@@ -414,6 +414,7 @@ p5.prototype.noTint = function() {
  * Apply the current tint color to the input image, return the resulting
  * canvas.
  *
+ * @private
  * @param {p5.Image} The image to be tinted
  * @return {canvas} The resulting tinted canvas
  *

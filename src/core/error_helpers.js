@@ -34,6 +34,7 @@ var getType = function( obj ) {
 /**
  * Prints out a fancy, colorful message to the console log
  *
+ * @private
  * @param  {String}               message the words to be said
  * @param  {String}               func    the name of the function to link
  * @param  {Number|String} color   CSS color string or error type

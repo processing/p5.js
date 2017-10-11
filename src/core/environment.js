@@ -238,6 +238,7 @@ p5.prototype.frameRate = function(fps) {
 /**
  * Returns the current framerate.
  *
+ * @private
  * @return {Number} current frameRate
  */
 p5.prototype.getFrameRate = function() {
@@ -253,6 +254,7 @@ p5.prototype.getFrameRate = function() {
  *
  * Calling frameRate() with no arguments returns the current framerate.
  *
+ * @private
  * @param {Number} [fps] number of frames to be displayed every second
  */
 p5.prototype.setFrameRate = function(fps) {

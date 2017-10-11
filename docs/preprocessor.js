@@ -6,7 +6,7 @@ function smokeTestMethods(data) {
   data.classitems.forEach(function(classitem) {
     if (classitem.itemtype === 'method') {
       new DocumentedMethod(classitem);
-    }
+	}
   });
 }
 
@@ -62,8 +62,8 @@ function mergeOverloadedMethods(data) {
         // indexed. We need to make sure that we don't list it multiple
         // times in our index pages and such.
 
-        method = methodsByFullName[fullName];
-
+		method = methodsByFullName[fullName];
+		
         assertEqual(method.file, classitem.file,
                     'all overloads must be defined in the same file');
         assertEqual(method.module, classitem.module,
@@ -125,6 +125,9 @@ function renderDescriptionsAsMarkdown(data) {
 }
 
 module.exports = function(data, options) {
+  data.classitems
+	  .filter(ci => !ci.itemtype && (ci.params || ci.return) && ci.access !== 'private')
+	  .forEach(ci => { console.error(ci.file + ":" + ci.line + ": unnamed public member"); });
   renderDescriptionsAsMarkdown(data);
   mergeOverloadedMethods(data);
   smokeTestMethods(data);
