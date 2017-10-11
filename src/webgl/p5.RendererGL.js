@@ -587,7 +587,7 @@ p5.RendererGL.prototype._setStrokeColor = function() {
  * @param  {Number}               [y] y-coordinate of the pixel
  * @param  {Number}               [w] width
  * @param  {Number}               [h] height
- * @return {Array|Color|p5.Image}     color of pixel at x,y in array format
+ * @return {Number[]|Color|p5.Image}  color of pixel at x,y in array format
  *                                    [R, G, B, A] or p5.Image
  */
 p5.RendererGL.prototype.get = function(x, y, w, h) {
@@ -641,6 +641,7 @@ p5.RendererGL.prototype.geometryInHash = function(gId){
 
 /**
  * [resize description]
+ * @private
  * @param  {Number} w [description]
  * @param  {Number} h [description]
  */
@@ -659,6 +660,7 @@ p5.RendererGL.prototype.resize = function(w,h) {
 /**
  * clears color and depth buffers
  * with r,g,b,a
+ * @private
  * @param {Number} r normalized red val.
  * @param {Number} g normalized green val.
  * @param {Number} b normalized blue val.
@@ -674,6 +676,7 @@ p5.RendererGL.prototype.clear = function() {
 
 /**
  * [translate description]
+ * @private
  * @param  {Number} x [description]
  * @param  {Number} y [description]
  * @param  {Number} z [description]
@@ -692,6 +695,7 @@ p5.RendererGL.prototype.translate = function(x, y, z) {
 
 /**
  * Scales the Model View Matrix by a vector
+ * @private
  * @param  {Number | p5.Vector | Array} x [description]
  * @param  {Number} [y] y-axis scalar
  * @param  {Number} [z] z-axis scalar
@@ -903,6 +907,7 @@ p5.RendererGL.prototype._bindBuffer = function( buffer, target,
 //////////////////////////////
 /**
  * turn a two dimensional array into one dimensional array
+ * @private
  * @param  {Array} arr 2-dimensional array
  * @return {Array}     1-dimensional array
  * [[1, 2, 3],[4, 5, 6]] -> [1, 2, 3, 4, 5, 6]
@@ -917,6 +922,7 @@ p5.RendererGL.prototype._flatten = function(arr){
 
 /**
  * turn a p5.Vector Array into a one dimensional number array
+ * @private
  * @param  {Array} arr  an array of p5.Vector
  * @return {Array]}     a one dimensional array of numbers
  * [p5.Vector(1, 2, 3), p5.Vector(4, 5, 6)] ->

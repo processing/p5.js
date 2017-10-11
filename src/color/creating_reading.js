@@ -294,7 +294,7 @@ p5.prototype.brightness = function(c) {
  */
 /**
  * @method color
- * @param  {Array}      values  an array containing the red,green,blue &
+ * @param  {Number[]}      values  an array containing the red,green,blue &
  *                                 and alpha components of the color
  * @return {p5.Color}
  */

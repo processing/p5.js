@@ -34,6 +34,7 @@ var getType = function( obj ) {
 /**
  * Prints out a fancy, colorful message to the console log
  *
+ * @private
  * @param  {String}               message the words to be said
  * @param  {String}               func    the name of the function to link
  * @param  {Number|String} color   CSS color string or error type
@@ -103,6 +104,7 @@ p5._friendlyFileLoadError = function (errorType, filePath) {
   report(message, errorInfo.method, FILE_LOAD);
 };
 
+var docCache = {};
 /**
 * Validates parameters
 * param  {String}               func    the name of the function
@@ -125,7 +127,7 @@ p5._validateParameters = function validateParameters(func, args) {
     typeof(IS_MINIFIED) !== 'undefined') {
     return; // skip FES
   }
-  var arrDoc = lookupParamDoc(func);
+  var arrDoc = docCache[func] || (docCache[func] = lookupParamDoc(func));
   var errorArray = [];
   var minErrCount = 999999;
   if (arrDoc.length > 1){   // func has multiple formats
