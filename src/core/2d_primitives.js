@@ -220,16 +220,6 @@ p5.prototype.ellipse = function() {
  *3 lines of various stroke sizes. Form top, bottom and right sides of a square.
  *
  */
-////commented out original
-// p5.prototype.line = function(x1, y1, x2, y2) {
-//   if (!this._renderer._doStroke) {
-//     return this;
-//   }
-//   if(this._renderer.isP3D){
-//   } else {
-//     this._renderer.line(x1, y1, x2, y2);
-//   }
-// };
 p5.prototype.line = function() {
   if (!this._renderer._doStroke) {
     return this;
@@ -242,13 +232,7 @@ p5.prototype.line = function() {
   p5._validateParameters('line', args);
   //check whether we should draw a 3d line or 2d
   if (this._renderer.isP3D) {
-    this._renderer.line(
-      args[0],
-      args[1],
-      args[2],
-      args[3],
-      args[4],
-      args[5]);
+    this._renderer.line.apply(this, args);
   } else {
     this._renderer.line(
       args[0],
