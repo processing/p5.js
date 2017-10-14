@@ -17,7 +17,10 @@ var fetchJsonp = require('fetch-jsonp');
 require('../core/error_helpers');
 
 /**
- * Loads a JSON file from a file or a URL, and returns an Object or Array.
+ * Loads a JSON file from a file or a URL, and returns an Object.
+ * Note that even if the JSON file contains an Array, an Object will be
+ * returned with index numbers as keys.
+ *
  * This method is asynchronous, meaning it may not finish before the next
  * line in your sketch is executed. JSONP is supported via a polyfill and you
  * can pass in as the second argument an object with definitions of the json

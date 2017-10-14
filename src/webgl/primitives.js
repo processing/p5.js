@@ -191,10 +191,10 @@ p5.prototype.box = function(){
  * Draw a sphere with given radius
  * @method sphere
  * @param  {Number} radius            radius of circle
- * @param  {Number} [detailX]         optional: number of segments,
+ * @param  {Number} [detailX]         number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
- * @param  {Number} [detailY]         optional: number of segments,
+ * @param  {Number} [detailY]         number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 16
  * @chainable
@@ -345,10 +345,10 @@ var _truncatedCone = function(
  * @method  cylinder
  * @param  {Number} radius     radius of the surface
  * @param  {Number} height     height of the cylinder
- * @param  {Number} [detailX]  optional: number of segments,
+ * @param  {Number} [detailX]  number of segments,
  *                             the more segments the smoother geometry
  *                             default is 24
- * @param {Number} [detailY]   optional: number of segments in y-dimension,
+ * @param {Number} [detailY]   number of segments in y-dimension,
  *                             the more segments the smoother geometry
  *                             default is 16
  * @chainable
@@ -411,10 +411,10 @@ p5.prototype.cylinder = function(){
  * @method cone
  * @param  {Number} radius            radius of the bottom surface
  * @param  {Number} height            height of the cone
- * @param  {Number} [detailX]         optional: number of segments,
+ * @param  {Number} [detailX]         number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
- * @param  {Number} [detailY]         optional: number of segments,
+ * @param  {Number} [detailY]         number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 16
  * @chainable
@@ -478,11 +478,11 @@ p5.prototype.cone = function(){
  * @param  {Number} radiusx           xradius of circle
  * @param  {Number} radiusy           yradius of circle
  * @param  {Number} radiusz           zradius of circle
- * @param  {Number} [detailX]         optional: number of segments,
+ * @param  {Number} [detailX]         number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24. Avoid detail number above
  *                                    150, it may crash the browser.
- * @param  {Number} [detailY]         optional: number of segments,
+ * @param  {Number} [detailY]         number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 16. Avoid detail number above
  *                                    150, it may crash the browser.
@@ -558,10 +558,10 @@ p5.prototype.ellipsoid = function(){
  * @method torus
  * @param  {Number} radius        radius of the whole ring
  * @param  {Number} tubeRadius    radius of the tube
- * @param  {Number} [detailX]     optional: number of segments in x-dimension,
+ * @param  {Number} [detailX]     number of segments in x-dimension,
  *                                the more segments the smoother geometry
  *                                default is 24
- * @param  {Number} [detailY]     optional: number of segments in y-dimension,
+ * @param  {Number} [detailY]     number of segments in y-dimension,
  *                                the more segments the smoother geometry
  *                                default is 16
  * @chainable
@@ -885,17 +885,16 @@ p5.RendererGL.prototype.curve=function
  * </code>
  * </div>
  */
-p5.RendererGL.prototype.line = function(x0,y0,z0,x1,y1,z1) {
-  if (typeof x0 !== 'undefined' ||
-      typeof y0 !== 'undefined' ||
-      typeof z0 !== 'undefined' ||
-      typeof x1 !== 'undefined' ||
-      typeof y1 !== 'undefined' ||
-      typeof z1 !== 'undefined')
-  {
+p5.RendererGL.prototype.line = function() {
+  if(arguments.length === 6) {
     this.beginShape();
-    this.vertex(x0, y0, z0);
-    this.vertex(x1, y1, z1);
+    this.vertex(arguments[0], arguments[1], arguments[2]);
+    this.vertex(arguments[3], arguments[4], arguments[5]);
+    this.endShape();
+  } else if(arguments.length === 4) {
+    this.beginShape();
+    this.vertex(arguments[0], arguments[1], 0);
+    this.vertex(arguments[2], arguments[3], 0);
     this.endShape();
   }
   return this;

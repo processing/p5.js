@@ -50,25 +50,21 @@ var defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
 p5.prototype.createCanvas = function(w, h, renderer) {
   //optional: renderer, otherwise defaults to p2d
   var r = renderer || constants.P2D;
-  var isDefault, c;
-
-  //4th arg (isDefault) used when called onLoad,
-  //otherwise hidden to the public api
-  if(arguments[3]){
-    isDefault =
-    (typeof arguments[3] === 'boolean') ? arguments[3] : false;
-  }
+  var c;
 
   if(r === constants.WEBGL){
     c = document.getElementById(defaultId);
-    if(c){ //if defaultCanvas already exists
+    if(c) { //if defaultCanvas already exists
       c.parentNode.removeChild(c); //replace the existing defaultCanvas
+      this._elements = this._elements.filter(function(e) {
+        return e !== this._renderer;
+      });
     }
     c = document.createElement('canvas');
     c.id = defaultId;
   }
   else {
-    if (isDefault) {
+    if (!this._defaultGraphicsCreated) {
       c = document.createElement('canvas');
       var i = 0;
       while (document.getElementById('defaultCanvas'+i)) {
@@ -94,25 +90,22 @@ p5.prototype.createCanvas = function(w, h, renderer) {
   }
 
 
-
   // Init our graphics renderer
   //webgl mode
   if (r === constants.WEBGL) {
     this._setProperty('_renderer', new p5.RendererGL(c, this, true));
-    this._isdefaultGraphics = true;
+    this._elements.push(this._renderer);
   }
   //P2D mode
   else {
-    if (!this._isdefaultGraphics) {
+    if (!this._defaultGraphicsCreated) {
       this._setProperty('_renderer', new p5.Renderer2D(c, this, true));
-      this._isdefaultGraphics = true;
+      this._defaultGraphicsCreated = true;
+      this._elements.push(this._renderer);
     }
   }
   this._renderer.resize(w, h);
   this._renderer._applyDefaults();
-  if (isDefault) { // only push once
-    this._elements.push(this._renderer);
-  }
   return this._renderer;
 };
 
