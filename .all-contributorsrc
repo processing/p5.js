@@ -8,62 +8,6 @@
   "commit": true,
   "contributors": [
     {
-      "login": "therewasaguy",
-      "name": "Jason Sigal",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/504124?v=4",
-      "profile": "http://jasonsigal.cc",
-      "contributions": [
-        "code",
-        "doc",
-        "ideas"
-      ]
-    },
-    {
-      "login": "karenpeng",
-      "name": "Karen",
-      "avatar_url": "https://avatars3.githubusercontent.com/u/1695075?v=4",
-      "profile": "https://twitter.com/KarenPunkPunk",
-      "contributions": [
-        "code",
-        "doc",
-        "ideas"
-      ]
-    },
-    {
-      "login": "evhan55",
-      "name": "Evelyn Eastmond",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/699840?v=4",
-      "profile": "http://www.evelyneastmond.com",
-      "contributions": [
-        "code",
-        "doc",
-        "ideas",
-        "infra"
-      ]
-    },
-    {
-      "login": "shiffman",
-      "name": "Daniel Shiffman",
-      "avatar_url": "https://avatars0.githubusercontent.com/u/191758?v=4",
-      "profile": "http://www.shiffman.net",
-      "contributions": [
-        "video",
-        "tutorial",
-        "code",
-        "ideas"
-      ]
-    },
-    {
-      "login": "mlarghydracept",
-      "name": "Stalgia Grigg",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/10382506?v=4",
-      "profile": "https://github.com/mlarghydracept",
-      "contributions": [
-        "code",
-        "doc"
-      ]
-    },
-    {
       "login": "lmccart",
       "name": "Lauren McCarthy",
       "avatar_url": "https://avatars3.githubusercontent.com/u/191056?v=4",
@@ -76,49 +20,74 @@
       ]
     },
     {
+      "login": "therewasaguy",
+      "name": "Jason Sigal",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/504124?v=4",
+      "profile": "http://jasonsigal.cc",
+      "contributions": []
+    },
+    {
+      "login": "karenpeng",
+      "name": "Karen",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/1695075?v=4",
+      "profile": "https://twitter.com/KarenPunkPunk",
+      "contributions": []
+    },
+    {
+      "login": "evhan55",
+      "name": "Evelyn Eastmond",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/699840?v=4",
+      "profile": "http://www.evelyneastmond.com",
+      "contributions": []
+    },
+    {
+      "login": "shiffman",
+      "name": "Daniel Shiffman",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/191758?v=4",
+      "profile": "http://www.shiffman.net",
+      "contributions": []
+    },
+    {
+      "login": "mlarghydracept",
+      "name": "Stalgia Grigg",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/10382506?v=4",
+      "profile": "https://github.com/mlarghydracept",
+      "contributions": []
+    },
+    {
       "login": "dhowe",
       "name": "dhowe",
       "avatar_url": "https://avatars3.githubusercontent.com/u/737638?v=4",
       "profile": "https://github.com/dhowe",
-      "contributions": [
-        "code",
-        "doc"
-      ]
+      "contributions": []
     },
     {
       "login": "indefinit",
       "name": "Kevin Siwoff",
       "avatar_url": "https://avatars1.githubusercontent.com/u/1585036?v=4",
       "profile": "http://kevinsiwoff.com",
-      "contributions": [
-        "code",
-        "doc",
-        "review"
-      ]
+      "contributions": []
     },
     {
       "login": "toolness",
       "name": "Atul Varma",
       "avatar_url": "https://avatars2.githubusercontent.com/u/124687?v=4",
       "profile": "http://portfolio.toolness.org/",
-      "contributions": [
-        "code",
-        "doc",
-        "ideas",
-        "example"
-      ]
+      "contributions": []
     },
     {
       "login": "iamjessklein",
       "name": "Jess Klein",
       "avatar_url": "https://avatars3.githubusercontent.com/u/535012?v=4",
       "profile": "http://www.jessklein.is/",
-      "contributions": [
-        "doc",
-        "ideas",
-        "example",
-        "design"
-      ]
+      "contributions": []
+    },
+    {
+      "login": "unoseistres",
+      "name": "uno seis tres",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/7158943?v=4",
+      "profile": "http://unoseistres.com",
+      "contributions": []
     }
   ]
 }
