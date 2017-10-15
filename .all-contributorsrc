@@ -28,6 +28,18 @@
         "doc",
         "ideas"
       ]
+    },
+    {
+      "login": "evhan55",
+      "name": "Evelyn Eastmond",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/699840?v=4",
+      "profile": "http://www.evelyneastmond.com",
+      "contributions": [
+        "code",
+        "doc",
+        "ideas",
+        "infra"
+      ]
     }
   ]
 }
