@@ -84,6 +84,17 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "indefinit",
+      "name": "Kevin Siwoff",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/1585036?v=4",
+      "profile": "http://kevinsiwoff.com",
+      "contributions": [
+        "code",
+        "doc",
+        "review"
+      ]
     }
   ]
 }
