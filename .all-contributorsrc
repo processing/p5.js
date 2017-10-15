@@ -74,6 +74,16 @@
         "ideas",
         "eventOrganizing"
       ]
+    },
+    {
+      "login": "dhowe",
+      "name": "dhowe",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/737638?v=4",
+      "profile": "https://github.com/dhowe",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ]
 }
