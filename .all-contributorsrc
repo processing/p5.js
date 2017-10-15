@@ -95,6 +95,18 @@
         "doc",
         "review"
       ]
+    },
+    {
+      "login": "toolness",
+      "name": "Atul Varma",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/124687?v=4",
+      "profile": "http://portfolio.toolness.org/",
+      "contributions": [
+        "code",
+        "doc",
+        "ideas",
+        "example"
+      ]
     }
   ]
 }
