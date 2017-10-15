@@ -130,7 +130,7 @@ p5.RendererGL.prototype.camera = function () {
   this.cameraMatrix.set(x0, y0, z0, 0,
                         x1, y1, z1, 0,
                         x2, y2, z2, 0,
-                         0,  0,  0, 1);
+                        0,   0,  0, 1);
 
   var tx = -eyeX;
   var ty = -eyeY;
@@ -152,8 +152,7 @@ p5.RendererGL.prototype.camera = function () {
                      this.cameraMatrix.mat4[12],
                      this.cameraMatrix.mat4[13],
                      this.cameraMatrix.mat4[14],
-                     this.cameraMatrix.mat4[15]
-                     );
+                     this.cameraMatrix.mat4[15]);
   return this;
 };
 
@@ -220,11 +219,10 @@ p5.RendererGL.prototype.perspective = function() {
   var f = 1.0 / Math.tan(this.cameraFOV / 2);
   var nf = 1.0 / (this.cameraNear - this.cameraFar);
 
-  this.uPMatrix.set(
-         f / aspect,  0,                     0,  0,
-                  0, -f,                     0,  0,
-                  0,  0,     (far + near) * nf, -1,
-                  0,  0, (2 * far * near) * nf,  0);
+  this.uPMatrix.set(f / aspect,  0,                     0,  0,
+                    0,          -f,                     0,  0,
+                    0,           0,     (far + near) * nf, -1,
+                    0,           0, (2 * far * near) * nf,  0);
 
   this._curCamera = 'custom';
 };
@@ -293,7 +291,7 @@ p5.prototype.ortho = function(left,right,bottom,top,near,far) {
   this._renderer.uPMatrix.set( x,  0,  0, 0,
                                0, -y,  0, 0,
                                0,  0,  z, 0,
-                              tx, ty, tz,  1);
+                               tx, ty, tz,  1);
 
   this._renderer._curCamera = 'custom';
 };

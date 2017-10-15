@@ -181,14 +181,22 @@ function testParamFormat(args, format){
       var types = format[p].type.split('|'); // case accepting multi-types
       if (argType === 'object'){             // if object, test for class
         if (!testParamClass(args[p], types)) {  // if fails to pass
-          error = {type:'WRONG_CLASS', position: p,
-            correctClass: types[p], wrongClass: args[p].name};
+          error = {
+            type:'WRONG_CLASS',
+            position: p,
+            correctClass: types[p],
+            wrongClass: args[p].name
+          };
           errorArray.push(error);
         }
       }else{                                 // not object, test for type
         if (!testParamType(args[p], types)) {  // if fails to pass
-          error = {type:'WRONG_TYPE', position: p,
-            correctType: types[p], wrongType: argType};
+          error = {
+            type:'WRONG_TYPE',
+            position: p,
+            correctType: types[p],
+            wrongType: argType
+          };
           errorArray.push(error);
         }
       }
@@ -259,14 +267,14 @@ function friendlyWelcome() {
   //var welcomeBgColor = '#ED225D';
   //var welcomeTextColor = 'white';
   console.log(
-  '    _ \n'+
-  ' /\\| |/\\ \n'+
-  ' \\ ` \' /  \n'+
-  ' / , . \\  \n'+
-  ' \\/|_|\\/ '+
-  '\n\n> p5.js says: Welcome! '+
-  'This is your friendly debugger. ' +
-  'To turn me off switch to using “p5.min.js”.'
+    '    _ \n'+
+    ' /\\| |/\\ \n'+
+    ' \\ ` \' /  \n'+
+    ' / , . \\  \n'+
+    ' \\/|_|\\/ '+
+    '\n\n> p5.js says: Welcome! '+
+    'This is your friendly debugger. ' +
+    'To turn me off switch to using “p5.min.js”.'
   );
 }
 

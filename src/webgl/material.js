@@ -192,8 +192,7 @@ p5.prototype.texture = function(){
   }
   this._renderer.GL.depthMask(true);
   this._renderer.GL.enable(this._renderer.GL.BLEND);
-  this._renderer.GL.blendFunc(this._renderer.GL.SRC_ALPHA,
-    this._renderer.GL.ONE_MINUS_SRC_ALPHA);
+  this._renderer.GL.blendFunc(this._renderer.GL.SRC_ALPHA, this._renderer.GL.ONE_MINUS_SRC_ALPHA);
 
   this._renderer.drawMode = constants.TEXTURE;
   if (! this._renderer.curFillShader.isTextureShader()) {

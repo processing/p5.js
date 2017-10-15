@@ -166,8 +166,7 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
     document.body.appendChild(c);
   }
   this._pInst.canvas = c;
-  this._pInst._setProperty('_renderer', new p5.RendererGL(this._pInst.canvas,
-    this._pInst, true, attr));
+  this._pInst._setProperty('_renderer', new p5.RendererGL(this._pInst.canvas, this._pInst, true, attr));
   this._pInst._renderer.resize(w, h);
   this._pInst._renderer._applyDefaults();
   this._pInst._elements.push(this._renderer);
@@ -319,8 +318,7 @@ p5.RendererGL.prototype._update = function() {
                      this.cameraMatrix.mat4[12],
                      this.cameraMatrix.mat4[13],
                      this.cameraMatrix.mat4[14],
-                     this.cameraMatrix.mat4[15]
-                     );
+                     this.cameraMatrix.mat4[15]);
 
   // reset light counters for new frame.
   this.ambientLightCount = 0;
@@ -665,7 +663,8 @@ p5.RendererGL.prototype.resize = function(w,h) {
  * @param {Number} a normalized alpha val.
  */
 p5.RendererGL.prototype.clear = function() {
-  this.GL.clearColor(arguments[0],
+  this.GL.clearColor(
+    arguments[0],
     arguments[1],
     arguments[2],
     arguments[3]);
@@ -819,8 +818,7 @@ p5.RendererGL.prototype.setStrokeShader = function (s) {
 
 p5.RendererGL.prototype._getLightShader = function () {
   if (this._defaultLightShader === undefined) {
-    this._defaultLightShader = new p5.Shader(this,
-      defaultShaders.lightVert, defaultShaders.lightTextureFrag);
+    this._defaultLightShader = new p5.Shader(this, defaultShaders.lightVert, defaultShaders.lightTextureFrag);
   }
   //this.drawMode = constants.FILL;
   return this._defaultLightShader;
@@ -828,8 +826,7 @@ p5.RendererGL.prototype._getLightShader = function () {
 
 p5.RendererGL.prototype._getImmediateModeShader = function () {
   if (this._defaultImmediateModeShader === undefined) {
-    this._defaultImmediateModeShader = new p5.Shader(this,
-      defaultShaders.immediateVert, defaultShaders.vertexColorFrag);
+    this._defaultImmediateModeShader = new p5.Shader(this, defaultShaders.immediateVert, defaultShaders.vertexColorFrag);
   }
   //this.drawMode = constants.FILL;
   return this._defaultImmediateModeShader;
@@ -837,8 +834,7 @@ p5.RendererGL.prototype._getImmediateModeShader = function () {
 
 p5.RendererGL.prototype._getNormalShader = function () {
   if (this._defaultNormalShader === undefined) {
-    this._defaultNormalShader = new p5.Shader(this,
-      defaultShaders.normalVert, defaultShaders.normalFrag);
+    this._defaultNormalShader = new p5.Shader(this, defaultShaders.normalVert, defaultShaders.normalFrag);
   }
   //this.drawMode = constants.FILL;
   return this._defaultNormalShader;
@@ -846,8 +842,7 @@ p5.RendererGL.prototype._getNormalShader = function () {
 
 p5.RendererGL.prototype._getColorShader = function () {
   if (this._defaultColorShader === undefined) {
-    this._defaultColorShader = new p5.Shader(this,
-      defaultShaders.normalVert, defaultShaders.basicFrag);
+    this._defaultColorShader = new p5.Shader(this, defaultShaders.normalVert, defaultShaders.basicFrag);
   }
   //this.drawMode = constants.FILL;
   return this._defaultColorShader;
@@ -855,8 +850,7 @@ p5.RendererGL.prototype._getColorShader = function () {
 
 p5.RendererGL.prototype._getLineShader = function () {
   if (this._defaultLineShader === undefined) {
-    this._defaultLineShader = new p5.Shader(this,
-      defaultShaders.lineVert, defaultShaders.lineFrag);
+    this._defaultLineShader = new p5.Shader(this, defaultShaders.lineVert, defaultShaders.lineFrag);
   }
   //this.drawMode = constants.STROKE;
   return this._defaultLineShader;

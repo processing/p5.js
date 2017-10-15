@@ -79,10 +79,8 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
   this._renderer.curFillShader.setUniform('uUseLighting', true);
   this._renderer.ambientLightCount++;
   //in case there's no material color for the geometry
-  this._renderer.curFillShader.setUniform('uMaterialColor',
-    this._renderer.curFillColor);
-  this._renderer.curFillShader.setUniform('uAmbientLightCount',
-    this._renderer.ambientLightCount);
+  this._renderer.curFillShader.setUniform('uMaterialColor', this._renderer.curFillColor);
+  this._renderer.curFillShader.setUniform('uAmbientLightCount', this._renderer.ambientLightCount);
   return this;
 };
 
@@ -156,12 +154,10 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
   }
   this._renderer.curFillShader.setUniform('uUseLighting', true);
   //in case there's no material color for the geometry
-  this._renderer.curFillShader.setUniform('uMaterialColor',
-    this._renderer.curFillColor);
+  this._renderer.curFillShader.setUniform('uMaterialColor', this._renderer.curFillColor);
   this._renderer.curFillShader.setUniform('uLightingDirection', [_x, _y, _z]);
   this._renderer.directionalLightCount ++;
-  this._renderer.curFillShader.setUniform('uDirectionalLightCount',
-    this._renderer.directionalLightCount);
+  this._renderer.curFillShader.setUniform('uDirectionalLightCount', this._renderer.directionalLightCount);
   return this;
 };
 
@@ -241,12 +237,10 @@ p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
   }
   this._renderer.curFillShader.setUniform('uUseLighting', true);
   //in case there's no material color for the geometry
-  this._renderer.curFillShader.setUniform('uMaterialColor',
-    this._renderer.curFillColor);
+  this._renderer.curFillShader.setUniform('uMaterialColor', this._renderer.curFillColor);
   this._renderer.curFillShader.setUniform('uPointLightLocation', [_x, _y, _z]);
   this._renderer.pointLightCount++;
-  this._renderer.curFillShader.setUniform('uPointLightCount',
-    this._renderer.pointLightCount);
+  this._renderer.curFillShader.setUniform('uPointLightCount', this._renderer.pointLightCount);
   return this;
 };
 

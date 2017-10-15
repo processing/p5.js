@@ -88,10 +88,9 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
 
     // Configure style consistency checking for this file, the source, and the tests.
-    jscs: {
+    eslint: {
       options: {
-        config: '.jscsrc',
-        reporter: require('jscs-stylish').path
+        configFile: '.eslintrc',
       },
       build: {
         src: [
@@ -106,32 +105,6 @@ module.exports = function(grunt) {
         ]
       },
       test: {
-        src: ['test/unit/**/*.js']
-      }
-    },
-
-    // Configure hinting for this file, the source, and the tests.
-    jshint: {
-      build: {
-        options: {
-          jshintrc: '.jshintrc'
-        },
-        src: [
-          'Gruntfile.js',
-          'tasks/**/*.js'
-        ]
-      },
-      source: {
-        options: {
-          jshintrc: 'src/.jshintrc',
-          ignores: [ 'src/external/**/*.js' ]
-        },
-        src: ['src/**/*.js']
-      },
-      test: {
-        options: {
-          jshintrc: 'test/.jshintrc'
-        },
         src: ['test/unit/**/*.js']
       }
     },
@@ -151,7 +124,7 @@ module.exports = function(grunt) {
       // Watch the codebase for changes
       main: {
         files: ['src/**/*.js'],
-        tasks: ['newer:jshint:source','test'],
+        tasks: ['newer:eslint:source','test'],
         options: {
           livereload: true
         }
@@ -336,13 +309,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-http');
-  grunt.loadNpmTasks('grunt-jscs');
   grunt.loadNpmTasks('grunt-minjson');
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-mocha-test');
@@ -353,8 +325,8 @@ module.exports = function(grunt) {
 
   // Create the multitasks.
   grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);
-  grunt.registerTask('test', ['jshint', 'jscs', 'yuidoc:prod', 'build', 'connect', 'mocha', 'mochaTest']);
-  grunt.registerTask('test:nobuild', ['jshint:test', 'jscs:test', 'connect', 'mocha']);
+  grunt.registerTask('test', ['eslint', 'yuidoc:prod', 'build', 'connect', 'mocha', 'mochaTest']);
+  grunt.registerTask('test:nobuild', ['eslint:test', 'connect', 'mocha']);
   grunt.registerTask('yui', ['yuidoc:prod', 'minjson']);
   grunt.registerTask('yui:test', ['yuidoc:prod', 'connect', 'mocha:yui']);
   grunt.registerTask('default', ['test']);

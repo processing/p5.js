@@ -89,8 +89,8 @@ p5.prototype.arrayCopy = function(
   length) {
 
   // the index to begin splicing from dst array
-  var start,
-      end;
+  var start;
+  var end;
 
   if (typeof length !== 'undefined') {
 

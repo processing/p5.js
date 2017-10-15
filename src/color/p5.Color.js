@@ -573,7 +573,7 @@ p5.Color._parseInputs = function() {
     // Try HSLA pattern matching.
     if (colorPatterns.HSL.test(str)) {  // hsl(H,S,L)
       results = colorPatterns.HSL.exec(str).slice(1)
-        .map(function(color, idx) {
+      .map(function(color, idx) {
         if (idx === 0) {
           return parseInt(color, 10) / 360;
         }
@@ -582,7 +582,7 @@ p5.Color._parseInputs = function() {
       results[3] = 1;
     } else if (colorPatterns.HSLA.test(str)) {  // hsla(H,S,L,A)
       results = colorPatterns.HSLA.exec(str).slice(1)
-        .map(function(color, idx) {
+      .map(function(color, idx) {
         if (idx === 0) {
           return parseInt(color, 10) / 360;
         }
@@ -602,7 +602,7 @@ p5.Color._parseInputs = function() {
     // Try HSBA pattern matching.
     if (colorPatterns.HSB.test(str)) {  // hsb(H,S,B)
       results = colorPatterns.HSB.exec(str).slice(1)
-        .map(function(color, idx) {
+      .map(function(color, idx) {
         if (idx === 0) {
           return parseInt(color, 10) / 360;
         }
@@ -611,7 +611,7 @@ p5.Color._parseInputs = function() {
       results[3] = 1;
     } else if (colorPatterns.HSBA.test(str)) {  // hsba(H,S,B,A)
       results = colorPatterns.HSBA.exec(str).slice(1)
-        .map(function(color, idx) {
+      .map(function(color, idx) {
         if (idx === 0) {
           return parseInt(color, 10) / 360;
         }
