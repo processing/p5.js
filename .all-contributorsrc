@@ -107,6 +107,18 @@
         "ideas",
         "example"
       ]
+    },
+    {
+      "login": "iamjessklein",
+      "name": "Jess Klein",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/535012?v=4",
+      "profile": "http://www.jessklein.is/",
+      "contributions": [
+        "doc",
+        "ideas",
+        "example",
+        "design"
+      ]
     }
   ]
 }
