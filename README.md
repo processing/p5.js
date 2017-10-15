@@ -45,3 +45,14 @@ Check out [p5js.org](http://p5js.org) for lots more! Here are some quick-links:
 p5.js is a collaborative project created by many individuals, and you are invited to help. All types of involvement are welcome. See the [community section](http://p5js.org/community) to get started!
 
 Developers, check out the [development](https://github.com/processing/p5.js/wiki/Development) wiki page for more in-depth details about contributing code, bug fixes, and documentation.
+
+## Contributors
+
+Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+| [<img src="https://avatars2.githubusercontent.com/u/504124?v=4" width="100px;"/><br /><sub>Jason Sigal</sub>](http://jasonsigal.cc)<br />[💻](https://github.com/processing/p5.js/commits?author=therewasaguy "Code") [📖](https://github.com/processing/p5.js/commits?author=therewasaguy "Documentation") [🤔](#ideas-therewasaguy "Ideas, Planning, & Feedback") |
+| :---: |
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Contributions of any kind welcome!

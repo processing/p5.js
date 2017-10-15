@@ -1,0 +1,22 @@
+{
+  "projectName": "p5.js",
+  "projectOwner": "processing",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "contributors": [
+    {
+      "login": "therewasaguy",
+      "name": "Jason Sigal",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/504124?v=4",
+      "profile": "http://jasonsigal.cc",
+      "contributions": [
+        "code",
+        "doc",
+        "ideas"
+      ]
+    }
+  ]
+}
