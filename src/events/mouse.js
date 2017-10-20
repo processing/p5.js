@@ -768,10 +768,10 @@ p5.prototype._onclick = function(e) {
  * no image displayed
  */
 
-p5.prototype._doubleClicked = function(e) {
+p5.prototype._ondblclick = function(e) {
   var context = this._isGlobal ? window : this;
   if (typeof context.doubleClicked === 'function') {
-    var executeDefault = context.ondblclick(e);
+    var executeDefault = context.doubleClicked(e);
     if(executeDefault === false) {
       e.preventDefault();
     }
