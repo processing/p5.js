@@ -671,22 +671,19 @@ p5.Renderer2D.prototype.polygon = function(args) {
       return this;
     }
   }
-  
   var points = [];
   var angle = constants.TWO_PI / sides;
   for (var a = 0; a < constants.TWO_PI; a += angle) {
-    var sx = x + cos(a) * size;
-    var sy = y + sin(a) * size;
+    var sx = x + Math.cos(a) * size;
+    var sy = y + Math.sin(a) * size;
     points.push({x: sx, y: sy});
   }
-  
   ctx.beginPath();
   ctx.moveTo(points[0].x, points[0].y);
   for(var i = 0; i < points.length; i++) {
     ctx.lineTo(points[i].x, points[i].y);
   }
   ctx.closePath();
-  
   if(doFill) {
     ctx.fill();
   }
