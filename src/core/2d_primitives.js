@@ -497,6 +497,14 @@ p5.prototype.triangle = function() {
   return this;
 };
 
+/**
+* Draws a polygon with a given size and a number of given sides for a given location.
+* 
+* @param {Number} x x-coordinate of the center of the shape
+* @param {Number} y y-coordinate of the center of the shape
+* @param {Number} sides Number of sides the shape will have
+* @param {Number} size The size of the shape
+*/
 p5.prototype.polygon = function() {
   if(!this.renderer._doStroke() && !this._renderer._doFill) {
     return this;
