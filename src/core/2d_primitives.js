@@ -497,4 +497,17 @@ p5.prototype.triangle = function() {
   return this;
 };
 
+p5.prototype.polygon = function() {
+  if(!this.renderer._doStroke() && !this._renderer._doFill) {
+    return this;
+  }
+  var args = new Array(arguments.length);
+  for(var i = 0; i < args.length; ++i) {
+    args[i] = arguments[i];
+  }
+  p5._validateParameters('polygon', args);
+  this._renderer.polygon(args);
+  return this;
+}
+
 module.exports = p5;
