@@ -6,7 +6,7 @@ function smokeTestMethods(data) {
   data.classitems.forEach(function(classitem) {
     if (classitem.itemtype === 'method') {
       new DocumentedMethod(classitem);
-	}
+    }
   });
 }
 
@@ -62,7 +62,7 @@ function mergeOverloadedMethods(data) {
         // indexed. We need to make sure that we don't list it multiple
         // times in our index pages and such.
 
-		method = methodsByFullName[fullName];
+        method = methodsByFullName[fullName];
 		
         assertEqual(method.file, classitem.file,
                     'all overloads must be defined in the same file');
