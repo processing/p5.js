@@ -644,6 +644,7 @@ p5.Table.prototype.addColumn = function(title) {
 /**
  *  Returns the total number of columns in a Table.
  *
+ *  @method  getColumnCount
  *  @return {Number} Number of columns in this table
  */
 p5.Table.prototype.getColumnCount = function() {
@@ -655,7 +656,6 @@ p5.Table.prototype.getColumnCount = function() {
  *
  *  @method  getRowCount
  *  @return {Number} Number of rows in this table
-
  */
 p5.Table.prototype.getRowCount = function() {
   return this.rows.length;

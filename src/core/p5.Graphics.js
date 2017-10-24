@@ -63,6 +63,9 @@ p5.Graphics = function(w, h, renderer, pInst) {
 
 p5.Graphics.prototype = Object.create(p5.Element.prototype);
 
+/**
+ * @method remove
+ */
 p5.Graphics.prototype.remove = function() {
   if (this.elt.parentNode) {
     this.elt.parentNode.removeChild(this.elt);
