@@ -303,6 +303,7 @@ p5.prototype.clear = function() {
  *
  */
 p5.prototype.colorMode = function() {
+  p5._validateParameters('colorMode', arguments);
   if (arguments[0] === constants.RGB ||
       arguments[0] === constants.HSB ||
       arguments[0] === constants.HSL) {

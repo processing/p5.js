@@ -6,6 +6,16 @@
 'use strict';
 
 var p5 = require('./core');
+
+/*
+if (typeof IS_MINIFIED !== 'undefined') {
+
+  p5._validateParameters =
+    p5._friendlyFileLoadError =
+    function () { };
+  
+} else */{
+  
 var doFriendlyWelcome = false; // TEMP until we get it all working LM
 // for parameter validation
 var dataDoc = require('../../docs/reference/data.json');
@@ -103,6 +113,7 @@ p5._friendlyFileLoadError = function (errorType, filePath) {
   report(message, errorInfo.method, FILE_LOAD);
 };
 
+  var docCache = {};
 /**
 * Validates parameters
 * param  {String}               func    the name of the function
@@ -125,10 +136,10 @@ p5._validateParameters = function validateParameters(func, args) {
     typeof(IS_MINIFIED) !== 'undefined') {
     return; // skip FES
   }
-  var arrDoc = lookupParamDoc(func);
+    try {
+      var arrDoc = docCache[func] || (docCache[func] = lookupParamDoc(func));
   var errorArray = [];
   var minErrCount = 999999;
-  if (arrDoc.length > 1){   // func has multiple formats
     for (var i = 0; i < arrDoc.length; i++) {
       var arrError = testParamFormat(args, arrDoc[i]);
       if( arrError.length === 0) {
@@ -144,11 +155,9 @@ p5._validateParameters = function validateParameters(func, args) {
     for (var n = 0; n < errorArray.length; n++) {
       p5._friendlyParamError(errorArray[n], func);
     }
-  } else {                 // func has a single format
-    errorArray = testParamFormat(args, arrDoc[0]);
-    for(var m = 0; m < errorArray.length; m++) {
-      p5._friendlyParamError(errorArray[m], func);
     }
+    catch (err) {
+      console.log('validation error: ' + err);
   }
 };
 // validateParameters() helper functions:
@@ -157,91 +166,128 @@ function lookupParamDoc(func){
   var queryResult = arrDoc.classitems.
     filter(function (x) { return x.name === func; });
   // different JSON structure for funct with multi-format
-  if (queryResult[0].hasOwnProperty('overloads')){
     var res = [];
+  if (queryResult[0].hasOwnProperty('overloads')){
     for(var i = 0; i < queryResult[0].overloads.length; i++) {
       res.push(queryResult[0].overloads[i].params);
     }
-    return res;
   } else {
-    return [queryResult[0].params];
+      res.push(queryResult[0].params);
   }
+    var builtinTypes = [
+      'number', 'string', 'boolean',
+      'constant', 'function', 'integer'
+    ];
+    res.forEach(function (formats) {
+      formats.forEach(function (format) {
+        format.types = format.type.split('|').map(function ct(type) {
+
+          if (type.substr(type.length - 2, 2) === '[]') {
+            return {
+              name: type,
+              array: ct(type.substr(0, type.length - 2))
+            };
 }
-function testParamFormat(args, format){
-  var errorArray = [];
-  var error;
-  for (var p = 0; p < format.length; p++) {
-    var argType = typeof(args[p]);
-    if ('undefined' === argType || null === argType) {
-      if (format[p].optional !== true) {
-        error = {type:'EMPTY_VAR', position: p};
-        errorArray.push(error);
+
+          var lowerType = type.toLowerCase();
+          if (lowerType.substr(0, 'function'.length) === 'function') {
+            lowerType = 'function';
       }
-    } else {
-      var types = format[p].type.split('|'); // case accepting multi-types
-      if (argType === 'object'){             // if object, test for class
-        if (!testParamClass(args[p], types)) {  // if fails to pass
-          error = {type:'WRONG_CLASS', position: p,
-            correctClass: types[p], wrongClass: args[p].name};
-          errorArray.push(error);
+          if (builtinTypes.indexOf(lowerType) >= 0) {
+            return { name: type, builtin: lowerType };
         }
-      }else{                                 // not object, test for type
-        if (!testParamType(args[p], types)) {  // if fails to pass
-          error = {type:'WRONG_TYPE', position: p,
-            correctType: types[p], wrongType: argType};
-          errorArray.push(error);
+
+          var t = window;
+          type.split('.').forEach(function (p) { t = t && t[p]; });
+          if (t) {
+            return { name: type, prototype: t };
         }
+
+          return { name: type, type: lowerType };
+        });
+      });
+    });
+    return res;
       }
+  function testParamFormat(args, formats) {
+    var errorArray = [];
+    for (var p = 0; p < formats.length; p++) {
+      var arg = args[p];
+      var format = formats[p];
+      var argType = typeof (arg);
+      if ('undefined' === argType || null === arg) {
+        if (format.optional !== true) {
+          errorArray.push({
+            type: 'EMPTY_VAR',
+            position: p,
+            correctType: format.type,
+          });
     }
+      } else if (!testParamTypes(arg, format.types)) {
+        errorArray.push({
+          type: 'WRONG_TYPE',
+          position: p,
+          correctType: format.type,
+          wrongType: arg instanceof Array ? 'array' : arg.name || argType
+        });
   }
+    }
   return errorArray;
 }
-// testClass() for object type parameter validation
+  // testType() for non-object type parameter validation
 // Returns true if PASS, false if FAIL
-function testParamClass(param, types){
+  function testParamTypes(param, types) {
   for (var i = 0; i < types.length; i++) {
-    if (types[i] === 'Array') {
-      if(param instanceof Array) {
+      if (testParamType(param, types[i])) {
         return true;
       }
-    } else {
-      if (param.name === types[i]) {
-        return true;      // class name match, pass
-      } else if (types[i] === 'Constant') {
-        return true;      // accepts any constant, pass
+      }
+    return false;
+    }
+  function testParamType(param, type) {
+    var isArray = param instanceof Array;
+    if (type.array && isArray) {
+      for (var i = 0; i < param.length; i++) {
+        if (!testParamType(param[i], type.array)) {
+  return false;
+}
+    }
+      return true;
+  }
+    else if (type.prototype) {
+      return param instanceof type.prototype;
+}
+    else if (type.builtin) {
+      switch (type.builtin) {
+        case 'number':
+          return (typeof param === 'number' || !!param && !isNaN(param));
+        case 'integer':
+          return (typeof param === 'number' || !!param && !isNaN(param)) &&
+            Number(param) === Math.floor(param);
+        case 'boolean':
+          return true;
+        case 'array':
+          return isArray;
+        case 'string':
+        case 'constant':
+          return typeof param === 'number' ||
+            typeof param === 'string';
+        case 'function':
+          return param instanceof Function;
       }
     }
+
+    return typeof param === type.t;
   }
-  return false;
-}
-// testType() for non-object type parameter validation
-// Returns true if PASS, false if FAIL
-function testParamType(param, types){
-  for (var i = 0; i < types.length; i++) {
-    if (typeof(param) === types[i].toLowerCase()) {
-      return true;      // type match, pass
-    } else if (types[i] === 'Constant') {
-      return true;      // accepts any constant, pass
-    }
-  }
-  return false;
-}
 // function for generating console.log() msg
 p5._friendlyParamError = function (errorObj, func) {
   var message;
   switch (errorObj.type){
     case 'EMPTY_VAR':
-      message = 'It looks like ' + func +
-        '() received an empty variable in spot #' + errorObj.position +
-        ' (zero-based index). If not intentional, this is often a problem' +
+        message = func + '() was expecting ' + errorObj.correctType +
+          ' for parameter #' + errorObj.position + ' (zero-based index), received' +
+          ' an empty variable instead. If not intentional, this is often a problem' +
         ' with scope: [https://p5js.org/examples/data-variable-scope.html].';
-      report(message, func, ERR_PARAMS);
-      break;
-    case 'WRONG_CLASS':
-      message = func + '() was expecting ' + errorObj.correctClass +
-        ' for parameter #' + errorObj.position + ' (zero-based index), received ';
-      // Wrap strings in quotes
-      message += 'an object with name '+ errorObj.wrongClass +' instead.';
       report(message, func, ERR_PARAMS);
       break;
     case 'WRONG_TYPE':
@@ -409,6 +455,8 @@ if (document.readyState !== 'complete') {
   window.addEventListener('load', function() {
     window.removeEventListener('error', helpForMisusedAtTopLevelCode, false);
   });
+}
+
 }
 
 module.exports = p5;

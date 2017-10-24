@@ -64,6 +64,7 @@ require('../core/error_helpers');
  *
  */
 p5.prototype.loadImage = function(path, successCallback, failureCallback) {
+  p5._validateParameters('loadImage', arguments);
   var img = new Image();
   var pImg = new p5.Image(1, 1, this);
 
@@ -233,6 +234,8 @@ p5.prototype.image =
   function(img, dx, dy, dWidth, dHeight, sx, sy, sWidth, sHeight) {
   // set defaults per spec: https://goo.gl/3ykfOq
 
+  p5._validateParameters('image', arguments);
+
   var defW = img.width;
   var defH = img.height;
 
@@ -377,6 +380,7 @@ p5.prototype.image =
  *
  */
 p5.prototype.tint = function () {
+  p5._validateParameters('tint', arguments);
   var c = this.color.apply(this, arguments);
   this._renderer._tint = c.levels;
 };
@@ -512,6 +516,7 @@ p5.prototype._getTintedImageCanvas = function(img) {
  *
  */
 p5.prototype.imageMode = function(m) {
+  p5._validateParameters('imageMode', arguments);
   if (m === constants.CORNER ||
     m === constants.CORNERS ||
     m === constants.CENTER) {

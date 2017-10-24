@@ -467,8 +467,8 @@ p5.prototype.map = function (n, start1, stop1, start2, stop2, withinBounds) {
  * of any length.
  *
  * @method max
- * @param  {Number|Array} n0 Numbers to compare
- * @return {Number}          maximum Number
+ * @param  {Number|Number[]} n0 Numbers to compare
+ * @return {Number}             maximum Number
  * @example
  * <div><code>
  * function setup() {
@@ -510,8 +510,8 @@ p5.prototype.max = function() {
  * of any length.
  *
  * @method min
- * @param  {Number|Array} n0 Numbers to compare
- * @return {Number}          minimum Number
+ * @param  {Number|Number[]} n0 Numbers to compare
+ * @return {Number}             minimum Number
  * @example
  * <div><code>
  * function setup() {

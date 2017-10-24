@@ -148,7 +148,7 @@ p5.prototype.matchAll = function(str, reg) {
  * @param {Array}        nums     the Numbers to format
  * @param {Number|String}       [left]
  * @param {Number|String}       [right]
- * @return {Array}                formatted Strings\
+ * @return {String[]}                formatted Strings
  * @example
  * <div>
  * <code>
@@ -258,7 +258,7 @@ function doNf() {
  * @method nfc
  * @param  {Array}    nums     the Numbers to format
  * @param  {Number|String}   [right]
- * @return {Array}           formatted Strings
+ * @return {String[]}           formatted Strings
  * @example
  * <div>
  * <code>
@@ -406,7 +406,7 @@ function addNfp() {
  * @param {Array}        nums     the Numbers to format
  * @param {Number}       [left]
  * @param {Number}       [right]
- * @return {Array}         formatted Strings
+ * @return {String[]}         formatted Strings
  * @example
  * <div>
  * <code>
@@ -550,7 +550,7 @@ p5.prototype.splitTokens = function() {
 /**
  * @method trim
  * @param  {Array} strs an Array of Strings to be trimmed
- * @return {Array}       an Array of trimmed Strings
+ * @return {String[]}   an Array of trimmed Strings
  * @example
  * <div>
  * <code>

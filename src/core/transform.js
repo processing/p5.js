@@ -179,7 +179,7 @@ p5.prototype.resetMatrix = function() {
  * @method rotate
  * @param  {Number} angle the angle of rotation, specified in radians
  *                        or degrees, depending on current angleMode
- * @param  {p5.Vector|Array} [axis] (in 3d) the axis to rotate around
+ * @param  {p5.Vector|Number[]} [axis] (in 3d) the axis to rotate around
  * @chainable
  * @example
  * <div>
@@ -195,6 +195,7 @@ p5.prototype.resetMatrix = function() {
  *
  */
 p5.prototype.rotate = function(angle, axis) {
+  p5._validateParameters('rotate', arguments);
   var args = new Array(arguments.length);
   var r;
   for (var i = 0; i < args.length; ++i) {
@@ -222,6 +223,7 @@ p5.prototype.rotate = function(angle, axis) {
  * @chainable
  */
 p5.prototype.rotateX = function(rad) {
+  p5._validateParameters('rotateX', arguments);
   if (this._renderer.isP3D) {
     this._renderer.rotateX(rad);
   } else {
@@ -237,6 +239,7 @@ p5.prototype.rotateX = function(rad) {
  * @chainable
  */
 p5.prototype.rotateY = function(rad) {
+  p5._validateParameters('rotateY', arguments);
   if (this._renderer.isP3D) {
     this._renderer.rotateY(rad);
   } else {
@@ -252,6 +255,7 @@ p5.prototype.rotateY = function(rad) {
  * @chainable
  */
 p5.prototype.rotateZ = function(rad) {
+  p5._validateParameters('rotateZ', arguments);
   if (this._renderer.isP3D) {
     this._renderer.rotateZ(rad);
   } else {
@@ -276,7 +280,7 @@ p5.prototype.rotateZ = function(rad) {
  * This function can be further controlled with push() and pop().
  *
  * @method scale
- * @param  {Number|p5.Vector|Array} s
+ * @param  {Number|p5.Vector|Number[]} s
  *                      percent to scale the object, or percentage to
  *                      scale the object in the x-axis if multiple arguments
  *                      are given
@@ -306,6 +310,7 @@ p5.prototype.rotateZ = function(rad) {
  *
  */
 p5.prototype.scale = function() {
+  p5._validateParameters('scale', arguments);
   var x,y,z;
   var args = new Array(arguments.length);
   for(var i = 0; i < args.length; i++) {
@@ -376,6 +381,7 @@ p5.prototype.scale = function() {
  *
  */
 p5.prototype.shearX = function(angle) {
+  p5._validateParameters('shearX', arguments);
   if (this._angleMode === constants.DEGREES) {
     angle = this.radians(angle);
   }
@@ -417,6 +423,7 @@ p5.prototype.shearX = function(angle) {
  *
  */
 p5.prototype.shearY = function(angle) {
+  p5._validateParameters('shearY', arguments);
   if (this._angleMode === constants.DEGREES) {
     angle = this.radians(angle);
   }
@@ -465,6 +472,7 @@ p5.prototype.shearY = function(angle) {
  *
  */
 p5.prototype.translate = function(x, y, z) {
+  p5._validateParameters('translate', arguments);
   if (this._renderer.isP3D) {
     this._renderer.translate(x, y, z);
   } else {

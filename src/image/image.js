@@ -97,6 +97,7 @@ var frames = [];
  *
  */
 p5.prototype.createImage = function(width, height) {
+  p5._validateParameters('createImage', arguments);
   return new p5.Image(width, height);
 };
 
@@ -151,6 +152,7 @@ p5.prototype.createImage = function(width, height) {
  *
  */
 p5.prototype.saveCanvas = function() {
+  p5._validateParameters('saveCanvas', arguments);
 
   var cnv, filename, extension;
   if (arguments.length === 3) {
@@ -274,6 +276,7 @@ p5.prototype.saveCanvas = function() {
  *
  */
 p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
+  p5._validateParameters('saveFrames', arguments);
   var duration = _duration || 3;
   duration = p5.prototype.constrain(duration, 0, 15);
   duration = duration * 1000;

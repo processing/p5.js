@@ -212,7 +212,7 @@ p5.prototype.texture = function(){
  * possible materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
  * @method  ambientMaterial
- * @param  {Number|Array|String|p5.Color} v1  gray value,
+ * @param  {Number|Number[]|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
  * @param  {Number}            [v2] green or saturation value
@@ -255,7 +255,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * possible materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
  * @method specularMaterial
- * @param  {Number|Array|String|p5.Color} v1  gray value,
+ * @param  {Number|Number[]|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
  * @param  {Number}            [v2] green or saturation value

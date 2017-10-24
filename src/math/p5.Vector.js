@@ -106,7 +106,7 @@ p5.Vector.prototype.toString = function p5VectorToString() {
  * Sets the x, y, and z component of the vector using two or three separate
  * variables, the data from a p5.Vector, or the values from a float array.
  * @method set
- * @param {Number|p5.Vector|Array} [x] the x component of the vector or a
+ * @param {Number|p5.Vector|Number[]} [x] the x component of the vector or a
  *                                     p5.Vector or an Array
  * @param {Number}                 [y] the y component of the vector
  * @param {Number}                 [z] the z component of the vector
@@ -174,7 +174,7 @@ p5.Vector.prototype.copy = function () {
  * acts directly on the vector. See the examples for more context.
  *
  * @method add
- * @param  {Number|p5.Vector|Array} x   the x component of the vector to be
+ * @param  {Number|p5.Vector|Number[]} x   the x component of the vector to be
  *                                      added or a p5.Vector or an Array
  * @param  {Number}                 [y] the y component of the vector to be
  *                                      added
@@ -226,7 +226,7 @@ p5.Vector.prototype.add = function (x, y, z) {
  * other acts directly on the vector. See the examples for more context.
  *
  * @method sub
- * @param  {Number|p5.Vector|Array} x   the x component of the vector or a
+ * @param  {Number|p5.Vector|Number[]} x   the x component of the vector or a
  *                                      p5.Vector or an Array
  * @param  {Number}                 [y] the y component of the vector
  * @param  {Number}                 [z] the z component of the vector
@@ -731,7 +731,7 @@ p5.Vector.prototype.array = function () {
  * Equality check against a p5.Vector
  *
  * @method equals
- * @param {Number|p5.Vector|Array} [x] the x component of the vector or a
+ * @param {Number|p5.Vector|Number[]} [x] the x component of the vector or a
  *                                     p5.Vector or an Array
  * @param {Number}                 [y] the y component of the vector
  * @param {Number}                 [z] the z component of the vector
