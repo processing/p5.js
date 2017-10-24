@@ -89,10 +89,10 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
 /**
  * Creates a directional light with a color and a direction
  * @method directionalLight
- * @param  {Number}    r        red or hue value (depending on the current
+ * @param  {Number}    v1       red or hue value (depending on the current
  * color mode),
- * @param  {Number}    g        green or saturation value
- * @param  {Number}    b        blue or brightness value
+ * @param  {Number}    v2       green or saturation value
+ * @param  {Number}    v3       blue or brightness value
  * @param  {p5.Vector} position the direction of the light
  * @chainable
  */
@@ -116,9 +116,9 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
 
 /**
  * @method directionalLight
- * @param  {Number}    r
- * @param  {Number}    g
- * @param  {Number}    b
+ * @param  {Number}    v1
+ * @param  {Number}    v2
+ * @param  {Number}    v3
  * @param  {Number}    x
  * @param  {Number}    y
  * @param  {Number}    z
@@ -193,10 +193,10 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
 /**
  * Creates a point light with a color and a light position
  * @method pointLight
- * @param  {Number}    r        red or hue value (depending on the current
+ * @param  {Number}    v1       red or hue value (depending on the current
  * color mode),
- * @param  {Number}    g        green or saturation value
- * @param  {Number}    b        blue or brightness value
+ * @param  {Number}    v2       green or saturation value
+ * @param  {Number}    v3       blue or brightness value
  * @param  {Number}    x        x axis position
  * @param  {Number}    y        y axis position
  * @param  {Number}    z        z axis position
@@ -233,9 +233,9 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
 
 /**
  * @method pointLight
- * @param  {Number}    r
- * @param  {Number}    g
- * @param  {Number}    b
+ * @param  {Number}    v1
+ * @param  {Number}    v2
+ * @param  {Number}    v3
  * @param  {p5.Vector} position the position of the light
  * @chainable
  */
@@ -256,13 +256,13 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  * @param  {p5.Vector}                position
  * @chainable
  */
-p5.prototype.pointLight = function(r, g, b, x, y, z) {
+p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
   if (! this._renderer.curFillShader.isLightShader()) {
     this._renderer.setFillShader(this._renderer._getLightShader());
   }
   //@TODO: check parameters number
   var color = this._renderer._pInst.color.apply(
-    this._renderer._pInst, [r, g, b]);
+    this._renderer._pInst, [v1, v2, v3]);
 
   var colors = new Float32Array(color._array.slice(0,3));
   this._renderer.curFillShader.setUniform('uPointLightColor', colors);
