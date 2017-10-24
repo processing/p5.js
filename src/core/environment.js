@@ -53,7 +53,7 @@ p5.prototype.print = function(args) {
  * been displayed since the program started. Inside setup() the value is 0,
  * after the first iteration of draw it is 1, etc.
  *
- * @property {Number} frameCount
+ * @property {Integer} frameCount
  * @readOnly
  * @example
  *   <div><code>

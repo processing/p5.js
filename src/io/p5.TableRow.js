@@ -45,7 +45,7 @@ p5.TableRow = function (str, separator) {
  *  The column may be specified by either its ID or title.
  *
  *  @method  set
- *  @param {String|Number} column Column ID (Number)
+ *  @param {String|Integer} column Column ID (Number)
  *                                or Title (String)
  *  @param {String|Number} value  The value to be stored
  */
@@ -81,7 +81,7 @@ p5.TableRow.prototype.set = function(column, value) {
  *  The column may be specified by either its ID or title.
  *
  *  @method  setNum
- *  @param {String|Number} column Column ID (Number)
+ *  @param {String|Integer} column Column ID (Number)
  *                                or Title (String)
  *  @param {Number} value  The value to be stored
  *                                as a Float
@@ -97,7 +97,7 @@ p5.TableRow.prototype.setNum = function(column, value){
  *  The column may be specified by either its ID or title.
  *
  *  @method  setString
- *  @param {String|Number} column Column ID (Number)
+ *  @param {String|Integer} column Column ID (Number)
  *                                or Title (String)
  *  @param {String} value  The value to be stored
  *                                as a String
@@ -112,7 +112,7 @@ p5.TableRow.prototype.setString = function(column, value){
  *  The column may be specified by either its ID or title.
  *
  *  @method  get
- *  @param  {String|Number} column columnName (string) or
+ *  @param  {String|Integer} column columnName (string) or
  *                                   ID (number)
  *  @return {String|Number}
  */
@@ -130,7 +130,7 @@ p5.TableRow.prototype.get = function(column) {
  *  title.
  *
  *  @method  getNum
- *  @param  {String|Number} column columnName (string) or
+ *  @param  {String|Integer} column columnName (string) or
  *                                   ID (number)
  *  @return {Number}  Float Floating point number
  */
@@ -154,7 +154,7 @@ p5.TableRow.prototype.getNum = function(column) {
  *  title.
  *
  *  @method  getString
- *  @param  {String|Number} column columnName (string) or
+ *  @param  {String|Integer} column columnName (string) or
  *                                   ID (number)
  *  @return {String}  String
  */

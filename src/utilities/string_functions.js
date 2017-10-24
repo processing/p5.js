@@ -137,17 +137,17 @@ p5.prototype.matchAll = function(str, reg) {
  *
  * @method nf
  * @param {Number|String}       num      the Number to format
- * @param {Number|String}       [left]   number of digits to the left of the
+ * @param {Integer|String}      [left]   number of digits to the left of the
  *                                decimal point
- * @param {Number|String}       [right]  number of digits to the right of the
+ * @param {Integer|String}      [right]  number of digits to the right of the
  *                                decimal point
  * @return {String}               formatted String
  */
 /**
  * @method nf
  * @param {Array}        nums     the Numbers to format
- * @param {Number|String}       [left]
- * @param {Number|String}       [right]
+ * @param {Integer|String}      [left]
+ * @param {Integer|String}      [right]
  * @return {String[]}                formatted Strings
  * @example
  * <div>
@@ -250,14 +250,14 @@ function doNf() {
  *
  * @method nfc
  * @param  {Number|String}   num     the Number to format
- * @param  {Number|String}   [right] number of digits to the right of the
+ * @param  {Integer|String}  [right] number of digits to the right of the
  *                                  decimal point
  * @return {String}           formatted String
  */
 /**
  * @method nfc
  * @param  {Array}    nums     the Numbers to format
- * @param  {Number|String}   [right]
+ * @param  {Integer|String}  [right]
  * @return {String[]}           formatted Strings
  * @example
  * <div>
@@ -330,17 +330,17 @@ function doNfc() {
  *
  * @method nfp
  * @param {Number} num      the Number to format
- * @param {Number}       [left]   number of digits to the left of the decimal
+ * @param {Integer}      [left]   number of digits to the left of the decimal
  *                                point
- * @param {Number}       [right]  number of digits to the right of the
+ * @param {Integer}      [right]  number of digits to the right of the
  *                                decimal point
  * @return {String}         formatted String
  */
 /**
  * @method nfp
  * @param {Number[]} nums      the Numbers to format
- * @param {Number}       [left]
- * @param {Number}       [right]
+ * @param {Integer}      [left]
+ * @param {Integer}      [right]
  * @return {String[]}         formatted Strings
  * @example
  * <div>
@@ -395,17 +395,17 @@ function addNfp() {
  *
  * @method nfs
  * @param {Number}       num      the Number to format
- * @param {Number}       [left]   number of digits to the left of the decimal
+ * @param {Integer}      [left]   number of digits to the left of the decimal
  *                                point
- * @param {Number}       [right]  number of digits to the right of the
+ * @param {Integer}      [right]  number of digits to the right of the
  *                                decimal point
  * @return {String}         formatted String
  */
 /**
  * @method nfs
  * @param {Array}        nums     the Numbers to format
- * @param {Number}       [left]
- * @param {Number}       [right]
+ * @param {Integer}      [left]
+ * @param {Integer}      [right]
  * @return {String[]}         formatted Strings
  * @example
  * <div>

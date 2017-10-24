@@ -79,7 +79,7 @@ p5.prototype.key = '';
  * You can also check for custom keys by looking up the keyCode of any key
  * on a site like this: <a href="http://keycode.info/">keycode.info</a>.
  *
- * @property {Number} keyCode
+ * @property {Integer} keyCode
  * @readOnly
  * @example
  * <div><code>
