@@ -62,8 +62,8 @@ p5.prototype.abs = Math.abs;
  *
  *   // Reformat the float returned by map and draw it.
  *   noStroke();
- *   text(nfc(ax, 2,2), ax, ay - 5);
- *   text(nfc(bx,1,1), bx, by - 5);
+ *   text(nfc(ax, 2), ax, ay - 5);
+ *   text(nfc(bx, 1), bx, by - 5);
  * }
  * </code></div>
   *
@@ -162,7 +162,7 @@ p5.prototype.constrain = function(n, low, high) {
  *   push();
  *   translate( (x1+x2)/2, (y1+y2)/2 );
  *   rotate( atan2(y2-y1,x2-x1) );
- *   text(nfc(d,1,1), 0, -5);
+ *   text(nfc(d,1), 0, -5);
  *   pop();
  *   // Fancy!
  * }
@@ -261,8 +261,8 @@ p5.prototype.exp = Math.exp;
  *
  *   // Reformat the float returned by map and draw it.
  *   noStroke();
- *   text(nfc(ax, 2,2), ax, ay - 5);
- *   text(nfc(bx,1,1), bx, by - 5);
+ *   text(nfc(ax, 2), ax, ay - 5);
+ *   text(nfc(bx, 1), bx, by - 5);
  * }
  * </code></div>
  *
@@ -472,7 +472,8 @@ p5.prototype.map = function (n, start1, stop1, start2, stop2, withinBounds) {
  * of any length.
  *
  * @method max
- * @param  {Number|Number[]} n0 Numbers to compare
+ * @param  {Number} n0 Number to compare
+ * @param  {Number} n1 Number to compare
  * @return {Number}             maximum Number
  * @example
  * <div><code>
@@ -501,6 +502,11 @@ p5.prototype.map = function (n, start1, stop1, start2, stop2, withinBounds) {
  * Small text at top reads: Array Elements 2 1 5 4 8 9. Large text at center: 9
  *
  */
+/**
+ * @method max
+ * @param  {Number[]} nums Numbers to compare
+ * @return {Number}
+ */
 p5.prototype.max = function() {
   p5._validateParameters('max', arguments);
   if (arguments[0] instanceof Array) {
@@ -516,7 +522,8 @@ p5.prototype.max = function() {
  * of any length.
  *
  * @method min
- * @param  {Number|Number[]} n0 Numbers to compare
+ * @param  {Number} n0 Number to compare
+ * @param  {Number} n1 Number to compare
  * @return {Number}             minimum Number
  * @example
  * <div><code>
@@ -544,6 +551,11 @@ p5.prototype.max = function() {
  * @alt
  * Small text at top reads: Array Elements 2 1 5 4 8 9. Large text at center: 1
  *
+ */
+/**
+ * @method min
+ * @param  {Number[]} nums Numbers to compare
+ * @return {Number}
  */
 p5.prototype.min = function() {
   p5._validateParameters('min', arguments);
@@ -669,8 +681,8 @@ p5.prototype.pow = Math.pow;
  *
  *   // Reformat the float returned by map and draw it.
  *   noStroke();
- *   text(nfc(ax, 2,2), ax, ay - 5);
- *   text(nfc(bx,1,1), bx, by - 5);
+ *   text(nfc(ax, 2), ax, ay - 5);
+ *   text(nfc(bx, 1), bx, by - 5);
  * }
  * </code></div>
  *

@@ -272,8 +272,8 @@ function doNf() {
  *   textSize(12);
  *
  *   // Draw formatted numbers
- *   text(nfc(num, 4, 2), 10, 30);
- *   text(nfc(numArr, 2, 1), 10, 80);
+ *   text(nfc(num, 4), 10, 30);
+ *   text(nfc(numArr, 2), 10, 80);
  *
  *   // Draw dividing line
  *   stroke(120);

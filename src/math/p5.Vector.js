@@ -798,7 +798,7 @@ p5.Vector.prototype.equals = function (x, y, z) {
  *   // Display that variable in an onscreen text.
  *   // (Note the nfc() function to truncate additional decimal places,
  *   // and the "\xB0" character for the degree symbol.)
- *   var readout = "angle = " + nfc(myDegrees,1,1) + "\xB0"
+ *   var readout = "angle = " + nfc(myDegrees,1) + "\xB0"
  *   noStroke();
  *   fill (0);
  *   text (readout, 5, 15);
