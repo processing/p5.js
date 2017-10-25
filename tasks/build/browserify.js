@@ -10,10 +10,14 @@ module.exports = function(grunt) {
 
   var srcFilePath = require.resolve('../../src/app.js');
 
-  // This file will not exist until it has been built
-  var libFilePath = path.resolve('lib/p5.js');
+  grunt.registerTask('browserify', 'Compile the p5.js source with Browserify', function(param) {
 
-  grunt.registerTask('browserify', 'Compile the p5.js source with Browserify', function() {
+    var isMin = param === 'min';
+    var filename = isMin ? 'p5.pre-min.js' : 'p5.js';
+
+    // This file will not exist until it has been built
+    var libFilePath = path.resolve('lib/' + filename);
+
     // Reading and writing files is asynchronous
     var done = this.async();
 
@@ -21,9 +25,15 @@ module.exports = function(grunt) {
     var banner = grunt.template.process(bannerTemplate);
 
     // Invoke Browserify programatically to bundle the code
-    var bundle = browserify(srcFilePath, {
-        standalone: 'p5'
-      })
+    var browseified = browserify(srcFilePath, {
+      standalone: 'p5'
+    });
+
+    if (isMin) {
+      browseified = browseified.exclude('../../docs/reference/data.json');
+    }
+
+    var bundle = browseified
       .transform('brfs')
       .bundle();
 
@@ -43,7 +53,7 @@ module.exports = function(grunt) {
       grunt.file.write(libFilePath, derequire(code));
 
       // Print a success message
-      grunt.log.writeln('>>'.green + ' Bundle ' + 'lib/p5.js'.cyan + ' created.');
+      grunt.log.writeln('>>'.green + ' Bundle ' + ('lib/' + filename).cyan + ' created.');
 
       // Complete the task
       done();
