@@ -1,12 +1,12 @@
 var fs = require('fs');
+var h2p = require('html2plaintext');
+var wrap = require('word-wrap');
 
 function shortenDescription(desc) {
-  var match = desc.match(/^((.|\n)+?\.)\s/);
 
-  if (match) {
-    return match[1];
-  }
-  return desc;
+  return wrap(h2p(desc), {
+    width: 50,
+  });
 }
 
 function createEmitter(filename) {

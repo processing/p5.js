@@ -71,6 +71,7 @@
     "grunt-release-it": "^1.0.1",
     "grunt-saucelabs": "8.6.1",
     "grunt-update-json": "^0.2.1",
+    "html2plaintext": "^1.1.1",
     "husky": "^0.14.3",
     "jscs-stylish": "^0.3.1",
     "karma": "^1.7.1",
@@ -87,7 +88,8 @@
     "mocha": "^3.2.0",
     "phantomjs": "^2.1.7",
     "prettier": "^1.7.4",
-    "request": "^2.81.0"
+    "request": "^2.81.0",
+    "word-wrap": "^1.2.3"
   },
   "license": "LGPL-2.1",
   "dependencies": {
