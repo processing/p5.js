@@ -220,6 +220,16 @@ p5.prototype.ellipse = function() {
  *3 lines of various stroke sizes. Form top, bottom and right sides of a square.
  *
  */
+/**
+ * @method line
+ * @param  {Number} x1
+ * @param  {Number} y1
+ * @param  {Number} z1 the z-coordinate of the first point
+ * @param  {Number} x2
+ * @param  {Number} y2
+ * @param  {Number} z2 the z-coordinate of the second point
+ * @chainable
+ */
 p5.prototype.line = function() {
   if (!this._renderer._doStroke) {
     return this;
@@ -252,6 +262,7 @@ p5.prototype.line = function() {
  * @method point
  * @param  {Number} x the x-coordinate
  * @param  {Number} y the y-coordinate
+ * @param  {Number} [z] the z-coordinate
  * @chainable
  * @example
  * <div>
@@ -326,12 +337,16 @@ p5.prototype.point = function() {
  * @method quad
  * @param {Number} x1
  * @param {Number} y1
+ * @param {Number} z1
  * @param {Number} x2
  * @param {Number} y2
+ * @param {Number} z2
  * @param {Number} x3
  * @param {Number} y3
+ * @param {Number} z3
  * @param {Number} x4
  * @param {Number} y4
+ * @param {Number} z4
  * @chainable
  */
 p5.prototype.quad = function() {
