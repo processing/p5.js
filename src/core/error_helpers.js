@@ -143,17 +143,21 @@ if (typeof IS_MINIFIED !== 'undefined') {
     var queryResult = arrDoc.classitems.
       filter(function (x) { return x.name === func; });
     // different JSON structure for funct with multi-format
-    var res = [];
+    var overloads = [];
     if (queryResult[0].hasOwnProperty('overloads')) {
       for (var i = 0; i < queryResult[0].overloads.length; i++) {
-        res.push(queryResult[0].overloads[i].params);
+        overloads.push(queryResult[0].overloads[i].params);
       }
     } else {
-      res.push(queryResult[0].params);
+      overloads.push(queryResult[0].params);
     }
 
     var mapConstants = {};
-    res.forEach(function (formats) {
+    var maxParams = 0;
+    overloads.forEach(function (formats) {
+      if (maxParams < formats.length) {
+        maxParams = formats.length;
+      }
       formats.forEach(function (format) {
         format.types = format.type.split('|').map(function ct(type) {
 
@@ -226,7 +230,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
         });
       });
     });
-    return res;
+    return {
+      overloads: overloads,
+      maxParams: maxParams,
+    };
   };
 
   var testParamType = function (param, type) {
@@ -306,27 +313,45 @@ if (typeof IS_MINIFIED !== 'undefined') {
   // function for generating console.log() msg
   p5._friendlyParamError = function (errorObj, func) {
     var message;
-    var format = errorObj.format;
-    var formatType = format.types.map(function (type) {
-      return type.names ? type.names.join('|') : type.name;
-    }).join('|');
+
+    function formatType() {
+      var format = errorObj.format;
+      return format.types.map(function (type) {
+        return type.names ? type.names.join('|') : type.name;
+      }).join('|');
+    }
 
     switch (errorObj.type) {
       case 'EMPTY_VAR':
-        message = func + '() was expecting ' + formatType +
+        message = func + '() was expecting ' + formatType() +
           ' for parameter #' + errorObj.position +
           ' (zero-based index), received an empty variable instead.' +
           ' If not intentional, this is often a problem with scope:' +
-          ' [https://p5js.org/examples/data-variable-scope.html].';
-        report(message, func, ERR_PARAMS);
+          ' [https://p5js.org/examples/data-variable-scope.html]';
         break;
       case 'WRONG_TYPE':
         var arg = errorObj.arg;
         var argType = arg instanceof Array ? 'array' : arg.name || typeof arg;
-        message = func + '() was expecting ' + formatType +
+        message = func + '() was expecting ' + formatType() +
           ' for parameter #' + errorObj.position +
-          ' (zero-based index), received ' + argType + ' instead.';
-        report(message, func, ERR_PARAMS);
+          ' (zero-based index), received ' + argType + ' instead';
+        break;
+      case 'WRONG_ARGUMENT_COUNT':
+        message = func + '() was expecting ' + errorObj.maxParams +
+          ' arguments, but received ' + errorObj.argCount;
+        break;
+    }
+
+    if (message) {
+      try {
+        var re = /Function\.validateParameters.*[\r\n].*[\r\n].*\(([^)]*)/;
+        var location = re.exec((new Error()).stack)[1];
+        if (location) {
+          message += ' at ' + location;
+        }
+      } catch (err) { }
+
+      report(message + '.', func, ERR_PARAMS);
     }
   };
 
@@ -352,20 +377,30 @@ if (typeof IS_MINIFIED !== 'undefined') {
       return; // skip FES
     }
 
-    var arrDoc = docCache[func] || (docCache[func] = lookupParamDoc(func));
+    var docs = docCache[func] || (docCache[func] = lookupParamDoc(func));
     var errorArray = [];
     var minErrCount = 999999;
-    for (var i = 0; i < arrDoc.length; i++) {
-      var arrError = testParamFormat(args, arrDoc[i]);
-      if (arrError.length === 0) {
-        return; // no error
-      }
+    var overloads = docs.overloads;
+    for (var i = 0; i < overloads.length; i++) {
+      var arrError = testParamFormat(args, overloads[i]);
       // see if this is the format with min number of err
       if (minErrCount > arrError.length) {
         minErrCount = arrError.length;
         errorArray = arrError;
       }
+      if (arrError.length === 0) {
+        break; // no error
+      }
     }
+
+    if (!errorArray.length && args.length > docs.maxParams) {
+      errorArray.push({
+        type: 'WRONG_ARGUMENT_COUNT',
+        argCount: args.length,
+        maxParams: docs.maxParams,
+      });
+    }
+
     // generate err msg
     for (var n = 0; n < errorArray.length; n++) {
       p5._friendlyParamError(errorArray[n], func);
