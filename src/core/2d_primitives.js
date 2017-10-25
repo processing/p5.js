@@ -32,7 +32,7 @@ require('./error_helpers');
  * @param  {Number} start  angle to start the arc, specified in radians
  * @param  {Number} stop   angle to stop the arc, specified in radians
  * @param  {Constant} [mode] optional parameter to determine the way of drawing
- *                         the arc. either CHORD or PIE
+ *                         the arc. either CHORD, PIE or OPEN
  * @chainable
  * @example
  * <div>
