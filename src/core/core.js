@@ -189,6 +189,7 @@ var p5 = function(sketch, node, sync) {
     'dragend': null,
     'dragover': null,
     'click': null,
+    'dblclick': null,
     'mouseover': null,
     'mouseout': null,
     'keydown': null,

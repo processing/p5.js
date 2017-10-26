@@ -229,7 +229,7 @@ p5.Element.prototype.mousePressed = function (fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.doubleClicked(changeGray); // attach listener for
- *                                 // canvas click only
+ *                                  // canvas double click only
  *   d = 10;
  *   g = 100;
  * }
@@ -244,7 +244,7 @@ p5.Element.prototype.mousePressed = function (fxn) {
  *   d = d + 10;
  * }
  *
- * // this function fires only when cnv is clicked
+ * // this function fires only when cnv is double clicked
  * function changeGray() {
  *   g = random(0, 255);
  * }
@@ -255,7 +255,7 @@ p5.Element.prototype.mousePressed = function (fxn) {
  *
  */
 p5.Element.prototype.doubleClicked = function (fxn) {
-  adjustListener('doubleClicked', fxn, this);
+  adjustListener('dblclick', fxn, this);
   return this;
 };
 
