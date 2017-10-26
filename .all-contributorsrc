@@ -1006,20 +1006,6 @@
       "contributions": []
     },
     {
-      "login": "REAS",
-      "name": "Casey Reas",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/677774?v=4",
-      "profile": "http://reas.com",
-      "contributions": []
-    },
-    {
-      "login": "benfry",
-      "name": "Ben Fry",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/1623101?v=4",
-      "profile": "http://fathom.info",
-      "contributions": []
-    },
-    {
       "login": "rev3rend",
       "name": "R. Luke DuBois",
       "avatar_url": "https://avatars0.githubusercontent.com/u/4147978?v=4",
@@ -1045,6 +1031,20 @@
       "name": "Boaz",
       "avatar_url": "https://avatars3.githubusercontent.com/u/122117?v=4",
       "profile": "http://boazsender.com",
+      "contributions": []
+    },
+    {
+      "login": "REAS",
+      "name": "Casey Reas",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/677774?v=4",
+      "profile": "http://reas.com",
+      "contributions": []
+    },
+    {
+      "login": "benfry",
+      "name": "Ben Fry",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/1623101?v=4",
+      "profile": "http://fathom.info",
       "contributions": []
     }
   ]
