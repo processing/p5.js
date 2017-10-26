@@ -43,6 +43,52 @@
       "contributions": []
     },
     {
+      "login": "limzykenneth",
+      "name": "Kenneth Lim",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/7543950?v=4",
+      "profile": "https://designerken.be/designing",
+      "contributions": [
+        "bug",
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "kjhollen",
+      "name": "kate hollenbach",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/78966?v=4",
+      "profile": "http://www.katehollenbach.com",
+      "contributions": []
+    },
+    {
+      "login": "mlarghydracept",
+      "name": "Stalgia Grigg",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/10382506?v=4",
+      "profile": "https://github.com/mlarghydracept",
+      "contributions": []
+    },
+    {
+      "login": "machinic",
+      "name": "Jerel Johnson",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/3985997?v=4",
+      "profile": "https://github.com/machinic",
+      "contributions": []
+    },
+    {
+      "login": "sakshamsaxena",
+      "name": "Saksham Saxena",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/8774516?v=4",
+      "profile": "http://sakshamsaxena.in",
+      "contributions": []
+    },
+    {
+      "login": "saberkhaniscool",
+      "name": "saber khan",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/11218401?v=4",
+      "profile": "https://twitter.com/ed_saber",
+      "contributions": []
+    },
+    {
       "login": "dhowe",
       "name": "dhowe",
       "avatar_url": "https://avatars3.githubusercontent.com/u/737638?v=4",
@@ -155,80 +201,6 @@
       "contributions": []
     },
     {
-      "login": "OhJia",
-      "name": "Jiashan Wu",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/6025418?v=4",
-      "profile": "http://fromjia.com/",
-      "contributions": []
-    },
-    {
-      "login": "limzykenneth",
-      "name": "Kenneth Lim",
-      "avatar_url": "https://avatars3.githubusercontent.com/u/7543950?v=4",
-      "profile": "https://designerken.be/designing",
-      "contributions": [
-        "bug",
-        "code",
-        "doc"
-      ]
-    },
-    {
-      "login": "kjhollen",
-      "name": "kate hollenbach",
-      "avatar_url": "https://avatars0.githubusercontent.com/u/78966?v=4",
-      "profile": "http://www.katehollenbach.com",
-      "contributions": []
-    },
-    {
-      "login": "mlarghydracept",
-      "name": "Stalgia Grigg",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/10382506?v=4",
-      "profile": "https://github.com/mlarghydracept",
-      "contributions": []
-    },
-    {
-      "login": "machinic",
-      "name": "Jerel Johnson",
-      "avatar_url": "https://avatars3.githubusercontent.com/u/3985997?v=4",
-      "profile": "https://github.com/machinic",
-      "contributions": []
-    },
-    {
-      "login": "sakshamsaxena",
-      "name": "Saksham Saxena",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/8774516?v=4",
-      "profile": "http://sakshamsaxena.in",
-      "contributions": []
-    },
-    {
-      "login": "saberkhaniscool",
-      "name": "saber khan",
-      "avatar_url": "https://avatars3.githubusercontent.com/u/11218401?v=4",
-      "profile": "https://twitter.com/ed_saber",
-      "contributions": []
-    },
-    {
-      "login": "futuremarc",
-      "name": "Marc Abbey",
-      "avatar_url": "https://avatars3.githubusercontent.com/u/8646752?v=4",
-      "profile": "https://github.com/futuremarc",
-      "contributions": []
-    },
-    {
-      "login": "kadamwhite",
-      "name": "K.Adam White",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/442115?v=4",
-      "profile": "http://www.kadamwhite.com",
-      "contributions": []
-    },
-    {
-      "login": "joecridge",
-      "name": "Joe Cridge",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/11491479?v=4",
-      "profile": "https://www.joecridge.me/",
-      "contributions": []
-    },
-    {
       "login": "almchung",
       "name": "AlM Chng",
       "avatar_url": "https://avatars2.githubusercontent.com/u/22488500?v=4",
@@ -268,6 +240,34 @@
       "name": "Jen Kagan",
       "avatar_url": "https://avatars0.githubusercontent.com/u/9204835?v=4",
       "profile": "http://kaganjd.github.io/portfolio/",
+      "contributions": []
+    },
+    {
+      "login": "OhJia",
+      "name": "Jiashan Wu",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/6025418?v=4",
+      "profile": "http://fromjia.com/",
+      "contributions": []
+    },
+    {
+      "login": "futuremarc",
+      "name": "Marc Abbey",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/8646752?v=4",
+      "profile": "https://github.com/futuremarc",
+      "contributions": []
+    },
+    {
+      "login": "kadamwhite",
+      "name": "K.Adam White",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/442115?v=4",
+      "profile": "http://www.kadamwhite.com",
+      "contributions": []
+    },
+    {
+      "login": "joecridge",
+      "name": "Joe Cridge",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/11491479?v=4",
+      "profile": "https://www.joecridge.me/",
       "contributions": []
     },
     {
