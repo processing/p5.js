@@ -915,6 +915,104 @@
       "contributions": []
     },
     {
+      "login": "molleindustria",
+      "name": "Paolo Pedercini",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/12369651?v=4",
+      "profile": "http://www.molleindustria.org",
+      "contributions": []
+    },
+    {
+      "login": "jasonalderman",
+      "name": "Jason Alderman",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/3819772?v=4",
+      "profile": "http://huah.net/jason/",
+      "contributions": []
+    },
+    {
+      "login": "pixelmaid",
+      "name": "Jennifer Jacobs",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/295733?v=4",
+      "profile": "http://media.mit.edu/~jacobsj",
+      "contributions": []
+    },
+    {
+      "login": "sepans",
+      "name": "Sepand Ansari",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/687513?v=4",
+      "profile": "http://sepans.com",
+      "contributions": []
+    },
+    {
+      "login": "valhead",
+      "name": "Val Head",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/1289596?v=4",
+      "profile": "http://valhead.com",
+      "contributions": []
+    },
+    {
+      "login": "six5532one",
+      "name": "Emily Chen",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/1435725?v=4",
+      "profile": "https://github.com/six5532one",
+      "contributions": []
+    },
+    {
+      "login": "b2renger",
+      "name": "b2renger",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/1818874?v=4",
+      "profile": "http://b2renger.github.io/",
+      "contributions": []
+    },
+    {
+      "login": "Craigson",
+      "name": "Craig Pickard",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/4640172?v=4",
+      "profile": "http://craigpickard.net/",
+      "contributions": []
+    },
+    {
+      "login": "mxchelle",
+      "name": "mxchelle",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/4912796?v=4",
+      "profile": "https://github.com/mxchelle",
+      "contributions": []
+    },
+    {
+      "login": "zrispo",
+      "name": "Zach Rispoli",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/4970417?v=4",
+      "profile": "http://www.wickeditor.com",
+      "contributions": []
+    },
+    {
+      "login": "CICILIU",
+      "name": "Liu Chang",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/7039783?v=4",
+      "profile": "http://www.liuchang.work",
+      "contributions": []
+    },
+    {
+      "login": "cvalenzuela",
+      "name": "Cristóbal Valenzuela",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/10605821?v=4",
+      "profile": "http://cvalenzuelab.com/",
+      "contributions": []
+    },
+    {
+      "login": "mileshiroo",
+      "name": "Miles Peyton",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/1015606?v=4",
+      "profile": "http://www.milespeyton.info",
+      "contributions": []
+    },
+    {
+      "login": "golanlevin",
+      "name": "Golan Levin",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/290053?v=4",
+      "profile": "http://www.flong.com",
+      "contributions": []
+    },
+    {
       "login": "maxkolyanov",
       "name": "Max Kolyanov",
       "avatar_url": "https://avatars1.githubusercontent.com/u/3266989?v=4",
@@ -1020,13 +1118,6 @@
       "contributions": []
     },
     {
-      "login": "golanlevin",
-      "name": "Golan Levin",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/290053?v=4",
-      "profile": "http://www.flong.com",
-      "contributions": []
-    },
-    {
       "login": "boazsender",
       "name": "Boaz",
       "avatar_url": "https://avatars3.githubusercontent.com/u/122117?v=4",
@@ -1045,97 +1136,6 @@
       "name": "Ben Fry",
       "avatar_url": "https://avatars1.githubusercontent.com/u/1623101?v=4",
       "profile": "http://fathom.info",
-      "contributions": []
-    },
-    {
-      "login": "molleindustria",
-      "name": "Paolo Pedercini",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/12369651?v=4",
-      "profile": "http://www.molleindustria.org",
-      "contributions": []
-    },
-    {
-      "login": "jasonalderman",
-      "name": "Jason Alderman",
-      "avatar_url": "https://avatars0.githubusercontent.com/u/3819772?v=4",
-      "profile": "http://huah.net/jason/",
-      "contributions": []
-    },
-    {
-      "login": "pixelmaid",
-      "name": "Jennifer Jacobs",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/295733?v=4",
-      "profile": "http://media.mit.edu/~jacobsj",
-      "contributions": []
-    },
-    {
-      "login": "sepans",
-      "name": "Sepand Ansari",
-      "avatar_url": "https://avatars3.githubusercontent.com/u/687513?v=4",
-      "profile": "http://sepans.com",
-      "contributions": []
-    },
-    {
-      "login": "valhead",
-      "name": "Val Head",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/1289596?v=4",
-      "profile": "http://valhead.com",
-      "contributions": []
-    },
-    {
-      "login": "six5532one",
-      "name": "Emily Chen",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/1435725?v=4",
-      "profile": "https://github.com/six5532one",
-      "contributions": []
-    },
-    {
-      "login": "b2renger",
-      "name": "b2renger",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/1818874?v=4",
-      "profile": "http://b2renger.github.io/",
-      "contributions": []
-    },
-    {
-      "login": "Craigson",
-      "name": "Craig Pickard",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/4640172?v=4",
-      "profile": "http://craigpickard.net/",
-      "contributions": []
-    },
-    {
-      "login": "mxchelle",
-      "name": "mxchelle",
-      "avatar_url": "https://avatars3.githubusercontent.com/u/4912796?v=4",
-      "profile": "https://github.com/mxchelle",
-      "contributions": []
-    },
-    {
-      "login": "zrispo",
-      "name": "Zach Rispoli",
-      "avatar_url": "https://avatars0.githubusercontent.com/u/4970417?v=4",
-      "profile": "http://www.wickeditor.com",
-      "contributions": []
-    },
-    {
-      "login": "CICILIU",
-      "name": "Liu Chang",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/7039783?v=4",
-      "profile": "http://www.liuchang.work",
-      "contributions": []
-    },
-    {
-      "login": "cvalenzuela",
-      "name": "Cristóbal Valenzuela",
-      "avatar_url": "https://avatars0.githubusercontent.com/u/10605821?v=4",
-      "profile": "http://cvalenzuelab.com/",
-      "contributions": []
-    },
-    {
-      "login": "mileshiroo",
-      "name": "Miles Peyton",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/1015606?v=4",
-      "profile": "http://www.milespeyton.info",
       "contributions": []
     }
   ]
