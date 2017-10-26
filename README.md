@@ -48,7 +48,8 @@ Developers, check out the [development](https://github.com/processing/p5.js/wiki
 
 ## Contributors
 
-Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key)).
+Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key))!
+
 We recognize all types of contributions. This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309).
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
