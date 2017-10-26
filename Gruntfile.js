@@ -284,11 +284,17 @@ module.exports = function(grunt) {
           port: 9001,
           keepalive: keepalive,
           middleware: function(connect, options, middlewares) {
-            middlewares.unshift(function(req, res, next) {
-              res.setHeader('Access-Control-Allow-Origin', '*');
-              res.setHeader('Access-Control-Allow-Methods', '*');
-              return next();
-            });
+            middlewares.unshift(
+              require('connect-modrewrite')([
+                '^/assets/js/p5\\.min\\.js(.*) /lib/p5.min.js$1 [L]',
+                '^/assets/js/p5\\.(dom|sound)\\.min\\.js(.*) /lib/addons/p5.$1.min.js$2 [L]',
+              ]),
+              function(req, res, next) {
+                res.setHeader('Access-Control-Allow-Origin', '*');
+                res.setHeader('Access-Control-Allow-Methods', '*');
+                return next();
+              }
+            );
             return middlewares;
           }
         }
