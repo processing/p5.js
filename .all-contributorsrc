@@ -712,6 +712,20 @@
       "contributions": []
     },
     {
+      "login": "bmoren",
+      "name": "Ben Moren",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/1385996?v=4",
+      "profile": "http://benmoren.com",
+      "contributions": []
+    },
+    {
+      "login": "runemadsen",
+      "name": "Rune Skjoldborg Madsen",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/192021?v=4",
+      "profile": "http://www.runemadsen.com",
+      "contributions": []
+    },
+    {
       "login": "b2renger",
       "name": "b2renger",
       "avatar_url": "https://avatars2.githubusercontent.com/u/1818874?v=4",
@@ -1153,17 +1167,10 @@
       "contributions": []
     },
     {
-      "login": "bmoren",
-      "name": "Ben Moren",
-      "avatar_url": "https://avatars3.githubusercontent.com/u/1385996?v=4",
-      "profile": "http://benmoren.com",
-      "contributions": []
-    },
-    {
-      "login": "runemadsen",
-      "name": "Rune Skjoldborg Madsen",
-      "avatar_url": "https://avatars0.githubusercontent.com/u/192021?v=4",
-      "profile": "http://www.runemadsen.com",
+      "login": "KevinWorkman",
+      "name": "Kevin Workman",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/6930986?v=4",
+      "profile": "http://HappyCoding.io",
       "contributions": []
     }
   ]
