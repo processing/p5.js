@@ -254,7 +254,14 @@
       "name": "Jared Sprague",
       "avatar_url": "https://avatars1.githubusercontent.com/u/3926730?v=4",
       "profile": "http://jaredsprague.com/",
-      "contributions": ["code","doc","example","financial","test","bug"]
+      "contributions": [
+        "code",
+        "doc",
+        "example",
+        "financial",
+        "test",
+        "bug"
+      ]
     },
     {
       "login": "kjhollen",
@@ -996,6 +1003,13 @@
       "name": "Ben Fry",
       "avatar_url": "https://avatars1.githubusercontent.com/u/1623101?v=4",
       "profile": "http://fathom.info",
+      "contributions": []
+    },
+    {
+      "login": "rasca0027",
+      "name": "Kai-han Chang",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/5270022?v=4",
+      "profile": "https://github.com/rasca0027",
       "contributions": []
     }
   ]
