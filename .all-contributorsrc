@@ -254,7 +254,7 @@
       "name": "Jared Sprague",
       "avatar_url": "https://avatars1.githubusercontent.com/u/3926730?v=4",
       "profile": "http://jaredsprague.com/",
-      "contributions": []
+      "contributions": ["code","doc","example","financial","test","bug"]
     },
     {
       "login": "kjhollen",
