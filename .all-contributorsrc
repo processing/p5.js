@@ -467,10 +467,66 @@
       "contributions": []
     },
     {
-      "login": "stinedec",
-      "name": "Christine de Carteret",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/7853707?v=4",
-      "profile": "http://cjdecarteret.com",
+      "login": "KevinWorkman",
+      "name": "Kevin Workman",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/6930986?v=4",
+      "profile": "http://HappyCoding.io",
+      "contributions": []
+    },
+    {
+      "login": "gauini",
+      "name": "gauini",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/4229215?v=4",
+      "profile": "https://github.com/gauini",
+      "contributions": []
+    },
+    {
+      "login": "sansumbrella",
+      "name": "David Wicks",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/81553?v=4",
+      "profile": "http://sansumbrella.com/",
+      "contributions": []
+    },
+    {
+      "login": "guillemontecinos",
+      "name": "Guillermo Montecinos",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/19594257?v=4",
+      "profile": "https://github.com/guillemontecinos",
+      "contributions": []
+    },
+    {
+      "login": "vanevery",
+      "name": "Shawn Van Every",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/431774?v=4",
+      "profile": "http://www.walking-productions.com/notslop/",
+      "contributions": []
+    },
+    {
+      "login": "msawired",
+      "name": "Sinan Ascioglu",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/579033?v=4",
+      "profile": "http://www.wiredpieces.com",
+      "contributions": []
+    },
+    {
+      "login": "hamoid",
+      "name": "Abe Pazos",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/108264?v=4",
+      "profile": "http://hamoid.com",
+      "contributions": []
+    },
+    {
+      "login": "CharStiles",
+      "name": "Char",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/10173517?v=4",
+      "profile": "http://charstiles.com/",
+      "contributions": []
+    },
+    {
+      "login": "genekogan",
+      "name": "Gene Kogan",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/1335251?v=4",
+      "profile": "http://genekogan.com",
       "contributions": []
     },
     {
@@ -649,6 +705,13 @@
       "contributions": []
     },
     {
+      "login": "stinedec",
+      "name": "Christine de Carteret",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/7853707?v=4",
+      "profile": "http://cjdecarteret.com",
+      "contributions": []
+    },
+    {
       "login": "crhallberg",
       "name": "Chris Hallberg",
       "avatar_url": "https://avatars0.githubusercontent.com/u/451107?v=4",
@@ -726,6 +789,20 @@
       "contributions": []
     },
     {
+      "login": "alignedleft",
+      "name": "Scott Murray",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/1034002?v=4",
+      "profile": "http://alignedleft.com",
+      "contributions": []
+    },
+    {
+      "login": "scottgarner",
+      "name": "Scott Garner",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/786436?v=4",
+      "profile": "http://www.scottmadethis.net/",
+      "contributions": []
+    },
+    {
       "login": "b2renger",
       "name": "b2renger",
       "avatar_url": "https://avatars2.githubusercontent.com/u/1818874?v=4",
@@ -786,13 +863,6 @@
       "name": "feedzh",
       "avatar_url": "https://avatars3.githubusercontent.com/u/378124?v=4",
       "profile": "https://github.com/feedzh",
-      "contributions": []
-    },
-    {
-      "login": "scottgarner",
-      "name": "Scott Garner",
-      "avatar_url": "https://avatars0.githubusercontent.com/u/786436?v=4",
-      "profile": "http://www.scottmadethis.net/",
       "contributions": []
     },
     {
@@ -1164,76 +1234,6 @@
       "name": "Ben Fry",
       "avatar_url": "https://avatars1.githubusercontent.com/u/1623101?v=4",
       "profile": "http://fathom.info",
-      "contributions": []
-    },
-    {
-      "login": "KevinWorkman",
-      "name": "Kevin Workman",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/6930986?v=4",
-      "profile": "http://HappyCoding.io",
-      "contributions": []
-    },
-    {
-      "login": "gauini",
-      "name": "gauini",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/4229215?v=4",
-      "profile": "https://github.com/gauini",
-      "contributions": []
-    },
-    {
-      "login": "sansumbrella",
-      "name": "David Wicks",
-      "avatar_url": "https://avatars0.githubusercontent.com/u/81553?v=4",
-      "profile": "http://sansumbrella.com/",
-      "contributions": []
-    },
-    {
-      "login": "guillemontecinos",
-      "name": "Guillermo Montecinos",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/19594257?v=4",
-      "profile": "https://github.com/guillemontecinos",
-      "contributions": []
-    },
-    {
-      "login": "vanevery",
-      "name": "Shawn Van Every",
-      "avatar_url": "https://avatars0.githubusercontent.com/u/431774?v=4",
-      "profile": "http://www.walking-productions.com/notslop/",
-      "contributions": []
-    },
-    {
-      "login": "msawired",
-      "name": "Sinan Ascioglu",
-      "avatar_url": "https://avatars3.githubusercontent.com/u/579033?v=4",
-      "profile": "http://www.wiredpieces.com",
-      "contributions": []
-    },
-    {
-      "login": "hamoid",
-      "name": "Abe Pazos",
-      "avatar_url": "https://avatars0.githubusercontent.com/u/108264?v=4",
-      "profile": "http://hamoid.com",
-      "contributions": []
-    },
-    {
-      "login": "CharStiles",
-      "name": "Char",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/10173517?v=4",
-      "profile": "http://charstiles.com/",
-      "contributions": []
-    },
-    {
-      "login": "genekogan",
-      "name": "Gene Kogan",
-      "avatar_url": "https://avatars3.githubusercontent.com/u/1335251?v=4",
-      "profile": "http://genekogan.com",
-      "contributions": []
-    },
-    {
-      "login": "alignedleft",
-      "name": "Scott Murray",
-      "avatar_url": "https://avatars0.githubusercontent.com/u/1034002?v=4",
-      "profile": "http://alignedleft.com",
       "contributions": []
     }
   ]
