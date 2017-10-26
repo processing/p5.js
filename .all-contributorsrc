@@ -1059,7 +1059,7 @@
       "name": "Jorge Moreno",
       "avatar_url": "https://avatars1.githubusercontent.com/u/703744?v=4",
       "profile": "http://www.moro.es",
-      "contributions": []
+      "contributions": ["bug", "code", "doc"]
     },
     {
       "login": "stevengreens10",
