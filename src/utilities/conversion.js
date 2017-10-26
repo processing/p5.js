@@ -135,7 +135,7 @@ p5.prototype.boolean = function(n) {
 };
 
 /**
- * Converts a number, string or boolean to its byte representation.
+ * Converts a number, string representation of a number, or boolean to its byte representation.
  * A byte can be only a whole number between -128 and 127, so when a value
  * outside of this range is converted, it wraps around to the corresponding
  * byte representation. When an array of number, string or boolean values is
@@ -155,6 +155,7 @@ p5.prototype.boolean = function(n) {
  * print(byte(128));               // -128
  * print(byte(23.4));              // 23
  * print(byte("23.4"));            // 23
+ * print(byte("hello"));           // NaN
  * print(byte(true));              // 1
  * print(byte([0, 255, "100"]));   // [0, -1, 100]
  * </code></div>
