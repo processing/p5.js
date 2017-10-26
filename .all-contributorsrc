@@ -131,7 +131,11 @@
       "name": "Kenneth Lim",
       "avatar_url": "https://avatars3.githubusercontent.com/u/7543950?v=4",
       "profile": "https://designerken.be/designing",
-      "contributions": ["bug", "code", "doc"]
+      "contributions": [
+        "bug",
+        "code",
+        "doc"
+      ]
     },
     {
       "login": "machinic",
@@ -978,6 +982,13 @@
       "name": "maddy",
       "avatar_url": "https://avatars0.githubusercontent.com/u/1965049?v=4",
       "profile": "http://maddy.zone",
+      "contributions": []
+    },
+    {
+      "login": "REAS",
+      "name": "Casey Reas",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/677774?v=4",
+      "profile": "http://reas.com",
       "contributions": []
     }
   ]
