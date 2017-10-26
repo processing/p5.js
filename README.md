@@ -49,7 +49,7 @@ Developers, check out the [development](https://github.com/processing/p5.js/wiki
 ## Contributors
 
 Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key)).
-We recognize all types of contributions. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309).
+We recognize all types of contributions. This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Instructions to add yourself or add contribution emojis to your name are [here](https://github.com/processing/p5.js/issues/2309).
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 | [<img src="https://avatars3.githubusercontent.com/u/191056?v=4" width="100px;"/><br /><sub>Lauren McCarthy</sub>](http://lauren-mccarthy.com)<br /> | [<img src="https://avatars2.githubusercontent.com/u/504124?v=4" width="100px;"/><br /><sub>Jason Sigal</sub>](http://jasonsigal.cc)<br /> | [<img src="https://avatars3.githubusercontent.com/u/1695075?v=4" width="100px;"/><br /><sub>Karen</sub>](https://twitter.com/KarenPunkPunk)<br /> | [<img src="https://avatars1.githubusercontent.com/u/699840?v=4" width="100px;"/><br /><sub>Evelyn Eastmond</sub>](http://www.evelyneastmond.com)<br /> | [<img src="https://avatars0.githubusercontent.com/u/191758?v=4" width="100px;"/><br /><sub>Daniel Shiffman</sub>](http://www.shiffman.net)<br /> | [<img src="https://avatars2.githubusercontent.com/u/10382506?v=4" width="100px;"/><br /><sub>Stalgia Grigg</sub>](https://github.com/mlarghydracept)<br /> | [<img src="https://avatars3.githubusercontent.com/u/737638?v=4" width="100px;"/><br /><sub>dhowe</sub>](https://github.com/dhowe)<br /> |
@@ -76,4 +76,3 @@ We recognize all types of contributions. Instructions to add yourself or add con
 | [<img src="https://avatars1.githubusercontent.com/u/1623101?v=4" width="100px;"/><br /><sub>Ben Fry</sub>](http://fathom.info)<br /> |
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Contributions of any kind welcome!
