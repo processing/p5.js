@@ -130,8 +130,8 @@
       "login": "limzykenneth",
       "name": "Kenneth Lim",
       "avatar_url": "https://avatars3.githubusercontent.com/u/7543950?v=4",
-      "profile": "http://designerken.be/designing",
-      "contributions": []
+      "profile": "https://designerken.be/designing",
+      "contributions": ["bug", "code", "doc"]
     },
     {
       "login": "machinic",
