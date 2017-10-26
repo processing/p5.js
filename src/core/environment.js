@@ -184,10 +184,7 @@ p5.prototype.cursor = function(type, x, y) {
  * @method frameRate
  * @param  {Number} fps number of frames to be displayed every second
  * @chainable
- */
-/**
- * @method frameRate
- * @return {Number}       current frameRate
+ *
  * @example
  *
  * <div><code>
@@ -225,6 +222,10 @@ p5.prototype.cursor = function(type, x, y) {
  * @alt
  * blue rect moves left to right, followed by red rect moving faster. Loops.
  *
+ */
+/**
+ * @method frameRate
+ * @return {Number}       current frameRate
  */
 p5.prototype.frameRate = function(fps) {
   if (typeof fps !== 'number' || fps < 0) {

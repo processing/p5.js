@@ -662,12 +662,6 @@ p5.Vector.prototype.angleBetween = function (v) {
  *                         (old vector) and 1.0 (new vector). 0.9 is very near
  *                         the new vector. 0.5 is halfway in between.
  * @chainable
- */
-/**
- * @method lerp
- * @param  {p5.Vector} v   the p5.Vector to lerp to
- * @param  {Number}    amt
- * @chainable
  *
  * @example
  * <div class="norender">
@@ -687,6 +681,12 @@ p5.Vector.prototype.angleBetween = function (v) {
  * // v3 has components [50,50,0]
  * </code>
  * </div>
+ */
+/**
+ * @method lerp
+ * @param  {p5.Vector} v   the p5.Vector to lerp to
+ * @param  {Number}    amt
+ * @chainable
  */
 p5.Vector.prototype.lerp = function (x, y, z, amt) {
   if (x instanceof p5.Vector) {

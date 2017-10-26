@@ -21,6 +21,25 @@ var p5 = require('../core/core');
  *                                 relative to the current color range
  * @param  {Number}        [alpha]
  * @chainable
+ *
+ * @example
+ * <div>
+ * <code>
+ * function setup(){
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw(){
+ *   background(0);
+ *   ambientLight(150);
+ *   ambientMaterial(250);
+ *   sphere(50);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * nothing displayed
+ *
  */
 
 /**
@@ -42,25 +61,6 @@ var p5 = require('../core/core');
  * @param  {p5.Color}      color   the ambient light color
  * @param  {Number}        [alpha]
  * @chainable
- *
- * @example
- * <div>
- * <code>
- * function setup(){
- *   createCanvas(100, 100, WEBGL);
- * }
- * function draw(){
- *   background(0);
- *   ambientLight(150);
- *   ambientMaterial(250);
- *   sphere(50);
- * }
- * </code>
- * </div>
- *
- * @alt
- * nothing displayed
- *
  */
 p5.prototype.ambientLight = function(v1, v2, v3, a){
   if (! this._renderer.curFillShader.isLightShader()) {

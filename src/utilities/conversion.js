@@ -47,11 +47,6 @@ p5.prototype.float = function(str) {
  * @method int
  * @param {String|Boolean|Number}       n value to parse
  * @return {Number}                     integer representation of value
- */
-/**
- * @method int
- * @param {Array} ns                    values to parse
- * @return {Number[]}                   integer representation of values
  *
  * @example
  * <div class='norender'><code>
@@ -62,6 +57,11 @@ p5.prototype.float = function(str) {
  * print(int(false)); // 0
  * print(int([false, true, "10.3", 9.8])); // [0, 1, 10, 9]
  * </code></div>
+ */
+/**
+ * @method int
+ * @param {Array} ns                    values to parse
+ * @return {Number[]}                   integer representation of values
  */
 p5.prototype.int = function(n, radix) {
   radix = radix || 10;
@@ -144,11 +144,7 @@ p5.prototype.boolean = function(n) {
  * @method byte
  * @param {String|Boolean|Number}       n value to parse
  * @return {Number}                     byte representation of value
- */
-/**
- * @method byte
- * @param {Array} ns                   values to parse
- * @return {Number[]}                  array of byte representation of values
+ *
  * @example
  * <div class='norender'><code>
  * print(byte(127));               // 127
@@ -158,6 +154,11 @@ p5.prototype.boolean = function(n) {
  * print(byte(true));              // 1
  * print(byte([0, 255, "100"]));   // [0, -1, 100]
  * </code></div>
+ */
+/**
+ * @method byte
+ * @param {Array} ns                   values to parse
+ * @return {Number[]}                  array of byte representation of values
  */
 p5.prototype.byte = function(n) {
   var nn = p5.prototype.int(n, 10);
@@ -178,11 +179,7 @@ p5.prototype.byte = function(n) {
  * @method char
  * @param {String|Number}       n value to parse
  * @return {String}             string representation of value
- */
-/**
- * @method char
- * @param {Array} ns              values to parse
- * @return {String[]}             array of string representation of values
+ *
  * @example
  * <div class='norender'><code>
  * print(char(65));                     // "A"
@@ -190,6 +187,11 @@ p5.prototype.byte = function(n) {
  * print(char([65, 66, 67]));           // [ "A", "B", "C" ]
  * print(join(char([65, 66, 67]), '')); // "ABC"
  * </code></div>
+ */
+/**
+ * @method char
+ * @param {Array} ns              values to parse
+ * @return {String[]}             array of string representation of values
  */
 p5.prototype.char = function(n) {
   if (typeof n === 'number' && !isNaN(n)) {
@@ -209,17 +211,18 @@ p5.prototype.char = function(n) {
  * @method unchar
  * @param {String} n     value to parse
  * @return {Number}      integer representation of value
- */
-/**
- * @method unchar
- * @param {Array} ns       values to parse
- * @return {Number[]}      integer representation of values
+ *
  * @example
  * <div class='norender'><code>
  * print(unchar("A"));               // 65
  * print(unchar(["A", "B", "C"]));   // [ 65, 66, 67 ]
  * print(unchar(split("ABC", "")));  // [ 65, 66, 67 ]
  * </code></div>
+ */
+/**
+ * @method unchar
+ * @param {Array} ns       values to parse
+ * @return {Number[]}      integer representation of values
  */
 p5.prototype.unchar = function(n) {
   if (typeof n === 'string' && n.length === 1) {
@@ -239,18 +242,19 @@ p5.prototype.unchar = function(n) {
  * @param {Number} n     value to parse
  * @param {Number} [digits]
  * @return {String}      hexadecimal string representation of value
- */
-/**
- * @method hex
- * @param {Number[]} ns    array of values to parse
- * @param {Number} [digits]
- * @return {String[]}      hexadecimal string representation of values
+ *
  * @example
  * <div class='norender'><code>
  * print(hex(255));               // "000000FF"
  * print(hex(255, 6));            // "0000FF"
  * print(hex([0, 127, 255], 6));  // [ "000000", "00007F", "0000FF" ]
  * </code></div>
+ */
+/**
+ * @method hex
+ * @param {Number[]} ns    array of values to parse
+ * @param {Number} [digits]
+ * @return {String[]}      hexadecimal string representation of values
  */
 p5.prototype.hex = function(n, digits) {
   digits = (digits === undefined || digits === null) ? digits = 8 : digits;
@@ -279,17 +283,18 @@ p5.prototype.hex = function(n, digits) {
  * @method unhex
  * @param {String} n value to parse
  * @return {Number}      integer representation of hexadecimal value
- */
-/**
- * @method unhex
- * @param {Array} ns values to parse
- * @return {Number[]}      integer representations of hexadecimal value
+ *
  * @example
  * <div class='norender'><code>
  * print(unhex("A"));                // 10
  * print(unhex("FF"));               // 255
  * print(unhex(["FF", "AA", "00"])); // [ 255, 170, 0 ]
  * </code></div>
+ */
+/**
+ * @method unhex
+ * @param {Array} ns values to parse
+ * @return {Number[]}      integer representations of hexadecimal value
  */
 p5.prototype.unhex = function(n) {
   if (n instanceof Array) {

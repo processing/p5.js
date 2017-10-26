@@ -232,9 +232,6 @@ p5.Image.prototype.loadPixels = function(){
  *                              underlying canvas
  * @param {Integer} h height of the target update area for the
  *                              underlying canvas
- */
-/**
- * @method updatePixels
  * @example
  * <div><code>
  * var myImage;
@@ -261,6 +258,9 @@ p5.Image.prototype.loadPixels = function(){
  * @alt
  * 2 images of rocky mountains vertically stacked
  *
+ */
+/**
+ * @method updatePixels
  */
 p5.Image.prototype.updatePixels = function(x, y, w, h){
   p5.Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
