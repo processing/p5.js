@@ -992,20 +992,6 @@
       "contributions": []
     },
     {
-      "login": "REAS",
-      "name": "Casey Reas",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/677774?v=4",
-      "profile": "http://reas.com",
-      "contributions": []
-    },
-    {
-      "login": "benfry",
-      "name": "Ben Fry",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/1623101?v=4",
-      "profile": "http://fathom.info",
-      "contributions": []
-    },
-    {
       "login": "rasca0027",
       "name": "Kai-han Chang",
       "avatar_url": "https://avatars2.githubusercontent.com/u/5270022?v=4",
@@ -1017,6 +1003,20 @@
       "name": "Alejandra Trejo",
       "avatar_url": "https://avatars1.githubusercontent.com/u/15284993?v=4",
       "profile": "https://www.alejandratrejo.com/",
+      "contributions": []
+    },
+    {
+      "login": "REAS",
+      "name": "Casey Reas",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/677774?v=4",
+      "profile": "http://reas.com",
+      "contributions": []
+    },
+    {
+      "login": "benfry",
+      "name": "Ben Fry",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/1623101?v=4",
+      "profile": "http://fathom.info",
       "contributions": []
     }
   ]
