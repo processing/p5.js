@@ -113,13 +113,6 @@
       "contributions": []
     },
     {
-      "login": "piinthecloud",
-      "name": "piinthecloud",
-      "avatar_url": "https://avatars3.githubusercontent.com/u/6187313?v=4",
-      "profile": "https://github.com/piinthecloud",
-      "contributions": []
-    },
-    {
       "login": "OhJia",
       "name": "Jiashan Wu",
       "avatar_url": "https://avatars1.githubusercontent.com/u/6025418?v=4",
@@ -184,20 +177,6 @@
       "name": "AlM Chng",
       "avatar_url": "https://avatars2.githubusercontent.com/u/22488500?v=4",
       "profile": "https://github.com/almchung",
-      "contributions": []
-    },
-    {
-      "login": "crhallberg",
-      "name": "Chris Hallberg",
-      "avatar_url": "https://avatars0.githubusercontent.com/u/451107?v=4",
-      "profile": "http://crhallberg.com",
-      "contributions": []
-    },
-    {
-      "login": "workergnome",
-      "name": "David Newbury",
-      "avatar_url": "https://avatars0.githubusercontent.com/u/34536?v=4",
-      "profile": "http://www.workergnome.com",
       "contributions": []
     },
     {
@@ -667,6 +646,27 @@
       "name": "Caroline Record",
       "avatar_url": "https://avatars0.githubusercontent.com/u/3160465?v=4",
       "profile": "http://www.carolinerecord.com/",
+      "contributions": []
+    },
+    {
+      "login": "crhallberg",
+      "name": "Chris Hallberg",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/451107?v=4",
+      "profile": "http://crhallberg.com",
+      "contributions": []
+    },
+    {
+      "login": "workergnome",
+      "name": "David Newbury",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/34536?v=4",
+      "profile": "http://www.workergnome.com",
+      "contributions": []
+    },
+    {
+      "login": "piinthecloud",
+      "name": "piinthecloud",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/6187313?v=4",
+      "profile": "https://github.com/piinthecloud",
       "contributions": []
     },
     {
