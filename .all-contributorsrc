@@ -43,13 +43,6 @@
       "contributions": []
     },
     {
-      "login": "mlarghydracept",
-      "name": "Stalgia Grigg",
-      "avatar_url": "https://avatars2.githubusercontent.com/u/10382506?v=4",
-      "profile": "https://github.com/mlarghydracept",
-      "contributions": []
-    },
-    {
       "login": "dhowe",
       "name": "dhowe",
       "avatar_url": "https://avatars3.githubusercontent.com/u/737638?v=4",
@@ -82,6 +75,55 @@
       "name": "uno seis tres",
       "avatar_url": "https://avatars1.githubusercontent.com/u/7158943?v=4",
       "profile": "http://unoseistres.com",
+      "contributions": []
+    },
+    {
+      "login": "susanev",
+      "name": "susan evans",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/5489125?v=4",
+      "profile": "http://www.susanev.com/",
+      "contributions": []
+    },
+    {
+      "login": "sasj",
+      "name": "Saskia Freeke",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/2619912?v=4",
+      "profile": "http://sasj.tumblr.com",
+      "contributions": []
+    },
+    {
+      "login": "phoenixperry",
+      "name": "Phoenix Perry",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/783625?v=4",
+      "profile": "http://www.phoenixperry.com",
+      "contributions": []
+    },
+    {
+      "login": "JE55E",
+      "name": "jesse cahn-thompson",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/2850174?v=4",
+      "profile": "https://s01e01.xyz/jct",
+      "contributions": []
+    },
+    {
+      "login": "lee2sman",
+      "name": "Lee T",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/7377908?v=4",
+      "profile": "https://github.com/lee2sman",
+      "contributions": []
+    },
+    {
+      "login": "chellyjin",
+      "name": "Chelly Jin",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/26236471?v=4",
+      "profile": "http://www.cargocollective.com/chellyjin",
+      "contributions": []
+    },
+    {
+      "login": "diygirls",
+      "name": "DIYgirls",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/1680038?v=4",
+      "profile": "http://www.diygirls.org",
       "contributions": []
     },
     {
@@ -129,6 +171,20 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "kjhollen",
+      "name": "kate hollenbach",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/78966?v=4",
+      "profile": "http://www.katehollenbach.com",
+      "contributions": []
+    },
+    {
+      "login": "mlarghydracept",
+      "name": "Stalgia Grigg",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/10382506?v=4",
+      "profile": "https://github.com/mlarghydracept",
+      "contributions": []
     },
     {
       "login": "machinic",
@@ -241,13 +297,6 @@
         "test",
         "bug"
       ]
-    },
-    {
-      "login": "kjhollen",
-      "name": "kate hollenbach",
-      "avatar_url": "https://avatars0.githubusercontent.com/u/78966?v=4",
-      "profile": "http://www.katehollenbach.com",
-      "contributions": []
     },
     {
       "login": "outofambit",
@@ -394,55 +443,6 @@
       "name": "Austin Cawley-Edwards",
       "avatar_url": "https://avatars3.githubusercontent.com/u/4655775?v=4",
       "profile": "https://austince.me",
-      "contributions": []
-    },
-    {
-      "login": "susanev",
-      "name": "susan evans",
-      "avatar_url": "https://avatars3.githubusercontent.com/u/5489125?v=4",
-      "profile": "http://www.susanev.com/",
-      "contributions": []
-    },
-    {
-      "login": "sasj",
-      "name": "Saskia Freeke",
-      "avatar_url": "https://avatars3.githubusercontent.com/u/2619912?v=4",
-      "profile": "http://sasj.tumblr.com",
-      "contributions": []
-    },
-    {
-      "login": "phoenixperry",
-      "name": "Phoenix Perry",
-      "avatar_url": "https://avatars0.githubusercontent.com/u/783625?v=4",
-      "profile": "http://www.phoenixperry.com",
-      "contributions": []
-    },
-    {
-      "login": "JE55E",
-      "name": "jesse cahn-thompson",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/2850174?v=4",
-      "profile": "https://s01e01.xyz/jct",
-      "contributions": []
-    },
-    {
-      "login": "lee2sman",
-      "name": "Lee T",
-      "avatar_url": "https://avatars1.githubusercontent.com/u/7377908?v=4",
-      "profile": "https://github.com/lee2sman",
-      "contributions": []
-    },
-    {
-      "login": "chellyjin",
-      "name": "Chelly Jin",
-      "avatar_url": "https://avatars0.githubusercontent.com/u/26236471?v=4",
-      "profile": "http://www.cargocollective.com/chellyjin",
-      "contributions": []
-    },
-    {
-      "login": "diygirls",
-      "name": "DIYgirls",
-      "avatar_url": "https://avatars3.githubusercontent.com/u/1680038?v=4",
-      "profile": "http://www.diygirls.org",
       "contributions": []
     },
     {
