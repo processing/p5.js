@@ -135,11 +135,11 @@ p5.prototype.boolean = function(n) {
 };
 
 /**
- * Converts a number, string representation of a number, or boolean to its byte representation.
- * A byte can be only a whole number between -128 and 127, so when a value
- * outside of this range is converted, it wraps around to the corresponding
- * byte representation. When an array of number, string or boolean values is
- * passed in, then an array of bytes the same length is returned.
+ * Converts a number, string representation of a number, or boolean to its byte
+ * representation. A byte can be only a whole number between -128 and 127, so
+ * when a value outside of this range is converted, it wraps around to the
+ * corresponding byte representation. When an array of number, string or boolean
+ * values is passed in, then an array of bytes the same length is returned.
  *
  * @method byte
  * @param {String|Boolean|Number}       n value to parse

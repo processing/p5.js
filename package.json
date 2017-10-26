@@ -8,10 +8,13 @@
     "grunt": "grunt",
     "build": "grunt build",
     "docs": "grunt yui",
-    "test": "grunt"
+    "test": "grunt",
+    "add": "all-contributors add",
+    "generate": "all-contributors generate"
   },
   "version": "0.5.16",
   "devDependencies": {
+    "all-contributors-cli": "^4.5.0",
     "amdclean": "~0.3.3",
     "browserify": "^11.0.1",
     "chai": "^3.5.0",
