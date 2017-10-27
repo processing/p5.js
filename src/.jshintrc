@@ -19,6 +19,7 @@
   "globals": {
     "require": false,
     "module": false,
+    "Symbol": false,
     "PImage": false
   }
 }

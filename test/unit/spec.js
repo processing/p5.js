@@ -40,6 +40,7 @@ var spec = {
   'utilities': [
     'array_functions',
     'string_functions',
+    'iterators',
     'time_date'
   ],
   'webgl': [

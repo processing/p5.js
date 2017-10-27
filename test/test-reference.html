@@ -48,10 +48,20 @@
   </script>
 
   <script>
+  var can_do_for_of = false;
+  </script>
+
+  <script>
+  for(var i of []) {};
+  can_do_for_of = true;
+  </script>
+
+  <script>
   var TEST_FILENAME_FILTERS = [
     {regex: /webgl/, condition: Modernizr.webgl},
     {regex: /acceleration/, condition: Modernizr.webgl},
-    {regex: /sound/, condition: Modernizr.webaudio}
+    {regex: /sound/, condition: Modernizr.webaudio},
+    {regex: /iterators/, condition: can_do_for_of}
   ];
   var MS_TIMEOUT = 4000;
 
