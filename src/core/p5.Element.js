@@ -49,10 +49,6 @@ p5.Element = function(elt, pInst) {
  * @param  {String|p5.Element|Object} parent the ID, DOM node, or p5.Element
  *                         of desired parent element
  * @chainable
- */
-/**
- * @method parent
- * @return {p5.Element}
  *
  * @example
  * <div class="norender"><code>
@@ -81,6 +77,10 @@ p5.Element = function(elt, pInst) {
  *
  * @alt
  * no display.
+ */
+/**
+ * @method parent
+ * @return {p5.Element}
  *
  */
 p5.Element.prototype.parent = function(p) {
@@ -108,10 +108,6 @@ p5.Element.prototype.parent = function(p) {
  * @method id
  * @param  {String} id ID of the element
  * @chainable
- */
-/**
- * @method id
- * @return {String} the id of the element
  *
  * @example
  * <div class='norender'><code>
@@ -125,7 +121,10 @@ p5.Element.prototype.parent = function(p) {
  *
  * @alt
  * no display.
- *
+ */
+/**
+ * @method id
+ * @return {String} the id of the element
  */
 p5.Element.prototype.id = function(id) {
   if (arguments.length === 0) {
@@ -229,7 +228,7 @@ p5.Element.prototype.mousePressed = function (fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.doubleClicked(changeGray); // attach listener for
- *                                 // canvas click only
+ *                                  // canvas double click only
  *   d = 10;
  *   g = 100;
  * }
@@ -244,7 +243,7 @@ p5.Element.prototype.mousePressed = function (fxn) {
  *   d = d + 10;
  * }
  *
- * // this function fires only when cnv is clicked
+ * // this function fires only when cnv is double clicked
  * function changeGray() {
  *   g = random(0, 255);
  * }
@@ -255,7 +254,7 @@ p5.Element.prototype.mousePressed = function (fxn) {
  *
  */
 p5.Element.prototype.doubleClicked = function (fxn) {
-  adjustListener('doubleClicked', fxn, this);
+  adjustListener('dblclick', fxn, this);
   return this;
 };
 

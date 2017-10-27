@@ -231,18 +231,6 @@ p5.prototype.clear = function() {
  *                          (or Lightness)
  * @param {Number}  [max]  range for all values
  * @chainable
- */
-/**
- * @method colorMode
- * @param {Constant} mode
- * @param {Number} max1     range for the red or hue depending on the
- *                              current color mode
- * @param {Number} max2     range for the green or saturation depending
- *                              on the current color mode
- * @param {Number} max3     range for the blue or brightness/lighntess
- *                              depending on the current color mode
- * @param {Number} [maxA]   range for the alpha
- * @chainable
  *
  * @example
  * <div>
@@ -302,6 +290,18 @@ p5.prototype.clear = function() {
  *50x50 ellipse at middle L & 40x40 ellipse at center. Transluscent pink outlines.
  *
  */
+/**
+ * @method colorMode
+ * @param {Constant} mode
+ * @param {Number} max1     range for the red or hue depending on the
+ *                              current color mode
+ * @param {Number} max2     range for the green or saturation depending
+ *                              on the current color mode
+ * @param {Number} max3     range for the blue or brightness/lighntess
+ *                              depending on the current color mode
+ * @param {Number} [maxA]   range for the alpha
+ * @chainable
+ */
 p5.prototype.colorMode = function() {
   p5._validateParameters('colorMode', arguments);
   if (arguments[0] === constants.RGB ||
@@ -355,28 +355,6 @@ p5.prototype.colorMode = function() {
  *                                 relative to the current color range
  * @param  {Number}        [alpha]
  * @chainable
- */
-
-/**
- * @method fill
- * @param  {String}        value   a color string
- * @param  {Number}        [alpha]
- * @chainable
- */
-
-/**
- * @method fill
- * @param  {Number[]}      values  an array containing the red,green,blue &
- *                                 and alpha components of the color
- * @chainable
- */
-
-/**
- * @method fill
- * @param  {p5.Color}      color   the fill color
- * @param  {Number}        [alpha]
- * @chainable
- *
  * @example
  * <div>
  * <code>
@@ -480,6 +458,26 @@ p5.prototype.colorMode = function() {
  * 60x60 blue rect with black outline in center of canvas.
  */
 
+/**
+ * @method fill
+ * @param  {String}        value   a color string
+ * @param  {Number}        [alpha]
+ * @chainable
+ */
+
+/**
+ * @method fill
+ * @param  {Number[]}      values  an array containing the red,green,blue &
+ *                                 and alpha components of the color
+ * @chainable
+ */
+
+/**
+ * @method fill
+ * @param  {p5.Color}      color   the fill color
+ * @param  {Number}        [alpha]
+ * @chainable
+ */
 p5.prototype.fill = function() {
   this._renderer._setProperty('_fillSet', true);
   this._renderer._setProperty('_doFill', true);
@@ -561,27 +559,6 @@ p5.prototype.noStroke = function() {
  *                                 relative to the current color range
  * @param  {Number}        v3      blue or brightness value
  *                                 relative to the current color range
- * @param  {Number}        [alpha]
- * @chainable
- */
-
-/**
- * @method stroke
- * @param  {String}        value   a color string
- * @param  {Number}        [alpha]
- * @chainable
- */
-
-/**
- * @method stroke
- * @param  {Number[]}      values  an array containing the red,green,blue &
- *                                 and alpha components of the color
- * @chainable
- */
-
-/**
- * @method stroke
- * @param  {p5.Color}      color   the stroke color
  * @param  {Number}        [alpha]
  * @chainable
  *
@@ -698,6 +675,27 @@ p5.prototype.noStroke = function() {
  * 60x60 white rect at center. Red outline.
  * 60x60 white rect at center. Dark fushcia outline.
  * 60x60 white rect at center. Blue outline.
+ */
+
+/**
+ * @method stroke
+ * @param  {String}        value   a color string
+ * @param  {Number}        [alpha]
+ * @chainable
+ */
+
+/**
+ * @method stroke
+ * @param  {Number[]}      values  an array containing the red,green,blue &
+ *                                 and alpha components of the color
+ * @chainable
+ */
+
+/**
+ * @method stroke
+ * @param  {p5.Color}      color   the stroke color
+ * @param  {Number}        [alpha]
+ * @chainable
  */
 
 p5.prototype.stroke = function() {

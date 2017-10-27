@@ -142,13 +142,7 @@ p5.prototype.matchAll = function(str, reg) {
  * @param {Integer|String}      [right]  number of digits to the right of the
  *                                decimal point
  * @return {String}               formatted String
- */
-/**
- * @method nf
- * @param {Array}        nums     the Numbers to format
- * @param {Integer|String}      [left]
- * @param {Integer|String}      [right]
- * @return {String[]}                formatted Strings
+ *
  * @example
  * <div>
  * <code>
@@ -176,7 +170,13 @@ p5.prototype.matchAll = function(str, reg) {
  *
  * @alt
  * "0011253" top left, "0112.531" mid left, "112.531061" bottom left canvas
- *
+ */
+/**
+ * @method nf
+ * @param {Array}        nums     the Numbers to format
+ * @param {Integer|String}      [left]
+ * @param {Integer|String}      [right]
+ * @return {String[]}                formatted Strings
  */
 p5.prototype.nf = function () {
   p5._validateParameters('nf', arguments);
@@ -253,12 +253,7 @@ function doNf() {
  * @param  {Integer|String}  [right] number of digits to the right of the
  *                                  decimal point
  * @return {String}           formatted String
- */
-/**
- * @method nfc
- * @param  {Array}    nums     the Numbers to format
- * @param  {Integer|String}  [right]
- * @return {String[]}           formatted Strings
+ *
  * @example
  * <div>
  * <code>
@@ -284,7 +279,12 @@ function doNf() {
  *
  * @alt
  * "11,253,106.115" top middle and "1.00,1.00,2.00" displayed bottom mid
- *
+ */
+/**
+ * @method nfc
+ * @param  {Array}    nums     the Numbers to format
+ * @param  {Integer|String}  [right]
+ * @return {String[]}           formatted Strings
  */
 p5.prototype.nfc = function () {
   p5._validateParameters('nfc', arguments);
@@ -335,13 +335,7 @@ function doNfc() {
  * @param {Integer}      [right]  number of digits to the right of the
  *                                decimal point
  * @return {String}         formatted String
- */
-/**
- * @method nfp
- * @param {Number[]} nums      the Numbers to format
- * @param {Integer}      [left]
- * @param {Integer}      [right]
- * @return {String[]}         formatted Strings
+ *
  * @example
  * <div>
  * <code>
@@ -367,7 +361,13 @@ function doNfc() {
  *
  * @alt
  * "+11253106.11" top middle and "-11253106.11" displayed bottom middle
- *
+ */
+/**
+ * @method nfp
+ * @param {Number[]} nums      the Numbers to format
+ * @param {Integer}      [left]
+ * @param {Integer}      [right]
+ * @return {String[]}         formatted Strings
  */
 p5.prototype.nfp = function() {
   p5._validateParameters('nfp', arguments);
@@ -400,13 +400,7 @@ function addNfp() {
  * @param {Integer}      [right]  number of digits to the right of the
  *                                decimal point
  * @return {String}         formatted String
- */
-/**
- * @method nfs
- * @param {Array}        nums     the Numbers to format
- * @param {Integer}      [left]
- * @param {Integer}      [right]
- * @return {String[]}         formatted Strings
+ *
  * @example
  * <div>
  * <code>
@@ -432,7 +426,13 @@ function addNfp() {
  *
  * @alt
  * "11253106.11" top middle and "-11253106.11" displayed bottom middle
- *
+ */
+/**
+ * @method nfs
+ * @param {Array}        nums     the Numbers to format
+ * @param {Integer}      [left]
+ * @param {Integer}      [right]
+ * @return {String[]}         formatted Strings
  */
 p5.prototype.nfs = function() {
   p5._validateParameters('nfs', arguments);
@@ -546,11 +546,7 @@ p5.prototype.splitTokens = function() {
  * @method trim
  * @param  {String} str a String to be trimmed
  * @return {String}       a trimmed String
- */
-/**
- * @method trim
- * @param  {Array} strs an Array of Strings to be trimmed
- * @return {String[]}   an Array of trimmed Strings
+ *
  * @example
  * <div>
  * <code>
@@ -561,7 +557,11 @@ p5.prototype.splitTokens = function() {
  *
  * @alt
  * "No new lines here" displayed center canvas
- *
+ */
+/**
+ * @method trim
+ * @param  {Array} strs an Array of Strings to be trimmed
+ * @return {String[]}   an Array of trimmed Strings
  */
 p5.prototype.trim = function(str) {
   p5._validateParameters('trim', arguments);

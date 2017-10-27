@@ -112,11 +112,6 @@ p5.prototype.createImage = function(width, height) {
  *                                  representing a specific html5 canvas (optional)
  *  @param  {String} [filename]
  *  @param  {String} [extension]      'jpg' or 'png'
-*/
-/**
- *  @method saveCanvas
- *  @param  {String} [filename]
- *  @param  {String} [extension]
  *
  *  @example
  *  <div class='norender'><code>
@@ -149,7 +144,11 @@ p5.prototype.createImage = function(width, height) {
  * no image displayed
  * no image displayed
  * no image displayed
- *
+ */
+/**
+ *  @method saveCanvas
+ *  @param  {String} [filename]
+ *  @param  {String} [extension]
  */
 p5.prototype.saveCanvas = function() {
   p5._validateParameters('saveCanvas', arguments);
