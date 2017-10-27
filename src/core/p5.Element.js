@@ -49,10 +49,6 @@ p5.Element = function(elt, pInst) {
  * @param  {String|p5.Element|Object} parent the ID, DOM node, or p5.Element
  *                         of desired parent element
  * @chainable
- */
-/**
- * @method parent
- * @return {p5.Element}
  *
  * @example
  * <div class="norender"><code>
@@ -81,6 +77,10 @@ p5.Element = function(elt, pInst) {
  *
  * @alt
  * no display.
+ */
+/**
+ * @method parent
+ * @return {p5.Element}
  *
  */
 p5.Element.prototype.parent = function(p) {
@@ -108,10 +108,6 @@ p5.Element.prototype.parent = function(p) {
  * @method id
  * @param  {String} id ID of the element
  * @chainable
- */
-/**
- * @method id
- * @return {String} the id of the element
  *
  * @example
  * <div class='norender'><code>
@@ -125,7 +121,10 @@ p5.Element.prototype.parent = function(p) {
  *
  * @alt
  * no display.
- *
+ */
+/**
+ * @method id
+ * @return {String} the id of the element
  */
 p5.Element.prototype.id = function(id) {
   if (arguments.length === 0) {
