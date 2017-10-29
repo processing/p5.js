@@ -359,7 +359,9 @@ p5.prototype._makeFrame = function(filename, extension, _cnv) {
  *
  */
 p5.prototype.getCanvasImage = function() {
-  return loadImage(this._curElement.elt.toDataURL('image/png'));
+  if (this._curElement && this._curElement.elt) {
+    return loadImage(this._curElement.elt.toDataURL('image/png'));
+  }
 };
 
 module.exports = p5;
