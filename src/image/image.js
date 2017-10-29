@@ -341,4 +341,25 @@ p5.prototype._makeFrame = function(filename, extension, _cnv) {
   frames.push(thisFrame);
 };
 
+/**
+ * Returns the current canvas as a loaded p5.Image. This allows an assignment
+ * or immediate use in the users sketch as a canvas screenshot.
+ *
+ * @method getCanvasImage
+ * @param none
+ *
+ * @example
+ * // This example shows how a user can directly create a screenshot of his
+ * // canvas and have it saved for future use or use immediately
+ * draw() {
+ *   // .. other code
+ *   var screenshot = getCanvasImage();
+ *   image(screenshot, 10, 10, 50, 50);
+ * }
+ *
+ */
+p5.prototype.getCanvasImage = function() {
+  return loadImage(this._curElement.elt.toDataURL('image/png'));
+};
+
 module.exports = p5;
