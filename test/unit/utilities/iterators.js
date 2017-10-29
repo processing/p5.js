@@ -52,5 +52,29 @@ suite('Iterators', function() {
         i++;
       }
     });
+
+    test('no result if start is past end', function() {
+      assert.deepEqual(
+        Array.from(myp5.range(0, 10, -1)),
+        []);
+      assert.deepEqual(
+        Array.from(myp5.range(0, -10, 1)),
+        []);
+    });
+
+    test('never ends if applicable', function() {
+      function never_ends(range) {
+        var iter = range[Symbol.iterator]();
+        for(var i = 0; i < 1000; i++) {
+          var res = iter.next();
+          assert.equal(res.done, false);
+        }
+      }
+      never_ends(myp5.range(0, null));
+      never_ends(myp5.range(0, null, 1));
+      never_ends(myp5.range(0, null, -1));
+      never_ends(myp5.range(0, null, 0));
+      never_ends(myp5.range(0, 10, 0));
+    });
   });
 });

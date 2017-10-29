@@ -51,7 +51,7 @@ var p5 = require('../core/core');
  */
 p5.prototype.range = function(start, stop, step) {
   if(typeof start === 'undefined') {
-    throw new Error('Not enough parameters for range');
+    throw new TypeError('Not enough parameters for range');
   }
   if(typeof stop === 'undefined') {
     stop = start;
@@ -67,7 +67,7 @@ p5.prototype.range = function(start, stop, step) {
       var i = start;
       return {
         next: function() {
-          if(dir * (i - stop) >= 0) {
+          if(stop !== null && dir * (i - stop) >= 0) {
             return {
               done: true
             };
