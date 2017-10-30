@@ -45,7 +45,7 @@
  *                      multiple real browsers on the developers local machine.
  *                      It will automatically detect which browsers are
  *                      installed from the following list (Chrome, Firefox,
- *                      Safari, Edge, IE) and run the bencharks in all installed
+ *                      Safari, Edge, IE) and run the benchmarks in all installed
  *                      browsers and report the results. Running "grunt karma"
  *                      will execute ALL the benchmarks. If you want to run a
  *                      specific benchmark you can by specifying the target e.g.
