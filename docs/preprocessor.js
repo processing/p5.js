@@ -6,6 +6,16 @@ function smokeTestMethods(data) {
   data.classitems.forEach(function(classitem) {
     if (classitem.itemtype === 'method') {
       new DocumentedMethod(classitem);
+
+      if (classitem.access !== 'private' &&
+        classitem.file.substr(0, 3) === 'src' &&
+        classitem.name &&
+        !classitem.example) {
+        console.log(classitem.file + ':' + classitem.line +
+          ': ' + classitem.itemtype + ' ' +
+          classitem.class + '.' + classitem.name +
+          ' missing example');
+      }
     }
   });
 }
@@ -143,7 +153,7 @@ module.exports.register = function(Handlebars, options) {
     // } else {
     //   return '/'+this.language;
     // }
-    return window.location.pathname+' hi'
+    return window.location.pathname
   });
 };
 

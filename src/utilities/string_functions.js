@@ -8,6 +8,7 @@
 'use strict';
 
 var p5 = require('../core/core');
+require('../core/error_helpers');
 
 //return p5; //LM is this a mistake?
 
@@ -36,6 +37,7 @@ var p5 = require('../core/core');
  *
  */
 p5.prototype.join = function(list, separator) {
+  p5._validateParameters('join', arguments);
   return list.join(separator);
 };
 
@@ -76,6 +78,7 @@ p5.prototype.join = function(list, separator) {
  *
  */
 p5.prototype.match =  function(str, reg) {
+  p5._validateParameters('match', arguments);
   return str.match(reg);
 };
 
@@ -110,9 +113,9 @@ p5.prototype.match =  function(str, reg) {
  * matchAll(string, regexp);
  * </code>
  * </div>
-
  */
 p5.prototype.matchAll = function(str, reg) {
+  p5._validateParameters('matchAll', arguments);
   var re = new RegExp(reg, 'g');
   var match = re.exec(str);
   var matches = [];
@@ -133,19 +136,13 @@ p5.prototype.matchAll = function(str, reg) {
  * be positive integers.
  *
  * @method nf
- * @param {Number} num            the Number to format
- * @param {Number}       [left]   number of digits to the left of the
+ * @param {Number|String}       num      the Number to format
+ * @param {Number|String}       [left]   number of digits to the left of the
  *                                decimal point
- * @param {Number}       [right]  number of digits to the right of the
+ * @param {Number|String}       [right]  number of digits to the right of the
  *                                decimal point
  * @return {String}               formatted String
- */
-/**
- * @method nf
- * @param {Number[]} nums         the Numbers to format
- * @param {Number}       [left]
- * @param {Number}       [right]
- * @return {String[]}             formatted Strings
+ *
  * @example
  * <div>
  * <code>
@@ -173,9 +170,16 @@ p5.prototype.matchAll = function(str, reg) {
  *
  * @alt
  * "0011253" top left, "0112.531" mid left, "112.531061" bottom left canvas
- *
+ */
+/**
+ * @method nf
+ * @param {Array}        nums     the Numbers to format
+ * @param {Number|String}       [left]
+ * @param {Number|String}       [right]
+ * @return {Array}                formatted Strings\
  */
 p5.prototype.nf = function () {
+  p5._validateParameters('nf', arguments);
   if (arguments[0] instanceof Array) {
     var a = arguments[1];
     var b = arguments[2];
@@ -245,16 +249,11 @@ function doNf() {
  * for the right parameter should always be a positive integer.
  *
  * @method nfc
- * @param  {Number}   num     the Number to format
- * @param  {Number}         [right] number of digits to the right of the
+ * @param  {Number|String}   num     the Number to format
+ * @param  {Number|String}   [right] number of digits to the right of the
  *                                  decimal point
  * @return {String}           formatted String
- */
-/**
- * @method nfc
- * @param  {Number[]}   nums     the Numbers to format
- * @param  {Number}         [right]
- * @return {String[]}           formatted Strings
+ *
  * @example
  * <div>
  * <code>
@@ -280,9 +279,15 @@ function doNf() {
  *
  * @alt
  * "11,253,106.115" top middle and "1.00,1.00,2.00" displayed bottom mid
- *
+ */
+/**
+ * @method nfc
+ * @param  {Array}    nums     the Numbers to format
+ * @param  {Number|String}   [right]
+ * @return {Array}           formatted Strings
  */
 p5.prototype.nfc = function () {
+  p5._validateParameters('nfc', arguments);
   if (arguments[0] instanceof Array) {
     var a = arguments[1];
     return arguments[0].map(function (x) {
@@ -330,13 +335,7 @@ function doNfc() {
  * @param {Number}       [right]  number of digits to the right of the
  *                                decimal point
  * @return {String}         formatted String
- */
-/**
- * @method nfp
- * @param {Number[]} nums      the Numbers to format
- * @param {Number}       [left]
- * @param {Number}       [right]
- * @return {String[]}         formatted Strings
+ *
  * @example
  * <div>
  * <code>
@@ -362,10 +361,17 @@ function doNfc() {
  *
  * @alt
  * "+11253106.11" top middle and "-11253106.11" displayed bottom middle
- *
+ */
+/**
+ * @method nfp
+ * @param {Number[]} nums      the Numbers to format
+ * @param {Number}       [left]
+ * @param {Number}       [right]
+ * @return {String[]}         formatted Strings
  */
 p5.prototype.nfp = function() {
-  var nfRes = this.nf.apply(this, arguments);
+  p5._validateParameters('nfp', arguments);
+  var nfRes = p5.prototype.nf.apply(this, arguments);
   if (nfRes instanceof Array) {
     return nfRes.map(addNfp);
   } else {
@@ -388,19 +394,13 @@ function addNfp() {
  * parameters should always be positive integers.
  *
  * @method nfs
- * @param {Number} num      the Number to format
+ * @param {Number}       num      the Number to format
  * @param {Number}       [left]   number of digits to the left of the decimal
  *                                point
  * @param {Number}       [right]  number of digits to the right of the
  *                                decimal point
  * @return {String}         formatted String
- */
-/**
- * @method nfs
- * @param {Number[]} nums     the Numbers to format
- * @param {Number}       [left]
- * @param {Number}       [right]
- * @return {String[]}         formatted Strings
+ *
  * @example
  * <div>
  * <code>
@@ -426,10 +426,17 @@ function addNfp() {
  *
  * @alt
  * "11253106.11" top middle and "-11253106.11" displayed bottom middle
- *
+ */
+/**
+ * @method nfs
+ * @param {Array}        nums     the Numbers to format
+ * @param {Number}       [left]
+ * @param {Number}       [right]
+ * @return {Array}         formatted Strings
  */
 p5.prototype.nfs = function() {
-  var nfRes = this.nf.apply(this, arguments);
+  p5._validateParameters('nfs', arguments);
+  var nfRes = p5.prototype.nf.apply(this, arguments);
   if (nfRes instanceof Array) {
     return nfRes.map(addNfs);
   } else {
@@ -474,6 +481,7 @@ function addNfs() {
  *
  */
 p5.prototype.split = function(str, delim) {
+  p5._validateParameters('split', arguments);
   return str.split(delim);
 };
 
@@ -504,6 +512,7 @@ p5.prototype.split = function(str, delim) {
  * </div>
  */
 p5.prototype.splitTokens = function() {
+  p5._validateParameters('splitTokens', arguments);
   var d,sqo,sqc,str;
   str = arguments[1];
   if (arguments.length > 1) {
@@ -537,11 +546,7 @@ p5.prototype.splitTokens = function() {
  * @method trim
  * @param  {String} str a String to be trimmed
  * @return {String}       a trimmed String
- */
-/**
- * @method trim
- * @param  {String[]} strs an Array of Strings to be trimmed
- * @return {String[]}       an Array of trimmed Strings
+ *
  * @example
  * <div>
  * <code>
@@ -552,9 +557,14 @@ p5.prototype.splitTokens = function() {
  *
  * @alt
  * "No new lines here" displayed center canvas
- *
+ */
+/**
+ * @method trim
+ * @param  {Array} strs an Array of Strings to be trimmed
+ * @return {Array}       an Array of trimmed Strings
  */
 p5.prototype.trim = function(str) {
+  p5._validateParameters('trim', arguments);
   if (str instanceof Array) {
     return str.map(this.trim);
   } else {

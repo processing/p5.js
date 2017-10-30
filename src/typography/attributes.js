@@ -59,10 +59,7 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  * @method textLeading
  * @param {Number} leading the size in pixels for spacing between lines
  * @chainable
- */
-/**
- * @method textLeading
- * @return {Number}
+ *
  * @example
  * <div>
  * <code>
@@ -83,7 +80,10 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  *
  * @alt
  *set L1 L2 & L3 displayed vertically 3 times. spacing increases for each set
- *
+ */
+/**
+ * @method textLeading
+ * @return {Number}
  */
 p5.prototype.textLeading = function(theLeading) {
   return this._renderer.textLeading.apply(this._renderer, arguments);
@@ -96,10 +96,7 @@ p5.prototype.textLeading = function(theLeading) {
  * @method textSize
  * @param {Number} theSize the size of the letters in units of pixels
  * @chainable
- */
-/**
- * @method textSize
- * @return {Number}
+ *
  * @example
  * <div>
  * <code>
@@ -114,7 +111,10 @@ p5.prototype.textLeading = function(theLeading) {
  *
  * @alt
  *Font Size 12 displayed small, Font Size 14 medium & Font Size 16 large
- *
+ */
+/**
+ * @method textSize
+ * @return {Number}
  */
 p5.prototype.textSize = function(theSize) {
   return this._renderer.textSize.apply(this._renderer, arguments);
@@ -129,10 +129,6 @@ p5.prototype.textSize = function(theSize) {
  * @param {Constant} theStyle styling for text, either NORMAL,
  *                            ITALIC, or BOLD
  * @chainable
- */
-/**
- * @method textStyle
- * @return {String}
  * @example
  * <div>
  * <code>
@@ -149,7 +145,10 @@ p5.prototype.textSize = function(theSize) {
  *
  * @alt
  *words Font Style Normal displayed normally, Italic in italic and bold in bold
- *
+ */
+/**
+ * @method textStyle
+ * @return {String}
  */
 p5.prototype.textStyle = function(theStyle) {
   return this._renderer.textStyle.apply(this._renderer, arguments);

@@ -31,13 +31,7 @@ require('./p5.Geometry');
  * @param  {function(Event)} [failureCallback] called with event error if
  *                                         the image fails to load.
  * @return {p5.Geometry} the p5.Geometry object
- */
-/**
- * @method loadModel
- * @param  {String} path
- * @param  {function(p5.Geometry)} [successCallback]
- * @param  {function(Event)} [failureCallback]
- * @return {p5.Geometry} the p5.Geometry object
+ *
  * @example
  * <div>
  * <code>
@@ -61,7 +55,13 @@ require('./p5.Geometry');
  *
  * @alt
  * Vertically rotating 3-d teapot with red, green and blue gradient.
- *
+ */
+/**
+ * @method loadModel
+ * @param  {String} path
+ * @param  {function(p5.Geometry)} [successCallback]
+ * @param  {function(Event)} [failureCallback]
+ * @return {p5.Geometry} the p5.Geometry object
  */
 p5.prototype.loadModel = function () {
   var path = arguments[0];
@@ -186,7 +186,6 @@ function parseObj( model, lines ) {
       }
     }
   }
-
   // If the model doesn't have normals, compute the normals
   if(model.vertexNormals.length === 0) {
     model.computeNormals();
@@ -228,6 +227,8 @@ function parseObj( model, lines ) {
 p5.prototype.model = function ( model ) {
   if (model.vertices.length > 0) {
     if (!this._renderer.geometryInHash(model.gid)) {
+      model._makeTriangleEdges();
+      this._renderer._edgesToVertices(model);
       this._renderer.createBuffers(model.gid, model);
     }
 

@@ -16,6 +16,7 @@ var styleEmpty = 'rgba(0,0,0,0)';
 
 p5.Renderer2D = function(elt, pInst, isMainCanvas){
   p5.Renderer.call(this, elt, pInst, isMainCanvas);
+  this.name = 'p5.Renderer2D';   // for friendly debugger system
   this.drawingContext = this.canvas.getContext('2d');
   this._pInst._setProperty('drawingContext', this.drawingContext);
   return this;
@@ -24,6 +25,7 @@ p5.Renderer2D = function(elt, pInst, isMainCanvas){
 p5.Renderer2D.prototype = Object.create(p5.Renderer.prototype);
 
 p5.Renderer2D.prototype._applyDefaults = function() {
+  this._cachedFillStyle = this._cachedStrokeStyle = undefined;
   this._setFill(constants._DEFAULT_FILL);
   this._setStroke(constants._DEFAULT_STROKE);
   this.drawingContext.lineCap = constants.ROUND;
@@ -221,7 +223,7 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
 
   var sx = x * pd;
   var sy = y * pd;
-  if (w === 1 && h === 1){
+  if (w === 1 && h === 1 && !(this instanceof p5.RendererGL)){
     var imageData = this.drawingContext.getImageData(sx, sy, 1, 1).data;
     //imageData = [0,0,0,0];
     return [
@@ -507,8 +509,12 @@ p5.Renderer2D.prototype.point = function(x, y) {
   } else if(this._getStroke() === styleEmpty){
     return this;
   }
+  var s = this._getStroke();
+  var f = this._getFill();
   x = Math.round(x);
   y = Math.round(y);
+  // swapping fill color to stroke and back after for correct point rendering
+  this._setFill(s);
   if (ctx.lineWidth > 1) {
     ctx.beginPath();
     ctx.arc(
@@ -523,6 +529,7 @@ p5.Renderer2D.prototype.point = function(x, y) {
   } else {
     ctx.fillRect(x, y, 1, 1);
   }
+  this._setFill(f);
 };
 
 p5.Renderer2D.prototype.quad =
@@ -893,30 +900,12 @@ p5.Renderer2D.prototype.noSmooth = function() {
   if ('imageSmoothingEnabled' in this.drawingContext) {
     this.drawingContext.imageSmoothingEnabled = false;
   }
-  else if ('mozImageSmoothingEnabled' in this.drawingContext) {
-    this.drawingContext.mozImageSmoothingEnabled = false;
-  }
-  else if ('webkitImageSmoothingEnabled' in this.drawingContext) {
-    this.drawingContext.webkitImageSmoothingEnabled = false;
-  }
-  else if ('msImageSmoothingEnabled' in this.drawingContext) {
-    this.drawingContext.msImageSmoothingEnabled = false;
-  }
   return this;
 };
 
 p5.Renderer2D.prototype.smooth = function() {
   if ('imageSmoothingEnabled' in this.drawingContext) {
     this.drawingContext.imageSmoothingEnabled = true;
-  }
-  else if ('mozImageSmoothingEnabled' in this.drawingContext) {
-    this.drawingContext.mozImageSmoothingEnabled = true;
-  }
-  else if ('webkitImageSmoothingEnabled' in this.drawingContext) {
-    this.drawingContext.webkitImageSmoothingEnabled = true;
-  }
-  else if ('msImageSmoothingEnabled' in this.drawingContext) {
-    this.drawingContext.msImageSmoothingEnabled = true;
   }
   return this;
 };
@@ -950,6 +939,9 @@ p5.Renderer2D.prototype.strokeWeight = function(w) {
 };
 
 p5.Renderer2D.prototype._getFill = function(){
+  if (!this._cachedFillStyle) {
+    this._cachedFillStyle = this.drawingContext.fillStyle;
+  }
   return this._cachedFillStyle;
 };
 
@@ -961,6 +953,9 @@ p5.Renderer2D.prototype._setFill = function(fillStyle){
 };
 
 p5.Renderer2D.prototype._getStroke = function(){
+  if (!this._cachedStrokeStyle) {
+    this._cachedStrokeStyle = this.drawingContext.strokeStyle;
+  }
   return this._cachedStrokeStyle;
 };
 
@@ -1013,8 +1008,8 @@ p5.Renderer2D.prototype._doFillStrokeClose = function () {
 //////////////////////////////////////////////
 
 p5.Renderer2D.prototype.applyMatrix =
-function(n00, n01, n02, n10, n11, n12) {
-  this.drawingContext.transform(n00, n01, n02, n10, n11, n12);
+function(a, b, c, d, e, f) {
+  this.drawingContext.transform(a, b, c, d, e, f);
 };
 
 p5.Renderer2D.prototype.resetMatrix = function() {
@@ -1283,8 +1278,8 @@ p5.Renderer2D.prototype._applyTextProperties = function() {
     this._setProperty('_textStyle', this._textFont.font.styleName);
   }
 
-  this.drawingContext.font = this._textStyle + ' ' +
-    this._textSize + 'px ' + font;
+  this.drawingContext.font = (this._textStyle || 'normal') +
+    ' ' + (this._textSize || 12) + 'px ' + (font || 'sans-serif');
 
   return p;
 };

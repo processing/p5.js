@@ -111,11 +111,6 @@ p5.prototype.createImage = function(width, height) {
  *                                  representing a specific html5 canvas (optional)
  *  @param  {String} [filename]
  *  @param  {String} [extension]      'jpg' or 'png'
-*/
-/**
- *  @method saveCanvas
- *  @param  {String} [filename]
- *  @param  {String} [extension]
  *
  *  @example
  *  <div class='norender'><code>
@@ -148,7 +143,11 @@ p5.prototype.createImage = function(width, height) {
  * no image displayed
  * no image displayed
  * no image displayed
- *
+ */
+/**
+ *  @method saveCanvas
+ *  @param  {String} [filename]
+ *  @param  {String} [extension]
  */
 p5.prototype.saveCanvas = function() {
 
@@ -239,6 +238,10 @@ p5.prototype.saveCanvas = function() {
  *  callback provided the image data isn't saved by default but instead passed
  *  as an argument to the callback function as an array of objects, with the
  *  size of array equal to the total number of frames.
+ *
+ *  Note that saveFrames() will only save the first 15 frames of an animation.
+ *  To export longer animations, you might look into a library like
+ *  <a href="https://github.com/spite/ccapture.js/">ccapture.js</a>.
  *
  *  @method saveFrames
  *  @param  {String}   filename

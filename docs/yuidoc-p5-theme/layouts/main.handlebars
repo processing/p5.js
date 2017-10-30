@@ -6,23 +6,23 @@
     <meta name="viewport" content="width=device-width">
     <meta name="description" content="p5.js a JS client-side library for creating graphic and interactive experiences, based on the core principles of Processing.">
     <title tabindex="1">p5.js | reference</title>
-    <link rel="stylesheet" href="/assets/css/all.css">
+    <link rel="stylesheet" href="https://p5js.org/assets/css/all.css">
     <link rel="stylesheet" href="{{projectAssets}}/reference.css">
     <script type="text/javascript" src="//fast.fonts.net/jsapi/5ace315e-3b19-4568-9e85-5bfcb29004c0.js"></script>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-    <script>window.jQuery || document.write('<script src="{{p5SiteRoot}}/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
-    <script src='/assets/js/p5.min.js'></script>
-    <script src='/assets/js/p5.dom.min.js'></script>
-    <script src='/assets/js/p5.sound.min.js'></script>
+    <script>window.jQuery || document.write('<script src="https://p5js.org/assets/js/vendor/jquery-1.9.1.min.js"><\/script>')</script>
+    <script src='https://p5js.org/assets/js/p5.min.js'></script>
+    <script src='https://p5js.org/assets/js/p5.dom.min.js'></script>
+    <script src='https://p5js.org/assets/js/p5.sound.min.js'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.3.3/backbone-min.js"></script>
 
-    <script type="text/javascript" src="/assets/js/vendor/ace-nc/ace.js"></script>
-    <script type="text/javascript" src="/assets/js/vendor/ace-nc/mode-javascript.js"></script>
-    <script type="text/javascript" src="/assets/js/vendor/prism.js"></script>
-    <script type="text/javascript" src="/assets/js/scroll.js"></script>
-    <script type="text/javascript" src="/assets/js/init.js"></script>
+    <script type="text/javascript" src="https://p5js.org/assets/js/vendor/ace-nc/ace.js"></script>
+    <script type="text/javascript" src="https://p5js.org/assets/js/vendor/ace-nc/mode-javascript.js"></script>
+    <script type="text/javascript" src="https://p5js.org/assets/js/vendor/prism.js"></script>
+    <script type="text/javascript" src="https://p5js.org/assets/js/scroll.js"></script>
+    <script type="text/javascript" src="https://p5js.org/assets/js/init.js"></script>
 
   </head>
 
@@ -42,7 +42,7 @@
       <!-- logo -->
       <header id="lockup">
         <a href="{{p5SiteRoot}}/">
-          <img src="/assets/img/p5js.svg" alt="link to p5 home page" id="logo_image" class="logo" />
+          <img src="https://p5js.org/assets/img/p5js.svg" alt="link to p5 home page" id="logo_image" class="logo" />
           <div id="p5_logo"></div>
         </a>
         <p class='tagline' style='display:block !important'>Processing Intuition times JavaScript power</p>
@@ -57,7 +57,7 @@
             <li><a href="{{p5SiteRoot}}/get-started/">Start</a></li>
             <li><a href="{{p5SiteRoot}}/reference/">Reference</a></li>
             <li><a href="{{p5SiteRoot}}/libraries/">Libraries</a></li>
-            <li><a href="{{p5SiteRoot}}/tutorials/">Tutorials</a></li>
+            <li><a href="{{p5SiteRoot}}/learn/">Learn</a></li>
             <li><a href="{{p5SiteRoot}}/examples/">Examples</a></li>
             <li><a href="{{p5SiteRoot}}/books/">Books</a></li>
             <li><a href="{{p5SiteRoot}}/community/">Community</a></li>
@@ -96,7 +96,7 @@
       <!-- outside of column for footer to go across both -->
       <p class="clearfix"> &nbsp; </p>
 
-      <object type="image/svg+xml" data="/assets/img/thick-asterisk-alone.svg" id="asterisk-design-element">
+      <object type="image/svg+xml" data="https://p5js.org/assets/img/thick-asterisk-alone.svg" id="asterisk-design-element">
            *<!-- to do: add fallback image in CSS -->
       </object>
     </div>
@@ -120,8 +120,8 @@
     </div>
 
     <script src="{{projectAssets}}/js/require.min.js"></script>
-    <script src="/assets/js/vendor/prism.js"></script>
-    <script src="/assets/js/render.js"></script>
+    <script src="https://p5js.org/assets/js/vendor/prism.js"></script>
+    <script src="https://p5js.org/assets/js/render.js"></script>
     <script src="{{projectAssets}}/js/reference.js"></script>
     <script type='text/javascript'>
 
@@ -130,6 +130,10 @@
 
     function updateLanguage() {
       if (translations) {
+        $('h1').html(translations['h1']);
+        $('.group-name, .subgroup-name').each(function() {
+          $(this).text(translations[$(this).text()]);
+        });
         var routes = window.location.hash.split('/');
         var obj = routes[1];
         var name = routes[2];

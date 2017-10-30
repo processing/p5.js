@@ -189,6 +189,7 @@ var p5 = function(sketch, node, sync) {
     'dragend': null,
     'dragover': null,
     'click': null,
+    'dblclick': null,
     'mouseover': null,
     'mouseout': null,
     'keydown': null,
@@ -357,7 +358,6 @@ var p5 = function(sketch, node, sync) {
 
       //mandatory update values(matrixs and stack)
 
-      this._setProperty('frameCount', this.frameCount + 1);
       this.redraw();
       this._frameRate = 1000.0/(now - this._lastFrameTime);
       this._lastFrameTime = now;
@@ -396,7 +396,10 @@ var p5 = function(sketch, node, sync) {
    * elements created by p5.js. It will also stop the draw loop and unbind
    * any properties or methods from the window global scope. It will
    * leave a variable p5 in case you wanted to create a new p5 sketch.
-   * If you like, you can set p5 = null to erase it.
+   * If you like, you can set p5 = null to erase it. While all functions and
+   * variables and objects created by the p5 library will be removed, any
+   * other global variables created by your code will remain.
+   *
    * @method remove
    * @example
    * <div class='norender'><code>
@@ -571,7 +574,8 @@ p5.prototype._preloadMethods = {
   loadShape: p5.prototype,
   loadTable: p5.prototype,
   loadFont: p5.prototype,
-  loadModel: p5.prototype
+  loadModel: p5.prototype,
+  loadShader: p5.prototype
 };
 
 p5.prototype._registeredMethods = { init: [], pre: [], post: [], remove: [] };

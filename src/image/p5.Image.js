@@ -35,6 +35,52 @@ var Filters = require('./filters');
  * <br><br>
  * Before using the pixels[] array, be sure to use the loadPixels() method on
  * the image to make sure that the pixel data is properly loaded.
+ * @example
+ * <div><code>
+ *
+ * function setup() {
+ *   var img = createImage(100, 100); // same as new p5.Image(100, 100);
+ *   img.loadPixels();
+ *   createCanvas(100, 100);
+ *   background(0);
+ *
+ *   // helper for writing color to array
+ *   function writeColor(image, x, y, red, green, blue, alpha) {
+ *     var index = (x + (y * width)) * 4;
+ *     image.pixels[index]   = red;
+ *     image.pixels[index+1] = green;
+ *     image.pixels[index+2] = blue;
+ *     image.pixels[index+3] = alpha;
+ *   }
+ *
+ *   // fill with random colors
+ *   for (var y = 0; y < img.height; y++) {
+ *     for (var x = 0; x < img.width; x++) {
+ *       var red = random(255);
+ *       var green = random(255);
+ *       var blue = random(255);
+ *       var alpha = 255;
+ *       writeColor(img, x, y, red, green, blue, alpha);
+ *     }
+ *   }
+ *
+ *   // draw a red line
+ *   for (var x = 0; x < img.width; x++) {
+ *     var y = 0;
+ *     writeColor(img, x, y, 255, 0, 0, 255);
+ *   }
+ *
+ *   // draw a green line
+ *   for (var x = 0; x < img.width; x++) {
+ *     var y = img.height - 1;
+ *     writeColor(img, x, y, 0, 255, 0, 255);
+ *   }
+ *
+ *   img.updatePixels();
+ *   image(img, 0, 0);
+ * }
+ * </code></div>
+ *
  *
  * @class p5.Image
  * @constructor
@@ -102,7 +148,7 @@ p5.Image = function(width, height){
   this.drawingContext = this.canvas.getContext('2d');
   this._pixelDensity = 1;
   //used for webgl texturing only
-  this.isTexture = false;
+  this._modified = false;
   /**
    * Array containing the values for all the pixels in the display window.
    * These values are numbers. This array is the size (include an appropriate
@@ -118,7 +164,7 @@ p5.Image = function(width, height){
    * values of the pixel at (1, 0). More generally, to set values for a pixel
    * at (x, y):
    * ```javascript
-   * var d = pixelDensity;
+   * var d = pixelDensity();
    * for (var i = 0; i < d; i++) {
    *   for (var j = 0; j < d; j++) {
    *     // loop over
@@ -171,6 +217,7 @@ p5.Image = function(width, height){
    *
    */
   this.pixels = [];
+  this.name = 'p5.Image';   // for friendly debugger system
 };
 
 /**
@@ -179,6 +226,7 @@ p5.Image = function(width, height){
  */
 p5.Image.prototype._setProperty = function (prop, value) {
   this[prop] = value;
+  this.setModified(true);
 };
 
 /**
@@ -214,6 +262,7 @@ p5.Image.prototype._setProperty = function (prop, value) {
  */
 p5.Image.prototype.loadPixels = function(){
   p5.Renderer2D.prototype.loadPixels.call(this);
+  this.setModified(true);
 };
 
 /**
@@ -229,9 +278,6 @@ p5.Image.prototype.loadPixels = function(){
  *                              underlying canvas
  * @param {Integer} h height of the target update area for the
  *                              underlying canvas
- */
-/**
- * @method updatePixels
  * @example
  * <div><code>
  * var myImage;
@@ -259,8 +305,12 @@ p5.Image.prototype.loadPixels = function(){
  * 2 images of rocky mountains vertically stacked
  *
  */
+/**
+ * @method updatePixels
+ */
 p5.Image.prototype.updatePixels = function(x, y, w, h){
   p5.Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
+  this.setModified(true);
 };
 
 /**
@@ -343,6 +393,7 @@ p5.Image.prototype.get = function(x, y, w, h){
  */
 p5.Image.prototype.set = function(x, y, imgOrCol){
   p5.Renderer2D.prototype.set.call(this, x, y, imgOrCol);
+  this.setModified(true);
 };
 
 /**
@@ -423,6 +474,8 @@ p5.Image.prototype.resize = function(width, height){
   if(this.pixels.length > 0){
     this.loadPixels();
   }
+
+  this.setModified(true);
 };
 
 /**
@@ -433,7 +486,7 @@ p5.Image.prototype.resize = function(width, height){
  * target region.
  *
  * @method copy
- * @param  {p5.Image|undefined} srcImage source image
+ * @param  {p5.Image|p5.Graphics|undefined} srcImage source image
  * @param  {Integer} sx X coordinate of the source's upper left corner
  * @param  {Integer} sy Y coordinate of the source's upper left corner
  * @param  {Integer} sw source image width
@@ -530,6 +583,7 @@ p5.Image.prototype.mask = function(p5Image) {
   this.drawingContext.globalCompositeOperation = 'destination-in';
   p5.Image.prototype.copy.apply(this, copyArgs);
   this.drawingContext.globalCompositeOperation = currBlend;
+  this.setModified(true);
 };
 
 /**
@@ -563,6 +617,7 @@ p5.Image.prototype.mask = function(p5Image) {
  */
 p5.Image.prototype.filter = function(operation, value) {
   Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
+  this.setModified(true);
 };
 
 /**
@@ -643,6 +698,33 @@ p5.Image.prototype.filter = function(operation, value) {
  */
 p5.Image.prototype.blend = function() {
   p5.prototype.blend.apply(this, arguments);
+  this.setModified(true);
+};
+
+/**
+ * helper method for web GL mode to indicate that an image has been
+ * changed or unchanged since last upload. gl texture upload will
+ * set this value to false after uploading the texture.
+ * @method setModified
+ * @param {boolean} val sets whether or not the image has been
+ * modified.
+ * @private
+ */
+p5.Image.prototype.setModified = function (val) {
+  this._modified = val; //enforce boolean?
+};
+
+/**
+ * helper method for web GL mode to figure out if the image
+ * has been modified and might need to be re-uploaded to texture
+ * memory between frames.
+ * @method isModified
+ * @private
+ * @return {boolean} a boolean indicating whether or not the
+ * image has been updated or modified since last texture upload.
+ */
+p5.Image.prototype.isModified = function () {
+  return this._modified;
 };
 
 /**

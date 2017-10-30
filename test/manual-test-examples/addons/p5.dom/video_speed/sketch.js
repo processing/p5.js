@@ -18,10 +18,10 @@ function setup() {
 function toggleVid() {
   if (playing) {
     fingers.pause();
-    button.html('play');
+    playButton.html('play');
   } else {
     fingers.loop();
-    button.html('pause');
+    playButton.html('pause');
   }
   playing = !playing;
 }

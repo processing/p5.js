@@ -59,6 +59,7 @@ p5.XML = function () {
   this.children = [];
   this.parent = null;
   this.content = null; //done
+  this.name = 'p5.XML';   // for friendly debugger system
 };
 
 
@@ -794,4 +795,4 @@ p5.XML.prototype._setAttributes = function(node) {
   this.attributes = att;
 };
 
-module.exports = p5.XML;
+module.exports = p5;

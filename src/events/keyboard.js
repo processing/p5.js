@@ -167,12 +167,12 @@ p5.prototype.keyCode = 0;
  *   return false; // prevent any default behaviour
  * }
  * </code>
+ * </div>
  *
  * @alt
  * black rect center. turns white when key pressed and black when released
  * black rect center. turns white when left arrow pressed and black when right.
  *
- * </div>
  */
 p5.prototype._onkeydown = function (e) {
   if (downKeys[e.which]) { // prevent multiple firings

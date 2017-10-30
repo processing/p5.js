@@ -81,6 +81,7 @@ p5.Vector = function() {
    * @property z {Number}
    */
   this.z = z;
+  this.name = 'p5.Vector';   // for friendly debugger system
 };
 
 /**
@@ -635,7 +636,13 @@ p5.Vector.prototype.rotate = function (a) {
  * </div>
  */
 p5.Vector.prototype.angleBetween = function (v) {
-  var angle = Math.acos(this.dot(v) / (this.mag() * v.mag()));
+  var dotmagmag = this.dot(v) / (this.mag() * v.mag());
+  // Mathematically speaking: the dotmagmag variable will be between -1 and 1
+  // inclusive. Practically though it could be slightly outside this range due
+  // to floating-point rounding issues. This can make Math.acos return NaN.
+  //
+  // Solution: we'll clamp the value to the -1,1 range
+  var angle = Math.acos(Math.min(1, Math.max(-1, dotmagmag)));
   if (this.p5) {
     if (this.p5._angleMode === constants.DEGREES) {
       angle = polarGeometry.radiansToDegrees(angle);
@@ -652,14 +659,8 @@ p5.Vector.prototype.angleBetween = function (v) {
  * @param  {p5.Vector} y   the y component
  * @param  {p5.Vector} z   the z component
  * @param  {Number}    amt the amount of interpolation; some value between 0.0
- *                         (old vector) and 1.0 (new vector). 0.1 is very near
+ *                         (old vector) and 1.0 (new vector). 0.9 is very near
  *                         the new vector. 0.5 is halfway in between.
- * @chainable
- */
-/**
- * @method lerp
- * @param  {p5.Vector} v   the p5.Vector to lerp to
- * @param  {Number}    amt
  * @chainable
  *
  * @example
@@ -680,6 +681,12 @@ p5.Vector.prototype.angleBetween = function (v) {
  * // v3 has components [50,50,0]
  * </code>
  * </div>
+ */
+/**
+ * @method lerp
+ * @param  {p5.Vector} v   the p5.Vector to lerp to
+ * @param  {Number}    amt
+ * @chainable
  */
 p5.Vector.prototype.lerp = function (x, y, z, amt) {
   if (x instanceof p5.Vector) {

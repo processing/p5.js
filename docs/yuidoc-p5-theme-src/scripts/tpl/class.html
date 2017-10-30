@@ -6,7 +6,7 @@
 </div>
 <% } %>
 
-<% var fields = _.filter(things, function(item) { return item.itemtype === 'property' }); %>
+<% var fields = _.filter(things, function(item) { return item.itemtype === 'property' && item.access !== 'private' }); %>
 <% if (fields.length > 0) { %>
   <h4>Fields</h4>
   <p>
@@ -17,7 +17,7 @@
   </p>
 <% } %>
 
-<% var methods = _.filter(things, function(item) { return item.itemtype === 'method' }); %>
+<% var methods = _.filter(things, function(item) { return item.itemtype === 'method' && item.access !== 'private' }); %>
 <% if (methods.length > 0) { %>
   <h4>Methods</h4>
   <p>

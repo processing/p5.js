@@ -11,12 +11,13 @@
 var p5 = require('../core/core');
 var constants = require('../core/constants');
 require('./p5.Color');
+require('../core/error_helpers');
 
 /**
  * Extracts the alpha value from a color or pixel array.
  *
  * @method alpha
- * @param {p5.Color|Number[]} obj p5.Color object or pixel array
+ * @param {p5.Color|Array} color p5.Color object or pixel array
  * @return {Number} the alpha value
  * @example
  * <div>
@@ -52,18 +53,15 @@ require('./p5.Color');
  * deep pink rect on left and grey rect on right, both 35x60.
  */
 p5.prototype.alpha = function(c) {
-  if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c)._getAlpha();
-  } else {
-    throw new Error('Needs p5.Color or pixel array as argument.');
-  }
+  p5._validateParameters('alpha', arguments);
+  return this.color(c)._getAlpha();
 };
 
 /**
  * Extracts the blue value from a color or pixel array.
  *
  * @method blue
- * @param {p5.Color|Number[]} obj p5.Color object or pixel array
+ * @param {p5.Color|Array} color p5.Color object or pixel array
  * @return {Number} the blue value
  * @example
  * <div>
@@ -84,18 +82,15 @@ p5.prototype.alpha = function(c) {
  *
  */
 p5.prototype.blue = function(c) {
-  if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c)._getBlue();
-  } else {
-    throw new Error('Needs p5.Color or pixel array as argument.');
-  }
+  p5._validateParameters('blue', arguments);
+  return this.color(c)._getBlue();
 };
 
 /**
  * Extracts the HSB brightness value from a color or pixel array.
  *
  * @method brightness
- * @param {p5.Color|Number[]} color p5.Color object or pixel array
+ * @param {p5.Color|Array} color p5.Color object or pixel array
  * @return {Number} the brightness value
  * @example
  * <div>
@@ -116,11 +111,8 @@ p5.prototype.blue = function(c) {
  *
  */
 p5.prototype.brightness = function(c) {
-  if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c)._getBrightness();
-  } else {
-    throw new Error('Needs p5.Color or pixel array as argument.');
-  }
+  p5._validateParameters('brightness', arguments);
+  return this.color(c)._getBrightness();
 };
 
 /**
@@ -282,7 +274,6 @@ p5.prototype.brightness = function(c) {
  * Dark blue rect on left and light teal rect on right of canvas, both 45x80.
  *
  */
-
 /**
  * @method color
  * @param  {Number}        v1      red or hue value relative to
@@ -301,11 +292,15 @@ p5.prototype.brightness = function(c) {
  * @param  {Number}        [alpha]
  * @return {p5.Color}
  */
-
 /**
  * @method color
- * @param  {Number[]}      values  an array containing the red,green,blue &
+ * @param  {Array}      values  an array containing the red,green,blue &
  *                                 and alpha components of the color
+ * @return {p5.Color}
+ */
+/**
+ * @method color
+ * @param  {p5.Color}     color
  * @return {p5.Color}
  */
 
@@ -319,6 +314,7 @@ p5.prototype.color = function() {
       return new p5.Color(this._renderer, arguments[0]);
     }
   } else {
+    p5._validateParameters('color', arguments);
     if (this instanceof p5.Renderer) {
       return new p5.Color(this, arguments);
     } else {
@@ -331,7 +327,7 @@ p5.prototype.color = function() {
  * Extracts the green value from a color or pixel array.
  *
  * @method green
- * @param {p5.Color|Number[]} color p5.Color object or pixel array
+ * @param {p5.Color|Array} color p5.Color object or pixel array
  * @return {Number} the green value
  * @example
  * <div>
@@ -353,11 +349,8 @@ p5.prototype.color = function() {
  */
 
 p5.prototype.green = function(c) {
-  if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c)._getGreen();
-  } else {
-    throw new Error('Needs p5.Color or pixel array as argument.');
-  }
+  p5._validateParameters('green', arguments);
+  return this.color(c)._getGreen();
 };
 
 /**
@@ -370,7 +363,7 @@ p5.prototype.green = function(c) {
  * maximum hue setting for each system is different.)
  *
  * @method hue
- * @param {p5.Color|Number[]} color p5.Color object or pixel array
+ * @param {p5.Color|Array} color p5.Color object or pixel array
  * @return {Number} the hue
  * @example
  * <div>
@@ -392,11 +385,8 @@ p5.prototype.green = function(c) {
  */
 
 p5.prototype.hue = function(c) {
-  if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c)._getHue();
-  } else {
-    throw new Error('Needs p5.Color or pixel array as argument.');
-  }
+  p5._validateParameters('hue', arguments);
+  return this.color(c)._getHue();
 };
 
 /**
@@ -443,34 +433,35 @@ p5.prototype.hue = function(c) {
  */
 
 p5.prototype.lerpColor = function(c1, c2, amt) {
+  p5._validateParameters('lerpColor', arguments);
   var mode = this._renderer._colorMode;
   var maxes = this._renderer._colorMaxes;
   var l0, l1, l2, l3;
   var fromArray, toArray;
 
   if (mode === constants.RGB) {
-    fromArray = c1.levels.map(function(level) {
+    fromArray = arguments[0].levels.map(function(level) {
       return level / 255;
     });
-    toArray = c2.levels.map(function(level) {
+    toArray = arguments[1].levels.map(function(level) {
       return level / 255;
     });
   } else if (mode === constants.HSB) {
-    c1._getBrightness();  // Cache hsba so it definitely exists.
-    c2._getBrightness();
-    fromArray = c1.hsba;
-    toArray = c2.hsba;
+    arguments[0]._getBrightness();  // Cache hsba so it definitely exists.
+    arguments[1]._getBrightness();
+    fromArray = arguments[0].hsba;
+    toArray = arguments[1].hsba;
   } else if (mode === constants.HSL) {
-    c1._getLightness();  // Cache hsla so it definitely exists.
-    c2._getLightness();
-    fromArray = c1.hsla;
-    toArray = c2.hsla;
+    arguments[0]._getLightness();  // Cache hsla so it definitely exists.
+    arguments[1]._getLightness();
+    fromArray = arguments[0].hsla;
+    toArray = arguments[1].hsla;
   } else {
     throw new Error (mode + 'cannot be used for interpolation.');
   }
 
   // Prevent extrapolation.
-  amt = Math.max(Math.min(amt, 1), 0);
+  amt = Math.max(Math.min(arguments[2], 1), 0);
 
   // Define lerp here itself if user isn't using math module.
   // Maintains the definition as found in math/calculation.js
@@ -499,7 +490,7 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  * Extracts the HSL lightness value from a color or pixel array.
  *
  * @method lightness
- * @param {p5.Color|Number[]} color p5.Color object or pixel array
+ * @param {p5.Color|Array} color p5.Color object or pixel array
  * @return {Number} the lightness
  * @example
  * <div>
@@ -520,18 +511,15 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  *
  */
 p5.prototype.lightness = function(c) {
-  if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c)._getLightness();
-  } else {
-    throw new Error('Needs p5.Color or pixel array as argument.');
-  }
+  p5._validateParameters('lightness', arguments);
+  return this.color(c)._getLightness();
 };
 
 /**
  * Extracts the red value from a color or pixel array.
  *
  * @method red
- * @param {p5.Color|Number[]} obj p5.Color object or pixel array
+ * @param {p5.Color|Array} color p5.Color object or pixel array
  * @return {Number} the red value
  * @example
  * <div>
@@ -562,11 +550,8 @@ p5.prototype.lightness = function(c) {
  * grey canvas
  */
 p5.prototype.red = function(c) {
-  if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c)._getRed();
-  } else {
-    throw new Error('Needs p5.Color or pixel array as argument.');
-  }
+  p5._validateParameters('red', arguments);
+  return this.color(c)._getRed();
 };
 
 /**
@@ -578,8 +563,8 @@ p5.prototype.red = function(c) {
  * HSL saturation otherwise.
  *
  * @method saturation
- * @param {p5.Color|Number[]} color p5.Color object or pixel array
- * @return {Number} the saturation
+ * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @return {Number} the saturation value
  * @example
  * <div>
  * <code>
@@ -600,11 +585,8 @@ p5.prototype.red = function(c) {
  */
 
 p5.prototype.saturation = function(c) {
-  if (c instanceof p5.Color || c instanceof Array) {
-    return this.color(c)._getSaturation();
-  } else {
-    throw new Error('Needs p5.Color or pixel array as argument.');
-  }
+  p5._validateParameters('saturation', arguments);
+  return this.color(c)._getSaturation();
 };
 
 module.exports = p5;

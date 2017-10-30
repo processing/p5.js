@@ -57,7 +57,7 @@ require('./webgl/loading');
 require('./webgl/p5.Matrix');
 require('./webgl/material');
 require('./webgl/light');
-require('./webgl/shader');
+require('./webgl/p5.Shader');
 require('./webgl/camera');
 require('./webgl/interaction');
 

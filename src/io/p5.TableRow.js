@@ -37,6 +37,7 @@ p5.TableRow = function (str, separator) {
   this.arr = arr;
   this.obj = obj;
   this.table = null;
+  this.name = 'p5.TableRow';   // for friendly debugger system
 };
 
 /**
@@ -165,4 +166,4 @@ p5.TableRow.prototype.getString = function(column) {
   }
 };
 
-module.exports = p5.TableRow;
+module.exports = p5;
