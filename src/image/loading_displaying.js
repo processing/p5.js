@@ -12,8 +12,6 @@ var Filters = require('./filters');
 var canvas = require('../core/canvas');
 var constants = require('../core/constants');
 
-require('../core/error_helpers');
-
 /**
  * Loads an image from a path and creates a p5.Image from it.
  * <br><br>

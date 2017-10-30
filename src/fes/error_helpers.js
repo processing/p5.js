@@ -1,15 +1,14 @@
 /**
  * @for p5
+ * @submodule FES
  * @requires core
  */
 
 'use strict';
 
-var p5 = require('./core');
+var p5 = require('../core/core');
 var doFriendlyWelcome = false; // TEMP until we get it all working LM
 // for parameter validation
-var dataDoc = require('../../docs/reference/data.json');
-var arrDoc = JSON.parse(JSON.stringify(dataDoc));
 
 // -- Borrowed from jQuery 1.11.3 --
 var class2type = {};
@@ -120,12 +119,12 @@ p5._friendlyFileLoadError = function (errorType, filePath) {
 *  "ellipse was expecting a number for parameter #1,
 *           received "foo" instead."
 */
-p5._validateParameters = function validateParameters(func, args) {
+p5.prototype._validateParameters = function validateParameters(doc, args) {
   if (p5.disableFriendlyErrors ||
     typeof(IS_MINIFIED) !== 'undefined') {
     return; // skip FES
   }
-  var arrDoc = lookupParamDoc(func);
+  var arrDoc = lookupParamDoc(doc);
   var errorArray = [];
   var minErrCount = 999999;
   if (arrDoc.length > 1){   // func has multiple formats
@@ -142,33 +141,34 @@ p5._validateParameters = function validateParameters(func, args) {
     }
     // generate err msg
     for (var n = 0; n < errorArray.length; n++) {
-      p5._friendlyParamError(errorArray[n], func);
+      this._friendlyParamError(errorArray[n], doc.name);
     }
   } else {                 // func has a single format
     errorArray = testParamFormat(args, arrDoc[0]);
     for(var m = 0; m < errorArray.length; m++) {
-      p5._friendlyParamError(errorArray[m], func);
+      this._friendlyParamError(errorArray[m], doc.name);
     }
   }
 };
 // validateParameters() helper functions:
 // lookupParamDoc() for querying data.json
-function lookupParamDoc(func){
-  var queryResult = arrDoc.classitems.
-    filter(function (x) { return x.name === func; });
+function lookupParamDoc(doc){
   // different JSON structure for funct with multi-format
-  if (queryResult[0].hasOwnProperty('overloads')){
+  if (doc.hasOwnProperty('overloads')){
     var res = [];
-    for(var i = 0; i < queryResult[0].overloads.length; i++) {
-      res.push(queryResult[0].overloads[i].params);
+    for(var i = 0; i < doc.overloads.length; i++) {
+      res.push(doc.overloads[i].params);
     }
     return res;
   } else {
-    return [queryResult[0].params];
+    return [doc.params];
   }
 }
 function testParamFormat(args, format){
   var errorArray = [];
+  if (!format) {
+    format = [];
+  }
   var error;
   for (var p = 0; p < format.length; p++) {
     var argType = typeof(args[p]);
@@ -194,13 +194,22 @@ function testParamFormat(args, format){
       }
     }
   }
+  if(args.length > format.length) {
+    error = {
+      type: 'WRONG_ARGUMENT_COUNT',
+      counts: [args.length, format.length]
+    };
+    errorArray.push(error);
+  }
   return errorArray;
 }
 // testClass() for object type parameter validation
 // Returns true if PASS, false if FAIL
 function testParamClass(param, types){
   for (var i = 0; i < types.length; i++) {
-    if (types[i] === 'Array') {
+    if (types[i] === 'Any') {
+      return true;
+    } else if(types[i] === 'Array') {
       if(param instanceof Array) {
         return true;
       }
@@ -218,7 +227,9 @@ function testParamClass(param, types){
 // Returns true if PASS, false if FAIL
 function testParamType(param, types){
   for (var i = 0; i < types.length; i++) {
-    if (typeof(param) === types[i].toLowerCase()) {
+    if (types[i] === 'Any') {
+      return true;
+    } else if (typeof(param) === types[i].toLowerCase()) {
       return true;      // type match, pass
     } else if (types[i] === 'Constant') {
       return true;      // accepts any constant, pass
@@ -227,7 +238,7 @@ function testParamType(param, types){
   return false;
 }
 // function for generating console.log() msg
-p5._friendlyParamError = function (errorObj, func) {
+p5.prototype._friendlyParamError = function (errorObj, func) {
   var message;
   switch (errorObj.type){
     case 'EMPTY_VAR':
@@ -250,6 +261,12 @@ p5._friendlyParamError = function (errorObj, func) {
       // Wrap strings in quotes
       message += errorObj.wrongType + ' instead.';
       report(message, func, ERR_PARAMS);
+      break;
+    case 'WRONG_ARGUMENT_COUNT':
+      message = func + '() was expecting ' + errorObj.counts[1] +
+        ' arguments, but received ' + errorObj.counts[0];
+      report(message, func, ERR_PARAMS);
+      break;
   }
 };
 function friendlyWelcome() {
@@ -341,7 +358,7 @@ function defineMisusedAtTopLevelCode() {
     // At present, p5 only adds its constants to p5.prototype during
     // construction, which may not have happened at the time a
     // ReferenceError is thrown, so we'll manually add them to our list.
-    getSymbols(require('./constants'))
+    getSymbols(require('../core/constants'))
   );
 
   // This will ultimately ensure that we report the most specific error
@@ -397,7 +414,7 @@ function helpForMisusedAtTopLevelCode(e, log) {
 
 // Exposing this primarily for unit testing.
 p5.prototype._helpForMisusedAtTopLevelCode = helpForMisusedAtTopLevelCode;
-p5.prototype._validateParameters = p5.validateParameters;
+// p5.prototype._validateParameters = p5.validateParameters;
 
 if (document.readyState !== 'complete') {
   window.addEventListener('error', helpForMisusedAtTopLevelCode, false);

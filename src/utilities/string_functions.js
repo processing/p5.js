@@ -8,7 +8,6 @@
 'use strict';
 
 var p5 = require('../core/core');
-require('../core/error_helpers');
 
 //return p5; //LM is this a mistake?
 
@@ -37,7 +36,6 @@ require('../core/error_helpers');
  *
  */
 p5.prototype.join = function(list, separator) {
-  p5._validateParameters('join', arguments);
   return list.join(separator);
 };
 
@@ -78,7 +76,6 @@ p5.prototype.join = function(list, separator) {
  *
  */
 p5.prototype.match =  function(str, reg) {
-  p5._validateParameters('match', arguments);
   return str.match(reg);
 };
 
@@ -115,7 +112,6 @@ p5.prototype.match =  function(str, reg) {
  * </div>
  */
 p5.prototype.matchAll = function(str, reg) {
-  p5._validateParameters('matchAll', arguments);
   var re = new RegExp(reg, 'g');
   var match = re.exec(str);
   var matches = [];
@@ -179,7 +175,6 @@ p5.prototype.matchAll = function(str, reg) {
  * @return {Array}                formatted Strings\
  */
 p5.prototype.nf = function () {
-  p5._validateParameters('nf', arguments);
   if (arguments[0] instanceof Array) {
     var a = arguments[1];
     var b = arguments[2];
@@ -287,7 +282,6 @@ function doNf() {
  * @return {Array}           formatted Strings
  */
 p5.prototype.nfc = function () {
-  p5._validateParameters('nfc', arguments);
   if (arguments[0] instanceof Array) {
     var a = arguments[1];
     return arguments[0].map(function (x) {
@@ -370,7 +364,6 @@ function doNfc() {
  * @return {String[]}         formatted Strings
  */
 p5.prototype.nfp = function() {
-  p5._validateParameters('nfp', arguments);
   var nfRes = p5.prototype.nf.apply(this, arguments);
   if (nfRes instanceof Array) {
     return nfRes.map(addNfp);
@@ -435,7 +428,6 @@ function addNfp() {
  * @return {Array}         formatted Strings
  */
 p5.prototype.nfs = function() {
-  p5._validateParameters('nfs', arguments);
   var nfRes = p5.prototype.nf.apply(this, arguments);
   if (nfRes instanceof Array) {
     return nfRes.map(addNfs);
@@ -481,7 +473,6 @@ function addNfs() {
  *
  */
 p5.prototype.split = function(str, delim) {
-  p5._validateParameters('split', arguments);
   return str.split(delim);
 };
 
@@ -512,7 +503,6 @@ p5.prototype.split = function(str, delim) {
  * </div>
  */
 p5.prototype.splitTokens = function() {
-  p5._validateParameters('splitTokens', arguments);
   var d,sqo,sqc,str;
   str = arguments[1];
   if (arguments.length > 1) {
@@ -564,7 +554,6 @@ p5.prototype.splitTokens = function() {
  * @return {Array}       an Array of trimmed Strings
  */
 p5.prototype.trim = function(str) {
-  p5._validateParameters('trim', arguments);
   if (str instanceof Array) {
     return str.map(this.trim);
   } else {

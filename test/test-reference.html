@@ -153,6 +153,8 @@
               var oldSetup = p.setup || function() {};
               var oldDraw = p.draw || function() {};
 
+              sinon.spy(p, '_friendlyParamError');
+
               p.setup = function() {
                 try {
                   oldSetup();
@@ -171,6 +173,13 @@
                     // This can happen if the page contained processor-intensive
                     // code that blocked the UI for too long.
                     reject(new Error("code took too long to execute"));
+                    return;
+                  }
+
+                  if(p._friendlyParamError.called) {
+                    reject(new Error(
+                      "p5._friendlyParamError was called: " +
+                      p._friendlyParamError.getCalls()));
                     return;
                   }
 

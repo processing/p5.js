@@ -8,7 +8,6 @@
 'use strict';
 
 var p5 = require('./core');
-require('./error_helpers');
 
 var bezierDetail = 20;
 var curveDetail = 20;
@@ -79,7 +78,6 @@ p5.prototype.bezier = function() {
     args[i] = arguments[i];
   }
 
-  p5._validateParameters('bezier', args);
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
@@ -164,7 +162,6 @@ p5.prototype.bezierPoint = function(a, b, c, d, t) {
     args[i] = arguments[i];
   }
 
-  p5._validateParameters('bezierPoint', args);
   var adjustedT = 1-args[4];
   return Math.pow(adjustedT,3)*args[0] +
    3*(Math.pow(adjustedT,2))*args[4]*args[1] +
@@ -243,7 +240,6 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
     args[i] = arguments[i];
   }
 
-  p5._validateParameters('bezierTangent', args);
   var adjustedT = 1-args[4];
   return 3*args[3]*Math.pow(args[4],2) -
    3*args[2]*Math.pow(args[4],2) +
@@ -334,7 +330,6 @@ p5.prototype.curve = function() {
     args[i] = arguments[i];
   }
 
-  p5._validateParameters('curve', args);
   if (!this._renderer._doStroke) {
     return this;
   }
@@ -463,7 +458,6 @@ p5.prototype.curvePoint = function(a, b, c, d, t) {
     args[i] = arguments[i];
   }
 
-  p5._validateParameters('curvePoint', args);
   var t3 = args[4]*args[4]*args[4],
     t2 = args[4]*args[4],
     f1 = -0.5 * t3 + t2 - 0.5 * args[4],
@@ -514,7 +508,6 @@ p5.prototype.curveTangent = function(a, b, c, d, t) {
     args[i] = arguments[i];
   }
 
-  p5._validateParameters('curveTangent', args);
   var t2 = args[4]*args[4],
     f1 = (-3*t2)/2 + 2*args[4] - 0.5,
     f2 = (9*t2)/2 - 5*args[4],

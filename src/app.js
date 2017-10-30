@@ -61,6 +61,9 @@ require('./webgl/p5.Shader');
 require('./webgl/camera');
 require('./webgl/interaction');
 
+require('./fes/error_helpers');
+require('./fes/inject');
+
 require('./core/init.js');
 
 

@@ -11,7 +11,6 @@
 var p5 = require('./core');
 var constants = require('./constants');
 var canvas = require('./canvas');
-require('./error_helpers');
 
 /**
  * Draw an arc to the screen. If called with only a, b, c, d, start, and
@@ -76,7 +75,6 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
     args[i] = arguments[i];
   }
 
-  p5._validateParameters('arc', args);
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
@@ -164,7 +162,6 @@ p5.prototype.ellipse = function() {
     args.push(args[2]);
   }
 
-  p5._validateParameters('ellipse', args);
   // p5 supports negative width and heights for rects
   if (args[2] < 0){args[2] = Math.abs(args[2]);}
   if (args[3] < 0){args[3] = Math.abs(args[3]);}
@@ -229,7 +226,6 @@ p5.prototype.line = function() {
     args[i] = arguments[i];
   }
 
-  p5._validateParameters('line', args);
   //check whether we should draw a 3d line or 2d
   if (this._renderer.isP3D) {
     this._renderer.line.apply(this, args);
@@ -276,7 +272,6 @@ p5.prototype.point = function() {
     args[i] = arguments[i];
   }
 
-  p5._validateParameters('point', args);
   //check whether we should draw a 3d line or 2d
   if (this._renderer.isP3D) {
     this._renderer.point(
@@ -343,7 +338,6 @@ p5.prototype.quad = function() {
     args[i] = arguments[i];
   }
 
-  p5._validateParameters('quad', args);
   if (this._renderer.isP3D) {
     this._renderer.quad(
       args[0],
@@ -443,7 +437,6 @@ p5.prototype.rect = function() {
     return this;
   }
 
-  p5._validateParameters('rect', args);
   var vals = canvas.modeAdjust(
     args[0],
     args[1],
@@ -492,7 +485,6 @@ p5.prototype.triangle = function() {
     args[i] = arguments[i];
   }
 
-  p5._validateParameters('triangle', args);
   this._renderer.triangle(args);
   return this;
 };

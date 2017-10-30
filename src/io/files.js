@@ -14,7 +14,6 @@ var p5 = require('../core/core');
 require('whatwg-fetch');
 require('es6-promise').polyfill();
 var fetchJsonp = require('fetch-jsonp');
-require('../core/error_helpers');
 
 /**
  * Loads a JSON file from a file or a URL, and returns an Object.
