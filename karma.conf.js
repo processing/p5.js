@@ -44,7 +44,7 @@ module.exports = function(config) {
 
     // Default list of files / patterns to load in the browser
     // This can be overriden in grunt-karma.js when using grunt to run karma
-    // These files will only be used when running karam directly with: karam start
+    // These files will only be used when running karma directly with: karma start
     files: [
       'lib/p5.js',
       'bench/**/*.bench.js'
