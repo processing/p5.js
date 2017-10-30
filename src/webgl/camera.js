@@ -251,6 +251,7 @@ p5.RendererGL.prototype.perspective = function() {
  * function draw(){
  *  background(200);
  *  orbitControl();
+ *  strokeWeight(0.1);
  *  for(var i = -1; i < 2; i++){
  *     for(var j = -2; j < 3; j++){
  *       push();
