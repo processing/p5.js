@@ -341,4 +341,43 @@ p5.prototype._makeFrame = function(filename, extension, _cnv) {
   frames.push(thisFrame);
 };
 
+/**
+ * Returns the current canvas as a loaded p5.Image. This allows an assignment
+ * or immediate use in the sketch as a canvas screenshot.
+ *
+ * @method getCanvasImage
+ * @example
+ * <div>
+ * <code>
+ * var screenshot;
+ *
+ * function draw() {
+ *   background(237, 34, 93);
+ *
+ *   // Sample circle
+ *   strokeWeight(10);
+ *   ellipse(50, 50, 80, 80);
+ *
+ *   // Draw the screenshot if the screenshot has been made
+ *   if(!(screenshot == null)) {
+ *     image(screenshot, 5, 5, 60, 60);
+ *   }
+ * }
+ *
+ * // When a mouse button is pressed, the screenshot is captured
+ * function mousePressed() {
+ *   screenshot = getCanvasImage();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * Screenshots are made and displayed on mouse click
+ */
+p5.prototype.getCanvasImage = function() {
+  if (this._curElement && this._curElement.elt) {
+    return this.loadImage(this._curElement.elt.toDataURL('image/png'));
+  }
+};
+
 module.exports = p5;
