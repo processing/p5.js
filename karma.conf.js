@@ -1,6 +1,6 @@
 /**
  *  This is the global shared configuration for karma.  Specific
- *  benchmark configuation is located in grunt-karma.js
+ *  benchmark configuration is located in grunt-karma.js
  */
 module.exports = function(config) {
   config.set({
