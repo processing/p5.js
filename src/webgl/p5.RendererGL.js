@@ -210,7 +210,10 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  * (note that p5 clears automatically on draw loop)
  * default is true
  * <br><br>
- *
+ * @method setAttributes
+ * @param  {String|Object}  String name of attribute or object with key-value pairs
+ * @param  {Boolean}        New value of named attribute
+ * @example
  * <div>
  * <code>
  *  function setup() {
@@ -252,10 +255,7 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  * </code>
  * </div>
  *
- * @method setAttributes
- * @param  {String|Object}  String name of attribute or object with key-value pairs
- * @param  {Boolean}        New value of named attribute
- *
+ * @alt a rotating cube with smoother edges
  */
 
 p5.prototype.setAttributes = function() {
