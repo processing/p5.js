@@ -19,6 +19,7 @@
     "browserify": "^11.0.1",
     "chai": "^3.5.0",
     "concat-files": "^0.1.0",
+    "connect-modrewrite": "^0.10.1",
     "derequire": "^2.0.0",
     "grunt": "^0.4.5",
     "grunt-cli": "^0.1.13",
