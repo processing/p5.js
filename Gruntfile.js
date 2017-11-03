@@ -113,15 +113,14 @@ module.exports = function(grunt) {
           'Gruntfile.js',
           'tasks/**/*.js',
           'test/unit/**/*.js',
-          'src/**/*.js',
-          '!src/external/**/*.js'
+          'src/**/*.js'
         ],
         options: {
           fix: true
         }
       },
       source: {
-        src: ['src/**/*.js', '!src/external/**/*.js']
+        src: ['src/**/*.js']
       },
       test: {
         src: ['test/unit/**/*.js']
