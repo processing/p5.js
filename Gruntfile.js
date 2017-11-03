@@ -112,6 +112,18 @@ module.exports = function(grunt) {
           'tasks/**/*.js'
         ]
       },
+      fix: {
+        src: [
+          'Gruntfile.js',
+          'tasks/**/*.js',
+          'test/unit/**/*.js',
+          'src/**/*.js',
+          '!src/external/**/*.js'
+        ],
+        options: {
+          fix: true
+        }
+      },
       source: {
         src: [
           'src/**/*.js',
@@ -353,7 +365,16 @@ module.exports = function(grunt) {
 
   // Create the multitasks.
   grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);
-  grunt.registerTask('test', ['eslint', 'yuidoc:prod', 'build', 'connect', 'mocha', 'mochaTest']);
+  grunt.registerTask('lint-no-fix', ['eslint:build', 'eslint:source', 'eslint:test']);
+  grunt.registerTask('lint-fix', ['eslint:fix']);
+  grunt.registerTask('test', [
+    'lint-no-fix',
+    'yuidoc:prod',
+    'build',
+    'connect',
+    'mocha',
+    'mochaTest'
+  ]);
   grunt.registerTask('test:nobuild', ['eslint:test', 'connect', 'mocha']);
   grunt.registerTask('yui', ['yuidoc:prod', 'minjson']);
   grunt.registerTask('yui:test', ['yuidoc:prod', 'connect', 'mocha:yui']);

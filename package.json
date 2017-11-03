@@ -9,6 +9,8 @@
     "build": "grunt build",
     "docs": "grunt yui",
     "test": "grunt",
+    "lint": "grunt lint-no-fix",
+    "lint:fix": "grunt lint-fix",
     "add": "all-contributors add",
     "generate": "all-contributors generate"
   },
@@ -22,6 +24,8 @@
     "connect-modrewrite": "^0.10.1",
     "derequire": "^2.0.0",
     "eslint": "^4.9.0",
+    "eslint-config-prettier": "2.7.0",
+    "eslint-plugin-prettier": "2.3.1",
     "grunt": "^0.4.5",
     "grunt-cli": "^0.1.13",
     "grunt-contrib-compress": "^1.4.3",
@@ -58,6 +62,7 @@
     "marked": "^0.3.5",
     "mocha": "^3.2.0",
     "phantomjs": "^2.1.7",
+    "prettier": "^1.7.4",
     "request": "^2.81.0"
   },
   "license": "LGPL-2.1",
