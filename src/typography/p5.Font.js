@@ -212,6 +212,7 @@ p5.Font.prototype.textToPoints = function(txt, x, y, fontSize, options) {
  * and glyphs, so the list of returned glyphs can be larger or smaller
  *  than the length of the given string.
  *
+ * @private
  * @param  {String} str the string to be converted
  * @return {Array}     the opentype glyphs
  */
@@ -223,6 +224,7 @@ p5.Font.prototype._getGlyphs = function(str) {
 /**
  * Returns an opentype path for the supplied string and position.
  *
+ * @private
  * @param  {String} line     a line of text
  * @param  {Number} x        x-position
  * @param  {Number} y        y-position

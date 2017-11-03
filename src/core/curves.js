@@ -102,6 +102,7 @@ p5.prototype.bezier = function() {
  *
  * The default value is 20.
  *
+ * @method bezierDetail
  * @param {Number} detail resolution of the curves
  * @chainable
  * @example
@@ -357,6 +358,7 @@ p5.prototype.curve = function() {
  *
  * The default value is 20.
  *
+ * @method curveDetail
  * @param {Number} resolution of the curves
  * @chainable
  * @example

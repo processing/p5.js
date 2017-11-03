@@ -51,6 +51,10 @@ p5.Geometry = function(detailX, detailY, callback){
   return this; // TODO: is this a constructor?
 };
 
+/**
+ * @method computeFaces
+ * @chainable
+ */
 p5.Geometry.prototype.computeFaces = function(){
   var sliceCount = this.detailX + 1;
   var a, b, c, d;
@@ -85,6 +89,7 @@ p5.Geometry.prototype._getFaceNormal = function(faceId,vertId){
 /**
  * computes smooth normals per vertex as an average of each
  * face.
+ * @method computeNormals
  * @chainable
  */
 p5.Geometry.prototype.computeNormals = function (){
@@ -110,6 +115,7 @@ p5.Geometry.prototype.computeNormals = function (){
 /**
  * Averages the vertex normals. Used in curved
  * surfaces
+ * @method averageNormals
  * @chainable
  */
 p5.Geometry.prototype.averageNormals = function() {
@@ -129,6 +135,7 @@ p5.Geometry.prototype.averageNormals = function() {
 
 /**
  * Averages pole normals.  Used in spherical primitives
+ * @method averagePoleNormals
  * @chainable
  */
 p5.Geometry.prototype.averagePoleNormals = function() {
@@ -160,6 +167,7 @@ p5.Geometry.prototype.averagePoleNormals = function() {
 
 /**
  * Create a 2D array for establishing stroke connections
+ * @private
  * @return {p5.Geometry}
  */
 p5.Geometry.prototype._makeTriangleEdges = function() {
@@ -183,6 +191,7 @@ p5.Geometry.prototype._makeTriangleEdges = function() {
  * Create 4 vertices for each stroke line, two at the beginning position
  * and two at the end position. These vertices are displaced relative to
  * that line's normal on the GPU
+ * @private
  * @return {p5.Geometry}
  */
 p5.RendererGL.prototype._edgesToVertices = function(geom) {
@@ -208,6 +217,7 @@ p5.RendererGL.prototype._edgesToVertices = function(geom) {
 
 /**
  * Modifies all vertices to be centered within the range -100 to 100.
+ * @method normalize
  * @chainable
  */
 p5.Geometry.prototype.normalize = function() {

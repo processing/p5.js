@@ -140,6 +140,7 @@ Filters._createImageData = function (width, height) {
  * use case of creating a filter chain that executes without actually updating
  * the canvas in between everystep.
  *
+ * @private
  * @param  {HTMLCanvasElement} canvas [description]
  * @param  {function(ImageData,Object)} func   [description]
  * @param  {Object} filterParam  [description]
@@ -171,6 +172,7 @@ Filters.apply = function (canvas, func, filterParam) {
  *
  * Borrowed from http://www.html5rocks.com/en/tutorials/canvas/imagefilters/
  *
+ * @private
  * @param  {Canvas} canvas
  * @param  {Float} level
  */
@@ -205,6 +207,7 @@ Filters.threshold = function (canvas, level) {
  *
  * Borrowed from http://www.html5rocks.com/en/tutorials/canvas/imagefilters/
  *
+ * @private
  * @param {Canvas} canvas
  */
 Filters.gray = function (canvas) {
@@ -224,6 +227,7 @@ Filters.gray = function (canvas) {
 /**
  * Sets the alpha channel to entirely opaque. No parameter is used.
  *
+ * @private
  * @param {Canvas} canvas
  */
 Filters.opaque = function (canvas) {
@@ -238,6 +242,7 @@ Filters.opaque = function (canvas) {
 
 /**
  * Sets each pixel to its inverse value. No parameter is used.
+ * @private
  * @param  {Canvas} canvas
  */
 Filters.invert = function (canvas) {
@@ -259,6 +264,7 @@ Filters.invert = function (canvas) {
  *
  * Adapted from java based processing implementation
  *
+ * @private
  * @param  {Canvas} canvas
  * @param  {Integer} level
  */
@@ -285,6 +291,7 @@ Filters.posterize = function (canvas, level) {
 
 /**
  * reduces the bright areas in an image
+ * @private
  * @param  {Canvas} canvas
  *
  */
@@ -367,6 +374,7 @@ Filters.dilate = function (canvas) {
 
 /**
  * increases the bright areas in an image
+ * @private
  * @param  {Canvas} canvas
  *
  */
