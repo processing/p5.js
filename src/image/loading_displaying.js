@@ -231,59 +231,57 @@ function _sAssign(sVal, iVal) {
  */
 p5.prototype.image =
   function(img, dx, dy, dWidth, dHeight, sx, sy, sWidth, sHeight) {
-  // set defaults per spec: https://goo.gl/3ykfOq
+    // set defaults per spec: https://goo.gl/3ykfOq
 
-  var defW = img.width;
-  var defH = img.height;
+    var defW = img.width;
+    var defH = img.height;
 
-  if (img.elt && img.elt.videoWidth && !img.canvas) { // video no canvas
-    defW = img.elt.videoWidth;
-    defH = img.elt.videoHeight;
-  }
-
-  var _dx = dx;
-  var _dy = dy;
-  var _dw = dWidth || defW;
-  var _dh = dHeight || defH;
-  var _sx = sx || 0;
-  var _sy = sy || 0;
-  var _sw = sWidth || defW;
-  var _sh = sHeight || defH;
-
-  _sw = _sAssign(_sw, defW);
-  _sh = _sAssign(_sh, defH);
-
-
-  // This part needs cleanup and unit tests
-  // see issues https://github.com/processing/p5.js/issues/1741
-  // and https://github.com/processing/p5.js/issues/1673
-  var pd = 1;
-
-  if (img.elt && !img.canvas && img.elt.style.width) {
-    //if img is video and img.elt.size() has been used and
-    //no width passed to image()
-    if(img.elt.videoWidth && !dWidth){
-      pd = img.elt.videoWidth;
+    if (img.elt && img.elt.videoWidth && !img.canvas) { // video no canvas
+      defW = img.elt.videoWidth;
+      defH = img.elt.videoHeight;
     }
-    //all other cases
-    else {
-      pd = img.elt.width;
+
+    var _dx = dx;
+    var _dy = dy;
+    var _dw = dWidth || defW;
+    var _dh = dHeight || defH;
+    var _sx = sx || 0;
+    var _sy = sy || 0;
+    var _sw = sWidth || defW;
+    var _sh = sHeight || defH;
+
+    _sw = _sAssign(_sw, defW);
+    _sh = _sAssign(_sh, defH);
+
+
+    // This part needs cleanup and unit tests
+    // see issues https://github.com/processing/p5.js/issues/1741
+    // and https://github.com/processing/p5.js/issues/1673
+    var pd = 1;
+
+    if (img.elt && !img.canvas && img.elt.style.width) {
+      //if img is video and img.elt.size() has been used and
+      //no width passed to image()
+      if(img.elt.videoWidth && !dWidth){
+        pd = img.elt.videoWidth;
+      }
+      //all other cases
+      else {
+        pd = img.elt.width;
+      }
+      pd /= parseInt(img.elt.style.width, 10);
     }
-    pd /= parseInt(img.elt.style.width, 10);
-  }
 
-  _sx *= pd;
-  _sy *= pd;
-  _sh *= pd;
-  _sw *= pd;
+    _sx *= pd;
+    _sy *= pd;
+    _sh *= pd;
+    _sw *= pd;
 
-  var vals = canvas.modeAdjust(_dx, _dy, _dw, _dh,
-    this._renderer._imageMode);
+    var vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer._imageMode);
 
-  // tint the image if there is a tint
-  this._renderer.image(img, _sx, _sy, _sw, _sh, vals.x, vals.y, vals.w,
-    vals.h);
-};
+    // tint the image if there is a tint
+    this._renderer.image(img, _sx, _sy, _sw, _sh, vals.x, vals.y, vals.w, vals.h);
+  };
 
 
 /**

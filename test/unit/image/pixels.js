@@ -44,10 +44,9 @@ suite('pixels', function() {
       assert.deepEqual(img.get(25, 26), [0, 0, 255, 255]);
     });
 
-    test('rounds down when given decimal numbers',
-      function() {
-        assert.deepEqual(img.get(25, 25.999), img.get(25, 25));
-      });
+    test('rounds down when given decimal numbers', function() {
+      assert.deepEqual(img.get(25, 25.999), img.get(25, 25));
+    });
   });
 
 });

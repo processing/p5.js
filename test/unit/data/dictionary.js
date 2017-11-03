@@ -25,8 +25,9 @@ suite('Dictionary Objects', function() {
     });
 
     test('has correct structure', function() {
-      assert.deepEqual(JSON.stringify(stringDict),
-      JSON.stringify({data:{'happy':'coding'}}));
+      assert.deepEqual(
+        JSON.stringify(stringDict),
+        JSON.stringify({data:{'happy':'coding'}}));
     });
 
     test('should have correct size', function() {
@@ -61,8 +62,9 @@ suite('Dictionary Objects', function() {
     });
 
     test('has correct structure', function() {
-      assert.deepEqual(JSON.stringify(numberDict),
-       JSON.stringify({data:{1:2}}));
+      assert.deepEqual(
+        JSON.stringify(numberDict),
+        JSON.stringify({data:{1:2}}));
     });
 
 

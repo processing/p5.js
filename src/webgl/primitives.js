@@ -63,7 +63,8 @@ p5.prototype.plane = function(){
         v = i / this.detailY;
         for (var j = 0; j <= this.detailX; j++){
           u = j / this.detailX;
-          p = new p5.Vector(width * u - width/2,
+          p = new p5.Vector(
+            width * u - width/2,
             height * v - height/2,
             0);
           this.vertices.push(p);
@@ -146,7 +147,6 @@ p5.prototype.box = function(){
         [0,1],[1,3],[3,2],[6,7],[8,9],[9,11],[14,15],
         [16,17],[17,19],[18,19],[20,21],[22,23]
       ];
-      var id=0;
       for (var i = 0; i < cubeIndices.length; i++) {
         var cubeIndex = cubeIndices[i];
         var v = i * 4;
@@ -161,7 +161,6 @@ p5.prototype.box = function(){
             ((d & 4) / 2 - 1) * depth/2);
           this.vertices.push( octant );
           this.uvs.push([j & 1, (j & 2) / 2]);
-          id++;
         }
         this.faces.push([v, v + 1, v + 2]);
         this.faces.push([v + 2, v + 1, v + 3]);
@@ -232,7 +231,8 @@ p5.prototype.sphere = function(){
           u = j / this.detailX;
           var theta = 2 * Math.PI * u;
           var phi = Math.PI * v - Math.PI / 2;
-          p = new p5.Vector(radius * Math.cos(phi) * Math.sin(theta),
+          p = new p5.Vector(
+            radius * Math.cos(phi) * Math.sin(theta),
             radius * Math.sin(phi),
             radius * Math.cos(phi) * Math.cos(theta));
           this.vertices.push(p);
@@ -314,28 +314,30 @@ var _truncatedCone = function(
           Math.sin(ii*Math.PI * 2 /detailX) * ringRadius,
           y,
           Math.cos(ii*Math.PI * 2 /detailX) * ringRadius)
-        );
+      );
       //VERTEX NORMALS
       this.vertexNormals.push(
         new p5.Vector(
-          (yy < 0 || yy > detailY) ? 0 :
-          (Math.sin(ii * Math.PI * 2 / detailX) * Math.cos(slant)),
+          (yy < 0 || yy > detailY) ? 0 : (Math.sin(ii * Math.PI * 2 / detailX) * Math.cos(slant)),
           (yy < 0) ? -1 : (yy > detailY ? 1 : Math.sin(slant)),
-          (yy < 0 || yy > detailY) ? 0 :
-          (Math.cos(ii * Math.PI * 2 / detailX) * Math.cos(slant)))
-        );
+          (yy < 0 || yy > detailY) ? 0 : (Math.cos(ii * Math.PI * 2 / detailX) * Math.cos(slant)))
+      );
       //UVs
       this.uvs.push([(ii / detailX), v]);
     }
   }
   for (yy = 0; yy < detailY + extra; ++yy) {
     for (ii = 0; ii < detailX; ++ii) {
-      this.faces.push([vertsAroundEdge * (yy + 0) + 0 + ii,
+      this.faces.push([
+        vertsAroundEdge * (yy + 0) + 0 + ii,
         vertsAroundEdge * (yy + 0) + 1 + ii,
-        vertsAroundEdge * (yy + 1) + 1 + ii]);
-      this.faces.push([vertsAroundEdge * (yy + 0) + 0 + ii,
+        vertsAroundEdge * (yy + 1) + 1 + ii
+      ]);
+      this.faces.push([
+        vertsAroundEdge * (yy + 0) + 0 + ii,
         vertsAroundEdge * (yy + 1) + 1 + ii,
-        vertsAroundEdge * (yy + 1) + 0 + ii]);
+        vertsAroundEdge * (yy + 1) + 0 + ii
+      ]);
     }
   }
 };
@@ -447,7 +449,8 @@ p5.prototype.cone = function(){
   var gId = 'cone|'+baseRadius+'|'+height+'|'+detailX+'|'+detailY;
   if(!this._renderer.geometryInHash(gId)){
     var coneGeom = new p5.Geometry(detailX, detailY);
-    _truncatedCone.call(coneGeom,
+    _truncatedCone.call(
+      coneGeom,
       baseRadius,
       0,//top radius 0
       height,
@@ -526,7 +529,8 @@ p5.prototype.ellipsoid = function(){
           u = j / this.detailX;
           var theta = 2 * Math.PI * u;
           var phi = Math.PI * v - Math.PI / 2;
-          p = new p5.Vector(radiusX * Math.cos(phi) * Math.sin(theta),
+          p = new p5.Vector(
+            radiusX * Math.cos(phi) * Math.sin(theta),
             radiusY * Math.sin(phi),
             radiusZ * Math.cos(phi) * Math.cos(theta));
           this.vertices.push(p);
@@ -642,8 +646,7 @@ p5.RendererGL.prototype.point = function(x, y, z){
   return this;
 };
 
-p5.RendererGL.prototype.triangle = function
-(args){
+p5.RendererGL.prototype.triangle = function(args){
   var x1=args[0], y1=args[1];
   var x2=args[2], y2=args[3];
   var x3=args[4], y3=args[5];
@@ -672,8 +675,7 @@ p5.RendererGL.prototype.triangle = function
   return this;
 };
 
-p5.RendererGL.prototype.ellipse = function
-(args){
+p5.RendererGL.prototype.ellipse = function(args){
   var x = args[0];
   var y = args[1];
   var width = args[2];
@@ -805,8 +807,7 @@ p5.RendererGL.prototype.quad = function(){
 
 //this implementation of bezier curve
 //is based on Bernstein polynomial
-p5.RendererGL.prototype.bezier = function
-(args){
+p5.RendererGL.prototype.bezier = function(args){
   var bezierDetail=args[12] || 20;//value of Bezier detail
   this.beginShape();
   var coeff=[0,0,0,0];//  Bernstein polynomial coeffecients
@@ -828,8 +829,7 @@ p5.RendererGL.prototype.bezier = function
   return this;
 };
 
-p5.RendererGL.prototype.curve=function
-(args){
+p5.RendererGL.prototype.curve=function(args){
   var curveDetail=args[12];
   this.beginShape();
   var coeff=[0,0,0,0];//coeffecients of the equation

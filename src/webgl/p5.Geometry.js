@@ -14,8 +14,7 @@ var p5 = require('../core/core');
  * @param {function} [callback] function to call upon object instantiation.
  *
  */
-p5.Geometry = function
-(detailX, detailY, callback){
+p5.Geometry = function(detailX, detailY, callback){
   //an array containing every vertex
   //@type [p5.Vector]
   this.vertices = [];
@@ -117,9 +116,10 @@ p5.Geometry.prototype.averageNormals = function() {
 
   for(var i = 0; i <= this.detailY; i++){
     var offset = this.detailX + 1;
-    var temp = p5.Vector
-      .add(this.vertexNormals[i*offset],
-        this.vertexNormals[i*offset + this.detailX]);
+    var temp = p5.Vector.add(
+      this.vertexNormals[i*offset],
+      this.vertexNormals[i*offset + this.detailX]);
+
     temp = p5.Vector.div(temp, 2);
     this.vertexNormals[i*offset] = temp;
     this.vertexNormals[i*offset + this.detailX] = temp;
@@ -191,10 +191,10 @@ p5.RendererGL.prototype._edgesToVertices = function(geom) {
     var begin = geom.vertices[geom.edges[i][0]];
     var end = geom.vertices[geom.edges[i][1]];
     var dir = end.copy().sub(begin).normalize();
-    var a = begin.array(),
-        b = begin.array(),
-        c = end.array(),
-        d = end.array();
+    var a = begin.array();
+    var b = begin.array();
+    var c = end.array();
+    var d = end.array();
     var dirAdd = dir.array();
     var dirSub = dir.array();
     // below is used to displace the pair of vertices at beginning and end

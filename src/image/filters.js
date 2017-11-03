@@ -294,9 +294,10 @@ Filters.dilate = function (canvas) {
   var maxIdx = pixels.length ? pixels.length/4 : 0;
   var out = new Int32Array(maxIdx);
   var currRowIdx, maxRowIdx, colOrig, colOut, currLum;
-  var idxRight, idxLeft, idxUp, idxDown,
-      colRight, colLeft, colUp, colDown,
-      lumRight, lumLeft, lumUp, lumDown;
+
+  var idxRight, idxLeft, idxUp, idxDown;
+  var colRight, colLeft, colUp, colDown;
+  var lumRight, lumLeft, lumUp, lumDown;
 
   while(currIdx < maxIdx) {
     currRowIdx = currIdx;
@@ -375,9 +376,9 @@ Filters.erode = function(canvas) {
   var maxIdx = pixels.length ? pixels.length/4 : 0;
   var out = new Int32Array(maxIdx);
   var currRowIdx, maxRowIdx, colOrig, colOut, currLum;
-  var idxRight, idxLeft, idxUp, idxDown,
-      colRight, colLeft, colUp, colDown,
-      lumRight, lumLeft, lumUp, lumDown;
+  var idxRight, idxLeft, idxUp, idxDown;
+  var colRight, colLeft, colUp, colDown;
+  var lumRight, lumLeft, lumUp, lumDown;
 
   while(currIdx < maxIdx) {
     currRowIdx = currIdx;

@@ -20,22 +20,28 @@ suite('Curves', function() {
       assert.typeOf(myp5.bezier, 'function');
     });
     test('no friendly-err-msg', function() {
-      assert.doesNotThrow(function() {
+      assert.doesNotThrow(
+        function() {
           myp5.bezier(85, 20, 10, 10, 90, 90, 15, 80);
         },
-        Error, 'got unwanted exception');
+        Error,
+        'got unwanted exception');
     });
     test('no friendly-err-msg. missing param #6, #7', function() {
-      assert.doesNotThrow(function() {
+      assert.doesNotThrow(
+        function() {
           myp5.bezier(85, 20, 10, 10, 90, 90);
         },
-        Error, 'got unwanted exception');
+        Error,
+        'got unwanted exception');
     });
     test('wrong param type at #0', function() {
-      assert.doesNotThrow(function() {
+      assert.doesNotThrow(
+        function() {
           myp5.bezier('85', 20, 10, 10, 90, 90, 15, 80);
         },
-        Error, 'got unwanted exception');
+        Error,
+        'got unwanted exception');
     });
   });
 
@@ -78,22 +84,28 @@ suite('Curves', function() {
       assert.typeOf(myp5.curve, 'function');
     });
     test('no friendly-err-msg', function() {
-      assert.doesNotThrow(function() {
+      assert.doesNotThrow(
+        function() {
           myp5.curve(5, 26, 5, 26, 73, 24, 73, 61);
         },
-        Error, 'got unwanted exception');
+        Error,
+        'got unwanted exception');
     });
     test('no friendly-err-msg. missing param #6, #7', function() {
-      assert.doesNotThrow(function() {
+      assert.doesNotThrow(
+        function() {
           myp5.curve(5, 26, 5, 26, 73, 24);
         },
-        Error, 'got unwanted exception');
+        Error,
+        'got unwanted exception');
     });
     test('wrong param type at #0', function() {
-      assert.doesNotThrow(function() {
+      assert.doesNotThrow(
+        function() {
           myp5.curve('5', 26, 5, 26, 73, 24, 73, 61);
         },
-        Error, 'got unwanted exception');
+        Error,
+        'got unwanted exception');
     });
   });
 

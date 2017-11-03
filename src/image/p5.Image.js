@@ -454,7 +454,8 @@ p5.Image.prototype.resize = function(width, height){
   var tempCanvas = document.createElement('canvas');
   tempCanvas.width = width;
   tempCanvas.height = height;
-  tempCanvas.getContext('2d').drawImage(this.canvas,
+  tempCanvas.getContext('2d').drawImage(
+    this.canvas,
     0, 0, this.canvas.width, this.canvas.height,
     0, 0, tempCanvas.width, tempCanvas.height
   );
@@ -466,7 +467,8 @@ p5.Image.prototype.resize = function(width, height){
 
   //Copy the image back
 
-  this.drawingContext.drawImage(tempCanvas,
+  this.drawingContext.drawImage(
+    tempCanvas,
     0, 0, width, height,
     0, 0, width, height
   );
