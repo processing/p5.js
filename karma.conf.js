@@ -1,6 +1,6 @@
 /**
  *  This is the global shared configuration for karma.  Specific
- *  benchmark configuation is located in grunt-karma.js
+ *  benchmark configuration is located in grunt-karma.js
  */
 module.exports = function(config) {
   config.set({
@@ -21,7 +21,7 @@ module.exports = function(config) {
       'karma-safari-launcher',
       'karma-detect-browsers',
       'karma-benchmark',
-      'karma-benchmark-reporter',
+      'karma-benchmark-reporter'
     ],
 
     detectBrowsers: {
@@ -29,7 +29,7 @@ module.exports = function(config) {
 
       // post processing of browsers list
       postDetection: function(availableBrowser) {
-        let browsers = [];
+        var browsers = [];
 
         // Filter out nightly and dev builds
         if (availableBrowser.indexOf('Chrome') >-1 )  browsers.push('Chrome');
@@ -53,7 +53,7 @@ module.exports = function(config) {
     // test results reporter to use
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
     reporters: [
-      'benchmark',
+      'benchmark'
     ],
 
     // web server port
@@ -75,6 +75,12 @@ module.exports = function(config) {
 
     // Concurrency level
     // how many browser should be started simultaneous
-    concurrency: Infinity
+    concurrency: Infinity,
+
+    // Sometimes Safari can timeout with the default values, raising these timeouts seem to fix it
+    captureTimeout: 60000,
+    browserDisconnectTimeout: 10000,
+    browserDisconnectTolerance: 3,
+    browserNoActivityTimeout: 60000
   })
-}
+};
