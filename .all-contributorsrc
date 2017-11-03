@@ -226,7 +226,10 @@
       "name": "Niklas Peters",
       "avatar_url": "https://avatars0.githubusercontent.com/u/20650298?s=460&amp;v=4",
       "profile": "https://www.niklaspeters.com",
-      "contributions": ["doc", "tutorial"]
+      "contributions": [
+        "doc",
+        "tutorial"
+      ]
     },
     {
       "login": "MathuraMG",
@@ -450,7 +453,10 @@
       "name": "Austin Cawley-Edwards",
       "avatar_url": "https://avatars3.githubusercontent.com/u/4655775?v=4",
       "profile": "https://austince.me",
-      "contributions": ["doc", "example"]
+      "contributions": [
+        "doc",
+        "example"
+      ]
     },
     {
       "login": "taseenb",
@@ -471,7 +477,9 @@
       "name": "John Pasquarello",
       "avatar_url": "https://avatars3.githubusercontent.com/u/2349625?v=4",
       "profile": "https://github.com/johnpasquarello",
-      "contributions": ["code"]
+      "contributions": [
+        "code"
+      ]
     },
     {
       "login": "KevinWorkman",
@@ -1066,7 +1074,11 @@
       "name": "Jorge Moreno",
       "avatar_url": "https://avatars1.githubusercontent.com/u/703744?v=4",
       "profile": "http://www.moro.es",
-      "contributions": ["bug", "code", "doc"]
+      "contributions": [
+        "bug",
+        "code",
+        "doc"
+      ]
     },
     {
       "login": "stevengreens10",
@@ -1242,6 +1254,15 @@
       "avatar_url": "https://avatars1.githubusercontent.com/u/1623101?v=4",
       "profile": "http://fathom.info",
       "contributions": []
+    },
+    {
+      "login": "wangyasai",
+      "name": "Yasai",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/13515645?v=4",
+      "profile": "https://github.com/wangyasai",
+      "contributions": [
+        "blog"
+      ]
     }
   ]
 }
