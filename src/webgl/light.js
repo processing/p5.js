@@ -88,17 +88,42 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
 
 /**
  * Creates a directional light with a color and a direction
- * @method  directionalLight
- * @param  {Number|Array|String|p5.Color} v1   gray value,
- * red or hue value (depending on the current color mode),
- * or color Array, or CSS color string
- * @param  {Number}          [v2] green or saturation value
- * @param  {Number}          [v3] blue or brightness value
- * @param  {Number}          [a]  opacity
- * @param  {Number|p5.Vector} x   x axis direction or a p5.Vector
- * @param  {Number}          [y]  y axis direction
- * @param  {Number}          [z]  z axis direction
+ * @method directionalLight
+ * @param  {Number}    v1       red or hue value (depending on the current
+ * color mode),
+ * @param  {Number}    v2       green or saturation value
+ * @param  {Number}    v3       blue or brightness value
+ * @param  {p5.Vector} position the direction of the light
  * @chainable
+ */
+
+/**
+ * @method directionalLight
+ * @param  {Number[]|String|p5.Color} color   color Array, CSS color string,
+ *                                             or p5.Color value
+ * @param  {Number}                   x       x axis direction
+ * @param  {Number}                   y       y axis direction
+ * @param  {Number}                   z       z axis direction
+ * @chainable
+ */
+
+/**
+ * @method directionalLight
+ * @param  {Number[]|String|p5.Color} color
+ * @param  {p5.Vector}                position
+ * @chainable
+ */
+
+/**
+ * @method directionalLight
+ * @param  {Number}    v1
+ * @param  {Number}    v2
+ * @param  {Number}    v3
+ * @param  {Number}    x
+ * @param  {Number}    y
+ * @param  {Number}    z
+ * @chainable
+ *
  * @example
  * <div>
  * <code>
@@ -167,16 +192,14 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
 
 /**
  * Creates a point light with a color and a light position
- * @method  pointLight
- * @param  {Number|Array|String|p5.Color} v1   gray value,
- * red or hue value (depending on the current color mode),
- * or color Array, or CSS color string
- * @param  {Number}          [v2] green or saturation value
- * @param  {Number}          [v3] blue or brightness value
- * @param  {Number}          [a]  opacity
- * @param  {Number|p5.Vector} x   x axis position or a p5.Vector
- * @param  {Number}          [y]  y axis position
- * @param  {Number}          [z]  z axis position
+ * @method pointLight
+ * @param  {Number}    v1       red or hue value (depending on the current
+ * color mode),
+ * @param  {Number}    v2       green or saturation value
+ * @param  {Number}    v3       blue or brightness value
+ * @param  {Number}    x        x axis position
+ * @param  {Number}    y        y axis position
+ * @param  {Number}    z        z axis position
  * @chainable
  * @example
  * <div>
@@ -207,7 +230,33 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  * spot light on canvas changes position with mouse
  *
  */
-p5.prototype.pointLight = function(v1, v2, v3, a, x, y, z) {
+
+/**
+ * @method pointLight
+ * @param  {Number}    v1
+ * @param  {Number}    v2
+ * @param  {Number}    v3
+ * @param  {p5.Vector} position the position of the light
+ * @chainable
+ */
+
+/**
+ * @method pointLight
+ * @param  {Number[]|String|p5.Color} color   color Array, CSS color string,
+ * or p5.Color value
+ * @param  {Number}                   x
+ * @param  {Number}                   y
+ * @param  {Number}                   z
+ * @chainable
+ */
+
+/**
+ * @method pointLight
+ * @param  {Number[]|String|p5.Color} color
+ * @param  {p5.Vector}                position
+ * @chainable
+ */
+p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
   if (! this._renderer.curFillShader.isLightShader()) {
     this._renderer.setFillShader(this._renderer._getLightShader());
   }
