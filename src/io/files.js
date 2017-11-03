@@ -378,7 +378,7 @@ p5.prototype.loadTable = function (path) {
       POST_TOKEN = 2,
       POST_RECORD = 4;
 
-    var QUOTE = '\"',
+    var QUOTE = '"',
       CR = '\r',
       LF = '\n';
 
@@ -409,7 +409,7 @@ p5.prototype.loadTable = function (path) {
       currentRecord = null;
     };
 
-    while (true) {
+    for(;;) {
       currentChar = resp[offset++];
 
       // EOF
@@ -1417,8 +1417,8 @@ p5.prototype.saveTable = function (table, filename, options) {
   else {
     pWriter.print('<html>');
     pWriter.print('<head>');
-    var str = '  <meta http-equiv=\"content-type\" content';
-    str += '=\"text/html;charset=utf-8\" />';
+    var str = '  <meta http-equiv="content-type" content';
+    str += '="text/html;charset=utf-8" />';
     pWriter.print(str);
     pWriter.print('</head>');
 
@@ -1468,9 +1468,9 @@ p5.prototype.saveTable = function (table, filename, options) {
  *  @private
  */
 p5.prototype.writeFile = function (dataToDownload, filename, extension) {
-  var type = 'application\/octet-stream';
+  var type = 'application/octet-stream';
   if (p5.prototype._isSafari()) {
-    type = 'text\/plain';
+    type = 'text/plain';
   }
   var blob = new Blob(dataToDownload, {
     'type': type
@@ -1513,7 +1513,7 @@ p5.prototype.downloadFile = function (href, fName, extension) {
     var aText = 'Hello, Safari user! To download this file...\n';
     aText += '1. Go to File --> Save As.\n';
     aText += '2. Choose "Page Source" as the Format.\n';
-    aText += '3. Name it with this extension: .\"' + ext + '\"';
+    aText += '3. Name it with this extension: ."' + ext + '"';
     alert(aText);
   }
   a.click();

@@ -124,21 +124,21 @@ suite('Error Helpers', function() {
     test('help for constants is shown', function() {
       assert.match(
         help('\'HALF_PI\' is undefined'),
-        /Did you just try to use p5\.js\'s HALF_PI constant\?/
+        /Did you just try to use p5\.js's HALF_PI constant\?/
       );
     });
 
     test('help for functions is shown', function() {
       assert.match(
         help('\'smooth\' is undefined'),
-        /Did you just try to use p5\.js\'s smooth\(\) function\?/
+        /Did you just try to use p5\.js's smooth\(\) function\?/
       );
     });
 
     test('help for variables is shown', function() {
       assert.match(
         help('\'focused\' is undefined'),
-        /Did you just try to use p5\.js\'s focused variable\?/
+        /Did you just try to use p5\.js's focused variable\?/
       );
     });
   });

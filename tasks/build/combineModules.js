@@ -25,7 +25,7 @@ module.exports = function(grunt) {
     // Make a list of sources from app.js in that sequence only
     var sources = [];
     var dump = fs.readFileSync('./src/app.js', 'utf8');
-    var regexp = /\(\'.+\'/g;
+    var regexp = /\('.+'/g;
     var match;
     while( (match = regexp.exec(dump)) != null) {
       var text = match[0];

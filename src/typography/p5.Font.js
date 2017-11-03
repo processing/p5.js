@@ -812,7 +812,8 @@ function path2curve(path, path2) {
   var pfirst = ''; // temporary holder for original path command
   var pcom = ''; // holder for previous path command of original path
 
-  for (var i = 0, ii = Math.max(p.length, p2 && p2.length || 0); i < ii; i++) {
+  ii = Math.max(p.length, p2 && p2.length || 0)
+  for (var i = 0; i < ii; i++) {
     if (p[i]) { pfirst = p[i][0]; } // save current path command
 
     if (pfirst !== 'C') {

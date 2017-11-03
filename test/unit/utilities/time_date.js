@@ -112,7 +112,7 @@ suite('time and date', function() {
       var runningTime = 50;
       var init_date = Date.now ();
       // wait :\
-      while (Date.now() - init_date < runningTime) { }
+      while (Date.now() - init_date < runningTime) { /* no-op */ }
       assert.operator(myp5.millis(), '>', runningTime, 'everything is ok');
     });
 
@@ -121,7 +121,7 @@ suite('time and date', function() {
       var init_date = Date.now ();
       var result = myp5.millis();
       // wait :\
-      while (Date.now() - init_date < runningTime) { }
+      while (Date.now() - init_date < runningTime) { /* no-op */ }
       var newResult = myp5.millis();
       assert.operator(newResult, '>', result, 'everything is ok');
     });
