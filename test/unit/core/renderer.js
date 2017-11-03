@@ -2,7 +2,7 @@ suite('Renderer', function() {
   var myp5;
 
   setup(function(done) {
-    new p5(function(p){
+    new p5(function(p) {
       p.setup = function() {
         myp5 = p;
         done();
@@ -21,22 +21,27 @@ suite('Renderer', function() {
       assert.deepEqual(myp5.color(myp5._renderer._getFill()).levels, white);
       assert.deepEqual(myp5.color(myp5._renderer._getStroke()).levels, black);
       assert.deepEqual(myp5.color(myp5.drawingContext.fillStyle).levels, white);
-      assert.deepEqual(myp5.color(myp5.drawingContext.strokeStyle).levels, black);
+      assert.deepEqual(
+        myp5.color(myp5.drawingContext.strokeStyle).levels,
+        black
+      );
       myp5.createCanvas(100, 100);
       assert.deepEqual(myp5.color(myp5._renderer._getFill()).levels, white);
       assert.deepEqual(myp5.color(myp5._renderer._getStroke()).levels, black);
       assert.deepEqual(myp5.color(myp5.drawingContext.fillStyle).levels, white);
-      assert.deepEqual(myp5.color(myp5.drawingContext.strokeStyle).levels, black);
+      assert.deepEqual(
+        myp5.color(myp5.drawingContext.strokeStyle).levels,
+        black
+      );
     });
   });
 
-  suite('p5.prototype.resizeCanvas' , function() {
+  suite('p5.prototype.resizeCanvas', function() {
     test('should resize canvas', function() {
       myp5.resizeCanvas(10, 20);
       assert.equal(myp5.canvas.width, 10 * myp5.pixelDensity());
       assert.equal(myp5.canvas.height, 20 * myp5.pixelDensity());
     });
-
 
     test('should restore fill color', function() {
       myp5.fill('#f0f0f0');
@@ -84,5 +89,4 @@ suite('Renderer', function() {
       drawX();
     });
   });
-
 });

@@ -9,7 +9,6 @@
 
 var p5 = require('../core/core');
 
-
 /**
  * Creates a new p5.Vector (the datatype for storing vectors). This provides a
  * two or three dimensional vector, specifically a Euclidean (also known as
@@ -22,7 +21,7 @@ var p5 = require('../core/core');
  * @param {Number} [z] z component of the vector
  * @return {p5.Vector}
  */
-p5.prototype.createVector = function (x, y, z) {
+p5.prototype.createVector = function(x, y, z) {
   if (this instanceof p5) {
     return new p5.Vector(this, arguments);
   } else {

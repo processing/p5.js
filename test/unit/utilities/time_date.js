@@ -2,7 +2,7 @@ suite('time and date', function() {
   var myp5;
 
   setup(function(done) {
-    new p5(function(p){
+    new p5(function(p) {
       p.setup = function() {
         myp5 = p;
         done();
@@ -29,7 +29,6 @@ suite('time and date', function() {
     });
   });
 
-
   suite('p5.prototype.day', function() {
     test('should be a function', function() {
       assert.ok(myp5.day);
@@ -49,7 +48,7 @@ suite('time and date', function() {
       assert.typeOf(myp5.month, 'function');
     });
 
-    test('should return today\'s month', function() {
+    test("should return today's month", function() {
       result = myp5.month();
       var jsMonth = new Date().getMonth() + 1;
       assert.equal(result, jsMonth);
@@ -97,7 +96,6 @@ suite('time and date', function() {
     });
   });
 
-
   suite('p5.prototype.millis', function() {
     test('should be a function', function() {
       assert.ok(myp5.millis);
@@ -110,18 +108,22 @@ suite('time and date', function() {
 
     test('result should be greater than running time', function() {
       var runningTime = 50;
-      var init_date = Date.now ();
+      var init_date = Date.now();
       // wait :\
-      while (Date.now() - init_date < runningTime) { /* no-op */ }
+      while (Date.now() - init_date < runningTime) {
+        /* no-op */
+      }
       assert.operator(myp5.millis(), '>', runningTime, 'everything is ok');
     });
 
     test('result should be > newResult', function() {
       var runningTime = 50;
-      var init_date = Date.now ();
+      var init_date = Date.now();
       var result = myp5.millis();
       // wait :\
-      while (Date.now() - init_date < runningTime) { /* no-op */ }
+      while (Date.now() - init_date < runningTime) {
+        /* no-op */
+      }
       var newResult = myp5.millis();
       assert.operator(newResult, '>', result, 'everything is ok');
     });

@@ -87,7 +87,7 @@ var Filters = require('./filters');
  * @param {Number} width
  * @param {Number} height
  */
-p5.Image = function(width, height){
+p5.Image = function(width, height) {
   /**
    * Image width.
    * @property {Number} width
@@ -217,14 +217,14 @@ p5.Image = function(width, height){
    *
    */
   this.pixels = [];
-  this.name = 'p5.Image';   // for friendly debugger system
+  this.name = 'p5.Image'; // for friendly debugger system
 };
 
 /**
  * Helper fxn for sharing pixel methods
  *
  */
-p5.Image.prototype._setProperty = function (prop, value) {
+p5.Image.prototype._setProperty = function(prop, value) {
   this[prop] = value;
   this.setModified(true);
 };
@@ -256,11 +256,11 @@ p5.Image.prototype._setProperty = function (prop, value) {
  * }
  * </code></div>
  *
-   * @alt
-   * 2 images of rocky mountains vertically stacked
-   *
+ * @alt
+ * 2 images of rocky mountains vertically stacked
+ *
  */
-p5.Image.prototype.loadPixels = function(){
+p5.Image.prototype.loadPixels = function() {
   p5.Renderer2D.prototype.loadPixels.call(this);
   this.setModified(true);
 };
@@ -308,7 +308,7 @@ p5.Image.prototype.loadPixels = function(){
 /**
  * @method updatePixels
  */
-p5.Image.prototype.updatePixels = function(x, y, w, h){
+p5.Image.prototype.updatePixels = function(x, y, w, h) {
   p5.Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
   this.setModified(true);
 };
@@ -354,7 +354,7 @@ p5.Image.prototype.updatePixels = function(x, y, w, h){
  * image of rocky mountains with 50x50 green rect in front
  *
  */
-p5.Image.prototype.get = function(x, y, w, h){
+p5.Image.prototype.get = function(x, y, w, h) {
   return p5.Renderer2D.prototype.get.call(this, x, y, w, h);
 };
 
@@ -391,7 +391,7 @@ p5.Image.prototype.get = function(x, y, w, h){
  * 2 gradated dark turquoise rects fade left. 1 center 1 bottom right of canvas
  *
  */
-p5.Image.prototype.set = function(x, y, imgOrCol){
+p5.Image.prototype.set = function(x, y, imgOrCol) {
   p5.Renderer2D.prototype.set.call(this, x, y, imgOrCol);
   this.setModified(true);
 };
@@ -426,8 +426,7 @@ p5.Image.prototype.set = function(x, y, imgOrCol){
  * image of rocky mountains. zoomed in
  *
  */
-p5.Image.prototype.resize = function(width, height){
-
+p5.Image.prototype.resize = function(width, height) {
   // Copy contents to a temporary canvas, resize the original
   // and then copy back.
   //
@@ -461,7 +460,6 @@ p5.Image.prototype.resize = function(width, height){
     0, 0, tempCanvas.width, tempCanvas.height
   );
 
-
   // Resize the original canvas, which will clear its contents
   this.canvas.width = this.width = width;
   this.canvas.height = this.height = height;
@@ -475,7 +473,7 @@ p5.Image.prototype.resize = function(width, height){
     0, 0, width, height
   );
 
-  if(this.pixels.length > 0){
+  if (this.pixels.length > 0) {
     this.loadPixels();
   }
 
@@ -523,7 +521,7 @@ p5.Image.prototype.resize = function(width, height){
  * image of rocky mountains and smaller image on top of bricks at top left
  *
  */
-p5.Image.prototype.copy = function () {
+p5.Image.prototype.copy = function() {
   p5.prototype.copy.apply(this, arguments);
 };
 
@@ -562,7 +560,7 @@ p5.Image.prototype.copy = function () {
 //       moment this method does not match native processings original
 //       functionality exactly.
 p5.Image.prototype.mask = function(p5Image) {
-  if(p5Image === undefined){
+  if (p5Image === undefined) {
     p5Image = this;
   }
   var currBlend = this.drawingContext.globalCompositeOperation;
@@ -576,8 +574,8 @@ p5.Image.prototype.mask = function(p5Image) {
     p5Image,
     0,
     0,
-    scaleFactor*p5Image.width,
-    scaleFactor*p5Image.height,
+    scaleFactor * p5Image.width,
+    scaleFactor * p5Image.height,
     0,
     0,
     this.width,
@@ -714,7 +712,7 @@ p5.Image.prototype.blend = function() {
  * modified.
  * @private
  */
-p5.Image.prototype.setModified = function (val) {
+p5.Image.prototype.setModified = function(val) {
   this._modified = val; //enforce boolean?
 };
 
@@ -727,7 +725,7 @@ p5.Image.prototype.setModified = function (val) {
  * @return {boolean} a boolean indicating whether or not the
  * image has been updated or modified since last texture upload.
  */
-p5.Image.prototype.isModified = function () {
+p5.Image.prototype.isModified = function() {
   return this._modified;
 };
 
@@ -767,10 +765,9 @@ p5.Image.prototype.save = function(filename, extension) {
   if (!extension) {
     extension = 'png';
     mimeType = 'image/png';
-  }
-  else {
+  } else {
     // en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support
-    switch(extension.toLowerCase()){
+    switch (extension.toLowerCase()) {
       case 'png':
         mimeType = 'image/png';
         break;
