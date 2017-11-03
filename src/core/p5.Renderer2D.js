@@ -658,6 +658,40 @@ p5.Renderer2D.prototype.triangle = function(args) {
   }
 };
 
+p5.Renderer2D.prototype.polygon = function(args) {
+  var ctx = this.drawingContext;
+  var doFill = this._doFill, doStroke = this._doStroke;
+  var x = args[0], y = args[1], sides = args[2], size = args[3];
+  if(doFill && !doStroke) {
+    if(this._getFill() === styleEmpty) {
+      return this;
+    }
+  } else if (!doFill && doStroke) {
+    if(this._getStroke() === styleEmpty) {
+      return this;
+    }
+  }
+  var points = [];
+  var angle = constants.TWO_PI / sides;
+  for (var a = 0; a < constants.TWO_PI; a += angle) {
+    var sx = x + Math.cos(a) * size;
+    var sy = y + Math.sin(a) * size;
+    points.push({x: sx, y: sy});
+  }
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
+  for(var i = 0; i < points.length; i++) {
+    ctx.lineTo(points[i].x, points[i].y);
+  }
+  ctx.closePath();
+  if(doFill) {
+    ctx.fill();
+  }
+  if(doStroke) {
+    ctx.stroke();
+  }
+};
+
 p5.Renderer2D.prototype.endShape =
 function (mode, vertices, isCurve, isBezier,
     isQuadratic, isContour, shapeKind) {

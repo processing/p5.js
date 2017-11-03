@@ -236,4 +236,15 @@ suite('2D Primitives', function() {
     });
   });
 
+  suite('p5.prototype.polygon', function() {
+    test('should be a function', function() {
+      assert.ok(myp5.polygon, 'function');
+    });
+    test('no friendly-err-msg', function() {
+      assert.doesNotThrow(function() {
+        myp5.polygon(Math.PI, Math.PI, 2.5, 9.3);
+      }, Error, 'got unwanted exception');
+    });
+  });
+
 });
