@@ -62,11 +62,11 @@
   },
   "license": "LGPL-2.1",
   "dependencies": {
-    "brfs": "^1.4.0",
-    "es6-promise": "^4.0.5",
-    "fetch-jsonp": "^1.0.6",
-    "opentype.js": "^0.7.1",
-    "whatwg-fetch": "^2.0.2"
+    "brfs": "^1.4.3",
+    "es6-promise": "^4.1.1",
+    "fetch-jsonp": "^1.1.3",
+    "opentype.js": "^0.7.3",
+    "whatwg-fetch": "^2.0.3"
   },
   "main": "./lib/p5.js",
   "files": [
