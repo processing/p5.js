@@ -505,7 +505,11 @@ p5.prototype._onmousemove = function(e){
   var context = this._isGlobal ? window : this;
   var executeDefault;
   this._updateNextMouseCoords(e);
+  
   if (!this.mouseIsPressed) {
+    
+    context.broadcastMouseEvent(context, e);
+
     if (typeof context.mouseMoved === 'function') {
       executeDefault = context.mouseMoved(e);
       if(executeDefault === false) {
@@ -514,6 +518,9 @@ p5.prototype._onmousemove = function(e){
     }
   }
   else {
+   
+    context.broadcastMouseEvent(context, e); // TODO: event type should be something like 'dragstart'
+
     if (typeof context.mouseDragged === 'function') {
       executeDefault = context.mouseDragged(e);
       if(executeDefault === false) {
@@ -581,7 +588,10 @@ p5.prototype._onmousedown = function(e) {
   this._setProperty('mouseIsPressed', true);
   this._setMouseButton(e);
   this._updateNextMouseCoords(e);
-  if (typeof context.mousePressed === 'function') {
+
+  context.broadcastMouseEvent(context, e); 
+
+  if (typeof context.mousePressed === 'function') {    
     executeDefault = context.mousePressed(e);
     if(executeDefault === false) {
       e.preventDefault();
@@ -645,6 +655,9 @@ p5.prototype._onmouseup = function(e) {
   var context = this._isGlobal ? window : this;
   var executeDefault;
   this._setProperty('mouseIsPressed', false);
+
+  context.broadcastMouseEvent(context, e); 
+
   if (typeof context.mouseReleased === 'function') {
     executeDefault = context.mouseReleased(e);
     if(executeDefault === false) {
@@ -711,8 +724,11 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  *
  */
 p5.prototype._onclick = function(e) {
-  var context = this._isGlobal ? window : this;
-  if (typeof context.mouseClicked === 'function') {
+  var context = this._isGlobal ? window : this;  
+
+  context.broadcastMouseEvent(context, e); 
+
+  if (typeof context.mouseClicked === 'function') {    
     var executeDefault = context.mouseClicked(e);
     if(executeDefault === false) {
       e.preventDefault();
@@ -770,6 +786,9 @@ p5.prototype._onclick = function(e) {
 
 p5.prototype._ondblclick = function(e) {
   var context = this._isGlobal ? window : this;
+
+  context.broadcastMouseEvent(context, e);
+
   if (typeof context.doubleClicked === 'function') {
     var executeDefault = context.doubleClicked(e);
     if(executeDefault === false) {
@@ -821,13 +840,97 @@ p5.prototype._ondblclick = function(e) {
  */
 p5.prototype._onwheel = function(e) {
   var context = this._isGlobal ? window : this;
-  if (typeof context.mouseWheel === 'function') {
-    e.delta = e.deltaY;
+
+  e.delta = e.deltaY;  
+  context.broadcastMouseEvent(context, e);
+
+  if (typeof context.mouseWheel === 'function') {    
     var executeDefault = context.mouseWheel(e);
     if(executeDefault === false) {
       e.preventDefault();
     }
   }
 };
+
+/**
+ * This is based on Observer pattern. 
+ * Works in global scope, but it's also particularly useful for ES6 classes, 
+ * living inside modules.You can subscribe your classes to mouse events like:
+ *
+ * p5.registerMethod("mouseEvent", this);
+ *
+ * That being a generic event. You can also register to any particular event:
+ *
+ * p5.registerMethod("mousePressed", this);
+ * p5.registerMethod("mouseReleased", this);
+ * etc.
+ *
+ * If you prefer the generic method, then you can switch the event type like:
+ *
+ *  mouseEvent(event) {
+ * 
+ *    const x = event.x;
+ *    const y = event.y;
+ * 
+ *    switch (event.type) {
+ *         case 'mousedown':
+ *           // do something for the mouse being pressed
+ * 
+ *           break;
+ *         case 'mouseup':
+ *           // do something for mouse released
+ * 
+ *           break;
+ *         case 'click':
+ *           // do something for mouse clicked
+ * 
+ *           break;
+ *         case 'wheel':
+ *           // do something for mouse dragged
+ * 
+ *           break;
+ *         case 'mousemove':
+ *           // do something for mouse moved
+ * 
+ *           break;
+ *         case 'mousedrag':
+ *           // do something for mouse moved
+ *         
+ *           break;
+ *     }    
+ *  } 
+ *
+ * For original processing implementation, see: 
+ * https://github.com/processing/processing/wiki/Library-Basics
+ * 
+ * @param  {obj} context [window|object]
+ * @param  {obj} e       mouse Event
+ * @return {obj}         mouse Event
+ */
+p5.prototype.broadcastMouseEvent = function(context, event) {
+ 
+  const acceptedMethods = {
+            mousedown: 'mousePressed', 
+            mouseup: 'mouseReleased', 
+            click: 'mouseClicked', 
+            wheel: 'mouseWheel', 
+            mousemove: 'mouseMoved'};
+
+  var method = acceptedMethods[event.type];
+
+  // call generic method
+  context._registeredMethods.mouseEvent.forEach(function (obj) {
+      obj['mouseEvent'](event);
+  }, context);
+
+  // call any particular method if exists (as public method)
+  if (typeof context._registeredMethods[method] !== 'undefined') {
+
+      // call any registered subscriber
+      context._registeredMethods[method].forEach(function (obj) {          
+          obj[method](event);              
+      }, context);
+  }
+}
 
 module.exports = p5;

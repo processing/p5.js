@@ -578,7 +578,7 @@ p5.prototype._preloadMethods = {
   loadShader: p5.prototype
 };
 
-p5.prototype._registeredMethods = { init: [], pre: [], post: [], remove: [] };
+p5.prototype._registeredMethods = { init: [], pre: [], post: [], remove: [], mouseEvent: [] };
 
 p5.prototype._registeredPreloadMethods = {};
 
@@ -590,6 +590,7 @@ p5.prototype.registerPreloadMethod = function(fnString, obj) {
 };
 
 p5.prototype.registerMethod = function(name, m) {
+
   if (!p5.prototype._registeredMethods.hasOwnProperty(name)) {
     p5.prototype._registeredMethods[name] = [];
   }
