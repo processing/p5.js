@@ -106,10 +106,9 @@ p5.Vector.prototype.toString = function p5VectorToString() {
  * Sets the x, y, and z component of the vector using two or three separate
  * variables, the data from a p5.Vector, or the values from a float array.
  * @method set
- * @param {Number|p5.Vector|Array} [x] the x component of the vector or a
- *                                     p5.Vector or an Array
- * @param {Number}                 [y] the y component of the vector
- * @param {Number}                 [z] the z component of the vector
+ * @param {Number} [x] the x component of the vector
+ * @param {Number} [y] the y component of the vector
+ * @param {Number} [z] the z component of the vector
  * @chainable
  * @example
  * <div class="norender">
@@ -124,6 +123,11 @@ p5.Vector.prototype.toString = function p5VectorToString() {
  * }
  * </code>
  * </div>
+ */
+/**
+ * @method set
+ * @param {p5.Vector|Array} value the vector to set
+ * @chainable
  */
 p5.Vector.prototype.set = function (x, y, z) {
   if (x instanceof p5.Vector) {
@@ -174,12 +178,9 @@ p5.Vector.prototype.copy = function () {
  * acts directly on the vector. See the examples for more context.
  *
  * @method add
- * @param  {Number|p5.Vector|Array} x   the x component of the vector to be
- *                                      added or a p5.Vector or an Array
- * @param  {Number}                 [y] the y component of the vector to be
- *                                      added
- * @param  {Number}                 [z] the z component of the vector to be
- *                                      added
+ * @param  {Number} x   the x component of the vector to be added
+ * @param  {Number} [y] the y component of the vector to be added
+ * @param  {Number} [z] the z component of the vector to be added
  * @chainable
  * @example
  * <div class="norender">
@@ -199,6 +200,11 @@ p5.Vector.prototype.copy = function () {
  * // v3 has components [3, 5, 7]
  * </code>
  * </div>
+ */
+/**
+ * @method add
+ * @param  {p5.Vector|Array} value the vector to add
+ * @chainable
  */
 p5.Vector.prototype.add = function (x, y, z) {
   if (x instanceof p5.Vector) {
@@ -226,10 +232,9 @@ p5.Vector.prototype.add = function (x, y, z) {
  * other acts directly on the vector. See the examples for more context.
  *
  * @method sub
- * @param  {Number|p5.Vector|Array} x   the x component of the vector or a
- *                                      p5.Vector or an Array
- * @param  {Number}                 [y] the y component of the vector
- * @param  {Number}                 [z] the z component of the vector
+ * @param  {Number} x   the x component of the vector to subtract
+ * @param  {Number} [y] the y component of the vector to subtract
+ * @param  {Number} [z] the z component of the vector to subtract
  * @chainable
  * @example
  * <div class="norender">
@@ -250,6 +255,11 @@ p5.Vector.prototype.add = function (x, y, z) {
  * // v3 has components [1, 1, 1]
  * </code>
  * </div>
+ */
+/**
+ * @method sub
+ * @param  {p5.Vector|Array} value the vector to subtract
+ * @chainable
  */
 p5.Vector.prototype.sub = function (x, y, z) {
   if (x instanceof p5.Vector) {
@@ -383,10 +393,10 @@ p5.Vector.prototype.magSq = function () {
  *
  *
  * @method dot
- * @param  {Number|p5.Vector} x   x component of the vector or a p5.Vector
- * @param  {Number}           [y] y component of the vector
- * @param  {Number}           [z] z component of the vector
- * @return {Number}                 the dot product
+ * @param  {Number} x   x component of the vector
+ * @param  {Number} [y] y component of the vector
+ * @param  {Number} [z] z component of the vector
+ * @return {Number}       the dot product
  *
  * @example
  * <div class="norender">
@@ -406,6 +416,11 @@ p5.Vector.prototype.magSq = function () {
  * print (p5.Vector.dot(v1, v2)); // Prints "10"
  * </code>
  * </div>
+ */
+/**
+ * @method dot
+ * @param  {p5.Vector} value value component of the vector or a p5.Vector
+ * @return {Number}
  */
 p5.Vector.prototype.dot = function (x, y, z) {
   if (x instanceof p5.Vector) {
@@ -731,10 +746,9 @@ p5.Vector.prototype.array = function () {
  * Equality check against a p5.Vector
  *
  * @method equals
- * @param {Number|p5.Vector|Array} [x] the x component of the vector or a
- *                                     p5.Vector or an Array
- * @param {Number}                 [y] the y component of the vector
- * @param {Number}                 [z] the z component of the vector
+ * @param {Number} [x] the x component of the vector
+ * @param {Number} [y] the y component of the vector
+ * @param {Number} [z] the z component of the vector
  * @return {Boolean} whether the vectors are equals
  * @example
  * <div class = "norender"><code>
@@ -754,6 +768,11 @@ p5.Vector.prototype.array = function () {
  * print (v1.equals(v3)) // false
  * </code>
  * </div>
+ */
+/**
+ * @method equals
+ * @param {p5.Vector|Array} value the vector to compare
+ * @return {Boolean}
  */
 p5.Vector.prototype.equals = function (x, y, z) {
   var a, b, c;

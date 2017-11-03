@@ -276,11 +276,8 @@ p5.prototype.rotateZ = function(rad) {
  * This function can be further controlled with push() and pop().
  *
  * @method scale
- * @param  {Number|p5.Vector|Array} s
- *                      percent to scale the object, or percentage to
- *                      scale the object in the x-axis if multiple arguments
- *                      are given
- * @param  {Number} [y] percent to scale the object in the y-axis
+ * @param  {Number} x   percent to scale the object in the x-axis
+ * @param  {Number} y   percent to scale the object in the y-axis
  * @param  {Number} [z] percent to scale the object in the z-axis (webgl only)
  * @chainable
  * @example
@@ -304,6 +301,11 @@ p5.prototype.rotateZ = function(rad) {
  * white 52x52 rect with black outline at center rotated counter 45 degrees
  * 2 white rects with black outline- 1 50x50 at center. other 25x65 bottom left
  *
+ */
+/**
+ * @method scale
+ * @param  {p5.Vector|Array} scales per-axis percents to scale the object
+ * @chainable
  */
 p5.prototype.scale = function() {
   var x,y,z;
