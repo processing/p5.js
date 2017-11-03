@@ -6,22 +6,54 @@
  */
 module.exports = {
   options: {
-    configFile: 'karma.conf.js',
+    configFile: 'karma.conf.js'
   },
-  'random-prod': {
+  'random-fe-on-prod': {
     options: {
       files: [
         'https://cdnjs.cloudflare.com/ajax/libs/p5.js/<%= pkg.version %>/p5.js',
-        'bench/random.bench.js',
-      ],
-    },
+        'bench/math/random-fe-on.bench.js'
+      ]
+    }
   },
-  'random-dev': {
+  'random-fe-on-prod-min': {
+    options: {
+      files: [
+        'https://cdnjs.cloudflare.com/ajax/libs/p5.js/<%= pkg.version %>/p5.min.js',
+        'bench/math/random-fe-on.bench.js'
+      ]
+    }
+  },
+  'random-fe-on-dev': {
     options: {
       files: [
         'lib/p5.js',
-        'bench/random.bench.js',
-      ],
-    },
+        'bench/math/random-fe-on.bench.js'
+      ]
+    }
   },
+  'random-fe-off-prod': {
+    options: {
+      files: [
+        'https://cdnjs.cloudflare.com/ajax/libs/p5.js/<%= pkg.version %>/p5.js',
+        'bench/math/random-fe-off.bench.js'
+      ]
+    }
+  },
+  'random-fe-off-prod-min': {
+    options: {
+      files: [
+        'https://cdnjs.cloudflare.com/ajax/libs/p5.js/<%= pkg.version %>/p5.min.js',
+        'bench/math/random-fe-off.bench.js'
+      ]
+    }
+  },
+  'random-fe-off-dev': {
+    options: {
+      files: [
+        'lib/p5.js',
+        'bench/math/random-fe-off.bench.js'
+      ]
+    }
+  }
 };

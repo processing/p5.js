@@ -75,7 +75,7 @@ module.exports = function(config) {
 
     // Concurrency level
     // how many browser should be started simultaneous
-    concurrency: Infinity,
+    concurrency: 3,
 
     // Sometimes Safari can timeout with the default values, raising these timeouts seem to fix it
     captureTimeout: 60000,
