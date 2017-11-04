@@ -192,8 +192,7 @@ p5.prototype.texture = function(){
   }
   this._renderer.GL.depthMask(true);
   this._renderer.GL.enable(this._renderer.GL.BLEND);
-  this._renderer.GL.blendFunc(this._renderer.GL.SRC_ALPHA,
-    this._renderer.GL.ONE_MINUS_SRC_ALPHA);
+  this._renderer.GL.blendFunc(this._renderer.GL.SRC_ALPHA, this._renderer.GL.ONE_MINUS_SRC_ALPHA);
 
   this._renderer.drawMode = constants.TEXTURE;
   if (! this._renderer.curFillShader.isTextureShader()) {
@@ -239,6 +238,11 @@ p5.prototype.texture = function(){
  * radiating light source from top right of canvas
  *
  */
+/**
+ * @method  ambientMaterial
+ * @param  {Number[]|String|p5.Color} color  color, color Array, or CSS color string
+ * @chainable
+ */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   if (! this._renderer.curFillShader.isLightShader()) {
     this._renderer.setFillShader(this._renderer._getLightShader());
@@ -281,6 +285,11 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * @alt
  * diffused radiating light source from top right of canvas
  *
+ */
+/**
+ * @method specularMaterial
+ * @param  {Number[]|String|p5.Color} color color Array, or CSS color string
+ * @chainable
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   if (! this._renderer.curFillShader.isLightShader()) {

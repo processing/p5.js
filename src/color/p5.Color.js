@@ -48,27 +48,47 @@ p5.Color = function(renderer, vals) {
   return this;
 };
 
+/**
+ * @method toString
+ * @return {String}
+ */
 p5.Color.prototype.toString = function() {
   var a = this.levels;
   var alpha = this._array[3];  // String representation uses normalized alpha.
   return 'rgba('+a[0]+','+a[1]+','+a[2]+','+ alpha +')';
 };
 
+/**
+ * @method setRed
+ * @param {Number} new_red
+ */
 p5.Color.prototype.setRed = function(new_red) {
   this._array[0] = new_red / this.maxes[constants.RGB][0];
   this._calculateLevels();
 };
 
+/**
+ * @method setGreen
+ * @param {Number} new_green
+ */
 p5.Color.prototype.setGreen = function(new_green) {
   this._array[1] = new_green / this.maxes[constants.RGB][1];
   this._calculateLevels();
 };
 
+/**
+ * @method setBlue
+ * @param {Number} new_blue
+ */
 p5.Color.prototype.setBlue = function(new_blue) {
   this._array[2] = new_blue / this.maxes[constants.RGB][2];
   this._calculateLevels();
 };
 
+/**
+ * @method setAlpha
+ * @param {Number} new_alpha
+ */
 p5.Color.prototype.setAlpha = function(new_alpha) {
   this._array[3] = new_alpha / this.maxes[this.mode][3];
   this._calculateLevels();
@@ -448,6 +468,7 @@ var colorPatterns = {
  * For a number of different inputs, returns a color formatted as [r, g, b, a]
  * arrays, with each component normalized between 0 and 1.
  *
+ * @private
  * @param {Array} [...args] An 'array-like' object that represents a list of
  *                          arguments
  * @return {Number[]}       a color formatted as [r, g, b, a]
@@ -573,7 +594,7 @@ p5.Color._parseInputs = function() {
     // Try HSLA pattern matching.
     if (colorPatterns.HSL.test(str)) {  // hsl(H,S,L)
       results = colorPatterns.HSL.exec(str).slice(1)
-        .map(function(color, idx) {
+      .map(function(color, idx) {
         if (idx === 0) {
           return parseInt(color, 10) / 360;
         }
@@ -582,7 +603,7 @@ p5.Color._parseInputs = function() {
       results[3] = 1;
     } else if (colorPatterns.HSLA.test(str)) {  // hsla(H,S,L,A)
       results = colorPatterns.HSLA.exec(str).slice(1)
-        .map(function(color, idx) {
+      .map(function(color, idx) {
         if (idx === 0) {
           return parseInt(color, 10) / 360;
         }
@@ -602,7 +623,7 @@ p5.Color._parseInputs = function() {
     // Try HSBA pattern matching.
     if (colorPatterns.HSB.test(str)) {  // hsb(H,S,B)
       results = colorPatterns.HSB.exec(str).slice(1)
-        .map(function(color, idx) {
+      .map(function(color, idx) {
         if (idx === 0) {
           return parseInt(color, 10) / 360;
         }
@@ -611,7 +632,7 @@ p5.Color._parseInputs = function() {
       results[3] = 1;
     } else if (colorPatterns.HSBA.test(str)) {  // hsba(H,S,B,A)
       results = colorPatterns.HSBA.exec(str).slice(1)
-        .map(function(color, idx) {
+      .map(function(color, idx) {
         if (idx === 0) {
           return parseInt(color, 10) / 360;
         }

@@ -87,10 +87,11 @@ p5.prototype.bezier = function() {
     args.push(bezierDetail);//adding value of bezier detail to the args array
     this._renderer.bezier(args);
   } else{
-    this._renderer.bezier(args[0],args[1],
-      args[2],args[3],
-      args[4],args[5],
-      args[6],args[7]);
+    this._renderer.bezier(
+      args[0], args[1],
+      args[2], args[3],
+      args[4], args[5],
+      args[6], args[7]);
   }
 
   return this;
@@ -101,6 +102,7 @@ p5.prototype.bezier = function() {
  *
  * The default value is 20.
  *
+ * @method bezierDetail
  * @param {Number} detail resolution of the curves
  * @chainable
  * @example
@@ -343,10 +345,11 @@ p5.prototype.curve = function() {
     args.push(curveDetail);
     this._renderer.curve(args);
   } else{
-    this._renderer.curve(args[0],args[1],
-      args[2],args[3],
-      args[4],args[5],
-      args[6],args[7]);
+    this._renderer.curve(
+      args[0], args[1],
+      args[2], args[3],
+      args[4], args[5],
+      args[6], args[7]);
   }
   return this;
 };
@@ -356,6 +359,7 @@ p5.prototype.curve = function() {
  *
  * The default value is 20.
  *
+ * @method curveDetail
  * @param {Number} resolution of the curves
  * @chainable
  * @example

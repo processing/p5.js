@@ -309,6 +309,11 @@ p5.prototype.rotateZ = function(rad) {
  * 2 white rects with black outline- 1 50x50 at center. other 25x65 bottom left
  *
  */
+/**
+ * @method scale
+ * @param  {p5.Vector|Number[]} scales per-axis percents to scale the object
+ * @chainable
+ */
 p5.prototype.scale = function() {
   p5._validateParameters('scale', arguments);
   var x,y,z;

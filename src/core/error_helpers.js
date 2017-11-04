@@ -23,8 +23,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
   // -- Borrowed from jQuery 1.11.3 --
   var class2type = {};
   var toString = class2type.toString;
-  var names = ['Boolean', 'Number', 'String', 'Function',
-    'Array', 'Date', 'RegExp', 'Object', 'Error'];
+  var names = [
+    'Boolean', 'Number', 'String', 'Function',
+    'Array', 'Date', 'RegExp', 'Object', 'Error'
+  ];
   for (var n = 0; n < names.length; n++) {
     class2type['[object ' + names[n] + ']'] = names[n].toLowerCase();
   }

@@ -53,10 +53,10 @@ module.exports = function(grunt) {
 
     // Invoke Browserify programatically to bundle the code
     var bundle = browserify(srcFilePath, {
-        standalone: 'p5'
-      })
-      .transform('brfs')
-      .bundle();
+      standalone: 'p5'
+    })
+    .transform('brfs')
+    .bundle();
 
     // Start the generated output with the banner comment,
     var code = banner + '\n';

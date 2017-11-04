@@ -14,8 +14,7 @@ var p5 = require('../core/core');
  * @param {function} [callback] function to call upon object instantiation.
  *
  */
-p5.Geometry = function
-(detailX, detailY, callback){
+p5.Geometry = function(detailX, detailY, callback){
   //an array containing every vertex
   //@type [p5.Vector]
   this.vertices = [];
@@ -52,6 +51,10 @@ p5.Geometry = function
   return this; // TODO: is this a constructor?
 };
 
+/**
+ * @method computeFaces
+ * @chainable
+ */
 p5.Geometry.prototype.computeFaces = function(){
   var sliceCount = this.detailX + 1;
   var a, b, c, d;
@@ -86,6 +89,7 @@ p5.Geometry.prototype._getFaceNormal = function(faceId,vertId){
 /**
  * computes smooth normals per vertex as an average of each
  * face.
+ * @method computeNormals
  * @chainable
  */
 p5.Geometry.prototype.computeNormals = function (){
@@ -111,15 +115,17 @@ p5.Geometry.prototype.computeNormals = function (){
 /**
  * Averages the vertex normals. Used in curved
  * surfaces
+ * @method averageNormals
  * @chainable
  */
 p5.Geometry.prototype.averageNormals = function() {
 
   for(var i = 0; i <= this.detailY; i++){
     var offset = this.detailX + 1;
-    var temp = p5.Vector
-      .add(this.vertexNormals[i*offset],
-        this.vertexNormals[i*offset + this.detailX]);
+    var temp = p5.Vector.add(
+      this.vertexNormals[i*offset],
+      this.vertexNormals[i*offset + this.detailX]);
+
     temp = p5.Vector.div(temp, 2);
     this.vertexNormals[i*offset] = temp;
     this.vertexNormals[i*offset + this.detailX] = temp;
@@ -129,6 +135,7 @@ p5.Geometry.prototype.averageNormals = function() {
 
 /**
  * Averages pole normals.  Used in spherical primitives
+ * @method averagePoleNormals
  * @chainable
  */
 p5.Geometry.prototype.averagePoleNormals = function() {
@@ -160,6 +167,7 @@ p5.Geometry.prototype.averagePoleNormals = function() {
 
 /**
  * Create a 2D array for establishing stroke connections
+ * @private
  * @return {p5.Geometry}
  */
 p5.Geometry.prototype._makeTriangleEdges = function() {
@@ -183,6 +191,7 @@ p5.Geometry.prototype._makeTriangleEdges = function() {
  * Create 4 vertices for each stroke line, two at the beginning position
  * and two at the end position. These vertices are displaced relative to
  * that line's normal on the GPU
+ * @private
  * @return {p5.Geometry}
  */
 p5.RendererGL.prototype._edgesToVertices = function(geom) {
@@ -191,10 +200,10 @@ p5.RendererGL.prototype._edgesToVertices = function(geom) {
     var begin = geom.vertices[geom.edges[i][0]];
     var end = geom.vertices[geom.edges[i][1]];
     var dir = end.copy().sub(begin).normalize();
-    var a = begin.array(),
-        b = begin.array(),
-        c = end.array(),
-        d = end.array();
+    var a = begin.array();
+    var b = begin.array();
+    var c = end.array();
+    var d = end.array();
     var dirAdd = dir.array();
     var dirSub = dir.array();
     // below is used to displace the pair of vertices at beginning and end
@@ -208,6 +217,7 @@ p5.RendererGL.prototype._edgesToVertices = function(geom) {
 
 /**
  * Modifies all vertices to be centered within the range -100 to 100.
+ * @method normalize
  * @chainable
  */
 p5.Geometry.prototype.normalize = function() {

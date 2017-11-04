@@ -26,6 +26,7 @@ var constants = require('./constants');
  * "global"   - all properties and methods are attached to the window
  * "instance" - all properties and methods are bound to this p5 object
  *
+ * @private
  * @param  {function}    sketch a closure that can set optional preload(),
  *                              setup(), and/or draw() properties on the
  *                              given p5 instance
@@ -204,6 +205,15 @@ var p5 = function(sketch, node, sync) {
 
   this._events.wheel = null;
   this._loadingScreenId = 'p5_loading';
+
+  // Allows methods to be registered on an instance that
+  // are instance-specific.
+  this._registeredMethods = {};
+  var methods = Object.getOwnPropertyNames(p5.prototype._registeredMethods);
+  for(var i = 0; i < methods.length; i++) {
+    var prop = methods[i];
+    this._registeredMethods[prop] = p5.prototype._registeredMethods[prop].slice();
+  }
 
   if (window.DeviceOrientationEvent) {
     this._events.deviceorientation = null;
@@ -589,10 +599,11 @@ p5.prototype.registerPreloadMethod = function(fnString, obj) {
 };
 
 p5.prototype.registerMethod = function(name, m) {
-  if (!p5.prototype._registeredMethods.hasOwnProperty(name)) {
-    p5.prototype._registeredMethods[name] = [];
+  var target = this || p5.prototype;
+  if (!target._registeredMethods.hasOwnProperty(name)) {
+    target._registeredMethods[name] = [];
   }
-  p5.prototype._registeredMethods[name].push(m);
+  target._registeredMethods[name].push(m);
 };
 
 p5.prototype._createFriendlyGlobalFunctionBinder = function(options) {

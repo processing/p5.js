@@ -116,9 +116,11 @@ function parseObj( model, lines ) {
   // used to map a specific combination (keyed on, for example, the string
   // "3/4/3"), to the actual index of the newly created vertex in the final
   // object.
-  var loadedVerts = {'v' : [],
-                    'vt' : [],
-                    'vn' : []};
+  var loadedVerts = {
+    'v' : [],
+    'vt' : [],
+    'vn' : []
+  };
   var indexedVerts = {};
 
   for (var line = 0; line < lines.length; ++line) {

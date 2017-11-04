@@ -40,6 +40,17 @@
  *
  *  grunt update_json - This automates updating the bower file
  *                      to match the package.json
+ *
+ *  grunt karma       - This runs the performance benchmarks in
+ *                      multiple real browsers on the developers local machine.
+ *                      It will automatically detect which browsers are
+ *                      installed from the following list (Chrome, Firefox,
+ *                      Safari, Edge, IE) and run the benchmarks in all installed
+ *                      browsers and report the results. Running "grunt karma"
+ *                      will execute ALL the benchmarks. If you want to run a
+ *                      specific benchmark you can by specifying the target e.g.
+ *                      "grunt karma:random-dev". The available targets are
+ *                      defined in grunt-karma.js.
  */
 
 function getYuidocOptions() {
@@ -75,6 +86,9 @@ module.exports = function(grunt) {
   // Specify what reporter we'd like to use for Mocha
   var reporter = 'Nyan';
 
+  // Load karma tasks from an external file to keep this file clean
+  var karmaTasks = require('./grunt-karma.js');
+
   // For the static server used in running tests, configure the keepalive.
   // (might not be useful at all.)
   var keepalive = false;
@@ -88,10 +102,9 @@ module.exports = function(grunt) {
     pkg: grunt.file.readJSON('package.json'),
 
     // Configure style consistency checking for this file, the source, and the tests.
-    jscs: {
+    eslint: {
       options: {
-        config: '.jscsrc',
-        reporter: require('jscs-stylish').path
+        configFile: '.eslintrc',
       },
       build: {
         src: [
@@ -106,32 +119,6 @@ module.exports = function(grunt) {
         ]
       },
       test: {
-        src: ['test/unit/**/*.js']
-      }
-    },
-
-    // Configure hinting for this file, the source, and the tests.
-    jshint: {
-      build: {
-        options: {
-          jshintrc: '.jshintrc'
-        },
-        src: [
-          'Gruntfile.js',
-          'tasks/**/*.js'
-        ]
-      },
-      source: {
-        options: {
-          jshintrc: 'src/.jshintrc',
-          ignores: [ 'src/external/**/*.js' ]
-        },
-        src: ['src/**/*.js']
-      },
-      test: {
-        options: {
-          jshintrc: 'test/.jshintrc'
-        },
         src: ['test/unit/**/*.js']
       }
     },
@@ -151,7 +138,7 @@ module.exports = function(grunt) {
       // Watch the codebase for changes
       main: {
         files: ['src/**/*.js'],
-        tasks: ['newer:jshint:source','test'],
+        tasks: ['newer:eslint:source','test'],
         options: {
           livereload: true
         }
@@ -274,6 +261,10 @@ module.exports = function(grunt) {
     // this builds the documentation for the codebase.
     yuidoc: getYuidocOptions(),
 
+    // This runs benchmarks in multiple real browsers for developing
+    // performance optimizations
+    karma: karmaTasks,
+
     // This is a static server which is used when testing connectivity for the
     // p5 library. This avoids needing an internet connection to run the tests.
     // It serves all the files in the test directory at http://localhost:9001/
@@ -284,11 +275,17 @@ module.exports = function(grunt) {
           port: 9001,
           keepalive: keepalive,
           middleware: function(connect, options, middlewares) {
-            middlewares.unshift(function(req, res, next) {
-              res.setHeader('Access-Control-Allow-Origin', '*');
-              res.setHeader('Access-Control-Allow-Methods', '*');
-              return next();
-            });
+            middlewares.unshift(
+              require('connect-modrewrite')([
+                '^/assets/js/p5\\.min\\.js(.*) /lib/p5.min.js$1 [L]',
+                '^/assets/js/p5\\.(dom|sound)\\.min\\.js(.*) /lib/addons/p5.$1.min.js$2 [L]',
+              ]),
+              function(req, res, next) {
+                res.setHeader('Access-Control-Allow-Origin', '*');
+                res.setHeader('Access-Control-Allow-Methods', '*');
+                return next();
+              }
+            );
             return middlewares;
           }
         }
@@ -336,13 +333,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-http');
-  grunt.loadNpmTasks('grunt-jscs');
   grunt.loadNpmTasks('grunt-minjson');
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-mocha-test');
@@ -350,11 +346,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-release-it');
   grunt.loadNpmTasks('grunt-saucelabs');
   grunt.loadNpmTasks('grunt-update-json');
+  grunt.loadNpmTasks('grunt-karma');
 
   // Create the multitasks.
   grunt.registerTask('build', ['browserify', 'browserify:min', 'uglify', 'requirejs']);
-  grunt.registerTask('test', ['jshint', 'jscs', 'yuidoc:prod', 'build', 'connect', 'mocha', 'mochaTest']);
-  grunt.registerTask('test:nobuild', ['jshint:test', 'jscs:test', 'connect', 'mocha']);
+  grunt.registerTask('test', ['eslint', 'yuidoc:prod', 'build', 'connect', 'mocha', 'mochaTest']);
+  grunt.registerTask('test:nobuild', ['eslint:test', 'connect', 'mocha']);
   grunt.registerTask('yui', ['yuidoc:prod', 'minjson']);
   grunt.registerTask('yui:test', ['yuidoc:prod', 'connect', 'mocha:yui']);
   grunt.registerTask('default', ['test']);

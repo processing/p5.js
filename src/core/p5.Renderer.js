@@ -210,7 +210,7 @@ function calculateOffset(object) {
     do {
       currentLeft += object.offsetLeft;
       currentTop += object.offsetTop;
-    } while (object = object.offsetParent);
+    } while ((object = object.offsetParent));
   } else {
     currentLeft += object.offsetLeft;
     currentTop += object.offsetTop;

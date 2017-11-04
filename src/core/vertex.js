@@ -469,8 +469,7 @@ p5.prototype.endContour = function() {
  */
 p5.prototype.endShape = function(mode) {
   if(this._renderer.isP3D){
-    this._renderer.endShape(mode, isCurve, isBezier,
-      isQuadratic, isContour, shapeKind);
+    this._renderer.endShape(mode, isCurve, isBezier, isQuadratic, isContour, shapeKind);
   }else{
     if (vertices.length === 0) { return this; }
     if (!this._renderer._doStroke && !this._renderer._doFill) { return this; }
@@ -482,8 +481,7 @@ p5.prototype.endShape = function(mode) {
       vertices.push(vertices[0]);
     }
 
-    this._renderer.endShape(mode, vertices, isCurve, isBezier,
-      isQuadratic, isContour, shapeKind);
+    this._renderer.endShape(mode, vertices, isCurve, isBezier, isQuadratic, isContour, shapeKind);
 
     // Reset some settings
     isCurve = false;
