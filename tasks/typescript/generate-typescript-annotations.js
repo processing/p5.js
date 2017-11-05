@@ -266,7 +266,7 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
       emit('// ' + decl);
       emit('');
     } else {
-      emit.description(classitem.description);
+      emit.description(classitem, overload);
       emit(decl);
     }
   }
@@ -306,7 +306,7 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
       }
 
 
-      emit.description(classitem.description);
+      emit.description(classitem);
 
       if (emit.getIndentLevel() === 0) {
         emit('declare ' + (classitem.final ? 'const ' : 'var ') + decl + ';');
