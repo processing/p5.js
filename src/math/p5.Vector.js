@@ -107,9 +107,9 @@ p5.Vector.prototype.toString = function p5VectorToString() {
  * Sets the x, y, and z component of the vector using two or three separate
  * variables, the data from a p5.Vector, or the values from a float array.
  * @method set
- * @param {Number}                 [x] the x component of the vector
- * @param {Number}                 [y] the y component of the vector
- * @param {Number}                 [z] the z component of the vector
+ * @param {Number} [x] the x component of the vector
+ * @param {Number} [y] the y component of the vector
+ * @param {Number} [z] the z component of the vector
  * @chainable
  * @example
  * <div class="norender">
@@ -179,12 +179,9 @@ p5.Vector.prototype.copy = function () {
  * acts directly on the vector. See the examples for more context.
  *
  * @method add
- * @param  {Number}                 x   the x component of the vector to be
- *                                      added
- * @param  {Number}                 [y] the y component of the vector to be
- *                                      added
- * @param  {Number}                 [z] the z component of the vector to be
- *                                      added
+ * @param  {Number} x   the x component of the vector to be added
+ * @param  {Number} [y] the y component of the vector to be added
+ * @param  {Number} [z] the z component of the vector to be added
  * @chainable
  * @example
  * <div class="norender">
