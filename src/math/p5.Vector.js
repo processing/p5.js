@@ -233,9 +233,9 @@ p5.Vector.prototype.add = function (x, y, z) {
  * other acts directly on the vector. See the examples for more context.
  *
  * @method sub
- * @param  {Number}                 x   the x component of the vector
- * @param  {Number}                 [y] the y component of the vector
- * @param  {Number}                 [z] the z component of the vector
+ * @param  {Number} x   the x component of the vector to subtract
+ * @param  {Number} [y] the y component of the vector to subtract
+ * @param  {Number} [z] the z component of the vector to subtract
  * @chainable
  * @example
  * <div class="norender">
@@ -747,9 +747,9 @@ p5.Vector.prototype.array = function () {
  * Equality check against a p5.Vector
  *
  * @method equals
- * @param {Number}                 [x] the x component of the vector
- * @param {Number}                 [y] the y component of the vector
- * @param {Number}                 [z] the z component of the vector
+ * @param {Number} [x] the x component of the vector
+ * @param {Number} [y] the y component of the vector
+ * @param {Number} [z] the z component of the vector
  * @return {Boolean} whether the vectors are equals
  * @example
  * <div class = "norender"><code>
