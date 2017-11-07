@@ -63,7 +63,6 @@ require('./error_helpers');
  * </code>
  * </div>
  *
- *
  * <div>
  * <code>
  * arc(50, 50, 80, 80, 0, PI+QUARTER_PI, PIE);
