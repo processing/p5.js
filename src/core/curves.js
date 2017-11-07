@@ -87,6 +87,7 @@ p5.prototype.bezier = function() {
     args.push(bezierDetail);//adding value of bezier detail to the args array
     this._renderer.bezier(args);
   } else{
+    // prettier-ignore
     this._renderer.bezier(
       args[0], args[1],
       args[2], args[3],
@@ -344,6 +345,7 @@ p5.prototype.curve = function() {
     args.push(curveDetail);
     this._renderer.curve(args);
   } else{
+    // prettier-ignore
     this._renderer.curve(
       args[0], args[1],
       args[2], args[3],

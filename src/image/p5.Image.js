@@ -454,6 +454,7 @@ p5.Image.prototype.resize = function(width, height){
   var tempCanvas = document.createElement('canvas');
   tempCanvas.width = width;
   tempCanvas.height = height;
+  // prettier-ignore
   tempCanvas.getContext('2d').drawImage(
     this.canvas,
     0, 0, this.canvas.width, this.canvas.height,
@@ -467,6 +468,7 @@ p5.Image.prototype.resize = function(width, height){
 
   //Copy the image back
 
+  // prettier-ignore
   this.drawingContext.drawImage(
     tempCanvas,
     0, 0, width, height,

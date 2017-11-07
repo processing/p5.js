@@ -127,6 +127,7 @@ p5.RendererGL.prototype.camera = function () {
   // the camera affects the model view matrix, insofar as it
   // inverse translates the world to the eye position of the camera
   // and rotates it.
+  // prettier-ignore
   this.cameraMatrix.set(x0, y0, z0, 0,
                         x1, y1, z1, 0,
                         x2, y2, z2, 0,
@@ -219,6 +220,7 @@ p5.RendererGL.prototype.perspective = function() {
   var f = 1.0 / Math.tan(this.cameraFOV / 2);
   var nf = 1.0 / (this.cameraNear - this.cameraFar);
 
+  // prettier-ignore
   this.uPMatrix.set(f / aspect,  0,                     0,  0,
                     0,          -f,                     0,  0,
                     0,           0,     (far + near) * nf, -1,
@@ -289,6 +291,7 @@ p5.prototype.ortho = function(left,right,bottom,top,near,far) {
   var tz = -(far + near)   / d;
 
   // The minus sign is needed to invert the Y axis.
+  // prettier-ignore
   this._renderer.uPMatrix.set( x,  0,  0, 0,
                                0, -y,  0, 0,
                                0,  0,  z, 0,

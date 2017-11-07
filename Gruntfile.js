@@ -84,7 +84,8 @@ function getYuidocOptions() {
 module.exports = function(grunt) {
 
   // Specify what reporter we'd like to use for Mocha
-  var reporter = (process.env.TRAVIS || grunt.option('quiet')) ? 'spec' : 'Nyan';
+  var quietReport = process.env.TRAVIS || grunt.option('quiet');
+  var reporter = quietReport ? 'spec' : 'Nyan';
 
   // Load karma tasks from an external file to keep this file clean
   var karmaTasks = require('./grunt-karma.js');

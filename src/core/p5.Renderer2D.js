@@ -406,6 +406,7 @@ p5.Renderer2D.prototype.arc =
         if (index === 0) {
           ctx.moveTo(vals.x + curve.ax * rx, vals.y + curve.ay * ry);
         }
+        // prettier-ignore
         ctx.bezierCurveTo(vals.x + curve.bx * rx, vals.y + curve.by * ry,
                           vals.x + curve.cx * rx, vals.y + curve.cy * ry,
                           vals.x + curve.dx * rx, vals.y + curve.dy * ry);
@@ -424,6 +425,7 @@ p5.Renderer2D.prototype.arc =
         if (index === 0) {
           ctx.moveTo(vals.x + curve.ax * rx, vals.y + curve.ay * ry);
         }
+        // prettier-ignore
         ctx.bezierCurveTo(vals.x + curve.bx * rx, vals.y + curve.by * ry,
                           vals.x + curve.cx * rx, vals.y + curve.cy * ry,
                           vals.x + curve.dx * rx, vals.y + curve.dy * ry);
