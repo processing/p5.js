@@ -15,8 +15,8 @@ require('./error_helpers');
 
 /**
  * Draw an arc to the screen. If called with only a, b, c, d, start, and
- * stop, the arc will be drawn as an open pie. If mode is provided, the arc
- * will be drawn either open, as a chord, or as a pie as specified. The
+ * stop, the arc will be drawn and filled as an open pie segment. If a mode parameter is provided, the arc
+ * will be filled like an open semi-circle (OPEN) , a closed semi-circle (CHORD), or as a closed pie segment (PIE). The
  * origin may be changed with the ellipseMode() function.<br><br>
  * Note that drawing a full circle (ex: 0 to TWO_PI) will appear blank
  * because 0 and TWO_PI are the same position on the unit circle. The
@@ -32,7 +32,7 @@ require('./error_helpers');
  * @param  {Number} start  angle to start the arc, specified in radians
  * @param  {Number} stop   angle to stop the arc, specified in radians
  * @param  {Constant} [mode] optional parameter to determine the way of drawing
- *                         the arc. either CHORD or PIE
+ *                         the arc. Parameter options are OPEN, CHORD or PIE
  * @chainable
  * @example
  * <div>
@@ -42,6 +42,12 @@ require('./error_helpers');
  * arc(50, 55, 60, 60, HALF_PI, PI);
  * arc(50, 55, 70, 70, PI, PI+QUARTER_PI);
  * arc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * arc(50, 50, 80, 80, 0, PI+QUARTER_PI);
  * </code>
  * </div>
  *
@@ -57,6 +63,7 @@ require('./error_helpers');
  * </code>
  * </div>
  *
+ *
  * <div>
  * <code>
  * arc(50, 50, 80, 80, 0, PI+QUARTER_PI, PIE);
@@ -65,6 +72,7 @@ require('./error_helpers');
  *
  * @alt
  *shattered outline of an ellipse with a quarter of a white circle bottom-right.
+ *white ellipse with top right quarter missing.
  *white ellipse with black outline with top right missing.
  *white ellipse with top right missing with black outline around shape.
  *white ellipse with top right quarter missing with black outline around the shape.
