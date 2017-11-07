@@ -59,9 +59,11 @@ suite('Font Loading', function() {
 
     suite('loadFont() with callback', function () {
 
-      test('should call success-callback with object when font loads',
+      test(
+        'should call success-callback with object when font loads',
         function (done) {
-          p5Inst.loadFont('manual-test-examples/p5.Font/acmesa.ttf',
+          p5Inst.loadFont(
+            'manual-test-examples/p5.Font/acmesa.ttf',
             function (p5Font) {
               assert.isObject(p5Font);
               assert.isTrue(p5Font instanceof p5.Font);
@@ -76,7 +78,8 @@ suite('Font Loading', function() {
       );
 
       test('should call error-callback when font fails to load', function (done) {
-        p5Inst.loadFont('invalid-path',
+        p5Inst.loadFont(
+          'invalid-path',
           function () {
             assert.ok(false);
             done();

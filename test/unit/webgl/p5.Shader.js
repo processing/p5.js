@@ -24,7 +24,8 @@ suite('p5.Shader', function() {
     // test each one
     for (var i = 0;  i < expectedUniforms.length; i++) {
       var uniform = uniforms[expectedUniforms[i]];
-      assert(uniform !== undefined,
+      assert(
+        uniform !== undefined,
         shaderName + ' missing expectedUniform: ' + expectedUniforms[i]);
     }
   };
@@ -37,7 +38,8 @@ suite('p5.Shader', function() {
     // test each one
     for (var i = 0;  i < expectedAttributes.length; i++) {
       var attribute = attributes[expectedAttributes[i]];
-      assert(attribute !== undefined,
+      assert(
+        attribute !== undefined,
         shaderName + ' missing expected attribute: ' + expectedAttributes[i]);
     }
   };
@@ -49,10 +51,12 @@ suite('p5.Shader', function() {
     myp5.shader(shaderObj);
     var s = myp5._renderer.curFillShader;
 
-    assert(s !== null  &&  s === shaderObj,
+    assert(
+      s !== null  &&  s === shaderObj,
       shaderName + ' was returned from p5.RendererGL.shader');
 
-    assert(myp5._renderer.curFillShader !== null &&
+    assert(
+      myp5._renderer.curFillShader !== null &&
       myp5._renderer.curFillShader === shaderObj,
       shaderName + ' was not set as renderer\'s curFillShader in shader()');
 
@@ -72,18 +76,21 @@ suite('p5.Shader', function() {
       assert.exists(myp5._renderer.curFillShader,
         'Shader is in use');
       */
-      assert(myp5._renderer.curFillShader !== null &&
+      assert(
+        myp5._renderer.curFillShader !== null &&
         myp5._renderer.curFillShader !== undefined,
         'Shader is not in use or has not been cached');
     });
     test('Uniform Cache', function() {
 
       var uniforms = myp5._renderer.curFillShader.uniforms;
-      assert(uniforms !== null &&
+      assert(
+        uniforms !== null &&
         uniforms !== undefined,
         'Shader uniforms have not been cached');
 
-      assert(Object.keys(uniforms).length > 0,
+      assert(
+        Object.keys(uniforms).length > 0,
         'Shader uniforms have not been cached');
     });
     test('Light Shader', function() {
@@ -110,7 +117,8 @@ suite('p5.Shader', function() {
         'uSampler',
         'isTexture'];
 
-      testShader('Light Shader', myp5._renderer._getLightShader(),
+      testShader(
+        'Light Shader', myp5._renderer._getLightShader(),
         expectedAttributes, expectedUniforms);
     });
     test('Color Shader definition', function() {
@@ -125,7 +133,8 @@ suite('p5.Shader', function() {
         'uNormalMatrix',
         'uMaterialColor'];
 
-      testShader('Color Shader', myp5._renderer._getColorShader(),
+      testShader(
+        'Color Shader', myp5._renderer._getColorShader(),
         expectedAttributes, expectedUniforms);
     });
     test('Immediate Mode Shader definition', function() {
@@ -140,7 +149,8 @@ suite('p5.Shader', function() {
         /*'uResolution',*/
         'uPointSize'];
 
-      testShader('Immediate Mode Shader', myp5._renderer._getImmediateModeShader(),
+      testShader(
+        'Immediate Mode Shader', myp5._renderer._getImmediateModeShader(),
         expectedAttributes, expectedUniforms);
     });
     test('Normal Shader definition', function() {
@@ -155,26 +165,30 @@ suite('p5.Shader', function() {
         'uProjectionMatrix',
         'uNormalMatrix'];
 
-      testShader('Normal Shader', myp5._renderer._getNormalShader(),
+      testShader(
+        'Normal Shader', myp5._renderer._getNormalShader(),
         expectedAttributes, expectedUniforms);
     });
     test('Normal Shader is set after normalMaterial()', function() {
       myp5.normalMaterial();
       var normalShader = myp5._renderer._getNormalShader();
-      assert(normalShader === myp5._renderer.curFillShader,
+      assert(
+        normalShader === myp5._renderer.curFillShader,
         '_renderer\'s curFillShader was not normal shader');
     });
     test('Color Shader is set after fill()', function() {
       myp5.fill(0);
       var colorShader = myp5._renderer._getColorShader();
-      assert(colorShader === myp5._renderer.curFillShader,
+      assert(
+        colorShader === myp5._renderer.curFillShader,
         '_renderer\'s curFillShader was not color shader after fill');
     });
     test('Shader switch between retain and immedate mode', function() {
       myp5.fill(0);
       myp5.box(70, 70, 70);
       var retainShader = myp5._renderer._getColorShader();
-      assert(retainShader === myp5._renderer.curFillShader,
+      assert(
+        retainShader === myp5._renderer.curFillShader,
         '_renderer\'s curFillShader was not color shader after fill() and box()');
 
       myp5.beginShape(myp5.TRIANGLES);
@@ -183,12 +197,14 @@ suite('p5.Shader', function() {
       myp5.vertex(25, -25, 0);
       myp5.endShape();
       var immediateShader = myp5._renderer._getImmediateModeShader();
-      assert(immediateShader === myp5._renderer.curFillShader,
+      assert(
+        immediateShader === myp5._renderer.curFillShader,
         '_renderer\'s curFillShader was not immediate mode shader ' +
         'after begin/endShape()');
 
       myp5.box(70, 70, 70);
-      assert(retainShader === myp5._renderer.curFillShader,
+      assert(
+        retainShader === myp5._renderer.curFillShader,
         '_renderer\'s curFillShader did not switch back to retain shader ' +
         ' to draw box() after immediate mode');
     });
@@ -196,7 +212,8 @@ suite('p5.Shader', function() {
       var lightShader = myp5._renderer._getLightShader();
 
       myp5.ambientMaterial(128);
-      assert(lightShader === myp5._renderer.curFillShader,
+      assert(
+        lightShader === myp5._renderer.curFillShader,
         '_renderer\'s curFillShader did not get set to light shader ' +
         'after call to ambientMaterial()');
     });
@@ -204,7 +221,8 @@ suite('p5.Shader', function() {
       var lightShader = myp5._renderer._getLightShader();
 
       myp5.specularMaterial(128);
-      assert(lightShader === myp5._renderer.curFillShader,
+      assert(
+        lightShader === myp5._renderer.curFillShader,
         '_renderer\'s curFillShader did not get set to light shader ' +
         'after call to specularMaterial()');
     });

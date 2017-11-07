@@ -35,6 +35,52 @@ var Filters = require('./filters');
  * <br><br>
  * Before using the pixels[] array, be sure to use the loadPixels() method on
  * the image to make sure that the pixel data is properly loaded.
+ * @example
+ * <div><code>
+ *
+ * function setup() {
+ *   var img = createImage(100, 100); // same as new p5.Image(100, 100);
+ *   img.loadPixels();
+ *   createCanvas(100, 100);
+ *   background(0);
+ *
+ *   // helper for writing color to array
+ *   function writeColor(image, x, y, red, green, blue, alpha) {
+ *     var index = (x + (y * width)) * 4;
+ *     image.pixels[index]   = red;
+ *     image.pixels[index+1] = green;
+ *     image.pixels[index+2] = blue;
+ *     image.pixels[index+3] = alpha;
+ *   }
+ *
+ *   // fill with random colors
+ *   for (var y = 0; y < img.height; y++) {
+ *     for (var x = 0; x < img.width; x++) {
+ *       var red = random(255);
+ *       var green = random(255);
+ *       var blue = random(255);
+ *       var alpha = 255;
+ *       writeColor(img, x, y, red, green, blue, alpha);
+ *     }
+ *   }
+ *
+ *   // draw a red line
+ *   for (var x = 0; x < img.width; x++) {
+ *     var y = 0;
+ *     writeColor(img, x, y, 255, 0, 0, 255);
+ *   }
+ *
+ *   // draw a green line
+ *   for (var x = 0; x < img.width; x++) {
+ *     var y = img.height - 1;
+ *     writeColor(img, x, y, 0, 255, 0, 255);
+ *   }
+ *
+ *   img.updatePixels();
+ *   image(img, 0, 0);
+ * }
+ * </code></div>
+ *
  *
  * @class p5.Image
  * @constructor
@@ -118,7 +164,7 @@ p5.Image = function(width, height){
    * values of the pixel at (1, 0). More generally, to set values for a pixel
    * at (x, y):
    * ```javascript
-   * var d = pixelDensity;
+   * var d = pixelDensity();
    * for (var i = 0; i < d; i++) {
    *   for (var j = 0; j < d; j++) {
    *     // loop over
@@ -232,9 +278,6 @@ p5.Image.prototype.loadPixels = function(){
  *                              underlying canvas
  * @param {Integer} h height of the target update area for the
  *                              underlying canvas
- */
-/**
- * @method updatePixels
  * @example
  * <div><code>
  * var myImage;
@@ -261,6 +304,9 @@ p5.Image.prototype.loadPixels = function(){
  * @alt
  * 2 images of rocky mountains vertically stacked
  *
+ */
+/**
+ * @method updatePixels
  */
 p5.Image.prototype.updatePixels = function(x, y, w, h){
   p5.Renderer2D.prototype.updatePixels.call(this, x, y, w, h);
@@ -408,7 +454,8 @@ p5.Image.prototype.resize = function(width, height){
   var tempCanvas = document.createElement('canvas');
   tempCanvas.width = width;
   tempCanvas.height = height;
-  tempCanvas.getContext('2d').drawImage(this.canvas,
+  tempCanvas.getContext('2d').drawImage(
+    this.canvas,
     0, 0, this.canvas.width, this.canvas.height,
     0, 0, tempCanvas.width, tempCanvas.height
   );
@@ -420,7 +467,8 @@ p5.Image.prototype.resize = function(width, height){
 
   //Copy the image back
 
-  this.drawingContext.drawImage(tempCanvas,
+  this.drawingContext.drawImage(
+    tempCanvas,
     0, 0, width, height,
     0, 0, width, height
   );

@@ -192,8 +192,7 @@ p5.prototype.texture = function(){
   }
   this._renderer.GL.depthMask(true);
   this._renderer.GL.enable(this._renderer.GL.BLEND);
-  this._renderer.GL.blendFunc(this._renderer.GL.SRC_ALPHA,
-    this._renderer.GL.ONE_MINUS_SRC_ALPHA);
+  this._renderer.GL.blendFunc(this._renderer.GL.SRC_ALPHA, this._renderer.GL.ONE_MINUS_SRC_ALPHA);
 
   this._renderer.drawMode = constants.TEXTURE;
   if (! this._renderer.curFillShader.isTextureShader()) {
@@ -212,12 +211,11 @@ p5.prototype.texture = function(){
  * possible materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
  * @method  ambientMaterial
- * @param  {Number|Array|String|p5.Color} v1  gray value,
- * red or hue value (depending on the current color mode),
- * or color Array, or CSS color string
- * @param  {Number}            [v2] green or saturation value
- * @param  {Number}            [v3] blue or brightness value
- * @param  {Number}            [a]  opacity
+ * @param  {Number} v1  gray value, red or hue value
+ *                         (depending on the current color mode)
+ * @param  {Number} [v2] green or saturation value
+ * @param  {Number} [v3] blue or brightness value
+ * @param  {Number} [a]  opacity
  * @chainable
  * @example
  * <div>
@@ -239,6 +237,11 @@ p5.prototype.texture = function(){
  * radiating light source from top right of canvas
  *
  */
+/**
+ * @method  ambientMaterial
+ * @param  {Array|String|p5.Color} color  color, color Array, or CSS color string
+ * @chainable
+ */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
   if (! this._renderer.curFillShader.isLightShader()) {
     this._renderer.setFillShader(this._renderer._getLightShader());
@@ -255,12 +258,11 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * possible materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
  * @method specularMaterial
- * @param  {Number|Array|String|p5.Color} v1  gray value,
- * red or hue value (depending on the current color mode),
- * or color Array, or CSS color string
- * @param  {Number}            [v2] green or saturation value
- * @param  {Number}            [v3] blue or brightness value
- * @param  {Number}            [a]  opacity
+ * @param  {Number} v1   gray value, red or hue value
+ *                        (depending on the current color mode),
+ * @param  {Number} [v2] green or saturation value
+ * @param  {Number} [v3] blue or brightness value
+ * @param  {Number} [a]  opacity
  * @chainable
  * @example
  * <div>
@@ -281,6 +283,11 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * @alt
  * diffused radiating light source from top right of canvas
  *
+ */
+/**
+ * @method specularMaterial
+ * @param  {Array|String|p5.Color} color color Array, or CSS color string
+ * @chainable
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
   if (! this._renderer.curFillShader.isLightShader()) {

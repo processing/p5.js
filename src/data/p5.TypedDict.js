@@ -197,10 +197,6 @@ p5.TypedDict.prototype._addObj = function(obj) {
  * @method create
  * @param {Number|String} key
  * @param {Number|String} value
- */
-/**
- * @method create
- * @param {Object} obj key/value pair
  *
  * @example
  * <div class="norender">
@@ -214,7 +210,10 @@ p5.TypedDict.prototype._addObj = function(obj) {
  * }
  *
  * </code></div>
- *
+ */
+/**
+ * @method create
+ * @param {Object} obj key/value pair
  */
 
 p5.TypedDict.prototype.create = function() {

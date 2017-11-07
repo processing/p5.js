@@ -31,13 +31,7 @@ require('./p5.Geometry');
  * @param  {function(Event)} [failureCallback] called with event error if
  *                                         the image fails to load.
  * @return {p5.Geometry} the p5.Geometry object
- */
-/**
- * @method loadModel
- * @param  {String} path
- * @param  {function(p5.Geometry)} [successCallback]
- * @param  {function(Event)} [failureCallback]
- * @return {p5.Geometry} the p5.Geometry object
+ *
  * @example
  * <div>
  * <code>
@@ -61,7 +55,13 @@ require('./p5.Geometry');
  *
  * @alt
  * Vertically rotating 3-d teapot with red, green and blue gradient.
- *
+ */
+/**
+ * @method loadModel
+ * @param  {String} path
+ * @param  {function(p5.Geometry)} [successCallback]
+ * @param  {function(Event)} [failureCallback]
+ * @return {p5.Geometry} the p5.Geometry object
  */
 p5.prototype.loadModel = function () {
   var path = arguments[0];
@@ -116,9 +116,11 @@ function parseObj( model, lines ) {
   // used to map a specific combination (keyed on, for example, the string
   // "3/4/3"), to the actual index of the newly created vertex in the final
   // object.
-  var loadedVerts = {'v' : [],
-                    'vt' : [],
-                    'vn' : []};
+  var loadedVerts = {
+    'v' : [],
+    'vt' : [],
+    'vn' : []
+  };
   var indexedVerts = {};
 
   for (var line = 0; line < lines.length; ++line) {

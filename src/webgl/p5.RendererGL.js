@@ -166,8 +166,7 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
     document.body.appendChild(c);
   }
   this._pInst.canvas = c;
-  this._pInst._setProperty('_renderer', new p5.RendererGL(this._pInst.canvas,
-    this._pInst, true, attr));
+  this._pInst._setProperty('_renderer', new p5.RendererGL(this._pInst.canvas, this._pInst, true, attr));
   this._pInst._renderer.resize(w, h);
   this._pInst._renderer._applyDefaults();
   this._pInst._elements.push(this._renderer);
@@ -210,7 +209,10 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  * (note that p5 clears automatically on draw loop)
  * default is true
  * <br><br>
- *
+ * @method setAttributes
+ * @param  {String|Object}  String name of attribute or object with key-value pairs
+ * @param  {Boolean}        New value of named attribute
+ * @example
  * <div>
  * <code>
  *  function setup() {
@@ -252,10 +254,7 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  * </code>
  * </div>
  *
- * @method setAttributes
- * @param  {String|Object}  String name of attribute or object with key-value pairs
- * @param  {Boolean}        New value of named attribute
- *
+ * @alt a rotating cube with smoother edges
  */
 
 p5.prototype.setAttributes = function() {
@@ -319,8 +318,7 @@ p5.RendererGL.prototype._update = function() {
                      this.cameraMatrix.mat4[12],
                      this.cameraMatrix.mat4[13],
                      this.cameraMatrix.mat4[14],
-                     this.cameraMatrix.mat4[15]
-                     );
+                     this.cameraMatrix.mat4[15]);
 
   // reset light counters for new frame.
   this.ambientLightCount = 0;
@@ -587,7 +585,7 @@ p5.RendererGL.prototype._setStrokeColor = function() {
  * @param  {Number}               [y] y-coordinate of the pixel
  * @param  {Number}               [w] width
  * @param  {Number}               [h] height
- * @return {Array|Color|p5.Image}     color of pixel at x,y in array format
+ * @return {Number[]|Color|p5.Image}  color of pixel at x,y in array format
  *                                    [R, G, B, A] or p5.Image
  */
 p5.RendererGL.prototype.get = function(x, y, w, h) {
@@ -641,6 +639,7 @@ p5.RendererGL.prototype.geometryInHash = function(gId){
 
 /**
  * [resize description]
+ * @private
  * @param  {Number} w [description]
  * @param  {Number} h [description]
  */
@@ -659,13 +658,15 @@ p5.RendererGL.prototype.resize = function(w,h) {
 /**
  * clears color and depth buffers
  * with r,g,b,a
+ * @private
  * @param {Number} r normalized red val.
  * @param {Number} g normalized green val.
  * @param {Number} b normalized blue val.
  * @param {Number} a normalized alpha val.
  */
 p5.RendererGL.prototype.clear = function() {
-  this.GL.clearColor(arguments[0],
+  this.GL.clearColor(
+    arguments[0],
     arguments[1],
     arguments[2],
     arguments[3]);
@@ -674,6 +675,7 @@ p5.RendererGL.prototype.clear = function() {
 
 /**
  * [translate description]
+ * @private
  * @param  {Number} x [description]
  * @param  {Number} y [description]
  * @param  {Number} z [description]
@@ -692,6 +694,7 @@ p5.RendererGL.prototype.translate = function(x, y, z) {
 
 /**
  * Scales the Model View Matrix by a vector
+ * @private
  * @param  {Number | p5.Vector | Array} x [description]
  * @param  {Number} [y] y-axis scalar
  * @param  {Number} [z] z-axis scalar
@@ -819,8 +822,7 @@ p5.RendererGL.prototype.setStrokeShader = function (s) {
 
 p5.RendererGL.prototype._getLightShader = function () {
   if (this._defaultLightShader === undefined) {
-    this._defaultLightShader = new p5.Shader(this,
-      defaultShaders.lightVert, defaultShaders.lightTextureFrag);
+    this._defaultLightShader = new p5.Shader(this, defaultShaders.lightVert, defaultShaders.lightTextureFrag);
   }
   //this.drawMode = constants.FILL;
   return this._defaultLightShader;
@@ -828,8 +830,7 @@ p5.RendererGL.prototype._getLightShader = function () {
 
 p5.RendererGL.prototype._getImmediateModeShader = function () {
   if (this._defaultImmediateModeShader === undefined) {
-    this._defaultImmediateModeShader = new p5.Shader(this,
-      defaultShaders.immediateVert, defaultShaders.vertexColorFrag);
+    this._defaultImmediateModeShader = new p5.Shader(this, defaultShaders.immediateVert, defaultShaders.vertexColorFrag);
   }
   //this.drawMode = constants.FILL;
   return this._defaultImmediateModeShader;
@@ -837,8 +838,7 @@ p5.RendererGL.prototype._getImmediateModeShader = function () {
 
 p5.RendererGL.prototype._getNormalShader = function () {
   if (this._defaultNormalShader === undefined) {
-    this._defaultNormalShader = new p5.Shader(this,
-      defaultShaders.normalVert, defaultShaders.normalFrag);
+    this._defaultNormalShader = new p5.Shader(this, defaultShaders.normalVert, defaultShaders.normalFrag);
   }
   //this.drawMode = constants.FILL;
   return this._defaultNormalShader;
@@ -846,8 +846,7 @@ p5.RendererGL.prototype._getNormalShader = function () {
 
 p5.RendererGL.prototype._getColorShader = function () {
   if (this._defaultColorShader === undefined) {
-    this._defaultColorShader = new p5.Shader(this,
-      defaultShaders.normalVert, defaultShaders.basicFrag);
+    this._defaultColorShader = new p5.Shader(this, defaultShaders.normalVert, defaultShaders.basicFrag);
   }
   //this.drawMode = constants.FILL;
   return this._defaultColorShader;
@@ -855,8 +854,7 @@ p5.RendererGL.prototype._getColorShader = function () {
 
 p5.RendererGL.prototype._getLineShader = function () {
   if (this._defaultLineShader === undefined) {
-    this._defaultLineShader = new p5.Shader(this,
-      defaultShaders.lineVert, defaultShaders.lineFrag);
+    this._defaultLineShader = new p5.Shader(this, defaultShaders.lineVert, defaultShaders.lineFrag);
   }
   //this.drawMode = constants.STROKE;
   return this._defaultLineShader;
@@ -903,6 +901,7 @@ p5.RendererGL.prototype._bindBuffer = function( buffer, target,
 //////////////////////////////
 /**
  * turn a two dimensional array into one dimensional array
+ * @private
  * @param  {Array} arr 2-dimensional array
  * @return {Array}     1-dimensional array
  * [[1, 2, 3],[4, 5, 6]] -> [1, 2, 3, 4, 5, 6]
@@ -917,6 +916,7 @@ p5.RendererGL.prototype._flatten = function(arr){
 
 /**
  * turn a p5.Vector Array into a one dimensional number array
+ * @private
  * @param  {Array} arr  an array of p5.Vector
  * @return {Array]}     a one dimensional array of numbers
  * [p5.Vector(1, 2, 3), p5.Vector(4, 5, 6)] ->

@@ -6,6 +6,16 @@ function smokeTestMethods(data) {
   data.classitems.forEach(function(classitem) {
     if (classitem.itemtype === 'method') {
       new DocumentedMethod(classitem);
+
+      if (classitem.access !== 'private' &&
+        classitem.file.substr(0, 3) === 'src' &&
+        classitem.name &&
+        !classitem.example) {
+        console.log(classitem.file + ':' + classitem.line +
+          ': ' + classitem.itemtype + ' ' +
+          classitem.class + '.' + classitem.name +
+          ' missing example');
+      }
     }
   });
 }
@@ -15,6 +25,11 @@ function mergeOverloadedMethods(data) {
   var paramsForOverloadedMethods = {};
 
   data.classitems = data.classitems.filter(function(classitem) {
+
+    if (classitem.access === "private") {
+      return false;
+    }
+
     var fullName, method;
 
     var assertEqual = function(a, b, msg) {
@@ -63,7 +78,7 @@ function mergeOverloadedMethods(data) {
         // times in our index pages and such.
 
         method = methodsByFullName[fullName];
-
+		
         assertEqual(method.file, classitem.file,
                     'all overloads must be defined in the same file');
         assertEqual(method.module, classitem.module,
@@ -125,6 +140,14 @@ function renderDescriptionsAsMarkdown(data) {
 }
 
 module.exports = function(data, options) {
+  data.classitems
+	  .filter(ci => !ci.itemtype && (ci.params || ci.return) && ci.access !== 'private')
+    .forEach(ci => { console.error(ci.file + ":" + ci.line + ": unnamed public member"); });
+
+  Object.keys(data.classes)
+    .filter(k => data.classes[k].access === "private")
+    .forEach(k => delete data.classes[k]);
+
   renderDescriptionsAsMarkdown(data);
   mergeOverloadedMethods(data);
   smokeTestMethods(data);

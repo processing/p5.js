@@ -193,14 +193,7 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  *
  * @method textFont
  * @return {Object} the current font
- */
-/**
- * @method textFont
- * @param {Object|String} font a font loaded via loadFont(), or a String
- * representing a <a href="https://mzl.la/2dOw8WD">web safe font</a> (a font
- * that is generally available across all systems)
- * @param {Number} [size] the font size to use
- * @chainable
+ *
  * @example
  * <div>
  * <code>
@@ -235,7 +228,14 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  *
  * @alt
  *words Font Style Normal displayed normally, Italic in italic and bold in bold
- *
+ */
+/**
+ * @method textFont
+ * @param {Object|String} font a font loaded via loadFont(), or a String
+ * representing a <a href="https://mzl.la/2dOw8WD">web safe font</a> (a font
+ * that is generally available across all systems)
+ * @param {Number} [size] the font size to use
+ * @chainable
  */
 p5.prototype.textFont = function(theFont, theSize) {
 
@@ -251,8 +251,7 @@ p5.prototype.textFont = function(theFont, theSize) {
     if (theSize) {
 
       this._renderer._setProperty('_textSize', theSize);
-      this._renderer._setProperty('_textLeading',
-        theSize * constants._DEFAULT_LEADMULT);
+      this._renderer._setProperty('_textLeading', theSize * constants._DEFAULT_LEADMULT);
     }
 
     return this._renderer._applyTextProperties();

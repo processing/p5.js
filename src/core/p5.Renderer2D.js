@@ -83,27 +83,26 @@ p5.Renderer2D.prototype.stroke = function() {
 
 p5.Renderer2D.prototype.image =
   function (img, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight) {
-  var cnv;
-  try {
-    if (this._tint) {
-      if (p5.MediaElement && img instanceof p5.MediaElement) {
-        img.loadPixels();
+    var cnv;
+    try {
+      if (this._tint) {
+        if (p5.MediaElement && img instanceof p5.MediaElement) {
+          img.loadPixels();
+        }
+        if (img.canvas) {
+          cnv = this._getTintedImageCanvas(img);
+        }
       }
-      if (img.canvas) {
-        cnv = this._getTintedImageCanvas(img);
+      if (!cnv) {
+        cnv = img.canvas || img.elt;
+      }
+      this.drawingContext.drawImage(cnv, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
+    } catch (e) {
+      if (e.name !== 'NS_ERROR_NOT_AVAILABLE') {
+        throw e;
       }
     }
-    if (!cnv) {
-      cnv = img.canvas || img.elt;
-    }
-    this.drawingContext.drawImage(cnv, sx, sy, sWidth, sHeight, dx, dy,
-      dWidth, dHeight);
-  } catch (e) {
-    if (e.name !== 'NS_ERROR_NOT_AVAILABLE') {
-      throw e;
-    }
-  }
-};
+  };
 
 p5.Renderer2D.prototype._getTintedImageCanvas = function (img) {
   if (!img.canvas) {
@@ -189,8 +188,7 @@ p5.Renderer2D._copyHelper =
 function (srcImage, sx, sy, sw, sh, dx, dy, dw, dh) {
   srcImage.loadPixels();
   var s = srcImage.canvas.width / srcImage.width;
-  this.drawingContext.drawImage(srcImage.canvas,
-    s * sx, s * sy, s * sw, s * sh, dx, dy, dw, dh);
+  this.drawingContext.drawImage(srcImage.canvas, s * sx, s * sy, s * sw, s * sh, dx, dy, dw, dh);
 };
 
 p5.Renderer2D.prototype.get = function(x, y, w, h) {
@@ -241,8 +239,7 @@ p5.Renderer2D.prototype.get = function(x, y, w, h) {
     var sh = dh * pd;
 
     var region = new p5.Image(dw, dh);
-    region.canvas.getContext('2d').drawImage(this.canvas, sx, sy, sw, sh,
-      0, 0, dw, dh);
+    region.canvas.getContext('2d').drawImage(this.canvas, sx, sy, sw, sh, 0, 0, dw, dh);
 
     return region;
   }
@@ -271,8 +268,7 @@ p5.Renderer2D.prototype.set = function (x, y, imgOrCol) {
   if (imgOrCol instanceof p5.Image) {
     this.drawingContext.save();
     this.drawingContext.setTransform(1, 0, 0, 1, 0, 0);
-    this.drawingContext.scale(this._pInst._pixelDensity,
-      this._pInst._pixelDensity);
+    this.drawingContext.scale(this._pInst._pixelDensity, this._pInst._pixelDensity);
     this.drawingContext.drawImage(imgOrCol.canvas, x, y);
     this.loadPixels.call(this._pInst);
     this.drawingContext.restore();
@@ -362,86 +358,86 @@ p5.Renderer2D.prototype.updatePixels = function (x, y, w, h) {
  */
 p5.Renderer2D.prototype._acuteArcToBezier =
   function _acuteArcToBezier(start, size) {
-  // Evauate constants.
-  var alpha = size / 2.0,
-    cos_alpha = Math.cos(alpha),
-    sin_alpha = Math.sin(alpha),
-    cot_alpha = 1.0 / Math.tan(alpha),
-    phi = start + alpha,  // This is how far the arc needs to be rotated.
-    cos_phi = Math.cos(phi),
-    sin_phi = Math.sin(phi),
-    lambda = (4.0 - cos_alpha) / 3.0,
-    mu = sin_alpha + (cos_alpha - lambda) * cot_alpha;
+    // Evauate constants.
+    var alpha = size / 2.0,
+      cos_alpha = Math.cos(alpha),
+      sin_alpha = Math.sin(alpha),
+      cot_alpha = 1.0 / Math.tan(alpha),
+      phi = start + alpha,  // This is how far the arc needs to be rotated.
+      cos_phi = Math.cos(phi),
+      sin_phi = Math.sin(phi),
+      lambda = (4.0 - cos_alpha) / 3.0,
+      mu = sin_alpha + (cos_alpha - lambda) * cot_alpha;
 
-  // Return rotated waypoints.
-  return {
-    ax: Math.cos(start),
-    ay: Math.sin(start),
-    bx: lambda * cos_phi + mu * sin_phi,
-    by: lambda * sin_phi - mu * cos_phi,
-    cx: lambda * cos_phi - mu * sin_phi,
-    cy: lambda * sin_phi + mu * cos_phi,
-    dx: Math.cos(start + size),
-    dy: Math.sin(start + size)
+    // Return rotated waypoints.
+    return {
+      ax: Math.cos(start),
+      ay: Math.sin(start),
+      bx: lambda * cos_phi + mu * sin_phi,
+      by: lambda * sin_phi - mu * cos_phi,
+      cx: lambda * cos_phi - mu * sin_phi,
+      cy: lambda * sin_phi + mu * cos_phi,
+      dx: Math.cos(start + size),
+      dy: Math.sin(start + size)
+    };
   };
-};
 
 p5.Renderer2D.prototype.arc =
   function(x, y, w, h, start, stop, mode) {
-  var ctx = this.drawingContext;
-  var vals = canvas.arcModeAdjust(x, y, w, h, this._ellipseMode);
-  var rx = vals.w / 2.0;
-  var ry = vals.h / 2.0;
-  var epsilon = 0.00001;  // Smallest visible angle on displays up to 4K.
-  var arcToDraw = 0;
-  var curves = [];
+    var ctx = this.drawingContext;
+    var vals = canvas.arcModeAdjust(x, y, w, h, this._ellipseMode);
+    var rx = vals.w / 2.0;
+    var ry = vals.h / 2.0;
+    var epsilon = 0.00001;  // Smallest visible angle on displays up to 4K.
+    var arcToDraw = 0;
+    var curves = [];
 
-  // Create curves
-  while(stop - start > epsilon) {
-    arcToDraw = Math.min(stop - start, constants.HALF_PI);
-    curves.push(this._acuteArcToBezier(start, arcToDraw));
-    start += arcToDraw;
-  }
-
-  // Fill curves
-  if (this._doFill) {
-    ctx.beginPath();
-    curves.forEach(function (curve, index) {
-      if (index === 0) {
-        ctx.moveTo(vals.x + curve.ax * rx, vals.y + curve.ay * ry);
-      }
-      ctx.bezierCurveTo(vals.x + curve.bx * rx, vals.y + curve.by * ry,
-                        vals.x + curve.cx * rx, vals.y + curve.cy * ry,
-                        vals.x + curve.dx * rx, vals.y + curve.dy * ry);
-    });
-    if (mode === constants.PIE || mode == null) {
-      ctx.lineTo(vals.x, vals.y);
+    // Create curves
+    while(stop - start > epsilon) {
+      arcToDraw = Math.min(stop - start, constants.HALF_PI);
+      curves.push(this._acuteArcToBezier(start, arcToDraw));
+      start += arcToDraw;
     }
-    ctx.closePath();
-    ctx.fill();
-  }
 
-  // Stroke curves
-  if (this._doStroke) {
-    ctx.beginPath();
-    curves.forEach(function (curve, index) {
-      if (index === 0) {
-        ctx.moveTo(vals.x + curve.ax * rx, vals.y + curve.ay * ry);
+    // Fill curves
+    if (this._doFill) {
+      ctx.beginPath();
+      curves.forEach(function (curve, index) {
+        if (index === 0) {
+          ctx.moveTo(vals.x + curve.ax * rx, vals.y + curve.ay * ry);
+        }
+        ctx.bezierCurveTo(vals.x + curve.bx * rx, vals.y + curve.by * ry,
+                          vals.x + curve.cx * rx, vals.y + curve.cy * ry,
+                          vals.x + curve.dx * rx, vals.y + curve.dy * ry);
+      });
+      if (mode === constants.PIE || mode == null) {
+        ctx.lineTo(vals.x, vals.y);
       }
-      ctx.bezierCurveTo(vals.x + curve.bx * rx, vals.y + curve.by * ry,
-                        vals.x + curve.cx * rx, vals.y + curve.cy * ry,
-                        vals.x + curve.dx * rx, vals.y + curve.dy * ry);
-    });
-    if (mode === constants.PIE) {
-      ctx.lineTo(vals.x, vals.y);
       ctx.closePath();
-    } else if (mode === constants.CHORD) {
-      ctx.closePath();
+      ctx.fill();
     }
-    ctx.stroke();
-  }
-  return this;
-};
+
+    // Stroke curves
+    if (this._doStroke) {
+      ctx.beginPath();
+      curves.forEach(function (curve, index) {
+        if (index === 0) {
+          ctx.moveTo(vals.x + curve.ax * rx, vals.y + curve.ay * ry);
+        }
+        ctx.bezierCurveTo(vals.x + curve.bx * rx, vals.y + curve.by * ry,
+                          vals.x + curve.cx * rx, vals.y + curve.cy * ry,
+                          vals.x + curve.dx * rx, vals.y + curve.dy * ry);
+      });
+      if (mode === constants.PIE) {
+        ctx.lineTo(vals.x, vals.y);
+        ctx.closePath();
+      } else if (mode === constants.CHORD) {
+        ctx.closePath();
+      }
+      ctx.stroke();
+    }
+    return this;
+  };
 
 p5.Renderer2D.prototype.ellipse = function(args) {
   var ctx = this.drawingContext;
@@ -534,31 +530,31 @@ p5.Renderer2D.prototype.point = function(x, y) {
 
 p5.Renderer2D.prototype.quad =
   function(x1, y1, x2, y2, x3, y3, x4, y4) {
-  var ctx = this.drawingContext;
-  var doFill = this._doFill, doStroke = this._doStroke;
-  if (doFill && !doStroke) {
-    if(this._getFill() === styleEmpty) {
-      return this;
+    var ctx = this.drawingContext;
+    var doFill = this._doFill, doStroke = this._doStroke;
+    if (doFill && !doStroke) {
+      if(this._getFill() === styleEmpty) {
+        return this;
+      }
+    } else if (!doFill && doStroke) {
+      if(this._getStroke() === styleEmpty) {
+        return this;
+      }
     }
-  } else if (!doFill && doStroke) {
-    if(this._getStroke() === styleEmpty) {
-      return this;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.lineTo(x3, y3);
+    ctx.lineTo(x4, y4);
+    ctx.closePath();
+    if (doFill) {
+      ctx.fill();
     }
-  }
-  ctx.beginPath();
-  ctx.moveTo(x1, y1);
-  ctx.lineTo(x2, y2);
-  ctx.lineTo(x3, y3);
-  ctx.lineTo(x4, y4);
-  ctx.closePath();
-  if (doFill) {
-    ctx.fill();
-  }
-  if (doStroke) {
-    ctx.stroke();
-  }
-  return this;
-};
+    if (doStroke) {
+      ctx.stroke();
+    }
+    return this;
+  };
 
 p5.Renderer2D.prototype.rect = function(args) {
   var x = args[0],
@@ -698,8 +694,7 @@ function (mode, vertices, isCurve, isBezier,
           vertices[i + 1][0],
           vertices[i + 1][1]
         ];
-        this.drawingContext.bezierCurveTo(b[1][0],b[1][1],
-          b[2][0],b[2][1],b[3][0],b[3][1]);
+        this.drawingContext.bezierCurveTo(b[1][0],b[1][1], b[2][0],b[2][1],b[3][0],b[3][1]);
       }
       if (closeShape) {
         this.drawingContext.lineTo(vertices[i + 1][0], vertices[i + 1][1]);
@@ -716,8 +711,7 @@ function (mode, vertices, isCurve, isBezier,
           this.drawingContext.lineTo(vertices[i][0], vertices[i][1]);
         }
       } else {
-        this.drawingContext.bezierCurveTo(vertices[i][0], vertices[i][1],
-          vertices[i][2], vertices[i][3], vertices[i][4], vertices[i][5]);
+        this.drawingContext.bezierCurveTo(vertices[i][0], vertices[i][1], vertices[i][2], vertices[i][3], vertices[i][4], vertices[i][5]);
       }
     }
     this._doFillStrokeClose();
@@ -732,8 +726,7 @@ function (mode, vertices, isCurve, isBezier,
           this.drawingContext.lineTo(vertices[i][0], vertices[i][1]);
         }
       } else {
-        this.drawingContext.quadraticCurveTo(vertices[i][0], vertices[i][1],
-          vertices[i][2], vertices[i][3]);
+        this.drawingContext.quadraticCurveTo(vertices[i][0], vertices[i][1], vertices[i][2], vertices[i][3]);
       }
     }
     this._doFillStrokeClose();

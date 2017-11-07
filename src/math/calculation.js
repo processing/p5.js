@@ -126,16 +126,7 @@ p5.prototype.constrain = function(n, low, high) {
  * @param  {Number} x2 x-coordinate of the second point
  * @param  {Number} y2 y-coordinate of the second point
  * @return {Number}    distance between the two points
- */
-/**
- * @method dist
- * @param  {Number} x1
- * @param  {Number} y1
- * @param  {Number} z1 z-coordinate of the first point
- * @param  {Number} x2
- * @param  {Number} y2
- * @param  {Number} z2 z-coordinate of the second point
- * @return {Number}    distance between the two points
+ *
  * @example
  * <div><code>
  * // Move your mouse inside the canvas to see the
@@ -169,13 +160,23 @@ p5.prototype.constrain = function(n, low, high) {
  *
  * @alt
  * 2 ellipses joined by line. 1 ellipse moves with mouse X&Y. Distance displayed.
- *
+ */
+/**
+ * @method dist
+ * @param  {Number} x1
+ * @param  {Number} y1
+ * @param  {Number} z1 z-coordinate of the first point
+ * @param  {Number} x2
+ * @param  {Number} y2
+ * @param  {Number} z2 z-coordinate of the second point
+ * @return {Number}    distance between the two points
  */
 p5.prototype.dist = function() {
   if (arguments.length === 4) { //2D
     return hypot(arguments[2]-arguments[0], arguments[3]-arguments[1]);
   } else if (arguments.length === 6) { //3D
-    return hypot(arguments[3]-arguments[0],
+    return hypot(
+      arguments[3]-arguments[0],
       arguments[4]-arguments[1],
       arguments[5]-arguments[2]);
   }

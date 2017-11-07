@@ -110,8 +110,7 @@ p5.Shader.prototype._loadAttributes = function() {
 
   var gl = this._renderer.GL;
 
-  var numAttributes = gl.getProgramParameter(this._glProgram,
-    gl.ACTIVE_ATTRIBUTES);
+  var numAttributes = gl.getProgramParameter(this._glProgram, gl.ACTIVE_ATTRIBUTES);
   for(var i = 0; i < numAttributes; ++i){
     var attributeInfo = gl.getActiveAttrib(this._glProgram, i);
     var name = attributeInfo.name;
@@ -141,8 +140,7 @@ p5.Shader.prototype._loadUniforms = function() {
   var gl = this._renderer.GL;
 
   // Inspect shader and cache uniform info
-  var numUniforms = gl.getProgramParameter(this._glProgram,
-    gl.ACTIVE_UNIFORMS);
+  var numUniforms = gl.getProgramParameter(this._glProgram, gl.ACTIVE_UNIFORMS);
 
   var samplerIndex = 0;
   for(var i = 0; i < numUniforms; ++i){
@@ -156,8 +154,7 @@ p5.Shader.prototype._loadUniforms = function() {
     //off here. The size property tells us that its an array
     //so we dont lose any information by doing this
     if(uniformInfo.size > 1) {
-      uniformName = uniformName.substring(0,
-        uniformName.indexOf('[0]'));
+      uniformName = uniformName.substring(0, uniformName.indexOf('[0]'));
     }
     uniform.name = uniformName;
     uniform.type = uniformInfo.type;
@@ -246,8 +243,7 @@ p5.Shader.prototype._setMatrixUniforms = function() {
 };
 
 p5.Shader.prototype._setViewportUniform = function() {
-  this.setUniform('uViewport',
-    this._renderer.GL.getParameter(this._renderer.GL.VIEWPORT));
+  this.setUniform('uViewport', this._renderer.GL.getParameter(this._renderer.GL.VIEWPORT));
 };
 
 /**

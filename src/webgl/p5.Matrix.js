@@ -12,14 +12,13 @@
 var p5 = require('../core/core');
 var polarGeometry = require('../math/polargeometry');
 var constants = require('../core/constants');
-var GLMAT_ARRAY_TYPE = (
-    typeof Float32Array !== 'undefined') ?
-  Float32Array : Array;
+var GLMAT_ARRAY_TYPE = (typeof Float32Array !== 'undefined') ? Float32Array : Array;
 
 /**
  * A class to describe a 4x4 matrix
  * for model and view matrix manipulation in the p5js webgl renderer.
- * class p5.Matrix
+ * @class p5.Matrix
+ * @private
  * @constructor
  * @param {Array} [mat4] array literal of our 4x4 matrix
  */
@@ -76,9 +75,14 @@ p5.Matrix = function() {
  * Sets the x, y, and z component of the vector using two or three separate
  * variables, the data from a p5.Matrix, or the values from a float array.
  *
+ * @method set
  * @param {p5.Matrix|Float32Array|Array} [inMatrix] the input p5.Matrix or
  *                                     an Array of length 16
- * @param {Number}          [n00..n33] 16 numbers passed by value to avoid
+ * @chainable
+ */
+/**
+ * @method set
+ * @param {Number[]} elements 16 numbers passed by value to avoid
  *                                     array copying.
  * @chainable
  */
@@ -113,6 +117,7 @@ p5.Matrix.prototype.set = function (inMatrix) {
 /**
  * Gets a copy of the vector, returns a p5.Matrix object.
  *
+ * @method get
  * @return {p5.Matrix} the copy of the p5.Matrix object
  */
 p5.Matrix.prototype.get = function () {
@@ -121,6 +126,7 @@ p5.Matrix.prototype.get = function () {
 
 /**
  * return a copy of a matrix
+ * @method copy
  * @return {p5.Matrix}   the result matrix
  */
 p5.Matrix.prototype.copy = function(){
@@ -146,6 +152,7 @@ p5.Matrix.prototype.copy = function(){
 
 /**
  * return an identity matrix
+ * @method identity
  * @return {p5.Matrix}   the result matrix
  */
 p5.Matrix.identity = function(){
@@ -154,6 +161,7 @@ p5.Matrix.identity = function(){
 
 /**
  * transpose according to a given matrix
+ * @method transpose
  * @param  {p5.Matrix|Float32Array|Array} a  the matrix to be based on to transpose
  * @chainable
  */
@@ -214,12 +222,13 @@ p5.Matrix.prototype.transpose = function(a){
 
 /**
  * invert  matrix according to a give matrix
+ * @method invert
  * @param  {p5.Matrix|Float32Array|Array} a   the matrix to be based on to invert
  * @chainable
  */
 p5.Matrix.prototype.invert = function(a){
-  var a00, a01, a02, a03, a10, a11, a12, a13,
-  a20, a21, a22, a23, a30, a31, a32, a33;
+  var a00, a01, a02, a03, a10, a11, a12, a13;
+  var a20, a21, a22, a23, a30, a31, a32, a33;
   if(a instanceof p5.Matrix){
     a00 = a.mat4[0];
     a01 = a.mat4[1];
@@ -255,22 +264,21 @@ p5.Matrix.prototype.invert = function(a){
     a32 = a[14];
     a33 = a[15];
   }
-  var b00 = a00 * a11 - a01 * a10,
-  b01 = a00 * a12 - a02 * a10,
-  b02 = a00 * a13 - a03 * a10,
-  b03 = a01 * a12 - a02 * a11,
-  b04 = a01 * a13 - a03 * a11,
-  b05 = a02 * a13 - a03 * a12,
-  b06 = a20 * a31 - a21 * a30,
-  b07 = a20 * a32 - a22 * a30,
-  b08 = a20 * a33 - a23 * a30,
-  b09 = a21 * a32 - a22 * a31,
-  b10 = a21 * a33 - a23 * a31,
-  b11 = a22 * a33 - a23 * a32,
+  var b00 = a00 * a11 - a01 * a10;
+  var b01 = a00 * a12 - a02 * a10;
+  var b02 = a00 * a13 - a03 * a10;
+  var b03 = a01 * a12 - a02 * a11;
+  var b04 = a01 * a13 - a03 * a11;
+  var b05 = a02 * a13 - a03 * a12;
+  var b06 = a20 * a31 - a21 * a30;
+  var b07 = a20 * a32 - a22 * a30;
+  var b08 = a20 * a33 - a23 * a30;
+  var b09 = a21 * a32 - a22 * a31;
+  var b10 = a21 * a33 - a23 * a31;
+  var b11 = a22 * a33 - a23 * a32;
 
   // Calculate the determinant
-  det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 -
-  b04 * b07 + b05 * b06;
+  var det = b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06;
 
   if (!det) {
     return null;
@@ -299,24 +307,25 @@ p5.Matrix.prototype.invert = function(a){
 
 /**
  * Inverts a 3x3 matrix
+ * @method invert3x3
  * @chainable
  */
 p5.Matrix.prototype.invert3x3 = function (){
-  var a00 = this.mat3[0],
-  a01 = this.mat3[1],
-  a02 = this.mat3[2],
-  a10 = this.mat3[3],
-  a11 = this.mat3[4],
-  a12 = this.mat3[5],
-  a20 = this.mat3[6],
-  a21 = this.mat3[7],
-  a22 = this.mat3[8],
-  b01 = a22 * a11 - a12 * a21,
-  b11 = -a22 * a10 + a12 * a20,
-  b21 = a21 * a10 - a11 * a20,
+  var a00 = this.mat3[0];
+  var a01 = this.mat3[1];
+  var a02 = this.mat3[2];
+  var a10 = this.mat3[3];
+  var a11 = this.mat3[4];
+  var a12 = this.mat3[5];
+  var a20 = this.mat3[6];
+  var a21 = this.mat3[7];
+  var a22 = this.mat3[8];
+  var b01 = a22 * a11 - a12 * a21;
+  var b11 = -a22 * a10 + a12 * a20;
+  var b21 = a21 * a10 - a11 * a20;
 
   // Calculate the determinant
-  det = a00 * b01 + a01 * b11 + a02 * b21;
+  var det = a00 * b01 + a01 * b11 + a02 * b21;
   if (!det) {
     return null;
   }
@@ -335,7 +344,8 @@ p5.Matrix.prototype.invert3x3 = function (){
 
 /**
  * transposes a 3x3 p5.Matrix by a mat3
- * @param  {[Number]} mat3 1-dimensional array
+ * @method transpose3x3
+ * @param  {Number[]} mat3 1-dimensional array
  * @chainable
  */
 p5.Matrix.prototype.transpose3x3 = function (mat3){
@@ -352,6 +362,7 @@ p5.Matrix.prototype.transpose3x3 = function (mat3){
 /**
  * converts a 4x4 matrix to its 3x3 inverse tranform
  * commonly used in MVMatrix to NMatrix conversions.
+ * @method invertTranspose
  * @param  {p5.Matrix} mat4 the matrix to be based on to invert
  * @chainable
  * @todo  finish implementation
@@ -379,6 +390,7 @@ p5.Matrix.prototype.inverseTranspose = function (matrix){
 
 /**
  * inspired by Toji's mat4 determinant
+ * @method determinant
  * @return {Number} Determinant of our 4x4 matrix
  */
 p5.Matrix.prototype.determinant = function(){
@@ -402,6 +414,7 @@ p5.Matrix.prototype.determinant = function(){
 
 /**
  * multiply two mat4s
+ * @method mult
  * @param {p5.Matrix|Float32Array|Array} multMatrix The matrix
  *                                                we want to multiply by
  * @chainable
@@ -459,6 +472,7 @@ p5.Matrix.prototype.mult = function(multMatrix){
 
 /**
  * scales a p5.Matrix by scalars or a vector
+ * @method scale
  * @param  {p5.Vector|Float32Array|Array} s vector to scale by
  * @chainable
  */
@@ -504,6 +518,7 @@ p5.Matrix.prototype.scale = function() {
 
 /**
  * rotate our Matrix around an axis by the given angle.
+ * @method rotate
  * @param  {Number} a The angle of rotation in radians
  * @param  {p5.Vector|Array} axis  the axis(es) to rotate around
  * @chainable
@@ -584,6 +599,7 @@ p5.Matrix.prototype.rotate = function(a, axis){
 /**
  * @todo  finish implementing this method!
  * translates
+ * @method translate
  * @param  {Number[]} v vector to translate by
  * @chainable
  */
@@ -613,6 +629,7 @@ p5.Matrix.prototype.rotateZ = function(a){
 
 /**
  * sets the perspective matrix
+ * @method perspective
  * @param  {Number} fovy   [description]
  * @param  {Number} aspect [description]
  * @param  {Number} near   near clipping plane
@@ -647,6 +664,7 @@ p5.Matrix.prototype.perspective = function(fovy,aspect,near,far){
 
 /**
  * sets the ortho matrix
+ * @method ortho
  * @param  {Number} left   [description]
  * @param  {Number} right  [description]
  * @param  {Number} bottom [description]

@@ -86,12 +86,10 @@ p5.Texture.prototype.init = function(data) {
     // assign a 1x1 empty texture initially, because data is not yet ready,
     // so that no errors occur in gl console!
     var tmpdata = new Uint8Array([1,1,1,1]);
-    gl.texImage2D(this.glTarget, 0, gl.RGBA, 1, 1, 0,
-      this.glFormat, gl.UNSIGNED_BYTE, tmpdata);
+    gl.texImage2D(this.glTarget, 0, gl.RGBA, 1, 1, 0, this.glFormat, gl.UNSIGNED_BYTE, tmpdata);
   } else {
     // data is ready: just push the texture!
-    gl.texImage2D(this.glTarget, 0,
-      this.glFormat, this.glFormat, gl.UNSIGNED_BYTE, data);
+    gl.texImage2D(this.glTarget, 0, this.glFormat, this.glFormat, gl.UNSIGNED_BYTE, data);
   }
 };
 
@@ -120,8 +118,7 @@ p5.Texture.prototype.update = function() {
     this.height = textureData.height;
 
     this.bindTexture();
-    gl.texImage2D(this.glTarget, 0,
-        this.glFormat, this.glFormat, gl.UNSIGNED_BYTE, textureData);
+    gl.texImage2D(this.glTarget, 0, this.glFormat, this.glFormat, gl.UNSIGNED_BYTE, textureData);
 
     if (this.isSrcP5Image) {
       data.setModified(false);
@@ -138,8 +135,7 @@ p5.Texture.prototype.update = function() {
     // for example, by a call to p5.Image.set
     if (data.isModified()) {
       this.bindTexture();
-      gl.texImage2D(this.glTarget, 0,
-        this.glFormat, this.glFormat, gl.UNSIGNED_BYTE, textureData);
+      gl.texImage2D(this.glTarget, 0, this.glFormat, this.glFormat, gl.UNSIGNED_BYTE, textureData);
       data.setModified(false);
     }
   } else if (this.isSrcMediaElement) {
@@ -171,14 +167,12 @@ p5.Texture.prototype.update = function() {
 
     if (shouldUpdate) {
       this.bindTexture();
-      gl.texImage2D(this.glTarget, 0,
-        this.glFormat, this.glFormat, gl.UNSIGNED_BYTE, textureData);
+      gl.texImage2D(this.glTarget, 0, this.glFormat, this.glFormat, gl.UNSIGNED_BYTE, textureData);
     }
   } else /* data instanceof p5.Graphics, probably */ {
     // there is not enough information to tell if the texture can be
     // conditionally updated; so to be safe, we just go ahead and upload it.
-    gl.texImage2D(this.glTarget, 0,
-        this.glFormat, this.glFormat, gl.UNSIGNED_BYTE, textureData);
+    gl.texImage2D(this.glTarget, 0, this.glFormat, this.glFormat, gl.UNSIGNED_BYTE, textureData);
   }
 };
 
