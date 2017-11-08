@@ -1026,6 +1026,23 @@ p5.prototype._pWriters = [];
  * @param {String} name name of the file to be created
  * @param {String} [extension]
  * @return {p5.PrintWriter}
+ * @example
+ * <div>
+ * <code>
+ * createButton('save')
+ *   .position(10, 10)
+ *   .mousePressed(function () {
+ *
+ *     var writer = createWriter("squares.txt");
+ *     for (var i = 0; i < 10; i++)
+ *       writer.print(i * i);
+ *     writer.close();
+ *     writer.flush();
+ *
+ *   })
+
+ * </code>
+ * </div>
  */
 p5.prototype.createWriter = function (name, extension) {
   var newPW;
