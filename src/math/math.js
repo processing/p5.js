@@ -21,6 +21,27 @@ var p5 = require('../core/core');
  * @param {Number} [y] y component of the vector
  * @param {Number} [z] z component of the vector
  * @return {p5.Vector}
+ * @example
+ * <div><code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   noStroke();
+ *   fill(255, 102, 204);
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   pointLight(
+ *     color(255),
+ *     createVector(sin(millis()/1000)*20, -40, -10)
+ *   );
+ *   scale(0.75);
+ *   sphere();
+ * }
+ * </code></div>
+ *
+ * @alt
+ * a purple sphere lit by a point light oscillating horizontally
  */
 p5.prototype.createVector = function (x, y, z) {
   if (this instanceof p5) {
