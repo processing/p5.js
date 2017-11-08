@@ -23,6 +23,16 @@ var p5 = require('../core/core');
  * @param {String} value
  * @return {p5.StringDict}
  *
+ * @example
+ * <div class="norender">
+ * <code>
+ *
+ * function setup() {
+ *   var myDictionary = createStringDict('p5', 'js');
+ *   print(myDictionary.hasKey('p5')); // logs true to console
+ * }
+ *
+ * </code></div>
  */
 
 p5.prototype.createStringDict = function() {
@@ -39,6 +49,16 @@ p5.prototype.createStringDict = function() {
  * @param {Number} value
  * @return {p5.NumberDict}
  *
+ * @example
+ * <div class="norender">
+ * <code>
+ *
+ * function setup() {
+ *   var myDictionary = createNumberDict('p5', 42);
+ *   print(myDictionary.hasKey('p5')); // logs true to console
+ * }
+ *
+ * </code></div>
  */
 
 p5.prototype.createNumberDict = function() {
@@ -233,8 +253,19 @@ p5.TypedDict.prototype.create = function() {
 /**
  * Empties Dictionary of all key-value pairs
  * @method clear
+ * @example
+ * <div class="norender">
+ * <code>
  *
+ * function setup() {
+ *   var myDictionary = createStringDict('p5', 'js');
+ *   print(myDictionary.hasKey('p5')); // prints 'true'
+ *   myDictionary.clear();
+ *   print(myDictionary.hasKey('p5')); // prints 'false'
+ * }
  *
+ * </code>
+ * </div>
  */
 
 p5.TypedDict.prototype.clear = function(){
@@ -277,6 +308,20 @@ p5.TypedDict.prototype.remove = function(key) {
  * Logs the list of items currently in the Dictionary to the console
  *
  * @method print
+ *
+ * @example
+ * <div class="norender">
+ * <code>
+ *
+ * function setup() {
+ *   var myDictionary = createStringDict('p5', 'js');
+ *   myDictionary.create('happy', 'coding');
+ *   myDictionary.print()
+ *   // above logs "key: p5 - value: js, key: happy - value: coding" to console
+ * }
+ *
+ * </code>
+ * </div>
  */
 
 p5.TypedDict.prototype.print = function() {
@@ -290,6 +335,18 @@ p5.TypedDict.prototype.print = function() {
  * storage.
  *
  * @method saveTable
+ * @example
+ * <div>
+ * <code>
+ * createButton('save')
+ *   .position(10, 10)
+ *   .mousePressed(function () {
+ *     createNumberDict({
+ *       'john': 1940, 'paul': 1942, 'george': 1943, 'ringo': 1940,
+ *     }).saveTable('beatles');
+ *   });
+ * </code>
+ * </div>
  */
 
 p5.TypedDict.prototype.saveTable = function() {
@@ -311,6 +368,18 @@ p5.TypedDict.prototype.saveTable = function() {
  * storage.
  *
  * @method saveJSON
+ * @example
+ * <div>
+ * <code>
+ * createButton('save')
+ *   .position(10, 10)
+ *   .mousePressed(function () {
+ *     createNumberDict({
+ *       'john': 1940, 'paul': 1942, 'george': 1943, 'ringo': 1940,
+ *     }).saveJSON('beatles');
+ *   });
+ * </code>
+ * </div>
  */
 
 p5.TypedDict.prototype.saveJSON = function(filename, opt) {
