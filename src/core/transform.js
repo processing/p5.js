@@ -220,6 +220,22 @@ p5.prototype.rotate = function(angle, axis) {
  * @method  rotateX
  * @param  {Number} rad angles in radians
  * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(255);
+ *   rotateX(millis() / 1000);
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 3d box rotating around the x axis.
  */
 p5.prototype.rotateX = function(rad) {
   if (this._renderer.isP3D) {
@@ -235,6 +251,22 @@ p5.prototype.rotateX = function(rad) {
  * @method rotateY
  * @param  {Number} rad angles in radians
  * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(255);
+ *   rotateY(millis() / 1000);
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 3d box rotating around the y axis.
  */
 p5.prototype.rotateY = function(rad) {
   if (this._renderer.isP3D) {
@@ -250,6 +282,22 @@ p5.prototype.rotateY = function(rad) {
  * @method rotateZ
  * @param  {Number} rad angles in radians
  * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(255);
+ *   rotateZ(millis() / 1000);
+ *   box();
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 3d box rotating around the z axis.
  */
 p5.prototype.rotateZ = function(rad) {
   if (this._renderer.isP3D) {
