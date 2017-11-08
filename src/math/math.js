@@ -22,7 +22,7 @@ var p5 = require('../core/core');
  * @param {Number} [z] z component of the vector
  * @return {p5.Vector}
  * @example
- * <div><code>
+ * <div modernizr='webgl'><code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   noStroke();

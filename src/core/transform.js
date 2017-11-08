@@ -221,7 +221,7 @@ p5.prototype.rotate = function(angle, axis) {
  * @param  {Number} rad angles in radians
  * @chainable
  * @example
- * <div>
+ * <div modernizr='webgl'>
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -252,7 +252,7 @@ p5.prototype.rotateX = function(rad) {
  * @param  {Number} rad angles in radians
  * @chainable
  * @example
- * <div>
+ * <div modernizr='webgl'>
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -283,7 +283,7 @@ p5.prototype.rotateY = function(rad) {
  * @param  {Number} rad angles in radians
  * @chainable
  * @example
- * <div>
+ * <div modernizr='webgl'>
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
