@@ -500,8 +500,7 @@ p5.Vector.prototype.cross = function cross(v) {
  * </div>
  */
 p5.Vector.prototype.dist = function dist(v) {
-  var d = v.copy().sub(this);
-  return d.mag();
+  return v.copy().sub(this).mag();
 };
 
 /**
@@ -546,8 +545,9 @@ p5.Vector.prototype.normalize = function normalize() {
 p5.Vector.prototype.limit = function limit(max) {
   var mSq = this.magSq();
   if (mSq > max * max) {
-    this.div(Math.sqrt(mSq)); //normalize it
-    this.mult(max);
+    this
+      .div(Math.sqrt(mSq)) //normalize it
+      .mult(max);
   }
   return this;
 };
@@ -597,12 +597,10 @@ p5.Vector.prototype.heading = function heading() {
   if (this.p5) {
     if (this.p5._angleMode === constants.RADIANS) {
       return h;
-    } else {
-      return polarGeometry.radiansToDegrees(h);
     }
-  } else {
-    return h;
+    return polarGeometry.radiansToDegrees(h);
   }
+  return h;
 };
 
 /**
@@ -880,7 +878,7 @@ p5.Vector.random2D = function random2D() {
       angle = this.p5.random(constants.TWO_PI);
     }
   } else {
-    angle = Math.random() * Math.PI * 2;
+    angle = Math.random() * constants.TWO_PI;
   }
   return this.fromAngle(angle);
 };
@@ -909,16 +907,16 @@ p5.Vector.random3D = function random3D() {
     angle = this.p5.random(0, constants.TWO_PI);
     vz = this.p5.random(-1, 1);
   } else {
-    angle = Math.random() * Math.PI * 2;
+    angle = Math.random() * constants.TWO_PI;
     vz = Math.random() * 2 - 1;
   }
-  var vx = Math.sqrt(1 - vz * vz) * Math.cos(angle);
-  var vy = Math.sqrt(1 - vz * vz) * Math.sin(angle);
+  var vzBase = Math.sqrt(1 - vz * vz);
+  var vx = vzBase * Math.cos(angle);
+  var vy = vzBase * Math.sin(angle);
   if (this.p5) {
     return new p5.Vector(this.p5, [vx, vy, vz]);
-  } else {
-    return new p5.Vector(vx, vy, vz);
   }
+  return new p5.Vector(vx,vy,vz);
 };
 
 // Adds two vectors together and returns a new one.
