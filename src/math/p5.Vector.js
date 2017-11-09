@@ -340,6 +340,20 @@ p5.Vector.prototype.mult = function mult(n) {
  * </div>
  */
 p5.Vector.prototype.div = function div(n) {
+  if (!(typeof n === 'number' && isFinite(n))) {
+    console.warn(
+      'p5.Vector.prototype.div:',
+      'n is undefined or not a finite number'
+    );
+    return this;
+  }
+  if (n === 0) {
+    console.warn(
+      'p5.Vector.prototype.div:',
+      'divide by 0'
+    );
+    return this;
+  }
   this.x /= n;
   this.y /= n;
   this.z /= n;
