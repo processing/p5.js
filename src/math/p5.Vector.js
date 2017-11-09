@@ -340,6 +340,20 @@ p5.Vector.prototype.mult = function mult(n) {
  * </div>
  */
 p5.Vector.prototype.div = function div(n) {
+  if (!(typeof n === 'number' && isFinite(n))) {
+    console.warn(
+      'p5.Vector.prototype.div:',
+      'n is undefined or not a finite number'
+    );
+    return this;
+  }
+  if (n === 0) {
+    console.warn(
+      'p5.Vector.prototype.div:',
+      'divide by 0'
+    );
+    return this;
+  }
   this.x /= n;
   this.y /= n;
   this.z /= n;
@@ -912,7 +926,7 @@ p5.Vector.random3D = function random3D() {
     angle = Math.random() * constants.TWO_PI;
     vz = Math.random() * 2 - 1;
   }
-  var vzBase = Math.sqrt( 1 - vz * vz);
+  var vzBase = Math.sqrt(1 - vz * vz);
   var vx = vzBase * Math.cos(angle);
   var vy = vzBase * Math.sin(angle);
   if (this.p5) {
