@@ -85,18 +85,6 @@ suite('p5.Vector', function() {
     });
   });
 
-  suite('new p5.Vector(1,2,undefined)', function() {
-    setup(function() {
-      v = new p5.Vector(1,2,undefined);
-    });
-
-    test('should have x, y, z be initialized to 1,2,0', function() {
-      assert.equal(v.x, 1);
-      assert.equal(v.y, 2);
-      assert.equal(v.z, 0);
-    });
-  });
-
   suite('p5.prototype.rotate() RADIANS', function() {
     setup(function() {
       myp5.angleMode(RADIANS);
