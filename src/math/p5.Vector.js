@@ -91,13 +91,14 @@ p5.Vector = function Vector() {
  * @method  toString
  * @return {String}
  * @example
- * <div class = "norender"><code>
+ * <div class = "norender">
+ * <code>
  * function setup() {
  *   var v = createVector(20,30);
  *   print(String(v)); // prints "p5.Vector Object : [20, 30, 0]"
  * }
- * </div></code>
- *
+ * </code>
+ * </div>
  */
 p5.Vector.prototype.toString = function p5VectorToString() {
   return 'p5.Vector Object : ['+ this.x +', '+ this.y +', '+ this.z + ']';
@@ -191,6 +192,7 @@ p5.Vector.prototype.copy = function copy() {
  * // v's components are set to [5, 7, 9]
  * </code>
  * </div>
+ *
  * <div class="norender">
  * <code>
  * // Static method
@@ -509,6 +511,7 @@ p5.Vector.prototype.cross = function cross(v) {
  * var distance = v1.dist(v2); // distance is 1.4142...
  * </code>
  * </div>
+ *
  * <div class="norender">
  * <code>
  * // Static method
@@ -539,7 +542,6 @@ p5.Vector.prototype.dist = function dist(v) {
  * // [0.4454354, 0.8908708, 0.089087084]
  * </code>
  * </div>
- *
  */
 p5.Vector.prototype.normalize = function normalize() {
   return this.mag() === 0 ? this : this.div(this.mag());
@@ -600,7 +602,8 @@ p5.Vector.prototype.setMag = function setMag(n) {
  * @method heading
  * @return {Number} the angle of rotation
  * @example
- * <div class = "norender"><code>
+ * <div class = "norender">
+ * <code>
  * function setup() {
  *   var v1 = createVector(30,50);
  *   print(v1.heading()); // 1.0303768265243125
@@ -611,7 +614,8 @@ p5.Vector.prototype.setMag = function setMag(n) {
  *   var v1 = createVector(30,70);
  *   print(v1.heading()); // 1.1659045405098132
  * }
- * </div></code>
+ * </code>
+ * </div>
  */
 p5.Vector.prototype.heading = function heading() {
   var h = Math.atan2(this.y, this.x);
@@ -742,12 +746,15 @@ p5.Vector.prototype.lerp = function lerp(x, y, z, amt) {
  * @method array
  * @return {Number[]} an Array with the 3 values
  * @example
- * <div class = "norender"><code>
+ * <div class = "norender">
+ * <code>
  * function setup() {
  *   var v = createVector(20,30);
  *   print(v.array()); // Prints : Array [20, 30, 0]
  * }
- * </div></code>
+ * </code>
+ * </div>
+ *
  * <div class="norender">
  * <code>
  * var v = createVector(10.0, 20.0, 30.0);
@@ -771,14 +778,17 @@ p5.Vector.prototype.array = function array() {
  * @param {Number} [z] the z component of the vector
  * @return {Boolean} whether the vectors are equals
  * @example
- * <div class = "norender"><code>
+ * <div class = "norender">
+ * <code>
  * v1 = createVector(5,10,20);
  * v2 = createVector(5,10,20);
  * v3 = createVector(13,10,19);
  *
  * print(v1.equals(v2.x,v2.y,v2.z)); // true
  * print(v1.equals(v3.x,v3.y,v3.z)); // false
- * </div></code>
+ * </code>
+ * </div>
+ *
  * <div class="norender">
  * <code>
  * var v1 = createVector(10.0, 20.0, 30.0);
