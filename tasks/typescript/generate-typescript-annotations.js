@@ -1,6 +1,18 @@
 /// @ts-check
 const createEmitter = require('./emit');
 
+function position(file, line) {
+  return file + ', line ' + line;
+}
+
+function classitemPosition(classitem) {
+  return position(classitem.file, classitem.line);
+}
+
+function overloadPosition(classitem, overload) {
+  return position(classitem.file, overload.line);
+}
+
 // mod is used to make yuidocs "global". It actually just calls generate()
 // This design was selected to avoid rewriting the whole file from
 // https://github.com/toolness/friendly-error-fellowship/blob/2093aee2acc53f0885fcad252a170e17af19682a/experiments/typescript/generate-typescript-annotations.js
@@ -23,7 +35,7 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
     'p5.sound'
   ];
 
-  var EXTERNAL_TYPES = [
+  var EXTERNAL_TYPES = new Set([
     'HTMLCanvasElement',
     'Float32Array',
     'AudioParam',
@@ -32,17 +44,15 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
     'DelayNode',
     'ConvolverNode',
     'Event'
-  ];
+  ]);
 
   var YUIDOC_TO_TYPESCRIPT_PARAM_MAP = {
-    // TODO: Not sure if there's a better type for generic Objects...
-    'Object': 'any',
+    'Object': 'object',
     'Any': 'any',
     'Number': 'number',
     'Integer': 'number',
     'String': 'string',
     'Constant': 'any',
-    //'Color': 'number',
     'undefined': 'undefined',
     'Null': 'null',
     'Array': 'any[]',
@@ -50,17 +60,22 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
     '*': 'any',
     'Void': 'void',
     'P5': 'p5',
-    // TODO: Not sure if there's a better type for functions. TypeScript's
-    // spec seems to mention something called "wildcard function types"
-    // here: https://github.com/Microsoft/TypeScript/issues/3970
-    'Function': '() => any',
+    // When the docs don't specify what kind of function we expect,
+    // then we need to use the global type `Function`
+    'Function': 'Function',
   };
 
   function getClassitems(className) {
     return yuidocs.classitems.filter(function (classitem) {
-      // Note that we check for classitem.name because some methods
-      // don't appear to define them... Filed this as
-      // https://github.com/processing/p5.js/issues/1252.
+      // Note that we first find items with the right class name,
+      // but we also check for classitem.name because
+      // YUIDoc includes classitems that we want to be undocumented
+      // just because we used block comments.
+      // We have other checks in place for finding missing method names
+      // on public methods so a missing classitem.name implies that
+      // the method is undocumented on purpose.
+      // See https://github.com/processing/p5.js/issues/1252 and
+      // https://github.com/processing/p5.js/pull/2301
       return classitem.class === className && classitem.name;
     });
   }
@@ -82,7 +97,7 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
     var paramNames = {};
     var optionalParamFound = false;
 
-    if (!classitem.is_constructor && !JS_SYMBOL_RE.test(classitem.name)) {
+    if (!(JS_SYMBOL_RE.test(classitem.name) || classitem.is_constructor)) {
       errors.push('"' + classitem.name + '" is not a valid JS symbol name');
     }
 
@@ -98,12 +113,6 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
         errors.push('param "' + param.name + '" is defined multiple times');
       }
       paramNames[param.name] = true;
-
-      /*
-      if (param.name === 'class') {
-        errors.push('param "' + param.name + '" is a reserved word in JS');
-      }
-      */
 
       if (!JS_SYMBOL_RE.test(param.name)) {
         errors.push('param "' + param.name +
@@ -172,6 +181,8 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
       return defaultType;
     }
 
+    type = type.trim();
+
     if (type === '') {
       return '';
     }
@@ -180,12 +191,15 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
       return translateType(type.substr(0, type.length - 2), defaultType) + '[]';
     }
 
-    type = type.trim();
-
     var matchFunction = type.match(/Function\(([^)]*)\)/i);
     if (matchFunction) {
       var paramTypes = matchFunction[1].split(',');
-      return '(' + paramTypes.map((t, i) => 'p' + (i + 1) + ':' + translateType(t, 'any')).join(',') + ') => any';
+      const mappedParamTypes = paramTypes.map((t, i) => {
+        const paramName = 'p' + (i + 1)
+        const paramType = translateType(t, 'any')
+        return paramName+ ': ' + paramType
+      })
+      return '(' + mappedParamTypes.join(',') + ') => any';
     }
 
     var parts = type.split('|');
@@ -193,11 +207,12 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
       return parts.map(t => translateType(t, defaultType)).join('|');
     }
 
-    if (type in YUIDOC_TO_TYPESCRIPT_PARAM_MAP) {
-      return YUIDOC_TO_TYPESCRIPT_PARAM_MAP[type];
+    const staticallyMappedType = YUIDOC_TO_TYPESCRIPT_PARAM_MAP[type];
+    if (staticallyMappedType != null) {
+      return staticallyMappedType;
     }
 
-    if (EXTERNAL_TYPES.indexOf(type) >= 0) {
+    if (EXTERNAL_TYPES.has(type)) {
       return type;
     }
 
@@ -256,10 +271,10 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
     if (errors.length) {
       emit.sectionBreak();
       emit('// TODO: Fix ' + classitem.name + '() errors in ' +
-        classitem.file + ', line ' + overload.line + ':');
+        overloadPosition(classitem, overload) + ':');
       emit('//');
       errors.forEach(function (error) {
-        console.log(classitem.file + ':' + overload.line + ', ' + error);
+        console.log( classitem.name + '() ' + overloadPosition(classitem, overload) + ', ' + error);
         emit('//   ' + error);
       });
       emit('//');
@@ -309,18 +324,17 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
       emit.description(classitem);
 
       if (emit.getIndentLevel() === 0) {
-        emit('declare ' + (classitem.final ? 'const ' : 'var ') + decl + ';');
+        const declarationType = (classitem.final ? 'const ' : 'var ');
+        emit('declare ' + declarationType + decl + ';');
       } else {
-        if (classitem.final) {
-          return;
-        }
-        emit(decl);
+        const modifier = classitem.final ? 'readonly ' : '';
+        emit(modifier + decl);
       }
 
     } else {
       emit.sectionBreak();
       emit('// TODO: Property "' + classitem.name +
-        '", defined in ' + classitem.file +
+        '", defined in ' + classitemPosition(classitem) +
         ', is not a valid JS symbol name');
       emit.sectionBreak();
     }
@@ -336,7 +350,7 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
         generateClassProperty(className, classitem);
       } else {
         emit('// TODO: Annotate ' + classitem.itemtype + ' "' +
-          classitem.name + '"');
+          classitem.name + '", defined in ' + classitemPosition(classitem));
       }
     });
   }
@@ -365,6 +379,26 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
 
     emit.dedent();
     emit('}');
+  }
+
+  function emitConstants() {
+    emit('// Constants ');
+    Object.keys(constants).forEach(function (key) {
+      var values = constants[key];
+
+      emit('type ' + key + ' =');
+      values.forEach(function (v, i) {
+        var str = ' typeof ' + v;
+        str = (i ? '|' : ' ') + str;
+        if (i === values.length - 1) {
+          str += ';';
+        }
+        emit('    ' + str);
+      });
+
+      emit('');
+
+    });
   }
 
   function generate() {
@@ -408,30 +442,7 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
 
     p5Aliases.forEach(generateP5Properties);
 
-    emit('// Constants ');
-    Object.keys(constants).forEach(function (key) {
-      var values = constants[key];
-
-      /*
-      emit('// ' + key);
-      values.forEach(function (v) {
-        emit('declare const ' + v + ': string;');
-      });
-      */
-
-      emit('type ' + key + ' =');
-      values.forEach(function (v, i) {
-        var str = ' typeof ' + v;
-        str = (i ? '|' : ' ') + str;
-        if (i === values.length - 1) {
-          str += ';';
-        }
-        emit('    ' + str);
-      });
-
-      emit('');
-
-    });
+    emitConstants();
 
     emit.close();
 
