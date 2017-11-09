@@ -347,14 +347,25 @@ suite('p5.Vector', function() {
 
   suite('mult()', function() {
     setup(function() {
-      v = new p5.Vector();
-      v.x = 1;
-      v.y = 1;
-      v.z = 1;
+      v = new p5.Vector(1, 1, 1);
     });
 
     test('should return the same object', function() {
       expect(v.mult(1)).to.eql(v);
+    });
+
+    test('should not change x, y, z if no argument is given', function () {
+      v.mult();
+      expect(v.x).to.eql(1);
+      expect(v.y).to.eql(1);
+      expect(v.z).to.eql(1);
+    });
+
+    test('should not change x, y, z if n is not a finite number', function () {
+      v.mult(NaN);
+      expect(v.x).to.eql(1);
+      expect(v.y).to.eql(1);
+      expect(v.z).to.eql(1);
     });
 
     suite('with scalar', function() {

@@ -308,9 +308,16 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
  * </div>
  */
 p5.Vector.prototype.mult = function mult(n) {
-  this.x *= n || 0;
-  this.y *= n || 0;
-  this.z *= n || 0;
+  if (!(typeof n === 'number' && isFinite(n))) {
+    console.warn(
+      'p5.Vector.prototype.mult:',
+      'n is undefined or not a finite number'
+    );
+    return this;
+  }
+  this.x *= n;
+  this.y *= n;
+  this.z *= n;
   return this;
 };
 
