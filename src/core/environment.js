@@ -19,58 +19,33 @@ p5.prototype._targetFrameRate = 60;
 
 var _windowPrint = window.print;
 
-
-if (window.console && console.log) {
-  /**
-   * The print() function writes to the console area of your browser.
-   * This function is often helpful for looking at the data a program is
-   * producing. This function creates a new line of text for each call to
-   * the function. Individual elements can be
-   * separated with quotes ("") and joined with the addition operator (+).
-   * <br><br>
-   * While print() is similar to console.log(), it does not directly map to
-   * it in order to simulate easier to understand behavior than
-   * console.log(). Due to this, it is slower. For fastest results, use
-   * console.log().
-   *
-   * @method print
-   * @param {Any} contents any combination of Number, String, Object, Boolean,
-   *                       Array to print
-   * @example
-   * <div><code class='norender'>
-   * var x = 10;
-   * print("The value of x is " + x);
-   * // prints "The value of x is 10"
-   * </code></div>
-   * @alt
-   * default grey canvas
-   */
-  // Converts passed args into a string and then parses that string to
-  // simulate synchronous behavior. This is a hack and is gross.
-  // Since this will not work on all objects, particularly circular
-  // structures, simply console.log() on error.
-  p5.prototype.print = function(args) {
-    try {
-      if (arguments.length === 0) {
-        _windowPrint();
-      }
-      else if (arguments.length > 1) {
-        console.log.apply(console, arguments);
-      } else {
-        var newArgs = JSON.parse(JSON.stringify(args));
-        if (JSON.stringify(newArgs)==='{}'){
-          console.log(args);
-        } else {
-          console.log(newArgs);
-        }
-      }
-    } catch(err) {
-      console.log(args);
-    }
-  };
-} else {
-  p5.prototype.print = function() {};
-}
+/**
+ * The print() function writes to the console area of your browser.
+ * This function is often helpful for looking at the data a program is
+ * producing. This function creates a new line of text for each call to
+ * the function. Individual elements can be
+ * separated with quotes ("") and joined with the addition operator (+).
+ *
+ * @method print
+ * @param {Any} contents any combination of Number, String, Object, Boolean,
+ *                       Array to print
+ * @example
+ * <div><code class='norender'>
+ * var x = 10;
+ * print("The value of x is " + x);
+ * // prints "The value of x is 10"
+ * </code></div>
+ * @alt
+ * default grey canvas
+ */
+p5.prototype.print = function(args) {
+  if (arguments.length === 0) {
+    _windowPrint();
+  }
+  else {
+    console.log.apply(console, arguments);
+  }
+};
 
 
 /**
@@ -209,10 +184,7 @@ p5.prototype.cursor = function(type, x, y) {
  * @method frameRate
  * @param  {Number} fps number of frames to be displayed every second
  * @chainable
- */
-/**
- * @method frameRate
- * @return {Number}       current frameRate
+ *
  * @example
  *
  * <div><code>
@@ -251,6 +223,10 @@ p5.prototype.cursor = function(type, x, y) {
  * blue rect moves left to right, followed by red rect moving faster. Loops.
  *
  */
+/**
+ * @method frameRate
+ * @return {Number}       current frameRate
+ */
 p5.prototype.frameRate = function(fps) {
   if (typeof fps !== 'number' || fps < 0) {
     return this._frameRate;
@@ -263,6 +239,7 @@ p5.prototype.frameRate = function(fps) {
 /**
  * Returns the current framerate.
  *
+ * @private
  * @return {Number} current frameRate
  */
 p5.prototype.getFrameRate = function() {
@@ -278,6 +255,7 @@ p5.prototype.getFrameRate = function() {
  *
  * Calling frameRate() with no arguments returns the current framerate.
  *
+ * @private
  * @param {Number} [fps] number of frames to be displayed every second
  */
 p5.prototype.setFrameRate = function(fps) {

@@ -353,6 +353,7 @@ p5.prototype.redraw = function () {
       f.call(self);
     };
     for (var idxRedraw = 0; idxRedraw < numberOfRedraws; idxRedraw++) {
+      this._setProperty('frameCount', this.frameCount + 1);
       this._registeredMethods.pre.forEach(callMethod);
       userDraw();
       this._registeredMethods.post.forEach(callMethod);

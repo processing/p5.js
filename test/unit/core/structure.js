@@ -1,33 +1,110 @@
 suite('Structure', function() {
+  var myp5;
 
-  var myp5 = new p5(function( p ) {
-    p.setup = function() {};
-    p.draw = function() {};
+  setup(function(done) {
+    new p5(function(p){
+      p.setup = function() {
+        myp5 = p;
+        done();
+      };
+    });
   });
 
-  teardown(function(){
+  teardown(function() {
     myp5.remove();
+  });
+
+  suite('p5.frameCount', function() {
+    test('starts at zero', function() {
+      return new Promise(function(resolve, reject) {
+        // Has to use a custom p5 to hook setup correctly
+        new p5(function(p) {
+          p.setup = function() {
+            if(p.frameCount !== 0) {
+              reject('frameCount is not 0 in setup');
+            }
+          };
+          p.draw = function() {
+            if(p.frameCount === 1) {
+              resolve();
+            }
+          };
+        });
+      });
+    });
+    test('matches draw calls', function() {
+      return new Promise(function(resolve, reject) {
+        var frames = myp5.frameCount;
+        var start = myp5.frameCount;
+        myp5.draw = function() {
+          try {
+            frames += 1;
+            assert.equal(myp5.frameCount, frames);
+            if(frames === start + 5) {
+              // Test 5 seperate redraws
+              myp5.noLoop();
+              setTimeout(myp5.redraw.bind(myp5), 10);
+              setTimeout(myp5.redraw.bind(myp5), 20);
+              setTimeout(myp5.redraw.bind(myp5), 30);
+              setTimeout(myp5.redraw.bind(myp5), 40);
+              setTimeout(myp5.redraw.bind(myp5), 50);
+            } else if(frames === start + 10) {
+              // Test loop resuming
+              myp5.loop();
+            } else if(frames === start + 15) {
+              // Test queuing multiple redraws
+              myp5.noLoop();
+              setTimeout(myp5.redraw.bind(myp5, 5), 10);
+            } else if(frames === start + 20) {
+              resolve();
+            }
+            assert.equal(myp5.frameCount, frames);
+          } catch(err) {
+            reject(err);
+          }
+        };
+      });
+    });
   });
 
   suite('p5.prototype.loop and p5.prototype.noLoop', function() {
     test('noLoop should stop', function() {
-      //myp5.noLoop();
-      var c0 = myp5.frameCount;
-      myp5.noLoop();
-      myp5.ellipse(0, 0, 10, 10);
-      var c1 = myp5.frameCount;
-      assert.equal(c0, c1);
+      return new Promise(function(resolve, reject) {
+        var c0 = myp5.frameCount;
+        myp5.noLoop();
+        myp5.draw = function() {
+          var c1 = myp5.frameCount;
+          // Allow one final draw to run
+          if(c1 > c0 + 1) {
+            reject('Entered draw');
+          }
+        };
+        setTimeout(resolve, 100);
+      });
     });
 
-    // This one is failing randomly sometimes. @TODO figure out why
-    // test('loop should restart', function() {
-    //   myp5.noLoop();
-    //   var c0 = myp5.frameCount;
-    //   myp5.loop();
-    //   myp5.ellipse(0, 0, 10, 10);
-    //   var c1 = myp5.frameCount;
-    //   assert.notEqual(c0, c1);
-    // });
+    test('loop should restart', function() {
+      return new Promise(function(resolve, reject) {
+        var c0 = myp5.frameCount;
+        myp5.noLoop();
+        myp5.draw = function() {
+          var c1 = myp5.frameCount;
+          // Allow one final draw to run
+          if(c1 > c0 + 1) {
+            reject('Entered draw');
+          }
+        };
+        setTimeout(resolve, 100);
+      }).then(function() {
+        return new Promise(function(resolve, reject) {
+          myp5.draw = resolve;
+          myp5.loop();
+          setTimeout(function() {
+            reject('Failed to restart draw.');
+          }, 100);
+        });
+      });
+    });
 
   });
 

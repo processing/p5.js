@@ -3,7 +3,6 @@
 'use strict';
 
 var p5 = require('../core/core');
-
 /**
  * p5 Geometry class
  * @class p5.Geometry
@@ -15,11 +14,20 @@ var p5 = require('../core/core');
  * @param {function} [callback] function to call upon object instantiation.
  *
  */
-p5.Geometry = function
-(detailX, detailY, callback){
+p5.Geometry = function(detailX, detailY, callback){
   //an array containing every vertex
   //@type [p5.Vector]
   this.vertices = [];
+
+  //an array containing every vertex for stroke drawing
+  this.lineVertices = [];
+
+  //an array 1 normal per lineVertex with
+  //final position representing which direction to
+  //displace for strokeWeight
+  //[[0,0,-1,1], [0,1,0,-1] ...];
+  this.lineNormals = [];
+
   //an array containing 1 normal per vertex
   //@type [p5.Vector]
   //[p5.Vector, p5.Vector, p5.Vector,p5.Vector, p5.Vector, p5.Vector,...]
@@ -30,6 +38,9 @@ p5.Geometry = function
   //a 2D array containing uvs for every vertex
   //[[0.0,0.0],[1.0,0.0], ...]
   this.uvs = [];
+  // a 2D array containing edge connectivity pattern for create line vertices
+  //based on faces for most objects;
+  this.edges = [];
   this.detailX = (detailX !== undefined) ? detailX: 1;
   this.detailY = (detailY !== undefined) ? detailY: 1;
   if(callback instanceof Function){
@@ -40,6 +51,10 @@ p5.Geometry = function
   return this; // TODO: is this a constructor?
 };
 
+/**
+ * @method computeFaces
+ * @chainable
+ */
 p5.Geometry.prototype.computeFaces = function(){
   var sliceCount = this.detailX + 1;
   var a, b, c, d;
@@ -74,6 +89,7 @@ p5.Geometry.prototype._getFaceNormal = function(faceId,vertId){
 /**
  * computes smooth normals per vertex as an average of each
  * face.
+ * @method computeNormals
  * @chainable
  */
 p5.Geometry.prototype.computeNormals = function (){
@@ -99,15 +115,17 @@ p5.Geometry.prototype.computeNormals = function (){
 /**
  * Averages the vertex normals. Used in curved
  * surfaces
+ * @method averageNormals
  * @chainable
  */
 p5.Geometry.prototype.averageNormals = function() {
 
   for(var i = 0; i <= this.detailY; i++){
     var offset = this.detailX + 1;
-    var temp = p5.Vector
-      .add(this.vertexNormals[i*offset],
-        this.vertexNormals[i*offset + this.detailX]);
+    var temp = p5.Vector.add(
+      this.vertexNormals[i*offset],
+      this.vertexNormals[i*offset + this.detailX]);
+
     temp = p5.Vector.div(temp, 2);
     this.vertexNormals[i*offset] = temp;
     this.vertexNormals[i*offset + this.detailX] = temp;
@@ -117,10 +135,10 @@ p5.Geometry.prototype.averageNormals = function() {
 
 /**
  * Averages pole normals.  Used in spherical primitives
+ * @method averagePoleNormals
  * @chainable
  */
 p5.Geometry.prototype.averagePoleNormals = function() {
-
   //average the north pole
   var sum = new p5.Vector(0, 0, 0);
   for(var i = 0; i < this.detailX; i++){
@@ -148,7 +166,58 @@ p5.Geometry.prototype.averagePoleNormals = function() {
 };
 
 /**
+ * Create a 2D array for establishing stroke connections
+ * @private
+ * @return {p5.Geometry}
+ */
+p5.Geometry.prototype._makeTriangleEdges = function() {
+  if (Array.isArray(this.strokeIndices)) {
+    for (var i=0, max=this.strokeIndices.length; i<max; i++) {
+      this.edges.push(this.strokeIndices[i]);
+    }
+  }
+  else {
+    for (var j=0; j<this.faces.length; j++) {
+      this.edges.push([this.faces[j][0], this.faces[j][1]]);
+      this.edges.push([this.faces[j][1], this.faces[j][2]]);
+      this.edges.push([this.faces[j][2], this.faces[j][0]]);
+    }
+  }
+  return this;
+};
+
+
+/**
+ * Create 4 vertices for each stroke line, two at the beginning position
+ * and two at the end position. These vertices are displaced relative to
+ * that line's normal on the GPU
+ * @private
+ * @return {p5.Geometry}
+ */
+p5.RendererGL.prototype._edgesToVertices = function(geom) {
+  geom.lineVertices = [];
+  for(var i = 0; i < geom.edges.length; i++) {
+    var begin = geom.vertices[geom.edges[i][0]];
+    var end = geom.vertices[geom.edges[i][1]];
+    var dir = end.copy().sub(begin).normalize();
+    var a = begin.array();
+    var b = begin.array();
+    var c = end.array();
+    var d = end.array();
+    var dirAdd = dir.array();
+    var dirSub = dir.array();
+    // below is used to displace the pair of vertices at beginning and end
+    // in opposite directions
+    dirAdd.push(1);
+    dirSub.push(-1);
+    geom.lineNormals.push(dirAdd,dirSub,dirAdd,dirAdd,dirSub,dirSub);
+    geom.lineVertices.push(a, b, c, c, b, d);
+  }
+};
+
+/**
  * Modifies all vertices to be centered within the range -100 to 100.
+ * @method normalize
  * @chainable
  */
 p5.Geometry.prototype.normalize = function() {

@@ -472,6 +472,12 @@ module.exports = {
   BEZIER: 'bezier',
   CURVE: 'curve',
 
+  // WEBGL DRAWMODES
+  STROKE: 'stroke',
+  FILL: 'fill',
+  TEXTURE: 'texture',
+  IMMEDIATE: 'immediate',
+
   // DEVICE-ORIENTATION
   /**
    * @property {String} LANDSCAPE

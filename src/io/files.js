@@ -17,7 +17,10 @@ var fetchJsonp = require('fetch-jsonp');
 require('../core/error_helpers');
 
 /**
- * Loads a JSON file from a file or a URL, and returns an Object or Array.
+ * Loads a JSON file from a file or a URL, and returns an Object.
+ * Note that even if the JSON file contains an Array, an Object will be
+ * returned with index numbers as keys.
+ *
  * This method is asynchronous, meaning it may not finish before the next
  * line in your sketch is executed. JSONP is supported via a polyfill and you
  * can pass in as the second argument an object with definitions of the json
@@ -125,7 +128,7 @@ p5.prototype.loadJSON = function () {
   }
 
   var self = this;
-  p5.prototype.httpDo(path, 'GET', options, t, function(resp){
+  this.httpDo(path, 'GET', options, t, function(resp){
     for (var k in resp) {
       ret[k] = resp[k];
     }
@@ -366,7 +369,7 @@ p5.prototype.loadTable = function (path) {
   var t = new p5.Table();
 
   var self = this;
-  p5.prototype.httpDo(path, 'GET', 'text', function(resp){
+  this.httpDo(path, 'GET', 'text', function(resp){
     var state = {};
 
     // define constants
@@ -444,6 +447,8 @@ p5.prototype.loadTable = function (path) {
             state.escaped = false;
             state.currentState = POST_TOKEN;
           }
+        } else if(currentChar === CR) {
+          continue;
         } else {
           state.token += currentChar;
         }
@@ -631,7 +636,7 @@ p5.prototype.loadXML = function() {
   }
 
   var self = this;
-  p5.prototype.httpDo(arguments[0], 'GET', 'xml', function(xml){
+  this.httpDo(arguments[0], 'GET', 'xml', function(xml){
     for(var key in xml) {
       ret[key] = xml[key];
     }
@@ -805,6 +810,56 @@ p5.prototype.httpPost = function () {
  * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
+ *
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Examples use USGS Earthquake API:
+ * // https://earthquake.usgs.gov/fdsnws/event/1/#methods
+ *
+ * // displays an animation of all USGS earthquakes
+ * var earthquakes;
+ * var eqFeatureIndex = 0;
+ *
+ * function preload() {
+ *    var url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson';
+ *    httpDo(url,
+ *      {
+ *        method: 'GET',
+ *        // Other Request options, like special headers for apis
+ *        headers: { authorization: 'Bearer secretKey' }
+ *      },
+ *      function(res) {
+ *        earthquakes = res;
+ *      });
+ * }
+ *
+ * function draw() {
+ *    // wait until the data is loaded
+ *    if (!earthquakes || !earthquakes.features[eqFeatureIndex]) {
+ *      return;
+ *    }
+ *    clear();
+ *
+ *    var feature = earthquakes.features[eqFeatureIndex];
+ *    var mag = feature.properties.mag;
+ *    var rad = mag / 11 * ((width + height) / 2);
+ *    fill(255, 0, 0, 100);
+ *    ellipse(
+ *      width / 2 + random(-2, 2),
+ *      height / 2 + random(-2, 2),
+ *      rad, rad
+ *    );
+ *
+ *    if (eqFeatureIndex >= earthquakes.features.length) {
+ *      eqFeatureIndex = 0;
+ *    } else {
+ *      eqFeatureIndex += 1;
+ *    }
+ * }
+ * </code>
+ * </div>
  */
 
 /**
@@ -966,6 +1021,12 @@ window.URL = window.URL || window.webkitURL;
 p5.prototype._pWriters = [];
 
 
+/**
+ * @method createWriter
+ * @param {String} name name of the file to be created
+ * @param {String} [extension]
+ * @return {p5.PrintWriter}
+ */
 p5.prototype.createWriter = function (name, extension) {
   var newPW;
   // check that it doesn't already exist
@@ -985,20 +1046,40 @@ p5.prototype.createWriter = function (name, extension) {
 };
 
 
+/**
+ *  @class p5.PrintWriter
+ *  @constructor
+ *  @param  {String}     filename
+ *  @param  {String}     [extension]
+ */
 p5.PrintWriter = function (filename, extension) {
   var self = this;
   this.name = filename;
   this.content = '';
   //Changed to write because it was being overloaded by function below.
+  /**
+   * @method write
+   * @param {Array} data
+   */
   this.write = function (data) {
     this.content += data;
   };
+  /**
+   * @method print
+   * @param {Array} data
+   */
   this.print = function (data) {
     this.content += data + '\n';
   };
+  /**
+   * @method flush
+   */
   this.flush = function () {
     this.content = '';
   };
+  /**
+   * @method close
+   */
   this.close = function () {
     // convert String to Array for the writeFile Blob
     var arr = [];
@@ -1383,7 +1464,7 @@ p5.prototype.saveTable = function (table, filename, options) {
  *
  *  @param  {Array} dataToDownload
  *  @param  {String} filename
- *  @param  {[String]} extension
+ *  @param  {String} [extension]
  *  @private
  */
 p5.prototype.writeFile = function (dataToDownload, filename, extension) {
@@ -1404,9 +1485,10 @@ p5.prototype.writeFile = function (dataToDownload, filename, extension) {
  *  This is a private function because it does not do any formatting,
  *  but it is used by saveStrings, saveJSON, saveTable etc.
  *
+ *  @method downloadFile
  *  @param  {String} href      i.e. an href generated by createObjectURL
- *  @param  {[String]} filename
- *  @param  {[String]} extension
+ *  @param  {String} [filename]
+ *  @param  {String} [extension]
  */
 p5.prototype.downloadFile = function (href, fName, extension) {
   var fx = _checkFileExtension(fName, extension);
@@ -1443,6 +1525,7 @@ p5.prototype.downloadFile = function (href, fName, extension) {
  *  if the provided parameter has no extension.
  *
  *  @param   {String} filename
+ *  @param   {String} [extension]
  *  @return  {String[]} [fileName, fileExtension]
  *
  *  @private

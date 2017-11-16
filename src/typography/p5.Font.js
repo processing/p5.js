@@ -107,7 +107,8 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
     var minX, minY, maxX, maxY, pos, xCoords = [], yCoords = [],
       scale = this._scale(fontSize);
 
-    this.font.forEachGlyph(str, x, y, fontSize, options,
+    this.font.forEachGlyph(
+      str, x, y, fontSize, options,
       function(glyph, gX, gY, gFontSize) {
 
         var gm = glyph.getMetrics();
@@ -131,14 +132,14 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
     };
 
     // Bounds are now calculated, so shift the x & y to match alignment settings
-    pos = this._handleAlignment(p, ctx, str, result.x, result.y,
+    pos = this._handleAlignment(
+      p, ctx, str, result.x, result.y,
       result.w + result.advance);
 
     result.x = pos.x;
     result.y = pos.y;
 
-    this.cache[cacheKey('textBounds', str, x, y, fontSize, alignment,
-      baseline)] = result;
+    this.cache[cacheKey('textBounds', str, x, y, fontSize, alignment, baseline)] = result;
   }
 
   return result;
@@ -148,6 +149,7 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
 /**
  * Computes an array of points following the path for specified text
  *
+ * @method textToPoints
  * @param  {String} txt     a line of text
  * @param  {Number} x        x-position
  * @param  {Number} y        y-position
@@ -166,13 +168,14 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
  */
 p5.Font.prototype.textToPoints = function(txt, x, y, fontSize, options) {
 
+  var xoff = 0, result = [], glyphs = this._getGlyphs(txt);
+
   function isSpace(i) {
     return ((glyphs[i].name && glyphs[i].name === 'space') ||
       (txt.length === glyphs.length && txt[i] === ' ') ||
       (glyphs[i].index && glyphs[i].index === 3));
   }
 
-  var xoff = 0, result = [], glyphs = this._getGlyphs(txt);
 
   fontSize = fontSize || this.parent._renderer._textSize;
 
@@ -209,6 +212,7 @@ p5.Font.prototype.textToPoints = function(txt, x, y, fontSize, options) {
  * and glyphs, so the list of returned glyphs can be larger or smaller
  *  than the length of the given string.
  *
+ * @private
  * @param  {String} str the string to be converted
  * @return {Array}     the opentype glyphs
  */
@@ -220,6 +224,7 @@ p5.Font.prototype._getGlyphs = function(str) {
 /**
  * Returns an opentype path for the supplied string and position.
  *
+ * @private
  * @param  {String} line     a line of text
  * @param  {Number} x        x-position
  * @param  {Number} y        y-position
@@ -575,14 +580,21 @@ function findDotsAtSegment(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, t) {
 
   if (mx > nx || my < ny) { alpha += 180; }
 
-  return { x: x, y: y, m: { x: mx, y: my }, n: { x: nx, y: ny },
-    start: { x: ax, y: ay }, end: { x: cx, y: cy }, alpha: alpha
+  return {
+    x: x,
+    y: y,
+    m: { x: mx, y: my },
+    n: { x: nx, y: ny },
+    start: { x: ax, y: ay },
+    end: { x: cx, y: cy },
+    alpha: alpha
   };
 }
 
 function getPointAtSegmentLength(p1x,p1y,c1x,c1y,c2x,c2y,p2x,p2y,length) {
   return (length == null) ? bezlen(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y) :
-    findDotsAtSegment(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y,
+    findDotsAtSegment(
+      p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y,
       getTatLen(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, length));
 }
 
@@ -598,8 +610,7 @@ function pointAtLength(path, length, istotal) {
       l = getPointAtSegmentLength(x, y, p[1], p[2], p[3], p[4], p[5], p[6]);
       if (len + l > length) {
         if (!istotal) {
-          point = getPointAtSegmentLength(x, y, p[1], p[2], p[3], p[4], p[5],
-            p[6], length - len);
+          point = getPointAtSegmentLength(x, y, p[1], p[2], p[3], p[4], p[5], p[6], length - len);
           return { x: point.x, y: point.y, alpha: point.alpha };
         }
       }
@@ -611,8 +622,7 @@ function pointAtLength(path, length, istotal) {
   }
   subpaths.end = sp;
 
-  point = istotal ? len : findDotsAtSegment
-    (x, y, p[0], p[1], p[2], p[3], p[4], p[5], 1);
+  point = istotal ? len : findDotsAtSegment(x, y, p[0], p[1], p[2], p[3], p[4], p[5], 1);
 
   if (point.alpha) {
     point = { x: point.x, y: point.y, alpha: point.alpha };
@@ -714,11 +724,14 @@ function pathToAbsolute(pathArray) {
 
 function path2curve(path, path2) {
 
-  var p = pathToAbsolute(path), p2 = path2 && pathToAbsolute(path2),
-    attrs = { x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null },
-    attrs2 = { x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null },
+  var p = pathToAbsolute(path), p2 = path2 && pathToAbsolute(path2);
+  var attrs = { x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null };
+  var attrs2 = { x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null };
+  var pcoms1 = []; // path commands of original path p
+  var pcoms2 = []; // path commands of original path p2
+  var ii;
 
-    processPath = function(path, d, pcom) {
+  var processPath = function(path, d, pcom) {
       var nx, ny, tq = { T: 1, Q: 1 };
       if (!path) { return ['C', d.x, d.y, d.x, d.y, d.x, d.y]; }
       if (!(path[0] in tq)) { d.qx = d.qy = null; }
@@ -794,12 +807,10 @@ function path2curve(path, path2) {
         a1.y = path1[i][2];
         ii = Math.max(p.length, p2 && p2.length || 0);
       }
-    },
+    };
 
-    pcoms1 = [], // path commands of original path p
-    pcoms2 = [], // path commands of original path p2
-    pfirst = '', // temporary holder for original path command
-    pcom = ''; // holder for previous path command of original path
+  var pfirst = ''; // temporary holder for original path command
+  var pcom = ''; // holder for previous path command of original path
 
   for (var i = 0, ii = Math.max(p.length, p2 && p2.length || 0); i < ii; i++) {
     if (p[i]) { pfirst = p[i][0]; } // save current path command
@@ -867,9 +878,8 @@ function a2c(x1, y1, rx, ry, angle, lac, sweep_flag, x2, y2, recursive) {
       rx = h * rx;
       ry = h * ry;
     }
-    var rx2 = rx * rx, ry2 = ry * ry,
-      k = (lac === sweep_flag ? -1 : 1) * Math.sqrt(Math.abs
-        ((rx2 * ry2 - rx2 * y * y - ry2 * x * x)/(rx2 * y * y + ry2 * x * x)));
+    var rx2 = rx * rx, ry2 = ry * ry;
+    var k = (lac === sweep_flag ? -1 : 1) * Math.sqrt(Math.abs((rx2 * ry2 - rx2 * y * y - ry2 * x * x)/(rx2 * y * y + ry2 * x * x)));
 
     cx = k * rx * y / ry + (x1 + x2) / 2;
     cy = k * -ry * x / rx + (y1 + y2) / 2;
@@ -900,8 +910,7 @@ function a2c(x1, y1, rx, ry, angle, lac, sweep_flag, x2, y2, recursive) {
     f2 = f1 + _120 * (sweep_flag && f2 > f1 ? 1 : -1);
     x2 = cx + rx * Math.cos(f2);
     y2 = cy + ry * Math.sin(f2);
-    res = a2c(x2, y2, rx, ry, angle, 0, sweep_flag, x2old, y2old,
-      [f2, f2old, cx, cy]);
+    res = a2c(x2, y2, rx, ry, angle, 0, sweep_flag, x2old, y2old, [f2, f2old, cx, cy]);
   }
   df = f2 - f1;
   var c1 = Math.cos(f1),
@@ -923,8 +932,7 @@ function a2c(x1, y1, rx, ry, angle, lac, sweep_flag, x2, y2, recursive) {
     res = [m2, m3, m4].concat(res).join().split(',');
     var newres = [];
     for (var i = 0, ii = res.length; i < ii; i++) {
-      newres[i] = i % 2 ? rotate(res[i - 1], res[i], rad).y : rotate(res[i],
-        res[i + 1], rad).x;
+      newres[i] = i % 2 ? rotate(res[i - 1], res[i], rad).y : rotate(res[i], res[i + 1], rad).x;
     }
     return newres;
   }
@@ -999,11 +1007,17 @@ function q2c(x1, y1, ax, ay, x2, y2) {
 function bezlen(x1, y1, x2, y2, x3, y3, x4, y4, z) {
   if (z == null) { z = 1; }
   z = z > 1 ? 1 : z < 0 ? 0 : z;
-  var z2 = z / 2,
-    n = 12, Tvalues = [-0.1252, 0.1252, -0.3678, 0.3678, -0.5873, 0.5873,
-       -0.7699, 0.7699, -0.9041, 0.9041, -0.9816, 0.9816],
-    sum = 0, Cvalues = [0.2491, 0.2491, 0.2335, 0.2335, 0.2032, 0.2032,
-      0.1601, 0.1601, 0.1069, 0.1069, 0.0472, 0.0472 ];
+  var z2 = z / 2;
+  var n = 12;
+  var Tvalues = [
+    -0.1252, 0.1252, -0.3678, 0.3678, -0.5873, 0.5873,
+    -0.7699, 0.7699, -0.9041, 0.9041, -0.9816, 0.9816];
+
+  var sum = 0;
+  var Cvalues = [
+    0.2491, 0.2491, 0.2335, 0.2335, 0.2032, 0.2032,
+    0.1601, 0.1601, 0.1069, 0.1069, 0.0472, 0.0472 ];
+
   for (var i = 0; i < n; i++) {
     var ct = z2 * Tvalues[i] + z2,
       xbase = base3(ct, x1, x2, x3, x4),

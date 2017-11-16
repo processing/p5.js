@@ -14,30 +14,111 @@ var constants = require('./constants');
 
 /**
  * Multiplies the current matrix by the one specified through the parameters.
- * This is very slow because it will try to calculate the inverse of the
- * transform, so avoid it whenever possible.
+ * This is a powerful operation that can perform the equivalent of translate,
+ * scale, shear and rotate all at once. You can learn more about transformation
+ * matrices on <a href="https://en.wikipedia.org/wiki/Transformation_matrix">
+ * Wikipedia</a>.
+ *
+ * The naming of the arguments here follows the naming of the <a href=
+ * "https://html.spec.whatwg.org/multipage/canvas.html#dom-context-2d-transform">
+ * WHATWG specification</a> and corresponds to a
+ * transformation matrix of the
+ * form:
+ *
+ * > <img style="max-width: 150px" src="assets/transformation-matrix.png"
+ * alt="The transformation matrix used when applyMatrix is called"/>
  *
  * @method applyMatrix
- * @param  {Number} n00 numbers which define the 3x2 matrix to be multiplied
- * @param  {Number} n01 numbers which define the 3x2 matrix to be multiplied
- * @param  {Number} n02 numbers which define the 3x2 matrix to be multiplied
- * @param  {Number} n10 numbers which define the 3x2 matrix to be multiplied
- * @param  {Number} n11 numbers which define the 3x2 matrix to be multiplied
- * @param  {Number} n12 numbers which define the 3x2 matrix to be multiplied
+ * @param  {Number} a numbers which define the 2x3 matrix to be multiplied
+ * @param  {Number} b numbers which define the 2x3 matrix to be multiplied
+ * @param  {Number} c numbers which define the 2x3 matrix to be multiplied
+ * @param  {Number} d numbers which define the 2x3 matrix to be multiplied
+ * @param  {Number} e numbers which define the 2x3 matrix to be multiplied
+ * @param  {Number} f numbers which define the 2x3 matrix to be multiplied
  * @chainable
  * @example
  * <div>
  * <code>
- * // Example in the works.
+ * function setup() {
+ *   frameRate(10);
+ *   rectMode(CENTER);
+ * }
+ *
+ * function draw() {
+ *   var step = frameCount % 20;
+ *   background(200);
+ *   // Equivalent to translate(x, y);
+ *   applyMatrix(1, 0, 0, 1, 40 + step, 50);
+ *   rect(0, 0, 50, 50);
+ * }
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * function setup() {
+ *   frameRate(10);
+ *   rectMode(CENTER);
+ * }
+ *
+ * function draw() {
+ *   var step = frameCount % 20;
+ *   background(200);
+ *   translate(50, 50);
+ *   // Equivalent to scale(x, y);
+ *   applyMatrix(1 / step, 0, 0, 1 / step, 0, 0);
+ *   rect(0, 0, 50, 50);
+ * }
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * function setup() {
+ *   frameRate(10);
+ *   rectMode(CENTER);
+ * }
+ *
+ * function draw() {
+ *   var step = frameCount % 20
+ *   var angle = map(step, 0, 20, 0, TWO_PI);
+ *   var cos_a = cos(angle);
+ *   var sin_a = sin(angle);
+ *   background(200);
+ *   translate(50, 50);
+ *   // Equivalent to rotate(angle);
+ *   applyMatrix(cos_a, sin_a, -sin_a, cos_a, 0, 0);
+ *   rect(0, 0, 50, 50);
+ * }
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * function setup() {
+ *   frameRate(10);
+ *   rectMode(CENTER);
+ * }
+ *
+ * function draw() {
+ *   var step = frameCount % 20
+ *   var angle = map(step, 0, 20, -PI/4, PI/4);
+ *   background(200);
+ *   translate(50, 50);
+ *   // equivalent to shearX(angle);
+ *   var shear_factor = 1 / tan(PI/2 - angle);
+ *   applyMatrix(1, 0, shear_factor, 1, 0, 0);
+ *   rect(0, 0, 50, 50);
+ * }
  * </code>
  * </div>
  *
  * @alt
- * no image diplayed
+ * A rectangle translating to the right
+ * A rectangle shrinking to the center
+ * A rectangle rotating clockwise about the center
+ * A rectangle shearing
  *
  */
-p5.prototype.applyMatrix = function(n00, n01, n02, n10, n11, n12) {
-  this._renderer.applyMatrix(n00, n01, n02, n10, n11, n12);
+p5.prototype.applyMatrix = function(a, b, c, d, e, f) {
+  this._renderer.applyMatrix(a, b, c, d, e, f);
   return this;
 };
 
@@ -61,12 +142,17 @@ p5.prototype.pushMatrix = function() {
  * @example
  * <div>
  * <code>
- * // Example in the works.
+ * translate(50, 50);
+ * applyMatrix(0.5, 0.5, -0.5, 0.5, 0, 0);
+ * rect(0, 0, 20, 20);
+ * // Note that the translate is also reset.
+ * resetMatrix();
+ * rect(0, 0, 20, 20);
  * </code>
  * </div>
  *
  * @alt
- * no image diplayed
+ * A rotated retangle in the center with another at the top left corner
  *
  */
 p5.prototype.resetMatrix = function() {
@@ -190,11 +276,8 @@ p5.prototype.rotateZ = function(rad) {
  * This function can be further controlled with push() and pop().
  *
  * @method scale
- * @param  {Number|p5.Vector|Array} s
- *                      percent to scale the object, or percentage to
- *                      scale the object in the x-axis if multiple arguments
- *                      are given
- * @param  {Number} [y] percent to scale the object in the y-axis
+ * @param  {Number} x   percent to scale the object in the x-axis
+ * @param  {Number} y   percent to scale the object in the y-axis
  * @param  {Number} [z] percent to scale the object in the z-axis (webgl only)
  * @chainable
  * @example
@@ -218,6 +301,11 @@ p5.prototype.rotateZ = function(rad) {
  * white 52x52 rect with black outline at center rotated counter 45 degrees
  * 2 white rects with black outline- 1 50x50 at center. other 25x65 bottom left
  *
+ */
+/**
+ * @method scale
+ * @param  {p5.Vector|Array} scales per-axis percents to scale the object
+ * @chainable
  */
 p5.prototype.scale = function() {
   var x,y,z;

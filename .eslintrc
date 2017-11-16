@@ -1,0 +1,54 @@
+{
+  "env": {
+    "node": true,
+    "browser": true,
+    "mocha": true,
+    "es6": true
+  },
+  "globals": {
+    "p5": true,
+    "assert": true,
+    "expect": true,
+    "sinon": true
+  },
+  "rules": {
+    "no-cond-assign": [
+      2,
+      "except-parens"
+    ],
+    "curly": 2,
+    "eqeqeq": ["error", "smart"],
+    "wrap-iife": [
+      2,
+      "any"
+    ],
+    "no-use-before-define": [
+      2,
+      {
+        "functions": false
+      }
+    ],
+    "new-cap": 0,
+    "no-caller": 2,
+    "quotes": [
+      2,
+      "single"
+    ],
+    "no-undef": 2,
+    "no-unused-vars": ["error", { "args": "none" }],
+    "no-trailing-spaces": 2,
+    "indent": [
+      2,
+      2,
+      {
+        "ArrayExpression": "first",
+        "SwitchCase": 1,
+        "ObjectExpression": "first",
+        "CallExpression": {
+          "arguments": "first"
+        },
+        "MemberExpression": "off"
+      }
+    ]
+  }
+}

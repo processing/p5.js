@@ -55,12 +55,6 @@ p5.prototype.append = function(array, value) {
  * @param {Array}  dst           the destination Array
  * @param {Number} dstPosition   starting position in the destination Array
  * @param {Number} length        number of Array elements to be copied
- */
-/**
- * @method arrayCopy
- * @param {Array}  src
- * @param {Array}  dst
- * @param {Number} [length]
  *
  * @example
  *  <div class="norender"><code>
@@ -81,6 +75,12 @@ p5.prototype.append = function(array, value) {
  *    }
  *  </div></code>
  */
+/**
+ * @method arrayCopy
+ * @param {Array}  src
+ * @param {Array}  dst
+ * @param {Number} [length]
+ */
 p5.prototype.arrayCopy = function(
   src,
   srcPosition,
@@ -89,8 +89,8 @@ p5.prototype.arrayCopy = function(
   length) {
 
   // the index to begin splicing from dst array
-  var start,
-      end;
+  var start;
+  var end;
 
   if (typeof length !== 'undefined') {
 

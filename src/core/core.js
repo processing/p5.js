@@ -26,6 +26,7 @@ var constants = require('./constants');
  * "global"   - all properties and methods are attached to the window
  * "instance" - all properties and methods are bound to this p5 object
  *
+ * @private
  * @param  {function}    sketch a closure that can set optional preload(),
  *                              setup(), and/or draw() properties on the
  *                              given p5 instance
@@ -189,6 +190,7 @@ var p5 = function(sketch, node, sync) {
     'dragend': null,
     'dragover': null,
     'click': null,
+    'dblclick': null,
     'mouseover': null,
     'mouseout': null,
     'keydown': null,
@@ -203,6 +205,15 @@ var p5 = function(sketch, node, sync) {
 
   this._events.wheel = null;
   this._loadingScreenId = 'p5_loading';
+
+  // Allows methods to be registered on an instance that
+  // are instance-specific.
+  this._registeredMethods = {};
+  var methods = Object.getOwnPropertyNames(p5.prototype._registeredMethods);
+  for(var i = 0; i < methods.length; i++) {
+    var prop = methods[i];
+    this._registeredMethods[prop] = p5.prototype._registeredMethods[prop].slice();
+  }
 
   if (window.DeviceOrientationEvent) {
     this._events.deviceorientation = null;
@@ -357,7 +368,6 @@ var p5 = function(sketch, node, sync) {
 
       //mandatory update values(matrixs and stack)
 
-      this._setProperty('frameCount', this.frameCount + 1);
       this.redraw();
       this._frameRate = 1000.0/(now - this._lastFrameTime);
       this._lastFrameTime = now;
@@ -396,7 +406,10 @@ var p5 = function(sketch, node, sync) {
    * elements created by p5.js. It will also stop the draw loop and unbind
    * any properties or methods from the window global scope. It will
    * leave a variable p5 in case you wanted to create a new p5 sketch.
-   * If you like, you can set p5 = null to erase it.
+   * If you like, you can set p5 = null to erase it. While all functions and
+   * variables and objects created by the p5 library will be removed, any
+   * other global variables created by your code will remain.
+   *
    * @method remove
    * @example
    * <div class='norender'><code>
@@ -571,7 +584,8 @@ p5.prototype._preloadMethods = {
   loadShape: p5.prototype,
   loadTable: p5.prototype,
   loadFont: p5.prototype,
-  loadModel: p5.prototype
+  loadModel: p5.prototype,
+  loadShader: p5.prototype
 };
 
 p5.prototype._registeredMethods = { init: [], pre: [], post: [], remove: [] };
@@ -586,10 +600,11 @@ p5.prototype.registerPreloadMethod = function(fnString, obj) {
 };
 
 p5.prototype.registerMethod = function(name, m) {
-  if (!p5.prototype._registeredMethods.hasOwnProperty(name)) {
-    p5.prototype._registeredMethods[name] = [];
+  var target = this || p5.prototype;
+  if (!target._registeredMethods.hasOwnProperty(name)) {
+    target._registeredMethods[name] = [];
   }
-  p5.prototype._registeredMethods[name].push(m);
+  target._registeredMethods[name].push(m);
 };
 
 p5.prototype._createFriendlyGlobalFunctionBinder = function(options) {

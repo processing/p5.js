@@ -127,7 +127,7 @@ suite('Core', function(){
 
   suite('new p5() / global mode', function() {
     var BIND_TAG = '<script src="../js/bind.js"></script>';
-    var P5_SCRIPT_URL = (!window.IS_MODULE) ? '../../lib/p5.js' : '../../lib/modules/p5.Core.js';
+    var P5_SCRIPT_URL = '../../lib/p5.js';
     var P5_SCRIPT_TAG = '<script src="' + P5_SCRIPT_URL + '"></script>';
     var iframe;
 
@@ -151,54 +151,61 @@ suite('Core', function(){
       }
     });
 
-    test('is triggered when "setup" is in window', function(done) {
-      createP5Iframe();
-      iframe.contentWindow.setup = function() {
-        done();
-      };
+    test('is triggered when "setup" is in window', function() {
+      return new Promise(function(resolve, reject) {
+        createP5Iframe();
+        iframe.contentWindow.setup = function() {
+          resolve();
+        };
+      });
     });
 
-    test('is triggered when "draw" is in window', function(done) {
-      createP5Iframe();
-      iframe.contentWindow.draw = function() {
-        done();
-      };
+    test('is triggered when "draw" is in window', function() {
+      return new Promise(function(resolve, reject) {
+        createP5Iframe();
+        iframe.contentWindow.draw = function() {
+          resolve();
+        };
+      });
     });
 
-    test('works when p5.js is loaded asynchronously', function(done) {
-      createP5Iframe(BIND_TAG);
+    test('works when p5.js is loaded asynchronously', function() {
+      return new Promise(function(resolve, reject) {
+        createP5Iframe(BIND_TAG);
 
-      iframe.contentWindow.addEventListener('load', function() {
-        var win = iframe.contentWindow;
+        iframe.contentWindow.addEventListener('load', function() {
+          var win = iframe.contentWindow;
 
-        win.setup = done;
+          win.setup = resolve;
 
-        var script = win.document.createElement('script');
-        script.setAttribute('src', P5_SCRIPT_URL);
+          var script = win.document.createElement('script');
+          script.setAttribute('src', P5_SCRIPT_URL);
 
-        win.document.body.appendChild(script);
-      }, false);
+          win.document.body.appendChild(script);
+        }, false);
+      });
     });
 
-    test('works on-demand', function(done) {
-      createP5Iframe([
-        BIND_TAG,
-        P5_SCRIPT_TAG,
-        '<script>',
-        'new p5();',
-        'originalP5Instance = p5.instance',
-        'myURL = p5.prototype.getURL();',
-        'function setup() { setupCalled = true; }',
-        'window.addEventListener("load", onDoneLoading, false);',
-        '</script>'
-      ].join('\n'));
-      iframe.contentWindow.onDoneLoading = function() {
+    test('works on-demand', function() {
+      return new Promise(function(resolve, reject) {
+        createP5Iframe([
+          BIND_TAG,
+          P5_SCRIPT_TAG,
+          '<script>',
+          'new p5();',
+          'originalP5Instance = p5.instance',
+          'myURL = p5.prototype.getURL();',
+          'function setup() { setupCalled = true; }',
+          'window.addEventListener("load", onDoneLoading, false);',
+          '</script>'
+        ].join('\n'));
+        iframe.contentWindow.onDoneLoading = resolve;
+      }).then(function() {
         var win = iframe.contentWindow;
         assert.equal(typeof(win.myURL), 'string');
         assert.strictEqual(win.setupCalled, true);
         assert.strictEqual(win.originalP5Instance, win.p5.instance);
-        done();
-      };
+      });
     });
   });
 
