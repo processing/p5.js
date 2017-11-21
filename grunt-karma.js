@@ -24,4 +24,20 @@ module.exports = {
       ],
     },
   },
+  'sin-prod': {
+    options: {
+      files: [
+        'https://cdnjs.cloudflare.com/ajax/libs/p5.js/<%= pkg.version %>/p5.js',
+        'bench/sin.bench.js',
+      ],
+    },
+  },
+  'sin-dev': {
+    options: {
+      files: [
+        'lib/p5.js',
+        'bench/sin.bench.js',
+      ],
+    },
+  },
 };
