@@ -652,18 +652,21 @@ p5.RendererGL.prototype.arc = function(){
   var detailY = 1;
   var epsilon = 0.00001; // Smallest visible angle on displays up to 4K.
 
+  x += width/2;  //Adjustments to match location of a 2D arc.
+  y += height/2;
 
   var shape =    Math.abs(start%(Math.PI*2) - stop%(Math.PI*2)) < epsilon ||
                  mode === 'ellipse' ? 'ellipse' : 'arc';
 
   var gId = shape+'|'+x+'|'+y+'|'+width+'|'+ height +'|'+start+'|'+
             stop+'|'+ mode+'|'+ detailX;
+
   if(!this.geometryInHash(gId)){
     var _arc = function(){
       this.strokeIndices = [];
       var aAdj = shape === 'ellipse' ? 1 : 0;
 
-      //Define the arc
+      //Define the points along the perimiter of the arc
       for (var i = 0; i < detailX; i++) {
         var a = i / (detailX -1 + aAdj);
         var theta = (stop - start) * a + start;
@@ -676,7 +679,10 @@ p5.RendererGL.prototype.arc = function(){
         this.uvs.push([_u,_v]);
       }
 
-      //Define the center point (Done after the ark because of the else branch)
+      //Define the center point. This is performed after perimiter of
+      //the arc is created because in some cases (the else branch) the
+      //point x, y would be outside the desired shape and calculating
+      //the new center requires the perimiter points.
       if(mode === 'pie' || mode === 'fan' || Math.abs(stop - start) >= Math.PI){
         this.vertices.unshift(new p5.Vector(x, y, 0));
         this.uvs.unshift([0.5,0.5]);
@@ -691,28 +697,29 @@ p5.RendererGL.prototype.arc = function(){
                           0.5 + (adjCenterY - y) / height]);
       }
 
-      //Create the faces and stroke along the edges
+      //Create the faces and stroke along the edges which are present
+      //in every Arc Mode.
       for (var j = 0; j < this.vertices.length -2; j++) {
         this.faces.push([0, j+1, j+2]);
         this.strokeIndices.push([j+1, j+2]);
       }
 
-      //Finalize curve shape
+      //Add faces and strokes not shared by every arc mode.
       if(shape === 'ellipse'){
         this.faces.push([0, this.vertices.length - 1, 1]);
         this.strokeIndices.push([this.vertices.length - 1, 1]);
-      } else if (mode === 'open'){
-        this.faces.push([0, this.vertices.length - 1, 1]);
       } else if (mode === 'chord'){
         this.faces.push([0, this.vertices.length - 1, 1]);
         this.strokeIndices.push([this.vertices.length - 1, 1]);
       } else if (mode === 'pie'){
         this.strokeIndices.push([this.vertices.length - 1, 0]);
         this.strokeIndices.push([0, 1]);
-      } else {console.log('Error, unknown mode');}
+      } else { //(mode === 'open' or was not supplied
+        this.faces.push([0, this.vertices.length - 1, 1]);
+      }
     };
 
-    //Create the arc and set it up
+    //Create the arc geometry, using a callback to the _arc function above
     var arcGeom = new p5.Geometry(detailX,detailY,_arc);
     arcGeom.computeNormals();
     if(detailX <= 24) {
@@ -764,9 +771,9 @@ p5.RendererGL.prototype.triangle = function
 };
 
 p5.RendererGL.prototype.ellipse = function(args){
-  //Note, the x and y adjustments here are because ellipses and
-  //arc get different treatment in core/canvas.js
-  this.arc(args[0]+args[2]*0.5, args[1]+args[3]*0.5 ,args[2], args[3],
+  //Pass arguments X, Y, Width, Height, and detail to Arc
+  //Supply additional parameters directing Arc to draw a full ellipse
+  this.arc(args[0], args[1] ,args[2], args[3],
            0, Math.PI * 2, 'ellipse', args[4]);
   return this;
 };

@@ -388,12 +388,14 @@ p5.Renderer2D.prototype._acuteArcToBezier =
 p5.Renderer2D.prototype.arc =
   function(x, y, w, h, start, stop, mode) {
   var ctx = this.drawingContext;
-  var vals = {x: x, y: y, w: w, h: h};
-  var rx = vals.w / 2.0;
-  var ry = vals.h / 2.0;
+  var rx = w / 2.0;
+  var ry = h / 2.0;
   var epsilon = 0.00001;  // Smallest visible angle on displays up to 4K.
   var arcToDraw = 0;
   var curves = [];
+
+  x += rx; //Adjustments to match 2d ellipse.
+  y += ry;
 
   // Create curves
   while(stop - start > epsilon) {
@@ -407,14 +409,14 @@ p5.Renderer2D.prototype.arc =
     ctx.beginPath();
     curves.forEach(function (curve, index) {
       if (index === 0) {
-        ctx.moveTo(vals.x + curve.ax * rx, vals.y + curve.ay * ry);
+        ctx.moveTo(x + curve.ax * rx, y + curve.ay * ry);
       }
-      ctx.bezierCurveTo(vals.x + curve.bx * rx, vals.y + curve.by * ry,
-                        vals.x + curve.cx * rx, vals.y + curve.cy * ry,
-                        vals.x + curve.dx * rx, vals.y + curve.dy * ry);
+      ctx.bezierCurveTo(x + curve.bx * rx, y + curve.by * ry,
+                        x + curve.cx * rx, y + curve.cy * ry,
+                        x + curve.dx * rx, y + curve.dy * ry);
     });
     if (mode === constants.PIE || mode == null) {
-      ctx.lineTo(vals.x, vals.y);
+      ctx.lineTo(x, y);
     }
     ctx.closePath();
     ctx.fill();
@@ -425,14 +427,14 @@ p5.Renderer2D.prototype.arc =
     ctx.beginPath();
     curves.forEach(function (curve, index) {
       if (index === 0) {
-        ctx.moveTo(vals.x + curve.ax * rx, vals.y + curve.ay * ry);
+        ctx.moveTo(x + curve.ax * rx, y + curve.ay * ry);
       }
-      ctx.bezierCurveTo(vals.x + curve.bx * rx, vals.y + curve.by * ry,
-                        vals.x + curve.cx * rx, vals.y + curve.cy * ry,
-                        vals.x + curve.dx * rx, vals.y + curve.dy * ry);
+      ctx.bezierCurveTo(x + curve.bx * rx, y + curve.by * ry,
+                        x + curve.cx * rx, y + curve.cy * ry,
+                        x + curve.dx * rx, y + curve.dy * ry);
     });
     if (mode === constants.PIE) {
-      ctx.lineTo(vals.x, vals.y);
+      ctx.lineTo(x, y);
       ctx.closePath();
     } else if (mode === constants.CHORD) {
       ctx.closePath();
