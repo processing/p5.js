@@ -23,7 +23,7 @@ require('./p5.Geometry');
  * @example
  * <div>
  * <code>
- * //draw a plane with width 200 and height 200
+ * //draw a plane with width 50 and height 50
  * function setup(){
  *   createCanvas(100, 100, WEBGL);
  * }
