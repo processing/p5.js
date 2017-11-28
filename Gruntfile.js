@@ -173,7 +173,10 @@ module.exports = function(grunt) {
       // Watch the codebase for doc updates
       yui:{
         files:['src/**/*.js', 'lib/addons/*.js'],
-        task:['yuidoc']
+        tasks:['browserify', 'yuidoc:prod', 'minjson', 'uglify'],
+        options: {
+          livereload: true
+        }
       }
     },
 
