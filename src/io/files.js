@@ -49,8 +49,8 @@ require('../core/error_helpers');
  * var earthquakes;
  * function preload() {
  *   // Get the most recent earthquake in the database
- *   var url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?' +
- *     'format=geojson&limit=1&orderby=time';
+ *   var url = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/'+
+ *     'summary/all_day.geojson';
  *   earthquakes = loadJSON(url);
  * }
  *
@@ -75,8 +75,8 @@ require('../core/error_helpers');
  * <div><code>
  * function setup() {
  *   noLoop();
- *   var url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?' +
- *     'format=geojson&limit=1&orderby=time';
+ *   var url = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/'+
+ *     'summary/all_day.geojson';
  *   loadJSON(url, drawEarthquake);
  * }
  *
