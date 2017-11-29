@@ -761,34 +761,7 @@ p5.Image.prototype.isModified = function () {
  *
  */
 p5.Image.prototype.save = function(filename, extension) {
-  var mimeType;
-  if (!extension) {
-    extension = 'png';
-    mimeType = 'image/png';
-  }
-  else {
-    // en.wikipedia.org/wiki/Comparison_of_web_browsers#Image_format_support
-    switch(extension.toLowerCase()){
-      case 'png':
-        mimeType = 'image/png';
-        break;
-      case 'jpeg':
-        mimeType = 'image/jpeg';
-        break;
-      case 'jpg':
-        mimeType = 'image/jpeg';
-        break;
-      default:
-        mimeType = 'image/png';
-        break;
-    }
-  }
-  var downloadMime = 'image/octet-stream';
-  var imageData = this.canvas.toDataURL(mimeType);
-  imageData = imageData.replace(mimeType, downloadMime);
-
-  //Make the browser download the file
-  p5.prototype.downloadFile(imageData, filename, extension);
+  p5.prototype.saveCanvas(this.canvas, filename, extension);
 };
 
 module.exports = p5.Image;

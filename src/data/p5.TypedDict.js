@@ -300,10 +300,8 @@ p5.TypedDict.prototype.saveTable = function() {
   }
 
   var filename = arguments[0] || 'mycsv';
-  var file = new Blob([output], {type: 'text/csv'});
-  var href = window.URL.createObjectURL(file);
-
-  p5.prototype.downloadFile(href, filename, 'csv');
+  var blob = new Blob([output], {type: 'text/csv'});
+  p5.prototype.downloadFile(blob, filename, 'csv');
 };
 
 /**
