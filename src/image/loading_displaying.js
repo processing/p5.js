@@ -372,7 +372,6 @@ p5.prototype.image =
 /**
  * @method tint
  * @param  {p5.Color}      color   the tint color
- * @param  {Number}        [alpha]
  */
 p5.prototype.tint = function () {
   var c = this.color.apply(this, arguments);

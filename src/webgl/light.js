@@ -59,7 +59,6 @@ var p5 = require('../core/core');
 /**
  * @method ambientLight
  * @param  {p5.Color}      color   the ambient light color
- * @param  {Number}        [alpha]
  * @chainable
  */
 p5.prototype.ambientLight = function(v1, v2, v3, a){

@@ -474,7 +474,6 @@ p5.prototype.colorMode = function() {
 /**
  * @method fill
  * @param  {p5.Color}      color   the fill color
- * @param  {Number}        [alpha]
  * @chainable
  */
 p5.prototype.fill = function() {
@@ -693,7 +692,6 @@ p5.prototype.noStroke = function() {
 /**
  * @method stroke
  * @param  {p5.Color}      color   the stroke color
- * @param  {Number}        [alpha]
  * @chainable
  */
 
