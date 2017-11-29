@@ -63,6 +63,9 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
     // When the docs don't specify what kind of function we expect,
     // then we need to use the global type `Function`
     'Function': 'Function',
+    // Special ignore for hard to fix YUIDoc from p5.sound
+    'Tone.Signal': 'any',
+    'SoundObject': 'any',
   };
 
   function getClassitems(className) {
