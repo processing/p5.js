@@ -243,7 +243,7 @@ p5.prototype.image = function(
   // set defaults per spec: https://goo.gl/3ykfOq
 
   p5._validateParameters('image', arguments);
-  
+
   var defW = img.width;
   var defH = img.height;
 

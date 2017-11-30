@@ -8,13 +8,8 @@
 var p5 = require('./core');
 
 if (typeof IS_MINIFIED !== 'undefined') {
-
-  p5._validateParameters =
-    p5._friendlyFileLoadError =
-    function () { };
-
+  p5._validateParameters = p5._friendlyFileLoadError = function() {};
 } else {
-
   var doFriendlyWelcome = false; // TEMP until we get it all working LM
   // for parameter validation
   var dataDoc = require('../../docs/reference/data.json');
@@ -24,25 +19,31 @@ if (typeof IS_MINIFIED !== 'undefined') {
   var class2type = {};
   var toString = class2type.toString;
   var names = [
-    'Boolean', 'Number', 'String', 'Function',
-    'Array', 'Date', 'RegExp', 'Object', 'Error'
+    'Boolean',
+    'Number',
+    'String',
+    'Function',
+    'Array',
+    'Date',
+    'RegExp',
+    'Object',
+    'Error'
   ];
   for (var n = 0; n < names.length; n++) {
     class2type['[object ' + names[n] + ']'] = names[n].toLowerCase();
   }
-  var getType = function (obj) {
+  var getType = function(obj) {
     if (obj == null) {
       return obj + '';
     }
-    return typeof obj === 'object' || typeof obj === 'function' ?
-      class2type[toString.call(obj)] || 'object' :
-      typeof obj;
+    return typeof obj === 'object' || typeof obj === 'function'
+      ? class2type[toString.call(obj)] || 'object'
+      : typeof obj;
   };
 
   // -- End borrow --
 
-
-  var friendlyWelcome = function () {
+  var friendlyWelcome = function() {
     // p5.js brand - magenta: #ED225D
     //var astrixBgColor = 'transparent';
     //var astrixTxtColor = '#ED225D';
@@ -50,13 +51,13 @@ if (typeof IS_MINIFIED !== 'undefined') {
     //var welcomeTextColor = 'white';
     console.log(
       '    _ \n' +
-      ' /\\| |/\\ \n' +
-      ' \\ ` \' /  \n' +
-      ' / , . \\  \n' +
-      ' \\/|_|\\/ ' +
-      '\n\n> p5.js says: Welcome! ' +
-      'This is your friendly debugger. ' +
-      'To turn me off switch to using “p5.min.js”.'
+        ' /\\| |/\\ \n' +
+        " \\ ` ' /  \n" +
+        ' / , . \\  \n' +
+        ' \\/|_|\\/ ' +
+        '\n\n> p5.js says: Welcome! ' +
+        'This is your friendly debugger. ' +
+        'To turn me off switch to using “p5.min.js”.'
     );
   };
 
@@ -76,27 +77,30 @@ if (typeof IS_MINIFIED !== 'undefined') {
   // p5.js blue, p5.js orange, auto dark green; fallback p5.js darkened magenta
   // See testColors below for all the color codes and names
   var typeColors = ['#2D7BB6', '#EE9900', '#4DB200', '#C83C00'];
-  var report = function (message, func, color) {
+  var report = function(message, func, color) {
     if (doFriendlyWelcome) {
       friendlyWelcome();
       doFriendlyWelcome = false;
-
     }
     if ('undefined' === getType(color)) {
       color = '#B40033'; // dark magenta
-    } else if (getType(color) === 'number') { // Type to color
+    } else if (getType(color) === 'number') {
+      // Type to color
       color = typeColors[color];
     }
     if (func.substring(0, 4) === 'load') {
       console.log(
-        '> p5.js says: ' + message +
-        '[https://github.com/processing/p5.js/wiki/Local-server]'
+        '> p5.js says: ' +
+          message +
+          '[https://github.com/processing/p5.js/wiki/Local-server]'
       );
-    }
-    else {
+    } else {
       console.log(
-        '> p5.js says: ' + message + ' [http://p5js.org/reference/#p5/' + func +
-        ']'
+        '> p5.js says: ' +
+          message +
+          ' [http://p5js.org/reference/#p5/' +
+          func +
+          ']'
       );
     }
   };
@@ -123,28 +127,39 @@ if (typeof IS_MINIFIED !== 'undefined') {
       fileType: 'font',
       method: 'loadFont',
       message: ' hosting the font online,'
-    },
+    }
   };
-  p5._friendlyFileLoadError = function (errorType, filePath) {
+  p5._friendlyFileLoadError = function(errorType, filePath) {
     var errorInfo = errorCases[errorType];
-    var message = 'It looks like there was a problem' +
-      ' loading your ' + errorInfo.fileType + '.' +
-      ' Try checking if the file path [' + filePath + '] is correct,' +
-      (errorInfo.message || '') + ' or running a local server.';
+    var message =
+      'It looks like there was a problem' +
+      ' loading your ' +
+      errorInfo.fileType +
+      '.' +
+      ' Try checking if the file path [' +
+      filePath +
+      '] is correct,' +
+      (errorInfo.message || '') +
+      ' or running a local server.';
     report(message, errorInfo.method, FILE_LOAD);
   };
 
   var docCache = {};
   var builtinTypes = [
-    'number', 'string', 'boolean',
-    'constant', 'function', 'integer'
+    'number',
+    'string',
+    'boolean',
+    'constant',
+    'function',
+    'integer'
   ];
 
   // validateParameters() helper functions:
   // lookupParamDoc() for querying data.json
-  var lookupParamDoc = function (func) {
-    var queryResult = arrDoc.classitems.
-      filter(function (x) { return x.name === func; });
+  var lookupParamDoc = function(func) {
+    var queryResult = arrDoc.classitems.filter(function(x) {
+      return x.name === func;
+    });
     // different JSON structure for funct with multi-format
     var overloads = [];
     if (queryResult[0].hasOwnProperty('overloads')) {
@@ -157,13 +172,12 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
     var mapConstants = {};
     var maxParams = 0;
-    overloads.forEach(function (formats) {
+    overloads.forEach(function(formats) {
       if (maxParams < formats.length) {
         maxParams = formats.length;
       }
-      formats.forEach(function (format) {
+      formats.forEach(function(format) {
         format.types = format.type.split('|').map(function ct(type) {
-
           // array
           if (type.substr(type.length - 2, 2) === '[]') {
             return {
@@ -176,7 +190,6 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
           // contant
           if (lowerType === 'constant') {
-
             var constant;
             if (mapConstants.hasOwnProperty(format.name)) {
               constant = mapConstants[format.name];
@@ -187,7 +200,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
               var names = [];
 
               constant = mapConstants[format.name] = {
-                values: values, names: names
+                values: values,
+                names: names
               };
 
               var myArray = myRe.exec(format.description);
@@ -208,8 +222,10 @@ if (typeof IS_MINIFIED !== 'undefined') {
               }
             }
             return {
-              name: type, builtin: lowerType,
-              names: constant.names, values: constant.values
+              name: type,
+              builtin: lowerType,
+              names: constant.names,
+              values: constant.values
             };
           }
 
@@ -224,7 +240,9 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
           // p5 class type
           var t = window;
-          type.split('.').forEach(function (p) { t = t && t[p]; });
+          type.split('.').forEach(function(p) {
+            t = t && t[p];
+          });
           if (t) {
             return { name: type, prototype: t };
           }
@@ -235,11 +253,11 @@ if (typeof IS_MINIFIED !== 'undefined') {
     });
     return {
       overloads: overloads,
-      maxParams: maxParams,
+      maxParams: maxParams
     };
   };
 
-  var testParamType = function (param, type) {
+  var testParamType = function(param, type) {
     var isArray = param instanceof Array;
     if (type.array && isArray) {
       for (var i = 0; i < param.length; i++) {
@@ -248,24 +266,23 @@ if (typeof IS_MINIFIED !== 'undefined') {
         }
       }
       return true;
-    }
-    else if (type.prototype) {
+    } else if (type.prototype) {
       return param instanceof type.prototype;
-    }
-    else if (type.builtin) {
+    } else if (type.builtin) {
       switch (type.builtin) {
         case 'number':
-          return (typeof param === 'number' || !!param && !isNaN(param));
+          return typeof param === 'number' || (!!param && !isNaN(param));
         case 'integer':
-          return (typeof param === 'number' || !!param && !isNaN(param)) &&
-            Number(param) === Math.floor(param);
+          return (
+            (typeof param === 'number' || (!!param && !isNaN(param))) &&
+            Number(param) === Math.floor(param)
+          );
         case 'boolean':
           return true;
         case 'array':
           return isArray;
         case 'string':
-          return typeof param === 'number' ||
-            typeof param === 'string';
+          return typeof param === 'number' || typeof param === 'string';
         case 'constant':
           return type.values.hasOwnProperty(param);
         case 'function':
@@ -278,7 +295,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
   // testType() for non-object type parameter validation
   // Returns true if PASS, false if FAIL
-  var testParamTypes = function (param, types) {
+  var testParamTypes = function(param, types) {
     for (var i = 0; i < types.length; i++) {
       if (testParamType(param, types[i])) {
         return true;
@@ -287,18 +304,18 @@ if (typeof IS_MINIFIED !== 'undefined') {
     return false;
   };
 
-  var testParamFormat = function (args, formats) {
+  var testParamFormat = function(args, formats) {
     var errorArray = [];
     for (var p = 0; p < formats.length; p++) {
       var arg = args[p];
       var format = formats[p];
-      var argType = typeof (arg);
+      var argType = typeof arg;
       if ('undefined' === argType || null === arg) {
         if (format.optional !== true) {
           errorArray.push({
             type: 'EMPTY_VAR',
             position: p,
-            format: format,
+            format: format
           });
         }
       } else if (!testParamTypes(arg, format.types)) {
@@ -314,20 +331,26 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   // function for generating console.log() msg
-  p5._friendlyParamError = function (errorObj, func) {
+  p5._friendlyParamError = function(errorObj, func) {
     var message;
 
     function formatType() {
       var format = errorObj.format;
-      return format.types.map(function (type) {
-        return type.names ? type.names.join('|') : type.name;
-      }).join('|');
+      return format.types
+        .map(function(type) {
+          return type.names ? type.names.join('|') : type.name;
+        })
+        .join('|');
     }
 
     switch (errorObj.type) {
       case 'EMPTY_VAR':
-        message = func + '() was expecting ' + formatType() +
-          ' for parameter #' + errorObj.position +
+        message =
+          func +
+          '() was expecting ' +
+          formatType() +
+          ' for parameter #' +
+          errorObj.position +
           ' (zero-based index), received an empty variable instead.' +
           ' If not intentional, this is often a problem with scope:' +
           ' [https://p5js.org/examples/data-variable-scope.html]';
@@ -335,46 +358,56 @@ if (typeof IS_MINIFIED !== 'undefined') {
       case 'WRONG_TYPE':
         var arg = errorObj.arg;
         var argType = arg instanceof Array ? 'array' : arg.name || typeof arg;
-        message = func + '() was expecting ' + formatType() +
-          ' for parameter #' + errorObj.position +
-          ' (zero-based index), received ' + argType + ' instead';
+        message =
+          func +
+          '() was expecting ' +
+          formatType() +
+          ' for parameter #' +
+          errorObj.position +
+          ' (zero-based index), received ' +
+          argType +
+          ' instead';
         break;
       case 'WRONG_ARGUMENT_COUNT':
-        message = func + '() was expecting ' + errorObj.maxParams +
-          ' arguments, but received ' + errorObj.argCount;
+        message =
+          func +
+          '() was expecting ' +
+          errorObj.maxParams +
+          ' arguments, but received ' +
+          errorObj.argCount;
         break;
     }
 
     if (message) {
       try {
         var re = /Function\.validateParameters.*[\r\n].*[\r\n].*\(([^)]*)/;
-        var location = re.exec((new Error()).stack)[1];
+        var location = re.exec(new Error().stack)[1];
         if (location) {
           message += ' at ' + location;
         }
-      } catch (err) { }
+      } catch (err) {}
 
       report(message + '.', func, ERR_PARAMS);
     }
   };
 
   /**
-  * Validates parameters
-  * param  {String}               func    the name of the function
-  * param  {Array}                args    user input arguments
-  *
-  * example:
-  *  var a;
-  *  ellipse(10,10,a,5);
-  * console ouput:
-  *  "It looks like ellipse received an empty variable in spot #2."
-  *
-  * example:
-  *  ellipse(10,"foo",5,5);
-  * console output:
-  *  "ellipse was expecting a number for parameter #1,
-  *           received "foo" instead."
-  */
+   * Validates parameters
+   * param  {String}               func    the name of the function
+   * param  {Array}                args    user input arguments
+   *
+   * example:
+   *  var a;
+   *  ellipse(10,10,a,5);
+   * console ouput:
+   *  "It looks like ellipse received an empty variable in spot #2."
+   *
+   * example:
+   *  ellipse(10,"foo",5,5);
+   * console output:
+   *  "ellipse was expecting a number for parameter #1,
+   *           received "foo" instead."
+   */
   p5._validateParameters = function validateParameters(func, args) {
     if (p5.disableFriendlyErrors) {
       return; // skip FES
@@ -400,7 +433,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       errorArray.push({
         type: 'WRONG_ARGUMENT_COUNT',
         argCount: args.length,
-        maxParams: docs.maxParams,
+        maxParams: docs.maxParams
       });
     }
 
@@ -409,7 +442,6 @@ if (typeof IS_MINIFIED !== 'undefined') {
       p5._friendlyParamError(errorArray[n], func);
     }
   };
-
 
   /**
    * Prints out all the colors in the color pallete with white text.
@@ -438,7 +470,6 @@ if (typeof IS_MINIFIED !== 'undefined') {
   p5.prototype._validateParameters = p5.validateParameters;
 }
 
-
 // This is a lazily-defined list of p5 symbols that may be
 // misused by beginners at top-level code, outside of setup/draw. We'd like
 // to detect these errors and help the user by suggesting they move them
@@ -446,39 +477,42 @@ if (typeof IS_MINIFIED !== 'undefined') {
 //
 // For more details, see https://github.com/processing/p5.js/issues/1121.
 var misusedAtTopLevelCode = null;
-var FAQ_URL = 'https://github.com/processing/p5.js/wiki/' +
+var FAQ_URL =
+  'https://github.com/processing/p5.js/wiki/' +
   'Frequently-Asked-Questions' +
   '#why-cant-i-assign-variables-using-p5-functions-and-' +
   'variables-before-setup';
 
-var defineMisusedAtTopLevelCode = function () {
+var defineMisusedAtTopLevelCode = function() {
   var uniqueNamesFound = {};
 
-  var getSymbols = function (obj) {
-    return Object.getOwnPropertyNames(obj).filter(function (name) {
-      if (name[0] === '_') {
-        return false;
-      }
-      if (name in uniqueNamesFound) {
-        return false;
-      }
+  var getSymbols = function(obj) {
+    return Object.getOwnPropertyNames(obj)
+      .filter(function(name) {
+        if (name[0] === '_') {
+          return false;
+        }
+        if (name in uniqueNamesFound) {
+          return false;
+        }
 
-      uniqueNamesFound[name] = true;
+        uniqueNamesFound[name] = true;
 
-      return true;
-    }).map(function (name) {
-      var type;
+        return true;
+      })
+      .map(function(name) {
+        var type;
 
-      if (typeof (obj[name]) === 'function') {
-        type = 'function';
-      } else if (name === name.toUpperCase()) {
-        type = 'constant';
-      } else {
-        type = 'variable';
-      }
+        if (typeof obj[name] === 'function') {
+          type = 'function';
+        } else if (name === name.toUpperCase()) {
+          type = 'constant';
+        } else {
+          type = 'variable';
+        }
 
-      return { name: name, type: type };
-    });
+        return { name: name, type: type };
+      });
   };
 
   misusedAtTopLevelCode = [].concat(
@@ -492,12 +526,12 @@ var defineMisusedAtTopLevelCode = function () {
   // This will ultimately ensure that we report the most specific error
   // possible to the user, e.g. advising them about HALF_PI instead of PI
   // when their code misuses the former.
-  misusedAtTopLevelCode.sort(function (a, b) {
+  misusedAtTopLevelCode.sort(function(a, b) {
     return b.name.length - a.name.length;
   });
 };
 
-var helpForMisusedAtTopLevelCode = function (e, log) {
+var helpForMisusedAtTopLevelCode = function(e, log) {
   if (!log) {
     log = console.log.bind(console);
   }
@@ -515,7 +549,7 @@ var helpForMisusedAtTopLevelCode = function (e, log) {
   //  return;
   //}
 
-  misusedAtTopLevelCode.some(function (symbol) {
+  misusedAtTopLevelCode.some(function(symbol) {
     // Note that while just checking for the occurrence of the
     // symbol name in the error message could result in false positives,
     // a more rigorous test is difficult because different browsers
@@ -530,11 +564,16 @@ var helpForMisusedAtTopLevelCode = function (e, log) {
     //   * Uncaught ReferenceError: PI is not defined  (Chrome)
 
     if (e.message && e.message.match('\\W?' + symbol.name + '\\W') !== null) {
-      log('Did you just try to use p5.js\'s ' + symbol.name +
-        (symbol.type === 'function' ? '() ' : ' ') + symbol.type +
-        '? If so, you may want to ' +
-        'move it into your sketch\'s setup() function.\n\n' +
-        'For more details, see: ' + FAQ_URL);
+      log(
+        "Did you just try to use p5.js's " +
+          symbol.name +
+          (symbol.type === 'function' ? '() ' : ' ') +
+          symbol.type +
+          '? If so, you may want to ' +
+          "move it into your sketch's setup() function.\n\n" +
+          'For more details, see: ' +
+          FAQ_URL
+      );
       return true;
     }
   });
@@ -550,7 +589,7 @@ if (document.readyState !== 'complete') {
   // global (non-instance mode) p5 APIs are used at the top-level
   // scope of a file, so we'll unbind our error listener now to make
   // sure we don't log false positives later.
-  window.addEventListener('load', function () {
+  window.addEventListener('load', function() {
     window.removeEventListener('error', helpForMisusedAtTopLevelCode, false);
   });
 }

@@ -354,7 +354,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-karma');
 
   // Create the multitasks.
-  grunt.registerTask('build', ['browserify', 'browserify:min', 'uglify', 'requirejs']);
+  grunt.registerTask('build', [
+    'browserify',
+    'browserify:min',
+    'uglify',
+    'requirejs'
+  ]);
   grunt.registerTask('lint-no-fix', [
     'eslint:build',
     'eslint:source',
