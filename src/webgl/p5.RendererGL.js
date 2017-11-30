@@ -709,7 +709,7 @@ p5.RendererGL.prototype.scale = function(x, y, z) {
 
 p5.RendererGL.prototype.rotate = function(rad, axis) {
   if (!axis) {
-    axis = [0,0,1];
+    axis = [0, 0, 1];
   }
   this.uMVMatrix.rotate(rad, axis);
   return this;
