@@ -61,7 +61,25 @@ p5.Color.prototype.toString = function() {
 
 /**
  * @method setRed
- * @param {Number} new_red
+ * @param {Number} red the new red value
+ * @example
+ * <div>
+ * <code>
+ *   var backgroundColor;
+ *
+ *   function setup() {
+ *     backgroundColor = color(100, 50, 150);
+ *   }
+ *
+ *   function draw() {
+ *     backgroundColor.setRed(128 + 128*sin(millis()/1000));
+ *     background(backgroundColor);
+ *   }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * canvas with gradually changing background color
  */
 p5.Color.prototype.setRed = function(new_red) {
   this._array[0] = new_red / this.maxes[constants.RGB][0];
@@ -70,8 +88,26 @@ p5.Color.prototype.setRed = function(new_red) {
 
 /**
  * @method setGreen
- * @param {Number} new_green
- */
+ * @param {Number} green the new green value
+ * @example
+ * <div>
+ * <code>
+ *   var backgroundColor;
+ *
+ *   function setup() {
+ *     backgroundColor = color(100, 50, 150);
+ *   }
+ *
+ *   function draw() {
+ *     backgroundColor.setGreen(128 + 128*sin(millis()/1000));
+ *     background(backgroundColor);
+ *   }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * canvas with gradually changing background color
+ **/
 p5.Color.prototype.setGreen = function(new_green) {
   this._array[1] = new_green / this.maxes[constants.RGB][1];
   this._calculateLevels();
@@ -79,8 +115,26 @@ p5.Color.prototype.setGreen = function(new_green) {
 
 /**
  * @method setBlue
- * @param {Number} new_blue
- */
+ * @param {Number} blue the new blue value
+ * @example
+ * <div>
+ * <code>
+ *   var backgroundColor;
+ *
+ *   function setup() {
+ *     backgroundColor = color(100, 50, 150);
+ *   }
+ *
+ *   function draw() {
+ *     backgroundColor.setBlue(128 + 128*sin(millis()/1000));
+ *     background(backgroundColor);
+ *   }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * canvas with gradually changing background color
+ **/
 p5.Color.prototype.setBlue = function(new_blue) {
   this._array[2] = new_blue / this.maxes[constants.RGB][2];
   this._calculateLevels();
@@ -88,8 +142,36 @@ p5.Color.prototype.setBlue = function(new_blue) {
 
 /**
  * @method setAlpha
- * @param {Number} new_alpha
- */
+ * @param {Number} alpha the new alpha value
+ * @example
+ * <div>
+ * <code>
+ * var squareColor;
+ *
+ * function setup() {
+ *   ellipseMode(CORNERS);
+ *   strokeWeight(4);
+ *   squareColor = color(100, 50, 150);
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *
+ *   noFill();
+ *   stroke(0);
+ *   ellipse(10,10,width-10,height-10);
+ *
+ *   squareColor.setAlpha(128 + 128*sin(millis()/1000));
+ *   fill(squareColor);
+ *   noStroke();
+ *   rect(13,13,width-26,height-26);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * circle behind a square with gradually changing opacity
+ **/
 p5.Color.prototype.setAlpha = function(new_alpha) {
   this._array[3] = new_alpha / this.maxes[this.mode][3];
   this._calculateLevels();

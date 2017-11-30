@@ -135,6 +135,13 @@
       examples = [].slice.call(div.querySelectorAll('div:not(.norender)'));
 
       examples.forEach(function(el, i) {
+
+        var ms = el.attributes['modernizr'];
+        if (ms && ms.value.split(',').some(
+          function (m) { return !Modernizr[m]; })) {
+          return;
+        }
+
         var exampleCode = el.textContent
           .replace(/assets\//g, '../docs/reference/assets/');
         var startTime = null;
