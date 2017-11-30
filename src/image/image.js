@@ -11,16 +11,10 @@
  */
 'use strict';
 
-
-var p5 = require('../core/core');
+var p5 = require('../core/core'); // This is not global, but JSHint is not aware that // this module is implicitly enclosed with Browserify: this overrides the // redefined-global error and permits using the name "frames" for the array // of saved animation frames.
 require('canvas-toBlob');
 
-/* global frames:true */// This is not global, but JSHint is not aware that
-// this module is implicitly enclosed with Browserify: this overrides the
-// redefined-global error and permits using the name "frames" for the array
-// of saved animation frames.
-var frames = [];
-
+/* global frames:true */ var frames = [];
 
 /**
  * Creates a new p5.Image (the datatype for storing images). This provides a
@@ -166,7 +160,7 @@ p5.prototype.saveCanvas = function (cnv, filename, extension) {
     || 'png';
 
   var mimeType;
-  switch(extension){
+  switch (extension) {
     default:
     //case 'png':
       mimeType = 'image/png';
@@ -238,17 +232,16 @@ p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
 
   var makeFrame = p5.prototype._makeFrame;
   var cnv = this._curElement.elt;
-  var frameFactory = setInterval(function(){
+  var frameFactory = setInterval(function() {
     makeFrame(fName + count, ext, cnv);
     count++;
-  },1000/fps);
+  }, 1000 / fps);
 
-  setTimeout(function(){
+  setTimeout(function() {
     clearInterval(frameFactory);
     if (callback) {
       callback(frames);
-    }
-    else {
+    } else {
       for (var i = 0; i < frames.length; i++) {
         var f = frames[i];
         p5.prototype.downloadFile(f.imageData, f.filename, f.ext);
@@ -269,9 +262,8 @@ p5.prototype._makeFrame = function(filename, extension, _cnv) {
   if (!extension) {
     extension = 'png';
     mimeType = 'image/png';
-  }
-  else {
-    switch(extension.toLowerCase()){
+  } else {
+    switch (extension.toLowerCase()) {
       case 'png':
         mimeType = 'image/png';
         break;
