@@ -77,7 +77,7 @@ p5.prototype.join = function(list, separator) {
  * "p5js*" displayed middle left of canvas.
  *
  */
-p5.prototype.match =  function(str, reg) {
+p5.prototype.match = function(str, reg) {
   p5._validateParameters('match', arguments);
   return str.match(reg);
 };
@@ -142,13 +142,7 @@ p5.prototype.matchAll = function(str, reg) {
  * @param {Number|String}       [right]  number of digits to the right of the
  *                                decimal point
  * @return {String}               formatted String
- */
-/**
- * @method nf
- * @param {Array}        nums     the Numbers to format
- * @param {Number|String}       [left]
- * @param {Number|String}       [right]
- * @return {Array}                formatted Strings\
+ *
  * @example
  * <div>
  * <code>
@@ -176,31 +170,33 @@ p5.prototype.matchAll = function(str, reg) {
  *
  * @alt
  * "0011253" top left, "0112.531" mid left, "112.531061" bottom left canvas
- *
  */
-p5.prototype.nf = function () {
+/**
+ * @method nf
+ * @param {Array}        nums     the Numbers to format
+ * @param {Number|String}       [left]
+ * @param {Number|String}       [right]
+ * @return {Array}                formatted Strings\
+ */
+p5.prototype.nf = function() {
   p5._validateParameters('nf', arguments);
   if (arguments[0] instanceof Array) {
     var a = arguments[1];
     var b = arguments[2];
-    return arguments[0].map(function (x) {
+    return arguments[0].map(function(x) {
       return doNf(x, a, b);
     });
-  }
-  else{
+  } else {
     var typeOfFirst = Object.prototype.toString.call(arguments[0]);
-    if(typeOfFirst === '[object Arguments]'){
-      if(arguments[0].length===3){
-        return this.nf(arguments[0][0],arguments[0][1],arguments[0][2]);
-      }
-      else if(arguments[0].length===2){
-        return this.nf(arguments[0][0],arguments[0][1]);
-      }
-      else{
+    if (typeOfFirst === '[object Arguments]') {
+      if (arguments[0].length === 3) {
+        return this.nf(arguments[0][0], arguments[0][1], arguments[0][2]);
+      } else if (arguments[0].length === 2) {
+        return this.nf(arguments[0][0], arguments[0][1]);
+      } else {
         return this.nf(arguments[0][0]);
       }
-    }
-    else {
+    } else {
       return doNf.apply(this, arguments);
     }
   }
@@ -216,7 +212,7 @@ function doNf() {
   var str = neg ? '-' : '';
   if (arguments.length === 3) {
     var decimal = '';
-    if(decimalInd !== -1 || arguments[2] - decPart.length > 0){
+    if (decimalInd !== -1 || arguments[2] - decPart.length > 0) {
       decimal = '.';
     }
     if (decPart.length > arguments[2]) {
@@ -232,8 +228,7 @@ function doNf() {
       str += '0';
     }
     return str;
-  }
-  else {
+  } else {
     for (var k = 0; k < Math.max(arguments[1] - intPart.length, 0); k++) {
       str += '0';
     }
@@ -253,12 +248,7 @@ function doNf() {
  * @param  {Number|String}   [right] number of digits to the right of the
  *                                  decimal point
  * @return {String}           formatted String
- */
-/**
- * @method nfc
- * @param  {Array}    nums     the Numbers to format
- * @param  {Number|String}   [right]
- * @return {Array}           formatted Strings
+ *
  * @example
  * <div>
  * <code>
@@ -284,13 +274,18 @@ function doNf() {
  *
  * @alt
  * "11,253,106.115" top middle and "1.00,1.00,2.00" displayed bottom mid
- *
  */
-p5.prototype.nfc = function () {
+/**
+ * @method nfc
+ * @param  {Array}    nums     the Numbers to format
+ * @param  {Number|String}   [right]
+ * @return {Array}           formatted Strings
+ */
+p5.prototype.nfc = function() {
   p5._validateParameters('nfc', arguments);
   if (arguments[0] instanceof Array) {
     var a = arguments[1];
-    return arguments[0].map(function (x) {
+    return arguments[0].map(function(x) {
       return doNfc(x, a);
     });
   } else {
@@ -305,16 +300,14 @@ function doNfc() {
   n = n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   if (arguments[1] === 0) {
     rem = '';
-  }
-  else if(arguments[1] !== undefined){
-    if(arguments[1] > rem.length){
-      rem+= dec === -1 ? '.' : '';
+  } else if (arguments[1] !== undefined) {
+    if (arguments[1] > rem.length) {
+      rem += dec === -1 ? '.' : '';
       var len = arguments[1] - rem.length + 1;
-      for(var i =0; i< len; i++){
+      for (var i = 0; i < len; i++) {
         rem += '0';
       }
-    }
-    else{
+    } else {
       rem = rem.substring(0, arguments[1] + 1);
     }
   }
@@ -335,13 +328,7 @@ function doNfc() {
  * @param {Number}       [right]  number of digits to the right of the
  *                                decimal point
  * @return {String}         formatted String
- */
-/**
- * @method nfp
- * @param {Number[]} nums      the Numbers to format
- * @param {Number}       [left]
- * @param {Number}       [right]
- * @return {String[]}         formatted Strings
+ *
  * @example
  * <div>
  * <code>
@@ -367,7 +354,13 @@ function doNfc() {
  *
  * @alt
  * "+11253106.11" top middle and "-11253106.11" displayed bottom middle
- *
+ */
+/**
+ * @method nfp
+ * @param {Number[]} nums      the Numbers to format
+ * @param {Number}       [left]
+ * @param {Number}       [right]
+ * @return {String[]}         formatted Strings
  */
 p5.prototype.nfp = function() {
   p5._validateParameters('nfp', arguments);
@@ -380,10 +373,9 @@ p5.prototype.nfp = function() {
 };
 
 function addNfp() {
-  return (
-    parseFloat(arguments[0]) > 0) ?
-    '+'+arguments[0].toString() :
-    arguments[0].toString();
+  return parseFloat(arguments[0]) > 0
+    ? '+' + arguments[0].toString()
+    : arguments[0].toString();
 }
 
 /**
@@ -400,13 +392,7 @@ function addNfp() {
  * @param {Number}       [right]  number of digits to the right of the
  *                                decimal point
  * @return {String}         formatted String
- */
-/**
- * @method nfs
- * @param {Array}        nums     the Numbers to format
- * @param {Number}       [left]
- * @param {Number}       [right]
- * @return {Array}         formatted Strings
+ *
  * @example
  * <div>
  * <code>
@@ -432,7 +418,13 @@ function addNfp() {
  *
  * @alt
  * "11253106.11" top middle and "-11253106.11" displayed bottom middle
- *
+ */
+/**
+ * @method nfs
+ * @param {Array}        nums     the Numbers to format
+ * @param {Number}       [left]
+ * @param {Number}       [right]
+ * @return {Array}         formatted Strings
  */
 p5.prototype.nfs = function() {
   p5._validateParameters('nfs', arguments);
@@ -445,10 +437,9 @@ p5.prototype.nfs = function() {
 };
 
 function addNfs() {
-  return (
-    parseFloat(arguments[0]) > 0) ?
-    ' '+arguments[0].toString() :
-    arguments[0].toString();
+  return parseFloat(arguments[0]) > 0
+    ? ' ' + arguments[0].toString()
+    : arguments[0].toString();
 }
 
 /**
@@ -513,21 +504,21 @@ p5.prototype.split = function(str, delim) {
  */
 p5.prototype.splitTokens = function() {
   p5._validateParameters('splitTokens', arguments);
-  var d,sqo,sqc,str;
+  var d, sqo, sqc, str;
   str = arguments[1];
   if (arguments.length > 1) {
     sqc = /\]/g.exec(str);
     sqo = /\[/g.exec(str);
-    if ( sqo && sqc ) {
-      str = str.slice(0, sqc.index) + str.slice(sqc.index+1);
+    if (sqo && sqc) {
+      str = str.slice(0, sqc.index) + str.slice(sqc.index + 1);
       sqo = /\[/g.exec(str);
-      str = str.slice(0, sqo.index) + str.slice(sqo.index+1);
-      d = new RegExp('[\\['+str+'\\]]','g');
-    } else if ( sqc ) {
-      str = str.slice(0, sqc.index) + str.slice(sqc.index+1);
+      str = str.slice(0, sqo.index) + str.slice(sqo.index + 1);
+      d = new RegExp('[\\[' + str + '\\]]', 'g');
+    } else if (sqc) {
+      str = str.slice(0, sqc.index) + str.slice(sqc.index + 1);
       d = new RegExp('[' + str + '\\]]', 'g');
-    } else if(sqo) {
-      str = str.slice(0, sqo.index) + str.slice(sqo.index+1);
+    } else if (sqo) {
+      str = str.slice(0, sqo.index) + str.slice(sqo.index + 1);
       d = new RegExp('[' + str + '\\[]', 'g');
     } else {
       d = new RegExp('[' + str + ']', 'g');
@@ -535,7 +526,9 @@ p5.prototype.splitTokens = function() {
   } else {
     d = /\s/g;
   }
-  return arguments[0].split(d).filter(function(n){return n;});
+  return arguments[0].split(d).filter(function(n) {
+    return n;
+  });
 };
 
 /**
@@ -546,11 +539,7 @@ p5.prototype.splitTokens = function() {
  * @method trim
  * @param  {String} str a String to be trimmed
  * @return {String}       a trimmed String
- */
-/**
- * @method trim
- * @param  {Array} strs an Array of Strings to be trimmed
- * @return {Array}       an Array of trimmed Strings
+ *
  * @example
  * <div>
  * <code>
@@ -561,7 +550,11 @@ p5.prototype.splitTokens = function() {
  *
  * @alt
  * "No new lines here" displayed center canvas
- *
+ */
+/**
+ * @method trim
+ * @param  {Array} strs an Array of Strings to be trimmed
+ * @return {Array}       an Array of trimmed Strings
  */
 p5.prototype.trim = function(str) {
   p5._validateParameters('trim', arguments);

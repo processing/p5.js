@@ -26,14 +26,18 @@ p5.prototype.touches = [];
 p5.prototype._updateTouchCoords = function(e) {
   if (this._curElement !== null) {
     var touches = [];
-    for(var i = 0; i < e.touches.length; i++){
-      touches[i] = getTouchInfo(this._curElement.elt,
-        this.width, this.height, e, i);
+    for (var i = 0; i < e.touches.length; i++) {
+      touches[i] = getTouchInfo(
+        this._curElement.elt,
+        this.width,
+        this.height,
+        e,
+        i
+      );
     }
     this._setProperty('touches', touches);
   }
 };
-
 
 function getTouchInfo(canvas, w, h, e, i) {
   i = i || 0;
@@ -100,14 +104,14 @@ p5.prototype._ontouchstart = function(e) {
   this._setProperty('mouseIsPressed', true);
   this._updateTouchCoords(e);
   this._updateNextMouseCoords(e);
-  if(typeof context.touchStarted === 'function') {
+  if (typeof context.touchStarted === 'function') {
     executeDefault = context.touchStarted(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   } else if (typeof context.mousePressed === 'function') {
     executeDefault = context.mousePressed(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
@@ -164,12 +168,12 @@ p5.prototype._ontouchmove = function(e) {
   this._updateNextMouseCoords(e);
   if (typeof context.touchMoved === 'function') {
     executeDefault = context.touchMoved(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   } else if (typeof context.mouseDragged === 'function') {
     executeDefault = context.mouseDragged(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
@@ -228,12 +232,12 @@ p5.prototype._ontouchend = function(e) {
   var executeDefault;
   if (typeof context.touchEnded === 'function') {
     executeDefault = context.touchEnded(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   } else if (typeof context.mouseReleased === 'function') {
     executeDefault = context.mouseReleased(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }

@@ -1,7 +1,6 @@
 language: node_js
 node_js:
-  - "4.2"
-  - "5.1"
+  - "8.9"
 install: npm install
 script: npm run grunt
 sudo: false

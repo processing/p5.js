@@ -41,12 +41,10 @@ var _windowPrint = window.print;
 p5.prototype.print = function(args) {
   if (arguments.length === 0) {
     _windowPrint();
-  }
-  else {
+  } else {
     console.log.apply(console, arguments);
   }
 };
-
 
 /**
  * The system variable frameCount contains the number of frames that have
@@ -105,7 +103,7 @@ p5.prototype.frameCount = 0;
  * green 50x50 ellipse at top left. Red X covers canvas when page focus changes
  *
  */
-p5.prototype.focused = (document.hasFocus());
+p5.prototype.focused = document.hasFocus();
 
 /**
  * Sets the cursor to a predefined symbol or an image, or makes it visible
@@ -151,8 +149,10 @@ p5.prototype.cursor = function(type, x, y) {
       // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
       coords = x + ' ' + y;
     }
-    if ((type.substring(0, 7) === 'http://') ||
-        (type.substring(0, 8) === 'https://')) {
+    if (
+      type.substring(0, 7) === 'http://' ||
+      type.substring(0, 8) === 'https://'
+    ) {
       // Image (absolute url)
       cursor = 'url(' + type + ') ' + coords + ', auto';
     } else if (/\.(cur|jpg|jpeg|gif|png|CUR|JPG|JPEG|GIF|PNG)$/.test(type)) {
@@ -184,10 +184,7 @@ p5.prototype.cursor = function(type, x, y) {
  * @method frameRate
  * @param  {Number} fps number of frames to be displayed every second
  * @chainable
- */
-/**
- * @method frameRate
- * @return {Number}       current frameRate
+ *
  * @example
  *
  * <div><code>
@@ -226,6 +223,10 @@ p5.prototype.cursor = function(type, x, y) {
  * blue rect moves left to right, followed by red rect moving faster. Loops.
  *
  */
+/**
+ * @method frameRate
+ * @return {Number}       current frameRate
+ */
 p5.prototype.frameRate = function(fps) {
   if (typeof fps !== 'number' || fps < 0) {
     return this._frameRate;
@@ -238,6 +239,7 @@ p5.prototype.frameRate = function(fps) {
 /**
  * Returns the current framerate.
  *
+ * @private
  * @return {Number} current frameRate
  */
 p5.prototype.getFrameRate = function() {
@@ -253,6 +255,7 @@ p5.prototype.getFrameRate = function() {
  *
  * Calling frameRate() with no arguments returns the current framerate.
  *
+ * @private
  * @param {Number} [fps] number of frames to be displayed every second
  */
 p5.prototype.setFrameRate = function(fps) {
@@ -283,7 +286,6 @@ p5.prototype.setFrameRate = function(fps) {
 p5.prototype.noCursor = function() {
   this._curElement.elt.style.cursor = 'none';
 };
-
 
 /**
  * System variable that stores the width of the entire screen display. This
@@ -345,10 +347,10 @@ p5.prototype.windowWidth = getWindowWidth();
  * <div class="norender"><code>
  * createCanvas(windowWidth, windowHeight);
  * </code></div>
-*@alt
+ *@alt
  * no display.
  *
-*/
+ */
 p5.prototype.windowHeight = getWindowHeight();
 
 /**
@@ -374,7 +376,7 @@ p5.prototype.windowHeight = getWindowHeight();
  * @alt
  * no display.
  */
-p5.prototype._onresize = function(e){
+p5.prototype._onresize = function(e) {
   this._setProperty('windowWidth', getWindowWidth());
   this._setProperty('windowHeight', getWindowHeight());
   var context = this._isGlobal ? window : this;
@@ -388,17 +390,21 @@ p5.prototype._onresize = function(e){
 };
 
 function getWindowWidth() {
-  return window.innerWidth ||
-         document.documentElement && document.documentElement.clientWidth ||
-         document.body && document.body.clientWidth ||
-         0;
+  return (
+    window.innerWidth ||
+    (document.documentElement && document.documentElement.clientWidth) ||
+    (document.body && document.body.clientWidth) ||
+    0
+  );
 }
 
 function getWindowHeight() {
-  return window.innerHeight ||
-         document.documentElement && document.documentElement.clientHeight ||
-         document.body && document.body.clientHeight ||
-         0;
+  return (
+    window.innerHeight ||
+    (document.documentElement && document.documentElement.clientHeight) ||
+    (document.body && document.body.clientHeight) ||
+    0
+  );
 }
 
 /**
@@ -459,11 +465,14 @@ p5.prototype.height = 0;
 p5.prototype.fullscreen = function(val) {
   // no arguments, return fullscreen or not
   if (typeof val === 'undefined') {
-    return document.fullscreenElement ||
-           document.webkitFullscreenElement ||
-           document.mozFullScreenElement ||
-           document.msFullscreenElement;
-  } else { // otherwise set to fullscreen or not
+    return (
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement
+    );
+  } else {
+    // otherwise set to fullscreen or not
     if (val) {
       launchFullscreen(document.documentElement);
     } else {
@@ -543,36 +552,36 @@ p5.prototype.displayDensity = function() {
 };
 
 function launchFullscreen(element) {
-  var enabled = document.fullscreenEnabled ||
-                document.webkitFullscreenEnabled ||
-                document.mozFullScreenEnabled ||
-                document.msFullscreenEnabled;
+  var enabled =
+    document.fullscreenEnabled ||
+    document.webkitFullscreenEnabled ||
+    document.mozFullScreenEnabled ||
+    document.msFullscreenEnabled;
   if (!enabled) {
     throw new Error('Fullscreen not enabled in this browser.');
   }
-  if(element.requestFullscreen) {
+  if (element.requestFullscreen) {
     element.requestFullscreen();
-  } else if(element.mozRequestFullScreen) {
+  } else if (element.mozRequestFullScreen) {
     element.mozRequestFullScreen();
-  } else if(element.webkitRequestFullscreen) {
+  } else if (element.webkitRequestFullscreen) {
     element.webkitRequestFullscreen();
-  } else if(element.msRequestFullscreen) {
+  } else if (element.msRequestFullscreen) {
     element.msRequestFullscreen();
   }
 }
 
 function exitFullscreen() {
-  if(document.exitFullscreen) {
+  if (document.exitFullscreen) {
     document.exitFullscreen();
-  } else if(document.mozCancelFullScreen) {
+  } else if (document.mozCancelFullScreen) {
     document.mozCancelFullScreen();
-  } else if(document.webkitExitFullscreen) {
+  } else if (document.webkitExitFullscreen) {
     document.webkitExitFullscreen();
   } else if (document.msExitFullscreen) {
     document.msExitFullscreen();
   }
 }
-
 
 /**
  * Gets the current URL.
@@ -624,7 +633,9 @@ p5.prototype.getURL = function() {
  *
  */
 p5.prototype.getURLPath = function() {
-  return location.pathname.split('/').filter(function(v){return v!=='';});
+  return location.pathname.split('/').filter(function(v) {
+    return v !== '';
+  });
 };
 /**
  * Gets the current URL params as an Object.
@@ -650,12 +661,12 @@ p5.prototype.getURLPath = function() {
 p5.prototype.getURLParams = function() {
   var re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
   var m;
-  var v={};
+  var v = {};
   while ((m = re.exec(location.search)) != null) {
     if (m.index === re.lastIndex) {
       re.lastIndex++;
     }
-    v[m[1]]=m[2];
+    v[m[1]] = m[2];
   }
   return v;
 };

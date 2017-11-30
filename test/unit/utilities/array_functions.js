@@ -2,7 +2,7 @@ suite('Array', function() {
   var myp5;
 
   setup(function(done) {
-    new p5(function(p){
+    new p5(function(p) {
       p.setup = function() {
         myp5 = p;
         done();
@@ -45,7 +45,6 @@ suite('Array', function() {
         myp5.arrayCopy(src, dest);
         assert.deepEqual(dest, src);
       });
-
     });
 
     suite('src, dst, len', function() {
@@ -58,10 +57,9 @@ suite('Array', function() {
         myp5.arrayCopy(src, dest, 4);
         assert.deepEqual(dest, [1, 2, 3, 4]);
       });
-
     });
 
-    suite('src, srcPosition, dst, dstPosition, length',function() {
+    suite('src, srcPosition, dst, dstPosition, length', function() {
       // src[1 - 2] is src[1] and src[2]
       test('should copy src[1 - 2] to dst[0 - 1]', function() {
         myp5.arrayCopy(src, 1, dest, 0, 2);
@@ -140,12 +138,12 @@ suite('Array', function() {
 
   suite('p5.prototype.splice', function() {
     test('should insert 4 into position 1', function() {
-      result = myp5.splice([1, 2, 3], 4 , 1);
+      result = myp5.splice([1, 2, 3], 4, 1);
       assert.deepEqual(result, [1, 4, 2, 3]);
     });
 
     test('should splice in array of values', function() {
-      result = myp5.splice([1, 2, 3], [4, 5] , 1);
+      result = myp5.splice([1, 2, 3], [4, 5], 1);
       assert.deepEqual(result, [1, 4, 5, 2, 3]);
     });
   });
@@ -161,5 +159,4 @@ suite('Array', function() {
       assert.deepEqual(result, [2, 3]);
     });
   });
-
 });

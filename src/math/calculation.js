@@ -66,7 +66,7 @@ p5.prototype.abs = Math.abs;
  *   text(nfc(bx,1,1), bx, by - 5);
  * }
  * </code></div>
-  *
+ *
  * @alt
  * 2 horizontal lines & number sets. increase with mouse x. bottom to 2 decimals
  *
@@ -126,16 +126,7 @@ p5.prototype.constrain = function(n, low, high) {
  * @param  {Number} x2 x-coordinate of the second point
  * @param  {Number} y2 y-coordinate of the second point
  * @return {Number}    distance between the two points
- */
-/**
- * @method dist
- * @param  {Number} x1
- * @param  {Number} y1
- * @param  {Number} z1 z-coordinate of the first point
- * @param  {Number} x2
- * @param  {Number} y2
- * @param  {Number} z2 z-coordinate of the second point
- * @return {Number}    distance between the two points
+ *
  * @example
  * <div><code>
  * // Move your mouse inside the canvas to see the
@@ -169,15 +160,28 @@ p5.prototype.constrain = function(n, low, high) {
  *
  * @alt
  * 2 ellipses joined by line. 1 ellipse moves with mouse X&Y. Distance displayed.
- *
+ */
+/**
+ * @method dist
+ * @param  {Number} x1
+ * @param  {Number} y1
+ * @param  {Number} z1 z-coordinate of the first point
+ * @param  {Number} x2
+ * @param  {Number} y2
+ * @param  {Number} z2 z-coordinate of the second point
+ * @return {Number}    distance between the two points
  */
 p5.prototype.dist = function() {
-  if (arguments.length === 4) { //2D
-    return hypot(arguments[2]-arguments[0], arguments[3]-arguments[1]);
-  } else if (arguments.length === 6) { //3D
-    return hypot(arguments[3]-arguments[0],
-      arguments[4]-arguments[1],
-      arguments[5]-arguments[2]);
+  if (arguments.length === 4) {
+    //2D
+    return hypot(arguments[2] - arguments[0], arguments[3] - arguments[1]);
+  } else if (arguments.length === 6) {
+    //3D
+    return hypot(
+      arguments[3] - arguments[0],
+      arguments[4] - arguments[1],
+      arguments[5] - arguments[2]
+    );
   }
 };
 
@@ -311,7 +315,7 @@ p5.prototype.floor = Math.floor;
  *
  */
 p5.prototype.lerp = function(start, stop, amt) {
-  return amt*(stop-start)+start;
+  return amt * (stop - start) + start;
 };
 
 /**
@@ -449,8 +453,8 @@ p5.prototype.mag = function(x, y) {
  * 2 25 by 25 white ellipses move with mouse x. Bottom has more range from X
  *
  */
-p5.prototype.map = function (n, start1, stop1, start2, stop2, withinBounds) {
-  var newval = ((n - start1)/(stop1 - start1)) * (stop2 - start2) + start2;
+p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
+  var newval = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
   if (!withinBounds) {
     return newval;
   }
@@ -498,9 +502,9 @@ p5.prototype.map = function (n, start1, stop1, start2, stop2, withinBounds) {
  */
 p5.prototype.max = function() {
   if (arguments[0] instanceof Array) {
-    return Math.max.apply(null,arguments[0]);
+    return Math.max.apply(null, arguments[0]);
   } else {
-    return Math.max.apply(null,arguments);
+    return Math.max.apply(null, arguments);
   }
 };
 
@@ -541,9 +545,9 @@ p5.prototype.max = function() {
  */
 p5.prototype.min = function() {
   if (arguments[0] instanceof Array) {
-    return Math.min.apply(null,arguments[0]);
+    return Math.min.apply(null, arguments[0]);
   } else {
-    return Math.min.apply(null,arguments);
+    return Math.min.apply(null, arguments);
   }
 };
 
@@ -715,7 +719,9 @@ p5.prototype.round = Math.round;
  * horizontal center line squared values displayed on top and regular on bottom.
  *
  */
-p5.prototype.sq = function(n) { return n*n; };
+p5.prototype.sq = function(n) {
+  return n * n;
+};
 
 /**
  * Calculates the square root of a number. The square root of a number is
@@ -799,7 +805,7 @@ function hypot(x, y, z) {
     var m = args[j] / max;
     var summand = m * m - compensation;
     var preliminary = sum + summand;
-    compensation = (preliminary - sum) - summand;
+    compensation = preliminary - sum - summand;
     sum = preliminary;
   }
   return Math.sqrt(sum) * max;

@@ -72,7 +72,7 @@ var curveDetail = 20;
  *bezier(250,250,0, 100,100,0, 100,0,0, 0,100,0);
  * </code>
  * </div>
-*/
+ */
 p5.prototype.bezier = function() {
   var args = new Array(arguments.length);
   for (var i = 0; i < args.length; ++i) {
@@ -83,14 +83,16 @@ p5.prototype.bezier = function() {
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
-  if (this._renderer.isP3D){
-    args.push(bezierDetail);//adding value of bezier detail to the args array
+  if (this._renderer.isP3D) {
+    args.push(bezierDetail); //adding value of bezier detail to the args array
     this._renderer.bezier(args);
-  } else{
-    this._renderer.bezier(args[0],args[1],
-      args[2],args[3],
-      args[4],args[5],
-      args[6],args[7]);
+  } else {
+    // prettier-ignore
+    this._renderer.bezier(
+      args[0], args[1],
+      args[2], args[3],
+      args[4], args[5],
+      args[6], args[7]);
   }
 
   return this;
@@ -101,6 +103,7 @@ p5.prototype.bezier = function() {
  *
  * The default value is 20.
  *
+ * @method bezierDetail
  * @param {Number} detail resolution of the curves
  * @chainable
  * @example
@@ -165,11 +168,13 @@ p5.prototype.bezierPoint = function(a, b, c, d, t) {
   }
 
   p5._validateParameters('bezierPoint', args);
-  var adjustedT = 1-args[4];
-  return Math.pow(adjustedT,3)*args[0] +
-   3*(Math.pow(adjustedT,2))*args[4]*args[1] +
-   3*adjustedT*Math.pow(args[4],2)*args[2] +
-   Math.pow(args[4],3)*args[3];
+  var adjustedT = 1 - args[4];
+  return (
+    Math.pow(adjustedT, 3) * args[0] +
+    3 * Math.pow(adjustedT, 2) * args[4] * args[1] +
+    3 * adjustedT * Math.pow(args[4], 2) * args[2] +
+    Math.pow(args[4], 3) * args[3]
+  );
 };
 
 /**
@@ -244,13 +249,15 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
   }
 
   p5._validateParameters('bezierTangent', args);
-  var adjustedT = 1-args[4];
-  return 3*args[3]*Math.pow(args[4],2) -
-   3*args[2]*Math.pow(args[4],2) +
-   6*args[2]*adjustedT*args[4] -
-   6*args[1]*adjustedT*args[4] +
-   3*args[1]*Math.pow(adjustedT,2) -
-   3*args[0]*Math.pow(adjustedT,2);
+  var adjustedT = 1 - args[4];
+  return (
+    3 * args[3] * Math.pow(args[4], 2) -
+    3 * args[2] * Math.pow(args[4], 2) +
+    6 * args[2] * adjustedT * args[4] -
+    6 * args[1] * adjustedT * args[4] +
+    3 * args[1] * Math.pow(adjustedT, 2) -
+    3 * args[0] * Math.pow(adjustedT, 2)
+  );
 };
 
 /**
@@ -338,14 +345,16 @@ p5.prototype.curve = function() {
   if (!this._renderer._doStroke) {
     return this;
   }
-  if (this._renderer.isP3D){
+  if (this._renderer.isP3D) {
     args.push(curveDetail);
     this._renderer.curve(args);
-  } else{
-    this._renderer.curve(args[0],args[1],
-      args[2],args[3],
-      args[4],args[5],
-      args[6],args[7]);
+  } else {
+    // prettier-ignore
+    this._renderer.curve(
+      args[0], args[1],
+      args[2], args[3],
+      args[4], args[5],
+      args[6], args[7]);
   }
   return this;
 };
@@ -355,6 +364,7 @@ p5.prototype.curve = function() {
  *
  * The default value is 20.
  *
+ * @method curveDetail
  * @param {Number} resolution of the curves
  * @chainable
  * @example
@@ -416,7 +426,7 @@ p5.prototype.curveDetail = function(d) {
  * @alt
  * Line shaped like right-facing arrow,points move with mouse-x and warp shape.
  */
-p5.prototype.curveTightness = function (t) {
+p5.prototype.curveTightness = function(t) {
   this._renderer._curveTightness = t;
 };
 
@@ -464,13 +474,13 @@ p5.prototype.curvePoint = function(a, b, c, d, t) {
   }
 
   p5._validateParameters('curvePoint', args);
-  var t3 = args[4]*args[4]*args[4],
-    t2 = args[4]*args[4],
+  var t3 = args[4] * args[4] * args[4],
+    t2 = args[4] * args[4],
     f1 = -0.5 * t3 + t2 - 0.5 * args[4],
     f2 = 1.5 * t3 - 2.5 * t2 + 1.0,
     f3 = -1.5 * t3 + 2.0 * t2 + 0.5 * args[4],
     f4 = 0.5 * t3 - 0.5 * t2;
-  return args[0]*f1 + args[1]*f2 + args[2]*f3 + args[3]*f4;
+  return args[0] * f1 + args[1] * f2 + args[2] * f3 + args[3] * f4;
 };
 
 /**
@@ -515,12 +525,12 @@ p5.prototype.curveTangent = function(a, b, c, d, t) {
   }
 
   p5._validateParameters('curveTangent', args);
-  var t2 = args[4]*args[4],
-    f1 = (-3*t2)/2 + 2*args[4] - 0.5,
-    f2 = (9*t2)/2 - 5*args[4],
-    f3 = (-9*t2)/2 + 4*args[4] + 0.5,
-    f4 = (3*t2)/2 - args[4];
-  return args[0]*f1 + args[1]*f2 + args[2]*f3 + args[3]*f4;
+  var t2 = args[4] * args[4],
+    f1 = -3 * t2 / 2 + 2 * args[4] - 0.5,
+    f2 = 9 * t2 / 2 - 5 * args[4],
+    f3 = -9 * t2 / 2 + 4 * args[4] + 0.5,
+    f4 = 3 * t2 / 2 - args[4];
+  return args[0] * f1 + args[1] * f2 + args[2] * f3 + args[3] * f4;
 };
 
 module.exports = p5;

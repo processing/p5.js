@@ -11,7 +11,6 @@ var p5 = require('../core/core');
 var constants = require('../core/constants');
 require('./p5.Texture');
 
-
 /**
  * Loads a custom shader from the provided vertex and fragment
  * shader paths. The shader files are loaded asynchronously in the
@@ -29,7 +28,7 @@ require('./p5.Texture');
  * @return {p5.Shader} a shader object created from the provided
  * vertex and fragment shader files.
  */
-p5.prototype.loadShader = function (vertFilename, fragFilename) {
+p5.prototype.loadShader = function(vertFilename, fragFilename) {
   var loadedShader = new p5.Shader();
 
   var self = this;
@@ -54,7 +53,6 @@ p5.prototype.loadShader = function (vertFilename, fragFilename) {
   return loadedShader;
 };
 
-
 /**
  * The shader() function lets the user provide a custom shader
  * to fill in shapes in WEBGL mode. Users can create their
@@ -66,11 +64,11 @@ p5.prototype.loadShader = function (vertFilename, fragFilename) {
  * @param {p5.Shader} [s] the desired p5.Shader to use for rendering
  * shapes.
  */
-p5.prototype.shader = function (s) {
+p5.prototype.shader = function(s) {
   if (s._renderer === undefined) {
     s._renderer = this._renderer;
   }
-  if(s.isStrokeShader()) {
+  if (s.isStrokeShader()) {
     this._renderer.setStrokeShader(s);
   } else {
     this._renderer.setFillShader(s);
@@ -103,7 +101,7 @@ p5.prototype.shader = function (s) {
  * Red, green and blue gradient.
  *
  */
-p5.prototype.normalMaterial = function(){
+p5.prototype.normalMaterial = function() {
   this._renderer.drawMode = constants.FILL;
   this._renderer.setFillShader(this._renderer._getNormalShader());
   this._renderer.noStroke();
@@ -185,18 +183,20 @@ p5.prototype.normalMaterial = function(){
  * black canvas
  *
  */
-p5.prototype.texture = function(){
+p5.prototype.texture = function() {
   var args = new Array(arguments.length);
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
   this._renderer.GL.depthMask(true);
   this._renderer.GL.enable(this._renderer.GL.BLEND);
-  this._renderer.GL.blendFunc(this._renderer.GL.SRC_ALPHA,
-    this._renderer.GL.ONE_MINUS_SRC_ALPHA);
+  this._renderer.GL.blendFunc(
+    this._renderer.GL.SRC_ALPHA,
+    this._renderer.GL.ONE_MINUS_SRC_ALPHA
+  );
 
   this._renderer.drawMode = constants.TEXTURE;
-  if (! this._renderer.curFillShader.isTextureShader()) {
+  if (!this._renderer.curFillShader.isTextureShader()) {
     this._renderer.setFillShader(this._renderer._getLightShader());
   }
   this._renderer.curFillShader.setUniform('uSpecular', false);
@@ -206,18 +206,16 @@ p5.prototype.texture = function(){
   return this;
 };
 
-
 /**
  * Ambient material for geometry with a given color. You can view all
  * possible materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
  * @method  ambientMaterial
- * @param  {Number|Array|String|p5.Color} v1  gray value,
- * red or hue value (depending on the current color mode),
- * or color Array, or CSS color string
- * @param  {Number}            [v2] green or saturation value
- * @param  {Number}            [v3] blue or brightness value
- * @param  {Number}            [a]  opacity
+ * @param  {Number} v1  gray value, red or hue value
+ *                         (depending on the current color mode)
+ * @param  {Number} [v2] green or saturation value
+ * @param  {Number} [v3] blue or brightness value
+ * @param  {Number} [a]  opacity
  * @chainable
  * @example
  * <div>
@@ -239,8 +237,13 @@ p5.prototype.texture = function(){
  * radiating light source from top right of canvas
  *
  */
+/**
+ * @method  ambientMaterial
+ * @param  {Array|String|p5.Color} color  color, color Array, or CSS color string
+ * @chainable
+ */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
-  if (! this._renderer.curFillShader.isLightShader()) {
+  if (!this._renderer.curFillShader.isLightShader()) {
     this._renderer.setFillShader(this._renderer._getLightShader());
   }
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
@@ -255,12 +258,11 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * possible materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
  * @method specularMaterial
- * @param  {Number|Array|String|p5.Color} v1  gray value,
- * red or hue value (depending on the current color mode),
- * or color Array, or CSS color string
- * @param  {Number}            [v2] green or saturation value
- * @param  {Number}            [v3] blue or brightness value
- * @param  {Number}            [a]  opacity
+ * @param  {Number} v1   gray value, red or hue value
+ *                        (depending on the current color mode),
+ * @param  {Number} [v2] green or saturation value
+ * @param  {Number} [v3] blue or brightness value
+ * @param  {Number} [a]  opacity
  * @chainable
  * @example
  * <div>
@@ -282,8 +284,13 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * diffused radiating light source from top right of canvas
  *
  */
+/**
+ * @method specularMaterial
+ * @param  {Array|String|p5.Color} color color Array, or CSS color string
+ * @chainable
+ */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
-  if (! this._renderer.curFillShader.isLightShader()) {
+  if (!this._renderer.curFillShader.isLightShader()) {
     this._renderer.setFillShader(this._renderer._getLightShader());
   }
 
@@ -304,16 +311,15 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
  * @param  {Number} a  [description]
  * @return {[Number]}  Normalized numbers array
  */
-p5.RendererGL.prototype._applyColorBlend = function(v1,v2,v3,a){
+p5.RendererGL.prototype._applyColorBlend = function(v1, v2, v3, a) {
   var gl = this.GL;
-  var color = this._pInst.color.apply(
-    this._pInst, arguments);
+  var color = this._pInst.color.apply(this._pInst, arguments);
   var colors = color._array;
-  if(colors[colors.length-1] < 1.0){
+  if (colors[colors.length - 1] < 1.0) {
     gl.depthMask(false);
     gl.enable(gl.BLEND);
-    gl.blendEquation( gl.FUNC_ADD );
-    gl.blendFunc( gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA );
+    gl.blendEquation(gl.FUNC_ADD);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   } else {
     gl.depthMask(true);
     gl.disable(gl.BLEND);

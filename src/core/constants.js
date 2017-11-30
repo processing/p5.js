@@ -7,7 +7,6 @@
 var PI = Math.PI;
 
 module.exports = {
-
   // GRAPHICS RENDERER
   /**
    * @property {String} P2D
@@ -493,5 +492,4 @@ module.exports = {
   // DEFAULTS
   _DEFAULT_STROKE: '#000000',
   _DEFAULT_FILL: '#FFFFFF'
-
 };
