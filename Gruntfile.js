@@ -163,7 +163,7 @@ module.exports = function(grunt) {
       },
       // Watch the codebase for doc updates
       // launch with 'grunt requirejs connect watch:yui'
-      yui:{
+      yui: {
         files: ['src/**/*.js', 'lib/addons/*.js'],
         tasks: ['browserify', 'yuidoc:prod', 'minjson', 'uglify'],
         options: {
