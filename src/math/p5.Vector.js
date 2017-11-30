@@ -51,16 +51,16 @@ var constants = require('../core/constants');
  * 2 white ellipses. One center-left the other bottom right and off canvas
  *
  */
-p5.Vector = function Vector() {
-  var x,y,z;
+p5.Vector = function() {
+  var x, y, z;
   // This is how it comes in with createVector()
-  if(arguments[0] instanceof p5) {
+  if (arguments[0] instanceof p5) {
     // save reference to p5 if passed in
     this.p5 = arguments[0];
-    x  = arguments[1][0] || 0;
-    y  = arguments[1][1] || 0;
-    z  = arguments[1][2] || 0;
-  // This is what we'll get with new p5.Vector()
+    x = arguments[1][0] || 0;
+    y = arguments[1][1] || 0;
+    z = arguments[1][2] || 0;
+    // This is what we'll get with new p5.Vector()
   } else {
     x = arguments[0] || 0;
     y = arguments[1] || 0;
@@ -81,7 +81,7 @@ p5.Vector = function Vector() {
    * @property z {Number}
    */
   this.z = z;
-  this.name = 'p5.Vector';   // for friendly debugger system
+  this.name = 'p5.Vector'; // for friendly debugger system
 };
 
 /**
@@ -101,7 +101,7 @@ p5.Vector = function Vector() {
  * </div>
  */
 p5.Vector.prototype.toString = function p5VectorToString() {
-  return 'p5.Vector Object : ['+ this.x +', '+ this.y +', '+ this.z + ']';
+  return 'p5.Vector Object : [' + this.x + ', ' + this.y + ', ' + this.z + ']';
 };
 
 /**
@@ -167,9 +167,9 @@ p5.Vector.prototype.set = function set(x, y, z) {
  */
 p5.Vector.prototype.copy = function copy() {
   if (this.p5) {
-    return new p5.Vector(this.p5,[this.x, this.y, this.z]);
+    return new p5.Vector(this.p5, [this.x, this.y, this.z]);
   } else {
-    return new p5.Vector(this.x,this.y,this.z);
+    return new p5.Vector(this.x, this.y, this.z);
   }
 };
 
@@ -406,7 +406,9 @@ p5.Vector.prototype.mag = function mag() {
  * </div>
  */
 p5.Vector.prototype.magSq = function magSq() {
-  var x = this.x, y = this.y, z = this.z;
+  var x = this.x;
+  var y = this.y;
+  var z = this.z;
   return (x * x + y * y + z * z);
 };
 
@@ -450,9 +452,7 @@ p5.Vector.prototype.dot = function dot(x, y, z) {
   if (x instanceof p5.Vector) {
     return this.dot(x.x, x.y, x.z);
   }
-  return this.x * (x || 0) +
-         this.y * (y || 0) +
-         this.z * (z || 0);
+  return this.x * (x || 0) + this.y * (y || 0) + this.z * (z || 0);
 };
 
 /**
@@ -489,9 +489,9 @@ p5.Vector.prototype.cross = function cross(v) {
   var y = this.z * v.x - this.x * v.z;
   var z = this.x * v.y - this.y * v.x;
   if (this.p5) {
-    return new p5.Vector(this.p5,[x,y,z]);
+    return new p5.Vector(this.p5, [x, y, z]);
   } else {
-    return new p5.Vector(x,y,z);
+    return new p5.Vector(x, y, z);
   }
 };
 
@@ -567,7 +567,7 @@ p5.Vector.prototype.normalize = function normalize() {
  */
 p5.Vector.prototype.limit = function limit(max) {
   var mSq = this.magSq();
-  if(mSq > max*max) {
+  if (mSq > max * max) {
     this
       .div(Math.sqrt(mSq)) //normalize it
       .mult(max);
@@ -822,9 +822,7 @@ p5.Vector.prototype.equals = function equals(x, y, z) {
   return this.x === a && this.y === b && this.z === c;
 };
 
-
 // Static Methods
-
 
 /**
  * Make a new 2D unit vector from an angle
@@ -877,9 +875,9 @@ p5.Vector.fromAngle = function fromAngle(angle) {
     }
   }
   if (this.p5) {
-    return new p5.Vector(this.p5,[Math.cos(angle),Math.sin(angle),0]);
+    return new p5.Vector(this.p5, [Math.cos(angle), Math.sin(angle), 0]);
   } else {
-    return new p5.Vector(Math.cos(angle),Math.sin(angle),0);
+    return new p5.Vector(Math.cos(angle), Math.sin(angle), 0);
   }
 };
 
@@ -934,7 +932,7 @@ p5.Vector.random2D = function random2D() {
  * </div>
  */
 p5.Vector.random3D = function random3D() {
-  var angle,vz;
+  var angle, vz;
   // If we know about p5
   if (this.p5) {
     angle = this.p5.random(0, constants.TWO_PI);
@@ -947,9 +945,9 @@ p5.Vector.random3D = function random3D() {
   var vx = vzBase * Math.cos(angle);
   var vy = vzBase * Math.sin(angle);
   if (this.p5) {
-    return new p5.Vector(this.p5,[vx,vy,vz]);
+    return new p5.Vector(this.p5, [vx, vy, vz]);
   }
-  return new p5.Vector(vx,vy,vz);
+  return new p5.Vector(vx, vy, vz);
 };
 
 // Adds two vectors together and returns a new one.
@@ -1008,7 +1006,6 @@ p5.Vector.sub = function sub(v1, v2, target) {
   return target;
 };
 
-
 /**
  * Multiplies a vector by a scalar and returns a new vector.
  */
@@ -1062,7 +1059,6 @@ p5.Vector.div = function div(v, n, target) {
   target.div(n);
   return target;
 };
-
 
 /**
  * Calculates the dot product of two vectors.
