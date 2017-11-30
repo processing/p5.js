@@ -2,7 +2,7 @@ suite('Noise', function() {
   var myp5;
 
   setup(function(done) {
-    new p5(function(p){
+    new p5(function(p) {
       p.setup = function() {
         myp5 = p;
         done();
@@ -59,7 +59,7 @@ suite('Noise', function() {
     });
     test('should return same sequence of numbers', function() {
       for (var i = 0; i < 5; i++) {
-        assert.isTrue(results[i] === results[i+5]);
+        assert.isTrue(results[i] === results[i + 5]);
       }
     });
   });

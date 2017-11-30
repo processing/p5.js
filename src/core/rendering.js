@@ -52,9 +52,10 @@ p5.prototype.createCanvas = function(w, h, renderer) {
   var r = renderer || constants.P2D;
   var c;
 
-  if(r === constants.WEBGL){
+  if (r === constants.WEBGL) {
     c = document.getElementById(defaultId);
-    if(c) { //if defaultCanvas already exists
+    if (c) {
+      //if defaultCanvas already exists
       c.parentNode.removeChild(c); //replace the existing defaultCanvas
       this._elements = this._elements.filter(function(e) {
         return e !== this._renderer;
@@ -62,17 +63,17 @@ p5.prototype.createCanvas = function(w, h, renderer) {
     }
     c = document.createElement('canvas');
     c.id = defaultId;
-  }
-  else {
+  } else {
     if (!this._defaultGraphicsCreated) {
       c = document.createElement('canvas');
       var i = 0;
-      while (document.getElementById('defaultCanvas'+i)) {
+      while (document.getElementById('defaultCanvas' + i)) {
         i++;
       }
-      defaultId = 'defaultCanvas'+i;
+      defaultId = 'defaultCanvas' + i;
       c.id = defaultId;
-    } else { // resize the default canvas if new one is created
+    } else {
+      // resize the default canvas if new one is created
       c = this.canvas;
     }
   }
@@ -80,24 +81,23 @@ p5.prototype.createCanvas = function(w, h, renderer) {
   // set to invisible if still in setup (to prevent flashing with manipulate)
   if (!this._setupDone) {
     c.dataset.hidden = true; // tag to show later
-    c.style.visibility='hidden';
+    c.style.visibility = 'hidden';
   }
 
-  if (this._userNode) { // user input node case
+  if (this._userNode) {
+    // user input node case
     this._userNode.appendChild(c);
   } else {
     document.body.appendChild(c);
   }
-
 
   // Init our graphics renderer
   //webgl mode
   if (r === constants.WEBGL) {
     this._setProperty('_renderer', new p5.RendererGL(c, this, true));
     this._elements.push(this._renderer);
-  }
-  //P2D mode
-  else {
+  } else {
+    //P2D mode
     if (!this._defaultGraphicsCreated) {
       this._setProperty('_renderer', new p5.Renderer2D(c, this, true));
       this._defaultGraphicsCreated = true;
@@ -136,9 +136,8 @@ p5.prototype.createCanvas = function(w, h, renderer) {
  * No image displayed.
  *
  */
-p5.prototype.resizeCanvas = function (w, h, noRedraw) {
+p5.prototype.resizeCanvas = function(w, h, noRedraw) {
   if (this._renderer) {
-
     // save canvas properties
     var props = {};
     for (var key in this.drawingContext) {
@@ -157,7 +156,6 @@ p5.prototype.resizeCanvas = function (w, h, noRedraw) {
     }
   }
 };
-
 
 /**
  * Removes the default canvas for a p5 sketch that doesn't
@@ -216,7 +214,7 @@ p5.prototype.noCanvas = function() {
  * 4 grey squares alternating light and dark grey. White quarter circle mid-left.
  *
  */
-p5.prototype.createGraphics = function(w, h, renderer){
+p5.prototype.createGraphics = function(w, h, renderer) {
   return new p5.Graphics(w, h, renderer, this);
 };
 
@@ -286,17 +284,26 @@ p5.prototype.createGraphics = function(w, h, renderer){
  *
  */
 p5.prototype.blendMode = function(mode) {
-  if (mode === constants.BLEND || mode === constants.DARKEST ||
-    mode === constants.LIGHTEST || mode === constants.DIFFERENCE ||
-    mode === constants.MULTIPLY || mode === constants.EXCLUSION ||
-    mode === constants.SCREEN || mode === constants.REPLACE ||
-    mode === constants.OVERLAY || mode === constants.HARD_LIGHT ||
-    mode === constants.SOFT_LIGHT || mode === constants.DODGE ||
-    mode === constants.BURN || mode === constants.ADD ||
-    mode === constants.NORMAL) {
+  if (
+    mode === constants.BLEND ||
+    mode === constants.DARKEST ||
+    mode === constants.LIGHTEST ||
+    mode === constants.DIFFERENCE ||
+    mode === constants.MULTIPLY ||
+    mode === constants.EXCLUSION ||
+    mode === constants.SCREEN ||
+    mode === constants.REPLACE ||
+    mode === constants.OVERLAY ||
+    mode === constants.HARD_LIGHT ||
+    mode === constants.SOFT_LIGHT ||
+    mode === constants.DODGE ||
+    mode === constants.BURN ||
+    mode === constants.ADD ||
+    mode === constants.NORMAL
+  ) {
     this._renderer.blendMode(mode);
   } else {
-    throw new Error('Mode '+mode+' not recognized.');
+    throw new Error('Mode ' + mode + ' not recognized.');
   }
 };
 
