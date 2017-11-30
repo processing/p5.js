@@ -123,12 +123,14 @@ p5.RendererGL.prototype.endShape = function(
     // this shouldn't change. :)
   }
   if (this.curStrokeShader.active === true) {
-
     for (var i = 0; i < this.immediateMode.vertices.length - 1; i++) {
-      this.immediateMode.edges.push([i, i+1]);
+      this.immediateMode.edges.push([i, i + 1]);
     }
     if (mode === constants.CLOSE) {
-      this.immediateMode.edges.push([this.immediateMode.vertices.length-1, 0]);
+      this.immediateMode.edges.push([
+        this.immediateMode.vertices.length - 1,
+        0
+      ]);
     }
 
     this._edgesToVertices(this.immediateMode);
@@ -220,33 +222,30 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
     );
   }
 
-  if (true || mode) {
-    if (
-      this.drawMode === constants.FILL ||
-      this.drawMode === constants.TEXTURE
-    ) {
-      switch (this.immediateMode.shapeMode) {
-        case constants.LINE_STRIP:
-          this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
-          break;
-        case constants.LINES:
-          this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
-          break;
-        case constants.TRIANGLES:
-          this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
-          break;
-      }
-    } else {
-      switch (this.immediateMode.shapeMode) {
-        case constants.LINE_STRIP:
-          this.immediateMode.shapeMode = constants.LINE_LOOP;
-          break;
-        case constants.LINES:
-          this.immediateMode.shapeMode = constants.LINE_LOOP;
-          break;
-      }
+  //if (true || mode) {
+  if (this.drawMode === constants.FILL || this.drawMode === constants.TEXTURE) {
+    switch (this.immediateMode.shapeMode) {
+      case constants.LINE_STRIP:
+        this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
+        break;
+      case constants.LINES:
+        this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
+        break;
+      case constants.TRIANGLES:
+        this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
+        break;
+    }
+  } else {
+    switch (this.immediateMode.shapeMode) {
+      case constants.LINE_STRIP:
+        this.immediateMode.shapeMode = constants.LINE_LOOP;
+        break;
+      case constants.LINES:
+        this.immediateMode.shapeMode = constants.LINE_LOOP;
+        break;
     }
   }
+  //}
   //QUADS & QUAD_STRIP are not supported primitives modes
   //in webgl.
   if (
