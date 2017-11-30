@@ -384,7 +384,7 @@ module.exports = function(grunt) {
   grunt.loadTasks('tasks/release');
 
   // Load typescript task
-  grunt.registerTask('typescript', function () {
+  grunt.registerTask('typescript', function() {
     require('./tasks/typescript/task.js')(grunt);
   });
 

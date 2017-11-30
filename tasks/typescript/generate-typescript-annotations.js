@@ -17,7 +17,6 @@ function overloadPosition(classitem, overload) {
 // This design was selected to avoid rewriting the whole file from
 // https://github.com/toolness/friendly-error-fellowship/blob/2093aee2acc53f0885fcad252a170e17af19682a/experiments/typescript/generate-typescript-annotations.js
 function mod(yuidocs, localFileame, globalFilename, sourcePath) {
-
   var emit;
   var constants = {};
   var missingTypes = {};
@@ -47,29 +46,29 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
   ]);
 
   var YUIDOC_TO_TYPESCRIPT_PARAM_MAP = {
-    'Object': 'object',
-    'Any': 'any',
-    'Number': 'number',
-    'Integer': 'number',
-    'String': 'string',
-    'Constant': 'any',
-    'undefined': 'undefined',
-    'Null': 'null',
-    'Array': 'any[]',
-    'Boolean': 'boolean',
+    Object: 'object',
+    Any: 'any',
+    Number: 'number',
+    Integer: 'number',
+    String: 'string',
+    Constant: 'any',
+    undefined: 'undefined',
+    Null: 'null',
+    Array: 'any[]',
+    Boolean: 'boolean',
     '*': 'any',
-    'Void': 'void',
-    'P5': 'p5',
+    Void: 'void',
+    P5: 'p5',
     // When the docs don't specify what kind of function we expect,
     // then we need to use the global type `Function`
-    'Function': 'Function',
+    Function: 'Function',
     // Special ignore for hard to fix YUIDoc from p5.sound
     'Tone.Signal': 'any',
-    'SoundObject': 'any',
+    SoundObject: 'any'
   };
 
   function getClassitems(className) {
-    return yuidocs.classitems.filter(function (classitem) {
+    return yuidocs.classitems.filter(function(classitem) {
       // Note that we first find items with the right class name,
       // but we also check for classitem.name because
       // YUIDoc includes classitems that we want to be undocumented
@@ -84,8 +83,11 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
   }
 
   function isValidP5ClassName(className) {
-    return P5_CLASS_RE.test(className) && className in yuidocs.classes ||
-      P5_CLASS_RE.test('p5.' + className) && ('p5.' + className) in yuidocs.classes;
+    return (
+      (P5_CLASS_RE.test(className) && className in yuidocs.classes) ||
+      (P5_CLASS_RE.test('p5.' + className) &&
+        'p5.' + className in yuidocs.classes)
+    );
   }
 
   /**
@@ -104,12 +106,13 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
       errors.push('"' + classitem.name + '" is not a valid JS symbol name');
     }
 
-    (overload.params || []).forEach(function (param) {
+    (overload.params || []).forEach(function(param) {
       if (param.optional) {
         optionalParamFound = true;
       } else if (optionalParamFound) {
-        errors.push('required param "' + param.name + '" follows an ' +
-          'optional param');
+        errors.push(
+          'required param "' + param.name + '" follows an ' + 'optional param'
+        );
       }
 
       if (param.name in paramNames) {
@@ -118,17 +121,16 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
       paramNames[param.name] = true;
 
       if (!JS_SYMBOL_RE.test(param.name)) {
-        errors.push('param "' + param.name +
-          '" is not a valid JS symbol name');
+        errors.push('param "' + param.name + '" is not a valid JS symbol name');
       }
 
       if (!validateType(param.type)) {
-        errors.push('param "' + param.name + '" has invalid type: ' +
-          param.type);
+        errors.push(
+          'param "' + param.name + '" has invalid type: ' + param.type
+        );
       }
 
       if (param.type === 'Constant') {
-
         var constantRe = /either\s+(?:[A-Z0-9_]+\s*,?\s*(?:or)?\s*)+/g;
         var execResult = constantRe.exec(param.description);
         var match;
@@ -139,7 +141,6 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
           match = 'CLOSE';
         }
         if (match) {
-
           var values = [];
 
           var reConst = /[A-Z0-9_]+/g;
@@ -147,16 +148,31 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
           while ((matchConst = reConst.exec(match)) !== null) {
             values.push(matchConst);
           }
-          var paramWords = param.name.split('.').pop().replace(/([A-Z])/g, ' $1').trim().toLowerCase().split(' ');
-          var propWords = classitem.name.split('.').pop().replace(/([A-Z])/g, ' $1').trim().toLowerCase().split(' ');
+          var paramWords = param.name
+            .split('.')
+            .pop()
+            .replace(/([A-Z])/g, ' $1')
+            .trim()
+            .toLowerCase()
+            .split(' ');
+          var propWords = classitem.name
+            .split('.')
+            .pop()
+            .replace(/([A-Z])/g, ' $1')
+            .trim()
+            .toLowerCase()
+            .split(' ');
 
           var constName;
           if (paramWords.length > 1 || propWords[0] === 'create') {
             constName = paramWords.join('_');
-          } else if (propWords[propWords.length - 1] === paramWords[paramWords.length - 1]) {
+          } else if (
+            propWords[propWords.length - 1] ===
+            paramWords[paramWords.length - 1]
+          ) {
             constName = propWords.join('_');
           } else {
-            constName = (propWords[0] + '_' + paramWords[paramWords.length - 1]);
+            constName = propWords[0] + '_' + paramWords[paramWords.length - 1];
           }
 
           constName = constName.toUpperCase();
@@ -198,10 +214,10 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
     if (matchFunction) {
       var paramTypes = matchFunction[1].split(',');
       const mappedParamTypes = paramTypes.map((t, i) => {
-        const paramName = 'p' + (i + 1)
-        const paramType = translateType(t, 'any')
-        return paramName+ ': ' + paramType
-      })
+        const paramName = 'p' + (i + 1);
+        const paramType = translateType(t, 'any');
+        return paramName + ': ' + paramType;
+      });
       return '(' + mappedParamTypes.join(',') + ') => any';
     }
 
@@ -237,34 +253,42 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
       name = 'theClass';
     }
 
-    return name + (param.optional ? '?' : '') + ': ' + translateType(param.type, 'any');
+    return (
+      name +
+      (param.optional ? '?' : '') +
+      ': ' +
+      translateType(param.type, 'any')
+    );
   }
 
   function generateClassMethod(className, classitem) {
     if (classitem.overloads) {
-      classitem.overloads.forEach(function (overload) {
+      classitem.overloads.forEach(function(overload) {
         generateClassMethodWithParams(className, classitem, overload);
       });
-    }
-    else {
+    } else {
       generateClassMethodWithParams(className, classitem, classitem);
     }
   }
 
-
   function generateClassMethodWithParams(className, classitem, overload) {
     var errors = validateMethod(classitem, overload);
     var params = (overload.params || []).map(translateParam);
-    var returnType = overload.chainable ? className
-      : overload.return ? translateType(overload.return.type, 'any')
-        : 'void';
+    var returnType = overload.chainable
+      ? className
+      : overload.return ? translateType(overload.return.type, 'any') : 'void';
     var decl;
 
     if (classitem.is_constructor) {
       decl = 'constructor(' + params.join(', ') + ')';
     } else {
-      decl = (overload.static ? 'static ' : '') + classitem.name + '(' +
-        params.join(', ') + '): ' + returnType;
+      decl =
+        (overload.static ? 'static ' : '') +
+        classitem.name +
+        '(' +
+        params.join(', ') +
+        '): ' +
+        returnType;
     }
 
     if (emit.getIndentLevel() === 0) {
@@ -273,11 +297,22 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
 
     if (errors.length) {
       emit.sectionBreak();
-      emit('// TODO: Fix ' + classitem.name + '() errors in ' +
-        overloadPosition(classitem, overload) + ':');
+      emit(
+        '// TODO: Fix ' +
+          classitem.name +
+          '() errors in ' +
+          overloadPosition(classitem, overload) +
+          ':'
+      );
       emit('//');
-      errors.forEach(function (error) {
-        console.log( classitem.name + '() ' + overloadPosition(classitem, overload) + ', ' + error);
+      errors.forEach(function(error) {
+        console.log(
+          classitem.name +
+            '() ' +
+            overloadPosition(classitem, overload) +
+            ', ' +
+            error
+        );
         emit('//   ' + error);
       });
       emit('//');
@@ -314,37 +349,38 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
       if (defaultValue) {
         decl = classitem.name + ': ';
         if (translatedType === 'string') {
-          decl += '\'' + defaultValue.replace(/'/g, '\\\'') + '\'';
-        }
-        else {
+          decl += "'" + defaultValue.replace(/'/g, "\\'") + "'";
+        } else {
           decl += defaultValue;
         }
       } else {
         decl = classitem.name + ': ' + translatedType;
       }
 
-
       emit.description(classitem);
 
       if (emit.getIndentLevel() === 0) {
-        const declarationType = (classitem.final ? 'const ' : 'var ');
+        const declarationType = classitem.final ? 'const ' : 'var ';
         emit('declare ' + declarationType + decl + ';');
       } else {
         const modifier = classitem.final ? 'readonly ' : '';
         emit(modifier + decl);
       }
-
     } else {
       emit.sectionBreak();
-      emit('// TODO: Property "' + classitem.name +
-        '", defined in ' + classitemPosition(classitem) +
-        ', is not a valid JS symbol name');
+      emit(
+        '// TODO: Property "' +
+          classitem.name +
+          '", defined in ' +
+          classitemPosition(classitem) +
+          ', is not a valid JS symbol name'
+      );
       emit.sectionBreak();
     }
   }
 
   function generateClassProperties(className) {
-    getClassitems(className).forEach(function (classitem) {
+    getClassitems(className).forEach(function(classitem) {
       classitem.file = classitem.file.replace(/\\/g, '/');
       emit.setCurrentSourceFile(classitem.file);
       if (classitem.itemtype === 'method') {
@@ -352,8 +388,14 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
       } else if (classitem.itemtype === 'property') {
         generateClassProperty(className, classitem);
       } else {
-        emit('// TODO: Annotate ' + classitem.itemtype + ' "' +
-          classitem.name + '", defined in ' + classitemPosition(classitem));
+        emit(
+          '// TODO: Annotate ' +
+            classitem.itemtype +
+            ' "' +
+            classitem.name +
+            '", defined in ' +
+            classitemPosition(classitem)
+        );
       }
     });
   }
@@ -373,8 +415,12 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
     info.file = info.file.replace(/\\/g, '/');
     emit.setCurrentSourceFile(info.file);
 
-    emit('class ' + nestedClassName +
-      (info.extends ? ' extends ' + info.extends : '') + ' {');
+    emit(
+      'class ' +
+        nestedClassName +
+        (info.extends ? ' extends ' + info.extends : '') +
+        ' {'
+    );
     emit.indent();
 
     generateClassConstructor(className);
@@ -386,11 +432,11 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
 
   function emitConstants() {
     emit('// Constants ');
-    Object.keys(constants).forEach(function (key) {
+    Object.keys(constants).forEach(function(key) {
       var values = constants[key];
 
       emit('type ' + key + ' =');
-      values.forEach(function (v, i) {
+      values.forEach(function(v, i) {
         var str = ' typeof ' + v;
         str = (i ? '|' : ' ') + str;
         if (i === values.length - 1) {
@@ -400,7 +446,6 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
       });
 
       emit('');
-
     });
   }
 
@@ -408,14 +453,17 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
     var p5Aliases = [];
     var p5Subclasses = [];
 
-    Object.keys(yuidocs.classes).forEach(function (className) {
+    Object.keys(yuidocs.classes).forEach(function(className) {
       if (P5_ALIASES.indexOf(className) !== -1) {
         p5Aliases.push(className);
       } else if (P5_CLASS_RE.test(className)) {
         p5Subclasses.push(className);
       } else {
-        throw new Error(className + ' is documented as a class but ' +
-          'I\'m not sure how to generate a type definition for it');
+        throw new Error(
+          className +
+            ' is documented as a class but ' +
+            "I'm not sure how to generate a type definition for it"
+        );
       }
     });
 

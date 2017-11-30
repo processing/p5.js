@@ -3,9 +3,8 @@ var h2p = require('html2plaintext');
 var wrap = require('word-wrap');
 
 function shortenDescription(desc) {
-
   return wrap(h2p(desc).replace(/[\r\n]+/, ''), {
-    width: 50,
+    width: 50
   });
 }
 
@@ -36,9 +35,11 @@ function createEmitter(filename) {
     }
 
     function emitDescription(desc) {
-      shortenDescription(desc).split('\n').forEach(function(line) {
-        emit(' * ' + line);
-      });
+      shortenDescription(desc)
+        .split('\n')
+        .forEach(function(line) {
+          emit(' * ' + line);
+        });
     }
 
     emit.sectionBreak();
@@ -51,12 +52,14 @@ function createEmitter(filename) {
         alloverloads = alloverloads.concat(classitem.overloads);
       }
       if (overload.params) {
-        overload.params.forEach(function (p) {
+        overload.params.forEach(function(p) {
           var arg = p.name;
           var p2;
-          for (var i = 0; !p2 && i < alloverloads.length; i ++) {
+          for (var i = 0; !p2 && i < alloverloads.length; i++) {
             if (alloverloads[i].params) {
-              p2 = alloverloads[i].params.find(p3 => p3.description && p3.name === arg);
+              p2 = alloverloads[i].params.find(
+                p3 => p3.description && p3.name === arg
+              );
               if (p2) {
                 if (p.optional) {
                   arg = '[' + arg + ']';
