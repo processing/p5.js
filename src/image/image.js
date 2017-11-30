@@ -144,25 +144,24 @@ p5.prototype.createImage = function(width, height) {
  *  @param  {String} [filename]
  *  @param  {String} [extension]
  */
-p5.prototype.saveCanvas = function (cnv, filename, extension) {
-
+p5.prototype.saveCanvas = function(cnv, filename, extension) {
   if (cnv instanceof p5.Element) {
     cnv = cnv.elt;
-  }
-  else if (!(cnv instanceof HTMLCanvasElement)) {
+  } else if (!(cnv instanceof HTMLCanvasElement)) {
     filename = cnv;
     extension = filename;
     cnv = this._curElement && this._curElement.elt;
   }
 
-  extension = extension
-    || p5.prototype._checkFileExtension(filename, extension)[1]
-    || 'png';
+  extension =
+    extension ||
+    p5.prototype._checkFileExtension(filename, extension)[1] ||
+    'png';
 
   var mimeType;
   switch (extension) {
     default:
-    //case 'png':
+      //case 'png':
       mimeType = 'image/png';
       break;
     case 'jpeg':
@@ -171,12 +170,9 @@ p5.prototype.saveCanvas = function (cnv, filename, extension) {
       break;
   }
 
-  cnv.toBlob(
-    function (blob) {
-      p5.prototype.downloadFile(blob, filename, extension);
-    },
-    mimeType
-  );
+  cnv.toBlob(function(blob) {
+    p5.prototype.downloadFile(blob, filename, extension);
+  }, mimeType);
 };
 
 /**
