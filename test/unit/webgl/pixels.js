@@ -19,7 +19,7 @@ suite('pixels WebGL', function() {
   suite('loadpixels()', function() {
     test('loadPixels color check', function(done) {
       myp5.createCanvas(100, 100, myp5.WEBGL);
-      myp5.background(0,100,0);
+      myp5.background(0, 100, 0);
       myp5.loadPixels();
       var pixels = myp5.pixels;
       assert.deepEqual(pixels[1], 100);
@@ -42,8 +42,8 @@ suite('pixels WebGL', function() {
     });
 
     test('get() singlePixel color and size', function(done) {
-      myp5.background(100,115,100);
-      img = myp5.get(0,0);
+      myp5.background(100, 115, 100);
+      img = myp5.get(0, 0);
       assert.isTrue(img[1] === 115);
       assert.isTrue(img.length === 4);
       done();

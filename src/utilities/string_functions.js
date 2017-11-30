@@ -77,7 +77,7 @@ p5.prototype.join = function(list, separator) {
  * "p5js*" displayed middle left of canvas.
  *
  */
-p5.prototype.match =  function(str, reg) {
+p5.prototype.match = function(str, reg) {
   p5._validateParameters('match', arguments);
   return str.match(reg);
 };
@@ -178,29 +178,25 @@ p5.prototype.matchAll = function(str, reg) {
  * @param {Number|String}       [right]
  * @return {Array}                formatted Strings\
  */
-p5.prototype.nf = function () {
+p5.prototype.nf = function() {
   p5._validateParameters('nf', arguments);
   if (arguments[0] instanceof Array) {
     var a = arguments[1];
     var b = arguments[2];
-    return arguments[0].map(function (x) {
+    return arguments[0].map(function(x) {
       return doNf(x, a, b);
     });
-  }
-  else{
+  } else {
     var typeOfFirst = Object.prototype.toString.call(arguments[0]);
-    if(typeOfFirst === '[object Arguments]'){
-      if(arguments[0].length===3){
-        return this.nf(arguments[0][0],arguments[0][1],arguments[0][2]);
-      }
-      else if(arguments[0].length===2){
-        return this.nf(arguments[0][0],arguments[0][1]);
-      }
-      else{
+    if (typeOfFirst === '[object Arguments]') {
+      if (arguments[0].length === 3) {
+        return this.nf(arguments[0][0], arguments[0][1], arguments[0][2]);
+      } else if (arguments[0].length === 2) {
+        return this.nf(arguments[0][0], arguments[0][1]);
+      } else {
         return this.nf(arguments[0][0]);
       }
-    }
-    else {
+    } else {
       return doNf.apply(this, arguments);
     }
   }
@@ -216,7 +212,7 @@ function doNf() {
   var str = neg ? '-' : '';
   if (arguments.length === 3) {
     var decimal = '';
-    if(decimalInd !== -1 || arguments[2] - decPart.length > 0){
+    if (decimalInd !== -1 || arguments[2] - decPart.length > 0) {
       decimal = '.';
     }
     if (decPart.length > arguments[2]) {
@@ -232,8 +228,7 @@ function doNf() {
       str += '0';
     }
     return str;
-  }
-  else {
+  } else {
     for (var k = 0; k < Math.max(arguments[1] - intPart.length, 0); k++) {
       str += '0';
     }
@@ -286,11 +281,11 @@ function doNf() {
  * @param  {Number|String}   [right]
  * @return {Array}           formatted Strings
  */
-p5.prototype.nfc = function () {
+p5.prototype.nfc = function() {
   p5._validateParameters('nfc', arguments);
   if (arguments[0] instanceof Array) {
     var a = arguments[1];
-    return arguments[0].map(function (x) {
+    return arguments[0].map(function(x) {
       return doNfc(x, a);
     });
   } else {
@@ -305,16 +300,14 @@ function doNfc() {
   n = n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   if (arguments[1] === 0) {
     rem = '';
-  }
-  else if(arguments[1] !== undefined){
-    if(arguments[1] > rem.length){
-      rem+= dec === -1 ? '.' : '';
+  } else if (arguments[1] !== undefined) {
+    if (arguments[1] > rem.length) {
+      rem += dec === -1 ? '.' : '';
       var len = arguments[1] - rem.length + 1;
-      for(var i =0; i< len; i++){
+      for (var i = 0; i < len; i++) {
         rem += '0';
       }
-    }
-    else{
+    } else {
       rem = rem.substring(0, arguments[1] + 1);
     }
   }
@@ -380,10 +373,9 @@ p5.prototype.nfp = function() {
 };
 
 function addNfp() {
-  return (
-    parseFloat(arguments[0]) > 0) ?
-    '+'+arguments[0].toString() :
-    arguments[0].toString();
+  return parseFloat(arguments[0]) > 0
+    ? '+' + arguments[0].toString()
+    : arguments[0].toString();
 }
 
 /**
@@ -445,10 +437,9 @@ p5.prototype.nfs = function() {
 };
 
 function addNfs() {
-  return (
-    parseFloat(arguments[0]) > 0) ?
-    ' '+arguments[0].toString() :
-    arguments[0].toString();
+  return parseFloat(arguments[0]) > 0
+    ? ' ' + arguments[0].toString()
+    : arguments[0].toString();
 }
 
 /**
@@ -513,21 +504,21 @@ p5.prototype.split = function(str, delim) {
  */
 p5.prototype.splitTokens = function() {
   p5._validateParameters('splitTokens', arguments);
-  var d,sqo,sqc,str;
+  var d, sqo, sqc, str;
   str = arguments[1];
   if (arguments.length > 1) {
     sqc = /\]/g.exec(str);
     sqo = /\[/g.exec(str);
-    if ( sqo && sqc ) {
-      str = str.slice(0, sqc.index) + str.slice(sqc.index+1);
+    if (sqo && sqc) {
+      str = str.slice(0, sqc.index) + str.slice(sqc.index + 1);
       sqo = /\[/g.exec(str);
-      str = str.slice(0, sqo.index) + str.slice(sqo.index+1);
-      d = new RegExp('[\\['+str+'\\]]','g');
-    } else if ( sqc ) {
-      str = str.slice(0, sqc.index) + str.slice(sqc.index+1);
+      str = str.slice(0, sqo.index) + str.slice(sqo.index + 1);
+      d = new RegExp('[\\[' + str + '\\]]', 'g');
+    } else if (sqc) {
+      str = str.slice(0, sqc.index) + str.slice(sqc.index + 1);
       d = new RegExp('[' + str + '\\]]', 'g');
-    } else if(sqo) {
-      str = str.slice(0, sqo.index) + str.slice(sqo.index+1);
+    } else if (sqo) {
+      str = str.slice(0, sqo.index) + str.slice(sqo.index + 1);
       d = new RegExp('[' + str + '\\[]', 'g');
     } else {
       d = new RegExp('[' + str + ']', 'g');
@@ -535,7 +526,9 @@ p5.prototype.splitTokens = function() {
   } else {
     d = /\s/g;
   }
-  return arguments[0].split(d).filter(function(n){return n;});
+  return arguments[0].split(d).filter(function(n) {
+    return n;
+  });
 };
 
 /**

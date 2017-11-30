@@ -46,12 +46,12 @@ var p5 = require('../core/core');
  * blue square shrinks in size grows to fill canvas. disappears then loops.
  *
  */
-p5.prototype.camera = function(){
+p5.prototype.camera = function() {
   this._renderer.camera.apply(this._renderer, arguments);
   return this;
 };
 
-p5.RendererGL.prototype.camera = function () {
+p5.RendererGL.prototype.camera = function() {
   var eyeX, eyeY, eyeZ;
   var centerX, centerY, centerZ;
   var upX, upY, upZ;
@@ -99,25 +99,25 @@ p5.RendererGL.prototype.camera = function () {
   var y2 = upZ;
 
   // computer x vector as y cross z
-  var x0 =  y1 * z2 - y2 * z1;
+  var x0 = y1 * z2 - y2 * z1;
   var x1 = -y0 * z2 + y2 * z0;
-  var x2 =  y0 * z1 - y1 * z0;
+  var x2 = y0 * z1 - y1 * z0;
 
   // recomputer y = z cross x
-  y0 =  z1 * x2 - z2 * x1;
+  y0 = z1 * x2 - z2 * x1;
   y1 = -z0 * x2 + z2 * x0;
-  y2 =  z0 * x1 - z1 * x0;
+  y2 = z0 * x1 - z1 * x0;
 
   // cross product gives area of parallelogram, which is < 1.0 for
   // non-perpendicular unit-length vectors; so normalize x, y here:
-  var xmag = Math.sqrt (x0 * x0 + x1 * x1 + x2 * x2);
+  var xmag = Math.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
   if (xmag !== 0) {
     x0 /= xmag;
     x1 /= xmag;
     x2 /= xmag;
   }
 
-  var ymag = Math.sqrt (y0 * y0 + y1 * y1 + y2 * y2);
+  var ymag = Math.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
   if (ymag !== 0) {
     y0 /= ymag;
     y1 /= ymag;
@@ -127,6 +127,7 @@ p5.RendererGL.prototype.camera = function () {
   // the camera affects the model view matrix, insofar as it
   // inverse translates the world to the eye position of the camera
   // and rotates it.
+  // prettier-ignore
   this.cameraMatrix.set(x0, y0, z0, 0,
                         x1, y1, z1, 0,
                         x2, y2, z2, 0,
@@ -137,22 +138,24 @@ p5.RendererGL.prototype.camera = function () {
   var tz = -eyeZ;
 
   this.cameraMatrix.translate([tx, ty, tz]);
-  this.uMVMatrix.set(this.cameraMatrix.mat4[0],
-                     this.cameraMatrix.mat4[1],
-                     this.cameraMatrix.mat4[2],
-                     this.cameraMatrix.mat4[3],
-                     this.cameraMatrix.mat4[4],
-                     this.cameraMatrix.mat4[5],
-                     this.cameraMatrix.mat4[6],
-                     this.cameraMatrix.mat4[7],
-                     this.cameraMatrix.mat4[8],
-                     this.cameraMatrix.mat4[9],
-                     this.cameraMatrix.mat4[10],
-                     this.cameraMatrix.mat4[11],
-                     this.cameraMatrix.mat4[12],
-                     this.cameraMatrix.mat4[13],
-                     this.cameraMatrix.mat4[14],
-                     this.cameraMatrix.mat4[15]);
+  this.uMVMatrix.set(
+    this.cameraMatrix.mat4[0],
+    this.cameraMatrix.mat4[1],
+    this.cameraMatrix.mat4[2],
+    this.cameraMatrix.mat4[3],
+    this.cameraMatrix.mat4[4],
+    this.cameraMatrix.mat4[5],
+    this.cameraMatrix.mat4[6],
+    this.cameraMatrix.mat4[7],
+    this.cameraMatrix.mat4[8],
+    this.cameraMatrix.mat4[9],
+    this.cameraMatrix.mat4[10],
+    this.cameraMatrix.mat4[11],
+    this.cameraMatrix.mat4[12],
+    this.cameraMatrix.mat4[13],
+    this.cameraMatrix.mat4[14],
+    this.cameraMatrix.mat4[15]
+  );
   return this;
 };
 
@@ -219,6 +222,7 @@ p5.RendererGL.prototype.perspective = function() {
   var f = 1.0 / Math.tan(this.cameraFOV / 2);
   var nf = 1.0 / (this.cameraNear - this.cameraFar);
 
+  // prettier-ignore
   this.uPMatrix.set(f / aspect,  0,                     0,  0,
                     0,          -f,                     0,  0,
                     0,           0,     (far + near) * nf, -1,
@@ -266,11 +270,11 @@ p5.RendererGL.prototype.perspective = function() {
  * 3 3d boxes, reveal several more boxes on 3d plane when mouse used to toggle
  *
  */
-p5.prototype.ortho = function(left,right,bottom,top,near,far) {
-  left = left || (-this.width/2);
-  right = right || (this.width/2);
-  bottom = bottom || (-this.height/2);
-  top = top || (this.height/2);
+p5.prototype.ortho = function(left, right, bottom, top, near, far) {
+  left = left || -this.width / 2;
+  right = right || this.width / 2;
+  bottom = bottom || -this.height / 2;
+  top = top || this.height / 2;
   near = near || 0;
   far = far || Math.max(this.width, this.height);
   this._renderer.uPMatrix = p5.Matrix.identity();
@@ -280,15 +284,16 @@ p5.prototype.ortho = function(left,right,bottom,top,near,far) {
   var h = top - bottom;
   var d = far - near;
 
-  var x =  2.0 / w;
-  var y =  2.0 / h;
+  var x = 2.0 / w;
+  var y = 2.0 / h;
   var z = -2.0 / d;
 
   var tx = -(right + left) / w;
   var ty = -(top + bottom) / h;
-  var tz = -(far + near)   / d;
+  var tz = -(far + near) / d;
 
   // The minus sign is needed to invert the Y axis.
+  // prettier-ignore
   this._renderer.uPMatrix.set( x,  0,  0, 0,
                                0, -y,  0, 0,
                                0,  0,  z, 0,
