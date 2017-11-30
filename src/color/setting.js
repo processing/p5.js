@@ -33,8 +33,6 @@ require('./p5.Color');
  *
  * @method background
  * @param {p5.Color} color     any value created by the color() function
- * @param {Number} [a]         opacity of the background relative to current
- *                             color range (default is 0-100)
  * @chainable
  *
  * @example
@@ -135,7 +133,8 @@ require('./p5.Color');
  * @param {String} colorstring color string, possible formats include: integer
  *                         rgb() or rgba(), percentage rgb() or rgba(),
  *                         3-digit hex, 6-digit hex
- * @param {Number} [a]
+ * @param {Number} [a]         opacity of the background relative to current
+ *                             color range (default is 0-100)
  * @chainable
  */
 
@@ -474,7 +473,6 @@ p5.prototype.colorMode = function() {
 /**
  * @method fill
  * @param  {p5.Color}      color   the fill color
- * @param  {Number}        [alpha]
  * @chainable
  */
 p5.prototype.fill = function() {
@@ -693,7 +691,6 @@ p5.prototype.noStroke = function() {
 /**
  * @method stroke
  * @param  {p5.Color}      color   the stroke color
- * @param  {Number}        [alpha]
  * @chainable
  */
 
