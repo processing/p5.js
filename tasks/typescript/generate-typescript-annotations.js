@@ -36,6 +36,7 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
 
   var EXTERNAL_TYPES = new Set([
     'HTMLCanvasElement',
+    'HTMLElement',
     'Float32Array',
     'AudioParam',
     'AudioNode',
@@ -326,12 +327,9 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
 
   function generateClassConstructor(className) {
     var classitem = yuidocs.classes[className];
-
-    if (!classitem.is_constructor) {
-      throw new Error(className + ' is not a constructor');
+    if (classitem.is_constructor) {
+      generateClassMethod(className, classitem);
     }
-
-    generateClassMethod(className, classitem);
   }
 
   function generateClassProperty(className, classitem) {
@@ -405,6 +403,7 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
     emit('// Properties from ' + className);
     emit.sectionBreak();
 
+    generateClassConstructor(className);
     generateClassProperties(className);
   }
 
