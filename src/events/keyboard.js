@@ -174,8 +174,9 @@ p5.prototype.keyCode = 0;
  * black rect center. turns white when left arrow pressed and black when right.
  *
  */
-p5.prototype._onkeydown = function (e) {
-  if (downKeys[e.which]) { // prevent multiple firings
+p5.prototype._onkeydown = function(e) {
+  if (downKeys[e.which]) {
+    // prevent multiple firings
     return;
   }
   this._setProperty('isKeyPressed', true);
@@ -190,7 +191,7 @@ p5.prototype._onkeydown = function (e) {
   var keyPressed = this.keyPressed || window.keyPressed;
   if (typeof keyPressed === 'function' && !e.charCode) {
     var executeDefault = keyPressed(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
@@ -226,11 +227,11 @@ p5.prototype._onkeydown = function (e) {
  * black rect center. turns white when key pressed and black when pressed again
  *
  */
-p5.prototype._onkeyup = function (e) {
+p5.prototype._onkeyup = function(e) {
   var keyReleased = this.keyReleased || window.keyReleased;
   downKeys[e.which] = false;
 
-  if(!areDownKeys()) {
+  if (!areDownKeys()) {
     this._setProperty('isKeyPressed', false);
     this._setProperty('keyIsPressed', false);
   }
@@ -245,7 +246,7 @@ p5.prototype._onkeyup = function (e) {
   this._setProperty('keyCode', e.which);
   if (typeof keyReleased === 'function') {
     var executeDefault = keyReleased(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
@@ -289,8 +290,9 @@ p5.prototype._onkeyup = function (e) {
  * black rect center. turns white when 'a' key typed and black when 'b' pressed
  *
  */
-p5.prototype._onkeypress = function (e) {
-  if (e.which === this._lastKeyCodeTyped) { // prevent multiple firings
+p5.prototype._onkeypress = function(e) {
+  if (e.which === this._lastKeyCodeTyped) {
+    // prevent multiple firings
     return;
   }
   this._setProperty('keyCode', e.which);
@@ -299,7 +301,7 @@ p5.prototype._onkeypress = function (e) {
   var keyTyped = this.keyTyped || window.keyTyped;
   if (typeof keyTyped === 'function') {
     var executeDefault = keyTyped(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
@@ -310,7 +312,7 @@ p5.prototype._onkeypress = function (e) {
  * not focused on the element we must assume all keys currently down have
  * been released.
  */
-p5.prototype._onblur = function (e) {
+p5.prototype._onblur = function(e) {
   downKeys = {};
 };
 

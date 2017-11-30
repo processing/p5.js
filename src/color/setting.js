@@ -33,8 +33,6 @@ require('./p5.Color');
  *
  * @method background
  * @param {p5.Color} color     any value created by the color() function
- * @param {Number} [a]         opacity of the background relative to current
- *                             color range (default is 0-100)
  * @chainable
  *
  * @example
@@ -135,7 +133,8 @@ require('./p5.Color');
  * @param {String} colorstring color string, possible formats include: integer
  *                         rgb() or rgba(), percentage rgb() or rgba(),
  *                         3-digit hex, 6-digit hex
- * @param {Number} [a]
+ * @param {Number} [a]         opacity of the background relative to current
+ *                             color range (default is 0-100)
  * @chainable
  */
 
@@ -304,29 +303,30 @@ p5.prototype.clear = function() {
  */
 p5.prototype.colorMode = function() {
   p5._validateParameters('colorMode', arguments);
-  if (arguments[0] === constants.RGB ||
-      arguments[0] === constants.HSB ||
-      arguments[0] === constants.HSL) {
-
+  if (
+    arguments[0] === constants.RGB ||
+    arguments[0] === constants.HSB ||
+    arguments[0] === constants.HSL
+  ) {
     // Set color mode.
     this._renderer._colorMode = arguments[0];
 
     // Set color maxes.
     var maxes = this._renderer._colorMaxes[this._renderer._colorMode];
     if (arguments.length === 2) {
-      maxes[0] = arguments[1];  // Red
-      maxes[1] = arguments[1];  // Green
-      maxes[2] = arguments[1];  // Blue
-      maxes[3] = arguments[1];  // Alpha
+      maxes[0] = arguments[1]; // Red
+      maxes[1] = arguments[1]; // Green
+      maxes[2] = arguments[1]; // Blue
+      maxes[3] = arguments[1]; // Alpha
     } else if (arguments.length === 4) {
-      maxes[0] = arguments[1];  // Red
-      maxes[1] = arguments[2];  // Green
-      maxes[2] = arguments[3];  // Blue
+      maxes[0] = arguments[1]; // Red
+      maxes[1] = arguments[2]; // Green
+      maxes[2] = arguments[3]; // Blue
     } else if (arguments.length === 5) {
-      maxes[0] = arguments[1];  // Red
-      maxes[1] = arguments[2];  // Green
-      maxes[2] = arguments[3];  // Blue
-      maxes[3] = arguments[4];  // Alpha
+      maxes[0] = arguments[1]; // Red
+      maxes[1] = arguments[2]; // Green
+      maxes[2] = arguments[3]; // Blue
+      maxes[3] = arguments[4]; // Alpha
     }
   }
 
@@ -475,7 +475,6 @@ p5.prototype.colorMode = function() {
 /**
  * @method fill
  * @param  {p5.Color}      color   the fill color
- * @param  {Number}        [alpha]
  * @chainable
  */
 p5.prototype.fill = function() {
@@ -503,7 +502,7 @@ p5.prototype.fill = function() {
  * white rect top middle and noFill rect center. Both 60x60 with black outlines.
  */
 p5.prototype.noFill = function() {
-  if(this._renderer.isP3D) {
+  if (this._renderer.isP3D) {
     this._renderer.noFill();
   }
   this._renderer._setProperty('_doFill', false);
@@ -531,7 +530,7 @@ p5.prototype.noFill = function() {
  */
 
 p5.prototype.noStroke = function() {
-  if(this._renderer.isP3D) {
+  if (this._renderer.isP3D) {
     this._renderer.noStroke();
   }
   this._renderer._setProperty('_doStroke', false);
@@ -694,7 +693,6 @@ p5.prototype.noStroke = function() {
 /**
  * @method stroke
  * @param  {p5.Color}      color   the stroke color
- * @param  {Number}        [alpha]
  * @chainable
  */
 

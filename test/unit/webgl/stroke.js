@@ -22,10 +22,12 @@ suite('stroke WebGL', function() {
       myp5.createCanvas(100, 100, myp5.WEBGL);
       assert(
         myp5._renderer.curStrokeShader === myp5._renderer._getLineShader(),
-        'default stroke shader was not initialized with GL canvas');
+        'default stroke shader was not initialized with GL canvas'
+      );
       assert(
         myp5._renderer.curFillShader === myp5._renderer._getColorShader(),
-        'default fill shader was not initialized with GL canvas');
+        'default fill shader was not initialized with GL canvas'
+      );
       done();
     });
 
@@ -33,18 +35,22 @@ suite('stroke WebGL', function() {
       myp5.noStroke();
       assert(
         myp5._renderer.curStrokeShader.active === false,
-        'stroke shader still active after noStroke()');
+        'stroke shader still active after noStroke()'
+      );
       assert.isTrue(
         myp5._renderer.curFillShader.active === true,
-        'fill shader deactivated by noStroke()');
+        'fill shader deactivated by noStroke()'
+      );
       myp5.stroke(0);
       myp5.noFill();
       assert(
         myp5._renderer.curStrokeShader.active === true,
-        'stroke shader not active after stroke()');
+        'stroke shader not active after stroke()'
+      );
       assert.isTrue(
         myp5._renderer.curFillShader.active === false,
-        'fill shader still active after noFill()');
+        'fill shader still active after noFill()'
+      );
       done();
     });
   });

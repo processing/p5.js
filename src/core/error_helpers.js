@@ -80,6 +80,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
     if (doFriendlyWelcome) {
       friendlyWelcome();
       doFriendlyWelcome = false;
+
     }
     if ('undefined' === getType(color)) {
       color = '#B40033'; // dark magenta

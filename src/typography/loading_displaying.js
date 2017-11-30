@@ -86,15 +86,12 @@ require('../core/error_helpers');
  * p5*js in p5's theme dark pink
  *
  */
-p5.prototype.loadFont = function (path, onSuccess, onError) {
-
+p5.prototype.loadFont = function(path, onSuccess, onError) {
   var p5Font = new p5.Font(this);
 
   var self = this;
-  opentype.load(path, function (err, font) {
-
+  opentype.load(path, function(err, font) {
     if (err) {
-
       if (typeof onError !== 'undefined') {
         return onError(err);
       }
@@ -112,21 +109,33 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
     self._decrementPreload();
 
     // check that we have an acceptable font type
-    var validFontTypes = [ 'ttf', 'otf', 'woff', 'woff2' ],
-      fileNoPath = path.split('\\').pop().split('/').pop(),
-      lastDotIdx = fileNoPath.lastIndexOf('.'), fontFamily, newStyle,
+    var validFontTypes = ['ttf', 'otf', 'woff', 'woff2'],
+      fileNoPath = path
+        .split('\\')
+        .pop()
+        .split('/')
+        .pop(),
+      lastDotIdx = fileNoPath.lastIndexOf('.'),
+      fontFamily,
+      newStyle,
       fileExt = lastDotIdx < 1 ? null : fileNoPath.substr(lastDotIdx + 1);
 
     // if so, add it to the DOM (name-only) for use with p5.dom
     if (validFontTypes.indexOf(fileExt) > -1) {
-
       fontFamily = fileNoPath.substr(0, lastDotIdx);
       newStyle = document.createElement('style');
-      newStyle.appendChild(document.createTextNode('\n@font-face {' +
-        '\nfont-family: ' + fontFamily + ';\nsrc: url(' + path + ');\n}\n'));
+      newStyle.appendChild(
+        document.createTextNode(
+          '\n@font-face {' +
+            '\nfont-family: ' +
+            fontFamily +
+            ';\nsrc: url(' +
+            path +
+            ');\n}\n'
+        )
+      );
       document.head.appendChild(newStyle);
     }
-
   });
 
   return p5Font;
@@ -184,8 +193,9 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
  *
  */
 p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
-  return (!(this._renderer._doFill || this._renderer._doStroke)) ? this :
-    this._renderer.text.apply(this._renderer, arguments);
+  return !(this._renderer._doFill || this._renderer._doStroke)
+    ? this
+    : this._renderer.text.apply(this._renderer, arguments);
 };
 
 /**
@@ -238,20 +248,19 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  * @chainable
  */
 p5.prototype.textFont = function(theFont, theSize) {
-
   if (arguments.length) {
-
     if (!theFont) {
-
       throw Error('null font passed to textFont');
     }
 
     this._renderer._setProperty('_textFont', theFont);
 
     if (theSize) {
-
       this._renderer._setProperty('_textSize', theSize);
-      this._renderer._setProperty('_textLeading', theSize * constants._DEFAULT_LEADMULT);
+      this._renderer._setProperty(
+        '_textLeading',
+        theSize * constants._DEFAULT_LEADMULT
+      );
     }
 
     return this._renderer._applyTextProperties();

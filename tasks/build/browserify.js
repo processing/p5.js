@@ -4,10 +4,10 @@ var path = require('path');
 var browserify = require('browserify');
 var derequire = require('derequire');
 
-var bannerTemplate = '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */';
+var bannerTemplate =
+  '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */';
 
 module.exports = function(grunt) {
-
   var srcFilePath = require.resolve('../../src/app.js');
 
   grunt.registerTask('browserify', 'Compile the p5.js source with Browserify', function(param) {

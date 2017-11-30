@@ -310,7 +310,7 @@ p5.prototype.brightness = function(c) {
 p5.prototype.color = function() {
   p5._validateParameters('color', arguments);
   if (arguments[0] instanceof p5.Color) {
-    return arguments[0];  // Do nothing if argument is already a color object.
+    return arguments[0]; // Do nothing if argument is already a color object.
   } else if (arguments[0] instanceof Array) {
     if (this instanceof p5.Renderer) {
       return new p5.Color(this, arguments[0]);
@@ -452,17 +452,17 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
       return level / 255;
     });
   } else if (mode === constants.HSB) {
-    arguments[0]._getBrightness();  // Cache hsba so it definitely exists.
+    arguments[0]._getBrightness(); // Cache hsba so it definitely exists.
     arguments[1]._getBrightness();
     fromArray = arguments[0].hsba;
     toArray = arguments[1].hsba;
   } else if (mode === constants.HSL) {
-    arguments[0]._getLightness();  // Cache hsla so it definitely exists.
+    arguments[0]._getLightness(); // Cache hsla so it definitely exists.
     arguments[1]._getLightness();
     fromArray = arguments[0].hsla;
     toArray = arguments[1].hsla;
   } else {
-    throw new Error (mode + 'cannot be used for interpolation.');
+    throw new Error(mode + 'cannot be used for interpolation.');
   }
 
   // Prevent extrapolation.
@@ -470,9 +470,9 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
 
   // Define lerp here itself if user isn't using math module.
   // Maintains the definition as found in math/calculation.js
-  if(typeof this.lerp === 'undefined') {
-    this.lerp = function (start, stop, amt) {
-      return amt*(stop-start)+start;
+  if (typeof this.lerp === 'undefined') {
+    this.lerp = function(start, stop, amt) {
+      return amt * (stop - start) + start;
     };
   }
 

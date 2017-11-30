@@ -84,7 +84,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
     self._decrementPreload();
   };
   img.onerror = function(e) {
-    p5._friendlyFileLoadError(0,img.src);
+    p5._friendlyFileLoadError(0, img.src);
     if (typeof failureCallback === 'function') {
       failureCallback(e);
     }
@@ -95,7 +95,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
   //see https://developer.mozilla.org/en-US/docs/HTML/CORS_Enabled_Image
   // When using data-uris the file will be loaded locally
   // so we don't need to worry about crossOrigin with base64 file types
-  if(path.indexOf('data:image/') !== 0) {
+  if (path.indexOf('data:image/') !== 0) {
     img.crossOrigin = 'Anonymous';
   }
 
@@ -117,8 +117,7 @@ p5.prototype.loadImage = function(path, successCallback, failureCallback) {
 function _sAssign(sVal, iVal) {
   if (sVal > 0 && sVal < iVal) {
     return sVal;
-  }
-  else {
+  } else {
     return iVal;
   }
 }
@@ -230,62 +229,69 @@ function _sAssign(sVal, iVal) {
  * @param {Number}    [sHeight] the height of the subsection of the
  *                            source image to draw into the destination rectangle
  */
-p5.prototype.image =
-  function(img, dx, dy, dWidth, dHeight, sx, sy, sWidth, sHeight) {
-    // set defaults per spec: https://goo.gl/3ykfOq
+p5.prototype.image = function(
+  img,
+  dx,
+  dy,
+  dWidth,
+  dHeight,
+  sx,
+  sy,
+  sWidth,
+  sHeight
+) {
+  // set defaults per spec: https://goo.gl/3ykfOq
 
-    p5._validateParameters('image', arguments);
+  p5._validateParameters('image', arguments);
+  
+  var defW = img.width;
+  var defH = img.height;
 
-    var defW = img.width;
-    var defH = img.height;
+  if (img.elt && img.elt.videoWidth && !img.canvas) {
+    // video no canvas
+    defW = img.elt.videoWidth;
+    defH = img.elt.videoHeight;
+  }
 
-    if (img.elt && img.elt.videoWidth && !img.canvas) { // video no canvas
-      defW = img.elt.videoWidth;
-      defH = img.elt.videoHeight;
-    }
+  var _dx = dx;
+  var _dy = dy;
+  var _dw = dWidth || defW;
+  var _dh = dHeight || defH;
+  var _sx = sx || 0;
+  var _sy = sy || 0;
+  var _sw = sWidth || defW;
+  var _sh = sHeight || defH;
 
-    var _dx = dx;
-    var _dy = dy;
-    var _dw = dWidth || defW;
-    var _dh = dHeight || defH;
-    var _sx = sx || 0;
-    var _sy = sy || 0;
-    var _sw = sWidth || defW;
-    var _sh = sHeight || defH;
+  _sw = _sAssign(_sw, defW);
+  _sh = _sAssign(_sh, defH);
 
-    _sw = _sAssign(_sw, defW);
-    _sh = _sAssign(_sh, defH);
+  // This part needs cleanup and unit tests
+  // see issues https://github.com/processing/p5.js/issues/1741
+  // and https://github.com/processing/p5.js/issues/1673
+  var pd = 1;
 
-
-    // This part needs cleanup and unit tests
-    // see issues https://github.com/processing/p5.js/issues/1741
-    // and https://github.com/processing/p5.js/issues/1673
-    var pd = 1;
-
-    if (img.elt && !img.canvas && img.elt.style.width) {
-      //if img is video and img.elt.size() has been used and
-      //no width passed to image()
-      if(img.elt.videoWidth && !dWidth){
-        pd = img.elt.videoWidth;
-      }
+  if (img.elt && !img.canvas && img.elt.style.width) {
+    //if img is video and img.elt.size() has been used and
+    //no width passed to image()
+    if (img.elt.videoWidth && !dWidth) {
+      pd = img.elt.videoWidth;
+    } else {
       //all other cases
-      else {
-        pd = img.elt.width;
-      }
-      pd /= parseInt(img.elt.style.width, 10);
+      pd = img.elt.width;
     }
+    pd /= parseInt(img.elt.style.width, 10);
+  }
 
-    _sx *= pd;
-    _sy *= pd;
-    _sh *= pd;
-    _sw *= pd;
+  _sx *= pd;
+  _sy *= pd;
+  _sh *= pd;
+  _sw *= pd;
 
-    var vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer._imageMode);
+  var vals = canvas.modeAdjust(_dx, _dy, _dw, _dh, this._renderer._imageMode);
 
-    // tint the image if there is a tint
-    this._renderer.image(img, _sx, _sy, _sw, _sh, vals.x, vals.y, vals.w, vals.h);
-  };
-
+  // tint the image if there is a tint
+  this._renderer.image(img, _sx, _sy, _sw, _sh, vals.x, vals.y, vals.w, vals.h);
+};
 
 /**
  * Sets the fill value for displaying images. Images can be tinted to
@@ -375,9 +381,8 @@ p5.prototype.image =
 /**
  * @method tint
  * @param  {p5.Color}      color   the tint color
- * @param  {Number}        [alpha]
  */
-p5.prototype.tint = function () {
+p5.prototype.tint = function() {
   p5._validateParameters('tint', arguments);
   var c = this.color.apply(this, arguments);
   this._renderer._tint = c.levels;
@@ -433,16 +438,16 @@ p5.prototype._getTintedImageCanvas = function(img) {
   var id = tmpCtx.createImageData(img.canvas.width, img.canvas.height);
   var newPixels = id.data;
 
-  for(var i = 0; i < pixels.length; i += 4) {
+  for (var i = 0; i < pixels.length; i += 4) {
     var r = pixels[i];
-    var g = pixels[i+1];
-    var b = pixels[i+2];
-    var a = pixels[i+3];
+    var g = pixels[i + 1];
+    var b = pixels[i + 2];
+    var a = pixels[i + 3];
 
-    newPixels[i] = r*this._renderer._tint[0]/255;
-    newPixels[i+1] = g*this._renderer._tint[1]/255;
-    newPixels[i+2] = b*this._renderer._tint[2]/255;
-    newPixels[i+3] = a*this._renderer._tint[3]/255;
+    newPixels[i] = r * this._renderer._tint[0] / 255;
+    newPixels[i + 1] = g * this._renderer._tint[1] / 255;
+    newPixels[i + 2] = b * this._renderer._tint[2] / 255;
+    newPixels[i + 3] = a * this._renderer._tint[3] / 255;
   }
 
   tmpCtx.putImageData(id, 0, 0);
@@ -516,12 +521,13 @@ p5.prototype._getTintedImageCanvas = function(img) {
  */
 p5.prototype.imageMode = function(m) {
   p5._validateParameters('imageMode', arguments);
-  if (m === constants.CORNER ||
+  if (
+    m === constants.CORNER ||
     m === constants.CORNERS ||
-    m === constants.CENTER) {
+    m === constants.CENTER
+  ) {
     this._renderer._imageMode = m;
   }
 };
-
 
 module.exports = p5;

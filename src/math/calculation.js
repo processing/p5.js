@@ -66,7 +66,7 @@ p5.prototype.abs = Math.abs;
  *   text(nfc(bx, 1), bx, by - 5);
  * }
  * </code></div>
-  *
+ *
  * @alt
  * 2 horizontal lines & number sets. increase with mouse x. bottom to 2 decimals
  *
@@ -174,13 +174,16 @@ p5.prototype.constrain = function(n, low, high) {
  */
 p5.prototype.dist = function() {
   p5._validateParameters('dist', arguments);
-  if (arguments.length === 4) { //2D
-    return hypot(arguments[2]-arguments[0], arguments[3]-arguments[1]);
-  } else if (arguments.length === 6) { //3D
+  if (arguments.length === 4) {
+    //2D
+    return hypot(arguments[2] - arguments[0], arguments[3] - arguments[1]);
+  } else if (arguments.length === 6) {
+    //3D
     return hypot(
-      arguments[3]-arguments[0],
-      arguments[4]-arguments[1],
-      arguments[5]-arguments[2]);
+      arguments[3] - arguments[0],
+      arguments[4] - arguments[1],
+      arguments[5] - arguments[2]
+    );
   }
 };
 
@@ -315,7 +318,7 @@ p5.prototype.floor = Math.floor;
  */
 p5.prototype.lerp = function(start, stop, amt) {
   p5._validateParameters('lerp', arguments);
-  return amt*(stop-start)+start;
+  return amt * (stop - start) + start;
 };
 
 /**
@@ -454,9 +457,9 @@ p5.prototype.mag = function(x, y) {
  * 2 25 by 25 white ellipses move with mouse x. Bottom has more range from X
  *
  */
-p5.prototype.map = function (n, start1, stop1, start2, stop2, withinBounds) {
+p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
   p5._validateParameters('map', arguments);
-  var newval = ((n - start1)/(stop1 - start1)) * (stop2 - start2) + start2;
+  var newval = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
   if (!withinBounds) {
     return newval;
   }
@@ -511,9 +514,9 @@ p5.prototype.map = function (n, start1, stop1, start2, stop2, withinBounds) {
 p5.prototype.max = function() {
   p5._validateParameters('max', arguments);
   if (arguments[0] instanceof Array) {
-    return Math.max.apply(null,arguments[0]);
+    return Math.max.apply(null, arguments[0]);
   } else {
-    return Math.max.apply(null,arguments);
+    return Math.max.apply(null, arguments);
   }
 };
 
@@ -561,9 +564,9 @@ p5.prototype.max = function() {
 p5.prototype.min = function() {
   p5._validateParameters('min', arguments);
   if (arguments[0] instanceof Array) {
-    return Math.min.apply(null,arguments[0]);
+    return Math.min.apply(null, arguments[0]);
   } else {
-    return Math.min.apply(null,arguments);
+    return Math.min.apply(null, arguments);
   }
 };
 
@@ -736,7 +739,9 @@ p5.prototype.round = Math.round;
  * horizontal center line squared values displayed on top and regular on bottom.
  *
  */
-p5.prototype.sq = function(n) { return n*n; };
+p5.prototype.sq = function(n) {
+  return n * n;
+};
 
 /**
  * Calculates the square root of a number. The square root of a number is
@@ -820,7 +825,7 @@ function hypot(x, y, z) {
     var m = args[j] / max;
     var summand = m * m - compensation;
     var preliminary = sum + summand;
-    compensation = (preliminary - sum) - summand;
+    compensation = preliminary - sum - summand;
     sum = preliminary;
   }
   return Math.sqrt(sum) * max;

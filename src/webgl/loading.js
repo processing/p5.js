@@ -63,12 +63,12 @@ require('./p5.Geometry');
  * @param  {function(Event)} [failureCallback]
  * @return {p5.Geometry} the p5.Geometry object
  */
-p5.prototype.loadModel = function () {
+p5.prototype.loadModel = function() {
   var path = arguments[0];
   var normalize;
   var successCallback;
   var failureCallback;
-  if(typeof arguments[1] === 'boolean') {
+  if (typeof arguments[1] === 'boolean') {
     normalize = arguments[1];
     successCallback = arguments[2];
     failureCallback = arguments[3];
@@ -80,17 +80,21 @@ p5.prototype.loadModel = function () {
 
   var model = new p5.Geometry();
   model.gid = path + '|' + normalize;
-  this.loadStrings(path, function(strings) {
-    parseObj(model, strings);
+  this.loadStrings(
+    path,
+    function(strings) {
+      parseObj(model, strings);
 
-    if (normalize) {
-      model.normalize();
-    }
+      if (normalize) {
+        model.normalize();
+      }
 
-    if (typeof successCallback === 'function') {
-      successCallback(model);
-    }
-  }.bind(this), failureCallback);
+      if (typeof successCallback === 'function') {
+        successCallback(model);
+      }
+    }.bind(this),
+    failureCallback
+  );
 
   return model;
 };
@@ -106,7 +110,7 @@ p5.prototype.loadModel = function () {
  *
  * f 4 3 2 1
  */
-function parseObj( model, lines ) {
+function parseObj(model, lines) {
   // OBJ allows a face to specify an index for a vertex (in the above example),
   // but it also allows you to specify a custom combination of vertex, UV
   // coordinate, and vertex normal. So, "3/4/3" would mean, "use vertex 3 with
@@ -117,9 +121,9 @@ function parseObj( model, lines ) {
   // "3/4/3"), to the actual index of the newly created vertex in the final
   // object.
   var loadedVerts = {
-    'v' : [],
-    'vt' : [],
-    'vn' : []
+    v: [],
+    vt: [],
+    vn: []
   };
   var indexedVerts = {};
 
@@ -133,9 +137,11 @@ function parseObj( model, lines ) {
       if (tokens[0] === 'v' || tokens[0] === 'vn') {
         // Check if this line describes a vertex or vertex normal.
         // It will have three numeric parameters.
-        var vertex = new p5.Vector(parseFloat(tokens[1]),
-                                   parseFloat(tokens[2]),
-                                   parseFloat(tokens[3]));
+        var vertex = new p5.Vector(
+          parseFloat(tokens[1]),
+          parseFloat(tokens[2]),
+          parseFloat(tokens[3])
+        );
         loadedVerts[tokens[0]].push(vertex);
       } else if (tokens[0] === 'vt') {
         // Check if this line describes a texture coordinate.
@@ -189,7 +195,7 @@ function parseObj( model, lines ) {
     }
   }
   // If the model doesn't have normals, compute the normals
-  if(model.vertexNormals.length === 0) {
+  if (model.vertexNormals.length === 0) {
     model.computeNormals();
   }
 
@@ -226,7 +232,7 @@ function parseObj( model, lines ) {
  * Vertically rotating 3-d teapot with red, green and blue gradient.
  *
  */
-p5.prototype.model = function ( model ) {
+p5.prototype.model = function(model) {
   if (model.vertices.length > 0) {
     if (!this._renderer.geometryInHash(model.gid)) {
       model._makeTriangleEdges();

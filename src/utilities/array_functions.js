@@ -81,30 +81,23 @@ p5.prototype.append = function(array, value) {
  * @param {Array}  dst
  * @param {Integer} [length]
  */
-p5.prototype.arrayCopy = function(
-  src,
-  srcPosition,
-  dst,
-  dstPosition,
-  length) {
-
+p5.prototype.arrayCopy = function(src, srcPosition, dst, dstPosition, length) {
   // the index to begin splicing from dst array
   var start;
   var end;
 
   if (typeof length !== 'undefined') {
-
     end = Math.min(length, src.length);
     start = dstPosition;
     src = src.slice(srcPosition, end + srcPosition);
-
   } else {
-
-    if (typeof dst !== 'undefined') { // src, dst, length
+    if (typeof dst !== 'undefined') {
+      // src, dst, length
       // rename  so we don't get confused
       end = dst;
       end = Math.min(end, src.length);
-    } else { // src, dst
+    } else {
+      // src, dst
       end = src.length;
     }
 
@@ -118,7 +111,6 @@ p5.prototype.arrayCopy = function(
   // we must modify the actual values of the array
   // instead of reassigning arrays
   Array.prototype.splice.apply(dst, [start, end].concat(src));
-
 };
 
 /**
@@ -224,9 +216,11 @@ p5.prototype.shuffle = function(arr, bool) {
   var isView = ArrayBuffer && ArrayBuffer.isView && ArrayBuffer.isView(arr);
   arr = bool || isView ? arr : arr.slice();
 
-  var rnd, tmp, idx = arr.length;
+  var rnd,
+    tmp,
+    idx = arr.length;
   while (idx > 1) {
-    rnd = Math.random()*idx | 0;
+    rnd = (Math.random() * idx) | 0;
 
     tmp = arr[--idx];
     arr[idx] = arr[rnd];
@@ -275,7 +269,9 @@ p5.prototype.sort = function(list, count) {
   if (typeof arr[0] === 'string') {
     arr = arr.sort();
   } else {
-    arr = arr.sort(function(a,b){return a-b;});
+    arr = arr.sort(function(a, b) {
+      return a - b;
+    });
   }
   return arr.concat(rest);
 };
@@ -307,7 +303,6 @@ p5.prototype.sort = function(list, count) {
  * </div></code>
  */
 p5.prototype.splice = function(list, value, index) {
-
   // note that splice returns spliced elements and not an array
   Array.prototype.splice.apply(list, [index, 0].concat(value));
 

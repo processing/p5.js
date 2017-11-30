@@ -48,20 +48,19 @@ var p5 = require('../core/core');
  * // 1, Panthera pardus, Leopard
  * // 2, Equus zebra, Zebra
  * </code></div>
-  *
-  * @alt
-  * no image displayed
-  *
+ *
+ * @alt
+ * no image displayed
+ *
  */
-p5.XML = function () {
+p5.XML = function() {
   this.name = null; //done
   this.attributes = {}; //done
   this.children = [];
   this.parent = null;
   this.content = null; //done
-  this.name = 'p5.XML';   // for friendly debugger system
+  this.name = 'p5.XML'; // for friendly debugger system
 };
-
 
 /**
  * Gets a copy of the element's parent. Returns the parent as another
@@ -244,7 +243,9 @@ p5.XML.prototype.hasChildren = function() {
  * </code></div>
  */
 p5.XML.prototype.listChildren = function() {
-  return this.children.map(function(c) { return c.name; });
+  return this.children.map(function(c) {
+    return c.name;
+  });
 };
 
 /**
@@ -289,9 +290,10 @@ p5.XML.prototype.listChildren = function() {
  */
 p5.XML.prototype.getChildren = function(param) {
   if (param) {
-    return this.children.filter(function(c) { return c.name === param; });
-  }
-  else {
+    return this.children.filter(function(c) {
+      return c.name === param;
+    });
+  } else {
     return this.children;
   }
 };
@@ -347,12 +349,11 @@ p5.XML.prototype.getChildren = function(param) {
  * </code></div>
  */
 p5.XML.prototype.getChild = function(param) {
-  if(typeof param === 'string') {
+  if (typeof param === 'string') {
     return this.children.find(function(c) {
       return c.name === param;
     });
-  }
-  else {
+  } else {
     return this.children[param];
   }
 };
@@ -431,8 +432,8 @@ p5.XML.prototype.addChild = function(node) {
  */
 p5.XML.prototype.removeChild = function(param) {
   var ind = -1;
-  if(typeof param === 'string') {
-    for (var i=0; i<this.children.length; i++) {
+  if (typeof param === 'string') {
+    for (var i = 0; i < this.children.length; i++) {
       if (this.children[i].name === param) {
         ind = i;
         break;
@@ -445,7 +446,6 @@ p5.XML.prototype.removeChild = function(param) {
     this.children.splice(ind, 1);
   }
 };
-
 
 /**
  * Counts the specified element's number of attributes, returned as an Number.
@@ -757,8 +757,8 @@ p5.XML.prototype.getContent = function(defaultValue) {
  * // "Mountain Goat"
  * </code></div>
  */
-p5.XML.prototype.setContent = function( content ) {
-  if(!this.children.length) {
+p5.XML.prototype.setContent = function(content) {
+  if (!this.children.length) {
     this.content = content;
   }
 };
@@ -788,8 +788,9 @@ p5.XML.prototype._setCont = function(content) {
  *
  */
 p5.XML.prototype._setAttributes = function(node) {
-  var  i, att = {};
-  for( i = 0; i < node.attributes.length; i++) {
+  var i,
+    att = {};
+  for (i = 0; i < node.attributes.length; i++) {
     att[node.attributes[i].nodeName] = node.attributes[i].nodeValue;
   }
   this.attributes = att;
