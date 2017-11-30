@@ -6,7 +6,6 @@
  * @requires constants
  */
 
-
 'use strict';
 
 var p5 = require('./core');
@@ -202,14 +201,13 @@ p5.prototype.rotate = function(angle, axis) {
   }
   if (this._angleMode === constants.DEGREES) {
     r = this.radians(args[0]);
-  } else if (this._angleMode === constants.RADIANS){
+  } else if (this._angleMode === constants.RADIANS) {
     r = args[0];
   }
   //in webgl mode
-  if(args.length > 1){
+  if (args.length > 1) {
     this._renderer.rotate(r, args[1]);
-  }
-  else {
+  } else {
     this._renderer.rotate(r);
   }
   return this;
@@ -308,9 +306,9 @@ p5.prototype.rotateZ = function(rad) {
  * @chainable
  */
 p5.prototype.scale = function() {
-  var x,y,z;
+  var x, y, z;
   var args = new Array(arguments.length);
-  for(var i = 0; i < args.length; i++) {
+  for (var i = 0; i < args.length; i++) {
     args[i] = arguments[i];
   }
   // Only check for Vector argument type if Vector is available
@@ -318,28 +316,24 @@ p5.prototype.scale = function() {
     x = args[0].x;
     y = args[0].y;
     z = args[0].z;
-  }
-  else if(args[0] instanceof Array){
+  } else if (args[0] instanceof Array) {
     x = args[0][0];
     y = args[0][1];
     z = args[0][2] || 1;
-  }
-  else {
-    if(args.length === 1){
+  } else {
+    if (args.length === 1) {
       x = y = z = args[0];
-    }
-    else {
+    } else {
       x = args[0];
       y = args[1];
       z = args[2] || 1;
     }
   }
 
-  if(this._renderer.isP3D){
-    this._renderer.scale.call(this._renderer, x,y,z);
-  }
-  else {
-    this._renderer.scale.call(this._renderer, x,y);
+  if (this._renderer.isP3D) {
+    this._renderer.scale.call(this._renderer, x, y, z);
+  } else {
+    this._renderer.scale.call(this._renderer, x, y);
   }
   return this;
 };
@@ -374,7 +368,7 @@ p5.prototype.scale = function() {
  * </div>
  *
  * @alt
-  * white irregular quadrilateral with black outline at top middle.
+ * white irregular quadrilateral with black outline at top middle.
  *
  */
 p5.prototype.shearX = function(angle) {

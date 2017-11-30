@@ -163,7 +163,7 @@ p5.prototype.atan = function(ratio) {
  * 60 by 10 rect at center of canvas rotates with mouse movements
  *
  */
-p5.prototype.atan2 = function (y, x) {
+p5.prototype.atan2 = function(y, x) {
   if (this._angleMode === constants.RADIANS) {
     return Math.atan2(y, x);
   } else {

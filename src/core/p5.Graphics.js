@@ -23,7 +23,6 @@ var constants = require('./constants');
  * @param {p5} [pInst]          pointer to p5 instance
  */
 p5.Graphics = function(w, h, renderer, pInst) {
-
   var r = renderer || constants.P2D;
 
   this.canvas = document.createElement('canvas');
@@ -57,7 +56,7 @@ p5.Graphics = function(w, h, renderer, pInst) {
       }
     }
   }
-  this.name = 'p5.Graphics';   // for friendly debugger system
+  this.name = 'p5.Graphics'; // for friendly debugger system
   return this;
 };
 

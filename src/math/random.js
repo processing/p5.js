@@ -24,17 +24,18 @@ var lcg = (function() {
     a = 1664525,
     // c and m should be co-prime
     c = 1013904223,
-    seed, z;
+    seed,
+    z;
   return {
-    setSeed : function(val) {
+    setSeed: function(val) {
       // pick a random seed if val is undefined or null
       // the >>> 0 casts the seed to an unsigned 32-bit integer
       z = seed = (val == null ? Math.random() * m : val) >>> 0;
     },
-    getSeed : function() {
+    getSeed: function() {
       return seed;
     },
-    rand : function() {
+    rand: function() {
       // define the recurrence relationship
       z = (a * z + c) % m;
       // return a float in [0, 1)
@@ -42,7 +43,7 @@ var lcg = (function() {
       return z / m;
     }
   };
-}());
+})();
 
 /**
  * Sets the seed value for random().
@@ -135,19 +136,17 @@ p5.prototype.randomSeed = function(seed) {
  * @return {*} the random element from the array
  * @example
  */
-p5.prototype.random = function (min, max) {
-
+p5.prototype.random = function(min, max) {
   var rand;
 
   if (seeded) {
-    rand  = lcg.rand();
+    rand = lcg.rand();
   } else {
     rand = Math.random();
   }
   if (typeof min === 'undefined') {
     return rand;
-  } else
-  if (typeof max === 'undefined') {
+  } else if (typeof max === 'undefined') {
     if (min instanceof Array) {
       return min[Math.floor(rand * min.length)];
     } else {
@@ -160,10 +159,9 @@ p5.prototype.random = function (min, max) {
       max = tmp;
     }
 
-    return rand * (max-min) + min;
+    return rand * (max - min) + min;
   }
 };
-
 
 /**
  *
@@ -220,8 +218,8 @@ p5.prototype.random = function (min, max) {
  * 100 horizontal lines from center of canvas. height & side change each render
  * black lines radiate from center of canvas. size determined each render
  */
-p5.prototype.randomGaussian = function(mean, sd)  {
-  var y1,x1,x2,w;
+p5.prototype.randomGaussian = function(mean, sd) {
+  var y1, x1, x2, w;
   if (previous) {
     y1 = y2;
     previous = false;
@@ -231,7 +229,7 @@ p5.prototype.randomGaussian = function(mean, sd)  {
       x2 = this.random(2) - 1;
       w = x1 * x1 + x2 * x2;
     } while (w >= 1);
-    w = Math.sqrt((-2 * Math.log(w))/w);
+    w = Math.sqrt(-2 * Math.log(w) / w);
     y1 = x1 * w;
     y2 = x2 * w;
     previous = true;
@@ -239,7 +237,7 @@ p5.prototype.randomGaussian = function(mean, sd)  {
 
   var m = mean || 0;
   var s = sd || 1;
-  return y1*s + m;
+  return y1 * s + m;
 };
 
 module.exports = p5;
