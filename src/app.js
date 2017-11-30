@@ -1,4 +1,3 @@
-
 'use strict';
 
 var p5 = require('./core/core');
@@ -62,6 +61,5 @@ require('./webgl/camera');
 require('./webgl/interaction');
 
 require('./core/init.js');
-
 
 module.exports = p5;

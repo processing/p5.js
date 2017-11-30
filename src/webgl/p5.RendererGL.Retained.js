@@ -13,15 +13,14 @@ var hashCount = 0;
  * @param  {String} gId  key of the geometry object
  */
 p5.RendererGL.prototype._initBufferDefaults = function(gId) {
-
   this._freeBuffers(gId);
 
   //@TODO remove this limit on hashes in gHash
-  hashCount ++;
-  if(hashCount > 1000){
+  hashCount++;
+  if (hashCount > 1000) {
     var key = Object.keys(this.gHash)[0];
     delete this.gHash[key];
-    hashCount --;
+    hashCount--;
   }
 
   //create a new entry in our gHash
@@ -29,14 +28,13 @@ p5.RendererGL.prototype._initBufferDefaults = function(gId) {
 };
 
 p5.RendererGL.prototype._freeBuffers = function(gId) {
-
   var geometry = this.gHash[gId];
   if (!geometry) {
     return;
   }
 
   delete this.gHash[gId];
-  hashCount --;
+  hashCount--;
 
   var gl = this.GL;
   geometry.vertexBuffer && gl.deleteBuffer(geometry.vertexBuffer);
@@ -74,24 +72,42 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
     geometry.lineVertexBuffer = gl.createBuffer();
 
     this._bindBuffer(
-      geometry.lineVertexBuffer, gl.ARRAY_BUFFER,
-      this._flatten(obj.lineVertices), Float32Array, gl.STATIC_DRAW);
+      geometry.lineVertexBuffer,
+      gl.ARRAY_BUFFER,
+      this._flatten(obj.lineVertices),
+      Float32Array,
+      gl.STATIC_DRAW
+    );
 
     this.curStrokeShader.enableAttrib(
       this.curStrokeShader.attributes.aPosition.location,
-      3, gl.FLOAT, false, 0, 0);
+      3,
+      gl.FLOAT,
+      false,
+      0,
+      0
+    );
   }
 
   if (this.curStrokeShader.attributes.aDirection) {
     geometry.lineNormalBuffer = gl.createBuffer();
 
     this._bindBuffer(
-      geometry.lineNormalBuffer, gl.ARRAY_BUFFER,
-      this._flatten(obj.lineNormals), Float32Array, gl.STATIC_DRAW);
+      geometry.lineNormalBuffer,
+      gl.ARRAY_BUFFER,
+      this._flatten(obj.lineNormals),
+      Float32Array,
+      gl.STATIC_DRAW
+    );
 
     this.curStrokeShader.enableAttrib(
       this.curStrokeShader.attributes.aDirection.location,
-      4, gl.FLOAT, false, 0, 0);
+      4,
+      gl.FLOAT,
+      false,
+      0,
+      0
+    );
   }
 
   if (this.curFillShader.attributes.aPosition) {
@@ -99,31 +115,53 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
 
     // allocate space for vertex positions
     this._bindBuffer(
-      geometry.vertexBuffer, gl.ARRAY_BUFFER,
-      this._vToNArray(obj.vertices), Float32Array, gl.STATIC_DRAW);
+      geometry.vertexBuffer,
+      gl.ARRAY_BUFFER,
+      this._vToNArray(obj.vertices),
+      Float32Array,
+      gl.STATIC_DRAW
+    );
 
     this.curFillShader.enableAttrib(
       this.curFillShader.attributes.aPosition.location,
-      3, gl.FLOAT, false, 0, 0);
+      3,
+      gl.FLOAT,
+      false,
+      0,
+      0
+    );
   }
 
   // allocate space for faces
   geometry.indexBuffer = gl.createBuffer();
   this._bindBuffer(
-    geometry.indexBuffer, gl.ELEMENT_ARRAY_BUFFER,
-    this._flatten(obj.faces), Uint16Array, gl.STATIC_DRAW);
+    geometry.indexBuffer,
+    gl.ELEMENT_ARRAY_BUFFER,
+    this._flatten(obj.faces),
+    Uint16Array,
+    gl.STATIC_DRAW
+  );
 
   if (this.curFillShader.attributes.aNormal) {
     geometry.normalBuffer = gl.createBuffer();
 
     // allocate space for normals
     this._bindBuffer(
-      geometry.normalBuffer, gl.ARRAY_BUFFER,
-      this._vToNArray(obj.vertexNormals), Float32Array, gl.STATIC_DRAW);
+      geometry.normalBuffer,
+      gl.ARRAY_BUFFER,
+      this._vToNArray(obj.vertexNormals),
+      Float32Array,
+      gl.STATIC_DRAW
+    );
 
     this.curFillShader.enableAttrib(
       this.curFillShader.attributes.aNormal.location,
-      3, gl.FLOAT, false, 0, 0);
+      3,
+      gl.FLOAT,
+      false,
+      0,
+      0
+    );
   }
 
   if (this.curFillShader.attributes.aTexCoord) {
@@ -131,12 +169,21 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
 
     // tex coords
     this._bindBuffer(
-      geometry.uvBuffer, gl.ARRAY_BUFFER,
-      this._flatten(obj.uvs), Float32Array, gl.STATIC_DRAW);
+      geometry.uvBuffer,
+      gl.ARRAY_BUFFER,
+      this._flatten(obj.uvs),
+      Float32Array,
+      gl.STATIC_DRAW
+    );
 
     this.curFillShader.enableAttrib(
       this.curFillShader.attributes.aTexCoord.location,
-      2, gl.FLOAT, false, 0, 0);
+      2,
+      gl.FLOAT,
+      false,
+      0,
+      0
+    );
   }
   //}
 };
@@ -158,25 +205,34 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
     this.setFillShader(this._getColorShader());
   }
   var geometry = this.gHash[gId];
-  if(this.curStrokeShader.active !== false &&
-   geometry.lineVertexCount > 0) {
+  if (this.curStrokeShader.active !== false && geometry.lineVertexCount > 0) {
     this.curStrokeShader.bindShader();
     if (geometry.lineVertexBuffer) {
       this._bindBuffer(geometry.lineVertexBuffer, gl.ARRAY_BUFFER);
       this.curStrokeShader.enableAttrib(
         this.curStrokeShader.attributes.aPosition.location,
-        3, gl.FLOAT, false, 0, 0);
+        3,
+        gl.FLOAT,
+        false,
+        0,
+        0
+      );
     }
     if (geometry.lineNormalBuffer) {
       this._bindBuffer(geometry.lineNormalBuffer, gl.ARRAY_BUFFER);
       this.curStrokeShader.enableAttrib(
         this.curStrokeShader.attributes.aDirection.location,
-        4, gl.FLOAT, false, 0, 0);
+        4,
+        gl.FLOAT,
+        false,
+        0,
+        0
+      );
     }
     this._drawArrays(gl.TRIANGLES, gId);
     this.curStrokeShader.unbindShader();
   }
-  if(this.curFillShader.active !== false) {
+  if (this.curFillShader.active !== false) {
     this.curFillShader.bindShader();
 
     if (geometry.vertexBuffer) {
@@ -184,7 +240,12 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
       this._bindBuffer(geometry.vertexBuffer, gl.ARRAY_BUFFER);
       this.curFillShader.enableAttrib(
         this.curFillShader.attributes.aPosition.location,
-        3, gl.FLOAT, false, 0, 0);
+        3,
+        gl.FLOAT,
+        false,
+        0,
+        0
+      );
     }
 
     if (geometry.indexBuffer) {
@@ -196,14 +257,25 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
       this._bindBuffer(geometry.normalBuffer, gl.ARRAY_BUFFER);
       this.curFillShader.enableAttrib(
         this.curFillShader.attributes.aNormal.location,
-        3, gl.FLOAT, false, 0, 0);
+        3,
+        gl.FLOAT,
+        false,
+        0,
+        0
+      );
     }
 
     if (geometry.uvBuffer) {
       // uv buffer
       this._bindBuffer(geometry.uvBuffer, gl.ARRAY_BUFFER);
       this.curFillShader.enableAttrib(
-        this.curFillShader.attributes.aTexCoord.location, 2, gl.FLOAT, false, 0, 0);
+        this.curFillShader.attributes.aTexCoord.location,
+        2,
+        gl.FLOAT,
+        false,
+        0,
+        0
+      );
     }
 
     this._drawElements(gl.TRIANGLES, gId);
@@ -217,10 +289,13 @@ p5.RendererGL.prototype._drawArrays = function(drawMode, gId) {
   return this;
 };
 
-p5.RendererGL.prototype._drawElements = function (drawMode, gId) {
+p5.RendererGL.prototype._drawElements = function(drawMode, gId) {
   this.GL.drawElements(
-    drawMode, this.gHash[gId].numberOfItems,
-    this.GL.UNSIGNED_SHORT, 0);
+    drawMode,
+    this.gHash[gId].numberOfItems,
+    this.GL.UNSIGNED_SHORT,
+    0
+  );
 };
 
 module.exports = p5.RendererGL;

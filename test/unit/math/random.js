@@ -2,7 +2,7 @@ suite('Random', function() {
   var myp5;
 
   setup(function(done) {
-    new p5(function(p){
+    new p5(function(p) {
       p.setup = function() {
         myp5 = p;
         done();
@@ -31,19 +31,19 @@ suite('Random', function() {
         }
       });
       test('should return a number', function() {
-        for(var i = 0; i < 10; i++) {
+        for (var i = 0; i < 10; i++) {
           assert.typeOf(results[i], 'number');
         }
       });
       test('should return a number 0 <= n < 1', function() {
-        for(var i = 0; i < 10; i++) {
+        for (var i = 0; i < 10; i++) {
           assert.isTrue(results[i] >= 0);
           assert.isTrue(results[i] < 1);
         }
       });
       test('should return same sequence of numbers', function() {
         for (var i = 0; i < 5; i++) {
-          assert.isTrue(results[i] === results[i+5]);
+          assert.isTrue(results[i] === results[i + 5]);
         }
       });
     });
