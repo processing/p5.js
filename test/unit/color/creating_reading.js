@@ -2,7 +2,7 @@ suite('color/CreatingReading', function() {
   var myp5;
 
   setup(function(done) {
-    new p5(function(p){
+    new p5(function(p) {
       p.setup = function() {
         myp5 = p;
         done();
@@ -32,7 +32,8 @@ suite('color/CreatingReading', function() {
           assert.approximately(val, 255, 0.01);
         },
         Error,
-        'got unwanted exception');
+        'got unwanted exception'
+      );
     });
     test('no friendly-err-msg II', function() {
       assert.doesNotThrow(
@@ -42,7 +43,8 @@ suite('color/CreatingReading', function() {
           assert.approximately(val, 127.5, 0.01);
         },
         Error,
-        'got unwanted exception');
+        'got unwanted exception'
+      );
     });
     test('wrong param type at #0', function() {
       assert.doesNotThrow(
@@ -51,7 +53,8 @@ suite('color/CreatingReading', function() {
           val = myp5.alpha(c);
         },
         Error,
-        'got unwanted exception');
+        'got unwanted exception'
+      );
     });
   });
 
@@ -67,7 +70,8 @@ suite('color/CreatingReading', function() {
           assert.approximately(val, 51, 0.5);
         },
         Error,
-        'got unwanted exception');
+        'got unwanted exception'
+      );
     });
     test('green(): no friendly-err-msg', function() {
       assert.doesNotThrow(
@@ -77,7 +81,8 @@ suite('color/CreatingReading', function() {
           assert.approximately(val, 255, 0.5);
         },
         Error,
-        'got unwanted exception');
+        'got unwanted exception'
+      );
     });
     test('blue(): no friendly-err-msg', function() {
       assert.doesNotThrow(
@@ -87,7 +92,8 @@ suite('color/CreatingReading', function() {
           assert.approximately(val, 71, 0.5);
         },
         Error,
-        'got unwanted exception');
+        'got unwanted exception'
+      );
     });
   });
 
@@ -103,7 +109,8 @@ suite('color/CreatingReading', function() {
           assert.approximately(val, 160, 0.5);
         },
         Error,
-        'got unwanted exception');
+        'got unwanted exception'
+      );
     });
     test('brightness(): no friendly-err-msg', function() {
       assert.doesNotThrow(
@@ -113,7 +120,8 @@ suite('color/CreatingReading', function() {
           assert.approximately(val, 100, 0.5);
         },
         Error,
-        'got unwanted exception');
+        'got unwanted exception'
+      );
     });
     test('lightness(): no friendly-err-msg', function() {
       assert.doesNotThrow(
@@ -123,7 +131,8 @@ suite('color/CreatingReading', function() {
           assert.approximately(val, 75, 0.5);
         },
         Error,
-        'got unwanted exception');
+        'got unwanted exception'
+      );
     });
     test('saturation(): no friendly-err-msg', function() {
       assert.doesNotThrow(
@@ -133,7 +142,8 @@ suite('color/CreatingReading', function() {
           assert.approximately(val, 100, 0.5);
         },
         Error,
-        'got unwanted exception');
+        'got unwanted exception'
+      );
     });
   });
 
@@ -175,7 +185,8 @@ suite('color/CreatingReading', function() {
           myp5.lerpColor(fromColor, toColor);
         },
         Error,
-        'got unwanted exception');
+        'got unwanted exception'
+      );
     });
   });
   suite('p5.prototype.lerpColor with alpha', function() {

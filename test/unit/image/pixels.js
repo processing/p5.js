@@ -2,7 +2,7 @@ suite('pixels', function() {
   var myp5;
 
   setup(function(done) {
-    new p5(function(p){
+    new p5(function(p) {
       p.setup = function() {
         myp5 = p;
         done();
@@ -48,5 +48,4 @@ suite('pixels', function() {
       assert.deepEqual(img.get(25, 25.999), img.get(25, 25));
     });
   });
-
 });

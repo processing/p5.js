@@ -2,9 +2,9 @@ suite('color/p5.ColorConversion', function() {
   var rgba = [1, 0, 0.4, 0.8];
   var rgbaWithMaxHue = [1, 0, 0, 0.6];
   var rgbaWithHighLightness = [0.969, 0.753, 0.122, 0.8];
-  var hsla = [336/360, 1, 0.5, 0.8];
+  var hsla = [336 / 360, 1, 0.5, 0.8];
   var hslaWithMaxHue = [1, 1, 0.5, 0.6];
-  var hsba = [336/360, 1, 1, 0.8];
+  var hsba = [336 / 360, 1, 1, 0.8];
   var hsbaWithMaxHue = [1, 1, 1, 0.6];
   var accuracy = 0.01;
   var result;
