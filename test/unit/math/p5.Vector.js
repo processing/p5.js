@@ -353,14 +353,14 @@ suite('p5.Vector', function() {
       expect(v.mult(1)).to.eql(v);
     });
 
-    test('should not change x, y, z if no argument is given', function () {
+    test('should not change x, y, z if no argument is given', function() {
       v.mult();
       expect(v.x).to.eql(1);
       expect(v.y).to.eql(1);
       expect(v.z).to.eql(1);
     });
 
-    test('should not change x, y, z if n is not a finite number', function () {
+    test('should not change x, y, z if n is not a finite number', function() {
       v.mult(NaN);
       expect(v.x).to.eql(1);
       expect(v.y).to.eql(1);
@@ -404,14 +404,14 @@ suite('p5.Vector', function() {
       expect(v.div(1)).to.eql(v);
     });
 
-    test('should not change x, y, z if no argument is given', function () {
+    test('should not change x, y, z if no argument is given', function() {
       v.div();
       expect(v.x).to.eql(1);
       expect(v.y).to.eql(1);
       expect(v.z).to.eql(1);
     });
 
-    test('should not change x, y, z if n is not a finite number', function () {
+    test('should not change x, y, z if n is not a finite number', function() {
       v.div(NaN);
       expect(v.x).to.eql(1);
       expect(v.y).to.eql(1);
@@ -426,7 +426,7 @@ suite('p5.Vector', function() {
         expect(v.z).to.be.closeTo(0.5, 0.01);
       });
 
-      test('should not change x, y, z if n is 0', function () {
+      test('should not change x, y, z if n is 0', function() {
         v.div(0);
         expect(v.x).to.eql(1);
         expect(v.y).to.eql(1);

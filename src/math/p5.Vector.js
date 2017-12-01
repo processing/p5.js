@@ -357,10 +357,7 @@ p5.Vector.prototype.div = function div(n) {
     return this;
   }
   if (n === 0) {
-    console.warn(
-      'p5.Vector.prototype.div:',
-      'divide by 0'
-    );
+    console.warn('p5.Vector.prototype.div:', 'divide by 0');
     return this;
   }
   this.x /= n;
@@ -524,7 +521,10 @@ p5.Vector.prototype.cross = function cross(v) {
  * </div>
  */
 p5.Vector.prototype.dist = function dist(v) {
-  return v.copy().sub(this).mag();
+  return v
+    .copy()
+    .sub(this)
+    .mag();
 };
 
 /**
@@ -568,8 +568,7 @@ p5.Vector.prototype.normalize = function normalize() {
 p5.Vector.prototype.limit = function limit(max) {
   var mSq = this.magSq();
   if (mSq > max * max) {
-    this
-      .div(Math.sqrt(mSq)) //normalize it
+    this.div(Math.sqrt(mSq)) //normalize it
       .mult(max);
   }
   return this;
@@ -947,7 +946,7 @@ p5.Vector.random3D = function random3D() {
   if (this.p5) {
     return new p5.Vector(this.p5, [vx, vy, vz]);
   }
-  return new p5.Vector(vx,vy,vz);
+  return new p5.Vector(vx, vy, vz);
 };
 
 // Adds two vectors together and returns a new one.
@@ -1099,7 +1098,7 @@ p5.Vector.cross = function cross(v1, v2) {
  * @param  {p5.Vector} v2 the second p5.Vector
  * @return {Number}     the distance
  */
-p5.Vector.dist = function dist(v1,v2) {
+p5.Vector.dist = function dist(v1, v2) {
   return v1.dist(v2);
 };
 
@@ -1139,7 +1138,7 @@ p5.Vector.lerp = function lerp(v1, v2, amt, target) {
  * @return {Number}        the magnitude of vecT
  * @static
  */
-p5.Vector.mag = function mag(vecT){
+p5.Vector.mag = function mag(vecT) {
   var x = vecT.x,
     y = vecT.y,
     z = vecT.z;
