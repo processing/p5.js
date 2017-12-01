@@ -306,10 +306,9 @@ p5.Shader.prototype.setUniform = function(uniformName, data) {
       }
       break;
     case gl.INT:
-      if(uniform.size > 1){
+      if (uniform.size > 1) {
         gl.uniform1iv(location, data);
-      }
-      else{
+      } else {
         gl.uniform1i(location, data);
       }
       break;
