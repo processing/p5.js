@@ -323,6 +323,12 @@ module.exports = {
 
   // RENDERING
   /**
+   * Defines the default image blending mode.
+   * For examples on how to use blend, see [blend()][] and [blendMode()][]
+   *
+   * [blend()]: #p5.Image/blend
+   * [blendMode()]: #p5/blendMode
+   *
    * @property {String} BLEND
    * @final
    * @default source-over
