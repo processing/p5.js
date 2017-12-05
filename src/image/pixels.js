@@ -82,11 +82,7 @@ p5.prototype.pixels = [];
 
 /**
  * Copies a region of pixels from one image to another, using a specified
- * blend mode to do the operation.<br><br>
- * Available blend modes are: BLEND | DARKEST | LIGHTEST | DIFFERENCE |
- * MULTIPLY| EXCLUSION | SCREEN | REPLACE | OVERLAY | HARD_LIGHT |
- * SOFT_LIGHT | DODGE | BURN | ADD | NORMAL
- *
+ * blend mode to do the operation.
  *
  * @method blend
  * @param  {p5.Image|undefined} srcImage source image
@@ -98,7 +94,10 @@ p5.prototype.pixels = [];
  * @param  {Integer} dy Y coordinate of the destination's upper left corner
  * @param  {Integer} dw destination image width
  * @param  {Integer} dh destination image height
- * @param  {Integer} blendMode the blend mode
+ * @param  {Constant} blendMode the blend mode. either
+ *     BLEND, DARKEST, LIGHTEST, DIFFERENCE,
+ *     MULTIPLY, EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
+ *     SOFT_LIGHT, DODGE, BURN, ADD or NORMAL.
  *
  * @example
  * <div><code>
