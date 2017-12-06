@@ -96,7 +96,7 @@ module.exports = function(grunt) {
     keepalive = true;
   }
 
-  grunt.initConfig({
+  let gruntConfig = {
     // read in the package, used for knowing the current version, et al.
     pkg: grunt.file.readJSON('package.json'),
 
@@ -106,15 +106,15 @@ module.exports = function(grunt) {
         configFile: '.eslintrc'
       },
       build: {
-        src: ['Gruntfile.js', 'tasks/**/*.js']
-      },
-      fix: {
         src: [
           'Gruntfile.js',
-          'tasks/**/*.js',
-          'test/unit/**/*.js',
-          'src/**/*.js'
-        ],
+          'grunt-karma.js',
+          'docs/preprocessor.js',
+          'tasks/**/*.js'
+        ]
+      },
+      fix: {
+        // src: is calculated below...
         options: {
           fix: true
         }
@@ -123,7 +123,13 @@ module.exports = function(grunt) {
         src: ['src/**/*.js']
       },
       test: {
-        src: ['test/unit/**/*.js']
+        src: [
+          'bench/**/*.js',
+          'test/test-docs-preprocessor/**/*.js',
+          'test/node/**/*.js',
+          'test/reporter/**/*.js',
+          'test/unit/**/*.js'
+        ]
       }
     },
 
@@ -320,7 +326,15 @@ module.exports = function(grunt) {
         }
       }
     }
-  });
+  };
+
+  // eslint fixes everything it checks:
+  gruntConfig.eslint.fix.src = Object.values(gruntConfig.eslint)
+    .map(s => s.src)
+    .reduce((a, b) => a.concat(b), [])
+    .filter(a => a);
+
+  grunt.initConfig(gruntConfig);
 
   // Load build tasks.
   // This contains the complete build task ("browserify")
