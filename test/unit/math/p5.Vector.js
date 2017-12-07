@@ -84,18 +84,6 @@ suite('p5.Vector', function() {
     });
   });
 
-  suite('new p5.Vector(1,2,undefined)', function() {
-    setup(function() {
-      v = new p5.Vector(1, 2, undefined);
-    });
-
-    test('should have x, y, z be initialized to 1,2,0', function() {
-      assert.equal(v.x, 1);
-      assert.equal(v.y, 2);
-      assert.equal(v.z, 0);
-    });
-  });
-
   suite('p5.prototype.rotate() RADIANS', function() {
     setup(function() {
       myp5.angleMode(RADIANS);
@@ -358,14 +346,25 @@ suite('p5.Vector', function() {
 
   suite('mult()', function() {
     setup(function() {
-      v = new p5.Vector();
-      v.x = 1;
-      v.y = 1;
-      v.z = 1;
+      v = new p5.Vector(1, 1, 1);
     });
 
     test('should return the same object', function() {
       expect(v.mult(1)).to.eql(v);
+    });
+
+    test('should not change x, y, z if no argument is given', function() {
+      v.mult();
+      expect(v.x).to.eql(1);
+      expect(v.y).to.eql(1);
+      expect(v.z).to.eql(1);
+    });
+
+    test('should not change x, y, z if n is not a finite number', function() {
+      v.mult(NaN);
+      expect(v.x).to.eql(1);
+      expect(v.y).to.eql(1);
+      expect(v.z).to.eql(1);
     });
 
     suite('with scalar', function() {
@@ -398,13 +397,25 @@ suite('p5.Vector', function() {
 
   suite('div()', function() {
     setup(function() {
-      v.x = 1;
-      v.y = 1;
-      v.z = 1;
+      v = new p5.Vector(1, 1, 1);
     });
 
     test('should return the same object', function() {
-      expect(v.div(0)).to.eql(v);
+      expect(v.div(1)).to.eql(v);
+    });
+
+    test('should not change x, y, z if no argument is given', function() {
+      v.div();
+      expect(v.x).to.eql(1);
+      expect(v.y).to.eql(1);
+      expect(v.z).to.eql(1);
+    });
+
+    test('should not change x, y, z if n is not a finite number', function() {
+      v.div(NaN);
+      expect(v.x).to.eql(1);
+      expect(v.y).to.eql(1);
+      expect(v.z).to.eql(1);
     });
 
     suite('with scalar', function() {
@@ -413,6 +424,13 @@ suite('p5.Vector', function() {
         expect(v.x).to.be.closeTo(0.5, 0.01);
         expect(v.y).to.be.closeTo(0.5, 0.01);
         expect(v.z).to.be.closeTo(0.5, 0.01);
+      });
+
+      test('should not change x, y, z if n is 0', function() {
+        v.div(0);
+        expect(v.x).to.eql(1);
+        expect(v.y).to.eql(1);
+        expect(v.z).to.eql(1);
       });
     });
 
