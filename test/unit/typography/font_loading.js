@@ -19,9 +19,7 @@ suite('Font Loading', function() {
 
     this_p5.setup = function() {
       suite('setup() after preload() with success callback', function() {
-        test('Resource should be loaded now if preload() finished', function(
-          done
-        ) {
+        test('Resource should be loaded now if preload() finished', function(done) {
           assert.isTrue(myFont instanceof p5.Font);
           assert.isObject(myFont);
           assert.isObject(myFont.font);
@@ -41,9 +39,7 @@ suite('Font Loading', function() {
 
     this_p5.setup = function() {
       suite('setup() after preload() without success callback', function() {
-        test('Resource should be loaded now if preload() finished', function(
-          done
-        ) {
+        test('Resource should be loaded now if preload() finished', function(done) {
           assert.isTrue(myFont instanceof p5.Font);
           assert.isObject(myFont);
           assert.isObject(myFont.font);
@@ -65,9 +61,7 @@ suite('Font Loading', function() {
     });
 
     suite('loadFont() with callback', function() {
-      test('should call success-callback with object when font loads', function(
-        done
-      ) {
+      test('should call success-callback with object when font loads', function(done) {
         p5Inst.loadFont(
           'manual-test-examples/p5.Font/acmesa.ttf',
           function(p5Font) {
@@ -83,9 +77,7 @@ suite('Font Loading', function() {
         );
       });
 
-      test('should call error-callback when font fails to load', function(
-        done
-      ) {
+      test('should call error-callback when font fails to load', function(done) {
         p5Inst.loadFont(
           'invalid-path',
           function() {
