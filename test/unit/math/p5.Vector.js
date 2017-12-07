@@ -84,18 +84,6 @@ suite('p5.Vector', function() {
     });
   });
 
-  suite('new p5.Vector(1,2,undefined)', function() {
-    setup(function() {
-      v = new p5.Vector(1, 2, undefined);
-    });
-
-    test('should have x, y, z be initialized to 1,2,0', function() {
-      assert.equal(v.x, 1);
-      assert.equal(v.y, 2);
-      assert.equal(v.z, 0);
-    });
-  });
-
   suite('p5.prototype.rotate() RADIANS', function() {
     setup(function() {
       myp5.angleMode(RADIANS);
@@ -358,10 +346,7 @@ suite('p5.Vector', function() {
 
   suite('mult()', function() {
     setup(function() {
-      v = new p5.Vector();
-      v.x = 1;
-      v.y = 1;
-      v.z = 1;
+      v = new p5.Vector(1, 1, 1);
     });
 
     test('should return the same object', function() {
@@ -369,6 +354,20 @@ suite('p5.Vector', function() {
     });
 
     suite('with scalar', function() {
+      test('should not change x, y, z if no argument is given', function () {
+        v.mult();
+        expect(v.x).to.eql(1);
+        expect(v.y).to.eql(1);
+        expect(v.z).to.eql(1);
+      });
+
+      test('should not change x, y, z if n is not a finite number', function () {
+        v.mult(NaN);
+        expect(v.x).to.eql(1);
+        expect(v.y).to.eql(1);
+        expect(v.z).to.eql(1);
+      });
+
       test('multiply the x, y, z with the scalar', function() {
         v.mult(2);
         expect(v.x).to.eql(2);
@@ -398,16 +397,35 @@ suite('p5.Vector', function() {
 
   suite('div()', function() {
     setup(function() {
-      v.x = 1;
-      v.y = 1;
-      v.z = 1;
+      v = new p5.Vector(1, 1, 1);
     });
 
     test('should return the same object', function() {
-      expect(v.div(0)).to.eql(v);
+      expect(v.div(1)).to.eql(v);
     });
 
     suite('with scalar', function() {
+      test('should not change x, y, z if no argument is given', function () {
+        v.div();
+        expect(v.x).to.eql(1);
+        expect(v.y).to.eql(1);
+        expect(v.z).to.eql(1);
+      });
+
+      test('should not change x, y, z if n is not a finite number', function () {
+        v.div(NaN);
+        expect(v.x).to.eql(1);
+        expect(v.y).to.eql(1);
+        expect(v.z).to.eql(1);
+      });
+
+      test('should not change x, y, z if n is 0', function () {
+        v.div(0);
+        expect(v.x).to.eql(1);
+        expect(v.y).to.eql(1);
+        expect(v.z).to.eql(1);
+      });
+
       test('divide the x, y, z with the scalar', function() {
         v.div(2);
         expect(v.x).to.be.closeTo(0.5, 0.01);
@@ -441,9 +459,7 @@ suite('p5.Vector', function() {
 
   suite('dot', function() {
     setup(function() {
-      v.x = 1;
-      v.y = 1;
-      v.z = 1;
+      v = new p5.Vector(1, 1, 1);
     });
 
     test('should return a number', function() {
@@ -487,9 +503,7 @@ suite('p5.Vector', function() {
   suite('cross', function() {
     var res;
     setup(function() {
-      v.x = 1;
-      v.y = 1;
-      v.z = 1;
+      v = new p5.Vector(1, 1, 1);
     });
 
     test('should return a new product', function() {
@@ -533,11 +547,9 @@ suite('p5.Vector', function() {
   suite('dist', function() {
     var b, c;
     setup(function() {
-      v.x = 0;
-      v.y = 0;
-      v.z = 1;
-      b = new p5.Vector(0, 0, 5);
-      c = new p5.Vector(3, 4, 1);
+      v = new p5.Vector(0, 0, 1);
+      b = new p5.Vector(0,0,5);
+      c = new p5.Vector(3,4,1);
     });
 
     test('should return a number', function() {
@@ -575,9 +587,7 @@ suite('p5.Vector', function() {
 
   suite('normalize', function() {
     setup(function() {
-      v.x = 1;
-      v.y = 1;
-      v.z = 1;
+      v = new p5.Vector(1, 1, 1);
     });
 
     test('should return the same object', function() {
@@ -611,9 +621,7 @@ suite('p5.Vector', function() {
 
   suite('limit', function() {
     setup(function() {
-      v.x = 1;
-      v.y = 1;
-      v.z = 1;
+      v = new p5.Vector(1, 1, 1);
     });
 
     test('should return the same object', function() {
@@ -647,9 +655,7 @@ suite('p5.Vector', function() {
 
   suite('setMag', function() {
     setup(function() {
-      v.x = 1;
-      v.y = 0;
-      v.z = 0;
+      v = new p5.Vector(1, 0, 0);
     });
 
     test('should return the same object', function() {
@@ -673,6 +679,10 @@ suite('p5.Vector', function() {
   });
 
   suite('heading', function() {
+    setup(function() {
+      v = new p5.Vector(1, 0, 0);
+    });
+
     test('should return a number', function() {
       expect(typeof v.heading() === 'number').to.eql(true);
     });
@@ -700,30 +710,32 @@ suite('p5.Vector', function() {
   });
 
   suite('rotate', function() {
+    setup(function() {
+      v = new p5.Vector(1, 0, 0);
+    });
+
     test('should return the same object', function() {
       expect(v.rotate()).to.eql(v);
     });
 
     test('should rotate the vector', function() {
-      v.x = 1;
-      v.y = 0;
-      v.z = 0;
       v.rotate(Math.PI);
       expect(v.x).to.be.closeTo(-1, 0.01);
       expect(v.y).to.be.closeTo(0, 0.01);
     });
 
     test('should rotate the vector', function() {
-      v.x = 1;
-      v.y = 0;
-      v.z = 0;
-      v.rotate(Math.PI / 2);
+      v.rotate(Math.PI/2);
       expect(v.x).to.be.closeTo(0, 0.01);
       expect(v.y).to.be.closeTo(1, 0.01);
     });
   });
 
   suite('lerp', function() {
+    setup(function() {
+      v = new p5.Vector();
+    });
+
     test('should return the same object', function() {
       expect(v.lerp()).to.eql(v);
     });
@@ -880,14 +892,15 @@ suite('p5.Vector', function() {
   });
 
   suite('array', function() {
+    setup(function() {
+      v = new p5.Vector(1, 23, 4);
+    });
+
     test('should return an array', function() {
       expect(v.array()).to.be.instanceof(Array);
     });
 
     test('should return an with the x y and z components', function() {
-      v.x = 1;
-      v.y = 23;
-      v.z = 4;
       expect(v.array()).to.eql([1, 23, 4]);
     });
   });
