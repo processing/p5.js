@@ -6,7 +6,6 @@
  * @requires constants
  */
 
-
 'use strict';
 
 var p5 = require('../core/core');
@@ -305,24 +304,24 @@ p5.prototype.pwinMouseY = 0;
  * @readOnly
  *
  * @example
-	* <div>
-	* <code>
-	* function draw() {
-	*   background(237, 34, 93);
-	*   fill(0);
-	*
-	*   if (mouseIsPressed) {
-	*     if (mouseButton == LEFT)
-	*       ellipse(50, 50, 50, 50);
-	*     if (mouseButton == RIGHT)
-	*       rect(25, 25, 50, 50);
-	*     if (mouseButton == CENTER)
-	*       triangle(23, 75, 50, 20, 78, 75);
-	*   }
-	*
-	*   print(mouseButton);
-	* }
-	* </code>
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(237, 34, 93);
+ *   fill(0);
+ *
+ *   if (mouseIsPressed) {
+ *     if (mouseButton == LEFT)
+ *       ellipse(50, 50, 50, 50);
+ *     if (mouseButton == RIGHT)
+ *       rect(25, 25, 50, 50);
+ *     if (mouseButton == CENTER)
+ *       triangle(23, 75, 50, 20, 78, 75);
+ *   }
+ *
+ *   print(mouseButton);
+ * }
+ * </code>
  * </div>
  *
  * @alt
@@ -339,22 +338,22 @@ p5.prototype.mouseButton = 0;
  * @readOnly
  *
  * @example
-	* <div>
-	* <code>
-	* function draw() {
-	*   background(237, 34, 93);
-	*   fill(0);
-	*
-	*   if (mouseIsPressed)
-	*     ellipse(50, 50, 50, 50);
-	*   else
-	*     rect(25, 25, 50, 50);
-	*
-	*   print(mouseIsPressed);
-	* }
-	* </code>
-	* </div>
-  *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(237, 34, 93);
+ *   fill(0);
+ *
+ *   if (mouseIsPressed)
+ *     ellipse(50, 50, 50, 50);
+ *   else
+ *     rect(25, 25, 50, 50);
+ *
+ *   print(mouseIsPressed);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * black 50x50 rect becomes ellipse with mouse click/press. fuschia background.
  *
@@ -362,8 +361,13 @@ p5.prototype.mouseButton = 0;
 p5.prototype.mouseIsPressed = false;
 
 p5.prototype._updateNextMouseCoords = function(e) {
-  if(this._curElement !== null && (!e.touches || e.touches.length>0)) {
-    var mousePos = getMousePos(this._curElement.elt, this.width, this.height, e);
+  if (this._curElement !== null && (!e.touches || e.touches.length > 0)) {
+    var mousePos = getMousePos(
+      this._curElement.elt,
+      this.width,
+      this.height,
+      e
+    );
     this._setProperty('mouseX', mousePos.x);
     this._setProperty('mouseY', mousePos.y);
     this._setProperty('winMouseX', mousePos.winX);
@@ -384,7 +388,8 @@ p5.prototype._updateMouseCoords = function() {
 };
 
 function getMousePos(canvas, w, h, evt) {
-  if (evt && !evt.clientX) { // use touches if touch and not mouse
+  if (evt && !evt.clientX) {
+    // use touches if touch and not mouse
     if (evt.touches) {
       evt = evt.touches[0];
     } else if (evt.changedTouches) {
@@ -501,27 +506,26 @@ p5.prototype._setMouseButton = function(e) {
  * no image displayed
  *
  */
-p5.prototype._onmousemove = function(e){
+p5.prototype._onmousemove = function(e) {
   var context = this._isGlobal ? window : this;
   var executeDefault;
   this._updateNextMouseCoords(e);
   if (!this.mouseIsPressed) {
     if (typeof context.mouseMoved === 'function') {
       executeDefault = context.mouseMoved(e);
-      if(executeDefault === false) {
+      if (executeDefault === false) {
         e.preventDefault();
       }
     }
-  }
-  else {
+  } else {
     if (typeof context.mouseDragged === 'function') {
       executeDefault = context.mouseDragged(e);
-      if(executeDefault === false) {
+      if (executeDefault === false) {
         e.preventDefault();
       }
     } else if (typeof context.touchMoved === 'function') {
       executeDefault = context.touchMoved(e);
-      if(executeDefault === false) {
+      if (executeDefault === false) {
         e.preventDefault();
       }
     }
@@ -583,12 +587,12 @@ p5.prototype._onmousedown = function(e) {
   this._updateNextMouseCoords(e);
   if (typeof context.mousePressed === 'function') {
     executeDefault = context.mousePressed(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   } else if (typeof context.touchStarted === 'function') {
     executeDefault = context.touchStarted(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
@@ -647,12 +651,12 @@ p5.prototype._onmouseup = function(e) {
   this._setProperty('mouseIsPressed', false);
   if (typeof context.mouseReleased === 'function') {
     executeDefault = context.mouseReleased(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   } else if (typeof context.touchEnded === 'function') {
     executeDefault = context.touchEnded(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
@@ -714,7 +718,7 @@ p5.prototype._onclick = function(e) {
   var context = this._isGlobal ? window : this;
   if (typeof context.mouseClicked === 'function') {
     var executeDefault = context.mouseClicked(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
@@ -772,7 +776,7 @@ p5.prototype._ondblclick = function(e) {
   var context = this._isGlobal ? window : this;
   if (typeof context.doubleClicked === 'function') {
     var executeDefault = context.doubleClicked(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
@@ -824,7 +828,7 @@ p5.prototype._onwheel = function(e) {
   if (typeof context.mouseWheel === 'function') {
     e.delta = e.deltaY;
     var executeDefault = context.mouseWheel(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }

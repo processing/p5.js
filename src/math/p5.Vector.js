@@ -57,10 +57,10 @@ p5.Vector = function Vector() {
   if (arguments[0] instanceof p5) {
     // save reference to p5 if passed in
     this.p5 = arguments[0];
-    x  = arguments[1][0] || 0;
-    y  = arguments[1][1] || 0;
-    z  = arguments[1][2] || 0;
-  // This is what we'll get with new p5.Vector()
+    x = arguments[1][0] || 0;
+    y = arguments[1][1] || 0;
+    z = arguments[1][2] || 0;
+    // This is what we'll get with new p5.Vector()
   } else {
     x = arguments[0] || 0;
     y = arguments[1] || 0;
@@ -81,7 +81,7 @@ p5.Vector = function Vector() {
    * @property z {Number}
    */
   this.z = z;
-  this.name = 'p5.Vector';   // for friendly debugger system
+  this.name = 'p5.Vector'; // for friendly debugger system
 };
 
 /**
@@ -450,9 +450,7 @@ p5.Vector.prototype.dot = function dot(x, y, z) {
   if (x instanceof p5.Vector) {
     return this.dot(x.x, x.y, x.z);
   }
-  return this.x * (x || 0) +
-         this.y * (y || 0) +
-         this.z * (z || 0);
+  return this.x * (x || 0) + this.y * (y || 0) + this.z * (z || 0);
 };
 
 /**
@@ -823,9 +821,7 @@ p5.Vector.prototype.equals = function equals(x, y, z) {
   return this.x === a && this.y === b && this.z === c;
 };
 
-
 // Static Methods
-
 
 /**
  * Make a new 2D unit vector from an angle
@@ -998,6 +994,7 @@ p5.Vector.add = function add(v1, v2, target) {
  * @return {p5.Vector} the resulting p5.Vector
  */
 p5.Vector.sub = function sub(v1, v2, target) {
+
   if (!target) {
     target = v1.copy();
   } else {
@@ -1006,7 +1003,6 @@ p5.Vector.sub = function sub(v1, v2, target) {
   target.sub(v2);
   return target;
 };
-
 
 /**
  * Multiplies a vector by a scalar and returns a new vector.
@@ -1061,7 +1057,6 @@ p5.Vector.div = function div(v, n, target) {
   target.div(n);
   return target;
 };
-
 
 /**
  * Calculates the dot product of two vectors.

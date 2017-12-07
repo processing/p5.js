@@ -1,4 +1,3 @@
-
 suite('p5.Vector', function() {
   var RADIANS = 'radians';
   var DEGREES = 'degrees';
@@ -6,7 +5,7 @@ suite('p5.Vector', function() {
   var myp5;
 
   setup(function(done) {
-    new p5(function(p){
+    new p5(function(p) {
       p.setup = function() {
         myp5 = p;
         done();
@@ -75,7 +74,7 @@ suite('p5.Vector', function() {
 
   suite('new p5.Vector(1,2,undefined)', function() {
     setup(function() {
-      v = new p5.Vector(1,2,undefined);
+      v = new p5.Vector(1, 2, undefined);
     });
 
     test('should have x, y, z be initialized to 1,2,0', function() {
@@ -147,8 +146,8 @@ suite('p5.Vector', function() {
 
   suite('set()', function() {
     suite('with p5.Vector', function() {
-      test('should have x, y, z be initialized to the vector\'s x, y, z', function() {
-        v.set(new p5.Vector(2,5,6));
+      test("should have x, y, z be initialized to the vector's x, y, z", function() {
+        v.set(new p5.Vector(2, 5, 6));
         expect(v.x).to.eql(2);
         expect(v.y).to.eql(5);
         expect(v.z).to.eql(6);
@@ -157,14 +156,14 @@ suite('p5.Vector', function() {
 
     suite('with Array', function() {
       test('[2,4] should set x == 2, y == 4, z == 0', function() {
-        v.set([2,4]);
+        v.set([2, 4]);
         expect(v.x).to.eql(2);
         expect(v.y).to.eql(4);
         expect(v.z).to.eql(0);
       });
 
-      test('should have x, y, z be initialized to the array\'s 0,1,2 index', function() {
-        v.set([2,5,6]);
+      test("should have x, y, z be initialized to the array's 0,1,2 index", function() {
+        v.set([2, 5, 6]);
         expect(v.x).to.eql(2);
         expect(v.y).to.eql(5);
         expect(v.z).to.eql(6);
@@ -191,7 +190,7 @@ suite('p5.Vector', function() {
       expect(newObject).to.not.equal(v);
     });
 
-    test('should return the calling object\'s x, y, z', function() {
+    test("should return the calling object's x, y, z", function() {
       v.x = 2;
       v.y = 3;
       v.z = 4;
@@ -209,7 +208,7 @@ suite('p5.Vector', function() {
 
     suite('with p5.Vector', function() {
       test('should add x, y, z  from the vector argument', function() {
-        v.add(new p5.Vector(1,5,6));
+        v.add(new p5.Vector(1, 5, 6));
         expect(v.x).to.eql(1);
         expect(v.y).to.eql(5);
         expect(v.z).to.eql(6);
@@ -219,15 +218,15 @@ suite('p5.Vector', function() {
     suite('with Array', function() {
       suite('add([2, 4])', function() {
         test('should add the x and y components', function() {
-          v.add([2,4]);
+          v.add([2, 4]);
           expect(v.x).to.eql(2);
           expect(v.y).to.eql(4);
           expect(v.z).to.eql(0);
         });
       });
 
-      test('should add the array\'s 0,1,2 index', function() {
-        v.add([2,5,6]);
+      test("should add the array's 0,1,2 index", function() {
+        v.add([2, 5, 6]);
         expect(v.x).to.eql(2);
         expect(v.y).to.eql(5);
         expect(v.z).to.eql(6);
@@ -236,7 +235,7 @@ suite('p5.Vector', function() {
 
     suite('add(3,5)', function() {
       test('should add the x and y components', function() {
-        v.add(3,5);
+        v.add(3, 5);
         expect(v.x).to.eql(3);
         expect(v.y).to.eql(5);
         expect(v.z).to.eql(0);
@@ -245,7 +244,7 @@ suite('p5.Vector', function() {
 
     suite('add(2,3,4)', function() {
       test('should add the x, y, z components', function() {
-        v.add(5,5,5);
+        v.add(5, 5, 5);
         expect(v.x).to.eql(5);
         expect(v.y).to.eql(5);
         expect(v.z).to.eql(5);
@@ -255,8 +254,8 @@ suite('p5.Vector', function() {
     suite('p5.Vector.add(v1, v2)', function() {
       var v1, v2, res;
       setup(function() {
-        v1 = new p5.Vector(2,0,3);
-        v2 = new p5.Vector(0,1,3);
+        v1 = new p5.Vector(2, 0, 3);
+        v2 = new p5.Vector(0, 1, 3);
         res = p5.Vector.add(v1, v2);
       });
 
@@ -281,7 +280,7 @@ suite('p5.Vector', function() {
     });
     suite('with p5.Vector', function() {
       test('should sub x, y, z  from the vector argument', function() {
-        v.sub(new p5.Vector(2,5,6));
+        v.sub(new p5.Vector(2, 5, 6));
         expect(v.x).to.eql(-2);
         expect(v.y).to.eql(-5);
         expect(v.z).to.eql(-6);
@@ -291,15 +290,15 @@ suite('p5.Vector', function() {
     suite('with Array', function() {
       suite('sub([2, 4])', function() {
         test('should sub the x and y components', function() {
-          v.sub([2,4]);
+          v.sub([2, 4]);
           expect(v.x).to.eql(-2);
           expect(v.y).to.eql(-4);
           expect(v.z).to.eql(0);
         });
       });
 
-      test('should substract from the array\'s 0,1,2 index', function() {
-        v.sub([2,5,6]);
+      test("should substract from the array's 0,1,2 index", function() {
+        v.sub([2, 5, 6]);
         expect(v.x).to.eql(-2);
         expect(v.y).to.eql(-5);
         expect(v.z).to.eql(-6);
@@ -308,7 +307,7 @@ suite('p5.Vector', function() {
 
     suite('sub(3,5)', function() {
       test('should substract the x and y components', function() {
-        v.sub(3,5);
+        v.sub(3, 5);
         expect(v.x).to.eql(-3);
         expect(v.y).to.eql(-5);
         expect(v.z).to.eql(0);
@@ -317,7 +316,7 @@ suite('p5.Vector', function() {
 
     suite('sub(2,3,4)', function() {
       test('should substract the x, y, z components', function() {
-        v.sub(5,5,5);
+        v.sub(5, 5, 5);
         expect(v.x).to.eql(-5);
         expect(v.y).to.eql(-5);
         expect(v.z).to.eql(-5);
@@ -327,8 +326,8 @@ suite('p5.Vector', function() {
     suite('p5.Vector.sub(v1, v2)', function() {
       var v1, v2, res;
       setup(function() {
-        v1 = new p5.Vector(2,0,3);
-        v2 = new p5.Vector(0,1,3);
+        v1 = new p5.Vector(2, 0, 3);
+        v2 = new p5.Vector(0, 1, 3);
         res = p5.Vector.sub(v1, v2);
       });
 
@@ -380,7 +379,7 @@ suite('p5.Vector', function() {
     suite('p5.Vector.mult(v, n)', function() {
       var v, res;
       setup(function() {
-        v = new p5.Vector(1,2,3);
+        v = new p5.Vector(1, 2, 3);
         res = p5.Vector.mult(v, 4);
       });
 
@@ -438,7 +437,7 @@ suite('p5.Vector', function() {
     suite('p5.Vector.div(v, n)', function() {
       var v, res;
       setup(function() {
-        v = new p5.Vector(1,1,1);
+        v = new p5.Vector(1, 1, 1);
         res = p5.Vector.div(v, 4);
       });
 
@@ -458,43 +457,41 @@ suite('p5.Vector', function() {
     });
   });
 
-
   suite('dot', function() {
     setup(function() {
       v = new p5.Vector(1, 1, 1);
     });
 
     test('should return a number', function() {
-      expect(typeof(v.dot(new p5.Vector())) ===  'number').to.eql(true);
+      expect(typeof v.dot(new p5.Vector()) === 'number').to.eql(true);
     });
-
 
     suite('with p5.Vector', function() {
       test('should be the dot product of the vector', function() {
-        expect(v.dot(new p5.Vector(2,2))).to.eql(4);
+        expect(v.dot(new p5.Vector(2, 2))).to.eql(4);
       });
     });
 
     suite('with x, y, z', function() {
       test('should be the dot product with x, y', function() {
-        expect(v.dot(2,2)).to.eql(4);
+        expect(v.dot(2, 2)).to.eql(4);
       });
 
       test('should be the dot product with x, y, z', function() {
-        expect(v.dot(2,2,2)).to.eql(6);
+        expect(v.dot(2, 2, 2)).to.eql(6);
       });
     });
 
     suite('p5.Vector.dot(v, n)', function() {
       var v1, v2, res;
       setup(function() {
-        v1 = new p5.Vector(1,1,1);
-        v2 = new p5.Vector(2,3,4);
+        v1 = new p5.Vector(1, 1, 1);
+        v2 = new p5.Vector(2, 3, 4);
         res = p5.Vector.dot(v1, v2);
       });
 
       test('should return a number', function() {
-        expect(typeof(res) ===  'number').to.eql(true);
+        expect(typeof res === 'number').to.eql(true);
       });
 
       test('should be the dot product of the two vectors', function() {
@@ -515,18 +512,18 @@ suite('p5.Vector', function() {
 
     suite('with p5.Vector', function() {
       test('should cross x, y, z  from the vector argument', function() {
-        res = v.cross(new p5.Vector(2,5,6));
-        expect(res.x).to.eql(1);   //this.y * v.z - this.z * v.y
-        expect(res.y).to.eql(-4);  //this.z * v.x - this.x * v.z
-        expect(res.z).to.eql(3);   //this.x * v.y - this.y * v.x
+        res = v.cross(new p5.Vector(2, 5, 6));
+        expect(res.x).to.eql(1); //this.y * v.z - this.z * v.y
+        expect(res.y).to.eql(-4); //this.z * v.x - this.x * v.z
+        expect(res.z).to.eql(3); //this.x * v.y - this.y * v.x
       });
     });
 
     suite('p5.Vector.cross(v1, v2)', function() {
       var v1, v2, res;
       setup(function() {
-        v1 = new p5.Vector(3,6,9);
-        v2 = new p5.Vector(1,1,1);
+        v1 = new p5.Vector(3, 6, 9);
+        v2 = new p5.Vector(1, 1, 1);
         res = p5.Vector.cross(v1, v2);
       });
 
@@ -556,7 +553,7 @@ suite('p5.Vector', function() {
     });
 
     test('should return a number', function() {
-      expect(typeof(v.dist(b)) ===  'number').to.eql(true);
+      expect(typeof v.dist(b) === 'number').to.eql(true);
     });
 
     test('should return distance between two vectors', function() {
@@ -570,18 +567,17 @@ suite('p5.Vector', function() {
     test('should be commutative', function() {
       expect(b.dist(c)).to.eql(c.dist(b));
     });
-
   });
 
   suite('p5.Vector.dist(v1, v2)', function() {
     var v1, v2;
     setup(function() {
-      v1 = new p5.Vector(0,0,0);
-      v2 = new p5.Vector(0,3,4);
+      v1 = new p5.Vector(0, 0, 0);
+      v2 = new p5.Vector(0, 3, 4);
     });
 
     test('should return a number', function() {
-      expect(typeof(p5.Vector.dist(v1, v2)) ===  'number').to.eql(true);
+      expect(typeof p5.Vector.dist(v1, v2) === 'number').to.eql(true);
     });
 
     test('should be commutative', function() {
@@ -688,7 +684,7 @@ suite('p5.Vector', function() {
     });
 
     test('should return a number', function() {
-      expect(typeof(v.heading()) ===  'number').to.eql(true);
+      expect(typeof v.heading() === 'number').to.eql(true);
     });
 
     test('heading for vector pointing right is 0', function() {
@@ -702,7 +698,7 @@ suite('p5.Vector', function() {
       v.x = 0;
       v.y = 1;
       v.z = 0;
-      expect(v.heading()).to.be.closeTo(Math.PI/2, 0.01);
+      expect(v.heading()).to.be.closeTo(Math.PI / 2, 0.01);
     });
 
     test('heading for vector pointing left is PI', function() {
@@ -816,15 +812,15 @@ suite('p5.Vector', function() {
   });
 
   suite('p5.Vector.fromAngle(angle)', function() {
-    var res,angle;
+    var res, angle;
     setup(function() {
-      angle = Math.PI/2;
+      angle = Math.PI / 2;
       res = p5.Vector.fromAngle(angle);
     });
 
     test('should be a p5.Vector with values (0,1)', function() {
-      expect(res.x).to.be.closeTo(0,0.01);
-      expect(res.y).to.be.closeTo(1,0.01);
+      expect(res.x).to.be.closeTo(0, 0.01);
+      expect(res.y).to.be.closeTo(1, 0.01);
     });
   });
 
@@ -858,7 +854,7 @@ suite('p5.Vector', function() {
     });
 
     test('should be a Number', function() {
-      expect(typeof(res)).to.eql('number');
+      expect(typeof res).to.eql('number');
     });
 
     suite('with [1,0,0] and [2,2,0]', function() {
@@ -866,7 +862,7 @@ suite('p5.Vector', function() {
         v1 = new p5.Vector(1, 0, 0);
         v2 = new p5.Vector(2, 2, 0);
         res = v1.angleBetween(v2);
-        expect(res).to.be.closeTo(Math.PI/4, 0.01);
+        expect(res).to.be.closeTo(Math.PI / 4, 0.01);
       });
     });
 
@@ -884,7 +880,7 @@ suite('p5.Vector', function() {
         v1 = new p5.Vector(2, 0, 0);
         v2 = new p5.Vector(-2, -2, 0);
         res = v1.angleBetween(v2);
-        expect(res).to.be.closeTo(Math.PI/2 + Math.PI/4, 0.01);
+        expect(res).to.be.closeTo(Math.PI / 2 + Math.PI / 4, 0.01);
       });
 
       test('should be commutative', function() {
@@ -908,5 +904,4 @@ suite('p5.Vector', function() {
       expect(v.array()).to.eql([1, 23, 4]);
     });
   });
-
 });
