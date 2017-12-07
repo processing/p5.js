@@ -121,9 +121,7 @@ suite('loading images', function() {
 
     this_p5.setup = function() {
       suite('setup() after preload() with success callback', function() {
-        test('Resource should be loaded now if preload() finished', function(
-          done
-        ) {
+        test('Resource should be loaded now', function(done) {
           assert.isTrue(myImage instanceof p5.Image);
           assert.isTrue(myImage.width > 0 && myImage.height > 0);
           done();
@@ -142,9 +140,7 @@ suite('loading images', function() {
 
     this_p5.setup = function() {
       suite('setup() after preload() without success callback', function() {
-        test('Resource should be loaded now if preload() finished', function(
-          done
-        ) {
+        test('Resource should be loaded now', function(done) {
           assert.isTrue(myImage instanceof p5.Image);
           assert.isTrue(myImage.width > 0 && myImage.height > 0);
           done();
