@@ -168,9 +168,13 @@ module.exports = function(grunt) {
         tasks: ['requirejs:yuidoc_theme']
       },
       // Watch the codebase for doc updates
+      // launch with 'grunt requirejs connect watch:yui'
       yui: {
         files: ['src/**/*.js', 'lib/addons/*.js'],
-        task: ['yuidoc']
+        tasks: ['browserify', 'yuidoc:prod', 'minjson', 'uglify'],
+        options: {
+          livereload: true
+        }
       }
     },
 
