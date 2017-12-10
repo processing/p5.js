@@ -143,82 +143,35 @@ p5.prototype.createImage = function(width, height) {
  *  @param  {String} [filename]
  *  @param  {String} [extension]
  */
-p5.prototype.saveCanvas = function() {
-  var cnv, filename, extension;
-  if (arguments.length === 3) {
-    cnv = arguments[0];
-    filename = arguments[1];
-    extension = arguments[2];
-  } else if (arguments.length === 2) {
-    if (typeof arguments[0] === 'object') {
-      cnv = arguments[0];
-      filename = arguments[1];
-    } else {
-      filename = arguments[0];
-      extension = arguments[1];
-    }
-  } else if (arguments.length === 1) {
-    if (typeof arguments[0] === 'object') {
-      cnv = arguments[0];
-    } else {
-      filename = arguments[0];
-    }
-  }
-
+p5.prototype.saveCanvas = function(cnv, filename, extension) {
   if (cnv instanceof p5.Element) {
     cnv = cnv.elt;
-  }
-  if (!(cnv instanceof HTMLCanvasElement)) {
-    cnv = null;
-  }
-
-  if (!extension) {
-    extension = p5.prototype._checkFileExtension(filename, extension)[1];
-    if (extension === '') {
-      extension = 'png';
-    }
+  } else if (!(cnv instanceof HTMLCanvasElement)) {
+    filename = cnv;
+    extension = filename;
+    cnv = this._curElement && this._curElement.elt;
   }
 
-  if (!cnv) {
-    if (this._curElement && this._curElement.elt) {
-      cnv = this._curElement.elt;
-    }
-  }
+  extension =
+    extension ||
+    p5.prototype._checkFileExtension(filename, extension)[1] ||
+    'png';
 
-  if (p5.prototype._isSafari()) {
-    var aText = 'Hello, Safari user!\n';
-    aText += 'Now capturing a screenshot...\n';
-    aText += 'To save this image,\n';
-    aText += 'go to File --> Save As.\n';
-    alert(aText);
-    window.location.href = cnv.toDataURL();
-  } else {
-    var mimeType;
-    if (typeof extension === 'undefined') {
-      extension = 'png';
+  var mimeType;
+  switch (extension) {
+    default:
+      //case 'png':
       mimeType = 'image/png';
-    } else {
-      switch (extension) {
-        case 'png':
-          mimeType = 'image/png';
-          break;
-        case 'jpeg':
-          mimeType = 'image/jpeg';
-          break;
-        case 'jpg':
-          mimeType = 'image/jpeg';
-          break;
-        default:
-          mimeType = 'image/png';
-          break;
-      }
-    }
-    var downloadMime = 'image/octet-stream';
-    var imageData = cnv.toDataURL(mimeType);
-    imageData = imageData.replace(mimeType, downloadMime);
-
-    p5.prototype.downloadFile(imageData, filename, extension);
+      break;
+    case 'jpeg':
+    case 'jpg':
+      mimeType = 'image/jpeg';
+      break;
   }
+
+  cnv.toBlob(function(blob) {
+    p5.prototype.downloadFile(blob, filename, extension);
+  }, mimeType);
 };
 
 /**
