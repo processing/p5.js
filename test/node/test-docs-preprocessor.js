@@ -41,11 +41,19 @@ describe('docs preprocessor', function() {
           {
             file: 'foo.js',
             line: 1,
-            params: [{ name: 'bar', type: 'String' }]
-          },
-          {
-            line: 5,
-            params: [{ name: 'baz', type: 'Number' }]
+            description: 'Does foo.',
+            itemtype: 'method',
+            name: 'foo',
+            overloads: [
+              {
+                line: 1,
+                params: [{ name: 'bar', type: 'String' }]
+              },
+              {
+                line: 5,
+                params: [{ name: 'baz', type: 'Number' }]
+              }
+            ]
           }
         ],
         consts: {}
