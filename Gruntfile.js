@@ -334,7 +334,7 @@ module.exports = function(grunt) {
 
   // eslint fixes everything it checks:
   gruntConfig.eslint.fix.src = Object.keys(gruntConfig.eslint)
-    .map(s => s.src)
+    .map(s => gruntConfig.eslint[s].src)
     .reduce((a, b) => a.concat(b), [])
     .filter(a => a);
 
