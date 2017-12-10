@@ -91,11 +91,7 @@ describe('docs preprocessor', function() {
         classitems: [
           {
             description: 'hi `there`',
-            params: [
-              {
-                description: 'what is *up*'
-              }
-            ]
+            params: [{ description: 'what is *up*' }]
           }
         ],
         consts: {}
@@ -109,11 +105,7 @@ describe('docs preprocessor', function() {
         classitems: [
           {
             description: '<p>hi <code>there</code></p>\n',
-            params: [
-              {
-                description: '<p>what is <em>up</em></p>\n'
-              }
-            ]
+            params: [{ description: '<p>what is <em>up</em></p>\n' }]
           }
         ],
         consts: {}
