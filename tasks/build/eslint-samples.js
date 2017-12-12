@@ -45,6 +45,34 @@ module.exports = grunt => {
           globals[ci.name] = true;
         });
 
+      function splitLines(text) {
+        var lines = [];
+
+        lines.lineFromIndex = function(index) {
+          var lines = this;
+          var lineCount = lines.length;
+          for (var i = 0; i < lineCount; i++) {
+            if (index < lines[i].index) return i - 1;
+          }
+          return lineCount - 1;
+        };
+
+        var m;
+        var reSplit = /(( *\* ?)?.*)(?:\r\n|\r|\n)/g;
+        while ((m = reSplit.exec(text)) != null) {
+          if (m.index === reSplit.lastIndex) {
+            reSplit.lastIndex++;
+          }
+
+          lines.push({
+            index: m.index,
+            text: m[1],
+            prefixLength: m[2] ? m[2].length : 0
+          });
+        }
+
+        return lines;
+      }
       engine.addPlugin('eslint-samples', {
         environments: {
           p5: {
@@ -53,25 +81,21 @@ module.exports = grunt => {
         },
         processors: {
           '.js': {
+            supportsAutofix: true,
             preprocess: function(text) {
-              var lines = (this.lines = []);
+              this.lines = splitLines(text);
 
               var m;
-              var reSplit = /(( *\* ?)?.*)(?:\r\n|\r|\n)/g;
-              while ((m = reSplit.exec(text)) != null) {
-                if (m.index === reSplit.lastIndex) {
-                  reSplit.lastIndex++;
-                }
+              var comments = [];
 
-                lines.push({
-                  index: m.index,
-                  text: m[1],
-                  prefixLength: m[2] ? m[2].length : 0
+              var reComment = /\/\*\*(?:.|\r|\n)*?\*\//g;
+              while ((m = reComment.exec(text)) != null) {
+                var value = m[0];
+                comments.push({
+                  value: value,
+                  range: [m.index, m.index + value.length]
                 });
               }
-
-              var extract = require('esprima-extract-comments');
-              var comments = extract(text);
 
               var samples = (this.samples = []);
 
@@ -88,7 +112,8 @@ module.exports = grunt => {
                   samples.push({
                     comment: comment,
                     index: m.index + m[1].length,
-                    code: code
+                    code: code,
+                    lines: splitLines(code)
                   });
                 }
               }
@@ -96,20 +121,10 @@ module.exports = grunt => {
               return samples.map(
                 s =>
                   s.code +
-                  '\r\ntypeof draw, typeof setup, typeof preload, typeof mousePressed;\r\n'
+                  '\ntypeof draw, typeof setup, typeof preload, typeof mousePressed;\n'
               );
             },
-            lineFromIndex: function(index) {
-              var lines = this.lines;
-              var lineCount = lines.length;
-              for (var i = 0; i < lineCount; i++) {
-                if (index < lines[i].index) return i - 1;
-              }
-              return lineCount - 1;
-            },
-            indexFromLine: function(line) {
-              return this.lines[line].index;
-            },
+
             postprocess: function(sampleMessages) {
               var problems = [];
 
@@ -119,19 +134,44 @@ module.exports = grunt => {
                 if (!messages.length) continue;
 
                 var sampleIndex = sample.comment.range[0] + sample.index;
-                var sampleLine = this.lineFromIndex(sampleIndex);
+                var sampleLine = this.lines.lineFromIndex(sampleIndex);
 
                 for (var j = 0; j < messages.length; j++) {
                   var msg = messages[j];
 
+                  /*
+                  var fix = msg.fix;
+                  if (fix) {
+                    var fixLine1 = sample.lines.lineFromIndex(fix.range[0]);
+                    var fixLine2 = sample.lines.lineFromIndex(fix.range[1] - 1);
+                    if (fixLine1 !== fixLine2) {
+                      // TODO: handle multi-line fixes
+                      fix.range = [0, 0];
+                      fix.text = '';
+                    } else {
+                      var line = this.lines[sampleLine + fixLine1];
+                      console.log(msg);
+                      console.log(sampleLine);
+                      console.log(fixLine1);
+                      console.log(line);
+                      //return;
+                      fix.range[0] += line.index + line.prefixLength;
+                      fix.range[1] += line.index + line.prefixLength;
+
+                      console.log(fix);
+                      //return;
+                    }
+                  }
+                  */
+
                   var startLine = msg.line + sampleLine;
                   msg.column += this.lines[startLine].prefixLength;
-                  msg.line = startLine + 1;
+                  msg.line = startLine;
 
                   if (msg.endLine) {
                     var endLine = msg.endLine + sampleLine;
                     msg.endColumn += this.lines[endLine].prefixLength;
-                    msg.endLine = endLine + 1;
+                    msg.endLine = endLine;
                   }
 
                   msg.message = msg.message

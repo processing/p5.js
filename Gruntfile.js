@@ -134,11 +134,17 @@ module.exports = function(grunt) {
     },
 
     'eslint-samples': {
-      //src: ["src/**/*.js"],
       src: ['src/**/*.js'],
+      //src: ['src/color/setting.js'],
       options: {
         configFile: '.eslintrc',
         format: 'unix'
+      },
+      fix: {
+        src: ['src/color/setting.js'],
+        options: {
+          fix: true
+        }
       }
     },
 
