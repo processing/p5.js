@@ -133,6 +133,15 @@ module.exports = function(grunt) {
       }
     },
 
+    'eslint-samples': {
+      //src: ["src/**/*.js"],
+      src: ['src/**/*.js'],
+      options: {
+        configFile: '.eslintrc',
+        format: 'unix'
+      }
+    },
+
     // Set up the watch task, used for live-reloading during development.
     // This watches both the codebase and the yuidoc theme.  Changing the
     // code touches files within the theme, so it will also recompile the
