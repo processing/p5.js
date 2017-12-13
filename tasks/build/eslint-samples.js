@@ -42,28 +42,25 @@ module.exports = grunt => {
       var globals = {};
       dataDoc.classitems
         .filter(
-        ci =>
-          classes.indexOf(ci.class) >= 0 &&
-          itemtypes.indexOf(ci.itemtype) >= 0
+          ci =>
+            classes.indexOf(ci.class) >= 0 &&
+            itemtypes.indexOf(ci.itemtype) >= 0
         )
         .forEach(ci => {
           globals[ci.name] = true;
         });
 
-      Object.keys(dataDoc.consts)
-        .forEach(c => {
-          globals[c] = true;
-        });
+      Object.keys(dataDoc.consts).forEach(c => {
+        globals[c] = true;
+      });
 
-
-      var q = dataDoc.classitems
+      dataDoc.classitems
         .find(ci => ci.name === 'keyCode' && ci.class === 'p5')
-        .description
-        .match(/[A-Z\r\n, _]{10,}/m)[0]
+        .description.match(/[A-Z\r\n, _]{10,}/m)[0]
         .match(/[A-Z_]+/gm)
         .forEach(c => {
           globals[c] = true;
-        })
+        });
 
       function splitLines(text) {
         var lines = [];
@@ -94,7 +91,6 @@ module.exports = grunt => {
         return lines;
       }
 
-
       var EOL = require('os').EOL;
 
       var userFunctions = [
@@ -120,10 +116,7 @@ module.exports = grunt => {
         'keyTyped'
       ];
       var userFunctionTrailer =
-        EOL +
-        userFunctions.map(s => 'typeof ' + s + ';').join(EOL) +
-        EOL;
-
+        EOL + userFunctions.map(s => 'typeof ' + s + ';').join(EOL) + EOL;
 
       engine.addPlugin('eslint-samples', {
         environments: {
@@ -187,7 +180,7 @@ module.exports = grunt => {
 
                 for (var j = 0; j < messages.length; j++) {
                   var msg = messages[j];
-                  
+
                   var fix = msg.fix;
                   if (fix) {
                     if (!sampleLines) {
@@ -202,15 +195,6 @@ module.exports = grunt => {
                       fix.text = '';
                     } else {
                       var line = this.lines[sampleLine + fixLine1];
-
-                      /*
-                      console.log(msg);
-                      console.log(sampleLine);
-                      console.log(fixLine1);
-                      console.log(line);
-                      console.log("====");
-                      console.log(sample.code);
-                      */
 
                       var fixColumn1 =
                         fix.range[0] - sampleLines[fixLine1].index;
