@@ -236,8 +236,8 @@ p5.prototype.clear = function() {
  * <code>
  * noStroke();
  * colorMode(RGB, 100);
- * for (i = 0; i < 100; i++) {
- *   for (j = 0; j < 100; j++) {
+ * for (var i = 0; i < 100; i++) {
+ *   for (var j = 0; j < 100; j++) {
  *     stroke(i, j, 0);
  *     point(i, j);
  *   }
@@ -249,8 +249,8 @@ p5.prototype.clear = function() {
  * <code>
  * noStroke();
  * colorMode(HSB, 100);
- * for (i = 0; i < 100; i++) {
- *   for (j = 0; j < 100; j++) {
+ * for (var i = 0; i < 100; i++) {
+ *   for (var j = 0; j < 100; j++) {
  *     stroke(i, j, 100);
  *     point(i, j);
  *   }
@@ -276,7 +276,7 @@ p5.prototype.clear = function() {
  * background(255);
  *
  * strokeWeight(4);
- * stroke(255, 0 , 10, 0.3);
+ * stroke(255, 0, 10, 0.3);
  * ellipse(40, 40, 50, 50);
  * ellipse(50, 50, 40, 40);
  * </code>

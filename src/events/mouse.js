@@ -91,9 +91,8 @@ p5.prototype.mouseY = 0;
  * function draw() {
  *   background(244, 248, 252);
  *   line(mouseX, mouseY, pmouseX, pmouseY);
- *   print(pmouseX + " -> " + mouseX);
+ *   print(pmouseX + ' -> ' + mouseX);
  * }
- *
  * </code>
  * </div>
  *
@@ -118,12 +117,12 @@ p5.prototype.pmouseX = 0;
  *   background(237, 34, 93);
  *   fill(0);
  *   //draw a square only if the mouse is not moving
- *   if(mouseY == pmouseY && mouseX == pmouseX)
- *     rect(20,20,60,60);
+ *   if (mouseY === pmouseY && mouseX === pmouseX) {
+ *     rect(20, 20, 60, 60);
+ *   }
  *
- *   print(pmouseY + " -> " + mouseY);
+ *   print(pmouseY + ' -> ' + mouseY);
  * }
- *
  * </code>
  * </div>
  *
@@ -155,13 +154,12 @@ p5.prototype.pmouseY = 0;
  *   fill(0);
  *
  *   //move the canvas to the horizontal mouse position
- *   //relative to the window
- *   myCanvas.position(winMouseX+1, windowHeight/2);
+ *   //rela                    tive to the window
+ *   myCanvas.position(winMouseX + 1, windowHeight / 2);
  *
- *  //the y of the square is relative to the canvas
- *  rect(20,mouseY,60,60);
+ *   //the y of the square is relative to the canvas
+ *   rect(20, mouseY, 60, 60);
  * }
- *
  * </code>
  * </div>
  *
@@ -193,13 +191,12 @@ p5.prototype.winMouseX = 0;
  *   fill(0);
  *
  *   //move the canvas to the vertical mouse position
- *   //relative to the window
- *   myCanvas.position(windowWidth/2, winMouseY+1);
+ *   //rel                    ative to the window
+ *   myCanvas.position(windowWidth / 2, winMouseY + 1);
  *
- *  //the x of the square is relative to the canvas
- *  rect(mouseX,20,60,60);
+ *   //the x of the square is relative to the canvas
+ *   rect(mouseX, 20, 60, 60);
  * }
- *
  * </code>
  * </div>
  *
@@ -220,7 +217,6 @@ p5.prototype.winMouseY = 0;
  * @example
  * <div>
  * <code>
- *
  * var myCanvas;
  *
  * function setup() {
@@ -228,20 +224,19 @@ p5.prototype.winMouseY = 0;
  *   myCanvas = createCanvas(100, 100);
  *   noStroke();
  *   fill(237, 34, 93);
- *   }
+ * }
  *
  * function draw() {
  *   clear();
  *   //the difference between previous and
  *   //current x position is the horizontal mouse speed
- *   var speed = abs(winMouseX-pwinMouseX);
+ *   var speed = abs(winMouseX - pwinMouseX);
  *   //change the size of the circle
  *   //according to the horizontal speed
- *   ellipse(50, 50, 10+speed*5, 10+speed*5);
+ *   ellipse(50, 50, 10 + speed * 5, 10 + speed * 5);
  *   //move the canvas to the mouse position
- *   myCanvas.position( winMouseX+1, winMouseY+1);
+ *   myCanvas.position(winMouseX + 1, winMouseY + 1);
  * }
- *
  * </code>
  * </div>
  *
@@ -263,7 +258,6 @@ p5.prototype.pwinMouseX = 0;
  * @example
  * <div>
  * <code>
- *
  * var myCanvas;
  *
  * function setup() {
@@ -271,20 +265,19 @@ p5.prototype.pwinMouseX = 0;
  *   myCanvas = createCanvas(100, 100);
  *   noStroke();
  *   fill(237, 34, 93);
- *   }
+ * }
  *
  * function draw() {
  *   clear();
  *   //the difference between previous and
  *   //current y position is the vertical mouse speed
- *   var speed = abs(winMouseY-pwinMouseY);
+ *   var speed = abs(winMouseY - pwinMouseY);
  *   //change the size of the circle
  *   //according to the vertical speed
- *   ellipse(50, 50, 10+speed*5, 10+speed*5);
+ *   ellipse(50, 50, 10 + speed * 5, 10 + speed * 5);
  *   //move the canvas to the mouse position
- *   myCanvas.position( winMouseX+1, winMouseY+1);
+ *   myCanvas.position(winMouseX + 1, winMouseY + 1);
  * }
- *
  * </code>
  * </div>
  *
@@ -311,12 +304,15 @@ p5.prototype.pwinMouseY = 0;
  *   fill(0);
  *
  *   if (mouseIsPressed) {
- *     if (mouseButton == LEFT)
+ *     if (mouseButton === LEFT) {
  *       ellipse(50, 50, 50, 50);
- *     if (mouseButton == RIGHT)
+ *     }
+ *     if (mouseButton === RIGHT) {
  *       rect(25, 25, 50, 50);
- *     if (mouseButton == CENTER)
+ *     }
+ *     if (mouseButton === CENTER) {
  *       triangle(23, 75, 50, 20, 78, 75);
+ *     }
  *   }
  *
  *   print(mouseButton);
@@ -344,10 +340,11 @@ p5.prototype.mouseButton = 0;
  *   background(237, 34, 93);
  *   fill(0);
  *
- *   if (mouseIsPressed)
+ *   if (mouseIsPressed) {
  *     ellipse(50, 50, 50, 50);
- *   else
+ *   } else {
  *     rect(25, 25, 50, 50);
+ *   }
  *
  *   print(mouseIsPressed);
  * }
@@ -555,7 +552,7 @@ p5.prototype._onmousemove = function(e) {
  *   rect(25, 25, 50, 50);
  * }
  * function mousePressed() {
- *   if (value == 0) {
+ *   if (value === 0) {
  *     value = 255;
  *   } else {
  *     value = 0;
@@ -621,7 +618,7 @@ p5.prototype._onmousedown = function(e) {
  *   rect(25, 25, 50, 50);
  * }
  * function mouseReleased() {
- *   if (value == 0) {
+ *   if (value === 0) {
  *     value = 255;
  *   } else {
  *     value = 0;
@@ -690,7 +687,7 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * }
  *
  * function mouseClicked() {
- *   if (value == 0) {
+ *   if (value === 0) {
  *     value = 255;
  *   } else {
  *     value = 0;
@@ -748,7 +745,7 @@ p5.prototype._onclick = function(e) {
  * }
  *
  * function doubleClicked() {
- *   if (value == 0) {
+ *   if (value === 0) {
  *     value = 255;
  *   } else {
  *     value = 0;

@@ -75,7 +75,7 @@ function getTouchInfo(canvas, w, h, e, i) {
  *   rect(25, 25, 50, 50);
  * }
  * function touchStarted() {
- *   if (value == 0) {
+ *   if (value === 0) {
  *     value = 255;
  *   } else {
  *     value = 0;
@@ -200,7 +200,7 @@ p5.prototype._ontouchmove = function(e) {
  *   rect(25, 25, 50, 50);
  * }
  * function touchEnded() {
- *   if (value == 0) {
+ *   if (value === 0) {
  *     value = 255;
  *   } else {
  *     value = 0;
