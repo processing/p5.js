@@ -68,7 +68,7 @@ function mergeOverloadedMethods(data) {
     var extractConsts = function(params) {
       params &&
         params.forEach(function(param) {
-          if (param.type === 'Constant') {
+          if (param.type.split('|').indexOf('Constant') >= 0) {
             var match;
             if (classitem.name === 'endShape' && param.name === 'mode') {
               match = 'CLOSE';

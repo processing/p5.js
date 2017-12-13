@@ -183,10 +183,11 @@ p5.prototype.random = function(min, max) {
  * @return {Number} the random number
  * @example
  * <div>
- * <code>for (var y = 0; y < 100; y++) {
+ * <code>
+ * for (var y = 0; y < 100; y++) {
  *  var x = randomGaussian(50,15);
  *  line(50, y, x, y);
- *}
+ * }
  * </code>
  * </div>
  * <div>

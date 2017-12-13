@@ -73,7 +73,8 @@ var perlin; // will be initialized lazily by noise() or noiseSeed()
  *                      coordinates
  * @example
  * <div>
- * <code>var xoff = 0.0;
+ * <code>
+ * var xoff = 0.0;
  *
  * function draw() {
  *   background(204);

@@ -36,14 +36,34 @@ module.exports = grunt => {
       const engine = new eslint.CLIEngine(opts);
 
       var itemtypes = ['method', 'property'];
+      var classes = ['p5', 'p5.dom'];
 
       var dataDoc = require('../../docs/reference/data.json');
       var globals = {};
       dataDoc.classitems
-        .filter(ci => ci.class === 'p5' && itemtypes.indexOf(ci.itemtype) >= 0)
+        .filter(
+        ci =>
+          classes.indexOf(ci.class) >= 0 &&
+          itemtypes.indexOf(ci.itemtype) >= 0
+        )
         .forEach(ci => {
           globals[ci.name] = true;
         });
+
+      Object.keys(dataDoc.consts)
+        .forEach(c => {
+          globals[c] = true;
+        });
+
+
+      var q = dataDoc.classitems
+        .find(ci => ci.name === 'keyCode' && ci.class === 'p5')
+        .description
+        .match(/[A-Z\r\n, _]{10,}/m)[0]
+        .match(/[A-Z_]+/gm)
+        .forEach(c => {
+          globals[c] = true;
+        })
 
       function splitLines(text) {
         var lines = [];
@@ -73,6 +93,38 @@ module.exports = grunt => {
 
         return lines;
       }
+
+
+      var EOL = require('os').EOL;
+
+      var userFunctions = [
+        'draw',
+        'setup',
+        'preload',
+        'mousePressed',
+        'mouseDragged',
+        'mouseMoved',
+        'mouseReleased',
+        'mouseClicked',
+        'mouseWheel',
+        'doubleClicked',
+        'windowResized',
+        'touchStarted',
+        'touchMoved',
+        'touchEnded',
+        'deviceMoved',
+        'deviceTurned',
+        'deviceShaken',
+        'keyPressed',
+        'keyReleased',
+        'keyTyped'
+      ];
+      var userFunctionTrailer =
+        EOL +
+        userFunctions.map(s => 'typeof ' + s + ';').join(EOL) +
+        EOL;
+
+
       engine.addPlugin('eslint-samples', {
         environments: {
           p5: {
@@ -103,7 +155,7 @@ module.exports = grunt => {
                 var comment = comments[i];
                 var commentText = comment.value;
 
-                var re = /(<code[^>]*>.*(?:\r\n|\r|\n))((?:.|\r|\n)*?)<\/code>/gm;
+                var re = /(<code[^>]*>\s*(?:\r\n|\r|\n))((?:.|\r|\n)*?)<\/code>/gm;
                 while ((m = re.exec(commentText)) != null) {
                   var code = m[2];
                   if (!code) continue;
@@ -112,20 +164,15 @@ module.exports = grunt => {
                   samples.push({
                     comment: comment,
                     index: m.index + m[1].length,
-                    code: code,
-                    lines: splitLines(code)
+                    code: code
                   });
                 }
               }
 
-              return samples.map(
-                s =>
-                  s.code +
-                  '\ntypeof draw, typeof setup, typeof preload, typeof mousePressed;\n'
-              );
+              return samples.map(s => s.code + userFunctionTrailer);
             },
 
-            postprocess: function(sampleMessages) {
+            postprocess: function(sampleMessages, filename) {
               var problems = [];
 
               for (var i = 0; i < sampleMessages.length; i++) {
@@ -133,36 +180,49 @@ module.exports = grunt => {
                 var sample = this.samples[i];
                 if (!messages.length) continue;
 
+                var sampleLines;
+
                 var sampleIndex = sample.comment.range[0] + sample.index;
                 var sampleLine = this.lines.lineFromIndex(sampleIndex);
 
                 for (var j = 0; j < messages.length; j++) {
                   var msg = messages[j];
-
-                  /*
+                  
                   var fix = msg.fix;
                   if (fix) {
-                    var fixLine1 = sample.lines.lineFromIndex(fix.range[0]);
-                    var fixLine2 = sample.lines.lineFromIndex(fix.range[1] - 1);
+                    if (!sampleLines) {
+                      sampleLines = splitLines(sample.code);
+                    }
+
+                    var fixLine1 = sampleLines.lineFromIndex(fix.range[0]);
+                    var fixLine2 = sampleLines.lineFromIndex(fix.range[1] - 1);
                     if (fixLine1 !== fixLine2) {
                       // TODO: handle multi-line fixes
                       fix.range = [0, 0];
                       fix.text = '';
                     } else {
                       var line = this.lines[sampleLine + fixLine1];
+
+                      /*
                       console.log(msg);
                       console.log(sampleLine);
                       console.log(fixLine1);
                       console.log(line);
-                      //return;
-                      fix.range[0] += line.index + line.prefixLength;
-                      fix.range[1] += line.index + line.prefixLength;
+                      console.log("====");
+                      console.log(sample.code);
+                      */
 
-                      console.log(fix);
-                      //return;
+                      var fixColumn1 =
+                        fix.range[0] - sampleLines[fixLine1].index;
+                      var fixColumn2 =
+                        fix.range[1] - sampleLines[fixLine1].index;
+
+                      fix.range[0] =
+                        line.index + line.prefixLength + fixColumn1;
+                      fix.range[1] =
+                        line.index + line.prefixLength + fixColumn2;
                     }
                   }
-                  */
 
                   var startLine = msg.line + sampleLine;
                   msg.column += this.lines[startLine].prefixLength;
@@ -175,8 +235,8 @@ module.exports = grunt => {
                   }
 
                   msg.message = msg.message
-                    .replace('\r', '\\r')
-                    .replace('\n', '\\n');
+                    .replace(/\r/g, '\\r')
+                    .replace(/\n|\u23CE/g, '\\n');
 
                   problems.push(msg);
                 }
