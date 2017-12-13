@@ -17,9 +17,19 @@
   },
   "lint-staged": {
     "Gruntfile.js": "eslint",
+    "grunt-karma.js": "eslint",
+    "docs/preprocessor.js": "eslint",
+    "utils/**/*.js": "eslint",
     "tasks/**/*.js": "eslint",
+    "bench/**/*.js": "eslint",
+    "test/test-docs-preprocessor/**/*.js": "eslint",
+    "test/node/**/*.js": "eslint",
+    "test/reporter/**/*.js": "eslint",
     "test/unit/**/*.js": "eslint",
-    "src/**/*.js": "eslint"
+    "src/**/*.js": [
+      "eslint",
+      "node ./utils/sample-linter.js"
+    ]
   },
   "version": "0.5.16",
   "devDependencies": {

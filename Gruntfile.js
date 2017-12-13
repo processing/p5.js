@@ -110,6 +110,7 @@ module.exports = function(grunt) {
           'Gruntfile.js',
           'grunt-karma.js',
           'docs/preprocessor.js',
+          'utils/**/*.js',
           'tasks/**/*.js'
         ]
       },
@@ -134,15 +135,15 @@ module.exports = function(grunt) {
     },
 
     'eslint-samples': {
-      src: ['src/**/*.js'],
-      //src: ['src/core/rendering.js'],
       options: {
         configFile: '.eslintrc',
         format: 'unix'
       },
+      source: {
+        src: ['src/**/*.js']
+      },
       fix: {
         src: ['src/**/*.js'],
-        //src: ['src/core/rendering.js'],
         options: {
           fix: true
         }
@@ -390,14 +391,16 @@ module.exports = function(grunt) {
   // Create the multitasks.
   grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);
   grunt.registerTask('lint-no-fix', [
+    'yui', // required for eslint-samples
     'eslint:build',
     'eslint:source',
-    'eslint:test'
+    'eslint:test',
+    'eslint-samples:source'
   ]);
   grunt.registerTask('lint-fix', ['eslint:fix']);
   grunt.registerTask('test', [
     'lint-no-fix',
-    'yuidoc:prod',
+    //'yuidoc:prod', // already done by lint-no-fix
     'build',
     'connect',
     'mocha',
