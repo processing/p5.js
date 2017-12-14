@@ -28,17 +28,14 @@ module.exports = {
     options: {
       files: [
         'https://cdnjs.cloudflare.com/ajax/libs/p5.js/<%= pkg.version %>/p5.js',
-        'bench/sin.bench.js',
-      ],
-    },
+        'bench/math/sin.bench.js'
+      ]
+    }
   },
   'sin-dev': {
     options: {
-      files: [
-        'lib/p5.js',
-        'bench/sin.bench.js',
-      ],
-    },
+      files: ['lib/p5.js', 'bench/math/sin.bench.js']
+    }
   },
   'random-fe-on-dev': {
     options: {
