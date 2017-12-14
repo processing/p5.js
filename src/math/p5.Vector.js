@@ -94,7 +94,7 @@ p5.Vector = function Vector() {
  * <div class = "norender">
  * <code>
  * function setup() {
- *   var v = createVector(20,30);
+ *   var v = createVector(20, 30);
  *   print(String(v)); // prints "p5.Vector Object : [20, 30, 0]"
  * }
  * </code>
@@ -116,12 +116,12 @@ p5.Vector.prototype.toString = function p5VectorToString() {
  * <div class="norender">
  * <code>
  * function setup() {
- *    var v = createVector(1, 2, 3);
- *    v.set(4,5,6); // Sets vector to [4, 5, 6]
+ *   var v = createVector(1, 2, 3);
+ *   v.set(4, 5, 6); // Sets vector to [4, 5, 6]
  *
- *    var v1 = createVector(0, 0, 0);
- *    var arr = [1, 2, 3];
- *    v1.set(arr); // Sets vector to [1, 2, 3]
+ *   var v1 = createVector(0, 0, 0);
+ *   var arr = [1, 2, 3];
+ *   v1.set(arr); // Sets vector to [1, 2, 3]
  * }
  * </code>
  * </div>
@@ -160,7 +160,7 @@ p5.Vector.prototype.set = function set(x, y, z) {
  * <code>
  * var v1 = createVector(1, 2, 3);
  * var v2 = v1.copy();
- * print(v1.x == v2.x && v1.y == v2.y && v1.z == v2.z);
+ * print(v1.x === v2.x && v1.y === v2.y && v1.z === v2.z);
  * // Prints "true"
  * </code>
  * </div>
@@ -188,7 +188,7 @@ p5.Vector.prototype.copy = function copy() {
  * <div class="norender">
  * <code>
  * var v = createVector(1, 2, 3);
- * v.add(4,5,6);
+ * v.add(4, 5, 6);
  * // v's components are set to [5, 7, 9]
  * </code>
  * </div>
@@ -201,6 +201,7 @@ p5.Vector.prototype.copy = function copy() {
  *
  * var v3 = p5.Vector.add(v1, v2);
  * // v3 has components [3, 5, 7]
+ * print(v3);
  * </code>
  * </div>
  */
@@ -256,6 +257,7 @@ p5.Vector.prototype.add = function add(x, y, z) {
  *
  * var v3 = p5.Vector.sub(v1, v2);
  * // v3 has components [1, 1, 1]
+ * print(v3);
  * </code>
  * </div>
  */
@@ -306,6 +308,7 @@ p5.Vector.prototype.sub = function sub(x, y, z) {
  * var v1 = createVector(1, 2, 3);
  * var v2 = p5.Vector.mult(v1, 2);
  * // v2 has components [2, 4, 6]
+ * print(v2);
  * </code>
  * </div>
  */
@@ -342,9 +345,10 @@ p5.Vector.prototype.mult = function mult(n) {
  * <div class="norender">
  * <code>
  * // Static method
- * var v1  = createVector(6, 4, 2);
- * var v2 = p5.Vector.div(v, 2);
+ * var v1 = createVector(6, 4, 2);
+ * var v2 = p5.Vector.div(v1, 2);
  * // v2 has components [3, 2, 1]
+ * print(v2);
  * </code>
  * </div>
  */
@@ -436,7 +440,7 @@ p5.Vector.prototype.magSq = function magSq() {
  * //Static method
  * var v1 = createVector(1, 2, 3);
  * var v2 = createVector(3, 2, 1);
- * print (p5.Vector.dot(v1, v2)); // Prints "10"
+ * print(p5.Vector.dot(v1, v2)); // Prints "10"
  * </code>
  * </div>
  */
@@ -478,6 +482,7 @@ p5.Vector.prototype.dot = function dot(x, y, z) {
  *
  * var crossProduct = p5.Vector.cross(v1, v2);
  * // crossProduct has components [0, 0, 1]
+ * print(crossProduct);
  * </code>
  * </div>
  */
@@ -506,6 +511,7 @@ p5.Vector.prototype.cross = function cross(v) {
  * var v2 = createVector(0, 1, 0);
  *
  * var distance = v1.dist(v2); // distance is 1.4142...
+ * print(distance);
  * </code>
  * </div>
  *
@@ -515,8 +521,9 @@ p5.Vector.prototype.cross = function cross(v) {
  * var v1 = createVector(1, 0, 0);
  * var v2 = createVector(0, 1, 0);
  *
- * var distance = p5.Vector.dist(v1,v2);
+ * var distance = p5.Vector.dist(v1, v2);
  * // distance is 1.4142...
+ * print(distance);
  * </code>
  * </div>
  */
@@ -604,13 +611,13 @@ p5.Vector.prototype.setMag = function setMag(n) {
  * <div class = "norender">
  * <code>
  * function setup() {
- *   var v1 = createVector(30,50);
+ *   var v1 = createVector(30, 50);
  *   print(v1.heading()); // 1.0303768265243125
  *
- *   var v1 = createVector(40,50);
+ *   v1 = createVector(40, 50);
  *   print(v1.heading()); // 0.8960553845713439
  *
- *   var v1 = createVector(30,70);
+ *   v1 = createVector(30, 70);
  *   print(v1.heading()); // 1.1659045405098132
  * }
  * </code>
@@ -670,6 +677,7 @@ p5.Vector.prototype.rotate = function rotate(a) {
  *
  * var angle = v1.angleBetween(v2);
  * // angle is PI/2
+ * print(angle);
  * </code>
  * </div>
  */
@@ -717,6 +725,7 @@ p5.Vector.prototype.angleBetween = function angleBetween(v) {
  *
  * var v3 = p5.Vector.lerp(v1, v2, 0.5);
  * // v3 has components [50,50,0]
+ * print(v3);
  * </code>
  * </div>
  */
@@ -748,7 +757,7 @@ p5.Vector.prototype.lerp = function lerp(x, y, z, amt) {
  * <div class = "norender">
  * <code>
  * function setup() {
- *   var v = createVector(20,30);
+ *   var v = createVector(20, 30);
  *   print(v.array()); // Prints : Array [20, 30, 0]
  * }
  * </code>
@@ -779,12 +788,12 @@ p5.Vector.prototype.array = function array() {
  * @example
  * <div class = "norender">
  * <code>
- * v1 = createVector(5,10,20);
- * v2 = createVector(5,10,20);
- * v3 = createVector(13,10,19);
+ * var v1 = createVector(5, 10, 20);
+ * var v2 = createVector(5, 10, 20);
+ * var v3 = createVector(13, 10, 19);
  *
- * print(v1.equals(v2.x,v2.y,v2.z)); // true
- * print(v1.equals(v3.x,v3.y,v3.z)); // false
+ * print(v1.equals(v2.x, v2.y, v2.z)); // true
+ * print(v1.equals(v3.x, v3.y, v3.z)); // false
  * </code>
  * </div>
  *
@@ -793,8 +802,8 @@ p5.Vector.prototype.array = function array() {
  * var v1 = createVector(10.0, 20.0, 30.0);
  * var v2 = createVector(10.0, 20.0, 30.0);
  * var v3 = createVector(0.0, 0.0, 0.0);
- * print (v1.equals(v2)) // true
- * print (v1.equals(v3)) // false
+ * print(v1.equals(v2)); // true
+ * print(v1.equals(v3)); // false
  * </code>
  * </div>
  */
@@ -834,20 +843,20 @@ p5.Vector.prototype.equals = function equals(x, y, z) {
  * <div>
  * <code>
  * function draw() {
- *   background (200);
+ *   background(200);
  *
  *   // Create a variable, proportional to the mouseX,
  *   // varying from 0-360, to represent an angle in degrees.
  *   angleMode(DEGREES);
- *   var myDegrees = map(mouseX, 0,width, 0,360);
+ *   var myDegrees = map(mouseX, 0, width, 0, 360);
  *
  *   // Display that variable in an onscreen text.
  *   // (Note the nfc() function to truncate additional decimal places,
  *   // and the "\xB0" character for the degree symbol.)
- *   var readout = "angle = " + nfc(myDegrees,1,1) + "\xB0"
+ *   var readout = 'angle = ' + nfc(myDegrees, 1, 1) + '\xB0';
  *   noStroke();
- *   fill (0);
- *   text (readout, 5, 15);
+ *   fill(0);
+ *   text(readout, 5, 15);
  *
  *   // Create a p5.Vector using the fromAngle function,
  *   // and extract its x and y components.
@@ -856,13 +865,13 @@ p5.Vector.prototype.equals = function equals(x, y, z) {
  *   var vy = v.y;
  *
  *   push();
- *   translate (width/2, height/2);
+ *   translate(width / 2, height / 2);
  *   noFill();
- *   stroke (150);
- *   line (0,0, 30,0);
- *   stroke (0);
- *   line (0,0, 30*vx, 30*vy);
- *   pop()
+ *   stroke(150);
+ *   line(0, 0, 30, 0);
+ *   stroke(0);
+ *   line(0, 0, 30 * vx, 30 * vy);
+ *   pop();
  * }
  * </code>
  * </div>
@@ -894,6 +903,7 @@ p5.Vector.fromAngle = function fromAngle(angle) {
  * // [0.61554617, -0.51195765, 0.0] or
  * // [-0.4695841, -0.14366731, 0.0] or
  * // [0.6091097, -0.22805278, 0.0]
+ * print(v);
  * </code>
  * </div>
  */
@@ -927,6 +937,7 @@ p5.Vector.random2D = function random2D() {
  * // [0.61554617, -0.51195765, 0.599168] or
  * // [-0.4695841, -0.14366731, -0.8711202] or
  * // [0.6091097, -0.22805278, -0.7595902]
+ * print(v);
  * </code>
  * </div>
  */
