@@ -198,7 +198,7 @@ function eslintFiles(opts, filesSrc) {
     outputFile: false,
     quiet: false,
     maxWarnings: -1,
-    envs: ['eslint-samples/p5'],
+    envs: ['eslint-samples/p5', 'amd'],
     format: 'unix'
   };
 
