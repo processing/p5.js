@@ -38,7 +38,9 @@ p5.Texture = function(renderer, obj) {
     typeof p5.MediaElement !== 'undefined' && obj instanceof p5.MediaElement;
   this._videoPrevUpdateTime = 0;
   this.isSrcHTMLElement =
-    typeof p5.Element !== 'undefined' && obj instanceof p5.Element;
+    typeof p5.Element !== 'undefined' &&
+    obj instanceof p5.Element &&
+    !(obj instanceof p5.Graphics);
   this.isSrcP5Image = obj instanceof p5.Image;
   this.isSrcP5Graphics = obj instanceof p5.Graphics;
 
