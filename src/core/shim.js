@@ -1,29 +1,32 @@
-
 // requestAnim shim layer by Paul Irish
-window.requestAnimationFrame = (function(){
-  return window.requestAnimationFrame      ||
-        window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame    ||
-        window.oRequestAnimationFrame      ||
-        window.msRequestAnimationFrame     ||
-        function(callback, element){
-          // should '60' here be framerate?
-          window.setTimeout(callback, 1000 / 60);
-        };
+window.requestAnimationFrame = (function() {
+  return (
+    window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.oRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    function(callback, element) {
+      // should '60' here be framerate?
+      window.setTimeout(callback, 1000 / 60);
+    }
+  );
 })();
 
 // use window.performance() to get max fast and accurate time in milliseconds
 window.performance = window.performance || {};
-window.performance.now = (function(){
+window.performance.now = (function() {
   var load_date = Date.now();
-  return window.performance.now        ||
-        window.performance.mozNow      ||
-        window.performance.msNow       ||
-        window.performance.oNow        ||
-        window.performance.webkitNow   ||
-        function () {
-          return Date.now() - load_date;
-        };
+  return (
+    window.performance.now ||
+    window.performance.mozNow ||
+    window.performance.msNow ||
+    window.performance.oNow ||
+    window.performance.webkitNow ||
+    function() {
+      return Date.now() - load_date;
+    }
+  );
 })();
 
 /*
@@ -69,13 +72,17 @@ window.performance.now = (function(){
  * Enumerable set to false to protect for...in from
  * Uint8ClampedArray.prototype pollution.
  */
-(function () {
+(function() {
   'use strict';
-  if (typeof Uint8ClampedArray !== 'undefined' &&
-      !Uint8ClampedArray.prototype.slice) {
+  if (
+    typeof Uint8ClampedArray !== 'undefined' &&
+    !Uint8ClampedArray.prototype.slice
+  ) {
     Object.defineProperty(Uint8ClampedArray.prototype, 'slice', {
       value: Array.prototype.slice,
-      writable: true, configurable: true, enumerable: false
+      writable: true,
+      configurable: true,
+      enumerable: false
     });
   }
-}());
+})();

@@ -1,6 +1,4 @@
-
 module.exports = {
-
   degreesToRadians: function(x) {
     return 2 * Math.PI * x / 360;
   },
@@ -8,5 +6,4 @@ module.exports = {
   radiansToDegrees: function(x) {
     return 360 * x / (2 * Math.PI);
   }
-
 };
