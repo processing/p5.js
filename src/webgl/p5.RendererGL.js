@@ -214,25 +214,26 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  * default is true
  * <br><br>
  * @method setAttributes
+ * @for p5
  * @param  {String|Object}  String name of attribute or object with key-value pairs
  * @param  {Boolean}        New value of named attribute
  * @example
  * <div>
  * <code>
- *  function setup() {
- *   createCanvas(150,150,WEBGL);
- *  }
+ * function setup() {
+ *   createCanvas(150, 150, WEBGL);
+ * }
  *
- *  function draw() {
+ * function draw() {
  *   background(255);
  *   push();
  *   rotateZ(frameCount * 0.02);
  *   rotateX(frameCount * 0.02);
  *   rotateY(frameCount * 0.02);
- *   fill(0,0,0);
+ *   fill(0, 0, 0);
  *   box(50);
  *   pop();
- *  }
+ * }
  * </code>
  * </div>
  * <br>
@@ -240,21 +241,21 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  * <br>
  * <div>
  * <code>
- *  function setup() {
- *   createCanvas(150,150,WEBGL);
+ * function setup() {
+ *   createCanvas(150, 150, WEBGL);
  *   setAttributes('antialias', true);
- *  }
+ * }
  *
- *  function draw() {
+ * function draw() {
  *   background(255);
  *   push();
  *   rotateZ(frameCount * 0.02);
  *   rotateX(frameCount * 0.02);
  *   rotateY(frameCount * 0.02);
- *   fill(0,0,0);
+ *   fill(0, 0, 0);
  *   box(50);
  *   pop();
- *  }
+ * }
  * </code>
  * </div>
  *
@@ -354,6 +355,7 @@ p5.RendererGL.prototype.background = function() {
 /**
  * Basic fill material for geometry with a given color
  * @method  fill
+ * @class p5.RendererGL
  * @param  {Number|Number[]|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
@@ -364,17 +366,17 @@ p5.RendererGL.prototype.background = function() {
  * @example
  * <div>
  * <code>
- * function setup(){
+ * function setup() {
  *   createCanvas(200, 200, WEBGL);
  * }
  *
- * function draw(){
- *  background(0);
- *  noStroke();
- *  fill(100, 100, 240);
- *  rotateX(frameCount * 0.01);
- *  rotateY(frameCount * 0.01);
- *  box(75, 75, 75);
+ * function draw() {
+ *   background(0);
+ *   noStroke();
+ *   fill(100, 100, 240);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   box(75, 75, 75);
  * }
  * </code>
  * </div>
@@ -405,17 +407,17 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
  * @example
  * <div>
  * <code>
- * function setup(){
+ * function setup() {
  *   createCanvas(200, 200, WEBGL);
  * }
  *
- * function draw(){
- *  background(0);
- *  noFill();
- *  stroke(100, 100, 240);
- *  rotateX(frameCount * 0.01);
- *  rotateY(frameCount * 0.01);
- *  box(75, 75, 75);
+ * function draw() {
+ *   background(0);
+ *   noFill();
+ *   stroke(100, 100, 240);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   box(75, 75, 75);
  * }
  * </code>
  * </div>
@@ -435,17 +437,17 @@ p5.RendererGL.prototype.noFill = function() {
  * @example
  * <div>
  * <code>
- * function setup(){
+ * function setup() {
  *   createCanvas(200, 200, WEBGL);
  * }
  *
- * function draw(){
- *  background(0);
- *  noStroke();
- *  fill(240, 150, 150);
- *  rotateX(frameCount * 0.01);
- *  rotateY(frameCount * 0.01);
- *  box(75, 75, 75);
+ * function draw() {
+ *   background(0);
+ *   noStroke();
+ *   fill(240, 150, 150);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   box(75, 75, 75);
  * }
  * </code>
  * </div>
@@ -470,17 +472,17 @@ p5.RendererGL.prototype.noStroke = function() {
  * @example
  * <div>
  * <code>
- * function setup(){
+ * function setup() {
  *   createCanvas(200, 200, WEBGL);
  * }
  *
- * function draw(){
- *  background(0);
- *  stroke(240, 150, 150);
- *  fill(100, 100, 240);
- *  rotateX(frameCount * 0.01);
- *  rotateY(frameCount * 0.01);
- *  box(75, 75, 75);
+ * function draw() {
+ *   background(0);
+ *   stroke(240, 150, 150);
+ *   fill(100, 100, 240);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   box(75, 75, 75);
  * }
  * </code>
  * </div>
@@ -510,17 +512,17 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
  * @example
  * <div>
  * <code>
- * function setup(){
+ * function setup() {
  *   createCanvas(200, 400, WEBGL);
  *   setAttributes('antialias', true);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(0);
  *   noStroke();
- *   translate(0,-100,0);
- *   stroke(240,150,150);
- *   fill(100,100,240);
+ *   translate(0, -100, 0);
+ *   stroke(240, 150, 150);
+ *   fill(100, 100, 240);
  *   push();
  *   strokeWeight(8);
  *   rotateX(frameCount * 0.01);
@@ -528,14 +530,13 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
  *   sphere(75);
  *   pop();
  *   push();
- *   translate(0,200,0);
+ *   translate(0, 200, 0);
  *   strokeWeight(1);
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
  *   sphere(75);
  *   pop();
  * }
- *
  * </code>
  * </div>
  *

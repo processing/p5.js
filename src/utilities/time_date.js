@@ -19,7 +19,7 @@ var p5 = require('../core/core');
  * <div>
  * <code>
  * var d = day();
- * text("Current day: \n" + d, 5, 50);
+ * text('Current day: \n' + d, 5, 50);
  * </code>
  * </div>
  *
@@ -41,7 +41,7 @@ p5.prototype.day = function() {
  * <div>
  * <code>
  * var h = hour();
- * text("Current hour:\n" + h, 5, 50);
+ * text('Current hour:\n' + h, 5, 50);
  * </code>
  * </div>
  *
@@ -63,7 +63,7 @@ p5.prototype.hour = function() {
  * <div>
  * <code>
  * var m = minute();
- * text("Current minute: \n" + m, 5, 50);
+ * text('Current minute: \n' + m, 5, 50);
  * </code>
  * </div>
  *
@@ -86,7 +86,7 @@ p5.prototype.minute = function() {
  * <div>
  * <code>
  * var millisecond = millis();
- * text("Milliseconds \nrunning: \n" + millisecond, 5, 40);
+ * text('Milliseconds \nrunning: \n' + millisecond, 5, 40);
  * </code>
  * </div>
  *
@@ -108,7 +108,7 @@ p5.prototype.millis = function() {
  * <div>
  * <code>
  * var m = month();
- * text("Current month: \n" + m, 5, 50);
+ * text('Current month: \n' + m, 5, 50);
  * </code>
  * </div>
  *
@@ -130,7 +130,7 @@ p5.prototype.month = function() {
  * <div>
  * <code>
  * var s = second();
- * text("Current second: \n" + s, 5, 50);
+ * text('Current second: \n' + s, 5, 50);
  * </code>
  * </div>
  *
@@ -152,7 +152,7 @@ p5.prototype.second = function() {
  * <div>
  * <code>
  * var y = year();
- * text("Current year: \n" + y, 5, 50);
+ * text('Current year: \n' + y, 5, 50);
  * </code>
  * </div>
  *

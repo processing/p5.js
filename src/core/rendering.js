@@ -125,7 +125,7 @@ p5.prototype.createCanvas = function(w, h, renderer) {
  * }
  *
  * function draw() {
- *  background(0, 100, 200);
+ *   background(0, 100, 200);
  * }
  *
  * function windowResized() {
@@ -205,7 +205,7 @@ p5.prototype.noCanvas = function() {
  *   background(200);
  *   pg.background(100);
  *   pg.noStroke();
- *   pg.ellipse(pg.width/2, pg.height/2, 50, 50);
+ *   pg.ellipse(pg.width / 2, pg.height / 2, 50, 50);
  *   image(pg, 50, 50);
  *   image(pg, 0, 0, 50, 50);
  * }

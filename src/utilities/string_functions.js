@@ -25,8 +25,8 @@ require('../core/error_helpers');
  * @example
  * <div>
  * <code>
- * var array = ["Hello", "world!"]
- * var separator = " "
+ * var array = ['Hello', 'world!'];
+ * var separator = ' ';
  * var message = join(array, separator);
  * text(message, 5, 50);
  * </code>
@@ -66,10 +66,10 @@ p5.prototype.join = function(list, separator) {
  * @example
  * <div>
  * <code>
- * var string = "Hello p5js*!"
- * var regexp = "p5js\\*"
- * var match = match(string, regexp);
- * text(match, 5, 50);
+ * var string = 'Hello p5js*!';
+ * var regexp = 'p5js\\*';
+ * var m = match(string, regexp);
+ * text(m, 5, 50);
  * </code>
  * </div>
  *
@@ -108,8 +108,8 @@ p5.prototype.match = function(str, reg) {
  * @example
  * <div class="norender">
  * <code>
- * var string = "Hello p5js*! Hello world!"
- * var regexp = "Hello"
+ * var string = 'Hello p5js*! Hello world!';
+ * var regexp = 'Hello';
  * matchAll(string, regexp);
  * </code>
  * </div>
@@ -255,7 +255,7 @@ function doNf() {
  * function setup() {
  *   background(200);
  *   var num = 11253106.115;
- *   var numArr = new Array(1,1,2);
+ *   var numArr = [1, 1, 2];
  *
  *   noStroke();
  *   fill(0);
@@ -459,8 +459,8 @@ function addNfs() {
  * @example
  * <div>
  * <code>
- * var names = "Pat,Xio,Alex"
- * var splitString = split(names, ",");
+ * var names = 'Pat,Xio,Alex';
+ * var splitString = split(names, ',');
  * text(splitString[0], 5, 30);
  * text(splitString[1], 5, 50);
  * text(splitString[2], 5, 70);
@@ -494,8 +494,8 @@ p5.prototype.split = function(str, delim) {
  * <div class = "norender">
  * <code>
  * function setup() {
- *   var myStr = "Mango, Banana, Lime";
- *   var myStrArr = splitTokens(myStr, ",");
+ *   var myStr = 'Mango, Banana, Lime';
+ *   var myStrArr = splitTokens(myStr, ',');
  *
  *   print(myStrArr); // prints : ["Mango"," Banana"," Lime"]
  * }
@@ -543,8 +543,8 @@ p5.prototype.splitTokens = function() {
  * @example
  * <div>
  * <code>
- * var string = trim("  No new lines\n   ");
- * text(string +" here", 2, 50);
+ * var string = trim('  No new lines\n   ');
+ * text(string + ' here', 2, 50);
  * </code>
  * </div>
  *

@@ -82,15 +82,15 @@ p5.Table = function(rows) {
  * function preload() {
  *   //my table is comma separated value "csv"
  *   //and has a header specifying the columns labels
- *   table = loadTable("assets/mammals.csv", "csv", "header");
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
  * }
  *
  * function setup() {
  *   //add a row
  *   var newRow = table.addRow();
- *   newRow.setString("id", table.getRowCount() - 1);
- *   newRow.setString("species", "Canis Lupus");
- *   newRow.setString("name", "Wolf");
+ *   newRow.setString('id', table.getRowCount() - 1);
+ *   newRow.setString('species', 'Canis Lupus');
+ *   newRow.setString('name', 'Wolf');
  *
  *   //print the results
  *   for (var r = 0; r < table.getRowCount(); r++)
@@ -139,12 +139,12 @@ p5.Table.prototype.addRow = function(row) {
  * function preload() {
  *   //my table is comma separated value "csv"
  *   //and has a header specifying the columns labels
- *   table = loadTable("assets/mammals.csv", "csv", "header");
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
  * }
  *
  * function setup() {
  *   //remove the first row
- *   var r = table.removeRow(0);
+ *   table.removeRow(0);
  *
  *   //print the results
  *   for (var r = 0; r < table.getRowCount(); r++)
@@ -189,15 +189,16 @@ p5.Table.prototype.removeRow = function(id) {
  * function preload() {
  *   //my table is comma separated value "csv"
  *   //and has a header specifying the columns labels
- *   table = loadTable("assets/mammals.csv", "csv", "header");
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
  * }
  *
  * function setup() {
  *   var row = table.getRow(1);
  *   //print it column by column
  *   //note: a row is an object, not an array
- *   for (var c = 0; c < table.getColumnCount(); c++)
+ *   for (var c = 0; c < table.getColumnCount(); c++) {
  *     print(row.getString(c));
+ *   }
  * }
  * </code>
  * </div>
@@ -232,18 +233,19 @@ p5.Table.prototype.getRow = function(r) {
  * function preload() {
  *   //my table is comma separated value "csv"
  *   //and has a header specifying the columns labels
- *   table = loadTable("assets/mammals.csv", "csv", "header");
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
  * }
  *
  * function setup() {
  *   var rows = table.getRows();
  *
  *   //warning: rows is an array of objects
- *   for (var r = 0; r < rows.length; r++)
- *     rows[r].set("name", "Unicorn");
+ *   for (var r = 0; r < rows.length; r++) {
+ *     rows[r].set('name', 'Unicorn');
+ *   }
  *
  *   //print the results
- *   for (var r = 0; r < table.getRowCount(); r++)
+ *   for (r = 0; r < table.getRowCount(); r++)
  *     for (var c = 0; c < table.getColumnCount(); c++)
  *       print(table.getString(r, c));
  * }
@@ -287,14 +289,14 @@ p5.Table.prototype.getRows = function() {
  * function preload() {
  *   //my table is comma separated value "csv"
  *   //and has a header specifying the columns labels
- *   table = loadTable("assets/mammals.csv", "csv", "header");
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
  * }
  *
  * function setup() {
  *   //find the animal named zebra
- *   var row = table.findRow("Zebra", "name");
+ *   var row = table.findRow('Zebra', 'name');
  *   //find the corresponding species
- *   print(row.getString("species"));
+ *   print(row.getString('species'));
  * }
  * </code>
  * </div>
@@ -352,19 +354,19 @@ p5.Table.prototype.findRow = function(value, column) {
  * function preload() {
  *   //my table is comma separated value "csv"
  *   //and has a header specifying the columns labels
- *   table = loadTable("assets/mammals.csv", "csv", "header");
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
  * }
  *
  * function setup() {
  *   //add another goat
  *   var newRow = table.addRow();
- *   newRow.setString("id", table.getRowCount() - 1);
- *   newRow.setString("species", "Scape Goat");
- *   newRow.setString("name", "Goat");
+ *   newRow.setString('id', table.getRowCount() - 1);
+ *   newRow.setString('species', 'Scape Goat');
+ *   newRow.setString('name', 'Goat');
  *
  *   //find the rows containing animals named Goat
- *   var rows = table.findRows("Goat", "name");
- *   print(rows.length + " Goats found");
+ *   var rows = table.findRows('Goat', 'name');
+ *   print(rows.length + ' Goats found');
  * }
  * </code>
  * </div>
@@ -510,12 +512,12 @@ p5.Table.prototype.matchRows = function(regexp, column) {
  * function preload() {
  *   //my table is comma separated value "csv"
  *   //and has a header specifying the columns labels
- *   table = loadTable("assets/mammals.csv", "csv", "header");
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
  * }
  *
  * function setup() {
  *   //getColumn returns an array that can be printed directly
- *   print(table.getColumn("species"));
+ *   print(table.getColumn('species'));
  *   //outputs ["Capra hircus", "Panthera pardus", "Equus zebra"]
  * }
  * </code>
@@ -561,13 +563,13 @@ p5.Table.prototype.getColumn = function(value) {
  * function preload() {
  *   //my table is comma separated value "csv"
  *   //and has a header specifying the columns labels
- *   table = loadTable("assets/mammals.csv", "csv", "header");
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
  * }
  *
  * function setup() {
  *   table.clearRows();
- *   print(table.getRowCount() + " total rows in table");
- *   print(table.getColumnCount() + " total columns in table");
+ *   print(table.getRowCount() + ' total rows in table');
+ *   print(table.getColumnCount() + ' total columns in table');
  * }
  * </code>
  * </div>
@@ -606,14 +608,14 @@ p5.Table.prototype.clearRows = function() {
  * function preload() {
  *   //my table is comma separated value "csv"
  *   //and has a header specifying the columns labels
- *   table = loadTable("assets/mammals.csv", "csv", "header");
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
  * }
  *
  * function setup() {
- *   table.addColumn("carnivore");
- *   table.set(0, "carnivore", "no");
- *   table.set(1, "carnivore", "yes");
- *   table.set(2, "carnivore", "no");
+ *   table.addColumn('carnivore');
+ *   table.set(0, 'carnivore', 'no');
+ *   table.set(1, 'carnivore', 'yes');
+ *   table.set(2, 'carnivore', 'no');
  *
  *   //print the results
  *   for (var r = 0; r < table.getRowCount(); r++)
@@ -767,11 +769,11 @@ p5.Table.prototype.trim = function(column) {
  * function preload() {
  *   //my table is comma separated value "csv"
  *   //and has a header specifying the columns labels
- *   table = loadTable("assets/mammals.csv", "csv", "header");
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
  * }
  *
  * function setup() {
- *   table.removeColumn("id");
+ *   table.removeColumn('id');
  *   print(table.getColumnCount());
  * }
  * </code>
@@ -833,12 +835,12 @@ p5.Table.prototype.removeColumn = function(c) {
  * function preload() {
  *   //my table is comma separated value "csv"
  *   //and has a header specifying the columns labels
- *   table = loadTable("assets/mammals.csv", "csv", "header");
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
  * }
  *
  * function setup() {
- *   table.set(0, "species", "Canis Lupus");
- *   table.set(0, "name", "Wolf");
+ *   table.set(0, 'species', 'Canis Lupus');
+ *   table.set(0, 'name', 'Wolf');
  *
  *   //print the results
  *   for (var r = 0; r < table.getRowCount(); r++)
@@ -883,11 +885,11 @@ p5.Table.prototype.set = function(row, column, value) {
  * function preload() {
  *   //my table is comma separated value "csv"
  *   //and has a header specifying the columns labels
- *   table = loadTable("assets/mammals.csv", "csv", "header");
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
  * }
  *
  * function setup() {
- *   table.setNum(1, "id", 1);
+ *   table.setNum(1, 'id', 1);
  *
  *   print(table.getColumn(0));
  *   //["0", 1, "2"]
@@ -944,13 +946,13 @@ p5.Table.prototype.setString = function(row, column, value) {
  * function preload() {
  *   //my table is comma separated value "csv"
  *   //and has a header specifying the columns labels
- *   table = loadTable("assets/mammals.csv", "csv", "header");
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
  * }
  *
  * function setup() {
  *   print(table.get(0, 1));
  *   //Capra hircus
- *   print(table.get(0, "species"));
+ *   print(table.get(0, 'species'));
  *   //Capra hircus
  * }
  * </code>
@@ -991,7 +993,7 @@ p5.Table.prototype.get = function(row, column) {
  * function preload() {
  *   //my table is comma separated value "csv"
  *   //and has a header specifying the columns labels
- *   table = loadTable("assets/mammals.csv", "csv", "header");
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
  * }
  *
  * function setup() {
@@ -1036,15 +1038,16 @@ p5.Table.prototype.getNum = function(row, column) {
  * function preload() {
  *   //my table is comma separated value "csv"
  *   //and has a header specifying the columns labels
- *   table = loadTable("assets/mammals.csv", "csv", "header");
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
  * }
  *
  * function setup() {
  *   var tableArray = table.getArray();
  *
  *   //output each row as array
- *   for (var i = 0; i < tableArray.length; i++)
+ *   for (var i = 0; i < tableArray.length; i++) {
  *     print(tableArray[i]);
+ *   }
  * }
  * </code>
  * </div>
@@ -1083,7 +1086,7 @@ p5.Table.prototype.getString = function(row, column) {
  * function preload() {
  *   //my table is comma separated value "csv"
  *   //and has a header specifying the columns labels
- *   table = loadTable("assets/mammals.csv", "csv", "header");
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
  * }
  *
  * function setup() {

@@ -96,34 +96,57 @@ module.exports = function(grunt) {
     keepalive = true;
   }
 
-  grunt.initConfig({
+  let gruntConfig = {
     // read in the package, used for knowing the current version, et al.
     pkg: grunt.file.readJSON('package.json'),
 
     // Configure style consistency checking for this file, the source, and the tests.
     eslint: {
       options: {
+        format: 'unix',
         configFile: '.eslintrc'
       },
       build: {
-        src: ['Gruntfile.js', 'tasks/**/*.js']
-      },
-      fix: {
         src: [
           'Gruntfile.js',
-          'tasks/**/*.js',
-          'test/unit/**/*.js',
-          'src/**/*.js'
-        ],
+          'grunt-karma.js',
+          'docs/preprocessor.js',
+          'utils/**/*.js',
+          'tasks/**/*.js'
+        ]
+      },
+      fix: {
+        // src: is calculated below...
         options: {
           fix: true
         }
       },
       source: {
-        src: ['src/**/*.js']
+        src: ['src/**/*.js', 'lib/addons/p5.dom.js']
       },
       test: {
-        src: ['test/unit/**/*.js']
+        src: [
+          'bench/**/*.js',
+          'test/test-docs-preprocessor/**/*.js',
+          'test/node/**/*.js',
+          'test/reporter/**/*.js',
+          'test/unit/**/*.js'
+        ]
+      }
+    },
+
+    'eslint-samples': {
+      options: {
+        configFile: '.eslintrc',
+        format: 'unix'
+      },
+      source: {
+        src: ['src/**/*.js', 'lib/addons/p5.dom.js']
+      },
+      fix: {
+        options: {
+          fix: true
+        }
       }
     },
 
@@ -162,9 +185,13 @@ module.exports = function(grunt) {
         tasks: ['requirejs:yuidoc_theme']
       },
       // Watch the codebase for doc updates
+      // launch with 'grunt requirejs connect watch:yui'
       yui: {
         files: ['src/**/*.js', 'lib/addons/*.js'],
-        task: ['yuidoc']
+        tasks: ['browserify', 'yuidoc:prod', 'minjson', 'uglify'],
+        options: {
+          livereload: true
+        }
       }
     },
 
@@ -320,7 +347,24 @@ module.exports = function(grunt) {
         }
       }
     }
-  });
+  };
+
+  // eslint fixes everything it checks:
+  gruntConfig.eslint.fix.src = Object.keys(gruntConfig.eslint)
+    .map(s => gruntConfig.eslint[s].src)
+    .reduce((a, b) => a.concat(b), [])
+    .filter(a => a);
+
+  /* not yet
+  gruntConfig['eslint-samples'].fix.src = Object.keys(
+    gruntConfig['eslint-samples']
+  )
+    .map(s => gruntConfig['eslint-samples'][s].src)
+    .reduce((a, b) => a.concat(b), [])
+    .filter(a => a);
+  */
+
+  grunt.initConfig(gruntConfig);
 
   // Load build tasks.
   // This contains the complete build task ("browserify")
@@ -361,14 +405,16 @@ module.exports = function(grunt) {
     'requirejs'
   ]);
   grunt.registerTask('lint-no-fix', [
+    'yui', // required for eslint-samples
     'eslint:build',
     'eslint:source',
-    'eslint:test'
+    'eslint:test',
+    'eslint-samples:source'
   ]);
   grunt.registerTask('lint-fix', ['eslint:fix']);
   grunt.registerTask('test', [
     'lint-no-fix',
-    'yuidoc:prod',
+    //'yuidoc:prod', // already done by lint-no-fix
     'build',
     'connect',
     'mocha',

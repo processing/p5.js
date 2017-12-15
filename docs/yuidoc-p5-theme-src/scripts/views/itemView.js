@@ -88,6 +88,9 @@ define([
           itemHtml = this.classTpl(cleanItem);
 
         } else {
+
+          cleanItem.constRefs = item.module === 'Constants' && App.data.consts[item.name];
+
           itemHtml = this.tpl({
             item: cleanItem,
             syntaxes: syntaxes
