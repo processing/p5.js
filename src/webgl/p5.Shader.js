@@ -20,38 +20,40 @@ var p5 = require('../core/core');
  * <div modernizr='webgl'>
  * <code>
  * var varying = 'precision highp float; varying vec2 vPos;';
- * var vs = varying
- * +'attribute vec3 aPosition;'
- * +'void main() { vPos = (gl_Position = vec4(aPosition,1.0)).xy; }';
- * var fs = varying
- * +'uniform vec2 p;'
- * +'uniform float r;'
- * +'const int I = 500;'
- * +'void main() {'
- * +'vec2 c = p + vPos * r, z = c;'
- * +'float n = 0.0;'
- * +'for (int i = I; i > 0; i --) {'
- * +'	 if(z.x*z.x+z.y*z.y > 4.0) {'
- * +'    n = float(i)/float(I);'
- * +'    break;'
- * +'  }'
- * +'	 z = vec2(z.x*z.x-z.y*z.y, 2.0*z.x*z.y) + c;'
- * +'}'
- * +'gl_FragColor = vec4(0.5-cos(n*17.0)/2.0,0.5-cos(n*13.0)/2.0,0.5-cos(n*23.0)/2.0,1.0);'
- * +'}';
+ * var vs =
+ *   varying +
+ *   'attribute vec3 aPosition;' +
+ *   'void main() { vPos = (gl_Position = vec4(aPosition,1.0)).xy; }';
+ * var fs =
+ *   varying +
+ *   'uniform vec2 p;' +
+ *   'uniform float r;' +
+ *   'const int I = 500;' +
+ *   'void main() {' +
+ *   '  vec2 c = p + vPos * r, z = c;' +
+ *   '  float n = 0.0;' +
+ *   '  for (int i = I; i > 0; i --) {' +
+ *   '    if(z.x*z.x+z.y*z.y > 4.0) {' +
+ *   '      n = float(i)/float(I);' +
+ *   '      break;' +
+ *   '    }' +
+ *   '    z = vec2(z.x*z.x-z.y*z.y, 2.0*z.x*z.y) + c;' +
+ *   '  }' +
+ *   '  gl_FragColor = vec4(0.5-cos(n*17.0)/2.0,0.5-cos(n*13.0)/2.0,0.5-cos(n*23.0)/2.0,1.0);' +
+ *   '}';
  *
  * var mandel;
  * function setup() {
  *   var renderer = createCanvas(100, 100, WEBGL);
  *   mandel = new p5.Shader(renderer, vs, fs);
  *   shader(mandel);
- *   mandel.setUniform('p', [-0.74364388703,0.13182590421]);
+ *   mandel.setUniform('p', [-0.74364388703, 0.13182590421]);
  *   noStroke();
  * }
  *
  * function draw() {
- *  mandel.setUniform('r', 1.5 * exp(-6.5 * (1 + sin(millis()/2000))));
- *  quad(-1, -1, 1, -1, 1, 1, -1, 1);
+ *   mandel.setUniform('r', 1.5 * exp(-6.5 * (1 + sin(millis() / 2000))));
+ *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
  * }
  * </code>
  * </div>
