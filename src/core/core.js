@@ -60,14 +60,16 @@ var p5 = function(sketch, node, sync) {
    * <div><code>
    * var img;
    * var c;
-   * function preload() {  // preload() runs once
+   * function preload() {
+  // preload() runs once
    *   img = loadImage('assets/laDefense.jpg');
    * }
    *
-   * function setup() {  // setup() waits until preload() is done
+   * function setup() {
+  // setup() waits until preload() is done
    *   img.loadPixels();
    *   // get color of middle pixel
-   *   c = img.get(img.width/2, img.height/2);
+   *   c = img.get(img.width / 2, img.height / 2);
    * }
    *
    * function draw() {
@@ -103,7 +105,7 @@ var p5 = function(sketch, node, sync) {
    * }
    *
    * function draw() {
-   *   rect(a++%width, 10, 2, 80);
+   *   rect(a++ % width, 10, 2, 80);
    * }
    * </code></div>
    *
@@ -143,10 +145,12 @@ var p5 = function(sketch, node, sync) {
    * @example
    * <div><code>
    * var yPos = 0;
-   * function setup() {  // setup() runs once
+   * function setup() {
+  // setup() runs once
    *   frameRate(30);
    * }
-   * function draw() {  // draw() loops forever, until stopped
+   * function draw() {
+  // draw() loops forever, until stopped
    *   background(204);
    *   yPos = yPos - 1;
    *   if (yPos < 0) {

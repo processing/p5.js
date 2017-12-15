@@ -53,10 +53,11 @@ p5.Element = function(elt, pInst) {
  * @example
  * <div class="norender"><code>
  * // in the html file:
- * &lt;div id="myContainer">&lt;/div>
+ * // &lt;div id="myContainer">&lt;/div>
+ *
  * // in the js file:
  * var cnv = createCanvas(100, 100);
- * cnv.parent("myContainer");
+ * cnv.parent('myContainer');
  * </code></div>
  * <div class='norender'><code>
  * var div0 = createDiv('this is the parent');
@@ -115,7 +116,7 @@ p5.Element.prototype.parent = function(p) {
  *   var cnv = createCanvas(100, 100);
  *   // Assigns a CSS selector ID to
  *   // the canvas element.
- *   cnv.id("mycanvas");
+ *   cnv.id('mycanvas');
  * }
  * </code></div>
  *
@@ -178,14 +179,14 @@ p5.Element.prototype.class = function(c) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mousePressed(changeGray); // attach listener for
- *                                 // canvas click only
+ *   // canvas click only
  *   d = 10;
  *   g = 100;
  * }
  *
  * function draw() {
  *   background(g);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires with any click anywhere
@@ -228,14 +229,14 @@ p5.Element.prototype.mousePressed = function(fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.doubleClicked(changeGray); // attach listener for
- *                                  // canvas double click only
+ *   // canvas double click only
  *   d = 10;
  *   g = 100;
  * }
  *
  * function draw() {
  *   background(g);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires with any double click anywhere
@@ -287,14 +288,14 @@ p5.Element.prototype.doubleClicked = function(fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseWheel(changeSize); // attach listener for
- *                               // activity on canvas only
+ *   // activity on canvas only
  *   d = 10;
  *   g = 100;
  * }
  *
  * function draw() {
  *   background(g);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires with mousewheel movement
@@ -343,14 +344,14 @@ p5.Element.prototype.mouseWheel = function(fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseReleased(changeGray); // attach listener for
- *                                  // activity on canvas only
+ *   // activity on canvas only
  *   d = 10;
  *   g = 100;
  * }
  *
  * function draw() {
  *   background(g);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires after the mouse has been
@@ -398,14 +399,14 @@ p5.Element.prototype.mouseReleased = function(fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseClicked(changeGray); // attach listener for
- *                                 // activity on canvas only
+ *   // activity on canvas only
  *   d = 10;
  *   g = 100;
  * }
  *
  * function draw() {
  *   background(g);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires after the mouse has been
@@ -450,7 +451,7 @@ p5.Element.prototype.mouseClicked = function(fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseMoved(changeSize); // attach listener for
- *                               // activity on canvas only
+ *   // activity on canvas only
  *   d = 10;
  *   g = 100;
  * }
@@ -458,7 +459,7 @@ p5.Element.prototype.mouseClicked = function(fxn) {
  * function draw() {
  *   background(g);
  *   fill(200);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires when mouse moves anywhere on
@@ -505,7 +506,6 @@ p5.Element.prototype.mouseMoved = function(fxn) {
  * <div class='norender'><code>
  * var cnv;
  * var d;
- * var g;
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseOver(changeGray);
@@ -513,7 +513,7 @@ p5.Element.prototype.mouseMoved = function(fxn) {
  * }
  *
  * function draw() {
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * function changeGray() {
@@ -563,7 +563,7 @@ p5.Element.prototype.mouseOver = function(fxn) {
  * function mySelectEvent() {
  *   var item = sel.value();
  *   background(200);
- *   text("it's a "+item+"!", 50, 50);
+ *   text("it's a " + item + '!', 50, 50);
  * }
  * </code></div>
  * <div><code>
@@ -571,7 +571,7 @@ p5.Element.prototype.mouseOver = function(fxn) {
  * var cnv;
  *
  * function setup() {
- *   checkbox = createCheckbox(" fill");
+ *   checkbox = createCheckbox(' fill');
  *   checkbox.changed(changeFill);
  *   cnv = createCanvas(100, 100);
  *   cnv.position(0, 30);
@@ -651,7 +651,6 @@ p5.Element.prototype.input = function(fxn) {
  * <div class='norender'><code>
  * var cnv;
  * var d;
- * var g;
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseOut(changeGray);
@@ -659,7 +658,7 @@ p5.Element.prototype.input = function(fxn) {
  * }
  *
  * function draw() {
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * function changeGray() {
@@ -697,14 +696,14 @@ p5.Element.prototype.mouseOut = function(fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.touchStarted(changeGray); // attach listener for
- *                                 // canvas click only
+ *   // canvas click only
  *   d = 10;
  *   g = 100;
  * }
  *
  * function draw() {
  *   background(g);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires with any touch anywhere
@@ -745,7 +744,7 @@ p5.Element.prototype.touchStarted = function(fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.touchMoved(changeGray); // attach listener for
- *                               // canvas click only
+ *   // canvas click only
  *   g = 100;
  * }
  *
@@ -786,15 +785,15 @@ p5.Element.prototype.touchMoved = function(fxn) {
  * var g;
  * function setup() {
  *   cnv = createCanvas(100, 100);
- *   cnv.touchEnded(changeGray);   // attach listener for
- *                                 // canvas click only
+ *   cnv.touchEnded(changeGray); // attach listener for
+ *   // canvas click only
  *   d = 10;
  *   g = 100;
  * }
  *
  * function draw() {
  *   background(g);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires with any touch anywhere
@@ -838,7 +837,7 @@ p5.Element.prototype.touchEnded = function(fxn) {
  *   var c = createCanvas(100, 100);
  *   background(200);
  *   textAlign(CENTER);
- *   text('Drag file', width/2, height/2);
+ *   text('Drag file', width / 2, height / 2);
  *   c.dragOver(dragOverCallback);
  * }
  *
@@ -846,7 +845,7 @@ p5.Element.prototype.touchEnded = function(fxn) {
  * // a file is dragged over the canvas
  * function dragOverCallback() {
  *   background(240);
- *   text('Dragged over', width/2, height/2);
+ *   text('Dragged over', width / 2, height / 2);
  * }
  * </code></div>
  * @alt
@@ -876,7 +875,7 @@ p5.Element.prototype.dragOver = function(fxn) {
  *   var c = createCanvas(100, 100);
  *   background(200);
  *   textAlign(CENTER);
- *   text('Drag file', width/2, height/2);
+ *   text('Drag file', width / 2, height / 2);
  *   c.dragLeave(dragLeaveCallback);
  * }
  *
@@ -884,7 +883,7 @@ p5.Element.prototype.dragOver = function(fxn) {
  * // a file is dragged out of the canvas
  * function dragLeaveCallback() {
  *   background(240);
- *   text('Dragged off', width/2, height/2);
+ *   text('Dragged off', width / 2, height / 2);
  * }
  * </code></div>
  * @alt
@@ -912,7 +911,7 @@ p5.Element.prototype.dragLeave = function(fxn) {
  *   var c = createCanvas(100, 100);
  *   background(200);
  *   textAlign(CENTER);
- *   text('drop image', width/2, height/2);
+ *   text('drop image', width / 2, height / 2);
  *   c.drop(gotFile);
  * }
  *

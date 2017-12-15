@@ -24,11 +24,11 @@ require('./p5.Geometry');
  * <div>
  * <code>
  * //draw a plane with width 50 and height 50
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
  *   plane(50, 50);
  * }
@@ -101,11 +101,11 @@ p5.prototype.plane = function() {
  * <div>
  * <code>
  * //draw a spinning box with width, height and depth 200
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
@@ -209,11 +209,11 @@ p5.prototype.box = function() {
  * <div>
  * <code>
  * // draw a sphere with radius 200
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
  *   sphere(50);
  * }
@@ -374,11 +374,11 @@ var _truncatedCone = function(
  * <div>
  * <code>
  * //draw a spinning cylinder with radius 200 and height 200
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateZ(frameCount * 0.01);
@@ -443,11 +443,11 @@ p5.prototype.cylinder = function() {
  * <div>
  * <code>
  * //draw a spinning cone with radius 200 and height 200
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateZ(frameCount * 0.01);
@@ -516,11 +516,11 @@ p5.prototype.cone = function() {
  * <div>
  * <code>
  * // draw an ellipsoid with radius 20, 30 and 40.
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
  *   ellipsoid(20, 30, 40);
  * }
@@ -604,11 +604,11 @@ p5.prototype.ellipsoid = function() {
  * <div>
  * <code>
  * //draw a spinning torus with radius 200 and tube radius 60
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
@@ -923,11 +923,11 @@ p5.RendererGL.prototype.curve = function(args) {
  * <div>
  * <code>
  * //draw a line
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
