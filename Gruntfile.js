@@ -355,12 +355,14 @@ module.exports = function(grunt) {
     .reduce((a, b) => a.concat(b), [])
     .filter(a => a);
 
+  /* not yet
   gruntConfig['eslint-samples'].fix.src = Object.keys(
     gruntConfig['eslint-samples']
   )
     .map(s => gruntConfig['eslint-samples'][s].src)
     .reduce((a, b) => a.concat(b), [])
     .filter(a => a);
+  */
 
   grunt.initConfig(gruntConfig);
 
