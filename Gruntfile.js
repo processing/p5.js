@@ -103,6 +103,7 @@ module.exports = function(grunt) {
     // Configure style consistency checking for this file, the source, and the tests.
     eslint: {
       options: {
+        format: 'unix',
         configFile: '.eslintrc'
       },
       build: {
@@ -110,6 +111,7 @@ module.exports = function(grunt) {
           'Gruntfile.js',
           'grunt-karma.js',
           'docs/preprocessor.js',
+          'utils/**/*.js',
           'tasks/**/*.js'
         ]
       },
@@ -120,7 +122,7 @@ module.exports = function(grunt) {
         }
       },
       source: {
-        src: ['src/**/*.js']
+        src: ['src/**/*.js', 'lib/addons/p5.dom.js']
       },
       test: {
         src: [
@@ -130,6 +132,21 @@ module.exports = function(grunt) {
           'test/reporter/**/*.js',
           'test/unit/**/*.js'
         ]
+      }
+    },
+
+    'eslint-samples': {
+      options: {
+        configFile: '.eslintrc',
+        format: 'unix'
+      },
+      source: {
+        src: ['src/**/*.js', 'lib/addons/p5.dom.js']
+      },
+      fix: {
+        options: {
+          fix: true
+        }
       }
     },
 
@@ -334,9 +351,18 @@ module.exports = function(grunt) {
 
   // eslint fixes everything it checks:
   gruntConfig.eslint.fix.src = Object.keys(gruntConfig.eslint)
-    .map(s => s.src)
+    .map(s => gruntConfig.eslint[s].src)
     .reduce((a, b) => a.concat(b), [])
     .filter(a => a);
+
+  /* not yet
+  gruntConfig['eslint-samples'].fix.src = Object.keys(
+    gruntConfig['eslint-samples']
+  )
+    .map(s => gruntConfig['eslint-samples'][s].src)
+    .reduce((a, b) => a.concat(b), [])
+    .filter(a => a);
+  */
 
   grunt.initConfig(gruntConfig);
 
@@ -374,14 +400,16 @@ module.exports = function(grunt) {
   // Create the multitasks.
   grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);
   grunt.registerTask('lint-no-fix', [
+    'yui', // required for eslint-samples
     'eslint:build',
     'eslint:source',
-    'eslint:test'
+    'eslint:test',
+    'eslint-samples:source'
   ]);
   grunt.registerTask('lint-fix', ['eslint:fix']);
   grunt.registerTask('test', [
     'lint-no-fix',
-    'yuidoc:prod',
+    //'yuidoc:prod', // already done by lint-no-fix
     'build',
     'connect',
     'mocha',

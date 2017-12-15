@@ -58,7 +58,7 @@ var lcg = (function() {
  * <div>
  * <code>
  * randomSeed(99);
- * for (var i=0; i < 100; i++) {
+ * for (var i = 0; i < 100; i++) {
  *   var r = random(0, 255);
  *   stroke(r);
  *   line(i, 0, i, 100);
@@ -102,8 +102,8 @@ p5.prototype.randomSeed = function(seed) {
  * <code>
  * for (var i = 0; i < 100; i++) {
  *   var r = random(50);
- *   stroke(r*5);
- *   line(50, i, 50+r, i);
+ *   stroke(r * 5);
+ *   line(50, i, 50 + r, i);
  * }
  * </code>
  * </div>
@@ -111,16 +111,16 @@ p5.prototype.randomSeed = function(seed) {
  * <code>
  * for (var i = 0; i < 100; i++) {
  *   var r = random(-50, 50);
- *   line(50,i,50+r,i);
+ *   line(50, i, 50 + r, i);
  * }
  * </code>
  * </div>
  * <div>
  * <code>
  * // Get a random element from an array using the random(Array) syntax
- * var words = [ "apple", "bear", "cat", "dog" ];
- * var word = random(words);  // select random word
- * text(word,10,50);  // draw the word
+ * var words = ['apple', 'bear', 'cat', 'dog'];
+ * var word = random(words); // select random word
+ * text(word, 10, 50); // draw the word
  * </code>
  * </div>
  *
@@ -183,10 +183,11 @@ p5.prototype.random = function(min, max) {
  * @return {Number} the random number
  * @example
  * <div>
- * <code>for (var y = 0; y < 100; y++) {
- *  var x = randomGaussian(50,15);
- *  line(50, y, x, y);
- *}
+ * <code>
+ * for (var y = 0; y < 100; y++) {
+ *   var x = randomGaussian(50, 15);
+ *   line(50, y, x, y);
+ * }
  * </code>
  * </div>
  * <div>
@@ -194,23 +195,23 @@ p5.prototype.random = function(min, max) {
  *var distribution = new Array(360);
  *
  *function setup() {
- *  createCanvas(100, 100);
- *  for (var i = 0; i < distribution.length; i++) {
- *    distribution[i] = floor(randomGaussian(0,15));
- *  }
+ *   createCanvas(100, 100);
+ *   for (var i = 0; i < distribution.length; i++) {
+ *     distribution[i] = floor(randomGaussian(0, 15));
+ *   }
  *}
  *
  *function draw() {
- *  background(204);
+ *   background(204);
  *
- *  translate(width/2, width/2);
+ *   translate(width / 2, width / 2);
  *
- *  for (var i = 0; i < distribution.length; i++) {
- *    rotate(TWO_PI/distribution.length);
- *    stroke(0);
- *    var dist = abs(distribution[i]);
- *    line(0, 0, dist, 0);
- *  }
+ *   for (var i = 0; i < distribution.length; i++) {
+ *     rotate(TWO_PI / distribution.length);
+ *     stroke(0);
+ *     var dist = abs(distribution[i]);
+ *     line(0, 0, dist, 0);
+ *   }
  *}
  * </code>
  * </div>

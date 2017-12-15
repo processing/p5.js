@@ -30,7 +30,8 @@ describe('docs preprocessor', function() {
             name: 'foo',
             params: [{ name: 'baz', type: 'Number' }]
           }
-        ]
+        ],
+        consts: {}
       };
 
       merge(data);
@@ -54,7 +55,8 @@ describe('docs preprocessor', function() {
               }
             ]
           }
-        ]
+        ],
+        consts: {}
       });
     });
 
@@ -63,7 +65,8 @@ describe('docs preprocessor', function() {
         classitems: [
           { itemtype: 'method', class: 'Bar', name: 'foo' },
           { itemtype: 'method', class: 'Baz', name: 'foo' }
-        ]
+        ],
+        consts: {}
       });
     });
 
@@ -72,7 +75,8 @@ describe('docs preprocessor', function() {
         classitems: [
           { itemtype: 'property', name: 'foo' },
           { itemtype: 'property', name: 'foo' }
-        ]
+        ],
+        consts: {}
       });
     });
   });
@@ -87,13 +91,10 @@ describe('docs preprocessor', function() {
         classitems: [
           {
             description: 'hi `there`',
-            params: [
-              {
-                description: 'what is *up*'
-              }
-            ]
+            params: [{ description: 'what is *up*' }]
           }
-        ]
+        ],
+        consts: {}
       };
 
       render(data);
@@ -104,13 +105,10 @@ describe('docs preprocessor', function() {
         classitems: [
           {
             description: '<p>hi <code>there</code></p>\n',
-            params: [
-              {
-                description: '<p>what is <em>up</em></p>\n'
-              }
-            ]
+            params: [{ description: '<p>what is <em>up</em></p>\n' }]
           }
-        ]
+        ],
+        consts: {}
       });
     });
   });

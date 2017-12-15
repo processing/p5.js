@@ -62,17 +62,14 @@ require('../core/error_helpers');
  *   textFont(font, 36);
  *   text('p5*js', 10, 50);
  * }
- *
  * </code></div>
  *
  * <p>You can also use the string name of the font to style other HTML
  * elements.</p>
  *
  * <div><code>
- * var myFont;
- *
  * function preload() {
- *   myFont = loadFont('assets/Avenir.otf');
+ *   loadFont('assets/Avenir.otf');
  * }
  *
  * function setup() {
@@ -172,16 +169,16 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  * <div>
  * <code>
  * textSize(32);
- * text("word", 10, 30);
+ * text('word', 10, 30);
  * fill(0, 102, 153);
- * text("word", 10, 60);
+ * text('word', 10, 60);
  * fill(0, 102, 153, 51);
- * text("word", 10, 90);
+ * text('word', 10, 90);
  * </code>
  * </div>
  * <div>
  * <code>
- * s = "The quick brown fox jumped over the lazy dog.";
+ * var s = 'The quick brown fox jumped over the lazy dog.';
  * fill(50);
  * text(s, 10, 10, 70, 80); // Text wraps within text box
  * </code>
@@ -209,29 +206,31 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  * <code>
  * fill(0);
  * textSize(12);
- * textFont("Georgia");
- * text("Georgia", 12, 30);
- * textFont("Helvetica");
- * text("Helvetica", 12, 60);
+ * textFont('Georgia');
+ * text('Georgia', 12, 30);
+ * textFont('Helvetica');
+ * text('Helvetica', 12, 60);
  * </code>
  * </div>
  * <div>
  * <code>
  * var fontRegular, fontItalic, fontBold;
  * function preload() {
- *    fontRegular = loadFont("assets/Regular.otf");
- *    fontItalic = loadFont("assets/Italic.ttf");
- *    fontBold = loadFont("assets/Bold.ttf");
+ *   fontRegular = loadFont('assets/Regular.otf');
+ *   fontItalic = loadFont('assets/Italic.ttf');
+ *   fontBold = loadFont('assets/Bold.ttf');
  * }
  * function setup() {
- *    background(210);
- *    fill(0).strokeWeight(0).textSize(10);
- *    textFont(fontRegular);
- *    text("Font Style Normal", 10, 30);
- *    textFont(fontItalic);
- *    text("Font Style Italic", 10, 50);
- *    textFont(fontBold);
- *    text("Font Style Bold", 10, 70);
+ *   background(210);
+ *   fill(0)
+    .strokeWeight(0)
+    .textSize(10);
+ *   textFont(fontRegular);
+ *   text('Font Style Normal', 10, 30);
+ *   textFont(fontItalic);
+ *   text('Font Style Italic', 10, 50);
+ *   textFont(fontBold);
+ *   text('Font Style Bold', 10, 70);
  * }
  * </code>
  * </div>

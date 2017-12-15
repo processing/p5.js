@@ -99,11 +99,11 @@ p5.prototype._updatePAccelerations = function() {
  * @example
  * <div>
  * <code>
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
  *   //rotateZ(radians(rotationZ));
  *   rotateX(radians(rotationX));
@@ -133,11 +133,11 @@ p5.prototype.rotationX = 0;
  * @example
  * <div>
  * <code>
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
  *   //rotateZ(radians(rotationZ));
  *   //rotateX(radians(rotationX));
@@ -169,11 +169,11 @@ p5.prototype.rotationY = 0;
  * @example
  * <div>
  * <code>
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(200);
  *   rotateZ(radians(rotationZ));
  *   //rotateX(radians(rotationX));
@@ -217,11 +217,13 @@ p5.prototype.rotationZ = 0;
  * var rX = rotationX + 180;
  * var pRX = pRotationX + 180;
  *
- * if ((rX - pRX > 0 && rX - pRX < 270)|| rX - pRX < -270){
+ * if ((rX - pRX > 0 && rX - pRX < 270) || rX - pRX < -270) {
  *   rotateDirection = 'clockwise';
- * } else if (rX - pRX < 0 || rX - pRX > 270){
+ * } else if (rX - pRX < 0 || rX - pRX > 270) {
  *   rotateDirection = 'counter-clockwise';
  * }
+ *
+ * print(rotateDirection);
  * </code>
  * </div>
  *
@@ -260,11 +262,12 @@ p5.prototype.pRotationX = 0;
  * var rY = rotationY + 180;
  * var pRY = pRotationY + 180;
  *
- * if ((rY - pRY > 0 && rY - pRY < 270)|| rY - pRY < -270){
+ * if ((rY - pRY > 0 && rY - pRY < 270) || rY - pRY < -270) {
  *   rotateDirection = 'clockwise';
- * } else if (rY - pRY < 0 || rY - pRY > 270){
+ * } else if (rY - pRY < 0 || rY - pRY > 270) {
  *   rotateDirection = 'counter-clockwise';
  * }
+ * print(rotateDirection);
  * </code>
  * </div>
  *
@@ -296,18 +299,15 @@ p5.prototype.pRotationY = 0;
  * // the angles wrap around.
  * var rotateDirection = 'clockwise';
  *
- * if ((rotationZ - pRotationZ > 0 &&
- *   rotationZ - pRotationZ < 270)||
- *   rotationZ - pRotationZ < -270){
- *
+ * if (
+ *   (rotationZ - pRotationZ > 0 && rotationZ - pRotationZ < 270) ||
+ *   rotationZ - pRotationZ < -270
+ * ) {
  *   rotateDirection = 'clockwise';
- *
- * } else if (rotationZ - pRotationZ < 0 ||
- *   rotationZ - pRotationZ > 270){
- *
+ * } else if (rotationZ - pRotationZ < 0 || rotationZ - pRotationZ > 270) {
  *   rotateDirection = 'counter-clockwise';
- *
  * }
+ * print(rotateDirection);
  * </code>
  * </div>
  *
@@ -426,9 +426,9 @@ p5.prototype.setShakeThreshold = function(val) {
  *   rect(25, 25, 50, 50);
  * }
  * function deviceTurned() {
- *   if (value == 0){
- *     value = 255
- *   } else if (value == 255) {
+ *   if (value === 0) {
+ *     value = 255;
+ *   } else if (value === 255) {
  *     value = 0;
  *   }
  * }
@@ -446,10 +446,10 @@ p5.prototype.setShakeThreshold = function(val) {
  *   rect(25, 25, 50, 50);
  * }
  * function deviceTurned() {
- *   if (turnAxis == 'X'){
- *     if (value == 0){
- *       value = 255
- *     } else if (value == 255) {
+ *   if (turnAxis === 'X') {
+ *     if (value === 0) {
+ *       value = 255;
+ *     } else if (value === 255) {
  *       value = 0;
  *     }
  *   }
