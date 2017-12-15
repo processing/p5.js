@@ -32,7 +32,7 @@ var _windowPrint = window.print;
  * @example
  * <div><code class='norender'>
  * var x = 10;
- * print("The value of x is " + x);
+ * print('The value of x is ' + x);
  * // prints "The value of x is 10"
  * </code></div>
  * @alt
@@ -55,18 +55,18 @@ p5.prototype.print = function(args) {
  * @readOnly
  * @example
  *   <div><code>
- *     function setup() {
- *       frameRate(30);
- *       textSize(20);
- *       textSize(30);
- *       textAlign(CENTER);
- *     }
+ * function setup() {
+ *   frameRate(30);
+ *   textSize(20);
+ *   textSize(30);
+ *   textAlign(CENTER);
+ * }
  *
- *     function draw() {
- *       background(200);
- *       text(frameCount, width/2, height/2);
- *     }
- *   </code></div>
+ * function draw() {
+ *   background(200);
+ *   text(frameCount, width / 2, height / 2);
+ * }
+</code></div>
  *
  * @alt
  * numbers rapidly counting upward with frame count set to 30.
@@ -91,8 +91,9 @@ p5.prototype.frameCount = 0;
  *   fill(0, 200, 0);
  *   ellipse(25, 25, 50, 50);
  *
- *   if (!focused) {  // or "if (focused === false)"
- *     stroke(200,0,0);
+ *   if (!focused) {
+    // or "if (focused === false)"
+ *     stroke(200, 0, 0);
  *     line(0, 0, 100, 100);
  *     line(100, 0, 0, 100);
  *   }
@@ -123,7 +124,7 @@ p5.prototype.focused = document.hasFocus();
  * // Move the mouse left and right across the image
  * // to see the cursor change from a cross to a hand
  * function draw() {
- *   line(width/2, 0, width/2, height);
+ *   line(width / 2, 0, width / 2, height);
  *   if (mouseX < 50) {
  *     cursor(CROSS);
  *   } else {
@@ -195,29 +196,30 @@ p5.prototype.cursor = function(type, x, y) {
  * function setup() {
  *   background(200);
  *   frameRate(fr); // Attempt to refresh at starting FPS
- *   clr = color(255,0,0);
+ *   clr = color(255, 0, 0);
  * }
  *
  * function draw() {
  *   background(200);
  *   rectX = rectX += 1; // Move Rectangle
  *
- *   if (rectX >= width) { // If you go off screen.
- *     if (fr == 30) {
- *       clr = color(0,0,255);
+ *   if (rectX >= width) {
+    // If you go off screen.
+ *     if (fr === 30) {
+ *       clr = color(0, 0, 255);
  *       fr = 10;
  *       frameRate(fr); // make frameRate 10 FPS
  *     } else {
- *       clr = color(255,0,0);
+ *       clr = color(255, 0, 0);
  *       fr = 30;
  *       frameRate(fr); // make frameRate 30 FPS
  *     }
  *     rectX = 0;
  *   }
  *   fill(clr);
- *   rect(rectX, 40, 20,20);
+ *   rect(rectX, 40, 20, 20);
  * }
- * </div></code>
+ * </code></div>
  *
  * @alt
  * blue rect moves left to right, followed by red rect moving faster. Loops.
@@ -366,7 +368,7 @@ p5.prototype.windowHeight = getWindowHeight();
  * }
  *
  * function draw() {
- *  background(0, 100, 200);
+ *   background(0, 100, 200);
  * }
  *
  * function windowResized() {
@@ -498,7 +500,7 @@ p5.prototype.fullscreen = function(val) {
  *   pixelDensity(1);
  *   createCanvas(100, 100);
  *   background(200);
- *   ellipse(width/2, height/2, 50, 50);
+ *   ellipse(width / 2, height / 2, 50, 50);
  * }
  * </code>
  * </div>
@@ -508,7 +510,7 @@ p5.prototype.fullscreen = function(val) {
  *   pixelDensity(3.0);
  *   createCanvas(100, 100);
  *   background(200);
- *   ellipse(width/2, height/2, 50, 50);
+ *   ellipse(width / 2, height / 2, 50, 50);
  * }
  * </code>
  * </div>
@@ -539,7 +541,7 @@ p5.prototype.pixelDensity = function(val) {
  *   pixelDensity(density);
  *   createCanvas(100, 100);
  *   background(200);
- *   ellipse(width/2, height/2, 50, 50);
+ *   ellipse(width / 2, height / 2, 50, 50);
  * }
  * </code>
  * </div>
@@ -601,7 +603,7 @@ function exitFullscreen() {
  *
  * function draw() {
  *   background(200);
- *   text(url, x, height/2);
+ *   text(url, x, height / 2);
  *   x--;
  * }
  * </code>
@@ -622,8 +624,8 @@ p5.prototype.getURL = function() {
  * <div class='norender'><code>
  * function setup() {
  *   var urlPath = getURLPath();
- *   for (var i=0; i&lt;urlPath.length; i++) {
- *     text(urlPath[i], 10, i*20+20);
+ *   for (var i = 0; i < urlPath.length; i++) {
+ *     text(urlPath[i], 10, i * 20 + 20);
  *   }
  * }
  * </code></div>

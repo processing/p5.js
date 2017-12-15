@@ -2,6 +2,11 @@
 
 var p5 = require('../core/core');
 
+/**
+ * @method orbitControl
+ * @for p5
+ * @chainable
+ */
 //@TODO: implement full orbit controls including
 //pan, zoom, quaternion rotation, etc.
 p5.prototype.orbitControl = function() {

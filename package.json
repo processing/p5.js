@@ -17,9 +17,23 @@
   },
   "lint-staged": {
     "Gruntfile.js": "eslint",
+    "grunt-karma.js": "eslint",
+    "docs/preprocessor.js": "eslint",
+    "utils/**/*.js": "eslint",
     "tasks/**/*.js": "eslint",
+    "bench/**/*.js": "eslint",
+    "test/test-docs-preprocessor/**/*.js": "eslint",
+    "test/node/**/*.js": "eslint",
+    "test/reporter/**/*.js": "eslint",
     "test/unit/**/*.js": "eslint",
-    "src/**/*.js": "eslint"
+    "lib/addons/p5.dom.js": [
+      "eslint",
+      "node ./utils/sample-linter.js"
+    ],
+    "src/**/*.js": [
+      "eslint",
+      "node ./utils/sample-linter.js"
+    ]
   },
   "version": "0.5.16",
   "devDependencies": {
@@ -33,6 +47,7 @@
     "eslint": "^4.9.0",
     "eslint-config-prettier": "2.7.0",
     "eslint-plugin-prettier": "2.3.1",
+    "esprima-extract-comments": "^0.2.1",
     "grunt": "^0.4.5",
     "grunt-cli": "^0.1.13",
     "grunt-contrib-compress": "^1.4.3",

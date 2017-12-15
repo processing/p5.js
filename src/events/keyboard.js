@@ -24,7 +24,6 @@ var downKeys = {};
  * @example
  * <div>
  * <code>
- * var value = 0;
  * function draw() {
  *   if (keyIsPressed === true) {
  *     fill(0);
@@ -62,9 +61,9 @@ p5.prototype.keyIsPressed = false; // khan
  *
  * function draw() {
  *   background(200);
- *   text(key, 33,65); // Display last key pressed.
+ *   text(key, 33, 65); // Display last key pressed.
  * }
- * </div></code>
+ * </code></div>
  *
  * @alt
  * canvas displays any key value that is pressed in pink font.
@@ -90,9 +89,9 @@ p5.prototype.key = '';
  * }
  *
  * function keyPressed() {
- *   if (keyCode == UP_ARROW) {
+ *   if (keyCode === UP_ARROW) {
  *     fillVal = 255;
- *   } else if (keyCode == DOWN_ARROW) {
+ *   } else if (keyCode === DOWN_ARROW) {
  *     fillVal = 0;
  *   }
  *   return false; // prevent default
@@ -162,7 +161,7 @@ p5.prototype.keyCode = 0;
  * </div>
  * <div class="norender">
  * <code>
- * function keyPressed(){
+ * function keyPressed() {
  *   // Do something
  *   return false; // prevent any default behaviour
  * }
@@ -337,17 +336,21 @@ p5.prototype._onblur = function(e) {
  * }
  *
  * function draw() {
- *   if (keyIsDown(LEFT_ARROW))
- *     x-=5;
+ *   if (keyIsDown(LEFT_ARROW)) {
+ *     x -= 5;
+ *   }
  *
- *   if (keyIsDown(RIGHT_ARROW))
- *     x+=5;
+ *   if (keyIsDown(RIGHT_ARROW)) {
+ *     x += 5;
+ *   }
  *
- *   if (keyIsDown(UP_ARROW))
- *     y-=5;
+ *   if (keyIsDown(UP_ARROW)) {
+ *     y -= 5;
+ *   }
  *
- *   if (keyIsDown(DOWN_ARROW))
- *     y+=5;
+ *   if (keyIsDown(DOWN_ARROW)) {
+ *     y += 5;
+ *   }
  *
  *   clear();
  *   fill(255, 0, 0);

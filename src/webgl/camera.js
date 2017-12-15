@@ -31,13 +31,13 @@ var p5 = require('../core/core');
  * @example
  * <div>
  * <code>
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
- * function draw(){
- *  //move the camera away from the plane by a sin wave
- *  camera(0, 0, sin(frameCount * 0.01) * 100, 0, 0, 0, 0, 1, 0);
- *  plane(120, 120);
+ * function draw() {
+ *   //move the camera away from the plane by a sin wave
+ *   camera(0, 0, sin(frameCount * 0.01) * 100, 0, 0, 0, 0, 1, 0);
+ *   plane(120, 120);
  * }
  * </code>
  * </div>
@@ -176,19 +176,19 @@ p5.RendererGL.prototype.camera = function() {
  * <code>
  * //drag mouse to toggle the world!
  * //you will see there's a vanish point
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   var fov = 60 / 180 * PI;
- *   var cameraZ = (height/2.0) / tan(fov/2.0);
- *   perspective(60 / 180 * PI, width/height, cameraZ * 0.1, cameraZ * 10);
+ *   var cameraZ = height / 2.0 / tan(fov / 2.0);
+ *   perspective(60 / 180 * PI, width / height, cameraZ * 0.1, cameraZ * 10);
  * }
- * function draw(){
- *  background(200);
- *  orbitControl();
- *  for(var i = -1; i < 2; i++){
- *     for(var j = -2; j < 3; j++){
+ * function draw() {
+ *   background(200);
+ *   orbitControl();
+ *   for (var i = -1; i < 2; i++) {
+ *     for (var j = -2; j < 3; j++) {
  *       push();
- *       translate(i*160, 0, j*160);
+ *       translate(i * 160, 0, j * 160);
  *       box(40, 40, 40);
  *       pop();
  *     }
@@ -246,18 +246,18 @@ p5.RendererGL.prototype.perspective = function() {
  * <code>
  * //drag mouse to toggle the world!
  * //there's no vanish point
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   ortho(-width/2, width/2, height/2, -height/2, 0, 500);
+ *   ortho(-width / 2, width / 2, height / 2, -height / 2, 0, 500);
  * }
- * function draw(){
- *  background(200);
- *  orbitControl();
- *  strokeWeight(0.1);
- *  for(var i = -1; i < 2; i++){
- *     for(var j = -2; j < 3; j++){
+ * function draw() {
+ *   background(200);
+ *   orbitControl();
+ *   strokeWeight(0.1);
+ *   for (var i = -1; i < 2; i++) {
+ *     for (var j = -2; j < 3; j++) {
  *       push();
- *       translate(i*160, 0, j*160);
+ *       translate(i * 160, 0, j * 160);
  *       box(40, 40, 40);
  *       pop();
  *     }
