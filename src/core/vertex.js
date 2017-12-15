@@ -353,10 +353,10 @@ p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
  * <code>
  * noFill();
  * beginShape();
- * curveVertex(84,  91);
- * curveVertex(84,  91);
- * curveVertex(68,  19);
- * curveVertex(21,  17);
+ * curveVertex(84, 91);
+ * curveVertex(84, 91);
+ * curveVertex(68, 19);
+ * curveVertex(21, 17);
  * curveVertex(32, 100);
  * curveVertex(32, 100);
  * endShape();

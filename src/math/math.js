@@ -30,10 +30,7 @@ var p5 = require('../core/core');
  *
  * function draw() {
  *   background(255);
- *   pointLight(
- *     color(255),
- *     createVector(sin(millis()/1000)*20, -40, -10)
- *   );
+ *   pointLight(color(255), createVector(sin(millis() / 1000) * 20, -40, -10));
  *   scale(0.75);
  *   sphere();
  * }
