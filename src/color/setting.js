@@ -21,7 +21,7 @@ require('./p5.Color');
  * <br><br>
  * The color is either specified in terms of the RGB, HSB, or HSL color
  * depending on the current colorMode. (The default color space is RGB, with
- * each value in the range from 0 to 255).
+ * each value in the range from 0 to 255). The alpha range by default is also 0 to 255.
  * <br><br>
  * If a single string argument is provided, RGB, RGBA and Hex CSS color strings
  * and all named color strings are supported. In this case, an alpha number
@@ -134,7 +134,7 @@ require('./p5.Color');
  *                         rgb() or rgba(), percentage rgb() or rgba(),
  *                         3-digit hex, 6-digit hex
  * @param {Number} [a]         opacity of the background relative to current
- *                             color range (default is 0-100)
+ *                             color range (default is 0-255)
  * @chainable
  */
 
@@ -236,8 +236,8 @@ p5.prototype.clear = function() {
  * <code>
  * noStroke();
  * colorMode(RGB, 100);
- * for (i = 0; i < 100; i++) {
- *   for (j = 0; j < 100; j++) {
+ * for (var i = 0; i < 100; i++) {
+ *   for (var j = 0; j < 100; j++) {
  *     stroke(i, j, 0);
  *     point(i, j);
  *   }
@@ -249,8 +249,8 @@ p5.prototype.clear = function() {
  * <code>
  * noStroke();
  * colorMode(HSB, 100);
- * for (i = 0; i < 100; i++) {
- *   for (j = 0; j < 100; j++) {
+ * for (var i = 0; i < 100; i++) {
+ *   for (var j = 0; j < 100; j++) {
  *     stroke(i, j, 100);
  *     point(i, j);
  *   }
@@ -276,11 +276,10 @@ p5.prototype.clear = function() {
  * background(255);
  *
  * strokeWeight(4);
- * stroke(255, 0 , 10, 0.3);
+ * stroke(255, 0, 10, 0.3);
  * ellipse(40, 40, 50, 50);
  * ellipse(50, 50, 40, 40);
  * </code>
- * </div>
  *
  * @alt
  *Green to red gradient from bottom L to top R. shading originates from top left.
@@ -337,7 +336,7 @@ p5.prototype.colorMode = function() {
  * fill(204, 102, 0), all subsequent shapes will be filled with orange. This
  * color is either specified in terms of the RGB or HSB color depending on
  * the current colorMode(). (The default color space is RGB, with each value
- * in the range from 0 to 255).
+ * in the range from 0 to 255). The alpha range by default is also 0 to 255.
  * <br><br>
  * If a single string argument is provided, RGB, RGBA and Hex CSS color strings
  * and all named color strings are supported. In this case, an alpha number
@@ -540,7 +539,7 @@ p5.prototype.noStroke = function() {
  * Sets the color used to draw lines and borders around shapes. This color
  * is either specified in terms of the RGB or HSB color depending on the
  * current colorMode() (the default color space is RGB, with each value in
- * the range from 0 to 255).
+ * the range from 0 to 255). The alpha range by default is also 0 to 255.
  * <br><br>
  * If a single string argument is provided, RGB, RGBA and Hex CSS color
  * strings and all named color strings are supported. In this case, an alpha

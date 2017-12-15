@@ -49,7 +49,8 @@ require('../core/error_helpers');
  * var earthquakes;
  * function preload() {
  *   // Get the most recent earthquake in the database
- *   var url = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/'+
+ *   var url =
+    'https://earthquake.usgs.gov/earthquakes/feed/v1.0/' +
  *     'summary/all_day.geojson';
  *   earthquakes = loadJSON(url);
  * }
@@ -63,7 +64,7 @@ require('../core/error_helpers');
  *   // Get the magnitude and name of the earthquake out of the loaded JSON
  *   var earthquakeMag = earthquakes.features[0].properties.mag;
  *   var earthquakeName = earthquakes.features[0].properties.place;
- *   ellipse(width/2, height/2, earthquakeMag * 10, earthquakeMag * 10);
+ *   ellipse(width / 2, height / 2, earthquakeMag * 10, earthquakeMag * 10);
  *   textAlign(CENTER);
  *   text(earthquakeName, 0, height - 30, width, 30);
  * }
@@ -75,7 +76,8 @@ require('../core/error_helpers');
  * <div><code>
  * function setup() {
  *   noLoop();
- *   var url = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/'+
+ *   var url =
+    'https://earthquake.usgs.gov/earthquakes/feed/v1.0/' +
  *     'summary/all_day.geojson';
  *   loadJSON(url, drawEarthquake);
  * }
@@ -88,7 +90,7 @@ require('../core/error_helpers');
  *   // Get the magnitude and name of the earthquake out of the loaded JSON
  *   var earthquakeMag = earthquakes.features[0].properties.mag;
  *   var earthquakeName = earthquakes.features[0].properties.place;
- *   ellipse(width/2, height/2, earthquakeMag * 10, earthquakeMag * 10);
+ *   ellipse(width / 2, height / 2, earthquakeMag * 10, earthquakeMag * 10);
  *   textAlign(CENTER);
  *   text(earthquakeName, 0, height - 30, width, 30);
  * }
@@ -268,7 +270,7 @@ p5.prototype.loadStrings = function() {
  * seperated by commas. For example:
  * <br><br>
  * <code>
- *   loadTable("my_csv_file.csv", "csv", "header")
+ * loadTable('my_csv_file.csv', 'csv', 'header');
  * </code>
  * </p>
  *
@@ -309,7 +311,7 @@ p5.prototype.loadStrings = function() {
  * function preload() {
  *   //my table is comma separated value "csv"
  *   //and has a header specifying the columns labels
- *   table = loadTable("assets/mammals.csv", "csv", "header");
+ *   table = loadTable('assets/mammals.csv', 'csv', 'header');
  *   //the file can be remote
  *   //table = loadTable("http://p5js.org/reference/assets/mammals.csv",
  *   //                  "csv", "header");
@@ -317,10 +319,10 @@ p5.prototype.loadStrings = function() {
  *
  * function setup() {
  *   //count the columns
- *   print(table.getRowCount() + " total rows in table");
- *   print(table.getColumnCount() + " total columns in table");
+ *   print(table.getRowCount() + ' total rows in table');
+ *   print(table.getColumnCount() + ' total columns in table');
  *
- *   print(table.getColumn("name"));
+ *   print(table.getColumn('name'));
  *   //["Goat", "Leopard", "Zebra"]
  *
  *   //cycle through the table
@@ -615,17 +617,17 @@ p5.prototype.parseXML = function(two) {
  * var xml;
  *
  * function preload() {
- *   xml = loadXML("assets/mammals.xml");
+ *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var children = xml.getChildren("animal");
+ *   var children = xml.getChildren('animal');
  *
  *   for (var i = 0; i < children.length; i++) {
- *     var id = children[i].getNum("id");
- *     var coloring = children[i].getString("species");
+ *     var id = children[i].getNum('id');
+ *     var coloring = children[i].getString('species');
  *     var name = children[i].getContent();
- *     print(id + ", " + coloring + ", " + name);
+ *     print(id + ', ' + coloring + ', ' + name);
  *   }
  * }
  *
@@ -692,34 +694,35 @@ p5.prototype.loadXML = function() {
  *                                    in as first argument
  * @example
  * <div class='norender'><code>
- *  // Examples use USGS Earthquake API:
- *  //   https://earthquake.usgs.gov/fdsnws/event/1/#methods
- *  var earthquakes;
- *  function preload() {
- *    // Get the most recent earthquake in the database
- *    var url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?' +
- *      'format=geojson&limit=1&orderby=time';
- *    httpGet(url, "jsonp", false, function(response) {
- *      // when the HTTP request completes, populate the variable that holds the
- *      // earthquake data used in the visualization.
- *      earthquakes = response;
- *    });
- *  }
+ * // Examples use USGS Earthquake API:
+ * //   https://earthquake.usgs.gov/fdsnws/event/1/#methods
+ * var earthquakes;
+ * function preload() {
+ *   // Get the most recent earthquake in the database
+ *   var url =
+    'https://earthquake.usgs.gov/fdsnws/event/1/query?' +
+ *     'format=geojson&limit=1&orderby=time';
+ *   httpGet(url, 'jsonp', false, function(response) {
+ *     // when the HTTP request completes, populate the variable that holds the
+ *     // earthquake data used in the visualization.
+ *     earthquakes = response;
+ *   });
+ * }
  *
- *  function draw() {
- *    if (!earthquakes) {
- *      // Wait until the earthquake data has loaded before drawing.
- *      return
- *    }
- *    background(200);
- *    // Get the magnitude and name of the earthquake out of the loaded JSON
- *    var earthquakeMag = earthquakes.features[0].properties.mag;
- *    var earthquakeName = earthquakes.features[0].properties.place;
- *    ellipse(width/2, height/2, earthquakeMag * 10, earthquakeMag * 10);
- *    textAlign(CENTER);
- *    text(earthquakeName, 0, height - 30, width, 30);
- *    noLoop();
- *  }
+ * function draw() {
+ *   if (!earthquakes) {
+ *     // Wait until the earthquake data has loaded before drawing.
+ *     return;
+ *   }
+ *   background(200);
+ *   // Get the magnitude and name of the earthquake out of the loaded JSON
+ *   var earthquakeMag = earthquakes.features[0].properties.mag;
+ *   var earthquakeName = earthquakes.features[0].properties.place;
+ *   ellipse(width / 2, height / 2, earthquakeMag * 10, earthquakeMag * 10);
+ *   textAlign(CENTER);
+ *   text(earthquakeName, 0, height - 30, width, 30);
+ *   noLoop();
+ * }
  * </code></div>
  */
 p5.prototype.httpGet = function() {
@@ -758,55 +761,53 @@ p5.prototype.httpGet = function() {
  * }
  *
  * function mousePressed() {
- *  // Pick new random color values
- *  var r = random(255);
- *  var g = random(255);
- *  var b = random(255);
+ *   // Pick new random color values
+ *   var r = random(255);
+ *   var g = random(255);
+ *   var b = random(255);
  *
- *  httpPost(url, 'json',
- *      postData,
- *      function (result) {
- *        strokeWeight(2);
- *        stroke(r, g, b);
- *        fill(r, g, b, 127);
- *        ellipse(mouseX, mouseY, 200, 200);
- *        text(result.body, mouseX, mouseY);
- *      });
+ *   httpPost(url, 'json', postData, function(result) {
+ *     strokeWeight(2);
+ *     stroke(r, g, b);
+ *     fill(r, g, b, 127);
+ *     ellipse(mouseX, mouseY, 200, 200);
+ *     text(result.body, mouseX, mouseY);
+ *   });
  * }
  * </code>
  * </div>
  *
  *
  * <div><code>
+ * var url = 'https://invalidURL'; // A bad URL that will cause errors
+ * var postData = { title: 'p5 Clicked!', body: 'p5.js is way cool.' };
  *
- *  var url = 'https://invalidURL'; // A bad URL that will cause errors
- *  var postData = { title: 'p5 Clicked!', body: 'p5.js is way cool.' };
+ * function setup() {
+ *   createCanvas(800, 800);
+ * }
  *
- *  function setup() {
- *     createCanvas(800, 800);
- *  }
+ * function mousePressed() {
+ *   // Pick new random color values
+ *   var r = random(255);
+ *   var g = random(255);
+ *   var b = random(255);
  *
- *  function mousePressed() {
- *    // Pick new random color values
- *    var r = random(255);
- *    var g = random(255);
- *    var b = random(255);
- *
- *    httpPost(url, 'json',
- *      postData,
- *      function (result) {
- *        // ... won't be called
- *      },
- *      function (error) {
- *        strokeWeight(2);
- *        stroke(r, g, b);
- *        fill(r, g, b, 127);
- *        text(error.toString(), mouseX, mouseY);
- *    });
- *  }
- *
- * </code>
- * </div>
+ *   httpPost(
+ *     url,
+ *     'json',
+ *     postData,
+ *     function(result) {
+ *       // ... won't be called
+ *     },
+ *     function(error) {
+ *       strokeWeight(2);
+ *       stroke(r, g, b);
+ *       fill(r, g, b, 127);
+ *       text(error.toString(), mouseX, mouseY);
+ *     }
+ *   );
+ * }
+ * </code></div>
  *
  */
 p5.prototype.httpPost = function() {
@@ -847,40 +848,38 @@ p5.prototype.httpPost = function() {
  * var eqFeatureIndex = 0;
  *
  * function preload() {
- *    var url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson';
- *    httpDo(url,
- *      {
- *        method: 'GET',
- *        // Other Request options, like special headers for apis
- *        headers: { authorization: 'Bearer secretKey' }
- *      },
- *      function(res) {
- *        earthquakes = res;
- *      });
+ *   var url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson';
+ *   httpDo(
+ *     url,
+ *     {
+ *       method: 'GET',
+ *       // Other Request options, like special headers for apis
+ *       headers: { authorization: 'Bearer secretKey' }
+ *     },
+ *     function(res) {
+ *       earthquakes = res;
+ *     }
+ *   );
  * }
  *
  * function draw() {
- *    // wait until the data is loaded
- *    if (!earthquakes || !earthquakes.features[eqFeatureIndex]) {
- *      return;
- *    }
- *    clear();
+ *   // wait until the data is loaded
+ *   if (!earthquakes || !earthquakes.features[eqFeatureIndex]) {
+ *     return;
+ *   }
+ *   clear();
  *
- *    var feature = earthquakes.features[eqFeatureIndex];
- *    var mag = feature.properties.mag;
- *    var rad = mag / 11 * ((width + height) / 2);
- *    fill(255, 0, 0, 100);
- *    ellipse(
- *      width / 2 + random(-2, 2),
- *      height / 2 + random(-2, 2),
- *      rad, rad
- *    );
+ *   var feature = earthquakes.features[eqFeatureIndex];
+ *   var mag = feature.properties.mag;
+ *   var rad = mag / 11 * ((width + height) / 2);
+ *   fill(255, 0, 0, 100);
+ *   ellipse(width / 2 + random(-2, 2), height / 2 + random(-2, 2), rad, rad);
  *
- *    if (eqFeatureIndex >= earthquakes.features.length) {
- *      eqFeatureIndex = 0;
- *    } else {
- *      eqFeatureIndex += 1;
- *    }
+ *   if (eqFeatureIndex >= earthquakes.features.length) {
+ *     eqFeatureIndex = 0;
+ *   } else {
+ *     eqFeatureIndex += 1;
+ *   }
  * }
  * </code>
  * </div>
@@ -1064,16 +1063,14 @@ p5.prototype._pWriters = [];
  * <code>
  * createButton('save')
  *   .position(10, 10)
- *   .mousePressed(function () {
- *
- *     var writer = createWriter("squares.txt");
- *     for (var i = 0; i < 10; i++)
+ *   .mousePressed(function() {
+ *     var writer = createWriter('squares.txt');
+ *     for (var i = 0; i < 10; i++) {
  *       writer.print(i * i);
+ *     }
  *     writer.close();
  *     writer.flush();
- *
- *   })
-
+ *   });
  * </code>
  * </div>
  */
@@ -1146,6 +1143,12 @@ p5.PrintWriter = function(filename, extension) {
   };
 };
 
+/**
+ * @module IO
+ * @submodule Output
+ * @for p5
+ */
+
 // object, filename, options --> saveJSON, saveStrings,
 // filename, [extension] [canvas] --> saveImage
 
@@ -1157,10 +1160,10 @@ p5.PrintWriter = function(filename, extension) {
  *  <p>The default behavior is to save the canvas as an image. You can
  *  optionally specify a filename.
  *  For example:</p>
- *  <pre class='language-javascript'><code>
- *  save();
- *  save('myCanvas.jpg'); // save a specific canvas with a filename
- *  </code></pre>
+ * <pre class='language-javascript'><code>
+ * save();
+ * save('myCanvas.jpg'); // save a specific canvas with a filename
+ * </code></pre>
  *
  *  <p>Alternately, the first parameter can be a pointer to a canvas
  *  p5.Element, an Array of Strings,
@@ -1170,28 +1173,45 @@ p5.PrintWriter = function(filename, extension) {
  *  to this type of object. This method will save a file that fits the
  *  given paramaters. For example:</p>
  *
- *  <pre class='language-javascript'><code>
+ * <pre class='language-javascript'><code>
+ * // Saves canvas as an image
+ * save('myCanvas.jpg');
  *
- *  save('myCanvas.jpg');           // Saves canvas as an image
+ * // Saves pImage as a png image
+ * var img = createImage(10, 10);
+ * save(img, 'my.png');
  *
- *  var cnv = createCanvas(100, 100);
- *  save(cnv, 'myCanvas.jpg');      // Saves canvas as an image
+ * // Saves canvas as an image
+ * var cnv = createCanvas(100, 100);
+ * save(cnv, 'myCanvas.jpg');
  *
- *  var gb = createGraphics(100, 100);
- *  save(gb, 'myGraphics.jpg');      // Saves p5.Renderer object as an image
+ * // Saves p5.Renderer object as an image
+ * var gb = createGraphics(100, 100);
+ * save(gb, 'myGraphics.jpg');
  *
- *  save(myTable, 'myTable.html');  // Saves table as html file
- *  save(myTable, 'myTable.csv',);  // Comma Separated Values
- *  save(myTable, 'myTable.tsv');   // Tab Separated Values
+ * var myTable = new p5.Table();
  *
- *  save(myJSON, 'my.json');        // Saves pretty JSON
- *  save(myJSON, 'my.json', true);  // Optimizes JSON filesize
+ * // Saves table as html file
+ * save(myTable, 'myTable.html');
  *
- *  save(img, 'my.png');            // Saves pImage as a png image
+ * // Comma Separated Values
+ * save(myTable, 'myTable.csv');
  *
- *  save(arrayOfStrings, 'my.txt'); // Saves strings to a text file with line
- *                                  // breaks after each item in the array
- *  </code></pre>
+ * // Tab Separated Values
+ * save(myTable, 'myTable.tsv');
+ *
+ * var myJSON = { a: 1, b: true };
+ *
+ * // Saves pretty JSON
+ * save(myJSON, 'my.json');
+ *
+ * // Optimizes JSON filesize
+ * save(myJSON, 'my.json', true);
+ *
+ * // Saves array of strings to a text file with line breaks after each item
+ * var arrayOfStrings = ['a', 'b'];
+ * save(arrayOfStrings, 'my.txt');
+ * </code></pre>
  *
  *  @method save
  *  @param  {Object|String} [objectOrFilename]  If filename is provided, will
@@ -1273,28 +1293,26 @@ p5.prototype.save = function(object, _filename, _options) {
  *                                 file to optimize filesize
  *                                 (but not readability).
  *  @example
- *  <div><code>
- *  var json;
+ * <div><code>
+ * var json = {}; // new  JSON Object
  *
- *  function setup() {
+ * json.id = 0;
+ * json.species = 'Panthera leo';
+ * json.name = 'Lion';
  *
- *    json = {}; // new JSON Object
+ * createButton('save')
+ *   .position(10, 10)
+ *   .mousePressed(function() {
+ *     saveJSON(json, 'lion.json');
+ *   });
  *
- *    json.id = 0;
- *    json.species = 'Panthera leo';
- *    json.name = 'Lion';
- *
- *  // To save, un-comment the line below, then click 'run'
- *  // saveJSON(json, 'lion.json');
- *  }
- *
- *  // Saves the following to a file called "lion.json":
- *  // {
- *  //   "id": 0,
- *  //   "species": "Panthera leo",
- *  //   "name": "Lion"
- *  // }
- *  </div></code>
+ * // saves the following to a file called "lion.json":
+ * // {
+ * //   "id": 0,
+ * //   "species": "Panthera leo",
+ * //   "name": "Lion"
+ * // }
+ * </code></div>
  *
  * @alt
  * no image displayed
@@ -1322,22 +1340,25 @@ p5.prototype.saveJSONArray = p5.prototype.saveJSON;
  *  @param  {Array} list      string array to be written
  *  @param  {String} filename filename for output
  *  @example
- *  <div><code>
- *  var words = 'apple bear cat dog';
+ * <div><code>
+ * var words = 'apple bear cat dog';
  *
- *  // .split() outputs an Array
- *  var list = split(words, ' ');
+ * // .split() outputs an Array
+ * var list = split(words, ' ');
  *
- *  // To save the file, un-comment next line and click 'run'
- *  // saveStrings(list, 'nouns.txt');
+ * createButton('save')
+ *   .position(10, 10)
+ *   .mousePressed(function() {
+ *     saveStrings(list, 'nouns.txt');
+ *   });
  *
- *  // Saves the following to a file called 'nouns.txt':
- *  //
- *  // apple
- *  // bear
- *  // cat
- *  // dog
- *  </code></div>
+ * // Saves the following to a file called 'nouns.txt':
+ * //
+ * // apple
+ * // bear
+ * // cat
+ * // dog
+ * </code></div>
  *
  * @alt
  * no image displayed
@@ -1383,28 +1404,28 @@ function escapeHelper(content) {
  *  @param  {String} [options]  can be one of "tsv", "csv", or "html"
  *  @example
  *  <div><code>
- *  var table;
+ * var table;
  *
- *  function setup() {
- *    table = new p5.Table();
+ * function setup() {
+ *   table = new p5.Table();
  *
- *    table.addColumn('id');
- *    table.addColumn('species');
- *    table.addColumn('name');
+ *   table.addColumn('id');
+ *   table.addColumn('species');
+ *   table.addColumn('name');
  *
- *    var newRow = table.addRow();
- *    newRow.setNum('id', table.getRowCount() - 1);
- *    newRow.setString('species', 'Panthera leo');
- *    newRow.setString('name', 'Lion');
+ *   var newRow = table.addRow();
+ *   newRow.setNum('id', table.getRowCount() - 1);
+ *   newRow.setString('species', 'Panthera leo');
+ *   newRow.setString('name', 'Lion');
  *
- *    // To save, un-comment next line then click 'run'
- *    // saveTable(table, 'new.csv');
- *    }
+ *   // To save, un-comment next line then click 'run'
+ *   // saveTable(table, 'new.csv');
+ * }
  *
- *    // Saves the following to a file called 'new.csv':
- *    // id,species,name
- *    // 0,Panthera leo,Lion
- *  </code></div>
+ * // Saves the following to a file called 'new.csv':
+ * // id,species,name
+ * // 0,Panthera leo,Lion
+ * </code></div>
  *
  * @alt
  * no image displayed
@@ -1514,8 +1535,7 @@ p5.prototype.writeFile = function(dataToDownload, filename, extension) {
   var blob = new Blob(dataToDownload, {
     type: type
   });
-  var href = window.URL.createObjectURL(blob);
-  p5.prototype.downloadFile(href, filename, extension);
+  p5.prototype.downloadFile(blob, filename, extension);
 };
 
 /**
@@ -1525,17 +1545,23 @@ p5.prototype.writeFile = function(dataToDownload, filename, extension) {
  *  but it is used by saveStrings, saveJSON, saveTable etc.
  *
  *  @method downloadFile
- *  @param  {String} href      i.e. an href generated by createObjectURL
+ *  @param  {String|Blob} data    either an href generated by createObjectURL,
+ *                                or a Blob object containing the data
  *  @param  {String} [filename]
  *  @param  {String} [extension]
  */
-p5.prototype.downloadFile = function(href, fName, extension) {
+p5.prototype.downloadFile = function(data, fName, extension) {
   var fx = _checkFileExtension(fName, extension);
   var filename = fx[0];
-  var ext = fx[1];
+
+  if (data instanceof Blob) {
+    var fileSaver = require('file-saver');
+    fileSaver.saveAs(data, filename);
+    return;
+  }
 
   var a = document.createElement('a');
-  a.href = href;
+  a.href = data;
   a.download = filename;
 
   // Firefox requires the link to be added to the DOM before click()
@@ -1552,11 +1578,10 @@ p5.prototype.downloadFile = function(href, fName, extension) {
     var aText = 'Hello, Safari user! To download this file...\n';
     aText += '1. Go to File --> Save As.\n';
     aText += '2. Choose "Page Source" as the Format.\n';
-    aText += '3. Name it with this extension: ."' + ext + '"';
+    aText += '3. Name it with this extension: ."' + fx[1] + '"';
     alert(aText);
   }
   a.click();
-  href = null;
 };
 
 /**
