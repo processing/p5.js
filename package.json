@@ -26,6 +26,10 @@
     "test/node/**/*.js": "eslint",
     "test/reporter/**/*.js": "eslint",
     "test/unit/**/*.js": "eslint",
+    "lib/addons/p5.dom.js": [
+      "eslint",
+      "node ./utils/sample-linter.js"
+    ],
     "src/**/*.js": [
       "eslint",
       "node ./utils/sample-linter.js"

@@ -194,11 +194,11 @@ module.exports = {
 };
 
 function eslintFiles(opts, filesSrc) {
-  opts = {
+  opts = opts || {
     outputFile: false,
     quiet: false,
     maxWarnings: -1,
-    envs: ['eslint-samples/p5'],
+    envs: ['eslint-samples/p5', 'amd'],
     format: 'unix'
   };
 
@@ -233,7 +233,7 @@ function eslintFiles(opts, filesSrc) {
 module.exports.eslintFiles = eslintFiles;
 
 if (!module.parent) {
-  var result = eslintFiles({}, process.argv.slice(2));
+  var result = eslintFiles(null, process.argv.slice(2));
   console.log(result.output);
   process.exit(result.report.errorCount === 0 ? 0 : 1);
 }
