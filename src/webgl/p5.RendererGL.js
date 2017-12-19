@@ -215,8 +215,8 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  * <br><br>
  * @method setAttributes
  * @for p5
- * @param  {String|Object}  String name of attribute or object with key-value pairs
- * @param  {Boolean}        New value of named attribute
+ * @param  {String}  key Name of attribute
+ * @param  {Boolean}        value New value of named attribute
  * @example
  * <div>
  * <code>
@@ -261,14 +261,20 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  *
  * @alt a rotating cube with smoother edges
  */
+/**
+ * @method setAttributes
+ * @for p5
+ * @param  {Object}  obj object with key-value pairs
+ */
 
-p5.prototype.setAttributes = function() {
+p5.prototype.setAttributes = function(key, value) {
   //@todo_FES
-  var attr = {};
-  if (arguments.length === 2) {
-    attr[arguments[0]] = arguments[1];
-  } else if (arguments.length === 1) {
-    attr = arguments[0];
+  var attr;
+  if (typeof value !== 'undefined') {
+    attr = {};
+    attr.key = value;
+  } else if (key instanceof Object) {
+    attr = key;
   }
   this._renderer._resetContext(attr);
 };

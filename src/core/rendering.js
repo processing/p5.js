@@ -4,6 +4,8 @@
  * @for p5
  */
 
+'use strict';
+
 var p5 = require('./core');
 var constants = require('./constants');
 require('./p5.Graphics');
@@ -57,8 +59,9 @@ p5.prototype.createCanvas = function(w, h, renderer) {
     if (c) {
       //if defaultCanvas already exists
       c.parentNode.removeChild(c); //replace the existing defaultCanvas
+      var thisRenderer = this._renderer;
       this._elements = this._elements.filter(function(e) {
-        return e !== this._renderer;
+        return e !== thisRenderer;
       });
     }
     c = document.createElement('canvas');
@@ -149,7 +152,11 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
     this._renderer.resize(w, h);
     // reset canvas properties
     for (var savedKey in props) {
-      this.drawingContext[savedKey] = props[savedKey];
+      try {
+        this.drawingContext[savedKey] = props[savedKey];
+      } catch (err) {
+        // ignore read-only property errors
+      }
     }
     if (!noRedraw) {
       this.redraw();

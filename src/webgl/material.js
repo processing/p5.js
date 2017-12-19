@@ -183,11 +183,7 @@ p5.prototype.normalMaterial = function() {
  * black canvas
  *
  */
-p5.prototype.texture = function() {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
+p5.prototype.texture = function(tex) {
   this._renderer.GL.depthMask(true);
   this._renderer.GL.enable(this._renderer.GL.BLEND);
   this._renderer.GL.blendFunc(
@@ -201,7 +197,7 @@ p5.prototype.texture = function() {
   }
   this._renderer.curFillShader.setUniform('uSpecular', false);
   this._renderer.curFillShader.setUniform('isTexture', true);
-  this._renderer.curFillShader.setUniform('uSampler', args[0]);
+  this._renderer.curFillShader.setUniform('uSampler', tex);
   this._renderer.noStroke();
   return this;
 };

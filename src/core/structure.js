@@ -326,22 +326,17 @@ p5.prototype.popStyle = function() {
  * black line on far left of canvas
  *
  */
-p5.prototype.redraw = function() {
+p5.prototype.redraw = function(n) {
   this.resetMatrix();
   if (this._renderer.isP3D) {
     this._renderer._update();
   }
 
-  var numberOfRedraws = 1;
-  if (arguments.length === 1) {
-    try {
-      if (parseInt(arguments[0]) > 1) {
-        numberOfRedraws = parseInt(arguments[0]);
-      }
-    } catch (error) {
-      // Do nothing, because the default value didn't be changed.
-    }
+  var numberOfRedraws = parseInt(n);
+  if (isNaN(numberOfRedraws) || numberOfRedraws < 1) {
+    numberOfRedraws = 1;
   }
+
   var userSetup = this.setup || window.setup;
   var userDraw = this.draw || window.draw;
   if (typeof userDraw === 'function') {

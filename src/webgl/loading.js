@@ -63,8 +63,7 @@ require('./p5.Geometry');
  * @param  {function(Event)} [failureCallback]
  * @return {p5.Geometry} the p5.Geometry object
  */
-p5.prototype.loadModel = function() {
-  var path = arguments[0];
+p5.prototype.loadModel = function(path) {
   var normalize;
   var successCallback;
   var failureCallback;

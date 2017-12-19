@@ -51,11 +51,18 @@ p5.prototype.camera = function() {
   return this;
 };
 
-p5.RendererGL.prototype.camera = function() {
-  var eyeX, eyeY, eyeZ;
-  var centerX, centerY, centerZ;
-  var upX, upY, upZ;
-  if (arguments.length === 0) {
+p5.RendererGL.prototype.camera = function(
+  eyeX,
+  eyeY,
+  eyeZ,
+  centerX,
+  centerY,
+  centerZ,
+  upX,
+  upY,
+  upZ
+) {
+  if (typeof eyeX === 'undefined') {
     eyeX = this.defaultCameraX;
     eyeY = this.defaultCameraY;
     eyeZ = this.defaultCameraZ;
@@ -65,16 +72,6 @@ p5.RendererGL.prototype.camera = function() {
     upX = 0;
     upY = 1;
     upZ = 0;
-  } else {
-    eyeX = arguments[0];
-    eyeY = arguments[1];
-    eyeZ = arguments[2];
-    centerX = arguments[3];
-    centerY = arguments[4];
-    centerZ = arguments[5];
-    upX = arguments[6];
-    upY = arguments[7];
-    upZ = arguments[8];
   }
 
   this.cameraX = eyeX;
@@ -206,11 +203,19 @@ p5.prototype.perspective = function() {
   return this;
 };
 
-p5.RendererGL.prototype.perspective = function() {
-  var fovy = arguments[0] || this.defaultCameraFOV;
-  var aspect = arguments[1] || this.defaultCameraAspect;
-  var near = arguments[2] || this.defaultCameraNear;
-  var far = arguments[3] || this.defaultCameraFar;
+p5.RendererGL.prototype.perspective = function(fovy, aspect, near, far) {
+  if (typeof fovy === 'undefined') {
+    fovy = this.defaultCameraFOV;
+  }
+  if (typeof aspect === 'undefined') {
+    aspect = this.defaultCameraAspect;
+  }
+  if (typeof near === 'undefined') {
+    near = this.defaultCameraNear;
+  }
+  if (typeof far === 'undefined') {
+    far = this.defaultCameraFar;
+  }
 
   this.cameraFOV = fovy;
   this.cameraAspect = aspect;

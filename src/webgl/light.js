@@ -167,23 +167,15 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
   this._renderer.curFillShader.setUniform('uDirectionalColor', colors);
 
   var _x, _y, _z;
-
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  if (typeof args[args.length - 1] === 'number') {
-    _x = args[args.length - 3];
-    _y = args[args.length - 2];
-    _z = args[args.length - 1];
+  var v = arguments[arguments.length - 1];
+  if (typeof v === 'number') {
+    _x = arguments[arguments.length - 3];
+    _y = arguments[arguments.length - 2];
+    _z = arguments[arguments.length - 1];
   } else {
-    try {
-      _x = args[args.length - 1].x;
-      _y = args[args.length - 1].y;
-      _z = args[args.length - 1].z;
-    } catch (error) {
-      throw error;
-    }
+    _x = v.x;
+    _y = v.y;
+    _z = v.z;
   }
   this._renderer.curFillShader.setUniform('uUseLighting', true);
   //in case there's no material color for the geometry
@@ -281,23 +273,15 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
   this._renderer.curFillShader.setUniform('uPointLightColor', colors);
 
   var _x, _y, _z;
-
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  if (typeof args[args.length - 1] === 'number') {
-    _x = args[args.length - 3];
-    _y = args[args.length - 2];
-    _z = args[args.length - 1];
+  var v = arguments[arguments.length - 1];
+  if (typeof v === 'number') {
+    _x = arguments[arguments.length - 3];
+    _y = arguments[arguments.length - 2];
+    _z = arguments[arguments.length - 1];
   } else {
-    try {
-      _x = args[args.length - 1].x;
-      _y = args[args.length - 1].y;
-      _z = args[args.length - 1].z;
-    } catch (error) {
-      throw error;
-    }
+    _x = v.x;
+    _y = v.y;
+    _z = v.z;
   }
   this._renderer.curFillShader.setUniform('uUseLighting', true);
   //in case there's no material color for the geometry

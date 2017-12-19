@@ -4,6 +4,8 @@
  * @for p5
  */
 
+'use strict';
+
 var PI = Math.PI;
 
 module.exports = {

@@ -194,22 +194,13 @@ p5.prototype.resetMatrix = function() {
  *
  */
 p5.prototype.rotate = function(angle, axis) {
-  var args = new Array(arguments.length);
   var r;
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
   if (this._angleMode === constants.DEGREES) {
-    r = this.radians(args[0]);
+    r = this.radians(angle);
   } else if (this._angleMode === constants.RADIANS) {
-    r = args[0];
+    r = angle;
   }
-  //in webgl mode
-  if (args.length > 1) {
-    this._renderer.rotate(r, args[1]);
-  } else {
-    this._renderer.rotate(r);
-  }
+  this._renderer.rotate(r, axis);
   return this;
 };
 
@@ -353,36 +344,27 @@ p5.prototype.rotateZ = function(rad) {
  * @param  {p5.Vector|Array} scales per-axis percents to scale the object
  * @chainable
  */
-p5.prototype.scale = function() {
-  var x, y, z;
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; i++) {
-    args[i] = arguments[i];
-  }
+p5.prototype.scale = function(x, y, z) {
   // Only check for Vector argument type if Vector is available
-  if (typeof p5.Vector !== 'undefined' && args[0] instanceof p5.Vector) {
-    x = args[0].x;
-    y = args[0].y;
-    z = args[0].z;
-  } else if (args[0] instanceof Array) {
-    x = args[0][0];
-    y = args[0][1];
-    z = args[0][2] || 1;
-  } else {
-    if (args.length === 1) {
-      x = y = z = args[0];
-    } else {
-      x = args[0];
-      y = args[1];
-      z = args[2] || 1;
-    }
+  if (x instanceof p5.Vector) {
+    var v = x;
+    x = v.x;
+    y = v.y;
+    z = v.z;
+  } else if (x instanceof Array) {
+    var rg = x;
+    x = rg[0];
+    y = rg[1];
+    z = rg[2] || 1;
+  }
+  if (isNaN(y)) {
+    y = z = x;
+  } else if (isNaN(z)) {
+    z = 1;
   }
 
-  if (this._renderer.isP3D) {
-    this._renderer.scale.call(this._renderer, x, y, z);
-  } else {
-    this._renderer.scale.call(this._renderer, x, y);
-  }
+  this._renderer.scale.call(this._renderer, x, y, z);
+
   return this;
 };
 

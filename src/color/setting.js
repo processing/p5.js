@@ -300,31 +300,31 @@ p5.prototype.clear = function() {
  * @param {Number} [maxA]   range for the alpha
  * @chainable
  */
-p5.prototype.colorMode = function() {
+p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
   if (
-    arguments[0] === constants.RGB ||
-    arguments[0] === constants.HSB ||
-    arguments[0] === constants.HSL
+    mode === constants.RGB ||
+    mode === constants.HSB ||
+    mode === constants.HSL
   ) {
     // Set color mode.
-    this._renderer._colorMode = arguments[0];
+    this._renderer._colorMode = mode;
 
     // Set color maxes.
-    var maxes = this._renderer._colorMaxes[this._renderer._colorMode];
+    var maxes = this._renderer._colorMaxes[mode];
     if (arguments.length === 2) {
-      maxes[0] = arguments[1]; // Red
-      maxes[1] = arguments[1]; // Green
-      maxes[2] = arguments[1]; // Blue
-      maxes[3] = arguments[1]; // Alpha
+      maxes[0] = max1; // Red
+      maxes[1] = max1; // Green
+      maxes[2] = max1; // Blue
+      maxes[3] = max1; // Alpha
     } else if (arguments.length === 4) {
-      maxes[0] = arguments[1]; // Red
-      maxes[1] = arguments[2]; // Green
-      maxes[2] = arguments[3]; // Blue
+      maxes[0] = max1; // Red
+      maxes[1] = max2; // Green
+      maxes[2] = max3; // Blue
     } else if (arguments.length === 5) {
-      maxes[0] = arguments[1]; // Red
-      maxes[1] = arguments[2]; // Green
-      maxes[2] = arguments[3]; // Blue
-      maxes[3] = arguments[4]; // Alpha
+      maxes[0] = max1; // Red
+      maxes[1] = max2; // Green
+      maxes[2] = max3; // Blue
+      maxes[3] = maxA; // Alpha
     }
   }
 

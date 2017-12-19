@@ -39,7 +39,7 @@ var _windowPrint = window.print;
  * default grey canvas
  */
 p5.prototype.print = function(args) {
-  if (arguments.length === 0) {
+  if (typeof args === 'undefined') {
     _windowPrint();
   } else {
     console.log.apply(console, arguments);
