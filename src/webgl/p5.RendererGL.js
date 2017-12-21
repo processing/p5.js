@@ -62,10 +62,15 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._initContext();
   this.isP3D = true; //lets us know we're in 3d mode
   this.GL = this.drawingContext;
+
   // lights
-  this.ambientLightCount = 0;
-  this.directionalLightCount = 0;
-  this.pointLightCount = 0;
+
+  this.ambientLightColors = [];
+  this.directionalLightDirections = [];
+  this.directionalLightColors = [];
+
+  this.pointLightPositions = [];
+  this.pointLightColors = [];
 
   /**
    * model view, projection, & normal
@@ -97,10 +102,10 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._defaultNormalShader = undefined;
   this._defaultColorShader = undefined;
 
-  this.curFillShader = {};
-  this.curStrokeShader = {};
+  this.curFillShader = undefined;
+  this.curStrokeShader = undefined;
 
-  this.setFillShader(this._getColorShader());
+  this._useColorShader();
   this.setStrokeShader(this._getLineShader());
 
   //Imediate Mode
@@ -325,10 +330,14 @@ p5.RendererGL.prototype._update = function() {
     this.cameraMatrix.mat4[15]
   );
 
-  // reset light counters for new frame.
-  this.ambientLightCount = 0;
-  this.directionalLightCount = 0;
-  this.pointLightCount = 0;
+  // reset light data for new frame.
+
+  this.ambientLightColors.length = 0;
+  this.directionalLightDirections.length = 0;
+  this.directionalLightColors.length = 0;
+
+  this.pointLightPositions.length = 0;
+  this.pointLightColors.length = 0;
 };
 
 /**
@@ -393,9 +402,9 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
     this.curFillShader.active = true;
   }
   if (this.isImmediateDrawing) {
-    this.setFillShader(this._getImmediateModeShader());
+    this._useImmediateModeShader();
   } else {
-    this.setFillShader(this._getColorShader());
+    this._useColorShader();
   }
   this.drawMode = constants.FILL;
   this.curFillShader.setUniform('uMaterialColor', colors);
@@ -820,8 +829,42 @@ p5.RendererGL.prototype.setStrokeShader = function(s) {
  *
  */
 
+p5.RendererGL.prototype._useLightShader = function() {
+  if (!this.curFillShader.isLightShader()) {
+    this.setFillShader(this._getLightShader());
+  }
+  return this.curFillShader;
+};
+
+p5.RendererGL.prototype._useColorShader = function() {
+  // looking at the code within the glsl files, I'm not really
+  // sure why these are two different shaders. but, they are,
+  // and if we're drawing in retain mode but the shader is the
+  // immediate mode one, we need to switch.
+
+  // TODO: what if curFillShader is _any_ other shader?
+  if (this.curFillShader === this._defaultImmediateModeShader) {
+    // there are different immediate mode and retain mode color shaders.
+    // if we're using the immediate mode one, we need to switch to
+    // one that works for retain mode.
+    this.setFillShader(this._getColorShader());
+  }
+  return this.curFillShader;
+};
+
+p5.RendererGL.prototype._useImmediateModeShader = function() {
+  // TODO: what if curFillShader is _any_ other shader?
+  if (this.curFillShader === this._defaultColorShader) {
+    // this is the fill/stroke shader for retain mode.
+    // must switch to immediate mode shader before drawing!
+    this.setFillShader(this._getImmediateModeShader());
+    // note that if we're using the texture shader...
+    // this shouldn't change. :)
+  }
+};
+
 p5.RendererGL.prototype._getLightShader = function() {
-  if (this._defaultLightShader === undefined) {
+  if (!this._defaultLightShader) {
     this._defaultLightShader = new p5.Shader(
       this,
       defaultShaders.lightVert,
@@ -833,7 +876,7 @@ p5.RendererGL.prototype._getLightShader = function() {
 };
 
 p5.RendererGL.prototype._getImmediateModeShader = function() {
-  if (this._defaultImmediateModeShader === undefined) {
+  if (!this._defaultImmediateModeShader) {
     this._defaultImmediateModeShader = new p5.Shader(
       this,
       defaultShaders.immediateVert,
@@ -845,7 +888,7 @@ p5.RendererGL.prototype._getImmediateModeShader = function() {
 };
 
 p5.RendererGL.prototype._getNormalShader = function() {
-  if (this._defaultNormalShader === undefined) {
+  if (!this._defaultNormalShader) {
     this._defaultNormalShader = new p5.Shader(
       this,
       defaultShaders.normalVert,
@@ -857,7 +900,7 @@ p5.RendererGL.prototype._getNormalShader = function() {
 };
 
 p5.RendererGL.prototype._getColorShader = function() {
-  if (this._defaultColorShader === undefined) {
+  if (!this._defaultColorShader) {
     this._defaultColorShader = new p5.Shader(
       this,
       defaultShaders.normalVert,
@@ -869,7 +912,7 @@ p5.RendererGL.prototype._getColorShader = function() {
 };
 
 p5.RendererGL.prototype._getLineShader = function() {
-  if (this._defaultLineShader === undefined) {
+  if (!this._defaultLineShader) {
     this._defaultLineShader = new p5.Shader(
       this,
       defaultShaders.lineVert,
@@ -881,7 +924,7 @@ p5.RendererGL.prototype._getLineShader = function() {
 };
 
 p5.RendererGL.prototype._getEmptyTexture = function() {
-  if (this._emptyTexture === undefined) {
+  if (!this._emptyTexture) {
     // a plain white texture RGBA, full alpha, single pixel.
     var im = new p5.Image(1, 1);
     im.set(0, 0, 255);
@@ -896,7 +939,7 @@ p5.RendererGL.prototype.getTexture = function(img) {
   };
   //this.drawMode = constants.TEXTURE;
   var tex = this.textures.find(checkSource);
-  if (tex === undefined) {
+  if (!tex) {
     tex = new p5.Texture(this, img);
     this.textures.push(tex);
   }
