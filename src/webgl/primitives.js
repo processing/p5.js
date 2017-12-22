@@ -232,29 +232,27 @@ p5.prototype.sphere = function() {
   var gId = 'sphere|' + radius + '|' + detailX + '|' + detailY;
   if (!this._renderer.geometryInHash(gId)) {
     var _sphere = function() {
-      var u, v, p;
       for (var i = 0; i <= this.detailY; i++) {
-        v = i / this.detailY;
+        var v = i / this.detailY;
+        var phi = Math.PI * v - Math.PI / 2;
+        var cosPhi = Math.cos(phi);
+        var sinPhi = Math.sin(phi);
         for (var j = 0; j <= this.detailX; j++) {
-          u = j / this.detailX;
+          var u = j / this.detailX;
           var theta = 2 * Math.PI * u;
-          var phi = Math.PI * v - Math.PI / 2;
-          p = new p5.Vector(
-            radius * Math.cos(phi) * Math.sin(theta),
-            radius * Math.sin(phi),
-            radius * Math.cos(phi) * Math.cos(theta)
+          var n = new p5.Vector(
+            cosPhi * Math.sin(theta),
+            sinPhi,
+            cosPhi * Math.cos(theta)
           );
-          this.vertices.push(p);
+          this.vertexNormals.push(n);
+          this.vertices.push(p5.Vector.mult(n, radius));
           this.uvs.push([u, v]);
         }
       }
     };
     var sphereGeom = new p5.Geometry(detailX, detailY, _sphere);
-    sphereGeom
-      .computeFaces()
-      .computeNormals()
-      .averageNormals()
-      .averagePoleNormals();
+    sphereGeom.computeFaces();
     if (detailX <= 24 && detailY <= 16) {
       sphereGeom._makeTriangleEdges();
       this._renderer._edgesToVertices(sphereGeom);
@@ -633,18 +631,24 @@ p5.prototype.torus = function() {
 
   if (!this._renderer.geometryInHash(gId)) {
     var _torus = function() {
-      var u, v, p;
       for (var i = 0; i <= this.detailY; i++) {
-        v = i / this.detailY;
+        var v = i / this.detailY;
+        var phi = 2 * Math.PI * v;
+        var cosPhi = Math.cos(phi);
+        var sinPhi = Math.sin(phi);
         for (var j = 0; j <= this.detailX; j++) {
-          u = j / this.detailX;
+          var u = j / this.detailX;
           var theta = 2 * Math.PI * u;
-          var phi = 2 * Math.PI * v;
-          p = new p5.Vector(
-            (radius + tubeRadius * Math.cos(phi)) * Math.cos(theta),
-            (radius + tubeRadius * Math.cos(phi)) * Math.sin(theta),
-            tubeRadius * Math.sin(phi)
+          var p = new p5.Vector(
+            (radius + tubeRadius * cosPhi) * Math.cos(theta),
+            (radius + tubeRadius * cosPhi) * Math.sin(theta),
+            tubeRadius * sinPhi
           );
+          this.vertexNormals.push(new p5.Vector(
+            tubeRadius * cosPhi * Math.cos(theta),
+            tubeRadius * cosPhi * Math.sin(theta),
+            tubeRadius * sinPhi
+          ));
           this.vertices.push(p);
           this.uvs.push([u, v]);
         }
@@ -652,9 +656,9 @@ p5.prototype.torus = function() {
     };
     var torusGeom = new p5.Geometry(detailX, detailY, _torus);
     torusGeom
-      .computeFaces()
+      .computeFaces()/*
       .computeNormals()
-      .averageNormals();
+      .averageNormals()*/;
     if (detailX <= 24 && detailY <= 16) {
       torusGeom._makeTriangleEdges();
       this._renderer._edgesToVertices(torusGeom);
