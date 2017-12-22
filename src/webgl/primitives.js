@@ -644,19 +644,20 @@ p5.prototype.torus = function() {
             (radius + tubeRadius * cosPhi) * Math.sin(theta),
             tubeRadius * sinPhi
           );
-          this.vertexNormals.push(new p5.Vector(
-            tubeRadius * cosPhi * Math.cos(theta),
-            tubeRadius * cosPhi * Math.sin(theta),
-            tubeRadius * sinPhi
-          ));
+          this.vertexNormals.push(
+            new p5.Vector(
+              tubeRadius * cosPhi * Math.cos(theta),
+              tubeRadius * cosPhi * Math.sin(theta),
+              tubeRadius * sinPhi
+            )
+          );
           this.vertices.push(p);
           this.uvs.push([u, v]);
         }
       }
     };
     var torusGeom = new p5.Geometry(detailX, detailY, _torus);
-    torusGeom
-      .computeFaces()/*
+    torusGeom.computeFaces() /*
       .computeNormals()
       .averageNormals()*/;
     if (detailX <= 24 && detailY <= 16) {

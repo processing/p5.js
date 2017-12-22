@@ -1,3 +1,5 @@
+precision mediump float;
+
 attribute vec3 aPosition;
 attribute vec3 aNormal;
 attribute vec2 aTexCoord;
@@ -22,7 +24,7 @@ void main(void){
   vViewPosition = viewModelPosition.xyz;
   gl_Position = uProjectionMatrix * viewModelPosition;  
 
-  vNormal = normalize(uNormalMatrix * aNormal);
+  vNormal = normalize(uNormalMatrix * normalize(aNormal));
   vTexCoord = aTexCoord;
 
   vAmbientColor = vec3(0.0);
