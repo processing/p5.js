@@ -79,10 +79,10 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
     color._array[1],
     color._array[2]
   );
-  shader.setUniform('uDirectionalColor', this._renderer.ambientLightColors);
+  shader.setUniform('uAmbientColor', this._renderer.ambientLightColors);
 
   shader.setUniform(
-    'uDirectionalLightCount',
+    'uAmbientLightCount',
     this._renderer.ambientLightColors.length / 3
   );
 
