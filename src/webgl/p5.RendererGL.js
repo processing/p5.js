@@ -26,11 +26,8 @@ var defaultShaders = {
   normalVert: fs.readFileSync(__dirname + '/shaders/normal.vert', 'utf-8'),
   normalFrag: fs.readFileSync(__dirname + '/shaders/normal.frag', 'utf-8'),
   basicFrag: fs.readFileSync(__dirname + '/shaders/basic.frag', 'utf-8'),
-  lightVert: fs.readFileSync(__dirname + '/shaders/light.vert', 'utf-8'),
-  lightTextureFrag: fs.readFileSync(
-    __dirname + '/shaders/light_texture.frag',
-    'utf-8'
-  ),
+  lightVert: fs.readFileSync(__dirname + '/shaders/phong.vert', 'utf-8'),
+  lightTextureFrag: fs.readFileSync(__dirname + '/shaders/phong.frag', 'utf-8'),
   lineVert: fs.readFileSync(__dirname + '/shaders/line.vert', 'utf-8'),
   lineFrag: fs.readFileSync(__dirname + '/shaders/line.frag', 'utf-8')
 };
