@@ -399,9 +399,9 @@ p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
     this.curFillShader.active = true;
   }
   if (this.isImmediateDrawing) {
-    this._useImmediateModeShader();
+    this.setFillShader(this._getImmediateModeShader());
   } else {
-    this._useColorShader();
+    this.setFillShader(this._getColorShader());
   }
   this.drawMode = constants.FILL;
   this.curFillShader.setUniform('uMaterialColor', colors);
@@ -827,7 +827,7 @@ p5.RendererGL.prototype.setStrokeShader = function(s) {
  */
 
 p5.RendererGL.prototype._useLightShader = function() {
-  if (!this.curFillShader.isLightShader()) {
+  if (!this.curFillShader || !this.curFillShader.isLightShader()) {
     this.setFillShader(this._getLightShader());
   }
   return this.curFillShader;
@@ -840,7 +840,10 @@ p5.RendererGL.prototype._useColorShader = function() {
   // immediate mode one, we need to switch.
 
   // TODO: what if curFillShader is _any_ other shader?
-  if (this.curFillShader === this._defaultImmediateModeShader) {
+  if (
+    !this.curFillShader ||
+    this.curFillShader === this._defaultImmediateModeShader
+  ) {
     // there are different immediate mode and retain mode color shaders.
     // if we're using the immediate mode one, we need to switch to
     // one that works for retain mode.
@@ -851,7 +854,7 @@ p5.RendererGL.prototype._useColorShader = function() {
 
 p5.RendererGL.prototype._useImmediateModeShader = function() {
   // TODO: what if curFillShader is _any_ other shader?
-  if (this.curFillShader === this._defaultColorShader) {
+  if (!this.curFillShader || this.curFillShader === this._defaultColorShader) {
     // this is the fill/stroke shader for retain mode.
     // must switch to immediate mode shader before drawing!
     this.setFillShader(this._getImmediateModeShader());

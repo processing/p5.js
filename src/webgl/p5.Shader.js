@@ -244,6 +244,7 @@ p5.Shader.prototype.unbindTextures = function() {
 p5.Shader.prototype._setMatrixUniforms = function() {
   this.setUniform('uProjectionMatrix', this._renderer.uPMatrix.mat4);
   this.setUniform('uModelViewMatrix', this._renderer.uMVMatrix.mat4);
+  this.setUniform('uViewMatrix', this._renderer.cameraMatrix.mat4);
   if (this === this._renderer.curFillShader) {
     this._renderer.uNMatrix.inverseTranspose(this._renderer.uMVMatrix);
     this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
@@ -284,18 +285,19 @@ p5.Shader.prototype.useProgram = function() {
 p5.Shader.prototype.setUniform = function(uniformName, data) {
   //@todo update all current gl.uniformXX calls
 
-  var gl = this._renderer.GL;
-  // todo: is this safe to do here?
-  // todo: store the values another way?
-  this.useProgram();
-
-  // TODO BIND?
   var uniform = this.uniforms[uniformName];
   if (!uniform) {
     //@todo warning?
     return;
   }
   var location = uniform.location;
+
+  var gl = this._renderer.GL;
+  // todo: is this safe to do here?
+  // todo: store the values another way?
+  this.useProgram();
+
+  // TODO BIND?
 
   switch (uniform.type) {
     case gl.BOOL:
@@ -306,7 +308,11 @@ p5.Shader.prototype.setUniform = function(uniformName, data) {
       }
       break;
     case gl.INT:
-      gl.uniform1i(location, data);
+      if (uniform.size > 1) {
+        gl.uniform1iv(location, data);
+      } else {
+        gl.uniform1i(location, data);
+      }
       break;
     case gl.FLOAT:
       if (uniform.size > 1) {
