@@ -70,9 +70,9 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
    * model view, projection, & normal
    * matrices
    */
-  this.uMVMatrix = new p5.Matrix();
-  this.uPMatrix  = new p5.Matrix();
-  this.uNMatrix = new p5.Matrix('mat3');
+  this.uMVMatrix = new p5.Matrix(pInst);
+  this.uPMatrix = new p5.Matrix(pInst);
+  this.uNMatrix = new p5.Matrix('mat3', pInst);
 
   // Camera
   this._curCamera = null;
@@ -85,7 +85,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.cameraZ = this.defaultCameraZ;
   this.cameraNear = this.defaultCameraNear;
   this.cameraFar = this.defaultCameraFar;
-  this.cameraMatrix = new p5.Matrix();
+  this.cameraMatrix = new p5.Matrix(pInst);
   this.camera(); // set default camera matrices
 
   //Geometry & Material hashes
@@ -749,7 +749,7 @@ p5.RendererGL.prototype.pop = function() {
 };
 
 p5.RendererGL.prototype.resetMatrix = function() {
-  this.uMVMatrix = p5.Matrix.identity();
+  this.uMVMatrix = p5.Matrix.identity(this._pInst);
   return this;
 };
 

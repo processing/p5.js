@@ -27,47 +27,25 @@ p5.Matrix = function() {
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
+
   // This is default behavior when object
   // instantiated using createMatrix()
   // @todo implement createMatrix() in core/math.js
-  if(args[0] instanceof p5) {
-    // save reference to p5 if passed in
-    this.p5 = args[0];
-    if(args[1] === 'mat3'){
-      this.mat3 = args[2] || new GLMAT_ARRAY_TYPE([
-        1, 0, 0,
-        0, 1, 0,
-        0, 0, 1
-      ]);
-    }
-    else {
-      this.mat4  = args[1] || new GLMAT_ARRAY_TYPE([
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1
-      ]);
-    }
-    // default behavior when object
-    // instantiated using new p5.Matrix()
-  } else {
-    if(args[0] === 'mat3'){
-      this.mat3 = args[1] || new GLMAT_ARRAY_TYPE([
-        1, 0, 0,
-        0, 1, 0,
-        0, 0, 1
-      ]);
-    }
-    else {
-      this.mat4 = args[0] || new GLMAT_ARRAY_TYPE([
-        1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1
-      ]);
-    }
+  if (args.length && args[args.length - 1] instanceof p5) {
+    this.p5 = args[args.length - 1];
   }
-  this.name = 'p5.Matrix';   // for friendly debugger system
+
+  if (args[0] === 'mat3') {
+    this.mat3 = Array.isArray(args[1])
+      ? args[1]
+      : new GLMAT_ARRAY_TYPE([1, 0, 0, 0, 1, 0, 0, 0, 1]);
+  } else {
+    this.mat4 = Array.isArray(args[0])
+      ? args[0]
+      : new GLMAT_ARRAY_TYPE([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+  }
+
+  this.name = 'p5.Matrix'; // for friendly debugger system
   return this;
 };
 
@@ -120,8 +98,8 @@ p5.Matrix.prototype.set = function (inMatrix) {
  * @method get
  * @return {p5.Matrix} the copy of the p5.Matrix object
  */
-p5.Matrix.prototype.get = function () {
-  return new p5.Matrix(this.mat4);
+p5.Matrix.prototype.get = function() {
+  return new p5.Matrix(this.mat4, this.p5);
 };
 
 /**
@@ -129,8 +107,8 @@ p5.Matrix.prototype.get = function () {
  * @method copy
  * @return {p5.Matrix}   the result matrix
  */
-p5.Matrix.prototype.copy = function(){
-  var copied = new p5.Matrix();
+p5.Matrix.prototype.copy = function() {
+  var copied = new p5.Matrix(this.p5);
   copied.mat4[0] = this.mat4[0];
   copied.mat4[1] = this.mat4[1];
   copied.mat4[2] = this.mat4[2];
@@ -155,8 +133,8 @@ p5.Matrix.prototype.copy = function(){
  * @method identity
  * @return {p5.Matrix}   the result matrix
  */
-p5.Matrix.identity = function(){
-  return new p5.Matrix();
+p5.Matrix.identity = function(pInst) {
+  return new p5.Matrix(pInst);
 };
 
 /**
