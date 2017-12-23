@@ -26,8 +26,13 @@ var defaultShaders = {
   normalVert: fs.readFileSync(__dirname + '/shaders/normal.vert', 'utf-8'),
   normalFrag: fs.readFileSync(__dirname + '/shaders/normal.frag', 'utf-8'),
   basicFrag: fs.readFileSync(__dirname + '/shaders/basic.frag', 'utf-8'),
-  lightVert: fs.readFileSync(__dirname + '/shaders/phong.vert', 'utf-8'),
-  lightTextureFrag: fs.readFileSync(__dirname + '/shaders/phong.frag', 'utf-8'),
+  lightVert: fs.readFileSync(__dirname + '/shaders/light.vert', 'utf-8'),
+  lightTextureFrag: fs.readFileSync(
+    __dirname + '/shaders/light_texture.frag',
+    'utf-8'
+  ),
+  phongVert: fs.readFileSync(__dirname + '/shaders/phong.vert', 'utf-8'),
+  phongFrag: fs.readFileSync(__dirname + '/shaders/phong.frag', 'utf-8'),
   lineVert: fs.readFileSync(__dirname + '/shaders/line.vert', 'utf-8'),
   lineFrag: fs.readFileSync(__dirname + '/shaders/line.frag', 'utf-8')
 };
@@ -56,6 +61,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
     attr.preserveDrawingBuffer === undefined
       ? true
       : attr.preserveDrawingBuffer;
+  this.attributes.perPixelLighting =
+    attr.perPixelLighting === undefined ? false : attr.perPixelLighting;
   this._initContext();
   this.isP3D = true; //lets us know we're in 3d mode
   this.GL = this.drawingContext;
@@ -872,11 +879,19 @@ p5.RendererGL.prototype._useImmediateModeShader = function() {
 
 p5.RendererGL.prototype._getLightShader = function() {
   if (!this._defaultLightShader) {
-    this._defaultLightShader = new p5.Shader(
-      this,
-      defaultShaders.lightVert,
-      defaultShaders.lightTextureFrag
-    );
+    if (this.attributes.perPixelLighting) {
+      this._defaultLightShader = new p5.Shader(
+        this,
+        defaultShaders.phongVert,
+        defaultShaders.phongFrag
+      );
+    } else {
+      this._defaultLightShader = new p5.Shader(
+        this,
+        defaultShaders.lightVert,
+        defaultShaders.lightTextureFrag
+      );
+    }
   }
   //this.drawMode = constants.FILL;
   return this._defaultLightShader;

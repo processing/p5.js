@@ -1,6 +1,7 @@
 precision mediump float;
 
-uniform mat4 uModelViewMatrix;
+//uniform mat4 uModelViewMatrix;
+uniform mat4 uViewMatrix;
 
 uniform vec4 uMaterialColor;
 uniform sampler2D uSampler;
@@ -24,12 +25,12 @@ varying vec3 vAmbientColor;
 vec3 V;
 vec3 N;
 
-const float specularScale = 0.65;
-const float shininess = 50.0;
+const float specularScale = 0.75;
+const float shininess = 20.0;
 
 struct LightResult {
 	float specular;
-	vec3 diffuse;
+	float diffuse;
 };
 
 float phongSpecular(
@@ -48,14 +49,15 @@ float lambertDiffuse(
   return max(0.0, dot(lightDirection, surfaceNormal));
 }
 
-LightResult light(vec3 lightVector, vec3 lightColor, float falloff) {
+LightResult light(vec3 lightVector) {
 
   vec3 L = normalize(lightVector);
 
   //compute our diffuse & specular terms
   LightResult lr;
-  lr.specular = phongSpecular(L, V, N, shininess) * specularScale * falloff;
-  lr.diffuse = lightColor * lambertDiffuse(L, N) * falloff;
+  if (uSpecular)
+    lr.specular = phongSpecular(L, V, N, shininess) * specularScale;
+  lr.diffuse = lambertDiffuse(L, N);
   return lr;
 }
 
@@ -70,29 +72,26 @@ void main(void) {
   for (int j = 0; j < 8; j++) {
     if (uDirectionalLightCount == j) break;
 
-    LightResult result = light(uLightingDirection[j], uDirectionalColor[j], 1.0);
-    diffuse += result.diffuse;
+    LightResult result = light(uLightingDirection[j]);
+    diffuse += result.diffuse * uDirectionalColor[j];
     specular += result.specular;
   }
 
   for (int k = 0; k < 8; k++) {
     if (uPointLightCount == k) break;
 
-    vec3 lightPosition = (uModelViewMatrix * vec4(uPointLightLocation[k], 1.0)).xyz;
-    //vec3 lightPosition = uPointLightLocation[k];
+    vec3 lightPosition = (uViewMatrix * vec4(uPointLightLocation[k], 1.0)).xyz;
     vec3 lightVector = lightPosition - vViewPosition;
 	
     //calculate attenuation
     float lightDistance = length(lightVector);
-    float falloff = 100.0 / (lightDistance + 100.0);
+    float falloff = 300.0 / (lightDistance + 300.0);
 
-    LightResult result = light(lightVector, uPointLightColor[k], falloff);
-    diffuse += result.diffuse;
-    specular += result.specular;
+    LightResult result = light(lightVector);
+    diffuse += result.diffuse * falloff * uPointLightColor[k];
+    specular += result.specular * falloff;
   }
 
-  vec4 diffuseColor = isTexture ? texture2D(uSampler, vTexCoord) : uMaterialColor;
-
-  gl_FragColor.rgb = diffuseColor.rgb * (diffuse + vAmbientColor) + specular;
-  gl_FragColor.a = diffuseColor.a;
+  gl_FragColor = isTexture ? texture2D(uSampler, vTexCoord) : uMaterialColor;
+  gl_FragColor.rgb = gl_FragColor.rgb * (diffuse + vAmbientColor) + specular;
 }
