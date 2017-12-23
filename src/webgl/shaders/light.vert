@@ -26,7 +26,7 @@ void main(void){
   vec4 positionVec4 = vec4(aPosition, 1.0);
   gl_Position = uProjectionMatrix * uModelViewMatrix * positionVec4;
 
-  vec3 vertexNormal = vec3(uNormalMatrix * normalize(aNormal));
+  vec3 vertexNormal = normalize(vec3( uNormalMatrix * aNormal ));
   vVertexNormal = vertexNormal;
   vVertTexCoord = aTexCoord;
 
