@@ -1157,4 +1157,17 @@ p5.Vector.mag = function mag(vecT) {
   return Math.sqrt(magSq);
 };
 
+/**
+ * @method fromPolar
+ * @param {Number} radius
+ * @param {Number} angle
+ * @return {p5.Vector}
+ */
+p5.Vector.fromPolar = function(radius, angle) {
+  let x = radius * cos(angle);
+  let y = radius * sin(angle);
+  return new p5.Vector(x, y);
+}
+
 module.exports = p5.Vector;
+
