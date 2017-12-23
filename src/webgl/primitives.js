@@ -661,9 +661,9 @@ p5.prototype.torus = function() {
             tubeRadius * sinPhi
           );
           var n = new p5.Vector(
-            tubeRadius * cosPhi * cosTheta,
-            tubeRadius * cosPhi * sinTheta,
-            tubeRadius * sinPhi
+            cosPhi * cosTheta,
+            cosPhi * sinTheta,
+            sinPhi
           );
 
           this.vertices.push(p);
