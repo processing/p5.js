@@ -5,12 +5,9 @@ function setup(){
 function draw(){
   background(0);
 
-  var locY = mouseY - height / 2;
-  var locX = mouseX - width / 2;
-
   ambientLight(50);
-  pointLight(250, 250, 250, locX, locY, 0);
-
+  pointLight(250, 250, 250, mouseX - width / 2, mouseY - height / 2, 0);
+  
   ambientMaterial(250);
   sphere(50, 64);
 }

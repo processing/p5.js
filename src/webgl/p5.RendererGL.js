@@ -143,6 +143,9 @@ p5.RendererGL.prototype._initContext = function() {
       gl.enable(gl.DEPTH_TEST);
       gl.depthFunc(gl.LEQUAL);
       gl.viewport(0, 0, gl.drawingBufferWidth, gl.drawingBufferHeight);
+      this._viewport = this.drawingContext.getParameter(
+        this.drawingContext.VIEWPORT
+      );
     }
   } catch (er) {
     throw new Error(er);
@@ -653,6 +656,7 @@ p5.RendererGL.prototype.resize = function(w, h) {
     this.GL.drawingBufferWidth,
     this.GL.drawingBufferHeight
   );
+  this._viewport = this.GL.getParameter(this.GL.VIEWPORT);
   // If we're using the default camera, update the aspect ratio
   if (this._curCamera === null || this._curCamera === 'default') {
     this._curCamera = null;
@@ -709,6 +713,9 @@ p5.RendererGL.prototype.scale = function(x, y, z) {
 };
 
 p5.RendererGL.prototype.rotate = function(rad, axis) {
+  if (!axis) {
+    axis = [0, 0, 1];
+  }
   this.uMVMatrix.rotate(rad, axis);
   return this;
 };
