@@ -907,7 +907,7 @@ p5.Vector.fromAngle = function fromAngle(angle, length) {
  * @param {Number}     [length] the length of the new vector (defaults to 1)
  * @return {p5.Vector}       the new p5.Vector object
  * @example
- * <div>
+ * <div modernizr='webgl'>
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
