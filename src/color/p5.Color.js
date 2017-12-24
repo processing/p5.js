@@ -65,16 +65,16 @@ p5.Color.prototype.toString = function() {
  * @example
  * <div>
  * <code>
- *   var backgroundColor;
+ * var backgroundColor;
  *
- *   function setup() {
- *     backgroundColor = color(100, 50, 150);
- *   }
+ * function setup() {
+ *   backgroundColor = color(100, 50, 150);
+ * }
  *
- *   function draw() {
- *     backgroundColor.setRed(128 + 128*sin(millis()/1000));
- *     background(backgroundColor);
- *   }
+ * function draw() {
+ *   backgroundColor.setRed(128 + 128 * sin(millis() / 1000));
+ *   background(backgroundColor);
+ * }
  * </code>
  * </div>
  *
@@ -92,16 +92,16 @@ p5.Color.prototype.setRed = function(new_red) {
  * @example
  * <div>
  * <code>
- *   var backgroundColor;
+ * var backgroundColor;
  *
- *   function setup() {
- *     backgroundColor = color(100, 50, 150);
- *   }
+ * function setup() {
+ *   backgroundColor = color(100, 50, 150);
+ * }
  *
- *   function draw() {
- *     backgroundColor.setGreen(128 + 128*sin(millis()/1000));
- *     background(backgroundColor);
- *   }
+ * function draw() {
+ *   backgroundColor.setGreen(128 + 128 * sin(millis() / 1000));
+ *   background(backgroundColor);
+ * }
  * </code>
  * </div>
  *
@@ -119,16 +119,16 @@ p5.Color.prototype.setGreen = function(new_green) {
  * @example
  * <div>
  * <code>
- *   var backgroundColor;
+ * var backgroundColor;
  *
- *   function setup() {
- *     backgroundColor = color(100, 50, 150);
- *   }
+ * function setup() {
+ *   backgroundColor = color(100, 50, 150);
+ * }
  *
- *   function draw() {
- *     backgroundColor.setBlue(128 + 128*sin(millis()/1000));
- *     background(backgroundColor);
- *   }
+ * function draw() {
+ *   backgroundColor.setBlue(128 + 128 * sin(millis() / 1000));
+ *   background(backgroundColor);
+ * }
  * </code>
  * </div>
  *
@@ -159,12 +159,12 @@ p5.Color.prototype.setBlue = function(new_blue) {
  *
  *   noFill();
  *   stroke(0);
- *   ellipse(10,10,width-10,height-10);
+ *   ellipse(10, 10, width - 10, height - 10);
  *
- *   squareColor.setAlpha(128 + 128*sin(millis()/1000));
+ *   squareColor.setAlpha(128 + 128 * sin(millis() / 1000));
  *   fill(squareColor);
  *   noStroke();
- *   rect(13,13,width-26,height-26);
+ *   rect(13, 13, width - 26, height - 26);
  * }
  * </code>
  * </div>

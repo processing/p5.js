@@ -57,8 +57,9 @@ p5.prototype.createCanvas = function(w, h, renderer) {
     if (c) {
       //if defaultCanvas already exists
       c.parentNode.removeChild(c); //replace the existing defaultCanvas
+      var thisRenderer = this._renderer;
       this._elements = this._elements.filter(function(e) {
-        return e !== this._renderer;
+        return e !== thisRenderer;
       });
     }
     c = document.createElement('canvas');
@@ -124,7 +125,7 @@ p5.prototype.createCanvas = function(w, h, renderer) {
  * }
  *
  * function draw() {
- *  background(0, 100, 200);
+ *   background(0, 100, 200);
  * }
  *
  * function windowResized() {
@@ -149,7 +150,11 @@ p5.prototype.resizeCanvas = function(w, h, noRedraw) {
     this._renderer.resize(w, h);
     // reset canvas properties
     for (var savedKey in props) {
-      this.drawingContext[savedKey] = props[savedKey];
+      try {
+        this.drawingContext[savedKey] = props[savedKey];
+      } catch (err) {
+        // ignore read-only property errors
+      }
     }
     if (!noRedraw) {
       this.redraw();
@@ -203,7 +208,7 @@ p5.prototype.noCanvas = function() {
  *   background(200);
  *   pg.background(100);
  *   pg.noStroke();
- *   pg.ellipse(pg.width/2, pg.height/2, 50, 50);
+ *   pg.ellipse(pg.width / 2, pg.height / 2, 50, 50);
  *   image(pg, 50, 50);
  *   image(pg, 0, 0, 50, 50);
  * }

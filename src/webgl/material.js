@@ -85,14 +85,14 @@ p5.prototype.shader = function(s) {
  * @example
  * <div>
  * <code>
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
- *  background(200);
- *  normalMaterial();
- *  sphere(50);
+ * function draw() {
+ *   background(200);
+ *   normalMaterial();
+ *   sphere(50);
  * }
  * </code>
  * </div>
@@ -119,12 +119,12 @@ p5.prototype.normalMaterial = function() {
  * <div>
  * <code>
  * var img;
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   img = loadImage("assets/laDefense.jpg");
+ *   img = loadImage('assets/laDefense.jpg');
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(0);
  *   rotateZ(frameCount * 0.01);
  *   rotateX(frameCount * 0.01);
@@ -139,13 +139,13 @@ p5.prototype.normalMaterial = function() {
  * <div>
  * <code>
  * var pg;
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  *   pg = createGraphics(200, 200);
  *   pg.textSize(100);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(0);
  *   pg.background(255);
  *   pg.text('hello!', 0, 100);
@@ -159,16 +159,16 @@ p5.prototype.normalMaterial = function() {
  * <div>
  * <code>
  * var vid;
- * function preload(){
- *   vid = createVideo("assets/fingers.mov");
+ * function preload() {
+ *   vid = createVideo('assets/fingers.mov');
  *   vid.hide();
  *   vid.loop();
  * }
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
  *
- * function draw(){
+ * function draw() {
  *   background(0);
  *   //pass video frame as texture
  *   texture(vid);
@@ -220,15 +220,15 @@ p5.prototype.texture = function() {
  * @example
  * <div>
  * <code>
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
- * function draw(){
- *  background(0);
- *  ambientLight(100);
- *  pointLight(250, 250, 250, 100, 100, 0);
- *  ambientMaterial(250);
- *  sphere(50);
+ * function draw() {
+ *   background(0);
+ *   ambientLight(100);
+ *   pointLight(250, 250, 250, 100, 100, 0);
+ *   ambientMaterial(250);
+ *   sphere(50);
  * }
  * </code>
  * </div>
@@ -267,15 +267,15 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * @example
  * <div>
  * <code>
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
- * function draw(){
- *  background(0);
- *  ambientLight(100);
- *  pointLight(250, 250, 250, 100, 100, 0);
- *  specularMaterial(250);
- *  sphere(50);
+ * function draw() {
+ *   background(0);
+ *   ambientLight(100);
+ *   pointLight(250, 250, 250, 100, 100, 0);
+ *   specularMaterial(250);
+ *   sphere(50);
  * }
  * </code>
  * </div>

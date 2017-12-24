@@ -251,10 +251,7 @@ p5.Shader.prototype._setMatrixUniforms = function() {
 };
 
 p5.Shader.prototype._setViewportUniform = function() {
-  this.setUniform(
-    'uViewport',
-    this._renderer.GL.getParameter(this._renderer.GL.VIEWPORT)
-  );
+  this.setUniform('uViewport', this._renderer._viewport);
 };
 
 /**
@@ -306,7 +303,11 @@ p5.Shader.prototype.setUniform = function(uniformName, data) {
       }
       break;
     case gl.INT:
-      gl.uniform1i(location, data);
+      if (uniform.size > 1) {
+        gl.uniform1iv(location, data);
+      } else {
+        gl.uniform1i(location, data);
+      }
       break;
     case gl.FLOAT:
       if (uniform.size > 1) {

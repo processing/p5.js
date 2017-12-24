@@ -36,11 +36,11 @@ var p5 = require('../core/core');
  * <code>
  * textSize(16);
  * textAlign(RIGHT);
- * text("ABCD", 50, 30);
+ * text('ABCD', 50, 30);
  * textAlign(CENTER);
- * text("EFGH", 50, 50);
+ * text('EFGH', 50, 50);
  * textAlign(LEFT);
- * text("IJKL", 50, 70);
+ * text('IJKL', 50, 70);
  * </code>
  * </div>
  *
@@ -64,16 +64,16 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  * <div>
  * <code>
  * // Text to display. The "\n" is a "new line" character
- * lines = "L1\nL2\nL3";
+ * var lines = 'L1\nL2\nL3';
  * textSize(12);
  *
- * textLeading(10);  // Set leading to 10
+ * textLeading(10); // Set leading to 10
  * text(lines, 10, 25);
  *
- * textLeading(20);  // Set leading to 20
+ * textLeading(20); // Set leading to 20
  * text(lines, 40, 25);
  *
- * textLeading(30);  // Set leading to 30
+ * textLeading(30); // Set leading to 30
  * text(lines, 70, 25);
  * </code>
  * </div>
@@ -101,11 +101,11 @@ p5.prototype.textLeading = function(theLeading) {
  * <div>
  * <code>
  * textSize(12);
- * text("Font Size 12", 10, 30);
+ * text('Font Size 12', 10, 30);
  * textSize(14);
- * text("Font Size 14", 10, 60);
+ * text('Font Size 14', 10, 60);
  * textSize(16);
- * text("Font Size 16", 10, 90);
+ * text('Font Size 16', 10, 90);
  * </code>
  * </div>
  *
@@ -135,11 +135,11 @@ p5.prototype.textSize = function(theSize) {
  * strokeWeight(0);
  * textSize(12);
  * textStyle(NORMAL);
- * text("Font Style Normal", 10, 30);
+ * text('Font Style Normal', 10, 30);
  * textStyle(ITALIC);
- * text("Font Style Italic", 10, 60);
+ * text('Font Style Italic', 10, 60);
  * textStyle(BOLD);
- * text("Font Style Bold", 10, 90);
+ * text('Font Style Bold', 10, 90);
  * </code>
  * </div>
  *
@@ -170,7 +170,7 @@ p5.prototype.textStyle = function(theStyle) {
  * text(aChar, 0, 40);
  * line(cWidth, 0, cWidth, 50);
  *
- * var aString = "p5.js";
+ * var aString = 'p5.js';
  * var sWidth = textWidth(aString);
  * text(aString, 0, 85);
  * line(sWidth, 50, sWidth, 100);
@@ -200,15 +200,15 @@ p5.prototype.textWidth = function(theText) {
  * var base = height * 0.75;
  * var scalar = 0.8; // Different for each font
  *
- * textSize(32);  // Set initial text size
- * var asc = textAscent() * scalar;  // Calc ascent
+ * textSize(32); // Set initial text size
+ * var asc = textAscent() * scalar; // Calc ascent
  * line(0, base - asc, width, base - asc);
- * text("dp", 0, base);  // Draw text on baseline
+ * text('dp', 0, base); // Draw text on baseline
  *
- * textSize(64);  // Increase text size
- * asc = textAscent() * scalar;  // Recalc ascent
+ * textSize(64); // Increase text size
+ * asc = textAscent() * scalar; // Recalc ascent
  * line(40, base - asc, width, base - asc);
- * text("dp", 40, base);  // Draw text on baseline
+ * text('dp', 40, base); // Draw text on baseline
  * </code>
  * </div>
  */
@@ -228,15 +228,15 @@ p5.prototype.textAscent = function() {
  * var base = height * 0.75;
  * var scalar = 0.8; // Different for each font
  *
- * textSize(32);  // Set initial text size
- * var desc = textDescent() * scalar;  // Calc ascent
- * line(0, base+desc, width, base+desc);
- * text("dp", 0, base);  // Draw text on baseline
+ * textSize(32); // Set initial text size
+ * var desc = textDescent() * scalar; // Calc ascent
+ * line(0, base + desc, width, base + desc);
+ * text('dp', 0, base); // Draw text on baseline
  *
- * textSize(64);  // Increase text size
- * desc = textDescent() * scalar;  // Recalc ascent
+ * textSize(64); // Increase text size
+ * desc = textDescent() * scalar; // Recalc ascent
  * line(40, base + desc, width, base + desc);
- * text("dp", 40, base);  // Draw text on baseline
+ * text('dp', 40, base); // Draw text on baseline
  * </code>
  * </div>
  */

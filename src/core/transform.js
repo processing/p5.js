@@ -77,7 +77,7 @@ var constants = require('./constants');
  * }
  *
  * function draw() {
- *   var step = frameCount % 20
+ *   var step = frameCount % 20;
  *   var angle = map(step, 0, 20, 0, TWO_PI);
  *   var cos_a = cos(angle);
  *   var sin_a = sin(angle);
@@ -97,12 +97,12 @@ var constants = require('./constants');
  * }
  *
  * function draw() {
- *   var step = frameCount % 20
- *   var angle = map(step, 0, 20, -PI/4, PI/4);
+ *   var step = frameCount % 20;
+ *   var angle = map(step, 0, 20, -PI / 4, PI / 4);
  *   background(200);
  *   translate(50, 50);
  *   // equivalent to shearX(angle);
- *   var shear_factor = 1 / tan(PI/2 - angle);
+ *   var shear_factor = 1 / tan(PI / 2 - angle);
  *   applyMatrix(1, 0, shear_factor, 1, 0, 0);
  *   rect(0, 0, 50, 50);
  * }
@@ -183,8 +183,8 @@ p5.prototype.resetMatrix = function() {
  * @example
  * <div>
  * <code>
- * translate(width/2, height/2);
- * rotate(PI/3.0);
+ * translate(width / 2, height / 2);
+ * rotate(PI / 3.0);
  * rect(-26, -26, 52, 52);
  * </code>
  * </div>
@@ -329,8 +329,8 @@ p5.prototype.rotateZ = function(rad) {
  * @example
  * <div>
  * <code>
- * translate(width/2, height/2);
- * rotate(PI/3.0);
+ * translate(width / 2, height / 2);
+ * rotate(PI / 3.0);
  * rect(-26, -26, 52, 52);
  * </code>
  * </div>
@@ -409,8 +409,8 @@ p5.prototype.scale = function() {
  * @example
  * <div>
  * <code>
- * translate(width/4, height/4);
- * shearX(PI/4.0);
+ * translate(width / 4, height / 4);
+ * shearX(PI / 4.0);
  * rect(0, 0, 30, 30);
  * </code>
  * </div>
@@ -450,8 +450,8 @@ p5.prototype.shearX = function(angle) {
  * @example
  * <div>
  * <code>
- * translate(width/4, height/4);
- * shearY(PI/4.0);
+ * translate(width / 4, height / 4);
+ * shearY(PI / 4.0);
  * rect(0, 0, 30, 30);
  * </code>
  * </div>
@@ -495,11 +495,11 @@ p5.prototype.shearY = function(angle) {
  *
  * <div>
  * <code>
- * rect(0, 0, 55, 55);  // Draw rect at original 0,0
+ * rect(0, 0, 55, 55); // Draw rect at original 0,0
  * translate(30, 20);
- * rect(0, 0, 55, 55);  // Draw rect at new 0,0
+ * rect(0, 0, 55, 55); // Draw rect at new 0,0
  * translate(14, 14);
- * rect(0, 0, 55, 55);  // Draw rect at new 0,0
+ * rect(0, 0, 55, 55); // Draw rect at new 0,0
  * </code>
  * </div>
  *

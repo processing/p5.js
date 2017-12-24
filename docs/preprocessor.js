@@ -34,10 +34,19 @@ function mergeOverloadedMethods(data) {
   var methodsByFullName = {};
   var paramsForOverloadedMethods = {};
 
+  var consts = (data.consts = {});
+
   data.classitems = data.classitems.filter(function(classitem) {
     if (classitem.access === 'private') {
       return false;
     }
+
+    var itemClass = data.classes[classitem.class];
+    if (!itemClass || itemClass.private) {
+      return false;
+    }
+
+    var methodConsts = {};
 
     var fullName, method;
 
@@ -59,6 +68,29 @@ function mergeOverloadedMethods(data) {
             ')'
         );
       }
+    };
+
+    var extractConsts = function(params) {
+      params &&
+        params.forEach(function(param) {
+          if (param.type.split('|').indexOf('Constant') >= 0) {
+            var match;
+            if (classitem.name === 'endShape' && param.name === 'mode') {
+              match = 'CLOSE';
+            } else {
+              var constantRe = /either\s+(?:[A-Z0-9_]+\s*,?\s*(?:or)?\s*)+/g;
+              var execResult = constantRe.exec(param.description);
+              match = execResult && execResult[0];
+            }
+            if (match) {
+              var reConst = /[A-Z0-9_]+/g;
+              var matchConst;
+              while ((matchConst = reConst.exec(match)) !== null) {
+                methodConsts[matchConst] = true;
+              }
+            }
+          }
+        });
     };
 
     var processOverloadedParams = function(params) {
@@ -96,6 +128,7 @@ function mergeOverloadedMethods(data) {
         }
       });
 
+      extractConsts(params);
       return params;
     };
 
@@ -149,8 +182,13 @@ function mergeOverloadedMethods(data) {
         method.overloads.push(makeOverload(classitem));
         return false;
       } else {
+        extractConsts(classitem.params);
         methodsByFullName[fullName] = classitem;
       }
+
+      Object.keys(methodConsts).forEach(constName =>
+        (consts[constName] || (consts[constName] = [])).push(fullName)
+      );
     }
     return true;
   });
