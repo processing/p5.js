@@ -954,49 +954,59 @@ p5.RendererGL.prototype.line = function() {
   return this;
 };
 
-p5.RendererGL.prototype.image = function(image, sx, sy, sw, sh,
-    dx, dy, dw, dh) {
-  if (typeof image !== 'undefined' &&
-      typeof sx !== 'undefined' &&
-      typeof sy !== 'undefined' &&
-      typeof sw !== 'undefined' &&
-      typeof sh !== 'undefined' &&
-      typeof dx !== 'undefined' &&
-      typeof dy !== 'undefined' &&
-      typeof dw !== 'undefined' &&
-      typeof dh !== 'undefined' &&
-      typeof this._pInst.texture !== 'undefined')
-  {
+p5.RendererGL.prototype.image = function(
+  image,
+  sx,
+  sy,
+  sw,
+  sh,
+  dx,
+  dy,
+  dw,
+  dh
+) {
+  if (
+    typeof image !== 'undefined' &&
+    typeof sx !== 'undefined' &&
+    typeof sy !== 'undefined' &&
+    typeof sw !== 'undefined' &&
+    typeof sh !== 'undefined' &&
+    typeof dx !== 'undefined' &&
+    typeof dy !== 'undefined' &&
+    typeof dw !== 'undefined' &&
+    typeof dh !== 'undefined' &&
+    typeof this._pInst.texture !== 'undefined'
+  ) {
     this._pInst.texture(image);
 
     var iWidth = image.width;
     var iHeight = image.height;
 
     var u0 = 0;
-    if(sx <= iWidth) {
+    if (sx <= iWidth) {
       u0 = sx / iWidth;
     }
 
     var v0 = 0;
-    if(sy <= iHeight) {
+    if (sy <= iHeight) {
       v0 = sy / iHeight;
     }
 
     var u1 = 1;
-    if((sx + sw) <= iWidth) {
+    if (sx + sw <= iWidth) {
       u1 = (sx + sw) / iWidth;
     }
 
     var v1 = 1;
-    if((sy + sh) <= iHeight) {
+    if (sy + sh <= iHeight) {
       v1 = (sy + sh) / iHeight;
     }
 
     this.beginShape();
     this.vertex(dx, dy, 0, u0, v0);
     this.vertex(dx + dw, dy, 0, u1, v0);
-    this.vertex(dx + dw, dy + dh,0, u1, v1);
-    this.vertex(dx, dy + dh,0, u0, v1);
+    this.vertex(dx + dw, dy + dh, 0, u1, v1);
+    this.vertex(dx, dy + dh, 0, u0, v1);
     this.endShape(constants.CLOSE);
   }
   return this;
