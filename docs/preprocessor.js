@@ -41,6 +41,11 @@ function mergeOverloadedMethods(data) {
       return false;
     }
 
+    var itemClass = data.classes[classitem.class];
+    if (!itemClass || itemClass.private) {
+      return false;
+    }
+
     var methodConsts = {};
 
     var fullName, method;
