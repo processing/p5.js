@@ -31,7 +31,8 @@ define([
         // module === group
         this.groups = {};
         _.each(items, function (item, i) {
-          if (item.file.indexOf('addons') === -1) { //addons don't get displayed on main page
+
+          if (!item.private && item.file.indexOf('addons') === -1) { //addons don't get displayed on main page
 
             var group = item.module || '_';
             var subgroup = item.submodule || '_';
@@ -54,13 +55,13 @@ define([
                 name: subgroup.replace('_', '&nbsp;'),
                 items: []
               };
-			}
-			
-			// hide the un-interesting constants  
-			if (group === 'Constants' && !item.example)
-				return;
+            }
 
-            if (item.file.indexOf('p5.') === -1) {
+            // hide the un-interesting constants  
+            if (group === 'Constants' && !item.example)
+              return;
+
+            if (item.class === 'p5') {
 
               self.groups[group].subgroups[subgroup].items.push(item);
 
