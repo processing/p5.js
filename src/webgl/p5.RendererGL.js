@@ -171,13 +171,11 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
     document.body.appendChild(c);
   }
   this._pInst.canvas = c;
-  this._pInst._setProperty(
-    '_renderer',
-    new p5.RendererGL(this._pInst.canvas, this._pInst, true, attr)
-  );
-  this._pInst._renderer.resize(w, h);
-  this._pInst._renderer._applyDefaults();
-  this._pInst._elements.push(this._renderer);
+  var renderer = new p5.RendererGL(this._pInst.canvas, this._pInst, true, attr);
+  this._pInst._setProperty('_renderer', renderer);
+  renderer.resize(w, h);
+  renderer._applyDefaults();
+  this._pInst._elements.push(renderer);
   if (typeof callback === 'function') {
     //setTimeout with 0 forces the task to the back of the queue, this ensures that
     //we finish switching out the renderer
