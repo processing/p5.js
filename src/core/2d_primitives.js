@@ -15,8 +15,8 @@ require('./error_helpers');
 
 /**
  * Draw an arc to the screen. If called with only a, b, c, d, start, and
- * stop, the arc will be drawn as an open pie. If mode is provided, the arc
- * will be drawn either open, as a chord, or as a pie as specified. The
+ * stop, the arc will be drawn and filled as an open pie segment. If a mode parameter is provided, the arc
+ * will be filled like an open semi-circle (OPEN) , a closed semi-circle (CHORD), or as a closed pie segment (PIE). The
  * origin may be changed with the ellipseMode() function.<br><br>
  * Note that drawing a full circle (ex: 0 to TWO_PI) will appear blank
  * because 0 and TWO_PI are the same position on the unit circle. The
@@ -32,7 +32,7 @@ require('./error_helpers');
  * @param  {Number} start  angle to start the arc, specified in radians
  * @param  {Number} stop   angle to stop the arc, specified in radians
  * @param  {Constant} [mode] optional parameter to determine the way of drawing
- *                         the arc. either CHORD or PIE
+ *                         the arc. Parameter options are OPEN, CHORD or PIE
  * @chainable
  * @example
  * <div>
@@ -40,31 +40,38 @@ require('./error_helpers');
  * arc(50, 55, 50, 50, 0, HALF_PI);
  * noFill();
  * arc(50, 55, 60, 60, HALF_PI, PI);
- * arc(50, 55, 70, 70, PI, PI+QUARTER_PI);
- * arc(50, 55, 80, 80, PI+QUARTER_PI, TWO_PI);
+ * arc(50, 55, 70, 70, PI, PI + QUARTER_PI);
+ * arc(50, 55, 80, 80, PI + QUARTER_PI, TWO_PI);
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * arc(50, 50, 80, 80, 0, PI+QUARTER_PI, OPEN);
+ * arc(50, 50, 80, 80, 0, PI + QUARTER_PI);
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * arc(50, 50, 80, 80, 0, PI+QUARTER_PI, CHORD);
+ * arc(50, 50, 80, 80, 0, PI + QUARTER_PI, OPEN);
  * </code>
  * </div>
  *
  * <div>
  * <code>
- * arc(50, 50, 80, 80, 0, PI+QUARTER_PI, PIE);
+ * arc(50, 50, 80, 80, 0, PI + QUARTER_PI, CHORD);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * arc(50, 50, 80, 80, 0, PI + QUARTER_PI, PIE);
  * </code>
  * </div>
  *
  * @alt
  *shattered outline of an ellipse with a quarter of a white circle bottom-right.
+ *white ellipse with top right quarter missing.
  *white ellipse with black outline with top right missing.
  *white ellipse with top right missing with black outline around shape.
  *white ellipse with top right quarter missing with black outline around the shape.
@@ -104,14 +111,14 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
   // Adjust angles to counter linear scaling.
   if (start <= constants.HALF_PI) {
     start = Math.atan(w / h * Math.tan(start));
-  } else  if (start > constants.HALF_PI && start <= 3 * constants.HALF_PI) {
+  } else if (start > constants.HALF_PI && start <= 3 * constants.HALF_PI) {
     start = Math.atan(w / h * Math.tan(start)) + constants.PI;
   } else {
     start = Math.atan(w / h * Math.tan(start)) + constants.TWO_PI;
   }
   if (stop <= constants.HALF_PI) {
     stop = Math.atan(w / h * Math.tan(stop));
-  } else  if (stop > constants.HALF_PI && stop <= 3 * constants.HALF_PI) {
+  } else if (stop > constants.HALF_PI && stop <= 3 * constants.HALF_PI) {
     stop = Math.atan(w / h * Math.tan(stop)) + constants.PI;
   } else {
     stop = Math.atan(w / h * Math.tan(stop)) + constants.TWO_PI;
@@ -166,8 +173,12 @@ p5.prototype.ellipse = function() {
 
   p5._validateParameters('ellipse', args);
   // p5 supports negative width and heights for rects
-  if (args[2] < 0){args[2] = Math.abs(args[2]);}
-  if (args[3] < 0){args[3] = Math.abs(args[3]);}
+  if (args[2] < 0) {
+    args[2] = Math.abs(args[2]);
+  }
+  if (args[3] < 0) {
+    args[3] = Math.abs(args[3]);
+  }
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
@@ -176,7 +187,8 @@ p5.prototype.ellipse = function() {
     args[1],
     args[2],
     args[3],
-    this._renderer._ellipseMode);
+    this._renderer._ellipseMode
+  );
   args[0] = vals.x;
   args[1] = vals.y;
   args[2] = vals.w;
@@ -220,16 +232,6 @@ p5.prototype.ellipse = function() {
  *3 lines of various stroke sizes. Form top, bottom and right sides of a square.
  *
  */
-////commented out original
-// p5.prototype.line = function(x1, y1, x2, y2) {
-//   if (!this._renderer._doStroke) {
-//     return this;
-//   }
-//   if(this._renderer.isP3D){
-//   } else {
-//     this._renderer.line(x1, y1, x2, y2);
-//   }
-// };
 p5.prototype.line = function() {
   if (!this._renderer._doStroke) {
     return this;
@@ -242,19 +244,9 @@ p5.prototype.line = function() {
   p5._validateParameters('line', args);
   //check whether we should draw a 3d line or 2d
   if (this._renderer.isP3D) {
-    this._renderer.line(
-      args[0],
-      args[1],
-      args[2],
-      args[3],
-      args[4],
-      args[5]);
+    this._renderer.line.apply(this, args);
   } else {
-    this._renderer.line(
-      args[0],
-      args[1],
-      args[2],
-      args[3]);
+    this._renderer.line(args[0], args[1], args[2], args[3]);
   }
   return this;
 };
@@ -295,20 +287,12 @@ p5.prototype.point = function() {
   p5._validateParameters('point', args);
   //check whether we should draw a 3d line or 2d
   if (this._renderer.isP3D) {
-    this._renderer.point(
-      args[0],
-      args[1],
-      args[2]
-    );
+    this._renderer.point(args[0], args[1], args[2]);
   } else {
-    this._renderer.point(
-      args[0],
-      args[1]
-    );
+    this._renderer.point(args[0], args[1]);
   }
   return this;
 };
-
 
 /**
  * Draw a quad. A quad is a quadrilateral, a four sided polygon. It is
@@ -391,65 +375,65 @@ p5.prototype.quad = function() {
 };
 
 /**
-* Draws a rectangle to the screen. A rectangle is a four-sided shape with
-* every angle at ninety degrees. By default, the first two parameters set
-* the location of the upper-left corner, the third sets the width, and the
-* fourth sets the height. The way these parameters are interpreted, however,
-* may be changed with the rectMode() function.
-* <br><br>
-* The fifth, sixth, seventh and eighth parameters, if specified,
-* determine corner radius for the top-right, top-left, lower-right and
-* lower-left corners, respectively. An omitted corner radius parameter is set
-* to the value of the previously specified radius value in the parameter list.
-*
-* @method rect
-* @param  {Number} x  x-coordinate of the rectangle.
-* @param  {Number} y  y-coordinate of the rectangle.
-* @param  {Number} w  width of the rectangle.
-* @param  {Number} h  height of the rectangle.
-* @param  {Number} [tl] optional radius of top-left corner.
-* @param  {Number} [tr] optional radius of top-right corner.
-* @param  {Number} [br] optional radius of bottom-right corner.
-* @param  {Number} [bl] optional radius of bottom-left corner.
-* @return {p5}          the p5 object.
-* @example
-* <div>
-* <code>
-* // Draw a rectangle at location (30, 20) with a width and height of 55.
-* rect(30, 20, 55, 55);
-* </code>
-* </div>
-*
-* <div>
-* <code>
-* // Draw a rectangle with rounded corners, each having a radius of 20.
-* rect(30, 20, 55, 55, 20);
-* </code>
-* </div>
-*
-* <div>
-* <code>
-* // Draw a rectangle with rounded corners having the following radii:
-* // top-left = 20, top-right = 15, bottom-right = 10, bottom-left = 5.
-* rect(30, 20, 55, 55, 20, 15, 10, 5);
-* </code>
-* </div>
-*
-* @alt
-* 55x55 white rect with black outline in mid-right of canvas.
-* 55x55 white rect with black outline and rounded edges in mid-right of canvas.
-* 55x55 white rect with black outline and rounded edges of different radii.
-*/
+ * Draws a rectangle to the screen. A rectangle is a four-sided shape with
+ * every angle at ninety degrees. By default, the first two parameters set
+ * the location of the upper-left corner, the third sets the width, and the
+ * fourth sets the height. The way these parameters are interpreted, however,
+ * may be changed with the rectMode() function.
+ * <br><br>
+ * The fifth, sixth, seventh and eighth parameters, if specified,
+ * determine corner radius for the top-right, top-left, lower-right and
+ * lower-left corners, respectively. An omitted corner radius parameter is set
+ * to the value of the previously specified radius value in the parameter list.
+ *
+ * @method rect
+ * @param  {Number} x  x-coordinate of the rectangle.
+ * @param  {Number} y  y-coordinate of the rectangle.
+ * @param  {Number} w  width of the rectangle.
+ * @param  {Number} h  height of the rectangle.
+ * @param  {Number} [tl] optional radius of top-left corner.
+ * @param  {Number} [tr] optional radius of top-right corner.
+ * @param  {Number} [br] optional radius of bottom-right corner.
+ * @param  {Number} [bl] optional radius of bottom-left corner.
+ * @return {p5}          the p5 object.
+ * @example
+ * <div>
+ * <code>
+ * // Draw a rectangle at location (30, 20) with a width and height of 55.
+ * rect(30, 20, 55, 55);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Draw a rectangle with rounded corners, each having a radius of 20.
+ * rect(30, 20, 55, 55, 20);
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // Draw a rectangle with rounded corners having the following radii:
+ * // top-left = 20, top-right = 15, bottom-right = 10, bottom-left = 5.
+ * rect(30, 20, 55, 55, 20, 15, 10, 5);
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 55x55 white rect with black outline in mid-right of canvas.
+ * 55x55 white rect with black outline and rounded edges in mid-right of canvas.
+ * 55x55 white rect with black outline and rounded edges of different radii.
+ */
 /**
-* @method rect
-* @param  {Number} x
-* @param  {Number} y
-* @param  {Number} w
-* @param  {Number} h
-* @param  {Number} [detailX]
-* @param  {Number} [detailY]
-* @chainable
-*/
+ * @method rect
+ * @param  {Number} x
+ * @param  {Number} y
+ * @param  {Number} w
+ * @param  {Number} h
+ * @param  {Number} [detailX]
+ * @param  {Number} [detailY]
+ * @chainable
+ */
 p5.prototype.rect = function() {
   var args = new Array(arguments.length);
   for (var i = 0; i < args.length; ++i) {
@@ -465,7 +449,8 @@ p5.prototype.rect = function() {
     args[1],
     args[2],
     args[3],
-    this._renderer._rectMode);
+    this._renderer._rectMode
+  );
   args[0] = vals.x;
   args[1] = vals.y;
   args[2] = vals.w;
@@ -475,31 +460,30 @@ p5.prototype.rect = function() {
 };
 
 /**
-* A triangle is a plane created by connecting three points. The first two
-* arguments specify the first point, the middle two arguments specify the
-* second point, and the last two arguments specify the third point.
-*
-* @method triangle
-* @param  {Number} x1 x-coordinate of the first point
-* @param  {Number} y1 y-coordinate of the first point
-* @param  {Number} x2 x-coordinate of the second point
-* @param  {Number} y2 y-coordinate of the second point
-* @param  {Number} x3 x-coordinate of the third point
-* @param  {Number} y3 y-coordinate of the third point
-* @chainable
-* @example
-* <div>
-* <code>
-* triangle(30, 75, 58, 20, 86, 75);
-* </code>
-* </div>
-*
-*@alt
-* white triangle with black outline in mid-right of canvas.
-*
-*/
+ * A triangle is a plane created by connecting three points. The first two
+ * arguments specify the first point, the middle two arguments specify the
+ * second point, and the last two arguments specify the third point.
+ *
+ * @method triangle
+ * @param  {Number} x1 x-coordinate of the first point
+ * @param  {Number} y1 y-coordinate of the first point
+ * @param  {Number} x2 x-coordinate of the second point
+ * @param  {Number} y2 y-coordinate of the second point
+ * @param  {Number} x3 x-coordinate of the third point
+ * @param  {Number} y3 y-coordinate of the third point
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * triangle(30, 75, 58, 20, 86, 75);
+ * </code>
+ * </div>
+ *
+ *@alt
+ * white triangle with black outline in mid-right of canvas.
+ *
+ */
 p5.prototype.triangle = function() {
-
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }

@@ -69,10 +69,10 @@ var curveDetail = 20;
  *background(0, 0, 0);
  *noFill();
  *stroke(255);
- *bezier(250,250,0, 100,100,0, 100,0,0, 0,100,0);
+ *bezier(250, 250, 0, 100, 100, 0, 100, 0, 0, 0, 100, 0);
  * </code>
  * </div>
-*/
+ */
 p5.prototype.bezier = function() {
   var args = new Array(arguments.length);
   for (var i = 0; i < args.length; ++i) {
@@ -83,14 +83,16 @@ p5.prototype.bezier = function() {
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
-  if (this._renderer.isP3D){
-    args.push(bezierDetail);//adding value of bezier detail to the args array
+  if (this._renderer.isP3D) {
+    args.push(bezierDetail); //adding value of bezier detail to the args array
     this._renderer.bezier(args);
-  } else{
-    this._renderer.bezier(args[0],args[1],
-      args[2],args[3],
-      args[4],args[5],
-      args[6],args[7]);
+  } else {
+    // prettier-ignore
+    this._renderer.bezier(
+      args[0], args[1],
+      args[2], args[3],
+      args[4], args[5],
+      args[6], args[7]);
   }
 
   return this;
@@ -101,6 +103,7 @@ p5.prototype.bezier = function() {
  *
  * The default value is 20.
  *
+ * @method bezierDetail
  * @param {Number} detail resolution of the curves
  * @chainable
  * @example
@@ -140,15 +143,21 @@ p5.prototype.bezierDetail = function(d) {
  * <div>
  * <code>
  * noFill();
- * x1 = 85, x2 = 10, x3 = 90, x4 = 15;
- * y1 = 20, y2 = 10, y3 = 90, y4 = 80;
+ * var x1 = 85,
+  x2 = 10,
+  x3 = 90,
+  x4 = 15;
+ * var y1 = 20,
+  y2 = 10,
+  y3 = 90,
+  y4 = 80;
  * bezier(x1, y1, x2, y2, x3, y3, x4, y4);
  * fill(255);
- * steps = 10;
- * for (i = 0; i <= steps; i++) {
- *   t = i / steps;
- *   x = bezierPoint(x1, x2, x3, x4, t);
- *   y = bezierPoint(y1, y2, y3, y4, t);
+ * var steps = 10;
+ * for (var i = 0; i <= steps; i++) {
+ *   var t = i / steps;
+ *   var x = bezierPoint(x1, x2, x3, x4, t);
+ *   var y = bezierPoint(y1, y2, y3, y4, t);
  *   ellipse(x, y, 5, 5);
  * }
  * </code>
@@ -165,11 +174,13 @@ p5.prototype.bezierPoint = function(a, b, c, d, t) {
   }
 
   p5._validateParameters('bezierPoint', args);
-  var adjustedT = 1-args[4];
-  return Math.pow(adjustedT,3)*args[0] +
-   3*(Math.pow(adjustedT,2))*args[4]*args[1] +
-   3*adjustedT*Math.pow(args[4],2)*args[2] +
-   Math.pow(args[4],3)*args[3];
+  var adjustedT = 1 - args[4];
+  return (
+    Math.pow(adjustedT, 3) * args[0] +
+    3 * Math.pow(adjustedT, 2) * args[4] * args[1] +
+    3 * adjustedT * Math.pow(args[4], 2) * args[2] +
+    Math.pow(args[4], 3) * args[3]
+  );
 };
 
 /**
@@ -190,21 +201,21 @@ p5.prototype.bezierPoint = function(a, b, c, d, t) {
  * <code>
  * noFill();
  * bezier(85, 20, 10, 10, 90, 90, 15, 80);
- * steps = 6;
+ * var steps = 6;
  * fill(255);
- * for (i = 0; i <= steps; i++) {
- *   t = i / steps;
+ * for (var i = 0; i <= steps; i++) {
+ *   var t = i / steps;
  *   // Get the location of the point
- *   x = bezierPoint(85, 10, 90, 15, t);
- *   y = bezierPoint(20, 10, 90, 80, t);
+ *   var x = bezierPoint(85, 10, 90, 15, t);
+ *   var y = bezierPoint(20, 10, 90, 80, t);
  *   // Get the tangent points
- *   tx = bezierTangent(85, 10, 90, 15, t);
- *   ty = bezierTangent(20, 10, 90, 80, t);
+ *   var tx = bezierTangent(85, 10, 90, 15, t);
+ *   var ty = bezierTangent(20, 10, 90, 80, t);
  *   // Calculate an angle from the tangent points
- *   a = atan2(ty, tx);
+ *   var a = atan2(ty, tx);
  *   a += PI;
  *   stroke(255, 102, 0);
- *   line(x, y, cos(a)*30 + x, sin(a)*30 + y);
+ *   line(x, y, cos(a) * 30 + x, sin(a) * 30 + y);
  *   // The following line of code makes a line
  *   // inverse of the above line
  *   //line(x, y, cos(a)*-30 + x, sin(a)*-30 + y);
@@ -219,16 +230,16 @@ p5.prototype.bezierPoint = function(a, b, c, d, t) {
  * noFill();
  * bezier(85, 20, 10, 10, 90, 90, 15, 80);
  * stroke(255, 102, 0);
- * steps = 16;
- * for (i = 0; i <= steps; i++) {
- *   t = i / steps;
- *   x = bezierPoint(85, 10, 90, 15, t);
- *   y = bezierPoint(20, 10, 90, 80, t);
- *   tx = bezierTangent(85, 10, 90, 15, t);
- *   ty = bezierTangent(20, 10, 90, 80, t);
- *   a = atan2(ty, tx);
+ * var steps = 16;
+ * for (var i = 0; i <= steps; i++) {
+ *   var t = i / steps;
+ *   var x = bezierPoint(85, 10, 90, 15, t);
+ *   var y = bezierPoint(20, 10, 90, 80, t);
+ *   var tx = bezierTangent(85, 10, 90, 15, t);
+ *   var ty = bezierTangent(20, 10, 90, 80, t);
+ *   var a = atan2(ty, tx);
  *   a -= HALF_PI;
- *   line(x, y, cos(a)*8 + x, sin(a)*8 + y);
+ *   line(x, y, cos(a) * 8 + x, sin(a) * 8 + y);
  * }
  * </code>
  * </div>
@@ -244,13 +255,15 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
   }
 
   p5._validateParameters('bezierTangent', args);
-  var adjustedT = 1-args[4];
-  return 3*args[3]*Math.pow(args[4],2) -
-   3*args[2]*Math.pow(args[4],2) +
-   6*args[2]*adjustedT*args[4] -
-   6*args[1]*adjustedT*args[4] +
-   3*args[1]*Math.pow(adjustedT,2) -
-   3*args[0]*Math.pow(adjustedT,2);
+  var adjustedT = 1 - args[4];
+  return (
+    3 * args[3] * Math.pow(args[4], 2) -
+    3 * args[2] * Math.pow(args[4], 2) +
+    6 * args[2] * adjustedT * args[4] -
+    6 * args[1] * adjustedT * args[4] +
+    3 * args[1] * Math.pow(adjustedT, 2) -
+    3 * args[0] * Math.pow(adjustedT, 2)
+  );
 };
 
 /**
@@ -288,15 +301,17 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * <div>
  * <code>
  * // Define the curve points as JavaScript objects
- * p1 = {x: 5, y: 26}, p2 = {x: 73, y: 24}
- * p3 = {x: 73, y: 61}, p4 = {x: 15, y: 65}
+ * var p1 = { x: 5, y: 26 },
+  p2 = { x: 73, y: 24 };
+ * var p3 = { x: 73, y: 61 },
+  p4 = { x: 15, y: 65 };
  * noFill();
  * stroke(255, 102, 0);
- * curve(p1.x, p1.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y)
+ * curve(p1.x, p1.y, p1.x, p1.y, p2.x, p2.y, p3.x, p3.y);
  * stroke(0);
- * curve(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y)
+ * curve(p1.x, p1.y, p2.x, p2.y, p3.x, p3.y, p4.x, p4.y);
  * stroke(255, 102, 0);
- * curve(p2.x, p2.y, p3.x, p3.y, p4.x, p4.y, p4.x, p4.y)
+ * curve(p2.x, p2.y, p3.x, p3.y, p4.x, p4.y, p4.x, p4.y);
  * </code>
  * </div>
  *
@@ -317,11 +332,11 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * <code>
  * noFill();
  * stroke(255, 102, 0);
- * curve(5,26,0, 5,26,0, 73,24,0, 73,61,0);
+ * curve(5, 26, 0, 5, 26, 0, 73, 24, 0, 73, 61, 0);
  * stroke(0);
- * curve(5,26,0, 73,24,0, 73,61,0, 15,65,0);
+ * curve(5, 26, 0, 73, 24, 0, 73, 61, 0, 15, 65, 0);
  * stroke(255, 102, 0);
- * curve(73,24,0, 73,61,0, 15,65,0, 15,65,0);
+ * curve(73, 24, 0, 73, 61, 0, 15, 65, 0, 15, 65, 0);
  * </code>
  * </div>
  *
@@ -338,14 +353,16 @@ p5.prototype.curve = function() {
   if (!this._renderer._doStroke) {
     return this;
   }
-  if (this._renderer.isP3D){
+  if (this._renderer.isP3D) {
     args.push(curveDetail);
     this._renderer.curve(args);
-  } else{
-    this._renderer.curve(args[0],args[1],
-      args[2],args[3],
-      args[4],args[5],
-      args[6],args[7]);
+  } else {
+    // prettier-ignore
+    this._renderer.curve(
+      args[0], args[1],
+      args[2], args[3],
+      args[4], args[5],
+      args[6], args[7]);
   }
   return this;
 };
@@ -355,6 +372,7 @@ p5.prototype.curve = function() {
  *
  * The default value is 20.
  *
+ * @method curveDetail
  * @param {Number} resolution of the curves
  * @chainable
  * @example
@@ -416,7 +434,7 @@ p5.prototype.curveDetail = function(d) {
  * @alt
  * Line shaped like right-facing arrow,points move with mouse-x and warp shape.
  */
-p5.prototype.curveTightness = function (t) {
+p5.prototype.curveTightness = function(t) {
   this._renderer._curveTightness = t;
 };
 
@@ -442,11 +460,11 @@ p5.prototype.curveTightness = function (t) {
  * curve(5, 26, 73, 24, 73, 61, 15, 65);
  * fill(255);
  * ellipseMode(CENTER);
- * steps = 6;
- * for (i = 0; i <= steps; i++) {
- *   t = i / steps;
- *   x = curvePoint(5, 5, 73, 73, t);
- *   y = curvePoint(26, 26, 24, 61, t);
+ * var steps = 6;
+ * for (var i = 0; i <= steps; i++) {
+ *   var t = i / steps;
+ *   var x = curvePoint(5, 5, 73, 73, t);
+ *   var y = curvePoint(26, 26, 24, 61, t);
  *   ellipse(x, y, 5, 5);
  *   x = curvePoint(5, 73, 73, 15, t);
  *   y = curvePoint(26, 24, 61, 65, t);
@@ -464,13 +482,13 @@ p5.prototype.curvePoint = function(a, b, c, d, t) {
   }
 
   p5._validateParameters('curvePoint', args);
-  var t3 = args[4]*args[4]*args[4],
-    t2 = args[4]*args[4],
+  var t3 = args[4] * args[4] * args[4],
+    t2 = args[4] * args[4],
     f1 = -0.5 * t3 + t2 - 0.5 * args[4],
     f2 = 1.5 * t3 - 2.5 * t2 + 1.0,
     f3 = -1.5 * t3 + 2.0 * t2 + 0.5 * args[4],
     f4 = 0.5 * t3 - 0.5 * t2;
-  return args[0]*f1 + args[1]*f2 + args[2]*f3 + args[3]*f4;
+  return args[0] * f1 + args[1] * f2 + args[2] * f3 + args[3] * f4;
 };
 
 /**
@@ -490,17 +508,17 @@ p5.prototype.curvePoint = function(a, b, c, d, t) {
  * <code>
  * noFill();
  * curve(5, 26, 73, 24, 73, 61, 15, 65);
- * steps = 6;
- * for (i = 0; i <= steps; i++) {
- *   t = i / steps;
- *   x = curvePoint(5, 73, 73, 15, t);
- *   y = curvePoint(26, 24, 61, 65, t);
+ * var steps = 6;
+ * for (var i = 0; i <= steps; i++) {
+ *   var t = i / steps;
+ *   var x = curvePoint(5, 73, 73, 15, t);
+ *   var y = curvePoint(26, 24, 61, 65, t);
  *   //ellipse(x, y, 5, 5);
- *   tx = curveTangent(5, 73, 73, 15, t);
- *   ty = curveTangent(26, 24, 61, 65, t);
- *   a = atan2(ty, tx);
- *   a -= PI/2.0;
- *   line(x, y, cos(a)*8 + x, sin(a)*8 + y);
+ *   var tx = curveTangent(5, 73, 73, 15, t);
+ *   var ty = curveTangent(26, 24, 61, 65, t);
+ *   var a = atan2(ty, tx);
+ *   a -= PI / 2.0;
+ *   line(x, y, cos(a) * 8 + x, sin(a) * 8 + y);
  * }
  * </code>
  * </div>
@@ -515,12 +533,12 @@ p5.prototype.curveTangent = function(a, b, c, d, t) {
   }
 
   p5._validateParameters('curveTangent', args);
-  var t2 = args[4]*args[4],
-    f1 = (-3*t2)/2 + 2*args[4] - 0.5,
-    f2 = (9*t2)/2 - 5*args[4],
-    f3 = (-9*t2)/2 + 4*args[4] + 0.5,
-    f4 = (3*t2)/2 - args[4];
-  return args[0]*f1 + args[1]*f2 + args[2]*f3 + args[3]*f4;
+  var t2 = args[4] * args[4],
+    f1 = -3 * t2 / 2 + 2 * args[4] - 0.5,
+    f2 = 9 * t2 / 2 - 5 * args[4],
+    f3 = -9 * t2 / 2 + 4 * args[4] + 0.5,
+    f4 = 3 * t2 / 2 - args[4];
+  return args[0] * f1 + args[1] * f2 + args[2] * f3 + args[3] * f4;
 };
 
 module.exports = p5;

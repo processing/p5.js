@@ -135,35 +135,35 @@ p5.prototype.loop = function() {
  * @example
  * <div>
  * <code>
- * ellipse(0, 50, 33, 33);  // Left circle
+ * ellipse(0, 50, 33, 33); // Left circle
  *
- * push();  // Start a new drawing state
+ * push(); // Start a new drawing state
  * strokeWeight(10);
  * fill(204, 153, 0);
  * translate(50, 0);
- * ellipse(0, 50, 33, 33);  // Middle circle
- * pop();  // Restore original state
+ * ellipse(0, 50, 33, 33); // Middle circle
+ * pop(); // Restore original state
  *
- * ellipse(100, 50, 33, 33);  // Right circle
+ * ellipse(100, 50, 33, 33); // Right circle
  * </code>
  * </div>
  * <div>
  * <code>
- * ellipse(0, 50, 33, 33);  // Left circle
+ * ellipse(0, 50, 33, 33); // Left circle
  *
- * push();  // Start a new drawing state
+ * push(); // Start a new drawing state
  * strokeWeight(10);
  * fill(204, 153, 0);
- * ellipse(33, 50, 33, 33);  // Left-middle circle
+ * ellipse(33, 50, 33, 33); // Left-middle circle
  *
- * push();  // Start another new drawing state
+ * push(); // Start another new drawing state
  * stroke(0, 102, 153);
- * ellipse(66, 50, 33, 33);  // Right-middle circle
- * pop();  // Restore previous state
+ * ellipse(66, 50, 33, 33); // Right-middle circle
+ * pop(); // Restore previous state
  *
- * pop();  // Restore original state
+ * pop(); // Restore original state
  *
- * ellipse(100, 50, 33, 33);  // Right circle
+ * ellipse(100, 50, 33, 33); // Right circle
  * </code>
  * </div>
  *
@@ -172,7 +172,7 @@ p5.prototype.loop = function() {
  * 2 Gold ellipses left black right blue stroke. 2 white ellipses on left+right.
  *
  */
-p5.prototype.push = function () {
+p5.prototype.push = function() {
   this._renderer.push();
   this._styles.push({
     _doStroke: this._renderer._doStroke,
@@ -210,35 +210,35 @@ p5.prototype.push = function () {
  * @example
  * <div>
  * <code>
- * ellipse(0, 50, 33, 33);  // Left circle
+ * ellipse(0, 50, 33, 33); // Left circle
  *
- * push();  // Start a new drawing state
+ * push(); // Start a new drawing state
  * translate(50, 0);
  * strokeWeight(10);
  * fill(204, 153, 0);
- * ellipse(0, 50, 33, 33);  // Middle circle
- * pop();  // Restore original state
+ * ellipse(0, 50, 33, 33); // Middle circle
+ * pop(); // Restore original state
  *
- * ellipse(100, 50, 33, 33);  // Right circle
+ * ellipse(100, 50, 33, 33); // Right circle
  * </code>
  * </div>
  * <div>
  * <code>
- * ellipse(0, 50, 33, 33);  // Left circle
+ * ellipse(0, 50, 33, 33); // Left circle
  *
- * push();  // Start a new drawing state
+ * push(); // Start a new drawing state
  * strokeWeight(10);
  * fill(204, 153, 0);
- * ellipse(33, 50, 33, 33);  // Left-middle circle
+ * ellipse(33, 50, 33, 33); // Left-middle circle
  *
- * push();  // Start another new drawing state
+ * push(); // Start another new drawing state
  * stroke(0, 102, 153);
- * ellipse(66, 50, 33, 33);  // Right-middle circle
- * pop();  // Restore previous state
+ * ellipse(66, 50, 33, 33); // Right-middle circle
+ * pop(); // Restore previous state
  *
- * pop();  // Restore original state
+ * pop(); // Restore original state
  *
- * ellipse(100, 50, 33, 33);  // Right circle
+ * ellipse(100, 50, 33, 33); // Right circle
  * </code>
  * </div>
  *
@@ -247,10 +247,10 @@ p5.prototype.push = function () {
  * 2 Gold ellipses left black right blue stroke. 2 white ellipses on left+right.
  *
  */
-p5.prototype.pop = function () {
+p5.prototype.pop = function() {
   this._renderer.pop();
   var lastS = this._styles.pop();
-  for(var prop in lastS){
+  for (var prop in lastS) {
     this._renderer[prop] = lastS[prop];
   }
 };
@@ -326,9 +326,9 @@ p5.prototype.popStyle = function() {
  * black line on far left of canvas
  *
  */
-p5.prototype.redraw = function () {
+p5.prototype.redraw = function() {
   this.resetMatrix();
-  if(this._renderer.isP3D){
+  if (this._renderer.isP3D) {
     this._renderer._update();
   }
 
@@ -349,10 +349,11 @@ p5.prototype.redraw = function () {
       this.scale(this._pixelDensity, this._pixelDensity);
     }
     var self = this;
-    var callMethod = function (f) {
+    var callMethod = function(f) {
       f.call(self);
     };
     for (var idxRedraw = 0; idxRedraw < numberOfRedraws; idxRedraw++) {
+      this._setProperty('frameCount', this.frameCount + 1);
       this._registeredMethods.pre.forEach(callMethod);
       userDraw();
       this._registeredMethods.post.forEach(callMethod);
@@ -365,6 +366,5 @@ p5.prototype.size = function() {
   s += 'drawing canvas, please use createCanvas() instead';
   throw s;
 };
-
 
 module.exports = p5;

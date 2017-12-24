@@ -12,9 +12,9 @@ var p5 = require('../core/core');
  * Texture class for WEBGL Mode
  * @class p5.Texture
  * @constructor
- * @param {renderer} [p5.Renderer.GL] an instance of p5.RendererGL that
+ * @param {p5.RendererGL} renderer an instance of p5.RendererGL that
  * will provide the GL context for this new p5.Texture
- * @param {obj} [p5.Image, p5.Graphics, p5.Element, p5.MediaElement] the
+ * @param {p5.Image|p5.Graphics|p5.Element|p5.MediaElement} [obj] the
  * object containing the image data to store in the texture.
  */
 p5.Texture = function(renderer, obj) {
@@ -34,11 +34,13 @@ p5.Texture = function(renderer, obj) {
 
   // used to determine if this texture might need constant updating
   // because it is a video or gif.
-  this.isSrcMediaElement = typeof p5.MediaElement !== 'undefined' &&
-    obj instanceof p5.MediaElement;
+  this.isSrcMediaElement =
+    typeof p5.MediaElement !== 'undefined' && obj instanceof p5.MediaElement;
   this._videoPrevUpdateTime = 0;
-  this.isSrcHTMLElement = typeof p5.Element !== 'undefined' &&
-    obj instanceof p5.Element;
+  this.isSrcHTMLElement =
+    typeof p5.Element !== 'undefined' &&
+    obj instanceof p5.Element &&
+    !(obj instanceof p5.Graphics);
   this.isSrcP5Image = obj instanceof p5.Image;
   this.isSrcP5Graphics = obj instanceof p5.Graphics;
 
@@ -50,13 +52,16 @@ p5.Texture = function(renderer, obj) {
   return this;
 };
 
-p5.Texture.prototype._getTextureDataFromSource = function () {
+p5.Texture.prototype._getTextureDataFromSource = function() {
   var textureData;
   if (this.isSrcP5Image) {
     // param is a p5.Image
     textureData = this.src.canvas;
-  } else if (this.isSrcMediaElement || this.isSrcP5Graphics ||
-      this.isSrcHTMLElement){
+  } else if (
+    this.isSrcMediaElement ||
+    this.isSrcP5Graphics ||
+    this.isSrcHTMLElement
+  ) {
     // if param is a video HTML element
     textureData = this.src.elt;
   }
@@ -81,17 +86,35 @@ p5.Texture.prototype.init = function(data) {
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, this.glWrapS);
   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, this.glWrapT);
 
-  if (this.width === 0 || this.height === 0 ||
-    (this.isSrcMediaElement && !this.src.loadedmetadata)) {
+  if (
+    this.width === 0 ||
+    this.height === 0 ||
+    (this.isSrcMediaElement && !this.src.loadedmetadata)
+  ) {
     // assign a 1x1 empty texture initially, because data is not yet ready,
     // so that no errors occur in gl console!
-    var tmpdata = new Uint8Array([1,1,1,1]);
-    gl.texImage2D(this.glTarget, 0, gl.RGBA, 1, 1, 0,
-      this.glFormat, gl.UNSIGNED_BYTE, tmpdata);
+    var tmpdata = new Uint8Array([1, 1, 1, 1]);
+    gl.texImage2D(
+      this.glTarget,
+      0,
+      gl.RGBA,
+      1,
+      1,
+      0,
+      this.glFormat,
+      gl.UNSIGNED_BYTE,
+      tmpdata
+    );
   } else {
     // data is ready: just push the texture!
-    gl.texImage2D(this.glTarget, 0,
-      this.glFormat, this.glFormat, gl.UNSIGNED_BYTE, data);
+    gl.texImage2D(
+      this.glTarget,
+      0,
+      this.glFormat,
+      this.glFormat,
+      gl.UNSIGNED_BYTE,
+      data
+    );
   }
 };
 
@@ -112,16 +135,21 @@ p5.Texture.prototype.update = function() {
 
   var gl = this._renderer.GL;
   // pull texture from data, make sure width & height are appropriate
-  if (textureData.width !== this.width ||
-      textureData.height !== this.height) {
+  if (textureData.width !== this.width || textureData.height !== this.height) {
     // make sure that if the width and height of this.src have changed
     // for some reason, we update our metadata and upload the texture again
     this.width = textureData.width;
     this.height = textureData.height;
 
     this.bindTexture();
-    gl.texImage2D(this.glTarget, 0,
-        this.glFormat, this.glFormat, gl.UNSIGNED_BYTE, textureData);
+    gl.texImage2D(
+      this.glTarget,
+      0,
+      this.glFormat,
+      this.glFormat,
+      gl.UNSIGNED_BYTE,
+      textureData
+    );
 
     if (this.isSrcP5Image) {
       data.setModified(false);
@@ -138,12 +166,17 @@ p5.Texture.prototype.update = function() {
     // for example, by a call to p5.Image.set
     if (data.isModified()) {
       this.bindTexture();
-      gl.texImage2D(this.glTarget, 0,
-        this.glFormat, this.glFormat, gl.UNSIGNED_BYTE, textureData);
+      gl.texImage2D(
+        this.glTarget,
+        0,
+        this.glFormat,
+        this.glFormat,
+        gl.UNSIGNED_BYTE,
+        textureData
+      );
       data.setModified(false);
     }
   } else if (this.isSrcMediaElement) {
-
     var shouldUpdate = false;
 
     // for a media element (video), we'll check if the current time in
@@ -171,14 +204,26 @@ p5.Texture.prototype.update = function() {
 
     if (shouldUpdate) {
       this.bindTexture();
-      gl.texImage2D(this.glTarget, 0,
-        this.glFormat, this.glFormat, gl.UNSIGNED_BYTE, textureData);
+      gl.texImage2D(
+        this.glTarget,
+        0,
+        this.glFormat,
+        this.glFormat,
+        gl.UNSIGNED_BYTE,
+        textureData
+      );
     }
-  } else /* data instanceof p5.Graphics, probably */ {
-    // there is not enough information to tell if the texture can be
+  } else {
+    /* data instanceof p5.Graphics, probably */ // there is not enough information to tell if the texture can be
     // conditionally updated; so to be safe, we just go ahead and upload it.
-    gl.texImage2D(this.glTarget, 0,
-        this.glFormat, this.glFormat, gl.UNSIGNED_BYTE, textureData);
+    gl.texImage2D(
+      this.glTarget,
+      0,
+      this.glFormat,
+      this.glFormat,
+      gl.UNSIGNED_BYTE,
+      textureData
+    );
   }
 };
 
@@ -186,8 +231,7 @@ p5.Texture.prototype.update = function() {
  * Binds the texture to the appropriate GL target.
  * @method bindTexture
  */
-p5.Texture.prototype.bindTexture = function () {
-
+p5.Texture.prototype.bindTexture = function() {
   // bind texture using gl context + glTarget and
   // generated gl texture object
   var gl = this._renderer.GL;
@@ -200,7 +244,7 @@ p5.Texture.prototype.bindTexture = function () {
  * Unbinds the texture from the appropriate GL target.
  * @method unbindTexture
  */
-p5.Texture.prototype.unbindTexture = function () {
+p5.Texture.prototype.unbindTexture = function() {
   // unbind per above, disable texturing on glTarget
   var gl = this._renderer.GL;
   gl.bindTexture(this.glTarget, null);

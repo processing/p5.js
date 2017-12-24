@@ -2,7 +2,7 @@ suite('Calculation', function() {
   var myp5;
 
   setup(function(done) {
-    new p5(function(p){
+    new p5(function(p) {
       p.setup = function() {
         myp5 = p;
         done();
@@ -209,6 +209,18 @@ suite('Calculation', function() {
       result = myp5.map(1, 0, 10, 0, 20);
       assert.equal(result, 2);
     });
+    test('should extrapolate by default', function() {
+      assert.approximately(myp5.map(10, 0, 1, 10, 11), 20, 0.01);
+      assert.approximately(myp5.map(-1, 0, 1, 10, 11), 9, 0.01);
+      assert.approximately(myp5.map(2, 0, 1, 20, 10), 0, 0.01);
+    });
+    test('shaould clamp correctly', function() {
+      assert.approximately(myp5.map(1, 0, 10, 0, 20, true), 2, 0.01);
+
+      assert.approximately(myp5.map(10, 0, 1, 10, 11, true), 11, 0.01);
+      assert.approximately(myp5.map(-1, 0, 1, 10, 11, true), 10, 0.01);
+      assert.approximately(myp5.map(2, 0, 1, 20, 10, true), 10, 0.01);
+    });
   });
 
   suite('p5.prototype.max', function() {
@@ -230,7 +242,7 @@ suite('Calculation', function() {
       assert.equal(result, 10);
     });
     test('should return larger value from array', function() {
-      result = myp5.max([10,-1]);
+      result = myp5.max([10, -1]);
       assert.equal(result, 10);
     });
     test('should return larger value from array', function() {
@@ -238,7 +250,7 @@ suite('Calculation', function() {
       assert.equal(result, 10);
     });
     test('should return single value from array', function() {
-      result = myp5.max([10,10]);
+      result = myp5.max([10, 10]);
       assert.equal(result, 10);
     });
   });
@@ -262,15 +274,15 @@ suite('Calculation', function() {
       assert.equal(result, 10);
     });
     test('should return smaller value from array', function() {
-      result = myp5.min([10,-1]);
+      result = myp5.min([10, -1]);
       assert.equal(result, -1);
     });
     test('should return smaller value from array', function() {
-      result = myp5.min([-1,10]);
+      result = myp5.min([-1, 10]);
       assert.equal(result, -1);
     });
     test('should return single value from array', function() {
-      result = myp5.min([10,10]);
+      result = myp5.min([10, 10]);
       assert.equal(result, 10);
     });
   });

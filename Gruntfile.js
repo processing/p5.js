@@ -40,6 +40,17 @@
  *
  *  grunt update_json - This automates updating the bower file
  *                      to match the package.json
+ *
+ *  grunt karma       - This runs the performance benchmarks in
+ *                      multiple real browsers on the developers local machine.
+ *                      It will automatically detect which browsers are
+ *                      installed from the following list (Chrome, Firefox,
+ *                      Safari, Edge, IE) and run the benchmarks in all installed
+ *                      browsers and report the results. Running "grunt karma"
+ *                      will execute ALL the benchmarks. If you want to run a
+ *                      specific benchmark you can by specifying the target e.g.
+ *                      "grunt karma:random-dev". The available targets are
+ *                      defined in grunt-karma.js.
  */
 
 function getYuidocOptions() {
@@ -71,9 +82,12 @@ function getYuidocOptions() {
 }
 
 module.exports = function(grunt) {
-
   // Specify what reporter we'd like to use for Mocha
-  var reporter = 'Nyan';
+  var quietReport = process.env.TRAVIS || grunt.option('quiet');
+  var reporter = quietReport ? 'spec' : 'Nyan';
+
+  // Load karma tasks from an external file to keep this file clean
+  var karmaTasks = require('./grunt-karma.js');
 
   // For the static server used in running tests, configure the keepalive.
   // (might not be useful at all.)
@@ -82,57 +96,57 @@ module.exports = function(grunt) {
     keepalive = true;
   }
 
-  grunt.initConfig({
-
+  let gruntConfig = {
     // read in the package, used for knowing the current version, et al.
     pkg: grunt.file.readJSON('package.json'),
 
     // Configure style consistency checking for this file, the source, and the tests.
-    jscs: {
+    eslint: {
       options: {
-        config: '.jscsrc',
-        reporter: require('jscs-stylish').path
+        format: 'unix',
+        configFile: '.eslintrc'
       },
       build: {
         src: [
           'Gruntfile.js',
+          'grunt-karma.js',
+          'docs/preprocessor.js',
+          'utils/**/*.js',
           'tasks/**/*.js'
         ]
       },
+      fix: {
+        // src: is calculated below...
+        options: {
+          fix: true
+        }
+      },
       source: {
-        src: [
-          'src/**/*.js',
-          '!src/external/**/*.js'
-        ]
+        src: ['src/**/*.js', 'lib/addons/p5.dom.js']
       },
       test: {
-        src: ['test/unit/**/*.js']
+        src: [
+          'bench/**/*.js',
+          'test/test-docs-preprocessor/**/*.js',
+          'test/node/**/*.js',
+          'test/reporter/**/*.js',
+          'test/unit/**/*.js'
+        ]
       }
     },
 
-    // Configure hinting for this file, the source, and the tests.
-    jshint: {
-      build: {
-        options: {
-          jshintrc: '.jshintrc'
-        },
-        src: [
-          'Gruntfile.js',
-          'tasks/**/*.js'
-        ]
+    'eslint-samples': {
+      options: {
+        configFile: '.eslintrc',
+        format: 'unix'
       },
       source: {
-        options: {
-          jshintrc: 'src/.jshintrc',
-          ignores: [ 'src/external/**/*.js' ]
-        },
-        src: ['src/**/*.js']
+        src: ['src/**/*.js', 'lib/addons/p5.dom.js']
       },
-      test: {
+      fix: {
         options: {
-          jshintrc: 'test/.jshintrc'
-        },
-        src: ['test/unit/**/*.js']
+          fix: true
+        }
       }
     },
 
@@ -142,7 +156,7 @@ module.exports = function(grunt) {
     // documentation.
     watch: {
       quick: {
-        files: ['src/**/*.js','src/**/*.frag','src/**/*.vert'],
+        files: ['src/**/*.js', 'src/**/*.frag', 'src/**/*.vert'],
         tasks: ['browserify'],
         options: {
           livereload: true
@@ -151,7 +165,7 @@ module.exports = function(grunt) {
       // Watch the codebase for changes
       main: {
         files: ['src/**/*.js'],
-        tasks: ['newer:jshint:source','test'],
+        tasks: ['newer:eslint:source', 'test'],
         options: {
           livereload: true
         }
@@ -171,16 +185,23 @@ module.exports = function(grunt) {
         tasks: ['requirejs:yuidoc_theme']
       },
       // Watch the codebase for doc updates
-      yui:{
-        files:['src/**/*.js', 'lib/addons/*.js'],
-        task:['yuidoc']
+      // launch with 'grunt requirejs connect watch:yui'
+      yui: {
+        files: ['src/**/*.js', 'lib/addons/*.js'],
+        tasks: ['browserify', 'yuidoc:prod', 'minjson', 'uglify'],
+        options: {
+          livereload: true
+        }
       }
     },
 
     // Set up node-side (non-browser) mocha tests.
     mochaTest: {
       test: {
-        src: ['test/node/**/*.js']
+        src: ['test/node/**/*.js'],
+        options: {
+          reporter: reporter
+        }
       }
     },
 
@@ -188,9 +209,7 @@ module.exports = function(grunt) {
     mocha: {
       yui: {
         options: {
-          urls: [
-            'http://localhost:9001/test/test-reference.html'
-          ],
+          urls: ['http://localhost:9001/test/test-reference.html'],
           reporter: reporter,
           run: false,
           log: true,
@@ -216,7 +235,6 @@ module.exports = function(grunt) {
     // file to match the values in package.json. It is (likely) used as part
     // of the manual release strategy.
     update_json: {
-
       // set some task-level options
       options: {
         src: 'package.json',
@@ -246,7 +264,7 @@ module.exports = function(grunt) {
           findNestedDependencies: true,
           wrap: true,
           paths: {
-            'jquery': 'empty:'
+            jquery: 'empty:'
           }
         }
       }
@@ -258,10 +276,11 @@ module.exports = function(grunt) {
       options: {
         compress: {
           global_defs: {
-            'IS_MINIFIED': true
+            IS_MINIFIED: true
           }
         },
-        banner: '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */ '
+        banner:
+          '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */ '
       },
       dist: {
         files: {
@@ -274,6 +293,10 @@ module.exports = function(grunt) {
     // this builds the documentation for the codebase.
     yuidoc: getYuidocOptions(),
 
+    // This runs benchmarks in multiple real browsers for developing
+    // performance optimizations
+    karma: karmaTasks,
+
     // This is a static server which is used when testing connectivity for the
     // p5 library. This avoids needing an internet connection to run the tests.
     // It serves all the files in the test directory at http://localhost:9001/
@@ -284,11 +307,17 @@ module.exports = function(grunt) {
           port: 9001,
           keepalive: keepalive,
           middleware: function(connect, options, middlewares) {
-            middlewares.unshift(function(req, res, next) {
-              res.setHeader('Access-Control-Allow-Origin', '*');
-              res.setHeader('Access-Control-Allow-Methods', '*');
-              return next();
-            });
+            middlewares.unshift(
+              require('connect-modrewrite')([
+                '^/assets/js/p5\\.min\\.js(.*) /lib/p5.min.js$1 [L]',
+                '^/assets/js/p5\\.(dom|sound)\\.min\\.js(.*) /lib/addons/p5.$1.min.js$2 [L]'
+              ]),
+              function(req, res, next) {
+                res.setHeader('Access-Control-Allow-Origin', '*');
+                res.setHeader('Access-Control-Allow-Methods', '*');
+                return next();
+              }
+            );
             return middlewares;
           }
         }
@@ -302,9 +331,9 @@ module.exports = function(grunt) {
           build: process.env.TRAVIS_JOB_ID,
           concurrency: 3,
           browsers: [
-            {browserName: 'chrome'},
-            {browserName: 'firefox', platform: 'Linux', version: '42.0'},
-            {browserName: 'safari'},
+            { browserName: 'chrome' },
+            { browserName: 'firefox', platform: 'Linux', version: '42.0' },
+            { browserName: 'safari' }
           ],
           testname: 'p5.js mocha tests',
           tags: ['master']
@@ -318,7 +347,24 @@ module.exports = function(grunt) {
         }
       }
     }
-  });
+  };
+
+  // eslint fixes everything it checks:
+  gruntConfig.eslint.fix.src = Object.keys(gruntConfig.eslint)
+    .map(s => gruntConfig.eslint[s].src)
+    .reduce((a, b) => a.concat(b), [])
+    .filter(a => a);
+
+  /* not yet
+  gruntConfig['eslint-samples'].fix.src = Object.keys(
+    gruntConfig['eslint-samples']
+  )
+    .map(s => gruntConfig['eslint-samples'][s].src)
+    .reduce((a, b) => a.concat(b), [])
+    .filter(a => a);
+  */
+
+  grunt.initConfig(gruntConfig);
 
   // Load build tasks.
   // This contains the complete build task ("browserify")
@@ -336,13 +382,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-copy');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-requirejs');
   grunt.loadNpmTasks('grunt-contrib-yuidoc');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-http');
-  grunt.loadNpmTasks('grunt-jscs');
   grunt.loadNpmTasks('grunt-minjson');
   grunt.loadNpmTasks('grunt-mocha');
   grunt.loadNpmTasks('grunt-mocha-test');
@@ -350,11 +395,27 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-release-it');
   grunt.loadNpmTasks('grunt-saucelabs');
   grunt.loadNpmTasks('grunt-update-json');
+  grunt.loadNpmTasks('grunt-karma');
 
   // Create the multitasks.
   grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);
-  grunt.registerTask('test', ['jshint', 'jscs', 'yuidoc:prod', 'build', 'connect', 'mocha', 'mochaTest']);
-  grunt.registerTask('test:nobuild', ['jshint:test', 'jscs:test', 'connect', 'mocha']);
+  grunt.registerTask('lint-no-fix', [
+    'yui', // required for eslint-samples
+    'eslint:build',
+    'eslint:source',
+    'eslint:test',
+    'eslint-samples:source'
+  ]);
+  grunt.registerTask('lint-fix', ['eslint:fix']);
+  grunt.registerTask('test', [
+    'lint-no-fix',
+    //'yuidoc:prod', // already done by lint-no-fix
+    'build',
+    'connect',
+    'mocha',
+    'mochaTest'
+  ]);
+  grunt.registerTask('test:nobuild', ['eslint:test', 'connect', 'mocha']);
   grunt.registerTask('yui', ['yuidoc:prod', 'minjson']);
   grunt.registerTask('yui:test', ['yuidoc:prod', 'connect', 'mocha:yui']);
   grunt.registerTask('default', ['test']);

@@ -6,7 +6,6 @@
  * @requires constants
  */
 
-
 'use strict';
 
 var p5 = require('../core/core');
@@ -92,9 +91,8 @@ p5.prototype.mouseY = 0;
  * function draw() {
  *   background(244, 248, 252);
  *   line(mouseX, mouseY, pmouseX, pmouseY);
- *   print(pmouseX + " -> " + mouseX);
+ *   print(pmouseX + ' -> ' + mouseX);
  * }
- *
  * </code>
  * </div>
  *
@@ -119,12 +117,12 @@ p5.prototype.pmouseX = 0;
  *   background(237, 34, 93);
  *   fill(0);
  *   //draw a square only if the mouse is not moving
- *   if(mouseY == pmouseY && mouseX == pmouseX)
- *     rect(20,20,60,60);
+ *   if (mouseY === pmouseY && mouseX === pmouseX) {
+ *     rect(20, 20, 60, 60);
+ *   }
  *
- *   print(pmouseY + " -> " + mouseY);
+ *   print(pmouseY + ' -> ' + mouseY);
  * }
- *
  * </code>
  * </div>
  *
@@ -156,13 +154,12 @@ p5.prototype.pmouseY = 0;
  *   fill(0);
  *
  *   //move the canvas to the horizontal mouse position
- *   //relative to the window
- *   myCanvas.position(winMouseX+1, windowHeight/2);
+ *   //rela                    tive to the window
+ *   myCanvas.position(winMouseX + 1, windowHeight / 2);
  *
- *  //the y of the square is relative to the canvas
- *  rect(20,mouseY,60,60);
+ *   //the y of the square is relative to the canvas
+ *   rect(20, mouseY, 60, 60);
  * }
- *
  * </code>
  * </div>
  *
@@ -194,13 +191,12 @@ p5.prototype.winMouseX = 0;
  *   fill(0);
  *
  *   //move the canvas to the vertical mouse position
- *   //relative to the window
- *   myCanvas.position(windowWidth/2, winMouseY+1);
+ *   //rel                    ative to the window
+ *   myCanvas.position(windowWidth / 2, winMouseY + 1);
  *
- *  //the x of the square is relative to the canvas
- *  rect(mouseX,20,60,60);
+ *   //the x of the square is relative to the canvas
+ *   rect(mouseX, 20, 60, 60);
  * }
- *
  * </code>
  * </div>
  *
@@ -221,7 +217,6 @@ p5.prototype.winMouseY = 0;
  * @example
  * <div>
  * <code>
- *
  * var myCanvas;
  *
  * function setup() {
@@ -229,20 +224,19 @@ p5.prototype.winMouseY = 0;
  *   myCanvas = createCanvas(100, 100);
  *   noStroke();
  *   fill(237, 34, 93);
- *   }
+ * }
  *
  * function draw() {
  *   clear();
  *   //the difference between previous and
  *   //current x position is the horizontal mouse speed
- *   var speed = abs(winMouseX-pwinMouseX);
+ *   var speed = abs(winMouseX - pwinMouseX);
  *   //change the size of the circle
  *   //according to the horizontal speed
- *   ellipse(50, 50, 10+speed*5, 10+speed*5);
+ *   ellipse(50, 50, 10 + speed * 5, 10 + speed * 5);
  *   //move the canvas to the mouse position
- *   myCanvas.position( winMouseX+1, winMouseY+1);
+ *   myCanvas.position(winMouseX + 1, winMouseY + 1);
  * }
- *
  * </code>
  * </div>
  *
@@ -264,7 +258,6 @@ p5.prototype.pwinMouseX = 0;
  * @example
  * <div>
  * <code>
- *
  * var myCanvas;
  *
  * function setup() {
@@ -272,20 +265,19 @@ p5.prototype.pwinMouseX = 0;
  *   myCanvas = createCanvas(100, 100);
  *   noStroke();
  *   fill(237, 34, 93);
- *   }
+ * }
  *
  * function draw() {
  *   clear();
  *   //the difference between previous and
  *   //current y position is the vertical mouse speed
- *   var speed = abs(winMouseY-pwinMouseY);
+ *   var speed = abs(winMouseY - pwinMouseY);
  *   //change the size of the circle
  *   //according to the vertical speed
- *   ellipse(50, 50, 10+speed*5, 10+speed*5);
+ *   ellipse(50, 50, 10 + speed * 5, 10 + speed * 5);
  *   //move the canvas to the mouse position
- *   myCanvas.position( winMouseX+1, winMouseY+1);
+ *   myCanvas.position(winMouseX + 1, winMouseY + 1);
  * }
- *
  * </code>
  * </div>
  *
@@ -305,24 +297,27 @@ p5.prototype.pwinMouseY = 0;
  * @readOnly
  *
  * @example
-	* <div>
-	* <code>
-	* function draw() {
-	*   background(237, 34, 93);
-	*   fill(0);
-	*
-	*   if (mouseIsPressed) {
-	*     if (mouseButton == LEFT)
-	*       ellipse(50, 50, 50, 50);
-	*     if (mouseButton == RIGHT)
-	*       rect(25, 25, 50, 50);
-	*     if (mouseButton == CENTER)
-	*       triangle(23, 75, 50, 20, 78, 75);
-	*   }
-	*
-	*   print(mouseButton);
-	* }
-	* </code>
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(237, 34, 93);
+ *   fill(0);
+ *
+ *   if (mouseIsPressed) {
+ *     if (mouseButton === LEFT) {
+ *       ellipse(50, 50, 50, 50);
+ *     }
+ *     if (mouseButton === RIGHT) {
+ *       rect(25, 25, 50, 50);
+ *     }
+ *     if (mouseButton === CENTER) {
+ *       triangle(23, 75, 50, 20, 78, 75);
+ *     }
+ *   }
+ *
+ *   print(mouseButton);
+ * }
+ * </code>
  * </div>
  *
  * @alt
@@ -339,22 +334,23 @@ p5.prototype.mouseButton = 0;
  * @readOnly
  *
  * @example
-	* <div>
-	* <code>
-	* function draw() {
-	*   background(237, 34, 93);
-	*   fill(0);
-	*
-	*   if (mouseIsPressed)
-	*     ellipse(50, 50, 50, 50);
-	*   else
-	*     rect(25, 25, 50, 50);
-	*
-	*   print(mouseIsPressed);
-	* }
-	* </code>
-	* </div>
-  *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(237, 34, 93);
+ *   fill(0);
+ *
+ *   if (mouseIsPressed) {
+ *     ellipse(50, 50, 50, 50);
+ *   } else {
+ *     rect(25, 25, 50, 50);
+ *   }
+ *
+ *   print(mouseIsPressed);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * black 50x50 rect becomes ellipse with mouse click/press. fuschia background.
  *
@@ -362,8 +358,13 @@ p5.prototype.mouseButton = 0;
 p5.prototype.mouseIsPressed = false;
 
 p5.prototype._updateNextMouseCoords = function(e) {
-  if(this._curElement !== null && (!e.touches || e.touches.length>0)) {
-    var mousePos = getMousePos(this._curElement.elt, this.width, this.height, e);
+  if (this._curElement !== null && (!e.touches || e.touches.length > 0)) {
+    var mousePos = getMousePos(
+      this._curElement.elt,
+      this.width,
+      this.height,
+      e
+    );
     this._setProperty('mouseX', mousePos.x);
     this._setProperty('mouseY', mousePos.y);
     this._setProperty('winMouseX', mousePos.winX);
@@ -384,7 +385,8 @@ p5.prototype._updateMouseCoords = function() {
 };
 
 function getMousePos(canvas, w, h, evt) {
-  if (evt && !evt.clientX) { // use touches if touch and not mouse
+  if (evt && !evt.clientX) {
+    // use touches if touch and not mouse
     if (evt.touches) {
       evt = evt.touches[0];
     } else if (evt.changedTouches) {
@@ -501,27 +503,26 @@ p5.prototype._setMouseButton = function(e) {
  * no image displayed
  *
  */
-p5.prototype._onmousemove = function(e){
+p5.prototype._onmousemove = function(e) {
   var context = this._isGlobal ? window : this;
   var executeDefault;
   this._updateNextMouseCoords(e);
   if (!this.mouseIsPressed) {
     if (typeof context.mouseMoved === 'function') {
       executeDefault = context.mouseMoved(e);
-      if(executeDefault === false) {
+      if (executeDefault === false) {
         e.preventDefault();
       }
     }
-  }
-  else {
+  } else {
     if (typeof context.mouseDragged === 'function') {
       executeDefault = context.mouseDragged(e);
-      if(executeDefault === false) {
+      if (executeDefault === false) {
         e.preventDefault();
       }
     } else if (typeof context.touchMoved === 'function') {
       executeDefault = context.touchMoved(e);
-      if(executeDefault === false) {
+      if (executeDefault === false) {
         e.preventDefault();
       }
     }
@@ -551,7 +552,7 @@ p5.prototype._onmousemove = function(e){
  *   rect(25, 25, 50, 50);
  * }
  * function mousePressed() {
- *   if (value == 0) {
+ *   if (value === 0) {
  *     value = 255;
  *   } else {
  *     value = 0;
@@ -583,12 +584,12 @@ p5.prototype._onmousedown = function(e) {
   this._updateNextMouseCoords(e);
   if (typeof context.mousePressed === 'function') {
     executeDefault = context.mousePressed(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   } else if (typeof context.touchStarted === 'function') {
     executeDefault = context.touchStarted(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
@@ -617,7 +618,7 @@ p5.prototype._onmousedown = function(e) {
  *   rect(25, 25, 50, 50);
  * }
  * function mouseReleased() {
- *   if (value == 0) {
+ *   if (value === 0) {
  *     value = 255;
  *   } else {
  *     value = 0;
@@ -647,12 +648,12 @@ p5.prototype._onmouseup = function(e) {
   this._setProperty('mouseIsPressed', false);
   if (typeof context.mouseReleased === 'function') {
     executeDefault = context.mouseReleased(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   } else if (typeof context.touchEnded === 'function') {
     executeDefault = context.touchEnded(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
@@ -686,7 +687,7 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  * }
  *
  * function mouseClicked() {
- *   if (value == 0) {
+ *   if (value === 0) {
  *     value = 255;
  *   } else {
  *     value = 0;
@@ -714,7 +715,7 @@ p5.prototype._onclick = function(e) {
   var context = this._isGlobal ? window : this;
   if (typeof context.mouseClicked === 'function') {
     var executeDefault = context.mouseClicked(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
@@ -744,7 +745,7 @@ p5.prototype._onclick = function(e) {
  * }
  *
  * function doubleClicked() {
- *   if (value == 0) {
+ *   if (value === 0) {
  *     value = 255;
  *   } else {
  *     value = 0;
@@ -768,11 +769,11 @@ p5.prototype._onclick = function(e) {
  * no image displayed
  */
 
-p5.prototype._doubleClicked = function(e) {
+p5.prototype._ondblclick = function(e) {
   var context = this._isGlobal ? window : this;
   if (typeof context.doubleClicked === 'function') {
-    var executeDefault = context.ondblclick(e);
-    if(executeDefault === false) {
+    var executeDefault = context.doubleClicked(e);
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
@@ -824,7 +825,7 @@ p5.prototype._onwheel = function(e) {
   if (typeof context.mouseWheel === 'function') {
     e.delta = e.deltaY;
     var executeDefault = context.mouseWheel(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }

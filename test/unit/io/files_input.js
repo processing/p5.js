@@ -2,7 +2,7 @@ suite('Files', function() {
   var myp5;
 
   setup(function(done) {
-    new p5(function(p){
+    new p5(function(p) {
       p.setup = function() {
         myp5 = p;
         done();
@@ -28,7 +28,7 @@ suite('Files', function() {
     test('should work when provided with just a path', function() {
       return new Promise(function(resolve, reject) {
         myp5.httpDo('unit/assets/sentences.txt', resolve, reject);
-      }).then(function(data){
+      }).then(function(data) {
         assert.ok(data);
         assert.isString(data);
       });
@@ -37,7 +37,7 @@ suite('Files', function() {
     test('should accept method parameter', function() {
       return new Promise(function(resolve, reject) {
         myp5.httpDo('unit/assets/sentences.txt', 'GET', resolve, reject);
-      }).then(function(data){
+      }).then(function(data) {
         assert.ok(data);
         assert.isString(data);
       });
@@ -46,7 +46,7 @@ suite('Files', function() {
     test('should accept type parameter', function() {
       return new Promise(function(resolve, reject) {
         myp5.httpDo('unit/assets/array.json', 'text', resolve, reject);
-      }).then(function(data){
+      }).then(function(data) {
         assert.ok(data);
         assert.isString(data);
       });
@@ -55,7 +55,7 @@ suite('Files', function() {
     test('should accept method and type parameter together', function() {
       return new Promise(function(resolve, reject) {
         myp5.httpDo('unit/assets/array.json', 'GET', 'text', resolve, reject);
-      }).then(function(data){
+      }).then(function(data) {
         assert.ok(data);
         assert.isString(data);
       });
@@ -63,10 +63,14 @@ suite('Files', function() {
 
     test('should pass error object to error callback function', function() {
       return new Promise(function(resolve, reject) {
-        myp5.httpDo('unit/assets/sen.txt', function(data){
-          reject('Incorrectly succeeded.');
-        }, resolve);
-      }).then(function(err){
+        myp5.httpDo(
+          'unit/assets/sen.txt',
+          function(data) {
+            reject('Incorrectly succeeded.');
+          },
+          resolve
+        );
+      }).then(function(err) {
         assert.instanceOf(err, Response, 'err is a Response');
         assert.isFalse(err.ok, 'err.ok is false');
         assert.equal(err.status, 404, 'Error status is 404');
@@ -83,7 +87,7 @@ suite('Files', function() {
   });
 
   // loadJSON()
-  suite('loadJSON() in Preload', function () {
+  suite('loadJSON() in Preload', function() {
     test('should be a function', function() {
       assert.ok(myp5.loadJSON);
       assert.typeOf(myp5.loadJSON, 'function');
@@ -97,13 +101,13 @@ suite('Files', function() {
   });
 
   // loadStrings()
-  suite('loadStrings() in Preload', function(){
+  suite('loadStrings() in Preload', function() {
     test('should be a function', function() {
       assert.ok(myp5.loadStrings);
       assert.typeOf(myp5.loadStrings, 'function');
     });
 
-    test('should return an array', function(){
+    test('should return an array', function() {
       result = myp5.loadStrings('unit/assets/sentences.txt');
       assert.ok(result);
       assert.isArray(result, 'result is and array');
@@ -111,8 +115,8 @@ suite('Files', function() {
   });
 
   // loadXML()
-  suite('loadXML() in Preload', function(){
-    test('should be a function', function(){
+  suite('loadXML() in Preload', function() {
+    test('should be a function', function() {
       assert.ok(myp5.loadXML);
       assert.typeOf(myp5.loadXML, 'function');
     });
@@ -151,17 +155,25 @@ suite('Files', function() {
 
     test('should call error callback function if provided', function() {
       return new Promise(function(resolve, reject) {
-        myp5.loadJSON('unit/assets/arr.json', function(data) {
-          reject('Success callback executed');
-        }, resolve);
+        myp5.loadJSON(
+          'unit/assets/arr.json',
+          function(data) {
+            reject('Success callback executed');
+          },
+          resolve
+        );
       });
     });
 
     test('should pass error object to error callback function', function() {
       return new Promise(function(resolve, reject) {
-        myp5.loadJSON('unit/assets/arr.json', function(data) {
-          reject('Success callback executed');
-        }, resolve);
+        myp5.loadJSON(
+          'unit/assets/arr.json',
+          function(data) {
+            reject('Success callback executed');
+          },
+          resolve
+        );
       }).then(function(err) {
         assert.instanceOf(err, Response, 'err is a Response.');
         assert.isFalse(err.ok, 'err.ok is false');
@@ -172,7 +184,12 @@ suite('Files', function() {
     // @TODO Need to check this does what it should
     test('should allow json to override jsonp in 3rd param', function() {
       return new Promise(function(resolve, reject) {
-        result = myp5.loadJSON('unit/assets/array.json', resolve, reject, 'json');
+        result = myp5.loadJSON(
+          'unit/assets/array.json',
+          resolve,
+          reject,
+          'json'
+        );
       }).then(function(resp) {
         assert.ok(resp);
       });
@@ -203,17 +220,25 @@ suite('Files', function() {
 
     test('should call error callback function if provided', function() {
       return new Promise(function(resolve, reject) {
-        myp5.loadStrings('unit/assets/sen.txt', function(data) {
-          reject('Success callback executed');
-        }, resolve);
+        myp5.loadStrings(
+          'unit/assets/sen.txt',
+          function(data) {
+            reject('Success callback executed');
+          },
+          resolve
+        );
       });
     });
 
     test('should pass error object to error callback function', function() {
       return new Promise(function(resolve, reject) {
-        myp5.loadStrings('unit/assets/sen.txt', function(data) {
-          reject('Success callback executed');
-        }, resolve);
+        myp5.loadStrings(
+          'unit/assets/sen.txt',
+          function(data) {
+            reject('Success callback executed');
+          },
+          resolve
+        );
       }).then(function(err) {
         assert.instanceOf(err, Response, 'err is an object');
         assert.isFalse(err.ok, 'err.ok is false');
@@ -223,8 +248,8 @@ suite('Files', function() {
   });
 
   // loadXML()
-  suite('p5.prototype.loadXML', function(){
-    test('should be a function', function(){
+  suite('p5.prototype.loadXML', function() {
+    test('should be a function', function() {
       assert.ok(myp5.loadXML);
       assert.typeOf(myp5.loadXML, 'function');
     });
@@ -245,20 +270,20 @@ suite('Files', function() {
     // });
   });
 
-  suite('p5.prototype.loadTable',function(){
+  suite('p5.prototype.loadTable', function() {
     var url = 'unit/assets/csv.csv';
 
-    test('should be a function', function(){
+    test('should be a function', function() {
       assert.isFunction(myp5.loadTable);
     });
 
-    test('should load a file without options',function() {
+    test('should load a file without options', function() {
       return new Promise(function(resolve, reject) {
         myp5.loadTable(url, resolve, reject);
       });
     });
 
-    test('the loaded file should be correct',function() {
+    test('the loaded file should be correct', function() {
       return new Promise(function(resolve, reject) {
         myp5.loadTable(url, resolve, reject);
       }).then(function(resp) {
@@ -279,7 +304,7 @@ suite('Files', function() {
     });
 
     test('using the csv and tsv options fails', function() {
-      var fn = function(){
+      var fn = function() {
         myp5.loadTable(url, 'csv', 'tsv');
       };
       assert.throw(fn, 'Cannot set multiple separator types.');
@@ -305,7 +330,7 @@ suite('Files', function() {
       });
     });
 
-    test('CSV files should handle commas within quoted fields',function() {
+    test('CSV files should handle commas within quoted fields', function() {
       return new Promise(function(resolve, reject) {
         myp5.loadTable(url, resolve, reject);
       }).then(function(resp) {
@@ -317,7 +342,7 @@ suite('Files', function() {
       });
     });
 
-    test('CSV files should handle escaped quotes and returns within quoted fields',function() {
+    test('CSV files should handle escaped quotes and returns within quoted fields', function() {
       return new Promise(function(resolve, reject) {
         myp5.loadTable(url, resolve, reject);
       }).then(function(resp) {
@@ -326,5 +351,4 @@ suite('Files', function() {
       });
     });
   });
-
 });

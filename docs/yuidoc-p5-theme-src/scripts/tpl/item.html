@@ -31,6 +31,28 @@
       <pre><code class="language-javascript">&lt;script language="javascript" type="text/javascript" src="path/to/p5.sound.js"&gt;&lt;/script&gt;</code></pre>
     </p>
   <% } %>
+
+  <% if (item.constRefs) { %>
+    <p>Used by:
+  <%
+      var refs = item.constRefs;
+      for (var i = 0; i < refs.length; i ++) {
+        var ref = refs[i];
+        var name = ref;
+        if (name.substr(0, 3) === 'p5.') {
+          name = name.substr(3);
+        }
+        if (i == refs.length - 1) {
+          %> and <%
+        } else if (i !== 0) {
+          %>, <%
+        }
+        %><a href="./#/<%= ref.replace('.', '/') %>"><%= name %>()</a><%
+      }
+  %>
+    </p>
+  <% } %>
+  
 </div>
 
 <div>
@@ -58,7 +80,7 @@
 <% } %>
 
 <% if (item.final) { %>
-<span class="flag final">final</span>
+<span class="flag final">constant</span>
 <% } %>
 
 <% if (item.static) { %>
@@ -66,7 +88,7 @@
 <% } %>
 
 <% if (item.chainable) { %>
-<span class="label label-success chainable">chainable</span>
+<p class="label label-success chainable">chainable</p>
 <% } %>
 
 <% if (item.async) { %>
@@ -139,12 +161,10 @@
 </div>
 <% } %>
 
-<% if (item.constructor || item.return) { %>
+<% if (item.return) { %>
 <div>
 	<h4>Returns</h4>
-	  <% if (item.constructor) { %>
-      <p class='returns'><span class="param-type label label-info"><%=item.name%></span>: a new object</p>
-    <% } else if (item.return.type) { %>
+    <% if (item.return.type) { %>
       <p class='returns'><span class="param-type label label-info"><%=item.return.type%></span>: <%= item.return.description %></p>
     <% } %>
 </div>

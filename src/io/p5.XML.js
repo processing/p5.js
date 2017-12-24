@@ -29,17 +29,17 @@ var p5 = require('../core/core');
  * var xml;
  *
  * function preload() {
- *   xml = loadXML("assets/mammals.xml");
+ *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var children = xml.getChildren("animal");
+ *   var children = xml.getChildren('animal');
  *
  *   for (var i = 0; i < children.length; i++) {
- *     var id = children[i].getNum("id");
- *     var coloring = children[i].getString("species");
+ *     var id = children[i].getNum('id');
+ *     var coloring = children[i].getString('species');
  *     var name = children[i].getContent();
- *     print(id + ", " + coloring + ", " + name);
+ *     print(id + ', ' + coloring + ', ' + name);
  *   }
  * }
  *
@@ -48,20 +48,19 @@ var p5 = require('../core/core');
  * // 1, Panthera pardus, Leopard
  * // 2, Equus zebra, Zebra
  * </code></div>
-  *
-  * @alt
-  * no image displayed
-  *
+ *
+ * @alt
+ * no image displayed
+ *
  */
-p5.XML = function () {
+p5.XML = function() {
   this.name = null; //done
   this.attributes = {}; //done
   this.children = [];
   this.parent = null;
   this.content = null; //done
-  this.name = 'p5.XML';   // for friendly debugger system
+  this.name = 'p5.XML'; // for friendly debugger system
 };
-
 
 /**
  * Gets a copy of the element's parent. Returns the parent as another
@@ -84,11 +83,11 @@ p5.XML = function () {
  * var xml;
  *
  * function preload() {
- *   xml = loadXML("assets/mammals.xml");
+ *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var children = xml.getChildren("animal");
+ *   var children = xml.getChildren('animal');
  *   var parent = children[1].getParent();
  *   print(parent.getName());
  * }
@@ -121,7 +120,7 @@ p5.XML.prototype.getParent = function() {
  * var xml;
  *
  * function preload() {
- *   xml = loadXML("assets/mammals.xml");
+ *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
@@ -156,12 +155,12 @@ p5.XML.prototype.getName = function() {
  * var xml;
  *
  * function preload() {
- *   xml = loadXML("assets/mammals.xml");
+ *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
  *   print(xml.getName());
- *   xml.setName("fish");
+ *   xml.setName('fish');
  *   print(xml.getName());
  * }
  *
@@ -195,7 +194,7 @@ p5.XML.prototype.setName = function(name) {
  * var xml;
  *
  * function preload() {
- *   xml = loadXML("assets/mammals.xml");
+ *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
@@ -232,7 +231,7 @@ p5.XML.prototype.hasChildren = function() {
  * var xml;
  *
  * function preload() {
- *   xml = loadXML("assets/mammals.xml");
+ *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
@@ -244,7 +243,9 @@ p5.XML.prototype.hasChildren = function() {
  * </code></div>
  */
 p5.XML.prototype.listChildren = function() {
-  return this.children.map(function(c) { return c.name; });
+  return this.children.map(function(c) {
+    return c.name;
+  });
 };
 
 /**
@@ -270,11 +271,11 @@ p5.XML.prototype.listChildren = function() {
  * var xml;
  *
  * function preload() {
- *   xml = loadXML("assets/mammals.xml");
+ *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var animals = xml.getChildren("animal");
+ *   var animals = xml.getChildren('animal');
  *
  *   for (var i = 0; i < animals.length; i++) {
  *     print(animals[i].getContent());
@@ -289,9 +290,10 @@ p5.XML.prototype.listChildren = function() {
  */
 p5.XML.prototype.getChildren = function(param) {
   if (param) {
-    return this.children.filter(function(c) { return c.name === param; });
-  }
-  else {
+    return this.children.filter(function(c) {
+      return c.name === param;
+    });
+  } else {
     return this.children;
   }
 };
@@ -319,11 +321,11 @@ p5.XML.prototype.getChildren = function(param) {
  * var xml;
  *
  * function preload() {
- *   xml = loadXML("assets/mammals.xml");
+ *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var firstChild = xml.getChild("animal");
+ *   var firstChild = xml.getChild('animal');
  *   print(firstChild.getContent());
  * }
  *
@@ -334,7 +336,7 @@ p5.XML.prototype.getChildren = function(param) {
  * var xml;
  *
  * function preload() {
- *   xml = loadXML("assets/mammals.xml");
+ *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
@@ -347,12 +349,11 @@ p5.XML.prototype.getChildren = function(param) {
  * </code></div>
  */
 p5.XML.prototype.getChild = function(param) {
-  if(typeof param === 'string') {
+  if (typeof param === 'string') {
     return this.children.find(function(c) {
       return c.name === param;
     });
-  }
-  else {
+  } else {
     return this.children[param];
   }
 };
@@ -394,13 +395,13 @@ p5.XML.prototype.addChild = function(node) {
  * var xml;
  *
  * function preload() {
- *   xml = loadXML("assets/mammals.xml");
+ *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   xml.removeChild("animal");
+ *   xml.removeChild('animal');
  *   var children = xml.getChildren();
- *   for (var i=0; i<children.length; i++) {
+ *   for (var i = 0; i < children.length; i++) {
  *     print(children[i].getContent());
  *   }
  * }
@@ -413,13 +414,13 @@ p5.XML.prototype.addChild = function(node) {
  * var xml;
  *
  * function preload() {
- *   xml = loadXML("assets/mammals.xml");
+ *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
  *   xml.removeChild(1);
  *   var children = xml.getChildren();
- *   for (var i=0; i<children.length; i++) {
+ *   for (var i = 0; i < children.length; i++) {
  *     print(children[i].getContent());
  *   }
  * }
@@ -431,8 +432,8 @@ p5.XML.prototype.addChild = function(node) {
  */
 p5.XML.prototype.removeChild = function(param) {
   var ind = -1;
-  if(typeof param === 'string') {
-    for (var i=0; i<this.children.length; i++) {
+  if (typeof param === 'string') {
+    for (var i = 0; i < this.children.length; i++) {
       if (this.children[i].name === param) {
         ind = i;
         break;
@@ -445,7 +446,6 @@ p5.XML.prototype.removeChild = function(param) {
     this.children.splice(ind, 1);
   }
 };
-
 
 /**
  * Counts the specified element's number of attributes, returned as an Number.
@@ -467,11 +467,11 @@ p5.XML.prototype.removeChild = function(param) {
  * var xml;
  *
  * function preload() {
- *   xml = loadXML("assets/mammals.xml");
+ *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var firstChild = xml.getChild("animal");
+ *   var firstChild = xml.getChild('animal');
  *   print(firstChild.getAttributeCount());
  * }
  *
@@ -504,11 +504,11 @@ p5.XML.prototype.getAttributeCount = function() {
  * var xml;
  *
  * function preload() {
- *   xml = loadXML("assets/mammals.xml");
+ *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var firstChild = xml.getChild("animal");
+ *   var firstChild = xml.getChild('animal');
  *   print(firstChild.listAttributes());
  * }
  *
@@ -541,13 +541,13 @@ p5.XML.prototype.listAttributes = function() {
  * var xml;
  *
  * function preload() {
- *   xml = loadXML("assets/mammals.xml");
+ *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var firstChild = xml.getChild("animal");
- *   print(firstChild.hasAttribute("species"));
- *   print(firstChild.hasAttribute("color"));
+ *   var firstChild = xml.getChild('animal');
+ *   print(firstChild.hasAttribute('species'));
+ *   print(firstChild.hasAttribute('color'));
  * }
  *
  * // Sketch prints:
@@ -584,12 +584,12 @@ p5.XML.prototype.hasAttribute = function(name) {
  * var xml;
  *
  * function preload() {
- *   xml = loadXML("assets/mammals.xml");
+ *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var firstChild = xml.getChild("animal");
- *   print(firstChild.getNum("id"));
+ *   var firstChild = xml.getChild('animal');
+ *   print(firstChild.getNum('id'));
  * }
  *
  * // Sketch prints:
@@ -625,12 +625,12 @@ p5.XML.prototype.getNum = function(name, defaultValue) {
  * var xml;
  *
  * function preload() {
- *   xml = loadXML("assets/mammals.xml");
+ *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var firstChild = xml.getChild("animal");
- *   print(firstChild.getString("species"));
+ *   var firstChild = xml.getChild('animal');
+ *   print(firstChild.getString('species'));
  * }
  *
  * // Sketch prints:
@@ -663,14 +663,14 @@ p5.XML.prototype.getString = function(name, defaultValue) {
  * var xml;
  *
  * function preload() {
- *   xml = loadXML("assets/mammals.xml");
+ *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var firstChild = xml.getChild("animal");
- *   print(firstChild.getString("species"));
- *   firstChild.setAttribute("species", "Jamides zebra");
- *   print(firstChild.getString("species"));
+ *   var firstChild = xml.getChild('animal');
+ *   print(firstChild.getString('species'));
+ *   firstChild.setAttribute('species', 'Jamides zebra');
+ *   print(firstChild.getString('species'));
  * }
  *
  * // Sketch prints:
@@ -706,11 +706,11 @@ p5.XML.prototype.setAttribute = function(name, value) {
  * var xml;
  *
  * function preload() {
- *   xml = loadXML("assets/mammals.xml");
+ *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var firstChild = xml.getChild("animal");
+ *   var firstChild = xml.getChild('animal');
  *   print(firstChild.getContent());
  * }
  *
@@ -742,13 +742,13 @@ p5.XML.prototype.getContent = function(defaultValue) {
  * var xml;
  *
  * function preload() {
- *   xml = loadXML("assets/mammals.xml");
+ *   xml = loadXML('assets/mammals.xml');
  * }
  *
  * function setup() {
- *   var firstChild = xml.getChild("animal");
+ *   var firstChild = xml.getChild('animal');
  *   print(firstChild.getContent());
- *   firstChild.setContent("Mountain Goat");
+ *   firstChild.setContent('Mountain Goat');
  *   print(firstChild.getContent());
  * }
  *
@@ -757,8 +757,8 @@ p5.XML.prototype.getContent = function(defaultValue) {
  * // "Mountain Goat"
  * </code></div>
  */
-p5.XML.prototype.setContent = function( content ) {
-  if(!this.children.length) {
+p5.XML.prototype.setContent = function(content) {
+  if (!this.children.length) {
     this.content = content;
   }
 };
@@ -788,8 +788,9 @@ p5.XML.prototype._setCont = function(content) {
  *
  */
 p5.XML.prototype._setAttributes = function(node) {
-  var  i, att = {};
-  for( i = 0; i < node.attributes.length; i++) {
+  var i,
+    att = {};
+  for (i = 0; i < node.attributes.length; i++) {
     att[node.attributes[i].nodeName] = node.attributes[i].nodeValue;
   }
   this.attributes = att;

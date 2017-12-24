@@ -1,17 +1,16 @@
-suite('Core', function(){
+suite('Core', function() {
   var node;
 
-  setup(function () {
+  setup(function() {
     node = document.createElement('div');
     document.body.appendChild(node);
   });
 
-  teardown(function () {
+  teardown(function() {
     document.body.removeChild(node);
   });
 
-  suite('new p5(sketch, null, true)', function () {
-
+  suite('new p5(sketch, null, true)', function() {
     // The reason why these tests run inside the suite() { ... } block is
     // because they test code that checks document.readyState.  If we waited
     // to run the test in test() { ... } the page would already be loaded and
@@ -19,57 +18,57 @@ suite('Core', function(){
     // readyState is "loading" and we can verify that the code is doing the
     // right thing during page load.
 
-    var myp5 = new p5(function() { }, null, true);
+    var myp5 = new p5(function() {}, null, true);
     var isDrawingContextDefined = myp5.drawingContext !== undefined;
 
-    test('should define drawContext synchronously', function () {
+    test('should define drawContext synchronously', function() {
       assert.ok(isDrawingContextDefined);
     });
   });
 
-  suite('new p5(sketch, null, false)', function () {
-    var myp5 = new p5(function() { }, null, false);
+  suite('new p5(sketch, null, false)', function() {
+    var myp5 = new p5(function() {}, null, false);
     var isDrawingContextDefined = myp5.drawingContext !== undefined;
 
-    test('should define drawContext asynchronously', function () {
+    test('should define drawContext asynchronously', function() {
       assert.equal(isDrawingContextDefined, false);
       assert.isDefined(myp5.drawingContext);
     });
   });
 
-  suite('new p5(sketch, node, true)', function () {
-    var myp5 = new p5(function() { }, node, true);
+  suite('new p5(sketch, node, true)', function() {
+    var myp5 = new p5(function() {}, node, true);
     var isDrawingContextDefined = myp5.drawingContext !== undefined;
 
-    test('should define drawContext synchronously', function () {
+    test('should define drawContext synchronously', function() {
       assert.ok(isDrawingContextDefined);
     });
   });
 
-  suite('new p5(sketch, node)', function () {
-    var myp5 = new p5(function() { }, node);
+  suite('new p5(sketch, node)', function() {
+    var myp5 = new p5(function() {}, node);
     var isDrawingContextDefined = myp5.drawingContext !== undefined;
 
-    test('should define drawContext asynchronously', function () {
+    test('should define drawContext asynchronously', function() {
       assert.equal(isDrawingContextDefined, false);
       assert.isDefined(myp5.drawingContext);
     });
   });
 
-  suite('new p5(sketch, true)', function () {
-    var myp5 = new p5(function() { }, true);
+  suite('new p5(sketch, true)', function() {
+    var myp5 = new p5(function() {}, true);
     var isDrawingContextDefined = myp5.drawingContext !== undefined;
 
-    test('should define drawContext synchronously', function () {
+    test('should define drawContext synchronously', function() {
       assert.ok(isDrawingContextDefined);
     });
   });
 
-  suite('new p5(sketch)', function () {
-    var myp5 = new p5(function() { });
+  suite('new p5(sketch)', function() {
+    var myp5 = new p5(function() {});
     var isDrawingContextDefined = myp5.drawingContext !== undefined;
 
-    test('should define drawContext asynchronously', function () {
+    test('should define drawContext asynchronously', function() {
       assert.equal(isDrawingContextDefined, false);
       assert.isDefined(myp5.drawingContext);
     });
@@ -104,8 +103,10 @@ suite('Core', function(){
 
       try {
         p5.prototype.registerMethod('init', function myInit() {
-          assert(!myInitCalled,
-                 'myInit should only be called once during test suite');
+          assert(
+            !myInitCalled,
+            'myInit should only be called once during test suite'
+          );
           myInitCalled = true;
 
           this.myInitCalled = true;
@@ -127,7 +128,7 @@ suite('Core', function(){
 
   suite('new p5() / global mode', function() {
     var BIND_TAG = '<script src="../js/bind.js"></script>';
-    var P5_SCRIPT_URL = (!window.IS_MODULE) ? '../../lib/p5.js' : '../../lib/modules/p5.Core.js';
+    var P5_SCRIPT_URL = '../../lib/p5.js';
     var P5_SCRIPT_TAG = '<script src="' + P5_SCRIPT_URL + '"></script>';
     var iframe;
 
@@ -151,54 +152,67 @@ suite('Core', function(){
       }
     });
 
-    test('is triggered when "setup" is in window', function(done) {
-      createP5Iframe();
-      iframe.contentWindow.setup = function() {
-        done();
-      };
+    test('is triggered when "setup" is in window', function() {
+      return new Promise(function(resolve, reject) {
+        createP5Iframe();
+        iframe.contentWindow.setup = function() {
+          resolve();
+        };
+      });
     });
 
-    test('is triggered when "draw" is in window', function(done) {
-      createP5Iframe();
-      iframe.contentWindow.draw = function() {
-        done();
-      };
+    test('is triggered when "draw" is in window', function() {
+      return new Promise(function(resolve, reject) {
+        createP5Iframe();
+        iframe.contentWindow.draw = function() {
+          resolve();
+        };
+      });
     });
 
-    test('works when p5.js is loaded asynchronously', function(done) {
-      createP5Iframe(BIND_TAG);
+    test('works when p5.js is loaded asynchronously', function() {
+      return new Promise(function(resolve, reject) {
+        createP5Iframe(BIND_TAG);
 
-      iframe.contentWindow.addEventListener('load', function() {
+        iframe.contentWindow.addEventListener(
+          'load',
+          function() {
+            var win = iframe.contentWindow;
+
+            win.setup = resolve;
+
+            var script = win.document.createElement('script');
+            script.setAttribute('src', P5_SCRIPT_URL);
+
+            win.document.body.appendChild(script);
+          },
+          false
+        );
+      });
+    });
+
+    test('works on-demand', function() {
+      return new Promise(function(resolve, reject) {
+        createP5Iframe(
+          [
+            BIND_TAG,
+            P5_SCRIPT_TAG,
+            '<script>',
+            'new p5();',
+            'originalP5Instance = p5.instance',
+            'myURL = p5.prototype.getURL();',
+            'function setup() { setupCalled = true; }',
+            'window.addEventListener("load", onDoneLoading, false);',
+            '</script>'
+          ].join('\n')
+        );
+        iframe.contentWindow.onDoneLoading = resolve;
+      }).then(function() {
         var win = iframe.contentWindow;
-
-        win.setup = done;
-
-        var script = win.document.createElement('script');
-        script.setAttribute('src', P5_SCRIPT_URL);
-
-        win.document.body.appendChild(script);
-      }, false);
-    });
-
-    test('works on-demand', function(done) {
-      createP5Iframe([
-        BIND_TAG,
-        P5_SCRIPT_TAG,
-        '<script>',
-        'new p5();',
-        'originalP5Instance = p5.instance',
-        'myURL = p5.prototype.getURL();',
-        'function setup() { setupCalled = true; }',
-        'window.addEventListener("load", onDoneLoading, false);',
-        '</script>'
-      ].join('\n'));
-      iframe.contentWindow.onDoneLoading = function() {
-        var win = iframe.contentWindow;
-        assert.equal(typeof(win.myURL), 'string');
+        assert.equal(typeof win.myURL, 'string');
         assert.strictEqual(win.setupCalled, true);
         assert.strictEqual(win.originalP5Instance, win.p5.instance);
-        done();
-      };
+      });
     });
   });
 
@@ -286,7 +300,9 @@ suite('Core', function(){
     // This is a regression test for
     // https://github.com/processing/p5.js/issues/1350.
     test('should not warn about overwriting preload methods', function() {
-      globalObject.loadJSON = function() { throw new Error(); };
+      globalObject.loadJSON = function() {
+        throw new Error();
+      };
       bind('loadJSON', noop);
       assert.equal(globalObject.loadJSON, noop);
       assert.isUndefined(logMsg);

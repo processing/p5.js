@@ -62,17 +62,14 @@ require('../core/error_helpers');
  *   textFont(font, 36);
  *   text('p5*js', 10, 50);
  * }
- *
  * </code></div>
  *
  * <p>You can also use the string name of the font to style other HTML
  * elements.</p>
  *
  * <div><code>
- * var myFont;
- *
  * function preload() {
- *   myFont = loadFont('assets/Avenir.otf');
+ *   loadFont('assets/Avenir.otf');
  * }
  *
  * function setup() {
@@ -86,15 +83,12 @@ require('../core/error_helpers');
  * p5*js in p5's theme dark pink
  *
  */
-p5.prototype.loadFont = function (path, onSuccess, onError) {
-
+p5.prototype.loadFont = function(path, onSuccess, onError) {
   var p5Font = new p5.Font(this);
 
   var self = this;
-  opentype.load(path, function (err, font) {
-
+  opentype.load(path, function(err, font) {
     if (err) {
-
       if (typeof onError !== 'undefined') {
         return onError(err);
       }
@@ -112,21 +106,33 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
     self._decrementPreload();
 
     // check that we have an acceptable font type
-    var validFontTypes = [ 'ttf', 'otf', 'woff', 'woff2' ],
-      fileNoPath = path.split('\\').pop().split('/').pop(),
-      lastDotIdx = fileNoPath.lastIndexOf('.'), fontFamily, newStyle,
+    var validFontTypes = ['ttf', 'otf', 'woff', 'woff2'],
+      fileNoPath = path
+        .split('\\')
+        .pop()
+        .split('/')
+        .pop(),
+      lastDotIdx = fileNoPath.lastIndexOf('.'),
+      fontFamily,
+      newStyle,
       fileExt = lastDotIdx < 1 ? null : fileNoPath.substr(lastDotIdx + 1);
 
     // if so, add it to the DOM (name-only) for use with p5.dom
     if (validFontTypes.indexOf(fileExt) > -1) {
-
       fontFamily = fileNoPath.substr(0, lastDotIdx);
       newStyle = document.createElement('style');
-      newStyle.appendChild(document.createTextNode('\n@font-face {' +
-        '\nfont-family: ' + fontFamily + ';\nsrc: url(' + path + ');\n}\n'));
+      newStyle.appendChild(
+        document.createTextNode(
+          '\n@font-face {' +
+            '\nfont-family: ' +
+            fontFamily +
+            ';\nsrc: url(' +
+            path +
+            ');\n}\n'
+        )
+      );
       document.head.appendChild(newStyle);
     }
-
   });
 
   return p5Font;
@@ -163,16 +169,16 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
  * <div>
  * <code>
  * textSize(32);
- * text("word", 10, 30);
+ * text('word', 10, 30);
  * fill(0, 102, 153);
- * text("word", 10, 60);
+ * text('word', 10, 60);
  * fill(0, 102, 153, 51);
- * text("word", 10, 90);
+ * text('word', 10, 90);
  * </code>
  * </div>
  * <div>
  * <code>
- * s = "The quick brown fox jumped over the lazy dog.";
+ * var s = 'The quick brown fox jumped over the lazy dog.';
  * fill(50);
  * text(s, 10, 10, 70, 80); // Text wraps within text box
  * </code>
@@ -184,8 +190,9 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
  *
  */
 p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
-  return (!(this._renderer._doFill || this._renderer._doStroke)) ? this :
-    this._renderer.text.apply(this._renderer, arguments);
+  return !(this._renderer._doFill || this._renderer._doStroke)
+    ? this
+    : this._renderer.text.apply(this._renderer, arguments);
 };
 
 /**
@@ -193,6 +200,43 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  *
  * @method textFont
  * @return {Object} the current font
+ *
+ * @example
+ * <div>
+ * <code>
+ * fill(0);
+ * textSize(12);
+ * textFont('Georgia');
+ * text('Georgia', 12, 30);
+ * textFont('Helvetica');
+ * text('Helvetica', 12, 60);
+ * </code>
+ * </div>
+ * <div>
+ * <code>
+ * var fontRegular, fontItalic, fontBold;
+ * function preload() {
+ *   fontRegular = loadFont('assets/Regular.otf');
+ *   fontItalic = loadFont('assets/Italic.ttf');
+ *   fontBold = loadFont('assets/Bold.ttf');
+ * }
+ * function setup() {
+ *   background(210);
+ *   fill(0)
+    .strokeWeight(0)
+    .textSize(10);
+ *   textFont(fontRegular);
+ *   text('Font Style Normal', 10, 30);
+ *   textFont(fontItalic);
+ *   text('Font Style Italic', 10, 50);
+ *   textFont(fontBold);
+ *   text('Font Style Bold', 10, 70);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ *words Font Style Normal displayed normally, Italic in italic and bold in bold
  */
 /**
  * @method textFont
@@ -201,58 +245,21 @@ p5.prototype.text = function(str, x, y, maxWidth, maxHeight) {
  * that is generally available across all systems)
  * @param {Number} [size] the font size to use
  * @chainable
- * @example
- * <div>
- * <code>
- * fill(0);
- * textSize(12);
- * textFont("Georgia");
- * text("Georgia", 12, 30);
- * textFont("Helvetica");
- * text("Helvetica", 12, 60);
- * </code>
- * </div>
- * <div>
- * <code>
- * var fontRegular, fontItalic, fontBold;
- * function preload() {
- *    fontRegular = loadFont("assets/Regular.otf");
- *    fontItalic = loadFont("assets/Italic.ttf");
- *    fontBold = loadFont("assets/Bold.ttf");
- * }
- * function setup() {
- *    background(210);
- *    fill(0).strokeWeight(0).textSize(10);
- *    textFont(fontRegular);
- *    text("Font Style Normal", 10, 30);
- *    textFont(fontItalic);
- *    text("Font Style Italic", 10, 50);
- *    textFont(fontBold);
- *    text("Font Style Bold", 10, 70);
- * }
- * </code>
- * </div>
- *
- * @alt
- *words Font Style Normal displayed normally, Italic in italic and bold in bold
- *
  */
 p5.prototype.textFont = function(theFont, theSize) {
-
   if (arguments.length) {
-
     if (!theFont) {
-
       throw Error('null font passed to textFont');
     }
 
     this._renderer._setProperty('_textFont', theFont);
 
     if (theSize) {
-
       this._renderer._setProperty('_textSize', theSize);
-      this._renderer._setProperty('_textLeading',
-        theSize * constants._DEFAULT_LEADMULT);
+      this._renderer._setProperty(
+        '_textLeading',
+        theSize * constants._DEFAULT_LEADMULT
+      );
     }
 
     return this._renderer._applyTextProperties();

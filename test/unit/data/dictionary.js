@@ -18,15 +18,16 @@ suite('Dictionary Objects', function() {
     myp5.remove();
   });
 
-
   suite('p5.prototype.stringDict', function() {
     test('should be created', function() {
       assert.isTrue(stringDict instanceof p5.StringDict);
     });
 
     test('has correct structure', function() {
-      assert.deepEqual(JSON.stringify(stringDict),
-      JSON.stringify({data:{'happy':'coding'}}));
+      assert.deepEqual(
+        JSON.stringify(stringDict),
+        JSON.stringify({ data: { happy: 'coding' } })
+      );
     });
 
     test('should have correct size', function() {
@@ -40,13 +41,13 @@ suite('Dictionary Objects', function() {
     });
 
     test('should add objects', function() {
-      stringDict.create({'p5': 'js', 'open': 'source'});
+      stringDict.create({ p5: 'js', open: 'source' });
       assert.deepEqual(stringDict.get('open'), 'source');
     });
 
     test('should change existing values', function() {
       stringDict.set('fun', 'times');
-      assert.deepEqual(stringDict.get('fun'),'times');
+      assert.deepEqual(stringDict.get('fun'), 'times');
     });
 
     test('should clear', function() {
@@ -61,28 +62,26 @@ suite('Dictionary Objects', function() {
     });
 
     test('has correct structure', function() {
-      assert.deepEqual(JSON.stringify(numberDict),
-       JSON.stringify({data:{1:2}}));
+      assert.deepEqual(
+        JSON.stringify(numberDict),
+        JSON.stringify({ data: { 1: 2 } })
+      );
     });
-
 
     test('should have correct size', function() {
       var amt = numberDict.size();
       assert.isTrue(amt === Object.keys(numberDict.data).length);
     });
 
-
     test('should add new key-value pairs', function() {
       numberDict.create(3, 4);
       assert.deepEqual(numberDict.get(3), 4);
     });
 
-
     test('should change existing values', function() {
       numberDict.set(1, 5);
-      assert.deepEqual(numberDict.get(1),5);
+      assert.deepEqual(numberDict.get(1), 5);
     });
-
 
     test('should add values together', function() {
       numberDict.set(1, 5);
