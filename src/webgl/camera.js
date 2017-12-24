@@ -10,12 +10,24 @@
 var p5 = require('../core/core');
 
 /**
- * Sets camera position
+ * Sets camera position for a 3D sketch. The function behaves similarly
+ * gluLookAt, except that it replaces the existing modelview matrix instead
+ * of applying any transformations calculated here on top of the existing
+ * model view.
+ * When called with no arguments, this function
+ * sets a default camera equivalent to calling
+ * camera(0, 0, (height/2.0) / tan(PI*30.0 / 180.0), 0, 0, 0, 0, 1, 0);
  * @method camera
- * @param  {Number} x  camera position value on x axis
- * @param  {Number} y  camera position value on y axis
- * @param  {Number} z  camera position value on z axis
- * @return {p5}        the p5 object
+ * @param  {Number} [x]        camera position value on x axis
+ * @param  {Number} [y]        camera position value on y axis
+ * @param  {Number} [z]        camera position value on z axis
+ * @param  {Number} [centerX]  x coordinate representing center of the sketch
+ * @param  {Number} [centerY]  y coordinate representing center of the sketch
+ * @param  {Number} [centerZ]  z coordinate representing center of the sketch
+ * @param  {Number} [upX]      x component of direction 'up' from camera
+ * @param  {Number} [upY]      y component of direction 'up' from camera
+ * @param  {Number} [upZ]      z component of direction 'up' from camera
+ * @return {p5}                the p5 object
  * @example
  * <div>
  * <code>
@@ -24,7 +36,7 @@ var p5 = require('../core/core');
  * }
  * function draw(){
  *  //move the camera away from the plane by a sin wave
- *  camera(0, 0, sin(frameCount * 0.01) * 100);
+ *  camera(0, 0, sin(frameCount * 0.01) * 100, 0, 0, 0, 0, 1, 0);
  *  plane(120, 120);
  * }
  * </code>
@@ -34,20 +46,131 @@ var p5 = require('../core/core');
  * blue square shrinks in size grows to fill canvas. disappears then loops.
  *
  */
-p5.prototype.camera = function(x, y, z){
-  //what it manipulates is the model view matrix
-  this._renderer.translate(-x, -y, -z);
+p5.prototype.camera = function() {
+  this._renderer.camera.apply(this._renderer, arguments);
+  return this;
+};
+
+p5.RendererGL.prototype.camera = function() {
+  var eyeX, eyeY, eyeZ;
+  var centerX, centerY, centerZ;
+  var upX, upY, upZ;
+  if (arguments.length === 0) {
+    eyeX = this.defaultCameraX;
+    eyeY = this.defaultCameraY;
+    eyeZ = this.defaultCameraZ;
+    centerX = eyeX;
+    centerY = eyeY;
+    centerZ = 0;
+    upX = 0;
+    upY = 1;
+    upZ = 0;
+  } else {
+    eyeX = arguments[0];
+    eyeY = arguments[1];
+    eyeZ = arguments[2];
+    centerX = arguments[3];
+    centerY = arguments[4];
+    centerZ = arguments[5];
+    upX = arguments[6];
+    upY = arguments[7];
+    upZ = arguments[8];
+  }
+
+  this.cameraX = eyeX;
+  this.cameraY = eyeY;
+  this.cameraZ = eyeZ;
+
+  // calculate camera Z vector
+  var z0 = eyeX - centerX;
+  var z1 = eyeY - centerY;
+  var z2 = eyeZ - centerZ;
+
+  this.eyeDist = Math.sqrt(z0 * z0 + z1 * z1 + z2 * z2);
+  if (this.eyeDist !== 0) {
+    z0 /= this.eyeDist;
+    z1 /= this.eyeDist;
+    z2 /= this.eyeDist;
+  }
+
+  // calculate camera Y vector
+  var y0 = upX;
+  var y1 = upY;
+  var y2 = upZ;
+
+  // computer x vector as y cross z
+  var x0 = y1 * z2 - y2 * z1;
+  var x1 = -y0 * z2 + y2 * z0;
+  var x2 = y0 * z1 - y1 * z0;
+
+  // recomputer y = z cross x
+  y0 = z1 * x2 - z2 * x1;
+  y1 = -z0 * x2 + z2 * x0;
+  y2 = z0 * x1 - z1 * x0;
+
+  // cross product gives area of parallelogram, which is < 1.0 for
+  // non-perpendicular unit-length vectors; so normalize x, y here:
+  var xmag = Math.sqrt(x0 * x0 + x1 * x1 + x2 * x2);
+  if (xmag !== 0) {
+    x0 /= xmag;
+    x1 /= xmag;
+    x2 /= xmag;
+  }
+
+  var ymag = Math.sqrt(y0 * y0 + y1 * y1 + y2 * y2);
+  if (ymag !== 0) {
+    y0 /= ymag;
+    y1 /= ymag;
+    y2 /= ymag;
+  }
+
+  // the camera affects the model view matrix, insofar as it
+  // inverse translates the world to the eye position of the camera
+  // and rotates it.
+  // prettier-ignore
+  this.cameraMatrix.set(x0, y0, z0, 0,
+                        x1, y1, z1, 0,
+                        x2, y2, z2, 0,
+                        0,   0,  0, 1);
+
+  var tx = -eyeX;
+  var ty = -eyeY;
+  var tz = -eyeZ;
+
+  this.cameraMatrix.translate([tx, ty, tz]);
+  this.uMVMatrix.set(
+    this.cameraMatrix.mat4[0],
+    this.cameraMatrix.mat4[1],
+    this.cameraMatrix.mat4[2],
+    this.cameraMatrix.mat4[3],
+    this.cameraMatrix.mat4[4],
+    this.cameraMatrix.mat4[5],
+    this.cameraMatrix.mat4[6],
+    this.cameraMatrix.mat4[7],
+    this.cameraMatrix.mat4[8],
+    this.cameraMatrix.mat4[9],
+    this.cameraMatrix.mat4[10],
+    this.cameraMatrix.mat4[11],
+    this.cameraMatrix.mat4[12],
+    this.cameraMatrix.mat4[13],
+    this.cameraMatrix.mat4[14],
+    this.cameraMatrix.mat4[15]
+  );
+  return this;
 };
 
 /**
- * Sets perspective camera
+ * Sets perspective camera. When called with no arguments, the defaults
+ * provided are equivalent to
+ * perspective(PI/3.0, width/height, cameraZ/10.0, cameraZ*10.0)
+ * where cameraZ is ((height/2.0) / tan(PI*60.0/360.0));
  * @method  perspective
- * @param  {Number} fovy   camera frustum vertical field of view,
- *                         from bottom to top of view, in degrees
- * @param  {Number} aspect camera frustum aspect ratio
- * @param  {Number} near   frustum near plane length
- * @param  {Number} far    frustum far plane length
- * @return {p5}            the p5 object
+ * @param  {Number} [fovy]   camera frustum vertical field of view,
+ *                           from bottom to top of view, in degrees
+ * @param  {Number} [aspect] camera frustum aspect ratio
+ * @param  {Number} [near]   frustum near plane length
+ * @param  {Number} [far]    frustum far plane length
+ * @return {p5}              the p5 object
  * @example
  * <div>
  * <code>
@@ -78,14 +201,34 @@ p5.prototype.camera = function(x, y, z){
  * colored 3d boxes toggleable with mouse position
  *
  */
-p5.prototype.perspective = function(fovy,aspect,near,far) {
-  fovy = fovy || (60 / 180 * this.PI);
-  aspect = aspect || (this.width/this.height);
-  near = near || ((this.height/2.0) / this.tan(fovy/2.0) * 0.1);
-  far = far || ((this.height/2.0) / this.tan(fovy/2.0) * 10);
-  this._renderer.uPMatrix = p5.Matrix.identity();
-  this._renderer.uPMatrix.perspective(fovy,aspect,near,far);
-  this._renderer._curCamera = 'custom';
+p5.prototype.perspective = function() {
+  this._renderer.perspective.apply(this._renderer, arguments);
+  return this;
+};
+
+p5.RendererGL.prototype.perspective = function() {
+  var fovy = arguments[0] || this.defaultCameraFOV;
+  var aspect = arguments[1] || this.defaultCameraAspect;
+  var near = arguments[2] || this.defaultCameraNear;
+  var far = arguments[3] || this.defaultCameraFar;
+
+  this.cameraFOV = fovy;
+  this.cameraAspect = aspect;
+  this.cameraNear = near;
+  this.cameraFar = far;
+
+  this.uPMatrix = p5.Matrix.identity();
+
+  var f = 1.0 / Math.tan(this.cameraFOV / 2);
+  var nf = 1.0 / (this.cameraNear - this.cameraFar);
+
+  // prettier-ignore
+  this.uPMatrix.set(f / aspect,  0,                     0,  0,
+                    0,          -f,                     0,  0,
+                    0,           0,     (far + near) * nf, -1,
+                    0,           0, (2 * far * near) * nf,  0);
+
+  this._curCamera = 'custom';
 };
 
 /**
@@ -110,6 +253,7 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
  * function draw(){
  *  background(200);
  *  orbitControl();
+ *  strokeWeight(0.1);
  *  for(var i = -1; i < 2; i++){
  *     for(var j = -2; j < 3; j++){
  *       push();
@@ -126,15 +270,35 @@ p5.prototype.perspective = function(fovy,aspect,near,far) {
  * 3 3d boxes, reveal several more boxes on 3d plane when mouse used to toggle
  *
  */
-p5.prototype.ortho = function(left,right,bottom,top,near,far) {
-  left = left || (-this.width/2);
-  right = right || (this.width/2);
-  bottom = bottom || (-this.height/2);
-  top = top || (this.height/2);
+p5.prototype.ortho = function(left, right, bottom, top, near, far) {
+  left = left || -this.width / 2;
+  right = right || this.width / 2;
+  bottom = bottom || -this.height / 2;
+  top = top || this.height / 2;
   near = near || 0;
   far = far || Math.max(this.width, this.height);
   this._renderer.uPMatrix = p5.Matrix.identity();
-  this._renderer.uPMatrix.ortho(left,right,bottom,top,near,far);
+  //this._renderer.uPMatrix.ortho(left,right,bottom,top,near,far);
+
+  var w = right - left;
+  var h = top - bottom;
+  var d = far - near;
+
+  var x = 2.0 / w;
+  var y = 2.0 / h;
+  var z = -2.0 / d;
+
+  var tx = -(right + left) / w;
+  var ty = -(top + bottom) / h;
+  var tz = -(far + near) / d;
+
+  // The minus sign is needed to invert the Y axis.
+  // prettier-ignore
+  this._renderer.uPMatrix.set( x,  0,  0, 0,
+                               0, -y,  0, 0,
+                               0,  0,  z, 0,
+                               tx, ty, tz,  1);
+
   this._renderer._curCamera = 'custom';
 };
 

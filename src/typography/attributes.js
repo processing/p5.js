@@ -28,7 +28,7 @@ var p5 = require('../core/core');
  * @method textAlign
  * @param {Constant} horizAlign horizontal alignment, either LEFT,
  *                            CENTER, or RIGHT
- * @param {Constant} vertAlign vertical alignment, either TOP,
+ * @param {Constant} [vertAlign] vertical alignment, either TOP,
  *                            BOTTOM, CENTER, or BASELINE
  * @return {Number}
  * @example
@@ -58,7 +58,8 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  *
  * @method textLeading
  * @param {Number} leading the size in pixels for spacing between lines
- * @return {Object|Number}
+ * @chainable
+ *
  * @example
  * <div>
  * <code>
@@ -79,7 +80,10 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  *
  * @alt
  *set L1 L2 & L3 displayed vertically 3 times. spacing increases for each set
- *
+ */
+/**
+ * @method textLeading
+ * @return {Number}
  */
 p5.prototype.textLeading = function(theLeading) {
   return this._renderer.textLeading.apply(this._renderer, arguments);
@@ -91,7 +95,8 @@ p5.prototype.textLeading = function(theLeading) {
  *
  * @method textSize
  * @param {Number} theSize the size of the letters in units of pixels
- * @return {Object|Number}
+ * @chainable
+ *
  * @example
  * <div>
  * <code>
@@ -106,7 +111,10 @@ p5.prototype.textLeading = function(theLeading) {
  *
  * @alt
  *Font Size 12 displayed small, Font Size 14 medium & Font Size 16 large
- *
+ */
+/**
+ * @method textSize
+ * @return {Number}
  */
 p5.prototype.textSize = function(theSize) {
   return this._renderer.textSize.apply(this._renderer, arguments);
@@ -118,9 +126,9 @@ p5.prototype.textSize = function(theSize) {
  * (opentype, truetype, etc.) please load styled fonts instead.
  *
  * @method textStyle
- * @param {Number|Constant} theStyle styling for text, either NORMAL,
+ * @param {Constant} theStyle styling for text, either NORMAL,
  *                            ITALIC, or BOLD
- * @return {Object|String}
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -137,7 +145,10 @@ p5.prototype.textSize = function(theSize) {
  *
  * @alt
  *words Font Style Normal displayed normally, Italic in italic and bold in bold
- *
+ */
+/**
+ * @method textStyle
+ * @return {String}
  */
 p5.prototype.textStyle = function(theStyle) {
   return this._renderer.textStyle.apply(this._renderer, arguments);
@@ -181,7 +192,7 @@ p5.prototype.textWidth = function(theText) {
  * Returns the ascent of the current font at its current size. The ascent
  * represents the distance, in pixels, of the tallest character above
  * the baseline.
- *
+ * @method textAscent
  * @return {Number}
  * @example
  * <div>
@@ -209,7 +220,7 @@ p5.prototype.textAscent = function() {
  * Returns the descent of the current font at its current size. The descent
  * represents the distance, in pixels, of the character with the longest
  * descender below the baseline.
- *
+ * @method textDescent
  * @return {Number}
  * @example
  * <div>

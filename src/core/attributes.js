@@ -36,7 +36,7 @@ var constants = require('./constants');
  *
  * @method ellipseMode
  * @param  {Constant} mode either CENTER, RADIUS, CORNER, or CORNERS
- * @return {p5}                   the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -68,10 +68,12 @@ var constants = require('./constants');
  *
  */
 p5.prototype.ellipseMode = function(m) {
-  if (m === constants.CORNER ||
+  if (
+    m === constants.CORNER ||
     m === constants.CORNERS ||
     m === constants.RADIUS ||
-    m === constants.CENTER) {
+    m === constants.CENTER
+  ) {
     this._renderer._ellipseMode = m;
   }
   return this;
@@ -83,7 +85,7 @@ p5.prototype.ellipseMode = function(m) {
  * smoothing of geometry, images, and fonts.
  *
  * @method noSmooth
- * @return {p5} the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -130,7 +132,7 @@ p5.prototype.noSmooth = function() {
  *
  * @method rectMode
  * @param  {Constant} mode either CORNER, CORNERS, CENTER, or RADIUS
- * @return {p5}                   the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -162,10 +164,12 @@ p5.prototype.noSmooth = function() {
  *
  */
 p5.prototype.rectMode = function(m) {
-  if (m === constants.CORNER ||
+  if (
+    m === constants.CORNER ||
     m === constants.CORNERS ||
     m === constants.RADIUS ||
-    m === constants.CENTER) {
+    m === constants.CENTER
+  ) {
     this._renderer._rectMode = m;
   }
   return this;
@@ -178,7 +182,7 @@ p5.prototype.rectMode = function(m) {
  * images, and fonts.
  *
  * @method smooth
- * @return {p5} the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -206,8 +210,8 @@ p5.prototype.smooth = function() {
  * parameters: SQUARE, PROJECT, and ROUND. The default cap is ROUND.
  *
  * @method strokeCap
- * @param  {Number|Constant} cap either SQUARE, PROJECT, or ROUND
- * @return {p5}                  the p5 object
+ * @param  {Constant} cap either SQUARE, PROJECT, or ROUND
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -226,9 +230,11 @@ p5.prototype.smooth = function() {
  *
  */
 p5.prototype.strokeCap = function(cap) {
-  if (cap === constants.ROUND ||
+  if (
+    cap === constants.ROUND ||
     cap === constants.SQUARE ||
-    cap === constants.PROJECT) {
+    cap === constants.PROJECT
+  ) {
     this._renderer.strokeCap(cap);
   }
   return this;
@@ -241,8 +247,8 @@ p5.prototype.strokeCap = function(cap) {
  * MITER.
  *
  * @method strokeJoin
- * @param  {Number|Constant} join either MITER, BEVEL, ROUND
- * @return {p5}                   the p5 object
+ * @param  {Constant} join either MITER, BEVEL, ROUND
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -290,9 +296,11 @@ p5.prototype.strokeCap = function(cap) {
  *
  */
 p5.prototype.strokeJoin = function(join) {
-  if (join === constants.ROUND ||
+  if (
+    join === constants.ROUND ||
     join === constants.BEVEL ||
-    join === constants.MITER) {
+    join === constants.MITER
+  ) {
     this._renderer.strokeJoin(join);
   }
   return this;

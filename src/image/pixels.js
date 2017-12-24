@@ -29,7 +29,7 @@ require('../color/p5.Color');
  * contain the R, G, B, A values of the pixel at (1, 0). More generally, to
  * set values for a pixel at (x, y):
  * ```javascript
- * var d = pixelDensity;
+ * var d = pixelDensity();
  * for (var i = 0; i < d; i++) {
  *   for (var j = 0; j < d; j++) {
  *     // loop over
@@ -205,7 +205,7 @@ p5.prototype.blend = function() {
  * image of rockies. Brickwall images on left and right. Right translucent
  *
  */
-p5.prototype.copy = function () {
+p5.prototype.copy = function() {
   p5.Renderer2D._copyHelper.apply(this, arguments);
 };
 
@@ -255,7 +255,8 @@ p5.prototype.copy = function () {
  * Increases the light areas. No parameter is used.
  *
  * @method filter
- * @param  {Constant} filterType
+ * @param  {Constant} filterType either THRESHOLD, GRAY, OPAQUE, INVERT,
+ *                                POSTERIZE, BLUR, ERODE or DILATE
  * @param  {Number} filterParam an optional parameter unique
  *  to each filter, see above
  *
@@ -378,10 +379,9 @@ p5.prototype.copy = function () {
  *
  */
 p5.prototype.filter = function(operation, value) {
-  if(this.canvas !== undefined) {
+  if (this.canvas !== undefined) {
     Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
-  }
-  else {
+  } else {
     Filters.apply(this.elt, Filters[operation.toLowerCase()], value);
   }
 };
@@ -415,7 +415,7 @@ p5.prototype.filter = function(operation, value) {
  * @param  {Number}         [y] y-coordinate of the pixel
  * @param  {Number}         [w] width
  * @param  {Number}         [h] height
- * @return {Array|p5.Image}     values of pixel at x,y in array format
+ * @return {Number[]|p5.Image}  values of pixel at x,y in array format
  *                              [R, G, B, A] or p5.Image
  * @example
  * <div>
@@ -453,7 +453,7 @@ p5.prototype.filter = function(operation, value) {
  * Image of the rocky mountains with 50x50 green rect in center of canvas
  *
  */
-p5.prototype.get = function(x, y, w, h){
+p5.prototype.get = function(x, y, w, h) {
   return this._renderer.get(x, y, w, h);
 };
 
@@ -565,7 +565,7 @@ p5.prototype.loadPixels = function() {
  * square with orangey-brown gradient lightening at bottom right.
  * image of the rocky mountains. with lines like an 'x' through the center.
  */
-p5.prototype.set = function (x, y, imgOrCol) {
+p5.prototype.set = function(x, y, imgOrCol) {
   this._renderer.set(x, y, imgOrCol);
 };
 /**
@@ -606,7 +606,7 @@ p5.prototype.set = function (x, y, imgOrCol) {
  * @alt
  * two images of the rocky mountains. one on top, one on bottom of canvas.
  */
-p5.prototype.updatePixels = function (x, y, w, h) {
+p5.prototype.updatePixels = function(x, y, w, h) {
   // graceful fail - if loadPixels() or set() has not been called, pixel
   // array will be empty, ignore call to updatePixels()
   if (this.pixels.length === 0) {

@@ -1,4 +1,3 @@
-
 'use strict';
 
 var p5 = require('./core/core');
@@ -46,6 +45,8 @@ require('./core/transform');
 require('./typography/attributes');
 require('./typography/loading_displaying');
 
+require('./data/p5.TypedDict');
+
 require('./webgl/p5.RendererGL');
 require('./webgl/p5.Geometry');
 require('./webgl/p5.RendererGL.Retained');
@@ -55,38 +56,10 @@ require('./webgl/loading');
 require('./webgl/p5.Matrix');
 require('./webgl/material');
 require('./webgl/light');
-require('./webgl/shader');
+require('./webgl/p5.Shader');
 require('./webgl/camera');
 require('./webgl/interaction');
 
-/**
- * _globalInit
- *
- * TODO: ???
- * if sketch is on window
- * assume "global" mode
- * and instantiate p5 automatically
- * otherwise do nothing
- *
- * @return {Undefined}
- */
-var _globalInit = function() {
-  if (!window.PHANTOMJS && !window.mocha) {
-    // If there is a setup or draw function on the window
-    // then instantiate p5 in "global" mode
-    if(((window.setup && typeof window.setup === 'function') ||
-       (window.draw && typeof window.draw === 'function')) &&
-       !p5.instance) {
-      new p5();
-    }
-  }
-};
-
-// TODO: ???
-if (document.readyState === 'complete') {
-  _globalInit();
-} else {
-  window.addEventListener('load', _globalInit , false);
-}
+require('./core/init.js');
 
 module.exports = p5;

@@ -16,7 +16,8 @@ function draw() {
   image(savanna);
 
   // Animate running cat
-  image(runningCat, sX, sY, 300, 150, 170, 100, 300, 150);
+  //image(source,canvasX,canvasY,canvasWidth,canvasHeight,sourceX,sourceY,sourceWidth,sourceHeight);
+  image(runningCat, 0,0, 300, 150, sX, sY, 300, 150);
   sX += 300;
   if (sX > 300) {
     sX = 0;

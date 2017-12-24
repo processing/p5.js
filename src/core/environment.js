@@ -19,62 +19,40 @@ p5.prototype._targetFrameRate = 60;
 
 var _windowPrint = window.print;
 
-
-if (window.console && console.log) {
-  /**
-   * The print() function writes to the console area of your browser.
-   * This function is often helpful for looking at the data a program is
-   * producing. This function creates a new line of text for each call to
-   * the function. Individual elements can be
-   * separated with quotes ("") and joined with the addition operator (+).
-   * <br><br>
-   * While print() is similar to console.log(), it does not directly map to
-   * it in order to simulate easier to understand behavior than
-   * console.log(). Due to this, it is slower. For fastest results, use
-   * console.log().
-   *
-   * @method print
-   * @param {Any} contents any combination of Number, String, Object, Boolean,
-   *                       Array to print
-   * @example
-   * <div><code class='norender'>
-   * var x = 10;
-   * print("The value of x is " + x);
-   * // prints "The value of x is 10"
-   * </code></div>
-   * @alt
-   * default grey canvas
-   */
-  // Converts passed args into a string and then parses that string to
-  // simulate synchronous behavior. This is a hack and is gross.
-  // Since this will not work on all objects, particularly circular
-  // structures, simply console.log() on error.
-  p5.prototype.print = function(args) {
-    try {
-      if (arguments.length === 0) {
-        _windowPrint();
-      }
-      else if (arguments.length > 1) {
-        console.log.apply(console, arguments);
-      } else {
-        var newArgs = JSON.parse(JSON.stringify(args));
-        console.log(newArgs);
-      }
-    } catch(err) {
-      console.log(args);
-    }
-  };
-} else {
-  p5.prototype.print = function() {};
-}
-
+/**
+ * The print() function writes to the console area of your browser.
+ * This function is often helpful for looking at the data a program is
+ * producing. This function creates a new line of text for each call to
+ * the function. Individual elements can be
+ * separated with quotes ("") and joined with the addition operator (+).
+ *
+ * @method print
+ * @param {Any} contents any combination of Number, String, Object, Boolean,
+ *                       Array to print
+ * @example
+ * <div><code class='norender'>
+ * var x = 10;
+ * print("The value of x is " + x);
+ * // prints "The value of x is 10"
+ * </code></div>
+ * @alt
+ * default grey canvas
+ */
+p5.prototype.print = function(args) {
+  if (arguments.length === 0) {
+    _windowPrint();
+  } else {
+    console.log.apply(console, arguments);
+  }
+};
 
 /**
  * The system variable frameCount contains the number of frames that have
  * been displayed since the program started. Inside setup() the value is 0,
  * after the first iteration of draw it is 1, etc.
  *
- * @property frameCount
+ * @property {Number} frameCount
+ * @readOnly
  * @example
  *   <div><code>
  *     function setup() {
@@ -101,7 +79,8 @@ p5.prototype.frameCount = 0;
  * the sketch will accept mouse or keyboard input. This variable is
  * "true" if the window is focused and "false" if not.
  *
- * @property focused
+ * @property {Boolean} focused
+ * @readOnly
  * @example
  * <div><code>
  * // To demonstrate, put two windows side by side.
@@ -124,7 +103,7 @@ p5.prototype.frameCount = 0;
  * green 50x50 ellipse at top left. Red X covers canvas when page focus changes
  *
  */
-p5.prototype.focused = (document.hasFocus());
+p5.prototype.focused = document.hasFocus();
 
 /**
  * Sets the cursor to a predefined symbol or an image, or makes it visible
@@ -135,7 +114,7 @@ p5.prototype.focused = (document.hasFocus());
  * be less than the dimensions of the image.
  *
  * @method cursor
- * @param {Number|Constant} type either ARROW, CROSS, HAND, MOVE, TEXT, or
+ * @param {String|Constant} type either ARROW, CROSS, HAND, MOVE, TEXT, or
  *                               WAIT, or path for image
  * @param {Number}          [x]  the horizontal active spot of the cursor
  * @param {Number}          [y]  the vertical active spot of the cursor
@@ -170,8 +149,10 @@ p5.prototype.cursor = function(type, x, y) {
       // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
       coords = x + ' ' + y;
     }
-    if ((type.substring(0, 7) === 'http://') ||
-        (type.substring(0, 8) === 'https://')) {
+    if (
+      type.substring(0, 7) === 'http://' ||
+      type.substring(0, 8) === 'https://'
+    ) {
       // Image (absolute url)
       cursor = 'url(' + type + ') ' + coords + ', auto';
     } else if (/\.(cur|jpg|jpeg|gif|png|CUR|JPG|JPEG|GIF|PNG)$/.test(type)) {
@@ -201,8 +182,9 @@ p5.prototype.cursor = function(type, x, y) {
  * or are non positive also returns current framerate.
  *
  * @method frameRate
- * @param  {Number} [fps] number of frames to be displayed every second
- * @return {Number}       current frameRate
+ * @param  {Number} fps number of frames to be displayed every second
+ * @chainable
+ *
  * @example
  *
  * <div><code>
@@ -241,8 +223,12 @@ p5.prototype.cursor = function(type, x, y) {
  * blue rect moves left to right, followed by red rect moving faster. Loops.
  *
  */
+/**
+ * @method frameRate
+ * @return {Number}       current frameRate
+ */
 p5.prototype.frameRate = function(fps) {
-  if (typeof fps !== 'number' || fps <= 0) {
+  if (typeof fps !== 'number' || fps < 0) {
     return this._frameRate;
   } else {
     this._setProperty('_targetFrameRate', fps);
@@ -253,6 +239,7 @@ p5.prototype.frameRate = function(fps) {
 /**
  * Returns the current framerate.
  *
+ * @private
  * @return {Number} current frameRate
  */
 p5.prototype.getFrameRate = function() {
@@ -268,6 +255,7 @@ p5.prototype.getFrameRate = function() {
  *
  * Calling frameRate() with no arguments returns the current framerate.
  *
+ * @private
  * @param {Number} [fps] number of frames to be displayed every second
  */
 p5.prototype.setFrameRate = function(fps) {
@@ -299,12 +287,12 @@ p5.prototype.noCursor = function() {
   this._curElement.elt.style.cursor = 'none';
 };
 
-
 /**
  * System variable that stores the width of the entire screen display. This
  * is used to run a full-screen program on any display size.
  *
- * @property displayWidth
+ * @property {Number} displayWidth
+ * @readOnly
  * @example
  * <div class="norender"><code>
  * createCanvas(displayWidth, displayHeight);
@@ -320,7 +308,8 @@ p5.prototype.displayWidth = screen.width;
  * System variable that stores the height of the entire screen display. This
  * is used to run a full-screen program on any display size.
  *
- * @property displayHeight
+ * @property {Number} displayHeight
+ * @readOnly
  * @example
  * <div class="norender"><code>
  * createCanvas(displayWidth, displayHeight);
@@ -336,7 +325,8 @@ p5.prototype.displayHeight = screen.height;
  * System variable that stores the width of the inner window, it maps to
  * window.innerWidth.
  *
- * @property windowWidth
+ * @property {Number} windowWidth
+ * @readOnly
  * @example
  * <div class="norender"><code>
  * createCanvas(windowWidth, windowHeight);
@@ -351,15 +341,16 @@ p5.prototype.windowWidth = getWindowWidth();
  * System variable that stores the height of the inner window, it maps to
  * window.innerHeight.
  *
- * @property windowHeight
+ * @property {Number} windowHeight
+ * @readOnly
  * @example
  * <div class="norender"><code>
  * createCanvas(windowWidth, windowHeight);
  * </code></div>
-*@alt
+ *@alt
  * no display.
  *
-*/
+ */
 p5.prototype.windowHeight = getWindowHeight();
 
 /**
@@ -385,7 +376,7 @@ p5.prototype.windowHeight = getWindowHeight();
  * @alt
  * no display.
  */
-p5.prototype._onresize = function(e){
+p5.prototype._onresize = function(e) {
   this._setProperty('windowWidth', getWindowWidth());
   this._setProperty('windowHeight', getWindowHeight());
   var context = this._isGlobal ? window : this;
@@ -399,17 +390,21 @@ p5.prototype._onresize = function(e){
 };
 
 function getWindowWidth() {
-  return window.innerWidth ||
-         document.documentElement && document.documentElement.clientWidth ||
-         document.body && document.body.clientWidth ||
-         0;
+  return (
+    window.innerWidth ||
+    (document.documentElement && document.documentElement.clientWidth) ||
+    (document.body && document.body.clientWidth) ||
+    0
+  );
 }
 
 function getWindowHeight() {
-  return window.innerHeight ||
-         document.documentElement && document.documentElement.clientHeight ||
-         document.body && document.body.clientHeight ||
-         0;
+  return (
+    window.innerHeight ||
+    (document.documentElement && document.documentElement.clientHeight) ||
+    (document.body && document.body.clientHeight) ||
+    0
+  );
 }
 
 /**
@@ -419,7 +414,8 @@ function getWindowHeight() {
  * variable to the value 320. The value of width defaults to 100 if
  * createCanvas() is not used in a program.
  *
- * @property width
+ * @property {Number} width
+ * @readOnly
  */
 p5.prototype.width = 0;
 
@@ -430,7 +426,8 @@ p5.prototype.width = 0;
  * variable to the value 240. The value of height defaults to 100 if
  * createCanvas() is not used in a program.
  *
- * @property height
+ * @property {Number} height
+ * @readOnly
  */
 p5.prototype.height = 0;
 
@@ -468,11 +465,14 @@ p5.prototype.height = 0;
 p5.prototype.fullscreen = function(val) {
   // no arguments, return fullscreen or not
   if (typeof val === 'undefined') {
-    return document.fullscreenElement ||
-           document.webkitFullscreenElement ||
-           document.mozFullScreenElement ||
-           document.msFullscreenElement;
-  } else { // otherwise set to fullscreen or not
+    return (
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement
+    );
+  } else {
+    // otherwise set to fullscreen or not
     if (val) {
       launchFullscreen(document.documentElement);
     } else {
@@ -552,36 +552,36 @@ p5.prototype.displayDensity = function() {
 };
 
 function launchFullscreen(element) {
-  var enabled = document.fullscreenEnabled ||
-                document.webkitFullscreenEnabled ||
-                document.mozFullScreenEnabled ||
-                document.msFullscreenEnabled;
+  var enabled =
+    document.fullscreenEnabled ||
+    document.webkitFullscreenEnabled ||
+    document.mozFullScreenEnabled ||
+    document.msFullscreenEnabled;
   if (!enabled) {
     throw new Error('Fullscreen not enabled in this browser.');
   }
-  if(element.requestFullscreen) {
+  if (element.requestFullscreen) {
     element.requestFullscreen();
-  } else if(element.mozRequestFullScreen) {
+  } else if (element.mozRequestFullScreen) {
     element.mozRequestFullScreen();
-  } else if(element.webkitRequestFullscreen) {
+  } else if (element.webkitRequestFullscreen) {
     element.webkitRequestFullscreen();
-  } else if(element.msRequestFullscreen) {
+  } else if (element.msRequestFullscreen) {
     element.msRequestFullscreen();
   }
 }
 
 function exitFullscreen() {
-  if(document.exitFullscreen) {
+  if (document.exitFullscreen) {
     document.exitFullscreen();
-  } else if(document.mozCancelFullScreen) {
+  } else if (document.mozCancelFullScreen) {
     document.mozCancelFullScreen();
-  } else if(document.webkitExitFullscreen) {
+  } else if (document.webkitExitFullscreen) {
     document.webkitExitFullscreen();
   } else if (document.msExitFullscreen) {
     document.msExitFullscreen();
   }
 }
-
 
 /**
  * Gets the current URL.
@@ -617,7 +617,7 @@ p5.prototype.getURL = function() {
 /**
  * Gets the current URL path as an array.
  * @method getURLPath
- * @return {Array} path components
+ * @return {String[]} path components
  * @example
  * <div class='norender'><code>
  * function setup() {
@@ -633,7 +633,9 @@ p5.prototype.getURL = function() {
  *
  */
 p5.prototype.getURLPath = function() {
-  return location.pathname.split('/').filter(function(v){return v!=='';});
+  return location.pathname.split('/').filter(function(v) {
+    return v !== '';
+  });
 };
 /**
  * Gets the current URL params as an Object.
@@ -659,12 +661,12 @@ p5.prototype.getURLPath = function() {
 p5.prototype.getURLParams = function() {
   var re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
   var m;
-  var v={};
+  var v = {};
   while ((m = re.exec(location.search)) != null) {
     if (m.index === re.lastIndex) {
       re.lastIndex++;
     }
-    v[m[1]]=m[2];
+    v[m[1]] = m[2];
   }
   return v;
 };

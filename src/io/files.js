@@ -11,155 +11,16 @@
 'use strict';
 
 var p5 = require('../core/core');
-var opentype = require('opentype.js');
 require('whatwg-fetch');
 require('es6-promise').polyfill();
 var fetchJsonp = require('fetch-jsonp');
 require('../core/error_helpers');
 
 /**
- * Checks if we are in preload and returns the last arg which will be the
- * _decrementPreload function if called from a loadX() function.  Should
- * only be used in loadX() functions.
- * @private
- */
-p5._getDecrementPreload = function () {
-  var decrementPreload = arguments[arguments.length - 1];
-
-  // when in preload decrementPreload will always be the last arg as it is set
-  // with args.push() before invocation in _wrapPreload
-  if ((window.preload || (this && this.preload)) &&
-    typeof decrementPreload === 'function') {
-    return decrementPreload;
-  } else {
-    return null;
-  }
-};
-
-/**
- * Loads an opentype font file (.otf, .ttf) from a file or a URL,
- * and returns a PFont Object. This method is asynchronous,
- * meaning it may not finish before the next line in your sketch
- * is executed.
- * <br><br>
- * The path to the font should be relative to the HTML file
- * that links in your sketch. Loading an from a URL or other
- * remote location may be blocked due to your browser's built-in
- * security.
+ * Loads a JSON file from a file or a URL, and returns an Object.
+ * Note that even if the JSON file contains an Array, an Object will be
+ * returned with index numbers as keys.
  *
- * @method loadFont
- * @param  {String}        path       name of the file or url to load
- * @param  {Function}      [callback] function to be executed after
- *                                    loadFont()
- *                                    completes
- * @return {Object}                   p5.Font object
- * @example
- *
- * <p>Calling loadFont() inside preload() guarantees that the load
- * operation will have completed before setup() and draw() are called.</p>
- *
- * <div><code>
- * var myFont;
- * function preload() {
- *   myFont = loadFont('assets/AvenirNextLTPro-Demi.otf');
- * }
- *
- * function setup() {
- *   fill('#ED225D');
- *   textFont(myFont);
- *   textSize(36);
- *   text('p5*js', 10, 50);
- * }
- * </code></div>
- *
- * Outside of preload(), you may supply a callback function to handle the
- * object:
- *
- * <div><code>
- * function setup() {
- *   loadFont('assets/AvenirNextLTPro-Demi.otf', drawText);
- * }
- *
- * function drawText(font) {
- *   fill('#ED225D');
- *   textFont(font, 36);
- *   text('p5*js', 10, 50);
- * }
- *
- * </code></div>
- *
- * <p>You can also use the string name of the font to style other HTML
- * elements.</p>
- *
- * <div><code>
- * var myFont;
- *
- * function preload() {
- *   myFont = loadFont('assets/Avenir.otf');
- * }
- *
- * function setup() {
- *   var myDiv = createDiv('hello there');
- *   myDiv.style('font-family', 'Avenir');
- * }
- * </code></div>
- *
- * @alt
- * p5*js in p5's theme dark pink
- * p5*js in p5's theme dark pink
- *
- */
-p5.prototype.loadFont = function (path, onSuccess, onError) {
-
-  var p5Font = new p5.Font(this);
-  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
-
-  opentype.load(path, function (err, font) {
-
-    if (err) {
-
-      if ((typeof onError !== 'undefined') && (onError !== decrementPreload)) {
-        return onError(err);
-      }
-      p5._friendlyFileLoadError(4, path);
-      console.error(err, path);
-      return;
-    }
-
-    p5Font.font = font;
-
-    if (typeof onSuccess !== 'undefined') {
-      onSuccess(p5Font);
-    }
-
-    if (decrementPreload && (onSuccess !== decrementPreload)) {
-      decrementPreload();
-    }
-
-    // check that we have an acceptable font type
-    var validFontTypes = [ 'ttf', 'otf', 'woff', 'woff2' ],
-      fileNoPath = path.split('\\').pop().split('/').pop(),
-      lastDotIdx = fileNoPath.lastIndexOf('.'), fontFamily, newStyle,
-      fileExt = lastDotIdx < 1 ? null : fileNoPath.substr(lastDotIdx + 1);
-
-    // if so, add it to the DOM (name-only) for use with p5.dom
-    if (validFontTypes.indexOf(fileExt) > -1) {
-
-      fontFamily = fileNoPath.substr(0, lastDotIdx);
-      newStyle = document.createElement('style');
-      newStyle.appendChild(document.createTextNode('\n@font-face {' +
-        '\nfont-family: ' + fontFamily + ';\nsrc: url(' + path + ');\n}\n'));
-      document.head.appendChild(newStyle);
-    }
-
-  });
-
-  return p5Font;
-};
-
-
-/**
- * Loads a JSON file from a file or a URL, and returns an Object or Array.
  * This method is asynchronous, meaning it may not finish before the next
  * line in your sketch is executed. JSONP is supported via a polyfill and you
  * can pass in as the second argument an object with definitions of the json
@@ -170,10 +31,10 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
  * @param  {String}        path       name of the file or url to load
  * @param  {Object}        [jsonpOptions] options object for jsonp related settings
  * @param  {String}        [datatype] "json" or "jsonp"
- * @param  {Function}      [callback] function to be executed after
+ * @param  {function}      [callback] function to be executed after
  *                                    loadJSON() completes, data is passed
  *                                    in as first argument
- * @param  {Function}      [errorCallback] function to be executed if
+ * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
  * @return {Object|Array}             JSON data
@@ -183,11 +44,14 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
  * operation before setup() and draw() are called.</p>
  *
  * <div><code>
- * var weather;
+ * // Examples use USGS Earthquake API:
+ * //   https://earthquake.usgs.gov/fdsnws/event/1/#methods
+ * var earthquakes;
  * function preload() {
- *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=London,UK'+
- *    '&APPID=7bbbb47522848e8b9c26ba35c226c734';
- *   weather = loadJSON(url);
+ *   // Get the most recent earthquake in the database
+ *   var url = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/'+
+ *     'summary/all_day.geojson';
+ *   earthquakes = loadJSON(url);
  * }
  *
  * function setup() {
@@ -196,10 +60,12 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
  *
  * function draw() {
  *   background(200);
- *   // get the humidity value out of the loaded JSON
- *   var humidity = weather.main.humidity;
- *   fill(0, humidity); // use the humidity value to set the alpha
- *   ellipse(width/2, height/2, 50, 50);
+ *   // Get the magnitude and name of the earthquake out of the loaded JSON
+ *   var earthquakeMag = earthquakes.features[0].properties.mag;
+ *   var earthquakeName = earthquakes.features[0].properties.place;
+ *   ellipse(width/2, height/2, earthquakeMag * 10, earthquakeMag * 10);
+ *   textAlign(CENTER);
+ *   text(earthquakeName, 0, height - 30, width, 30);
  * }
  * </code></div>
  *
@@ -209,20 +75,22 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
  * <div><code>
  * function setup() {
  *   noLoop();
- *   var url = 'http://api.openweathermap.org/data/2.5/weather?q=NewYork'+
- *    '&APPID=7bbbb47522848e8b9c26ba35c226c734';
- *   loadJSON(url, drawWeather);
+ *   var url = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/'+
+ *     'summary/all_day.geojson';
+ *   loadJSON(url, drawEarthquake);
  * }
  *
  * function draw() {
  *   background(200);
  * }
  *
- * function drawWeather(weather) {
- *   // get the humidity value out of the loaded JSON
- *   var humidity = weather.main.humidity;
- *   fill(0, humidity); // use the humidity value to set the alpha
- *   ellipse(width/2, height/2, 50, 50);
+ * function drawEarthquake(earthquakes) {
+ *   // Get the magnitude and name of the earthquake out of the loaded JSON
+ *   var earthquakeMag = earthquakes.features[0].properties.mag;
+ *   var earthquakeName = earthquakes.features[0].properties.place;
+ *   ellipse(width/2, height/2, earthquakeMag * 10, earthquakeMag * 10);
+ *   textAlign(CENTER);
+ *   text(earthquakeName, 0, height - 30, width, 30);
  * }
  * </code></div>
  *
@@ -231,12 +99,11 @@ p5.prototype.loadFont = function (path, onSuccess, onError) {
  * 50x50 ellipse that changes from black to white depending on the current humidity
  *
  */
-p5.prototype.loadJSON = function () {
+p5.prototype.loadJSON = function() {
   var path = arguments[0];
   var callback;
   var errorCallback;
   var options;
-  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
   var ret = {}; // object needed for preload
   var t = 'json';
@@ -248,29 +115,36 @@ p5.prototype.loadJSON = function () {
       if (arg === 'jsonp' || arg === 'json') {
         t = arg;
       }
-    } else if (typeof arg === 'function' && arg !== decrementPreload) {
-      if(!callback){
+    } else if (typeof arg === 'function') {
+      if (!callback) {
         callback = arg;
-      }else{
+      } else {
         errorCallback = arg;
       }
-    } else if (typeof arg === 'object' && arg.hasOwnProperty('jsonpCallback')){
+    } else if (typeof arg === 'object' && arg.hasOwnProperty('jsonpCallback')) {
       t = 'jsonp';
       options = arg;
     }
   }
 
-  p5.prototype.httpDo(path, 'GET', options, t, function(resp){
-    for (var k in resp) {
-      ret[k] = resp[k];
-    }
-    if (typeof callback !== 'undefined') {
-      callback(resp);
-    }
-    if (decrementPreload && (callback !== decrementPreload)) {
-      decrementPreload();
-    }
-  }, errorCallback);
+  var self = this;
+  this.httpDo(
+    path,
+    'GET',
+    options,
+    t,
+    function(resp) {
+      for (var k in resp) {
+        ret[k] = resp[k];
+      }
+      if (typeof callback !== 'undefined') {
+        callback(resp);
+      }
+
+      self._decrementPreload();
+    },
+    errorCallback
+  );
 
   return ret;
 };
@@ -290,13 +164,13 @@ p5.prototype.loadJSON = function () {
  *
  * @method loadStrings
  * @param  {String}   filename   name of the file or url to load
- * @param  {Function} [callback] function to be executed after loadStrings()
+ * @param  {function} [callback] function to be executed after loadStrings()
  *                               completes, Array is passed in as first
  *                               argument
- * @param  {Function} [errorCallback] function to be executed if
+ * @param  {function} [errorCallback] function to be executed if
  *                               there is an error, response is passed
  *                               in as first argument
- * @return {Array}               Array of Strings
+ * @return {String[]}            Array of Strings
  * @example
  *
  * <p>Calling loadStrings() inside preload() guarantees to complete the
@@ -335,35 +209,41 @@ p5.prototype.loadJSON = function () {
  * randomly generated text from a file, for example "i have three feet"
  *
  */
-p5.prototype.loadStrings = function () {
+p5.prototype.loadStrings = function() {
   var ret = [];
-  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
   var callback, errorCallback;
 
-  for(var i=1; i<arguments.length; i++){
+  for (var i = 1; i < arguments.length; i++) {
     var arg = arguments[i];
-    if(typeof arg === 'function' && arg !== decrementPreload){
-      if(typeof callback === 'undefined'){
+    if (typeof arg === 'function') {
+      if (typeof callback === 'undefined') {
         callback = arg;
-      }else{
+      } else if (typeof errorCallback === 'undefined') {
         errorCallback = arg;
       }
     }
   }
 
-  p5.prototype.httpDo(arguments[0], 'GET', 'text', function(data){
-    var arr = data.match(/[^\r\n]+/g);
-    for (var k in arr) {
-      ret[k] = arr[k];
-    }
+  var self = this;
+  p5.prototype.httpDo.call(
+    this,
+    arguments[0],
+    'GET',
+    'text',
+    function(data) {
+      var arr = data.match(/[^\r\n]+/g);
+      for (var k in arr) {
+        ret[k] = arr[k];
+      }
 
-    if (typeof callback !== 'undefined') {
-      callback(ret);
-    }
-    if (decrementPreload && (callback !== decrementPreload)) {
-      decrementPreload();
-    }
-  }, errorCallback);
+      if (typeof callback !== 'undefined') {
+        callback(ret);
+      }
+
+      self._decrementPreload();
+    },
+    errorCallback
+  );
 
   return ret;
 };
@@ -404,11 +284,11 @@ p5.prototype.loadStrings = function () {
  * @method loadTable
  * @param  {String}         filename   name of the file or URL to load
  * @param  {String} [options]  "header" "csv" "tsv"
- * @param  {Function}       [callback] function to be executed after
+ * @param  {function}       [callback] function to be executed after
  *                                     loadTable() completes. On success, the
  *                                     Table object is passed in as the
  *                                     first argument.
- * @param  {Function}  [errorCallback] function to be executed if
+ * @param  {function}  [errorCallback] function to be executed if
  *                                     there is an error, response is passed
  *                                     in as first argument
  * @return {Object}                    Table object containing data
@@ -457,29 +337,28 @@ p5.prototype.loadStrings = function () {
  * randomly generated text from a file, for example "i have three feet"
  *
  */
-p5.prototype.loadTable = function (path) {
-  var callback = null;
-  var errorCallback = null;
+p5.prototype.loadTable = function(path) {
+  var callback;
+  var errorCallback;
   var options = [];
   var header = false;
-  var ext = path.substring(path.lastIndexOf('.')+1,path.length);
+  var ext = path.substring(path.lastIndexOf('.') + 1, path.length);
   var sep = ',';
   var separatorSet = false;
-  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
 
-  if(ext === 'tsv'){ //Only need to check extension is tsv because csv is default
+  if (ext === 'tsv') {
+    //Only need to check extension is tsv because csv is default
     sep = '\t';
   }
 
   for (var i = 1; i < arguments.length; i++) {
-    if ((typeof (arguments[i]) === 'function') &&
-      (arguments[i] !== decrementPreload)) {
-      if(!callback){
+    if (typeof arguments[i] === 'function') {
+      if (typeof callback === 'undefined') {
         callback = arguments[i];
-      } else {
+      } else if (typeof errorCallback === 'undefined') {
         errorCallback = arguments[i];
       }
-    } else if (typeof (arguments[i]) === 'string') {
+    } else if (typeof arguments[i] === 'string') {
       options.push(arguments[i]);
       if (arguments[i] === 'header') {
         header = true;
@@ -504,145 +383,152 @@ p5.prototype.loadTable = function (path) {
 
   var t = new p5.Table();
 
-  p5.prototype.httpDo(path, 'GET', 'text', function(resp){
-    var state = {};
+  var self = this;
+  this.httpDo(
+    path,
+    'GET',
+    'text',
+    function(resp) {
+      var state = {};
 
-    // define constants
-    var PRE_TOKEN = 0,
-      MID_TOKEN = 1,
-      POST_TOKEN = 2,
-      POST_RECORD = 4;
+      // define constants
+      var PRE_TOKEN = 0,
+        MID_TOKEN = 1,
+        POST_TOKEN = 2,
+        POST_RECORD = 4;
 
-    var QUOTE = '\"',
-      CR = '\r',
-      LF = '\n';
+      var QUOTE = '"',
+        CR = '\r',
+        LF = '\n';
 
-    var records = [];
-    var offset = 0;
-    var currentRecord = null;
-    var currentChar;
+      var records = [];
+      var offset = 0;
+      var currentRecord = null;
+      var currentChar;
 
-    var tokenBegin = function () {
-      state.currentState = PRE_TOKEN;
-      state.token = '';
-    };
+      var tokenBegin = function() {
+        state.currentState = PRE_TOKEN;
+        state.token = '';
+      };
 
-    var tokenEnd = function () {
-      currentRecord.push(state.token);
-      tokenBegin();
-    };
+      var tokenEnd = function() {
+        currentRecord.push(state.token);
+        tokenBegin();
+      };
 
-    var recordBegin = function () {
-      state.escaped = false;
-      currentRecord = [];
-      tokenBegin();
-    };
+      var recordBegin = function() {
+        state.escaped = false;
+        currentRecord = [];
+        tokenBegin();
+      };
 
-    var recordEnd = function () {
-      state.currentState = POST_RECORD;
-      records.push(currentRecord);
-      currentRecord = null;
-    };
+      var recordEnd = function() {
+        state.currentState = POST_RECORD;
+        records.push(currentRecord);
+        currentRecord = null;
+      };
 
-    while (true) {
-      currentChar = resp[offset++];
+      for (;;) {
+        currentChar = resp[offset++];
 
-      // EOF
-      if (currentChar == null) {
-        if (state.escaped) {
-          throw new Error('Unclosed quote in file.');
+        // EOF
+        if (currentChar == null) {
+          if (state.escaped) {
+            throw new Error('Unclosed quote in file.');
+          }
+          if (currentRecord) {
+            tokenEnd();
+            recordEnd();
+            break;
+          }
         }
-        if (currentRecord) {
+        if (currentRecord === null) {
+          recordBegin();
+        }
+
+        // Handle opening quote
+        if (state.currentState === PRE_TOKEN) {
+          if (currentChar === QUOTE) {
+            state.escaped = true;
+            state.currentState = MID_TOKEN;
+            continue;
+          }
+          state.currentState = MID_TOKEN;
+        }
+
+        // mid-token and escaped, look for sequences and end quote
+        if (state.currentState === MID_TOKEN && state.escaped) {
+          if (currentChar === QUOTE) {
+            if (resp[offset] === QUOTE) {
+              state.token += QUOTE;
+              offset++;
+            } else {
+              state.escaped = false;
+              state.currentState = POST_TOKEN;
+            }
+          } else if (currentChar === CR) {
+            continue;
+          } else {
+            state.token += currentChar;
+          }
+          continue;
+        }
+
+        // fall-through: mid-token or post-token, not escaped
+        if (currentChar === CR) {
+          if (resp[offset] === LF) {
+            offset++;
+          }
           tokenEnd();
           recordEnd();
-          break;
-        }
-      }
-      if (currentRecord === null) {
-        recordBegin();
-      }
-
-      // Handle opening quote
-      if (state.currentState === PRE_TOKEN) {
-        if (currentChar === QUOTE) {
-          state.escaped = true;
-          state.currentState = MID_TOKEN;
-          continue;
-        }
-        state.currentState = MID_TOKEN;
-      }
-
-      // mid-token and escaped, look for sequences and end quote
-      if (state.currentState === MID_TOKEN && state.escaped) {
-        if (currentChar === QUOTE) {
-          if (resp[offset] === QUOTE) {
-            state.token += QUOTE;
-            offset++;
-          } else {
-            state.escaped = false;
-            state.currentState = POST_TOKEN;
-          }
-        } else {
+        } else if (currentChar === LF) {
+          tokenEnd();
+          recordEnd();
+        } else if (currentChar === sep) {
+          tokenEnd();
+        } else if (state.currentState === MID_TOKEN) {
           state.token += currentChar;
         }
-        continue;
       }
 
-      // fall-through: mid-token or post-token, not escaped
-      if (currentChar === CR) {
-        if (resp[offset] === LF) {
-          offset++;
-        }
-        tokenEnd();
-        recordEnd();
-      } else if (currentChar === LF) {
-        tokenEnd();
-        recordEnd();
-      } else if (currentChar === sep) {
-        tokenEnd();
-      } else if (state.currentState === MID_TOKEN) {
-        state.token += currentChar;
-      }
-    }
-
-    // set up column names
-    if (header) {
-      t.columns = records.shift();
-    } else {
-      for (i = 0; i < records[0].length; i++) {
-        t.columns[i] = 'null';
-      }
-    }
-    var row;
-    for (i = 0; i < records.length; i++) {
-      //Handles row of 'undefined' at end of some CSVs
-      if (records[i].length === 1) {
-        if (records[i][0] === 'undefined' || records[i][0] === '') {
-          continue;
+      // set up column names
+      if (header) {
+        t.columns = records.shift();
+      } else {
+        for (i = 0; i < records[0].length; i++) {
+          t.columns[i] = 'null';
         }
       }
-      row = new p5.TableRow();
-      row.arr = records[i];
-      row.obj = makeObject(records[i], t.columns);
-      t.addRow(row);
-    }
-    if (callback !== null) {
-      callback(t);
-    }
-    if (decrementPreload && (callback !== decrementPreload)) {
-      decrementPreload();
-    }
+      var row;
+      for (i = 0; i < records.length; i++) {
+        //Handles row of 'undefined' at end of some CSVs
+        if (records[i].length === 1) {
+          if (records[i][0] === 'undefined' || records[i][0] === '') {
+            continue;
+          }
+        }
+        row = new p5.TableRow();
+        row.arr = records[i];
+        row.obj = makeObject(records[i], t.columns);
+        t.addRow(row);
+      }
+      if (typeof callback === 'function') {
+        callback(t);
+      }
 
-  }, function(err){
-    // Error handling
-    p5._friendlyFileLoadError(2, path);
+      self._decrementPreload();
+    },
+    function(err) {
+      // Error handling
+      p5._friendlyFileLoadError(2, path);
 
-    if(errorCallback){
-      errorCallback(err);
-    }else{
-      throw err;
+      if (errorCallback) {
+        errorCallback(err);
+      } else {
+        throw err;
+      }
     }
-  });
+  );
 
   return t;
 };
@@ -651,7 +537,7 @@ p5.prototype.loadTable = function (path) {
 function makeObject(row, headers) {
   var ret = {};
   headers = headers || [];
-  if (typeof (headers) === 'undefined') {
+  if (typeof headers === 'undefined') {
     for (var j = 0; j < row.length; j++) {
       headers[j.toString()] = j;
     }
@@ -665,11 +551,11 @@ function makeObject(row, headers) {
 }
 
 /*global parseXML */
-p5.prototype.parseXML = function (two) {
+p5.prototype.parseXML = function(two) {
   var one = new p5.XML();
   var i;
   if (two.children.length) {
-    for ( i = 0; i < two.children.length; i++ ) {
+    for (i = 0; i < two.children.length; i++) {
       var node = parseXML(two.children[i]);
       one.addChild(node);
     }
@@ -680,8 +566,7 @@ p5.prototype.parseXML = function (two) {
       one.children[j].parent = one;
     }
     return one;
-  }
-  else {
+  } else {
     one.setName(two.nodeName);
     one._setCont(two.textContent);
     one._setAttributes(two);
@@ -703,50 +588,92 @@ p5.prototype.parseXML = function (two) {
  * line in your sketch is executed. Calling loadXML() inside preload()
  * guarantees to complete the operation before setup() and draw() are called.
  *
- * <p>Outside of preload(), you may supply a callback function to handle the
- * object:</p>
+ * Outside of preload(), you may supply a callback function to handle the
+ * object.
  *
  * @method loadXML
  * @param  {String}   filename   name of the file or URL to load
- * @param  {Function} [callback] function to be executed after loadXML()
+ * @param  {function} [callback] function to be executed after loadXML()
  *                               completes, XML object is passed in as
  *                               first argument
- * @param  {Function} [errorCallback] function to be executed if
+ * @param  {function} [errorCallback] function to be executed if
  *                               there is an error, response is passed
  *                               in as first argument
  * @return {Object}              XML object containing data
+ * @example
+ * <div class='norender'><code>
+ * // The following short XML file called "mammals.xml" is parsed
+ * // in the code below.
+ * //
+ * // <?xml version="1.0"?>
+ * // &lt;mammals&gt;
+ * //   &lt;animal id="0" species="Capra hircus">Goat&lt;/animal&gt;
+ * //   &lt;animal id="1" species="Panthera pardus">Leopard&lt;/animal&gt;
+ * //   &lt;animal id="2" species="Equus zebra">Zebra&lt;/animal&gt;
+ * // &lt;/mammals&gt;
+ *
+ * var xml;
+ *
+ * function preload() {
+ *   xml = loadXML("assets/mammals.xml");
+ * }
+ *
+ * function setup() {
+ *   var children = xml.getChildren("animal");
+ *
+ *   for (var i = 0; i < children.length; i++) {
+ *     var id = children[i].getNum("id");
+ *     var coloring = children[i].getString("species");
+ *     var name = children[i].getContent();
+ *     print(id + ", " + coloring + ", " + name);
+ *   }
+ * }
+ *
+ * // Sketch prints:
+ * // 0, Capra hircus, Goat
+ * // 1, Panthera pardus, Leopard
+ * // 2, Equus zebra, Zebra
+ * </code></div>
+ *
+ * @alt
+ * no image displayed
+ *
  */
 p5.prototype.loadXML = function() {
   var ret = {};
-  var decrementPreload = p5._getDecrementPreload.apply(this, arguments);
   var callback, errorCallback;
 
-  for(var i=1; i<arguments.length; i++){
+  for (var i = 1; i < arguments.length; i++) {
     var arg = arguments[i];
-    if(typeof arg === 'function' && arg !== decrementPreload){
-      if(typeof callback === 'undefined'){
+    if (typeof arg === 'function') {
+      if (typeof callback === 'undefined') {
         callback = arg;
-      }else{
+      } else if (typeof errorCallback === 'undefined') {
         errorCallback = arg;
       }
     }
   }
 
-  p5.prototype.httpDo(arguments[0], 'GET', 'xml', function(xml){
-    for(var key in xml) {
-      ret[key] = xml[key];
-    }
-    if (typeof callback !== 'undefined') {
-      callback(ret);
-    }
-    if (decrementPreload && (callback !== decrementPreload)) {
-      decrementPreload();
-    }
-  }, errorCallback);
+  var self = this;
+  this.httpDo(
+    arguments[0],
+    'GET',
+    'xml',
+    function(xml) {
+      for (var key in xml) {
+        ret[key] = xml[key];
+      }
+      if (typeof callback !== 'undefined') {
+        callback(ret);
+      }
+
+      self._decrementPreload();
+    },
+    errorCallback
+  );
 
   return ret;
 };
-
 
 /**
  * Method for executing an HTTP GET request. If data type is not specified,
@@ -757,14 +684,45 @@ p5.prototype.loadXML = function() {
  * @param  {String}        path       name of the file or url to load
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
  * @param  {Object}        [data]     param data passed sent with request
- * @param  {Function}      [callback] function to be executed after
+ * @param  {function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
  *                                    as first argument
- * @param  {Function}      [errorCallback] function to be executed if
+ * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
+ * @example
+ * <div class='norender'><code>
+ *  // Examples use USGS Earthquake API:
+ *  //   https://earthquake.usgs.gov/fdsnws/event/1/#methods
+ *  var earthquakes;
+ *  function preload() {
+ *    // Get the most recent earthquake in the database
+ *    var url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?' +
+ *      'format=geojson&limit=1&orderby=time';
+ *    httpGet(url, "jsonp", false, function(response) {
+ *      // when the HTTP request completes, populate the variable that holds the
+ *      // earthquake data used in the visualization.
+ *      earthquakes = response;
+ *    });
+ *  }
+ *
+ *  function draw() {
+ *    if (!earthquakes) {
+ *      // Wait until the earthquake data has loaded before drawing.
+ *      return
+ *    }
+ *    background(200);
+ *    // Get the magnitude and name of the earthquake out of the loaded JSON
+ *    var earthquakeMag = earthquakes.features[0].properties.mag;
+ *    var earthquakeName = earthquakes.features[0].properties.place;
+ *    ellipse(width/2, height/2, earthquakeMag * 10, earthquakeMag * 10);
+ *    textAlign(CENTER);
+ *    text(earthquakeName, 0, height - 30, width, 30);
+ *    noLoop();
+ *  }
+ * </code></div>
  */
-p5.prototype.httpGet = function () {
+p5.prototype.httpGet = function() {
   var args = Array.prototype.slice.call(arguments);
   args.splice(1, 0, 'GET');
   p5.prototype.httpDo.apply(this, args);
@@ -777,16 +735,81 @@ p5.prototype.httpGet = function () {
  *
  * @method httpPost
  * @param  {String}        path       name of the file or url to load
- * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
+ * @param  {String}        [datatype] "json", "jsonp", "xml", or "text".
+ *                                    If omitted, httpPost() will guess.
  * @param  {Object}        [data]     param data passed sent with request
- * @param  {Function}      [callback] function to be executed after
- *                                    httpGet() completes, data is passed in
+ * @param  {function}      [callback] function to be executed after
+ *                                    httpPost() completes, data is passed in
  *                                    as first argument
- * @param  {Function}      [errorCallback] function to be executed if
+ * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Examples use jsonplaceholder.typicode.com for a Mock Data API
+ *
+ * var url = 'https://jsonplaceholder.typicode.com/posts';
+ * var postData = { userId: 1, title: 'p5 Clicked!', body: 'p5.js is way cool.' };
+ *
+ * function setup() {
+ *   createCanvas(800, 800);
+ * }
+ *
+ * function mousePressed() {
+ *  // Pick new random color values
+ *  var r = random(255);
+ *  var g = random(255);
+ *  var b = random(255);
+ *
+ *  httpPost(url, 'json',
+ *      postData,
+ *      function (result) {
+ *        strokeWeight(2);
+ *        stroke(r, g, b);
+ *        fill(r, g, b, 127);
+ *        ellipse(mouseX, mouseY, 200, 200);
+ *        text(result.body, mouseX, mouseY);
+ *      });
+ * }
+ * </code>
+ * </div>
+ *
+ *
+ * <div><code>
+ *
+ *  var url = 'https://invalidURL'; // A bad URL that will cause errors
+ *  var postData = { title: 'p5 Clicked!', body: 'p5.js is way cool.' };
+ *
+ *  function setup() {
+ *     createCanvas(800, 800);
+ *  }
+ *
+ *  function mousePressed() {
+ *    // Pick new random color values
+ *    var r = random(255);
+ *    var g = random(255);
+ *    var b = random(255);
+ *
+ *    httpPost(url, 'json',
+ *      postData,
+ *      function (result) {
+ *        // ... won't be called
+ *      },
+ *      function (error) {
+ *        strokeWeight(2);
+ *        stroke(r, g, b);
+ *        fill(r, g, b, 127);
+ *        text(error.toString(), mouseX, mouseY);
+ *    });
+ *  }
+ *
+ * </code>
+ * </div>
+ *
  */
-p5.prototype.httpPost = function () {
+p5.prototype.httpPost = function() {
   var args = Array.prototype.slice.call(arguments);
   args.splice(1, 0, 'POST');
   p5.prototype.httpDo.apply(this, args);
@@ -805,12 +828,62 @@ p5.prototype.httpPost = function () {
  *                                    defaults to "GET"
  * @param  {String}        [datatype] "json", "jsonp", "xml", or "text"
  * @param  {Object}        [data]     param data passed sent with request
- * @param  {Function}      [callback] function to be executed after
+ * @param  {function}      [callback] function to be executed after
  *                                    httpGet() completes, data is passed in
  *                                    as first argument
- * @param  {Function}      [errorCallback] function to be executed if
+ * @param  {function}      [errorCallback] function to be executed if
  *                                    there is an error, response is passed
  *                                    in as first argument
+ *
+ *
+ * @example
+ * <div>
+ * <code>
+ * // Examples use USGS Earthquake API:
+ * // https://earthquake.usgs.gov/fdsnws/event/1/#methods
+ *
+ * // displays an animation of all USGS earthquakes
+ * var earthquakes;
+ * var eqFeatureIndex = 0;
+ *
+ * function preload() {
+ *    var url = 'https://earthquake.usgs.gov/fdsnws/event/1/query?format=geojson';
+ *    httpDo(url,
+ *      {
+ *        method: 'GET',
+ *        // Other Request options, like special headers for apis
+ *        headers: { authorization: 'Bearer secretKey' }
+ *      },
+ *      function(res) {
+ *        earthquakes = res;
+ *      });
+ * }
+ *
+ * function draw() {
+ *    // wait until the data is loaded
+ *    if (!earthquakes || !earthquakes.features[eqFeatureIndex]) {
+ *      return;
+ *    }
+ *    clear();
+ *
+ *    var feature = earthquakes.features[eqFeatureIndex];
+ *    var mag = feature.properties.mag;
+ *    var rad = mag / 11 * ((width + height) / 2);
+ *    fill(255, 0, 0, 100);
+ *    ellipse(
+ *      width / 2 + random(-2, 2),
+ *      height / 2 + random(-2, 2),
+ *      rad, rad
+ *    );
+ *
+ *    if (eqFeatureIndex >= earthquakes.features.length) {
+ *      eqFeatureIndex = 0;
+ *    } else {
+ *      eqFeatureIndex += 1;
+ *    }
+ * }
+ * </code>
+ * </div>
  */
 
 /**
@@ -819,10 +892,10 @@ p5.prototype.httpPost = function () {
  * @param  {Object}        options   Request object options as documented in the
  *                                    "fetch" API
  * <a href="https://developer.mozilla.org/en/docs/Web/API/Fetch_API">reference</a>
- * @param  {Function}      [callback]
- * @param  {Function}      [errorCallback]
+ * @param  {function}      [callback]
+ * @param  {function}      [errorCallback]
  */
-p5.prototype.httpDo = function () {
+p5.prototype.httpDo = function() {
   var type = '';
   var callback;
   var errorCallback;
@@ -831,18 +904,20 @@ p5.prototype.httpDo = function () {
   var cbCount = 0;
   var contentType = 'text/plain';
   // Trim the callbacks off the end to get an idea of how many arguments are passed
-  for (var i = arguments.length-1; i > 0; i--){
-    if(typeof arguments[i] === 'function'){
+  for (var i = arguments.length - 1; i > 0; i--) {
+    if (typeof arguments[i] === 'function') {
       cbCount++;
-    }else{
+    } else {
       break;
     }
   }
   // The number of arguments minus callbacks
   var argsCount = arguments.length - cbCount;
-  if(argsCount === 2 &&
-     typeof arguments[0] === 'string' &&
-     typeof arguments[1] === 'object'){
+  if (
+    argsCount === 2 &&
+    typeof arguments[0] === 'string' &&
+    typeof arguments[1] === 'object'
+  ) {
     // Intended for more advanced use, pass in Request parameters directly
     request = new Request(arguments[0], arguments[1]);
     callback = arguments[2];
@@ -869,7 +944,12 @@ p5.prototype.httpDo = function () {
       if (typeof a === 'string') {
         if (a === 'GET' || a === 'POST' || a === 'PUT' || a === 'DELETE') {
           method = a;
-        } else if(a === 'json' || a === 'jsonp' || a === 'xml' || a === 'text') {
+        } else if (
+          a === 'json' ||
+          a === 'jsonp' ||
+          a === 'xml' ||
+          a === 'text'
+        ) {
           type = a;
         } else {
           data = a;
@@ -877,11 +957,11 @@ p5.prototype.httpDo = function () {
       } else if (typeof a === 'number') {
         data = a.toString();
       } else if (typeof a === 'object') {
-        if(a.hasOwnProperty('jsonpCallback')){
+        if (a.hasOwnProperty('jsonpCallback')) {
           for (var attr in a) {
             jsonpOptions[attr] = a[attr];
           }
-        }else{
+        } else {
           data = JSON.stringify(a);
           contentType = 'application/json';
         }
@@ -914,43 +994,46 @@ p5.prototype.httpDo = function () {
     });
   }
 
-  if(type === 'jsonp'){
+  if (type === 'jsonp') {
     fetchJsonp(arguments[0], jsonpOptions)
-      .then(function(res){
-        if(res.ok){
+      .then(function(res) {
+        if (res.ok) {
           return res.json();
         }
         throw res;
-      }).then(function(resp){
+      })
+      .then(function(resp) {
         callback(resp);
-      }).catch(function(err){
+      })
+      .catch(function(err) {
         if (errorCallback) {
           errorCallback(err);
         } else {
           throw err;
         }
       });
-  }else{
+  } else {
     fetch(request)
-      .then(function(res){
-        if(res.ok){
-          if(type === 'json'){
+      .then(function(res) {
+        if (res.ok) {
+          if (type === 'json') {
             return res.json();
-          }else{
+          } else {
             return res.text();
           }
         }
 
         throw res;
       })
-      .then(function(resp){
-        if (type === 'xml'){
+      .then(function(resp) {
+        if (type === 'xml') {
           var parser = new DOMParser();
           resp = parser.parseFromString(resp, 'text/xml');
           resp = parseXML(resp.documentElement);
         }
         callback(resp);
-      }).catch(function(err, msg){
+      })
+      .catch(function(err, msg) {
         if (errorCallback) {
           errorCallback(err);
         } else {
@@ -971,8 +1054,30 @@ window.URL = window.URL || window.webkitURL;
 // private array of p5.PrintWriter objects
 p5.prototype._pWriters = [];
 
+/**
+ * @method createWriter
+ * @param {String} name name of the file to be created
+ * @param {String} [extension]
+ * @return {p5.PrintWriter}
+ * @example
+ * <div>
+ * <code>
+ * createButton('save')
+ *   .position(10, 10)
+ *   .mousePressed(function () {
+ *
+ *     var writer = createWriter("squares.txt");
+ *     for (var i = 0; i < 10; i++)
+ *       writer.print(i * i);
+ *     writer.close();
+ *     writer.flush();
+ *
+ *   })
 
-p5.prototype.createWriter = function (name, extension) {
+ * </code>
+ * </div>
+ */
+p5.prototype.createWriter = function(name, extension) {
   var newPW;
   // check that it doesn't already exist
   for (var i in p5.prototype._pWriters) {
@@ -990,22 +1095,41 @@ p5.prototype.createWriter = function (name, extension) {
   return newPW;
 };
 
-
-p5.PrintWriter = function (filename, extension) {
+/**
+ *  @class p5.PrintWriter
+ *  @constructor
+ *  @param  {String}     filename
+ *  @param  {String}     [extension]
+ */
+p5.PrintWriter = function(filename, extension) {
   var self = this;
   this.name = filename;
   this.content = '';
   //Changed to write because it was being overloaded by function below.
-  this.write = function (data) {
+  /**
+   * @method write
+   * @param {Array} data
+   */
+  this.write = function(data) {
     this.content += data;
   };
-  this.print = function (data) {
+  /**
+   * @method print
+   * @param {Array} data
+   */
+  this.print = function(data) {
     this.content += data + '\n';
   };
-  this.flush = function () {
+  /**
+   * @method flush
+   */
+  this.flush = function() {
     this.content = '';
   };
-  this.close = function () {
+  /**
+   * @method close
+   */
+  this.close = function() {
     // convert String to Array for the writeFile Blob
     var arr = [];
     arr.push(this.content);
@@ -1089,7 +1213,7 @@ p5.PrintWriter = function (filename, extension) {
  *                            output will be optimized for filesize,
  *                            rather than readability.
  */
-p5.prototype.save = function (object, _filename, _options) {
+p5.prototype.save = function(object, _filename, _options) {
   // parse the arguments and figure out which things we are saving
   var args = arguments;
   // =================================================
@@ -1100,24 +1224,18 @@ p5.prototype.save = function (object, _filename, _options) {
   if (args.length === 0) {
     p5.prototype.saveCanvas(cnv);
     return;
-  }
-  // otherwise, parse the arguments
+  } else if (args[0] instanceof p5.Renderer || args[0] instanceof p5.Graphics) {
+    // otherwise, parse the arguments
 
-  // if first param is a p5Graphics, then saveCanvas
-  else if (args[0] instanceof p5.Renderer ||
-    args[0] instanceof p5.Graphics) {
+    // if first param is a p5Graphics, then saveCanvas
     p5.prototype.saveCanvas(args[0].elt, args[1], args[2]);
     return;
-  }
-
-  // if 1st param is String and only one arg, assume it is canvas filename
-  else if (args.length === 1 && typeof (args[0]) === 'string') {
+  } else if (args.length === 1 && typeof args[0] === 'string') {
+    // if 1st param is String and only one arg, assume it is canvas filename
     p5.prototype.saveCanvas(cnv, args[0]);
-  }
-
-  // =================================================
-  // OPTION 2: extension clarifies saveStrings vs. saveJSON
-  else {
+  } else {
+    // =================================================
+    // OPTION 2: extension clarifies saveStrings vs. saveJSON
     var extension = _checkFileExtension(args[1], args[2])[1];
     switch (extension) {
       case 'json':
@@ -1126,8 +1244,8 @@ p5.prototype.save = function (object, _filename, _options) {
       case 'txt':
         p5.prototype.saveStrings(args[0], args[1], args[2]);
         return;
-        // =================================================
-        // OPTION 3: decide based on object...
+      // =================================================
+      // OPTION 3: decide based on object...
       default:
         if (args[0] instanceof Array) {
           p5.prototype.saveStrings(args[0], args[1], args[2]);
@@ -1182,7 +1300,7 @@ p5.prototype.save = function (object, _filename, _options) {
  * no image displayed
  *
  */
-p5.prototype.saveJSON = function (json, filename, opt) {
+p5.prototype.saveJSON = function(json, filename, opt) {
   var stringify;
   if (opt) {
     stringify = JSON.stringify(json);
@@ -1194,7 +1312,6 @@ p5.prototype.saveJSON = function (json, filename, opt) {
 
 p5.prototype.saveJSONObject = p5.prototype.saveJSON;
 p5.prototype.saveJSONArray = p5.prototype.saveJSON;
-
 
 /**
  *  Writes an array of Strings to a text file, one line per String.
@@ -1226,7 +1343,7 @@ p5.prototype.saveJSONArray = p5.prototype.saveJSON;
  * no image displayed
  *
  */
-p5.prototype.saveStrings = function (list, filename, extension) {
+p5.prototype.saveStrings = function(list, filename, extension) {
   var ext = extension || 'txt';
   var pWriter = this.createWriter(filename, ext);
   for (var i = 0; i < list.length; i++) {
@@ -1239,7 +1356,6 @@ p5.prototype.saveStrings = function (list, filename, extension) {
   pWriter.close();
   pWriter.flush();
 };
-
 
 // =======
 // HELPERS
@@ -1294,11 +1410,11 @@ function escapeHelper(content) {
  * no image displayed
  *
  */
-p5.prototype.saveTable = function (table, filename, options) {
+p5.prototype.saveTable = function(table, filename, options) {
   var ext;
-  if(options === undefined){
-    ext = filename.substring(filename.lastIndexOf('.')+1,filename.length);
-  }else{
+  if (options === undefined) {
+    ext = filename.substring(filename.lastIndexOf('.') + 1, filename.length);
+  } else {
     ext = options;
   }
   var pWriter = this.createWriter(filename, ext);
@@ -1336,14 +1452,12 @@ p5.prototype.saveTable = function (table, filename, options) {
       }
       pWriter.write('\n');
     }
-  }
-
-  // otherwise, make HTML
-  else {
+  } else {
+    // otherwise, make HTML
     pWriter.print('<html>');
     pWriter.print('<head>');
-    var str = '  <meta http-equiv=\"content-type\" content';
-    str += '=\"text/html;charset=utf-8\" />';
+    var str = '  <meta http-equiv="content-type" content';
+    str += '="text/html;charset=utf-8" />';
     pWriter.print(str);
     pWriter.print('</head>');
 
@@ -1389,16 +1503,16 @@ p5.prototype.saveTable = function (table, filename, options) {
  *
  *  @param  {Array} dataToDownload
  *  @param  {String} filename
- *  @param  {[String]} extension
+ *  @param  {String} [extension]
  *  @private
  */
-p5.prototype.writeFile = function (dataToDownload, filename, extension) {
-  var type = 'application\/octet-stream';
+p5.prototype.writeFile = function(dataToDownload, filename, extension) {
+  var type = 'application/octet-stream';
   if (p5.prototype._isSafari()) {
-    type = 'text\/plain';
+    type = 'text/plain';
   }
   var blob = new Blob(dataToDownload, {
-    'type': type
+    type: type
   });
   var href = window.URL.createObjectURL(blob);
   p5.prototype.downloadFile(href, filename, extension);
@@ -1410,11 +1524,12 @@ p5.prototype.writeFile = function (dataToDownload, filename, extension) {
  *  This is a private function because it does not do any formatting,
  *  but it is used by saveStrings, saveJSON, saveTable etc.
  *
+ *  @method downloadFile
  *  @param  {String} href      i.e. an href generated by createObjectURL
- *  @param  {[String]} filename
- *  @param  {[String]} extension
+ *  @param  {String} [filename]
+ *  @param  {String} [extension]
  */
-p5.prototype.downloadFile = function (href, fName, extension) {
+p5.prototype.downloadFile = function(href, fName, extension) {
   var fx = _checkFileExtension(fName, extension);
   var filename = fx[0];
   var ext = fx[1];
@@ -1437,7 +1552,7 @@ p5.prototype.downloadFile = function (href, fName, extension) {
     var aText = 'Hello, Safari user! To download this file...\n';
     aText += '1. Go to File --> Save As.\n';
     aText += '2. Choose "Page Source" as the Format.\n';
-    aText += '3. Name it with this extension: .\"' + ext + '\"';
+    aText += '3. Name it with this extension: ."' + ext + '"';
     alert(aText);
   }
   a.click();
@@ -1449,7 +1564,8 @@ p5.prototype.downloadFile = function (href, fName, extension) {
  *  if the provided parameter has no extension.
  *
  *  @param   {String} filename
- *  @return  {Array} [fileName, fileExtension]
+ *  @param   {String} [extension]
+ *  @return  {String[]} [fileName, fileExtension]
  *
  *  @private
  */
@@ -1483,7 +1599,7 @@ p5.prototype._checkFileExtension = _checkFileExtension;
  *  @return  {Boolean} [description]
  *  @private
  */
-p5.prototype._isSafari = function () {
+p5.prototype._isSafari = function() {
   var x = Object.prototype.toString.call(window.HTMLElement);
   return x.indexOf('Constructor') > 0;
 };

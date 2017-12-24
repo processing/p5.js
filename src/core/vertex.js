@@ -34,7 +34,7 @@ var isFirstContour = true;
  * other shapes, such as ellipse() or rect() within.
  *
  * @method beginContour
- * @return {Object} the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -85,9 +85,9 @@ p5.prototype.beginContour = function() {
  * ellipse() or rect() within beginShape().
  *
  * @method beginShape
- * @param  {Constant} kind either POINTS, LINES, TRIANGLES, TRIANGLE_FAN
+ * @param  {Constant} [kind] either POINTS, LINES, TRIANGLES, TRIANGLE_FAN
  *                                TRIANGLE_STRIP, QUADS, or QUAD_STRIP
- * @return {Object}               the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -229,7 +229,7 @@ p5.prototype.beginContour = function() {
  * endShape(CLOSE);
  * </code>
  * </div>
-  * @alt
+ * @alt
  * white square-shape with black outline in middle-right of canvas.
  * 4 black points in a square shape in middle-right of canvas.
  * 2 horizontal black lines. In the top-right and bottom-right of canvas.
@@ -244,18 +244,20 @@ p5.prototype.beginContour = function() {
  *
  */
 p5.prototype.beginShape = function(kind) {
-  if (kind === constants.POINTS ||
+  if (
+    kind === constants.POINTS ||
     kind === constants.LINES ||
     kind === constants.TRIANGLES ||
     kind === constants.TRIANGLE_FAN ||
     kind === constants.TRIANGLE_STRIP ||
     kind === constants.QUADS ||
-    kind === constants.QUAD_STRIP) {
+    kind === constants.QUAD_STRIP
+  ) {
     shapeKind = kind;
   } else {
     shapeKind = null;
   }
-  if(this._renderer.isP3D){
+  if (this._renderer.isP3D) {
     this._renderer.beginShape(kind);
   } else {
     vertices = [];
@@ -283,7 +285,7 @@ p5.prototype.beginShape = function(kind) {
  * @param  {Number} y3 y-coordinate for the second control point
  * @param  {Number} x4 x-coordinate for the anchor point
  * @param  {Number} y4 y-coordinate for the anchor point
- * @return {Object}    the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -345,7 +347,7 @@ p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
  * @method curveVertex
  * @param {Number} x x-coordinate of the vertex
  * @param {Number} y y-coordinate of the vertex
- * @return {Object} the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -365,7 +367,7 @@ p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
  * Upside-down u-shape line, mid canvas. left point extends beyond canvas view.
  *
  */
-p5.prototype.curveVertex = function(x,y) {
+p5.prototype.curveVertex = function(x, y) {
   isCurve = true;
   this.vertex(x, y);
   return this;
@@ -386,7 +388,7 @@ p5.prototype.curveVertex = function(x,y) {
  * other shapes, such as ellipse() or rect() within.
  *
  * @method endContour
- * @return {Object} the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -439,8 +441,8 @@ p5.prototype.endContour = function() {
  * the shape (to connect the beginning and the end).
  *
  * @method endShape
- * @param  {Constant} mode use CLOSE to close the shape
- * @return {Object}               the p5 object
+ * @param  {Constant} [mode] use CLOSE to close the shape
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -465,12 +467,22 @@ p5.prototype.endContour = function() {
  *
  */
 p5.prototype.endShape = function(mode) {
-  if(this._renderer.isP3D){
-    this._renderer.endShape(mode, isCurve, isBezier,
-      isQuadratic, isContour, shapeKind);
-  }else{
-    if (vertices.length === 0) { return this; }
-    if (!this._renderer._doStroke && !this._renderer._doFill) { return this; }
+  if (this._renderer.isP3D) {
+    this._renderer.endShape(
+      mode,
+      isCurve,
+      isBezier,
+      isQuadratic,
+      isContour,
+      shapeKind
+    );
+  } else {
+    if (vertices.length === 0) {
+      return this;
+    }
+    if (!this._renderer._doStroke && !this._renderer._doFill) {
+      return this;
+    }
 
     var closeShape = mode === constants.CLOSE;
 
@@ -479,8 +491,15 @@ p5.prototype.endShape = function(mode) {
       vertices.push(vertices[0]);
     }
 
-    this._renderer.endShape(mode, vertices, isCurve, isBezier,
-      isQuadratic, isContour, shapeKind);
+    this._renderer.endShape(
+      mode,
+      vertices,
+      isCurve,
+      isBezier,
+      isQuadratic,
+      isContour,
+      shapeKind
+    );
 
     // Reset some settings
     isCurve = false;
@@ -513,7 +532,7 @@ p5.prototype.endShape = function(mode) {
  * @param  {Number} cy y-coordinate for the control point
  * @param  {Number} x3 x-coordinate for the anchor point
  * @param  {Number} y3 y-coordinate for the anchor point
- * @return {Object}    the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -547,7 +566,7 @@ p5.prototype.endShape = function(mode) {
 p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
   //if we're drawing a contour, put the points into an
   // array for inside drawing
-  if(this._contourInited) {
+  if (this._contourInited) {
     var pt = {};
     pt.x = cx;
     pt.y = cy;
@@ -585,7 +604,8 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  * @method vertex
  * @param  {Number} x x-coordinate of the vertex
  * @param  {Number} y y-coordinate of the vertex
- * @return {Object}   the p5 object
+ * @param  {Number|Boolean} [z] z-coordinate of the vertex
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -602,10 +622,10 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  * 4 black points in a square shape in middle-right of canvas.
  *
  */
-p5.prototype.vertex = function(x, y, moveTo) {
-  if(this._renderer.isP3D){
-    this._renderer.vertex(x, y, moveTo);
-  }else{
+p5.prototype.vertex = function(x, y, moveTo, u, v) {
+  if (this._renderer.isP3D) {
+    this._renderer.vertex.apply(this._renderer, arguments);
+  } else {
     var vert = [];
     vert.isVert = true;
     vert[0] = x;

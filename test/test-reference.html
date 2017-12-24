@@ -19,16 +19,11 @@
   </script>
 
   <!-- Include your assertion lib of choice -->
-  <script src="js/chai.js" type="text/javascript" ></script>
+  <script src="../node_modules/chai/chai.js" type="text/javascript" ></script>
   <script src="js/bind.js" type="text/javascript" ></script>
   <script src="js/sinon.js" type="text/javascript" ></script>
-  <script src="js/testRender.js" type="text/javascript" ></script>
   <script src="js/modernizr.js"></script>
-  <script type="text/javascript" >
-    // Setup chai
-    var expect = chai.expect;
-    var assert = chai.assert;
-  </script>
+  <script src="js/chai_helpers.js" type="text/javascript" ></script>
 
   <script>
     // Because we load tests asynchronously, we need to manually load
@@ -38,7 +33,7 @@
     // https://github.com/kmiyashiro/grunt-mocha#option-2
     if (window.PHANTOMJS)
       document.write(
-        '<script src="../node_modules/grunt-mocha/phantomjs/bridge.js"><\/script>';
+        '<script src="../node_modules/grunt-mocha/phantomjs/bridge.js"><\/script>'
       );
   </script>
 
@@ -48,17 +43,17 @@
   <script>
     if (Modernizr.webaudio)
       document.write(
-        '<script src="../lib/addons/p5.sound.js"><\/script>';
+        '<script src="../lib/addons/p5.sound.js"><\/script>'
       );
   </script>
 
   <script>
   var TEST_FILENAME_FILTERS = [
     {regex: /webgl/, condition: Modernizr.webgl},
-    {regex: /events\/acceleration\.js/, condition: Modernizr.webgl},
+    {regex: /acceleration/, condition: Modernizr.webgl},
     {regex: /sound/, condition: Modernizr.webaudio}
   ];
-  var MS_TIMEOUT = 2000;
+  var MS_TIMEOUT = 4000;
 
   // TODO: This code has basically been harvested from
   // https://github.com/processing/p5.js-website/blob/master/js/render.js.
@@ -83,12 +78,12 @@
         }
 
         var fxns = [
-          'setup', 'draw', 'preload', 'mousePressed', 'mouseReleased', 
-          'mouseMoved', 'mouseDragged', 'mouseClicked', 'mouseWheel', 
-          'touchStarted', 'touchMoved', 'touchEnded', 
+          'setup', 'draw', 'preload', 'mousePressed', 'mouseReleased',
+          'mouseMoved', 'mouseDragged', 'mouseClicked', 'mouseWheel',
+          'touchStarted', 'touchMoved', 'touchEnded',
           'keyPressed', 'keyReleased', 'keyTyped'
         ];
-        fxns.forEach(function(f) { 
+        fxns.forEach(function(f) {
           var ind = runnable.indexOf(f+'(');
           // this is a gross hack within a hacky script that
           // ensures the function names found are not substrings
@@ -140,34 +135,59 @@
       examples = [].slice.call(div.querySelectorAll('div:not(.norender)'));
 
       examples.forEach(function(el, i) {
+
+        var ms = el.attributes['modernizr'];
+        if (ms && ms.value.split(',').some(
+          function (m) { return !Modernizr[m]; })) {
+          return;
+        }
+
         var exampleCode = el.textContent
           .replace(/assets\//g, '../docs/reference/assets/');
+        var startTime = null;
 
-        var testFunc = function(done) {
-          var startTime = Date.now();
+        var testFunc = function() {
+          var test_context = this;
+          return new Promise(function(resolve, reject) {
+            startTime = Date.now();
 
-          this.timeout(MS_TIMEOUT);
-          myp5Div = document.createElement('div');
-          document.body.appendChild(myp5Div);
+            test_context.timeout(MS_TIMEOUT);
+            myp5Div = document.createElement('div');
+            document.body.appendChild(myp5Div);
 
-          myp5 = new p5(createExampleSketch(exampleCode, function(p) {
-            var drawCalled = false;
-            var oldDraw = p.draw || function() {};
+            myp5 = new p5(createExampleSketch(exampleCode, function(p) {
+              var drawCalled = false;
+              var oldSetup = p.setup || function() {};
+              var oldDraw = p.draw || function() {};
 
-            p.draw = function() {
-              oldDraw.call(p);
-              if (drawCalled) return;
-              drawCalled = true;
-
-              if (Date.now() - startTime > MS_TIMEOUT) {
-                // This can happen if the page contained processor-intensive
-                // code that blocked the UI for too long.
-                return done(new Error("code took too long to execute"));
+              p.setup = function() {
+                try {
+                  oldSetup();
+                } catch(err) {
+                  reject(err);
+                }
               }
 
-              done();
-            };
-          }), myp5Div);
+              p.draw = function() {
+                try {
+                  oldDraw.call(p);
+                  if (drawCalled) return;
+                  drawCalled = true;
+
+                  if (Date.now() - startTime > MS_TIMEOUT) {
+                    // This can happen if the page contained processor-intensive
+                    // code that blocked the UI for too long.
+                    reject(new Error("code took too long to execute"));
+                    return;
+                  }
+
+                  resolve();
+                } catch(err) {
+                  reject(err);
+                }
+              };
+            }, myp5Div));
+          });
         };
 
         testFunc.toString = function() {

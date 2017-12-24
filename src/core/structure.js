@@ -172,7 +172,7 @@ p5.prototype.loop = function() {
  * 2 Gold ellipses left black right blue stroke. 2 white ellipses on left+right.
  *
  */
-p5.prototype.push = function () {
+p5.prototype.push = function() {
   this._renderer.push();
   this._styles.push({
     _doStroke: this._renderer._doStroke,
@@ -247,10 +247,10 @@ p5.prototype.push = function () {
  * 2 Gold ellipses left black right blue stroke. 2 white ellipses on left+right.
  *
  */
-p5.prototype.pop = function () {
+p5.prototype.pop = function() {
   this._renderer.pop();
   var lastS = this._styles.pop();
-  for(var prop in lastS){
+  for (var prop in lastS) {
     this._renderer[prop] = lastS[prop];
   }
 };
@@ -326,9 +326,9 @@ p5.prototype.popStyle = function() {
  * black line on far left of canvas
  *
  */
-p5.prototype.redraw = function () {
+p5.prototype.redraw = function() {
   this.resetMatrix();
-  if(this._renderer.isP3D){
+  if (this._renderer.isP3D) {
     this._renderer._update();
   }
 
@@ -349,10 +349,11 @@ p5.prototype.redraw = function () {
       this.scale(this._pixelDensity, this._pixelDensity);
     }
     var self = this;
-    var callMethod = function (f) {
+    var callMethod = function(f) {
       f.call(self);
     };
     for (var idxRedraw = 0; idxRedraw < numberOfRedraws; idxRedraw++) {
+      this._setProperty('frameCount', this.frameCount + 1);
       this._registeredMethods.pre.forEach(callMethod);
       userDraw();
       this._registeredMethods.post.forEach(callMethod);
@@ -365,6 +366,5 @@ p5.prototype.size = function() {
   s += 'drawing canvas, please use createCanvas() instead';
   throw s;
 };
-
 
 module.exports = p5;

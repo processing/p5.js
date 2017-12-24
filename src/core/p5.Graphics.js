@@ -17,28 +17,28 @@ var constants = require('./constants');
  * @class p5.Graphics
  * @constructor
  * @extends p5.Element
- * @param {String} elt DOM node that is wrapped
- * @param {Object} [pInst] pointer to p5 instance
- * @param {Boolean} whether we're using it as main canvas
+ * @param {Number} w            width
+ * @param {Number} h            height
+ * @param {Constant} renderer   the renderer to use, either P2D or WEBGL
+ * @param {p5} [pInst]          pointer to p5 instance
  */
 p5.Graphics = function(w, h, renderer, pInst) {
-
   var r = renderer || constants.P2D;
 
-  var c = document.createElement('canvas');
+  this.canvas = document.createElement('canvas');
   var node = this._userNode || document.body;
-  node.appendChild(c);
+  node.appendChild(this.canvas);
 
-  p5.Element.call(this, c, pInst, false);
+  p5.Element.call(this, this.canvas, pInst, false);
   this._styles = [];
   this.width = w;
   this.height = h;
   this._pixelDensity = pInst._pixelDensity;
 
   if (r === constants.WEBGL) {
-    this._renderer = new p5.RendererGL(c, this, false);
+    this._renderer = new p5.RendererGL(this.canvas, this, false);
   } else {
-    this._renderer = new p5.Renderer2D(c, this, false);
+    this._renderer = new p5.Renderer2D(this.canvas, this, false);
   }
 
   this._renderer.resize(w, h);
@@ -56,12 +56,15 @@ p5.Graphics = function(w, h, renderer, pInst) {
       }
     }
   }
-
+  this.name = 'p5.Graphics'; // for friendly debugger system
   return this;
 };
 
 p5.Graphics.prototype = Object.create(p5.Element.prototype);
 
+/**
+ * @method remove
+ */
 p5.Graphics.prototype.remove = function() {
   if (this.elt.parentNode) {
     this.elt.parentNode.removeChild(this.elt);

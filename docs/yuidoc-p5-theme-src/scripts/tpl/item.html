@@ -17,6 +17,10 @@
 
   <span class='description-text'><%= item.description %></span>
 
+  <% if (item.extends) { %>
+    <p>Extends <a href="/reference/#/<%=item.extends%>" title="<%=item.extends%> reference"><%=item.extends%></a></p>
+  <% } %>
+
   <% if (item.module === 'p5.dom') { %>
     <p>This function requires you include the p5.dom library.  Add the following into the head of your index.html file:
       <pre><code class="language-javascript">&lt;script language="javascript" type="text/javascript" src="path/to/p5.dom.js"&gt;&lt;/script&gt;</code></pre>
@@ -28,7 +32,6 @@
     </p>
   <% } %>
 </div>
-
 
 <div>
   <h4>Syntax</h4>
@@ -63,7 +66,7 @@
 <% } %>
 
 <% if (item.chainable) { %>
-<span class="label label-success chainable">chainable</span>
+<p class="label label-success chainable">chainable</p>
 <% } %>
 
 <% if (item.async) { %>
@@ -116,7 +119,7 @@
     <td>
     <% var p = item.params[i] %>
     <% if (p.optional) { %>
-      <code class="language-javascript">[<%=p.name%>]</code>
+      <code class="language-javascript"><%=p.name%></code>
     <% } else { %>
       <code class="language-javascript"><%=p.name%></code>
     <% } %> 
@@ -138,10 +141,9 @@
 
 <% if (item.return) { %>
 <div>
-  <h4>Returns</h4>
+	<h4>Returns</h4>
     <% if (item.return.type) { %>
       <p class='returns'><span class="param-type label label-info"><%=item.return.type%></span>: <%= item.return.description %></p>
     <% } %>
 </div>
 <% } %>
-

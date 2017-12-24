@@ -4,7 +4,7 @@
   <% _.each(group.subgroups, function(subgroup, ind) { %>
     <dl>
     <% if (subgroup.name !== '0') { %>
-        <dt class="subgroup-<%=subgroup.name%>"><%=subgroup.name%></dt>
+        <dt class="subgroup-name subgroup-<%=subgroup.name%>"><%=subgroup.name%></dt>
     <% } %>
     <% _.each(subgroup.items, function(item) { %>
     <dd><a href="<%=item.hash%>" title="<%- striptags(item.description) %>"><%=item.name%><% if (item.itemtype === 'method') { %>()<%}%></a></dd>

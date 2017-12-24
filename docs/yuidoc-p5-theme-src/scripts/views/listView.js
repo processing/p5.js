@@ -54,7 +54,11 @@ define([
                 name: subgroup.replace('_', '&nbsp;'),
                 items: []
               };
-            }
+			}
+			
+			// hide the un-interesting constants  
+			if (group === 'Constants' && !item.example)
+				return;
 
             if (item.file.indexOf('p5.') === -1) {
 

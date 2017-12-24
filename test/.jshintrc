@@ -1,8 +1,10 @@
 {
   "boss": true,
   "curly": true,
+  "esnext": true,
   "eqeqeq": true,
   "eqnull": true,
+  "evil": true,
   "immed": true,
   "latedef": "nofunc",
   "newcap": true,
@@ -29,6 +31,7 @@
     "PElement": false,
     "p5": false,
     "PVector": false,
-    "testRender": false
+
+    "Response": false
   }
 }

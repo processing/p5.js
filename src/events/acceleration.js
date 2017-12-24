@@ -13,8 +13,10 @@ var p5 = require('../core/core');
  * The system variable deviceOrientation always contains the orientation of
  * the device. The value of this variable will either be set 'landscape'
  * or 'portrait'. If no data is available it will be set to 'undefined'.
+ * either LANDSCAPE or PORTRAIT.
  *
- * @property deviceOrientation
+ * @property {Constant} deviceOrientation
+ * @readOnly
  */
 p5.prototype.deviceOrientation = undefined;
 
@@ -22,7 +24,8 @@ p5.prototype.deviceOrientation = undefined;
  * The system variable accelerationX always contains the acceleration of the
  * device along the x axis. Value is represented as meters per second squared.
  *
- * @property accelerationX
+ * @property {Number} accelerationX
+ * @readOnly
  */
 p5.prototype.accelerationX = 0;
 
@@ -30,7 +33,8 @@ p5.prototype.accelerationX = 0;
  * The system variable accelerationY always contains the acceleration of the
  * device along the y axis. Value is represented as meters per second squared.
  *
- * @property accelerationY
+ * @property {Number} accelerationY
+ * @readOnly
  */
 p5.prototype.accelerationY = 0;
 
@@ -38,7 +42,8 @@ p5.prototype.accelerationY = 0;
  * The system variable accelerationZ always contains the acceleration of the
  * device along the z axis. Value is represented as meters per second squared.
  *
- * @property accelerationZ
+ * @property {Number} accelerationZ
+ * @readOnly
  */
 p5.prototype.accelerationZ = 0;
 
@@ -47,7 +52,8 @@ p5.prototype.accelerationZ = 0;
  * device along the x axis in the frame previous to the current frame. Value
  * is represented as meters per second squared.
  *
- * @property pAccelerationX
+ * @property {Number} pAccelerationX
+ * @readOnly
  */
 p5.prototype.pAccelerationX = 0;
 
@@ -56,7 +62,8 @@ p5.prototype.pAccelerationX = 0;
  * device along the y axis in the frame previous to the current frame. Value
  * is represented as meters per second squared.
  *
- * @property pAccelerationY
+ * @property {Number} pAccelerationY
+ * @readOnly
  */
 p5.prototype.pAccelerationY = 0;
 
@@ -65,7 +72,8 @@ p5.prototype.pAccelerationY = 0;
  * device along the z axis in the frame previous to the current frame. Value
  * is represented as meters per second squared.
  *
- * @property pAccelerationZ
+ * @property {Number} pAccelerationZ
+ * @readOnly
  */
 p5.prototype.pAccelerationZ = 0;
 
@@ -74,7 +82,7 @@ p5.prototype.pAccelerationZ = 0;
  *
  * @private
  */
-p5.prototype._updatePAccelerations = function(){
+p5.prototype._updatePAccelerations = function() {
   this._setProperty('pAccelerationX', this.accelerationX);
   this._setProperty('pAccelerationY', this.accelerationY);
   this._setProperty('pAccelerationZ', this.accelerationZ);
@@ -105,7 +113,8 @@ p5.prototype._updatePAccelerations = function(){
  * </code>
  * </div>
  *
- * @property rotationX
+ * @property {Number} rotationX
+ * @readOnly
  *
  * @alt
  * red horizontal line right, green vertical line bottom. black background.
@@ -138,7 +147,8 @@ p5.prototype.rotationX = 0;
  * </code>
  * </div>
  *
- * @property rotationY
+ * @property {Number} rotationY
+ * @readOnly
  *
  * @alt
  * red horizontal line right, green vertical line bottom. black background.
@@ -173,7 +183,8 @@ p5.prototype.rotationY = 0;
  * </code>
  * </div>
  *
- * @property rotationZ
+ * @property {Number} rotationZ
+ * @readOnly
  *
  * @alt
  * red horizontal line right, green vertical line bottom. black background.
@@ -200,7 +211,7 @@ p5.prototype.rotationZ = 0;
  * var rotateDirection = 'clockwise';
  *
  * // Simple range conversion to make things simpler.
- * // This is not absolutely neccessary but the logic
+ * // This is not absolutely necessary but the logic
  * // will be different in that case.
  *
  * var rX = rotationX + 180;
@@ -218,7 +229,8 @@ p5.prototype.rotationZ = 0;
  * no image to display.
  *
  *
- * @property pRotationX
+ * @property {Number} pRotationX
+ * @readOnly
  */
 p5.prototype.pRotationX = 0;
 
@@ -242,7 +254,7 @@ p5.prototype.pRotationX = 0;
  * var rotateDirection = 'clockwise';
  *
  * // Simple range conversion to make things simpler.
- * // This is not absolutely neccessary but the logic
+ * // This is not absolutely necessary but the logic
  * // will be different in that case.
  *
  * var rY = rotationY + 180;
@@ -260,7 +272,8 @@ p5.prototype.pRotationX = 0;
  * no image to display.
  *
  *
- * @property pRotationY
+ * @property {Number} pRotationY
+ * @readOnly
  */
 p5.prototype.pRotationY = 0;
 
@@ -302,7 +315,8 @@ p5.prototype.pRotationY = 0;
  * no image to display.
  *
  *
- * @property pRotationZ
+ * @property {Number} pRotationZ
+ * @readOnly
  */
 p5.prototype.pRotationZ = 0;
 
@@ -318,12 +332,16 @@ var pRotateDirectionX;
 var pRotateDirectionY;
 var pRotateDirectionZ;
 
-p5.prototype._updatePRotations = function(){
+p5.prototype._updatePRotations = function() {
   this._setProperty('pRotationX', this.rotationX);
   this._setProperty('pRotationY', this.rotationY);
   this._setProperty('pRotationZ', this.rotationZ);
 };
 
+/**
+ * @property {String} turnAxis
+ * @readOnly
+ */
 p5.prototype.turnAxis = undefined;
 
 var move_threshold = 0.5;
@@ -336,8 +354,8 @@ var shake_threshold = 30;
  * @method setMoveThreshold
  * @param {number} value The threshold value
  */
-p5.prototype.setMoveThreshold = function(val){
-  if(typeof val === 'number'){
+p5.prototype.setMoveThreshold = function(val) {
+  if (typeof val === 'number') {
     move_threshold = val;
   }
 };
@@ -349,8 +367,8 @@ p5.prototype.setMoveThreshold = function(val){
  * @method setShakeThreshold
  * @param {number} value The threshold value
  */
-p5.prototype.setShakeThreshold = function(val){
-  if(typeof val === 'number'){
+p5.prototype.setShakeThreshold = function(val) {
+  if (typeof val === 'number') {
     shake_threshold = val;
   }
 };
@@ -475,14 +493,14 @@ p5.prototype.setShakeThreshold = function(val){
  *
  */
 
-p5.prototype._ondeviceorientation = function (e) {
+p5.prototype._ondeviceorientation = function(e) {
   this._updatePRotations();
   this._setProperty('rotationX', e.beta);
   this._setProperty('rotationY', e.gamma);
   this._setProperty('rotationZ', e.alpha);
   this._handleMotion();
 };
-p5.prototype._ondevicemotion = function (e) {
+p5.prototype._ondevicemotion = function(e) {
   this._updatePAccelerations();
   this._setProperty('accelerationX', e.acceleration.x * 2);
   this._setProperty('accelerationY', e.acceleration.y * 2);
@@ -499,9 +517,11 @@ p5.prototype._handleMotion = function() {
   }
   var deviceMoved = this.deviceMoved || window.deviceMoved;
   if (typeof deviceMoved === 'function') {
-    if (Math.abs(this.accelerationX - this.pAccelerationX) > move_threshold ||
+    if (
+      Math.abs(this.accelerationX - this.pAccelerationX) > move_threshold ||
       Math.abs(this.accelerationY - this.pAccelerationY) > move_threshold ||
-      Math.abs(this.accelerationZ - this.pAccelerationZ) > move_threshold) {
+      Math.abs(this.accelerationZ - this.pAccelerationZ) > move_threshold
+    ) {
       deviceMoved();
     }
   }
@@ -514,15 +534,15 @@ p5.prototype._handleMotion = function() {
     var wRX = this.rotationX + 180;
     var wPRX = this.pRotationX + 180;
     var wSAX = startAngleX + 180;
-    if ((wRX - wPRX > 0 && wRX - wPRX < 270)|| wRX - wPRX < -270){
+    if ((wRX - wPRX > 0 && wRX - wPRX < 270) || wRX - wPRX < -270) {
       rotateDirectionX = 'clockwise';
-    } else if (wRX - wPRX < 0 || wRX - wPRX > 270){
+    } else if (wRX - wPRX < 0 || wRX - wPRX > 270) {
       rotateDirectionX = 'counter-clockwise';
     }
-    if (rotateDirectionX !== pRotateDirectionX){
+    if (rotateDirectionX !== pRotateDirectionX) {
       wSAX = wRX;
     }
-    if (Math.abs(wRX - wSAX) > 90 && Math.abs(wRX - wSAX) < 270){
+    if (Math.abs(wRX - wSAX) > 90 && Math.abs(wRX - wSAX) < 270) {
       wSAX = wRX;
       this._setProperty('turnAxis', 'X');
       deviceTurned();
@@ -534,15 +554,15 @@ p5.prototype._handleMotion = function() {
     var wRY = this.rotationY + 180;
     var wPRY = this.pRotationY + 180;
     var wSAY = startAngleY + 180;
-    if ((wRY - wPRY > 0 && wRY - wPRY < 270)|| wRY - wPRY < -270){
+    if ((wRY - wPRY > 0 && wRY - wPRY < 270) || wRY - wPRY < -270) {
       rotateDirectionY = 'clockwise';
-    } else if (wRY - wPRY < 0 || wRY - this.pRotationY > 270){
+    } else if (wRY - wPRY < 0 || wRY - this.pRotationY > 270) {
       rotateDirectionY = 'counter-clockwise';
     }
-    if (rotateDirectionY !== pRotateDirectionY){
+    if (rotateDirectionY !== pRotateDirectionY) {
       wSAY = wRY;
     }
-    if (Math.abs(wRY - wSAY) > 90 && Math.abs(wRY - wSAY) < 270){
+    if (Math.abs(wRY - wSAY) > 90 && Math.abs(wRY - wSAY) < 270) {
       wSAY = wRY;
       this._setProperty('turnAxis', 'Y');
       deviceTurned();
@@ -552,19 +572,25 @@ p5.prototype._handleMotion = function() {
 
     // Z-axis is already in the range 0 to 360
     // so no conversion is needed.
-    if ((this.rotationZ - this.pRotationZ > 0 &&
-      this.rotationZ - this.pRotationZ < 270)||
-      this.rotationZ - this.pRotationZ < -270){
+    if (
+      (this.rotationZ - this.pRotationZ > 0 &&
+        this.rotationZ - this.pRotationZ < 270) ||
+      this.rotationZ - this.pRotationZ < -270
+    ) {
       rotateDirectionZ = 'clockwise';
-    } else if (this.rotationZ - this.pRotationZ < 0 ||
-      this.rotationZ - this.pRotationZ > 270){
+    } else if (
+      this.rotationZ - this.pRotationZ < 0 ||
+      this.rotationZ - this.pRotationZ > 270
+    ) {
       rotateDirectionZ = 'counter-clockwise';
     }
-    if (rotateDirectionZ !== pRotateDirectionZ){
+    if (rotateDirectionZ !== pRotateDirectionZ) {
       startAngleZ = this.rotationZ;
     }
-    if (Math.abs(this.rotationZ - startAngleZ) > 90 &&
-      Math.abs(this.rotationZ - startAngleZ) < 270){
+    if (
+      Math.abs(this.rotationZ - startAngleZ) > 90 &&
+      Math.abs(this.rotationZ - startAngleZ) < 270
+    ) {
       startAngleZ = this.rotationZ;
       this._setProperty('turnAxis', 'Z');
       deviceTurned();
@@ -586,6 +612,5 @@ p5.prototype._handleMotion = function() {
     }
   }
 };
-
 
 module.exports = p5;

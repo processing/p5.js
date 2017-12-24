@@ -6,7 +6,6 @@
  * @requires constants
  */
 
-
 'use strict';
 
 var p5 = require('../core/core');
@@ -26,7 +25,8 @@ p5.prototype._hasMouseInteracted = false;
  * used instead of mouse input, mouseX will hold the x value of the most
  * recent touch point.
  *
- * @property mouseX
+ * @property {Number} mouseX
+ * @readOnly
  *
  * @example
  * <div>
@@ -51,7 +51,8 @@ p5.prototype.mouseX = 0;
  * used instead of mouse input, mouseY will hold the y value of the most
  * recent touch point.
  *
- * @property mouseY
+ * @property {Number} mouseY
+ * @readOnly
  *
  * @example
  * <div>
@@ -75,7 +76,8 @@ p5.prototype.mouseY = 0;
  * the mouse or finger in the frame previous to the current frame, relative to
  * (0, 0) of the canvas.
  *
- * @property pmouseX
+ * @property {Number} pmouseX
+ * @readOnly
  *
  * @example
  * <div>
@@ -106,7 +108,8 @@ p5.prototype.pmouseX = 0;
  * mouse or finger in the frame previous to the current frame, relative to
  * (0, 0) of the canvas.
  *
- * @property pmouseY
+ * @property {Number} pmouseY
+ * @readOnly
  *
  * @example
  * <div>
@@ -134,7 +137,8 @@ p5.prototype.pmouseY = 0;
  * The system variable winMouseX always contains the current horizontal
  * position of the mouse, relative to (0, 0) of the window.
  *
- * @property winMouseX
+ * @property {Number} winMouseX
+ * @readOnly
  *
  * @example
  * <div>
@@ -171,7 +175,8 @@ p5.prototype.winMouseX = 0;
  * The system variable winMouseY always contains the current vertical
  * position of the mouse, relative to (0, 0) of the window.
  *
- * @property winMouseY
+ * @property {Number} winMouseY
+ * @readOnly
  *
  * @example
  * <div>
@@ -209,7 +214,8 @@ p5.prototype.winMouseY = 0;
  * of the mouse in the frame previous to the current frame, relative to
  * (0, 0) of the window.
  *
- * @property pwinMouseX
+ * @property {Number} pwinMouseX
+ * @readOnly
  *
  * @example
  * <div>
@@ -250,7 +256,8 @@ p5.prototype.pwinMouseX = 0;
  * the mouse in the frame previous to the current frame, relative to (0, 0)
  * of the window.
  *
- * @property pwinMouseY
+ * @property {Number} pwinMouseY
+ * @readOnly
  *
  *
  * @example
@@ -293,27 +300,28 @@ p5.prototype.pwinMouseY = 0;
  * LEFT, RIGHT, or CENTER depending on which button was pressed last.
  * Warning: different browsers may track mouseButton differently.
  *
- * @property mouseButton
+ * @property {Constant} mouseButton
+ * @readOnly
  *
  * @example
-	* <div>
-	* <code>
-	* function draw() {
-	*   background(237, 34, 93);
-	*   fill(0);
-	*
-	*   if (mouseIsPressed) {
-	*     if (mouseButton == LEFT)
-	*       ellipse(50, 50, 50, 50);
-	*     if (mouseButton == RIGHT)
-	*       rect(25, 25, 50, 50);
-	*     if (mouseButton == CENTER)
-	*       triangle(23, 75, 50, 20, 78, 75);
-	*   }
-	*
-	*   print(mouseButton);
-	* }
-	* </code>
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(237, 34, 93);
+ *   fill(0);
+ *
+ *   if (mouseIsPressed) {
+ *     if (mouseButton == LEFT)
+ *       ellipse(50, 50, 50, 50);
+ *     if (mouseButton == RIGHT)
+ *       rect(25, 25, 50, 50);
+ *     if (mouseButton == CENTER)
+ *       triangle(23, 75, 50, 20, 78, 75);
+ *   }
+ *
+ *   print(mouseButton);
+ * }
+ * </code>
  * </div>
  *
  * @alt
@@ -326,35 +334,40 @@ p5.prototype.mouseButton = 0;
  * The boolean system variable mouseIsPressed is true if the mouse is pressed
  * and false if not.
  *
- * @property mouseIsPressed
+ * @property {Boolean} mouseIsPressed
+ * @readOnly
  *
  * @example
-	* <div>
-	* <code>
-	* function draw() {
-	*   background(237, 34, 93);
-	*   fill(0);
-	*
-	*   if (mouseIsPressed)
-	*     ellipse(50, 50, 50, 50);
-	*   else
-	*     rect(25, 25, 50, 50);
-	*
-	*   print(mouseIsPressed);
-	* }
-	* </code>
-	* </div>
-  *
+ * <div>
+ * <code>
+ * function draw() {
+ *   background(237, 34, 93);
+ *   fill(0);
+ *
+ *   if (mouseIsPressed)
+ *     ellipse(50, 50, 50, 50);
+ *   else
+ *     rect(25, 25, 50, 50);
+ *
+ *   print(mouseIsPressed);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * black 50x50 rect becomes ellipse with mouse click/press. fuschia background.
  *
  */
 p5.prototype.mouseIsPressed = false;
-p5.prototype.isMousePressed = false; // both are supported
 
 p5.prototype._updateNextMouseCoords = function(e) {
-  if(this._curElement !== null && (!e.touches || e.touches.length>0)) {
-    var mousePos = getMousePos(this._curElement.elt, this.width, this.height, e);
+  if (this._curElement !== null && (!e.touches || e.touches.length > 0)) {
+    var mousePos = getMousePos(
+      this._curElement.elt,
+      this.width,
+      this.height,
+      e
+    );
     this._setProperty('mouseX', mousePos.x);
     this._setProperty('mouseY', mousePos.y);
     this._setProperty('winMouseX', mousePos.winX);
@@ -375,7 +388,8 @@ p5.prototype._updateMouseCoords = function() {
 };
 
 function getMousePos(canvas, w, h, evt) {
-  if (evt && !evt.clientX) { // use touches if touch and not mouse
+  if (evt && !evt.clientX) {
+    // use touches if touch and not mouse
     if (evt.touches) {
       evt = evt.touches[0];
     } else if (evt.changedTouches) {
@@ -492,27 +506,26 @@ p5.prototype._setMouseButton = function(e) {
  * no image displayed
  *
  */
-p5.prototype._onmousemove = function(e){
+p5.prototype._onmousemove = function(e) {
   var context = this._isGlobal ? window : this;
   var executeDefault;
   this._updateNextMouseCoords(e);
   if (!this.mouseIsPressed) {
     if (typeof context.mouseMoved === 'function') {
       executeDefault = context.mouseMoved(e);
-      if(executeDefault === false) {
+      if (executeDefault === false) {
         e.preventDefault();
       }
     }
-  }
-  else {
+  } else {
     if (typeof context.mouseDragged === 'function') {
       executeDefault = context.mouseDragged(e);
-      if(executeDefault === false) {
+      if (executeDefault === false) {
         e.preventDefault();
       }
-    } else if (!window.PointerEvent && typeof context.touchMoved === 'function') {
+    } else if (typeof context.touchMoved === 'function') {
       executeDefault = context.touchMoved(e);
-      if(executeDefault === false) {
+      if (executeDefault === false) {
         e.preventDefault();
       }
     }
@@ -574,12 +587,12 @@ p5.prototype._onmousedown = function(e) {
   this._updateNextMouseCoords(e);
   if (typeof context.mousePressed === 'function') {
     executeDefault = context.mousePressed(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
-  } else if (!window.PointerEvent && typeof context.touchStarted === 'function') {
+  } else if (typeof context.touchStarted === 'function') {
     executeDefault = context.touchStarted(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
@@ -638,12 +651,12 @@ p5.prototype._onmouseup = function(e) {
   this._setProperty('mouseIsPressed', false);
   if (typeof context.mouseReleased === 'function') {
     executeDefault = context.mouseReleased(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
-  } else if (!window.PointerEvent && typeof context.touchEnded === 'function') {
+  } else if (typeof context.touchEnded === 'function') {
     executeDefault = context.touchEnded(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
@@ -655,6 +668,9 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
 /**
  * The mouseClicked() function is called once after a mouse button has been
  * pressed and then released.<br><br>
+ * Browsers handle clicks differently, so this function is only guaranteed to be
+ * run when the left mouse button is clicked. To handle other mouse buttons
+ * being pressed or released, see mousePressed() or mouseReleased().<br><br>
  * Browsers may have different default
  * behaviors attached to various mouse events. To prevent any default
  * behavior for this event, add "return false" to the end of the method.
@@ -672,6 +688,7 @@ p5.prototype._ondragover = p5.prototype._onmousemove;
  *   fill(value);
  *   rect(25, 25, 50, 50);
  * }
+ *
  * function mouseClicked() {
  *   if (value == 0) {
  *     value = 255;
@@ -701,7 +718,65 @@ p5.prototype._onclick = function(e) {
   var context = this._isGlobal ? window : this;
   if (typeof context.mouseClicked === 'function') {
     var executeDefault = context.mouseClicked(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
+      e.preventDefault();
+    }
+  }
+};
+
+/**
+ * The doubleClicked() function is executed every time a event
+ * listener has detected a dblclick event which is a part of the
+ * DOM L3 specification. The doubleClicked event is fired when a
+ * pointing device button (usually a mouse's primary button)
+ * is clicked twice on a single element. For more info on the
+ * dblclick event refer to mozilla's documentation here:
+ * https://developer.mozilla.org/en-US/docs/Web/Events/dblclick
+ *
+ * @method doubleClicked
+ * @example
+ * <div>
+ * <code>
+ * // Click within the image to change
+ * // the value of the rectangle
+ * // after the mouse has been double clicked
+ *
+ * var value = 0;
+ * function draw() {
+ *   fill(value);
+ *   rect(25, 25, 50, 50);
+ * }
+ *
+ * function doubleClicked() {
+ *   if (value == 0) {
+ *     value = 255;
+ *   } else {
+ *     value = 0;
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * <div class="norender">
+ * <code>
+ * function doubleClicked() {
+ *   ellipse(mouseX, mouseY, 5, 5);
+ *   // prevent default
+ *   return false;
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * black 50x50 rect turns white with mouse doubleClick/press.
+ * no image displayed
+ */
+
+p5.prototype._ondblclick = function(e) {
+  var context = this._isGlobal ? window : this;
+  if (typeof context.doubleClicked === 'function') {
+    var executeDefault = context.doubleClicked(e);
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
@@ -753,7 +828,7 @@ p5.prototype._onwheel = function(e) {
   if (typeof context.mouseWheel === 'function') {
     e.delta = e.deltaY;
     var executeDefault = context.mouseWheel(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }

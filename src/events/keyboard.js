@@ -19,7 +19,8 @@ var downKeys = {};
  * The boolean system variable keyIsPressed is true if any key is pressed
  * and false if no keys are pressed.
  *
- * @property keyIsPressed
+ * @property {Boolean} keyIsPressed
+ * @readOnly
  * @example
  * <div>
  * <code>
@@ -48,7 +49,8 @@ p5.prototype.keyIsPressed = false; // khan
  * is best to use it within keyTyped(). For non-ASCII keys, use the keyCode
  * variable.
  *
- * @property key
+ * @property {String} key
+ * @readOnly
  * @example
  * <div><code>
  * // Click any key to display it!
@@ -77,7 +79,8 @@ p5.prototype.key = '';
  * You can also check for custom keys by looking up the keyCode of any key
  * on a site like this: <a href="http://keycode.info/">keycode.info</a>.
  *
- * @property keyCode
+ * @property {Number} keyCode
+ * @readOnly
  * @example
  * <div><code>
  * var fillVal = 126;
@@ -164,15 +167,16 @@ p5.prototype.keyCode = 0;
  *   return false; // prevent any default behaviour
  * }
  * </code>
+ * </div>
  *
  * @alt
  * black rect center. turns white when key pressed and black when released
  * black rect center. turns white when left arrow pressed and black when right.
  *
- * </div>
  */
-p5.prototype._onkeydown = function (e) {
-  if (downKeys[e.which]) { // prevent multiple firings
+p5.prototype._onkeydown = function(e) {
+  if (downKeys[e.which]) {
+    // prevent multiple firings
     return;
   }
   this._setProperty('isKeyPressed', true);
@@ -187,7 +191,7 @@ p5.prototype._onkeydown = function (e) {
   var keyPressed = this.keyPressed || window.keyPressed;
   if (typeof keyPressed === 'function' && !e.charCode) {
     var executeDefault = keyPressed(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
@@ -223,11 +227,11 @@ p5.prototype._onkeydown = function (e) {
  * black rect center. turns white when key pressed and black when pressed again
  *
  */
-p5.prototype._onkeyup = function (e) {
+p5.prototype._onkeyup = function(e) {
   var keyReleased = this.keyReleased || window.keyReleased;
   downKeys[e.which] = false;
 
-  if(!areDownKeys()) {
+  if (!areDownKeys()) {
     this._setProperty('isKeyPressed', false);
     this._setProperty('keyIsPressed', false);
   }
@@ -242,7 +246,7 @@ p5.prototype._onkeyup = function (e) {
   this._setProperty('keyCode', e.which);
   if (typeof keyReleased === 'function') {
     var executeDefault = keyReleased(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
@@ -286,8 +290,9 @@ p5.prototype._onkeyup = function (e) {
  * black rect center. turns white when 'a' key typed and black when 'b' pressed
  *
  */
-p5.prototype._onkeypress = function (e) {
-  if (e.which === this._lastKeyCodeTyped) { // prevent multiple firings
+p5.prototype._onkeypress = function(e) {
+  if (e.which === this._lastKeyCodeTyped) {
+    // prevent multiple firings
     return;
   }
   this._setProperty('keyCode', e.which);
@@ -296,7 +301,7 @@ p5.prototype._onkeypress = function (e) {
   var keyTyped = this.keyTyped || window.keyTyped;
   if (typeof keyTyped === 'function') {
     var executeDefault = keyTyped(e);
-    if(executeDefault === false) {
+    if (executeDefault === false) {
       e.preventDefault();
     }
   }
@@ -307,7 +312,7 @@ p5.prototype._onkeypress = function (e) {
  * not focused on the element we must assume all keys currently down have
  * been released.
  */
-p5.prototype._onblur = function (e) {
+p5.prototype._onblur = function(e) {
   downKeys = {};
 };
 

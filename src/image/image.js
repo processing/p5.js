@@ -11,15 +11,9 @@
  */
 'use strict';
 
+var p5 = require('../core/core'); // This is not global, but JSHint is not aware that // this module is implicitly enclosed with Browserify: this overrides the // redefined-global error and permits using the name "frames" for the array // of saved animation frames.
 
-var p5 = require('../core/core');
-
-/* global frames:true */// This is not global, but JSHint is not aware that
-// this module is implicitly enclosed with Browserify: this overrides the
-// redefined-global error and permits using the name "frames" for the array
-// of saved animation frames.
-var frames = [];
-
+/* global frames:true */ var frames = [];
 
 /**
  * Creates a new p5.Image (the datatype for storing images). This provides a
@@ -107,10 +101,11 @@ p5.prototype.createImage = function(width, height) {
  *  file immediately, or prompt the user with a dialogue window.
  *
  *  @method saveCanvas
- *  @param  {Canvas} [selectedCanvas] a variable representing a
- *                             specific html5 canvas (optional)
+ *  @param  {p5.Element|HTMLCanvasElement} selectedCanvas   a variable
+ *                                  representing a specific html5 canvas (optional)
  *  @param  {String} [filename]
- *  @param  {String} [extension] 'jpg' or 'png'
+ *  @param  {String} [extension]      'jpg' or 'png'
+ *
  *  @example
  *  <div class='norender'><code>
  *  function setup() {
@@ -142,10 +137,13 @@ p5.prototype.createImage = function(width, height) {
  * no image displayed
  * no image displayed
  * no image displayed
- *
+ */
+/**
+ *  @method saveCanvas
+ *  @param  {String} [filename]
+ *  @param  {String} [extension]
  */
 p5.prototype.saveCanvas = function() {
-
   var cnv, filename, extension;
   if (arguments.length === 3) {
     cnv = arguments[0];
@@ -187,7 +185,7 @@ p5.prototype.saveCanvas = function() {
     }
   }
 
-  if ( p5.prototype._isSafari() ) {
+  if (p5.prototype._isSafari()) {
     var aText = 'Hello, Safari user!\n';
     aText += 'Now capturing a screenshot...\n';
     aText += 'To save this image,\n';
@@ -196,12 +194,11 @@ p5.prototype.saveCanvas = function() {
     window.location.href = cnv.toDataURL();
   } else {
     var mimeType;
-    if (typeof(extension) === 'undefined') {
+    if (typeof extension === 'undefined') {
       extension = 'png';
       mimeType = 'image/png';
-    }
-    else {
-      switch(extension){
+    } else {
+      switch (extension) {
         case 'png':
           mimeType = 'image/png';
           break;
@@ -234,12 +231,16 @@ p5.prototype.saveCanvas = function() {
  *  as an argument to the callback function as an array of objects, with the
  *  size of array equal to the total number of frames.
  *
+ *  Note that saveFrames() will only save the first 15 frames of an animation.
+ *  To export longer animations, you might look into a library like
+ *  <a href="https://github.com/spite/ccapture.js/">ccapture.js</a>.
+ *
  *  @method saveFrames
  *  @param  {String}   filename
  *  @param  {String}   extension 'jpg' or 'png'
  *  @param  {Number}   duration  Duration in seconds to save the frames for.
  *  @param  {Number}   framerate  Framerate to save the frames in.
- *  @param  {Function} [callback] A callback function that will be executed
+ *  @param  {function(Array)} [callback] A callback function that will be executed
                                   to handle the image data. This function
                                   should accept an array as argument. The
                                   array will contain the specified number of
@@ -273,17 +274,16 @@ p5.prototype.saveFrames = function(fName, ext, _duration, _fps, callback) {
 
   var makeFrame = p5.prototype._makeFrame;
   var cnv = this._curElement.elt;
-  var frameFactory = setInterval(function(){
+  var frameFactory = setInterval(function() {
     makeFrame(fName + count, ext, cnv);
     count++;
-  },1000/fps);
+  }, 1000 / fps);
 
-  setTimeout(function(){
+  setTimeout(function() {
     clearInterval(frameFactory);
     if (callback) {
       callback(frames);
-    }
-    else {
+    } else {
       for (var i = 0; i < frames.length; i++) {
         var f = frames[i];
         p5.prototype.downloadFile(f.imageData, f.filename, f.ext);
@@ -304,9 +304,8 @@ p5.prototype._makeFrame = function(filename, extension, _cnv) {
   if (!extension) {
     extension = 'png';
     mimeType = 'image/png';
-  }
-  else {
-    switch(extension.toLowerCase()){
+  } else {
+    switch (extension.toLowerCase()) {
       case 'png':
         mimeType = 'image/png';
         break;

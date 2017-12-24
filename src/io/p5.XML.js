@@ -14,7 +14,6 @@ var p5 = require('../core/core');
  *
  * @class p5.XML
  * @constructor
- * @return {p5.XML}    p5.XML object generated
  * @example
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed
@@ -49,26 +48,26 @@ var p5 = require('../core/core');
  * // 1, Panthera pardus, Leopard
  * // 2, Equus zebra, Zebra
  * </code></div>
-  *
-  * @alt
-  * no image displayed
-  *
+ *
+ * @alt
+ * no image displayed
+ *
  */
-p5.XML = function () {
+p5.XML = function() {
   this.name = null; //done
   this.attributes = {}; //done
   this.children = [];
   this.parent = null;
   this.content = null; //done
+  this.name = 'p5.XML'; // for friendly debugger system
 };
-
 
 /**
  * Gets a copy of the element's parent. Returns the parent as another
  * p5.XML object.
  *
  * @method getParent
- * @return {Object}   element parent
+ * @return {p5.XML}   element parent
  * @example
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed
@@ -216,7 +215,7 @@ p5.XML.prototype.hasChildren = function() {
  * on each child element individually.
  *
  * @method listChildren
- * @return {Array} names of the children of the element
+ * @return {String[]} names of the children of the element
  * @example&lt;animal
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed
@@ -244,7 +243,9 @@ p5.XML.prototype.hasChildren = function() {
  * </code></div>
  */
 p5.XML.prototype.listChildren = function() {
-  return this.children.map(function(c) { return c.name; });
+  return this.children.map(function(c) {
+    return c.name;
+  });
 };
 
 /**
@@ -254,7 +255,7 @@ p5.XML.prototype.listChildren = function() {
  *
  * @method getChildren
  * @param {String} [name] element name
- * @return {Array} children of the element
+ * @return {p5.XML[]} children of the element
  * @example&lt;animal
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed
@@ -289,9 +290,10 @@ p5.XML.prototype.listChildren = function() {
  */
 p5.XML.prototype.getChildren = function(param) {
   if (param) {
-    return this.children.filter(function(c) { return c.name === param; });
-  }
-  else {
+    return this.children.filter(function(c) {
+      return c.name === param;
+    });
+  } else {
     return this.children;
   }
 };
@@ -347,12 +349,11 @@ p5.XML.prototype.getChildren = function(param) {
  * </code></div>
  */
 p5.XML.prototype.getChild = function(param) {
-  if(typeof param === 'string') {
+  if (typeof param === 'string') {
     return this.children.find(function(c) {
       return c.name === param;
     });
-  }
-  else {
+  } else {
     return this.children[param];
   }
 };
@@ -364,7 +365,7 @@ p5.XML.prototype.getChild = function(param) {
  * A reference to the newly created child is returned as an p5.XML object.
  *
  * @method addChild
- * @param {Object} a p5.XML Object which will be the child to be added
+ * @param {p5.XML} a p5.XML Object which will be the child to be added
  */
 p5.XML.prototype.addChild = function(node) {
   if (node instanceof p5.XML) {
@@ -431,8 +432,8 @@ p5.XML.prototype.addChild = function(node) {
  */
 p5.XML.prototype.removeChild = function(param) {
   var ind = -1;
-  if(typeof param === 'string') {
-    for (var i=0; i<this.children.length; i++) {
+  if (typeof param === 'string') {
+    for (var i = 0; i < this.children.length; i++) {
       if (this.children[i].name === param) {
         ind = i;
         break;
@@ -445,7 +446,6 @@ p5.XML.prototype.removeChild = function(param) {
     this.children.splice(ind, 1);
   }
 };
-
 
 /**
  * Counts the specified element's number of attributes, returned as an Number.
@@ -488,7 +488,7 @@ p5.XML.prototype.getAttributeCount = function() {
  * array of Strings.
  *
  * @method listAttributes
- * @return {Array} an array of strings containing the names of attributes
+ * @return {String[]} an array of strings containing the names of attributes
  * @example
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed
@@ -757,8 +757,8 @@ p5.XML.prototype.getContent = function(defaultValue) {
  * // "Mountain Goat"
  * </code></div>
  */
-p5.XML.prototype.setContent = function( content ) {
-  if(!this.children.length) {
+p5.XML.prototype.setContent = function(content) {
+  if (!this.children.length) {
     this.content = content;
   }
 };
@@ -788,11 +788,12 @@ p5.XML.prototype._setCont = function(content) {
  *
  */
 p5.XML.prototype._setAttributes = function(node) {
-  var  i, att = {};
-  for( i = 0; i < node.attributes.length; i++) {
+  var i,
+    att = {};
+  for (i = 0; i < node.attributes.length; i++) {
     att[node.attributes[i].nodeName] = node.attributes[i].nodeValue;
   }
   this.attributes = att;
 };
 
-module.exports = p5.XML;
+module.exports = p5;
