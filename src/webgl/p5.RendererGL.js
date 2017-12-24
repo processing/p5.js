@@ -195,9 +195,12 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
     }, 0);
   }
 };
-
 /**
- *
+ * @module Rendering
+ * @submodule Rendering
+ * @for p5
+ */
+/**
  * Set attributes for the WebGL Drawing context.
  * This is a way of adjusting ways that the WebGL
  * renderer works to fine-tune the display and performance.
@@ -225,6 +228,10 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  * (note that p5 clears automatically on draw loop)
  * default is true
  * <br><br>
+ * perPixelLighting - if true, per-pixel lighting will be used in the
+ * lighting shader.
+ * default is false
+ * <br><br>
  * @method setAttributes
  * @for p5
  * @param  {String|Object}  String name of attribute or object with key-value pairs
@@ -233,7 +240,7 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  * <div>
  * <code>
  * function setup() {
- *   createCanvas(150, 150, WEBGL);
+ *   createCanvas(100, 100, WEBGL);
  * }
  *
  * function draw() {
@@ -254,7 +261,7 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  * <div>
  * <code>
  * function setup() {
- *   createCanvas(150, 150, WEBGL);
+ *   createCanvas(100, 100, WEBGL);
  *   setAttributes('antialias', true);
  * }
  *
@@ -267,6 +274,59 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  *   fill(0, 0, 0);
  *   box(50);
  *   pop();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // press the mouse button to enable perPixelLighting
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   noStroke();
+ *   fill(255);
+ * }
+ *
+ * var lights = [
+ *   { c: '#f00', t: 1.12, p: 1.91, r: 0.2 },
+ *   { c: '#0f0', t: 1.21, p: 1.31, r: 0.2 },
+ *   { c: '#00f', t: 1.37, p: 1.57, r: 0.2 },
+ *   { c: '#ff0', t: 1.12, p: 1.91, r: 0.7 },
+ *   { c: '#0ff', t: 1.21, p: 1.31, r: 0.7 },
+ *   { c: '#f0f', t: 1.37, p: 1.57, r: 0.7 }
+ * ];
+ *
+ * function draw() {
+ *   var t = millis() / 1000 + 1000;
+ *   background(0);
+ *   directionalLight(color('#222'), -1, -1, 1);
+ *
+ *   for (var i = 0; i < lights.length; i++) {
+ *     var light = lights[i];
+ *     pointLight(
+ *       color(light.c),
+ *       p5.Vector.fromAngles(t * light.t, t * light.p, width * light.r)
+ *     );
+ *   }
+ *
+ *   specularMaterial(255);
+ *   sphere(width * 0.1);
+ *
+ *   rotateX(t * 0.77);
+ *   rotateY(t * 0.83);
+ *   rotateZ(t * 0.91);
+ *   torus(width * 0.3, width * 0.07, 30, 10);
+ * }
+ *
+ * function mousePressed() {
+ *   setAttributes('perPixelLighting', true);
+ *   noStroke();
+ *   fill(255);
+ * }
+ * function mouseReleased() {
+ *   setAttributes('perPixelLighting', false);
+ *   noStroke();
+ *   fill(255);
  * }
  * </code>
  * </div>
@@ -284,6 +344,10 @@ p5.prototype.setAttributes = function() {
   }
   this._renderer._resetContext(attr);
 };
+
+/**
+ * @class p5.RendererGL
+ */
 
 p5.RendererGL.prototype._computeCameraDefaultSettings = function() {
   this.defaultCameraFOV = 60 / 180 * Math.PI;
@@ -371,7 +435,6 @@ p5.RendererGL.prototype.background = function() {
 /**
  * Basic fill material for geometry with a given color
  * @method  fill
- * @class p5.RendererGL
  * @param  {Number|Array|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
