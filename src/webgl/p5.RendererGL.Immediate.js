@@ -115,13 +115,8 @@ p5.RendererGL.prototype.endShape = function(
   isContour,
   shapeKind
 ) {
-  if (this.curFillShader === this._getColorShader()) {
-    // this is the fill/stroke shader for retain mode.
-    // must switch to immediate mode shader before drawing!
-    this.setFillShader(this._getImmediateModeShader());
-    // note that if we're using the texture shader...
-    // this shouldn't change. :)
-  }
+  this._useImmediateModeShader();
+
   if (this.curStrokeShader.active === true) {
     for (var i = 0; i < this.immediateMode.vertices.length - 1; i++) {
       this.immediateMode.edges.push([i, i + 1]);

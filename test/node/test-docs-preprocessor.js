@@ -14,6 +14,10 @@ describe('docs preprocessor', function() {
 
     it('should merge methods with the same name', function() {
       var data = {
+        classes: {
+          Bar: {},
+          Baz: {}
+        },
         classitems: [
           {
             file: 'foo.js',
@@ -21,6 +25,7 @@ describe('docs preprocessor', function() {
             description: 'Does foo.',
             itemtype: 'method',
             name: 'foo',
+            class: 'Bar',
             params: [{ name: 'bar', type: 'String' }]
           },
           {
@@ -28,6 +33,7 @@ describe('docs preprocessor', function() {
             line: 5,
             itemtype: 'method',
             name: 'foo',
+            class: 'Bar',
             params: [{ name: 'baz', type: 'Number' }]
           }
         ],
@@ -37,6 +43,10 @@ describe('docs preprocessor', function() {
       merge(data);
 
       expect(data).to.eql({
+        classes: {
+          Bar: {},
+          Baz: {}
+        },
         classitems: [
           {
             file: 'foo.js',
@@ -44,6 +54,7 @@ describe('docs preprocessor', function() {
             description: 'Does foo.',
             itemtype: 'method',
             name: 'foo',
+            class: 'Bar',
             overloads: [
               {
                 line: 1,
@@ -62,6 +73,10 @@ describe('docs preprocessor', function() {
 
     it('should not merge methods from different classes', function() {
       ensureMergeDoesNothing({
+        classes: {
+          Bar: {},
+          Baz: {}
+        },
         classitems: [
           { itemtype: 'method', class: 'Bar', name: 'foo' },
           { itemtype: 'method', class: 'Baz', name: 'foo' }
@@ -72,9 +87,13 @@ describe('docs preprocessor', function() {
 
     it('should not merge properties', function() {
       ensureMergeDoesNothing({
+        classes: {
+          Bar: {},
+          Baz: {}
+        },
         classitems: [
-          { itemtype: 'property', name: 'foo' },
-          { itemtype: 'property', name: 'foo' }
+          { itemtype: 'property', class: 'Bar', name: 'foo' },
+          { itemtype: 'property', class: 'Baz', name: 'foo' }
         ],
         consts: {}
       });
@@ -87,7 +106,10 @@ describe('docs preprocessor', function() {
     it('should work', function() {
       var data = {
         modules: {},
-        classes: {},
+        classes: {
+          Bar: {},
+          Baz: {}
+        },
         classitems: [
           {
             description: 'hi `there`',
@@ -101,7 +123,10 @@ describe('docs preprocessor', function() {
 
       expect(data).to.eql({
         modules: {},
-        classes: {},
+        classes: {
+          Bar: {},
+          Baz: {}
+        },
         classitems: [
           {
             description: '<p>hi <code>there</code></p>\n',
