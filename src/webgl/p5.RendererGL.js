@@ -985,10 +985,32 @@ p5.RendererGL.prototype._bindBuffer = function(
  * [[1, 2, 3],[4, 5, 6]] -> [1, 2, 3, 4, 5, 6]
  */
 p5.RendererGL.prototype._flatten = function(arr) {
-  if (arr.length > 0) {
-    return [].concat.apply([], arr);
-  } else {
+  //when empty, return empty
+  if (arr.length === 0) {
     return [];
+  } else if (arr.length > 20000) {
+    //big models , load slower to avoid stack overflow
+    //faster non-recursive flatten via axelduch
+    //stackoverflow.com/questions/27266550/how-to-flatten-nested-array-in-javascript
+    var toString = Object.prototype.toString;
+    var arrayTypeStr = '[object Array]';
+    var result = [];
+    var nodes = arr.slice();
+    var node;
+    node = nodes.pop();
+    do {
+      if (toString.call(node) === arrayTypeStr) {
+        nodes.push.apply(nodes, node);
+      } else {
+        result.push(node);
+      }
+    } while (nodes.length && (node = nodes.pop()) !== undefined);
+    result.reverse(); // we reverse result to restore the original order
+    return result;
+  } else {
+    //otherwise if model within limits for browser
+    //use faster recursive loading
+    return [].concat.apply([], arr);
   }
 };
 
