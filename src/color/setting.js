@@ -280,6 +280,7 @@ p5.prototype.clear = function() {
  * ellipse(40, 40, 50, 50);
  * ellipse(50, 50, 40, 40);
  * </code>
+ * </div>
  *
  * @alt
  *Green to red gradient from bottom L to top R. shading originates from top left.
