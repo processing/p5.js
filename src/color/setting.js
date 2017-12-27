@@ -302,6 +302,7 @@ p5.prototype.clear = function() {
  * @chainable
  */
 p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
+  p5._validateParameters('colorMode', arguments);
   if (
     mode === constants.RGB ||
     mode === constants.HSB ||

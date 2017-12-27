@@ -372,7 +372,7 @@ p5.RendererGL.prototype.background = function() {
  * Basic fill material for geometry with a given color
  * @method  fill
  * @class p5.RendererGL
- * @param  {Number|Array|String|p5.Color} v1  gray value,
+ * @param  {Number|Number[]|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
  * @param  {Number}            [v2] green or saturation value
@@ -479,7 +479,7 @@ p5.RendererGL.prototype.noStroke = function() {
 /**
  * Basic stroke material for geometry with a given color
  * @method  stroke
- * @param  {Number|Array|String|p5.Color} v1  gray value,
+ * @param  {Number|Number[]|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
  * @param  {Number}            [v2] green or saturation value
@@ -1021,8 +1021,8 @@ p5.RendererGL.prototype._flatten = function(arr) {
 /**
  * turn a p5.Vector Array into a one dimensional number array
  * @private
- * @param  {Array} arr  an array of p5.Vector
- * @return {Array]}     a one dimensional array of numbers
+ * @param  {p5.Vector[]} arr  an array of p5.Vector
+ * @return {Number[]}     a one dimensional array of numbers
  * [p5.Vector(1, 2, 3), p5.Vector(4, 5, 6)] ->
  * [1, 2, 3, 4, 5, 6]
  */

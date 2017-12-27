@@ -137,9 +137,9 @@ p5.prototype.matchAll = function(str, reg) {
  *
  * @method nf
  * @param {Number|String}       num      the Number to format
- * @param {Number|String}       [left]   number of digits to the left of the
+ * @param {Integer|String}      [left]   number of digits to the left of the
  *                                decimal point
- * @param {Number|String}       [right]  number of digits to the right of the
+ * @param {Integer|String}      [right]  number of digits to the right of the
  *                                decimal point
  * @return {String}               formatted String
  *
@@ -174,9 +174,9 @@ p5.prototype.matchAll = function(str, reg) {
 /**
  * @method nf
  * @param {Array}        nums     the Numbers to format
- * @param {Number|String}       [left]
- * @param {Number|String}       [right]
- * @return {Array}                formatted Strings\
+ * @param {Integer|String}      [left]
+ * @param {Integer|String}      [right]
+ * @return {String[]}                formatted Strings
  */
 p5.prototype.nf = function(nums, left, right) {
   p5._validateParameters('nf', arguments);
@@ -242,7 +242,7 @@ function doNf(num, left, right) {
  *
  * @method nfc
  * @param  {Number|String}   num     the Number to format
- * @param  {Number|String}   [right] number of digits to the right of the
+ * @param  {Integer|String}  [right] number of digits to the right of the
  *                                  decimal point
  * @return {String}           formatted String
  *
@@ -259,8 +259,8 @@ function doNf(num, left, right) {
  *   textSize(12);
  *
  *   // Draw formatted numbers
- *   text(nfc(num, 4, 2), 10, 30);
- *   text(nfc(numArr, 2, 1), 10, 80);
+ *   text(nfc(num, 4), 10, 30);
+ *   text(nfc(numArr, 2), 10, 80);
  *
  *   // Draw dividing line
  *   stroke(120);
@@ -275,8 +275,8 @@ function doNf(num, left, right) {
 /**
  * @method nfc
  * @param  {Array}    nums     the Numbers to format
- * @param  {Number|String}   [right]
- * @return {Array}           formatted Strings
+ * @param  {Integer|String}  [right]
+ * @return {String[]}           formatted Strings
  */
 p5.prototype.nfc = function(num, right) {
   p5._validateParameters('nfc', arguments);
@@ -319,9 +319,9 @@ function doNfc(num, right) {
  *
  * @method nfp
  * @param {Number} num      the Number to format
- * @param {Number}       [left]   number of digits to the left of the decimal
+ * @param {Integer}      [left]   number of digits to the left of the decimal
  *                                point
- * @param {Number}       [right]  number of digits to the right of the
+ * @param {Integer}      [right]  number of digits to the right of the
  *                                decimal point
  * @return {String}         formatted String
  *
@@ -354,8 +354,8 @@ function doNfc(num, right) {
 /**
  * @method nfp
  * @param {Number[]} nums      the Numbers to format
- * @param {Number}       [left]
- * @param {Number}       [right]
+ * @param {Integer}      [left]
+ * @param {Integer}      [right]
  * @return {String[]}         formatted Strings
  */
 p5.prototype.nfp = function() {
@@ -381,9 +381,9 @@ function addNfp(num) {
  *
  * @method nfs
  * @param {Number}       num      the Number to format
- * @param {Number}       [left]   number of digits to the left of the decimal
+ * @param {Integer}      [left]   number of digits to the left of the decimal
  *                                point
- * @param {Number}       [right]  number of digits to the right of the
+ * @param {Integer}      [right]  number of digits to the right of the
  *                                decimal point
  * @return {String}         formatted String
  *
@@ -416,9 +416,9 @@ function addNfp(num) {
 /**
  * @method nfs
  * @param {Array}        nums     the Numbers to format
- * @param {Number}       [left]
- * @param {Number}       [right]
- * @return {Array}         formatted Strings
+ * @param {Integer}      [left]
+ * @param {Integer}      [right]
+ * @return {String[]}         formatted Strings
  */
 p5.prototype.nfs = function() {
   p5._validateParameters('nfs', arguments);
@@ -546,7 +546,7 @@ p5.prototype.splitTokens = function(value, delims) {
 /**
  * @method trim
  * @param  {Array} strs an Array of Strings to be trimmed
- * @return {Array}       an Array of trimmed Strings
+ * @return {String[]}   an Array of trimmed Strings
  */
 p5.prototype.trim = function(str) {
   p5._validateParameters('trim', arguments);

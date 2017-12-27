@@ -289,7 +289,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'lib/p5.min.js': 'lib/p5.js',
+          'lib/p5.min.js': 'lib/p5.pre-min.js',
           'lib/addons/p5.dom.min.js': 'lib/addons/p5.dom.js'
         }
       }
@@ -403,7 +403,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-karma');
 
   // Create the multitasks.
-  grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);
+  grunt.registerTask('build', [
+    'browserify',
+    'browserify:min',
+    'uglify',
+    'requirejs'
+  ]);
   grunt.registerTask('lint-no-fix', [
     'yui', // required for eslint-samples
     'eslint:build',
