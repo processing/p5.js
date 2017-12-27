@@ -46,12 +46,8 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
   this.gHash[gId].numberOfItems = obj.faces.length * 3;
   this.gHash[gId].lineVertexCount = obj.lineVertices.length;
 
-  if (this.curFillShader === this._getImmediateModeShader()) {
-    // there are different immediate mode and retain mode color shaders.
-    // if we're using the immediate mode one, we need to switch to
-    // one that works for retain mode.
-    this.setFillShader(this._getColorShader());
-  }
+  this._useColorShader();
+
   this._bindBuffer(
     this.gHash[gId].lineVertexBuffer,
     gl.ARRAY_BUFFER,
@@ -160,13 +156,8 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
 p5.RendererGL.prototype.drawBuffers = function(gId) {
   this._setDefaultCamera();
   var gl = this.GL;
-  if (this.curFillShader === this._getImmediateModeShader()) {
-    // looking at the code within the glsl files, I'm not really
-    // sure why these are two different shaders. but, they are,
-    // and if we're drawing in retain mode but the shader is the
-    // immediate mode one, we need to switch.
-    this.setFillShader(this._getColorShader());
-  }
+  this._useColorShader();
+
   if (
     this.curStrokeShader.active !== false &&
     this.gHash[gId].lineVertexCount > 0

@@ -196,12 +196,10 @@ p5.prototype.texture = function() {
   );
 
   this._renderer.drawMode = constants.TEXTURE;
-  if (!this._renderer.curFillShader.isTextureShader()) {
-    this._renderer.setFillShader(this._renderer._getLightShader());
-  }
-  this._renderer.curFillShader.setUniform('uSpecular', false);
-  this._renderer.curFillShader.setUniform('isTexture', true);
-  this._renderer.curFillShader.setUniform('uSampler', args[0]);
+  var shader = this._renderer._useLightShader();
+  shader.setUniform('uSpecular', false);
+  shader.setUniform('isTexture', true);
+  shader.setUniform('uSampler', args[0]);
   this._renderer.noStroke();
   return this;
 };
@@ -243,13 +241,12 @@ p5.prototype.texture = function() {
  * @chainable
  */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
-  if (!this._renderer.curFillShader.isLightShader()) {
-    this._renderer.setFillShader(this._renderer._getLightShader());
-  }
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
-  this._renderer.curFillShader.setUniform('uMaterialColor', colors);
-  this._renderer.curFillShader.setUniform('uSpecular', false);
-  this._renderer.curFillShader.setUniform('isTexture', false);
+
+  var shader = this._renderer._useLightShader();
+  shader.setUniform('uMaterialColor', colors);
+  shader.setUniform('uSpecular', false);
+  shader.setUniform('isTexture', false);
   return this;
 };
 
@@ -290,14 +287,12 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * @chainable
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
-  if (!this._renderer.curFillShader.isLightShader()) {
-    this._renderer.setFillShader(this._renderer._getLightShader());
-  }
-
   var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
-  this._renderer.curFillShader.setUniform('uMaterialColor', colors);
-  this._renderer.curFillShader.setUniform('uSpecular', true);
-  this._renderer.curFillShader.setUniform('isTexture', false);
+
+  var shader = this._renderer._useLightShader();
+  shader.setUniform('uMaterialColor', colors);
+  shader.setUniform('uSpecular', true);
+  shader.setUniform('isTexture', false);
   return this;
 };
 
