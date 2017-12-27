@@ -102,7 +102,6 @@ p5.prototype.beginContour = function() {
  *
  * <div>
  * <code>
- * // currently not working
  * beginShape(POINTS);
  * vertex(30, 20);
  * vertex(85, 20);
