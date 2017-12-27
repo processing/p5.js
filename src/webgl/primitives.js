@@ -660,11 +660,7 @@ p5.prototype.torus = function() {
             (radius + tubeRadius * cosPhi) * sinTheta,
             tubeRadius * sinPhi
           );
-          var n = new p5.Vector(
-            tubeRadius * cosPhi * cosTheta,
-            tubeRadius * cosPhi * sinTheta,
-            tubeRadius * sinPhi
-          );
+          var n = new p5.Vector(cosPhi * cosTheta, cosPhi * sinTheta, sinPhi);
 
           this.vertices.push(p);
           this.vertexNormals.push(n);
