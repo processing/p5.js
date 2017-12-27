@@ -1230,14 +1230,10 @@ function base3(t, p1, p2, p3, p4) {
 }
 
 function cacheKey() {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  i = args.length;
   var hash = '';
-  while (i--) {
-    hash += args[i] === Object(args[i]) ? JSON.stringify(args[i]) : args[i];
+  for (var i = arguments.length - 1; i >= 0; --i) {
+    var v = arguments[i];
+    hash += v === Object(v) ? JSON.stringify(v) : v;
   }
   return hash;
 }

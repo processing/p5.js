@@ -4,6 +4,8 @@
  * @for p5
  */
 
+'use strict';
+
 var p5 = require('./core');
 var constants = require('./constants');
 

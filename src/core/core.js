@@ -36,7 +36,7 @@ var constants = require('./constants');
  * @return {p5}                 a p5 instance
  */
 var p5 = function(sketch, node, sync) {
-  if (arguments.length === 2 && typeof node === 'boolean') {
+  if (typeof node === 'boolean' && typeof sync === 'undefined') {
     sync = node;
     node = undefined;
   }
@@ -179,6 +179,8 @@ var p5 = function(sketch, node, sync) {
   this._preloadCount = 0;
   this._isGlobal = false;
   this._loop = true;
+  this._bezierDetail = 20;
+  this._curveDetail = 20;
   this._styles = [];
   this._defaultCanvasSize = {
     width: 100,
@@ -296,12 +298,7 @@ var p5 = function(sketch, node, sync) {
       //increment counter
       this._incrementPreload();
       //call original function
-      var args = new Array(arguments.length);
-      for (var i = 0; i < args.length; ++i) {
-        args[i] = arguments[i];
-      }
-      // args.push(this._decrementPreload.bind(this));
-      return this._registeredPreloadMethods[fnName].apply(obj, args);
+      return this._registeredPreloadMethods[fnName].apply(obj, arguments);
     }.bind(this);
   };
 

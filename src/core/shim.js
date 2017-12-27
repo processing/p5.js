@@ -1,3 +1,5 @@
+'use strict';
+
 // requestAnim shim layer by Paul Irish
 window.requestAnimationFrame = (function() {
   return (
