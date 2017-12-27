@@ -176,13 +176,11 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
     document.body.appendChild(c);
   }
   this._pInst.canvas = c;
-  this._pInst._setProperty(
-    '_renderer',
-    new p5.RendererGL(this._pInst.canvas, this._pInst, true, attr)
-  );
-  this._pInst._renderer.resize(w, h);
-  this._pInst._renderer._applyDefaults();
-  this._pInst._elements.push(this._renderer);
+  var renderer = new p5.RendererGL(this._pInst.canvas, this._pInst, true, attr);
+  this._pInst._setProperty('_renderer', renderer);
+  renderer.resize(w, h);
+  renderer._applyDefaults();
+  this._pInst._elements.push(renderer);
   if (typeof callback === 'function') {
     //setTimeout with 0 forces the task to the back of the queue, this ensures that
     //we finish switching out the renderer
@@ -991,10 +989,32 @@ p5.RendererGL.prototype._bindBuffer = function(
  * [[1, 2, 3],[4, 5, 6]] -> [1, 2, 3, 4, 5, 6]
  */
 p5.RendererGL.prototype._flatten = function(arr) {
-  if (arr.length > 0) {
-    return [].concat.apply([], arr);
-  } else {
+  //when empty, return empty
+  if (arr.length === 0) {
     return [];
+  } else if (arr.length > 20000) {
+    //big models , load slower to avoid stack overflow
+    //faster non-recursive flatten via axelduch
+    //stackoverflow.com/questions/27266550/how-to-flatten-nested-array-in-javascript
+    var toString = Object.prototype.toString;
+    var arrayTypeStr = '[object Array]';
+    var result = [];
+    var nodes = arr.slice();
+    var node;
+    node = nodes.pop();
+    do {
+      if (toString.call(node) === arrayTypeStr) {
+        nodes.push.apply(nodes, node);
+      } else {
+        result.push(node);
+      }
+    } while (nodes.length && (node = nodes.pop()) !== undefined);
+    result.reverse(); // we reverse result to restore the original order
+    return result;
+  } else {
+    //otherwise if model within limits for browser
+    //use faster recursive loading
+    return [].concat.apply([], arr);
   }
 };
 
