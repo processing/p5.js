@@ -102,6 +102,7 @@ p5.prototype.bezier = function() {
  *
  */
 p5.prototype.bezierDetail = function(d) {
+  p5._validateParameters('bezierDetail', arguments);
   this._bezierDetail = d;
   return this;
 };
@@ -349,6 +350,7 @@ p5.prototype.curve = function() {
  *
  */
 p5.prototype.curveDetail = function(d) {
+  p5._validateParameters('curveDetail', arguments);
   this._curveDetail = d;
   return this;
 };
@@ -395,6 +397,7 @@ p5.prototype.curveDetail = function(d) {
  * Line shaped like right-facing arrow,points move with mouse-x and warp shape.
  */
 p5.prototype.curveTightness = function(t) {
+  p5._validateParameters('curveTightness', arguments);
   this._renderer._curveTightness = t;
 };
 

@@ -32,7 +32,7 @@ require('./error_helpers');
  * @param  {Number} start  angle to start the arc, specified in radians
  * @param  {Number} stop   angle to stop the arc, specified in radians
  * @param  {Constant} [mode] optional parameter to determine the way of drawing
- *                         the arc. Parameter options are OPEN, CHORD or PIE
+ *                         the arc. either CHORD, PIE or OPEN
  * @chainable
  * @example
  * <div>
@@ -214,6 +214,16 @@ p5.prototype.ellipse = function(x, y, w, h) {
  *3 lines of various stroke sizes. Form top, bottom and right sides of a square.
  *
  */
+/**
+ * @method line
+ * @param  {Number} x1
+ * @param  {Number} y1
+ * @param  {Number} z1 the z-coordinate of the first point
+ * @param  {Number} x2
+ * @param  {Number} y2
+ * @param  {Number} z2 the z-coordinate of the second point
+ * @chainable
+ */
 p5.prototype.line = function() {
   p5._validateParameters('line', arguments);
 
@@ -291,12 +301,16 @@ p5.prototype.point = function() {
  * @method quad
  * @param {Number} x1
  * @param {Number} y1
+ * @param {Number} z1
  * @param {Number} x2
  * @param {Number} y2
+ * @param {Number} z2
  * @param {Number} x3
  * @param {Number} y3
+ * @param {Number} z3
  * @param {Number} x4
  * @param {Number} y4
+ * @param {Number} z4
  * @chainable
  */
 p5.prototype.quad = function() {

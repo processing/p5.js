@@ -170,7 +170,7 @@ p5.prototype.blend = function() {
  * target region.
  *
  * @method copy
- * @param  {p5.Image|undefined} srcImage source image
+ * @param  {p5.Image|p5.Graphics|undefined} srcImage source image
  * @param  {Integer} sx X coordinate of the source's upper left corner
  * @param  {Integer} sy Y coordinate of the source's upper left corner
  * @param  {Integer} sw source image width
@@ -205,6 +205,7 @@ p5.prototype.blend = function() {
  *
  */
 p5.prototype.copy = function() {
+  p5._validateParameters('copy', arguments);
   p5.Renderer2D._copyHelper.apply(this, arguments);
 };
 
@@ -521,7 +522,7 @@ p5.prototype.loadPixels = function() {
  * @method set
  * @param {Number}              x x-coordinate of the pixel
  * @param {Number}              y y-coordinate of the pixel
- * @param {Number|Array|Object} c insert a grayscale value | a pixel array |
+ * @param {Number|Number[]|Object} c insert a grayscale value | a pixel array |
  *                                a p5.Color object | a p5.Image to copy
  * @example
  * <div>
