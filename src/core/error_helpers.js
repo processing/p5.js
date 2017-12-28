@@ -6,6 +6,7 @@
 'use strict';
 
 var p5 = require('./core');
+var constants = require('./constants');
 
 if (typeof IS_MINIFIED !== 'undefined') {
   p5._validateParameters = p5._friendlyFileLoadError = function() {};
@@ -151,6 +152,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
     'boolean',
     'constant',
     'function',
+    'any',
     'integer'
   ];
 
@@ -206,7 +208,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
               var myArray = myRe.exec(format.description);
               if (func === 'endShape' && format.name === 'mode') {
-                values[p5.CLOSE] = true;
+                values[constants.CLOSE] = true;
                 names.push('CLOSE');
               } else {
                 var match = myArray[0];
@@ -214,8 +216,8 @@ if (typeof IS_MINIFIED !== 'undefined') {
                 var matchConst;
                 while ((matchConst = reConst.exec(match)) !== null) {
                   var name = matchConst[0];
-                  if (p5.prototype.hasOwnProperty(name)) {
-                    values[p5.prototype[name]] = true;
+                  if (constants.hasOwnProperty(name)) {
+                    values[constants[name]] = true;
                     names.push(name);
                   }
                 }
@@ -278,6 +280,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
             Number(param) === Math.floor(param)
           );
         case 'boolean':
+        case 'any':
           return true;
         case 'array':
           return isArray;
