@@ -19,14 +19,23 @@ var p5 = require('../core/core');
  * or object you provide.
  *
  * @method createStringDict
+ * @for p5
  * @param {String|Object} key or object
  * @param {String} value
  * @return {p5.StringDict}
  *
+ * @example
+ * <div class="norender">
+ * <code>
+ * function setup() {
+ *   var myDictionary = createStringDict('p5', 'js');
+ *   print(myDictionary.hasKey('p5')); // logs true to console
+ * }
+ * </code></div>
  */
 
-p5.prototype.createStringDict = function() {
-  return new p5.StringDict(arguments[0], arguments[1]);
+p5.prototype.createStringDict = function(key, value) {
+  return new p5.StringDict(key, value);
 };
 
 /**
@@ -35,14 +44,23 @@ p5.prototype.createStringDict = function() {
  * or object you provide.
  *
  * @method createNumberDict
+ * @for p5
  * @param {Number|Object} key or object
  * @param {Number} value
  * @return {p5.NumberDict}
  *
+ * @example
+ * <div class="norender">
+ * <code>
+ * function setup() {
+ *   var myDictionary = createNumberDict('p5', 42);
+ *   print(myDictionary.hasKey('p5')); // logs true to console
+ * }
+ * </code></div>
  */
 
-p5.prototype.createNumberDict = function() {
-  return new p5.NumberDict(arguments[0], arguments[1]);
+p5.prototype.createNumberDict = function(key, value) {
+  return new p5.NumberDict(key, value);
 };
 
 /**
@@ -55,12 +73,12 @@ p5.prototype.createNumberDict = function() {
  *
  */
 
-p5.TypedDict = function() {
-  this.data = {};
-  if(arguments[0][0] instanceof Object) {
-    this.data = arguments[0][0];
+p5.TypedDict = function(key, value) {
+  if (key instanceof Object) {
+    this.data = key;
   } else {
-    this.data[arguments[0][0]] = arguments[0][1];
+    this.data = {};
+    this.data[key] = value;
   }
   return this;
 };
@@ -74,18 +92,16 @@ p5.TypedDict = function() {
  * @example
  * <div class="norender">
  * <code>
- *
  * function setup() {
  *   var myDictionary = createNumberDict(1, 10);
  *   myDictionary.create(2, 20);
  *   myDictionary.create(3, 30);
- *   var amt = myDictionary.size(); // value of amt is 3
+ *   print(myDictionary.size()); // value of amt is 3
  * }
- *
  * </code></div>
  *
  */
-p5.TypedDict.prototype.size = function(){
+p5.TypedDict.prototype.size = function() {
   return Object.keys(this.data).length;
 };
 
@@ -100,12 +116,10 @@ p5.TypedDict.prototype.size = function(){
  * @example
  * <div class="norender">
  * <code>
- *
  * function setup() {
  *   var myDictionary = createStringDict('p5', 'js');
  *   print(myDictionary.hasKey('p5')); // logs true to console
  * }
- *
  * </code></div>
  *
  */
@@ -124,21 +138,19 @@ p5.TypedDict.prototype.hasKey = function(key) {
  * @example
  * <div class="norender">
  * <code>
- *
  * function setup() {
  *   var myDictionary = createStringDict('p5', 'js');
  *   var myValue = myDictionary.get('p5');
  *   print(myValue === 'js'); // logs true to console
  * }
- *
  * </code></div>
  *
  */
 
 p5.TypedDict.prototype.get = function(key) {
-  if(this.data.hasOwnProperty(key)){
+  if (this.data.hasOwnProperty(key)) {
     return this.data[key];
-  }else{
+  } else {
     console.log(key + ' does not exist in this Dictionary');
   }
 };
@@ -154,25 +166,21 @@ p5.TypedDict.prototype.get = function(key) {
  * @example
  * <div class="norender">
  * <code>
- *
  * function setup() {
  *   var myDictionary = createStringDict('p5', 'js');
  *   myDictionary.set('p5', 'JS');
- *   myDictionary.print()
+ *   myDictionary.print();
  *   // above logs "key: p5 - value: JS" to console
  * }
- *
  * </code></div>
  *
  */
 
 p5.TypedDict.prototype.set = function(key, value) {
-  if (arguments.length === 2) {
-    if(!this.data.hasOwnProperty(key)){
-      this.create(key, value);
-    } else {
-      this.data[key] = value;
-    }
+  if (this._validate(value)) {
+    this.data[key] = value;
+  } else {
+    console.log('Those values dont work for this dictionary type.');
   }
 };
 
@@ -183,11 +191,7 @@ p5.TypedDict.prototype.set = function(key, value) {
 
 p5.TypedDict.prototype._addObj = function(obj) {
   for (var key in obj) {
-    if(this._validate(obj[key])) {
-      this.data[key] = obj[key];
-    } else {
-      console.log('Those values dont work for this dictionary type.');
-    }
+    this.set(key, obj[key]);
   }
 };
 
@@ -201,14 +205,12 @@ p5.TypedDict.prototype._addObj = function(obj) {
  * @example
  * <div class="norender">
  * <code>
- *
  * function setup() {
  *   var myDictionary = createStringDict('p5', 'js');
  *   myDictionary.create('happy', 'coding');
- *   myDictionary.print()
+ *   myDictionary.print();
  *   // above logs "key: p5 - value: js, key: happy - value: coding" to console
  * }
- *
  * </code></div>
  */
 /**
@@ -216,28 +218,36 @@ p5.TypedDict.prototype._addObj = function(obj) {
  * @param {Object} obj key/value pair
  */
 
-p5.TypedDict.prototype.create = function() {
-  if(arguments.length === 1 && arguments[0] instanceof Object) {
-    this._addObj(arguments[0]);
-  }
-  else if(arguments.length === 2) {
-    var obj = {};
-    obj[arguments[0]] = arguments[1];
-    this._addObj(obj);
+p5.TypedDict.prototype.create = function(key, value) {
+  if (key instanceof Object && typeof value === 'undefined') {
+    this._addObj(key);
+  } else if (typeof key !== 'undefined') {
+    this.set(key, value);
   } else {
-    console.log('In order to create a new Dictionary entry you must pass ' +
-      'an object or a key, value pair');
+    console.log(
+      'In order to create a new Dictionary entry you must pass ' +
+        'an object or a key, value pair'
+    );
   }
 };
 
 /**
  * Empties Dictionary of all key-value pairs
  * @method clear
- *
- *
+ * @example
+ * <div class="norender">
+ * <code>
+ * function setup() {
+ *   var myDictionary = createStringDict('p5', 'js');
+ *   print(myDictionary.hasKey('p5')); // prints 'true'
+ *   myDictionary.clear();
+ *   print(myDictionary.hasKey('p5')); // prints 'false'
+ * }
+ * </code>
+ * </div>
  */
 
-p5.TypedDict.prototype.clear = function(){
+p5.TypedDict.prototype.clear = function() {
   this.data = {};
 };
 
@@ -250,23 +260,21 @@ p5.TypedDict.prototype.clear = function(){
  * @example
  * <div class="norender">
  * <code>
- *
  * function setup() {
  *   var myDictionary = createStringDict('p5', 'js');
  *   myDictionary.create('happy', 'coding');
- *   myDictionary.print()
+ *   myDictionary.print();
  *   // above logs "key: p5 - value: js, key: happy - value: coding" to console
  *   myDictionary.remove('p5');
  *   myDictionary.print();
  *   // above logs "key: happy value: coding" to console
  * }
- *
  * </code></div>
  *
  */
 
 p5.TypedDict.prototype.remove = function(key) {
-  if(this.data.hasOwnProperty(key)) {
+  if (this.data.hasOwnProperty(key)) {
     delete this.data[key];
   } else {
     throw key + ' does not exist in this Dictionary';
@@ -277,6 +285,18 @@ p5.TypedDict.prototype.remove = function(key) {
  * Logs the list of items currently in the Dictionary to the console
  *
  * @method print
+ *
+ * @example
+ * <div class="norender">
+ * <code>
+ * function setup() {
+ *   var myDictionary = createStringDict('p5', 'js');
+ *   myDictionary.create('happy', 'coding');
+ *   myDictionary.print();
+ *   // above logs "key: p5 - value: js, key: happy - value: coding" to console
+ * }
+ * </code>
+ * </div>
  */
 
 p5.TypedDict.prototype.print = function() {
@@ -290,20 +310,32 @@ p5.TypedDict.prototype.print = function() {
  * storage.
  *
  * @method saveTable
+ * @example
+ * <div>
+ * <code>
+ * createButton('save')
+ *   .position(10, 10)
+ *   .mousePressed(function() {
+ *     createNumberDict({
+ *       john: 1940,
+      paul: 1942,
+      george: 1943,
+      ringo: 1940
+ *     }).saveTable('beatles');
+ *   });
+ * </code>
+ * </div>
  */
 
-p5.TypedDict.prototype.saveTable = function() {
+p5.TypedDict.prototype.saveTable = function(filename) {
   var output = '';
 
   for (var key in this.data) {
     output += key + ',' + this.data[key] + '\n';
   }
 
-  var filename = arguments[0] || 'mycsv';
-  var file = new Blob([output], {type: 'text/csv'});
-  var href = window.URL.createObjectURL(file);
-
-  p5.prototype.downloadFile(href, filename, 'csv');
+  var blob = new Blob([output], { type: 'text/csv' });
+  p5.prototype.downloadFile(blob, filename || 'mycsv', 'csv');
 };
 
 /**
@@ -311,6 +343,21 @@ p5.TypedDict.prototype.saveTable = function() {
  * storage.
  *
  * @method saveJSON
+ * @example
+ * <div>
+ * <code>
+ * createButton('save')
+ *   .position(10, 10)
+ *   .mousePressed(function() {
+ *     createNumberDict({
+ *       john: 1940,
+      paul: 1942,
+      george: 1943,
+      ringo: 1940
+ *     }).saveJSON('beatles');
+ *   });
+ * </code>
+ * </div>
  */
 
 p5.TypedDict.prototype.saveJSON = function(filename, opt) {
@@ -322,7 +369,7 @@ p5.TypedDict.prototype.saveJSON = function(filename, opt) {
  * values for the Dictionary type
  */
 
-p5.TypedDict.prototype._validate = function(key, value) {
+p5.TypedDict.prototype._validate = function(value) {
   return true;
 };
 
@@ -338,13 +385,13 @@ p5.TypedDict.prototype._validate = function(key, value) {
  */
 
 p5.StringDict = function() {
-  p5.TypedDict.call(this, arguments);
+  p5.TypedDict.apply(this, arguments);
 };
 
 p5.StringDict.prototype = Object.create(p5.TypedDict.prototype);
 
 p5.StringDict.prototype._validate = function(value) {
-  return (typeof value === 'string');
+  return typeof value === 'string';
 };
 
 /**
@@ -359,7 +406,7 @@ p5.StringDict.prototype._validate = function(value) {
  */
 
 p5.NumberDict = function() {
-  p5.TypedDict.call(this, arguments);
+  p5.TypedDict.apply(this, arguments);
 };
 
 p5.NumberDict.prototype = Object.create(p5.TypedDict.prototype);
@@ -370,7 +417,7 @@ p5.NumberDict.prototype = Object.create(p5.TypedDict.prototype);
  */
 
 p5.NumberDict.prototype._validate = function(value) {
-  return (typeof value === 'number');
+  return typeof value === 'number';
 };
 
 /**
@@ -394,7 +441,7 @@ p5.NumberDict.prototype._validate = function(value) {
  */
 
 p5.NumberDict.prototype.add = function(key, amount) {
-  if(this.data.hasOwnProperty(key)){
+  if (this.data.hasOwnProperty(key)) {
     this.data[key] += amount;
   } else {
     console.log('The key - ' + key + ' does not exist in this dictionary.');
@@ -446,7 +493,7 @@ p5.NumberDict.prototype.sub = function(key, amount) {
  */
 
 p5.NumberDict.prototype.mult = function(key, amount) {
-  if(this.data.hasOwnProperty(key)){
+  if (this.data.hasOwnProperty(key)) {
     this.data[key] *= amount;
   } else {
     console.log('The key - ' + key + ' does not exist in this dictionary.');
@@ -474,7 +521,7 @@ p5.NumberDict.prototype.mult = function(key, amount) {
  */
 
 p5.NumberDict.prototype.div = function(key, amount) {
-  if(this.data.hasOwnProperty(key)){
+  if (this.data.hasOwnProperty(key)) {
     this.data[key] /= amount;
   } else {
     console.log('The key - ' + key + ' does not exist in this dictionary.');
@@ -489,14 +536,14 @@ p5.NumberDict.prototype.div = function(key, amount) {
  */
 
 p5.NumberDict.prototype._valueTest = function(flip) {
-  if(Object.keys(this.data).length === 0) {
+  if (Object.keys(this.data).length === 0) {
     throw 'Unable to search for a minimum or maximum value on an empty NumberDict';
-  } else if(Object.keys(this.data).length === 1) {
+  } else if (Object.keys(this.data).length === 1) {
     return this.data[Object.keys(this.data)[0]];
   } else {
     var result = this.data[Object.keys(this.data)[0]];
-    for(var key in this.data) {
-      if(this.data[key] * flip < result * flip) {
+    for (var key in this.data) {
+      if (this.data[key] * flip < result * flip) {
         result = this.data[key];
       }
     }
@@ -513,8 +560,9 @@ p5.NumberDict.prototype._valueTest = function(flip) {
  * <div class='norender'>
  * <code>
  * function setup() {
- *   var myDictionary = createNumberDict({2 : -10, 4 : 0.65, 1.2 : 3});
+ *   var myDictionary = createNumberDict({ 2: -10, 4: 0.65, 1.2: 3 });
  *   var lowestValue = myDictionary.minValue(); // value is -10
+ *   print(lowestValue);
  * }
  * </code></div>
  *
@@ -533,8 +581,9 @@ p5.NumberDict.prototype.minValue = function() {
  * <div class='norender'>
  * <code>
  * function setup() {
- *   var myDictionary = createNumberDict({2 : -10, 4 : 0.65, 1.2 : 3});
+ *   var myDictionary = createNumberDict({ 2: -10, 4: 0.65, 1.2: 3 });
  *   var highestValue = myDictionary.maxValue(); // value is 3
+ *   print(highestValue);
  * }
  * </code></div>
  *
@@ -552,14 +601,14 @@ p5.NumberDict.prototype.maxValue = function() {
  */
 
 p5.NumberDict.prototype._keyTest = function(flip) {
-  if(Object.keys(this.data).length === 0) {
+  if (Object.keys(this.data).length === 0) {
     throw 'Unable to use minValue on an empty NumberDict';
-  } else if(Object.keys(this.data).length === 1) {
+  } else if (Object.keys(this.data).length === 1) {
     return Object.keys(this.data)[0];
   } else {
     var result = Object.keys(this.data)[0];
-    for(var i=1; i<Object.keys(this.data).length; i++) {
-      if(Object.keys(this.data)[i] * flip < result * flip) {
+    for (var i = 1; i < Object.keys(this.data).length; i++) {
+      if (Object.keys(this.data)[i] * flip < result * flip) {
         result = Object.keys(this.data)[i];
       }
     }
@@ -576,8 +625,9 @@ p5.NumberDict.prototype._keyTest = function(flip) {
  * <div class='norender'>
  * <code>
  * function setup() {
- *   var myDictionary = createNumberDict({2 : 4, 4 : 6, 1.2 : 3});
+ *   var myDictionary = createNumberDict({ 2: 4, 4: 6, 1.2: 3 });
  *   var lowestKey = myDictionary.minKey(); // value is 1.2
+ *   print(lowestKey);
  * }
  * </code></div>
  *
@@ -596,8 +646,9 @@ p5.NumberDict.prototype.minKey = function() {
  * <div class='norender'>
  * <code>
  * function setup() {
- *   var myDictionary = createNumberDict({ 2 : 4, 4 : 6, 1.2 : 3});
+ *   var myDictionary = createNumberDict({ 2: 4, 4: 6, 1.2: 3 });
  *   var highestKey = myDictionary.maxKey(); // value is 4
+ *   print(highestKey);
  * }
  * </code></div>
  *

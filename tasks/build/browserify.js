@@ -4,49 +4,63 @@ var path = require('path');
 var browserify = require('browserify');
 var derequire = require('derequire');
 
-var bannerTemplate = '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */';
+var bannerTemplate =
+  '/*! p5.js v<%= pkg.version %> <%= grunt.template.today("mmmm dd, yyyy") %> */';
 
 module.exports = function(grunt) {
-
   var srcFilePath = require.resolve('../../src/app.js');
 
-  // This file will not exist until it has been built
-  var libFilePath = path.resolve('lib/p5.js');
+  grunt.registerTask(
+    'browserify',
+    'Compile the p5.js source with Browserify',
+    function(param) {
+      var isMin = param === 'min';
+      var filename = isMin ? 'p5.pre-min.js' : 'p5.js';
 
-  grunt.registerTask('browserify', 'Compile the p5.js source with Browserify', function() {
-    // Reading and writing files is asynchronous
-    var done = this.async();
+      // This file will not exist until it has been built
+      var libFilePath = path.resolve('lib/' + filename);
 
-    // Render the banner for the top of the file
-    var banner = grunt.template.process(bannerTemplate);
+      // Reading and writing files is asynchronous
+      var done = this.async();
 
-    // Invoke Browserify programatically to bundle the code
-    var bundle = browserify(srcFilePath, {
-      standalone: 'p5'
-    })
-    .transform('brfs')
-    .bundle();
+      // Render the banner for the top of the file
+      var banner = grunt.template.process(bannerTemplate);
 
-    // Start the generated output with the banner comment,
-    var code = banner + '\n';
+      // Invoke Browserify programatically to bundle the code
+      var browseified = browserify(srcFilePath, {
+        standalone: 'p5'
+      });
 
-    // Then read the bundle into memory so we can run it through derequire
-    bundle.on('data', function(data) {
-      code += data;
-    }).on('end', function() {
+      if (isMin) {
+        browseified = browseified.exclude('../../docs/reference/data.json');
+      }
 
-      // "code" is complete: create the distributable UMD build by running
-      // the bundle through derequire, then write the bundle to disk.
-      // (Derequire changes the bundle's internal "require" function to
-      // something that will not interfere with this module being used
-      // within a separate browserify bundle.)
-      grunt.file.write(libFilePath, derequire(code));
+      var bundle = browseified.transform('brfs').bundle();
 
-      // Print a success message
-      grunt.log.writeln('>>'.green + ' Bundle ' + 'lib/p5.js'.cyan + ' created.');
+      // Start the generated output with the banner comment,
+      var code = banner + '\n';
 
-      // Complete the task
-      done();
-    });
-  });
+      // Then read the bundle into memory so we can run it through derequire
+      bundle
+        .on('data', function(data) {
+          code += data;
+        })
+        .on('end', function() {
+          // "code" is complete: create the distributable UMD build by running
+          // the bundle through derequire, then write the bundle to disk.
+          // (Derequire changes the bundle's internal "require" function to
+          // something that will not interfere with this module being used
+          // within a separate browserify bundle.)
+          grunt.file.write(libFilePath, derequire(code));
+
+          // Print a success message
+          grunt.log.writeln(
+            '>>'.green + ' Bundle ' + ('lib/' + filename).cyan + ' created.'
+          );
+
+          // Complete the task
+          done();
+        });
+    }
+  );
 };

@@ -4,6 +4,8 @@
  * @for p5
  */
 
+'use strict';
+
 var p5 = require('./core');
 var constants = require('../core/constants');
 
@@ -21,7 +23,7 @@ var constants = require('../core/constants');
  */
 p5.Renderer = function(elt, pInst, isMainCanvas) {
   p5.Element.call(this, elt, pInst);
-  this.name = 'p5.Renderer';   // for friendly debugger system
+  this.name = 'p5.Renderer'; // for friendly debugger system
   this.canvas = elt;
   this._pInst = pInst;
   if (isMainCanvas) {
@@ -31,11 +33,11 @@ p5.Renderer = function(elt, pInst, isMainCanvas) {
     this._pInst._setProperty('canvas', this.canvas);
     this._pInst._setProperty('width', this.width);
     this._pInst._setProperty('height', this.height);
-  } else { // hide if offscreen buffer by default
+  } else {
+    // hide if offscreen buffer by default
     this.canvas.style.display = 'none';
     this._styles = []; // non-main elt styles stored in p5.Renderer
   }
-
 
   this._textSize = 12;
   this._textLeading = 15;
@@ -43,7 +45,6 @@ p5.Renderer = function(elt, pInst, isMainCanvas) {
   this._textStyle = constants.NORMAL;
   this._textAscent = null;
   this._textDescent = null;
-
 
   this._rectMode = constants.CORNER;
   this._ellipseMode = constants.CENTER;
@@ -61,13 +62,9 @@ p5.Renderer = function(elt, pInst, isMainCanvas) {
     hsb: [360, 100, 100, 1],
     hsl: [360, 100, 100, 1]
   };
-
 };
 
 p5.Renderer.prototype = Object.create(p5.Element.prototype);
-
-
-
 
 /**
  * Resize our canvas element.
@@ -77,7 +74,7 @@ p5.Renderer.prototype.resize = function(w, h) {
   this.height = h;
   this.elt.width = w * this._pInst._pixelDensity;
   this.elt.height = h * this._pInst._pixelDensity;
-  this.elt.style.width = w +'px';
+  this.elt.style.width = w + 'px';
   this.elt.style.height = h + 'px';
   if (this._isMainCanvas) {
     this._pInst._setProperty('width', this.width);
@@ -86,9 +83,7 @@ p5.Renderer.prototype.resize = function(w, h) {
 };
 
 p5.Renderer.prototype.textLeading = function(l) {
-
-  if (arguments.length && arguments[0]) {
-
+  if (typeof l === 'number') {
     this._setProperty('_textLeading', l);
     return this;
   }
@@ -97,9 +92,7 @@ p5.Renderer.prototype.textLeading = function(l) {
 };
 
 p5.Renderer.prototype.textSize = function(s) {
-
-  if (arguments.length && arguments[0]) {
-
+  if (typeof s === 'number') {
     this._setProperty('_textSize', s);
     this._setProperty('_textLeading', s * constants._DEFAULT_LEADMULT);
     return this._applyTextProperties();
@@ -109,12 +102,12 @@ p5.Renderer.prototype.textSize = function(s) {
 };
 
 p5.Renderer.prototype.textStyle = function(s) {
-
-  if (arguments.length && arguments[0]) {
-
-    if (s === constants.NORMAL ||
+  if (s) {
+    if (
+      s === constants.NORMAL ||
       s === constants.ITALIC ||
-      s === constants.BOLD) {
+      s === constants.BOLD
+    ) {
       this._setProperty('_textStyle', s);
     }
 
@@ -132,14 +125,13 @@ p5.Renderer.prototype.textAscent = function() {
 };
 
 p5.Renderer.prototype.textDescent = function() {
-
   if (this._textDescent === null) {
     this._updateTextMetrics();
   }
   return this._textDescent;
 };
 
-p5.Renderer.prototype._applyDefaults = function(){
+p5.Renderer.prototype._applyDefaults = function() {
   return this;
 };
 
@@ -147,15 +139,12 @@ p5.Renderer.prototype._applyDefaults = function(){
  * Helper fxn to check font type (system or otf)
  */
 p5.Renderer.prototype._isOpenType = function(f) {
-
   f = f || this._textFont;
-  return (typeof f === 'object' && f.font && f.font.supported);
+  return typeof f === 'object' && f.font && f.font.supported;
 };
 
 p5.Renderer.prototype._updateTextMetrics = function() {
-
   if (this._isOpenType()) {
-
     this._setProperty('_textAscent', this._textFont._textAscent());
     this._setProperty('_textDescent', this._textFont._textDescent());
     return this;

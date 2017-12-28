@@ -25,10 +25,10 @@ var p5 = require('../core/core');
  * @example
  * <div>
  * <code>
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
- * function draw(){
+ * function draw() {
  *   background(0);
  *   ambientLight(150);
  *   ambientMaterial(250);
@@ -59,28 +59,33 @@ var p5 = require('../core/core');
 /**
  * @method ambientLight
  * @param  {p5.Color}      color   the ambient light color
- * @param  {Number}        [alpha]
  * @chainable
  */
-p5.prototype.ambientLight = function(v1, v2, v3, a){
-  if (! this._renderer.curFillShader.isLightShader()) {
-    this._renderer.setFillShader(this._renderer._getLightShader());
-  }
+p5.prototype.ambientLight = function(v1, v2, v3, a) {
+  var color = this.color.apply(this, arguments);
 
-  var color = this._renderer._pInst.color.apply(
-    this._renderer._pInst, arguments);
+  var shader = this._renderer._useLightShader();
 
   //@todo this is a bit icky. array uniforms have
   //to be multiples of the type 3(rgb) in this case.
   //a preallocated Float32Array(24) that we copy into
   //would be better
-  var colors = new Float32Array(color._array.slice(0,3));
-  this._renderer.curFillShader.setUniform('uAmbientColor', colors);
-  this._renderer.curFillShader.setUniform('uUseLighting', true);
-  this._renderer.ambientLightCount++;
+  shader.setUniform('uUseLighting', true);
   //in case there's no material color for the geometry
-  this._renderer.curFillShader.setUniform('uMaterialColor', this._renderer.curFillColor);
-  this._renderer.curFillShader.setUniform('uAmbientLightCount', this._renderer.ambientLightCount);
+  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
+
+  this._renderer.ambientLightColors.push(
+    color._array[0],
+    color._array[1],
+    color._array[2]
+  );
+  shader.setUniform('uAmbientColor', this._renderer.ambientLightColors);
+
+  shader.setUniform(
+    'uAmbientLightCount',
+    this._renderer.ambientLightColors.length / 3
+  );
+
   return this;
 };
 
@@ -125,14 +130,14 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
  * @example
  * <div>
  * <code>
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
- * function draw(){
+ * function draw() {
  *   background(0);
  *   //move your mouse to change light direction
- *   var dirX = (mouseX / width - 0.5) *2;
- *   var dirY = (mouseY / height - 0.5) *(-2);
+ *   var dirX = (mouseX / width - 0.5) * 2;
+ *   var dirY = (mouseY / height - 0.5) * -2;
  *   directionalLight(250, 250, 250, dirX, dirY, 0.25);
  *   ambientMaterial(250);
  *   sphere(50);
@@ -145,44 +150,44 @@ p5.prototype.ambientLight = function(v1, v2, v3, a){
  *
  */
 p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
-  if (! this._renderer.curFillShader.isLightShader()) {
-    this._renderer.setFillShader(this._renderer._getLightShader());
-  }
+  var shader = this._renderer._useLightShader();
 
   //@TODO: check parameters number
-  var color = this._renderer._pInst.color.apply(
-    this._renderer._pInst, [v1, v2, v3]);
-
-  var colors = new Float32Array(color._array.slice(0,3));
-  this._renderer.curFillShader.setUniform('uDirectionalColor', colors);
+  var color = this.color.apply(this, [v1, v2, v3]);
 
   var _x, _y, _z;
-
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+  var v = arguments[arguments.length - 1];
+  if (typeof v === 'number') {
+    _x = arguments[arguments.length - 3];
+    _y = arguments[arguments.length - 2];
+    _z = arguments[arguments.length - 1];
+  } else {
+    _x = v.x;
+    _y = v.y;
+    _z = v.z;
   }
-  if(typeof args[args.length-1] === 'number'){
-    _x = args[args.length-3];
-    _y = args[args.length-2];
-    _z = args[args.length-1];
-
-  }else{
-    try{
-      _x = args[args.length-1].x;
-      _y = args[args.length-1].y;
-      _z = args[args.length-1].z;
-    }
-    catch(error){
-      throw error;
-    }
-  }
-  this._renderer.curFillShader.setUniform('uUseLighting', true);
+  shader.setUniform('uUseLighting', true);
   //in case there's no material color for the geometry
-  this._renderer.curFillShader.setUniform('uMaterialColor', this._renderer.curFillColor);
-  this._renderer.curFillShader.setUniform('uLightingDirection', [_x, _y, _z]);
-  this._renderer.directionalLightCount ++;
-  this._renderer.curFillShader.setUniform('uDirectionalLightCount', this._renderer.directionalLightCount);
+  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
+
+  this._renderer.directionalLightDirections.push(_x, _y, _z);
+  shader.setUniform(
+    'uLightingDirection',
+    this._renderer.directionalLightDirections
+  );
+
+  this._renderer.directionalLightColors.push(
+    color._array[0],
+    color._array[1],
+    color._array[2]
+  );
+  shader.setUniform('uDirectionalColor', this._renderer.directionalLightColors);
+
+  shader.setUniform(
+    'uDirectionalLightCount',
+    this._renderer.directionalLightColors.length / 3
+  );
+
   return this;
 };
 
@@ -200,14 +205,14 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  * @example
  * <div>
  * <code>
- * function setup(){
+ * function setup() {
  *   createCanvas(100, 100, WEBGL);
  * }
- * function draw(){
+ * function draw() {
  *   background(0);
  *   //move your mouse to change light position
- *   var locY = (mouseY / height - 0.5) *(-2);
- *   var locX = (mouseX / width - 0.5) *2;
+ *   var locY = (mouseY / height - 0.5) * -2;
+ *   var locX = (mouseX / width - 0.5) * 2;
  *   //to set the light position,
  *   //think of the world's coordinate as:
  *   // -1,1 -------- 1,1
@@ -253,43 +258,45 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  * @chainable
  */
 p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
-  if (! this._renderer.curFillShader.isLightShader()) {
-    this._renderer.setFillShader(this._renderer._getLightShader());
-  }
   //@TODO: check parameters number
-  var color = this._renderer._pInst.color.apply(
-    this._renderer._pInst, [v1, v2, v3]);
-
-  var colors = new Float32Array(color._array.slice(0,3));
-  this._renderer.curFillShader.setUniform('uPointLightColor', colors);
+  var color = this._renderer._pInst.color.apply(this._renderer._pInst, [
+    v1,
+    v2,
+    v3
+  ]);
 
   var _x, _y, _z;
-
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+  var v = arguments[arguments.length - 1];
+  if (typeof v === 'number') {
+    _x = arguments[arguments.length - 3];
+    _y = arguments[arguments.length - 2];
+    _z = arguments[arguments.length - 1];
+  } else {
+    _x = v.x;
+    _y = v.y;
+    _z = v.z;
   }
-  if(typeof args[args.length-1] === 'number'){
-    _x = args[args.length-3];
-    _y = args[args.length-2];
-    _z = args[args.length-1];
 
-  }else{
-    try{
-      _x = args[args.length-1].x;
-      _y = args[args.length-1].y;
-      _z = args[args.length-1].z;
-    }
-    catch(error){
-      throw error;
-    }
-  }
-  this._renderer.curFillShader.setUniform('uUseLighting', true);
+  var shader = this._renderer._useLightShader();
+  shader.setUniform('uUseLighting', true);
   //in case there's no material color for the geometry
-  this._renderer.curFillShader.setUniform('uMaterialColor', this._renderer.curFillColor);
-  this._renderer.curFillShader.setUniform('uPointLightLocation', [_x, _y, _z]);
-  this._renderer.pointLightCount++;
-  this._renderer.curFillShader.setUniform('uPointLightCount', this._renderer.pointLightCount);
+  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
+
+  this._renderer.pointLightPositions.push(_x, _y, _z);
+  shader.setUniform('uPointLightLocation', this._renderer.pointLightPositions);
+
+  this._renderer.pointLightColors.push(
+    color._array[0],
+    color._array[1],
+    color._array[2]
+  );
+  shader.setUniform('uPointLightColor', this._renderer.pointLightColors);
+
+  shader.setUniform(
+    'uPointLightCount',
+    this._renderer.pointLightColors.length / 3
+  );
+
   return this;
 };
 

@@ -32,43 +32,41 @@ var _windowPrint = window.print;
  * @example
  * <div><code class='norender'>
  * var x = 10;
- * print("The value of x is " + x);
+ * print('The value of x is ' + x);
  * // prints "The value of x is 10"
  * </code></div>
  * @alt
  * default grey canvas
  */
 p5.prototype.print = function(args) {
-  if (arguments.length === 0) {
+  if (typeof args === 'undefined') {
     _windowPrint();
-  }
-  else {
+  } else {
     console.log.apply(console, arguments);
   }
 };
-
 
 /**
  * The system variable frameCount contains the number of frames that have
  * been displayed since the program started. Inside setup() the value is 0,
  * after the first iteration of draw it is 1, etc.
  *
- * @property {Number} frameCount
+ * @property {Integer} frameCount
  * @readOnly
  * @example
  *   <div><code>
- *     function setup() {
- *       frameRate(30);
- *       textSize(20);
- *       textSize(30);
- *       textAlign(CENTER);
- *     }
+ * function setup() {
+ *   frameRate(30);
+ *   textSize(20);
+ *   textSize(30);
+ *   textAlign(CENTER);
+ * }
  *
- *     function draw() {
- *       background(200);
- *       text(frameCount, width/2, height/2);
- *     }
- *   </code></div>
+ * function draw() {
+ *   background(200);
+ *   text(frameCount, width / 2, height / 2);
+ * }
+</code></div>
  *
  * @alt
  * numbers rapidly counting upward with frame count set to 30.
@@ -93,8 +91,9 @@ p5.prototype.frameCount = 0;
  *   fill(0, 200, 0);
  *   ellipse(25, 25, 50, 50);
  *
- *   if (!focused) {  // or "if (focused === false)"
- *     stroke(200,0,0);
+ *   if (!focused) {
+    // or "if (focused === false)"
+ *     stroke(200, 0, 0);
  *     line(0, 0, 100, 100);
  *     line(100, 0, 0, 100);
  *   }
@@ -105,7 +104,7 @@ p5.prototype.frameCount = 0;
  * green 50x50 ellipse at top left. Red X covers canvas when page focus changes
  *
  */
-p5.prototype.focused = (document.hasFocus());
+p5.prototype.focused = document.hasFocus();
 
 /**
  * Sets the cursor to a predefined symbol or an image, or makes it visible
@@ -125,7 +124,7 @@ p5.prototype.focused = (document.hasFocus());
  * // Move the mouse left and right across the image
  * // to see the cursor change from a cross to a hand
  * function draw() {
- *   line(width/2, 0, width/2, height);
+ *   line(width / 2, 0, width / 2, height);
  *   if (mouseX < 50) {
  *     cursor(CROSS);
  *   } else {
@@ -151,8 +150,10 @@ p5.prototype.cursor = function(type, x, y) {
       // https://developer.mozilla.org/en-US/docs/Web/CSS/cursor
       coords = x + ' ' + y;
     }
-    if ((type.substring(0, 7) === 'http://') ||
-        (type.substring(0, 8) === 'https://')) {
+    if (
+      type.substring(0, 7) === 'http://' ||
+      type.substring(0, 8) === 'https://'
+    ) {
       // Image (absolute url)
       cursor = 'url(' + type + ') ' + coords + ', auto';
     } else if (/\.(cur|jpg|jpeg|gif|png|CUR|JPG|JPEG|GIF|PNG)$/.test(type)) {
@@ -195,29 +196,30 @@ p5.prototype.cursor = function(type, x, y) {
  * function setup() {
  *   background(200);
  *   frameRate(fr); // Attempt to refresh at starting FPS
- *   clr = color(255,0,0);
+ *   clr = color(255, 0, 0);
  * }
  *
  * function draw() {
  *   background(200);
  *   rectX = rectX += 1; // Move Rectangle
  *
- *   if (rectX >= width) { // If you go off screen.
- *     if (fr == 30) {
- *       clr = color(0,0,255);
+ *   if (rectX >= width) {
+    // If you go off screen.
+ *     if (fr === 30) {
+ *       clr = color(0, 0, 255);
  *       fr = 10;
  *       frameRate(fr); // make frameRate 10 FPS
  *     } else {
- *       clr = color(255,0,0);
+ *       clr = color(255, 0, 0);
  *       fr = 30;
  *       frameRate(fr); // make frameRate 30 FPS
  *     }
  *     rectX = 0;
  *   }
  *   fill(clr);
- *   rect(rectX, 40, 20,20);
+ *   rect(rectX, 40, 20, 20);
  * }
- * </div></code>
+ * </code></div>
  *
  * @alt
  * blue rect moves left to right, followed by red rect moving faster. Loops.
@@ -228,6 +230,7 @@ p5.prototype.cursor = function(type, x, y) {
  * @return {Number}       current frameRate
  */
 p5.prototype.frameRate = function(fps) {
+  p5._validateParameters('frameRate', arguments);
   if (typeof fps !== 'number' || fps < 0) {
     return this._frameRate;
   } else {
@@ -286,7 +289,6 @@ p5.prototype.setFrameRate = function(fps) {
 p5.prototype.noCursor = function() {
   this._curElement.elt.style.cursor = 'none';
 };
-
 
 /**
  * System variable that stores the width of the entire screen display. This
@@ -348,10 +350,10 @@ p5.prototype.windowWidth = getWindowWidth();
  * <div class="norender"><code>
  * createCanvas(windowWidth, windowHeight);
  * </code></div>
-*@alt
+ *@alt
  * no display.
  *
-*/
+ */
 p5.prototype.windowHeight = getWindowHeight();
 
 /**
@@ -367,7 +369,7 @@ p5.prototype.windowHeight = getWindowHeight();
  * }
  *
  * function draw() {
- *  background(0, 100, 200);
+ *   background(0, 100, 200);
  * }
  *
  * function windowResized() {
@@ -377,7 +379,7 @@ p5.prototype.windowHeight = getWindowHeight();
  * @alt
  * no display.
  */
-p5.prototype._onresize = function(e){
+p5.prototype._onresize = function(e) {
   this._setProperty('windowWidth', getWindowWidth());
   this._setProperty('windowHeight', getWindowHeight());
   var context = this._isGlobal ? window : this;
@@ -391,17 +393,21 @@ p5.prototype._onresize = function(e){
 };
 
 function getWindowWidth() {
-  return window.innerWidth ||
-         document.documentElement && document.documentElement.clientWidth ||
-         document.body && document.body.clientWidth ||
-         0;
+  return (
+    window.innerWidth ||
+    (document.documentElement && document.documentElement.clientWidth) ||
+    (document.body && document.body.clientWidth) ||
+    0
+  );
 }
 
 function getWindowHeight() {
-  return window.innerHeight ||
-         document.documentElement && document.documentElement.clientHeight ||
-         document.body && document.body.clientHeight ||
-         0;
+  return (
+    window.innerHeight ||
+    (document.documentElement && document.documentElement.clientHeight) ||
+    (document.body && document.body.clientHeight) ||
+    0
+  );
 }
 
 /**
@@ -460,13 +466,17 @@ p5.prototype.height = 0;
  *
  */
 p5.prototype.fullscreen = function(val) {
+  p5._validateParameters('fullscreen', arguments);
   // no arguments, return fullscreen or not
   if (typeof val === 'undefined') {
-    return document.fullscreenElement ||
-           document.webkitFullscreenElement ||
-           document.mozFullScreenElement ||
-           document.msFullscreenElement;
-  } else { // otherwise set to fullscreen or not
+    return (
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement
+    );
+  } else {
+    // otherwise set to fullscreen or not
     if (val) {
       launchFullscreen(document.documentElement);
     } else {
@@ -492,7 +502,7 @@ p5.prototype.fullscreen = function(val) {
  *   pixelDensity(1);
  *   createCanvas(100, 100);
  *   background(200);
- *   ellipse(width/2, height/2, 50, 50);
+ *   ellipse(width / 2, height / 2, 50, 50);
  * }
  * </code>
  * </div>
@@ -502,7 +512,7 @@ p5.prototype.fullscreen = function(val) {
  *   pixelDensity(3.0);
  *   createCanvas(100, 100);
  *   background(200);
- *   ellipse(width/2, height/2, 50, 50);
+ *   ellipse(width / 2, height / 2, 50, 50);
  * }
  * </code>
  * </div>
@@ -512,6 +522,7 @@ p5.prototype.fullscreen = function(val) {
  * sharp 50x50 white ellipse with black outline in center of canvas.
  */
 p5.prototype.pixelDensity = function(val) {
+  p5._validateParameters('pixelDensity', arguments);
   if (typeof val === 'number') {
     this._pixelDensity = val;
   } else {
@@ -533,7 +544,7 @@ p5.prototype.pixelDensity = function(val) {
  *   pixelDensity(density);
  *   createCanvas(100, 100);
  *   background(200);
- *   ellipse(width/2, height/2, 50, 50);
+ *   ellipse(width / 2, height / 2, 50, 50);
  * }
  * </code>
  * </div>
@@ -546,36 +557,36 @@ p5.prototype.displayDensity = function() {
 };
 
 function launchFullscreen(element) {
-  var enabled = document.fullscreenEnabled ||
-                document.webkitFullscreenEnabled ||
-                document.mozFullScreenEnabled ||
-                document.msFullscreenEnabled;
+  var enabled =
+    document.fullscreenEnabled ||
+    document.webkitFullscreenEnabled ||
+    document.mozFullScreenEnabled ||
+    document.msFullscreenEnabled;
   if (!enabled) {
     throw new Error('Fullscreen not enabled in this browser.');
   }
-  if(element.requestFullscreen) {
+  if (element.requestFullscreen) {
     element.requestFullscreen();
-  } else if(element.mozRequestFullScreen) {
+  } else if (element.mozRequestFullScreen) {
     element.mozRequestFullScreen();
-  } else if(element.webkitRequestFullscreen) {
+  } else if (element.webkitRequestFullscreen) {
     element.webkitRequestFullscreen();
-  } else if(element.msRequestFullscreen) {
+  } else if (element.msRequestFullscreen) {
     element.msRequestFullscreen();
   }
 }
 
 function exitFullscreen() {
-  if(document.exitFullscreen) {
+  if (document.exitFullscreen) {
     document.exitFullscreen();
-  } else if(document.mozCancelFullScreen) {
+  } else if (document.mozCancelFullScreen) {
     document.mozCancelFullScreen();
-  } else if(document.webkitExitFullscreen) {
+  } else if (document.webkitExitFullscreen) {
     document.webkitExitFullscreen();
   } else if (document.msExitFullscreen) {
     document.msExitFullscreen();
   }
 }
-
 
 /**
  * Gets the current URL.
@@ -595,7 +606,7 @@ function exitFullscreen() {
  *
  * function draw() {
  *   background(200);
- *   text(url, x, height/2);
+ *   text(url, x, height / 2);
  *   x--;
  * }
  * </code>
@@ -616,8 +627,8 @@ p5.prototype.getURL = function() {
  * <div class='norender'><code>
  * function setup() {
  *   var urlPath = getURLPath();
- *   for (var i=0; i&lt;urlPath.length; i++) {
- *     text(urlPath[i], 10, i*20+20);
+ *   for (var i = 0; i < urlPath.length; i++) {
+ *     text(urlPath[i], 10, i * 20 + 20);
  *   }
  * }
  * </code></div>
@@ -627,7 +638,9 @@ p5.prototype.getURL = function() {
  *
  */
 p5.prototype.getURLPath = function() {
-  return location.pathname.split('/').filter(function(v){return v!=='';});
+  return location.pathname.split('/').filter(function(v) {
+    return v !== '';
+  });
 };
 /**
  * Gets the current URL params as an Object.
@@ -653,12 +666,12 @@ p5.prototype.getURLPath = function() {
 p5.prototype.getURLParams = function() {
   var re = /[?&]([^&=]+)(?:[&=])([^&=]+)/gim;
   var m;
-  var v={};
+  var v = {};
   while ((m = re.exec(location.search)) != null) {
     if (m.index === re.lastIndex) {
       re.lastIndex++;
     }
-    v[m[1]]=m[2];
+    v[m[1]] = m[2];
   }
   return v;
 };

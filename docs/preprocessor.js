@@ -7,14 +7,24 @@ function smokeTestMethods(data) {
     if (classitem.itemtype === 'method') {
       new DocumentedMethod(classitem);
 
-      if (classitem.access !== 'private' &&
+      if (
+        classitem.access !== 'private' &&
         classitem.file.substr(0, 3) === 'src' &&
         classitem.name &&
-        !classitem.example) {
-        console.log(classitem.file + ':' + classitem.line +
-          ': ' + classitem.itemtype + ' ' +
-          classitem.class + '.' + classitem.name +
-          ' missing example');
+        !classitem.example
+      ) {
+        console.log(
+          classitem.file +
+            ':' +
+            classitem.line +
+            ': ' +
+            classitem.itemtype +
+            ' ' +
+            classitem.class +
+            '.' +
+            classitem.name +
+            ' missing example'
+        );
       }
     }
   });
@@ -24,22 +34,63 @@ function mergeOverloadedMethods(data) {
   var methodsByFullName = {};
   var paramsForOverloadedMethods = {};
 
-  data.classitems = data.classitems.filter(function(classitem) {
+  var consts = (data.consts = {});
 
-    if (classitem.access === "private") {
+  data.classitems = data.classitems.filter(function(classitem) {
+    if (classitem.access === 'private') {
       return false;
     }
+
+    var itemClass = data.classes[classitem.class];
+    if (!itemClass || itemClass.private) {
+      return false;
+    }
+
+    var methodConsts = {};
 
     var fullName, method;
 
     var assertEqual = function(a, b, msg) {
       if (a !== b) {
         throw new Error(
-          'for ' + fullName + '() defined in ' + classitem.file + ':' +
-          classitem.line + ', ' +
-          msg + ' (' + JSON.stringify(a) + ' !== ' + JSON.stringify(b) + ')'
+          'for ' +
+            fullName +
+            '() defined in ' +
+            classitem.file +
+            ':' +
+            classitem.line +
+            ', ' +
+            msg +
+            ' (' +
+            JSON.stringify(a) +
+            ' !== ' +
+            JSON.stringify(b) +
+            ')'
         );
       }
+    };
+
+    var extractConsts = function(params) {
+      params &&
+        params.forEach(function(param) {
+          if (param.type.split('|').indexOf('Constant') >= 0) {
+            var match;
+            if (classitem.name === 'endShape' && param.name === 'mode') {
+              match = 'CLOSE';
+            } else {
+              var constantRe = /either\s+(?:[A-Z0-9_]+\s*,?\s*(?:or)?\s*)+/g;
+              var execResult = constantRe.exec(param.description);
+              match = execResult && execResult[0];
+            }
+            if (match) {
+              var reConst = /[A-Z0-9_]+/g;
+              var matchConst;
+              while ((matchConst = reConst.exec(match)) !== null) {
+                methodConsts[matchConst] = true;
+              }
+            }
+          }
+        });
     };
 
     var processOverloadedParams = function(params) {
@@ -55,18 +106,29 @@ function mergeOverloadedMethods(data) {
         var origParam = paramNames[param.name];
 
         if (origParam) {
-          assertEqual(origParam.type, param.type,
-                      'types for param "' + param.name + '" must match ' +
-                      'across all overloads');
-          assertEqual(param.description, '',
-                      'description for param "' + param.name + '" should ' +
-                      'only be defined in its first use; subsequent ' +
-                      'overloads should leave it empty');
+          assertEqual(
+            origParam.type,
+            param.type,
+            'types for param "' +
+              param.name +
+              '" must match ' +
+              'across all overloads'
+          );
+          assertEqual(
+            param.description,
+            '',
+            'description for param "' +
+              param.name +
+              '" should ' +
+              'only be defined in its first use; subsequent ' +
+              'overloads should leave it empty'
+          );
         } else {
           paramNames[param.name] = param;
         }
       });
 
+      extractConsts(params);
       return params;
     };
 
@@ -78,31 +140,40 @@ function mergeOverloadedMethods(data) {
         // times in our index pages and such.
 
         method = methodsByFullName[fullName];
-		
-        assertEqual(method.file, classitem.file,
-                    'all overloads must be defined in the same file');
-        assertEqual(method.module, classitem.module,
-                    'all overloads must be defined in the same module');
-        assertEqual(method.submodule, classitem.submodule,
-                    'all overloads must be defined in the same submodule');
-        assertEqual(classitem.description || '', '',
-                    'additional overloads should have no description');
 
-        function makeOverload(method) {
+        assertEqual(
+          method.file,
+          classitem.file,
+          'all overloads must be defined in the same file'
+        );
+        assertEqual(
+          method.module,
+          classitem.module,
+          'all overloads must be defined in the same module'
+        );
+        assertEqual(
+          method.submodule,
+          classitem.submodule,
+          'all overloads must be defined in the same submodule'
+        );
+        assertEqual(
+          classitem.description || '',
+          '',
+          'additional overloads should have no description'
+        );
+
+        var makeOverload = function(method) {
           var overload = {
             line: method.line,
             params: processOverloadedParams(method.params || [])
           };
           // TODO: the doc renderer assumes (incorrectly) that
           //   these are the same for all overrides
-          if (method.static)
-            overload.static = method.static;
-          if (method.chainable)
-            overload.chainable = method.chainable;
-          if (method.return)
-            overload.return = method.return;
+          if (method.static) overload.static = method.static;
+          if (method.chainable) overload.chainable = method.chainable;
+          if (method.return) overload.return = method.return;
           return overload;
-        }
+        };
 
         if (!method.overloads) {
           method.overloads = [makeOverload(method)];
@@ -111,8 +182,13 @@ function mergeOverloadedMethods(data) {
         method.overloads.push(makeOverload(classitem));
         return false;
       } else {
+        extractConsts(classitem.params);
         methodsByFullName[fullName] = classitem;
       }
+
+      Object.keys(methodConsts).forEach(constName =>
+        (consts[constName] || (consts[constName] = [])).push(fullName)
+      );
     }
     return true;
   });
@@ -141,11 +217,15 @@ function renderDescriptionsAsMarkdown(data) {
 
 module.exports = function(data, options) {
   data.classitems
-	  .filter(ci => !ci.itemtype && (ci.params || ci.return) && ci.access !== 'private')
-    .forEach(ci => { console.error(ci.file + ":" + ci.line + ": unnamed public member"); });
+    .filter(
+      ci => !ci.itemtype && (ci.params || ci.return) && ci.access !== 'private'
+    )
+    .forEach(ci => {
+      console.error(ci.file + ':' + ci.line + ': unnamed public member');
+    });
 
   Object.keys(data.classes)
-    .filter(k => data.classes[k].access === "private")
+    .filter(k => data.classes[k].access === 'private')
     .forEach(k => delete data.classes[k]);
 
   renderDescriptionsAsMarkdown(data);
@@ -156,17 +236,13 @@ module.exports = function(data, options) {
 module.exports.mergeOverloadedMethods = mergeOverloadedMethods;
 module.exports.renderDescriptionsAsMarkdown = renderDescriptionsAsMarkdown;
 
-
-
 module.exports.register = function(Handlebars, options) {
-
   Handlebars.registerHelper('root', function(context, options) {
     // if (this.language === 'en') {
     //   return '';
     // } else {
     //   return '/'+this.language;
     // }
-    return window.location.pathname
+    return window.location.pathname;
   });
 };
-

@@ -25,8 +25,8 @@ require('../core/error_helpers');
  * @example
  * <div>
  * <code>
- * var array = ["Hello", "world!"]
- * var separator = " "
+ * var array = ['Hello', 'world!'];
+ * var separator = ' ';
  * var message = join(array, separator);
  * text(message, 5, 50);
  * </code>
@@ -66,10 +66,10 @@ p5.prototype.join = function(list, separator) {
  * @example
  * <div>
  * <code>
- * var string = "Hello p5js*!"
- * var regexp = "p5js\\*"
- * var match = match(string, regexp);
- * text(match, 5, 50);
+ * var string = 'Hello p5js*!';
+ * var regexp = 'p5js\\*';
+ * var m = match(string, regexp);
+ * text(m, 5, 50);
  * </code>
  * </div>
  *
@@ -77,7 +77,7 @@ p5.prototype.join = function(list, separator) {
  * "p5js*" displayed middle left of canvas.
  *
  */
-p5.prototype.match =  function(str, reg) {
+p5.prototype.match = function(str, reg) {
   p5._validateParameters('match', arguments);
   return str.match(reg);
 };
@@ -108,8 +108,8 @@ p5.prototype.match =  function(str, reg) {
  * @example
  * <div class="norender">
  * <code>
- * var string = "Hello p5js*! Hello world!"
- * var regexp = "Hello"
+ * var string = 'Hello p5js*! Hello world!';
+ * var regexp = 'Hello';
  * matchAll(string, regexp);
  * </code>
  * </div>
@@ -137,9 +137,9 @@ p5.prototype.matchAll = function(str, reg) {
  *
  * @method nf
  * @param {Number|String}       num      the Number to format
- * @param {Number|String}       [left]   number of digits to the left of the
+ * @param {Integer|String}      [left]   number of digits to the left of the
  *                                decimal point
- * @param {Number|String}       [right]  number of digits to the right of the
+ * @param {Integer|String}      [right]  number of digits to the right of the
  *                                decimal point
  * @return {String}               formatted String
  *
@@ -174,67 +174,59 @@ p5.prototype.matchAll = function(str, reg) {
 /**
  * @method nf
  * @param {Array}        nums     the Numbers to format
- * @param {Number|String}       [left]
- * @param {Number|String}       [right]
- * @return {Array}                formatted Strings\
+ * @param {Integer|String}      [left]
+ * @param {Integer|String}      [right]
+ * @return {String[]}                formatted Strings
  */
-p5.prototype.nf = function () {
+p5.prototype.nf = function(nums, left, right) {
   p5._validateParameters('nf', arguments);
-  if (arguments[0] instanceof Array) {
-    var a = arguments[1];
-    var b = arguments[2];
-    return arguments[0].map(function (x) {
-      return doNf(x, a, b);
+  if (nums instanceof Array) {
+    return nums.map(function(x) {
+      return doNf(x, left, right);
     });
-  }
-  else{
-    var typeOfFirst = Object.prototype.toString.call(arguments[0]);
-    if(typeOfFirst === '[object Arguments]'){
-      if(arguments[0].length===3){
-        return this.nf(arguments[0][0],arguments[0][1],arguments[0][2]);
+  } else {
+    var typeOfFirst = Object.prototype.toString.call(nums);
+    if (typeOfFirst === '[object Arguments]') {
+      if (nums.length === 3) {
+        return this.nf(nums[0], nums[1], nums[2]);
+      } else if (nums.length === 2) {
+        return this.nf(nums[0], nums[1]);
+      } else {
+        return this.nf(nums[0]);
       }
-      else if(arguments[0].length===2){
-        return this.nf(arguments[0][0],arguments[0][1]);
-      }
-      else{
-        return this.nf(arguments[0][0]);
-      }
-    }
-    else {
-      return doNf.apply(this, arguments);
+    } else {
+      return doNf(nums, left, right);
     }
   }
 };
 
-function doNf() {
-  var num = arguments[0];
+function doNf(num, left, right) {
   var neg = num < 0;
   var n = neg ? num.toString().substring(1) : num.toString();
   var decimalInd = n.indexOf('.');
   var intPart = decimalInd !== -1 ? n.substring(0, decimalInd) : n;
   var decPart = decimalInd !== -1 ? n.substring(decimalInd + 1) : '';
   var str = neg ? '-' : '';
-  if (arguments.length === 3) {
+  if (typeof right !== 'undefined') {
     var decimal = '';
-    if(decimalInd !== -1 || arguments[2] - decPart.length > 0){
+    if (decimalInd !== -1 || right - decPart.length > 0) {
       decimal = '.';
     }
-    if (decPart.length > arguments[2]) {
-      decPart = decPart.substring(0, arguments[2]);
+    if (decPart.length > right) {
+      decPart = decPart.substring(0, right);
     }
-    for (var i = 0; i < arguments[1] - intPart.length; i++) {
+    for (var i = 0; i < left - intPart.length; i++) {
       str += '0';
     }
     str += intPart;
     str += decimal;
     str += decPart;
-    for (var j = 0; j < arguments[2] - decPart.length; j++) {
+    for (var j = 0; j < right - decPart.length; j++) {
       str += '0';
     }
     return str;
-  }
-  else {
-    for (var k = 0; k < Math.max(arguments[1] - intPart.length, 0); k++) {
+  } else {
+    for (var k = 0; k < Math.max(left - intPart.length, 0); k++) {
       str += '0';
     }
     str += n;
@@ -250,7 +242,7 @@ function doNf() {
  *
  * @method nfc
  * @param  {Number|String}   num     the Number to format
- * @param  {Number|String}   [right] number of digits to the right of the
+ * @param  {Integer|String}  [right] number of digits to the right of the
  *                                  decimal point
  * @return {String}           formatted String
  *
@@ -260,15 +252,15 @@ function doNf() {
  * function setup() {
  *   background(200);
  *   var num = 11253106.115;
- *   var numArr = new Array(1,1,2);
+ *   var numArr = [1, 1, 2];
  *
  *   noStroke();
  *   fill(0);
  *   textSize(12);
  *
  *   // Draw formatted numbers
- *   text(nfc(num, 4, 2), 10, 30);
- *   text(nfc(numArr, 2, 1), 10, 80);
+ *   text(nfc(num, 4), 10, 30);
+ *   text(nfc(numArr, 2), 10, 80);
  *
  *   // Draw dividing line
  *   stroke(120);
@@ -283,39 +275,36 @@ function doNf() {
 /**
  * @method nfc
  * @param  {Array}    nums     the Numbers to format
- * @param  {Number|String}   [right]
- * @return {Array}           formatted Strings
+ * @param  {Integer|String}  [right]
+ * @return {String[]}           formatted Strings
  */
-p5.prototype.nfc = function () {
+p5.prototype.nfc = function(num, right) {
   p5._validateParameters('nfc', arguments);
-  if (arguments[0] instanceof Array) {
-    var a = arguments[1];
-    return arguments[0].map(function (x) {
-      return doNfc(x, a);
+  if (num instanceof Array) {
+    return num.map(function(x) {
+      return doNfc(x, right);
     });
   } else {
-    return doNfc.apply(this, arguments);
+    return doNfc(num, right);
   }
 };
-function doNfc() {
-  var num = arguments[0].toString();
+function doNfc(num, right) {
+  num = num.toString();
   var dec = num.indexOf('.');
   var rem = dec !== -1 ? num.substring(dec) : '';
   var n = dec !== -1 ? num.substring(0, dec) : num;
   n = n.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  if (arguments[1] === 0) {
+  if (right === 0) {
     rem = '';
-  }
-  else if(arguments[1] !== undefined){
-    if(arguments[1] > rem.length){
-      rem+= dec === -1 ? '.' : '';
-      var len = arguments[1] - rem.length + 1;
-      for(var i =0; i< len; i++){
+  } else if (typeof right !== 'undefined') {
+    if (right > rem.length) {
+      rem += dec === -1 ? '.' : '';
+      var len = right - rem.length + 1;
+      for (var i = 0; i < len; i++) {
         rem += '0';
       }
-    }
-    else{
-      rem = rem.substring(0, arguments[1] + 1);
+    } else {
+      rem = rem.substring(0, right + 1);
     }
   }
   return n + rem;
@@ -330,9 +319,9 @@ function doNfc() {
  *
  * @method nfp
  * @param {Number} num      the Number to format
- * @param {Number}       [left]   number of digits to the left of the decimal
+ * @param {Integer}      [left]   number of digits to the left of the decimal
  *                                point
- * @param {Number}       [right]  number of digits to the right of the
+ * @param {Integer}      [right]  number of digits to the right of the
  *                                decimal point
  * @return {String}         formatted String
  *
@@ -365,8 +354,8 @@ function doNfc() {
 /**
  * @method nfp
  * @param {Number[]} nums      the Numbers to format
- * @param {Number}       [left]
- * @param {Number}       [right]
+ * @param {Integer}      [left]
+ * @param {Integer}      [right]
  * @return {String[]}         formatted Strings
  */
 p5.prototype.nfp = function() {
@@ -379,11 +368,8 @@ p5.prototype.nfp = function() {
   }
 };
 
-function addNfp() {
-  return (
-    parseFloat(arguments[0]) > 0) ?
-    '+'+arguments[0].toString() :
-    arguments[0].toString();
+function addNfp(num) {
+  return parseFloat(num) > 0 ? '+' + num.toString() : num.toString();
 }
 
 /**
@@ -395,9 +381,9 @@ function addNfp() {
  *
  * @method nfs
  * @param {Number}       num      the Number to format
- * @param {Number}       [left]   number of digits to the left of the decimal
+ * @param {Integer}      [left]   number of digits to the left of the decimal
  *                                point
- * @param {Number}       [right]  number of digits to the right of the
+ * @param {Integer}      [right]  number of digits to the right of the
  *                                decimal point
  * @return {String}         formatted String
  *
@@ -430,9 +416,9 @@ function addNfp() {
 /**
  * @method nfs
  * @param {Array}        nums     the Numbers to format
- * @param {Number}       [left]
- * @param {Number}       [right]
- * @return {Array}         formatted Strings
+ * @param {Integer}      [left]
+ * @param {Integer}      [right]
+ * @return {String[]}         formatted Strings
  */
 p5.prototype.nfs = function() {
   p5._validateParameters('nfs', arguments);
@@ -444,11 +430,8 @@ p5.prototype.nfs = function() {
   }
 };
 
-function addNfs() {
-  return (
-    parseFloat(arguments[0]) > 0) ?
-    ' '+arguments[0].toString() :
-    arguments[0].toString();
+function addNfs(num) {
+  return parseFloat(num) > 0 ? ' ' + num.toString() : num.toString();
 }
 
 /**
@@ -468,8 +451,8 @@ function addNfs() {
  * @example
  * <div>
  * <code>
- * var names = "Pat,Xio,Alex"
- * var splitString = split(names, ",");
+ * var names = 'Pat,Xio,Alex';
+ * var splitString = split(names, ',');
  * text(splitString[0], 5, 30);
  * text(splitString[1], 5, 50);
  * text(splitString[2], 5, 70);
@@ -503,31 +486,31 @@ p5.prototype.split = function(str, delim) {
  * <div class = "norender">
  * <code>
  * function setup() {
- *   var myStr = "Mango, Banana, Lime";
- *   var myStrArr = splitTokens(myStr, ",");
+ *   var myStr = 'Mango, Banana, Lime';
+ *   var myStrArr = splitTokens(myStr, ',');
  *
  *   print(myStrArr); // prints : ["Mango"," Banana"," Lime"]
  * }
  * </code>
  * </div>
  */
-p5.prototype.splitTokens = function() {
+p5.prototype.splitTokens = function(value, delims) {
   p5._validateParameters('splitTokens', arguments);
-  var d,sqo,sqc,str;
-  str = arguments[1];
-  if (arguments.length > 1) {
-    sqc = /\]/g.exec(str);
-    sqo = /\[/g.exec(str);
-    if ( sqo && sqc ) {
-      str = str.slice(0, sqc.index) + str.slice(sqc.index+1);
+  var d;
+  if (typeof delims !== 'undefined') {
+    var str = delims;
+    var sqc = /\]/g.exec(str);
+    var sqo = /\[/g.exec(str);
+    if (sqo && sqc) {
+      str = str.slice(0, sqc.index) + str.slice(sqc.index + 1);
       sqo = /\[/g.exec(str);
-      str = str.slice(0, sqo.index) + str.slice(sqo.index+1);
-      d = new RegExp('[\\['+str+'\\]]','g');
-    } else if ( sqc ) {
-      str = str.slice(0, sqc.index) + str.slice(sqc.index+1);
+      str = str.slice(0, sqo.index) + str.slice(sqo.index + 1);
+      d = new RegExp('[\\[' + str + '\\]]', 'g');
+    } else if (sqc) {
+      str = str.slice(0, sqc.index) + str.slice(sqc.index + 1);
       d = new RegExp('[' + str + '\\]]', 'g');
-    } else if(sqo) {
-      str = str.slice(0, sqo.index) + str.slice(sqo.index+1);
+    } else if (sqo) {
+      str = str.slice(0, sqo.index) + str.slice(sqo.index + 1);
       d = new RegExp('[' + str + '\\[]', 'g');
     } else {
       d = new RegExp('[' + str + ']', 'g');
@@ -535,7 +518,9 @@ p5.prototype.splitTokens = function() {
   } else {
     d = /\s/g;
   }
-  return arguments[0].split(d).filter(function(n){return n;});
+  return value.split(d).filter(function(n) {
+    return n;
+  });
 };
 
 /**
@@ -550,8 +535,8 @@ p5.prototype.splitTokens = function() {
  * @example
  * <div>
  * <code>
- * var string = trim("  No new lines\n   ");
- * text(string +" here", 2, 50);
+ * var string = trim('  No new lines\n   ');
+ * text(string + ' here', 2, 50);
  * </code>
  * </div>
  *
@@ -561,7 +546,7 @@ p5.prototype.splitTokens = function() {
 /**
  * @method trim
  * @param  {Array} strs an Array of Strings to be trimmed
- * @return {Array}       an Array of trimmed Strings
+ * @return {String[]}   an Array of trimmed Strings
  */
 p5.prototype.trim = function(str) {
   p5._validateParameters('trim', arguments);

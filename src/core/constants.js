@@ -4,10 +4,11 @@
  * @for p5
  */
 
+'use strict';
+
 var PI = Math.PI;
 
 module.exports = {
-
   // GRAPHICS RENDERER
   /**
    * @property {String} P2D
@@ -126,13 +127,31 @@ module.exports = {
    */
   TWO_PI: PI * 2,
   /**
+   * Constant to be used with angleMode() function, to set the mode which
+   * p5.js interprates and calculates angles (either DEGREES or RADIANS).
    * @property {String} DEGREES
    * @final
+   *
+   * @example
+   * <div class='norender'><code>
+   * function setup() {
+   *   angleMode(DEGREES);
+   * }
+   * </code></div>
    */
   DEGREES: 'degrees',
   /**
+   * Constant to be used with angleMode() function, to set the mode which
+   * p5.js interprates and calculates angles (either RADIANS or DEGREES).
    * @property {String} RADIANS
    * @final
+   *
+   * @example
+   * <div class='norender'><code>
+   * function setup() {
+   *   angleMode(RADIANS);
+   * }
+   * </code></div>
    */
   RADIANS: 'radians',
   DEG_TO_RAD: PI / 180.0,
@@ -493,5 +512,4 @@ module.exports = {
   // DEFAULTS
   _DEFAULT_STROKE: '#000000',
   _DEFAULT_FILL: '#FFFFFF'
-
 };

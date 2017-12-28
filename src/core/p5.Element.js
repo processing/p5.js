@@ -4,6 +4,8 @@
  * @for p5.Element
  */
 
+'use strict';
+
 var p5 = require('./core');
 
 /**
@@ -33,7 +35,7 @@ p5.Element = function(elt, pInst) {
   this._events = {};
   this.width = this.elt.offsetWidth;
   this.height = this.elt.offsetHeight;
-  this.name = 'p5.Element';   // for friendly debugger system
+  this.name = 'p5.Element'; // for friendly debugger system
 };
 
 /**
@@ -53,10 +55,11 @@ p5.Element = function(elt, pInst) {
  * @example
  * <div class="norender"><code>
  * // in the html file:
- * &lt;div id="myContainer">&lt;/div>
+ * // &lt;div id="myContainer">&lt;/div>
+ *
  * // in the js file:
  * var cnv = createCanvas(100, 100);
- * cnv.parent("myContainer");
+ * cnv.parent('myContainer');
  * </code></div>
  * <div class='norender'><code>
  * var div0 = createDiv('this is the parent');
@@ -84,20 +87,20 @@ p5.Element = function(elt, pInst) {
  *
  */
 p5.Element.prototype.parent = function(p) {
-  if (arguments.length === 0){
+  if (typeof p === 'undefined') {
     return this.elt.parentNode;
-  } else {
-    if (typeof p === 'string') {
-      if (p[0] === '#') {
-        p = p.substring(1);
-      }
-      p = document.getElementById(p);
-    } else if (p instanceof p5.Element) {
-      p = p.elt;
-    }
-    p.appendChild(this.elt);
-    return this;
   }
+
+  if (typeof p === 'string') {
+    if (p[0] === '#') {
+      p = p.substring(1);
+    }
+    p = document.getElementById(p);
+  } else if (p instanceof p5.Element) {
+    p = p.elt;
+  }
+  p.appendChild(this.elt);
+  return this;
 };
 
 /**
@@ -115,7 +118,7 @@ p5.Element.prototype.parent = function(p) {
  *   var cnv = createCanvas(100, 100);
  *   // Assigns a CSS selector ID to
  *   // the canvas element.
- *   cnv.id("mycanvas");
+ *   cnv.id('mycanvas');
  * }
  * </code></div>
  *
@@ -127,14 +130,14 @@ p5.Element.prototype.parent = function(p) {
  * @return {String} the id of the element
  */
 p5.Element.prototype.id = function(id) {
-  if (arguments.length === 0) {
+  if (typeof id === 'undefined') {
     return this.elt.id;
-  } else {
-    this.elt.id = id;
-    this.width = this.elt.offsetWidth;
-    this.height = this.elt.offsetHeight;
-    return this;
   }
+
+  this.elt.id = id;
+  this.width = this.elt.offsetWidth;
+  this.height = this.elt.offsetHeight;
+  return this;
 };
 
 /**
@@ -151,12 +154,12 @@ p5.Element.prototype.id = function(id) {
  * @return {String} the class of the element
  */
 p5.Element.prototype.class = function(c) {
-  if (arguments.length === 0) {
+  if (typeof c === 'undefined') {
     return this.elt.className;
-  } else {
-    this.elt.className = c;
-    return this;
   }
+
+  this.elt.className = c;
+  return this;
 };
 
 /**
@@ -178,14 +181,14 @@ p5.Element.prototype.class = function(c) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mousePressed(changeGray); // attach listener for
- *                                 // canvas click only
+ *   // canvas click only
  *   d = 10;
  *   g = 100;
  * }
  *
  * function draw() {
  *   background(g);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires with any click anywhere
@@ -203,7 +206,7 @@ p5.Element.prototype.class = function(c) {
  * no display.
  *
  */
-p5.Element.prototype.mousePressed = function (fxn) {
+p5.Element.prototype.mousePressed = function(fxn) {
   adjustListener('mousedown', fxn, this);
   adjustListener('touchstart', fxn, this);
   return this;
@@ -228,14 +231,14 @@ p5.Element.prototype.mousePressed = function (fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.doubleClicked(changeGray); // attach listener for
- *                                  // canvas double click only
+ *   // canvas double click only
  *   d = 10;
  *   g = 100;
  * }
  *
  * function draw() {
  *   background(g);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires with any double click anywhere
@@ -253,11 +256,10 @@ p5.Element.prototype.mousePressed = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.doubleClicked = function (fxn) {
+p5.Element.prototype.doubleClicked = function(fxn) {
   adjustListener('dblclick', fxn, this);
   return this;
 };
-
 
 /**
  * The .mouseWheel() function is called once after every time a
@@ -288,14 +290,14 @@ p5.Element.prototype.doubleClicked = function (fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseWheel(changeSize); // attach listener for
- *                               // activity on canvas only
+ *   // activity on canvas only
  *   d = 10;
  *   g = 100;
  * }
  *
  * function draw() {
  *   background(g);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires with mousewheel movement
@@ -320,7 +322,7 @@ p5.Element.prototype.doubleClicked = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.mouseWheel = function (fxn) {
+p5.Element.prototype.mouseWheel = function(fxn) {
   adjustListener('wheel', fxn, this);
   return this;
 };
@@ -344,14 +346,14 @@ p5.Element.prototype.mouseWheel = function (fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseReleased(changeGray); // attach listener for
- *                                  // activity on canvas only
+ *   // activity on canvas only
  *   d = 10;
  *   g = 100;
  * }
  *
  * function draw() {
  *   background(g);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires after the mouse has been
@@ -372,12 +374,11 @@ p5.Element.prototype.mouseWheel = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.mouseReleased = function (fxn) {
+p5.Element.prototype.mouseReleased = function(fxn) {
   adjustListener('mouseup', fxn, this);
   adjustListener('touchend', fxn, this);
   return this;
 };
-
 
 /**
  * The .mouseClicked() function is called once after a mouse button is
@@ -400,14 +401,14 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseClicked(changeGray); // attach listener for
- *                                 // activity on canvas only
+ *   // activity on canvas only
  *   d = 10;
  *   g = 100;
  * }
  *
  * function draw() {
  *   background(g);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires after the mouse has been
@@ -428,7 +429,7 @@ p5.Element.prototype.mouseReleased = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.mouseClicked = function (fxn) {
+p5.Element.prototype.mouseClicked = function(fxn) {
   adjustListener('click', fxn, this);
   return this;
 };
@@ -452,7 +453,7 @@ p5.Element.prototype.mouseClicked = function (fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseMoved(changeSize); // attach listener for
- *                               // activity on canvas only
+ *   // activity on canvas only
  *   d = 10;
  *   g = 100;
  * }
@@ -460,7 +461,7 @@ p5.Element.prototype.mouseClicked = function (fxn) {
  * function draw() {
  *   background(g);
  *   fill(200);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires when mouse moves anywhere on
@@ -486,7 +487,7 @@ p5.Element.prototype.mouseClicked = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.mouseMoved = function (fxn) {
+p5.Element.prototype.mouseMoved = function(fxn) {
   adjustListener('mousemove', fxn, this);
   adjustListener('touchmove', fxn, this);
   return this;
@@ -507,7 +508,6 @@ p5.Element.prototype.mouseMoved = function (fxn) {
  * <div class='norender'><code>
  * var cnv;
  * var d;
- * var g;
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseOver(changeGray);
@@ -515,7 +515,7 @@ p5.Element.prototype.mouseMoved = function (fxn) {
  * }
  *
  * function draw() {
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * function changeGray() {
@@ -531,11 +531,10 @@ p5.Element.prototype.mouseMoved = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.mouseOver = function (fxn) {
+p5.Element.prototype.mouseOver = function(fxn) {
   adjustListener('mouseover', fxn, this);
   return this;
 };
-
 
 /**
  * The .changed() function is called when the value of an
@@ -566,7 +565,7 @@ p5.Element.prototype.mouseOver = function (fxn) {
  * function mySelectEvent() {
  *   var item = sel.value();
  *   background(200);
- *   text("it's a "+item+"!", 50, 50);
+ *   text("it's a " + item + '!', 50, 50);
  * }
  * </code></div>
  * <div><code>
@@ -574,7 +573,7 @@ p5.Element.prototype.mouseOver = function (fxn) {
  * var cnv;
  *
  * function setup() {
- *   checkbox = createCheckbox(" fill");
+ *   checkbox = createCheckbox(' fill');
  *   checkbox.changed(changeFill);
  *   cnv = createCanvas(100, 100);
  *   cnv.position(0, 30);
@@ -599,7 +598,7 @@ p5.Element.prototype.mouseOver = function (fxn) {
  * dropdown: pear, kiwi, grape. When selected text "its a" + selection shown.
  *
  */
-p5.Element.prototype.changed = function (fxn) {
+p5.Element.prototype.changed = function(fxn) {
   adjustListener('change', fxn, this);
   return this;
 };
@@ -634,7 +633,7 @@ p5.Element.prototype.changed = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.input = function (fxn) {
+p5.Element.prototype.input = function(fxn) {
   adjustListener('input', fxn, this);
   return this;
 };
@@ -654,7 +653,6 @@ p5.Element.prototype.input = function (fxn) {
  * <div class='norender'><code>
  * var cnv;
  * var d;
- * var g;
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.mouseOut(changeGray);
@@ -662,7 +660,7 @@ p5.Element.prototype.input = function (fxn) {
  * }
  *
  * function draw() {
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * function changeGray() {
@@ -677,7 +675,7 @@ p5.Element.prototype.input = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.mouseOut = function (fxn) {
+p5.Element.prototype.mouseOut = function(fxn) {
   adjustListener('mouseout', fxn, this);
   return this;
 };
@@ -700,14 +698,14 @@ p5.Element.prototype.mouseOut = function (fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.touchStarted(changeGray); // attach listener for
- *                                 // canvas click only
+ *   // canvas click only
  *   d = 10;
  *   g = 100;
  * }
  *
  * function draw() {
  *   background(g);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires with any touch anywhere
@@ -725,7 +723,7 @@ p5.Element.prototype.mouseOut = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.touchStarted = function (fxn) {
+p5.Element.prototype.touchStarted = function(fxn) {
   adjustListener('touchstart', fxn, this);
   adjustListener('mousedown', fxn, this);
   return this;
@@ -748,7 +746,7 @@ p5.Element.prototype.touchStarted = function (fxn) {
  * function setup() {
  *   cnv = createCanvas(100, 100);
  *   cnv.touchMoved(changeGray); // attach listener for
- *                               // canvas click only
+ *   // canvas click only
  *   g = 100;
  * }
  *
@@ -766,7 +764,7 @@ p5.Element.prototype.touchStarted = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.touchMoved = function (fxn) {
+p5.Element.prototype.touchMoved = function(fxn) {
   adjustListener('touchmove', fxn, this);
   adjustListener('mousemove', fxn, this);
   return this;
@@ -789,15 +787,15 @@ p5.Element.prototype.touchMoved = function (fxn) {
  * var g;
  * function setup() {
  *   cnv = createCanvas(100, 100);
- *   cnv.touchEnded(changeGray);   // attach listener for
- *                                 // canvas click only
+ *   cnv.touchEnded(changeGray); // attach listener for
+ *   // canvas click only
  *   d = 10;
  *   g = 100;
  * }
  *
  * function draw() {
  *   background(g);
- *   ellipse(width/2, height/2, d, d);
+ *   ellipse(width / 2, height / 2, d, d);
  * }
  *
  * // this function fires with any touch anywhere
@@ -816,13 +814,11 @@ p5.Element.prototype.touchMoved = function (fxn) {
  * no display.
  *
  */
-p5.Element.prototype.touchEnded = function (fxn) {
+p5.Element.prototype.touchEnded = function(fxn) {
   adjustListener('touchend', fxn, this);
   adjustListener('mouseup', fxn, this);
   return this;
 };
-
-
 
 /**
  * The .dragOver() function is called once after every time a
@@ -843,7 +839,7 @@ p5.Element.prototype.touchEnded = function (fxn) {
  *   var c = createCanvas(100, 100);
  *   background(200);
  *   textAlign(CENTER);
- *   text('Drag file', width/2, height/2);
+ *   text('Drag file', width / 2, height / 2);
  *   c.dragOver(dragOverCallback);
  * }
  *
@@ -851,13 +847,13 @@ p5.Element.prototype.touchEnded = function (fxn) {
  * // a file is dragged over the canvas
  * function dragOverCallback() {
  *   background(240);
- *   text('Dragged over', width/2, height/2);
+ *   text('Dragged over', width / 2, height / 2);
  * }
  * </code></div>
  * @alt
  * nothing displayed
  */
-p5.Element.prototype.dragOver = function (fxn) {
+p5.Element.prototype.dragOver = function(fxn) {
   adjustListener('dragover', fxn, this);
   return this;
 };
@@ -881,7 +877,7 @@ p5.Element.prototype.dragOver = function (fxn) {
  *   var c = createCanvas(100, 100);
  *   background(200);
  *   textAlign(CENTER);
- *   text('Drag file', width/2, height/2);
+ *   text('Drag file', width / 2, height / 2);
  *   c.dragLeave(dragLeaveCallback);
  * }
  *
@@ -889,13 +885,13 @@ p5.Element.prototype.dragOver = function (fxn) {
  * // a file is dragged out of the canvas
  * function dragLeaveCallback() {
  *   background(240);
- *   text('Dragged off', width/2, height/2);
+ *   text('Dragged off', width / 2, height / 2);
  * }
  * </code></div>
  * @alt
  * nothing displayed
  */
-p5.Element.prototype.dragLeave = function (fxn) {
+p5.Element.prototype.dragLeave = function(fxn) {
   adjustListener('dragleave', fxn, this);
   return this;
 };
@@ -917,7 +913,7 @@ p5.Element.prototype.dragLeave = function (fxn) {
  *   var c = createCanvas(100, 100);
  *   background(200);
  *   textAlign(CENTER);
- *   text('drop image', width/2, height/2);
+ *   text('drop image', width / 2, height / 2);
  *   c.drop(gotFile);
  * }
  *
@@ -932,7 +928,7 @@ p5.Element.prototype.dragLeave = function (fxn) {
  * Canvas turns into whatever image is dragged/dropped onto it.
  *
  */
-p5.Element.prototype.drop = function (callback, fxn) {
+p5.Element.prototype.drop = function(callback, fxn) {
   // Make a file loader callback and trigger user's callback
   function makeLoader(theFile) {
     // Making a p5.File object
@@ -945,50 +941,59 @@ p5.Element.prototype.drop = function (callback, fxn) {
 
   // Is the file stuff supported?
   if (window.File && window.FileReader && window.FileList && window.Blob) {
-
     // If you want to be able to drop you've got to turn off
     // a lot of default behavior
-    attachListener('dragover',function(evt) {
-      evt.stopPropagation();
-      evt.preventDefault();
-    },this);
+    attachListener(
+      'dragover',
+      function(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+      },
+      this
+    );
 
     // If this is a drag area we need to turn off the default behavior
-    attachListener('dragleave',function(evt) {
-      evt.stopPropagation();
-      evt.preventDefault();
-    },this);
+    attachListener(
+      'dragleave',
+      function(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+      },
+      this
+    );
 
     // If just one argument it's the callback for the files
-    if (arguments.length > 1) {
+    if (typeof fxn !== 'undefined') {
       attachListener('drop', fxn, this);
     }
 
     // Deal with the files
-    attachListener('drop', function(evt) {
+    attachListener(
+      'drop',
+      function(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
 
-      evt.stopPropagation();
-      evt.preventDefault();
+        // A FileList
+        var files = evt.dataTransfer.files;
 
-      // A FileList
-      var files = evt.dataTransfer.files;
+        // Load each one and trigger the callback
+        for (var i = 0; i < files.length; i++) {
+          var f = files[i];
+          var reader = new FileReader();
+          reader.onload = makeLoader(f);
 
-      // Load each one and trigger the callback
-      for (var i = 0; i < files.length; i++) {
-        var f = files[i];
-        var reader = new FileReader();
-        reader.onload = makeLoader(f);
-
-
-        // Text or data?
-        // This should likely be improved
-        if (f.type.indexOf('text') > -1) {
-          reader.readAsText(f);
-        } else {
-          reader.readAsDataURL(f);
+          // Text or data?
+          // This should likely be improved
+          if (f.type.indexOf('text') > -1) {
+            reader.readAsText(f);
+          } else {
+            reader.readAsDataURL(f);
+          }
         }
-      }
-    }, this);
+      },
+      this
+    );
   } else {
     console.log('The File APIs are not fully supported in this browser.');
   }
@@ -1000,8 +1005,7 @@ p5.Element.prototype.drop = function (callback, fxn) {
 function adjustListener(ev, fxn, ctx) {
   if (fxn === false) {
     detachListener(ev, ctx);
-  }
-  else {
+  } else {
     attachListener(ev, fxn, ctx);
   }
   return this;
@@ -1031,9 +1035,8 @@ function detachListener(ev, ctx) {
  * Helper fxn for sharing pixel methods
  *
  */
-p5.Element.prototype._setProperty = function (prop, value) {
+p5.Element.prototype._setProperty = function(prop, value) {
   this[prop] = value;
 };
-
 
 module.exports = p5.Element;

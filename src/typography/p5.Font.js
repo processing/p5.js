@@ -25,7 +25,6 @@ var constants = require('../core/constants');
  * @param {p5} [pInst] pointer to p5 instance
  */
 p5.Font = function(p) {
-
   this.parent = p;
 
   this.cache = {};
@@ -35,11 +34,10 @@ p5.Font = function(p) {
    * @property font
    */
   this.font = undefined;
-  this.name = 'p5.Font';   // for friendly debugger system
+  this.name = 'p5.Font'; // for friendly debugger system
 };
 
 p5.Font.prototype.list = function() {
-
   // TODO
   throw 'not yet implemented';
 };
@@ -63,22 +61,22 @@ p5.Font.prototype.list = function() {
  * var font;
  * var textString = 'Lorem ipsum dolor sit amet.';
  * function preload() {
- *    font = loadFont('./assets/Regular.otf');
- * };
+ *   font = loadFont('./assets/Regular.otf');
+ * }
  * function setup() {
- *    background(210);
+ *   background(210);
  *
- *    var bbox = font.textBounds(textString, 10, 30, 12);
- *    fill(255);
- *    stroke(0);
- *    rect(bbox.x, bbox.y, bbox.w, bbox.h);
- *    fill(0);
- *    noStroke();
+ *   var bbox = font.textBounds(textString, 10, 30, 12);
+ *   fill(255);
+ *   stroke(0);
+ *   rect(bbox.x, bbox.y, bbox.w, bbox.h);
+ *   fill(0);
+ *   noStroke();
  *
- *    textFont(font);
- *    textSize(12);
- *    text(textString, 10, 30);
- * };
+ *   textFont(font);
+ *   textSize(12);
+ *   text(textString, 10, 30);
+ * }
  * </code>
  * </div>
  *
@@ -87,7 +85,6 @@ p5.Font.prototype.list = function() {
  *
  */
 p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
-
   x = x !== undefined ? x : 0;
   y = y !== undefined ? y : 0;
   fontSize = fontSize || this.parent._renderer._textSize;
@@ -95,28 +92,36 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
   // Check cache for existing bounds. Take into consideration the text alignment
   // settings. Default alignment should match opentype's origin: left-aligned &
   // alphabetic baseline.
-  var p = (options && options.renderer && options.renderer._pInst) ||
-    this.parent, ctx = p._renderer.drawingContext,
+  var p =
+      (options && options.renderer && options.renderer._pInst) || this.parent,
+    ctx = p._renderer.drawingContext,
     alignment = ctx.textAlign || constants.LEFT,
     baseline = ctx.textBaseline || constants.BASELINE,
     key = cacheKey('textBounds', str, x, y, fontSize, alignment, baseline),
     result = this.cache[key];
 
   if (!result) {
-
-    var minX, minY, maxX, maxY, pos, xCoords = [], yCoords = [],
+    var minX,
+      minY,
+      maxX,
+      maxY,
+      pos,
+      xCoords = [],
+      yCoords = [],
       scale = this._scale(fontSize);
 
-    this.font.forEachGlyph(
-      str, x, y, fontSize, options,
-      function(glyph, gX, gY, gFontSize) {
-
-        var gm = glyph.getMetrics();
-        xCoords.push(gX + (gm.xMin * scale));
-        xCoords.push(gX + (gm.xMax * scale));
-        yCoords.push(gY + (-gm.yMin * scale));
-        yCoords.push(gY + (-gm.yMax * scale));
-      });
+    this.font.forEachGlyph(str, x, y, fontSize, options, function(
+      glyph,
+      gX,
+      gY,
+      gFontSize
+    ) {
+      var gm = glyph.getMetrics();
+      xCoords.push(gX + gm.xMin * scale);
+      xCoords.push(gX + gm.xMax * scale);
+      yCoords.push(gY + -gm.yMin * scale);
+      yCoords.push(gY + -gm.yMax * scale);
+    });
 
     minX = Math.min.apply(null, xCoords);
     minY = Math.min.apply(null, yCoords);
@@ -133,18 +138,24 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
 
     // Bounds are now calculated, so shift the x & y to match alignment settings
     pos = this._handleAlignment(
-      p, ctx, str, result.x, result.y,
-      result.w + result.advance);
+      p,
+      ctx,
+      str,
+      result.x,
+      result.y,
+      result.w + result.advance
+    );
 
     result.x = pos.x;
     result.y = pos.y;
 
-    this.cache[cacheKey('textBounds', str, x, y, fontSize, alignment, baseline)] = result;
+    this.cache[
+      cacheKey('textBounds', str, x, y, fontSize, alignment, baseline)
+    ] = result;
   }
 
   return result;
 };
-
 
 /**
  * Computes an array of points following the path for specified text
@@ -165,29 +176,69 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
  * when determining whether two edges are collinear
  *
  * @return {Array}  an array of points, each with x, y, alpha (the path angle)
+ * @example
+ * <div>
+ * <code>
+ * var font;
+ * function preload() {
+ *   font = loadFont('./assets/Avenir.otf');
+ * }
+ *
+ * var points;
+ * var bounds;
+ * function setup() {
+ *   createCanvas(100, 100);
+ *   stroke(0);
+ *   fill(255, 104, 204);
+ *
+ *   points = font.textToPoints('p5', 0, 0, 10, {
+ *     sampleFactor: 5,
+ *     simplifyThreshold: 0
+ *   });
+ *   bounds = font.textBounds(' p5 ', 0, 0, 10);
+ * }
+ *
+ * function draw() {
+ *   background(255);
+ *   beginShape();
+ *   translate(-bounds.x * width / bounds.w, -bounds.y * height / bounds.h);
+ *   for (var i = 0; i < points.length; i++) {
+ *     var p = points[i];
+ *     vertex(
+ *       p.x * width / bounds.w +
+ *         sin(20 * p.y / bounds.h + millis() / 1000) * width / 30,
+ *       p.y * height / bounds.h
+ *     );
+ *   }
+ *   endShape(CLOSE);
+ * }
+ * </code>
+ * </div>
+ *
  */
 p5.Font.prototype.textToPoints = function(txt, x, y, fontSize, options) {
-
-  var xoff = 0, result = [], glyphs = this._getGlyphs(txt);
+  var xoff = 0,
+    result = [],
+    glyphs = this._getGlyphs(txt);
 
   function isSpace(i) {
-    return ((glyphs[i].name && glyphs[i].name === 'space') ||
+    return (
+      (glyphs[i].name && glyphs[i].name === 'space') ||
       (txt.length === glyphs.length && txt[i] === ' ') ||
-      (glyphs[i].index && glyphs[i].index === 3));
+      (glyphs[i].index && glyphs[i].index === 3)
+    );
   }
-
 
   fontSize = fontSize || this.parent._renderer._textSize;
 
   for (var i = 0; i < glyphs.length; i++) {
-
-    if (!isSpace(i)) { // fix to #1817, #2069
+    if (!isSpace(i)) {
+      // fix to #1817, #2069
 
       var gpath = glyphs[i].getPath(x, y, fontSize),
         paths = splitPaths(gpath.commands);
 
       for (var j = 0; j < paths.length; j++) {
-
         var pts = pathToPoints(paths[j], options);
 
         for (var k = 0; k < pts.length; k++) {
@@ -217,7 +268,6 @@ p5.Font.prototype.textToPoints = function(txt, x, y, fontSize, options) {
  * @return {Array}     the opentype glyphs
  */
 p5.Font.prototype._getGlyphs = function(str) {
-
   return this.font.stringToGlyphs(str);
 };
 
@@ -232,9 +282,8 @@ p5.Font.prototype._getGlyphs = function(str) {
  * @return {Object}     the opentype path
  */
 p5.Font.prototype._getPath = function(line, x, y, options) {
-
-  var p = (options && options.renderer && options.renderer._pInst) ||
-    this.parent,
+  var p =
+      (options && options.renderer && options.renderer._pInst) || this.parent,
     ctx = p._renderer.drawingContext,
     pos = this._handleAlignment(p, ctx, line, x, y);
 
@@ -257,23 +306,18 @@ p5.Font.prototype._getPath = function(line, x, y, options) {
  * @return {Object}     this p5.Font object
  */
 p5.Font.prototype._getPathData = function(line, x, y, options) {
-
   var decimals = 3;
 
   // create path from string/position
   if (typeof line === 'string' && arguments.length > 2) {
-
     line = this._getPath(line, x, y, options);
-  }
-  // handle options specified in 2nd arg
-  else if (typeof x === 'object') {
-
+  } else if (typeof x === 'object') {
+    // handle options specified in 2nd arg
     options = x;
   }
 
   // handle svg arguments
   if (options && typeof options.decimals === 'number') {
-
     decimals = options.decimals;
   }
 
@@ -298,17 +342,13 @@ p5.Font.prototype._getPathData = function(line, x, y, options) {
  * @return {Object}     this p5.Font object
  */
 p5.Font.prototype._getSVG = function(line, x, y, options) {
-
   var decimals = 3;
 
   // create path from string/position
   if (typeof line === 'string' && arguments.length > 2) {
-
     line = this._getPath(line, x, y, options);
-  }
-  // handle options specified in 2nd arg
-  else if (typeof x === 'object') {
-
+  } else if (typeof x === 'object') {
+    // handle options specified in 2nd arg
     options = x;
   }
 
@@ -345,22 +385,19 @@ p5.Font.prototype._getSVG = function(line, x, y, options) {
  * @return {p5.Font}     this p5.Font object
  */
 p5.Font.prototype._renderPath = function(line, x, y, options) {
-
-  var pdata, pg = (options && options.renderer) || this.parent._renderer,
+  var pdata,
+    pg = (options && options.renderer) || this.parent._renderer,
     ctx = pg.drawingContext;
 
   if (typeof line === 'object' && line.commands) {
-
     pdata = line.commands;
   } else {
-
     //pos = handleAlignment(p, ctx, line, x, y);
     pdata = this._getPath(line, x, y, options).commands;
   }
 
   ctx.beginPath();
   for (var i = 0; i < pdata.length; i += 1) {
-
     var cmd = pdata[i];
     if (cmd.type === 'M') {
       ctx.moveTo(cmd.x, cmd.y);
@@ -377,12 +414,10 @@ p5.Font.prototype._renderPath = function(line, x, y, options) {
 
   // only draw stroke if manually set by user
   if (pg._doStroke && pg._strokeSet) {
-
     ctx.stroke();
   }
 
   if (pg._doFill) {
-
     // if fill hasn't been set by user, use default-text-fill
     if (!pg._fillSet) {
       pg._setFill(constants._DEFAULT_TEXT_FILL);
@@ -394,24 +429,21 @@ p5.Font.prototype._renderPath = function(line, x, y, options) {
 };
 
 p5.Font.prototype._textWidth = function(str, fontSize) {
-
   return this.font.getAdvanceWidth(str, fontSize);
 };
 
 p5.Font.prototype._textAscent = function(fontSize) {
-
   return this.font.ascender * this._scale(fontSize);
 };
 
 p5.Font.prototype._textDescent = function(fontSize) {
-
   return -this.font.descender * this._scale(fontSize);
 };
 
 p5.Font.prototype._scale = function(fontSize) {
-
-  return (1 / this.font.unitsPerEm) * (fontSize ||
-    this.parent._renderer._textSize);
+  return (
+    1 / this.font.unitsPerEm * (fontSize || this.parent._renderer._textSize)
+  );
 };
 
 p5.Font.prototype._handleAlignment = function(p, ctx, line, x, y, textWidth) {
@@ -419,8 +451,8 @@ p5.Font.prototype._handleAlignment = function(p, ctx, line, x, y, textWidth) {
     textAscent = this._textAscent(fontSize),
     textDescent = this._textDescent(fontSize);
 
-  textWidth = textWidth !== undefined ? textWidth :
-    this._textWidth(line, fontSize);
+  textWidth =
+    textWidth !== undefined ? textWidth : this._textWidth(line, fontSize);
 
   if (ctx.textAlign === constants.CENTER) {
     x -= textWidth / 2;
@@ -442,13 +474,12 @@ p5.Font.prototype._handleAlignment = function(p, ctx, line, x, y, textWidth) {
 // path-utils
 
 function pathToPoints(cmds, options) {
-
   var opts = parseOpts(options, {
     sampleFactor: 0.1,
-    simplifyThreshold: 0,
+    simplifyThreshold: 0
   });
 
-  var len = pointAtLength(cmds,0,1), // total-length
+  var len = pointAtLength(cmds, 0, 1), // total-length
     t = len / (len * opts.sampleFactor),
     pts = [];
 
@@ -457,7 +488,7 @@ function pathToPoints(cmds, options) {
   }
 
   if (opts.simplifyThreshold) {
-    /*var count = */simplify(pts, opts.simplifyThreshold);
+    /*var count = */ simplify(pts, opts.simplifyThreshold);
     //console.log('Simplify: removed ' + count + ' pts');
   }
 
@@ -465,14 +496,11 @@ function pathToPoints(cmds, options) {
 }
 
 function simplify(pts, angle) {
-
-  angle = (typeof angle === 'undefined') ? 0 : angle;
+  angle = typeof angle === 'undefined' ? 0 : angle;
 
   var num = 0;
   for (var i = pts.length - 1; pts.length > 3 && i >= 0; --i) {
-
     if (collinear(at(pts, i - 1), at(pts, i), at(pts, i + 1), angle)) {
-
       // Remove the middle point
       pts.splice(i % pts.length, 1);
       num++;
@@ -482,8 +510,8 @@ function simplify(pts, angle) {
 }
 
 function splitPaths(cmds) {
-
-  var paths = [], current;
+  var paths = [],
+    current;
   for (var i = 0; i < cmds.length; i++) {
     if (cmds[i].type === 'M') {
       if (current) {
@@ -499,9 +527,9 @@ function splitPaths(cmds) {
 }
 
 function cmdToArr(cmd) {
-
-  var arr = [ cmd.type ];
-  if (cmd.type === 'M' || cmd.type === 'L') { // moveto or lineto
+  var arr = [cmd.type];
+  if (cmd.type === 'M' || cmd.type === 'L') {
+    // moveto or lineto
     arr.push(cmd.x, cmd.y);
   } else if (cmd.type === 'C') {
     arr.push(cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x, cmd.y);
@@ -513,11 +541,9 @@ function cmdToArr(cmd) {
 }
 
 function parseOpts(options, defaults) {
-
   if (typeof options !== 'object') {
     options = defaults;
-  }
-  else {
+  } else {
     for (var key in defaults) {
       if (typeof options[key] === 'undefined') {
         options[key] = defaults[key];
@@ -535,7 +561,6 @@ function at(v, i) {
 }
 
 function collinear(a, b, c, thresholdAngle) {
-
   if (!thresholdAngle) {
     return areaTriangle(a, b, c) === 0;
   }
@@ -545,7 +570,8 @@ function collinear(a, b, c, thresholdAngle) {
     collinear.tmpPoint2 = [];
   }
 
-  var ab = collinear.tmpPoint1, bc = collinear.tmpPoint2;
+  var ab = collinear.tmpPoint1,
+    bc = collinear.tmpPoint2;
   ab.x = b.x - a.x;
   ab.y = b.y - a.y;
   bc.x = c.x - b.x;
@@ -560,25 +586,32 @@ function collinear(a, b, c, thresholdAngle) {
 }
 
 function areaTriangle(a, b, c) {
-  return (((b[0] - a[0]) * (c[1] - a[1])) - ((c[0] - a[0]) * (b[1] - a[1])));
+  return (b[0] - a[0]) * (c[1] - a[1]) - (c[0] - a[0]) * (b[1] - a[1]);
 }
 
 // Portions of below code copyright 2008 Dmitry Baranovskiy (via MIT license)
 
 function findDotsAtSegment(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, t) {
-
-  var t1 = 1 - t, t13 = Math.pow(t1, 3), t12 = Math.pow(t1, 2), t2 = t * t,
-    t3 = t2 * t, x = t13 * p1x + t12 * 3 * t * c1x + t1 * 3 * t * t * c2x +
-    t3 * p2x, y = t13 * p1y + t12 * 3 * t * c1y + t1 * 3 * t * t * c2y +
-    t3 * p2y, mx = p1x + 2 * t * (c1x - p1x) + t2 * (c2x - 2 * c1x + p1x),
+  var t1 = 1 - t,
+    t13 = Math.pow(t1, 3),
+    t12 = Math.pow(t1, 2),
+    t2 = t * t,
+    t3 = t2 * t,
+    x = t13 * p1x + t12 * 3 * t * c1x + t1 * 3 * t * t * c2x + t3 * p2x,
+    y = t13 * p1y + t12 * 3 * t * c1y + t1 * 3 * t * t * c2y + t3 * p2y,
+    mx = p1x + 2 * t * (c1x - p1x) + t2 * (c2x - 2 * c1x + p1x),
     my = p1y + 2 * t * (c1y - p1y) + t2 * (c2y - 2 * c1y + p1y),
     nx = c1x + 2 * t * (c2x - c1x) + t2 * (p2x - 2 * c2x + c1x),
     ny = c1y + 2 * t * (c2y - c1y) + t2 * (p2y - 2 * c2y + c1y),
-    ax = t1 * p1x + t * c1x, ay = t1 * p1y + t * c1y,
-    cx = t1 * c2x + t * p2x, cy = t1 * c2y + t * p2y,
-    alpha = (90 - Math.atan2(mx - nx, my - ny) * 180 / Math.PI);
+    ax = t1 * p1x + t * c1x,
+    ay = t1 * p1y + t * c1y,
+    cx = t1 * c2x + t * p2x,
+    cy = t1 * c2y + t * p2y,
+    alpha = 90 - Math.atan2(mx - nx, my - ny) * 180 / Math.PI;
 
-  if (mx > nx || my < ny) { alpha += 180; }
+  if (mx > nx || my < ny) {
+    alpha += 180;
+  }
 
   return {
     x: x,
@@ -591,16 +624,42 @@ function findDotsAtSegment(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, t) {
   };
 }
 
-function getPointAtSegmentLength(p1x,p1y,c1x,c1y,c2x,c2y,p2x,p2y,length) {
-  return (length == null) ? bezlen(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y) :
-    findDotsAtSegment(
-      p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y,
-      getTatLen(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, length));
+function getPointAtSegmentLength(
+  p1x,
+  p1y,
+  c1x,
+  c1y,
+  c2x,
+  c2y,
+  p2x,
+  p2y,
+  length
+) {
+  return length == null
+    ? bezlen(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y)
+    : findDotsAtSegment(
+        p1x,
+        p1y,
+        c1x,
+        c1y,
+        c2x,
+        c2y,
+        p2x,
+        p2y,
+        getTatLen(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, length)
+      );
 }
 
 function pointAtLength(path, length, istotal) {
   path = path2curve(path);
-  var x, y, p, l, sp = '', subpaths = {}, point, len = 0;
+  var x,
+    y,
+    p,
+    l,
+    sp = '',
+    subpaths = {},
+    point,
+    len = 0;
   for (var i = 0, ii = path.length; i < ii; i++) {
     p = path[i];
     if (p[0] === 'M') {
@@ -610,7 +669,17 @@ function pointAtLength(path, length, istotal) {
       l = getPointAtSegmentLength(x, y, p[1], p[2], p[3], p[4], p[5], p[6]);
       if (len + l > length) {
         if (!istotal) {
-          point = getPointAtSegmentLength(x, y, p[1], p[2], p[3], p[4], p[5], p[6], length - len);
+          point = getPointAtSegmentLength(
+            x,
+            y,
+            p[1],
+            p[2],
+            p[3],
+            p[4],
+            p[5],
+            p[6],
+            length - len
+          );
           return { x: point.x, y: point.y, alpha: point.alpha };
         }
       }
@@ -622,7 +691,9 @@ function pointAtLength(path, length, istotal) {
   }
   subpaths.end = sp;
 
-  point = istotal ? len : findDotsAtSegment(x, y, p[0], p[1], p[2], p[3], p[4], p[5], 1);
+  point = istotal
+    ? len
+    : findDotsAtSegment(x, y, p[0], p[1], p[2], p[3], p[4], p[5], 1);
 
   if (point.alpha) {
     point = { x: point.x, y: point.y, alpha: point.alpha };
@@ -632,8 +703,12 @@ function pointAtLength(path, length, istotal) {
 }
 
 function pathToAbsolute(pathArray) {
-
-  var res = [], x = 0, y = 0, mx = 0, my = 0, start = 0;
+  var res = [],
+    x = 0,
+    y = 0,
+    mx = 0,
+    my = 0,
+    start = 0;
   if (!pathArray) {
     // console.warn("Unexpected state: undefined pathArray"); // shouldn't happen
     return res;
@@ -647,11 +722,15 @@ function pathToAbsolute(pathArray) {
     res[0] = ['M', x, y];
   }
 
-  var dots,crz = pathArray.length===3 && pathArray[0][0]==='M' &&
-    pathArray[1][0].toUpperCase()==='R' && pathArray[2][0].toUpperCase()==='Z';
+  var dots,
+    crz =
+      pathArray.length === 3 &&
+      pathArray[0][0] === 'M' &&
+      pathArray[1][0].toUpperCase() === 'R' &&
+      pathArray[2][0].toUpperCase() === 'Z';
 
   for (var r, pa, i = start, ii = pathArray.length; i < ii; i++) {
-    res.push(r = []);
+    res.push((r = []));
     pa = pathArray[i];
     if (pa[0] !== String.prototype.toUpperCase.call(pa[0])) {
       r[0] = String.prototype.toUpperCase.call(pa[0]);
@@ -686,7 +765,7 @@ function pathToAbsolute(pathArray) {
           break;
         default:
           for (j = 1, jj = pa.length; j < jj; j++) {
-            r[j] = +pa[j] + ((j % 2) ? x : y);
+            r[j] = +pa[j] + (j % 2 ? x : y);
           }
       }
     } else if (pa[0] === 'R') {
@@ -723,8 +802,8 @@ function pathToAbsolute(pathArray) {
 }
 
 function path2curve(path, path2) {
-
-  var p = pathToAbsolute(path), p2 = path2 && pathToAbsolute(path2);
+  var p = pathToAbsolute(path),
+    p2 = path2 && pathToAbsolute(path2);
   var attrs = { x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null };
   var attrs2 = { x: 0, y: 0, bx: 0, by: 0, X: 0, Y: 0, qx: null, qy: null };
   var pcoms1 = []; // path commands of original path p
@@ -732,9 +811,15 @@ function path2curve(path, path2) {
   var ii;
 
   var processPath = function(path, d, pcom) {
-      var nx, ny, tq = { T: 1, Q: 1 };
-      if (!path) { return ['C', d.x, d.y, d.x, d.y, d.x, d.y]; }
-      if (!(path[0] in tq)) { d.qx = d.qy = null; }
+      var nx,
+        ny,
+        tq = { T: 1, Q: 1 };
+      if (!path) {
+        return ['C', d.x, d.y, d.x, d.y, d.x, d.y];
+      }
+      if (!(path[0] in tq)) {
+        d.qx = d.qy = null;
+      }
       switch (path[0]) {
         case 'M':
           d.X = path[1];
@@ -766,7 +851,9 @@ function path2curve(path, path2) {
         case 'Q':
           d.qx = path[1];
           d.qy = path[2];
-          path = ['C'].concat(q2c(d.x,d.y,path[1],path[2],path[3],path[4]));
+          path = ['C'].concat(
+            q2c(d.x, d.y, path[1], path[2], path[3], path[4])
+          );
           break;
         case 'L':
           path = ['C'].concat(l2c(d.x, d.y, path[1], path[2]));
@@ -783,21 +870,21 @@ function path2curve(path, path2) {
       }
       return path;
     },
-
     fixArc = function(pp, i) {
       if (pp[i].length > 7) {
         pp[i].shift();
         var pi = pp[i];
         while (pi.length) {
           pcoms1[i] = 'A';
-          if (p2) { pcoms2[i] = 'A'; }
+          if (p2) {
+            pcoms2[i] = 'A';
+          }
           pp.splice(i++, 0, ['C'].concat(pi.splice(0, 6)));
         }
         pp.splice(i, 1);
-        ii = Math.max(p.length, p2 && p2.length || 0);
+        ii = Math.max(p.length, (p2 && p2.length) || 0);
       }
     },
-
     fixM = function(path1, path2, a1, a2, i) {
       if (path1 && path2 && path1[i][0] === 'M' && path2[i][0] !== 'M') {
         path2.splice(i, 0, ['M', a2.x, a2.y]);
@@ -805,41 +892,57 @@ function path2curve(path, path2) {
         a1.by = 0;
         a1.x = path1[i][1];
         a1.y = path1[i][2];
-        ii = Math.max(p.length, p2 && p2.length || 0);
+        ii = Math.max(p.length, (p2 && p2.length) || 0);
       }
     };
 
   var pfirst = ''; // temporary holder for original path command
   var pcom = ''; // holder for previous path command of original path
 
-  for (var i = 0, ii = Math.max(p.length, p2 && p2.length || 0); i < ii; i++) {
-    if (p[i]) { pfirst = p[i][0]; } // save current path command
+  ii = Math.max(p.length, (p2 && p2.length) || 0);
+  for (var i = 0; i < ii; i++) {
+    if (p[i]) {
+      pfirst = p[i][0];
+    } // save current path command
 
     if (pfirst !== 'C') {
       pcoms1[i] = pfirst; // Save current path command
-      if (i) { pcom = pcoms1[i - 1]; } // Get previous path command pcom
+      if (i) {
+        pcom = pcoms1[i - 1];
+      } // Get previous path command pcom
     }
     p[i] = processPath(p[i], attrs, pcom);
 
-    if (pcoms1[i] !== 'A' && pfirst === 'C') { pcoms1[i] = 'C'; }
+    if (pcoms1[i] !== 'A' && pfirst === 'C') {
+      pcoms1[i] = 'C';
+    }
 
     fixArc(p, i); // fixArc adds also the right amount of A:s to pcoms1
 
-    if (p2) { // the same procedures is done to p2
-      if (p2[i]) { pfirst = p2[i][0]; }
+    if (p2) {
+      // the same procedures is done to p2
+      if (p2[i]) {
+        pfirst = p2[i][0];
+      }
       if (pfirst !== 'C') {
         pcoms2[i] = pfirst;
-        if (i) { pcom = pcoms2[i - 1]; }
+        if (i) {
+          pcom = pcoms2[i - 1];
+        }
       }
       p2[i] = processPath(p2[i], attrs2, pcom);
 
-      if (pcoms2[i] !== 'A' && pfirst === 'C') { pcoms2[i] = 'C'; }
+      if (pcoms2[i] !== 'A' && pfirst === 'C') {
+        pcoms2[i] = 'C';
+      }
 
       fixArc(p2, i);
     }
     fixM(p, p2, attrs, attrs2, i);
     fixM(p2, p, attrs2, attrs, i);
-    var seg = p[i], seg2 = p2 && p2[i], seglen = seg.length,
+    var seg = p[i],
+      seg2 = p2 && p2[i],
+      seglen = seg.length,
       seg2len = p2 && seg2.length;
     attrs.x = seg[seglen - 2];
     attrs.y = seg[seglen - 1];
@@ -857,9 +960,16 @@ function path2curve(path, path2) {
 function a2c(x1, y1, rx, ry, angle, lac, sweep_flag, x2, y2, recursive) {
   // for more information of where this Math came from visit:
   // http://www.w3.org/TR/SVG11/implnote.html#ArcImplementationNotes
-  var PI = Math.PI, _120 = PI * 120 / 180, f1, f2, cx, cy,
-    rad = PI / 180 * (+angle || 0), res = [], xy,
-    rotate = function (x, y, rad) {
+  var PI = Math.PI,
+    _120 = PI * 120 / 180,
+    f1,
+    f2,
+    cx,
+    cy,
+    rad = PI / 180 * (+angle || 0),
+    res = [],
+    xy,
+    rotate = function(x, y, rad) {
       var X = x * Math.cos(rad) - y * Math.sin(rad),
         Y = x * Math.sin(rad) + y * Math.cos(rad);
       return { x: X, y: Y };
@@ -871,15 +981,23 @@ function a2c(x1, y1, rx, ry, angle, lac, sweep_flag, x2, y2, recursive) {
     xy = rotate(x2, y2, -rad);
     x2 = xy.x;
     y2 = xy.y;
-    var x = (x1 - x2) / 2, y = (y1 - y2) / 2,
-      h = (x * x) / (rx * rx) + (y * y) / (ry * ry);
+    var x = (x1 - x2) / 2,
+      y = (y1 - y2) / 2,
+      h = x * x / (rx * rx) + y * y / (ry * ry);
     if (h > 1) {
       h = Math.sqrt(h);
       rx = h * rx;
       ry = h * ry;
     }
-    var rx2 = rx * rx, ry2 = ry * ry;
-    var k = (lac === sweep_flag ? -1 : 1) * Math.sqrt(Math.abs((rx2 * ry2 - rx2 * y * y - ry2 * x * x)/(rx2 * y * y + ry2 * x * x)));
+    var rx2 = rx * rx,
+      ry2 = ry * ry;
+    var k =
+      (lac === sweep_flag ? -1 : 1) *
+      Math.sqrt(
+        Math.abs(
+          (rx2 * ry2 - rx2 * y * y - ry2 * x * x) / (rx2 * y * y + ry2 * x * x)
+        )
+      );
 
     cx = k * rx * y / ry + (x1 + x2) / 2;
     cy = k * -ry * x / rx + (y1 + y2) / 2;
@@ -889,8 +1007,12 @@ function a2c(x1, y1, rx, ry, angle, lac, sweep_flag, x2, y2, recursive) {
     f1 = x1 < cx ? PI - f1 : f1;
     f2 = x2 < cx ? PI - f2 : f2;
 
-    if (f1 < 0) { f1 = PI * 2 + f1; }
-    if (f2 < 0) { f2 = PI * 2 + f2; }
+    if (f1 < 0) {
+      f1 = PI * 2 + f1;
+    }
+    if (f2 < 0) {
+      f2 = PI * 2 + f2;
+    }
 
     if (sweep_flag && f1 > f2) {
       f1 = f1 - PI * 2;
@@ -906,11 +1028,18 @@ function a2c(x1, y1, rx, ry, angle, lac, sweep_flag, x2, y2, recursive) {
   }
   var df = f2 - f1;
   if (Math.abs(df) > _120) {
-    var f2old = f2, x2old = x2, y2old = y2;
+    var f2old = f2,
+      x2old = x2,
+      y2old = y2;
     f2 = f1 + _120 * (sweep_flag && f2 > f1 ? 1 : -1);
     x2 = cx + rx * Math.cos(f2);
     y2 = cy + ry * Math.sin(f2);
-    res = a2c(x2, y2, rx, ry, angle, 0, sweep_flag, x2old, y2old, [f2, f2old, cx, cy]);
+    res = a2c(x2, y2, rx, ry, angle, 0, sweep_flag, x2old, y2old, [
+      f2,
+      f2old,
+      cx,
+      cy
+    ]);
   }
   df = f2 - f1;
   var c1 = Math.cos(f1),
@@ -929,10 +1058,16 @@ function a2c(x1, y1, rx, ry, angle, lac, sweep_flag, x2, y2, recursive) {
   if (recursive) {
     return [m2, m3, m4].concat(res);
   } else {
-    res = [m2, m3, m4].concat(res).join().split(',');
+    res = [m2, m3, m4]
+      .concat(res)
+      .join()
+      .split(',');
     var newres = [];
     for (var i = 0, ii = res.length; i < ii; i++) {
-      newres[i] = i % 2 ? rotate(res[i - 1], res[i], rad).y : rotate(res[i], res[i + 1], rad).x;
+      newres[i] =
+        i % 2
+          ? rotate(res[i - 1], res[i], rad).y
+          : rotate(res[i], res[i + 1], rad).x;
     }
     return newres;
   }
@@ -942,19 +1077,24 @@ function a2c(x1, y1, rx, ry, angle, lac, sweep_flag, x2, y2, recursive) {
 function catmullRom2bezier(crp, z) {
   var d = [];
   for (var i = 0, iLen = crp.length; iLen - 2 * !z > i; i += 2) {
-    var p = [{
-      x: +crp[i - 2],
-      y: +crp[i - 1]
-    }, {
-      x: +crp[i],
-      y: +crp[i + 1]
-    }, {
-      x: +crp[i + 2],
-      y: +crp[i + 3]
-    }, {
-      x: +crp[i + 4],
-      y: +crp[i + 5]
-    }];
+    var p = [
+      {
+        x: +crp[i - 2],
+        y: +crp[i - 1]
+      },
+      {
+        x: +crp[i],
+        y: +crp[i + 1]
+      },
+      {
+        x: +crp[i + 2],
+        y: +crp[i + 3]
+      },
+      {
+        x: +crp[i + 4],
+        y: +crp[i + 5]
+      }
+    ];
     if (z) {
       if (!i) {
         p[0] = {
@@ -986,37 +1126,74 @@ function catmullRom2bezier(crp, z) {
         };
       }
     }
-    d.push(['C', (-p[0].x + 6 * p[1].x + p[2].x) / 6, (-p[0].y + 6 * p[1].y +
-      p[2].y) / 6, (p[1].x + 6 * p[2].x - p[3].x) / 6, (p[1].y + 6 * p[2].y -
-      p[3].y) / 6, p[2].x, p[2].y ]);
+    d.push([
+      'C',
+      (-p[0].x + 6 * p[1].x + p[2].x) / 6,
+      (-p[0].y + 6 * p[1].y + p[2].y) / 6,
+      (p[1].x + 6 * p[2].x - p[3].x) / 6,
+      (p[1].y + 6 * p[2].y - p[3].y) / 6,
+      p[2].x,
+      p[2].y
+    ]);
   }
 
   return d;
 }
 
-function l2c(x1, y1, x2, y2) { return [x1, y1, x2, y2, x2, y2]; }
+function l2c(x1, y1, x2, y2) {
+  return [x1, y1, x2, y2, x2, y2];
+}
 
 function q2c(x1, y1, ax, ay, x2, y2) {
-  var _13 = 1 / 3, _23 = 2 / 3;
+  var _13 = 1 / 3,
+    _23 = 2 / 3;
   return [
-    _13 * x1 + _23 * ax, _13 * y1 + _23 * ay,
-    _13 * x2 + _23 * ax, _13 * y2 + _23 * ay, x2, y2
+    _13 * x1 + _23 * ax,
+    _13 * y1 + _23 * ay,
+    _13 * x2 + _23 * ax,
+    _13 * y2 + _23 * ay,
+    x2,
+    y2
   ];
 }
 
 function bezlen(x1, y1, x2, y2, x3, y3, x4, y4, z) {
-  if (z == null) { z = 1; }
+  if (z == null) {
+    z = 1;
+  }
   z = z > 1 ? 1 : z < 0 ? 0 : z;
   var z2 = z / 2;
   var n = 12;
   var Tvalues = [
-    -0.1252, 0.1252, -0.3678, 0.3678, -0.5873, 0.5873,
-    -0.7699, 0.7699, -0.9041, 0.9041, -0.9816, 0.9816];
+    -0.1252,
+    0.1252,
+    -0.3678,
+    0.3678,
+    -0.5873,
+    0.5873,
+    -0.7699,
+    0.7699,
+    -0.9041,
+    0.9041,
+    -0.9816,
+    0.9816
+  ];
 
   var sum = 0;
   var Cvalues = [
-    0.2491, 0.2491, 0.2335, 0.2335, 0.2032, 0.2032,
-    0.1601, 0.1601, 0.1069, 0.1069, 0.0472, 0.0472 ];
+    0.2491,
+    0.2491,
+    0.2335,
+    0.2335,
+    0.2032,
+    0.2032,
+    0.1601,
+    0.1601,
+    0.1069,
+    0.1069,
+    0.0472,
+    0.0472
+  ];
 
   for (var i = 0; i < n; i++) {
     var ct = z2 * Tvalues[i] + z2,
@@ -1032,7 +1209,11 @@ function getTatLen(x1, y1, x2, y2, x3, y3, x4, y4, ll) {
   if (ll < 0 || bezlen(x1, y1, x2, y2, x3, y3, x4, y4) < ll) {
     return;
   }
-  var t = 1, step = t / 2, t2 = t - step, l, e = 0.01;
+  var t = 1,
+    step = t / 2,
+    t2 = t - step,
+    l,
+    e = 0.01;
   l = bezlen(x1, y1, x2, y2, x3, y3, x4, y4, t2);
   while (Math.abs(l - ll) > e) {
     step /= 2;
@@ -1049,15 +1230,10 @@ function base3(t, p1, p2, p3, p4) {
 }
 
 function cacheKey() {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  i = args.length;
   var hash = '';
-  while (i--) {
-    hash += (args[i] === Object(args[i])) ?
-      JSON.stringify(args[i]) : args[i];
+  for (var i = arguments.length - 1; i >= 0; --i) {
+    var v = arguments[i];
+    hash += v === Object(v) ? JSON.stringify(v) : v;
   }
   return hash;
 }
