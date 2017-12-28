@@ -592,10 +592,12 @@ p5.Image.prototype.mask = function(p5Image) {
  * Applies an image filter to a p5.Image
  *
  * @method filter
- * @param {String} operation one of threshold, gray, invert, posterize, opaque
- *                           erode, dilate and blur. See Filters.js for docs on
- *                           each available filter
- * @param {Number|undefined} value
+ * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
+ *                                POSTERIZE, BLUR, ERODE, DILATE or BLUR.
+ *                                See Filters.js for docs on
+ *                                each available filter
+ * @param  {Number} [filterParam] an optional parameter unique
+ *                                to each filter, see above
  * @example
  * <div><code>
  * var photo1;
@@ -627,7 +629,7 @@ p5.Image.prototype.filter = function(operation, value) {
  * blend mode to do the operation.
  *
  * @method blend
- * @param  {p5.Image|undefined} srcImage source image
+ * @param  {p5.Image} srcImage source image
  * @param  {Integer} sx X coordinate of the source's upper left corner
  * @param  {Integer} sy Y coordinate of the source's upper left corner
  * @param  {Integer} sw source image width
@@ -636,7 +638,10 @@ p5.Image.prototype.filter = function(operation, value) {
  * @param  {Integer} dy Y coordinate of the destination's upper left corner
  * @param  {Integer} dw destination image width
  * @param  {Integer} dh destination image height
- * @param  {Integer} blendMode the blend mode
+ * @param  {Constant} blendMode the blend mode. either
+ *     BLEND, DARKEST, LIGHTEST, DIFFERENCE,
+ *     MULTIPLY, EXCLUSION, SCREEN, REPLACE, OVERLAY, HARD_LIGHT,
+ *     SOFT_LIGHT, DODGE, BURN, ADD or NORMAL.
  *
  * Available blend modes are: normal | multiply | screen | overlay |
  *            darken | lighten | color-dodge | color-burn | hard-light |
@@ -697,6 +702,18 @@ p5.Image.prototype.filter = function(operation, value) {
  * image of rockies. Brickwall images on left and right. Right mortar transparent
  * image of rockies. Brickwall images on left and right. Right translucent
  *
+ */
+/**
+ * @method blend
+ * @param  {Integer} sx
+ * @param  {Integer} sy
+ * @param  {Integer} sw
+ * @param  {Integer} sh
+ * @param  {Integer} dx
+ * @param  {Integer} dy
+ * @param  {Integer} dw
+ * @param  {Integer} dh
+ * @param  {Constant} blendMode
  */
 p5.Image.prototype.blend = function() {
   p5.prototype.blend.apply(this, arguments);

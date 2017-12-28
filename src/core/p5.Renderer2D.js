@@ -1307,7 +1307,7 @@ p5.Renderer2D.prototype.textWidth = function(s) {
 };
 
 p5.Renderer2D.prototype.textAlign = function(h, v) {
-  if (typeof h !== 'undefined' && typeof v !== 'undefined') {
+  if (typeof h !== 'undefined') {
     if (
       h === constants.LEFT ||
       h === constants.RIGHT ||

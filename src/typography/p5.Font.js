@@ -50,8 +50,8 @@ p5.Font.prototype.list = function() {
  * @param  {String} line     a line of text
  * @param  {Number} x        x-position
  * @param  {Number} y        y-position
- * @param  {Number} fontSize font size to use (optional)
- * @param  {Object} options opentype options (optional)
+ * @param  {Number} [fontSize] font size to use (optional)
+ * @param  {Object} [options] opentype options (optional)
  *
  * @return {Object}          a rectangle object with properties: x, y, w, h
  *

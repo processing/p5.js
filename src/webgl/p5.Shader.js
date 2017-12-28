@@ -277,9 +277,9 @@ p5.Shader.prototype.useProgram = function() {
  * @chainable
  * @param {String} uniformName the name of the uniform in the
  * shader program
- * @param {Object} data the data to be associated with that uniform; type
- * varies (could be a single numerical value, array, matrix, or
- * texture / sampler reference)
+ * @param {Object|Number|Boolean|Number[]} data the data to be associated
+ * with that uniform; type varies (could be a single numerical value, array,
+ * matrix, or texture / sampler reference)
  */
 p5.Shader.prototype.setUniform = function(uniformName, data) {
   //@todo update all current gl.uniformXX calls
