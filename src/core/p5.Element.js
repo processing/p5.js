@@ -165,16 +165,12 @@ p5.Element.prototype.id = function(id) {
  * <div class='norender'>
  * <code>
  * function setup() {
- *   createP('No matter how small.').
- *      class('seuss').
- *      mousePressed(pressed);
- *   createP("But someone, I ain't sayin' who, Has got a guilty face.").
- *      class('shel').
- *      mousePressed(pressed);
+ *   createP('No matter how small.').class('seuss').mousePressed(pressed);
+ *   createP("But someone, I ain't sayin' who, Has got a guilty face.").class('shel').mousePressed(pressed);
  * }
  *
  * function pressed() {
- *  // `this` refers to the clicked element
+ *  // `this` refers to the clicked element.
  *  // Sets the class name to the pressed element's name plus '-pressed'
  *  this.class(this.class() + '-pressed');
  * }
