@@ -80,7 +80,6 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.uPMatrix = new p5.Matrix();
   this.uNMatrix = new p5.Matrix('mat3');
 
-
   // Camera
   this._curCamera = null;
   // default camera settings, then use those to populate camera fields.

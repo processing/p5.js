@@ -109,7 +109,6 @@ p5.Matrix.prototype.get = function() {
  * @return {p5.Matrix}   the result matrix
  */
 p5.Matrix.prototype.copy = function() {
-
   var copied = new p5.Matrix(this.p5);
   copied.mat4[0] = this.mat4[0];
   copied.mat4[1] = this.mat4[1];
