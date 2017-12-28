@@ -505,12 +505,9 @@ p5.Matrix.prototype.scale = function() {
 p5.Matrix.prototype.rotate = function(a, axis){
   var x, y, z, _a, len;
 
-  if (this.p5) {
-    if (this.p5._angleMode === constants.DEGREES) {
-      _a = polarGeometry.degreesToRadians(a);
-    }
-  }
-  else {
+  if (this.p5 && this.p5._angleMode === constants.DEGREES) {
+    _a = polarGeometry.degreesToRadians(a);
+  } else {
     _a = a;
   }
   if (axis instanceof p5.Vector) {
