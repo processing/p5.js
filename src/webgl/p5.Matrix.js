@@ -61,7 +61,7 @@ p5.Matrix = function() {
  * variables, the data from a p5.Matrix, or the values from a float array.
  *
  * @method set
- * @param {p5.Matrix|Float32Array|Array} [inMatrix] the input p5.Matrix or
+ * @param {p5.Matrix|Float32Array|Number[]} [inMatrix] the input p5.Matrix or
  *                                     an Array of length 16
  * @chainable
  */
@@ -147,7 +147,8 @@ p5.Matrix.identity = function() {
 /**
  * transpose according to a given matrix
  * @method transpose
- * @param  {p5.Matrix|Float32Array|Array} a  the matrix to be based on to transpose
+ * @param  {p5.Matrix|Float32Array|Number[]} a  the matrix to be
+ *                                               based on to transpose
  * @chainable
  */
 p5.Matrix.prototype.transpose = function(a) {
@@ -207,7 +208,8 @@ p5.Matrix.prototype.transpose = function(a) {
 /**
  * invert  matrix according to a give matrix
  * @method invert
- * @param  {p5.Matrix|Float32Array|Array} a   the matrix to be based on to invert
+ * @param  {p5.Matrix|Float32Array|Number[]} a   the matrix to be
+ *                                                based on to invert
  * @chainable
  */
 p5.Matrix.prototype.invert = function(a) {
@@ -400,7 +402,7 @@ p5.Matrix.prototype.determinant = function() {
 /**
  * multiply two mat4s
  * @method mult
- * @param {p5.Matrix|Float32Array|Array} multMatrix The matrix
+ * @param {p5.Matrix|Float32Array|Number[]} multMatrix The matrix
  *                                                we want to multiply by
  * @chainable
  */
@@ -459,7 +461,7 @@ p5.Matrix.prototype.mult = function(multMatrix) {
 /**
  * scales a p5.Matrix by scalars or a vector
  * @method scale
- * @param  {p5.Vector|Float32Array|Array} s vector to scale by
+ * @param  {p5.Vector|Float32Array|Number[]} s vector to scale by
  * @chainable
  */
 p5.Matrix.prototype.scale = function() {
@@ -505,7 +507,7 @@ p5.Matrix.prototype.scale = function() {
  * rotate our Matrix around an axis by the given angle.
  * @method rotate
  * @param  {Number} a The angle of rotation in radians
- * @param  {p5.Vector|Array} axis  the axis(es) to rotate around
+ * @param  {p5.Vector|Number[]} axis  the axis(es) to rotate around
  * @chainable
  * inspired by Toji's gl-matrix lib, mat4 rotation
  */

@@ -304,7 +304,7 @@ p5.XML.prototype.getChildren = function(param) {
  * child is found.
  *
  * @method getChild
- * @param {String|Number} name element name or index
+ * @param {String|Integer} name element name or index
  * @return {p5.XML}
  * @example&lt;animal
  * <div class='norender'><code>
@@ -379,7 +379,7 @@ p5.XML.prototype.addChild = function(node) {
  * Removes the element specified by name or index.
  *
  * @method removeChild
- * @param {String|Number} name element name or index
+ * @param {String|Integer} name element name or index
  * @example
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed
@@ -451,7 +451,7 @@ p5.XML.prototype.removeChild = function(param) {
  * Counts the specified element's number of attributes, returned as an Number.
  *
  * @method getAttributeCount
- * @return {Number}
+ * @return {Integer}
  * @example
  * <div class='norender'><code>
  * // The following short XML file called "mammals.xml" is parsed

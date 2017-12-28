@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
   degreesToRadians: function(x) {
     return 2 * Math.PI * x / 360;

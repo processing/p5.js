@@ -7,6 +7,8 @@
  * @requires color_conversion
  */
 
+'use strict';
+
 var p5 = require('../core/core');
 var constants = require('../core/constants');
 var color_conversion = require('./color_conversion');
@@ -600,7 +602,7 @@ var colorPatterns = {
  * //todo
  *
  */
-p5.Color._parseInputs = function() {
+p5.Color._parseInputs = function(r, g, b, a) {
   var numArgs = arguments.length;
   var mode = this.mode;
   var maxes = this.maxes;
@@ -609,13 +611,13 @@ p5.Color._parseInputs = function() {
   if (numArgs >= 3) {
     // Argument is a list of component values.
 
-    results[0] = arguments[0] / maxes[mode][0];
-    results[1] = arguments[1] / maxes[mode][1];
-    results[2] = arguments[2] / maxes[mode][2];
+    results[0] = r / maxes[mode][0];
+    results[1] = g / maxes[mode][1];
+    results[2] = b / maxes[mode][2];
 
     // Alpha may be undefined, so default it to 100%.
-    if (typeof arguments[3] === 'number') {
-      results[3] = arguments[3] / maxes[mode][3];
+    if (typeof a === 'number') {
+      results[3] = a / maxes[mode][3];
     } else {
       results[3] = 1;
     }
@@ -633,8 +635,8 @@ p5.Color._parseInputs = function() {
     } else {
       return results;
     }
-  } else if (numArgs === 1 && typeof arguments[0] === 'string') {
-    var str = arguments[0].trim().toLowerCase();
+  } else if (numArgs === 1 && typeof r === 'string') {
+    var str = r.trim().toLowerCase();
 
     // Return if string is a named colour.
     if (namedColors[str]) {
@@ -785,10 +787,7 @@ p5.Color._parseInputs = function() {
 
     // Input did not match any CSS color pattern: default to white.
     results = [1, 1, 1, 1];
-  } else if (
-    (numArgs === 1 || numArgs === 2) &&
-    typeof arguments[0] === 'number'
-  ) {
+  } else if ((numArgs === 1 || numArgs === 2) && typeof r === 'number') {
     // 'Grayscale' mode.
 
     /**
@@ -796,13 +795,13 @@ p5.Color._parseInputs = function() {
      * value (they are equivalent when chroma is zero). For RGB, normalize the
      * gray level according to the blue maximum.
      */
-    results[0] = arguments[0] / maxes[mode][2];
-    results[1] = arguments[0] / maxes[mode][2];
-    results[2] = arguments[0] / maxes[mode][2];
+    results[0] = r / maxes[mode][2];
+    results[1] = r / maxes[mode][2];
+    results[2] = r / maxes[mode][2];
 
     // Alpha may be undefined, so default it to 100%.
-    if (typeof arguments[1] === 'number') {
-      results[3] = arguments[1] / maxes[mode][3];
+    if (typeof g === 'number') {
+      results[3] = g / maxes[mode][3];
     } else {
       results[3] = 1;
     }

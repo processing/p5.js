@@ -128,7 +128,7 @@ p5.Vector.prototype.toString = function p5VectorToString() {
  */
 /**
  * @method set
- * @param {p5.Vector|Array} value the vector to set
+ * @param {p5.Vector|Number[]} value the vector to set
  * @chainable
  */
 p5.Vector.prototype.set = function set(x, y, z) {
@@ -207,7 +207,7 @@ p5.Vector.prototype.copy = function copy() {
  */
 /**
  * @method add
- * @param  {p5.Vector|Array} value the vector to add
+ * @param  {p5.Vector|Number[]} value the vector to add
  * @chainable
  */
 p5.Vector.prototype.add = function add(x, y, z) {
@@ -263,7 +263,7 @@ p5.Vector.prototype.add = function add(x, y, z) {
  */
 /**
  * @method sub
- * @param  {p5.Vector|Array} value the vector to subtract
+ * @param  {p5.Vector|Number[]} value the vector to subtract
  * @chainable
  */
 p5.Vector.prototype.sub = function sub(x, y, z) {
@@ -854,7 +854,7 @@ p5.Vector.prototype.equals = function equals(x, y, z) {
  *   // Display that variable in an onscreen text.
  *   // (Note the nfc() function to truncate additional decimal places,
  *   // and the "\xB0" character for the degree symbol.)
- *   var readout = 'angle = ' + nfc(myDegrees, 1, 1) + '\xB0';
+ *   var readout = 'angle = ' + nfc(myDegrees, 1) + '\xB0';
  *   noStroke();
  *   fill(0);
  *   text(readout, 5, 15);
