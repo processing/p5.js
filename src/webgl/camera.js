@@ -275,36 +275,43 @@ p5.RendererGL.prototype.perspective = function(fovy, aspect, near, far) {
  * 3 3d boxes, reveal several more boxes on 3d plane when mouse used to toggle
  *
  */
-p5.prototype.ortho = function(left, right, bottom, top, near, far) {
-  left = left || -this.width / 2;
-  right = right || this.width / 2;
-  bottom = bottom || -this.height / 2;
-  top = top || this.height / 2;
-  near = near || 0;
-  far = far || Math.max(this.width, this.height);
-  this._renderer.uPMatrix = p5.Matrix.identity();
-  //this._renderer.uPMatrix.ortho(left,right,bottom,top,near,far);
 
-  var w = right - left;
-  var h = top - bottom;
-  var d = far - near;
-
-  var x = 2.0 / w;
-  var y = 2.0 / h;
-  var z = -2.0 / d;
-
-  var tx = -(right + left) / w;
-  var ty = -(top + bottom) / h;
-  var tz = -(far + near) / d;
-
-  // The minus sign is needed to invert the Y axis.
-  // prettier-ignore
-  this._renderer.uPMatrix.set( x,  0,  0, 0,
-                               0, -y,  0, 0,
-                               0,  0,  z, 0,
-                               tx, ty, tz,  1);
-
-  this._renderer._curCamera = 'custom';
+p5.prototype.ortho = function(){
+  this._renderer.ortho.apply(this._renderer, arguments);
+  return this;
 };
+
+p5.RendererGL.prototype.ortho = function(l, r, b, t, n, f) {
+  // ortho() ... top/left = 0/0
+  if(l === undefined) l = 0;
+  if(r === undefined) r = +this.width;
+  if(b === undefined) b = -this.height;
+  if(t === undefined) t = 0;
+  if(n === undefined) n = -Number.MAX_VALUE;
+  if(f === undefined) f = +Number.MAX_VALUE;
+  
+  var lr = r - l;
+  var tb = t - b;
+  var fn = f - n;
+  
+  var x = +2.0 / lr;
+  var y = +2.0 / tb;
+  var z = -2.0 / fn;
+  
+  var tx = -(r + l) / lr;
+  var ty = -(t + b) / tb;
+  var tz = -(f + n) / fn;
+  
+  this.uPMatrix = p5.Matrix.identity();
+  this.uPMatrix.set(  x,  0,  0, 0,
+                      0, -y,  0, 0,
+                      0,  0,  z, 0,
+                     tx, ty, tz, 1);
+  
+  this._curCamera = 'custom';
+};
+
+
+
 
 module.exports = p5;
