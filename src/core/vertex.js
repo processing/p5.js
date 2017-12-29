@@ -259,7 +259,7 @@ p5.prototype.beginShape = function(kind) {
     } else {
       shapeKind = null;
     }
-      
+
     vertices = [];
     contourVertices = [];
   }
