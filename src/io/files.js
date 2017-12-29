@@ -285,7 +285,7 @@ p5.prototype.loadStrings = function() {
  *
  * @method loadTable
  * @param  {String}         filename   name of the file or URL to load
- * @param  {String} [options]  "header" "csv" "tsv"
+ * @param  {String}         options  "header" "csv" "tsv"
  * @param  {function}       [callback] function to be executed after
  *                                     loadTable() completes. On success, the
  *                                     Table object is passed in as the
@@ -338,6 +338,13 @@ p5.prototype.loadStrings = function() {
  * randomly generated text from a file, for example "i smell like butter"
  * randomly generated text from a file, for example "i have three feet"
  *
+ */
+/**
+ * @method loadTable
+ * @param  {String}         filename
+ * @param  {function}       [callback]
+ * @param  {function}  [errorCallback]
+ * @return {Object}
  */
 p5.prototype.loadTable = function(path) {
   var callback;
