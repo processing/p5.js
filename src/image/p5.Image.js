@@ -488,7 +488,7 @@ p5.Image.prototype.resize = function(width, height) {
  * target region.
  *
  * @method copy
- * @param  {p5.Image|p5.Graphics|undefined} srcImage source image
+ * @param  {p5.Image|p5.Element} srcImage source image
  * @param  {Integer} sx X coordinate of the source's upper left corner
  * @param  {Integer} sy Y coordinate of the source's upper left corner
  * @param  {Integer} sw source image width
@@ -521,8 +521,43 @@ p5.Image.prototype.resize = function(width, height) {
  * image of rocky mountains and smaller image on top of bricks at top left
  *
  */
+/**
+ * @method copy
+ * @param  {Integer} sx
+ * @param  {Integer} sy
+ * @param  {Integer} sw
+ * @param  {Integer} sh
+ * @param  {Integer} dx
+ * @param  {Integer} dy
+ * @param  {Integer} dw
+ * @param  {Integer} dh
+ */
 p5.Image.prototype.copy = function() {
-  p5.prototype.copy.apply(this, arguments);
+  var srcImage, sx, sy, sw, sh, dx, dy, dw, dh;
+  if (arguments.length === 9) {
+    srcImage = arguments[0];
+    sx = arguments[1];
+    sy = arguments[2];
+    sw = arguments[3];
+    sh = arguments[4];
+    dx = arguments[5];
+    dy = arguments[6];
+    dw = arguments[7];
+    dh = arguments[8];
+  } else if (arguments.length === 8) {
+    srcImage = this;
+    sx = arguments[0];
+    sy = arguments[1];
+    sw = arguments[2];
+    sh = arguments[3];
+    dx = arguments[4];
+    dy = arguments[5];
+    dw = arguments[6];
+    dh = arguments[7];
+  } else {
+    throw new Error('Signature not supported');
+  }
+  p5.Renderer2D._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
 };
 
 /**

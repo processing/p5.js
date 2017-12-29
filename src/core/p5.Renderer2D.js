@@ -200,13 +200,24 @@ p5.Renderer2D.prototype.copy = function() {
   } else {
     throw new Error('Signature not supported');
   }
-  p5.Renderer2D._copyHelper(srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
+  p5.Renderer2D._copyHelper(this, srcImage, sx, sy, sw, sh, dx, dy, dw, dh);
 };
 
-p5.Renderer2D._copyHelper = function(srcImage, sx, sy, sw, sh, dx, dy, dw, dh) {
+p5.Renderer2D._copyHelper = function(
+  dstImage,
+  srcImage,
+  sx,
+  sy,
+  sw,
+  sh,
+  dx,
+  dy,
+  dw,
+  dh
+) {
   srcImage.loadPixels();
   var s = srcImage.canvas.width / srcImage.width;
-  this.drawingContext.drawImage(
+  dstImage.drawingContext.drawImage(
     srcImage.canvas,
     s * sx,
     s * sy,
