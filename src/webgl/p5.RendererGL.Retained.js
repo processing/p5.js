@@ -225,6 +225,17 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   return this;
 };
 
+p5.RendererGL.prototype.drawBuffersScaled = function(gId, scale) {
+  var uMVMatrix = this.uMVMatrix;
+  this.uMVMatrix.scale(scale);
+  try {
+    this.drawBuffers(gId);
+  }
+  finally {
+    this.uMVMatrix = uMVMatrix;
+  }
+}
+  
 p5.RendererGL.prototype._drawArrays = function(drawMode, gId) {
   this.GL.drawArrays(drawMode, 0, this.gHash[gId].lineVertexCount);
   return this;
