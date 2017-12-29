@@ -88,7 +88,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
     this._renderer.createBuffers(gId, planeGeom);
   }
 
-  this._renderer.drawBuffersScaled(gId, [width, height, 0]);
+  this._renderer.drawBuffersScaled(gId, width, height, 0);
 };
 
 /**
@@ -200,7 +200,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
     //geometry Id, Geom object
     this._renderer.createBuffers(gId, boxGeom);
   }
-  this._renderer.drawBuffersScaled(gId, [width, height, depth]);
+  this._renderer.drawBuffersScaled(gId, width, height, depth);
 
   return this;
 };
@@ -393,7 +393,7 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY) {
     this._renderer.createBuffers(gId, cylinderGeom);
   }
 
-  this._renderer.drawBuffersScaled(gId, [radius, radius, height]);
+  this._renderer.drawBuffersScaled(gId, radius, radius, height);
 
   return this;
 };
@@ -557,7 +557,7 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
     this._renderer.createBuffers(gId, ellipsoidGeom);
   }
 
-  this._renderer.drawBuffersScaled(gId, [radiusX, radiusY, radiusZ]);
+  this._renderer.drawBuffersScaled(gId, radiusX, radiusY, radiusZ);
 
   return this;
 };
@@ -652,7 +652,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
     }
     this._renderer.createBuffers(gId, torusGeom);
   }
-  this._renderer.drawBuffersScaled(gId, [radius, radius, radius]);
+  this._renderer.drawBuffersScaled(gId, radius, radius, radius);
 
   return this;
 };
