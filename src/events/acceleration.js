@@ -386,7 +386,6 @@ var shake_threshold = 30;
  */
 
 p5.prototype.setMoveThreshold = function(val) {
-  p5._validateParameters('setMoveThreshold', arguments);
   move_threshold = val;
 };
 
@@ -430,7 +429,6 @@ p5.prototype.setMoveThreshold = function(val) {
  */
 
 p5.prototype.setShakeThreshold = function(val) {
-  p5._validateParameters('setShakeThreshold', arguments);
   shake_threshold = val;
 };
 

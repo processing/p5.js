@@ -354,7 +354,9 @@ suite('p5.Vector', function() {
     });
 
     test('should not change x, y, z if no argument is given', function() {
+      p5._throwValidationErrors = false;
       v.mult();
+      p5._throwValidationErrors = true;
       expect(v.x).to.eql(1);
       expect(v.y).to.eql(1);
       expect(v.z).to.eql(1);
@@ -405,7 +407,9 @@ suite('p5.Vector', function() {
     });
 
     test('should not change x, y, z if no argument is given', function() {
+      p5._throwValidationErrors = false;
       v.div();
+      p5._throwValidationErrors = true;
       expect(v.x).to.eql(1);
       expect(v.y).to.eql(1);
       expect(v.z).to.eql(1);
@@ -635,7 +639,9 @@ suite('p5.Vector', function() {
     });
 
     test('should return the same object', function() {
+      p5._throwValidationErrors = false;
       expect(v.limit()).to.eql(v);
+      p5._throwValidationErrors = true;
     });
 
     suite('with a vector larger than the limit', function() {
@@ -719,7 +725,9 @@ suite('p5.Vector', function() {
 
   suite('rotate', function() {
     test('should return the same object', function() {
+      p5._throwValidationErrors = false;
       expect(v.rotate()).to.eql(v);
+      p5._throwValidationErrors = true;
     });
 
     test('should rotate the vector', function() {
@@ -743,7 +751,9 @@ suite('p5.Vector', function() {
 
   suite('lerp', function() {
     test('should return the same object', function() {
+      p5._throwValidationErrors = false;
       expect(v.lerp()).to.eql(v);
+      p5._throwValidationErrors = true;
     });
 
     // PEND: ADD BACK IN
@@ -781,7 +791,9 @@ suite('p5.Vector', function() {
         v.x = 0;
         v.y = 0;
         v.z = 0;
+        p5._throwValidationErrors = false;
         v.lerp(2, 2, 2);
+        p5._throwValidationErrors = true;
         expect(v.x).to.eql(0);
         expect(v.y).to.eql(0);
         expect(v.z).to.eql(0);

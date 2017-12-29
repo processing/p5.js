@@ -9,7 +9,7 @@ var p5 = require('./core');
 var constants = require('./constants');
 
 if (typeof IS_MINIFIED !== 'undefined') {
-  p5._validateParameters = p5._friendlyFileLoadError = function() {};
+  p5._friendlyFileLoadError = function() {};
 } else {
   var doFriendlyWelcome = false; // TEMP until we get it all working LM
   // for parameter validation
@@ -145,7 +145,6 @@ if (typeof IS_MINIFIED !== 'undefined') {
     report(message, errorInfo.method, FILE_LOAD);
   };
 
-  var docCache = {};
   var builtinTypes = [
     'number',
     'string',
@@ -157,19 +156,24 @@ if (typeof IS_MINIFIED !== 'undefined') {
   ];
 
   // validateParameters() helper functions:
-  // lookupParamDoc() for querying data.json
-  var lookupParamDoc = function(func) {
+  // parseParamDoc() for querying data.json
+  var parseParamDoc = function(docData) {
+    /*
     var queryResult = arrDoc.classitems.filter(function(x) {
       return x.name === func;
     });
+    var docData = queryResult[0];
+    */
+
+    var func = docData.name;
     // different JSON structure for funct with multi-format
     var overloads = [];
-    if (queryResult[0].hasOwnProperty('overloads')) {
-      for (var i = 0; i < queryResult[0].overloads.length; i++) {
-        overloads.push(queryResult[0].overloads[i].params);
+    if (docData.hasOwnProperty('overloads')) {
+      for (var i = 0; i < docData.overloads.length; i++) {
+        overloads.push(docData.overloads[i].params);
       }
     } else {
-      overloads.push(queryResult[0].params || []);
+      overloads.push(docData.params || []);
     }
 
     var mapConstants = {};
@@ -262,6 +266,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
       });
     });
     return {
+      name: func,
       overloads: overloads,
       maxParams: maxParams
     };
@@ -342,7 +347,7 @@ if (typeof IS_MINIFIED !== 'undefined') {
   };
 
   // function for generating console.log() msg
-  p5._friendlyParamError = function(errorObj, func) {
+  var friendlyParamError = function(errorObj, func) {
     var message;
 
     function formatType() {
@@ -419,12 +424,13 @@ if (typeof IS_MINIFIED !== 'undefined') {
    *  "ellipse was expecting a number for parameter #1,
    *           received "foo" instead."
    */
-  p5._validateParameters = function validateParameters(func, args) {
+  var validateParameters = function(docData, args) {
     if (p5.disableFriendlyErrors) {
       return; // skip FES
     }
 
-    var docs = docCache[func] || (docCache[func] = lookupParamDoc(func));
+    var func = docData.name;
+    var docs = docData.docs || (docData.docs = parseParamDoc(docData));
     var errorArray = [];
     var minErrCount = 999999;
     var overloads = docs.overloads;
@@ -450,7 +456,79 @@ if (typeof IS_MINIFIED !== 'undefined') {
 
     // generate err msg
     for (var n = 0; n < errorArray.length; n++) {
-      p5._friendlyParamError(errorArray[n], func);
+      friendlyParamError(errorArray[n], func);
+    }
+  };
+
+  // this is only for use by the mocha tests
+  p5._validateParameters = function(func, args) {
+    var classitems = arrDoc.classitems;
+    for (var i = 0; i < classitems.length; i++) {
+      var classitem = classitems[i];
+      if (classitem.class === 'p5' && classitem.name === func) {
+        validateParameters(classitem, args);
+        return;
+      }
+    }
+  };
+
+  var skipValidation = ['httpDo', 'createCapture', 'loadJSON', 'loadTable'];
+
+  var _validationInitialized = false;
+  p5._initializeParameterValidation = function() {
+    if (_validationInitialized) {
+      return;
+    }
+    _validationInitialized = true;
+    var classitems = arrDoc.classitems;
+    var typeMap = {};
+    for (var i = 0; i < classitems.length; i++) {
+      var classitem = classitems[i];
+      var typeName = classitem.class;
+      if (classitem.module === 'p5.sound' || typeName === 'p5.RendererGL') {
+        continue; // not ready yet
+      }
+      if (typeName === 'p5.dom') {
+        typeName = 'p5';
+      }
+
+      if (
+        classitem.itemtype !== 'method' ||
+        classitem.private ||
+        (typeName === 'p5' && skipValidation.indexOf(classitem.name) >= 0)
+      ) {
+        continue;
+      }
+      var type;
+      if (typeMap.hasOwnProperty(typeName)) {
+        type = typeMap[typeName];
+      } else {
+        var t = null;
+        var parts = typeName.split('.');
+        if (parts[0] === 'p5') {
+          t = p5;
+          for (var ip = 1; t && ip < parts.length; ip++) t = t[parts[ip]];
+        }
+        type = typeMap[typeName] = t || null;
+      }
+
+      if (!type) {
+        continue;
+      }
+      var pr = classitem.static ? type : type.prototype;
+      var fn = pr[classitem.name];
+      if (typeof fn === 'function') {
+        var proxy = (function(fn, vp, classitem) {
+          return function validatingProxy() {
+            vp(classitem, arguments);
+            return fn.apply(this, arguments);
+          };
+        })(fn, validateParameters, classitem);
+        if (window[classitem.name] === pr[classitem.name]) {
+          window[classitem.name] = proxy;
+        }
+        pr[classitem.name] = proxy;
+      }
     }
   };
 
@@ -477,8 +555,6 @@ if (typeof IS_MINIFIED !== 'undefined') {
     report(str, 'print', '#C83C00'); // auto dark orange
     report(str, 'print', '#4DB200'); // auto dark green
   } */
-
-  p5.prototype._validateParameters = p5.validateParameters;
 }
 
 // This is a lazily-defined list of p5 symbols that may be

@@ -230,7 +230,6 @@ p5.prototype.cursor = function(type, x, y) {
  * @return {Number}       current frameRate
  */
 p5.prototype.frameRate = function(fps) {
-  p5._validateParameters('frameRate', arguments);
   if (typeof fps !== 'number' || fps < 0) {
     return this._frameRate;
   } else {
@@ -466,7 +465,6 @@ p5.prototype.height = 0;
  *
  */
 p5.prototype.fullscreen = function(val) {
-  p5._validateParameters('fullscreen', arguments);
   // no arguments, return fullscreen or not
   if (typeof val === 'undefined') {
     return (
@@ -522,7 +520,6 @@ p5.prototype.fullscreen = function(val) {
  * sharp 50x50 white ellipse with black outline in center of canvas.
  */
 p5.prototype.pixelDensity = function(val) {
-  p5._validateParameters('pixelDensity', arguments);
   if (typeof val === 'number') {
     this._pixelDensity = val;
   } else {

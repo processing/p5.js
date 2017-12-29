@@ -53,7 +53,6 @@ var p5 = require('../core/core');
  * @return {Object}
  */
 p5.prototype.textAlign = function(horizAlign, vertAlign) {
-  p5._validateParameters('textAlign', arguments);
   return this._renderer.textAlign.apply(this._renderer, arguments);
 };
 
@@ -91,7 +90,6 @@ p5.prototype.textAlign = function(horizAlign, vertAlign) {
  * @return {Number}
  */
 p5.prototype.textLeading = function(theLeading) {
-  p5._validateParameters('textLeading', arguments);
   return this._renderer.textLeading.apply(this._renderer, arguments);
 };
 
@@ -123,7 +121,6 @@ p5.prototype.textLeading = function(theLeading) {
  * @return {Number}
  */
 p5.prototype.textSize = function(theSize) {
-  p5._validateParameters('textSize', arguments);
   return this._renderer.textSize.apply(this._renderer, arguments);
 };
 
@@ -158,7 +155,6 @@ p5.prototype.textSize = function(theSize) {
  * @return {String}
  */
 p5.prototype.textStyle = function(theStyle) {
-  p5._validateParameters('textStyle', arguments);
   return this._renderer.textStyle.apply(this._renderer, arguments);
 };
 
@@ -190,7 +186,6 @@ p5.prototype.textStyle = function(theStyle) {
  *
  */
 p5.prototype.textWidth = function(theText) {
-  p5._validateParameters('textWidth', arguments);
   if (theText.length === 0) {
     return 0;
   }
@@ -222,7 +217,6 @@ p5.prototype.textWidth = function(theText) {
  * </div>
  */
 p5.prototype.textAscent = function() {
-  p5._validateParameters('textAscent', arguments);
   return this._renderer.textAscent();
 };
 
@@ -251,7 +245,6 @@ p5.prototype.textAscent = function() {
  * </div>
  */
 p5.prototype.textDescent = function() {
-  p5._validateParameters('textDescent', arguments);
   return this._renderer.textDescent();
 };
 

@@ -166,7 +166,6 @@ p5.prototype.pixels = [];
  * @param  {Constant} blendMode
  */
 p5.prototype.blend = function() {
-  p5._validateParameters('blend', arguments);
   if (this._renderer) {
     this._renderer.blend.apply(this._renderer, arguments);
   } else {
@@ -229,7 +228,6 @@ p5.prototype.blend = function() {
  * @param  {Integer} dh
  */
 p5.prototype.copy = function() {
-  p5._validateParameters('copy', arguments);
   p5.Renderer2D.prototype.copy.apply(this._renderer, arguments);
 };
 
@@ -404,7 +402,6 @@ p5.prototype.copy = function() {
  *
  */
 p5.prototype.filter = function(operation, value) {
-  p5._validateParameters('filter', arguments);
   if (this.canvas !== undefined) {
     Filters.apply(this.canvas, Filters[operation.toLowerCase()], value);
   } else {
@@ -521,7 +518,6 @@ p5.prototype.get = function(x, y, w, h) {
  *
  */
 p5.prototype.loadPixels = function() {
-  p5._validateParameters('loadPixels', arguments);
   this._renderer.loadPixels();
 };
 
@@ -638,7 +634,6 @@ p5.prototype.set = function(x, y, imgOrCol) {
  * two images of the rocky mountains. one on top, one on bottom of canvas.
  */
 p5.prototype.updatePixels = function(x, y, w, h) {
-  p5._validateParameters('updatePixels', arguments);
   // graceful fail - if loadPixels() or set() has not been called, pixel
   // array will be empty, ignore call to updatePixels()
   if (this.pixels.length === 0) {

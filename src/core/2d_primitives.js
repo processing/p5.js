@@ -78,7 +78,6 @@ require('./error_helpers');
  *
  */
 p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
-  p5._validateParameters('arc', arguments);
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
@@ -164,8 +163,6 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
  * @param  {Integer} detail number of radial sectors to draw
  */
 p5.prototype.ellipse = function(x, y, w, h, detailX) {
-  p5._validateParameters('ellipse', arguments);
-
   // p5 supports negative width and heights for rects
   if (w < 0) {
     w = Math.abs(w);
@@ -232,8 +229,6 @@ p5.prototype.ellipse = function(x, y, w, h, detailX) {
  * @chainable
  */
 p5.prototype.line = function() {
-  p5._validateParameters('line', arguments);
-
   if (this._renderer._doStroke) {
     this._renderer.line.apply(this._renderer, arguments);
   }
@@ -267,8 +262,6 @@ p5.prototype.line = function() {
  *
  */
 p5.prototype.point = function() {
-  p5._validateParameters('point', arguments);
-
   if (this._renderer._doStroke) {
     this._renderer.point.apply(this._renderer, arguments);
   }
@@ -321,8 +314,6 @@ p5.prototype.point = function() {
  * @chainable
  */
 p5.prototype.quad = function() {
-  p5._validateParameters('quad', arguments);
-
   if (this._renderer._doStroke || this._renderer._doFill) {
     this._renderer.quad.apply(this._renderer, arguments);
   }
@@ -391,8 +382,6 @@ p5.prototype.quad = function() {
  * @chainable
  */
 p5.prototype.rect = function() {
-  p5._validateParameters('rect', arguments);
-
   if (this._renderer._doStroke || this._renderer._doFill) {
     var vals = canvas.modeAdjust(
       arguments[0],
@@ -438,8 +427,6 @@ p5.prototype.rect = function() {
  *
  */
 p5.prototype.triangle = function() {
-  p5._validateParameters('triangle', arguments);
-
   if (this._renderer._doStroke || this._renderer._doFill) {
     this._renderer.triangle(arguments);
   }

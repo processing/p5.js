@@ -21,7 +21,9 @@ suite('Calculation', function() {
       assert.typeOf(myp5.abs, 'function');
     });
     test('should return a number', function() {
+      p5._throwValidationErrors = false;
       result = myp5.abs();
+      p5._throwValidationErrors = true;
       assert.typeOf(result, 'number');
     });
     test('should return an absolute value', function() {

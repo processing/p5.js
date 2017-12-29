@@ -114,7 +114,6 @@ p5.prototype.ceil = Math.ceil;
  *
  */
 p5.prototype.constrain = function(n, low, high) {
-  p5._validateParameters('constrain', arguments);
   return Math.max(Math.min(n, high), low);
 };
 
@@ -173,7 +172,6 @@ p5.prototype.constrain = function(n, low, high) {
  * @return {Number}    distance between the two points
  */
 p5.prototype.dist = function() {
-  p5._validateParameters('dist', arguments);
   if (arguments.length === 4) {
     //2D
     return hypot(arguments[2] - arguments[0], arguments[3] - arguments[1]);
@@ -317,7 +315,6 @@ p5.prototype.floor = Math.floor;
  *
  */
 p5.prototype.lerp = function(start, stop, amt) {
-  p5._validateParameters('lerp', arguments);
   return amt * (stop - start) + start;
 };
 
@@ -411,7 +408,6 @@ p5.prototype.log = Math.log;
  *
  */
 p5.prototype.mag = function(x, y) {
-  p5._validateParameters('mag', arguments);
   return hypot(x, y);
 };
 
@@ -459,7 +455,6 @@ p5.prototype.mag = function(x, y) {
  *
  */
 p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
-  p5._validateParameters('map', arguments);
   var newval = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
   if (!withinBounds) {
     return newval;
@@ -513,7 +508,6 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
  * @return {Number}
  */
 p5.prototype.max = function() {
-  p5._validateParameters('max', arguments);
   if (arguments[0] instanceof Array) {
     return Math.max.apply(null, arguments[0]);
   } else {
@@ -563,7 +557,6 @@ p5.prototype.max = function() {
  * @return {Number}
  */
 p5.prototype.min = function() {
-  p5._validateParameters('min', arguments);
   if (arguments[0] instanceof Array) {
     return Math.min.apply(null, arguments[0]);
   } else {
@@ -620,7 +613,6 @@ p5.prototype.min = function() {
  *
  */
 p5.prototype.norm = function(n, start, stop) {
-  p5._validateParameters('norm', arguments);
   return this.map(n, start, stop, 0, 1);
 };
 

@@ -1,4 +1,8 @@
 suite('Error Helpers', function() {
+  if (window.IS_TESTING_MINIFIED_VERSION) {
+    return;
+  }
+
   var myp5;
 
   setup(function(done) {

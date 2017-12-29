@@ -66,7 +66,6 @@ require('./p5.Geometry');
  * @return {p5.Geometry} the p5.Geometry object
  */
 p5.prototype.loadModel = function(path) {
-  p5._validateParameters('loadModel', arguments);
   var normalize;
   var successCallback;
   var failureCallback;
@@ -246,7 +245,6 @@ function parseObj(model, lines) {
  */
 p5.prototype.model = function(model) {
   this._assert3d('model');
-  p5._validateParameters('model', arguments);
   if (model.vertices.length > 0) {
     if (!this._renderer.geometryInHash(model.gid)) {
       model._makeTriangleEdges()._edgesToVertices();
