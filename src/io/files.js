@@ -1270,7 +1270,7 @@ p5.prototype.save = function(object, _filename, _options) {
         if (args[0] instanceof Array) {
           p5.prototype.saveStrings(args[0], args[1], args[2]);
         } else if (args[0] instanceof p5.Table) {
-          p5.prototype.saveTable(args[0], args[1], args[2], args[3]);
+          p5.prototype.saveTable(args[0], args[1], args[2]);
         } else if (args[0] instanceof p5.Image) {
           p5.prototype.saveCanvas(args[0].canvas, args[1]);
         } else if (args[0] instanceof p5.SoundFile) {
@@ -1337,8 +1337,9 @@ p5.prototype.saveJSONArray = p5.prototype.saveJSON;
  *  vary between web browsers.
  *
  *  @method saveStrings
- *  @param  {Array} list      string array to be written
+ *  @param  {String[]} list   string array to be written
  *  @param  {String} filename filename for output
+ *  @param  {String} [extension] the filename's extension
  *  @example
  * <div><code>
  * var words = 'apple bear cat dog';

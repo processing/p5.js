@@ -182,7 +182,7 @@ p5.prototype.blend = function() {
  * target region.
  *
  * @method copy
- * @param  {p5.Image|p5.Graphics|undefined} srcImage source image
+ * @param  {p5.Image|p5.Element} srcImage source image
  * @param  {Integer} sx X coordinate of the source's upper left corner
  * @param  {Integer} sy Y coordinate of the source's upper left corner
  * @param  {Integer} sw source image width
@@ -216,9 +216,20 @@ p5.prototype.blend = function() {
  * image of rockies. Brickwall images on left and right. Right translucent
  *
  */
+/**
+ * @method copy
+ * @param  {Integer} sx
+ * @param  {Integer} sy
+ * @param  {Integer} sw
+ * @param  {Integer} sh
+ * @param  {Integer} dx
+ * @param  {Integer} dy
+ * @param  {Integer} dw
+ * @param  {Integer} dh
+ */
 p5.prototype.copy = function() {
   p5._validateParameters('copy', arguments);
-  p5.Renderer2D._copyHelper.apply(this, arguments);
+  p5.Renderer2D.prototype.copy.apply(this._renderer, arguments);
 };
 
 /**

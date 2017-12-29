@@ -24,7 +24,7 @@ Liquid.prototype.calculateDrag = function(m) {
   var dragMagnitude = this.c * speed * speed;
 
   // Direction is inverse of velocity
-  var dragForce = m.velocity.get();
+  var dragForce = m.velocity.copy();
   dragForce.mult(-1);
   
   // Scale according to magnitude

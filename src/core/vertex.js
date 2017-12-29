@@ -243,23 +243,23 @@ p5.prototype.beginContour = function() {
  *
  */
 p5.prototype.beginShape = function(kind) {
-  p5._validateParameters('beginShape', arguments);
-  if (
-    kind === constants.POINTS ||
-    kind === constants.LINES ||
-    kind === constants.TRIANGLES ||
-    kind === constants.TRIANGLE_FAN ||
-    kind === constants.TRIANGLE_STRIP ||
-    kind === constants.QUADS ||
-    kind === constants.QUAD_STRIP
-  ) {
-    shapeKind = kind;
-  } else {
-    shapeKind = null;
-  }
   if (this._renderer.isP3D) {
-    this._renderer.beginShape(kind);
+    this._renderer.beginShape.apply(this._renderer, arguments);
   } else {
+    if (
+      kind === constants.POINTS ||
+      kind === constants.LINES ||
+      kind === constants.TRIANGLES ||
+      kind === constants.TRIANGLE_FAN ||
+      kind === constants.TRIANGLE_STRIP ||
+      kind === constants.QUADS ||
+      kind === constants.QUAD_STRIP
+    ) {
+      shapeKind = kind;
+    } else {
+      shapeKind = null;
+    }
+      
     vertices = [];
     contourVertices = [];
   }
@@ -607,7 +607,6 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  * @method vertex
  * @param  {Number} x x-coordinate of the vertex
  * @param  {Number} y y-coordinate of the vertex
- * @param  {Number|Boolean} [z] z-coordinate of the vertex
  * @chainable
  * @example
  * <div>
@@ -624,6 +623,14 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  * @alt
  * 4 black points in a square shape in middle-right of canvas.
  *
+ */
+/**
+ * @method vertex
+ * @param  {Number} x
+ * @param  {Number} y
+ * @param  {Number} [z] z-coordinate of the vertex
+ * @param  {Number} [u] the vertex's texture u-coordinate
+ * @param  {Number} [v] the vertex's texture v-coordinate
  */
 p5.prototype.vertex = function(x, y, moveTo, u, v) {
   if (this._renderer.isP3D) {

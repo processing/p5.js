@@ -165,7 +165,7 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
  * @param  {Number} x        x-position
  * @param  {Number} y        y-position
  * @param  {Number} fontSize font size to use (optional)
- * @param  {Object} options  an (optional) object that can contain:
+ * @param  {Object} [options] an (optional) object that can contain:
  *
  * <br>sampleFactor - the ratio of path-length to number of samples
  * (default=.25); higher values yield more points and are therefore
