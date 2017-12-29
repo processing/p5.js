@@ -27,8 +27,9 @@ require('../core/error_helpers');
  * @method loadFont
  * @param  {String}        path       name of the file or url to load
  * @param  {Function}      [callback] function to be executed after
- *                                    loadFont()
- *                                    completes
+ *                                    loadFont() completes
+ * @param  {Function}      [onError]  function to be executed if
+ *                                    an error occurs
  * @return {p5.Font}                  p5.Font object
  * @example
  *
