@@ -379,16 +379,7 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY) {
   var gId = 'cylinder|' + detailX + '|' + detailY;
   if (!this._renderer.geometryInHash(gId)) {
     var cylinderGeom = new p5.Geometry(detailX, detailY);
-    _truncatedCone.call(
-      cylinderGeom,
-      1,
-      1,
-      1,
-      detailX,
-      detailY,
-      true,
-      true
-    );
+    _truncatedCone.call(cylinderGeom, 1, 1, 1, detailX, detailY, true, true);
     cylinderGeom.computeNormals();
     if (detailX <= 24 && detailY <= 16) {
       cylinderGeom._makeTriangleEdges();
@@ -545,11 +536,7 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
           var theta = 2 * Math.PI * u;
           var cosTheta = Math.cos(theta);
           var sinTheta = Math.sin(theta);
-          var p = new p5.Vector(
-            cosPhi * sinTheta,
-            sinPhi,
-            cosPhi * cosTheta
-          );
+          var p = new p5.Vector(cosPhi * sinTheta, sinPhi, cosPhi * cosTheta);
           this.vertices.push(p);
           this.vertexNormals.push(p);
           this.uvs.push([u, v]);
@@ -613,8 +600,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
 
   if (typeof tubeRadius === 'undefined') {
     tubeRadius = 10;
-  }
-  else if (!tubeRadius) {
+  } else if (!tubeRadius) {
     return; // nothing to draw
   }
 
@@ -635,7 +621,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
         var phi = 2 * Math.PI * v;
         var cosPhi = Math.cos(phi);
         var sinPhi = Math.sin(phi);
-        var r = (1 + tubeRatio * cosPhi);
+        var r = 1 + tubeRatio * cosPhi;
 
         for (var j = 0; j <= this.detailX; j++) {
           var u = j / this.detailX;
@@ -643,11 +629,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
           var cosTheta = Math.cos(theta);
           var sinTheta = Math.sin(theta);
 
-          var p = new p5.Vector(
-            r * cosTheta,
-            r * sinTheta,
-            tubeRatio * sinPhi
-          );
+          var p = new p5.Vector(r * cosTheta, r * sinTheta, tubeRatio * sinPhi);
 
           var n = new p5.Vector(cosPhi * cosTheta, cosPhi * sinTheta, sinPhi);
 
