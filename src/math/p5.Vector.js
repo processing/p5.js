@@ -701,9 +701,9 @@ p5.Vector.prototype.angleBetween = function angleBetween(v) {
  * Linear interpolate the vector to another vector
  *
  * @method lerp
- * @param  {p5.Vector} x   the x component
- * @param  {p5.Vector} y   the y component
- * @param  {p5.Vector} z   the z component
+ * @param  {Number}    x   the x component
+ * @param  {Number}    y   the y component
+ * @param  {Number}    z   the z component
  * @param  {Number}    amt the amount of interpolation; some value between 0.0
  *                         (old vector) and 1.0 (new vector). 0.9 is very near
  *                         the new vector. 0.5 is halfway in between.
