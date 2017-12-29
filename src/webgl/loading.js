@@ -188,7 +188,13 @@ function parseObj(model, lines) {
             face.push(vertIndex);
           }
 
-          model.faces.push(face);
+          if (
+            face[0] !== face[1] &&
+            face[0] !== face[2] &&
+            face[1] !== face[2]
+          ) {
+            model.faces.push(face);
+          }
         }
       }
     }
