@@ -281,34 +281,35 @@ p5.prototype.ortho = function(){
   return this;
 };
 
-p5.RendererGL.prototype.ortho = function(l, r, b, t, n, f) {
-  // ortho() ... top/left = 0/0
-  if(l === undefined) l = 0;
-  if(r === undefined) r = +this.width;
-  if(b === undefined) b = -this.height;
-  if(t === undefined) t = 0;
-  if(n === undefined) n = -Number.MAX_VALUE;
-  if(f === undefined) f = +Number.MAX_VALUE;
-  
-  var lr = r - l;
-  var tb = t - b;
-  var fn = f - n;
-  
-  var x = +2.0 / lr;
-  var y = +2.0 / tb;
-  var z = -2.0 / fn;
-  
-  var tx = -(r + l) / lr;
-  var ty = -(t + b) / tb;
-  var tz = -(f + n) / fn;
-  
+p5.RendererGL.prototype.ortho = function(left, right, bottom, top, near, far) {
+
+  if(left   === undefined) left   = -this.width  / 2;
+  if(right  === undefined) right  = +this.width  / 2;
+  if(bottom === undefined) bottom = -this.height / 2;
+  if(top    === undefined) top    = +this.height / 2;
+  if(near   === undefined) near   =  0;
+  if(far    === undefined) far    =  Math.max(this.width, this.height);
+
+  var w = right - left;
+  var h = top - bottom;
+  var d = far - near;
+
+  var x = +2.0 / w;
+  var y = +2.0 / h;
+  var z = -2.0 / d;
+
+  var tx = -(right + left) / w;
+  var ty = -(top + bottom) / h;
+  var tz = -(far + near) / d;
+
   this.uPMatrix = p5.Matrix.identity();
-  this.uPMatrix.set(  x,  0,  0, 0,
-                      0, -y,  0, 0,
-                      0,  0,  z, 0,
-                     tx, ty, tz, 1);
-  
+  this.uPMatrix.set(  x,  0,  0,  0,
+                      0, -y,  0,  0,
+                      0,  0,  z,  0,
+                     tx, ty, tz,  1);
+
   this._curCamera = 'custom';
+  
 };
 
 
