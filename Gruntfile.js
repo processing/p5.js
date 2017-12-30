@@ -289,7 +289,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'lib/p5.min.js': 'lib/p5.js',
+          'lib/p5.min.js': 'lib/p5.pre-min.js',
           'lib/addons/p5.dom.min.js': 'lib/addons/p5.dom.js'
         }
       }
@@ -314,8 +314,8 @@ module.exports = function(grunt) {
           middleware: function(connect, options, middlewares) {
             middlewares.unshift(
               require('connect-modrewrite')([
-                '^/assets/js/p5\\.min\\.js(.*) /lib/p5.min.js$1 [L]',
-                '^/assets/js/p5\\.(dom|sound)\\.min\\.js(.*) /lib/addons/p5.$1.min.js$2 [L]'
+                '^/assets/js/p5(\\.min)?\\.js(.*) /lib/p5$1.js$2 [L]',
+                '^/assets/js/p5\\.(dom|sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
               ]),
               function(req, res, next) {
                 res.setHeader('Access-Control-Allow-Origin', '*');
@@ -403,7 +403,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-karma');
 
   // Create the multitasks.
-  grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);
+  grunt.registerTask('build', [
+    'browserify',
+    'browserify:min',
+    'uglify',
+    'requirejs'
+  ]);
   grunt.registerTask('lint-no-fix', [
     'yui', // required for eslint-samples
     'eslint:build',

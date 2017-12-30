@@ -67,12 +67,10 @@ p5.RendererGL.prototype.beginShape = function(mode) {
  * @chainable
  * @TODO implement handling of p5.Vector args
  */
-p5.RendererGL.prototype.vertex = function() {
-  var x, y, z, u, v;
+p5.RendererGL.prototype.vertex = function(x, y) {
+  var z, u, v;
 
   // default to (x, y) mode: all other arugments assumed to be 0.
-  x = arguments[0];
-  y = arguments[1];
   z = u = v = 0;
 
   if (arguments.length === 3) {

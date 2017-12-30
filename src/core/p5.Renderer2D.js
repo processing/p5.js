@@ -1,3 +1,5 @@
+'use strict';
+
 var p5 = require('./core');
 var canvas = require('./canvas');
 var constants = require('./constants');
@@ -1305,7 +1307,7 @@ p5.Renderer2D.prototype.textWidth = function(s) {
 };
 
 p5.Renderer2D.prototype.textAlign = function(h, v) {
-  if (arguments.length) {
+  if (typeof h !== 'undefined' && typeof v !== 'undefined') {
     if (
       h === constants.LEFT ||
       h === constants.RIGHT ||

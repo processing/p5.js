@@ -183,11 +183,7 @@ p5.prototype.normalMaterial = function() {
  * black canvas
  *
  */
-p5.prototype.texture = function() {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
+p5.prototype.texture = function(tex) {
   this._renderer.GL.depthMask(true);
   this._renderer.GL.enable(this._renderer.GL.BLEND);
   this._renderer.GL.blendFunc(
@@ -199,7 +195,7 @@ p5.prototype.texture = function() {
   var shader = this._renderer._useLightShader();
   shader.setUniform('uSpecular', false);
   shader.setUniform('isTexture', true);
-  shader.setUniform('uSampler', args[0]);
+  shader.setUniform('uSampler', tex);
   this._renderer.noStroke();
   return this;
 };
@@ -210,7 +206,7 @@ p5.prototype.texture = function() {
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
  * @method  ambientMaterial
  * @param  {Number} v1  gray value, red or hue value
- *                         (depending on the current color mode)
+ *                         (depending on the current color mode),
  * @param  {Number} [v2] green or saturation value
  * @param  {Number} [v3] blue or brightness value
  * @param  {Number} [a]  opacity
@@ -237,7 +233,7 @@ p5.prototype.texture = function() {
  */
 /**
  * @method  ambientMaterial
- * @param  {Array|String|p5.Color} color  color, color Array, or CSS color string
+ * @param  {Number[]|String|p5.Color} color  color, color Array, or CSS color string
  * @chainable
  */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
@@ -255,8 +251,8 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * possible materials in this
  * <a href="https://p5js.org/examples/3d-materials.html">example</a>.
  * @method specularMaterial
- * @param  {Number} v1   gray value, red or hue value
- *                        (depending on the current color mode),
+ * @param  {Number} v1  gray value, red or hue value
+ *                       (depending on the current color mode),
  * @param  {Number} [v2] green or saturation value
  * @param  {Number} [v3] blue or brightness value
  * @param  {Number} [a]  opacity
@@ -283,7 +279,7 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  */
 /**
  * @method specularMaterial
- * @param  {Array|String|p5.Color} color color Array, or CSS color string
+ * @param  {Number[]|String|p5.Color} color color Array, or CSS color string
  * @chainable
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {

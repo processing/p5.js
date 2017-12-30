@@ -1,3 +1,5 @@
+'use strict';
+
 var p5 = require('../core/core');
 
 /**

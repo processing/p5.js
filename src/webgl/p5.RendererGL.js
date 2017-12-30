@@ -176,13 +176,11 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
     document.body.appendChild(c);
   }
   this._pInst.canvas = c;
-  this._pInst._setProperty(
-    '_renderer',
-    new p5.RendererGL(this._pInst.canvas, this._pInst, true, attr)
-  );
-  this._pInst._renderer.resize(w, h);
-  this._pInst._renderer._applyDefaults();
-  this._pInst._elements.push(this._renderer);
+  var renderer = new p5.RendererGL(this._pInst.canvas, this._pInst, true, attr);
+  this._pInst._setProperty('_renderer', renderer);
+  renderer.resize(w, h);
+  renderer._applyDefaults();
+  this._pInst._elements.push(renderer);
   if (typeof callback === 'function') {
     //setTimeout with 0 forces the task to the back of the queue, this ensures that
     //we finish switching out the renderer
@@ -223,8 +221,8 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  * <br><br>
  * @method setAttributes
  * @for p5
- * @param  {String|Object}  String name of attribute or object with key-value pairs
- * @param  {Boolean}        New value of named attribute
+ * @param  {String}  key Name of attribute
+ * @param  {Boolean}        value New value of named attribute
  * @example
  * <div>
  * <code>
@@ -269,14 +267,20 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  *
  * @alt a rotating cube with smoother edges
  */
+/**
+ * @method setAttributes
+ * @for p5
+ * @param  {Object}  obj object with key-value pairs
+ */
 
-p5.prototype.setAttributes = function() {
+p5.prototype.setAttributes = function(key, value) {
   //@todo_FES
-  var attr = {};
-  if (arguments.length === 2) {
-    attr[arguments[0]] = arguments[1];
-  } else if (arguments.length === 1) {
-    attr = arguments[0];
+  var attr;
+  if (typeof value !== 'undefined') {
+    attr = {};
+    attr.key = value;
+  } else if (key instanceof Object) {
+    attr = key;
   }
   this._renderer._resetContext(attr);
 };
@@ -368,7 +372,7 @@ p5.RendererGL.prototype.background = function() {
  * Basic fill material for geometry with a given color
  * @method  fill
  * @class p5.RendererGL
- * @param  {Number|Array|String|p5.Color} v1  gray value,
+ * @param  {Number|Number[]|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
  * @param  {Number}            [v2] green or saturation value
@@ -475,7 +479,7 @@ p5.RendererGL.prototype.noStroke = function() {
 /**
  * Basic stroke material for geometry with a given color
  * @method  stroke
- * @param  {Number|Array|String|p5.Color} v1  gray value,
+ * @param  {Number|Number[]|String|p5.Color} v1  gray value,
  * red or hue value (depending on the current color mode),
  * or color Array, or CSS color string
  * @param  {Number}            [v2] green or saturation value
@@ -985,18 +989,40 @@ p5.RendererGL.prototype._bindBuffer = function(
  * [[1, 2, 3],[4, 5, 6]] -> [1, 2, 3, 4, 5, 6]
  */
 p5.RendererGL.prototype._flatten = function(arr) {
-  if (arr.length > 0) {
-    return [].concat.apply([], arr);
-  } else {
+  //when empty, return empty
+  if (arr.length === 0) {
     return [];
+  } else if (arr.length > 20000) {
+    //big models , load slower to avoid stack overflow
+    //faster non-recursive flatten via axelduch
+    //stackoverflow.com/questions/27266550/how-to-flatten-nested-array-in-javascript
+    var toString = Object.prototype.toString;
+    var arrayTypeStr = '[object Array]';
+    var result = [];
+    var nodes = arr.slice();
+    var node;
+    node = nodes.pop();
+    do {
+      if (toString.call(node) === arrayTypeStr) {
+        nodes.push.apply(nodes, node);
+      } else {
+        result.push(node);
+      }
+    } while (nodes.length && (node = nodes.pop()) !== undefined);
+    result.reverse(); // we reverse result to restore the original order
+    return result;
+  } else {
+    //otherwise if model within limits for browser
+    //use faster recursive loading
+    return [].concat.apply([], arr);
   }
 };
 
 /**
  * turn a p5.Vector Array into a one dimensional number array
  * @private
- * @param  {Array} arr  an array of p5.Vector
- * @return {Array]}     a one dimensional array of numbers
+ * @param  {p5.Vector[]} arr  an array of p5.Vector
+ * @return {Number[]}     a one dimensional array of numbers
  * [p5.Vector(1, 2, 3), p5.Vector(4, 5, 6)] ->
  * [1, 2, 3, 4, 5, 6]
  */

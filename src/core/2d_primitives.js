@@ -32,7 +32,7 @@ require('./error_helpers');
  * @param  {Number} start  angle to start the arc, specified in radians
  * @param  {Number} stop   angle to stop the arc, specified in radians
  * @param  {Constant} [mode] optional parameter to determine the way of drawing
- *                         the arc. Parameter options are OPEN, CHORD or PIE
+ *                         the arc. either CHORD, PIE or OPEN
  * @chainable
  * @example
  * <div>
@@ -78,12 +78,7 @@ require('./error_helpers');
  *
  */
 p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-
-  p5._validateParameters('arc', args);
+  p5._validateParameters('arc', arguments);
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
@@ -161,39 +156,26 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
  *white ellipse with black outline in middle-right of canvas that is 55x55.
  *
  */
-p5.prototype.ellipse = function() {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  // Duplicate 3rd argument if only 3 given.
-  if (args.length === 3) {
-    args.push(args[2]);
+p5.prototype.ellipse = function(x, y, w, h) {
+  p5._validateParameters('ellipse', arguments);
+
+  // p5 supports negative width and heights for rects
+  if (w < 0) {
+    w = Math.abs(w);
   }
 
-  p5._validateParameters('ellipse', args);
-  // p5 supports negative width and heights for rects
-  if (args[2] < 0) {
-    args[2] = Math.abs(args[2]);
+  if (typeof h === 'undefined') {
+    // Duplicate 3rd argument if only 3 given.
+    h = w;
+  } else if (h < 0) {
+    h = Math.abs(h);
   }
-  if (args[3] < 0) {
-    args[3] = Math.abs(args[3]);
+
+  if (this._renderer._doStroke || this._renderer._doFill) {
+    var vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
+    this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h]);
   }
-  if (!this._renderer._doStroke && !this._renderer._doFill) {
-    return this;
-  }
-  var vals = canvas.modeAdjust(
-    args[0],
-    args[1],
-    args[2],
-    args[3],
-    this._renderer._ellipseMode
-  );
-  args[0] = vals.x;
-  args[1] = vals.y;
-  args[2] = vals.w;
-  args[3] = vals.h;
-  this._renderer.ellipse(args);
+
   return this;
 };
 /**
@@ -232,22 +214,23 @@ p5.prototype.ellipse = function() {
  *3 lines of various stroke sizes. Form top, bottom and right sides of a square.
  *
  */
+/**
+ * @method line
+ * @param  {Number} x1
+ * @param  {Number} y1
+ * @param  {Number} z1 the z-coordinate of the first point
+ * @param  {Number} x2
+ * @param  {Number} y2
+ * @param  {Number} z2 the z-coordinate of the second point
+ * @chainable
+ */
 p5.prototype.line = function() {
-  if (!this._renderer._doStroke) {
-    return this;
-  }
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+  p5._validateParameters('line', arguments);
+
+  if (this._renderer._doStroke) {
+    this._renderer.line.apply(this._renderer, arguments);
   }
 
-  p5._validateParameters('line', args);
-  //check whether we should draw a 3d line or 2d
-  if (this._renderer.isP3D) {
-    this._renderer.line.apply(this, args);
-  } else {
-    this._renderer.line(args[0], args[1], args[2], args[3]);
-  }
   return this;
 };
 
@@ -260,6 +243,7 @@ p5.prototype.line = function() {
  * @method point
  * @param  {Number} x the x-coordinate
  * @param  {Number} y the y-coordinate
+ * @param  {Number} [z] the z-coordinate (for WEBGL mode)
  * @chainable
  * @example
  * <div>
@@ -276,21 +260,12 @@ p5.prototype.line = function() {
  *
  */
 p5.prototype.point = function() {
-  if (!this._renderer._doStroke) {
-    return this;
-  }
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+  p5._validateParameters('point', arguments);
+
+  if (this._renderer._doStroke) {
+    this._renderer.point.apply(this._renderer, arguments);
   }
 
-  p5._validateParameters('point', args);
-  //check whether we should draw a 3d line or 2d
-  if (this._renderer.isP3D) {
-    this._renderer.point(args[0], args[1], args[2]);
-  } else {
-    this._renderer.point(args[0], args[1]);
-  }
   return this;
 };
 
@@ -326,51 +301,25 @@ p5.prototype.point = function() {
  * @method quad
  * @param {Number} x1
  * @param {Number} y1
+ * @param {Number} z1
  * @param {Number} x2
  * @param {Number} y2
+ * @param {Number} z2
  * @param {Number} x3
  * @param {Number} y3
+ * @param {Number} z3
  * @param {Number} x4
  * @param {Number} y4
+ * @param {Number} z4
  * @chainable
  */
 p5.prototype.quad = function() {
-  if (!this._renderer._doStroke && !this._renderer._doFill) {
-    return this;
-  }
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+  p5._validateParameters('quad', arguments);
+
+  if (this._renderer._doStroke || this._renderer._doFill) {
+    this._renderer.quad.apply(this._renderer, arguments);
   }
 
-  p5._validateParameters('quad', args);
-  if (this._renderer.isP3D) {
-    this._renderer.quad(
-      args[0],
-      args[1],
-      args[2],
-      args[3],
-      args[4],
-      args[5],
-      args[6],
-      args[7],
-      args[8],
-      args[9],
-      args[10],
-      args[11]
-    );
-  } else {
-    this._renderer.quad(
-      args[0],
-      args[1],
-      args[2],
-      args[3],
-      args[4],
-      args[5],
-      args[6],
-      args[7]
-    );
-  }
   return this;
 };
 
@@ -434,28 +383,14 @@ p5.prototype.quad = function() {
  * @param  {Number} [detailY]
  * @chainable
  */
-p5.prototype.rect = function() {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  if (!this._renderer._doStroke && !this._renderer._doFill) {
-    return this;
+p5.prototype.rect = function(x, y, w, h, detailX, detailY) {
+  p5._validateParameters('rect', arguments);
+
+  if (this._renderer._doStroke || this._renderer._doFill) {
+    var vals = canvas.modeAdjust(x, y, w, h, this._renderer._rectMode);
+    this._renderer.rect([vals.x, vals.y, vals.w, vals.h]);
   }
 
-  p5._validateParameters('rect', args);
-  var vals = canvas.modeAdjust(
-    args[0],
-    args[1],
-    args[2],
-    args[3],
-    this._renderer._rectMode
-  );
-  args[0] = vals.x;
-  args[1] = vals.y;
-  args[2] = vals.w;
-  args[3] = vals.h;
-  this._renderer.rect(args);
   return this;
 };
 
@@ -484,16 +419,12 @@ p5.prototype.rect = function() {
  *
  */
 p5.prototype.triangle = function() {
-  if (!this._renderer._doStroke && !this._renderer._doFill) {
-    return this;
-  }
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+  p5._validateParameters('triangle', arguments);
+
+  if (this._renderer._doStroke || this._renderer._doFill) {
+    this._renderer.triangle(arguments);
   }
 
-  p5._validateParameters('triangle', args);
-  this._renderer.triangle(args);
   return this;
 };
 

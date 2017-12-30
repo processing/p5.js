@@ -44,15 +44,20 @@ require('./p5.Geometry');
  * 3d red and green gradient.
  * rotating view of a multi-colored cylinder with concave sides.
  */
-p5.prototype.plane = function() {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+p5.prototype.plane = function(width, height, detailX, detailY) {
+  if (typeof width === 'undefined') {
+    width = 50;
   }
-  var width = args[0] || 50;
-  var height = args[1] || width;
-  var detailX = typeof args[2] === 'number' ? args[2] : 1;
-  var detailY = typeof args[3] === 'number' ? args[3] : 1;
+  if (typeof height === 'undefined') {
+    height = width;
+  }
+
+  if (typeof detailX === 'undefined') {
+    detailX = 1;
+  }
+  if (typeof detailY === 'undefined') {
+    detailY = 1;
+  }
 
   var gId = 'plane|' + width + '|' + height + '|' + detailX + '|' + detailY;
 
@@ -114,17 +119,24 @@ p5.prototype.plane = function() {
  * </code>
  * </div>
  */
-p5.prototype.box = function() {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+p5.prototype.box = function(width, height, depth, detailX, detailY) {
+  if (typeof width === 'undefined') {
+    width = 50;
   }
-  var width = args[0] || 50;
-  var height = args[1] || width;
-  var depth = args[2] || width;
+  if (typeof height === 'undefined') {
+    height = width;
+  }
+  if (typeof depth === 'undefined') {
+    depth = height;
+  }
 
-  var detailX = typeof args[3] === 'number' ? args[3] : 4;
-  var detailY = typeof args[4] === 'number' ? args[4] : 4;
+  if (typeof detailX === 'undefined') {
+    detailX = 4;
+  }
+  if (typeof detailY === 'undefined') {
+    detailY = 4;
+  }
+
   var gId =
     'box|' + width + '|' + height + '|' + depth + '|' + detailX + '|' + detailY;
   if (!this._renderer.geometryInHash(gId)) {
@@ -220,41 +232,42 @@ p5.prototype.box = function() {
  * </code>
  * </div>
  */
-p5.prototype.sphere = function() {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+p5.prototype.sphere = function(radius, detailX, detailY) {
+  if (typeof radius === 'undefined') {
+    radius = 50;
   }
-  var radius = args[0] || 50;
-  var detailX = typeof args[1] === 'number' ? args[1] : 24;
-  var detailY = typeof args[2] === 'number' ? args[2] : 16;
+  if (typeof detailX === 'undefined') {
+    detailX = 24;
+  }
+  if (typeof detailY === 'undefined') {
+    detailY = 16;
+  }
 
   var gId = 'sphere|' + radius + '|' + detailX + '|' + detailY;
   if (!this._renderer.geometryInHash(gId)) {
     var _sphere = function() {
-      var u, v, p;
       for (var i = 0; i <= this.detailY; i++) {
-        v = i / this.detailY;
+        var v = i / this.detailY;
+        var phi = Math.PI * v - Math.PI / 2;
+        var cosPhi = Math.cos(phi);
+        var sinPhi = Math.sin(phi);
+
         for (var j = 0; j <= this.detailX; j++) {
-          u = j / this.detailX;
+          var u = j / this.detailX;
           var theta = 2 * Math.PI * u;
-          var phi = Math.PI * v - Math.PI / 2;
-          p = new p5.Vector(
-            radius * Math.cos(phi) * Math.sin(theta),
-            radius * Math.sin(phi),
-            radius * Math.cos(phi) * Math.cos(theta)
+          var n = new p5.Vector(
+            cosPhi * Math.sin(theta),
+            sinPhi,
+            cosPhi * Math.cos(theta)
           );
-          this.vertices.push(p);
+          this.vertexNormals.push(n);
+          this.vertices.push(p5.Vector.mult(n, radius));
           this.uvs.push([u, v]);
         }
       }
     };
     var sphereGeom = new p5.Geometry(detailX, detailY, _sphere);
-    sphereGeom
-      .computeFaces()
-      .computeNormals()
-      .averageNormals()
-      .averagePoleNormals();
+    sphereGeom.computeFaces();
     if (detailX <= 24 && detailY <= 16) {
       sphereGeom._makeTriangleEdges();
       this._renderer._edgesToVertices(sphereGeom);
@@ -387,15 +400,20 @@ var _truncatedCone = function(
  * </code>
  * </div>
  */
-p5.prototype.cylinder = function() {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+p5.prototype.cylinder = function(radius, height, detailX, detailY) {
+  if (typeof radius === 'undefined') {
+    radius = 50;
   }
-  var radius = args[0] || 50;
-  var height = args[1] || radius;
-  var detailX = typeof args[2] === 'number' ? args[2] : 24;
-  var detailY = typeof args[3] === 'number' ? args[3] : 16;
+  if (typeof height === 'undefined') {
+    height = radius;
+  }
+  if (typeof detailX === 'undefined') {
+    detailX = 24;
+  }
+  if (typeof detailY === 'undefined') {
+    detailY = 16;
+  }
+
   var gId = 'cylinder|' + radius + '|' + height + '|' + detailX + '|' + detailY;
   if (!this._renderer.geometryInHash(gId)) {
     var cylinderGeom = new p5.Geometry(detailX, detailY);
@@ -456,21 +474,26 @@ p5.prototype.cylinder = function() {
  * </code>
  * </div>
  */
-p5.prototype.cone = function() {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+p5.prototype.cone = function(radius, height, detailX, detailY) {
+  if (typeof radius === 'undefined') {
+    radius = 50;
   }
-  var baseRadius = args[0] || 50;
-  var height = args[1] || baseRadius;
-  var detailX = typeof args[2] === 'number' ? args[2] : 24;
-  var detailY = typeof args[3] === 'number' ? args[3] : 16;
-  var gId = 'cone|' + baseRadius + '|' + height + '|' + detailX + '|' + detailY;
+  if (typeof height === 'undefined') {
+    height = radius;
+  }
+  if (typeof detailX === 'undefined') {
+    detailX = 24;
+  }
+  if (typeof detailY === 'undefined') {
+    detailY = 16;
+  }
+
+  var gId = 'cone|' + radius + '|' + height + '|' + detailX + '|' + detailY;
   if (!this._renderer.geometryInHash(gId)) {
     var coneGeom = new p5.Geometry(detailX, detailY);
     _truncatedCone.call(
       coneGeom,
-      baseRadius,
+      radius,
       0, //top radius 0
       height,
       detailX,
@@ -527,16 +550,23 @@ p5.prototype.cone = function() {
  * </code>
  * </div>
  */
-p5.prototype.ellipsoid = function() {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
+  if (typeof radiusX === 'undefined') {
+    radiusX = 50;
   }
-  var detailX = typeof args[3] === 'number' ? args[3] : 24;
-  var detailY = typeof args[4] === 'number' ? args[4] : 24;
-  var radiusX = args[0] || 50;
-  var radiusY = args[1] || radiusX;
-  var radiusZ = args[2] || radiusX;
+  if (typeof radiusY === 'undefined') {
+    radiusY = radiusX;
+  }
+  if (typeof radiusZ === 'undefined') {
+    radiusZ = radiusX;
+  }
+
+  if (typeof detailX === 'undefined') {
+    detailX = 24;
+  }
+  if (typeof detailY === 'undefined') {
+    detailY = 16;
+  }
 
   var gId =
     'ellipsoid|' +
@@ -552,25 +582,36 @@ p5.prototype.ellipsoid = function() {
 
   if (!this._renderer.geometryInHash(gId)) {
     var _ellipsoid = function() {
-      var u, v, p;
       for (var i = 0; i <= this.detailY; i++) {
-        v = i / this.detailY;
+        var v = i / this.detailY;
+        var phi = Math.PI * v - Math.PI / 2;
+        var cosPhi = Math.cos(phi);
+        var sinPhi = Math.sin(phi);
+
         for (var j = 0; j <= this.detailX; j++) {
-          u = j / this.detailX;
+          var u = j / this.detailX;
           var theta = 2 * Math.PI * u;
-          var phi = Math.PI * v - Math.PI / 2;
-          p = new p5.Vector(
-            radiusX * Math.cos(phi) * Math.sin(theta),
-            radiusY * Math.sin(phi),
-            radiusZ * Math.cos(phi) * Math.cos(theta)
+          var cosTheta = Math.cos(theta);
+          var sinTheta = Math.sin(theta);
+          var p = new p5.Vector(
+            radiusX * cosPhi * sinTheta,
+            radiusY * sinPhi,
+            radiusZ * cosPhi * cosTheta
           );
+          var n = new p5.Vector(
+            cosPhi * sinTheta / radiusX,
+            sinPhi / radiusY,
+            cosPhi * cosTheta / radiusZ
+          ).normalize();
+
           this.vertices.push(p);
+          this.vertexNormals.push(n);
           this.uvs.push([u, v]);
         }
       }
     };
     var ellipsoidGeom = new p5.Geometry(detailX, detailY, _ellipsoid);
-    ellipsoidGeom.computeFaces().computeNormals();
+    ellipsoidGeom.computeFaces();
     if (detailX <= 24 && detailY <= 24) {
       ellipsoidGeom._makeTriangleEdges();
       this._renderer._edgesToVertices(ellipsoidGeom);
@@ -617,44 +658,53 @@ p5.prototype.ellipsoid = function() {
  * </code>
  * </div>
  */
-p5.prototype.torus = function() {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
+  if (typeof radius === 'undefined') {
+    radius = 50;
   }
-  var detailX = typeof args[2] === 'number' ? args[2] : 24;
-  var detailY = typeof args[3] === 'number' ? args[3] : 16;
+  if (typeof tubeRadius === 'undefined') {
+    tubeRadius = 10;
+  }
 
-  var radius = args[0] || 50;
-  var tubeRadius = args[1] || 10;
+  if (typeof detailX === 'undefined') {
+    detailX = 24;
+  }
+  if (typeof detailY === 'undefined') {
+    detailY = 16;
+  }
 
   var gId =
     'torus|' + radius + '|' + tubeRadius + '|' + detailX + '|' + detailY;
 
   if (!this._renderer.geometryInHash(gId)) {
     var _torus = function() {
-      var u, v, p;
       for (var i = 0; i <= this.detailY; i++) {
-        v = i / this.detailY;
+        var v = i / this.detailY;
+        var phi = 2 * Math.PI * v;
+        var cosPhi = Math.cos(phi);
+        var sinPhi = Math.sin(phi);
+
         for (var j = 0; j <= this.detailX; j++) {
-          u = j / this.detailX;
+          var u = j / this.detailX;
           var theta = 2 * Math.PI * u;
-          var phi = 2 * Math.PI * v;
-          p = new p5.Vector(
-            (radius + tubeRadius * Math.cos(phi)) * Math.cos(theta),
-            (radius + tubeRadius * Math.cos(phi)) * Math.sin(theta),
-            tubeRadius * Math.sin(phi)
+          var cosTheta = Math.cos(theta);
+          var sinTheta = Math.sin(theta);
+
+          var p = new p5.Vector(
+            (radius + tubeRadius * cosPhi) * cosTheta,
+            (radius + tubeRadius * cosPhi) * sinTheta,
+            tubeRadius * sinPhi
           );
+          var n = new p5.Vector(cosPhi * cosTheta, cosPhi * sinTheta, sinPhi);
+
           this.vertices.push(p);
+          this.vertexNormals.push(n);
           this.uvs.push([u, v]);
         }
       }
     };
     var torusGeom = new p5.Geometry(detailX, detailY, _torus);
-    torusGeom
-      .computeFaces()
-      .computeNormals()
-      .averageNormals();
+    torusGeom.computeFaces();
     if (detailX <= 24 && detailY <= 16) {
       torusGeom._makeTriangleEdges();
       this._renderer._edgesToVertices(torusGeom);
@@ -796,19 +846,7 @@ p5.RendererGL.prototype.rect = function(args) {
   return this;
 };
 
-p5.RendererGL.prototype.quad = function() {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  var x1 = args[0],
-    y1 = args[1],
-    x2 = args[2],
-    y2 = args[3],
-    x3 = args[4],
-    y3 = args[5],
-    x4 = args[6],
-    y4 = args[7];
+p5.RendererGL.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
   var gId =
     'quad|' +
     x1 +
@@ -847,63 +885,76 @@ p5.RendererGL.prototype.quad = function() {
 
 //this implementation of bezier curve
 //is based on Bernstein polynomial
-p5.RendererGL.prototype.bezier = function(args) {
-  var bezierDetail = args[12] || 20; //value of Bezier detail
+// pretier-ignore
+p5.RendererGL.prototype.bezier = function(
+  x1,
+  y1,
+  z1,
+  x2,
+  y2,
+  z2,
+  x3,
+  y3,
+  z3,
+  x4,
+  y4,
+  z4
+) {
+  var bezierDetail = this._pInst._bezierDetail || 20; //value of Bezier detail
   this.beginShape();
-  var coeff = [0, 0, 0, 0]; //  Bernstein polynomial coeffecients
-  var vertex = [0, 0, 0]; //(x,y,z) coordinates of points in bezier curve
   for (var i = 0; i <= bezierDetail; i++) {
-    coeff[0] = Math.pow(1 - i / bezierDetail, 3);
-    coeff[1] = 3 * (i / bezierDetail) * Math.pow(1 - i / bezierDetail, 2);
-    coeff[2] = 3 * Math.pow(i / bezierDetail, 2) * (1 - i / bezierDetail);
-    coeff[3] = Math.pow(i / bezierDetail, 3);
-    vertex[0] =
-      args[0] * coeff[0] +
-      args[3] * coeff[1] +
-      args[6] * coeff[2] +
-      args[9] * coeff[3];
-    vertex[1] =
-      args[1] * coeff[0] +
-      args[4] * coeff[1] +
-      args[7] * coeff[2] +
-      args[10] * coeff[3];
-    vertex[2] =
-      args[2] * coeff[0] +
-      args[5] * coeff[1] +
-      args[8] * coeff[2] +
-      args[11] * coeff[3];
-    this.vertex(vertex[0], vertex[1], vertex[2]);
+    var c1 = Math.pow(1 - i / bezierDetail, 3);
+    var c2 = 3 * (i / bezierDetail) * Math.pow(1 - i / bezierDetail, 2);
+    var c3 = 3 * Math.pow(i / bezierDetail, 2) * (1 - i / bezierDetail);
+    var c4 = Math.pow(i / bezierDetail, 3);
+    this.vertex(
+      x1 * c1 + x2 * c2 + x3 * c3 + x4 * c4,
+      y1 * c1 + y2 * c2 + y3 * c3 + y4 * c4,
+      z1 * c1 + z2 * c2 + z3 * c3 + z4 * c4
+    );
   }
   this.endShape();
   return this;
 };
 
-p5.RendererGL.prototype.curve = function(args) {
-  var curveDetail = args[12];
+// pretier-ignore
+p5.RendererGL.prototype.curve = function(
+  x1,
+  y1,
+  z1,
+  x2,
+  y2,
+  z2,
+  x3,
+  y3,
+  z3,
+  x4,
+  y4,
+  z4
+) {
+  var curveDetail = this._pInst._curveDetail;
   this.beginShape();
-  var coeff = [0, 0, 0, 0]; //coeffecients of the equation
-  var vertex = [0, 0, 0]; //(x,y,z) coordinates of points in bezier curve
   for (var i = 0; i <= curveDetail; i++) {
-    coeff[0] = Math.pow(i / curveDetail, 3) * 0.5;
-    coeff[1] = Math.pow(i / curveDetail, 2) * 0.5;
-    coeff[2] = i / curveDetail * 0.5;
-    coeff[3] = 0.5;
-    vertex[0] =
-      coeff[0] * (-args[0] + 3 * args[3] - 3 * args[6] + args[9]) +
-      coeff[1] * (2 * args[0] - 5 * args[3] + 4 * args[6] - args[9]) +
-      coeff[2] * (-args[0] + args[6]) +
-      coeff[3] * (2 * args[3]);
-    vertex[1] =
-      coeff[0] * (-args[1] + 3 * args[4] - 3 * args[7] + args[10]) +
-      coeff[1] * (2 * args[1] - 5 * args[4] + 4 * args[7] - args[10]) +
-      coeff[2] * (-args[1] + args[7]) +
-      coeff[3] * (2 * args[4]);
-    vertex[2] =
-      coeff[0] * (-args[2] + 3 * args[5] - 3 * args[8] + args[11]) +
-      coeff[1] * (2 * args[2] - 5 * args[5] + 4 * args[8] - args[11]) +
-      coeff[2] * (-args[2] + args[8]) +
-      coeff[3] * (2 * args[5]);
-    this.vertex(vertex[0], vertex[1], vertex[2]);
+    var c1 = Math.pow(i / curveDetail, 3) * 0.5;
+    var c2 = Math.pow(i / curveDetail, 2) * 0.5;
+    var c3 = i / curveDetail * 0.5;
+    var c4 = 0.5;
+    var vx =
+      c1 * (-x1 + 3 * x2 - 3 * x3 + x4) +
+      c2 * (2 * x1 - 5 * x2 + 4 * x3 - x4) +
+      c3 * (-x1 + x3) +
+      c4 * (2 * x2);
+    var vy =
+      c1 * (-y1 + 3 * y2 - 3 * y3 + y4) +
+      c2 * (2 * y1 - 5 * y2 + 4 * y3 - y4) +
+      c3 * (-y1 + y3) +
+      c4 * (2 * y2);
+    var vz =
+      c1 * (-z1 + 3 * z2 - 3 * z3 + z4) +
+      c2 * (2 * z1 - 5 * z2 + 4 * z3 - z4) +
+      c3 * (-z1 + z3) +
+      c4 * (2 * z2);
+    this.vertex(vx, vy, vz);
   }
   this.endShape();
   return this;

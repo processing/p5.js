@@ -17,7 +17,8 @@ require('../core/error_helpers');
  * Extracts the alpha value from a color or pixel array.
  *
  * @method alpha
- * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ *                                         or CSS color
  * @return {Number} the alpha value
  * @example
  * <div>
@@ -61,7 +62,8 @@ p5.prototype.alpha = function(c) {
  * Extracts the blue value from a color or pixel array.
  *
  * @method blue
- * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ *                                         or CSS color
  * @return {Number} the blue value
  * @example
  * <div>
@@ -90,7 +92,8 @@ p5.prototype.blue = function(c) {
  * Extracts the HSB brightness value from a color or pixel array.
  *
  * @method brightness
- * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ *                                         or CSS color
  * @return {Number} the brightness value
  * @example
  * <div>
@@ -294,7 +297,7 @@ p5.prototype.brightness = function(c) {
  */
 /**
  * @method color
- * @param  {Array}      values  an array containing the red,green,blue &
+ * @param  {Number[]}      values  an array containing the red,green,blue &
  *                                 and alpha components of the color
  * @return {p5.Color}
  */
@@ -305,6 +308,7 @@ p5.prototype.brightness = function(c) {
  */
 
 p5.prototype.color = function() {
+  p5._validateParameters('color', arguments);
   if (arguments[0] instanceof p5.Color) {
     return arguments[0]; // Do nothing if argument is already a color object.
   } else if (arguments[0] instanceof Array) {
@@ -314,7 +318,6 @@ p5.prototype.color = function() {
       return new p5.Color(this._renderer, arguments[0]);
     }
   } else {
-    p5._validateParameters('color', arguments);
     if (this instanceof p5.Renderer) {
       return new p5.Color(this, arguments);
     } else {
@@ -327,7 +330,8 @@ p5.prototype.color = function() {
  * Extracts the green value from a color or pixel array.
  *
  * @method green
- * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ *                                         or CSS color
  * @return {Number} the green value
  * @example
  * <div>
@@ -363,7 +367,8 @@ p5.prototype.green = function(c) {
  * maximum hue setting for each system is different.)
  *
  * @method hue
- * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ *                                         or CSS color
  * @return {Number} the hue
  * @example
  * <div>
@@ -440,28 +445,28 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
   var fromArray, toArray;
 
   if (mode === constants.RGB) {
-    fromArray = arguments[0].levels.map(function(level) {
+    fromArray = c1.levels.map(function(level) {
       return level / 255;
     });
-    toArray = arguments[1].levels.map(function(level) {
+    toArray = c2.levels.map(function(level) {
       return level / 255;
     });
   } else if (mode === constants.HSB) {
-    arguments[0]._getBrightness(); // Cache hsba so it definitely exists.
-    arguments[1]._getBrightness();
-    fromArray = arguments[0].hsba;
-    toArray = arguments[1].hsba;
+    c1._getBrightness(); // Cache hsba so it definitely exists.
+    c2._getBrightness();
+    fromArray = c1.hsba;
+    toArray = c2.hsba;
   } else if (mode === constants.HSL) {
-    arguments[0]._getLightness(); // Cache hsla so it definitely exists.
-    arguments[1]._getLightness();
-    fromArray = arguments[0].hsla;
-    toArray = arguments[1].hsla;
+    c1._getLightness(); // Cache hsla so it definitely exists.
+    c2._getLightness();
+    fromArray = c1.hsla;
+    toArray = c2.hsla;
   } else {
     throw new Error(mode + 'cannot be used for interpolation.');
   }
 
   // Prevent extrapolation.
-  amt = Math.max(Math.min(arguments[2], 1), 0);
+  amt = Math.max(Math.min(amt, 1), 0);
 
   // Define lerp here itself if user isn't using math module.
   // Maintains the definition as found in math/calculation.js
@@ -490,7 +495,8 @@ p5.prototype.lerpColor = function(c1, c2, amt) {
  * Extracts the HSL lightness value from a color or pixel array.
  *
  * @method lightness
- * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ *                                         or CSS color
  * @return {Number} the lightness
  * @example
  * <div>
@@ -519,7 +525,8 @@ p5.prototype.lightness = function(c) {
  * Extracts the red value from a color or pixel array.
  *
  * @method red
- * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ *                                         or CSS color
  * @return {Number} the red value
  * @example
  * <div>
@@ -563,7 +570,8 @@ p5.prototype.red = function(c) {
  * HSL saturation otherwise.
  *
  * @method saturation
- * @param {p5.Color|Array} color p5.Color object or pixel array
+ * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ *                                         or CSS color
  * @return {Number} the saturation value
  * @example
  * <div>

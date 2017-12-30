@@ -40,7 +40,7 @@ p5.prototype.abs = Math.abs;
  *
  * @method ceil
  * @param  {Number} n number to round up
- * @return {Number}   rounded up number
+ * @return {Integer}   rounded up number
  * @example
  * <div><code>
  * function draw() {
@@ -62,8 +62,8 @@ p5.prototype.abs = Math.abs;
  *
  *   // Reformat the float returned by map and draw it.
  *   noStroke();
- *   text(nfc(ax, 2, 2), ax, ay - 5);
- *   text(nfc(bx, 1, 1), bx, by - 5);
+ *   text(nfc(ax, 2), ax, ay - 5);
+ *   text(nfc(bx, 1), bx, by - 5);
  * }
  * </code></div>
  *
@@ -114,6 +114,7 @@ p5.prototype.ceil = Math.ceil;
  *
  */
 p5.prototype.constrain = function(n, low, high) {
+  p5._validateParameters('constrain', arguments);
   return Math.max(Math.min(n, high), low);
 };
 
@@ -152,7 +153,7 @@ p5.prototype.constrain = function(n, low, high) {
  *   push();
  *   translate((x1 + x2) / 2, (y1 + y2) / 2);
  *   rotate(atan2(y2 - y1, x2 - x1));
- *   text(nfc(d, 1, 1), 0, -5);
+ *   text(nfc(d, 1), 0, -5);
  *   pop();
  *   // Fancy!
  * }
@@ -172,6 +173,7 @@ p5.prototype.constrain = function(n, low, high) {
  * @return {Number}    distance between the two points
  */
 p5.prototype.dist = function() {
+  p5._validateParameters('dist', arguments);
   if (arguments.length === 4) {
     //2D
     return hypot(arguments[2] - arguments[0], arguments[3] - arguments[1]);
@@ -241,7 +243,7 @@ p5.prototype.exp = Math.exp;
  *
  * @method floor
  * @param  {Number} n number to round down
- * @return {Number}   rounded down number
+ * @return {Integer}  rounded down number
  * @example
  * <div><code>
  * function draw() {
@@ -263,8 +265,8 @@ p5.prototype.exp = Math.exp;
  *
  *   // Reformat the float returned by map and draw it.
  *   noStroke();
- *   text(nfc(ax, 2, 2), ax, ay - 5);
- *   text(nfc(bx, 1, 1), bx, by - 5);
+ *   text(nfc(ax, 2), ax, ay - 5);
+ *   text(nfc(bx, 1), bx, by - 5);
  * }
  * </code></div>
  *
@@ -315,6 +317,7 @@ p5.prototype.floor = Math.floor;
  *
  */
 p5.prototype.lerp = function(start, stop, amt) {
+  p5._validateParameters('lerp', arguments);
   return amt * (stop - start) + start;
 };
 
@@ -408,6 +411,7 @@ p5.prototype.log = Math.log;
  *
  */
 p5.prototype.mag = function(x, y) {
+  p5._validateParameters('mag', arguments);
   return hypot(x, y);
 };
 
@@ -455,6 +459,7 @@ p5.prototype.mag = function(x, y) {
  *
  */
 p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
+  p5._validateParameters('map', arguments);
   var newval = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
   if (!withinBounds) {
     return newval;
@@ -472,8 +477,9 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
  * of any length.
  *
  * @method max
- * @param  {Number|Array} n0 Numbers to compare
- * @return {Number}          maximum Number
+ * @param  {Number} n0 Number to compare
+ * @param  {Number} n1 Number to compare
+ * @return {Number}             maximum Number
  * @example
  * <div><code>
  * function setup() {
@@ -501,7 +507,13 @@ p5.prototype.map = function(n, start1, stop1, start2, stop2, withinBounds) {
  * Small text at top reads: Array Elements 2 1 5 4 8 9. Large text at center: 9
  *
  */
+/**
+ * @method max
+ * @param  {Number[]} nums Numbers to compare
+ * @return {Number}
+ */
 p5.prototype.max = function() {
+  p5._validateParameters('max', arguments);
   if (arguments[0] instanceof Array) {
     return Math.max.apply(null, arguments[0]);
   } else {
@@ -515,8 +527,9 @@ p5.prototype.max = function() {
  * of any length.
  *
  * @method min
- * @param  {Number|Array} n0 Numbers to compare
- * @return {Number}          minimum Number
+ * @param  {Number} n0 Number to compare
+ * @param  {Number} n1 Number to compare
+ * @return {Number}             minimum Number
  * @example
  * <div><code>
  * function setup() {
@@ -544,7 +557,13 @@ p5.prototype.max = function() {
  * Small text at top reads: Array Elements 2 1 5 4 8 9. Large text at center: 1
  *
  */
+/**
+ * @method min
+ * @param  {Number[]} nums Numbers to compare
+ * @return {Number}
+ */
 p5.prototype.min = function() {
+  p5._validateParameters('min', arguments);
   if (arguments[0] instanceof Array) {
     return Math.min.apply(null, arguments[0]);
   } else {
@@ -601,6 +620,7 @@ p5.prototype.min = function() {
  *
  */
 p5.prototype.norm = function(n, start, stop) {
+  p5._validateParameters('norm', arguments);
   return this.map(n, start, stop, 0, 1);
 };
 
@@ -644,7 +664,7 @@ p5.prototype.pow = Math.pow;
  *
  * @method round
  * @param  {Number} n number to round
- * @return {Number}   rounded number
+ * @return {Integer}  rounded number
  * @example
  * <div><code>
  * function draw() {
@@ -666,8 +686,8 @@ p5.prototype.pow = Math.pow;
  *
  *   // Reformat the float returned by map and draw it.
  *   noStroke();
- *   text(nfc(ax, 2, 2), ax, ay - 5);
- *   text(nfc(bx, 1, 1), bx, by - 5);
+ *   text(nfc(ax, 2), ax, ay - 5);
+ *   text(nfc(bx, 1), bx, by - 5);
  * }
  * </code></div>
  *
