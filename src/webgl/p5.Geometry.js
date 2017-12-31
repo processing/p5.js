@@ -71,19 +71,18 @@ p5.Geometry.prototype.computeFaces = function() {
   return this;
 };
 
-p5.Geometry.prototype._getFaceNormal = function(faceId, vertId) {
+p5.Geometry.prototype._getFaceNormal = function(faceId) {
   //This assumes that vA->vB->vC is a counter-clockwise ordering
   var face = this.faces[faceId];
-  var vA = this.vertices[face[vertId % 3]];
-  var vB = this.vertices[face[(vertId + 1) % 3]];
-  var vC = this.vertices[face[(vertId + 2) % 3]];
-  var n = p5.Vector.cross(p5.Vector.sub(vB, vA), p5.Vector.sub(vC, vA));
-  var sinAlpha =
-    p5.Vector.mag(n) /
-    (p5.Vector.mag(p5.Vector.sub(vB, vA)) *
-      p5.Vector.mag(p5.Vector.sub(vC, vA)));
-  n = n.normalize();
-  return n.mult(Math.asin(sinAlpha));
+  var vA = this.vertices[face[0]];
+  var vB = this.vertices[face[1]];
+  var vC = this.vertices[face[2]];
+  var ab = p5.Vector.sub(vB, vA);
+  var ac = p5.Vector.sub(vC, vA);
+  var n = p5.Vector.cross(ab, ac);
+  var ln = p5.Vector.mag(n);
+  var sinAlpha = ln / (p5.Vector.mag(ab) * p5.Vector.mag(ac));
+  return n.mult(Math.asin(sinAlpha) / ln);
 };
 /**
  * computes smooth normals per vertex as an average of each
@@ -92,6 +91,7 @@ p5.Geometry.prototype._getFaceNormal = function(faceId, vertId) {
  * @chainable
  */
 p5.Geometry.prototype.computeNormals = function() {
+  var normals = [];
   for (var v = 0; v < this.vertices.length; v++) {
     var normal = new p5.Vector();
     for (var i = 0; i < this.faces.length; i++) {
@@ -103,7 +103,8 @@ p5.Geometry.prototype.computeNormals = function() {
         this.faces[i][1] === v ||
         this.faces[i][2] === v
       ) {
-        normal = normal.add(this._getFaceNormal(i, v));
+        var faceNormal = normals[i] || (normals[i] = this._getFaceNormal(i));
+        normal = normal.add(faceNormal);
       }
     }
     normal = normal.normalize();
