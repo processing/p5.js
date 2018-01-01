@@ -43,7 +43,8 @@ function mod(yuidocs, localFileame, globalFilename, sourcePath) {
     'GainNode',
     'DelayNode',
     'ConvolverNode',
-    'Event'
+    'Event',
+    'Blob'
   ]);
 
   var YUIDOC_TO_TYPESCRIPT_PARAM_MAP = {
