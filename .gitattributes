@@ -1,0 +1,2 @@
+# Let git decide if a file is text or binary
+* text=auto
