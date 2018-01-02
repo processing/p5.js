@@ -276,19 +276,18 @@ p5.RendererGL.prototype.perspective = function(fovy, aspect, near, far) {
  *
  */
 
-p5.prototype.ortho = function(){
+p5.prototype.ortho = function() {
   this._renderer.ortho.apply(this._renderer, arguments);
   return this;
 };
 
 p5.RendererGL.prototype.ortho = function(left, right, bottom, top, near, far) {
-
-  if(left   === undefined) left   = -this.width  / 2;
-  if(right  === undefined) right  = +this.width  / 2;
-  if(bottom === undefined) bottom = -this.height / 2;
-  if(top    === undefined) top    = +this.height / 2;
-  if(near   === undefined) near   =  0;
-  if(far    === undefined) far    =  Math.max(this.width, this.height);
+  if (left === undefined) left = -this.width / 2;
+  if (right === undefined) right = +this.width / 2;
+  if (bottom === undefined) bottom = -this.height / 2;
+  if (top === undefined) top = +this.height / 2;
+  if (near === undefined) near = 0;
+  if (far === undefined) far = Math.max(this.width, this.height);
 
   var w = right - left;
   var h = top - bottom;
@@ -303,16 +302,14 @@ p5.RendererGL.prototype.ortho = function(left, right, bottom, top, near, far) {
   var tz = -(far + near) / d;
 
   this.uPMatrix = p5.Matrix.identity();
-  this.uPMatrix.set(  x,  0,  0,  0,
-                      0, -y,  0,  0,
-                      0,  0,  z,  0,
+
+  // prettier-ignore
+  this.uPMatrix.set(  x,  0,  0,  0, 
+                      0, -y,  0,  0, 
+                      0,  0,  z,  0, 
                      tx, ty, tz,  1);
 
   this._curCamera = 'custom';
-  
 };
-
-
-
 
 module.exports = p5;
