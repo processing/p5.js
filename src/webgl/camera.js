@@ -222,7 +222,7 @@ p5.RendererGL.prototype.perspective = function(fovy, aspect, near, far) {
   this.cameraNear = near;
   this.cameraFar = far;
 
-  this.uPMatrix = p5.Matrix.identity();
+  this.uPMatrix = p5.Matrix.identity(this.pInst);
 
   var f = 1.0 / Math.tan(this.cameraFOV / 2);
   var nf = 1.0 / (this.cameraNear - this.cameraFar);
@@ -282,7 +282,7 @@ p5.prototype.ortho = function(left, right, bottom, top, near, far) {
   top = top || this.height / 2;
   near = near || 0;
   far = far || Math.max(this.width, this.height);
-  this._renderer.uPMatrix = p5.Matrix.identity();
+  this._renderer.uPMatrix = p5.Matrix.identity(this._pInst);
   //this._renderer.uPMatrix.ortho(left,right,bottom,top,near,far);
 
   var w = right - left;
