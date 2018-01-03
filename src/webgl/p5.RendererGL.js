@@ -342,7 +342,7 @@ p5.prototype.setAttributes = function(key, value) {
   var attr;
   if (typeof value !== 'undefined') {
     attr = {};
-    attr.key = value;
+    attr[key] = value;
   } else if (key instanceof Object) {
     attr = key;
   }
