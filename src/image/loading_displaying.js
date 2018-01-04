@@ -140,7 +140,7 @@ function _sAssign(sVal, iVal) {
  * <img src="assets/drawImage.png"></img>
  *
  * @method image
- * @param  {p5.Image|p5.Graphics} img    the image to display
+ * @param  {p5.Image|p5.Element} img    the image to display
  * @param  {Number}   x     the x-coordinate of the top-left corner of the image
  * @param  {Number}   y     the y-coordinate of the top-left corner of the image
  * @param  {Number}   [width]  the width to draw the image
@@ -212,7 +212,7 @@ function _sAssign(sVal, iVal) {
  */
 /**
  * @method image
- * @param  {p5.Image|p5.Graphics} img
+ * @param  {p5.Image|p5.Element} img
  * @param  {Number}   dx     the x-coordinate of the destination
  *                           rectangle in which to draw the source image
  * @param  {Number}   dy     the y-coordinate of the destination

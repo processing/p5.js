@@ -19,7 +19,7 @@ function setup() {
   cols = width/videoScale;
   rows = height/videoScale;
 
-  devicePixelScaling(false);
+  pixelDensity(1);
   video = createCapture(VIDEO);
   video.size(cols,rows);
   //video.hide();

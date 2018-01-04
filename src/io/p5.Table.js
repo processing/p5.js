@@ -710,7 +710,7 @@ p5.Table.prototype.removeTokens = function(chars, column) {
  *  may be referenced by either its ID or title.
  *
  *  @method  trim
- *  @param  {String|Integer} column Column ID (number)
+ *  @param  {String|Integer} [column] Column ID (number)
  *                                   or name (string)
  */
 p5.Table.prototype.trim = function(column) {
@@ -1066,7 +1066,7 @@ p5.Table.prototype.getString = function(row, column) {
  * title.
  *
  * @method  getObject
- * @param {String} headerColumn Name of the column which should be used to
+ * @param {String} [headerColumn] Name of the column which should be used to
  *                              title each row object (optional)
  * @return {Object}
  *

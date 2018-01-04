@@ -15,7 +15,7 @@ function Ball(tempR) {
   this.y = random(height);
   this.xspeed = random( -5,5);
   this.yspeed = random( -5,5);
-  this.color = [100,50];
+  this.c = [100,50];
 }
 
 Ball.prototype.move = function() {
