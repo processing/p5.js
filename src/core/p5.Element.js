@@ -26,6 +26,18 @@ var p5 = require('./core');
 p5.Element = function(elt, pInst) {
   /**
    * Underlying HTML element. All normal HTML methods can be called on this.
+   * @example
+   * <div>
+   * <code>
+   * createCanvas(300, 500);
+   * background(0, 0, 0, 0);
+   * var input = createInput();
+   * input.position(20, 225);
+   * var inputElem = new p5.Element(input.elt);
+   * inputElem.style('width:450px;');
+   * inputElem.value('some string');
+   * </code>
+   * </div>
    *
    * @property elt
    * @readOnly
