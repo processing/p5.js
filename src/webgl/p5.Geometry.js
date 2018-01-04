@@ -9,8 +9,8 @@ var p5 = require('../core/core');
  * @constructor
  * @param  {function | Object} vertData callback function or Object
  *                     containing routine(s) for vertex data generation
- * @param  {Number} [detailX] number of vertices on horizontal surface
- * @param  {Number} [detailY] number of vertices on horizontal surface
+ * @param  {Integer} [detailX] number of vertices on horizontal surface
+ * @param  {Integer} [detailY] number of vertices on horizontal surface
  * @param {function} [callback] function to call upon object instantiation.
  *
  */

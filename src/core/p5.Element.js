@@ -904,8 +904,8 @@ p5.Element.prototype.dragLeave = function(fxn) {
  * is triggered just once when a file (or files) are dropped.
  *
  * @method drop
- * @param  {Function|Boolean} callback  callback triggered when files are dropped.
- * @param  {Function|Boolean} fxn       callback to receive loaded file.
+ * @param  {Function} callback  callback triggered when files are dropped.
+ * @param  {Function} [fxn]       callback to receive loaded file.
  * @chainable
  * @example
  * <div><code>

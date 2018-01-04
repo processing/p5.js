@@ -239,13 +239,13 @@ p5.RendererGL.prototype.perspective = function(fovy, aspect, near, far) {
 /**
  * Setup ortho camera
  * @method  ortho
- * @param  {Number} left   camera frustum left plane
- * @param  {Number} right  camera frustum right plane
- * @param  {Number} bottom camera frustum bottom plane
- * @param  {Number} top    camera frustum top plane
- * @param  {Number} near   camera frustum near plane
- * @param  {Number} far    camera frustum far plane
- * @return {p5}            the p5 object
+ * @param  {Number} [left]   camera frustum left plane
+ * @param  {Number} [right]  camera frustum right plane
+ * @param  {Number} [bottom] camera frustum bottom plane
+ * @param  {Number} [top]    camera frustum top plane
+ * @param  {Number} [near]   camera frustum near plane
+ * @param  {Number} [far]    camera frustum far plane
+ * @return {p5}              the p5 object
  * @example
  * <div>
  * <code>
