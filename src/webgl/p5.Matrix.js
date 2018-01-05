@@ -12,8 +12,17 @@
 var p5 = require('../core/core');
 var polarGeometry = require('../math/polargeometry');
 var constants = require('../core/constants');
-var GLMAT_ARRAY_TYPE =
-  typeof Float32Array !== 'undefined' ? Float32Array : Array;
+
+var GLMAT_ARRAY_TYPE = Array;
+var isMatrixArray = function(x) {
+  return x instanceof Array;
+};
+if (typeof Float32Array !== 'undefined') {
+  GLMAT_ARRAY_TYPE = Float32Array;
+  isMatrixArray = function(x) {
+    return x instanceof Array || x instanceof Float32Array;
+  };
+}
 
 /**
  * A class to describe a 4x4 matrix
@@ -69,7 +78,7 @@ p5.Matrix.prototype.set = function(inMatrix) {
   if (inMatrix instanceof p5.Matrix) {
     this.mat4 = inMatrix.mat4;
     return this;
-  } else if (inMatrix instanceof GLMAT_ARRAY_TYPE) {
+  } else if (isMatrixArray(inMatrix)) {
     this.mat4 = inMatrix;
     return this;
   } else if (arguments.length === 16) {
@@ -171,7 +180,7 @@ p5.Matrix.prototype.transpose = function(a) {
     this.mat4[13] = a13;
     this.mat4[14] = a23;
     this.mat4[15] = a.mat4[15];
-  } else if (a instanceof GLMAT_ARRAY_TYPE) {
+  } else if (isMatrixArray(a)) {
     a01 = a[1];
     a02 = a[2];
     a03 = a[3];
@@ -226,7 +235,7 @@ p5.Matrix.prototype.invert = function(a) {
     a31 = a.mat4[13];
     a32 = a.mat4[14];
     a33 = a.mat4[15];
-  } else if (a instanceof GLMAT_ARRAY_TYPE) {
+  } else if (isMatrixArray(a)) {
     a00 = a[0];
     a01 = a[1];
     a02 = a[2];
@@ -366,7 +375,16 @@ p5.Matrix.prototype.inverseTranspose = function(matrix) {
     this.mat3[8] = matrix.mat4[10];
   }
 
-  this.invert3x3().transpose3x3(this.mat3);
+  var inverse = this.invert3x3();
+  // check inverse succeded
+  if (inverse) {
+    inverse.transpose3x3(this.mat3);
+  } else {
+    // in case of singularity, just zero the matrix
+    for (var i = 0; i < 9; i++) {
+      this.mat3[i] = 0;
+    }
+  }
   return this;
 };
 
@@ -407,7 +425,7 @@ p5.Matrix.prototype.mult = function(multMatrix) {
     _src = this.copy().mat4; // only need to allocate in this rare case
   } else if (multMatrix instanceof p5.Matrix) {
     _src = multMatrix.mat4;
-  } else if (multMatrix instanceof GLMAT_ARRAY_TYPE) {
+  } else if (isMatrixArray(multMatrix)) {
     _src = multMatrix;
   } else {
     return; // nothing to do.
