@@ -17,7 +17,7 @@ var defaultId = 'defaultCanvas0'; // this gets set again in createCanvas
  * Creates a canvas element in the document, and sets the dimensions of it
  * in pixels. This method should be called only once at the start of setup.
  * Calling createCanvas more than once in a sketch will result in very
- * unpredicable behavior. If you want more than one drawing canvas
+ * unpredictable behavior. If you want more than one drawing canvas
  * you could use createGraphics (hidden by default but it can be shown).
  * <br><br>
  * The system variables width and height are set by the parameters passed
