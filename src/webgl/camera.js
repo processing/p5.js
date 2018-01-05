@@ -287,8 +287,8 @@ p5.RendererGL.prototype.ortho = function(left, right, bottom, top, near, far) {
   if (top === undefined) top = +this.height / 2;
   if (near === undefined) near = 0;
   if (far === undefined) far = Math.max(this.width, this.height);
-  this._renderer.uPMatrix = p5.Matrix.identity(this._pInst);
-  //this._renderer.uPMatrix.ortho(left,right,bottom,top,near,far);
+  this.uPMatrix = p5.Matrix.identity(this._pInst);
+  //this.uPMatrix.ortho(left,right,bottom,top,near,far);
 
   var w = right - left;
   var h = top - bottom;
