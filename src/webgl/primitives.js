@@ -13,8 +13,8 @@ require('./p5.Geometry');
 /**
  * Draw a plane with given a width and height
  * @method plane
- * @param  {Number} width      width of the plane
- * @param  {Number} height     height of the plane
+ * @param  {Number} [width]    width of the plane
+ * @param  {Number} [height]   height of the plane
  * @param  {Integer} [detailX]  Optional number of triangle
  *                             subdivisions in x-dimension
  * @param {Integer} [detailY]   Optional number of triangle
@@ -88,13 +88,13 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
     this._renderer.createBuffers(gId, planeGeom);
   }
 
-  this._renderer.drawBuffersScaled(gId, [width, height, 0]);
+  this._renderer.drawBuffersScaled(gId, width, height, 0);
 };
 
 /**
  * Draw a box with given width, height and depth
  * @method  box
- * @param  {Number} width     width of the box
+ * @param  {Number} [width]     width of the box
  * @param  {Number} [Height]    height of the box
  * @param  {Number} [depth]     depth of the box
  * @param {Integer} [detailX]  Optional number of triangle
@@ -200,7 +200,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
     //geometry Id, Geom object
     this._renderer.createBuffers(gId, boxGeom);
   }
-  this._renderer.drawBuffersScaled(gId, [width, height, depth]);
+  this._renderer.drawBuffersScaled(gId, width, height, depth);
 
   return this;
 };
@@ -208,11 +208,11 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
 /**
  * Draw a sphere with given radius
  * @method sphere
- * @param  {Number} radius            radius of circle
- * @param  {Integer} [detailX]         number of segments,
+ * @param  {Number} [radius]          radius of circle
+ * @param  {Integer} [detailX]        number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
- * @param  {Integer} [detailY]         number of segments,
+ * @param  {Integer} [detailY]        number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 16
  * @chainable
@@ -336,12 +336,12 @@ var _truncatedCone = function(
 /**
  * Draw a cylinder with given radius and height
  * @method  cylinder
- * @param  {Number} radius     radius of the surface
- * @param  {Number} height     height of the cylinder
- * @param  {Integer} [detailX]  number of segments,
+ * @param  {Number} [radius]   radius of the surface
+ * @param  {Number} [height]   height of the cylinder
+ * @param  {Integer} [detailX] number of segments,
  *                             the more segments the smoother geometry
  *                             default is 24
- * @param {Integer} [detailY]   number of segments in y-dimension,
+ * @param {Integer} [detailY]  number of segments in y-dimension,
  *                             the more segments the smoother geometry
  *                             default is 16
  * @chainable
@@ -393,7 +393,7 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY) {
     this._renderer.createBuffers(gId, cylinderGeom);
   }
 
-  this._renderer.drawBuffersScaled(gId, [radius, radius, height]);
+  this._renderer.drawBuffersScaled(gId, radius, radius, height);
 
   return this;
 };
@@ -401,12 +401,12 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY) {
 /**
  * Draw a cone with given radius and height
  * @method cone
- * @param  {Number} radius            radius of the bottom surface
- * @param  {Number} height            height of the cone
- * @param  {Integer} [detailX]         number of segments,
+ * @param  {Number} [radius]          radius of the bottom surface
+ * @param  {Number} [height]          height of the cone
+ * @param  {Integer} [detailX]        number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
- * @param  {Integer} [detailY]         number of segments,
+ * @param  {Integer} [detailY]        number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 16
  * @chainable
@@ -476,9 +476,9 @@ p5.prototype.cone = function(radius, height, detailX, detailY) {
 /**
  * Draw an ellipsoid with given radius
  * @method ellipsoid
- * @param  {Number} radiusx           xradius of circle
- * @param  {Number} radiusy           yradius of circle
- * @param  {Number} radiusz           zradius of circle
+ * @param  {Number} [radiusx]         xradius of circle
+ * @param  {Number} [radiusy]         yradius of circle
+ * @param  {Number} [radiusz]         zradius of circle
  * @param  {Integer} [detailX]        number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24. Avoid detail number above
@@ -557,7 +557,7 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
     this._renderer.createBuffers(gId, ellipsoidGeom);
   }
 
-  this._renderer.drawBuffersScaled(gId, [radiusX, radiusY, radiusZ]);
+  this._renderer.drawBuffersScaled(gId, radiusX, radiusY, radiusZ);
 
   return this;
 };
@@ -565,8 +565,8 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
 /**
  * Draw a torus with given radius and tube radius
  * @method torus
- * @param  {Number} radius        radius of the whole ring
- * @param  {Number} tubeRadius    radius of the tube
+ * @param  {Number} [radius]      radius of the whole ring
+ * @param  {Number} [tubeRadius]  radius of the tube
  * @param  {Integer} [detailX]    number of segments in x-dimension,
  *                                the more segments the smoother geometry
  *                                default is 24
@@ -652,7 +652,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
     }
     this._renderer.createBuffers(gId, torusGeom);
   }
-  this._renderer.drawBuffersScaled(gId, [radius, radius, radius]);
+  this._renderer.drawBuffersScaled(gId, radius, radius, radius);
 
   return this;
 };

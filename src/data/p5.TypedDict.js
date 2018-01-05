@@ -87,7 +87,7 @@ p5.TypedDict = function(key, value) {
  * Returns the number of key-value pairs currently in Dictionary object
  *
  * @method size
- * @return {Number} the number of key-value pairs in Dictionary object
+ * @return {Integer} the number of key-value pairs in Dictionary object
  *
  * @example
  * <div class="norender">

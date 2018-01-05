@@ -91,7 +91,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.cameraZ = this.defaultCameraZ;
   this.cameraNear = this.defaultCameraNear;
   this.cameraFar = this.defaultCameraFar;
-  this.cameraMatrix = new p5.Matrix();
+  this.cameraMatrix = new p5.Matrix(pInst);
   this.camera(); // set default camera matrices
 
   //Geometry & Material hashes
@@ -721,30 +721,30 @@ p5.RendererGL.prototype.translate = function(x, y, z) {
  * @chainable
  */
 p5.RendererGL.prototype.scale = function(x, y, z) {
-  this.uMVMatrix.scale([x, y, z]);
+  this.uMVMatrix.scale(x, y, z);
   return this;
 };
 
 p5.RendererGL.prototype.rotate = function(rad, axis) {
-  if (!axis) {
-    axis = [0, 0, 1];
+  if (typeof axis === 'undefined') {
+    return this.rotateZ(rad);
   }
-  this.uMVMatrix.rotate(rad, axis);
+  p5.Matrix.prototype.rotate.apply(this.uMVMatrix, arguments);
   return this;
 };
 
 p5.RendererGL.prototype.rotateX = function(rad) {
-  this.rotate(rad, [1, 0, 0]);
+  this.rotate(rad, 1, 0, 0);
   return this;
 };
 
 p5.RendererGL.prototype.rotateY = function(rad) {
-  this.rotate(rad, [0, 1, 0]);
+  this.rotate(rad, 0, 1, 0);
   return this;
 };
 
 p5.RendererGL.prototype.rotateZ = function(rad) {
-  this.rotate(rad, [0, 0, 1]);
+  this.rotate(rad, 0, 0, 1);
   return this;
 };
 
@@ -772,7 +772,7 @@ p5.RendererGL.prototype.pop = function() {
 };
 
 p5.RendererGL.prototype.resetMatrix = function() {
-  this.uMVMatrix = p5.Matrix.identity();
+  this.uMVMatrix = p5.Matrix.identity(this._pInst);
   return this;
 };
 

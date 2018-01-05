@@ -285,7 +285,7 @@ p5.prototype.loadStrings = function() {
  *
  * @method loadTable
  * @param  {String}         filename   name of the file or URL to load
- * @param  {String} [options]  "header" "csv" "tsv"
+ * @param  {String}         options  "header" "csv" "tsv"
  * @param  {function}       [callback] function to be executed after
  *                                     loadTable() completes. On success, the
  *                                     Table object is passed in as the
@@ -338,6 +338,13 @@ p5.prototype.loadStrings = function() {
  * randomly generated text from a file, for example "i smell like butter"
  * randomly generated text from a file, for example "i have three feet"
  *
+ */
+/**
+ * @method loadTable
+ * @param  {String}         filename
+ * @param  {function}       [callback]
+ * @param  {function}  [errorCallback]
+ * @return {Object}
  */
 p5.prototype.loadTable = function(path) {
   var callback;
@@ -1270,7 +1277,7 @@ p5.prototype.save = function(object, _filename, _options) {
         if (args[0] instanceof Array) {
           p5.prototype.saveStrings(args[0], args[1], args[2]);
         } else if (args[0] instanceof p5.Table) {
-          p5.prototype.saveTable(args[0], args[1], args[2], args[3]);
+          p5.prototype.saveTable(args[0], args[1], args[2]);
         } else if (args[0] instanceof p5.Image) {
           p5.prototype.saveCanvas(args[0].canvas, args[1]);
         } else if (args[0] instanceof p5.SoundFile) {
@@ -1337,8 +1344,9 @@ p5.prototype.saveJSONArray = p5.prototype.saveJSON;
  *  vary between web browsers.
  *
  *  @method saveStrings
- *  @param  {Array} list      string array to be written
+ *  @param  {String[]} list   string array to be written
  *  @param  {String} filename filename for output
+ *  @param  {String} [extension] the filename's extension
  *  @example
  * <div><code>
  * var words = 'apple bear cat dog';

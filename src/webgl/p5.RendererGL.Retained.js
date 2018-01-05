@@ -273,9 +273,14 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   return this;
 };
 
-p5.RendererGL.prototype.drawBuffersScaled = function(gId, scale) {
-  var uMVMatrix = this.uMVMatrix;
-  this.uMVMatrix.scale(scale);
+p5.RendererGL.prototype.drawBuffersScaled = function(
+  gId,
+  scaleX,
+  scaleY,
+  scaleZ
+) {
+  var uMVMatrix = this.uMVMatrix.copy();
+  this.uMVMatrix.scale(scaleX, scaleY, scaleZ);
   try {
     this.drawBuffers(gId);
   } finally {
