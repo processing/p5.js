@@ -295,8 +295,8 @@ p5.RendererGL.prototype.drawBuffersScaled = function(
   scaleZ
 ) {
   var uMVMatrix = this.uMVMatrix.copy();
-  this.uMVMatrix.scale(scaleX, scaleY, scaleZ);
   try {
+    this.uMVMatrix.scale(scaleX, scaleY, scaleZ);
     this.drawBuffers(gId);
   } finally {
     this.uMVMatrix = uMVMatrix;
