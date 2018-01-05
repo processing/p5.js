@@ -54,6 +54,25 @@ p5.Color = function(renderer, vals) {
 /**
  * @method toString
  * @return {String}
+ * @example
+ * <div>
+ * <code>
+ * var myColor;
+ * function setup() {
+ *   createCanvas(200, 200);
+ *   stroke(255);
+ *   myColor = color(100, 100, 250);
+ *   fill(myColor);
+ * }
+ *
+ * function draw() {
+ *   text(myColor.toString(), 10, 10);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * canvas with text representation of color
  */
 p5.Color.prototype.toString = function() {
   var a = this.levels;

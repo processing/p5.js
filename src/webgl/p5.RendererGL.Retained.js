@@ -63,6 +63,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
 
   this._useColorShader();
 
+  // initialize the stroke shader's 'aPosition' buffer, if used
   if (this.curStrokeShader.attributes.aPosition) {
     geometry.lineVertexBuffer = gl.createBuffer();
 
@@ -84,6 +85,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
     );
   }
 
+  // initialize the stroke shader's 'aDirection' buffer, if used
   if (this.curStrokeShader.attributes.aDirection) {
     geometry.lineNormalBuffer = gl.createBuffer();
 
@@ -105,6 +107,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
     );
   }
 
+  // initialize the fill shader's 'aPosition' buffer, if used
   if (this.curFillShader.attributes.aPosition) {
     geometry.vertexBuffer = gl.createBuffer();
 
@@ -137,6 +140,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
     gl.STATIC_DRAW
   );
 
+  // initialize the fill shader's 'aNormal' buffer, if used
   if (this.curFillShader.attributes.aNormal) {
     geometry.normalBuffer = gl.createBuffer();
 
@@ -159,6 +163,7 @@ p5.RendererGL.prototype.createBuffers = function(gId, obj) {
     );
   }
 
+  // initialize the fill shader's 'aTexCoord' buffer, if used
   if (this.curFillShader.attributes.aTexCoord) {
     geometry.uvBuffer = gl.createBuffer();
 
@@ -194,8 +199,11 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   var gl = this.GL;
   this._useColorShader();
   var geometry = this.gHash[gId];
+
   if (this.curStrokeShader.active !== false && geometry.lineVertexCount > 0) {
     this.curStrokeShader.bindShader();
+
+    // bind the stroke shader's 'aPosition' buffer
     if (geometry.lineVertexBuffer) {
       this._bindBuffer(geometry.lineVertexBuffer, gl.ARRAY_BUFFER);
       this.curStrokeShader.enableAttrib(
@@ -207,6 +215,8 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
         0
       );
     }
+
+    // bind the stroke shader's 'aDirection' buffer
     if (geometry.lineNormalBuffer) {
       this._bindBuffer(geometry.lineNormalBuffer, gl.ARRAY_BUFFER);
       this.curStrokeShader.enableAttrib(
@@ -218,12 +228,15 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
         0
       );
     }
+
     this._drawArrays(gl.TRIANGLES, gId);
     this.curStrokeShader.unbindShader();
   }
+
   if (this.curFillShader.active !== false) {
     this.curFillShader.bindShader();
 
+    // bind the fill shader's 'aPosition' buffer
     if (geometry.vertexBuffer) {
       //vertex position buffer
       this._bindBuffer(geometry.vertexBuffer, gl.ARRAY_BUFFER);
@@ -242,6 +255,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
       this._bindBuffer(geometry.indexBuffer, gl.ELEMENT_ARRAY_BUFFER);
     }
 
+    // bind the fill shader's 'aNormal' buffer
     if (geometry.normalBuffer) {
       this._bindBuffer(geometry.normalBuffer, gl.ARRAY_BUFFER);
       this.curFillShader.enableAttrib(
@@ -254,6 +268,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
       );
     }
 
+    // bind the fill shader's 'aTexCoord' buffer
     if (geometry.uvBuffer) {
       // uv buffer
       this._bindBuffer(geometry.uvBuffer, gl.ARRAY_BUFFER);
