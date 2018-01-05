@@ -674,13 +674,14 @@ p5.RendererGL.prototype.triangle = function(args) {
     y2 = args[3];
   var x3 = args[4],
     y3 = args[5];
-  var gId = 'tri|' + x1 + '|' + y1 + '|' + x2 + '|' + y2 + '|' + x3 + '|' + y3;
+
+  var gId = 'tri';
   if (!this.geometryInHash(gId)) {
     var _triangle = function() {
       var vertices = [];
-      vertices.push(new p5.Vector(x1, y1, 0));
-      vertices.push(new p5.Vector(x2, y2, 0));
-      vertices.push(new p5.Vector(x3, y3, 0));
+      vertices.push(new p5.Vector(0, 0, 0));
+      vertices.push(new p5.Vector(0, 1, 0));
+      vertices.push(new p5.Vector(1, 0, 0));
       this.strokeIndices = [[0, 1], [1, 2], [2, 0]];
       this.vertices = vertices;
       this.faces = [[0, 1, 2]];
@@ -693,7 +694,22 @@ p5.RendererGL.prototype.triangle = function(args) {
     this.createBuffers(gId, triGeom);
   }
 
-  this.drawBuffers(gId);
+  var uMVMatrix = this.uMVMatrix;
+  try {
+    /* eslint-disable */
+    this.uMVMatrix.mult([
+      x2 - x1, y2 - y1, 0, 0,
+      x3 - x1, y3 - y1, 0, 0,
+      0, 0, 1, 0,
+      x1, y1, 0, 1
+    ]);
+    /* eslint-enable */
+
+    this.drawBuffers(gId);
+  } finally {
+    this.uMVMatrix = uMVMatrix;
+  }
+
   return this;
 };
 
@@ -705,66 +721,65 @@ p5.RendererGL.prototype.ellipse = function(args) {
   //detailX and Y are optional 6th & 7th
   //arguments
   var detailX = args[4] || 24;
-  var detailY = args[5] || 16;
-  var gId =
-    'ellipse|' + args[0] + '|' + args[1] + '|' + args[2] + '|' + args[3];
+  var gId = 'ellipse|' + detailX;
   if (!this.geometryInHash(gId)) {
     var _ellipse = function() {
-      var u, v, p;
-      var centerX = x + width * 0.5;
-      var centerY = y + height * 0.5;
-      for (var i = 0; i <= this.detailY; i++) {
-        v = i / this.detailY;
-        for (var j = 0; j <= this.detailX; j++) {
-          u = j / this.detailX;
-          var theta = 2 * Math.PI * u;
-          if (v === 0) {
-            p = new p5.Vector(centerX, centerY, 0);
-          } else {
-            var _x = centerX + width * 0.5 * Math.cos(theta);
-            var _y = centerY + height * 0.5 * Math.sin(theta);
-            p = new p5.Vector(_x, _y, 0);
-          }
-          this.vertices.push(p);
-          this.uvs.push([u, v]);
-        }
+      this.vertices.push(new p5.Vector(0, 0, 0));
+      this.uvs.push([0, 0]);
+
+      for (var i = 0; i <= this.detailX; i++) {
+        var u = i / this.detailX;
+        var theta = 2 * Math.PI * u;
+
+        var _x = Math.cos(theta) / 2;
+        var _y = Math.sin(theta) / 2;
+
+        this.vertices.push(new p5.Vector(_x, _y, 0));
+        this.uvs.push([_x + 0.5, _y + 0.5]);
+
+        this.faces.push([0, (i + 1) % this.detailX + 1, i + 1]);
       }
     };
-    var ellipseGeom = new p5.Geometry(detailX, detailY, _ellipse);
-    ellipseGeom.computeFaces().computeNormals();
-    if (detailX <= 24 && detailY <= 16) {
+    var ellipseGeom = new p5.Geometry(detailX, 1, _ellipse);
+    ellipseGeom.computeNormals();
+    if (detailX <= 50) {
       ellipseGeom._makeTriangleEdges();
       this._edgesToVertices(ellipseGeom);
     } else {
-      console.log(
-        'Cannot stroke ellipse with more' + ' than 24 detailX or 16 detailY'
-      );
+      console.log('Cannot stroke ellipse with more than 50 detailX');
     }
 
     this.createBuffers(gId, ellipseGeom);
   }
-  this.drawBuffers(gId);
+
+  var uMVMatrix = this.uMVMatrix;
+  try {
+    // TODO: single mult() call?
+    this.uMVMatrix.translate([x + width / 2, y + height / 2, 0]);
+    this.uMVMatrix.scale(width, height, 1);
+
+    this.drawBuffers(gId);
+  } finally {
+    this.uMVMatrix = uMVMatrix;
+  }
   return this;
 };
 
 p5.RendererGL.prototype.rect = function(args) {
-  var gId = 'rect|' + args[0] + '|' + args[1] + '|' + args[2] + '|' + args[3];
   var x = args[0];
   var y = args[1];
   var width = args[2];
   var height = args[3];
   var detailX = args[4] || 24;
   var detailY = args[5] || 16;
+  var gId = 'rect|' + detailX + '|' + detailY;
   if (!this.geometryInHash(gId)) {
     var _rect = function() {
-      var u, v, p;
       for (var i = 0; i <= this.detailY; i++) {
-        v = i / this.detailY;
+        var v = i / this.detailY;
         for (var j = 0; j <= this.detailX; j++) {
-          u = j / this.detailX;
-          // var _x = x-width/2;
-          // var _y = y-height/2;
-          p = new p5.Vector(x + width * u, y + height * v, 0);
+          var u = j / this.detailX;
+          var p = new p5.Vector(u, v, 0);
           this.vertices.push(p);
           this.uvs.push([u, v]);
         }
@@ -778,7 +793,17 @@ p5.RendererGL.prototype.rect = function(args) {
     this._edgesToVertices(rectGeom);
     this.createBuffers(gId, rectGeom);
   }
-  this.drawBuffers(gId);
+
+  var uMVMatrix = this.uMVMatrix;
+  try {
+    // TODO: single mult() call?
+    this.uMVMatrix.translate([x, y, 0]);
+    this.uMVMatrix.scale(width, height, 1);
+
+    this.drawBuffers(gId);
+  } finally {
+    this.uMVMatrix = uMVMatrix;
+  }
   return this;
 };
 
