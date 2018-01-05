@@ -19,7 +19,7 @@ function draw() {
   var t = millis() / 1000 + 1000;
   background(0);
 
-  directionalLight(color('#111'), -1, -1, -1);
+  directionalLight(color('#111'), 1, 1, 1);
 
   for (var i = 0; i < lights.length; i++) {
     var light = lights[i];

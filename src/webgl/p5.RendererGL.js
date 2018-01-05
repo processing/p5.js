@@ -297,7 +297,7 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  * function draw() {
  *   var t = millis() / 1000 + 1000;
  *   background(0);
- *   directionalLight(color('#222'), -1, -1, 1);
+ *   directionalLight(color('#222'), 1, 1, 1);
  *
  *   for (var i = 0; i < lights.length; i++) {
  *     var light = lights[i];
