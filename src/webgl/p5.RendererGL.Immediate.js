@@ -162,6 +162,7 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
   var gl = this.GL;
   this.curFillShader.bindShader();
 
+  // initialize the fill shader's 'aPosition' buffer
   if (this.curFillShader.attributes.aPosition) {
     //vertex position Attribute
     this._bindBuffer(
@@ -182,6 +183,7 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
     );
   }
 
+  // initialize the fill shader's 'aVertexColor' buffer
   if (
     this.drawMode === constants.FILL &&
     this.curFillShader.attributes.aVertexColor
@@ -204,6 +206,7 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
     );
   }
 
+  // initialize the fill shader's 'aTexCoord' buffer
   if (
     this.drawMode === constants.TEXTURE &&
     this.curFillShader.attributes.aTexCoord
@@ -272,6 +275,7 @@ p5.RendererGL.prototype._drawStrokeImmediateMode = function() {
   var gl = this.GL;
   this.curStrokeShader.bindShader();
 
+  // initialize the stroke shader's 'aPosition' buffer
   if (this.curStrokeShader.attributes.aPosition) {
     this._bindBuffer(
       this.immediateMode.lineVertexBuffer,
@@ -291,6 +295,7 @@ p5.RendererGL.prototype._drawStrokeImmediateMode = function() {
     );
   }
 
+  // initialize the stroke shader's 'aDirection' buffer
   if (this.curStrokeShader.attributes.aDirection) {
     this._bindBuffer(
       this.immediateMode.lineNormalBuffer,
