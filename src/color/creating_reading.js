@@ -311,19 +311,10 @@ p5.prototype.color = function() {
   p5._validateParameters('color', arguments);
   if (arguments[0] instanceof p5.Color) {
     return arguments[0]; // Do nothing if argument is already a color object.
-  } else if (arguments[0] instanceof Array) {
-    if (this instanceof p5.Renderer) {
-      return new p5.Color(this, arguments[0]);
-    } else {
-      return new p5.Color(this._renderer, arguments[0]);
-    }
-  } else {
-    if (this instanceof p5.Renderer) {
-      return new p5.Color(this, arguments);
-    } else {
-      return new p5.Color(this._renderer, arguments);
-    }
   }
+
+  var args = arguments[0] instanceof Array ? arguments[0] : arguments;
+  return new p5.Color(this, args);
 };
 
 /**
@@ -439,8 +430,8 @@ p5.prototype.hue = function(c) {
 
 p5.prototype.lerpColor = function(c1, c2, amt) {
   p5._validateParameters('lerpColor', arguments);
-  var mode = this._renderer._colorMode;
-  var maxes = this._renderer._colorMaxes;
+  var mode = this._colorMode;
+  var maxes = this._colorMaxes;
   var l0, l1, l2, l3;
   var fromArray, toArray;
 
