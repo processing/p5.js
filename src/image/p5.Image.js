@@ -409,7 +409,7 @@ p5.Image.prototype.set = function(x, y, imgOrCol) {
  * <div><code>
  * var img;
  *
- * function setup() {
+ * function preload() {
  *   img = loadImage('assets/rockies.jpg');
  * }
 
