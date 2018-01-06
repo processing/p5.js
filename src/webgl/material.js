@@ -63,7 +63,7 @@ p5.prototype.loadShader = function(vertFilename, fragFilename) {
  * @example
  * <div modernizr='webgl'>
  * <code>
- * // the 'varying's are shader between both vertex & fragment shaders
+ * // the 'varying's are shared between both vertex & fragment shaders
  * var varying = 'precision highp float; varying vec2 vPos;';
  *
  * // the vertex shader is called for each vertex
@@ -93,6 +93,8 @@ p5.prototype.loadShader = function(vertFilename, fragFilename) {
  *
  * var mandel;
  * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
  *   // create and initialize the shader
  *   mandel = createShader(vs, fs);
  *   shader(mandel);
