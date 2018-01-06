@@ -379,8 +379,8 @@ p5.prototype.quad = function() {
  * @param  {Number} y
  * @param  {Number} w
  * @param  {Number} h
- * @param  {Number} [detailX]
- * @param  {Number} [detailY]
+ * @param  {Integer} [detailX]
+ * @param  {Integer} [detailY]
  * @chainable
  */
 p5.prototype.rect = function(x, y, w, h, detailX, detailY) {

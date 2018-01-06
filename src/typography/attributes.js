@@ -30,7 +30,7 @@ var p5 = require('../core/core');
  *                            CENTER, or RIGHT
  * @param {Constant} [vertAlign] vertical alignment, either TOP,
  *                            BOTTOM, CENTER, or BASELINE
- * @return {Number}
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -47,6 +47,10 @@ var p5 = require('../core/core');
  * @alt
  *Letters ABCD displayed at top right, EFGH at center and IJKL at bottom left.
  *
+ */
+/**
+ * @method textAlign
+ * @return {Object}
  */
 p5.prototype.textAlign = function(horizAlign, vertAlign) {
   return this._renderer.textAlign.apply(this._renderer, arguments);

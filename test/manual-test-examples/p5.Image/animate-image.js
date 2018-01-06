@@ -13,7 +13,7 @@ var sX = 0, sY = 0;
 
 function draw() {
   clear();
-  image(savanna);
+  image(savanna, 0, 0);
 
   // Animate running cat
   //image(source,canvasX,canvasY,canvasWidth,canvasHeight,sourceX,sourceY,sourceWidth,sourceHeight);

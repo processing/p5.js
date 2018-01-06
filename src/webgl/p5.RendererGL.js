@@ -31,6 +31,8 @@ var defaultShaders = {
     __dirname + '/shaders/light_texture.frag',
     'utf-8'
   ),
+  phongVert: fs.readFileSync(__dirname + '/shaders/phong.vert', 'utf-8'),
+  phongFrag: fs.readFileSync(__dirname + '/shaders/phong.frag', 'utf-8'),
   lineVert: fs.readFileSync(__dirname + '/shaders/line.vert', 'utf-8'),
   lineFrag: fs.readFileSync(__dirname + '/shaders/line.frag', 'utf-8')
 };
@@ -59,6 +61,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
     attr.preserveDrawingBuffer === undefined
       ? true
       : attr.preserveDrawingBuffer;
+  this.attributes.perPixelLighting =
+    attr.perPixelLighting === undefined ? false : attr.perPixelLighting;
   this._initContext();
   this.isP3D = true; //lets us know we're in 3d mode
   this.GL = this.drawingContext;
@@ -189,9 +193,12 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
     }, 0);
   }
 };
-
 /**
- *
+ * @module Rendering
+ * @submodule Rendering
+ * @for p5
+ */
+/**
  * Set attributes for the WebGL Drawing context.
  * This is a way of adjusting ways that the WebGL
  * renderer works to fine-tune the display and performance.
@@ -219,6 +226,10 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  * (note that p5 clears automatically on draw loop)
  * default is true
  * <br><br>
+ * perPixelLighting - if true, per-pixel lighting will be used in the
+ * lighting shader.
+ * default is false
+ * <br><br>
  * @method setAttributes
  * @for p5
  * @param  {String}  key Name of attribute
@@ -227,7 +238,7 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  * <div>
  * <code>
  * function setup() {
- *   createCanvas(150, 150, WEBGL);
+ *   createCanvas(100, 100, WEBGL);
  * }
  *
  * function draw() {
@@ -248,7 +259,7 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  * <div>
  * <code>
  * function setup() {
- *   createCanvas(150, 150, WEBGL);
+ *   createCanvas(100, 100, WEBGL);
  *   setAttributes('antialias', true);
  * }
  *
@@ -261,6 +272,59 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  *   fill(0, 0, 0);
  *   box(50);
  *   pop();
+ * }
+ * </code>
+ * </div>
+ *
+ * <div>
+ * <code>
+ * // press the mouse button to enable perPixelLighting
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   noStroke();
+ *   fill(255);
+ * }
+ *
+ * var lights = [
+ *   { c: '#f00', t: 1.12, p: 1.91, r: 0.2 },
+ *   { c: '#0f0', t: 1.21, p: 1.31, r: 0.2 },
+ *   { c: '#00f', t: 1.37, p: 1.57, r: 0.2 },
+ *   { c: '#ff0', t: 1.12, p: 1.91, r: 0.7 },
+ *   { c: '#0ff', t: 1.21, p: 1.31, r: 0.7 },
+ *   { c: '#f0f', t: 1.37, p: 1.57, r: 0.7 }
+ * ];
+ *
+ * function draw() {
+ *   var t = millis() / 1000 + 1000;
+ *   background(0);
+ *   directionalLight(color('#222'), 1, 1, 1);
+ *
+ *   for (var i = 0; i < lights.length; i++) {
+ *     var light = lights[i];
+ *     pointLight(
+ *       color(light.c),
+ *       p5.Vector.fromAngles(t * light.t, t * light.p, width * light.r)
+ *     );
+ *   }
+ *
+ *   specularMaterial(255);
+ *   sphere(width * 0.1);
+ *
+ *   rotateX(t * 0.77);
+ *   rotateY(t * 0.83);
+ *   rotateZ(t * 0.91);
+ *   torus(width * 0.3, width * 0.07, 30, 10);
+ * }
+ *
+ * function mousePressed() {
+ *   setAttributes('perPixelLighting', true);
+ *   noStroke();
+ *   fill(255);
+ * }
+ * function mouseReleased() {
+ *   setAttributes('perPixelLighting', false);
+ *   noStroke();
+ *   fill(255);
  * }
  * </code>
  * </div>
@@ -278,12 +342,16 @@ p5.prototype.setAttributes = function(key, value) {
   var attr;
   if (typeof value !== 'undefined') {
     attr = {};
-    attr.key = value;
+    attr[key] = value;
   } else if (key instanceof Object) {
     attr = key;
   }
   this._renderer._resetContext(attr);
 };
+
+/**
+ * @class p5.RendererGL
+ */
 
 p5.RendererGL.prototype._computeCameraDefaultSettings = function() {
   this.defaultCameraFOV = 60 / 180 * Math.PI;
@@ -879,11 +947,19 @@ p5.RendererGL.prototype._useImmediateModeShader = function() {
 
 p5.RendererGL.prototype._getLightShader = function() {
   if (!this._defaultLightShader) {
-    this._defaultLightShader = new p5.Shader(
-      this,
-      defaultShaders.lightVert,
-      defaultShaders.lightTextureFrag
-    );
+    if (this.attributes.perPixelLighting) {
+      this._defaultLightShader = new p5.Shader(
+        this,
+        defaultShaders.phongVert,
+        defaultShaders.phongFrag
+      );
+    } else {
+      this._defaultLightShader = new p5.Shader(
+        this,
+        defaultShaders.lightVert,
+        defaultShaders.lightTextureFrag
+      );
+    }
   }
   //this.drawMode = constants.FILL;
   return this._defaultLightShader;
