@@ -25,8 +25,9 @@ varying vec3 vAmbientColor;
 vec3 V;
 vec3 N;
 
-const float specularScale = 0.75;
-const float shininess = 20.0;
+const float shininess = 32.0;
+const float specularFactor = 2.0;
+const float diffuseFactor = 0.73;
 
 struct LightResult {
 	float specular;
@@ -39,7 +40,7 @@ float phongSpecular(
   vec3 surfaceNormal,
   float shininess) {
 
-  vec3 R = normalize(reflect(lightDirection, surfaceNormal));  
+  vec3 R = normalize(reflect(-lightDirection, surfaceNormal));  
   return pow(max(0.0, dot(R, viewDirection)), shininess);
 }
 
@@ -56,7 +57,7 @@ LightResult light(vec3 lightVector) {
   //compute our diffuse & specular terms
   LightResult lr;
   if (uSpecular)
-    lr.specular = phongSpecular(L, V, N, shininess) * specularScale;
+    lr.specular = phongSpecular(L, V, N, shininess);
   lr.diffuse = lambertDiffuse(L, N);
   return lr;
 }
@@ -81,11 +82,11 @@ void main(void) {
     if (uPointLightCount == k) break;
 
     vec3 lightPosition = (uViewMatrix * vec4(uPointLightLocation[k], 1.0)).xyz;
-    vec3 lightVector = lightPosition - vViewPosition;
+    vec3 lightVector = vViewPosition - lightPosition;
 	
     //calculate attenuation
     float lightDistance = length(lightVector);
-    float falloff = 300.0 / (lightDistance + 300.0);
+    float falloff = 500.0 / (lightDistance + 500.0);
 
     LightResult result = light(lightVector);
     diffuse += result.diffuse * falloff * uPointLightColor[k];
@@ -93,5 +94,5 @@ void main(void) {
   }
 
   gl_FragColor = isTexture ? texture2D(uSampler, vTexCoord) : uMaterialColor;
-  gl_FragColor.rgb = gl_FragColor.rgb * (diffuse + vAmbientColor) + specular;
+  gl_FragColor.rgb = gl_FragColor.rgb * (diffuse * diffuseFactor + vAmbientColor) + specular * specularFactor;
 }
