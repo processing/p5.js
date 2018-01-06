@@ -53,6 +53,7 @@ p5.Color = function(renderer, vals) {
 
 /**
  * @method toString
+ * @param {String} [format]
  * @return {String}
  * @example
  * <div>
@@ -74,10 +75,56 @@ p5.Color = function(renderer, vals) {
  * @alt
  * canvas with text representation of color
  */
-p5.Color.prototype.toString = function() {
-  var a = this.levels;
-  var alpha = this._array[3]; // String representation uses normalized alpha.
-  return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + alpha + ')';
+p5.Color.prototype.toString = function(format) {
+  var str = '';
+  switch (format) {
+    case '#rrggbb':
+    case 'web-color':
+    case 'hex':
+    case 'hex-rgb':
+      str = '#'; //fallthrough
+    case 'rrggbb':
+      return str.concat(
+        this.levels[0].toString(16),
+        this.levels[1].toString(16),
+        this.levels[2].toString(16)
+      );
+
+    case '#rrggbbaa':
+    case 'hex-rgba':
+      str = '#'; //fallthrough
+    case 'rrggbbaa':
+      return str.concat(
+        this.levels[0].toString(16),
+        this.levels[1].toString(16),
+        this.levels[2].toString(16),
+        this.levels[3].toString(16)
+      );
+
+    case '#rgb':
+      str = '#'; //fallthrough
+    case 'rgb':
+      return str.concat(
+        Math.round(this.levels[0] / 16).toString(16),
+        Math.round(this.levels[1] / 16).toString(16),
+        Math.round(this.levels[2] / 16).toString(16)
+      );
+
+    case '#rgba':
+      str = '#'; //fallthrough
+    case 'rgba':
+      return str.concat(
+        Math.round(this.levels[0] / 16).toString(16),
+        Math.round(this.levels[1] / 16).toString(16),
+        Math.round(this.levels[2] / 16).toString(16),
+        Math.round(this.levels[3] / 16).toString(16)
+      );
+
+    default:
+      var a = this.levels;
+      var alpha = this._array[3]; // String representation uses normalized alpha.
+      return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + alpha + ')';
+  }
 };
 
 /**
