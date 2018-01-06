@@ -7,10 +7,13 @@
 var playMode = 'sustain';
 var sample1, sample2, button;
 
-function setup() {
-  createCanvas(0,0);
+function preload() {
   sample1 = loadSound( ['../_files/Damscray_-_Dancing_Tiger_01.ogg', '../_files/Damscray_-_Dancing_Tiger_01.mp3'] );
   sample2 = loadSound( ['../_files/Damscray_-_Dancing_Tiger_02.ogg', '../_files/Damscray_-_Dancing_Tiger_02.mp3'] );
+}
+
+function setup() {
+  createCanvas(0,0);
 
   createP('Press "a" and "s" on your keyboard to play two different samples.<br> Trigger lots of sounds at once! Change mode to hear the difference');
 
