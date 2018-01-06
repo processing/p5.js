@@ -137,8 +137,8 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  *   background(0);
  *   //move your mouse to change light direction
  *   var dirX = (mouseX / width - 0.5) * 2;
- *   var dirY = (mouseY / height - 0.5) * -2;
- *   directionalLight(250, 250, 250, dirX, dirY, 0.25);
+ *   var dirY = (mouseY / height - 0.5) * 2;
+ *   directionalLight(250, 250, 250, -dirX, -dirY, 0.25);
  *   ambientMaterial(250);
  *   sphere(50);
  * }
@@ -170,7 +170,9 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
   //in case there's no material color for the geometry
   shader.setUniform('uMaterialColor', this._renderer.curFillColor);
 
-  this._renderer.directionalLightDirections.push(_x, _y, _z);
+  // normalize direction
+  var l = Math.sqrt(_x * _x + _y * _y + _z * _z);
+  this._renderer.directionalLightDirections.push(_x / l, _y / l, _z / l);
   shader.setUniform(
     'uLightingDirection',
     this._renderer.directionalLightDirections
