@@ -200,7 +200,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   this._useColorShader();
   var geometry = this.gHash[gId];
 
-  if (this.curStrokeShader.active !== false && geometry.lineVertexCount > 0) {
+  if (this._doStroke && geometry.lineVertexCount > 0) {
     this.curStrokeShader.bindShader();
 
     // bind the stroke shader's 'aPosition' buffer
@@ -229,11 +229,12 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
       );
     }
 
+    this._applyColorBlend(this.curStrokeColor);
     this._drawArrays(gl.TRIANGLES, gId);
     this.curStrokeShader.unbindShader();
   }
 
-  if (this.curFillShader.active !== false) {
+  if (this._doFill !== false) {
     this.curFillShader.bindShader();
 
     // bind the fill shader's 'aPosition' buffer
@@ -282,6 +283,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
       );
     }
 
+    this._applyColorBlend(this.curFillColor);
     this._drawElements(gl.TRIANGLES, gId);
     this.curFillShader.unbindShader();
   }

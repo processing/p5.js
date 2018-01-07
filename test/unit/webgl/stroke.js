@@ -34,21 +34,21 @@ suite('stroke WebGL', function() {
     test('check activate and deactivating fill and stroke', function(done) {
       myp5.noStroke();
       assert(
-        myp5._renderer.curStrokeShader.active === false,
+        !myp5._renderer._doStroke,
         'stroke shader still active after noStroke()'
       );
       assert.isTrue(
-        myp5._renderer.curFillShader.active === true,
+        myp5._renderer._doFill,
         'fill shader deactivated by noStroke()'
       );
       myp5.stroke(0);
       myp5.noFill();
       assert(
-        myp5._renderer.curStrokeShader.active === true,
+        myp5._renderer._doStroke,
         'stroke shader not active after stroke()'
       );
       assert.isTrue(
-        myp5._renderer.curFillShader.active === false,
+        myp5._renderer._doFill,
         'fill shader still active after noFill()'
       );
       done();
