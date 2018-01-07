@@ -507,7 +507,7 @@ p5.prototype.fill = function() {
  * </code>
  * </div>
  *
- * <div>
+ * <div modernizr='webgl'>
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
@@ -547,7 +547,7 @@ p5.prototype.noFill = function() {
  * </code>
  * </div>
  *
- * <div>
+ * <div modernizr='webgl'>
  * <code>
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
