@@ -160,7 +160,42 @@ p5.Element.prototype.id = function(id) {
  * @method class
  * @param  {String} class class to add
  * @chainable
+ *
+ * @example
+ * <div class='norender'>
+ * <code>
+ * function setup() {
+ *   const personText = createP("A person's a person");
+ *   personText.class('seuss');
+ *   createP('No matter how small.').class('seuss');
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * no display.
+ *
+ *
+ * @example
+ * <div class='norender'>
+ * <code>
+ * function setup() {
+ *   createP('No matter how small.').class('seuss').mousePressed(pressed);
+ *   createP("But someone, I ain't sayin' who, Has got a guilty face.").class('shel').mousePressed(pressed);
+ * }
+ *
+ * function pressed() {
+ *  // `this` refers to the clicked element.
+ *  // Sets the class name to the pressed element's name plus '-pressed'
+ *  this.class(this.class() + '-pressed');
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * no display.
  */
+
 /**
  * @method class
  * @return {String} the class of the element
