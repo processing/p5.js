@@ -76,3 +76,25 @@ function loadScript(src) {
 window.addEventListener('load', function() {
   onScriptLoad(null);
 });
+
+// Listen to uncaught errors to let us forward them to mocha
+window.addEventListener('error', function errorListener(event) {
+  var error = event.error;
+
+  // PhantomJS doesn't include event.error :(
+  if (error == null) {
+    error = new Error(event.message);
+
+    // Log an ErrorEvent
+    console.log(
+      'Error:',
+      event.message,
+      'in',
+      event.filename,
+      'at',
+      event.lineno + ':' + event.colno
+    );
+  }
+
+  mocha.throwError(event);
+});
