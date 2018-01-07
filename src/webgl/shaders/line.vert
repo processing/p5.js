@@ -70,7 +70,7 @@ void main() {
   vec2 normal = vec2(-tangent.y, tangent.x);
 
   float thickness = aDirection.w * uStrokeWeight;
-  vec2 offset = normal * thickness;
+  vec2 offset = normal * thickness / 2.0;
 
   // Perspective ---
   // convert from world to clip by multiplying with projection scaling factor
