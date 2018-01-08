@@ -328,6 +328,11 @@ module.exports = function(grunt) {
         }
       }
     },
+    open: {
+      yui: {
+        path: 'http://0.0.0.0:9001/docs/reference/'
+      }
+    },
     'saucelabs-mocha': {
       all: {
         options: {
@@ -391,6 +396,7 @@ module.exports = function(grunt) {
   // Load the external libraries used.
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-open');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -433,6 +439,13 @@ module.exports = function(grunt) {
   grunt.registerTask('test:nobuild', ['eslint:test', 'connect', 'mocha']);
   grunt.registerTask('yui', ['yuidoc:prod', 'minjson', 'typescript']);
   grunt.registerTask('yui:test', ['yuidoc:prod', 'connect', 'mocha:yui']);
+  grunt.registerTask('yui:dev', [
+    'yui:prod',
+    'browserify',
+    'connect',
+    'open:yui',
+    'watch:yui'
+  ]);
   grunt.registerTask('default', ['test']);
   grunt.registerTask('saucetest', ['connect', 'saucelabs-mocha']);
 };
