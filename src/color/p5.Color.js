@@ -52,9 +52,18 @@ p5.Color = function(renderer, vals) {
 };
 
 /**
+ * This function returns the color formatted as a string. This can be useful
+ * for debugging, or for using p5.js with other libraries.
  * @method toString
- * @param {String} [format]
- * @return {String}
+ * @param {String} [format] How the color string will be formatted.
+ * Leaving this empty formats the string as rgba(r, g, b, a).
+ * '#rgb' '#rgba' '#rrggbb' and '#rrggbbaa' format as hexadecimal color codes.
+ * 'hex3' 'hex4' 'hex6' and 'hex8' are aliases for the above formats respectively.
+ * 'hex' and 'web-color' are aliases of 'hex6'.
+ * 'rgb' 'hsb' and 'hsl' return the color formatted as each color mode.
+ * 'rgba' 'hsba' and 'hsla' are the same as above but with alpha channels.
+ * 'rgb%' 'hsb%' 'hsl%' 'rgba%' 'hsba%' and 'hsla%' format as percentages.
+ * @return {String} the formatted string
  * @example
  * <div>
  * <code>
@@ -68,6 +77,8 @@ p5.Color = function(renderer, vals) {
  *
  * function draw() {
  *   text(myColor.toString(), 10, 10);
+ *   text(myColor.toString('hex'), 10, 95);
+ *   text(myColor.toString('rgba%'), 10, 180);
  * }
  * </code>
  * </div>
@@ -76,53 +87,169 @@ p5.Color = function(renderer, vals) {
  * canvas with text representation of color
  */
 p5.Color.prototype.toString = function(format) {
-  var str = '';
+  if (!this.hsba) this.hsba = color_conversion._rgbaToHSBA(this._array);
+  if (!this.hsla) this.hsla = color_conversion._rgbaToHSLA(this._array);
+
+  var a = this.levels;
+  var f = this._array;
+  var alpha = f[3]; // String representation uses normalized alpha
+
   switch (format) {
     case '#rrggbb':
     case 'web-color':
     case 'hex':
-    case 'hex-rgb':
-      str = '#'; //fallthrough
-    case 'rrggbb':
-      return str.concat(
-        this.levels[0].toString(16),
-        this.levels[1].toString(16),
-        this.levels[2].toString(16)
+    case 'hex6':
+      return '#'.concat(
+        a[0].toString(16),
+        a[1].toString(16),
+        a[2].toString(16)
       );
 
     case '#rrggbbaa':
-    case 'hex-rgba':
-      str = '#'; //fallthrough
-    case 'rrggbbaa':
-      return str.concat(
-        this.levels[0].toString(16),
-        this.levels[1].toString(16),
-        this.levels[2].toString(16),
-        this.levels[3].toString(16)
+    case 'hex8':
+      return '#'.concat(
+        a[0].toString(16),
+        a[1].toString(16),
+        a[2].toString(16),
+        a[3].toString(16)
       );
 
     case '#rgb':
-      str = '#'; //fallthrough
-    case 'rgb':
-      return str.concat(
-        Math.round(this.levels[0] / 16).toString(16),
-        Math.round(this.levels[1] / 16).toString(16),
-        Math.round(this.levels[2] / 16).toString(16)
+    case 'hex3':
+      return '#'.concat(
+        Math.floor(f[0] * 15).toString(16),
+        Math.floor(f[1] * 15).toString(16),
+        Math.floor(f[2] * 15).toString(16)
       );
 
     case '#rgba':
-      str = '#'; //fallthrough
-    case 'rgba':
-      return str.concat(
-        Math.round(this.levels[0] / 16).toString(16),
-        Math.round(this.levels[1] / 16).toString(16),
-        Math.round(this.levels[2] / 16).toString(16),
-        Math.round(this.levels[3] / 16).toString(16)
+    case 'hex4':
+      return '#'.concat(
+        Math.floor(f[0] * 15).toString(16),
+        Math.floor(f[1] * 15).toString(16),
+        Math.floor(f[2] * 15).toString(16),
+        Math.floor(f[3] * 15).toString(16)
       );
 
+    case 'rgb':
+      return 'rgb('.concat(a[0], ', ', a[1], ', ', a[2], ')');
+
+    case 'rgb%':
+      return 'rgb('.concat(
+        (100 * f[0]).toPrecision(3),
+        '%, ',
+        (100 * f[1]).toPrecision(3),
+        '%, ',
+        (100 * f[2]).toPrecision(3),
+        '%)'
+      );
+
+    case 'rgba%':
+      return 'rgba('.concat(
+        (100 * f[0]).toPrecision(3),
+        '%, ',
+        (100 * f[1]).toPrecision(3),
+        '%, ',
+        (100 * f[2]).toPrecision(3),
+        '%, ',
+        (100 * f[3]).toPrecision(3),
+        '%)'
+      );
+
+    case 'hsb':
+    case 'hsv':
+      return 'hsb('.concat(
+        this.hsba[0] * this.maxes[constants.HSB][0],
+        ', ',
+        this.hsba[1] * this.maxes[constants.HSB][1],
+        ', ',
+        this.hsba[2] * this.maxes[constants.HSB][2],
+        ')'
+      );
+
+    case 'hsb%':
+    case 'hsv%':
+      return 'hsb('.concat(
+        (100 * this.hsba[0]).toPrecision(3),
+        '%, ',
+        (100 * this.hsba[1]).toPrecision(3),
+        '%, ',
+        (100 * this.hsba[2]).toPrecision(3),
+        '%)'
+      );
+
+    case 'hsba':
+    case 'hsva':
+      return 'hsba('.concat(
+        this.hsba[0] * this.maxes[constants.HSB][0],
+        ', ',
+        this.hsba[1] * this.maxes[constants.HSB][1],
+        ', ',
+        this.hsba[2] * this.maxes[constants.HSB][2],
+        ', ',
+        alpha,
+        ')'
+      );
+
+    case 'hsba%':
+    case 'hsva%':
+      return 'hsba('.concat(
+        (100 * this.hsba[0]).toPrecision(3),
+        '%, ',
+        (100 * this.hsba[1]).toPrecision(3),
+        '%, ',
+        (100 * this.hsba[2]).toPrecision(3),
+        '%, ',
+        (100 * alpha).toPrecision(3),
+        '%)'
+      );
+
+    case 'hsl':
+      return 'hsl('.concat(
+        this.hsla[0] * this.maxes[constants.HSL][0],
+        ', ',
+        this.hsla[1] * this.maxes[constants.HSL][1],
+        ', ',
+        this.hsla[2] * this.maxes[constants.HSL][2],
+        ')'
+      );
+
+    case 'hsl%':
+      return 'hsl('.concat(
+        (100 * this.hsla[0]).toPrecision(3),
+        '%, ',
+        (100 * this.hsla[1]).toPrecision(3),
+        '%, ',
+        (100 * this.hsla[2]).toPrecision(3),
+        '%)'
+      );
+
+    case 'hsla':
+      return 'hsla('.concat(
+        this.hsla[0] * this.maxes[constants.HSL][0],
+        ', ',
+        this.hsla[1] * this.maxes[constants.HSL][1],
+        ', ',
+        this.hsla[2] * this.maxes[constants.HSL][2],
+        ', ',
+        alpha,
+        ')'
+      );
+
+    case 'hsla%':
+      return 'hsl('.concat(
+        (100 * this.hsla[0]).toPrecision(3),
+        '%, ',
+        (100 * this.hsla[1]).toPrecision(3),
+        '%, ',
+        (100 * this.hsla[2]).toPrecision(3),
+        '%, ',
+        (100 * alpha).toPrecision(3),
+        '%)'
+      );
+
+    case 'rgba':
     default:
-      var a = this.levels;
-      var alpha = this._array[3]; // String representation uses normalized alpha.
       return 'rgba(' + a[0] + ',' + a[1] + ',' + a[2] + ',' + alpha + ')';
   }
 };
