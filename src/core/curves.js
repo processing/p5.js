@@ -30,7 +30,7 @@ require('./error_helpers');
  * @param  {Number} y3 y-coordinate for the second control point
  * @param  {Number} x4 x-coordinate for the second anchor point
  * @param  {Number} y4 y-coordinate for the second anchor point
- * @return {p5}        the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -42,6 +42,16 @@ require('./error_helpers');
  * bezier(85, 20, 10, 10, 90, 90, 15, 80);
  * </code>
  * </div>
+ *
+ * <div>
+ * <code>
+ * background(0, 0, 0);
+ * noFill();
+ * stroke(255);
+ * bezier(250, 250, 0, 100, 100, 0, 100, 0, 0, 0, 100, 0);
+ * </code>
+ * </div>
+ *
  * @alt
  * stretched black s-shape in center with orange lines extending from end points.
  * stretched black s-shape with 10 5x5 white ellipses along the shape.
@@ -55,20 +65,19 @@ require('./error_helpers');
  */
 /**
  * @method bezier
+ * @param  {Number} x1
+ * @param  {Number} y1
  * @param  {Number} z1 z-coordinate for the first anchor point
+ * @param  {Number} x2
+ * @param  {Number} y2
  * @param  {Number} z2 z-coordinate for the first control point
- * @param  {Number} z3 z-coordinate for the first anchor point
- * @param  {Number} z4 z-coordinate for the first control point
+ * @param  {Number} x3
+ * @param  {Number} y3
+ * @param  {Number} z3 z-coordinate for the second control point
+ * @param  {Number} x4
+ * @param  {Number} y4
+ * @param  {Number} z4 z-coordinate for the second anchor point
  * @chainable
- * @example
- * <div>
- * <code>
- *background(0, 0, 0);
- *noFill();
- *stroke(255);
- *bezier(250, 250, 0, 100, 100, 0, 100, 0, 0, 0, 100, 0);
- * </code>
- * </div>
  */
 p5.prototype.bezier = function() {
   p5._validateParameters('bezier', arguments);
@@ -260,7 +269,7 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * @param  {Number} y3 y-coordinate for the second point
  * @param  {Number} x4 x-coordinate for the ending control point
  * @param  {Number} y4 y-coordinate for the ending control point
- * @return {p5}        the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -289,20 +298,6 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * curve(p2.x, p2.y, p3.x, p3.y, p4.x, p4.y, p4.x, p4.y);
  * </code>
  * </div>
- *
- * @alt
- * horseshoe shape with orange ends facing left and black curved center.
- * horseshoe shape with orange ends facing left and black curved center.
- *
- */
-/**
- * @method curve
- * @param  {Number} z1 z-coordinate for the beginning control point
- * @param  {Number} z2 z-coordinate for the first point
- * @param  {Number} z3 z-coordinate for the second point
- * @param  {Number} z4 z-coordinate for the ending control point
- * @chainable
- * @example
  * <div>
  * <code>
  * noFill();
@@ -316,7 +311,25 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * </div>
  *
  * @alt
+ * horseshoe shape with orange ends facing left and black curved center.
+ * horseshoe shape with orange ends facing left and black curved center.
  * curving black and orange lines.
+ */
+/**
+ * @method curve
+ * @param  {Number} x1
+ * @param  {Number} y1
+ * @param  {Number} z1 z-coordinate for the beginning control point
+ * @param  {Number} x2
+ * @param  {Number} y2
+ * @param  {Number} z2 z-coordinate for the first point
+ * @param  {Number} x3
+ * @param  {Number} y3
+ * @param  {Number} z3 z-coordinate for the second point
+ * @param  {Number} x4
+ * @param  {Number} y4
+ * @param  {Number} z4 z-coordinate for the ending control point
+ * @chainable
  */
 p5.prototype.curve = function() {
   p5._validateParameters('curve', arguments);

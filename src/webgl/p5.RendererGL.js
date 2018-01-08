@@ -445,7 +445,7 @@ p5.RendererGL.prototype.background = function() {
  * @param  {Number}            [v2] green or saturation value
  * @param  {Number}            [v3] blue or brightness value
  * @param  {Number}            [a]  opacity
- * @return {p5}                the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>

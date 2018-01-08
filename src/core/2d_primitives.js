@@ -353,7 +353,7 @@ p5.prototype.quad = function() {
  * @param  {Number} [tr] optional radius of top-right corner.
  * @param  {Number} [br] optional radius of bottom-right corner.
  * @param  {Number} [bl] optional radius of bottom-left corner.
- * @return {p5}          the p5 object.
+ * @chainable
  * @example
  * <div>
  * <code>
