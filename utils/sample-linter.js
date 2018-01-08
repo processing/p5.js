@@ -57,7 +57,9 @@ function splitLines(text) {
   return lines;
 }
 
-var EOL = require('os').EOL;
+// We're enforcing Unix line endings
+// See https://eslint.org/docs/rules/linebreak-style
+var EOL = '\n';
 
 var userFunctions = [
   'draw',
