@@ -506,13 +506,29 @@ p5.prototype.fill = function() {
  * rect(20, 20, 60, 60);
  * </code>
  * </div>
+ *
+ * <div modernizr='webgl'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *   noFill();
+ *   stroke(100, 100, 240);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   box(45, 45, 45);
+ * }
+ * </code>
+ * </div>
+ *
  * @alt
  * white rect top middle and noFill rect center. Both 60x60 with black outlines.
+ * black canvas with purple cube wireframe spinning
  */
 p5.prototype.noFill = function() {
-  if (this._renderer.isP3D) {
-    this._renderer.noFill();
-  }
   this._renderer._setProperty('_doFill', false);
   return this;
 };
@@ -531,16 +547,28 @@ p5.prototype.noFill = function() {
  * </code>
  * </div>
  *
+ * <div modernizr='webgl'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ *
+ * function draw() {
+ *   background(0);
+ *   noStroke();
+ *   fill(240, 150, 150);
+ *   rotateX(frameCount * 0.01);
+ *   rotateY(frameCount * 0.01);
+ *   box(45, 45, 45);
+ * }
+ * </code>
+ * </div>
  *
  * @alt
- *60x60 white rect at center. no outline.
- *
+ * 60x60 white rect at center. no outline.
+ * black canvas with pink cube spinning
  */
-
 p5.prototype.noStroke = function() {
-  if (this._renderer.isP3D) {
-    this._renderer.noStroke();
-  }
   this._renderer._setProperty('_doStroke', false);
   return this;
 };
