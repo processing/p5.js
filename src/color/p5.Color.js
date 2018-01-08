@@ -100,22 +100,23 @@ p5.Color.prototype.toString = function(format) {
     case 'web-color':
       str = '#'; //fallthrough
     case 16:
+    case '16':
     case 'hex':
     case 'hex6':
       return str.concat(
-        a[0].toString(16),
-        a[1].toString(16),
-        a[2].toString(16)
+        a[0] < 16 ? '0'.concat(a[0].toString(16)) : a[0].toString(16),
+        a[1] < 16 ? '0'.concat(a[1].toString(16)) : a[1].toString(16),
+        a[2] < 16 ? '0'.concat(a[2].toString(16)) : a[2].toString(16)
       );
 
     case '#rrggbbaa':
       str = '#'; //fallthrough
     case 'hex8':
       return str.concat(
-        a[0].toString(16),
-        a[1].toString(16),
-        a[2].toString(16),
-        a[3].toString(16)
+        a[0] < 16 ? '0'.concat(a[0].toString(16)) : a[0].toString(16),
+        a[1] < 16 ? '0'.concat(a[1].toString(16)) : a[1].toString(16),
+        a[2] < 16 ? '0'.concat(a[2].toString(16)) : a[2].toString(16),
+        a[3] < 16 ? '0'.concat(a[2].toString(16)) : a[3].toString(16)
       );
 
     case '#rgb':
