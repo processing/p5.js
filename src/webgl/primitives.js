@@ -815,13 +815,25 @@ p5.RendererGL.prototype.ellipse = function(args) {
 
 p5.RendererGL.prototype.rect = function(args) {
   var perPixelLighting = this.attributes.perPixelLighting;
-  var gId = 'rect|' + args[0] + '|' + args[1] + '|' + args[2] + '|' + args[3];
   var x = args[0];
   var y = args[1];
   var width = args[2];
   var height = args[3];
   var detailX = args[4] || (perPixelLighting ? 1 : 24);
   var detailY = args[5] || (perPixelLighting ? 1 : 16);
+  var gId =
+    'rect|' +
+    x +
+    '|' +
+    y +
+    '|' +
+    width +
+    '|' +
+    height +
+    '|' +
+    detailX +
+    '|' +
+    detailY;
   if (!this.geometryInHash(gId)) {
     var _rect = function() {
       var u, v, p;
