@@ -19,7 +19,7 @@ require('./p5.Geometry');
  *                             subdivisions in x-dimension
  * @param {Number} [detailY]   Optional number of triangle
  *                             subdivisions in y-dimension
- * @return {p5}                the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
