@@ -99,6 +99,7 @@ p5.Color.prototype.toString = function(format) {
     case '#rrggbb':
     case 'web-color':
       str = '#'; //fallthrough
+    case 16:
     case 'hex':
     case 'hex6':
       return str.concat(
