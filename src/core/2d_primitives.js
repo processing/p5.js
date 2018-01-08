@@ -156,7 +156,16 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
  *white ellipse with black outline in middle-right of canvas that is 55x55.
  *
  */
-p5.prototype.ellipse = function(x, y, w, h) {
+/**
+ * @method ellipse
+ * @param  {Number} x
+ * @param  {Number} y
+ * @param  {Number} w
+ * @param  {Number} h
+ * @param  {Integer} detailX number of segments in the x-direction
+ * @param  {Integer} [detailY] number of segments in the y-direction
+ */
+p5.prototype.ellipse = function(x, y, w, h, detailX, detailY) {
   p5._validateParameters('ellipse', arguments);
 
   // p5 supports negative width and heights for rects
@@ -173,7 +182,7 @@ p5.prototype.ellipse = function(x, y, w, h) {
 
   if (this._renderer._doStroke || this._renderer._doFill) {
     var vals = canvas.modeAdjust(x, y, w, h, this._renderer._ellipseMode);
-    this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h]);
+    this._renderer.ellipse([vals.x, vals.y, vals.w, vals.h, detailX, detailY]);
   }
 
   return this;
@@ -379,8 +388,8 @@ p5.prototype.quad = function() {
  * @param  {Number} y
  * @param  {Number} w
  * @param  {Number} h
- * @param  {Integer} [detailX]
- * @param  {Integer} [detailY]
+ * @param  {Integer} [detailX] number of segments in the x-direction
+ * @param  {Integer} [detailY] number of segments in the y-direction
  * @chainable
  */
 p5.prototype.rect = function(x, y, w, h, detailX, detailY) {
@@ -388,7 +397,7 @@ p5.prototype.rect = function(x, y, w, h, detailX, detailY) {
 
   if (this._renderer._doStroke || this._renderer._doFill) {
     var vals = canvas.modeAdjust(x, y, w, h, this._renderer._rectMode);
-    this._renderer.rect([vals.x, vals.y, vals.w, vals.h]);
+    this._renderer.rect([vals.x, vals.y, vals.w, vals.h, detailX, detailY]);
   }
 
   return this;
