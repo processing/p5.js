@@ -123,19 +123,19 @@ p5.Color.prototype.toString = function(format) {
       str = '#'; //fallthrough
     case 'hex3':
       return str.concat(
-        Math.floor(f[0] * 15).toString(16),
-        Math.floor(f[1] * 15).toString(16),
-        Math.floor(f[2] * 15).toString(16)
+        Math.round(f[0] * 15).toString(16),
+        Math.round(f[1] * 15).toString(16),
+        Math.round(f[2] * 15).toString(16)
       );
 
     case '#rgba':
       str = '#'; //fallthrough
     case 'hex4':
       return str.concat(
-        Math.floor(f[0] * 15).toString(16),
-        Math.floor(f[1] * 15).toString(16),
-        Math.floor(f[2] * 15).toString(16),
-        Math.floor(f[3] * 15).toString(16)
+        Math.round(f[0] * 15).toString(16),
+        Math.round(f[1] * 15).toString(16),
+        Math.round(f[2] * 15).toString(16),
+        Math.round(f[3] * 15).toString(16)
       );
 
     case 'rgb':
