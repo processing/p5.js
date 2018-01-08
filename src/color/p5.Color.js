@@ -55,11 +55,11 @@ p5.Color = function(renderer, vals) {
  * This function returns the color formatted as a string. This can be useful
  * for debugging, or for using p5.js with other libraries.
  * @method toString
- * @param {String} [format] How the color string will be formatted.
+ * @param {Number|String} [format] How the color string will be formatted.
  * Leaving this empty formats the string as rgba(r, g, b, a).
  * '#rgb' '#rgba' '#rrggbb' and '#rrggbbaa' format as hexadecimal color codes.
- * 'hex3' 'hex4' 'hex6' and 'hex8' are aliases for the above formats respectively.
- * 'hex' and 'web-color' are aliases of 'hex6'.
+ * 'hex3' 'hex4' 'hex6' and 'hex8' return the same, without the '#''
+ * 16 'hex' and 'web-color' are aliases of 'hex6'.
  * 'rgb' 'hsb' and 'hsl' return the color formatted as each color mode.
  * 'rgba' 'hsba' and 'hsla' are the same as above but with alpha channels.
  * 'rgb%' 'hsb%' 'hsl%' 'rgba%' 'hsba%' and 'hsla%' format as percentages.
@@ -93,21 +93,24 @@ p5.Color.prototype.toString = function(format) {
   var a = this.levels;
   var f = this._array;
   var alpha = f[3]; // String representation uses normalized alpha
+  var str = '';
 
   switch (format) {
     case '#rrggbb':
     case 'web-color':
+      str = '#'; //fallthrough
     case 'hex':
     case 'hex6':
-      return '#'.concat(
+      return str.concat(
         a[0].toString(16),
         a[1].toString(16),
         a[2].toString(16)
       );
 
     case '#rrggbbaa':
+      str = '#'; //fallthrough
     case 'hex8':
-      return '#'.concat(
+      return str.concat(
         a[0].toString(16),
         a[1].toString(16),
         a[2].toString(16),
@@ -115,16 +118,18 @@ p5.Color.prototype.toString = function(format) {
       );
 
     case '#rgb':
+      str = '#'; //fallthrough
     case 'hex3':
-      return '#'.concat(
+      return str.concat(
         Math.floor(f[0] * 15).toString(16),
         Math.floor(f[1] * 15).toString(16),
         Math.floor(f[2] * 15).toString(16)
       );
 
     case '#rgba':
+      str = '#'; //fallthrough
     case 'hex4':
-      return '#'.concat(
+      return str.concat(
         Math.floor(f[0] * 15).toString(16),
         Math.floor(f[1] * 15).toString(16),
         Math.floor(f[2] * 15).toString(16),
