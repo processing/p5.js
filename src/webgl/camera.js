@@ -222,16 +222,7 @@ p5.RendererGL.prototype.perspective = function(fovy, aspect, near, far) {
   this.cameraNear = near;
   this.cameraFar = far;
 
-  this.uPMatrix = p5.Matrix.identity(this.pInst);
-
-  var f = 1.0 / Math.tan(this.cameraFOV / 2);
-  var nf = 1.0 / (this.cameraNear - this.cameraFar);
-
-  // prettier-ignore
-  this.uPMatrix.set(f / aspect,  0,                     0,  0,
-                    0,          -f,                     0,  0,
-                    0,           0,     (far + near) * nf, -1,
-                    0,           0, (2 * far * near) * nf,  0);
+  this.uPMatrix.perspective(fovy, aspect, near, far);
 
   this._curCamera = 'custom';
 };
@@ -287,28 +278,72 @@ p5.RendererGL.prototype.ortho = function(left, right, bottom, top, near, far) {
   if (top === undefined) top = +this.height / 2;
   if (near === undefined) near = 0;
   if (far === undefined) far = Math.max(this.width, this.height);
-  this.uPMatrix = p5.Matrix.identity(this._pInst);
-  //this.uPMatrix.ortho(left,right,bottom,top,near,far);
 
-  var w = right - left;
-  var h = top - bottom;
-  var d = far - near;
+  this.uPMatrix.ortho(left, right, bottom, top, near, far);
 
-  var x = +2.0 / w;
-  var y = +2.0 / h;
-  var z = -2.0 / d;
+  this._curCamera = 'custom';
+};
 
-  var tx = -(right + left) / w;
-  var ty = -(top + bottom) / h;
-  var tz = -(far + near) / d;
+/**
+ * Setup frustum camera
+ * @method  frustum
+ * @param  {Number} [left]   camera frustum left plane
+ * @param  {Number} [right]  camera frustum right plane
+ * @param  {Number} [bottom] camera frustum bottom plane
+ * @param  {Number} [top]    camera frustum top plane
+ * @param  {Number} [near]   camera frustum near plane
+ * @param  {Number} [far]    camera frustum far plane
+ * @chainable
+ * @example
+ * <div>
+ * <code>
+ * //drag mouse to toggle the world!
+ * //there's no vanish point
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   frustum(-1, 1, 1, -1, 1, 10000);
+ * }
+ * function draw() {
+ *   background(200);
+ *   orbitControl();
+ *   strokeWeight(0.1);
+ *   for (var i = -1; i < 2; i++) {
+ *     for (var j = -2; j < 3; j++) {
+ *       push();
+ *       translate(i * 160, 0, j * 160);
+ *       box(40, 40, 40);
+ *       pop();
+ *     }
+ *   }
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * 3 3d boxes, reveal several more boxes on 3d plane when mouse used to toggle
+ *
+ */
+p5.prototype.frustum = function() {
+  this._renderer.frustum.apply(this._renderer, arguments);
+  return this;
+};
 
-  this.uPMatrix = p5.Matrix.identity();
+p5.RendererGL.prototype.frustum = function(
+  left,
+  right,
+  bottom,
+  top,
+  near,
+  far
+) {
+  if (left === undefined) left = -1;
+  if (right === undefined) right = +1;
+  if (bottom === undefined) bottom = -1;
+  if (top === undefined) top = +1;
+  if (near === undefined) near = 1;
+  if (far === undefined) far = 10000;
 
-  // prettier-ignore
-  this.uPMatrix.set(  x,  0,  0,  0, 
-                      0, -y,  0,  0, 
-                      0,  0,  z,  0, 
-                     tx, ty, tz,  1);
+  this.uPMatrix.frustum(left, right, bottom, top, near, far);
 
   this._curCamera = 'custom';
 };
