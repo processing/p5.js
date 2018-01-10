@@ -637,11 +637,13 @@ p5.Matrix.prototype.shearY = function(angle) {
  * Scales this matrix by a given vector or scalar.
  *
  * @method scale
- * @param {p5.Vector|Array|Number} vsrc the scale value(s)
+ * @param {p5.Vector|Array|Number} vsrc the scale in x,y,z
  * @chainable
  */
 p5.Matrix.prototype.scale = function(vsrc) {
-  var x, y, z;
+  var x = 1,
+    y = 1,
+    z = 1;
   if (vsrc instanceof p5.Vector) {
     x = vsrc.x;
     y = vsrc.y;
@@ -652,10 +654,11 @@ p5.Matrix.prototype.scale = function(vsrc) {
     z = vsrc[2];
   } else if (typeof vsrc === 'number') {
     x = y = z = vsrc;
-  } else if (arguments.length === 3) {
-    x = arguments[0];
-    y = arguments[1];
-    z = arguments[2];
+  } else {
+    // last resort, hope we got some numbers
+    x = arguments[0] || 1;
+    y = arguments[1] || 1;
+    z = arguments[2] || 1;
   }
   var mat = this.mat4 || this.mat3;
 
@@ -690,13 +693,15 @@ p5.Matrix.prototype.scale = function(vsrc) {
  * Translates this matrix by a given vector.
  *
  * @method translate
- * @param {p5.Vector|Array} vsrc the translation in x,y and z
+ * @param {p5.Vector|Array|Number} vsrc the translation in x,y,z
  * @chainable
  */
 p5.Matrix.prototype.translate = function(vsrc) {
   var mat = this.mat4;
   if (mat) {
-    var x, y, z;
+    var x = 0,
+      y = 0,
+      z = 0;
     if (vsrc instanceof p5.Vector) {
       x = vsrc.x;
       y = vsrc.y;
@@ -705,10 +710,11 @@ p5.Matrix.prototype.translate = function(vsrc) {
       x = vsrc[0];
       y = vsrc[1];
       z = vsrc[2];
-    } else if (arguments.length === 3) {
-      x = arguments[0];
-      y = arguments[1];
-      z = arguments[2];
+    } else {
+      // last resort, hope we got some numbers
+      x = arguments[0] || 0;
+      y = arguments[1] || 0;
+      z = arguments[2] || 0;
     }
     mat[12] += mat[0] * x + mat[4] * y + mat[8] * z;
     mat[13] += mat[1] * x + mat[5] * y + mat[9] * z;
