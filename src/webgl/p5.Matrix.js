@@ -640,27 +640,35 @@ p5.Matrix.prototype.shearY = function(angle) {
  * @param {p5.Vector|Array|Number} vsrc the scale in x,y,z
  * @chainable
  */
-p5.Matrix.prototype.scale = function(vsrc) {
-  var x = 1,
-    y = 1,
-    z = 1;
-  if (vsrc instanceof p5.Vector) {
-    x = vsrc.x;
-    y = vsrc.y;
-    z = vsrc.z;
-  } else if (vsrc instanceof Array) {
-    x = vsrc[0];
-    y = vsrc[1];
-    z = vsrc[2];
-  } else if (typeof vsrc === 'number') {
-    x = y = z = vsrc;
+p5.Matrix.prototype.scale = function() {
+  var x, y, z;
+  var arg = arguments[0];
+  var numArgs = arguments.length;
+  var mat = this.mat4 || this.mat3;
+
+  if (arg instanceof p5.Vector) {
+    x = arg.x;
+    y = arg.y;
+    z = arg.z;
+  } else if (arg instanceof Array) {
+    x = arg[0];
+    y = arg[1];
+    z = arg[2];
+  } else if (numArgs === 1 && typeof arg === 'number') {
+    x = arg;
+    y = arg;
+    z = arg;
   } else {
     // last resort, hope we got some numbers
-    x = arguments[0] || 1;
-    y = arguments[1] || 1;
-    z = arguments[2] || 1;
+    x = arguments[0];
+    y = arguments[1];
+    z = arguments[2];
   }
-  var mat = this.mat4 || this.mat3;
+
+  // just in case, default scale value is 1
+  x = x === undefined ? 1 : x;
+  y = y === undefined ? 1 : y;
+  z = z === undefined ? 1 : z;
 
   if (mat.length === 16) {
     mat[0] *= x;
@@ -693,29 +701,37 @@ p5.Matrix.prototype.scale = function(vsrc) {
  * Translates this matrix by a given vector.
  *
  * @method translate
- * @param {p5.Vector|Array|Number} vsrc the translation in x,y,z
+ * @param {p5.Vector}
+ * @param {Number[]}
+ * @param {Number,Number,Number}
  * @chainable
  */
-p5.Matrix.prototype.translate = function(vsrc) {
+p5.Matrix.prototype.translate = function() {
+  var x, y, z;
+  var arg = arguments[0];
   var mat = this.mat4;
+
   if (mat) {
-    var x = 0,
-      y = 0,
-      z = 0;
-    if (vsrc instanceof p5.Vector) {
-      x = vsrc.x;
-      y = vsrc.y;
-      z = vsrc.z;
-    } else if (vsrc instanceof Array) {
-      x = vsrc[0];
-      y = vsrc[1];
-      z = vsrc[2];
+    if (arg instanceof p5.Vector) {
+      x = arg.x;
+      y = arg.y;
+      z = arg.z;
+    } else if (arg instanceof Array) {
+      x = arg[0];
+      y = arg[1];
+      z = arg[2];
     } else {
       // last resort, hope we got some numbers
-      x = arguments[0] || 0;
-      y = arguments[1] || 0;
-      z = arguments[2] || 0;
+      x = arguments[0];
+      y = arguments[1];
+      z = arguments[2];
     }
+
+    // just in case, default translation value is 0
+    x = x === undefined ? 0 : x;
+    y = y === undefined ? 0 : y;
+    z = z === undefined ? 0 : z;
+
     mat[12] += mat[0] * x + mat[4] * y + mat[8] * z;
     mat[13] += mat[1] * x + mat[5] * y + mat[9] * z;
     mat[14] += mat[2] * x + mat[6] * y + mat[10] * z;

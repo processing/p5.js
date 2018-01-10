@@ -680,57 +680,56 @@ p5.RendererGL.prototype.clear = function() {
 };
 
 /**
- * [translate description]
+ * Translates the Model in World-Space.
+ * If only x and y is given, z will be 0;
  * @private
- * @param  {Number} x [description]
- * @param  {Number} y [description]
- * @param  {Number} z [description]
+ * @param  {p5.Vector} vec
+ * @param  {Number[]} vec
+ * @param  {Number} x
+ * @param  {Number} y
+ * @param  {Number} z (optional, default is 0)
  * @chainable
- * @todo implement handle for components or vector as args
  */
-p5.RendererGL.prototype.translate = function(x, y, z) {
-  if (x instanceof p5.Vector) {
-    z = x.z;
-    y = x.y;
-    x = x.x;
-  }
-  this.uMVMatrix.translate([x, y, z]);
+p5.RendererGL.prototype.translate = function() {
+  this.uMVMatrix.translate.apply(this.uMVMatrix, arguments);
   return this;
 };
 
 /**
- * Scales the Model View Matrix by a vector
+ * Scales the Model in World-Space.
+ * If only x and y is given, z will be 1;
+ * If only one value is given, the model scales equal in all axis.
  * @private
- * @param  {Number | p5.Vector | Array} x [description]
- * @param  {Number} [y] y-axis scalar
- * @param  {Number} [z] z-axis scalar
+ * @param  {p5.Vector} vec
+ * @param  {Number[]} vec
+ * @param  {Number} scalar for uniform scale
+ * @param  {Number} x scale in x
+ * @param  {Number} y scale in y
+ * @param  {Number} z scale in z (optional, default is 1)
  * @chainable
  */
-p5.RendererGL.prototype.scale = function(x, y, z) {
-  this.uMVMatrix.scale([x, y, z]);
+p5.RendererGL.prototype.scale = function() {
+  this.uMVMatrix.scale.apply(this.uMVMatrix, arguments);
   return this;
 };
 
-p5.RendererGL.prototype.rotate = function(rad, axis) {
-  if (!axis) {
-    axis = [0, 0, 1];
-  }
-  this.uMVMatrix.rotate(rad, axis);
+p5.RendererGL.prototype.rotate = function(angle, axis) {
+  this.uMVMatrix.rotate(angle, axis || [0, 0, 1]);
   return this;
 };
 
-p5.RendererGL.prototype.rotateX = function(rad) {
-  this.rotate(rad, [1, 0, 0]);
+p5.RendererGL.prototype.rotateX = function(angle) {
+  this.uMVMatrix.rotateX(angle);
   return this;
 };
 
-p5.RendererGL.prototype.rotateY = function(rad) {
-  this.rotate(rad, [0, 1, 0]);
+p5.RendererGL.prototype.rotateY = function(angle) {
+  this.uMVMatrix.rotateY(angle);
   return this;
 };
 
-p5.RendererGL.prototype.rotateZ = function(rad) {
-  this.rotate(rad, [0, 0, 1]);
+p5.RendererGL.prototype.rotateZ = function(angle) {
+  this.uMVMatrix.rotateZ(angle);
   return this;
 };
 
