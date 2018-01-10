@@ -27,7 +27,7 @@ var p5 = require('../core/core');
  * @param  {Number} [upX]      x component of direction 'up' from camera
  * @param  {Number} [upY]      y component of direction 'up' from camera
  * @param  {Number} [upZ]      z component of direction 'up' from camera
- * @return {p5}                the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -167,7 +167,7 @@ p5.RendererGL.prototype.camera = function(
  * @param  {Number} [aspect] camera frustum aspect ratio
  * @param  {Number} [near]   frustum near plane length
  * @param  {Number} [far]    frustum far plane length
- * @return {p5}              the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -245,7 +245,7 @@ p5.RendererGL.prototype.perspective = function(fovy, aspect, near, far) {
  * @param  {Number} [top]    camera frustum top plane
  * @param  {Number} [near]   camera frustum near plane
  * @param  {Number} [far]    camera frustum far plane
- * @return {p5}              the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>

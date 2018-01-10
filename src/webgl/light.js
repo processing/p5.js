@@ -32,13 +32,14 @@ var p5 = require('../core/core');
  *   background(0);
  *   ambientLight(150);
  *   ambientMaterial(250);
- *   sphere(50);
+ *   noStroke();
+ *   sphere(25);
  * }
  * </code>
  * </div>
  *
  * @alt
- * nothing displayed
+ * evenly distributed light across a sphere
  *
  */
 
@@ -98,6 +99,28 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  * @param  {Number}    v3       blue or brightness value
  * @param  {p5.Vector} position the direction of the light
  * @chainable
+ * @example
+ * <div>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ * }
+ * function draw() {
+ *   background(0);
+ *   //move your mouse to change light direction
+ *   var dirX = (mouseX / width - 0.5) * 2;
+ *   var dirY = (mouseY / height - 0.5) * 2;
+ *   directionalLight(250, 250, 250, -dirX, -dirY, 0.25);
+ *   ambientMaterial(250);
+ *   noStroke();
+ *   sphere(25);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * light source on canvas changeable with mouse position
+ *
  */
 
 /**
@@ -126,28 +149,6 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  * @param  {Number}    y
  * @param  {Number}    z
  * @chainable
- *
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(100, 100, WEBGL);
- * }
- * function draw() {
- *   background(0);
- *   //move your mouse to change light direction
- *   var dirX = (mouseX / width - 0.5) * 2;
- *   var dirY = (mouseY / height - 0.5) * -2;
- *   directionalLight(250, 250, 250, dirX, dirY, 0.25);
- *   ambientMaterial(250);
- *   sphere(50);
- * }
- * </code>
- * </div>
- *
- * @alt
- * light source on canvas changeable with mouse position
- *
  */
 p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
   var shader = this._renderer._useLightShader();
@@ -170,7 +171,9 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
   //in case there's no material color for the geometry
   shader.setUniform('uMaterialColor', this._renderer.curFillColor);
 
-  this._renderer.directionalLightDirections.push(_x, _y, _z);
+  // normalize direction
+  var l = Math.sqrt(_x * _x + _y * _y + _z * _z);
+  this._renderer.directionalLightDirections.push(_x / l, _y / l, _z / l);
   shader.setUniform(
     'uLightingDirection',
     this._renderer.directionalLightDirections
@@ -211,18 +214,19 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  * function draw() {
  *   background(0);
  *   //move your mouse to change light position
- *   var locY = (mouseY / height - 0.5) * -2;
- *   var locX = (mouseX / width - 0.5) * 2;
- *   //to set the light position,
- *   //think of the world's coordinate as:
- *   // -1,1 -------- 1,1
- *   //   |            |
- *   //   |            |
- *   //   |            |
- *   // -1,-1---------1,-1
- *   pointLight(250, 250, 250, locX, locY, 0);
+ *   var locX = mouseX - width / 2;
+ *   var locY = mouseY - height / 2;
+ *   // to set the light position,
+ *   // think of the world's coordinate as:
+ *   // -width/2,-height/2 -------- width/2,-height/2
+ *   //                |            |
+ *   //                |     0,0    |
+ *   //                |            |
+ *   // -width/2,height/2--------width/2,height/2
+ *   pointLight(250, 250, 250, locX, locY, 50);
  *   ambientMaterial(250);
- *   sphere(50);
+ *   noStroke();
+ *   sphere(25);
  * }
  * </code>
  * </div>

@@ -833,11 +833,12 @@ p5.Vector.prototype.equals = function equals(x, y, z) {
 // Static Methods
 
 /**
- * Make a new 2D unit vector from an angle
+ * Make a new 2D vector from an angle
  *
  * @method fromAngle
  * @static
  * @param {Number}     angle the desired angle
+ * @param {Number}     [length] the length of the new vector (defaults to 1)
  * @return {p5.Vector}       the new p5.Vector object
  * @example
  * <div>
@@ -860,7 +861,7 @@ p5.Vector.prototype.equals = function equals(x, y, z) {
  *
  *   // Create a p5.Vector using the fromAngle function,
  *   // and extract its x and y components.
- *   var v = p5.Vector.fromAngle(radians(myDegrees));
+ *   var v = p5.Vector.fromAngle(radians(myDegrees), 30);
  *   var vx = v.x;
  *   var vy = v.y;
  *
@@ -870,22 +871,92 @@ p5.Vector.prototype.equals = function equals(x, y, z) {
  *   stroke(150);
  *   line(0, 0, 30, 0);
  *   stroke(0);
- *   line(0, 0, 30 * vx, 30 * vy);
+ *   line(0, 0, vx, vy);
  *   pop();
  * }
  * </code>
  * </div>
  */
-p5.Vector.fromAngle = function fromAngle(angle) {
+p5.Vector.fromAngle = function fromAngle(angle, length) {
   if (this.p5) {
     if (this.p5._angleMode === constants.DEGREES) {
       angle = polarGeometry.degreesToRadians(angle);
     }
   }
+  if (typeof length === 'undefined') {
+    length = 1;
+  }
   if (this.p5) {
-    return new p5.Vector(this.p5, [Math.cos(angle), Math.sin(angle), 0]);
+    return new p5.Vector(this.p5, [
+      length * Math.cos(angle),
+      length * Math.sin(angle),
+      0
+    ]);
   } else {
-    return new p5.Vector(Math.cos(angle), Math.sin(angle), 0);
+    return new p5.Vector(length * Math.cos(angle), length * Math.sin(angle), 0);
+  }
+};
+
+/**
+ * Make a new 3D vector from a pair of ISO spherical angles
+ *
+ * @method fromAngles
+ * @static
+ * @param {Number}     theta the polar angle (zero is up)
+ * @param {Number}     phi the azimuthal angle (zero is out of the screen)
+ * @param {Number}     [length] the length of the new vector (defaults to 1)
+ * @return {p5.Vector}       the new p5.Vector object
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   fill(255);
+ *   noStroke();
+ * }
+ * function draw() {
+ *   background(255);
+ *
+ *   var t = millis() / 1000;
+ *
+ *   // add three point lights
+ *   pointLight(color('#f00'), p5.Vector.fromAngles(t * 1.0, t * 1.3, 100));
+ *   pointLight(color('#0f0'), p5.Vector.fromAngles(t * 1.1, t * 1.2, 100));
+ *   pointLight(color('#00f'), p5.Vector.fromAngles(t * 1.2, t * 1.1, 100));
+ *
+ *   sphere(35);
+ * }
+ * </code>
+ * </div>
+ */
+p5.Vector.fromAngles = function(theta, phi, length) {
+  if (this.p5) {
+    if (this.p5._angleMode === constants.DEGREES) {
+      theta = polarGeometry.degreesToRadians(theta);
+      phi = polarGeometry.degreesToRadians(phi);
+    }
+  }
+  if (typeof length === 'undefined') {
+    length = 1;
+  }
+  var cosPhi = Math.cos(phi);
+  var sinPhi = Math.sin(phi);
+  var cosTheta = Math.cos(theta);
+  var sinTheta = Math.sin(theta);
+
+  if (this.p5) {
+    return new new p5.Vector(
+      this.p5,
+      length * sinTheta * sinPhi,
+      -length * cosTheta,
+      length * sinTheta * cosPhi
+    )();
+  } else {
+    return new p5.Vector(
+      length * sinTheta * sinPhi,
+      -length * cosTheta,
+      length * sinTheta * cosPhi
+    );
   }
 };
 
