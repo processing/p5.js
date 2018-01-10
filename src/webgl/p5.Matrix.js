@@ -21,6 +21,18 @@
  *
  */
 
+/**
+ *
+ * TODO:
+ *
+ *  1) remove p5-reference from Matrix class.
+ *  2) better separation of 3x3 and 4x4 Matrix.
+ *     Or get rid of 3x3 at all, it isnt required.
+ *     A normalmatrix can be created from a 4x4 matrix as well and simply
+ *     extracted as 3x3 when setting the shader-uniforms.
+ *
+ */
+
 'use strict';
 
 var p5 = require('../core/core');
@@ -40,13 +52,16 @@ var GLMAT = Float32Array || Array;
  *   new p5.Matrix(p5.Matrix | Float32Array | Array); // copy
  *
  *   new p5.Matrix(p5); // new 4x4 matrix + p5-reference
- *
  * </pre>
  *
  * @class p5.Matrix
  * @private
  * @constructor
- * @param {...*} variable args
+ * @param {} empty - default 4x4-matrix
+ * @param {p5.Matrix} copy-constructor
+ * @param {Float32Array | Array} matrix data as array, (will be copied).
+ * @param {String} 'mat3' - a hint, to create a 3x3-matrix. (see TODO)
+ * @param {p5} reference to parent p5 instance. (see TODO)
  * @chainable
  */
 p5.Matrix = function() {
@@ -592,7 +607,11 @@ p5.Matrix.prototype.rotateZ = function(angle) {
 p5.Matrix.prototype.shearX = function(angle) {
   angle = this.assertAngleMode(angle);
   var t = Math.tan(angle);
-  this.mult([1, t, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+  // prettier-ignore
+  this.mult([1, 0, 0, 0, 
+             t, 1, 0, 0, 
+             0, 0, 1, 0, 
+             0, 0, 0, 1]);
 
   return this;
 };
@@ -605,7 +624,11 @@ p5.Matrix.prototype.shearX = function(angle) {
 p5.Matrix.prototype.shearY = function(angle) {
   angle = this.assertAngleMode(angle);
   var t = Math.tan(angle);
-  this.mult([1, 0, 0, 0, t, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+  // prettier-ignore
+  this.mult([1, t, 0, 0, 
+             0, 1, 0, 0, 
+             0, 0, 1, 0, 
+             0, 0, 0, 1]);
 
   return this;
 };
@@ -629,6 +652,10 @@ p5.Matrix.prototype.scale = function(vsrc) {
     z = vsrc[2];
   } else if (typeof vsrc === 'number') {
     x = y = z = vsrc;
+  } else if (arguments.length === 3) {
+    x = arguments[0];
+    y = arguments[1];
+    z = arguments[2];
   }
   var mat = this.mat4 || this.mat3;
 
@@ -678,6 +705,10 @@ p5.Matrix.prototype.translate = function(vsrc) {
       x = vsrc[0];
       y = vsrc[1];
       z = vsrc[2];
+    } else if (arguments.length === 3) {
+      x = arguments[0];
+      y = arguments[1];
+      z = arguments[2];
     }
     mat[12] += mat[0] * x + mat[4] * y + mat[8] * z;
     mat[13] += mat[1] * x + mat[5] * y + mat[9] * z;
