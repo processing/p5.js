@@ -196,7 +196,7 @@ p5.TypedDict.prototype._addObj = function(obj) {
 };
 
 /**
- * Removes a key-value pair in the Dictionary
+ * Creates a key-value pair in the Dictionary
  *
  * @method create
  * @param {Number|String} key
