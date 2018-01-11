@@ -42,26 +42,60 @@ var GLMAT = Float32Array || Array;
 /**
  * A class to describe a 4x4 or 3x3 transformation matrix for the p5js webgl
  * renderer.
+ * By default a 4x4 matrix is created.
  *
  * <pre>
+ *
  *   <s>construction examples:</s>
  *
  *   new p5.Matrix(); // new 4x4 matrix
  *   new p5.Matrix('mat3'); // new 3x3 matrix
- *
  *   new p5.Matrix(p5.Matrix | Float32Array | Array); // copy
- *
  *   new p5.Matrix(p5); // new 4x4 matrix + p5-reference
+ *
  * </pre>
  *
  * @class p5.Matrix
  * @private
  * @constructor
- * @param {} empty - default 4x4-matrix
- * @param {p5.Matrix} copy-constructor
- * @param {Float32Array | Array} matrix data as array, (will be copied).
- * @param {String} 'mat3' - a hint, to create a 3x3-matrix. (see TODO)
- * @param {p5} reference to parent p5 instance. (see TODO)
+ */
+
+/**
+ * Creates a new 4x4 matrix, initialized from the given array-values or an
+ * identity-matrix in case of no initial array.
+ * @class p5.Matrix
+ * @private
+ * @constructor
+ * @param  {Array | Float32Array} [matrix-array] (optional) array-length 16.
+ * @param  {p5} [p5] - (optional) reference to p5.
+ * @chainable
+ */
+
+/**
+ * Creates a new 3x3 matrix, initialized from the given array-values or an
+ * identity-matrix in case of no initial array.
+ * @class p5.Matrix
+ * @private
+ * @constructor
+ * @param  {String} 'mat3' required hint, to create a 3x3 identity-matrix.
+ * @param  {Array | Float32Array} [matrix-array] (optional) array-length 9.
+ * @param  {p5} [p5] - (optional) reference to p5.
+ * @chainable
+ */
+
+/**
+ * Creates a new 4x4 identity-matrix (default).
+ * @class p5.Matrix
+ * @constructor
+ * @chainable
+ */
+
+/**
+ * Copy constructor, the new Matrix will be a copy.
+ * @class p5.Matrix
+ * @private
+ * @constructor
+ * @param  {p5.Matrix} matrix copy constructor.
  * @chainable
  */
 p5.Matrix = function() {
@@ -552,7 +586,7 @@ p5.Matrix.prototype.rotate = function(angle, axis) {
 };
 
 /**
- * Rotates a matrix around the X-Axis.
+ * Rotates the matrix around the X-Axis.
  *
  * @method rotateX
  * @param {Number} angle
@@ -568,7 +602,7 @@ p5.Matrix.prototype.rotateX = function(angle) {
 };
 
 /**
- * Rotates a matrix around the Y-Axis.
+ * Rotates the matrix around the Y-Axis.
  *
  * @method rotateY
  * @param {Number} angle
@@ -584,7 +618,7 @@ p5.Matrix.prototype.rotateY = function(angle) {
 };
 
 /**
- * Rotates a matrix around the Z-Axis.
+ * Rotates the matrix around the Z-Axis.
  *
  * @method rotateY
  * @param {Number} angle
@@ -634,10 +668,28 @@ p5.Matrix.prototype.shearY = function(angle) {
 };
 
 /**
- * Scales this matrix by a given vector or scalar.
- *
  * @method scale
- * @param {p5.Vector|Array|Number} vsrc the scale in x,y,z
+ * @param  {p5.Vector} scales a p5.Vector(x,y,z)
+ * @chainable
+ */
+
+/**
+ * @method scale
+ * @param  {Array} scales an array[x,y,z]
+ * @chainable
+ */
+
+/**
+ * @method scale
+ * @param  {Number} x same value used for X,Y,Z
+ * @chainable
+ */
+
+/**
+ * @method scale
+ * @param  {Number} x scale in X
+ * @param  {Number} y scale in Y
+ * @param  {Number} z scale in Z
  * @chainable
  */
 p5.Matrix.prototype.scale = function() {
@@ -698,12 +750,22 @@ p5.Matrix.prototype.scale = function() {
 };
 
 /**
- * Translates this matrix by a given vector.
- *
  * @method translate
- * @param {p5.Vector}
- * @param {Number[]}
- * @param {Number,Number,Number}
+ * @param  {Array} scales an array[x,y,z]
+ * @chainable
+ */
+
+/**
+ * @method translate
+ * @param  {Number} x translate in X
+ * @param  {Number} y translate in Y
+ * @param  {Number} z translate in Z
+ * @chainable
+ */
+
+/**
+ * @method translate
+ * @param  {p5.Vector} scales a p5.Vector(x,y,z)
  * @chainable
  */
 p5.Matrix.prototype.translate = function() {

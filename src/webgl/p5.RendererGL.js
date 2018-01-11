@@ -679,35 +679,11 @@ p5.RendererGL.prototype.clear = function() {
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
 
-/**
- * Translates the Model in World-Space.
- * If only x and y is given, z will be 0;
- * @private
- * @param  {p5.Vector} vec
- * @param  {Number[]} vec
- * @param  {Number} x
- * @param  {Number} y
- * @param  {Number} z (optional, default is 0)
- * @chainable
- */
 p5.RendererGL.prototype.translate = function() {
   this.uMVMatrix.translate.apply(this.uMVMatrix, arguments);
   return this;
 };
 
-/**
- * Scales the Model in World-Space.
- * If only x and y is given, z will be 1;
- * If only one value is given, the model scales equal in all axis.
- * @private
- * @param  {p5.Vector} vec
- * @param  {Number[]} vec
- * @param  {Number} scalar for uniform scale
- * @param  {Number} x scale in x
- * @param  {Number} y scale in y
- * @param  {Number} z scale in z (optional, default is 1)
- * @chainable
- */
 p5.RendererGL.prototype.scale = function() {
   this.uMVMatrix.scale.apply(this.uMVMatrix, arguments);
   return this;
