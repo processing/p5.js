@@ -94,55 +94,50 @@ var GLMAT = Float32Array || Array;
  * @chainable
  */
 p5.Matrix = function() {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
+  var numArgs = arguments.length;
+
+  // copy args
+  var args = new Array(numArgs);
+  for (var i = 0; i < numArgs; ++i) {
     args[i] = arguments[i];
   }
 
-  // check if last arg is p5-reference
-  if (args.length && args[args.length - 1] instanceof p5) {
-    this.p5 = args[args.length - 1];
+  // check for p5-reference
+  if (numArgs && args[numArgs - 1] instanceof p5) {
+    this.p5 = args[numArgs - 1];
   }
 
-  // assume, args[0] is a (typed) array[16]
-  var mat;
-
-  // 1) copy constructor
+  //  copy constructor
   if (args[0] instanceof p5.Matrix) {
     var other = args[0];
     if (other.p5) this.p5 = other.p5;
     if (other.mat3) this.mat3 = other.mat3.slice();
     if (other.mat4) this.mat4 = other.mat4.slice();
-  } else if (args[0] === 'mat3') {
-    // 2) 3x3 matrix: check for 'mat3' and eventually given array
-    // assume, args[1] is a (typed) array[9]
-    mat = args[1];
-
-    // if no valid array, create 3x3 identity
-    // note: .length check, instead of .constructor check.
-    if (!mat || mat.length !== 9) {
-      mat = [1, 0, 0, 0, 1, 0, 0, 0, 1];
-    }
-    // if available create as Float32Array
-    if (Float32Array) {
-      mat = new Float32Array(mat);
-    }
-    this.mat3 = mat;
   } else {
-    // 3) 4x4 matrix: this is basically default when no args are given
-    // assume, args[0] is a (typed) array[16]
-    mat = args[0];
+    var mat;
 
-    // if no valid array, create 4x4 identity
-    // note: .length check, instead of .constructor check.
-    if (!mat || mat.length !== 16) {
-      mat = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+    if (args[0] === 'mat3') {
+      // expect args[1] to be an array[9] for a 3x3 matrix
+      mat = args[1];
+      // if not (just a length check) -> new 3x3 identity
+      if (!(mat && mat.length === 9)) {
+        mat = [1, 0, 0, 0, 1, 0, 0, 0, 1];
+      }
+    } else {
+      // expect args[0] to be an array[16] for a 4x4 matrix
+      mat = args[0];
+      // if not (just a length check) -> new 4x4 identity
+      if (!(mat && mat.length === 16)) {
+        mat = [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
+      }
     }
-    // if available create as Float32Array
-    if (Float32Array) {
-      mat = new Float32Array(mat);
+
+    // setup final array as mat3 or mat4
+    if (mat.length === 9) {
+      this.mat3 = Float32Array ? new Float32Array(mat) : mat.slice();
+    } else {
+      this.mat4 = Float32Array ? new Float32Array(mat) : mat.slice();
     }
-    this.mat4 = mat;
   }
 
   this.name = 'p5.Matrix'; // for friendly debugger system
@@ -572,9 +567,16 @@ p5.Matrix.prototype.rotate = function(angle, axis) {
 
   // this = this * mRotation
   if (this.mat4) {
-    this.mult([x0, y0, z0, 0, x1, y1, z1, 0, x2, y2, z2, 0, 0, 0, 0, 1]);
+    // prettier-ignore
+    this.mult([x0, y0, z0, 0, 
+               x1, y1, z1, 0, 
+               x2, y2, z2, 0, 
+               0, 0, 0, 1]);
   } else {
-    this.mult([x0, y0, z0, x1, y1, z1, x2, y2, z2]);
+    // prettier-ignore
+    this.mult([x0, y0, z0, 
+               x1, y1, z1, 
+               x2, y2, z2]);
   }
 
   return this;
@@ -591,7 +593,11 @@ p5.Matrix.prototype.rotateX = function(angle) {
   angle = this.assertAngleMode(angle);
   var c = Math.cos(angle);
   var s = Math.sin(angle);
-  this.mult([1, 0, 0, 0, 0, c, +s, 0, 0, -s, c, 0, 0, 0, 0, 1]);
+  // prettier-ignore
+  this.mult([1, 0, 0, 0, 
+             0, c,+s, 0, 
+             0,-s, c, 0, 
+             0, 0, 0, 1]);
 
   return this;
 };
@@ -607,7 +613,11 @@ p5.Matrix.prototype.rotateY = function(angle) {
   angle = this.assertAngleMode(angle);
   var c = Math.cos(angle);
   var s = Math.sin(angle);
-  this.mult([c, 0, -s, 0, 0, 1, 0, 0, +s, 0, c, 0, 0, 0, 0, 1]);
+  // prettier-ignore
+  this.mult([ c, 0,-s, 0, 
+              0, 1, 0, 0, 
+             +s, 0, c, 0, 
+              0, 0, 0, 1]);
 
   return this;
 };
@@ -623,7 +633,11 @@ p5.Matrix.prototype.rotateZ = function(angle) {
   angle = this.assertAngleMode(angle);
   var c = Math.cos(angle);
   var s = Math.sin(angle);
-  this.mult([c, +s, 0, 0, -s, c, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+  // prettier-ignore
+  this.mult([c, +s, 0, 0, 
+             -s, c, 0, 0, 
+              0, 0, 1, 0, 
+              0, 0, 0, 1]);
 
   return this;
 };
@@ -922,23 +936,10 @@ p5.Matrix.prototype.invert = function(msrc, mdst) {
   mdst = mdst.mat4 || mdst.mat3 || mdst;
   msrc = msrc.mat4 || msrc.mat3 || msrc;
 
-  var a00,
-    a01,
-    a02,
-    a03,
-    a10,
-    a11,
-    a12,
-    a13,
-    a20,
-    a21,
-    a22,
-    a23,
-    a30,
-    a31,
-    a32,
-    a33;
-  var b00, b01, b02, b03, b04, b05, b06, b07, b08, b09, b10, b11, b21;
+  // prettier-ignore
+  var a00,a01,a02,a03,a10,a11,a12,a13,a20,a21,a22,a23,a30,a31,a32,a33;
+  // prettier-ignore
+  var b00,b01,b02,b03,b04,b05,b06,b07,b08,b09,b10,b11,b21;
   var det;
 
   if (msrc.length === 16) {
@@ -1039,23 +1040,10 @@ p5.Matrix.prototype.invert = function(msrc, mdst) {
  * @returns {Number} the resulting determinant
  */
 p5.Matrix.prototype.determinant = function() {
-  var a00,
-    a01,
-    a02,
-    a03,
-    a10,
-    a11,
-    a12,
-    a13,
-    a20,
-    a21,
-    a22,
-    a23,
-    a30,
-    a31,
-    a32,
-    a33;
-  var b00, b01, b02, b03, b04, b05, b06, b07, b08, b09, b10, b11, b21;
+  // prettier-ignore
+  var a00,a01,a02,a03,a10,a11,a12,a13,a20,a21,a22,a23,a30,a31,a32,a33;
+  // prettier-ignore
+  var b00,b01,b02,b03,b04,b05,b06,b07,b08,b09,b10,b11,b21;
   var det;
   var mat;
 
@@ -1292,50 +1280,15 @@ p5.Matrix.prototype.toString = function() {
   var p = 4;
   var m = this.mat4 || this.mat3;
   if (m.length === 16) {
-    s0 =
-      m[0].toFixed(p) +
-      ', ' +
-      m[4].toFixed(p) +
-      ', ' +
-      m[8].toFixed(p) +
-      ', ' +
-      m[12].toFixed(p) +
-      '\n';
-    s1 =
-      m[1].toFixed(p) +
-      ', ' +
-      m[5].toFixed(p) +
-      ', ' +
-      m[9].toFixed(p) +
-      ', ' +
-      m[13].toFixed(p) +
-      '\n';
-    s2 =
-      m[2].toFixed(p) +
-      ', ' +
-      m[6].toFixed(p) +
-      ', ' +
-      m[10].toFixed(p) +
-      ', ' +
-      m[14].toFixed(p) +
-      '\n';
-    s3 =
-      m[3].toFixed(p) +
-      ', ' +
-      m[7].toFixed(p) +
-      ', ' +
-      m[11].toFixed(p) +
-      ', ' +
-      m[15].toFixed(p) +
-      '\n';
+    /*prettier-ignore*/ s0 = m[0].toFixed(p)+', '+m[4].toFixed(p)+', '+m[8].toFixed(p)+', '+m[12].toFixed(p)+'\n';
+    /*prettier-ignore*/ s1 = m[1].toFixed(p)+', '+m[5].toFixed(p)+', '+m[9].toFixed(p)+', '+m[13].toFixed(p)+'\n';
+    /*prettier-ignore*/ s2 = m[2].toFixed(p)+', '+m[6].toFixed(p)+', '+m[10].toFixed(p)+', '+m[14].toFixed(p)+'\n';
+    /*prettier-ignore*/ s3 = m[3].toFixed(p)+', '+m[7].toFixed(p)+', '+m[11].toFixed(p)+', '+m[15].toFixed(p)+'\n';
     return s0 + s1 + s2 + s3;
   } else {
-    s0 =
-      m[0].toFixed(p) + ', ' + m[3].toFixed(p) + ', ' + m[6].toFixed(p) + '\n';
-    s1 =
-      m[1].toFixed(p) + ', ' + m[4].toFixed(p) + ', ' + m[7].toFixed(p) + '\n';
-    s2 =
-      m[2].toFixed(p) + ', ' + m[5].toFixed(p) + ', ' + m[8].toFixed(p) + '\n';
+    /*prettier-ignore*/ s0 = m[0].toFixed(p)+', '+m[3].toFixed(p)+', '+m[6].toFixed(p)+'\n';
+    /*prettier-ignore*/ s1 = m[1].toFixed(p)+', '+m[4].toFixed(p)+', '+m[7].toFixed(p)+'\n';
+    /*prettier-ignore*/ s2 = m[2].toFixed(p)+', '+m[5].toFixed(p)+', '+m[8].toFixed(p)+'\n';
     return s0 + s1 + s2;
   }
 };
