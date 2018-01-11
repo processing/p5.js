@@ -55,9 +55,20 @@ var GLMAT = Float32Array || Array;
  *
  * </pre>
  *
+ * Creates a new 4x4 identity-matrix (default).
  * @class p5.Matrix
  * @private
  * @constructor
+ */
+
+/**
+ * Copy constructor, the new Matrix will be a copy.
+ * @class p5.Matrix
+ * @private
+ * @constructor
+ * @param  {p5.Matrix} matrix copy constructor.
+ * @param  {p5} [p5] - (optional) reference to p5.
+ * @chainable
  */
 
 /**
@@ -77,25 +88,9 @@ var GLMAT = Float32Array || Array;
  * @class p5.Matrix
  * @private
  * @constructor
- * @param  {String} 'mat3' required hint, to create a 3x3 identity-matrix.
+ * @param  {String} 'mat3' required hint to create a 3x3 identity-matrix.
  * @param  {Array | Float32Array} [matrix-array] (optional) array-length 9.
  * @param  {p5} [p5] - (optional) reference to p5.
- * @chainable
- */
-
-/**
- * Creates a new 4x4 identity-matrix (default).
- * @class p5.Matrix
- * @constructor
- * @chainable
- */
-
-/**
- * Copy constructor, the new Matrix will be a copy.
- * @class p5.Matrix
- * @private
- * @constructor
- * @param  {p5.Matrix} matrix copy constructor.
  * @chainable
  */
 p5.Matrix = function() {
