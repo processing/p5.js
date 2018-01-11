@@ -184,23 +184,30 @@ p5.Matrix.prototype.isMat4 = function() {
 };
 
 /**
- * Creates a new identity matrix.
+ * Creates a new 4x4 identity matrix.
+ * to create a new 3x3 identity matrix, call the constructor like this:
+ *   new p5.Matrix('mat3', p5)
  *
  * @method identity
+ * @param {p5} [p5] (optional) reference to parent p5
  * @return {p5.Matrix} matrix
  * @chainable
  */
-p5.Matrix.identity = function() {
-  return new p5.Matrix(arguments);
+p5.Matrix.identity = function(pInst) {
+  return new p5.Matrix(pInst);
 };
 
 /**
  * resets the matrix as identity matrix.
  *
  * @method identity
+ * @param {p5} [p5] (optional) reference to parent p5
  * @chainable
  */
-p5.Matrix.prototype.identity = function() {
+p5.Matrix.prototype.identity = function(pInst) {
+  if (pInst instanceof p5) {
+    this.p5 = p5;
+  }
   var mat = this.mat4 || this.mat3;
   if (mat.length === 16) {
     mat[0] = 1;
