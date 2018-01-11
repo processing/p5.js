@@ -709,6 +709,16 @@ p5.RendererGL.prototype.rotateZ = function(angle) {
   return this;
 };
 
+p5.RendererGL.prototype.shearX = function(angle) {
+  this.uMVMatrix.shearX(angle);
+  return this;
+};
+
+p5.RendererGL.prototype.shearY = function(angle) {
+  this.uMVMatrix.shearY(angle);
+  return this;
+};
+
 /**
  * pushes a copy of the model view matrix onto the
  * MV Matrix stack.
