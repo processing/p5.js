@@ -265,9 +265,9 @@ p5.prototype.copy = function() {
  * <br><br>
  *
  * BLUR
- * Executes a Guassian blur with the level parameter specifying the extent
+ * Executes a Gaussian blur with the level parameter specifying the extent
  * of the blurring. If no parameter is used, the blur is equivalent to
- * Guassian blur of radius 1. Larger values increase the blur.
+ * Gaussian blur of radius 1. Larger values increase the blur.
  * <br><br>
  *
  * ERODE
