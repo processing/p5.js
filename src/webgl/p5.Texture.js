@@ -47,8 +47,8 @@ p5.Texture = function(renderer, obj) {
   this.isSrcP5Graphics = obj instanceof p5.Graphics;
 
   var textureData = this._getTextureDataFromSource();
-  this.height = textureData.width;
-  this.width = textureData.height;
+  this.width = textureData.width;
+  this.height = textureData.height;
 
   this.init(textureData);
   return this;

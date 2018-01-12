@@ -61,7 +61,7 @@ p5.prototype.mouseX = 0;
  * function draw() {
  *   background(244, 248, 252);
  *   line(0, mouseY, 100, mouseY);
- *}
+ * }
  * </code>
  * </div>
  *
@@ -179,7 +179,7 @@ p5.prototype.winMouseX = 0;
  * @example
  * <div>
  * <code>
- *var myCanvas;
+ * var myCanvas;
  *
  * function setup() {
  *   //use a variable to store a pointer to the canvas

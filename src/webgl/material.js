@@ -54,6 +54,72 @@ p5.prototype.loadShader = function(vertFilename, fragFilename) {
 };
 
 /**
+ * @method createShader
+ * @param {String} vertSrc source code for the vertex shader
+ * @param {String} fragSrc source code for the fragment shader
+ * @returns {p5.Shader} a shader object created from the provided
+ * vertex and fragment shaders.
+ *
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * // the 'varying's are shared between both vertex & fragment shaders
+ * var varying = 'precision highp float; varying vec2 vPos;';
+ *
+ * // the vertex shader is called for each vertex
+ * var vs =
+ *   varying +
+ *   'attribute vec3 aPosition;' +
+ *   'void main() { vPos = (gl_Position = vec4(aPosition,1.0)).xy; }';
+ *
+ * // the fragment shader is called for each pixel
+ * var fs =
+ *   varying +
+ *   'uniform vec2 p;' +
+ *   'uniform float r;' +
+ *   'const int I = 500;' +
+ *   'void main() {' +
+ *   '  vec2 c = p + vPos * r, z = c;' +
+ *   '  float n = 0.0;' +
+ *   '  for (int i = I; i > 0; i --) {' +
+ *   '    if(z.x*z.x+z.y*z.y > 4.0) {' +
+ *   '      n = float(i)/float(I);' +
+ *   '      break;' +
+ *   '    }' +
+ *   '    z = vec2(z.x*z.x-z.y*z.y, 2.0*z.x*z.y) + c;' +
+ *   '  }' +
+ *   '  gl_FragColor = vec4(0.5-cos(n*17.0)/2.0,0.5-cos(n*13.0)/2.0,0.5-cos(n*23.0)/2.0,1.0);' +
+ *   '}';
+ *
+ * var mandel;
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *
+ *   // create and initialize the shader
+ *   mandel = createShader(vs, fs);
+ *   shader(mandel);
+ *   noStroke();
+ *
+ *   // 'p' is the center point of the Mandelbrot image
+ *   mandel.setUniform('p', [-0.74364388703, 0.13182590421]);
+ * }
+ *
+ * function draw() {
+ *   // 'r' is the size of the image in Mandelbrot-space
+ *   mandel.setUniform('r', 1.5 * exp(-6.5 * (1 + sin(millis() / 2000))));
+ *   quad(-1, -1, 1, -1, 1, 1, -1, 1);
+ * }
+ * </code>
+ * </div>
+ *
+ * @alt
+ * zooming Mandelbrot set. a colorful, infinitely detailed fractal.
+ */
+p5.prototype.createShader = function(vertSrc, fragSrc) {
+  return new p5.Shader(this._renderer, vertSrc, fragSrc);
+};
+
+/**
  * The shader() function lets the user provide a custom shader
  * to fill in shapes in WEBGL mode. Users can create their
  * own shaders by loading vertex and fragment shaders with
@@ -104,7 +170,8 @@ p5.prototype.shader = function(s) {
 p5.prototype.normalMaterial = function() {
   this._renderer.drawMode = constants.FILL;
   this._renderer.setFillShader(this._renderer._getNormalShader());
-  this._renderer.noStroke();
+  this._renderer.curFillColor = [1, 1, 1, 1];
+  this.noStroke();
   return this;
 };
 
@@ -196,7 +263,7 @@ p5.prototype.texture = function(tex) {
   shader.setUniform('uSpecular', false);
   shader.setUniform('isTexture', true);
   shader.setUniform('uSampler', tex);
-  this._renderer.noStroke();
+  this.noStroke();
   return this;
 };
 
@@ -237,10 +304,11 @@ p5.prototype.texture = function(tex) {
  * @chainable
  */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
-  var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
+  var color = p5.prototype.color.apply(this, arguments);
+  this._renderer.curFillColor = color._array;
 
   var shader = this._renderer._useLightShader();
-  shader.setUniform('uMaterialColor', colors);
+  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
   shader.setUniform('uSpecular', false);
   shader.setUniform('isTexture', false);
   return this;
@@ -283,10 +351,11 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * @chainable
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
-  var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
+  var color = p5.prototype.color.apply(this, arguments);
+  this._renderer.curFillColor = color._array;
 
   var shader = this._renderer._useLightShader();
-  shader.setUniform('uMaterialColor', colors);
+  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
   shader.setUniform('uSpecular', true);
   shader.setUniform('isTexture', false);
   return this;
@@ -296,16 +365,11 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
  * @private blends colors according to color components.
  * If alpha value is less than 1, we need to enable blending
  * on our gl context.  Otherwise opaque objects need to a depthMask.
- * @param  {Number} v1 [description]
- * @param  {Number} v2 [description]
- * @param  {Number} v3 [description]
- * @param  {Number} a  [description]
- * @return {[Number]}  Normalized numbers array
+ * @param  {Number[]} color [description]
+ * @return {Number[]]}  Normalized numbers array
  */
-p5.RendererGL.prototype._applyColorBlend = function(v1, v2, v3, a) {
+p5.RendererGL.prototype._applyColorBlend = function(colors) {
   var gl = this.GL;
-  var color = this._pInst.color.apply(this._pInst, arguments);
-  var colors = color._array;
   if (colors[colors.length - 1] < 1.0) {
     gl.depthMask(false);
     gl.enable(gl.BLEND);

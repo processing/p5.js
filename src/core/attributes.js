@@ -316,7 +316,7 @@ p5.prototype.strokeJoin = function(join) {
  *
  * @method strokeWeight
  * @param  {Number} weight the weight (in pixels) of the stroke
- * @return {p5}            the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
