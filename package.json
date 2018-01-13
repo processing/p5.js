@@ -64,7 +64,6 @@
     "grunt-http": "^2.2.0",
     "grunt-jscs": "^3.0.1",
     "grunt-karma": "^2.0.0",
-    "grunt-lib-phantomjs": "~0.4.0",
     "grunt-minjson": "^0.4.0",
     "grunt-mocha": "^1.0.4",
     "grunt-mocha-test": "^0.12.7",
@@ -87,8 +86,7 @@
     "karma-safari-launcher": "^1.0.0",
     "lint-staged": "^4.3.0",
     "marked": "^0.3.5",
-    "mocha": "^3.2.0",
-    "phantomjs": "^2.1.7",
+    "mocha": "^4.1.0",
     "prettier": "^1.7.4",
     "request": "^2.81.0",
     "word-wrap": "^1.2.3"

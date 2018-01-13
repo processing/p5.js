@@ -231,7 +231,8 @@ module.exports = function(grunt) {
           run: true,
           log: true,
           logErrors: true,
-          timeout: 100000
+          timeout: 100000,
+          growlOnSuccess: false
         }
       }
     },
