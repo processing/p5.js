@@ -1,9 +1,12 @@
 var img;
 var sz = 100;
 
-function setup(){
-  createCanvas(windowWidth, windowHeight, WEBGL);
+function preload() {
   img = loadImage("assets/UV_Grid_Sm.jpg");
+}
+
+function setup() {
+  createCanvas(windowWidth, windowHeight, WEBGL);
 }
 
 function draw(){

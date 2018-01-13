@@ -5,12 +5,14 @@
 // create a variable for the sound file
 var soundFile;
 
+function preload() {
+  // create a SoundFile
+  soundFile = loadSound( ['../_files/beatbox.ogg', '../_files/beatbox.mp3'] );
+}
+
 function setup() {
   createCanvas(400, 400);
   background(0);
-
-  // create a SoundFile
-  soundFile = loadSound( ['../_files/beatbox.ogg', '../_files/beatbox.mp3'] );
 
   createP('Press any key to play the sound');
 }
