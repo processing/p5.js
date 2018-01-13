@@ -19,6 +19,10 @@
  *                     start the connect server and leave it running; the tests
  *                     can then be opened at localhost:9001/test/test.html
  *
+ *  grunt yui:dev     - This rebuilds the inline documentation. It also rebuilds
+ *                     each time a change to the source is detected. You can preview
+ *                     the reference at localhost:9001/test/test.html
+ *
  *  Note: `grunt test:nobuild` will skip the build step when running the tests,
  *  and only runs the test files themselves through the linter: this can save
  *  a lot of time when authoring test specs without making any build changes.
@@ -447,6 +451,7 @@ module.exports = function(grunt) {
     'open:yui',
     'watch:yui'
   ]);
+  grunt.registerTask('yui:build', ['requirejs:yuidoc_theme', 'yui']);
   grunt.registerTask('default', ['test']);
   grunt.registerTask('saucetest', ['connect', 'saucelabs-mocha']);
 };
