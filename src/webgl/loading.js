@@ -38,10 +38,12 @@ require('./p5.Geometry');
  * //draw a spinning teapot
  * var teapot;
  *
+ * function preload() {
+ *   teapot = loadModel('assets/teapot.obj');
+ * }
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *
- *   teapot = loadModel('assets/teapot.obj');
  * }
  *
  * function draw() {
@@ -218,10 +220,12 @@ function parseObj(model, lines) {
  * //draw a spinning teapot
  * var teapot;
  *
+ * function preload() {
+ *   teapot = loadModel('assets/teapot.obj');
+ * }
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *
- *   teapot = loadModel('assets/teapot.obj');
  * }
  *
  * function draw() {

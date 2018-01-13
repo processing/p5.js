@@ -160,6 +160,19 @@ p5.Element.prototype.id = function(id) {
  * @method class
  * @param  {String} class class to add
  * @chainable
+ *
+ * @example
+ * <div class='norender'><code>
+ * function setup() {
+ *   var cnv = createCanvas(100, 100);
+ *   // Assigns a CSS selector class 'small'
+ *   // to the canvas element.
+ *   cnv.class('small');
+ * }
+ * </code></div>
+ *
+ * @alt
+ * no display.
  */
 /**
  * @method class
