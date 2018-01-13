@@ -114,7 +114,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
- *   box(200, 200, 200);
+ *   box(50);
  * }
  * </code>
  * </div>
@@ -227,7 +227,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  *
  * function draw() {
  *   background(200);
- *   sphere(50);
+ *   sphere(40);
  * }
  * </code>
  * </div>
@@ -395,7 +395,7 @@ var _truncatedCone = function(
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateZ(frameCount * 0.01);
- *   cylinder(200, 200);
+ *   cylinder(20, 50);
  * }
  * </code>
  * </div>
@@ -469,7 +469,7 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY) {
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateZ(frameCount * 0.01);
- *   cone(200, 200);
+ *   cone(40, 70);
  * }
  * </code>
  * </div>
@@ -653,7 +653,7 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
  *   background(200);
  *   rotateX(frameCount * 0.01);
  *   rotateY(frameCount * 0.01);
- *   torus(200, 60);
+ *   torus(50, 15);
  * }
  * </code>
  * </div>

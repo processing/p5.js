@@ -186,9 +186,12 @@ p5.prototype.normalMaterial = function() {
  * <div>
  * <code>
  * var img;
+ * function preload() {
+ *   img = loadImage('assets/laDefense.jpg');
+ * }
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   img = loadImage('assets/laDefense.jpg');
  * }
  *
  * function draw() {
