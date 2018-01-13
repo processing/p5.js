@@ -441,7 +441,7 @@ module.exports = function(grunt) {
   grunt.registerTask('yui:test', ['yuidoc:prod', 'connect', 'mocha:yui']);
   grunt.registerTask('yui:dev', [
     'yui:prod',
-    'browserify',
+    'build',
     'connect',
     'open:yui',
     'watch:yui'
