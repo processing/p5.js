@@ -1,22 +1,29 @@
 /**
+ * ---------------------------------------------------------
  *
+ * PMatrix3D,4x4         p5.Matrix,4x4       p5.Matrix,3x3
  *
- * PMatrix3D             p5.Matrix
- *
- * m00 m01 m02 m03       m0 m4 m8  m12
- * m10 m11 m12 m13       m1 m5 m9  m13
- * m20 m21 m22 m23       m2 m6 m10 m14
+ * m00 m01 m02 m03       m0 m4 m8  m12       m0 m3 m6
+ * m10 m11 m12 m13       m1 m5 m9  m13       m1 m4 m7
+ * m20 m21 m22 m23       m2 m6 m10 m14       m2 m5 m8
  * m30 m31 m32 m33       m3 m7 m11 m15
  *
+ * ---------------------------------------------------------
  *
- * p5.Matrix.mat4 = [m0, m1, m2, ... m13, m14, m15]
- * p5.Matrix.mat3 = [m0, m1, m2, ... m6, m7, m8]
- *
+ * 4x4 array ..... [ m0, m1, m2, m3, ... m13, m14, m15 ]
  *
  * X axis ........ [ m0,  m1,  m2,  m3  ]
  * Y axis ........ [ m4,  m5,  m6,  m7  ]
  * Z axis ........ [ m8,  m9,  m10, m11 ]
  * translation ... [ m12, m13, m14, m15 ]
+ *
+ * ---------------------------------------------------------
+ *
+ * 3x3 array ..... [ m0, m1, m2, m3, m4, m5, m6, m7, m8 ]
+ *
+ * X axis ........ [ m0, m1, m2 ]
+ * Y axis ........ [ m3, m4, m5 ]
+ * Z axis ........ [ m6, m7, m8 ]
  *
  *
  */
@@ -37,7 +44,12 @@
 
 var p5 = require('../core/core');
 var constants = require('../core/constants');
-var GLMAT = Float32Array || Array;
+
+function hasFloat32Array() {
+  return typeof Float32Array !== 'undefined';
+}
+
+var GLMAT = hasFloat32Array() ? Float32Array : Array;
 
 /**
  * A class to describe a 4x4 or 3x3 transformation matrix for the p5js webgl
@@ -132,11 +144,13 @@ p5.Matrix = function() {
       }
     }
 
+    mat = hasFloat32Array() ? new Float32Array(mat) : mat.slice();
+
     // setup final array as mat3 or mat4
     if (mat.length === 9) {
-      this.mat3 = Float32Array ? new Float32Array(mat) : mat.slice();
+      this.mat3 = mat;
     } else {
-      this.mat4 = Float32Array ? new Float32Array(mat) : mat.slice();
+      this.mat4 = mat;
     }
   }
 
