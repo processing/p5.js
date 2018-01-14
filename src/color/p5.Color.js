@@ -55,12 +55,10 @@ p5.Color = function(renderer, vals) {
  * This function returns the color formatted as a string. This can be useful
  * for debugging, or for using p5.js with other libraries.
  * @method toString
- * @param {Number|String} [format] How the color string will be formatted.
+ * @param {String} [format] How the color string will be formatted.
  * Leaving this empty formats the string as rgba(r, g, b, a).
  * '#rgb' '#rgba' '#rrggbb' and '#rrggbbaa' format as hexadecimal color codes.
- * 'hex3' 'hex4' 'hex6' and 'hex8' return the same, without the '#''
- * 16 'hex' and 'web-color' are aliases of 'hex6'.
- * 'rgb' 'hsb' and 'hsl' return the color formatted as each color mode.
+ * 'rgb' 'hsb' and 'hsl' return the color formatted in the specified color mode.
  * 'rgba' 'hsba' and 'hsla' are the same as above but with alpha channels.
  * 'rgb%' 'hsb%' 'hsl%' 'rgba%' 'hsba%' and 'hsla%' format as percentages.
  * @return {String} the formatted string
@@ -77,7 +75,7 @@ p5.Color = function(renderer, vals) {
  *
  * function draw() {
  *   text(myColor.toString(), 10, 10);
- *   text(myColor.toString('hex'), 10, 95);
+ *   text(myColor.toString('#rrggbb'), 10, 95);
  *   text(myColor.toString('rgba%'), 10, 180);
  * }
  * </code>
@@ -93,26 +91,17 @@ p5.Color.prototype.toString = function(format) {
   var a = this.levels;
   var f = this._array;
   var alpha = f[3]; // String representation uses normalized alpha
-  var str = '';
 
   switch (format) {
     case '#rrggbb':
-    case 'web-color':
-      str = '#'; //fallthrough
-    case 16:
-    case '16':
-    case 'hex':
-    case 'hex6':
-      return str.concat(
+      return '#'.concat(
         a[0] < 16 ? '0'.concat(a[0].toString(16)) : a[0].toString(16),
         a[1] < 16 ? '0'.concat(a[1].toString(16)) : a[1].toString(16),
         a[2] < 16 ? '0'.concat(a[2].toString(16)) : a[2].toString(16)
       );
 
     case '#rrggbbaa':
-      str = '#'; //fallthrough
-    case 'hex8':
-      return str.concat(
+      return '#'.concat(
         a[0] < 16 ? '0'.concat(a[0].toString(16)) : a[0].toString(16),
         a[1] < 16 ? '0'.concat(a[1].toString(16)) : a[1].toString(16),
         a[2] < 16 ? '0'.concat(a[2].toString(16)) : a[2].toString(16),
@@ -120,18 +109,14 @@ p5.Color.prototype.toString = function(format) {
       );
 
     case '#rgb':
-      str = '#'; //fallthrough
-    case 'hex3':
-      return str.concat(
+      return '#'.concat(
         Math.round(f[0] * 15).toString(16),
         Math.round(f[1] * 15).toString(16),
         Math.round(f[2] * 15).toString(16)
       );
 
     case '#rgba':
-      str = '#'; //fallthrough
-    case 'hex4':
-      return str.concat(
+      return '#'.concat(
         Math.round(f[0] * 15).toString(16),
         Math.round(f[1] * 15).toString(16),
         Math.round(f[2] * 15).toString(16),
