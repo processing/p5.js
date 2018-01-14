@@ -1114,8 +1114,6 @@ p5.PrintWriter = function(filename, extension) {
   /**
    * @method write
    * @param {Array} data
-   * @param {Number} data
-   * @param {String} data
    * @example
    * <div>
    * <code>
@@ -1148,8 +1146,6 @@ p5.PrintWriter = function(filename, extension) {
    * @method print
    * @method write
    * @param {Array} data
-   * @param {Number} data
-   * @param {String} data
    * @example
    * <div>
    * <code>
