@@ -8,13 +8,13 @@
 /* globals Request: false */
 /* globals Headers: false */
 
-"use strict";
+'use strict';
 
-var p5 = require("../core/core");
-require("whatwg-fetch");
-require("es6-promise").polyfill();
-var fetchJsonp = require("fetch-jsonp");
-require("../core/error_helpers");
+var p5 = require('../core/core');
+require('whatwg-fetch');
+require('es6-promise').polyfill();
+var fetchJsonp = require('fetch-jsonp');
+require('../core/error_helpers');
 
 /**
  * Loads a JSON file from a file or a URL, and returns an Object.
@@ -108,23 +108,23 @@ p5.prototype.loadJSON = function() {
   var options;
 
   var ret = {}; // object needed for preload
-  var t = "json";
+  var t = 'json';
 
   // check for explicit data type argument
   for (var i = 1; i < arguments.length; i++) {
     var arg = arguments[i];
-    if (typeof arg === "string") {
-      if (arg === "jsonp" || arg === "json") {
+    if (typeof arg === 'string') {
+      if (arg === 'jsonp' || arg === 'json') {
         t = arg;
       }
-    } else if (typeof arg === "function") {
+    } else if (typeof arg === 'function') {
       if (!callback) {
         callback = arg;
       } else {
         errorCallback = arg;
       }
-    } else if (typeof arg === "object" && arg.hasOwnProperty("jsonpCallback")) {
-      t = "jsonp";
+    } else if (typeof arg === 'object' && arg.hasOwnProperty('jsonpCallback')) {
+      t = 'jsonp';
       options = arg;
     }
   }
@@ -132,14 +132,14 @@ p5.prototype.loadJSON = function() {
   var self = this;
   this.httpDo(
     path,
-    "GET",
+    'GET',
     options,
     t,
     function(resp) {
       for (var k in resp) {
         ret[k] = resp[k];
       }
-      if (typeof callback !== "undefined") {
+      if (typeof callback !== 'undefined') {
         callback(resp);
       }
 
@@ -217,10 +217,10 @@ p5.prototype.loadStrings = function() {
 
   for (var i = 1; i < arguments.length; i++) {
     var arg = arguments[i];
-    if (typeof arg === "function") {
-      if (typeof callback === "undefined") {
+    if (typeof arg === 'function') {
+      if (typeof callback === 'undefined') {
         callback = arg;
-      } else if (typeof errorCallback === "undefined") {
+      } else if (typeof errorCallback === 'undefined') {
         errorCallback = arg;
       }
     }
@@ -230,15 +230,15 @@ p5.prototype.loadStrings = function() {
   p5.prototype.httpDo.call(
     this,
     arguments[0],
-    "GET",
-    "text",
+    'GET',
+    'text',
     function(data) {
       var arr = data.match(/[^\r\n]+/g);
       for (var k in arr) {
         ret[k] = arr[k];
       }
 
-      if (typeof callback !== "undefined") {
+      if (typeof callback !== 'undefined') {
         callback(ret);
       }
 
@@ -351,39 +351,39 @@ p5.prototype.loadTable = function(path) {
   var errorCallback;
   var options = [];
   var header = false;
-  var ext = path.substring(path.lastIndexOf(".") + 1, path.length);
-  var sep = ",";
+  var ext = path.substring(path.lastIndexOf('.') + 1, path.length);
+  var sep = ',';
   var separatorSet = false;
 
-  if (ext === "tsv") {
+  if (ext === 'tsv') {
     //Only need to check extension is tsv because csv is default
-    sep = "\t";
+    sep = '\t';
   }
 
   for (var i = 1; i < arguments.length; i++) {
-    if (typeof arguments[i] === "function") {
-      if (typeof callback === "undefined") {
+    if (typeof arguments[i] === 'function') {
+      if (typeof callback === 'undefined') {
         callback = arguments[i];
-      } else if (typeof errorCallback === "undefined") {
+      } else if (typeof errorCallback === 'undefined') {
         errorCallback = arguments[i];
       }
-    } else if (typeof arguments[i] === "string") {
+    } else if (typeof arguments[i] === 'string') {
       options.push(arguments[i]);
-      if (arguments[i] === "header") {
+      if (arguments[i] === 'header') {
         header = true;
       }
-      if (arguments[i] === "csv") {
+      if (arguments[i] === 'csv') {
         if (separatorSet) {
-          throw new Error("Cannot set multiple separator types.");
+          throw new Error('Cannot set multiple separator types.');
         } else {
-          sep = ",";
+          sep = ',';
           separatorSet = true;
         }
-      } else if (arguments[i] === "tsv") {
+      } else if (arguments[i] === 'tsv') {
         if (separatorSet) {
-          throw new Error("Cannot set multiple separator types.");
+          throw new Error('Cannot set multiple separator types.');
         } else {
-          sep = "\t";
+          sep = '\t';
           separatorSet = true;
         }
       }
@@ -395,8 +395,8 @@ p5.prototype.loadTable = function(path) {
   var self = this;
   this.httpDo(
     path,
-    "GET",
-    "text",
+    'GET',
+    'text',
     function(resp) {
       var state = {};
 
@@ -407,8 +407,8 @@ p5.prototype.loadTable = function(path) {
         POST_RECORD = 4;
 
       var QUOTE = '"',
-        CR = "\r",
-        LF = "\n";
+        CR = '\r',
+        LF = '\n';
 
       var records = [];
       var offset = 0;
@@ -417,7 +417,7 @@ p5.prototype.loadTable = function(path) {
 
       var tokenBegin = function() {
         state.currentState = PRE_TOKEN;
-        state.token = "";
+        state.token = '';
       };
 
       var tokenEnd = function() {
@@ -443,7 +443,7 @@ p5.prototype.loadTable = function(path) {
         // EOF
         if (currentChar == null) {
           if (state.escaped) {
-            throw new Error("Unclosed quote in file.");
+            throw new Error('Unclosed quote in file.');
           }
           if (currentRecord) {
             tokenEnd();
@@ -505,14 +505,14 @@ p5.prototype.loadTable = function(path) {
         t.columns = records.shift();
       } else {
         for (i = 0; i < records[0].length; i++) {
-          t.columns[i] = "null";
+          t.columns[i] = 'null';
         }
       }
       var row;
       for (i = 0; i < records.length; i++) {
         //Handles row of 'undefined' at end of some CSVs
         if (records[i].length === 1) {
-          if (records[i][0] === "undefined" || records[i][0] === "") {
+          if (records[i][0] === 'undefined' || records[i][0] === '') {
             continue;
           }
         }
@@ -521,7 +521,7 @@ p5.prototype.loadTable = function(path) {
         row.obj = makeObject(records[i], t.columns);
         t.addRow(row);
       }
-      if (typeof callback === "function") {
+      if (typeof callback === 'function') {
         callback(t);
       }
 
@@ -546,7 +546,7 @@ p5.prototype.loadTable = function(path) {
 function makeObject(row, headers) {
   var ret = {};
   headers = headers || [];
-  if (typeof headers === "undefined") {
+  if (typeof headers === 'undefined') {
     for (var j = 0; j < row.length; j++) {
       headers[j.toString()] = j;
     }
@@ -654,10 +654,10 @@ p5.prototype.loadXML = function() {
 
   for (var i = 1; i < arguments.length; i++) {
     var arg = arguments[i];
-    if (typeof arg === "function") {
-      if (typeof callback === "undefined") {
+    if (typeof arg === 'function') {
+      if (typeof callback === 'undefined') {
         callback = arg;
-      } else if (typeof errorCallback === "undefined") {
+      } else if (typeof errorCallback === 'undefined') {
         errorCallback = arg;
       }
     }
@@ -666,13 +666,13 @@ p5.prototype.loadXML = function() {
   var self = this;
   this.httpDo(
     arguments[0],
-    "GET",
-    "xml",
+    'GET',
+    'xml',
     function(xml) {
       for (var key in xml) {
         ret[key] = xml[key];
       }
-      if (typeof callback !== "undefined") {
+      if (typeof callback !== 'undefined') {
         callback(ret);
       }
 
@@ -734,7 +734,7 @@ p5.prototype.loadXML = function() {
  */
 p5.prototype.httpGet = function() {
   var args = Array.prototype.slice.call(arguments);
-  args.splice(1, 0, "GET");
+  args.splice(1, 0, 'GET');
   p5.prototype.httpDo.apply(this, args);
 };
 
@@ -819,7 +819,7 @@ p5.prototype.httpGet = function() {
  */
 p5.prototype.httpPost = function() {
   var args = Array.prototype.slice.call(arguments);
-  args.splice(1, 0, "POST");
+  args.splice(1, 0, 'POST');
   p5.prototype.httpDo.apply(this, args);
 };
 
@@ -902,16 +902,16 @@ p5.prototype.httpPost = function() {
  * @param  {function}      [errorCallback]
  */
 p5.prototype.httpDo = function() {
-  var type = "";
+  var type = '';
   var callback;
   var errorCallback;
   var request;
   var jsonpOptions = {};
   var cbCount = 0;
-  var contentType = "text/plain";
+  var contentType = 'text/plain';
   // Trim the callbacks off the end to get an idea of how many arguments are passed
   for (var i = arguments.length - 1; i > 0; i--) {
-    if (typeof arguments[i] === "function") {
+    if (typeof arguments[i] === 'function') {
       cbCount++;
     } else {
       break;
@@ -921,8 +921,8 @@ p5.prototype.httpDo = function() {
   var argsCount = arguments.length - cbCount;
   if (
     argsCount === 2 &&
-    typeof arguments[0] === "string" &&
-    typeof arguments[1] === "object"
+    typeof arguments[0] === 'string' &&
+    typeof arguments[1] === 'object'
   ) {
     // Intended for more advanced use, pass in Request parameters directly
     request = new Request(arguments[0], arguments[1]);
@@ -930,48 +930,48 @@ p5.prototype.httpDo = function() {
     errorCallback = arguments[3];
 
     // do some sort of smart type checking
-    if (type === "") {
-      if (request.url.indexOf("json") !== -1) {
-        type = "json";
-      } else if (request.url.indexOf("xml") !== -1) {
-        type = "xml";
+    if (type === '') {
+      if (request.url.indexOf('json') !== -1) {
+        type = 'json';
+      } else if (request.url.indexOf('xml') !== -1) {
+        type = 'xml';
       } else {
-        type = "text";
+        type = 'text';
       }
     }
   } else {
     // Provided with arguments
     var path = arguments[0];
-    var method = "GET";
+    var method = 'GET';
     var data;
 
     for (var j = 1; j < arguments.length; j++) {
       var a = arguments[j];
-      if (typeof a === "string") {
-        if (a === "GET" || a === "POST" || a === "PUT" || a === "DELETE") {
+      if (typeof a === 'string') {
+        if (a === 'GET' || a === 'POST' || a === 'PUT' || a === 'DELETE') {
           method = a;
         } else if (
-          a === "json" ||
-          a === "jsonp" ||
-          a === "xml" ||
-          a === "text"
+          a === 'json' ||
+          a === 'jsonp' ||
+          a === 'xml' ||
+          a === 'text'
         ) {
           type = a;
         } else {
           data = a;
         }
-      } else if (typeof a === "number") {
+      } else if (typeof a === 'number') {
         data = a.toString();
-      } else if (typeof a === "object") {
-        if (a.hasOwnProperty("jsonpCallback")) {
+      } else if (typeof a === 'object') {
+        if (a.hasOwnProperty('jsonpCallback')) {
           for (var attr in a) {
             jsonpOptions[attr] = a[attr];
           }
         } else {
           data = JSON.stringify(a);
-          contentType = "application/json";
+          contentType = 'application/json';
         }
-      } else if (typeof a === "function") {
+      } else if (typeof a === 'function') {
         if (!callback) {
           callback = a;
         } else {
@@ -980,27 +980,27 @@ p5.prototype.httpDo = function() {
       }
     }
     // do some sort of smart type checking
-    if (type === "") {
-      if (path.indexOf("json") !== -1) {
-        type = "json";
-      } else if (path.indexOf("xml") !== -1) {
-        type = "xml";
+    if (type === '') {
+      if (path.indexOf('json') !== -1) {
+        type = 'json';
+      } else if (path.indexOf('xml') !== -1) {
+        type = 'xml';
       } else {
-        type = "text";
+        type = 'text';
       }
     }
 
     request = new Request(path, {
       method: method,
-      mode: "cors",
+      mode: 'cors',
       body: data,
       headers: new Headers({
-        "Content-Type": contentType
+        'Content-Type': contentType
       })
     });
   }
 
-  if (type === "jsonp") {
+  if (type === 'jsonp') {
     fetchJsonp(arguments[0], jsonpOptions)
       .then(function(res) {
         if (res.ok) {
@@ -1022,7 +1022,7 @@ p5.prototype.httpDo = function() {
     fetch(request)
       .then(function(res) {
         if (res.ok) {
-          if (type === "json") {
+          if (type === 'json') {
             return res.json();
           } else {
             return res.text();
@@ -1032,9 +1032,9 @@ p5.prototype.httpDo = function() {
         throw res;
       })
       .then(function(resp) {
-        if (type === "xml") {
+        if (type === 'xml') {
           var parser = new DOMParser();
-          resp = parser.parseFromString(resp, "text/xml");
+          resp = parser.parseFromString(resp, 'text/xml');
           resp = parseXML(resp.documentElement);
         }
         callback(resp);
@@ -1100,7 +1100,7 @@ p5.prototype.createWriter = function(name, extension) {
 };
 
 /**
- * p5 PrintWriter class
+ *  p5 PrintWriter class
  *  @class p5.PrintWriter
  *  @constructor
  *  @param  {String}     filename
@@ -1109,7 +1109,7 @@ p5.prototype.createWriter = function(name, extension) {
 p5.PrintWriter = function(filename, extension) {
   var self = this;
   this.name = filename;
-  this.content = "";
+  this.content = '';
   //Changed to write because it was being overloaded by function below.
   /**
    * @method write
@@ -1172,7 +1172,7 @@ p5.PrintWriter = function(filename, extension) {
    * </div>
    */
   this.print = function(data) {
-    this.content += data + "\n";
+    this.content += data + '\n';
   };
   /**
    * @method flush
@@ -1209,7 +1209,7 @@ p5.PrintWriter = function(filename, extension) {
    * 
    */
   this.flush = function() {
-    this.content = "";
+    this.content = '';
   };
   /**
    * @method close
@@ -1258,7 +1258,6 @@ p5.PrintWriter = function(filename, extension) {
     self = {};
   };
 };
-
 /**
  * @module IO
  * @submodule Output
@@ -1366,7 +1365,7 @@ p5.prototype.save = function(object, _filename, _options) {
     // if first param is a p5Graphics, then saveCanvas
     p5.prototype.saveCanvas(args[0].elt, args[1], args[2]);
     return;
-  } else if (args.length === 1 && typeof args[0] === "string") {
+  } else if (args.length === 1 && typeof args[0] === 'string') {
     // if 1st param is String and only one arg, assume it is canvas filename
     p5.prototype.saveCanvas(cnv, args[0]);
   } else {
@@ -1374,10 +1373,10 @@ p5.prototype.save = function(object, _filename, _options) {
     // OPTION 2: extension clarifies saveStrings vs. saveJSON
     var extension = _checkFileExtension(args[1], args[2])[1];
     switch (extension) {
-      case "json":
+      case 'json':
         p5.prototype.saveJSON(args[0], args[1], args[2]);
         return;
-      case "txt":
+      case 'txt':
         p5.prototype.saveStrings(args[0], args[1], args[2]);
         return;
       // =================================================
@@ -1441,7 +1440,7 @@ p5.prototype.saveJSON = function(json, filename, opt) {
   } else {
     stringify = JSON.stringify(json, undefined, 2);
   }
-  this.saveStrings(stringify.split("\n"), filename, "json");
+  this.saveStrings(stringify.split('\n'), filename, 'json');
 };
 
 p5.prototype.saveJSONObject = p5.prototype.saveJSON;
@@ -1482,7 +1481,7 @@ p5.prototype.saveJSONArray = p5.prototype.saveJSON;
  *
  */
 p5.prototype.saveStrings = function(list, filename, extension) {
-  var ext = extension || "txt";
+  var ext = extension || 'txt';
   var pWriter = this.createWriter(filename, ext);
   for (var i = 0; i < list.length; i++) {
     if (i < list.length - 1) {
@@ -1501,11 +1500,11 @@ p5.prototype.saveStrings = function(list, filename, extension) {
 
 function escapeHelper(content) {
   return content
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 /**
@@ -1551,7 +1550,7 @@ function escapeHelper(content) {
 p5.prototype.saveTable = function(table, filename, options) {
   var ext;
   if (options === undefined) {
-    ext = filename.substring(filename.lastIndexOf(".") + 1, filename.length);
+    ext = filename.substring(filename.lastIndexOf('.') + 1, filename.length);
   } else {
     ext = options;
   }
@@ -1559,13 +1558,13 @@ p5.prototype.saveTable = function(table, filename, options) {
 
   var header = table.columns;
 
-  var sep = ","; // default to CSV
-  if (ext === "tsv") {
-    sep = "\t";
+  var sep = ','; // default to CSV
+  if (ext === 'tsv') {
+    sep = '\t';
   }
-  if (ext !== "html") {
+  if (ext !== 'html') {
     // make header if it has values
-    if (header[0] !== "0") {
+    if (header[0] !== '0') {
       for (var h = 0; h < header.length; h++) {
         if (h < header.length - 1) {
           pWriter.write(header[h] + sep);
@@ -1573,7 +1572,7 @@ p5.prototype.saveTable = function(table, filename, options) {
           pWriter.write(header[h]);
         }
       }
-      pWriter.write("\n");
+      pWriter.write('\n');
     }
 
     // make rows
@@ -1588,45 +1587,45 @@ p5.prototype.saveTable = function(table, filename, options) {
           pWriter.write(table.rows[i].arr[j]);
         }
       }
-      pWriter.write("\n");
+      pWriter.write('\n');
     }
   } else {
     // otherwise, make HTML
-    pWriter.print("<html>");
-    pWriter.print("<head>");
+    pWriter.print('<html>');
+    pWriter.print('<head>');
     var str = '  <meta http-equiv="content-type" content';
     str += '="text/html;charset=utf-8" />';
     pWriter.print(str);
-    pWriter.print("</head>");
+    pWriter.print('</head>');
 
-    pWriter.print("<body>");
-    pWriter.print("  <table>");
+    pWriter.print('<body>');
+    pWriter.print('  <table>');
 
     // make header if it has values
-    if (header[0] !== "0") {
-      pWriter.print("    <tr>");
+    if (header[0] !== '0') {
+      pWriter.print('    <tr>');
       for (var k = 0; k < header.length; k++) {
         var e = escapeHelper(header[k]);
-        pWriter.print("      <td>" + e);
-        pWriter.print("      </td>");
+        pWriter.print('      <td>' + e);
+        pWriter.print('      </td>');
       }
-      pWriter.print("    </tr>");
+      pWriter.print('    </tr>');
     }
 
     // make rows
     for (var row = 0; row < table.rows.length; row++) {
-      pWriter.print("    <tr>");
+      pWriter.print('    <tr>');
       for (var col = 0; col < table.columns.length; col++) {
         var entry = table.rows[row].getString(col);
         var htmlEntry = escapeHelper(entry);
-        pWriter.print("      <td>" + htmlEntry);
-        pWriter.print("      </td>");
+        pWriter.print('      <td>' + htmlEntry);
+        pWriter.print('      </td>');
       }
-      pWriter.print("    </tr>");
+      pWriter.print('    </tr>');
     }
-    pWriter.print("  </table>");
-    pWriter.print("</body>");
-    pWriter.print("</html>");
+    pWriter.print('  </table>');
+    pWriter.print('</body>');
+    pWriter.print('</html>');
   }
   // close and flush the pWriter
   pWriter.close();
@@ -1645,9 +1644,9 @@ p5.prototype.saveTable = function(table, filename, options) {
  *  @private
  */
 p5.prototype.writeFile = function(dataToDownload, filename, extension) {
-  var type = "application/octet-stream";
+  var type = 'application/octet-stream';
   if (p5.prototype._isSafari()) {
-    type = "text/plain";
+    type = 'text/plain';
   }
   var blob = new Blob(dataToDownload, {
     type: type
@@ -1672,12 +1671,12 @@ p5.prototype.downloadFile = function(data, fName, extension) {
   var filename = fx[0];
 
   if (data instanceof Blob) {
-    var fileSaver = require("file-saver");
+    var fileSaver = require('file-saver');
     fileSaver.saveAs(data, filename);
     return;
   }
 
-  var a = document.createElement("a");
+  var a = document.createElement('a');
   a.href = data;
   a.download = filename;
 
@@ -1687,13 +1686,13 @@ p5.prototype.downloadFile = function(data, fName, extension) {
     e.stopPropagation();
   };
 
-  a.style.display = "none";
+  a.style.display = 'none';
   document.body.appendChild(a);
 
   // Safari will open this file in the same page as a confusing Blob.
   if (p5.prototype._isSafari()) {
-    var aText = "Hello, Safari user! To download this file...\n";
-    aText += "1. Go to File --> Save As.\n";
+    var aText = 'Hello, Safari user! To download this file...\n';
+    aText += '1. Go to File --> Save As.\n';
     aText += '2. Choose "Page Source" as the Format.\n';
     aText += '3. Name it with this extension: ."' + fx[1] + '"';
     alert(aText);
@@ -1712,22 +1711,22 @@ p5.prototype.downloadFile = function(data, fName, extension) {
  *  @private
  */
 function _checkFileExtension(filename, extension) {
-  if (!extension || extension === true || extension === "true") {
-    extension = "";
+  if (!extension || extension === true || extension === 'true') {
+    extension = '';
   }
   if (!filename) {
-    filename = "untitled";
+    filename = 'untitled';
   }
-  var ext = "";
+  var ext = '';
   // make sure the file will have a name, see if filename needs extension
-  if (filename && filename.indexOf(".") > -1) {
-    ext = filename.split(".").pop();
+  if (filename && filename.indexOf('.') > -1) {
+    ext = filename.split('.').pop();
   }
   // append extension if it doesn't exist
   if (extension) {
     if (ext !== extension) {
       ext = extension;
-      filename = filename + "." + ext;
+      filename = filename + '.' + ext;
     }
   }
   return [filename, ext];
@@ -1743,7 +1742,7 @@ p5.prototype._checkFileExtension = _checkFileExtension;
  */
 p5.prototype._isSafari = function() {
   var x = Object.prototype.toString.call(window.HTMLElement);
-  return x.indexOf("Constructor") > 0;
+  return x.indexOf('Constructor') > 0;
 };
 
 /**
