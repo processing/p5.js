@@ -1112,8 +1112,6 @@ p5.PrintWriter = function(filename, extension) {
   this.content = "";
   //Changed to write because it was being overloaded by function below.
   /**
-   * A method which adds data to "content" of PrintWriter instance. 
-   * The "content" later becomes final output when close() method is called on the instance.
    * @method write
    * @param {Array} data
    * @param {Number} data
@@ -1147,8 +1145,6 @@ p5.PrintWriter = function(filename, extension) {
     this.content += data;
   };
   /**
-   * A method which adds data to "content" of PrintWriter instance with a new line character in the end. 
-   * The "content" later becomes final output when close() method is called on the instance.
    * @method print
    * @method write
    * @param {Array} data
@@ -1183,7 +1179,6 @@ p5.PrintWriter = function(filename, extension) {
     this.content += data + "\n";
   };
   /**
-   * This method will empty the content array of PrintWriter instance.
    * @method flush
    *
    * @example
@@ -1221,8 +1216,6 @@ p5.PrintWriter = function(filename, extension) {
     this.content = "";
   };
   /**
-   * This method outputs a file to user.
-   * Contents of the PrintWriter instance are flushed after one save.
    * @method close
    *
    * @example
