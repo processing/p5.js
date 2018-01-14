@@ -679,58 +679,43 @@ p5.RendererGL.prototype.clear = function() {
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
 
-/**
- * [translate description]
- * @private
- * @param  {Number} x [description]
- * @param  {Number} y [description]
- * @param  {Number} z [description]
- * @chainable
- * @todo implement handle for components or vector as args
- */
-p5.RendererGL.prototype.translate = function(x, y, z) {
-  if (x instanceof p5.Vector) {
-    z = x.z;
-    y = x.y;
-    x = x.x;
-  }
-  this.uMVMatrix.translate([x, y, z]);
+p5.RendererGL.prototype.translate = function() {
+  this.uMVMatrix.translate.apply(this.uMVMatrix, arguments);
   return this;
 };
 
-/**
- * Scales the Model View Matrix by a vector
- * @private
- * @param  {Number | p5.Vector | Array} x [description]
- * @param  {Number} [y] y-axis scalar
- * @param  {Number} [z] z-axis scalar
- * @chainable
- */
-p5.RendererGL.prototype.scale = function(x, y, z) {
-  this.uMVMatrix.scale([x, y, z]);
+p5.RendererGL.prototype.scale = function() {
+  this.uMVMatrix.scale.apply(this.uMVMatrix, arguments);
   return this;
 };
 
-p5.RendererGL.prototype.rotate = function(rad, axis) {
-  if (!axis) {
-    axis = [0, 0, 1];
-  }
-  this.uMVMatrix.rotate(rad, axis);
+p5.RendererGL.prototype.rotate = function(angle, axis) {
+  this.uMVMatrix.rotate(angle, axis || [0, 0, 1]);
   return this;
 };
 
-p5.RendererGL.prototype.rotateX = function(rad) {
-  this.rotate(rad, [1, 0, 0]);
+p5.RendererGL.prototype.rotateX = function(angle) {
+  this.uMVMatrix.rotateX(angle);
   return this;
 };
 
-p5.RendererGL.prototype.rotateY = function(rad) {
-  this.rotate(rad, [0, 1, 0]);
+p5.RendererGL.prototype.rotateY = function(angle) {
+  this.uMVMatrix.rotateY(angle);
   return this;
 };
 
-p5.RendererGL.prototype.rotateZ = function(rad) {
-  this.rotate(rad, [0, 0, 1]);
+p5.RendererGL.prototype.rotateZ = function(angle) {
+  this.uMVMatrix.rotateZ(angle);
+  return this;
+};
+
+p5.RendererGL.prototype.shearX = function(angle) {
+  this.uMVMatrix.shearX(angle);
+  return this;
+};
+
+p5.RendererGL.prototype.shearY = function(angle) {
+  this.uMVMatrix.shearY(angle);
   return this;
 };
 
