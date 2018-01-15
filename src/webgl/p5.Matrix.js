@@ -478,13 +478,13 @@ p5.Matrix.prototype.mult = function(multMatrix) {
  * @chainable
  */
 p5.Matrix.prototype.scale = function(x, y, z) {
-  //if our 1st arg is a type p5.Vector
   if (x instanceof p5.Vector) {
+    // x is a vector, extract the components from it.
     y = x.y;
     z = x.z;
     x = x.x; // must be last
   } else if (x instanceof Array) {
-    //otherwise if it's an array
+    // x is an array, extract the components from it.
     y = x[1];
     z = x[2];
     x = x[0]; // must be last
@@ -523,10 +523,12 @@ p5.Matrix.prototype.rotate = function(a, x, y, z) {
     _a = a;
   }
   if (x instanceof p5.Vector) {
+    // x is a vector, extract the components from it.
     y = x.y;
     z = x.z;
     x = x.x; //must be last
   } else if (x instanceof Array) {
+    // x is an array, extract the components from it.
     y = x[1];
     z = x[2];
     x = x[0]; //must be last

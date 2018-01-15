@@ -694,16 +694,23 @@ p5.RendererGL.prototype.triangle = function(args) {
     this.createBuffers(gId, triGeom);
   }
 
-  var uMVMatrix = this.uMVMatrix;
+  // only one triangle is cached, one point is at the origin, and the
+  // two adjacent sides are tne unit vectors along the X & Y axes.
+  //
+  // this matrix multiplication transforms those two unit vectors
+  // onto the required vector prior to rendering, and moves the
+  // origin appropriately.
+  var uMVMatrix = this.uMVMatrix.copy();
   try {
-    /* eslint-disable */
-    this.uMVMatrix.mult([
-      x2 - x1, y2 - y1, 0, 0,
-      x3 - x1, y3 - y1, 0, 0,
-      0, 0, 1, 0,
-      x1, y1, 0, 1
-    ]);
-    /* eslint-enable */
+    
+    var mult = new p5.Matrix([
+      x2 - x1, y2 - y1, 0, 0, // the resulting unit X-axis
+      x3 - x1, y3 - y1, 0, 0, // the resulting unit Y-axis
+      0, 0, 1, 0,             // the resulting unit Z-axis (unchanged)
+      x1, y1, 0, 1            // the resulting origin
+    ]).mult(this.uMVMatrix);
+
+    this.uMVMatrix = mult;
 
     this.drawBuffers(gId);
   } finally {
@@ -724,18 +731,18 @@ p5.RendererGL.prototype.ellipse = function(args) {
   var gId = 'ellipse|' + detailX;
   if (!this.geometryInHash(gId)) {
     var _ellipse = function() {
-      this.vertices.push(new p5.Vector(0, 0, 0));
-      this.uvs.push([0, 0]);
+      this.vertices.push(new p5.Vector(0.5, 0.5, 0));
+      this.uvs.push([0.5, 0.5]);
 
       for (var i = 0; i <= this.detailX; i++) {
         var u = i / this.detailX;
         var theta = 2 * Math.PI * u;
 
-        var _x = Math.cos(theta) / 2;
-        var _y = Math.sin(theta) / 2;
+        var _x = 0.5 + Math.cos(theta) / 2;
+        var _y = 0.5 + Math.sin(theta) / 2;
 
         this.vertices.push(new p5.Vector(_x, _y, 0));
-        this.uvs.push([_x + 0.5, _y + 0.5]);
+        this.uvs.push([_x, _y]);
 
         this.faces.push([0, (i + 1) % this.detailX + 1, i + 1]);
       }
@@ -752,10 +759,14 @@ p5.RendererGL.prototype.ellipse = function(args) {
     this.createBuffers(gId, ellipseGeom);
   }
 
-  var uMVMatrix = this.uMVMatrix;
+  // only a single ellipse (of a given detail) is cached: a circle of
+  // _diameter_ 1 (radius 0.5).
+  //
+  // before rendering, this circle is squished (technical term ;)
+  // appropriately and moved to the required location.
+  var uMVMatrix = this.uMVMatrix.copy();
   try {
-    // TODO: single mult() call?
-    this.uMVMatrix.translate([x + width / 2, y + height / 2, 0]);
+    this.uMVMatrix.translate([x, y, 0]);
     this.uMVMatrix.scale(width, height, 1);
 
     this.drawBuffers(gId);
@@ -794,9 +805,12 @@ p5.RendererGL.prototype.rect = function(args) {
     this.createBuffers(gId, rectGeom);
   }
 
-  var uMVMatrix = this.uMVMatrix;
+  // only a single rectangle (of a given detail) is cached: a square with
+  // opposite corners at (0,0) & (1,1).
+  //
+  // before rendering, this square is scaled & moved to the required location.
+  var uMVMatrix = this.uMVMatrix.copy();
   try {
-    // TODO: single mult() call?
     this.uMVMatrix.translate([x, y, 0]);
     this.uMVMatrix.scale(width, height, 1);
 
