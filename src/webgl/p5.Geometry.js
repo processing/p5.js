@@ -43,12 +43,26 @@ p5.Geometry = function(detailX, detailY, callback) {
   this.edges = [];
   this.detailX = detailX !== undefined ? detailX : 1;
   this.detailY = detailY !== undefined ? detailY : 1;
+
+  this.dirtyFlags = {};
+
   if (callback instanceof Function) {
     callback.call(this);
   }
   this.name = 'p5.Geometry'; // for friendly debugger system
+};
 
-  return this; // TODO: is this a constructor?
+p5.Geometry.prototype.reset = function() {
+  this.lineVertices.length = 0;
+  this.lineNormals.length = 0;
+
+  this.vertices.length = 0;
+  this.edges.length = 0;
+  this.vertexColors.length = 0;
+  this.vertexNormals.length = 0;
+  this.uvs.length = 0;
+
+  this.dirtyFlags = {};
 };
 
 /**
@@ -208,6 +222,7 @@ p5.Geometry.prototype._makeTriangleEdges = function() {
  */
 p5.Geometry.prototype._edgesToVertices = function() {
   this.lineVertices = [];
+  this.lineNormals = [];
   for (var i = 0; i < this.edges.length; i++) {
     var begin = this.vertices[this.edges[i][0]];
     var end = this.vertices[this.edges[i][1]];
@@ -225,7 +240,7 @@ p5.Geometry.prototype._edgesToVertices = function() {
     // in opposite directions
     dirAdd.push(1);
     dirSub.push(-1);
-    this.lineNormals.push(dirAdd, dirSub, dirAdd, dirAdd, dirSub, dirSub);
+    this.lineNormals.push(dirAdd, dirSub, dirSub, dirSub, dirAdd, dirAdd);
     this.lineVertices.push(a, b, c, c, b, d);
   }
   return this;

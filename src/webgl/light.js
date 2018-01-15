@@ -10,6 +10,109 @@
 var p5 = require('../core/core');
 
 /**
+ * Sets the default ambient light, directional light, falloff, and
+ * specular values. The defaults are ambientLight(128, 128, 128) and
+ * directionalLight(128, 128, 128, 0, 0, -1), lightFalloff(1, 0, 0),
+ * and lightSpecular(0, 0, 0). Lights need to be included in the draw()
+ * to remain persistent in a looping program. Placing them in the setup()
+ * of a looping program will cause them to only have an effect the
+ * first time through the loop.
+ * @method lights
+ * @chainable
+ */
+p5.RendererGL.prototype.lights = function() {
+  this._enableLighting = true;
+  var grey = [0.5, 0.5, 0.5];
+  this._specularLight = [0, 0, 0];
+  this.ambientLightColors = grey;
+  this.directionalLightDirections = [0, 0, -1];
+  this.directionalLightColors = grey;
+  this.directionalLightSpecularColors = this._specularLight;
+  this.lightFalloff(1, 0, 0);
+};
+
+/**
+ * Disable all lighting. Lighting is turned off by default and enabled
+ * with the lights() function. This function can be used to disable
+ * lighting so that 2D geometry (which does not require lighting) can
+ * be drawn after a set of lighted 3D geometry.
+ *
+ * @method noLights
+ * @chainable
+ */
+p5.RendererGL.prototype.noLights = function() {
+  this._enableLighting = false;
+};
+
+/**
+ * Sets the specular color for lights. Like fill(), it affects
+ * only the elements which are created after it in the code.
+ * Specular refers to light which bounces off a surface in a
+ * preferred direction (rather than bouncing in all directions
+ * like a diffuse light) and is used for creating highlights.
+ * The specular quality of a light interacts with the specular
+ * material qualities set through the specularMaterial() and shininess() functions.
+ *
+ * @method lightSpecular
+ * @param  {Number}        v1      red or hue value relative to
+ *                                 the current color range
+ * @param  {Number}        v2      green or saturation value
+ *                                 relative to the current color range
+ * @param  {Number}        v3      blue or brightness value
+ *                                 relative to the current color range
+ * @chainable
+ */
+/**
+ * @method lightSpecular
+ * @param  {Number|String} value   a color string or a grey value
+ * @chainable
+ */
+/**
+ * @method lightSpecular
+ * @param  {Number[]}      values  an array containing the red,green & blue
+ *                                 components of the color
+ * @chainable
+ */
+/**
+ * @method lightSpecular
+ * @param  {p5.Color}      color   the specular light color
+ * @chainable
+ */
+p5.RendererGL.prototype.lightSpecular = function() {
+  var color = p5.prototype.color.apply(this._pInst, arguments);
+  this._specularLight = color._array.slice(0, 3);
+};
+
+/**
+ * Sets the falloff rates for point lights, spot lights, and ambient
+ * lights. Like fill(), it affects only the elements which are created
+ * after it in the code. The default value is lightFalloff(1.0, 0.0, 0.0),
+ * and the parameters are used to calculate the falloff with the
+ * following equation:
+ *
+ * d = distance from light position to vertex position <br/>
+ * falloff = 1 / (CONSTANT + d * LINEAR + (d*d) * QUADRATIC)
+ *
+ * Thinking about an ambient light with a falloff can be tricky.
+ * If you want a region of your scene to be lit ambiently with one
+ * color and another region to be lit ambiently with another color,
+ * you could use an ambient light with location and falloff.
+ * You can think of it as a point light that doesn't care which direction
+ * a surface is facing.
+ *
+ * @method lightFalloff
+ * @param {Number} [constant]  constant value or determining falloff
+ * @param {Number} [linear]    linear value for determining falloff
+ * @param {Number} [quadratic] quadratic value for determining falloff
+ * @chainable
+ */
+p5.RendererGL.prototype.lightFalloff = function(constant, linear, quadratic) {
+  this._constantFalloff = constant || 1;
+  this._linearFalloff = linear || 0;
+  this._quadraticFalloff = quadratic || 0;
+};
+
+/**
  * Creates an ambient light with a color
  *
  * @method ambientLight
@@ -61,25 +164,12 @@ var p5 = require('../core/core');
  */
 p5.RendererGL.prototype.ambientLight = function(v1, v2, v3, a) {
   var color = p5.prototype.color.apply(this._pInst, arguments);
-
-  var shader = this._useLightShader();
-
-  //@todo this is a bit icky. array uniforms have
-  //to be multiples of the type 3(rgb) in this case.
-  //a preallocated Float32Array(24) that we copy into
-  //would be better
-  shader.setUniform('uUseLighting', true);
-  //in case there's no material color for the geometry
-  shader.setUniform('uMaterialColor', this.curFillColor);
-
   this.ambientLightColors.push(
     color._array[0],
     color._array[1],
     color._array[2]
   );
-  shader.setUniform('uAmbientColor', this.ambientLightColors);
-
-  shader.setUniform('uAmbientLightCount', this.ambientLightColors.length / 3);
+  this._enableLighting = true;
 };
 
 /**
@@ -140,8 +230,6 @@ p5.RendererGL.prototype.ambientLight = function(v1, v2, v3, a) {
  * @chainable
  */
 p5.RendererGL.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
-  var shader = this._useLightShader();
-
   //@TODO: check parameters number
   var color = p5.prototype.color.apply(this._pInst, [v1, v2, v3]);
 
@@ -156,26 +244,20 @@ p5.RendererGL.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
     _y = v.y;
     _z = v.z;
   }
-  shader.setUniform('uUseLighting', true);
-  //in case there's no material color for the geometry
-  shader.setUniform('uMaterialColor', this.curFillColor);
 
   // normalize direction
   var l = Math.sqrt(_x * _x + _y * _y + _z * _z);
   this.directionalLightDirections.push(_x / l, _y / l, _z / l);
-  shader.setUniform('uLightingDirection', this.directionalLightDirections);
-
   this.directionalLightColors.push(
     color._array[0],
     color._array[1],
     color._array[2]
   );
-  shader.setUniform('uDirectionalColor', this.directionalLightColors);
-
-  shader.setUniform(
-    'uDirectionalLightCount',
-    this.directionalLightColors.length / 3
+  Array.prototype.push.apply(
+    this.directionalLightSpecularColors,
+    this._specularLight
   );
+  this._enableLighting = true;
 };
 
 /**
@@ -243,7 +325,6 @@ p5.RendererGL.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  * @chainable
  */
 p5.RendererGL.prototype.pointLight = function(v1, v2, v3, x, y, z) {
-  this._enableLighting = true;
   //@TODO: check parameters number
   var color = p5.prototype.color.apply(this._pInst, [v1, v2, v3]);
 
@@ -259,18 +340,13 @@ p5.RendererGL.prototype.pointLight = function(v1, v2, v3, x, y, z) {
     _z = v.z;
   }
 
-  var shader = this._useLightShader();
-  shader.setUniform('uUseLighting', true);
-  //in case there's no material color for the geometry
-  shader.setUniform('uMaterialColor', this.curFillColor);
-
   this.pointLightPositions.push(_x, _y, _z);
-  shader.setUniform('uPointLightLocation', this.pointLightPositions);
-
   this.pointLightColors.push(color._array[0], color._array[1], color._array[2]);
-  shader.setUniform('uPointLightColor', this.pointLightColors);
-
-  shader.setUniform('uPointLightCount', this.pointLightColors.length / 3);
+  Array.prototype.push.apply(
+    this.pointLightSpecularColors,
+    this._specularLight
+  );
+  this._enableLighting = true;
 };
 
 module.exports = p5;

@@ -12,6 +12,7 @@ suite('p5.Shader', function() {
         p.createCanvas(100, 100, p.WEBGL);
         p.pointLight(250, 250, 250, 100, 100, 0);
         p.ambientMaterial(250);
+        p.box();
       };
     });
   });
@@ -110,11 +111,11 @@ suite('p5.Shader', function() {
         'uDirectionalLightCount',
         'uPointLightCount',
         'uAmbientColor',
-        'uLightingDirection',
-        'uDirectionalColor',
+        'uDirectionalLightDirection',
+        'uDirectionalLightColor',
         'uPointLightLocation',
         'uPointLightColor',
-        'uSpecular',
+        'uSpecularPower',
         'uMaterialColor',
         'uSampler',
         'isTexture'
@@ -144,18 +145,18 @@ suite('p5.Shader', function() {
       );
     });
     test('Immediate Mode Shader definition', function() {
-      var expectedAttributes = ['aPosition', 'aVertexColor'];
+      var expectedAttributes = ['aPosition', 'aMaterialColor'];
 
       var expectedUniforms = [
         'uModelViewMatrix',
-        'uProjectionMatrix',
+        'uProjectionMatrix'
         /*'uResolution',*/
-        'uPointSize'
+        /*'uPointSize'*/
       ];
 
       testShader(
         'Immediate Mode Shader',
-        myp5._renderer._getImmediateModeShader(),
+        myp5._renderer._getImmediateLightShader(),
         expectedAttributes,
         expectedUniforms
       );
@@ -184,6 +185,7 @@ suite('p5.Shader', function() {
         "_renderer's curFillShader was not normal shader"
       );
     });
+    /*
     test('Color Shader is set after fill()', function() {
       myp5.fill(0);
       var colorShader = myp5._renderer._getColorShader();
@@ -220,6 +222,7 @@ suite('p5.Shader', function() {
           ' to draw box() after immediate mode'
       );
     });
+    */
     test('Light shader set after ambientMaterial()', function() {
       var lightShader = myp5._renderer._getLightShader();
 

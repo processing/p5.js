@@ -135,11 +135,27 @@ p5.RendererGL.prototype.shader = function(s) {
     s._renderer = this;
   }
 
+  s.init();
+
   if (s.isStrokeShader()) {
-    this.setStrokeShader(s);
+    this.curStrokeShader = s;
   } else {
-    this.setFillShader(s);
+    this.curFillShader = s;
+    this._enableNormal = false;
   }
+};
+
+/**
+ * Restores the default shaders. Code that runs after resetShader()
+ * will not be affected by previously defined shaders.
+ *
+ * @method resetShader
+ * @chainable
+ */
+p5.RendererGL.prototype.resetShader = function() {
+  this.curStrokeShader = this.curFillShader = null;
+  this._enableNormal = false;
+  this._tex = null;
 };
 
 /**
@@ -169,9 +185,7 @@ p5.RendererGL.prototype.shader = function(s) {
  */
 p5.RendererGL.prototype.normalMaterial = function() {
   this.drawMode = constants.FILL;
-  this.setFillShader(this._getNormalShader());
-  this.curFillColor = [1, 1, 1, 1];
-  this._pInst.noStroke();
+  this._enableNormal = true;
 };
 
 /**
@@ -254,11 +268,8 @@ p5.RendererGL.prototype.normalMaterial = function() {
  */
 p5.RendererGL.prototype.texture = function(tex) {
   this.drawMode = constants.TEXTURE;
-  var shader = this._useLightShader();
-  shader.setUniform('uSpecular', false);
-  shader.setUniform('isTexture', true);
-  shader.setUniform('uSampler', tex);
-  this._pInst.noStroke();
+  this._enableNormal = false;
+  this._tex = tex;
 };
 
 /**
@@ -299,13 +310,12 @@ p5.RendererGL.prototype.texture = function(tex) {
  */
 p5.RendererGL.prototype.ambientMaterial = function(v1, v2, v3, a) {
   var color = p5.prototype.color.apply(this._pInst, arguments);
-  this.curFillColor = color._array;
-
-  var shader = this._useLightShader();
-  shader.setUniform('uMaterialColor', this.curFillColor);
-  shader.setUniform('uSpecular', false);
-  shader.setUniform('isTexture', false);
+  this._ambientColor = color._array;
+  this._enableNormal = false;
+  this._tex = null;
 };
+
+p5.RendererGL.prototype.ambient = p5.RendererGL.prototype.ambientMaterial;
 
 /**
  * Specular material for geometry with a given color. You can view all
@@ -345,12 +355,15 @@ p5.RendererGL.prototype.ambientMaterial = function(v1, v2, v3, a) {
  */
 p5.RendererGL.prototype.specularMaterial = function(v1, v2, v3, a) {
   var color = p5.prototype.color.apply(this._pInst, arguments);
-  this.curFillColor = color._array;
+  this._specularColor = color._array;
+  this._enableNormal = false;
+  this._tex = null;
+};
 
-  var shader = this._useLightShader();
-  shader.setUniform('uMaterialColor', this.curFillColor);
-  shader.setUniform('uSpecular', true);
-  shader.setUniform('isTexture', false);
+p5.RendererGL.prototype.specular = p5.RendererGL.prototype.specularMaterial;
+
+p5.RendererGL.prototype.shininess = function(shine) {
+  this._specularPower = shine;
 };
 
 /**

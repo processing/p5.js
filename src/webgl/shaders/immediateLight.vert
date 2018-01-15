@@ -5,6 +5,13 @@ attribute vec3 aPosition;
 attribute vec3 aNormal;
 attribute vec2 aTexCoord;
 
+// material properties
+attribute vec3 aEmissiveColor;
+attribute vec3 aAmbientColor;
+attribute vec4 aMaterialColor;
+attribute vec3 aSpecularColor;
+attribute float aSpecularPower;
+
 // matrices
 uniform mat4 uViewMatrix;
 uniform mat4 uModelViewMatrix;
@@ -32,18 +39,12 @@ uniform float uConstantFalloff;
 uniform float uLinearFalloff;
 uniform float uQuadraticFalloff;
 
-// material properties
-uniform vec3 uEmissiveColor;
-uniform vec3 uAmbientColor;
-uniform vec4 uMaterialColor;
-uniform vec3 uSpecularColor;
-uniform float uSpecularPower;
-
 
 //varying vec3 vVertexNormal;
 varying highp vec2 vVertTexCoord;
 varying vec4 vVertexColor;
 varying vec3 vDiffuseLight;
+varying vec4 vMaterialColor;
 
 void main(void){
 
@@ -64,7 +65,7 @@ void main(void){
     totalAmbientLight += uAmbientLightColor[i];
   }
 
-  sumLights(totalDiffuseLight, totalSpecularLight, viewModelPosition, uSpecularPower);
+  sumLights(totalDiffuseLight, totalSpecularLight, viewModelPosition, aSpecularPower);
 
   // fragment variables:
 
@@ -72,8 +73,9 @@ void main(void){
 
   vVertTexCoord = aTexCoord;
   vDiffuseLight = totalDiffuseLight;
+  vMaterialColor = aMaterialColor;
 
-  vVertexColor = vec4(totalAmbientLight * uAmbientColor, 0) + 
-                 vec4(totalSpecularLight * uSpecularColor, 0) + 
-                 vec4(uEmissiveColor.rgb, 0);
+  vVertexColor = vec4(totalAmbientLight * aAmbientColor, 0) + 
+                 vec4(totalSpecularLight * aSpecularColor, 0) + 
+                 vec4(aEmissiveColor.rgb, 0);
 }
