@@ -624,7 +624,7 @@ p5.RendererGL.prototype.loadPixels = function() {
   h *= pd;
   //if there isn't a renderer-level temporary pixels buffer
   //make a new one
-  if (this.pixels === undefined) {
+  if (typeof this.pixels === 'undefined') {
     this.pixels = new Uint8Array(
       this.GL.drawingBufferWidth * this.GL.drawingBufferHeight * 4
     );
@@ -672,7 +672,7 @@ p5.RendererGL.prototype.resize = function(w, h) {
     this._setDefaultCamera();
   }
   //resize pixels buffer
-  if (this.pixels !== undefined) {
+  if (typeof this.pixels !== 'undefined') {
     this.pixels = new Uint8Array(
       this.GL.drawingBufferWidth * this.GL.drawingBufferHeight * 4
     );
