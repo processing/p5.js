@@ -50,8 +50,8 @@ p5.Font.prototype.list = function() {
  * @param  {String} line     a line of text
  * @param  {Number} x        x-position
  * @param  {Number} y        y-position
- * @param  {Number} fontSize font size to use (optional)
- * @param  {Object} options opentype options (optional)
+ * @param  {Number} [fontSize] font size to use (optional)
+ * @param  {Object} [options] opentype options (optional)
  *
  * @return {Object}          a rectangle object with properties: x, y, w, h
  *
@@ -165,7 +165,7 @@ p5.Font.prototype.textBounds = function(str, x, y, fontSize, options) {
  * @param  {Number} x        x-position
  * @param  {Number} y        y-position
  * @param  {Number} fontSize font size to use (optional)
- * @param  {Object} options  an (optional) object that can contain:
+ * @param  {Object} [options] an (optional) object that can contain:
  *
  * <br>sampleFactor - the ratio of path-length to number of samples
  * (default=.25); higher values yield more points and are therefore
@@ -1230,14 +1230,10 @@ function base3(t, p1, p2, p3, p4) {
 }
 
 function cacheKey() {
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
-  }
-  i = args.length;
   var hash = '';
-  while (i--) {
-    hash += args[i] === Object(args[i]) ? JSON.stringify(args[i]) : args[i];
+  for (var i = arguments.length - 1; i >= 0; --i) {
+    var v = arguments[i];
+    hash += v === Object(v) ? JSON.stringify(v) : v;
   }
   return hash;
 }

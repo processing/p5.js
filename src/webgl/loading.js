@@ -63,8 +63,7 @@ require('./p5.Geometry');
  * @param  {function(Event)} [failureCallback]
  * @return {p5.Geometry} the p5.Geometry object
  */
-p5.prototype.loadModel = function() {
-  var path = arguments[0];
+p5.prototype.loadModel = function(path) {
   var normalize;
   var successCallback;
   var failureCallback;
@@ -189,7 +188,13 @@ function parseObj(model, lines) {
             face.push(vertIndex);
           }
 
-          model.faces.push(face);
+          if (
+            face[0] !== face[1] &&
+            face[0] !== face[2] &&
+            face[1] !== face[2]
+          ) {
+            model.faces.push(face);
+          }
         }
       }
     }

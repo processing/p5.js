@@ -25,7 +25,7 @@ function setup() {
   result = createElement("H1", "this is h1");
 
   vid = createVideo('../fingers.mov');
-  vid.loop(true);
+  vid.loop();
   vid.hide();
 
 }

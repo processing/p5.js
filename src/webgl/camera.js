@@ -51,11 +51,18 @@ p5.prototype.camera = function() {
   return this;
 };
 
-p5.RendererGL.prototype.camera = function() {
-  var eyeX, eyeY, eyeZ;
-  var centerX, centerY, centerZ;
-  var upX, upY, upZ;
-  if (arguments.length === 0) {
+p5.RendererGL.prototype.camera = function(
+  eyeX,
+  eyeY,
+  eyeZ,
+  centerX,
+  centerY,
+  centerZ,
+  upX,
+  upY,
+  upZ
+) {
+  if (typeof eyeX === 'undefined') {
     eyeX = this.defaultCameraX;
     eyeY = this.defaultCameraY;
     eyeZ = this.defaultCameraZ;
@@ -65,16 +72,6 @@ p5.RendererGL.prototype.camera = function() {
     upX = 0;
     upY = 1;
     upZ = 0;
-  } else {
-    eyeX = arguments[0];
-    eyeY = arguments[1];
-    eyeZ = arguments[2];
-    centerX = arguments[3];
-    centerY = arguments[4];
-    centerZ = arguments[5];
-    upX = arguments[6];
-    upY = arguments[7];
-    upZ = arguments[8];
   }
 
   this.cameraX = eyeX;
@@ -206,18 +203,26 @@ p5.prototype.perspective = function() {
   return this;
 };
 
-p5.RendererGL.prototype.perspective = function() {
-  var fovy = arguments[0] || this.defaultCameraFOV;
-  var aspect = arguments[1] || this.defaultCameraAspect;
-  var near = arguments[2] || this.defaultCameraNear;
-  var far = arguments[3] || this.defaultCameraFar;
+p5.RendererGL.prototype.perspective = function(fovy, aspect, near, far) {
+  if (typeof fovy === 'undefined') {
+    fovy = this.defaultCameraFOV;
+  }
+  if (typeof aspect === 'undefined') {
+    aspect = this.defaultCameraAspect;
+  }
+  if (typeof near === 'undefined') {
+    near = this.defaultCameraNear;
+  }
+  if (typeof far === 'undefined') {
+    far = this.defaultCameraFar;
+  }
 
   this.cameraFOV = fovy;
   this.cameraAspect = aspect;
   this.cameraNear = near;
   this.cameraFar = far;
 
-  this.uPMatrix = p5.Matrix.identity();
+  this.uPMatrix = p5.Matrix.identity(this.pInst);
 
   var f = 1.0 / Math.tan(this.cameraFOV / 2);
   var nf = 1.0 / (this.cameraNear - this.cameraFar);
@@ -234,13 +239,13 @@ p5.RendererGL.prototype.perspective = function() {
 /**
  * Setup ortho camera
  * @method  ortho
- * @param  {Number} left   camera frustum left plane
- * @param  {Number} right  camera frustum right plane
- * @param  {Number} bottom camera frustum bottom plane
- * @param  {Number} top    camera frustum top plane
- * @param  {Number} near   camera frustum near plane
- * @param  {Number} far    camera frustum far plane
- * @return {p5}            the p5 object
+ * @param  {Number} [left]   camera frustum left plane
+ * @param  {Number} [right]  camera frustum right plane
+ * @param  {Number} [bottom] camera frustum bottom plane
+ * @param  {Number} [top]    camera frustum top plane
+ * @param  {Number} [near]   camera frustum near plane
+ * @param  {Number} [far]    camera frustum far plane
+ * @return {p5}              the p5 object
  * @example
  * <div>
  * <code>
@@ -270,36 +275,42 @@ p5.RendererGL.prototype.perspective = function() {
  * 3 3d boxes, reveal several more boxes on 3d plane when mouse used to toggle
  *
  */
-p5.prototype.ortho = function(left, right, bottom, top, near, far) {
-  left = left || -this.width / 2;
-  right = right || this.width / 2;
-  bottom = bottom || -this.height / 2;
-  top = top || this.height / 2;
-  near = near || 0;
-  far = far || Math.max(this.width, this.height);
-  this._renderer.uPMatrix = p5.Matrix.identity();
-  //this._renderer.uPMatrix.ortho(left,right,bottom,top,near,far);
+p5.prototype.ortho = function() {
+  this._renderer.ortho.apply(this._renderer, arguments);
+  return this;
+};
+
+p5.RendererGL.prototype.ortho = function(left, right, bottom, top, near, far) {
+  if (left === undefined) left = -this.width / 2;
+  if (right === undefined) right = +this.width / 2;
+  if (bottom === undefined) bottom = -this.height / 2;
+  if (top === undefined) top = +this.height / 2;
+  if (near === undefined) near = 0;
+  if (far === undefined) far = Math.max(this.width, this.height);
+  this.uPMatrix = p5.Matrix.identity(this._pInst);
+  //this.uPMatrix.ortho(left,right,bottom,top,near,far);
 
   var w = right - left;
   var h = top - bottom;
   var d = far - near;
 
-  var x = 2.0 / w;
-  var y = 2.0 / h;
+  var x = +2.0 / w;
+  var y = +2.0 / h;
   var z = -2.0 / d;
 
   var tx = -(right + left) / w;
   var ty = -(top + bottom) / h;
   var tz = -(far + near) / d;
 
-  // The minus sign is needed to invert the Y axis.
-  // prettier-ignore
-  this._renderer.uPMatrix.set( x,  0,  0, 0,
-                               0, -y,  0, 0,
-                               0,  0,  z, 0,
-                               tx, ty, tz,  1);
+  this.uPMatrix = p5.Matrix.identity();
 
-  this._renderer._curCamera = 'custom';
+  // prettier-ignore
+  this.uPMatrix.set(  x,  0,  0,  0, 
+                      0, -y,  0,  0, 
+                      0,  0,  z,  0, 
+                     tx, ty, tz,  1);
+
+  this._curCamera = 'custom';
 };
 
 module.exports = p5;

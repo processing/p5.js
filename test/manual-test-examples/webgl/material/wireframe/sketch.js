@@ -5,9 +5,12 @@
 
 var teapot;
 
+function preload() {
+  teapot = loadModel('../wireframe/assets/teapot.obj', true);
+}
+
 function setup() {
   createCanvas(windowWidth, windowHeight, WEBGL);
-  teapot = loadModel('assets/teapot.obj', true);
 }
 
 

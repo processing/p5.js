@@ -85,7 +85,7 @@ p5.prototype.pixels = [];
  * blend mode to do the operation.
  *
  * @method blend
- * @param  {p5.Image|undefined} srcImage source image
+ * @param  {p5.Image} srcImage source image
  * @param  {Integer} sx X coordinate of the source's upper left corner
  * @param  {Integer} sy Y coordinate of the source's upper left corner
  * @param  {Integer} sw source image width
@@ -153,6 +153,18 @@ p5.prototype.pixels = [];
  *
  *
  */
+/**
+ * @method blend
+ * @param  {Integer} sx
+ * @param  {Integer} sy
+ * @param  {Integer} sw
+ * @param  {Integer} sh
+ * @param  {Integer} dx
+ * @param  {Integer} dy
+ * @param  {Integer} dw
+ * @param  {Integer} dh
+ * @param  {Constant} blendMode
+ */
 p5.prototype.blend = function() {
   if (this._renderer) {
     this._renderer.blend.apply(this._renderer, arguments);
@@ -170,7 +182,7 @@ p5.prototype.blend = function() {
  * target region.
  *
  * @method copy
- * @param  {p5.Image|undefined} srcImage source image
+ * @param  {p5.Image|p5.Element} srcImage source image
  * @param  {Integer} sx X coordinate of the source's upper left corner
  * @param  {Integer} sy Y coordinate of the source's upper left corner
  * @param  {Integer} sw source image width
@@ -204,8 +216,20 @@ p5.prototype.blend = function() {
  * image of rockies. Brickwall images on left and right. Right translucent
  *
  */
+/**
+ * @method copy
+ * @param  {Integer} sx
+ * @param  {Integer} sy
+ * @param  {Integer} sw
+ * @param  {Integer} sh
+ * @param  {Integer} dx
+ * @param  {Integer} dy
+ * @param  {Integer} dw
+ * @param  {Integer} dh
+ */
 p5.prototype.copy = function() {
-  p5.Renderer2D._copyHelper.apply(this, arguments);
+  p5._validateParameters('copy', arguments);
+  p5.Renderer2D.prototype.copy.apply(this._renderer, arguments);
 };
 
 /**
@@ -254,11 +278,12 @@ p5.prototype.copy = function() {
  * Increases the light areas. No parameter is used.
  *
  * @method filter
- * @param  {Constant} filterType either THRESHOLD, GRAY, OPAQUE, INVERT,
- *                                POSTERIZE, BLUR, ERODE or DILATE
- * @param  {Number} filterParam an optional parameter unique
- *  to each filter, see above
- *
+ * @param  {Constant} filterType  either THRESHOLD, GRAY, OPAQUE, INVERT,
+ *                                POSTERIZE, BLUR, ERODE, DILATE or BLUR.
+ *                                See Filters.js for docs on
+ *                                each available filter
+ * @param  {Number} [filterParam] an optional parameter unique
+ *                                to each filter, see above
  *
  * @example
  * <div>
@@ -521,7 +546,7 @@ p5.prototype.loadPixels = function() {
  * @method set
  * @param {Number}              x x-coordinate of the pixel
  * @param {Number}              y y-coordinate of the pixel
- * @param {Number|Array|Object} c insert a grayscale value | a pixel array |
+ * @param {Number|Number[]|Object} c insert a grayscale value | a pixel array |
  *                                a p5.Color object | a p5.Image to copy
  * @example
  * <div>

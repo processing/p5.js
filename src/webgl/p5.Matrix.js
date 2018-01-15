@@ -28,30 +28,24 @@ p5.Matrix = function() {
   for (var i = 0; i < args.length; ++i) {
     args[i] = arguments[i];
   }
+
   // This is default behavior when object
   // instantiated using createMatrix()
   // @todo implement createMatrix() in core/math.js
-  if (args[0] instanceof p5) {
-    // save reference to p5 if passed in
-    this.p5 = args[0];
-    if (args[1] === 'mat3') {
-      this.mat3 = args[2] || new GLMAT_ARRAY_TYPE([1, 0, 0, 0, 1, 0, 0, 0, 1]);
-    } else {
-      this.mat4 =
-        args[1] ||
-        new GLMAT_ARRAY_TYPE([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
-    }
-    // default behavior when object
-    // instantiated using new p5.Matrix()
-  } else {
-    if (args[0] === 'mat3') {
-      this.mat3 = args[1] || new GLMAT_ARRAY_TYPE([1, 0, 0, 0, 1, 0, 0, 0, 1]);
-    } else {
-      this.mat4 =
-        args[0] ||
-        new GLMAT_ARRAY_TYPE([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
-    }
+  if (args.length && args[args.length - 1] instanceof p5) {
+    this.p5 = args[args.length - 1];
   }
+
+  if (args[0] === 'mat3') {
+    this.mat3 = Array.isArray(args[1])
+      ? args[1]
+      : new GLMAT_ARRAY_TYPE([1, 0, 0, 0, 1, 0, 0, 0, 1]);
+  } else {
+    this.mat4 = Array.isArray(args[0])
+      ? args[0]
+      : new GLMAT_ARRAY_TYPE([1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]);
+  }
+
   this.name = 'p5.Matrix'; // for friendly debugger system
   return this;
 };
@@ -61,7 +55,7 @@ p5.Matrix = function() {
  * variables, the data from a p5.Matrix, or the values from a float array.
  *
  * @method set
- * @param {p5.Matrix|Float32Array|Array} [inMatrix] the input p5.Matrix or
+ * @param {p5.Matrix|Float32Array|Number[]} [inMatrix] the input p5.Matrix or
  *                                     an Array of length 16
  * @chainable
  */
@@ -106,7 +100,7 @@ p5.Matrix.prototype.set = function(inMatrix) {
  * @return {p5.Matrix} the copy of the p5.Matrix object
  */
 p5.Matrix.prototype.get = function() {
-  return new p5.Matrix(this.mat4);
+  return new p5.Matrix(this.mat4, this.p5);
 };
 
 /**
@@ -115,7 +109,7 @@ p5.Matrix.prototype.get = function() {
  * @return {p5.Matrix}   the result matrix
  */
 p5.Matrix.prototype.copy = function() {
-  var copied = new p5.Matrix();
+  var copied = new p5.Matrix(this.p5);
   copied.mat4[0] = this.mat4[0];
   copied.mat4[1] = this.mat4[1];
   copied.mat4[2] = this.mat4[2];
@@ -140,14 +134,15 @@ p5.Matrix.prototype.copy = function() {
  * @method identity
  * @return {p5.Matrix}   the result matrix
  */
-p5.Matrix.identity = function() {
-  return new p5.Matrix();
+p5.Matrix.identity = function(pInst) {
+  return new p5.Matrix(pInst);
 };
 
 /**
  * transpose according to a given matrix
  * @method transpose
- * @param  {p5.Matrix|Float32Array|Array} a  the matrix to be based on to transpose
+ * @param  {p5.Matrix|Float32Array|Number[]} a  the matrix to be
+ *                                               based on to transpose
  * @chainable
  */
 p5.Matrix.prototype.transpose = function(a) {
@@ -207,7 +202,8 @@ p5.Matrix.prototype.transpose = function(a) {
 /**
  * invert  matrix according to a give matrix
  * @method invert
- * @param  {p5.Matrix|Float32Array|Array} a   the matrix to be based on to invert
+ * @param  {p5.Matrix|Float32Array|Number[]} a   the matrix to be
+ *                                                based on to invert
  * @chainable
  */
 p5.Matrix.prototype.invert = function(a) {
@@ -400,7 +396,7 @@ p5.Matrix.prototype.determinant = function() {
 /**
  * multiply two mat4s
  * @method mult
- * @param {p5.Matrix|Float32Array|Array} multMatrix The matrix
+ * @param {p5.Matrix|Float32Array|Number[]} multMatrix The matrix
  *                                                we want to multiply by
  * @chainable
  */
@@ -459,7 +455,7 @@ p5.Matrix.prototype.mult = function(multMatrix) {
 /**
  * scales a p5.Matrix by scalars or a vector
  * @method scale
- * @param  {p5.Vector|Float32Array|Array} s vector to scale by
+ * @param  {p5.Vector|Float32Array|Number[]} s vector to scale by
  * @chainable
  */
 p5.Matrix.prototype.scale = function() {
@@ -505,17 +501,15 @@ p5.Matrix.prototype.scale = function() {
  * rotate our Matrix around an axis by the given angle.
  * @method rotate
  * @param  {Number} a The angle of rotation in radians
- * @param  {p5.Vector|Array} axis  the axis(es) to rotate around
+ * @param  {p5.Vector|Number[]} axis  the axis(es) to rotate around
  * @chainable
  * inspired by Toji's gl-matrix lib, mat4 rotation
  */
 p5.Matrix.prototype.rotate = function(a, axis) {
   var x, y, z, _a, len;
 
-  if (this.p5) {
-    if (this.p5._angleMode === constants.DEGREES) {
-      _a = polarGeometry.degreesToRadians(a);
-    }
+  if (this.p5 && this.p5._angleMode === constants.DEGREES) {
+    _a = polarGeometry.degreesToRadians(a);
   } else {
     _a = a;
   }

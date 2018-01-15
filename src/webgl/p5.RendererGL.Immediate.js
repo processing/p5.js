@@ -67,12 +67,10 @@ p5.RendererGL.prototype.beginShape = function(mode) {
  * @chainable
  * @TODO implement handling of p5.Vector args
  */
-p5.RendererGL.prototype.vertex = function() {
-  var x, y, z, u, v;
+p5.RendererGL.prototype.vertex = function(x, y) {
+  var z, u, v;
 
   // default to (x, y) mode: all other arugments assumed to be 0.
-  x = arguments[0];
-  y = arguments[1];
   z = u = v = 0;
 
   if (arguments.length === 3) {
@@ -115,13 +113,8 @@ p5.RendererGL.prototype.endShape = function(
   isContour,
   shapeKind
 ) {
-  if (this.curFillShader === this._getColorShader()) {
-    // this is the fill/stroke shader for retain mode.
-    // must switch to immediate mode shader before drawing!
-    this.setFillShader(this._getImmediateModeShader());
-    // note that if we're using the texture shader...
-    // this shouldn't change. :)
-  }
+  this._useImmediateModeShader();
+
   if (this.curStrokeShader.active === true) {
     for (var i = 0; i < this.immediateMode.vertices.length - 1; i++) {
       this.immediateMode.edges.push([i, i + 1]);
@@ -166,25 +159,33 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
 ) {
   var gl = this.GL;
   this.curFillShader.bindShader();
-  //vertex position Attribute
-  this._bindBuffer(
-    this.immediateMode.vertexBuffer,
-    gl.ARRAY_BUFFER,
-    this._vToNArray(this.immediateMode.vertices),
-    Float32Array,
-    gl.DYNAMIC_DRAW
-  );
 
-  this.curFillShader.enableAttrib(
-    this.curFillShader.attributes.aPosition.location,
-    3,
-    gl.FLOAT,
-    false,
-    0,
-    0
-  );
+  // initialize the fill shader's 'aPosition' buffer
+  if (this.curFillShader.attributes.aPosition) {
+    //vertex position Attribute
+    this._bindBuffer(
+      this.immediateMode.vertexBuffer,
+      gl.ARRAY_BUFFER,
+      this._vToNArray(this.immediateMode.vertices),
+      Float32Array,
+      gl.DYNAMIC_DRAW
+    );
 
-  if (this.drawMode === constants.FILL) {
+    this.curFillShader.enableAttrib(
+      this.curFillShader.attributes.aPosition.location,
+      3,
+      gl.FLOAT,
+      false,
+      0,
+      0
+    );
+  }
+
+  // initialize the fill shader's 'aVertexColor' buffer
+  if (
+    this.drawMode === constants.FILL &&
+    this.curFillShader.attributes.aVertexColor
+  ) {
     this._bindBuffer(
       this.immediateMode.colorBuffer,
       gl.ARRAY_BUFFER,
@@ -202,7 +203,12 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
       0
     );
   }
-  if (this.drawMode === constants.TEXTURE) {
+
+  // initialize the fill shader's 'aTexCoord' buffer
+  if (
+    this.drawMode === constants.TEXTURE &&
+    this.curFillShader.attributes.aTexCoord
+  ) {
     //texture coordinate Attribute
     this._bindBuffer(
       this.immediateMode.uvBuffer,
@@ -226,11 +232,7 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
   if (this.drawMode === constants.FILL || this.drawMode === constants.TEXTURE) {
     switch (this.immediateMode.shapeMode) {
       case constants.LINE_STRIP:
-        this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
-        break;
       case constants.LINES:
-        this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
-        break;
       case constants.TRIANGLES:
         this.immediateMode.shapeMode = constants.TRIANGLE_FAN;
         break;
@@ -238,8 +240,6 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
   } else {
     switch (this.immediateMode.shapeMode) {
       case constants.LINE_STRIP:
-        this.immediateMode.shapeMode = constants.LINE_LOOP;
-        break;
       case constants.LINES:
         this.immediateMode.shapeMode = constants.LINE_LOOP;
         break;
@@ -272,37 +272,46 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
 p5.RendererGL.prototype._drawStrokeImmediateMode = function() {
   var gl = this.GL;
   this.curStrokeShader.bindShader();
-  this._bindBuffer(
-    this.immediateMode.lineVertexBuffer,
-    gl.ARRAY_BUFFER,
-    this._flatten(this.immediateMode.lineVertices),
-    Float32Array,
-    gl.STATIC_DRAW
-  );
 
-  this.curStrokeShader.enableAttrib(
-    this.curStrokeShader.attributes.aPosition.location,
-    3,
-    gl.FLOAT,
-    false,
-    0,
-    0
-  );
-  this._bindBuffer(
-    this.immediateMode.lineNormalBuffer,
-    gl.ARRAY_BUFFER,
-    this._flatten(this.immediateMode.lineNormals),
-    Float32Array,
-    gl.STATIC_DRAW
-  );
-  this.curStrokeShader.enableAttrib(
-    this.curStrokeShader.attributes.aDirection.location,
-    4,
-    gl.FLOAT,
-    false,
-    0,
-    0
-  );
+  // initialize the stroke shader's 'aPosition' buffer
+  if (this.curStrokeShader.attributes.aPosition) {
+    this._bindBuffer(
+      this.immediateMode.lineVertexBuffer,
+      gl.ARRAY_BUFFER,
+      this._flatten(this.immediateMode.lineVertices),
+      Float32Array,
+      gl.STATIC_DRAW
+    );
+
+    this.curStrokeShader.enableAttrib(
+      this.curStrokeShader.attributes.aPosition.location,
+      3,
+      gl.FLOAT,
+      false,
+      0,
+      0
+    );
+  }
+
+  // initialize the stroke shader's 'aDirection' buffer
+  if (this.curStrokeShader.attributes.aDirection) {
+    this._bindBuffer(
+      this.immediateMode.lineNormalBuffer,
+      gl.ARRAY_BUFFER,
+      this._flatten(this.immediateMode.lineNormals),
+      Float32Array,
+      gl.STATIC_DRAW
+    );
+    this.curStrokeShader.enableAttrib(
+      this.curStrokeShader.attributes.aDirection.location,
+      4,
+      gl.FLOAT,
+      false,
+      0,
+      0
+    );
+  }
+
   gl.drawArrays(gl.TRIANGLES, 0, this.immediateMode.lineVertices.length);
 
   // todo / optimizations? leave bound until another shader is set?

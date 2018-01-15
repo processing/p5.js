@@ -159,12 +159,20 @@ require('./p5.Color');
 
 /**
  * @method background
+ * @param  {Number[]}      values  an array containing the red,green,blue &
+ *                                 and alpha components of the color
+ * @chainable
+ */
+
+/**
+ * @method background
  * @param {p5.Image} image     image created with loadImage() or createImage(),
  *                             to set as background
  *                             (must be same size as the sketch window)
  * @param  {Number}  [a]
  * @chainable
  */
+
 p5.prototype.background = function() {
   if (arguments[0] instanceof p5.Image) {
     this.image(arguments[0], 0, 0, this.width, this.height);
@@ -280,6 +288,7 @@ p5.prototype.clear = function() {
  * ellipse(40, 40, 50, 50);
  * ellipse(50, 50, 40, 40);
  * </code>
+ * </div>
  *
  * @alt
  *Green to red gradient from bottom L to top R. shading originates from top left.
@@ -300,31 +309,32 @@ p5.prototype.clear = function() {
  * @param {Number} [maxA]   range for the alpha
  * @chainable
  */
-p5.prototype.colorMode = function() {
+p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
+  p5._validateParameters('colorMode', arguments);
   if (
-    arguments[0] === constants.RGB ||
-    arguments[0] === constants.HSB ||
-    arguments[0] === constants.HSL
+    mode === constants.RGB ||
+    mode === constants.HSB ||
+    mode === constants.HSL
   ) {
     // Set color mode.
-    this._renderer._colorMode = arguments[0];
+    this._renderer._colorMode = mode;
 
     // Set color maxes.
-    var maxes = this._renderer._colorMaxes[this._renderer._colorMode];
+    var maxes = this._renderer._colorMaxes[mode];
     if (arguments.length === 2) {
-      maxes[0] = arguments[1]; // Red
-      maxes[1] = arguments[1]; // Green
-      maxes[2] = arguments[1]; // Blue
-      maxes[3] = arguments[1]; // Alpha
+      maxes[0] = max1; // Red
+      maxes[1] = max1; // Green
+      maxes[2] = max1; // Blue
+      maxes[3] = max1; // Alpha
     } else if (arguments.length === 4) {
-      maxes[0] = arguments[1]; // Red
-      maxes[1] = arguments[2]; // Green
-      maxes[2] = arguments[3]; // Blue
+      maxes[0] = max1; // Red
+      maxes[1] = max2; // Green
+      maxes[2] = max3; // Blue
     } else if (arguments.length === 5) {
-      maxes[0] = arguments[1]; // Red
-      maxes[1] = arguments[2]; // Green
-      maxes[2] = arguments[3]; // Blue
-      maxes[3] = arguments[4]; // Alpha
+      maxes[0] = max1; // Red
+      maxes[1] = max2; // Green
+      maxes[2] = max3; // Blue
+      maxes[3] = maxA; // Alpha
     }
   }
 

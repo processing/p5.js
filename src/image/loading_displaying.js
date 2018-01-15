@@ -64,6 +64,7 @@ require('../core/error_helpers');
  *
  */
 p5.prototype.loadImage = function(path, successCallback, failureCallback) {
+  p5._validateParameters('loadImage', arguments);
   var img = new Image();
   var pImg = new p5.Image(1, 1, this);
 
@@ -139,7 +140,7 @@ function _sAssign(sVal, iVal) {
  * <img src="assets/drawImage.png"></img>
  *
  * @method image
- * @param  {p5.Image|p5.Graphics} img    the image to display
+ * @param  {p5.Image|p5.Element} img    the image to display
  * @param  {Number}   x     the x-coordinate of the top-left corner of the image
  * @param  {Number}   y     the y-coordinate of the top-left corner of the image
  * @param  {Number}   [width]  the width to draw the image
@@ -211,7 +212,7 @@ function _sAssign(sVal, iVal) {
  */
 /**
  * @method image
- * @param  {p5.Image|p5.Graphics} img
+ * @param  {p5.Image|p5.Element} img
  * @param  {Number}   dx     the x-coordinate of the destination
  *                           rectangle in which to draw the source image
  * @param  {Number}   dy     the y-coordinate of the destination
@@ -240,6 +241,8 @@ p5.prototype.image = function(
   sHeight
 ) {
   // set defaults per spec: https://goo.gl/3ykfOq
+
+  p5._validateParameters('image', arguments);
 
   var defW = img.width;
   var defH = img.height;
@@ -380,6 +383,7 @@ p5.prototype.image = function(
  * @param  {p5.Color}      color   the tint color
  */
 p5.prototype.tint = function() {
+  p5._validateParameters('tint', arguments);
   var c = this.color.apply(this, arguments);
   this._renderer._tint = c.levels;
 };
@@ -516,6 +520,7 @@ p5.prototype._getTintedImageCanvas = function(img) {
  *
  */
 p5.prototype.imageMode = function(m) {
+  p5._validateParameters('imageMode', arguments);
   if (
     m === constants.CORNER ||
     m === constants.CORNERS ||

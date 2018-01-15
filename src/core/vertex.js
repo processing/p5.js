@@ -102,7 +102,6 @@ p5.prototype.beginContour = function() {
  *
  * <div>
  * <code>
- * // currently not working
  * beginShape(POINTS);
  * vertex(30, 20);
  * vertex(85, 20);
@@ -244,22 +243,23 @@ p5.prototype.beginContour = function() {
  *
  */
 p5.prototype.beginShape = function(kind) {
-  if (
-    kind === constants.POINTS ||
-    kind === constants.LINES ||
-    kind === constants.TRIANGLES ||
-    kind === constants.TRIANGLE_FAN ||
-    kind === constants.TRIANGLE_STRIP ||
-    kind === constants.QUADS ||
-    kind === constants.QUAD_STRIP
-  ) {
-    shapeKind = kind;
-  } else {
-    shapeKind = null;
-  }
   if (this._renderer.isP3D) {
-    this._renderer.beginShape(kind);
+    this._renderer.beginShape.apply(this._renderer, arguments);
   } else {
+    if (
+      kind === constants.POINTS ||
+      kind === constants.LINES ||
+      kind === constants.TRIANGLES ||
+      kind === constants.TRIANGLE_FAN ||
+      kind === constants.TRIANGLE_STRIP ||
+      kind === constants.QUADS ||
+      kind === constants.QUAD_STRIP
+    ) {
+      shapeKind = kind;
+    } else {
+      shapeKind = null;
+    }
+
     vertices = [];
     contourVertices = [];
   }
@@ -313,6 +313,7 @@ p5.prototype.beginShape = function(kind) {
  *
  */
 p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
+  p5._validateParameters('bezierVertex', arguments);
   if (vertices.length === 0) {
     throw 'vertex() must be used once before calling bezierVertex()';
   } else {
@@ -368,6 +369,7 @@ p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
  *
  */
 p5.prototype.curveVertex = function(x, y) {
+  p5._validateParameters('curveVertex', arguments);
   isCurve = true;
   this.vertex(x, y);
   return this;
@@ -564,6 +566,7 @@ p5.prototype.endShape = function(mode) {
  *
  */
 p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
+  p5._validateParameters('quadraticVertex', arguments);
   //if we're drawing a contour, put the points into an
   // array for inside drawing
   if (this._contourInited) {
@@ -604,7 +607,6 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  * @method vertex
  * @param  {Number} x x-coordinate of the vertex
  * @param  {Number} y y-coordinate of the vertex
- * @param  {Number|Boolean} [z] z-coordinate of the vertex
  * @chainable
  * @example
  * <div>
@@ -621,6 +623,14 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  * @alt
  * 4 black points in a square shape in middle-right of canvas.
  *
+ */
+/**
+ * @method vertex
+ * @param  {Number} x
+ * @param  {Number} y
+ * @param  {Number} [z] z-coordinate of the vertex
+ * @param  {Number} [u] the vertex's texture u-coordinate
+ * @param  {Number} [v] the vertex's texture v-coordinate
  */
 p5.prototype.vertex = function(x, y, moveTo, u, v) {
   if (this._renderer.isP3D) {

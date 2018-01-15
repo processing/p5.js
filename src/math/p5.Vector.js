@@ -128,7 +128,7 @@ p5.Vector.prototype.toString = function p5VectorToString() {
  */
 /**
  * @method set
- * @param {p5.Vector|Array} value the vector to set
+ * @param {p5.Vector|Number[]} value the vector to set
  * @chainable
  */
 p5.Vector.prototype.set = function set(x, y, z) {
@@ -207,7 +207,7 @@ p5.Vector.prototype.copy = function copy() {
  */
 /**
  * @method add
- * @param  {p5.Vector|Array} value the vector to add
+ * @param  {p5.Vector|Number[]} value the vector to add
  * @chainable
  */
 p5.Vector.prototype.add = function add(x, y, z) {
@@ -263,7 +263,7 @@ p5.Vector.prototype.add = function add(x, y, z) {
  */
 /**
  * @method sub
- * @param  {p5.Vector|Array} value the vector to subtract
+ * @param  {p5.Vector|Number[]} value the vector to subtract
  * @chainable
  */
 p5.Vector.prototype.sub = function sub(x, y, z) {
@@ -701,9 +701,9 @@ p5.Vector.prototype.angleBetween = function angleBetween(v) {
  * Linear interpolate the vector to another vector
  *
  * @method lerp
- * @param  {p5.Vector} x   the x component
- * @param  {p5.Vector} y   the y component
- * @param  {p5.Vector} z   the z component
+ * @param  {Number}    x   the x component
+ * @param  {Number}    y   the y component
+ * @param  {Number}    z   the z component
  * @param  {Number}    amt the amount of interpolation; some value between 0.0
  *                         (old vector) and 1.0 (new vector). 0.9 is very near
  *                         the new vector. 0.5 is halfway in between.
@@ -833,11 +833,12 @@ p5.Vector.prototype.equals = function equals(x, y, z) {
 // Static Methods
 
 /**
- * Make a new 2D unit vector from an angle
+ * Make a new 2D vector from an angle
  *
  * @method fromAngle
  * @static
  * @param {Number}     angle the desired angle
+ * @param {Number}     [length] the length of the new vector (defaults to 1)
  * @return {p5.Vector}       the new p5.Vector object
  * @example
  * <div>
@@ -853,14 +854,14 @@ p5.Vector.prototype.equals = function equals(x, y, z) {
  *   // Display that variable in an onscreen text.
  *   // (Note the nfc() function to truncate additional decimal places,
  *   // and the "\xB0" character for the degree symbol.)
- *   var readout = 'angle = ' + nfc(myDegrees, 1, 1) + '\xB0';
+ *   var readout = 'angle = ' + nfc(myDegrees, 1) + '\xB0';
  *   noStroke();
  *   fill(0);
  *   text(readout, 5, 15);
  *
  *   // Create a p5.Vector using the fromAngle function,
  *   // and extract its x and y components.
- *   var v = p5.Vector.fromAngle(radians(myDegrees));
+ *   var v = p5.Vector.fromAngle(radians(myDegrees), 30);
  *   var vx = v.x;
  *   var vy = v.y;
  *
@@ -870,22 +871,92 @@ p5.Vector.prototype.equals = function equals(x, y, z) {
  *   stroke(150);
  *   line(0, 0, 30, 0);
  *   stroke(0);
- *   line(0, 0, 30 * vx, 30 * vy);
+ *   line(0, 0, vx, vy);
  *   pop();
  * }
  * </code>
  * </div>
  */
-p5.Vector.fromAngle = function fromAngle(angle) {
+p5.Vector.fromAngle = function fromAngle(angle, length) {
   if (this.p5) {
     if (this.p5._angleMode === constants.DEGREES) {
       angle = polarGeometry.degreesToRadians(angle);
     }
   }
+  if (typeof length === 'undefined') {
+    length = 1;
+  }
   if (this.p5) {
-    return new p5.Vector(this.p5, [Math.cos(angle), Math.sin(angle), 0]);
+    return new p5.Vector(this.p5, [
+      length * Math.cos(angle),
+      length * Math.sin(angle),
+      0
+    ]);
   } else {
-    return new p5.Vector(Math.cos(angle), Math.sin(angle), 0);
+    return new p5.Vector(length * Math.cos(angle), length * Math.sin(angle), 0);
+  }
+};
+
+/**
+ * Make a new 3D vector from a pair of ISO spherical angles
+ *
+ * @method fromAngles
+ * @static
+ * @param {Number}     theta the polar angle (zero is up)
+ * @param {Number}     phi the azimuthal angle (zero is out of the screen)
+ * @param {Number}     [length] the length of the new vector (defaults to 1)
+ * @return {p5.Vector}       the new p5.Vector object
+ * @example
+ * <div modernizr='webgl'>
+ * <code>
+ * function setup() {
+ *   createCanvas(100, 100, WEBGL);
+ *   fill(255);
+ *   noStroke();
+ * }
+ * function draw() {
+ *   background(255);
+ *
+ *   var t = millis() / 1000;
+ *
+ *   // add three point lights
+ *   pointLight(color('#f00'), p5.Vector.fromAngles(t * 1.0, t * 1.3, 100));
+ *   pointLight(color('#0f0'), p5.Vector.fromAngles(t * 1.1, t * 1.2, 100));
+ *   pointLight(color('#00f'), p5.Vector.fromAngles(t * 1.2, t * 1.1, 100));
+ *
+ *   sphere(35);
+ * }
+ * </code>
+ * </div>
+ */
+p5.Vector.fromAngles = function(theta, phi, length) {
+  if (this.p5) {
+    if (this.p5._angleMode === constants.DEGREES) {
+      theta = polarGeometry.degreesToRadians(theta);
+      phi = polarGeometry.degreesToRadians(phi);
+    }
+  }
+  if (typeof length === 'undefined') {
+    length = 1;
+  }
+  var cosPhi = Math.cos(phi);
+  var sinPhi = Math.sin(phi);
+  var cosTheta = Math.cos(theta);
+  var sinTheta = Math.sin(theta);
+
+  if (this.p5) {
+    return new new p5.Vector(
+      this.p5,
+      length * sinTheta * sinPhi,
+      -length * cosTheta,
+      length * sinTheta * cosPhi
+    )();
+  } else {
+    return new p5.Vector(
+      length * sinTheta * sinPhi,
+      -length * cosTheta,
+      length * sinTheta * cosPhi
+    );
   }
 };
 

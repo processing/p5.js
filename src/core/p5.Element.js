@@ -4,6 +4,8 @@
  * @for p5.Element
  */
 
+'use strict';
+
 var p5 = require('./core');
 
 /**
@@ -24,6 +26,18 @@ var p5 = require('./core');
 p5.Element = function(elt, pInst) {
   /**
    * Underlying HTML element. All normal HTML methods can be called on this.
+   * @example
+   * <div>
+   * <code>
+   * createCanvas(300, 500);
+   * background(0, 0, 0, 0);
+   * var input = createInput();
+   * input.position(20, 225);
+   * var inputElem = new p5.Element(input.elt);
+   * inputElem.style('width:450px;');
+   * inputElem.value('some string');
+   * </code>
+   * </div>
    *
    * @property elt
    * @readOnly
@@ -85,20 +99,20 @@ p5.Element = function(elt, pInst) {
  *
  */
 p5.Element.prototype.parent = function(p) {
-  if (arguments.length === 0) {
+  if (typeof p === 'undefined') {
     return this.elt.parentNode;
-  } else {
-    if (typeof p === 'string') {
-      if (p[0] === '#') {
-        p = p.substring(1);
-      }
-      p = document.getElementById(p);
-    } else if (p instanceof p5.Element) {
-      p = p.elt;
-    }
-    p.appendChild(this.elt);
-    return this;
   }
+
+  if (typeof p === 'string') {
+    if (p[0] === '#') {
+      p = p.substring(1);
+    }
+    p = document.getElementById(p);
+  } else if (p instanceof p5.Element) {
+    p = p.elt;
+  }
+  p.appendChild(this.elt);
+  return this;
 };
 
 /**
@@ -128,14 +142,14 @@ p5.Element.prototype.parent = function(p) {
  * @return {String} the id of the element
  */
 p5.Element.prototype.id = function(id) {
-  if (arguments.length === 0) {
+  if (typeof id === 'undefined') {
     return this.elt.id;
-  } else {
-    this.elt.id = id;
-    this.width = this.elt.offsetWidth;
-    this.height = this.elt.offsetHeight;
-    return this;
   }
+
+  this.elt.id = id;
+  this.width = this.elt.offsetWidth;
+  this.height = this.elt.offsetHeight;
+  return this;
 };
 
 /**
@@ -152,12 +166,12 @@ p5.Element.prototype.id = function(id) {
  * @return {String} the class of the element
  */
 p5.Element.prototype.class = function(c) {
-  if (arguments.length === 0) {
+  if (typeof c === 'undefined') {
     return this.elt.className;
-  } else {
-    this.elt.className = c;
-    return this;
   }
+
+  this.elt.className = c;
+  return this;
 };
 
 /**
@@ -902,8 +916,8 @@ p5.Element.prototype.dragLeave = function(fxn) {
  * is triggered just once when a file (or files) are dropped.
  *
  * @method drop
- * @param  {Function|Boolean} callback  callback triggered when files are dropped.
- * @param  {Function|Boolean} fxn       callback to receive loaded file.
+ * @param  {Function} callback  callback triggered when files are dropped.
+ * @param  {Function} [fxn]       callback to receive loaded file.
  * @chainable
  * @example
  * <div><code>
@@ -961,7 +975,7 @@ p5.Element.prototype.drop = function(callback, fxn) {
     );
 
     // If just one argument it's the callback for the files
-    if (arguments.length > 1) {
+    if (typeof fxn !== 'undefined') {
       attachListener('drop', fxn, this);
     }
 

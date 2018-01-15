@@ -187,7 +187,12 @@ module.exports = function(grunt) {
       // Watch the codebase for doc updates
       // launch with 'grunt requirejs connect watch:yui'
       yui: {
-        files: ['src/**/*.js', 'lib/addons/*.js'],
+        files: [
+          'src/**/*.js',
+          'lib/addons/*.js',
+          'src/**/*.frag',
+          'src/**/*.vert'
+        ],
         tasks: ['browserify', 'yuidoc:prod', 'minjson', 'uglify'],
         options: {
           livereload: true
@@ -284,7 +289,7 @@ module.exports = function(grunt) {
       },
       dist: {
         files: {
-          'lib/p5.min.js': 'lib/p5.js',
+          'lib/p5.min.js': 'lib/p5.pre-min.js',
           'lib/addons/p5.dom.min.js': 'lib/addons/p5.dom.js'
         }
       }
@@ -309,8 +314,8 @@ module.exports = function(grunt) {
           middleware: function(connect, options, middlewares) {
             middlewares.unshift(
               require('connect-modrewrite')([
-                '^/assets/js/p5\\.min\\.js(.*) /lib/p5.min.js$1 [L]',
-                '^/assets/js/p5\\.(dom|sound)\\.min\\.js(.*) /lib/addons/p5.$1.min.js$2 [L]'
+                '^/assets/js/p5(\\.min)?\\.js(.*) /lib/p5$1.js$2 [L]',
+                '^/assets/js/p5\\.(dom|sound)(\\.min)?\\.js(.*) /lib/addons/p5.$1$2.js$3 [L]'
               ]),
               function(req, res, next) {
                 res.setHeader('Access-Control-Allow-Origin', '*');
@@ -378,6 +383,11 @@ module.exports = function(grunt) {
   // Load release task
   grunt.loadTasks('tasks/release');
 
+  // Load typescript task
+  grunt.registerTask('typescript', function() {
+    require('./tasks/typescript/task.js')(grunt);
+  });
+
   // Load the external libraries used.
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-connect');
@@ -398,7 +408,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-karma');
 
   // Create the multitasks.
-  grunt.registerTask('build', ['browserify', 'uglify', 'requirejs']);
+  grunt.registerTask('build', [
+    'browserify',
+    'browserify:min',
+    'uglify',
+    'requirejs'
+  ]);
   grunt.registerTask('lint-no-fix', [
     'yui', // required for eslint-samples
     'eslint:build',
@@ -416,7 +431,7 @@ module.exports = function(grunt) {
     'mochaTest'
   ]);
   grunt.registerTask('test:nobuild', ['eslint:test', 'connect', 'mocha']);
-  grunt.registerTask('yui', ['yuidoc:prod', 'minjson']);
+  grunt.registerTask('yui', ['yuidoc:prod', 'minjson', 'typescript']);
   grunt.registerTask('yui:test', ['yuidoc:prod', 'connect', 'mocha:yui']);
   grunt.registerTask('default', ['test']);
   grunt.registerTask('saucetest', ['connect', 'saucelabs-mocha']);

@@ -49,10 +49,10 @@ p5.prototype.append = function(array, value) {
  *
  * @method arrayCopy
  * @param {Array}  src           the source Array
- * @param {Number} srcPosition   starting position in the source Array
+ * @param {Integer} srcPosition  starting position in the source Array
  * @param {Array}  dst           the destination Array
- * @param {Number} dstPosition   starting position in the destination Array
- * @param {Number} length        number of Array elements to be copied
+ * @param {Integer} dstPosition   starting position in the destination Array
+ * @param {Integer} length        number of Array elements to be copied
  *
  * @example
  * <div class='norender'><code>
@@ -73,7 +73,7 @@ p5.prototype.append = function(array, value) {
  * @method arrayCopy
  * @param {Array}  src
  * @param {Array}  dst
- * @param {Number} [length]
+ * @param {Integer} [length]
  */
 p5.prototype.arrayCopy = function(src, srcPosition, dst, dstPosition, length) {
   // the index to begin splicing from dst array
@@ -231,7 +231,7 @@ p5.prototype.shuffle = function(arr, bool) {
  *
  * @method sort
  * @param {Array} list Array to sort
- * @param {Number} [count] number of elements to sort, starting from 0
+ * @param {Integer} [count] number of elements to sort, starting from 0
  *
  * @example
  * <div class = 'norender'><code>
@@ -279,7 +279,7 @@ p5.prototype.sort = function(list, count) {
  * @method splice
  * @param {Array}  list Array to splice into
  * @param {any}    value value to be spliced in
- * @param {Number} position in the array from which to insert data
+ * @param {Integer} position in the array from which to insert data
  *
  * @example
  * <div class = 'norender'><code>
@@ -311,8 +311,8 @@ p5.prototype.splice = function(list, value, index) {
  *
  * @method subset
  * @param  {Array}  list    Array to extract from
- * @param  {Number} start   position to begin
- * @param  {Number} [count] number of values to extract
+ * @param  {Integer} start   position to begin
+ * @param  {Integer} [count] number of values to extract
  * @return {Array}          Array of extracted elements
  *
  * @example

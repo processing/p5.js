@@ -6,6 +6,8 @@
  * @requires core
  */
 
+'use strict';
+
 var p5 = require('../core/core');
 
 /**
@@ -244,6 +246,7 @@ p5.Shader.prototype.unbindTextures = function() {
 p5.Shader.prototype._setMatrixUniforms = function() {
   this.setUniform('uProjectionMatrix', this._renderer.uPMatrix.mat4);
   this.setUniform('uModelViewMatrix', this._renderer.uMVMatrix.mat4);
+  this.setUniform('uViewMatrix', this._renderer.cameraMatrix.mat4);
   if (this === this._renderer.curFillShader) {
     this._renderer.uNMatrix.inverseTranspose(this._renderer.uMVMatrix);
     this.setUniform('uNormalMatrix', this._renderer.uNMatrix.mat3);
@@ -274,12 +277,19 @@ p5.Shader.prototype.useProgram = function() {
  * @chainable
  * @param {String} uniformName the name of the uniform in the
  * shader program
- * @param {Object} data the data to be associated with that uniform; type
- * varies (could be a single numerical value, array, matrix, or
- * texture / sampler reference)
+ * @param {Object|Number|Boolean|Number[]} data the data to be associated
+ * with that uniform; type varies (could be a single numerical value, array,
+ * matrix, or texture / sampler reference)
  */
 p5.Shader.prototype.setUniform = function(uniformName, data) {
   //@todo update all current gl.uniformXX calls
+
+  var uniform = this.uniforms[uniformName];
+  if (!uniform) {
+    //@todo warning?
+    return;
+  }
+  var location = uniform.location;
 
   var gl = this._renderer.GL;
   // todo: is this safe to do here?
@@ -287,12 +297,6 @@ p5.Shader.prototype.setUniform = function(uniformName, data) {
   this.useProgram();
 
   // TODO BIND?
-  var uniform = this.uniforms[uniformName];
-  if (!uniform) {
-    //@todo warning?
-    return;
-  }
-  var location = uniform.location;
 
   switch (uniform.type) {
     case gl.BOOL:

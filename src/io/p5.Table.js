@@ -121,7 +121,7 @@ p5.Table.prototype.addRow = function(row) {
  * Removes a row from the table object.
  *
  * @method  removeRow
- * @param   {Number} id ID number of the row to remove
+ * @param   {Integer} id ID number of the row to remove
  *
  * @example
  * <div class="norender">
@@ -170,7 +170,7 @@ p5.Table.prototype.removeRow = function(id) {
  * can then be used to get and set values of the selected row.
  *
  * @method  getRow
- * @param  {Number}   rowID ID number of the row to get
+ * @param  {Integer}   rowID ID number of the row to get
  * @return {p5.TableRow} p5.TableRow object
  *
  * @example
@@ -269,7 +269,7 @@ p5.Table.prototype.getRows = function() {
  *
  *  @method  findRow
  *  @param  {String} value  The value to match
- *  @param  {Number|String} column ID number or title of the
+ *  @param  {Integer|String} column ID number or title of the
  *                                 column to search
  *  @return {p5.TableRow}
  *
@@ -334,7 +334,7 @@ p5.Table.prototype.findRow = function(value, column) {
  *
  *  @method  findRows
  *  @param  {String} value  The value to match
- *  @param  {Number|String} column ID number or title of the
+ *  @param  {Integer|String} column ID number or title of the
  *                                 column to search
  *  @return {p5.TableRow[]}        An Array of TableRow objects
  *
@@ -403,7 +403,7 @@ p5.Table.prototype.findRows = function(value, column) {
  *
  *  @method  matchRow
  *  @param  {String} regexp The regular expression to match
- *  @param  {String|Number} column The column ID (number) or
+ *  @param  {String|Integer} column The column ID (number) or
  *                                   title (string)
  *  @return {p5.TableRow}        TableRow object
  */
@@ -432,7 +432,7 @@ p5.Table.prototype.matchRow = function(regexp, column) {
  *
  *  @method  matchRows
  *  @param  {String} regexp The regular expression to match
- *  @param  {String|Number} [column] The column ID (number) or
+ *  @param  {String|Integer} [column] The column ID (number) or
  *                                   title (string)
  *  @return {p5.TableRow[]}          An Array of TableRow objects
  *  @example
@@ -638,7 +638,7 @@ p5.Table.prototype.addColumn = function(title) {
  *  Returns the total number of columns in a Table.
  *
  *  @method  getColumnCount
- *  @return {Number} Number of columns in this table
+ *  @return {Integer} Number of columns in this table
  */
 p5.Table.prototype.getColumnCount = function() {
   return this.columns.length;
@@ -648,7 +648,7 @@ p5.Table.prototype.getColumnCount = function() {
  *  Returns the total number of rows in a Table.
  *
  *  @method  getRowCount
- *  @return {Number} Number of rows in this table
+ *  @return {Integer} Number of rows in this table
  */
 p5.Table.prototype.getRowCount = function() {
   return this.rows.length;
@@ -663,7 +663,7 @@ p5.Table.prototype.getRowCount = function() {
  *
  *  @method  removeTokens
  *  @param  {String} chars  String listing characters to be removed
- *  @param  {String|Number} [column] Column ID (number)
+ *  @param  {String|Integer} [column] Column ID (number)
  *                                   or name (string)
  */
 p5.Table.prototype.removeTokens = function(chars, column) {
@@ -710,7 +710,7 @@ p5.Table.prototype.removeTokens = function(chars, column) {
  *  may be referenced by either its ID or title.
  *
  *  @method  trim
- *  @param  {String|Number} column Column ID (number)
+ *  @param  {String|Integer} [column] Column ID (number)
  *                                   or name (string)
  */
 p5.Table.prototype.trim = function(column) {
@@ -751,7 +751,7 @@ p5.Table.prototype.trim = function(column) {
  *  would remove the second column, and so on.
  *
  *  @method  removeColumn
- *  @param  {String|Number} column columnName (string) or ID (number)
+ *  @param  {String|Integer} column columnName (string) or ID (number)
  *
  * @example
  * <div class="norender">
@@ -815,7 +815,7 @@ p5.Table.prototype.removeColumn = function(c) {
  * by either its ID or title.
  *
  * @method  set
- * @param {String|Number} column column ID (Number)
+ * @param {String|Integer} column column ID (Number)
  *                               or title (String)
  * @param {String|Number} value  value to assign
  *
@@ -864,8 +864,8 @@ p5.Table.prototype.set = function(row, column, value) {
  * by either its ID or title.
  *
  * @method setNum
- * @param {Number} row row ID
- * @param {String|Number} column column ID (Number)
+ * @param {Integer} row row ID
+ * @param {String|Integer} column column ID (Number)
  *                               or title (String)
  * @param {Number} value  value to assign
  *
@@ -910,8 +910,8 @@ p5.Table.prototype.setNum = function(row, column, value) {
  * by either its ID or title.
  *
  * @method  setString
- * @param {Number} row row ID
- * @param {String|Number} column column ID (Number)
+ * @param {Integer} row row ID
+ * @param {String|Integer} column column ID (Number)
  *                               or title (String)
  * @param {String} value  value to assign
  */
@@ -925,8 +925,8 @@ p5.Table.prototype.setString = function(row, column, value) {
  * either its ID or title.
  *
  * @method  get
- * @param {Number} row row ID
- * @param  {String|Number} column columnName (string) or
+ * @param {Integer} row row ID
+ * @param  {String|Integer} column columnName (string) or
  *                                   ID (number)
  * @return {String|Number}
  *
@@ -972,8 +972,8 @@ p5.Table.prototype.get = function(row, column) {
  * either its ID or title.
  *
  * @method  getNum
- * @param {Number} row row ID
- * @param  {String|Number} column columnName (string) or
+ * @param {Integer} row row ID
+ * @param  {String|Integer} column columnName (string) or
  *                                   ID (number)
  * @return {Number}
  *
@@ -1017,8 +1017,8 @@ p5.Table.prototype.getNum = function(row, column) {
  * either its ID or title.
  *
  * @method  getString
- * @param {Number} row row ID
- * @param  {String|Number} column columnName (string) or
+ * @param {Integer} row row ID
+ * @param  {String|Integer} column columnName (string) or
  *                                   ID (number)
  * @return {String}
  *
@@ -1066,7 +1066,7 @@ p5.Table.prototype.getString = function(row, column) {
  * title.
  *
  * @method  getObject
- * @param {String} headerColumn Name of the column which should be used to
+ * @param {String} [headerColumn] Name of the column which should be used to
  *                              title each row object (optional)
  * @return {Object}
  *
