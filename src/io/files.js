@@ -1117,8 +1117,8 @@ p5.PrintWriter = function(filename, extension) {
    * @example
    * <div>
    * <code>
-   * var writer; 
-   * 
+   * var writer;
+   *
    * function setup () {
    *   writer = createWriter("outputFileName", "txt");
    *   // Initially, writer.contents = ""
@@ -1127,14 +1127,14 @@ p5.PrintWriter = function(filename, extension) {
    *   .position(10, 10)
    *   .mousePressed(function() {
    *
-   *    // Adding data to output in one single line 
+   *    // Adding data to output in one single line
    *     for (var i = 0; i < 10; i++) {
    *       writer.write(i * i); // writer.contents += i * 1
    *     }
    *    // This method saves the file
-   *     writer.close(); 
+   *     writer.close();
    *   });
-   *   
+   *
    * }
    * </code>
    * </div>
@@ -1149,8 +1149,8 @@ p5.PrintWriter = function(filename, extension) {
    * @example
    * <div>
    * <code>
-   * var writer; 
-   * 
+   * var writer;
+   *
    * function setup () {
    *   writer = createWriter("outputFileName", "txt");
    *   // Initially, writer.contents = ""
@@ -1159,14 +1159,14 @@ p5.PrintWriter = function(filename, extension) {
    *   .position(10, 10)
    *   .mousePressed(function() {
    *
-   *    // Adding data to output in one single line 
+   *    // Adding data to output in one single line
    *     for (var i = 0; i < 10; i++) {
    *       writer.print(i * i); // writer.contents += i * 1 + "\n"
    *     }
    *    // This method saves the file and flushes the content afterwards.
-   *     writer.close(); 
+   *     writer.close();
    *   });
-   *   
+   *
    * }
    * </code>
    * </div>
@@ -1180,8 +1180,8 @@ p5.PrintWriter = function(filename, extension) {
    * @example
    * <div>
    * <code>
-   * var writer; 
-   * 
+   * var writer;
+   *
    * function setup () {
    *   writer = createWriter("outputFileName", "txt");
    *   // Initially, writer.content = ""
@@ -1190,23 +1190,23 @@ p5.PrintWriter = function(filename, extension) {
    *   .position(10, 10)
    *   .mousePressed(function() {
    *
-   *    // Adding data to output in one single line 
+   *    // Adding data to output in one single line
    *     for (var i = 0; i < 10; i++) {
    *       writer.write(i * i); // writer.content += i * 1
    *     }
-   *     
+   *
    *    // Right now.. writer.content = "0149162536496481"
    *    writer.flush();
    *    // After flush method is called.. writer.content = ""
-   *    
+   *
    *    // This method saves the file and also flushes the content
-   *     writer.close(); 
+   *     writer.close();
    *   });
-   *   
+   *
    * }
    * </code>
    * </div>
-   * 
+   *
    */
   this.flush = function() {
     this.content = '';
@@ -1219,25 +1219,25 @@ p5.PrintWriter = function(filename, extension) {
    * <code>
    * var clicked; // a variable to count number of times user clicks the button
    * var writer; // will store p5 PrintWriter object
-   * 
+   *
    * function setup () {
    *   writer = createWriter("outputFileName", "extension"); // extension = "txt" or something else.
    *   // Initially, writer.content = ""
-   *   
+   *
    *   clicked = 0;
-   *   
+   *
    *  createButton('save')
    *   .position(10, 10)
    *   .mousePressed(function() {
    *     clicked += 1;
-   *   
-   *    // Adding some data to save as outputFileName.extension 
+   *
+   *    // Adding some data to save as outputFileName.extension
    *     writer.write(clicked); // writer.content += clicked;
-   *    
+   *
    *    // Save the file
-   *     writer.close(); 
+   *     writer.close();
    *   });
-   *   
+   *
    * }
    * </code>
    * </div>
