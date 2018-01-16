@@ -1,10 +1,13 @@
 var cnv, soundFile, fft, peakDetect;
 var ellipseWidth = 10;
 
+function preload() {
+  soundFile = loadSound('../_files/beat.mp3');
+}
+
 function setup() {
   cnv = createCanvas(100,100);
 
-  soundFile = loadSound('../_files/beat.mp3');
   fft = new p5.FFT();
   peakDetect = new p5.PeakDetect();
 

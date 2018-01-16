@@ -170,7 +170,8 @@ p5.prototype.shader = function(s) {
 p5.prototype.normalMaterial = function() {
   this._renderer.drawMode = constants.FILL;
   this._renderer.setFillShader(this._renderer._getNormalShader());
-  this._renderer.noStroke();
+  this._renderer.curFillColor = [1, 1, 1, 1];
+  this.noStroke();
   return this;
 };
 
@@ -185,9 +186,12 @@ p5.prototype.normalMaterial = function() {
  * <div>
  * <code>
  * var img;
+ * function preload() {
+ *   img = loadImage('assets/laDefense.jpg');
+ * }
+ *
  * function setup() {
  *   createCanvas(100, 100, WEBGL);
- *   img = loadImage('assets/laDefense.jpg');
  * }
  *
  * function draw() {
@@ -262,7 +266,7 @@ p5.prototype.texture = function(tex) {
   shader.setUniform('uSpecular', false);
   shader.setUniform('isTexture', true);
   shader.setUniform('uSampler', tex);
-  this._renderer.noStroke();
+  this.noStroke();
   return this;
 };
 
@@ -303,10 +307,11 @@ p5.prototype.texture = function(tex) {
  * @chainable
  */
 p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
-  var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
+  var color = p5.prototype.color.apply(this, arguments);
+  this._renderer.curFillColor = color._array;
 
   var shader = this._renderer._useLightShader();
-  shader.setUniform('uMaterialColor', colors);
+  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
   shader.setUniform('uSpecular', false);
   shader.setUniform('isTexture', false);
   return this;
@@ -349,10 +354,11 @@ p5.prototype.ambientMaterial = function(v1, v2, v3, a) {
  * @chainable
  */
 p5.prototype.specularMaterial = function(v1, v2, v3, a) {
-  var colors = this._renderer._applyColorBlend.apply(this._renderer, arguments);
+  var color = p5.prototype.color.apply(this, arguments);
+  this._renderer.curFillColor = color._array;
 
   var shader = this._renderer._useLightShader();
-  shader.setUniform('uMaterialColor', colors);
+  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
   shader.setUniform('uSpecular', true);
   shader.setUniform('isTexture', false);
   return this;
@@ -362,16 +368,11 @@ p5.prototype.specularMaterial = function(v1, v2, v3, a) {
  * @private blends colors according to color components.
  * If alpha value is less than 1, we need to enable blending
  * on our gl context.  Otherwise opaque objects need to a depthMask.
- * @param  {Number} v1 [description]
- * @param  {Number} v2 [description]
- * @param  {Number} v3 [description]
- * @param  {Number} a  [description]
- * @return {[Number]}  Normalized numbers array
+ * @param  {Number[]} color [description]
+ * @return {Number[]]}  Normalized numbers array
  */
-p5.RendererGL.prototype._applyColorBlend = function(v1, v2, v3, a) {
+p5.RendererGL.prototype._applyColorBlend = function(colors) {
   var gl = this.GL;
-  var color = this._pInst.color.apply(this._pInst, arguments);
-  var colors = color._array;
   if (colors[colors.length - 1] < 1.0) {
     gl.depthMask(false);
     gl.enable(gl.BLEND);

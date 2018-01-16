@@ -6,6 +6,11 @@ var img;
 var vid;
 var theta = 0;
 
+function preload() {
+  img = loadImage("assets/UV_Grid_Sm.jpg");
+
+}
+
 function setup(){
   createCanvas(windowWidth, windowHeight, WEBGL);
   
@@ -13,12 +18,9 @@ function setup(){
   // createCanvas(windowWidth, windowHeight);
 
   // img = loadImage("assets/cat.jpg");
-  img = loadImage("assets/UV_Grid_Sm.jpg");
   // vid = createVideo(["assets/360video_256crop_v2.mp4"]);
   //vid.loop();
   //vid.hide();
-
-
 }
 
 function draw(){

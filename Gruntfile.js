@@ -19,6 +19,10 @@
  *                     start the connect server and leave it running; the tests
  *                     can then be opened at localhost:9001/test/test.html
  *
+ *  grunt yui:dev     - This rebuilds the inline documentation. It also rebuilds
+ *                     each time a change to the source is detected. You can preview
+ *                     the reference at localhost:9001/test/test.html
+ *
  *  Note: `grunt test:nobuild` will skip the build step when running the tests,
  *  and only runs the test files themselves through the linter: this can save
  *  a lot of time when authoring test specs without making any build changes.
@@ -231,7 +235,8 @@ module.exports = function(grunt) {
           run: true,
           log: true,
           logErrors: true,
-          timeout: 100000
+          timeout: 100000,
+          growlOnSuccess: false
         }
       }
     },
@@ -328,6 +333,11 @@ module.exports = function(grunt) {
         }
       }
     },
+    open: {
+      yui: {
+        path: 'http://0.0.0.0:9001/docs/reference/'
+      }
+    },
     'saucelabs-mocha': {
       all: {
         options: {
@@ -391,6 +401,7 @@ module.exports = function(grunt) {
   // Load the external libraries used.
   grunt.loadNpmTasks('grunt-contrib-compress');
   grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-open');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-eslint');
   grunt.loadNpmTasks('grunt-contrib-watch');
@@ -433,6 +444,14 @@ module.exports = function(grunt) {
   grunt.registerTask('test:nobuild', ['eslint:test', 'connect', 'mocha']);
   grunt.registerTask('yui', ['yuidoc:prod', 'minjson', 'typescript']);
   grunt.registerTask('yui:test', ['yuidoc:prod', 'connect', 'mocha:yui']);
+  grunt.registerTask('yui:dev', [
+    'yui:prod',
+    'build',
+    'connect',
+    'open:yui',
+    'watch:yui'
+  ]);
+  grunt.registerTask('yui:build', ['requirejs:yuidoc_theme', 'yui']);
   grunt.registerTask('default', ['test']);
   grunt.registerTask('saucetest', ['connect', 'saucelabs-mocha']);
 };

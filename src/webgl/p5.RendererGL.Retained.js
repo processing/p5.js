@@ -200,7 +200,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   this._useColorShader();
   var geometry = this.gHash[gId];
 
-  if (this.curStrokeShader.active !== false && geometry.lineVertexCount > 0) {
+  if (this._doStroke && geometry.lineVertexCount > 0) {
     this.curStrokeShader.bindShader();
 
     // bind the stroke shader's 'aPosition' buffer
@@ -229,11 +229,12 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
       );
     }
 
+    this._applyColorBlend(this.curStrokeColor);
     this._drawArrays(gl.TRIANGLES, gId);
     this.curStrokeShader.unbindShader();
   }
 
-  if (this.curFillShader.active !== false) {
+  if (this._doFill !== false) {
     this.curFillShader.bindShader();
 
     // bind the fill shader's 'aPosition' buffer
@@ -282,10 +283,41 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
       );
     }
 
+    this._applyColorBlend(this.curFillColor);
     this._drawElements(gl.TRIANGLES, gId);
     this.curFillShader.unbindShader();
   }
   return this;
+};
+
+/**
+ * Calls drawBuffers() with a scaled model/view matrix.
+ *
+ * This is used by various 3d primitive methods (in primitives.js, eg. plane,
+ * box, torus, etc...) to allow caching of un-scaled geometries. Those
+ * geometries are generally created with unit-length dimensions, cached as
+ * such, and then scaled appropriately in this method prior to rendering.
+ *
+ * @private
+ * @method drawBuffersScaled
+ * @param {String} gId     ID in our geom hash
+ * @param {Number} scaleX  the amount to scale in the X direction
+ * @param {Number} scaleY  the amount to scale in the Y direction
+ * @param {Number} scaleZ  the amount to scale in the Z direction
+ */
+p5.RendererGL.prototype.drawBuffersScaled = function(
+  gId,
+  scaleX,
+  scaleY,
+  scaleZ
+) {
+  var uMVMatrix = this.uMVMatrix.copy();
+  try {
+    this.uMVMatrix.scale(scaleX, scaleY, scaleZ);
+    this.drawBuffers(gId);
+  } finally {
+    this.uMVMatrix = uMVMatrix;
+  }
 };
 
 p5.RendererGL.prototype._drawArrays = function(drawMode, gId) {

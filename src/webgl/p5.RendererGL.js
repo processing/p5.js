@@ -122,10 +122,8 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.fill(255, 255, 255, 255);
   //this.stroke(0, 0, 0, 255);
   this.pointSize = 5.0; //default point size
-  this.curStrokeWeight = 2; //default stroke weight
-  this.curStrokeColor = [0, 0, 0, 1];
-  this._setStrokeWeight();
-  this._setStrokeColor();
+  this.strokeWeight(2);
+  this.stroke(0, 0, 0);
   // array of textures created in this gl context via this.getTexture(src)
   this.textures = [];
   this.name = 'p5.RendererGL'; // for friendly debugger system
@@ -425,6 +423,7 @@ p5.RendererGL.prototype.background = function() {
   var _b = _col.levels[2] / 255;
   var _a = _col.levels[3] / 255;
   this.GL.clearColor(_r, _g, _b, _a);
+  this.GL.depthMask(true);
   this.GL.clear(this.GL.COLOR_BUFFER_BIT | this.GL.DEPTH_BUFFER_BIT);
 };
 
@@ -446,7 +445,7 @@ p5.RendererGL.prototype.background = function() {
  * @param  {Number}            [v2] green or saturation value
  * @param  {Number}            [v3] blue or brightness value
  * @param  {Number}            [a]  opacity
- * @return {p5}                the p5 object
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -471,77 +470,16 @@ p5.RendererGL.prototype.background = function() {
  */
 p5.RendererGL.prototype.fill = function(v1, v2, v3, a) {
   //see material.js for more info on color blending in webgl
-  var colors = this._applyColorBlend.apply(this, arguments);
-  this.curFillColor = colors;
-  if (this.curFillShader.active === false) {
-    this.curFillShader.active = true;
-  }
+  var color = p5.prototype.color.apply(this._pInst, arguments);
+  this.curFillColor = color._array;
+
   if (this.isImmediateDrawing) {
     this.setFillShader(this._getImmediateModeShader());
   } else {
     this.setFillShader(this._getColorShader());
   }
   this.drawMode = constants.FILL;
-  this.curFillShader.setUniform('uMaterialColor', colors);
-};
-
-/**
- * Does not render fill material
- * @method  noFill
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(200, 200, WEBGL);
- * }
- *
- * function draw() {
- *   background(0);
- *   noFill();
- *   stroke(100, 100, 240);
- *   rotateX(frameCount * 0.01);
- *   rotateY(frameCount * 0.01);
- *   box(75, 75, 75);
- * }
- * </code>
- * </div>
- *
- * @alt
- * black canvas with purple cube wireframe spinning
- *
- */
-
-p5.RendererGL.prototype.noFill = function() {
-  this.curFillShader.active = false;
-};
-
-/**
- * Does not render stroke
- * @method  noStroke
- * @example
- * <div>
- * <code>
- * function setup() {
- *   createCanvas(200, 200, WEBGL);
- * }
- *
- * function draw() {
- *   background(0);
- *   noStroke();
- *   fill(240, 150, 150);
- *   rotateX(frameCount * 0.01);
- *   rotateY(frameCount * 0.01);
- *   box(75, 75, 75);
- * }
- * </code>
- * </div>
- *
- * @alt
- * black canvas with pink cube spinning
- *
- */
-p5.RendererGL.prototype.noStroke = function() {
-  this.curStrokeShader.active = false;
+  this.curFillShader.setUniform('uMaterialColor', this.curFillColor);
 };
 
 /**
@@ -576,17 +514,12 @@ p5.RendererGL.prototype.noStroke = function() {
  *
  */
 p5.RendererGL.prototype.stroke = function(r, g, b, a) {
-  if (this.curStrokeShader.active === false) {
-    this.curStrokeShader.active = true;
-  }
   //@todo allow transparency in stroking currently doesn't have
   //any impact and causes problems with specularMaterial
   arguments[3] = 255;
-  var colors = this._applyColorBlend.apply(this, arguments);
-  if (this.curStrokeColor !== colors) {
-    this.curStrokeColor = colors;
-    this._setStrokeColor();
-  }
+  var color = p5.prototype.color.apply(this._pInst, arguments);
+  this.curStrokeColor = color._array;
+  this.curStrokeShader.setUniform('uMaterialColor', this.curStrokeColor);
 };
 
 /**
@@ -630,26 +563,11 @@ p5.RendererGL.prototype.stroke = function(r, g, b, a) {
  *
  */
 p5.RendererGL.prototype.strokeWeight = function(w) {
-  if (this.curStrokeShader.active === false) {
-    this.curStrokeShader.active = true;
-  }
   if (this.curStrokeWeight !== w) {
     this.pointSize = w;
     this.curStrokeWeight = w;
     this.curStrokeShader.setUniform('uStrokeWeight', w);
   }
-};
-
-p5.RendererGL.prototype._setStrokeWeight = function() {
-  // this should only be called after an appropriate call
-  // to shader() internally....
-  this.curStrokeShader.setUniform('uStrokeWeight', this.curStrokeWeight);
-};
-
-p5.RendererGL.prototype._setStrokeColor = function() {
-  // this should only be called after an appropriate call
-  // to shader() internally....
-  this.curStrokeShader.setUniform('uMaterialColor', this.curStrokeColor);
 };
 
 /**
@@ -789,30 +707,30 @@ p5.RendererGL.prototype.translate = function(x, y, z) {
  * @chainable
  */
 p5.RendererGL.prototype.scale = function(x, y, z) {
-  this.uMVMatrix.scale([x, y, z]);
+  this.uMVMatrix.scale(x, y, z);
   return this;
 };
 
 p5.RendererGL.prototype.rotate = function(rad, axis) {
-  if (!axis) {
-    axis = [0, 0, 1];
+  if (typeof axis === 'undefined') {
+    return this.rotateZ(rad);
   }
-  this.uMVMatrix.rotate(rad, axis);
+  p5.Matrix.prototype.rotate.apply(this.uMVMatrix, arguments);
   return this;
 };
 
 p5.RendererGL.prototype.rotateX = function(rad) {
-  this.rotate(rad, [1, 0, 0]);
+  this.rotate(rad, 1, 0, 0);
   return this;
 };
 
 p5.RendererGL.prototype.rotateY = function(rad) {
-  this.rotate(rad, [0, 1, 0]);
+  this.rotate(rad, 0, 1, 0);
   return this;
 };
 
 p5.RendererGL.prototype.rotateZ = function(rad) {
-  this.rotate(rad, [0, 0, 1]);
+  this.rotate(rad, 0, 0, 1);
   return this;
 };
 
@@ -874,8 +792,7 @@ p5.RendererGL.prototype.setFillShader = function(s) {
     // safe to do this multiple times;
     // init() will bail early if has already been run.
     this.curFillShader.init();
-    this.curFillShader.useProgram();
-    this.curFillShader.active = true;
+    //this.curFillShader.useProgram();
   }
   // always return this.curFillShader, even if no change was made.
   return this.curFillShader;
@@ -893,8 +810,7 @@ p5.RendererGL.prototype.setStrokeShader = function(s) {
     // safe to do this multiple times;
     // init() will bail early if has already been run.
     this.curStrokeShader.init();
-    this.curStrokeShader.useProgram();
-    this.curStrokeShader.active = true;
+    //this.curStrokeShader.useProgram();
   }
   // always return this.curLineShader, even if no change was made.
   return this.curStrokeShader;
@@ -943,6 +859,7 @@ p5.RendererGL.prototype._useImmediateModeShader = function() {
     // note that if we're using the texture shader...
     // this shouldn't change. :)
   }
+  return this.curFillShader;
 };
 
 p5.RendererGL.prototype._getLightShader = function() {

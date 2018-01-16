@@ -115,7 +115,7 @@ p5.RendererGL.prototype.endShape = function(
 ) {
   this._useImmediateModeShader();
 
-  if (this.curStrokeShader.active === true) {
+  if (this._doStroke && this.drawMode !== constants.TEXTURE) {
     for (var i = 0; i < this.immediateMode.vertices.length - 1; i++) {
       this.immediateMode.edges.push([i, i + 1]);
     }
@@ -129,7 +129,7 @@ p5.RendererGL.prototype.endShape = function(
     this._edgesToVertices(this.immediateMode);
     this._drawStrokeImmediateMode();
   }
-  if (this.curFillShader.active === true) {
+  if (this._doFill) {
     this._drawFillImmediateMode(
       mode,
       isCurve,
@@ -258,6 +258,7 @@ p5.RendererGL.prototype._drawFillImmediateMode = function(
         ' not yet implemented in webgl mode.'
     );
   } else {
+    this._applyColorBlend(this.curFillColor);
     gl.enable(gl.BLEND);
     gl.drawArrays(
       this.immediateMode.shapeMode,
@@ -312,6 +313,7 @@ p5.RendererGL.prototype._drawStrokeImmediateMode = function() {
     );
   }
 
+  this._applyColorBlend(this.curStrokeColor);
   gl.drawArrays(gl.TRIANGLES, 0, this.immediateMode.lineVertices.length);
 
   // todo / optimizations? leave bound until another shader is set?

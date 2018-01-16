@@ -165,7 +165,7 @@ p5.prototype.loadFont = function(path, onSuccess, onError) {
  *                     see rectMode() for more info
  * @param {Number} [y2]  by default, the height of the text box,
  *                     see rectMode() for more info
- * @return {p5} this
+ * @chainable
  * @example
  * <div>
  * <code>

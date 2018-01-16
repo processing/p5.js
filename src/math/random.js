@@ -192,16 +192,16 @@ p5.prototype.random = function(min, max) {
  * </div>
  * <div>
  * <code>
- *var distribution = new Array(360);
+ * var distribution = new Array(360);
  *
- *function setup() {
+ * function setup() {
  *   createCanvas(100, 100);
  *   for (var i = 0; i < distribution.length; i++) {
  *     distribution[i] = floor(randomGaussian(0, 15));
  *   }
- *}
+ * }
  *
- *function draw() {
+ * function draw() {
  *   background(204);
  *
  *   translate(width / 2, width / 2);
@@ -212,7 +212,7 @@ p5.prototype.random = function(min, max) {
  *     var dist = abs(distribution[i]);
  *     line(0, 0, dist, 0);
  *   }
- *}
+ * }
  * </code>
  * </div>
  * @alt
