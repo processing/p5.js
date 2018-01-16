@@ -12,8 +12,17 @@
 var p5 = require('../core/core');
 var polarGeometry = require('../math/polargeometry');
 var constants = require('../core/constants');
-var GLMAT_ARRAY_TYPE =
-  typeof Float32Array !== 'undefined' ? Float32Array : Array;
+
+var GLMAT_ARRAY_TYPE = Array;
+var isMatrixArray = function(x) {
+  return x instanceof Array;
+};
+if (typeof Float32Array !== 'undefined') {
+  GLMAT_ARRAY_TYPE = Float32Array;
+  isMatrixArray = function(x) {
+    return x instanceof Array || x instanceof Float32Array;
+  };
+}
 
 /**
  * A class to describe a 4x4 matrix
@@ -69,7 +78,7 @@ p5.Matrix.prototype.set = function(inMatrix) {
   if (inMatrix instanceof p5.Matrix) {
     this.mat4 = inMatrix.mat4;
     return this;
-  } else if (inMatrix instanceof GLMAT_ARRAY_TYPE) {
+  } else if (isMatrixArray(inMatrix)) {
     this.mat4 = inMatrix;
     return this;
   } else if (arguments.length === 16) {
@@ -171,7 +180,7 @@ p5.Matrix.prototype.transpose = function(a) {
     this.mat4[13] = a13;
     this.mat4[14] = a23;
     this.mat4[15] = a.mat4[15];
-  } else if (a instanceof GLMAT_ARRAY_TYPE) {
+  } else if (isMatrixArray(a)) {
     a01 = a[1];
     a02 = a[2];
     a03 = a[3];
@@ -226,7 +235,7 @@ p5.Matrix.prototype.invert = function(a) {
     a31 = a.mat4[13];
     a32 = a.mat4[14];
     a33 = a.mat4[15];
-  } else if (a instanceof GLMAT_ARRAY_TYPE) {
+  } else if (isMatrixArray(a)) {
     a00 = a[0];
     a01 = a[1];
     a02 = a[2];
@@ -366,7 +375,16 @@ p5.Matrix.prototype.inverseTranspose = function(matrix) {
     this.mat3[8] = matrix.mat4[10];
   }
 
-  this.invert3x3().transpose3x3(this.mat3);
+  var inverse = this.invert3x3();
+  // check inverse succeded
+  if (inverse) {
+    inverse.transpose3x3(this.mat3);
+  } else {
+    // in case of singularity, just zero the matrix
+    for (var i = 0; i < 9; i++) {
+      this.mat3[i] = 0;
+    }
+  }
   return this;
 };
 
@@ -401,13 +419,16 @@ p5.Matrix.prototype.determinant = function() {
  * @chainable
  */
 p5.Matrix.prototype.mult = function(multMatrix) {
-  var _dest = new GLMAT_ARRAY_TYPE(16);
-  var _src = new GLMAT_ARRAY_TYPE(16);
+  var _src;
 
-  if (multMatrix instanceof p5.Matrix) {
+  if (multMatrix === this || multMatrix === this.mat4) {
+    _src = this.copy().mat4; // only need to allocate in this rare case
+  } else if (multMatrix instanceof p5.Matrix) {
     _src = multMatrix.mat4;
-  } else if (multMatrix instanceof GLMAT_ARRAY_TYPE) {
+  } else if (isMatrixArray(multMatrix)) {
     _src = multMatrix;
+  } else {
+    return; // nothing to do.
   }
 
   // each row is used for the multiplier
@@ -415,39 +436,37 @@ p5.Matrix.prototype.mult = function(multMatrix) {
     b1 = this.mat4[1],
     b2 = this.mat4[2],
     b3 = this.mat4[3];
-  _dest[0] = b0 * _src[0] + b1 * _src[4] + b2 * _src[8] + b3 * _src[12];
-  _dest[1] = b0 * _src[1] + b1 * _src[5] + b2 * _src[9] + b3 * _src[13];
-  _dest[2] = b0 * _src[2] + b1 * _src[6] + b2 * _src[10] + b3 * _src[14];
-  _dest[3] = b0 * _src[3] + b1 * _src[7] + b2 * _src[11] + b3 * _src[15];
+  this.mat4[0] = b0 * _src[0] + b1 * _src[4] + b2 * _src[8] + b3 * _src[12];
+  this.mat4[1] = b0 * _src[1] + b1 * _src[5] + b2 * _src[9] + b3 * _src[13];
+  this.mat4[2] = b0 * _src[2] + b1 * _src[6] + b2 * _src[10] + b3 * _src[14];
+  this.mat4[3] = b0 * _src[3] + b1 * _src[7] + b2 * _src[11] + b3 * _src[15];
 
   b0 = this.mat4[4];
   b1 = this.mat4[5];
   b2 = this.mat4[6];
   b3 = this.mat4[7];
-  _dest[4] = b0 * _src[0] + b1 * _src[4] + b2 * _src[8] + b3 * _src[12];
-  _dest[5] = b0 * _src[1] + b1 * _src[5] + b2 * _src[9] + b3 * _src[13];
-  _dest[6] = b0 * _src[2] + b1 * _src[6] + b2 * _src[10] + b3 * _src[14];
-  _dest[7] = b0 * _src[3] + b1 * _src[7] + b2 * _src[11] + b3 * _src[15];
+  this.mat4[4] = b0 * _src[0] + b1 * _src[4] + b2 * _src[8] + b3 * _src[12];
+  this.mat4[5] = b0 * _src[1] + b1 * _src[5] + b2 * _src[9] + b3 * _src[13];
+  this.mat4[6] = b0 * _src[2] + b1 * _src[6] + b2 * _src[10] + b3 * _src[14];
+  this.mat4[7] = b0 * _src[3] + b1 * _src[7] + b2 * _src[11] + b3 * _src[15];
 
   b0 = this.mat4[8];
   b1 = this.mat4[9];
   b2 = this.mat4[10];
   b3 = this.mat4[11];
-  _dest[8] = b0 * _src[0] + b1 * _src[4] + b2 * _src[8] + b3 * _src[12];
-  _dest[9] = b0 * _src[1] + b1 * _src[5] + b2 * _src[9] + b3 * _src[13];
-  _dest[10] = b0 * _src[2] + b1 * _src[6] + b2 * _src[10] + b3 * _src[14];
-  _dest[11] = b0 * _src[3] + b1 * _src[7] + b2 * _src[11] + b3 * _src[15];
+  this.mat4[8] = b0 * _src[0] + b1 * _src[4] + b2 * _src[8] + b3 * _src[12];
+  this.mat4[9] = b0 * _src[1] + b1 * _src[5] + b2 * _src[9] + b3 * _src[13];
+  this.mat4[10] = b0 * _src[2] + b1 * _src[6] + b2 * _src[10] + b3 * _src[14];
+  this.mat4[11] = b0 * _src[3] + b1 * _src[7] + b2 * _src[11] + b3 * _src[15];
 
   b0 = this.mat4[12];
   b1 = this.mat4[13];
   b2 = this.mat4[14];
   b3 = this.mat4[15];
-  _dest[12] = b0 * _src[0] + b1 * _src[4] + b2 * _src[8] + b3 * _src[12];
-  _dest[13] = b0 * _src[1] + b1 * _src[5] + b2 * _src[9] + b3 * _src[13];
-  _dest[14] = b0 * _src[2] + b1 * _src[6] + b2 * _src[10] + b3 * _src[14];
-  _dest[15] = b0 * _src[3] + b1 * _src[7] + b2 * _src[11] + b3 * _src[15];
-
-  this.mat4 = _dest;
+  this.mat4[12] = b0 * _src[0] + b1 * _src[4] + b2 * _src[8] + b3 * _src[12];
+  this.mat4[13] = b0 * _src[1] + b1 * _src[5] + b2 * _src[9] + b3 * _src[13];
+  this.mat4[14] = b0 * _src[2] + b1 * _src[6] + b2 * _src[10] + b3 * _src[14];
+  this.mat4[15] = b0 * _src[3] + b1 * _src[7] + b2 * _src[11] + b3 * _src[15];
 
   return this;
 };
@@ -458,42 +477,32 @@ p5.Matrix.prototype.mult = function(multMatrix) {
  * @param  {p5.Vector|Float32Array|Number[]} s vector to scale by
  * @chainable
  */
-p5.Matrix.prototype.scale = function() {
-  var x, y, z;
-  var args = new Array(arguments.length);
-  for (var i = 0; i < args.length; ++i) {
-    args[i] = arguments[i];
+p5.Matrix.prototype.scale = function(x, y, z) {
+  if (x instanceof p5.Vector) {
+    // x is a vector, extract the components from it.
+    y = x.y;
+    z = x.z;
+    x = x.x; // must be last
+  } else if (x instanceof Array) {
+    // x is an array, extract the components from it.
+    y = x[1];
+    z = x[2];
+    x = x[0]; // must be last
   }
-  //if our 1st arg is a type p5.Vector
-  if (args[0] instanceof p5.Vector) {
-    x = args[0].x;
-    y = args[0].y;
-    z = args[0].z;
-  } else if (args[0] instanceof Array) {
-    //otherwise if it's an array
-    x = args[0][0];
-    y = args[0][1];
-    z = args[0][2];
-  }
-  var _dest = new GLMAT_ARRAY_TYPE(16);
-  _dest[0] = this.mat4[0] * x;
-  _dest[1] = this.mat4[1] * x;
-  _dest[2] = this.mat4[2] * x;
-  _dest[3] = this.mat4[3] * x;
-  _dest[4] = this.mat4[4] * y;
-  _dest[5] = this.mat4[5] * y;
-  _dest[6] = this.mat4[6] * y;
-  _dest[7] = this.mat4[7] * y;
-  _dest[8] = this.mat4[8] * z;
-  _dest[9] = this.mat4[9] * z;
-  _dest[10] = this.mat4[10] * z;
-  _dest[11] = this.mat4[11] * z;
-  _dest[12] = this.mat4[12];
-  _dest[13] = this.mat4[13];
-  _dest[14] = this.mat4[14];
-  _dest[15] = this.mat4[15];
 
-  this.mat4 = _dest;
+  this.mat4[0] *= x;
+  this.mat4[1] *= x;
+  this.mat4[2] *= x;
+  this.mat4[3] *= x;
+  this.mat4[4] *= y;
+  this.mat4[5] *= y;
+  this.mat4[6] *= y;
+  this.mat4[7] *= y;
+  this.mat4[8] *= z;
+  this.mat4[9] *= z;
+  this.mat4[10] *= z;
+  this.mat4[11] *= z;
+
   return this;
 };
 
@@ -505,22 +514,24 @@ p5.Matrix.prototype.scale = function() {
  * @chainable
  * inspired by Toji's gl-matrix lib, mat4 rotation
  */
-p5.Matrix.prototype.rotate = function(a, axis) {
-  var x, y, z, _a, len;
+p5.Matrix.prototype.rotate = function(a, x, y, z) {
+  var _a, len;
 
   if (this.p5 && this.p5._angleMode === constants.DEGREES) {
     _a = polarGeometry.degreesToRadians(a);
   } else {
     _a = a;
   }
-  if (axis instanceof p5.Vector) {
-    x = axis.x;
-    y = axis.y;
-    z = axis.z;
-  } else if (axis instanceof Array) {
-    x = axis[0];
-    y = axis[1];
-    z = axis[2];
+  if (x instanceof p5.Vector) {
+    // x is a vector, extract the components from it.
+    y = x.y;
+    z = x.z;
+    x = x.x; //must be last
+  } else if (x instanceof Array) {
+    // x is an array, extract the components from it.
+    y = x[1];
+    z = x[2];
+    x = x[0]; //must be last
   }
 
   len = Math.sqrt(x * x + y * y + z * z);
@@ -591,13 +602,13 @@ p5.Matrix.prototype.translate = function(v) {
 };
 
 p5.Matrix.prototype.rotateX = function(a) {
-  this.rotate(a, [1, 0, 0]);
+  this.rotate(a, 1, 0, 0);
 };
 p5.Matrix.prototype.rotateY = function(a) {
-  this.rotate(a, [0, 1, 0]);
+  this.rotate(a, 0, 1, 0);
 };
 p5.Matrix.prototype.rotateZ = function(a) {
-  this.rotate(a, [0, 0, 1]);
+  this.rotate(a, 0, 0, 1);
 };
 
 /**
