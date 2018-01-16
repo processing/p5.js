@@ -241,7 +241,7 @@ p5.RendererGL.prototype.endShape = function(
         fill = this._getImmediateLightShader();
       }
     } else {
-      if (!fill || !fill.isColorShader()) {
+      if (!fill /*|| !fill.isColorShader()*/) {
         fill = this._getImmediateFlatShader();
       }
     }

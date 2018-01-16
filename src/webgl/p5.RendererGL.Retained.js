@@ -156,7 +156,7 @@ p5.RendererGL.prototype.drawBuffers = function(gId, drawMode) {
       fill = this._getTextureShader();
     }
   } else {
-    if (!fill || !fill.isColorShader()) {
+    if (!fill /* || !fill.isColorShader()*/) {
       fill = this._getColorShader();
     }
   }
