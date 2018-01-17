@@ -10,8 +10,6 @@
 'use strict';
 
 var p5 = require('../core/core');
-var polarGeometry = require('../math/polargeometry');
-var constants = require('../core/constants');
 
 var GLMAT_ARRAY_TYPE = Array;
 var isMatrixArray = function(x) {
@@ -515,13 +513,8 @@ p5.Matrix.prototype.scale = function(x, y, z) {
  * inspired by Toji's gl-matrix lib, mat4 rotation
  */
 p5.Matrix.prototype.rotate = function(a, x, y, z) {
-  var _a, len;
+  var _a = this.p5 ? this.p5._toRadians(a) : a;
 
-  if (this.p5 && this.p5._angleMode === constants.DEGREES) {
-    _a = polarGeometry.degreesToRadians(a);
-  } else {
-    _a = a;
-  }
   if (x instanceof p5.Vector) {
     // x is a vector, extract the components from it.
     y = x.y;
@@ -534,7 +527,7 @@ p5.Matrix.prototype.rotate = function(a, x, y, z) {
     x = x[0]; //must be last
   }
 
-  len = Math.sqrt(x * x + y * y + z * z);
+  var len = Math.sqrt(x * x + y * y + z * z);
   x *= 1 / len;
   y *= 1 / len;
   z *= 1 / len;

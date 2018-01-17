@@ -9,7 +9,6 @@
 'use strict';
 
 var p5 = require('./core');
-var constants = require('./constants');
 
 /**
  * Multiplies the current matrix by the one specified through the parameters.
@@ -195,13 +194,7 @@ p5.prototype.resetMatrix = function() {
  */
 p5.prototype.rotate = function(angle, axis) {
   p5._validateParameters('rotate', arguments);
-  var r;
-  if (this._angleMode === constants.DEGREES) {
-    r = this.radians(angle);
-  } else if (this._angleMode === constants.RADIANS) {
-    r = angle;
-  }
-  this._renderer.rotate(r, axis);
+  this._renderer.rotate(this._toRadians(angle), axis);
   return this;
 };
 
@@ -411,10 +404,7 @@ p5.prototype.scale = function(x, y, z) {
  */
 p5.prototype.shearX = function(angle) {
   p5._validateParameters('shearX', arguments);
-  if (this._angleMode === constants.DEGREES) {
-    angle = this.radians(angle);
-  }
-  this._renderer.shearX(angle);
+  this._renderer.shearX(this._toRadians(angle));
   return this;
 };
 
@@ -453,10 +443,7 @@ p5.prototype.shearX = function(angle) {
  */
 p5.prototype.shearY = function(angle) {
   p5._validateParameters('shearY', arguments);
-  if (this._angleMode === constants.DEGREES) {
-    angle = this.radians(angle);
-  }
-  this._renderer.shearY(angle);
+  this._renderer.shearY(this._toRadians(angle));
   return this;
 };
 

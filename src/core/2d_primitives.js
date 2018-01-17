@@ -82,10 +82,9 @@ p5.prototype.arc = function(x, y, w, h, start, stop, mode) {
   if (!this._renderer._doStroke && !this._renderer._doFill) {
     return this;
   }
-  if (this._angleMode === constants.DEGREES) {
-    start = this.radians(start);
-    stop = this.radians(stop);
-  }
+
+  start = this._toRadians(start);
+  stop = this._toRadians(stop);
 
   // Make all angles positive...
   while (start < 0) {
