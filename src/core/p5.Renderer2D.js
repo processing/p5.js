@@ -1366,13 +1366,18 @@ p5.Renderer2D.prototype._applyTextProperties = function() {
 
 p5.Renderer2D.prototype.push = function() {
   this.drawingContext.save();
+
+  // get the base renderer style
+  return p5.Renderer.prototype.push.apply(this);
 };
 
-p5.Renderer2D.prototype.pop = function() {
+p5.Renderer2D.prototype.pop = function(style) {
   this.drawingContext.restore();
   // Re-cache the fill / stroke state
   this._cachedFillStyle = this.drawingContext.fillStyle;
   this._cachedStrokeStyle = this.drawingContext.strokeStyle;
+
+  p5.Renderer.prototype.pop.call(this, style);
 };
 
 module.exports = p5.Renderer2D;

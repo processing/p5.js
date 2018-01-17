@@ -7,9 +7,6 @@ require('../core/p5.Renderer');
 require('./p5.Matrix');
 var fs = require('fs');
 
-var uMVMatrixStack = [];
-var cameraMatrixStack = [];
-
 var defaultShaders = {
   immediateVert: fs.readFileSync(
     __dirname + '/shaders/immediate.vert',
@@ -179,11 +176,16 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
     document.body.appendChild(c);
   }
   this._pInst.canvas = c;
+
+  this._pInst.push();
   var renderer = new p5.RendererGL(this._pInst.canvas, this._pInst, true, attr);
   this._pInst._setProperty('_renderer', renderer);
   renderer.resize(w, h);
   renderer._applyDefaults();
   this._pInst._elements.push(renderer);
+
+  this._pInst.pop();
+
   if (typeof callback === 'function') {
     //setTimeout with 0 forces the task to the back of the queue, this ensures that
     //we finish switching out the renderer
@@ -750,27 +752,17 @@ p5.RendererGL.prototype.rotateZ = function(rad) {
   return this;
 };
 
-/**
- * pushes a copy of the model view matrix onto the
- * MV Matrix stack.
- */
 p5.RendererGL.prototype.push = function() {
-  uMVMatrixStack.push(this.uMVMatrix.copy());
-  cameraMatrixStack.push(this.cameraMatrix.copy());
-};
+  // get the base renderer style
+  var style = p5.Renderer.prototype.push.apply(this);
 
-/**
- * [pop description]
- */
-p5.RendererGL.prototype.pop = function() {
-  if (uMVMatrixStack.length === 0) {
-    throw new Error('Invalid popMatrix!');
-  }
-  this.uMVMatrix = uMVMatrixStack.pop();
-  if (cameraMatrixStack.length === 0) {
-    throw new Error('Invalid popMatrix!');
-  }
-  this.cameraMatrix = cameraMatrixStack.pop();
+  // add webgl-specific style properties
+  var properties = style.properties;
+
+  properties.uMVMatrix = this.uMVMatrix.copy();
+  properties.cameraMatrix = this.cameraMatrix.copy();
+
+  return style;
 };
 
 p5.RendererGL.prototype.resetMatrix = function() {

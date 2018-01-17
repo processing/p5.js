@@ -60,6 +60,46 @@ p5.Renderer = function(elt, pInst, isMainCanvas) {
 
 p5.Renderer.prototype = Object.create(p5.Element.prototype);
 
+p5.Renderer.prototype.push = function() {
+  return {
+    properties: {
+      _doStroke: this._doStroke,
+      _strokeSet: this._strokeSet,
+      _doFill: this._doFill,
+      _fillSet: this._fillSet,
+      _tint: this._tint,
+      _imageMode: this._imageMode,
+      _rectMode: this._rectMode,
+      _ellipseMode: this._ellipseMode,
+      _textFont: this._textFont,
+      _textLeading: this._textLeading,
+      _textSize: this._textSize,
+      _textStyle: this._textStyle
+    }
+  };
+};
+
+function assign(to, firstSource) {
+  for (var i = 1; i < arguments.length; i++) {
+    var nextSource = arguments[i];
+    if (nextSource === undefined || nextSource === null) {
+      continue;
+    }
+
+    for (var nextKey in nextSource)
+      if (nextSource.hasOwnProperty(nextKey)) {
+        to[nextKey] = nextSource[nextKey];
+      }
+  }
+  return to;
+}
+
+p5.Renderer.prototype.pop = function(style) {
+  if (style.properties) {
+    assign(this, style.properties);
+  }
+};
+
 /**
  * Resize our canvas element.
  */
