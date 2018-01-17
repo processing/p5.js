@@ -290,6 +290,36 @@ p5.RendererGL.prototype.drawBuffers = function(gId) {
   return this;
 };
 
+/**
+ * Calls drawBuffers() with a scaled model/view matrix.
+ *
+ * This is used by various 3d primitive methods (in primitives.js, eg. plane,
+ * box, torus, etc...) to allow caching of un-scaled geometries. Those
+ * geometries are generally created with unit-length dimensions, cached as
+ * such, and then scaled appropriately in this method prior to rendering.
+ *
+ * @private
+ * @method drawBuffersScaled
+ * @param {String} gId     ID in our geom hash
+ * @param {Number} scaleX  the amount to scale in the X direction
+ * @param {Number} scaleY  the amount to scale in the Y direction
+ * @param {Number} scaleZ  the amount to scale in the Z direction
+ */
+p5.RendererGL.prototype.drawBuffersScaled = function(
+  gId,
+  scaleX,
+  scaleY,
+  scaleZ
+) {
+  var uMVMatrix = this.uMVMatrix.copy();
+  try {
+    this.uMVMatrix.scale(scaleX, scaleY, scaleZ);
+    this.drawBuffers(gId);
+  } finally {
+    this.uMVMatrix = uMVMatrix;
+  }
+};
+
 p5.RendererGL.prototype._drawArrays = function(drawMode, gId) {
   this.GL.drawArrays(drawMode, 0, this.gHash[gId].lineVertexCount);
   return this;

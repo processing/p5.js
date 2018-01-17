@@ -15,9 +15,9 @@ require('./p5.Geometry');
  * @method plane
  * @param  {Number} [width]    width of the plane
  * @param  {Number} [height]   height of the plane
- * @param  {Number} [detailX]  Optional number of triangle
+ * @param  {Integer} [detailX]  Optional number of triangle
  *                             subdivisions in x-dimension
- * @param {Number} [detailY]   Optional number of triangle
+ * @param {Integer} [detailY]   Optional number of triangle
  *                             subdivisions in y-dimension
  * @chainable
  * @example
@@ -59,7 +59,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
     detailY = 1;
   }
 
-  var gId = 'plane|' + width + '|' + height + '|' + detailX + '|' + detailY;
+  var gId = 'plane|' + detailX + '|' + detailY;
 
   if (!this._renderer.geometryInHash(gId)) {
     var _plane = function() {
@@ -68,7 +68,7 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
         v = i / this.detailY;
         for (var j = 0; j <= this.detailX; j++) {
           u = j / this.detailX;
-          p = new p5.Vector(width * u - width / 2, height * v - height / 2, 0);
+          p = new p5.Vector(u - 0.5, v - 0.5, 0);
           this.vertices.push(p);
           this.uvs.push([u, v]);
         }
@@ -88,18 +88,18 @@ p5.prototype.plane = function(width, height, detailX, detailY) {
     this._renderer.createBuffers(gId, planeGeom);
   }
 
-  this._renderer.drawBuffers(gId);
+  this._renderer.drawBuffersScaled(gId, width, height, 0);
 };
 
 /**
  * Draw a box with given width, height and depth
  * @method  box
- * @param  {Number} [width]   width of the box
- * @param  {Number} [height]  height of the box
- * @param  {Number} [depth]   depth of the box
- * @param {Number} [detailX]  Optional number of triangle
+ * @param  {Number} [width]     width of the box
+ * @param  {Number} [Height]    height of the box
+ * @param  {Number} [depth]     depth of the box
+ * @param {Integer} [detailX]  Optional number of triangle
  *                            subdivisions in x-dimension
- * @param {Number} [detailY]  Optional number of triangle
+ * @param {Integer} [detailY]  Optional number of triangle
  *                            subdivisions in y-dimension
  * @chainable
  * @example
@@ -137,8 +137,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
     detailY = 4;
   }
 
-  var gId =
-    'box|' + width + '|' + height + '|' + depth + '|' + detailX + '|' + detailY;
+  var gId = 'box|' + detailX + '|' + detailY;
   if (!this._renderer.geometryInHash(gId)) {
     var _box = function() {
       var cubeIndices = [
@@ -174,9 +173,9 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
           //https://github.com/evanw/lightgl.js
           //octants:https://en.wikipedia.org/wiki/Octant_(solid_geometry)
           var octant = new p5.Vector(
-            ((d & 1) * 2 - 1) * width / 2,
-            ((d & 2) - 1) * height / 2,
-            ((d & 4) / 2 - 1) * depth / 2
+            ((d & 1) * 2 - 1) / 2,
+            ((d & 2) - 1) / 2,
+            ((d & 4) / 2 - 1) / 2
           );
           this.vertices.push(octant);
           this.uvs.push([j & 1, (j & 2) / 2]);
@@ -201,7 +200,7 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
     //geometry Id, Geom object
     this._renderer.createBuffers(gId, boxGeom);
   }
-  this._renderer.drawBuffers(gId);
+  this._renderer.drawBuffersScaled(gId, width, height, depth);
 
   return this;
 };
@@ -210,10 +209,10 @@ p5.prototype.box = function(width, height, depth, detailX, detailY) {
  * Draw a sphere with given radius
  * @method sphere
  * @param  {Number} [radius]          radius of circle
- * @param  {Number} [detailX]         number of segments,
+ * @param  {Integer} [detailX]        number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
- * @param  {Number} [detailY]         number of segments,
+ * @param  {Integer} [detailY]        number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 16
  * @chainable
@@ -243,44 +242,7 @@ p5.prototype.sphere = function(radius, detailX, detailY) {
     detailY = 16;
   }
 
-  var gId = 'sphere|' + radius + '|' + detailX + '|' + detailY;
-  if (!this._renderer.geometryInHash(gId)) {
-    var _sphere = function() {
-      for (var i = 0; i <= this.detailY; i++) {
-        var v = i / this.detailY;
-        var phi = Math.PI * v - Math.PI / 2;
-        var cosPhi = Math.cos(phi);
-        var sinPhi = Math.sin(phi);
-
-        for (var j = 0; j <= this.detailX; j++) {
-          var u = j / this.detailX;
-          var theta = 2 * Math.PI * u;
-          var n = new p5.Vector(
-            cosPhi * Math.sin(theta),
-            sinPhi,
-            cosPhi * Math.cos(theta)
-          );
-          this.vertexNormals.push(n);
-          this.vertices.push(p5.Vector.mult(n, radius));
-          this.uvs.push([u, v]);
-        }
-      }
-    };
-    var sphereGeom = new p5.Geometry(detailX, detailY, _sphere);
-    sphereGeom.computeFaces();
-    if (detailX <= 24 && detailY <= 16) {
-      sphereGeom._makeTriangleEdges();
-      this._renderer._edgesToVertices(sphereGeom);
-    } else {
-      console.log(
-        'Cannot draw stroke on sphere objects with more' +
-          ' than 24 detailX or 16 detailY'
-      );
-    }
-
-    this._renderer.createBuffers(gId, sphereGeom);
-  }
-  this._renderer.drawBuffers(gId);
+  this.ellipsoid(radius, radius, radius, detailX, detailY);
 
   return this;
 };
@@ -376,10 +338,10 @@ var _truncatedCone = function(
  * @method  cylinder
  * @param  {Number} [radius]   radius of the surface
  * @param  {Number} [height]   height of the cylinder
- * @param  {Number} [detailX]  number of segments,
+ * @param  {Integer} [detailX] number of segments,
  *                             the more segments the smoother geometry
  *                             default is 24
- * @param {Number} [detailY]   number of segments in y-dimension,
+ * @param {Integer} [detailY]  number of segments in y-dimension,
  *                             the more segments the smoother geometry
  *                             default is 16
  * @chainable
@@ -414,19 +376,10 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY) {
     detailY = 16;
   }
 
-  var gId = 'cylinder|' + radius + '|' + height + '|' + detailX + '|' + detailY;
+  var gId = 'cylinder|' + detailX + '|' + detailY;
   if (!this._renderer.geometryInHash(gId)) {
     var cylinderGeom = new p5.Geometry(detailX, detailY);
-    _truncatedCone.call(
-      cylinderGeom,
-      radius,
-      radius,
-      height,
-      detailX,
-      detailY,
-      true,
-      true
-    );
+    _truncatedCone.call(cylinderGeom, 1, 1, 1, detailX, detailY, true, true);
     cylinderGeom.computeNormals();
     if (detailX <= 24 && detailY <= 16) {
       cylinderGeom._makeTriangleEdges();
@@ -440,7 +393,7 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY) {
     this._renderer.createBuffers(gId, cylinderGeom);
   }
 
-  this._renderer.drawBuffers(gId);
+  this._renderer.drawBuffersScaled(gId, radius, radius, height);
 
   return this;
 };
@@ -450,10 +403,10 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY) {
  * @method cone
  * @param  {Number} [radius]          radius of the bottom surface
  * @param  {Number} [height]          height of the cone
- * @param  {Number} [detailX]         number of segments,
+ * @param  {Integer} [detailX]        number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24
- * @param  {Number} [detailY]         number of segments,
+ * @param  {Integer} [detailY]        number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 16
  * @chainable
@@ -526,11 +479,11 @@ p5.prototype.cone = function(radius, height, detailX, detailY) {
  * @param  {Number} [radiusx]         xradius of circle
  * @param  {Number} [radiusy]         yradius of circle
  * @param  {Number} [radiusz]         zradius of circle
- * @param  {Number} [detailX]         number of segments,
+ * @param  {Integer} [detailX]        number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 24. Avoid detail number above
  *                                    150, it may crash the browser.
- * @param  {Number} [detailY]         number of segments,
+ * @param  {Integer} [detailY]        number of segments,
  *                                    the more segments the smoother geometry
  *                                    default is 16. Avoid detail number above
  *                                    150, it may crash the browser.
@@ -568,17 +521,7 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
     detailY = 16;
   }
 
-  var gId =
-    'ellipsoid|' +
-    radiusX +
-    '|' +
-    radiusY +
-    '|' +
-    radiusZ +
-    '|' +
-    detailX +
-    '|' +
-    detailY;
+  var gId = 'ellipsoid|' + detailX + '|' + detailY;
 
   if (!this._renderer.geometryInHash(gId)) {
     var _ellipsoid = function() {
@@ -593,19 +536,9 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
           var theta = 2 * Math.PI * u;
           var cosTheta = Math.cos(theta);
           var sinTheta = Math.sin(theta);
-          var p = new p5.Vector(
-            radiusX * cosPhi * sinTheta,
-            radiusY * sinPhi,
-            radiusZ * cosPhi * cosTheta
-          );
-          var n = new p5.Vector(
-            cosPhi * sinTheta / radiusX,
-            sinPhi / radiusY,
-            cosPhi * cosTheta / radiusZ
-          ).normalize();
-
+          var p = new p5.Vector(cosPhi * sinTheta, sinPhi, cosPhi * cosTheta);
           this.vertices.push(p);
-          this.vertexNormals.push(n);
+          this.vertexNormals.push(p);
           this.uvs.push([u, v]);
         }
       }
@@ -624,7 +557,7 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
     this._renderer.createBuffers(gId, ellipsoidGeom);
   }
 
-  this._renderer.drawBuffers(gId);
+  this._renderer.drawBuffersScaled(gId, radiusX, radiusY, radiusZ);
 
   return this;
 };
@@ -634,10 +567,10 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
  * @method torus
  * @param  {Number} [radius]      radius of the whole ring
  * @param  {Number} [tubeRadius]  radius of the tube
- * @param  {Number} [detailX]     number of segments in x-dimension,
+ * @param  {Integer} [detailX]    number of segments in x-dimension,
  *                                the more segments the smoother geometry
  *                                default is 24
- * @param  {Number} [detailY]     number of segments in y-dimension,
+ * @param  {Integer} [detailY]    number of segments in y-dimension,
  *                                the more segments the smoother geometry
  *                                default is 16
  * @chainable
@@ -661,9 +594,14 @@ p5.prototype.ellipsoid = function(radiusX, radiusY, radiusZ, detailX, detailY) {
 p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
   if (typeof radius === 'undefined') {
     radius = 50;
+  } else if (!radius) {
+    return; // nothing to draw
   }
+
   if (typeof tubeRadius === 'undefined') {
     tubeRadius = 10;
+  } else if (!tubeRadius) {
+    return; // nothing to draw
   }
 
   if (typeof detailX === 'undefined') {
@@ -673,8 +611,8 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
     detailY = 16;
   }
 
-  var gId =
-    'torus|' + radius + '|' + tubeRadius + '|' + detailX + '|' + detailY;
+  var tubeRatio = (tubeRadius / radius).toPrecision(4);
+  var gId = 'torus|' + tubeRatio + '|' + detailX + '|' + detailY;
 
   if (!this._renderer.geometryInHash(gId)) {
     var _torus = function() {
@@ -683,6 +621,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
         var phi = 2 * Math.PI * v;
         var cosPhi = Math.cos(phi);
         var sinPhi = Math.sin(phi);
+        var r = 1 + tubeRatio * cosPhi;
 
         for (var j = 0; j <= this.detailX; j++) {
           var u = j / this.detailX;
@@ -690,11 +629,8 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
           var cosTheta = Math.cos(theta);
           var sinTheta = Math.sin(theta);
 
-          var p = new p5.Vector(
-            (radius + tubeRadius * cosPhi) * cosTheta,
-            (radius + tubeRadius * cosPhi) * sinTheta,
-            tubeRadius * sinPhi
-          );
+          var p = new p5.Vector(r * cosTheta, r * sinTheta, tubeRatio * sinPhi);
+
           var n = new p5.Vector(cosPhi * cosTheta, cosPhi * sinTheta, sinPhi);
 
           this.vertices.push(p);
@@ -716,7 +652,7 @@ p5.prototype.torus = function(radius, tubeRadius, detailX, detailY) {
     }
     this._renderer.createBuffers(gId, torusGeom);
   }
-  this._renderer.drawBuffers(gId);
+  this._renderer.drawBuffersScaled(gId, radius, radius, radius);
 
   return this;
 };
@@ -738,13 +674,14 @@ p5.RendererGL.prototype.triangle = function(args) {
     y2 = args[3];
   var x3 = args[4],
     y3 = args[5];
-  var gId = 'tri|' + x1 + '|' + y1 + '|' + x2 + '|' + y2 + '|' + x3 + '|' + y3;
+
+  var gId = 'tri';
   if (!this.geometryInHash(gId)) {
     var _triangle = function() {
       var vertices = [];
-      vertices.push(new p5.Vector(x1, y1, 0));
-      vertices.push(new p5.Vector(x2, y2, 0));
-      vertices.push(new p5.Vector(x3, y3, 0));
+      vertices.push(new p5.Vector(0, 0, 0));
+      vertices.push(new p5.Vector(0, 1, 0));
+      vertices.push(new p5.Vector(1, 0, 0));
       this.strokeIndices = [[0, 1], [1, 2], [2, 0]];
       this.vertices = vertices;
       this.faces = [[0, 1, 2]];
@@ -757,7 +694,29 @@ p5.RendererGL.prototype.triangle = function(args) {
     this.createBuffers(gId, triGeom);
   }
 
-  this.drawBuffers(gId);
+  // only one triangle is cached, one point is at the origin, and the
+  // two adjacent sides are tne unit vectors along the X & Y axes.
+  //
+  // this matrix multiplication transforms those two unit vectors
+  // onto the required vector prior to rendering, and moves the
+  // origin appropriately.
+  var uMVMatrix = this.uMVMatrix.copy();
+  try {
+    // prettier-ignore
+    var mult = new p5.Matrix([
+      x2 - x1, y2 - y1, 0, 0, // the resulting unit X-axis
+      x3 - x1, y3 - y1, 0, 0, // the resulting unit Y-axis
+      0, 0, 1, 0,             // the resulting unit Z-axis (unchanged)
+      x1, y1, 0, 1            // the resulting origin
+    ]).mult(this.uMVMatrix);
+
+    this.uMVMatrix = mult;
+
+    this.drawBuffers(gId);
+  } finally {
+    this.uMVMatrix = uMVMatrix;
+  }
+
   return this;
 };
 
@@ -769,66 +728,69 @@ p5.RendererGL.prototype.ellipse = function(args) {
   //detailX and Y are optional 6th & 7th
   //arguments
   var detailX = args[4] || 24;
-  var detailY = args[5] || 16;
-  var gId =
-    'ellipse|' + args[0] + '|' + args[1] + '|' + args[2] + '|' + args[3];
+  var gId = 'ellipse|' + detailX;
   if (!this.geometryInHash(gId)) {
     var _ellipse = function() {
-      var u, v, p;
-      var centerX = x + width * 0.5;
-      var centerY = y + height * 0.5;
-      for (var i = 0; i <= this.detailY; i++) {
-        v = i / this.detailY;
-        for (var j = 0; j <= this.detailX; j++) {
-          u = j / this.detailX;
-          var theta = 2 * Math.PI * u;
-          if (v === 0) {
-            p = new p5.Vector(centerX, centerY, 0);
-          } else {
-            var _x = centerX + width * 0.5 * Math.cos(theta);
-            var _y = centerY + height * 0.5 * Math.sin(theta);
-            p = new p5.Vector(_x, _y, 0);
-          }
-          this.vertices.push(p);
-          this.uvs.push([u, v]);
-        }
+      this.vertices.push(new p5.Vector(0.5, 0.5, 0));
+      this.uvs.push([0.5, 0.5]);
+
+      for (var i = 0; i <= this.detailX; i++) {
+        var u = i / this.detailX;
+        var theta = 2 * Math.PI * u;
+
+        var _x = 0.5 + Math.cos(theta) / 2;
+        var _y = 0.5 + Math.sin(theta) / 2;
+
+        this.vertices.push(new p5.Vector(_x, _y, 0));
+        this.uvs.push([_x, _y]);
+
+        this.faces.push([0, (i + 1) % this.detailX + 1, i + 1]);
       }
     };
-    var ellipseGeom = new p5.Geometry(detailX, detailY, _ellipse);
-    ellipseGeom.computeFaces().computeNormals();
-    if (detailX <= 24 && detailY <= 16) {
+    var ellipseGeom = new p5.Geometry(detailX, 1, _ellipse);
+    ellipseGeom.computeNormals();
+    if (detailX <= 50) {
       ellipseGeom._makeTriangleEdges();
       this._edgesToVertices(ellipseGeom);
     } else {
-      console.log(
-        'Cannot stroke ellipse with more' + ' than 24 detailX or 16 detailY'
-      );
+      console.log('Cannot stroke ellipse with more than 50 detailX');
     }
 
     this.createBuffers(gId, ellipseGeom);
   }
-  this.drawBuffers(gId);
+
+  // only a single ellipse (of a given detail) is cached: a circle of
+  // _diameter_ 1 (radius 0.5).
+  //
+  // before rendering, this circle is squished (technical term ;)
+  // appropriately and moved to the required location.
+  var uMVMatrix = this.uMVMatrix.copy();
+  try {
+    this.uMVMatrix.translate([x, y, 0]);
+    this.uMVMatrix.scale(width, height, 1);
+
+    this.drawBuffers(gId);
+  } finally {
+    this.uMVMatrix = uMVMatrix;
+  }
   return this;
 };
 
 p5.RendererGL.prototype.rect = function(args) {
-  var gId = 'rect|' + args[0] + '|' + args[1] + '|' + args[2] + '|' + args[3];
   var x = args[0];
   var y = args[1];
   var width = args[2];
   var height = args[3];
   var detailX = args[4] || 24;
   var detailY = args[5] || 16;
+  var gId = 'rect|' + detailX + '|' + detailY;
   if (!this.geometryInHash(gId)) {
     var _rect = function() {
-      var u, v, p;
       for (var i = 0; i <= this.detailY; i++) {
-        v = i / this.detailY;
+        var v = i / this.detailY;
         for (var j = 0; j <= this.detailX; j++) {
-          u = j / this.detailX;
-          // var _x = x-width/2;
-          // var _y = y-height/2;
-          p = new p5.Vector(x + width * u, y + height * v, 0);
+          var u = j / this.detailX;
+          var p = new p5.Vector(u, v, 0);
           this.vertices.push(p);
           this.uvs.push([u, v]);
         }
@@ -842,7 +804,20 @@ p5.RendererGL.prototype.rect = function(args) {
     this._edgesToVertices(rectGeom);
     this.createBuffers(gId, rectGeom);
   }
-  this.drawBuffers(gId);
+
+  // only a single rectangle (of a given detail) is cached: a square with
+  // opposite corners at (0,0) & (1,1).
+  //
+  // before rendering, this square is scaled & moved to the required location.
+  var uMVMatrix = this.uMVMatrix.copy();
+  try {
+    this.uMVMatrix.translate([x, y, 0]);
+    this.uMVMatrix.scale(width, height, 1);
+
+    this.drawBuffers(gId);
+  } finally {
+    this.uMVMatrix = uMVMatrix;
+  }
   return this;
 };
 
