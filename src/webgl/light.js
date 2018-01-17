@@ -42,30 +42,27 @@ var p5 = require('../core/core');
  * evenly distributed light across a sphere
  *
  */
-
 /**
  * @method ambientLight
- * @param  {String}        value   a color string
+ * @param  {String|Number}        value   a color string or grey value
  * @param  {Number}        [alpha]
  * @chainable
  */
-
 /**
  * @method ambientLight
  * @param  {Number[]}      values  an array containing the red,green,blue &
  *                                 and alpha components of the color
  * @chainable
  */
-
 /**
  * @method ambientLight
  * @param  {p5.Color}      color   the ambient light color
  * @chainable
  */
-p5.prototype.ambientLight = function(v1, v2, v3, a) {
-  var color = this.color.apply(this, arguments);
+p5.RendererGL.prototype.ambientLight = function(v1, v2, v3, a) {
+  var color = p5.prototype.color.apply(this._pInst, arguments);
 
-  var shader = this._renderer._useLightShader();
+  var shader = this._useLightShader();
 
   //@todo this is a bit icky. array uniforms have
   //to be multiples of the type 3(rgb) in this case.
@@ -73,21 +70,16 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
   //would be better
   shader.setUniform('uUseLighting', true);
   //in case there's no material color for the geometry
-  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
+  shader.setUniform('uMaterialColor', this.curFillColor);
 
-  this._renderer.ambientLightColors.push(
+  this.ambientLightColors.push(
     color._array[0],
     color._array[1],
     color._array[2]
   );
-  shader.setUniform('uAmbientColor', this._renderer.ambientLightColors);
+  shader.setUniform('uAmbientColor', this.ambientLightColors);
 
-  shader.setUniform(
-    'uAmbientLightCount',
-    this._renderer.ambientLightColors.length / 3
-  );
-
-  return this;
+  shader.setUniform('uAmbientLightCount', this.ambientLightColors.length / 3);
 };
 
 /**
@@ -122,7 +114,6 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  * light source on canvas changeable with mouse position
  *
  */
-
 /**
  * @method directionalLight
  * @param  {Number[]|String|p5.Color} color   color Array, CSS color string,
@@ -132,14 +123,12 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  * @param  {Number}                   z       z axis direction
  * @chainable
  */
-
 /**
  * @method directionalLight
  * @param  {Number[]|String|p5.Color} color
  * @param  {p5.Vector}                position
  * @chainable
  */
-
 /**
  * @method directionalLight
  * @param  {Number}    v1
@@ -150,11 +139,11 @@ p5.prototype.ambientLight = function(v1, v2, v3, a) {
  * @param  {Number}    z
  * @chainable
  */
-p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
-  var shader = this._renderer._useLightShader();
+p5.RendererGL.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
+  var shader = this._useLightShader();
 
   //@TODO: check parameters number
-  var color = this.color.apply(this, [v1, v2, v3]);
+  var color = p5.prototype.color.apply(this._pInst, [v1, v2, v3]);
 
   var _x, _y, _z;
   var v = arguments[arguments.length - 1];
@@ -169,29 +158,24 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
   }
   shader.setUniform('uUseLighting', true);
   //in case there's no material color for the geometry
-  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
+  shader.setUniform('uMaterialColor', this.curFillColor);
 
   // normalize direction
   var l = Math.sqrt(_x * _x + _y * _y + _z * _z);
-  this._renderer.directionalLightDirections.push(_x / l, _y / l, _z / l);
-  shader.setUniform(
-    'uLightingDirection',
-    this._renderer.directionalLightDirections
-  );
+  this.directionalLightDirections.push(_x / l, _y / l, _z / l);
+  shader.setUniform('uLightingDirection', this.directionalLightDirections);
 
-  this._renderer.directionalLightColors.push(
+  this.directionalLightColors.push(
     color._array[0],
     color._array[1],
     color._array[2]
   );
-  shader.setUniform('uDirectionalColor', this._renderer.directionalLightColors);
+  shader.setUniform('uDirectionalColor', this.directionalLightColors);
 
   shader.setUniform(
     'uDirectionalLightCount',
-    this._renderer.directionalLightColors.length / 3
+    this.directionalLightColors.length / 3
   );
-
-  return this;
 };
 
 /**
@@ -235,7 +219,6 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  * spot light on canvas changes position with mouse
  *
  */
-
 /**
  * @method pointLight
  * @param  {Number}    v1
@@ -244,7 +227,6 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  * @param  {p5.Vector} position the position of the light
  * @chainable
  */
-
 /**
  * @method pointLight
  * @param  {Number[]|String|p5.Color} color   color Array, CSS color string,
@@ -254,16 +236,16 @@ p5.prototype.directionalLight = function(v1, v2, v3, x, y, z) {
  * @param  {Number}                   z
  * @chainable
  */
-
 /**
  * @method pointLight
  * @param  {Number[]|String|p5.Color} color
  * @param  {p5.Vector}                position
  * @chainable
  */
-p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
+p5.RendererGL.prototype.pointLight = function(v1, v2, v3, x, y, z) {
+  this._enableLighting = true;
   //@TODO: check parameters number
-  var color = this._renderer._pInst.color.apply(this, [v1, v2, v3]);
+  var color = p5.prototype.color.apply(this._pInst, [v1, v2, v3]);
 
   var _x, _y, _z;
   var v = arguments[arguments.length - 1];
@@ -277,27 +259,18 @@ p5.prototype.pointLight = function(v1, v2, v3, x, y, z) {
     _z = v.z;
   }
 
-  var shader = this._renderer._useLightShader();
+  var shader = this._useLightShader();
   shader.setUniform('uUseLighting', true);
   //in case there's no material color for the geometry
-  shader.setUniform('uMaterialColor', this._renderer.curFillColor);
+  shader.setUniform('uMaterialColor', this.curFillColor);
 
-  this._renderer.pointLightPositions.push(_x, _y, _z);
-  shader.setUniform('uPointLightLocation', this._renderer.pointLightPositions);
+  this.pointLightPositions.push(_x, _y, _z);
+  shader.setUniform('uPointLightLocation', this.pointLightPositions);
 
-  this._renderer.pointLightColors.push(
-    color._array[0],
-    color._array[1],
-    color._array[2]
-  );
-  shader.setUniform('uPointLightColor', this._renderer.pointLightColors);
+  this.pointLightColors.push(color._array[0], color._array[1], color._array[2]);
+  shader.setUniform('uPointLightColor', this.pointLightColors);
 
-  shader.setUniform(
-    'uPointLightCount',
-    this._renderer.pointLightColors.length / 3
-  );
-
-  return this;
+  shader.setUniform('uPointLightCount', this.pointLightColors.length / 3);
 };
 
 module.exports = p5;

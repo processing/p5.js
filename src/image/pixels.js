@@ -191,6 +191,7 @@ p5.prototype.blend = function() {
  * @param  {Integer} dy Y coordinate of the destination's upper left corner
  * @param  {Integer} dw destination image width
  * @param  {Integer} dh destination image height
+ * @chainable
  *
  * @example
  * <div><code>
@@ -226,11 +227,9 @@ p5.prototype.blend = function() {
  * @param  {Integer} dy
  * @param  {Integer} dw
  * @param  {Integer} dh
+ * @chainable
  */
-p5.prototype.copy = function() {
-  p5._validateParameters('copy', arguments);
-  p5.Renderer2D.prototype.copy.apply(this._renderer, arguments);
-};
+// see thunkRendererMethods
 
 /**
  * Applies a filter to the canvas.
@@ -482,9 +481,7 @@ p5.prototype.filter = function(operation, value) {
  * Image of the rocky mountains with 50x50 green rect in center of canvas
  *
  */
-p5.prototype.get = function(x, y, w, h) {
-  return this._renderer.get(x, y, w, h);
-};
+// see thunkRendererMethods
 
 /**
  * Loads the pixel data for the display window into the pixels[] array. This
@@ -493,6 +490,7 @@ p5.prototype.get = function(x, y, w, h) {
  * will occur.
  *
  * @method loadPixels
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -518,9 +516,7 @@ p5.prototype.get = function(x, y, w, h) {
  * two images of the rocky mountains. one on top, one on bottom of canvas.
  *
  */
-p5.prototype.loadPixels = function() {
-  this._renderer.loadPixels();
-};
+// see thunkRendererMethods
 
 /**
  * <p>Changes the color of any pixel, or writes an image directly to the
@@ -546,8 +542,9 @@ p5.prototype.loadPixels = function() {
  * @method set
  * @param {Number}              x x-coordinate of the pixel
  * @param {Number}              y y-coordinate of the pixel
- * @param {Number|Number[]|Object} c insert a grayscale value | a pixel array |
- *                                a p5.Color object | a p5.Image to copy
+ * @param {Number|Number[]|p5.Color|p5.Image} c insert a grayscale value |
+ *                   a pixel array | a p5.Color object | a p5.Image to copy
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -593,9 +590,8 @@ p5.prototype.loadPixels = function() {
  * square with orangey-brown gradient lightening at bottom right.
  * image of the rocky mountains. with lines like an 'x' through the center.
  */
-p5.prototype.set = function(x, y, imgOrCol) {
-  this._renderer.set(x, y, imgOrCol);
-};
+// see thunkRendererMethods
+
 /**
  * Updates the display window with the data in the pixels[] array.
  * Use in conjunction with loadPixels(). If you're only reading pixels from
@@ -634,13 +630,6 @@ p5.prototype.set = function(x, y, imgOrCol) {
  * @alt
  * two images of the rocky mountains. one on top, one on bottom of canvas.
  */
-p5.prototype.updatePixels = function(x, y, w, h) {
-  // graceful fail - if loadPixels() or set() has not been called, pixel
-  // array will be empty, ignore call to updatePixels()
-  if (this.pixels.length === 0) {
-    return;
-  }
-  this._renderer.updatePixels(x, y, w, h);
-};
+// see thunkRendererMethods
 
 module.exports = p5;

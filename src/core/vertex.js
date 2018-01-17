@@ -242,28 +242,24 @@ p5.prototype.beginContour = function() {
  * Thick white l-shape with black outline mid-top-left of canvas.
  *
  */
-p5.prototype.beginShape = function(kind) {
-  if (this._renderer.isP3D) {
-    this._renderer.beginShape.apply(this._renderer, arguments);
+// see thunkRendererMethods
+p5.Renderer2D.prototype.beginShape = function(kind) {
+  if (
+    kind === constants.POINTS ||
+    kind === constants.LINES ||
+    kind === constants.TRIANGLES ||
+    kind === constants.TRIANGLE_FAN ||
+    kind === constants.TRIANGLE_STRIP ||
+    kind === constants.QUADS ||
+    kind === constants.QUAD_STRIP
+  ) {
+    shapeKind = kind;
   } else {
-    if (
-      kind === constants.POINTS ||
-      kind === constants.LINES ||
-      kind === constants.TRIANGLES ||
-      kind === constants.TRIANGLE_FAN ||
-      kind === constants.TRIANGLE_STRIP ||
-      kind === constants.QUADS ||
-      kind === constants.QUAD_STRIP
-    ) {
-      shapeKind = kind;
-    } else {
-      shapeKind = null;
-    }
-
-    vertices = [];
-    contourVertices = [];
+    shapeKind = null;
   }
-  return this;
+
+  vertices = [];
+  contourVertices = [];
 };
 
 /**
@@ -312,8 +308,8 @@ p5.prototype.beginShape = function(kind) {
  * white crescent shape in middle of canvas. Points facing left.
  *
  */
-p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
-  p5._validateParameters('bezierVertex', arguments);
+// see thunkRendererMethods
+p5.Renderer2D.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
   if (vertices.length === 0) {
     throw 'vertex() must be used once before calling bezierVertex()';
   } else {
@@ -329,7 +325,6 @@ p5.prototype.bezierVertex = function(x2, y2, x3, y3, x4, y4) {
       vertices.push(vert);
     }
   }
-  return this;
 };
 
 /**
@@ -632,33 +627,29 @@ p5.prototype.quadraticVertex = function(cx, cy, x3, y3) {
  * @param  {Number} [u] the vertex's texture u-coordinate
  * @param  {Number} [v] the vertex's texture v-coordinate
  */
-p5.prototype.vertex = function(x, y, moveTo, u, v) {
-  if (this._renderer.isP3D) {
-    this._renderer.vertex.apply(this._renderer, arguments);
-  } else {
-    var vert = [];
-    vert.isVert = true;
-    vert[0] = x;
-    vert[1] = y;
-    vert[2] = 0;
-    vert[3] = 0;
-    vert[4] = 0;
-    vert[5] = this._renderer._getFill();
-    vert[6] = this._renderer._getStroke();
+// see thunkRendererMethods
+p5.Renderer2D.prototype.vertex = function(x, y, moveTo, u, v) {
+  var vert = [];
+  vert.isVert = true;
+  vert[0] = x;
+  vert[1] = y;
+  vert[2] = 0;
+  vert[3] = 0;
+  vert[4] = 0;
+  vert[5] = this._getFill();
+  vert[6] = this._getStroke();
 
-    if (moveTo) {
-      vert.moveTo = moveTo;
-    }
-    if (isContour) {
-      if (contourVertices.length === 0) {
-        vert.moveTo = true;
-      }
-      contourVertices.push(vert);
-    } else {
-      vertices.push(vert);
-    }
+  if (moveTo) {
+    vert.moveTo = moveTo;
   }
-  return this;
+  if (isContour) {
+    if (contourVertices.length === 0) {
+      vert.moveTo = true;
+    }
+    contourVertices.push(vert);
+  } else {
+    vertices.push(vert);
+  }
 };
 
 module.exports = p5;

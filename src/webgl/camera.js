@@ -46,11 +46,7 @@ var p5 = require('../core/core');
  * blue square shrinks in size grows to fill canvas. disappears then loops.
  *
  */
-p5.prototype.camera = function() {
-  this._renderer.camera.apply(this._renderer, arguments);
-  return this;
-};
-
+// see thunkRendererMethods
 p5.RendererGL.prototype.camera = function(
   eyeX,
   eyeY,
@@ -153,7 +149,6 @@ p5.RendererGL.prototype.camera = function(
     this.cameraMatrix.mat4[14],
     this.cameraMatrix.mat4[15]
   );
-  return this;
 };
 
 /**
@@ -198,11 +193,7 @@ p5.RendererGL.prototype.camera = function(
  * colored 3d boxes toggleable with mouse position
  *
  */
-p5.prototype.perspective = function() {
-  this._renderer.perspective.apply(this._renderer, arguments);
-  return this;
-};
-
+// see thunkRendererMethods
 p5.RendererGL.prototype.perspective = function(fovy, aspect, near, far) {
   if (typeof fovy === 'undefined') {
     fovy = this.defaultCameraFOV;
@@ -275,11 +266,7 @@ p5.RendererGL.prototype.perspective = function(fovy, aspect, near, far) {
  * 3 3d boxes, reveal several more boxes on 3d plane when mouse used to toggle
  *
  */
-p5.prototype.ortho = function() {
-  this._renderer.ortho.apply(this._renderer, arguments);
-  return this;
-};
-
+// see thunkRendererMethods
 p5.RendererGL.prototype.ortho = function(left, right, bottom, top, near, far) {
   if (left === undefined) left = -this.width / 2;
   if (right === undefined) right = +this.width / 2;

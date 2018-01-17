@@ -368,8 +368,8 @@ p5.Image.prototype.get = function(x, y, w, h) {
  * @method set
  * @param {Number}              x x-coordinate of the pixel
  * @param {Number}              y y-coordinate of the pixel
- * @param {Number|Number[]|Object}   a grayscale value | pixel array |
- *                                a p5.Color | image to copy
+ * @param {Number|Number[]|p5.Color|p5.Image}   a grayscale value |
+ *                    pixel array | a p5.Color | image to copy
  * @example
  * <div>
  * <code>

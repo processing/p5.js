@@ -214,6 +214,7 @@ function parseObj(model, lines) {
  *
  * @method model
  * @param  {p5.Geometry} model Loaded 3d model to be rendered
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -241,14 +242,14 @@ function parseObj(model, lines) {
  * Vertically rotating 3-d teapot with red, green and blue gradient.
  *
  */
-p5.prototype.model = function(model) {
+p5.RendererGL.prototype.model = function(model) {
   if (model.vertices.length > 0) {
-    if (!this._renderer.geometryInHash(model.gid)) {
+    if (!this.geometryInHash(model.gid)) {
       model._makeTriangleEdges()._edgesToVertices();
-      this._renderer.createBuffers(model.gid, model);
+      this.createBuffers(model.gid, model);
     }
 
-    this._renderer.drawBuffers(model.gid);
+    this.drawBuffers(model.gid);
   }
 };
 
