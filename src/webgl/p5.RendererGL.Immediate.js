@@ -56,7 +56,6 @@ p5.RendererGL.prototype.beginShape = function(mode) {
     this.immediateMode.uvCoords.length = 0;
   }
   this.isImmediateDrawing = true;
-  return this;
 };
 /**
  * adds a vertex to be drawn in a custom Shape.
@@ -97,8 +96,6 @@ p5.RendererGL.prototype.vertex = function(x, y) {
   );
 
   this.immediateMode.uvCoords.push(u, v);
-
-  return this;
 };
 
 /**
@@ -145,8 +142,6 @@ p5.RendererGL.prototype.endShape = function(
   this.immediateMode.vertexColors.length = 0;
   this.immediateMode.uvCoords.length = 0;
   this.isImmediateDrawing = false;
-
-  return this;
 };
 
 p5.RendererGL.prototype._drawFillImmediateMode = function(

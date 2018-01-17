@@ -233,15 +233,7 @@ p5.prototype.ellipse = function(x, y, w, h, detailX, detailY) {
  * @param  {Number} z2 the z-coordinate of the second point
  * @chainable
  */
-p5.prototype.line = function() {
-  p5._validateParameters('line', arguments);
-
-  if (this._renderer._doStroke) {
-    this._renderer.line.apply(this._renderer, arguments);
-  }
-
-  return this;
-};
+// see thunkRendererMethods
 
 /**
  * Draws a point, a coordinate in space at the dimension of one pixel.
@@ -268,15 +260,7 @@ p5.prototype.line = function() {
  *4 points centered in the middle-right of the canvas.
  *
  */
-p5.prototype.point = function() {
-  p5._validateParameters('point', arguments);
-
-  if (this._renderer._doStroke) {
-    this._renderer.point.apply(this._renderer, arguments);
-  }
-
-  return this;
-};
+// see thunkRendererMethods
 
 /**
  * Draw a quad. A quad is a quadrilateral, a four sided polygon. It is
@@ -322,15 +306,7 @@ p5.prototype.point = function() {
  * @param {Number} z4
  * @chainable
  */
-p5.prototype.quad = function() {
-  p5._validateParameters('quad', arguments);
-
-  if (this._renderer._doStroke || this._renderer._doFill) {
-    this._renderer.quad.apply(this._renderer, arguments);
-  }
-
-  return this;
-};
+// see thunkRendererMethods
 
 /**
  * Draws a rectangle to the screen. A rectangle is a four-sided shape with
@@ -392,16 +368,7 @@ p5.prototype.quad = function() {
  * @param  {Integer} [detailY] number of segments in the y-direction
  * @chainable
  */
-p5.prototype.rect = function(x, y, w, h, detailX, detailY) {
-  p5._validateParameters('rect', arguments);
-
-  if (this._renderer._doStroke || this._renderer._doFill) {
-    var vals = canvas.modeAdjust(x, y, w, h, this._renderer._rectMode);
-    this._renderer.rect([vals.x, vals.y, vals.w, vals.h, detailX, detailY]);
-  }
-
-  return this;
-};
+// see thunkRendererMethods
 
 /**
  * A triangle is a plane created by connecting three points. The first two
@@ -427,14 +394,6 @@ p5.prototype.rect = function(x, y, w, h, detailX, detailY) {
  * white triangle with black outline in mid-right of canvas.
  *
  */
-p5.prototype.triangle = function() {
-  p5._validateParameters('triangle', arguments);
-
-  if (this._renderer._doStroke || this._renderer._doFill) {
-    this._renderer.triangle(arguments);
-  }
-
-  return this;
-};
+// see thunkRendererMethods
 
 module.exports = p5;

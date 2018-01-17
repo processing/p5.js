@@ -79,15 +79,7 @@ require('./error_helpers');
  * @param  {Number} z4 z-coordinate for the second anchor point
  * @chainable
  */
-p5.prototype.bezier = function() {
-  p5._validateParameters('bezier', arguments);
-
-  if (this._renderer._doStroke || this._renderer._doFill) {
-    this._renderer.bezier.apply(this._renderer, arguments);
-  }
-
-  return this;
-};
+// see thunkRendererMethods
 
 /**
  * Sets the resolution at which Beziers display.
@@ -331,15 +323,7 @@ p5.prototype.bezierTangent = function(a, b, c, d, t) {
  * @param  {Number} z4 z-coordinate for the ending control point
  * @chainable
  */
-p5.prototype.curve = function() {
-  p5._validateParameters('curve', arguments);
-
-  if (this._renderer._doStroke) {
-    this._renderer.curve.apply(this._renderer, arguments);
-  }
-
-  return this;
-};
+// see thunkRendererMethods
 
 /**
  * Sets the resolution at which curves display.

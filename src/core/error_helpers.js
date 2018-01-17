@@ -160,15 +160,24 @@ if (typeof IS_MINIFIED !== 'undefined') {
   // lookupParamDoc() for querying data.json
   var lookupParamDoc = function(func) {
     var queryResult = arrDoc.classitems.filter(function(x) {
-      return x.name === func;
+      return x.name === func && x.class === 'p5';
     });
+    if (!queryResult.length) {
+      queryResult = arrDoc.classitems.filter(function(x) {
+        return x.name === func;
+      });
+    }
+    if (!queryResult.length) {
+      return null;
+    }
+
     // different JSON structure for funct with multi-format
     var overloads = [];
     if (queryResult[0].hasOwnProperty('overloads')) {
       for (var i = 0; i < queryResult[0].overloads.length; i++) {
         overloads.push(queryResult[0].overloads[i].params);
       }
-    } else {
+    } else if (queryResult[0].params) {
       overloads.push(queryResult[0].params);
     }
 
@@ -424,7 +433,14 @@ if (typeof IS_MINIFIED !== 'undefined') {
       return; // skip FES
     }
 
-    var docs = docCache[func] || (docCache[func] = lookupParamDoc(func));
+    var docs = docCache[func];
+    if (typeof docs === 'undefined') {
+      docs = docCache[func] = lookupParamDoc(func);
+    }
+    if (docs === null) {
+      return;
+    }
+
     var errorArray = [];
     var minErrCount = 999999;
     var overloads = docs.overloads;

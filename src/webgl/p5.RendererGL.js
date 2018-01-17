@@ -127,8 +127,6 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   // array of textures created in this gl context via this.getTexture(src)
   this.textures = [];
   this.name = 'p5.RendererGL'; // for friendly debugger system
-
-  return this;
 };
 
 p5.RendererGL.prototype = Object.create(p5.Renderer.prototype);
@@ -232,6 +230,7 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  * @for p5
  * @param  {String}  key Name of attribute
  * @param  {Boolean}        value New value of named attribute
+ * @chainable
  * @example
  * <div>
  * <code>
@@ -333,9 +332,10 @@ p5.RendererGL.prototype._resetContext = function(attr, options, callback) {
  * @method setAttributes
  * @for p5
  * @param  {Object}  obj object with key-value pairs
+ * @chainable
  */
 
-p5.prototype.setAttributes = function(key, value) {
+p5.RendererGL.prototype.setAttributes = function(key, value) {
   //@todo_FES
   var attr;
   if (typeof value !== 'undefined') {
@@ -344,7 +344,7 @@ p5.prototype.setAttributes = function(key, value) {
   } else if (key instanceof Object) {
     attr = key;
   }
-  this._renderer._resetContext(attr);
+  this._resetContext(attr);
 };
 
 /**
@@ -709,7 +709,6 @@ p5.RendererGL.prototype.translate = function(x, y, z) {
     x = x.x;
   }
   this.uMVMatrix.translate([x, y, z]);
-  return this;
 };
 
 /**
@@ -722,7 +721,6 @@ p5.RendererGL.prototype.translate = function(x, y, z) {
  */
 p5.RendererGL.prototype.scale = function(x, y, z) {
   this.uMVMatrix.scale(x, y, z);
-  return this;
 };
 
 p5.RendererGL.prototype.rotate = function(rad, axis) {
@@ -730,22 +728,18 @@ p5.RendererGL.prototype.rotate = function(rad, axis) {
     return this.rotateZ(rad);
   }
   p5.Matrix.prototype.rotate.apply(this.uMVMatrix, arguments);
-  return this;
 };
 
 p5.RendererGL.prototype.rotateX = function(rad) {
   this.rotate(rad, 1, 0, 0);
-  return this;
 };
 
 p5.RendererGL.prototype.rotateY = function(rad) {
   this.rotate(rad, 0, 1, 0);
-  return this;
 };
 
 p5.RendererGL.prototype.rotateZ = function(rad) {
   this.rotate(rad, 0, 0, 1);
-  return this;
 };
 
 /**
