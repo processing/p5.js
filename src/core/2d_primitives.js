@@ -25,10 +25,10 @@ require('./error_helpers');
  * only to draw parts of an ellipse.
  *
  * @method arc
- * @param  {Number} a      x-coordinate of the arc's ellipse
- * @param  {Number} b      y-coordinate of the arc's ellipse
- * @param  {Number} c      width of the arc's ellipse by default
- * @param  {Number} d      height of the arc's ellipse by default
+ * @param  {Number} x      x-coordinate of the arc's ellipse
+ * @param  {Number} y      y-coordinate of the arc's ellipse
+ * @param  {Number} w      width of the arc's ellipse by default
+ * @param  {Number} h      height of the arc's ellipse by default
  * @param  {Number} start  angle to start the arc, specified in radians
  * @param  {Number} stop   angle to stop the arc, specified in radians
  * @param  {Constant} [mode] optional parameter to determine the way of drawing
