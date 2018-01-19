@@ -794,10 +794,10 @@ p5.RendererGL.prototype.rect = function(x, y, w, h, detailX, detailY) {
     return;
   }
   var vals = canvas.modeAdjust(x, y, w, h, this._rectMode);
-  x = vals[0];
-  y = vals[1];
-  w = vals[2];
-  h = vals[3];
+  x = vals.x;
+  y = vals.y;
+  w = vals.w;
+  h = vals.h;
 
   var perPixelLighting = this.attributes.perPixelLighting;
   detailX = detailX || (perPixelLighting ? 1 : 24);

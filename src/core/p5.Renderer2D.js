@@ -613,10 +613,10 @@ p5.Renderer2D.prototype.quad = function(x1, y1, x2, y2, x3, y3, x4, y4) {
 
 p5.Renderer2D.prototype.rect = function(x, y, w, h, tl, tr, br, bl) {
   var vals = canvas.modeAdjust(x, y, w, h, this._rectMode);
-  x = vals[0];
-  y = vals[1];
-  w = vals[2];
-  h = vals[3];
+  x = vals.x;
+  y = vals.y;
+  w = vals.w;
+  h = vals.h;
 
   var ctx = this.drawingContext;
   var doFill = this._doFill,
