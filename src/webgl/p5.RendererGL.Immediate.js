@@ -232,22 +232,24 @@ p5.RendererGL.prototype.endShape = function(
     // render the fill
     this._renderStroke(geometry, stroke);
 
-    //select the fill shader
-    var fill = this.curFillShader;
-    if (this._enableNormal) {
-      fill = this._getNormalShader();
-    } else if (this._enableLighting) {
-      if (!fill || !fill.isLightShader()) {
-        fill = this._getImmediateLightShader();
+    if (drawMode) {
+      //select the fill shader
+      var fill = this.curFillShader;
+      if (this._enableNormal) {
+        fill = this._getNormalShader();
+      } else if (this._enableLighting) {
+        if (!fill || !fill.isLightShader()) {
+          fill = this._getImmediateLightShader();
+        }
+      } else {
+        if (!fill /*|| !fill.isColorShader()*/) {
+          fill = this._getImmediateFlatShader();
+        }
       }
-    } else {
-      if (!fill /*|| !fill.isColorShader()*/) {
-        fill = this._getImmediateFlatShader();
-      }
-    }
 
-    // render the fill
-    this._renderFill(geometry, fill, drawMode);
+      // render the fill
+      this._renderFill(geometry, fill, drawMode);
+    }
   }
 
   // reset the immediate geometry
