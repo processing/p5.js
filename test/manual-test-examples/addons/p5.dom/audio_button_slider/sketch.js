@@ -5,7 +5,7 @@ var amp;
 
 function setup() {
   createCanvas(100,100);
-  beat = createAudio(['../lucky_dragons_-_power_melody.ogg', '../lucky_dragons_-_power_melody.mp3']);
+  beat = createAudio(['../lucky_dragons.ogg', '../lucky_dragons.mp3']);
 
   button = createButton('play');
   button.mousePressed(toggleAudio);
