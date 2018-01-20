@@ -317,10 +317,10 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
     mode === constants.HSL
   ) {
     // Set color mode.
-    this._renderer._colorMode = mode;
+    this._colorMode = mode;
 
     // Set color maxes.
-    var maxes = this._renderer._colorMaxes[mode];
+    var maxes = this._colorMaxes[mode];
     if (arguments.length === 2) {
       maxes[0] = max1; // Red
       maxes[1] = max1; // Green

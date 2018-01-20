@@ -58,7 +58,7 @@ p5.Renderer2D.prototype.background = function() {
   } else {
     var curFill = this._getFill();
     // create background rect
-    var color = this._pInst.color.apply(this, arguments);
+    var color = this._pInst.color.apply(this._pInst, arguments);
     var newFill = color.toString();
     this._setFill(newFill);
     this.drawingContext.fillRect(0, 0, this.width, this.height);
@@ -73,12 +73,12 @@ p5.Renderer2D.prototype.clear = function() {
 };
 
 p5.Renderer2D.prototype.fill = function() {
-  var color = this._pInst.color.apply(this, arguments);
+  var color = this._pInst.color.apply(this._pInst, arguments);
   this._setFill(color.toString());
 };
 
 p5.Renderer2D.prototype.stroke = function() {
-  var color = this._pInst.color.apply(this, arguments);
+  var color = this._pInst.color.apply(this._pInst, arguments);
   this._setStroke(color.toString());
 };
 
