@@ -66,8 +66,6 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this._initContext();
   this.isP3D = true; //lets us know we're in 3d mode
   this.GL = this.drawingContext;
-  this.GL.depthMask(true);
-  this.GL.disable(this.GL.BLEND);
 
   // lights
 
@@ -121,12 +119,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
 
   // note: must call fill() and stroke () AFTER
   // default shader has been set.
-  //see material.js for more info on color blending in webgl
-  this.curFillColor = [1, 1, 1, 1];
-  this.curFillShader.setUniform('uMaterialColor', this.curFillColor);
-  this.curFillShader.active = true;
-  this.drawMode = constants.FILL;
-
+  this.fill(255, 255, 255, 255);
   //this.stroke(0, 0, 0, 255);
   this.pointSize = 5.0; //default point size
   this.curStrokeWeight = 2; //default stroke weight
