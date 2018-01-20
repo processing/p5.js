@@ -14,7 +14,7 @@ var canvas = require('./canvas');
 require('./error_helpers');
 
 /**
- * Draw an arc to the screen. If called with only a, b, c, d, start, and
+ * Draw an arc to the screen. If called with only x, y, w, h, start, and
  * stop, the arc will be drawn and filled as an open pie segment. If a mode parameter is provided, the arc
  * will be filled like an open semi-circle (OPEN) , a closed semi-circle (CHORD), or as a closed pie segment (PIE). The
  * origin may be changed with the ellipseMode() function.<br><br>
