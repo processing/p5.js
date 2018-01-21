@@ -13,7 +13,7 @@ var waveform = [];
 
 function preload() {
   soundFormats('ogg', 'mp3');
-  soundFile = loadSound('../_files/lucky_dragons_-_power_melody');
+  soundFile = loadSound('../_files/lucky_dragons');
 }
 
 function setup() {

@@ -4,7 +4,7 @@
 
 function preload(){
   soundFormats('ogg', 'mp3');
-  soundFile = loadSound('../_files/Damscray_-_Dancing_Tiger_01');
+  soundFile = loadSound('../_files/Damscray_01');
 }
 
 function setup() {

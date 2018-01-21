@@ -2,7 +2,7 @@
 // Creative Commons BY-NC-SA
 
 function preload() {
-  soundFile = loadSound('../_files/Damscray_-_Dancing_Tiger_01', soundReady);
+  soundFile = loadSound('../_files/Damscray_01', soundReady);
 }
 
 function setup() {

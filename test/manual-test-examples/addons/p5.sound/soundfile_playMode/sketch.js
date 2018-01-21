@@ -8,8 +8,8 @@ var playMode = 'sustain';
 var sample1, sample2, button;
 
 function preload() {
-  sample1 = loadSound( ['../_files/Damscray_-_Dancing_Tiger_01.ogg', '../_files/Damscray_-_Dancing_Tiger_01.mp3'] );
-  sample2 = loadSound( ['../_files/Damscray_-_Dancing_Tiger_02.ogg', '../_files/Damscray_-_Dancing_Tiger_02.mp3'] );
+  sample1 = loadSound( ['../_files/Damscray_01.ogg', '../_files/Damscray_01.mp3'] );
+  sample2 = loadSound( ['../_files/Damscray_02.ogg', '../_files/Damscray_02.mp3'] );
 }
 
 function setup() {

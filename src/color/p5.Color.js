@@ -30,9 +30,9 @@ var color_conversion = require('./color_conversion');
  * @class p5.Color
  * @constructor
  */
-p5.Color = function(renderer, vals) {
+p5.Color = function(pInst, vals) {
   // Record color mode and maxes at time of construction.
-  this._storeModeAndMaxes(renderer._colorMode, renderer._colorMaxes);
+  this._storeModeAndMaxes(pInst._colorMode, pInst._colorMaxes);
 
   // Calculate normalized RGBA values.
   if (
@@ -659,7 +659,7 @@ p5.Color._parseInputs = function(r, g, b, a) {
 
     // Return if string is a named colour.
     if (namedColors[str]) {
-      return p5.Color._parseInputs.apply(this, [namedColors[str]]);
+      return p5.Color._parseInputs.call(this, namedColors[str]);
     }
 
     // Try RGBA pattern matching.
