@@ -138,20 +138,24 @@
     <tr>
     <td>
     <% var p = item.params[i] %>
-    <% if (p.optional) { %>
-      <code class="language-javascript"><%=p.name%></code>
-    <% } else { %>
-      <code class="language-javascript"><%=p.name%></code>
-    <% } %> 
+    <code class="language-javascript"><%=p.name%></code>
     <%if (p.optdefault) { %>=<%=p.optdefault%><% } %>
     </td>
     <td>
-    <% if (p.type) { %>
-      <span class="param-type label label-info"><%=p.type%></span>: <%=p.description%></span> 
-    <% } %>
+    <% if (p.type) {
+      var types = p.type.split('|');
+      for (var it = 0; it < types.length; it ++) {
+        var type = types[it].trim();
+        if (!type) continue;
+        %>
+        <code class="language-javascript"><%=type%></code>
+    <% } } %>
     <% if (p.multiple) {%>
       <span class="flag multiple" title="This argument may occur one or more times.">multiple</span>
     <% } %>
+    </td>
+    <td width="100%">
+      <span class="param-description"><%=p.description%></span>
     </td>
     </tr>
   <% } %>
