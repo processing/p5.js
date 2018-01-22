@@ -1125,6 +1125,7 @@ p5.PrintWriter = function(filename, extension) {
     this.content += data + '\n';
   };
   /**
+   * Flushes the PrintWriter object that calls it
    * @method flush
    * @example
    * <div class ="norender"><code>
