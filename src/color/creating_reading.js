@@ -288,25 +288,12 @@ p5.prototype.brightness = function(c) {
  * @param  {Number}        [alpha]
  * @return {p5.Color}
  */
-
 /**
  * @method color
- * @param  {String}        value   a color string
- * @param  {Number}        [alpha]
+ * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ *                                         or CSS color
  * @return {p5.Color}
  */
-/**
- * @method color
- * @param  {Number[]}      values  an array containing the red,green,blue &
- *                                 and alpha components of the color
- * @return {p5.Color}
- */
-/**
- * @method color
- * @param  {p5.Color}     color
- * @return {p5.Color}
- */
-
 p5.prototype.color = function() {
   p5._validateParameters('color', arguments);
   if (arguments[0] instanceof p5.Color) {

@@ -19,7 +19,7 @@ var p5 = require('../core/core');
  *                                 relative to the current color range
  * @param  {Number}        v3      blue or brightness value
  *                                 relative to the current color range
- * @param  {Number}        [alpha]
+ * @param  {Number}        [alpha] alpha value
  * @chainable
  *
  * @example
@@ -42,24 +42,17 @@ var p5 = require('../core/core');
  * evenly distributed light across a sphere
  *
  */
-
 /**
  * @method ambientLight
- * @param  {String}        value   a color string
+ * @param  {Number}        gray    number specifying value between white
+ *                                 and black.
  * @param  {Number}        [alpha]
  * @chainable
  */
-
 /**
  * @method ambientLight
- * @param  {Number[]}      values  an array containing the red,green,blue &
- *                                 and alpha components of the color
- * @chainable
- */
-
-/**
- * @method ambientLight
- * @param  {p5.Color}      color   the ambient light color
+ * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ *                                         or CSS color
  * @chainable
  */
 p5.prototype.ambientLight = function(v1, v2, v3, a) {

@@ -32,7 +32,13 @@ require('./p5.Color');
  * A p5.Image can also be provided to set the background iamge.
  *
  * @method background
- * @param {p5.Color} color     any value created by the color() function
+ * @param {Number} v1     red or hue value (depending on the current color
+ *                        mode)
+ * @param {Number} v2     green or saturation value (depending on the current
+ *                        color mode)
+ * @param {Number} v3     blue or brightness value (depending on the current
+ *                        color mode)
+ * @param  {Number} [alpha] alpha value
  * @chainable
  *
  * @example
@@ -127,52 +133,26 @@ require('./p5.Color');
  * canvas with light purple background.
  * canvas with blue background.
  */
-
 /**
  * @method background
- * @param {String} colorstring color string, possible formats include: integer
- *                         rgb() or rgba(), percentage rgb() or rgba(),
- *                         3-digit hex, 6-digit hex
- * @param {Number} [a]         opacity of the background relative to current
- *                             color range (default is 0-255)
+ * @param  {Number}        gray    number specifying value between white
+ *                                 and black.
+ * @param  {Number}        [alpha]
  * @chainable
  */
-
 /**
  * @method background
- * @param {Number} gray   specifies a value between white and black
- * @param {Number} [a]
+ * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ *                                         or CSS color
  * @chainable
  */
-
-/**
- * @method background
- * @param {Number} v1     red or hue value (depending on the current color
- *                        mode)
- * @param {Number} v2     green or saturation value (depending on the current
- *                        color mode)
- * @param {Number} v3     blue or brightness value (depending on the current
- *                        color mode)
- * @param  {Number} [a]
- * @chainable
- */
-
-/**
- * @method background
- * @param  {Number[]}      values  an array containing the red,green,blue &
- *                                 and alpha components of the color
- * @chainable
- */
-
 /**
  * @method background
  * @param {p5.Image} image     image created with loadImage() or createImage(),
  *                             to set as background
  *                             (must be same size as the sketch window)
- * @param  {Number}  [a]
  * @chainable
  */
-
 p5.prototype.background = function() {
   if (arguments[0] instanceof p5.Image) {
     this.image(arguments[0], 0, 0, this.width, this.height);
@@ -361,7 +341,7 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  *                                 relative to the current color range
  * @param  {Number}        v3      blue or brightness value
  *                                 relative to the current color range
- * @param  {Number}        [alpha]
+ * @param  {Number}        [alpha] alpha value
  * @chainable
  * @example
  * <div>
@@ -465,24 +445,17 @@ p5.prototype.colorMode = function(mode, max1, max2, max3, maxA) {
  * 60x60 dark fushcia rect with black outline in center of canvas.
  * 60x60 blue rect with black outline in center of canvas.
  */
-
 /**
  * @method fill
- * @param  {String}        value   a color string
+ * @param  {Number}        gray    number specifying value between white
+ *                                 and black.
  * @param  {Number}        [alpha]
  * @chainable
  */
-
 /**
  * @method fill
- * @param  {Number[]}      values  an array containing the red,green,blue &
- *                                 and alpha components of the color
- * @chainable
- */
-
-/**
- * @method fill
- * @param  {p5.Color}      color   the fill color
+ * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ *                                         or CSS color
  * @chainable
  */
 p5.prototype.fill = function() {
@@ -594,7 +567,7 @@ p5.prototype.noStroke = function() {
  *                                 relative to the current color range
  * @param  {Number}        v3      blue or brightness value
  *                                 relative to the current color range
- * @param  {Number}        [alpha]
+ * @param  {Number}        [alpha] alpha value
  * @chainable
  *
  * @example
@@ -714,24 +687,17 @@ p5.prototype.noStroke = function() {
 
 /**
  * @method stroke
- * @param  {String}        value   a color string
+ * @param  {Number}        gray    number specifying value between white
+ *                                 and black.
  * @param  {Number}        [alpha]
  * @chainable
  */
-
 /**
  * @method stroke
- * @param  {Number[]}      values  an array containing the red,green,blue &
- *                                 and alpha components of the color
+ * @param {p5.Color|Number[]|String} color p5.Color object, color components,
+ *                                         or CSS color
  * @chainable
  */
-
-/**
- * @method stroke
- * @param  {p5.Color}      color   the stroke color
- * @chainable
- */
-
 p5.prototype.stroke = function() {
   this._renderer._setProperty('_strokeSet', true);
   this._renderer._setProperty('_doStroke', true);
