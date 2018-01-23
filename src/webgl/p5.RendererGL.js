@@ -95,7 +95,7 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.cameraZ = this.defaultCameraZ;
   this.cameraNear = this.defaultCameraNear;
   this.cameraFar = this.defaultCameraFar;
-  this.cameraMatrix = new p5.Matrix(pInst);
+  this.cameraMatrix = new p5.Matrix();
   this.camera(); // set default camera matrices
 
   //Geometry & Material hashes

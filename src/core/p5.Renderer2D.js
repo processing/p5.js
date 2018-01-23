@@ -1118,8 +1118,8 @@ p5.Renderer2D.prototype.resetMatrix = function() {
   return this;
 };
 
-p5.Renderer2D.prototype.rotate = function(r) {
-  this.drawingContext.rotate(r);
+p5.Renderer2D.prototype.rotate = function(rad) {
+  this.drawingContext.rotate(rad);
 };
 
 p5.Renderer2D.prototype.scale = function(x, y) {
@@ -1127,13 +1127,13 @@ p5.Renderer2D.prototype.scale = function(x, y) {
   return this;
 };
 
-p5.Renderer2D.prototype.shearX = function(angle) {
-  this.drawingContext.transform(1, 0, Math.tan(angle), 1, 0, 0);
+p5.Renderer2D.prototype.shearX = function(rad) {
+  this.drawingContext.transform(1, 0, Math.tan(rad), 1, 0, 0);
   return this;
 };
 
-p5.Renderer2D.prototype.shearY = function(angle) {
-  this.drawingContext.transform(1, Math.tan(angle), 0, 1, 0, 0);
+p5.Renderer2D.prototype.shearY = function(rad) {
+  this.drawingContext.transform(1, Math.tan(rad), 0, 1, 0, 0);
   return this;
 };
 

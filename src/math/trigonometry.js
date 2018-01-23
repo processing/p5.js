@@ -13,6 +13,10 @@ var p5 = require('../core/core');
 var polarGeometry = require('./polargeometry');
 var constants = require('../core/constants');
 
+/*
+ * all DEGREES/RADIANS conversion should be done in the p5 instance
+ * if possible, using the p5._toRadians(), p5._fromRadians() methods.
+ */
 p5.prototype._angleMode = constants.RADIANS;
 
 /**
@@ -335,7 +339,7 @@ p5.prototype.angleMode = function(mode) {
  */
 p5.prototype._toRadians = function(angle) {
   if (this._angleMode === constants.DEGREES) {
-    return angle * 2 * Math.PI / 360;
+    return angle * constants.DEG_TO_RAD;
   }
   return angle;
 };
@@ -350,7 +354,7 @@ p5.prototype._toRadians = function(angle) {
  */
 p5.prototype._toDegrees = function(angle) {
   if (this._angleMode === constants.RADIANS) {
-    return angle * 360 / (2 * Math.PI);
+    return angle * constants.RAD_TO_DEG;
   }
   return angle;
 };
@@ -365,7 +369,7 @@ p5.prototype._toDegrees = function(angle) {
  */
 p5.prototype._fromRadians = function(angle) {
   if (this._angleMode === constants.DEGREES) {
-    return angle * 360 / (2 * Math.PI);
+    return angle * constants.RAD_TO_DEG;
   }
   return angle;
 };
