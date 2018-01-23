@@ -1194,6 +1194,19 @@ p5.PrintWriter = function(filename, extension) {
     this.content += data + '\n';
   };
   /**
+   * Clears the data already written to the PrintWriter object
+   * @method flush
+   * @example
+   * <div class ="norender"><code>
+   * // create writer object
+   * var writer = createWriter('newFile.txt');
+   * writer.write(['Flush me']);
+   * // flush writer object here
+   * writer.flush();
+   * // close writer
+   * writer.close();
+   * </code></div>
+   *
    */
   this.flush = function() {
     this.content = '';
