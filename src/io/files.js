@@ -1111,39 +1111,118 @@ p5.PrintWriter = function(filename, extension) {
   this.content = '';
   //Changed to write because it was being overloaded by function below.
   /**
+   * Writes data to the PrintWriter stream
    * @method write
-   * @param {Array} data
+   * @param {Array} data all data to be written by the PrintWriter
+   * @example
+   * <div class="norender">
+   * <code>
+   * // creates a file called 'newFile.txt'
+   * var writer = createWriter('newFile.txt');
+   * // write 'Hello world!'' to the file
+   * writer.write(['Hello world!']);
+   * // close the PrintWriter and save the file
+   * writer.close();
+   * </code>
+   * </div>
+   * <div class='norender'>
+   * <code>
+   * // creates a file called 'newFile2.txt'
+   * var writer = createWriter('newFile2.txt');
+   * // write 'apples,bananas,123' to the file
+   * writer.write(['apples', 'bananas', 123]);
+   * // close the PrintWriter and save the file
+   * writer.close();
+   * </code>
+   * </div>
+   * <div class='norender'>
+   * <code>
+   * // creates a file called 'newFile3.txt'
+   * var writer = createWriter('newFile3.txt');
+   * // write 'My name is: Teddy' to the file
+   * writer.write('My name is:');
+   * writer.write(' Teddy');
+   * // close the PrintWriter and save the file
+   * writer.close();
+   * </code>
+   * </div>
    */
   this.write = function(data) {
     this.content += data;
   };
   /**
+   * Writes data to the PrintWriter stream, and adds a new line at the end
    * @method print
-   * @param {Array} data
+   * @param {Array} data all data to be printed by the PrintWriter
+   * @example
+   * <div class='norender'>
+   * <code>
+   * // creates a file called 'newFile.txt'
+   * var writer = createWriter('newFile.txt');
+   * // creates a file containing
+   * //  My name is:
+   * //  Teddy
+   * writer.print('My name is:');
+   * writer.print('Teddy');
+   * // close the PrintWriter and save the file
+   * writer.close();
+   * </code>
+   * </div>
+   * <div class='norender'>
+   * <code>
+   * var writer;
+   *
+   * function setup() {
+   *   createCanvas(400, 400);
+   *   // create a PrintWriter
+   *   writer = createWriter('newFile.txt');
+   * }
+   *
+   * function draw() {
+   *   // print all mouseX and mouseY coordinates to the stream
+   *   writer.print([mouseX, mouseY]);
+   * }
+   *
+   * function mouseClicked() {
+   *   // close the PrintWriter and save the file
+   *   writer.close();
+   * }
+   * </code>
+   * </div>
    */
   this.print = function(data) {
     this.content += data + '\n';
   };
   /**
-   * Flushes the PrintWriter object that calls it
+   * Flushes the PrintWriter object
    * @method flush
    * @example
-   * <div class ="norender"><code>
-   * // create writer object
-   * var writer = createWriter('newFile.txt');
-   * writer.write(['Flush me']);
-   * // flush writer object here
-   * writer.flush();
-   * // close writer
-   * writer.close();
-   * </code></div>
-   *
    */
   this.flush = function() {
     this.content = '';
   };
   /**
+   * Closes the PrintWriter
    * @method close
+   * @example
+   * <div class="norender">
+   * <code>
+   * // create a file called 'newFile.txt'
+   * var writer = createWriter('newFile.txt');
+   * // close the PrintWriter and save the file
+   * writer.close();
+   * </code>
+   * </div>
+   * <div class='norender'>
+   * <code>
+   * // create a file called 'newFile2.txt'
+   * var writer = createWriter('newFile2.txt');
+   * // write some data to the file
+   * writer.write([100, 101, 102]);
+   * // close the PrintWriter and save the file
+   * writer.close();
+   * </code>
+   * </div>
    */
   this.close = function() {
     // convert String to Array for the writeFile Blob
