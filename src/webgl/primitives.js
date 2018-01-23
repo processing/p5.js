@@ -393,7 +393,7 @@ p5.prototype.cylinder = function(radius, height, detailX, detailY) {
     this._renderer.createBuffers(gId, cylinderGeom);
   }
 
-  this._renderer.drawBuffersScaled(gId, radius, radius, height);
+  this._renderer.drawBuffersScaled(gId, radius, height, radius);
 
   return this;
 };
