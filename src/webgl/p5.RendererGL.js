@@ -120,8 +120,6 @@ p5.RendererGL = function(elt, pInst, isMainCanvas, attr) {
   this.isImmediateDrawing = false;
   this.immediateMode = {};
 
-  // note: must call fill() and stroke () AFTER
-  // default shader has been set.
   //see material.js for more info on color blending in webgl
   this.curFillColor = [1, 1, 1, 1];
   this.curFillShader.setUniform('uMaterialColor', this.curFillColor);
